@@ -425,7 +425,7 @@ BOOL RE_Export(struct ReadMailData *rmData, char *source,
 
       // we have to get the file extension of our source file and use it
       // in our destination file as well
-		  stcgfe(ext, source);
+      stcgfe(ext, source);
 
       name = RE_SuggestName(mail);
       sprintf(buffer2, "%s-%d.%s", name[0] != '\0' ? name : mail->MailFile, nr, ext[0] != '\0' ? ext : "tmp");
@@ -472,7 +472,7 @@ BOOL RE_Export(struct ReadMailData *rmData, char *source,
 void RE_PrintFile(char *filename)
 {
   if(C->PrinterCheck && !CheckPrinter())
-	  return;
+    return;
 
   switch(C->PrintMethod)
   {
@@ -1867,7 +1867,7 @@ BOOL RE_DecodePart(struct Part *rp)
         if(ext[0] == '\0' && rp->Name[0] != '\0')
         {
           // get the file extension name
-	  		  stcgfe(ext, rp->Name);
+          stcgfe(ext, rp->Name);
           if(strlen(ext) > 5)
             ext[0] = '\0'; // if the file extension is longer than 5 chars lets use "tmp"
         }
@@ -2242,8 +2242,8 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
 
   BusyText(GetStr(MSG_BusyReading), "");
 
-	// here we read in the mail in our read mail group
-	GetMailFile(rmData->readFile, folder, mail);
+  // here we read in the mail in our read mail group
+  GetMailFile(rmData->readFile, folder, mail);
 
   // check whether the folder of the mail is using XPK and if so we
   // unpack it to a temporarly file
@@ -2310,15 +2310,15 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
       if(isMultiPartMail(mail) == FALSE)
       {
         // set the MultiPart-Mixed flag
-    		SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
+        SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
 
-		  	// if the mail is no virtual mail we can also
-			  // refresh the maillist depending information
-  			if(!isVirtualMail(mail))
-	  		{
-		  		SET_FLAG(mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
-			  	DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
-  			}
+        // if the mail is no virtual mail we can also
+        // refresh the maillist depending information
+        if(!isVirtualMail(mail))
+        {
+          SET_FLAG(mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+          DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
+        }
       }
     }
   }
@@ -3140,7 +3140,7 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
 //  Allocates resources for background message parsing
 struct ReadMailData *AllocPrivateRMData(struct Mail *mail, enum ParseMode pMode)
 {
-	struct ReadMailData *rmData = calloc(1, sizeof(struct ReadMailData));
+  struct ReadMailData *rmData = calloc(1, sizeof(struct ReadMailData));
 
   if(rmData)
   {

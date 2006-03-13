@@ -29,19 +29,19 @@
 
 struct node
 {
-	struct node *succ;
-	struct node *pred;
-	char        *name;
-	void        *data;
+  struct node *succ;
+  struct node *pred;
+  char        *name;
+  void        *data;
 };
 
 
 struct list
 {
-	struct node *head;
-	struct node *tail;
-	struct node *tailpred;
-	long         cnt;
+  struct node *head;
+  struct node *tail;
+  struct node *tailpred;
+  long         cnt;
 };
 
 void list_init( struct list *l );

@@ -33,7 +33,7 @@
 /* CLASSDATA
 struct Data
 {
-	Object *context_menu;
+  Object *context_menu;
 };
 */
 
@@ -42,8 +42,8 @@ struct Data
 //  Compares two messages
 static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
 {
-	switch (column)
-	{
+  switch (column)
+  {
     case 0:
     {
       // lets calculate each value
@@ -163,23 +163,23 @@ MakeStaticHook(FindAddressHook, FindAddressFunc);
 //  Message listview sort hook
 HOOKPROTONHNO(CompareFunc, LONG, struct NList_CompareMessage *ncm)
 {
-	struct Mail *entry1 = (struct Mail *)ncm->entry1;
-	struct Mail *entry2 = (struct Mail *)ncm->entry2;
-	LONG col1 = ncm->sort_type & MUIV_NList_TitleMark_ColMask;
-	LONG col2 = ncm->sort_type2 & MUIV_NList_TitleMark2_ColMask;
-	int cmp;
+  struct Mail *entry1 = (struct Mail *)ncm->entry1;
+  struct Mail *entry2 = (struct Mail *)ncm->entry2;
+  LONG col1 = ncm->sort_type & MUIV_NList_TitleMark_ColMask;
+  LONG col2 = ncm->sort_type2 & MUIV_NList_TitleMark2_ColMask;
+  int cmp;
 
-	if(ncm->sort_type == (LONG)MUIV_NList_SortType_None)
-		return 0;
+  if(ncm->sort_type == (LONG)MUIV_NList_SortType_None)
+    return 0;
 
-	if(ncm->sort_type & MUIV_NList_TitleMark_TypeMask) cmp = MailCompare(entry2, entry1, col1);
-	else                                               cmp = MailCompare(entry1, entry2, col1);
+  if(ncm->sort_type & MUIV_NList_TitleMark_TypeMask) cmp = MailCompare(entry2, entry1, col1);
+  else                                               cmp = MailCompare(entry1, entry2, col1);
 
-	if(cmp || col1 == col2) return cmp;
-	if(ncm->sort_type2 & MUIV_NList_TitleMark2_TypeMask) cmp = MailCompare(entry2, entry1, col2);
-	else                                                 cmp = MailCompare(entry1, entry2, col2);
+  if(cmp || col1 == col2) return cmp;
+  if(ncm->sort_type2 & MUIV_NList_TitleMark2_TypeMask) cmp = MailCompare(entry2, entry1, col2);
+  else                                                 cmp = MailCompare(entry1, entry2, col2);
 
-	return cmp;
+  return cmp;
 }
 MakeStaticHook(CompareHook, CompareFunc);
 
@@ -187,179 +187,179 @@ MakeStaticHook(CompareHook, CompareFunc);
 /// DisplayHook
 HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 {
-	struct Mail *entry;
-	char **array;
-	BOOL searchWinHook = FALSE;
+  struct Mail *entry;
+  char **array;
+  BOOL searchWinHook = FALSE;
 
-	if(!msg)
-		return 0;
+  if(!msg)
+    return 0;
 
-	// now we set our local variables to the DisplayMessage structure ones
-	entry = (struct Mail *)msg->entry;
-	array = msg->strings;
+  // now we set our local variables to the DisplayMessage structure ones
+  entry = (struct Mail *)msg->entry;
+  array = msg->strings;
 
-	// now we check who is the parent of this DisplayHook
-	if(G->FI && obj == G->FI->GUI.LV_MAILS)
-	{
-		searchWinHook = TRUE;
-	}
-	else if(!G->MA)
-		return 0;
+  // now we check who is the parent of this DisplayHook
+  if(G->FI && obj == G->FI->GUI.LV_MAILS)
+  {
+    searchWinHook = TRUE;
+  }
+  else if(!G->MA)
+    return 0;
 
-	if(entry)
-	{
-		if(entry->Folder)
-		{
-			static char dispsta[SIZE_DEFAULT];
-			static char dispsiz[SIZE_SMALL];
-			struct Person *pe;
-			STRPTR addr;
+  if(entry)
+  {
+    if(entry->Folder)
+    {
+      static char dispsta[SIZE_DEFAULT];
+      static char dispsiz[SIZE_SMALL];
+      struct Person *pe;
+      STRPTR addr;
 
-			// prepare the status char buffer
-			dispsta[0] = '\0';
-			array[0] = dispsta;
+      // prepare the status char buffer
+      dispsta[0] = '\0';
+      array[0] = dispsta;
 
-			// first we check which main status this mail has
-			// and put the leftmost mail icon accordingly.
-			if(hasStatusError(entry) || isPartialMail(entry)) strcat(dispsta, SICON_ERROR);
-			else if(hasStatusQueued(entry))  strcat(dispsta, SICON_WAITSEND);
-			else if(hasStatusSent(entry))    strcat(dispsta, SICON_SENT);
-			else if(hasStatusRead(entry))    strcat(dispsta, SICON_OLD);
-			else                             strcat(dispsta, SICON_UNREAD);
+      // first we check which main status this mail has
+      // and put the leftmost mail icon accordingly.
+      if(hasStatusError(entry) || isPartialMail(entry)) strcat(dispsta, SICON_ERROR);
+      else if(hasStatusQueued(entry))  strcat(dispsta, SICON_WAITSEND);
+      else if(hasStatusSent(entry))    strcat(dispsta, SICON_SENT);
+      else if(hasStatusRead(entry))    strcat(dispsta, SICON_OLD);
+      else                             strcat(dispsta, SICON_UNREAD);
 
-			// then we add the 2. level if icons with the additional mail information
-			// like importance, signed/crypted, report and attachment information
-			if(getImportanceLevel(entry) == IMP_HIGH)  strcat(dispsta, SICON_URGENT);
-			if(isMP_CryptedMail(entry))                strcat(dispsta, SICON_CRYPT);
-			else if(isMP_SignedMail(entry))            strcat(dispsta, SICON_SIGNED);
-			if(isMP_ReportMail(entry))                 strcat(dispsta, SICON_REPORT);
-			if(isMP_MixedMail(entry))                  strcat(dispsta, SICON_ATTACH);
+      // then we add the 2. level if icons with the additional mail information
+      // like importance, signed/crypted, report and attachment information
+      if(getImportanceLevel(entry) == IMP_HIGH)  strcat(dispsta, SICON_URGENT);
+      if(isMP_CryptedMail(entry))                strcat(dispsta, SICON_CRYPT);
+      else if(isMP_SignedMail(entry))            strcat(dispsta, SICON_SIGNED);
+      if(isMP_ReportMail(entry))                 strcat(dispsta, SICON_REPORT);
+      if(isMP_MixedMail(entry))                  strcat(dispsta, SICON_ATTACH);
 
-			// and as the 3rd level of icons we put information on the secondary status
-			// like replied, forwarded, hold
-			if(hasStatusNew(entry))        strcat(dispsta, SICON_NEW);
-			else if(hasStatusHold(entry))  strcat(dispsta, SICON_HOLD);
-			if(hasStatusMarked(entry))     strcat(dispsta, SICON_MARK);
-			if(hasStatusReplied(entry))    strcat(dispsta, SICON_REPLY);
-			if(hasStatusForwarded(entry))  strcat(dispsta, SICON_FORWARD);
+      // and as the 3rd level of icons we put information on the secondary status
+      // like replied, forwarded, hold
+      if(hasStatusNew(entry))        strcat(dispsta, SICON_NEW);
+      else if(hasStatusHold(entry))  strcat(dispsta, SICON_HOLD);
+      if(hasStatusMarked(entry))     strcat(dispsta, SICON_MARK);
+      if(hasStatusReplied(entry))    strcat(dispsta, SICON_REPLY);
+      if(hasStatusForwarded(entry))  strcat(dispsta, SICON_FORWARD);
 
-			// now we generate the proper string for the mailaddress
-			if(C->MessageCols & (1<<1) || searchWinHook)
-			{
-				static char dispfro[SIZE_DEFAULT];
-				dispfro[0] = '\0';
-				array[1] = dispfro;
+      // now we generate the proper string for the mailaddress
+      if(C->MessageCols & (1<<1) || searchWinHook)
+      {
+        static char dispfro[SIZE_DEFAULT];
+        dispfro[0] = '\0';
+        array[1] = dispfro;
 
-				if(isMultiRCPTMail(entry))
-					strcat(dispfro, SICON_GROUP);
+        if(isMultiRCPTMail(entry))
+          strcat(dispfro, SICON_GROUP);
 
-				if(((entry->Folder->Type == FT_CUSTOMMIXED || entry->Folder->Type == FT_DELETED) &&
-						(hasStatusSent(entry) || hasStatusQueued(entry) || hasStatusHold(entry) ||
-						 hasStatusError(entry))) || (searchWinHook && isOutgoingFolder(entry->Folder)))
-				{
-					pe = &entry->To;
-					strcat(dispfro, GetStr(MSG_MA_ToPrefix));
-				}
-				else
-					pe = isOutgoingFolder(entry->Folder) ? &entry->To : &entry->From;
+        if(((entry->Folder->Type == FT_CUSTOMMIXED || entry->Folder->Type == FT_DELETED) &&
+            (hasStatusSent(entry) || hasStatusQueued(entry) || hasStatusHold(entry) ||
+             hasStatusError(entry))) || (searchWinHook && isOutgoingFolder(entry->Folder)))
+        {
+          pe = &entry->To;
+          strcat(dispfro, GetStr(MSG_MA_ToPrefix));
+        }
+        else
+          pe = isOutgoingFolder(entry->Folder) ? &entry->To : &entry->From;
 
-				#ifndef DISABLE_ADDRESSBOOK_LOOKUP
-				{
-					struct MUI_NListtree_TreeNode *tn;
+        #ifndef DISABLE_ADDRESSBOOK_LOOKUP
+        {
+          struct MUI_NListtree_TreeNode *tn;
 
-					set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
+          set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
 
-					if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], MUIF_NONE)))
-					{
-						addr = ((struct ABEntry *)tn->tn_User)->RealName[0] ? ((struct ABEntry *)tn->tn_User)->RealName : AddrName((*pe));
-					}
-					else
-						addr = AddrName((*pe));
-				}
-				#else
-				addr = AddrName((*pe));
-				#endif
+          if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], MUIF_NONE)))
+          {
+            addr = ((struct ABEntry *)tn->tn_User)->RealName[0] ? ((struct ABEntry *)tn->tn_User)->RealName : AddrName((*pe));
+          }
+          else
+            addr = AddrName((*pe));
+        }
+        #else
+        addr = AddrName((*pe));
+        #endif
 
-				// lets put the string together
-				strncat(dispfro, addr, SIZE_DEFAULT-strlen(dispfro)-1);
-			}
+        // lets put the string together
+        strncat(dispfro, addr, SIZE_DEFAULT-strlen(dispfro)-1);
+      }
 
-			// lets set all other fields now
-			if(!searchWinHook && C->MessageCols & (1<<2))
-			 array[2] = AddrName((entry->ReplyTo));
+      // lets set all other fields now
+      if(!searchWinHook && C->MessageCols & (1<<2))
+       array[2] = AddrName((entry->ReplyTo));
 
-			// then the Subject
-			array[3] = entry->Subject;
+      // then the Subject
+      array[3] = entry->Subject;
 
-			// we first copy the Date Received/sent because this would probably be not
-			// set by all ppl and strcpy() is costy ;)
-			if((C->MessageCols & (1<<7) && entry->transDate.tv_secs > 0) || searchWinHook)
-			{
-				static char datstr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
-				TimeVal2String(datstr, &entry->transDate, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
-				array[7] = datstr;
-			}
-			else
-				array[7] = "";
+      // we first copy the Date Received/sent because this would probably be not
+      // set by all ppl and strcpy() is costy ;)
+      if((C->MessageCols & (1<<7) && entry->transDate.tv_secs > 0) || searchWinHook)
+      {
+        static char datstr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
+        TimeVal2String(datstr, &entry->transDate, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+        array[7] = datstr;
+      }
+      else
+        array[7] = "";
 
-			if(C->MessageCols & (1<<4) || searchWinHook)
-			{
-				static char datstr[64];
-				DateStamp2String(datstr, &entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
-				array[4] = datstr;
-			}
+      if(C->MessageCols & (1<<4) || searchWinHook)
+      {
+        static char datstr[64];
+        DateStamp2String(datstr, &entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+        array[4] = datstr;
+      }
 
-			if(C->MessageCols & (1<<5) || searchWinHook)
-			{
-				FormatSize(entry->Size, array[5] = dispsiz);
-			}
+      if(C->MessageCols & (1<<5) || searchWinHook)
+      {
+        FormatSize(entry->Size, array[5] = dispsiz);
+      }
 
-			array[6] = entry->MailFile;
-			array[8] = entry->Folder->Name;
+      array[6] = entry->MailFile;
+      array[8] = entry->Folder->Name;
 
-			// depending on the mail status we set the font to bold or plain
-			if(hasStatusUnread(entry) || hasStatusNew(entry))
-			 msg->preparses[1] = msg->preparses[2] = msg->preparses[3] = msg->preparses[4] = msg->preparses[5] = MUIX_B;
-		}
-	}
-	else
-	{
-		struct Folder *folder = NULL;
+      // depending on the mail status we set the font to bold or plain
+      if(hasStatusUnread(entry) || hasStatusNew(entry))
+       msg->preparses[1] = msg->preparses[2] = msg->preparses[3] = msg->preparses[4] = msg->preparses[5] = MUIX_B;
+    }
+  }
+  else
+  {
+    struct Folder *folder = NULL;
 
-		// first we have to make sure that the mail window has a valid folder
-		if(!searchWinHook && !(folder = FO_GetCurrentFolder()))
-			return 0;
+    // first we have to make sure that the mail window has a valid folder
+    if(!searchWinHook && !(folder = FO_GetCurrentFolder()))
+      return 0;
 
-		array[0] = GetStr(MSG_MA_TitleStatus);
+    array[0] = GetStr(MSG_MA_TitleStatus);
 
-		// depending on the current folder and the parent object we
-		// display different titles for different columns
-		if(!searchWinHook && isOutgoingFolder(folder))
-		{
-			array[1] = GetStr(MSG_To);
-			array[7] = GetStr(MSG_DATE_SENT);
-		}
-		else if(searchWinHook || folder->Type == FT_CUSTOMMIXED || folder->Type == FT_DELETED)
-		{
-			array[1] = GetStr(MSG_FROMTO);
-			array[7] = GetStr(MSG_DATE_SNTRCVD);
-		}
-		else
-		{
-			array[1] = GetStr(MSG_From);
-			array[7] = GetStr(MSG_DATE_RECEIVED);
-		}
+    // depending on the current folder and the parent object we
+    // display different titles for different columns
+    if(!searchWinHook && isOutgoingFolder(folder))
+    {
+      array[1] = GetStr(MSG_To);
+      array[7] = GetStr(MSG_DATE_SENT);
+    }
+    else if(searchWinHook || folder->Type == FT_CUSTOMMIXED || folder->Type == FT_DELETED)
+    {
+      array[1] = GetStr(MSG_FROMTO);
+      array[7] = GetStr(MSG_DATE_SNTRCVD);
+    }
+    else
+    {
+      array[1] = GetStr(MSG_From);
+      array[7] = GetStr(MSG_DATE_RECEIVED);
+    }
 
-		array[2] = GetStr(MSG_ReturnAddress);
-		array[3] = GetStr(MSG_Subject);
-		array[4] = GetStr(MSG_Date);
-		array[5] = GetStr(MSG_Size);
-		array[6] = GetStr(MSG_Filename);
+    array[2] = GetStr(MSG_ReturnAddress);
+    array[3] = GetStr(MSG_Subject);
+    array[4] = GetStr(MSG_Date);
+    array[5] = GetStr(MSG_Size);
+    array[6] = GetStr(MSG_Filename);
 
-		array[8] = GetStr(MSG_Folder); // The Folder is just a dummy entry to serve the SearchWindowDisplayHook
-	}
+    array[8] = GetStr(MSG_Folder); // The Folder is just a dummy entry to serve the SearchWindowDisplayHook
+  }
 
-	return 0;
+  return 0;
 }
 MakeStaticHook(DisplayHook, DisplayFunc);
 
@@ -369,58 +369,58 @@ MakeStaticHook(DisplayHook, DisplayFunc);
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-	struct Data *data;
+  struct Data *data;
 
-	if(!(obj = DoSuperNew(cl, obj,
+  if(!(obj = DoSuperNew(cl, obj,
 
-		MUIA_Font,                       C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
+    MUIA_Font,                       C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
 
-		MUIA_NList_MinColSortable,       0,
-		MUIA_NList_TitleClick,           TRUE,
-		MUIA_NList_TitleClick2,          TRUE,
-		MUIA_NList_MultiSelect,          MUIV_NList_MultiSelect_Default,
-		MUIA_NList_CompareHook2,         &CompareHook,
-		MUIA_NList_DisplayHook2,         &DisplayHook,
-		MUIA_NList_AutoVisible,          TRUE,
-		MUIA_NList_Title,                TRUE,
-		MUIA_NList_TitleSeparator,       TRUE,
-		MUIA_NList_DefaultObjectOnClick, FALSE,
-	
-		TAG_MORE, inittags(msg))))
-	{
-		return 0;
-	}
+    MUIA_NList_MinColSortable,       0,
+    MUIA_NList_TitleClick,           TRUE,
+    MUIA_NList_TitleClick2,          TRUE,
+    MUIA_NList_MultiSelect,          MUIV_NList_MultiSelect_Default,
+    MUIA_NList_CompareHook2,         &CompareHook,
+    MUIA_NList_DisplayHook2,         &DisplayHook,
+    MUIA_NList_AutoVisible,          TRUE,
+    MUIA_NList_Title,                TRUE,
+    MUIA_NList_TitleSeparator,       TRUE,
+    MUIA_NList_DefaultObjectOnClick, FALSE,
+  
+    TAG_MORE, inittags(msg))))
+  {
+    return 0;
+  }
 
-	data = (struct Data *)INST_DATA(cl,obj);
+  data = (struct Data *)INST_DATA(cl,obj);
 
-	// connect some notifies to the mainMailList group
-	DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,  MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_Both);
-	DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick2, MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_2);
-	DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark,  MUIV_TriggerValue);
-	DoMethod(obj, MUIM_Notify, MUIA_NList_SortType2,   MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark2, MUIV_TriggerValue);
+  // connect some notifies to the mainMailList group
+  DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,  MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_Both);
+  DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick2, MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_2);
+  DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark,  MUIV_TriggerValue);
+  DoMethod(obj, MUIM_Notify, MUIA_NList_SortType2,   MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark2, MUIV_TriggerValue);
 
-	return (ULONG)obj;
+  return (ULONG)obj;
 }
 
 ///
 /// OVERLOAD(OM_DISPOSE)
 OVERLOAD(OM_DISPOSE)
 {
-	GETDATA;
+  GETDATA;
 
-	// make sure that our context menus are also disposed
-	if(data->context_menu)
-		MUI_DisposeObject(data->context_menu);
+  // make sure that our context menus are also disposed
+  if(data->context_menu)
+    MUI_DisposeObject(data->context_menu);
 
-	return DoSuperMethodA(cl,obj,msg);
+  return DoSuperMethodA(cl,obj,msg);
 }
 
 ///
 /// OVERLOAD(MUIM_NList_ContextMenuBuild)
 OVERLOAD(MUIM_NList_ContextMenuBuild)
 {
-	GETDATA;
-	struct MUIP_NList_ContextMenuBuild *m = (struct MUIP_NList_ContextMenuBuild *)msg;
+  GETDATA;
+  struct MUIP_NList_ContextMenuBuild *m = (struct MUIP_NList_ContextMenuBuild *)msg;
   static char menutitle[SIZE_DEFAULT];
   struct MUI_NList_TestPos_Result res;
   struct Mail *mail = NULL;
@@ -436,7 +436,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   }
 
   // if this was a RMB click on the titlebar we create our own special menu
-	if(m->ontop)
+  if(m->ontop)
   {
     data->context_menu = MenustripObject,
       Child, MenuObjectT(GetStr(MSG_MA_CTX_MAILLIST)),
@@ -459,24 +459,24 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     return (ULONG)data->context_menu;
   }
 
-	if(!fo)
-		return(0);
+  if(!fo)
+    return(0);
 
   // Now lets find out which entry is under the mouse pointer
-	DoMethod(obj, MUIM_NList_TestPos, m->mx, m->my, &res);
+  DoMethod(obj, MUIM_NList_TestPos, m->mx, m->my, &res);
 
   if(res.entry >= 0)
   {
     int i;
-		
-		DoMethod(obj, MUIM_NList_GetEntry, res.entry, &mail);
-		if(!mail)
-			return(0);
+    
+    DoMethod(obj, MUIM_NList_GetEntry, res.entry, &mail);
+    if(!mail)
+      return(0);
 
-		fo->LastActive = xget(obj, MUIA_NList_Active);
+    fo->LastActive = xget(obj, MUIA_NList_Active);
 
-		if(isMultiPartMail(mail))
-			hasattach = TRUE;
+    if(isMultiPartMail(mail))
+      hasattach = TRUE;
 
     for (i = 0; i < MAXWR; i++)
     {
@@ -484,7 +484,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     }
 
     // Now we set this entry as activ
-		if(fo->LastActive != res.entry) set(obj, MUIA_NList_Active, res.entry);
+    if(fo->LastActive != res.entry) set(obj, MUIA_NList_Active, res.entry);
   }
 
   // now we create the menu title of the context menu
@@ -518,8 +518,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToRead),     MUIA_Menuitem_Enabled, mail && !isOutBox,  MUIA_UserData, MMEN_TOREAD,     End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToHold),     MUIA_Menuitem_Enabled, mail && isOutBox,   MUIA_UserData, MMEN_TOHOLD,     End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToQueued),   MUIA_Menuitem_Enabled, mail && isOutBox,   MUIA_UserData, MMEN_TOQUEUED,   End,
-				Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-				Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ALLTOREAD),  MUIA_Menuitem_Enabled, mail && !isOutBox,  MUIA_UserData, MMEN_ALLTOREAD,  End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ALLTOREAD),  MUIA_Menuitem_Enabled, mail && !isOutBox,  MUIA_UserData, MMEN_ALLTOREAD,  End,
       End,
       Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_GETADDRESS),  MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_SAVEADDR, End,
@@ -551,9 +551,9 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 /// OVERLOAD(MUIM_ContextMenuChoice)
 OVERLOAD(MUIM_ContextMenuChoice)
 {
-	struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
+  struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
 
-	switch(xget(m->item, MUIA_UserData))
+  switch(xget(m->item, MUIA_UserData))
   {
     // if the user selected a TitleContextMenu item
     case 1:
@@ -565,12 +565,12 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case 7:
     case 8:
     {
-			ULONG col = xget(m->item, MUIA_UserData)-1;
+      ULONG col = xget(m->item, MUIA_UserData)-1;
 
       if(isFlagSet(C->MessageCols, (1<<col))) CLEAR_FLAG(C->MessageCols, (1<<col));
       else                                    SET_FLAG(C->MessageCols, (1<<col));
 
-			DoMethod(obj, MUIM_MainMailList_MakeFormat);
+      DoMethod(obj, MUIM_MainMailList_MakeFormat);
     }
     break;
 
@@ -588,7 +588,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case MMEN_TOQUEUED:   DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    SFLAG_QUEUED|SFLAG_READ,SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR); break;
     case MMEN_TOMARKED:   DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    SFLAG_MARKED,           SFLAG_NONE);                        break;
     case MMEN_TOUNMARKED: DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    SFLAG_NONE,             SFLAG_MARKED);                      break;
-		case MMEN_ALLTOREAD:  DoMethod(G->App, MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ,             SFLAG_NEW);                         break;
+    case MMEN_ALLTOREAD:  DoMethod(G->App, MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ,             SFLAG_NEW);                         break;
     case MMEN_SAVEADDR:   DoMethod(G->App, MUIM_CallHook, &MA_GetAddressHook); break;
     case MMEN_MOVE:       DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook); break;
     case MMEN_COPY:       DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook); break;
@@ -599,13 +599,13 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case MMEN_CROP:       DoMethod(G->App, MUIM_CallHook, &MA_RemoveAttachHook); break;
     case MMEN_EXPMSG:     DoMethod(G->App, MUIM_CallHook, &MA_ExportMessagesHook, FALSE); break;
     case MMEN_NEW:        DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_NEW,  0); break;
-		case MMEN_SELALL:     DoMethod(obj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On,     NULL); break;
-		case MMEN_SELNONE:    DoMethod(obj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off,    NULL); break;
-		case MMEN_SELTOGG:    DoMethod(obj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Toggle, NULL); break;
+    case MMEN_SELALL:     DoMethod(obj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On,     NULL); break;
+    case MMEN_SELNONE:    DoMethod(obj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off,    NULL); break;
+    case MMEN_SELTOGG:    DoMethod(obj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Toggle, NULL); break;
 
     default:
     {
-			return DoSuperMethodA(cl, obj, msg);
+      return DoSuperMethodA(cl, obj, msg);
     }
   }
 
@@ -619,34 +619,34 @@ OVERLOAD(MUIM_ContextMenuChoice)
 //  Creates format definition for message listview
 DECLARE(MakeFormat)
 {
-	static const int defwidth[MACOLNUM] = { -1,-1,-1,-1,-1,-1,-1,-1 };
-	char format[SIZE_LARGE];
-	BOOL first = TRUE;
-	int i;
+  static const int defwidth[MACOLNUM] = { -1,-1,-1,-1,-1,-1,-1,-1 };
+  char format[SIZE_LARGE];
+  BOOL first = TRUE;
+  int i;
 
-	*format = '\0';
+  *format = '\0';
 
-	for(i = 0; i < MACOLNUM; i++)
-	{
-		if(C->MessageCols & (1<<i))
-		{
-			if(first)
-				first = FALSE;
-			else
-				strcat(format, " BAR,");
+  for(i = 0; i < MACOLNUM; i++)
+  {
+    if(C->MessageCols & (1<<i))
+    {
+      if(first)
+        first = FALSE;
+      else
+        strcat(format, " BAR,");
 
-			sprintf(&format[strlen(format)], "COL=%d W=%d", i, defwidth[i]);
+      sprintf(&format[strlen(format)], "COL=%d W=%d", i, defwidth[i]);
 
-			if(i == 5)
-				strcat(format, " P=\033r");
-		}
-	}
-	strcat(format, " BAR");
+      if(i == 5)
+        strcat(format, " P=\033r");
+    }
+  }
+  strcat(format, " BAR");
 
-	// set the new NList_Format to our object
-	set(obj, MUIA_NList_Format, format);
+  // set the new NList_Format to our object
+  set(obj, MUIA_NList_Format, format);
 
-	return 0;
+  return 0;
 }
 
 ///

@@ -4,10 +4,22 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-03-13  Jens Langner <Jens.Langner@light-speed.de>
+
+    * misc: adapted all relevant source code to the new tabulator char
+      forbit rule from our coding styleguide.
+    * STYLEGUIDE: added a new developer document explaining the various
+      coding styles used in the source code of YAM. Every YAM developer
+      should definitly read at least once through the document and 
+      adapt his coding style to the one described in the document.
+      Especially the rule on using TABs (0x09) characters should be
+      mentioned here as we had too much trouble in the pasted with them
+      and therefore consider them forbidden within our code.
+
 2006-03-12  Alexey Ivanov <AmiS@amiga.org.ru>
 
     * src/YAM_utilities.c, src/YAM.c, src/YAM_UT.c: removed some unused
-			code.
+      code.
 
 2006-03-12  Jens Langner <Jens.Langner@light-speed.de>
 

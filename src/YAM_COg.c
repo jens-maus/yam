@@ -610,10 +610,10 @@ Object *CO_Page0(struct CO_ClassData *data)
            End,
          End,
 
-				 Child, RectangleObject,
-      	    MUIA_Rectangle_HBar, TRUE,
-		        MUIA_FixHeight,      4,
-				 End,
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
 
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_MinConfig)),
             Child, Label2(GetStr(MSG_CO_RealName)),
@@ -687,10 +687,10 @@ Object *CO_Page1(struct CO_ClassData *data)
            End,
          End,
 
-				 Child, RectangleObject,
-      	    MUIA_Rectangle_HBar, TRUE,
-		        MUIA_FixHeight,      4,
-				 End,
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
 
          Child, ScrollgroupObject,
            MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -857,10 +857,10 @@ Object *CO_Page2(struct CO_ClassData *data)
            End,
          End,
 
-				 Child, RectangleObject,
-      	    MUIA_Rectangle_HBar, TRUE,
-		        MUIA_FixHeight,      4,
-				 End,
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
 
          Child, HGroup, GroupFrameT(GetStr(MSG_CO_Download)),
             Child, ColGroup(2),
@@ -981,10 +981,10 @@ Object *CO_Page3(struct CO_ClassData *data)
            End,
          End,
 
-				 Child, RectangleObject,
-      	    MUIA_Rectangle_HBar, TRUE,
-		        MUIA_FixHeight,      4,
-				 End,
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
 
          Child, HGroup,
               Child, VGroup,
@@ -1035,10 +1035,10 @@ Object *CO_Page3(struct CO_ClassData *data)
                     Child, RectangleObject,
                        MUIA_Weight, 1,
                     End,
-           				  Child, RectangleObject,
-     			       	     MUIA_Rectangle_HBar, TRUE,
-     					         MUIA_FixHeight,      4,
-           				  End,
+                     Child, RectangleObject,
+                         MUIA_Rectangle_HBar, TRUE,
+                        MUIA_FixHeight,      4,
+                     End,
                     Child, HGroup,
                        Child, data->GUI.BT_MORE = MakeButton(GetStr(MSG_CO_More)),
                        Child, HVSpace,
@@ -1203,10 +1203,10 @@ Object *CO_Page4(struct CO_ClassData *data)
            End,
          End,
 
-				 Child, RectangleObject,
-      	    MUIA_Rectangle_HBar, TRUE,
-		        MUIA_FixHeight,      4,
-				 End,
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
 
          Child, ColGroup(3), GroupFrameT(GetStr(MSG_CO_HeaderLayout)),
             Child, Label2(GetStr(MSG_CO_Header)),
@@ -1312,10 +1312,10 @@ Object *CO_Page5(struct CO_ClassData *data)
            End,
          End,
 
-				 Child, RectangleObject,
-      	    MUIA_Rectangle_HBar, TRUE,
-		        MUIA_FixHeight,      4,
-				 End,
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
 
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_MessageHeader)),
             Child, Label2(GetStr(MSG_CO_ReplyTo)),
@@ -1415,10 +1415,10 @@ Object *CO_Page6(struct CO_ClassData *data)
            End,
          End,
 
-				 Child, RectangleObject,
-      	    MUIA_Rectangle_HBar, TRUE,
-		        MUIA_FixHeight,      4,
-				 End,
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
 
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_Forwarding)),
             Child, Label2(GetStr(MSG_CO_FwdInit)),
@@ -1500,10 +1500,10 @@ Object *CO_Page7(struct CO_ClassData *data)
            End,
          End,
 
-				 Child, RectangleObject,
-      	    MUIA_Rectangle_HBar, TRUE,
-		        MUIA_FixHeight,      4,
-				 End,
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
 
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_Signature)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_USESIG, GetStr(MSG_CO_UseSig)),
@@ -1599,10 +1599,10 @@ Object *CO_Page8(struct CO_ClassData *data)
            End,
          End,
 
-				 Child, RectangleObject,
-      	    MUIA_Rectangle_HBar, TRUE,
-		        MUIA_FixHeight,      4,
-				 End,
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
 
          Child, ScrollgroupObject,
            MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -1713,10 +1713,10 @@ Object *CO_Page9(struct CO_ClassData *data)
            End,
          End,
 
-				 Child, RectangleObject,
-      	    MUIA_Rectangle_HBar, TRUE,
-		        MUIA_FixHeight,      4,
-				 End,
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
 
          Child, ColGroup(2), GroupFrameT("PGP"),
             Child, Label2(GetStr(MSG_CO_PGPExe)),
@@ -1804,10 +1804,10 @@ Object *CO_Page10(struct CO_ClassData *data)
            End,
          End,
 
-				 Child, RectangleObject,
-      	    MUIA_Rectangle_HBar, TRUE,
-		        MUIA_FixHeight,      4,
-				 End,
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
 
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_OnStartup)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_LOADALL, GetStr(MSG_CO_LoadAll)),
@@ -1866,10 +1866,10 @@ Object *CO_Page11(struct CO_ClassData *data)
            End,
          End,
 
-				 Child, RectangleObject,
-      	    MUIA_Rectangle_HBar, TRUE,
-		        MUIA_FixHeight,      4,
-				 End,
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
 
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_MimeViewers)),
             Child, HGroup,
@@ -1983,10 +1983,10 @@ Object *CO_Page12(struct CO_ClassData *data)
            End,
          End,
 
-				 Child, RectangleObject,
-      	    MUIA_Rectangle_HBar, TRUE,
-		        MUIA_FixHeight,      4,
-				 End,
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
 
          Child, HGroup, GroupFrameT(GetStr(MSG_Columns)),
             Child, HVSpace,
@@ -2077,10 +2077,10 @@ Object *CO_Page13(struct CO_ClassData *data)
            End,
          End,
 
-				 Child, RectangleObject,
-      	    MUIA_Rectangle_HBar, TRUE,
-		        MUIA_FixHeight,      4,
-				 End,
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
 
          Child, VGroup,
             Child, data->GUI.LV_REXX = ListviewObject,
@@ -2157,10 +2157,10 @@ Object *CO_Page14(struct CO_ClassData *data)
          End,
        End,
 
-			 Child, RectangleObject,
-    	    MUIA_Rectangle_HBar, TRUE,
-	        MUIA_FixHeight,      4,
-			 End,
+       Child, RectangleObject,
+          MUIA_Rectangle_HBar, TRUE,
+          MUIA_FixHeight,      4,
+       End,
 
        Child, ScrollgroupObject,
          MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -2307,9 +2307,9 @@ Object *CO_Page15(struct CO_ClassData *data)
       End,
 
       Child, RectangleObject,
-    	  MUIA_Rectangle_HBar, TRUE,
-	      MUIA_FixHeight,      4,
-	    End,
+        MUIA_Rectangle_HBar, TRUE,
+        MUIA_FixHeight,      4,
+      End,
 
       Child, VGroup,
         // more to come...

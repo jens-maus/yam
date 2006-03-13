@@ -39,45 +39,45 @@
 #define OBJECT_NAME  "Classes.o"
 
 #define KEYWD_SUPERCLASS  "Superclass:"
-#define KEYWD_DESC		    "Description:"
-#define KEYWD_CLASSDATA		"CLASSDATA"
-#define KEYWD_OVERLOAD		"OVERLOAD"
-#define KEYWD_DECLARE		  "DECLARE"
-#define KEYWD_ATTR		    "ATTR"
-#define KEYWD_EXPORT		  "EXPORT"
+#define KEYWD_DESC        "Description:"
+#define KEYWD_CLASSDATA    "CLASSDATA"
+#define KEYWD_OVERLOAD    "OVERLOAD"
+#define KEYWD_DECLARE      "DECLARE"
+#define KEYWD_ATTR        "ATTR"
+#define KEYWD_EXPORT      "EXPORT"
 
 
 struct overloaddef
 {
-	char *name;
+  char *name;
 };
 
 struct declaredef
 {
-	char *name;
-	char *params;
+  char *name;
+  char *params;
 };
 
 struct attrdef
 {
-	char *name;
+  char *name;
 };
 
 struct exportdef
 {
-	char *exporttext;
+  char *exporttext;
 };
 
 struct classdef
 {
-	char *name;               /* i.e. Searchwindow */
-	char *superclass;         /* i.e. MUIC_Window */
-	char *desc;
-	char *classdata;
-	struct list overloadlist; /* list of extracted OVERLOAD() macros */
-	struct list declarelist;  /* list of extracted DECLARE() macros */
-	struct list attrlist;     /* list of extracted ATTR() macros */
-	struct list exportlist;   /* list of extracted EXPORT blocks */
+  char *name;               /* i.e. Searchwindow */
+  char *superclass;         /* i.e. MUIC_Window */
+  char *desc;
+  char *classdata;
+  struct list overloadlist; /* list of extracted OVERLOAD() macros */
+  struct list declarelist;  /* list of extracted DECLARE() macros */
+  struct list attrlist;     /* list of extracted ATTR() macros */
+  struct list exportlist;   /* list of extracted EXPORT blocks */
 
 };
 

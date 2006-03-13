@@ -1448,8 +1448,8 @@ MakeStaticHook(InitFilterPopupListHook, InitFilterPopupList);
 /// FilterPopupDisplayHook
 HOOKPROTONH(FilterPopupDisplayFunc, ULONG, char **array, struct FilterNode *filter)
 {
-	array[0] = filter->name;
-	return 0;
+  array[0] = filter->name;
+  return 0;
 }
 MakeStaticHook(FilterPopupDisplayHook, FilterPopupDisplayFunc);
 

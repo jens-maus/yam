@@ -3529,17 +3529,17 @@ static struct MailTransferNode *TR_AddMessageHeader(int *count, int size, long a
 // a separate output file.
 static BOOL ReadDBXMessage(FILE *fh, FILE *out, unsigned int addr)
 {
-	// This can be static as this function is the leave of the recursion
-	static unsigned char buf[0x210];
-	unsigned int size;
+  // This can be static as this function is the leave of the recursion
+  static unsigned char buf[0x210];
+  unsigned int size;
   BOOL result = TRUE;
 
   ENTER();
 
   D(DBF_IMPORT, "reading message from addr 0x%lx", addr);
 
-	while(addr)
-	{
+  while(addr)
+  {
     unsigned char *pFirst;
     unsigned char *pLast;
     unsigned char *pCur;
@@ -3547,14 +3547,14 @@ static BOOL ReadDBXMessage(FILE *fh, FILE *out, unsigned int addr)
     unsigned int writeSize;
 
     // seek to the actual message position
-		if(fseek(fh, addr, SEEK_SET))
+    if(fseek(fh, addr, SEEK_SET))
     {
       result = FALSE;
       break;
     }
 
     // read out the whole message at once
-		if(fread(buf, 1, sizeof(buf), fh) != sizeof(buf))
+    if(fread(buf, 1, sizeof(buf), fh) != sizeof(buf))
     {
       result = FALSE;
       break;
@@ -3562,8 +3562,8 @@ static BOOL ReadDBXMessage(FILE *fh, FILE *out, unsigned int addr)
 
     // get the size of the read part and the addr
     // of the next part of the message
-		size = writeSize = GetLong(buf, 8);
-		addr = GetLong(buf, 12);
+    size = writeSize = GetLong(buf, 8);
+    addr = GetLong(buf, 12);
 
     // as *.dbx files are created under Windows they
     // may carry "\r\n" return sequences. But as we are
@@ -3589,16 +3589,16 @@ static BOOL ReadDBXMessage(FILE *fh, FILE *out, unsigned int addr)
     // write out the message part at one
     if(writeSize > 0)
     {
-  		if(fwrite(pFirst, 1, writeSize, out) != writeSize)
+      if(fwrite(pFirst, 1, writeSize, out) != writeSize)
       {
         result = FALSE;
         break;
       }
     }
-	}
+  }
 
   RETURN(result);
-	return result;
+  return result;
 }
 
 ///
@@ -3606,129 +3606,129 @@ static BOOL ReadDBXMessage(FILE *fh, FILE *out, unsigned int addr)
 // reads out the message info of a dbx (Outlook Express) Mail Archive file
 static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, unsigned int size, int *mail_accu, BOOL preview)
 {
-	BOOL rc = FALSE;
-	unsigned char *buf;
-	FILE *mailout = NULL;
+  BOOL rc = FALSE;
+  unsigned char *buf;
+  FILE *mailout = NULL;
 
-	unsigned char *data;
-	unsigned char *body;
-	unsigned int i;
-	unsigned int length_of_idxs;
-	unsigned int num_of_idxs;
-	unsigned int object_marker;
-	unsigned char *entries[32];
-	unsigned char *msg_entry;
-	unsigned int msg_addr = 0;
-	unsigned int mailStatusFlags = SFLAG_NONE;
+  unsigned char *data;
+  unsigned char *body;
+  unsigned int i;
+  unsigned int length_of_idxs;
+  unsigned int num_of_idxs;
+  unsigned int object_marker;
+  unsigned char *entries[32];
+  unsigned char *msg_entry;
+  unsigned int msg_addr = 0;
+  unsigned int mailStatusFlags = SFLAG_NONE;
 
   ENTER();
 
-	if(size < 12)
+  if(size < 12)
     size = 12;
 
-	if(!(buf = malloc(size)))
+  if(!(buf = malloc(size)))
   {
-		E(DBF_IMPORT, "Couldn't allocate %d bytes", size);
+    E(DBF_IMPORT, "Couldn't allocate %d bytes", size);
     RETURN(FALSE);
     return FALSE;
   }
 
   // seek to the position where to find the message info object
-	if(fseek(fh, addr, SEEK_SET))
+  if(fseek(fh, addr, SEEK_SET))
   {
-		E(DBF_IMPORT, "Unable to seek at %x", addr);
-		goto out;
+    E(DBF_IMPORT, "Unable to seek at %x", addr);
+    goto out;
   }
 
   // read in the whole message info object
-	if(fread(buf, 1, size, fh) != size)
+  if(fread(buf, 1, size, fh) != size)
   {
-		E(DBF_IMPORT, "Unable to read %d bytes", size);
-		goto out;
+    E(DBF_IMPORT, "Unable to read %d bytes", size);
+    goto out;
   }
 
   // check if the object marker matches
-	object_marker = GetLong(buf, 0);
-	if(object_marker != addr)
+  object_marker = GetLong(buf, 0);
+  if(object_marker != addr)
   {
-		E(DBF_IMPORT, "Object marker didn't match");
-		goto out;
+    E(DBF_IMPORT, "Object marker didn't match");
+    goto out;
   }
 
   // check the number of indexes
-	length_of_idxs = GetLong(buf, 4);
-	num_of_idxs = buf[10];
-	if(num_of_idxs > sizeof(entries)/sizeof(entries[0]))
+  length_of_idxs = GetLong(buf, 4);
+  num_of_idxs = buf[10];
+  if(num_of_idxs > sizeof(entries)/sizeof(entries[0]))
   {
-		E(DBF_IMPORT, "Too many indexes");
-		goto out;
+    E(DBF_IMPORT, "Too many indexes");
+    goto out;
   }
 
-	// check if we have read enough data, if not we must read more
-	if(size-12 < length_of_idxs)
-	{
-		unsigned char *newbuf;
+  // check if we have read enough data, if not we must read more
+  if(size-12 < length_of_idxs)
+  {
+    unsigned char *newbuf;
 
-		D(DBF_IMPORT, "read in %d bytes of object at 0x%x, but index length is %d", size, addr, length_of_idxs);
+    D(DBF_IMPORT, "read in %d bytes of object at 0x%x, but index length is %d", size, addr, length_of_idxs);
 
-		if(!(newbuf = malloc(length_of_idxs + 12)))
+    if(!(newbuf = malloc(length_of_idxs + 12)))
     {
-  		E(DBF_IMPORT, "Couldn't allocate %d bytes", length_of_idxs+12);
-			goto out;
+      E(DBF_IMPORT, "Couldn't allocate %d bytes", length_of_idxs+12);
+      goto out;
     }
 
-		memcpy(newbuf, buf, size);
-		if(fread(&newbuf[size], 1, length_of_idxs - size, fh) != length_of_idxs - size)
-		{
-			E(DBF_IMPORT, "Couldn't load more bytes");
+    memcpy(newbuf, buf, size);
+    if(fread(&newbuf[size], 1, length_of_idxs - size, fh) != length_of_idxs - size)
+    {
+      E(DBF_IMPORT, "Couldn't load more bytes");
 
-			free(newbuf);
-			goto out;
-		}
+      free(newbuf);
+      goto out;
+    }
 
-		free(buf);
-		buf = newbuf;
-	}
+    free(buf);
+    buf = newbuf;
+  }
 
-	body = buf + 12;
-	data = body + num_of_idxs * 4;
+  body = buf + 12;
+  data = body + num_of_idxs * 4;
 
-	memset(entries, 0, sizeof(entries));
+  memset(entries, 0, sizeof(entries));
 
-	for(i=0; i<num_of_idxs; i++)
-	{
-		unsigned int idx = body[0];
-		unsigned int addr = body[1] | (body[2] << 8) | (body[3] << 16);
+  for(i=0; i<num_of_idxs; i++)
+  {
+    unsigned int idx = body[0];
+    unsigned int addr = body[1] | (body[2] << 8) | (body[3] << 16);
 
     // check the index value
-		if((idx & 0x7f) > sizeof(entries)/sizeof(entries[0]))
+    if((idx & 0x7f) > sizeof(entries)/sizeof(entries[0]))
     {
-			E(DBF_IMPORT, "Wrong index");
-			goto out;
+      E(DBF_IMPORT, "Wrong index");
+      goto out;
     }
 
-		if(idx & 0x80)
-		{
-			// overwrite the body (and enforce little endian)
-			body[0] = addr & 0xff;
-			body[1] = (addr & 0xff00) >> 8;
-			body[2] = (addr & 0xff0000) >> 16;
-			body[3] = 0;
+    if(idx & 0x80)
+    {
+      // overwrite the body (and enforce little endian)
+      body[0] = addr & 0xff;
+      body[1] = (addr & 0xff00) >> 8;
+      body[2] = (addr & 0xff0000) >> 16;
+      body[3] = 0;
 
-			// is direct value
-			entries[idx & 0x7f] = body;
-		}
+      // is direct value
+      entries[idx & 0x7f] = body;
+    }
     else
-		{
-			entries[idx] = data + addr;
-		}
-		
+    {
+      entries[idx] = data + addr;
+    }
+    
     body += 4;
-	}
+  }
 
-	// Index number 1 points to flags
-	if(entries[1])
-	{
+  // Index number 1 points to flags
+  if(entries[1])
+  {
     unsigned int flags = GetLong(entries[1], 0);
 
     // check all flags and set the new mail status
@@ -3738,46 +3738,46 @@ static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, u
     if(flags & (1UL << 7)) // mail has been read
       SET_FLAG(mailStatusFlags, SFLAG_READ);
 
-		if(flags & (1UL << 19)) // mail has replied status
+    if(flags & (1UL << 19)) // mail has replied status
       SET_FLAG(mailStatusFlags, SFLAG_REPLIED);
-	}
-
-	// Index number 4 points to the whole message
-	if(!(msg_entry = entries[4]))
-  {
-		E(DBF_IMPORT, "Did not find a message");
-		goto out;
   }
 
-	// extract the message address
-	msg_addr = GetLong(msg_entry, 0);
-
-	// Open the output file
-	if(!(mailout = fopen(outFileName, "wb")))
+  // Index number 4 points to the whole message
+  if(!(msg_entry = entries[4]))
   {
-		E(DBF_IMPORT, "Couldn't open %s for output", outFileName);
-		goto out;
+    E(DBF_IMPORT, "Did not find a message");
+    goto out;
   }
 
-	// Write the message into the out file */
-	if(ReadDBXMessage(fh, mailout, msg_addr) == FALSE)
-	{
-		E(DBF_IMPORT, "Couldn't read dbx message @ addr %x", msg_addr);
+  // extract the message address
+  msg_addr = GetLong(msg_entry, 0);
 
-		fclose(mailout);
+  // Open the output file
+  if(!(mailout = fopen(outFileName, "wb")))
+  {
+    E(DBF_IMPORT, "Couldn't open %s for output", outFileName);
+    goto out;
+  }
+
+  // Write the message into the out file */
+  if(ReadDBXMessage(fh, mailout, msg_addr) == FALSE)
+  {
+    E(DBF_IMPORT, "Couldn't read dbx message @ addr %x", msg_addr);
+
+    fclose(mailout);
     mailout = NULL;
     DeleteFile(outFileName);
-		goto out;
-	}
+    goto out;
+  }
 
-	rc = TRUE;
+  rc = TRUE;
 
 out:
-	if(mailout)
+  if(mailout)
     fclose(mailout);
 
-	free(buf);
-	
+  free(buf);
+  
   if(rc)
   {
     if(preview == TRUE)
@@ -3808,88 +3808,88 @@ out:
 // file from Outlook Express.
 static BOOL ReadDBXNode(FILE *fh, char *outFileName, unsigned int addr, int *mail_accu, BOOL preview)
 {
-	unsigned char *buf;
-	unsigned char *body;
-	unsigned int child;
-	int object_marker;
-	int entries;
+  unsigned char *buf;
+  unsigned char *body;
+  unsigned int child;
+  int object_marker;
+  int entries;
 
   ENTER();
 
   // alloc enough memory to facilitate the the whole tree
-	if(!(buf = malloc((0x18+0x264))))
+  if(!(buf = malloc((0x18+0x264))))
   {
-		E(DBF_IMPORT, "Couldn't allocate enough memory for node");
+    E(DBF_IMPORT, "Couldn't allocate enough memory for node");
     RETURN(FALSE);
     return FALSE;
   }
 
   // seek to the start of the tree node
-	if(fseek(fh, addr, SEEK_SET))
-	{
-		free(buf);
+  if(fseek(fh, addr, SEEK_SET))
+  {
+    free(buf);
 
-		E(DBF_IMPORT, "Unable to seek at %x", addr);
+    E(DBF_IMPORT, "Unable to seek at %x", addr);
     RETURN(FALSE);
-		return FALSE;
-	}
+    return FALSE;
+  }
 
   // read in the whole tree with one read operation
-	if(fread(buf, 1, (0x18+0x264), fh) != (0x18+0x264))
-	{
-		free(buf);
+  if(fread(buf, 1, (0x18+0x264), fh) != (0x18+0x264))
+  {
+    free(buf);
 
-		E(DBF_IMPORT, "Unable to read %d bytes", 0x18+0x264);
+    E(DBF_IMPORT, "Unable to read %d bytes", 0x18+0x264);
     RETURN(FALSE);
-		return FALSE;
-	}
+    return FALSE;
+  }
 
-	object_marker = GetLong(buf, 0);
-	child = GetLong(buf, 8);
-	entries = buf[17];
-	body = &buf[0x18];
+  object_marker = GetLong(buf, 0);
+  child = GetLong(buf, 8);
+  entries = buf[17];
+  body = &buf[0x18];
 
-	while(entries--)
-	{
-		unsigned int value = GetLong(body, 0);
-		unsigned int chld = GetLong(body, 4);
-		unsigned int novals = GetLong(body, 8);
+  while(entries--)
+  {
+    unsigned int value = GetLong(body, 0);
+    unsigned int chld = GetLong(body, 4);
+    unsigned int novals = GetLong(body, 8);
 
-		// value points to a pointer to a message
-		if(value)
-		{
-			if(ReadDBXMessageInfo(fh, outFileName, value, novals, mail_accu, preview) == FALSE)
-			{
-				free(buf);
+    // value points to a pointer to a message
+    if(value)
+    {
+      if(ReadDBXMessageInfo(fh, outFileName, value, novals, mail_accu, preview) == FALSE)
+      {
+        free(buf);
 
-				E(DBF_IMPORT, "Failed to read the indexed info");
+        E(DBF_IMPORT, "Failed to read the indexed info");
         RETURN(FALSE);
-				return FALSE;
-			}
-		}
+        return FALSE;
+      }
+    }
 
-		if(chld)
-		{
-			if(ReadDBXNode(fh, outFileName, chld, mail_accu, preview) == FALSE)
-			{
-				free(buf);
+    if(chld)
+    {
+      if(ReadDBXNode(fh, outFileName, chld, mail_accu, preview) == FALSE)
+      {
+        free(buf);
 
-				E(DBF_IMPORT, "Failed to read node at %p", chld);
+        E(DBF_IMPORT, "Failed to read node at %p", chld);
         RETURN(FALSE);
-				return FALSE;
-			}
-		}
+        return FALSE;
+      }
+    }
 
-		body += 12;
-	}
+    body += 12;
+  }
 
-	free(buf);
+  free(buf);
 
-	if(child)
-		return ReadDBXNode(fh, outFileName, child, mail_accu, preview);
+  if(child)
+    return ReadDBXNode(fh, outFileName, child, mail_accu, preview);
 
   RETURN(TRUE);
-	return TRUE;
+  return TRUE;
 }
 
 ///
@@ -4056,16 +4056,16 @@ BOOL TR_GetMessageList_IMPORT()
         // an Outlook Express database file.
         if((file_header = (unsigned char *)malloc(0x24bc)))
         {
-      		if(fread(file_header, 1, 0x24bc, ifh) == 0x24bc)
+          if(fread(file_header, 1, 0x24bc, ifh) == 0x24bc)
           {
             // try to identify the file as a CLSID_MessageDatabase file
-  		  	  if((file_header[0] == 0xcf && file_header[1] == 0xad &&
+            if((file_header[0] == 0xcf && file_header[1] == 0xad &&
                 file_header[2] == 0x12 && file_header[3] == 0xfe) &&
                (file_header[4] == 0xc5 && file_header[5] == 0xfd &&
                 file_header[6] == 0x74 && file_header[7] == 0x6f))
             {
-  						int number_of_mails = GetLong(file_header, 0xc4);
-							unsigned int root_node = GetLong(file_header, 0xe4);
+              int number_of_mails = GetLong(file_header, 0xc4);
+              unsigned int root_node = GetLong(file_header, 0xe4);
 
               D(DBF_IMPORT, "number of mails in dbx file: %d", number_of_mails);
 
@@ -4074,7 +4074,7 @@ BOOL TR_GetMessageList_IMPORT()
               if(ReadDBXNode(ifh, fname, root_node, &c, TRUE) && c == number_of_mails)
                 result = TRUE;
               else
-        				E(DBF_IMPORT, "Failed to read from root_node; c=%d", c);
+                E(DBF_IMPORT, "Failed to read from root_node; c=%d", c);
             }
           }
 
@@ -4307,10 +4307,10 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
             if((ofh = fopen(MA_NewMailFile(folder, mfile), "wb")) == NULL)
               break;
 
-          	if(ReadDBXMessage(ifh, ofh, mtn->importAddr) == FALSE)
-          		E(DBF_IMPORT, "Couldn't import dbx message from addr %x", mtn->importAddr);
+            if(ReadDBXMessage(ifh, ofh, mtn->importAddr) == FALSE)
+              E(DBF_IMPORT, "Couldn't import dbx message from addr %x", mtn->importAddr);
 
-        		fclose(ofh);
+            fclose(ofh);
 
             // after writing out the mail to a
             // new mail file we go and add it to the folder

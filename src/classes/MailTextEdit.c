@@ -33,8 +33,8 @@
 /* CLASSDATA
 struct Data
 {
-	Object *slider;
-	struct MUI_EventHandlerNode ehnode;
+  Object *slider;
+  struct MUI_EventHandlerNode ehnode;
 };
 */
 
@@ -42,83 +42,83 @@ struct Data
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-	if((obj = (Object *)DoSuperMethodA(cl, obj, msg)))
-	{
-		GETDATA;
+  if((obj = (Object *)DoSuperMethodA(cl, obj, msg)))
+  {
+    GETDATA;
 
-		struct TagItem *tags = inittags(msg), *tag;
-		while((tag = NextTagItem(&tags)))
-		{
-			switch(tag->ti_Tag)
-			{
-				// we also catch foreign attributes
-				case MUIA_TextEditor_Slider: data->slider = (Object *)tag->ti_Data; break;
-			}
-		}
-	}
+    struct TagItem *tags = inittags(msg), *tag;
+    while((tag = NextTagItem(&tags)))
+    {
+      switch(tag->ti_Tag)
+      {
+        // we also catch foreign attributes
+        case MUIA_TextEditor_Slider: data->slider = (Object *)tag->ti_Data; break;
+      }
+    }
+  }
 
-	return (ULONG)obj;
+  return (ULONG)obj;
 }
 
 ///
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)
 {
-	struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
-	
-	return (ULONG)(drop_msg->obj == G->AB->GUI.LV_ADDRESSES);
+  struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
+  
+  return (ULONG)(drop_msg->obj == G->AB->GUI.LV_ADDRESSES);
 }
 
 ///
 /// OVERLOAD(MUIM_DragDrop)
 OVERLOAD(MUIM_DragDrop)
 {
-	struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
-	
-	if(drop_msg->obj == G->AB->GUI.LV_ADDRESSES)
-	{
-		struct MUI_NListtree_TreeNode *tn;
-		
-		if((tn = (struct MUI_NListtree_TreeNode *)xget(drop_msg->obj, MUIA_NListtree_Active)))
-		{
-			struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
-			
-			if(ab->Type != AET_GROUP)
-			{
-				DoMethod(obj, MUIM_TextEditor_InsertText, AB_PrettyPrintAddress(ab), MUIV_TextEditor_InsertText_Cursor);
-			}
-		}
-	}
-	
-	return DoSuperMethodA(cl, obj, msg);
+  struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
+  
+  if(drop_msg->obj == G->AB->GUI.LV_ADDRESSES)
+  {
+    struct MUI_NListtree_TreeNode *tn;
+    
+    if((tn = (struct MUI_NListtree_TreeNode *)xget(drop_msg->obj, MUIA_NListtree_Active)))
+    {
+      struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
+      
+      if(ab->Type != AET_GROUP)
+      {
+        DoMethod(obj, MUIM_TextEditor_InsertText, AB_PrettyPrintAddress(ab), MUIV_TextEditor_InsertText_Cursor);
+      }
+    }
+  }
+  
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
 /// OVERLOAD(MUIM_Show)
 OVERLOAD(MUIM_Show)
 {
-	G->EdColMap[6] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColoredText, 0);
-	G->EdColMap[7] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color1stLevel, 0);
-	G->EdColMap[8] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color2ndLevel, 0);
-	G->EdColMap[9] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color3rdLevel, 0);
-	G->EdColMap[10] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color4thLevel, 0);
-	G->EdColMap[11] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorURL, 0);
+  G->EdColMap[6] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColoredText, 0);
+  G->EdColMap[7] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color1stLevel, 0);
+  G->EdColMap[8] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color2ndLevel, 0);
+  G->EdColMap[9] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color3rdLevel, 0);
+  G->EdColMap[10] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color4thLevel, 0);
+  G->EdColMap[11] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorURL, 0);
 
-	return DoSuperMethodA(cl, obj, msg);
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
 /// OVERLOAD(MUIM_Hide)
 OVERLOAD(MUIM_Hide)
 {
-	if(G->EdColMap[6] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[6]);
-	if(G->EdColMap[7] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[7]);
-	if(G->EdColMap[8] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[8]);
-	if(G->EdColMap[9] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[9]);
-	if(G->EdColMap[10] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[10]);
-	if(G->EdColMap[11] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[11]);
+  if(G->EdColMap[6] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[6]);
+  if(G->EdColMap[7] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[7]);
+  if(G->EdColMap[8] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[8]);
+  if(G->EdColMap[9] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[9]);
+  if(G->EdColMap[10] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[10]);
+  if(G->EdColMap[11] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[11]);
 
-	return DoSuperMethodA(cl, obj, msg);
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
@@ -127,17 +127,17 @@ OVERLOAD(MUIM_Hide)
 // for adding it later on a GoActive Method call.
 OVERLOAD(MUIM_Setup)
 {
-	GETDATA;
-	
-	data->ehnode.ehn_Priority = 1;
-	data->ehnode.ehn_Flags    = 0;
-	data->ehnode.ehn_Object   = obj;
-	data->ehnode.ehn_Class    = cl;
-	data->ehnode.ehn_Events   = IDCMP_RAWKEY;
+  GETDATA;
+  
+  data->ehnode.ehn_Priority = 1;
+  data->ehnode.ehn_Flags    = 0;
+  data->ehnode.ehn_Object   = obj;
+  data->ehnode.ehn_Class    = cl;
+  data->ehnode.ehn_Events   = IDCMP_RAWKEY;
 
-	DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+  DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
 
-	return DoSuperMethodA(cl, obj, msg);
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
@@ -145,11 +145,11 @@ OVERLOAD(MUIM_Setup)
 // On a Cleanup we have to remove the EventHandler
 OVERLOAD(MUIM_Cleanup)
 {
-	GETDATA;
+  GETDATA;
 
-	DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+  DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
 
-	return DoSuperMethodA(cl, obj, msg);
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
@@ -159,62 +159,62 @@ OVERLOAD(MUIM_Cleanup)
 // inserts the famous [...] substitution.
 OVERLOAD(MUIM_HandleEvent)
 {
-	struct IntuiMessage *imsg;
+  struct IntuiMessage *imsg;
 
-	if((imsg = ((struct MUIP_HandleEvent *)msg)->imsg))
-	{
-		if(imsg->Class == IDCMP_RAWKEY)
-		{
-			if(imsg->Code == IECODE_DEL)
-			{
-				if(isFlagSet(imsg->Qualifier, IEQUALIFIER_RCOMMAND) &&
-					 !xget(obj, MUIA_TextEditor_ReadOnly))
-				{
-					ULONG ret;
-					ULONG x1, y1, x2, y2;
+  if((imsg = ((struct MUIP_HandleEvent *)msg)->imsg))
+  {
+    if(imsg->Class == IDCMP_RAWKEY)
+    {
+      if(imsg->Code == IECODE_DEL)
+      {
+        if(isFlagSet(imsg->Qualifier, IEQUALIFIER_RCOMMAND) &&
+           !xget(obj, MUIA_TextEditor_ReadOnly))
+        {
+          ULONG ret;
+          ULONG x1, y1, x2, y2;
 
-					// let`s check first if a multiline block is marked or not
-					if(DoMethod(obj, MUIM_TextEditor_BlockInfo, &x1, &y1, &x2, &y2) && y2-y1 >= 1)
-					{
-						// then we first clear the qualifier so that the real
-						// TextEditor HandleEvent method treats this imsg as a normal DEL pressed imsg
-						CLEAR_FLAG(imsg->Qualifier, IEQUALIFIER_RCOMMAND);
-						ret = DoSuperMethodA(cl, obj, msg);
+          // let`s check first if a multiline block is marked or not
+          if(DoMethod(obj, MUIM_TextEditor_BlockInfo, &x1, &y1, &x2, &y2) && y2-y1 >= 1)
+          {
+            // then we first clear the qualifier so that the real
+            // TextEditor HandleEvent method treats this imsg as a normal DEL pressed imsg
+            CLEAR_FLAG(imsg->Qualifier, IEQUALIFIER_RCOMMAND);
+            ret = DoSuperMethodA(cl, obj, msg);
 
-						// Now that the marked text is cleared we can insert our great [...]
-						// snip text ;)
-						DoMethod(obj, MUIM_TextEditor_InsertText, "[...]\n", MUIV_TextEditor_InsertText_Cursor);
+            // Now that the marked text is cleared we can insert our great [...]
+            // snip text ;)
+            DoMethod(obj, MUIM_TextEditor_InsertText, "[...]\n", MUIV_TextEditor_InsertText_Cursor);
 
-						return ret;
-					}
-				}
-			}
-		}
-	}
+            return ret;
+          }
+        }
+      }
+    }
+  }
 
-	return DoSuperMethodA(cl, obj, msg);
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
 /// OVERLOAD(MUIM_TextEditor_HandleError)
 OVERLOAD(MUIM_TextEditor_HandleError)
 {
-	char *errortxt = NULL;
-	
-	switch(((struct MUIP_TextEditor_HandleError *)msg)->errorcode)
-	{
-		case Error_ClipboardIsEmpty:  errortxt = GetStr(MSG_CL_ErrorEmptyCB); break;
-		case Error_ClipboardIsNotFTXT:errortxt = GetStr(MSG_CL_ErrorNotFTXT); break;
-		case Error_NoAreaMarked:      errortxt = GetStr(MSG_CL_ErrorNoArea); break;
-		case Error_NothingToRedo:     errortxt = GetStr(MSG_CL_ErrorNoRedo); break;
-		case Error_NothingToUndo:     errortxt = GetStr(MSG_CL_ErrorNoUndo); break;
-		case Error_NotEnoughUndoMem:  errortxt = GetStr(MSG_CL_ErrorNoUndoMem); break;
-	}
-	
-	if(errortxt)
-		MUI_Request(_app(obj), _win(obj), 0L, NULL, GetStr(MSG_OkayReq), errortxt);
+  char *errortxt = NULL;
+  
+  switch(((struct MUIP_TextEditor_HandleError *)msg)->errorcode)
+  {
+    case Error_ClipboardIsEmpty:  errortxt = GetStr(MSG_CL_ErrorEmptyCB); break;
+    case Error_ClipboardIsNotFTXT:errortxt = GetStr(MSG_CL_ErrorNotFTXT); break;
+    case Error_NoAreaMarked:      errortxt = GetStr(MSG_CL_ErrorNoArea); break;
+    case Error_NothingToRedo:     errortxt = GetStr(MSG_CL_ErrorNoRedo); break;
+    case Error_NothingToUndo:     errortxt = GetStr(MSG_CL_ErrorNoUndo); break;
+    case Error_NotEnoughUndoMem:  errortxt = GetStr(MSG_CL_ErrorNoUndoMem); break;
+  }
+  
+  if(errortxt)
+    MUI_Request(_app(obj), _win(obj), 0L, NULL, GetStr(MSG_OkayReq), errortxt);
 
-	return DoSuperMethodA(cl, obj, msg);
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///

@@ -33,7 +33,7 @@
 /* CLASSDATA
 struct Data
 {
-	short dummy;
+  short dummy;
 };
 */
 
@@ -41,23 +41,23 @@ struct Data
 /// OVERLOAD(MUIM_Window_Snapshot)
 OVERLOAD(MUIM_Window_Snapshot)
 {
- 	// get the weights according to their GUI elements
-	G->Weights[0] = xget(G->MA->GUI.LV_FOLDERS,  MUIA_HorizWeight);
-	G->Weights[1] = xget(G->MA->GUI.GR_MAILVIEW, MUIA_HorizWeight);
-	G->Weights[6] = xget(G->MA->GUI.PG_MAILLIST, MUIA_VertWeight);
+   // get the weights according to their GUI elements
+  G->Weights[0] = xget(G->MA->GUI.LV_FOLDERS,  MUIA_HorizWeight);
+  G->Weights[1] = xget(G->MA->GUI.GR_MAILVIEW, MUIA_HorizWeight);
+  G->Weights[6] = xget(G->MA->GUI.PG_MAILLIST, MUIA_VertWeight);
 
-	// if the embedded read pane objects are currently active we save their weight values
-	if(C->EmbeddedReadPane)
-	{
-		G->Weights[7] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight);
-		G->Weights[8] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_HGVertWeight);
-		G->Weights[9] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_TGVertWeight);
-	}
+  // if the embedded read pane objects are currently active we save their weight values
+  if(C->EmbeddedReadPane)
+  {
+    G->Weights[7] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight);
+    G->Weights[8] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_HGVertWeight);
+    G->Weights[9] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_TGVertWeight);
+  }
 
-	// make sure the layout is saved
-	SaveLayout(TRUE);
+  // make sure the layout is saved
+  SaveLayout(TRUE);
 
-	return DoSuperMethodA(cl, obj, msg);
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
@@ -70,11 +70,11 @@ OVERLOAD(MUIM_Window_Snapshot)
 // their close
 DECLARE(DisposeSubWindow) // Object *win
 {
-	set(msg->win, MUIA_Window_Open, FALSE);
-	DoMethod(G->App, OM_REMMEMBER, msg->win);
-	MUI_DisposeObject(msg->win);
+  set(msg->win, MUIA_Window_Open, FALSE);
+  DoMethod(G->App, OM_REMMEMBER, msg->win);
+  MUI_DisposeObject(msg->win);
 
-	return 0;
+  return 0;
 }
 
 ///

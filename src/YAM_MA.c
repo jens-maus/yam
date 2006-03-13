@@ -1599,7 +1599,7 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
 
              CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
              SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
-	   				 DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
+              DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
 
              DeleteFile(fname);
 
@@ -2358,10 +2358,10 @@ BOOL MA_ImportMessages(char *fname)
       // an Outlook Express database file.
       if((file_header = (unsigned char *)malloc(0x24bc)))
       {
-    		if(fread(file_header, 1, 0x24bc, fh) == 0x24bc)
+        if(fread(file_header, 1, 0x24bc, fh) == 0x24bc)
         {
           // try to identify the file as a CLSID_MessageDatabase file
-  		  	if((file_header[0] == 0xcf && file_header[1] == 0xad &&
+          if((file_header[0] == 0xcf && file_header[1] == 0xad &&
               file_header[2] == 0x12 && file_header[3] == 0xfe) &&
              (file_header[4] == 0xc5 && file_header[5] == 0xfd &&
               file_header[6] == 0x74 && file_header[7] == 0x6f))

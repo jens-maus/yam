@@ -33,7 +33,7 @@
 /* CLASSDATA
 struct Data
 {
-	short dummy;
+  short dummy;
 };
 */
 
@@ -41,52 +41,52 @@ struct Data
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)
 {
-	struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
+  struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
 
-	if(d->obj != obj)
-	{
-		if(d->obj == G->AB->GUI.LV_ADDRESSES)
-		{
-			struct MUI_NListtree_TreeNode *active;
-		
-			if((active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active)))
-			{
-				if(!((struct ABEntry *)(active->tn_User))->Members)
-					return MUIV_DragQuery_Accept;
-			}
-		}
+  if(d->obj != obj)
+  {
+    if(d->obj == G->AB->GUI.LV_ADDRESSES)
+    {
+      struct MUI_NListtree_TreeNode *active;
+    
+      if((active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active)))
+      {
+        if(!((struct ABEntry *)(active->tn_User))->Members)
+          return MUIV_DragQuery_Accept;
+      }
+    }
 
-		return MUIV_DragQuery_Refuse;
-	}
+    return MUIV_DragQuery_Refuse;
+  }
 
-	return DoSuperMethodA(cl,obj,msg);
+  return DoSuperMethodA(cl,obj,msg);
 }
 
 ///
 /// OVERLOAD(MUIM_DragDrop)
 OVERLOAD(MUIM_DragDrop)
 {
-	struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
+  struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
 
-	if(d->obj != obj)
-	{
-		if(d->obj == G->AB->GUI.LV_ADDRESSES)
-		{
-			struct MUI_NListtree_TreeNode *active;
-		
-			if((active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active)))
-			{
-				if(isFlagSet(active->tn_Flags, TNF_LIST))
-					EA_AddMembers(obj, active);
-				else
-					EA_AddSingleMember(obj, active);
-			}
-		}
+  if(d->obj != obj)
+  {
+    if(d->obj == G->AB->GUI.LV_ADDRESSES)
+    {
+      struct MUI_NListtree_TreeNode *active;
+    
+      if((active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active)))
+      {
+        if(isFlagSet(active->tn_Flags, TNF_LIST))
+          EA_AddMembers(obj, active);
+        else
+          EA_AddSingleMember(obj, active);
+      }
+    }
 
-		return 0;
-	}
+    return 0;
+  }
 
-	return DoSuperMethodA(cl,obj,msg);
+  return DoSuperMethodA(cl,obj,msg);
 }
 
 ///

@@ -1820,8 +1820,8 @@ int rfc2047_encode_file(FILE *fh, const char *str)
     // of the actual word.
     if(c_wstart == NULL)
     {
-			// and if the current char is not a linear white space we found
-			// the start
+      // and if the current char is not a linear white space we found
+      // the start
       if(!is_lwsp(*c))
       {
         c_wstart = c;     // save the current c as the word start in the source string

@@ -217,13 +217,13 @@ HOOKPROTONHNONP(RemoveLastRule, void)
       free(rule);
 
       // Remove the GUI elements as well
-    	if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
-	    {
+      if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
+      {
         Object *cstate = (Object *)childList->lh_Head;
-		    Object *child;
+        Object *child;
         Object *lastChild = NULL;
 
-		    while((child = NextObject(&cstate)))
+        while((child = NextObject(&cstate)))
           lastChild = child;
 
         if(lastChild)
@@ -285,11 +285,11 @@ void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
 
   // we have to find out how many rules the filter has
   if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
-	{
+  {
     Object *cstate = (Object *)childList->lh_Head;
-		Object *child;
+    Object *child;
 
-		while((child = NextObject(&cstate)))
+    while((child = NextObject(&cstate)))
     {
       set(child, MUIA_Disabled, !filter);
       numRules++;
@@ -343,19 +343,19 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
     // all previous existing group childs
     DoMethod(gui->GR_RGROUP, MUIM_Group_InitChange); // required for proper refresh
     DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange);
-  	if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
-	  {
+    if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
+    {
       int i;
-		  struct MinNode *curNode;
+      struct MinNode *curNode;
       Object *cstate = (Object *)childList->lh_Head;
-		  Object *child;
+      Object *child;
 
-		  while((child = NextObject(&cstate)))
-		  {
+      while((child = NextObject(&cstate)))
+      {
         // remove that child
         DoMethod(gui->GR_SGROUP, OM_REMMEMBER, child);
         MUI_DisposeObject(child);
-		  }
+      }
 
       // Now we should have a clean SGROUP and can populate with new SearchControlGroup
       // objects
@@ -379,7 +379,7 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
         // add it to our searchGroupList
         DoMethod(gui->GR_SGROUP, OM_ADDMEMBER, newSearchGroup);
       }
-	  }
+    }
     DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
     DoMethod(gui->GR_RGROUP, MUIM_Group_ExitChange); // required for proper refresh
   }
@@ -434,15 +434,15 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     filter->moveTo[SIZE_NAME-1] = '\0';
 
     // make sure to update all rule settings
-  	if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
-	  {
+    if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
+    {
       Object *cstate = (Object *)childList->lh_Head;
-		  Object *child;
+      Object *child;
       int i=0;
 
-		  // iterate through the childList and update the rule structures
+      // iterate through the childList and update the rule structures
       while((child = NextObject(&cstate)))
-		  {
+      {
         struct RuleNode *rule;
 
         // get the rule out of the ruleList or create a new one
@@ -453,7 +453,7 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
         DoMethod(child, MUIM_SearchControlGroup_SetToRule, rule);
 
         ++i;
-		  }
+      }
     }
 
     GhostOutFilter(gui, filter);
@@ -473,15 +473,15 @@ HOOKPROTONHNO(CO_RemoteToggleFunc, void, int *arg)
   struct List *childList = (struct List *)xget(G->CO->GUI.GR_SGROUP, MUIA_Group_ChildList);
 
   if(childList)
-	{
-	  Object *cstate = (Object *)childList->lh_Head;
-		Object *child;
+  {
+    Object *cstate = (Object *)childList->lh_Head;
+    Object *child;
 
-		while((child = NextObject(&cstate)))
-		{
+    while((child = NextObject(&cstate)))
+    {
       set(child, MUIA_SearchControlGroup_RemoteFilterMode, rm);
-		}
-	}
+    }
+  }
 
   SetActiveFilterData();
 }
@@ -1815,7 +1815,7 @@ static struct CO_ClassData *CO_New(void)
                End,
                Child, data->GUI.GR_PAGE = PageGroup,
                   NoFrame,
-            			MUIA_Group_ActivePage, 0,
+                  MUIA_Group_ActivePage, 0,
                   Child, CO_Page0(data),
                   Child, CO_Page1(data),
                   Child, CO_Page2(data),
@@ -1835,10 +1835,10 @@ static struct CO_ClassData *CO_New(void)
                End,
             End,
 
-    				Child, RectangleObject,
-          	   MUIA_Rectangle_HBar, TRUE,
-    		       MUIA_FixHeight,      4,
-    				End,
+            Child, RectangleObject,
+               MUIA_Rectangle_HBar, TRUE,
+               MUIA_FixHeight,      4,
+            End,
 
             Child, HGroup,
                MUIA_Group_SameWidth, TRUE,

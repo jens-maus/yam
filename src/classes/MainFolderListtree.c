@@ -33,7 +33,7 @@
 /* CLASSDATA
 struct Data
 {
-	Object *context_menu;
+  Object *context_menu;
 };
 */
 
@@ -43,13 +43,13 @@ enum { CMN_EDITF=10, CMN_DELETEF, CMN_INDEX, CMN_NEWF, CMN_NEWFG, CMN_SNAPS, CMN
 /// OVERLOAD(OM_DISPOSE)
 OVERLOAD(OM_DISPOSE)
 {
-	GETDATA;
+  GETDATA;
 
-	// make sure that our context menus are also disposed
-	if(data->context_menu)
-		MUI_DisposeObject(data->context_menu);
+  // make sure that our context menus are also disposed
+  if(data->context_menu)
+    MUI_DisposeObject(data->context_menu);
 
-	return DoSuperMethodA(cl,obj,msg);
+  return DoSuperMethodA(cl,obj,msg);
 }
 
 ///
@@ -58,96 +58,96 @@ OVERLOAD(OM_DISPOSE)
 // dragging for some special objects
 OVERLOAD(MUIM_DragReport)
 {
-	struct MUIP_DragReport *dr = (struct MUIP_DragReport *)msg;
-	struct MUI_NListtree_TestPos_Result res;
-	struct MUI_NListtree_TreeNode *tn;
+  struct MUIP_DragReport *dr = (struct MUIP_DragReport *)msg;
+  struct MUI_NListtree_TestPos_Result res;
+  struct MUI_NListtree_TreeNode *tn;
 
-	DoMethod(obj, MUIM_NListtree_TestPos, dr->x, dr->y, &res);
+  DoMethod(obj, MUIM_NListtree_TestPos, dr->x, dr->y, &res);
 
-	if((tn = res.tpr_TreeNode))
-	{
-		struct Folder *folder = (struct Folder *)tn->tn_User;
+  if((tn = res.tpr_TreeNode))
+  {
+    struct Folder *folder = (struct Folder *)tn->tn_User;
 
-		// If we drag a folder on a folder we reject it immediatly because only below or above
-		// is allowed
-		if(dr->obj == obj)
-		{
-			if(folder->Type != FT_GROUP && res.tpr_Type == MUIV_NListtree_TestPos_Result_Onto)
-			{
-				return(MUIV_DragReport_Abort);
-			}
-		}
-		else
-		{
-			// If we drag a mail onto a folder we allow only dragging on and not below or above
-			if(folder->Type == FT_GROUP || res.tpr_Type != MUIV_NListtree_TestPos_Result_Onto)
-			{
-				return(MUIV_DragReport_Abort);
-			}
-		}
+    // If we drag a folder on a folder we reject it immediatly because only below or above
+    // is allowed
+    if(dr->obj == obj)
+    {
+      if(folder->Type != FT_GROUP && res.tpr_Type == MUIV_NListtree_TestPos_Result_Onto)
+      {
+        return(MUIV_DragReport_Abort);
+      }
+    }
+    else
+    {
+      // If we drag a mail onto a folder we allow only dragging on and not below or above
+      if(folder->Type == FT_GROUP || res.tpr_Type != MUIV_NListtree_TestPos_Result_Onto)
+      {
+        return(MUIV_DragReport_Abort);
+      }
+    }
 
-		// to rescue the dropping we call the SuperMethod now
-		return(DoSuperMethodA(cl, obj, msg));
-	}
+    // to rescue the dropping we call the SuperMethod now
+    return(DoSuperMethodA(cl, obj, msg));
+  }
 
-	return(MUIV_DragReport_Abort);
+  return(MUIV_DragReport_Abort);
 }
 
 ///
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)
 {
-	struct MUIP_DragQuery *dq = (struct MUIP_DragQuery *)msg;
+  struct MUIP_DragQuery *dq = (struct MUIP_DragQuery *)msg;
 
-	// check if the object that requests the drag operation
-	// is a mail list object or not
-	if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, dq->obj) == TRUE)
-		return MUIV_DragQuery_Accept;
+  // check if the object that requests the drag operation
+  // is a mail list object or not
+  if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, dq->obj) == TRUE)
+    return MUIV_DragQuery_Accept;
 
-	return DoSuperMethodA(cl,obj,msg);
+  return DoSuperMethodA(cl,obj,msg);
 }
 
 ///
 /// OVERLOAD(MUIM_DragDrop)
 OVERLOAD(MUIM_DragDrop)
 {
-	struct MUIP_DragDrop *dd = (struct MUIP_DragDrop *)msg;
+  struct MUIP_DragDrop *dd = (struct MUIP_DragDrop *)msg;
 
-	// if a folder is dragged on a folder we break here and the SuperClass should handle the msg
-	if(dd->obj != obj)
-	{
-		struct Folder *srcfolder;
-		struct Folder *dstfolder;
-		struct MUI_NListtree_TreeNode *tn_src;
-		struct MUI_NListtree_TreeNode *tn_dst;
-		
-		tn_dst = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_DropTarget);
-		if(!tn_dst)
-			return 0;
-		
-		dstfolder = tn_dst->tn_User;
+  // if a folder is dragged on a folder we break here and the SuperClass should handle the msg
+  if(dd->obj != obj)
+  {
+    struct Folder *srcfolder;
+    struct Folder *dstfolder;
+    struct MUI_NListtree_TreeNode *tn_src;
+    struct MUI_NListtree_TreeNode *tn_dst;
+    
+    tn_dst = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_DropTarget);
+    if(!tn_dst)
+      return 0;
+    
+    dstfolder = tn_dst->tn_User;
 
-		tn_src = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_Active);
-		if(!tn_src)
-			return 0;
-		
-		srcfolder = tn_src->tn_User;
+    tn_src = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_Active);
+    if(!tn_src)
+      return 0;
+    
+    srcfolder = tn_src->tn_User;
 
-		if(dstfolder->Type != FT_GROUP)
-			MA_MoveCopy(NULL, srcfolder, dstfolder, FALSE);
-		
-		return 0;
-	}
+    if(dstfolder->Type != FT_GROUP)
+      MA_MoveCopy(NULL, srcfolder, dstfolder, FALSE);
+    
+    return 0;
+  }
 
-	return DoSuperMethodA(cl,obj,msg);
+  return DoSuperMethodA(cl,obj,msg);
 }
 
 ///
 /// OVERLOAD(MUIM_NList_ContextMenuBuild)
 OVERLOAD(MUIM_NList_ContextMenuBuild)
 {
-	GETDATA;
-	struct MUIP_NList_ContextMenuBuild *m = (struct MUIP_NList_ContextMenuBuild *)msg;
+  GETDATA;
+  struct MUIP_NList_ContextMenuBuild *m = (struct MUIP_NList_ContextMenuBuild *)msg;
   struct MUI_NListtree_TestPos_Result r;
   struct MUI_NListtree_TreeNode *tn;
   struct Folder *folder = NULL;
@@ -165,7 +165,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   }
 
   // if this was a RMB click on the titlebar we create our own special menu
-	if(m->ontop)
+  if(m->ontop)
   {
     data->context_menu = MenustripObject,
       Child, MenuObjectT(GetStr(MSG_MA_CTX_FOLDERLIST)),
@@ -186,7 +186,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   }
 
   // Now lets find out which entry is under the mouse pointer
-	DoMethod(gui->NL_FOLDERS, MUIM_NListtree_TestPos, m->mx, m->my, &r);
+  DoMethod(gui->NL_FOLDERS, MUIM_NListtree_TestPos, m->mx, m->my, &r);
 
   tn = r.tpr_TreeNode;
 
@@ -248,9 +248,9 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 /// OVERLOAD(MUIM_ContextMenuChoice)
 OVERLOAD(MUIM_ContextMenuChoice)
 {
-	struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
+  struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
 
-	switch(xget(m->item, MUIA_UserData))
+  switch(xget(m->item, MUIA_UserData))
   {
     // if the user selected a TitleContextMenu item
     case 1:
@@ -259,7 +259,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case 4:
     case 5:
     {
-			ULONG col = xget(m->item, MUIA_UserData)-1;
+      ULONG col = xget(m->item, MUIA_UserData)-1;
 
       if(isFlagSet(C->FolderCols, (1<<col))) CLEAR_FLAG(C->FolderCols, (1<<col));
       else                                   SET_FLAG(C->FolderCols, (1<<col));

@@ -33,7 +33,7 @@
 /* CLASSDATA
 struct Data
 {
-	short dummy;
+  short dummy;
 };
 */
 
@@ -41,31 +41,31 @@ struct Data
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)
 {
-	struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
+  struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
 
-	if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
-		return MUIV_DragQuery_Accept;
+  if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
+    return MUIV_DragQuery_Accept;
 
-	return DoSuperMethodA(cl,obj,msg);
+  return DoSuperMethodA(cl,obj,msg);
 }
 
 ///
 /// OVERLOAD(MUIM_DragDrop)
 OVERLOAD(MUIM_DragDrop)
 {
-	struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
+  struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
 
-	if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
-	{
-		struct Mail **mlist = MA_CreateMarkedList(d->obj, FALSE);
-		if(mlist)
-		{
-			MA_GetAddress(mlist);
-			free(mlist);
-		}
-	}
+  if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
+  {
+    struct Mail **mlist = MA_CreateMarkedList(d->obj, FALSE);
+    if(mlist)
+    {
+      MA_GetAddress(mlist);
+      free(mlist);
+    }
+  }
 
-	return DoSuperMethodA(cl,obj,msg);
+  return DoSuperMethodA(cl,obj,msg);
 }
 
 ///
