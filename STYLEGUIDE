@@ -269,9 +269,6 @@ camelon notation, where the first letter is lowercase and the first
 letter of the following words is uppercase, as shown in the previous
 example.
 
-MUI custom class names should also conform to camelon notation. Example:
-"TextEditor" instead of "Texteditor".
-
 Defines (both constants and macros) are completely uppercase. However, if
 the defines are such as like "#define isUppercase" then a mixed case
 writing is allowed.
@@ -324,7 +321,29 @@ Some examples:
 
 ############################################################################
 
-9. Types
+9. Custom Class naming
+----------------------
+
+Since we manage our own MUI custom classes in the 'src/classes' directory
+of YAM, we try to make things clear as much as possible. One thing is the
+naming of the YAM internal custom classes.
+
+We have the convention that internal MUI classes of YAM should be put into
+the 'classes' subdirectory and together with the file naming, the internal
+class should use the same 'camelon notation' like we use for variables.
+
+Example: "TextEditor" instead of "Texteditor".
+
+In addition, we believe the class/file-name itself should clearly show from
+which superclass a particular class was inheriented. For example, if you
+generate a new class which is inheriented from MUIC_Group, we highly suggest
+to use a name ending with "Group".
+
+Example: "ReadMailGroup" instead of "ReadMailClass"
+
+############################################################################
+
+10. Types
 --------
 
 We mostly use standard C-types wherever possible. This is 'char *' for
@@ -360,7 +379,7 @@ as opposed to:
 
 ############################################################################
 
-10. Taglists
+11. Taglists
 ------------
 
 When providing taglists, one can either put all tags on the same line
@@ -384,7 +403,7 @@ example:
 
 ############################################################################
 
-11. ANSI-C vs. AmigaOS
+12. ANSI-C vs. AmigaOS
 ----------------------
 
 As a general rule: Use the ANSI-C functions like memcpy, malloc etc.
@@ -397,7 +416,7 @@ this styleguide.
 
 ############################################################################
 
-12. Comments
+13. Comments
 ------------
 
 A general rule for commenting is: Comment as much as possible while you
@@ -411,7 +430,7 @@ wherever possible.
 
 ############################################################################
 
-13. Debugging statements
+14. Debugging statements
 ------------------------
 
 As we recently implemented a very flexible runtime debugging functions in
@@ -465,3 +484,6 @@ variable texts for debugging, warning or even error conditions.
 Please note that in case YAM will be compiled without the "DEBUG" define, all
 code normally emitted by these macros will be omitted. They are really plainly
 meant to be usefull during debugging.
+
+############################################################################
+
