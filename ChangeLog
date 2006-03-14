@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-03-14  Jens Langner <Jens.Langner@light-speed.de>
+
+    * charsets: removed all charset translation files as they are now
+      obsolete since the use of codesets.library.
+
 2006-03-13  Jens Langner <Jens.Langner@light-speed.de>
 
     * misc: adapted all relevant source code to the new tabulator char

@@ -1,6 +1,0 @@
-YCT1 - YAM Charset Translation
-Amiga ELOT (Codepage 928) -> Windows (Codepage 1253)
-AUTHOR Manos S. Pappas
-FROM AmigaELOT
-TO Windows-1253
-$b6=$a2

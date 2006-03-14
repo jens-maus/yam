@@ -1,6 +1,0 @@
-YCT1 - YAM Charset Translation
-iso-8859-7 -> Amiga ELOT (Codepage 928)
-AUTHOR Manos S. Pappas (manos@pappas-online.de)
-FROM iso-8859-7
-TO Amiga ELOT 928
-$a2=$b6
