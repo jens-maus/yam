@@ -48,6 +48,8 @@
  *
  * History
  * -------
+ * 0.18 - minor cosmetic changes to the generated source layout
+ *
  * 0.17 - removed all 'long' datatype uses as this generates tag values that
  *        are larger than 32bit and therefore make us run into problems.
  *        Also modified the whole tagvalue generation code to just generate
@@ -132,7 +134,7 @@
  *
  */
 
-static const char *verstr = "0.17";
+static const char *verstr = "0.18";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -736,19 +738,19 @@ void gen_supportroutines( FILE *fp )
   arg_storm ? bn                    : "",  
   arg_storm ? "_NewObject()\n"      : "",
   bn, bn,
-  arg_storm ? "///\n"               : "",  
+  arg_storm ? "\n///"               : "",
 
   arg_storm ? "/// "                : "",  
   arg_storm ? bn                    : "",  
   arg_storm ? "_SetupClasses()\n"   : "",
   bn, bn, bn, bn, bn, bn, bn,
-  arg_storm ? "///\n"               : "",  
+  arg_storm ? "\n///"               : "",
 
   arg_storm ? "/// "                : "",  
   arg_storm ? bn                    : "",  
   arg_storm ? "_CleanupClasses()\n" : "",
   bn, bn, bn, bn,
-  arg_storm ? "///\n"               : "");
+  arg_storm ? "\n/// "              : "");
 }
 
 int gen_source( char *destfile, struct list *classlist )
@@ -782,6 +784,7 @@ int gen_source( char *destfile, struct list *classlist )
   /*        Write dispatchers...         */
   /***************************************/
   
+  fprintf(fp, "/*** Custom Class Dispatchers ***/\n");
   for (nn = NULL; nn = list_getnext(classlist, nn, (void **) &nextcd);)
   {
     if (arg_storm) fprintf(fp, "/// %sDispatcher()\n", nextcd->name);
@@ -801,19 +804,26 @@ int gen_source( char *destfile, struct list *classlist )
       fprintf(fp, "    case %-40s: return m_%s_%-20s(cl, obj, (APTR)msg);\n",
         name, nextcd->name, nextdd->name);
     }
-    fprintf(fp, "  }\n  return DoSuperMethodA(cl, obj, msg);\n}\n");
+    fprintf(fp, "  }\n  return DoSuperMethodA(cl, obj, msg);\n}\n\n");
     if (arg_storm) fprintf(fp, "///\n");
-    fprintf(fp, "\n");
   }
 
   /*****************************************/
   /*        Write MCCInfo struct           */
   /*****************************************/
 
+  fprintf(fp, "\n/*** Custom Class Support ***/\n");
+  if(arg_storm)
+    fprintf(fp, "/// struct MCCInfo\n");
+
   fprintf(fp,
     "const struct\n"
     "{\n"
-    "  STRPTR Name; STRPTR SuperClass; LONG SuperMCC; ULONG (*GetSize) (void); APTR Dispatcher;\n"
+    "  STRPTR Name;\n"
+    "  STRPTR SuperClass;\n"
+    "  LONG SuperMCC;\n"
+    "  ULONG (*GetSize)(void);\n"
+    "  APTR Dispatcher;\n"
     "} MCCInfo[NUMBEROFCLASSES] =\n"
     "{\n");
 
@@ -824,6 +834,9 @@ int gen_source( char *destfile, struct list *classlist )
     if (nextcd) fprintf(fp, ",\n"); else fprintf(fp, "\n");
   }
   fprintf(fp,  "};\n\n");
+
+  if(arg_storm)
+    fprintf(fp, "///\n");
   
   /*****************************************/
   /*        Append support routines        */
@@ -974,18 +987,18 @@ int gen_header( char *destfile, struct list *classlist )
     /* Write protos for this class         */
     /***************************************/
 
-    fprintf(fp, "ULONG %sGetSize( void );\n", cn);
+    fprintf(fp, "ULONG %sGetSize(void);\n", cn);
 
     /* Write OVERLOADs */
     for (n = NULL; n = list_getnext(&nextcd->overloadlist, n, (void **) &nextod);)
     {
-      fprintf(fp, "ULONG m_%s_%-20s(struct IClass *cl, Object *obj, Msg msg);\n",
+      fprintf(fp, "ULONG m_%s_%s(struct IClass *cl, Object *obj, Msg msg);\n",
         nextcd->name, nextod->name);
     }
     /* Write DECLAREs */
     for (n = NULL; n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd);)
     {
-      fprintf(fp, "ULONG m_%s_%-20s(struct IClass *cl, Object *obj, struct MUIP_%s_%s *msg);\n",
+      fprintf(fp, "ULONG m_%s_%s(struct IClass *cl, Object *obj, struct MUIP_%s_%s *msg);\n",
         nextcd->name, nextdd->name, cn, nextdd->name);
     }
     fprintf(fp, "\n");
