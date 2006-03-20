@@ -162,10 +162,6 @@ BOOL ImageCacheInit(const char *imagePath)
 
   ENTER();
 
-  // initialize our global image cache
-  // list
-  NewList((struct List *)&G->imageCacheList);
-
   // now we walk through our imageFileArray and populate our
   // imagecachelist
   for(i=0; i < MAXIMAGES; i++)

@@ -602,9 +602,9 @@ static void ADSTnotify_stop(void)
 ///
 
 /*** XPK Packer initialization routines ***/
-/// initXPKPackerList()
+/// InitXPKPackerList()
 // initializes the internal XPK PackerList
-static BOOL initXPKPackerList(void)
+static BOOL InitXPKPackerList(void)
 {
   BOOL result = FALSE;
   ENTER();
@@ -656,9 +656,9 @@ static BOOL initXPKPackerList(void)
 }
 
 ///
-/// freeXPKPackerList()
+/// FreeXPKPackerList()
 // free all content of our previously loaded XPK packer list
-static void freeXPKPackerList(void)
+static void FreeXPKPackerList(void)
 {
   struct MinNode *curNode;
   ENTER();
@@ -1007,7 +1007,7 @@ static void Terminate(void)
 
   // free our private internal XPK PackerList
   D(DBF_STARTUP, "cleaning up XPK stuff...");
-  freeXPKPackerList();
+  FreeXPKPackerList();
   CLOSELIB(XpkBase, IXpk);
 
   // cleaning up all AmiSSL stuff
@@ -1574,6 +1574,14 @@ static void Initialise(BOOL hidden)
    // codesets via codesets.library
    G->codesetsList = CodesetsListCreateA(NULL);
 
+   // Initialise and Setup our own MUI custom classes before we go on
+   if(!YAM_SetupClasses())
+      Abort(MSG_ErrorClasses);
+
+   // allocate the MUI root object and popup the progress/about window
+   if(!Root_New(hidden))
+      Abort(FindPort("YAM") ? NULL : MSG_ErrorMuiApp);
+
    // signal the splash window to show a 10% gauge
    SplashProgress(GetStr(MSG_LoadingGFX), 10);
 
@@ -1669,27 +1677,19 @@ static void Initialise(BOOL hidden)
    if(ImageCacheInit(pathbuf) == FALSE)
      Abort(NULL); // exit the application
 
-   // Initialise and Setup our own MUI custom classes before we go on
-   if(!YAM_SetupClasses())
-      Abort(MSG_ErrorClasses);
-
-   // allocate the MUI root object and popup the progress/about window
-   if(!Root_New(hidden))
-      Abort(FindPort("YAM") ? NULL : MSG_ErrorMuiApp);
-
    // lets advance the progress bar to 20%
    SplashProgress(GetStr(MSG_InitLibs), 20);
 
    // load & initialize some optional libraries which are not required, however highly recommended
    INITLIB(XPKNAME, 0, 0, &XpkBase, "main", &IXpk, FALSE, NULL);
-   initXPKPackerList();
+   InitXPKPackerList();
 
    // initialize our timers
    if(!TC_Init())
     Abort(MSG_ErrorTimer);
 
    // initialize our ASL stuff
-   for(i = 0; i < MAXASL; i++)
+   for(i=0; i < MAXASL; i++)
    {
      if(!(G->ASLReq[i] = MUI_AllocAslRequestTags(ASL_FileRequest, ASLFR_RejectIcons, TRUE, TAG_END)))
        Abort(MSG_ErrorAslStruct);
@@ -1699,7 +1699,7 @@ static void Initialise(BOOL hidden)
    G->AppPort = CreateMsgPort();
 
    // initialize the file nofifications
-   for(i = 0; i <= MAXWR; i++)
+   for(i=0; i <= MAXWR; i++)
    {
       G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreateMsgPort();
       G->WR_NRequest[i].nr_Name = (STRPTR)G->WR_Filename[i];
@@ -2150,6 +2150,7 @@ int main(int argc, char **argv)
       NewList((struct List *)&(G->readMailDataList));
       NewList((struct List *)&(C->filterList));
       NewList((struct List *)&(G->xpkPackerList));
+      NewList((struct List *)&(G->imageCacheList));
 
       // We have to initialize the ActiveWin flags to -1, so than the
       // the arexx commands for the windows are reporting an error if
