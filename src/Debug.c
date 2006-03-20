@@ -95,6 +95,7 @@ void SetupDebug(void)
       { "util",     DBF_UTIL    },
       { "import",   DBF_IMPORT  },
       { "xpk",      DBF_XPK     },
+      { "image",    DBF_IMAGE   },
       { "all",      DBF_ALL     },
       { NULL,       0           }
     };
