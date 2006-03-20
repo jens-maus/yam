@@ -6,6 +6,28 @@ $Id$
 
 2006-03-19  Jens Langner <Jens.Langner@light-speed.de>
 
+    * icons: converted all default config_#?, status_#? and folder_#? images
+      to the PNG file format and set the transparency of all files correctly.
+      Please note that the PNG file format should from now on be considered the
+      default image format for the internal images of YAM:Icons. So please all
+      image/icon designers adapt your image files accordingly.
+    * Debug.c,h: added new DBF_IMAGE debug flag.
+    * classes/BodychunkImage.c: removed because new ImageArea class replaces
+      it.
+    * classes/ImageArea.c: implemented an new image class which is derived from
+      MUIC_Area and uses the new datatypes-based ImageCache facility for
+      loading/requesting all different image files required in YAM. In fact,
+      this new imageclass/cache facility is based on some code kindly taken
+      from SimpleMail and allows Users now to use all kind of image file formats
+      (PNG, JPG, etc.) in YAM:Icons instead of just plain ILBM files. Now all
+      image data will be loaded via datatypes.library instead of loading it
+      manually which also had some drawbacks in terms of transparency support
+      and such. However, successfull loading of the image data is therefore
+      also now dependent on the correct installation of the datatypes system.
+    * ImageCache.c, misc: implemented a new datatypes.library based image
+      cache facility which provides functions to load images via datatypes
+      library and caches its datatype object in case a second instance will
+      be requested.
     * extrasrc/genclasses: minor cosmetic changes to the generated source
       layout.
 
@@ -269,7 +291,7 @@ $Id$
     * housekeeping: bumped the copyright year to 2006 now that a new year has
       begun. Lets see how fast we can proceed this year so that we will see
       a new full release hopefully in Q1 of 2006.
-	 
+   
 2005-12-17  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/MainMailListGroup.c: now the column widths of the normal mail list
@@ -1377,7 +1399,7 @@ $Id$
     * ReadWindow.c: removed another bunch of "-repeat" key definition
       to prevent a continious deletion of mails by holding down the
       delete key.
-	 
+   
 2005-02-01  Jens Langner <Jens.Langner@light-speed.de>
 
     * UserImage.c: another minor change to the UserImage custom class
@@ -1487,7 +1509,7 @@ $Id$
         serving only for up to a maximum of 3 possible read windows. So if you
         stumble over a problem with the new readmail facility, please don't
         hestitate to bring it to our attention so that we can fix it immediatly.
-	 
+   
 2005-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_stringsizes.h: increased the SIZE_FILE buffer length define
