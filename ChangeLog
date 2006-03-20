@@ -6,6 +6,8 @@ $Id$
 
 2006-03-20  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c: fixed a minor bug where upon trying to start YAM twice the
+      second instance crashes caused by an uninitialized xpkPackerList.
     * icons/std/status_group: slightly improved the transparency looking of
       the "group" status image.
 		

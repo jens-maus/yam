@@ -609,8 +609,6 @@ static BOOL initXPKPackerList(void)
   BOOL result = FALSE;
   ENTER();
 
-  NewList((struct List *)&G->xpkPackerList);
-
   if(XpkBase)
   {
     struct XpkPackerList xpl;
@@ -1576,7 +1574,8 @@ static void Initialise(BOOL hidden)
    // codesets via codesets.library
    G->codesetsList = CodesetsListCreateA(NULL);
 
-   SplashProgress(GetStr(MSG_LoadingGFX), 20);
+   // signal the splash window to show a 10% gauge
+   SplashProgress(GetStr(MSG_LoadingGFX), 10);
 
    // before we load our images in YAM:icons we check the image layout
    // by loading the ".imglayout" file, checking if it matches the version
@@ -1678,19 +1677,29 @@ static void Initialise(BOOL hidden)
    if(!Root_New(hidden))
       Abort(FindPort("YAM") ? NULL : MSG_ErrorMuiApp);
 
-   // lets advance the progress bar to 10%
+   // lets advance the progress bar to 20%
    SplashProgress(GetStr(MSG_InitLibs), 20);
 
    // load & initialize some optional libraries which are not required, however highly recommended
    INITLIB(XPKNAME, 0, 0, &XpkBase, "main", &IXpk, FALSE, NULL);
    initXPKPackerList();
 
-   if (!TC_Init()) Abort(MSG_ErrorTimer);
-   for (i = 0; i < MAXASL; i++)
-      if (!(G->ASLReq[i] = MUI_AllocAslRequestTags(ASL_FileRequest, ASLFR_RejectIcons, TRUE,
-         TAG_END))) Abort(MSG_ErrorAslStruct);
+   // initialize our timers
+   if(!TC_Init())
+    Abort(MSG_ErrorTimer);
+
+   // initialize our ASL stuff
+   for(i = 0; i < MAXASL; i++)
+   {
+     if(!(G->ASLReq[i] = MUI_AllocAslRequestTags(ASL_FileRequest, ASLFR_RejectIcons, TRUE, TAG_END)))
+       Abort(MSG_ErrorAslStruct);
+   }
+
+   // create the main message port
    G->AppPort = CreateMsgPort();
-   for (i = 0; i <= MAXWR; i++)
+
+   // initialize the file nofifications
+   for(i = 0; i <= MAXWR; i++)
    {
       G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreateMsgPort();
       G->WR_NRequest[i].nr_Name = (STRPTR)G->WR_Filename[i];
@@ -2140,6 +2149,7 @@ int main(int argc, char **argv)
       // prepare some exec lists of either the Global or Config structure
       NewList((struct List *)&(G->readMailDataList));
       NewList((struct List *)&(C->filterList));
+      NewList((struct List *)&(G->xpkPackerList));
 
       // We have to initialize the ActiveWin flags to -1, so than the
       // the arexx commands for the windows are reporting an error if
