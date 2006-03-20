@@ -5741,3 +5741,6 @@ AmiSSL v%lu.%lu on your system and restart YAM.
 MSG_CO_AMISSLWARN_BT (1654//)
 *_Exit|Ignore _always|Ignore
 ;
+MSG_BUSY_OPENINGCONFIG (1655//)
+Opening configuration...
+;

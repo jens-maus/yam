@@ -1720,6 +1720,8 @@ MakeStaticHook(CO_CloseHook,CO_CloseFunc);
 //  Opens configuration window
 HOOKPROTONHNONP(CO_OpenFunc, void)
 {
+  BusyText(GetStr(MSG_BUSY_OPENINGCONFIG), "");
+
   // check if there isn't already a configuration
   // open
   if(!G->CO)
@@ -1738,6 +1740,8 @@ HOOKPROTONHNONP(CO_OpenFunc, void)
   // make sure the configuration window is open
   if(!SafeOpenWindow(G->CO->GUI.WI))
     CallHookPkt(&CO_CloseHook, 0, 0);
+
+  BusyEnd();
 }
 MakeHook(CO_OpenHook,CO_OpenFunc);
 ///
