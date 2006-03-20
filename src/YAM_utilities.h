@@ -81,22 +81,10 @@ struct TempFile
    char  Filename[SIZE_PATH+SIZE_MFILE];
 };
 
-struct BodyChunkData
-{
-   ULONG * Colors;
-   UBYTE * Body;
-   int     Width;
-   int     Height;
-   int     Depth;
-   int     Compression;
-   int     Masking;
-   char    File[SIZE_NAME];
-};
-
 struct NewToolbarEntry
 {
-   APTR label;
-   APTR help;
+  Object *label;
+  Object *help;
 };
 
 // Library open/close macros
@@ -254,6 +242,7 @@ ULONG    CompressMsgID(char *msgid);
 BOOL     ConvertCRLF(char *in, char *out, BOOL to);
 ULONG    ConvertKey(struct IntuiMessage *imsg);
 BOOL     isChildOfGroup(Object *group, Object *child);
+void     MyBltMaskBitMapRastPort(struct BitMap *srcBitMap, LONG xSrc, LONG ySrc, struct RastPort *destRP, LONG xDest, LONG yDest, LONG xSize, LONG ySize, ULONG minterm, APTR bltMask);
 BOOL     CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh);
 BOOL     MoveFile(char *oldname, char *newname);
 char *   CreateFilename(const char * const file);
@@ -296,8 +285,6 @@ long     FileCount(char *directory);
 void     FinishUnpack(char *file);
 struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notext, struct Folder *exclude, APTR parent);
 void     FormatSize(LONG size, char *buffer);
-void     FreeBCImage(struct BodyChunkData *bcd);
-struct BodyChunkData *GetBCImage(char *fname);
 time_t   GetDateStamp(void);
 char *   GetFolderDir(struct Folder *fo);
 char *   GetLine(FILE *fh, char *buffer, int bufsize);
@@ -315,7 +302,6 @@ char *   IdentifyFile(char *fname);
 void     InfoWindow(char *title, char *body, char *oktext, APTR parent);
 void     InsertAddresses(APTR obj, char **addr, BOOL add);
 char *   itoa(int val);
-struct BodyChunkData *LoadBCImage(char *fname);
 void     LoadLayout(void);
 BOOL     MailExists(struct Mail *mailptr, struct Folder *folder);
 Object * MakeButton(char *txt);

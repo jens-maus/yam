@@ -76,33 +76,48 @@ OVERLOAD(OM_NEW)
     set(obj, MUIA_NList_DisplayHook, &data->displayHook);
 
     // create/load all bodychunkimages of our config icons
-    data->configIcon[0]  = MakeBCImage("config_firststep");
-    data->configIcon[1]  = MakeBCImage("config_network");
-    data->configIcon[2]  = MakeBCImage("config_newmail");
-    data->configIcon[3]  = MakeBCImage("config_filters");
-    data->configIcon[4]  = MakeBCImage("config_read");
-    data->configIcon[5]  = MakeBCImage("config_write");
-    data->configIcon[6]  = MakeBCImage("config_answer");
-    data->configIcon[7]  = MakeBCImage("config_signature");
-    data->configIcon[8]  = MakeBCImage("config_lists");
-    data->configIcon[9]  = MakeBCImage("config_security");
-    data->configIcon[10] = MakeBCImage("config_start");
-    data->configIcon[11] = MakeBCImage("config_mime");
-    data->configIcon[12] = MakeBCImage("config_abook");
-    data->configIcon[13] = MakeBCImage("config_scripts");
-    data->configIcon[14] = MakeBCImage("config_misc");
-    data->configIcon[15] = MakeBCImage("config_update");
+    data->configIcon[0]  = MakeImageObject("config_firststep");
+    data->configIcon[1]  = MakeImageObject("config_network");
+    data->configIcon[2]  = MakeImageObject("config_newmail");
+    data->configIcon[3]  = MakeImageObject("config_filters");
+    data->configIcon[4]  = MakeImageObject("config_read");
+    data->configIcon[5]  = MakeImageObject("config_write");
+    data->configIcon[6]  = MakeImageObject("config_answer");
+    data->configIcon[7]  = MakeImageObject("config_signature");
+    data->configIcon[8]  = MakeImageObject("config_lists");
+    data->configIcon[9]  = MakeImageObject("config_security");
+    data->configIcon[10] = MakeImageObject("config_start");
+    data->configIcon[11] = MakeImageObject("config_mime");
+    data->configIcon[12] = MakeImageObject("config_abook");
+    data->configIcon[13] = MakeImageObject("config_scripts");
+    data->configIcon[14] = MakeImageObject("config_misc");
+    data->configIcon[15] = MakeImageObject("config_update");
 
     // now we can add the config icon objects and use UseImage
     // to prepare it for displaying it in the NList
     for(i = 0; i < MAXCPAGES; i++)
-    {
-      DoMethod(obj, OM_ADDMEMBER, data->configIcon[i]);
       DoMethod(obj, MUIM_NList_UseImage, data->configIcon[i], i, MUIF_NONE);
-    }
   }
   
   return (ULONG)obj;
+}
+
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  GETDATA;
+  int i;
+
+  for(i=0; i < MAXCPAGES; i++)
+  {
+    if(data->configIcon[i])
+      MUI_DisposeObject(data->configIcon[i]);
+
+    data->configIcon[i] = NULL;
+  }
+
+  return 0;
 }
 
 ///

@@ -59,7 +59,7 @@ enum TimerIO { TIO_WRINDEX=0,
 /*** Global Structure ***/
 struct Global 
 {
-   /* pointers first */
+   // pointers first
    Object *                 App;
    Object *                 WI_SEARCH;
    Object *                 NewMailSound_Obj;
@@ -71,7 +71,6 @@ struct Global
    struct MsgPort *         AppPort;
    struct RexxHost *        RexxHost;
    struct DiskObject *      DiskObj[MAXICONS];
-   struct BodyChunkData *   BImage[MAXIMAGES];
    struct FileRequester *   ASLReq[MAXASL];
    struct Locale *          Locale;
    struct MA_ClassData *    MA;
@@ -127,6 +126,7 @@ struct Global
    struct sockaddr_in       TR_INetSocketAddr;
    struct MinList           readMailDataList;
    struct MinList           xpkPackerList;
+   struct MinList           imageCacheList;
 
    char                     ProgDir[SIZE_PATH];
    char                     ProgName[SIZE_FILE];

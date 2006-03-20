@@ -80,6 +80,7 @@
 #include "YAM_read.h"
 #include "YAM_rexx.h"
 #include "YAM_write.h"
+#include "ImageCache.h"
 #include "classes/Classes.h"
 
 #include "Debug.h"
@@ -830,7 +831,6 @@ static BOOL Root_New(BOOL hidden)
 {
    if((G->App = YAMObject, End))
    {
-      set(G->App, MUIA_Application_HelpFile, "YAM.guide");
       if(hidden)
         set(G->App, MUIA_Application_Iconified, TRUE);
 
@@ -978,12 +978,8 @@ static void Terminate(void)
       FreeDiskObject(G->DiskObj[i]);
   }
 
-  D(DBF_STARTUP, "freeing bodychunk images...");
-  for(i = 0; i < MAXIMAGES; i++)
-  {
-    if(G->BImage[i])
-      FreeBCImage(G->BImage[i]);
-  }
+  D(DBF_STARTUP, "freeing image cache...");
+  ImageCacheCleanup();
 
   D(DBF_STARTUP, "freeing config...");
   CO_FreeConfig(C);
@@ -1432,7 +1428,7 @@ static void Initialise2(void)
 
       // if this folder hasn`t got any own folder image in the folder
       // directory and it is one of our standard folders we have to check which image we put in front of it
-      if(!folder->BC_FImage)
+      if(folder->imageObject == NULL)
       {
         if(folder->Type == FT_INCOMING)      folder->ImageIndex = (folder->New+folder->Unread) ? 3 : 2;
         else if(folder->Type == FT_OUTGOING) folder->ImageIndex = (folder->Total > 0) ? 5 : 4;
@@ -1500,53 +1496,6 @@ static void Initialise(BOOL hidden)
    char *errorMsg = NULL;
    char pathbuf[SIZE_PATH];
    char filebuf[SIZE_PATHFILE];
-
-   // The following two static variables carry the image files normally loaded
-   // from YAM:Icons. These files contain images that are loaded, cached and
-   // displayed to the user like in the folder listtree oder main listview.
-   // Please note that as soon as you change something here you have to
-   // increase the VERSION define as well to make sure the user is reminded
-   // of having the correct image layout installed.
-   //
-   // VERSIONS:
-   // 1 : <= YAM 2.3
-   // 2 : == YAM 2.4-2.4p1
-   // 3 : >= YAM 2.5
-   //
-   #define IMGLAYOUT_VERSION 3
-   static const char *imnames[MAXIMAGES] =
-   {
-     // Status information images
-     "status_unread",   "status_old",    "status_forward",  "status_reply",
-     "status_waitsend", "status_error",  "status_hold",     "status_sent",
-     "status_new",      "status_delete", "status_download", "status_group",
-     "status_urgent",   "status_attach", "status_report",   "status_crypt",
-     "status_signed",   "status_mark",
-
-     // Default images for the folder list
-     "folder_fold",     "folder_unfold",       "folder_incoming", "folder_incoming_new",
-     "folder_outgoing", "folder_outgoing_new", "folder_deleted",  "folder_deleted_new",
-     "folder_sent",
-
-     // Images for the YAM configuration window
-     "config_firststep", "config_firststep_big",
-     "config_network",   "config_network_big",
-     "config_newmail",   "config_newmail_big",
-     "config_filters",   "config_filters_big",
-     "config_read",      "config_read_big",
-     "config_write",     "config_write_big",
-     "config_answer",    "config_answer_big",
-     "config_signature", "config_signature_big",
-     "config_lists",     "config_lists_big",
-     "config_security",  "config_security_big",
-     "config_start",     "config_start_big",
-     "config_mime",      "config_mime_big",
-     "config_abook",     "config_abook_big",
-     "config_scripts",   "config_scripts_big",
-     "config_misc",      "config_misc_big",
-     "config_update",    "config_update_big"
-   };
-
    static const char *icnames[MAXICONS] =
    {
      "empty", "old", "new", "check"
@@ -1556,6 +1505,9 @@ static void Initialise(BOOL hidden)
 
    // lets save the current date/time in our startDate value
    DateStamp(&G->StartDate);
+
+   // initialize the random number seed.
+   srand((unsigned int)GetDateStamp());
 
    // First open locale.library, so we can display a translated error requester
    // in case some of the other libraries can't be opened.
@@ -1567,7 +1519,7 @@ static void Initialise(BOOL hidden)
 
    // load&initialize all required libraries
    INITLIB("graphics.library",  36, 0, &GfxBase,      "main", &IGraphics, TRUE, NULL);
-   INITLIB("layers.library",    36, 0, &LayersBase,   "main", &ILayers,   TRUE, NULL);
+   INITLIB("layers.library",    39, 0, &LayersBase,   "main", &ILayers,   TRUE, NULL);
    INITLIB("workbench.library", 36, 0, &WorkbenchBase,"main", &IWorkbench,TRUE, NULL);
    INITLIB("keymap.library",    36, 0, &KeymapBase,   "main", &IKeymap,   TRUE, NULL);
    INITLIB("iffparse.library",  36, 0, &IFFParseBase, "main", &IIFFParse, TRUE, NULL);
@@ -1623,36 +1575,6 @@ static void Initialise(BOOL hidden)
    // now we search through PROGDIR:Charsets and load all user defined
    // codesets via codesets.library
    G->codesetsList = CodesetsListCreateA(NULL);
-
-   // Initialise and Setup our own MUI custom classes before we go on
-   if(!YAM_SetupClasses())
-      Abort(MSG_ErrorClasses);
-
-   // allocate the MUI root object and popup the progress/about window
-   if(!Root_New(hidden))
-      Abort(FindPort("YAM") ? NULL : MSG_ErrorMuiApp);
-
-   // lets advance the progress bar to 10%
-   SplashProgress(GetStr(MSG_InitLibs), 10);
-
-   // load & initialize some optional libraries which are not required, however highly recommended
-   INITLIB(XPKNAME, 0, 0, &XpkBase, "main", &IXpk, FALSE, NULL);
-   initXPKPackerList();
-
-   if (!TC_Init()) Abort(MSG_ErrorTimer);
-   for (i = 0; i < MAXASL; i++)
-      if (!(G->ASLReq[i] = MUI_AllocAslRequestTags(ASL_FileRequest, ASLFR_RejectIcons, TRUE,
-         TAG_END))) Abort(MSG_ErrorAslStruct);
-   G->AppPort = CreateMsgPort();
-   for (i = 0; i <= MAXWR; i++)
-   {
-      G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreateMsgPort();
-      G->WR_NRequest[i].nr_Name = (STRPTR)G->WR_Filename[i];
-      G->WR_NRequest[i].nr_Flags = NRF_SEND_MESSAGE;
-   }
-
-   // initialize the random number seed.
-   srand((unsigned int)GetDateStamp());
 
    SplashProgress(GetStr(MSG_LoadingGFX), 20);
 
@@ -1714,9 +1636,6 @@ static void Initialise(BOOL hidden)
    else
      G->HideIcon = GetDiskObject(filebuf);
 
-   if(G->HideIcon)
-      set(G->App, MUIA_Application_DiskObject, G->HideIcon);
-
    for(i=0; i < MAXICONS; i++)
    {
       strmfp(filebuf, pathbuf, icnames[i]);
@@ -1746,30 +1665,36 @@ static void Initialise(BOOL hidden)
       }
    }
 
-   // load the standard images now
-   for(i=0; i < MAXIMAGES; i++)
+   // make sure we initialize the image Cache which in turn will
+   // cause YAM to load all static images from the YAM:Icons directory
+   if(ImageCacheInit(pathbuf) == FALSE)
+     Abort(NULL); // exit the application
+
+   // Initialise and Setup our own MUI custom classes before we go on
+   if(!YAM_SetupClasses())
+      Abort(MSG_ErrorClasses);
+
+   // allocate the MUI root object and popup the progress/about window
+   if(!Root_New(hidden))
+      Abort(FindPort("YAM") ? NULL : MSG_ErrorMuiApp);
+
+   // lets advance the progress bar to 10%
+   SplashProgress(GetStr(MSG_InitLibs), 20);
+
+   // load & initialize some optional libraries which are not required, however highly recommended
+   INITLIB(XPKNAME, 0, 0, &XpkBase, "main", &IXpk, FALSE, NULL);
+   initXPKPackerList();
+
+   if (!TC_Init()) Abort(MSG_ErrorTimer);
+   for (i = 0; i < MAXASL; i++)
+      if (!(G->ASLReq[i] = MUI_AllocAslRequestTags(ASL_FileRequest, ASLFR_RejectIcons, TRUE,
+         TAG_END))) Abort(MSG_ErrorAslStruct);
+   G->AppPort = CreateMsgPort();
+   for (i = 0; i <= MAXWR; i++)
    {
-      strmfp(filebuf, pathbuf, imnames[i]);
-
-      // load the bodychunkimage and report an error if something went wrong
-      if((G->BImage[i] = LoadBCImage(filebuf)) == NULL &&
-         G->NoImageWarning == FALSE)
-      {
-        int reqResult;
-
-        if((reqResult = MUI_Request(G->App, NULL, 0, GetStr(MSG_ER_IMAGEOBJECT_TITLE),
-                                                     GetStr(MSG_ER_EXITIGNOREALL),
-                                                     GetStr(MSG_ER_IMAGEOBJECT),
-                                                     imnames[i], pathbuf)))
-        {
-          if(reqResult == 2)
-            G->NoImageWarning = TRUE;
-          else
-            Abort(NULL); // exit the application
-        }
-      }
-
-      DoMethod(G->App, MUIM_Application_InputBuffered);
+      G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreateMsgPort();
+      G->WR_NRequest[i].nr_Name = (STRPTR)G->WR_Filename[i];
+      G->WR_NRequest[i].nr_Flags = NRF_SEND_MESSAGE;
    }
 
    LEAVE();

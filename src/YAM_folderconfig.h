@@ -90,8 +90,7 @@ enum FolderMode { FM_NORMAL=0,  // normal folder
 
 struct Folder
 {
-   APTR            BC_FImage;
-   struct BodyChunkData *   FImage;
+   Object *        imageObject;
    struct Mail *   Messages;
    ULONG           Flags;
    LONG            Size;

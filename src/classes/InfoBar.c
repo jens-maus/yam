@@ -36,11 +36,10 @@ struct Data
   Object *TX_FOLDER;
   Object *TX_FINFO;
   Object *TX_INFO;
-  Object *BC_INFO;
   Object *GA_GROUP;
   Object *GA_INFO;
   Object *GA_LABEL;
-  struct BodyChunkData *actualImage;
+  Object *actualImage;
   struct Folder *actualFolder;
   struct timeval last_gaugemove;
 };
@@ -160,11 +159,11 @@ DECLARE(SetFolder) // struct Folder *newFolder
   GETDATA;
 
   struct Folder *folder = msg->newFolder;
-  struct BodyChunkData *bcd = NULL;
 
   data->actualFolder = folder;
 
-  if(!folder) return -1;
+  if(!folder)
+    return -1;
 
   // prepare the object for a change
   if(DoMethod(obj, MUIM_Group_InitChange))
@@ -175,55 +174,33 @@ DECLARE(SetFolder) // struct Folder *newFolder
     // now we are going to set some status field at the right side of the folder name
     nnset(data->TX_FINFO, MUIA_Text_Contents, GetFolderInfo(folder));
 
-    // lets see which image we should display
-    if(folder->FImage)                 bcd = folder->FImage;
-    else if(folder->ImageIndex >= 0)  bcd = G->BImage[folder->ImageIndex+MAXBCSTATUSIMG];
-    else bcd = NULL;
-
     // only if the image should be changed we proceed or otherwise
     // MUI will refresh too often
-    if(data->actualImage != bcd)
+    if(data->actualImage != NULL && (folder->imageObject == NULL ||
+       stricmp((char *)xget(data->actualImage, MUIA_ImageArea_Filename),
+               (char *)xget(folder->imageObject, MUIA_ImageArea_Filename)) != 0))
     {
-      // now we check whether we have to remove the old bodychunkobject first
-      if(data->BC_INFO)
-      {
-        DoMethod(obj, OM_REMMEMBER, data->BC_INFO);
-        MUI_DisposeObject(data->BC_INFO);
-        data->BC_INFO = NULL;
-      }
+      DoMethod(obj, OM_REMMEMBER, data->actualImage);
+      MUI_DisposeObject(data->actualImage);
+      data->actualImage = NULL;
+    }
 
-      // and if we have a new one we generate the object an add it
-      // to the grouplist of this infobar
-      if(bcd)
-      {
-        data->BC_INFO = BodychunkObject,
-          InnerSpacing(0,0),
-          MUIA_FixWidth,             bcd->Width,
-          MUIA_FixHeight,            bcd->Height,
-          MUIA_Bitmap_Width,         bcd->Width,
-          MUIA_Bitmap_Height,        bcd->Height,
-          MUIA_Bitmap_SourceColors,  bcd->Colors,
-          MUIA_Bodychunk_Depth,      bcd->Depth,
-          MUIA_Bodychunk_Body,       bcd->Body,
-          MUIA_Bodychunk_Compression,bcd->Compression,
-          MUIA_Bodychunk_Masking,    bcd->Masking,
-          MUIA_Bitmap_Transparent,   0,
-        End;
+    // and if we have a new one we generate the object an add it
+    // to the grouplist of this infobar
+    if(data->actualImage == NULL)
+    {
+      if(folder->imageObject)
+        data->actualImage = MakeImageObject(xget(folder->imageObject, MUIA_ImageArea_Filename));
+      else if(folder->ImageIndex >= 0 && G->MA->GUI.IMG_FOLDER[folder->ImageIndex])
+        data->actualImage = MakeImageObject(xget(G->MA->GUI.IMG_FOLDER[folder->ImageIndex], MUIA_ImageArea_Filename));
 
-        if(data->BC_INFO)
-        {
-          DoMethod(obj, OM_ADDMEMBER, data->BC_INFO);
-        }
-      }
+      if(data->actualImage)
+        DoMethod(obj, OM_ADDMEMBER, data->actualImage);
     }
 
     // now that we are finished we can call ExitChange to refresh the infobar
     DoMethod(obj, MUIM_Group_ExitChange);
   }
-
-  // and lets point the instancedata to our new image
-  // so that we can check later if we should really update it or not.
-  data->actualImage = bcd;
 
   return 0;
 }

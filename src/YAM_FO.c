@@ -53,7 +53,7 @@
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
-#include "classes/ClassesExtra.h"
+#include "classes/Classes.h"
 
 #include "Debug.h"
 
@@ -419,7 +419,7 @@ BOOL FO_FreeFolder(struct Folder *folder)
   if(!folder) return(FALSE);
 
   // remove the image of this folder from the objectlist at the application
-  if(folder->BC_FImage)
+  if(folder->imageObject)
   {
     // Here we cannot remove the BC_FImage from the BC_GROUP because the
     // destructor of the Folder Listtree will call this function and then
@@ -430,10 +430,11 @@ BOOL FO_FreeFolder(struct Folder *folder)
 
     // remove the bodychunk object from the nlist
     DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
-  }
 
-  // free the Bodychunk
-  if(folder->FImage) FreeBCImage(folder->FImage);
+    // the image object itself will be freed by
+    // the folder object itself as it is part of the hierarchy since we
+    // added it with OM_ADDMEMBER.
+  }
 
   // now it`s time to deallocate the folder itself
   free(folder);
@@ -529,7 +530,8 @@ BOOL FO_LoadTree(char *fname)
                   fo.ImageIndex = j;
 
                   // Now we load the FolderImages if they exists
-                  if(FO_LoadFolderImages(&fo)) j++;
+                  if(FO_LoadFolderImages(&fo))
+                    j++;
                   else
                   {
                     // we cannot find out if there is new/unread mail in the folder,
@@ -566,7 +568,8 @@ BOOL FO_LoadTree(char *fname)
                fo.SortIndex = i++;
 
                // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-               if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body))
+               if(G->MA->GUI.IMG_FOLDER[0] != NULL &&
+                  G->MA->GUI.IMG_FOLDER[1] != NULL)
                {
                   SET_FLAG(tnflags, TNF_NOSIGN);
                }
@@ -594,7 +597,8 @@ BOOL FO_LoadTree(char *fname)
                }
 
                // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-               if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body))
+               if(G->MA->GUI.IMG_FOLDER[0] != NULL &&
+                  G->MA->GUI.IMG_FOLDER[1] != NULL)
                {
                   SET_FLAG(tnflags, TNF_NOSIGN);
                }
@@ -643,47 +647,38 @@ BOOL FO_LoadTree(char *fname)
 BOOL FO_LoadFolderImages(struct Folder *fo)
 {
   char fname[SIZE_PATHFILE];
-  APTR lv = G->MA->GUI.NL_FOLDERS;
+  Object *lv = G->MA->GUI.NL_FOLDERS;
+
+  ENTER();
 
   // first we make sure that valid data is underway.
-  if(!fo && fo->ImageIndex < MAXBCFOLDERIMG+1) return FALSE;
+  if(!fo && fo->ImageIndex < MAXBCFOLDERIMG+1)
+  {
+    RETURN(FALSE);
+    return FALSE;
+  }
 
   MyStrCpy(fname, GetFolderDir(fo));
   AddPart(fname, ".fimage", sizeof(fname));
 
-  fo->FImage = LoadBCImage(fname);
-  if(!fo->FImage) return FALSE;
-
-  fo->BC_FImage = BodychunkObject,
-                    MUIA_FixWidth,             fo->FImage->Width,
-                    MUIA_FixHeight,            fo->FImage->Height,
-                    MUIA_Bitmap_Width,         fo->FImage->Width,
-                    MUIA_Bitmap_Height,        fo->FImage->Height,
-                    MUIA_Bitmap_SourceColors,  fo->FImage->Colors,
-                    MUIA_Bodychunk_Depth,      fo->FImage->Depth,
-                    MUIA_Bodychunk_Body,       fo->FImage->Body,
-                    MUIA_Bodychunk_Compression,fo->FImage->Compression,
-                    MUIA_Bodychunk_Masking,    fo->FImage->Masking,
-                    MUIA_Bitmap_Transparent,   0,
-                    MUIA_InnerBottom,          0,
-                    MUIA_InnerLeft,            0,
-                    MUIA_InnerRight,           0,
-                    MUIA_InnerTop,             0,
-                  End;
-
-  if(!fo->BC_FImage) return FALSE;
-
-  // Prepare the BC_GROUP for adding a new child
-  if(DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_InitChange))
+  if(FileExists(fname))
   {
-    DoMethod(G->MA->GUI.BC_GROUP, OM_ADDMEMBER, fo->BC_FImage);
-    DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_ExitChange);
+    fo->imageObject = ImageAreaObject,
+                        MUIA_ImageArea_Filename, fname,
+                      End;
+
+    // Now we say that this image could be used by this Listtree
+    if(fo->imageObject != NULL)
+      DoMethod(lv, MUIM_NList_UseImage, fo->imageObject, fo->ImageIndex, MUIF_NONE);
+
+    RETURN(TRUE);
+    return TRUE;
   }
+  else
+    fo->imageObject = NULL;
 
-  // Now we say that this image could be used by this Listtree
-  DoMethod(lv, MUIM_NList_UseImage, fo->BC_FImage, fo->ImageIndex, MUIF_NONE);
-
-  return TRUE;
+  RETURN(FALSE);
+  return FALSE;
 }
 
 ///
@@ -1003,7 +998,8 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
       long tnflags = (TNF_LIST | TNF_OPEN);
 
       // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-      if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body))
+      if(G->MA->GUI.IMG_FOLDER[0] != NULL &&
+         G->MA->GUI.IMG_FOLDER[1] != NULL)
       {
         SET_FLAG(tnflags, TNF_NOSIGN);
       }
@@ -1050,8 +1046,7 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
          // folder
          *folder.Path       = 0;
          *folder.Name       = 0;
-         folder.BC_FImage   = NULL;
-         folder.FImage      = NULL;
+         folder.imageObject = NULL;
          folder.Messages    = NULL;
          folder.ImageIndex  = -1;  // No Image for the folder by default.
       }
@@ -1139,23 +1134,16 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
          DeleteMailDir(GetFolderDir(folder), FALSE);
          ClearMailList(folder, TRUE);
 
-         // Here we remove the Bodychunk Object from the BC_GROUP because the destructor
+         // Here we dispose the folderimage Object because the destructor
          // of the Folder Listtree can`t do this without throwing enforcer hits
-         if(folder->BC_FImage)
+         if(folder->imageObject)
          {
-            // Prepare the BC_GROUP for removing a child
-            if(DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_InitChange))
-            {
-               DoMethod(G->MA->GUI.BC_GROUP, OM_REMMEMBER, folder->BC_FImage);
-               DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_ExitChange);
-            }
-
             // we make sure that the NList also doesn`t use the image in future anymore
             DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
 
             // and last, but not least we free the BC object here, so that this Object is also gone
-            MUI_DisposeObject(folder->BC_FImage);
-            folder->BC_FImage = NULL; // let`s set it to NULL so that the destructor doesn`t do the work again.
+            MUI_DisposeObject(folder->imageObject);
+            folder->imageObject = NULL; // let`s set it to NULL so that the destructor doesn`t do the work again.
          }
       }
     }
@@ -1453,21 +1441,14 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
             // we do not have to call FreeFolder manually, because the
             // destructor of the Listtree will do this for us. But we
             // have to free the FImage of the folder if it exists
-            if(folder->BC_FImage)
+            if(folder->imageObject)
             {
-              // Prepare the BC_GROUP for removing a child
-              if(DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_InitChange))
-              {
-                DoMethod(G->MA->GUI.BC_GROUP, OM_REMMEMBER, folder->BC_FImage);
-                DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_ExitChange);
-              }
-
               // we make sure that the NList also doesn`t use the image in future anymore
               DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
 
               // and last, but not least we free the BC object here, so that this Object is also gone
-              MUI_DisposeObject(folder->BC_FImage);
-              folder->BC_FImage = NULL; // let`s set it to NULL so that the destructor doesn`t do the work again.
+              MUI_DisposeObject(folder->imageObject);
+              folder->imageObject = NULL; // let`s set it to NULL so that the destructor doesn`t do the work again.
             }
           }
 

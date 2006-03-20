@@ -52,7 +52,6 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/Aboutwindow.o \
 	$(OBJDIR)/$(CLASSDIR)/AttachmentGroup.o \
 	$(OBJDIR)/$(CLASSDIR)/AttachmentImage.o \
-	$(OBJDIR)/$(CLASSDIR)/BodychunkImage.o \
 	$(OBJDIR)/$(CLASSDIR)/ConfigPageList.o \
 	$(OBJDIR)/$(CLASSDIR)/ReadMailGroup.o \
 	$(OBJDIR)/$(CLASSDIR)/ReadWindow.o \
@@ -67,6 +66,7 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/InfoBar.o \
 	$(OBJDIR)/$(CLASSDIR)/WriteAttachmentList.o \
 	$(OBJDIR)/$(CLASSDIR)/QuickSearchBar.o \
+	$(OBJDIR)/$(CLASSDIR)/ImageArea.o \
 	$(OBJDIR)/$(CLASSDIR)/YAM.o
 
 # and the other object files
@@ -97,6 +97,7 @@ OBJS = \
 	$(OBJDIR)/YAM_UT.o \
 	$(OBJDIR)/YAM_WR.o \
 	$(OBJDIR)/all_gcc.o \
+	$(OBJDIR)/ImageCache.o \
 	$(OBJDIR)/Debug.o \
 	$(CLASSES)
 

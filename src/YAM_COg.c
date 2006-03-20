@@ -594,7 +594,7 @@ Object *CO_Page0(struct CO_ClassData *data)
          MUIA_HelpNode, "CO00",
 
          Child, HGroup,
-            Child, MakeBCImage("config_firststep_big"),
+            Child, MakeImageObject("config_firststep_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -671,7 +671,7 @@ Object *CO_Page1(struct CO_ClassData *data)
          MUIA_HelpNode, "CO01",
 
          Child, HGroup,
-            Child, MakeBCImage("config_network_big"),
+            Child, MakeImageObject("config_network_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -841,7 +841,7 @@ Object *CO_Page2(struct CO_ClassData *data)
          MUIA_HelpNode, "CO02",
 
          Child, HGroup,
-            Child, MakeBCImage("config_newmail_big"),
+            Child, MakeImageObject("config_newmail_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -965,7 +965,7 @@ Object *CO_Page3(struct CO_ClassData *data)
          MUIA_HelpNode, "CO03",
 
          Child, HGroup,
-            Child, MakeBCImage("config_filters_big"),
+            Child, MakeImageObject("config_filters_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1187,7 +1187,7 @@ Object *CO_Page4(struct CO_ClassData *data)
          MUIA_HelpNode, "CO04",
 
          Child, HGroup,
-            Child, MakeBCImage("config_read_big"),
+            Child, MakeImageObject("config_read_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1296,7 +1296,7 @@ Object *CO_Page5(struct CO_ClassData *data)
          MUIA_HelpNode, "CO05",
 
          Child, HGroup,
-            Child, MakeBCImage("config_write_big"),
+            Child, MakeImageObject("config_write_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1399,7 +1399,7 @@ Object *CO_Page6(struct CO_ClassData *data)
          MUIA_HelpNode, "CO06",
 
          Child, HGroup,
-            Child, MakeBCImage("config_answer_big"),
+            Child, MakeImageObject("config_answer_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1484,7 +1484,7 @@ Object *CO_Page7(struct CO_ClassData *data)
          MUIA_HelpNode, "CO07",
 
          Child, HGroup,
-            Child, MakeBCImage("config_signature_big"),
+            Child, MakeImageObject("config_signature_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1583,7 +1583,7 @@ Object *CO_Page8(struct CO_ClassData *data)
          MUIA_HelpNode, "CO08",
 
          Child, HGroup,
-            Child, MakeBCImage("config_lists_big"),
+            Child, MakeImageObject("config_lists_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1697,7 +1697,7 @@ Object *CO_Page9(struct CO_ClassData *data)
          MUIA_HelpNode, "CO09",
 
          Child, HGroup,
-            Child, MakeBCImage("config_security_big"),
+            Child, MakeImageObject("config_security_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1788,7 +1788,7 @@ Object *CO_Page10(struct CO_ClassData *data)
          MUIA_HelpNode, "CO10",
 
          Child, HGroup,
-            Child, MakeBCImage("config_start_big"),
+            Child, MakeImageObject("config_start_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1850,7 +1850,7 @@ Object *CO_Page11(struct CO_ClassData *data)
          MUIA_HelpNode, "CO11",
 
          Child, HGroup,
-            Child, MakeBCImage("config_mime_big"),
+            Child, MakeImageObject("config_mime_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1967,7 +1967,7 @@ Object *CO_Page12(struct CO_ClassData *data)
          MUIA_HelpNode, "CO12",
 
          Child, HGroup,
-            Child, MakeBCImage("config_abook_big"),
+            Child, MakeImageObject("config_abook_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -2061,7 +2061,7 @@ Object *CO_Page13(struct CO_ClassData *data)
          MUIA_HelpNode, "CO13",
 
          Child, HGroup,
-            Child, MakeBCImage("config_scripts_big"),
+            Child, MakeImageObject("config_scripts_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -2141,7 +2141,7 @@ Object *CO_Page14(struct CO_ClassData *data)
        MUIA_HelpNode, "CO14",
 
        Child, HGroup,
-          Child, MakeBCImage("config_misc_big"),
+          Child, MakeImageObject("config_misc_big"),
           Child, VGroup,
             Child, TextObject,
               MUIA_Text_PreParse, "\033b",
@@ -2290,7 +2290,7 @@ Object *CO_Page15(struct CO_ClassData *data)
       MUIA_HelpNode, "CO15",
 
       Child, HGroup,
-        Child, MakeBCImage("config_update_big"),
+        Child, MakeImageObject("config_update_big"),
         Child, VGroup,
           Child, TextObject,
             MUIA_Text_PreParse, "\033b",

@@ -148,7 +148,7 @@ OVERLOAD(OM_NEW)
 
   // prepare the status icons for adding it later on to our statusGroup object
   for(i=0; i < ARRAY_SIZE(icon); i++)
-    statusIcon[icon[i].status] = MakeBCImage(icon[i].name);
+    statusIcon[icon[i].status] = MakeImageObject(icon[i].name);
 
   // should be a compile-time nop!
   for(i=ARRAY_SIZE(icon); i<MAXBCSTATUSIMG; i++)
@@ -159,11 +159,13 @@ OVERLOAD(OM_NEW)
     MUIA_Group_LayoutHook,  &LayoutHook,
     MUIA_ContextMenu,        FALSE,
   TAG_MORE, inittags(msg));
-  if (obj)
+
+  if(obj)
   {
     struct Data *data = (struct Data *)INST_DATA(cl, obj);
     if(!data)
       return 0;
+
     // copy data from temp object to its real place
     memcpy(&data->statusIcon[0], &statusIcon[0], sizeof(statusIcon));
   }

@@ -3037,7 +3037,7 @@ BOOL MA_SortWindow(void)
     {
       DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.IB_INFOBAR,
                                                     G->MA->GUI.GR_TOP,
-                                                    G->MA->GUI.BC_GROUP,
+                                                    G->MA->GUI.GR_HIDDEN,
                                                     G->MA->GUI.GR_BOTTOM,
                                                     NULL);
     }
@@ -3046,7 +3046,7 @@ BOOL MA_SortWindow(void)
     case IB_POS_CENTER:
     {
       DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP,
-                                                    G->MA->GUI.BC_GROUP,
+                                                    G->MA->GUI.GR_HIDDEN,
                                                     G->MA->GUI.IB_INFOBAR,
                                                     G->MA->GUI.GR_BOTTOM,
                                                     NULL);
@@ -3056,7 +3056,7 @@ BOOL MA_SortWindow(void)
     case IB_POS_BOTTOM:
     {
       DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP,
-                                                    G->MA->GUI.BC_GROUP,
+                                                    G->MA->GUI.GR_HIDDEN,
                                                     G->MA->GUI.GR_BOTTOM,
                                                     G->MA->GUI.IB_INFOBAR,
                                                     NULL);
@@ -3226,37 +3226,8 @@ struct MA_ClassData *MA_New(void)
                   End,
                   Child, HSpace(0),
                End),
-            Child, data->GUI.BC_GROUP = HGroup,
+            Child, data->GUI.GR_HIDDEN = HGroup,
                MUIA_ShowMe, FALSE,
-               // Create the status flag image objects
-               Child, data->GUI.BC_STAT[SICON_ID_UNREAD]   = MakeBCImage("status_unread"),
-               Child, data->GUI.BC_STAT[SICON_ID_OLD]      = MakeBCImage("status_old"),
-               Child, data->GUI.BC_STAT[SICON_ID_FORWARD]  = MakeBCImage("status_forward"),
-               Child, data->GUI.BC_STAT[SICON_ID_REPLY]    = MakeBCImage("status_reply"),
-               Child, data->GUI.BC_STAT[SICON_ID_WAITSEND] = MakeBCImage("status_waitsend"),
-               Child, data->GUI.BC_STAT[SICON_ID_ERROR]    = MakeBCImage("status_error"),
-               Child, data->GUI.BC_STAT[SICON_ID_HOLD]     = MakeBCImage("status_hold"),
-               Child, data->GUI.BC_STAT[SICON_ID_SENT]     = MakeBCImage("status_sent"),
-               Child, data->GUI.BC_STAT[SICON_ID_NEW]      = MakeBCImage("status_new"),
-               Child, data->GUI.BC_STAT[SICON_ID_DELETE]   = MakeBCImage("status_delete"),
-               Child, data->GUI.BC_STAT[SICON_ID_DOWNLOAD] = MakeBCImage("status_download"),
-               Child, data->GUI.BC_STAT[SICON_ID_GROUP]    = MakeBCImage("status_group"),
-               Child, data->GUI.BC_STAT[SICON_ID_URGENT]   = MakeBCImage("status_urgent"),
-               Child, data->GUI.BC_STAT[SICON_ID_ATTACH]   = MakeBCImage("status_attach"),
-               Child, data->GUI.BC_STAT[SICON_ID_REPORT]   = MakeBCImage("status_report"),
-               Child, data->GUI.BC_STAT[SICON_ID_CRYPT]    = MakeBCImage("status_crypt"),
-               Child, data->GUI.BC_STAT[SICON_ID_SIGNED]   = MakeBCImage("status_signed"),
-               Child, data->GUI.BC_STAT[SICON_ID_MARK]     = MakeBCImage("status_mark"),
-               // Create the default folder image objects
-               Child, data->GUI.BC_FOLDER[0] = MakeBCImage("folder_fold"),
-               Child, data->GUI.BC_FOLDER[1] = MakeBCImage("folder_unfold"),
-               Child, data->GUI.BC_FOLDER[2] = MakeBCImage("folder_incoming"),
-               Child, data->GUI.BC_FOLDER[3] = MakeBCImage("folder_incoming_new"),
-               Child, data->GUI.BC_FOLDER[4] = MakeBCImage("folder_outgoing"),
-               Child, data->GUI.BC_FOLDER[5] = MakeBCImage("folder_outgoing_new"),
-               Child, data->GUI.BC_FOLDER[6] = MakeBCImage("folder_deleted"),
-               Child, data->GUI.BC_FOLDER[7] = MakeBCImage("folder_deleted_new"),
-               Child, data->GUI.BC_FOLDER[8] = MakeBCImage("folder_sent"),
                Child, data->GUI.ST_LAYOUT = StringObject,
                   MUIA_ObjectID, MAKE_ID('S','T','L','A'),
                   MUIA_String_MaxLen, SIZE_DEFAULT,
@@ -3317,15 +3288,42 @@ struct MA_ClassData *MA_New(void)
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
          // define the StatusFlag images that should be used
-         for(i = 0; i < MAXBCSTATUSIMG; i++)
-           DoMethod(data->GUI.PG_MAILLIST, MUIM_NList_UseImage, data->GUI.BC_STAT[i], i, MUIF_NONE);
+         data->GUI.IMG_STAT[SICON_ID_UNREAD]   = MakeImageObject("status_unread");
+         data->GUI.IMG_STAT[SICON_ID_OLD]      = MakeImageObject("status_old");
+         data->GUI.IMG_STAT[SICON_ID_FORWARD]  = MakeImageObject("status_forward");
+         data->GUI.IMG_STAT[SICON_ID_REPLY]    = MakeImageObject("status_reply");
+         data->GUI.IMG_STAT[SICON_ID_WAITSEND] = MakeImageObject("status_waitsend");
+         data->GUI.IMG_STAT[SICON_ID_ERROR]    = MakeImageObject("status_error");
+         data->GUI.IMG_STAT[SICON_ID_HOLD]     = MakeImageObject("status_hold");
+         data->GUI.IMG_STAT[SICON_ID_SENT]     = MakeImageObject("status_sent");
+         data->GUI.IMG_STAT[SICON_ID_NEW]      = MakeImageObject("status_new");
+         data->GUI.IMG_STAT[SICON_ID_DELETE]   = MakeImageObject("status_delete");
+         data->GUI.IMG_STAT[SICON_ID_DOWNLOAD] = MakeImageObject("status_download");
+         data->GUI.IMG_STAT[SICON_ID_GROUP]    = MakeImageObject("status_group");
+         data->GUI.IMG_STAT[SICON_ID_URGENT]   = MakeImageObject("status_urgent");
+         data->GUI.IMG_STAT[SICON_ID_ATTACH]   = MakeImageObject("status_attach");
+         data->GUI.IMG_STAT[SICON_ID_REPORT]   = MakeImageObject("status_report");
+         data->GUI.IMG_STAT[SICON_ID_CRYPT]    = MakeImageObject("status_crypt");
+         data->GUI.IMG_STAT[SICON_ID_SIGNED]   = MakeImageObject("status_signed");
+         data->GUI.IMG_STAT[SICON_ID_MARK]     = MakeImageObject("status_mark");
+         for(i=0; i < MAXBCSTATUSIMG; i++)
+           DoMethod(data->GUI.PG_MAILLIST, MUIM_NList_UseImage, data->GUI.IMG_STAT[i], i, MUIF_NONE);
 
          // Define the Images the FolderListtree that can be used
-         for(i = 0; i < MAXBCFOLDERIMG; i++)
-           DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_FOLDER[i], i, MUIF_NONE);
+         data->GUI.IMG_FOLDER[0] = MakeImageObject("folder_fold");
+         data->GUI.IMG_FOLDER[1] = MakeImageObject("folder_unfold");
+         data->GUI.IMG_FOLDER[2] = MakeImageObject("folder_incoming");
+         data->GUI.IMG_FOLDER[3] = MakeImageObject("folder_incoming_new");
+         data->GUI.IMG_FOLDER[4] = MakeImageObject("folder_outgoing");
+         data->GUI.IMG_FOLDER[5] = MakeImageObject("folder_outgoing_new");
+         data->GUI.IMG_FOLDER[6] = MakeImageObject("folder_deleted");
+         data->GUI.IMG_FOLDER[7] = MakeImageObject("folder_deleted_new");
+         data->GUI.IMG_FOLDER[8] = MakeImageObject("folder_sent");
+         for(i=0; i < MAXBCFOLDERIMG; i++)
+           DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.IMG_FOLDER[i], i, MUIF_NONE);
 
          // Now we need the XPK image also in the folder list
-         DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_STAT[15], MAXBCFOLDERIMG, MUIF_NONE);
+         DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.IMG_STAT[SICON_ID_CRYPT], MAXBCFOLDERIMG, MUIF_NONE);
 
          // set the maillist group as the default object of that window
          set(data->GUI.WI, MUIA_Window_DefaultObject, xget(data->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListObject));

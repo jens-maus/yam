@@ -53,6 +53,8 @@
 #include <proto/icon.h>
 #include <proto/iffparse.h>
 #include <proto/intuition.h>
+#include <proto/graphics.h>
+#include <proto/layers.h>
 #include <proto/keymap.h>
 #include <proto/locale.h>
 #include <proto/muimaster.h>
@@ -4125,119 +4127,95 @@ BOOL isChildOfGroup(Object *group, Object *child)
 
 ///
 
-/**** BodyChunk ****/
-/// FreeBCImage
-//  Frees a bodychunk image
-void FreeBCImage(struct BodyChunkData *bcd)
+/*** GFX related ***/
+/// struct LayerHookMsg
+struct LayerHookMsg
 {
-   if (bcd)
-   {
-      if (bcd->Colors) free(bcd->Colors);
-      if (bcd->Body) free(bcd->Body);
-      free(bcd);
-   }
-}
+  struct Layer *layer;
+  struct Rectangle bounds;
+  LONG offsetx;
+  LONG offsety;
+};
+
 ///
-/// GetBCImage
-//  Searches for a bodychunk image by filename
-struct BodyChunkData *GetBCImage(char *fname)
+/// struct BltHook
+struct BltHook
 {
-   int i;
+  struct Hook hook;
+  struct BitMap maskBitMap;
+  struct BitMap *srcBitMap;
+  LONG srcx,srcy;
+  LONG destx,desty;
+};
 
-   for (i = 0; i < MAXIMAGES; i++)
-   {
-      if (G->BImage[i] && !strcmp(G->BImage[i]->File, fname)) return G->BImage[i];
-   }
-
-   return NULL;
-}
 ///
-/// LoadBCImage
-//  Loads a bodychunk image from disk
-struct BodyChunkData *LoadBCImage(char *fname)
+/// MyBltMaskBitMap()
+static void MyBltMaskBitMap(const struct BitMap *srcBitMap, LONG xSrc, LONG ySrc, struct BitMap *destBitMap, LONG xDest, LONG yDest, LONG xSize, LONG ySize, struct BitMap *maskBitMap)
 {
-   struct BodyChunkData *bcd=calloc(1,sizeof(struct BodyChunkData));
-   if (bcd)
-   {
-      struct IFFHandle *iff=AllocIFF();
-      if (iff)
-      {
-         if ((iff->iff_Stream = Open(fname, MODE_OLDFILE)))
-         {
-            InitIFFasDOS(iff);
-            if (!OpenIFF(iff, IFFF_READ))
-            {
-               if (!ParseIFF(iff, IFFPARSE_STEP))
-               {
-                  struct ContextNode *cn=CurrentChunk(iff);
-                  if (cn && (cn->cn_ID == ID_FORM) && (cn->cn_Type == ID_ILBM))
-                  {
-                     if (!PropChunk (iff, ID_ILBM, ID_BMHD) &&
-                         !PropChunk (iff, ID_ILBM, ID_CMAP) &&
-                         !StopChunk (iff, ID_ILBM, ID_BODY) &&
-                         !StopOnExit(iff, ID_ILBM, ID_FORM) &&
-                         !ParseIFF  (iff, IFFPARSE_SCAN))
-                     {
-                        struct StoredProperty *sp;
-                        if ((sp = FindProp(iff, ID_ILBM, ID_CMAP)))
-                        {
-                           bcd->Colors = calloc((size_t)sp->sp_Size, sizeof(ULONG));
-                           if (bcd->Colors)
-                           {
-                              int i;
-                              for (i = 0; i < sp->sp_Size; i++)
-                              {
-                                 ULONG c = ((UBYTE *)sp->sp_Data)[i];
-                                 bcd->Colors[i] = (c *= 0x01010101);
-                              }
-                           }
-                        }
-                        if ((sp = FindProp(iff,ID_ILBM,ID_BMHD)))
-                        {
-                           struct BitMapHeader *bmhd = (struct BitMapHeader *)sp->sp_Data;
-                           if (bmhd->bmh_Compression == cmpNone || bmhd->bmh_Compression==cmpByteRun1)
-                           {
-                              struct ContextNode *cnode = CurrentChunk(iff);
-
-                              if(cnode)
-                              {
-                                LONG size = cnode->cn_Size;
-
-                                if((bcd->Body = calloc((size_t)size,1)))
-                                {
-                                   if(ReadChunkBytes(iff, bcd->Body, size) == size)
-                                   {
-                                      bcd->Width  = bmhd->bmh_Width;
-                                      bcd->Height = bmhd->bmh_Height;
-                                      bcd->Depth = bmhd->bmh_Depth;
-                                      bcd->Compression = bmhd->bmh_Compression;
-                                      bcd->Masking = bmhd->bmh_Masking;
-                                      strcpy(bcd->File, (char *)FilePart(fname));
-                                   }
-                                }
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-
-               CloseIFF(iff);
-            }
-
-            Close(iff->iff_Stream);
-         }
-
-         FreeIFF(iff);
-      }
-
-      if (bcd->Depth) return bcd;
-
-      FreeBCImage(bcd);
-   }
-
-   return NULL;
+  BltBitMap(srcBitMap,xSrc,ySrc,destBitMap, xDest, yDest, xSize, ySize, 0x99,~0,NULL);
+  BltBitMap(maskBitMap,xSrc,ySrc,destBitMap, xDest, yDest, xSize, ySize, 0xe2,~0,NULL);
+  BltBitMap(srcBitMap,xSrc,ySrc,destBitMap, xDest, yDest, xSize, ySize, 0x99,~0,NULL);
 }
+
+///
+/// BltMaskHook
+HOOKPROTO(BltMaskFunc, void, struct RastPort *rp, struct LayerHookMsg *msg)
+{
+  struct BltHook *h = (struct BltHook*)hook;
+
+  LONG width = msg->bounds.MaxX - msg->bounds.MinX+1;
+  LONG height = msg->bounds.MaxY - msg->bounds.MinY+1;
+  LONG offsetx = h->srcx + msg->offsetx - h->destx;
+  LONG offsety = h->srcy + msg->offsety - h->desty;
+
+  MyBltMaskBitMap(h->srcBitMap, offsetx, offsety, rp->BitMap, msg->bounds.MinX, msg->bounds.MinY, width, height, &h->maskBitMap);
+}
+MakeStaticHook(BltMaskHook, BltMaskFunc);
+
+///
+/// MyBltMaskBitMapRastPort()
+void MyBltMaskBitMapRastPort(struct BitMap *srcBitMap, LONG xSrc, LONG ySrc, struct RastPort *destRP, LONG xDest, LONG yDest, LONG xSize, LONG ySize, ULONG minterm, APTR bltMask)
+{
+  ENTER();
+
+  if(GetBitMapAttr(srcBitMap, BMA_FLAGS) & BMF_INTERLEAVED)
+  {
+    LONG src_depth = GetBitMapAttr(srcBitMap, BMA_DEPTH);
+    struct Rectangle rect;
+    struct BltHook hook;
+
+    // Define the destination rectangle in the rastport
+    rect.MinX = xDest;
+    rect.MinY = yDest;
+    rect.MaxX = xDest + xSize - 1;
+    rect.MaxY = yDest + ySize - 1;
+
+    // Initialize the hook
+    InitHook(&hook.hook, BltMaskHook, NULL);
+    hook.srcBitMap = srcBitMap;
+    hook.srcx = xSrc;
+    hook.srcy = ySrc;
+    hook.destx = xDest;
+    hook.desty = yDest;
+
+    // Initialize a bitmap where all plane pointers points to the mask
+    InitBitMap(&hook.maskBitMap, src_depth, GetBitMapAttr(srcBitMap, BMA_WIDTH), GetBitMapAttr(srcBitMap, BMA_HEIGHT));
+    while(src_depth)
+    {
+      hook.maskBitMap.Planes[--src_depth] = bltMask;
+    }
+
+    // Blit onto the Rastport */
+    DoHookClipRects(&hook.hook, destRP, &rect);
+  }
+  else
+  {
+    BltMaskBitMapRastPort(srcBitMap, xSrc, ySrc, destRP, xDest, yDest, xSize, ySize, minterm, bltMask);
+  }
+
+  LEAVE();
+}
+
 ///
 
 /*** Miscellaneous stuff ***/
@@ -4612,7 +4590,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
 
    // if this folder hasn`t got any own folder image in the folder
    // directory and it is one of our standard folders we have to check which image we put in front of it
-   if (!fo->BC_FImage)
+   if(fo->imageObject == NULL)
    {
       if(fo->Type == FT_INCOMING)      fo->ImageIndex = (fo->New+fo->Unread) ? 3 : 2;
       else if(fo->Type == FT_OUTGOING) fo->ImageIndex = (fo->Total > 0) ? 5 : 4;

@@ -62,6 +62,7 @@
 #include "YAM_md5.h"
 #include "YAM_mime.h"
 
+#include "classes/ClassesExtra.h"
 #include "Debug.h"
 
 struct TransStat
@@ -4804,8 +4805,8 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
             DoMethod(bt_leave,           MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_NONE);
             DoMethod(bt_all,             MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
             DoMethod(bt_none,            MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
-            DoMethod(data->GUI.LV_MAILS, MUIM_NList_UseImage, G->MA->GUI.BC_STAT[9], 9, 0);
-            DoMethod(data->GUI.LV_MAILS, MUIM_NList_UseImage, G->MA->GUI.BC_STAT[10], 10, 0);
+            DoMethod(data->GUI.LV_MAILS, MUIM_NList_UseImage, G->MA->GUI.IMG_STAT[SICON_ID_DELETE], SICON_ID_DELETE, MUIF_NONE);
+            DoMethod(data->GUI.LV_MAILS, MUIM_NList_UseImage, G->MA->GUI.IMG_STAT[SICON_ID_DOWNLOAD], SICON_ID_DOWNLOAD, MUIF_NONE);
          }
          DoMethod(data->GUI.BT_ABORT, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
          MA_ChangeTransfer(FALSE);

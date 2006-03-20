@@ -30,6 +30,8 @@
 
 #include "MainWindow_cl.h"
 
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
@@ -38,10 +40,51 @@ struct Data
 */
 
 /* Overloaded Methods */
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  ULONG result;
+  int i;
+
+  ENTER();
+
+  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, MAXBCFOLDERIMG, MUIF_NONE);
+
+  for(i=0; i < MAXBCSTATUSIMG; i++)
+  {
+    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_UseImage, NULL, i, MUIF_NONE);
+
+    if(G->MA->GUI.IMG_STAT[i])
+    {
+      MUI_DisposeObject(G->MA->GUI.IMG_STAT[i]);
+      G->MA->GUI.IMG_STAT[i] = NULL;
+    }
+  }
+
+  for(i=0; i < MAXBCFOLDERIMG; i++)
+  {
+    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, i, MUIF_NONE);
+
+    if(G->MA->GUI.IMG_FOLDER[i])
+    {
+      MUI_DisposeObject(G->MA->GUI.IMG_FOLDER[i]);
+      G->MA->GUI.IMG_FOLDER[i] = NULL;
+    }
+  }
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+///
 /// OVERLOAD(MUIM_Window_Snapshot)
 OVERLOAD(MUIM_Window_Snapshot)
 {
-   // get the weights according to their GUI elements
+  ULONG result;
+  ENTER();
+
+  // get the weights according to their GUI elements
   G->Weights[0] = xget(G->MA->GUI.LV_FOLDERS,  MUIA_HorizWeight);
   G->Weights[1] = xget(G->MA->GUI.GR_MAILVIEW, MUIA_HorizWeight);
   G->Weights[6] = xget(G->MA->GUI.PG_MAILLIST, MUIA_VertWeight);
@@ -57,7 +100,10 @@ OVERLOAD(MUIM_Window_Snapshot)
   // make sure the layout is saved
   SaveLayout(TRUE);
 
-  return DoSuperMethodA(cl, obj, msg);
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -70,10 +116,13 @@ OVERLOAD(MUIM_Window_Snapshot)
 // their close
 DECLARE(DisposeSubWindow) // Object *win
 {
+  ENTER();
+
   set(msg->win, MUIA_Window_Open, FALSE);
   DoMethod(G->App, OM_REMMEMBER, msg->win);
   MUI_DisposeObject(msg->win);
 
+  RETURN(0);
   return 0;
 }
 

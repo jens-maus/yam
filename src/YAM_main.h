@@ -202,9 +202,9 @@ struct MA_GUIData
    Object *MN_FOLDER;
    Object *MN_REXX;
    Object *MS_MAIN;
-   Object *BC_GROUP;
-   Object *BC_STAT[MAXBCSTATUSIMG];
-   Object *BC_FOLDER[MAXBCFOLDERIMG];
+   Object *GR_HIDDEN;
+   Object *IMG_STAT[MAXBCSTATUSIMG];
+   Object *IMG_FOLDER[MAXBCFOLDERIMG];
    Object *ST_LAYOUT;
    Object *MI_ERRORS;
    Object *MI_CSINGLE;

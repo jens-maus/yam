@@ -1269,7 +1269,7 @@ struct AB_ClassData *AB_New(void)
         SetHelp(data->GUI.BT_BCC,MSG_HELP_AB_BT_BCC);
 
         // Now we add the group image to the NListtree
-        DoMethod(data->GUI.LV_ADDRESSES, MUIM_NList_UseImage, G->MA->GUI.BC_STAT[11], 0, MUIF_NONE);
+        DoMethod(data->GUI.LV_ADDRESSES, MUIM_NList_UseImage, G->MA->GUI.IMG_STAT[SICON_ID_GROUP], 0, MUIF_NONE);
 
         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_NEW      ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_NewABookHook,0);
         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_OPEN     ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_OpenABookHook,0);
