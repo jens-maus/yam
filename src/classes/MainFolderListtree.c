@@ -30,26 +30,92 @@
 
 #include "MainFolderListtree_cl.h"
 
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
   Object *context_menu;
+  Object *folderImage[MAX_FOLDERIMG+1];
 };
 */
 
 enum { CMN_EDITF=10, CMN_DELETEF, CMN_INDEX, CMN_NEWF, CMN_NEWFG, CMN_SNAPS, CMN_RELOAD, CMN_EXPUNGE };
 
 /* Overloaded Methods */
+/// OVERLOAD(OM_NEW)
+OVERLOAD(OM_NEW)
+{
+  struct Data *data;
+  int i;
+
+  ENTER();
+
+  if(!(obj = DoSuperNew(cl, obj,
+    TAG_MORE, inittags(msg))))
+  {
+    RETURN(0);
+    return 0;
+  }
+
+  data = (struct Data *)INST_DATA(cl,obj);
+
+  // prepare the folder images
+  data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold");
+  data->folderImage[FICON_ID_UNFOLD]      = MakeImageObject("folder_unfold");
+  data->folderImage[FICON_ID_INCOMING]    = MakeImageObject("folder_incoming");
+  data->folderImage[FICON_ID_INCOMING_NEW]= MakeImageObject("folder_incoming_new");
+  data->folderImage[FICON_ID_OUTGOING]    = MakeImageObject("folder_outgoing");
+  data->folderImage[FICON_ID_OUTGOING_NEW]= MakeImageObject("folder_outgoing_new");
+  data->folderImage[FICON_ID_DELETED]     = MakeImageObject("folder_deleted");
+  data->folderImage[FICON_ID_DELETED_NEW] = MakeImageObject("folder_deleted_new");
+  data->folderImage[FICON_ID_SENT]        = MakeImageObject("folder_sent");
+  data->folderImage[FICON_ID_PROTECTED]   = MakeImageObject("status_crypt");
+  for(i=0; i < MAX_FOLDERIMG+1; i++)
+    DoMethod(obj, MUIM_NList_UseImage, data->folderImage[i], i, MUIF_NONE);
+
+  RETURN((ULONG)obj);
+  return (ULONG)obj;
+}
+
+///
 /// OVERLOAD(OM_DISPOSE)
 OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
+  int i;
 
   // make sure that our context menus are also disposed
   if(data->context_menu)
     MUI_DisposeObject(data->context_menu);
 
+  for(i=0; i < MAX_FOLDERIMG+1; i++)
+  {
+    DoMethod(obj, MUIM_NList_UseImage, NULL, i, MUIF_NONE);
+    if(data->folderImage[i])
+    {
+      MUI_DisposeObject(data->folderImage[i]);
+      data->folderImage[i] = NULL;
+    }
+  }
+
   return DoSuperMethodA(cl,obj,msg);
+}
+
+///
+/// OVERLOAD(OM_GET)
+// get some stuff of our instance data
+OVERLOAD(OM_GET)
+{
+  GETDATA;
+  ULONG *store = ((struct opGet *)msg)->opg_Storage;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    ATTR(ImageArray): *store = (ULONG)data->folderImage; return TRUE;
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///

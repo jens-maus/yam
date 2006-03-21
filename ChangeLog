@@ -4,6 +4,16 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-03-21  Jens Langner <Jens.Langner@light-speed.de>
+
+  * classes/AddrBookListtree.c, classes/StatusIconGroup.c, classes/InfoBar.c,
+    classes/MainMailList.c, classes/TransferMailList.c, MainFolderListtree.c,
+    misc: moved all MakeImageObject() creations into the corresponding instance
+    data of the objects they belong to. This should not only make things
+    cleaner, it should also fix a recent bug where we did reuse a very same
+    instance of ImageAreaObject in multiple objects causing images not to
+    be visible at all. Also adapted all related source accordingly.
+
 2006-03-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * ImageCache.c, YAM.c: moved the initialization of the image cache back

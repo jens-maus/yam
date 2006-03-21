@@ -56,10 +56,10 @@
 #define MAXMV          100
 #define MAXRX           21
 
-#define MAXBCSTATUSIMG  18
-#define MAXBCFOLDERIMG   9
-#define MAXBCCFGIMG     32
-#define MAXIMAGES      (MAXBCSTATUSIMG+MAXBCFOLDERIMG+MAXBCCFGIMG)
+#define MAX_STATUSIMG   18
+#define MAX_FOLDERIMG    9
+#define MAX_CFGIMG      32
+#define MAX_IMAGES      (MAX_STATUSIMG+MAX_FOLDERIMG+MAX_CFGIMG)
 
 #define MAXICONS         4
 #define MAXASL           9

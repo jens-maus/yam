@@ -191,8 +191,12 @@ DECLARE(SetFolder) // struct Folder *newFolder
     {
       if(folder->imageObject)
         data->actualImage = MakeImageObject(xget(folder->imageObject, MUIA_ImageArea_Filename));
-      else if(folder->ImageIndex >= 0 && G->MA->GUI.IMG_FOLDER[folder->ImageIndex])
-        data->actualImage = MakeImageObject(xget(G->MA->GUI.IMG_FOLDER[folder->ImageIndex], MUIA_ImageArea_Filename));
+      else if(folder->ImageIndex >= 0 && folder->ImageIndex < MAX_FOLDERIMG)
+      {
+        Object **imageArray = (Object **)xget(G->MA->GUI.NL_FOLDERS, MUIA_MainFolderListtree_ImageArray);
+        if(imageArray && imageArray[folder->ImageIndex])
+          data->actualImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
+      }
 
       if(data->actualImage)
         DoMethod(obj, OM_ADDMEMBER, data->actualImage);

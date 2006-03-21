@@ -306,20 +306,6 @@ OVERLOAD(MUIM_NList_Sort)
 }
 
 ///
-/// OVERLOAD(MUIM_NList_UseImage)
-OVERLOAD(MUIM_NList_UseImage)
-{
-  GETDATA;
-  ULONG result;
-
-  // delegate this method call to all subNLists
-  if((result = DoMethodA(data->mainListObjects[LT_MAIN], msg)))
-    result = DoMethodA(data->mainListObjects[LT_QUICKVIEW], msg);
-
-  return result;
-}
-
-///
 
 /* Public Methods */
 /// DECLARE(MakeFormat)

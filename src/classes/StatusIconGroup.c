@@ -36,7 +36,7 @@
 /* CLASSDATA
 struct Data
 {
-  Object *statusIcon[MAXBCSTATUSIMG];
+  Object *statusIcon[MAX_STATUSIMG];
 };
 */
 
@@ -140,18 +140,18 @@ OVERLOAD(OM_NEW)
     { SICON_ID_SIGNED,   "status_signed" },
     { SICON_ID_MARK,     "status_mark" }
   };
-  Object *statusIcon[MAXBCSTATUSIMG];
+  Object *statusIcon[MAX_STATUSIMG];
   unsigned int i;
 
   // make sure that all icons are listed!
-  ASSERT( ARRAY_SIZE(icon) == MAXBCSTATUSIMG );
+  ASSERT(ARRAY_SIZE(icon) == MAX_STATUSIMG);
 
   // prepare the status icons for adding it later on to our statusGroup object
   for(i=0; i < ARRAY_SIZE(icon); i++)
     statusIcon[icon[i].status] = MakeImageObject(icon[i].name);
 
   // should be a compile-time nop!
-  for(i=ARRAY_SIZE(icon); i<MAXBCSTATUSIMG; i++)
+  for(i=ARRAY_SIZE(icon); i < MAX_STATUSIMG; i++)
     statusIcon[i] = NULL;
 
   obj = DoSuperNew(cl, obj,
@@ -191,7 +191,7 @@ OVERLOAD(OM_DISPOSE)
 
     while((child = NextObject(&cstate)))
     {
-      for(i=0; i < MAXBCSTATUSIMG; i++)
+      for(i=0; i < MAX_STATUSIMG; i++)
       {
         if(data->statusIcon[i] == child)
         {
@@ -206,7 +206,7 @@ OVERLOAD(OM_DISPOSE)
   DoMethod(obj, MUIM_Group_ExitChange);
 
   // now we can free all status icons
-  for(i=0; i < MAXBCSTATUSIMG; i++)
+  for(i=0; i < MAX_STATUSIMG; i++)
   {
     if(data->statusIcon[i])
       MUI_DisposeObject(data->statusIcon[i]);
@@ -239,7 +239,7 @@ DECLARE(Update) // struct Mail *mail
     {
       int i;
 
-      for(i=0; i < MAXBCSTATUSIMG; i++)
+      for(i=0; i < MAX_STATUSIMG; i++)
       {
         if(data->statusIcon[i] == child)
         {

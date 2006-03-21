@@ -2076,7 +2076,7 @@ MakeHook(PO_InitFolderListHook, PO_InitFolderList);
 ///
 /// MA_LV_FDspFunc
 //  Folder listview display hook
-HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
+HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
 {
    if(msg == NULL)
     return 0;
@@ -2094,7 +2094,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
       {
         case FT_GROUP:
         {
-          sprintf(msg->Array[0] = dispfold, "\033o[%d] %s", (isFlagSet(msg->TreeNode->tn_Flags, TNF_OPEN) ? 1 : 0), entry->Name);
+          sprintf(msg->Array[0] = dispfold, "\033o[%d] %s", (isFlagSet(msg->TreeNode->tn_Flags, TNF_OPEN) ? FICON_ID_UNFOLD : FICON_ID_FOLD), entry->Name);
           msg->Preparse[0] = (entry->New+entry->Unread) ? (MUIX_B MUIX_I ) : MUIX_B MUIX_I "\0334";
         }
         break;
@@ -2144,7 +2144,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
             msg->Preparse[0] = MUIX_I;
 
           if(isProtectedFolder(entry))
-            sprintf(dispfold, "%s \033o[%d]", dispfold, MAXBCFOLDERIMG);
+            sprintf(dispfold, "%s \033o[%d]", dispfold, FICON_ID_PROTECTED);
         }
       }
    }

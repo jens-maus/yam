@@ -54,7 +54,7 @@
 // current imagelayout. Please note that as soon as you change something
 // here you also have to alter the IMGLAYOUT_VERSION in the ImageCache.h
 // headerfile.
-static const char *imageFileArray[MAXIMAGES] =
+static const char *imageFileArray[MAX_IMAGES] =
 {
   // Status information images
   "status_unread",   "status_old",    "status_forward",  "status_reply",
@@ -164,7 +164,7 @@ BOOL ImageCacheInit(const char *imagePath)
 
   // now we walk through our imageFileArray and populate our
   // imagecachelist
-  for(i=0; i < MAXIMAGES; i++)
+  for(i=0; i < MAX_IMAGES; i++)
   {
     char filebuf[SIZE_PATHFILE];
 
@@ -349,6 +349,34 @@ void DisposeImage(struct imageCacheNode *node)
     E(DBF_IMAGE, "either node is NULL or openCount was already == 0");
 
   LEAVE();
+}
+
+///
+/// IsImageInCache()
+// returns TRUE if the specified image filename is found to
+// be in the cache - may it be loaded or unloaded.
+BOOL IsImageInCache(char *filename)
+{
+  struct MinNode *curNode;
+  BOOL result = FALSE;
+
+  ENTER();
+
+  // walk through our global imageCacheList and try to find the specified
+  // image file.
+  for(curNode = G->imageCacheList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  {
+    struct imageCacheNode *node = (struct imageCacheNode *)curNode;
+
+    if(node->filename != NULL && stricmp(filename, FilePart(node->filename)) == 0)
+    {
+      result = TRUE;
+      break;
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///

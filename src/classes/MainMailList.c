@@ -30,10 +30,13 @@
 
 #include "MainMailList_cl.h"
 
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
   Object *context_menu;
+  Object *statusImage[MAX_STATUSIMG];
 };
 */
 
@@ -370,6 +373,9 @@ MakeStaticHook(DisplayHook, DisplayFunc);
 OVERLOAD(OM_NEW)
 {
   struct Data *data;
+  int i;
+
+  ENTER();
 
   if(!(obj = DoSuperNew(cl, obj,
 
@@ -388,10 +394,33 @@ OVERLOAD(OM_NEW)
   
     TAG_MORE, inittags(msg))))
   {
+    RETURN(0);
     return 0;
   }
 
   data = (struct Data *)INST_DATA(cl,obj);
+
+  // prepare the mail status images
+  data->statusImage[SICON_ID_UNREAD]   = MakeImageObject("status_unread");
+  data->statusImage[SICON_ID_OLD]      = MakeImageObject("status_old");
+  data->statusImage[SICON_ID_FORWARD]  = MakeImageObject("status_forward");
+  data->statusImage[SICON_ID_REPLY]    = MakeImageObject("status_reply");
+  data->statusImage[SICON_ID_WAITSEND] = MakeImageObject("status_waitsend");
+  data->statusImage[SICON_ID_ERROR]    = MakeImageObject("status_error");
+  data->statusImage[SICON_ID_HOLD]     = MakeImageObject("status_hold");
+  data->statusImage[SICON_ID_SENT]     = MakeImageObject("status_sent");
+  data->statusImage[SICON_ID_NEW]      = MakeImageObject("status_new");
+  data->statusImage[SICON_ID_DELETE]   = MakeImageObject("status_delete");
+  data->statusImage[SICON_ID_DOWNLOAD] = MakeImageObject("status_download");
+  data->statusImage[SICON_ID_GROUP]    = MakeImageObject("status_group");
+  data->statusImage[SICON_ID_URGENT]   = MakeImageObject("status_urgent");
+  data->statusImage[SICON_ID_ATTACH]   = MakeImageObject("status_attach");
+  data->statusImage[SICON_ID_REPORT]   = MakeImageObject("status_report");
+  data->statusImage[SICON_ID_CRYPT]    = MakeImageObject("status_crypt");
+  data->statusImage[SICON_ID_SIGNED]   = MakeImageObject("status_signed");
+  data->statusImage[SICON_ID_MARK]     = MakeImageObject("status_mark");
+  for(i=0; i < MAX_STATUSIMG; i++)
+    DoMethod(obj, MUIM_NList_UseImage, data->statusImage[i], i, MUIF_NONE);
 
   // connect some notifies to the mainMailList group
   DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,  MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_Both);
@@ -399,6 +428,7 @@ OVERLOAD(OM_NEW)
   DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark,  MUIV_TriggerValue);
   DoMethod(obj, MUIM_Notify, MUIA_NList_SortType2,   MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark2, MUIV_TriggerValue);
 
+  RETURN((ULONG)obj);
   return (ULONG)obj;
 }
 
@@ -407,10 +437,21 @@ OVERLOAD(OM_NEW)
 OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
+  int i;
 
   // make sure that our context menus are also disposed
   if(data->context_menu)
     MUI_DisposeObject(data->context_menu);
+
+  for(i=0; i < MAX_STATUSIMG; i++)
+  {
+    DoMethod(obj, MUIM_NList_UseImage, NULL, i, MUIF_NONE);
+    if(data->statusImage[i])
+    {
+      MUI_DisposeObject(data->statusImage[i]);
+      data->statusImage[i] = NULL;
+    }
+  }
 
   return DoSuperMethodA(cl,obj,msg);
 }

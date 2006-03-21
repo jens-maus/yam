@@ -21,21 +21,22 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
- $Id$
+ $Id: AddrBookListtree.c 2046 2006-03-13 12:13:58Z damato $
 
- Superclass:  MUIC_NListtree
- Description: NListtree class of the addressbook
+ Superclass:  MUIC_NList
+ Description: NList class of the transfer window
 
 ***************************************************************************/
 
-#include "AddrBookListtree_cl.h"
+#include "TransferMailList_cl.h"
 
 #include "Debug.h"
 
 /* CLASSDATA
 struct Data
 {
-  Object *listImage;
+  Object *downloadImage;
+  Object *deleteImage;
 };
 */
 
@@ -57,8 +58,11 @@ OVERLOAD(OM_NEW)
   data = (struct Data *)INST_DATA(cl,obj);
 
   // prepare the group image
-  data->listImage = MakeImageObject("status_group");
-  DoMethod(obj, MUIM_NList_UseImage, data->listImage, 0, MUIF_NONE);
+  data->downloadImage = MakeImageObject("status_download");
+  data->deleteImage   = MakeImageObject("status_delete");
+
+  DoMethod(obj, MUIM_NList_UseImage, data->downloadImage, SICON_ID_DOWNLOAD, MUIF_NONE);
+  DoMethod(obj, MUIM_NList_UseImage, data->deleteImage, SICON_ID_DELETE, MUIF_NONE);
 
   RETURN((ULONG)obj);
   return (ULONG)obj;
@@ -70,40 +74,18 @@ OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
 
-  // make sure that we free our group image
-  DoMethod(obj, MUIM_NList_UseImage, NULL, 0, MUIF_NONE);
-  MUI_DisposeObject(data->listImage);
-  data->listImage = NULL;
-
-  return DoSuperMethodA(cl,obj,msg);
-}
-
-///
-/// OVERLOAD(MUIM_DragQuery)
-OVERLOAD(MUIM_DragQuery)
-{
-  struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
-
-  if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
-    return MUIV_DragQuery_Accept;
-
-  return DoSuperMethodA(cl,obj,msg);
-}
-
-///
-/// OVERLOAD(MUIM_DragDrop)
-OVERLOAD(MUIM_DragDrop)
-{
-  struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
-
-  if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
+  if(data->downloadImage)
   {
-    struct Mail **mlist = MA_CreateMarkedList(d->obj, FALSE);
-    if(mlist)
-    {
-      MA_GetAddress(mlist);
-      free(mlist);
-    }
+    DoMethod(obj, MUIM_NList_UseImage, NULL, SICON_ID_DOWNLOAD, MUIF_NONE);
+    MUI_DisposeObject(data->downloadImage);
+    data->downloadImage = NULL;
+  }
+
+  if(data->deleteImage)
+  {
+    DoMethod(obj, MUIM_NList_UseImage, NULL, SICON_ID_DELETE, MUIF_NONE);
+    MUI_DisposeObject(data->deleteImage);
+    data->deleteImage = NULL;
   }
 
   return DoSuperMethodA(cl,obj,msg);

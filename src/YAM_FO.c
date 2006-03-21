@@ -55,6 +55,7 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
+#include "ImageCache.h"
 #include "Debug.h"
 
 /* local protos */
@@ -479,7 +480,7 @@ BOOL FO_LoadTree(char *fname)
    static struct Folder fo;
    BOOL success = FALSE;
    char buffer[SIZE_LARGE];
-   int nested = 0, i = 0, j = MAXBCFOLDERIMG+1;
+   int nested = 0, i = 0, j = MAX_FOLDERIMG+1;
    FILE *fh;
    APTR lv = G->MA->GUI.NL_FOLDERS;
    struct MUI_NListtree_TreeNode *tn_root = MUIV_NListtree_Insert_ListNode_Root;
@@ -568,10 +569,10 @@ BOOL FO_LoadTree(char *fname)
                fo.SortIndex = i++;
 
                // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-               if(G->MA->GUI.IMG_FOLDER[0] != NULL &&
-                  G->MA->GUI.IMG_FOLDER[1] != NULL)
+               if(IsImageInCache("folder_fold") &&
+                  IsImageInCache("folder_unfold"))
                {
-                  SET_FLAG(tnflags, TNF_NOSIGN);
+                 SET_FLAG(tnflags, TNF_NOSIGN);
                }
 
                if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)))
@@ -597,10 +598,10 @@ BOOL FO_LoadTree(char *fname)
                }
 
                // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-               if(G->MA->GUI.IMG_FOLDER[0] != NULL &&
-                  G->MA->GUI.IMG_FOLDER[1] != NULL)
+               if(IsImageInCache("folder_fold") &&
+                  IsImageInCache("folder_unfold"))
                {
-                  SET_FLAG(tnflags, TNF_NOSIGN);
+                 SET_FLAG(tnflags, TNF_NOSIGN);
                }
 
                // now we are going to add this treenode to the list
@@ -652,7 +653,7 @@ BOOL FO_LoadFolderImages(struct Folder *fo)
   ENTER();
 
   // first we make sure that valid data is underway.
-  if(!fo && fo->ImageIndex < MAXBCFOLDERIMG+1)
+  if(!fo && fo->ImageIndex < MAX_FOLDERIMG+1)
   {
     RETURN(FALSE);
     return FALSE;
@@ -998,8 +999,8 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
       long tnflags = (TNF_LIST | TNF_OPEN);
 
       // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-      if(G->MA->GUI.IMG_FOLDER[0] != NULL &&
-         G->MA->GUI.IMG_FOLDER[1] != NULL)
+      if(IsImageInCache("folder_fold") &&
+         IsImageInCache("folder_unfold"))
       {
         SET_FLAG(tnflags, TNF_NOSIGN);
       }

@@ -67,6 +67,7 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/WriteAttachmentList.o \
 	$(OBJDIR)/$(CLASSDIR)/QuickSearchBar.o \
 	$(OBJDIR)/$(CLASSDIR)/ImageArea.o \
+	$(OBJDIR)/$(CLASSDIR)/TransferMailList.o \
 	$(OBJDIR)/$(CLASSDIR)/YAM.o
 
 # and the other object files

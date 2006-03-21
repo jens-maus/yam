@@ -88,6 +88,29 @@ enum FolderMode { FM_NORMAL=0,  // normal folder
 
 #define FolderName(fo) ((fo) ? (fo)->Name : "?")
 
+// for managing the different standard folder icons we manage our IDs and ESC sequences here
+#define FICON_ID_FOLD           0 // folder_fold
+#define FICON_ID_UNFOLD         1 // folder_unfold
+#define FICON_ID_INCOMING       2 // folder_incoming
+#define FICON_ID_INCOMING_NEW   3 // folder_incoming_new
+#define FICON_ID_OUTGOING       4 // folder_outgoing
+#define FICON_ID_OUTGOING_NEW   5 // folder_outgoing_new
+#define FICON_ID_DELETED        6 // folder_deleted
+#define FICON_ID_DELETED_NEW    7 // folder_deleted_new
+#define FICON_ID_SENT           8 // folder_sent
+#define FICON_ID_PROTECTED      9 // status_crypt
+
+#define FICON_FOLD          "\033o[" STR(FICON_ID_FOLD)         "]"
+#define FICON_UNFOLD        "\033o[" STR(FICON_ID_UNFOLD)       "]"
+#define FICON_INCOMING      "\033o[" STR(FICON_ID_INCOMING)     "]"
+#define FICON_INCOMING_NEW  "\033o[" STR(FICON_ID_INCOMING_NEW) "]"
+#define FICON_OUTGOING      "\033o[" STR(FICON_ID_OUTGOING)     "]"
+#define FICON_OUTGOING_NEW  "\033o[" STR(FICON_ID_OUTGOING_NEW) "]"
+#define FICON_DELETED       "\033o[" STR(FICON_ID_DELETED)      "]"
+#define FICON_DELETED_NEW   "\033o[" STR(FICON_ID_DELETED_NEW)  "]"
+#define FICON_SENT          "\033o[" STR(FICON_ID_SENT)         "]"
+#define FICON_PROTECTED     "\033o[" STR(FICON_ID_PROTECTED)    "]"
+
 struct Folder
 {
    Object *        imageObject;

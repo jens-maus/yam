@@ -40,44 +40,6 @@ struct Data
 */
 
 /* Overloaded Methods */
-/// OVERLOAD(OM_DISPOSE)
-OVERLOAD(OM_DISPOSE)
-{
-  ULONG result;
-  int i;
-
-  ENTER();
-
-  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, MAXBCFOLDERIMG, MUIF_NONE);
-
-  for(i=0; i < MAXBCSTATUSIMG; i++)
-  {
-    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_UseImage, NULL, i, MUIF_NONE);
-
-    if(G->MA->GUI.IMG_STAT[i])
-    {
-      MUI_DisposeObject(G->MA->GUI.IMG_STAT[i]);
-      G->MA->GUI.IMG_STAT[i] = NULL;
-    }
-  }
-
-  for(i=0; i < MAXBCFOLDERIMG; i++)
-  {
-    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, i, MUIF_NONE);
-
-    if(G->MA->GUI.IMG_FOLDER[i])
-    {
-      MUI_DisposeObject(G->MA->GUI.IMG_FOLDER[i]);
-      G->MA->GUI.IMG_FOLDER[i] = NULL;
-    }
-  }
-
-  result = DoSuperMethodA(cl, obj, msg);
-
-  RETURN(result);
-  return result;
-}
-///
 /// OVERLOAD(MUIM_Window_Snapshot)
 OVERLOAD(MUIM_Window_Snapshot)
 {

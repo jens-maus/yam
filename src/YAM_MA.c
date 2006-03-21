@@ -3287,44 +3287,6 @@ struct MA_ClassData *MA_New(void)
 
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
-         // define the StatusFlag images that should be used
-         data->GUI.IMG_STAT[SICON_ID_UNREAD]   = MakeImageObject("status_unread");
-         data->GUI.IMG_STAT[SICON_ID_OLD]      = MakeImageObject("status_old");
-         data->GUI.IMG_STAT[SICON_ID_FORWARD]  = MakeImageObject("status_forward");
-         data->GUI.IMG_STAT[SICON_ID_REPLY]    = MakeImageObject("status_reply");
-         data->GUI.IMG_STAT[SICON_ID_WAITSEND] = MakeImageObject("status_waitsend");
-         data->GUI.IMG_STAT[SICON_ID_ERROR]    = MakeImageObject("status_error");
-         data->GUI.IMG_STAT[SICON_ID_HOLD]     = MakeImageObject("status_hold");
-         data->GUI.IMG_STAT[SICON_ID_SENT]     = MakeImageObject("status_sent");
-         data->GUI.IMG_STAT[SICON_ID_NEW]      = MakeImageObject("status_new");
-         data->GUI.IMG_STAT[SICON_ID_DELETE]   = MakeImageObject("status_delete");
-         data->GUI.IMG_STAT[SICON_ID_DOWNLOAD] = MakeImageObject("status_download");
-         data->GUI.IMG_STAT[SICON_ID_GROUP]    = MakeImageObject("status_group");
-         data->GUI.IMG_STAT[SICON_ID_URGENT]   = MakeImageObject("status_urgent");
-         data->GUI.IMG_STAT[SICON_ID_ATTACH]   = MakeImageObject("status_attach");
-         data->GUI.IMG_STAT[SICON_ID_REPORT]   = MakeImageObject("status_report");
-         data->GUI.IMG_STAT[SICON_ID_CRYPT]    = MakeImageObject("status_crypt");
-         data->GUI.IMG_STAT[SICON_ID_SIGNED]   = MakeImageObject("status_signed");
-         data->GUI.IMG_STAT[SICON_ID_MARK]     = MakeImageObject("status_mark");
-         for(i=0; i < MAXBCSTATUSIMG; i++)
-           DoMethod(data->GUI.PG_MAILLIST, MUIM_NList_UseImage, data->GUI.IMG_STAT[i], i, MUIF_NONE);
-
-         // Define the Images the FolderListtree that can be used
-         data->GUI.IMG_FOLDER[0] = MakeImageObject("folder_fold");
-         data->GUI.IMG_FOLDER[1] = MakeImageObject("folder_unfold");
-         data->GUI.IMG_FOLDER[2] = MakeImageObject("folder_incoming");
-         data->GUI.IMG_FOLDER[3] = MakeImageObject("folder_incoming_new");
-         data->GUI.IMG_FOLDER[4] = MakeImageObject("folder_outgoing");
-         data->GUI.IMG_FOLDER[5] = MakeImageObject("folder_outgoing_new");
-         data->GUI.IMG_FOLDER[6] = MakeImageObject("folder_deleted");
-         data->GUI.IMG_FOLDER[7] = MakeImageObject("folder_deleted_new");
-         data->GUI.IMG_FOLDER[8] = MakeImageObject("folder_sent");
-         for(i=0; i < MAXBCFOLDERIMG; i++)
-           DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.IMG_FOLDER[i], i, MUIF_NONE);
-
-         // Now we need the XPK image also in the folder list
-         DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.IMG_STAT[SICON_ID_CRYPT], MAXBCFOLDERIMG, MUIF_NONE);
-
          // set the maillist group as the default object of that window
          set(data->GUI.WI, MUIA_Window_DefaultObject, xget(data->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListObject));
 

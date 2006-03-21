@@ -62,7 +62,7 @@
 #include "YAM_md5.h"
 #include "YAM_mime.h"
 
-#include "classes/ClassesExtra.h"
+#include "classes/Classes.h"
 #include "Debug.h"
 
 struct TransStat
@@ -4645,8 +4645,8 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
     struct Person *pe = &mail->From;
 
     sprintf(array[0] = dispsta, "%3d ", entry->index);
-    if(hasTR_LOAD(entry))   strcat(dispsta, "\033o[10]");
-    if(hasTR_DELETE(entry)) strcat(dispsta, "\033o[9]");
+    if(hasTR_LOAD(entry))   strcat(dispsta, SICON_DOWNLOAD);
+    if(hasTR_DELETE(entry)) strcat(dispsta, SICON_DELETE);
     if(mail->Size >= C->WarnSize<<10) strcat(dispsiz, MUIX_PH);
     FormatSize(mail->Size, array[1] = dispsiz);
     array[2] = dispfro;
@@ -4678,8 +4678,8 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
    struct TR_ClassData *data = calloc(1, sizeof(struct TR_ClassData));
    if (data)
    {
-      APTR bt_all = NULL, bt_none = NULL, bt_loadonly = NULL, bt_loaddel = NULL, bt_delonly = NULL, bt_leave = NULL;
-      APTR gr_sel, gr_proc, gr_win;
+      Object *bt_all = NULL, *bt_none = NULL, *bt_loadonly = NULL, *bt_loaddel = NULL, *bt_delonly = NULL, *bt_leave = NULL;
+      Object *gr_sel, *gr_proc, *gr_win;
       BOOL fullwin = (TRmode == TR_GET || TRmode == TR_IMPORT);
 
       NewList((struct List *)&data->transferList);
@@ -4715,7 +4715,7 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
             MUIA_ShowMe, TRmode==TR_IMPORT || C->PreSelection>=2,
             Child, NListviewObject,
                MUIA_CycleChain,1,
-               MUIA_NListview_NList, data->GUI.LV_MAILS = NListObject,
+               MUIA_NListview_NList, data->GUI.LV_MAILS = TransferMailListObject,
                   MUIA_NList_MultiSelect, MUIV_NList_MultiSelect_Default,
                   MUIA_NList_Format        , "W=-1 BAR,W=-1 MACW=9 P=\33r BAR,MICW=20 BAR,MICW=16 BAR,MICW=9 MACW=15",
                   MUIA_NList_DisplayHook   , &TR_LV_DspFuncHook,
@@ -4805,8 +4805,6 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
             DoMethod(bt_leave,           MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_NONE);
             DoMethod(bt_all,             MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
             DoMethod(bt_none,            MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
-            DoMethod(data->GUI.LV_MAILS, MUIM_NList_UseImage, G->MA->GUI.IMG_STAT[SICON_ID_DELETE], SICON_ID_DELETE, MUIF_NONE);
-            DoMethod(data->GUI.LV_MAILS, MUIM_NList_UseImage, G->MA->GUI.IMG_STAT[SICON_ID_DOWNLOAD], SICON_ID_DOWNLOAD, MUIF_NONE);
          }
          DoMethod(data->GUI.BT_ABORT, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
          MA_ChangeTransfer(FALSE);
