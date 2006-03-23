@@ -214,7 +214,6 @@ static char *GetDateTime(void)
 static char *NewID(BOOL is_msgid)
 {
    static char idbuf[SIZE_MSGID];
-   static int ctr = 0;
 
    if(is_msgid)
    {
@@ -232,9 +231,11 @@ static char *NewID(BOOL is_msgid)
    }
    else
    {
+      static int ctr = 0;
+
       // Generate a unique Boundary ID which conforms to RFC 2045 and includes
       // a "=_" sequence to make it safe for quoted printable encoded parts
-      sprintf(idbuf, "=_BOUNDARY.%lx%lx.%02x", (ULONG)FindTask(NULL), (ULONG)rand(), ++ctr);
+      sprintf(idbuf, "--=_BOUNDARY.%lx%lx.%02x", (ULONG)FindTask(NULL), (ULONG)rand(), ++ctr);
    }
 
    return idbuf;

@@ -6,6 +6,11 @@ $Id$
 
 2006-03-23  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c: slightly altered the default pattern for generating the
+    MIME boundary ID. By adding 2 additional "-" chars to the front the
+    probability of malforming/misinterpreting the boundary border should be
+    limited. In fact, using this kind of pattern should be more 'standard'
+    like what we generated before.
   * YAM_MI.c: fixed a bug in the RFC 2047 encoding routines where we did
     issue a CRLF sequence in case our encoded string gets passes the maximum
     allowed length defined in the RFC2047 standard. Please note that even if
