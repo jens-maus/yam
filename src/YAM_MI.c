@@ -1878,8 +1878,10 @@ int rfc2047_encode_file(FILE *fh, const char *str)
             fwrite(encode_buf, eb_wstart-encode_buf-1, 1, fh);
 
             // also put out a CRLF SPACE to signal a new line
-            // starts
-            fwrite("\r\n ", 3*sizeof(char), 1, fh);
+            // starts - in fact we use just a "LF " sequence here
+            // or we risk the header to get malformed for clients
+            // can't dealing with them in headers
+            fwrite("\n ", 2*sizeof(char), 1, fh);
 
             // then move the other stuff to the start
             memmove(encode_buf, eb_wstart, ebp-eb_wstart);
@@ -1917,7 +1919,10 @@ int rfc2047_encode_file(FILE *fh, const char *str)
               fwrite(encode_buf, split_pos-encode_buf, 1, fh);
 
               // now add "?=\r\n " so that the next line is prepared
-              fwrite("?=\r\n ", 5*sizeof(char), 1, fh);
+              // in fact we use just a "LF " sequence here
+              // or we risk the header to get malformed for clients
+              // can't dealing with them in headers
+              fwrite("?=\n ", 4*sizeof(char), 1, fh);
 
               if(ebp-split_pos > 3)
               {
@@ -2065,8 +2070,10 @@ int rfc2047_encode_file(FILE *fh, const char *str)
               fwrite(encode_buf, eb_wstart-encode_buf-1, 1, fh);
 
               // also put out a CRLF SPACE to signal a new line
-              // starts
-              fwrite("\r\n ", 3*sizeof(char), 1, fh);
+              // starts - in fact we use just a "LF " sequence here
+              // or we risk the header to get malformed for clients
+              // can't dealing with them in headers
+              fwrite("\n ", 2*sizeof(char), 1, fh);
 
               // then move the other stuff to the start
               memmove(encode_buf, eb_wstart, ebp-eb_wstart);

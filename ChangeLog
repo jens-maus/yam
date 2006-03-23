@@ -4,6 +4,22 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-03-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MI.c: fixed a bug in the RFC 2047 encoding routines where we did
+    issue a CRLF sequence in case our encoded string gets passes the maximum
+    allowed length defined in the RFC2047 standard. Please note that even if
+    the standard clearly defines "CRLF<SPACE>" as the proper separation char
+    sequence, using just "LF<SPACE>" is definitly better as otherwise clients
+    may get confused and think that this sequence is the sign of a starting
+    body text, resulting in a malformed mail display. So using just an LF
+    seems to be definitly more appropriate here and should fix the reported
+    problems where mails from YAM show up malformed on Outlook&Co.
+  * locale/italiano.ct: update italian catalog translation kindly provided by
+    Luca Longone.
+  * locale/francais.ct: updated french catalog translation kindly provided by
+    Alexandre Balaban.
+
 2006-03-21  Jens Langner <Jens.Langner@light-speed.de>
 
   * classes/AddrBookListtree.c, classes/StatusIconGroup.c, classes/InfoBar.c,
