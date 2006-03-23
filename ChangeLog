@@ -6,6 +6,9 @@ $Id$
 
 2006-03-23  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MI.c: modified the base64encode_file() routine to make sure it
+    doesn't add a redundant newline character to the end of the base64
+    encoded text making the MIME encoding a bit more slim.
   * YAM_WR.c: slightly altered the default pattern for generating the
     MIME boundary ID. By adding 2 additional "-" chars to the front the
     probability of malforming/misinterpreting the boundary border should be

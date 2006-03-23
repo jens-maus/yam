@@ -516,7 +516,7 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
         // going to write in advance next time.
         missing_chars = B64_LINELEN-todo;
       }
-      else if(fputc('\n', out) == EOF)
+      else if((towrite > 0 || eof_reached == FALSE) && fputc('\n', out) == EOF)
       {
         E(DBF_MIME, "error on writing newline");
 
