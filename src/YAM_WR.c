@@ -973,7 +973,7 @@ static const char *MIMEwarn =
   "  Unix/MacOS/Windows: http://www.mozilla.com/thunderbird/\n"
   "\n"
   "General information about MIME can be found at:\n"
-  "http://en.wikipedia.org/wiki/MIME\n\n";
+  "http://en.wikipedia.org/wiki/MIME\n";
 static const char *PGPwarn  =
   "The following body part contains a PGP encrypted message. Either\n"
   "your mail reader doesn't support MIME/PGP as specified in RFC 2015,\n"
