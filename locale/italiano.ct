@@ -1,12 +1,11 @@
-;
-; YAM 2.5 italian catalog translation
-;
-; $Id$
-;
-## version $VER: YAM.catalog 5.7 (05.03.2006)
+## version $VER: YAM.catalog 5.8 (23.03.2006)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone
+;
+; italiano.ct - YAM 2.5 catalog translation file
+; $Id:$
+;
 ;
 MSG_Folder
 Cartella
@@ -5357,19 +5356,19 @@ MSG_CO_READ_TITLE
 Impostazioni Lettura Posta
 ;
 MSG_CO_READ_SUMMARY
-Configura lettura della posta...
+Configura la lettura della posta...
 ;
 MSG_CO_WRITE_TITLE
 Impostazioni Scrittura Posta
 ;
 MSG_CO_WRITE_SUMMARY
-Configura scrittura della posta...
+Configura la scrittura della posta...
 ;
 MSG_CO_REPLY_TITLE
-Impostazioni Risposta Posta
+Impostazioni Risposta alla Posta
 ;
 MSG_CO_REPLY_SUMMARY
-Configura risposta posta...
+Configura la risposta alla posta...
 ;
 MSG_CO_SIGNATURE_TITLE
 Impostazioni Firma della Posta
@@ -5381,13 +5380,13 @@ MSG_CO_LISTS_TITLE
 Impostazioni Liste Posta
 ;
 MSG_CO_LISTS_SUMMARY
-Cambia l'aspetto delle liste di posta...
+Cambia l'aspetto delle liste della posta...
 ;
 MSG_CO_SECURITY_TITLE
 Impostazioni Sicurezza
 ;
 MSG_CO_SECURITY_SUMMARY
-Configura impostazioni riguardanti la sicurezza...
+Configura le impostazioni riguardanti la sicurezza...
 ;
 MSG_CO_STARTUP_TITLE
 Impostazioni Azioni Lancio/Uscita
@@ -5399,7 +5398,7 @@ MSG_CO_MIME_TITLE
 Impostazione Datatype MIME
 ;
 MSG_CO_MIME_SUMMARY
-Imposta come i tipi MIME possono essere gestiti...
+Imposta come i tipi MIME devono essere gestiti...
 ;
 MSG_CO_ABOOK_TITLE
 Impostazioni Rubrica
@@ -5418,5 +5417,32 @@ Varie
 ;
 MSG_CO_MIXED_SUMMARY
 Configura varie impostazioni...
+;
+MSG_CO_UPDATE_TITLE
+Aggiornamenti Software
+;
+MSG_CO_UPDATE_SUMMARY
+Controlla nuovi aggiornamenti di YAM...
+;
+MSG_CO_CrdUpdate
+Aggiorna
+;
+MSG_CO_AMISSLWARN_TITLE
+Avviso disponibilità di AmiSSL
+;
+MSG_CO_AMISSLWARN
+YAM non ha trovato disponibile AmiSSL per le sue\n\
+funzionalità interne SSLv3/TLSv1. Quindi tutte le\n\
+connessioni sicure sono state disabilitate finché AmiSSL\n\
+non verrà trovato e installato correttamente.\n\
+\n\
+Prego assicurati di aver installato correttamente almeno\n\
+AmiSSL v%lu.%lu sul tuo sistema e rilancia YAM.
+;
+MSG_CO_AMISSLWARN_BT
+*_Esci|Ignora _sempre|Ignora
+;
+MSG_BUSY_OPENINGCONFIG
+Impostazioni in apertura...
 ;
 
