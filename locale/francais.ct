@@ -1,10 +1,9 @@
-## version $VER: YAM.catalog 5.101 (01.02.2006) ATO-Fr
+## version $VER: YAM.catalog 5.102 (23.03.2006)
 ## language français
 ## codeset 0
 ;
 ; francais.ct - YAM 2.5 catalog translation file
 ; $Id$
-; based on v1.126 of YAM.cd
 ;
 ; General
 ;
@@ -7579,7 +7578,7 @@ Sujet Ou Expéditeur
 ;
 MSG_QUICKSEARCH_SO_TOORCC
 Destinataire (A Ou Cc)
-; Recipient (To Or Cc)
+; Recipient (To Or CC)
 ;
 MSG_QUICKSEARCH_SO_INMSG
 Trouver dans le message
@@ -7690,7 +7689,7 @@ Cela peut être du à un encodage incorrect  par le client de mail émetteur ou à u
 ; This may be caused by an incorrect encoding done by the \
 ; sending mail client or because the base64 part has been malformed \
 ; during transmission.
-;
+; PARTNR, MSGFILE
 MSG_ER_B64DECTRUNCTXT
 Du texte lisible de la pièce jointe %ld du message '%s'  n'a pas pu être décodé en base64 et peut être affiché de manière incorrecte ou même absent.\n\n\
 Cela peut être du à un encodage incorrect  par le client de mail émetteur ou à une altération de la partie base64 lors de la transmission.
@@ -7700,10 +7699,10 @@ Cela peut être du à un encodage incorrect  par le client de mail émetteur ou à u
 ; This may be caused by an incorrect encoding done by the \
 ; sending mail client or because the base64 part has been malformed \
 ; during transmission.
-;
+; PARTNR, MSGFILE
 MSG_MA_MessageImport
 Importation des messages depuis fichier MBOX, BX ou texte...
-;Import messages from MBOX, DBX or plain mail files...
+; Import messages from MBOX, DBX or plain mail files...
 ;
 MSG_ER_MESSAGEIMPORT
 Une erreur est survenue lors de l'import des messages depuis le fichier '%s'.\n\n\
@@ -7725,4 +7724,251 @@ Exportation des messages vers un fichier de messages compatible MBOX...
 MSG_YAMINFO
 Logiciel de courrier électronique en Open Source pour Amiga\n
 ; Open Source E-mail package for the Amiga
+;
+MSG_CO_SYSTEMSETTINGS
+Configuration système
+; System Settings
+;
+MSG_CO_DEFAULTCHARSET
+Jeu de caractères par défaut
+; Default Charset
+;
+MSG_CO_CHARSETUNKNOWNWARN
+Le jeu de caractères configuré dans YAM est '%s' qui n'est\n\
+pas supporté par la version installée de codesets.library.\n\
+\n\
+Comment voulez-vous procéder ?
+; The charset configured for YAM is '%s' but isn't\n\
+; supported by the installed codesets.library version.\n\
+; \n\
+; How do you want to proceed?
+; LOCALCHARSET
+;
+MSG_CO_CHARSETUNKNOWNWARN_BT
+*_Changer pour le défaut|_Ignorer
+; *_Change to default|_Ignore
+;
+MSG_ER_LIB
+Impossible d'ouvrir '%s' version v%lu.%lu requise.\n\
+\n\
+Veuillez vérifier que vous possédez au moins cette\n\
+version installée dans votre chemin de recherche.
+; Can't open required '%s', version v%lu.%lu\n\
+; \n\
+; Please make sure you have at least this minimum\n\
+; version installed in your library path.
+; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
+;
+MSG_ER_LIB_URL
+Impossible d'ouvrir '%s' version v%lu.%lu requise.\n\
+\n\
+Veuillez consulter '%s'\n\
+pour télécharger la dernière version et vous assurer\n\
+qu'elle est correctement installée dans votre chemin\n\
+de recherche.
+; Can't open required '%s', version v%lu.%lu\n\
+; \n\
+; Please consult '%s'\n\
+; for downloading the very latest version and make\n\
+; sure you have it properly installed in your library path.
+; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION, LIBRARY_URL
+;
+MSG_ER_NO_MCC
+Impossible d'ouvrir la classe MUI requise '%s' v%lu.%lu.\n\
+\n\
+Veuillez consulter '%s'\n\
+et vous assurer que vous avez la dernière version installée.
+; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
+; \n\
+; Please consult '%s'\n\
+; and make sure you have the latest version installed.
+; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
+;
+MSG_ER_MCC_OLD
+Impossible d'ouvrir la classe MUI requise '%s' v%lu.%lu.\n\
+\n\
+La version actuellement installée est v%lu.%lu, veuillez\n\
+vous mettre à jour en téléchargeant la dernière version\n\
+depuis '%s'.
+; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
+; \n\
+; Currently installed is v%lu.%lu, please upgrade by downloading\n\
+; the latest version from '%s'.
+; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
+;
+MSG_ER_MCC_IN_USE
+Impossible d'ouvrir la classe MUI requise '%s' v%lu.%lu.\n\
+La version %lu.%lu est actuellement utilisée par d'autres applications.\n\
+\n\
+Veuillez consulter '%s'.\n\
+Lorsque vous aurez installé la version requise, fermez tous les\n\
+programmes MUI, puis vous assurer que l'ancienne classe soit\n\
+déchargée de la mémoire avant de réessayer.
+; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
+; %lu.%lu is currently in use by other applications.\n\
+; \n\
+; Please consult '%s'.\n\
+; Once you have installed the required version,\n\
+; close all MUI programs, make sure the old class\n\
+; is flushed from memory and try again.
+; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
+;
+MSG_CO_FIRSTSTEPS_TITLE
+Réglages de base
+; First Steps Settings
+;
+MSG_CO_FIRSTSTEPS_SUMMARY
+Pour configurer rapidement le strict minimum...
+; For quickly configurating the bare minimum...
+;
+MSG_CO_TCPIP_TITLE
+Réglages TCP/IP
+; TCP/IP Settings
+;
+MSG_CO_TCPIP_SUMMARY
+Pour configurer vos serveurs SMTP et POP3...
+; For configuring your SMTP and POP3 server...
+;
+MSG_CO_NEWMAIL_TITLE
+Réglages nouveaux courriers
+; New Mail Settings
+;
+MSG_CO_NEWMAIL_SUMMARY
+Comment agir à la réception de nouveaux courriers...
+; How to react upon receiving new mails...
+;
+MSG_CO_FILTER_TITLE
+Réglages des filtres
+; Mail Filter Settings
+;
+MSG_CO_FILTER_SUMMARY
+Pour définir vos propres filtres de courrier...
+; Define your own mail filters...
+;
+MSG_CO_READ_TITLE
+Réglages de lecture de courrier
+; Mail Reading Settings
+;
+MSG_CO_READ_SUMMARY
+Pour configurer la manière de lire vos courriers...
+; Configure mail reading...
+;
+MSG_CO_WRITE_TITLE
+Réglages de rédaction de courrier
+; Mail Writing Settings
+;
+MSG_CO_WRITE_SUMMARY
+Pour configurer la manière de rédiger vos courriers...
+; Configure mail writing...
+;
+MSG_CO_REPLY_TITLE
+Réglages de réponse au courrier
+; Mail Replying Settings
+;
+MSG_CO_REPLY_SUMMARY
+Pour configurer la manière de répondre à vous courriers...
+; Configure mail replying...
+;
+MSG_CO_SIGNATURE_TITLE
+Réglages de signature de courrier
+; Mail Signature Settings
+;
+MSG_CO_SIGNATURE_SUMMARY
+Pour configurer les signatures de vos courriers...
+; Configure your signatures...
+;
+MSG_CO_LISTS_TITLE
+Réglages des listes de diffusion
+; Mail Lists Settings
+;
+MSG_CO_LISTS_SUMMARY
+Changez l'apparence des listes de diffusion...
+; Change the mail lists appearance...
+;
+MSG_CO_SECURITY_TITLE
+Réglages de sécurité
+; Security Settings
+;
+MSG_CO_SECURITY_SUMMARY
+Pour configurer toutes les options de sécurité...
+; Configure security relevant settings...
+;
+MSG_CO_STARTUP_TITLE
+Réglages des actions de démarrage/arrêt
+; Startup/Quit Actions Setup
+;
+MSG_CO_STARTUP_SUMMARY
+Opérations de maintenance lors du démarrage et l'arrêt de YAM...
+; Maintenance processing during startup and shutdown of YAM...
+;
+MSG_CO_MIME_TITLE
+Réglages des types MIME
+; MIME Datatype Setup
+;
+MSG_CO_MIME_SUMMARY
+Pour configurer la manière de traiter les types MIME...
+; Setup how MIME types should be handled...
+;
+MSG_CO_ABOOK_TITLE
+Réglages du carnet d'adresses
+; Adressbook Settings
+;
+MSG_CO_ABOOK_SUMMARY
+Pour configurer les options relatives au carnet d'adresses...
+; Handle additional adressbook related option...
+;
+MSG_CO_SCRIPTS_TITLE
+Réglages des scripts utilisateur
+; User-definable Scripts
+;
+MSG_CO_SCRIPTS_SUMMARY
+Pour configurer vos scripts utilitaires...
+; Configure your helper scripts...
+;
+MSG_CO_MIXED_TITLE
+Réglages divers
+; Miscellaneous
+;
+MSG_CO_MIXED_SUMMARY
+Pour configurer diverses options...
+; Configure various mixed settings...
+;
+MSG_CO_UPDATE_TITLE
+Réglages des mises à jour
+; Software Update
+;
+MSG_CO_UPDATE_SUMMARY
+Vérification des mises à jour de YAM...
+; Check for updates of YAM...
+;
+MSG_CO_CrdUpdate
+Mises à jour
+; Update
+;
+MSG_CO_AMISSLWARN_TITLE
+Avertissement de disponibilité AmiSSL
+; AmiSSL availibility warning
+;
+MSG_CO_AMISSLWARN
+YAM a détecté qu'AmiSSL est indisponible\n\
+pour ses fonctions internes SSLv3/TLSv1.\n\
+Aussi toute connexion sécurisée sera désactivée\n\
+jusqu'à ce qu'AmiSSL soit installé correctement\n\
+et détecté  comme tel.\n\
+\n\
+Veuillez vous assurer que vous avez installé\n\
+correctement au moins AmiSSL v%lu.%lu sur\n\
+votre système et redémarrez YAM.
+; YAM has found AmiSSL to be unavailable for its\n\
+; internal SSLv3/TLSv1 functionality. Therefore all\n\
+; secure connections were disabled until AmiSSL is\n\
+; found to be installed correctly.\n\
+; \n\
+; Please make sure you correctly installed at least\n\
+; AmiSSL v%lu.%lu on your system and restart YAM.
+; AMISSL_VERSION, AMISSL_REVISION
+;
+MSG_CO_AMISSLWARN_BT
+*_Quitter|_Toujours ignorer|_Ignorer
+; *_Exit|Ignore _always|Ignore
 ;
