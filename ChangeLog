@@ -6,6 +6,8 @@ $Id$
 
 2006-03-26  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MI.c: minor cosmetic source change more properly dealing with
+    using the output buffers.
   * YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM.c, locale/YAM.c: a manual override
     of the timezone and DST settings is now possible even if locale library
     and/or an AutoDST tool was found active. That way a user might perfectly

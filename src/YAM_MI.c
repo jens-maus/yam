@@ -1097,7 +1097,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
       // out the data to our out stream.
       if(optr-outbuffer >= QPDEC_BUF)
       {
-        unsigned char *dptr;
+        unsigned char *dptr = outbuffer;
         size_t todo = optr-outbuffer;
 
         // if the caller supplied a source codeset, we have to
@@ -1108,7 +1108,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
           ULONG strLen = 0;
           STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
                                           CSA_DestCodeset,   G->localCharset,
-                                          CSA_Source,        outbuffer,
+                                          CSA_Source,        dptr,
                                           CSA_SourceLen,     todo,
                                           CSA_DestLenPtr,    &strLen,
                                           TAG_DONE);
@@ -1122,14 +1122,8 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
             todo = strLen;
           }
           else
-          {
             W(DBF_MIME, "error while trying to convert qpdecoded string to local charset!");
-
-            dptr = outbuffer;
-          }
         }
-        else
-          dptr = outbuffer;
 
         // now we do a binary write of the data
         if(fwrite(dptr, 1, todo, out) != todo)
@@ -1161,7 +1155,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
   // hasn't been written out yet
   if(optr-outbuffer > 0)
   {
-    unsigned char *dptr;
+    unsigned char *dptr = outbuffer;
     size_t todo = optr-outbuffer;
 
     // if the caller supplied a source codeset, we have to
@@ -1172,7 +1166,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
       ULONG strLen = 0;
       STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
                                       CSA_DestCodeset,   G->localCharset,
-                                      CSA_Source,        outbuffer,
+                                      CSA_Source,        dptr,
                                       CSA_SourceLen,     todo,
                                       CSA_DestLenPtr,    &strLen,
                                       TAG_DONE);
@@ -1186,14 +1180,8 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
         todo = strLen;
       }
       else
-      {
         W(DBF_MIME, "error while trying to convert qpdecoded string to local charset!");
-
-        dptr = outbuffer;
-      }
     }
-    else
-      dptr = outbuffer;
 
     // now we do a binary write of the data
     if(fwrite(dptr, 1, todo, out) != todo)
@@ -1605,7 +1593,7 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
         // out the data to our out stream.
         if(optr-outbuffer >= UUDEC_OBUF)
         {
-          unsigned char *dptr;
+          unsigned char *dptr = outbuffer;
           size_t todo = optr-outbuffer;
 
           // if the caller supplied a source codeset, we have to
@@ -1616,7 +1604,7 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
             ULONG strLen = 0;
             STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
                                             CSA_DestCodeset,   G->localCharset,
-                                            CSA_Source,        outbuffer,
+                                            CSA_Source,        dptr,
                                             CSA_SourceLen,     todo,
                                             CSA_DestLenPtr,    &strLen,
                                             TAG_DONE);
@@ -1630,14 +1618,8 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
               todo = strLen;
             }
             else
-            {
               W(DBF_MIME, "error while trying to convert uudecoded string to local charset!");
-
-              dptr = outbuffer;
-            }
           }
-          else
-            dptr = outbuffer;
 
           // now we do a binary write of the data
           if(fwrite(dptr, 1, todo, out) != todo)
@@ -1727,7 +1709,7 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
   // hasn't been written out yet
   if(optr-outbuffer > 0)
   {
-    unsigned char *dptr;
+    unsigned char *dptr = outbuffer;
     size_t todo = optr-outbuffer;
 
     // if the caller supplied a source codeset, we have to
@@ -1738,7 +1720,7 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
       ULONG strLen = 0;
       STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
                                       CSA_DestCodeset,   G->localCharset,
-                                      CSA_Source,        outbuffer,
+                                      CSA_Source,        dptr,
                                       CSA_SourceLen,     todo,
                                       CSA_DestLenPtr,    &strLen,
                                       TAG_DONE);
@@ -1752,14 +1734,8 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
         todo = strLen;
       }
       else
-      {
         W(DBF_MIME, "error while trying to convert uudecoded string to local charset!");
-
-        dptr = outbuffer;
-      }
     }
-    else
-      dptr = outbuffer;
 
     // now we do a binary write of the data
     if(fwrite(dptr, 1, todo, out) != todo)
