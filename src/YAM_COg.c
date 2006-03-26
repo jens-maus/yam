@@ -644,8 +644,7 @@ Object *CO_Page0(struct CO_ClassData *data)
       SetHelp(data->GUI.ST_PASSWD0   ,MSG_HELP_CO_ST_PASSWD    );
       SetHelp(data->GUI.CY_TZONE     ,MSG_HELP_CO_CY_TZONE     );
       SetHelp(data->GUI.CH_DLSAVING  ,MSG_HELP_CO_CH_DLSAVING  );
-      set(data->GUI.CH_DLSAVING, MUIA_Disabled, G->CO_DST > 0);
-      if (G->Locale) set(data->GUI.CY_TZONE, MUIA_Disabled, TRUE);
+
       DoMethod(data->GUI.ST_POPHOST0 ,MUIM_Notify,MUIA_String_Contents, MUIV_EveryTime,MUIV_Notify_Application ,3,MUIM_CallHook,&CO_GetDefaultPOPHook,0);
       DoMethod(data->GUI.ST_PASSWD0  ,MUIM_Notify,MUIA_String_Contents, MUIV_EveryTime,MUIV_Notify_Application ,3,MUIM_CallHook,&CO_GetDefaultPOPHook,0);
    }

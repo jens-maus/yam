@@ -600,6 +600,111 @@ static void ADSTnotify_stop(void)
 }
 
 ///
+/// GetDST
+//  Checks if daylight saving time is active
+//  return 0 if no DST system was found
+//         1 if no DST is set
+//         2 if DST is set (summertime)
+static int GetDST(BOOL update)
+{
+  char buffer[50];
+  char *tmp;
+  int result = 0;
+
+  ENTER();
+
+  // prepare the NotifyRequest structure
+  if(update == FALSE)
+    memset(&ADSTdata, 0, sizeof(struct ADST_Data));
+
+  // lets check the DaylightSaving stuff now
+  // we check in the following order:
+  // 1. SetDST (ENV:TZONE)
+  // 2. FACTS (ENV:FACTS/DST)
+  // 3. SummertimeGuard (ENV:SUMMERTIME)
+  // 4. ixemul (ENV:IXGMTOFFSET)
+
+  // SetDST saves the DST settings in the TZONE env-variable which
+  // is a bit more complex than the others, so we need to do some advance parsing
+  if((!update || ADSTdata.method == ADST_SETDST)
+     && GetVar((STRPTR)&ADSTfile[ADST_SETDST][4], buffer, 50, 0) >= 3)
+  {
+    int i;
+
+    for(i=0; buffer[i]; i++)
+    {
+      if(result == 0)
+      {
+        // if we found the time difference in the TZONE variable we at least found a correct TZONE file
+        if(buffer[i] >= '0' && buffer[i] <= '9')
+          result = 1;
+      }
+      else if(isalpha(buffer[i]))
+        result = 2; // if it is followed by a alphabetic sign we are in DST mode
+    }
+
+    D(DBF_STARTUP, "Found '%s' (SetDST) with DST flag: %d", ADSTfile[ADST_SETDST], result);
+
+    ADSTdata.method = ADST_SETDST;
+  }
+
+  // FACTS saves the DST information in a ENV:FACTS/DST env variable which will be
+  // Hex 00 or 01 to indicate the DST value.
+  if((!update || ADSTdata.method == ADST_FACTS) && result == 0
+    && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], buffer, 50, GVF_BINARY_VAR) > 0)
+  {
+    ADSTdata.method = ADST_FACTS;
+
+    if(buffer[0] == 0x01)
+      result = 2;
+    else if(buffer[0] == 0x00)
+      result = 1;
+
+    D(DBF_STARTUP, "Found '%s' (FACTS) with DST flag: %d", ADSTfile[ADST_FACTS], result);
+  }
+
+  // SummerTimeGuard sets the last string to "YES" if DST is actually active
+  if((!update || ADSTdata.method == ADST_SGUARD) && result == 0
+     && GetVar((STRPTR)&ADSTfile[ADST_SGUARD][4], buffer, 50, 0) > 3 && (tmp = strrchr(buffer, ':')))
+  {
+    ADSTdata.method = ADST_SGUARD;
+
+    if(tmp[1] == 'Y')
+      result = 2;
+    else if(tmp[1] == 'N')
+      result = 1;
+
+    D(DBF_STARTUP, "Found '%s' (SGUARD) with DST flag: %d", ADSTfile[ADST_SGUARD], result);
+  }
+
+  // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
+  // DST is actually active.
+  if((!update || ADSTdata.method == ADST_IXGMT) && result == 0
+    && GetVar((STRPTR)&ADSTfile[ADST_IXGMT][4], buffer, 50, GVF_BINARY_VAR) >= 4)
+  {
+    ADSTdata.method = ADST_IXGMT;
+
+    if(buffer[4] == 0x01)
+      result = 2;
+    else if(buffer[4] == 0x00)
+      result = 1;
+
+    D(DBF_STARTUP, "Found '%s' (IXGMT) with DST flag: %d", ADSTfile[ADST_IXGMT], result);
+  }
+
+  if(!update && result == 0)
+  {
+    ADSTdata.method = ADST_NONE;
+
+    W(DBF_STARTUP, "Didn't find any AutoDST facility active!");
+  }
+
+  // No correctly installed AutoDST tool was found
+  // so lets return zero.
+  RETURN(result);
+  return result;
+}
+///
 
 /*** XPK Packer initialization routines ***/
 /// InitXPKPackerList()
@@ -1856,85 +1961,6 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
   }
 
   LEAVE();
-}
-///
-/// GetDST
-//  Checks if daylight saving time is active
-//  return 0 if no DST system was found - 1 if no DST is set and 3 if set
-static int GetDST(BOOL update)
-{
-   char buffer[50];
-   char *tmp;
-   int result = 0;
-
-   // prepare the NotifyRequest structure
-   if(!update) memset(&ADSTdata, 0, sizeof(struct ADST_Data));
-
-   /* lets check the DaylightSaving stuff now
-    * we check in the following order:
-    * 1. SetDST (ENV:TZONE)
-    * 2. FACTS (ENV:FACTS/DST)
-    * 3. SummertimeGuard (ENV:SUMMERTIME)
-    * 4. ixemul (ENV:IXGMTOFFSET)
-    */
-
-   // SetDST saves the DST settings in the TZONE env-variable which
-   // is a bit more complex than the others, so we need to do some advance parsing
-   if((!update || ADSTdata.method == ADST_SETDST)
-      && GetVar((STRPTR)&ADSTfile[ADST_SETDST][4], buffer, 50, 0) >= 3)
-   {
-      int i;
-
-      for(i=0; buffer[i]; i++)
-      {
-        if(result == 0)
-        {
-          // if we found the time difference in the TZONE variable we at least found a correct TZONE file
-          if(buffer[i] >= '0' && buffer[i] <= '9') result = 1;
-        }
-        else if(isalpha(buffer[i])) result = 2; // if it is followed by a alphabetic sign we are in DST mode
-      }
-
-      ADSTdata.method = ADST_SETDST;
-   }
-
-   // FACTS saves the DST information in a ENV:FACTS/DST env variable which will be
-   // Hex 00 or 01 to indicate the DST value.
-   if((!update || ADSTdata.method == ADST_FACTS) && result == 0
-      && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], buffer, 50, GVF_BINARY_VAR) > 0)
-   {
-      ADSTdata.method = ADST_FACTS;
-
-      if(buffer[0] == 0x01)       return 2;
-      else if(buffer[0] == 0x00)  return 1;
-   }
-
-   // SummerTimeGuard sets the last string to "YES" if DST is actually active
-   if((!update || ADSTdata.method == ADST_SGUARD) && result == 0
-      && GetVar((STRPTR)&ADSTfile[ADST_SGUARD][4], buffer, 50, 0) > 3 && (tmp = strrchr(buffer, ':')))
-   {
-      ADSTdata.method = ADST_SGUARD;
-
-      if(tmp[1] == 'Y')       return 2;
-      else if(tmp[1] == 'N')  return 1;
-   }
-
-   // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
-   // DST is actually active.
-   if((!update || ADSTdata.method == ADST_IXGMT) && result == 0
-      && GetVar((STRPTR)&ADSTfile[ADST_IXGMT][4], buffer, 50, GVF_BINARY_VAR) >= 4)
-   {
-      ADSTdata.method = ADST_IXGMT;
-
-      if(buffer[4] == 0x01)       return 2;
-      else if(buffer[4] == 0x00)  return 1;
-   }
-
-   if(!update && result == 0) ADSTdata.method = ADST_NONE;
-
-   // No correctly installed AutoDST tool was found
-   // so lets return zero.
-   return result;
 }
 ///
 

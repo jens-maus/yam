@@ -5744,3 +5744,28 @@ MSG_CO_AMISSLWARN_BT (1654//)
 MSG_BUSY_OPENINGCONFIG (1655//)
 Opening configuration...
 ;
+MSG_CO_TIMEZONEWARN_TITLE (1656//)
+Timezone setting warning
+;
+MSG_CO_TIMEZONEWARN (1657//)
+The timezone setting in YAM doesn't match\n\
+the system's default timezone.\n\
+\n\
+How do you want to proceed?
+;
+MSG_CO_TIMEZONEWARN_BT (1658//)
+*_Change|Ignore _always|_Ignore
+;
+MSG_CO_AUTODSTWARN_TITLE (1659//)
+AutoDST warning
+;
+MSG_CO_AUTODSTWARN (1660//)
+YAM has found an AutoDST tool active and\n\
+it reports a different Daylight Saving setting\n\
+than currently set in your YAM configuration.\n\
+\n\
+How do you want to proceed?
+;
+MSG_CO_AUTODSTWARN_BT (1661//)
+*_Change|Ignore _always|_Ignore
+;

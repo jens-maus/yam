@@ -4,6 +4,18 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-03-26  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM.c, locale/YAM.c: a manual override
+    of the timezone and DST settings is now possible even if locale library
+    and/or an AutoDST tool was found active. That way a user might perfectly
+    override the autosettings of YAM. However, in case YAM finds a difference
+    in the YAM config setup compared to the system's default settings it will
+    popup a warning requester to the user, reminding him of the difference,
+    asking how to proceed. This should make the timezone/DST setup a bit more
+    intuitive than just disabling the cycle/checkbox, especially in case a
+    user wants to override the system's defaults.
+
 2006-03-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MI.c: modified the base64encode_file() routine to make sure it

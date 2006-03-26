@@ -422,6 +422,8 @@ struct Config
    BOOL  WBAppIcon;
    BOOL  DockyIcon;
    BOOL  AmiSSLCheck;
+   BOOL  TimeZoneCheck;
+   BOOL  AutoDSTCheck;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color1stLevel;

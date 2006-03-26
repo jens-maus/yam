@@ -1101,6 +1101,8 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->LocalCharset, "ISO-8859-1");
       co->SysCharsetCheck = TRUE;
       co->AmiSSLCheck = TRUE;
+      co->TimeZoneCheck = TRUE;
+      co->AutoDSTCheck = TRUE;
       co->PrintMethod = PRINTMETHOD_RAW;
       co->StackSize = 40000;
       co->AutoColumnResize = TRUE;
@@ -1187,11 +1189,71 @@ void CO_Validate(struct Config *co, BOOL update)
       sprintf(co->P3[i]->Account, "%s@%s", co->P3[i]->User, co->P3[i]->Server);
    }
 
-   // If Locale is present, overwrite the timezone from the config
-   if(G->Locale) co->TimeZone = -(G->Locale->loc_GMTOffset);
+   // now we check whether our timezone setting is coherent to an
+   // eventually set locale setting.
+   if(co->TimeZoneCheck)
+   {
+     if(G->Locale && co->TimeZone != -(G->Locale->loc_GMTOffset))
+     {
+        int res = MUI_Request(G->App, NULL, 0,
+                              GetStr(MSG_CO_TIMEZONEWARN_TITLE),
+                              GetStr(MSG_CO_TIMEZONEWARN_BT),
+                              GetStr(MSG_CO_TIMEZONEWARN));
 
-   // lets check the DaylightSaving stuff now
-   if(G->CO_DST) co->DaylightSaving = G->CO_DST==2;
+        // if the user has clicked on Change, we do
+        // change the timezone and save it immediatly
+        if(res == 1)
+        {
+          co->TimeZone = -(G->Locale->loc_GMTOffset);
+          saveAtEnd = TRUE;
+        }
+        else if(res == 2)
+        {
+          co->TimeZoneCheck = FALSE;
+          saveAtEnd = TRUE;
+        }
+     }
+   }
+   else if(G->Locale && co->TimeZone == -(G->Locale->loc_GMTOffset))
+   {
+     // enable the timezone checking again!
+     co->TimeZoneCheck = TRUE;
+     saveAtEnd = TRUE;
+   }
+
+   // we also check the DST (Daylight Saving settings) in case
+   // we have a AutoDST tool running.
+   if(co->AutoDSTCheck)
+   {
+     // check if we found an AutoDST tool or not.
+     if(G->CO_DST > 0 && co->DaylightSaving != (G->CO_DST == 2))
+     {
+        int res = MUI_Request(G->App, NULL, 0,
+                              GetStr(MSG_CO_AUTODSTWARN_TITLE),
+                              GetStr(MSG_CO_AUTODSTWARN_BT),
+                              GetStr(MSG_CO_AUTODSTWARN));
+
+        // if the user has clicked on Change, we do
+        // change the DST setting and save it immediatly
+        if(res == 1)
+        {
+          co->DaylightSaving = (G->CO_DST == 2);
+          saveAtEnd = TRUE;
+        }
+        else if(res == 2)
+        {
+          co->AutoDSTCheck = FALSE;
+          saveAtEnd = TRUE;
+        }
+
+     }
+   }
+   else if(G->CO_DST > 0 && co->DaylightSaving == (G->CO_DST == 2))
+   {
+     // enable the autodst checking again!
+     co->AutoDSTCheck = TRUE;
+     saveAtEnd = TRUE;
+   }
 
    G->PGPVersion = CO_DetectPGP(co);
 

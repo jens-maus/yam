@@ -404,6 +404,8 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "HideGUIElements  = %d\n", co->HideGUIElements);
       fprintf(fh, "SysCharsetCheck  = %s\n", Bool2Txt(co->SysCharsetCheck));
       fprintf(fh, "AmiSSLCheck      = %s\n", Bool2Txt(co->AmiSSLCheck));
+      fprintf(fh, "TimeZoneCheck    = %s\n", Bool2Txt(co->TimeZoneCheck));
+      fprintf(fh, "AutoDSTCheck     = %s\n", Bool2Txt(co->AutoDSTCheck));
       fprintf(fh, "StackSize        = %d\n", co->StackSize);
       fprintf(fh, "PrintMethod      = %d\n", co->PrintMethod);
       fprintf(fh, "AutoColumnResize = %s\n", Bool2Txt(co->AutoColumnResize));
@@ -889,6 +891,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "HideGUIElements")) co->HideGUIElements = atoi(value);
                else if (!stricmp(buffer, "SysCharsetCheck"))co->SysCharsetCheck = Txt2Bool(value);
                else if (!stricmp(buffer, "AmiSSLCheck"))    co->AmiSSLCheck = Txt2Bool(value);
+               else if (!stricmp(buffer, "TimeZoneCheck"))  co->TimeZoneCheck = Txt2Bool(value);
+               else if (!stricmp(buffer, "AutoDSTCheck"))   co->AutoDSTCheck = Txt2Bool(value);
                else if (!stricmp(buffer, "StackSize"))      co->StackSize = atoi(value);
                else if (!stricmp(buffer, "PrintMethod"))    co->PrintMethod = atoi(value);
                else if (!stricmp(buffer, "AutoColumnResize")) co->AutoColumnResize = Txt2Bool(value);
