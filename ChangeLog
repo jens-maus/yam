@@ -4,7 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
-2006-03-06  Gunther Nikl <gni@gecko.de>
+2006-03-27  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: increased the minimum required version of codesets.library to
+    6.1 to prevent users from using an older, buggy and not supported
+    version anymore.
+
+2006-03-27  Gunther Nikl <gni@gecko.de>
 
   * src/VMakefile, src/smakefile: Update.
 

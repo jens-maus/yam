@@ -1629,7 +1629,7 @@ static void Initialise(BOOL hidden)
    INITLIB(RXSNAME,             36, 0, &RexxSysBase,  "main", &IRexxSys,  TRUE, NULL);
    INITLIB("muimaster.library", 19, 0, &MUIMasterBase,"main", &IMUIMaster,TRUE, "http://www.sasg.com/");
    INITLIB("datatypes.library", 39, 0, &DataTypesBase,"main", &IDataTypes,TRUE, NULL);
-   INITLIB("codesets.library",   6, 0, &CodesetsBase, "main", &ICodesets, TRUE, "http://www.sf.net/projects/codesetslib/");
+   INITLIB("codesets.library",   6, 1, &CodesetsBase, "main", &ICodesets, TRUE, "http://www.sf.net/projects/codesetslib/");
 
    // we check for the amisslmaster.library v3 accordingly
    if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", &IAmiSSLMaster, FALSE, NULL))
