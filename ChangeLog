@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-03-06  Gunther Nikl <gni@gecko.de>
+
+  * src/VMakefile, src/smakefile: Update.
+
 2006-03-26  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MI.c: minor cosmetic source change more properly dealing with
@@ -150,9 +154,6 @@ $Id$
     window now that all page groups are directly generated rather
     than loading it on display of each page.
 
-2006-03-06  Gunther Nikl <gni@gecko.de>
-
-  * src/VMakefile, src/smakefile: adapted for new repository layout.
 
 2006-03-05  Jens Langner <Jens.Langner@light-speed.de>
 
