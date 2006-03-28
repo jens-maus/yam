@@ -120,7 +120,6 @@ struct Library* MUIMasterBase     = NULL;
 struct Library* OpenURLBase       = NULL;
 struct Library* RexxSysBase       = NULL;
 struct Library* SocketBase        = NULL;
-struct Library* UtilityBase       = NULL;
 struct Library* WorkbenchBase     = NULL;
 struct Library* XpkBase           = NULL;
 struct Library* AmiSSLMasterBase  = NULL;
@@ -130,6 +129,9 @@ struct Library* GfxBase           = NULL;
 struct Library* LayersBase        = NULL;
 struct Library* DiskfontBase      = NULL;
 struct Library* CodesetsBase      = NULL;
+#if !defined(__NEWLIB__)
+struct Library* UtilityBase       = NULL;
+#endif
 #if defined(__amigaos4__)
 struct Library* ApplicationBase = NULL; // application.library
 #endif
@@ -148,7 +150,6 @@ struct MUIMasterIFace*    IMUIMaster    = NULL;
 struct OpenURLIFace*      IOpenURL      = NULL;
 struct RexxSysIFace*      IRexxSys      = NULL;
 struct SocketIFace*       ISocket       = NULL;
-struct UtilityIFace*      IUtility      = NULL;
 struct WorkbenchIFace*    IWorkbench    = NULL;
 struct XpkIFace*          IXpk          = NULL;
 struct AmiSSLMasterIFace* IAmiSSLMaster = NULL;
@@ -159,7 +160,14 @@ struct LayersIFace*       ILayers       = NULL;
 struct DiskfontIFace*     IDiskfont     = NULL;
 struct CodesetsIFace*     ICodesets     = NULL;
 struct ApplicationIFace*  IApplication  = NULL;
+#if !defined(__NEWLIB__)
+struct UtilityIFace*      IUtility      = NULL;
+#endif
 #endif /* __amigaos4__ */
+
+#if defined(__NEWLIB__)
+int errno = 0;
+#endif
 
 struct WBStartup *WBmsg;
 

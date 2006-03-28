@@ -47,6 +47,7 @@ GENCLASSES= $(EXTRASRC)/genclasses
 OBJDIR    = .obj_os4
 
 # Compiler/Linker flags
+CRT      = clib2
 CPU      = -mcpu=604e
 CPUFLAGS = -mmultiple -Wa,-mregnames
 CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" \
@@ -56,8 +57,8 @@ WARN     = -W -Wall
 OPTFLAGS = -O3 -fomit-frame-pointer -funroll-loops
 DEBUG    = -DDEBUG #-g3 -O0
 REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
-CFLAGS   = -pipe -I. -I./include $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -D__USE_INLINE__ $(REDEFINE) -c
-LDFLAGS  = $(CPU)
+CFLAGS   = -pipe -mcrt=$(CRT) -I. -I./include $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -D__USE_INLINE__ $(REDEFINE) -c
+LDFLAGS  = $(CPU) -mcrt=$(CRT)
 LDLIBS   = -lm -ldebug
 
 # CPU and DEBUG can be defined outside, defaults to above

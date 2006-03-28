@@ -844,8 +844,13 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
     // so we don't seem to have a transfer Date in the file comment.
     // What we do now is that we take the date from the original file
     // (the first 5 numerical numbers are the days)
+    #if defined(__NEWLIB__)
+    newDate.tv_sec  = atol(filename) * 24 * 60 * 60;
+    newDate.tv_usec = 0;
+    #else
     newDate.tv_secs  = atol(filename) * 24 * 60 * 60;
     newDate.tv_micro = 0;
+    #endif
 
     // encode this date as a base64 encoded string
     base64encode(dateFilePart, (unsigned char *)&newDate, sizeof(struct timeval));
@@ -1561,8 +1566,13 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
           // if we weren`t able to decode the base64 encoded string
           // we have to validate the transDate so that the calling function
           // recognizes to rewrite the comment with a valid string.
-          mail->transDate.tv_micro = 0;
+          #if defined(__NEWLIB__)
+          mail->transDate.tv_sec  = 0;
+          mail->transDate.tv_usec = 0;
+          #else
           mail->transDate.tv_secs  = 0;
+          mail->transDate.tv_micro = 0;
+          #endif
         }
         else
         {
@@ -1632,7 +1642,11 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
       // if we didn't find a Date: header we take the transfered date (if found)
       if(dateFound == FALSE)
       {
+        #if defined(__NEWLIB__)
+        if(mail->transDate.tv_sec > 0)
+        #else
         if(mail->transDate.tv_secs > 0)
+        #endif
         {
           // convert the UTC transDate to a UTC mail Date
           TimeVal2DateStamp(&mail->transDate, &mail->Date, TZC_NONE);
@@ -1895,9 +1909,13 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                 {
                   struct Mail *newMail = AddMailToList(&email->Mail, folder);
 
-                  // if this new mail hasn`t got a valid transDate we have to check if we
+                  // if this new mail hasn`t got a valid transDate we have to check if we
                   // have to take the fileDate as a fallback value.
+                  #if defined(__NEWLIB__)
+                  if(newMail->transDate.tv_sec == 0)
+                  #else
                   if(newMail->transDate.tv_secs == 0)
+                  #endif
                   {
                     // only if it is _not_ a "waitforsend" and "hold" message we can take the fib_Date
                     // as the fallback

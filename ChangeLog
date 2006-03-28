@@ -4,6 +4,16 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-03-28  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile.os4,YAM_global.c,YAM.c,YAM_UT.c,YAM_FI.c,YAM_MAf.c,YAM_TR.c:
+    added support for making it possible to compile YAM for AmigaOS4 with
+    newlib runtime library support. However, please note that per default
+    YAM will still be compiled with clib2 for OS4 until we sorted out
+    every bit and byte of the newlib compatibility. But at least for testing
+    purposes compilation with newlib support might be a good idea and we
+    therefore temporarly keep all those "#if defined(__NEWLIB__)" defines.
+
 2006-03-27  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: increased the minimum required version of codesets.library to
