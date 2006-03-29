@@ -46,6 +46,9 @@
 #include <proto/timer.h>
 #include <proto/utility.h>
 
+#include <netinet/ip.h>
+#include <netinet/tcp.h>
+
 #include "extra.h"
 #include "SDI_hook.h"
 
