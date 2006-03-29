@@ -3228,12 +3228,15 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   // if the caller wants to cleanup everything tidy we do it here or exit immediatly
   if(fullCleanup)
   {
+    D(DBF_MAIL, "doing a full cleanup");
+
     // now we have to check whether there is a .unp (unpack) file and delete
     // it acoordingly (we can`t use the FinishUnpack() function because the
     // window still refers to the file which will be prevent the deletion.
     if(strstr(rmData->readFile, ".unp"))
       DeleteFile(rmData->readFile);
 
+    D(DBF_MAIL, "closing tempfile");
     // close any opened temporary file
     if(rmData->tempFile)
     {
@@ -3241,6 +3244,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
       rmData->tempFile = NULL;
     }
 
+    D(DBF_MAIL, "checking virtual mail status");
     // if the rmData carries a virtual mail we have to clear it
     // aswell
     if(rmData->mail &&
@@ -3250,6 +3254,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
       rmData->mail = NULL;
     }
 
+    D(DBF_MAIL, "cleaning up readwindow");
     // clean up the read window now
     if(rmData->readWindow)
     {
