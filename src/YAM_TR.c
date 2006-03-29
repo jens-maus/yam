@@ -1103,13 +1103,8 @@ static int TR_Connect(char *host, int port)
   {
     struct timeval tv;
 
-    #if defined(__NEWLIB__)
-    tv.tv_sec  = C->SocketOptions.SendTimeOut;
-    tv.tv_usec = 0;
-    #else
     tv.tv_secs  = C->SocketOptions.SendTimeOut;
     tv.tv_micro = 0;
-    #endif
 
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(struct timeval)) == -1)
     {
@@ -1122,13 +1117,8 @@ static int TR_Connect(char *host, int port)
   {
     struct timeval tv;
 
-    #if defined(__NEWLIB__)
-    tv.tv_sec  = C->SocketOptions.RecvTimeOut;
-    tv.tv_usec = 0;
-    #else
     tv.tv_secs  = C->SocketOptions.RecvTimeOut;
     tv.tv_micro = 0;
-    #endif
 
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct timeval)) == -1)
     {
@@ -1168,18 +1158,10 @@ static int TR_Connect(char *host, int port)
     D(DBF_NET, "SO_RCVLOWAT...: %ld", optval);
 
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, &tvlen);
-    #if defined(__NEWLIB__)
-    D(DBF_NET, "SO_SNDTIMEO...: %ld", tv.tv_sec);
-    #else
     D(DBF_NET, "SO_SNDTIMEO...: %ld", tv.tv_secs);
-    #endif
 
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, &tvlen);
-    #if defined(__NEWLIB__)
-    D(DBF_NET, "SO_RCVTIMEO...: %ld", tv.tv_sec);
-    #else
     D(DBF_NET, "SO_RCVTIMEO...: %ld", tv.tv_secs);
-    #endif
   }
   #endif
 
@@ -2752,11 +2734,7 @@ static void TR_TransStat_Start(struct TransStat *ts)
 
    // get the actual time we started the TransferStatus
    GetSysTime(&ts->Clock_Last);
-   #if defined(__NEWLIB__)
-   ts->Clock_Start = ts->Clock_Last.tv_sec;
-   #else
    ts->Clock_Start = ts->Clock_Last.tv_secs;
-   #endif
 
    SPrintF(G->TR->CountLabel, GetStr(MSG_TR_MessageGauge), "%ld", ts->Msgs_Tot);
    SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
@@ -2819,17 +2797,9 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
         SubTime(&delta, &ts->Clock_Last);
 
         // update the display at least twice a second
-        #if defined(__NEWLIB__)
-        if(delta.tv_sec > 0 || delta.tv_usec > 250000)
-        #else
         if(delta.tv_secs > 0 || delta.tv_micro > 250000)
-        #endif
         {
-           #if defined(__NEWLIB__)
-           ULONG deltatime = now.tv_sec - ts->Clock_Start;
-           #else
            ULONG deltatime = now.tv_secs - ts->Clock_Start;
-           #endif
            ULONG speed = 0;
            LONG remclock = 0;
 
@@ -2869,11 +2839,7 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
 
      // we make sure that we, at least update the gauge at the end
      GetSysTime(&now);
-     #if defined(__NEWLIB__)
-     deltatime = now.tv_sec - ts->Clock_Start;
-     #else
      deltatime = now.tv_secs - ts->Clock_Start;
-     #endif
 
      // first we calculate the speed in bytes/sec
      // to display to the user

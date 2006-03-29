@@ -158,13 +158,8 @@ static void TC_Prepare(enum TimerIO tio, int seconds, int micros)
 
       // issue a new timerequest
       tr->tr_node.io_Command = TR_ADDREQUEST;
-      #if defined(__NEWLIB__)
-      tr->tr_time.tv_sec    = seconds;
-      tr->tr_time.tv_usec   = micros;
-      #else
       tr->tr_time.tv_secs    = seconds;
       tr->tr_time.tv_micro   = micros;
-      #endif
 
       // flag the timer to be prepared to get fired later on
       timer->isPrepared = TRUE;
@@ -194,17 +189,10 @@ static void TC_Start(enum TimerIO tio)
 
     DateStamp2String(dateString, NULL, DSS_DATETIME, TZC_NONE);
 
-    #if defined(__NEWLIB__)
-    D(DBF_TIMERIO, "timer[%ld]: started @ %s to finish in %ld'%ld secs", tio,
-                                                                         dateString,
-                                                                         timer->tr->tr_time.tv_sec,
-                                                                         timer->tr->tr_time.tv_usec);
-    #else
     D(DBF_TIMERIO, "timer[%ld]: started @ %s to finish in %ld'%ld secs", tio,
                                                                          dateString,
                                                                          timer->tr->tr_time.tv_secs,
                                                                          timer->tr->tr_time.tv_micro);
-    #endif
     #endif
 
     // fire the timer by doing a SendIO()

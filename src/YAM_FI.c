@@ -690,11 +690,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
             SubTime(&delta, &last);
 
             // update the display at least twice a second
-            #if defined(__NEWLIB__)
             if(delta.tv_sec > 0 || delta.tv_usec > 250000)
-            #else
-            if(delta.tv_secs > 0 || delta.tv_micro > 250000)
-            #endif
             {
               set(ga, MUIA_Gauge_Current, progress);
 

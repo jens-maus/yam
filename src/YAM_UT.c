@@ -2417,17 +2417,10 @@ void GetSysTimeUTC(struct timeval *tv)
 //  to/from UTC
 void TimeValTZConvert(struct timeval *tv, enum TZConvert tzc)
 {
-  #if defined(__NEWLIB__)
-  if(tzc == TZC_LOCAL)
-    tv->tv_sec += (C->TimeZone+C->DaylightSaving*60)*60;
-  else if(tzc == TZC_UTC)
-    tv->tv_sec -= (C->TimeZone+C->DaylightSaving*60)*60;
-  #else
   if(tzc == TZC_LOCAL)
     tv->tv_secs += (C->TimeZone+C->DaylightSaving*60)*60;
   else if(tzc == TZC_UTC)
     tv->tv_secs -= (C->TimeZone+C->DaylightSaving*60)*60;
-  #endif
 }
 ///
 /// DateStampTZConvert
@@ -2449,19 +2442,11 @@ void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc)
 //  converts a struct timeval to a struct DateStamp
 void TimeVal2DateStamp(const struct timeval *tv, struct DateStamp *ds, enum TZConvert tzc)
 {
-  #if defined(__NEWLIB__)
-  LONG seconds = (tv->tv_sec+tv->tv_usec/1000000);
-  #else
   LONG seconds = (tv->tv_secs+tv->tv_micro/1000000);
-  #endif
 
   ds->ds_Days   = seconds/86400;       // calculate the days since 1.1.1978
   ds->ds_Minute = (seconds%86400)/60;
-  #if defined(__NEWLIB__)
-  ds->ds_Tick   = (tv->tv_sec%60)*TICKS_PER_SECOND + (tv->tv_usec/20000);
-  #else
   ds->ds_Tick   = (tv->tv_secs%60)*TICKS_PER_SECOND + (tv->tv_micro/20000);
-  #endif
 
   // if we want to convert from/to UTC we need to do this now
   if(tzc != TZC_NONE)
@@ -2477,13 +2462,8 @@ void DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv, enum TZCo
     return;
 
   // creates wrong timevals from DateStamps with year >= 2114 ...
-  #if defined(__NEWLIB__)
-  tv->tv_sec = (ds->ds_Days*24*60 + ds->ds_Minute)*60 + ds->ds_Tick/TICKS_PER_SECOND;
-  tv->tv_usec = (ds->ds_Tick % TICKS_PER_SECOND) * 1000000/TICKS_PER_SECOND;
-  #else
   tv->tv_secs = (ds->ds_Days*24*60 + ds->ds_Minute)*60 + ds->ds_Tick/TICKS_PER_SECOND;
   tv->tv_micro = (ds->ds_Tick % TICKS_PER_SECOND) * 1000000/TICKS_PER_SECOND;
-  #endif
 
   // if we want to convert from/to UTC we need to do this now
   if(tzc != TZC_NONE)
@@ -4432,11 +4412,7 @@ void Busy(char *text, char *parameter, int cur, int max)
             SubTime(&delta, &last_move);
 
             // update the display at least twice a second
-            #if defined(__NEWLIB__)
-            if(delta.tv_sec > 0 || delta.tv_usec > 250000)
-            #else
             if(delta.tv_secs > 0 || delta.tv_micro > 250000)
-            #endif
             {
               DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, NULL, cur, -1);
               memcpy(&last_move, &now, sizeof(struct timeval));

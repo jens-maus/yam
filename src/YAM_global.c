@@ -165,10 +165,6 @@ struct UtilityIFace*      IUtility      = NULL;
 #endif
 #endif /* __amigaos4__ */
 
-#if defined(__NEWLIB__)
-int errno = 0;
-#endif
-
 struct WBStartup *WBmsg;
 
 const char* const SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };

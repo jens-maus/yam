@@ -40,7 +40,7 @@
 
 #include "Debug.h"
 
-#ifndef __MORPHOS__
+#if !defined(__MORPHOS__)
 extern void KPutFmt(const char *format, va_list arg);
 #endif
 

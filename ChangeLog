@@ -4,6 +4,18 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-03-29  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_global.c,YAM.c,YAM_UT.c,YAM_FI.c,YAM_MAf.c,YAM_TR.c: reverted most
+    of the "#if defined(__NEWLIB__)" uses as YAM can now be compiled with
+    newlib since we don't use our own netincludes anymore.
+  * include, Makefile: moved the bsdsocket based netincludes to a
+    subdirectory of our private include path. This makes it possible now
+    to use the standard OS4 SDK's netincludes instead of our own ones
+    by just ommitting to add -I./include/netincludes to the makefiles.
+    This should also hopefully fix the 'struct timeval' issues when comping
+    YAM with newlib.
+
 2006-03-28  Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile.os4,YAM_global.c,YAM.c,YAM_UT.c,YAM_FI.c,YAM_MAf.c,YAM_TR.c:
