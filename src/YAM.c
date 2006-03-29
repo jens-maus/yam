@@ -1749,6 +1749,10 @@ static void Initialise(BOOL hidden)
    else
      G->HideIcon = GetDiskObject(filebuf);
 
+   // as we have load our HideIcon now we have to set the icon as the
+   // default application to our root YAM object right now.
+   set(G->App, MUIA_Application_DiskObject, G->HideIcon);
+
    for(i=0; i < MAXICONS; i++)
    {
       strmfp(filebuf, pathbuf, icnames[i]);

@@ -402,7 +402,6 @@ OVERLOAD(OM_NEW)
     MUIA_Application_UseRexx,        FALSE,
     MUIA_Application_SingleTask,     singleTaskOnly,
     MUIA_Application_UsedClasses,    Classes,
-    MUIA_Application_DiskObject,     G->HideIcon,
     MUIA_Application_HelpFile,       "YAM.guide",
 
     TAG_MORE, inittags(msg))))
@@ -439,6 +438,7 @@ OVERLOAD(OM_NEW)
 
     LoadEMailCache(data->EMailCacheName, &data->EMailCache);
   }
+
   return (ULONG)obj;
 }
 

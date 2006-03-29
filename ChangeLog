@@ -6,6 +6,8 @@ $Id$
 
 2006-03-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: fixed a recently introduced bug where the default AppIcon when
+    iconifying YAM wasn't set to the YAM diskicon anymore.
   * YAM_global.c,YAM.c,YAM_UT.c,YAM_FI.c,YAM_MAf.c,YAM_TR.c: reverted most
     of the "#if defined(__NEWLIB__)" uses as YAM can now be compiled with
     newlib since we don't use our own netincludes anymore.
