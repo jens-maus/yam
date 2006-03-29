@@ -6,6 +6,9 @@ $Id$
 
 2006-03-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/MainMailListGroup.c: fixed a bug where upon switching to
+    the quicksearch maillist the mail listview couldn't be controlled with
+    the keyboard anymore.
   * YAM.c: fixed a recently introduced bug where the default AppIcon when
     iconifying YAM wasn't set to the YAM diskicon anymore.
   * YAM_global.c,YAM.c,YAM_UT.c,YAM_FI.c,YAM_MAf.c,YAM_TR.c: reverted most

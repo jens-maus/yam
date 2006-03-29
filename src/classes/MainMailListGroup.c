@@ -138,7 +138,15 @@ OVERLOAD(OM_SET)
     {
       case MUIA_Group_ActivePage:
       {
-        data->activeList = tag->ti_Data;
+        if(data->activeList != tag->ti_Data)
+        {
+          // set the new mainlist as the default object of the window it belongs to
+          // but only if not another one is yet active
+          if((Object*)xget(_win(obj), MUIA_Window_DefaultObject) == data->mainListObjects[data->activeList])
+            set(_win(obj), MUIA_Window_DefaultObject, data->mainListObjects[tag->ti_Data]);
+
+          data->activeList = tag->ti_Data;
+        }
       }
       break;
 
@@ -346,11 +354,6 @@ DECLARE(SwitchToList) // enum MainListType type
 
     // switch the page of the group now
     set(obj, MUIA_Group_ActivePage, msg->type);
-
-    // set the new maillist group as the default object of the window it belongs to
-    // but only if not another one is yet active
-    if((Object*)xget(_win(obj), MUIA_Window_DefaultObject) == data->mainListObjects[data->activeList])
-      set(_win(obj), MUIA_Window_DefaultObject, data->mainListObjects[msg->type]);
 
     if(msg->type == LT_MAIN)
     {
