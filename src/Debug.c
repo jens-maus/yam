@@ -377,8 +377,8 @@ void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const
 
 void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int line, const char *format, ...)
 {
-  if(isFlagSet(debug_classes, dclass) &&
-     isFlagSet(debug_flags, dflags))
+  if((isFlagSet(debug_classes, dclass) && isFlagSet(debug_flags, dflags)) ||
+     (isFlagSet(dclass, DBC_ERROR) || isFlagSet(dclass, DBC_WARNING)))
   {
     va_list args;
 

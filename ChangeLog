@@ -6,6 +6,8 @@ $Id$
 
 2006-03-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Debug.c: modified debugging output to always output messages of class
+    DBC_ERROR and DBC_WARNING.
   * YAM_MA.c: fixed bug #1431331 where a hold mail with an empty body, but
     with an attachment couldn't be reedit in the outgoing folder.
   * classes/MainMailListGroup.c: fixed a bug where upon switching to
