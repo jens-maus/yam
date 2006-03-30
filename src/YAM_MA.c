@@ -1037,7 +1037,7 @@ int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
    char *cmsg, *sbuf;
 
    // return if mail is already being written/edited
-   for (i = 0; i < MAXWR; i++)
+   for(i = 0; i < MAXWR; i++)
    {
      if(G->WR[i] && G->WR[i]->Mail == mail)
      {
@@ -1073,10 +1073,12 @@ int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
          {
             if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)))
             {
+              int msglen = strlen(cmsg);
+
               // we check whether cmsg contains any text and if so we
               // have to take care that the leading newline isn't written to the
               // file as ReadInMessage() always puts a newline at the end of cmsg!
-              if(cmsg[0] == '\0' || fwrite(cmsg, strlen(cmsg)-1, 1, out) == 1)
+              if(msglen <= 1 || fwrite(cmsg, msglen-1, 1, out) == 1)
               {
                 // free our temp text now
                 free(cmsg);
