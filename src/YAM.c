@@ -1741,18 +1741,6 @@ static void Initialise(BOOL hidden)
      }
    }
 
-   // now we load the standard icons like (check.info, new.info etc)
-   // but we also try to take care of different icon.library versions.
-   strmfp(filebuf, G->ProgDir, G->ProgName);
-   if(IconBase->lib_Version >= 44)
-     G->HideIcon = GetIconTags(filebuf, TAG_DONE);
-   else
-     G->HideIcon = GetDiskObject(filebuf);
-
-   // as we have load our HideIcon now we have to set the icon as the
-   // default application to our root YAM object right now.
-   set(G->App, MUIA_Application_DiskObject, G->HideIcon);
-
    for(i=0; i < MAXICONS; i++)
    {
       strmfp(filebuf, pathbuf, icnames[i]);

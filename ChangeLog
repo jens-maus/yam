@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-03-30  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, classes/YAM.c: moved the G->HideIcon loading routines to the
+    main application object' initialization routine. That way YAM might
+    immediately use the icon instead of setting it during runtime.
+
 2006-03-29  Jens Langner <Jens.Langner@light-speed.de>
 
   * Debug.c: modified debugging output to always output messages of class

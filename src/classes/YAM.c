@@ -30,6 +30,7 @@
 
 #include "YAM_cl.h"
 
+#include <proto/icon.h>
 #if defined(__amigaos4__)
 #include <proto/application.h>
 #endif
@@ -371,6 +372,7 @@ DECLARE(AddToEmailCache) // struct Person *person
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
+  char filebuf[SIZE_PATHFILE];
   BOOL singleTaskOnly = TRUE;
   char var;
 
@@ -391,6 +393,14 @@ OVERLOAD(OM_NEW)
   if(GetVar("MultipleYAM", &var, sizeof(var), 0) > -1)
     singleTaskOnly = FALSE;
 
+  // now we load the standard icons like (check.info, new.info etc)
+  // but we also try to take care of different icon.library versions.
+  strmfp(filebuf, G->ProgDir, G->ProgName);
+  if(IconBase->lib_Version >= 44)
+   G->HideIcon = GetIconTags(filebuf, TAG_DONE);
+  else
+   G->HideIcon = GetDiskObject(filebuf);
+
   if((obj = (Object *)DoSuperNew(cl, obj,
 
     MUIA_Application_Author,         "YAM Open Source Team",
@@ -403,6 +413,7 @@ OVERLOAD(OM_NEW)
     MUIA_Application_SingleTask,     singleTaskOnly,
     MUIA_Application_UsedClasses,    Classes,
     MUIA_Application_HelpFile,       "YAM.guide",
+    MUIA_Application_DiskObject,     G->HideIcon,
 
     TAG_MORE, inittags(msg))))
   {
