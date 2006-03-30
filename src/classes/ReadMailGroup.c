@@ -773,12 +773,13 @@ DECLARE(CheckPGPSignature) // BOOL forceRequester
      !hasPGPSCheckedFlag(rmData))
   {
     int error;
-    char fullfile[SIZE_PATHFILE], options[SIZE_LARGE];
+    char fullfile[SIZE_PATHFILE];
+    char options[SIZE_LARGE];
     
     if(!StartUnpack(GetMailFile(NULL, NULL, rmData->mail), fullfile, rmData->mail->Folder))
       return FALSE;
     
-    sprintf(options, (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s -o %s +bat +f +lang=en", fullfile, "T:PGP.tmp");
+    snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s -o %s +bat +f +lang=en", fullfile, "T:PGP.tmp");
     error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, KEEPLOG);
     FinishUnpack(fullfile);
     DeleteFile("T:PGP.tmp");
@@ -816,11 +817,12 @@ DECLARE(ExtractPGPKey)
   GETDATA;
   struct ReadMailData *rmData = data->readMailData;
   struct Mail *mail = rmData->mail;
-  char fullfile[SIZE_PATHFILE], options[SIZE_PATHFILE];
+  char fullfile[SIZE_PATHFILE];
+  char options[SIZE_PATHFILE];
 
   if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder))
   {
-    sprintf(options, (G->PGPVersion == 5) ? "-a %s +batchmode=1 +force" : "-ka %s +bat +f", fullfile);
+    snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-a %s +batchmode=1 +force" : "-ka %s +bat +f", fullfile);
     PGPCommand((G->PGPVersion == 5) ? "pgpk" : "pgp", options, 0);
     FinishUnpack(fullfile);
   }

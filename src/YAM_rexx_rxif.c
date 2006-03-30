@@ -899,8 +899,8 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
             DateStamp2String(rd->rd.res.date = rd->date, &mail->Date, DSS_USDATETIME, TZC_LOCAL);
             rd->rd.res.subject = mail->Subject;
             rd->rd.res.size = &mail->Size;
-            sprintf(rd->rd.res.msgid = rd->msgid, "%lX", mail->cMsgID);
-            sprintf(rd->rd.res.flags = rd->flags, "%c%c%c%c%c-%c%c%c",
+            snprintf(rd->rd.res.msgid = rd->msgid, sizeof(rd->msgid), "%lX", mail->cMsgID);
+            snprintf(rd->rd.res.flags = rd->flags, sizeof(rd->flags), "%c%c%c%c%c-%c%c%c",
                       isMultiRCPTMail(mail) ? 'M' : '-',
                       isMP_MixedMail(mail)  ? 'A' : '-',
                       isMP_ReportMail(mail) ? 'R' : '-',
@@ -1095,10 +1095,10 @@ void rx_getfolderinfo( UNUSED struct RexxHost *host, struct rxd_getfolderinfo **
          if(fo && fo->Type != FT_GROUP)
          {
             num = FO_GetFolderPosition(fo, FALSE);
-            if (!strnicmp(key, "NUM", 3))      sprintf(rd->rd.res.value = rd->result, "%d", num);
+            if (!strnicmp(key, "NUM", 3))      snprintf(rd->rd.res.value = rd->result, sizeof(rd->result), "%d", num);
             else if (!strnicmp(key, "NAM", 3)) rd->rd.res.value = fo->Name;
             else if (!strnicmp(key, "PAT", 3)) rd->rd.res.value = fo->Path;
-            else if (!strnicmp(key, "MAX", 3)) sprintf(rd->rd.res.value = rd->result, "%d", fo->Total);
+            else if (!strnicmp(key, "MAX", 3)) snprintf(rd->rd.res.value = rd->result, sizeof(rd->result), "%d", fo->Total);
             else rd->rd.rc = RETURN_ERROR;
          }
          else rd->rd.rc = RETURN_ERROR;
@@ -1137,7 +1137,7 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
 
             rd->rd.res.value = rd->result;
             key = rd->rd.arg.item;
-            if (!strnicmp(key, "ACT", 3)) sprintf(rd->result, "%d", active);
+            if (!strnicmp(key, "ACT", 3)) snprintf(rd->result, sizeof(rd->result), "%d", active);
             else if (!strnicmp(key, "STA", 3))
             {
               if(hasStatusError(mail))

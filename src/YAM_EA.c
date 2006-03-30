@@ -248,8 +248,10 @@ void EA_FixAlias(struct ABEntry *ab, BOOL excludemyself)
   {
     if (excludemyself && ab == ab_found) return;
 
-    if ((l = strlen(ab->Alias)) > SIZE_NAME-2) l = SIZE_NAME-2;
-    sprintf(&alias[l], "%d", ++c);
+    if((l = strlen(ab->Alias)) > SIZE_NAME-2)
+      l = SIZE_NAME-2;
+
+    snprintf(&alias[l], sizeof(alias)-l, "%d", ++c);
   }
 
   // copy the modified string back
@@ -432,7 +434,7 @@ HOOKPROTONHNO(EA_DownloadPhotoFunc, void, int *arg)
    if (*addr || *name)
    {
       strcpy(dbfile, name);
-      if ((p = strrchr(dbfile, ' '))) { *p = 0; sprintf(newname, "%s, %s", p+1, dbfile); }
+      if ((p = strrchr(dbfile, ' '))) { *p = 0; snprintf(newname, sizeof(newname), "%s, %s", p+1, dbfile); }
       else strcpy(newname, name);
       strmfp(dbfile, C->TempDir, "gallery.db");
       if (TR_OpenTCPIP())

@@ -430,7 +430,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
          // of the current match string, but keep the string borders in mind.
          strncpy(buffer, search->Match, SIZE_PATTERN);
          buffer[SIZE_PATTERN] = '\0';
-         sprintf(search->Match, "#?%s#?", buffer);
+         snprintf(search->Match, sizeof(search->Match), "#?%s#?", buffer);
       }
 
       if(casesens)
@@ -1097,7 +1097,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
   if(hasExecuteAction(filter) && *filter->executeCmd)
   {
     char buf[SIZE_COMMAND+SIZE_PATHFILE];
-    sprintf(buf, "%s \"%s\"", filter->executeCmd, GetRealPath(GetMailFile(NULL, NULL, mail)));
+    snprintf(buf, sizeof(buf), "%s \"%s\"", filter->executeCmd, GetRealPath(GetMailFile(NULL, NULL, mail)));
     ExecuteCommand(buf, FALSE, OUT_DOS);
     G->RRs.Executed++;
   }
@@ -1171,7 +1171,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
   // if he really wants to apply the filters or not.
   if(mode == APPLY_USER)
   {
-    sprintf(buf, GetStr(MSG_MA_ConfirmFilter), folder->Name);
+    snprintf(buf, sizeof(buf), GetStr(MSG_MA_ConfirmFilter), folder->Name);
     if(!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), buf))
       return;
   }
@@ -1247,7 +1247,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 
   if(G->RRs.Checked && mode == APPLY_USER)
   {
-    sprintf(buf, GetStr(MSG_MA_FilterStats), G->RRs.Checked, G->RRs.Forwarded, G->RRs.Moved, G->RRs.Deleted);
+    snprintf(buf, sizeof(buf), GetStr(MSG_MA_FilterStats), G->RRs.Checked, G->RRs.Forwarded, G->RRs.Moved, G->RRs.Deleted);
     MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), buf);
   }
 }

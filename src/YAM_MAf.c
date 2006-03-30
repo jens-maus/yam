@@ -142,7 +142,7 @@ BOOL MA_PromptFolderPassword(struct Folder *fo, APTR win)
   if(!Stricmp(fo->Password, user->Password))
     return TRUE;
 
-  sprintf(prompt, GetStr(MSG_MA_GetFolderPass), fo->Name);
+  snprintf(prompt, sizeof(prompt), GetStr(MSG_MA_GetFolderPass), fo->Name);
 
   do
   {
@@ -371,7 +371,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
    for (mail = folder->Messages; mail; mail = mail->Next)
    {
       memset(&cmail, 0, sizeof(struct ComprMail));
-      sprintf(buf, "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
+      snprintf(buf, sizeof(buf), "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
          mail->Subject,
          mail->From.Address, mail->From.RealName,
          mail->To.Address, mail->To.RealName,
@@ -865,7 +865,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
     // ok, now we should have all main parts of the new filename, so we
     // can concatenate it to one new filename and try to rename the old
     // style mailfile to the newstyle equivalent.
-    sprintf(newFileName, "%s.001,%s", dateFilePart, statusFilePart);
+    snprintf(newFileName, sizeof(newFileName), "%s.001,%s", dateFilePart, statusFilePart);
 
     // so, now we should be finished with finding the new filename of the mail file.
     // lets try to rename it with the dos.library's Rename() function
@@ -900,7 +900,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
           eac->eac_MatchFunc = NULL;
 
           // search for files matching the dateFilePart
-          sprintf(matchPattern, "%s.#?", dateFilePart);
+          snprintf(matchPattern, sizeof(matchPattern), "%s.#?", dateFilePart);
           ParsePatternNoCase(matchPattern, pattern, 16*2+2);
           eac->eac_MatchString = pattern;
 
@@ -953,7 +953,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
       }
 
       // let us now try it again to rename the file
-      sprintf(newFileName, "%s.%03d,%s", dateFilePart, ++mailCounter, statusFilePart);
+      snprintf(newFileName, sizeof(newFileName), "%s.%03d,%s", dateFilePart, ++mailCounter, statusFilePart);
 
       strncpy(newFilePath, GetFolderDir(folder), SIZE_PATHFILE);
       newFilePath[SIZE_PATHFILE] = '\0';
@@ -1015,7 +1015,7 @@ char *MA_NewMailFile(struct Folder *folder, char *mailfile)
 
   do
   {
-    sprintf(newFileName, "%s.%03d,N", dateFilePart, ++mCounter);
+    snprintf(newFileName, sizeof(newFileName), "%s.%03d,N", dateFilePart, ++mCounter);
 
     if(mCounter > 999)
       return NULL;
@@ -2026,8 +2026,8 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
 
    // then format a standard DateStamp string like string
    // so that we can use StrToDate()
-   sprintf(tdate, "%02d-%02d-%02d", mon, day, year%100);
-   sprintf(ttime, "%02d:%02d:%02d", hour, min, sec);
+   snprintf(tdate, sizeof(tdate), "%02d-%02d-%02d", mon, day, year%100);
+   snprintf(ttime, sizeof(ttime), "%02d:%02d:%02d", hour, min, sec);
    dt.dat_Format  = FORMAT_USA;
    dt.dat_Flags   = 0;
    dt.dat_StrDate = tdate;
@@ -2094,7 +2094,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
       {
         case FT_GROUP:
         {
-          sprintf(msg->Array[0] = dispfold, "\033o[%d] %s", (isFlagSet(msg->TreeNode->tn_Flags, TNF_OPEN) ? FICON_ID_UNFOLD : FICON_ID_FOLD), entry->Name);
+          snprintf(msg->Array[0] = dispfold, sizeof(dispfold), "\033o[%d] %s", (isFlagSet(msg->TreeNode->tn_Flags, TNF_OPEN) ? FICON_ID_UNFOLD : FICON_ID_FOLD), entry->Name);
           msg->Preparse[0] = (entry->New+entry->Unread) ? (MUIX_B MUIX_I ) : MUIX_B MUIX_I "\0334";
         }
         break;
@@ -2102,14 +2102,14 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
         default:
         {
           if(entry->ImageIndex >= 0)
-            sprintf(msg->Array[0] = dispfold, "\033o[%d] ", entry->ImageIndex);
+            snprintf(msg->Array[0] = dispfold, sizeof(dispfold), "\033o[%d] ", entry->ImageIndex);
           else
             strcpy(msg->Array[0] = dispfold, " ");
 
           if(entry->Name[0])
             strcat(dispfold, entry->Name);
           else
-            sprintf(dispfold, "[%s]", FilePart(entry->Path));
+            snprintf(dispfold, sizeof(dispfold), "[%s]", FilePart(entry->Path));
 
           if(entry->LoadedMode != LM_UNLOAD)
           {
@@ -2117,25 +2117,25 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
             {
               msg->Preparse[0] = MUIX_B;
               if((C->FolderCols & (1<<3)) == 0)
-                sprintf(dispfold, "%s (%d)", dispfold, entry->Unread);
+                snprintf(dispfold, sizeof(dispfold), "%s (%d)", dispfold, entry->Unread);
             }
             else if(entry->Unread)
             {
               msg->Preparse[0] = MUIX_B "\0334";
               if((C->FolderCols & (1<<2)) == 0)
-                sprintf(dispfold, "%s (%d)", dispfold, entry->Unread);
+                snprintf(dispfold, sizeof(dispfold), "%s (%d)", dispfold, entry->Unread);
             }
 
             // if other folder columns are enabled lets fill the values
             // in
             if(C->FolderCols & (1<<1))
-              sprintf(msg->Array[1] = disptot, "%d", entry->Total);
+              snprintf(msg->Array[1] = disptot, sizeof(disptot), "%d", entry->Total);
 
             if(C->FolderCols & (1<<2) && entry->Unread-entry->New > 0)
-              sprintf(msg->Array[2] = dispunr, "%d", entry->Unread-entry->New);
+              snprintf(msg->Array[2] = dispunr, sizeof(dispunr), "%d", entry->Unread-entry->New);
 
             if(C->FolderCols & (1<<3) && entry->New > 0)
-              sprintf(msg->Array[3] = dispnew, "%d", entry->New);
+              snprintf(msg->Array[3] = dispnew, sizeof(dispnew), "%d", entry->New);
 
             if(C->FolderCols & (1<<4) && entry->Size > 0)
               FormatSize(entry->Size, msg->Array[4] = dispsiz);
@@ -2144,7 +2144,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
             msg->Preparse[0] = MUIX_I;
 
           if(isProtectedFolder(entry))
-            sprintf(dispfold, "%s \033o[%d]", dispfold, FICON_ID_PROTECTED);
+            snprintf(dispfold, sizeof(dispfold), "%s \033o[%d]", dispfold, FICON_ID_PROTECTED);
         }
       }
    }
@@ -2176,12 +2176,15 @@ void MA_MakeFOFormat(Object *lv)
    {
       if(C->FolderCols & (1<<i))
       {
+          int p;
+
           if(first)
             first = FALSE;
           else
             strcat(format, " BAR,");
 
-          sprintf(&format[strlen(format)], "COL=%d W=%d", i, defwidth[i]);
+          p = strlen(format);
+          snprintf(&format[p], sizeof(format)-p,  "COL=%d W=%d", i, defwidth[i]);
 
           if(i > 0)
             strcat(format, " P=\033r");

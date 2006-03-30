@@ -671,12 +671,15 @@ DECLARE(MakeFormat)
   {
     if(C->MessageCols & (1<<i))
     {
+      int p;
+
       if(first)
         first = FALSE;
       else
         strcat(format, " BAR,");
 
-      sprintf(&format[strlen(format)], "COL=%d W=%d", i, defwidth[i]);
+      p = strlen(format);
+      snprintf(&format[p], sizeof(format)-p, "COL=%d W=%d", i, defwidth[i]);
 
       if(i == 5)
         strcat(format, " P=\033r");

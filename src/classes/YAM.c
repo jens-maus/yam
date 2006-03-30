@@ -116,11 +116,11 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
 
       if(entry->RealName[0])
       {
-        sprintf(line, "%s <%s>\n", entry->RealName, entry->Address);
+        snprintf(line, sizeof(line), "%s <%s>\n", entry->RealName, entry->Address);
       }
       else
       {
-        sprintf(line, "<%s>\n", entry->Address);
+        snprintf(line, sizeof(line), "<%s>\n", entry->Address);
       }
 
       FPuts(fh, line);

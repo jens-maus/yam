@@ -71,7 +71,7 @@ HOOKPROTONH(DisplayFunc, LONG, STRPTR *array, struct CustomABEntry *e)
   array[1] = e->MatchEntry->RealName[0] ? e->MatchEntry->RealName : "-";
   array[2] = e->MatchEntry->Address[0]  ? e->MatchEntry->Address  : "-";
 
-  sprintf(buf, "\033b%." STR(SIZE_ADDRESS) "s", e->MatchString);
+  snprintf(buf, sizeof(buf), "\033b%." STR(SIZE_ADDRESS) "s", e->MatchString);
   array[e->MatchField] = buf;
 
   return 0;

@@ -693,8 +693,7 @@ DECLARE(UpdateStats) // ULONG force
     ULONG numEntries = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries);
     struct Folder* curFolder = FO_GetCurrentFolder();
 
-    sprintf(statusText, GetStr(MSG_QUICKSEARCH_SHOWNMSGS), numEntries,
-                                                           curFolder->Total);
+    snprintf(statusText, sizeof(statusText), GetStr(MSG_QUICKSEARCH_SHOWNMSGS), numEntries, curFolder->Total);
 
     set(data->TX_STATUSTEXT, MUIA_Text_Contents, statusText);
   }

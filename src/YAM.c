@@ -1159,7 +1159,7 @@ static void Abort(APTR formatnum, ...)
 
    if(formatnum)
    {
-      vsprintf(error, GetStr(formatnum), a);
+      vsnprintf(error, sizeof(error), GetStr(formatnum), a);
 
       if(MUIMasterBase && G && G->App)
       {

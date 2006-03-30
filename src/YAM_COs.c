@@ -416,17 +416,17 @@ void CO_SaveConfig(struct Config *co, char *fname)
       if(co->SocketOptions.NoDelay)     strcat(buf, " TCP_NODELAY");
       if(co->SocketOptions.LowDelay)    strcat(buf, " IPTOS_LOWDELAY");
       if(co->SocketOptions.SendBuffer > -1)
-        sprintf(&buf[strlen(buf)], " SO_SNDBUF=%ld", co->SocketOptions.SendBuffer);
+        snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_SNDBUF=%ld", co->SocketOptions.SendBuffer);
       if(co->SocketOptions.RecvBuffer > -1)
-        sprintf(&buf[strlen(buf)], " SO_RCVBUF=%ld", co->SocketOptions.RecvBuffer);
+        snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_RCVBUF=%ld", co->SocketOptions.RecvBuffer);
       if(co->SocketOptions.SendLowAt > -1)
-        sprintf(&buf[strlen(buf)], " SO_SNDLOWAT=%ld", co->SocketOptions.SendLowAt);
+        snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_SNDLOWAT=%ld", co->SocketOptions.SendLowAt);
       if(co->SocketOptions.RecvLowAt > -1)
-        sprintf(&buf[strlen(buf)], " SO_RCVLOWAT=%ld", co->SocketOptions.RecvLowAt);
+        snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_RCVLOWAT=%ld", co->SocketOptions.RecvLowAt);
       if(co->SocketOptions.SendTimeOut > -1)
-        sprintf(&buf[strlen(buf)], " SO_SNDTIMEO=%ld", co->SocketOptions.SendTimeOut);
+        snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_SNDTIMEO=%ld", co->SocketOptions.SendTimeOut);
       if(co->SocketOptions.RecvTimeOut > -1)
-        sprintf(&buf[strlen(buf)], " SO_RCVTIMEO=%ld", co->SocketOptions.RecvTimeOut);
+        snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_RCVTIMEO=%ld", co->SocketOptions.RecvTimeOut);
 
       fprintf(fh, "SocketOptions    =%s\n", buf);
       fprintf(fh, "TRBufferSize     = %d\n", co->TRBufferSize);
@@ -1207,7 +1207,7 @@ void CO_SetConfig(void)
          DoMethod(gui->LV_POP3, MUIM_List_Clear);
          for (i = 0; i < MAXP3; i++) if ((pop3 = CE->P3[i]))
          {
-            sprintf(pop3->Account, "%s@%s", pop3->User, pop3->Server);
+            snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
             DoMethod(gui->LV_POP3, MUIM_List_InsertSingle, pop3, MUIV_List_Insert_Bottom);
          }
          break;

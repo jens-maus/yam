@@ -6,6 +6,10 @@ $Id$
 
 2006-03-30  Jens Langner <Jens.Langner@light-speed.de>
 
+  * misc: replaced all possible sprintf()/vsprintf() uses by their buffer
+    overflow safe variants snprintf()/vsnprintf(). This should hopefully
+    make some passages a bit more crash robust as often sprintf()/vsprintf()
+    is to blame when it comes to possible buffer overlow conditions.
   * Debug.c, Makefile.os4: reworked the _DPRINTF() debugging function to
     not use any KPutFmt() function anymore so that the obsolete (on OS4)
     libdebug.a link library is not required anymore.

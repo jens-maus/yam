@@ -373,7 +373,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   while(success == FALSE)
   {
     // generate a new filename with the data we have collected
-    sprintf(newFileName, "%s.%03d,%s", dateFilePart, mcounter, statusFilePart);
+    snprintf(newFileName, sizeof(newFileName), "%s.%03d,%s", dateFilePart, mcounter, statusFilePart);
 
     // now check if the filename has changed or not
     if(strcmp(newFileName, mail->MailFile) == 0)
@@ -1240,7 +1240,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
 
             if (*mail->Subject)
             {
-               sprintf(buffer, "%s (fwd)", mail->Subject);
+               snprintf(buffer, sizeof(buffer), "%s (fwd)", mail->Subject);
                if (!strstr(rsub, buffer))
                {
                   if (*rsub) rsub = StrBufCat(rsub, "; ");
@@ -1342,8 +1342,10 @@ int MA_NewReply(struct Mail **mlist, int flags)
             // If this mail already have a subject we are going to add a "Re:" to it.
             if (*mail->Subject)
             {
-               if (j) strcpy(buffer, mail->Subject);
-               else sprintf(buffer, "Re: %s", MA_GetRealSubject(mail->Subject));
+               if(j)
+                strcpy(buffer, mail->Subject);
+               else
+                snprintf(buffer, sizeof(buffer), "Re: %s", MA_GetRealSubject(mail->Subject));
 
                if (!strstr(rsub, buffer))
                {
@@ -1424,7 +1426,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
                else if(hasMListFlag(flags) || mlistad) ; // do nothing
                else if (C->CompareAddress && *mail->ReplyTo.Address && stricmp(mail->From.Address, mail->ReplyTo.Address))
                {
-                  sprintf(buffer, GetStr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
+                  snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
                   switch (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_Compare3ReqOpt), buffer))
                   {
                      case 3:
@@ -1551,7 +1553,7 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
      char fname[SIZE_PATHFILE];
      char tfname[SIZE_PATHFILE];
 
-     sprintf(tfname, "%s.tmp", GetMailFile(fname, NULL, mail));
+     snprintf(tfname, sizeof(tfname), "%s.tmp", GetMailFile(fname, NULL, mail));
 
      if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)))
      {
@@ -1890,7 +1892,7 @@ static struct Person *MA_GetAddressSelect(struct Mail *mail)
    if (C->CompareAddress && *mail->ReplyTo.Address) if (stricmp(mail->From.Address, mail->ReplyTo.Address))
    {
       char buffer[SIZE_LARGE];
-      sprintf(buffer, GetStr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
+      snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
       switch (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_Compare2ReqOpt), buffer))
       {
          case 2: pe = &mail->ReplyTo; break;
@@ -2631,7 +2633,7 @@ HOOKPROTONHNONP(MA_CheckVersionFunc, void)
             fscanf(tf->FP, "%d.%d.%d", &day, &mon, &year);
             GetLine(tf->FP, newver, SIZE_SMALL);
             currver = (year<78 ? 1000000:0)+year*10000+mon*100+day;
-            sprintf(buf, GetStr(MSG_MA_LatestVersion), &newver[1], day, mon, year < 78 ? 2000+year : 1900+year, yamversion, yamversiondate,
+            snprintf(buf, sizeof(buf), GetStr(MSG_MA_LatestVersion), &newver[1], day, mon, year < 78 ? 2000+year : 1900+year, yamversion, yamversiondate,
                currver > thisver ? GetStr(MSG_MA_NewVersion) : GetStr(MSG_MA_NoNewVersion));
             if (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_CheckVersion), GetStr(MSG_MA_VersionReqOpt), buf)) GotoURL(C->SupportSite);
          }
@@ -2928,7 +2930,7 @@ void MA_SetupDynamicMenus(void)
 
    for (i = 0; i < MAXP3; i++) if (C->P3[i])
    {
-      sprintf(C->P3[i]->Account, "%s@%s", C->P3[i]->User, C->P3[i]->Server);
+      snprintf(C->P3[i]->Account, sizeof(C->P3[i]->Account), "%s@%s", C->P3[i]->User, C->P3[i]->Server);
 
       /* Warning: Small memory leak here, each time this function is called,
                   since the strdup()'ed string doesn't get free()'d anywhere,
@@ -3121,7 +3123,7 @@ struct MA_ClassData *MA_New(void)
       if (username = C->RealName,(user = US_GetCurrentUser()))
         username = user->Name;
 
-      sprintf(data->WinTitle, GetStr(MSG_MA_WinTitle), yamversionver, username);
+      snprintf(data->WinTitle, sizeof(data->WinTitle), GetStr(MSG_MA_WinTitle), yamversionver, username);
 
       data->GUI.MS_MAIN = MenustripObject,
          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Project),

@@ -82,9 +82,7 @@ STRPTR AB_PrettyPrintAddress(struct ABEntry *e)
 STRPTR AB_PrettyPrintAddress2(STRPTR realname, STRPTR address)
 {
   static char buf[SIZE_REALNAME + SIZE_ADDRESS + 4];
-
-  sprintf(buf, "%." STR(SIZE_REALNAME) "s <%." STR(SIZE_ADDRESS) "s>", realname, address);
-
+  snprintf(buf, sizeof(buf), "%." STR(SIZE_REALNAME) "s <%." STR(SIZE_ADDRESS) "s>", realname, address);
   return buf;
 }
 
@@ -117,7 +115,7 @@ char *AB_ExpandBD(long date)
    if (!date || date/1000000 > 31 || date/1000000 < 1 || ((date/10000)%100) > 12 || ((date/10000)%100) < 1 || date%10000 < 1000)
      return "";
 
-   sprintf(datestr, "%02ld-%s-%ld", date/1000000, months[((date/10000)%100)-1], date%10000);
+   snprintf(datestr, sizeof(datestr), "%02ld-%s-%ld", date/1000000, months[((date/10000)%100)-1], date%10000);
    return datestr;
 }
 
@@ -150,8 +148,10 @@ static STACKEXT BOOL AB_FindTodaysBirthdates(struct MUI_NListtree_TreeNode *list
 
       if (ab->Type == AET_USER && ab->BirthDay/10000 == today/10000)
       {
-        char question[SIZE_LARGE], *name = *ab->RealName ? ab->RealName : ab->Alias;
-        sprintf(question, GetStr(MSG_AB_BirthdayReq), name, today%10000-ab->BirthDay%10000);
+        char question[SIZE_LARGE];
+        char *name = *ab->RealName ? ab->RealName : ab->Alias;
+
+        snprintf(question, sizeof(question), GetStr(MSG_AB_BirthdayReq), name, today%10000-ab->BirthDay%10000);
 
         if (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_AB_BirthdayReminder), GetStr(MSG_YesNoReq), question))
         {
@@ -871,9 +871,11 @@ BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, e
                if(mode == ABF_USER)
                {
                   char buf[SIZE_LARGE];
+
                   DoMethod(lv, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
                   set(lv, MUIA_NListtree_Active, tn);
-                  sprintf(buf, GetStr(MSG_AB_FoundEntry), ab->Alias, ab->RealName);
+
+                  snprintf(buf, sizeof(buf), GetStr(MSG_AB_FoundEntry), ab->Alias, ab->RealName);
 
                   switch (MUI_Request(G->App, G->AB->GUI.WI, 0, GetStr(MSG_AB_FindEntry), GetStr(MSG_AB_FoundEntryGads), buf))
                   {
@@ -927,9 +929,10 @@ HOOKPROTONHNO(AB_OpenFunc, void, int *arg)
         // nothing
       break;
    }
+
    ab->WrWin = *md ? arg[1] : -1;
    ab->Modified = FALSE;
-   sprintf(ab->WTitle, "%s %s", GetStr(MSG_MA_MAddrBook), md);
+   snprintf(ab->WTitle, sizeof(ab->WTitle), "%s %s", GetStr(MSG_MA_MAddrBook), md);
    set(ab->GUI.WI, MUIA_Window_Title, ab->WTitle);
    set(ab->GUI.LV_ADDRESSES, MUIA_NListtree_Active, MUIV_NListtree_Active_Off);
    SafeOpenWindow(ab->GUI.WI);
@@ -1024,7 +1027,7 @@ HOOKPROTONHNO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
             case AET_LIST:
             {
               static char dispal[SIZE_DEFAULT];
-              sprintf(msg->Array[0] = dispal, "\033o[0]%s", entry->Alias);
+              snprintf(msg->Array[0] = dispal, sizeof(dispal), "\033o[0]%s", entry->Alias);
             }
             break;
 
@@ -1116,16 +1119,30 @@ MakeStaticHook(AB_LV_CmpFuncHook, AB_LV_CmpFunc);
 //  Creates format definition for address book listview
 void AB_MakeABFormat(APTR lv)
 {
-   int i;
-   char format[SIZE_LARGE];
-   BOOL first = TRUE;
-   *format = 0;
-   for (i = 0; i < ABCOLNUM; i++) if (C->AddrbookCols & (1<<i))
-   {
-      if (first) first = FALSE; else strcat(format, " BAR,");
-      sprintf(&format[strlen(format)], "COL=%d W=-1", i);
-   }
-   set(lv, MUIA_NListtree_Format, format);
+  int i;
+  char format[SIZE_LARGE];
+  BOOL first = TRUE;
+
+  *format = '\0';
+
+  for(i=0; i < ABCOLNUM; i++)
+  {
+    if(C->AddrbookCols & (1<<i))
+    {
+      int p;
+
+      if(first)
+        first = FALSE;
+      else
+        strcat(format, " BAR,");
+
+      p = strlen(format);
+
+      snprintf(&format[p], sizeof(format)-p, "COL=%d W=-1", i);
+    }
+  }
+
+  set(lv, MUIA_NListtree_Format, format);
 }
 
 ///

@@ -48,6 +48,8 @@
  *
  * History
  * -------
+ * 0.19 - replaced all sprintf() uses by proper snprintf() ones.
+ *
  * 0.18 - minor cosmetic changes to the generated source layout
  *
  * 0.17 - removed all 'long' datatype uses as this generates tag values that
@@ -134,7 +136,7 @@
  *
  */
 
-static const char *verstr = "0.18";
+static const char *verstr = "0.19";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -800,7 +802,7 @@ int gen_source( char *destfile, struct list *classlist )
     for (n = NULL; n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd);)
     {
       char name[128];
-      sprintf(name, "MUIM_%s_%s", nextcd->name, nextdd->name);
+      snprintf(name, sizeof(name), "MUIM_%s_%s", nextcd->name, nextdd->name);
       fprintf(fp, "    case %-40s: return m_%s_%-20s(cl, obj, (APTR)msg);\n",
         name, nextcd->name, nextdd->name);
     }
@@ -936,7 +938,7 @@ int gen_header( char *destfile, struct list *classlist )
     for (n = NULL; n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd);)
     {
       char name[128];
-      sprintf(name, "MUIM_%s_%s", cn, nextdd->name);
+      snprintf(name, sizeof(name), "MUIM_%s_%s", cn, nextdd->name);
       fprintf(fp, "#define %-45s 0x%08lx\n", name, gettagvalue(cn, 1));
     }
 
@@ -947,7 +949,7 @@ int gen_header( char *destfile, struct list *classlist )
     for (n = NULL; n = list_getnext(&nextcd->attrlist, n, (void **) &nextad);)
     {
       char name[128];
-      sprintf(name, "MUIA_%s_%s", cn, nextad->name);
+      snprintf(name, sizeof(name), "MUIA_%s_%s", cn, nextad->name);
       fprintf(fp, "#define %-45s 0x%08lx\n", name, gettagvalue(cn, 1));
     }
     fprintf(fp, "\n");
@@ -1018,7 +1020,7 @@ int gen_classheaders( struct list *classlist )
   {
     char name[128], buf[128], *p;
     char *cn = nextcd->name;
-    sprintf(name, "%s_cl.h", cn);
+    snprintf(name, sizeof(name), "%s_cl.h", cn);
     myaddpart(arg_classdir, name, 255);
     printf("Creating class header: %s\n", arg_classdir);
     if (!(fp = fopen(arg_classdir, "w")))

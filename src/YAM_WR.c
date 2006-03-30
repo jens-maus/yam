@@ -227,7 +227,7 @@ static char *NewID(BOOL is_msgid)
       // Here we try to generate a unique MessageID.
       // We try to be as much conform to the Recommandations for generating
       // unqiue Message IDs as we can: http://www.jwz.org/doc/mid.html
-      sprintf(idbuf, "%lx%lx.%lx@%s", seconds, ds.ds_Tick, (ULONG)rand(), C->SMTP_Server);
+      snprintf(idbuf, sizeof(idbuf), "%lx%lx.%lx@%s", seconds, ds.ds_Tick, (ULONG)rand(), C->SMTP_Server);
    }
    else
    {
@@ -235,7 +235,7 @@ static char *NewID(BOOL is_msgid)
 
       // Generate a unique Boundary ID which conforms to RFC 2045 and includes
       // a "=_" sequence to make it safe for quoted printable encoded parts
-      sprintf(idbuf, "--=_BOUNDARY.%lx%lx.%02x", (ULONG)FindTask(NULL), (ULONG)rand(), ++ctr);
+      snprintf(idbuf, sizeof(idbuf), "--=_BOUNDARY.%lx%lx.%02x", (ULONG)FindTask(NULL), (ULONG)rand(), ++ctr);
    }
 
    return idbuf;
@@ -717,7 +717,7 @@ static void WR_AddTagline(FILE *fh_mail)
 
    if (*C->TagsFile)
    {
-      sprintf(hashfile, "%s.hsh", C->TagsFile);
+      snprintf(hashfile, sizeof(hashfile), "%s.hsh", C->TagsFile);
 
       if(FileTime(C->TagsFile) > FileTime(hashfile))
         WR_CreateHashTable(C->TagsFile, hashfile, C->TagsSeparator);
@@ -1103,7 +1103,7 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
       fclose(tf->FP); tf->FP = NULL;
       ConvertCRLF(tf->Filename, tf2->Filename, TRUE);
       CloseTempFile(tf);
-      sprintf(pgpfile, "%s.asc", tf2->Filename);
+      snprintf(pgpfile, sizeof(pgpfile), "%s.asc", tf2->Filename);
       if((sec == SEC_SIGN) || (sec == SEC_BOTH)) PGPGetPassPhrase();
       switch (sec)
       {
@@ -1113,20 +1113,20 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
             fputc('\n', fh);
             EncodePart(fh, firstpart);
             fprintf(fh, "\n--%s\nContent-Type: application/pgp-signature\n\n", boundary);
-            sprintf(options, (G->PGPVersion == 5) ? "-ab %s +batchmode=1 +force" : "-sab %s +bat +f", tf2->Filename);
+            snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-ab %s +batchmode=1 +force" : "-sab %s +bat +f", tf2->Filename);
             if (*C->MyPGPID) { strcat(options, " -u "); strcat(options, C->MyPGPID); }
             if (!PGPCommand((G->PGPVersion == 5) ? "pgps" : "pgp", options, 0)) success = TRUE;
             break;
          case SEC_ENCRYPT :
             fprintf(fh, "Content-type: multipart/encrypted; boundary=\"%s\"; protocol=\"application/pgp-encrypted\"\n\n%s\n--%s\n", boundary, MIMEwarn, boundary);
             fprintf(fh, "Content-Type: application/pgp-encrypted\n\nVersion: 1\n\n%s\n--%s\nContent-Type: application/octet-stream\n\n", PGPwarn, boundary);
-            sprintf(options, (G->PGPVersion == 5) ? "-a %s %s +batchmode=1 +force" : "-ea %s %s +bat +f", tf2->Filename, ids);
+            snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-a %s %s +batchmode=1 +force" : "-ea %s %s +bat +f", tf2->Filename, ids);
             if (!PGPCommand((G->PGPVersion == 5) ? "pgpe" : "pgp", options, 0)) success = TRUE;
             break;
          case SEC_BOTH :
             fprintf(fh, "Content-type: multipart/encrypted; boundary=\"%s\"; protocol=\"application/pgp-encrypted\"\n\n%s\n--%s\n", boundary, MIMEwarn, boundary);
             fprintf(fh, "Content-Type: application/pgp-encrypted\n\nVersion: 1\n\n%s\n--%s\nContent-Type: application/octet-stream\n\n", PGPwarn, boundary);
-            sprintf(options, (G->PGPVersion == 5) ? "-a %s %s +batchmode=1 +force -s" : "-sea %s %s +bat +f", tf2->Filename, ids);
+            snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-a %s %s +batchmode=1 +force -s" : "-sea %s %s +bat +f", tf2->Filename, ids);
             if (*C->MyPGPID) { strcat(options, " -u "); strcat(options, C->MyPGPID); }
             if (!PGPCommand((G->PGPVersion == 5) ? "pgpe" : "pgp", options, 0)) success = TRUE;
             break;
@@ -1268,8 +1268,8 @@ BOOL WriteOutMessage(struct Compose *comp)
    }
    *options = 0;
    if (comp->DelSend) strcat(options, ",delsent");
-   if (comp->Security) sprintf(&options[strlen(options)], ",%s", SecCodes[comp->Security]);
-   if (comp->Signature) sprintf(&options[strlen(options)], ",sigfile%d", comp->Signature-1);
+   if (comp->Security) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",%s", SecCodes[comp->Security]);
+   if (comp->Signature) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",sigfile%d", comp->Signature-1);
    if (*options) EmitHeader(fh, "X-YAM-Options", &options[1]);
    EmitHeader(fh, "From", comp->From ? comp->From : BuildAddrName(C->EmailAddress, C->RealName));
    if (comp->ReplyTo) EmitHeader(fh, "Reply-To", comp->ReplyTo);
@@ -1713,7 +1713,7 @@ HOOKPROTONHNO(WR_Edit, void, int *arg)
       /* Workaround for a MUI bug */
 
       EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum]);
-      sprintf(buffer,"%s \"%s\"", C->Editor, GetRealPath(G->WR_Filename[winnum]));
+      snprintf(buffer, sizeof(buffer), "%s \"%s\"", C->Editor, GetRealPath(G->WR_Filename[winnum]));
       ExecuteCommand(buffer, TRUE, OUT_NIL);
    }
 }
@@ -1766,7 +1766,7 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
       if (!*arcname) strsfn((char *)ar->fr_ArgList[0].wa_Name, NULL, NULL, NULL, arcname);
       if (!StringRequest(arcname, SIZE_FILE, GetStr(MSG_WR_CreateArc), GetStr(MSG_WR_CreateArcReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->WR[winnum]->GUI.WI)) return;
       strmfp(filename, C->TempDir, arcname);
-      sprintf(arcpath, strchr(filename, ' ') ? "\"%s\"" : "%s", filename);
+      snprintf(arcpath, sizeof(arcpath), strchr(filename, ' ') ? "\"%s\"" : "%s", filename);
       if (strstr(C->PackerCommand, "%l")) if ((tf = OpenTempFile("w")))
       {
          for (i = 0; i < ar->fr_NumArgs; i++)
@@ -1789,7 +1789,7 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
 //                         strcpy(filename, "\"");
 //                         strmfp(&filename[1], ar->fr_Drawer, ar->fr_ArgList[i].wa_Name);
 //                         strcat(filename, "\" ");
-                         sprintf(filename, "\"%s\"", ar->fr_ArgList[i].wa_Name);
+                         snprintf(filename, sizeof(filename), "\"%s\"", ar->fr_ArgList[i].wa_Name);
                          dst = StrBufCat(dst, filename);
                       }
                       break;
@@ -1808,12 +1808,12 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
       MyStrCpy(filename, arcpath);
       if (FileSize(filename) == -1)
       {
-         sprintf(filename, "%s.lha", arcpath);
+         snprintf(filename, sizeof(filename), "%s.lha", arcpath);
          if (FileSize(filename) == -1)
          {
-            sprintf(filename, "%s.lzx", arcpath);
+            snprintf(filename, sizeof(filename), "%s.lzx", arcpath);
             if (FileSize(filename) == -1)
-               sprintf(filename, "%s.zip", arcpath);
+               snprintf(filename, sizeof(filename), "%s.zip", arcpath);
          }
       }
       WR_AddFileToList(winnum, filename, NULL, TRUE);
@@ -2014,7 +2014,7 @@ HOOKPROTONHNO(WR_AddPGPKeyFunc, void, int *arg)
    int winnum = *arg;
    char *myid = *C->MyPGPID ? C->MyPGPID : C->EmailAddress;
    char options[SIZE_LARGE], *fname = "T:PubKey.asc";
-   sprintf(options, (G->PGPVersion == 5) ? "-x %s -o %s +force +batchmode=1" : "-kxa %s %s +f +bat", myid, fname);
+   snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-x %s -o %s +force +batchmode=1" : "-kxa %s %s +f +bat", myid, fname);
    if (!PGPCommand((G->PGPVersion == 5) ? "pgpk" : "pgp", options, 0))
    {
     if (FileSize(fname) > 0)
@@ -2104,11 +2104,11 @@ void WR_SetupOldMail(int winnum, struct ReadMailData *rmData)
 /*** WR_UpdateTitleFunc - Shows cursor coordinates ***/
 HOOKPROTONHNO(WR_UpdateWTitleFunc, void, int *arg)
 {
-   struct WR_ClassData *wr = G->WR[*arg];
-   APTR ed = wr->GUI.TE_EDIT;
+  struct WR_ClassData *wr = G->WR[*arg];
+  Object *ed = wr->GUI.TE_EDIT;
 
-   sprintf(wr->WTitle, "%03ld\n%03ld", xget(ed,MUIA_TextEditor_CursorY)+1, xget(ed,MUIA_TextEditor_CursorX)+1);
-   set(wr->GUI.TX_POSI, MUIA_Text_Contents, wr->WTitle);
+  snprintf(wr->WTitle, sizeof(wr->WTitle), "%03ld\n%03ld", xget(ed,MUIA_TextEditor_CursorY)+1, xget(ed,MUIA_TextEditor_CursorX)+1);
+  set(wr->GUI.TX_POSI, MUIA_Text_Contents, wr->WTitle);
 }
 MakeStaticHook(WR_UpdateWTitleHook,WR_UpdateWTitleFunc);
 ///
@@ -2214,7 +2214,7 @@ HOOKPROTONH(WR_LV_DspFunc, long, char **array, struct Attach *entry)
    if (entry)
    {
       array[0] = entry->Name;
-      sprintf(array[1] = dispsz, "%d", entry->Size);
+      snprintf(array[1] = dispsz, sizeof(dispsz), "%d", entry->Size);
       array[2] = DescribeCT(entry->ContentType);
       array[3] = entry->IsMIME ? "MIME" : "UU";
       array[4] = entry->Description;

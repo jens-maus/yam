@@ -251,7 +251,7 @@ BOOL TR_InitTLS(VOID)
 
   // We have to feed the random number generator first
   D(DBF_NET, "Seeding random number generator...");
-  sprintf(tmp, "%lx%lx", (unsigned long)time((time_t *)0), (unsigned long)FindTask(NULL));
+  snprintf(tmp, sizeof(tmp), "%lx%lx", (unsigned long)time((time_t *)0), (unsigned long)FindTask(NULL));
   RAND_seed(tmp, strlen(tmp));
 
   if (!(method = SSLv23_client_method()))
@@ -598,7 +598,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
         // let us now generate a more or less random and unique cnonce
         // identifier which we can supply to our SMTP server.
-        sprintf(cnonce, "%08lx%08lx", (ULONG)rand(), (ULONG)rand());
+        snprintf(cnonce, sizeof(cnonce), "%08lx%08lx", (ULONG)rand(), (ULONG)rand());
 
         // the we generate the response according to RFC 2831 with A1
         // and A2 as MD5 encoded strings
@@ -615,12 +615,12 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           // lets first generate the A1 string
           // A1 = { H( { username-value, ":", realm-value, ":", passwd } ),
           //      ":", nonce-value, ":", cnonce-value }
-          sprintf(buf, "%s:%s:%s", C->SMTP_AUTH_User, realm, C->SMTP_AUTH_Pass);
+          snprintf(buf, sizeof(buf), "%s:%s:%s", C->SMTP_AUTH_User, realm, C->SMTP_AUTH_Pass);
           MD5Init(&context);
           MD5Update(&context, (unsigned char *)buf, strlen(buf));
           MD5Final(digest, &context);
           memcpy(A1, digest, 16);
-          A1_len += sprintf(&A1[16], ":%s:%s", nonce, cnonce);
+          A1_len += snprintf(&A1[16], sizeof(A1)-16, ":%s:%s", nonce, cnonce);
           D(DBF_NET, "unencoded A1: `%s` (%ld)", A1, A1_len);
 
           // then we directly build the hexadecimal representation
@@ -628,14 +628,14 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           MD5Init(&context);
           MD5Update(&context, (unsigned char *)A1, A1_len);
           MD5Final((UBYTE *)digest_hex, &context);
-          sprintf(A1, "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
+          snprintf(A1, sizeof(A1), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                               digest_hex[2], digest_hex[3]);
           D(DBF_NET, "encoded   A1: `%s`", A1);
 
 
           // then we generate the A2 string accordingly
           // A2 = { "AUTHENTICATE:", digest-uri-value }
-          sprintf(A2, "AUTHENTICATE:smtp/%s", realm);
+          snprintf(A2, sizeof(A2), "AUTHENTICATE:smtp/%s", realm);
           D(DBF_NET, "unencoded A2: `%s`", A2);
 
           // and also directly build the hexadecimal representation
@@ -643,7 +643,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           MD5Init(&context);
           MD5Update(&context, (unsigned char *)A2, strlen(A2));
           MD5Final((UBYTE *)digest_hex, &context);
-          sprintf(A2, "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
+          snprintf(A2, sizeof(A2), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                               digest_hex[2], digest_hex[3]);
           D(DBF_NET, "encoded   A2: `%s`", A2);
 
@@ -651,7 +651,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           // HEX(H(A1)), ":",
           // nonce-value, ":", nc-value, ":",
           // cnonce-value, ":", qop-value, ":", HEX(H(A2))
-          sprintf(buf2, "%s:%s:00000001:%s:auth:%s", A1, nonce, cnonce, A2);
+          snprintf(buf2, sizeof(buf2), "%s:%s:00000001:%s:auth:%s", A1, nonce, cnonce, A2);
           D(DBF_NET, "unencoded resp: `%s`", buf2);
 
           // and finally build the respone-value =
@@ -661,27 +661,27 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           MD5Init(&context);
           MD5Update(&context, (unsigned char *)buf2, strlen(buf2));
           MD5Final((UBYTE *)digest_hex, &context);
-          sprintf(response, "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
+          snprintf(response, sizeof(response), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                                     digest_hex[2], digest_hex[3]);
           D(DBF_NET, "encoded   resp: `%s`", response);
         }
 
         // form up the challenge to authenticate according to RFC 2831
-        sprintf(challenge,
-                "username=\"%s\","        // the username token
-                "realm=\"%s\","           // the realm token
-                "nonce=\"%s\","           // the nonce token
-                "cnonce=\"%s\","          // the client nonce (cnonce)
-                "nc=00000001,"            // the nonce count (here always 1)
-                "qop=auth,"               // we just use auth
-                "digest-uri=\"smtp/%s\"," // the digest-uri token
-                "response=%s",            // the response
-                C->SMTP_AUTH_User,
-                realm,
-                nonce,
-                cnonce,
-                realm,
-                response);
+        snprintf(challenge, sizeof(challenge),
+                 "username=\"%s\","        // the username token
+                 "realm=\"%s\","           // the realm token
+                 "nonce=\"%s\","           // the nonce token
+                 "cnonce=\"%s\","          // the client nonce (cnonce)
+                 "nc=00000001,"            // the nonce count (here always 1)
+                 "qop=auth,"               // we just use auth
+                 "digest-uri=\"smtp/%s\"," // the digest-uri token
+                 "response=%s",            // the response
+                 C->SMTP_AUTH_User,
+                 realm,
+                 nonce,
+                 cnonce,
+                 realm,
+                 response);
 
         D(DBF_NET, "prepared challenge answer....: `%s`", challenge);
         base64encode(buffer, (unsigned char *)challenge, strlen(challenge));
@@ -744,7 +744,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
         // compose the md5 challenge
         hmac_md5((unsigned char *)challenge, strlen(challenge), (unsigned char *)password, strlen(password), (unsigned char *)digest);
-        sprintf(buf, "%s %08lx%08lx%08lx%08lx", login, digest[0], digest[1], digest[2], digest[3]);
+        snprintf(buf, sizeof(buf), "%s %08lx%08lx%08lx%08lx", login, digest[0], digest[1], digest[2], digest[3]);
 
         D(DBF_NET, "prepared CRAM-MD5 reponse..: `%s`", buf);
         // lets base64 encode the md5 challenge for the answer
@@ -819,15 +819,15 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
       // we don`t have a "authorize-id" so we set the first char to \0
       challenge[len++] = '\0';
-      len += sprintf(challenge+len, "%s", C->SMTP_AUTH_User)+1; // authenticate-id
-      len += sprintf(challenge+len, "%s", C->SMTP_AUTH_Pass);   // password
+      len += snprintf(challenge+len, sizeof(challenge)-len, "%s", C->SMTP_AUTH_User)+1; // authenticate-id
+      len += snprintf(challenge+len, sizeof(challenge)-len, "%s", C->SMTP_AUTH_Pass);   // password
 
       // now we base64 encode this string and send it to the server
       base64encode(buffer, (unsigned char *)challenge, len);
 
       // lets now form up the AUTH PLAIN command we are going to send
       // to the SMTP server for authorization purposes:
-      sprintf(challenge, "%s %s\r\n", SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
+      snprintf(challenge, sizeof(challenge), "%s %s\r\n", SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
 
       // now we send the SMTP AUTH command (UserName+Password)
       if(TR_WriteLine(challenge) <= 0) return FALSE;
@@ -1393,8 +1393,8 @@ static int TR_Send(char *ptr, int len, int flags)
 //  Sets the title of the transfer window
 void TR_SetWinTitle(BOOL from, char *host)
 {
-   sprintf(G->TR->WTitle, GetStr(from ? MSG_TR_MailTransferFrom : MSG_TR_MailTransferTo), host);
-   set(G->TR->GUI.WI, MUIA_Window_Title, G->TR->WTitle);
+  snprintf(G->TR->WTitle, sizeof(G->TR->WTitle), GetStr(from ? MSG_TR_MailTransferFrom : MSG_TR_MailTransferTo), host);
+  set(G->TR->GUI.WI, MUIA_Window_Title, G->TR->WTitle);
 }
 ///
 /// TR_ReadLine()
@@ -1661,23 +1661,25 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
    if (!TR_Connect(host, hport))
    {
 /*
-      if (noproxy) sprintf(buf, "GET /%s HTTP/1.0\r\nHost: http://%s\r\n", path, host);
+      if (noproxy) snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\nHost: http://%s\r\n", path, host);
       else if (port = strchr(url, ':'))
       {
          *port++ = 0;
-         sprintf(buf, "GET http://%s:%s/%s HTTP/1.0\r\nHost: http://%s\r\n", url, port, path, url);
+         snprintf(buf, sizeof(buf), "GET http://%s:%s/%s HTTP/1.0\r\nHost: http://%s\r\n", url, port, path, url);
       }
-      else sprintf(buf, "GET http://%s/%s HTTP/1.0\r\nHost: http://%s\r\n", url, path, url);
-      sprintf(&buf[strlen(buf)], "From: %s\r\nUser-Agent: %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), yamversion);
+      else snprintf(buf, sizeof(buf), "GET http://%s/%s HTTP/1.0\r\nHost: http://%s\r\n", url, path, url);
+      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), "From: %s\r\nUser-Agent: %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), yamversion);
 */
-      if (noproxy) sprintf(buf, "GET /%s HTTP/1.0\r\nHost: %s\r\n", path, host);
+      if (noproxy) snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\nHost: %s\r\n", path, host);
       else if ((port = strchr(url, ':')))
       {
          *port++ = 0;
-         sprintf(buf, "GET http://%s:%s/%s HTTP/1.0\r\nHost: %s\r\n", url, port, path, url);
+         snprintf(buf, sizeof(buf), "GET http://%s:%s/%s HTTP/1.0\r\nHost: %s\r\n", url, port, path, url);
       }
-      else sprintf(buf, "GET http://%s/%s HTTP/1.0\r\nHost: %s\r\n", url, path, url);
-      sprintf(&buf[strlen(buf)], "From: %s\r\nUser-Agent: %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), yamversion);
+      else snprintf(buf, sizeof(buf), "GET http://%s/%s HTTP/1.0\r\nHost: %s\r\n", url, path, url);
+
+      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), "From: %s\r\nUser-Agent: %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), yamversion);
+
       if(TR_WriteLine(buf) > 0)
       {
          len = TR_Recv(buf, SIZE_LINE);
@@ -1736,8 +1738,10 @@ static char *TR_SendPOP3Cmd(enum POPCommand command, char *parmtext, APTR errorM
    }
 
    // if we specified a parameter for the pop command lets add it now
-   if(!parmtext || !*parmtext) sprintf(buf, "%s\r\n", POPcmd[command]);
-   else sprintf(buf, "%s %s\r\n", POPcmd[command], parmtext);
+   if(!parmtext || !*parmtext)
+    snprintf(buf, SIZE_LINE, "%s\r\n", POPcmd[command]);
+   else
+    snprintf(buf, SIZE_LINE, "%s %s\r\n", POPcmd[command], parmtext);
 
    // send the pop command to the server and see if it was received somehow
    // and for a connect we don`t send something or the server will get
@@ -1848,7 +1852,7 @@ static int TR_ConnectPOP(int guilevel)
 
    if (!*passwd)
    {
-      sprintf(buf, GetStr(MSG_TR_PopLoginReq), C->P3[pop]->User, host);
+      snprintf(buf, sizeof(buf), GetStr(MSG_TR_PopLoginReq), C->P3[pop]->User, host);
       if (!StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_TR_PopLogin), buf, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->TR->GUI.WI))
       {
         return -1;
@@ -1875,8 +1879,9 @@ static int TR_ConnectPOP(int guilevel)
          MD5Init(&context);
          MD5Update(&context, (unsigned char *)buf, strlen(buf));
          MD5Final(digest, &context);
-         sprintf(buf, "%s ", C->P3[pop]->User);
-         for(j=strlen(buf), i=0; i<16; j+=2, i++) sprintf(&buf[j], "%02x", digest[i]);
+         snprintf(buf, sizeof(buf), "%s ", C->P3[pop]->User);
+         for(j=strlen(buf), i=0; i<16; j+=2, i++)
+           snprintf(&buf[j], sizeof(buf)-j, "%02x", digest[i]);
          buf[j] = 0;
          set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendAPOPLogin));
          if (!TR_SendPOP3Cmd(POPCMD_APOP, buf, MSG_ER_BadResponse)) return -1;
@@ -2155,7 +2160,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
       //
       // This command is optional within the RFC 1939 specification
       // and therefore we don`t throw any error
-      sprintf(cmdbuf, "%d 1", mtn->index);
+      snprintf(cmdbuf, sizeof(cmdbuf), "%d 1", mtn->index);
       if(TR_SendPOP3Cmd(POPCMD_TOP, cmdbuf, NULL))
       {
          char *tfname = "yamTOP.msg";
@@ -2201,7 +2206,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
                if(lline == -1)
                {
                   char uidl[SIZE_DEFAULT+SIZE_HOST];
-                  sprintf(uidl, "%s@%s", Trim(email->MsgID), C->P3[G->TR->POP_Nr]->Server);
+                  snprintf(uidl, sizeof(uidl), "%s@%s", Trim(email->MsgID), C->P3[G->TR->POP_Nr]->Server);
                   mail->UIDL = AllocCopy(uidl, strlen(uidl)+1);
                }
                else if(lline == -2)
@@ -2465,8 +2470,10 @@ static char *TR_SendSMTPCmd(enum SMTPCommand command, char *parmtext, APTR error
    }
 
    // now we prepare the SMTP command
-   if(!parmtext || !*parmtext) sprintf(buf, "%s\r\n", SMTPcmd[command]);
-   else sprintf(buf, "%s %s\r\n", SMTPcmd[command], parmtext);
+   if(!parmtext || !*parmtext)
+    snprintf(buf, SIZE_LINE, "%s\r\n", SMTPcmd[command]);
+   else
+    snprintf(buf, SIZE_LINE, "%s %s\r\n", SMTPcmd[command], parmtext);
 
    // lets issue the command, but not if we connect
    if(command != SMTP_CONNECT && TR_WriteLine(buf) <= 0) { errorMsg = MSG_ER_ConnectionBroken; goto clean_exit; }
@@ -3129,7 +3136,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
    if ((f = fopen(mf = GetMailFile(NULL, outfolder, mail), "r")))
    {
       char buf[SIZE_LINE];
-      sprintf(buf, "FROM:<%s>", C->EmailAddress);
+      snprintf(buf, sizeof(buf), "FROM:<%s>", C->EmailAddress);
       if (TR_SendSMTPCmd(SMTP_MAIL, buf, MSG_ER_BadResponse))
       {
          int j;
@@ -3138,21 +3145,21 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 
          if(email)
          {
-            sprintf(buf, "TO:<%s>", mail->To.Address);
+            snprintf(buf, sizeof(buf), "TO:<%s>", mail->To.Address);
             if (!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse)) rcptok = FALSE;
             for (j = 0; j < email->NoSTo && rcptok; j++)
             {
-              sprintf(buf, "TO:<%s>", email->STo[j].Address);
+              snprintf(buf, sizeof(buf), "TO:<%s>", email->STo[j].Address);
               if (!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse)) rcptok = FALSE;
             }
             for (j = 0; j < email->NoCC && rcptok; j++)
             {
-              sprintf(buf, "TO:<%s>", email->CC[j].Address);
+              snprintf(buf, sizeof(buf), "TO:<%s>", email->CC[j].Address);
               if (!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse)) rcptok = FALSE;
             }
             for (j = 0; j < email->NoBCC && rcptok; j++)
             {
-              sprintf(buf, "TO:<%s>", email->BCC[j].Address);
+              snprintf(buf, sizeof(buf), "TO:<%s>", email->BCC[j].Address);
               if (!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse)) rcptok = FALSE;
             }
 
@@ -3920,7 +3927,7 @@ BOOL TR_GetMessageList_IMPORT()
   NewList((struct List *)&G->TR->transferList);
 
   // prepare the temporary filename buffers
-  sprintf(tfname, "YAMi%02d.tmp", G->RexxHost->portnumber);
+  snprintf(tfname, sizeof(tfname), "YAMi%02d.tmp", G->RexxHost->portnumber);
   strmfp(fname, C->TempDir, tfname);
 
   // before this function is called the MA_ImportMessages() function
@@ -4411,7 +4418,7 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
    {
       BOOL done = FALSE;
 
-      sprintf(msgnum, "%d", number);
+      snprintf(msgnum, sizeof(msgnum), "%d", number);
       if(TR_SendPOP3Cmd(POPCMD_RETR, msgnum, MSG_ER_BadResponse))
       {
          // now we call a subfunction to receive data from the POP3 server
@@ -4458,7 +4465,7 @@ static void TR_DeleteMessage(int number)
 {
    char msgnum[SIZE_SMALL];
 
-   sprintf(msgnum, "%d", number);
+   snprintf(msgnum, sizeof(msgnum), "%d", number);
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_DeletingServerMail));
    if(TR_SendPOP3Cmd(POPCMD_DELE, msgnum, MSG_ER_BadResponse)) G->TR->Stats.Deleted++;
 }
@@ -4486,14 +4493,14 @@ static void TR_NewMailAlert(void)
     if(xget(G->App, MUIA_Application_Iconified) == TRUE)
       PopUp();
 
-    sprintf(buffer, GetStr(MSG_TR_NewMailReq), stats->Downloaded, stats->OnServer-stats->Deleted, stats->DupSkipped);
-    sprintf(&buffer[strlen(buffer)], GetStr(MSG_TR_FilterStats), rr->Checked,
-                                                                 rr->Bounced,
-                                                                 rr->Forwarded,
-                                                                 rr->Replied,
-                                                                 rr->Executed,
-                                                                 rr->Moved,
-                                                                 rr->Deleted);
+    snprintf(buffer, sizeof(buffer), GetStr(MSG_TR_NewMailReq), stats->Downloaded, stats->OnServer-stats->Deleted, stats->DupSkipped);
+    snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), GetStr(MSG_TR_FilterStats), rr->Checked,
+                                                                     rr->Bounced,
+                                                                     rr->Forwarded,
+                                                                     rr->Replied,
+                                                                     rr->Executed,
+                                                                     rr->Moved,
+                                                                     rr->Deleted);
 
     // show the info window.
     InfoWindow(GetStr(MSG_TR_NewMail), buffer, GetStr(MSG_Okay), G->MA->GUI.WI);
@@ -4668,7 +4675,7 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
     struct Mail *mail = entry->mail;
     struct Person *pe = &mail->From;
 
-    sprintf(array[0] = dispsta, "%3d ", entry->index);
+    snprintf(array[0] = dispsta, sizeof(dispsta), "%3d ", entry->index);
     if(hasTR_LOAD(entry))   strcat(dispsta, SICON_DOWNLOAD);
     if(hasTR_DELETE(entry)) strcat(dispsta, SICON_DELETE);
     if(mail->Size >= C->WarnSize<<10) strcat(dispsiz, MUIX_PH);

@@ -220,7 +220,7 @@ HOOKPROTONH(AttachDspFunc, long, char **array, struct Part *entry)
       array[0] = array[2] = "";
 
       if(entry->Nr > PART_RAW)
-        sprintf(array[0] = dispnu, "%d", entry->Nr);
+        snprintf(array[0] = dispnu, sizeof(dispnu), "%d", entry->Nr);
 
       if(*entry->Name) array[1] = entry->Name;
       else             array[1] = DescribeCT(entry->ContentType);
@@ -264,7 +264,7 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, c
 
   // lets create the requester text
   va_start(args, format);
-  vsprintf(reqtxt, format, args);
+  vsnprintf(reqtxt, sizeof(reqtxt), format, args);
   va_end(args);
 
   // if the applicationpointer is NULL we fall back to a standard requester
@@ -809,9 +809,9 @@ void InfoWindow(char *title, char *body, char *oktext, APTR parent)
 //  Converts an integer into a string
 char *itoa(int val)
 {
-   static char str[SIZE_SMALL];
-   sprintf(str, "%d", val);
-   return str;
+  static char str[SIZE_SMALL];
+  snprintf(str, sizeof(str), "%d", val);
+  return str;
 }
 ///
 /// MatchNoCase
@@ -1045,7 +1045,9 @@ char *Encrypt(char *source)
    while (read >= source)
    {
       unsigned char c = (*read--)^CRYPTBYTE;
-      sprintf(&buffer[strlen(buffer)], "%03d ", c);
+      int p = strlen(buffer);
+
+      snprintf(&buffer[p], sizeof(buffer)-p, "%03d ", c);
    }
    return buffer;
 }
@@ -1746,7 +1748,7 @@ struct TempFile *OpenTempFile(char *mode)
 
       // now format our temporary filename according to our Application data
       // this format tries to make the temporary filename kinda unique.
-      sprintf(buf, "YAMt%d%02d.tmp", G->RexxHost->portnumber, ++count);
+      snprintf(buf, sizeof(buf), "YAMt%d%02d.tmp", G->RexxHost->portnumber, ++count);
 
       // now add the temporary path to the filename
       strmfp(tf->Filename, C->TempDir, buf);
@@ -2118,16 +2120,22 @@ struct Person *GetReturnAddress(struct Mail *mail)
 //  Creates "Real Name" <E-mail> string
 char *BuildAddrName(char *address, char *name)
 {
-   static char buffer[SIZE_ADDRESS+SIZE_REALNAME+4];
-   char *delim;
+  static char buffer[SIZE_ADDRESS+SIZE_REALNAME+4];
+  char *delim;
 
-   if (*name)
-   {
-      if (strpbrk(name, ",.()")) delim = "\""; else delim = "";
-      sprintf(buffer, "%s%s%s <%s>", delim, name, delim, address);
-   }
-   else sprintf(buffer, "%s", address);
-   return buffer;
+  if(*name)
+  {
+    if(strpbrk(name, ",.()"))
+      delim = "\"";
+    else
+      delim = "";
+
+    snprintf(buffer, sizeof(buffer), "%s%s%s <%s>", delim, name, delim, address);
+  }
+  else
+    snprintf(buffer, sizeof(buffer), "%s", address);
+
+  return buffer;
 }
 ///
 /// ExtractAddress
@@ -2260,7 +2268,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
             {
               char tzone[6];
               int convertedTimeZone = (etd->OM_TimeZone/60)*100 + (etd->OM_TimeZone%60);
-              sprintf(tzone, "%+05d", convertedTimeZone);
+              snprintf(tzone, sizeof(tzone), "%+05d", convertedTimeZone);
               dst = StrBufCat(dst, tzone);
             }
             break;
@@ -3218,7 +3226,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 
        mCounter++;
 
-       sprintf(&dstFileName[13], "%03d", mCounter);
+       snprintf(&dstFileName[13], sizeof(dstFileName)-13, "%03d", mCounter);
        dstFileName[16] = ','; // restore it
 
        strcpy(dstbuf, GetFolderDir(dstfolder));
@@ -3333,7 +3341,7 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
    MA_GetIndex(folder);
    GetMailFile(srcbuf, folder, mail);
    GetPackMethod(dstMode, &pmeth, &peff);
-   sprintf(dstbuf, "%s.tmp", srcbuf);
+   snprintf(dstbuf, sizeof(dstbuf), "%s.tmp", srcbuf);
 
    SHOWSTRING(DBF_UTIL, srcbuf);
 
@@ -3427,7 +3435,7 @@ char *StartUnpack(char *file, char *newfile, struct Folder *folder)
       {
          char nfile[SIZE_FILE];
 
-         sprintf(nfile, "%s_%08lx.unp", FilePart(file), (ULONG)folder);
+         snprintf(nfile, sizeof(nfile), "%s_%08lx.unp", FilePart(file), (ULONG)folder);
 
          strmfp(newfile, C->TempDir, nfile);
          if (FileSize(newfile) < 0) if (!UncompressMailFile(file, newfile, folder ? folder->Password : "")) return NULL;
@@ -4064,18 +4072,18 @@ void SaveLayout(BOOL permanent)
    // 9:  Vertical weight of bottom object (texteditor) of the embedded read pane
    // 10: Vertical weight of top object (headerlist) in a read window
    // 11: Vertical weight of bottom object (texteditor) in a read window
-   sprintf(buf, "%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld", G->Weights[0],
-                                                                   G->Weights[1],
-                                                                   G->Weights[2],
-                                                                   G->Weights[3],
-                                                                   G->Weights[4],
-                                                                   G->Weights[5],
-                                                                   G->Weights[6],
-                                                                   G->Weights[7],
-                                                                   G->Weights[8],
-                                                                   G->Weights[9],
-                                                                   G->Weights[10],
-                                                                   G->Weights[11]);
+   snprintf(buf, sizeof(buf), "%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld", G->Weights[0],
+                                                                                 G->Weights[1],
+                                                                                 G->Weights[2],
+                                                                                 G->Weights[3],
+                                                                                 G->Weights[4],
+                                                                                 G->Weights[5],
+                                                                                 G->Weights[6],
+                                                                                 G->Weights[7],
+                                                                                 G->Weights[8],
+                                                                                 G->Weights[9],
+                                                                                 G->Weights[10],
+                                                                                 G->Weights[11]);
 
    setstring(G->MA->GUI.ST_LAYOUT, buf);
    DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);
@@ -4309,7 +4317,7 @@ static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, vo
    {
       struct ClockData cd;
       Amiga2Date(GetDateStamp(), &cd);
-      sprintf(filename, "YAM-%s%d.log", months[cd.month-1], cd.year);
+      snprintf(filename, sizeof(filename), "YAM-%s%d.log", months[cd.month-1], cd.year);
    }
    else strcpy(filename, "YAM.log");
    strmfp(logfile, *C->LogfilePath ? C->LogfilePath : G->ProgDir, filename);
@@ -4351,7 +4359,7 @@ void Busy(char *text, char *parameter, int cur, int max)
    {
       if(*text)
       {
-        sprintf(infotext[BusyLevel], text, parameter);
+        snprintf(infotext[BusyLevel], SIZE_DEFAULT, text, parameter);
 
         if(max > 0)
         {
@@ -4365,7 +4373,7 @@ void Busy(char *text, char *parameter, int cur, int max)
           {
             static char progressText[SIZE_DEFAULT];
 
-            sprintf(progressText, "%%ld/%d", max);
+            snprintf(progressText, sizeof(progressText), "%%ld/%d", max);
 
             DoMethod(G->SplashWinObject, MUIM_Splashwindow_StatusChange, infotext[BusyLevel], -1);
             DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, progressText, cur, max);
@@ -4495,17 +4503,15 @@ void DisplayAppIconStatistics(void)
         switch (*++src)
         {
           case '%': strcpy(dst, "%");            break;
-          case 'n': sprintf(dst, "%d", new_msg); break;
-          case 'u': sprintf(dst, "%d", unr_msg); break;
-          case 't': sprintf(dst, "%d", tot_msg); break;
-          case 's': sprintf(dst, "%d", snt_msg); break;
-          case 'd': sprintf(dst, "%d", del_msg); break;
+          case 'n': snprintf(dst, sizeof(dst), "%d", new_msg); break;
+          case 'u': snprintf(dst, sizeof(dst), "%d", unr_msg); break;
+          case 't': snprintf(dst, sizeof(dst), "%d", tot_msg); break;
+          case 's': snprintf(dst, sizeof(dst), "%d", snt_msg); break;
+          case 'd': snprintf(dst, sizeof(dst), "%d", del_msg); break;
         }
       }
       else
-      {
-        sprintf(dst, "%c", *src);
-      }
+        snprintf(dst, sizeof(dst), "%c", *src);
 
       strcat(apptit, dst);
     }
@@ -4784,7 +4790,10 @@ static char *IdentifyFileDT(char *fname)
                case GID_MOVIE:
                case GID_ANIMATION:  type = "video"; break;
             }
-            if (type) sprintf(ctype, "%s/x-%s", type, dth->dth_BaseName);
+
+            if(type)
+              snprintf(ctype, sizeof(ctype), "%s/x-%s", type, dth->dth_BaseName);
+
             ReleaseDataType(dtn);
          }
          UnLock (lock);
@@ -4959,7 +4968,7 @@ void GotoURL(char *url)
   if (C->RX[MACRO_URL].Script[0])
   {
     char newurl[SIZE_LARGE];
-    sprintf(newurl, "%c%s%c", '"', url, '"');
+    snprintf(newurl, sizeof(newurl), "%c%s%c", '"', url, '"');
     MA_StartMacro(MACRO_URL, newurl);
   }
   else if((OpenURLBase=OpenLibrary("openurl.library", 1)))

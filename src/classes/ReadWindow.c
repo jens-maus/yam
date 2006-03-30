@@ -58,7 +58,7 @@ struct Data
   struct MUIP_Toolbar_Description toolbarDesc[MUIV_ReadWindow_ToolbarItems];
 
   char  title[SIZE_DEFAULT+1];
-  int    lastDirection;
+  int   lastDirection;
   int   windowNumber;
 };
 */
@@ -529,15 +529,15 @@ DECLARE(ReadMail) // struct Mail *mail
     if(C->MultipleWindows == TRUE ||
        rmData == G->ActiveRexxRMData)
     {
-      titleLen = sprintf(data->title, "[%d] %s %s: ", data->windowNumber,
-                                      isOutgoingMail ? GetStr(MSG_To) : GetStr(MSG_From),
-                                      isOutgoingMail ? AddrName(mail->To) : AddrName(mail->From));
+      titleLen = snprintf(data->title, sizeof(data->title), "[%d] %s %s: ", data->windowNumber,
+                                                            isOutgoingMail ? GetStr(MSG_To) : GetStr(MSG_From),
+                                                            isOutgoingMail ? AddrName(mail->To) : AddrName(mail->From));
     }
     else
     {
-      titleLen = sprintf(data->title, "%s %s: ",
-                                      isOutgoingMail ? GetStr(MSG_To) : GetStr(MSG_From),
-                                      isOutgoingMail ? AddrName(mail->To) : AddrName(mail->From));
+      titleLen = snprintf(data->title, sizeof(data->title), "%s %s: ",
+                                                            isOutgoingMail ? GetStr(MSG_To) : GetStr(MSG_From),
+                                                            isOutgoingMail ? AddrName(mail->To) : AddrName(mail->From));
     }
 
     if(strlen(mail->Subject)+titleLen > SIZE_DEFAULT)

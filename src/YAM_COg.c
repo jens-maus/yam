@@ -101,8 +101,14 @@ HOOKPROTONH(CO_LV_RxDspFunc, long, char **array, int num)
       case MACRO_PREWRITE:  strcat(rexxoptm, GetStr(MSG_CO_ScriptPreWriteMsg)); break;
       case MACRO_POSTWRITE: strcat(rexxoptm, GetStr(MSG_CO_ScriptPostWriteMsg)); break;
       case MACRO_URL:       strcat(rexxoptm, GetStr(MSG_CO_ScriptClickURL)); break;
-      default: sprintf(&rexxoptm[strlen(rexxoptm)], GetStr(MSG_CO_ScriptMenu), num);
+
+      default:
+      {
+        int p = strlen(rexxoptm);
+        snprintf(&rexxoptm[p], sizeof(rexxoptm)-p, GetStr(MSG_CO_ScriptMenu), num);
+      }
    }
+
    return 0;
 }
 MakeStaticHook(CO_LV_RxDspHook,CO_LV_RxDspFunc);

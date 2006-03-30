@@ -229,14 +229,14 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
          {
             p2->ContentType = "message/disposition-notification";
             p2->Filename = tf2->Filename;
-            sprintf(buf, "%s (%s)", C->SMTP_Domain, yamversion);
+            snprintf(buf, sizeof(buf), "%s (%s)", C->SMTP_Domain, yamversion);
             EmitHeader(tf2->FP, "Reporting-UA", buf);
             if (*email->OriginalRcpt.Address)
             {
-              sprintf(buf, "rfc822;%s", BuildAddrName2(&email->OriginalRcpt));
+              snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddrName2(&email->OriginalRcpt));
               EmitHeader(tf2->FP, "Original-Recipient", buf);
             }
-            sprintf(buf, "rfc822;%s", BuildAddrName(C->EmailAddress, C->RealName));
+            snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddrName(C->EmailAddress, C->RealName));
             EmitHeader(tf2->FP, "Final-Recipient", buf);
             EmitHeader(tf2->FP, "Original-Message-ID", email->MsgID);
             EmitHeader(tf2->FP, "Disposition", disp);
@@ -428,12 +428,12 @@ BOOL RE_Export(struct ReadMailData *rmData, char *source,
       stcgfe(ext, source);
 
       name = RE_SuggestName(mail);
-      sprintf(buffer2, "%s-%d.%s", name[0] != '\0' ? name : mail->MailFile, nr, ext[0] != '\0' ? ext : "tmp");
+      snprintf(buffer2, sizeof(buffer2), "%s-%d.%s", name[0] != '\0' ? name : mail->MailFile, nr, ext[0] != '\0' ? ext : "tmp");
     }
     else
     {
       name = RE_SuggestName(mail);
-      sprintf(buffer2, "%s.msg", name[0] != '\0' ? name : mail->MailFile);
+      snprintf(buffer2, sizeof(buffer2), "%s.msg", name[0] != '\0' ? name : mail->MailFile);
     }
 
     if(force)
@@ -645,10 +645,10 @@ void RE_DisplayMIME(char *fname, char *ctype)
           if(mv->Command[j] == '\0') break;
         }
 
-        sprintf(command, realcmd, GetRealPath(fname));
+        snprintf(command, sizeof(command), realcmd, GetRealPath(fname));
       }
       else
-        sprintf(command, mv->Command, GetRealPath(fname));
+        snprintf(command, sizeof(command), mv->Command, GetRealPath(fname));
 
       ExecuteCommand(command, TRUE, OUT_NIL);
     }
@@ -673,7 +673,7 @@ void RE_SaveAll(struct ReadMailData *rmData, char *path)
       if(*part->Name)
         stccpy(fname, part->Name, SIZE_DEFAULT);
       else
-        sprintf(fname, "%s-%d", rmData->mail->MailFile, part->Nr);
+        snprintf(fname, sizeof(fname), "%s-%d", rmData->mail->MailFile, part->Nr);
 
       strmfp(dest, path, fname);
 
@@ -1445,7 +1445,7 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
     newPart->Boundary = StrBufCpy(newPart->Boundary, first ? first->Boundary : (prev ? prev->Boundary : ""));
 
     newPart->rmData = rmData;
-    sprintf(file, "YAMr%08lx-p%d.txt", readMailDataID(rmData), newPart->Nr);
+    snprintf(file, sizeof(file), "YAMr%08lx-p%d.txt", readMailDataID(rmData), newPart->Nr);
     strmfp(newPart->Filename, C->TempDir, file);
 
     SHOWSTRING(DBF_MAIL, newPart->Filename);
@@ -1688,6 +1688,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
         else
         {
           char *unquotedBoundary;
+          int unquotedBoundaryLen;
           BOOL done;
 
           if(*boundary == '"')
@@ -1696,8 +1697,9 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
             unquotedBoundary = boundary;
 
           // form the Boundary specification
-          hrp->Boundary = AllocStrBuf(strlen(unquotedBoundary)+3);
-          sprintf(hrp->Boundary, "--%s", unquotedBoundary);
+          unquotedBoundaryLen = strlen(unquotedBoundary);
+          hrp->Boundary = AllocStrBuf(unquotedBoundaryLen+3);
+          snprintf(hrp->Boundary, unquotedBoundaryLen+3, "--%s", unquotedBoundary);
 
           // in case we allocated a new boundary
           // string we go and free it immediately.
@@ -1874,7 +1876,7 @@ BOOL RE_DecodePart(struct Part *rp)
       }
 
       // lets generate the destination file name for the decoded part
-      sprintf(file, "YAMm%08lx-p%d.%s", readMailDataID(rp->rmData), rp->Nr, ext[0] != '\0' ? ext : "tmp");
+      snprintf(file, sizeof(file), "YAMm%08lx-p%d.%s", readMailDataID(rp->rmData), rp->Nr, ext[0] != '\0' ? ext : "tmp");
       strmfp(buf, C->TempDir, file);
 
       D(DBF_MAIL, "decoding '%s' to '%s'", rp->Filename, buf);
@@ -2013,7 +2015,7 @@ static void RE_HandleMDNReport(struct Part *frp)
     else
       type = MDNtype;
 
-    sprintf(file, "YAMm%08lx-p%d.txt", readMailDataID(rp[0]->rmData), rp[0]->Nr);
+    snprintf(file, sizeof(file), "YAMm%08lx-p%d.txt", readMailDataID(rp[0]->rmData), rp[0]->Nr);
     strmfp(buf, C->TempDir, file);
 
     D(DBF_MAIL, "creating MDN report in '%s'", buf);
@@ -2060,7 +2062,7 @@ static void RE_HandleSignedMessage(struct Part *frp)
          SET_FLAG(frp->rmData->signedFlags, PGPS_MIME);
 
          ConvertCRLF(rp[0]->Filename, tf->Filename, TRUE);
-         sprintf(options, (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", rp[1]->Filename, tf->Filename);
+         snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", rp[1]->Filename, tf->Filename);
          error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
          if(error > 0)
            SET_FLAG(frp->rmData->signedFlags, PGPS_BADSIG);
@@ -2089,8 +2091,8 @@ static int RE_DecryptPGP(struct ReadMailData *rmData, char *src)
   if(G->PGPVersion == 5)
   {
     char fname[SIZE_PATHFILE];
-    sprintf(fname, "%s.asc", src); Rename(src, fname);
-    sprintf(options, "%s +batchmode=1 +force +language=us", fname);
+    snprintf(fname, sizeof(fname), "%s.asc", src); Rename(src, fname);
+    snprintf(options, sizeof(options), "%s +batchmode=1 +force +language=us", fname);
     error = PGPCommand("pgpv", options, KEEPLOG|NOERRORS);
     RE_GetSigFromLog(rmData, orcpt);
     if(*orcpt)
@@ -2100,7 +2102,7 @@ static int RE_DecryptPGP(struct ReadMailData *rmData, char *src)
   }
   else
   {
-    sprintf(options, "%s +bat +f +lang=en", src);
+    snprintf(options, sizeof(options), "%s +bat +f +lang=en", src);
     error = PGPCommand("pgp", options, KEEPLOG|NOERRORS);
     RE_GetSigFromLog(rmData, NULL);
   }
@@ -2276,7 +2278,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
         char file[SIZE_FILE];
 
         part->Nr = i;
-        sprintf(file, "YAMm%08lx-p%d%s", readMailDataID(rmData), i, strchr(part->Filename, '.'));
+        snprintf(file, sizeof(file), "YAMm%08lx-p%d%s", readMailDataID(rmData), i, strchr(part->Filename, '.'));
         strmfp(tmpFile, C->TempDir, file);
 
         D(DBF_MAIL, "renaming '%s' to '%s'", part->Filename, tmpFile);
@@ -2419,19 +2421,19 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
           char buffer[SIZE_LARGE];
 
           // lets generate the separator bar.
-          sprintf(buffer, "\033c\033[s:18]\033p[7]%s:%s%s\033p[0]\n"
-                          "\033l\033b%s:\033n %s <%s>\n", GetStr(MSG_MA_ATTACHMENT),
-                                                          *part->Name ? " " : "",
-                                                          part->Name,
-                                                          GetStr(MSG_RE_ContentType),
-                                                          DescribeCT(part->ContentType),
-                                                          part->ContentType);
+          snprintf(buffer, sizeof(buffer), "\033c\033[s:18]\033p[7]%s:%s%s\033p[0]\n"
+                                           "\033l\033b%s:\033n %s <%s>\n", GetStr(MSG_MA_ATTACHMENT),
+                                                                           *part->Name ? " " : "",
+                                                                           part->Name,
+                                                                           GetStr(MSG_RE_ContentType),
+                                                                           DescribeCT(part->ContentType),
+                                                                           part->ContentType);
 
           cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
 
           *buffer = 0;
           if(*part->Description)
-            sprintf(buffer, "\033b%s:\033n %s\n", GetStr(MSG_RE_Description), part->Description);
+            snprintf(buffer, sizeof(buffer), "\033b%s:\033n %s\n", GetStr(MSG_RE_Description), part->Description);
 
           strcat(buffer, "\033[s:2]\n");
           cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
@@ -2884,7 +2886,7 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
    switch (C->AddToAddrbook)
    {
       case 1: if (!templ->Type) break;
-      case 2: sprintf(buf, GetStr(MSG_RE_AddSender), BuildAddrName(templ->Address, templ->RealName));
+      case 2: snprintf(buf, sizeof(buf), GetStr(MSG_RE_AddSender), BuildAddrName(templ->Address, templ->RealName));
               doit = MUI_Request(G->App, win, 0, NULL, GetStr(MSG_YesNoReq), buf);
               break;
       case 3: if (!templ->Type) break;
@@ -2966,8 +2968,9 @@ BOOL RE_DownloadPhoto(Object *win, char *url, struct ABEntry *ab)
    if (doit)
    {
       if (!stcgfe(ext, url)) strcpy(ext, "iff");
-      sprintf(fname, "%s.%s", name, ext);
-      for (i = 2; PFExists(C->GalleryDir, fname); i++) sprintf(fname, "%s%d.%s", name, i, ext);
+      snprintf(fname, sizeof(fname), "%s.%s", name, ext);
+      for(i = 2; PFExists(C->GalleryDir, fname); i++)
+        snprintf(fname, sizeof(fname), "%s%d.%s", name, i, ext);
       strmfp(picfname, C->GalleryDir, fname);
       if (TR_OpenTCPIP())
       {
@@ -3032,7 +3035,7 @@ void RE_ClickedOnMessage(char *address)
    // and if so, we reuse it
    hits = AB_SearchEntry(address, ASM_ADDRESS|ASM_USER|ASM_LIST, &ab);
 
-   sprintf(buf, GetStr(MSG_RE_SelectAddressReq), address);
+   snprintf(buf, sizeof(buf), GetStr(MSG_RE_SelectAddressReq), address);
    gads = GetStr(hits ? MSG_RE_SelectAddressEdit : MSG_RE_SelectAddressAdd);
 
    switch (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, gads, buf))

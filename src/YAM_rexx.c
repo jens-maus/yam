@@ -84,11 +84,11 @@ void ReplyRexxCommand(struct RexxMsg *rexxmessage, long primary, long secondary,
       }
       else
       {
-         char buf[16];
-         
          if( primary > 0 )
          {
-            sprintf( buf, "%ld", secondary );
+            char buf[16];
+
+            snprintf(buf, sizeof(buf), "%ld", secondary);
             result = buf;
          }
          else
@@ -276,8 +276,8 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
    
    Forbid();
    
-   while( FindPort(host->portname) )
-      sprintf( host->portname, "%s.%d", basename, ++ext );
+   while(FindPort(host->portname))
+      snprintf(host->portname, sizeof(host->portname), "%s.%d", basename, ++ext);
    
    host->portnumber = ext;
    host->port->mp_Node.ln_Name = host->portname;
@@ -570,12 +570,12 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
                return( (struct rxs_stemnode *) -1L );
             }
             
-            sprintf( t, ".%ld", index++ );
+            snprintf(t, sizeof(resb)-(t-resb), ".%ld", index++);
             new->name = StrDup( resb );
             
             if( optn )
             {
-               sprintf( longbuff, "%ld", *r );
+               snprintf(longbuff, sizeof(longbuff), "%ld", *r);
                new->value = StrDup( longbuff );
             }
             else
@@ -589,7 +589,7 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
          strcpy( t, ".COUNT" );
          countnd->name = StrDup( resb );
          
-         sprintf( longbuff, "%ld", index );
+         snprintf(longbuff, sizeof(longbuff), "%ld", index);
          countnd->value = StrDup( longbuff );
       }
       else
@@ -605,7 +605,7 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
          
          if( optn )
          {
-            sprintf( longbuff, "%ld", *((long *) *resarray) );
+            snprintf(longbuff, sizeof(longbuff), "%ld", *((long *)*resarray));
             new->value = StrDup( longbuff );
             ++resarray;
          }

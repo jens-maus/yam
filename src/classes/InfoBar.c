@@ -63,18 +63,16 @@ char *GetFolderInfo(struct Folder *folder)
     {
       switch (*++src)
       {
-        case '%': strcpy(dst, "%");                    break;
-        case 'n': sprintf(dst, "%d", folder->New);     break;
-        case 'u': sprintf(dst, "%d", folder->Unread);  break;
-        case 't': sprintf(dst, "%d", folder->Total);   break;
-        case 's': sprintf(dst, "%d", folder->Sent);    break;
-        case 'd': sprintf(dst, "%d", folder->Deleted); break;
+        case '%': strcpy(dst, "%"); break;
+        case 'n': snprintf(dst, sizeof(dst), "%d", folder->New);     break;
+        case 'u': snprintf(dst, sizeof(dst), "%d", folder->Unread);  break;
+        case 't': snprintf(dst, sizeof(dst), "%d", folder->Total);   break;
+        case 's': snprintf(dst, sizeof(dst), "%d", folder->Sent);    break;
+        case 'd': snprintf(dst, sizeof(dst), "%d", folder->Deleted); break;
       }
     }
     else
-    {
-      sprintf(dst, "%c", *src);
-    }
+      snprintf(dst, sizeof(dst), "%c", *src);
 
     strcat(bartxt, dst);
   }
@@ -215,13 +213,13 @@ DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
 {
   GETDATA;
 
-  static char infoText[256];
-
   if(msg->gaugeText != NULL)
   {
+    static char infoText[256];
+
     nnset(data->GA_LABEL, MUIA_Text_Contents, msg->gaugeText);
 
-    sprintf(infoText, "%%ld/%ld", msg->max);
+    snprintf(infoText, sizeof(infoText), "%%ld/%ld", msg->max);
 
     SetAttrs(data->GA_INFO,
       MUIA_Gauge_InfoText,  infoText,

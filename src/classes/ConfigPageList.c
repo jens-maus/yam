@@ -52,9 +52,7 @@ struct PageList
 HOOKPROTONH(DisplayFunc, long, char **array, struct PageList *entry)
 {
   static char page[SIZE_DEFAULT];
-  
-  sprintf(array[0] = page, "\033o[%d] %s", entry->Offset, GetStr(entry->PageLabel));
-  
+  snprintf(array[0] = page, sizeof(page), "\033o[%d] %s", entry->Offset, GetStr(entry->PageLabel));
   return 0;
 }
 MakeStaticHook(DisplayHook, DisplayFunc);

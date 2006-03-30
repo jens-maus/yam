@@ -1906,7 +1906,7 @@ int rfc2047_encode_file(FILE *fh, const char *str)
 
                 // as we splitted an encoded-word we have to start the next
                 // line with a proper encoded-word start again.
-                move_start = sprintf(encode_buf, "=?%s?Q?", strippedCharsetName(G->localCharset));
+                move_start = snprintf(encode_buf, sizeof(encode_buf), "=?%s?Q?", strippedCharsetName(G->localCharset));
 
                 // then move the other stuff to the start again
                 memmove(encode_buf+move_start, split_pos, ebp-split_pos);
@@ -1982,7 +1982,7 @@ int rfc2047_encode_file(FILE *fh, const char *str)
           // before we place encoded data in our encode buffer we have to
           // place the "=?charset?Q?" string at the beginning because here
           // the encoding starts
-          ebp += sprintf(ebp, "=?%s?Q?", strippedCharsetName(G->localCharset));
+          ebp += snprintf(ebp, sizeof(encode_buf)-(ebp-encode_buf), "=?%s?Q?", strippedCharsetName(G->localCharset));
         }
 
         // so this is where the actual encoding is performed now.

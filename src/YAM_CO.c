@@ -86,8 +86,10 @@ static void CopyConfigData(struct Config*, struct Config*);
 static void CO_NewPrefsFile(char *fname)
 {
    static char wtitle[SIZE_SMALL+SIZE_PATHFILE];
+
    strcpy(G->CO_PrefsFile, fname);
-   sprintf(wtitle, "%s (%s)", GetStr(MSG_MA_MConfig), fname);
+   snprintf(wtitle, sizeof(wtitle), "%s (%s)", GetStr(MSG_MA_MConfig), fname);
+
    set(G->CO->GUI.WI, MUIA_Window_Title, wtitle);
 }
 ///
@@ -608,7 +610,7 @@ HOOKPROTONHNONP(CO_PutP3Entry, void)
       pop3->Enabled        = GetMUICheck(gui->CH_POPENABLED);
       pop3->UseAPOP        = GetMUICheck(gui->CH_USEAPOP);
       pop3->DeleteOnServer = GetMUICheck(gui->CH_DELETE);
-      sprintf(pop3->Account, "%s@%s", pop3->User, pop3->Server);
+      snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
 
       if(GetMUICheck(gui->CH_POP3SSL))
       {
@@ -653,7 +655,7 @@ HOOKPROTONHNONP(CO_GetDefaultPOPFunc, void)
    GetMUIString(pop3->Server, G->CO->GUI.ST_POPHOST0);
    pop3->Port = 110;
    GetMUIString(pop3->Password, G->CO->GUI.ST_PASSWD0);
-   sprintf(pop3->Account, "%s@%s", pop3->User, pop3->Server);
+   snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
 }
 MakeHook(CO_GetDefaultPOPHook,CO_GetDefaultPOPFunc);
 ///
@@ -1186,7 +1188,7 @@ void CO_Validate(struct Config *co, BOOL update)
          if ((p = strchr(buffer, '@'))) *p = 0;
          strcpy(co->P3[i]->User, buffer);
       }
-      sprintf(co->P3[i]->Account, "%s@%s", co->P3[i]->User, co->P3[i]->Server);
+      snprintf(co->P3[i]->Account, sizeof(co->P3[i]->Account), "%s@%s", co->P3[i]->User, co->P3[i]->Server);
    }
 
    // now we check whether our timezone setting is coherent to an
@@ -1265,7 +1267,7 @@ void CO_Validate(struct Config *co, BOOL update)
    {
       char filename[SIZE_FILE];
 
-      sprintf(filename, "YAMw%08lx-%d.tmp", (LONG)FindTask(NULL), i);
+      snprintf(filename, sizeof(filename), "YAMw%08lx-%d.tmp", (LONG)FindTask(NULL), i);
       strmfp(G->WR_Filename[i], co->TempDir, filename);
    }
 
@@ -1635,7 +1637,7 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
    {
       if(*(CE->Editor))
       {
-        sprintf(buffer,"%s \"%s\"", CE->Editor, GetRealPath(CreateFilename(SigNames[sig])));
+        snprintf(buffer, sizeof(buffer), "%s \"%s\"", CE->Editor, GetRealPath(CreateFilename(SigNames[sig])));
         ExecuteCommand(buffer, FALSE, OUT_NIL);
       }
       else return;
