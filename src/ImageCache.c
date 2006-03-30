@@ -200,7 +200,7 @@ BOOL ImageCacheInit(const char *imagePath)
       {
         node->filename = strdup(filebuf);
 
-        D(DBF_STARTUP, "initialized imageCacheNode of file '%s'", node->filename);
+        D(DBF_STARTUP, "init imageCacheNode 0x%08lx of file '%s'", node, node->filename);
 
         AddTail((struct List *)&G->imageCacheList, (struct Node *)&node->node);
       }
@@ -346,7 +346,7 @@ void DisposeImage(struct imageCacheNode *node)
     D(DBF_IMAGE, "reduced open count of image '%s' : %d", node->filename != NULL ? node->filename : "<NULL>", node->openCount);
   }
   else
-    E(DBF_IMAGE, "either node is NULL or openCount was already == 0");
+    W(DBF_IMAGE, "couldn't reduce opencount of imageCacheNode 0x%08lx/openCount=%d", node, node ? (int)node->openCount : -1);
 
   LEAVE();
 }
