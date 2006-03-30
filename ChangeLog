@@ -6,6 +6,9 @@ $Id$
 
 2006-03-30  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Debug.c, Makefile.os4: reworked the _DPRINTF() debugging function to
+    not use any KPutFmt() function anymore so that the obsolete (on OS4)
+    libdebug.a link library is not required anymore.
   * YAM_UT.c, misc: modified our own MUI_Request() replacement function
     to always make sure the application will be automaticall uniconified
     in case a requester is raised by YAM. This should fix the issue where
