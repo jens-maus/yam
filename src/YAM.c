@@ -863,10 +863,7 @@ static BOOL StayInProg()
 
    if(G->AB->Modified)
    {
-     // make sure the application is uniconified before we popup the requester
-     nnset(G->App, MUIA_Application_Iconified, FALSE);
-
-     if (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ABookModifiedGad), GetStr(MSG_AB_Modified)))
+     if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ABookModifiedGad), GetStr(MSG_AB_Modified)))
        CallHookPkt(&AB_SaveABookHook, 0, 0);
    }
 
@@ -875,10 +872,7 @@ static BOOL StayInProg()
 
    if(req || G->CO || C->ConfirmOnQuit)
    {
-     // make sure the application is uniconified before we popup the requester
-     nnset(G->App, MUIA_Application_Iconified, FALSE);
-
-     if (!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_QuitYAMReq)))
+     if(!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_QuitYAMReq)))
        return TRUE;
    }
 
@@ -1811,29 +1805,36 @@ static void Initialise(BOOL hidden)
 //  Sends pending mail on startup
 static void SendWaitingMail(void)
 {
-   struct Folder *fo = FO_GetFolderByType(FT_OUTGOING, NULL);
-   struct Mail *mail;
-   int tots = 0;
-   int hidden;
+  struct Folder *fo = FO_GetFolderByType(FT_OUTGOING, NULL);
+  struct Mail *mail;
+  int tots = 0;
 
-   if(!fo)
+  ENTER();
+
+  if(!fo)
+  {
+    LEAVE();
     return;
+  }
 
-   for(mail = fo->Messages; mail; mail = mail->Next)
-   {
-      if(!hasStatusHold(mail) && !hasStatusError(mail))
-        tots++;
-   }
+  for(mail=fo->Messages; mail; mail = mail->Next)
+  {
+    if(!hasStatusHold(mail) && !hasStatusError(mail))
+      tots++;
+  }
 
-   if(!tots)
-    return;
+  if(tots > 0)
+  {
+    MA_ChangeFolder(fo, TRUE);
 
-   MA_ChangeFolder(fo, TRUE);
-
-   hidden = xget(G->App, MUIA_Application_Iconified);
-
-   if(hidden || MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_SendStartReq)))
+    if(xget(G->App, MUIA_Application_Iconified) ||
+       MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_SendStartReq)))
+    {
       MA_Send(SEND_ALL);
+    }
+  }
+
+  LEAVE();
 }
 ///
 /// DoStartup
@@ -2202,9 +2203,6 @@ int main(int argc, char **argv)
         if(FileExists(fileName))
         {
           int reqres;
-
-          // make sure the application is not iconified
-          set(G->App, MUIA_Application_Iconified, FALSE);
 
           reqres = MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_AUTOSAVEFOUND_TITLE),
                                                          GetStr(MSG_MA_AUTOSAVEFOUND_BT),

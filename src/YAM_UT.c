@@ -412,6 +412,12 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, c
     // exiting with the last button
     DoMethod(WI_YAMREQ ,MUIM_Notify, MUIA_Window_CloseRequest, TRUE, app, 2, MUIM_Application_ReturnID, num_gads);
 
+    // before we popup the requester we make sure
+    // the application is being uniconified as popping put
+    // a requester shouldn't be prevented at all.
+    if(xget(G->App, MUIA_Application_Iconified) == TRUE)
+      set(G->App, MUIA_Application_Iconified, FALSE);
+
     // lets collect the waiting returnIDs now
     COLLECT_RETURNIDS;
 
@@ -3883,13 +3889,25 @@ int GetMUINumer(Object *obj)
 //  Tries to open a window
 BOOL SafeOpenWindow(Object *obj)
 {
-   int isopen, isicon;
-   set(obj, MUIA_Window_Open, TRUE);
-   isopen = xget(obj, MUIA_Window_Open);
-   isicon = xget(_app(obj), MUIA_Application_Iconified);
-   if (isopen || isicon) return TRUE;
-   DisplayBeep(0);
-   return FALSE;
+  ENTER();
+
+  // make sure we open the window object
+  set(obj, MUIA_Window_Open, TRUE);
+
+  // now we check wheter the window was successfully
+  // open or the application has been in iconify state
+  if(xget(obj, MUIA_Window_Open) == TRUE ||
+     xget(_app(obj), MUIA_Application_Iconified) == TRUE)
+  {
+    RETURN(TRUE);
+    return TRUE;
+  }
+
+  // otherwise we perform a DisplaBeep()
+  DisplayBeep(0);
+
+  RETURN(FALSE);
+  return FALSE;
 }
 ///
 /// DisposeModule

@@ -6,6 +6,10 @@ $Id$
 
 2006-03-30  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c, misc: modified our own MUI_Request() replacement function
+    to always make sure the application will be automaticall uniconified
+    in case a requester is raised by YAM. This should fix the issue where
+    upon starting YAM with "HIDE" didn't popup any warning/error requester.
   * YAM.c, classes/YAM.c: moved the G->HideIcon loading routines to the
     main application object' initialization routine. That way YAM might
     immediately use the icon instead of setting it during runtime.

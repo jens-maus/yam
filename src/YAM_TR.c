@@ -4467,24 +4467,45 @@ static void TR_DeleteMessage(int number)
 //  Notifies user when new mail is available
 static void TR_NewMailAlert(void)
 {
-   struct DownloadResult *stats = &G->TR->Stats;
+  struct DownloadResult *stats = &G->TR->Stats;
 
-   if (!stats->Downloaded) return;
-   if(hasRequesterNotify(C->NotifyType) && G->TR->GUIlevel != POP_REXX)
-   {
-      int iconified;
-      static char buffer[SIZE_LARGE];
-      struct RuleResult *rr = &G->RRs;
-      iconified = xget(G->App, MUIA_Application_Iconified);
-      if (iconified) { PopUp(); Delay(50L); }
-      sprintf(buffer, GetStr(MSG_TR_NewMailReq),
-         stats->Downloaded, stats->OnServer-stats->Deleted, stats->DupSkipped);
-      sprintf(&buffer[strlen(buffer)], GetStr(MSG_TR_FilterStats),
-         rr->Checked, rr->Bounced, rr->Forwarded, rr->Replied, rr->Executed, rr->Moved, rr->Deleted);
-      InfoWindow(GetStr(MSG_TR_NewMail), buffer, GetStr(MSG_Okay), G->MA->GUI.WI);
-   }
-   if(hasCommandNotify(C->NotifyType)) ExecuteCommand(C->NotifyCommand, FALSE, OUT_DOS);
-   if(hasSoundNotify(C->NotifyType))   PlaySound(C->NotifySound);
+  ENTER();
+
+  if(!stats->Downloaded)
+  {
+    LEAVE();
+    return;
+  }
+
+  if(hasRequesterNotify(C->NotifyType) && G->TR->GUIlevel != POP_REXX)
+  {
+    static char buffer[SIZE_LARGE];
+    struct RuleResult *rr = &G->RRs;
+
+    // make sure the application isn't iconified
+    if(xget(G->App, MUIA_Application_Iconified) == TRUE)
+      PopUp();
+
+    sprintf(buffer, GetStr(MSG_TR_NewMailReq), stats->Downloaded, stats->OnServer-stats->Deleted, stats->DupSkipped);
+    sprintf(&buffer[strlen(buffer)], GetStr(MSG_TR_FilterStats), rr->Checked,
+                                                                 rr->Bounced,
+                                                                 rr->Forwarded,
+                                                                 rr->Replied,
+                                                                 rr->Executed,
+                                                                 rr->Moved,
+                                                                 rr->Deleted);
+
+    // show the info window.
+    InfoWindow(GetStr(MSG_TR_NewMail), buffer, GetStr(MSG_Okay), G->MA->GUI.WI);
+  }
+
+  if(hasCommandNotify(C->NotifyType))
+    ExecuteCommand(C->NotifyCommand, FALSE, OUT_DOS);
+
+  if(hasSoundNotify(C->NotifyType))
+    PlaySound(C->NotifySound);
+
+  LEAVE();
 }
 
 ///
