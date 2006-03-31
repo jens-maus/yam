@@ -25,15 +25,9 @@ LONG XpkPackTags(Tag tag, ...)
 LONG XpkUnpackTags(Tag tag, ...)
 { return XpkUnpack((struct TagItem *)&tag); }
 
-#include <proto/openurl.h>
-BOOL URL_Open(STRPTR str, ULONG tag, ...)
-{ return URL_OpenA(str,(struct TagItem *)&tag); }
-
 #include <proto/amissl.h>
 long InitAmiSSL(Tag tag, ...)
 { return InitAmiSSLA((struct TagItem *)&tag); }
-long CleanupAmiSSL(Tag tag, ...)
-{ return CleanupAmiSSLA((struct TagItem *)&tag); }
 
 #include <proto/codesets.h>
 STRPTR *CodesetsSupported(Tag tag1, ...)

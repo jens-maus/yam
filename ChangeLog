@@ -7,6 +7,7 @@ $Id$
 2006-03-31  Gunther Nikl <gni@gecko.de>
 
   * src/VMakefile, src/smakefile: Update.
+  * src/extrasrc/dice.c: Remove unused stubs.
 
 2006-03-30  Jens Langner <Jens.Langner@light-speed.de>
 
