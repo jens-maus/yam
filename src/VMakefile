@@ -34,7 +34,7 @@ RM	= delete quiet
 FC	= flexcat
 FLEX	= flex
 CDEFS	= `rx "say '-D__YAM_VERDATE=' || '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x || ' -D__YAM_VERDAYS=' || date('I')"`
-CFLAGS	= -I. -Iinclude -+ -c
+CFLAGS	= -I. -Iinclude -Iinclude/netinclude -+ -c
 LDFLAGS	= 
 LDLIBS	= -lextra -lmui
 

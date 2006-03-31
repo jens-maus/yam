@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-03-31  Gunther Nikl <gni@gecko.de>
+
+  * src/VMakefile, src/smakefile: Update.
+
 2006-03-30  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: replaced all possible sprintf()/vsprintf() uses by their buffer
