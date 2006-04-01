@@ -348,20 +348,21 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
             if (!strncmp(buffer, "@USER", 5))
             {
                addr.Type = AET_USER;
-               stccpy(addr.Alias   , Trim(&buffer[6]),SIZE_NAME);
-               stccpy(addr.Address , Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_ADDRESS);
-               stccpy(addr.RealName, Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_REALNAME);
-               stccpy(addr.Comment , Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_DEFAULT);
+               strlcpy(addr.Alias, Trim(&buffer[6]), sizeof(addr.Alias));
+               strlcpy(addr.Address, Trim(GetLine(fh, buffer, SIZE_LARGE)), sizeof(addr.Address));
+               strlcpy(addr.RealName, Trim(GetLine(fh, buffer, SIZE_LARGE)), sizeof(addr.RealName));
+               strlcpy(addr.Comment, Trim(GetLine(fh, buffer, SIZE_LARGE)), sizeof(addr.Comment));
                if (version > 2)
                {
-                  stccpy(addr.Phone   , Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_DEFAULT);;
-                  stccpy(addr.Street  , Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_DEFAULT);
-                  stccpy(addr.City    , Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_DEFAULT);
-                  stccpy(addr.Country , Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_DEFAULT);
-                  stccpy(addr.PGPId   , Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_DEFAULT);
+                  strlcpy(addr.Phone, Trim(GetLine(fh, buffer, SIZE_LARGE)), sizeof(addr.Phone));
+                  strlcpy(addr.Street, Trim(GetLine(fh, buffer, SIZE_LARGE)), sizeof(addr.Street));
+                  strlcpy(addr.City, Trim(GetLine(fh, buffer, SIZE_LARGE)), sizeof(addr.City));
+                  strlcpy(addr.Country, Trim(GetLine(fh, buffer, SIZE_LARGE)), sizeof(addr.Country));
+                  strlcpy(addr.PGPId, Trim(GetLine(fh, buffer, SIZE_LARGE)), sizeof(addr.PGPId));
                   addr.BirthDay = atol(Trim(GetLine(fh, buffer, SIZE_LARGE)));
-                  stccpy(addr.Photo   , Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_PATHFILE);
-                  if (strcmp(GetLine(fh, buffer, SIZE_LARGE), "@ENDUSER")) stccpy(addr.Homepage,Trim(buffer),SIZE_URL);
+                  strlcpy(addr.Photo, Trim(GetLine(fh, buffer, SIZE_LARGE)), sizeof(addr.Photo));
+                  if(strcmp(GetLine(fh, buffer, SIZE_LARGE), "@ENDUSER"))
+                    strlcpy(addr.Homepage, Trim(buffer), sizeof(addr.Homepage));
                }
                if (version > 3)
                {
@@ -376,13 +377,13 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
                char *members;
                addr.Type = AET_LIST;
 
-               stccpy(addr.Alias   , Trim(&buffer[6]), SIZE_NAME);
+               strlcpy(addr.Alias, Trim(&buffer[6]), sizeof(addr.Alias));
                if (version > 2)
                {
-                  stccpy(addr.Address , Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_ADDRESS);
-                  stccpy(addr.RealName, Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_REALNAME);
+                  strlcpy(addr.Address , Trim(GetLine(fh, buffer, SIZE_LARGE)), sizeof(addr.Address));
+                  strlcpy(addr.RealName, Trim(GetLine(fh, buffer, SIZE_LARGE)), sizeof(addr.RealName));
                }
-               stccpy(addr.Comment , Trim(GetLine(fh, buffer, SIZE_LARGE)), SIZE_DEFAULT);
+               strlcpy(addr.Comment , Trim(GetLine(fh, buffer, SIZE_LARGE)), sizeof(addr.Comment));
                members = AllocStrBuf(SIZE_DEFAULT);
                while (GetLine(fh, buffer, SIZE_LARGE))
                {
@@ -393,7 +394,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
                }
                len = strlen(members)+1;
                addr.Members = malloc(len);
-               strcpy(addr.Members, members);
+               strlcpy(addr.Members, members, len);
                FreeStrBuf(members);
                DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
                free(addr.Members);
@@ -401,8 +402,8 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
             else if (!strncmp(buffer, "@GROUP", 6))
             {
                addr.Type = AET_GROUP;
-               stccpy(addr.Alias  , Trim(&buffer[7]), SIZE_NAME);
-               stccpy(addr.Comment, Trim(GetLine(fh, buffer, SIZE_LARGE)), SIZE_DEFAULT);
+               strlcpy(addr.Alias  , Trim(&buffer[7]), sizeof(addr.Alias));
+               strlcpy(addr.Comment, Trim(GetLine(fh, buffer, SIZE_LARGE)), sizeof(addr.Comment));
                nested++;
                parent[nested] = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested-1], MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST);
             }
@@ -428,14 +429,14 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
               char *p, *p2;
               memset(&addr, 0, sizeof(struct ABEntry));
               if ((p = strchr(buffer, ' '))) *p = 0;
-              stccpy(addr.Address, buffer, SIZE_ADDRESS);
+              strlcpy(addr.Address, buffer, sizeof(addr.Address));
               if (p)
               {
-                 stccpy(addr.RealName, ++p, SIZE_REALNAME);
+                 strlcpy(addr.RealName, ++p, sizeof(addr.RealName));
                  if ((p2 = strchr(p, ' '))) *p2 = 0;
               }
               else if ((p2 = strchr(p = buffer, '@'))) *p2 = 0;
-              stccpy(addr.Alias, p, SIZE_NAME);
+              strlcpy(addr.Alias, p, sizeof(addr.Alias));
               DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
            }
          }
@@ -785,7 +786,7 @@ HOOKPROTONHNONP(AB_DuplicateFunc, void)
          char buf[SIZE_NAME];
          int len;
          EA_Setup(winnum, ab);
-         strcpy(buf, ab->Alias);
+         strlcpy(buf, ab->Alias, sizeof(buf));
          if ((len = strlen(buf)))
          {
             if (isdigit(buf[len-1])) buf[len-1]++;
@@ -967,7 +968,8 @@ HOOKPROTONHNO(AB_LV_ConFunc, struct ABEntry *, struct MUIP_NListtree_ConstructMe
       struct ABEntry *addr = (struct ABEntry *)msg->UserData;
 
       memcpy(entry, addr, sizeof(struct ABEntry));
-      if (addr->Members) strcpy(entry->Members = malloc(strlen(addr->Members)+1), addr->Members);
+      if(addr->Members)
+        entry->Members = strdup(addr->Members);
    }
 
    return entry;

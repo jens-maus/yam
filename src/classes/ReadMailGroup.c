@@ -796,7 +796,7 @@ DECLARE(CheckPGPSignature) // BOOL forceRequester
   {
     char buffer[SIZE_LARGE];
     
-    strcpy(buffer, hasPGPSBadSigFlag(rmData) ? GetStr(MSG_RE_BadSig) : GetStr(MSG_RE_GoodSig));
+    strlcpy(buffer, hasPGPSBadSigFlag(rmData) ? GetStr(MSG_RE_BadSig) : GetStr(MSG_RE_GoodSig), sizeof(buffer));
     if(hasPGPSAddressFlag(rmData))
     {
       strcat(buffer, GetStr(MSG_RE_SigFrom));

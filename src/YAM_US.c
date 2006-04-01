@@ -117,9 +117,14 @@ static void US_LoadUsers(void)
             if (!strncmp(buffer, "@USER", 5))
             {
                struct User *u = &G->Users.User[G->Users.Num];
-               MyStrCpy(u->Name, Trim(&buffer[6]));
-               MyStrCpy(u->MailDir, Trim(GetLine(fh, buffer, SIZE_LARGE)));
-               if (!*u->MailDir) { MyStrCpy(u->MailDir, G->MA_MailDir); save = TRUE; }
+               strlcpy(u->Name, Trim(&buffer[6]), sizeof(u->Name));
+               strlcpy(u->MailDir, Trim(GetLine(fh, buffer, SIZE_LARGE)), sizeof(u->MailDir));
+               if(!*u->MailDir)
+               {
+                 strlcpy(u->MailDir, G->MA_MailDir, sizeof(u->MailDir));
+                 save = TRUE;
+               }
+
                if (FileType(u->MailDir) != 2)
                {
                   ER_NewError(GetStr(MSG_ER_UserRemoved), u->MailDir, u->Name);
@@ -133,7 +138,10 @@ static void US_LoadUsers(void)
                   u->UseAddr = isFlagSet(flags, 2);
                   u->UseDict = isFlagSet(flags, 1);
                   if (!u->Limited) hasmanager = TRUE;
-                  if (ver >= 2) MyStrCpy(u->Password, Decrypt(GetLine(fh, buffer, SIZE_LARGE)));
+
+                  if(ver >= 2)
+                    strlcpy(u->Password, Decrypt(GetLine(fh, buffer, SIZE_LARGE)), sizeof(u->Password));
+
                   u->ID = GetSimpleID();
                   G->Users.Num++;
                }
@@ -147,7 +155,7 @@ static void US_LoadUsers(void)
    if (!G->Users.Num)
    {
       struct User *u = &G->Users.User[0];
-      MyStrCpy(u->MailDir, G->MA_MailDir);
+      strlcpy(u->MailDir, G->MA_MailDir, sizeof(u->MailDir));
       u->UseAddr = u->UseDict = TRUE;
       u->ID = GetSimpleID();
       G->Users.Num = 1;
@@ -201,10 +209,10 @@ BOOL US_Login(char *username, char *password, char *maildir, char *prefsfile)
 
    u = &G->Users.User[user];
    G->Users.CurrentID = u->ID;
-   strcpy(G->MA_MailDir, maildir ? maildir : u->MailDir);
+   strlcpy(G->MA_MailDir, maildir ? maildir : u->MailDir, sizeof(G->MA_MailDir));
 
    if(prefsfile)
-     strcpy(G->CO_PrefsFile, prefsfile);
+     strlcpy(G->CO_PrefsFile, prefsfile, sizeof(G->CO_PrefsFile));
    else
      strmfp(G->CO_PrefsFile, G->MA_MailDir, ".config");
 
@@ -323,7 +331,10 @@ HOOKPROTONHNONP(US_OpenFunc, void)
       int i;
       struct User *u = 0;
       for (i = 0; i < G->Users.Num; i++) if (G->Users.User[i].ID == G->Users.CurrentID) u = &G->Users.User[i];
-      if (!*G->Users.User[0].Name) MyStrCpy(G->Users.User[0].Name, C->RealName);
+
+      if(!*G->Users.User[0].Name)
+        strlcpy(G->Users.User[0].Name, C->RealName, sizeof(G->Users.User[0].Name));
+
       if (!(G->US = US_New(!u->Limited))) return;
       if (!SafeOpenWindow(G->US->GUI.WI)) { DisposeModulePush(&G->US); return; }
       for (i = 0; i < G->Users.Num; i++) DoMethod(G->US->GUI.LV_USERS, MUIM_NList_InsertSingle, &G->Users.User[i], MUIV_NList_Insert_Bottom);
@@ -390,9 +401,9 @@ HOOKPROTONHNONP(US_PutUSEntryFunc, void)
    DoMethod(gui->LV_USERS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &user);
    if (user)
    {
-      GetMUIString(user->Name, gui->ST_USER);
-      GetMUIString(user->MailDir, gui->ST_MAILDIR);
-      GetMUIString(user->Password, gui->ST_PASSWD);
+      GetMUIString(user->Name, gui->ST_USER, sizeof(user->Name));
+      GetMUIString(user->MailDir, gui->ST_MAILDIR, sizeof(user->MailDir));
+      GetMUIString(user->Password, gui->ST_PASSWD, sizeof(user->Password));
       user->UseAddr = GetMUICheck(gui->CH_USEADDR);
       user->UseDict = GetMUICheck(gui->CH_USEDICT);
       user->Limited = !GetMUICheck(gui->CH_ROOT);

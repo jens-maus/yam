@@ -508,7 +508,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           {
             // if the challenge don`t have a "realm" we assume our
             // choosen SMTP domain to be the realm
-            strcpy(realm, C->SMTP_Domain);
+            strlcpy(realm, C->SMTP_Domain, sizeof(realm));
           }
 
           D(DBF_NET, "realm: `%s`", realm);
@@ -1643,7 +1643,11 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
    FILE *out;
 
    G->Error = FALSE;
-   if (!strnicmp(url0,"http://",7)) strcpy(url, &url0[7]); else strcpy(url, url0);
+   if(!strnicmp(url0,"http://",7))
+     strlcpy(url, &url0[7], sizeof(url));
+   else
+     strlcpy(url, url0, sizeof(url));
+
    if (url1)
    {
       if (url[strlen(url)-1] != '/') strcat(url, "/");
@@ -1655,7 +1659,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
       strcat(url, url2);
    }
    if ((path = strchr(url,'/'))) *path++ = 0; else path = "";
-   strcpy(host, noproxy ? url : C->ProxyServer);
+   strlcpy(host, noproxy ? url : C->ProxyServer, sizeof(host));
    if ((bufptr = strchr(host, ':'))) { *bufptr++ = 0; hport = atoi(bufptr); }
    else hport = noproxy ? 80 : 8080;
    if (!TR_Connect(host, hport))
@@ -1774,8 +1778,8 @@ static int TR_ConnectPOP(int guilevel)
    int port = C->P3[pop]->Port;
    char *resp;
 
-   strcpy(passwd, C->P3[pop]->Password);
-   strcpy(host, C->P3[pop]->Server);
+   strlcpy(passwd, C->P3[pop]->Password, sizeof(passwd));
+   strlcpy(host, C->P3[pop]->Server, sizeof(host));
 
    // now we have to check whether SSL/TLS is selected for that POP account,
    // but perhaps TLS is not working.
@@ -1871,7 +1875,7 @@ static int TR_ConnectPOP(int guilevel)
       // message
       if((p = strchr(welcomemsg, '<')))
       {
-         strcpy(buf, p);
+         strlcpy(buf, p, sizeof(buf));
          if ((p = strchr(buf, '>'))) p[1] = 0;
 
          // then we send the APOP command to authenticate via APOP
@@ -2195,8 +2199,8 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
                mail->From    = email->Mail.From;
                mail->To      = email->Mail.To;
                mail->ReplyTo = email->Mail.ReplyTo;
-               strcpy(mail->Subject, email->Mail.Subject);
-               strcpy(mail->MailFile, email->Mail.MailFile);
+               strlcpy(mail->Subject, email->Mail.Subject, sizeof(mail->Subject));
+               strlcpy(mail->MailFile, email->Mail.MailFile, sizeof(mail->MailFile));
                mail->Date = email->Mail.Date;
 
                // if thie function was called with -1, then the POP3 server
@@ -3328,7 +3332,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
       G->TR->SearchCount = AllocFilterSearch(APPLY_SENT);
       TR_TransStat_Init(&ts);
       TR_TransStat_Start(&ts);
-      strcpy(host, C->SMTP_Server);
+      strlcpy(host, C->SMTP_Server, sizeof(host));
 
       // If the hostname has a explicit :xxxxx port statement at the end we
       // take this one, even if its not needed anymore.
@@ -4412,7 +4416,7 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
    char msgnum[SIZE_SMALL], msgfile[SIZE_PATHFILE];
    FILE *f;
 
-   MyStrCpy(msgfile, MA_NewMailFile(infolder, mfile));
+   strlcpy(msgfile, MA_NewMailFile(infolder, mfile), sizeof(msgfile));
 
    if ((f = fopen(msgfile, "w")))
    {
@@ -4681,7 +4685,7 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
     if(mail->Size >= C->WarnSize<<10) strcat(dispsiz, MUIX_PH);
     FormatSize(mail->Size, array[1] = dispsiz);
     array[2] = dispfro;
-    MyStrCpy(dispfro, AddrName((*pe)));
+    strlcpy(dispfro, AddrName((*pe)), sizeof(dispfro));
     array[3] = mail->Subject;
     array[4] = dispdate;
     *dispdate = '\0';

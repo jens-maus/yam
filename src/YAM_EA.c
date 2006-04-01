@@ -242,7 +242,7 @@ void EA_FixAlias(struct ABEntry *ab, BOOL excludemyself)
   int c = 1, l;
   struct ABEntry *ab_found = NULL;
 
-  strcpy(alias, ab->Alias);
+  strlcpy(alias, ab->Alias, sizeof(alias));
 
   while(AB_SearchEntry(alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &ab_found) > 0)
   {
@@ -255,7 +255,7 @@ void EA_FixAlias(struct ABEntry *ab, BOOL excludemyself)
   }
 
   // copy the modified string back
-  strcpy(ab->Alias, alias);
+  strlcpy(ab->Alias, alias, sizeof(ab->Alias));
 }
 
 ///
@@ -323,27 +323,27 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
    set(gui->WI, MUIA_Window_Open, FALSE);
    G->AB->Modified = TRUE;
    if (old) addr = G->EA[winnum]->ABEntry; else addr = &newaddr;
-   GetMUIString(addr->Alias, gui->ST_ALIAS);
-   GetMUIString(addr->Comment, gui->ST_COMMENT);
+   GetMUIString(addr->Alias, gui->ST_ALIAS, sizeof(addr->Alias));
+   GetMUIString(addr->Comment, gui->ST_COMMENT, sizeof(addr->Comment));
    switch (addr->Type = G->EA[winnum]->Type)
    {
-      case AET_USER:  GetMUIString(addr->RealName, gui->ST_REALNAME);
-                      GetMUIString(addr->Address, gui->ST_ADDRESS);
-                      GetMUIString(addr->Phone, gui->ST_PHONE);
-                      GetMUIString(addr->Street, gui->ST_STREET);
-                      GetMUIString(addr->City, gui->ST_CITY);
-                      GetMUIString(addr->Country, gui->ST_COUNTRY);
-                      GetMUIString(addr->PGPId, gui->ST_PGPKEY);
-                      GetMUIString(addr->Homepage, gui->ST_HOMEPAGE);
+      case AET_USER:  GetMUIString(addr->RealName, gui->ST_REALNAME, sizeof(addr->RealName));
+                      GetMUIString(addr->Address, gui->ST_ADDRESS, sizeof(addr->Address));
+                      GetMUIString(addr->Phone, gui->ST_PHONE, sizeof(addr->Phone));
+                      GetMUIString(addr->Street, gui->ST_STREET, sizeof(addr->Street));
+                      GetMUIString(addr->City, gui->ST_CITY, sizeof(addr->City));
+                      GetMUIString(addr->Country, gui->ST_COUNTRY, sizeof(addr->Country));
+                      GetMUIString(addr->PGPId, gui->ST_PGPKEY, sizeof(addr->PGPId));
+                      GetMUIString(addr->Homepage, gui->ST_HOMEPAGE, sizeof(addr->Homepage));
                       addr->DefSecurity = GetMUICycle(gui->CY_DEFSECURITY);
-                      strcpy(addr->Photo, G->EA[winnum]->PhotoName);
+                      strlcpy(addr->Photo, G->EA[winnum]->PhotoName, sizeof(addr->Photo));
                       addr->BirthDay = bdate;
                       if (!*addr->Alias) EA_SetDefaultAlias(addr);
                       EA_FixAlias(addr, old);
                       if (!old) EA_InsertBelowActive(addr, 0);
                       break;
-      case AET_LIST:  GetMUIString(addr->RealName, gui->ST_REALNAME);
-                      GetMUIString(addr->Address, gui->ST_ADDRESS);
+      case AET_LIST:  GetMUIString(addr->RealName, gui->ST_REALNAME, sizeof(addr->RealName));
+                      GetMUIString(addr->Address, gui->ST_ADDRESS, sizeof(addr->Address));
                       members = AllocStrBuf(SIZE_DEFAULT);
                       for (i = 0; ; i++)
                       {
@@ -353,9 +353,15 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
                          members = StrBufCat(members, p);
                          members = StrBufCat(members, "\n");
                       }
-                      if (old) addr->Members = realloc(addr->Members, strlen(members)+1);
-                      else     addr->Members = malloc(strlen(members)+1);
-                      strcpy(addr->Members, members);
+
+                      if(old)
+                      {
+                        addr->Members = realloc(addr->Members, strlen(members)+1);
+                        memcpy(addr->Members, members, strlen(members)+1);
+                      }
+                      else
+                        addr->Members = strdup(members);
+
                       EA_FixAlias(addr, old);
                       if (!old)
                       {
@@ -380,7 +386,9 @@ static void EA_SetPhoto(int winnum, char *fname)
 {
    struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
 
-   if (fname) strcpy(G->EA[winnum]->PhotoName, fname);
+   if(fname)
+     strlcpy(G->EA[winnum]->PhotoName, fname, sizeof(G->EA[winnum]->PhotoName));
+
    fname = G->EA[winnum]->PhotoName;
 
    if(*fname && gui->BC_PHOTO &&
@@ -433,10 +441,18 @@ HOOKPROTONHNO(EA_DownloadPhotoFunc, void, int *arg)
    homepage = (char *)xget(gui->ST_HOMEPAGE, MUIA_String_Contents);
    if (*addr || *name)
    {
-      strcpy(dbfile, name);
-      if ((p = strrchr(dbfile, ' '))) { *p = 0; snprintf(newname, sizeof(newname), "%s, %s", p+1, dbfile); }
-      else strcpy(newname, name);
+      strlcpy(dbfile, name, sizeof(dbfile));
+
+      if((p = strrchr(dbfile, ' ')))
+      {
+        *p = '\0';
+        snprintf(newname, sizeof(newname), "%s, %s", p+1, dbfile);
+      }
+      else
+        strlcpy(newname, name, sizeof(newname));
+
       strmfp(dbfile, C->TempDir, "gallery.db");
+
       if (TR_OpenTCPIP())
       {
          BusyText(GetStr(MSG_BusyDownloadingPic), name);

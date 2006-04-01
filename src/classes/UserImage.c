@@ -68,7 +68,7 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        ATTR(File)         : if(tag->ti_Data) stccpy(data->fileName, (char *)tag->ti_Data, SIZE_PATHFILE); break;
+        ATTR(File)        : if(tag->ti_Data) strlcpy(data->fileName, (char *)tag->ti_Data, sizeof(data->fileName)); break;
         ATTR(MaxHeight)   : data->maxHeight   = (ULONG)tag->ti_Data; break;
         ATTR(MaxWidth)    : data->maxWidth    = (ULONG)tag->ti_Data; break;
         ATTR(NoMinHeight) : data->noMinHeight = (BOOL)tag->ti_Data; break;

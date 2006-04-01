@@ -256,7 +256,7 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
       return NULL;
    }
 
-   strcpy( host->portname, basename );
+   strlcpy(host->portname, basename, sizeof(host->portname));
    
    if( (host->port = usrport) )
    {
@@ -484,11 +484,14 @@ static void free_stemlist( struct rxs_stemnode *first )
 
 ///
 /// StrDup
-static char *StrDup( char *s )
+static char *StrDup(char *s)
 {
-   char *t = AllocVec( (ULONG)strlen(s)+1, MEMF_ANY );
-   if( t ) strcpy( t, s );
-   return t;
+  char *t = AllocVec((ULONG)strlen(s)+1, MEMF_ANY);
+
+  if(t)
+    strlcpy(t, s, strlen(s)+1);
+
+  return t;
 }
 
 ///
@@ -586,7 +589,7 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
          
          /* Die Count-Node */
          
-         strcpy( t, ".COUNT" );
+         strlcpy(t, ".COUNT", sizeof(resb)-(t-resb));
          countnd->name = StrDup( resb );
          
          snprintf(longbuff, sizeof(longbuff), "%ld", index);
@@ -643,9 +646,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    }
    
    /* welches Kommando? */
-   
-   strcpy( argb, (char *) ARG0(rexxmsg) );
-   strcat( argb, "\n" );
+   snprintf(argb, strlen((char *)ARG0(rexxmsg))+2, "%s\n", ARG0(rexxmsg));
    arg = argb;
 
    SHOWSTRING(DBF_REXX, arg);
@@ -700,7 +701,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    /* Argumente parsen */
    
    if( rxc->results )
-      strcpy( cargstr, "VAR/K,STEM/K" );
+      strlcpy(cargstr, "VAR/K,STEM/K", (ULONG)(rxc->args ? 15+strlen(rxc->args) : 15));
    else
       *cargstr = '\0';
    

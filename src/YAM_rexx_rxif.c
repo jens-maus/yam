@@ -893,9 +893,9 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
             else if(!hasStatusNew(mail))
               rd->rd.res.status = "O"; // Old status
 
-            stccpy(rd->rd.res.from    = rd->from   , BuildAddrName2(&mail->From), SIZE_ADDRESS);
-            stccpy(rd->rd.res.to      = rd->to     , BuildAddrName2(&mail->To), SIZE_ADDRESS);
-            stccpy(rd->rd.res.replyto = rd->replyto, BuildAddrName2(pe), SIZE_ADDRESS);
+            strlcpy(rd->rd.res.from = rd->from, BuildAddrName2(&mail->From), sizeof(rd->from));
+            strlcpy(rd->rd.res.to = rd->to, BuildAddrName2(&mail->To), sizeof(rd->to));
+            strlcpy(rd->rd.res.replyto = rd->replyto, BuildAddrName2(pe), sizeof(rd->replyto));
             DateStamp2String(rd->rd.res.date = rd->date, &mail->Date, DSS_USDATETIME, TZC_LOCAL);
             rd->rd.res.subject = mail->Subject;
             rd->rd.res.size = &mail->Size;
@@ -1162,9 +1162,9 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
               else if(!hasStatusNew(mail))
                 rd->rd.res.value = "O"; // Old status
             }
-            else if (!strnicmp(key, "FRO", 3)) strcpy(rd->result, BuildAddrName2(&mail->From));
-            else if (!strnicmp(key, "TO" , 2)) strcpy(rd->result, BuildAddrName2(&mail->To));
-            else if (!strnicmp(key, "REP", 3)) strcpy(rd->result, BuildAddrName2(pe));
+            else if (!strnicmp(key, "FRO", 3)) strlcpy(rd->result, BuildAddrName2(&mail->From), sizeof(rd->result));
+            else if (!strnicmp(key, "TO" , 2)) strlcpy(rd->result, BuildAddrName2(&mail->To), sizeof(rd->result));
+            else if (!strnicmp(key, "REP", 3)) strlcpy(rd->result, BuildAddrName2(pe), sizeof(rd->result));
             else if (!strnicmp(key, "SUB", 3)) rd->rd.res.value = mail->Subject;
             else if (!strnicmp(key, "FIL", 3)) GetMailFile(rd->rd.res.value = rd->result, mail->Folder, mail);
             else rd->rd.rc = RETURN_ERROR;
@@ -1689,10 +1689,8 @@ void rx_addrinfo( UNUSED struct RexxHost *host, struct rxd_addrinfo **rxd, long 
           rd->rd.res.birthdate = &ab->BirthDay;
           rd->rd.res.image = ab->Photo;
 
-          if (ab->Members)
+          if(ab->Members && (rd->members = strdup(ab->Members)))
           {
-            rd->members = calloc(strlen(ab->Members)+1,1);
-            strcpy(rd->members, ab->Members);
             for (j = 0, ptr = rd->members; *ptr; j++, ptr++)
             {
               if ((ptr = strchr(ptr, '\n'))) *ptr = 0; else break;
@@ -1743,7 +1741,7 @@ void rx_addrresolve( UNUSED struct RexxHost *host, struct rxd_addrresolve **rxd,
         if(res && strcmp(rd->rd.arg.alias, res)) /* did the string change ? */
         {
           if((rd->rd.res.recpt = rd->string = AllocStrBuf(strlen(res)+1)))
-          strcpy(rd->string, res);
+            strlcpy(rd->string, res, strlen(res)+1);
         }
         else
         {
@@ -1782,7 +1780,7 @@ void rx_newmailfile( UNUSED struct RexxHost *host, struct rxd_newmailfile **rxd,
          if (folder && folder->Type != FT_GROUP)
          {
            char mfile[SIZE_MFILE];
-           strcpy(rd->rd.res.filename = rd->result, MA_NewMailFile(folder, mfile));
+           strlcpy(rd->rd.res.filename = rd->result, MA_NewMailFile(folder, mfile), sizeof(rd->result));
          }
          else rd->rd.rc = RETURN_ERROR;
 
@@ -2170,7 +2168,8 @@ void rx_requeststring( UNUSED struct RexxHost *host, struct rxd_requeststring **
          
       case RXIF_ACTION:
          reqtext = AllocReqText(rd->rd.arg.body);
-         if (rd->rd.arg.string) stccpy(rd->string, rd->rd.arg.string, SIZE_DEFAULT);
+         if(rd->rd.arg.string)
+           strlcpy(rd->string, rd->rd.arg.string, sizeof(rd->string));
          rd->rd.rc = !StringRequest(rd->string, SIZE_DEFAULT, NULL, reqtext, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), (BOOL)rd->rd.arg.secret, G->MA->GUI.WI);
          rd->rd.res.string = rd->string;
          free(reqtext);
@@ -2275,16 +2274,16 @@ void rx_addredit( UNUSED struct RexxHost *host, struct rxd_addredit **rxd, long 
          if((tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
          {
             struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
-            if (rd->arg.alias)    stccpy(ab->Alias, rd->arg.alias, SIZE_NAME);
-            if (rd->arg.name)     stccpy(ab->RealName, rd->arg.name, SIZE_REALNAME);
-            if (rd->arg.email)    stccpy(ab->Address, rd->arg.email, SIZE_ADDRESS);
-            if (rd->arg.pgp)      stccpy(ab->PGPId, rd->arg.pgp, SIZE_ADDRESS);
-            if (rd->arg.homepage) stccpy(ab->Homepage, rd->arg.homepage, SIZE_URL);
-            if (rd->arg.street)   stccpy(ab->Street, rd->arg.street, SIZE_DEFAULT);
-            if (rd->arg.city)     stccpy(ab->City, rd->arg.city, SIZE_DEFAULT);
-            if (rd->arg.country)  stccpy(ab->Country, rd->arg.country, SIZE_DEFAULT);
-            if (rd->arg.phone)    stccpy(ab->Phone, rd->arg.phone, SIZE_DEFAULT);
-            if (rd->arg.comment)  stccpy(ab->Comment, rd->arg.comment, SIZE_DEFAULT);
+            if (rd->arg.alias)    strlcpy(ab->Alias, rd->arg.alias, sizeof(ab->Alias));
+            if (rd->arg.name)     strlcpy(ab->RealName, rd->arg.name, sizeof(ab->RealName));
+            if (rd->arg.email)    strlcpy(ab->Address, rd->arg.email, sizeof(ab->Address));
+            if (rd->arg.pgp)      strlcpy(ab->PGPId, rd->arg.pgp, sizeof(ab->PGPId));
+            if (rd->arg.homepage) strlcpy(ab->Homepage, rd->arg.homepage, sizeof(ab->Homepage));
+            if (rd->arg.street)   strlcpy(ab->Street, rd->arg.street, sizeof(ab->Street));
+            if (rd->arg.city)     strlcpy(ab->City, rd->arg.city, sizeof(ab->City));
+            if (rd->arg.country)  strlcpy(ab->Country, rd->arg.country, sizeof(ab->Country));
+            if (rd->arg.phone)    strlcpy(ab->Phone, rd->arg.phone, sizeof(ab->Phone));
+            if (rd->arg.comment)  strlcpy(ab->Comment, rd->arg.comment, sizeof(ab->Comment));
             if (rd->arg.birthdate)
             {
               // if the user supplied 0 as the birthdate, he wants to "delete" the current
@@ -2297,15 +2296,14 @@ void rx_addredit( UNUSED struct RexxHost *host, struct rxd_addredit **rxd, long 
                 break;
               }
             }
-            if (rd->arg.image)    stccpy(ab->Photo, rd->arg.image, SIZE_PATHFILE);
+            if (rd->arg.image)    strlcpy(ab->Photo, rd->arg.image, sizeof(ab->Photo));
             if (rd->arg.member && ab->Type == AET_LIST)
             {
                char **p, *memb = AllocStrBuf(SIZE_DEFAULT);
                if (rd->arg.add && ab->Members) memb = StrBufCpy(memb, ab->Members);
                for (p = rd->arg.member; *p; p++) { memb = StrBufCat(memb, *p); memb = StrBufCat(memb, "\n"); }
                if (ab->Members) free(ab->Members);
-               ab->Members = malloc(strlen(memb)+1);
-               strcpy(ab->Members, memb);
+               ab->Members = strdup(memb);
                FreeStrBuf(memb);
             }
             DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
@@ -2456,9 +2454,9 @@ void rx_addrnew( UNUSED struct RexxHost *host, struct rxd_addrnew **rxd, long ac
             if(tolower(*rd->arg.type) == 'g')       addr.Type = AET_GROUP;
             else if (tolower(*rd->arg.type) == 'l') addr.Type = AET_LIST;
          }
-         if (rd->arg.alias)    stccpy(addr.Alias, rd->arg.alias, SIZE_NAME);
-         if (rd->arg.name)     stccpy(addr.RealName, rd->arg.name, SIZE_REALNAME);
-         if (rd->arg.email)    stccpy(addr.Address, rd->arg.email, SIZE_ADDRESS);
+         if (rd->arg.alias)    strlcpy(addr.Alias, rd->arg.alias, sizeof(addr.Alias));
+         if (rd->arg.name)     strlcpy(addr.RealName, rd->arg.name, sizeof(addr.RealName));
+         if (rd->arg.email)    strlcpy(addr.Address, rd->arg.email, sizeof(addr.Address));
          if (!*addr.Alias)
          {
             if (addr.Type == AET_USER) EA_SetDefaultAlias(&addr);

@@ -533,15 +533,12 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   {
     struct Person *pers = isOutBox ? &mail->To : &mail->From;
 
-    strcpy(menutitle, GetStr(isOutBox ? MSG_To : MSG_From));
-    strcat(menutitle, ": ");
+    snprintf(menutitle, sizeof(menutitle), "%s: ", GetStr(isOutBox ? MSG_To : MSG_From));
     strncat(menutitle, BuildAddrName2(pers), 20-strlen(menutitle));
     strcat(menutitle, "...");
   }
   else
-  {
-    strcpy(menutitle, GetStr(MSG_MAIL_NONSEL));
-  }
+    strlcpy(menutitle, GetStr(MSG_MAIL_NONSEL), sizeof(menutitle));
 
   data->context_menu = MenustripObject,
     Child, MenuObjectT(menutitle),

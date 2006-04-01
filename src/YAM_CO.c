@@ -85,12 +85,12 @@ static void CopyConfigData(struct Config*, struct Config*);
 //  Sets the name of the configuration file
 static void CO_NewPrefsFile(char *fname)
 {
-   static char wtitle[SIZE_SMALL+SIZE_PATHFILE];
+  static char wtitle[SIZE_SMALL+SIZE_PATHFILE];
 
-   strcpy(G->CO_PrefsFile, fname);
-   snprintf(wtitle, sizeof(wtitle), "%s (%s)", GetStr(MSG_MA_MConfig), fname);
+  strlcpy(G->CO_PrefsFile, fname, sizeof(G->CO_PrefsFile));
+  snprintf(wtitle, sizeof(wtitle), "%s (%s)", GetStr(MSG_MA_MConfig), fname);
 
-   set(G->CO->GUI.WI, MUIA_Window_Title, wtitle);
+  set(G->CO->GUI.WI, MUIA_Window_Title, wtitle);
 }
 ///
 
@@ -412,7 +412,7 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     struct List *childList;
     int rm = GetMUICheck(gui->CH_REMOTE);
 
-    GetMUIString(filter->name, gui->ST_RNAME);
+    GetMUIString(filter->name, gui->ST_RNAME, sizeof(filter->name));
     filter->remote = (rm == 1);
     filter->applyToNew  = GetMUICheck(gui->CH_APPLYNEW);
     filter->applyToSent = GetMUICheck(gui->CH_APPLYSENT);
@@ -426,11 +426,11 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     if(GetMUICheck(gui->CH_AMOVE))      SET_FLAG(filter->actions, FA_MOVE);
     if(GetMUICheck(gui->CH_ADELETE))    SET_FLAG(filter->actions, FA_DELETE);
     if(GetMUICheck(gui->CH_ASKIP))      SET_FLAG(filter->actions, FA_SKIPMSG);
-    GetMUIString(filter->bounceTo,   gui->ST_ABOUNCE);
-    GetMUIString(filter->forwardTo,  gui->ST_AFORWARD);
-    GetMUIString(filter->replyFile,  gui->ST_ARESPONSE);
-    GetMUIString(filter->executeCmd, gui->ST_AEXECUTE);
-    GetMUIString(filter->playSound,  gui->ST_APLAY);
+    GetMUIString(filter->bounceTo,   gui->ST_ABOUNCE, sizeof(filter->bounceTo));
+    GetMUIString(filter->forwardTo,  gui->ST_AFORWARD, sizeof(filter->forwardTo));
+    GetMUIString(filter->replyFile,  gui->ST_ARESPONSE, sizeof(filter->replyFile));
+    GetMUIString(filter->executeCmd, gui->ST_AEXECUTE, sizeof(filter->executeCmd));
+    GetMUIString(filter->playSound,  gui->ST_APLAY, sizeof(filter->playSound));
 
     strncpy(filter->moveTo, (char *)xget(gui->TX_MOVETO, MUIA_Text_Contents), SIZE_NAME);
     filter->moveTo[SIZE_NAME-1] = '\0';
@@ -500,12 +500,10 @@ struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
    {
       if (first)
       {
-         char *p, buffer[SIZE_USERID];
+         char *p = strchr(co->EmailAddress, '@');
 
-         stccpy(buffer, co->EmailAddress, SIZE_USERID);
-         if ((p = strchr(buffer, '@'))) *p = 0;
-         strcpy(pop3->User, buffer);
-         strcpy(pop3->Server, co->SMTP_Server);
+         strlcpy(pop3->User, co->EmailAddress, p ? (unsigned int)(p-(co->EmailAddress)) : sizeof(pop3->User));
+         strlcpy(pop3->Server, co->SMTP_Server, sizeof(pop3->Server));
       }
 
       pop3->Port = 110;
@@ -604,9 +602,9 @@ HOOKPROTONHNONP(CO_PutP3Entry, void)
    if (p != MUIV_List_Active_Off)
    {
       DoMethod(gui->LV_POP3, MUIM_List_GetEntry, p, &pop3);
-      GetMUIString(pop3->Server, gui->ST_POPHOST);
-      GetMUIString(pop3->User, gui->ST_POPUSERID);
-      GetMUIString(pop3->Password, gui->ST_PASSWD);
+      GetMUIString(pop3->Server, gui->ST_POPHOST, sizeof(pop3->Server));
+      GetMUIString(pop3->User, gui->ST_POPUSERID, sizeof(pop3->User));
+      GetMUIString(pop3->Password, gui->ST_PASSWD, sizeof(pop3->Password));
       pop3->Enabled        = GetMUICheck(gui->CH_POPENABLED);
       pop3->UseAPOP        = GetMUICheck(gui->CH_USEAPOP);
       pop3->DeleteOnServer = GetMUICheck(gui->CH_DELETE);
@@ -652,9 +650,9 @@ HOOKPROTONHNONP(CO_GetDefaultPOPFunc, void)
    struct POP3 *pop3 = CE->P3[0];
 
    if (!pop3) return;
-   GetMUIString(pop3->Server, G->CO->GUI.ST_POPHOST0);
+   GetMUIString(pop3->Server, G->CO->GUI.ST_POPHOST0, sizeof(pop3->Server));
    pop3->Port = 110;
-   GetMUIString(pop3->Password, G->CO->GUI.ST_PASSWD0);
+   GetMUIString(pop3->Password, G->CO->GUI.ST_PASSWD0, sizeof(pop3->Password));
    snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
 }
 MakeHook(CO_GetDefaultPOPHook,CO_GetDefaultPOPFunc);
@@ -665,12 +663,12 @@ MakeHook(CO_GetDefaultPOPHook,CO_GetDefaultPOPFunc);
 //  Initializes a new MIME viewer
 struct MimeView *CO_NewMimeView(void)
 {
-   struct MimeView *mv = calloc(1, sizeof(struct MimeView));
-   if (mv)
-   {
-      stccpy(mv->ContentType, "?/?", SIZE_CTYPE);
-   }
-   return mv;
+  struct MimeView *mv = calloc(1, sizeof(struct MimeView));
+
+  if(mv)
+    strlcpy(mv->ContentType, "?/?", sizeof(mv->ContentType));
+
+  return mv;
 }
 
 ///
@@ -746,9 +744,9 @@ HOOKPROTONHNONP(CO_PutMVEntry, void)
    DoMethod(gui->LV_MIME, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &mv);
    if (mv)
    {
-      GetMUIString(mv->ContentType, gui->ST_CTYPE);
-      GetMUIString(mv->Extension, gui->ST_EXTENS);
-      GetMUIString(mv->Command, gui->ST_COMMAND);
+      GetMUIString(mv->ContentType, gui->ST_CTYPE, sizeof(mv->ContentType));
+      GetMUIString(mv->Extension, gui->ST_EXTENS, sizeof(mv->Extension));
+      GetMUIString(mv->Command, gui->ST_COMMAND, sizeof(mv->Command));
       DoMethod(gui->LV_MIME, MUIM_List_Redraw, MUIV_List_Redraw_Active);
    }
 }
@@ -786,8 +784,8 @@ HOOKPROTONHNONP(CO_PutRXEntry, void)
    if (act != MUIV_List_Active_Off)
    {
       struct RxHook *rh = &(CE->RX[act]);
-      GetMUIString(rh->Name, gui->ST_RXNAME);
-      GetMUIString(rh->Script, gui->ST_SCRIPT);
+      GetMUIString(rh->Name, gui->ST_RXNAME, sizeof(rh->Name));
+      GetMUIString(rh->Script, gui->ST_SCRIPT, sizeof(rh->Script));
       rh->IsAmigaDOS = GetMUICycle(gui->CY_ISADOS) == 1;
       rh->UseConsole = GetMUICheck(gui->CH_CONSOLE);
       rh->WaitTerm = GetMUICheck(gui->CH_WAITTERM);
@@ -923,14 +921,14 @@ void CO_SetDefaults(struct Config *co, int page)
    {
       for (i = 0; i < MAXMV; i++) { if (co->MV[i]) free(co->MV[i]); co->MV[i] = NULL; }
       co->ShowHeader = 1;
-      strcpy(co->ShortHeaders,"(From|To|Date|Subject)");
+      strlcpy(co->ShortHeaders, "(From|To|Date|Subject)", sizeof(co->ShortHeaders));
       co->ShowSenderInfo = 2;
-      strcpy(co->ColoredText.buf, "m6");
-      strcpy(co->Color1stLevel.buf, "m0");
-      strcpy(co->Color2ndLevel.buf, "m7");
-      strcpy(co->Color3rdLevel.buf, "m3");
-      strcpy(co->Color4thLevel.buf, "m1");
-      strcpy(co->ColorURL.buf, "p6");
+      strlcpy(co->ColoredText.buf, "m6", sizeof(co->ColoredText.buf));
+      strlcpy(co->Color1stLevel.buf, "m0", sizeof(co->Color1stLevel.buf));
+      strlcpy(co->Color2ndLevel.buf, "m7", sizeof(co->Color2ndLevel.buf));
+      strlcpy(co->Color3rdLevel.buf, "m3", sizeof(co->Color3rdLevel.buf));
+      strlcpy(co->Color4thLevel.buf, "m1", sizeof(co->Color4thLevel.buf));
+      strlcpy(co->ColorURL.buf, "p6", sizeof(co->ColorURL.buf));
       co->DisplayAllTexts = TRUE;
       co->FixedFontEdit = TRUE;
       co->UseTextstyles = TRUE;
@@ -948,12 +946,12 @@ void CO_SetDefaults(struct Config *co, int page)
    if(page == 5 || page < 0)
    {
       *co->ReplyTo = *co->Organization = *co->ExtraHeaders = '\0';
-      strcpy(co->NewIntro, GetStr(MSG_CO_NewIntroDef));
-      strcpy(co->Greetings, GetStr(MSG_CO_GreetingsDef));
+      strlcpy(co->NewIntro, GetStr(MSG_CO_NewIntroDef), sizeof(co->NewIntro));
+      strlcpy(co->Greetings, GetStr(MSG_CO_GreetingsDef), sizeof(co->Greetings));
       co->WarnSubject = TRUE;
       co->EdWrapCol = 76;
       co->EdWrapMode = 2;
-      strcpy(co->Editor, "C:Ed");
+      strlcpy(co->Editor, "C:Ed", sizeof(co->Editor));
       co->LaunchAlways = FALSE;
       co->EmailCache = 10;
       co->AutoSave = 120;
@@ -962,21 +960,21 @@ void CO_SetDefaults(struct Config *co, int page)
    // [Reply/Forward]
    if(page == 6 || page < 0)
    {
-      strcpy(co->ReplyHello, "Hello %f\\n");
-      strcpy(co->ReplyIntro, "On %d, you wrote:\\n");
-      strcpy(co->ReplyBye, "Regards");
-      strcpy(co->AltReplyHello, GetStr(MSG_CO_AltRepHelloDef));
-      strcpy(co->AltReplyIntro, GetStr(MSG_CO_AltRepIntroDef));
-      strcpy(co->AltReplyBye, GetStr(MSG_CO_AltRepByeDef));
-      strcpy(co->AltReplyPattern, GetStr(MSG_CO_AltRepPatternDef));
-      strcpy(co->MLReplyHello, GetStr(MSG_CO_MLRepHelloDef));
-      strcpy(co->MLReplyIntro, GetStr(MSG_CO_MLRepIntroDef));
-      strcpy(co->MLReplyBye, GetStr(MSG_CO_MLRepByeDef));
-      strcpy(co->ForwardIntro, GetStr(MSG_CO_ForwardIntroDef));
-      strcpy(co->ForwardFinish, GetStr(MSG_CO_ForwardFinishDef));
+      strlcpy(co->ReplyHello, "Hello %f\\n", sizeof(co->ReplyHello));
+      strlcpy(co->ReplyIntro, "On %d, you wrote:\\n", sizeof(co->ReplyIntro));
+      strlcpy(co->ReplyBye, "Regards", sizeof(co->ReplyBye));
+      strlcpy(co->AltReplyHello, GetStr(MSG_CO_AltRepHelloDef), sizeof(co->AltReplyHello));
+      strlcpy(co->AltReplyIntro, GetStr(MSG_CO_AltRepIntroDef), sizeof(co->AltReplyIntro));
+      strlcpy(co->AltReplyBye, GetStr(MSG_CO_AltRepByeDef), sizeof(co->AltReplyBye));
+      strlcpy(co->AltReplyPattern, GetStr(MSG_CO_AltRepPatternDef), sizeof(co->AltReplyPattern));
+      strlcpy(co->MLReplyHello, GetStr(MSG_CO_MLRepHelloDef), sizeof(co->MLReplyHello));
+      strlcpy(co->MLReplyIntro, GetStr(MSG_CO_MLRepIntroDef), sizeof(co->MLReplyIntro));
+      strlcpy(co->MLReplyBye, GetStr(MSG_CO_MLRepByeDef), sizeof(co->MLReplyBye));
+      strlcpy(co->ForwardIntro, GetStr(MSG_CO_ForwardIntroDef), sizeof(co->ForwardIntro));
+      strlcpy(co->ForwardFinish, GetStr(MSG_CO_ForwardFinishDef), sizeof(co->ForwardFinish));
+      strlcpy(co->QuoteText, ">", sizeof(co->QuoteText));
+      strlcpy(co->AltQuoteText, "|", sizeof(co->AltQuoteText));
       co->QuoteMessage = co->QuoteEmptyLines = co->CompareAddress = co->StripSignature = TRUE;
-      strcpy(co->QuoteText, ">");
-      strcpy(co->AltQuoteText, "|");
    }
 
    // [Signature]
@@ -984,7 +982,7 @@ void CO_SetDefaults(struct Config *co, int page)
    {
       co->UseSignature = FALSE;
       strmfp(co->TagsFile, G->ProgDir, ".taglines");
-      strcpy(co->TagsSeparator, "%%");
+      strlcpy(co->TagsSeparator, "%%", sizeof(co->TagsSeparator));
    }
 
    // [Lists]
@@ -996,7 +994,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->FolderCntMenu = TRUE;
       co->MessageCntMenu = TRUE;
       co->InfoBar = IB_POS_CENTER;
-      strcpy(co->InfoBarText, GetStr(MSG_CO_InfoBarDef));
+      strlcpy(co->InfoBarText, GetStr(MSG_CO_InfoBarDef), sizeof(co->InfoBarText));
    }
 
    // [Security]
@@ -1008,14 +1006,14 @@ void CO_SetDefaults(struct Config *co, int page)
 
       if(!G->PGPVersion)
       {
-         strcpy(co->PGPCmdPath, "C:");
+         strlcpy(co->PGPCmdPath, "C:", sizeof(co->PGPCmdPath));
          G->PGPVersion = CO_DetectPGP(co);
       }
       *co->MyPGPID = 0;
       co->EncryptToSelf = co->LogAllEvents = TRUE;
-      strcpy(co->ReMailer, "Remailer <remailer@remailer.xganon.com>");
-      strcpy(co->RMCommands, "Anon-To: %s");
-      strcpy(co->LogfilePath, G->ProgDir);
+      strlcpy(co->ReMailer, "Remailer <remailer@remailer.xganon.com>", sizeof(co->ReMailer));
+      strlcpy(co->RMCommands, "Anon-To: %s", sizeof(co->RMCommands));
+      strlcpy(co->LogfilePath, G->ProgDir, sizeof(co->LogfilePath));
       co->LogfileMode = 1;
       co->SplitLogfile = FALSE;
    }
@@ -1032,18 +1030,18 @@ void CO_SetDefaults(struct Config *co, int page)
    if(page == 11 || page < 0)
    {
       co->MV[0] = CO_NewMimeView();
-      strcpy(co->MV[0]->ContentType, GetStr(MSG_Default));
-      strcpy(co->MV[0]->Command, "SYS:Utilities/Multiview \"%s\"");
+      strlcpy(co->MV[0]->ContentType, GetStr(MSG_Default), sizeof(co->MV[0]->ContentType));
+      strlcpy(co->MV[0]->Command, "SYS:Utilities/Multiview \"%s\"", sizeof(co->MV[0]->Command));
       co->IdentifyBin = TRUE;
-      strcpy(co->DetachDir, "RAM:");
-      strcpy(co->AttachDir, "RAM:");
+      strlcpy(co->DetachDir, "RAM:", sizeof(co->DetachDir));
+      strlcpy(co->AttachDir, "RAM:", sizeof(co->AttachDir));
    }
 
    // [Address book]
    if(page == 12 || page < 0)
    {
-      strcpy(co->GalleryDir, "YAM:Gallery");
-      strcpy(co->NewAddrGroup, "NEW");
+      strlcpy(co->GalleryDir, "YAM:Gallery", sizeof(co->GalleryDir));
+      strlcpy(co->NewAddrGroup, "NEW", sizeof(co->NewAddrGroup));
       co->AddMyInfo = FALSE;
       co->AddToAddrbook = 0;
       co->AddrbookCols = 1+2+4;
@@ -1063,17 +1061,17 @@ void CO_SetDefaults(struct Config *co, int page)
    // [Mixed]
    if(page == 14 || page < 0)
    {
-      strcpy(co->TempDir, "T:");
-      strcpy(co->PackerCommand, "LhA -a -m -i%l a \"%a\"");
+      strlcpy(co->TempDir, "T:", sizeof(co->TempDir));
+      strlcpy(co->PackerCommand, "LhA -a -m -i%l a \"%a\"", sizeof(co->PackerCommand));
       co->IconPositionX = co->IconPositionY = 0;
-      strcpy(co->AppIconText, GetStr(MSG_CO_APPICON_LABEL));
+      strlcpy(co->AppIconText, GetStr(MSG_CO_APPICON_LABEL), sizeof(co->AppIconText));
       co->IconifyOnQuit = co->RemoveAtOnce = FALSE;
       co->Confirm = co->SaveSent = co->SendMDNAtOnce = TRUE;
       co->ConfirmDelete = 2;
       co->MDN_Display = co->MDN_Process = co->MDN_Delete = 2;
       co->MDN_Filter = 3;
-      strcpy(co->XPKPack, "HUFF");
-      strcpy(co->XPKPackEncrypt, "HUFF");
+      strlcpy(co->XPKPack, "HUFF", sizeof(co->XPKPack));
+      strlcpy(co->XPKPackEncrypt, "HUFF", sizeof(co->XPKPackEncrypt));
       co->XPKPackEff = 50;
       co->XPKPackEncryptEff = 50;
 
@@ -1095,12 +1093,12 @@ void CO_SetDefaults(struct Config *co, int page)
    {
       co->LetterPart = 1;
       co->WriteIndexes = 120;
-      strcpy(co->SupportSite, "http://www.yam.ch/");
+      strlcpy(co->SupportSite, "http://www.yam.ch/", sizeof(co->SupportSite));
       co->JumpToNewMsg = co->AskJumpUnread = co->PrinterCheck = co->IsOnlineCheck = TRUE;
       co->JumpToIncoming = FALSE;
       co->ConfirmOnQuit = FALSE;
       co->HideGUIElements = 0;
-      strcpy(co->LocalCharset, "ISO-8859-1");
+      strlcpy(co->LocalCharset, "ISO-8859-1", sizeof(co->LocalCharset));
       co->SysCharsetCheck = TRUE;
       co->AmiSSLCheck = TRUE;
       co->TimeZoneCheck = TRUE;
@@ -1168,26 +1166,27 @@ static void CopyConfigData(struct Config *dco, struct Config *sco)
 //  Validates a configuration, update GUI etc.
 void CO_Validate(struct Config *co, BOOL update)
 {
-   char *p, buffer[SIZE_USERID];
+   char *p = strchr(co->EmailAddress, '@');
    BOOL saveAtEnd = FALSE;
    int i;
 
    ENTER();
 
-   if (!*co->SMTP_Server) strcpy(co->SMTP_Server, co->P3[0]->Server);
+   if(!*co->SMTP_Server) strlcpy(co->SMTP_Server, co->P3[0]->Server, sizeof(co->SMTP_Server));
    if (co->SMTP_Port == 0) co->SMTP_Port = 25;
-   if (!*co->SMTP_Domain) { p = strchr(co->EmailAddress, '@'); strcpy(co->SMTP_Domain, p ? p+1 : ""); }
+   if(!*co->SMTP_Domain)
+     strlcpy(co->SMTP_Domain, p ? p+1 : "", sizeof(co->SMTP_Domain));
+
    for (i = 0; i < MAXP3; i++) if (co->P3[i])
    {
-      if (!*co->P3[i]->Server) strcpy(co->P3[i]->Server, co->SMTP_Server);
+      if(!*co->P3[i]->Server)
+        strlcpy(co->P3[i]->Server, co->SMTP_Server, sizeof(co->P3[i]->Server));
+
       if (co->P3[i]->Port == 0) co->P3[i]->Port = 110;
 
-      if (!*co->P3[i]->User)
-      {
-         stccpy(buffer, co->EmailAddress, SIZE_USERID);
-         if ((p = strchr(buffer, '@'))) *p = 0;
-         strcpy(co->P3[i]->User, buffer);
-      }
+      if(!*co->P3[i]->User)
+        strlcpy(co->P3[i]->User, co->EmailAddress, p ? (unsigned int)(p-(co->EmailAddress)) : sizeof(co->P3[i]->User));
+
       snprintf(co->P3[i]->Account, sizeof(co->P3[i]->Account), "%s@%s", co->P3[i]->User, co->P3[i]->Server);
    }
 
@@ -1324,7 +1323,7 @@ void CO_Validate(struct Config *co, BOOL update)
    // charset to 'iso-8859-1' as this one is probably the most common one.
    if(co->LocalCharset[0] == '\0')
    {
-      strcpy(co->LocalCharset, "ISO-8859-1");
+      strlcpy(co->LocalCharset, "ISO-8859-1", sizeof(co->LocalCharset));
       saveAtEnd = TRUE;
    }
 
@@ -1605,7 +1604,9 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
                         if (*command == '%' && command[1] == 'f') { *p++ = *command++; *p++ = 's'; } else *p++ = *command;
                      *p = 0;
                   }
-                  if (*ext) stccpy(mv->Extension, ext, SIZE_NAME);
+
+                  if(*ext)
+                    strlcpy(mv->Extension, ext, sizeof(mv->Extension));
                }
             }
             fclose(fh);

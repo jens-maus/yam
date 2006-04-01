@@ -25,7 +25,6 @@
 
 ***************************************************************************/
 
-#include "extrasrc/stccpy.c"
 #include "extrasrc/stcgfe.c"
 #include "extrasrc/strmfp.c"
 #include "extrasrc/strsfn.c"

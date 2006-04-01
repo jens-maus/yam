@@ -367,7 +367,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   *ptr = '\0'; // NUL terminate it
 
   // construct the full old file path
-  strcpy(oldFilePath, folderDir);
+  strlcpy(oldFilePath, folderDir, sizeof(oldFilePath));
   AddPart(oldFilePath, mail->MailFile, SIZE_PATHFILE);
 
   while(success == FALSE)
@@ -383,13 +383,13 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
     }
 
     // construct new full file path
-    strcpy(newFilePath, folderDir);
+    strlcpy(newFilePath, folderDir, sizeof(newFilePath));
     AddPart(newFilePath, newFileName, SIZE_PATHFILE);
 
     // then rename it
     if(Rename(oldFilePath, newFilePath) != 0)
     {
-      strcpy(mail->MailFile, newFileName);
+      strlcpy(mail->MailFile, newFileName, sizeof(mail->MailFile));
       success = TRUE;
 
       // before we exit we check through all our read windows if
@@ -404,7 +404,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
         {
           struct ReadMailData *rmData = (struct ReadMailData *)curNode;
           if(rmData->mail == mail)
-            strcpy(rmData->readFile, newFilePath);
+            strlcpy(rmData->readFile, newFilePath, sizeof(rmData->readFile));
         }
       }
     }
@@ -555,17 +555,17 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
    char mfile[SIZE_MFILE];
    int result;
 
-   strcpy(mfile, mail->MailFile);
+   strlcpy(mfile, mail->MailFile, sizeof(mfile));
 
    if((result = TransferMailFile(copyit, mail, to)) >= 0)
    {
-      strcpy(cmail.MailFile, mail->MailFile);
+      strlcpy(cmail.MailFile, mail->MailFile, sizeof(cmail.MailFile));
 
       if(copyit)
       {
         AppendLogVerbose(25, GetStr(MSG_LOG_CopyingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
-        strcpy(mail->MailFile, mfile);
+        strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
       }
       else
       {
@@ -894,8 +894,9 @@ static char *MA_AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
    else
    {
       char addr[SIZE_ADDRESS];
-      strcpy(addr, pe->Address);
-      strcat(addr, strchr(C->EmailAddress, '@'));
+      char *p = strchr(C->EmailAddress, '@');
+
+      snprintf(addr, sizeof(addr), "%s%s", pe->Address, p ? p : "");
       ins = BuildAddrName(addr, pe->RealName);
    }
    if (excludeme) if (!stricmp(pe->Address, C->EmailAddress)) return sbuf;
@@ -953,9 +954,9 @@ static void MA_SetupQuoteString(struct WR_ClassData *wr, struct ExpandTextData *
    etd->R_Address    = "";
 
    sbuf = ExpandText(C->QuoteText, etd);
-   stccpy(wr->QuoteText, TrimEnd(sbuf), SIZE_DEFAULT);
+   strlcpy(wr->QuoteText, TrimEnd(sbuf), sizeof(wr->QuoteText));
    FreeStrBuf(sbuf);
-   stccpy(wr->AltQuoteText, C->AltQuoteText, SIZE_SMALL);
+   strlcpy(wr->AltQuoteText, C->AltQuoteText, sizeof(wr->AltQuoteText));
 }
 
 ///
@@ -1083,7 +1084,7 @@ int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
                 // free our temp text now
                 free(cmsg);
 
-                strcpy(wr->MsgID, email->IRTMsgID);
+                strlcpy(wr->MsgID, email->IRTMsgID, sizeof(wr->MsgID));
                 setstring(wr->GUI.ST_SUBJECT, mail->Subject);
                 setstring(wr->GUI.ST_FROM, BuildAddrName2(&mail->From));
                 setstring(wr->GUI.ST_REPLYTO, BuildAddrName2(&mail->ReplyTo));
@@ -1343,7 +1344,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
             if (*mail->Subject)
             {
                if(j)
-                strcpy(buffer, mail->Subject);
+                strlcpy(buffer, mail->Subject, sizeof(buffer));
                else
                 snprintf(buffer, sizeof(buffer), "Re: %s", MA_GetRealSubject(mail->Subject));
 
@@ -1353,7 +1354,9 @@ int MA_NewReply(struct Mail **mlist, int flags)
                   rsub = StrBufCat(rsub, buffer);
                }
             }
-            if (!multi) strcpy(wr->MsgID, email->MsgID);
+
+            if(!multi)
+              strlcpy(wr->MsgID, email->MsgID, sizeof(wr->MsgID));
 
             // Now we analyse the folder of the selected mail and if it
             // is a mailing list we have to do some operation
@@ -1361,8 +1364,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
             {
                char tofld[SIZE_LARGE], fromfld[SIZE_LARGE];
 
-               strcpy(tofld, BuildAddrName2(&mail->To));
-               strcpy(fromfld, BuildAddrName2(&mail->From));
+               strlcpy(tofld, BuildAddrName2(&mail->To), sizeof(tofld));
+               strlcpy(fromfld, BuildAddrName2(&mail->From), sizeof(fromfld));
 
                // if the mail we are going to reply resists in the incoming folder
                // we have to check all other folders first.
@@ -2421,7 +2424,7 @@ BOOL MA_ImportMessages(char *fname)
 
     // put some import relevant data into variables of our
     // transfer window object
-    stccpy(G->TR->ImportFile, fname, SIZE_PATHFILE);
+    strlcpy(G->TR->ImportFile, fname, sizeof(G->TR->ImportFile));
     G->TR->ImportFolder = actfo;
     G->TR->ImportFormat = foundFormat;
 
@@ -2554,12 +2557,14 @@ HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
 
    if (!(mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE))) return;
    selected = (int)*mlist;
+
    for (i = 0; i < selected; i++)
    {
       mail = mlist[i+2];
       if (ask)
       {
-         strcpy(subj, mail->Subject);
+         strlcpy(subj, mail->Subject, sizeof(subj));
+
          switch (StringRequest(subj, SIZE_SUBJECT, GetStr(MSG_MA_ChangeSubj), GetStr(MSG_MA_ChangeSubjReq), GetStr(MSG_Okay), (i || selected == 1) ? NULL : GetStr(MSG_MA_All), GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
          {
             case 0: free(mlist); return;
@@ -2665,7 +2670,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
    char command[SIZE_LARGE], *wtitle = "CON:////YAM ARexx Window/AUTO";
    struct RexxMsg *sentrm;
 
-   strcpy(command, C->RX[num].Script);
+   strlcpy(command, C->RX[num].Script, sizeof(command));
    if (!*command) return 0;
    if (param) { strcat(command, " "); strcat(command, param); }
    if (C->RX[num].IsAmigaDOS)

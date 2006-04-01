@@ -199,7 +199,6 @@ struct NewToolbarEntry
 #define BuildAddrName2(p)     BuildAddrName((p)->Address, (p)->RealName)
 #define SetHelp(o,str)        set(o, MUIA_ShortHelp, GetStr(str))
 #define DisposeModulePush(m)  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, m)
-#define MyStrCpy(a,b)         memcpy((a), (b), sizeof(a)), (a)[sizeof(a)-1] = '\0'
 #define FreeStrBuf(str)       ((str) ? free(((char *)(str))-sizeof(size_t)) : (void)0)
 #define isSpace(c)            ((BOOL)(G->Locale ? (IsSpace(G->Locale, (ULONG)(c)) != 0) : (ISpace((c)) != 0)))
 #define isGraph(c)            ((BOOL)(G->Locale ? (IsGraph(G->Locale, (ULONG)(c)) != 0) : (isgraph((c)) != 0)))
@@ -207,8 +206,8 @@ struct NewToolbarEntry
 #define isValidMailFile(file) (!(strlen(file) < 17 || file[12] != '.' || file[16] != ',' || !isdigit(file[13])))
 #define Bool2Txt(b)           ((b) ? "Y" : "N")
 #define Txt2Bool(t)           (BOOL)(toupper((int)*(t)) == 'Y' || (int)*(t) == '1')
-#define GetMUIString(a, obj)  strcpy((a), (char *)xget((obj), MUIA_String_Contents))
-#define GetMUIText(a, obj)    strcpy((a), (char *)xget((obj), MUIA_Text_Contents))
+#define GetMUIString(a, o, l) strlcpy((a), (char *)xget((o), MUIA_String_Contents), (l))
+#define GetMUIText(a, o, l)   strlcpy((a), (char *)xget((o), MUIA_Text_Contents), (l))
 
 #if !defined(IsMinListEmpty)
 #define IsMinListEmpty(x)     (((x)->mlh_TailPred) == (struct MinNode *)(x))

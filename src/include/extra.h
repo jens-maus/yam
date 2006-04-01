@@ -19,9 +19,6 @@
 ** <string.h>
 */
 
-#ifndef __MORPHOS__
-extern int stccpy(char *, const char *, int);
-#endif
 extern int stcgfe(char *, const char *);
 extern void strmfp(char *, const char *, const char *);
 extern void strsfn(const char *, char *, char *, char *, char *);

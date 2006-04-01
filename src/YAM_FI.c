@@ -366,8 +366,8 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
    search->Compare   = compar;
    search->Status    = stat;
    search->SubString = substr;
-   stccpy(search->Match, match, SIZE_PATTERN);
-   stccpy(search->Field, field, SIZE_DEFAULT);
+   strlcpy(search->Match, match, sizeof(search->Match));
+   strlcpy(search->Field, field, sizeof(search->Field));
    search->Pattern = search->PatBuf;
    search->Fast = FS_NONE;
    NewList((struct List *)&search->patternList);
@@ -749,7 +749,7 @@ HOOKPROTONHNONP(CreateFilterFromSearch, void)
     {
       struct RuleNode *rule = GetFilterRule(filter, 0);
 
-      strcpy(filter->name, name);
+      strlcpy(filter->name, name, sizeof(filter->name));
 
       if(rule)
         DoMethod(G->FI->GUI.GR_SEARCH, MUIM_SearchControlGroup_SetToRule, rule);
@@ -1367,7 +1367,7 @@ struct FilterNode *CreateNewFilter(void)
 
   if(filter)
   {
-    strcpy(filter->name, GetStr(MSG_NewEntry));
+    strlcpy(filter->name, GetStr(MSG_NewEntry), sizeof(filter->name));
     filter->applyToNew = TRUE;
     filter->applyOnReq = TRUE;
 

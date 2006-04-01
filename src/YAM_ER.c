@@ -117,11 +117,9 @@ void STDARGS VARARGS68K ER_NewError(char *error, ...)
       strcat(buf, datstr);
       strcat(buf, ")");
 
-      if((G->ER_Message[G->ER_NumErr-1] = malloc(strlen(buf)+1)))
-      {
-        strcpy(G->ER_Message[G->ER_NumErr-1], buf);
-      }
+      G->ER_Message[G->ER_NumErr-1] = strdup(buf);
    }
+
    SPrintF(label, "\033c%s %%ld/%ld", GetStr(MSG_ErrorReq), G->ER_NumErr);
 
    SetAttrs(gui->NB_ERROR,

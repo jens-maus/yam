@@ -101,10 +101,7 @@ HOOKPROTONO(SelectionFunc, ULONG, struct IconSelectMsg *ism)
   {
     if(ism->ism_Type == WBDRAWER)
     {
-      msg->destName = malloc(strlen(ism->ism_Name)+1);
-      if(msg->destName)
-        strcpy(msg->destName, ism->ism_Name);
-
+      msg->destName = strdup(ism->ism_Name);
       return ISMACTION_Select;
     }
     else if(ism->ism_Type == WBDISK)
@@ -112,9 +109,7 @@ HOOKPROTONO(SelectionFunc, ULONG, struct IconSelectMsg *ism)
       msg->destName = malloc(strlen(ism->ism_Name)+2);
       if(msg->destName)
       {
-        strcpy(msg->destName, ism->ism_Name);
-        strcat(msg->destName, ":");
-
+        snprintf(msg->destName, strlen(ism->ism_Name)+2, "%s:", ism->ism_Name);
         return ISMACTION_Select;
       }
     }
@@ -751,11 +746,9 @@ OVERLOAD(MUIM_DeleteDragImage)
 
         for(n = path_list->lh_Head; n->ln_Succ; n = n->ln_Succ)
         {
-          selMsg.drawer = malloc(strlen(n->ln_Name)+1);
+          selMsg.drawer = strdup(n->ln_Name);
           if(selMsg.drawer)
           {
-            strcpy(selMsg.drawer, n->ln_Name);
-
             ChangeWorkbenchSelectionA(selMsg.drawer, &hook, NULL);
 
             if(selMsg.finish)
@@ -772,7 +765,7 @@ OVERLOAD(MUIM_DeleteDragImage)
                 data->dropPath = malloc(len);
                 if(data->dropPath)
                 {
-                  strcpy(data->dropPath, selMsg.drawer);
+                  strlcpy(data->dropPath, selMsg.drawer, len);
                   AddPart(data->dropPath, selMsg.destName, len);
                 }
 

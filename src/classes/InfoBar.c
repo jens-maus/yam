@@ -63,7 +63,7 @@ char *GetFolderInfo(struct Folder *folder)
     {
       switch (*++src)
       {
-        case '%': strcpy(dst, "%"); break;
+        case '%': strlcpy(dst, "%", sizeof(dst)); break;
         case 'n': snprintf(dst, sizeof(dst), "%d", folder->New);     break;
         case 'u': snprintf(dst, sizeof(dst), "%d", folder->Unread);  break;
         case 't': snprintf(dst, sizeof(dst), "%d", folder->Total);   break;

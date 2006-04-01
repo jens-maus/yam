@@ -477,7 +477,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
   }
   else
   {
-    strcpy(data->menuTitle, GetStr(MSG_Attachments));
+    strlcpy(data->menuTitle, GetStr(MSG_Attachments), sizeof(data->menuTitle));
     data->selectedPart = NULL;
   }
 

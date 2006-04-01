@@ -86,7 +86,9 @@ HOOKPROTONH(CO_LV_RxDspFunc, long, char **array, int num)
    static char rexxoptm[SIZE_DEFAULT];
    int scr = num-1;
 
-   strcpy(array[0] = rexxoptm, "");
+   rexxoptm[0] = '\0';
+   array[0] = rexxoptm;
+
    if (*CE->RX[scr].Script) strcat(rexxoptm, MUIX_PH);
    switch (scr)
    {

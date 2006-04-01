@@ -351,8 +351,8 @@ DECLARE(AddToEmailCache) // struct Person *person
         struct ABEntry *entry = &newnode->ecn_Person;
 
         // Lets copy the data in the new Person struct
-        strcpy(entry->RealName, msg->person->RealName);
-        strcpy(entry->Address, msg->person->Address);
+        strlcpy(entry->RealName, msg->person->RealName, sizeof(entry->RealName));
+        strlcpy(entry->Address, msg->person->Address, sizeof(entry->Address));
 
         // we always add new items to the top because this is a FILO
         AddHead(&data->EMailCache, (struct Node *)newnode);

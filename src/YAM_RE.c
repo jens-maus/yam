@@ -204,7 +204,7 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
 
       p1->Filename = tf1->Filename;
       mode = isAutoActMDN(type) ? "automatically" : "in response to a user command";
-      strcpy(disp, isAutoActMDN(type) ? "automatic-action/" : "manual-action/");
+      strlcpy(disp, isAutoActMDN(type) ? "automatic-action/" : "manual-action/", sizeof(disp));
       strcat(disp, isAutoSendMDN(type) ? "MDN-sent-automatically; " : "MDN-sent-manually; ");
 
       switch(type & MDN_TYPEMASK)
@@ -340,7 +340,7 @@ BOOL RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi)
 
             case 2:
               sendnow = FALSE;
-              strcpy(buttons, GetStr(MSG_RE_MDNGads1));
+              strlcpy(buttons, GetStr(MSG_RE_MDNGads1), sizeof(buttons));
 
               if(isonline)
                 strcat(buttons, GetStr(MSG_RE_MDNGads2));
@@ -417,7 +417,7 @@ BOOL RE_Export(struct ReadMailData *rmData, char *source,
   {
     if(*name)
     {
-      strcpy(buffer2, name);
+      strlcpy(buffer2, name, sizeof(buffer2));
     }
     else if(nr)
     {
@@ -671,7 +671,7 @@ void RE_SaveAll(struct ReadMailData *rmData, char *path)
     for(part = rmData->firstPart->Next->Next; part; part = part->Next)
     {
       if(*part->Name)
-        stccpy(fname, part->Name, SIZE_DEFAULT);
+        strlcpy(fname, part->Name, sizeof(fname));
       else
         snprintf(fname, sizeof(fname), "%s-%d", rmData->mail->MailFile, part->Nr);
 
@@ -689,13 +689,16 @@ void RE_SaveAll(struct ReadMailData *rmData, char *path)
 //  Finds e-mail address in PGP output
 static BOOL RE_GetAddressFromLog(char *buf, char *address)
 {
-   if ((buf = strchr(buf, 34)))
-   {
-      stccpy(address, ++buf, SIZE_ADDRESS);
-      if ((buf = strchr(address, 34))) *buf = 0;
-      return TRUE;
-   }
-   return FALSE;
+  if((buf = strchr(buf, '"')))
+  {
+    strlcpy(address, ++buf, SIZE_ADDRESS);
+    if((buf = strchr(address, '"')))
+      *buf = '\0';
+
+    return TRUE;
+  }
+
+  return FALSE;
 }
 ///
 /// RE_GetSigFromLog
@@ -842,6 +845,7 @@ static char *UnquoteString(char *s, BOOL new)
 
     // otherwise overwrite the original string array
     strcpy(o, ans);
+
     free(ans);
   }
 
@@ -1050,7 +1054,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
     {
       char buf[SIZE_DEFAULT];
 
-      stccpy(p = buf, value, SIZE_DEFAULT);
+      strlcpy(p = buf, value, sizeof(buf));
       TrimEnd(p);
 
       // As the content-transfer-encoding field is mostly used in
@@ -1080,7 +1084,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
     }
     else if(!stricmp(field, "content-description"))
     {
-      stccpy(rp->Description, value, SIZE_DEFAULT);
+      strlcpy(rp->Description, value, sizeof(rp->Description));
     }
     else if(!stricmp(field, "content-disposition"))
     {
@@ -1510,7 +1514,7 @@ static void RE_UndoPart(struct Part *rp)
       trp = trp->Prev;
 
       // now copy the filename string
-      strcpy(trp->Next->Filename, trp->Filename);
+      strlcpy(trp->Next->Filename, trp->Filename, sizeof(trp->Next->Filename));
 
     }
     while(trp->Prev && trp != rp);
@@ -1613,7 +1617,7 @@ static void RE_SetPartInfo(struct Part *rp)
    // if this part hasn`t got any name, we place the CParName as the normal name
    if(!*rp->Name && (rp->CParName || rp->CParFileName))
    {
-      stccpy(rp->Name, rp->CParName ? rp->CParName : rp->CParFileName, SIZE_DEFAULT);
+      strlcpy(rp->Name, rp->CParName ? rp->CParName : rp->CParFileName, sizeof(rp->Name));
       UnquoteString(rp->Name, FALSE);
    }
 
@@ -1910,7 +1914,7 @@ BOOL RE_DecodePart(struct Part *rp)
             rp->Decoded = TRUE;
           }
 
-          strcpy(rp->Filename, buf);
+          strlcpy(rp->Filename, buf, sizeof(rp->Filename));
           RE_SetPartInfo(rp);
         }
         else
@@ -1926,7 +1930,7 @@ BOOL RE_DecodePart(struct Part *rp)
         fclose(out);
         fclose(in);
         DeleteFile(rp->Filename);
-        strcpy(rp->Filename, buf);
+        strlcpy(rp->Filename, buf, sizeof(rp->Filename));
         rp->Decoded = TRUE;
         RE_SetPartInfo(rp);
       }
@@ -1952,7 +1956,7 @@ static void RE_HandleMDNReport(struct Part *frp)
   {
     rp[2] = rp[1]->Next;
     msgdesc = AllocStrBuf(80);
-    strcpy(MDNtype, "");
+    MDNtype[0] = '\0';
 
     for(j = 1; j < (rp[2] ? 3 : 2); j++)
     {
@@ -1993,7 +1997,7 @@ static void RE_HandleMDNReport(struct Part *frp)
               else if(!stricmp(field, "final-recipient"))
                 msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNFinalRecpt)), value);
               else if(!stricmp(field, "disposition"))
-                stccpy(MDNtype, Trim(value), SIZE_DEFAULT);
+                strlcpy(MDNtype, Trim(value), sizeof(MDNtype));
              }
           }
 
@@ -2031,7 +2035,7 @@ static void RE_HandleMDNReport(struct Part *frp)
       fclose(out);
 
       DeleteFile(rp[0]->Filename);
-      strcpy(rp[0]->Filename, buf);
+      strlcpy(rp[0]->Filename, buf, sizeof(rp[0]->Filename));
       rp[0]->Decoded = TRUE;
       RE_SetPartInfo(rp[0]);
       if(rp[2])
@@ -2260,7 +2264,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
       return FALSE;
     }
 
-    strcpy(rmData->readFile, tmpFile);
+    strlcpy(rmData->readFile, tmpFile, sizeof(rmData->readFile));
   }
 
   rmData->parseMode = pMode;
@@ -2284,7 +2288,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
         D(DBF_MAIL, "renaming '%s' to '%s'", part->Filename, tmpFile);
 
         RenameFile(part->Filename, tmpFile);
-        strcpy(part->Filename, tmpFile);
+        strlcpy(part->Filename, tmpFile, sizeof(part->Filename));
       }
     }
 
@@ -2303,8 +2307,8 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
       struct Part *firstPart = rmData->firstPart;
       struct Part *attachPart = firstPart->Next;
 
-      strcpy(attachPart->Name, firstPart->Name);
-      strcpy(attachPart->Description, firstPart->Description);
+      strlcpy(attachPart->Name, firstPart->Name, sizeof(attachPart->Name));
+      strlcpy(attachPart->Description, firstPart->Description, sizeof(attachPart->Description));
       attachPart->CParFileName = firstPart->CParFileName;
 
       // in case the mail is already flagged as a
@@ -2559,9 +2563,9 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   // a application/octet-stream part as we don't know if it
                   // is some text or something else.
                   uup->ContentType = StrBufCpy(uup->ContentType, "application/octet-stream");
-                  strcpy(uup->Description, GetStr(MSG_RE_UUencodedFile));
+                  strlcpy(uup->Description, GetStr(MSG_RE_UUencodedFile), sizeof(uup->Description));
                   if(nameptr)
-                    stccpy(uup->Name, nameptr, SIZE_FILE);
+                    strlcpy(uup->Name, nameptr, sizeof(uup->Name));
 
                   // save the old position of our input file position so that
                   // we can set it back later on
@@ -2820,8 +2824,8 @@ void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
    struct ExtendedMail *email;
 
    memset(ab, 0, sizeof(struct ABEntry));
-   stccpy(ab->Address, mail->From.Address, SIZE_ADDRESS);
-   stccpy(ab->RealName, mail->From.RealName, SIZE_REALNAME);
+   strlcpy(ab->Address, mail->From.Address, sizeof(ab->Address));
+   strlcpy(ab->RealName, mail->From.RealName, sizeof(ab->RealName));
 
    if(isSenderInfoMail(mail))
    {
@@ -2840,13 +2844,13 @@ void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
                s = Cleanse(s); eq = TrimStart(eq);
                TrimEnd(eq);
                UnquoteString(eq, FALSE);
-               if (!stricmp(s, "street")) stccpy(ab->Street, eq, SIZE_DEFAULT);
-               if (!stricmp(s, "city")) stccpy(ab->City, eq, SIZE_DEFAULT);
-               if (!stricmp(s, "country")) stccpy(ab->Country, eq, SIZE_DEFAULT);
-               if (!stricmp(s, "phone")) stccpy(ab->Phone, eq, SIZE_DEFAULT);
-               if (!stricmp(s, "homepage")) stccpy(ab->Homepage, eq, SIZE_URL);
-               if (!stricmp(s, "dob")) ab->BirthDay = atol(eq);
-               if (!stricmp(s, "picture")) stccpy(ab->Photo, eq, SIZE_PATHFILE);
+               if (!stricmp(s, "street"))   strlcpy(ab->Street, eq, sizeof(ab->Street));
+               if (!stricmp(s, "city"))     strlcpy(ab->City, eq, sizeof(ab->City));
+               if (!stricmp(s, "country"))  strlcpy(ab->Country, eq, sizeof(ab->Country));
+               if (!stricmp(s, "phone"))    strlcpy(ab->Phone, eq, sizeof(ab->Phone));
+               if (!stricmp(s, "homepage")) strlcpy(ab->Homepage, eq, sizeof(ab->Homepage));
+               if (!stricmp(s, "dob"))      ab->BirthDay = atol(eq);
+               if (!stricmp(s, "picture"))  strlcpy(ab->Photo, eq, sizeof(ab->Photo));
                ab->Type = 1;
             }
             s = t;
@@ -2863,14 +2867,15 @@ void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new)
 {
    BOOL changed = FALSE;
 
-   if (!*old->RealName && *new->RealName) { strcpy(old->RealName, new->RealName); changed = TRUE; }
-   if (!*old->Address  && *new->Address ) { strcpy(old->Address,  new->Address ); changed = TRUE; }
-   if (!*old->Street   && *new->Street  ) { strcpy(old->Street,   new->Street  ); changed = TRUE; }
-   if (!*old->Country  && *new->Country ) { strcpy(old->Country,  new->Country ); changed = TRUE; }
-   if (!*old->City     && *new->City    ) { strcpy(old->City,     new->City    ); changed = TRUE; }
-   if (!*old->Phone    && *new->Phone   ) { strcpy(old->Phone,    new->Phone   ); changed = TRUE; }
-   if (!*old->Homepage && *new->Homepage) { strcpy(old->Homepage, new->Homepage); changed = TRUE; }
+   if (!*old->RealName && *new->RealName) { strlcpy(old->RealName, new->RealName, sizeof(old->RealName)); changed = TRUE; }
+   if (!*old->Address  && *new->Address ) { strlcpy(old->Address,  new->Address,  sizeof(old->Address));  changed = TRUE; }
+   if (!*old->Street   && *new->Street  ) { strlcpy(old->Street,   new->Street,   sizeof(old->Street));   changed = TRUE; }
+   if (!*old->Country  && *new->Country ) { strlcpy(old->Country,  new->Country,  sizeof(old->Country));  changed = TRUE; }
+   if (!*old->City     && *new->City    ) { strlcpy(old->City,     new->City,     sizeof(old->City));     changed = TRUE; }
+   if (!*old->Phone    && *new->Phone   ) { strlcpy(old->Phone,    new->Phone,    sizeof(old->Phone));    changed = TRUE; }
+   if (!*old->Homepage && *new->Homepage) { strlcpy(old->Homepage, new->Homepage, sizeof(old->Homepage)); changed = TRUE; }
    if (!old->BirthDay  && new->BirthDay ) { old->BirthDay = new->BirthDay; changed = TRUE; }
+
    if (changed)
       CallHookPkt(&AB_SaveABookHook, 0, 0);
 }
@@ -2907,8 +2912,8 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
          if(!tn || ((struct ABEntry *)tn->tn_User)->Type != AET_GROUP)
          {
             memset(&ab_new, 0, sizeof(struct ABEntry));
-            stccpy(ab_new.Alias, C->NewAddrGroup, SIZE_NAME);
-            stccpy(ab_new.Comment, GetStr(MSG_RE_NewGroupTitle), SIZE_DEFAULT);
+            strlcpy(ab_new.Alias, C->NewAddrGroup, sizeof(ab_new.Alias));
+            strlcpy(ab_new.Comment, GetStr(MSG_RE_NewGroupTitle), sizeof(ab_new.Comment));
             ab_new.Type = AET_GROUP;
             tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, ab_new.Alias, &ab_new, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, TNF_LIST);
          }
@@ -2934,17 +2939,20 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
 //  Searches portrait of sender in the gallery directory
 BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo)
 {
-   *photo = 0;
-   if (*ab->Photo) strcpy(photo, ab->Photo);
+   *photo = '\0';
+   if(*ab->Photo)
+     strcpy(photo, ab->Photo);
    else if (*C->GalleryDir)
    {
       char fname[SIZE_FILE];
-      stccpy(fname, ab->RealName, SIZE_FILE);
-      if (PFExists(C->GalleryDir, fname)) strmfp(photo, C->GalleryDir, fname);
+      strlcpy(fname, ab->RealName, sizeof(fname));
+      if(PFExists(C->GalleryDir, fname))
+        strmfp(photo, C->GalleryDir, fname);
       else
       {
-         stccpy(fname, ab->Address, SIZE_FILE);
-         if (PFExists(C->GalleryDir, fname)) strmfp(photo, C->GalleryDir, fname);
+         strlcpy(fname, ab->Address, sizeof(fname));
+         if(PFExists(C->GalleryDir, fname))
+           strmfp(photo, C->GalleryDir, fname);
       }
    }
    if (!*photo) return FALSE;
@@ -2967,8 +2975,11 @@ BOOL RE_DownloadPhoto(Object *win, char *url, struct ABEntry *ab)
    }
    if (doit)
    {
-      if (!stcgfe(ext, url)) strcpy(ext, "iff");
+      if(!stcgfe(ext, url))
+        strlcpy(ext, "iff", sizeof(ext));
+
       snprintf(fname, sizeof(fname), "%s.%s", name, ext);
+
       for(i = 2; PFExists(C->GalleryDir, fname); i++)
         snprintf(fname, sizeof(fname), "%s%d.%s", name, i, ext);
       strmfp(picfname, C->GalleryDir, fname);
@@ -2978,7 +2989,7 @@ BOOL RE_DownloadPhoto(Object *win, char *url, struct ABEntry *ab)
          CreateDirectory(C->GalleryDir);
          if (TR_DownloadURL(url, NULL, NULL, picfname))
          {
-            strcpy(ab->Photo, picfname);
+            strlcpy(ab->Photo, picfname, sizeof(ab->Photo));
             CallHookPkt(&AB_SaveABookHook, 0, 0);
             success = TRUE;
          }

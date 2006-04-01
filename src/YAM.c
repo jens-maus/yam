@@ -738,7 +738,7 @@ static BOOL InitXPKPackerList(void)
 
             // because the short name isn't always equal to the packer short name
             // we work around that problem and make sure they are equal.
-            strcpy((char *)newPacker->info.xpi_Name, (char *)xpl.xpl_Packer[i]);
+            strlcpy((char *)newPacker->info.xpi_Name, (char *)xpl.xpl_Packer[i], sizeof(newPacker->info.xpi_Name));
 
             D(DBF_XPK, "Found XPKPacker: %ld: [%s] = '%s'", i, xpl.xpl_Packer[i], newPacker->info.xpi_Name);
 
@@ -1218,8 +1218,7 @@ static BOOL CheckMCC(char *name, ULONG minver, ULONG minrev, BOOL req, STRPTR ur
 
       // If we did't get the version we wanted, let's try to open the
       // libraries ourselves and see what happens...
-      strcpy(libname, "PROGDIR:mui/");
-      strcat(libname, name);
+      snprintf(libname, sizeof(libname), "PROGDIR:mui/%s", name);
 
       if ((base = OpenLibrary(&libname[8], 0)) || (base = OpenLibrary(&libname[0], 0)))
       {
@@ -2144,21 +2143,23 @@ int main(int argc, char **argv)
       NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));
       if(WBmsg && WBmsg->sm_NumArgs > 0)
       {
-        strncpy(G->ProgName, (char *)WBmsg->sm_ArgList[0].wa_Name, SIZE_FILE);
+        strlcpy(G->ProgName, (char *)WBmsg->sm_ArgList[0].wa_Name, sizeof(G->ProgName));
       }
       else
       {
         char buf[SIZE_PATHFILE];
 
-        GetProgramName((STRPTR)&buf, SIZE_PATHFILE);
+        GetProgramName((STRPTR)&buf, sizeof(buf));
 
-        strcpy(G->ProgName, (char *)FilePart(buf));
+        strlcpy(G->ProgName, (char *)FilePart(buf), sizeof(G->ProgName));
       }
 
       D(DBF_STARTUP, "ProgDir.: '%s'", G->ProgDir);
       D(DBF_STARTUP, "ProgName: '%s'", G->ProgName);
 
-      if(!args.maildir) strcpy(G->MA_MailDir, G->ProgDir);
+      if(!args.maildir)
+        strlcpy(G->MA_MailDir, G->ProgDir, sizeof(G->MA_MailDir));
+
       args.hide = -args.hide;
       args.nocheck = -args.nocheck;
       G->TR_Debug = -args.debug;

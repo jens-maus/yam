@@ -448,11 +448,11 @@ DECLARE(SetToRule) // struct RuleNode *rule
   rule->searchMode = GetMUICycle(data->CY_MODE[data->remoteFilterMode]);
   rule->combine = GetMUICycle(data->CY_COMBINE)+1;
   rule->subSearchMode = GetMUIRadio(data->RA_ADRMODE);
-  GetMUIString(rule->customField, data->ST_FIELD);
+  GetMUIString(rule->customField, data->ST_FIELD, sizeof(rule->customField));
   rule->comparison = GetMUICycle(data->CY_COMP[g]);
 
   if(g != 3) // Page 3 (Status) has no ST_MATCH
-    GetMUIString(rule->matchPattern, data->ST_MATCH[g]);
+    GetMUIString(rule->matchPattern, data->ST_MATCH[g], sizeof(rule->matchPattern));
   else
   {
     rule->matchPattern[0] = mailStatusCycleMap[GetMUICycle(data->CY_STATUS)];

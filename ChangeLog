@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-04-01  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: replaced all strcpy()/stccpy() uses wherever possible by
+    the more robust and buffer-overflow safe strlcpy() function use.
+  * STYLGUIDE: updated the coding styleguide to mention that certain
+    functions known to cause buffer overflows are considered obsolete and
+    should be replaced by proper buffer overflow safe variants.
+
 2006-03-31  Gunther Nikl <gni@gecko.de>
 
   * src/VMakefile, src/smakefile: Update.

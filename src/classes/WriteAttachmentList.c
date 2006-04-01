@@ -95,8 +95,8 @@ OVERLOAD(MUIM_DragDrop)
       DoMethod(d->obj, MUIM_NList_GetEntry, id, &mail);
       memset(&attach, 0, sizeof(struct Attach));
       GetMailFile(attach.FilePath, NULL, mail);
-      stccpy(attach.Description, mail->Subject, SIZE_DEFAULT);
-      strcpy(attach.ContentType, "message/rfc822");
+      strlcpy(attach.Description, mail->Subject, sizeof(attach.Description));
+      strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));
       attach.Size = mail->Size;
       attach.IsMIME = TRUE;
       DoMethod(obj, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
@@ -127,14 +127,14 @@ OVERLOAD(MUIM_DragDrop)
     // copy the file now
     if(CopyFile(attach.FilePath, NULL, mailPart->Filename, NULL))
     {
-      strcpy(attach.Description, mailPart->Description);
-      stccpy(attach.ContentType, mailPart->ContentType, SIZE_CTYPE);
+      strlcpy(attach.Description, mailPart->Description, sizeof(attach.Description));
+      strlcpy(attach.ContentType, mailPart->ContentType, sizeof(attach.ContentType));
       attach.Size = mailPart->Size;
       attach.IsMIME = mailPart->EncodingCode != ENC_UUE;
       attach.IsTemp = TRUE;
 
       if(mailPart->Name)
-        strcpy(attach.Name, mailPart->Name);
+        strlcpy(attach.Name, mailPart->Name, sizeof(attach.Name));
 
       // add the new attachment to the NList
       DoMethod(obj, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);

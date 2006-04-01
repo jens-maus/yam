@@ -1021,7 +1021,8 @@ DECLARE(ChangeSubjectRequest)
   if(MailExists(mail, folder))
   {
     char subj[SIZE_SUBJECT];
-    strcpy(subj, mail->Subject);
+
+    strlcpy(subj, mail->Subject, sizeof(subj));
     
     if(StringRequest(subj, SIZE_SUBJECT,
                      GetStr(MSG_MA_ChangeSubj),

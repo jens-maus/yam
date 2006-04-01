@@ -195,7 +195,7 @@ static char *MA_IndexFileName(struct Folder *folder)
 {
   static char buffer[SIZE_PATHFILE];
 
-  strcpy(buffer, GetFolderDir(folder));
+  strlcpy(buffer, GetFolderDir(folder), sizeof(buffer));
   AddPart(buffer, ".index", SIZE_PATHFILE);
 
   return buffer;
@@ -269,18 +269,18 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                  break;
                }
 
-               strcpy(mail.Subject, GetNextLine(buf));
-               strcpy(mail.From.Address, GetNextLine(NULL));
-               strcpy(mail.From.RealName, GetNextLine(NULL));
-               strcpy(mail.To.Address, GetNextLine(NULL));
-               strcpy(mail.To.RealName, GetNextLine(NULL));
-               strcpy(mail.ReplyTo.Address, GetNextLine(NULL));
-               strcpy(mail.ReplyTo.RealName, GetNextLine(NULL));
+               strlcpy(mail.Subject, GetNextLine(buf), sizeof(mail.Subject));
+               strlcpy(mail.From.Address, GetNextLine(NULL), sizeof(mail.From.Address));
+               strlcpy(mail.From.RealName, GetNextLine(NULL), sizeof(mail.From.RealName));
+               strlcpy(mail.To.Address, GetNextLine(NULL), sizeof(mail.To.Address));
+               strlcpy(mail.To.RealName, GetNextLine(NULL), sizeof(mail.To.RealName));
+               strlcpy(mail.ReplyTo.Address, GetNextLine(NULL), sizeof(mail.ReplyTo.Address));
+               strlcpy(mail.ReplyTo.RealName, GetNextLine(NULL), sizeof(mail.ReplyTo.RealName));
                mail.Folder = folder;
                mail.mflags = cmail.mflags;
                mail.sflags = cmail.sflags;
                setVOLValue(&mail, 0);  // we have to make sure that the volatile flag field isn`t loaded
-               strcpy(mail.MailFile, cmail.mailFile);
+               strlcpy(mail.MailFile, cmail.mailFile, sizeof(mail.MailFile));
                mail.Date = cmail.date;
                mail.transDate = cmail.transDate;
                mail.cMsgID = cmail.cMsgID;
@@ -377,7 +377,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
          mail->To.Address, mail->To.RealName,
          mail->ReplyTo.Address, mail->ReplyTo.RealName);
 
-      strcpy(cmail.mailFile, mail->MailFile);
+      strlcpy(cmail.mailFile, mail->MailFile, sizeof(cmail.mailFile));
       cmail.date = mail->Date;
       cmail.transDate = mail->transDate;
       cmail.sflags = mail->sflags;
@@ -833,7 +833,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
     {
       // ok we have the transfer Date, so lets put it at the beginning of
       // the new filename
-      strcpy(dateFilePart, &comment[2]);
+      strlcpy(dateFilePart, &comment[2], sizeof(dateFilePart));
     }
   }
 
@@ -1020,7 +1020,7 @@ char *MA_NewMailFile(struct Folder *folder, char *mailfile)
     if(mCounter > 999)
       return NULL;
 
-    strcpy(fullpath, folderDir);
+    strlcpy(fullpath, folderDir, sizeof(fullpath));
     AddPart(fullpath, newFileName, SIZE_PATHFILE);
   }
   while(FileExists(fullpath));
@@ -1286,7 +1286,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
    }
 
    mail = &email->Mail;
-   stccpy(mail->MailFile, file, SIZE_MFILE);
+   strlcpy(mail->MailFile, file, sizeof(mail->MailFile));
    email->DelSend = !C->SaveSent;
    if((fh = fopen(GetMailFile(fullfile, folder, mail), "r")))
    {
@@ -1420,17 +1420,17 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
          else if(!stricmp(field, "subject"))
          {
            SET_FLAG(ok, 4);
-           stccpy(mail->Subject, Trim(value), SIZE_SUBJECT);
+           strlcpy(mail->Subject, Trim(value), sizeof(mail->Subject));
          }
          else if(!stricmp(field, "message-id"))
          {
            mail->cMsgID = CompressMsgID(p = Trim(value));
-           stccpy(email->MsgID, p, SIZE_MSGID);
+           strlcpy(email->MsgID, p, sizeof(email->MsgID));
          }
          else if(!stricmp(field, "in-reply-to"))
          {
            mail->cIRTMsgID = CompressMsgID(p = Trim(value));
-           stccpy(email->IRTMsgID, p, SIZE_MSGID);
+           strlcpy(email->IRTMsgID, p, sizeof(email->IRTMsgID));
          }
          else if(!stricmp(field, "date"))
          {
@@ -1532,7 +1532,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
       FreeHeaderList(&headerList);
 
       if((ok & 8) && !mail->ReplyTo.RealName[0] && !stricmp(mail->ReplyTo.Address, mail->From.Address))
-        strcpy(mail->ReplyTo.RealName, mail->From.RealName);
+        strlcpy(mail->ReplyTo.RealName, mail->From.RealName, sizeof(mail->ReplyTo.RealName));
 
 
       // if this function call has a folder of NULL then we are examining a virtual mail
@@ -2104,7 +2104,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
           if(entry->ImageIndex >= 0)
             snprintf(msg->Array[0] = dispfold, sizeof(dispfold), "\033o[%d] ", entry->ImageIndex);
           else
-            strcpy(msg->Array[0] = dispfold, " ");
+            strlcpy(msg->Array[0] = dispfold, " ", sizeof(dispfold));
 
           if(entry->Name[0])
             strcat(dispfold, entry->Name);

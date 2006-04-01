@@ -678,7 +678,7 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
 
     // lets create the static parts of the Attachrequest entries in the NList
     spart[0].Nr = PART_ORIGINAL;
-    strcpy(spart[0].Name, GetStr(MSG_RE_Original));
+    strlcpy(spart[0].Name, GetStr(MSG_RE_Original), sizeof(spart[0].Name));
     spart[0].Size = rmData->mail->Size;
     spart[0].Decoded = TRUE;
     DoMethod(lv_attach, MUIM_NList_InsertSingle, &spart[0], MUIV_NList_Insert_Top);
@@ -688,7 +688,7 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
     if(!isDisplayReq(mode))
     {
       spart[1].Nr = PART_ALLTEXT;
-      strcpy(spart[1].Name, GetStr(MSG_RE_AllTexts));
+      strlcpy(spart[1].Name, GetStr(MSG_RE_AllTexts), sizeof(spart[1].Name));
       spart[1].Size = 0;
 
       DoMethod(lv_attach, MUIM_NList_InsertSingle, &spart[1], MUIV_NList_Insert_Bottom);
@@ -951,7 +951,7 @@ char *StrBufCpy(char *strbuf, const char *source)
 
   // do a string copy into the new buffer
   if(newstrbuf)
-    strcpy(newstrbuf, source);
+    strlcpy(newstrbuf, source, ((size_t *)newstrbuf)[-1]);
 
   return newstrbuf;
 }
@@ -983,7 +983,7 @@ char *StrBufCat(char *strbuf, const char *source)
   if(newlen != oldlen)
   {
     if((newstrbuf = AllocStrBuf(newlen+1)))
-      strcpy(newstrbuf, strbuf);
+      strlcpy(newstrbuf, strbuf, newlen+1);
 
     FreeStrBuf(strbuf);
   }
@@ -1186,7 +1186,7 @@ char *FileComment(char *filename)
     {
       if(Examine(lock, fib))
       {
-        strcpy(fileComment, fib->fib_Comment);
+        strlcpy(fileComment, fib->fib_Comment, sizeof(fileComment));
         comment = fileComment;
       }
       FreeDosObject(DOS_FIB, fib);
@@ -2142,11 +2142,11 @@ char *BuildAddrName(char *address, char *name)
 //  Extracts e-mail address and real name
 void ExtractAddress(char *line, struct Person *pe)
 {
-   char *p = line, *ra[4], *save = malloc(strlen(line)+1);
+   char *p = line, *ra[4], *save;
    BOOL found = FALSE;
 
    ra[2] = ra[3] = NULL;
-   strcpy(save, line);
+   save = strdup(line);
    pe->Address[0] = pe->RealName[0] = 0;
    while (ISpace(*p)) p++;
    if ((ra[0] = MyStrChr(p,'<'))) if ((ra[1] = MyStrChr(ra[0],'>')))
@@ -2166,11 +2166,15 @@ void ExtractAddress(char *line, struct Person *pe)
       *ra[1] = 0;
       if (!found) ra[2] = ra[3] = "";
    }
+
    if (*ra[2] == '\"') ra[2]++;
    if (*ra[3] == '\"' && *(ra[3]-1) != '\\') *ra[3] = 0;
-   MyStrCpy(pe->Address ,Trim(ra[0]));
-   MyStrCpy(pe->RealName, Trim(ra[2]));
+
+   strlcpy(pe->Address ,Trim(ra[0]), sizeof(pe->Address));
+   strlcpy(pe->RealName, Trim(ra[2]), sizeof(pe->RealName));
+
    strcpy(line, save);
+
    free(save);
 }
 ///
@@ -2225,7 +2229,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
 
             case 'f':
             {
-              MyStrCpy(buf, etd->OS_Name);
+              strlcpy(buf, etd->OS_Name, sizeof(buf));
 
               if((p = strchr(buf, ',')))
                 p = Trim(++p);
@@ -2299,7 +2303,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
 
             case 'v':
             {
-              strcpy(buf, etd->R_Name);
+              strlcpy(buf, etd->R_Name, sizeof(buf));
               if((p = strchr(buf, ',')))
                 p = Trim(++p);
               else
@@ -2319,7 +2323,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
 
             case 'i':
             {
-              strcpy(buf, etd->OS_Name);
+              strlcpy(buf, etd->OS_Name, sizeof(buf));
 
               for(p = p2 = &buf[1]; *p; p++)
               {
@@ -2333,7 +2337,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
 
             case 'j':
             {
-              strcpy(buf, etd->OS_Name);
+              strlcpy(buf, etd->OS_Name, sizeof(buf));
 
               for(p2 = &buf[1], p = &buf[strlen(buf)-1]; p > p2; p--)
               {
@@ -3211,8 +3215,8 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
    // check if we can just take the exactly same filename in the destination
    // folder or if we require to increase the mailfile counter to make it
    // unique
-   strcpy(dstFileName, mail->MailFile);
-   strcpy(dstbuf, GetFolderDir(dstfolder));
+   strlcpy(dstFileName, mail->MailFile, sizeof(dstFileName));
+   strlcpy(dstbuf, GetFolderDir(dstfolder), sizeof(dstbuf));
    AddPart(dstbuf, dstFileName, SIZE_PATHFILE);
 
    if(FileExists(dstbuf))
@@ -3229,14 +3233,14 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
        snprintf(&dstFileName[13], sizeof(dstFileName)-13, "%03d", mCounter);
        dstFileName[16] = ','; // restore it
 
-       strcpy(dstbuf, GetFolderDir(dstfolder));
+       strlcpy(dstbuf, GetFolderDir(dstfolder), sizeof(dstbuf));
        AddPart(dstbuf, dstFileName, SIZE_PATHFILE);
      }
      while(FileExists(dstbuf));
 
      // if we end up here we finally found a new mailfilename which we can use, so
      // lets copy it to our MailFile variable
-     strcpy(mail->MailFile, dstFileName);
+     strlcpy(mail->MailFile, dstFileName, sizeof(mail->MailFile));
    }
 
    // now that we have the source and destination filename
@@ -3440,7 +3444,9 @@ char *StartUnpack(char *file, char *newfile, struct Folder *folder)
          strmfp(newfile, C->TempDir, nfile);
          if (FileSize(newfile) < 0) if (!UncompressMailFile(file, newfile, folder ? folder->Password : "")) return NULL;
       }
-      else strcpy(newfile, file);
+      else
+        strcpy(newfile, file);
+
       return newfile;
    }
    return NULL;
@@ -3532,17 +3538,17 @@ MakeHook(GeneralDesHook, GeneralDesFunc);
 ///
 /// PO_SetPublicKey
 //  Copies public PGP key from list to string gadget
-HOOKPROTONH(PO_SetPublicKey, void, APTR pop, APTR string)
+HOOKPROTONH(PO_SetPublicKey, void, Object *pop, Object *string)
 {
-   char *var, buf[SIZE_SMALL];
+  char *var = NULL;
 
-   DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &var);
-   if (var)
-   {
-      strcpy(buf, "0x");
-      strncat(buf, var, 8);
-      setstring(string, buf);
-   }
+  DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &var);
+  if(var)
+  {
+    char buf[SIZE_SMALL];
+    snprintf(buf, sizeof(buf), "0x%s", var);
+    setstring(string, buf);
+  }
 }
 MakeHook(PO_SetPublicKeyHook, PO_SetPublicKey);
 ///
@@ -3562,7 +3568,7 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
    }
    else
    {
-      strcpy(buf, "-kv  ");
+      strlcpy(buf, "-kv  ", sizeof(buf));
       if (secret)
       {
          GetVar("PGPPATH", &buf[4], SIZE_DEFAULT, 0);
@@ -4258,7 +4264,7 @@ void PGPGetPassPhrase(void)
          char pgppass[SIZE_DEFAULT];
          G->PGPPassVolatile = TRUE; *pgppass = 0;
          if (StringRequest(pgppass, SIZE_DEFAULT, "PGP", GetStr(MSG_UT_PGPPassReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->MA->GUI.WI))
-            strcpy(G->PGPPassPhrase, pgppass);
+            strlcpy(G->PGPPassPhrase, pgppass, sizeof(G->PGPPassPhrase));
       }
       else return;
    }
@@ -4319,8 +4325,11 @@ static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, vo
       Amiga2Date(GetDateStamp(), &cd);
       snprintf(filename, sizeof(filename), "YAM-%s%d.log", months[cd.month-1], cd.year);
    }
-   else strcpy(filename, "YAM.log");
+   else
+     strlcpy(filename, "YAM.log", sizeof(filename));
+
    strmfp(logfile, *C->LogfilePath ? C->LogfilePath : G->ProgDir, filename);
+
    if ((fh = fopen(logfile, "a")))
    {
       char datstr[64];
@@ -4502,7 +4511,7 @@ void DisplayAppIconStatistics(void)
       {
         switch (*++src)
         {
-          case '%': strcpy(dst, "%");            break;
+          case '%': strlcpy(dst, "%", sizeof(dst));            break;
           case 'n': snprintf(dst, sizeof(dst), "%d", new_msg); break;
           case 'u': snprintf(dst, sizeof(dst), "%d", unr_msg); break;
           case 't': snprintf(dst, sizeof(dst), "%d", tot_msg); break;
@@ -4768,7 +4777,8 @@ static char *IdentifyFileDT(char *fname)
 {
    static char ctype[SIZE_CTYPE];
 
-   strcpy(ctype, "application/octet-stream");
+   strlcpy(ctype, "application/octet-stream", sizeof(ctype));
+
    if (DataTypesBase)
    {
       BPTR lock = Lock(fname, ACCESS_READ);

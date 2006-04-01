@@ -275,8 +275,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
    char buffer[SIZE_LARGE];
    char fname[SIZE_PATHFILE];
 
-   MyStrCpy(fname, GetFolderDir(fo));
-
+   strlcpy(fname, GetFolderDir(fo), sizeof(fname));
    AddPart(fname, ".fconfig", sizeof(fname));
 
    if((fh = fopen(fname, "r")))
@@ -298,9 +297,9 @@ BOOL FO_LoadConfig(struct Folder *fo)
             for (p = buffer; *p && !ISpace(*p); p++); *p = 0;
             if (*buffer && value)
             {
-               if(!stricmp(buffer, "Name"))              MyStrCpy(fo->Name, value);
+               if(!stricmp(buffer, "Name"))              strlcpy(fo->Name, value, sizeof(fo->Name));
                else if(!stricmp(buffer, "MaxAge"))       fo->MaxAge = atoi(value);
-               else if(!stricmp(buffer, "Password"))     MyStrCpy(fo->Password, Decrypt(value));
+               else if(!stricmp(buffer, "Password"))     strlcpy(fo->Password, Decrypt(value), sizeof(fo->Password));
                else if(!stricmp(buffer, "Type"))         fo->Type = atoi(value);
                else if(!stricmp(buffer, "XPKType"))      fo->Mode = atoi(value); // valid < v2.4
                else if(!stricmp(buffer, "Mode"))         fo->Mode = atoi(value);
@@ -308,13 +307,13 @@ BOOL FO_LoadConfig(struct Folder *fo)
                else if(!stricmp(buffer, "Sort2"))        fo->Sort[1] = atoi(value);
                else if(!stricmp(buffer, "Stats"))        { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
                else if(!stricmp(buffer, "MLSupport"))    fo->MLSupport = Txt2Bool(value);
-               else if(!stricmp(buffer, "MLFromAddr"))   MyStrCpy(fo->MLFromAddress,value);
-               else if(!stricmp(buffer, "MLRepToAddr"))  MyStrCpy(fo->MLReplyToAddress, value);
-               else if(!stricmp(buffer, "MLAddress"))    MyStrCpy(fo->MLAddress, value);
-               else if(!stricmp(buffer, "MLPattern"))    MyStrCpy(fo->MLPattern, value);
+               else if(!stricmp(buffer, "MLFromAddr"))   strlcpy(fo->MLFromAddress, value, sizeof(fo->MLFromAddress));
+               else if(!stricmp(buffer, "MLRepToAddr"))  strlcpy(fo->MLReplyToAddress, value, sizeof(fo->MLReplyToAddress));
+               else if(!stricmp(buffer, "MLAddress"))    strlcpy(fo->MLAddress, value, sizeof(fo->MLAddress));
+               else if(!stricmp(buffer, "MLPattern"))    strlcpy(fo->MLPattern, value, sizeof(fo->MLPattern));
                else if(!stricmp(buffer, "MLSignature"))  fo->MLSignature = atoi(value);
-               else if(!stricmp(buffer, "WriteIntro"))     MyStrCpy(fo->WriteIntro, value);
-               else if(!stricmp(buffer, "WriteGreetings")) MyStrCpy(fo->WriteGreetings, value);
+               else if(!stricmp(buffer, "WriteIntro"))     strlcpy(fo->WriteIntro, value, sizeof(fo->WriteIntro));
+               else if(!stricmp(buffer, "WriteGreetings")) strlcpy(fo->WriteGreetings, value, sizeof(fo->WriteGreetings));
             }
          }
          success = TRUE;
@@ -352,7 +351,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
    char fname[SIZE_PATHFILE];
    FILE *fh;
 
-   MyStrCpy(fname, GetFolderDir(fo));
+   strlcpy(fname, GetFolderDir(fo), sizeof(fname));
    AddPart(fname, ".fconfig", sizeof(fname));
 
    if ((fh = fopen(fname, "w")))
@@ -378,7 +377,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
       fprintf(fh, "WriteGreetings = %s\n",  fo->WriteGreetings);
       fclose(fh);
 
-      MyStrCpy(fname, GetFolderDir(fo));
+      strlcpy(fname, GetFolderDir(fo), sizeof(fname));
       AddPart(fname, ".index", sizeof(fname));
 
       if(!isModified(fo)) SetFileDate(fname, DateStamp(&ds));
@@ -402,8 +401,8 @@ struct Folder *FO_NewFolder(enum FolderType type, char *path, char *name)
      folder->Sort[1] = 3;
      folder->Type = type;
      folder->ImageIndex = -1;
-     MyStrCpy(folder->Path, path);
-     MyStrCpy(folder->Name, name);
+     strlcpy(folder->Path, path, sizeof(folder->Path));
+     strlcpy(folder->Name, name, sizeof(folder->Name));
      if (!CreateDirectory(GetFolderDir(folder)))
      {
        free(folder); return NULL;
@@ -502,8 +501,8 @@ BOOL FO_LoadTree(char *fname)
                fo.Type = FT_CUSTOM;
                fo.Sort[0] = 1;
                fo.Sort[1] = 3;
-               MyStrCpy(fo.Name, Trim(&buffer[8]));
-               MyStrCpy(fo.Path, Trim(GetLine(fh, buffer, sizeof(buffer))));
+               strlcpy(fo.Name, Trim(&buffer[8]), sizeof(fo.Name));
+               strlcpy(fo.Path, Trim(GetLine(fh, buffer, sizeof(buffer))), sizeof(fo.Path));
 
                if (CreateDirectory(GetFolderDir(&fo)))
                {
@@ -563,7 +562,7 @@ BOOL FO_LoadTree(char *fname)
                // SEPARATOR support is obsolete since the folder hierachical order
                // that`s why we handle SEPARATORs as GROUPs now for backward compatibility
                fo.Type = FT_GROUP;
-               MyStrCpy(fo.Name, Trim(&buffer[11]));
+               strlcpy(fo.Name, Trim(&buffer[11]), sizeof(fo.Name));
                do if (!strcmp(buffer, "@ENDSEPARATOR")) break;
                while (GetLine(fh, buffer, sizeof(buffer)));
                fo.SortIndex = i++;
@@ -588,7 +587,7 @@ BOOL FO_LoadTree(char *fname)
                long tnflags = (TNF_LIST);
 
                fo.Type = FT_GROUP;
-               MyStrCpy(fo.Name, Trim(&buffer[7]));
+               strlcpy(fo.Name, Trim(&buffer[7]), sizeof(fo.Name));
 
                // now we check if the node should be open or not
                if(GetLine(fh, buffer, sizeof(buffer)))
@@ -659,7 +658,7 @@ BOOL FO_LoadFolderImages(struct Folder *fo)
     return FALSE;
   }
 
-  MyStrCpy(fname, GetFolderDir(fo));
+  strlcpy(fname, GetFolderDir(fo), sizeof(fname));
   AddPart(fname, ".fimage", sizeof(fname));
 
   if(FileExists(fname))
@@ -787,8 +786,8 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
    int i;
 
    BusyGauge(GetStr(MSG_BusyMoving), itoa(fo->Total), fo->Total);
-   strcpy(srcbuf, GetFolderDir(oldfo));
-   strcpy(dstbuf, GetFolderDir(fo));
+   strlcpy(srcbuf, GetFolderDir(oldfo), sizeof(srcbuf));
+   strlcpy(dstbuf, GetFolderDir(fo), sizeof(dstbuf));
 
    for(i = 0, mail = fo->Messages; mail && success; mail = mail->Next, i++)
    {
@@ -805,9 +804,9 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
    if(success)
    {
       // now we try to move an existing .index file
-      MyStrCpy(srcbuf, GetFolderDir(oldfo));
+      strlcpy(srcbuf, GetFolderDir(oldfo), sizeof(srcbuf));
       AddPart(srcbuf, ".index", sizeof(srcbuf));
-      MyStrCpy(dstbuf, GetFolderDir(fo));
+      strlcpy(dstbuf, GetFolderDir(fo), sizeof(dstbuf));
       AddPart(dstbuf, ".index", sizeof(dstbuf));
 
       if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
@@ -817,9 +816,9 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
       else
       {
         // now we try to mvoe the .fimage file aswell
-        MyStrCpy(srcbuf, GetFolderDir(oldfo));
+        strlcpy(srcbuf, GetFolderDir(oldfo), sizeof(srcbuf));
         AddPart(srcbuf, ".fimage", sizeof(srcbuf));
-        MyStrCpy(dstbuf, GetFolderDir(fo));
+        strlcpy(dstbuf, GetFolderDir(fo), sizeof(dstbuf));
         AddPart(dstbuf, ".fimage", sizeof(dstbuf));
 
         if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
@@ -867,7 +866,7 @@ static BOOL FO_EnterPassword(struct Folder *fo)
    if(!*passwd)
      return FALSE;
 
-   strcpy(fo->Password, passwd);
+   strlcpy(fo->Password, passwd, sizeof(fo->Password));
 
    return TRUE;
 }
@@ -953,8 +952,8 @@ static void FO_PutFolder(struct Folder *folder)
    static const int cycle2type[3] = { FT_CUSTOM, FT_CUSTOMSENT, FT_CUSTOMMIXED };
    int i;
 
-   GetMUIString(folder->Name, gui->ST_FNAME);
-   GetMUIString(folder->Path, gui->ST_FPATH);
+   GetMUIString(folder->Name, gui->ST_FNAME, sizeof(folder->Name));
+   GetMUIString(folder->Path, gui->ST_FPATH, sizeof(folder->Path));
 
    // we have to correct the folder path because we shouldn`t allow a last / in the
    // path
@@ -975,13 +974,13 @@ static void FO_PutFolder(struct Folder *folder)
    folder->Stats = GetMUICheck(gui->CH_STATS);
    folder->MLSupport = GetMUICheck(gui->CH_MLSUPPORT);
 
-   GetMUIString(folder->WriteIntro,       gui->ST_HELLOTEXT);
-   GetMUIString(folder->WriteGreetings,   gui->ST_BYETEXT);
+   GetMUIString(folder->WriteIntro, gui->ST_HELLOTEXT, sizeof(folder->WriteIntro));
+   GetMUIString(folder->WriteGreetings, gui->ST_BYETEXT, sizeof(folder->WriteGreetings));
 
-   GetMUIString(folder->MLPattern,        gui->ST_MLPATTERN);
-   GetMUIString(folder->MLAddress,        gui->ST_MLADDRESS);
-   GetMUIString(folder->MLFromAddress,    gui->ST_MLFROMADDRESS);
-   GetMUIString(folder->MLReplyToAddress, gui->ST_MLREPLYTOADDRESS);
+   GetMUIString(folder->MLPattern, gui->ST_MLPATTERN, sizeof(folder->MLPattern));
+   GetMUIString(folder->MLAddress, gui->ST_MLADDRESS, sizeof(folder->MLAddress));
+   GetMUIString(folder->MLFromAddress, gui->ST_MLFROMADDRESS, sizeof(folder->MLFromAddress));
+   GetMUIString(folder->MLReplyToAddress, gui->ST_MLREPLYTOADDRESS, sizeof(folder->MLReplyToAddress));
    folder->MLSignature = GetMUICycle(gui->CY_MLSIGNATURE);
 }
 
@@ -1055,8 +1054,11 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
 
       case 3:
       {
-         if (!ReqFile(ASL_FOLDER, G->MA->GUI.WI, GetStr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->MA_MailDir, "")) return;
-         MyStrCpy(folder.Path, G->ASLReq[ASL_FOLDER]->fr_Drawer);
+         if(!ReqFile(ASL_FOLDER, G->MA->GUI.WI, GetStr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->MA_MailDir, ""))
+           return;
+
+         strlcpy(folder.Path, G->ASLReq[ASL_FOLDER]->fr_Drawer, sizeof(folder.Path));
+
          FO_LoadConfig(&folder);
       }
       break;
@@ -1243,7 +1245,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
         return;
       }
 
-      strcpy(oldfolder->Name, folder.Name);
+      strlcpy(oldfolder->Name, folder.Name, sizeof(oldfolder->Name));
 
       // if the folderpath string has changed
       if(stricmp(oldfolder->Path, folder.Path) != 0)
@@ -1252,8 +1254,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
          char realpath_new[SIZE_PATH];
 
          // lets get the real pathes so that we can compare them later on
-         strcpy(realpath_old, GetRealPath(oldfolder->Path));
-         strcpy(realpath_new, GetRealPath(folder.Path));
+         strlcpy(realpath_old, GetRealPath(oldfolder->Path), sizeof(realpath_old));
+         strlcpy(realpath_new, GetRealPath(folder.Path), sizeof(realpath_new));
 
          // then let`s check if the realPathes (after lock/unlock) is also different
          if(stricmp(realpath_old, realpath_new) != 0)
@@ -1286,15 +1288,15 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
            else return;
          }
 
-         strcpy(oldfolder->Path, folder.Path);
+         strlcpy(oldfolder->Path, folder.Path, sizeof(oldfolder->Path));
       }
 
-      strcpy(oldfolder->WriteIntro,       folder.WriteIntro);
-      strcpy(oldfolder->WriteGreetings,   folder.WriteGreetings);
-      strcpy(oldfolder->MLFromAddress,    folder.MLFromAddress);
-      strcpy(oldfolder->MLReplyToAddress, folder.MLReplyToAddress);
-      strcpy(oldfolder->MLAddress,        folder.MLAddress);
-      strcpy(oldfolder->MLPattern,        folder.MLPattern);
+      strlcpy(oldfolder->WriteIntro,       folder.WriteIntro, sizeof(oldfolder->WriteIntro));
+      strlcpy(oldfolder->WriteGreetings,   folder.WriteGreetings, sizeof(oldfolder->WriteGreetings));
+      strlcpy(oldfolder->MLFromAddress,    folder.MLFromAddress, sizeof(oldfolder->MLFromAddress));
+      strlcpy(oldfolder->MLReplyToAddress, folder.MLReplyToAddress, sizeof(oldfolder->MLReplyToAddress));
+      strlcpy(oldfolder->MLAddress,        folder.MLAddress, sizeof(oldfolder->MLAddress));
+      strlcpy(oldfolder->MLPattern,        folder.MLPattern, sizeof(oldfolder->MLPattern));
       oldfolder->MLSignature = folder.MLSignature;
       oldfolder->Sort[0]   = folder.Sort[0];
       oldfolder->Sort[1]   = folder.Sort[1];
@@ -1322,7 +1324,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
          }
 
          if(isProtectedFolder(&folder) && isProtectedFolder(oldfolder))
-            strcpy(folder.Password, oldfolder->Password);
+            strlcpy(folder.Password, oldfolder->Password, sizeof(folder.Password));
 
          if(changed)
          {
@@ -1345,7 +1347,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
               oldfolder->Mode = newmode;
             }
 
-            strcpy(oldfolder->Password, folder.Password);
+            strlcpy(oldfolder->Password, folder.Password, sizeof(oldfolder->Password));
          }
          oldfolder->Type = folder.Type;
       }
@@ -1493,27 +1495,24 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
     // Analyze the ToAdress through the Smith&Waterman algorithm
     if(takePattern && (result = SWSSearch(toPattern, mail->To.Address)))
     {
-      if(res) res = realloc(res, strlen(result)+1);
-      else    res = malloc(strlen(result)+1);
+      if(res)
+        free(res);
 
-      if(!res) return;
+      res = strdup(result);
+      if(!res)
+        return;
 
-      strcpy(res, result);
       toPattern = res;
 
       // If we reached a #? pattern then we break here
       if(strcmp(toPattern, "#?") == 0)
-      {
         takePattern = FALSE;
-      }
     }
 
     // Lets check if the toAddress kept the same and then we can use
     // it for the TOADDRESS string gadget
     if(takeAddress && stricmp(toAddress, mail->To.Address) != 0)
-    {
       takeAddress = FALSE;
-    }
   }
 
   // lets make a pattern out of the found SWS string
@@ -1521,10 +1520,13 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
   {
     if(strlen(toPattern) >= 2 && !(toPattern[0] == '#' && toPattern[1] == '?'))
     {
-      if(res)  res = realloc(res, strlen(res)+3);
-      else if((res = malloc(strlen(toPattern)+3))) strcpy(res, toPattern);
+      if(res)
+        res = realloc(res, strlen(res)+3);
+      else if((res = malloc(strlen(toPattern)+3)))
+        strlcpy(res, toPattern, strlen(toPattern));
 
-      if(!res) return;
+      if(!res)
+        return;
 
       // move the actual string to the back and copy the wildcard in front of it.
       memmove(&res[2], res, strlen(res)+1);
@@ -1536,8 +1538,10 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
 
     if(strlen(toPattern) >= 2 && !(toPattern[strlen(toPattern)-2] == '#' && toPattern[strlen(toPattern)-1] == '?'))
     {
-      if(res)  res = realloc(res, strlen(res)+3);
-      else if((res = malloc(strlen(toPattern)+3))) strcpy(res, toPattern);
+      if(res)
+        res = realloc(res, strlen(res)+3);
+      else if((res = malloc(strlen(toPattern)+3)))
+        strlcpy(res, toPattern, strlen(toPattern));
 
       if(!res) return;
 

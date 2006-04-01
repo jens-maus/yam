@@ -70,8 +70,9 @@ static void DI_FinishEdit(void)
       new.Text = StrBufCpy(NULL, edtext ? edtext : "");
       if(G->DI->OldEntry->Text) FreeStrBuf(G->DI->OldEntry->Text);
 
-      GetMUIString(new.Alias, gui->ST_ALIAS);
-      if (!*new.Alias) strcpy(new.Alias, GetStr(MSG_NewEntry));
+      GetMUIString(new.Alias, gui->ST_ALIAS, sizeof(new.Alias));
+      if(*new.Alias == '\0')
+        strlcpy(new.Alias, GetStr(MSG_NewEntry), sizeof(new.Alias));
 
       *(G->DI->OldEntry) = new;
 
@@ -133,8 +134,9 @@ static int DI_Load(void)
             memset(&entry, 0, sizeof(struct Dict));
             if (!strncmp(buffer, "@ENTRY", 6))
             {
-               MyStrCpy(entry.Alias, Trim(&buffer[7]));
+               strlcpy(entry.Alias, Trim(&buffer[7]), sizeof(entry.Alias));
                entry.Text = AllocStrBuf(80);
+
                while (fgets(buffer, SIZE_LARGE, fh))
                   if ((p = strstr(buffer, "@ENDENTRY\n"))) { *p = 0; entry.Text = StrBufCat(entry.Text, buffer); break; }
                   else entry.Text = StrBufCat(entry.Text, buffer);
@@ -212,7 +214,7 @@ HOOKPROTONHNO(DI_ModifyFunc, void, int *arg)
    struct Dict new;
 
    DI_FinishEdit();
-   strcpy(new.Alias, GetStr(MSG_NewEntry));
+   strlcpy(new.Alias, GetStr(MSG_NewEntry), sizeof(new.Alias));
    new.Text = AllocStrBuf(80);
    DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_InsertSingle, &new, MUIV_List_Insert_Bottom);
    nnset(G->DI->GUI.LV_ENTRIES, MUIA_List_Active, MUIV_List_Active_Bottom);

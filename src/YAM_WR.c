@@ -143,8 +143,8 @@ HOOKPROTONHNO(WR_PutFileEntry, void, int *arg)
       int ismime = xget(gui->RA_ENCODING, MUIA_Radio_Active);
 
       attach->IsMIME = (ismime == 0);
-      GetMUIString(attach->ContentType, gui->ST_CTYPE);
-      GetMUIString(attach->Description, gui->ST_DESC);
+      GetMUIString(attach->ContentType, gui->ST_CTYPE, sizeof(attach->ContentType));
+      GetMUIString(attach->Description, gui->ST_DESC, sizeof(attach->Description));
       DoMethod(gui->LV_ATTACH, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
    }
 }
@@ -171,7 +171,7 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
         if(Examine(lock, fib))
         {
           attach.Size = fib->fib_Size;
-          MyStrCpy(attach.Description, fib->fib_Comment);
+          strlcpy(attach.Description, fib->fib_Comment, sizeof(attach.Description));
         }
         FreeDosObject(DOS_FIB, fib);
       }
@@ -185,9 +185,9 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
       int encoding = xget(gui->RA_ENCODING, MUIA_Radio_Active);
       attach.IsMIME = (encoding == 0);
       attach.IsTemp = istemp;
-      MyStrCpy(attach.FilePath, filename);
-      MyStrCpy(attach.Name, name ? name : (char *)FilePart(filename));
-      MyStrCpy(attach.ContentType, ctype);
+      strlcpy(attach.FilePath, filename, sizeof(attach.FilePath));
+      strlcpy(attach.Name, name ? name : (char *)FilePart(filename), sizeof(attach.Name));
+      strlcpy(attach.ContentType, ctype, sizeof(attach.ContentType));
       nnset(gui->ST_CTYPE, MUIA_String_Contents, attach.ContentType);
       nnset(gui->ST_DESC, MUIA_String_Contents, attach.Description);
       DoMethod(gui->LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
@@ -432,20 +432,30 @@ void EmitHeader(FILE *fh, char *hdr, char *body)
 //  Outputs the value of a recipient header line, one entry per line
 static void EmitRcptField(FILE *fh, char *body)
 {
-   char *part, *next, *bodycpy = malloc(strlen(body)+1);
+  char *bodycpy;
 
-   if (bodycpy)
-   {
-     strcpy(part = bodycpy, body);
-     while (part)
-     {
-        if (!*part) break;
-        if ((next = MyStrChr(part, ','))) *next++ = 0;
-        HeaderFputs(Trim(part), fh);
-        if ((part = next)) fputs(",\n\t", fh);
-     }
-     free(bodycpy);
-   }
+  if((bodycpy = strdup(body)))
+  {
+    char *part = bodycpy;
+
+    while(part)
+    {
+      char *next;
+
+      if(*part == '\0')
+        break;
+
+      if((next = MyStrChr(part, ',')))
+        *next++ = '\0';
+
+      HeaderFputs(Trim(part), fh);
+
+      if((part = next))
+        fputs(",\n\t", fh);
+    }
+
+    free(bodycpy);
+  }
 }
 
 ///
@@ -1293,7 +1303,7 @@ mimebody:
 
    fputs("MIME-Version: 1.0\n", fh); // RFC 1521 requires that
 
-   strcpy(boundary, NewID(FALSE));
+   strlcpy(boundary, NewID(FALSE), sizeof(boundary));
    if (comp->ReportType > 0)
    {
       WR_ComposeReport(fh, comp, boundary);
@@ -1478,7 +1488,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       if(MailExists(edmail, NULL))
       {
          comp.FH = fopen(GetMailFile(NULL, outfolder, edmail), "w");
-         MyStrCpy(mail.MailFile, edmail->MailFile);
+         strlcpy(mail.MailFile, edmail->MailFile, sizeof(mail.MailFile));
       }
       else
       {
@@ -1786,7 +1796,7 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
             case 'l': dst = StrBufCat(dst, tf->Filename); break;
             case 'f': for (i = 0; i < ar->fr_NumArgs; i++)
                       {
-//                         strcpy(filename, "\"");
+//                         strlcpy(filename, "\"", sizeof(filename));
 //                         strmfp(&filename[1], ar->fr_Drawer, ar->fr_ArgList[i].wa_Name);
 //                         strcat(filename, "\" ");
                          snprintf(filename, sizeof(filename), "\"%s\"", ar->fr_ArgList[i].wa_Name);
@@ -1805,7 +1815,7 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
       CurrentDir(olddir); UnLock(filedir);
       FreeStrBuf(dst);
       CloseTempFile(tf);
-      MyStrCpy(filename, arcpath);
+      strlcpy(filename, arcpath, sizeof(filename));
       if (FileSize(filename) == -1)
       {
          snprintf(filename, sizeof(filename), "%s.lha", arcpath);
@@ -2086,12 +2096,12 @@ void WR_SetupOldMail(int winnum, struct ReadMailData *rmData)
       attach.IsTemp = TRUE;
 
       if(part->Name)
-        MyStrCpy(attach.Name, part->Name);
+        strlcpy(attach.Name, part->Name, sizeof(attach.Name));
 
-      MyStrCpy(attach.FilePath, part->Filename);
+      strlcpy(attach.FilePath, part->Filename, sizeof(attach.FilePath));
       *part->Filename = '\0';
-      MyStrCpy(attach.ContentType, part->ContentType);
-      MyStrCpy(attach.Description, part->Description);
+      strlcpy(attach.ContentType, part->ContentType, sizeof(attach.ContentType));
+      strlcpy(attach.Description, part->Description, sizeof(attach.Description));
       DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
 
       BusyEnd();
