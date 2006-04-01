@@ -487,3 +487,27 @@ meant to be usefull during debugging.
 
 ############################################################################
 
+15. Obsolete string functions
+-----------------------------
+
+A simple rules is: In any event, try to avoid to use one of the following
+functions as they are known to cause buffer overflows. Use their replacement
+functions listed here instead:
+
+  OBSOLETE    REPLACEMENT
+  --------    -----------
+  strcpy      strlcpy
+  strncpy     strlcpy
+  strcat      strlcat
+  strncat     strlcat
+  stccpy      strlcpy
+  sprintf     snprintf
+  vsprintf    vsnprintf
+
+So please try to avoid the use of one of the above listed functions as their
+use should be really considered obsolete within YAM. And if we try to stick
+to their much safer variants listed here, we really hope to be a bit more
+on the safe side and highly reduce the probablity of unwanted crashes due to
+buffer overflows.
+
+############################################################################
