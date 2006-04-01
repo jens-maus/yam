@@ -685,7 +685,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         D(DBF_NET, "prepared challenge answer....: `%s`", challenge);
         base64encode(buffer, (unsigned char *)challenge, strlen(challenge));
         D(DBF_NET, "encoded  challenge answer....: `%s`", buffer);
-        strcat(buffer,"\r\n");
+        strlcat(buffer, "\r\n", sizeof(buffer));
 
         // now we send the SMTP AUTH response
         if(TR_WriteLine(buffer) <= 0) return FALSE;
@@ -748,7 +748,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         // lets base64 encode the md5 challenge for the answer
         base64encode(buffer, (unsigned char *)buf, strlen(buf));
         D(DBF_NET, "encoded  CRAM-MD5 reponse..: `%s`", buffer);
-        strcat(buffer, "\r\n");
+        strlcat(buffer, "\r\n", sizeof(buffer));
 
         // now we send the SMTP AUTH response
         if(TR_WriteLine(buffer) <= 0) return FALSE;
@@ -772,7 +772,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
          D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_User);
          base64encode(buffer, (unsigned char *)C->SMTP_AUTH_User, strlen(C->SMTP_AUTH_User));
          D(DBF_NET, "encoded  AUTH LOGIN challenge: `%s`", buffer);
-         strcat(buffer,"\r\n");
+         strlcat(buffer, "\r\n", sizeof(buffer));
 
          // now we send the SMTP AUTH response (UserName)
          if(TR_WriteLine(buffer) <= 0) return FALSE;
@@ -785,7 +785,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
             D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_Pass);
             base64encode(buffer, (unsigned char *)C->SMTP_AUTH_Pass, strlen(C->SMTP_AUTH_Pass));
             D(DBF_NET, "encoded  AUTH LOGIN challenge: `%s`", buffer);
-            strcat(buffer,"\r\n");
+            strlcat(buffer, "\r\n", sizeof(buffer));
 
             // now lets send the Password
             if(TR_WriteLine(buffer) <= 0) return FALSE;
@@ -1648,13 +1648,17 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
 
    if (url1)
    {
-      if (url[strlen(url)-1] != '/') strcat(url, "/");
-      strcat(url, url1);
+      if(url[strlen(url)-1] != '/')
+        strlcat(url, "/", sizeof(url));
+
+      strlcat(url, url1, sizeof(url));
    }
    if (url2)
    {
-      if (url[strlen(url)-1] != '/') strcat(url, "/");
-      strcat(url, url2);
+      if (url[strlen(url)-1] != '/')
+        strlcat(url, "/", sizeof(url));
+
+      strlcat(url, url2, sizeof(url));
    }
    if ((path = strchr(url,'/'))) *path++ = 0; else path = "";
    strlcpy(host, noproxy ? url : C->ProxyServer, sizeof(host));
@@ -1877,7 +1881,7 @@ static int TR_ConnectPOP(int guilevel)
          if ((p = strchr(buf, '>'))) p[1] = 0;
 
          // then we send the APOP command to authenticate via APOP
-         strcat(buf, passwd);
+         strlcat(buf, passwd, sizeof(buf));
          MD5Init(&context);
          MD5Update(&context, (unsigned char *)buf, strlen(buf));
          MD5Final(digest, &context);
@@ -2081,8 +2085,8 @@ static BOOL TR_GetUIDLonServer(void)
 
          // lets add our own ident to the uidl so that we can compare
          // it against our saved list
-         strcat(uidl, "@");
-         strcat(uidl, C->P3[G->TR->POP_Nr]->Server);
+         strlcat(uidl, "@", sizeof(uidl));
+         strlcat(uidl, C->P3[G->TR->POP_Nr]->Server, sizeof(uidl));
 
          // iterate to the mail the UIDL is for and save it in the variable
          if(IsMinListEmpty(&G->TR->transferList) == FALSE)
@@ -4677,14 +4681,31 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
     struct Mail *mail = entry->mail;
     struct Person *pe = &mail->From;
 
+    // status icon display
     snprintf(array[0] = dispsta, sizeof(dispsta), "%3d ", entry->index);
-    if(hasTR_LOAD(entry))   strcat(dispsta, SICON_DOWNLOAD);
-    if(hasTR_DELETE(entry)) strcat(dispsta, SICON_DELETE);
-    if(mail->Size >= C->WarnSize<<10) strcat(dispsiz, MUIX_PH);
-    FormatSize(mail->Size, array[1] = dispsiz);
+    if(hasTR_LOAD(entry))
+      strlcat(dispsta, SICON_DOWNLOAD, sizeof(dispsta));
+
+    if(hasTR_DELETE(entry))
+      strlcat(dispsta, SICON_DELETE, sizeof(dispsta));
+
+    // size display
+    if(mail->Size >= C->WarnSize<<10)
+    {
+      strlcpy(array[1] = dispsiz, MUIX_PH, sizeof(dispsiz));
+      FormatSize(mail->Size, dispsiz+strlen(dispsiz));
+    }
+    else
+      FormatSize(mail->Size, array[1] = dispsiz);
+
+    // from address display
     array[2] = dispfro;
     strlcpy(dispfro, AddrName((*pe)), sizeof(dispfro));
+
+    // mail subject display
     array[3] = mail->Subject;
+
+    // display date
     array[4] = dispdate;
     *dispdate = '\0';
 

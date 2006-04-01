@@ -548,9 +548,11 @@ DECLARE(ReadMail) // struct Mail *mail
         strlcat(data->title, "...", sizeof(data->title)); // signals that the string was cut.
       }
       else
-        strcat(&data->title[SIZE_DEFAULT-4], "...");
+        strlcat(&data->title[SIZE_DEFAULT-4], "...", 4);
     }
-    else strcat(data->title, mail->Subject);
+    else
+      strlcat(data->title, mail->Subject, sizeof(data->title));
+
     set(obj, MUIA_Window_Title, data->title);
 
     // enable some Menuitems depending on the read mail

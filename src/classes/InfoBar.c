@@ -74,7 +74,7 @@ char *GetFolderInfo(struct Folder *folder)
     else
       snprintf(dst, sizeof(dst), "%c", *src);
 
-    strcat(bartxt, dst);
+    strlcat(bartxt, dst, sizeof(bartxt));
   }
 
   return bartxt;

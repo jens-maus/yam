@@ -430,9 +430,9 @@ static char *CreateVAR( struct rxs_stemnode *stem )
    
    for( s = stem; s; s = s->succ )
    {
-      strcat( var, s->value );
-      if( s->succ )
-         strcat( var, " " );
+      strlcat(var, s->value, size+1);
+      if(s->succ)
+         strlcat(var, " ", size+1);
    }
    
    return( var );
@@ -707,9 +707,10 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    
    if( rxc->args )
    {
-      if( *cargstr )
-         strcat( cargstr, "," );
-      strcat( cargstr, rxc->args );
+      if(*cargstr)
+         strlcat(cargstr, ",", (ULONG)(rxc->args ? 15+strlen(rxc->args) : 15));
+
+      strlcat(cargstr, rxc->args, (ULONG)(rxc->args ? 15+strlen(rxc->args) : 15));
    }
    
    if( *cargstr )

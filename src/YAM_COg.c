@@ -89,20 +89,22 @@ HOOKPROTONH(CO_LV_RxDspFunc, long, char **array, int num)
    rexxoptm[0] = '\0';
    array[0] = rexxoptm;
 
-   if (*CE->RX[scr].Script) strcat(rexxoptm, MUIX_PH);
-   switch (scr)
+   if(*CE->RX[scr].Script)
+     strlcat(rexxoptm, MUIX_PH, sizeof(rexxoptm));
+
+   switch(scr)
    {
-      case MACRO_STARTUP:   strcat(rexxoptm, GetStr(MSG_CO_ScriptStartup)); break;
-      case MACRO_QUIT:      strcat(rexxoptm, GetStr(MSG_CO_ScriptTerminate)); break;
-      case MACRO_PREGET:    strcat(rexxoptm, GetStr(MSG_CO_ScriptPreGetMail)); break;
-      case MACRO_POSTGET:   strcat(rexxoptm, GetStr(MSG_CO_ScriptPostGetMail)); break;
-      case MACRO_NEWMSG:    strcat(rexxoptm, GetStr(MSG_CO_ScriptNewMsg)); break;
-      case MACRO_PRESEND:   strcat(rexxoptm, GetStr(MSG_CO_ScriptPreSendMail)); break;
-      case MACRO_POSTSEND:  strcat(rexxoptm, GetStr(MSG_CO_ScriptPostSendMail)); break;
-      case MACRO_READ:      strcat(rexxoptm, GetStr(MSG_CO_ScriptReadMsg)); break;
-      case MACRO_PREWRITE:  strcat(rexxoptm, GetStr(MSG_CO_ScriptPreWriteMsg)); break;
-      case MACRO_POSTWRITE: strcat(rexxoptm, GetStr(MSG_CO_ScriptPostWriteMsg)); break;
-      case MACRO_URL:       strcat(rexxoptm, GetStr(MSG_CO_ScriptClickURL)); break;
+      case MACRO_STARTUP:   strlcat(rexxoptm, GetStr(MSG_CO_ScriptStartup), sizeof(rexxoptm)); break;
+      case MACRO_QUIT:      strlcat(rexxoptm, GetStr(MSG_CO_ScriptTerminate), sizeof(rexxoptm)); break;
+      case MACRO_PREGET:    strlcat(rexxoptm, GetStr(MSG_CO_ScriptPreGetMail), sizeof(rexxoptm)); break;
+      case MACRO_POSTGET:   strlcat(rexxoptm, GetStr(MSG_CO_ScriptPostGetMail), sizeof(rexxoptm)); break;
+      case MACRO_NEWMSG:    strlcat(rexxoptm, GetStr(MSG_CO_ScriptNewMsg), sizeof(rexxoptm)); break;
+      case MACRO_PRESEND:   strlcat(rexxoptm, GetStr(MSG_CO_ScriptPreSendMail), sizeof(rexxoptm)); break;
+      case MACRO_POSTSEND:  strlcat(rexxoptm, GetStr(MSG_CO_ScriptPostSendMail), sizeof(rexxoptm)); break;
+      case MACRO_READ:      strlcat(rexxoptm, GetStr(MSG_CO_ScriptReadMsg), sizeof(rexxoptm)); break;
+      case MACRO_PREWRITE:  strlcat(rexxoptm, GetStr(MSG_CO_ScriptPreWriteMsg), sizeof(rexxoptm)); break;
+      case MACRO_POSTWRITE: strlcat(rexxoptm, GetStr(MSG_CO_ScriptPostWriteMsg), sizeof(rexxoptm)); break;
+      case MACRO_URL:       strlcat(rexxoptm, GetStr(MSG_CO_ScriptClickURL), sizeof(rexxoptm)); break;
 
       default:
       {

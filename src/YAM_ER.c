@@ -113,9 +113,9 @@ void STDARGS VARARGS68K ER_NewError(char *error, ...)
       FormatString(G->Locale, error, VA_ARG(args, void *), &hook);
       VA_END(args);
 
-      strcat(buf, "\n\n(");
-      strcat(buf, datstr);
-      strcat(buf, ")");
+      strlcat(buf, "\n\n(", sizeof(buf));
+      strlcat(buf, datstr, sizeof(buf));
+      strlcat(buf, ")", sizeof(buf));
 
       G->ER_Message[G->ER_NumErr-1] = strdup(buf);
    }

@@ -799,8 +799,8 @@ DECLARE(CheckPGPSignature) // BOOL forceRequester
     strlcpy(buffer, hasPGPSBadSigFlag(rmData) ? GetStr(MSG_RE_BadSig) : GetStr(MSG_RE_GoodSig), sizeof(buffer));
     if(hasPGPSAddressFlag(rmData))
     {
-      strcat(buffer, GetStr(MSG_RE_SigFrom));
-      strcat(buffer, rmData->sigAuthor);
+      strlcat(buffer, GetStr(MSG_RE_SigFrom), sizeof(buffer));
+      strlcat(buffer, rmData->sigAuthor, sizeof(buffer));
     }
     
     MUI_Request(G->App, _win(obj), MUIF_NONE, GetStr(MSG_RE_SigCheck), GetStr(MSG_Okay), buffer);

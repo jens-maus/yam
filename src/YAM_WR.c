@@ -1123,8 +1123,14 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
             fputc('\n', fh);
             EncodePart(fh, firstpart);
             fprintf(fh, "\n--%s\nContent-Type: application/pgp-signature\n\n", boundary);
+
             snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-ab %s +batchmode=1 +force" : "-sab %s +bat +f", tf2->Filename);
-            if (*C->MyPGPID) { strcat(options, " -u "); strcat(options, C->MyPGPID); }
+            if(*C->MyPGPID != '\0')
+            {
+              strlcat(options, " -u ", sizeof(options));
+              strlcat(options, C->MyPGPID, sizeof(options));
+            }
+
             if (!PGPCommand((G->PGPVersion == 5) ? "pgps" : "pgp", options, 0)) success = TRUE;
             break;
          case SEC_ENCRYPT :
@@ -1137,7 +1143,13 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
             fprintf(fh, "Content-type: multipart/encrypted; boundary=\"%s\"; protocol=\"application/pgp-encrypted\"\n\n%s\n--%s\n", boundary, MIMEwarn, boundary);
             fprintf(fh, "Content-Type: application/pgp-encrypted\n\nVersion: 1\n\n%s\n--%s\nContent-Type: application/octet-stream\n\n", PGPwarn, boundary);
             snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-a %s %s +batchmode=1 +force -s" : "-sea %s %s +bat +f", tf2->Filename, ids);
-            if (*C->MyPGPID) { strcat(options, " -u "); strcat(options, C->MyPGPID); }
+
+            if(*C->MyPGPID != '\0')
+            {
+              strlcat(options, " -u ", sizeof(options));
+              strlcat(options, C->MyPGPID, sizeof(options));
+            }
+
             if (!PGPCommand((G->PGPVersion == 5) ? "pgpe" : "pgp", options, 0)) success = TRUE;
             break;
 
@@ -1277,7 +1289,7 @@ BOOL WriteOutMessage(struct Compose *comp)
       }
    }
    *options = 0;
-   if (comp->DelSend) strcat(options, ",delsent");
+   if (comp->DelSend) strlcat(options, ",delsent", sizeof(options));
    if (comp->Security) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",%s", SecCodes[comp->Security]);
    if (comp->Signature) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",sigfile%d", comp->Signature-1);
    if (*options) EmitHeader(fh, "X-YAM-Options", &options[1]);
@@ -1335,11 +1347,11 @@ mimebody:
 //  Returns filename of the auto-save file
 char *WR_AutoSaveFile(int winnr)
 {
-   static char fname[SIZE_PATHFILE];
-   strmfp(fname, G->MA_MailDir, ".autosave");
-   strcat(fname, itoa(winnr));
-   strcat(fname, ".txt");
-   return fname;
+  static char fname[SIZE_PATHFILE];
+  strmfp(fname, G->MA_MailDir, ".autosave");
+  strlcat(fname, itoa(winnr), sizeof(fname));
+  strlcat(fname, ".txt", sizeof(fname));
+  return fname;
 }
 ///
 
@@ -1798,7 +1810,7 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
                       {
 //                         strlcpy(filename, "\"", sizeof(filename));
 //                         strmfp(&filename[1], ar->fr_Drawer, ar->fr_ArgList[i].wa_Name);
-//                         strcat(filename, "\" ");
+//                         strlcat(filename, "\" ", sizeof(filename));
                          snprintf(filename, sizeof(filename), "\"%s\"", ar->fr_ArgList[i].wa_Name);
                          dst = StrBufCat(dst, filename);
                       }

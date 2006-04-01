@@ -2101,7 +2101,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
             strlcpy(msg->Array[0] = dispfold, " ", sizeof(dispfold));
 
           if(entry->Name[0])
-            strcat(dispfold, entry->Name);
+            strlcat(dispfold, entry->Name, sizeof(dispfold));
           else
             snprintf(dispfold, sizeof(dispfold), "[%s]", FilePart(entry->Path));
 
@@ -2175,16 +2175,16 @@ void MA_MakeFOFormat(Object *lv)
           if(first)
             first = FALSE;
           else
-            strcat(format, " BAR,");
+            strlcat(format, " BAR,", sizeof(format));
 
           p = strlen(format);
           snprintf(&format[p], sizeof(format)-p,  "COL=%d W=%d", i, defwidth[i]);
 
           if(i > 0)
-            strcat(format, " P=\033r");
+            strlcat(format, " P=\033r", sizeof(format));
       }
    }
-   strcat(format, " BAR");
+   strlcat(format, " BAR", sizeof(format));
 
    set(lv, MUIA_NListtree_Format, format);
 }

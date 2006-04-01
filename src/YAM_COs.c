@@ -412,9 +412,12 @@ void CO_SaveConfig(struct Config *co, char *fname)
 
       // prepare the socket option string
       buf[0] = '\0'; // clear it first
-      if(co->SocketOptions.KeepAlive)   strcat(buf, " SO_KEEPALIVE");
-      if(co->SocketOptions.NoDelay)     strcat(buf, " TCP_NODELAY");
-      if(co->SocketOptions.LowDelay)    strcat(buf, " IPTOS_LOWDELAY");
+      if(co->SocketOptions.KeepAlive)
+        strlcat(buf, " SO_KEEPALIVE", sizeof(buf));
+      if(co->SocketOptions.NoDelay)
+        strlcat(buf, " TCP_NODELAY", sizeof(buf));
+      if(co->SocketOptions.LowDelay)
+        strlcat(buf, " IPTOS_LOWDELAY", sizeof(buf));
       if(co->SocketOptions.SendBuffer > -1)
         snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_SNDBUF=%ld", co->SocketOptions.SendBuffer);
       if(co->SocketOptions.RecvBuffer > -1)

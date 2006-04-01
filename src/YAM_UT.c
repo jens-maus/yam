@@ -989,7 +989,7 @@ char *StrBufCat(char *strbuf, const char *source)
 
   // do a string copy into the new buffer
   if(newstrbuf)
-    strcat(newstrbuf, source);
+    strlcat(newstrbuf, source, newlen+1);
 
   return newstrbuf;
 }
@@ -3569,8 +3569,10 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
       if (secret)
       {
          GetVar("PGPPATH", &buf[4], SIZE_DEFAULT, 0);
-         if ((p = buf[strlen(buf)-1]) != ':' && p != '/') strcat(buf, "/");
-         strcat(buf, "secring.pgp");
+         if((p = buf[strlen(buf)-1]) != ':' && p != '/')
+           strlcat(buf, "/", sizeof(buf));
+
+         strlcat(buf, "secring.pgp", sizeof(buf));
       }
       retc = PGPCommand("pgp", buf, KEEPLOG);
    }
@@ -4300,8 +4302,8 @@ int PGPCommand(char *progname, char *options, int flags)
       {
          BusyText(GetStr(MSG_BusyPGPrunning), "");
          strmfp(command, C->PGPCmdPath, progname);
-         strcat(command, " >" PGPLOGFILE " ");
-         strcat(command, options);
+         strlcat(command, " >" PGPLOGFILE " ", sizeof(command));
+         strlcat(command, options, sizeof(command));
          error = SystemTags(command, SYS_Input, fhi, SYS_Output, fho, NP_StackSize, C->StackSize, TAG_DONE);
          Close(fho);
          BusyEnd();
@@ -4526,7 +4528,7 @@ void DisplayAppIconStatistics(void)
       else
         snprintf(dst, sizeof(dst), "%c", *src);
 
-      strcat(apptit, dst);
+      strlcat(apptit, dst, sizeof(apptit));
     }
   }
 

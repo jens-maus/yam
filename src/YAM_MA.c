@@ -1815,7 +1815,8 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    if (C->Confirm && selected >= C->ConfirmDelete && !force)
    {
       SPrintF(buffer, selected==1 ? GetStr(MSG_MA_1Selected) : GetStr(MSG_MA_xSelected), selected);
-      strcat(buffer, GetStr(MSG_MA_ConfirmDel));
+      strlcat(buffer, GetStr(MSG_MA_ConfirmDel), sizeof(buffer));
+
       if (!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_OkayCancelReq), buffer))
       {
          free(mlist);
@@ -2671,7 +2672,13 @@ BOOL MA_StartMacro(enum Macro num, char *param)
 
    strlcpy(command, C->RX[num].Script, sizeof(command));
    if (!*command) return 0;
-   if (param) { strcat(command, " "); strcat(command, param); }
+
+   if(param)
+   {
+     strlcat(command, " ", sizeof(command));
+     strlcat(command, param, sizeof(command));
+   }
+
    if (C->RX[num].IsAmigaDOS)
    {
       BusyText(GetStr(MSG_MA_EXECUTINGCMD), "");

@@ -789,9 +789,13 @@ HOOKPROTONHNONP(AB_DuplicateFunc, void)
          strlcpy(buf, ab->Alias, sizeof(buf));
          if ((len = strlen(buf)))
          {
-            if (isdigit(buf[len-1])) buf[len-1]++;
-            else if (len < SIZE_NAME-1) strcat(buf, "2");
-            else buf[len-1] = '2';
+            if(isdigit(buf[len-1]))
+              buf[len-1]++;
+            else if(len < SIZE_NAME-1)
+              strlcat(buf, "2", sizeof(buf));
+            else
+              buf[len-1] = '2';
+
             setstring(G->EA[winnum]->GUI.ST_ALIAS, buf);
          }
       }
@@ -1136,7 +1140,7 @@ void AB_MakeABFormat(APTR lv)
       if(first)
         first = FALSE;
       else
-        strcat(format, " BAR,");
+        strlcat(format, " BAR,", sizeof(format));
 
       p = strlen(format);
 

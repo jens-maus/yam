@@ -437,7 +437,7 @@ OVERLOAD(OM_NEW)
 
     // now we add the compiler information as YAM can be
     // compiled with different versions and types of compilers
-    strcat(&data->compileInfo[strlen(data->compileInfo)], yamcompiler);
+    strlcat(&data->compileInfo[strlen(data->compileInfo)], yamcompiler, sizeof(data->compileInfo)-strlen(data->compileInfo));
 
     while((tag = NextTagItem(&tags)))
     {

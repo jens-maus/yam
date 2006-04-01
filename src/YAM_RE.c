@@ -204,16 +204,17 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
 
       p1->Filename = tf1->Filename;
       mode = isAutoActMDN(type) ? "automatically" : "in response to a user command";
-      strlcpy(disp, isAutoActMDN(type) ? "automatic-action/" : "manual-action/", sizeof(disp));
-      strcat(disp, isAutoSendMDN(type) ? "MDN-sent-automatically; " : "MDN-sent-manually; ");
+
+      snprintf(disp, sizeof(disp), "%s%s", isAutoActMDN(type) ? "automatic-action/" : "manual-action/",
+                                           isAutoSendMDN(type) ? "MDN-sent-automatically; " : "MDN-sent-manually; ");
 
       switch(type & MDN_TYPEMASK)
       {
-         case MDN_READ: strcat(disp, "displayed");  fprintf(tf1->FP, MDNMessage[0], date, rcpt, subj); break;
-         case MDN_DISP: strcat(disp, "dispatched"); fprintf(tf1->FP, MDNMessage[1], date, rcpt, subj, mode); break;
-         case MDN_PROC: strcat(disp, "processed");  fprintf(tf1->FP, MDNMessage[2], date, rcpt, subj, mode); break;
-         case MDN_DELE: strcat(disp, "deleted");    fprintf(tf1->FP, MDNMessage[3], date, rcpt, subj, mode); break;
-         case MDN_DENY: strcat(disp, "denied");     fprintf(tf1->FP, MDNMessage[4], rcpt, date, subj); break;
+         case MDN_READ: strlcat(disp, "displayed", sizeof(disp));  fprintf(tf1->FP, MDNMessage[0], date, rcpt, subj); break;
+         case MDN_DISP: strlcat(disp, "dispatched", sizeof(disp)); fprintf(tf1->FP, MDNMessage[1], date, rcpt, subj, mode); break;
+         case MDN_PROC: strlcat(disp, "processed", sizeof(disp));  fprintf(tf1->FP, MDNMessage[2], date, rcpt, subj, mode); break;
+         case MDN_DELE: strlcat(disp, "deleted", sizeof(disp));    fprintf(tf1->FP, MDNMessage[3], date, rcpt, subj, mode); break;
+         case MDN_DENY: strlcat(disp, "denied", sizeof(disp));     fprintf(tf1->FP, MDNMessage[4], rcpt, date, subj); break;
       }
       fclose(tf1->FP); tf1->FP = NULL;
       SimpleWordWrap(tf1->Filename, 72);
@@ -340,15 +341,11 @@ BOOL RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi)
 
             case 2:
               sendnow = FALSE;
-              strlcpy(buttons, GetStr(MSG_RE_MDNGads1), sizeof(buttons));
 
-              if(isonline)
-                strcat(buttons, GetStr(MSG_RE_MDNGads2));
-
-              strcat(buttons, GetStr(MSG_RE_MDNGads3));
-
-              if(multi)
-                strcat(buttons, GetStr(MSG_RE_MDNGads4));
+              snprintf(buttons, sizeof(buttons), "%s%s%s%s", GetStr(MSG_RE_MDNGads1),
+                                                             isonline ? GetStr(MSG_RE_MDNGads2) : "",
+                                                             GetStr(MSG_RE_MDNGads3),
+                                                             multi ? GetStr(MSG_RE_MDNGads4) : "");
 
               switch (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), buttons, GetStr(MSG_RE_MDNReq)))
               {
@@ -2435,7 +2432,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
           if(*part->Description)
             snprintf(buffer, sizeof(buffer), "\033b%s:\033n %s\n", GetStr(MSG_RE_Description), part->Description);
 
-          strcat(buffer, "\033[s:2]\n");
+          strlcat(buffer, "\033[s:2]\n", sizeof(buffer));
           cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
         }
       }

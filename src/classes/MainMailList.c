@@ -224,44 +224,46 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 
       // first we check which main status this mail has
       // and put the leftmost mail icon accordingly.
-      if(hasStatusError(entry) || isPartialMail(entry)) strcat(dispsta, SICON_ERROR);
-      else if(hasStatusQueued(entry))  strcat(dispsta, SICON_WAITSEND);
-      else if(hasStatusSent(entry))    strcat(dispsta, SICON_SENT);
-      else if(hasStatusRead(entry))    strcat(dispsta, SICON_OLD);
-      else                             strcat(dispsta, SICON_UNREAD);
+      if(hasStatusError(entry) || isPartialMail(entry)) strlcat(dispsta, SICON_ERROR, sizeof(dispsta));
+      else if(hasStatusQueued(entry))  strlcat(dispsta, SICON_WAITSEND, sizeof(dispsta));
+      else if(hasStatusSent(entry))    strlcat(dispsta, SICON_SENT, sizeof(dispsta));
+      else if(hasStatusRead(entry))    strlcat(dispsta, SICON_OLD, sizeof(dispsta));
+      else                             strlcat(dispsta, SICON_UNREAD, sizeof(dispsta));
 
       // then we add the 2. level if icons with the additional mail information
       // like importance, signed/crypted, report and attachment information
-      if(getImportanceLevel(entry) == IMP_HIGH)  strcat(dispsta, SICON_URGENT);
-      if(isMP_CryptedMail(entry))                strcat(dispsta, SICON_CRYPT);
-      else if(isMP_SignedMail(entry))            strcat(dispsta, SICON_SIGNED);
-      if(isMP_ReportMail(entry))                 strcat(dispsta, SICON_REPORT);
-      if(isMP_MixedMail(entry))                  strcat(dispsta, SICON_ATTACH);
+      if(getImportanceLevel(entry) == IMP_HIGH)  strlcat(dispsta, SICON_URGENT, sizeof(dispsta));
+      if(isMP_CryptedMail(entry))                strlcat(dispsta, SICON_CRYPT, sizeof(dispsta));
+      else if(isMP_SignedMail(entry))            strlcat(dispsta, SICON_SIGNED, sizeof(dispsta));
+      if(isMP_ReportMail(entry))                 strlcat(dispsta, SICON_REPORT, sizeof(dispsta));
+      if(isMP_MixedMail(entry))                  strlcat(dispsta, SICON_ATTACH, sizeof(dispsta));
 
       // and as the 3rd level of icons we put information on the secondary status
       // like replied, forwarded, hold
-      if(hasStatusNew(entry))        strcat(dispsta, SICON_NEW);
-      else if(hasStatusHold(entry))  strcat(dispsta, SICON_HOLD);
-      if(hasStatusMarked(entry))     strcat(dispsta, SICON_MARK);
-      if(hasStatusReplied(entry))    strcat(dispsta, SICON_REPLY);
-      if(hasStatusForwarded(entry))  strcat(dispsta, SICON_FORWARD);
+      if(hasStatusNew(entry))        strlcat(dispsta, SICON_NEW, sizeof(dispsta));
+      else if(hasStatusHold(entry))  strlcat(dispsta, SICON_HOLD, sizeof(dispsta));
+      if(hasStatusMarked(entry))     strlcat(dispsta, SICON_MARK, sizeof(dispsta));
+      if(hasStatusReplied(entry))    strlcat(dispsta, SICON_REPLY, sizeof(dispsta));
+      if(hasStatusForwarded(entry))  strlcat(dispsta, SICON_FORWARD, sizeof(dispsta));
 
       // now we generate the proper string for the mailaddress
       if(C->MessageCols & (1<<1) || searchWinHook)
       {
         static char dispfro[SIZE_DEFAULT];
-        dispfro[0] = '\0';
+
         array[1] = dispfro;
 
         if(isMultiRCPTMail(entry))
-          strcat(dispfro, SICON_GROUP);
+          strlcpy(dispfro, SICON_GROUP, sizeof(dispfro));
+        else
+          dispfro[0] = '\0';
 
         if(((entry->Folder->Type == FT_CUSTOMMIXED || entry->Folder->Type == FT_DELETED) &&
             (hasStatusSent(entry) || hasStatusQueued(entry) || hasStatusHold(entry) ||
              hasStatusError(entry))) || (searchWinHook && isOutgoingFolder(entry->Folder)))
         {
           pe = &entry->To;
-          strcat(dispfro, GetStr(MSG_MA_ToPrefix));
+          strlcat(dispfro, GetStr(MSG_MA_ToPrefix), sizeof(dispfro));
         }
         else
           pe = isOutgoingFolder(entry->Folder) ? &entry->To : &entry->From;
@@ -673,16 +675,16 @@ DECLARE(MakeFormat)
       if(first)
         first = FALSE;
       else
-        strcat(format, " BAR,");
+        strlcat(format, " BAR,", sizeof(format));
 
       p = strlen(format);
       snprintf(&format[p], sizeof(format)-p, "COL=%d W=%d", i, defwidth[i]);
 
       if(i == 5)
-        strcat(format, " P=\033r");
+        strlcat(format, " P=\033r", sizeof(format));
     }
   }
-  strcat(format, " BAR");
+  strlcat(format, " BAR", sizeof(format));
 
   // set the new NList_Format to our object
   set(obj, MUIA_NList_Format, format);
