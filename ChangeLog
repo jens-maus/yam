@@ -6,6 +6,8 @@ $Id$
 
 2006-04-01  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ReadWindow.c, MainMailList.c, YAM_UT.c: replaced all strncat() uses
+    by strlcat().
   * misc: replaced all strcpy()/stccpy() uses wherever possible by
     the more robust and buffer-overflow safe strlcpy() function use.
   * STYLGUIDE: updated the coding styleguide to mention that certain

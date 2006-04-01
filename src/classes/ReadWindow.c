@@ -544,8 +544,8 @@ DECLARE(ReadMail) // struct Mail *mail
     {
       if(titleLen < SIZE_DEFAULT-3)
       {
-        strncat(data->title, mail->Subject, SIZE_DEFAULT-titleLen-3);
-        strcat(data->title, "..."); // signals that the string was cut.
+        strlcat(data->title, mail->Subject, SIZE_DEFAULT-titleLen-3);
+        strlcat(data->title, "...", sizeof(data->title)); // signals that the string was cut.
       }
       else
         strcat(&data->title[SIZE_DEFAULT-4], "...");

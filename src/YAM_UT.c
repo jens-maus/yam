@@ -3592,8 +3592,15 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
             if (!strncmp(buf, "sec", 3) || (!strncmp(&buf[1], "ub", 2) && !secret))
             {
                memcpy(entry, &buf[12], 8);
+
                while (GetLine(fp, buf, sizeof(buf)))
-                  if (!strncmp(buf, "uid", 3)) { strncat(entry, &buf[4], SIZE_DEFAULT-9); break; }
+               {
+                 if(!strncmp(buf, "uid", 3))
+                 {
+                   strlcat(entry, &buf[4], sizeof(entry)-9);
+                   break;
+                 }
+               }
             }
          }
          else
@@ -3601,7 +3608,7 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
             if (buf[9] == '/' && buf[23] == '/')
             {
                memcpy(entry, &buf[10], 8);
-               strncat(entry, &buf[29], SIZE_DEFAULT-8);
+               strlcat(entry, &buf[29], sizeof(entry)-8);
             }
          }
          if (*entry)

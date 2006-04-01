@@ -284,7 +284,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
         #endif
 
         // lets put the string together
-        strncat(dispfro, addr, SIZE_DEFAULT-strlen(dispfro)-1);
+        strlcat(dispfro, addr, sizeof(dispfro)-strlen(dispfro)-1);
       }
 
       // lets set all other fields now
@@ -534,8 +534,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     struct Person *pers = isOutBox ? &mail->To : &mail->From;
 
     snprintf(menutitle, sizeof(menutitle), "%s: ", GetStr(isOutBox ? MSG_To : MSG_From));
-    strncat(menutitle, BuildAddrName2(pers), 20-strlen(menutitle));
-    strcat(menutitle, "...");
+    strlcat(menutitle, BuildAddrName2(pers), 20-strlen(menutitle) > 0 ? 20-strlen(menutitle) : 0);
+    strlcat(menutitle, "...", sizeof(menutitle));
   }
   else
     strlcpy(menutitle, GetStr(MSG_MAIL_NONSEL), sizeof(menutitle));
