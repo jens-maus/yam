@@ -6,6 +6,9 @@ $Id$
 
 2006-04-01  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c, YAM_MI.c, classes/YAM.c, classes/AttachmentImage.c, YAM_CO.c,
+    YAM_UT.c, YAM_FI.c, YAM_MAf.c, YAM_RE.c, YAM_TR.c: replaced all error
+    print strncpy() uses by its buffer-overflow safe strlcpy() counterpart.
   * ReadWindow.c, MainMailList.c, YAM_UT.c: replaced all strncat() uses
     by strlcat().
   * misc: replaced all strcpy()/stccpy() uses wherever possible by

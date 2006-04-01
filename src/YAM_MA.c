@@ -2533,8 +2533,7 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
       fclose(newfh);
       f = FileSize(newfile); fo->Size += f - mail->Size; mail->Size = f;
       AppendLog(82, GetStr(MSG_LOG_ChangingSubject), mail->Subject, mail->MailFile, fo->Name, subj);
-      strncpy(mail->Subject, subj, SIZE_SUBJECT-1); // only copy a maximum of SIZE_SUBJECT or it will burn
-      mail->Subject[SIZE_SUBJECT-1] = '\0';
+      strlcpy(mail->Subject, subj, sizeof(mail->Subject));
       MA_ExpireIndex(fo);
 
       if(fo->Mode > FM_SIMPLE)

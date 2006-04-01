@@ -78,10 +78,10 @@ VOID LoadEMailCache(STRPTR name, struct List *list)
         if(addr != line)
         {
           addr[-1] = '\0';
-          strncpy(node->ecn_Person.RealName, line, SIZE_REALNAME-1);
+          strlcpy(node->ecn_Person.RealName, line, sizeof(node->ecn_Person.RealName));
         }
         end[0] = '\0';
-        strncpy(node->ecn_Person.Address, addr+1, SIZE_ADDRESS-1);
+        strlcpy(node->ecn_Person.Address, addr+1, sizeof(node->ecn_Person.Address));
 
         AddTail(list, &node->ecn_Node);
       }

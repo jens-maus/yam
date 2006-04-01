@@ -340,8 +340,7 @@ static void FI_GenerateListPatterns(struct Search *search)
             newNode = malloc(sizeof(struct SearchPatternNode));
             if(newNode != NULL)
             {
-              strncpy(newNode->pattern, pattern, sizeof(newNode->pattern));
-              newNode->pattern[sizeof(newNode->pattern)] = '\0';
+              strlcpy(newNode->pattern, pattern, sizeof(newNode->pattern));
 
               // add the pattern to our list
               AddTail((struct List *)&search->patternList, (struct Node *)newNode);
@@ -428,8 +427,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
 
          // if substring is selected lets generate a substring out
          // of the current match string, but keep the string borders in mind.
-         strncpy(buffer, search->Match, SIZE_PATTERN);
-         buffer[SIZE_PATTERN] = '\0';
+         strlcpy(buffer, search->Match, sizeof(buffer));
          snprintf(search->Match, sizeof(search->Match), "#?%s#?", buffer);
       }
 

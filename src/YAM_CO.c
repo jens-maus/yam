@@ -431,9 +431,7 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     GetMUIString(filter->replyFile,  gui->ST_ARESPONSE, sizeof(filter->replyFile));
     GetMUIString(filter->executeCmd, gui->ST_AEXECUTE, sizeof(filter->executeCmd));
     GetMUIString(filter->playSound,  gui->ST_APLAY, sizeof(filter->playSound));
-
-    strncpy(filter->moveTo, (char *)xget(gui->TX_MOVETO, MUIA_Text_Contents), SIZE_NAME);
-    filter->moveTo[SIZE_NAME-1] = '\0';
+    GetMUIText(filter->moveTo, gui->TX_MOVETO, sizeof(filter->moveTo));
 
     // make sure to update all rule settings
     if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
@@ -1297,7 +1295,7 @@ void CO_Validate(struct Config *co, BOOL update)
             // change the charset and save it immediatly
             if(res == 1)
             {
-              strncpy(co->LocalCharset, sysCodeset->name, SIZE_CTYPE);
+              strlcpy(co->LocalCharset, sysCodeset->name, sizeof(co->LocalCharset));
               saveAtEnd = TRUE;
             }
             else if(res == 2)
@@ -1309,7 +1307,7 @@ void CO_Validate(struct Config *co, BOOL update)
         }
         else if(sysCodeset->name[0])
         {
-          strncpy(co->LocalCharset, sysCodeset->name, SIZE_CTYPE);
+          strlcpy(co->LocalCharset, sysCodeset->name, sizeof(co->LocalCharset));
           saveAtEnd = TRUE;
         }
         else
@@ -1343,7 +1341,7 @@ void CO_Validate(struct Config *co, BOOL update)
      {
        // fallback to the system's default codeset
        if((G->localCharset = CodesetsFindA(NULL, NULL)))
-         strncpy(co->LocalCharset, G->localCharset->name, SIZE_CTYPE);
+         strlcpy(co->LocalCharset, G->localCharset->name, sizeof(co->LocalCharset));
      }
    }
 

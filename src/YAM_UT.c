@@ -523,10 +523,7 @@ int StringRequest(char *string, int size, char *title, char *body, char *yestext
     REISSUE_RETURNIDS;
 
     if(ret_code > 0)
-    {
-      strncpy(string, (char *)xget(st_in, MUIA_String_Contents), size);
-      string[size-1] = '\0';
-    }
+      GetMUIString(string, st_in, size);
 
     // remove & dispose the requester object
     DoMethod(G->App, OM_REMMEMBER, wi_sr);

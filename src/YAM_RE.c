@@ -1856,12 +1856,8 @@ BOOL RE_DecodePart(struct Part *rp)
             if(MatchNoCase(rp->ContentType, C->MV[i]->ContentType))
             {
               char *extension = strtok(TrimStart(C->MV[i]->Extension), " |");
-
               if(extension)
-              {
-                strncpy(ext, extension, SIZE_FILE-1);
-                ext[SIZE_FILE-1] = '\0';
-              }
+                strlcpy(ext, extension, sizeof(ext));
 
               break;
             }
