@@ -658,6 +658,7 @@ OVERLOAD(MUIM_DeleteDragImage)
 #if defined(__amigaos4__)
   ULONG which;
   char *buf;
+  struct Screen *wbscreen = LockPubScreen("Workbench");
 
   if(data->dropPath)
   {
@@ -665,45 +666,60 @@ OVERLOAD(MUIM_DeleteDragImage)
     data->dropPath = NULL;
   }
 
-  if((buf = (STRPTR)malloc(2048)))
+  // now we check whether YAM is running on the workbench screen or
+  // not, because otherwise we skip our further operations.
+  if(wbscreen)
   {
-    char name[256];
-    ULONG type = ~0;
-
-    struct TagItem ti[] = { { WBOBJA_DrawerPath,      (ULONG)buf          },
-                            { WBOBJA_DrawerPathSize, 2048                 },
-                            { WBOBJA_Name,            (ULONG)name          },
-                            { WBOBJA_NameSize,        (ULONG)sizeof(name) },
-                            { WBOBJA_Type,            (ULONG)&type         },
-                            { TAG_DONE,               FALSE                } };
-
-    buf[0] = '\0';
-
-    // Note that we use WhichWorkbenchObjectA() and not WhichWorkbenchObject()
-    // because the latter wasn't implemented in workbench.library < 51.9
-    which = WhichWorkbenchObjectA(NULL, _screen(obj)->MouseX, _screen(obj)->MouseY, ti);
-    if(which == WBO_ICON)
+    if(wbscreen == _screen(obj) && (buf = (STRPTR)malloc(SIZE_PATHFILE)))
     {
-      if(type == WBDRAWER)
-        AddPart(buf, name, 2048);
-      else if(type == WBDISK)
-        snprintf(buf, 2048, "%s:", name);
-      
-      which = WBO_DRAWER;
-    }
-    
-    if(which == WBO_DRAWER && buf[0] != '\0')
-    {
-      if((data->dropPath = strdup(buf)))
+      char name[256];
+      ULONG type = ~0;
+
+      struct TagItem ti[] = { { WBOBJA_DrawerPath,      (ULONG)buf          },
+                              { WBOBJA_DrawerPathSize,  SIZE_PATHFILE       },
+                              { WBOBJA_Name,            (ULONG)name         },
+                              { WBOBJA_NameSize,        (ULONG)sizeof(name) },
+                              { WBOBJA_Type,            (ULONG)&type        },
+                              { TAG_DONE,               FALSE               } };
+
+      buf[0] = '\0';
+
+      // Note that we use WhichWorkbenchObjectA() and not WhichWorkbenchObject()
+      // because the latter wasn't implemented in workbench.library < 51.9
+      which = WhichWorkbenchObjectA(NULL, _screen(obj)->MouseX, _screen(obj)->MouseY, ti);
+      if(which == WBO_ICON)
       {
-        D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
-          
-        DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
+        if(type == WBDRAWER)
+          AddPart(buf, name, SIZE_PATHFILE);
+        else if(type == WBDISK)
+          snprintf(buf, SIZE_PATHFILE, "%s:", name);
+      
+        which = WBO_DRAWER;
       }
-    }
+    
+      if(which == WBO_DRAWER && buf[0] != '\0')
+      {
+        if((data->dropPath = strdup(buf)))
+        {
+          D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
+          
+          DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
+        }
+      }
+      else
+      {
+        W(DBF_GUI, "couldn't found drop point of attachment image");
+        DisplayBeep(_screen(obj));
+      }
 
-    free(buf);
+      free(buf);
+    }
+    else
+      W(DBF_GUI, "YAM is not running on workbench, skipping drop operation");
+
+    UnlockPubScreen(NULL, wbscreen);
   }
+
 #else
   // this stuff only works with Workbench v45+
   if(WorkbenchBase->lib_Version >= 45)
@@ -782,12 +798,18 @@ OVERLOAD(MUIM_DeleteDragImage)
             data->dropPath = selMsg.destName;
         }
 
-        D(DBF_GUI, "found dropPath: [%s]", data->dropPath ? data->dropPath : "n/a");
-
         // signal other listening for the DropPath that we
         // found out where to icon has dropped at exactly.
         if(data->dropPath)
+        {
+          D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
           DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
+        }
+        else
+        {
+          W(DBF_GUI, "couldn't found drop point of attachment image");
+          DisplayBeep(_screen(obj));
+        }
       }
     }
   }

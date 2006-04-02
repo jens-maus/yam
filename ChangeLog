@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-04-02  Jens Langner <Jens.Langner@light-speed.de>
+
+  * classes/AttachmentImage.c: fixed a bug in the Attachment Drag&Drop
+    operations where YAM did even perform a workbench drop operation in
+    case it was running on its on screen. Now it will skip that operation
+    instead.
+
 2006-04-01  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: replaced all strcat() uses by proper buffer-overflow safe
