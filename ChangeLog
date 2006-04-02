@@ -6,6 +6,10 @@ $Id$
 
 2006-04-02  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c, classes/WriteAttachemntList.c, classes/ReadWindow.c,
+    classes/AttachemnetGroup.c, classes/Recipientstring.c,
+    classes/Splashwindow.c: changed all DisplayBeep() uses to just work
+    on the Screen YAM is actually running wherever possible.
   * classes/AttachmentImage.c: fixed a bug in the Attachment Drag&Drop
     operations where YAM did even perform a workbench drop operation in
     case it was running on its on screen. Now it will skip that operation

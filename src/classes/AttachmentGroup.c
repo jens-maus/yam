@@ -824,7 +824,7 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
         MakeWorkbenchObjectVisibleA(filePathBuf, NULL);
     }
     else
-      DisplayBeep(NULL);
+      DisplayBeep(_screen(obj));
 
     BusyEnd();
 

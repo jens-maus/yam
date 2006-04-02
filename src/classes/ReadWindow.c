@@ -1141,13 +1141,13 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
 
         // beep if no folder with unread mails was found
         if(i > (int)*flist || i < 1)
-          DisplayBeep(NULL);
+          DisplayBeep(_screen(obj));
 
         free(flist);
       }
     }
     else
-      DisplayBeep(NULL);
+      DisplayBeep(_screen(obj));
   }
 
   // if we didn't find any next/previous mail (mail == NULL) then
@@ -1189,7 +1189,7 @@ DECLARE(FollowThread) // LONG direction
     DoMethod(obj, MUIM_ReadWindow_ReadMail, fmail);
   }
   else
-    DisplayBeep(0);
+    DisplayBeep(_screen(obj));
 
   return 0;
 }

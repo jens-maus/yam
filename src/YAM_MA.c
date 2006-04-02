@@ -2584,13 +2584,20 @@ MakeHook(MA_ChangeSubjectHook, MA_ChangeSubjectFunc);
 //  Displays 'About MUI' window
 HOOKPROTONHNONP(MA_AboutMUIFunc, void)
 {
-   static APTR muiwin = NULL;
+  static Object *muiwin = NULL;
 
-   if (!muiwin) muiwin = AboutmuiObject,
-      MUIA_Window_RefWindow, G->MA->GUI.WI,
+  if(!muiwin)
+  {
+    muiwin = AboutmuiObject,
+      MUIA_Window_RefWindow,     G->MA->GUI.WI,
       MUIA_Aboutmui_Application, G->App,
-   End;
-   if (muiwin) SafeOpenWindow(muiwin); else DisplayBeep(0);
+    End;
+  }
+
+  if(muiwin)
+    SafeOpenWindow(muiwin);
+  else
+    DisplayBeep(NULL);
 }
 MakeStaticHook(MA_AboutMUIHook, MA_AboutMUIFunc);
 
@@ -2607,7 +2614,7 @@ HOOKPROTONHNONP(MA_ShowAboutWindowFunc, void)
   if(G->AboutWinObject)
     SafeOpenWindow(G->AboutWinObject);
   else
-    DisplayBeep(0);
+    DisplayBeep(NULL);
 }
 MakeStaticHook(MA_ShowAboutWindowHook, MA_ShowAboutWindowFunc);
 

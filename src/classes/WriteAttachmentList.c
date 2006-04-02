@@ -140,7 +140,7 @@ OVERLOAD(MUIM_DragDrop)
       DoMethod(obj, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
     }
     else
-      DisplayBeep(NULL);
+      DisplayBeep(_screen(obj));
 
     BusyEnd();
     return 0;

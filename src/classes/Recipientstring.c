@@ -375,7 +375,8 @@ OVERLOAD(MUIM_HandleEvent)
               set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
             }
           }
-          else DisplayBeep(NULL);
+          else
+            DisplayBeep(_screen(obj));
 
           result = MUI_EventHandlerRC_Eat;
         }

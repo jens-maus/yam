@@ -470,7 +470,7 @@ DECLARE(PasswordRequest) // struct User *user
           break;
         }
 
-        DisplayBeep(NULL);
+        DisplayBeep(_screen(obj));
       }
       else if(ret == 2)
         break;
