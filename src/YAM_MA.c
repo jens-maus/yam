@@ -3147,7 +3147,7 @@ struct MA_ClassData *MA_New(void)
          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Project),
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_PROJECT_ABOUT), MMEN_ABOUT),
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_AboutMUI), MMEN_ABOUTMUI),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_PROJECT_CHECKVERSION), MMEN_VERSION),
+            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_UPDATECHECK), MMEN_VERSION),
             MUIA_Family_Child, data->GUI.MI_ERRORS = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_LastErrors), MUIA_Menuitem_Enabled, G->ER_NumErr > 0, MUIA_UserData, MMEN_ERRORS, End,
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_Restart), MMEN_LOGIN),

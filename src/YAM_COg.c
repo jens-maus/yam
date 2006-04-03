@@ -2294,6 +2294,12 @@ Object *CO_Page14(struct CO_ClassData *data)
 Object *CO_Page15(struct CO_ClassData *data)
 {
   Object *grp;
+  static char *updateInterval[4];
+
+  updateInterval[0] = GetStr(MSG_CO_UPDATE_DAILY);
+  updateInterval[1] = GetStr(MSG_CO_UPDATE_WEEKLY);
+  updateInterval[2] = GetStr(MSG_CO_UPDATE_MONTHLY);
+  updateInterval[3] = NULL;
 
   if((grp = VGroup,
       MUIA_HelpNode, "CO15",
@@ -2321,12 +2327,52 @@ Object *CO_Page15(struct CO_ClassData *data)
       End,
 
       Child, VGroup,
-        // more to come...
+        Child, VGroup, GroupFrameT(GetStr(MSG_CO_SOFTWAREUPDATE)),
+          Child, ColGroup(2),
+            Child, data->GUI.CH_UPDATECHECK = MakeCheck(GetStr(MSG_CO_SEARCHFORUPDATES)),
+            Child, HGroup,
+              Child, LLabel1(GetStr(MSG_CO_SEARCHFORUPDATES)),
+              Child, data->GUI.CY_UPDATEINTERVAL = MakeCycle(updateInterval, ""),
+              Child, HVSpace,
+            End,
+            Child, HVSpace,
+            Child, TextObject,
+              MUIA_Text_Contents, GetStr(MSG_CO_SEARCHFORUPDATESINFO),
+              MUIA_Font,          MUIV_Font_Tiny,
+            End,
+            Child, VSpace(10),
+            Child, VSpace(10),
+            Child, HVSpace,
+            Child, HGroup,
+              Child, data->GUI.BT_UPDATENOW = MakeButton(GetStr(MSG_CO_SEARCHNOW)),
+              Child, HVSpace,
+              Child, HVSpace,
+            End,
+          End,
+          Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+          End,
+          Child, ColGroup(3),
+            Child, LLabel1(GetStr(MSG_CO_LASTSEARCH)),
+            Child, data->GUI.TX_UPDATESTATUS = TextObject,
+              MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOCHECK),
+            End,
+            Child, HVSpace,
+            Child, HVSpace,
+            Child, data->GUI.TX_UPDATEDATE = TextObject,
+              MUIA_Text_Contents, "",
+            End,
+            Child, HVSpace,
+          End,
+        End,
         Child, HVSpace,
       End,
     End))
   {
+    nnset(data->GUI.CY_UPDATEINTERVAL, MUIA_Disabled, TRUE);
 
+    DoMethod(data->GUI.CH_UPDATECHECK, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.CY_UPDATEINTERVAL, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
   }
 
   return grp;

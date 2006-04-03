@@ -252,6 +252,11 @@ struct CO_GUIData
    Object *CH_WBAPPICON;
    Object *CH_DOCKYICON;
    Object *ST_DEFAULTCHARSET;
+   Object *CH_UPDATECHECK;
+   Object *CY_UPDATEINTERVAL;
+   Object *BT_UPDATENOW;
+   Object *TX_UPDATESTATUS;
+   Object *TX_UPDATEDATE;
 };
 
 struct CO_ClassData  /* configuration window */

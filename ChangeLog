@@ -6,6 +6,8 @@ $Id$
 
 2006-04-03  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c: added some first non-functional GUI elements for the new
+    upcoming update-check facility. more to come...
   * YAM_RE.c, classes/AttachmentGroup.c: fixed a bug in the 'SaveAll'
     attachment export routines, where YAM didn't allow to save all
     mail attachment parts if the mail in question just contained an

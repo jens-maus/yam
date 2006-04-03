@@ -4499,9 +4499,6 @@ Rexx script
 MSG_PROJECT_ABOUT (1298//)
 ?\000About...
 ;
-MSG_PROJECT_CHECKVERSION (1299//)
-Check version
-;
 MSG_FOLDER_NEWFOLDER (1300//)
 New folder...
 ;
@@ -5768,4 +5765,37 @@ How do you want to proceed?
 ;
 MSG_CO_AUTODSTWARN_BT (1661//)
 *_Change|Ignore _always|_Ignore
+;
+MSG_MA_UPDATECHECK (1662//)
+Check for updates...
+;
+MSG_CO_SOFTWAREUPDATE (1663//)
+Software Update
+;
+MSG_CO_UPDATE_DAILY (1664//)
+Daily
+;
+MSG_CO_UPDATE_WEEKLY (1665//)
+Weekly
+;
+MSG_CO_UPDATE_MONTHLY (1666//)
+Monthly
+;
+MSG_CO_SEARCHFORUPDATES (1667//)
+Search for _Updates:
+;
+MSG_CO_SEARCHFORUPDATESINFO (1668//)
+You will be notified as soon as updates are available.
+;
+MSG_CO_SEARCHNOW (1669//)
+Search _now
+;
+MSG_CO_LASTSEARCH (1670//)
+Last Search:
+;
+MSG_CO_LASTSTATUS_NOCHECK (1671//)
+No check performed yet.
+;
+MSG_CO_LASTSTATUS_NOUPDATE (1672//)
+New newer versions were found.
 ;
