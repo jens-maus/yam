@@ -684,7 +684,9 @@ DECLARE(SaveAll)
   GETDATA;
   struct Part *part = data->firstPart->Next;
 
-  if(part && part->Next)
+  SHOWPOINTER(DBF_MAIL, part);
+
+  if(part)
   {
     if(ReqFile(ASL_DETACH, _win(obj), GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, ""))
     {

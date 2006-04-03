@@ -6,6 +6,10 @@ $Id$
 
 2006-04-03  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c, classes/AttachmentGroup.c: fixed a bug in the 'SaveAll'
+    attachment export routines, where YAM didn't allow to save all
+    mail attachment parts if the mail in question just contained an
+    attachment as its major mail part.
   * YAM_TR.c: fixed a minor bug in the preselection window's display hook
     where all mail sizes > 0 were flagged as being highlighted due to a
     warning size even if it was set to zero in the configuration.

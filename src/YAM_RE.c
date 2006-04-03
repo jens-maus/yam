@@ -660,26 +660,34 @@ void RE_SaveAll(struct ReadMailData *rmData, char *path)
 {
   char *dest;
 
+  ENTER();
+
   if((dest = calloc(1, strlen(path)+SIZE_DEFAULT+1)))
   {
     struct Part *part;
     char fname[SIZE_DEFAULT];
 
-    for(part = rmData->firstPart->Next->Next; part; part = part->Next)
+    for(part = rmData->firstPart->Next; part; part = part->Next)
     {
-      if(*part->Name)
-        strlcpy(fname, part->Name, sizeof(fname));
-      else
-        snprintf(fname, sizeof(fname), "%s-%d", rmData->mail->MailFile, part->Nr);
+      // we skip the part which is considered the letterPart
+      if(part->Nr != rmData->letterPartNum)
+      {
+        if(*part->Name)
+          strlcpy(fname, part->Name, sizeof(fname));
+        else
+          snprintf(fname, sizeof(fname), "%s-%d", rmData->mail->MailFile, part->Nr);
 
-      strmfp(dest, path, fname);
+        strmfp(dest, path, fname);
 
-      RE_DecodePart(part);
-      RE_Export(rmData, part->Filename, dest, part->Name, part->Nr, FALSE, FALSE, part->ContentType);
+        RE_DecodePart(part);
+        RE_Export(rmData, part->Filename, dest, part->Name, part->Nr, FALSE, FALSE, part->ContentType);
+      }
     }
 
     free(dest);
   }
+
+  LEAVE();
 }
 ///
 /// RE_GetAddressFromLog
