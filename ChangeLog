@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-04-03  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: fixed a minor bug in the preselection window's display hook
+    where all mail sizes > 0 were flagged as being highlighted due to a
+    warning size even if it was set to zero in the configuration.
+
 2006-04-02  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c, classes/WriteAttachemntList.c, classes/ReadWindow.c,

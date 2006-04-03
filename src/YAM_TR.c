@@ -1934,7 +1934,7 @@ static void TR_DisplayMailList(BOOL largeonly)
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
       struct Mail *mail = mtn->mail;
 
-      if(mail->Size >= C->WarnSize<<10 || !largeonly)
+      if(mail->Size >= C->WarnSize*1024 || !largeonly)
       {
         mtn->position = pos++;
 
@@ -1987,7 +1987,7 @@ static BOOL TR_GetMessageList_GET(void)
             mode = (C->DownloadLarge ? 1 : 0) +
                    (C->P3[G->TR->POP_Nr]->DeleteOnServer ? 2 : 0) +
                    (G->TR->GUIlevel == POP_USER ? 4 : 0) +
-                   ((C->WarnSize && newMail->Size >= (C->WarnSize<<10)) ? 8 : 0);
+                   ((C->WarnSize && newMail->Size >= (C->WarnSize*1024)) ? 8 : 0);
 
             // allocate a new MailTransferNode and add it to our
             // new transferlist
@@ -2385,7 +2385,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
                     struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
                     struct Mail *mail = mtn->mail;
 
-                    if(mail->Size >= C->WarnSize<<10)
+                    if(mail->Size >= C->WarnSize*1024)
                     {
                       preselect = TRUE;
                       break;
@@ -4690,7 +4690,7 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
       strlcat(dispsta, SICON_DELETE, sizeof(dispsta));
 
     // size display
-    if(mail->Size >= C->WarnSize<<10)
+    if(C->WarnSize > 0 && mail->Size >= C->WarnSize*1024)
     {
       strlcpy(array[1] = dispsiz, MUIX_PH, sizeof(dispsiz));
       FormatSize(mail->Size, dispsiz+strlen(dispsiz));
