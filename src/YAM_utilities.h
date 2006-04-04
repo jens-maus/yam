@@ -87,6 +87,31 @@ struct NewToolbarEntry
   Object *help;
 };
 
+// since the Amiga's timeval structure was renamed to
+// "struct TimeVal" in OS4 (to prevent clashes with the POSIX one)
+// we require to define that slightly compatible structure on our
+// own in case we compile YAM for something else than OS4
+#if !defined(__amigaos4__)
+struct TimeVal
+{
+  ULONG Seconds;
+  ULONG Microseconds;
+};
+
+struct TimeRequest
+{
+  struct IORequest Request;
+  struct TimeVal   Time;
+};
+
+#define TIMEVAL(x)  (struct timeval *)(x)
+
+#else
+
+#define TIMEVAL(x)  (x)
+
+#endif
+
 // Library open/close macros
 #if defined(__amigaos4__)
 #define INITLIB(lname, v, r, lbase, iname, ibase, req, url)  (InitLib((lname), (v), (r), (APTR)(lbase), (iname), (APTR)(ibase), (req), (url)))
@@ -249,12 +274,12 @@ BOOL     CreateDirectory(char *dir);
 long     DateStamp2Long(struct DateStamp *date);
 int      TZtoMinutes(char *tzone);
 void     DateStampUTC(struct DateStamp *ds);
-void     GetSysTimeUTC(struct timeval *tv);
-void     TimeValTZConvert(struct timeval *tv, enum TZConvert tzc);
+void     GetSysTimeUTC(struct TimeVal *tv);
+void     TimeValTZConvert(struct TimeVal *tv, enum TZConvert tzc);
 void     DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc);
-void     TimeVal2DateStamp(const struct timeval *tv, struct DateStamp *ds, enum TZConvert tzc);
-void     DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv, enum TZConvert tzc);
-BOOL     TimeVal2String(char *dst, const struct timeval *tv, enum DateStampType mode, enum TZConvert tzc);
+void     TimeVal2DateStamp(const struct TimeVal *tv, struct DateStamp *ds, enum TZConvert tzc);
+void     DateStamp2TimeVal(const struct DateStamp *ds, struct TimeVal *tv, enum TZConvert tzc);
+BOOL     TimeVal2String(char *dst, const struct TimeVal *tv, enum DateStampType mode, enum TZConvert tzc);
 BOOL     DateStamp2String(char *dst, struct DateStamp *date, enum DateStampType mode, enum TZConvert tzc);
 BOOL     DateStamp2RFCString(char *dst, struct DateStamp *date, int timeZone, BOOL convert);
 char *   Decrypt(char *source);

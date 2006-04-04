@@ -41,7 +41,7 @@ struct Data
   Object *NL_SEARCHOPTIONS;
   Object *ST_SEARCHSTRING;
   Object *BT_CLEARBUTTON;
-  struct timeval last_statusupdate;
+  struct TimeVal last_statusupdate;
 };
 */
 
@@ -63,7 +63,7 @@ enum ViewOptions { VO_ALL=0, VO_UNREAD, VO_NEW, VO_MARKED, VO_IMPORTANT, VO_LAST
 // function to actually check if a struct Mail* matches
 // the currently active criteria
 static inline BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
-                             enum SearchOptions so, char* searchString, struct timeval* curTimeUTC)
+                             enum SearchOptions so, char* searchString, struct TimeVal* curTimeUTC)
 {
   BOOL foundMatch = FALSE;
 
@@ -98,13 +98,13 @@ static inline BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
     // check if the mail is not older than 5 days (taken from the receive date)
     case VO_LAST5DAYS:
     {
-      struct timeval now;
+      struct TimeVal now;
 
-      memcpy(&now, curTimeUTC, sizeof(struct timeval));
-      SubTime(&now, &mail->transDate);
+      memcpy(&now, curTimeUTC, sizeof(struct TimeVal));
+      SubTime(TIMEVAL(&now), TIMEVAL(&mail->transDate));
 
       // check if after subtime now is <= 5 days
-      foundMatch = (now.tv_secs <= (5*24*60*60));
+      foundMatch = (now.Seconds <= (5*24*60*60));
     }
     break;
 
@@ -550,7 +550,7 @@ DECLARE(ProcessSearch)
     enum SearchOptions searchOption = xget(data->NL_SEARCHOPTIONS, MUIA_NList_Active);
     char* searchString = (char*)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
     BOOL foundMatch = FALSE;
-    struct timeval curTimeUTC;
+    struct TimeVal curTimeUTC;
 
     // get the current time in UTC
     GetSysTimeUTC(&curTimeUTC);
@@ -604,7 +604,7 @@ DECLARE(MatchMail) // struct Mail* mail
   enum ViewOptions viewOption = xget(data->CY_VIEWOPTIONS, MUIA_Cycle_Active);
   enum SearchOptions searchOption = xget(data->NL_SEARCHOPTIONS, MUIA_NList_Active);
   char* searchString = (char*)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
-  struct timeval curTimeUTC;
+  struct TimeVal curTimeUTC;
 
   // get the current time in UTC
   GetSysTimeUTC(&curTimeUTC);
@@ -662,24 +662,24 @@ DECLARE(UpdateStats) // ULONG force
   if(msg->force == FALSE)
   {
     // now we check that we don't update the text too often
-    struct timeval now;
+    struct TimeVal now;
 
     // then we update the gauge, but we take also care of not refreshing
     // it too often or otherwise it slows down the whole search process.
-    GetSysTime(&now);
-    if(-CmpTime(&now, &data->last_statusupdate) > 0)
+    GetSysTime(TIMEVAL(&now));
+    if(-CmpTime(TIMEVAL(&now), TIMEVAL(&data->last_statusupdate)) > 0)
     {
-      struct timeval delta;
+      struct TimeVal delta;
 
       // how much time has passed exactly?
-      memcpy(&delta, &now, sizeof(struct timeval));
-      SubTime(&delta, &data->last_statusupdate);
+      memcpy(&delta, &now, sizeof(struct TimeVal));
+      SubTime(TIMEVAL(&delta), TIMEVAL(&data->last_statusupdate));
 
       // update the display at least twice a second
-      if(delta.tv_secs > 0 || delta.tv_micro > 250000)
+      if(delta.Seconds > 0 || delta.Microseconds > 250000)
       {
         doUpdate = TRUE;
-        memcpy(&data->last_statusupdate, &now, sizeof(struct timeval));
+        memcpy(&data->last_statusupdate, &now, sizeof(struct TimeVal));
       }
     }
 

@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-04-04  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: changed all "struct timeval" uses by "struct TimeVal" and
+    introduced an own definition of it to YAM_utilities.h. That way future
+    clashes of the POSIX' "timeval" and the new AmigaOS' "TimeVal" should
+    be prevented and make it now possible to compile for clib2 and newlib
+    out-of-the-box.
+
 2006-04-03  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c: added some first non-functional GUI elements for the new

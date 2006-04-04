@@ -615,8 +615,8 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
    struct Mail *mail;
    APTR ga = gui->GA_PROGRESS;
    struct Search search;
-   struct timeval now;
-   struct timeval last;
+   struct TimeVal now;
+   struct TimeVal last;
 
    // by default we don`t dispose on end
    G->FI->DisposeOnEnd = FALSE;
@@ -661,7 +661,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
 
    set(gui->GR_PAGE, MUIA_Group_ActivePage, 1);
 
-   memset(&last, 0, sizeof(struct timeval));
+   memset(&last, 0, sizeof(struct TimeVal));
 
    for (i = 0; i < sfonum && !G->FI->Abort; i++)
    {
@@ -678,24 +678,24 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
 
          // then we update the gauge, but we take also care of not refreshing
          // it too often or otherwise it slows down the whole search process.
-         GetSysTime(&now);
-         if(-CmpTime(&now, &last) > 0)
+         GetSysTime(TIMEVAL(&now));
+         if(-CmpTime(TIMEVAL(&now), TIMEVAL(&last)) > 0)
          {
-            struct timeval delta;
+            struct TimeVal delta;
 
             // how much time has passed exactly?
-            memcpy(&delta, &now, sizeof(struct timeval));
-            SubTime(&delta, &last);
+            memcpy(&delta, &now, sizeof(struct TimeVal));
+            SubTime(TIMEVAL(&delta), TIMEVAL(&last));
 
             // update the display at least twice a second
-            if(delta.tv_secs > 0 || delta.tv_micro > 250000)
+            if(delta.Seconds > 0 || delta.Microseconds > 250000)
             {
               set(ga, MUIA_Gauge_Current, progress);
 
               // signal the application to update now
               DoMethod(G->App, MUIM_Application_InputBuffered);
 
-              memcpy(&last, &now, sizeof(struct timeval));
+              memcpy(&last, &now, sizeof(struct TimeVal));
             }
 
          }

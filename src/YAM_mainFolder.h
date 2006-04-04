@@ -47,7 +47,7 @@ struct Mail
    int              position;   // current position of the mail (various uses)
    int              tzone;      // the timezone which this mail is based on
    struct DateStamp Date;       // the datestamp of the mail (UTC)
-   struct timeval   transDate;  // the date/time when this messages arrived/was sent. (UTC)
+   struct TimeVal   transDate;  // the date/time when this messages arrived/was sent. (UTC)
    struct Person    From;       // The sender of the mail
    struct Person    To;         // The mail recipient of the mail
    struct Person    ReplyTo;    // ReplyTo address of the mail

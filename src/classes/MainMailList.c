@@ -136,7 +136,7 @@ static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
 
     case 7:
     {
-      return CmpTime(&entry2->transDate, &entry1->transDate);
+      return CmpTime(TIMEVAL(&entry2->transDate), TIMEVAL(&entry1->transDate));
     }
     break;
 
@@ -298,7 +298,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 
       // we first copy the Date Received/sent because this would probably be not
       // set by all ppl and strcpy() is costy ;)
-      if((C->MessageCols & (1<<7) && entry->transDate.tv_secs > 0) || searchWinHook)
+      if((C->MessageCols & (1<<7) && entry->transDate.Seconds > 0) || searchWinHook)
       {
         static char datstr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
         TimeVal2String(datstr, &entry->transDate, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);

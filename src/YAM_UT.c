@@ -2421,21 +2421,21 @@ void DateStampUTC(struct DateStamp *ds)
 ///
 /// GetSysTimeUTC
 //  gets the actual system time in UTC
-void GetSysTimeUTC(struct timeval *tv)
+void GetSysTimeUTC(struct TimeVal *tv)
 {
-  GetSysTime(tv);
+  GetSysTime(TIMEVAL(tv));
   TimeValTZConvert(tv, TZC_UTC);
 }
 ///
 /// TimeValTZConvert
 //  converts a supplied timeval depending on the TZConvert flag to be converted
 //  to/from UTC
-void TimeValTZConvert(struct timeval *tv, enum TZConvert tzc)
+void TimeValTZConvert(struct TimeVal *tv, enum TZConvert tzc)
 {
   if(tzc == TZC_LOCAL)
-    tv->tv_secs += (C->TimeZone+C->DaylightSaving*60)*60;
+    tv->Seconds += (C->TimeZone+C->DaylightSaving*60)*60;
   else if(tzc == TZC_UTC)
-    tv->tv_secs -= (C->TimeZone+C->DaylightSaving*60)*60;
+    tv->Seconds -= (C->TimeZone+C->DaylightSaving*60)*60;
 }
 ///
 /// DateStampTZConvert
@@ -2454,14 +2454,14 @@ void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc)
 }
 ///
 /// TimeVal2DateStamp
-//  converts a struct timeval to a struct DateStamp
-void TimeVal2DateStamp(const struct timeval *tv, struct DateStamp *ds, enum TZConvert tzc)
+//  converts a struct TimeVal to a struct DateStamp
+void TimeVal2DateStamp(const struct TimeVal *tv, struct DateStamp *ds, enum TZConvert tzc)
 {
-  LONG seconds = (tv->tv_secs+tv->tv_micro/1000000);
+  LONG seconds = (tv->Seconds+(tv->Microseconds/1000000));
 
   ds->ds_Days   = seconds/86400;       // calculate the days since 1.1.1978
   ds->ds_Minute = (seconds%86400)/60;
-  ds->ds_Tick   = (tv->tv_secs%60)*TICKS_PER_SECOND + (tv->tv_micro/20000);
+  ds->ds_Tick   = (tv->Seconds%60)*TICKS_PER_SECOND + (tv->Microseconds/20000);
 
   // if we want to convert from/to UTC we need to do this now
   if(tzc != TZC_NONE)
@@ -2469,16 +2469,16 @@ void TimeVal2DateStamp(const struct timeval *tv, struct DateStamp *ds, enum TZCo
 }
 ///
 /// DateStamp2TimeVal
-//  converts a struct DateStamp to a struct timeval
-void DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv, enum TZConvert tzc)
+//  converts a struct DateStamp to a struct TimeVal
+void DateStamp2TimeVal(const struct DateStamp *ds, struct TimeVal *tv, enum TZConvert tzc)
 {
   // check if the ptrs are set or not.
   if(ds == NULL || tv == NULL)
     return;
 
   // creates wrong timevals from DateStamps with year >= 2114 ...
-  tv->tv_secs = (ds->ds_Days*24*60 + ds->ds_Minute)*60 + ds->ds_Tick/TICKS_PER_SECOND;
-  tv->tv_micro = (ds->ds_Tick % TICKS_PER_SECOND) * 1000000/TICKS_PER_SECOND;
+  tv->Seconds = (ds->ds_Days*24*60 + ds->ds_Minute)*60 + ds->ds_Tick/TICKS_PER_SECOND;
+  tv->Microseconds = (ds->ds_Tick % TICKS_PER_SECOND) * 1000000/TICKS_PER_SECOND;
 
   // if we want to convert from/to UTC we need to do this now
   if(tzc != TZC_NONE)
@@ -2487,7 +2487,7 @@ void DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv, enum TZCo
 ///
 /// TimeVal2String
 //  Converts a timeval structure to a string with using DateStamp2String after a convert
-BOOL TimeVal2String(char *dst, const struct timeval *tv, enum DateStampType mode, enum TZConvert tzc)
+BOOL TimeVal2String(char *dst, const struct TimeVal *tv, enum DateStampType mode, enum TZConvert tzc)
 {
    struct DateStamp ds;
 
@@ -4368,7 +4368,7 @@ void Busy(char *text, char *parameter, int cur, int max)
 {
    // we can have different busy levels (defined BUSYLEVEL)
    static char infotext[BUSYLEVEL][SIZE_DEFAULT];
-   static struct timeval last_move;
+   static struct TimeVal last_move;
 
    if(text)
    {
@@ -4393,7 +4393,7 @@ void Busy(char *text, char *parameter, int cur, int max)
             DoMethod(G->SplashWinObject, MUIM_Splashwindow_StatusChange, infotext[BusyLevel], -1);
             DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, progressText, cur, max);
 
-            GetSysTime(&last_move);
+            GetSysTime(TIMEVAL(&last_move));
           }
         }
         else
@@ -4439,24 +4439,24 @@ void Busy(char *text, char *parameter, int cur, int max)
 
         if(G->InStartupPhase)
         {
-          struct timeval now;
+          struct TimeVal now;
 
           // then we update the gauge, but we take also care of not refreshing
           // it too often or otherwise it slows down the whole search process.
-          GetSysTime(&now);
-          if(-CmpTime(&now, &last_move) > 0)
+          GetSysTime(TIMEVAL(&now));
+          if(-CmpTime(TIMEVAL(&now), TIMEVAL(&last_move)) > 0)
           {
-            struct timeval delta;
+            struct TimeVal delta;
 
             // how much time has passed exactly?
-            memcpy(&delta, &now, sizeof(struct timeval));
-            SubTime(&delta, &last_move);
+            memcpy(&delta, &now, sizeof(struct TimeVal));
+            SubTime(TIMEVAL(&delta), TIMEVAL(&last_move));
 
             // update the display at least twice a second
-            if(delta.tv_secs > 0 || delta.tv_micro > 250000)
+            if(delta.Seconds > 0 || delta.Microseconds > 250000)
             {
               DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, NULL, cur, -1);
-              memcpy(&last_move, &now, sizeof(struct timeval));
+              memcpy(&last_move, &now, sizeof(struct TimeVal));
             }
           }
         }

@@ -118,7 +118,7 @@ struct Args
 // TimerIO structures we use
 struct TC_Request
 {
-  struct timerequest *tr; // pointer to the timerequest
+  struct TimeRequest *tr; // pointer to the timerequest
   BOOL isRunning;         // if the request is currenty active/running
   BOOL isPrepared;        // if the request is prepared to get fired
 };
@@ -154,12 +154,12 @@ static void TC_Prepare(enum TimerIO tio, int seconds, int micros)
 
     if(timer->isRunning == FALSE && timer->isPrepared == FALSE)
     {
-      struct timerequest *tr = timer->tr;
+      struct TimeRequest *tr = timer->tr;
 
       // issue a new timerequest
-      tr->tr_node.io_Command = TR_ADDREQUEST;
-      tr->tr_time.tv_secs    = seconds;
-      tr->tr_time.tv_micro   = micros;
+      tr->Request.io_Command  = TR_ADDREQUEST;
+      tr->Time.Seconds        = seconds;
+      tr->Time.Microseconds   = micros;
 
       // flag the timer to be prepared to get fired later on
       timer->isPrepared = TRUE;
@@ -191,8 +191,8 @@ static void TC_Start(enum TimerIO tio)
 
     D(DBF_TIMERIO, "timer[%ld]: started @ %s to finish in %ld'%ld secs", tio,
                                                                          dateString,
-                                                                         timer->tr->tr_time.tv_secs,
-                                                                         timer->tr->tr_time.tv_micro);
+                                                                         timer->tr->Time.Seconds,
+                                                                         timer->tr->Time.Microseconds);
     #endif
 
     // fire the timer by doing a SendIO()
@@ -279,12 +279,12 @@ static void TC_Exit(void)
       TC_Stop(i);
 
     // then close the device
-    if(TCData.timer[0].tr->tr_node.io_Device != NULL)
+    if(TCData.timer[0].tr->Request.io_Device != NULL)
     {
       // drop the OS4 Interface of the TimerBase
       DROPINTERFACE(ITimer);
 
-      CloseDevice(&TCData.timer[0].tr->tr_node);
+      CloseDevice(&TCData.timer[0].tr->Request);
     }
 
     // and then we delete the IO requests
@@ -295,14 +295,14 @@ static void TC_Exit(void)
         #if defined(__amigaos4__)
         FreeSysObject(ASOT_IOREQUEST, TCData.timer[i].tr);
         #else
-        FreeMem(TCData.timer[i].tr, sizeof(struct timerequest));
+        FreeMem(TCData.timer[i].tr, sizeof(struct TimeRequest));
         #endif
 
         TCData.timer[i].tr = NULL;
       }
     }
 
-    DeleteIORequest(&TCData.timer[0].tr->tr_node);
+    DeleteIORequest(&TCData.timer[0].tr->Request);
     TCData.timer[0].tr = NULL;
   }
 
@@ -330,13 +330,13 @@ static BOOL TC_Init(void)
   if((TCData.port = CreateMsgPort()))
   {
     // create the TimerIOs now
-    if((TCData.timer[0].tr = (struct timerequest *)CreateIORequest(TCData.port, sizeof(struct timerequest))))
+    if((TCData.timer[0].tr = (struct TimeRequest *)CreateIORequest(TCData.port, sizeof(struct TimeRequest))))
     {
       // then open the device
-      if(!OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.timer[0].tr->tr_node, 0L))
+      if(!OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.timer[0].tr->Request, 0L))
       {
         // needed to get GetSysTime() working
-        if((TimerBase = (APTR)TCData.timer[0].tr->tr_node.io_Device) &&
+        if((TimerBase = (APTR)TCData.timer[0].tr->Request.io_Device) &&
            GETINTERFACE("main", ITimer, TimerBase))
         {
           int i;
@@ -348,19 +348,19 @@ static BOOL TC_Init(void)
             // on OS4 we use AllocSysObjectTags to give the OS a better chance to
             // free the data in case YAM crashes
             if(!(TCData.timer[i].tr = AllocSysObjectTags(ASOT_IOREQUEST,
-                                                         ASOIOR_Size,      sizeof(struct timerequest),
+                                                         ASOIOR_Size,      sizeof(struct TimeRequest),
                                                          ASOIOR_ReplyPort, TCData.port,
                                                          TAG_DONE)))
             {
               break;
             }
             #else
-            if(!(TCData.timer[i].tr = AllocMem(sizeof(struct timerequest), MEMF_PUBLIC)))
+            if(!(TCData.timer[i].tr = AllocMem(sizeof(struct TimeRequest), MEMF_PUBLIC)))
               break;
             #endif
 
             // copy the data of timerIO[0] to the new one
-            CopyMem(TCData.timer[0].tr, TCData.timer[i].tr, sizeof(struct timerequest));
+            CopyMem(TCData.timer[0].tr, TCData.timer[i].tr, sizeof(struct TimeRequest));
           }
         }
       }
@@ -2326,7 +2326,7 @@ int main(int argc, char **argv)
             // check for a TimerIO event
             if(signals & timsig)
             {
-              struct timerequest *timeReq;
+              struct TimeRequest *timeReq;
               BOOL processed = FALSE;
 
               #if defined(DEBUG)
@@ -2337,7 +2337,7 @@ int main(int argc, char **argv)
               #endif
 
               // check if we have a waiting message
-              while((timeReq = (struct timerequest *)GetMsg(TCData.port)))
+              while((timeReq = (struct TimeRequest *)GetMsg(TCData.port)))
               {
                 int i;
 

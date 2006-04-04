@@ -77,7 +77,7 @@ struct TransStat
    ULONG Size_Curr;
    ULONG Size_Curr_Max;
    ULONG Clock_Start;
-   struct timeval Clock_Last;
+   struct TimeVal Clock_Last;
 };
 
 #define TS_SETMAX (-1)
@@ -1099,12 +1099,12 @@ static int TR_Connect(char *host, int port)
 
   if(C->SocketOptions.SendTimeOut > -1)
   {
-    struct timeval tv;
+    struct TimeVal tv;
 
-    tv.tv_secs  = C->SocketOptions.SendTimeOut;
-    tv.tv_micro = 0;
+    tv.Seconds = C->SocketOptions.SendTimeOut;
+    tv.Microseconds = 0;
 
-    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(struct timeval)) == -1)
+    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(struct TimeVal)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_SNDTIMEO) error");
       ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDTIMEO");
@@ -1113,12 +1113,12 @@ static int TR_Connect(char *host, int port)
 
   if(C->SocketOptions.RecvTimeOut > -1)
   {
-    struct timeval tv;
+    struct TimeVal tv;
 
-    tv.tv_secs  = C->SocketOptions.RecvTimeOut;
-    tv.tv_micro = 0;
+    tv.Seconds = C->SocketOptions.RecvTimeOut;
+    tv.Microseconds = 0;
 
-    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct timeval)) == -1)
+    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct TimeVal)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_RCVTIMEO) error");
       ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVTIMEO");
@@ -1129,8 +1129,8 @@ static int TR_Connect(char *host, int port)
   #ifdef DEBUG
   {
     LONG optlen = sizeof(optval);
-    struct timeval tv;
-    LONG tvlen = sizeof(struct timeval);
+    struct TimeVal tv;
+    LONG tvlen = sizeof(struct TimeVal);
 
     D(DBF_NET, "Opened socket: %lx", G->TR_Socket);
 
@@ -1156,10 +1156,10 @@ static int TR_Connect(char *host, int port)
     D(DBF_NET, "SO_RCVLOWAT...: %ld", optval);
 
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, &tvlen);
-    D(DBF_NET, "SO_SNDTIMEO...: %ld", tv.tv_secs);
+    D(DBF_NET, "SO_SNDTIMEO...: %ld", tv.Seconds);
 
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, &tvlen);
-    D(DBF_NET, "SO_RCVTIMEO...: %ld", tv.tv_secs);
+    D(DBF_NET, "SO_RCVTIMEO...: %ld", tv.Seconds);
   }
   #endif
 
@@ -2746,8 +2746,8 @@ static void TR_TransStat_Start(struct TransStat *ts)
    ts->Msgs_Done = ts->Size_Done = 0;
 
    // get the actual time we started the TransferStatus
-   GetSysTime(&ts->Clock_Last);
-   ts->Clock_Start = ts->Clock_Last.tv_secs;
+   GetSysTime(TIMEVAL(&ts->Clock_Last));
+   ts->Clock_Start = ts->Clock_Last.Seconds;
 
    SPrintF(G->TR->CountLabel, GetStr(MSG_TR_MessageGauge), "%ld", ts->Msgs_Tot);
    SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
@@ -2766,7 +2766,7 @@ static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, L
    if(!xget(G->TR->GUI.WI, MUIA_Window_Open)) return;
 
    // get the new time since the last nextmsg start
-   GetSysTime(&ts->Clock_Last);
+   GetSysTime(TIMEVAL(&ts->Clock_Last));
 
    // if we have a preselection window, update it.
    if(G->TR->GUI.GR_LIST && listpos >= 0)
@@ -2789,7 +2789,7 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
 {
    if(size_incr > 0)
    {
-     struct timeval now;
+     struct TimeVal now;
 
      ts->Size_Curr += size_incr;
      ts->Size_Done += size_incr;
@@ -2800,19 +2800,19 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
      // now we check if should really update our
      // transfer display or if it will be overkill
      // we shouldn`t update it more than twice a second.
-     GetSysTime(&now);
-     if(-CmpTime(&now, &ts->Clock_Last) > 0)
+     GetSysTime(TIMEVAL(&now));
+     if(-CmpTime(TIMEVAL(&now), TIMEVAL(&ts->Clock_Last)) > 0)
      {
-        struct timeval delta;
+        struct TimeVal delta;
 
         // how much time has passed exactly?
         delta = now;
-        SubTime(&delta, &ts->Clock_Last);
+        SubTime(TIMEVAL(&delta), TIMEVAL(&ts->Clock_Last));
 
         // update the display at least twice a second
-        if(delta.tv_secs > 0 || delta.tv_micro > 250000)
+        if(delta.Seconds > 0 || delta.Microseconds > 250000)
         {
-           ULONG deltatime = now.tv_secs - ts->Clock_Start;
+           ULONG deltatime = now.Seconds - ts->Clock_Start;
            ULONG speed = 0;
            LONG remclock = 0;
 
@@ -2840,7 +2840,7 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
    }
    else if(size_incr == TS_SETMAX)
    {
-     struct timeval now;
+     struct TimeVal now;
      ULONG deltatime;
      ULONG speed = 0;
      LONG remclock = 0;
@@ -2851,8 +2851,8 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
      if(!xget(G->TR->GUI.WI, MUIA_Window_Open)) return;
 
      // we make sure that we, at least update the gauge at the end
-     GetSysTime(&now);
-     deltatime = now.tv_secs - ts->Clock_Start;
+     GetSysTime(TIMEVAL(&now));
+     deltatime = now.Seconds - ts->Clock_Start;
 
      // first we calculate the speed in bytes/sec
      // to display to the user

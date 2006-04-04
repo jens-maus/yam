@@ -83,7 +83,7 @@ struct ComprMail
 {
    char             mailFile[SIZE_MFILE]; // mail filename without path
    struct DateStamp date;                 // the creation date of the mail (UTC)
-   struct timeval   transDate;            // the received/sent date with ms (UTC)
+   struct TimeVal   transDate;            // the received/sent date with ms (UTC)
    unsigned int     sflags;               // mail status flags
    unsigned int     mflags;               // general mail flags
    unsigned long    cMsgID;               // compressed MessageID
@@ -838,16 +838,16 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
 
   if(dateFilePart[0] == '\0')
   {
-    struct timeval newDate;
+    struct TimeVal newDate;
 
     // so we don't seem to have a transfer Date in the file comment.
     // What we do now is that we take the date from the original file
     // (the first 5 numerical numbers are the days)
-    newDate.tv_secs  = atol(filename) * 24 * 60 * 60;
-    newDate.tv_micro = 0;
+    newDate.Seconds = atol(filename) * 24 * 60 * 60;
+    newDate.Microseconds = 0;
 
     // encode this date as a base64 encoded string
-    base64encode(dateFilePart, (unsigned char *)&newDate, sizeof(struct timeval));
+    base64encode(dateFilePart, (unsigned char *)&newDate, sizeof(struct TimeVal));
   }
 
   // as the dateFilePart may contain slashes "/" we have to replace them
@@ -994,7 +994,7 @@ char *MA_NewMailFile(struct Folder *folder, char *mailfile)
   char newFileName[SIZE_MFILE];
   char *folderDir = GetFolderDir(folder);
   char *ptr;
-  struct timeval curDate;
+  struct TimeVal curDate;
   int mCounter = 0;
 
   // take the current time and use it as the datePart of the
@@ -1002,7 +1002,7 @@ char *MA_NewMailFile(struct Folder *folder, char *mailfile)
   GetSysTimeUTC(&curDate);
 
   // encode this date as a base64 encoded string
-  base64encode(dateFilePart, (unsigned char *)&curDate, sizeof(struct timeval));
+  base64encode(dateFilePart, (unsigned char *)&curDate, sizeof(struct TimeVal));
 
   // as the dateFilePart may contain slashes "/" we have to replace them
   // with "-" chars to don't drive the filesystem crazy :)
@@ -1315,7 +1315,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
    {
       char *ptr;
       char dateFilePart[12+1];
-      char timebuf[sizeof(struct timeval)+1]; // +1 because the b64decode does set a NUL byte
+      char timebuf[sizeof(struct TimeVal)+1]; // +1 because the b64decode does set a NUL byte
       struct MinNode *curNode = headerList.mlh_Head;
 
       // Now we process the read header to set all flags accordingly
@@ -1557,14 +1557,14 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
           // if we weren`t able to decode the base64 encoded string
           // we have to validate the transDate so that the calling function
           // recognizes to rewrite the comment with a valid string.
-          mail->transDate.tv_secs  = 0;
-          mail->transDate.tv_micro = 0;
+          mail->transDate.Seconds      = 0;
+          mail->transDate.Microseconds = 0;
         }
         else
         {
           // everything seems to have worked so lets copy the binary data in our
           // transDate structure
-          memcpy(&mail->transDate, timebuf, sizeof(struct timeval));
+          memcpy(&mail->transDate, timebuf, sizeof(struct TimeVal));
         }
 
         // now grab the status out of the end of the mailfilename
@@ -1628,7 +1628,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
       // if we didn't find a Date: header we take the transfered date (if found)
       if(dateFound == FALSE)
       {
-        if(mail->transDate.tv_secs > 0)
+        if(mail->transDate.Seconds > 0)
         {
           // convert the UTC transDate to a UTC mail Date
           TimeVal2DateStamp(&mail->transDate, &mail->Date, TZC_NONE);
@@ -1892,7 +1892,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
                   // if this new mail hasn`t got a valid transDate we have to check if we
                   // have to take the fileDate as a fallback value.
-                  if(newMail->transDate.tv_secs == 0)
+                  if(newMail->transDate.Seconds == 0)
                   {
                     // only if it is _not_ a "waitforsend" and "hold" message we can take the fib_Date
                     // as the fallback
