@@ -6,6 +6,9 @@ $Id$
 
 2006-04-10  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c: fixed bug #1464538 where upon editing a mail in the outgoing
+    folder lead to always stripping the very last linefeed character and
+    therefore malformed the original mail.
   * YAM_MI.c: fixed a bug in the strippedCharsetName() function where we did
     truncate the charset name under certain situations.
   * YAM_UT.c: added proper "SYS_Error" specifications to all our SystemTags()

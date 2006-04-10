@@ -1077,9 +1077,8 @@ int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
               int msglen = strlen(cmsg);
 
               // we check whether cmsg contains any text and if so we
-              // have to take care that the leading newline isn't written to the
-              // file as ReadInMessage() always puts a newline at the end of cmsg!
-              if(msglen <= 1 || fwrite(cmsg, msglen-1, 1, out) == 1)
+              // write out the whole text to our temporary file.
+              if(msglen == 0 || fwrite(cmsg, msglen, 1, out) == 1)
               {
                 // free our temp text now
                 free(cmsg);
