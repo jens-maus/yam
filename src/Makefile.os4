@@ -47,7 +47,7 @@ GENCLASSES= $(EXTRASRC)/genclasses
 OBJDIR    = .obj_os4
 
 # Compiler/Linker flags
-CRT      = clib2
+CRT      = newlib
 CPU      = -mcpu=604e
 CPUFLAGS = -mmultiple -Wa,-mregnames
 CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" \

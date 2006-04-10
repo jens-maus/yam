@@ -6,6 +6,10 @@ $Id$
 
 2006-04-10  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Makefile.os4: set 'newlib' as the new default C runtime library for the
+    native OS4 builds. Future versions of YAM for OS4 will expliclitly use
+    newlib.library instead of clib2 from now on. However, clib2 builds are
+    still possible by overriding the "CRT=" option of the makefile.
   * YAM_TR.c: slightly reworked the buffer management for the DIGEST-MD5
     authentication method. Apart from the more robust buffer management
     this change should also fix a buffer truncation due to the recent change
