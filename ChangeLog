@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-04-10  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: slightly reworked the buffer management for the DIGEST-MD5
+    authentication method. Apart from the more robust buffer management
+    this change should also fix a buffer truncation due to the recent change
+    from sprintf->snprintf.
+
 2006-04-04  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: changed all "struct timeval" uses by "struct TimeVal" and

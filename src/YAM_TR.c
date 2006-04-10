@@ -433,6 +433,8 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
    char buffer[SIZE_LINE];
    char challenge[SIZE_LINE];
 
+   ENTER();
+
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SENDAUTH));
 
    // first we check if the user has supplied the User&Password
@@ -440,6 +442,8 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
    if(!C->SMTP_AUTH_User[0] || !C->SMTP_AUTH_Pass[0])
    {
       ER_NewError(GetStr(MSG_ER_NOAUTHUSERPASS));
+
+      RETURN(FALSE);
       return FALSE;
    }
 
@@ -450,11 +454,10 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
       // send the AUTH command and get the response back
       if((resp = TR_SendSMTPCmd(ESMTP_AUTH_DIGEST_MD5, NULL, MSG_ER_BadResponse)))
       {
-        char realm[SIZE_HOST];
-        char nonce[SIZE_DEFAULT];
-        char qop[SIZE_DEFAULT];
-        char cnonce[SIZE_DEFAULT];
-        char response[SIZE_DEFAULT];
+        char *realm = NULL;
+        char *nonce = NULL;
+        char cnonce[16+1];
+        char response[32+1];
         char *chalRet;
 
         // get the challenge code from the response line of the
@@ -471,7 +474,10 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
         // lets base64 decode it
         if(base64decode(challenge, (unsigned char *)challenge, strlen(challenge)) <= 0)
+        {
+          RETURN(FALSE);
           return FALSE;
+        }
 
         D(DBF_NET, "decoded  DIGEST-MD5 challenge: `%s`", challenge);
 
@@ -498,16 +504,20 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
               pend = pstart + strlen(pstart);
 
             // now copy the found realm into our realm string
-            memcpy(realm, pstart, (size_t)(pend-pstart));
-
-            // NUL terminate the string
-            realm[pend-pstart] = '\0';
+            realm = malloc((pend-pstart)+1);
+            if(realm)
+              strlcpy(realm, pstart, (pend-pstart)+1);
+            else
+            {
+              RETURN(FALSE);
+              return FALSE;
+            }
           }
           else
           {
-            // if the challenge don`t have a "realm" we assume our
+            // if the challenge doesn`t have a "realm" we assume our
             // choosen SMTP domain to be the realm
-            strlcpy(realm, C->SMTP_Domain, sizeof(realm));
+            realm = strdup(C->SMTP_Domain);
           }
 
           D(DBF_NET, "realm: `%s`", realm);
@@ -528,16 +538,27 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
               pend = pstart + strlen(pstart);
 
             // now copy the found nonce into our nonce string
-            memcpy(nonce, pstart, (size_t)(pend-pstart));
+            nonce = malloc((pend-pstart)+1);
+            if(nonce)
+              strlcpy(nonce, pstart, (pend-pstart)+1);
+            else
+            {
+              free(realm);
 
-            // NUL terminate the string
-            nonce[pend-pstart] = '\0';
+              RETURN(FALSE);
+              return FALSE;
+            }
           }
           else
           {
             E(DBF_NET, "no `nonce=` token found!");
+
+            free(realm);
+
+            RETURN(FALSE);
             return FALSE;
           }
+
           D(DBF_NET, "nonce: `%s`", nonce);
 
           // now we check the "qop" to carry "auth" so that we are
@@ -546,32 +567,32 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           // assumes the server to support at least "auth"
           if((pstart = strstr(challenge, "qop=")))
           {
-            // iterate to the beginning of the nonce
+            char *qop;
+
+            // iterate to the beginning of the qop=
             pstart += 4;
 
             // skip a leading "
             if(*pstart == '"')
-            {
               pstart++;
 
-              // find the end of the string
-              pend = strpbrk(pstart, "\""); // find a ending "
-              if(!pend)
-                return FALSE; // no closing " - this seems to be an error!
-            }
+            // find the end of the string
+            pend = strpbrk(pstart, "\","); // find a ending " or ,
+            if(!pend)
+              pend = pstart + strlen(pstart);
+
+            // now copy the found qop into our qop string
+            qop = malloc((pend-pstart)+1);
+            if(qop)
+              strlcpy(qop, pstart, (pend-pstart)+1);
             else
             {
-              // find the end of the string
-              pend = strpbrk(pstart, "\""); // find a ending "
-              if(!pend)
-                pend = pstart + strlen(pstart);
+              free(realm);
+              free(nonce);
+
+              RETURN(FALSE);
+              return FALSE;
             }
-
-            // now copy the found qop into our nonce string
-            memcpy(qop, pstart, (size_t)(pend-pstart));
-
-            // NUL terminate the string
-            qop[pend-pstart] = '\0';
 
             // then we check whether we have a plain "auth" within
             // qop or not
@@ -582,10 +603,18 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
                 break;
             }
 
+            // we don't need the qop string anymore
+            free(qop);
+
             // check if we found a plain auth
             if(!pstart)
             {
               E(DBF_NET, "no `auth` in `qop` token found!");
+
+              free(realm);
+              free(nonce);
+
+              RETURN(FALSE);
               return FALSE;
             }
           }
@@ -605,11 +634,10 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           unsigned char digest[16]; // 16 octets
           ULONG digest_hex[4];      // 16 octets
           struct MD5Context context;
-          char buf[SIZE_DEFAULT];
-          char buf2[SIZE_DEFAULT];
-          char A1[SIZE_DEFAULT];
+          char buf[SIZE_LARGE];
+          char A1[32+1];
           int  A1_len = 16;         // 16 octects minimum
-          char A2[SIZE_DEFAULT];
+          char A2[32+1];
 
           // lets first generate the A1 string
           // A1 = { H( { username-value, ":", realm-value, ":", passwd } ),
@@ -618,50 +646,50 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           MD5Init(&context);
           MD5Update(&context, (unsigned char *)buf, strlen(buf));
           MD5Final(digest, &context);
-          memcpy(A1, digest, 16);
-          A1_len += snprintf(&A1[16], sizeof(A1)-16, ":%s:%s", nonce, cnonce);
-          D(DBF_NET, "unencoded A1: `%s` (%ld)", A1, A1_len);
+          memcpy(buf, digest, 16);
+          A1_len += snprintf(&buf[16], sizeof(buf)-16, ":%s:%s", nonce, cnonce);
+          D(DBF_NET, "unencoded A1: `%s` (%ld)", buf, A1_len);
 
           // then we directly build the hexadecimal representation
           // HEX(H(A1))
           MD5Init(&context);
-          MD5Update(&context, (unsigned char *)A1, A1_len);
+          MD5Update(&context, (unsigned char *)buf, A1_len);
           MD5Final((UBYTE *)digest_hex, &context);
           snprintf(A1, sizeof(A1), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
-                                              digest_hex[2], digest_hex[3]);
+                                                           digest_hex[2], digest_hex[3]);
           D(DBF_NET, "encoded   A1: `%s`", A1);
 
 
           // then we generate the A2 string accordingly
           // A2 = { "AUTHENTICATE:", digest-uri-value }
-          snprintf(A2, sizeof(A2), "AUTHENTICATE:smtp/%s", realm);
-          D(DBF_NET, "unencoded A2: `%s`", A2);
+          snprintf(buf, sizeof(buf), "AUTHENTICATE:smtp/%s", realm);
+          D(DBF_NET, "unencoded A2: `%s`", buf);
 
           // and also directly build the hexadecimal representation
           // HEX(H(A2))
           MD5Init(&context);
-          MD5Update(&context, (unsigned char *)A2, strlen(A2));
+          MD5Update(&context, (unsigned char *)buf, strlen(buf));
           MD5Final((UBYTE *)digest_hex, &context);
           snprintf(A2, sizeof(A2), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
-                                              digest_hex[2], digest_hex[3]);
+                                                           digest_hex[2], digest_hex[3]);
           D(DBF_NET, "encoded   A2: `%s`", A2);
 
           // now we build the string from which we also build the MD5
           // HEX(H(A1)), ":",
           // nonce-value, ":", nc-value, ":",
           // cnonce-value, ":", qop-value, ":", HEX(H(A2))
-          snprintf(buf2, sizeof(buf2), "%s:%s:00000001:%s:auth:%s", A1, nonce, cnonce, A2);
-          D(DBF_NET, "unencoded resp: `%s`", buf2);
+          snprintf(buf, sizeof(buf), "%s:%s:00000001:%s:auth:%s", A1, nonce, cnonce, A2);
+          D(DBF_NET, "unencoded resp: `%s`", buf);
 
           // and finally build the respone-value =
           // HEX( KD( HEX(H(A1)), ":",
           //          nonce-value, ":", nc-value, ":",
           //          cnonce-value, ":", qop-value, ":", HEX(H(A2)) }))
           MD5Init(&context);
-          MD5Update(&context, (unsigned char *)buf2, strlen(buf2));
+          MD5Update(&context, (unsigned char *)buf, strlen(buf));
           MD5Final((UBYTE *)digest_hex, &context);
           snprintf(response, sizeof(response), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
-                                                    digest_hex[2], digest_hex[3]);
+                                                                       digest_hex[2], digest_hex[3]);
           D(DBF_NET, "encoded   resp: `%s`", response);
         }
 
@@ -672,9 +700,9 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
                  "nonce=\"%s\","           // the nonce token
                  "cnonce=\"%s\","          // the client nonce (cnonce)
                  "nc=00000001,"            // the nonce count (here always 1)
-                 "qop=auth,"               // we just use auth
+                 "qop=\"auth\","           // we just use auth
                  "digest-uri=\"smtp/%s\"," // the digest-uri token
-                 "response=%s",            // the response
+                 "response=\"%s\"",        // the response
                  C->SMTP_AUTH_User,
                  realm,
                  nonce,
@@ -688,25 +716,32 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         strlcat(buffer, "\r\n", sizeof(buffer));
 
         // now we send the SMTP AUTH response
-        if(TR_WriteLine(buffer) <= 0) return FALSE;
-
-        // get the server response and see if it was valid
-        if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 334)
+        if(TR_WriteLine(buffer) > 0)
         {
-          ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
+          // get the server response and see if it was valid
+          if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 334)
+            ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
+          else
+          {
+            // now that we have received the 334 code we just send a plain line
+            // to signal that we don`t need any option
+            if(TR_WriteLine("\r\n") > 0)
+            {
+              if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
+                ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
+              else
+                rc = SMTP_ACTION_OK;
+            }
+            else
+              E(DBF_NET, "couldn't write empty line...");
+          }
         }
         else
-        {
-          // now that we have received the 334 code we just send a plain line
-          // to signal that we don`t need any option
-          if(TR_WriteLine("\r\n") <= 0) return FALSE;
+          E(DBF_NET, "couldn't write empty line...");
 
-          if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-          {
-            ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
-          }
-          else rc = SMTP_ACTION_OK;
-        }
+        // free all our dynamic buffers
+        free(realm);
+        free(nonce);
       }
    }
    else if(hasCRAM_MD5_Auth(ServerFlags)) // SMTP AUTH CRAM-MD5 (RFC 2195)
@@ -736,7 +771,10 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
         // lets base64 decode it
         if(base64decode(challenge, (unsigned char *)challenge, strlen(challenge)) <= 0)
+        {
+          RETURN(FALSE);
           return FALSE;
+        }
 
         D(DBF_NET, "decoded  CRAM-MD5 challenge: `%s`", challenge);
 
@@ -751,14 +789,14 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         strlcat(buffer, "\r\n", sizeof(buffer));
 
         // now we send the SMTP AUTH response
-        if(TR_WriteLine(buffer) <= 0) return FALSE;
-
-        // get the server response and see if it was valid
-        if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
+        if(TR_WriteLine(buffer) > 0)
         {
-          ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_CRAM_MD5], buffer);
+          // get the server response and see if it was valid
+          if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
+            ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_CRAM_MD5], buffer);
+          else
+            rc = SMTP_ACTION_OK;
         }
-        else rc = SMTP_ACTION_OK;
       }
    }
    else if(hasLOGIN_Auth(ServerFlags))  // SMTP AUTH LOGIN
@@ -775,32 +813,32 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
          strlcat(buffer, "\r\n", sizeof(buffer));
 
          // now we send the SMTP AUTH response (UserName)
-         if(TR_WriteLine(buffer) <= 0) return FALSE;
-
-         // get the server response and see if it was valid
-         if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0
-            && (rc = getResponseCode(buffer)) == 334)
+         if(TR_WriteLine(buffer) > 0)
          {
-            // prepare the password challenge
-            D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_Pass);
-            base64encode(buffer, (unsigned char *)C->SMTP_AUTH_Pass, strlen(C->SMTP_AUTH_Pass));
-            D(DBF_NET, "encoded  AUTH LOGIN challenge: `%s`", buffer);
-            strlcat(buffer, "\r\n", sizeof(buffer));
+           // get the server response and see if it was valid
+           if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0
+              && (rc = getResponseCode(buffer)) == 334)
+           {
+              // prepare the password challenge
+              D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_Pass);
+              base64encode(buffer, (unsigned char *)C->SMTP_AUTH_Pass, strlen(C->SMTP_AUTH_Pass));
+              D(DBF_NET, "encoded  AUTH LOGIN challenge: `%s`", buffer);
+              strlcat(buffer, "\r\n", sizeof(buffer));
 
-            // now lets send the Password
-            if(TR_WriteLine(buffer) <= 0) return FALSE;
+              // now lets send the Password
+              if(TR_WriteLine(buffer) > 0)
+              {
+                // get the server response and see if it was valid
+                if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0
+                   && (rc = getResponseCode(buffer)) == 235)
+                {
+                   rc = SMTP_ACTION_OK;
+                }
+              }
+           }
 
-            // get the server response and see if it was valid
-            if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0
-               && (rc = getResponseCode(buffer)) == 235)
-            {
-               rc = SMTP_ACTION_OK;
-            }
-         }
-
-         if(rc != SMTP_ACTION_OK)
-         {
-            ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_LOGIN], buffer);
+           if(rc != SMTP_ACTION_OK)
+             ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_LOGIN], buffer);
          }
       }
    }
@@ -828,14 +866,14 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
       snprintf(challenge, sizeof(challenge), "%s %s\r\n", SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
 
       // now we send the SMTP AUTH command (UserName+Password)
-      if(TR_WriteLine(challenge) <= 0) return FALSE;
-
-      // get the server response and see if it was valid
-      if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
+      if(TR_WriteLine(challenge) > 0)
       {
-        ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
+        // get the server response and see if it was valid
+        if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
+          ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
+        else
+          rc = SMTP_ACTION_OK;
       }
-      else rc = SMTP_ACTION_OK;
    }
    else
    {
@@ -846,6 +884,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
    D(DBF_NET, "Server responded with %ld", rc);
 
+   RETURN((BOOL)(rc == SMTP_ACTION_OK));
    return (BOOL)(rc == SMTP_ACTION_OK);
 }
 ///
