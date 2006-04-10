@@ -56,6 +56,8 @@ enum TZConvert { TZC_NONE, TZC_UTC, TZC_LOCAL };
 enum ReqFileType { ASL_ABOOK=0, ASL_CONFIG, ASL_DETACH, ASL_ATTACH,
   ASL_REXX, ASL_PHOTO, ASL_IMPORT, ASL_EXPORT, ASL_FOLDER };
 
+enum OutputDefType { OUT_DOS=0, OUT_NIL };
+
 struct Person
 {       
    char Address[SIZE_ADDRESS];
@@ -147,9 +149,6 @@ struct TimeRequest
 #define BusySet(c)            Busy(NULL, NULL, c, 0)
 #define BusyText(t, p)        Busy(t, p, 0, 0)
 #define BusyGauge(t, p, max)  Busy(t, p, 0, max)
-
-#define OUT_DOS       ((BPTR)0)
-#define OUT_NIL       ((BPTR)1)
 
 // attachment requester flags & macros
 #define ATTREQ_DISP       (1<<0)
@@ -294,7 +293,7 @@ BOOL     DumpClipboard(FILE *out);
 BOOL     EditorToFile(Object *editor, char *file);
 char *   Encrypt(char *source);
 char *   GetRealPath(char *path);
-BOOL     ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef);
+BOOL     ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef);
 char *   ExpandText(char *src, struct ExpandTextData *etd);
 void     ExtractAddress(char *line, struct Person *pe);
 BOOL     FileExists(char *filename);

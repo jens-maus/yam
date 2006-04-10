@@ -6,6 +6,9 @@ $Id$
 
 2006-04-10  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: added proper "SYS_Error" specifications to all our SystemTags()
+    calls so that the error output filehandle is correctly specified on OS4
+    as well.
   * Makefile.os4: set 'newlib' as the new default C runtime library for the
     native OS4 builds. Future versions of YAM for OS4 will expliclitly use
     newlib.library instead of clib2 from now on. However, clib2 builds are

@@ -4289,33 +4289,53 @@ void PGPClearPassPhrase(BOOL force)
 //  Launches a PGP command
 int PGPCommand(char *progname, char *options, int flags)
 {
-   BPTR fhi,fho;
-   int error = -1;
-   char command[SIZE_LARGE];
+  BPTR fhi;
+  char command[SIZE_LARGE];
+  int error = -1;
 
-   ENTER();
-   D(DBF_UTIL, "[%s] [%s] - flags: %ld", progname, options, flags);
+  ENTER();
+  D(DBF_UTIL, "[%s] [%s] - flags: %ld", progname, options, flags);
 
-   if ((fhi = Open("NIL:", MODE_OLDFILE)))
-   {
-      if ((fho = Open("NIL:", MODE_NEWFILE)))
-      {
-         BusyText(GetStr(MSG_BusyPGPrunning), "");
-         strmfp(command, C->PGPCmdPath, progname);
-         strlcat(command, " >" PGPLOGFILE " ", sizeof(command));
-         strlcat(command, options, sizeof(command));
-         error = SystemTags(command, SYS_Input, fhi, SYS_Output, fho, NP_StackSize, C->StackSize, TAG_DONE);
-         Close(fho);
-         BusyEnd();
-      }
-      Close(fhi);
-   }
-   if (error > 0 && !hasNoErrorsFlag(flags)) ER_NewError(GetStr(MSG_ER_PGPreturnsError), command, PGPLOGFILE);
-   if (error < 0) ER_NewError(GetStr(MSG_ER_PGPnotfound), C->PGPCmdPath);
-   if (!error && !hasKeepLogFlag(flags)) DeleteFile(PGPLOGFILE);
+  if((fhi = Open("NIL:", MODE_OLDFILE)))
+  {
+    BPTR fho;
 
-   RETURN(error);
-   return error;
+    if((fho = Open("NIL:", MODE_NEWFILE)))
+    {
+      BusyText(GetStr(MSG_BusyPGPrunning), "");
+      strmfp(command, C->PGPCmdPath, progname);
+      strlcat(command, " >" PGPLOGFILE " ", sizeof(command));
+      strlcat(command, options, sizeof(command));
+
+      // use SystemTags() for executing PGP
+      error = SystemTags(command, SYS_Input,    fhi,
+                                  SYS_Output,   fho,
+                                  #if defined(__amigaos4__)
+                                  SYS_Error,    NULL,
+                                  #endif
+                                  NP_StackSize, C->StackSize,
+                                  NP_WindowPtr, NULL,
+                                  TAG_DONE);
+
+      BusyEnd();
+
+      Close(fho);
+    }
+
+    Close(fhi);
+  }
+
+  if(error > 0 && !hasNoErrorsFlag(flags))
+    ER_NewError(GetStr(MSG_ER_PGPreturnsError), command, PGPLOGFILE);
+
+  if(error < 0)
+    ER_NewError(GetStr(MSG_ER_PGPnotfound), C->PGPCmdPath);
+
+  if(!error && !hasKeepLogFlag(flags))
+    DeleteFile(PGPLOGFILE);
+
+  RETURN(error);
+  return error;
 }
 ///
 /// AppendToLogfile
@@ -4922,25 +4942,40 @@ char *GetRealPath(char *path)
 ///
 /// ExecuteCommand
 //  Executes a DOS command
-BOOL ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef)
+BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
 {
-  BPTR in;
-  BPTR out;
-  BPTR path;
   BOOL result = TRUE;
+  BPTR path;
+  BPTR in = 0;
+  BPTR out = 0;
+  #if defined(__amigaos4__)
+  BPTR err = 0;
+  #endif
 
   ENTER();
   SHOWSTRING(DBF_UTIL, cmd);
 
-  switch (outdef)
+  switch(outdef)
   {
-    case OUT_DOS: in = Input(); out = Output(); break;
-    case OUT_NIL: out = Open("NIL:", MODE_NEWFILE); in = Open("NIL:", MODE_OLDFILE); break;
-    default:      out = outdef; in = Open("NIL:", MODE_OLDFILE); break;
-  }
+    case OUT_DOS:
+    {
+      in = Input();
+      out = Output();
+      #if defined(__amigaos4__)
+      err = ErrorOutput();
+      #endif
 
-  if(!outdef)
-    asynch = FALSE;
+      asynch = FALSE;
+    }
+    break;
+
+    case OUT_NIL:
+    {
+      in = Open("NIL:", MODE_OLDFILE);
+      out = Open("NIL:", MODE_NEWFILE);
+    }
+    break;
+  }
 
   // path may return 0, but that's fine.
   path = CloneSearchPath();
@@ -4948,21 +4983,29 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef)
   if(SystemTags(cmd,
                 SYS_Input,    in,
                 SYS_Output,   out,
+                #if defined(__amigaos4__)
+                SYS_Error,    err,
+                #endif
                 NP_Path,      path,
                 NP_StackSize, C->StackSize,
+                NP_WindowPtr, NULL,
                 SYS_Asynch,   asynch,
                 TAG_DONE) == -1)
   {
     // something went wrong.
     FreeSearchPath(path);
-
-    if(asynch && outdef)
-    {
-      Close(out);
-      Close(in);
-    }
+    path = 0;
 
     result = FALSE;
+  }
+
+  if(asynch == FALSE && outdef != OUT_DOS)
+  {
+    if(path != 0)
+      FreeSearchPath(path);
+
+    Close(out);
+    Close(in);
   }
 
   RETURN(result);
