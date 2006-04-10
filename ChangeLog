@@ -6,6 +6,8 @@ $Id$
 
 2006-04-10  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MI.c: fixed a bug in the strippedCharsetName() function where we did
+    truncate the charset name under certain situations.
   * YAM_UT.c: added proper "SYS_Error" specifications to all our SystemTags()
     calls so that the error output filehandle is correctly specified on OS4
     as well.

@@ -174,10 +174,15 @@ char *strippedCharsetName(const struct codeset* codeset)
   char *strStart = TrimStart(codeset->name);
   char *strEnd = strchr(strStart, ' ');
 
-  if(strEnd != NULL || strStart > codeset->name)
+  if(strEnd > strStart || strStart > codeset->name)
   {
     static char strippedName[SIZE_CTYPE+1];
-    strlcpy(strippedName, strStart, strEnd-strStart);
+
+    if(strEnd > strStart && (size_t)(strEnd-strStart) < sizeof(strippedName))
+      strlcpy(strippedName, strStart, strEnd-strStart+1);
+    else
+      strlcpy(strippedName, strStart, sizeof(strippedName));
+
     return strippedName;
   }
   else
