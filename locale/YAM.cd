@@ -4589,13 +4589,6 @@ MSG_HELP_MA_CY_DEFSECURITY (1330//)
 Default security for sending\n\
 mail to this person
 ;
-MSG_WR_DefSecurityConflict (1331//)
-The recipients of this mail have different default\n\
-security settings. What kind of security do you want?
-;
-MSG_WR_DefSecurityConflictGads (1332//)
-*_None|_Sign|_Encrypt|_Both|Send _anonymously
-;
 MSG_WR_SecDefaults (1333//)
 Default
 ;
@@ -5798,4 +5791,13 @@ No check performed yet.
 ;
 MSG_CO_LASTSTATUS_NOUPDATE (1672//)
 New newer versions were found.
+;
+MSG_WR_SECURITYREQ (1673//)
+The recipients of the mail do have different\n\
+default mail security settings.\n\
+\n\
+How do you want to compose the mail?
+;
+MSG_WR_SECURITYREQ_GADS (1674//)
+*_Plain|_Signed|_Encrypted|S_igned&Encrypted|_Anonymous|_Cancel
 ;

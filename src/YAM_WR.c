@@ -99,7 +99,7 @@ static BOOL WR_Bounce(FILE*, struct Compose*);
 static BOOL WR_SaveDec(FILE*, struct Compose*);
 static void WR_EmitExtHeader(FILE*, struct Compose*);
 static void WR_ComposeReport(FILE*, struct Compose*, char*);
-static void SetDefaultSecurity(struct Compose*);
+static BOOL SetDefaultSecurity(struct Compose*);
 static BOOL WR_ComposePGP(FILE*, struct Compose*, char*);
 static char *WR_TransformText(char*, enum TransformMode, char*);
 static void WR_SharedSetup(struct WR_ClassData*, int);
@@ -1012,70 +1012,121 @@ static void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
 
 ///
 /// SetDefaultSecurity
-static void SetDefaultSecurity(struct Compose *comp)
+static BOOL SetDefaultSecurity(struct Compose *comp)
 {
-   enum Security security=SEC_NONE;
-   BOOL FirstAddr=TRUE;
-   char *CheckThese[3],*buf;
-   unsigned int i;
+  BOOL result = TRUE;
+  enum Security security = SEC_NONE;
+  BOOL FirstAddr = TRUE;
+  char *CheckThese[3];
+  unsigned int i;
 
-   /* collect address pointers for easier iteration */
-   CheckThese[0] = comp->MailTo;
-   CheckThese[1] = comp->MailCC;
-   CheckThese[2] = comp->MailBCC;
+  ENTER();
 
-   /* go through all addresses */
-   for(i=0; i<ARRAY_SIZE(CheckThese); i++)
-   {
-      if(CheckThese[i] == NULL) continue;  /* skip empty fields */
-      /* copy string as strtok() will modify it */
-      if((buf = strdup(CheckThese[i])))
+  // collect address pointers for easier iteration
+  CheckThese[0] = comp->MailTo;
+  CheckThese[1] = comp->MailCC;
+  CheckThese[2] = comp->MailBCC;
+
+  // go through all addresses
+  for(i=0; i < ARRAY_SIZE(CheckThese); i++)
+  {
+    char *buf;
+
+    // skip empty fields
+    if(CheckThese[i] == NULL)
+      continue;
+
+    // copy string as strtok() will modify it
+    if((buf = strdup(CheckThese[i])))
+    {
+      struct ABEntry *ab=NULL;
+      enum Security currsec;
+      char *in=buf;
+      char *s;
+      char *saveptr1;
+
+      // loop through comma-separated addresses in string
+      while((s = strtok_r(in, ",", &saveptr1)))
       {
-         struct ABEntry *ab=NULL;
-         enum Security currsec;
-         char *in=buf,*s,*t;
+        char *saveptr2;
+        char *t = NULL;
 
-         /* loop through comma-separated addresses in string */
-         while((s = StrTok_R(&in,",")))
-         {
-            while((t = StrTok_R(&s," ()<>")))
+        in = NULL;
+
+        while((t = strtok_r(s, " ()<>", &saveptr2)))
+        {
+          s = NULL;
+
+          if(strchr(t, '@'))
+            break;
+        }
+
+        // can't find address for this entry - shouldn't happen
+        if(!t)
+          continue;
+
+        if(AB_SearchEntry(t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &ab) && (ab != NULL))
+        {
+          // get default from entry
+          currsec = ab->DefSecurity;
+        }
+        else
+          currsec = SEC_NONE; // entry not in address book -> no security
+
+        if(currsec != security)
+        {
+          // first address' setting is always used
+          if(FirstAddr)
+          {
+            FirstAddr = FALSE;
+            security = currsec; // assume as default
+          }
+          else
+          {
+            // conflict: two addresses have different defaults
+            int res = MUI_RequestA(G->App, NULL, 0, NULL, GetStr(MSG_WR_SECURITYREQ_GADS),
+                                                          GetStr(MSG_WR_SECURITYREQ), NULL);
+
+            switch(res)
             {
-               if(strchr(t,'@'))
-                  break;
+              case 0:
+                result = FALSE;
+              break;
+
+              case 1:
+                security = SEC_NONE;
+              break;
+
+              case 2:
+                security = SEC_SIGN;
+              break;
+
+              case 3:
+                security = SEC_ENCRYPT;
+              break;
+
+              case 4:
+                security = SEC_BOTH;
+              break;
+
+              case 5:
+                security = SEC_SENDANON;
+              break;
             }
 
-            if(!t) continue; /* can't find address for this entry - shouldn't happen */
-
-            if(AB_SearchEntry(t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &ab) && (ab != NULL))
-            {
-              currsec = ab->DefSecurity; /* get default from entry */
-            }
-            else
-              currsec = SEC_NONE;    /* entry not in address book -> no security */
-
-            if(currsec != security)
-            {
-               if(FirstAddr)    /* first address' setting is always used */
-               {
-                  FirstAddr = FALSE;
-                  security = currsec;  /* assume as default */
-               }
-               else             /* conflict: two addresses have different defaults */
-               {
-                  security = MUI_RequestA(G->App, NULL, 0, NULL, GetStr(MSG_WR_DefSecurityConflictGads),
-                             GetStr(MSG_WR_DefSecurityConflict),NULL);
-                  if(security == SEC_NONE)
-                     security = SEC_MAXDUMMY-1;  /* correct 1..N numbering of requester buttons */
-                  else
-                     security--;
-                  break;  /* terminate recipient loop */
-               }
-            }
-         }
-         free(buf);
+            break;  // terminate recipient loop
+          }
+        }
       }
-   }
-   comp->Security = security;
+
+      free(buf);
+    }
+  }
+
+  comp->Security = security;
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -1484,8 +1535,13 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       if (GetMUICheck(gui->CH_RECEIPT)) SET_FLAG(comp.Receipt, RCPT_RETURN);
       if (GetMUICheck(gui->CH_DISPNOTI)) SET_FLAG(comp.Receipt, RCPT_MDN);
       comp.Signature = GetMUIRadio(gui->RA_SIGNATURE);
+
       if((comp.Security = GetMUIRadio(gui->RA_SECURITY)) == SEC_DEFAULTS)
-         SetDefaultSecurity(&comp);
+      {
+        if(SetDefaultSecurity(&comp) == FALSE)
+          return;
+      }
+
       comp.DelSend = GetMUICheck(gui->CH_DELSEND);
       comp.UserInfo = GetMUICheck(gui->CH_ADDINFO);
       att = xget(gui->LV_ATTACH, MUIA_NList_Entries);
