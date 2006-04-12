@@ -2997,7 +2997,8 @@ BOOL RE_DownloadPhoto(Object *win, char *url, struct ABEntry *ab)
          BusyEnd();
          TR_CloseTCPIP();
       }
-      else ER_NewError(GetStr(MSG_ER_NoTCP));
+      else
+        ER_NewError(GetStr(MSG_ER_OPENTCPIP));
    }
    return success;
 }

@@ -2030,7 +2030,8 @@ BOOL MA_SendMList(struct Mail **mlist)
       }
       TR_CloseTCPIP();
    }
-   else ER_NewError(GetStr(MSG_ER_NoTCP));
+   else
+     ER_NewError(GetStr(MSG_ER_OPENTCPIP));
 
    MA_StartMacro(MACRO_POSTSEND, NULL);
    return success;
@@ -2654,7 +2655,8 @@ HOOKPROTONHNONP(MA_CheckVersionFunc, void)
       BusyEnd();
       TR_CloseTCPIP();
    }
-   else ER_NewError(GetStr(MSG_ER_NoTCP));
+   else
+     ER_NewError(GetStr(MSG_ER_OPENTCPIP));
 }
 MakeStaticHook(MA_CheckVersionHook, MA_CheckVersionFunc);
 

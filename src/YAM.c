@@ -2576,9 +2576,15 @@ int main(int argc, char **argv)
             }
          }
       }
-      if (C->SendOnQuit && !args.nocheck) if (TR_IsOnline()) SendWaitingMail();
-      if (C->CleanupOnQuit) DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
-      if (C->RemoveOnQuit) DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, TRUE);
+
+      if(C->SendOnQuit && !args.nocheck && TR_IsOnline())
+        SendWaitingMail();
+
+      if(C->CleanupOnQuit)
+        DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
+
+      if(C->RemoveOnQuit)
+        DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, TRUE);
 
       AppendLog(99, GetStr(MSG_LOG_Terminated), "", "", "", "");
       MA_StartMacro(MACRO_QUIT, NULL);

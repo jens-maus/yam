@@ -3769,10 +3769,6 @@ MSG_ER_NotInGallery (1105//)
 Couldn't find this person in the YAM user gallery. Either the person \
 doesn't exist in the database or his/her name or address is mispelt.
 ;
-MSG_ER_NoTCP (1106//)
-No TCP/IP stack running! A bsdsocket.library-compatible internet \
-stack must be started before you can use this function.
-;
 MSG_ER_ErrorDateFormat (1107//)
 Invalid date/time format.\n\
 \n\
@@ -5793,11 +5789,19 @@ MSG_CO_LASTSTATUS_NOUPDATE (1672//)
 New newer versions were found.
 ;
 MSG_WR_SECURITYREQ (1673//)
-The recipients of the mail do have different\n\
+The recipients of the mail have different\n\
 default mail security settings.\n\
 \n\
 How do you want to compose the mail?
 ;
 MSG_WR_SECURITYREQ_GADS (1674//)
 *_Plain|_Signed|_Encrypted|S_igned&Encrypted|_Anonymous|_Cancel
+;
+MSG_ER_OPENTCPIP (1675//)
+YAM wasn't able to open the appropriate bsdsocket.library \
+interface, required for TCP/IP connections.\n\
+\n\
+Please make sure that you have a compatible TCP/IP stack \
+installed, correctly configured and that your network \
+interface is up and running.
 ;

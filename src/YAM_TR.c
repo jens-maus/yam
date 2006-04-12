@@ -894,49 +894,113 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 //  Checks if there's an online connection
 BOOL TR_IsOnline(void)
 {
-   BOOL isonline = FALSE;
+  BOOL isonline = FALSE;
 
-   if(C->IsOnlineCheck)
-   {
-      if((MiamiBase = OpenLibrary("miami.library", 10)))
+  ENTER();
+
+  if(C->IsOnlineCheck)
+  {
+    #if defined(__amigaos4__)
+    // first we try to open the v4 version of bsdsocket.library
+    // and query it for its interface status (this is mainly for RoadShow)
+    if((SocketBase = OpenLibrary("bsdsocket.library", 4L)))
+    {
+      if(GETINTERFACE("main", ISocket, SocketBase))
       {
-         if(GETINTERFACE("main", IMiami, MiamiBase))
-         {
-           isonline = MiamiIsOnline(*C->IOCInterface ? C->IOCInterface : NULL);
+        BOOL hasInterfaceAPI = FALSE;
 
-           DROPINTERFACE(IMiami);
-         }
+        // in case the user hasn't specified a specific
+        // interface we just do a general query
+        if(C->IOCInterface[0] == '\0')
+        {
+          ULONG status = 0;
 
-         CloseLibrary(MiamiBase);
-         MiamiBase = NULL;
+          if(SocketBaseTags(SBTM_GETREF(SBTC_SYSTEM_STATUS), &status, TAG_END) == 0 &&
+             hasFlag(status, SBSYSSTAT_Interfaces))
+          {
+            D(DBF_NET, "found the bsdsocket v4 TCP/IP stack to be up&running.");
+            isonline = TRUE;
+          }
+          else
+            W(DBF_NET, "couldn't query TCP/IP stack for its online status.");
+        }
+        else if(SocketBaseTags(SBTM_GETREF(SBTC_HAVE_INTERFACE_API), &hasInterfaceAPI, TAG_END) == 0)
+        {
+          LONG onlineState = 0;
+
+          // now that we know that we have an interface API, we can
+          // go and query the interface if it is up&running correctly.
+          if(QueryInterfaceTags(C->IOCInterface, IFQ_State, &onlineState, TAG_END) == 0 &&
+             onlineState == SM_Up)
+          {
+            D(DBF_NET, "found the interface '%s' to be UP", C->IOCInterface);
+            isonline = TRUE;
+          }
+          else
+            W(DBF_NET, "found the interface '%s' to be DOWN", C->IOCInterface);
+        }
+        else
+          W(DBF_NET, "couldn't query TCP/IP stack for interface status.");
+
+        DROPINTERFACE(ISocket);
       }
-      else if((GenesisBase = OpenLibrary("genesis.library", 1)))
+
+      CloseLibrary(SocketBase);
+      SocketBase = NULL;
+    }
+    else
+    #endif
+    if((MiamiBase = OpenLibrary("miami.library", 10)))
+    {
+      if(GETINTERFACE("main", IMiami, MiamiBase))
       {
-         if(GETINTERFACE("main", IGenesis, GenesisBase))
-         {
-           isonline = IsOnline(*C->IOCInterface ? (long)C->IOCInterface : 0);
+        isonline = MiamiIsOnline(C->IOCInterface[0] != '\0' ? C->IOCInterface : NULL);
 
-           DROPINTERFACE(IGenesis);
-         }
-
-         CloseLibrary(GenesisBase);
-         GenesisBase = NULL;
+        DROPINTERFACE(IMiami);
       }
-   }
 
-   if(isonline == FALSE)
-   {
-     // if no online check was selected, we just check if bsdsocket.library
-     // is available.
-     struct Library *socketbase = OpenLibrary("bsdsocket.library", 2L);
-     if (socketbase)
-     {
-       CloseLibrary(socketbase);
-       isonline = TRUE;
-     }
-   }
+      CloseLibrary(MiamiBase);
+      MiamiBase = NULL;
+    }
+    else if((GenesisBase = OpenLibrary("genesis.library", 1)))
+    {
+      if(GETINTERFACE("main", IGenesis, GenesisBase))
+      {
+        isonline = IsOnline(C->IOCInterface[0] != '\0' ? (long)C->IOCInterface : 0);
 
-   return isonline;
+        DROPINTERFACE(IGenesis);
+      }
+
+      CloseLibrary(GenesisBase);
+      GenesisBase = NULL;
+    }
+    else
+    {
+      struct Library *socketbase = OpenLibrary("bsdsocket.library", 2L);
+      if(socketbase)
+      {
+        CloseLibrary(socketbase);
+        isonline = TRUE;
+      }
+      else
+        W(DBF_NET, "couldn't find out online status");
+    }
+  }
+  else
+  {
+    // if no online check was selected, we just do a simple library exists
+    // check and see if we are able to open a bsdsocket.library with a
+    // minimum version of 2 or not.
+    struct Library *socketbase = OpenLibrary("bsdsocket.library", 2L);
+    if(socketbase)
+    {
+      CloseLibrary(socketbase);
+      isonline = TRUE;
+    }
+  }
+
+  RETURN(isonline);
+  return isonline;
 }
 
 ///
@@ -969,7 +1033,7 @@ void TR_CloseTCPIP(void)
 BOOL TR_OpenTCPIP(void)
 {
   // first do an online check
-  if(!TR_IsOnline())
+  if(C->IsOnlineCheck && !TR_IsOnline())
     return FALSE;
 
   // then open the bsdsocket.library and it`s OS4 interface
@@ -2320,7 +2384,14 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
    if (isfirst) /* Init first connection */
    {
       G->LastDL.Error = TRUE;
-      if (!TR_OpenTCPIP()) { if (guilevel == POP_USER) ER_NewError(GetStr(MSG_ER_NoTCP)); return; }
+      if(!TR_OpenTCPIP())
+      {
+        if(guilevel == POP_USER)
+          ER_NewError(GetStr(MSG_ER_OPENTCPIP));
+
+        return;
+      }
+
       if (!CO_IsValid()) { TR_CloseTCPIP(); return; }
       if (!(G->TR = TR_New(TR_GET))) { TR_CloseTCPIP(); return; }
       G->TR->Checking = TRUE;
