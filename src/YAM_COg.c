@@ -805,7 +805,6 @@ Object *CO_Page1(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_POP3SSL     ,MSG_HELP_CO_CH_POP3SSL      );
       SetHelp(data->GUI.CH_USESTLS     ,MSG_HELP_CO_CH_USESTLS      );
 
-      DoMethod(grp, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.GR_POP3, data->GUI.BT_PDEL, authgrp, NULL);
       DoMethod(data->GUI.LV_POP3       ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_GetP3EntryHook,0);
       DoMethod(data->GUI.ST_POPHOST    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
       DoMethod(data->GUI.ST_POPPORT    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);

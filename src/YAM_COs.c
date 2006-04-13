@@ -1188,7 +1188,6 @@ void CO_GetConfig(void)
 void CO_SetConfig(void)
 {
    struct CO_GUIData *gui = &G->CO->GUI;
-   struct POP3 *pop3;
    int i;
 
    ENTER();
@@ -1204,7 +1203,9 @@ void CO_SetConfig(void)
          nnset(gui->ST_PASSWD0,  MUIA_String_Contents, CE->P3[0]->Password);
          nnset(gui->ST_DEFAULTCHARSET,  MUIA_String_Contents, CE->LocalCharset);
          break;
+
       case 1:
+      {
          setstring(gui->ST_SMTPHOST, CE->SMTP_Server);
          set(gui->ST_SMTPPORT, MUIA_String_Integer, CE->SMTP_Port);
          setstring(gui->ST_DOMAIN, CE->SMTP_Domain);
@@ -1214,13 +1215,26 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_USESMTPAUTH,CE->Use_SMTP_AUTH);
          setstring   (gui->ST_SMTPAUTHUSER,CE->SMTP_AUTH_User);
          setstring   (gui->ST_SMTPAUTHPASS,CE->SMTP_AUTH_Pass);
+
+         // clear the list first
          DoMethod(gui->LV_POP3, MUIM_List_Clear);
-         for (i = 0; i < MAXP3; i++) if ((pop3 = CE->P3[i]))
+
+         for(i=0; i < MAXP3; i++)
          {
-            snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
-            DoMethod(gui->LV_POP3, MUIM_List_InsertSingle, pop3, MUIV_List_Insert_Bottom);
+           struct POP3 *pop3;
+
+           if((pop3 = CE->P3[i]))
+           {
+             snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
+             DoMethod(gui->LV_POP3, MUIM_List_InsertSingle, pop3, MUIV_List_Insert_Bottom);
+           }
          }
-         break;
+
+         // make sure the first entry is selected per default
+         set(gui->LV_POP3, MUIA_List_Active, MUIV_List_Active_Top);
+      }
+      break;
+
       case 2:
          setcheckmark(gui->CH_AVOIDDUP  ,CE->AvoidDuplicates);
          setcycle    (gui->CY_MSGSELECT ,CE->PreSelection);

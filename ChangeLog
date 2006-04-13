@@ -6,6 +6,9 @@ $Id$
 
 2006-04-12  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COs.c: worked around bug #1469136 which occured with MUI 3.8 system
+    and where it did happen that portions of the TCP/IP configuration page
+    didn't get correctly enabled.
   * YAM_TR.c: fixed bug #1418384 where the network interface online check
     routines were broken and always returned that the interface is up&running
     even if it wasn't. Also enhanced the routines a bit and implemented
