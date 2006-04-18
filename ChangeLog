@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-04-18  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_utilities.h: revised our own "struct TimeVal" fallback structure
+    definitions to also be defined on older OS4 SDK's.
+  * locale/svenska.ct: updated swedish catalog translation kindly provided by
+    Pär Boberg.
+
 2006-04-12  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COs.c: worked around bug #1469136 which occured with MUI 3.8 system
