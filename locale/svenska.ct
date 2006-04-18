@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 5.5 (28.12.05)
+## version $VER: YAM.ct 5.5 (16.04.06)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -225,10 +225,6 @@ MSG_Path
 Sökväg
 ;#DEF Path
 ;#SET (57//)
-MSG_Copyright1
-E-postprogram i öppen källkod för Amiga\n\nCopyright (C) 1995-2000 Marcel Beck\nCopyright (C) 2000-2006 YAM Open Source Team
-;#DEF Open Source E-mail package for the Amiga\n\nCopyright (C) 1995-2000 Marcel Beck\nCopyright (C) 2000-2006 YAM Open Source Team
-;#SET (59//)
 MSG_Version
 Version:
 ;#DEF Version:
@@ -462,7 +458,7 @@ Hämtade %ld brev från POP3-kontot '%s@%s'
 ;#DEF Retrieved %ld message(s) from POP3 account '%s@%s'
 ;#SET (119//)
 MSG_LOG_ConnectSMTP
-Uppkopplad mot SMTP-servern '%s'
+Ansluten till SMTP-servern '%s'
 ;#DEF Connected to SMTP server '%s'
 ;#SET (120//)
 MSG_LOG_SendingVerbose
@@ -849,14 +845,6 @@ MSG_MA_FlushIndices
 Rensa index
 ;#DEF Flush indices
 ;#SET (219//)
-MSG_MA_ExportMessages
-Exportera...
-;#DEF Export...
-;#SET (220//)
-MSG_MA_ImportMessages
-Importera...
-;#DEF Import...
-;#SET (221//)
 MSG_MA_MSendAll
 S\000Skicka köad post
 ;#DEF S\000Send queued mail
@@ -990,7 +978,7 @@ Vidarebefordra valt brev\ntill en annan mottagare.
 ;#DEF Forward selected message\nto another recipient
 ;#SET (254//)
 MSG_HELP_MA_BT_POPNOW
-Koppla upp mot e-postservern\noch hämta nya brev.
+Anslut till e-postservern\noch hämta nya brev.
 ;#DEF Connect to the mail server\nand download new messages
 ;#SET (255//)
 MSG_HELP_MA_BT_SENDALL
@@ -1645,10 +1633,6 @@ MSG_CO_MultiReadWin
 Flera f_önster
 ;#DEF _Multiple windows
 ;#SET (420//)
-MSG_CO_CharsetTrans
-Översätt _teckenupps.
-;#DEF Charset _translation
-;#SET (421//)
 MSG_CO_DisplayAll
 Visa _alla texter
 ;#DEF Display _all texts
@@ -2234,7 +2218,7 @@ Logga in med APOP.
 ;#DEF Login using APOP authentication
 ;#SET (568//)
 MSG_HELP_CO_CH_POPENABLED
-Koppla upp mot denna server\nnär du hämtar ny post.
+Anslut till denna server\nnär du hämtar ny post.
 ;#DEF Connect to this server\nwhen checking for new mail
 ;#SET (569//)
 MSG_HELP_CO_CH_AVOIDDUP
@@ -2397,10 +2381,6 @@ MSG_HELP_CO_CY_SIGSEPLINE
 Typ av avskiljare för att\nskilja signatur från brev.
 ;#DEF Type of the signature\nseparation line
 ;#SET (609//)
-MSG_HELP_CO_ST_INTRANS
-Teckenöversättning att använda\nvid läsning av brev.
-;#DEF Apply this character set translation\nwhen reading messages
-;#SET (610//)
 MSG_HELP_CO_CH_ALLTEXTS
 Visa alla textdelar i ett\nbrev med flera delar.
 ;#DEF Display all textual parts\nof a multipart message
@@ -2465,10 +2445,6 @@ MSG_HELP_CO_ST_BYETEXT
 Text att infoga i slutet av ett nytt brev.
 ;#DEF Text to insert at the\nbottom of a new message
 ;#SET (626//)
-MSG_HELP_CO_ST_OUTTRANS
-Använd denna teckenöversättning\nför nya brev.
-;#DEF Apply this character set translation\non new messages
-;#SET (627//)
 MSG_HELP_CO_ST_EDWRAP
 Kolumn där radbrytning\nautomatiskt sätts in.
 ;#DEF Word-wrap message text\nat this column
@@ -4150,11 +4126,11 @@ Kasta det skrivna brevet.
 ;#DEF Discard the\ncreated message
 ;#SET (1050//)
 MSG_TR_Connecting
-Kopplar upp mot e-postservern...
+Ansluter till e-postservern...
 ;#DEF Connecting to mail server...
 ;#SET (1051//)
 MSG_TR_WaitWelcome
-Uppkopplad, väntar på hälsningsmeddelande...
+Ansluten, väntar på hälsningsmeddelande...
 ;#DEF Connected, awaiting welcome message...
 ;#SET (1052//)
 MSG_TR_PopLoginReq
@@ -4182,7 +4158,7 @@ Hämtar information...
 ;#DEF Getting statistics...
 ;#SET (1058//)
 MSG_TR_Disconnecting
-Kopplar ner...
+Avbryter anslutning...
 ;#DEF Disconnecting...
 ;#SET (1059//)
 MSG_TR_ApplyFilters
@@ -4369,10 +4345,6 @@ MSG_ER_NotInGallery
 Kunde inte hitta personen i YAMs användargalleri. Antingen finns inte personen däri eller så är namn eller adress felstavat.
 ;#DEF Couldn't find this person in the YAM user gallery. Either the person doesn't exist in the database or his/her name or address is mispelt.
 ;#SET (1105//)
-MSG_ER_NoTCP
-Det körs ingen TCP/IP-stack! En TCP/IP-stack kompatibel med bsdsocketbiblioteket måste startas innan du kan använda denna funktion.
-;#DEF No TCP/IP stack running! A bsdsocket.library-compatible internet stack must be started before you can use this function.
-;#SET (1106//)
 MSG_ER_ErrorDateFormat
 Felaktigt datum-/tidformat.\n\nDatumet måste vara i AmigaDOS-format.\nT.ex: %s
 ;#DEF Invalid date/time format.\n\nThe date has to be in AmigaDOS format.\nExample: %s
@@ -4442,7 +4414,7 @@ Kunde inte skicka HTTP-förfrågan. Kunde inte hämta dokument från webbservern.
 ;#DEF Couldn't send HTTP request. Requesting a document from the WWW server failed.
 ;#SET (1125//)
 MSG_ER_ConnectHTTP
-Kunde inte koppla upp mot webbservern '%s'.\n\nMöjliga felorsaker: TCP/IP-stacken är inte uppkopplad, servern är nere eller stöder inte HTTP-förfrågningar.
+Kunde inte ansluta till webbservern '%s'.\n\nMöjliga felorsaker: TCP/IP-stacken är inte uppkopplad, servern är nere eller stöder inte HTTP-förfrågningar.
 ;#DEF Couldn't connect to WWW server '%s'.\n\nPossible reasons: TCP/IP offline, invalid address, server is currently down or doesn't support HTTP requests.
 ;#SET (1126//)
 MSG_ER_BadResponse
@@ -4458,7 +4430,7 @@ Okänd SMTP-server: '%s'.\n\nTCP/IP-stacken är inte uppkopplad eller så är server
 ;#DEF Unknown SMTP server: '%s'.\n\nTCP/IP is offline or the server address is invalid.
 ;#SET (1129//)
 MSG_ER_CantConnect
-Kunde inte koppla upp mot '%s'.\n\nE-postservern är just nu nere eller stöder inte POP3/SMTP.
+Kunde inte ansluta till '%s'.\n\nE-postservern är just nu nere eller stöder inte POP3/SMTP.
 ;#DEF Couldn't connect to '%s'.\n\nThe mail server is currently down or doesn't support the POP3/SMTP protocols.
 ;#SET (1130//)
 MSG_ER_NoAPOP
@@ -4470,7 +4442,7 @@ Kunde inte skriva till brevfilen %s.\n\nYAM kunde inte spara brevet på disk.Disk
 ;#DEF Write error on mail file: %s.\n\nYAM can't save the message to disk, maybe you're out of disk space.
 ;#SET (1132//)
 MSG_ER_ConnectionBroken
-TCP/IP uppkopplingen bröts, förmodligen kopplade modemet ner.
+TCP/IP anslutningen bruten, förmodligen avbröt modemet anslutningen.
 ;#DEF TCP/IP connection broken, probably due to a carrier drop.
 ;#SET (1133//)
 MSG_ER_ErrorReadMailfile
@@ -5109,10 +5081,6 @@ MSG_PROJECT_ABOUT
 ?\000Om...
 ;#DEF ?\000About...
 ;#SET (1298//)
-MSG_PROJECT_CHECKVERSION
-Kontrollera version
-;#DEF Check version
-;#SET (1299//)
 MSG_FOLDER_NEWFOLDER
 Ny mapp...
 ;#DEF New folder...
@@ -5229,14 +5197,6 @@ MSG_HELP_MA_CY_DEFSECURITY
 Förvald säkerhet vid skickande\nav brev till denna person
 ;#DEF Default security for sending\nmail to this person
 ;#SET (1330//)
-MSG_WR_DefSecurityConflict
-Mottagarna av detta mail har olika förinställda\nsäkerhetsinställningar. Vad för slags säkerhet vill du ha?
-;#DEF The recipients of this mail have different default\nsecurity settings. What kind of security do you want?
-;#SET (1331//)
-MSG_WR_DefSecurityConflictGads
-*Inge_n|_Signera|Krypt_era|_Båda|Skicka _anonymt
-;#DEF *_None|_Sign|_Encrypt|_Both|Send _anonymously
-;#SET (1332//)
 MSG_WR_SecDefaults
 Förinställt
 ;#DEF Default
@@ -5413,10 +5373,6 @@ MSG_OPENGUI
 Öppnar GUI...
 ;#DEF Opening GUI...
 ;#SET (1380//)
-MSG_ERR_OPENLIB
-Kan inte öppna '%s', version v%lu.%lu
-;#DEF Can't open '%s', version v%lu.%lu
-;#SET (1381//)
 MSG_CO_CONTEXTMENU
 Kontext meny
 ;#DEF Context menu
@@ -5594,7 +5550,7 @@ Använd POP3 TLSv1/SSLv3
 ;#DEF Use POP3 TLSv1/SSLv3
 ;#SET (1427//)
 MSG_HELP_CO_CH_POP3SSL
-YAM kopplar upp sig via TLSv1/SSLv3 till POP3 severn på\nPOP3 SSL port 995 och skicka epost därifrån. Om denna kryssruta\när skuggad, så betyder det att AmiSSL stöd ej är tillgängligt.
+YAM ansluter sig via TLSv1/SSLv3 till POP3 severn på\nPOP3 SSL port 995 och skickar epost därifrån. Om denna kryssruta\när skuggad, så betyder det att AmiSSL stöd ej är tillgängligt.
 ;#DEF YAM will connect via TLSv1/SSLv3 to the POP3 server on the\nPOP3 SSL port 995 port and transfer email from there. If this\ncheckbox is ghosted, it means AmiSSL support is not available.
 ;#SET (1428//)
 MSG_CO_USESTLS
@@ -5641,14 +5597,6 @@ MSG_TR_SENDAUTH
 Skickar SMTP AUTH förfrågan...
 ;#DEF Sending SMTP AUTH request...
 ;#SET (1439//)
-MSG_CO_AutoTranslateIn
-Autodetektera sidkodning/öve_rsättning
-;#DEF Codepage Autodetect/T_ranslation
-;#SET (1440//)
-MSG_HELP_CO_CH_AUTOTRANSLATEIN
-Underlättar läsning av konstiga teckenuppsättningar.\nMest för cyrilliska användare.
-;#DEF Helps reading strange character sets.\nMainly for cyrillic users.
-;#SET (1441//)
 MSG_CO_IMPORTMIMETITLE
 Importera MIME visare och typer
 ;#DEF Import MIME viewers & types
@@ -5657,10 +5605,6 @@ MSG_ER_TRANSFERMAIL
 Kunde inte flytta brev '%s' till mapp '%s'.\n\nAntingen existerar inte filen eller så kunde den inte kopieras av någon anledning.
 ;#DEF Couldn't transfer mail '%s' to folder '%s'.\n\nEither the file doesn't exist or it couldn't be copied for some reason.
 ;#SET (1443//)
-MSG_ER_IMPORTMAIL
-Kunde inte importera brev från fil '%s'.\n\nKontrollera att filen verkligen innehåller brev i standard MBOX format (separerad av en ensam "Från " linje).
-;#DEF Couldn't import any mail from file '%s'.\n\nMake sure that the file really contains emails in the standard MBOX format (separated by a single "From " line).
-;#SET (1444//)
 MSG_ER_ADDRBOOKLOAD
 Kunde inte ladda adressbok från fil '%s'.\n\nAntingen existerar inte filen eller så kunde den inte öppnas av någon anledning.
 ;#DEF Couldn't load address book from file '%s'.\n\nEither the file doesn't exist or it couldn't be opened for some reason.
@@ -5682,21 +5626,9 @@ Namn på mapp grupp:
 ;#DEF Name of folder group:
 ;#SET (1449//)
 MSG_ER_UNUSABLEAMISSL
-Du har valt TLSv1/SSLv3 för denna kopplig, men AmiSSL kunde inte initieras. Kolla din AmiSSL installation eller stäng av TLS/SSL för denna koppling.
+Du har valt TLSv1/SSLv3 för denna anslutning, men AmiSSL kunde inte initieras. Kolla din AmiSSL installation eller stäng av TLS/SSL för denna anslutning.
 ;#DEF You have selected TLSv1/SSLv3 for this connection, but AmiSSL couldn't be initialized. Please check your AmiSSL installation or disable TLS/SSL for this connection.
 ;#SET (1450//)
-MSG_NO_MCC
-Kunde inte öppna MUI klass '%s' V%lu.%lu.\nKlassen är inte installerad.
-;#DEF Couldn't open MUI custom class '%s' V%lu.%lu.\nThe class is not installed.
-;#SET (1451//)
-MSG_MCC_OLD
-Kunde inte öppna MUI klass '%s' V%lu.%lu.\n\nNuvarande installerad är V%lu.%lu, uppgradera!
-;#DEF Couldn't open MUI custom class '%s' V%lu.%lu.\n\nCurrently installed is V%lu.%lu, please upgrade!
-;#SET (1452//)
-MSG_MCC_IN_USE
-Kunde inte öppna MUI klass '%s' V%lu.%lu.\n%lu.%lu används förnärvarande av andra applikationer.\n\nNär du har installerat den versionen som behövs,\nstäng alla MUI program, kontrollera att den gamla klassen\när tömd från minnet och försök igen.
-;#DEF Couldn't open MUI custom class '%s' V%lu.%lu.\n%lu.%lu is currently in use by other applications.\n\nOnce you have installed the required version,\nclose all MUI programs, make sure the old class\nis flushed from memory and try again.
-;#SET (1453//)
 MSG_RETRY_QUIT_GAD
 Försök igen|Avsluta
 ;#DEF Try again|Quit
@@ -5706,11 +5638,11 @@ Din SMTP server stödjer inte TLS/SSL. Stäng av denna funktion i din YAM konfigur
 ;#DEF Your SMTP server doesn't support TLS/SSL. Please disable this option in your YAM configuration.
 ;#SET (1455//)
 MSG_ER_NOAUTHUSERPASS
-Inget användarnamn eller lösenord specifierades för SMTP AUTH kopplingen YAM försökte etablera. Kontrollera din konfiguration.
+Inget användarnamn eller lösenord specifierades för SMTP AUTH anslutningen YAM försökte etablera. Kontrollera din konfiguration.
 ;#DEF No user name or password was specified for the SMTP AUTH connection YAM was trying to establish. Please check your configuration.
 ;#SET (1456//)
 MSG_ER_POPWELCOME
-POP servern svarade med ett felmeddelande under välkomst proceduren och uppkoppligen kopplades ned:\n\n%s\n
+POP servern svarade med ett felmeddelande under välkomst proceduren och anslutningen avbröts:\n\n%s\n
 ;#DEF The POP server replied with an error message during the welcome procedure and the connection was terminated:\n\n%s\n
 ;#SET (1457//)
 MSG_CO_APPICON_LABEL
@@ -6206,8 +6138,8 @@ MSG_QUICKSEARCH_SO_SUBJORSENDER
 ;#DEF Subject Or Sender
 ;#SET (1580//)
 MSG_QUICKSEARCH_SO_TOORCC
-Till eller Cc
-;#DEF To Or Cc
+Mottagare (Till eller Cc)
+;#DEF Recipient (To Or CC)
 ;#SET (1581//)
 MSG_QUICKSEARCH_SO_INMSG
 Hitta i meddelande
@@ -6305,3 +6237,283 @@ MSG_ER_B64DECTRUNCTXT
 Viss läsbar text från MIME del %ld av brev '%s' kunde inte base64 avkodas och kan visas felaktigt eller inte alls.\n\nDetta kan bero på en felaktig kodning av den skickande mail klieten eller för att base64 delen har blivit skadad under sändning.
 ;#DEF Some readable text from MIME part %ld of mail '%s' couldn't be base64 decoded and may show up incorrect or is even missing.\n\nThis may be caused by an incorrect encoding done by the sending mail client or because the base64 part has been malformed during transmission.
 ;#SET (1605//)
+MSG_MA_MessageImport
+Importera meddelanden från MBOX, DBX eller vanliga mailfiler...
+;#DEF Import messages from MBOX, DBX or plain mail files...
+;#SET (1606//)
+MSG_ER_MESSAGEIMPORT
+Ett fel inträffade vid försök att importera mail från fil '%s'.\n\nVänligen kontrollera att filen är läsbar och att den innehåller RFC822 kompatibla mail, i någon av de import dataformat som YAM stödjer. YAM kan förnärvarande importera mail från antigen 'MBOX', 'DBX' (Outlook Express) eller en vanlig RFC822 mail fil. Kolla i dokumentationen för mer information om de importformat som stödjs och alternativa metoder att importera mail.
+;#DEF An error occurred while trying to import mails from file '%s'.\n\nMake sure that the choosen file is readable and contains RFC822 compliant emails in one of YAM's supported import data formats. YAM is currently able to import mails from either a 'MBOX', 'DBX' (Outlook Express) or even a plain RFC822 mail file. Please check the documentation for more information on the supported import formats and alternative methods to import mails.
+;#SET (1607//)
+MSG_MA_MESSAGEEXPORT
+Exportera meddelanden till en MBOX kompatibel fil...
+;#DEF Export messages to a MBOX compliant mail file...
+;#SET (1608//)
+MSG_YAMINFO
+E-post program i öppen källkod för Amiga
+;#DEF Open Source E-mail package for the Amiga
+;#SET (1609//)
+MSG_CO_SYSTEMSETTINGS
+Systeminställningar
+;#DEF System Settings
+;#SET (1610//)
+MSG_CO_DEFAULTCHARSET
+Förvald teckenuppsättning
+;#DEF Default Charset
+;#SET (1611//)
+MSG_CO_CHARSETUNKNOWNWARN
+Teckenuppsättningen för YAM är '%s' men stödjs\ninte av den installerade codesets.library versionen.\n\nHur vill du fortsätta?
+;#DEF The charset configured for YAM is '%s' but isn't\nsupported by the installed codesets.library version.\n\nHow do you want to proceed?
+;#SET (1612//)
+MSG_CO_CHARSETUNKNOWNWARN_BT
+*_Ändra till förvalt|_Ignorera
+;#DEF *_Change to default|_Ignore
+;#SET (1613//)
+MSG_ER_LIB
+Kan inte öppna '%s', version v%lu.%lu\n\nVänligen kontrollera att du åtminståne har denna minimum\nversion installerad i din library sökväg.
+;#DEF Can't open required '%s', version v%lu.%lu\n\nPlease make sure you have at least this minimum\nversion installed in your library path.
+;#SET (1614//)
+MSG_ER_LIB_URL
+Kan inte öppna '%s', version v%lu.%lu\n\nVänligen använd '%s'\nför att ladda ned den senaste versionen och\nkontrollera att den är korrekt installerad i library sökvägen.
+;#DEF Can't open required '%s', version v%lu.%lu\n\nPlease consult '%s'\nfor downloading the very latest version and make\nsure you have it properly installed in your library path.
+;#SET (1615//)
+MSG_ER_NO_MCC
+Kunde inte öppna MUI specialklass '%s' v%lu.%lu.\n\nVänligen använd '%s'\noch kontrollera att du har senaste versionen installerad.
+;#DEF Couldn't open required MUI custom class '%s' v%lu.%lu.\n\nPlease consult '%s'\nand make sure you have the latest version installed.
+;#SET (1616//)
+MSG_ER_MCC_OLD
+Kunde inte öppna MUI specialklass '%s' v%lu.%lu.\n\nInstallerad version är v%lu.%lu, vänligen uppgradera genom att\nladda ned senaste versionen från '%s'.
+;#DEF Couldn't open required MUI custom class '%s' v%lu.%lu.\n\nCurrently installed is v%lu.%lu, please upgrade by downloading\nthe latest version from '%s'.
+;#SET (1617//)
+MSG_ER_MCC_IN_USE
+Kunde inte öppna MUI specialklass '%s' v%lu.%lu.\n%lu.%lu används förnärvarande av andra program.\n\nVänligen använd '%s'.\nNär du har installerat den version som krävs,\nstäng alla MUI program, kontrollera att den gamla klassen\när rensad från minnet och försök igen.
+;#DEF Couldn't open required MUI custom class '%s' v%lu.%lu.\n%lu.%lu is currently in use by other applications.\n\nPlease consult '%s'.\nOnce you have installed the required version,\nclose all MUI programs, make sure the old class\nis flushed from memory and try again.
+;#SET (1618//)
+MSG_CO_FIRSTSTEPS_TITLE
+Inställningar första steg
+;#DEF First Steps Settings
+;#SET (1619//)
+MSG_CO_FIRSTSTEPS_SUMMARY
+För att snabbt konfigurera det som behövs till att börja med...
+;#DEF For quickly configurating the bare minimum...
+;#SET (1620//)
+MSG_CO_TCPIP_TITLE
+Inställningar TCP/IP
+;#DEF TCP/IP Settings
+;#SET (1621//)
+MSG_CO_TCPIP_SUMMARY
+För konfigurering av SMTP och POP3 server...
+;#DEF For configuring your SMTP and POP3 server...
+;#SET (1622//)
+MSG_CO_NEWMAIL_TITLE
+Inställningar nya brev
+;#DEF New Mail Settings
+;#SET (1623//)
+MSG_CO_NEWMAIL_SUMMARY
+Vad som ska hända vid mottagning av nya brev...
+;#DEF How to react upon receiving new mails...
+;#SET (1624//)
+MSG_CO_FILTER_TITLE
+Inställningar brevfilter
+;#DEF Mail Filter Settings
+;#SET (1625//)
+MSG_CO_FILTER_SUMMARY
+Definiera dina egna brevfilter...
+;#DEF Define your own mail filters...
+;#SET (1626//)
+MSG_CO_READ_TITLE
+Inställningar brevläsning
+;#DEF Mail Reading Settings
+;#SET (1627//)
+MSG_CO_READ_SUMMARY
+Konfigurera läsning av brev...
+;#DEF Configure mail reading...
+;#SET (1628//)
+MSG_CO_WRITE_TITLE
+Inställningar brevskrivning
+;#DEF Mail Writing Settings
+;#SET (1629//)
+MSG_CO_WRITE_SUMMARY
+Konfigurera skrivning av brev...
+;#DEF Configure mail writing...
+;#SET (1630//)
+MSG_CO_REPLY_TITLE
+Inställningar brevsvarande
+;#DEF Mail Replying Settings
+;#SET (1631//)
+MSG_CO_REPLY_SUMMARY
+Konfigurera svarande av brev...
+;#DEF Configure mail replying...
+;#SET (1632//)
+MSG_CO_SIGNATURE_TITLE
+Inställningar signatur
+;#DEF Mail Signature Settings
+;#SET (1633//)
+MSG_CO_SIGNATURE_SUMMARY
+Konfigurera dina signaturer...
+;#DEF Configure your signatures...
+;#SET (1634//)
+MSG_CO_LISTS_TITLE
+Inställningar brevlistor
+;#DEF Mail Lists Settings
+;#SET (1635//)
+MSG_CO_LISTS_SUMMARY
+Ändra brevlistornas utseende...
+;#DEF Change the mail lists appearance...
+;#SET (1636//)
+MSG_CO_SECURITY_TITLE
+Inställningar säkerhet
+;#DEF Security Settings
+;#SET (1637//)
+MSG_CO_SECURITY_SUMMARY
+Konfigurera relevanta säkerhetsinställningar...
+;#DEF Configure security relevant settings...
+;#SET (1638//)
+MSG_CO_STARTUP_TITLE
+Inställningar uppstart/avslut
+;#DEF Startup/Quit Actions Setup
+;#SET (1639//)
+MSG_CO_STARTUP_SUMMARY
+Aktiviteter som ska utföras vid uppstart och avslut av YAM...
+;#DEF Maintenance processing during startup and shutdown of YAM...
+;#SET (1640//)
+MSG_CO_MIME_TITLE
+Inställningar MIME
+;#DEF MIME Datatype Setup
+;#SET (1641//)
+MSG_CO_MIME_SUMMARY
+Konfigurera hur MIME-typer ska hanteras...
+;#DEF Setup how MIME types should be handled...
+;#SET (1642//)
+MSG_CO_ABOOK_TITLE
+Inställningar adressbok
+;#DEF Adressbook Settings
+;#SET (1643//)
+MSG_CO_ABOOK_SUMMARY
+Hantera adressbokens extra val...
+;#DEF Handle additional adressbook related option...
+;#SET (1644//)
+MSG_CO_SCRIPTS_TITLE
+Inställningar skript
+;#DEF User-definable Scripts
+;#SET (1645//)
+MSG_CO_SCRIPTS_SUMMARY
+Konfigurera dina hjälpskript...
+;#DEF Configure your helper scripts...
+;#SET (1646//)
+MSG_CO_MIXED_TITLE
+Inställningar övrigt
+;#DEF Miscellaneous
+;#SET (1647//)
+MSG_CO_MIXED_SUMMARY
+Konfigurera olika blandade inställningar...
+;#DEF Configure various mixed settings...
+;#SET (1648//)
+MSG_CO_UPDATE_TITLE
+Inställningar uppdatering
+;#DEF Software Update
+;#SET (1649//)
+MSG_CO_UPDATE_SUMMARY
+Kontrollera efter uppdatering av YAM...
+;#DEF Check for updates of YAM...
+;#SET (1650//)
+MSG_CO_CrdUpdate
+Uppdatera
+;#DEF Update
+;#SET (1651//)
+MSG_CO_AMISSLWARN_TITLE
+AmiSSL tillgänglighetsvarning
+;#DEF AmiSSL availibility warning
+;#SET (1652//)
+MSG_CO_AMISSLWARN
+YAM saknar AmiSSL för sin interna SSLv3/TLSv1 funktionalitet.\nAlla säkra anslutningar är därför avstängda,\ntills AmiSSL är korrekt installerat.\n\nVänligen kontrollera att du har åtminståne AmiSSL v%lu.%lu\ninstallerat och starta om YAM.
+;#DEF YAM has found AmiSSL to be unavailable for its\ninternal SSLv3/TLSv1 functionality. Therefore all\nsecure connections were disabled until AmiSSL is\nfound to be installed correctly.\n\nPlease make sure you correctly installed at least\nAmiSSL v%lu.%lu on your system and restart YAM.
+;#SET (1653//)
+MSG_CO_AMISSLWARN_BT
+*_Avsluta|_Ignorera alltid|Ignorera
+;#DEF *_Exit|Ignore _always|Ignore
+;#SET (1654//)
+MSG_BUSY_OPENINGCONFIG
+Öppnar inställningar...
+;#DEF Opening configuration...
+;#SET (1655//)
+MSG_CO_TIMEZONEWARN_TITLE
+Tidszonsinställning varning
+;#DEF Timezone setting warning
+;#SET (1656//)
+MSG_CO_TIMEZONEWARN
+Tidszonsinställningen i YAM, matchar inte\nsystemets förvalda tidszon.\n\nHur vill du fortsätta?
+;#DEF The timezone setting in YAM doesn't match\nthe system's default timezone.\n\nHow do you want to proceed?
+;#SET (1657//)
+MSG_CO_TIMEZONEWARN_BT
+*_Ändra|_Ignorera alltid|Ig_norera
+;#DEF *_Change|Ignore _always|_Ignore
+;#SET (1658//)
+MSG_CO_AUTODSTWARN_TITLE
+Automatisk sommartid varning
+;#DEF AutoDST warning
+;#SET (1659//)
+MSG_CO_AUTODSTWARN
+YAM har upptäckt ett program för automatisk sommartid\nsom rapporterar en annan sommartidsinställning\nän vad som förnärvarande är konfigurerat i YAM.\n\nHur vill du fortsätta?
+;#DEF YAM has found an AutoDST tool active and\nit reports a different Daylight Saving setting\nthan currently set in your YAM configuration.\n\nHow do you want to proceed?
+;#SET (1660//)
+MSG_CO_AUTODSTWARN_BT
+*_Ändra|_Ignorera alltid|Ig_norera
+;#DEF *_Change|Ignore _always|_Ignore
+;#SET (1661//)
+MSG_MA_UPDATECHECK
+Kolla efter uppdatering...
+;#DEF Check for updates...
+;#SET (1662//)
+MSG_CO_SOFTWAREUPDATE
+Uppdatering
+;#DEF Software Update
+;#SET (1663//)
+MSG_CO_UPDATE_DAILY
+Dagligen
+;#DEF Daily
+;#SET (1664//)
+MSG_CO_UPDATE_WEEKLY
+Varje vecka
+;#DEF Weekly
+;#SET (1665//)
+MSG_CO_UPDATE_MONTHLY
+Varje månad
+;#DEF Monthly
+;#SET (1666//)
+MSG_CO_SEARCHFORUPDATES
+Sök efter _uppdatering:
+;#DEF Search for _Updates:
+;#SET (1667//)
+MSG_CO_SEARCHFORUPDATESINFO
+Du blir meddelad så snart en uppdatering är tillgänglig.
+;#DEF You will be notified as soon as updates are available.
+;#SET (1668//)
+MSG_CO_SEARCHNOW
+Sök _nu
+;#DEF Search _now
+;#SET (1669//)
+MSG_CO_LASTSEARCH
+Senaste sökning:
+;#DEF Last Search:
+;#SET (1670//)
+MSG_CO_LASTSTATUS_NOCHECK
+Ingen sökning utförd ännu.
+;#DEF No check performed yet.
+;#SET (1671//)
+MSG_CO_LASTSTATUS_NOUPDATE
+Inga nya versioner hittades.
+;#DEF New newer versions were found.
+;#SET (1672//)
+MSG_WR_SECURITYREQ
+Brevets mottagare har olika förvalda\nbrevsäkerhetsinställningar.\n\nHur vill du komponera brevet?
+;#DEF The recipients of the mail have different\ndefault mail security settings.\n\nHow do you want to compose the mail?
+;#SET (1673//)
+MSG_WR_SECURITYREQ_GADS
+*_Vanligt|_Signerat|_Krypterat|S_ignerat&Krypterat|_Anonymnt|Av_bryt
+;#DEF *_Plain|_Signed|_Encrypted|S_igned&Encrypted|_Anonymous|_Cancel
+;#SET (1674//)
+MSG_ER_OPENTCPIP
+YAM kunde inte öppna lämpligt bsdsocket.library gränssnitt, nödvändigt för TCP/IP anslutningar.\n\nVänligen kontrollera att du har en kompatibel TCP/IP stack installerad, korrekt konfigurerad och att ditt nätverksgränssnitt är fungerande.
+;#DEF YAM wasn't able to open the appropriate bsdsocket.library interface, required for TCP/IP connections.\n\nPlease make sure that you have a compatible TCP/IP stack installed, correctly configured and that your network interface is up and running.
+;#SET (1675//)
