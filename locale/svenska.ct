@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 5.5 (16.04.06)
+## version $VER: YAM.ct 5.6 (19.04.06)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -6510,7 +6510,7 @@ Brevets mottagare har olika förvalda\nbrevsäkerhetsinställningar.\n\nHur vill du
 ;#DEF The recipients of the mail have different\ndefault mail security settings.\n\nHow do you want to compose the mail?
 ;#SET (1673//)
 MSG_WR_SECURITYREQ_GADS
-*_Vanligt|_Signerat|_Krypterat|S_ignerat&Krypterat|_Anonymnt|Av_bryt
+*_Vanligt|_Signerat|_Krypterat|S_ignerat&krypterat|_Anonymnt|Av_bryt
 ;#DEF *_Plain|_Signed|_Encrypted|S_igned&Encrypted|_Anonymous|_Cancel
 ;#SET (1674//)
 MSG_ER_OPENTCPIP

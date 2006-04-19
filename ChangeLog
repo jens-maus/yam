@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-04-19  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: made some very minor changes
+
 2006-04-18  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_utilities.h: revised our own "struct TimeVal" fallback structure
@@ -216,7 +220,7 @@ $Id$
     second instance crashes caused by an uninitialized xpkPackerList.
   * icons/std/status_group: slightly improved the transparency looking of
     the "group" status image.
-		
+        
 2006-03-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * icons: converted all default config_#?, status_#? and folder_#? images
