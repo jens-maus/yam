@@ -33,11 +33,11 @@
 
 #include <proto/locale.h>
 
+#include "YAM.h"
+
 struct FC_Type { long ID; char * Str; };
 
 const struct FC_Type _%i = { %d, %s };
-
-static struct Catalog *%b_Catalog = NULL;
 
 /*** Catalog functions ***/
 /// GetStr()
@@ -45,10 +45,8 @@ char *GetStr(APTR fcstr)
 {
   char *defaultstr = ((struct FC_Type *)fcstr)->Str;
 
-  if(LocaleBase)
-  {
-    return (char *)GetCatalogStr(%b_Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
-  }
+  if(G->Catalog)
+    return (char *)GetCatalogStr(G->Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
 
   return defaultstr;
 }
@@ -65,22 +63,23 @@ char *GetStripStr(APTR fcstr)
 /// Close%bCatalog()
 void Close%bCatalog(void)
 {
-  if (LocaleBase) CloseCatalog(%b_Catalog);
-  %b_Catalog = NULL;
+  if(G->Catalog != NULL)
+  {
+    CloseCatalog(G->Catalog);
+    G->Catalog = NULL;
+  }
 }
 ///
-/// Open%bCatalog(void)
-void Open%bCatalog(void)
+/// Open%bCatalog()
+void Open%bCatalog()
 {
   static const struct TagItem tags[] = {
                                          { OC_BuiltInLanguage, (ULONG)%l },
-                                         { OC_Version,         %v },
+                                         { OC_Version,         %v  },
                                          { TAG_DONE,           0  }
                                        };
 
-  if (LocaleBase && !%b_Catalog)
-  {
-    %b_Catalog = OpenCatalogA(NULL, "%b.catalog", (struct TagItem *)&tags[0]);
-  }
+  if(LocaleBase && G->Catalog == NULL)
+    G->Catalog = OpenCatalogA(NULL, "%b.catalog", (struct TagItem *)&tags[0]);
 }
 ///

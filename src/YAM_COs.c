@@ -394,6 +394,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "LetterPart       = %d\n", co->LetterPart);
       fprintf(fh, "WriteIndexes     = %d\n", co->WriteIndexes);
       fprintf(fh, "SupportSite      = %s\n", co->SupportSite);
+      fprintf(fh, "UpdateServer     = %s\n", co->UpdateServer);
       fprintf(fh, "JumpToNewMsg     = %s\n", Bool2Txt(co->JumpToNewMsg));
       fprintf(fh, "JumpToIncoming   = %s\n", Bool2Txt(co->JumpToIncoming));
       fprintf(fh, "AskJumpUnread    = %s\n", Bool2Txt(co->AskJumpUnread));
@@ -891,6 +892,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 /*Hidden*/     else if (!stricmp(buffer, "LetterPart"))     { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
                else if (!stricmp(buffer, "WriteIndexes"))   co->WriteIndexes = atoi(value);
                else if (!stricmp(buffer, "SupportSite"))    strlcpy(co->SupportSite, value, sizeof(co->SupportSite));
+               else if (!stricmp(buffer, "UpdateServer"))   strlcpy(co->UpdateServer, value, sizeof(co->UpdateServer));
                else if (!stricmp(buffer, "JumpToNewMsg"))   co->JumpToNewMsg = Txt2Bool(value);
                else if (!stricmp(buffer, "JumpToIncoming")) co->JumpToIncoming = Txt2Bool(value);
                else if (!stricmp(buffer, "AskJumpUnread"))  co->AskJumpUnread = Txt2Bool(value);

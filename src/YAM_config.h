@@ -486,6 +486,7 @@ struct Config
    char  XPKPack[5];
    char  XPKPackEncrypt[5];
    char  SupportSite[SIZE_HOST];
+   char  UpdateServer[SIZE_HOST];
    char  LocalCharset[SIZE_CTYPE+1];
    char  IOCInterface[SIZE_SMALL];
    char  AppIconText[SIZE_COMMAND];

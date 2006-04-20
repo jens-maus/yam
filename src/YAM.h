@@ -73,6 +73,7 @@ struct Global
    struct DiskObject *      DiskObj[MAXICONS];
    struct FileRequester *   ASLReq[MAXASL];
    struct Locale *          Locale;
+   struct Catalog *         Catalog;
    struct MA_ClassData *    MA;
    struct CO_ClassData *    CO;
    struct AB_ClassData *    AB;

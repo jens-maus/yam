@@ -62,7 +62,9 @@
 #include "YAM_userlist.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"
+
 #include "classes/Classes.h"
+#include "UpdateCheck.h"
 
 #include "Debug.h"
 
@@ -2623,40 +2625,7 @@ MakeStaticHook(MA_ShowAboutWindowHook, MA_ShowAboutWindowFunc);
 //  Checks YAM homepage for new program versions
 HOOKPROTONHNONP(MA_CheckVersionFunc, void)
 {
-   struct TempFile *tf;
-   int mon, day, year;
-   long thisver, currver;
-   char newver[SIZE_SMALL], buf[SIZE_LARGE];
-
-   // first we check if we can start a connection or if the
-   // tcp/ip stuff is busy right now so that we do not interrupt something
-   if(SocketBase && G->TR_Socket != SMTP_NO_SOCKET) return;
-
-   if (TR_OpenTCPIP())
-   {
-      sscanf(yamversiondate, "%d.%d.%d", &day, &mon, &year);
-      thisver = (year<78 ? 1000000:0)+year*10000+mon*100+day;
-      BusyText(GetStr(MSG_BusyGettingVerInfo), "");
-      tf = OpenTempFile(NULL);
-      if (TR_DownloadURL(C->SupportSite, "files/", "version", tf->Filename))
-      {
-         if ((tf->FP = fopen(tf->Filename,"r")))
-         {
-            fscanf(tf->FP, "%d.%d.%d", &day, &mon, &year);
-            GetLine(tf->FP, newver, SIZE_SMALL);
-            currver = (year<78 ? 1000000:0)+year*10000+mon*100+day;
-            snprintf(buf, sizeof(buf), GetStr(MSG_MA_LatestVersion), &newver[1], day, mon, year < 78 ? 2000+year : 1900+year, yamversion, yamversiondate,
-               currver > thisver ? GetStr(MSG_MA_NewVersion) : GetStr(MSG_MA_NoNewVersion));
-            if (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_CheckVersion), GetStr(MSG_MA_VersionReqOpt), buf)) GotoURL(C->SupportSite);
-         }
-         else ER_NewError(GetStr(MSG_ER_CantOpenTempfile), tf->Filename);
-      }
-      CloseTempFile(tf);
-      BusyEnd();
-      TR_CloseTCPIP();
-   }
-   else
-     ER_NewError(GetStr(MSG_ER_OPENTCPIP));
+  CheckForUpdates();
 }
 MakeStaticHook(MA_CheckVersionHook, MA_CheckVersionFunc);
 

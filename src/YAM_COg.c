@@ -53,6 +53,8 @@
 #include "YAM_mime.h"
 #include "YAM_utilities.h"
 
+#include "UpdateCheck.h"
+
 #include "Debug.h"
 
 enum VarPopMode { VPM_FORWARD=0, VPM_REPLYHELLO, VPM_REPLYINTRO, VPM_REPLYBYE,
@@ -553,6 +555,17 @@ HOOKPROTONHNO(FilterDisplayFunc, LONG, struct NList_DisplayMessage *msg)
   return 0;
 }
 MakeStaticHook(FilterDisplayHook, FilterDisplayFunc);
+
+///
+/// UpdateCheckHook
+// initiates an interactive update check
+HOOKPROTONHNONP(UpdateCheckFunc, LONG)
+{
+  CheckForUpdates();
+
+  return 0;
+}
+MakeStaticHook(UpdateCheckHook, UpdateCheckFunc);
 
 ///
 
@@ -2372,6 +2385,7 @@ Object *CO_Page15(struct CO_ClassData *data)
     nnset(data->GUI.CY_UPDATEINTERVAL, MUIA_Disabled, TRUE);
 
     DoMethod(data->GUI.CH_UPDATECHECK, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.CY_UPDATEINTERVAL, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+    DoMethod(data->GUI.BT_UPDATENOW,   MUIM_Notify, MUIA_Pressed,  FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &UpdateCheckHook);
   }
 
   return grp;

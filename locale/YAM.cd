@@ -474,22 +474,6 @@ Folder '%s' is a protected folder.\n\
 Please enter the password to unlock it:
 ; FOLDER
 ;
-MSG_MA_LatestVersion (145//)
-Latest version: %s (%2ld.%02ld.%ld)\n\
-This version: %s (%s)\n\
-\n\
-%s
-; VERSION_NUMBER, DAY, MONTH, YEAR, VERSION_NUMBER, DATE, TEXT
-;
-MSG_MA_NewVersion (146//)
-\e8A new version is available at the YAM homepage!
-;
-MSG_MA_NoNewVersion (147//)
-You're already using the latest version.
-;
-MSG_MA_VersionReqOpt (148//)
-_Visit homepage|*_Cancel
-;
 MSG_MA_ReplyReq (149//)
 The selected message has multiple recipients.\n\
 Do you want to send the reply...
@@ -680,10 +664,6 @@ About YAM
 ;
 MSG_MA_AboutMUI (200//)
 About MUI...
-;
-MSG_MA_CheckVersion (201//)
-Check version
-;This is the title of the check version window, not the menu item.
 ;
 MSG_MA_LastErrors (202//)
 Show last message

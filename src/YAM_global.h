@@ -41,6 +41,7 @@ extern const char* const yamversion;
 extern const char* const yamversionver;
 extern const char* const yamversionstring;
 extern const char* const yamverxmailer;
+extern const char* const yambuildid;
 extern const char* const yamversiondate;
 extern const char* const yamcopyright;
 extern const char* const yamfullcopyright;

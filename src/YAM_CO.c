@@ -1092,6 +1092,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->LetterPart = 1;
       co->WriteIndexes = 120;
       strlcpy(co->SupportSite, "http://www.yam.ch/", sizeof(co->SupportSite));
+      strlcpy(co->UpdateServer, "http://update.yam.ch/", sizeof(co->UpdateServer));
       co->JumpToNewMsg = co->AskJumpUnread = co->PrinterCheck = co->IsOnlineCheck = TRUE;
       co->JumpToIncoming = FALSE;
       co->ConfirmOnQuit = FALSE;

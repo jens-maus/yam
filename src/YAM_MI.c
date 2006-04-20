@@ -2410,6 +2410,49 @@ static int rfc2047_decode_int(const char *text,
 
 ///
 
+/*** RFC 1738 URL encoding/decoding routines ***/
+/// urlencode()
+// URL encoding function returning the length of the encoded string.
+int urlencode(char *to, const char *from, unsigned int len)
+{
+  char *optr = to;
+
+  ENTER();
+
+  // only continue of we have reasonable input
+  // values.
+  if(from && *from && to)
+  {
+    unsigned char *iptr = (unsigned char *)from;
+    unsigned char c = *iptr;
+
+    while(c != '\0' && (optr-to) < (int)len)
+    {
+      if(isalnum(c))
+        *optr++ = c;
+      else
+      {
+        // the char is not an alphanumeric character
+        // so we need to encode it like "%XX" where XX is
+        // the hexadecimal interpretation of it
+        *optr++ = '%';
+        *optr++ = basis_hex[(c >> 4) & 0xF];
+        *optr++ = basis_hex[c & 0xF];
+      }
+
+      c = *(++iptr);
+    }
+
+    // NUL terminate the output string
+    *optr = '\0';
+  }
+
+  RETURN((int)(optr-to));
+  return optr-to;
+}
+
+///
+
 /*** RFC 2231 MIME parameter encoding/decoding routines ***/
 #warning "implement RFC 2231 decoding/encoding ASAP!"
 

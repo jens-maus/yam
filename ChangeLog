@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-04-20  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: added&changed some more code for the upcoming routines to perform
+    a direct and more advanced update check via internet. Please note that we
+    are still not finished and currently nothing will happen.
+
 2006-04-19  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: made some very minor changes

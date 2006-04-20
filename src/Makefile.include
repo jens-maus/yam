@@ -99,6 +99,7 @@ OBJS = \
 	$(OBJDIR)/YAM_WR.o \
 	$(OBJDIR)/all_gcc.o \
 	$(OBJDIR)/ImageCache.o \
+	$(OBJDIR)/UpdateCheck.o \
 	$(OBJDIR)/Debug.o \
 	$(CLASSES)
 

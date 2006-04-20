@@ -87,6 +87,7 @@ const char * const yamversionver    = __YAM_VERSION __YAM_DEVEL CPU;
 const char * const yamversionstring = "$VER: YAM " __YAM_VERSION __YAM_DEVEL CPU " (" __YAM_VERDATE ") " __YAM_COPYRIGHT;
 const char * const yamverxmailer    = "YAM " __YAM_VERSION __YAM_DEVEL __YAM_BUILDID CPU \
                                       " AmigaOS E-mail Client (C) 2000-2006 YAM Open Source Team - http://www.yam.ch/";
+const char * const yambuildid       = __YAM_BUILDID;
 const char * const yamcopyright     = __YAM_COPYRIGHT;
 const char * const yamfullcopyright = __YAM_FULLCOPYRIGHT;
 const char * const yamversiondate   = __YAM_VERDATE;
