@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-04-21  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: updated according to the latest changes.
+
 2006-04-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: added&changed some more code for the upcoming routines to perform

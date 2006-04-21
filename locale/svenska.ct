@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 5.6 (19.04.06)
+## version $VER: YAM.ct 5.7 (21.04.06)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -553,22 +553,6 @@ MSG_MA_GetFolderPass
 Mappen '%s' är skyddad.\nAnge lösenord för att komma åt den:
 ;#DEF Folder '%s' is a protected folder.\nPlease enter the password to unlock it:
 ;#SET (144//)
-MSG_MA_LatestVersion
-Senaste version: %s (%2ld.%02ld.%ld)\nDenna version: %s (%s)\n\n%s
-;#DEF Latest version: %s (%2ld.%02ld.%ld)\nThis version: %s (%s)\n\n%s
-;#SET (145//)
-MSG_MA_NewVersion
-\e8Det finns en nyare version tillgänglig på YAMs hemsida!
-;#DEF \e8A new version is available at the YAM homepage!
-;#SET (146//)
-MSG_MA_NoNewVersion
-Du använder redan den senaste versionen.
-;#DEF You're already using the latest version.
-;#SET (147//)
-MSG_MA_VersionReqOpt
-_Gå till hemsidan|*A_vbryt
-;#DEF _Visit homepage|*_Cancel
-;#SET (148//)
 MSG_MA_ReplyReq
 Brevet har flera mottagare.\nVill du skicka svaret...
 ;#DEF The selected message has multiple recipients.\nDo you want to send the reply...
@@ -773,10 +757,6 @@ MSG_MA_AboutMUI
 Om MUI...
 ;#DEF About MUI...
 ;#SET (200//)
-MSG_MA_CheckVersion
-Kontrollera version
-;#DEF Check version
-;#SET (201//)
 MSG_MA_LastErrors
 Visa senaste fel
 ;#DEF Show last message
