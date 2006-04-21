@@ -93,7 +93,9 @@ BOOL CheckForUpdates(void)
         snprintf(request, SIZE_URL, "%s&lang=%s%%20%d%%2E%d", request, buf, G->Catalog->cat_Version, G->Catalog->cat_Revision);
 
       // encode the exec version
-      snprintf(request, SIZE_URL, "%s&exec=%d%%2E%d", request, SysBase->lib_Version, SysBase->lib_Revision);
+      snprintf(request, SIZE_URL, "%s&exec=%d%%2E%d", request,
+                                                      ((struct Library *)SysBase)->lib_Version,
+                                                      ((struct Library *)SysBase)->lib_Revision);
 
       // encode the MUI version
       snprintf(request, SIZE_URL, "%s&mui=%d%%2E%d", request, MUIMasterBase->lib_Version, MUIMasterBase->lib_Revision);
