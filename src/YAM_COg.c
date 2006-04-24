@@ -717,7 +717,6 @@ Object *CO_Page0(struct CO_ClassData *data)
 Object *CO_Page1(struct CO_ClassData *data)
 {
    Object *grp;
-   Object *authgrp;
    static char *secureMethods[4];
 
    secureMethods[0] = GetStr(MSG_CO_SMTPSECURE_NO);
@@ -774,7 +773,7 @@ Object *CO_Page1(struct CO_ClassData *data)
                          Child, data->GUI.CH_USESMTPAUTH = MakeCheck(GetStr(MSG_CO_UseSMTPAUTH)),
                          Child, LLabel1(GetStr(MSG_CO_UseSMTPAUTH)),
                          Child, HSpace(0),
-                         Child, authgrp=ColGroup(2),
+                         Child, ColGroup(2),
                             Child, Label2(GetStr(MSG_CO_SMTPUser)),
                             Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,GetStr(MSG_CO_SMTPUser)),
                             Child, Label2(GetStr(MSG_CO_SMTPPass)),
@@ -866,9 +865,13 @@ Object *CO_Page1(struct CO_ClassData *data)
       DoMethod(data->GUI.CH_DELETE     ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
       DoMethod(data->GUI.BT_PADD       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_AddPOP3Hook,0);
       DoMethod(data->GUI.BT_PDEL       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_DelPOP3Hook,0);
-      DoMethod(data->GUI.CH_USESMTPAUTH,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,authgrp,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+      DoMethod(data->GUI.CH_USESMTPAUTH,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,MUIV_Notify_Application,5,MUIM_MultiSet,MUIA_Disabled,MUIV_NotTriggerValue,data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS);
       DoMethod(data->GUI.CH_POP3SSL    ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_USESTLS,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
       DoMethod(data->GUI.RA_SMTPSECURE ,MUIM_Notify,MUIA_Radio_Active, 0,data->GUI.RA_SMTPSECURE,3,MUIM_Set,MUIA_Disabled, !G->TR_UseableTLS);
+
+      // disable some gadgets per default
+      set(data->GUI.ST_SMTPAUTHUSER, MUIA_Disabled, TRUE);
+      set(data->GUI.ST_SMTPAUTHPASS, MUIA_Disabled, TRUE);
    }
 
    return grp;

@@ -6,6 +6,8 @@ $Id$
 
 2006-04-24  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c: fixed bug #1470662 where we forgot to ghost some gadgets in case
+    the optional SMTP-AUTH settings are disabled by the user.
   * YAM.c, UpdateCheck.c, misc: added a new timer for supporting the new online
     update-check facility. Now, YAM will automatically check for updates in
     case the predefined update-check interval is due. It will then check for
