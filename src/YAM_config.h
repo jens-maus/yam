@@ -33,6 +33,8 @@
 #include "YAM_find.h"
 #include "YAM_transfer.h"
 
+#include "UpdateCheck.h"
+
 #define FOCOLNUM 5
 #define MACOLNUM 8  // the maximum number of columns the MessageListview can have
 #define ABCOLNUM 9
@@ -366,9 +368,11 @@ struct Config
    int   EmbeddedMailDelay;
    int   StatusChangeDelay;
    int   KeepAliveInterval;
+   int   UpdateInterval;
 
    enum  PrintMethod   PrintMethod;
    enum  SMTPSecMethod SMTP_SecureMethod;
+   enum  UpdateCheckStatus LastUpdateStatus;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;
@@ -438,6 +442,7 @@ struct Config
    struct MUI_PenSpec ColorURL;
    struct RxHook      RX[MAXRX];
    struct TRSocketOpt SocketOptions;
+   struct TimeVal     LastUpdateCheck;
 
    char  RealName[SIZE_REALNAME];
    char  EmailAddress[SIZE_ADDRESS];

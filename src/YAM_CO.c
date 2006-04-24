@@ -1086,6 +1086,13 @@ void CO_SetDefaults(struct Config *co, int page)
         co->WBAppIcon = TRUE;
    }
 
+   // [Update]
+   if(page == 15 || page < 0)
+   {
+      co->UpdateInterval = 604800; // check weekly for updates per default
+      co->LastUpdateStatus = UST_NOCHECK;
+   }
+
    // everything else
    if(page < 0)
    {
@@ -1518,6 +1525,13 @@ void CO_Validate(struct Config *co, BOOL update)
                               TAG_DONE);
         }
         #endif
+      }
+
+      // [Update]
+      if(G->CO->Visited[15] || G->CO->UpdateAll)
+      {
+        // make sure we reinit the update check timer
+        InitUpdateCheck(FALSE);
       }
    }
 

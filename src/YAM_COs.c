@@ -390,11 +390,17 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "XPKPackEncrypt   = %s;%d\n", co->XPKPackEncrypt, co->XPKPackEncryptEff);
       fprintf(fh, "PackerCommand    = %s\n", co->PackerCommand);
 
+      fprintf(fh, "\n[Update]\n");
+      fprintf(fh, "UpdateInterval   = %d\n", co->UpdateInterval);
+      fprintf(fh, "UpdateServer     = %s\n", co->UpdateServer);
+      TimeVal2String(buf, &co->LastUpdateCheck, DSS_USDATETIME, TZC_NONE);
+      fprintf(fh, "LastUpdateCheck  = %s\n", buf);
+      fprintf(fh, "LastUpdateStatus = %d\n", co->LastUpdateStatus);
+
       fprintf(fh, "\n[Advanced]\n");
       fprintf(fh, "LetterPart       = %d\n", co->LetterPart);
       fprintf(fh, "WriteIndexes     = %d\n", co->WriteIndexes);
       fprintf(fh, "SupportSite      = %s\n", co->SupportSite);
-      fprintf(fh, "UpdateServer     = %s\n", co->UpdateServer);
       fprintf(fh, "JumpToNewMsg     = %s\n", Bool2Txt(co->JumpToNewMsg));
       fprintf(fh, "JumpToIncoming   = %s\n", Bool2Txt(co->JumpToIncoming));
       fprintf(fh, "AskJumpUnread    = %s\n", Bool2Txt(co->AskJumpUnread));
@@ -889,10 +895,13 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "XPKPack"))        { strlcpy(co->XPKPack, value, sizeof(co->XPKPack)); co->XPKPackEff = atoi(&value[5]); }
                else if (!stricmp(buffer, "XPKPackEncrypt")) { strlcpy(co->XPKPackEncrypt, value, sizeof(co->XPKPackEncrypt)); co->XPKPackEncryptEff = atoi(&value[5]); }
                else if (!stricmp(buffer, "PackerCommand"))  strlcpy(co->PackerCommand, value, sizeof(co->PackerCommand));
-/*Hidden*/     else if (!stricmp(buffer, "LetterPart"))     { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
+/*Update*/     else if (!stricmp(buffer, "UpdateInterval")) co->UpdateInterval = atoi(value);
+               else if (!stricmp(buffer, "UpdateServer"))   strlcpy(co->UpdateServer, value, sizeof(co->UpdateServer));
+               else if (!stricmp(buffer, "LastUpdateCheck"))String2TimeVal(&co->LastUpdateCheck, value, DSS_USDATETIME, TZC_NONE);
+               else if (!stricmp(buffer, "LastUpdateStatus")) co->LastUpdateStatus = atoi(value);
+/*Advanced*/   else if (!stricmp(buffer, "LetterPart"))     { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
                else if (!stricmp(buffer, "WriteIndexes"))   co->WriteIndexes = atoi(value);
                else if (!stricmp(buffer, "SupportSite"))    strlcpy(co->SupportSite, value, sizeof(co->SupportSite));
-               else if (!stricmp(buffer, "UpdateServer"))   strlcpy(co->UpdateServer, value, sizeof(co->UpdateServer));
                else if (!stricmp(buffer, "JumpToNewMsg"))   co->JumpToNewMsg = Txt2Bool(value);
                else if (!stricmp(buffer, "JumpToIncoming")) co->JumpToIncoming = Txt2Bool(value);
                else if (!stricmp(buffer, "AskJumpUnread"))  co->AskJumpUnread = Txt2Bool(value);
@@ -1178,7 +1187,37 @@ void CO_GetConfig(void)
          CE->XPKPackEff        = GetMUINumer  (gui->NB_PACKER);
          CE->XPKPackEncryptEff = GetMUINumer  (gui->NB_ENCPACK);
          GetMUIString(CE->PackerCommand, gui->ST_ARCHIVER, sizeof(CE->PackerCommand));
-         break;
+      break;
+
+      // [Update]
+      case 15:
+      {
+        if(GetMUICheck(gui->CH_UPDATECHECK) == TRUE)
+        {
+          int interval = GetMUICycle(gui->CY_UPDATEINTERVAL);
+
+          switch(interval)
+          {
+            case 0:
+              CE->UpdateInterval = 86400; // 1 day
+            break;
+
+            case 1:
+              CE->UpdateInterval = 604800; // 1 week
+            break;
+
+            case 2:
+              CE->UpdateInterval = 2419200; // 1 month
+            break;
+
+            default:
+              CE->UpdateInterval = 0;
+          }
+        }
+        else
+          CE->UpdateInterval = 0; // disabled
+      }
+      break;
    }
 
    LEAVE();
@@ -1412,6 +1451,60 @@ void CO_SetConfig(void)
          setslider   (gui->NB_ENCPACK   ,CE->XPKPackEncryptEff);
          setstring   (gui->ST_ARCHIVER  ,CE->PackerCommand);
          break;
+
+      // [Update]
+      case 15:
+      {
+        setcheckmark(gui->CH_UPDATECHECK, CE->UpdateInterval > 0);
+
+        if(CE->UpdateInterval > 0)
+        {
+          if(CE->UpdateInterval <= 86400)
+            setcycle(gui->CY_UPDATEINTERVAL, 0); // daily
+          else if(CE->UpdateInterval <= 604800)
+            setcycle(gui->CY_UPDATEINTERVAL, 1); // weekly
+          else
+            setcycle(gui->CY_UPDATEINTERVAL, 2); // monthly
+        }
+        else
+          setcycle(gui->CY_UPDATEINTERVAL, 1);
+
+        // now we set the information on the last update check
+        switch(C->LastUpdateStatus)
+        {
+          case UST_NOCHECK:
+            set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOCHECK));
+          break;
+
+          case UST_NOUPDATE:
+            set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOUPDATE));
+          break;
+
+          case UST_NOQUERY:
+            set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOQUERY));
+          break;
+
+          case UST_UPDATESUCCESS:
+            set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_UPDATESUCCESS));
+          break;
+        }
+
+        // set the lastUpdateCheckDate
+        if(C->LastUpdateStatus != UST_NOCHECK && C->LastUpdateCheck.Seconds > 0)
+        {
+          char buf[SIZE_DEFAULT];
+
+          TimeVal2String(buf, &C->LastUpdateCheck, DSS_DATETIME, TZC_NONE);
+          set(gui->TX_UPDATEDATE, MUIA_Text_Contents, buf);
+        }
+        else
+        {
+          // no update check was yet performed, so we clear our status gadgets
+          set(gui->TX_UPDATEDATE, MUIA_Text_Contents, "");
+        }
+      }
+      break;
+
    }
 
    LEAVE();

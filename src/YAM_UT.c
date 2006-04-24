@@ -2636,33 +2636,203 @@ BOOL DateStamp2RFCString(char *dst, struct DateStamp *date, int timeZone, BOOL c
 }
 ///
 /// DateStamp2Long
-// Converts a datestamp to a numeric value
+// Converts a datestamp to a pseudo numeric value
 long DateStamp2Long(struct DateStamp *date)
 {
-   char *s, datestr[LEN_DATSTRING];
-   struct DateStamp dsnow;
-   struct DateTime dt;
-   int y;
+  char *s;
+  char datestr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
+  struct DateStamp dsnow;
+  struct DateTime dt;
+  int y;
+  long res = 0;
 
-   if (!date) date = DateStamp(&dsnow);
-   memset(&dt, 0, sizeof(struct DateTime));
-   dt.dat_Stamp   = *date;
-   dt.dat_Format  = FORMAT_USA;
-   dt.dat_StrDate = datestr;
+  ENTER();
 
-   DateToStr(&dt);
-   s = Trim(datestr);
+  if(!date)
+    date = DateStamp(&dsnow);
 
-   // get the year
-   y = atoi(&s[6]);
+  memset(&dt, 0, sizeof(struct DateTime));
+  dt.dat_Stamp   = *date;
+  dt.dat_Format  = FORMAT_USA;
+  dt.dat_StrDate = datestr;
 
-   // this is a Y2K patch
-   // if less then 8035 days has passed since 1.1.1978 then we are in the 20th century
-   if (date->ds_Days < 8035) y += 1900;
-   else y += 2000;
+  if(DateToStr(&dt))
+  {
+    s = Trim(datestr);
 
-   return((100*atoi(&s[3])+atoi(s))*10000+y);
+    // get the year
+    y = atoi(&s[6]);
+
+    // this is a Y2K patch
+    // if less then 8035 days has passed since 1.1.1978 then we are in the 20th century
+    if(date->ds_Days < 8035) y += 1900;
+    else y += 2000;
+
+    res = (100*atoi(&s[3])+atoi(s))*10000+y;
+  }
+
+  RETURN(res);
+  return res;
 }
+///
+/// String2DateStamp()
+//  Tries to converts a string into a datestamp via StrToDate()
+BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mode, enum TZConvert tzc)
+{
+  char datestr[64], timestr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
+  BOOL result = FALSE;
+
+  ENTER();
+
+  // depending on the DateStampType we have to try to split the string differently
+  // into the separate datestr/timestr combo
+  switch(mode)
+  {
+    case DSS_UNIXDATE:
+    {
+      char *p;
+
+      // we walk from the front to the back and skip the week
+      // day name
+      if((p = strchr(string, ' ')))
+      {
+        int month;
+
+        // extract the month
+        for(month=0; month < 12; month++)
+        {
+          if(strnicmp(string, months[month], 3) == 0)
+            break;
+        }
+
+        if(month >= 12)
+          break;
+
+        // extract the day
+        if((p = strchr(p, ' ')))
+        {
+          int day = atoi(p+1);
+
+          if(day < 1 || day > 31)
+            break;
+
+          // extract the timestring
+          if((p = strchr(p, ' ')))
+          {
+            strlcpy(timestr, p+1, 8);
+
+            // extract the year
+            if((p = strchr(p, ' ')))
+            {
+              int year = atoi(p+1);
+
+              if(year < 1970 || year > 2070)
+                break;
+
+              // now we can compose our datestr
+              snprintf(datestr, sizeof(datestr), "%02d-%02d-%02d", month+1, day, year%100);
+
+              result = TRUE;
+            }
+          }
+        }
+      }
+    }
+    break;
+
+    case DSS_DATETIME:
+    case DSS_USDATETIME:
+    {
+      char *p;
+
+      // copy the datestring
+      if((p = strchr(string, ' ')))
+      {
+        strlcpy(datestr, string, p-string+1);
+        strlcpy(timestr, p+1, sizeof(timestr));
+
+        result = TRUE;
+      }
+    }
+    break;
+
+    case DSS_WEEKDAY:
+    case DSS_DATE:
+    {
+      strlcpy(datestr, string, sizeof(datestr));
+      timestr[0] = '\0';
+      result = TRUE;
+    }
+    break;
+
+    case DSS_TIME:
+    {
+      strlcpy(timestr, string, sizeof(timestr));
+      datestr[0] = '\0';
+      result = TRUE;
+    }
+    break;
+
+    case DSS_BEAT:
+    case DSS_DATEBEAT:
+      // not supported yet.
+    break;
+  }
+
+  // we continue only if everything until now is fine.
+  if(result == TRUE)
+  {
+    struct DateTime dt;
+
+    // now we fill the DateTime structure with the data for our request.
+    dt.dat_Format  = (mode == DSS_USDATETIME || mode == DSS_UNIXDATE) ? FORMAT_USA : FORMAT_DEF;
+    dt.dat_Flags   = 0; // perhaps later we can add Weekday substitution
+    dt.dat_StrDate = datestr;
+    dt.dat_StrTime = timestr;
+    dt.dat_StrDay  = NULL;
+
+    // convert the string to a dateStamp
+    if(StrToDate(&dt))
+    {
+      // now we check whether we have to convert the datestamp to a specific TZ or not
+      if(tzc != TZC_NONE)
+        DateStampTZConvert(&dt.dat_Stamp, tzc);
+
+      // now we do copy the datestamp stuff over the one from our mail
+      memcpy(dst, &dt.dat_Stamp, sizeof(struct DateStamp));
+    }
+    else
+      result = FALSE;
+  }
+
+  if(result == FALSE)
+    W(DBF_UTIL, "couldn't convert string '%s' to struct DateStamp", string);
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// String2TimeVal()
+// converts a string to a struct TimeVal, if possible.
+BOOL String2TimeVal(struct TimeVal *dst, char *string, enum DateStampType mode, enum TZConvert tzc)
+{
+  struct DateStamp ds;
+  BOOL result;
+
+  ENTER();
+
+  // we use the String2DateStamp function for conversion
+  if((result = String2DateStamp(&ds, string, mode, tzc)))
+  {
+    // now we just have to convert the DateStamp to a struct TimeVal
+    DateStamp2TimeVal(&ds, dst, TZC_NONE);
+  }
+
+  RETURN(result);
+  return result;
+}
+
 ///
 /// TZtoMinutes
 //  Converts time zone into a numeric offset also using timezone abbreviations

@@ -80,7 +80,9 @@
 #include "YAM_read.h"
 #include "YAM_rexx.h"
 #include "YAM_write.h"
+
 #include "ImageCache.h"
+#include "UpdateCheck.h"
 #include "classes/Classes.h"
 
 #include "Debug.h"
@@ -111,9 +113,6 @@ struct Args
 };
 
 /**************************************************************************/
-
-// the used number of timerIO requests (refer to YAM.h)
-#define TIO_NUM (7)
 
 // TimerIO structures we use
 struct TC_Request
@@ -148,7 +147,7 @@ static void TC_Prepare(enum TimerIO tio, int seconds, int micros)
 {
   ENTER();
 
-  if(micros > 0 || seconds > 0)
+  if(seconds > 0 || micros > 0)
   {
     struct TC_Request *timer = &TCData.timer[tio];
 
@@ -168,7 +167,7 @@ static void TC_Prepare(enum TimerIO tio, int seconds, int micros)
       W(DBF_TIMERIO, "timer[%ld]: already running/prepared", tio);
   }
   else
-    D(DBF_TIMERIO, "timer[%ld]: secs and micros are zero, no prepare required", tio);
+    W(DBF_TIMERIO, "timer[%ld]: secs and micros are zero, no prepare required", tio);
 
   LEAVE();
 }
@@ -203,7 +202,7 @@ static void TC_Start(enum TimerIO tio)
     timer->isPrepared = FALSE;
   }
   else
-    W(DBF_TIMERIO, "timer[%ld]: either already running or prepared to get fired", tio);
+    W(DBF_TIMERIO, "timer[%ld]: either already running or not prepared to get fired", tio);
 
   LEAVE();
 }
@@ -241,7 +240,7 @@ void TC_Stop(enum TimerIO tio)
       E(DBF_TIMERIO, "timer[%ld]: is invalid and can't be stopped", tio);
   }
   else
-    D(DBF_TIMERIO, "timer[%ld]: already stopped", tio);
+    W(DBF_TIMERIO, "timer[%ld]: already stopped", tio);
 
   LEAVE();
 }
@@ -528,7 +527,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     }
     break;
 
-    // one a POP3_KEEPALIVE we make sure that a currently active, but waiting
+    // on a POP3_KEEPALIVE we make sure that a currently active, but waiting
     // POP3 connection (preselection) doesn't die by sending NOOP commands regularly
     // to the currently connected POP3 server.
     case TIO_POP3_KEEPALIVE:
@@ -542,6 +541,25 @@ static void TC_Dispatcher(enum TimerIO tio)
         TC_Prepare(tio, C->KeepAliveInterval, 0);
       }
     }
+    break;
+
+    // on a UPDATECHECK we have to process our update check routines as the
+    // user wants to check if there is a new version of YAM available or not.
+    case TIO_UPDATECHECK:
+    {
+      D(DBF_TIMERIO, "timer[%ld]: TIO_UPDATECHECK received: %s", tio, dateString);
+
+      CheckForUpdates();
+
+      // prepare the timer to get fired again
+      if(C->UpdateInterval > 0)
+        TC_Prepare(tio, C->UpdateInterval, 0);
+    }
+    break;
+
+    // dummy to please GCC
+    case TIO_NUM:
+      // nothing
     break;
   }
 
@@ -2312,6 +2330,10 @@ int main(int argc, char **argv)
       TC_Start(TIO_CHECKMAIL);
       TC_Start(TIO_AUTOSAVE);
 
+      // initialize the automatic UpdateCheck facility and schedule an
+      // automatic update check during startup if necessary
+      InitUpdateCheck(TRUE);
+
       // start the event loop
       while (!(ret = Root_GlobalDispatcher(DoMethod(G->App, MUIM_Application_NewInput, &signals))))
       {
@@ -2384,6 +2406,9 @@ int main(int argc, char **argv)
 
                 if(TCData.timer[TIO_POP3_KEEPALIVE].isPrepared)
                   TC_Start(TIO_POP3_KEEPALIVE);
+
+                if(TCData.timer[TIO_UPDATECHECK].isPrepared)
+                  TC_Start(TIO_UPDATECHECK);
               }
               else
                 W(DBF_TIMERIO, "timer signal received, but no timer request was processed!!!");

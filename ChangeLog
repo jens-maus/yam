@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-04-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, UpdateCheck.c, misc: added a new timer for supporting the new online
+    update-check facility. Now, YAM will automatically check for updates in
+    case the predefined update-check interval is due. It will then check for
+    update via internet - however, it will still not notify the user in case
+    there are updates available as we still have to do some work on that stuff.
+
 2006-04-21  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: updated according to the latest changes.

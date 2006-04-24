@@ -5766,18 +5766,24 @@ MSG_CO_LASTSTATUS_NOCHECK (1671//)
 No check performed yet.
 ;
 MSG_CO_LASTSTATUS_NOUPDATE (1672//)
-New newer versions were found.
+No new software updates were available.
 ;
-MSG_WR_SECURITYREQ (1673//)
+MSG_CO_LASTSTATUS_NOQUERY (1673//)
+Couldn't query update server for updates.
+;
+MSG_CO_LASTSTATUS_UPDATESUCCESS (1674//)
+Successfully found and processed new updates.
+;
+MSG_WR_SECURITYREQ (1675//)
 The recipients of the mail have different\n\
 default mail security settings.\n\
 \n\
 How do you want to compose the mail?
 ;
-MSG_WR_SECURITYREQ_GADS (1674//)
+MSG_WR_SECURITYREQ_GADS (1676//)
 *_Plain|_Signed|_Encrypted|S_igned&Encrypted|_Anonymous|_Cancel
 ;
-MSG_ER_OPENTCPIP (1675//)
+MSG_ER_OPENTCPIP (1677//)
 YAM wasn't able to open the appropriate bsdsocket.library \
 interface, required for TCP/IP connections.\n\
 \n\

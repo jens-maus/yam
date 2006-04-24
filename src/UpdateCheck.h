@@ -28,7 +28,18 @@
 
 ***************************************************************************/
 
+// enumeration values for the update check
+// status
+enum UpdateCheckStatus
+{
+  UST_NOCHECK=0,
+  UST_NOUPDATE,
+  UST_NOQUERY,
+  UST_UPDATESUCCESS
+};
+
 // externally accessible functions
+void InitUpdateCheck(BOOL initial);
 BOOL CheckForUpdates(void);
 
 #endif // UPDATECHECK_H

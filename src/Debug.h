@@ -95,6 +95,7 @@
 #define DBF_IMPORT   (1<<12)    // for import of messages (YAM_MA.c,YAM_TR.c)
 #define DBF_XPK      (1<<13)    // for XPKmaster.library stuff
 #define DBF_IMAGE    (1<<14)    // for loading/mainting image files (and cache)
+#define DBF_UPDATE   (1<<15)    // for the updatecheck facility (UpdateCheck.c)
 #define DBF_ALL      0xffffffff
 
 void SetupDebug(void);

@@ -2625,7 +2625,10 @@ MakeStaticHook(MA_ShowAboutWindowHook, MA_ShowAboutWindowFunc);
 //  Checks YAM homepage for new program versions
 HOOKPROTONHNONP(MA_CheckVersionFunc, void)
 {
-  CheckForUpdates();
+  // we rather call CheckForUpdates() directly, we better
+  // issue the waiting timerequest with an interval of 1 micros so
+  // that it gets fired immediately
+  TC_Restart(TIO_UPDATECHECK, 0, 1);
 }
 MakeStaticHook(MA_CheckVersionHook, MA_CheckVersionFunc);
 

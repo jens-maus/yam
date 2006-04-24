@@ -271,7 +271,6 @@ BOOL     CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh);
 BOOL     MoveFile(char *oldname, char *newname);
 char *   CreateFilename(const char * const file);
 BOOL     CreateDirectory(char *dir);
-long     DateStamp2Long(struct DateStamp *date);
 int      TZtoMinutes(char *tzone);
 void     DateStampUTC(struct DateStamp *ds);
 void     GetSysTimeUTC(struct TimeVal *tv);
@@ -282,6 +281,9 @@ void     DateStamp2TimeVal(const struct DateStamp *ds, struct TimeVal *tv, enum 
 BOOL     TimeVal2String(char *dst, const struct TimeVal *tv, enum DateStampType mode, enum TZConvert tzc);
 BOOL     DateStamp2String(char *dst, struct DateStamp *date, enum DateStampType mode, enum TZConvert tzc);
 BOOL     DateStamp2RFCString(char *dst, struct DateStamp *date, int timeZone, BOOL convert);
+long     DateStamp2Long(struct DateStamp *date);
+BOOL     String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mode, enum TZConvert tzc);
+BOOL     String2TimeVal(struct TimeVal *dst, char *string, enum DateStampType mode, enum TZConvert tzc);
 char *   Decrypt(char *source);
 BOOL     DeleteMailDir(char *dir, BOOL isroot);
 char *   DescribeCT(const char *ct);

@@ -559,11 +559,47 @@ MakeStaticHook(FilterDisplayHook, FilterDisplayFunc);
 ///
 /// UpdateCheckHook
 // initiates an interactive update check
-HOOKPROTONHNONP(UpdateCheckFunc, LONG)
+HOOKPROTONHNONP(UpdateCheckFunc, void)
 {
+  struct CO_GUIData *gui = &G->CO->GUI;
+
+  // perform the update check and update our open GUI
+  // elements accordingly.
   CheckForUpdates();
 
-  return 0;
+  // update the status and lastupdatedate label
+  switch(C->LastUpdateStatus)
+  {
+    case UST_NOCHECK:
+      set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOCHECK));
+    break;
+
+    case UST_NOUPDATE:
+      set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOUPDATE));
+    break;
+
+    case UST_NOQUERY:
+      set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOQUERY));
+    break;
+
+    case UST_UPDATESUCCESS:
+      set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_UPDATESUCCESS));
+    break;
+  }
+
+  // set the lastUpdateCheckDate
+  if(C->LastUpdateStatus != UST_NOCHECK && C->LastUpdateCheck.Seconds > 0)
+  {
+    char buf[SIZE_DEFAULT];
+
+    TimeVal2String(buf, &C->LastUpdateCheck, DSS_DATETIME, TZC_NONE);
+    set(gui->TX_UPDATEDATE, MUIA_Text_Contents, buf);
+  }
+  else
+  {
+    // no update check was yet performed, so we clear our status gadgets
+    set(gui->TX_UPDATEDATE, MUIA_Text_Contents, "");
+  }
 }
 MakeStaticHook(UpdateCheckHook, UpdateCheckFunc);
 
@@ -2365,17 +2401,15 @@ Object *CO_Page15(struct CO_ClassData *data)
             MUIA_Rectangle_HBar, TRUE,
             MUIA_FixHeight,      4,
           End,
-          Child, ColGroup(3),
+          Child, ColGroup(2),
             Child, LLabel1(GetStr(MSG_CO_LASTSEARCH)),
             Child, data->GUI.TX_UPDATESTATUS = TextObject,
               MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOCHECK),
             End,
-            Child, HVSpace,
-            Child, HVSpace,
+            Child, HSpace(1),
             Child, data->GUI.TX_UPDATEDATE = TextObject,
               MUIA_Text_Contents, "",
             End,
-            Child, HVSpace,
           End,
         End,
         Child, HVSpace,
