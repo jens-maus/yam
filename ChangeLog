@@ -4,6 +4,21 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-04-25  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c: YAM allows the user now to also directly insert a file as an
+    UUencoded text passage within the write window via a new menu entry. This
+    should make life easier for people wanting to inline a UUencoded file in
+    their actual message part in case they are not able to use the normal MIME
+    attachment routines of YAM (e.g. due to a mailing list stripping all
+    additional MIME parts). However, please note that inlining UUencoded text
+    within the main text part of a mail isn't particular standardized and its
+    up to the mail clients to decide what to do with it. Therefore, inlining
+    UUencoded text should always be considered wisely and should never be
+    necessary under normal conditions. But it may become handy in case all other
+    attachment methods fail even if other mail clients may simply ignore those
+    inlined attachments.
+
 2006-04-24  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c: fixed bug #1470662 where we forgot to ghost some gadgets in case

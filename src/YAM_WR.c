@@ -1970,14 +1970,23 @@ static char *WR_TransformText(char *source, enum TransformMode mode, char *qtext
    int ch, i, size = FileSize(source), pos = 0, p = 0, qtextlen = strlen(qtext);
    BOOL quote = (mode == ED_INSQUOT || mode == ED_PASQUOT ||
                  mode == ED_INSALTQUOT || mode == ED_PASALTQUOT);
-   if (size > 0)
+   if(size > 0)
    {
       size += SIZE_DEFAULT;
-      if (quote) size += size/20*qtextlen;
-      if ((dest = calloc(size, 1)))
+      if(quote)
+        size += size/20*qtextlen;
+      if(mode == ED_INSUUCODE)
+        size += strlen(FilePart(qtext))+12+7; // for the "begin 644 XXX" and "end passage
+
+      if((dest = calloc(size, 1)))
       {
-         if ((fp = fopen(source, "r")))
+         if((fp = fopen(source, "r")))
          {
+            // in case the source is UUencoded text we have to add the
+            // "begin 644 XXX" stuff in advance.
+            if(mode == ED_INSUUCODE)
+              p = snprintf(dest, size, "\nbegin 644 %s\n", FilePart(qtext));
+
             while ((ch = fgetc(fp)) != EOF)
             {
                if (!pos && quote)
@@ -1996,6 +2005,12 @@ static char *WR_TransformText(char *source, enum TransformMode mode, char *qtext
                dest[p++] = ch;
             }
             dest[p] = 0;
+
+            // in case the source is UUencoded text we have to add the
+            // "end" stuff at the end of the text as well
+            if(mode == ED_INSUUCODE)
+              strlcat(dest, "``\nend\n", size);
+
             fclose(fp);
          }
       }
@@ -2020,7 +2035,9 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
 {
    enum TransformMode cmd = arg[0];
    int winnum = arg[1];
-   char *text, *quotetext, filename[SIZE_PATHFILE];
+   char *text = NULL;
+   char *quotetext;
+   char filename[SIZE_PATHFILE];
    struct TempFile *tf;
    struct WR_ClassData *wr = G->WR[winnum];
 
@@ -2037,6 +2054,45 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
          strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
          text = WR_TransformText(filename, cmd, quotetext);
          break;
+
+      // the user wants to insert a file as
+      // a uuencoded text passage.
+      case ED_INSUUCODE:
+      {
+        // first we request the filename of the file we want to its
+        // uuencoded interpretation to be inserted into the editor
+        if(ReqFile(ASL_ATTACH, wr->GUI.WI, GetStr(MSG_WR_InsertFile), REQF_NONE, C->AttachDir, ""))
+        {
+          strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
+
+          // open a temporary file
+          if((tf = OpenTempFile("w")))
+          {
+            // open both files and start the uuencoding
+            FILE *in = fopen(filename, "r");
+            if(in)
+            {
+              // lets uuencode the file now.
+              if(uuencode_file(in, tf->FP) > 0)
+              {
+                // we successfully encoded the file, so lets
+                // close our tempfile file pointer and call the tranformtext function
+                fclose(tf->FP);
+                tf->FP = NULL;
+
+                // now transform the text
+                text = WR_TransformText(tf->Filename, cmd, filename);
+              }
+
+              fclose(in);
+            }
+
+            CloseTempFile(tf);
+          }
+        }
+      }
+      break;
+
       default:
          if (!(tf = OpenTempFile("w"))) return;
          DumpClipboard(tf->FP);
@@ -2045,10 +2101,15 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
          CloseTempFile(tf);
          break;
    }
+
    if(text)
    {
-      if (cmd == ED_OPEN) DoMethod(wr->GUI.TE_EDIT, MUIM_TextEditor_ClearText);
+      if(cmd == ED_OPEN)
+        DoMethod(wr->GUI.TE_EDIT, MUIM_TextEditor_ClearText);
+
       DoMethod(wr->GUI.TE_EDIT, MUIM_TextEditor_InsertText, text);
+
+      // free our allocated text
       free(text);
    }
 }
@@ -2344,7 +2405,7 @@ static struct WR_ClassData *WR_New(int winnum)
         WMEN_AUTOSP,WMEN_SEP0,WMEN_SEP1,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
         WMEN_DELSEND,WMEN_RECEIPT,WMEN_DISPNOTI,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
         WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
-        WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5
+        WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5, WMEN_INSUUCODE
       };
 
       static char *rtitles[4]={NULL}, *encoding[3], *security[SEC_MAXDUMMY+1], *priority[4], *signat[5];
@@ -2418,6 +2479,7 @@ static struct WR_ClassData *WR_New(int winnum)
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Quoted), MUIA_UserData,WMEN_INSQUOT, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_AltQuoted), MUIA_UserData,WMEN_INSALTQUOT, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_ROT13), MUIA_UserData,WMEN_INSROT13, End,
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_UUCODE), MUIA_UserData,WMEN_INSUUCODE, End,
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_SaveAs), MUIA_UserData,WMEN_SAVEAS, End,
@@ -2675,6 +2737,7 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSQUOT   ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSQUOT,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSALTQUOT,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSALTQUOT,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSROT13  ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSROT13,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSUUCODE ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSUUCODE,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SAVEAS    ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_SaveAsHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_EDIT      ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_EditHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_CUT       ,data->GUI.TE_EDIT      ,2,MUIM_TextEditor_ARexxCmd,"CUT");

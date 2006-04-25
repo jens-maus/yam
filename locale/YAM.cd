@@ -5791,3 +5791,6 @@ Please make sure that you have a compatible TCP/IP stack \
 installed, correctly configured and that your network \
 interface is up and running.
 ;
+MSG_WR_UUCODE (1678//)
+UUencoded text
+;
