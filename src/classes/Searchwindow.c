@@ -53,6 +53,7 @@ OVERLOAD(OM_NEW)
     WindowContents, VGroup,
 
       Child, string = BetterStringObject,
+        MUIA_CycleChain, TRUE,
         StringFrame,
       End,
 
@@ -63,9 +64,9 @@ OVERLOAD(OM_NEW)
       End,
 
       Child, HGroup,
-        Child, search = SimpleButton(GetStr(MSG_SEARCHWINDOW_BT_SEARCH)),
-        Child, top    = SimpleButton(GetStr(MSG_SEARCHWINDOW_BT_FROMTOP)),
-        Child, cancel = SimpleButton(GetStr(MSG_SEARCHWINDOW_BT_CANCEL)),
+        Child, search = MakeButton(GetStr(MSG_SEARCHWINDOW_BT_SEARCH)),
+        Child, top    = MakeButton(GetStr(MSG_SEARCHWINDOW_BT_FROMTOP)),
+        Child, cancel = MakeButton(GetStr(MSG_SEARCHWINDOW_BT_CANCEL)),
       End,
 
     End,

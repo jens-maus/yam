@@ -150,7 +150,7 @@ OVERLOAD(OM_NEW)
       End,
       Child, HGroup,
         Child, RectangleObject, End,
-        Child, bt_okay = SimpleButton(GetStr(MSG_ABOUT_OKAY_GAD)),
+        Child, bt_okay = MakeButton(GetStr(MSG_ABOUT_OKAY_GAD)),
         Child, RectangleObject, End,
       End,
     End,

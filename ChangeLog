@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-04-26  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: replaced all SimpleButton() uses by our own MakeButton() function
+    as the MUI's SimpleButton() doesn't specify any CycleChain and therefore
+    make it harder to navigate by keyboard through the various GUI objects
+    in a window.
+
 2006-04-25  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c: adressed bug #1464538 once more as I didn't fix the reported
