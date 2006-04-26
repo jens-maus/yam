@@ -1137,8 +1137,15 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
 
   // we process the file line-by-line, analyze it if it is between the boundary
   // do an eventually existing charset translation and write it out again.
-  while(GetLine(in, buf, SIZE_LINE))
+  while(fgets(buf, SIZE_LINE, in))
   {
+    char *pNewline;
+
+    // search for either a \r or \n and terminate there
+    // if found.
+    if((pNewline = strpbrk(buf, "\r\n")))
+      *pNewline = '\0'; // strip any newline
+
     // first we check if we reached the boundary yet.
     if(rp && strncmp(buf, rp->Boundary, blen) == 0)
     {
@@ -1175,7 +1182,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
         {
           // now write back exactly the same amount of bytes we have read
           // previously
-          if(fprintf(out, "%s\n", str) <= 0)
+          if(fprintf(out, "%s%s", str, pNewline != NULL ? "\n" : "") <= 0)
           {
             E(DBF_MAIL, "error during write operation!");
 
@@ -1191,7 +1198,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
       else
       {
         // now write back exactly the same amount of bytes we read previously
-        if(fprintf(out, "%s\n", buf) <= 0)
+        if(fprintf(out, "%s%s", buf, pNewline != NULL ? "\n" : "") <= 0)
         {
           E(DBF_MAIL, "error during write operation!");
 
@@ -2494,6 +2501,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             // nothing serious happened so lets continue...
             rptr = msg+1;
 
+            D(DBF_STARTUP, "e: %lx %ld", rptr[strlen(rptr)-1], strlen(rptr));
+
             // find signature first if it should be stripped
             if(mode == RIM_QUOTE && C->StripSignature)
             {
@@ -2520,6 +2529,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             // parse the message string
             while(*rptr)
             {
+              BOOL newlineAtEnd;
+
               // lets get the first real line of the data and make sure to strip all
               // NUL bytes because otherwise we are not able to show the text.
               for(eolptr = rptr; *eolptr != '\n' && eolptr < msg+nread+1; eolptr++)
@@ -2529,12 +2540,19 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 if(*eolptr == '\0')
                   *eolptr = ' ';
               }
-              *eolptr = '\0'; // terminate the string
+
+              // check if we have a newline at the end or not
+              newlineAtEnd = (*eolptr == '\n');
+
+              // terminate the string right where we are (also eventually stripping
+              // a newline
+              *eolptr = '\0';
 
               // now that we have a full line we can check for inline stuff
               // like inline uuencode/pgp sections
 
-/* UUenc */   if(strncmp(rptr, "begin ", 6) == 0 &&
+/* UUenc */   if(mode != RIM_EDIT && // in Edit mode we don't handle inlined UUencoded attachments.
+                 strncmp(rptr, "begin ", 6) == 0 &&
                  rptr[6] >= '0' && rptr[6] <= '7' &&
                  rptr[7] >= '0' && rptr[7] <= '7' &&
                  rptr[8] >= '0' && rptr[8] <= '7')
@@ -2758,28 +2776,37 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               {
                 if (mode == RIM_READ)
                 {
-                  if(C->SigSepLine == 1) cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
-                  else if(C->SigSepLine == 2) cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033[s:2]");
-                  else if(C->SigSepLine == 3) break;
+                  if(C->SigSepLine == 1)
+                    cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
+                  else if(C->SigSepLine == 2)
+                    cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033[s:2]");
+                  else if(C->SigSepLine == 3)
+                    break;
 
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+                  if(newlineAtEnd)
+                    cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
                 }
                 else if(mode == RIM_QUOTE)
                 {
-                  if(C->StripSignature && (rptr == sigptr)) break;
+                  if(C->StripSignature && (rptr == sigptr))
+                    break;
                 }
                 else
                 {
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "-- \n");
+                  if(newlineAtEnd)
+                    cmsg = AppendToBuffer(cmsg, &wptr, &len, "-- \n");
+                  else
+                    cmsg = AppendToBuffer(cmsg, &wptr, &len, "-- ");
                 }
               }
-
 /* PGP sig */ else if (!strncmp(rptr, "-----BEGIN PGP PUBLIC KEY BLOCK", 31))
               {
                 rmData->hasPGPKey = TRUE;
 
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+
+                if(newlineAtEnd)
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
               }
               else if (!strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29))
               {
@@ -2795,7 +2822,9 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 /* other */   else
               {
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+
+                if(newlineAtEnd)
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
               }
 
               rptr = eolptr+1;

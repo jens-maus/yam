@@ -6,6 +6,16 @@ $Id$
 
 2006-04-25  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c: adressed bug #1464538 once more as I didn't fix the reported
+    problem of disappearing newlines at the end of a mail in all cases. In
+    fact, the issue wasn't that particular easy like I first thought. The main
+    fix of the problem lies in the RE_ConsumeRestOfPart() function where we
+    have to use fgets() directly instead of GetLine() so that we can find out
+    if we have to add a newline to our raw mime part files or not. Now that
+    long-standing issue of disappearing/reappearing newlines at the end of
+    re-edited mails should hopefully finally be fixed.
+  * YAM_RE.c: messages with inlined uuencoded text will keep it when the mail
+    will be re-edited, rather than converting it into a proper MIME attachment.
   * YAM_WR.c: YAM allows the user now to also directly insert a file as an
     UUencoded text passage within the write window via a new menu entry. This
     should make life easier for people wanting to inline a UUencoded file in
