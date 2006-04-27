@@ -6,6 +6,9 @@ $Id$
 
 2006-04-26  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c: fixed a bug in the filter configuration GUI where on systems
+    without any defined filters, the "Compare" register didn't correctly layout
+    and therefore caused trouble in the whole YAM configuration GUI handling.
   * classes/UpdateNotifyWindow.c, UpdateCheck.c: added a new Update notification
     window which will be used to display a list of found components where newer
     updates are available after having checked via internet. Please note, that

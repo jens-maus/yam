@@ -1090,6 +1090,8 @@ Object *CO_Page3(struct CO_ClassData *data)
                        MUIA_Scrollgroup_FreeHoriz, FALSE,
                        MUIA_Scrollgroup_FreeVert,  TRUE,
                        MUIA_Scrollgroup_Contents,  data->GUI.GR_SGROUP = VirtgroupObject,
+                         Child, SearchControlGroupObject, // we need a minimum of one dummy control group
+                         End,
                        End,
                     End,
                     Child, RectangleObject,
