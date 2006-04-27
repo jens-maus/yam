@@ -176,7 +176,6 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
       DoMethod(gui->GR_RGROUP, MUIM_Group_InitChange); // required for a proper refresh
       DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange);
       DoMethod(gui->GR_SGROUP, OM_ADDMEMBER, newSearchGroup);
-      //DoMethod(gui->GR_SGROUP, MUIM_Group_MoveMember, newSearchGroup, -1);
       DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
       DoMethod(gui->GR_RGROUP, MUIM_Group_ExitChange); // required for a proper refresh
 
