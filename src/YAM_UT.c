@@ -5207,8 +5207,11 @@ void GotoURL(char *url)
   {
     if(GETINTERFACE("main", IOpenURL, OpenURLBase))
     {
+      static const struct TagItem tags[] = { { URL_NewWindow, TRUE },
+                                             { TAG_DONE, 0         } };
+
       // open the URL in a new window per default
-      URL_Open(url, URL_NewWindow, TRUE, TAG_DONE);
+      URL_OpenA(url, (struct TagItem *)&tags[0]);
 
       DROPINTERFACE(IOpenURL);
     }
