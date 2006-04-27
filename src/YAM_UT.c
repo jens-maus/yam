@@ -42,6 +42,7 @@
 #include <exec/memory.h>
 #include <libraries/asl.h>
 #include <libraries/gadtools.h>
+#include <libraries/openurl.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
@@ -5194,7 +5195,9 @@ int GetSimpleID(void)
 //  Loads an URL using an ARexx script or openurl.library
 void GotoURL(char *url)
 {
-  if (C->RX[MACRO_URL].Script[0])
+  ENTER();
+
+  if(C->RX[MACRO_URL].Script[0])
   {
     char newurl[SIZE_LARGE];
     snprintf(newurl, sizeof(newurl), "%c%s%c", '"', url, '"');
@@ -5204,13 +5207,16 @@ void GotoURL(char *url)
   {
     if(GETINTERFACE("main", IOpenURL, OpenURLBase))
     {
-      URL_OpenA(url, NULL);
+      // open the URL in a new window per default
+      URL_Open(url, URL_NewWindow, TRUE, TAG_DONE);
 
       DROPINTERFACE(IOpenURL);
     }
     CloseLibrary(OpenURLBase);
     OpenURLBase = NULL;
   }
+
+  LEAVE();
 }
 ///
 /// SWSSearch()

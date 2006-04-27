@@ -6,6 +6,9 @@ $Id$
 
 2006-04-26  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: added an URL_NewWindow to our URL_Open() call for using openurl
+    which in fact will force it to always open an URL in a separate browser
+    window.
   * misc: replaced all SimpleButton() uses by our own MakeButton() function
     as the MUI's SimpleButton() doesn't specify any CycleChain and therefore
     make it harder to navigate by keyboard through the various GUI objects
