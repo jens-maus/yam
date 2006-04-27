@@ -264,7 +264,7 @@ BOOL CheckForUpdates(void)
             }
 
             // make sure we show the update notify window.
-            #if 1 // disabled until 100% finished!!
+            #if 0 // disabled until 100% finished!!
             if(updatesAvailable)
             {
               set(G->UpdateNotifyWinObject, MUIA_Window_Open, TRUE);
