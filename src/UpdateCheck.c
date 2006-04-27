@@ -68,12 +68,12 @@ void InitUpdateCheck(BOOL initial)
     nextCheck.Microseconds  = C->LastUpdateCheck.Microseconds;
 
     // get the current time
-    GetSysTime(&now);
+    GetSysTime(TIMEVAL(&now));
 
     // compare it against the last checked time we have
     // in our config and if greater than we go and do an immediate update
     // check.
-    if(initial && CmpTime(&now, &nextCheck) <= 0)
+    if(initial && CmpTime(TIMEVAL(&now), TIMEVAL(&nextCheck)) <= 0)
     {
       D(DBF_UPDATE, "update-check is due to be processed NOW.");
 
@@ -295,7 +295,7 @@ BOOL CheckForUpdates(void)
   // as the last operation we get the current time as the
   // last checked time for the update check and save our
   // configuration back to disk.
-  GetSysTime(&C->LastUpdateCheck);
+  GetSysTime(TIMEVAL(&C->LastUpdateCheck));
 
   // we save the configuration file which we currently
   // have in memory and copy the changed elements to our
