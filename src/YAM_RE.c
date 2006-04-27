@@ -2501,8 +2501,6 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             // nothing serious happened so lets continue...
             rptr = msg+1;
 
-            D(DBF_STARTUP, "e: %lx %ld", rptr[strlen(rptr)-1], strlen(rptr));
-
             // find signature first if it should be stripped
             if(mode == RIM_QUOTE && C->StripSignature)
             {
