@@ -5794,3 +5794,36 @@ interface is up and running.
 MSG_WR_UUCODE (1678//)
 UUencoded text
 ;
+MSG_UPD_NOTIFICATION_WTITLE (1679//)
+Update Notification
+;
+MSG_UPD_NOTIFICATION_TITLE (1680//)
+Updates available
+;
+MSG_UPD_NOTIFICATION_SUMMARY (1681//)
+YAM has found the following updates to be available:
+;
+MSG_UPD_NOTIFICATION_CHANGES (1682//)
+Changes:
+;
+MSG_UPD_NOTIFICATION_NOUPDATE (1683//)
+Do not notify me on updates in future
+;
+MSG_UPD_NOTIFICATION_VISITURL (1684//)
+Visit URL
+;
+MSG_UPD_NOTIFICATION_CLOSE (1685//)
+Close
+;
+MSG_UPD_NOTIFICATION_COMP (1686//)
+Component
+;
+MSG_UPD_NOTIFICATION_RECENT (1687//)
+Recent
+;
+MSG_UPD_NOTIFICATION_INSTALLED (1688//)
+Installed
+;
+MSG_UPD_NOTIFICATION_URL (1689//)
+URL
+;

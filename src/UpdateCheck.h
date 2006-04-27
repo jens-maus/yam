@@ -38,6 +38,17 @@ enum UpdateCheckStatus
   UST_UPDATESUCCESS
 };
 
+// when an update for a specific component is found
+// a structure is filled and sent to the update notification window
+struct UpdateComponent
+{
+  char name[SIZE_DEFAULT];        // name of the component
+  char recent[SIZE_DEFAULT];      // recent version string (available)
+  char installed[SIZE_DEFAULT];   // currently installed version
+  char url[SIZE_URL];             // the URL where the component is available
+  struct TempFile *changeLogFile; // the file with the text about the changes.
+};
+
 // externally accessible functions
 void InitUpdateCheck(BOOL initial);
 BOOL CheckForUpdates(void);

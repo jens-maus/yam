@@ -6,6 +6,11 @@ $Id$
 
 2006-04-26  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/UpdateNotifyWindow.c, UpdateCheck.c: added a new Update notification
+    window which will be used to display a list of found components where newer
+    updates are available after having checked via internet. Please note, that
+    the automatic notification is still disabled as we are still not 100%
+    finished. Please keep patient, its almost finished...
   * YAM_UT.c: added an URL_NewWindow to our URL_Open() call for using openurl
     which in fact will force it to always open an URL in a separate browser
     window.

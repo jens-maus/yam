@@ -40,6 +40,7 @@
 #include "YAM_locale.h"
 #include "YAM_transfer.h"
 
+#include "classes/Classes.h"
 #include "UpdateCheck.h"
 
 #include "Debug.h"
@@ -161,13 +162,117 @@ BOOL CheckForUpdates(void)
           // now we parse the result.
           if((tf->FP = fopen(tf->Filename, "r")))
           {
+            BOOL updatesAvailable = FALSE;
+            struct UpdateComponent *comp = NULL;
+
+            // make sure we clear an eventually existing update window
+            if(G->UpdateNotifyWinObject)
+              DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_Clear);
+
             while(GetLine(tf->FP, buf, SIZE_LINE))
             {
-              D(DBF_STARTUP, "%s", buf);
+              D(DBF_UPDATE, "%s", buf);
+
+              // if we find an '[UPDATE]' tag, we can go and create an
+              // update notify window in advance and fill it according to the
+              // followed information
+              if(strcmp(buf, "[UPDATE]") == 0)
+              {
+                // make sure that we have created the update notification
+                // window in advance.
+                if(!G->UpdateNotifyWinObject)
+                {
+                  if((G->UpdateNotifyWinObject = UpdateNotifyWindowObject, End))
+                    DoMethod(G->App, OM_ADDMEMBER, G->UpdateNotifyWinObject);
+                  else
+                    break;
+                }
+
+                // if we still have an update component structure
+                // waiting to be submitted to our window we do it right
+                // away.
+                if(comp != NULL)
+                {
+                  DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_AddComponent, comp);
+                  comp = NULL;
+                }
+
+                // make sure that we know that we have updates available also
+                // later on.
+                updatesAvailable = TRUE;
+
+                // create a new UpdateComponent structure which we
+                // are going to fill step by step
+                if(!(comp = calloc(sizeof(struct UpdateComponent), 1)))
+                {
+                  updatesAvailable = FALSE;
+                  break;
+                }
+              }
+              else if(strcmp(buf, "[EOT]") == 0)
+              {
+                if(comp != NULL)
+                {
+                  DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_AddComponent, comp);
+                  comp = NULL;
+
+                  break;
+                }
+              }
+              else if(comp != NULL)
+              {
+                if(strncmp(buf, "COMPONENT: ", 11) == 0)
+                  strlcpy(comp->name, buf+11, sizeof(comp->name));
+                else if(strncmp(buf, "RECENT: ", 7) == 0)
+                  strlcpy(comp->recent, buf+7, sizeof(comp->recent));
+                else if(strncmp(buf, "INSTALLED: ", 11) == 0)
+                  strlcpy(comp->installed, buf+11, sizeof(comp->installed));
+                else if(strncmp(buf, "URL: ", 5) == 0)
+                  strlcpy(comp->url, buf+5, sizeof(comp->url));
+                else if(strncmp(buf, "CHANGES:", 8) == 0)
+                {
+                  // we put the changelog text into a temporary file
+                  if((comp->changeLogFile = OpenTempFile("w")))
+                  {
+                    FILE *out = comp->changeLogFile->FP;
+
+                    while(GetLine(tf->FP, buf, SIZE_LINE))
+                    {
+                      if(strcmp(buf, "[EOC]") == 0 ||
+                         strcmp(buf, "[EOT]") == 0)
+                      {
+                        // break out
+                        break;
+                      }
+                      else
+                        fprintf(out, "%s\n", buf);
+                    }
+
+                    fclose(out);
+                    comp->changeLogFile->FP = NULL;
+                  }
+                }
+              }
             }
 
-            // flag the last update that we didn't found any new updates
-            C->LastUpdateStatus = UST_NOUPDATE;
+            // make sure we submitted all update components to our
+            // notify window.
+            if(comp != NULL)
+            {
+              DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_AddComponent, comp);
+              comp = NULL;
+            }
+
+            // make sure we show the update notify window.
+            #if 1 // disabled until 100% finished!!
+            if(updatesAvailable)
+            {
+              set(G->UpdateNotifyWinObject, MUIA_Window_Open, TRUE);
+              C->LastUpdateStatus = UST_UPDATESUCCESS;
+            }
+            else
+            #endif
+              C->LastUpdateStatus = UST_NOUPDATE; // we didn't find any new updates.
 
             fclose(tf->FP);
             tf->FP = NULL;
