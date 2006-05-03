@@ -103,6 +103,7 @@ CLASSES = \
   $(OBJDIR)/$(CLASSDIR)/QuickSearchBar.o \
   $(OBJDIR)/$(CLASSDIR)/ImageArea.o \
   $(OBJDIR)/$(CLASSDIR)/TransferMailList.o \
+  $(OBJDIR)/$(CLASSDIR)/UpdateNotifyWindow.o \
   $(OBJDIR)/$(CLASSDIR)/YAM.o
 
 # and the other object files
@@ -133,6 +134,7 @@ OBJS = \
   $(OBJDIR)/YAM_UT.o \
   $(OBJDIR)/YAM_WR.o \
   $(OBJDIR)/ImageCache.o \
+  $(OBJDIR)/UpdateCheck.o \
   $(CLASSES) \
   $(OBJDIR)/all_sas.o \
   $(OBJDIR)/Debug.o

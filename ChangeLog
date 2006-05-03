@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-05-03  Gunther Nikl <gni@gecko.de>
+
+  * src/VMakefile, src/smakefile: Update.
+
 2006-04-26  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c: fixed a bug in the filter configuration GUI where on systems
