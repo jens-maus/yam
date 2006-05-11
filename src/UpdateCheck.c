@@ -162,6 +162,7 @@ BOOL CheckForUpdates(void)
           // now we parse the result.
           if((tf->FP = fopen(tf->Filename, "r")))
           {
+            BOOL validUpdateCheck = FALSE;
             BOOL updatesAvailable = FALSE;
             struct UpdateComponent *comp = NULL;
 
@@ -173,11 +174,26 @@ BOOL CheckForUpdates(void)
             {
               D(DBF_UPDATE, "%s", buf);
 
-              // if we find an '[UPDATE]' tag, we can go and create an
-              // update notify window in advance and fill it according to the
-              // followed information
-              if(strcmp(buf, "[UPDATE]") == 0)
+              if(stricmp(buf, "<updatecheck>") == 0)
               {
+                validUpdateCheck = TRUE;
+              }
+              else if(stricmp(buf, "</updatecheck>") == 0)
+              {
+                // break out as the update check signals to exit
+                break;
+              }
+              else if(validUpdateCheck == FALSE)
+              {
+                // we skip all lines until we found the <updatecheck> tag
+                continue;
+              }
+              else if(stricmp(buf, "<component>") == 0)
+              {
+                // if we find an '<component>' tag, we can go and create an
+                // update notify window in advance and fill it according to the
+                // followed information
+
                 // make sure that we have created the update notification
                 // window in advance.
                 if(!G->UpdateNotifyWinObject)
@@ -209,27 +225,25 @@ BOOL CheckForUpdates(void)
                   break;
                 }
               }
-              else if(strcmp(buf, "[EOT]") == 0)
+              else if(stricmp(buf, "</component>") == 0)
               {
                 if(comp != NULL)
                 {
                   DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_AddComponent, comp);
                   comp = NULL;
-
-                  break;
                 }
               }
               else if(comp != NULL)
               {
-                if(strncmp(buf, "COMPONENT: ", 11) == 0)
-                  strlcpy(comp->name, buf+11, sizeof(comp->name));
-                else if(strncmp(buf, "RECENT: ", 7) == 0)
+                if(strnicmp(buf, "NAME: ", 6) == 0)
+                  strlcpy(comp->name, buf+6, sizeof(comp->name));
+                else if(strnicmp(buf, "RECENT: ", 7) == 0)
                   strlcpy(comp->recent, buf+7, sizeof(comp->recent));
-                else if(strncmp(buf, "INSTALLED: ", 11) == 0)
+                else if(strnicmp(buf, "INSTALLED: ", 11) == 0)
                   strlcpy(comp->installed, buf+11, sizeof(comp->installed));
-                else if(strncmp(buf, "URL: ", 5) == 0)
+                else if(strnicmp(buf, "URL: ", 5) == 0)
                   strlcpy(comp->url, buf+5, sizeof(comp->url));
-                else if(strncmp(buf, "CHANGES:", 8) == 0)
+                else if(stricmp(buf, "<changelog>") == 0)
                 {
                   // we put the changelog text into a temporary file
                   if((comp->changeLogFile = OpenTempFile("w")))
@@ -238,8 +252,9 @@ BOOL CheckForUpdates(void)
 
                     while(GetLine(tf->FP, buf, SIZE_LINE))
                     {
-                      if(strcmp(buf, "[EOC]") == 0 ||
-                         strcmp(buf, "[EOT]") == 0)
+                      D(DBF_UPDATE, "%s", buf);
+
+                      if(stricmp(buf, "</changelog>") == 0)
                       {
                         // break out
                         break;
@@ -264,14 +279,12 @@ BOOL CheckForUpdates(void)
             }
 
             // make sure we show the update notify window.
-            #if 0 // disabled until 100% finished!!
             if(updatesAvailable)
             {
               set(G->UpdateNotifyWinObject, MUIA_Window_Open, TRUE);
               C->LastUpdateStatus = UST_UPDATESUCCESS;
             }
             else
-            #endif
               C->LastUpdateStatus = UST_NOUPDATE; // we didn't find any new updates.
 
             fclose(tf->FP);

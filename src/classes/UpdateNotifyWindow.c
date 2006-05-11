@@ -42,6 +42,7 @@ struct Data
   Object *ComponentHistory;
   Object *SkipInFutureCheckBox;
   char *ChangeLogText;
+  char WindowTitle[SIZE_DEFAULT];
 };
 */
 
@@ -114,8 +115,8 @@ OVERLOAD(OM_NEW)
   if((obj = DoSuperNew(cl, obj,
 
     MUIA_Window_Title,      GetStr(MSG_UPD_NOTIFICATION_WTITLE),
-    MUIA_Window_Height,     MUIV_Window_Height_MinMax(20),
-    MUIA_Window_Width,      MUIV_Window_Width_MinMax(20),
+    MUIA_Window_Height,     MUIV_Window_Height_MinMax(30),
+    MUIA_Window_Width,      MUIV_Window_Width_MinMax(15),
     MUIA_Window_RefWindow,  G->MA->GUI.WI,
     WindowContents, VGroup,
 
@@ -143,7 +144,7 @@ OVERLOAD(OM_NEW)
 
       Child, NListviewObject,
         MUIA_CycleChain, TRUE,
-        MUIA_VertWeight, 10,
+        MUIA_VertWeight, 20,
         MUIA_Listview_DragType,  MUIV_Listview_DragType_None,
         MUIA_NListview_NList, nl_componentlist = NListObject,
            InputListFrame,
@@ -191,8 +192,9 @@ OVERLOAD(OM_NEW)
 
       Child, HGroup,
         Child, HVSpace,
-        Child, bt_visit = MakeButton(GetStr(MSG_UPD_NOTIFICATION_VISITURL)),
+        Child, HVSpace,
         Child, bt_close = MakeButton(GetStr(MSG_UPD_NOTIFICATION_CLOSE)),
+        Child, bt_visit = MakeButton(GetStr(MSG_UPD_NOTIFICATION_VISITURL)),
       End,
 
     End,
@@ -242,9 +244,17 @@ OVERLOAD(OM_SET)
           DoMethod(obj, MUIM_UpdateNotifyWindow_Clear);
         else
         {
+          struct DateStamp now;
+          char buf[SIZE_DEFAULT];
+
           // setup some options and select the first entry at the top
           set(data->SkipInFutureCheckBox, MUIA_Selected, C->UpdateInterval == 0);
           set(data->ComponentList, MUIA_NList_Active, MUIV_NList_Active_Top);
+
+          // we now specify the window title as we add the date/time to it
+          DateStamp2String(buf, DateStamp(&now), DSS_DATETIME, TZC_NONE);
+          snprintf(data->WindowTitle, sizeof(data->WindowTitle), "%s - %s", GetStr(MSG_UPD_NOTIFICATION_WTITLE), buf);
+          set(obj, MUIA_Window_Title, data->WindowTitle);
 
           // we also make sure the application in uniconified.
           set(G->App, MUIA_Application_Iconified, FALSE);

@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-05-12  Jens Langner <Jens.Langner@light-speed.de>
+
+  * UpdateCheck.c, UpdateNotifyWindow.c: reworked the whole update protocol once
+    more to be compatible to the new PHP-based update script which is still under
+    development and will notify YAM about latest software updates.
+
 2006-05-03  Gunther Nikl <gni@gecko.de>
 
   * src/VMakefile, src/smakefile: Update.
