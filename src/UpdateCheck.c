@@ -155,6 +155,8 @@ BOOL CheckForUpdates(void)
         snprintf(request, SIZE_URL, "%s&mui=%d%%2E%d", request, MUIMasterBase->lib_Version,
                                                                 MUIMasterBase->lib_Revision);
 
+        D(DBF_UPDATE, "send update request: '%s'", request);
+
         // now we send a specific request via TR_DownloadURL() to
         // our update server
         if(TR_DownloadURL(C->UpdateServer, request, NULL, tf->Filename))

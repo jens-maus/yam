@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-05-15  Jens Langner <Jens.Langner@light-speed.de>
+
+  * UpdateCheck.c: finalized the updatecheck mechanism together with the updated
+    nightly build script and PHP-based updatecheck mechanism. Now YAM should
+    automatically inform a user in case a newer version is set to be available
+    on the main update server http://update.yam.ch/
+
 2006-05-12  Jens Langner <Jens.Langner@light-speed.de>
 
   * UpdateCheck.c, UpdateNotifyWindow.c: reworked the whole update protocol once
