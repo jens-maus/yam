@@ -51,7 +51,7 @@ static const char USED_VAR yam_stack_size[] = "$STACK:65536\n";  // Shell v45 an
   #error "initial stack specification failed"
 #endif
 
-/* the version stuff */
+// define the CPU strings
 #if defined(__PPC__)
   #if defined(__amigaos4__)
     #define CPU " [OS4/PPC]"
@@ -74,20 +74,29 @@ static const char USED_VAR yam_stack_size[] = "$STACK:65536\n";  // Shell v45 an
   #error "Unsupported CPU model - check compiler defines"
 #endif
 
+// for defining the actual version of YAM and mapping it
+// to constant variables.
+#define __YAM           "YAM"
 #define __YAM_VERSION   "2.5"
 #define __YAM_DEVEL     "-dev"
 #ifndef __YAM_BUILDID
-#define __YAM_BUILDID   ""
+#define __YAM_BUILDID   0
 #endif
 #define __YAM_COPYRIGHT     "Copyright (C) 2000-2006 YAM Open Source Team"
 #define __YAM_FULLCOPYRIGHT "Copyright (C) 1995-2000 Marcel Beck\n" __YAM_COPYRIGHT
+#define __YAM_XMAILER       "AmigaOS E-mail Client (C) 2000-2006 YAM Open Source Team - http://www.yam.ch/"
 
-const char * const yamversion       = "YAM " __YAM_VERSION __YAM_DEVEL CPU;
+#if __YAM_BUILDID == 0
+const char * const yamverxmailer    = __YAM " " __YAM_VERSION __YAM_DEVEL CPU " " __YAM_XMAILER;
+const char * const yambuildid       = "";
+#else
+const char * const yamverxmailer    = __YAM " " __YAM_VERSION __YAM_DEVEL "-" STR(__YAM_BUILDID) CPU " " __YAM_XMAILER;
+const char * const yambuildid       = STR(__YAM_BUILDID);
+#endif
+
+const char * const yamversion       = __YAM " " __YAM_VERSION __YAM_DEVEL CPU;
 const char * const yamversionver    = __YAM_VERSION __YAM_DEVEL CPU;
-const char * const yamversionstring = "$VER: YAM " __YAM_VERSION __YAM_DEVEL CPU " (" __YAM_VERDATE ") " __YAM_COPYRIGHT;
-const char * const yamverxmailer    = "YAM " __YAM_VERSION __YAM_DEVEL __YAM_BUILDID CPU \
-                                      " AmigaOS E-mail Client (C) 2000-2006 YAM Open Source Team - http://www.yam.ch/";
-const char * const yambuildid       = __YAM_BUILDID;
+const char * const yamversionstring = "$VER: " __YAM " " __YAM_VERSION __YAM_DEVEL CPU " (" __YAM_VERDATE ") " __YAM_COPYRIGHT;
 const char * const yamcopyright     = __YAM_COPYRIGHT;
 const char * const yamfullcopyright = __YAM_FULLCOPYRIGHT;
 const char * const yamversiondate   = __YAM_VERDATE;
