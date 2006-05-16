@@ -172,7 +172,7 @@ OVERLOAD(OM_NEW)
       End,
       Child, NListviewObject,
         MUIA_NListview_NList, nf_componenthistory = NFloattextObject,
-          MUIA_Font,             MUIV_Font_Tiny,
+          MUIA_Font,             MUIV_Font_Fixed,
           MUIA_NList_Format,     "P=\33l",
           MUIA_NList_Input,      FALSE,
           MUIA_NFloattext_Text,  "",

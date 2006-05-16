@@ -6,6 +6,9 @@ $Id$
 
 2006-05-16  Jens Langner <Jens.Langner@light-speed.de>
 
+  * UpdateNotifyWindow.c: made the NFloattext which displays the changelog to use
+    MUIV_Font_Fixed instead so that a preformatted changelog will show up more
+    structured.
   * YAM_global.c: the __YAM_BUILDID define doesn't have to carry any leading "-"
     sign anymore. This should make the updatecheck script less complicated and
     more intuitive.
