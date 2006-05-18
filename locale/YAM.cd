@@ -177,9 +177,6 @@ From
 MSG_To (54//)
 To
 ;
-MSG_Default (55//)
-default
-;
 MSG_Columns (56//)
 Columns
 ;
@@ -1355,13 +1352,10 @@ MSG_CO_MimeCmd (426//)
 _Viewer
 ;
 MSG_CO_Extension (427//)
-E_xtension
+File e_xtension
 ;
 MSG_CO_DefaultViewer (428//)
 De_fault viewer
-;
-MSG_CO_IdentifyBin (429//)
-_Identify binary attachments
 ;
 MSG_CO_MessageHeader (430//)
 Message header
@@ -1986,16 +1980,12 @@ MSG_HELP_CO_BT_MDEL (618//)
 Remove selected MIME viewer
 ;
 MSG_HELP_CO_ST_EXTENS (619//)
-Filename extensions used\n\
+File extensions used\n\
 by this file type
 ;
 MSG_HELP_CO_ST_DEFVIEWER (620//)
 Program used to display\n\
 attachments of unknown type
-;
-MSG_HELP_CO_CH_IDENTBIN (621//)
-Try to identify the file type\n\
-before using the default viewer
 ;
 MSG_HELP_CO_ST_REPLYTO (622//)
 Enter the default return address, if\n\
@@ -5826,4 +5816,7 @@ Installed
 ;
 MSG_UPD_NOTIFICATION_URL (1689//)
 URL
+;
+MSG_CO_MIME_DESCRIPTION (1690//)
+_Description
 ;
