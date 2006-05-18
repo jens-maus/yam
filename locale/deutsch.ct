@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 5.14 (22.01.2006)
+## version $VER: YAM.catalog 5.15 (19.05.2006)
 ## language deutsch
 ## codeset 0
 ;
@@ -1786,7 +1786,7 @@ _Programm
 ; _Viewer
 ;
 MSG_CO_Extension
-Er_weiterung
+Datei_endung
 ; E_xtension
 ;
 MSG_CO_DefaultViewer
@@ -2612,7 +2612,7 @@ Ausgewähltes MIME-Anzeigeprogramm entfernen
 ; Remove selected MIME viewer
 ;
 MSG_HELP_CO_ST_EXTENS
-Dateinamenerweiterungen, die für\ndiesen Dateityp benutzt werden
+Dateiendungen, die für\ndiesen Dateityp benutzt werden
 ; Filename extensions used\n\
 ; by this file type
 ;
