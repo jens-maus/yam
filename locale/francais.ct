@@ -1,10 +1,26 @@
 ## version $VER: YAM.catalog 5.102 (23.03.2006)
 ## language français
 ## codeset 0
-## chunk AUTH Alexandre Balaban
 ;
-; francais.ct - YAM 2.5 catalog translation file
+## chunk AUTH Alexandre Balaban
+; YAM.cd - YAM 2.5 catalog description file
 ; $Id$
+; based on YAM.cd 2124 2006-04-27 00:42:50Z
+;
+; Please note that all catalog strings have to carry a proper
+; identifier number in the (X//) string part of the MSG_ identifier
+; field and that those numbers have to be unique and continous over
+; all different YAM versions. This allows to remove some obsolete
+; strings later on without having to worry about identifier clashes.
+; This however means that if an entry is being deleted here its
+; identifier should NEVER be reused later on. So, if you are going to
+; add new strings here do that always at the bottom of the file
+; and increase the last listed identifier number by one for your
+; new entries. And if you delete an entry NEVER reorder or resort
+; the ID numbers accordingly.
+; 
+;#version 5
+;#language english
 ;
 ; General
 ;
@@ -606,27 +622,6 @@ Entrez le mot de passe pour y accéder :
 ; Please enter the password to unlock it:
 ; FOLDER
 ;
-MSG_MA_LatestVersion
-Dernière version : %s (%2ld.%02ld.%ld)\n\
-Cette version : %s (%s)\n\n%s
-; Latest version: %s (%2ld.%02ld.%ld)\n\
-; This version: %s (%s)\n\
-; \n\
-; %s
-; VERSION_NUMBER, DAY, MONTH, YEAR, VERSION_NUMBER, DATE, TEXT
-;
-MSG_MA_NewVersion
-\e8Une nouvelle version est disponible sur la page de YAM !
-; \e8A new version is available at the YAM homepage!
-;
-MSG_MA_NoNewVersion
-Vous utilisez déjà la dernière version.
-; You're already using the latest version.
-;
-MSG_MA_VersionReqOpt
-_Visiter la page|*_Annuler
-; _Visit homepage|*_Cancel
-;
 MSG_MA_ReplyReq
 Ce message à de multiple destinataires.\n\
 Vous voulez envoyer la réponse...
@@ -892,11 +887,6 @@ MSG_MA_About
 MSG_MA_AboutMUI
 À propos de MUI...
 ; About MUI...
-;
-MSG_MA_CheckVersion
-Chercher nouvelle version
-; Check version
-;This is the title of the check version window, not the menu item.
 ;
 MSG_MA_LastErrors
 Montrer dernier message
@@ -5183,12 +5173,6 @@ Soit elle n'est pas dans la galerie soit son nom ou son adresse est erroné.
 ; Couldn't find this person in the YAM user gallery. Either the person \
 ; doesn't exist in the database or his/her name or address is mispelt.
 ;
-MSG_ER_NoTCP
-Pas de couche TCP/IP détectée ! Une pile internet compatible \
-« bsdsocket » doit-être démarrée avant d'utiliser cette fonction.
-; No TCP/IP stack running! A bsdsocket.library-compatible internet \
-; stack must be started before you can use this function.
-;
 MSG_ER_ErrorDateFormat
 Format date/heure invalide.\n\
 \n\
@@ -6203,10 +6187,6 @@ MSG_PROJECT_ABOUT
 ?\000À propos...
 ; ?\000About...
 ;
-MSG_PROJECT_CHECKVERSION
-Chercher nouvelle version
-; Check version
-;
 MSG_FOLDER_NEWFOLDER
 Nouveau dossier...
 ; New folder...
@@ -6328,16 +6308,6 @@ Sécurité par défaut pour envoyer\n\
 un courrier à cette personne
 ; Default security for sending\n\
 ; mail to this person
-;
-MSG_WR_DefSecurityConflict
-Le destinataire de ce courrier a des réglages de sécurité\n\
-par défaut différents. Quel type de sécurité choisir ?
-; The recipients of this mail have different default\n\
-; security settings. What kind of security do you want?
-;
-MSG_WR_DefSecurityConflictGads
-*_Aucun|_Signer|_Crypter|_Les deux|_Envoi anonyme
-; *_None|_Sign|_Encrypt|_Both|Send _anonymously
 ;
 MSG_WR_SecDefaults
 Défaut
@@ -7744,7 +7714,6 @@ Comment voulez-vous procéder ?
 ; \n\
 ; How do you want to proceed?
 ; LOCALCHARSET
-;
 MSG_CO_CHARSETUNKNOWNWARN_BT
 *_Changer pour le défaut|_Ignorer
 ; *_Change to default|_Ignore
@@ -7968,8 +7937,213 @@ votre système et redémarrez YAM.
 ; Please make sure you correctly installed at least\n\
 ; AmiSSL v%lu.%lu on your system and restart YAM.
 ; AMISSL_VERSION, AMISSL_REVISION
-;
 MSG_CO_AMISSLWARN_BT
 *_Quitter|_Toujours ignorer|_Ignorer
 ; *_Exit|Ignore _always|Ignore
+;
+MSG_BUSY_OPENINGCONFIG
+Ouverture de la configuration...
+; Opening configuration...
+;
+;
+MSG_CO_TIMEZONEWARN_TITLE
+Avertissement de réglage de Timezone
+; Timezone setting warning
+;
+; ***NEW***
+;
+MSG_CO_TIMEZONEWARN
+Le réglage de Timezone dans YAM ne correspond\n\
+pas à la Timezone par défaut du système.\n\
+\n\
+Que désirez-vous faire ?
+; The timezone setting in YAM doesn't match\n\
+; the system's default timezone.\n\
+; \n\
+; How do you want to proceed?
+;
+;
+MSG_CO_TIMEZONEWARN_BT
+*_Changer|_Toujours ignorer|_Ignorer
+; *_Change|Ignore _always|_Ignore
+;
+;
+MSG_CO_AUTODSTWARN_TITLE
+Avertissement AutoDST
+; AutoDST warning
+;
+;
+MSG_CO_AUTODSTWARN
+YAM a détecté un utilitaire AutoDST actif et\n\
+celui indique un réglage d'heure d'été/hiver\n\
+différent de celui de la configuration de YAM.\n\
+\n\
+Que désirez-vous faire ?
+; YAM has found an AutoDST tool active and\n\
+; it reports a different Daylight Saving setting\n\
+; than currently set in your YAM configuration.\n\
+; \n\
+; How do you want to proceed?
+;
+;
+MSG_CO_AUTODSTWARN_BT
+_Changer|_Toujours ignorer|_Ignorer
+; *_Change|Ignore _always|_Ignore
+;
+;
+MSG_MA_UPDATECHECK
+Rechercher des mises à jour...
+; Check for updates...
+;
+;
+MSG_CO_SOFTWAREUPDATE
+Mise à jour logicielle
+; Software Update
+;
+;
+MSG_CO_UPDATE_DAILY
+Quotidienne
+; Daily
+;
+;
+MSG_CO_UPDATE_WEEKLY
+Hebdomadaire
+; Weekly
+;
+;
+MSG_CO_UPDATE_MONTHLY
+Mensuelle
+; Monthly
+;
+;
+MSG_CO_SEARCHFORUPDATES
+Recherche de _mises à jour
+; Search for _Updates:
+;
+;
+MSG_CO_SEARCHFORUPDATESINFO
+Vous serez notifié dès que des mises à jour sont disponibles.
+; You will be notified as soon as updates are available.
+;
+;
+MSG_CO_SEARCHNOW
+Vérifier mai_ntenant
+; Search _now
+;
+;
+MSG_CO_LASTSEARCH
+Dernière vérification :
+; Last Search:
+;
+;
+MSG_CO_LASTSTATUS_NOCHECK
+Aucune jusqu'à présent.
+; No check performed yet.
+;
+;
+MSG_CO_LASTSTATUS_NOUPDATE
+Aucune mise à jour disponible.
+; No new software updates were available.
+;
+;
+MSG_CO_LASTSTATUS_NOQUERY
+Impossible de contacter le serveur de mise à jour.
+; Couldn't query update server for updates.
+;
+;
+MSG_CO_LASTSTATUS_UPDATESUCCESS
+Nouvelle(s) mise(s) à jour trouvée(s) et traitée(s)
+; Successfully found and processed new updates.
+;
+;
+MSG_WR_SECURITYREQ
+Les destinataires de ce courrier ont des réglages\n\
+de sécurité de messagerie par défaut différents.\n\
+\n\
+Comment désirez-vous composer ce mail ?
+; The recipients of the mail have different\n\
+; default mail security settings.\n\
+; \n\
+; How do you want to compose the mail?
+;
+;
+MSG_WR_SECURITYREQ_GADS
+*A_ucune[_Signé|_Crypté|S_igné & crypté[Envoi A_nonyme|_Annuler
+; *_Plain|_Signed|_Encrypted|S_igned&Encrypted|_Anonymous|_Cancel
+;
+;
+MSG_ER_OPENTCPIP
+YAM n'a pas été en mesure d'ouvrir l'interface\n\
+bsdsocket.library requise pour les connexions TCP/IP.\n\
+\n\
+Veuillez vous assurer que vous disposez d'une pile TCP/IP\n\
+compatible installée, correctement configurée et que votre\n\
+interface réseau est active et fonctionnelle.
+; YAM wasn't able to open the appropriate bsdsocket.library \
+; interface, required for TCP/IP connections.\n\
+; \n\
+; Please make sure that you have a compatible TCP/IP stack \
+; installed, correctly configured and that your network \
+; interface is up and running.
+;
+;
+MSG_WR_UUCODE
+Texte UUencodé
+; UUencoded text
+;
+;
+MSG_UPD_NOTIFICATION_WTITLE
+Notification de mise à jour
+; Update Notification
+;
+;
+MSG_UPD_NOTIFICATION_TITLE
+Mise(s) à jour disponible(s)
+; Updates available
+;
+;
+MSG_UPD_NOTIFICATION_SUMMARY
+YAM a trouvé les mises à jour suivantes :
+; YAM has found the following updates to be available:
+;
+;
+MSG_UPD_NOTIFICATION_CHANGES
+Modifications (en anglais) :
+; Changes:
+;
+;
+MSG_UPD_NOTIFICATION_NOUPDATE
+Ne plus me notifier des mises à jour
+; Do not notify me on updates in future
+;
+;
+MSG_UPD_NOTIFICATION_VISITURL
+Visiter l'URL
+; Visit URL
+;
+;
+MSG_UPD_NOTIFICATION_CLOSE
+Fermer
+; Close
+;
+;
+MSG_UPD_NOTIFICATION_COMP
+Composant
+; Component
+;
+;
+MSG_UPD_NOTIFICATION_RECENT
+Disponible
+; Recent
+;
+;
+MSG_UPD_NOTIFICATION_INSTALLED
+Installé
+; Installed
+;
+;
+MSG_UPD_NOTIFICATION_URL
+URL
+; URL
+;
 ;

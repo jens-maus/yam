@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-04-21  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/francais.ct: updated according to the latest changes.
+
 2006-05-16  Jens Langner <Jens.Langner@light-speed.de>
 
   * UpdateNotifyWindow.c: made the NFloattext which displays the changelog to use
