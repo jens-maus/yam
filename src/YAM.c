@@ -995,9 +995,13 @@ static void Terminate(void)
   {
     // search through our ReadDataList
     struct MinNode *curNode;
-    for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ;)
     {
       struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+      // already iterate to the next node as the cleanup
+      // will free the memory area
+      curNode = curNode->mln_Succ;
 
       CleanupReadMailData(rmData, TRUE);
     }
@@ -2187,6 +2191,7 @@ int main(int argc, char **argv)
 
       // prepare some exec lists of either the Global or Config structure
       NewList((struct List *)&(G->readMailDataList));
+      NewList((struct List *)&(C->mimeTypeList));
       NewList((struct List *)&(C->filterList));
       NewList((struct List *)&(G->xpkPackerList));
       NewList((struct List *)&(G->imageCacheList));

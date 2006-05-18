@@ -604,6 +604,129 @@ HOOKPROTONHNONP(UpdateCheckFunc, void)
 MakeStaticHook(UpdateCheckHook, UpdateCheckFunc);
 
 ///
+/// AddMimeTypeHook()
+//  Adds a new MIME type structure to the internal list
+HOOKPROTONHNONP(AddMimeTypeFunc, void)
+{
+  struct CO_GUIData *gui = &G->CO->GUI;
+  struct MimeTypeNode *mt;
+
+  ENTER();
+
+  if((mt = CreateNewMimeType()))
+  {
+    // add the new mime type to our internal list of
+    // user definable MIME types.
+    AddTail((struct List *)&(C->mimeTypeList), (struct Node *)mt);
+
+    // add the new MimeType also to the config page.
+    DoMethod(gui->LV_MIME, MUIM_List_InsertSingle, mt, MUIV_List_Insert_Bottom);
+
+    // make sure the new entry is the active entry and that the list
+    // is also the active gadget in the window.
+    set(gui->LV_MIME, MUIA_List_Active, MUIV_List_Active_Bottom);
+    set(gui->WI, MUIA_Window_ActiveObject, gui->ST_CTYPE);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(AddMimeTypeHook, AddMimeTypeFunc);
+
+///
+/// DelMimeTypeHook()
+//  Deletes an entry from the MIME type list.
+HOOKPROTONHNONP(DelMimeTypeFunc, void)
+{
+  struct CO_GUIData *gui = &G->CO->GUI;
+  int pos;
+
+  ENTER();
+
+  if((pos = xget(gui->LV_MIME, MUIA_List_Active)) != MUIV_List_Active_Off)
+  {
+    struct MimeTypeNode *mt = NULL;
+
+    DoMethod(gui->LV_MIME, MUIM_List_GetEntry, pos, &mt);
+
+    if(mt)
+    {
+      // remove from MUI list
+      DoMethod(gui->LV_MIME, MUIM_List_Remove, pos);
+
+      // remove from internal list
+      Remove((struct Node *)mt);
+
+      // free memory.
+      free(mt);
+    }
+  }
+
+  LEAVE();
+}
+MakeStaticHook(DelMimeTypeHook, DelMimeTypeFunc);
+
+///
+/// GetMimeTypeEntryHook()
+//  Fills form with data from selected list entry
+HOOKPROTONHNONP(GetMimeTypeEntryFunc, void)
+{
+  struct MimeTypeNode *mt = NULL;
+  struct CO_GUIData *gui = &G->CO->GUI;
+
+  ENTER();
+
+  DoMethod(gui->LV_MIME, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &mt);
+  if(mt)
+  {
+    nnset(gui->ST_CTYPE, MUIA_String_Contents, mt->ContentType);
+    nnset(gui->ST_EXTENS, MUIA_String_Contents, mt->Extension);
+    nnset(gui->ST_COMMAND, MUIA_String_Contents, mt->Command);
+    nnset(gui->ST_DESCRIPTION, MUIA_String_Contents, mt->Description);
+  }
+
+  set(gui->GR_MIME, MUIA_Disabled, !mt);
+  set(gui->BT_MDEL, MUIA_Disabled, !mt);
+
+  LEAVE();
+}
+MakeStaticHook(GetMimeTypeEntryHook, GetMimeTypeEntryFunc);
+
+///
+/// PutMimeTypeEntryHook()
+//  Fills form data into selected list entry
+HOOKPROTONHNONP(PutMimeTypeEntryFunc, void)
+{
+  struct MimeTypeNode *mt = NULL;
+  struct CO_GUIData *gui = &G->CO->GUI;
+
+  ENTER();
+
+  DoMethod(gui->LV_MIME, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &mt);
+  if(mt)
+  {
+    GetMUIString(mt->ContentType, gui->ST_CTYPE, sizeof(mt->ContentType));
+    GetMUIString(mt->Extension, gui->ST_EXTENS, sizeof(mt->Extension));
+    GetMUIString(mt->Command, gui->ST_COMMAND, sizeof(mt->Command));
+    GetMUIString(mt->Description, gui->ST_DESCRIPTION, sizeof(mt->Description));
+
+    DoMethod(gui->LV_MIME, MUIM_List_Redraw, MUIV_List_Redraw_Active);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(PutMimeTypeEntryHook, PutMimeTypeEntryFunc);
+///
+/// MimeTypeDisplayHook()
+// display hook for the mime type list
+HOOKPROTONH(MimeTypeDisplayFunc, LONG, char **array, struct MimeTypeNode *mt)
+{
+  array[0] = mt->ContentType;
+
+  return 0;
+}
+MakeStaticHook(MimeTypeDisplayHook, MimeTypeDisplayFunc);
+
+///
 
 /*** Pages ***/
 /// CO_Page0  (Start)
@@ -1938,7 +2061,10 @@ Object *CO_Page11(struct CO_ClassData *data)
                Child, ListviewObject,
                   MUIA_Weight, 60,
                   MUIA_CycleChain, 1,
-                  MUIA_Listview_List, data->GUI.LV_MIME = ListObject, InputListFrame, End,
+                  MUIA_Listview_List, data->GUI.LV_MIME = ListObject,
+                    InputListFrame,
+                    MUIA_List_DisplayHook, &MimeTypeDisplayHook,
+                  End,
                End,
                Child, VGroup,
                   Child, data->GUI.GR_MIME = ColGroup(2),
@@ -1949,7 +2075,16 @@ Object *CO_Page11(struct CO_ClassData *data)
                         MUIA_Poplist_Array   , ContType,
                      End,
                      Child, Label2(GetStr(MSG_CO_Extension)),
-                     Child, data->GUI.ST_EXTENS = MakeString(SIZE_NAME,GetStr(MSG_CO_Extension)),
+                     Child, data->GUI.ST_EXTENS = BetterStringObject,
+                        StringFrame,
+                        MUIA_String_Accept,      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ",
+                        MUIA_String_MaxLen,      SIZE_NAME,
+                        MUIA_ControlChar,        ShortCut(GetStr(MSG_CO_Extension)),
+                        MUIA_String_AdvanceOnCR, TRUE,
+                        MUIA_CycleChain,         TRUE,
+                     End,
+                     Child, Label2(GetStr(MSG_CO_MIME_DESCRIPTION)),
+                     Child, data->GUI.ST_DESCRIPTION = MakeString(SIZE_DEFAULT, GetStr(MSG_CO_MIME_DESCRIPTION)),
                      Child, Label2(GetStr(MSG_CO_MimeCmd)),
                      Child, PopaslObject,
                         MUIA_Popstring_String, data->GUI.ST_COMMAND = MakeString(SIZE_COMMAND,GetStr(MSG_CO_MimeCmd)),
@@ -1970,7 +2105,6 @@ Object *CO_Page11(struct CO_ClassData *data)
                   MUIA_Popstring_Button, PopButton(MUII_PopFile),
                End,
             End,
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_IDENTBIN, GetStr(MSG_CO_IdentifyBin)),
          End,
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_Paths)),
             Child, Label2(GetStr(MSG_CO_Detach)),
@@ -1996,17 +2130,18 @@ Object *CO_Page11(struct CO_ClassData *data)
       SetHelp(data->GUI.BT_MADD      ,MSG_HELP_CO_BT_MADD      );
       SetHelp(data->GUI.BT_MDEL      ,MSG_HELP_CO_BT_MDEL      );
       SetHelp(data->GUI.ST_DEFVIEWER ,MSG_HELP_CO_ST_DEFVIEWER );
-      SetHelp(data->GUI.CH_IDENTBIN  ,MSG_HELP_CO_CH_IDENTBIN  );
       SetHelp(data->GUI.ST_DETACHDIR ,MSG_HELP_CO_ST_DETACHDIR );
       SetHelp(data->GUI.ST_ATTACHDIR ,MSG_HELP_CO_ST_ATTACHDIR );
+
       DoMethod(grp,MUIM_MultiSet,MUIA_Disabled,TRUE,data->GUI.GR_MIME,data->GUI.BT_MDEL,NULL);
-      DoMethod(data->GUI.LV_MIME     ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_GetMVEntryHook);
-      DoMethod(data->GUI.ST_CTYPE    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutMVEntryHook);
-      DoMethod(data->GUI.ST_EXTENS   ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutMVEntryHook);
-      DoMethod(data->GUI.ST_COMMAND  ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutMVEntryHook);
-      DoMethod(data->GUI.ST_DEFVIEWER,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutMVEntryHook);
-      DoMethod(data->GUI.BT_MADD     ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_AddMimeViewHook);
-      DoMethod(data->GUI.BT_MDEL     ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_DelMimeViewHook);
+      DoMethod(data->GUI.LV_MIME     ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &GetMimeTypeEntryHook);
+      DoMethod(data->GUI.ST_CTYPE    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
+      DoMethod(data->GUI.ST_EXTENS   ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
+      DoMethod(data->GUI.ST_COMMAND  ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
+      DoMethod(data->GUI.ST_DESCRIPTION,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
+      DoMethod(data->GUI.ST_DEFVIEWER,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
+      DoMethod(data->GUI.BT_MADD     ,MUIM_Notify,MUIA_Pressed        ,FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &AddMimeTypeHook);
+      DoMethod(data->GUI.BT_MDEL     ,MUIM_Notify,MUIA_Pressed        ,FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &DelMimeTypeHook);
    }
    return grp;
 }

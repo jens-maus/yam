@@ -487,23 +487,28 @@ void RE_PrintFile(char *filename)
 //  Displays a message part (attachment) using a MIME viewer
 void RE_DisplayMIME(char *fname, char *ctype)
 {
-  int i;
-  struct MimeView *mv = NULL;
-  static char command[SIZE_COMMAND+SIZE_PATHFILE];
-  char *fileptr;
+  struct MinNode *curNode;
+  struct MimeTypeNode *mt = NULL;
 
-  for(i = 1; i < MAXMV; i++)
+  ENTER();
+
+  // we first browse through the whole mimeTypeList and try to find
+  // out if the content-type spec in one of the user-defined
+  // MIME types matches or not.
+  for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
   {
-    if (C->MV[i] && MatchNoCase(ctype, C->MV[i]->ContentType))
+    struct MimeTypeNode *curType = (struct MimeTypeNode *)curNode;
+
+    if(MatchNoCase(ctype, curType->ContentType))
     {
-      mv = C->MV[i];
+      mt = curType;
       break;
     }
   }
 
   // if the MIME part is an rfc822 conform email attachment we
   // try to open it as a virtual mail in another read window.
-  if(!mv && !stricmp(ctype, "message/rfc822"))
+  if(!mt && !stricmp(ctype, "message/rfc822"))
   {
     struct TempFile *tf;
 
@@ -559,29 +564,39 @@ void RE_DisplayMIME(char *fname, char *ctype)
   }
   else
   {
-    if(!mv && C->IdentifyBin)
-    {
-      ctype = IdentifyFile(fname);
+    static char command[SIZE_COMMAND+SIZE_PATHFILE];
+    char *fileptr;
+    char *cmdPtr;
 
-      for(i=1; i < MAXMV && C->MV[i]; i++)
+    // if we haven't identified the file yet by analyzing its specified
+    // content-type, we go and try to identify it by our own internal
+    // identify routines.
+    if(!mt && (ctype = IdentifyFile(fname)))
+    {
+      for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
-        if(MatchNoCase(ctype, C->MV[i]->ContentType))
+        struct MimeTypeNode *curType = (struct MimeTypeNode *)curNode;
+
+        if(MatchNoCase(ctype, curType->ContentType))
         {
-          mv = C->MV[i];
+          mt = curType;
           break;
         }
       }
     }
 
-    // if we didn't find a mime view or the command line was empty
-    // we choose the default mime view action
-    if(!mv || mv->Command[0] == '\0')
-      mv = C->MV[0];
+    // if we still didn't found the correct mime type or the command line of the
+    // current mime type is empty we use the default mime viewer specified in
+    // the YAM configuration.
+    if(!mt || mt->Command[0] == '\0')
+      cmdPtr = C->DefaultMimeViewer;
+    else
+      cmdPtr = mt->Command;
 
     // now we have to generate a real commandstring and make sure that
     // the %s is covered with "" or otherwise we will run into trouble with
     // the execute and pathes that have whitespaces.
-    if((fileptr = strstr(mv->Command, "%s")))
+    if((fileptr = strstr(cmdPtr, "%s")))
     {
       char *startPtr = fileptr;
       char *endPtr = fileptr;
@@ -592,7 +607,7 @@ void RE_DisplayMIME(char *fname, char *ctype)
       // we first move back until we find whitespace or a quotation mark
       do
       {
-        if(*startPtr == ' ' || startPtr == &mv->Command[0])
+        if(*startPtr == ' ' || startPtr == &cmdPtr[0])
         {
           startPtr++;
           break;
@@ -632,26 +647,27 @@ void RE_DisplayMIME(char *fname, char *ctype)
         for(i=0,j=0; ;i++,j++)
         {
           // if this is the start or end we place the first quotation mark
-          if(&mv->Command[j] == startPtr || &mv->Command[j] == endPtr)
-          {
+          if(&cmdPtr[j] == startPtr || &cmdPtr[j] == endPtr)
             realcmd[i++] = '"';
-          }
 
-          realcmd[i] = mv->Command[j];
+          realcmd[i] = cmdPtr[j];
 
-          if(mv->Command[j] == '\0') break;
+          if(cmdPtr[j] == '\0')
+            break;
         }
 
         snprintf(command, sizeof(command), realcmd, GetRealPath(fname));
       }
       else
-        snprintf(command, sizeof(command), mv->Command, GetRealPath(fname));
+        snprintf(command, sizeof(command), cmdPtr, GetRealPath(fname));
 
       ExecuteCommand(command, TRUE, OUT_NIL);
     }
     else
-      ExecuteCommand(mv->Command, TRUE, OUT_NIL);
+      ExecuteCommand(cmdPtr, TRUE, OUT_NIL);
   }
+
+  LEAVE();
 }
 ///
 /// RE_SaveAll
@@ -1859,15 +1875,18 @@ BOOL RE_DecodePart(struct Part *rp)
       if(rp->Nr != PART_RAW)
       {
         // only if we have a contentType we search through our MIME list
-        if(rp->ContentType)
+        if(rp->ContentType && rp->ContentType[0] != '\0')
         {
-          int i;
+          struct MinNode *curNode;
 
-          for(i=1;i < MAXMV && C->MV[i]; i++)
+          for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
           {
-            if(MatchNoCase(rp->ContentType, C->MV[i]->ContentType))
+            struct MimeTypeNode *curType = (struct MimeTypeNode *)curNode;
+
+            if(MatchNoCase(rp->ContentType, curType->ContentType))
             {
-              char *extension = strtok(TrimStart(C->MV[i]->Extension), " |");
+              char *extension = strtok(TrimStart(curType->Extension), " |;,");
+
               if(extension)
                 strlcpy(ext, extension, sizeof(ext));
 

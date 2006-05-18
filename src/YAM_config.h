@@ -195,11 +195,11 @@ struct CO_GUIData
    Object *GR_MIME;
    Object *ST_CTYPE;
    Object *ST_EXTENS;
+   Object *ST_DESCRIPTION;
    Object *ST_COMMAND;
    Object *ST_DEFVIEWER;
    Object *BT_MADD;
    Object *BT_MDEL;
-   Object *CH_IDENTBIN;
    Object *ST_DETACHDIR;
    Object *ST_ATTACHDIR;
    Object *ST_GALLDIR;
@@ -287,11 +287,13 @@ struct POP3
    BOOL  DeleteOnServer;
 };
 
-struct MimeView
+struct MimeTypeNode
 {
-   char  ContentType[SIZE_CTYPE];
-   char  Command[SIZE_COMMAND];
-   char  Extension[SIZE_NAME];
+  struct MinNode node;            // required for placing it into the mimeTypeList
+  char ContentType[SIZE_CTYPE];   // IANA conform content-type (e.g. 'application/pdf')
+  char Command[SIZE_COMMAND];     // command spec for viewing files of that mime Type
+  char Extension[SIZE_NAME];      // space separated string list of extensions
+  char Description[SIZE_DEFAULT]; // a short description of the MIME type
 };
 
 /*** RxHook structure ***/
@@ -325,10 +327,10 @@ enum PrintMethod { PRINTMETHOD_RAW };
 /*** Configuration main structure ***/
 struct Config
 {
-   struct POP3 *    P3[MAXP3];
-   struct MimeView *MV[MAXMV];
+   struct POP3 *P3[MAXP3];
 
-   struct MinList filterList; // list of currently available filter node
+   struct MinList filterList;   // list of currently available filter node
+   struct MinList mimeTypeList; // list of user defined MIME types.
 
    int   TimeZone;
    int   PreSelection;
@@ -406,7 +408,6 @@ struct Config
    BOOL  SendOnQuit;
    BOOL  CleanupOnQuit;
    BOOL  RemoveOnQuit;
-   BOOL  IdentifyBin;
    BOOL  AddMyInfo;
    BOOL  IconifyOnQuit;
    BOOL  Confirm;
@@ -496,6 +497,7 @@ struct Config
    char  IOCInterface[SIZE_SMALL];
    char  AppIconText[SIZE_COMMAND];
    char  InfoBarText[SIZE_COMMAND];
+   char  DefaultMimeViewer[SIZE_COMMAND];
 };
 
 enum SizeFormat { SF_DEFAULT=0, SF_MIXED, SF_1PREC, SF_2PREC, SF_3PREC };
@@ -505,19 +507,15 @@ extern struct Config *C;
 extern struct Config *CE;
 
 // external hooks
-extern struct Hook CO_AddMimeViewHook;
 extern struct Hook CO_AddPOP3Hook;
-extern struct Hook CO_DelMimeViewHook;
 extern struct Hook CO_DelPOP3Hook;
 extern struct Hook CO_EditSignatHook;
 extern struct Hook CO_SwitchSignatHook;
 extern struct Hook CO_GetDefaultPOPHook;
-extern struct Hook CO_GetMVEntryHook;
 extern struct Hook CO_GetP3EntryHook;
 extern struct Hook CO_GetRXEntryHook;
 extern struct Hook CO_OpenHook;
 extern struct Hook CO_PL_DspFuncHook;
-extern struct Hook CO_PutMVEntryHook;
 extern struct Hook CO_PutP3EntryHook;
 extern struct Hook CO_PutRXEntryHook;
 extern struct Hook CO_RemoteToggleHook;
@@ -530,11 +528,11 @@ extern struct Hook RemoveLastRuleHook;
 
 void              CO_FreeConfig(struct Config *co);
 BOOL              CO_IsValid(void);
-struct MimeView * CO_NewMimeView(void);
 struct POP3 *     CO_NewPOP3(struct Config *co, BOOL first);
 void              CO_SetDefaults(struct Config *co, int page);
 void              CO_Validate(struct Config *co, BOOL update);
 
-void              GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
+void                 GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
+struct MimeTypeNode *CreateNewMimeType(void);
 
 #endif /* YAM_CONFIG_H */

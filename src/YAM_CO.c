@@ -655,99 +655,21 @@ HOOKPROTONHNONP(CO_GetDefaultPOPFunc, void)
 MakeHook(CO_GetDefaultPOPHook,CO_GetDefaultPOPFunc);
 ///
 
-/**** Mime Viewers ****/
-/// CO_NewMimeView
-//  Initializes a new MIME viewer
-struct MimeView *CO_NewMimeView(void)
+/**** MIME Types/Viewers ****/
+/// CreateNewMimeType()
+//  Initializes a new MIME type structure
+struct MimeTypeNode *CreateNewMimeType(void)
 {
-  struct MimeView *mv = calloc(1, sizeof(struct MimeView));
+  struct MimeTypeNode *mt;
+  ENTER();
 
-  if(mv)
-    strlcpy(mv->ContentType, "?/?", sizeof(mv->ContentType));
+  if((mt = calloc(1, sizeof(struct MimeTypeNode))))
+    strlcpy(mt->ContentType, "?/?", sizeof(mt->ContentType));
 
-  return mv;
+  RETURN(mt);
+  return mt;
 }
 
-///
-/// CO_AddMimeView
-//  Adds a new entry to the MIME viewer list
-HOOKPROTONHNONP(CO_AddMimeView, void)
-{
-   struct CO_GUIData *gui = &G->CO->GUI;
-   int i;
-   for (i = 0; i < MAXMV; i++)
-      if (!CE->MV[i])
-      {
-         CE->MV[i] = CO_NewMimeView();
-         DoMethod(gui->LV_MIME, MUIM_List_InsertSingle, CE->MV[i], MUIV_List_Insert_Bottom);
-         set(gui->LV_MIME, MUIA_List_Active, MUIV_List_Active_Bottom);
-         set(gui->WI, MUIA_Window_ActiveObject, gui->ST_CTYPE);
-         break;
-      }
-}
-MakeHook(CO_AddMimeViewHook,CO_AddMimeView);
-
-///
-/// CO_DelMimeView
-//  Deletes an entry from the MIME viewer list
-HOOKPROTONHNONP(CO_DelMimeView, void)
-{
-   int p = xget(G->CO->GUI.LV_MIME, MUIA_List_Active);
-
-   if(p != MUIV_List_Active_Off)
-   {
-      int i;
-
-      DoMethod(G->CO->GUI.LV_MIME, MUIM_List_Remove, p);
-
-      for(i=p+1; i < MAXMV-1; i++)
-      {
-        CE->MV[i] = CE->MV[i+1];
-      }
-
-      CE->MV[i] = NULL;
-   }
-}
-MakeHook(CO_DelMimeViewHook,CO_DelMimeView);
-
-///
-/// CO_GetMVEntry
-//  Fills form with data from selected list entry
-HOOKPROTONHNONP(CO_GetMVEntry, void)
-{
-   struct MimeView *mv = NULL;
-   struct CO_GUIData *gui = &G->CO->GUI;
-
-   DoMethod(gui->LV_MIME, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &mv);
-   if(mv)
-   {
-      nnset(gui->ST_CTYPE, MUIA_String_Contents, mv->ContentType);
-      nnset(gui->ST_EXTENS, MUIA_String_Contents, mv->Extension);
-      nnset(gui->ST_COMMAND, MUIA_String_Contents, mv->Command);
-   }
-   set(gui->GR_MIME, MUIA_Disabled, !mv);
-   set(gui->BT_MDEL, MUIA_Disabled, !mv);
-}
-MakeHook(CO_GetMVEntryHook,CO_GetMVEntry);
-
-///
-/// CO_PutMVEntry
-//  Fills form data into selected list entry
-HOOKPROTONHNONP(CO_PutMVEntry, void)
-{
-   struct MimeView *mv = NULL;
-   struct CO_GUIData *gui = &G->CO->GUI;
-
-   DoMethod(gui->LV_MIME, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &mv);
-   if (mv)
-   {
-      GetMUIString(mv->ContentType, gui->ST_CTYPE, sizeof(mv->ContentType));
-      GetMUIString(mv->Extension, gui->ST_EXTENS, sizeof(mv->Extension));
-      GetMUIString(mv->Command, gui->ST_COMMAND, sizeof(mv->Command));
-      DoMethod(gui->LV_MIME, MUIM_List_Redraw, MUIV_List_Redraw_Active);
-   }
-}
-MakeHook(CO_PutMVEntryHook,CO_PutMVEntry);
 ///
 
 /**** ARexx Hooks ****/
@@ -824,7 +746,20 @@ void CO_FreeConfig(struct Config *co)
 
   // free all config elements
   for(i = 0; i < MAXP3; i++) { if(co->P3[i]) free(co->P3[i]); }
-  for(i = 0; i < MAXMV; i++) { if(co->MV[i]) free(co->MV[i]); }
+
+
+  // we have to free the mimeTypeList
+  for(curNode = co->mimeTypeList.mlh_Head; curNode->mln_Succ;)
+  {
+    struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
+
+    // before we remove the node we have to save the pointer to the next one
+    curNode = curNode->mln_Succ;
+
+    // Remove node from list
+    Remove((struct Node *)mt);
+    free(mt);
+  }
 
   // we have to free the filterList
   for(curNode = co->filterList.mlh_Head; curNode->mln_Succ;)
@@ -846,6 +781,7 @@ void CO_FreeConfig(struct Config *co)
   memset(co, 0, sizeof(struct Config));
 
   // init the filterList & stuff
+  NewList((struct List *)&co->mimeTypeList);
   NewList((struct List *)&co->filterList);
 
   LEAVE();
@@ -906,9 +842,14 @@ void CO_SetDefaults(struct Config *co, int page)
       struct MinNode *curNode;
 
       // we have to free the filterList
-      for(curNode = co->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      for(curNode = co->filterList.mlh_Head; curNode->mln_Succ;)
       {
-        free(curNode);
+        struct MinNode *node = curNode;
+
+        // before we remove the node we have to save the pointer to the next one
+        curNode = curNode->mln_Succ;
+
+        free(node);
       }
       NewList((struct List *)&co->filterList);
    }
@@ -916,7 +857,6 @@ void CO_SetDefaults(struct Config *co, int page)
    // [Read]
    if(page == 4 || page < 0)
    {
-      for (i = 0; i < MAXMV; i++) { if (co->MV[i]) free(co->MV[i]); co->MV[i] = NULL; }
       co->ShowHeader = 1;
       strlcpy(co->ShortHeaders, "(From|To|Date|Subject)", sizeof(co->ShortHeaders));
       co->ShowSenderInfo = 2;
@@ -1026,10 +966,21 @@ void CO_SetDefaults(struct Config *co, int page)
    // [MIME]
    if(page == 11 || page < 0)
    {
-      co->MV[0] = CO_NewMimeView();
-      strlcpy(co->MV[0]->ContentType, GetStr(MSG_Default), sizeof(co->MV[0]->ContentType));
-      strlcpy(co->MV[0]->Command, "SYS:Utilities/Multiview \"%s\"", sizeof(co->MV[0]->Command));
-      co->IdentifyBin = TRUE;
+      struct MinNode *curNode;
+
+      // we have to free the mimeTypeList
+      for(curNode = co->mimeTypeList.mlh_Head; curNode->mln_Succ;)
+      {
+        struct MinNode *node = curNode;
+
+        // before we remove the node we have to save the pointer to the next one
+        curNode = curNode->mln_Succ;
+
+        free(node);
+      }
+      NewList((struct List *)&co->mimeTypeList);
+
+      strlcpy(co->DefaultMimeViewer, "SYS:Utilities/Multiview \"%s\"", sizeof(co->DefaultMimeViewer));
       strlcpy(co->DetachDir, "RAM:", sizeof(co->DetachDir));
       strlcpy(co->AttachDir, "RAM:", sizeof(co->AttachDir));
    }
@@ -1147,8 +1098,18 @@ static void CopyConfigData(struct Config *dco, struct Config *sco)
   for(i = 0; i < MAXP3; i++)
     dco->P3[i] = sco->P3[i] ? (struct POP3 *)AllocCopy(sco->P3[i], sizeof(struct POP3)) : NULL;
 
-  for(i = 0; i < MAXMV; i++)
-    dco->MV[i] = sco->MV[i] ? (struct MimeView *)AllocCopy(sco->MV[i], sizeof(struct MimeView)) : NULL;
+  // for copying the mimetype list we have to do a deep copy of the list
+  NewList((struct List *)&dco->mimeTypeList);
+
+  for(curNode = sco->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  {
+    struct MimeTypeNode *srcNode = (struct MimeTypeNode *)curNode;
+    struct MimeTypeNode *dstNode = calloc(1, sizeof(struct MimeTypeNode));
+
+    memcpy(dstNode, srcNode, sizeof(struct MimeTypeNode));
+
+    AddTail((struct List *)&dco->mimeTypeList, (struct Node *)dstNode);
+  }
 
   // for copying the filters we do have to do another deep copy
   NewList((struct List *)&dco->filterList);
@@ -1546,87 +1507,166 @@ void CO_Validate(struct Config *co, BOOL update)
 //  Imports MIME viewers from a MIME.prefs file
 HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
 {
-   int mode;
+  int mode;
 
-   if ((mode = MUI_Request(G->App, G->CO->GUI.WI, 0, GetStr(MSG_CO_ImportMIME), GetStr(MSG_CO_ImportMIMEGads), GetStr(MSG_CO_ImportMIMEReq))))
-      if (ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_IMPORTMIMETITLE), REQF_NONE, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types"))))
+  ENTER();
+
+  if((mode = MUI_Request(G->App, G->CO->GUI.WI, 0, GetStr(MSG_CO_ImportMIME), GetStr(MSG_CO_ImportMIMEGads), GetStr(MSG_CO_ImportMIMEReq))))
+  {
+    if(ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_IMPORTMIMETITLE), REQF_NONE, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types"))))
+    {
+      char fname[SIZE_PATHFILE];
+      FILE *fh;
+
+      strmfp(fname, G->ASLReq[ASL_CONFIG]->fr_Drawer, G->ASLReq[ASL_CONFIG]->fr_File);
+
+      if((fh = fopen(fname, "r")))
       {
-         char buffer[SIZE_LARGE], fname[SIZE_PATHFILE], *p, *p2;
-         struct MimeView *mv;
-         APTR lv = G->CO->GUI.LV_MIME;
-         int i;
-         FILE *fh;
-         strmfp(fname, G->ASLReq[ASL_CONFIG]->fr_Drawer, G->ASLReq[ASL_CONFIG]->fr_File);
-         if ((fh = fopen(fname, "r")))
-         {
-            set(lv, MUIA_List_Quiet, TRUE);
-            while (fgets(buffer, SIZE_LARGE, fh))
-            {
-               char *ctype = buffer, *ext = "", *command = "";
-               if ((p = strpbrk(ctype, "\r\n"))) *p = 0;
-               if (!*ctype || ISpace(*ctype)) continue;
-               if (mode == 1)
-               {
-                  if (*ctype == ';') continue;
-                  for (p = ctype; *p && *p != ','; ++p);
-                  if (*p)
-                  {
-                     for (*p = 0, ext = ++p; *p && *p != ','; ++p);
-                     if (*p)
-                     {
-                        for (*p++ = 0; *p && *p != ','; ++p);
-                        if (*p)
-                        {
-                           for (command = ++p; *p && *p != ','; ++p);
-                           *p = 0;
-                        }
-                     }
-                  }
-               }
-               else if (mode == 2)
-               {
-                  if (*ctype == '#') continue;
-                  for (p2 = p = ctype; !ISpace(*p) && *p && *p != ';'; p2 = ++p);
-                  if ((p = strpbrk(p,";"))) ++p;
-                  if (p) command = TrimStart(p);
-                  *p2 = 0;
-               }
-               else
-               {
-                  if (*ctype == '#') continue;
-                  for (p2 = p = ctype; !ISpace(*p) && *p; p2 = ++p);
-                  if (*p) ext = TrimStart(p);
-                  *p2 = 0;
-               }
-               for (mv = NULL, i = 0; i < MAXMV; i++) if (CE->MV[i]) if (!stricmp(CE->MV[i]->ContentType, ctype)) { mv = CE->MV[i]; break; }
-               if (!mv) for (i = 0; i < MAXMV; i++) if (!CE->MV[i])
-               {
-                  mv = CE->MV[i] = CO_NewMimeView();
-                  DoMethod(lv, MUIM_List_InsertSingle, mv, MUIV_List_Insert_Bottom);
-                  break;
-               }
-               if (mv)
-               {
-                  for (p = mv->ContentType; *ctype && strlen(mv->ContentType) < SIZE_CTYPE; ctype++)
-                     if (*ctype == '*') { *p++ = '#'; *p++ = '?'; } else *p++ = *ctype;
-                  *p = 0;
-                  if (*command)
-                  {
-                     for (p = mv->Command; *command && strlen(mv->Command) < SIZE_COMMAND; command++)
-                        if (*command == '%' && command[1] == 'f') { *p++ = *command++; *p++ = 's'; } else *p++ = *command;
-                     *p = 0;
-                  }
+        Object *lv = G->CO->GUI.LV_MIME;
+        char buffer[SIZE_LARGE];
 
-                  if(*ext)
-                    strlcpy(mv->Extension, ext, sizeof(mv->Extension));
-               }
+        set(lv, MUIA_List_Quiet, TRUE);
+
+        while(fgets(buffer, SIZE_LARGE, fh))
+        {
+          struct MimeTypeNode *mt = NULL;
+          struct MinNode *curNode;
+          char *ctype = buffer;
+          char *ext = "";
+          char *command = "";
+          char *p;
+          char *p2;
+
+          if((p = strpbrk(ctype, "\r\n")))
+            *p = '\0';
+
+          if(!*ctype || ISpace(*ctype))
+            continue;
+
+          if(mode == 1)
+          {
+            if(*ctype == ';')
+              continue;
+
+            for(p = ctype; *p && *p != ','; ++p);
+
+            if(*p)
+            {
+              for(*p = '\0', ext = ++p; *p && *p != ','; ++p);
+
+              if(*p)
+              {
+                for(*p++ = '\0'; *p && *p != ','; ++p);
+
+                if(*p)
+                {
+                  for(command = ++p; *p && *p != ','; ++p);
+
+                  *p = '\0';
+                }
+              }
             }
-            fclose(fh);
-            set(lv, MUIA_List_Quiet, FALSE);
-            DoMethod(lv, MUIM_List_Redraw, MUIV_List_Redraw_All);
-         }
-         else ER_NewError(GetStr(MSG_ER_CantOpenFile), fname);
+          }
+          else if (mode == 2)
+          {
+            if(*ctype == '#')
+              continue;
+
+            for(p2 = p = ctype; !ISpace(*p) && *p && *p != ';'; p2 = ++p);
+
+            if((p = strpbrk(p,";")))
+              ++p;
+
+            if(p)
+              command = TrimStart(p);
+
+            *p2 = '\0';
+          }
+          else
+          {
+            if(*ctype == '#')
+              continue;
+
+            for(p2 = p = ctype; !ISpace(*p) && *p; p2 = ++p);
+
+            if(*p)
+              ext = TrimStart(p);
+
+            *p2 = '\0';
+          }
+
+          // now we try to find the content-type in our mimeTypeList
+          for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          {
+            struct MimeTypeNode *mtNode = (struct MimeTypeNode *)curNode;
+
+            if(stricmp(mtNode->ContentType, ctype) == 0)
+            {
+              mt = mtNode;
+              break;
+            }
+          }
+
+          // if we couldn't find it in our list we have to create a new mimeTypeNode
+          // and put it into our list.
+          if(mt == NULL && (mt = CreateNewMimeType()))
+          {
+            // add the new mime type to our internal list of
+            // user definable MIME types.
+            AddTail((struct List *)&(C->mimeTypeList), (struct Node *)mt);
+
+            // add the new MimeType also to the config page.
+            DoMethod(lv, MUIM_List_InsertSingle, mt, MUIV_List_Insert_Bottom);
+          }
+
+          // if we have a valid mimeTypeNode now we can fill it with valid data
+          if(mt)
+          {
+            for(p = mt->ContentType; *ctype && strlen(mt->ContentType) < sizeof(mt->ContentType); ctype++)
+            {
+              if(*ctype == '*')
+              {
+                *p++ = '#';
+                *p++ = '?';
+              }
+              else
+                *p++ = *ctype;
+            }
+
+            *p = '\0';
+
+            if(*command)
+            {
+              for(p = mt->Command; *command && strlen(mt->Command) < sizeof(mt->Command); command++)
+              {
+                if(*command == '%' && command[1] == 'f')
+                {
+                  *p++ = *command++;
+                  *p++ = 's';
+                }
+                else
+                  *p++ = *command;
+              }
+
+              *p = '\0';
+            }
+
+            if(*ext)
+              strlcpy(mt->Extension, ext, sizeof(mt->Extension));
+          }
+        }
+
+        fclose(fh);
+
+        set(lv, MUIA_List_Quiet, FALSE);
+        DoMethod(lv, MUIM_List_Redraw, MUIV_List_Redraw_All);
       }
+      else
+        ER_NewError(GetStr(MSG_ER_CantOpenFile), fname);
+    }
+  }
+
+  LEAVE();
 }
 MakeStaticHook(CO_ImportCTypesHook, CO_ImportCTypesFunc);
 

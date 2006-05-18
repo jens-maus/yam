@@ -112,7 +112,6 @@ static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff);
 static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff);
 static BOOL UncompressMailFile(char *src, char *dst, char *passwd);
 static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
-static char *IdentifyFileDT(char *fname);
 
 #if !defined(__amigaos4__) || (INCLUDE_VERSION < 50)
 struct PathNode
@@ -4960,128 +4959,178 @@ void PlaySound(char *filename)
 //  Matches a file extension against a list of extension
 static BOOL MatchExtension(char *fileext, char *extlist)
 {
-   while ((extlist = strtok(extlist, " ")))
-   {
-      if (!stricmp(extlist, fileext)) return TRUE;
-      extlist = NULL;
-   }
-   return FALSE;
+  ENTER();
+  BOOL result = FALSE;
+
+  while((extlist = strtok(extlist, " |;,")))
+  {
+    // now check if the extension matches
+    if(stricmp(extlist, fileext) == 0)
+    {
+      result = TRUE;
+      break;
+    }
+
+    extlist = NULL;
+  }
+
+  RETURN(result);
+  return result;
 }
-///
-/// IdentifyFileDT
-//  Detects the file type using datatypes.library
-static char *IdentifyFileDT(char *fname)
-{
-   static char ctype[SIZE_CTYPE];
 
-   strlcpy(ctype, "application/octet-stream", sizeof(ctype));
-
-   if (DataTypesBase)
-   {
-      BPTR lock = Lock(fname, ACCESS_READ);
-      if (lock)
-      {
-         struct DataType *dtn = ObtainDataTypeA(DTST_FILE, (APTR)lock, NULL);
-         if (dtn)
-         {
-            char *type = NULL;
-            struct DataTypeHeader *dth = dtn->dtn_Header;
-            switch (dth->dth_GroupID)
-            {
-               case GID_SYSTEM:     break;
-               case GID_DOCUMENT:   type = "applicátion"; break;
-               case GID_TEXT:       type = "text"; break;
-               case GID_SOUND:
-               case GID_INSTRUMENT: type = "audio"; break;
-               case GID_PICTURE:    type = "image"; break;
-               case GID_MOVIE:
-               case GID_ANIMATION:  type = "video"; break;
-            }
-
-            if(type)
-              snprintf(ctype, sizeof(ctype), "%s/x-%s", type, dth->dth_BaseName);
-
-            ReleaseDataType(dtn);
-         }
-         UnLock (lock);
-      }
-   }
-   return ctype;
-}
 ///
 /// IdentifyFile
-//  Detects the file type by analyzing file extension and contents
+// Tries to identify a file and returns its content-type if applicable
+// otherwise NULL
 char *IdentifyFile(char *fname)
 {
-   char *ctype = "";
-   FILE *fh;
+  char ext[SIZE_FILE];
+  char *ctype = NULL;
 
-   if ((fh = fopen(fname, "r")))
-   {
-      int i, len;
-      char buffer[SIZE_LARGE], *ext;
+  ENTER();
 
-      len = fread(buffer, 1, SIZE_LARGE-1, fh);
-      buffer[len] = 0;
+  // Here we try to identify the file content-type in multiple steps:
+  //
+  // 1: try to walk through the users' mime type list and check if
+  //    a specified extension in the list matches the one of our file.
+  //
+  // 2: check against our hardcoded internal list of known extensions
+  //    and try to do some semi-detailed analysis of the file header
+  //
+  // 3: use datatypes.library to find out the file class and construct
+  //    an artifical content-type partly matching the file.
+
+  // extract the extension of the file name first
+  stcgfe(ext, fname);
+
+  // now we try to identify the file by the extension first
+  if(ext[0] != '\0')
+  {
+    struct MinNode *curNode;
+
+    // identify by the user specified mime types
+    for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct MimeTypeNode *curType = (struct MimeTypeNode *)curNode;
+
+      if(curType->Extension[0] != '\0' &&
+         MatchExtension(ext, curType->Extension))
+      {
+        ctype = curType->ContentType;
+        break;
+      }
+    }
+
+    if(ctype == NULL)
+    {
+      // before we are going to try to identify the file by reading some bytes out of
+      // it, we try to identify it only by the extension.
+      if(!stricmp(ext, "htm") || !stricmp(ext, "html"))       ctype = (char*)ContType[CT_TX_HTML];
+      else if(!stricmp(ext, "txt"))                           ctype = (char*)ContType[CT_TX_PLAIN];
+      else if(!stricmp(ext, "guide"))                         ctype = (char*)ContType[CT_TX_GUIDE];
+      else if(!stricmp(ext, "ps") || !stricmp(ext, "eps"))    ctype = (char*)ContType[CT_AP_PS];
+      else if(!stricmp(ext, "pdf"))                           ctype = (char*)ContType[CT_AP_PDF];
+      else if(!stricmp(ext, "rtf"))                           ctype = (char*)ContType[CT_AP_RTF];
+      else if(!stricmp(ext, "lha"))                           ctype = (char*)ContType[CT_AP_LHA];
+      else if(!stricmp(ext, "lzx"))                           ctype = (char*)ContType[CT_AP_LZX];
+      else if(!stricmp(ext, "zip"))                           ctype = (char*)ContType[CT_AP_ZIP];
+      else if(!stricmp(ext, "rexx"))                          ctype = (char*)ContType[CT_AP_REXX];
+      else if(!stricmp(ext, "jpg") || !stricmp(ext, "jpeg"))  ctype = (char*)ContType[CT_IM_JPG];
+      else if(!stricmp(ext, "gif"))                           ctype = (char*)ContType[CT_IM_GIF];
+      else if(!stricmp(ext, "png"))                           ctype = (char*)ContType[CT_IM_PNG];
+      else if(!stricmp(ext, "tif") || !stricmp(ext, "tiff"))  ctype = (char*)ContType[CT_IM_TIFF];
+      else if(!stricmp(ext, "iff") || !stricmp(ext, "ilbm"))  ctype = (char*)ContType[CT_IM_ILBM];
+      else if(!stricmp(ext, "au") || !stricmp(ext, "snd"))    ctype = (char*)ContType[CT_AU_AU];
+      else if(!stricmp(ext, "wav"))                           ctype = (char*)ContType[CT_AU_WAV];
+      else if(!stricmp(ext, "mpg") || !stricmp(ext, "mpeg"))  ctype = (char*)ContType[CT_VI_MPG];
+      else if(!stricmp(ext, "qt") || !stricmp(ext, "mov"))    ctype = (char*)ContType[CT_VI_MOV];
+      else if(!stricmp(ext, "avi"))                           ctype = (char*)ContType[CT_VI_AVI];
+    }
+  }
+
+  // go on if we haven't got a content-type yet and try to identify
+  // it with our own, hardcoded means.
+  if(ctype == NULL)
+  {
+    FILE *fh;
+
+    // now that we still haven't been able to identify the file, we go
+    // and read in some bytes from the file and try to identify it by analyzing
+    // the binary data.
+    if((fh = fopen(fname, "r")))
+    {
+      char buffer[SIZE_LARGE];
+      int rlen;
+
+      // we read in SIZE_LARGE into our temporary buffer without
+      // checking if it worked out.
+      rlen = fread(buffer, 1, SIZE_LARGE-1, fh);
+      buffer[rlen] = '\0'; // NUL terminate the buffer.
+
+      // close the file immediately.
       fclose(fh);
-      if ((ext = strrchr(fname, '.'))) ++ext;
-      else ext = "--";
 
-      if (!stricmp(ext, "htm") || !stricmp(ext, "html"))                          ctype = (char*)ContType[CT_TX_HTML];
-      else if (!strnicmp(buffer, "@database", 9) || !stricmp(ext, "guide"))       ctype = (char*)ContType[CT_TX_GUIDE];
-      else if (!stricmp(ext, "ps") || !stricmp(ext, "eps"))                       ctype = (char*)ContType[CT_AP_PS];
-      else if (!stricmp(ext, "pdf") || !strncmp(buffer, "%PDF-", 5))              ctype = (char*)ContType[CT_AP_PDF];
-      else if (!stricmp(ext, "rtf"))                                              ctype = (char*)ContType[CT_AP_RTF];
-      else if (!stricmp(ext, "lha") || !strncmp(&buffer[2], "-lh5-", 5))          ctype = (char*)ContType[CT_AP_LHA];
-      else if (!stricmp(ext, "lzx") || !strncmp(buffer, "LZX", 3))                ctype = (char*)ContType[CT_AP_LZX];
-      else if (!stricmp(ext, "zip"))                                              ctype = (char*)ContType[CT_AP_ZIP];
-      else if (*((long *)buffer) >= HUNK_UNIT && *((long *)buffer) <= HUNK_INDEX) ctype = (char*)ContType[CT_AP_AEXE];
-      else if (!stricmp(ext, "rexx") || !stricmp(ext+strlen(ext)-2, "rx"))        ctype = (char*)ContType[CT_AP_REXX];
-      else if (!strncmp(&buffer[6], "JFIF", 4))                                   ctype = (char*)ContType[CT_IM_JPG];
-      else if (!strncmp(buffer, "GIF8", 4))                                       ctype = (char*)ContType[CT_IM_GIF];
-      else if (!strnicmp(ext, "png",4) || !strncmp(&buffer[1], "PNG", 3))         ctype = (char*)ContType[CT_IM_PNG];
-      else if (!strnicmp(ext, "tif",4))                                           ctype = (char*)ContType[CT_IM_TIFF];
-      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ILBM", 4))    ctype = (char*)ContType[CT_IM_ILBM];
-      else if (!stricmp(ext, "au") || !stricmp(ext, "snd"))                       ctype = (char*)ContType[CT_AU_AU];
-      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "8SVX", 4))    ctype = (char*)ContType[CT_AU_8SVX];
-      else if (!stricmp(ext, "wav"))                                              ctype = (char*)ContType[CT_AU_WAV];
-      else if (!stricmp(ext, "mpg") || !stricmp(ext, "mpeg"))                     ctype = (char*)ContType[CT_VI_MPG];
-      else if (!stricmp(ext, "qt") || !stricmp(ext, "mov"))                       ctype = (char*)ContType[CT_VI_MOV];
-      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ANIM", 4))    ctype = (char*)ContType[CT_VI_ANIM];
-      else if (!stricmp(ext, "avi"))                                              ctype = (char*)ContType[CT_VI_AVI];
-      else if (stristr(buffer, "\nFrom:"))                                        ctype = (char*)ContType[CT_ME_EMAIL];
-      else
+      if(!strnicmp(buffer, "@database", 9))                                      ctype = (char*)ContType[CT_TX_GUIDE];
+      else if(!strncmp(buffer, "%PDF-", 5))                                      ctype = (char*)ContType[CT_AP_PDF];
+      else if(!strncmp(&buffer[2], "-lh5-", 5))                                  ctype = (char*)ContType[CT_AP_LHA];
+      else if(!strncmp(buffer, "LZX", 3))                                        ctype = (char*)ContType[CT_AP_LZX];
+      else if(*((long *)buffer) >= HUNK_UNIT && *((long *)buffer) <= HUNK_INDEX) ctype = (char*)ContType[CT_AP_AEXE];
+      else if(!strncmp(&buffer[6], "JFIF", 4))                                   ctype = (char*)ContType[CT_IM_JPG];
+      else if(!strncmp(buffer, "GIF8", 4))                                       ctype = (char*)ContType[CT_IM_GIF];
+      else if(!strncmp(&buffer[1], "PNG", 3))                                    ctype = (char*)ContType[CT_IM_PNG];
+      else if(!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ILBM", 4))    ctype = (char*)ContType[CT_IM_ILBM];
+      else if(!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "8SVX", 4))    ctype = (char*)ContType[CT_AU_8SVX];
+      else if(!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ANIM", 4))    ctype = (char*)ContType[CT_VI_ANIM];
+      else if(stristr(buffer, "\nFrom:"))                                        ctype = (char*)ContType[CT_ME_EMAIL];
+    }
+  }
+
+  // and if we still haven't identified the file we really have a hard time
+  // and try to use datatypes.library now to get a clue about what the file
+  // might actually be.
+  if(ctype == NULL)
+  {
+    // per default we end up with an "application/octet-stream" content-type
+    strlcpy(ctype, ContType[CT_AP_OCTET], sizeof(ctype));
+
+    if(DataTypesBase)
+    {
+      BPTR lock;
+
+      if((lock = Lock(fname, ACCESS_READ)))
       {
-         for(i = 1; i < MAXMV; i++)
-         {
-           if(C->MV[i] && MatchExtension(ext, C->MV[i]->Extension))
-             ctype = C->MV[i]->ContentType;
-         }
+        struct DataType *dtn;
+
+        if((dtn = ObtainDataTypeA(DTST_FILE, (APTR)lock, NULL)))
+        {
+          char *type = NULL;
+          struct DataTypeHeader *dth = dtn->dtn_Header;
+
+          switch(dth->dth_GroupID)
+          {
+            case GID_SYSTEM:     break;
+            case GID_DOCUMENT:   type = "application"; break;
+            case GID_TEXT:       type = "text"; break;
+            case GID_SOUND:
+            case GID_INSTRUMENT: type = "audio"; break;
+            case GID_PICTURE:    type = "image"; break;
+            case GID_MOVIE:
+            case GID_ANIMATION:  type = "video"; break;
+          }
+
+          if(type)
+            snprintf(ctype, sizeof(ctype), "%s/x-%s", type, dth->dth_BaseName);
+
+          ReleaseDataType(dtn);
+        }
+
+        UnLock (lock);
       }
+    }
+  }
 
-      if (!*ctype)
-      {
-         unsigned char c;
-         int notascii = 0;
-
-         for(i = 0; i < len; i++)
-         {
-           c = buffer[i];
-
-           if((c < 32 || c > 127) &&
-              c != '\t' && c != '\n')
-           {
-             notascii++;
-           }
-         }
-
-         if(notascii < len/10)
-           ctype = (char*)ContType[(FileProtection(fname)&FIBF_SCRIPT) ? CT_AP_SCRIPT : CT_TX_PLAIN];
-         else
-           ctype = IdentifyFileDT(fname);
-      }
-   }
-   return ctype;
+  RETURN(ctype);
+  return ctype;
 }
 ///
 /// GetRealPath

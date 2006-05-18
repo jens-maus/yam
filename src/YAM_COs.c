@@ -338,13 +338,18 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "RemoveOnQuit     = %s\n", Bool2Txt(co->RemoveOnQuit));
 
       fprintf(fh, "\n[MIME]\n");
-      for (i = 0; i < MAXMV; i++) if (co->MV[i])
+      fprintf(fh, "MV00.ContentType = Default\n");
+      fprintf(fh, "MV00.Command     = %s\n", C->DefaultMimeViewer);
+
+      for(i=1, curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
       {
-         fprintf(fh, "MV%02d.ContentType = %s\n", i, co->MV[i]->ContentType);
-         fprintf(fh, "MV%02d.Extension   = %s\n", i, co->MV[i]->Extension);
-         fprintf(fh, "MV%02d.Command     = %s\n", i, co->MV[i]->Command);
+        struct MimeTypeNode *mtNode = (struct MimeTypeNode *)curNode;
+
+        fprintf(fh, "MV%02d.ContentType = %s\n", i, mtNode->ContentType);
+        fprintf(fh, "MV%02d.Extension   = %s\n", i, mtNode->Extension);
+        fprintf(fh, "MV%02d.Command     = %s\n", i, mtNode->Command);
+        fprintf(fh, "MV%02d.Description = %s\n", i, mtNode->Description);
       }
-      fprintf(fh, "IdentifyBin      = %s\n", Bool2Txt(co->IdentifyBin));
       fprintf(fh, "DetachDir        = %s\n", co->DetachDir);
       fprintf(fh, "AttachDir        = %s\n", co->AttachDir);
 
@@ -552,11 +557,18 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                   else if (!strnicmp(buffer, "MimeViewer", 10))
                   {
                      int j = atoi(&buffer[10]);
-                     struct MimeView *mv = co->MV[j];
-                     if (!mv) mv = co->MV[j] = CO_NewMimeView();
-                     p = strchr(value, ';'); *p++ = 0;
-                     strlcpy(mv->ContentType, value, sizeof(mv->ContentType));
-                     strlcpy(mv->Command, p, sizeof(mv->Command));
+                     struct MimeTypeNode *mt;
+
+                     if(j >= 0 && j < 100 && (mt = CreateNewMimeType()))
+                     {
+                       p = strchr(value, ';');
+                       *p++ = '\0';
+
+                       strlcpy(mt->ContentType, value, sizeof(mt->ContentType));
+                       strlcpy(mt->Command, p, sizeof(mt->Command));
+
+                       AddTail((struct List *)&(co->mimeTypeList), (struct Node *)mt);
+                     }
                   }
                   else if (!strnicmp(buffer, "RexxMenu", 8))
                   {
@@ -645,9 +657,13 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 
                  if(lastFilter == NULL)
                  {
-                   lastFilter = CreateNewFilter();
-                   AddTail((struct List *)&co->filterList, (struct Node *)lastFilter);
-                   lastFilterID = curFilterID;
+                   if((lastFilter = CreateNewFilter()))
+                   {
+                     AddTail((struct List *)&co->filterList, (struct Node *)lastFilter);
+                     lastFilterID = curFilterID;
+                   }
+                   else
+                     break;
                  }
 
                  // now find out which subtype this filter has
@@ -839,22 +855,70 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "SendOnQuit"))     co->SendOnQuit = Txt2Bool(value);
                else if (!stricmp(buffer, "CleanupOnQuit"))  co->CleanupOnQuit = Txt2Bool(value);
                else if (!stricmp(buffer, "RemoveOnQuit"))   co->RemoveOnQuit = Txt2Bool(value);
-/*11*/         else if (!strnicmp(buffer, "MV", 2) && buffer[4] == '.')
+/*11*/         else if (!strnicmp(buffer, "MV", 2) && isdigit(buffer[2]) && isdigit(buffer[3]) && strchr(buffer, '.'))
                {
-                  int j = atoi(&buffer[2]);
-                  struct MimeView *mv = co->MV[j];
-                  p = &buffer[5];
-                  if(!mv)
-                    mv = co->MV[j] = CO_NewMimeView();
+                 static struct MimeTypeNode *lastType = NULL;
+                 static int lastTypeID = -1;
+                 int curTypeID = atoi(&buffer[2]);
+                 char *p = strchr(buffer, '.')+1;
 
-                  if(!stricmp(p, "ContentType"))
-                    strlcpy(mv->ContentType, value, sizeof(mv->ContentType));
-                  else if(!stricmp(p, "Extension"))
-                    strlcpy(mv->Extension, value, sizeof(mv->Extension));
-                  else if(!stricmp(p, "Command"))
-                    strlcpy(mv->Command, value, sizeof(mv->Command));
+                 // we only get the correct mimetype node if the ID
+                 // is greater than zero, because zero is reserved for the default
+                 // mime viewer type.
+                 if(curTypeID > 0)
+                 {
+                   if(lastType && lastTypeID != curTypeID)
+                   {
+                     int i;
+                     struct MinNode *curNode;
+
+                     // reset the lastType
+                     lastType = NULL;
+                     lastTypeID = -1;
+
+                     // try to get the mimeType with that particular filter ID out of our
+                     // filterList
+                     for(i=0, curNode = co->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
+                     {
+                       if(i == curTypeID)
+                       {
+                         lastType = (struct MimeTypeNode *)curNode;
+                         lastTypeID = i;
+                         break;
+                       }
+                     }
+                   }
+
+                   if(lastType == NULL)
+                   {
+                     if((lastType = CreateNewMimeType()))
+                     {
+                        AddTail((struct List *)&co->mimeTypeList, (struct Node *)lastType);
+                        lastTypeID = curTypeID;
+                     }
+                     else
+                      break;
+                   }
+                 }
+
+                 // now we can fill the mimeType with data
+                 if(curTypeID > 0)
+                 {
+                   if(!stricmp(p, "ContentType"))
+                     strlcpy(lastType->ContentType, value, sizeof(lastType->ContentType));
+                   else if(!stricmp(p, "Extension"))
+                     strlcpy(lastType->Extension, value, sizeof(lastType->Extension));
+                   else if(!stricmp(p, "Command"))
+                     strlcpy(lastType->Command, value, sizeof(lastType->Command));
+                   else if(!stricmp(p, "Description"))
+                     strlcpy(lastType->Description, value, sizeof(lastType->Description));
+                 }
+                 else
+                 {
+                   if(!stricmp(p, "Command"))
+                     strlcpy(C->DefaultMimeViewer, value, sizeof(C->DefaultMimeViewer));
+                 }
                }
-               else if (!stricmp(buffer, "IdentifyBin"))    co->IdentifyBin = Txt2Bool(value);
                else if (!stricmp(buffer, "DetachDir"))      strlcpy(co->DetachDir, value, sizeof(co->DetachDir));
                else if (!stricmp(buffer, "AttachDir"))      strlcpy(co->AttachDir, value, sizeof(co->AttachDir));
 /*12*/         else if (!stricmp(buffer, "GalleryDir"))     strlcpy(co->GalleryDir, value, sizeof(co->GalleryDir));
@@ -1151,8 +1215,7 @@ void CO_GetConfig(void)
          CE->RemoveOnQuit      = GetMUICheck  (gui->CH_REMOVEQUIT);
          break;
       case 11:
-         GetMUIString(CE->MV[0]->Command, gui->ST_DEFVIEWER, sizeof(CE->MV[0]->Command));
-         CE->IdentifyBin       = GetMUICheck  (gui->CH_IDENTBIN);
+         GetMUIString(CE->DefaultMimeViewer, gui->ST_DEFVIEWER, sizeof(CE->DefaultMimeViewer));
          GetMUIString(CE->DetachDir, gui->ST_DETACHDIR, sizeof(CE->DetachDir));
          GetMUIString(CE->AttachDir, gui->ST_ATTACHDIR, sizeof(CE->AttachDir));
          break;
@@ -1407,14 +1470,28 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_DELETEQUIT ,CE->CleanupOnQuit);
          setcheckmark(gui->CH_REMOVEQUIT ,CE->RemoveOnQuit);
          break;
+
       case 11:
+      {
+         struct MinNode *curNode;
+
+         // clear the filter list first
          DoMethod(gui->LV_MIME, MUIM_List_Clear);
-         for (i = 1; i < MAXMV; i++) if (CE->MV[i]) DoMethod(gui->LV_MIME, MUIM_List_InsertSingle, CE->MV[i], MUIV_List_Insert_Bottom);
-         setstring   (gui->ST_DEFVIEWER ,CE->MV[0]->Command);
-         setcheckmark(gui->CH_IDENTBIN  ,CE->IdentifyBin);
+
+         // iterate through our filter list and add it to our
+         // MUI List
+         for(curNode = CE->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+           DoMethod(gui->LV_MIME, MUIM_List_InsertSingle, curNode, MUIV_List_Insert_Bottom);
+
+         // make sure the first entry is selected per default
+         set(gui->LV_MIME, MUIA_List_Active, MUIV_List_Active_Top);
+
+         setstring   (gui->ST_DEFVIEWER ,CE->DefaultMimeViewer);
          setstring   (gui->ST_DETACHDIR ,CE->DetachDir);
          setstring   (gui->ST_ATTACHDIR ,CE->AttachDir);
-         break;
+      }
+      break;
+
       case 12:
          setstring   (gui->ST_GALLDIR   ,CE->GalleryDir);
          setstring   (gui->ST_PHOTOURL  ,CE->MyPictureURL);

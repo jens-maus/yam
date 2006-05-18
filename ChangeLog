@@ -4,7 +4,23 @@ YAM Open Source - ChangeLog
 
 $Id$
 
-2006-04-21  Alexandre Balaban <abalaban@free.fr>
+2006-05-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: reworked the whole MIME type management/recognition to work more
+    intuitive by first scanning the user definable MIME type list, then falling
+    back to try to identify a file via internal methods and last by using
+    datatypes.library for querying general file information to construct an
+    artifical MIME type as a fallback. In addition, the previous limit of a
+    maximum of 100 user definable MIME types was removed. Now a user might
+    specify an unlimited amount of MIME types in addition to specifying a short
+    description for each type which will be later displayed right beside an
+    attachment file. Also removed the obsolete "IdentifyBin" option which just
+    caused confusion and wasn't particular usefull.
+  * locale/YAM.cd: renamed the various "Extension" uses by "File Extension",
+    which definitly is a better naming for it. Translations should adapt to
+    that change.
+
+2006-05-19  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: updated according to the latest changes.
 
