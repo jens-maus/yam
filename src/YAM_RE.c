@@ -454,9 +454,9 @@ BOOL RE_Export(struct ReadMailData *rmData, char *source,
   }
   SetComment(dest, BuildAddrName2(&mail->From));
 
-  if(!stricmp(ctype, ContType[CT_AP_AEXE]))
+  if(!stricmp(ctype, IntMimeTypeArray[MT_AP_AEXE].ContentType))
     SetProtection(dest, 0);
-  else if(!stricmp(ctype, ContType[CT_AP_SCRIPT]))
+  else if(!stricmp(ctype, IntMimeTypeArray[MT_AP_SCRIPT].ContentType))
     SetProtection(dest, FIBF_SCRIPT);
 
   AppendLogVerbose(80, GetStr(MSG_LOG_SavingAtt), dest, mail->MailFile, FolderName(mail->Folder), "");

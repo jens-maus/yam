@@ -2383,14 +2383,34 @@ char *DescribeCT(const char *ct)
     ret = GetStr(MSG_CTunknown);
   else
   {
-    unsigned int i;
+    struct MinNode *curNode;
 
-    for(i=0; ContType[i]; i++)
+    // first we search through the users' own MIME type list
+    for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
-      if(stricmp(ct, ContType[i]) == 0)
+      struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
+
+      if(MatchNoCase(ct, mt->ContentType) && mt->Description[0] != '\0')
       {
-        ret = GetStr((char*)ContTypeDesc[i]);
+        ret = mt->Description;
         break;
+      }
+
+    }
+
+    // if we still haven't identified the description
+    // we go and search through the internal list
+    if(ret == ct)
+    {
+      unsigned int i;
+
+      for(i=0; IntMimeTypeArray[i].ContentType != NULL; i++)
+      {
+        if(stricmp(ct, IntMimeTypeArray[i].ContentType) == 0)
+        {
+          ret = GetStr(IntMimeTypeArray[i].Description);
+          break;
+        }
       }
     }
   }
@@ -5026,30 +5046,21 @@ char *IdentifyFile(char *fname)
 
     if(ctype == NULL)
     {
+      unsigned int i;
+
       D(DBF_MIME, "identifying file by extension (hardcoded list)");
 
       // before we are going to try to identify the file by reading some bytes out of
       // it, we try to identify it only by the extension.
-      if(!stricmp(ext, "htm") || !stricmp(ext, "html"))       ctype = (char*)ContType[CT_TX_HTML];
-      else if(!stricmp(ext, "txt"))                           ctype = (char*)ContType[CT_TX_PLAIN];
-      else if(!stricmp(ext, "guide"))                         ctype = (char*)ContType[CT_TX_GUIDE];
-      else if(!stricmp(ext, "ps") || !stricmp(ext, "eps"))    ctype = (char*)ContType[CT_AP_PS];
-      else if(!stricmp(ext, "pdf"))                           ctype = (char*)ContType[CT_AP_PDF];
-      else if(!stricmp(ext, "rtf"))                           ctype = (char*)ContType[CT_AP_RTF];
-      else if(!stricmp(ext, "lha"))                           ctype = (char*)ContType[CT_AP_LHA];
-      else if(!stricmp(ext, "lzx"))                           ctype = (char*)ContType[CT_AP_LZX];
-      else if(!stricmp(ext, "zip"))                           ctype = (char*)ContType[CT_AP_ZIP];
-      else if(!stricmp(ext, "rexx"))                          ctype = (char*)ContType[CT_AP_REXX];
-      else if(!stricmp(ext, "jpg") || !stricmp(ext, "jpeg"))  ctype = (char*)ContType[CT_IM_JPG];
-      else if(!stricmp(ext, "gif"))                           ctype = (char*)ContType[CT_IM_GIF];
-      else if(!stricmp(ext, "png"))                           ctype = (char*)ContType[CT_IM_PNG];
-      else if(!stricmp(ext, "tif") || !stricmp(ext, "tiff"))  ctype = (char*)ContType[CT_IM_TIFF];
-      else if(!stricmp(ext, "iff") || !stricmp(ext, "ilbm"))  ctype = (char*)ContType[CT_IM_ILBM];
-      else if(!stricmp(ext, "au") || !stricmp(ext, "snd"))    ctype = (char*)ContType[CT_AU_AU];
-      else if(!stricmp(ext, "wav"))                           ctype = (char*)ContType[CT_AU_WAV];
-      else if(!stricmp(ext, "mpg") || !stricmp(ext, "mpeg"))  ctype = (char*)ContType[CT_VI_MPG];
-      else if(!stricmp(ext, "qt") || !stricmp(ext, "mov"))    ctype = (char*)ContType[CT_VI_MOV];
-      else if(!stricmp(ext, "avi"))                           ctype = (char*)ContType[CT_VI_AVI];
+      for(i=0; IntMimeTypeArray[i].ContentType != NULL; i++)
+      {
+        if(IntMimeTypeArray[i].Extension != NULL &&
+           MatchExtension(ext, IntMimeTypeArray[i].Extension))
+        {
+          ctype = IntMimeTypeArray[i].ContentType;
+          break;
+        }
+      }
     }
   }
 
@@ -5077,18 +5088,18 @@ char *IdentifyFile(char *fname)
       // close the file immediately.
       fclose(fh);
 
-      if(!strnicmp(buffer, "@database", 9))                                      ctype = (char*)ContType[CT_TX_GUIDE];
-      else if(!strncmp(buffer, "%PDF-", 5))                                      ctype = (char*)ContType[CT_AP_PDF];
-      else if(!strncmp(&buffer[2], "-lh5-", 5))                                  ctype = (char*)ContType[CT_AP_LHA];
-      else if(!strncmp(buffer, "LZX", 3))                                        ctype = (char*)ContType[CT_AP_LZX];
-      else if(*((long *)buffer) >= HUNK_UNIT && *((long *)buffer) <= HUNK_INDEX) ctype = (char*)ContType[CT_AP_AEXE];
-      else if(!strncmp(&buffer[6], "JFIF", 4))                                   ctype = (char*)ContType[CT_IM_JPG];
-      else if(!strncmp(buffer, "GIF8", 4))                                       ctype = (char*)ContType[CT_IM_GIF];
-      else if(!strncmp(&buffer[1], "PNG", 3))                                    ctype = (char*)ContType[CT_IM_PNG];
-      else if(!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ILBM", 4))    ctype = (char*)ContType[CT_IM_ILBM];
-      else if(!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "8SVX", 4))    ctype = (char*)ContType[CT_AU_8SVX];
-      else if(!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ANIM", 4))    ctype = (char*)ContType[CT_VI_ANIM];
-      else if(stristr(buffer, "\nFrom:"))                                        ctype = (char*)ContType[CT_ME_EMAIL];
+      if(!strnicmp(buffer, "@database", 9))                                      ctype = IntMimeTypeArray[MT_TX_GUIDE].ContentType;
+      else if(!strncmp(buffer, "%PDF-", 5))                                      ctype = IntMimeTypeArray[MT_AP_PDF].ContentType;
+      else if(!strncmp(&buffer[2], "-lh5-", 5))                                  ctype = IntMimeTypeArray[MT_AP_LHA].ContentType;
+      else if(!strncmp(buffer, "LZX", 3))                                        ctype = IntMimeTypeArray[MT_AP_LZX].ContentType;
+      else if(*((long *)buffer) >= HUNK_UNIT && *((long *)buffer) <= HUNK_INDEX) ctype = IntMimeTypeArray[MT_AP_AEXE].ContentType;
+      else if(!strncmp(&buffer[6], "JFIF", 4))                                   ctype = IntMimeTypeArray[MT_IM_JPG].ContentType;
+      else if(!strncmp(buffer, "GIF8", 4))                                       ctype = IntMimeTypeArray[MT_IM_GIF].ContentType;
+      else if(!strncmp(&buffer[1], "PNG", 3))                                    ctype = IntMimeTypeArray[MT_IM_PNG].ContentType;
+      else if(!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ILBM", 4))    ctype = IntMimeTypeArray[MT_IM_ILBM].ContentType;
+      else if(!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "8SVX", 4))    ctype = IntMimeTypeArray[MT_AU_8SVX].ContentType;
+      else if(!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ANIM", 4))    ctype = IntMimeTypeArray[MT_VI_ANIM].ContentType;
+      else if(stristr(buffer, "\nFrom:"))                                        ctype = IntMimeTypeArray[MT_ME_EMAIL].ContentType;
     }
   }
 
@@ -5100,7 +5111,7 @@ char *IdentifyFile(char *fname)
     D(DBF_MIME, "identifying file through datatypes.library");
 
     // per default we end up with an "application/octet-stream" content-type
-    ctype = (char *)ContType[CT_AP_OCTET];
+    ctype = IntMimeTypeArray[MT_AP_OCTET].ContentType;
 
     if(DataTypesBase)
     {

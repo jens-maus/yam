@@ -179,69 +179,6 @@ struct WBStartup *WBmsg;
 
 const char* const SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };
 const char* const FolderNames[4] = { "incoming", "outgoing", "sent", "deleted" };
-
-const char* const ContType[] =
-{
-   /*CT_TX_PLAIN */ "text/plain",
-   /*CT_TX_HTML  */ "text/html",
-   /*CT_TX_GUIDE */ "text/x-aguide",
-   /*CT_AP_OCTET */ "application/octet-stream",
-   /*CT_AP_PS    */ "application/postscript",
-   /*CT_AP_PDF   */ "application/pdf",
-   /*CT_AP_RTF   */ "application/rtf",
-   /*CT_AP_LHA   */ "application/x-lha",
-   /*CT_AP_LZX   */ "application/x-lzx",
-   /*CT_AP_ZIP   */ "application/x-zip",
-   /*CT_AP_AEXE  */ "application/x-amiga-executable",
-   /*CT_AP_SCRIPT*/ "application/x-amigados-script",
-   /*CT_AP_REXX  */ "application/x-rexx",
-   /*CT_IM_JPG   */ "image/jpeg",
-   /*CT_IM_GIF   */ "image/gif",
-   /*CT_IM_PNG   */ "image/png",
-   /*CT_IM_TIFF  */ "image/tiff",
-   /*CT_IM_ILBM  */ "image/x-ilbm",
-   /*CT_AU_AU    */ "audio/basic",
-   /*CT_AU_8SVX  */ "audio/x-8svx",
-   /*CT_AU_WAV   */ "audio/x-wav",
-   /*CT_VI_MPG   */ "video/mpeg",
-   /*CT_VI_MOV   */ "video/quicktime",
-   /*CT_VI_ANIM  */ "video/x-anim",
-   /*CT_VI_AVI   */ "video/x-msvideo",
-   /*CT_ME_EMAIL */ "message/rfc822",
-   NULL,
-};
-
-const char* const ContTypeDesc[] =
-{
-   MSG_CTtextplain,
-   MSG_CTtexthtml,
-   MSG_CTtextaguide,
-   MSG_CTapplicationoctetstream,
-   MSG_CTapplicationpostscript,
-   MSG_CTapplicationpdf,
-   MSG_CTapplicationrtf,
-   MSG_CTapplicationlha,
-   MSG_CTapplicationlzx,
-   MSG_CTapplicationzip,
-   MSG_CTapplicationamigaexe,
-   MSG_CTapplicationadosscript,
-   MSG_CTapplicationrexx,
-   MSG_CTimagejpeg,
-   MSG_CTimagegif,
-   MSG_CTimagepng,
-   MSG_CTimagetiff,
-   MSG_CTimageilbm,
-   MSG_CTaudiobasic,
-   MSG_CTaudio8svx,
-   MSG_CTaudiowav,
-   MSG_CTvideompeg,
-   MSG_CTvideoquicktime,
-   MSG_CTvideoanim,
-   MSG_CTvideomsvideo,
-   MSG_CTmessagerfc822,
-   NULL,
-};
-
 const char* const wdays[7] = { "Sun","Mon","Tue","Wed","Thu","Fri","Sat" };
 const char* const months[12] = { "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
 const char* const SecCodes[5] = { "none","sign","encrypt","sign+encrypt","anonymous" };

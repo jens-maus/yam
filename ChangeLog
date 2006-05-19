@@ -4,6 +4,16 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-05-20  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: moved the hardcoded, internal list of MIME types to YAM_mime.h,c
+    and unified the previously two structures into one. Also reworked the
+    mechanism on how the internal MIME types are searched for identifying
+    a certain file. In addition, the popup lists in the configuration and
+    write window will now also take respect of that change and especially
+    the write window will now show a complete list of MIME types either
+    the internal (hardcoded) or the user defined one.
+
 2006-05-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: revised the automatic identification of the content-type of a

@@ -30,6 +30,8 @@
 
 #include "ReadWindow_cl.h"
 
+#include "YAM_mime.h"
+
 #include "Debug.h"
 
 /* EXPORT
@@ -712,7 +714,7 @@ DECLARE(CopyMailRequest)
         AppendLogNormal(24, GetStr(MSG_LOG_Copying), (void *)1, srcfolder->Name, dstfolder->Name, "");
       }
       else if(RE_Export(rmData, rmData->readFile,
-                MA_NewMailFile(dstfolder, mail->MailFile), "", 0, FALSE, FALSE, (char*)ContType[CT_ME_EMAIL]))
+                MA_NewMailFile(dstfolder, mail->MailFile), "", 0, FALSE, FALSE, IntMimeTypeArray[MT_ME_EMAIL].ContentType))
       {
         struct Mail *newmail = AddMailToList(mail, dstfolder);
 
@@ -857,7 +859,7 @@ DECLARE(SaveMailRequest)
       {
         case PART_ORIGINAL:
         {
-          RE_Export(rmData, rmData->readFile, "", "", 0, FALSE, FALSE, (char*)ContType[CT_ME_EMAIL]);
+          RE_Export(rmData, rmData->readFile, "", "", 0, FALSE, FALSE, IntMimeTypeArray[MT_ME_EMAIL].ContentType);
         }
         break;
 
@@ -869,7 +871,7 @@ DECLARE(SaveMailRequest)
             fclose(tf->FP);
             tf->FP = NULL;
 
-            RE_Export(rmData, tf->Filename, "", "", 0, FALSE, FALSE, (char*)ContType[CT_TX_PLAIN]);
+            RE_Export(rmData, tf->Filename, "", "", 0, FALSE, FALSE, IntMimeTypeArray[MT_TX_PLAIN].ContentType);
             CloseTempFile(tf);
           }
         }

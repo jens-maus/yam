@@ -1739,7 +1739,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
                   if(doprint)
                     CopyFile("PRT:", 0, tf->Filename, 0);
                   else
-                    RE_Export(rmData, tf->Filename, "", "", 0, FALSE, FALSE, (char*)ContType[CT_TX_PLAIN]);
+                    RE_Export(rmData, tf->Filename, "", "", 0, FALSE, FALSE, IntMimeTypeArray[MT_TX_PLAIN].ContentType);
 
                   CloseTempFile(tf);
                }

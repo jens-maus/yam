@@ -63,6 +63,7 @@
 #include "YAM_global.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
+#include "YAM_mime.h"
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
@@ -653,23 +654,6 @@ HOOKPROTONHNONP(CO_GetDefaultPOPFunc, void)
    snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
 }
 MakeHook(CO_GetDefaultPOPHook,CO_GetDefaultPOPFunc);
-///
-
-/**** MIME Types/Viewers ****/
-/// CreateNewMimeType()
-//  Initializes a new MIME type structure
-struct MimeTypeNode *CreateNewMimeType(void)
-{
-  struct MimeTypeNode *mt;
-  ENTER();
-
-  if((mt = calloc(1, sizeof(struct MimeTypeNode))))
-    strlcpy(mt->ContentType, "?/?", sizeof(mt->ContentType));
-
-  RETURN(mt);
-  return mt;
-}
-
 ///
 
 /**** ARexx Hooks ****/

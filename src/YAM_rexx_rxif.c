@@ -52,6 +52,7 @@
 #include "YAM_global.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
+#include "YAM_mime.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 #include "YAM_rexx_rxcl.h"
@@ -1511,7 +1512,7 @@ void rx_readsave( UNUSED struct RexxHost *host, struct rxd_readsave **rxd, long 
                                   0,
                                   TRUE,
                                   (BOOL)rd->arg.overwrite,
-                                  (char*)ContType[CT_TX_PLAIN]);
+                                  IntMimeTypeArray[MT_TX_PLAIN].ContentType);
               CloseTempFile(tf);
             }
          }

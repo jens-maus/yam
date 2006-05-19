@@ -287,15 +287,6 @@ struct POP3
    BOOL  DeleteOnServer;
 };
 
-struct MimeTypeNode
-{
-  struct MinNode node;            // required for placing it into the mimeTypeList
-  char ContentType[SIZE_CTYPE];   // IANA conform content-type (e.g. 'application/pdf')
-  char Command[SIZE_COMMAND];     // command spec for viewing files of that mime Type
-  char Extension[SIZE_NAME];      // space separated string list of extensions
-  char Description[SIZE_DEFAULT]; // a short description of the MIME type
-};
-
 /*** RxHook structure ***/
 struct RxHook
 {
@@ -532,7 +523,6 @@ struct POP3 *     CO_NewPOP3(struct Config *co, BOOL first);
 void              CO_SetDefaults(struct Config *co, int page);
 void              CO_Validate(struct Config *co, BOOL update);
 
-void                 GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
-struct MimeTypeNode *CreateNewMimeType(void);
+void              GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
 
 #endif /* YAM_CONFIG_H */

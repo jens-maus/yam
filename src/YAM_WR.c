@@ -57,6 +57,7 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
+#include "YAM_configGUI.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
@@ -2654,11 +2655,7 @@ static struct WR_ClassData *WR_New(int winnum)
                      End,
                      Child, ColGroup(2),
                         Child, Label2(GetStr(MSG_WR_ContentType)),
-                        Child, PoplistObject,
-                           MUIA_Popstring_String, data->GUI.ST_CTYPE = MakeString(SIZE_CTYPE,GetStr(MSG_WR_ContentType)),
-                           MUIA_Popstring_Button, PopButton(MUII_PopUp),
-                           MUIA_Poplist_Array   , ContType,
-                        End,
+                        Child, MakeMimeTypePop(&data->GUI.ST_CTYPE, GetStr(MSG_WR_ContentType)),
                         Child, Label2(GetStr(MSG_WR_Description)),
                         Child, data->GUI.ST_DESC = MakeString(SIZE_DEFAULT,GetStr(MSG_WR_Description)),
                         Child, HSpace(0),

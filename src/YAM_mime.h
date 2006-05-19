@@ -59,4 +59,59 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen);
 // rfc1738 URL encoding/decoding routines
 int urlencode(char *to, const char *from, unsigned int len);
 
+// MimeType management
+struct MimeTypeNode
+{
+  struct MinNode node;            // required for placing it into the mimeTypeList
+  char ContentType[SIZE_CTYPE];   // IANA conform content-type (e.g. 'application/pdf')
+  char Extension[SIZE_NAME];      // space separated string list of extensions
+  char Description[SIZE_DEFAULT]; // a short description of the MIME type
+  char Command[SIZE_COMMAND];     // command spec for viewing files of that mime Type
+};
+
+struct MimeTypeNode *CreateNewMimeType(void);
+
+// for maintaing our own internal (hardcoded)
+// MimeType array for identifying files. Please make sure
+// that the IntMimeTypeID enumeration matches the layout of
+// the IntMimeTypes array.
+struct IntMimeType
+{
+  char *ContentType;  // IANA conform content-type (e.g. 'application/pdf')
+  char *Extension;    // space separated string list of extensions
+  char *Description;  // a short description of the MIME type
+};
+
+extern const struct IntMimeType IntMimeTypeArray[];
+
+enum IntMimeTypeID
+{
+  MT_TX_PLAIN=0, // text/plain
+  MT_TX_HTML,    // text/html
+  MT_TX_GUIDE,   // text/x-aguide
+  MT_AP_OCTET,   // application/octet-stream
+  MT_AP_PS,      // application/postscript
+  MT_AP_PDF,     // application/pdf
+  MT_AP_RTF,     // application/rtf
+  MT_AP_LHA,     // application/x-lha
+  MT_AP_LZX,     // application/x-lzx
+  MT_AP_ZIP,     // application/x-zip
+  MT_AP_AEXE,    // application/x-amiga-executable
+  MT_AP_SCRIPT,  // application/x-amigados-script
+  MT_AP_REXX,    // application/x-rexx
+  MT_IM_JPG,     // image/jpeg
+  MT_IM_GIF,     // image/gif
+  MT_IM_PNG,     // image/png
+  MT_IM_TIFF,    // image/tiff
+  MT_IM_ILBM,    // image/x-ilbm
+  MT_AU_AU,      // audio/basic
+  MT_AU_8SVX,    // audio/x-8svx
+  MT_AU_WAV,     // audio/x-wav
+  MT_VI_MPG,     // video/mpeg
+  MT_VI_MOV,     // video/quicktime
+  MT_VI_ANIM,    // video/x-anim
+  MT_VI_AVI,     // video/x-msvideo
+  MT_ME_EMAIL    // message/rfc822
+};
+
 #endif /* YAM_MIME_H */
