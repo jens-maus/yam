@@ -5100,7 +5100,7 @@ char *IdentifyFile(char *fname)
     D(DBF_MIME, "identifying file through datatypes.library");
 
     // per default we end up with an "application/octet-stream" content-type
-    ctype = ContType[CT_AP_OCTET];
+    ctype = (char *)ContType[CT_AP_OCTET];
 
     if(DataTypesBase)
     {
