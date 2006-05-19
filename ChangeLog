@@ -6,6 +6,11 @@ $Id$
 
 2006-05-19  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c, YAM_RE.c: fixed a crash bug in the recently reworked mimetype
+    identification routines. In addition, the RE_DisplayMIME() function will
+    now only use IdentifyFile() in case the supplied content-type is NULL or
+    empty as the function is only for identifying a missing content-type which
+    only rarely happens nowadays.
   * misc: reworked the whole MIME type management/recognition to work more
     intuitive by first scanning the user definable MIME type list, then falling
     back to try to identify a file via internal methods and last by using

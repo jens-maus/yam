@@ -5003,12 +5003,14 @@ char *IdentifyFile(char *fname)
 
   // extract the extension of the file name first
   stcgfe(ext, fname);
+  SHOWSTRING(DBF_MIME, ext);
 
   // now we try to identify the file by the extension first
   if(ext[0] != '\0')
   {
     struct MinNode *curNode;
 
+    D(DBF_MIME, "identifying file by extension (mimeTypeList)");
     // identify by the user specified mime types
     for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
@@ -5024,6 +5026,8 @@ char *IdentifyFile(char *fname)
 
     if(ctype == NULL)
     {
+      D(DBF_MIME, "identifying file by extension (hardcoded list)");
+
       // before we are going to try to identify the file by reading some bytes out of
       // it, we try to identify it only by the extension.
       if(!stricmp(ext, "htm") || !stricmp(ext, "html"))       ctype = (char*)ContType[CT_TX_HTML];
@@ -5054,6 +5058,8 @@ char *IdentifyFile(char *fname)
   if(ctype == NULL)
   {
     FILE *fh;
+
+    D(DBF_MIME, "identifying file by binary comparing the first bytes of '%s'", fname);
 
     // now that we still haven't been able to identify the file, we go
     // and read in some bytes from the file and try to identify it by analyzing
@@ -5091,8 +5097,10 @@ char *IdentifyFile(char *fname)
   // might actually be.
   if(ctype == NULL)
   {
+    D(DBF_MIME, "identifying file through datatypes.library");
+
     // per default we end up with an "application/octet-stream" content-type
-    strlcpy(ctype, ContType[CT_AP_OCTET], sizeof(ctype));
+    ctype = ContType[CT_AP_OCTET];
 
     if(DataTypesBase)
     {
@@ -5120,7 +5128,12 @@ char *IdentifyFile(char *fname)
           }
 
           if(type)
-            snprintf(ctype, sizeof(ctype), "%s/x-%s", type, dth->dth_BaseName);
+          {
+            static char contentType[SIZE_CTYPE];
+
+            snprintf(contentType, sizeof(contentType), "%s/x-%s", type, dth->dth_BaseName);
+            ctype = contentType;
+          }
 
           ReleaseDataType(dtn);
         }

@@ -492,25 +492,43 @@ void RE_DisplayMIME(char *fname, char *ctype)
 
   ENTER();
 
+  // in case no content-type was specified, or it is empty we try to be
+  // somewhat intelligent, by deeper analyzing the file and its content
+  // first.
+  if(ctype == NULL || ctype[0] == '\0')
+  {
+    D(DBF_MIME, "no content-type specified, analyzing '%s'", fname);
+
+    if((ctype = IdentifyFile(fname)))
+      D(DBF_MIME, "identified file as '%s'", ctype);
+  }
+
+  D(DBF_MIME, "trying to display file '%s' of content-type '%s'", fname, ctype);
+
   // we first browse through the whole mimeTypeList and try to find
   // out if the content-type spec in one of the user-defined
   // MIME types matches or not.
-  for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  if(ctype != NULL)
   {
-    struct MimeTypeNode *curType = (struct MimeTypeNode *)curNode;
-
-    if(MatchNoCase(ctype, curType->ContentType))
+    for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
-      mt = curType;
-      break;
+      struct MimeTypeNode *curType = (struct MimeTypeNode *)curNode;
+
+      if(MatchNoCase(ctype, curType->ContentType))
+      {
+        mt = curType;
+        break;
+      }
     }
   }
 
   // if the MIME part is an rfc822 conform email attachment we
   // try to open it as a virtual mail in another read window.
-  if(!mt && !stricmp(ctype, "message/rfc822"))
+  if(!mt && ctype != NULL && !stricmp(ctype, "message/rfc822"))
   {
     struct TempFile *tf;
+
+    D(DBF_MIME, "identified content-type as 'message/rfc822'");
 
     if((tf = OpenTempFile(NULL)))
     {
@@ -568,23 +586,6 @@ void RE_DisplayMIME(char *fname, char *ctype)
     char *fileptr;
     char *cmdPtr;
 
-    // if we haven't identified the file yet by analyzing its specified
-    // content-type, we go and try to identify it by our own internal
-    // identify routines.
-    if(!mt && (ctype = IdentifyFile(fname)))
-    {
-      for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-      {
-        struct MimeTypeNode *curType = (struct MimeTypeNode *)curNode;
-
-        if(MatchNoCase(ctype, curType->ContentType))
-        {
-          mt = curType;
-          break;
-        }
-      }
-    }
-
     // if we still didn't found the correct mime type or the command line of the
     // current mime type is empty we use the default mime viewer specified in
     // the YAM configuration.
@@ -592,6 +593,8 @@ void RE_DisplayMIME(char *fname, char *ctype)
       cmdPtr = C->DefaultMimeViewer;
     else
       cmdPtr = mt->Command;
+
+    D(DBF_MIME, "compiling command sequence of '%s'", cmdPtr);
 
     // now we have to generate a real commandstring and make sure that
     // the %s is covered with "" or otherwise we will run into trouble with
@@ -660,6 +663,8 @@ void RE_DisplayMIME(char *fname, char *ctype)
       }
       else
         snprintf(command, sizeof(command), cmdPtr, GetRealPath(fname));
+
+      D(DBF_MIME, "executing '%s'", command);
 
       ExecuteCommand(command, TRUE, OUT_NIL);
     }
