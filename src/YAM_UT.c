@@ -4959,8 +4959,9 @@ void PlaySound(char *filename)
 //  Matches a file extension against a list of extension
 static BOOL MatchExtension(char *fileext, char *extlist)
 {
-  ENTER();
   BOOL result = FALSE;
+
+  ENTER();
 
   while((extlist = strtok(extlist, " |;,")))
   {
