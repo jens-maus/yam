@@ -6,6 +6,8 @@ $Id$
 
 2006-05-19  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c: revised the automatic identification of the content-type of a
+    file and adapted the routines to the new IdentifyFile() API.
   * YAM_UT.c, YAM_RE.c: fixed a crash bug in the recently reworked mimetype
     identification routines. In addition, the RE_DisplayMIME() function will
     now only use IdentifyFile() in case the supplied content-type is NULL or

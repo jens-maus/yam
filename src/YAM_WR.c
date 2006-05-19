@@ -155,17 +155,25 @@ MakeStaticHook(WR_PutFileEntryHook, WR_PutFileEntry);
 /*** WR_AddFileToList - Adds a file to the attachment list, gets its size and type ***/
 BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
 {
-   static struct Attach attach;
-   struct FileInfoBlock *fib;
-   struct WR_GUIData *gui = &G->WR[winnum]->GUI;
-   char *ctype;
-   BPTR lock;
+  struct WR_GUIData *gui = &G->WR[winnum]->GUI;
+  BOOL result = FALSE;
 
-   if (!filename) return FALSE;
-   memset(&attach, 0, sizeof(struct Attach));
+  ENTER();
 
-   if((lock = Lock((STRPTR)filename,ACCESS_READ)))
-   {
+  if(filename)
+  {
+    static struct Attach attach;
+    char *ctype;
+    BPTR lock;
+
+    memset(&attach, 0, sizeof(struct Attach));
+
+    // we try to get the filesize and comment and copy
+    // it into our attchement structure.
+    if((lock = Lock((STRPTR)filename,ACCESS_READ)))
+    {
+      struct FileInfoBlock *fib;
+
       if((fib = AllocDosObject(DOS_FIB, NULL)))
       {
         if(Examine(lock, fib))
@@ -176,13 +184,16 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
         FreeDosObject(DOS_FIB, fib);
       }
       UnLock(lock);
-   }
-   else return FALSE;
+    }
 
-   ctype = IdentifyFile(filename);
-   if (*ctype)
-   {
+    // now we try to find out the content-type of the
+    // attachment by using the IdentifyFile() function which will
+    // do certain checks to guess the content-type out of the file name
+    // and content.
+    if((ctype = IdentifyFile(filename)) && ctype[0] != '\0')
+    {
       int encoding = xget(gui->RA_ENCODING, MUIA_Radio_Active);
+
       attach.IsMIME = (encoding == 0);
       attach.IsTemp = istemp;
       strlcpy(attach.FilePath, filename, sizeof(attach.FilePath));
@@ -190,11 +201,18 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
       strlcpy(attach.ContentType, ctype, sizeof(attach.ContentType));
       nnset(gui->ST_CTYPE, MUIA_String_Contents, attach.ContentType);
       nnset(gui->ST_DESC, MUIA_String_Contents, attach.Description);
+
+      // put the attachment into our attachment MUI list and set
+      // it active.
       DoMethod(gui->LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
       set(gui->LV_ATTACH, MUIA_NList_Active, MUIV_NList_Active_Bottom);
-      return TRUE;
-   }
-   return FALSE;
+
+      result = TRUE;
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 ///
 
