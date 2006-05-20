@@ -5110,7 +5110,7 @@ char *IdentifyFile(char *fname)
 
         for(i=0; i < rlen; i++)
         {
-          unsigned c = buffer[i];
+          unsigned char c = buffer[i];
 
           // see if the current buffer position is
           // considered an ASCII/SPACE char.
