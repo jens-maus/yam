@@ -5096,9 +5096,9 @@ char *IdentifyFile(char *fname)
       else if(!strncmp(&buffer[6], "JFIF", 4))                                   ctype = IntMimeTypeArray[MT_IM_JPG].ContentType;
       else if(!strncmp(buffer, "GIF8", 4))                                       ctype = IntMimeTypeArray[MT_IM_GIF].ContentType;
       else if(!strncmp(&buffer[1], "PNG", 3))                                    ctype = IntMimeTypeArray[MT_IM_PNG].ContentType;
-      else if(!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ILBM", 4))    ctype = IntMimeTypeArray[MT_IM_ILBM].ContentType;
-      else if(!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "8SVX", 4))    ctype = IntMimeTypeArray[MT_AU_8SVX].ContentType;
-      else if(!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ANIM", 4))    ctype = IntMimeTypeArray[MT_VI_ANIM].ContentType;
+      else if(!strncmp(&buffer[8], "ILBM", 4) && !strncmp(buffer, "FORM", 4))    ctype = IntMimeTypeArray[MT_IM_ILBM].ContentType;
+      else if(!strncmp(&buffer[8], "8SVX", 4) && !strncmp(buffer, "FORM", 4))    ctype = IntMimeTypeArray[MT_AU_8SVX].ContentType;
+      else if(!strncmp(&buffer[8], "ANIM", 4) && !strncmp(buffer, "FORM", 4))    ctype = IntMimeTypeArray[MT_VI_ANIM].ContentType;
       else if(stristr(buffer, "\nFrom:"))                                        ctype = IntMimeTypeArray[MT_ME_EMAIL].ContentType;
       else
       {
