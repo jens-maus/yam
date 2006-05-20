@@ -88,23 +88,38 @@ enum IntMimeTypeID
 {
   MT_TX_PLAIN=0, // text/plain
   MT_TX_HTML,    // text/html
+  MT_TX_XML,     // text/xml
   MT_TX_GUIDE,   // text/x-aguide
+  MT_AP_GZIP,    // application/gzip
+  MT_AP_HQX,     // application/mac-binhex40
+  MT_AP_XLS,     // application/msexcel
+  MT_AP_PPT,     // application/mspowerpoint
+  MT_AP_DOC,     // application/msword
   MT_AP_OCTET,   // application/octet-stream
   MT_AP_PS,      // application/postscript
   MT_AP_PDF,     // application/pdf
+  MT_AP_PGP,     // application/pgp
   MT_AP_RTF,     // application/rtf
+  MT_AP_BZ2,     // application/x-bzip2
+  MT_AP_Z,       // application/x-compress
   MT_AP_LHA,     // application/x-lha
   MT_AP_LZX,     // application/x-lzx
-  MT_AP_ZIP,     // application/x-zip
+  MT_AP_TAR,     // application/x-tar
+  MT_AP_TGZ,     // application/x-tar-gz
   MT_AP_AEXE,    // application/x-amiga-executable
   MT_AP_SCRIPT,  // application/x-amigados-script
   MT_AP_REXX,    // application/x-rexx
+  MT_AP_ZIP,     // application/zip
+  MT_IM_BMP,     // image/bmp
   MT_IM_JPG,     // image/jpeg
   MT_IM_GIF,     // image/gif
   MT_IM_PNG,     // image/png
   MT_IM_TIFF,    // image/tiff
   MT_IM_ILBM,    // image/x-ilbm
   MT_AU_AU,      // audio/basic
+  MT_AU_AIFF,    // audio/x-aiff
+  MT_AU_MIDI,    // audio/x-midi
+  MT_AU_MPEG,    // audio/x-mpeg
   MT_AU_8SVX,    // audio/x-8svx
   MT_AU_WAV,     // audio/x-wav
   MT_VI_MPG,     // video/mpeg

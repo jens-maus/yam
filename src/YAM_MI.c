@@ -2457,39 +2457,55 @@ int urlencode(char *to, const char *from, unsigned int len)
 #warning "implement RFC 2231 decoding/encoding ASAP!"
 
 /**** MIME Types/Viewers ****/
+/// IntMimeTypeArray[]
 const struct IntMimeType IntMimeTypeArray[] =
 {
-  //                  ContentType                       Extensions  Description
-  /* MT_TX_PLAIN */ { "text/plain",                     "txt",      MSG_CTtextplain  },
-  /* MT_TX_HTML  */ { "text/html",                      "html htm", MSG_CTtexthtml   },
-  /* MT_TX_GUIDE */ { "text/x-aguide",                  "guide",    MSG_CTtextaguide },
-  /* MT_AP_OCTET */ { "application/octet-stream",       NULL,       MSG_CTapplicationoctetstream },
-  /* MT_AP_PS    */ { "application/postscript",         "ps eps",   MSG_CTapplicationpostscript },
-  /* MT_AP_PDF   */ { "application/pdf",                "pdf",      MSG_CTapplicationpdf },
-  /* MT_AP_RTF   */ { "application/rtf",                "rtf",      MSG_CTapplicationrtf },
-  /* MT_AP_LHA   */ { "application/x-lha",              "lha",      MSG_CTapplicationlha },
-  /* MT_AP_LZX   */ { "application/x-lzx",              "lzx",      MSG_CTapplicationlzx },
-  /* MT_AP_ZIP   */ { "application/x-zip",              "zip",      MSG_CTapplicationzip },
-  /* MT_AP_AEXE  */ { "application/x-amiga-executable", NULL,       MSG_CTapplicationamigaexe },
-  /* MT_AP_SCRIPT*/ { "application/x-amigados-script",  NULL,       MSG_CTapplicationadosscript },
-  /* MT_AP_REXX  */ { "application/x-rexx",             "rexx rx",  MSG_CTapplicationrexx },
-  /* MT_IM_JPG   */ { "image/jpeg",                     "jpg jpeg", MSG_CTimagejpeg },
-  /* MT_IM_GIF   */ { "image/gif",                      "gif",      MSG_CTimagegif },
-  /* MT_IM_PNG   */ { "image/png",                      "png",      MSG_CTimagepng },
-  /* MT_IM_TIFF  */ { "image/tiff",                     "tif tiff", MSG_CTimagetiff },
-  /* MT_IM_ILBM  */ { "image/x-ilbm",                   "iff ilbm", MSG_CTimageilbm },
-  /* MT_AU_AU    */ { "audio/basic",                    "au snd",   MSG_CTaudiobasic },
-  /* MT_AU_8SVX  */ { "audio/x-8svx",                   "svx",      MSG_CTaudio8svx },
-  /* MT_AU_WAV   */ { "audio/x-wav",                    "wav",      MSG_CTaudiowav },
-  /* MT_VI_MPG   */ { "video/mpeg",                     "mpg mpeg", MSG_CTvideompeg },
-  /* MT_VI_MOV   */ { "video/quicktime",                "qt mov",   MSG_CTvideoquicktime },
-  /* MT_VI_ANIM  */ { "video/x-anim",                   "anim",     MSG_CTvideoanim },
-  /* MT_VI_AVI   */ { "video/x-msvideo",                "avi",      MSG_CTvideomsvideo },
-  /* MT_ME_EMAIL */ { "message/rfc822",                 "eml",      MSG_CTmessagerfc822 },
-  { NULL, NULL, NULL }
-
+  //                  ContentType                       Extensions          Description
+  /* MT_TX_PLAIN */ { "text/plain",                     "txt asc",          MSG_CTtextplain },
+  /* MT_TX_HTML  */ { "text/html",                      "html htm shtml",   MSG_CTtexthtml },
+  /* MT_TX_XML   */ { "text/xml",                       "xml",              MSG_CTtextxml },
+  /* MT_TX_GUIDE */ { "text/x-aguide",                  "guide",            MSG_CTtextaguide },
+  /* MT_TX_GZIP  */ { "application/gzip",               "gz",               MSG_CTapplicationgz },
+  /* MT_AP_HQX   */ { "application/mac-binhex40",       "hqx",              MSG_CTapplicationhqx },
+  /* MT_AP_XLS   */ { "application/msexcel",            "xls xla",          MSG_CTapplicationxls },
+  /* MT_AP_PPT   */ { "application/mspowerpoint",       "ppt ppz pps pot",  MSG_CTapplicationppt },
+  /* MT_AP_PPT   */ { "application/msword",             "doc dot",          MSG_CTapplicationdoc },
+  /* MT_AP_OCTET */ { "application/octet-stream",       "bin exe",          MSG_CTapplicationoctetstream },
+  /* MT_AP_PS    */ { "application/postscript",         "ps eps ai",        MSG_CTapplicationpostscript },
+  /* MT_AP_PDF   */ { "application/pdf",                "pdf",              MSG_CTapplicationpdf },
+  /* MT_AP_PGP   */ { "application/pgp",                "pgp",              MSG_CTapplicationpgp },
+  /* MT_AP_RTF   */ { "application/rtf",                "rtf",              MSG_CTapplicationrtf },
+  /* MT_AP_BZ2   */ { "application/x-bzip2",            "bz2",              MSG_CTapplicationbz2 },
+  /* MT_AP_Z     */ { "application/x-compress",         "z",                MSG_CTapplicationz },
+  /* MT_AP_LHA   */ { "application/x-lha",              "lha",              MSG_CTapplicationlha },
+  /* MT_AP_LZX   */ { "application/x-lzx",              "lzx",              MSG_CTapplicationlzx },
+  /* MT_AP_TAR   */ { "application/x-tar",              "tar gtar",         MSG_CTapplicationtar },
+  /* MT_AP_TGZ   */ { "application/x-tar-gz",           "tgz tar.gz",       MSG_CTapplicationtgz },
+  /* MT_AP_AEXE  */ { "application/x-amiga-executable", NULL,               MSG_CTapplicationamigaexe },
+  /* MT_AP_SCRIPT*/ { "application/x-amigados-script",  NULL,               MSG_CTapplicationadosscript },
+  /* MT_AP_REXX  */ { "application/x-rexx",             "rexx rx",          MSG_CTapplicationrexx },
+  /* MT_AP_ZIP   */ { "application/zip",                "zip",              MSG_CTapplicationzip },
+  /* MT_IM_BMP   */ { "image/bmp",                      "bmp",              MSG_CTimagebmp },
+  /* MT_IM_JPG   */ { "image/jpeg",                     "jpg jpeg",         MSG_CTimagejpeg },
+  /* MT_IM_GIF   */ { "image/gif",                      "gif",              MSG_CTimagegif },
+  /* MT_IM_PNG   */ { "image/png",                      "png",              MSG_CTimagepng },
+  /* MT_IM_TIFF  */ { "image/tiff",                     "tif tiff",         MSG_CTimagetiff },
+  /* MT_IM_ILBM  */ { "image/x-ilbm",                   "iff ilbm",         MSG_CTimageilbm },
+  /* MT_AU_AU    */ { "audio/basic",                    "au snd",           MSG_CTaudiobasic },
+  /* MT_AU_AIFF  */ { "audio/x-aiff",                   "aiff aif aifc",    MSG_CTaudioaiff },
+  /* MT_AU_MIDI  */ { "audio/x-midi",                   "midi mid",         MSG_CTaudiomidi },
+  /* MT_AU_MPEG  */ { "audio/x-mpeg",                   "mp3 mp2",          MSG_CTaudiompeg },
+  /* MT_AU_8SVX  */ { "audio/x-8svx",                   "svx",              MSG_CTaudio8svx },
+  /* MT_AU_WAV   */ { "audio/x-wav",                    "wav",              MSG_CTaudiowav },
+  /* MT_VI_MPG   */ { "video/mpeg",                     "mpg mpeg",         MSG_CTvideompeg },
+  /* MT_VI_MOV   */ { "video/quicktime",                "qt mov",           MSG_CTvideoquicktime },
+  /* MT_VI_ANIM  */ { "video/x-anim",                   "anim",             MSG_CTvideoanim },
+  /* MT_VI_AVI   */ { "video/x-msvideo",                "avi",              MSG_CTvideomsvideo },
+  /* MT_ME_EMAIL */ { "message/rfc822",                 "eml",              MSG_CTmessagerfc822 },
+                    { NULL,                             NULL,               NULL }
 };
 
+///
 /// CreateNewMimeType()
 //  Initializes a new MIME type structure
 struct MimeTypeNode *CreateNewMimeType(void)

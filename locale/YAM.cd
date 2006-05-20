@@ -5820,3 +5820,48 @@ URL
 MSG_CO_MIME_DESCRIPTION (1690//)
 _Description
 ;
+MSG_CTapplicationgz (1691//)
+GNU zip archive
+;
+MSG_CTapplicationhqx (1692//)
+Macintosh archive
+;
+MSG_CTapplicationxls (1693//)
+Microsoft Excel file
+;
+MSG_CTapplicationppt (1694//)
+Microsoft Powerpoint file
+;
+MSG_CTapplicationdoc (1695//)
+Microsoft Word file
+;
+MSG_CTtextxml (1696//)
+XML file
+;
+MSG_CTapplicationz (1697//)
+zlib compressed file
+;
+MSG_CTapplicationtar (1698//)
+tar archive
+;
+MSG_CTaudioaiff (1699//)
+AIFF audio file
+;
+MSG_CTaudiomidi (1700//)
+MIDI audio file
+;
+MSG_CTaudiompeg (1701//)
+MPEG audio file
+;
+MSG_CTimagebmp (1702//)
+Bitmap image file
+;
+MSG_CTapplicationtgz (1703//)
+gzipped tar archive
+;
+MSG_CTapplicationpgp (1704//)
+PGP encrypted file
+;
+MSG_CTapplicationbz2 (1705//)
+BZIP2 archive
+;
