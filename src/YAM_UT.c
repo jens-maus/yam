@@ -5100,56 +5100,76 @@ char *IdentifyFile(char *fname)
       else if(!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "8SVX", 4))    ctype = IntMimeTypeArray[MT_AU_8SVX].ContentType;
       else if(!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ANIM", 4))    ctype = IntMimeTypeArray[MT_VI_ANIM].ContentType;
       else if(stristr(buffer, "\nFrom:"))                                        ctype = IntMimeTypeArray[MT_ME_EMAIL].ContentType;
-    }
-  }
-
-  // and if we still haven't identified the file we really have a hard time
-  // and try to use datatypes.library now to get a clue about what the file
-  // might actually be.
-  if(ctype == NULL)
-  {
-    D(DBF_MIME, "identifying file through datatypes.library");
-
-    // per default we end up with an "application/octet-stream" content-type
-    ctype = IntMimeTypeArray[MT_AP_OCTET].ContentType;
-
-    if(DataTypesBase)
-    {
-      BPTR lock;
-
-      if((lock = Lock(fname, ACCESS_READ)))
+      else
       {
-        struct DataType *dtn;
+        // now we do a statistical analysis to see if the file
+        // is a binary file or not. Because then we use datatypes.library
+        // for generating an artificial MIME type.
+        int notascii = 0;
+        int i;
 
-        if((dtn = ObtainDataTypeA(DTST_FILE, (APTR)lock, NULL)))
+        for(i=0; i < rlen; i++)
         {
-          char *type = NULL;
-          struct DataTypeHeader *dth = dtn->dtn_Header;
+          unsigned c = buffer[i];
 
-          switch(dth->dth_GroupID)
-          {
-            case GID_SYSTEM:     break;
-            case GID_DOCUMENT:   type = "application"; break;
-            case GID_TEXT:       type = "text"; break;
-            case GID_SOUND:
-            case GID_INSTRUMENT: type = "audio"; break;
-            case GID_PICTURE:    type = "image"; break;
-            case GID_MOVIE:
-            case GID_ANIMATION:  type = "video"; break;
-          }
-
-          if(type)
-          {
-            static char contentType[SIZE_CTYPE];
-
-            snprintf(contentType, sizeof(contentType), "%s/x-%s", type, dth->dth_BaseName);
-            ctype = contentType;
-          }
-
-          ReleaseDataType(dtn);
+          // see if the current buffer position is
+          // considered an ASCII/SPACE char.
+          if((c < 32 || c > 127) && !isspace(c))
+            notascii++;
         }
 
-        UnLock (lock);
+        // if the amount of not ASCII chars is lower than rlen/10 we
+        // consider it a text file and don't do a deeper analysis.
+        if(notascii < rlen/10)
+           ctype = IntMimeTypeArray[(FileProtection(fname) & FIBF_SCRIPT) ? MT_AP_SCRIPT : MT_TX_PLAIN].ContentType;
+        else
+        {
+          D(DBF_MIME, "identifying file through datatypes.library");
+
+          // per default we end up with an "application/octet-stream" content-type
+          ctype = IntMimeTypeArray[MT_AP_OCTET].ContentType;
+
+          if(DataTypesBase)
+          {
+            BPTR lock;
+
+            if((lock = Lock(fname, ACCESS_READ)))
+            {
+              struct DataType *dtn;
+
+              if((dtn = ObtainDataTypeA(DTST_FILE, (APTR)lock, NULL)))
+              {
+                char *type = NULL;
+                struct DataTypeHeader *dth = dtn->dtn_Header;
+
+                switch(dth->dth_GroupID)
+                {
+                  case GID_SYSTEM:     break;
+                  case GID_DOCUMENT:   type = "application"; break;
+                  case GID_TEXT:       type = "text"; break;
+                  case GID_MUSIC:
+                  case GID_SOUND:
+                  case GID_INSTRUMENT: type = "audio"; break;
+                  case GID_PICTURE:    type = "image"; break;
+                  case GID_MOVIE:
+                  case GID_ANIMATION:  type = "video"; break;
+                }
+
+                if(type)
+                {
+                  static char contentType[SIZE_CTYPE];
+
+                  snprintf(contentType, sizeof(contentType), "%s/x-%s", type, dth->dth_BaseName);
+                  ctype = contentType;
+                }
+
+                ReleaseDataType(dtn);
+              }
+
+              UnLock (lock);
+            }
+          }
+        }
       }
     }
   }

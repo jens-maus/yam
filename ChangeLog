@@ -6,6 +6,10 @@ $Id$
 
 2006-05-20  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: reactivated the statistical file content analysis right before
+    we are going to ask datatypes.library for identifying a file. Now YAM
+    will read the first 512 bytes of a file and try to do a statistical
+    analysis on it for identifying if the file is a binary or text file.
   * YAM_MI.c, YAM_mime.h, YAM.cd: added a whole bunch of additional,
     internal MIME types together with their known file extensions. This
     should hopefully increase the flexibility of YAM in case a user hasn't
