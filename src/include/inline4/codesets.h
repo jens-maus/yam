@@ -57,11 +57,11 @@
 #elif (__GNUC__ == 2 && __GNUC_MINOR__ >= 95)
 #define CodesetsFind(vargs...) ICodesets->CodesetsFind(## vargs) 
 #endif
-#define CodesetsFindBestA(text, text_len, error_ptr, attrs) ICodesets->CodesetsFindBestA(text, text_len, error_ptr, attrs) 
+#define CodesetsFindBestA(attrs) ICodesets->CodesetsFindBestA(attrs) 
 #if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L) || (__GNUC__ >= 3)
-#define CodesetsFindBest(text, text_len, ...) ICodesets->CodesetsFindBest(text, text_len, __VA_ARGS__) 
+#define CodesetsFindBest(...) ICodesets->CodesetsFindBest(__VA_ARGS__) 
 #elif (__GNUC__ == 2 && __GNUC_MINOR__ >= 95)
-#define CodesetsFindBest(text, text_len, vargs...) ICodesets->CodesetsFindBest(text, text_len, ## vargs) 
+#define CodesetsFindBest(...) ICodesets->CodesetsFindBest(## vargs) 
 #endif
 #define CodesetsUTF8Len(str) ICodesets->CodesetsUTF8Len(str) 
 #define CodesetsUTF8ToStrA(attrs) ICodesets->CodesetsUTF8ToStrA(attrs) 

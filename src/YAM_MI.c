@@ -682,6 +682,19 @@ long base64decode_file(FILE *in, FILE *out,
     }
     #endif
 
+    // in case the user wants us to detect the correct cyrillic codeset
+    // we do it now
+    if(C->DetectCyrillic)
+    {
+      struct codeset *cs = CodesetsFindBest(CSA_Source,         outbuffer,
+                                            CSA_SourceLen,      outLength,
+                                            CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
+                                            TAG_DONE);
+
+      if(cs != NULL && cs != srcCodeset)
+        srcCodeset = cs;
+    }
+
     // if the caller supplied a source codeset, we have to
     // make sure we convert our outbuffer before writing it out
     // to the file into our local charset
@@ -1101,6 +1114,19 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
         unsigned char *dptr = outbuffer;
         size_t todo = optr-outbuffer;
 
+        // in case the user wants us to detect the correct cyrillic codeset
+        // we do it now
+        if(C->DetectCyrillic)
+        {
+          struct codeset *cs = CodesetsFindBest(CSA_Source,         dptr,
+                                                CSA_SourceLen,      todo,
+                                                CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
+                                                TAG_DONE);
+
+          if(cs != NULL && cs != srcCodeset)
+            srcCodeset = cs;
+        }
+
         // if the caller supplied a source codeset, we have to
         // make sure we convert our outbuffer before writing it out
         // to the file into our local charset
@@ -1158,6 +1184,19 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
   {
     unsigned char *dptr = outbuffer;
     size_t todo = optr-outbuffer;
+
+    // in case the user wants us to detect the correct cyrillic codeset
+    // we do it now
+    if(C->DetectCyrillic)
+    {
+      struct codeset *cs = CodesetsFindBest(CSA_Source,         dptr,
+                                            CSA_SourceLen,      todo,
+                                            CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
+                                            TAG_DONE);
+
+      if(cs != NULL && cs != srcCodeset)
+        srcCodeset = cs;
+    }
 
     // if the caller supplied a source codeset, we have to
     // make sure we convert our outbuffer before writing it out
@@ -1597,6 +1636,19 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
           unsigned char *dptr = outbuffer;
           size_t todo = optr-outbuffer;
 
+          // in case the user wants us to detect the correct cyrillic codeset
+          // we do it now
+          if(C->DetectCyrillic)
+          {
+            struct codeset *cs = CodesetsFindBest(CSA_Source,         dptr,
+                                                  CSA_SourceLen,      todo,
+                                                  CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
+                                                  TAG_DONE);
+
+            if(cs != NULL && cs != srcCodeset)
+              srcCodeset = cs;
+          }
+
           // if the caller supplied a source codeset, we have to
           // make sure we convert our outbuffer before writing it out
           // to the file into our local charset
@@ -1712,6 +1764,19 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
   {
     unsigned char *dptr = outbuffer;
     size_t todo = optr-outbuffer;
+
+    // in case the user wants us to detect the correct cyrillic codeset
+    // we do it now
+    if(C->DetectCyrillic)
+    {
+      struct codeset *cs = CodesetsFindBest(CSA_Source,         dptr,
+                                            CSA_SourceLen,      todo,
+                                            CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
+                                            TAG_DONE);
+
+      if(cs != NULL && cs != srcCodeset)
+        srcCodeset = cs;
+    }
 
     // if the caller supplied a source codeset, we have to
     // make sure we convert our outbuffer before writing it out
@@ -2120,6 +2185,19 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
                                 UNUSED const char *lang, void *arg)
 {
   struct rfc2047_decode_info *info = (struct rfc2047_decode_info *)arg;
+
+  // in case the user wants us to detect the correct cyrillic codeset
+  // we do it now
+  if(C->DetectCyrillic)
+  {
+    struct codeset *cs = CodesetsFindBest(CSA_Source,         txt,
+                                          CSA_SourceLen,      len,
+                                          CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
+                                          TAG_DONE);
+
+    if(cs != NULL)
+      chset = cs->name;
+  }
 
   // now we try to get the src codeset from codesets.library
   // and convert the string into our local charset if required

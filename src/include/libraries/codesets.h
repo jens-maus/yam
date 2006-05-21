@@ -102,7 +102,7 @@ struct codesetList
 
 enum
 {
-  CSR_ConversionOK,    /* conversion successful */
+  CSR_ConversionOK=0,  /* conversion successful */
   CSR_SourceExhausted, /* partial character in source, but hit end */
   CSR_TargetExhausted, /* insuff. room in target for conversion */
   CSR_SourceIllegal    /* source sequence is illegal/malformed */
@@ -110,8 +110,19 @@ enum
 
 enum
 {
-  CSF_StrictConversion = 0,
+  CSF_StrictConversion=0,
   CSF_LenientConversion
+};
+
+/***********************************************************************/
+
+/*
+** Enumerations for CSA_CodesetFamily
+*/
+enum
+{
+  CSV_CodesetFamily_Latin=0,   /* Latin Family */
+  CSV_CodesetFamily_Cyrillic   /* Cyrillic Family */
 };
 
 /***********************************************************************/
@@ -140,6 +151,8 @@ enum
 #define CSA_CodesetFile         CODESETSLIB_TAG(15)
 #define CSA_CodesetList         CODESETSLIB_TAG(16)
 #define CSA_FreeCodesets        CODESETSLIB_TAG(17)
+#define CSA_CodesetFamily       CODESETSLIB_TAG(18)
+#define CSA_ErrPtr              CODESETSLIB_TAG(19)
 
 #define CSA_B64SourceString     CODESETSLIB_TAG(20)
 #define CSA_B64SourceLen        CODESETSLIB_TAG(21)

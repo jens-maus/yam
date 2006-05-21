@@ -1140,7 +1140,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
 ///
 /// RE_ConsumeRestOfPart
 //  Processes body of a message part
-static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset, struct Part *rp)
+static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset, struct Part *rp, BOOL allowAutoDetect)
 {
   char buf[SIZE_LINE];
   int blen = 0;
@@ -1186,33 +1186,43 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
     {
       int buflen = strlen(buf);
 
+      // in case the user wants us to detect the correct cyrillic codeset
+      // we do it now
+      if(C->DetectCyrillic && allowAutoDetect)
+      {
+        struct codeset *cs = CodesetsFindBest(CSA_Source,         buf,
+                                              CSA_SourceLen,      buflen,
+                                              CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
+                                              TAG_DONE);
+
+        if(cs != NULL && cs != srcCodeset)
+          srcCodeset = cs;
+      }
+
       // if this function was invoked with a source Codeset we have to make sure
       // we convert from the supplied source Codeset to our current local codeset with
       // help of the functions codesets.library provides.
       if(srcCodeset && buflen > 0)
       {
-        STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
-                                        CSA_DestCodeset,   G->localCharset,
-                                        CSA_Source,        buf,
-                                        CSA_SourceLen,     buflen,
-                                        TAG_DONE);
+        // convert from the srcCodeset to the destination one.
+        char *str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
+                                       CSA_DestCodeset,   G->localCharset,
+                                       CSA_Source,        buf,
+                                       CSA_SourceLen,     buflen,
+                                       TAG_DONE);
 
-        // now that we have the utf8 string we can go and
-        // convert it into the local charset immediately.
-        if(str)
+        // now write back exactly the same amount of bytes we have read
+        // previously
+        if(fprintf(out, "%s%s", str ? str : buf, pNewline != NULL ? "\n" : "") <= 0)
         {
-          // now write back exactly the same amount of bytes we have read
-          // previously
-          if(fprintf(out, "%s%s", str, pNewline != NULL ? "\n" : "") <= 0)
-          {
-            E(DBF_MAIL, "error during write operation!");
+          E(DBF_MAIL, "error during write operation!");
 
-            RETURN(FALSE);
-            return FALSE;
-          }
-
-          CodesetsFreeA(str, NULL);
+          RETURN(FALSE);
+          return FALSE;
         }
+
+        if(str)
+          CodesetsFreeA(str, NULL);
         else
           W(DBF_MAIL, "couldn't convert str with CodesetsConvertStr()");
       }
@@ -1367,7 +1377,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
       D(DBF_MAIL, "UU decoded %ld chars of part %ld.", decoded, rp->Nr);
 
       if(decoded >= 0 &&
-        RE_ConsumeRestOfPart(in, NULL, NULL, NULL))
+        RE_ConsumeRestOfPart(in, NULL, NULL, NULL, FALSE))
       {
         decodeResult = 1;
       }
@@ -1424,9 +1434,9 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 
     default:
     {
-      if(sourceCodeset)
+      if(sourceCodeset || C->DetectCyrillic)
       {
-        if(RE_ConsumeRestOfPart(in, out, sourceCodeset, NULL))
+        if(RE_ConsumeRestOfPart(in, out, sourceCodeset, NULL, TRUE))
           decodeResult = 1;
       }
       else if(rp->HasHeaders)
@@ -1743,7 +1753,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
           if(unquotedBoundary != boundary)
             free(unquotedBoundary);
 
-          done = RE_ConsumeRestOfPart(in, NULL, NULL, hrp);
+          done = RE_ConsumeRestOfPart(in, NULL, NULL, hrp, FALSE);
           rp = hrp;
 
           while (!done)
@@ -1767,21 +1777,21 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
               if(RE_ParseMessage(rmData, in, NULL, rp))
               {
                 RE_UndoPart(rp);
-                done = RE_ConsumeRestOfPart(in, NULL, NULL, prev);
+                done = RE_ConsumeRestOfPart(in, NULL, NULL, prev, FALSE);
                 for (rp = prev; rp->Next; rp = rp->Next);
               }
             }
             else if (RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
             {
               fputc('\n', out);
-              done = RE_ConsumeRestOfPart(in, out, NULL, rp);
+              done = RE_ConsumeRestOfPart(in, out, NULL, rp, FALSE);
               fclose(out);
               RE_SetPartInfo(rp);
             }
             else
             {
               fclose(out);
-              done = RE_ConsumeRestOfPart(in, NULL, NULL, rp);
+              done = RE_ConsumeRestOfPart(in, NULL, NULL, rp, FALSE);
               RE_UndoPart(rp);
               rp = prev;
             }
@@ -1792,7 +1802,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
       {
         if(RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
         {
-          RE_ConsumeRestOfPart(in, out, NULL, NULL);
+          RE_ConsumeRestOfPart(in, out, NULL, NULL, FALSE);
           fclose(out);
           RE_SetPartInfo(rp);
         }
@@ -1800,7 +1810,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
         {
           fclose(out);
           RE_UndoPart(rp);
-          RE_ConsumeRestOfPart(in, NULL, NULL, NULL);
+          RE_ConsumeRestOfPart(in, NULL, NULL, NULL, FALSE);
         }
       }
     }

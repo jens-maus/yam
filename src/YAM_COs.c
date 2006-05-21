@@ -149,6 +149,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "TimeZone         = %d\n", co->TimeZone);
       fprintf(fh, "DaylightSaving   = %s\n", Bool2Txt(co->DaylightSaving));
       fprintf(fh, "LocalCharset     = %s\n", co->LocalCharset);
+      fprintf(fh, "DetectCyrillic   = %s\n", Bool2Txt(co->DetectCyrillic));
 
       fprintf(fh, "\n[TCP/IP]\n");
       fprintf(fh, "SMTP-Server      = %s\n", co->SMTP_Server);
@@ -591,6 +592,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "TimeZone"))       co->TimeZone = atoi(value);
                else if (!stricmp(buffer, "DaylightSaving")) co->DaylightSaving = Txt2Bool(value);
                else if (!stricmp(buffer, "LocalCharset"))   strlcpy(co->LocalCharset, value, sizeof(co->LocalCharset));
+               else if (!stricmp(buffer, "DetectCyrillic")) co->DetectCyrillic = Txt2Bool(value);
 /*1*/          else if (!stricmp(buffer, "SMTP-Server"))    strlcpy(co->SMTP_Server, value, sizeof(co->SMTP_Server));
                else if (!stricmp(buffer, "SMTP-Port"))      co->SMTP_Port = atoi(value);
                else if (!stricmp(buffer, "SMTP-Domain"))    strlcpy(co->SMTP_Domain, value, sizeof(co->SMTP_Domain));
@@ -1066,6 +1068,7 @@ void CO_GetConfig(void)
          CE->TimeZone          = MapTZ(GetMUICycle(gui->CY_TZONE), TRUE);
          CE->DaylightSaving    = GetMUICheck  (gui->CH_DLSAVING);
          GetMUIString(CE->LocalCharset, gui->ST_DEFAULTCHARSET, sizeof(CE->LocalCharset));
+         CE->DetectCyrillic= GetMUICheck(gui->CH_DETECTCYRILLIC);
          break;
       case 1:
          GetMUIString(CE->SMTP_Server, gui->ST_SMTPHOST, sizeof(CE->SMTP_Server));
@@ -1307,6 +1310,7 @@ void CO_SetConfig(void)
          nnset(gui->ST_POPHOST0, MUIA_String_Contents, CE->P3[0]->Server);
          nnset(gui->ST_PASSWD0,  MUIA_String_Contents, CE->P3[0]->Password);
          nnset(gui->ST_DEFAULTCHARSET,  MUIA_String_Contents, CE->LocalCharset);
+         setcheckmark(gui->CH_DETECTCYRILLIC, CE->DetectCyrillic);
          break;
 
       case 1:

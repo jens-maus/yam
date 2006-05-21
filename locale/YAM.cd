@@ -5865,3 +5865,12 @@ PGP encrypted file
 MSG_CTapplicationbz2 (1705//)
 BZIP2 archive
 ;
+MSG_CO_DETECT_CYRILLIC (1706//)
+Auto-detect cyrillic charsets
+;
+MSG_HELP_CO_DETECT_CYRILLIC (1707//)
+Tries to use the auto-detect feature\n\
+of codesets.library to automatically\n\
+identify the correct cyrillic codeset.\n\
+(only relevant for cyrillic users)
+;

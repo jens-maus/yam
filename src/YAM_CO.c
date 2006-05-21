@@ -792,6 +792,7 @@ void CO_SetDefaults(struct Config *co, int page)
       else          co->TimeZone = 0;
 
       co->DaylightSaving = FALSE;
+      co->DetectCyrillic = FALSE;
    }
 
    // [TCP/IP]

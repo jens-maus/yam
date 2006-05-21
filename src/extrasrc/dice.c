@@ -34,6 +34,8 @@ STRPTR *CodesetsSupported(Tag tag1, ...)
 { return CodesetsSupportedA((struct TagItem *)&tag1); }
 struct codeset *CodesetsFind(STRPTR name, Tag tag1, ...)
 { return CodesetsFindA(name, (struct TagItem *)&tag1); }
+struct codeset *CodesetsFindBest(Tag tag1, ...)
+{ return CodesetsFindBestA((struct TagItem *)&tag1); }
 STRPTR CodesetsConvertStr(Tag tag1, ...)
 { return CodesetsConvertStrA((struct TagItem *)&tag1); }
 BOOL CodesetsListDelete(Tag tag1, ...)

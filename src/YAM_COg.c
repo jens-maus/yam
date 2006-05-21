@@ -986,22 +986,24 @@ Object *CO_Page0(struct CO_ClassData *data)
 
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_SYSTEMSETTINGS)),
             Child, Label2(GetStr(MSG_CO_TimeZone)),
-            Child, VGroup,
-              Child, data->GUI.CY_TZONE = MakeCycle(tzone,GetStr(MSG_CO_TimeZone)),
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_DLSAVING, GetStr(MSG_CO_DaylightSaving)),
-            End,
+            Child, data->GUI.CY_TZONE = MakeCycle(tzone,GetStr(MSG_CO_TimeZone)),
+            Child, HSpace(1),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_DLSAVING, GetStr(MSG_CO_DaylightSaving)),
             Child, Label2(GetStr(MSG_CO_DEFAULTCHARSET)),
             Child, MakeCharsetPop((Object **)&data->GUI.ST_DEFAULTCHARSET),
+            Child, HSpace(1),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_DETECTCYRILLIC, GetStr(MSG_CO_DETECT_CYRILLIC)),
          End,
          Child, HVSpace,
       End))
    {
-      SetHelp(data->GUI.ST_REALNAME  ,MSG_HELP_CO_ST_REALNAME  );
-      SetHelp(data->GUI.ST_EMAIL     ,MSG_HELP_CO_ST_EMAIL     );
-      SetHelp(data->GUI.ST_POPHOST0  ,MSG_HELP_CO_ST_POPHOST   );
-      SetHelp(data->GUI.ST_PASSWD0   ,MSG_HELP_CO_ST_PASSWD    );
-      SetHelp(data->GUI.CY_TZONE     ,MSG_HELP_CO_CY_TZONE     );
-      SetHelp(data->GUI.CH_DLSAVING  ,MSG_HELP_CO_CH_DLSAVING  );
+      SetHelp(data->GUI.ST_REALNAME,       MSG_HELP_CO_ST_REALNAME);
+      SetHelp(data->GUI.ST_EMAIL,          MSG_HELP_CO_ST_EMAIL);
+      SetHelp(data->GUI.ST_POPHOST0,       MSG_HELP_CO_ST_POPHOST);
+      SetHelp(data->GUI.ST_PASSWD0,        MSG_HELP_CO_ST_PASSWD);
+      SetHelp(data->GUI.CY_TZONE,          MSG_HELP_CO_CY_TZONE);
+      SetHelp(data->GUI.CH_DLSAVING,       MSG_HELP_CO_CH_DLSAVING);
+      SetHelp(data->GUI.CH_DETECTCYRILLIC, MSG_HELP_CO_DETECT_CYRILLIC);
 
       DoMethod(data->GUI.ST_POPHOST0 ,MUIM_Notify,MUIA_String_Contents, MUIV_EveryTime,MUIV_Notify_Application ,3,MUIM_CallHook,&CO_GetDefaultPOPHook,0);
       DoMethod(data->GUI.ST_PASSWD0  ,MUIM_Notify,MUIA_String_Contents, MUIV_EveryTime,MUIV_Notify_Application ,3,MUIM_CallHook,&CO_GetDefaultPOPHook,0);

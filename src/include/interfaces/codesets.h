@@ -45,8 +45,8 @@ struct CodesetsIFace
 	STRPTR * APICALL (*CodesetsSupported)(struct CodesetsIFace *Self, ...);
 	struct codeset * APICALL (*CodesetsFindA)(struct CodesetsIFace *Self, STRPTR name, struct TagItem * attrs);
 	struct codeset * APICALL (*CodesetsFind)(struct CodesetsIFace *Self, STRPTR name, ...);
-	struct codeset * APICALL (*CodesetsFindBestA)(struct CodesetsIFace *Self, STRPTR text, ULONG text_len, ULONG * error_ptr, struct TagItem * attrs);
-	struct codeset * APICALL (*CodesetsFindBest)(struct CodesetsIFace *Self, STRPTR text, ULONG text_len, ULONG * error_ptr, ...);
+	struct codeset * APICALL (*CodesetsFindBestA)(struct CodesetsIFace *Self, struct TagItem * attrs);
+	struct codeset * APICALL (*CodesetsFindBest)(struct CodesetsIFace *Self, ...);
 	ULONG APICALL (*CodesetsUTF8Len)(struct CodesetsIFace *Self, const UTF8 * str);
 	STRPTR APICALL (*CodesetsUTF8ToStrA)(struct CodesetsIFace *Self, struct TagItem * attrs);
 	STRPTR APICALL (*CodesetsUTF8ToStr)(struct CodesetsIFace *Self, ...);

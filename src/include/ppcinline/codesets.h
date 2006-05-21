@@ -107,13 +107,13 @@
 	({ULONG _tags[] = {tags}; CodesetsFindA((name), (struct TagItem *) _tags);})
 #endif
 
-#define CodesetsFindBestA(text, text_len, error_ptr, attrs) \
-	LP4(0x6c, struct codeset *, CodesetsFindBestA, STRPTR, text, a0, ULONG, text_len, d0, ULONG *, error_ptr, a1, struct TagItem *, attrs, a2, \
+#define CodesetsFindBestA(attrs) \
+	LP1(0x6c, struct codeset *, CodesetsFindBestA, struct TagItem *, attrs, a0, \
 	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #ifndef NO_PPCINLINE_STDARG
-#define CodesetsFindBest(text, text_len, error_ptr, tags...) \
-	({ULONG _tags[] = {tags}; CodesetsFindBestA((text), (text_len), (error_ptr), (struct TagItem *) _tags);})
+#define CodesetsFindBest(tags...) \
+	({ULONG _tags[] = {tags}; CodesetsFindBestA((struct TagItem *) _tags);})
 #endif
 
 #define CodesetsUTF8Len(str) \

@@ -4,6 +4,19 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-05-22  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: readded the formerly removed cyrillic auto-detect codeset stuff
+    after having added/revised the CodesetsFindBest() function in
+    codesets.library. Now a new checkbox is available in the YAM config
+    to select that cyrillic-specific auto-detect feature. If enabled,
+    CodesetsFindBest() is used right before each CodesetsConvertStr() use
+    to identify/guess the correct cyrillic codeset via codesets.library.
+    Please note that this old/new feature is still highly experimental and
+    requires a stil experimental 6.2 version of codesets.library. As soon as
+    a cyrillic user verified that it works as expected, we will bump the
+    mimimum required version of codesets.library to 6.2, of course.
+
 2006-05-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: reactivated the statistical file content analysis right before

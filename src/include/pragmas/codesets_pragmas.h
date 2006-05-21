@@ -40,7 +40,7 @@
 #pragma amicall(CodesetsBase,0x05a,CodesetsFreeA(a0,a1))
 #pragma amicall(CodesetsBase,0x060,CodesetsSupportedA(a0))
 #pragma amicall(CodesetsBase,0x066,CodesetsFindA(a0,a1))
-#pragma amicall(CodesetsBase,0x06c,CodesetsFindBestA(a0,d0,a1,a2))
+#pragma amicall(CodesetsBase,0x06c,CodesetsFindBestA(a0))
 #pragma amicall(CodesetsBase,0x072,CodesetsUTF8Len(a0))
 #pragma amicall(CodesetsBase,0x078,CodesetsUTF8ToStrA(a0))
 #pragma amicall(CodesetsBase,0x07e,CodesetsUTF8CreateA(a0))
@@ -68,7 +68,7 @@
 #pragma  libcall CodesetsBase CodesetsFreeA          05a 9802
 #pragma  libcall CodesetsBase CodesetsSupportedA     060 801
 #pragma  libcall CodesetsBase CodesetsFindA          066 9802
-#pragma  libcall CodesetsBase CodesetsFindBestA      06c a90804
+#pragma  libcall CodesetsBase CodesetsFindBestA      06c 801
 #pragma  libcall CodesetsBase CodesetsUTF8Len        072 801
 #pragma  libcall CodesetsBase CodesetsUTF8ToStrA     078 801
 #pragma  libcall CodesetsBase CodesetsUTF8CreateA    07e 801
@@ -88,7 +88,7 @@
 #pragma tagcall(CodesetsBase,0x05a,CodesetsFree(a0,a1))
 #pragma tagcall(CodesetsBase,0x060,CodesetsSupported(a0))
 #pragma tagcall(CodesetsBase,0x066,CodesetsFind(a0,a1))
-#pragma tagcall(CodesetsBase,0x06c,CodesetsFindBest(a0,d0,a1,a2))
+#pragma tagcall(CodesetsBase,0x06c,CodesetsFindBest(a0))
 #pragma tagcall(CodesetsBase,0x078,CodesetsUTF8ToStr(a0))
 #pragma tagcall(CodesetsBase,0x07e,CodesetsUTF8Create(a0))
 #pragma tagcall(CodesetsBase,0x084,CodesetsEncodeB64(a0))
@@ -106,7 +106,7 @@
 #pragma  tagcall CodesetsBase CodesetsFree           05a 9802
 #pragma  tagcall CodesetsBase CodesetsSupported      060 801
 #pragma  tagcall CodesetsBase CodesetsFind           066 9802
-#pragma  tagcall CodesetsBase CodesetsFindBest       06c a90804
+#pragma  tagcall CodesetsBase CodesetsFindBest       06c 801
 #pragma  tagcall CodesetsBase CodesetsUTF8ToStr      078 801
 #pragma  tagcall CodesetsBase CodesetsUTF8Create     07e 801
 #pragma  tagcall CodesetsBase CodesetsEncodeB64      084 801

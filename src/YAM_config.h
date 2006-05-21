@@ -259,6 +259,7 @@ struct CO_GUIData
    Object *BT_UPDATENOW;
    Object *TX_UPDATESTATUS;
    Object *TX_UPDATEDATE;
+   Object *CH_DETECTCYRILLIC;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -425,6 +426,7 @@ struct Config
    BOOL  AmiSSLCheck;
    BOOL  TimeZoneCheck;
    BOOL  AutoDSTCheck;
+   BOOL  DetectCyrillic;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color1stLevel;
