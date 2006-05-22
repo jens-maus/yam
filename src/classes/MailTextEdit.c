@@ -30,6 +30,8 @@
 
 #include "MailTextEdit_cl.h"
 
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
@@ -200,20 +202,32 @@ OVERLOAD(MUIM_HandleEvent)
 OVERLOAD(MUIM_TextEditor_HandleError)
 {
   char *errortxt = NULL;
+
+  ENTER();
+
+  SHOWVALUE(DBF_GUI, ((struct MUIP_TextEditor_HandleError *)msg)->errorcode);
   
   switch(((struct MUIP_TextEditor_HandleError *)msg)->errorcode)
   {
-    case Error_ClipboardIsEmpty:  errortxt = GetStr(MSG_CL_ErrorEmptyCB); break;
-    case Error_ClipboardIsNotFTXT:errortxt = GetStr(MSG_CL_ErrorNotFTXT); break;
-    case Error_NoAreaMarked:      errortxt = GetStr(MSG_CL_ErrorNoArea); break;
-    case Error_NothingToRedo:     errortxt = GetStr(MSG_CL_ErrorNoRedo); break;
-    case Error_NothingToUndo:     errortxt = GetStr(MSG_CL_ErrorNoUndo); break;
-    case Error_NotEnoughUndoMem:  errortxt = GetStr(MSG_CL_ErrorNoUndoMem); break;
+    case Error_ClipboardIsEmpty:
+    case Error_ClipboardIsNotFTXT:
+    case Error_NoAreaMarked:
+    case Error_NothingToRedo:
+    case Error_NothingToUndo:
+      // nothing but DisplayBeep()
+    break;
+
+    case Error_NotEnoughUndoMem:
+      errortxt = GetStr(MSG_WR_ErrorNotEnoughUndoMem);
+    break;
   }
   
   if(errortxt)
     MUI_Request(_app(obj), _win(obj), 0L, NULL, GetStr(MSG_OkayReq), errortxt);
+  else
+    DisplayBeep(NULL);
 
+  LEAVE();
   return DoSuperMethodA(cl, obj, msg);
 }
 

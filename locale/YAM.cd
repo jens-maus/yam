@@ -2527,30 +2527,6 @@ Set blind copy recipient(s)\n\
 for new message
 ;
 ;
-; Module CL
-;
-MSG_CL_ErrorEmptyCB (770//)
-The clipboard is empty.
-;
-MSG_CL_ErrorNotFTXT (771//)
-The clipboard does not contain text.
-;
-MSG_CL_ErrorNoArea (772//)
-No area marked.
-;
-MSG_CL_ErrorNoRedo (773//)
-Nothing to redo.
-;
-MSG_CL_ErrorNoUndo (774//)
-Nothing to undo.
-;
-MSG_CL_ErrorNoUndoMem (775//)
-There is not enough memory\n\
-to keep the undo buffer.\n\
-\n\
-The undo buffer is lost.
-;
-;
 ; Module EA - Procedures
 ;
 MSG_EA_EditUser (776//)
@@ -5873,4 +5849,10 @@ Tries to use the auto-detect feature\n\
 of codesets.library to automatically\n\
 identify the correct cyrillic codeset.\n\
 (only relevant for cyrillic users)
+;
+MSG_WR_ErrorNotEnoughUndoMem (1708//)
+The erased text was too large to be\n\
+put into the undo buffer.\n\
+\n\
+Therefore, the undo buffer is lost.
 ;

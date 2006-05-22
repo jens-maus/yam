@@ -6,6 +6,12 @@ $Id$
 
 2006-05-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/MailTextEdit.c: there was no real reason to bother a user with
+    an error requester if TextEditor.mcc failed a minor operation (e.g.
+    no undo/redo was able due to the buffer borders.) Now YAM will issue
+    a simple DisplayBeep() instead which should be more appropriate,
+    especially if the user doesn't want to get interrupted during writing an
+    email.
   * misc: readded the formerly removed cyrillic auto-detect codeset stuff
     after having added/revised the CodesetsFindBest() function in
     codesets.library. Now a new checkbox is available in the YAM config
