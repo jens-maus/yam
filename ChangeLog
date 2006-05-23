@@ -6,6 +6,8 @@ $Id$
 
 2006-05-23  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MI.c: changed the internal "audio/x-mpeg" to use the IANA conform
+    "audio/mpeg" instead.
   * YAM_RE.c, YAM_read.h: revised the MIME content value parameter parsing
     routine for the upcoming RFC2231 conform parameter decoding. The
     extracting of the parameter names and values are now done in the new

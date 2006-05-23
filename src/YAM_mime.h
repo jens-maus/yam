@@ -117,9 +117,9 @@ enum IntMimeTypeID
   MT_IM_TIFF,    // image/tiff
   MT_IM_ILBM,    // image/x-ilbm
   MT_AU_AU,      // audio/basic
+  MT_AU_MPEG,    // audio/mpeg
   MT_AU_AIFF,    // audio/x-aiff
   MT_AU_MIDI,    // audio/x-midi
-  MT_AU_MPEG,    // audio/x-mpeg
   MT_AU_8SVX,    // audio/x-8svx
   MT_AU_WAV,     // audio/x-wav
   MT_VI_MPG,     // video/mpeg
