@@ -6,6 +6,8 @@ $Id$
 
 2006-05-23  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c: fixed a minor memory leak where we didn't free the name
+    component of each new content parameter.
   * YAM_MI.c: changed the internal "audio/x-mpeg" to use the IANA conform
     "audio/mpeg" instead.
   * YAM_RE.c, YAM_read.h: revised the MIME content value parameter parsing

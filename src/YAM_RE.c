@@ -1113,10 +1113,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
             else if(!strcmp(name, "charset"))
               rp->CParCSet = value;
             else
-            {
-              free(name);
               free(value);
-            }
           }
           break;
 
@@ -1128,16 +1125,17 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
               rp->CParFileName = value;
             }
             else
-            {
-              free(name);
               free(value);
-            }
           }
           break;
         }
+
+        free(name);
       }
       else
       {
+        E(DBF_MIME, "couldn't extract a full parameter (%lx/%lx)", name, value);
+
         if(name)
           free(name);
 
