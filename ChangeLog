@@ -4,6 +4,17 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-05-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c, YAM_read.h: revised the MIME content value parameter parsing
+    routine for the upcoming RFC2231 conform parameter decoding. The
+    extracting of the parameter names and values are now done in the new
+    ExtractNextParam() function which also perfectly takes respect of
+    quoted strings. It should also reduce the number of required operations
+    until we have separated the names/value of all MIME parameters. In
+    addition, the whole "struct Part" CPar#? members are now dynamically
+    allocated instead of modifying the ContentType member directly.
+
 2006-05-22  Jens Langner <Jens.Langner@light-speed.de>
 
   * classes/MailTextEdit.c: there was no real reason to bother a user with

@@ -788,6 +788,115 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
 ///
 
 /*** MIME ***/
+/// ExtractNextParam()
+// extracts the name and value of the next upcoming content paramater in string s
+// returns the end of string s in case we are finished
+static char *ExtractNextParam(char *s, char **name, char **value)
+{
+  char *p;
+  char *u;
+
+  ENTER();
+
+  // skip all leading spaces and return pointer
+  // to first real char.
+  p = TrimStart(s);
+
+  // extract the paramater name first
+  if((s = u = strchr(p, '=')) && u > p)
+  {
+    char *t;
+    int nameLen;
+
+    // skip trailing spaces as well
+    while(u > p && *--u && ISpace(*u));
+
+    // get the length of the parameter name
+    nameLen = u-p+1;
+
+    // allocate enough memory to put in the name
+    if((*name = t = malloc(nameLen+1)))
+    {
+      // copy the parameter name char by char
+      // while converting it to lowercase
+      while(p <= u)
+      {
+        *t++ = tolower((int)*p++);
+      }
+
+      *t = '\0'; // NUL termination
+
+      D(DBF_MAIL, "name='%s' %d", *name, nameLen);
+
+      // now we go and extract the parameter value, actually
+      // taking respect of quoted string and such
+      s = TrimStart(++s);
+      if(*s)
+      {
+        BOOL quoted = (*s == '"');
+        int valueLen;
+
+        if(quoted)
+          s++;
+
+        // we first calculate the value length for
+        // allocating the buffer later on
+        if((p = strchr(s, ';')))
+        {
+          valueLen = p-s;
+          p++;
+        }
+        else
+        {
+          valueLen = strlen(s);
+          p = s+valueLen;
+        }
+
+        // allocate enough memory to put in the value
+        if((*value = t = malloc(valueLen+1)))
+        {
+          while(valueLen--)
+          {
+            if(quoted)
+            {
+              if(*s == '\\')
+                s++;
+              else if(*s == '"')
+                break;
+            }
+
+            *t++ = *s++;
+          }
+
+          *t = '\0';
+
+          // skip trailing spaces as well if the value
+          // wasn't quoted
+          if(quoted == FALSE)
+          {
+            while(t > *value && *--t && ISpace(*t))
+              *t = '\0';
+          }
+
+          D(DBF_MAIL, "value='%s' %d", *value, valueLen);
+
+          RETURN(p);
+          return p;
+        }
+      }
+
+      free(*name);
+    }
+  }
+
+  *name = NULL;
+  *value = NULL;
+
+  RETURN(p);
+  return p;
+}
+
+///
 /// ParamEnd
 //  Finds next parameter in header field
 static char *ParamEnd(char *s)
@@ -882,131 +991,172 @@ static char *UnquoteString(char *s, BOOL new)
 //  Parses parameters of Content-Type header field
 enum parameterType { PT_CONTENTTYPE, PT_CONTENTDISPOSITION };
 
-static void RE_ParseContentParameters(struct Part *rp, enum parameterType pType)
+static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameterType pType)
 {
-  char *s = NULL;
+  char *p = str;
+  char *s;
+  int size = 0;
+
+  ENTER();
+
+  // scan for the real size of the content-type: value without the
+  // corresponding parameters.
+  while(*p)
+  {
+    if(*p == ';')
+      break;
+
+    if(!ISpace(*p))
+      size++;
+
+    p++;
+  }
+
+  // now we scan through the contentType spec and strip all spaces
+  // in between until we reach a ";" which signals a next parameter.
+  // we also make sure we just allocate memory for the content-type
+  // as our ParseContentParameters() function will allocate the rest.
+  if((s = malloc(size+1)))
+  {
+    char *q = s;
+    p=str;
+
+    while(*p)
+    {
+      if(*p == ';')
+        break;
+
+      if(!ISpace(*p))
+        *q++ = *p;
+
+      p++;
+    }
+
+    *q = '\0';
+  }
 
   // depending on the parameterType we
   // have to use different source string
   switch(pType)
   {
     case PT_CONTENTTYPE:
-      s = rp->ContentType;
+    {
+      if(rp->ContentType)
+        free(rp->ContentType);
+
+      rp->ContentType = s;
+    }
     break;
 
     case PT_CONTENTDISPOSITION:
-      s = rp->ContentDisposition;
+    {
+      if(rp->ContentDisposition)
+        free(rp->ContentDisposition);
+
+      rp->ContentDisposition = s;
+    }
     break;
   }
 
-  // each parameter is separated by single ';' characters,
-  // so we parse it ; wise. And in fact we can skip the
-  // very first one as this is normally already the
-  // value of the header itself
-  s = strchr(s, ';');
-
-  // no additional parameters found, return immediately
-  if(!s)
-    return;
-
-  *s++ = '\0'; // NUL termination
-
-  // now we go and parse the first additional
-  // parameter.
-  do
+  // if we have additional content parameters we go and
+  // try to separate them accordingly.
+  if(*p == ';')
   {
-    char *t;
-    char *eq;
+    char *next = ++p;
+    char *name;
+    char *value;
 
-    // try to find the end of the parameter
-    // (which may also be another ';'. However, ParamEnd()
-    // also takes care of quoted strings.
-    if((t = ParamEnd(s)))
-      *t++ = '\0';
-
-    // now that 's' is pointing to the actual
-    // parameter name, we try to obtain the actual
-    // value of the parameter
-    if((eq = strchr(s, '=')))
+    // now we walk through our string by extracting each
+    // content parameter/value combo in a while loop.
+    while(*next != '\0' && (next = ExtractNextParam(next, &name, &value)))
     {
-      // make eq point to the actual start of the
-      // parameter value and also make sure the string
-      // is unquoted.
-      *eq++ = '\0';
-      eq = TrimStart(eq);
-      TrimEnd(eq);
-      UnquoteString(eq, FALSE);
-
-      // now we also make sure the parameter name
-      // is trimmed and lowercase only
-      s = Cleanse(s);
-
-      // depending on the parameterType we
-      // have to parse different parameters
-      switch(pType)
+      if(name && value)
       {
-        case PT_CONTENTTYPE:
+        // depending on the parameterType we
+        // have to parse different parameters
+        switch(pType)
         {
-          if(!strncmp(s, "name", 4))
+          case PT_CONTENTTYPE:
           {
-            // we try to find out which encoding the
-            // parameter is actually using by checking for
-            // an asterisk sign (see: RFC 2231)
-            if(s[4] == '*')
+            if(!strncmp(name, "name", 4))
             {
-              #warning "implement RFC 2231 decoding ASAP!"
+              // we try to find out which encoding the
+              // parameter is actually using by checking for
+              // an asterisk sign (see: RFC 2231)
+              if(name[4] == '*')
+              {
+                #warning "implement RFC 2231 decoding ASAP!"
+              }
+              else
+              {
+                // otherwise we use our rfc2047 decoding
+                // routines even if this is not defined
+                // by any RFC. However, many mail clients
+                // seem to use RFC2047 encoding also
+                // for the content parameters.
+                rfc2047_decode(value, value, strlen(value));
+              }
+
+              rp->CParName = value;
+            }
+            else if(!strncmp(name, "description", 11))
+            {
+              rfc2047_decode(value, value, strlen(value));
+              rp->CParDesc = value;
+            }
+            else if(!strcmp(name, "boundary"))
+              rp->CParBndr = value;
+            else if(!strcmp(name, "protocol"))
+              rp->CParProt = value;
+            else if(!strcmp(name, "report-type"))
+              rp->CParRType = value;
+            else if(!strcmp(name, "charset"))
+              rp->CParCSet = value;
+            else
+            {
+              free(name);
+              free(value);
+            }
+          }
+          break;
+
+          case PT_CONTENTDISPOSITION:
+          {
+            if(!strncmp(name, "filename", 8))
+            {
+              rfc2047_decode(value, value, strlen(value));
+              rp->CParFileName = value;
             }
             else
             {
-              // otherwise we use our rfc2047 decoding
-              // routines even if this is not defined
-              // by any RFC. However, many mail clients
-              // seem to use RFC2047 encoding also
-              // for the content parameters.
-              rfc2047_decode(eq, eq, strlen(eq));
+              free(name);
+              free(value);
             }
-
-            rp->CParName = eq;
           }
-          else if(!strncmp(s, "description", 11))
-          {
-            rfc2047_decode(eq, eq, strlen(eq));
-            rp->CParDesc = eq;
-          }
-          else if(!strcmp(s, "boundary"))
-            rp->CParBndr = eq;
-          else if(!strcmp(s, "protocol"))
-            rp->CParProt = eq;
-          else if(!strcmp(s, "report-type"))
-            rp->CParRType = eq;
-          else if(!strcmp(s, "charset"))
-            rp->CParCSet = eq;
+          break;
         }
-        break;
+      }
+      else
+      {
+        if(name)
+          free(name);
 
-        case PT_CONTENTDISPOSITION:
-        {
-          if(!strncmp(s, "filename", 8))
-          {
-            rfc2047_decode(eq, eq, strlen(eq));
-            rp->CParFileName = eq;
-          }
-        }
-        break;
+        if(value)
+          free(value);
       }
     }
-
-    s = t;
   }
-  while(s);
+
+  LEAVE();
 }
 ///
 /// RE_ScanHeader
 //  Parses the header of the message or of a message part
 static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
 {
-  char *p;
   struct MinNode *curNode;
+
+  ENTER();
 
   // check if we already have a headerList and if so we clean it first
   if(rp->headerList)
@@ -1015,7 +1165,10 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
   {
     // we do not have any headerList yet so lets allocate a new one
     if((rp->headerList = calloc(1, sizeof(struct MinList))) == NULL)
+    {
+      RETURN(FALSE);
       return FALSE;
+    }
   }
 
   // we read in the headers from our mail file
@@ -1027,6 +1180,8 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
       ER_NewError(GetStr(MSG_ER_MultipartEOF));
 
     rp->HasHeaders = FALSE;
+
+    RETURN(FALSE);
     return FALSE;
   }
   else
@@ -1055,29 +1210,14 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
       // OpenNewPart() function sets
       if(value[0] != '\0')
       {
-        rp->ContentType = StrBufCpy(rp->ContentType, p=value);
-
-        // now we scan for the content subtype and strip eventually
-        // existing spaces in front or after the dividing '/'
-        do
-        {
-          if(!(p = strchr(rp->ContentType, '/')))
-            break;
-
-          if (ISpace(*(p-1)))     for (--p; *p; ++p) *p = *(p+1);
-          else if(ISpace(*(p+1))) for (++p; *p; ++p) *p = *(p+1);
-          else break;
-        }
-        while(1);
-
-        TrimEnd(rp->ContentType);
-        RE_ParseContentParameters(rp, PT_CONTENTTYPE);
+        RE_ParseContentParameters(value, rp, PT_CONTENTTYPE);
       }
       else
         W(DBF_MAIL, "Empty 'Content-Type' headerline found.. using default '%s'.", rp->ContentType);
     }
     else if(!stricmp(field, "content-transfer-encoding"))
     {
+      char *p;
       char buf[SIZE_DEFAULT];
 
       strlcpy(p = buf, value, sizeof(buf));
@@ -1114,27 +1254,11 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
     }
     else if(!stricmp(field, "content-disposition"))
     {
-      // if we found a content-disposition field we have to parse it for
-      // some information.
-      rp->ContentDisposition = StrBufCpy(rp->ContentDisposition, p = value);
-
-      // now we scan for the content disposition subtype and strip eventually
-      // existing spaces in front or after the dividing '/'
-      do
-      {
-        if(!(p = strchr(rp->ContentDisposition, '/'))) break;
-
-        if(ISpace(*(p-1)))       for (--p; *p; ++p) *p = *(p+1);
-        else if(ISpace(*(p+1)))  for (++p; *p; ++p) *p = *(p+1);
-        else break;
-      }
-      while(1);
-
-      TrimEnd(rp->ContentDisposition);
-      RE_ParseContentParameters(rp, PT_CONTENTDISPOSITION);
+      RE_ParseContentParameters(value, rp, PT_CONTENTDISPOSITION);
     }
   }
 
+  RETURN(TRUE);
   return TRUE;
 }
 ///
@@ -1154,7 +1278,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
   }
 
   if(rp)
-    blen = strlen(rp->Boundary);
+    blen = strlen(rp->CParBndr);
 
   // we process the file line-by-line, analyze it if it is between the boundary
   // do an eventually existing charset translation and write it out again.
@@ -1168,9 +1292,9 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
       *pNewline = '\0'; // strip any newline
 
     // first we check if we reached the boundary yet.
-    if(rp && strncmp(buf, rp->Boundary, blen) == 0)
+    if(rp && buf[0] == '-' && buf[1] == '-' && strncmp(buf+2, rp->CParBndr, blen) == 0)
     {
-      if(buf[blen] == '-' && buf[blen+1] == '-' && buf[blen+2] == '\0')
+      if(buf[blen+2] == '-' && buf[blen+3] == '-' && buf[blen+4] == '\0')
       {
         RETURN(TRUE);
         return TRUE;
@@ -1478,18 +1602,20 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
       newPart->Nr = prev->Nr+1;
     }
 
-    newPart->ContentType = StrBufCpy(NULL, "text/plain");
-    newPart->EncodingCode = ENC_NONE;
-
     if(first && strnicmp(first->ContentType, "multipart", 9))
     {
-      newPart->ContentType = StrBufCpy(newPart->ContentType, first->ContentType);
-      newPart->CParCSet = first->CParCSet;
+      newPart->ContentType = strdup(first->ContentType);
+      newPart->CParCSet = first->CParCSet ? strdup(first->CParCSet) : NULL;
       newPart->EncodingCode = first->EncodingCode;
+    }
+    else
+    {
+      newPart->ContentType = strdup("text/plain");
+      newPart->EncodingCode = ENC_NONE;
     }
 
     // copy the boundary specification
-    newPart->Boundary = StrBufCpy(newPart->Boundary, first ? first->Boundary : (prev ? prev->Boundary : ""));
+    newPart->CParBndr = strdup(first ? first->CParBndr : (prev ? prev->CParBndr : ""));
 
     newPart->rmData = rmData;
     snprintf(file, sizeof(file), "YAMr%08lx-p%d.txt", readMailDataID(rmData), newPart->Nr);
@@ -1575,9 +1701,17 @@ static void RE_UndoPart(struct Part *rp)
   }
 
   // free some string buffers
-  FreeStrBuf(rp->ContentType);
-  FreeStrBuf(rp->ContentDisposition);
-  FreeStrBuf(rp->Boundary);
+  free(rp->ContentType);
+  free(rp->ContentDisposition);
+
+  // free all the CPar structue members
+  if(rp->CParName)      free(rp->CParName);
+  if(rp->CParFileName)  free(rp->CParFileName);
+  if(rp->CParBndr)      free(rp->CParBndr);
+  if(rp->CParProt)      free(rp->CParProt);
+  if(rp->CParDesc)      free(rp->CParDesc);
+  if(rp->CParRType)     free(rp->CParRType);
+  if(rp->CParCSet)      free(rp->CParCSet);
 
   // now we check whether the readMailData letterPartNum has to be decreased to
   // point to the correct letterPart number again
@@ -1659,10 +1793,7 @@ static void RE_SetPartInfo(struct Part *rp)
 
    // if this part hasn`t got any name, we place the CParName as the normal name
    if(!*rp->Name && (rp->CParName || rp->CParFileName))
-   {
       strlcpy(rp->Name, rp->CParName ? rp->CParName : rp->CParFileName, sizeof(rp->Name));
-      UnquoteString(rp->Name, FALSE);
-   }
 
    // let`s set if this is a printable (readable part)
    rp->Printable = !strnicmp(rp->ContentType, "text", 4) || rp->Nr == PART_RAW;
@@ -1726,75 +1857,50 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
 
     if(hrp)
     {
-      char *boundary = hrp->CParBndr;
-
-      if(boundary != NULL && strnicmp(hrp->ContentType, "multipart", 9) == 0)
+      if(hrp->CParBndr != NULL && strnicmp(hrp->ContentType, "multipart", 9) == 0)
       {
-        if(!boundary)
-          ER_NewError(GetStr(MSG_ER_MissingBoundary));
-        else
+        BOOL done = RE_ConsumeRestOfPart(in, NULL, NULL, hrp, FALSE);
+
+        rp = hrp;
+
+        while(!done)
         {
-          char *unquotedBoundary;
-          int unquotedBoundaryLen;
-          BOOL done;
+          struct Part *prev = rp;
+          out = RE_OpenNewPart(rmData, &rp, prev, hrp);
 
-          if(*boundary == '"')
-            unquotedBoundary = UnquoteString(boundary, TRUE);
-          else
-            unquotedBoundary = boundary;
+          if(out == NULL) break;
 
-          // form the Boundary specification
-          unquotedBoundaryLen = strlen(unquotedBoundary);
-          hrp->Boundary = AllocStrBuf(unquotedBoundaryLen+3);
-          snprintf(hrp->Boundary, unquotedBoundaryLen+3, "--%s", unquotedBoundary);
-
-          // in case we allocated a new boundary
-          // string we go and free it immediately.
-          if(unquotedBoundary != boundary)
-            free(unquotedBoundary);
-
-          done = RE_ConsumeRestOfPart(in, NULL, NULL, hrp, FALSE);
-          rp = hrp;
-
-          while (!done)
+          if(!RE_ScanHeader(rp, in, out, 1))
           {
-            struct Part *prev = rp;
-            out = RE_OpenNewPart(rmData, &rp, prev, hrp);
+            fclose(out);
+            RE_UndoPart(rp);
+            break;
+          }
 
-            if(out == NULL) break;
+          if(!strnicmp(rp->ContentType, "multipart", 9))
+          {
+            fclose(out);
 
-            if(!RE_ScanHeader(rp, in, out, 1))
+            if(RE_ParseMessage(rmData, in, NULL, rp))
             {
-              fclose(out);
               RE_UndoPart(rp);
-              break;
+              done = RE_ConsumeRestOfPart(in, NULL, NULL, prev, FALSE);
+              for (rp = prev; rp->Next; rp = rp->Next);
             }
-
-            if(!strnicmp(rp->ContentType, "multipart", 9))
-            {
-              fclose(out);
-
-              if(RE_ParseMessage(rmData, in, NULL, rp))
-              {
-                RE_UndoPart(rp);
-                done = RE_ConsumeRestOfPart(in, NULL, NULL, prev, FALSE);
-                for (rp = prev; rp->Next; rp = rp->Next);
-              }
-            }
-            else if (RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
-            {
-              fputc('\n', out);
-              done = RE_ConsumeRestOfPart(in, out, NULL, rp, FALSE);
-              fclose(out);
-              RE_SetPartInfo(rp);
-            }
-            else
-            {
-              fclose(out);
-              done = RE_ConsumeRestOfPart(in, NULL, NULL, rp, FALSE);
-              RE_UndoPart(rp);
-              rp = prev;
-            }
+          }
+          else if (RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
+          {
+            fputc('\n', out);
+            done = RE_ConsumeRestOfPart(in, out, NULL, rp, FALSE);
+            fclose(out);
+            RE_SetPartInfo(rp);
+          }
+          else
+          {
+            fclose(out);
+            done = RE_ConsumeRestOfPart(in, NULL, NULL, rp, FALSE);
+            RE_UndoPart(rp);
+            rp = prev;
           }
         }
       }
@@ -2201,10 +2307,13 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
          // convert & copy our decrypted file over the encrypted part
          if(ConvertCRLF(tf->Filename, warnPart->Filename, FALSE) && (in = fopen(warnPart->Filename, "r")))
          {
-            warnPart->ContentType = StrBufCpy(warnPart->ContentType, "text/plain");
+            if(warnPart->ContentType)
+              free(warnPart->ContentType);
+
+            warnPart->ContentType = strdup("text/plain");
             warnPart->Printable = TRUE;
             warnPart->EncodingCode = ENC_NONE;
-            *warnPart->Description = 0;
+            *warnPart->Description = '\0';
             RE_ScanHeader(warnPart, in, NULL, 2);
             fclose(in);
             warnPart->Decoded = FALSE;
@@ -2218,10 +2327,13 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
         // we have to put this error in place were the nonlocalized version is right now.
         if(CopyFile(warnPart->Filename, NULL, tf->Filename, NULL))
         {
-           warnPart->ContentType = StrBufCpy(warnPart->ContentType, "text/plain");
+           if(warnPart->ContentType)
+             free(warnPart->ContentType);
+
+           warnPart->ContentType = strdup("text/plain");
            warnPart->Printable = TRUE;
            warnPart->EncodingCode = ENC_NONE;
-           *warnPart->Description = 0;
+           *warnPart->Description = '\0';
            warnPart->Decoded = TRUE;
            warnPart->HasHeaders = FALSE;
         }
@@ -2351,7 +2463,11 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
 
       strlcpy(attachPart->Name, firstPart->Name, sizeof(attachPart->Name));
       strlcpy(attachPart->Description, firstPart->Description, sizeof(attachPart->Description));
-      attachPart->CParFileName = firstPart->CParFileName;
+
+      if(attachPart->CParFileName)
+        free(attachPart->CParFileName);
+
+      attachPart->CParFileName = strdup(firstPart->CParFileName);
 
       // in case the mail is already flagged as a
       // multipart mail we don't have to go on...
@@ -2613,8 +2729,12 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   // prepare our part META data and fake the new part as being
                   // a application/octet-stream part as we don't know if it
                   // is some text or something else.
-                  uup->ContentType = StrBufCpy(uup->ContentType, "application/octet-stream");
+                  if(uup->ContentType)
+                    free(uup->ContentType);
+
+                  uup->ContentType = strdup("application/octet-stream");
                   strlcpy(uup->Description, GetStr(MSG_RE_UUencodedFile), sizeof(uup->Description));
+
                   if(nameptr)
                     strlcpy(uup->Name, nameptr, sizeof(uup->Name));
 
@@ -3281,14 +3401,20 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
       part->headerList = NULL;
     }
 
-    FreeStrBuf(part->ContentType);
+    free(part->ContentType);
     part->ContentType = NULL;
 
-    FreeStrBuf(part->ContentDisposition);
+    free(part->ContentDisposition);
     part->ContentDisposition = NULL;
 
-    FreeStrBuf(part->Boundary);
-    part->Boundary = NULL;
+    // free all the CPar structue members
+    if(part->CParName)      free(part->CParName);
+    if(part->CParFileName)  free(part->CParFileName);
+    if(part->CParBndr)      free(part->CParBndr);
+    if(part->CParProt)      free(part->CParProt);
+    if(part->CParDesc)      free(part->CParDesc);
+    if(part->CParRType)     free(part->CParRType);
+    if(part->CParCSet)      free(part->CParCSet);
 
     D(DBF_MAIL, "freeing mailpart: %08lx", part);
     free(part);

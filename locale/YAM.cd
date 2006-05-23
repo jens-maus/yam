@@ -3777,9 +3777,6 @@ Couldn't extract MIME message.\n\
 \n\
 The message contains badly formed MIME parts or it's empty or truncated.
 ;
-MSG_ER_MissingBoundary (1121//)
-Missing boundary in multipart message. The message seems to be truncated.
-;
 MSG_ER_CantOpenFile (1122//)
 Couldn't read from file '%s'.\n\
 \n\

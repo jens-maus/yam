@@ -111,16 +111,15 @@ struct Part
    struct Part         *NextSelected;       // ptr to next selected or NULL
    struct ReadMailData *rmData;             // ptr to the parent readmail Data
    struct MinList      *headerList;         // ptr to a list of headers or NULL
-   char                *ContentType;
-   char                *ContentDisposition;
-   char                *CParName;
-   char                *CParFileName;
-   char                *CParBndr;
-   char                *CParProt;
-   char                *CParDesc;
-   char                *CParRType;
-   char                *CParCSet;
-   char                *Boundary;           // ptr to a buffer with the boundary
+   char                *ContentType;        // ptr to the content-type "text/plain"
+   char                *ContentDisposition; // ptr to the content-disposition "attachment"
+   char                *CParName;           // ptr to the content-type name
+   char                *CParFileName;       // ptr to the content-disposition filename
+   char                *CParBndr;           // ptr to the content-type boundary
+   char                *CParProt;           // ptr to the content-type protocol
+   char                *CParDesc;           // ptr to the content-type description
+   char                *CParRType;          // ptr to the content-type report-type
+   char                *CParCSet;           // ptr to the content-type charset "iso8859-1"
    long                 Size;
    int                  MaxHeaderLen;
    int                  Nr;
