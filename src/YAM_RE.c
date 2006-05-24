@@ -1083,20 +1083,20 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
               // we try to find out which encoding the
               // parameter is actually using by checking for
               // an asterisk sign (see: RFC 2231)
-              if(attribute[4] != '*')
-              {
-                // otherwise we use our rfc2047 decoding
-                // routines even if this is not defined
-                // by any RFC. However, many mail clients
-                // seem to use RFC2047 encoding also
-                // for the content parameters, even if that is illegal.
-                rfc2047_decode(value, value, strlen(value));
-                rp->CParName = value;
-              }
-              else
+              if(attribute[4] == '*')
               {
                 static struct codeset *nameCodeset = NULL;
                 rfc2231_decode(&attribute[5], value, &rp->CParName, &nameCodeset);
+              }
+              else
+              {
+                // otherwise we keep the string as is, as the
+                // MA_ReadHeader() function might already converted
+                // an eventually existing RFC2047 encoding even if
+                // that is normally just reserved for special header lines.
+                // However, even modern mail clients seem to still encode
+                // even MIME parameters with rfc2047.
+                rp->CParName = value;
               }
             }
             else if(!strncmp(attribute, "description", 11))
@@ -1104,20 +1104,20 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
               // we try to find out which encoding the
               // parameter is actually using by checking for
               // an asterisk sign (see: RFC 2231)
-              if(attribute[11] != '*')
-              {
-                // otherwise we use our rfc2047 decoding
-                // routines even if this is not defined
-                // by any RFC. However, many mail clients
-                // seem to use RFC2047 encoding also
-                // for the content parameters, even if that is illegal.
-                rfc2047_decode(value, value, strlen(value));
-                rp->CParDesc = value;
-              }
-              else
+              if(attribute[11] == '*')
               {
                 static struct codeset *descCodeset = NULL;
                 rfc2231_decode(&attribute[12], value, &rp->CParDesc, &descCodeset);
+              }
+              else
+              {
+                // otherwise we keep the string as is, as the
+                // MA_ReadHeader() function might already converted
+                // an eventually existing RFC2047 encoding even if
+                // that is normally just reserved for special header lines.
+                // However, even modern mail clients seem to still encode
+                // even MIME parameters with rfc2047.
+                rp->CParDesc = value;
               }
             }
             else if(!strcmp(attribute, "boundary"))
@@ -1140,20 +1140,20 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
               // we try to find out which encoding the
               // parameter is actually using by checking for
               // an asterisk sign (see: RFC 2231)
-              if(attribute[8] != '*')
-              {
-                // otherwise we use our rfc2047 decoding
-                // routines even if this is not defined
-                // by any RFC. However, many mail clients
-                // seem to use RFC2047 encoding also
-                // for the content parameters, even if that is illegal.
-                rfc2047_decode(value, value, strlen(value));
-                rp->CParFileName = value;
-              }
-              else
+              if(attribute[8] == '*')
               {
                 static struct codeset *fileNameCodeset = NULL;
                 rfc2231_decode(&attribute[9], value, &rp->CParFileName, &fileNameCodeset);
+              }
+              else
+              {
+                // otherwise we keep the string as is, as the
+                // MA_ReadHeader() function might already converted
+                // an eventually existing RFC2047 encoding even if
+                // that is normally just reserved for special header lines.
+                // However, even modern mail clients seem to still encode
+                // even MIME parameters with rfc2047.
+                rp->CParFileName = value;
               }
             }
             else
@@ -1280,6 +1280,8 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
     }
     else if(!stricmp(field, "content-description"))
     {
+      // we just copy the value here as the initial rfc2047 decoding
+      // was done in MA_ReadHeader() already.
       strlcpy(rp->Description, value, sizeof(rp->Description));
     }
     else if(!stricmp(field, "content-disposition"))

@@ -6,6 +6,8 @@ $Id$
 
 2006-05-24  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c: removed some redundant rfc2047_decode() calls as we have a
+    general rfc2047 decoding done in MA_ReadHeader().
   * YAM_MI.c, YAM_mime.h, YAM_RE.c: added RFC2231 MIME parameter decoding
     support. Now YAM will automatically identify if a MIME parameter contains
     a RFC2231 encoded sequence and decode it accordingly. Otherwise it will
