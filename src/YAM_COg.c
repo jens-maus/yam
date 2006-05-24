@@ -510,7 +510,14 @@ Object *MakeMimeTypePop(Object **string, char *desc)
 
   if((po = PopobjectObject,
 
-    MUIA_Popstring_String, *string = MakeString(SIZE_CTYPE, desc),
+    MUIA_Popstring_String, *string = BetterStringObject,
+      StringFrame,
+      MUIA_String_Accept,      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-/",
+      MUIA_String_MaxLen,      SIZE_CTYPE,
+      MUIA_ControlChar,        ShortCut(GetStr(desc)),
+      MUIA_String_AdvanceOnCR, TRUE,
+      MUIA_CycleChain,         TRUE,
+    End,
     MUIA_Popstring_Button, bt = PopButton(MUII_PopUp),
     MUIA_Popobject_StrObjHook, &PO_MimeTypeListOpenHook,
     MUIA_Popobject_ObjStrHook, &PO_MimeTypeListCloseHook,

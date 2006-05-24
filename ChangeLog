@@ -6,6 +6,8 @@ $Id$
 
 2006-05-24  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c: we limit the string gadget for specifying a MIME type/subtype
+    to only accept valid characters which are [0-9][a-Z][+-/].
   * YAM_RE.c: removed some redundant rfc2047_decode() calls as we have a
     general rfc2047 decoding done in MA_ReadHeader().
   * YAM_MI.c, YAM_mime.h, YAM_RE.c: added RFC2231 MIME parameter decoding
