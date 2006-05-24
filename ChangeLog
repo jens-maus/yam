@@ -4,6 +4,17 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-05-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MI.c, YAM_mime.h, YAM_RE.c: added RFC2231 MIME parameter decoding
+    support. Now YAM will automatically identify if a MIME parameter contains
+    a RFC2231 encoded sequence and decode it accordingly. Otherwise it will
+    use the formerly only supported RFC2047 decoding even if that is not
+    fully standardized - but it is common sense that many mail clients
+    still encode MIME parameter with RFC2047 instead. Now only RFC2231
+    encoding support is missing to have the whole MIME parameter encoding
+    issue fixed.
+
 2006-05-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c: fixed a minor memory leak where we didn't free the name

@@ -47,6 +47,7 @@ static int rfc2047_decode_int(const char *text,
 static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *chset,
                                 const char *lang, void *arg);
 INLINE char *rfc2047_search_quote(const char **ptr);
+static int rfc2231_decode_int(char *dst, const char *src, struct codeset *srcCodeset);
 
 
 /***************************************************************************
@@ -2532,7 +2533,130 @@ int urlencode(char *to, const char *from, unsigned int len)
 ///
 
 /*** RFC 2231 MIME parameter encoding/decoding routines ***/
-#warning "implement RFC 2231 decoding/encoding ASAP!"
+/// rfc2231_decode()
+// the main RFC 2231 decoding routine
+int rfc2231_decode(char *attr, char *value, char **result, struct codeset **srcCodeset)
+{
+  int ret = 0;
+
+  ENTER();
+
+  if(attr[0] == '0' || attr[0] == '\0')
+  {
+    char *p;
+
+    // we found the 'name*0=' parameter, so we have to
+    // see if we can retrieve the charset and language
+    // spec from our value
+    if((p = strchr(value, '\'')))
+    {
+      *p = '\0';
+
+      if(p-value > 0)
+      {
+        // search for the codeset via codesets.library
+        *srcCodeset = CodesetsFind(value,
+                                   CSA_CodesetList,       G->codesetsList,
+                                   CSA_FallbackToDefault, FALSE,
+                                   TAG_DONE);
+      }
+
+      // and we skip the language part as we don't
+      // require it yet.
+      if((p = strchr(++p, '\'')))
+      {
+        // nowe we decode the encoded string
+        ret = rfc2231_decode_int(value, p+1, *srcCodeset);
+      }
+      else
+        W(DBF_MIME, "malformed rfc2231 content parameter found! '%s'", value);
+    }
+    else
+      W(DBF_MIME, "malformed rfc2231 content parameter found! '%s'", value);
+
+    *result = value;
+  }
+  else if(isdigit(attr[0]))
+  {
+    // we found another parameter with number > 0
+    // so we have to append what we decode next
+    ret = rfc2231_decode_int(value, value, *srcCodeset);
+
+    // now we concatenate
+    if(*result)
+    {
+      int newSize = strlen(*result)+strlen(value)+1;
+
+      if((*result = realloc(*result, newSize)))
+      {
+        strlcat(*result, value, newSize);
+
+        free(value);
+      }
+    }
+  }
+  else
+    *result = value;
+
+  RETURN(ret);
+  return ret;
+}
+
+///
+/// rfc2231_decode_int()
+// function which does the actual RFC2231 based string decoding
+// (not including parameter concatenating)
+static int rfc2231_decode_int(char *dst, const char *src, struct codeset *srcCodeset)
+{
+  char *p = (char *)src;
+  char *q = dst;
+
+  ENTER();
+
+  while(*p)
+  {
+    if(*p == '%' && p[1] != '\0' && p[2] != '\0')
+    {
+      unsigned char c1 = hexchar(p[1]);
+      unsigned char c2 = hexchar(p[2]);
+
+      // so we have enough space, lets decode it, but let us
+      // check if the two chars are really hexadecimal chars
+      if(c1 != 255 && c2 != 255)
+      {
+        *dst++ = c1<<4 | c2;
+        p += 3;
+      }
+      else
+        *dst++ = *p++;
+    }
+    else
+      *dst++ = *p++;
+  }
+
+  *dst = '\0';
+
+  if(srcCodeset && srcCodeset != G->localCharset && p-src > 0)
+  {
+    STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
+                                    CSA_DestCodeset,   G->localCharset,
+                                    CSA_Source,        q,
+                                    TAG_DONE);
+
+    if(str)
+    {
+      strcpy(q, str);
+      CodesetsFreeA(str, NULL);
+    }
+    else
+      W(DBF_MIME, "error while trying to convert rfc2231 decoded string to local charset!");
+  }
+
+  RETURN((int)(p-src));
+  return p-src;
+}
+
+///
 
 /**** MIME Types/Viewers ****/
 /// IntMimeTypeArray[]

@@ -1063,14 +1063,14 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
   if(*p == ';')
   {
     char *next = ++p;
-    char *name;
+    char *attribute;
     char *value;
 
     // now we walk through our string by extracting each
     // content parameter/value combo in a while loop.
-    while(*next != '\0' && (next = ExtractNextParam(next, &name, &value)))
+    while(*next != '\0' && (next = ExtractNextParam(next, &attribute, &value)))
     {
-      if(name && value)
+      if(attribute && value)
       {
         // depending on the parameterType we
         // have to parse different parameters
@@ -1078,39 +1078,55 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
         {
           case PT_CONTENTTYPE:
           {
-            if(!strncmp(name, "name", 4))
+            if(!strncmp(attribute, "name", 4))
             {
               // we try to find out which encoding the
               // parameter is actually using by checking for
               // an asterisk sign (see: RFC 2231)
-              if(name[4] == '*')
-              {
-                #warning "implement RFC 2231 decoding ASAP!"
-              }
-              else
+              if(attribute[4] != '*')
               {
                 // otherwise we use our rfc2047 decoding
                 // routines even if this is not defined
                 // by any RFC. However, many mail clients
                 // seem to use RFC2047 encoding also
-                // for the content parameters.
+                // for the content parameters, even if that is illegal.
                 rfc2047_decode(value, value, strlen(value));
+                rp->CParName = value;
               }
-
-              rp->CParName = value;
+              else
+              {
+                static struct codeset *nameCodeset = NULL;
+                rfc2231_decode(&attribute[5], value, &rp->CParName, &nameCodeset);
+              }
             }
-            else if(!strncmp(name, "description", 11))
+            else if(!strncmp(attribute, "description", 11))
             {
-              rfc2047_decode(value, value, strlen(value));
-              rp->CParDesc = value;
+              // we try to find out which encoding the
+              // parameter is actually using by checking for
+              // an asterisk sign (see: RFC 2231)
+              if(attribute[11] != '*')
+              {
+                // otherwise we use our rfc2047 decoding
+                // routines even if this is not defined
+                // by any RFC. However, many mail clients
+                // seem to use RFC2047 encoding also
+                // for the content parameters, even if that is illegal.
+                rfc2047_decode(value, value, strlen(value));
+                rp->CParDesc = value;
+              }
+              else
+              {
+                static struct codeset *descCodeset = NULL;
+                rfc2231_decode(&attribute[12], value, &rp->CParDesc, &descCodeset);
+              }
             }
-            else if(!strcmp(name, "boundary"))
+            else if(!strcmp(attribute, "boundary"))
               rp->CParBndr = value;
-            else if(!strcmp(name, "protocol"))
+            else if(!strcmp(attribute, "protocol"))
               rp->CParProt = value;
-            else if(!strcmp(name, "report-type"))
+            else if(!strcmp(attribute, "report-type"))
               rp->CParRType = value;
-            else if(!strcmp(name, "charset"))
+            else if(!strcmp(attribute, "charset"))
               rp->CParCSet = value;
             else
               free(value);
@@ -1119,10 +1135,26 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
 
           case PT_CONTENTDISPOSITION:
           {
-            if(!strncmp(name, "filename", 8))
+            if(!strncmp(attribute, "filename", 8))
             {
-              rfc2047_decode(value, value, strlen(value));
-              rp->CParFileName = value;
+              // we try to find out which encoding the
+              // parameter is actually using by checking for
+              // an asterisk sign (see: RFC 2231)
+              if(attribute[8] != '*')
+              {
+                // otherwise we use our rfc2047 decoding
+                // routines even if this is not defined
+                // by any RFC. However, many mail clients
+                // seem to use RFC2047 encoding also
+                // for the content parameters, even if that is illegal.
+                rfc2047_decode(value, value, strlen(value));
+                rp->CParFileName = value;
+              }
+              else
+              {
+                static struct codeset *fileNameCodeset = NULL;
+                rfc2231_decode(&attribute[9], value, &rp->CParFileName, &fileNameCodeset);
+              }
             }
             else
               free(value);
@@ -1130,14 +1162,14 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
           break;
         }
 
-        free(name);
+        free(attribute);
       }
       else
       {
-        E(DBF_MIME, "couldn't extract a full parameter (%lx/%lx)", name, value);
+        E(DBF_MIME, "couldn't extract a full parameter (%lx/%lx)", attribute, value);
 
-        if(name)
-          free(name);
+        if(attribute)
+          free(attribute);
 
         if(value)
           free(value);
@@ -2465,7 +2497,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
       if(attachPart->CParFileName)
         free(attachPart->CParFileName);
 
-      attachPart->CParFileName = strdup(firstPart->CParFileName);
+      attachPart->CParFileName = firstPart->CParFileName ? strdup(firstPart->CParFileName) : NULL;
 
       // in case the mail is already flagged as a
       // multipart mail we don't have to go on...
