@@ -514,7 +514,7 @@ Object *MakeMimeTypePop(Object **string, char *desc)
       StringFrame,
       MUIA_String_Accept,      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-/",
       MUIA_String_MaxLen,      SIZE_CTYPE,
-      MUIA_ControlChar,        ShortCut(GetStr(desc)),
+      MUIA_ControlChar,        ShortCut(desc),
       MUIA_String_AdvanceOnCR, TRUE,
       MUIA_CycleChain,         TRUE,
     End,
