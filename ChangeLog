@@ -6,6 +6,8 @@ $Id$
 
 2006-05-25  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c: removed some obsolete functions and did some preparations for
+    the upcoming RFC2231 encoding support.
   * UpdateNotifyWindow.c: the update notification window size and location is
     now fully under user control. That means a user can now save its position
     and size so that it remembers its position/size accordingly. In addition,

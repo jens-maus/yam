@@ -81,11 +81,9 @@ static struct WritePart *BuildPartsList(int);
 static char *GetDateTime(void);
 static char *NewID(BOOL);
 static enum Encoding WhichEncodingForFile(char*, char*);
-static void HeaderFputs(char*, FILE*);
+static void HeaderFputs(char*, FILE*, BOOL);
 static void EmitRcptField(FILE*, char*);
 static void EmitRcptHeader(FILE*, char*, char*);
-static void FPutsQuoting(char*, FILE*);
-static void WriteCtypeNicely(FILE*, char*);
 static void WriteContentTypeAndEncoding(FILE*, struct WritePart*);
 static void WR_WriteUIItem(FILE*, int*, char*, char*);
 static void WR_WriteUserInfo(FILE *, char *);
@@ -392,7 +390,7 @@ void FreePartsList(struct WritePart *p)
 /// HeaderFputs
 //  Outputs the value of a header line directly to the FILE pointer and handle
 //  QP MIME encoding (RFC2047) and automatic charset translation.
-static void HeaderFputs(char *s, FILE *fh)
+static void HeaderFputs(char *s, FILE *fh, BOOL param)
 {
   BOOL doEncoding = FALSE;
   char *c = s;
@@ -429,7 +427,7 @@ static void HeaderFputs(char *s, FILE *fh)
   {
      // there seems to be non "violating" characters in the string, so lets
      // simply put it out to the FILE pointer without encoding some text
-     // according to RFC 2047
+     // according to RFC 2047 or RFC 2231
      fputs(s, fh);
   }
 
@@ -441,9 +439,9 @@ static void HeaderFputs(char *s, FILE *fh)
 //  Outputs a complete header line
 void EmitHeader(FILE *fh, char *hdr, char *body)
 {
-   fprintf(fh, "%s: ", hdr);
-   HeaderFputs(body, fh);
-   fputc('\n', fh);
+  fprintf(fh, "%s: ", hdr);
+  HeaderFputs(body, fh, FALSE);
+  fputc('\n', fh);
 }
 
 ///
@@ -467,7 +465,7 @@ static void EmitRcptField(FILE *fh, char *body)
       if((next = MyStrChr(part, ',')))
         *next++ = '\0';
 
-      HeaderFputs(Trim(part), fh);
+      HeaderFputs(Trim(part), fh, FALSE);
 
       if((part = next))
         fputs(",\n\t", fh);
@@ -482,111 +480,62 @@ static void EmitRcptField(FILE *fh, char *body)
 //  Outputs a complete recipient header line
 static void EmitRcptHeader(FILE *fh, char *hdr, char *body)
 {
-   fprintf(fh, "%s: ", hdr);
-   EmitRcptField(fh, body ? body : "");
-   fputc('\n', fh);
+  fprintf(fh, "%s: ", hdr);
+  EmitRcptField(fh, body ? body : "");
+  fputc('\n', fh);
 }
 
-///
-/// FPutsQuoting
-//  Handles quotes and slashes
-static void FPutsQuoting(char *s, FILE *fh)
-{
-   char *end = s + strlen(s) - 1;
-   while (ISpace(*end) && end > s) --end;
-   if (*s == '\"')
-   {
-      fputc(*s, fh);
-      while (*++s)
-      {
-         if (*s == '\"') break;
-         if (*s == '\\') { fputc(*s, fh); ++s; if (!*s) break; }
-         fputc(*s, fh);
-      }
-      fputc('\"', fh);
-   }
-   else
-   {
-      fputc('\"', fh); fputc(*s, fh);
-      while (*++s)
-      {
-         if (*s == '\"' || *s == '\\') fputc('\\', fh);
-         fputc(*s, fh);
-      }
-      fputc('\"', fh);
-   }
-}
-
-///
-/// WriteCtypeNicely
-//  Outputs content type
-static void WriteCtypeNicely(FILE *fh, char *ct)
-{
-   char *semi, *slash, *eq, *s;
-
-   for (s = ct; *s; ++s) if (*s == '\n') *s = ' ';
-   if ((semi = (char *)strchr(ct, ';'))) *semi = '\0';
-   slash = (char *)strchr(ct, '/');
-   fputs(ct, fh);
-   if (!slash) fputs("/unknown", fh);
-   while (semi)
-   {
-      ct = semi + 1;
-      *semi = ';';
-      if ((semi = (char *) strchr(ct, ';'))) *semi = '\0';
-      if ((eq = (char *) strchr(ct, '='))) *eq = '\0';
-      fputs(";\n\t", fh);
-      while (ISpace(*ct)) ++ct;
-      fputs(ct, fh);
-      if (eq)
-      {
-         s = eq;
-         fputc('=', fh);
-         ++s;
-         while (ISpace(*s)) ++s;
-         FPutsQuoting(s, fh);
-         *eq = '=';
-      }
-   }
-}
 ///
 /// WriteContentTypeAndEncoding
 //  Outputs content type header including parameters
 static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
 {
-   char *p;
+  char *p;
 
-   fputs("Content-Type: ", fh);
-   WriteCtypeNicely(fh, part->ContentType);
-   if(!strncmp(part->ContentType, "text/", 5) && part->EncType != ENC_NONE)
-      fprintf(fh, "; charset=%s", strippedCharsetName(G->localCharset));
+  ENTER();
 
-   if ((p = part->Name)) if (*p)
-   {
-      fputs("; name=\"", fh);
-      HeaderFputs(p, fh);
-      fputs("\"\nContent-Disposition: attachment; filename=\"", fh);
-      HeaderFputs(p, fh);
-      fputc('\"', fh);
-   }
-   fputc('\n', fh);
-   if (part->EncType != ENC_NONE)
-   {
-      fputs("Content-Transfer-Encoding: ", fh);
-      switch (part->EncType)
-      {
-         case ENC_B64:  fputs("base64\n", fh); break;
-         case ENC_QP:   fputs("quoted-printable\n", fh); break;
-         case ENC_UUE:  fputs("x-uue\n", fh); break;
-         case ENC_8BIT: fputs("8bit\n", fh); break;
-         case ENC_BIN:  fputs("binary\n", fh); break;
+  // output the "Content-Type:
+  fprintf(fh, "Content-Type: %s", part->ContentType);
+  if(part->EncType != ENC_NONE && strncmp(part->ContentType, "text/", 5) == 0)
+    fprintf(fh, "; charset=%s", strippedCharsetName(G->localCharset));
 
-         default:
-          // nothing
-         break;
-      }
-   }
-   if ((p = part->Description)) if (*p) EmitHeader(fh, "Content-Description", p);
+  // output the "name" and Content-Disposition as well
+  // as the "filename" parameter to the mail
+  if((p = part->Name) && *p)
+  {
+    fputs("; name=\"", fh);
+    HeaderFputs(p, fh, TRUE); // output and do rfc2231 encoding
+    fputs("\"\nContent-Disposition: attachment; filename=\"", fh);
+    HeaderFputs(p, fh, TRUE); // output and do rfc2231 encoding
+    fputc('"', fh);
+  }
+  fputc('\n', fh);
+
+  // output the Content-Transfer-Encoding:
+  if(part->EncType != ENC_NONE)
+  {
+    char *enc = NULL;
+
+    switch(part->EncType)
+    {
+      case ENC_B64:  enc = "base64"; break;
+      case ENC_QP:   enc = "quoted-printable"; break;
+      case ENC_UUE:  enc = "x-uue"; break;
+      case ENC_8BIT: enc = "8bit"; break;
+      case ENC_BIN:  enc = "binary"; break;
+      case ENC_NONE:
+        // nothing
+      break;
+    }
+
+    fprintf(fh, "Content-Transfer-Encoding: %s\n", enc ? enc : "7bit");
+  }
+
+  // output the Content-Description if appropriate
+  if((p = part->Description) && *p)
+    EmitHeader(fh, "Content-Description", p);
+
+  LEAVE();
 }
 
 ///
@@ -594,12 +543,19 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
 //  Outputs a single parameter of the X-SenderInfo header
 static void WR_WriteUIItem(FILE *fh, int *len, char *parameter, char *value)
 {
-   int l = 6+strlen(parameter)+strlen(value);
-   *len += l;
-   fputc(';', fh); if (*len > 80) { fputs("\n  ", fh); *len = l; }
-   fprintf(fh, " %s=\"", parameter);
-   HeaderFputs(value, fh);
-   fputc('\"', fh);
+  int l = 6+strlen(parameter)+strlen(value);
+
+  *len += l;
+  fputc(';', fh);
+  if(*len > 80)
+  {
+    fputs("\n\t", fh);
+    *len = l;
+  }
+
+  fprintf(fh, " %s=\"", parameter);
+  HeaderFputs(value, fh, TRUE);
+  fputc('\"', fh);
 }
 
 ///
