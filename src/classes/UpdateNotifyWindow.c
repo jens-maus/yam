@@ -114,9 +114,10 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
+    MUIA_Window_ID,         MAKE_ID('U','P','D','1'),
     MUIA_Window_Title,      GetStr(MSG_UPD_NOTIFICATION_WTITLE),
     MUIA_Window_Height,     MUIV_Window_Height_MinMax(30),
-    MUIA_Window_Width,      MUIV_Window_Width_MinMax(15),
+    MUIA_Window_Width,      MUIV_Window_Width_MinMax(30),
     MUIA_Window_RefWindow,  G->MA->GUI.WI,
     WindowContents, VGroup,
 
@@ -207,11 +208,11 @@ OVERLOAD(OM_NEW)
     data->ComponentHistory = nf_componenthistory;
     data->SkipInFutureCheckBox = ch_skipinfuture;
 
-    DoMethod(obj,               MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, MUIM_Set, MUIA_Window_Open, FALSE);
+    DoMethod(obj,               MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, MUIM_UpdateNotifyWindow_Close);
     DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, MUIM_UpdateNotifyWindow_Select, MUIV_TriggerValue);
     DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, MUIM_UpdateNotifyWindow_VisitURL);
     DoMethod(bt_visit,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, MUIM_UpdateNotifyWindow_VisitURL);
-    DoMethod(bt_close,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);
+    DoMethod(bt_close,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_UpdateNotifyWindow_Close);
 
     SetAttrs(obj,
       MUIA_Window_Activate,      TRUE,
@@ -355,6 +356,30 @@ DECLARE(VisitURL)
   DoMethod(data->ComponentList, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &comp);
   if(comp)
     GotoURL(comp->url);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(Close)
+DECLARE(Close)
+{
+  GETDATA;
+
+  ENTER();
+
+  // before we close the window we have to check the status
+  // of the SkipInFutureCheckBox and set the configuration accordingly.
+  if(xget(data->SkipInFutureCheckBox, MUIA_Selected) == TRUE)
+  {
+    // now we make sure no further update timer is running.
+    C->UpdateInterval = 0;
+    InitUpdateCheck(FALSE);
+  }
+
+  // now close the window for real.
+  set(obj, MUIA_Window_Open, FALSE);
 
   RETURN(0);
   return 0;

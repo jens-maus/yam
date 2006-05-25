@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-05-25  Jens Langner <Jens.Langner@light-speed.de>
+
+  * UpdateNotifyWindow.c: the update notification window size and location is
+    now fully under user control. That means a user can now save its position
+    and size so that it remembers its position/size accordingly. In addition,
+    the "Do not notify in future" checkbox should as well work as expected now.
+
 2006-05-24  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c: we limit the string gadget for specifying a MIME type/subtype
