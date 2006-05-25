@@ -21,7 +21,7 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
- $Id: AddrBookListtree.c 2046 2006-03-13 12:13:58Z damato $
+ $Id$
 
  Superclass:  MUIC_NList
  Description: NList class of the transfer window

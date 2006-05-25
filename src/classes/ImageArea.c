@@ -21,7 +21,7 @@
  YAM Official Support Site : http://www.yam.ch
  YAM OpenSource project     : http://sourceforge.net/projects/yamos/
 
- $Id: BodychunkImage.c 2046 2006-03-13 12:13:58Z damato $
+ $Id$
 
  Superclass:  MUIC_Area
  Description: Class for loading/mainting datatype based images
