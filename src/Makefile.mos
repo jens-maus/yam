@@ -59,7 +59,7 @@ DEBUG    = -DDEBUG -g3 -O0
 CFLAGS   = -noixemul -pipe -I. -I./include -I./include/netinclude $(CPU) \
             $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -c
 LDFLAGS  = -noixemul $(CPU)
-LDLIBS   = -lm -ldebug -lxpk -lamissl
+LDLIBS   = -lm -ldebug -L./lib/mos -lxpk -lamissl -lcodesets
 
 # Special flags
 DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
