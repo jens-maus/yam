@@ -1525,7 +1525,7 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
           if((p = strpbrk(ctype, "\r\n")))
             *p = '\0';
 
-          if(!*ctype || ISpace(*ctype))
+          if(!*ctype || isspace(*ctype))
             continue;
 
           if(mode == 1)
@@ -1557,7 +1557,7 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
             if(*ctype == '#')
               continue;
 
-            for(p2 = p = ctype; !ISpace(*p) && *p && *p != ';'; p2 = ++p);
+            for(p2 = p = ctype; !isspace(*p) && *p && *p != ';'; p2 = ++p);
 
             if((p = strpbrk(p,";")))
               ++p;
@@ -1572,7 +1572,7 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
             if(*ctype == '#')
               continue;
 
-            for(p2 = p = ctype; !ISpace(*p) && *p; p2 = ++p);
+            for(p2 = p = ctype; !isspace(*p) && *p; p2 = ++p);
 
             if(*p)
               ext = TrimStart(p);

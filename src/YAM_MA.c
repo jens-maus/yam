@@ -1577,7 +1577,7 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
 
                 while(fgets(buf, SIZE_LINE, in))
                 {
-                  if(!ISpace(*buf))
+                  if(!isspace(*buf))
                     infield = !strnicmp(buf, "content-transfer-encoding", 25) || !strnicmp(buf, "content-type", 12);
 
                   if(!infield || inbody)
@@ -2523,7 +2523,8 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
                if (!hasorigsubj) EmitHeader(newfh, "X-Original-Subject", mail->Subject);
                EmitHeader(newfh, "Subject", subj);
             }
-            if (!ISpace(*buf))
+
+            if(!isspace(*buf))
             {
                infield = !strnicmp(buf, "subject:", 8);
                if (!strnicmp(buf, "x-original-subject:", 19)) hasorigsubj = TRUE;
@@ -2792,8 +2793,10 @@ char *MA_GetRealSubject(char *sub)
    {
       // if the following char isn`t a whitespace we return the real
       // subject directly after the last bracket
-      if(ISpace(p[1])) return MA_GetRealSubject(p+2);
-      else return MA_GetRealSubject(p+1);
+      if(isspace(p[1]))
+        return MA_GetRealSubject(p+2);
+      else
+        return MA_GetRealSubject(p+1);
    }
 
    if (strchr(":[({", sub[2])) if ((p = strchr(sub, ':'))) return MA_GetRealSubject(TrimStart(++p));

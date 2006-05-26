@@ -611,7 +611,7 @@ long base64decode_file(FILE *in, FILE *out,
 
     while(todo > 0)
     {
-      if(!ISpace(*sptr))
+      if(!isspace(*sptr))
       {
         *dptr = *sptr;
         dptr++;
@@ -2343,7 +2343,7 @@ static int rfc2047_decode_int(const char *text,
         if(*text == '=' && *(text+1) == '?')
           break;
 
-        if(!ISpace((int)(unsigned char)*text))
+        if(!isspace((int)(unsigned char)*text))
           had_last_word=0;
 
         ++text;

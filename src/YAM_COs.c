@@ -478,9 +478,9 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
          {
             char *p, *value, *value2 = "";
 
-            if ((value = strchr(buffer, '='))) for (value2 = (++value)+1; ISpace(*value); value++);
+            if ((value = strchr(buffer, '='))) for (value2 = (++value)+1; isspace(*value); value++);
             if ((p = strpbrk(buffer,"\r\n"))) *p = 0;
-            for (p = buffer; *p && *p != '=' && !ISpace(*p); p++); *p = 0;
+            for (p = buffer; *p && *p != '=' && !isspace(*p); p++); *p = 0;
 
             if (*buffer && value)
             {

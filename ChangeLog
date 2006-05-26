@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-05-26  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_utilties.h, misc: replaced the redundant ISpace() macro by the more
+    standardized isspace() equivalent which should remove the confusion and
+    mixed use of both functions/macros in the source code.
+
 2006-05-26  Gunther Nikl <gni@gecko.de>
 
   * Updated fd files and MorphOS inline files.

@@ -809,7 +809,7 @@ static char *ExtractNextParam(char *s, char **name, char **value)
     int nameLen;
 
     // skip trailing spaces as well
-    while(u > p && *--u && ISpace(*u));
+    while(u > p && *--u && isspace(*u));
 
     // get the length of the parameter name
     nameLen = u-p+1;
@@ -874,7 +874,7 @@ static char *ExtractNextParam(char *s, char **name, char **value)
           // wasn't quoted
           if(quoted == FALSE)
           {
-            while(t > *value && *--t && ISpace(*t))
+            while(t > *value && *--t && isspace(*t))
               *t = '\0';
           }
 
@@ -939,7 +939,7 @@ static char *Cleanse(char *s)
 
   // now we walk back from the end of the string
   // and strip the trailing spaces.
-  while(tmp > s && *--tmp && ISpace(*tmp))
+  while(tmp > s && *--tmp && isspace(*tmp))
     *tmp = '\0';
 
   return s;
@@ -1006,7 +1006,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
     if(*p == ';')
       break;
 
-    if(!ISpace(*p))
+    if(!isspace(*p))
       size++;
 
     p++;
@@ -1026,7 +1026,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
       if(*p == ';')
         break;
 
-      if(!ISpace(*p))
+      if(!isspace(*p))
         *q++ = *p;
 
       p++;

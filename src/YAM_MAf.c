@@ -1096,7 +1096,7 @@ BOOL MA_ReadHeader(FILE *fh, struct MinList *headerList)
         {
           // move to the "real" start of the string so that we can copy
           // from there to our previous header.
-          for(ptr = buffer; *ptr && ISpace(*ptr); ptr++);
+          for(ptr = buffer; *ptr && isspace(*ptr); ptr++);
 
           // we want to preserve the last space so that this headerline
           // is correctly connected
@@ -1954,7 +1954,7 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
    else
      p = (char *)date;
 
-   while(*p && ISpace(*p))
+   while(*p && isspace(*p))
      p++;
 
    while((p = strtok(p, " \t")))
@@ -2005,7 +2005,7 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
          // get the time zone
          case 4:
          {
-            while (*p && (ISpace(*p) || *p == '(')) p++;
+            while (*p && (isspace(*p) || *p == '(')) p++;
             tzone = p;
          }
          break;

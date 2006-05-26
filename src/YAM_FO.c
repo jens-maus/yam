@@ -292,9 +292,9 @@ BOOL FO_LoadConfig(struct Folder *fo)
          while (fgets(buffer, SIZE_LARGE, fh))
          {
             char *p, *value;
-            if ((value = strchr(buffer, '='))) for (++value; ISpace(*value); value++);
+            if ((value = strchr(buffer, '='))) for (++value; isspace(*value); value++);
             if ((p = strpbrk(buffer,"\r\n"))) *p = 0;
-            for (p = buffer; *p && !ISpace(*p); p++); *p = 0;
+            for (p = buffer; *p && !isspace(*p); p++); *p = 0;
             if (*buffer && value)
             {
                if(!stricmp(buffer, "Name"))              strlcpy(fo->Name, value, sizeof(fo->Name));

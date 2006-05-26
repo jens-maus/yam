@@ -95,7 +95,7 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
 
   // if the user clicked on space we skip the following
   // analysis of a URL and just check if it was an attachment the user clicked at
-  if(!ISpace(clickmsg->LineContents[clickmsg->ClickPosition]))
+  if(!isspace(clickmsg->LineContents[clickmsg->ClickPosition]))
   {
     int pos = clickmsg->ClickPosition;
     char *line, *surl;
@@ -108,12 +108,12 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
 
     // find the beginning of the word we clicked at
     surl = &line[pos];
-    while(surl != &line[0] && !ISpace(*(surl-1)))
+    while(surl != &line[0] && !isspace(*(surl-1)))
       surl--;
 
     // now find the end of the word the user clicked at
     p = &line[pos];
-    while(p+1 != &line[strlen(line)] && !ISpace(*(p+1)))
+    while(p+1 != &line[strlen(line)] && !isspace(*(p+1)))
       p++;
     
     *(++p) = '\0';

@@ -862,7 +862,7 @@ char *GetNextLine(char *p1)
 //  Strips leading spaces
 char *TrimStart(char *s)
 {
-   while (*s && ISpace(*s)) ++s;
+   while (*s && isspace(*s)) ++s;
    return s;
 }
 ///
@@ -871,7 +871,7 @@ char *TrimStart(char *s)
 char *TrimEnd(char *s)
 {
    char *e = s+strlen(s)-1;
-   while (e >= s && ISpace(*e)) *e-- = 0;
+   while (e >= s && isspace(*e)) *e-- = 0;
    return s;
 }
 ///
@@ -882,8 +882,8 @@ char *Trim(char *s)
    if(s)
    {
       char *e = s+strlen(s)-1;
-      while (*s && ISpace(*s)) ++s;
-      while (e >= s && ISpace(*e)) *e-- = '\0';
+      while (*s && isspace(*s)) ++s;
+      while (e >= s && isspace(*e)) *e-- = '\0';
    }
    return s;
 }
@@ -1374,7 +1374,7 @@ static int Word_Length(const char *buf)
 
   while((c = *buf))
   {
-    if(ISpace(c))
+    if(isspace(c))
     {
       if(c == '\n' || c == '\r')
         return 0;
@@ -1389,7 +1389,7 @@ static int Word_Length(const char *buf)
 
   while((c = *buf))
   {
-    if(ISpace(c) || c == '\0')
+    if(isspace(c) || c == '\0')
       break;
 
     len++;
@@ -1593,7 +1593,7 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
       // we check whether this char was a whitespace
       // or not and if so we set the lastwasspace flag and we also check if
       // we are near the end of the line so that we have to initiate a word wrap
-      if((lastwasspace = ISpace(c)) && line_len + Word_Length(src) >= line_max)
+      if((lastwasspace = isspace(c)) && line_len + Word_Length(src) >= line_max)
       {
         char *indent;
 
@@ -1679,7 +1679,7 @@ void SimpleWordWrap(char *filename, int wrapsize)
             p = lsp;
             Write(fh, &ch, 1);
          }
-         if (ISpace(ch)) lsp = p;
+         if (isspace(ch)) lsp = p;
          if (ch == '\n') { sol = p+1; lsp = -1; }
          p++;
       }
@@ -2145,11 +2145,11 @@ void ExtractAddress(char *line, struct Person *pe)
    ra[2] = ra[3] = NULL;
    save = strdup(line);
    pe->Address[0] = pe->RealName[0] = 0;
-   while (ISpace(*p)) p++;
+   while (isspace(*p)) p++;
    if ((ra[0] = MyStrChr(p,'<'))) if ((ra[1] = MyStrChr(ra[0],'>')))
    {
       *ra[0]++ = 0; *ra[1] = 0;
-      for (ra[2] = p, ra[3] = ra[0]-2; ISpace(*ra[3]) && ra[3] >= ra[2]; ra[3]--) *ra[3] = 0;
+      for (ra[2] = p, ra[3] = ra[0]-2; isspace(*ra[3]) && ra[3] >= ra[2]; ra[3]--) *ra[3] = 0;
       found = TRUE;
    }
    if (!found)

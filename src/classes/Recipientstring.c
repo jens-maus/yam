@@ -688,7 +688,7 @@ DECLARE(RecipientStart)
     if(buf[i] == '"')
       quote ^= TRUE;
   }
-  while(ISpace(buf[i]))
+  while(isspace(buf[i]))
     i++;
 
   return i;

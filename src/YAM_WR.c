@@ -417,7 +417,7 @@ static void HeaderFputs(char *s, FILE *fh, BOOL param)
   // in RFC 2047
   if(doEncoding ||
      ((c = strstr(s, "=?")) && isascii(*(c+1)) &&
-      (c == s || ISpace(*(c-1))))) // to find stray =? strings
+      (c == s || isspace(*(c-1))))) // to find stray =? strings
   {
      // now that we found out that the string contains non ASCII
      // characters, lets encode them accoding to RFC 2047
@@ -869,7 +869,7 @@ static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
             EmitHeader(fh, "Resent-From", BuildAddrName(C->EmailAddress, C->RealName));
             EmitHeader(fh, "Resent-Date", GetDateTime());
          }
-         if (!ISpace(*buf) && !inbody) infield = !strnicmp(buf, "to:", 3);
+         if (!isspace(*buf) && !inbody) infield = !strnicmp(buf, "to:", 3);
          if (!infield || inbody) fputs(buf, fh);
       }
       fclose(oldfh);
@@ -909,7 +909,7 @@ static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
       while (fgets(buf, SIZE_LINE, oldfh))
       {
          if (*buf == '\n') { fprintf(fh, "X-YAM-Decrypted: PGP; %s\n", GetDateTime()); break; }
-         if (!ISpace(*buf)) infield = !strnicmp(buf, "content-type:", 13)
+         if (!isspace(*buf)) infield = !strnicmp(buf, "content-type:", 13)
                                    || !strnicmp(buf, "content-transfer-encoding", 25)
                                    || !strnicmp(buf, "mime-version:", 13);
          if (!infield) fputs(buf, fh);

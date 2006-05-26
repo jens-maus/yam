@@ -3307,7 +3307,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                       inbody = TRUE;
                       lineskip = FALSE;
                     }
-                    else if(!ISpace(*buf)) // headerlines don`t start with a space
+                    else if(!isspace(*buf)) // headerlines don`t start with a space
                     {
                       // headerlines with bcc or x-yam- will be skipped by us.
                       lineskip = !strnicmp(buf, "bcc", 3) || !strnicmp(buf, "x-yam-", 6);
