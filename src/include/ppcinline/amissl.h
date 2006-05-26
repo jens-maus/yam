@@ -10076,7 +10076,7 @@
 	LP0(0x3b46, const ASN1_ITEM *, PROXY_CERT_INFO_EXTENSION_it, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
+#if defined(USE_INLINE_STDARG) && !defined(__STRICT_ANSI__)
 #define InitAmiSSL(tags...) \
 	({ULONG _tags[] = {tags}; InitAmiSSLA((struct TagItem *) _tags);})
 
