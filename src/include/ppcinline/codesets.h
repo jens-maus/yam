@@ -1,226 +1,247 @@
+/* Automatically generated header! Do not edit! */
+
 #ifndef _PPCINLINE_CODESETS_H
 #define _PPCINLINE_CODESETS_H
 
-/***************************************************************************
-
- codesets.library - Amiga shared library for handling different codesets
- Copyright (C) 2001-2005 by Alfonso [alfie] Ranieri <alforan@tin.it>.
- Copyright (C) 2005-2006 by codesets.library Open Source Team
-
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 2.1 of the License, or (at your option) any later version.
-
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
-
- codesets.library project: http://sourceforge.net/projects/codesetslib/
-
- $Id$
-
-***************************************************************************/
-
-#ifndef CLIB_CODESETS_PROTOS_H
-#define CLIB_CODESETS_PROTOS_H
-#endif
-
 #ifndef __PPCINLINE_MACROS_H
 #include <ppcinline/macros.h>
-#endif
-
-#ifndef  LIBRARIES_CODESETS_H
-#include <libraries/codesets.h>
-#endif
+#endif /* !__PPCINLINE_MACROS_H */
 
 #ifndef CODESETS_BASE_NAME
 #define CODESETS_BASE_NAME CodesetsBase
+#endif /* !CODESETS_BASE_NAME */
+
+#define CodesetsSupportedA(__p0) \
+	LP1(96, STRPTR *, CodesetsSupportedA, \
+		struct TagItem *, __p0, a0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsIsLegalUTF8(__p0, __p1) \
+	LP2(54, BOOL , CodesetsIsLegalUTF8, \
+		const UTF8 *, __p0, a0, \
+		ULONG , __p1, d0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsListRemoveA(__p0) \
+	LP1(186, BOOL , CodesetsListRemoveA, \
+		struct TagItem *, __p0, a0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsFindBestA(__p0) \
+	LP1(108, struct codeset *, CodesetsFindBestA, \
+		struct TagItem *, __p0, a0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsListCreateA(__p0) \
+	LP1(168, struct codesetList *, CodesetsListCreateA, \
+		struct TagItem *, __p0, a0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsDecodeB64A(__p0) \
+	LP1(138, ULONG , CodesetsDecodeB64A, \
+		struct TagItem *, __p0, a0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsIsValidUTF8(__p0) \
+	LP1(150, BOOL , CodesetsIsValidUTF8, \
+		STRPTR , __p0, a0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsStrLenA(__p0, __p1) \
+	LP2(144, ULONG , CodesetsStrLenA, \
+		STRPTR , __p0, a0, \
+		struct TagItem *, __p1, a1, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsConvertStrA(__p0) \
+	LP1(162, STRPTR , CodesetsConvertStrA, \
+		struct TagItem *, __p0, a0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsFindA(__p0, __p1) \
+	LP2(102, struct codeset *, CodesetsFindA, \
+		STRPTR , __p0, a0, \
+		struct TagItem *, __p1, a1, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsFreeA(__p0, __p1) \
+	LP2NR(90, CodesetsFreeA, \
+		APTR , __p0, a0, \
+		struct TagItem *, __p1, a1, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsUTF8ToStrA(__p0) \
+	LP1(120, STRPTR , CodesetsUTF8ToStrA, \
+		struct TagItem *, __p0, a0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsFreeVecPooledA(__p0, __p1, __p2) \
+	LP3NR(156, CodesetsFreeVecPooledA, \
+		APTR , __p0, a0, \
+		APTR , __p1, a1, \
+		struct TagItem *, __p2, a2, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsUTF8Len(__p0) \
+	LP1(114, ULONG , CodesetsUTF8Len, \
+		const UTF8 *, __p0, a0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsListAddA(__p0, __p1) \
+	LP2(180, BOOL , CodesetsListAddA, \
+		struct codesetList *, __p0, a0, \
+		struct TagItem *, __p1, a1, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsConvertUTF32toUTF16(__p0, __p1, __p2, __p3, __p4) \
+	LP5(36, ULONG , CodesetsConvertUTF32toUTF16, \
+		const UTF32 **, __p0, a0, \
+		const UTF32 *, __p1, a1, \
+		UTF16 **, __p2, a2, \
+		UTF16 *, __p3, a3, \
+		ULONG , __p4, d0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsConvertUTF16toUTF32(__p0, __p1, __p2, __p3, __p4) \
+	LP5(42, ULONG , CodesetsConvertUTF16toUTF32, \
+		const UTF16 **, __p0, a0, \
+		const UTF16 *, __p1, a1, \
+		UTF32 **, __p2, a2, \
+		UTF32 *, __p3, a3, \
+		ULONG , __p4, d0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsListDeleteA(__p0) \
+	LP1(174, BOOL , CodesetsListDeleteA, \
+		struct TagItem *, __p0, a0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsSetDefaultA(__p0, __p1) \
+	LP2(84, struct codeset *, CodesetsSetDefaultA, \
+		STRPTR , __p0, a0, \
+		struct TagItem *, __p1, a1, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsEncodeB64A(__p0) \
+	LP1(132, ULONG , CodesetsEncodeB64A, \
+		struct TagItem *, __p0, a0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsUTF8CreateA(__p0) \
+	LP1(126, UTF8 *, CodesetsUTF8CreateA, \
+		struct TagItem *, __p0, a0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsConvertUTF32toUTF8(__p0, __p1, __p2, __p3, __p4) \
+	LP5(72, ULONG , CodesetsConvertUTF32toUTF8, \
+		const UTF32 **, __p0, a0, \
+		const UTF32 *, __p1, a1, \
+		UTF8 **, __p2, a2, \
+		UTF8 *, __p3, a3, \
+		ULONG , __p4, d0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsConvertUTF8toUTF32(__p0, __p1, __p2, __p3, __p4) \
+	LP5(78, ULONG , CodesetsConvertUTF8toUTF32, \
+		const UTF8 **, __p0, a0, \
+		const UTF8 *, __p1, a1, \
+		UTF32 **, __p2, a2, \
+		UTF32 *, __p3, a3, \
+		ULONG , __p4, d0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsConvertUTF16toUTF8(__p0, __p1, __p2, __p3, __p4) \
+	LP5(48, ULONG , CodesetsConvertUTF16toUTF8, \
+		const UTF16 **, __p0, a0, \
+		const UTF16 *, __p1, a1, \
+		UTF8 **, __p2, a2, \
+		UTF8 *, __p3, a3, \
+		ULONG , __p4, d0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsIsLegalUTF8Sequence(__p0, __p1) \
+	LP2(60, BOOL , CodesetsIsLegalUTF8Sequence, \
+		const UTF8 *, __p0, a0, \
+		const UTF8 *, __p1, a1, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define CodesetsConvertUTF8toUTF16(__p0, __p1, __p2, __p3, __p4) \
+	LP5(66, ULONG , CodesetsConvertUTF8toUTF16, \
+		const UTF8 **, __p0, a0, \
+		const UTF8 *, __p1, a1, \
+		UTF16 **, __p2, a2, \
+		UTF16 *, __p3, a3, \
+		ULONG , __p4, d0, \
+		, CODESETS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#if defined(USE_INLINE_STDARG) && !defined(__STRICT_ANSI__)
+
+#include <stdarg.h>
+
+#define CodesetsSupported(...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsSupportedA((struct TagItem *)_tags);})
+
+#define CodesetsListRemove(...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsListRemoveA((struct TagItem *)_tags);})
+
+#define CodesetsListDelete(...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsListDeleteA((struct TagItem *)_tags);})
+
+#define CodesetsDecodeB64(...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsDecodeB64A((struct TagItem *)_tags);})
+
+#define CodesetsListCreate(...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsListCreateA((struct TagItem *)_tags);})
+
+#define CodesetsSetDefault(__p0, ...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsSetDefaultA(__p0, (struct TagItem *)_tags);})
+
+#define CodesetsStrLen(__p0, ...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsStrLenA(__p0, (struct TagItem *)_tags);})
+
+#define CodesetsConvertStr(...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsConvertStrA((struct TagItem *)_tags);})
+
+#define CodesetsUTF8Create(...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsUTF8CreateA((struct TagItem *)_tags);})
+
+#define CodesetsFree(__p0, ...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsFreeA(__p0, (struct TagItem *)_tags);})
+
+#define CodesetsFindBest(...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsFindBestA((struct TagItem *)_tags);})
+
+#define CodesetsEncodeB64(...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsEncodeB64A((struct TagItem *)_tags);})
+
+#define CodesetsFind(__p0, ...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsFindA(__p0, (struct TagItem *)_tags);})
+
+#define CodesetsFreeVecPooled(__p0, __p1, ...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsFreeVecPooledA(__p0, __p1, (struct TagItem *)_tags);})
+
+#define CodesetsUTF8ToStr(...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsUTF8ToStrA((struct TagItem *)_tags);})
+
+#define CodesetsListAdd(__p0, ...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	CodesetsListAddA(__p0, (struct TagItem *)_tags);})
+
 #endif
 
-#define CodesetsConvertUTF32toUTF16(sourceStart, sourceEnd, targetStart, targetEnd, flags) \
-	LP5(0x24, ULONG, CodesetsConvertUTF32toUTF16, const , sourceStart, a0, const , sourceEnd, a1, UTF16 **, targetStart, a2, UTF16 *, targetEnd, a3, ULONG, flags, d0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define CodesetsConvertUTF16toUTF32(sourceStart, sourceEnd, targetStart, targetEnd, flags) \
-	LP5(0x2a, ULONG, CodesetsConvertUTF16toUTF32, const , sourceStart, a0, const , sourceEnd, a1, UTF32 **, targetStart, a2, UTF32 *, targetEnd, a3, ULONG, flags, d0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define CodesetsConvertUTF16toUTF8(sourceStart, sourceEnd, targetStart, targetEnd, flags) \
-	LP5(0x30, ULONG, CodesetsConvertUTF16toUTF8, const , sourceStart, a0, const , sourceEnd, a1, UTF8 **, targetStart, a2, UTF8 *, targetEnd, a3, ULONG, flags, d0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define CodesetsIsLegalUTF8(source, length) \
-	LP2(0x36, BOOL, CodesetsIsLegalUTF8, const , source, a0, ULONG, length, d0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define CodesetsIsLegalUTF8Sequence(source, sourceEnd) \
-	LP2(0x3c, BOOL, CodesetsIsLegalUTF8Sequence, const , source, a0, const , sourceEnd, a1, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define CodesetsConvertUTF8toUTF16(sourceStart, sourceEnd, targetStart, targetEnd, flags) \
-	LP5(0x42, ULONG, CodesetsConvertUTF8toUTF16, const , sourceStart, a0, const , sourceEnd, a1, UTF16 **, targetStart, a2, UTF16 *, targetEnd, a3, ULONG, flags, d0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define CodesetsConvertUTF32toUTF8(sourceStart, sourceEnd, targetStart, targetEnd, flags) \
-	LP5(0x48, ULONG, CodesetsConvertUTF32toUTF8, const , sourceStart, a0, const , sourceEnd, a1, UTF8 **, targetStart, a2, UTF8 *, targetEnd, a3, ULONG, flags, d0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define CodesetsConvertUTF8toUTF32(sourceStart, sourceEnd, targetStart, targetEnd, flags) \
-	LP5(0x4e, ULONG, CodesetsConvertUTF8toUTF32, const , sourceStart, a0, const , sourceEnd, a1, UTF32 **, targetStart, a2, UTF32 *, targetEnd, a3, ULONG, flags, d0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define CodesetsSetDefaultA(name, attrs) \
-	LP2(0x54, struct codeset *, CodesetsSetDefaultA, STRPTR, name, a0, struct TagItem *, attrs, a1, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsSetDefault(name, tags...) \
-	({ULONG _tags[] = {tags}; CodesetsSetDefaultA((name), (struct TagItem *) _tags);})
-#endif
-
-#define CodesetsFreeA(obj, attrs) \
-	LP2NR(0x5a, CodesetsFreeA, APTR, obj, a0, struct TagItem *, attrs, a1, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsFree(obj, tags...) \
-	({ULONG _tags[] = {tags}; CodesetsFreeA((obj), (struct TagItem *) _tags);})
-#endif
-
-#define CodesetsSupportedA(attrs) \
-	LP1(0x60, STRPTR *, CodesetsSupportedA, struct TagItem *, attrs, a0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsSupported(tags...) \
-	({ULONG _tags[] = {tags}; CodesetsSupportedA((struct TagItem *) _tags);})
-#endif
-
-#define CodesetsFindA(name, attrs) \
-	LP2(0x66, struct codeset *, CodesetsFindA, STRPTR, name, a0, struct TagItem *, attrs, a1, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsFind(name, tags...) \
-	({ULONG _tags[] = {tags}; CodesetsFindA((name), (struct TagItem *) _tags);})
-#endif
-
-#define CodesetsFindBestA(attrs) \
-	LP1(0x6c, struct codeset *, CodesetsFindBestA, struct TagItem *, attrs, a0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsFindBest(tags...) \
-	({ULONG _tags[] = {tags}; CodesetsFindBestA((struct TagItem *) _tags);})
-#endif
-
-#define CodesetsUTF8Len(str) \
-	LP1(0x72, ULONG, CodesetsUTF8Len, const , str, a0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define CodesetsUTF8ToStrA(attrs) \
-	LP1(0x78, STRPTR, CodesetsUTF8ToStrA, struct TagItem *, attrs, a0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsUTF8ToStr(tags...) \
-	({ULONG _tags[] = {tags}; CodesetsUTF8ToStrA((struct TagItem *) _tags);})
-#endif
-
-#define CodesetsUTF8CreateA(attrs) \
-	LP1(0x7e, UTF8 *, CodesetsUTF8CreateA, struct TagItem *, attrs, a0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsUTF8Create(tags...) \
-	({ULONG _tags[] = {tags}; CodesetsUTF8CreateA((struct TagItem *) _tags);})
-#endif
-
-#define CodesetsEncodeB64A(attrs) \
-	LP1(0x84, ULONG, CodesetsEncodeB64A, struct TagItem *, attrs, a0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsEncodeB64(tags...) \
-	({ULONG _tags[] = {tags}; CodesetsEncodeB64A((struct TagItem *) _tags);})
-#endif
-
-#define CodesetsDecodeB64A(attrs) \
-	LP1(0x8a, ULONG, CodesetsDecodeB64A, struct TagItem *, attrs, a0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsDecodeB64(tags...) \
-	({ULONG _tags[] = {tags}; CodesetsDecodeB64A((struct TagItem *) _tags);})
-#endif
-
-#define CodesetsStrLenA(str, attrs) \
-	LP2(0x90, ULONG, CodesetsStrLenA, STRPTR, str, a0, struct TagItem *, attrs, a1, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsStrLen(str, tags...) \
-	({ULONG _tags[] = {tags}; CodesetsStrLenA((str), (struct TagItem *) _tags);})
-#endif
-
-#define CodesetsIsValidUTF8(str) \
-	LP1(0x96, BOOL, CodesetsIsValidUTF8, STRPTR, str, a0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define CodesetsFreeVecPooledA(pool, mem, attrs) \
-	LP3NR(0x9c, CodesetsFreeVecPooledA, APTR, pool, a0, APTR, mem, a1, struct TagItem *, attrs, a2, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsFreeVecPooled(pool, mem, tags...) \
-	({ULONG _tags[] = {tags}; CodesetsFreeVecPooledA((pool), (mem), (struct TagItem *) _tags);})
-#endif
-
-#define CodesetsConvertStrA(str) \
-	LP1(0xa2, STRPTR, CodesetsConvertStrA, struct TagItem *, str, a0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsConvertStr(tags...) \
-	({ULONG _tags[] = {tags}; CodesetsConvertStrA((struct TagItem *) _tags);})
-#endif
-
-#define CodesetsListCreateA(attrs) \
-	LP1(0xa8, struct codesetList *, CodesetsListCreateA, struct TagItem *, attrs, a0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsListCreate(tags...) \
-	({ULONG _tags[] = {tags}; CodesetsListCreateA((struct TagItem *) _tags);})
-#endif
-
-#define CodesetsListDeleteA(attrs) \
-	LP1(0xae, BOOL, CodesetsListDeleteA, struct TagItem *, attrs, a0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsListDelete(tags...) \
-	({ULONG _tags[] = {tags}; CodesetsListDeleteA((struct TagItem *) _tags);})
-#endif
-
-#define CodesetsListAddA(list, attrs) \
-	LP2(0xb4, BOOL, CodesetsListAddA, struct codesetList *, list, a0, struct TagItem *, attrs, a1, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsListAdd(list, tags...) \
-	({ULONG _tags[] = {tags}; CodesetsListAddA((list), (struct TagItem *) _tags);})
-#endif
-
-#define CodesetsListRemoveA(attrs) \
-	LP1(0xba, BOOL, CodesetsListRemoveA, struct TagItem *, attrs, a0, \
-	, CODESETS_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CodesetsListRemove(tags...) \
-	({ULONG _tags[] = {tags}; CodesetsListRemoveA((struct TagItem *) _tags);})
-#endif
-
-#endif /*  _PPCINLINE_CODESETS_H  */
+#endif /* !_PPCINLINE_CODESETS_H */

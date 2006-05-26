@@ -24,19 +24,9 @@
 	LP1(0x24, long, InitAmiSSLA, struct TagItem *, tagList, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
-#define InitAmiSSL(tags...) \
-	({ULONG _tags[] = {tags}; InitAmiSSLA((struct TagItem *) _tags);})
-#endif
-
 #define CleanupAmiSSLA(tagList) \
 	LP1(0x2a, long, CleanupAmiSSLA, struct TagItem *, tagList, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define CleanupAmiSSL(tags...) \
-	({ULONG _tags[] = {tags}; CleanupAmiSSLA((struct TagItem *) _tags);})
-#endif
 
 #define IsCipherAvailable(cipher) \
 	LP1(0x30, long, IsCipherAvailable, long, cipher, d0, \
@@ -1374,19 +1364,9 @@
 	LP3(0x82e, int, BIO_vprintf, BIO *, bio, a0, const char *, format, a1, long *, args, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
-#define BIO_printf(bio, format, tags...) \
-	({ULONG _tags[] = {tags}; BIO_vprintf((bio), (format), (long *) _tags);})
-#endif
-
 #define BIO_vsnprintf(buf, n, format, args) \
 	LP4(0x834, int, BIO_vsnprintf, char *, buf, a0, ULONG, n, d0, const char *, format, a1, long *, args, d1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define BIO_snprintf(buf, n, format, tags...) \
-	({ULONG _tags[] = {tags}; BIO_vsnprintf((buf), (n), (format), (long *) _tags);})
-#endif
 
 #define ERR_load_BIO_strings() \
 	LP0NR(0x83a, ERR_load_BIO_strings, \
@@ -2695,11 +2675,6 @@
 #define ERR_add_error_dataA(num, args) \
 	LP2NR(0xfde, ERR_add_error_dataA, LONG, num, d0, long *, args, d1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#ifndef NO_PPCINLINE_STDARG
-#define ERR_add_error_data(num, tags...) \
-	({ULONG _tags[] = {tags}; ERR_add_error_dataA((num), (long *) _tags);})
-#endif
 
 #define ERR_load_strings(lib, str) \
 	LP2NR(0xfe4, ERR_load_strings, LONG, lib, d0, ERR_STRING_DATA *, str, a0, \
@@ -10100,5 +10075,22 @@
 #define PROXY_CERT_INFO_EXTENSION_it() \
 	LP0(0x3b46, const ASN1_ITEM *, PROXY_CERT_INFO_EXTENSION_it, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
+
+#ifndef NO_PPCINLINE_STDARG
+#define InitAmiSSL(tags...) \
+	({ULONG _tags[] = {tags}; InitAmiSSLA((struct TagItem *) _tags);})
+
+#define CleanupAmiSSL(tags...) \
+	({ULONG _tags[] = {tags}; CleanupAmiSSLA((struct TagItem *) _tags);})
+
+#define BIO_printf(bio, format, tags...) \
+	({ULONG _tags[] = {tags}; BIO_vprintf((bio), (format), (long *) _tags);})
+
+#define BIO_snprintf(buf, n, format, tags...) \
+	({ULONG _tags[] = {tags}; BIO_vsnprintf((buf), (n), (format), (long *) _tags);})
+
+#define ERR_add_error_data(num, tags...) \
+	({ULONG _tags[] = {tags}; ERR_add_error_dataA((num), (long *) _tags);})
+#endif
 
 #endif /*  _PPCINLINE_AMISSL_H  */

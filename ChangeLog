@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-05-26  Gunther Nikl <gni@gecko.de>
+
+  * Updated fd files and MorphOS inline files.
+
 2006-05-25  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: removed some obsolete functions and did some preparations for
