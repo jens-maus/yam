@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-05-28  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MI.c, misc: finally implemented the RFC2231 compliant MIME parameter
+    encoding routine and changed the mail compose functions to use this new
+    function rather than encoding MIME parameters via RFC2047. This in fact
+    should now make YAM fully conform to RFC2231.
+
 2006-05-26  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_utilties.h, misc: replaced the redundant ISpace() macro by the more

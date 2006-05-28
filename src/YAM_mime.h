@@ -60,6 +60,7 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen);
 int urlencode(char *to, const char *from, unsigned int len);
 
 // rfc2231 encoding/decoding routines
+int rfc2231_encode_file(FILE *fh, const char *paramName, const char *str);
 int rfc2231_decode(char *attr, char *value, char **result, struct codeset **cs);
 
 // MimeType management

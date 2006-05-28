@@ -892,8 +892,8 @@ static char *ExtractNextParam(char *s, char **name, char **value)
   *name = NULL;
   *value = NULL;
 
-  RETURN(p);
-  return p;
+  RETURN(NULL);
+  return NULL;
 }
 
 ///

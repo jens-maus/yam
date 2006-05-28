@@ -2533,6 +2533,86 @@ int urlencode(char *to, const char *from, unsigned int len)
 ///
 
 /*** RFC 2231 MIME parameter encoding/decoding routines ***/
+/// rfc2231_encode_file()
+// Special encoding routines based on RFC2231 which defines how
+// content parameters in a header field should be encoded.
+// This function takes the actual file pointer, the string that
+// should be encoded and the actual parameter name for which we
+// encode 'str'.
+int rfc2231_encode_file(FILE *fh, const char *paramName, const char *str)
+{
+  int num = 0;
+  int outchars = 0;
+  char buf[SIZE_DEFAULT];
+  char *p = (char *)str;
+  char *optr = &buf[0];
+
+  ENTER();
+
+  // we loop until we have processed the whole
+  // input string
+  while(*p)
+  {
+    unsigned char c = (unsigned char)*p;
+
+    if(optr-buf == 0)
+    {
+      // if this is the very first parameter
+      // part, we go and add the charset as well but no language
+      // definition as we don't support that yet.
+      if(num == 0)
+        snprintf(buf, SIZE_DEFAULT, "\n\t%s*%d*=%s''", paramName, num++, strippedCharsetName(G->localCharset));
+      else
+        snprintf(buf, SIZE_DEFAULT, "\n\t%s*%d*=", paramName, num++);
+
+      optr = buf+strlen(buf);
+    }
+    else if(optr-buf > 78-3) // max 78 chars line length
+    {
+      if(c)
+        *optr++ = ';';
+
+      // output our buffer to the file pointer
+      if(fwrite(buf, optr-buf, 1, fh) == 0)
+        break;
+
+      outchars += optr-buf;
+      optr = &buf[0];
+
+      continue;
+    }
+
+    // encode the current char if it isn't an alphanumeric
+    // one
+    if(isalnum(c))
+      *optr++ = c;
+    else
+    {
+      // the char is not an alphanumeric character
+      // so we need to encode it like "%XX" where XX is
+      // the hexadecimal interpretation of it
+      *optr++ = '%';
+      *optr++ = basis_hex[(c >> 4) & 0xF];
+      *optr++ = basis_hex[c & 0xF];
+    }
+
+    // iterate forward
+    p++;
+  }
+
+  // if there is still something in out output buffer
+  // we output it now
+  if(optr-buf > 0)
+  {
+    fwrite(buf, optr-buf, 1, fh);
+    outchars += optr-buf;
+  }
+
+  RETURN(outchars);
+  return outchars;
+}
+
+///
 /// rfc2231_decode()
 // the main RFC 2231 decoding routine
 int rfc2231_decode(char *attr, char *value, char **result, struct codeset **srcCodeset)

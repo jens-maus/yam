@@ -81,7 +81,7 @@ static struct WritePart *BuildPartsList(int);
 static char *GetDateTime(void);
 static char *NewID(BOOL);
 static enum Encoding WhichEncodingForFile(char*, char*);
-static void HeaderFputs(char*, FILE*, BOOL);
+static void HeaderFputs(FILE *, const char *, const char *);
 static void EmitRcptField(FILE*, char*);
 static void EmitRcptHeader(FILE*, char*, char*);
 static void WriteContentTypeAndEncoding(FILE*, struct WritePart*);
@@ -388,21 +388,28 @@ void FreePartsList(struct WritePart *p)
 
 ///
 /// HeaderFputs
-//  Outputs the value of a header line directly to the FILE pointer and handle
-//  QP MIME encoding (RFC2047) and automatic charset translation.
-static void HeaderFputs(char *s, FILE *fh, BOOL param)
+// Outputs the value of a header line directly to the FILE pointer and handle
+// RFC2231 complicant MIME parameter encoding, but also RFC2047 compliant
+// MIME value encoding as well. As soon as "param" is set to NULL, RFC2047
+// encoding will be used, otherwise RFC2231-based one.
+static void HeaderFputs(FILE *fh, const char *s, const char *param)
 {
   BOOL doEncoding = FALSE;
-  char *c = s;
+  char *c = (char *)s;
+  int paramLen = 0;
 
   ENTER();
+
+  if(param)
+    paramLen = strlen(param);
 
   // let us now search for any non-ascii compliant character aswell
   // as converting each character with the translation table
   while(*c)
   {
-    // check for any non-ascii character
-    if(!doEncoding && (!isascii(*c) || iscntrl(*c)))
+    // check for any non-ascii character or
+    // if the string would be
+    if(!isascii(*c) || iscntrl(*c))
     {
       doEncoding = TRUE;
       break;
@@ -412,23 +419,46 @@ static void HeaderFputs(char *s, FILE *fh, BOOL param)
     c++;
   }
 
-  // now that we have converted the string and analyzed it we
-  // have to check whether we have to encode some words like proposed
-  // in RFC 2047
-  if(doEncoding ||
-     ((c = strstr(s, "=?")) && isascii(*(c+1)) &&
-      (c == s || isspace(*(c-1))))) // to find stray =? strings
+  // in case we want to process a MIME parameter we have to
+  // check other things as well.
+  if(doEncoding == FALSE)
   {
-     // now that we found out that the string contains non ASCII
-     // characters, lets encode them accoding to RFC 2047
-     rfc2047_encode_file(fh, s);
+    if(param != NULL)
+      doEncoding = (c-s+1+paramLen+6) > 78;
+    else
+    {
+      // we have to check for stray =? strings as we are
+      // going to consider a rfc2047 encoding
+      doEncoding = ((c = strstr(s, "=?")) && isascii(*(c+1)) &&
+                    (c == s || isspace(*(c-1))));
+
+    }
+
+  }
+
+
+  // if an encoding is required, we go and process it accordingly but
+  // have to check wheter we do rfc2047 or rfc2231 based encoding
+  if(doEncoding)
+  {
+    if(param)
+    {
+      // do the actual rfc2231 based MIME paramater encoding
+      rfc2231_encode_file(fh, param, s);
+    }
+    else
+    {
+      // do the actual rfc2047 based encoding
+      rfc2047_encode_file(fh, s);
+    }
   }
   else
   {
-     // there seems to be non "violating" characters in the string, so lets
-     // simply put it out to the FILE pointer without encoding some text
-     // according to RFC 2047 or RFC 2231
-     fputs(s, fh);
+    // there seems to be non "violating" characters in the string and
+    // the resulting string will also be not > 78 chars in case we
+    // have to encode a MIME parameter, so we go and putout the source
+    // string immediatel.y
+    fputs(s, fh);
   }
 
   LEAVE();
@@ -440,7 +470,7 @@ static void HeaderFputs(char *s, FILE *fh, BOOL param)
 void EmitHeader(FILE *fh, char *hdr, char *body)
 {
   fprintf(fh, "%s: ", hdr);
-  HeaderFputs(body, fh, FALSE);
+  HeaderFputs(fh, body, NULL);
   fputc('\n', fh);
 }
 
@@ -465,7 +495,7 @@ static void EmitRcptField(FILE *fh, char *body)
       if((next = MyStrChr(part, ',')))
         *next++ = '\0';
 
-      HeaderFputs(Trim(part), fh, FALSE);
+      HeaderFputs(fh, Trim(part), NULL);
 
       if((part = next))
         fputs(",\n\t", fh);
@@ -503,11 +533,10 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
   // as the "filename" parameter to the mail
   if((p = part->Name) && *p)
   {
-    fputs("; name=\"", fh);
-    HeaderFputs(p, fh, TRUE); // output and do rfc2231 encoding
-    fputs("\"\nContent-Disposition: attachment; filename=\"", fh);
-    HeaderFputs(p, fh, TRUE); // output and do rfc2231 encoding
-    fputc('"', fh);
+    fputc(';', fh);
+    HeaderFputs(fh, p, "name"); // output and do rfc2231 encoding
+    fputs("\nContent-Disposition: attachment;", fh);
+    HeaderFputs(fh, p, "filename"); // output and do rfc2231 encoding
   }
   fputc('\n', fh);
 
@@ -553,9 +582,7 @@ static void WR_WriteUIItem(FILE *fh, int *len, char *parameter, char *value)
     *len = l;
   }
 
-  fprintf(fh, " %s=\"", parameter);
-  HeaderFputs(value, fh, TRUE);
-  fputc('\"', fh);
+  HeaderFputs(fh, value, parameter);
 }
 
 ///
