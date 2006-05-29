@@ -1944,106 +1944,142 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 //  Converts textual date header into datestamp format
 static BOOL MA_ScanDate(struct Mail *mail, const char *date)
 {
-   int count = 0, day = 0, mon = 0, year = 0, hour = 0, min = 0, sec = 0;
-   char *tzone = "", *p, tdate[SIZE_SMALL], ttime[SIZE_SMALL];
-   struct DateTime dt;
-   struct DateStamp *ds = &dt.dat_Stamp;
+  int count = 0;
+  int day = 0;
+  int mon = 0;
+  int year = 0;
+  int hour = 0;
+  int min = 0;
+  int sec = 0;
+  char *s;
+  char tdate[SIZE_SMALL];
+  char ttime[SIZE_SMALL];
+  char tzone[SIZE_SMALL];
+  struct DateTime dt;
+  struct DateStamp *ds = &dt.dat_Stamp;
 
-   if((p = strchr(date, ',')))
-     p++;
-   else
-     p = (char *)date;
+  ENTER();
 
-   while(*p && isspace(*p))
-     p++;
+  if((s = strchr(date, ',')))
+    s++;
+  else
+    s = (char *)date;
 
-   while((p = strtok(p, " \t")))
-   {
-      switch(count)
+  // skip leading spaces
+  while(*s && isspace(*s))
+    s++;
+
+  while(*s)
+  {
+    char *e;
+
+    if((e = strpbrk(s, " |;,")) == NULL)
+      e = s+strlen(s);
+
+    switch(count)
+    {
+      // get the day
+      case 0:
       {
-         // get the day
-         case 0:
-         {
-            if(!isdigit(*p) || (day = atoi(p)) > 31)
-              return FALSE;
-         }
-         break;
-
-         // get the month
-         case 1:
-         {
-            for(mon = 1; mon <= 12; mon++)
-            {
-              if(strnicmp(p, months[mon-1], 3) == 0) break;
-            }
-
-            if(mon > 12)
-              return FALSE;
-         }
-         break;
-
-         // get the year
-         case 2:
-         {
-            year = atoi(p);
-         }
-         break;
-
-         // get the time values
-         case 3:
-         {
-            if(sscanf(p, "%d:%d:%d", &hour, &min, &sec) != 3)
-            {
-              if(sscanf (p, "%d:%d", &hour, &min) == 2)
-                sec = 0;
-              else
-                return FALSE;
-            }
-         }
-         break;
-
-         // get the time zone
-         case 4:
-         {
-            while (*p && (isspace(*p) || *p == '(')) p++;
-            tzone = p;
-         }
-         break;
+        if(!isdigit(*s) || (day = atoi(s)) > 31)
+        {
+          RETURN(FALSE);
+          return FALSE;
+        }
       }
+      break;
 
-      // if we iterated until 4 we can break out
-      if(count == 4) break;
+      // get the month
+      case 1:
+      {
+        for(mon = 1; mon <= 12; mon++)
+        {
+          if(strnicmp(s, months[mon-1], 3) == 0)
+            break;
+        }
 
-      count++;
-      p = NULL;
-   }
+        if(mon > 12)
+        {
+          RETURN(FALSE);
+          return FALSE;
+        }
+      }
+      break;
 
-   // then format a standard DateStamp string like string
-   // so that we can use StrToDate()
-   snprintf(tdate, sizeof(tdate), "%02d-%02d-%02d", mon, day, year%100);
-   snprintf(ttime, sizeof(ttime), "%02d:%02d:%02d", hour, min, sec);
-   dt.dat_Format  = FORMAT_USA;
-   dt.dat_Flags   = 0;
-   dt.dat_StrDate = tdate;
-   dt.dat_StrTime = ttime;
-   if(!StrToDate(&dt))
-     return FALSE;
+      // get the year
+      case 2:
+      {
+        year = atoi(s);
+      }
+      break;
 
-   // save the timezone
-   mail->tzone = TZtoMinutes(tzone);
+      // get the time values
+      case 3:
+      {
+        if(sscanf(s, "%d:%d:%d", &hour, &min, &sec) != 3)
+        {
+          if(sscanf(s, "%d:%d", &hour, &min) == 2)
+            sec = 0;
+          else
+          {
+            RETURN(FALSE);
+            return FALSE;
+          }
+        }
+      }
+      break;
 
-   // bring the date in relation to UTC
-   ds->ds_Minute -= mail->tzone;
+      // get the time zone
+      case 4:
+      {
+        while(*s && (isspace(*s) || *s == '('))
+          s++;
 
-   // we need to check the datestamp variable that it is still in it`s borders
-   // after the UTC correction
-   while(ds->ds_Minute < 0)     { ds->ds_Minute += 1440; ds->ds_Days--; }
-   while(ds->ds_Minute >= 1440) { ds->ds_Minute -= 1440; ds->ds_Days++; }
+        strlcpy(tzone, s, MIN(sizeof(tzone), (unsigned int)(e-s+1)));
+      }
+      break;
+    }
 
-   // now we do copy the datestamp stuff over the one from our mail
-   memcpy(&mail->Date, ds, sizeof(struct DateStamp));
+    // if we iterated until 4 we can break out
+    if(count == 4)
+      break;
 
-   return TRUE;
+    count++;
+
+    // set the next start to our last search
+    s = ++e;
+  }
+
+  // then format a standard DateStamp string like string
+  // so that we can use StrToDate()
+  snprintf(tdate, sizeof(tdate), "%02d-%02d-%02d", mon, day, year%100);
+  snprintf(ttime, sizeof(ttime), "%02d:%02d:%02d", hour, min, sec);
+  dt.dat_Format  = FORMAT_USA;
+  dt.dat_Flags   = 0;
+  dt.dat_StrDate = tdate;
+  dt.dat_StrTime = ttime;
+  if(!StrToDate(&dt))
+  {
+    RETURN(FALSE);
+    return FALSE;
+  }
+
+  // save the timezone
+  mail->tzone = TZtoMinutes(tzone);
+
+  // bring the date in relation to UTC
+  ds->ds_Minute -= mail->tzone;
+
+  // we need to check the datestamp variable that it is still in it`s borders
+  // after the UTC correction
+  while(ds->ds_Minute < 0)     { ds->ds_Minute += 1440; ds->ds_Days--; }
+  while(ds->ds_Minute >= 1440) { ds->ds_Minute -= 1440; ds->ds_Days++; }
+
+  // now we do copy the datestamp stuff over the one from our mail
+  memcpy(&mail->Date, ds, sizeof(struct DateStamp));
+
+  RETURN(TRUE);
+  return TRUE;
 }
 ///
 

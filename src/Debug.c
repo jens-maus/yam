@@ -60,12 +60,11 @@ void SetupDebug(void)
 
   if(GetVar("yamdebug", var, sizeof(var), 0) > 0)
   {
-    char *tok;
-    char *debug = var;
+    char *s = var;
 
     // static list of our debugging classes tokens.
     // in the yamdebug variable these classes always start with a @
-    static struct { char *token; unsigned long flag; } dbclasses[] =
+    static const struct { char *token; unsigned long flag; } dbclasses[] =
     {
       { "ctrace",  DBC_CTRACE   },
       { "report",  DBC_REPORT   },
@@ -78,7 +77,7 @@ void SetupDebug(void)
       { NULL,      0            }
     };
 
-    static struct { char *token; unsigned long flag; } dbflags[] =
+    static const struct { char *token; unsigned long flag; } dbflags[] =
     {
       { "always",   DBF_ALWAYS  },
       { "startup",  DBF_STARTUP },
@@ -101,21 +100,25 @@ void SetupDebug(void)
     };
 
     // we parse the env variable token-wise
-    while((tok = strtok(debug, ", ;")))
+    while(*s)
     {
       ULONG i;
+      char *e;
+
+      if((e = strpbrk(s, " ,;")) == NULL)
+        e = s+strlen(s);
 
       // check if the token is class definition or
       // just a flag definition
-      if(tok[0] == '@')
+      if(s[0] == '@')
       {
         // check if this call is a negation or not
-        if(tok[1] == '!')
+        if(s[1] == '!')
         {
           // search for the token and clear the flag
           for(i=0; dbclasses[i].token; i++)
           {
-            if(stricmp(tok+2, dbclasses[i].token) == 0)
+            if(strnicmp(&s[2], dbclasses[i].token, sizeof(dbclasses[i].token)) == 0)
             {
               kprintf("clear '%s' debug class flag.\n", dbclasses[i].token);
               CLEAR_FLAG(debug_classes, dbclasses[i].flag);
@@ -127,7 +130,7 @@ void SetupDebug(void)
           // search for the token and set the flag
           for(i=0; dbclasses[i].token; i++)
           {
-            if(stricmp(tok+1, dbclasses[i].token) == 0)
+            if(strnicmp(&s[1], dbclasses[i].token, sizeof(dbclasses[i].token)) == 0)
             {
               kprintf("set '%s' debug class flag\n", dbclasses[i].token);
               SET_FLAG(debug_classes, dbclasses[i].flag);
@@ -138,11 +141,11 @@ void SetupDebug(void)
       else
       {
         // check if this call is a negation or not
-        if(tok[1] == '!')
+        if(s[1] == '!')
         {
           for(i=0; dbflags[i].token; i++)
           {
-            if(stricmp(tok+1, dbflags[i].token) == 0)
+            if(strnicmp(&s[1], dbflags[i].token, sizeof(dbflags[i].token)) == 0)
             {
               kprintf("clear '%s' debug flag\n", dbflags[i].token);
               CLEAR_FLAG(debug_flags, dbflags[i].flag);
@@ -153,7 +156,7 @@ void SetupDebug(void)
         {
           // check if the token was "ansi" and if so enable the ANSI color
           // output
-          if(stricmp(tok, "ansi") == 0)
+          if(strnicmp(s, "ansi", 4) == 0)
           {
             kprintf("ansi output enabled\n");
             ansi_output = TRUE;
@@ -162,7 +165,7 @@ void SetupDebug(void)
           {
             for(i=0; dbflags[i].token; i++)
             {
-              if(stricmp(tok, dbflags[i].token) == 0)
+              if(strnicmp(s, dbflags[i].token, sizeof(dbflags[i].token)) == 0)
               {
                 kprintf("set '%s' debug flag\n", dbflags[i].token);
                 SET_FLAG(debug_flags, dbflags[i].flag);
@@ -172,7 +175,8 @@ void SetupDebug(void)
         }
       }
 
-      debug = NULL;
+      // set the next start to our last search
+      s = ++e;
     }
   }
 

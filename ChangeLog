@@ -6,6 +6,11 @@ $Id$
 
 2006-05-28  Jens Langner <Jens.Langner@light-speed.de>
 
+  * misc: replaced the strtok() and strtok_r() use wherever possible with
+    proper strpbrk() uses as strtok()/strtok_r() is known to be unsafe due
+    to the fact that it modifies the content of its first argument. Therefore
+    the use of strtok() is highly discouraged and it shouldn't be used
+    in future anymore.
   * YAM_MI.c, misc: finally implemented the RFC2231 compliant MIME parameter
     encoding routine and changed the mail compose functions to use this new
     function rather than encoding MIME parameters via RFC2047. This in fact

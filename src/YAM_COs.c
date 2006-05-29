@@ -986,55 +986,62 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "AutoColumnResize")) co->AutoColumnResize = Txt2Bool(value);
                else if (!stricmp(buffer, "SocketOptions"))
                {
+                  char *s = value;
+
                   // Now we have to identify the socket option line
                   // and we to that by tokenizing it
-                  char *tok = strtok(value, " ");
-                  while(tok)
+                  while(*s)
                   {
-                    if(stricmp(tok, "SO_KEEPALIVE") == 0)
+                    char *e;
+
+                    if((e = strpbrk(s, " |;,")) == NULL)
+                      e = s+strlen(s);
+
+                    if(strnicmp(s, "SO_KEEPALIVE", 12) == 0)
                     {
                       co->SocketOptions.KeepAlive = TRUE;
                     }
-                    else if(stricmp(tok, "TCP_NODELAY") == 0)
+                    else if(strnicmp(s, "TCP_NODELAY", 11) == 0)
                     {
                       co->SocketOptions.NoDelay = TRUE;
                     }
-                    else if(stricmp(tok, "IPTOS_LOWDELAY") == 0)
+                    else if(strnicmp(s, "IPTOS_LOWDELAY", 14) == 0)
                     {
                       co->SocketOptions.LowDelay = TRUE;
                     }
-                    else if(strnicmp(tok, "SO_SNDBUF", 9) == 0)
+                    else if(strnicmp(s, "SO_SNDBUF", 9) == 0)
                     {
-                      char *p = strchr(tok, '=');
+                      char *p = strchr(s, '=');
                       if(p) co->SocketOptions.SendBuffer = atoi(p+1);
                     }
-                    else if(strnicmp(tok, "SO_RCVBUF", 9) == 0)
+                    else if(strnicmp(s, "SO_RCVBUF", 9) == 0)
                     {
-                      char *p = strchr(tok, '=');
+                      char *p = strchr(s, '=');
                       if(p) co->SocketOptions.RecvBuffer = atoi(p+1);
                     }
-                    else if(strnicmp(tok, "SO_SNDLOWAT", 11) == 0)
+                    else if(strnicmp(s, "SO_SNDLOWAT", 11) == 0)
                     {
-                      char *p = strchr(tok, '=');
+                      char *p = strchr(s, '=');
                       if(p) co->SocketOptions.SendLowAt = atoi(p+1);
                     }
-                    else if(strnicmp(tok, "SO_RCVLOWAT", 11) == 0)
+                    else if(strnicmp(s, "SO_RCVLOWAT", 11) == 0)
                     {
-                      char *p = strchr(tok, '=');
+                      char *p = strchr(s, '=');
                       if(p) co->SocketOptions.RecvLowAt = atoi(p+1);
                     }
-                    else if(strnicmp(tok, "SO_SNDTIMEO", 11) == 0)
+                    else if(strnicmp(s, "SO_SNDTIMEO", 11) == 0)
                     {
-                      char *p = strchr(tok, '=');
+                      char *p = strchr(s, '=');
                       if(p) co->SocketOptions.SendTimeOut = atoi(p+1);
                     }
-                    else if(strnicmp(tok, "SO_RCVTIMEO", 11) == 0)
+                    else if(strnicmp(s, "SO_RCVTIMEO", 11) == 0)
                     {
-                      char *p = strchr(tok, '=');
+                      char *p = strchr(s, '=');
                       if(p) co->SocketOptions.RecvTimeOut = atoi(p+1);
                     }
 
-                    tok = strtok(NULL, " ");
+                    // set the next start to our last search
+                    s = ++e;
                   }
                }
                else if (!stricmp(buffer, "TRBufferSize")) co->TRBufferSize = atoi(value);

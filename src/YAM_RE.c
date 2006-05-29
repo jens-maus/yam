@@ -2038,10 +2038,13 @@ BOOL RE_DecodePart(struct Part *rp)
 
             if(MatchNoCase(rp->ContentType, curType->ContentType))
             {
-              char *extension = strtok(TrimStart(curType->Extension), " |;,");
+              char *s = TrimStart(curType->Extension);
+              char *e;
 
-              if(extension)
-                strlcpy(ext, extension, sizeof(ext));
+              if((e = strpbrk(s, " |;,")) == NULL)
+                e = s+strlen(s);
+
+              strlcpy(ext, s, MIN(sizeof(ext), (unsigned int)(e-s+1)));
 
               break;
             }

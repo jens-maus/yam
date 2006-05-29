@@ -4983,16 +4983,28 @@ static BOOL MatchExtension(char *fileext, char *extlist)
 
   ENTER();
 
-  while((extlist = strtok(extlist, " |;,")))
+  if(extlist)
   {
-    // now check if the extension matches
-    if(stricmp(extlist, fileext) == 0)
-    {
-      result = TRUE;
-      break;
-    }
+    char *s = extlist;
 
-    extlist = NULL;
+    // now we search for our delimiters step by step
+    while(*s)
+    {
+      char *e;
+
+      if((e = strpbrk(s, " |;,")) == NULL)
+        e = s+strlen(s);
+
+      // now check if the extension matches
+      if(strnicmp(s, fileext, e-s) == 0)
+      {
+        result = TRUE;
+        break;
+      }
+
+      // set the next start to our last search
+      s = ++e;
+    }
   }
 
   RETURN(result);
