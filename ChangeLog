@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-05-29  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c: fixed a bug in the recentyl revised MIME parameter encoding
+    where an unencoded parameter was outputted without any parameter name.
+
 2006-05-28  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: replaced the strtok() and strtok_r() use wherever possible with

@@ -452,6 +452,12 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param)
       rfc2047_encode_file(fh, s);
     }
   }
+  else if(param)
+  {
+    // output the parameter name right before
+    // the resulting parameter value
+    fprintf(fh, "\n\t%s=%s", param, s);
+  }
   else
   {
     // there seems to be non "violating" characters in the string and
