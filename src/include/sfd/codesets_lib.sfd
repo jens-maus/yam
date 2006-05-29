@@ -12,8 +12,8 @@ ULONG CodesetsConvertUTF16toUTF32(const  UTF16 **sourceStart, const UTF16 **sour
 	UTF32 *targetEnd, ULONG flags) (a0,a1,a2,a3,d0)
 ULONG CodesetsConvertUTF16toUTF8(const UTF16 **sourceStart, const UTF16 **sourceEnd, UTF8 **targetStart,
 	UTF8 *targetEnd, ULONG flags) (a0,a1,a2,a3,d0)
-ULONG CodesetsIsLegalUTF8(const UTF8 *source, ULONG length) (a0,d0)
-ULONG CodesetsIsLegalUTF8Sequence(const UTF8 *source, const UTF8 *sourceEnd) (a0,a1)
+BOOL CodesetsIsLegalUTF8(const UTF8 *source, ULONG length) (a0,d0)
+BOOL CodesetsIsLegalUTF8Sequence(const UTF8 *source, const UTF8 *sourceEnd) (a0,a1)
 ULONG CodesetsConvertUTF8toUTF16(const UTF8 **sourceStart, const UTF8 *sourceEnd, UTF16 **targetStart,
 	UTF16 *targetEnd, ULONG flags) (a0,a1,a2,a3,d0)
 ULONG CodesetsConvertUTF32toUTF8(const UTF32 **sourceStart, const UTF32 *sourceEnd, UTF8 **targetStart,
@@ -32,9 +32,9 @@ STRPTR * CodesetsSupported(Tag attrs, ...) (a0)
 struct codeset * CodesetsFindA(STRPTR name, struct TagItem * attrs) (a0,a1)
 ==varargs
 struct codeset * CodesetsFind(STRPTR name, Tag attrs, ...) (a0,a1)
-struct codeset * CodesetsFindBestA(STRPTR text, ULONG text_len, ULONG * error_ptr, struct TagItem * attrs) (a0,d0,a1,a2)
+struct codeset * CodesetsFindBestA(struct TagItem * attrs) (a0)
 ==varargs
-struct codeset * CodesetsFindBest(STRPTR text, ULONG text_len, ULONG * error_ptr, Tag attrs, ...) (a0,d0,a1,a2)
+struct codeset * CodesetsFindBest(Tag attrs, ...) (a0)
 ULONG CodesetsUTF8Len(const UTF8 *str) (a0)
 STRPTR CodesetsUTF8ToStrA(struct TagItem * attrs) (a0)
 ==varargs
@@ -51,11 +51,23 @@ ULONG CodesetsDecodeB64(Tag attrs, ...) (a0)
 ULONG CodesetsStrLenA(STRPTR str, struct TagItem * attrs) (a0,a1)
 ==varargs
 ULONG CodesetsStrLen(STRPTR str, Tag attrs, ...) (a0,a1)
-ULONG CodesetsIsValidUTF8(STRPTR str) (a0)
+BOOL CodesetsIsValidUTF8(STRPTR str) (a0)
 void CodesetsFreeVecPooledA(APTR pool, APTR mem, struct TagItem *attrs) (a0,a1,a2)
 ==varargs
 void CodesetsFreeVecPooled(APTR pool, APTR mem, Tag attrs, ...) (a0,a1,a2)
 STRPTR CodesetsConvertStrA(struct TagItem * attrs) (a0)
 ==varargs
 STRPTR CodesetsConvertStr(Tag attrs, ...) (a0)
+struct codesetList * CodesetsListCreateA(struct TagItem *attrs) (a0)
+==varargs
+struct codesetList * CodesetsListCreate(Tag attrs, ...) (a0)
+BOOL CodesetsListDeleteA(struct TagItem *attrs) (a0)
+==varargs
+BOOL CodesetsListDelete(Tag tag1, ...) (a0)
+BOOL CodesetsListAddA(struct codesetList *codesetsList, struct TagItem *attrs) (a0,a1)
+==varargs
+BOOL CodesetsListAdd(struct codesetList *codesetsList, Tag attrs, ...) (a0,a1)
+BOOL CodesetsListRemoveA(struct TagItem *attrs) (a0)
+==varargs
+BOOL CodesetsListRemove(Tag tag1, ...) (a0)
 ==end
