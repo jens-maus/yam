@@ -6,6 +6,8 @@ $Id$
 
 2006-05-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * icons/std/#?.toolbar: updated all toolbar images to latest PNG versions
+    supplied by Martin Merz.
   * ReadMailGroup.c: implemented a ContextMenu for the standard ReadMailGroup
     object which will be used for the embedded mail pane and which will
     implement all main mail related functionality a normal read window's menu
