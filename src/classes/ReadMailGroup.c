@@ -50,6 +50,9 @@ struct Data
   Object *mailTextObject;
   Object *textEditScrollbar;
   Object *attachmentGroup;
+  Object *contextMenu;
+
+  char menuTitle[SIZE_DEFAULT];
 
   struct MinList senderInfoHeaders;
 
@@ -64,6 +67,12 @@ struct Data
 #define hasUpdateOnlyFlag(v)        (isFlagSet((v), MUIF_ReadMailGroup_ReadMail_UpdateOnly))
 #define hasStatusChangeDelayFlag(v)  (isFlagSet((v), MUIF_ReadMailGroup_ReadMail_StatusChangeDelay))
 */
+
+/// Menu enumerations
+enum { RMEN_HNONE=100, RMEN_HSHORT, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIMAGE, RMEN_WRAPH,
+       RMEN_TSTYLE, RMEN_FFONT, RMEN_EXTKEY, RMEN_CHKSIG, RMEN_SAVEDEC, RMEN_DISPLAY, RMEN_DETACH, RMEN_CROP,
+       RMEN_PRINT, RMEN_SAVE, RMEN_REPLY, RMEN_FORWARD, RMEN_MOVE, RMEN_COPY, RMEN_DELETE };
+///
 
 /* Hooks */
 /// HeaderDisplayHook
@@ -175,6 +184,7 @@ OVERLOAD(OM_NEW)
   struct ReadMailData *rmData;
   LONG hgVertWeight = 5;
   LONG tgVertWeight = 100;
+  BOOL withContextMenu = FALSE;
 
   // get eventually set attributes first
   struct TagItem *tags = inittags(msg), *tag;
@@ -182,8 +192,9 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(HGVertWeight) : hgVertWeight = tag->ti_Data; break;
-      ATTR(TGVertWeight) : tgVertWeight = tag->ti_Data; break;
+      ATTR(HGVertWeight): hgVertWeight = tag->ti_Data; break;
+      ATTR(TGVertWeight): tgVertWeight = tag->ti_Data; break;
+      ATTR(ContextMenu) : withContextMenu = tag->ti_Data; break;
     }
   }
 
@@ -210,6 +221,7 @@ OVERLOAD(OM_NEW)
 
     MUIA_Group_Horiz, FALSE,
     GroupSpacing(1),
+    MUIA_ContextMenu, withContextMenu,
     Child, data->headerGroup = HGroup,
       GroupSpacing(0),
       MUIA_VertWeight, hgVertWeight,
@@ -218,12 +230,12 @@ OVERLOAD(OM_NEW)
         MUIA_NListview_NList, data->headerList = NListObject,
           InputListFrame,
           MUIA_NList_DisplayHook,          &HeaderDisplayHook,
-          MUIA_NList_Format,                "P=\033r\0338 W=-1 MIW=-1,",
+          MUIA_NList_Format,               "P=\033r\0338 W=-1 MIW=-1,",
           MUIA_NList_Input,                FALSE,
-          MUIA_NList_TypeSelect,            MUIV_NList_TypeSelect_Char,
+          MUIA_NList_TypeSelect,           MUIV_NList_TypeSelect_Char,
           MUIA_NList_DefaultObjectOnClick, FALSE,
-          MUIA_ContextMenu,                NULL,
-          MUIA_CycleChain,                  TRUE,
+          MUIA_ContextMenu,                FALSE,
+          MUIA_CycleChain,                 TRUE,
         End,
       End,
       Child, data->senderImageGroup = VGroup,
@@ -352,6 +364,112 @@ OVERLOAD(OM_SET)
   }
 
   return DoSuperMethodA(cl, obj, msg);
+}
+///
+/// OVERLOAD(MUIM_ContextMenuBuild)
+OVERLOAD(MUIM_ContextMenuBuild)
+{
+  GETDATA;
+  struct MUIP_ContextMenuBuild *mb = (struct MUIP_ContextMenuBuild *)msg;
+  struct ReadMailData *rmData = data->readMailData;
+
+  ENTER();
+
+  // dispose the old contextMenu if it still exists
+  if(data->contextMenu)
+  {
+    MUI_DisposeObject(data->contextMenu);
+    data->contextMenu = NULL;
+  }
+
+  // generate a context menu title now
+  if(_isinobject(data->headerGroup, mb->mx, mb->my))
+  {
+    strlcpy(data->menuTitle, GetStr(MSG_RE_HEADERDISPLAY), sizeof(data->menuTitle));
+
+    data->contextMenu = MenustripObject,
+      Child, MenuObjectT(data->menuTitle),
+        Child, MenuitemCheck(GetStr(MSG_RE_NoHeaders),    NULL, C->ShowHeader==HM_NOHEADER,    FALSE, 0x06, RMEN_HNONE),
+        Child, MenuitemCheck(GetStr(MSG_RE_ShortHeaders), NULL, C->ShowHeader==HM_SHORTHEADER, FALSE, 0x05, RMEN_HSHORT),
+        Child, MenuitemCheck(GetStr(MSG_RE_FullHeaders),  NULL, C->ShowHeader==HM_FULLHEADER,  FALSE, 0x03, RMEN_HFULL),
+        Child, MenuBarLabel,
+        Child, MenuitemCheck(GetStr(MSG_RE_NoSInfo),      NULL, C->ShowSenderInfo==SIM_OFF,    FALSE, 0xE0, RMEN_SNONE),
+        Child, MenuitemCheck(GetStr(MSG_RE_SInfo),        NULL, C->ShowSenderInfo==SIM_DATA,   FALSE, 0xD0, RMEN_SDATA),
+        Child, MenuitemCheck(GetStr(MSG_RE_SInfoImage),   NULL, C->ShowSenderInfo==SIM_ALL,    FALSE, 0x90, RMEN_SFULL),
+        Child, MenuitemCheck(GetStr(MSG_RE_SImageOnly),   NULL, C->ShowSenderInfo==SIM_IMAGE,  FALSE, 0x70, RMEN_SIMAGE),
+        Child, MenuBarLabel,
+        Child, MenuitemCheck(GetStr(MSG_RE_WrapHeader),   NULL, C->WrapHeader, TRUE, 0, RMEN_WRAPH),
+      End,
+    End;
+  }
+  else
+  {
+    if(rmData && rmData->mail)
+    {
+      snprintf(data->menuTitle, sizeof(data->menuTitle), "%s: ", GetStr(MSG_Subject));
+      strlcat(data->menuTitle, rmData->mail->Subject, 30-strlen(data->menuTitle) > 0 ? 30-strlen(data->menuTitle) : 0);
+      strlcat(data->menuTitle, "...", sizeof(data->menuTitle));
+    }
+    else
+      strlcpy(data->menuTitle, GetStr(MSG_RE_MAILDETAILS), sizeof(data->menuTitle));
+
+    data->contextMenu = MenustripObject,
+      Child, MenuObjectT(data->menuTitle),
+        Child, Menuitem(GetStr(MSG_MA_MReply),   NULL, TRUE, FALSE, RMEN_REPLY),
+        Child, Menuitem(GetStr(MSG_MA_MForward), NULL, TRUE, FALSE, RMEN_FORWARD),
+        Child, Menuitem(GetStr(MSG_MA_MMove),    NULL, TRUE, FALSE, RMEN_MOVE),
+        Child, Menuitem(GetStr(MSG_MA_MCopy),    NULL, TRUE, FALSE, RMEN_COPY),
+        Child, MenuBarLabel,
+        Child, Menuitem(GetStr(MSG_MA_Save),     NULL, TRUE, FALSE, RMEN_SAVE),
+        Child, Menuitem(GetStr(MSG_Print),       NULL, TRUE, FALSE, RMEN_PRINT),
+        Child, Menuitem(GetStr(MSG_MA_MDelete),  NULL, TRUE, TRUE,  RMEN_DELETE),
+        Child, MenuBarLabel,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Attachments),
+          Child, Menuitem(GetStr(MSG_RE_MDisplay),NULL, TRUE, FALSE, RMEN_DISPLAY),
+          Child, Menuitem(GetStr(MSG_RE_SaveAll), NULL, TRUE, FALSE, RMEN_DETACH),
+          Child, Menuitem(GetStr(MSG_MA_Crop),    NULL, TRUE, FALSE, RMEN_CROP),
+        End,
+        Child, MenuBarLabel,
+        Child, MenuObject, MUIA_Menu_Title, "PGP",
+          Child, Menuitem(GetStr(MSG_RE_ExtractKey),    NULL, TRUE, FALSE, RMEN_EXTKEY),
+          Child, Menuitem(GetStr(MSG_RE_SigCheck),      NULL, TRUE, FALSE, RMEN_CHKSIG),
+          Child, Menuitem(GetStr(MSG_RE_SaveDecrypted), NULL, TRUE, FALSE, RMEN_SAVEDEC),
+        End,
+        Child, MenuBarLabel,
+        Child, MenuitemCheck(GetStr(MSG_RE_Textstyles), NULL, C->UseTextstyles, TRUE, 0, RMEN_TSTYLE),
+        Child, MenuitemCheck(GetStr(MSG_RE_FixedFont),  NULL, C->FixedFontEdit, TRUE, 0, RMEN_FFONT),
+      End,
+    End;
+
+  }
+
+  RETURN((ULONG)data->contextMenu);
+  return (ULONG)data->contextMenu;
+}
+///
+/// OVERLOAD(MUIM_ContextMenuChoice)
+OVERLOAD(MUIM_ContextMenuChoice)
+{
+  GETDATA;
+  struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
+  struct ReadMailData *rmData = data->readMailData;
+  ULONG result = 0;
+
+  switch(xget(m->item, MUIA_UserData))
+  {
+    case RMEN_REPLY:    DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NEW_REPLY, 0); break;
+    case RMEN_FORWARD:  DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NEW_FORWARD, 0); break;
+    case RMEN_MOVE:     DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook); break;
+    case RMEN_COPY:     DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook); break;
+
+    #warning "finish ASAP!"
+
+    default:
+      result = DoSuperMethodA(cl, obj, msg);
+  }
+
+  RETURN(result);
+  return result;
 }
 ///
 

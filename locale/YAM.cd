@@ -5853,3 +5853,9 @@ put into the undo buffer.\n\
 \n\
 Therefore, the undo buffer is lost.
 ;
+MSG_RE_HEADERDISPLAY (1709//)
+Header Display
+;
+MSG_RE_MAILDETAILS (1710//)
+Mail Details
+;

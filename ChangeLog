@@ -6,6 +6,11 @@ $Id$
 
 2006-05-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ReadMailGroup.c: implemented a ContextMenu for the standard ReadMailGroup
+    object which will be used for the embedded mail pane and which will
+    implement all main mail related functionality a normal read window's menu
+    will also provide. Please note that not all functions are implemented yet
+    and that we need to rework some parts.
   * YAM_WR.c: fixed a bug in the recentyl revised MIME parameter encoding
     where an unencoded parameter was outputted without any parameter name.
 
