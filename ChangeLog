@@ -6,6 +6,8 @@ $Id$
 
 2006-05-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: bumped the minimum required version of codesets.library to 6.2 as
+    the new cyrillic auto-detection requires that version.
   * icons/std/#?.toolbar: updated all toolbar images to latest PNG versions
     supplied by Martin Merz.
   * ReadMailGroup.c: implemented a ContextMenu for the standard ReadMailGroup
