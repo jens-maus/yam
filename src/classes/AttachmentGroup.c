@@ -155,10 +155,10 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
           if(mailPart->Decoded == FALSE)
           {
             buf[0] = '~';
-            FormatSize(mailPart->Size, &buf[1]);
+            FormatSize(mailPart->Size, &buf[1], sizeof(buf)-1);
           }
           else
-            FormatSize(mailPart->Size, buf);
+            FormatSize(mailPart->Size, buf, sizeof(buf));
 
           sizeLabelLen = TextLength(&rp, buf, strlen(buf));
           largestLabelLen = MAX(sizeLabelLen, largestLabelLen);
@@ -402,10 +402,10 @@ OVERLOAD(MUIM_Draw)
               if(mailPart->Decoded == FALSE)
               {
                 buf[0] = '~';
-                FormatSize(mailPart->Size, &buf[1]);
+                FormatSize(mailPart->Size, &buf[1], sizeof(buf)-1);
               }
               else
-                FormatSize(mailPart->Size, buf);
+                FormatSize(mailPart->Size, buf, sizeof(buf));
 
               cnt = TextFit(_rp(obj), buf, strlen(buf), &te, NULL, 1, textSpaceWidth, textSpaceHeight);
               if(cnt > 0)

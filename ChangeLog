@@ -6,6 +6,10 @@ $Id$
 
 2006-05-30  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c, misc: replaced the very last uses of the plain sprintf() in our
+    FormatSize() function with calls to the buffer overflow safe snprintf().
+    Now YAM should be completly sprintf() free and therefore a bit more stable
+    against potential buffer overflows.
   * YAM_UT.c, misc: changed all DateStamp2String() and TimeVal2String()
     conversion routines to carry an additinal "dstlen" parameter which allows
     to use buffer overflow safe snprintf()-like functions.

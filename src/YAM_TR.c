@@ -4803,10 +4803,10 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
     if(C->WarnSize > 0 && mail->Size >= C->WarnSize*1024)
     {
       strlcpy(array[1] = dispsiz, MUIX_PH, sizeof(dispsiz));
-      FormatSize(mail->Size, dispsiz+strlen(dispsiz));
+      FormatSize(mail->Size, dispsiz+strlen(dispsiz), sizeof(dispsiz)-strlen(dispsiz));
     }
     else
-      FormatSize(mail->Size, array[1] = dispsiz);
+      FormatSize(mail->Size, array[1] = dispsiz, sizeof(dispsiz));
 
     // from address display
     array[2] = dispfro;

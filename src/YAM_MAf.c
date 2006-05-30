@@ -2168,7 +2168,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
               snprintf(msg->Array[3] = dispnew, sizeof(dispnew), "%d", entry->New);
 
             if(C->FolderCols & (1<<4) && entry->Size > 0)
-              FormatSize(entry->Size, msg->Array[4] = dispsiz);
+              FormatSize(entry->Size, msg->Array[4] = dispsiz, sizeof(dispsiz));
           }
           else
             msg->Preparse[0] = MUIX_I;

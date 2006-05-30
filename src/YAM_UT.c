@@ -230,11 +230,11 @@ HOOKPROTONH(AttachDspFunc, long, char **array, struct Part *entry)
         array[2] = dispsz;
 
         if(entry->Decoded)
-          FormatSize(entry->Size, dispsz);
+          FormatSize(entry->Size, dispsz, sizeof(dispsz));
         else
         {
           dispsz[0] = '~';
-          FormatSize(entry->Size, &dispsz[1]);
+          FormatSize(entry->Size, &dispsz[1], sizeof(dispsz)-1);
         }
       }
    }
@@ -2655,7 +2655,7 @@ BOOL DateStamp2RFCString(char *dst, int dstlen, struct DateStamp *date, int time
   // use utility's Amiga2Date for calculating the correct date/time
   Amiga2Date(seconds, &cd);
 
-  // use sprintf to format the RFC2822 conforming datetime string.
+  // use snprintf to format the RFC2822 conforming datetime string.
   snprintf(dst, dstlen, "%s, %02d %s %d %02d:%02d:%02d %+05d", wdays[cd.wday],
                                                                cd.mday,
                                                                months[cd.month-1],
@@ -3100,7 +3100,7 @@ int TZtoMinutes(char *tzone)
 ///
 /// FormatSize
 //  Displays large numbers using group separators
-void FormatSize(LONG size, char *buf)
+void FormatSize(LONG size, char *buf, int buflen)
 {
   char *dp = G->Locale ? (char *)G->Locale->loc_DecimalPoint : ".";
   double dsize = (double)size;
@@ -3118,10 +3118,10 @@ void FormatSize(LONG size, char *buf)
     */
     case SF_1PREC:
     {
-      if(size < KB)       sprintf(buf, "%ld B", size);
-      else if(size < MB)  sprintf(buf, "%.1f KB", dsize/KB);
-      else if(size < GB)  sprintf(buf, "%.1f MB", dsize/MB);
-      else                sprintf(buf, "%.1f GB", dsize/GB);
+      if(size < KB)       snprintf(buf, buflen, "%ld B", size);
+      else if(size < MB)  snprintf(buf, buflen, "%.1f KB", dsize/KB);
+      else if(size < GB)  snprintf(buf, buflen, "%.1f MB", dsize/MB);
+      else                snprintf(buf, buflen, "%.1f GB", dsize/GB);
 
       if((buf = strchr(buf, '.'))) *buf = *dp;
     }
@@ -3134,10 +3134,10 @@ void FormatSize(LONG size, char *buf)
     */
     case SF_2PREC:
     {
-      if(size < KB)       sprintf(buf, "%ld B", size);
-      else if(size < MB)  sprintf(buf, "%.2f KB", dsize/KB);
-      else if(size < GB)  sprintf(buf, "%.2f MB", dsize/MB);
-      else                sprintf(buf, "%.2f GB", dsize/GB);
+      if(size < KB)       snprintf(buf, buflen, "%ld B", size);
+      else if(size < MB)  snprintf(buf, buflen, "%.2f KB", dsize/KB);
+      else if(size < GB)  snprintf(buf, buflen, "%.2f MB", dsize/MB);
+      else                snprintf(buf, buflen, "%.2f GB", dsize/GB);
 
       if((buf = strchr(buf, '.'))) *buf = *dp;
     }
@@ -3150,10 +3150,10 @@ void FormatSize(LONG size, char *buf)
     */
     case SF_3PREC:
     {
-      if(size < KB)       sprintf(buf, "%ld B", size);
-      else if(size < MB)  sprintf(buf, "%.3f KB", dsize/KB);
-      else if(size < GB)  sprintf(buf, "%.3f MB", dsize/MB);
-      else                sprintf(buf, "%.3f GB", dsize/GB);
+      if(size < KB)       snprintf(buf, buflen, "%ld B", size);
+      else if(size < MB)  snprintf(buf, buflen, "%.3f KB", dsize/KB);
+      else if(size < GB)  snprintf(buf, buflen, "%.3f MB", dsize/MB);
+      else                snprintf(buf, buflen, "%.3f GB", dsize/GB);
 
       if((buf = strchr(buf, '.'))) *buf = *dp;
     }
@@ -3166,10 +3166,10 @@ void FormatSize(LONG size, char *buf)
     */
     case SF_MIXED:
     {
-      if(size < KB)       sprintf(buf, "%ld B", size);
-      else if(size < MB)  sprintf(buf, "%.1f KB", dsize/KB);
-      else if(size < GB)  sprintf(buf, "%.2f MB", dsize/MB);
-      else                sprintf(buf, "%.3f GB", dsize/GB);
+      if(size < KB)       snprintf(buf, buflen, "%ld B", size);
+      else if(size < MB)  snprintf(buf, buflen, "%.1f KB", dsize/KB);
+      else if(size < GB)  snprintf(buf, buflen, "%.2f MB", dsize/MB);
+      else                snprintf(buf, buflen, "%.3f GB", dsize/GB);
 
       if((buf = strchr(buf, '.'))) *buf = *dp;
     }
@@ -3187,10 +3187,10 @@ void FormatSize(LONG size, char *buf)
       // as we just split the size to another value, we redefine the KB/MB/GB values to base 10 variables
       enum { KB = 1000, MB = 1000 * 1000, GB = 1000 * 1000 * 1000 };
 
-      if(size < KB)      sprintf(buf, "%ld", size);
-      else if(size < MB) sprintf(buf, "%ld%s%03ld", size/KB, gs, size%KB);
-      else if(size < GB) sprintf(buf, "%ld%s%03ld%s%03ld", size/MB, gs, (size%MB)/KB, gs, size%KB);
-      else               sprintf(buf, "%ld%s%03ld%s%03ld%s%03ld", size/GB, gs, (size%GB)/MB, gs, (size%MB)/KB, gs, size%KB);
+      if(size < KB)      snprintf(buf, buflen, "%ld", size);
+      else if(size < MB) snprintf(buf, buflen, "%ld%s%03ld", size/KB, gs, size%KB);
+      else if(size < GB) snprintf(buf, buflen, "%ld%s%03ld%s%03ld", size/MB, gs, (size%MB)/KB, gs, size%KB);
+      else               snprintf(buf, buflen, "%ld%s%03ld%s%03ld%s%03ld", size/GB, gs, (size%GB)/MB, gs, (size%MB)/KB, gs, size%KB);
     }
     break;
   }

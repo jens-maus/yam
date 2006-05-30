@@ -309,7 +309,7 @@ long     FileTime(const char *filename);
 long     FileCount(char *directory);
 void     FinishUnpack(char *file);
 struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notext, struct Folder *exclude, APTR parent);
-void     FormatSize(LONG size, char *buffer);
+void     FormatSize(LONG size, char *buffer, int buflen);
 time_t   GetDateStamp(void);
 char *   GetFolderDir(struct Folder *fo);
 char *   GetLine(FILE *fh, char *buffer, int bufsize);
