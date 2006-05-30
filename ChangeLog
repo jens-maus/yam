@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-05-31  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c, YAM_UT.c, YAM_utilities.h: fixed bug #1496905 where the time
+    and date expand string (%t) did return the time/date relative in UTC
+    rather than in the actual timezone of the original message.
+
 2006-05-30  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c, misc: replaced the very last uses of the plain sprintf() in our

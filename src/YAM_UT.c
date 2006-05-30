@@ -107,7 +107,6 @@ int BusyLevel = 0;
 /* local protos */
 static int  Word_Length(const char *buf);
 static int  Quoting_Chars(char *buf, int len, char *text, int *post_spaces);
-static char *FileToBuffer(char *file);
 static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff);
 static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff);
 static BOOL UncompressMailFile(char *src, char *dst, char *passwd);
@@ -1957,7 +1956,7 @@ BOOL DeleteMailDir(char *dir, BOOL isroot)
 ///
 /// FileToBuffer
 //  Reads a complete file into memory
-static char *FileToBuffer(char *file)
+char *FileToBuffer(char *file)
 {
   FILE *fh;
   char *text = NULL;
@@ -2184,191 +2183,6 @@ ULONG CompressMsgID(char *msgid)
   // consists only of one cycle through the crc function we call it
   // with -1
   return msgid && *msgid ? CRC32(msgid, strlen(msgid), -1L) : 0;
-}
-///
-/// ExpandText
-//  Replaces variables with values
-char *ExpandText(char *src, struct ExpandTextData *etd)
-{
-   char buf[SIZE_ADDRESS];
-   char *p;
-   char *p2;
-   char *dst = AllocStrBuf(SIZE_DEFAULT);
-   struct DateStamp adate;
-
-   for(; *src; src++)
-   {
-      if(*src == '\\')
-      {
-         src++;
-         switch (*src)
-         {
-            case '\\':
-              dst = StrBufCat(dst, "\\");
-            break;
-
-            case 'n':
-              dst = StrBufCat(dst, "\n");
-            break;
-         }
-      }
-      else if(*src == '%' && etd)
-      {
-         if(!etd->OM_Date)
-           etd->OM_Date = DateStamp(&adate);
-
-         src++;
-         switch(*src)
-         {
-            case 'n':
-              dst = StrBufCat(dst, etd->OS_Name);
-            break;
-
-            case 'f':
-            {
-              strlcpy(buf, etd->OS_Name, sizeof(buf));
-
-              if((p = strchr(buf, ',')))
-                p = Trim(++p);
-              else
-              {
-                for(p = buf; *p && *p != ' '; p++);
-
-                *p = 0;
-                p = buf;
-              }
-              dst = StrBufCat(dst, p);
-            }
-            break;
-
-            case 's':
-              dst = StrBufCat(dst, etd->OM_Subject);
-            break;
-
-            case 'e':
-              dst = StrBufCat(dst, etd->OS_Address);
-            break;
-
-            case 'd':
-            {
-              char datstr[64];
-              DateStamp2String(datstr, sizeof(datstr), etd->OM_Date, DSS_DATE, TZC_NONE);
-              dst = StrBufCat(dst, datstr);
-            }
-            break;
-
-            case 't':
-            {
-              char datstr[64];
-              DateStamp2String(datstr, sizeof(datstr), etd->OM_Date, DSS_TIME, TZC_NONE);
-              dst = StrBufCat(dst, datstr);
-            }
-            break;
-
-            case 'z':
-            {
-              char tzone[6];
-              int convertedTimeZone = (etd->OM_TimeZone/60)*100 + (etd->OM_TimeZone%60);
-              snprintf(tzone, sizeof(tzone), "%+05d", convertedTimeZone);
-              dst = StrBufCat(dst, tzone);
-            }
-            break;
-
-            case 'w':
-            {
-              char datstr[64];
-              DateStamp2String(datstr, sizeof(datstr), etd->OM_Date, DSS_WEEKDAY, TZC_NONE);
-              dst = StrBufCat(dst, datstr);
-            }
-            break;
-
-            case 'c':
-            {
-              char datstr[64];
-              DateStamp2RFCString(datstr, sizeof(datstr), etd->OM_Date, etd->OM_TimeZone, TRUE);
-              dst = StrBufCat(dst, datstr);
-            }
-            break;
-
-            case 'm':
-              dst = StrBufCat(dst, etd->OM_MessageID);
-            break;
-
-            case 'r':
-              dst = StrBufCat(dst, etd->R_Name);
-            break;
-
-            case 'v':
-            {
-              strlcpy(buf, etd->R_Name, sizeof(buf));
-              if((p = strchr(buf, ',')))
-                p = Trim(++p);
-              else
-              {
-                for(p = buf; *p && *p != ' '; p++);
-
-                *p = 0;
-                p = buf;
-              }
-              dst = StrBufCat(dst, p);
-            }
-            break;
-
-            case 'a':
-              dst = StrBufCat(dst, etd->R_Address);
-            break;
-
-            case 'i':
-            {
-              strlcpy(buf, etd->OS_Name, sizeof(buf));
-
-              for(p = p2 = &buf[1]; *p; p++)
-              {
-                if(*p == ' ' && p[1] && p[1] != ' ')
-                  *p2++ = *++p;
-              }
-              *p2 = 0;
-              dst = StrBufCat(dst, buf);
-            }
-            break;
-
-            case 'j':
-            {
-              strlcpy(buf, etd->OS_Name, sizeof(buf));
-
-              for(p2 = &buf[1], p = &buf[strlen(buf)-1]; p > p2; p--)
-              {
-                if(p[-1] == ' ')
-                {
-                  *p2++ = *p;
-                  break;
-                }
-              }
-              *p2 = 0;
-              dst = StrBufCat(dst, buf);
-            }
-            break;
-
-            case 'h':
-            {
-              if((p = FileToBuffer(etd->HeaderFile)))
-              {
-                dst = StrBufCat(dst, p);
-                free(p);
-              }
-            }
-            break;
-         }
-      }
-      else
-      {
-         static char chr[2] = { 0,0 };
-         chr[0] = *src;
-         dst = StrBufCat(dst, chr);
-      }
-   }
-
-   return dst;
 }
 ///
 /// DescribeCT
@@ -2639,7 +2453,7 @@ BOOL DateStamp2RFCString(char *dst, int dstlen, struct DateStamp *date, int time
 
   // if the user wants to convert the datestamp we have to make sure we
   // substract/add the timeZone
-  if(convert)
+  if(convert && timeZone != 0)
   {
     date->ds_Minute += timeZone;
 

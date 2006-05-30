@@ -68,6 +68,20 @@
 
 #include "Debug.h"
 
+/* local structures */
+struct ExpandTextData
+{
+  char *            OS_Name;
+  char *            OS_Address;
+  char *            OM_Subject;
+  struct DateStamp  OM_Date;
+  int               OM_TimeZone;
+  char *            OM_MessageID;
+  char *            R_Name;
+  char *            R_Address;
+  char *            HeaderFile;
+};
+
 /* local protos */
 static ULONG MA_GetSortType(int);
 static struct Mail *MA_MoveCopySingle(struct Mail*, struct Folder*, struct Folder*, BOOL);
@@ -830,6 +844,190 @@ unsigned int MA_FromXStatusHeader(char *xstatusflags)
 }
 
 ///
+/// ExpandText
+//  Replaces variables with values
+static char *ExpandText(char *src, struct ExpandTextData *etd)
+{
+  char buf[SIZE_ADDRESS];
+  char *p;
+  char *p2;
+  char *dst = AllocStrBuf(SIZE_DEFAULT);
+
+  ENTER();
+
+  for(; *src; src++)
+  {
+    if(*src == '\\')
+    {
+      src++;
+      switch (*src)
+      {
+        case '\\':
+          dst = StrBufCat(dst, "\\");
+        break;
+
+        case 'n':
+          dst = StrBufCat(dst, "\n");
+        break;
+      }
+    }
+    else if(*src == '%' && etd)
+    {
+      src++;
+      switch(*src)
+      {
+        case 'n':
+          dst = StrBufCat(dst, etd->OS_Name);
+        break;
+
+        case 'f':
+        {
+          strlcpy(buf, etd->OS_Name, sizeof(buf));
+
+          if((p = strchr(buf, ',')))
+            p = Trim(++p);
+          else
+          {
+            for(p = buf; *p && *p != ' '; p++);
+
+            *p = 0;
+            p = buf;
+          }
+          dst = StrBufCat(dst, p);
+        }
+        break;
+
+        case 's':
+          dst = StrBufCat(dst, etd->OM_Subject);
+        break;
+
+        case 'e':
+          dst = StrBufCat(dst, etd->OS_Address);
+        break;
+
+        case 'd':
+        {
+          char datstr[64];
+          DateStamp2String(datstr, sizeof(datstr), &etd->OM_Date, DSS_DATE, TZC_NONE);
+          dst = StrBufCat(dst, datstr);
+        }
+        break;
+
+        case 't':
+        {
+          char datstr[64];
+          DateStamp2String(datstr, sizeof(datstr), &etd->OM_Date, DSS_TIME, TZC_NONE);
+          dst = StrBufCat(dst, datstr);
+        }
+        break;
+
+        case 'z':
+        {
+          char tzone[6];
+          int convertedTimeZone = (etd->OM_TimeZone/60)*100 + (etd->OM_TimeZone%60);
+          snprintf(tzone, sizeof(tzone), "%+05d", convertedTimeZone);
+          dst = StrBufCat(dst, tzone);
+        }
+        break;
+
+        case 'w':
+        {
+          char datstr[64];
+          DateStamp2String(datstr, sizeof(datstr), &etd->OM_Date, DSS_WEEKDAY, TZC_NONE);
+          dst = StrBufCat(dst, datstr);
+        }
+        break;
+
+        case 'c':
+        {
+          char datstr[64];
+          DateStamp2RFCString(datstr, sizeof(datstr), &etd->OM_Date, etd->OM_TimeZone, FALSE);
+          dst = StrBufCat(dst, datstr);
+        }
+        break;
+
+        case 'm':
+          dst = StrBufCat(dst, etd->OM_MessageID);
+        break;
+
+        case 'r':
+          dst = StrBufCat(dst, etd->R_Name);
+        break;
+
+        case 'v':
+        {
+          strlcpy(buf, etd->R_Name, sizeof(buf));
+          if((p = strchr(buf, ',')))
+            p = Trim(++p);
+          else
+          {
+            for(p = buf; *p && *p != ' '; p++);
+
+            *p = '\0';
+            p = buf;
+          }
+          dst = StrBufCat(dst, p);
+        }
+        break;
+
+        case 'a':
+          dst = StrBufCat(dst, etd->R_Address);
+        break;
+
+        case 'i':
+        {
+          strlcpy(buf, etd->OS_Name, sizeof(buf));
+
+          for(p = p2 = &buf[1]; *p; p++)
+          {
+            if(*p == ' ' && p[1] && p[1] != ' ')
+              *p2++ = *++p;
+          }
+          *p2 = '\0';
+          dst = StrBufCat(dst, buf);
+        }
+        break;
+
+        case 'j':
+        {
+          strlcpy(buf, etd->OS_Name, sizeof(buf));
+
+          for(p2 = &buf[1], p = &buf[strlen(buf)-1]; p > p2; p--)
+          {
+            if(p[-1] == ' ')
+            {
+              *p2++ = *p;
+              break;
+            }
+          }
+          *p2 = '\0';
+          dst = StrBufCat(dst, buf);
+        }
+        break;
+
+        case 'h':
+        {
+          if((p = FileToBuffer(etd->HeaderFile)))
+          {
+            dst = StrBufCat(dst, p);
+            free(p);
+          }
+        }
+        break;
+      }
+    }
+    else
+    {
+       static char chr[2] = { 0,0 };
+       chr[0] = *src;
+       dst = StrBufCat(dst, chr);
+    }
+  }
+
+  RETURN(dst);
+  return dst;
+}
+///
 
 /*** Main button functions ***/
 /// MA_ReadMessage
@@ -920,13 +1118,16 @@ static int MA_CmpDate(struct Mail **pentry1, struct Mail **pentry2)
 //  Inserts a phrase into the message text
 static void MA_InsertIntroText(FILE *fh, char *text, struct ExpandTextData *etd)
 {
-   if (*text)
-   {
-      char *sbuf;
-      sbuf = ExpandText(text, etd);
-      fprintf(fh, "%s\n", sbuf);
-      FreeStrBuf(sbuf);
-   }
+  ENTER();
+
+  if(*text)
+  {
+    char *sbuf = ExpandText(text, etd);
+    fprintf(fh, "%s\n", sbuf);
+    FreeStrBuf(sbuf);
+  }
+
+  LEAVE();
 }
 
 ///
@@ -944,21 +1145,51 @@ static void MA_EditorNotification(int winnum)
 //  Creates quote string by replacing variables with values
 static void MA_SetupQuoteString(struct WR_ClassData *wr, struct ExpandTextData *etd, struct Mail *mail)
 {
-   struct ExpandTextData l_etd;
-   char *sbuf;
-   if (!etd) etd = &l_etd;
-   etd->OS_Name      = mail ? (*(mail->From.RealName) ? mail->From.RealName : mail->From.Address) : "";
-   etd->OS_Address   = mail ? mail->From.Address : "";
-   etd->OM_Subject   = mail ? mail->Subject : "";
-   etd->OM_Date      = mail ? &(mail->Date) : &(G->StartDate);
-   etd->OM_TimeZone  = mail ? mail->tzone : C->TimeZone;
-   etd->R_Name       = "";
-   etd->R_Address    = "";
+  struct ExpandTextData l_etd;
+  char *sbuf;
 
-   sbuf = ExpandText(C->QuoteText, etd);
-   strlcpy(wr->QuoteText, TrimEnd(sbuf), sizeof(wr->QuoteText));
-   FreeStrBuf(sbuf);
-   strlcpy(wr->AltQuoteText, C->AltQuoteText, sizeof(wr->AltQuoteText));
+  ENTER();
+
+  if(!etd)
+    etd = &l_etd;
+
+  etd->OS_Name     = mail ? (*(mail->From.RealName) ? mail->From.RealName : mail->From.Address) : "";
+  etd->OS_Address  = mail ? mail->From.Address : "";
+  etd->OM_Subject  = mail ? mail->Subject : "";
+  etd->OM_TimeZone = mail ? mail->tzone : C->TimeZone;
+  etd->R_Name      = "";
+  etd->R_Address   = "";
+
+  // we have to copy the datestamp and eventually convert it
+  // according to the timezone
+  if(mail)
+  {
+    // the mail time is in UTC, so we have to convert it to the
+    // actual time of the mail as we don't do any conversion
+    // later on
+    memcpy(&etd->OM_Date, &mail->Date, sizeof(struct DateStamp));
+
+    if(mail->tzone != 0)
+    {
+      struct DateStamp *date = &etd->OM_Date;
+
+      date->ds_Minute += mail->tzone;
+
+      // we need to check the datestamp variable that it is still in it`s borders
+      // after adjustment
+      while(date->ds_Minute < 0)     { date->ds_Minute += 1440; date->ds_Days--; }
+      while(date->ds_Minute >= 1440) { date->ds_Minute -= 1440; date->ds_Days++; }
+    }
+  }
+  else
+    memcpy(&etd->OM_Date, &G->StartDate, sizeof(struct DateStamp));
+
+  sbuf = ExpandText(C->QuoteText, etd);
+  strlcpy(wr->QuoteText, TrimEnd(sbuf), sizeof(wr->QuoteText));
+  FreeStrBuf(sbuf);
+  strlcpy(wr->AltQuoteText, C->AltQuoteText, sizeof(wr->AltQuoteText));
+
+  LEAVE();
 }
 
 ///
@@ -1234,8 +1465,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
               return winnum;
             }
 
-            MA_SetupQuoteString(wr, &etd, mail);
-            etd.OM_TimeZone = email->Mail.tzone;
+            MA_SetupQuoteString(wr, &etd, &email->Mail);
             etd.OM_MessageID = email->MsgID;
             etd.R_Name = *mail->To.RealName ? mail->To.RealName : mail->To.Address;
             etd.R_Address = mail->To.Address;
@@ -1337,8 +1567,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
               return winnum;
             }
 
-            MA_SetupQuoteString(wr, &etd, mail);
-            etd.OM_TimeZone = email->Mail.tzone;
+            MA_SetupQuoteString(wr, &etd, &email->Mail);
             etd.OM_MessageID = email->MsgID;
 
             // If this mail already have a subject we are going to add a "Re:" to it.

@@ -64,19 +64,6 @@ struct Person
    char RealName[SIZE_REALNAME];
 };
 
-struct ExpandTextData
-{
-   char *            OS_Name;
-   char *            OS_Address;
-   char *            OM_Subject;
-   struct DateStamp *OM_Date;
-   int               OM_TimeZone;
-   char *            OM_MessageID;
-   char *            R_Name;
-   char *            R_Address;
-   char *            HeaderFile;
-};
-
 struct TempFile
 {
    FILE *FP;
@@ -296,11 +283,11 @@ BOOL     EditorToFile(Object *editor, char *file);
 char *   Encrypt(char *source);
 char *   GetRealPath(char *path);
 BOOL     ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef);
-char *   ExpandText(char *src, struct ExpandTextData *etd);
 void     ExtractAddress(char *line, struct Person *pe);
 BOOL     FileExists(char *filename);
 int      FileSize(char *filename);
 long     FileProtection(const char *filename);
+char *   FileToBuffer(char *file);
 BOOL     FileToEditor(char *file, Object *editor);
 int      FileType(char *filename);
 char *   FileComment(char *filename);
