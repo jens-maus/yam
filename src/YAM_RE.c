@@ -1783,10 +1783,30 @@ static void RE_UndoPart(struct Part *rp)
 //  Checks if part is PGP signed/encrypted or a MDN
 static int RE_RequiresSpecialHandling(struct Part *hrp)
 {
-   if (!stricmp(hrp->ContentType, "multipart/report") && !stricmp(hrp->CParRType, "disposition-notification")) return 1;
-   if (!stricmp(hrp->ContentType, "multipart/signed") && !stricmp(hrp->CParProt, "application/pgp-signature")) return 2;
-   if (!stricmp(hrp->ContentType, "multipart/encrypted") && !stricmp(hrp->CParProt, "application/pgp-encrypted")) return 3;
-   return 0;
+  int res = 0;
+  ENTER();
+
+  if(hrp->CParRType && !stricmp(hrp->ContentType, "multipart/report") &&
+                       !stricmp(hrp->CParRType, "disposition-notification"))
+  {
+    res = 1;
+  }
+  else if(hrp->CParProt)
+  {
+    if(!stricmp(hrp->ContentType, "multipart/signed") &&
+       !stricmp(hrp->CParProt, "application/pgp-signature"))
+    {
+      res = 2;
+    }
+    else if(!stricmp(hrp->ContentType, "multipart/encrypted") &&
+            !stricmp(hrp->CParProt, "application/pgp-encrypted"))
+    {
+      res = 3;
+    }
+  }
+
+  RETURN(res);
+  return res;
 }
 ///
 /// RE_SaveThisPart

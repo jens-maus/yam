@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-05-30  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c: fixed parts of bug #1497278 where certain messages caused YAM
+    to process a NULL pointer via strcmp(), causing an illegal access.
+
 2006-05-29  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: bumped the minimum required version of codesets.library to 6.2 as
