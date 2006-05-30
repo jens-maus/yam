@@ -240,7 +240,7 @@ HOOKPROTONHNONP(MA_SetMessageInfoFunc, void)
   {
     char datstr[64];
 
-    DateStamp2String(datstr, &mail->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+    DateStamp2String(datstr, sizeof(datstr), &mail->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
     SPrintF(sh = buffer, GetStr(MSG_MA_MessageInfo), mail->From.RealName,
                                                      mail->From.Address,
                                                      mail->To.RealName,

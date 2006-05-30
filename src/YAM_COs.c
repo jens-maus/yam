@@ -400,7 +400,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "\n[Update]\n");
       fprintf(fh, "UpdateInterval   = %d\n", co->UpdateInterval);
       fprintf(fh, "UpdateServer     = %s\n", co->UpdateServer);
-      TimeVal2String(buf, &co->LastUpdateCheck, DSS_USDATETIME, TZC_NONE);
+      TimeVal2String(buf, sizeof(buf), &co->LastUpdateCheck, DSS_USDATETIME, TZC_NONE);
       fprintf(fh, "LastUpdateCheck  = %s\n", buf);
       fprintf(fh, "LastUpdateStatus = %d\n", co->LastUpdateStatus);
 
@@ -1583,7 +1583,7 @@ void CO_SetConfig(void)
         {
           char buf[SIZE_DEFAULT];
 
-          TimeVal2String(buf, &C->LastUpdateCheck, DSS_DATETIME, TZC_NONE);
+          TimeVal2String(buf, sizeof(buf), &C->LastUpdateCheck, DSS_DATETIME, TZC_NONE);
           set(gui->TX_UPDATEDATE, MUIA_Text_Contents, buf);
         }
         else

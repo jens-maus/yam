@@ -775,7 +775,7 @@ HOOKPROTONHNONP(UpdateCheckFunc, void)
   {
     char buf[SIZE_DEFAULT];
 
-    TimeVal2String(buf, &C->LastUpdateCheck, DSS_DATETIME, TZC_NONE);
+    TimeVal2String(buf, sizeof(buf), &C->LastUpdateCheck, DSS_DATETIME, TZC_NONE);
     set(gui->TX_UPDATEDATE, MUIA_Text_Contents, buf);
   }
   else

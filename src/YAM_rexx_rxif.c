@@ -897,7 +897,7 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
             strlcpy(rd->rd.res.from = rd->from, BuildAddrName2(&mail->From), sizeof(rd->from));
             strlcpy(rd->rd.res.to = rd->to, BuildAddrName2(&mail->To), sizeof(rd->to));
             strlcpy(rd->rd.res.replyto = rd->replyto, BuildAddrName2(pe), sizeof(rd->replyto));
-            DateStamp2String(rd->rd.res.date = rd->date, &mail->Date, DSS_USDATETIME, TZC_LOCAL);
+            DateStamp2String(rd->rd.res.date = rd->date, sizeof(rd->date), &mail->Date, DSS_USDATETIME, TZC_LOCAL);
             rd->rd.res.subject = mail->Subject;
             rd->rd.res.size = &mail->Size;
             snprintf(rd->rd.res.msgid = rd->msgid, sizeof(rd->msgid), "%lX", mail->cMsgID);

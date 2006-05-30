@@ -220,9 +220,9 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
 //  Formats current date and time for Date header field
 static char *GetDateTime(void)
 {
-   static char dt[SIZE_DEFAULT];
-   DateStamp2RFCString(dt, NULL, C->TimeZone + (C->DaylightSaving ? 60 : 0), FALSE);
-   return dt;
+  static char dt[SIZE_DEFAULT];
+  DateStamp2RFCString(dt, sizeof(dt), NULL, C->TimeZone + (C->DaylightSaving ? 60 : 0), FALSE);
+  return dt;
 }
 
 ///

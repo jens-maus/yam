@@ -3143,7 +3143,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
                   BOOL inHeader = TRUE;
 
                   // printf out our leading "From " MBOX format line first
-                  DateStamp2String(datstr, &mail->Date, DSS_UNIXDATE, TZC_NONE);
+                  DateStamp2String(datstr, sizeof(datstr), &mail->Date, DSS_UNIXDATE, TZC_NONE);
                   fprintf(fh, "From %s %s", mail->From.Address, datstr);
 
                   // let us put out the Status: header field
@@ -4820,7 +4820,7 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
     *dispdate = '\0';
 
     if(mail->Date.ds_Days)
-      DateStamp2String(dispdate, &mail->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+      DateStamp2String(dispdate, sizeof(dispdate), &mail->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
   }
   else
   {

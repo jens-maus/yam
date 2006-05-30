@@ -6,6 +6,9 @@ $Id$
 
 2006-05-30  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c, misc: changed all DateStamp2String() and TimeVal2String()
+    conversion routines to carry an additinal "dstlen" parameter which allows
+    to use buffer overflow safe snprintf()-like functions.
   * YAM_RE.c: fixed parts of bug #1497278 where certain messages caused YAM
     to process a NULL pointer via strcmp(), causing an illegal access.
 

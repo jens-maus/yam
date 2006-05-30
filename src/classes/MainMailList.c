@@ -301,7 +301,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
       if((C->MessageCols & (1<<7) && entry->transDate.Seconds > 0) || searchWinHook)
       {
         static char datstr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
-        TimeVal2String(datstr, &entry->transDate, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+        TimeVal2String(datstr, sizeof(datstr), &entry->transDate, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
         array[7] = datstr;
       }
       else
@@ -310,7 +310,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
       if(C->MessageCols & (1<<4) || searchWinHook)
       {
         static char datstr[64];
-        DateStamp2String(datstr, &entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+        DateStamp2String(datstr, sizeof(datstr), &entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
         array[4] = datstr;
       }
 

@@ -390,7 +390,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
         if(!StrToDate(&(search->DT)))
         {
           char datstr[64];
-          DateStamp2String(datstr, NULL, DSS_DATE, TZC_NONE);
+          DateStamp2String(datstr, sizeof(datstr), NULL, DSS_DATE, TZC_NONE);
           ER_NewError(GetStr(MSG_ER_ErrorDateFormat), datstr);
 
           return FALSE;

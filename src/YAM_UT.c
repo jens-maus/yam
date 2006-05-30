@@ -2252,7 +2252,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
             case 'd':
             {
               char datstr[64];
-              DateStamp2String(datstr, etd->OM_Date, DSS_DATE, TZC_NONE);
+              DateStamp2String(datstr, sizeof(datstr), etd->OM_Date, DSS_DATE, TZC_NONE);
               dst = StrBufCat(dst, datstr);
             }
             break;
@@ -2260,7 +2260,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
             case 't':
             {
               char datstr[64];
-              DateStamp2String(datstr, etd->OM_Date, DSS_TIME, TZC_NONE);
+              DateStamp2String(datstr, sizeof(datstr), etd->OM_Date, DSS_TIME, TZC_NONE);
               dst = StrBufCat(dst, datstr);
             }
             break;
@@ -2277,7 +2277,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
             case 'w':
             {
               char datstr[64];
-              DateStamp2String(datstr, etd->OM_Date, DSS_WEEKDAY, TZC_NONE);
+              DateStamp2String(datstr, sizeof(datstr), etd->OM_Date, DSS_WEEKDAY, TZC_NONE);
               dst = StrBufCat(dst, datstr);
             }
             break;
@@ -2285,7 +2285,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
             case 'c':
             {
               char datstr[64];
-              DateStamp2RFCString(datstr, etd->OM_Date, etd->OM_TimeZone, TRUE);
+              DateStamp2RFCString(datstr, sizeof(datstr), etd->OM_Date, etd->OM_TimeZone, TRUE);
               dst = StrBufCat(dst, datstr);
             }
             break;
@@ -2507,113 +2507,126 @@ void DateStamp2TimeVal(const struct DateStamp *ds, struct TimeVal *tv, enum TZCo
 ///
 /// TimeVal2String
 //  Converts a timeval structure to a string with using DateStamp2String after a convert
-BOOL TimeVal2String(char *dst, const struct TimeVal *tv, enum DateStampType mode, enum TZConvert tzc)
+BOOL TimeVal2String(char *dst, int dstlen, const struct TimeVal *tv, enum DateStampType mode, enum TZConvert tzc)
 {
-   struct DateStamp ds;
+  struct DateStamp ds;
 
-   // convert the timeval into a datestamp
-   TimeVal2DateStamp(tv, &ds, TZC_NONE);
+  // convert the timeval into a datestamp
+  TimeVal2DateStamp(tv, &ds, TZC_NONE);
 
-   // then call the DateStamp2String() function to get the real string
-   return DateStamp2String(dst, &ds, mode, tzc);
+  // then call the DateStamp2String() function to get the real string
+  return DateStamp2String(dst, dstlen, &ds, mode, tzc);
 }
 ///
 /// DateStamp2String
 //  Converts a datestamp to a string. The caller have to make sure that the destination has
 //  at least 64 characters space.
-BOOL DateStamp2String(char *dst, struct DateStamp *date, enum DateStampType mode, enum TZConvert tzc)
+BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateStampType mode, enum TZConvert tzc)
 {
-   char datestr[64], timestr[64], daystr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
-   struct DateTime dt;
-   struct DateStamp dsnow;
+  char datestr[64], timestr[64], daystr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
+  struct DateTime dt;
+  struct DateStamp dsnow;
 
-   // if this argument is not set we get the actual time
-   if(!date)
-     date = DateStamp(&dsnow);
+  ENTER();
 
-   // now we fill the DateTime structure with the data for our request.
-   dt.dat_Stamp   = *date;
-   dt.dat_Format  = (mode == DSS_USDATETIME || mode == DSS_UNIXDATE) ? FORMAT_USA : FORMAT_DEF;
-   dt.dat_Flags   = 0; // perhaps later we can add Weekday substitution
-   dt.dat_StrDate = datestr;
-   dt.dat_StrTime = timestr;
-   dt.dat_StrDay  = daystr;
+  // if this argument is not set we get the actual time
+  if(!date)
+    date = DateStamp(&dsnow);
 
-   // now we check whether we have to convert the datestamp to a specific TZ or not
-   if(tzc != TZC_NONE)
-     DateStampTZConvert(&dt.dat_Stamp, tzc);
+  // now we fill the DateTime structure with the data for our request.
+  dt.dat_Stamp   = *date;
+  dt.dat_Format  = (mode == DSS_USDATETIME || mode == DSS_UNIXDATE) ? FORMAT_USA : FORMAT_DEF;
+  dt.dat_Flags   = 0; // perhaps later we can add Weekday substitution
+  dt.dat_StrDate = datestr;
+  dt.dat_StrTime = timestr;
+  dt.dat_StrDay  = daystr;
 
-   // lets terminate the strings as OS 3.1 is strange
-   datestr[31] = '\0';
-   timestr[31] = '\0';
-   daystr[31]  = '\0';
+  // now we check whether we have to convert the datestamp to a specific TZ or not
+  if(tzc != TZC_NONE)
+    DateStampTZConvert(&dt.dat_Stamp, tzc);
 
-   // lets convert the DateStamp now to a string
-   if(DateToStr(&dt) == FALSE)
-     return FALSE;
+  // lets terminate the strings as OS 3.1 is strange
+  datestr[31] = '\0';
+  timestr[31] = '\0';
+  daystr[31]  = '\0';
 
-   switch (mode)
-   {
-      case DSS_UNIXDATE:
-      {
-        int y = atoi(&datestr[6]);
+  // lets convert the DateStamp now to a string
+  if(DateToStr(&dt) == FALSE)
+  {
+    // clear the dststring as well
+    dst[0] = '\0';
 
-        // this is a Y2K patch
-        // if less then 8035 days has passed since 1.1.1978 then we are in the 20th century
-        if (date->ds_Days < 8035) y += 1900;
-        else y += 2000;
+    RETURN(FALSE);
+    return FALSE;
+  }
 
-        sprintf(dst, "%s %s %02d %s %d\n", wdays[dt.dat_Stamp.ds_Days%7], months[atoi(datestr)-1], atoi(&datestr[3]), timestr, y);
-      }
-      break;
+  switch(mode)
+  {
+    case DSS_UNIXDATE:
+    {
+      int y = atoi(&datestr[6]);
 
-      case DSS_DATETIME:
-      case DSS_USDATETIME:
-      {
-        sprintf(dst, "%s %s", datestr, timestr);
-      }
-      break;
+      // this is a Y2K patch
+      // if less then 8035 days has passed since 1.1.1978 then we are in the 20th century
+      if (date->ds_Days < 8035) y += 1900;
+      else y += 2000;
 
-      case DSS_WEEKDAY:
-      {
-        strcpy(dst, daystr);
-      }
-      break;
+      snprintf(dst, dstlen, "%s %s %02d %s %d\n", wdays[dt.dat_Stamp.ds_Days%7], months[atoi(datestr)-1], atoi(&datestr[3]), timestr, y);
+    }
+    break;
 
-      case DSS_DATE:
-      {
-        strcpy(dst, datestr);
-      }
-      break;
+    case DSS_DATETIME:
+    case DSS_USDATETIME:
+    {
+      snprintf(dst, dstlen, "%s %s", datestr, timestr);
+    }
+    break;
 
-      case DSS_TIME:
-      {
-        strcpy(dst, timestr);
-      }
-      break;
+    case DSS_WEEKDAY:
+    {
+      strlcpy(dst, daystr, dstlen);
+    }
+    break;
 
-      case DSS_BEAT:
-      case DSS_DATEBEAT:
-      {
-        // calculate the beat time
-        LONG beat = (((date->ds_Minute-C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
+    case DSS_DATE:
+    {
+      strlcpy(dst, datestr, dstlen);
+    }
+    break;
 
-        if(mode == DSS_DATEBEAT) sprintf(dst, "%s @%03ld", datestr, beat);
-        else                     sprintf(dst, "@%03ld", beat);
-      }
-      break;
-   }
+    case DSS_TIME:
+    {
+      strlcpy(dst, timestr, dstlen);
+    }
+    break;
 
-   return TRUE;
+    case DSS_BEAT:
+    case DSS_DATEBEAT:
+    {
+      // calculate the beat time
+      LONG beat = (((date->ds_Minute-C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
+
+      if(mode == DSS_DATEBEAT)
+        snprintf(dst, dstlen, "%s @%03ld", datestr, beat);
+      else
+        snprintf(dst, dstlen, "@%03ld", beat);
+    }
+    break;
+  }
+
+  RETURN(TRUE);
+  return TRUE;
 }
 ///
 /// DateStamp2RFCString()
-BOOL DateStamp2RFCString(char *dst, struct DateStamp *date, int timeZone, BOOL convert)
+BOOL DateStamp2RFCString(char *dst, int dstlen, struct DateStamp *date, int timeZone, BOOL convert)
 {
   struct DateStamp curDateStamp;
   struct ClockData cd;
   time_t seconds;
   int convertedTimeZone = (timeZone/60)*100 + (timeZone%60);
+
+  ENTER();
 
   // if date == NULL we get the current time/date
   if(date == NULL)
@@ -2643,15 +2656,16 @@ BOOL DateStamp2RFCString(char *dst, struct DateStamp *date, int timeZone, BOOL c
   Amiga2Date(seconds, &cd);
 
   // use sprintf to format the RFC2822 conforming datetime string.
-  sprintf(dst, "%s, %02d %s %d %02d:%02d:%02d %+05d", wdays[cd.wday],
-                                                      cd.mday,
-                                                      months[cd.month-1],
-                                                      cd.year,
-                                                      cd.hour,
-                                                      cd.min,
-                                                      cd.sec,
-                                                      convertedTimeZone);
+  snprintf(dst, dstlen, "%s, %02d %s %d %02d:%02d:%02d %+05d", wdays[cd.wday],
+                                                               cd.mday,
+                                                               months[cd.month-1],
+                                                               cd.year,
+                                                               cd.hour,
+                                                               cd.min,
+                                                               cd.sec,
+                                                               convertedTimeZone);
 
+  RETURN(TRUE);
   return TRUE;
 }
 ///
@@ -4549,7 +4563,7 @@ static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, vo
    if ((fh = fopen(logfile, "a")))
    {
       char datstr[64];
-      DateStamp2String(datstr, NULL, DSS_DATETIME, TZC_NONE);
+      DateStamp2String(datstr, sizeof(datstr), NULL, DSS_DATETIME, TZC_NONE);
       fprintf(fh, "%s [%02d] ", datstr, id);
       fprintf(fh, text, a1, a2, a3, a4);
       fprintf(fh, "\n");

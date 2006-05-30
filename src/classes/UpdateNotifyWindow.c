@@ -245,15 +245,14 @@ OVERLOAD(OM_SET)
           DoMethod(obj, MUIM_UpdateNotifyWindow_Clear);
         else
         {
-          struct DateStamp now;
-          char buf[SIZE_DEFAULT];
+          char buf[64];
 
           // setup some options and select the first entry at the top
           set(data->SkipInFutureCheckBox, MUIA_Selected, C->UpdateInterval == 0);
           set(data->ComponentList, MUIA_NList_Active, MUIV_NList_Active_Top);
 
           // we now specify the window title as we add the date/time to it
-          DateStamp2String(buf, DateStamp(&now), DSS_DATETIME, TZC_NONE);
+          DateStamp2String(buf, sizeof(buf), NULL, DSS_DATETIME, TZC_NONE);
           snprintf(data->WindowTitle, sizeof(data->WindowTitle), "%s - %s", GetStr(MSG_UPD_NOTIFICATION_WTITLE), buf);
           set(obj, MUIA_Window_Title, data->WindowTitle);
 

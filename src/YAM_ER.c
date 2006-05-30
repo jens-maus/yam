@@ -104,7 +104,7 @@ void STDARGS VARARGS68K ER_NewError(char *error, ...)
       }
 
       // get actual date as a string
-      DateStamp2String(datstr, NULL, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE);
+      DateStamp2String(datstr, sizeof(datstr), NULL, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE);
 
       // initialize the hook
       InitHook(&hook, putCharHook, buf);

@@ -186,7 +186,7 @@ static void TC_Start(enum TimerIO tio)
     #if defined(DEBUG)
     char dateString[64];
 
-    DateStamp2String(dateString, NULL, DSS_DATETIME, TZC_NONE);
+    DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
 
     D(DBF_TIMERIO, "timer[%ld]: started @ %s to finish in %ld'%ld secs", tio,
                                                                          dateString,
@@ -397,7 +397,7 @@ static void TC_Dispatcher(enum TimerIO tio)
   #if defined(DEBUG)
   char dateString[64];
 
-  DateStamp2String(dateString, NULL, DSS_DATETIME, TZC_NONE);
+  DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
   #endif
 
   ENTER();
@@ -2359,7 +2359,7 @@ int main(int argc, char **argv)
               #if defined(DEBUG)
               char dateString[64];
 
-              DateStamp2String(dateString, NULL, DSS_DATETIME, TZC_NONE);
+              DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
               D(DBF_TIMERIO, "timer signal received @ %s", dateString);
               #endif
 

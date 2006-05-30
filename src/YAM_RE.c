@@ -200,7 +200,7 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
       char *rcpt = BuildAddrName2(&mail->To);
       char *subj = mail->Subject;
 
-      DateStamp2String(date, &mail->Date, DSS_DATETIME, TZC_NONE);
+      DateStamp2String(date, sizeof(date), &mail->Date, DSS_DATETIME, TZC_NONE);
 
       p1->Filename = tf1->Filename;
       mode = isAutoActMDN(type) ? "automatically" : "in response to a user command";
