@@ -253,13 +253,26 @@ MakeStaticHook(AttachDspHook, AttachDspFunc);
 /// YAMMUIRequest
 // Own -secure- implementation of MUI_Request with collecting and reissueing ReturnIDs
 // We also have a wrapper #define MUI_Request for calling that function instead.
-LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, char *gadgets, char *format, ...)
+LONG STDARGS YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const char *tit, const char *gad, const char *format, ...)
 {
   LONG result = -1;
   char reqtxt[SIZE_LINE];
   Object *WI_YAMREQ;
   Object *BT_GROUP;
   va_list args;
+  char *title = NULL;
+  char *gadgets = NULL;
+
+  ENTER();
+
+  // as the title and gadgets are const, we provide
+  // local copies of those string to not risk and .rodata
+  // access.
+  if(tit)
+    title = strdup(tit);
+
+  if(gad)
+    gadgets = strdup(gad);
 
   // lets create the requester text
   va_start(args, format);
@@ -282,6 +295,13 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, c
       result = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
     }
 
+    if(title)
+      free(title);
+
+    if(gadgets)
+      free(gadgets);
+
+    RETURN(result);
     return result;
   }
 
@@ -320,7 +340,6 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, c
   {
     char *next, *token;
     int num_gads, i;
-    char fstring[] = "-capslock f1"; // by default we set it to "-capslock f1" so that we can press f1
     char *ul;
     BOOL active = FALSE, ie = TRUE;
     Object *BT_TEMP;
@@ -331,7 +350,8 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, c
     // first we count how many gadget we have to create
     for(num_gads=1, token=gadgets; *token; token++)
     {
-      if(*token == '|') num_gads++;
+      if(*token == '|')
+        num_gads++;
     }
 
     // prepare the BT_Group for the change.
@@ -340,9 +360,17 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, c
     // now we create the buttons for the requester
     for(token=gadgets, i=0; i < num_gads; i++, token=next)
     {
-      if((next = strchr(token, '|'))) *next++ = '\0';
-      if(*token == '*') { active=TRUE; token++; }
-      if((ul = strchr(token, '_'))) ie = FALSE;
+      if((next = strchr(token, '|')))
+        *next++ = '\0';
+
+      if(*token == '*')
+      {
+        active=TRUE;
+        token++;
+      }
+
+      if((ul = strchr(token, '_')))
+        ie = FALSE;
 
       // create the button object now.
       BT_TEMP = TextObject,
@@ -392,16 +420,26 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, c
 
         if(i<=8)
         {
-          fstring[11] = '0'+i+1;
+          // by default we set it to "-capslock f1" so that we can press f1
+          // even if the capslock is on.
+          static char fstring[13];
+
+          snprintf(fstring, sizeof(fstring), "-capslock f%d", i+1);
           DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, fstring, app, 2, MUIM_Application_ReturnID, i+1);
         }
 
         DoMethod(BT_TEMP, MUIM_Notify, MUIA_Pressed, FALSE, app, 2, MUIM_Application_ReturnID, i+1);
-        if(active) { set(WI_YAMREQ, MUIA_Window_ActiveObject, BT_TEMP); active = FALSE; }
+
+        if(active)
+        {
+          set(WI_YAMREQ, MUIA_Window_ActiveObject, BT_TEMP);
+          active = FALSE;
+        }
       }
 
       // write back what we took.
-      if(next) *(next-1) = '|';
+      if(next)
+        *(next-1) = '|';
     }
 
     // signal a ExitChange now
@@ -447,6 +485,13 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, c
     set(app, MUIA_Application_Sleep, FALSE);
   }
 
+  if(title)
+    free(title);
+
+  if(gadgets)
+    free(gadgets);
+
+  RETURN(result);
   return result;
 }
 ///
@@ -549,7 +594,7 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
       MUIA_Window_RefWindow, parent,
       MUIA_Window_LeftEdge,  MUIV_Window_LeftEdge_Centered,
       MUIA_Window_TopEdge,   MUIV_Window_TopEdge_Centered,
-      MUIA_Window_ID,        MAKE_ID('F','R','E','Q'),
+//    MUIA_Window_ID,         MAKE_ID('F','R','E','Q'), // we don`t supply a windowID or otherwise the upper three attributes don`t work.
       WindowContents, VGroup,
          Child, LLabel(body),
          Child, lv_folder = ListviewObject,

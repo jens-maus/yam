@@ -6,6 +6,10 @@ $Id$
 
 2006-06-01  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: fixed a .rodata access where the YAMMUIRequest() function
+    did modify the supplied title and gadget text for parsing it correctly.
+    Now it will use local buffers instead which should fix the crash bug
+    in case no catalog file at all is used.
   * Makefile.#?: modified the makefiles to always generate binaries with
     full symbol information (-g) embedded and just strip the debugging
     relevant symbols on link time via the 'strip' tool. This should make
