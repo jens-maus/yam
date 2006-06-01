@@ -467,6 +467,7 @@ _Visitar a homepage|*_Cancelar
 ;
 MSG_MA_ReplyReq
 A mensagem selecionada tem múltiplos destinatários.\n\
+\n\
 Deseja enviar a resposta...
 ;
 MSG_MA_ReplyReqOpt

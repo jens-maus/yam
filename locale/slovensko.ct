@@ -662,8 +662,11 @@ _Obi¹èi domaèo stran|*_Preklièi
 ; _Visit homepage|*_Cancel
 ;
 MSG_MA_ReplyReq
-Izbrano sporoèilo ima veè prejemnikov.\nAli ¾elite odgovor poslati...
+Izbrano sporoèilo ima veè prejemnikov.\n\
+\n\
+Ali ¾elite odgovor poslati...
 ; The selected message has multiple recipients.\n\
+; \n\
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt

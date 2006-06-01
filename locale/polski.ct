@@ -663,8 +663,11 @@ _Odwiedú stronë domowâ|*Ponie_chaj
 ; _Visit homepage|*_Cancel
 ;
 MSG_MA_ReplyReq
-Wybrana wiadomoôê ma wielu odbiorców.\n Czy chcesz wysîaê odpowiedú...
+Wybrana wiadomoôê ma wielu odbiorców.\n\
+\n\
+Czy chcesz wysîaê odpowiedú...
 ; The selected message has multiple recipients.\n\
+; \n\
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt

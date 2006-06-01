@@ -695,6 +695,7 @@ _На домашнюю страницу|*_Отмена
 ;
 MSG_MA_ReplyReq
 Это сообщение содержит несколько получателей.\n\
+\n\
 Кому Вы хотите отправить ответ?
 ;The selected message has multiple recipients.
 ;Do you want to send the reply...

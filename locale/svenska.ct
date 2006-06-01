@@ -554,7 +554,9 @@ Mappen '%s' är skyddad.\nAnge lösenord för att komma åt den:
 ;#DEF Folder '%s' is a protected folder.\nPlease enter the password to unlock it:
 ;#SET (144//)
 MSG_MA_ReplyReq
-Brevet har flera mottagare.\nVill du skicka svaret...
+Brevet har flera mottagare.\n\
+\n\
+Vill du skicka svaret...
 ;#DEF The selected message has multiple recipients.\nDo you want to send the reply...
 ;#SET (149//)
 MSG_MA_ReplyReqOpt

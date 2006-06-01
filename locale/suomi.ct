@@ -701,7 +701,9 @@ _Vieraile kotisivulla|*_Peru
 ; _Visit homepage|*_Cancel
 ;
 MSG_MA_ReplyReq
-Valitulla viestill‰ on useita vastaanottajia.\nHaluatko l‰hett‰‰ vastauksen...
+Valitulla viestill‰ on useita vastaanottajia.\n\
+\n\
+Haluatko l‰hett‰‰ vastauksen...
 ; The selected message has multiple recipients.\nDo you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt

@@ -624,12 +624,18 @@ _Besuche Homepage|*_Abbrechen
 ; _Visit homepage|*_Cancel
 ;
 MSG_MA_ReplyReq
-Die Nachricht hat mehrere Empfänger.\nAntwort senden...
+Die Nachricht hat mehrere Empfänger.\n\
+\n\
+Antwort senden...
 ; The selected message has multiple recipients.\n\
+; \n\
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-*an den\nAb_sender|...an den Absender _und\nalle Empfänger|...an die\n_Empfänger|_Abbrechen
+*an den\n\
+Ab_sender|...an den Absender _und\n\
+alle Empfänger|...an die\n\
+_Empfänger|_Abbrechen
 ; *...to the\n\
 ; _sender|...to the sender and\n\
 ; _all recipients|...to the\n\

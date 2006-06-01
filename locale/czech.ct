@@ -669,8 +669,10 @@ Pêejít na domo_vskou stránku|*_Zruîit
 ;
 MSG_MA_ReplyReq
 Vybraná zpráva má více pêíjemcû.\n\
+\n\
 Chcete odeslat odpovëð...
 ; The selected message has multiple recipients.\n\
+; \n\
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt

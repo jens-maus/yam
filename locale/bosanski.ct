@@ -713,8 +713,11 @@ _Posjeti stranicu|*O_dustani
 ; _Visit homepage|*_Cancel
 ;
 MSG_MA_ReplyReq
-Izabrana poruka ima vise primalaca.\nZelis li odgovoriti...
+Izabrana poruka ima vise primalaca.\n\
+\n\
+Zelis li odgovoriti...
 ; The selected message has multiple recipients.\n\
+; \n\
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt

@@ -668,8 +668,10 @@ _Visitar página web|*_Cancelar
 ;
 MSG_MA_ReplyReq
 El mensaje seleccionado tiene varios destinatarios.\n\
+\n\
 ¿A quién desea enviar la respuesta?
 ; The selected message has multiple recipients.\n\
+; \n\
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt

@@ -4,7 +4,7 @@
 ## chunk AUTH Luca Longone
 ;
 ; italiano.ct - YAM 2.5 catalog translation file
-; $Id:$
+; $Id$
 ;
 ;
 MSG_Folder
@@ -443,6 +443,7 @@ _Visita l'homepage|*_Annulla
 ;
 MSG_MA_ReplyReq
 Il messaggio selezionato ha destinatari multipli.\n\
+\n\
 Vuoi mandare la risposta...
 ;
 MSG_MA_ReplyReqOpt

@@ -717,8 +717,10 @@ _Sayfaya Git|*_Vazgeç
 ;
 MSG_MA_ReplyReq
 Seçilen mesajýn çoklu alýcýsý var.\n\
+\n\
 Cevabýnýzý...
 ; The selected message has multiple recipients.\n\
+; \n\
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt

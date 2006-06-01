@@ -664,7 +664,9 @@ Látogasd meg a honlapot|*Mégse
 ; _Visit homepage|*_Cancel
 ;
 MSG_MA_ReplyReq
-A kiválasztott üzenetnek több címzettje van.\nEl akarod küldeni a választ...
+A kiválasztott üzenetnek több címzettje van.\n\
+\n\
+El akarod küldeni a választ...
 ; The selected message has multiple recipients.\n\
 ; Do you want to send the reply...
 ;

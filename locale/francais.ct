@@ -624,8 +624,10 @@ Entrez le mot de passe pour y accéder :
 ;
 MSG_MA_ReplyReq
 Ce message à de multiple destinataires.\n\
+\n\
 Vous voulez envoyer la réponse...
 ; The selected message has multiple recipients.\n\
+; \n\
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt

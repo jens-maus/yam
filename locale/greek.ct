@@ -602,7 +602,9 @@ _Επίσκεψη ιστοσελίδας|*_¶κυρο
 ;_Visit homepage|*_Cancel
 ;
 MSG_MA_ReplyReq
-Το επιλεγμένο μήνυμα έχει πολλαπλούς παραλήπτες.\nΘέλετε να στείλετε την απάντηση...
+Το επιλεγμένο μήνυμα έχει πολλαπλούς παραλήπτες.\n\
+\n\
+Θέλετε να στείλετε την απάντηση...
 ;The selected message has multiple recipients.\nDo you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
