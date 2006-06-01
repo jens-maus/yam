@@ -3685,11 +3685,6 @@ _Close window
 ;
 ; Module ER - Error Messages
 ;
-MSG_ER_ErrorTTable (1099//)
-Couldn't open translation table '%s'\n\
-(non existent or wrong format).
-; FILENAME
-;
 MSG_ER_CantCreateFile (1100//)
 Couldn't write to file '%s'.\n\
 \n\
