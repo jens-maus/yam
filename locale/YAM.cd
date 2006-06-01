@@ -553,9 +553,6 @@ Enter a new subject:
 MSG_MA_All (169//)
 All
 ;
-MSG_MA_Cancel (170//)
-\ebCancel
-;
 MSG_MA_TitleStatus (171//)
 Status
 ;

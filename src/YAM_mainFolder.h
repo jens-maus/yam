@@ -84,7 +84,6 @@ struct ExtendedMail
 extern struct Hook MA_ChangeFolderHook;
 extern struct Hook MA_FlushIndexHook;
 extern struct Hook MA_LV_FDspFuncHook;
-extern struct Hook PO_InitFolderListHook;
 
 void  MA_ChangeFolder(struct Folder *folder, BOOL set_active);
 void  MA_ExpireIndex(struct Folder *folder);

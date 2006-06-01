@@ -2084,26 +2084,6 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
 ///
 
 /*** Hooks ***/
-/// PO_InitFolderList
-//  Creates a popup list of all folders
-HOOKPROTONHNP(PO_InitFolderList, long, Object *pop)
-{
-   int i;
-   struct Folder **flist;
-
-   DoMethod(pop, MUIM_List_Clear);
-   DoMethod(pop, MUIM_List_InsertSingle, GetStr(MSG_MA_Cancel), MUIV_List_Insert_Bottom);
-   if ((flist = FO_CreateList()))
-   {
-      for (i = 1; i <= (int)*flist; i++) if (flist[i]->Type != FT_GROUP)
-         DoMethod(pop, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
-      free(flist);
-   }
-   return TRUE;
-}
-MakeHook(PO_InitFolderListHook, PO_InitFolderList);
-
-///
 /// MA_LV_FDspFunc
 //  Folder listview display hook
 HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)

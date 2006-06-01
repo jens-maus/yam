@@ -70,13 +70,62 @@ static Object *MakeStaticCheck(void);
 ***************************************************************************/
 
 /*** Hooks ***/
+/// PO_InitFolderList
+//  Creates a popup list of all folders
+HOOKPROTONH(PO_InitFolderList, BOOL, Object *pop, Object *str)
+{
+  struct Folder **flist;
+  char *s;
+
+  ENTER();
+
+  // get the currently set string
+  s = (char *)xget(str, MUIA_Text_Contents);
+
+  DoMethod(pop, MUIM_List_Clear);
+
+  if((flist = FO_CreateList()))
+  {
+    int i;
+
+    for(i=1; i <= (int)*flist; i++)
+    {
+      if(flist[i]->Type != FT_GROUP)
+      {
+        DoMethod(pop, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
+
+        // now we check wheter we make that item active or not.
+        if(s && stricmp(flist[i]->Name, s) == 0)
+        {
+          set(pop, MUIA_List_Active, i-1);
+          s = NULL;
+        }
+      }
+    }
+
+    free(flist);
+  }
+
+  RETURN(TRUE);
+  return TRUE;
+}
+MakeStaticHook(PO_InitFolderListHook, PO_InitFolderList);
+
+///
 /// PO_List2TextFunc
 //  Copies listview selection to text gadget
 HOOKPROTONH(PO_List2TextFunc, void, Object *list, Object *text)
 {
-   char *selection;
-   DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &selection);
-   if (selection) if (strcmp(selection, GetStr(MSG_MA_Cancel))) set(text, MUIA_Text_Contents, selection);
+  char *selection = NULL;
+
+  ENTER();
+
+  DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &selection);
+
+  if(selection)
+    set(text, MUIA_Text_Contents, selection);
+
+  LEAVE();
 }
 MakeStaticHook(PO_List2TextHook, PO_List2TextFunc);
 
@@ -967,7 +1016,6 @@ Object *CO_Page0(struct CO_ClassData *data)
                 MUIA_Weight,        100,
               End,
               Child, TextObject,
-                MUIA_Text_PreParse, "",
                 MUIA_Text_Contents, GetStr(MSG_CO_FIRSTSTEPS_SUMMARY),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
@@ -1044,7 +1092,6 @@ Object *CO_Page1(struct CO_ClassData *data)
                 MUIA_Weight,        100,
               End,
               Child, TextObject,
-                MUIA_Text_PreParse, "",
                 MUIA_Text_Contents, GetStr(MSG_CO_TCPIP_SUMMARY),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
@@ -1217,7 +1264,6 @@ Object *CO_Page2(struct CO_ClassData *data)
                 MUIA_Weight,        100,
               End,
               Child, TextObject,
-                MUIA_Text_PreParse, "",
                 MUIA_Text_Contents, GetStr(MSG_CO_NEWMAIL_SUMMARY),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
@@ -1341,7 +1387,6 @@ Object *CO_Page3(struct CO_ClassData *data)
                 MUIA_Weight,        100,
               End,
               Child, TextObject,
-                MUIA_Text_PreParse, "",
                 MUIA_Text_Contents, GetStr(MSG_CO_FILTER_SUMMARY),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
@@ -1452,11 +1497,16 @@ Object *CO_Page3(struct CO_ClassData *data)
                               TextFrame,
                            End,
                            MUIA_Popstring_Button,bt_moveto = PopButton(MUII_PopUp),
-                           MUIA_Popobject_StrObjHook,&PO_InitFolderListHook,
-                           MUIA_Popobject_ObjStrHook,&PO_List2TextHook,
-                           MUIA_Popobject_WindowHook,&PO_WindowHook,
+                           MUIA_Popobject_StrObjHook, &PO_InitFolderListHook,
+                           MUIA_Popobject_ObjStrHook, &PO_List2TextHook,
+                           MUIA_Popobject_WindowHook, &PO_WindowHook,
                            MUIA_Popobject_Object, data->GUI.LV_MOVETO = ListviewObject,
-                              MUIA_Listview_List, ListObject, InputListFrame, End,
+                              MUIA_Listview_List, ListObject,
+                                InputListFrame,
+                                MUIA_List_AutoVisible,   TRUE,
+                                MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
+                                MUIA_List_DestructHook,  MUIV_List_DestructHook_String,
+                              End,
                           End,
                         End,
                     End,
@@ -1565,7 +1615,6 @@ Object *CO_Page4(struct CO_ClassData *data)
                 MUIA_Weight,        100,
               End,
               Child, TextObject,
-                MUIA_Text_PreParse, "",
                 MUIA_Text_Contents, GetStr(MSG_CO_READ_SUMMARY),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
@@ -1674,7 +1723,6 @@ Object *CO_Page5(struct CO_ClassData *data)
                 MUIA_Weight,        100,
               End,
               Child, TextObject,
-                MUIA_Text_PreParse, "",
                 MUIA_Text_Contents, GetStr(MSG_CO_WRITE_SUMMARY),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
@@ -1777,7 +1825,6 @@ Object *CO_Page6(struct CO_ClassData *data)
                 MUIA_Weight,        100,
               End,
               Child, TextObject,
-                MUIA_Text_PreParse, "",
                 MUIA_Text_Contents, GetStr(MSG_CO_REPLY_SUMMARY),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
@@ -1862,7 +1909,6 @@ Object *CO_Page7(struct CO_ClassData *data)
                 MUIA_Weight,        100,
               End,
               Child, TextObject,
-                MUIA_Text_PreParse, "",
                 MUIA_Text_Contents, GetStr(MSG_CO_SIGNATURE_SUMMARY),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
@@ -1961,7 +2007,6 @@ Object *CO_Page8(struct CO_ClassData *data)
                 MUIA_Weight,        100,
               End,
               Child, TextObject,
-                MUIA_Text_PreParse, "",
                 MUIA_Text_Contents, GetStr(MSG_CO_LISTS_SUMMARY),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
@@ -2075,7 +2120,6 @@ Object *CO_Page9(struct CO_ClassData *data)
                 MUIA_Weight,        100,
               End,
               Child, TextObject,
-                MUIA_Text_PreParse, "",
                 MUIA_Text_Contents, GetStr(MSG_CO_SECURITY_SUMMARY),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
@@ -2166,7 +2210,6 @@ Object *CO_Page10(struct CO_ClassData *data)
                 MUIA_Weight,        100,
               End,
               Child, TextObject,
-                MUIA_Text_PreParse, "",
                 MUIA_Text_Contents, GetStr(MSG_CO_STARTUP_SUMMARY),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
@@ -2228,7 +2271,6 @@ Object *CO_Page11(struct CO_ClassData *data)
                 MUIA_Weight,        100,
               End,
               Child, TextObject,
-                MUIA_Text_PreParse, "",
                 MUIA_Text_Contents, GetStr(MSG_CO_MIME_SUMMARY),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
@@ -2353,7 +2395,6 @@ Object *CO_Page12(struct CO_ClassData *data)
                 MUIA_Weight,        100,
               End,
               Child, TextObject,
-                MUIA_Text_PreParse, "",
                 MUIA_Text_Contents, GetStr(MSG_CO_ABOOK_SUMMARY),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
@@ -2447,7 +2488,6 @@ Object *CO_Page13(struct CO_ClassData *data)
                 MUIA_Weight,        100,
               End,
               Child, TextObject,
-                MUIA_Text_PreParse, "",
                 MUIA_Text_Contents, GetStr(MSG_CO_SCRIPTS_SUMMARY),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
@@ -2527,7 +2567,6 @@ Object *CO_Page14(struct CO_ClassData *data)
               MUIA_Weight,        100,
             End,
             Child, TextObject,
-              MUIA_Text_PreParse, "",
               MUIA_Text_Contents, GetStr(MSG_CO_MIXED_SUMMARY),
               MUIA_Font,          MUIV_Font_Tiny,
               MUIA_Weight,        100,
@@ -2682,7 +2721,6 @@ Object *CO_Page15(struct CO_ClassData *data)
             MUIA_Weight,        100,
           End,
           Child, TextObject,
-            MUIA_Text_PreParse, "",
             MUIA_Text_Contents, GetStr(MSG_CO_UPDATE_SUMMARY),
             MUIA_Font,          MUIV_Font_Tiny,
             MUIA_Weight,        100,
