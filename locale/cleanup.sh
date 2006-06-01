@@ -9,7 +9,7 @@
 #
 
 CDFILE="./YAM.cd"
-SOURCES="../*.c ../classes/*.c"
+SOURCES="../src/*.c ../src/classes/*.c"
 TMPCD="/tmp/YAM.cd"
 
 ########################################################
