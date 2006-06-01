@@ -55,9 +55,9 @@ CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" \
            -D__YAM_BUILDID="$(BUILDID)"
 WARN     = -W -Wall
 OPTFLAGS = -O3 -fomit-frame-pointer -funroll-loops
-DEBUG    = -DDEBUG -g3 -O0
+DEBUG    = -DDEBUG -O0
 CFLAGS   = -noixemul -pipe -I. -I./include -I./include/netinclude $(CPU) \
-            $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -c
+            $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -g -c
 LDFLAGS  = -noixemul $(CPU)
 LDLIBS   = -lm -ldebug -L./lib/mos -lxpk -lamissl -lcodesets
 

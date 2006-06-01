@@ -132,7 +132,7 @@ $(LOCALE)/%.catalog: $(LOCALE)/%.ct
 $(TARGET): $(OBJS)
 	@printf '\033[32mLinking \033[1m$@\033[0m\n'
 	@$(CC) $(LDFLAGS) -o $@.debug $(OBJS) $(LDLIBS)
-	@$(STRIP) -R ".comment" -o $@ $@.debug
+	@$(STRIP) -R ".comment" -S -o $@ $@.debug
 	@$(CHMOD) a+x $@
 
 dump:

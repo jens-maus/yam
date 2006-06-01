@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-01  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile.#?: modified the makefiles to always generate binaries with
+    full symbol information (-g) embedded and just strip the debugging
+    relevant symbols on link time via the 'strip' tool. This should make
+    bug reports from users definitly more transparent.
+
 2006-05-31  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c, YAM_UT.c, YAM_utilities.h: fixed bug #1496905 where the time
