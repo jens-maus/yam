@@ -78,7 +78,7 @@ enum { RMEN_HSHORT=100, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIM
 /* Hooks */
 /// HeaderDisplayHook
 //  Header listview display hook
-HOOKPROTONH(HeaderDisplayFunc, long, char **array, struct HeaderNode *hdrNode)
+HOOKPROTONH(HeaderDisplayFunc, LONG, char **array, struct HeaderNode *hdrNode)
 {
   // set the array now so that the NList shows the correct values.
   array[0] = hdrNode->name;
@@ -87,6 +87,39 @@ HOOKPROTONH(HeaderDisplayFunc, long, char **array, struct HeaderNode *hdrNode)
   return 0;
 }
 MakeStaticHook(HeaderDisplayHook, HeaderDisplayFunc);
+///
+/// HeaderCompareHook
+//  Header listview compare hook
+HOOKPROTO(HeaderCompareFunc, LONG, struct HeaderNode *hdrNode1, struct HeaderNode *hdrNode2)
+{
+  LONG diff = 0;
+  struct ReadMailData *rmData = (struct ReadMailData *)hook->h_Data;
+
+  ENTER();
+
+  // we sort the headerdisplay  not only by checking which
+  // header should be displayed, but also by checking in
+  // which order they should be displayed regarding the
+  // specification in the short headers string object.
+  if(rmData->headerMode == HM_SHORTHEADER && C->ShortHeaders[0] != '\0')
+  {
+    char *e1 = stristr(C->ShortHeaders, hdrNode1->name);
+    char *e2 = stristr(C->ShortHeaders, hdrNode2->name);
+
+    // now we calculate extra points we give the entries
+    // for their matching position
+    if(e1 && e2)
+      diff = (LONG)(e2-e1);
+    else if(e1)
+      diff = +1;
+    else
+      diff = -1;
+  }
+
+  RETURN(diff);
+  return diff;
+}
+MakeStaticHook(HeaderCompareHook, HeaderCompareFunc);
 ///
 /// TextEditDoubleClickHook
 //  Handles double-clicks on an URL
@@ -212,6 +245,10 @@ OVERLOAD(OM_NEW)
   rmData->wrapHeaders = C->WrapHeader;
   rmData->useTextstyles = C->UseTextstyles;
   rmData->useFixedFont = C->FixedFontEdit;
+
+  // prepare the headerCompareHook to carry a reference to the
+  // readMailData instead
+  HeaderCompareHook.h_Data = rmData;
   
   // create some object before the real object
   data->textEditScrollbar = ScrollbarObject, End;
@@ -228,6 +265,7 @@ OVERLOAD(OM_NEW)
         MUIA_NListview_NList, data->headerList = NListObject,
           InputListFrame,
           MUIA_NList_DisplayHook,          &HeaderDisplayHook,
+          MUIA_NList_CompareHook,          &HeaderCompareHook,
           MUIA_NList_Format,               "P=\033r\0338 W=-1 MIW=-1,",
           MUIA_NList_Input,                FALSE,
           MUIA_NList_TypeSelect,           MUIV_NList_TypeSelect_Char,
@@ -644,7 +682,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
           {
             // we simply insert the whole headerNode and split the display later in our HeaderDisplayHook
             DoMethod(data->headerList, MUIM_NList_InsertSingleWrap, hdrNode,
-                                       MUIV_NList_Insert_Bottom,
+                                       MUIV_NList_Insert_Sorted,
                                        rmData->wrapHeaders ? WRAPCOL1 : NOWRAP, ALIGN_LEFT);
           }
         }
@@ -710,7 +748,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
               newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_RealName)));
               newNode->content = StrBufCpy(NULL, ab->RealName);
               AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
+              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
             }
 
             if(*ab->Street && (newNode = malloc(sizeof(struct HeaderNode))))
@@ -719,7 +757,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
               newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Street)));
               newNode->content = StrBufCpy(NULL, ab->Street);
               AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
+              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
             }
 
             if(*ab->City && (newNode = malloc(sizeof(struct HeaderNode))))
@@ -728,7 +766,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
               newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_City)));
               newNode->content = StrBufCpy(NULL, ab->City);
               AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
+              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
             }
 
             if(*ab->Country && (newNode = malloc(sizeof(struct HeaderNode))))
@@ -737,7 +775,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
               newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Country)));
               newNode->content = StrBufCpy(NULL, ab->Country);
               AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
+              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
             }
 
             if(*ab->Phone && (newNode = malloc(sizeof(struct HeaderNode))))
@@ -746,7 +784,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
               newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Phone)));
               newNode->content = StrBufCpy(NULL, ab->Phone);
               AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
+              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
             }
 
             if(*AB_ExpandBD(ab->BirthDay) && (newNode = malloc(sizeof(struct HeaderNode))))
@@ -755,7 +793,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
               newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_DOB)));
               newNode->content = StrBufCpy(NULL, AB_ExpandBD(ab->BirthDay));
               AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
+              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
             }
 
             if(*ab->Comment && (newNode = malloc(sizeof(struct HeaderNode))))
@@ -764,7 +802,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
               newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Description)));
               newNode->content = StrBufCpy(NULL, ab->Comment);
               AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
+              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
             }
 
             if(*ab->Homepage && (newNode = malloc(sizeof(struct HeaderNode))))
@@ -773,7 +811,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
               newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Homepage)));
               newNode->content = StrBufCpy(NULL, ab->Homepage);
               AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
+              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
             }
           }
         }

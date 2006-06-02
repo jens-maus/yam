@@ -4,6 +4,16 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-02  Jens Langner <Jens.Langner@light-speed.de>
+
+  * classes/ReadMailGroup.c: the header display in a read window/group is
+    now automatically sorted according to the order of the search tokens
+    in the header name pattern field in the YAM read configuration. Please
+    note that YAM will only sort the header display in the "Short headers"
+    mode, which means a user must have enabled it to have the automatic
+    sorting of the header display activated. This was a long overdue
+    feature and might become handy to the end-user.
+
 2006-06-01  Jens Langner <Jens.Langner@light-speed.de>
 
   * classes/ReadMailGroup.c, classes/ReadWindow.c: finished up the new
