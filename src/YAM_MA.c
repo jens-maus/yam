@@ -3211,7 +3211,7 @@ void MA_SetupEmbeddedReadPane(void)
       if(mailBalanceObj)
       {
         G->MA->GUI.MN_EMBEDDEDREADPANE = readPaneObj = ReadMailGroupObject,
-                                                         MUIA_ReadMailGroup_ContextMenu, TRUE,
+                                                         MUIA_ContextMenu, TRUE,
                                                        End;
 
         if(readPaneObj)

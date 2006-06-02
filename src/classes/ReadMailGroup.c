@@ -31,6 +31,7 @@
 #include "ReadMailGroup_cl.h"
 
 #include "YAM_error.h"
+#include "YAM_mime.h"
 #include "YAM_read.h"
 
 #include "Debug.h"
@@ -69,7 +70,7 @@ struct Data
 */
 
 /// Menu enumerations
-enum { RMEN_HNONE=100, RMEN_HSHORT, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIMAGE, RMEN_WRAPH,
+enum { RMEN_HSHORT=100, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIMAGE, RMEN_WRAPH,
        RMEN_TSTYLE, RMEN_FFONT, RMEN_EXTKEY, RMEN_CHKSIG, RMEN_SAVEDEC, RMEN_DISPLAY, RMEN_DETACH, RMEN_CROP,
        RMEN_PRINT, RMEN_SAVE, RMEN_REPLY, RMEN_FORWARD, RMEN_MOVE, RMEN_COPY, RMEN_DELETE };
 ///
@@ -184,7 +185,6 @@ OVERLOAD(OM_NEW)
   struct ReadMailData *rmData;
   LONG hgVertWeight = 5;
   LONG tgVertWeight = 100;
-  BOOL withContextMenu = FALSE;
 
   // get eventually set attributes first
   struct TagItem *tags = inittags(msg), *tag;
@@ -194,7 +194,6 @@ OVERLOAD(OM_NEW)
     {
       ATTR(HGVertWeight): hgVertWeight = tag->ti_Data; break;
       ATTR(TGVertWeight): tgVertWeight = tag->ti_Data; break;
-      ATTR(ContextMenu) : withContextMenu = tag->ti_Data; break;
     }
   }
 
@@ -211,7 +210,7 @@ OVERLOAD(OM_NEW)
   rmData->headerMode = C->ShowHeader;
   rmData->senderInfoMode = C->ShowSenderInfo;
   rmData->wrapHeaders = C->WrapHeader;
-  rmData->noTextstyles = !C->UseTextstyles;
+  rmData->useTextstyles = C->UseTextstyles;
   rmData->useFixedFont = C->FixedFontEdit;
   
   // create some object before the real object
@@ -221,7 +220,6 @@ OVERLOAD(OM_NEW)
 
     MUIA_Group_Horiz, FALSE,
     GroupSpacing(1),
-    MUIA_ContextMenu, withContextMenu,
     Child, data->headerGroup = HGroup,
       GroupSpacing(0),
       MUIA_VertWeight, hgVertWeight,
@@ -372,6 +370,8 @@ OVERLOAD(MUIM_ContextMenuBuild)
   GETDATA;
   struct MUIP_ContextMenuBuild *mb = (struct MUIP_ContextMenuBuild *)msg;
   struct ReadMailData *rmData = data->readMailData;
+  struct Mail *mail = rmData->mail;
+  BOOL isRealMail = !isVirtualMail(mail);
 
   ENTER();
 
@@ -389,16 +389,15 @@ OVERLOAD(MUIM_ContextMenuBuild)
 
     data->contextMenu = MenustripObject,
       Child, MenuObjectT(data->menuTitle),
-        Child, MenuitemCheck(GetStr(MSG_RE_NoHeaders),    NULL, C->ShowHeader==HM_NOHEADER,    FALSE, 0x06, RMEN_HNONE),
-        Child, MenuitemCheck(GetStr(MSG_RE_ShortHeaders), NULL, C->ShowHeader==HM_SHORTHEADER, FALSE, 0x05, RMEN_HSHORT),
-        Child, MenuitemCheck(GetStr(MSG_RE_FullHeaders),  NULL, C->ShowHeader==HM_FULLHEADER,  FALSE, 0x03, RMEN_HFULL),
+        Child, MenuitemCheck(GetStr(MSG_RE_ShortHeaders), NULL, rmData->headerMode==HM_SHORTHEADER, FALSE, 0x05, RMEN_HSHORT),
+        Child, MenuitemCheck(GetStr(MSG_RE_FullHeaders),  NULL, rmData->headerMode==HM_FULLHEADER,  FALSE, 0x03, RMEN_HFULL),
         Child, MenuBarLabel,
-        Child, MenuitemCheck(GetStr(MSG_RE_NoSInfo),      NULL, C->ShowSenderInfo==SIM_OFF,    FALSE, 0xE0, RMEN_SNONE),
-        Child, MenuitemCheck(GetStr(MSG_RE_SInfo),        NULL, C->ShowSenderInfo==SIM_DATA,   FALSE, 0xD0, RMEN_SDATA),
-        Child, MenuitemCheck(GetStr(MSG_RE_SInfoImage),   NULL, C->ShowSenderInfo==SIM_ALL,    FALSE, 0x90, RMEN_SFULL),
-        Child, MenuitemCheck(GetStr(MSG_RE_SImageOnly),   NULL, C->ShowSenderInfo==SIM_IMAGE,  FALSE, 0x70, RMEN_SIMAGE),
+        Child, MenuitemCheck(GetStr(MSG_RE_NoSInfo),      NULL, rmData->senderInfoMode==SIM_OFF,    FALSE, 0xE0, RMEN_SNONE),
+        Child, MenuitemCheck(GetStr(MSG_RE_SInfo),        NULL, rmData->senderInfoMode==SIM_DATA,   FALSE, 0xD0, RMEN_SDATA),
+        Child, MenuitemCheck(GetStr(MSG_RE_SInfoImage),   NULL, rmData->senderInfoMode==SIM_ALL,    FALSE, 0x90, RMEN_SFULL),
+        Child, MenuitemCheck(GetStr(MSG_RE_SImageOnly),   NULL, rmData->senderInfoMode==SIM_IMAGE,  FALSE, 0x70, RMEN_SIMAGE),
         Child, MenuBarLabel,
-        Child, MenuitemCheck(GetStr(MSG_RE_WrapHeader),   NULL, C->WrapHeader, TRUE, 0, RMEN_WRAPH),
+        Child, MenuitemCheck(GetStr(MSG_RE_WrapHeader),   NULL, rmData->wrapHeaders, TRUE, 0, RMEN_WRAPH),
       End,
     End;
   }
@@ -417,27 +416,27 @@ OVERLOAD(MUIM_ContextMenuBuild)
       Child, MenuObjectT(data->menuTitle),
         Child, Menuitem(GetStr(MSG_MA_MReply),   NULL, TRUE, FALSE, RMEN_REPLY),
         Child, Menuitem(GetStr(MSG_MA_MForward), NULL, TRUE, FALSE, RMEN_FORWARD),
-        Child, Menuitem(GetStr(MSG_MA_MMove),    NULL, TRUE, FALSE, RMEN_MOVE),
+        Child, Menuitem(GetStr(MSG_MA_MMove),    NULL, isRealMail, FALSE, RMEN_MOVE),
         Child, Menuitem(GetStr(MSG_MA_MCopy),    NULL, TRUE, FALSE, RMEN_COPY),
         Child, MenuBarLabel,
+        Child, Menuitem(GetStr(MSG_RE_MDisplay),NULL, TRUE, FALSE, RMEN_DISPLAY),
         Child, Menuitem(GetStr(MSG_MA_Save),     NULL, TRUE, FALSE, RMEN_SAVE),
         Child, Menuitem(GetStr(MSG_Print),       NULL, TRUE, FALSE, RMEN_PRINT),
-        Child, Menuitem(GetStr(MSG_MA_MDelete),  NULL, TRUE, TRUE,  RMEN_DELETE),
+        Child, Menuitem(GetStr(MSG_MA_MDelete),  NULL, isRealMail, TRUE,  RMEN_DELETE),
         Child, MenuBarLabel,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Attachments),
-          Child, Menuitem(GetStr(MSG_RE_MDisplay),NULL, TRUE, FALSE, RMEN_DISPLAY),
           Child, Menuitem(GetStr(MSG_RE_SaveAll), NULL, TRUE, FALSE, RMEN_DETACH),
-          Child, Menuitem(GetStr(MSG_MA_Crop),    NULL, TRUE, FALSE, RMEN_CROP),
+          Child, Menuitem(GetStr(MSG_MA_Crop),    NULL, isRealMail, FALSE, RMEN_CROP),
         End,
         Child, MenuBarLabel,
         Child, MenuObject, MUIA_Menu_Title, "PGP",
-          Child, Menuitem(GetStr(MSG_RE_ExtractKey),    NULL, TRUE, FALSE, RMEN_EXTKEY),
-          Child, Menuitem(GetStr(MSG_RE_SigCheck),      NULL, TRUE, FALSE, RMEN_CHKSIG),
-          Child, Menuitem(GetStr(MSG_RE_SaveDecrypted), NULL, TRUE, FALSE, RMEN_SAVEDEC),
+          Child, Menuitem(GetStr(MSG_RE_ExtractKey),    NULL, rmData->hasPGPKey, FALSE, RMEN_EXTKEY),
+          Child, Menuitem(GetStr(MSG_RE_SigCheck),      NULL, (hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData)), FALSE, RMEN_CHKSIG),
+          Child, Menuitem(GetStr(MSG_RE_SaveDecrypted), NULL, isRealMail && (hasPGPEMimeFlag(rmData) || hasPGPEOldFlag(rmData)), FALSE, RMEN_SAVEDEC),
         End,
         Child, MenuBarLabel,
-        Child, MenuitemCheck(GetStr(MSG_RE_Textstyles), NULL, C->UseTextstyles, TRUE, 0, RMEN_TSTYLE),
-        Child, MenuitemCheck(GetStr(MSG_RE_FixedFont),  NULL, C->FixedFontEdit, TRUE, 0, RMEN_FFONT),
+        Child, MenuitemCheck(GetStr(MSG_RE_Textstyles), NULL, rmData->useTextstyles, TRUE, 0, RMEN_TSTYLE),
+        Child, MenuitemCheck(GetStr(MSG_RE_FixedFont),  NULL, rmData->useFixedFont, TRUE, 0, RMEN_FFONT),
       End,
     End;
 
@@ -453,6 +452,8 @@ OVERLOAD(MUIM_ContextMenuChoice)
   GETDATA;
   struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
   struct ReadMailData *rmData = data->readMailData;
+  BOOL updateGroup = FALSE;
+  BOOL checked = xget(m->item, MUIA_Menuitem_Checked);
   ULONG result = 0;
 
   switch(xget(m->item, MUIA_UserData))
@@ -461,12 +462,34 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case RMEN_FORWARD:  DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NEW_FORWARD, 0); break;
     case RMEN_MOVE:     DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook); break;
     case RMEN_COPY:     DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook); break;
+    case RMEN_DISPLAY:  DoMethod(obj, MUIM_ReadMailGroup_DisplayMailRequest); break;
+    case RMEN_SAVE:     DoMethod(obj, MUIM_ReadMailGroup_SaveMailRequest); break;
+    case RMEN_PRINT:    DoMethod(obj, MUIM_ReadMailGroup_PrintMailRequest); break;
+    case RMEN_DELETE:   DoMethod(obj, MUIM_ReadMailGroup_DeleteMail); break;
+    case RMEN_DETACH:   DoMethod(obj, MUIM_ReadMailGroup_SaveAllAttachments); break;
+    case RMEN_CROP:     DoMethod(obj, MUIM_ReadMailGroup_CropAttachmentsRequest); break;
+    case RMEN_EXTKEY:   DoMethod(obj, MUIM_ReadMailGroup_ExtractPGPKey); break;
+    case RMEN_CHKSIG:   DoMethod(obj, MUIM_ReadMailGroup_CheckPGPSignature, TRUE); break;
+    case RMEN_SAVEDEC:  DoMethod(obj, MUIM_ReadMailGroup_SaveDecryptedMail); break;
 
-    #warning "finish ASAP!"
+    // now we check the checkmarks of the
+    // context-menu
+    case RMEN_HSHORT:   rmData->headerMode = HM_SHORTHEADER; updateGroup = TRUE; break;
+    case RMEN_HFULL:    rmData->headerMode = HM_FULLHEADER; updateGroup = TRUE; break;
+    case RMEN_SNONE:    rmData->senderInfoMode = SIM_OFF; updateGroup = TRUE; break;
+    case RMEN_SDATA:    rmData->senderInfoMode = SIM_DATA; updateGroup = TRUE; break;
+    case RMEN_SFULL:    rmData->senderInfoMode = SIM_ALL; updateGroup = TRUE; break;
+    case RMEN_SIMAGE:   rmData->senderInfoMode = SIM_IMAGE; updateGroup = TRUE; break;
+    case RMEN_WRAPH:    rmData->wrapHeaders = checked; updateGroup = TRUE; break;
+    case RMEN_TSTYLE:   rmData->useTextstyles = checked; updateGroup = TRUE; break;
+    case RMEN_FFONT:    rmData->useFixedFont = checked; updateGroup = TRUE; break;
 
     default:
       result = DoSuperMethodA(cl, obj, msg);
   }
+
+  if(updateGroup)
+    DoMethod(obj, MUIM_ReadMailGroup_ReadMail, rmData->mail, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
 
   RETURN(result);
   return result;
@@ -799,7 +822,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
       // before we can put the message body into the TextEditor, we have to preparse the text and
       // try to set some styles, as we don`t use the buggy ImportHooks of TextEditor anymore and are anyway
       // more powerful this way.
-      if(!rmData->noTextstyles)
+      if(rmData->useTextstyles)
         body = ParseEmailText(body);
 
       SetAttrs(data->mailTextObject, MUIA_TextEditor_FixedFont, rmData->useFixedFont,
@@ -807,7 +830,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
                                      TAG_DONE);
 
       // free the parsed text afterwards as the texteditor has copied it anyway.
-      if(!rmData->noTextstyles)
+      if(rmData->useTextstyles)
         free(body);
 
       free(cmsg);
@@ -1134,3 +1157,210 @@ DECLARE(ActivateMailText)
 }
 
 ///
+/// DECLARE(SaveMailRequest)
+//  Saves the current message or an attachment to disk
+DECLARE(SaveMailRequest)
+{
+  GETDATA;
+  struct ReadMailData *rmData = data->readMailData;
+  struct Part *part;
+  struct TempFile *tf;
+
+  ENTER();
+
+  if((part = AttachRequest(GetStr(MSG_RE_SaveMessage),
+                           GetStr(MSG_RE_SelectSavePart),
+                           GetStr(MSG_RE_SaveGad),
+                           GetStr(MSG_Cancel), ATTREQ_SAVE|ATTREQ_MULTI, rmData)))
+  {
+    BusyText(GetStr(MSG_BusyDecSaving), "");
+
+    for(; part; part = part->NextSelected)
+    {
+      switch(part->Nr)
+      {
+        case PART_ORIGINAL:
+        {
+          RE_Export(rmData, rmData->readFile, "", "", 0, FALSE, FALSE, IntMimeTypeArray[MT_ME_EMAIL].ContentType);
+        }
+        break;
+
+        case PART_ALLTEXT:
+        {
+          if((tf = OpenTempFile("w")))
+          {
+            DoMethod(obj, MUIM_ReadMailGroup_SaveDisplay, tf->FP);
+            fclose(tf->FP);
+            tf->FP = NULL;
+
+            RE_Export(rmData, tf->Filename, "", "", 0, FALSE, FALSE, IntMimeTypeArray[MT_TX_PLAIN].ContentType);
+            CloseTempFile(tf);
+          }
+        }
+        break;
+
+        default:
+        {
+          RE_DecodePart(part);
+
+          RE_Export(rmData, part->Filename, "",
+                    part->CParFileName ? part->CParFileName : part->Name, part->Nr,
+                    FALSE, FALSE, part->ContentType);
+        }
+      }
+    }
+
+    BusyEnd();
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(PrintMailRequest)
+DECLARE(PrintMailRequest)
+{
+  GETDATA;
+  struct ReadMailData *rmData = data->readMailData;
+  struct Part *part;
+  struct TempFile *prttmp;
+
+  ENTER();
+
+  if((part = AttachRequest(GetStr(MSG_RE_PrintMsg),
+                           GetStr(MSG_RE_SelectPrintPart),
+                           GetStr(MSG_RE_PrintGad),
+                           GetStr(MSG_Cancel), ATTREQ_PRINT|ATTREQ_MULTI, rmData)))
+  {
+    BusyText(GetStr(MSG_BusyDecPrinting), "");
+
+    for(; part; part = part->NextSelected)
+    {
+      switch(part->Nr)
+      {
+        case PART_ORIGINAL:
+          RE_PrintFile(rmData->readFile);
+        break;
+
+        case PART_ALLTEXT:
+        {
+          if((prttmp = OpenTempFile("w")))
+          {
+            DoMethod(obj, MUIM_ReadMailGroup_SaveDisplay, prttmp->FP);
+            fclose(prttmp->FP);
+            prttmp->FP = NULL;
+
+            RE_PrintFile(prttmp->Filename);
+            CloseTempFile(prttmp);
+          }
+        }
+        break;
+
+        default:
+          RE_PrintFile(part->Filename);
+      }
+    }
+
+    BusyEnd();
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(DisplayMailRequest)
+DECLARE(DisplayMailRequest)
+{
+  GETDATA;
+  struct ReadMailData *rmData = data->readMailData;
+  struct Part *part;
+
+  ENTER();
+
+  if((part = AttachRequest(GetStr(MSG_RE_DisplayMsg),
+                           GetStr(MSG_RE_SelectDisplayPart),
+                           GetStr(MSG_RE_DisplayGad),
+                           GetStr(MSG_Cancel), ATTREQ_DISP|ATTREQ_MULTI, rmData)))
+  {
+    BusyText(GetStr(MSG_BusyDecDisplaying), "");
+
+    for(; part; part = part->NextSelected)
+    {
+      RE_DecodePart(part);
+
+      switch(part->Nr)
+      {
+        case PART_ORIGINAL:
+        {
+          RE_DisplayMIME(rmData->readFile, "text/plain");
+        }
+        break;
+
+        default:
+          RE_DisplayMIME(part->Filename, part->ContentType);
+      }
+    }
+
+    BusyEnd();
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(DeleteMail)
+DECLARE(DeleteMail)
+{
+  GETDATA;
+  struct ReadMailData *rmData = data->readMailData;
+  struct Mail *mail = rmData->mail;
+  struct Folder *folder = mail->Folder;
+
+  ENTER();
+
+  if(MailExists(mail, folder))
+  {
+    struct Folder *delfolder = FO_GetFolderByType(FT_DELETED, NULL);
+
+    // delete the mail
+    MA_DeleteSingle(mail, FALSE, FALSE);
+    AppendLogNormal(22, GetStr(MSG_LOG_Moving), (void *)1, folder->Name, delfolder->Name, "");
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(CropAttachmentsRequest)
+//  Removes attachments from the current message
+DECLARE(CropAttachmentsRequest)
+{
+  GETDATA;
+  struct ReadMailData *rmData = data->readMailData;
+  struct Mail *mail = rmData->mail;
+
+  ENTER();
+
+  // remove the attchments now
+  MA_RemoveAttach(mail, TRUE);
+
+  if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail))
+  {
+    MA_ChangeSelected(TRUE);
+    DisplayStatistics(mail->Folder, TRUE);
+  }
+
+  // make sure to refresh the mail of this window as we do not
+  // have any attachments anymore
+  DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+

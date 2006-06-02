@@ -326,17 +326,17 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_MOVE,     obj, 1, MUIM_ReadWindow_MoveMailRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_COPY,     obj, 1, MUIM_ReadWindow_CopyMailRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DELETE,    obj, 2, MUIM_ReadWindow_DeleteMailRequest, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PRINT,    obj, 1, MUIM_ReadWindow_PrintMailRequest);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVE,      obj, 1, MUIM_ReadWindow_SaveMailRequest);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DISPLAY,  obj, 1, MUIM_ReadWindow_DisplayMailRequest);
-    DoMethod(obj,  MUIM_Notify, MUIA_Window_MenuAction, RMEN_DETACH,    data->readMailGroup, 1, MUIM_ReadMailGroup_SaveAllAttachments);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_CROP,      obj, 1, MUIM_ReadWindow_CropAttachmentsRequest);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PRINT,    data->readMailGroup, 1, MUIM_ReadMailGroup_PrintMailRequest);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVE,     data->readMailGroup, 1, MUIM_ReadMailGroup_SaveMailRequest);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DISPLAY,  data->readMailGroup, 1, MUIM_ReadMailGroup_DisplayMailRequest);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DETACH,   data->readMailGroup, 1, MUIM_ReadMailGroup_SaveAllAttachments);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_CROP,     data->readMailGroup, 1, MUIM_ReadMailGroup_CropAttachmentsRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEW,      obj, 3,  MUIM_ReadWindow_NewMail, NEW_NEW, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_REPLY,    obj, 3, MUIM_ReadWindow_NewMail, NEW_REPLY, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FORWARD,  obj, 3, MUIM_ReadWindow_NewMail, NEW_FORWARD, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_BOUNCE,   obj, 3, MUIM_ReadWindow_NewMail, NEW_BOUNCE, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVEADDR,  obj, 1, MUIM_ReadWindow_GrabSenderAddress);
-    DoMethod(obj,  MUIM_Notify, MUIA_Window_MenuAction, RMEN_SETUNREAD,obj, 1, MUIM_ReadWindow_SetMailToUnread);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SETUNREAD,obj, 1, MUIM_ReadWindow_SetMailToUnread);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SETMARKED,obj, 1, MUIM_ReadWindow_SetMailToMarked);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_CHSUBJ,    obj, 1, MUIM_ReadWindow_ChangeSubjectRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PREV,      obj, 3, MUIM_ReadWindow_SwitchMail, -1, 0);
@@ -355,16 +355,16 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SDATA,    obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_DATA);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SFULL,    obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_ALL);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SIMAGE,    obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_IMAGE);
-    DoMethod(obj,  MUIM_Notify, MUIA_Window_MenuAction, RMEN_WRAPH,    obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_WRAPH,    obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TSTYLE,    obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FFONT,    obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 0, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 3, MUIM_ReadWindow_SwitchMail, -1, MUIV_Toolbar_Qualifier);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 1, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 3, MUIM_ReadWindow_SwitchMail, +1, MUIV_Toolbar_Qualifier);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 2, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 2, MUIM_ReadWindow_FollowThread, -1);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 3, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 2, MUIM_ReadWindow_FollowThread, +1);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 5, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 1, MUIM_ReadWindow_DisplayMailRequest);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 6, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 1, MUIM_ReadWindow_SaveMailRequest);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 7, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 1, MUIM_ReadWindow_PrintMailRequest);
+    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 5, MUIV_Toolbar_Notify_Pressed, FALSE, data->readMailGroup, 1, MUIM_ReadMailGroup_DisplayMailRequest);
+    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 6, MUIV_Toolbar_Notify_Pressed, FALSE, data->readMailGroup, 1, MUIM_ReadMailGroup_SaveMailRequest);
+    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 7, MUIV_Toolbar_Notify_Pressed, FALSE, data->readMailGroup, 1, MUIM_ReadMailGroup_PrintMailRequest);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 9, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 2, MUIM_ReadWindow_DeleteMailRequest, MUIV_Toolbar_Qualifier);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Notify,10, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 1, MUIM_ReadWindow_MoveMailRequest);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 3, MUIM_ReadWindow_NewMail, NEW_REPLY, MUIV_Toolbar_Qualifier);
@@ -788,176 +788,6 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
 }
 
 ///
-/// DECLARE(PrintMailRequest)
-DECLARE(PrintMailRequest)
-{
-  GETDATA;
-  struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
-  struct Part *part;
-  struct TempFile *prttmp;
-
-  if((part = AttachRequest(GetStr(MSG_RE_PrintMsg),
-                           GetStr(MSG_RE_SelectPrintPart),
-                           GetStr(MSG_RE_PrintGad),
-                           GetStr(MSG_Cancel), ATTREQ_PRINT|ATTREQ_MULTI, rmData)))
-  {
-    BusyText(GetStr(MSG_BusyDecPrinting), "");
-
-    for(; part; part = part->NextSelected)
-    {
-      switch(part->Nr)
-      {
-        case PART_ORIGINAL:
-          RE_PrintFile(rmData->readFile);
-        break;
-
-        case PART_ALLTEXT:
-        {
-          if((prttmp = OpenTempFile("w")))
-          {
-            DoMethod(data->readMailGroup, MUIM_ReadMailGroup_SaveDisplay, prttmp->FP);
-            fclose(prttmp->FP);
-            prttmp->FP = NULL;
-            
-            RE_PrintFile(prttmp->Filename);
-            CloseTempFile(prttmp);
-          }
-        }
-        break;
-
-        default:
-          RE_PrintFile(part->Filename);
-      }
-    }
-
-    BusyEnd();
-  }
-
-  return 0;
-}
-
-///
-/// DECLARE(SaveMailRequest)
-//  Saves the current message or an attachment to disk
-DECLARE(SaveMailRequest)
-{
-  GETDATA;
-  struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
-  struct Part *part;
-  struct TempFile *tf;
-
-  if((part = AttachRequest(GetStr(MSG_RE_SaveMessage),
-                           GetStr(MSG_RE_SelectSavePart),
-                           GetStr(MSG_RE_SaveGad),
-                           GetStr(MSG_Cancel), ATTREQ_SAVE|ATTREQ_MULTI, rmData)))
-  {
-    BusyText(GetStr(MSG_BusyDecSaving), "");
-    
-    for(; part; part = part->NextSelected)
-    {
-      switch(part->Nr)
-      {
-        case PART_ORIGINAL:
-        {
-          RE_Export(rmData, rmData->readFile, "", "", 0, FALSE, FALSE, IntMimeTypeArray[MT_ME_EMAIL].ContentType);
-        }
-        break;
-
-        case PART_ALLTEXT:
-        {
-          if((tf = OpenTempFile("w")))
-          {
-            DoMethod(data->readMailGroup, MUIM_ReadMailGroup_SaveDisplay, tf->FP);
-            fclose(tf->FP);
-            tf->FP = NULL;
-
-            RE_Export(rmData, tf->Filename, "", "", 0, FALSE, FALSE, IntMimeTypeArray[MT_TX_PLAIN].ContentType);
-            CloseTempFile(tf);
-          }
-        }
-        break;
-
-        default:
-        {
-          RE_DecodePart(part);
-          
-          RE_Export(rmData, part->Filename, "",
-                    part->CParFileName ? part->CParFileName : part->Name, part->Nr,
-                    FALSE, FALSE, part->ContentType);
-        }
-      }
-    }
-
-    BusyEnd();
-  }
-
-  return 0;
-}
-
-///
-/// DECLARE(DisplayMailRequest)
-DECLARE(DisplayMailRequest)
-{
-  GETDATA;
-  struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
-  struct Part *part;
-
-  if((part = AttachRequest(GetStr(MSG_RE_DisplayMsg),
-                           GetStr(MSG_RE_SelectDisplayPart),
-                           GetStr(MSG_RE_DisplayGad),
-                           GetStr(MSG_Cancel), ATTREQ_DISP|ATTREQ_MULTI, rmData)))
-  {
-    BusyText(GetStr(MSG_BusyDecDisplaying), "");
-
-    for(; part; part = part->NextSelected)
-    {
-      RE_DecodePart(part);
-      
-      switch(part->Nr)
-      {
-        case PART_ORIGINAL:
-        {
-          RE_DisplayMIME(rmData->readFile, "text/plain");
-        }
-        break;
-
-        default:
-          RE_DisplayMIME(part->Filename, part->ContentType);
-      }
-    }
-    
-    BusyEnd();
-  }
-
-  return 0;
-}
-
-///
-/// DECLARE(CropAttachmentsRequest)
-//  Removes attachments from the current message
-DECLARE(CropAttachmentsRequest)
-{
-  GETDATA;
-  struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
-  struct Mail *mail = rmData->mail;
-
-  // remove the attchments now
-  MA_RemoveAttach(mail, TRUE);
-  
-  if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail))
-  {
-    MA_ChangeSelected(TRUE);
-    DisplayStatistics(mail->Folder, TRUE);
-  }
-  
-  // make sure to refresh the mail of this window as we do not
-  // have any attachments anymore
-  DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
-
-  return 0;
-}
-
-///
 /// DECLARE(GrabSenderAddress)
 //  Stores sender address of current message in the address book
 DECLARE(GrabSenderAddress)
@@ -1242,8 +1072,8 @@ DECLARE(StyleOptionsChanged)
       
   // check the menu items for the style options
   // what we are going to enable/disable in our upcoming update
-  rmData->wrapHeaders    = xget(data->MI_WRAPH, MUIA_Menuitem_Checked);
-  rmData->noTextstyles   = !xget(data->MI_TSTYLE, MUIA_Menuitem_Checked);
+  rmData->wrapHeaders   = xget(data->MI_WRAPH, MUIA_Menuitem_Checked);
+  rmData->useTextstyles = xget(data->MI_TSTYLE, MUIA_Menuitem_Checked);
   rmData->useFixedFont  = xget(data->MI_FFONT, MUIA_Menuitem_Checked);
 
   // issue an update of the readMailGroup

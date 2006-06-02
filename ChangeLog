@@ -6,6 +6,11 @@ $Id$
 
 2006-06-01  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/ReadMailGroup.c, classes/ReadWindow.c: finished up the new
+    ContextMenu for the embedded read pane. Now a user can use the right
+    mouse button on an embedded read pane and apply the similar operations
+    via a context menu like he/she can do when using the standard menuitems
+    of a read window.
   * YAM_COg.c, YAM_MAf.c: moved the PO_InitFolderList hook to YAM_COg.c
     where it belongs to be static only and removed the non-sense "Cancel"
     entry which was added per default. The popup can perfectly be
