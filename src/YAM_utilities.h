@@ -295,7 +295,7 @@ struct DateStamp *FileDate(char *filename);
 long     FileTime(const char *filename);
 long     FileCount(char *directory);
 void     FinishUnpack(char *file);
-struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notext, struct Folder *exclude, APTR parent);
+struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notext, struct Folder *exclude, Object *parent);
 void     FormatSize(LONG size, char *buffer, int buflen);
 time_t   GetDateStamp(void);
 char *   GetFolderDir(struct Folder *fo);

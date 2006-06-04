@@ -130,7 +130,6 @@ OVERLOAD(OM_NEW)
             MUIA_Weight,        100,
           End,
           Child, TextObject,
-            MUIA_Text_PreParse, "",
             MUIA_Text_Contents, GetStr(MSG_UPD_NOTIFICATION_SUMMARY),
             MUIA_Font,          MUIV_Font_Tiny,
             MUIA_Weight,        100,
