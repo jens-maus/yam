@@ -585,96 +585,109 @@ int StringRequest(char *string, int size, char *title, char *body, char *yestext
 ///
 /// FolderRequest
 //  Allows user to choose a folder from a list
-struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notext, struct Folder *exclude, APTR parent)
+struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notext, struct Folder *exclude, Object *parent)
 {
-   static int lastactive;
-   struct Folder **flist, *folder = (struct Folder *)-1;
-   char *fname;
-   APTR bt_okay, bt_cancel, wi_fr, lv_folder;
+  struct Folder *folder = (struct Folder *)-1;
+  Object *bt_okay;
+  Object *bt_cancel;
+  Object *wi_fr;
+  Object *lv_folder;
 
-   wi_fr = WindowObject,
-      MUIA_Window_Title, title ? title : "YAM",
-      MUIA_Window_RefWindow, parent,
-      MUIA_Window_LeftEdge,  MUIV_Window_LeftEdge_Centered,
-      MUIA_Window_TopEdge,   MUIV_Window_TopEdge_Centered,
-//    MUIA_Window_ID,         MAKE_ID('F','R','E','Q'), // we don`t supply a windowID or otherwise the upper three attributes don`t work.
-      WindowContents, VGroup,
-         Child, LLabel(body),
-         Child, lv_folder = ListviewObject,
-            MUIA_CycleChain, 1,
-            MUIA_Listview_DoubleClick, TRUE,
-            MUIA_Listview_List, ListObject,
-               InputListFrame,
-               MUIA_List_AutoVisible, TRUE,
-            End,
-         End,
-         Child, ColGroup(3),
-            Child, bt_okay = MakeButton(yestext),
-            Child, HSpace(0),
-            Child, bt_cancel = MakeButton(notext),
-         End,
+  ENTER();
+
+  wi_fr = WindowObject,
+    MUIA_Window_Title,     title ? title : "YAM",
+    MUIA_Window_ID,        parent == NULL ?  MAKE_ID('F','R','E','Q') : 0,
+    MUIA_Window_RefWindow, parent,
+    MUIA_Window_LeftEdge,  MUIV_Window_LeftEdge_Centered,
+    MUIA_Window_TopEdge,   MUIV_Window_TopEdge_Centered,
+    MUIA_Window_Height,    MUIV_Window_Height_MinMax(30),
+    WindowContents, VGroup,
+      Child, LLabel(body),
+      Child, lv_folder = ListviewObject,
+        MUIA_CycleChain, TRUE,
+        MUIA_Listview_DoubleClick, TRUE,
+        MUIA_Listview_List, ListObject,
+          InputListFrame,
+          MUIA_List_AutoVisible, TRUE,
+        End,
       End,
-   End;
+      Child, ColGroup(3),
+        Child, bt_okay = MakeButton(yestext),
+        Child, HSpace(0),
+        Child, bt_cancel = MakeButton(notext),
+      End,
+    End,
+  End;
 
-   if (wi_fr)
-   {
-      int i;
+  if(wi_fr)
+  {
+    char *fname;
+    static int lastactive;
+    struct Folder **flist;
+    int i;
 
-      flist = FO_CreateList();
-      for (i = 1; i <= (int)*flist; i++) if (flist[i] != exclude) if (flist[i]->Type != FT_GROUP)
-         DoMethod(lv_folder, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
-      free(flist);
-      set(lv_folder, MUIA_List_Active, lastactive);
-      set(wi_fr, MUIA_Window_ActiveObject, lv_folder);
-      set(G->App, MUIA_Application_Sleep, TRUE);
-      DoMethod(G->App, OM_ADDMEMBER, wi_fr);
-      DoMethod(bt_okay  , MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 1);
-      DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 3);
-      DoMethod(lv_folder, MUIM_Notify, MUIA_Listview_DoubleClick, MUIV_EveryTime, G->App, 2, MUIM_Application_ReturnID, 1);
-      DoMethod(wi_fr, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->App, 2, MUIM_Application_ReturnID, 3);
+    flist = FO_CreateList();
+    for(i = 1; i <= (int)*flist; i++)
+    {
+      if(flist[i] != exclude && flist[i]->Type != FT_GROUP)
+        DoMethod(lv_folder, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
+    }
 
-      // lets collect the waiting returnIDs now
-      COLLECT_RETURNIDS;
+    free(flist);
+    set(lv_folder, MUIA_List_Active, lastactive);
+    set(wi_fr, MUIA_Window_ActiveObject, lv_folder);
+    set(G->App, MUIA_Application_Sleep, TRUE);
+    DoMethod(G->App, OM_ADDMEMBER, wi_fr);
+    DoMethod(bt_okay  , MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 1);
+    DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 3);
+    DoMethod(lv_folder, MUIM_Notify, MUIA_Listview_DoubleClick, MUIV_EveryTime, G->App, 2, MUIM_Application_ReturnID, 1);
+    DoMethod(wi_fr, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->App, 2, MUIM_Application_ReturnID, 3);
 
-      if(!SafeOpenWindow(wi_fr))
-        folder = NULL;
-      else while(folder == (struct Folder *)-1)
+    // lets collect the waiting returnIDs now
+    COLLECT_RETURNIDS;
+
+    if(!SafeOpenWindow(wi_fr))
+      folder = NULL;
+    else while(folder == (struct Folder *)-1)
+    {
+      static ULONG signals=0;
+
+      switch(DoMethod(G->App, MUIM_Application_NewInput, &signals))
       {
-         static ULONG signals=0;
+        case 1:
+        {
+          int act = xget(lv_folder, MUIA_List_Active);
 
-         switch(DoMethod(G->App, MUIM_Application_NewInput, &signals))
-         {
-            case 1:
-            {
-              int act = xget(lv_folder, MUIA_List_Active);
-              DoMethod(lv_folder, MUIM_List_GetEntry, act, &fname);
-              if((folder = FO_GetFolderByName(fname, NULL)))
-                lastactive = act;
-            }
-            break;
+          DoMethod(lv_folder, MUIM_List_GetEntry, act, &fname);
 
-            case 3:
-            {
-              folder = NULL;
-            }
-            break;
-         }
+          if((folder = FO_GetFolderByName(fname, NULL)))
+            lastactive = act;
+        }
+        break;
 
-         if(folder == (struct Folder *)-1 && signals)
-           signals = Wait(signals);
+        case 3:
+          folder = NULL;
+        break;
       }
 
-      // now lets reissue the collected returnIDs again
-      REISSUE_RETURNIDS;
+      if(folder == (struct Folder *)-1 && signals)
+        signals = Wait(signals);
+    }
 
-      // remove & dipose the requester object
-      DoMethod(G->App, OM_REMMEMBER, wi_fr);
-      MUI_DisposeObject(wi_fr);
+    // now lets reissue the collected returnIDs again
+    REISSUE_RETURNIDS;
 
-      // wake up the application
-      set(G->App, MUIA_Application_Sleep, FALSE);
-   }
-   return folder;
+    // remove & dipose the requester object
+    DoMethod(G->App, OM_REMMEMBER, wi_fr);
+    MUI_DisposeObject(wi_fr);
+
+    // wake up the application
+    set(G->App, MUIA_Application_Sleep, FALSE);
+  }
+
+  RETURN(folder);
+  return folder;
 }
 ///
 /// AttachRequest

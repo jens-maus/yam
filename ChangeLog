@@ -6,6 +6,8 @@ $Id$
 
 2006-06-04  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: a FolderRequest() window will now open with a relative height
+    instead of always the minimum height.
   * classes/ReadMailGroup.c: if a user doubleclicks on the headerlist
     display, YAM will now switch between the "Short Header" and "Full Header"
     view respectively.
