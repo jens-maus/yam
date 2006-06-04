@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-04  Jens Langner <Jens.Langner@light-speed.de>
+
+  * classes/ReadMailGroup.c: if a user doubleclicks on the headerlist
+    display, YAM will now switch between the "Short Header" and "Full Header"
+    view respectively.
+
 2006-06-02  Jens Langner <Jens.Langner@light-speed.de>
 
   * classes/ReadMailGroup.c: the header display in a read window/group is

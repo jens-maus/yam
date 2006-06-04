@@ -325,6 +325,11 @@ OVERLOAD(OM_NEW)
     // place our data in the node and add it to the readMailDataList
     rmData->readMailGroup = obj;
     AddTail((struct List *)&(G->readMailDataList), (struct Node *)data->readMailData);
+
+    // now we connect some notifies.
+    DoMethod(data->headerList, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime,
+             obj, 1, MUIM_ReadMailGroup_HeaderListDoubleClicked);
+
   }
 
   // free the temporary mem we allocated before
@@ -1395,6 +1400,28 @@ DECLARE(CropAttachmentsRequest)
   // make sure to refresh the mail of this window as we do not
   // have any attachments anymore
   DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(HeaderListDoubleClicked)
+// Switches between the SHORT and FULL header view of
+// the header list
+DECLARE(HeaderListDoubleClicked)
+{
+  GETDATA;
+  struct ReadMailData *rmData = data->readMailData;
+
+  ENTER();
+
+  if(rmData->headerMode == HM_SHORTHEADER)
+    rmData->headerMode = HM_FULLHEADER;
+  else
+    rmData->headerMode = HM_SHORTHEADER;
+
+  DoMethod(obj, MUIM_ReadMailGroup_ReadMail, rmData->mail, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
 
   RETURN(0);
   return 0;
