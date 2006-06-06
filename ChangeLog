@@ -6,6 +6,11 @@ $Id$
 
 2006-06-06  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MAf.c: an enabled embedded read pane will now be automatically
+    disabled in case a folder group is selected as the active folder. In
+    addition, in case a real folder is reactived, YAM now also make sure that
+    it refreshes the read pane correctly with the last active mail of that
+    folder.
   * Debug.c: fixed a minor bug in the env-variable parsing routines.
 
 2006-06-04  Jens Langner <Jens.Langner@light-speed.de>

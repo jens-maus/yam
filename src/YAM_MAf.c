@@ -636,15 +636,25 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
   // if this folder should be disabled, lets do it now
   if(folder->Type == FT_GROUP || MA_GetIndex(folder) == FALSE)
   {
-    SetAttrs(gui->PG_MAILLIST, MUIA_Disabled, TRUE,
-                               MUIA_ShortHelp, NULL,
+    SetAttrs(gui->PG_MAILLIST, MUIA_Disabled,     TRUE,
+                               MUIA_ShortHelp,    NULL,
+                               MUIA_NList_Active, MUIV_NList_Active_Off,
                                TAG_DONE);
 
     // set the quickbar as disabled as well
     if(C->QuickSearchBar)
       set(gui->GR_QUICKSEARCHBAR, MUIA_Disabled, TRUE);
 
+    // also set an embedded read pane as disabled.
+    if(C->EmbeddedReadPane)
+      set(gui->MN_EMBEDDEDREADPANE, MUIA_Disabled, TRUE);
+
     DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
+
+    // make sure the main mail list noticies that
+    // the selection has changed so that if a user reactivates a valid
+    // folder the main mail list will get updated accordingly.
+    MA_ChangeSelected(TRUE);
   }
   else
   {
@@ -653,6 +663,10 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 
     // Now we update the InfoBar accordingly
     DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
+
+    // enable an embedded read pane again
+    if(C->EmbeddedReadPane)
+      set(gui->MN_EMBEDDEDREADPANE, MUIA_Disabled, FALSE);
 
     // in case the main window has an quicksearchbar, we have to
     // clear it as well before changing the folder
