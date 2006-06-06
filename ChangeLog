@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-06  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Debug.c: fixed a minor bug in the env-variable parsing routines.
+
 2006-06-04  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: a FolderRequest() window will now open with a relative height

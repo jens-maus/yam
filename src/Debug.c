@@ -106,7 +106,7 @@ void SetupDebug(void)
       char *e;
 
       if((e = strpbrk(s, " ,;")) == NULL)
-        e = s+strlen(s);
+        e = s+(strlen(s)-1);
 
       // check if the token is class definition or
       // just a flag definition
@@ -118,7 +118,7 @@ void SetupDebug(void)
           // search for the token and clear the flag
           for(i=0; dbclasses[i].token; i++)
           {
-            if(strnicmp(&s[2], dbclasses[i].token, sizeof(dbclasses[i].token)) == 0)
+            if(strnicmp(&s[2], dbclasses[i].token, strlen(dbclasses[i].token)) == 0)
             {
               kprintf("clear '%s' debug class flag.\n", dbclasses[i].token);
               CLEAR_FLAG(debug_classes, dbclasses[i].flag);
@@ -130,7 +130,7 @@ void SetupDebug(void)
           // search for the token and set the flag
           for(i=0; dbclasses[i].token; i++)
           {
-            if(strnicmp(&s[1], dbclasses[i].token, sizeof(dbclasses[i].token)) == 0)
+            if(strnicmp(&s[1], dbclasses[i].token, strlen(dbclasses[i].token)) == 0)
             {
               kprintf("set '%s' debug class flag\n", dbclasses[i].token);
               SET_FLAG(debug_classes, dbclasses[i].flag);
@@ -145,7 +145,7 @@ void SetupDebug(void)
         {
           for(i=0; dbflags[i].token; i++)
           {
-            if(strnicmp(&s[1], dbflags[i].token, sizeof(dbflags[i].token)) == 0)
+            if(strnicmp(&s[1], dbflags[i].token, strlen(dbflags[i].token)) == 0)
             {
               kprintf("clear '%s' debug flag\n", dbflags[i].token);
               CLEAR_FLAG(debug_flags, dbflags[i].flag);
@@ -165,7 +165,7 @@ void SetupDebug(void)
           {
             for(i=0; dbflags[i].token; i++)
             {
-              if(strnicmp(s, dbflags[i].token, sizeof(dbflags[i].token)) == 0)
+              if(strnicmp(s, dbflags[i].token, strlen(dbflags[i].token)) == 0)
               {
                 kprintf("set '%s' debug flag\n", dbflags[i].token);
                 SET_FLAG(debug_flags, dbflags[i].flag);
