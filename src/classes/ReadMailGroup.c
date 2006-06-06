@@ -62,11 +62,13 @@ struct Data
 */
 
 /* EXPORT
-#define MUIF_ReadMailGroup_ReadMail_UpdateOnly        (1<<0) // the call to ReadMail is just because of an update of the same mail
+#define MUIF_ReadMailGroup_ReadMail_UpdateOnly         (1<<0) // the call to ReadMail is just because of an update of the same mail
 #define MUIF_ReadMailGroup_ReadMail_StatusChangeDelay  (1<<1) // the mail status should not be change immediatley but with a specified time interval
+#define MUIF_ReadMailGroup_ReadMail_UpdateTextOnly     (1<<2) // update the main mail text only
 
-#define hasUpdateOnlyFlag(v)        (isFlagSet((v), MUIF_ReadMailGroup_ReadMail_UpdateOnly))
+#define hasUpdateOnlyFlag(v)         (isFlagSet((v), MUIF_ReadMailGroup_ReadMail_UpdateOnly))
 #define hasStatusChangeDelayFlag(v)  (isFlagSet((v), MUIF_ReadMailGroup_ReadMail_StatusChangeDelay))
+#define hasUpdateTextOnlyFlag(v)     (isFlagSet((v), MUIF_ReadMailGroup_ReadMail_UpdateTextOnly))
 */
 
 /// Menu enumerations
@@ -495,7 +497,8 @@ OVERLOAD(MUIM_ContextMenuChoice)
   GETDATA;
   struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
   struct ReadMailData *rmData = data->readMailData;
-  BOOL updateGroup = FALSE;
+  BOOL updateHeader = FALSE;
+  BOOL updateText = FALSE;
   BOOL checked = xget(m->item, MUIA_Menuitem_Checked);
   ULONG result = 0;
 
@@ -517,22 +520,27 @@ OVERLOAD(MUIM_ContextMenuChoice)
 
     // now we check the checkmarks of the
     // context-menu
-    case RMEN_HSHORT:   rmData->headerMode = HM_SHORTHEADER; updateGroup = TRUE; break;
-    case RMEN_HFULL:    rmData->headerMode = HM_FULLHEADER; updateGroup = TRUE; break;
-    case RMEN_SNONE:    rmData->senderInfoMode = SIM_OFF; updateGroup = TRUE; break;
-    case RMEN_SDATA:    rmData->senderInfoMode = SIM_DATA; updateGroup = TRUE; break;
-    case RMEN_SFULL:    rmData->senderInfoMode = SIM_ALL; updateGroup = TRUE; break;
-    case RMEN_SIMAGE:   rmData->senderInfoMode = SIM_IMAGE; updateGroup = TRUE; break;
-    case RMEN_WRAPH:    rmData->wrapHeaders = checked; updateGroup = TRUE; break;
-    case RMEN_TSTYLE:   rmData->useTextstyles = checked; updateGroup = TRUE; break;
-    case RMEN_FFONT:    rmData->useFixedFont = checked; updateGroup = TRUE; break;
+    case RMEN_HSHORT:   rmData->headerMode = HM_SHORTHEADER; updateHeader = TRUE; break;
+    case RMEN_HFULL:    rmData->headerMode = HM_FULLHEADER; updateHeader = TRUE; break;
+    case RMEN_SNONE:    rmData->senderInfoMode = SIM_OFF; updateHeader = TRUE; break;
+    case RMEN_SDATA:    rmData->senderInfoMode = SIM_DATA; updateHeader = TRUE; break;
+    case RMEN_SFULL:    rmData->senderInfoMode = SIM_ALL; updateHeader = TRUE; break;
+    case RMEN_SIMAGE:   rmData->senderInfoMode = SIM_IMAGE; updateHeader = TRUE; break;
+    case RMEN_WRAPH:    rmData->wrapHeaders = checked; updateHeader = TRUE; break;
+    case RMEN_TSTYLE:   rmData->useTextstyles = checked; updateText = TRUE; break;
+    case RMEN_FFONT:    rmData->useFixedFont = checked; updateText = TRUE; break;
 
     default:
       result = DoSuperMethodA(cl, obj, msg);
   }
 
-  if(updateGroup)
-    DoMethod(obj, MUIM_ReadMailGroup_ReadMail, rmData->mail, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+  if(updateText)
+  {
+    DoMethod(obj, MUIM_ReadMailGroup_ReadMail, rmData->mail, (MUIF_ReadMailGroup_ReadMail_UpdateOnly |
+                                                              MUIF_ReadMailGroup_ReadMail_UpdateTextOnly));
+  }
+  else if(updateHeader)
+    DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
 
   RETURN(result);
   return result;
@@ -580,6 +588,8 @@ DECLARE(Clear) // BOOL noTextEditClear
 
   CleanupReadMailData(data->readMailData, FALSE);
 
+  data->hasContent = FALSE;
+
   RETURN(0);
   return 0;
 }
@@ -592,7 +602,6 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
   struct Mail *mail = msg->mail;
   struct Folder *folder = mail->Folder;
   struct ReadMailData *rmData = data->readMailData;
-  char *cmsg;
   BOOL result = FALSE; // error per default
 
   ENTER();
@@ -600,7 +609,8 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
   // before we actually start loading data into our readmailGroup
   // we have to make sure we didn't actually have something displayed
   // which should get freed first
-  DoMethod(obj, MUIM_ReadMailGroup_Clear, hasUpdateOnlyFlag(msg->flags));
+  if(!hasUpdateTextOnlyFlag(msg->flags))
+    DoMethod(obj, MUIM_ReadMailGroup_Clear, hasUpdateOnlyFlag(msg->flags));
 
   // set the passed mail as the current mail read by our ReadMailData
   // structure
@@ -609,16 +619,14 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
   // load the message now
   if(RE_LoadMessage(rmData, PM_ALL))
   {
-    // now read in the Mail in a temporary buffer
+    char *cmsg;
+
     BusyText(GetStr(MSG_BusyDisplaying), "");
+
+    // now read in the Mail in a temporary buffer
     if((cmsg = RE_ReadInMessage(rmData, RIM_READ)))
     {
-      struct Person *from = &rmData->mail->From;
-      struct ABEntry *ab = NULL;
-      struct ABEntry abtmpl;
       char *body;
-      BOOL dispheader;
-      int hits;
 
       // the first operation should be: check if the mail is a multipart mail and if so we tell
       // our attachment group about it and read the partlist or otherwise a previously opened
@@ -656,217 +664,17 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
       else
         set(data->attachmentGroup, MUIA_ShowMe, FALSE);
 
-      // then we check whether we should disable the headerList display
-      // or not.
-      dispheader = (rmData->headerMode != HM_NOHEADER);
-      set(data->headerGroup, MUIA_ShowMe, dispheader);
-      set(data->balanceObject, MUIA_ShowMe, dispheader);
-    
-      set(data->headerList, MUIA_NList_Quiet, TRUE);
-      body = cmsg;
-
-      // we first go through the headerList of our first Part, which should in fact
-      // be the headerPart
-      if(dispheader && rmData->firstPart && rmData->firstPart->headerList)
-      {
-        struct MinNode *curNode;
-
-        // Now we process the read header to set all flags accordingly
-        for(curNode = rmData->firstPart->headerList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-        {
-          struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
-
-          // now we use MatchNoCase() to find out if we should include that headerNode
-          // in out headerList or not
-          if(rmData->headerMode == HM_SHORTHEADER)
-            dispheader = MatchNoCase(hdrNode->name, C->ShortHeaders);
-          else
-            dispheader = (rmData->headerMode == HM_FULLHEADER);
-
-          if(dispheader)
-          {
-            // we simply insert the whole headerNode and split the display later in our HeaderDisplayHook
-            DoMethod(data->headerList, MUIM_NList_InsertSingleWrap, hdrNode,
-                                       MUIV_NList_Insert_Sorted,
-                                       rmData->wrapHeaders ? WRAPCOL1 : NOWRAP, ALIGN_LEFT);
-          }
-        }
-      }
-
-      if((hits = AB_SearchEntry(from->Address, ASM_ADDRESS|ASM_USER, &ab)) == 0 &&
-         *from->RealName)
-      {
-        hits = AB_SearchEntry(from->RealName, ASM_REALNAME|ASM_USER, &ab);
-      }
-
-      RE_GetSenderInfo(rmData->mail, &abtmpl);
-
-      if(!stricmp(from->Address, C->EmailAddress) || !stricmp(from->RealName, C->RealName))
-      {
-        if(!ab)
-        {
-          ab = &abtmpl;
-          *ab->Photo = 0;
-        }
-      }
-      else
-      {
-        if(ab)
-        {
-          RE_UpdateSenderInfo(ab, &abtmpl);
-          if(!hasUpdateOnlyFlag(msg->flags) &&
-             C->AddToAddrbook > 0 && !*ab->Photo && *abtmpl.Photo && *C->GalleryDir)
-          {
-            RE_DownloadPhoto(_win(obj), abtmpl.Photo, ab);
-          }
-        }
-        else
-        {
-          if(!hasUpdateOnlyFlag(msg->flags) &&
-             C->AddToAddrbook > 0 && (ab = RE_AddToAddrbook(_win(obj), &abtmpl)))
-          {
-            if(*abtmpl.Photo && *C->GalleryDir)
-              RE_DownloadPhoto(_win(obj), abtmpl.Photo, ab);
-          }
-          else
-          {
-            ab = &abtmpl;
-            *ab->Photo = 0;
-          }
-        }
-      }
-
-      if(rmData->senderInfoMode != SIM_OFF)
-      {
-        if(rmData->senderInfoMode != SIM_IMAGE)
-        {
-          if(hits == 1 || ab->Type == AET_LIST)
-          {
-            struct HeaderNode *newNode;
-
-            // make sure we cleaned up the senderInfoHeader List beforehand
-            FreeHeaderList(&data->senderInfoHeaders);
-
-            if(*ab->RealName && (newNode = malloc(sizeof(struct HeaderNode))))
-            {
-              newNode->name = StrBufCpy(NULL, MUIX_I);
-              newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_RealName)));
-              newNode->content = StrBufCpy(NULL, ab->RealName);
-              AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
-            }
-
-            if(*ab->Street && (newNode = malloc(sizeof(struct HeaderNode))))
-            {
-              newNode->name = StrBufCpy(NULL, MUIX_I);
-              newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Street)));
-              newNode->content = StrBufCpy(NULL, ab->Street);
-              AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
-            }
-
-            if(*ab->City && (newNode = malloc(sizeof(struct HeaderNode))))
-            {
-              newNode->name = StrBufCpy(NULL, MUIX_I);
-              newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_City)));
-              newNode->content = StrBufCpy(NULL, ab->City);
-              AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
-            }
-
-            if(*ab->Country && (newNode = malloc(sizeof(struct HeaderNode))))
-            {
-              newNode->name = StrBufCpy(NULL, MUIX_I);
-              newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Country)));
-              newNode->content = StrBufCpy(NULL, ab->Country);
-              AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
-            }
-
-            if(*ab->Phone && (newNode = malloc(sizeof(struct HeaderNode))))
-            {
-              newNode->name = StrBufCpy(NULL, MUIX_I);
-              newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Phone)));
-              newNode->content = StrBufCpy(NULL, ab->Phone);
-              AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
-            }
-
-            if(*AB_ExpandBD(ab->BirthDay) && (newNode = malloc(sizeof(struct HeaderNode))))
-            {
-              newNode->name = StrBufCpy(NULL, MUIX_I);
-              newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_DOB)));
-              newNode->content = StrBufCpy(NULL, AB_ExpandBD(ab->BirthDay));
-              AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
-            }
-
-            if(*ab->Comment && (newNode = malloc(sizeof(struct HeaderNode))))
-            {
-              newNode->name = StrBufCpy(NULL, MUIX_I);
-              newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Description)));
-              newNode->content = StrBufCpy(NULL, ab->Comment);
-              AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
-            }
-
-            if(*ab->Homepage && (newNode = malloc(sizeof(struct HeaderNode))))
-            {
-              newNode->name = StrBufCpy(NULL, MUIX_I);
-              newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Homepage)));
-              newNode->content = StrBufCpy(NULL, ab->Homepage);
-              AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
-              DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
-            }
-          }
-        }
-
-        if((rmData->senderInfoMode == SIM_ALL || rmData->senderInfoMode == SIM_IMAGE) &&
-           DoMethod(data->senderImageGroup, MUIM_Group_InitChange))
-        {
-          char photopath[SIZE_PATHFILE];
-
-          if(data->senderImage)
-          {
-            DoMethod(data->senderImageGroup, OM_REMMEMBER, data->senderImage);
-            MUI_DisposeObject(data->senderImage);
-          }
-
-          data->senderImage = NULL;
-
-          if(RE_FindPhotoOnDisk(ab, photopath) &&
-             (data->senderImage = UserImageObject,
-                                    MUIA_Weight,                 100,
-                                    MUIA_UserImage_File,         photopath,
-                                    MUIA_UserImage_MaxHeight,    64,
-                                    MUIA_UserImage_MaxWidth,    64,
-                                    MUIA_UserImage_NoMinHeight, TRUE,
-                                  End))
-          {
-            D(DBF_GUI, "SenderPicture found: %s %ld %ld", photopath, xget(data->headerList, MUIA_Width), xget(data->headerList, MUIA_Height));
-
-            DoMethod(data->senderImageGroup, OM_ADDMEMBER, data->senderImage);
-
-            // resort the group so that the space object is at the bottom of it.
-            DoMethod(data->senderImageGroup, MUIM_Group_Sort, data->senderImage,
-                                                              data->senderImageSpace,
-                                                              NULL);
-          }
-          DoMethod(data->senderImageGroup, MUIM_Group_ExitChange);
-        }
-      }
-      set(data->senderImageGroup, MUIA_ShowMe, (rmData->senderInfoMode == SIM_ALL ||
-                                                rmData->senderInfoMode == SIM_IMAGE) &&
-                                               (data->senderImage != NULL));
-      
-      // enable the headerList again
-      set(data->headerList, MUIA_NList_Quiet, FALSE);
+      // make sure the header display is also updated correctly.
+      if(!hasUpdateTextOnlyFlag(msg->flags))
+        DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, msg->flags);
 
       // before we can put the message body into the TextEditor, we have to preparse the text and
       // try to set some styles, as we don`t use the buggy ImportHooks of TextEditor anymore and are anyway
       // more powerful this way.
       if(rmData->useTextstyles)
-        body = ParseEmailText(body);
+        body = ParseEmailText(cmsg);
+      else
+        body = cmsg;
 
       SetAttrs(data->mailTextObject, MUIA_TextEditor_FixedFont, rmData->useFixedFont,
                                      MUIA_TextEditor_Contents,  body,
@@ -940,6 +748,233 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 
   RETURN(result);
   return result;
+}
+
+///
+/// DECLARE(UpdateHeaderDisplay)
+DECLARE(UpdateHeaderDisplay) // ULONG flags
+{
+  GETDATA;
+  struct ReadMailData *rmData = data->readMailData;
+  struct Person *from = &rmData->mail->From;
+  struct ABEntry *ab = NULL;
+  struct ABEntry abtmpl;
+  BOOL dispheader;
+  int hits;
+
+  ENTER();
+
+  // make sure the headerList is cleared if necessary
+  if(data->hasContent)
+    DoMethod(data->headerList, MUIM_NList_Clear);
+
+  // then we check whether we should disable the headerList display
+  // or not.
+  dispheader = (rmData->headerMode != HM_NOHEADER);
+  set(data->headerGroup, MUIA_ShowMe, dispheader);
+  set(data->balanceObject, MUIA_ShowMe, dispheader);
+
+  set(data->headerList, MUIA_NList_Quiet, TRUE);
+
+  // we first go through the headerList of our first Part, which should in fact
+  // be the headerPart
+  if(dispheader && rmData->firstPart && rmData->firstPart->headerList)
+  {
+    struct MinNode *curNode;
+
+    // Now we process the read header to set all flags accordingly
+    for(curNode = rmData->firstPart->headerList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
+
+      // now we use MatchNoCase() to find out if we should include that headerNode
+      // in out headerList or not
+      if(rmData->headerMode == HM_SHORTHEADER)
+        dispheader = MatchNoCase(hdrNode->name, C->ShortHeaders);
+      else
+        dispheader = (rmData->headerMode == HM_FULLHEADER);
+
+      if(dispheader)
+      {
+        // we simply insert the whole headerNode and split the display later in our HeaderDisplayHook
+        DoMethod(data->headerList, MUIM_NList_InsertSingleWrap, hdrNode,
+                                   MUIV_NList_Insert_Sorted,
+                                   rmData->wrapHeaders ? WRAPCOL1 : NOWRAP, ALIGN_LEFT);
+      }
+    }
+  }
+
+  if((hits = AB_SearchEntry(from->Address, ASM_ADDRESS|ASM_USER, &ab)) == 0 &&
+     *from->RealName)
+  {
+    hits = AB_SearchEntry(from->RealName, ASM_REALNAME|ASM_USER, &ab);
+  }
+
+  RE_GetSenderInfo(rmData->mail, &abtmpl);
+
+  if(!stricmp(from->Address, C->EmailAddress) || !stricmp(from->RealName, C->RealName))
+  {
+    if(!ab)
+    {
+      ab = &abtmpl;
+      *ab->Photo = 0;
+    }
+  }
+  else
+  {
+    if(ab)
+    {
+      RE_UpdateSenderInfo(ab, &abtmpl);
+      if(!hasUpdateOnlyFlag(msg->flags) &&
+         C->AddToAddrbook > 0 && !*ab->Photo && *abtmpl.Photo && *C->GalleryDir)
+      {
+        RE_DownloadPhoto(_win(obj), abtmpl.Photo, ab);
+      }
+    }
+    else
+    {
+      if(!hasUpdateOnlyFlag(msg->flags) &&
+         C->AddToAddrbook > 0 && (ab = RE_AddToAddrbook(_win(obj), &abtmpl)))
+      {
+        if(*abtmpl.Photo && *C->GalleryDir)
+          RE_DownloadPhoto(_win(obj), abtmpl.Photo, ab);
+      }
+      else
+      {
+        ab = &abtmpl;
+        *ab->Photo = 0;
+      }
+    }
+  }
+
+  if(rmData->senderInfoMode != SIM_OFF)
+  {
+    if(rmData->senderInfoMode != SIM_IMAGE)
+    {
+      if(hits == 1 || ab->Type == AET_LIST)
+      {
+        struct HeaderNode *newNode;
+
+        // make sure we cleaned up the senderInfoHeader List beforehand
+        FreeHeaderList(&data->senderInfoHeaders);
+
+        if(*ab->RealName && (newNode = malloc(sizeof(struct HeaderNode))))
+        {
+          newNode->name = StrBufCpy(NULL, MUIX_I);
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_RealName)));
+          newNode->content = StrBufCpy(NULL, ab->RealName);
+          AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+          DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
+        }
+
+        if(*ab->Street && (newNode = malloc(sizeof(struct HeaderNode))))
+        {
+          newNode->name = StrBufCpy(NULL, MUIX_I);
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Street)));
+          newNode->content = StrBufCpy(NULL, ab->Street);
+          AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+          DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
+        }
+
+        if(*ab->City && (newNode = malloc(sizeof(struct HeaderNode))))
+        {
+          newNode->name = StrBufCpy(NULL, MUIX_I);
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_City)));
+          newNode->content = StrBufCpy(NULL, ab->City);
+          AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+          DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
+        }
+
+        if(*ab->Country && (newNode = malloc(sizeof(struct HeaderNode))))
+        {
+          newNode->name = StrBufCpy(NULL, MUIX_I);
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Country)));
+          newNode->content = StrBufCpy(NULL, ab->Country);
+          AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+          DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
+        }
+
+        if(*ab->Phone && (newNode = malloc(sizeof(struct HeaderNode))))
+        {
+          newNode->name = StrBufCpy(NULL, MUIX_I);
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Phone)));
+          newNode->content = StrBufCpy(NULL, ab->Phone);
+          AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+          DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
+        }
+
+        if(*AB_ExpandBD(ab->BirthDay) && (newNode = malloc(sizeof(struct HeaderNode))))
+        {
+          newNode->name = StrBufCpy(NULL, MUIX_I);
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_DOB)));
+          newNode->content = StrBufCpy(NULL, AB_ExpandBD(ab->BirthDay));
+          AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+          DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
+        }
+
+        if(*ab->Comment && (newNode = malloc(sizeof(struct HeaderNode))))
+        {
+          newNode->name = StrBufCpy(NULL, MUIX_I);
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Description)));
+          newNode->content = StrBufCpy(NULL, ab->Comment);
+          AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+          DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
+        }
+
+        if(*ab->Homepage && (newNode = malloc(sizeof(struct HeaderNode))))
+        {
+          newNode->name = StrBufCpy(NULL, MUIX_I);
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Homepage)));
+          newNode->content = StrBufCpy(NULL, ab->Homepage);
+          AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+          DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
+        }
+      }
+    }
+
+    if((rmData->senderInfoMode == SIM_ALL || rmData->senderInfoMode == SIM_IMAGE) &&
+       DoMethod(data->senderImageGroup, MUIM_Group_InitChange))
+    {
+      char photopath[SIZE_PATHFILE];
+
+      if(data->senderImage)
+      {
+        DoMethod(data->senderImageGroup, OM_REMMEMBER, data->senderImage);
+        MUI_DisposeObject(data->senderImage);
+      }
+
+      data->senderImage = NULL;
+
+      if(RE_FindPhotoOnDisk(ab, photopath) &&
+         (data->senderImage = UserImageObject,
+                                MUIA_Weight,                 100,
+                                MUIA_UserImage_File,         photopath,
+                                MUIA_UserImage_MaxHeight,    64,
+                                MUIA_UserImage_MaxWidth,    64,
+                                MUIA_UserImage_NoMinHeight, TRUE,
+                              End))
+      {
+        D(DBF_GUI, "SenderPicture found: %s %ld %ld", photopath, xget(data->headerList, MUIA_Width), xget(data->headerList, MUIA_Height));
+
+        DoMethod(data->senderImageGroup, OM_ADDMEMBER, data->senderImage);
+
+        // resort the group so that the space object is at the bottom of it.
+        DoMethod(data->senderImageGroup, MUIM_Group_Sort, data->senderImage,
+                                                          data->senderImageSpace,
+                                                          NULL);
+      }
+      DoMethod(data->senderImageGroup, MUIM_Group_ExitChange);
+    }
+  }
+  set(data->senderImageGroup, MUIA_ShowMe, (rmData->senderInfoMode == SIM_ALL ||
+                                            rmData->senderInfoMode == SIM_IMAGE) &&
+                                           (data->senderImage != NULL));
+
+  // enable the headerList again
+  set(data->headerList, MUIA_NList_Quiet, FALSE);
+
+  RETURN(0);
+  return 0;
 }
 
 ///
@@ -1421,7 +1456,7 @@ DECLARE(HeaderListDoubleClicked)
   else
     rmData->headerMode = HM_SHORTHEADER;
 
-  DoMethod(obj, MUIM_ReadMailGroup_ReadMail, rmData->mail, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+  DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
 
   RETURN(0);
   return 0;

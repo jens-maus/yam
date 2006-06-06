@@ -773,7 +773,7 @@ DECLARE(CropAll)
   if(rmData->readWindow)
     DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, mail);
   else
-    DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail, MUIF_NONE);
+    DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail, MUIF_ReadMailGroup_ReadMail_UpdateTextOnly);
 
   return 0;
 }

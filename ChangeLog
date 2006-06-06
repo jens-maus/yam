@@ -6,6 +6,9 @@ $Id$
 
 2006-06-06  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/ReadMailGroup.c, all: implemented request #1501579 and optimized
+    the mail text and header display such that only the necessary areas will
+    be refreshed instead of always the whole readmailgroup.
   * YAM_MAf.c: an enabled embedded read pane will now be automatically
     disabled in case a folder group is selected as the active folder. In
     addition, in case a real folder is reactived, YAM now also make sure that

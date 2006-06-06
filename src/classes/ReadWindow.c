@@ -1038,8 +1038,7 @@ DECLARE(ChangeHeaderMode) // enum HeaderMode hmode
   rmData->headerMode = msg->hmode;
 
   // issue an update of the readMailGroup
-  DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, rmData->mail,
-                                MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+  DoMethod(data->readMailGroup, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
 
   return 0;
 }
@@ -1056,8 +1055,7 @@ DECLARE(ChangeSenderInfoMode) // enum SInfoMode simode
   rmData->senderInfoMode = msg->simode;
 
   // issue an update of the readMailGroup
-  DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, rmData->mail,
-                                MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+  DoMethod(data->readMailGroup, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
 
   return 0;
 }
@@ -1068,18 +1066,52 @@ DECLARE(StyleOptionsChanged)
 {
   GETDATA;
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
+  BOOL updateHeader = FALSE;
+  BOOL updateText = FALSE;
+  BOOL tmp;
 
-      
-  // check the menu items for the style options
-  // what we are going to enable/disable in our upcoming update
-  rmData->wrapHeaders   = xget(data->MI_WRAPH, MUIA_Menuitem_Checked);
-  rmData->useTextstyles = xget(data->MI_TSTYLE, MUIA_Menuitem_Checked);
-  rmData->useFixedFont  = xget(data->MI_FFONT, MUIA_Menuitem_Checked);
+  ENTER();
 
-  // issue an update of the readMailGroup
-  DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, rmData->mail,
-                                MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+  // check wrapHeaders diff
+  if((tmp = xget(data->MI_WRAPH, MUIA_Menuitem_Checked)) != rmData->wrapHeaders)
+  {
+    rmData->wrapHeaders = tmp;
+    updateHeader = TRUE;
+  }
 
+  // check useTextstyles diff
+  if((tmp = xget(data->MI_TSTYLE, MUIA_Menuitem_Checked)) != rmData->useTextstyles)
+  {
+    rmData->useTextstyles = tmp;
+    updateText = TRUE;
+  }
+
+  // check useFixedFont diff
+  if((tmp = xget(data->MI_FFONT, MUIA_Menuitem_Checked)) != rmData->useFixedFont)
+  {
+    rmData->useFixedFont = tmp;
+    updateText = TRUE;
+  }
+
+  // issue an update of the readMailGroup's components
+  if(updateHeader && updateText)
+  {
+    DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, rmData->mail,
+                                  MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+  }
+  else if(updateText)
+  {
+    DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, rmData->mail,
+                                  (MUIF_ReadMailGroup_ReadMail_UpdateOnly |
+                                   MUIF_ReadMailGroup_ReadMail_UpdateTextOnly));
+  }
+  else if(updateHeader)
+  {
+    DoMethod(data->readMailGroup, MUIM_ReadMailGroup_UpdateHeaderDisplay,
+                                  MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+  }
+
+  RETURN(0);
   return 0;
 }
 
