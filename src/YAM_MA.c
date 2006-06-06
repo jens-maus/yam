@@ -145,8 +145,10 @@ void MA_ChangeSelected(BOOL forceUpdate)
   struct Folder *fo = FO_GetCurrentFolder();
   int selected;
   int i;
-  BOOL active, hasattach = FALSE;
+  BOOL active;
+  BOOL hasattach = FALSE;
   BOOL beingedited = FALSE;
+  BOOL folderEnabled;
   struct Mail *mail;
 
   ENTER();
@@ -211,18 +213,26 @@ void MA_ChangeSelected(BOOL forceUpdate)
     }
   }
 
+  // now we have to make sure that all toolbar and menu items are
+  // enabled and disabled according to the folder/mail status
   DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
 
+  folderEnabled = !(fo->Type == FT_GROUP);
+
+  // deal with the toolbar
   if(gui->TO_TOOLBAR)
   {
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 1, MUIV_Toolbar_Set_Ghosted, !active || !isOutgoingFolder(fo) || beingedited);
     DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 0, MUIV_Toolbar_Set_Ghosted, !active);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !active && !selected, 2,3,4,7,8, -1);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 1, MUIV_Toolbar_Set_Ghosted, !active || !isOutgoingFolder(fo) || beingedited);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !active || !selected, 2,3,4,7,8, -1);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 13, MUIV_Toolbar_Set_Ghosted, !folderEnabled);
   }
 
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active || selected,
+  // enable/disable menu items
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, (active || selected) && folderEnabled,
                    gui->MI_MOVE, gui->MI_DELETE, gui->MI_GETADDRESS, gui->MI_REPLY, gui->MI_FORWARD, gui->MI_STATUS,
                    gui->MI_EXPMSG, gui->MI_COPY, gui->MI_PRINT, gui->MI_SAVE, gui->MI_CHSUBJ, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled, gui->MI_FILTER, gui->MI_UPDINDEX, gui->MI_IMPORT, gui->MI_EXPORT, gui->MI_SELECT, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active, gui->MI_READ, gui->MI_BOUNCE, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active && isOutgoingFolder(fo) && !beingedited, gui->MI_EDIT, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, fo->Type == FT_OUTGOING && (active || selected), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
@@ -3373,10 +3383,10 @@ struct MA_ClassData *MA_New(void)
             End,
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_MSearch), MMEN_SEARCH),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_MFilter), MMEN_FILTER),
+            MUIA_Family_Child, data->GUI.MI_FILTER = MakeMenuitem(GetStr(MSG_MA_MFilter), MMEN_FILTER),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_RemoveDeleted), MMEN_DELDEL),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_UpdateIndex), MMEN_INDEX),
+            MUIA_Family_Child, data->GUI.MI_UPDINDEX = MakeMenuitem(GetStr(MSG_MA_UpdateIndex), MMEN_INDEX),
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_FlushIndices), MMEN_FLUSH),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
             MUIA_Family_Child, data->GUI.MI_IMPORT = MakeMenuitem(GetStr(MSG_FOLDER_IMPORT), MMEN_IMPORT),
@@ -3407,7 +3417,7 @@ struct MA_ClassData *MA_New(void)
             MUIA_Family_Child, data->GUI.MI_BOUNCE = MakeMenuitem(GetStr(MSG_MESSAGE_BOUNCE), MMEN_BOUNCE),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
             MUIA_Family_Child, data->GUI.MI_GETADDRESS = MakeMenuitem(GetStr(MSG_MESSAGE_GETADDRESS), MMEN_SAVEADDR),
-            MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_Select),
+            MUIA_Family_Child, data->GUI.MI_SELECT = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_Select),
                MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_SelectAll), MMEN_SELALL),
                MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_SelectNone), MMEN_SELNONE),
                MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_SelectToggle), MMEN_SELTOGG),

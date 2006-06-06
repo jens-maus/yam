@@ -6,6 +6,9 @@ $Id$
 
 2006-06-06  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c, YAM_main.h: fixed a minor bug where not all menu items and
+    toolbar gadgets were disabled in case a folder group is set to the
+    currently active folder.
   * classes/ReadMailGroup.c, all: implemented request #1501579 and optimized
     the mail text and header display such that only the necessary areas will
     be refreshed instead of always the whole readmailgroup.

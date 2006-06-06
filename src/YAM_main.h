@@ -236,6 +236,9 @@ struct MA_GUIData
    Object *MI_ALLTOREAD;
    Object *MI_CHSUBJ;
    Object *MI_SEND;
+   Object *MI_FILTER;
+   Object *MI_UPDINDEX;
+   Object *MI_SELECT;
    Object *LV_FOLDERS;
    Object *NL_FOLDERS;
    Object *TO_TOOLBAR;
