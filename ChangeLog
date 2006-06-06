@@ -6,6 +6,9 @@ $Id$
 
 2006-06-06  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c, YAM_MAf.c, Debug.c, YAM_COs.c: fixed all strpbrk() uses where
+    we use the function as replacements of strtok() and did iterate not
+    entirely conform.
   * YAM_MA.c, YAM_main.h: fixed a minor bug where not all menu items and
     toolbar gadgets were disabled in case a folder group is set to the
     currently active folder.

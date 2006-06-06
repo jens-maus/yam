@@ -1041,7 +1041,10 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                     }
 
                     // set the next start to our last search
-                    s = ++e;
+                    if(*e)
+                      s = ++e;
+                    else
+                      break;
                   }
                }
                else if (!stricmp(buffer, "TRBufferSize")) co->TRBufferSize = atoi(value);

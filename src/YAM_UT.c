@@ -4884,6 +4884,8 @@ static BOOL MatchExtension(char *fileext, char *extlist)
       if((e = strpbrk(s, " |;,")) == NULL)
         e = s+strlen(s);
 
+      D(DBF_MIME, "try matching file extension '%s' with '%s' %d", fileext, s, e-s);
+
       // now check if the extension matches
       if(strnicmp(s, fileext, e-s) == 0)
       {
@@ -4892,7 +4894,10 @@ static BOOL MatchExtension(char *fileext, char *extlist)
       }
 
       // set the next start to our last search
-      s = ++e;
+      if(*e)
+        s = ++e;
+      else
+        break;
     }
   }
 

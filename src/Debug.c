@@ -106,7 +106,7 @@ void SetupDebug(void)
       char *e;
 
       if((e = strpbrk(s, " ,;")) == NULL)
-        e = s+(strlen(s)-1);
+        e = s+strlen(s);
 
       // check if the token is class definition or
       // just a flag definition
@@ -176,7 +176,10 @@ void SetupDebug(void)
       }
 
       // set the next start to our last search
-      s = ++e;
+      if(*e)
+        s = ++e;
+      else
+        break;
     }
   }
 

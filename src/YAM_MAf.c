@@ -2061,7 +2061,10 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
     count++;
 
     // set the next start to our last search
-    s = ++e;
+    if(*e)
+      s = ++e;
+    else
+      break;
   }
 
   // then format a standard DateStamp string like string
