@@ -125,7 +125,7 @@ static void US_LoadUsers(void)
                  save = TRUE;
                }
 
-               if (FileType(u->MailDir) != 2)
+               if(FileType(u->MailDir) != FIT_DRAWER)
                {
                   ER_NewError(GetStr(MSG_ER_UserRemoved), u->MailDir, u->Name);
                   u->Name[0] = 0;
@@ -291,7 +291,7 @@ static BOOL US_SaveUserList(void)
       {
          if (*u->MailDir)
          {
-            if (FileType(u->MailDir) != 2)
+            if(FileType(u->MailDir) != FIT_DRAWER)
             {
                if (MUI_Request(G->App, G->US->GUI.WI, 0, GetStr(MSG_MA_MUsers), GetStr(MSG_YesNoReq), GetStr(MSG_US_ErrorNoDirectory)))
                {

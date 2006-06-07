@@ -384,30 +384,34 @@ MakeStaticHook(EA_OkayHook, EA_Okay);
 //  Updates the portrait image
 static void EA_SetPhoto(int winnum, char *fname)
 {
-   struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
+  struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
 
-   if(fname)
-     strlcpy(G->EA[winnum]->PhotoName, fname, sizeof(G->EA[winnum]->PhotoName));
+  ENTER();
 
-   fname = G->EA[winnum]->PhotoName;
+  if(fname)
+    strlcpy(G->EA[winnum]->PhotoName, fname, sizeof(G->EA[winnum]->PhotoName));
 
-   if(*fname && gui->BC_PHOTO &&
-      DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
-   {
-      DoMethod(gui->GR_PHOTO, OM_REMMEMBER, gui->BC_PHOTO);
-      MUI_DisposeObject(gui->BC_PHOTO);
+  fname = G->EA[winnum]->PhotoName;
 
-      gui->BC_PHOTO = UserImageObject,
-                        MUIA_UserImage_File,         fname,
-                        MUIA_UserImage_MaxHeight,    64,
-                        MUIA_UserImage_MaxWidth,    64,
-                        MUIA_UserImage_NoMinHeight, FALSE,
-                      End;
+  if(*fname && FileType(fname) == FIT_FILE && gui->BC_PHOTO &&
+     DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
+  {
+    DoMethod(gui->GR_PHOTO, OM_REMMEMBER, gui->BC_PHOTO);
+    MUI_DisposeObject(gui->BC_PHOTO);
 
-      DoMethod(gui->GR_PHOTO, OM_ADDMEMBER, gui->BC_PHOTO);
+    gui->BC_PHOTO = UserImageObject,
+                      MUIA_UserImage_File,        fname,
+                      MUIA_UserImage_MaxHeight,   64,
+                      MUIA_UserImage_MaxWidth,    64,
+                      MUIA_UserImage_NoMinHeight, FALSE,
+                    End;
 
-      DoMethod(gui->GR_PHOTO, MUIM_Group_ExitChange);
-   }
+    DoMethod(gui->GR_PHOTO, OM_ADDMEMBER, gui->BC_PHOTO);
+
+    DoMethod(gui->GR_PHOTO, MUIM_Group_ExitChange);
+  }
+
+  LEAVE();
 }
 
 ///
@@ -533,16 +537,19 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                      Child, data->GUI.ST_BIRTHDAY = MakeString(SIZE_SMALL,GetStr(MSG_EA_DOB)),
                   End,
                   Child, VGroupV, GroupFrameT(GetStr(MSG_EA_Portrait)),
-                     Child, data->GUI.BT_SELECTPHOTO = MakeButton(GetStr(MSG_EA_SelectPhoto)),
                      Child, HGroup,
                         Child, HSpace(0),
                         Child, data->GUI.GR_PHOTO = HGroup,
-                           Child, data->GUI.BC_PHOTO = RectangleObject, MUIA_FixWidth, 100, MUIA_FixHeight, 80, End,
+                           Child, data->GUI.BC_PHOTO = RectangleObject,
+                             MUIA_FixWidth,  64,
+                             MUIA_FixHeight, 64,
+                           End,
                            ImageButtonFrame,
                         End,
                         Child, HSpace(0),
                      End,
                      Child, VSpace(0),
+                     Child, data->GUI.BT_SELECTPHOTO = MakeButton(GetStr(MSG_EA_SelectPhoto)),
                   End,
                End,
             End;

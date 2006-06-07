@@ -1203,10 +1203,12 @@ long FileProtection(const char *filename)
 ///
 /// FileType
 //  Returns file type (file/directory)
-int FileType(char *filename)
+enum FType FileType(char *filename)
 {
   BPTR lock;
-  long type = 0;
+  enum FType type = FIT_NONEXIST;
+
+  ENTER();
 
   if((lock = Lock((STRPTR)filename, ACCESS_READ)))
   {
@@ -1216,7 +1218,7 @@ int FileType(char *filename)
     {
       if(Examine(lock, fib))
       {
-        type = fib->fib_DirEntryType < 0 ? 1 : 2;
+        type = fib->fib_DirEntryType < 0 ? FIT_FILE : FIT_DRAWER;
       }
       FreeDosObject(DOS_FIB, fib);
     }
@@ -1224,6 +1226,7 @@ int FileType(char *filename)
     UnLock(lock);
   }
 
+  RETURN(type);
   return type;
 }
 ///
@@ -2123,19 +2126,24 @@ char *CreateFilename(const char * const file)
 //  Makes a directory
 BOOL CreateDirectory(char *dir)
 {
-   int t = FileType(dir);
-   if (t == 2) return TRUE;
-   if (t == 0)
-   {
-      BPTR fl = CreateDir((STRPTR)dir);
-      if (fl)
-      {
-         UnLock(fl);
-         return TRUE;
-      }
-   }
-   if (G->MA) ER_NewError(GetStr(MSG_ER_CantCreateDir), dir);
-   return FALSE;
+  enum FType t = FileType(dir);
+
+  if(t == FIT_DRAWER)
+    return TRUE;
+  else if(t == FIT_NONEXIST)
+  {
+    BPTR fl = CreateDir((STRPTR)dir);
+    if(fl)
+    {
+      UnLock(fl);
+      return TRUE;
+    }
+  }
+
+  if(G->MA)
+    ER_NewError(GetStr(MSG_ER_CantCreateDir), dir);
+
+  return FALSE;
 }
 ///
 /// GetFolderDir

@@ -88,10 +88,15 @@ OVERLOAD(MUIM_Setup)
   APTR oldWindowPtr;
   BOOL result = FALSE;
 
+  ENTER();
+
   // call the SuperMethod() first
   if(!DoSuperMethodA(cl, obj, msg) ||
      data->fileName[0] == '\0')
+  {
+    RETURN(result);
     return result;
+  }
 
   // tell DOS not to bother us with requesters
   myproc = (struct Process *)FindTask(NULL);
@@ -101,14 +106,14 @@ OVERLOAD(MUIM_Setup)
   // create the datatypes object
   datatypeObject = NewDTObject(data->fileName,
     DTA_SourceType,          DTST_FILE,
-    DTA_GroupID,            GID_PICTURE,
+    DTA_GroupID,             GID_PICTURE,
     OBP_Precision,           PRECISION_IMAGE,
     PDTA_Remap,              TRUE,
     PDTA_DestMode,           PMODE_V43,
     PDTA_Screen,             (ULONG)_screen(obj),
     PDTA_FreeSourceBitMap,   TRUE,
-    PDTA_UseFriendBitMap,   TRUE,
-    PDTA_ScaleQuality,      0,
+    PDTA_UseFriendBitMap,    TRUE,
+    PDTA_ScaleQuality,       0,
   TAG_DONE);
 
   // restore the window pointer of DOS again.
@@ -211,7 +216,12 @@ OVERLOAD(MUIM_Setup)
     DisposeDTObject(datatypeObject);
   }
 
-  return result;
+  if(result == FALSE)
+    data->scaledBitMap = NULL;
+
+  // return always true as we don't want to get that thing hided.
+  RETURN(TRUE);
+  return TRUE;
 }
 ///
 /// OVERLOAD(MUIM_Cleanup)
@@ -241,6 +251,8 @@ OVERLOAD(MUIM_Draw)
   {
     if(data->scaledBitMap)
       BltBitMapRastPort(data->scaledBitMap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0);
+    else
+      DoMethod(obj, MUIM_DrawBackground, _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0, 0, MUIF_NONE);
   }
 
   return 0;
@@ -265,6 +277,16 @@ OVERLOAD(MUIM_AskMinMax)
     mi->DefHeight += data->scaledHeight;
     mi->MaxWidth  += data->scaledWidth;
     mi->MaxHeight += data->scaledHeight;
+  }
+  else
+  {
+    // define a default minWidth
+    mi->MinWidth  += data->maxWidth;
+    mi->MinHeight += data->maxHeight;
+    mi->DefWidth  += data->maxWidth;
+    mi->DefHeight += data->maxHeight;
+    mi->MaxWidth  += data->maxWidth;
+    mi->MaxHeight += data->maxHeight;
   }
 
   return 0;

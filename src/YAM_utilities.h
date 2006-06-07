@@ -58,6 +58,8 @@ enum ReqFileType { ASL_ABOOK=0, ASL_CONFIG, ASL_DETACH, ASL_ATTACH,
 
 enum OutputDefType { OUT_DOS=0, OUT_NIL };
 
+enum FType { FIT_NONEXIST=0, FIT_FILE, FIT_DRAWER };
+
 struct Person
 {       
    char Address[SIZE_ADDRESS];
@@ -289,7 +291,7 @@ int      FileSize(char *filename);
 long     FileProtection(const char *filename);
 char *   FileToBuffer(char *file);
 BOOL     FileToEditor(char *file, Object *editor);
-int      FileType(char *filename);
+enum FType FileType(char *filename);
 char *   FileComment(char *filename);
 struct DateStamp *FileDate(char *filename);
 long     FileTime(const char *filename);

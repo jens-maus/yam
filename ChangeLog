@@ -6,6 +6,9 @@ $Id$
 
 2006-06-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * src/YAM_EA.c: fixed bug #1458223 where in case a non image file had been
+    specified as a user image, the UserImage class crashed. The same happend
+    in case a directory was specified instead of a real image file.
   * src/YAM_MA.c, classes/ReadWindow.c, classes/ReadMailGroup.c: fixed a
     long-standing bug #724517 where the enable/disable status of some toolbar
     gadgets weren't quite consistent of what the read window and its
