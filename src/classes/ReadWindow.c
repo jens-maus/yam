@@ -582,17 +582,20 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
   GETDATA;
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
   struct Mail *mail = rmData->mail;
+  enum NewMode mode = msg->mode;
   int flags = 0;
 
+  ENTER();
+
   // check for qualifier keys
-  if(msg->mode == NEW_FORWARD)
+  if(mode == NEW_FORWARD)
   {
     if(hasFlag(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
-      msg->mode = NEW_BOUNCE;
+      mode = NEW_BOUNCE;
     else if(isFlagSet(msg->qualifier, IEQUALIFIER_CONTROL))
       SET_FLAG(flags, NEWF_FWD_NOATTACH);
   }
-  else if(msg->mode == NEW_REPLY)
+  else if(mode == NEW_REPLY)
   {
     if(hasFlag(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
       SET_FLAG(flags, NEWF_REP_PRIVATE);
@@ -614,7 +617,7 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
     mlist[1] = NULL;
     mlist[2] = mail;
 
-    switch(msg->mode)
+    switch(mode)
     {
       case NEW_NEW:     MA_NewNew(mail, flags);       break;
       case NEW_EDIT:    MA_NewEdit(mail, flags, obj); break;
@@ -628,6 +631,7 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
     }
   }
 
+  RETURN(0);
   return 0;
 }
 

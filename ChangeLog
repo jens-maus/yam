@@ -6,6 +6,8 @@ $Id$
 
 2006-06-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/ReadWindow.c: fixed bug #1380548 where a subsequent use of a
+    toolbar gadget caused the static Notify value to get overwritten.
   * src/YAM_EA.c: fixed bug #1458223 where in case a non image file had been
     specified as a user image, the UserImage class crashed. The same happend
     in case a directory was specified instead of a real image file.
