@@ -491,8 +491,8 @@ meant to be usefull during debugging.
 -----------------------------
 
 A simple rules is: In any event, try to avoid to use one of the following
-functions as they are known to cause buffer overflows. Use their replacement
-functions listed here instead:
+functions as they are known to cause buffer overflows or other known issues.
+Use their replacement functions listed here instead:
 
   OBSOLETE    REPLACEMENT
   --------    -----------
@@ -503,6 +503,7 @@ functions listed here instead:
   stccpy      strlcpy
   sprintf     snprintf
   vsprintf    vsnprintf
+  strtok      strpbrk
 
 So please try to avoid the use of one of the above listed functions as their
 use should be really considered obsolete within YAM. And if we try to stick
