@@ -6,6 +6,14 @@ $Id$
 
 2006-06-06  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c: enhanced the MIME type/file recognition routines to also try
+    to identify a filename in case no user defined MIME type was found. This
+    should fix problems where in case a mail contains attachments of content
+    type "application/octet-stream" but the file extension suggests a valid
+    and existing user defined MIME type, the defined MIME viewer didn't open.
+    Now YAM will fallback to trying to identify the file type via the file
+    extension in case no user defined type for the specified attachment
+    content-type was found.
   * YAM_UT.c, YAM_MAf.c, Debug.c, YAM_COs.c: fixed all strpbrk() uses where
     we use the function as replacements of strtok() and did iterate not
     entirely conform.

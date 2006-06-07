@@ -489,6 +489,7 @@ void RE_DisplayMIME(char *fname, char *ctype)
 {
   struct MinNode *curNode;
   struct MimeTypeNode *mt = NULL;
+  BOOL triedToIdentify = FALSE;
 
   ENTER();
 
@@ -501,6 +502,8 @@ void RE_DisplayMIME(char *fname, char *ctype)
 
     if((ctype = IdentifyFile(fname)))
       D(DBF_MIME, "identified file as '%s'", ctype);
+
+    triedToIdentify = TRUE;
   }
 
   D(DBF_MIME, "trying to display file '%s' of content-type '%s'", fname, ctype);
@@ -590,7 +593,34 @@ void RE_DisplayMIME(char *fname, char *ctype)
     // current mime type is empty we use the default mime viewer specified in
     // the YAM configuration.
     if(!mt || mt->Command[0] == '\0')
+    {
       cmdPtr = C->DefaultMimeViewer;
+
+      // if we haven't tried to identify the file
+      // via IdentifyFile() yet, we try it here
+      if(triedToIdentify == FALSE)
+      {
+        D(DBF_MIME, "haven't found a user action, trying to identifying via IdentifyFile()");
+
+        if((ctype = IdentifyFile(fname)))
+        {
+          D(DBF_MIME, "identified file as '%s'", ctype);
+
+          for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          {
+            struct MimeTypeNode *curType = (struct MimeTypeNode *)curNode;
+
+            if(MatchNoCase(ctype, curType->ContentType))
+            {
+              if(curType->Command[0] != '\0')
+                cmdPtr = curType->Command;
+
+              break;
+            }
+          }
+        }
+      }
+    }
     else
       cmdPtr = mt->Command;
 
@@ -2063,6 +2093,8 @@ BOOL RE_DecodePart(struct Part *rp)
 
               if((e = strpbrk(s, " |;,")) == NULL)
                 e = s+strlen(s);
+
+              D(DBF_MIME, "identified file extension: '%s' %d", s, e-s);
 
               strlcpy(ext, s, MIN(sizeof(ext), (unsigned int)(e-s+1)));
 
