@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-07  Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/YAM.cd, locale/*.ct: added the 'CC' and 'BCC' shortcuts to the
+    respective gadget texts so that identification of those special fields
+    is more intuitive and the standard way.
+
 2006-06-06  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c: enhanced the MIME type/file recognition routines to also try

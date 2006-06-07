@@ -4270,11 +4270,11 @@ _Opis
 ; D_escription
 ;
 MSG_WR_CopyTo
-Kopije _za
+Kopije _za (CC)
 ; C_opies to
 ;
 MSG_WR_BlindCopyTo
-Skrive_ne kopije za
+Skrive_ne kopije za (BCC)
 ; Hidde_n copies to
 ;
 MSG_WR_From

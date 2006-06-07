@@ -4431,11 +4431,11 @@ P_opis
 ; D_escription
 ;
 MSG_WR_CopyTo
-K_opie pro
+K_opie pro (CC)
 ; C_opies to
 ;
 MSG_WR_BlindCopyTo
-S_krytá kopie pro
+S_krytá kopie pro (BCC)
 ; Hidde_n copies to
 ;
 MSG_WR_From

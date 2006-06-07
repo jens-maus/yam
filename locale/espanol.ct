@@ -4493,11 +4493,11 @@ D_escripción
 ; D_escription
 ;
 MSG_WR_CopyTo
-C_opias para
+C_opias para (CC)
 ; C_opies to
 ;
 MSG_WR_BlindCopyTo
-Copia_s ocultas para
+Copia_s ocultas para (BCC)
 ; Hidde_n copies to
 ;
 MSG_WR_From

@@ -4240,11 +4240,11 @@ _Opis
 ; D_escription
 ;
 MSG_WR_CopyTo
-Kopije n_a
+Kopije n_a (CC)
 ; C_opies to
 ;
 MSG_WR_BlindCopyTo
-Sk_rivene kopije na
+Sk_rivene kopije na (BCC)
 ; Hidde_n copies to
 ;
 MSG_WR_From

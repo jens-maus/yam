@@ -3156,10 +3156,10 @@ MSG_WR_Description (949//)
 D_escription
 ;
 MSG_WR_CopyTo (950//)
-C_opies to
+C_opies to (CC)
 ;
 MSG_WR_BlindCopyTo (951//)
-Hidde_n copies to
+Hidde_n copies to (BCC)
 ;
 MSG_WR_From (952//)
 _From

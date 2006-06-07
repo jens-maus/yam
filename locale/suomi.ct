@@ -3972,11 +3972,11 @@ S_elitys
 ; D_escription
 ;
 MSG_WR_CopyTo
-K_opiot
+K_opiot (CC)
 ; C_opies to
 ;
 MSG_WR_BlindCopyTo
-Piilo_kopiot
+Piilo_kopiot (BCC)
 ; Hidde_n copies to
 ;
 MSG_WR_From

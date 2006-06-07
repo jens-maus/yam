@@ -3179,10 +3179,10 @@ MSG_WR_Description
 D_escrição
 ;
 MSG_WR_CopyTo
-Cópias para
+Cópias para (CC)
 ;
 MSG_WR_BlindCopyTo
-Cópias Esco_ndidas para
+Cópias Esco_ndidas para (BCC)
 ;
 MSG_WR_From
 De

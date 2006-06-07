@@ -4157,11 +4157,11 @@ _Beschreibung
 ; D_escription
 ;
 MSG_WR_CopyTo
-_Kopie an
+_Kopie an (CC)
 ; C_opies to
 ;
 MSG_WR_BlindCopyTo
-_Versteckte Kopie an
+_Versteckte Kopie an (BCC)
 ; Hidde_n copies to
 ;
 MSG_WR_From

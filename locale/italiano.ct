@@ -3093,10 +3093,10 @@ MSG_WR_Description
 _Descrizione
 ;
 MSG_WR_CopyTo
-_Copia a
+_Copia a (CC)
 ;
 MSG_WR_BlindCopyTo
-Copie _nascoste a
+Copie _nascoste a (BCC)
 ;
 MSG_WR_From
 _Da
@@ -3117,7 +3117,7 @@ MSG_WR_Receipt
 Rice_vuta di ritorno
 ;
 MSG_WR_GetMDN
-Tracciatura _messaggio
+Tracciatura _messaggio (MDN)
 ;
 MSG_WR_AddInfo
 Agg. info _personali

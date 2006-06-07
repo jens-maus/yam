@@ -4523,11 +4523,11 @@ _Beskrivelse
 ; D_escription
 ;
 MSG_WR_CopyTo
-_Kopi til
+_Kopi til (CC)
 ; C_opies to
 ;
 MSG_WR_BlindCopyTo
-_Blindkopi til
+_Blindkopi til (BCC)
 ; Hidde_n copies to
 ;
 MSG_WR_From

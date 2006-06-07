@@ -4404,11 +4404,11 @@ D_escription
 ; D_escription
 ;
 MSG_WR_CopyTo
-_Copier à
+_Copier à (CC)
 ; C_opies to
 ;
 MSG_WR_BlindCopyTo
-Copie cac_hée à
+Copie cac_hée à (BCC)
 ; Hidde_n copies to
 ;
 MSG_WR_From

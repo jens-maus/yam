@@ -3708,11 +3708,11 @@ B_eskrivning
 ;#DEF D_escription
 ;#SET (949//)
 MSG_WR_CopyTo
-K_opior till
+K_opior till (CC)
 ;#DEF C_opies to
 ;#SET (950//)
 MSG_WR_BlindCopyTo
-_Dolda kopior till
+_Dolda kopior till (BCC)
 ;#DEF Hidde_n copies to
 ;#SET (951//)
 MSG_WR_From
