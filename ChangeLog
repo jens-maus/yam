@@ -6,6 +6,8 @@ $Id$
 
 2006-06-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/Aboutwindow.c: added forgotten OpenURL link and description
+    as a used third party component.
   * locale/YAM.cd, locale/*.ct: added the 'CC' and 'BCC' shortcuts to the
     respective gadget texts so that identification of those special fields
     is more intuitive and the standard way.
