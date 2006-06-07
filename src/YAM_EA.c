@@ -426,68 +426,6 @@ HOOKPROTONHNO(EA_SelectPhotoFunc, void, int *arg)
 MakeStaticHook(EA_SelectPhotoHook, EA_SelectPhotoFunc);
 
 ///
-/// EA_DownloadPhotoFunc
-//  Downloads a portrait from the YAM user gallery
-HOOKPROTONHNO(EA_DownloadPhotoFunc, void, int *arg)
-{
-   int winnum = *arg, c;
-   struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
-   char *p, dbfile[SIZE_PATHFILE], *name, *addr, *homepage, newname[SIZE_DEFAULT], dbentry[5][SIZE_DEFAULT];
-   BOOL success = FALSE;
-   FILE *db;
-
-   name = (char *)xget(gui->ST_REALNAME, MUIA_String_Contents);
-   addr = (char *)xget(gui->ST_ADDRESS, MUIA_String_Contents);
-   homepage = (char *)xget(gui->ST_HOMEPAGE, MUIA_String_Contents);
-   if (*addr || *name)
-   {
-      strlcpy(dbfile, name, sizeof(dbfile));
-
-      if((p = strrchr(dbfile, ' ')))
-      {
-        *p = '\0';
-        snprintf(newname, sizeof(newname), "%s, %s", p+1, dbfile);
-      }
-      else
-        strlcpy(newname, name, sizeof(newname));
-
-      strmfp(dbfile, C->TempDir, "gallery.db");
-
-      if (TR_OpenTCPIP())
-      {
-         BusyText(GetStr(MSG_BusyDownloadingPic), name);
-         if (!(db = fopen(dbfile, "r")))
-            if (TR_DownloadURL(C->SupportSite, "gallery", "database", dbfile))
-               db = fopen(dbfile, "r");
-         if (db)
-         {
-            for (c = 0; GetLine(db, dbentry[c], SIZE_DEFAULT); c++) if (c == 4)
-            {
-               c = -1;
-               if (!stricmp(dbentry[0], name) || !stricmp(dbentry[0], newname) || !stricmp(dbentry[1], addr))
-               {
-                  if (!*name) setstring(gui->ST_REALNAME, dbentry[0]);
-                  if (!*addr) setstring(gui->ST_ADDRESS, dbentry[1]);
-                  if (!*homepage) setstring(gui->ST_HOMEPAGE, dbentry[3]);
-                  CreateDirectory(C->GalleryDir);
-                  strmfp(dbfile, C->GalleryDir, (char *)FilePart(dbentry[2]));
-                  if (TR_DownloadURL(C->SupportSite, "gallery", dbentry[2], dbfile)) EA_SetPhoto(winnum, dbfile);
-                  success = TRUE; break;
-               }
-            }
-            fclose(db);
-            if (!success) ER_NewError(GetStr(MSG_ER_NotInGallery));
-         }
-         BusyEnd();
-         TR_CloseTCPIP();
-      }
-      else
-        ER_NewError(GetStr(MSG_ER_OPENTCPIP));
-   }
-}
-MakeStaticHook(EA_DownloadPhotoHook, EA_DownloadPhotoFunc);
-
-///
 /// EA_HomepageFunc
 //  Launches a browser to view the homepage of the person
 HOOKPROTONHNO(EA_HomepageFunc, void, int *arg)
@@ -595,10 +533,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                      Child, data->GUI.ST_BIRTHDAY = MakeString(SIZE_SMALL,GetStr(MSG_EA_DOB)),
                   End,
                   Child, VGroupV, GroupFrameT(GetStr(MSG_EA_Portrait)),
-                     Child, ColGroup(2),
-                        Child, data->GUI.BT_SELECTPHOTO = MakeButton(GetStr(MSG_EA_SelectPhoto)),
-                        Child, data->GUI.BT_LOADPHOTO = MakeButton(GetStr(MSG_EA_LoadPhoto)),
-                     End,
+                     Child, data->GUI.BT_SELECTPHOTO = MakeButton(GetStr(MSG_EA_SelectPhoto)),
                      Child, HGroup,
                         Child, HSpace(0),
                         Child, data->GUI.GR_PHOTO = HGroup,
@@ -614,7 +549,6 @@ static struct EA_ClassData *EA_New(int winnum, int type)
             if (group)
             {
                DoMethod(group, MUIM_MultiSet, MUIA_String_Reject, ",", data->GUI.ST_ALIAS, data->GUI.ST_REALNAME, data->GUI.ST_ADDRESS, NULL);
-               set(data->GUI.BT_LOADPHOTO, MUIA_Disabled, !*C->GalleryDir);
                SetHelp(data->GUI.ST_REALNAME   ,MSG_HELP_EA_ST_REALNAME   );
                SetHelp(data->GUI.ST_ADDRESS    ,MSG_HELP_EA_ST_ADDRESS    );
                SetHelp(data->GUI.ST_PGPKEY     ,MSG_HELP_EA_ST_PGPKEY     );
@@ -627,10 +561,8 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                SetHelp(data->GUI.ST_BIRTHDAY   ,MSG_HELP_EA_ST_BIRTHDAY   );
                SetHelp(data->GUI.BC_PHOTO      ,MSG_HELP_EA_BC_PHOTO      );
                SetHelp(data->GUI.BT_SELECTPHOTO,MSG_HELP_EA_BT_SELECTPHOTO);
-               SetHelp(data->GUI.BT_LOADPHOTO  ,MSG_HELP_EA_BT_LOADPHOTO  );
 
                DoMethod(data->GUI.BT_SELECTPHOTO, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &EA_SelectPhotoHook, winnum);
-               DoMethod(data->GUI.BT_LOADPHOTO,   MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &EA_DownloadPhotoHook, winnum);
 
                // when a key ID is selected, set default security to "encrypt"
                DoMethod(data->GUI.ST_PGPKEY, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, data->GUI.CY_DEFSECURITY, 3, MUIM_Set, MUIA_Cycle_Active, 2);

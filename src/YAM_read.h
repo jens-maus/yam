@@ -153,7 +153,6 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode);
 char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode rMode);
 void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab);
 void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new);
-BOOL RE_DownloadPhoto(Object *win, char *url, struct ABEntry *ab);
 struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ);
 void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor);
 BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo);

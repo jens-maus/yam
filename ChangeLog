@@ -6,6 +6,10 @@ $Id$
 
 2006-06-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * src/YAM_EA.c, misc: removed all user gallery download code as the photo
+    download functionality is considered to be obsolete since we moved
+    to a new main webserver and nowadays other mechanisms should be
+    preferred to exchange images between users.
   * classes/Aboutwindow.c: added forgotten OpenURL link and description
     as a used third party component.
   * locale/YAM.cd, locale/*.ct: added the 'CC' and 'BCC' shortcuts to the

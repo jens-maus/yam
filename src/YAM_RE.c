@@ -3228,49 +3228,6 @@ BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo)
    return (BOOL)(FileSize(photo) > 0);
 }
 ///
-/// RE_DownloadPhoto
-//  Downloads portrait photograph of sender from the YAM homepage
-BOOL RE_DownloadPhoto(Object *win, char *url, struct ABEntry *ab)
-{
-   char fname[SIZE_FILE], picfname[SIZE_PATHFILE], ext[SIZE_SMALL];
-   char *name = *ab->Alias ? ab->Alias : "pic";
-   int i;
-   BOOL success = FALSE, doit = FALSE;
-
-   switch (C->AddToAddrbook)
-   {
-      case 1: case 2: doit = MUI_Request(G->App, win, 0, NULL, GetStr(MSG_OkayCancelReq), GetStr(MSG_RE_DownloadPhotoReq)); break;
-      case 3: case 4: doit = TR_IsOnline();
-   }
-   if (doit)
-   {
-      if(!stcgfe(ext, url))
-        strlcpy(ext, "iff", sizeof(ext));
-
-      snprintf(fname, sizeof(fname), "%s.%s", name, ext);
-
-      for(i = 2; PFExists(C->GalleryDir, fname); i++)
-        snprintf(fname, sizeof(fname), "%s%d.%s", name, i, ext);
-      strmfp(picfname, C->GalleryDir, fname);
-      if (TR_OpenTCPIP())
-      {
-         BusyText(GetStr(MSG_BusyDownloadingPic), name);
-         CreateDirectory(C->GalleryDir);
-         if (TR_DownloadURL(url, NULL, NULL, picfname))
-         {
-            strlcpy(ab->Photo, picfname, sizeof(ab->Photo));
-            CallHookPkt(&AB_SaveABookHook, 0, 0);
-            success = TRUE;
-         }
-         BusyEnd();
-         TR_CloseTCPIP();
-      }
-      else
-        ER_NewError(GetStr(MSG_ER_OPENTCPIP));
-   }
-   return success;
-}
-///
 /// RE_ClickedOnMessage
 //  User clicked on a e-mail address
 void RE_ClickedOnMessage(char *address)

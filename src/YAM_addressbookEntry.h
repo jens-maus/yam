@@ -51,7 +51,6 @@ struct EA_GUIData
    Object *GR_PHOTO;
    Object *BC_PHOTO;
    Object *BT_SELECTPHOTO;
-   Object *BT_LOADPHOTO;
    Object *LV_MEMBER;
    Object *ST_MEMBER;
    Object *BT_ADD;

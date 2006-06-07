@@ -2587,9 +2587,6 @@ Portrait
 MSG_EA_SelectPhoto (794//)
 Se_lect
 ;
-MSG_EA_LoadPhoto (795//)
-_Download
-;
 MSG_EA_ReturnAddress (796//)
 _Return address
 ;
@@ -2655,10 +2652,6 @@ Portrait picture of this person
 MSG_HELP_EA_BT_SELECTPHOTO (812//)
 Select a picture file from disk\n\
 (image datatypes supported)
-;
-MSG_HELP_EA_BT_LOADPHOTO (813//)
-Download a picture of the person\n\
-from the YAM User Gallery
 ;
 MSG_HELP_EA_ST_REALNAME_L (814//)
 Full name of this distribution list\n\
@@ -2859,11 +2852,6 @@ to your address book?
 ;
 MSG_RE_NewGroupTitle (863//)
 Automatically added entries
-;
-MSG_RE_DownloadPhotoReq (864//)
-Do you want to download the photo of the sender\n\
-and add it to your personal gallery?\n\
-(You must be online before clicking the OKAY button)
 ;
 MSG_RE_ContentType (865//)
 Content-Type
@@ -3704,10 +3692,6 @@ MSG_ER_ErrorDOBformat (1104//)
 Date of birth is in wrong format. The correct format is \
 DD-MMM-YYYY (month names in English).
 ;
-MSG_ER_NotInGallery (1105//)
-Couldn't find this person in the YAM user gallery. Either the person \
-doesn't exist in the database or his/her name or address is mispelt.
-;
 MSG_ER_ErrorDateFormat (1107//)
 Invalid date/time format.\n\
 \n\
@@ -4343,10 +4327,6 @@ Saving glossary...
 ;
 MSG_BusyLoadingDI (1274//)
 Loading glossary...
-;
-MSG_BusyDownloadingPic (1275//)
-Downloading portrait of %s...
-; NAME
 ;
 MSG_BusyUncompressingFO (1276//)
 (De)compressing folders...

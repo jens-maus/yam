@@ -817,32 +817,28 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
     if(!ab)
     {
       ab = &abtmpl;
-      *ab->Photo = 0;
+      *ab->Photo = '\0';
     }
   }
   else
   {
     if(ab)
-    {
       RE_UpdateSenderInfo(ab, &abtmpl);
-      if(!hasUpdateOnlyFlag(msg->flags) &&
-         C->AddToAddrbook > 0 && !*ab->Photo && *abtmpl.Photo && *C->GalleryDir)
-      {
-        RE_DownloadPhoto(_win(obj), abtmpl.Photo, ab);
-      }
-    }
     else
     {
       if(!hasUpdateOnlyFlag(msg->flags) &&
-         C->AddToAddrbook > 0 && (ab = RE_AddToAddrbook(_win(obj), &abtmpl)))
+         C->AddToAddrbook > 0)
       {
-        if(*abtmpl.Photo && *C->GalleryDir)
-          RE_DownloadPhoto(_win(obj), abtmpl.Photo, ab);
+        if((ab = RE_AddToAddrbook(_win(obj), &abtmpl)) == NULL)
+        {
+          ab = &abtmpl;
+          *ab->Photo = '\0';
+        }
       }
       else
       {
         ab = &abtmpl;
-        *ab->Photo = 0;
+        *ab->Photo = '\0';
       }
     }
   }
