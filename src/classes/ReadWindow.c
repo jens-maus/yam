@@ -54,6 +54,8 @@ struct Data
   Object *MI_EXTKEY;
   Object *MI_CHKSIG;
   Object *MI_SAVEDEC;
+  Object *MI_REPLY;
+  Object *MI_BOUNCE;
   Object *windowToolbar;
   Object *statusIconGroup;
   Object *readMailGroup;
@@ -226,9 +228,9 @@ OVERLOAD(OM_NEW)
         End,
         MenuChild, MenuBarLabel,
         MenuChild, Menuitem(GetStr(MSG_New),         "N", TRUE, FALSE, RMEN_NEW),
-        MenuChild, Menuitem(GetStr(MSG_MA_MReply),   "R", TRUE, FALSE, RMEN_REPLY),
+        MenuChild, data->MI_REPLY = Menuitem(GetStr(MSG_MA_MReply),   "R", TRUE, FALSE, RMEN_REPLY),
         MenuChild, Menuitem(GetStr(MSG_MA_MForward), "W", TRUE, FALSE, RMEN_FORWARD),
-        MenuChild, Menuitem(GetStr(MSG_MA_MBounce),   "B", TRUE, FALSE, RMEN_BOUNCE),
+        MenuChild, data->MI_BOUNCE = Menuitem(GetStr(MSG_MA_MBounce),   "B", TRUE, FALSE, RMEN_BOUNCE),
         MenuChild, MenuBarLabel,
         MenuChild, Menuitem(GetStr(MSG_MA_MGetAddress), "J", TRUE, FALSE, RMEN_SAVEADDR),
         MenuChild, Menuitem(GetStr(MSG_RE_SetUnread),   "U", TRUE, FALSE, RMEN_SETUNREAD),
@@ -474,12 +476,14 @@ DECLARE(ReadMail) // struct Mail *mail
   D(DBF_GUI, "setting up readWindow for reading a mail");
 
   // enable/disable some menuitems in advance
-  set(data->MI_EDIT,     MUIA_Menuitem_Enabled, isOutgoingMail);
-  set(data->MI_MOVE,     MUIA_Menuitem_Enabled, isRealMail);
-  set(data->MI_DELETE,  MUIA_Menuitem_Enabled, isRealMail);
-  set(data->MI_CROP,    MUIA_Menuitem_Enabled, isRealMail);
-  set(data->MI_CHSUBJ,  MUIA_Menuitem_Enabled, isRealMail);
-  set(data->MI_NAVIG,    MUIA_Menuitem_Enabled, isRealMail);
+  set(data->MI_EDIT,   MUIA_Menuitem_Enabled, isOutgoingMail);
+  set(data->MI_MOVE,   MUIA_Menuitem_Enabled, isRealMail);
+  set(data->MI_DELETE, MUIA_Menuitem_Enabled, isRealMail);
+  set(data->MI_CROP,   MUIA_Menuitem_Enabled, isRealMail);
+  set(data->MI_CHSUBJ, MUIA_Menuitem_Enabled, isRealMail);
+  set(data->MI_NAVIG,  MUIA_Menuitem_Enabled, isRealMail);
+  set(data->MI_REPLY,  MUIA_Menuitem_Enabled, !isOutgoingMail);
+  set(data->MI_BOUNCE, MUIA_Menuitem_Enabled, !isOutgoingMail);
 
   if(data->windowToolbar)
   {

@@ -417,6 +417,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
   struct ReadMailData *rmData = data->readMailData;
   struct Mail *mail = rmData->mail;
   BOOL isRealMail = !isVirtualMail(mail);
+  BOOL isOutgoingMail = isRealMail ? isOutgoingFolder(mail->Folder) : FALSE;
 
   ENTER();
 
@@ -459,7 +460,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
 
     data->contextMenu = MenustripObject,
       Child, MenuObjectT(data->menuTitle),
-        Child, Menuitem(GetStr(MSG_MA_MReply),   NULL, TRUE, FALSE, RMEN_REPLY),
+        Child, Menuitem(GetStr(MSG_MA_MReply),   NULL, !isOutgoingMail, FALSE, RMEN_REPLY),
         Child, Menuitem(GetStr(MSG_MA_MForward), NULL, TRUE, FALSE, RMEN_FORWARD),
         Child, Menuitem(GetStr(MSG_MA_MMove),    NULL, isRealMail, FALSE, RMEN_MOVE),
         Child, Menuitem(GetStr(MSG_MA_MCopy),    NULL, TRUE, FALSE, RMEN_COPY),

@@ -6,6 +6,10 @@ $Id$
 
 2006-06-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * src/YAM_MA.c, classes/ReadWindow.c, classes/ReadMailGroup.c: fixed a
+    long-standing bug #724517 where the enable/disable status of some toolbar
+    gadgets weren't quite consistent of what the read window and its
+    menu items presented.
   * src/YAM_EA.c, misc: removed all user gallery download code as the photo
     download functionality is considered to be obsolete since we moved
     to a new main webserver and nowadays other mechanisms should be
