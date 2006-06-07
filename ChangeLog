@@ -6,6 +6,10 @@ $Id$
 
 2006-06-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/AddrBookListtree.c, YAM_AB.c: fixed bug #1032625 where manually
+    sorting of the addressbook was a hard job as well as searching through
+    the addressbook didn't work as the user normally expected. Now an
+    addresbook search is always a substring search instead.
   * classes/ReadWindow.c: fixed bug #1380548 where a subsequent use of a
     toolbar gadget caused the static Notify value to get overwritten.
   * src/YAM_EA.c: fixed bug #1458223 where in case a non image file had been

@@ -79,6 +79,36 @@ OVERLOAD(OM_DISPOSE)
 }
 
 ///
+/// OVERLOAD(MUIM_DragReport)
+// we catch MUIM_DragReport because we want to restrict some
+// dragging for some special objects
+OVERLOAD(MUIM_DragReport)
+{
+  struct MUIP_DragReport *dr = (struct MUIP_DragReport *)msg;
+  struct MUI_NListtree_TestPos_Result res;
+  struct MUI_NListtree_TreeNode *tn;
+
+  DoMethod(obj, MUIM_NListtree_TestPos, dr->x, dr->y, &res);
+
+  if((tn = res.tpr_TreeNode))
+  {
+    struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
+
+    // If we drag an ABEntry on another ABEntry we abort the
+    // DragReport immediately because we want to support drag operations
+    // between ABEntry elements and groups
+    // is allowed
+    if(entry->Type != AET_GROUP && res.tpr_Type == MUIV_NListtree_TestPos_Result_Onto)
+        return(MUIV_DragReport_Abort);
+
+    // to rescue the dropping we call the SuperMethod now
+    return(DoSuperMethodA(cl, obj, msg));
+  }
+
+  return(MUIV_DragReport_Abort);
+}
+
+///
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)
 {

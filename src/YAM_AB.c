@@ -904,14 +904,19 @@ BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, e
 /*** AB_FindFunc - Searches address book ***/
 HOOKPROTONHNONP(AB_FindFunc, void)
 {
-   static char pattern[SIZE_PATTERN] = { 0 };
+  static char pattern[SIZE_PATTERN+1] = "";
 
-   G->AB->Hits = 0;
-   if (StringRequest(pattern, SIZE_PATTERN, GetStr(MSG_AB_FindEntry), GetStr(MSG_AB_FindEntryReq), GetStr(MSG_AB_StartSearch), NULL, GetStr(MSG_Cancel), FALSE, G->AB->GUI.WI))
-   {
-      AB_FindEntry(MUIV_NListtree_GetEntry_ListNode_Root, pattern, ABF_USER, NULL);
-      if (!G->AB->Hits) MUI_Request(G->App, G->AB->GUI.WI, 0, GetStr(MSG_AB_FindEntry), GetStr(MSG_OkayReq), GetStr(MSG_AB_NoneFound));
-   }
+  G->AB->Hits = 0;
+  if(StringRequest(pattern, SIZE_PATTERN, GetStr(MSG_AB_FindEntry), GetStr(MSG_AB_FindEntryReq), GetStr(MSG_AB_StartSearch), NULL, GetStr(MSG_Cancel), FALSE, G->AB->GUI.WI))
+  {
+    char searchPattern[SIZE_PATTERN+5];
+
+    snprintf(searchPattern, sizeof(searchPattern), "#?%s#?", pattern);
+
+    AB_FindEntry(MUIV_NListtree_GetEntry_ListNode_Root, searchPattern, ABF_USER, NULL);
+    if(!G->AB->Hits)
+      MUI_Request(G->App, G->AB->GUI.WI, 0, GetStr(MSG_AB_FindEntry), GetStr(MSG_OkayReq), GetStr(MSG_AB_NoneFound));
+  }
 }
 MakeStaticHook(AB_FindHook, AB_FindFunc);
 
