@@ -1635,17 +1635,24 @@ void rx_addrfind( UNUSED struct RexxHost *host, struct rxd_addrfind **rxd, long 
          break;
          
       case RXIF_ACTION:
-         G->AB->Hits = 0;
-         if (rd->arg.nameonly) mode = rd->arg.emailonly ? ABF_RX_NAMEEMAIL : ABF_RX_NAME;
-                          else mode = rd->arg.emailonly ? ABF_RX_EMAIL     : ABF_RX;
-         AB_FindEntry(MUIV_NListtree_GetEntry_ListNode_Root, rd->arg.pattern, mode, NULL);
-         if (G->AB->Hits)
-         {
-            rd->res.alias = calloc(G->AB->Hits+1, sizeof(char *));
-            AB_FindEntry(MUIV_NListtree_GetEntry_ListNode_Root, rd->arg.pattern, mode, rd->res.alias);
-         }
-         else rd->rc = RETURN_WARN;
-         break;
+      {
+        int hits;
+
+        if(rd->arg.nameonly)
+          mode = rd->arg.emailonly ? ABF_RX_NAMEEMAIL : ABF_RX_NAME;
+        else
+          mode = rd->arg.emailonly ? ABF_RX_EMAIL     : ABF_RX;
+
+        if((hits = AB_FindEntry(rd->arg.pattern, mode, NULL)) > 0)
+        {
+          rd->res.alias = calloc(hits+1, sizeof(char *));
+          if(AB_FindEntry(rd->arg.pattern, mode, rd->res.alias) == 0)
+            rd->rc = RETURN_WARN;
+        }
+        else
+          rd->rc = RETURN_WARN;
+      }
+      break;
       
       case RXIF_FREE:
          if (rd->res.alias) free(rd->res.alias);

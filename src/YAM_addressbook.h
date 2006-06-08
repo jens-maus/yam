@@ -71,7 +71,6 @@ struct AB_GUIData
 struct AB_ClassData  /* address book window */
 {
    struct AB_GUIData    GUI;
-   int                  Hits;
    int                  SortBy;
    int                  WrWin;
    enum AddressbookMode Mode;
@@ -90,7 +89,7 @@ void   AB_CheckBirthdates(void);
 char * AB_CompleteAlias(char *text);
 long   AB_CompressBD(char *datestr);
 char * AB_ExpandBD(long date);
-BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, enum AddressbookFind mode, char **result);
+int    AB_FindEntry(char *pattern, enum AddressbookFind mode, char **result);
 APTR   AB_GotoEntry(char *alias);
 void   AB_InsertAddress(APTR string, char *alias, char *name, char *address);
 BOOL   AB_LoadTree(char *fname, BOOL append, BOOL sorted);

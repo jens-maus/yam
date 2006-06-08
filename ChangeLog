@@ -6,6 +6,10 @@ $Id$
 
 2006-06-08  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_AB.c, misc: fixed bug #1469130 where the addressbook search was
+    slightly broken. In addition, the recursive use of AB_FindEntry() wasn't
+    required at all, so it is now removed, which should slightly reduce
+    stack usage on large addressbooks.
   * YAM_MA.c: fixed bug #806352 where the new menu shortcuts for the mail
     status changes rendered the shortcut for the 'Execut script' menu
     item of the main menu useless. In addition, slightly reworked the whole

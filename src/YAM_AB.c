@@ -804,99 +804,105 @@ HOOKPROTONHNONP(AB_DuplicateFunc, void)
 MakeStaticHook(AB_DuplicateHook, AB_DuplicateFunc);
 
 ///
-/// AB_FindEntry (rec)
-//  Recursively searches an address book node for a given pattern
-BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, enum AddressbookFind mode, char **result)
+/// AB_FindEntry
+// Searches an address book node for a given pattern
+int AB_FindEntry(char *pattern, enum AddressbookFind mode, char **result)
 {
-   APTR lv = G->AB->GUI.LV_ADDRESSES;
-   struct MUI_NListtree_TreeNode *tn;
-   int i;
+  Object *lv = G->AB->GUI.LV_ADDRESSES;
+  int res = 0;
+  int i;
 
-   for (i=0; ; i++)
-   {
-      if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, list, i, MUIF_NONE)))
+  ENTER();
+
+  for(i=0;;i++)
+  {
+    struct MUI_NListtree_TreeNode *tn;
+
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)))
+    {
+      struct ABEntry *ab = tn->tn_User;
+
+      if(ab->Type == AET_GROUP)
+        continue;
+      else
       {
-         struct ABEntry *ab = tn->tn_User;
+        BOOL found = FALSE;
+        int winnum;
 
-         if(ab->Type == AET_GROUP)
-         {
-            if(!AB_FindEntry(tn, pattern, mode, result))
-              return FALSE;
-         }
-         else
-         {
-            BOOL found = FALSE;
-            int winnum;
+        switch(mode)
+        {
+          case ABF_RX_NAME:
+            found = MatchNoCase(ab->RealName, pattern);
+          break;
 
-            switch (mode)
+          case ABF_RX_EMAIL:
+            found = MatchNoCase(ab->Address, pattern);
+          break;
+
+          case ABF_RX_NAMEEMAIL:
+            found = MatchNoCase(ab->RealName, pattern) | MatchNoCase(ab->Address, pattern);
+          break;
+
+          default:
+          {
+            if((found = MatchNoCase(ab->Alias, pattern) | MatchNoCase(ab->Comment, pattern)) == FALSE)
             {
-               case ABF_RX_NAME:
-               {
-                  if(ab->Type != AET_GROUP)
-                    found = MatchNoCase(ab->RealName, pattern);
-               }
-               break;
-
-               case ABF_RX_EMAIL:
-               {
-                  if(ab->Type != AET_GROUP)
-                    found = MatchNoCase(ab->Address, pattern);
-               }
-               break;
-
-               case ABF_RX_NAMEEMAIL:
-               {
-                  if(ab->Type != AET_GROUP)
-                    found = MatchNoCase(ab->RealName, pattern) | MatchNoCase(ab->Address, pattern);
-               }
-               break;
-
-               default:
-               {
-                  found = MatchNoCase(ab->Alias, pattern) | MatchNoCase(ab->Comment, pattern);
-
-                  if(found == FALSE && ab->Type != AET_GROUP)
-                    found = MatchNoCase(ab->RealName, pattern) | MatchNoCase(ab->Address, pattern);
-
-                  if(found == FALSE && ab->Type == AET_USER)
-                  {
-                    found = MatchNoCase(ab->Homepage, pattern)|
-                            MatchNoCase(ab->Street, pattern)  |
-                            MatchNoCase(ab->City, pattern)    |
-                            MatchNoCase(ab->Country, pattern) |
-                            MatchNoCase(ab->Phone, pattern);
-                  }
-               }
+              if((found = MatchNoCase(ab->RealName, pattern) | MatchNoCase(ab->Address, pattern)) == FALSE && ab->Type == AET_USER)
+              {
+                found = MatchNoCase(ab->Homepage, pattern)|
+                        MatchNoCase(ab->Street, pattern)  |
+                        MatchNoCase(ab->City, pattern)    |
+                        MatchNoCase(ab->Country, pattern) |
+                        MatchNoCase(ab->Phone, pattern);
+              }
             }
+          }
+        }
 
-            if(found)
+        if(found)
+        {
+          res++;
+
+          if(mode == ABF_USER)
+          {
+            char buf[SIZE_LARGE];
+
+            DoMethod(lv, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
+            set(lv, MUIA_NListtree_Active, tn);
+
+            snprintf(buf, sizeof(buf), GetStr(MSG_AB_FoundEntry), ab->Alias, ab->RealName);
+
+            switch(MUI_Request(G->App, G->AB->GUI.WI, 0, GetStr(MSG_AB_FindEntry), GetStr(MSG_AB_FoundEntryGads), buf))
             {
-               G->AB->Hits++;
+              case 1:
+                // nothing
+              break;
 
-               if(mode == ABF_USER)
-               {
-                  char buf[SIZE_LARGE];
+              case 2:
+              {
+                if((winnum = EA_Init(ab->Type, ab)) >= 0)
+                  EA_Setup(winnum, ab);
+              }
+              // continue
 
-                  DoMethod(lv, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
-                  set(lv, MUIA_NListtree_Active, tn);
-
-                  snprintf(buf, sizeof(buf), GetStr(MSG_AB_FoundEntry), ab->Alias, ab->RealName);
-
-                  switch (MUI_Request(G->App, G->AB->GUI.WI, 0, GetStr(MSG_AB_FindEntry), GetStr(MSG_AB_FoundEntryGads), buf))
-                  {
-                     case 1: break;
-                     case 2: if ((winnum = EA_Init(ab->Type, ab)) >= 0) EA_Setup(winnum, ab);
-                     case 0: return FALSE;
-                  }
-               }
-               else if (result) *result++ = ab->Alias;
+              case 0:
+              {
+                RETURN(-1);
+                return -1;
+              }
             }
-         }
+          }
+          else if(result)
+            *result++ = ab->Alias;
+        }
       }
-      else break;
-   }
+    }
+    else
+      break;
+  }
 
-   return TRUE;
+  RETURN(res);
+  return res;
 }
 
 ///
@@ -906,17 +912,19 @@ HOOKPROTONHNONP(AB_FindFunc, void)
 {
   static char pattern[SIZE_PATTERN+1] = "";
 
-  G->AB->Hits = 0;
+  ENTER();
+
   if(StringRequest(pattern, SIZE_PATTERN, GetStr(MSG_AB_FindEntry), GetStr(MSG_AB_FindEntryReq), GetStr(MSG_AB_StartSearch), NULL, GetStr(MSG_Cancel), FALSE, G->AB->GUI.WI))
   {
     char searchPattern[SIZE_PATTERN+5];
 
     snprintf(searchPattern, sizeof(searchPattern), "#?%s#?", pattern);
 
-    AB_FindEntry(MUIV_NListtree_GetEntry_ListNode_Root, searchPattern, ABF_USER, NULL);
-    if(!G->AB->Hits)
+    if(AB_FindEntry(searchPattern, ABF_USER, NULL) == 0)
       MUI_Request(G->App, G->AB->GUI.WI, 0, GetStr(MSG_AB_FindEntry), GetStr(MSG_OkayReq), GetStr(MSG_AB_NoneFound));
   }
+
+  LEAVE();
 }
 MakeStaticHook(AB_FindHook, AB_FindFunc);
 
