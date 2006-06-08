@@ -127,15 +127,15 @@ static BPTR CloneSearchPath(void)
 {
   BPTR path = 0;
 
+  ENTER();
+
   if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
-  {
     WorkbenchControl(NULL, WBCTRLA_DuplicateSearchPath, &path, TAG_DONE);
-  }
   else
   {
     // We don't like this evil code in OS4 compile, as we should have
     // a recent enough workbench available
-#ifndef __amigaos4__
+    #ifndef __amigaos4__
     struct Process *pr;
 
     pr = (struct Process*)FindTask(NULL);
@@ -175,9 +175,10 @@ static BPTR CloneSearchPath(void)
         }
       }
     }
-#endif
+    #endif
   }
-  
+
+  RETURN(path);
   return path;
 }
 
@@ -186,25 +187,27 @@ static BPTR CloneSearchPath(void)
 // Free the memory returned by CloneSearchPath
 static void FreeSearchPath(BPTR path)
 {
-  if(path == 0)
-    return;
+  ENTER();
 
-  if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
+  if(path != 0)
   {
-    WorkbenchControl(NULL, WBCTRLA_FreeSearchPath, path, TAG_DONE);
-  }
-  else
-  {
-#ifndef __amigaos4__
-    while (path)
+    if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
+      WorkbenchControl(NULL, WBCTRLA_FreeSearchPath, path, TAG_DONE);
+    else
     {
-      struct PathNode *node = BADDR(path);
-      path = node->pn_Next;
-      UnLock(node->pn_Lock);
-      FreeVec(node);
+      #ifndef __amigaos4__
+      while (path)
+      {
+        struct PathNode *node = BADDR(path);
+        path = node->pn_Next;
+        UnLock(node->pn_Lock);
+        FreeVec(node);
+      }
+      #endif
     }
-#endif
   }
+
+  LEAVE();
 }
 ///
 
@@ -4397,11 +4400,14 @@ int PGPCommand(char *progname, char *options, int flags)
       // use SystemTags() for executing PGP
       error = SystemTags(command, SYS_Input,    fhi,
                                   SYS_Output,   fho,
+                                  SYS_Asynch,   FALSE,
                                   #if defined(__amigaos4__)
                                   SYS_Error,    NULL,
+                                  NP_Child,     TRUE,
                                   #endif
+                                  NP_Name,      "YAM PGP process",
                                   NP_StackSize, C->StackSize,
-                                  NP_WindowPtr, NULL,
+                                  NP_WindowPtr, -1, // no requester at all
                                   TAG_DONE);
 
       BusyEnd();
@@ -5157,6 +5163,8 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
   }
 
   // path may return 0, but that's fine.
+  // and we also don't free it manually as this
+  // is done by SystemTags/CreateNewProc itself.
   path = CloneSearchPath();
 
   if(SystemTags(cmd,
@@ -5164,25 +5172,29 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
                 SYS_Output,   out,
                 #if defined(__amigaos4__)
                 SYS_Error,    err,
+                NP_Child,     TRUE,
                 #endif
+                NP_Name,      "YAM command process",
                 NP_Path,      path,
                 NP_StackSize, C->StackSize,
-                NP_WindowPtr, NULL,
+                NP_WindowPtr, -1,           // show no requesters at all
                 SYS_Asynch,   asynch,
-                TAG_DONE) == -1)
+                TAG_DONE) != 0)
   {
-    // something went wrong.
-    FreeSearchPath(path);
-    path = 0;
+    // an error occurred as SystemTags should always
+    // return zero on success, no matter what.
+
+    // manually free our search path
+    // as SystemTags() shouldn't have freed
+    // it itself.
+    if(path != 0)
+      FreeSearchPath(path);
 
     result = FALSE;
   }
 
   if(asynch == FALSE && outdef != OUT_DOS)
   {
-    if(path != 0)
-      FreeSearchPath(path);
-
     Close(out);
     Close(in);
   }

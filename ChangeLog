@@ -6,6 +6,9 @@ $Id$
 
 2006-06-08  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: fixed bug #1487409 where executing a command in synchron mode
+    cause YAM to provocate a crash in dos.library due to freeing the PathNode
+    specified with "NP_Path" value after the command manually.
   * YAM_AB.c, misc: fixed bug #1469130 where the addressbook search was
     slightly broken. In addition, the recursive use of AB_FindEntry() wasn't
     required at all, so it is now removed, which should slightly reduce
