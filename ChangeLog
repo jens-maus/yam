@@ -4,6 +4,15 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-08  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c: fixed bug #806352 where the new menu shortcuts for the mail
+    status changes rendered the shortcut for the 'Execut script' menu
+    item of the main menu useless. In addition, slightly reworked the whole
+    MA_SetupDynamicMenus() to act a bit more save on possible object
+    creation failures as well as removed an unneeded strdup() which caused
+    minor memory leaks to occur.
+
 2006-06-07  Jens Langner <Jens.Langner@light-speed.de>
 
   * classes/AddrBookListtree.c, YAM_AB.c: fixed bug #1032625 where manually

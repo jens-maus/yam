@@ -3126,56 +3126,91 @@ MakeHook(MA_FolderClickHook, MA_FolderClickFunc);
 //  Updates ARexx and POP3 account menu items
 void MA_SetupDynamicMenus(void)
 {
-   static const char *shortcuts[10] = { "0","1","2","3","4","5","6","7","8","9" };
-   int i;
+  ENTER();
 
-   /* Scripts menu */
+  // generate the dynamic REXX Menu of the main window.
+  // make sure we remove an old dynamic menu first
+  if(G->MA->GUI.MN_REXX)
+    DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_Remove, G->MA->GUI.MN_REXX);
 
-   if (G->MA->GUI.MN_REXX)
-      DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_Remove, G->MA->GUI.MN_REXX);
+  // now we generate a new one.
+  G->MA->GUI.MN_REXX = MenuObject,
+    MUIA_Menu_Title, GetStr(MSG_MA_Scripts),
+    MUIA_Family_Child, MenuitemObject,
+      MUIA_Menuitem_Title,    GetStr(MSG_MA_ExecuteScript),
+      MUIA_Menuitem_Shortcut, "^",
+      MUIA_UserData,          MMEN_SCRIPT,
+    End,
+    MUIA_Family_Child, MenuitemObject,
+      MUIA_Menuitem_Title, NM_BARLABEL,
+    End,
+  End;
 
-   G->MA->GUI.MN_REXX = MenuObject,
-      MUIA_Menu_Title, GetStr(MSG_MA_Scripts),
-      MUIA_Family_Child, MenuitemObject,
-         MUIA_Menuitem_Title, GetStr(MSG_MA_ExecuteScript),
-         MUIA_Menuitem_Shortcut, ".", MUIA_UserData, MMEN_SCRIPT,
-         End,
-      MUIA_Family_Child, MenuitemObject,
-         MUIA_Menuitem_Title, NM_BARLABEL,
-         End,
-      End;
+  if(G->MA->GUI.MN_REXX)
+  {
+    static const char *shortcuts[10] = { "0","1","2","3","4","5","6","7","8","9" };
+    int i;
 
-   for (i = 0; i < 10; i++) if (C->RX[i].Script[0])
-      DoMethod(G->MA->GUI.MN_REXX, MUIM_Family_AddTail, MenuitemObject,
-         MUIA_Menuitem_Title, C->RX[i].Name,
-         MUIA_Menuitem_Shortcut, shortcuts[i],
-         MUIA_UserData, MMEN_MACRO+i, End);
+    // the first ten entries of our user definable
+    // rexx script array is for defining rexx items
+    // linked to the main menu.
+    for(i=0; i < 10; i++)
+    {
+      if(C->RX[i].Script[0])
+      {
+        Object *newObj = MenuitemObject,
+                           MUIA_Menuitem_Title,    C->RX[i].Name,
+                           MUIA_Menuitem_Shortcut, shortcuts[i],
+                           MUIA_UserData,          MMEN_MACRO+i,
+                         End;
 
-   DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_AddTail, G->MA->GUI.MN_REXX);
+        if(newObj)
+          DoMethod(G->MA->GUI.MN_REXX, MUIM_Family_AddTail, newObj);
+      }
+    }
 
-   /* 'Folder/Check single account' menu */
+    // add the new dynamic menu to our
+    // main menu
+    DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_AddTail, G->MA->GUI.MN_REXX);
+  }
 
-   if (G->MA->GUI.MI_CSINGLE)
-      DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Remove, G->MA->GUI.MI_CSINGLE);
 
-   G->MA->GUI.MI_CSINGLE = MenuitemObject,
-      MUIA_Menuitem_Title, GetStr(MSG_MA_CheckSingle),
-      End;
+  // dynamic Folder/Check menu items
+  if(G->MA->GUI.MI_CSINGLE)
+    DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Remove, G->MA->GUI.MI_CSINGLE);
 
-   for (i = 0; i < MAXP3; i++) if (C->P3[i])
-   {
-      snprintf(C->P3[i]->Account, sizeof(C->P3[i]->Account), "%s@%s", C->P3[i]->User, C->P3[i]->Server);
+  G->MA->GUI.MI_CSINGLE = MenuitemObject,
+    MUIA_Menuitem_Title, GetStr(MSG_MA_CheckSingle),
+  End;
 
-      /* Warning: Small memory leak here, each time this function is called,
-                  since the strdup()'ed string doesn't get free()'d anywhere,
-                  before program exit. The Menuitem class does *not* have a
-                  private buffer for the string!
-      */
+  if(G->MA->GUI.MI_CSINGLE)
+  {
+    int i;
 
-      DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, MenuitemObject, MUIA_Menuitem_Title, strdup(C->P3[i]->Account), MUIA_UserData,MMEN_POPHOST+i, End, TAG_DONE);
+    for(i=0; i < MAXP3; i++)
+    {
+      if(C->P3[i])
+      {
+        Object *newObj;
 
-   }
-   DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_AddTail, G->MA->GUI.MI_CSINGLE, TAG_DONE);
+        snprintf(C->P3[i]->Account, sizeof(C->P3[i]->Account), "%s@%s", C->P3[i]->User, C->P3[i]->Server);
+
+        newObj = MenuitemObject,
+                   MUIA_Menuitem_Title, C->P3[i]->Account,
+                   MUIA_UserData,       MMEN_POPHOST+i,
+                 End;                   
+
+        if(newObj)
+          DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);
+      }
+    }
+
+    // add the new dynamic menu to our
+    // main menu
+    DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_AddTail, G->MA->GUI.MI_CSINGLE);
+  }
+
+  LEAVE();
 }
 
 ///
