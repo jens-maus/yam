@@ -143,12 +143,12 @@ void MA_ChangeSelected(BOOL forceUpdate)
   static struct Mail *lastMail = NULL;
   struct MA_GUIData *gui = &G->MA->GUI;
   struct Folder *fo = FO_GetCurrentFolder();
-  int selected;
   int i;
   BOOL active;
   BOOL hasattach = FALSE;
   BOOL beingedited = FALSE;
   BOOL folderEnabled;
+  ULONG numSelected = 0;
   struct Mail *mail;
 
   ENTER();
@@ -177,19 +177,18 @@ void MA_ChangeSelected(BOOL forceUpdate)
   if(C->StatusChangeDelayOn)
     TC_Stop(TIO_READSTATUSUPDATE);
 
+  // ask the mail list how many entries as currently selected
+  DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
+
   // make sure the mail is displayed in our readMailGroup of the main window
   // (if enabled) - but we do only issue a timer event here so the read pane
   // is only refreshed about 100 milliseconds after the last change in the listview
   // was recognized.
   if(C->EmbeddedReadPane)
   {
-    ULONG numSelected;
-
     // but before we really issue a readpaneupdate we check whether the user has
     // selected more than one mail at a time which then should clear the
     // readpane as it might have been disabled.
-    DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
-
     if(numSelected == 1)
       TC_Restart(TIO_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
     else
@@ -215,30 +214,28 @@ void MA_ChangeSelected(BOOL forceUpdate)
 
   // now we have to make sure that all toolbar and menu items are
   // enabled and disabled according to the folder/mail status
-  DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
-
   folderEnabled = !(fo->Type == FT_GROUP);
 
   // deal with the toolbar
   if(gui->TO_TOOLBAR)
   {
     DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 0, MUIV_Toolbar_Set_Ghosted, !active);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 1, MUIV_Toolbar_Set_Ghosted, !active || !isOutgoingFolder(fo) || beingedited);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !active || !selected, 2,3,4,8, -1);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 7, MUIV_Toolbar_Set_Ghosted, !active || !selected || isOutgoingFolder(fo));
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 1, MUIV_Toolbar_Set_Ghosted, !active || !isOutgoingFolder(fo) || numSelected > 1 || beingedited);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !active || numSelected == 0, 2,3,4,8, -1);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 7, MUIV_Toolbar_Set_Ghosted, !active || numSelected == 0 || isOutgoingFolder(fo));
     DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 13, MUIV_Toolbar_Set_Ghosted, !folderEnabled);
   }
 
   // enable/disable menu items
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, (active || selected) && folderEnabled,
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, (active || numSelected > 0) && folderEnabled,
                    gui->MI_MOVE, gui->MI_DELETE, gui->MI_GETADDRESS, gui->MI_FORWARD, gui->MI_STATUS,
                    gui->MI_EXPMSG, gui->MI_COPY, gui->MI_PRINT, gui->MI_SAVE, gui->MI_CHSUBJ, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled, gui->MI_FILTER, gui->MI_UPDINDEX, gui->MI_IMPORT, gui->MI_EXPORT, gui->MI_SELECT, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active, gui->MI_READ, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active && isOutgoingFolder(fo) && !beingedited, gui->MI_EDIT, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, fo->Type == FT_OUTGOING && (active || selected), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isOutgoingFolder(fo) && (active || selected) , gui->MI_TOREAD, gui->MI_TOUNREAD, gui->MI_ALLTOREAD, gui->MI_REPLY, gui->MI_BOUNCE, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, hasattach && (active || selected), gui->MI_ATTACH, gui->MI_SAVEATT, gui->MI_REMATT, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, fo->Type == FT_OUTGOING && (active || numSelected > 0), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isOutgoingFolder(fo) && (active || numSelected > 0) , gui->MI_TOREAD, gui->MI_TOUNREAD, gui->MI_ALLTOREAD, gui->MI_REPLY, gui->MI_BOUNCE, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, hasattach && (active || numSelected > 0), gui->MI_ATTACH, gui->MI_SAVEATT, gui->MI_REMATT, NULL);
 
   LEAVE();
 }

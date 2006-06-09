@@ -6,6 +6,7 @@ $Id$
 
 2006-06-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c: minor optimizations to the MA_ChangeSelected() function.
   * YAM_UT.c: all modal requester windows in YAM will now have the same layout
     with a MUII_RequesterBack background and a Group object combining the
     actual requester content. That should make the function of the window more
