@@ -174,13 +174,17 @@ BOOL CheckForUpdates(void)
 
             while(GetLine(tf->FP, buf, SIZE_LINE))
             {
-              D(DBF_UPDATE, "%s", buf);
+              // make sure we trim the line by stripping leading
+              // and trailing spaces.
+              char *p = Trim(buf);
 
-              if(stricmp(buf, "<updatecheck>") == 0)
+              D(DBF_UPDATE, "'%s'", p);
+
+              if(stricmp(p, "<updatecheck>") == 0)
               {
                 validUpdateCheck = TRUE;
               }
-              else if(stricmp(buf, "</updatecheck>") == 0)
+              else if(stricmp(p, "</updatecheck>") == 0)
               {
                 // break out as the update check signals to exit
                 break;
@@ -190,7 +194,7 @@ BOOL CheckForUpdates(void)
                 // we skip all lines until we found the <updatecheck> tag
                 continue;
               }
-              else if(stricmp(buf, "<component>") == 0)
+              else if(stricmp(p, "<component>") == 0)
               {
                 // if we find an '<component>' tag, we can go and create an
                 // update notify window in advance and fill it according to the
@@ -227,7 +231,7 @@ BOOL CheckForUpdates(void)
                   break;
                 }
               }
-              else if(stricmp(buf, "</component>") == 0)
+              else if(stricmp(p, "</component>") == 0)
               {
                 if(comp != NULL)
                 {
@@ -237,15 +241,15 @@ BOOL CheckForUpdates(void)
               }
               else if(comp != NULL)
               {
-                if(strnicmp(buf, "NAME: ", 6) == 0)
-                  strlcpy(comp->name, buf+6, sizeof(comp->name));
-                else if(strnicmp(buf, "RECENT: ", 7) == 0)
-                  strlcpy(comp->recent, buf+7, sizeof(comp->recent));
-                else if(strnicmp(buf, "INSTALLED: ", 11) == 0)
-                  strlcpy(comp->installed, buf+11, sizeof(comp->installed));
-                else if(strnicmp(buf, "URL: ", 5) == 0)
-                  strlcpy(comp->url, buf+5, sizeof(comp->url));
-                else if(stricmp(buf, "<changelog>") == 0)
+                if(strnicmp(p, "NAME: ", 6) == 0)
+                  strlcpy(comp->name, p+6, sizeof(comp->name));
+                else if(strnicmp(p, "RECENT: ", 7) == 0)
+                  strlcpy(comp->recent, p+7, sizeof(comp->recent));
+                else if(strnicmp(p, "INSTALLED: ", 11) == 0)
+                  strlcpy(comp->installed, p+11, sizeof(comp->installed));
+                else if(strnicmp(p, "URL: ", 5) == 0)
+                  strlcpy(comp->url, p+5, sizeof(comp->url));
+                else if(stricmp(p, "<changelog>") == 0)
                 {
                   // we put the changelog text into a temporary file
                   if((comp->changeLogFile = OpenTempFile("w")))

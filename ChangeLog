@@ -6,6 +6,8 @@ $Id$
 
 2006-06-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * UpdateCheck.c: fixed bug #1503244 where while parsing the received update
+    data, YAM didn't strip eventually existing leading/trailing spaces.
   * YAM_MA.c: fixed a bug where quickly multiselecting mails might still have
     triggered that the embedded read pane was left with some content. This was
     caused by a missing stopping of an already existing READPANEUPDATE timer.
