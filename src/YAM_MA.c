@@ -192,7 +192,14 @@ void MA_ChangeSelected(BOOL forceUpdate)
     if(numSelected == 1)
       TC_Restart(TIO_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
     else
+    {
+      // make sure an already existing readpaneupdate timer is canceled in advance.
+      TC_Stop(TIO_READPANEUPDATE);
+
+      // clear the readmail group now
       DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, FALSE);
+      lastMail = NULL;
+    }
   }
 
   // in case the currently active maillist is the mainmainlist we
