@@ -6,6 +6,12 @@ $Id$
 
 2006-06-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: all modal requester windows in YAM will now have the same layout
+    with a MUII_RequesterBack background and a Group object combining the
+    actual requester content. That should make the function of the window more
+    obvious and intuitive. In addition, modal windows will now always open at
+    the current mouse position which should reduce the required time to move
+    to the actual requester buttons.
   * YAM_FO.c: on a doubleclick at the folder listtree the edit folder settings
     window will always become the frontmost window.
 
