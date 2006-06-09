@@ -418,6 +418,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
   struct Mail *mail = rmData->mail;
   BOOL isRealMail = !isVirtualMail(mail);
   BOOL isOutgoingMail = isRealMail ? isOutgoingFolder(mail->Folder) : FALSE;
+  BOOL hasContent = data->hasContent;
 
   ENTER();
 
@@ -435,21 +436,21 @@ OVERLOAD(MUIM_ContextMenuBuild)
 
     data->contextMenu = MenustripObject,
       Child, MenuObjectT(data->menuTitle),
-        Child, MenuitemCheck(GetStr(MSG_RE_ShortHeaders), NULL, rmData->headerMode==HM_SHORTHEADER, FALSE, 0x05, RMEN_HSHORT),
-        Child, MenuitemCheck(GetStr(MSG_RE_FullHeaders),  NULL, rmData->headerMode==HM_FULLHEADER,  FALSE, 0x03, RMEN_HFULL),
+        Child, MenuitemCheck(GetStr(MSG_RE_ShortHeaders), NULL, hasContent, rmData->headerMode==HM_SHORTHEADER, FALSE, 0x05, RMEN_HSHORT),
+        Child, MenuitemCheck(GetStr(MSG_RE_FullHeaders),  NULL, hasContent, rmData->headerMode==HM_FULLHEADER,  FALSE, 0x03, RMEN_HFULL),
         Child, MenuBarLabel,
-        Child, MenuitemCheck(GetStr(MSG_RE_NoSInfo),      NULL, rmData->senderInfoMode==SIM_OFF,    FALSE, 0xE0, RMEN_SNONE),
-        Child, MenuitemCheck(GetStr(MSG_RE_SInfo),        NULL, rmData->senderInfoMode==SIM_DATA,   FALSE, 0xD0, RMEN_SDATA),
-        Child, MenuitemCheck(GetStr(MSG_RE_SInfoImage),   NULL, rmData->senderInfoMode==SIM_ALL,    FALSE, 0x90, RMEN_SFULL),
-        Child, MenuitemCheck(GetStr(MSG_RE_SImageOnly),   NULL, rmData->senderInfoMode==SIM_IMAGE,  FALSE, 0x70, RMEN_SIMAGE),
+        Child, MenuitemCheck(GetStr(MSG_RE_NoSInfo),      NULL, hasContent, rmData->senderInfoMode==SIM_OFF,    FALSE, 0xE0, RMEN_SNONE),
+        Child, MenuitemCheck(GetStr(MSG_RE_SInfo),        NULL, hasContent, rmData->senderInfoMode==SIM_DATA,   FALSE, 0xD0, RMEN_SDATA),
+        Child, MenuitemCheck(GetStr(MSG_RE_SInfoImage),   NULL, hasContent, rmData->senderInfoMode==SIM_ALL,    FALSE, 0x90, RMEN_SFULL),
+        Child, MenuitemCheck(GetStr(MSG_RE_SImageOnly),   NULL, hasContent, rmData->senderInfoMode==SIM_IMAGE,  FALSE, 0x70, RMEN_SIMAGE),
         Child, MenuBarLabel,
-        Child, MenuitemCheck(GetStr(MSG_RE_WrapHeader),   NULL, rmData->wrapHeaders, TRUE, 0, RMEN_WRAPH),
+        Child, MenuitemCheck(GetStr(MSG_RE_WrapHeader),   NULL, hasContent, rmData->wrapHeaders, TRUE, 0, RMEN_WRAPH),
       End,
     End;
   }
   else
   {
-    if(rmData && rmData->mail)
+    if(rmData && rmData->mail && hasContent)
     {
       snprintf(data->menuTitle, sizeof(data->menuTitle), "%s: ", GetStr(MSG_Subject));
       strlcat(data->menuTitle, rmData->mail->Subject, 30-strlen(data->menuTitle) > 0 ? 30-strlen(data->menuTitle) : 0);
@@ -460,32 +461,35 @@ OVERLOAD(MUIM_ContextMenuBuild)
 
     data->contextMenu = MenustripObject,
       Child, MenuObjectT(data->menuTitle),
-        Child, Menuitem(GetStr(MSG_MA_MReply),   NULL, !isOutgoingMail, FALSE, RMEN_REPLY),
-        Child, Menuitem(GetStr(MSG_MA_MForward), NULL, TRUE, FALSE, RMEN_FORWARD),
-        Child, Menuitem(GetStr(MSG_MA_MMove),    NULL, isRealMail, FALSE, RMEN_MOVE),
-        Child, Menuitem(GetStr(MSG_MA_MCopy),    NULL, TRUE, FALSE, RMEN_COPY),
+        Child, Menuitem(GetStr(MSG_MA_MReply),   NULL, hasContent && !isOutgoingMail, FALSE, RMEN_REPLY),
+        Child, Menuitem(GetStr(MSG_MA_MForward), NULL, hasContent, FALSE, RMEN_FORWARD),
+        Child, Menuitem(GetStr(MSG_MA_MMove),    NULL, hasContent && isRealMail, FALSE, RMEN_MOVE),
+        Child, Menuitem(GetStr(MSG_MA_MCopy),    NULL, hasContent, FALSE, RMEN_COPY),
         Child, MenuBarLabel,
-        Child, Menuitem(GetStr(MSG_RE_MDisplay),NULL, TRUE, FALSE, RMEN_DISPLAY),
-        Child, Menuitem(GetStr(MSG_MA_Save),     NULL, TRUE, FALSE, RMEN_SAVE),
-        Child, Menuitem(GetStr(MSG_Print),       NULL, TRUE, FALSE, RMEN_PRINT),
-        Child, Menuitem(GetStr(MSG_MA_MDelete),  NULL, isRealMail, TRUE,  RMEN_DELETE),
+        Child, Menuitem(GetStr(MSG_RE_MDisplay), NULL, hasContent, FALSE, RMEN_DISPLAY),
+        Child, Menuitem(GetStr(MSG_MA_Save),     NULL, hasContent, FALSE, RMEN_SAVE),
+        Child, Menuitem(GetStr(MSG_Print),       NULL, hasContent, FALSE, RMEN_PRINT),
+        Child, Menuitem(GetStr(MSG_MA_MDelete),  NULL, hasContent && isRealMail, TRUE,  RMEN_DELETE),
         Child, MenuBarLabel,
-        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Attachments),
-          Child, Menuitem(GetStr(MSG_RE_SaveAll), NULL, TRUE, FALSE, RMEN_DETACH),
-          Child, Menuitem(GetStr(MSG_MA_Crop),    NULL, isRealMail, FALSE, RMEN_CROP),
+        Child, MenuitemObject,
+          MUIA_Menuitem_Title, GetStr(MSG_Attachments),
+          MUIA_Menuitem_Enabled, hasContent,
+          Child, Menuitem(GetStr(MSG_RE_SaveAll), NULL, hasContent, FALSE, RMEN_DETACH),
+          Child, Menuitem(GetStr(MSG_MA_Crop),    NULL, hasContent && isRealMail, FALSE, RMEN_CROP),
         End,
         Child, MenuBarLabel,
-        Child, MenuObject, MUIA_Menu_Title, "PGP",
+        Child, MenuitemObject,
+          MUIA_Menuitem_Title, "PGP",
+          MUIA_Menuitem_Enabled, hasContent,
           Child, Menuitem(GetStr(MSG_RE_ExtractKey),    NULL, rmData->hasPGPKey, FALSE, RMEN_EXTKEY),
           Child, Menuitem(GetStr(MSG_RE_SigCheck),      NULL, (hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData)), FALSE, RMEN_CHKSIG),
           Child, Menuitem(GetStr(MSG_RE_SaveDecrypted), NULL, isRealMail && (hasPGPEMimeFlag(rmData) || hasPGPEOldFlag(rmData)), FALSE, RMEN_SAVEDEC),
         End,
         Child, MenuBarLabel,
-        Child, MenuitemCheck(GetStr(MSG_RE_Textstyles), NULL, rmData->useTextstyles, TRUE, 0, RMEN_TSTYLE),
-        Child, MenuitemCheck(GetStr(MSG_RE_FixedFont),  NULL, rmData->useFixedFont, TRUE, 0, RMEN_FFONT),
+        Child, MenuitemCheck(GetStr(MSG_RE_Textstyles), NULL, hasContent, rmData->useTextstyles, TRUE, 0, RMEN_TSTYLE),
+        Child, MenuitemCheck(GetStr(MSG_RE_FixedFont),  NULL, hasContent, rmData->useFixedFont, TRUE, 0, RMEN_FFONT),
       End,
     End;
-
   }
 
   RETURN((ULONG)data->contextMenu);

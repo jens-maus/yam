@@ -6,6 +6,8 @@ $Id$
 
 2006-06-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/ReadMailGroup.c: in case a ReadMailGroup object contains no content
+    the context menu in question will be completly disabled now.
   * YAM_MA.c: minor optimizations to the MA_ChangeSelected() function.
   * YAM_UT.c: all modal requester windows in YAM will now have the same layout
     with a MUII_RequesterBack background and a Group object combining the

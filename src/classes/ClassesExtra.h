@@ -81,15 +81,16 @@
 																			MUIA_UserData,								(u),\
 																		End
 
-#define MenuitemCheck(t,s,e,g,x,u)	MenuitemObject,											\
-																			MUIA_Menuitem_Checkit,			 TRUE,\
-																			MUIA_Menuitem_Title,					(t),\
-																			MUIA_Menuitem_Shortcut,				(s),\
-																			MUIA_Menuitem_Checked,				(e),\
-																			MUIA_Menuitem_Toggle,					(g),\
-																			MUIA_Menuitem_Exclude,				(x),\
-																			MUIA_UserData,								(u),\
-																		End
+#define MenuitemCheck(t,s,e,c,g,x,u)	MenuitemObject,											\
+  																			MUIA_Menuitem_Checkit,			 TRUE,\
+	  																		MUIA_Menuitem_Title,					(t),\
+		  																	MUIA_Menuitem_Shortcut,				(s),\
+			  																MUIA_Menuitem_Checked,				(c),\
+				  															MUIA_Menuitem_Toggle,					(g),\
+					  														MUIA_Menuitem_Exclude,				(x),\
+						  													MUIA_Menuitem_Enabled,				(e),\
+							  												MUIA_UserData,								(u),\
+								  										End
 
 #define MenuBarLabel								MenuitemObject,											\
 																			MUIA_Menuitem_Title,  NM_BARLABEL,\
