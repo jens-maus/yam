@@ -6,6 +6,10 @@ $Id$
 
 2006-06-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/ReadMailGroup.c: fixed a minor bug in the header list compare hook
+    definition which may caused an illegal access to a non existing readmaildata
+    structure due to the fact that the hook wasn't defined in each INST_DATA
+    of a readmailgroup object.
   * UpdateCheck.c: fixed bug #1503244 where while parsing the received update
     data, YAM didn't strip eventually existing leading/trailing spaces.
   * YAM_MA.c: fixed a bug where quickly multiselecting mails might still have

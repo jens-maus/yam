@@ -56,6 +56,7 @@ struct Data
   char menuTitle[SIZE_DEFAULT];
 
   struct MinList senderInfoHeaders;
+  struct Hook headerCompareHook;
 
   BOOL hasContent;
 };
@@ -108,13 +109,13 @@ HOOKPROTO(HeaderCompareFunc, LONG, struct HeaderNode *hdrNode1, struct HeaderNod
     char *e1 = stristr(C->ShortHeaders, hdrNode1->name);
     char *e2 = stristr(C->ShortHeaders, hdrNode2->name);
 
-    // now we calculate extra points we give the entries
-    // for their matching position
+    // now we compare the position of the found pointers
+    // so that a lower pointer get higher priorities
     if(e1 && e2)
       diff = (LONG)(e2-e1);
     else if(e1)
       diff = +1;
-    else
+    else if(e2)
       diff = -1;
   }
 
@@ -248,10 +249,6 @@ OVERLOAD(OM_NEW)
   rmData->useTextstyles = C->UseTextstyles;
   rmData->useFixedFont = C->FixedFontEdit;
 
-  // prepare the headerCompareHook to carry a reference to the
-  // readMailData instead
-  HeaderCompareHook.h_Data = rmData;
-  
   // create some object before the real object
   data->textEditScrollbar = ScrollbarObject, End;
 
@@ -267,7 +264,6 @@ OVERLOAD(OM_NEW)
         MUIA_NListview_NList, data->headerList = NListObject,
           InputListFrame,
           MUIA_NList_DisplayHook,          &HeaderDisplayHook,
-          MUIA_NList_CompareHook,          &HeaderCompareHook,
           MUIA_NList_Format,               "P=\033r\0338 W=-1 MIW=-1,",
           MUIA_NList_Input,                FALSE,
           MUIA_NList_TypeSelect,           MUIV_NList_TypeSelect_Char,
@@ -320,6 +316,10 @@ OVERLOAD(OM_NEW)
 
     // copy back the data stored in our temporarly struct Data
     memcpy(data, tmpData, sizeof(struct Data));
+
+    // prepare the headerCompareHook to carry a reference to the readMailData
+    InitHook(&data->headerCompareHook, HeaderCompareHook, rmData);
+    set(data->headerList, MUIA_NList_CompareHook, &data->headerCompareHook);
 
     // prepare the senderInfoHeader list
     NewList((struct List *)&data->senderInfoHeaders);
