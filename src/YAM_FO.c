@@ -940,6 +940,11 @@ static void FO_GetFolder(struct Folder *folder)
             MUIA_Cycle_Active,    folder->MLSignature,
             MUIA_Disabled, !folder->MLSupport || isdefault,
             TAG_DONE);
+
+   // we make sure the window is at the front if it
+   // is already open
+   if(xget(G->FO->GUI.WI, MUIA_Window_Open))
+     DoMethod(G->FO->GUI.WI, MUIM_Window_ToFront);
 }
 
 ///
@@ -1598,10 +1603,13 @@ static struct FO_ClassData *FO_New(void)
       ftypes[1]  = GetStr(MSG_FO_FTSentMail);
       ftypes[2]  = GetStr(MSG_FO_FTBothMail);
       ftypes[3]  = NULL;
+
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, GetStr(MSG_FO_EditFolder),
-         MUIA_HelpNode, "FO_W",
+         MUIA_HelpNode,  "FO_W",
          MUIA_Window_ID, MAKE_ID('F','O','L','D'),
+         MUIA_Window_LeftEdge, MUIV_Window_LeftEdge_Moused,
+         MUIA_Window_TopEdge,  MUIV_Window_TopEdge_Moused,
          WindowContents, VGroup,
             Child, ColGroup(2), GroupFrameT(GetStr(MSG_FO_Properties)),
                Child, Label2(GetStr(MSG_CO_Name)),

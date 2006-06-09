@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-09  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_FO.c: on a doubleclick at the folder listtree the edit folder settings
+    window will always become the frontmost window.
+
 2006-06-08  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: fixed bug #1487409 where executing a command in synchron mode
