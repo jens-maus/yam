@@ -409,7 +409,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param)
   {
     // check for any non-ascii character or
     // if the string would be
-    if(!isascii(*c) || iscntrl(*c))
+    if(!isascii(*c) || iscntrl(*c) || *c == '"')
     {
       doEncoding = TRUE;
       break;
@@ -456,14 +456,14 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param)
   {
     // output the parameter name right before
     // the resulting parameter value
-    fprintf(fh, "\n\t%s=%s", param, s);
+    fprintf(fh, "\n\t%s=\"%s\"", param, s);
   }
   else
   {
     // there seems to be non "violating" characters in the string and
     // the resulting string will also be not > 78 chars in case we
     // have to encode a MIME parameter, so we go and putout the source
-    // string immediatel.y
+    // string immediately
     fputs(s, fh);
   }
 

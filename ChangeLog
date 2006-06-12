@@ -6,6 +6,9 @@ $Id$
 
 2006-06-13  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c: fixed bug #1505068 where YAM didn't put MIME parameters which
+    are not encoded into quotes and therefore might left a MIME paramter as
+    invalid according to the RFC.
   * YAM_UT.c: minor rework of the CloneSearchPath()/FreeSearchPath() functions
     to make them more compliant to MorphOS/Ambient environments.
   * YAM_RE.c: fixed bug #1504359 and #1464538 where YAM did append additional
