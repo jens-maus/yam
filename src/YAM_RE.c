@@ -1330,6 +1330,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
 {
   char buf[SIZE_LINE];
   int blen = 0;
+  BOOL prependNewline = FALSE;
 
   ENTER();
 
@@ -1353,8 +1354,8 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
     if((pNewline = strpbrk(buf, "\r\n")))
       *pNewline = '\0'; // strip any newline
 
-    // first we check if we reached the boundary yet.
-    if(rp && buf[0] == '-' && buf[1] == '-' && strncmp(buf+2, rp->CParBndr, blen) == 0)
+    // first we check if we reached a MIME boundary yet.
+    if(blen > 0 && buf[0] == '-' && buf[1] == '-' && strncmp(buf+2, rp->CParBndr, blen) == 0)
     {
       if(buf[blen+2] == '-' && buf[blen+3] == '-' && buf[blen+4] == '\0')
       {
@@ -1399,7 +1400,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
 
         // now write back exactly the same amount of bytes we have read
         // previously
-        if(fprintf(out, "%s%s", str ? str : buf, pNewline != NULL ? "\n" : "") <= 0)
+        if(fprintf(out, "%s%s", prependNewline ? "\n" : "", str ? str : buf) <= 0)
         {
           E(DBF_MAIL, "error during write operation!");
 
@@ -1415,7 +1416,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
       else
       {
         // now write back exactly the same amount of bytes we read previously
-        if(fprintf(out, "%s%s", buf, pNewline != NULL ? "\n" : "") <= 0)
+        if(fprintf(out, "%s%s", prependNewline ? "\n" : "", buf) <= 0)
         {
           E(DBF_MAIL, "error during write operation!");
 
@@ -1423,6 +1424,10 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
           return FALSE;
         }
       }
+
+      // check if the next iteration should prepend a newline or not.
+      if(pNewline)
+        prependNewline = TRUE;
     }
   }
 
@@ -1430,6 +1435,11 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
   // if there is still something in c and then write it into the out fh.
   if(feof(in))
   {
+    // if we still have a prependNewline as TRUE we have to add
+    // a single newline
+    if(out && prependNewline)
+      fputc('\n', out);
+
     RETURN(TRUE);
     return TRUE;
   }

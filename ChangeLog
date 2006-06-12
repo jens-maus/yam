@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-13  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c: fixed bug #1504359 and #1464538 where YAM did append additional
+    phantom newline characters to mails with attachments and therefore caused
+    problems with e.g. plain text attachments not fully matching the file
+    which was attached by the sender.
+
 2006-06-09  Jens Langner <Jens.Langner@light-speed.de>
 
   * classes/ReadMailGroup.c: fixed a minor bug in the header list compare hook
