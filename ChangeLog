@@ -6,6 +6,8 @@ $Id$
 
 2006-06-13  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: minor rework of the CloneSearchPath()/FreeSearchPath() functions
+    to make them more compliant to MorphOS/Ambient environments.
   * YAM_RE.c: fixed bug #1504359 and #1464538 where YAM did append additional
     phantom newline characters to mails with attachments and therefore caused
     problems with e.g. plain text attachments not fully matching the file

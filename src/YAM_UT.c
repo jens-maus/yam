@@ -131,14 +131,15 @@ static BPTR CloneSearchPath(void)
 
   if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
     WorkbenchControl(NULL, WBCTRLA_DuplicateSearchPath, &path, TAG_DONE);
-  else
-  {
-    // We don't like this evil code in OS4 compile, as we should have
-    // a recent enough workbench available
-    #ifndef __amigaos4__
-    struct Process *pr;
 
-    pr = (struct Process*)FindTask(NULL);
+  #ifndef __amigaos4__
+  // if we couldn't obtain a duplicate copy of the
+  // workbench search path here it is very likely that
+  // we are running on a system without workench.library < 44 or
+  // on a MorphOS with not the very latets workbench.lib.
+  if(path == NULL)
+  {
+    struct Process *pr = (struct Process*)FindTask(NULL);
 
     if(pr->pr_Task.tc_Node.ln_Type == NT_PROCESS)
     {
@@ -160,8 +161,8 @@ static BPTR CloneSearchPath(void)
           if(!dir2)
             break;
 
-          // TODO: Check out if AllocVec() is correct, because this memory is
-          // freed by the system later
+          // Use AllocVec(), because this memory is freed by FreeVec()
+          // by the system later
           if(!(node = AllocVec(sizeof(struct PathNode), MEMF_PUBLIC)))
           {
             UnLock(dir2);
@@ -175,8 +176,8 @@ static BPTR CloneSearchPath(void)
         }
       }
     }
-    #endif
   }
+  #endif
 
   RETURN(path);
   return path;
@@ -191,12 +192,16 @@ static void FreeSearchPath(BPTR path)
 
   if(path != 0)
   {
+    #ifndef __MORPHOS__
     if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
       WorkbenchControl(NULL, WBCTRLA_FreeSearchPath, path, TAG_DONE);
     else
+    #endif
     {
       #ifndef __amigaos4__
-      while (path)
+      // This is also compatible with WorkenchControl(NULL, WBCTRLA_FreeSearchPath, ...)
+      // in MorphOS/Ambient environments.
+      while(path)
       {
         struct PathNode *node = BADDR(path);
         path = node->pn_Next;
