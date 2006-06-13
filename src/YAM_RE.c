@@ -1429,10 +1429,14 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
           }
         }
       }
+      else if(prependNewline)
+        fputc('\n', out);
 
       // check if the next iteration should prepend a newline or not.
       if(pNewline)
         prependNewline = TRUE;
+      else
+        prependNewline = FALSE;
     }
   }
 
