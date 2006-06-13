@@ -3746,7 +3746,7 @@ YAM cannot display a particular message header correctly.
 ; ENCODING_TYPE
 ;
 MSG_ER_MultipartEOF (1119//)
-Unexpected EOF while decoding multipart message. \
+Unexpected EOF while decoding a multipart message. \
 The message seems to be truncated.
 ;
 MSG_ER_MIMEError (1120//)
