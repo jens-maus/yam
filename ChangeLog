@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-14  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c: fixed a minot issue which was introduced by the latest bugfix
+    of bug #1464538 and caused YAM to throw unexpected Multipar warnings
+    or it didn't correctly extract all MIME information of a mail.
+
 2006-06-13  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: updated according to the latest changes, plus

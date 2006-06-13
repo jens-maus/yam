@@ -1373,55 +1373,60 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
     {
       int buflen = strlen(buf);
 
-      // in case the user wants us to detect the correct cyrillic codeset
-      // we do it now
-      if(C->DetectCyrillic && allowAutoDetect)
+      // just in case our input buffer is > 0 we go on
+      // or otherwise we continue or iteration
+      if(buflen > 0)
       {
-        struct codeset *cs = CodesetsFindBest(CSA_Source,         buf,
-                                              CSA_SourceLen,      buflen,
-                                              CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
-                                              TAG_DONE);
-
-        if(cs != NULL && cs != srcCodeset)
-          srcCodeset = cs;
-      }
-
-      // if this function was invoked with a source Codeset we have to make sure
-      // we convert from the supplied source Codeset to our current local codeset with
-      // help of the functions codesets.library provides.
-      if(srcCodeset && buflen > 0)
-      {
-        // convert from the srcCodeset to the destination one.
-        char *str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
-                                       CSA_DestCodeset,   G->localCharset,
-                                       CSA_Source,        buf,
-                                       CSA_SourceLen,     buflen,
-                                       TAG_DONE);
-
-        // now write back exactly the same amount of bytes we have read
-        // previously
-        if(fprintf(out, "%s%s", prependNewline ? "\n" : "", str ? str : buf) <= 0)
+        // in case the user wants us to detect the correct cyrillic codeset
+        // we do it now
+        if(C->DetectCyrillic && allowAutoDetect)
         {
-          E(DBF_MAIL, "error during write operation!");
+          struct codeset *cs = CodesetsFindBest(CSA_Source,         buf,
+                                                CSA_SourceLen,      buflen,
+                                                CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
+                                                TAG_DONE);
 
-          RETURN(FALSE);
-          return FALSE;
+          if(cs != NULL && cs != srcCodeset)
+            srcCodeset = cs;
         }
 
-        if(str)
-          CodesetsFreeA(str, NULL);
-        else
-          W(DBF_MAIL, "couldn't convert str with CodesetsConvertStr()");
-      }
-      else
-      {
-        // now write back exactly the same amount of bytes we read previously
-        if(fprintf(out, "%s%s", prependNewline ? "\n" : "", buf) <= 0)
+        // if this function was invoked with a source Codeset we have to make sure
+        // we convert from the supplied source Codeset to our current local codeset with
+        // help of the functions codesets.library provides.
+        if(srcCodeset)
         {
-          E(DBF_MAIL, "error during write operation!");
+          // convert from the srcCodeset to the destination one.
+          char *str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
+                                         CSA_DestCodeset,   G->localCharset,
+                                         CSA_Source,        buf,
+                                         CSA_SourceLen,     buflen,
+                                         TAG_DONE);
 
-          RETURN(FALSE);
-          return FALSE;
+          // now write back exactly the same amount of bytes we have read
+          // previously
+          if(fprintf(out, "%s%s", prependNewline ? "\n" : "", str ? str : buf) <= 0)
+          {
+            E(DBF_MAIL, "error during write operation!");
+
+            RETURN(FALSE);
+            return FALSE;
+          }
+
+          if(str)
+            CodesetsFreeA(str, NULL);
+          else
+            W(DBF_MAIL, "couldn't convert str with CodesetsConvertStr()");
+        }
+        else
+        {
+          // now write back exactly the same amount of bytes we read previously
+          if(fprintf(out, "%s%s", prependNewline ? "\n" : "", buf) <= 0)
+          {
+            E(DBF_MAIL, "error during write operation!");
+
+            RETURN(FALSE);
+            return FALSE;
+          }
         }
       }
 
