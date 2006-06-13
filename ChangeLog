@@ -6,6 +6,10 @@ $Id$
 
 2006-06-13  Jens Langner <Jens.Langner@light-speed.de>
 
+  * UpdateCheck.c: YAM will now also send information about all used third
+    party library versions as well as all used MUI .mcc versions to the
+    update server so that it may check if a newer version of that component
+    is available and inform the user of that.
   * YAM_RE.c: fixed a minor issue which was introduced by the latest bugfix
     of bug #1464538 and caused YAM to throw "unexpected multipart" errors
     or didn't correctly extract all MIME information of a mail.
