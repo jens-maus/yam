@@ -85,7 +85,6 @@ static void HeaderFputs(FILE *, const char *, const char *);
 static void EmitRcptField(FILE*, char*);
 static void EmitRcptHeader(FILE*, char*, char*);
 static void WriteContentTypeAndEncoding(FILE*, struct WritePart*);
-static void WR_WriteUIItem(FILE*, int*, char*, char*);
 static void WR_WriteUserInfo(FILE *, char *);
 static void EncodePart(FILE*, struct WritePart*);
 static BOOL WR_CreateHashTable(char*, char*, char*);
@@ -574,58 +573,41 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
 }
 
 ///
-/// WR_WriteUIItem
-//  Outputs a single parameter of the X-SenderInfo header
-static void WR_WriteUIItem(FILE *fh, int *len, char *parameter, char *value)
-{
-  int l = 6+strlen(parameter)+strlen(value);
-
-  *len += l;
-  fputc(';', fh);
-  if(*len > 80)
-  {
-    fputs("\n\t", fh);
-    *len = l;
-  }
-
-  HeaderFputs(fh, value, parameter);
-}
-
-///
 /// WR_WriteUserInfo
 //  Outputs X-SenderInfo header line
 static void WR_WriteUserInfo(FILE *fh, char *from)
 {
-   int len = 15;
-   struct ABEntry *ab = NULL;
-   struct Person pers = { "", "" };
+  struct ABEntry *ab = NULL;
+  struct Person pers = { "", "" };
 
-   // Now we extract the real email from the address string
-   if(*from)
-   {
-      ExtractAddress(from, &pers);
-   }
+  // Now we extract the real email from the address string
+  if(*from)
+    ExtractAddress(from, &pers);
 
-   if(*(pers.Address) && AB_SearchEntry(pers.Address, ASM_ADDRESS|ASM_USER, &ab))
-   {
-      if (ab->Type != AET_USER) ab = NULL;
-      else if (!*ab->Homepage && !*ab->Phone && !*ab->Street && !*ab->City && !*ab->Country && !ab->BirthDay) ab = NULL;
-   }
+  if(*(pers.Address) && AB_SearchEntry(pers.Address, ASM_ADDRESS|ASM_USER, &ab))
+  {
+    if(ab->Type != AET_USER)
+      ab = NULL;
+    else if(!*ab->Homepage && !*ab->Phone && !*ab->Street && !*ab->City && !*ab->Country && !ab->BirthDay)
+      ab = NULL;
+  }
 
-   if (!ab && !*C->MyPictureURL) return;
-   fputs("X-SenderInfo: 1", fh);
-   if (*C->MyPictureURL) WR_WriteUIItem(fh, &len, "picture", C->MyPictureURL);
+  if(!ab && !*C->MyPictureURL)
+    return;
 
-   if (ab)
-   {
-      if (*ab->Homepage) WR_WriteUIItem(fh, &len, "homepage", ab->Homepage);
-      if (*ab->Street)   WR_WriteUIItem(fh, &len, "street", ab->Street);
-      if (*ab->City)     WR_WriteUIItem(fh, &len, "city", ab->City);
-      if (*ab->Country)  WR_WriteUIItem(fh, &len, "country", ab->Country);
-      if (*ab->Phone)    WR_WriteUIItem(fh, &len, "phone", ab->Phone);
-      if (ab->BirthDay)  fprintf(fh, "; dob=%ld", ab->BirthDay);
-   }
-   fputc('\n', fh);
+  fputs("X-SenderInfo: 1", fh);
+  if(*C->MyPictureURL) { fputc(';', fh); HeaderFputs(fh, C->MyPictureURL, "picture"); }
+
+  if(ab)
+  {
+    if(*ab->Homepage) { fputc(';', fh); HeaderFputs(fh, ab->Homepage, "homepage"); }
+    if(*ab->Street)   { fputc(';', fh); HeaderFputs(fh, ab->Street, "street"); }
+    if(*ab->City)     { fputc(';', fh); HeaderFputs(fh, ab->City, "city"); }
+    if(*ab->Country)  { fputc(';', fh); HeaderFputs(fh, ab->Country, "country"); }
+    if(*ab->Phone)    { fputc(';', fh); HeaderFputs(fh, ab->Phone, "phone"); }
+    if(ab->BirthDay)  fprintf(fh, ";\n\tdob=%ld", ab->BirthDay);
+  }
+  fputc('\n', fh);
 }
 ///
 /// EncodePart

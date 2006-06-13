@@ -6,6 +6,9 @@ $Id$
 
 2006-06-13  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c: fixed bug #1505424 where we did issue additional empty lines to
+    the sender information and therefore left the mail content somehow
+    malformed.
   * YAM_UT.c, YAM_FO.c: reverted the change on all our modal requesters where
     a modal requester will always be opened relative to the current mouse position
     which isn't as intuitive as I expected. In addition, the initial window
