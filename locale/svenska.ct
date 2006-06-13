@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 5.7 (21.04.06)
+## version $VER: YAM.ct 5.8 (13.06.06)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -213,10 +213,6 @@ MSG_To
 Till
 ;#DEF To
 ;#SET (54//)
-MSG_Default
-förvalt
-;#DEF default
-;#SET (55//)
 MSG_Columns
 Kolumner
 ;#DEF Columns
@@ -554,10 +550,8 @@ Mappen '%s' är skyddad.\nAnge lösenord för att komma åt den:
 ;#DEF Folder '%s' is a protected folder.\nPlease enter the password to unlock it:
 ;#SET (144//)
 MSG_MA_ReplyReq
-Brevet har flera mottagare.\n\
-\n\
-Vill du skicka svaret...
-;#DEF The selected message has multiple recipients.\nDo you want to send the reply...
+Brevet har flera mottagare.\n\nVill du skicka svaret...
+;#DEF The selected message has multiple recipients.\n\nDo you want to send the reply...
 ;#SET (149//)
 MSG_MA_ReplyReqOpt
 *...till\nav_sändaren|...till avsändaren och\n_alla mottagare|...till\nmottaga_rna|A_vbryt
@@ -639,10 +633,6 @@ MSG_MA_All
 Alla
 ;#DEF All
 ;#SET (169//)
-MSG_MA_Cancel
-\ebAvbryt
-;#DEF \ebCancel
-;#SET (170//)
 MSG_MA_TitleStatus
 Status
 ;#DEF Status
@@ -1636,17 +1626,13 @@ _Visare
 ;#DEF _Viewer
 ;#SET (426//)
 MSG_CO_Extension
-_Ändelse
-;#DEF E_xtension
+Fil_ändelse
+;#DEF File e_xtension
 ;#SET (427//)
 MSG_CO_DefaultViewer
 _Förvald visare
 ;#DEF De_fault viewer
 ;#SET (428//)
-MSG_CO_IdentifyBin
-_Identifiera binära bilagor
-;#DEF _Identify binary attachments
-;#SET (429//)
 MSG_CO_MessageHeader
 Brevhuvud
 ;#DEF Message header
@@ -2396,17 +2382,13 @@ Ta bort vald MIME-visare.
 ;#DEF Remove selected MIME viewer
 ;#SET (618//)
 MSG_HELP_CO_ST_EXTENS
-Filändelse för denna filtyp.
-;#DEF Filename extensions used\nby this file type
+Filändelser som används\nför denna filtyp.
+;#DEF File extensions used\nby this file type
 ;#SET (619//)
 MSG_HELP_CO_ST_DEFVIEWER
 Program för att visa bilagor av okänd typ.
 ;#DEF Program used to display\nattachments of unknown type
 ;#SET (620//)
-MSG_HELP_CO_CH_IDENTBIN
-Försök identifiera filtyp\ninnan förvald visare används.
-;#DEF Try to identify the file type\nbefore using the default viewer
-;#SET (621//)
 MSG_HELP_CO_ST_REPLYTO
 Ange svarsadress om den skiljer\nsig från din e-postadress.
 ;#DEF Enter the default return address, if\nit differs from your email address.
@@ -2991,30 +2973,6 @@ MSG_HELP_AB_BT_BCC
 Sätt dold kopiemottagare av det nya brevet.\n(Mottagaren kommer inte att synas i brevet.)
 ;#DEF Set blind copy recipient(s)\nfor new message
 ;#SET (769//)
-MSG_CL_ErrorEmptyCB
-Urklippet är tomt.
-;#DEF The clipboard is empty.
-;#SET (770//)
-MSG_CL_ErrorNotFTXT
-Urklippet innehåller ingen text.
-;#DEF The clipboard does not contain text.
-;#SET (771//)
-MSG_CL_ErrorNoArea
-Ingen text är vald.
-;#DEF No area marked.
-;#SET (772//)
-MSG_CL_ErrorNoRedo
-Det finns inget att ta tillbaks.
-;#DEF Nothing to redo.
-;#SET (773//)
-MSG_CL_ErrorNoUndo
-Det finns inget att ångra.
-;#DEF Nothing to undo.
-;#SET (774//)
-MSG_CL_ErrorNoUndoMem
-Det finns inte tillräckligt\nmed minne för ångerbufferten.\n\nÅngerbufferten är förlorad.
-;#DEF There is not enough memory\nto keep the undo buffer.\n\nThe undo buffer is lost.
-;#SET (775//)
 MSG_EA_EditUser
 Redigera person
 ;#DEF Edit person
@@ -3091,10 +3049,6 @@ MSG_EA_SelectPhoto
 Vä_lj
 ;#DEF Se_lect
 ;#SET (794//)
-MSG_EA_LoadPhoto
-Hä_mta
-;#DEF _Download
-;#SET (795//)
 MSG_EA_ReturnAddress
 Sva_rsadress
 ;#DEF _Return address
@@ -3163,10 +3117,6 @@ MSG_HELP_EA_BT_SELECTPHOTO
 Välj en bild att visa (bilddatatyper stöds).
 ;#DEF Select a picture file from disk\n(image datatypes supported)
 ;#SET (812//)
-MSG_HELP_EA_BT_LOADPHOTO
-Hämta bild på personen\nfrån YAMs användargalleri.
-;#DEF Download a picture of the person\nfrom the YAM User Gallery
-;#SET (813//)
 MSG_HELP_EA_ST_REALNAME_L
 Fullt namn på denna sändlista\n(kommer att användas i Till:).
 ;#DEF Full name of this distribution list\n(will be used in the To: field)
@@ -3367,10 +3317,6 @@ MSG_RE_NewGroupTitle
 Automatiskt tillagda poster
 ;#DEF Automatically added entries
 ;#SET (863//)
-MSG_RE_DownloadPhotoReq
-Vill du ladda ner bilden på avsändaren\noch lägga till den till ditt persongalleri?\n(Du måste vara uppkopplad innan du klickar på OK-knappen)
-;#DEF Do you want to download the photo of the sender\nand add it to your personal gallery?\n(You must be online before clicking the OKAY button)
-;#SET (864//)
 MSG_RE_ContentType
 Innehållstyp
 ;#DEF Content-Type
@@ -3709,11 +3655,11 @@ B_eskrivning
 ;#SET (949//)
 MSG_WR_CopyTo
 K_opior till (CC)
-;#DEF C_opies to
+;#DEF C_opies to (CC)
 ;#SET (950//)
 MSG_WR_BlindCopyTo
 _Dolda kopior till (BCC)
-;#DEF Hidde_n copies to
+;#DEF Hidde_n copies to (BCC)
 ;#SET (951//)
 MSG_WR_From
 _Från
@@ -4299,10 +4245,6 @@ MSG_ER_Close
 _Stäng fönster
 ;#DEF _Close window
 ;#SET (1098//)
-MSG_ER_ErrorTTable
-Kunde inte öppna översättningstabellen '%s'\n(finns inte eller är i fel format).
-;#DEF Couldn't open translation table '%s'\n(non existent or wrong format).
-;#SET (1099//)
 MSG_ER_CantCreateFile
 Kunde inte skriva till filen '%s'.\n\nKontrollera att sökvägen existerar och att volymen inte är skrivskyddad.
 ;#DEF Couldn't write to file '%s'.\n\nMake sure that the path exists and that the volume isn't write-protected.
@@ -4323,10 +4265,6 @@ MSG_ER_ErrorDOBformat
 Födelsedatumet har fel format. Använd formatet DD-MMM-ÅÅÅÅ.
 ;#DEF Date of birth is in wrong format. The correct format is DD-MMM-YYYY (month names in English).
 ;#SET (1104//)
-MSG_ER_NotInGallery
-Kunde inte hitta personen i YAMs användargalleri. Antingen finns inte personen däri eller så är namn eller adress felstavat.
-;#DEF Couldn't find this person in the YAM user gallery. Either the person doesn't exist in the database or his/her name or address is mispelt.
-;#SET (1105//)
 MSG_ER_ErrorDateFormat
 Felaktigt datum-/tidformat.\n\nDatumet måste vara i AmigaDOS-format.\nT.ex: %s
 ;#DEF Invalid date/time format.\n\nThe date has to be in AmigaDOS format.\nExample: %s
@@ -4375,10 +4313,6 @@ MSG_ER_MIMEError
 Kunde inte avkoda MIME-brev.\n\nBrevet innehåller felaktiga MIME-delar, är tomt, eller har klippts av.
 ;#DEF Couldn't extract MIME message.\n\nThe message contains badly formed MIME parts or it's empty or truncated.
 ;#SET (1120//)
-MSG_ER_MissingBoundary
-Gräns för flerpartsbrev saknas. Brevet verkar ha klippts av.
-;#DEF Missing boundary in multipart message. The message seems to be truncated.
-;#SET (1121//)
 MSG_ER_CantOpenFile
 Kunde inte läsa filen '%s'.\n\nFilen verkar inte existera.
 ;#DEF Couldn't read from file '%s'.\n\nThe file doesn't seem to exist.
@@ -4967,10 +4901,6 @@ MSG_BusyLoadingDI
 Laddar ordlista...
 ;#DEF Loading glossary...
 ;#SET (1274//)
-MSG_BusyDownloadingPic
-Laddar ner bild på %s...
-;#DEF Downloading portrait of %s...
-;#SET (1275//)
 MSG_BusyUncompressingFO
 (De)komprimerar mapp(ar)...
 ;#DEF (De)compressing folders...
@@ -5804,7 +5734,7 @@ Ett oväntat fel inträffade vid försök att koda filen '%s' med quoted-printable k
 ;#DEF An unexpected error occurred while trying to encode the file '%s' with the quoted-printable file encoding routines.
 ;#SET (1501//)
 MSG_ER_UUFILEENCODE
-Ett oväntat fel inträffade vid försök att koda filen '%s' med UUcode kodnings rutiner.
+Ett oväntat fel inträffade vid försök att koda filen '%s' med UU-kod kodnings rutiner.
 ;#DEF An unexpected error occurred while trying to encode the file '%s' with the UUcode file encoding routines.
 ;#SET (1502//)
 MSG_ER_QPDEC_FILEIO
@@ -5824,15 +5754,15 @@ Vissa icke tillåtna tecken har upptäckts under avkodningen av quoted-printable f
 ;#DEF Some not allowed characters have been spotted during the quoted-printable decoding of file '%s' and where therefore removed during the decoding.
 ;#SET (1506//)
 MSG_ER_UUDEC_TAGMISS
-Vid försök att avkoda UUcode filen '%s', kunde YAM inte hitta den '%s' tagg som krävs enligt UUcode standarden.
+Vid försök att avkoda UU-kod filen '%s', kunde YAM inte hitta den '%s' tagg som krävs enligt UUcode standarden.
 ;#DEF While trying to UUdecode file '%s', YAM wasn't able to find the required '%s' tag as proposed by the UUcode standard.
 ;#SET (1507//)
 MSG_ER_UUDEC_CHECKSUM
-Vid försök att avkoda UUcode filen '%s', har YAM upptäckt att vissa inbäddade kontrollsummor var felaktiga och därför är det rekommenderat att kontrollera att den aktuella filen inte är förvanskad.\n\nEn felaktig UUcode kodare har använts eller så är meddelandet avklippt.
+Vid försök att avkoda UU-kod filen '%s', har YAM upptäckt att vissa inbäddade kontrollsummor var felaktiga och därför är det rekommenderat att kontrollera att den aktuella filen inte är förvanskad.\n\nEn felaktig UUcode kodare har använts eller så är meddelandet avklippt.
 ;#DEF While trying to UUdecode file '%s', YAM has found that some embedded checksums were invalid and therefore suggests to check that the resulting file isn't corrupted.\n\nA defective UUencoder was used or the message is truncated.
 ;#SET (1508//)
 MSG_ER_UUDEC_CORRUPT
-Vid försök att avkoda UUcode filen '%s', har YAM upptäckt att den UUcode kodade delen verkar vara förvanskad. \n\nEn felaktig UUcode kodare har använts eller så är meddelandet avklippt.
+Vid försök att avkoda UU-kod filen '%s', har YAM upptäckt att den UUcode kodade delen verkar vara förvanskad. \n\nEn felaktig UUcode kodare har använts eller så är meddelandet avklippt.
 ;#DEF While trying to UUdecode file '%s', YAM has found that the UUencoded part seems to be corrupt. \n\nA defective UUencoder was used or the message is truncated.
 ;#SET (1509//)
 MSG_FI_StatMarked
@@ -6484,18 +6414,158 @@ Ingen sökning utförd ännu.
 ;#DEF No check performed yet.
 ;#SET (1671//)
 MSG_CO_LASTSTATUS_NOUPDATE
-Inga nya versioner hittades.
-;#DEF New newer versions were found.
+Inga nya uppdateringar hittades.
+;#DEF No new software updates were available.
 ;#SET (1672//)
+MSG_CO_LASTSTATUS_NOQUERY
+Kunde inte fråga uppdateringsservern om uppdateringar.
+;#DEF Couldn't query update server for updates.
+;#SET (1673//)
+MSG_CO_LASTSTATUS_UPDATESUCCESS
+Hittade och bearbetade nya uppdateringar framgångsrikt.
+;#DEF Successfully found and processed new updates.
+;#SET (1674//)
 MSG_WR_SECURITYREQ
 Brevets mottagare har olika förvalda\nbrevsäkerhetsinställningar.\n\nHur vill du komponera brevet?
 ;#DEF The recipients of the mail have different\ndefault mail security settings.\n\nHow do you want to compose the mail?
-;#SET (1673//)
+;#SET (1675//)
 MSG_WR_SECURITYREQ_GADS
 *_Vanligt|_Signerat|_Krypterat|S_ignerat&krypterat|_Anonymnt|Av_bryt
 ;#DEF *_Plain|_Signed|_Encrypted|S_igned&Encrypted|_Anonymous|_Cancel
-;#SET (1674//)
+;#SET (1676//)
 MSG_ER_OPENTCPIP
 YAM kunde inte öppna lämpligt bsdsocket.library gränssnitt, nödvändigt för TCP/IP anslutningar.\n\nVänligen kontrollera att du har en kompatibel TCP/IP stack installerad, korrekt konfigurerad och att ditt nätverksgränssnitt är fungerande.
 ;#DEF YAM wasn't able to open the appropriate bsdsocket.library interface, required for TCP/IP connections.\n\nPlease make sure that you have a compatible TCP/IP stack installed, correctly configured and that your network interface is up and running.
-;#SET (1675//)
+;#SET (1677//)
+MSG_WR_UUCODE
+UU-kodad text
+;#DEF UUencoded text
+;#SET (1678//)
+MSG_UPD_NOTIFICATION_WTITLE
+Uppdateringsmeddelande
+;#DEF Update Notification
+;#SET (1679//)
+MSG_UPD_NOTIFICATION_TITLE
+Uppdateringar tillgängliga
+;#DEF Updates available
+;#SET (1680//)
+MSG_UPD_NOTIFICATION_SUMMARY
+YAM har hittat följande tillgängliga uppdateringar:
+;#DEF YAM has found the following updates to be available:
+;#SET (1681//)
+MSG_UPD_NOTIFICATION_CHANGES
+Ändringar:
+;#DEF Changes:
+;#SET (1682//)
+MSG_UPD_NOTIFICATION_NOUPDATE
+Meddela mig inte om uppdateringar i framtiden
+;#DEF Do not notify me on updates in future
+;#SET (1683//)
+MSG_UPD_NOTIFICATION_VISITURL
+Besök URL
+;#DEF Visit URL
+;#SET (1684//)
+MSG_UPD_NOTIFICATION_CLOSE
+Stäng
+;#DEF Close
+;#SET (1685//)
+MSG_UPD_NOTIFICATION_COMP
+Komponent
+;#DEF Component
+;#SET (1686//)
+MSG_UPD_NOTIFICATION_RECENT
+Senast
+;#DEF Recent
+;#SET (1687//)
+MSG_UPD_NOTIFICATION_INSTALLED
+Installerad
+;#DEF Installed
+;#SET (1688//)
+MSG_UPD_NOTIFICATION_URL
+URL
+;#DEF URL
+;#SET (1689//)
+MSG_CO_MIME_DESCRIPTION
+_Beskrivning
+;#DEF _Description
+;#SET (1690//)
+MSG_CTapplicationgz
+GNU zip arkiv
+;#DEF GNU zip archive
+;#SET (1691//)
+MSG_CTapplicationhqx
+Macintosh arkiv
+;#DEF Macintosh archive
+;#SET (1692//)
+MSG_CTapplicationxls
+Microsoft Excel fil
+;#DEF Microsoft Excel file
+;#SET (1693//)
+MSG_CTapplicationppt
+Microsoft Powerpoint fil
+;#DEF Microsoft Powerpoint file
+;#SET (1694//)
+MSG_CTapplicationdoc
+Microsoft Word fil
+;#DEF Microsoft Word file
+;#SET (1695//)
+MSG_CTtextxml
+XML fil
+;#DEF XML file
+;#SET (1696//)
+MSG_CTapplicationz
+zlib komprimerad fil
+;#DEF zlib compressed file
+;#SET (1697//)
+MSG_CTapplicationtar
+tar arkiv
+;#DEF tar archive
+;#SET (1698//)
+MSG_CTaudioaiff
+AIFF ljud fil
+;#DEF AIFF audio file
+;#SET (1699//)
+MSG_CTaudiomidi
+MIDI ljud fil
+;#DEF MIDI audio file
+;#SET (1700//)
+MSG_CTaudiompeg
+MPEG ljud fil
+;#DEF MPEG audio file
+;#SET (1701//)
+MSG_CTimagebmp
+Bitmap bild fil
+;#DEF Bitmap image file
+;#SET (1702//)
+MSG_CTapplicationtgz
+gzippat tar arkiv
+;#DEF gzipped tar archive
+;#SET (1703//)
+MSG_CTapplicationpgp
+PGP krypterad fil
+;#DEF PGP encrypted file
+;#SET (1704//)
+MSG_CTapplicationbz2
+BZIP2 arkiv
+;#DEF BZIP2 archive
+;#SET (1705//)
+MSG_CO_DETECT_CYRILLIC
+Autodetektera cyrillisk teckenuppsättning
+;#DEF Auto-detect cyrillic charsets
+;#SET (1706//)
+MSG_HELP_CO_DETECT_CYRILLIC
+Försöker använda autodetektera\nfunktionen i codesets.library för att\nautomatiskt identifiera korrekt cyrillisk\nteckenuppsättning. (endast relevant för cyrilliska användare)
+;#DEF Tries to use the auto-detect feature\nof codesets.library to automatically\nidentify the correct cyrillic codeset.\n(only relevant for cyrillic users)
+;#SET (1707//)
+MSG_WR_ErrorNotEnoughUndoMem
+Den raderade texten var för stor\nför att stoppas i ångra bufferten.\n\nDärför är ångra bufferten förlorad.
+;#DEF The erased text was too large to be\nput into the undo buffer.\n\nTherefore, the undo buffer is lost.
+;#SET (1708//)
+MSG_RE_HEADERDISPLAY
+Brevhuvudsvisning
+;#DEF Header Display
+;#SET (1709//)
+MSG_RE_MAILDETAILS
+Brevdetaljer
+;#DEF Mail Details
+;#SET (1710//)

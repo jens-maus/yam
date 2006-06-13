@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-13  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: updated according to the latest changes, plus
+    some minor changes.
+
 2006-06-13  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: fixed bug #1505068 where YAM didn't put MIME parameters which
