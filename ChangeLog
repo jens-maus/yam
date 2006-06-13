@@ -4,19 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
-2006-06-14  Jens Langner <Jens.Langner@light-speed.de>
-
-  * YAM_RE.c: fixed a minot issue which was introduced by the latest bugfix
-    of bug #1464538 and caused YAM to throw unexpected Multipar warnings
-    or it didn't correctly extract all MIME information of a mail.
-
-2006-06-13  Pär Boberg <pbobbenb@spray.se>
-
-  * locale/svenska.ct: updated according to the latest changes, plus
-    some minor changes.
-
 2006-06-13  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c: fixed a minor issue which was introduced by the latest bugfix
+    of bug #1464538 and caused YAM to throw "unexpected multipart" errors
+    or didn't correctly extract all MIME information of a mail.
   * YAM_WR.c: fixed bug #1505068 where YAM didn't put MIME parameters which
     are not encoded into quotes and therefore might left a MIME paramter as
     invalid according to the RFC.
@@ -26,6 +18,11 @@ $Id$
     phantom newline characters to mails with attachments and therefore caused
     problems with e.g. plain text attachments not fully matching the file
     which was attached by the sender.
+
+2006-06-13  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: updated according to the latest changes, plus
+    some minor changes.
 
 2006-06-09  Jens Langner <Jens.Langner@light-speed.de>
 
