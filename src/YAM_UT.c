@@ -2224,40 +2224,65 @@ char *BuildAddrName(char *address, char *name)
 //  Extracts e-mail address and real name
 void ExtractAddress(char *line, struct Person *pe)
 {
-   char *p = line, *ra[4], *save;
-   BOOL found = FALSE;
+  char *save;
+  BOOL found = FALSE;
 
-   ra[2] = ra[3] = NULL;
-   save = strdup(line);
-   pe->Address[0] = pe->RealName[0] = 0;
-   while (isspace(*p)) p++;
-   if ((ra[0] = MyStrChr(p,'<'))) if ((ra[1] = MyStrChr(ra[0],'>')))
-   {
-      *ra[0]++ = 0; *ra[1] = 0;
-      for (ra[2] = p, ra[3] = ra[0]-2; isspace(*ra[3]) && ra[3] >= ra[2]; ra[3]--) *ra[3] = 0;
+  ENTER();
+
+  pe->Address[0] = '\0';
+  pe->RealName[0] = '\0';
+
+  if((save = strdup(line)))
+  {
+    char *p = save;
+    char *ra[4];
+
+    ra[2] = ra[3] = '\0';
+
+    // skip leading whitespaces
+    while(isspace(*p))
+      p++;
+
+    if((ra[0] = MyStrChr(p, '<')) && (ra[1] = MyStrChr(ra[0], '>')))
+    {
+      *ra[0]++ = '\0';
+      *ra[1] = '\0';
+
+      for(ra[2] = p, ra[3] = ra[0]-2; isspace(*ra[3]) && ra[3] >= ra[2]; ra[3]--)
+        *ra[3] = '\0';
+
       found = TRUE;
-   }
-   if (!found)
-   {
-      for (ra[1] = ra[0] = p; *ra[1] && *ra[1] != '\t' && *ra[1] != ' ' && *ra[1] != ','; ra[1]++);
-      if ((ra[2] = MyStrChr(ra[1],'('))) if ((ra[3] = MyStrChr(ra[2],')')))
+    }
+
+    if(!found)
+    {
+      for(ra[1] = ra[0] = p; *ra[1] && *ra[1] != '\t' && *ra[1] != ' ' && *ra[1] != ','; ra[1]++);
+
+      if((ra[2] = MyStrChr(ra[1], '(')) && (ra[3] = MyStrChr(ra[2], ')')))
       {
-         ra[2]++; *ra[3]-- = 0;
-         found = TRUE;
+        ra[2]++;
+        *ra[3]-- = '\0';
+        found = TRUE;
       }
-      *ra[1] = 0;
-      if (!found) ra[2] = ra[3] = "";
-   }
 
-   if (*ra[2] == '\"') ra[2]++;
-   if (*ra[3] == '\"' && *(ra[3]-1) != '\\') *ra[3] = 0;
+      *ra[1] = '\0';
+      if(!found)
+        ra[2] = ra[3] = "";
+    }
 
-   strlcpy(pe->Address ,Trim(ra[0]), sizeof(pe->Address));
-   strlcpy(pe->RealName, Trim(ra[2]), sizeof(pe->RealName));
+    if(*ra[2] == '\"')
+      ra[2]++;
 
-   strcpy(line, save);
+    if(*ra[3] == '\"' && *(ra[3]-1) != '\\')
+      *ra[3] = '\0';
 
-   free(save);
+    strlcpy(pe->Address,  Trim(ra[0]), sizeof(pe->Address));
+    strlcpy(pe->RealName, Trim(ra[2]), sizeof(pe->RealName));
+
+    free(save);
+  }
+
+  LEAVE();
 }
 ///
 /// CompressMsgID

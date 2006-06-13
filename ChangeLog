@@ -6,6 +6,10 @@ $Id$
 
 2006-06-13  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c, YAM_TR.c, YAM_MAf.c: applied minor cosmetic optimizations/changes
+    to the routines extracting a recipient address so that debugging of those
+    related functions shoule be more easy and intuitive in case something
+    goes wrong.
   * YAM_WR.c: fixed bug #1505424 where we did issue additional empty lines to
     the sender information and therefore left the mail content somehow
     malformed.

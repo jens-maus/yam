@@ -61,14 +61,14 @@ enum ReceiptType { RCPT_TYPE_ALL=1, RCPT_TYPE_READ };
 struct ExtendedMail
 {
    struct Mail      Mail;
-   struct Person *  STo;
-   struct Person *  CC;
-   struct Person *  BCC;
+   struct Person *  STo;          // ptr to an array of "To:" recipients (exlucing the main To:)
+   struct Person *  CC;           // ptr to an array of "CC:" recipients
+   struct Person *  BCC;          // ptr to an array of "BCC:" recipients
    char *           extraHeaders; // YAM internal headers (X-YAM-...)
    char *           SenderInfo;
-   int              NoSTo;
-   int              NoCC;
-   int              NoBCC;
+   int              NoSTo;        // number of recipients in STo (minus one)
+   int              NoCC;         // number of recipients in CC
+   int              NoBCC;        // number of recipients in BCC
    int              Signature;
    int              Security;
    enum ReceiptType ReceiptType;

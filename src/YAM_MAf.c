@@ -119,7 +119,7 @@ struct FIndex
 static void MA_ValidateStatus(struct Folder*);
 static char *MA_IndexFileName(struct Folder*);
 static BOOL MA_DetectUUE(FILE*);
-static void MA_GetRecipients(char*, struct Person**, int*);
+static int  MA_GetRecipients(char*, struct Person**);
 static BOOL MA_ScanDate(struct Mail *mail, const char *date);
 static BOOL MA_ScanMailBox(struct Folder *folder);
 static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder);
@@ -1250,26 +1250,54 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
 ///
 /// MA_GetRecipients
 //  Extracts recipients from a header field
-static void MA_GetRecipients(char *h, struct Person **per, int *percnt)
+static int MA_GetRecipients(char *h, struct Person **per)
 {
-   int cnt;
-   char *p = h, *next;
-   for (cnt = 0; *p;)
-   {
-      cnt++;
-      if ((p = MyStrChr(p, ','))) p++; else break;
-   }
-   *percnt = cnt;
-   if (cnt)
-   {
-      *per = calloc(cnt, sizeof(struct Person));
-      for (cnt = 0, p = h; *p; cnt++)
+  int cnt=0;
+  char *p = h;
+
+  ENTER();
+
+  while(*p)
+  {
+    cnt++;
+    if((p = MyStrChr(p, ',')))
+      p++;
+    else
+      break;
+  }
+
+  if(cnt > 0)
+  {
+    struct Person *cur;
+
+    // allocate enough memory to carry all
+    // found recipients in an array of struct Person
+    // structures.
+    if((*per = cur = calloc(cnt, sizeof(struct Person))))
+    {
+      for(p=h; *p; cur++)
       {
-         if ((next = MyStrChr(p, ','))) *next++ = 0;
-         ExtractAddress(p, (struct Person *)((ULONG)*per+cnt*sizeof(struct Person)));
-         if (!(p = next)) break;
+        char *next;
+
+        if((next = MyStrChr(p, ',')))
+          *next++ = '\0';
+
+        ExtractAddress(p, cur);
+
+        D(DBF_MIME, "extracted rcpt: '%s' '%s'", cur->RealName, cur->Address);
+
+        if(!(p = next))
+          break;
       }
-   }
+    }
+    else
+      cnt = 0;
+  }
+  else
+    *per = NULL;
+
+  RETURN(cnt);
+  return cnt;
 }
 
 ///
@@ -1379,7 +1407,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
            {
              SET_FLAG(ok, 2);
              if((p = MyStrChr(value, ',')))
-               *p++ = 0;
+               *p++ = '\0';
 
              ExtractAddress(value, &pe);
              mail->To = pe;
@@ -1388,7 +1416,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
                if(deep)
                {
                  if(email->NoSTo == 0)
-                   MA_GetRecipients(p, &(email->STo), &(email->NoSTo));
+                   email->NoSTo = MA_GetRecipients(p, &(email->STo));
 
                  if(email->NoSTo > 0)
                    SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
@@ -1396,6 +1424,8 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
                else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
                  SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
              }
+
+             D(DBF_MIME, "'To:' recipients: %d", email->NoSTo+1);
            }
          }
          else if(!stricmp(field, "cc"))
@@ -1403,9 +1433,9 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
            if(deep)
            {
              if(email->NoCC == 0)
-             {
-               MA_GetRecipients(value, &(email->CC), &(email->NoCC));
-             }
+               email->NoCC = MA_GetRecipients(value, &(email->CC));
+
+             D(DBF_MIME, "'Cc:' recipients: %d", email->NoCC);
 
              if(email->NoCC > 0)
                SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
@@ -1418,9 +1448,9 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
            if(deep)
            {
              if(email->NoBCC == 0)
-             {
-               MA_GetRecipients(value, &(email->BCC), &(email->NoBCC));
-             }
+               email->NoBCC = MA_GetRecipients(value, &(email->BCC));
+
+             D(DBF_MIME, "'BCC:' recipients: %d", email->NoBCC);
 
              if(email->NoBCC > 0)
                SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);

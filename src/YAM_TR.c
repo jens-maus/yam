@@ -3252,31 +3252,44 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
    if ((f = fopen(mf = GetMailFile(NULL, outfolder, mail), "r")))
    {
       char buf[SIZE_LINE];
+
       snprintf(buf, sizeof(buf), "FROM:<%s>", C->EmailAddress);
       if (TR_SendSMTPCmd(SMTP_MAIL, buf, MSG_ER_BadResponse))
       {
-         int j;
-         BOOL rcptok = TRUE;
          struct ExtendedMail *email = MA_ExamineMail(outfolder, mail->MailFile, TRUE);
 
          if(email)
          {
+            BOOL rcptok = TRUE;
+            int j;
+
+            // specify the main 'To:' recipient
             snprintf(buf, sizeof(buf), "TO:<%s>", mail->To.Address);
-            if (!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse)) rcptok = FALSE;
-            for (j = 0; j < email->NoSTo && rcptok; j++)
+            if(!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse))
+               rcptok = FALSE;
+
+            // now add the additional 'To:' recipients of the mail
+            for(j=0; j < email->NoSTo && rcptok; j++)
             {
               snprintf(buf, sizeof(buf), "TO:<%s>", email->STo[j].Address);
-              if (!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse)) rcptok = FALSE;
+              if(!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse))
+                rcptok = FALSE;
             }
-            for (j = 0; j < email->NoCC && rcptok; j++)
+
+            // add the 'Cc:' recipients
+            for(j=0; j < email->NoCC && rcptok; j++)
             {
               snprintf(buf, sizeof(buf), "TO:<%s>", email->CC[j].Address);
-              if (!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse)) rcptok = FALSE;
+              if(!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse))
+                rcptok = FALSE;
             }
-            for (j = 0; j < email->NoBCC && rcptok; j++)
+
+            // add the 'BCC:' recipients
+            for(j=0; j < email->NoBCC && rcptok; j++)
             {
               snprintf(buf, sizeof(buf), "TO:<%s>", email->BCC[j].Address);
-              if (!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse)) rcptok = FALSE;
+              if(!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse))
+                rcptok = FALSE;
             }
 
             if (rcptok)
