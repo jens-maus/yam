@@ -6,6 +6,11 @@ $Id$
 
 2006-06-13  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c, YAM_FO.c: reverted the change on all our modal requesters where
+    a modal requester will always be opened relative to the current mouse position
+    which isn't as intuitive as I expected. In addition, the initial window
+    position where the window is opened is now back to be fully under user
+    control.
   * UpdateCheck.c: YAM will now also send information about all used third
     party library versions as well as all used MUI .mcc versions to the
     update server so that it may check if a newer version of that component
