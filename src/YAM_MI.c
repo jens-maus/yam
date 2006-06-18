@@ -2234,7 +2234,7 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
           // to put the txt in our destination
           if(info->maxlen < dstLen)
           {
-            W(DBF_MIME, "not enough space to put converted string with len %d into info->dst!");
+            W(DBF_MIME, "not enough space to put converted string with len %ld into info->dst!", dstLen);
 
             CodesetsFreeA(str, NULL);
             return -1;
@@ -2245,7 +2245,7 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
 
           // lets copy all data from our converted string to
           // our own destination buffer
-          memcpy(info->dst, str, dstLen);
+          memmove(info->dst, str, dstLen);
 
           // free our codesets buffer.
           CodesetsFreeA(str, NULL);
@@ -2267,7 +2267,7 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
 
   if(info->maxlen < len)
   {
-    W(DBF_MIME, "not enough space to put string with len %d into info->dst!");
+    W(DBF_MIME, "not enough space to put string with len %ld into info->dst!", len);
     return -1;
   }
 
@@ -2276,7 +2276,7 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
 
   // lets copy all data from our converted string to
   // our own destination buffer
-  memcpy(info->dst, txt, len);
+  memmove(info->dst, txt, len);
 
   // increase the destination pointer so that the
   // next iteration can profit out of it.

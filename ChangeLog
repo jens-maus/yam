@@ -6,6 +6,11 @@ $Id$
 
 2006-06-18  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MI.c: replaced all memcpy() uses in rfc2047_dec_callback() with
+    memmove() as the src and dst areas may overlap under certain conditions
+    which in fact may cause certain undefined problems. Thanks to Thore
+    Böckelmann for reporting the issue as it certainly wasn't an easy bug
+    to find.
   * italino.ct: updated italian catalog translation kindly provided by Luca
     Longone.
 
