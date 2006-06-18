@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 5.8 (23.03.2006)
+## version $VER: YAM.catalog 5.9 (18.06.2006)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone
@@ -165,9 +165,6 @@ Da
 ;
 MSG_To
 A
-;
-MSG_Default
-predefinito
 ;
 MSG_Columns
 Colonne
@@ -426,24 +423,8 @@ MSG_MA_GetFolderPass
 La cartella '%s' è una cartella protetta.\n\
 Per favore, scrivi la password per sbloccarla:
 ;
-MSG_MA_LatestVersion
-Versione più recente: %s (%2ld.%02ld.%ld)\n\
-Questa versione: %s (%s)\n\
-\n\
-%s
-;
-MSG_MA_NewVersion
-\e8Una nuova versione è disponibile nella homepage di YAM!
-;
-MSG_MA_NoNewVersion
-Stai già utilizzando la versione più recente.
-;
-MSG_MA_VersionReqOpt
-_Visita l'homepage|*_Annulla
-;
 MSG_MA_ReplyReq
 Il messaggio selezionato ha destinatari multipli.\n\
-\n\
 Vuoi mandare la risposta...
 ;
 MSG_MA_ReplyReqOpt
@@ -520,9 +501,6 @@ Scrivi un nuovo oggetto:
 ;
 MSG_MA_All
 Tutti
-;
-MSG_MA_Cancel
-\ebAnnulla
 ;
 MSG_MA_TitleStatus
 Stato
@@ -620,9 +598,6 @@ Informazioni...
 ;
 MSG_MA_AboutMUI
 Informazioni su MUI...
-;
-MSG_MA_CheckVersion
-Controlla versione
 ;
 MSG_MA_LastErrors
 Mostra ultimo messaggio
@@ -1314,9 +1289,6 @@ Es_tensione
 MSG_CO_DefaultViewer
 Visualizzatore prede_finito
 ;
-MSG_CO_IdentifyBin
-_Identifica allegati binari
-;
 MSG_CO_MessageHeader
 Intestazione messaggi
 ;
@@ -1944,10 +1916,6 @@ MSG_HELP_CO_ST_DEFVIEWER
 Programma di visualizzazione da usare\n\
 con gli allegati di tipo sconosciuto.
 ;
-MSG_HELP_CO_CH_IDENTBIN
-Prova ad identificare il tipo di file prima di\n\
-usare il visualizzatore predefinito.
-;
 MSG_HELP_CO_ST_REPLYTO
 Inserisci l'indirizzo predefinito dove avere risposta,\n\
 se differente dal tuo indirizzo email.
@@ -2475,27 +2443,6 @@ MSG_HELP_AB_BT_BCC
 Imposta il destinatario della copia\n\
 nascosta per il nuovo messaggio.
 ;
-MSG_CL_ErrorEmptyCB
-La clipboard è vuota.
-;
-MSG_CL_ErrorNotFTXT
-La clipboard non contiene testo.
-;
-MSG_CL_ErrorNoArea
-Nessuna area contrassegnata.
-;
-MSG_CL_ErrorNoRedo
-Niente da ripristinare.
-;
-MSG_CL_ErrorNoUndo
-Niente da annullare.
-;
-MSG_CL_ErrorNoUndoMem
-Memoria insufficiente per gestire\n\
-un buffer 'Annulla'.\n\
-\n\
-Il buffer di 'annullamento' è perso.
-;
 MSG_EA_EditUser
 Modifica persona
 ;
@@ -2552,9 +2499,6 @@ Foto
 ;
 MSG_EA_SelectPhoto
 Se_leziona
-;
-MSG_EA_LoadPhoto
-Prele_va
 ;
 MSG_EA_ReturnAddress
 Indi_rizzo di ritorno
@@ -2618,10 +2562,6 @@ Foto di questa persona.
 MSG_HELP_EA_BT_SELECTPHOTO
 Seleziona un'immagine dal disco\n\
 (sono supportati i datatype per le immagini).
-;
-MSG_HELP_EA_BT_LOADPHOTO
-Preleva un'immagine della persona\n\
-dalla galleria utenti di YAM.
 ;
 MSG_HELP_EA_ST_REALNAME_L
 Nome completo di questa lista\n\
@@ -2825,11 +2765,6 @@ nella tua rubrica?
 ;
 MSG_RE_NewGroupTitle
 Voci aggiunte automaticamente
-;
-MSG_RE_DownloadPhotoReq
-Vuoi prelevare la foto del mittente ed aggiungerla\n\
-nella tua galleria personale?\n\
-(Devi essere in linea prima di premere il pulsante OKAY)
 ;
 MSG_RE_ContentType
 Tipo di contenuto
@@ -3276,7 +3211,7 @@ MSG_WR_MReceipt
 Ricevuta di ritorno
 ;
 MSG_WR_MGetMDN
-Tracciatura messaggio
+Tracciatura messaggio (MDN)
 ;
 MSG_WR_MAddInfo
 Agg. info personali
@@ -3588,10 +3523,6 @@ _Cancella messaggi
 MSG_ER_Close
 C_hiudi finestra
 ;
-MSG_ER_ErrorTTable
-Non posso aprire la tabella di conversione '%s'\n\
-(formato non esistente o errato).
-;
 MSG_ER_CantCreateFile
 Non posso scrivere nel file '%s'.\n\
 \n\
@@ -3610,12 +3541,6 @@ Devi specificare un indirizzo per questa voce!
 ;
 MSG_ER_ErrorDOBformat
 La data di nascita è in un formato errato. Il formato corretto è GG-MMM-AAAA (il mese deve essere scritto in inglese).
-;
-MSG_ER_NotInGallery
-Non posso trovare questa persona nella galleria utenti di YAM. O il nome della persona non esiste nel database o il suo nome o indirizzo è scritto male.
-;
-MSG_ER_NoTCP
-Lo stack TCP \ebnon\en è avviato! Una bsdsocket.library-compatibile deve essere avviata prima di poter usare tale funzione.
 ;
 MSG_ER_ErrorDateFormat
 Formato errato data/tempo.\n\
@@ -3669,9 +3594,6 @@ MSG_ER_MIMEError
 Non posso estrarre il messaggio MIME.\n\
 \n\
 Il messaggio contiene parti del formato MIME non corretto o è vuoto o troncato.
-;
-MSG_ER_MissingBoundary
-Delimitazione persa nel messaggio multiparte. Il messaggio sembra essere troncato.
 ;
 MSG_ER_CantOpenFile
 Non posso leggere dal file '%s'.\n\
@@ -4183,9 +4105,6 @@ Salvo glossario...
 MSG_BusyLoadingDI
 Carico glossario...
 ;
-MSG_BusyDownloadingPic
-Prelevo l'immagine di %s...
-;
 MSG_BusyUncompressingFO
 (De)comprimo le cartelle...
 ;
@@ -4256,9 +4175,6 @@ Script Rexx
 ;
 MSG_PROJECT_ABOUT
 ?\0Informazioni...
-;
-MSG_PROJECT_CHECKVERSION
-Controlla versione
 ;
 MSG_FOLDER_NEWFOLDER
 Nuova cartella...
@@ -4349,13 +4265,6 @@ S_icurezza
 MSG_HELP_MA_CY_DEFSECURITY
 Sicurezza predefinita per spedire\n\
 messaggi a questa persona.
-;
-MSG_WR_DefSecurityConflict
-Le impostazioni di sicurezza predefinite per i destinatari\n\
-di questo messaggio sono diverse. Che tipo di sicurezza vuoi?
-;
-MSG_WR_DefSecurityConflictGads
-*_Nessuna|_Firma|_Codifica|_Entrambe|Manda come _anonimo
 ;
 MSG_WR_SecDefaults
 Predefinita
@@ -5446,4 +5355,186 @@ MSG_CO_AMISSLWARN_BT
 MSG_BUSY_OPENINGCONFIG
 Impostazioni in apertura...
 ;
-
+MSG_CO_TIMEZONEWARN_TITLE
+Avvertimento impostazioni fuso orario
+;
+MSG_CO_TIMEZONEWARN
+Le impostazioni del fuso orario in YAM non\n\
+combaciano con il fuso orario di sistema.\n\
+\n\
+Come vuoi procedere?
+;
+MSG_CO_TIMEZONEWARN_BT
+*_Cambia|Ignora _sempre|_Ignora
+;
+MSG_CO_AUTODSTWARN_TITLE
+Avvertimento impostazione automatica ora legale/solare
+;
+MSG_CO_AUTODSTWARN
+YAM ha trovato un programma attivo per l'impostazione\n\
+automatica dell'ora legale/solare che riporta una\n\
+impostazione diversa rispetto a quella presente in YAM.\n\
+\n\
+Come vuoi procedere?
+;
+MSG_CO_AUTODSTWARN_BT
+*_Cambia|Ignora _sempre|_Ignora
+;
+MSG_MA_UPDATECHECK
+Controlla aggiornamenti...
+;
+MSG_CO_SOFTWAREUPDATE
+Aggiornamento software
+;
+MSG_CO_UPDATE_DAILY
+Quotidiano
+;
+MSG_CO_UPDATE_WEEKLY
+Settimanale
+;
+MSG_CO_UPDATE_MONTHLY
+Mensile
+;
+MSG_CO_SEARCHFORUPDATES
+Cerca a_ggiornamenti:
+;
+MSG_CO_SEARCHFORUPDATESINFO
+Verrai avvertito appena sarà disponibile un aggiornamento.
+;
+MSG_CO_SEARCHNOW
+Cerca a_desso
+;
+MSG_CO_LASTSEARCH
+Ultima ricerca:
+;
+MSG_CO_LASTSTATUS_NOCHECK
+Controllo non ancora eseguito.
+;
+MSG_CO_LASTSTATUS_NOUPDATE
+Nessun aggiornamento software disponibile.
+;
+MSG_CO_LASTSTATUS_NOQUERY
+Impossibile interrogare il server per gli aggiornamenti.
+;
+MSG_CO_LASTSTATUS_UPDATESUCCESS
+Trovati e processati con successo nuovi aggiornamenti.
+;
+MSG_WR_SECURITYREQ
+I destinatari del messaggio usano diverse\n\
+impostazioni di sicurezza predefinite.\n\
+\n\
+Come vuoi comporre il messaggio?
+;
+MSG_WR_SECURITYREQ_GADS
+*Se_mplice|_Firmato|_Criptato|Firmato _e criptato|An_onimo|_Annulla
+;
+MSG_ER_OPENTCPIP
+YAM non è stato capace di aprire l'appropriata interfaccia alla bsdsocket.library, richiesta per le connessioni TCP/IP.\n\
+\n\
+Prego assicurati di avere uno stack TCP/IP compatibile installato, correttamente configurato e che la tua rete sia attiva e funzionante.
+;
+MSG_WR_UUCODE
+Testo UUencoded
+;
+MSG_UPD_NOTIFICATION_WTITLE
+Aggiorna Notifica
+;
+MSG_UPD_NOTIFICATION_TITLE
+Aggiornamenti disponibili
+;
+MSG_UPD_NOTIFICATION_SUMMARY
+YAM ha trovato i seguenti aggiornamenti disponibili:
+;
+MSG_UPD_NOTIFICATION_CHANGES
+Cambiamenti:
+;
+MSG_UPD_NOTIFICATION_NOUPDATE
+Non notificarmi aggiornamenti in futuro
+;
+MSG_UPD_NOTIFICATION_VISITURL
+Visita URL
+;
+MSG_UPD_NOTIFICATION_CLOSE
+Chiudi
+;
+MSG_UPD_NOTIFICATION_COMP
+Componente
+;
+MSG_UPD_NOTIFICATION_RECENT
+Precedenti
+;
+MSG_UPD_NOTIFICATION_INSTALLED
+Installati
+;
+MSG_UPD_NOTIFICATION_URL
+URL
+;
+MSG_CO_MIME_DESCRIPTION
+_Descrizione
+;
+MSG_CTapplicationgz
+Archivio zip GNU
+;
+MSG_CTapplicationhqx
+Archivio Macintosh
+;
+MSG_CTapplicationxls
+File Microsoft Excel
+;
+MSG_CTapplicationppt
+File Microsoft Powerpoint
+;
+MSG_CTapplicationdoc
+File Microsoft Word
+;
+MSG_CTtextxml
+File XML
+;
+MSG_CTapplicationz
+File compresso zlib
+;
+MSG_CTapplicationtar
+Archivio tar
+;
+MSG_CTaudioaiff
+File audio AIFF
+;
+MSG_CTaudiomidi
+File audio MIDI
+;
+MSG_CTaudiompeg
+File audio MPEG
+;
+MSG_CTimagebmp
+File immagine Bitmap
+;
+MSG_CTapplicationtgz
+Archivio tar gzippato
+;
+MSG_CTapplicationpgp
+Flie crittato PGP
+;
+MSG_CTapplicationbz2
+Archivio  BZIP2
+;
+MSG_CO_DETECT_CYRILLIC
+Identifica automaticamente i set di caratteri cirillici
+;
+MSG_HELP_CO_DETECT_CYRILLIC
+Prova a usare la funzione di auto-identificazione della\n\
+codesets.library per identificare automaticamente\n\
+il set di caratteri cirillici corretto.\n\
+(Solo per utenti che usano il cirillico)
+;
+MSG_WR_ErrorNotEnoughUndoMem
+Il testo cancellato era troppo largo per\n\
+essere inserito nel buffer di undo.\n\
+\n\
+Per questo il buffer di undo è andato perso.
+;
+MSG_RE_HEADERDISPLAY
+Visualizzazione header (intestazione)
+;
+MSG_RE_MAILDETAILS
+Dettagli messaggio
+;

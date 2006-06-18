@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-18  Jens Langner <Jens.Langner@light-speed.de>
+
+  * italino.ct: updated italian catalog translation kindly provided by Luca
+    Longone.
+
 2006-06-13  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c, YAM_TR.c, YAM_MAf.c: applied minor cosmetic optimizations/changes
