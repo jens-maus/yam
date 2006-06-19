@@ -285,7 +285,7 @@ BOOL     EditorToFile(Object *editor, char *file);
 char *   Encrypt(char *source);
 char *   GetRealPath(char *path);
 BOOL     ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef);
-void     ExtractAddress(char *line, struct Person *pe);
+void     ExtractAddress(const char *line, struct Person *pe);
 BOOL     FileExists(char *filename);
 int      FileSize(char *filename);
 long     FileProtection(const char *filename);
@@ -330,7 +330,7 @@ Object * MakePGPKeyList(Object **st, BOOL secret, char *label);
 Object * MakeString(int maxlen, char *label);
 Object * MakeAddressField(Object **string, char *label, APTR help, int abmode, int winnum, BOOL allowmulti);
 BOOL     MatchNoCase(const char *string, const char *match);
-char *   MyStrChr(const char *s, int c);
+char *   MyStrChr(const char *s, const char c);
 struct TempFile *OpenTempFile(char *mode);
 BOOL     AllFolderLoaded(void);
 BOOL     PFExists(char *path, char *file);
@@ -363,6 +363,7 @@ char *   Trim(char *s);
 char *   TrimEnd(char *s);
 char *   TrimStart(char *s);
 LONG STDARGS YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const char *title, const char *gadgets, const char *format, ...);
+char *   UnquoteString(const char *s, BOOL new);
 
 // Here we define inline functions that should be inlined by
 // the compiler, if possible.

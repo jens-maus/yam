@@ -976,14 +976,21 @@ char *stristr(const char *a, const char *b)
 ///
 /// MyStrChr
 //  Searches for a character in string, ignoring text in quotes
-char *MyStrChr(const char *s, int c)
+char *MyStrChr(const char *s, const char c)
 {
-   BOOL nested = FALSE;
+  BOOL nested = FALSE;
 
-   for (; *s; s++)
-      if (*s == '\"') nested = !nested;
-      else if (*s == (char)c && !nested) return (char *)s;
-   return NULL;
+  while(*s)
+  {
+    if(*s == '\"')
+      nested = !nested;
+    else if(*s == c && !nested)
+      return (char *)s;
+
+    s++;
+  }
+
+  return NULL;
 }
 ///
 /// AllocStrBuf
@@ -1124,6 +1131,47 @@ char *Encrypt(char *source)
       snprintf(&buffer[p], sizeof(buffer)-p, "%03d ", c);
    }
    return buffer;
+}
+///
+/// UnquoteString
+//  Removes quotes from a string, skipping "escaped" quotes
+char *UnquoteString(const char *s, BOOL new)
+{
+  char *ans, *t, *o = (char *)s;
+
+  if(*s != '"')
+    return (char *)s;
+
+  if((ans = malloc(strlen(s)+1)))
+  {
+    ++s;
+    t = ans;
+
+    while(*s)
+    {
+      if(*s == '\\')
+        *t++ = *++s;
+      else if(*s == '"')
+        break;
+      else
+        *t++ = *s;
+
+      ++s;
+    }
+
+    *t = '\0';
+
+    // in case the user wants to have the copy lets do it
+    if(new)
+      return ans;
+
+    // otherwise overwrite the original string array
+    strcpy(o, ans);
+
+    free(ans);
+  }
+
+  return o;
 }
 ///
 
@@ -2221,63 +2269,138 @@ char *BuildAddrName(char *address, char *name)
 }
 ///
 /// ExtractAddress
-//  Extracts e-mail address and real name
-void ExtractAddress(char *line, struct Person *pe)
+//  Extracts e-mail address and real name according to RFC2822 (section 3.4)
+void ExtractAddress(const char *line, struct Person *pe)
 {
   char *save;
-  BOOL found = FALSE;
 
   ENTER();
 
   pe->Address[0] = '\0';
   pe->RealName[0] = '\0';
 
+  // create a temp copy of our source
+  // string so that we don't have to alter it.
   if((save = strdup(line)))
   {
     char *p = save;
-    char *ra[4];
-
-    ra[2] = ra[3] = '\0';
+    char *start;
+    char *end;
+    char *address = NULL;
+    char *realname = NULL;
 
     // skip leading whitespaces
     while(isspace(*p))
       p++;
 
-    if((ra[0] = MyStrChr(p, '<')) && (ra[1] = MyStrChr(ra[0], '>')))
+    // we first try to extract the email address part of the line in case
+    // the email is in < > brackets (see RFC2822)
+    //
+    // something like: "Realname <mail@address.net>"
+    if((start = MyStrChr(p, '<')) && (end = MyStrChr(start, '>')))
     {
-      *ra[0]++ = '\0';
-      *ra[1] = '\0';
+      *start = '\0';
+      *end = '\0';
 
-      for(ra[2] = p, ra[3] = ra[0]-2; isspace(*ra[3]) && ra[3] >= ra[2]; ra[3]--)
-        *ra[3] = '\0';
+      // now we have successfully extract the
+      // email address between start and end
+      address = ++start;
 
-      found = TRUE;
+      // per definition of RFC 2822, the realname (display name)
+      // should be in front of the email, but we will extract it later on
+      realname = p;
     }
 
-    if(!found)
+    // if we haven't found the email yet
+    // we might have search for something like "mail@address.net (Realname)"
+    if(address == NULL)
     {
-      for(ra[1] = ra[0] = p; *ra[1] && *ra[1] != '\t' && *ra[1] != ' ' && *ra[1] != ','; ra[1]++);
+      // extract the mail address first
+      for(start=end=p; *end && !isspace(*end) && *end != ',' && *end != '('; end++);
 
-      if((ra[2] = MyStrChr(ra[1], '(')) && (ra[3] = MyStrChr(ra[2], ')')))
+      // now we should have the email address
+      if(end > start)
       {
-        ra[2]++;
-        *ra[3]-- = '\0';
-        found = TRUE;
+        char *s = NULL;
+
+        if(*end != '\0')
+        {
+          *end = '\0';
+          s = end+1;
+        }
+
+        // we have the mail address
+        address = start;
+
+        // we should have the email address now so we go and extract
+        // the realname encapsulated in ( )
+        if(s && (s = strchr(s, '(')))
+        {
+          start = ++s;
+
+          // now we search for the last closing )
+          end = strrchr(start, ')');
+          if(end)
+            *end = '\0';
+          else
+            end = start+strlen(start);
+
+          realname = start;
+        }
+      }
+    }
+
+    // we successfully found an email adress, so we go
+    // and copy it into our person's structure.
+    if(address)
+      strlcpy(pe->Address,  Trim(address), sizeof(pe->Address));
+
+    // in case we found a descriptive realname we go and
+    // parse it for quoted and escaped passages.
+    if(realname)
+    {
+      unsigned int i;
+      BOOL quoted = FALSE;
+
+      // as a realname may be quoted '"' and also may contain escaped sequences
+      // like '\"', we extract the realname more carefully here.
+      p = realname;
+
+      // make sure we strip all leading spaces
+      while(isspace(*p))
+        p++;
+
+      // check if the realname is quoted or not
+      if(*p == '"')
+      {
+        quoted = TRUE;
+        p++;
       }
 
-      *ra[1] = '\0';
-      if(!found)
-        ra[2] = ra[3] = "";
+      for(i=0; *p && i < sizeof(pe->RealName); i++, p++)
+      {
+        if(quoted && (*p == '\\' || *p == '"'))
+          p++;
+
+        if(*p)
+          pe->RealName[i] = *p;
+        else
+          break;
+      }
+
+      // make sure we properly NUL-terminate
+      // the string
+      if(i < sizeof(pe->RealName))
+        pe->RealName[i] = '\0';
+      else
+        pe->RealName[sizeof(pe->RealName)-1] = '\0';
+
+      // make sure we strip all trailing spaces
+      TrimEnd(pe->RealName);
     }
 
-    if(*ra[2] == '\"')
-      ra[2]++;
-
-    if(*ra[3] == '\"' && *(ra[3]-1) != '\\')
-      *ra[3] = '\0';
-
-    strlcpy(pe->Address,  Trim(ra[0]), sizeof(pe->Address));
-    strlcpy(pe->RealName, Trim(ra[2]), sizeof(pe->RealName));
+    D(DBF_MIME, "addr: '%s'", pe->Address);
+    D(DBF_MIME, "real: '%s'", pe->RealName);
 
     free(save);
   }

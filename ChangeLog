@@ -6,6 +6,9 @@ $Id$
 
 2006-06-19  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: reworked the ExtractAddress() function to also take care of
+    uoted and escaped realnames as well as realname with multiple nested
+    parenthesis.
   * classes/UpdateNotifyWindow.c: fixed an issue where in case an application
     was iconfified while an updatenotification window was opened caused the
     application to enter an endless loop if the application was signaled to

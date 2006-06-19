@@ -976,47 +976,6 @@ static char *Cleanse(char *s)
 }
 
 ///
-/// UnquoteString
-//  Removes quotes from a string, skipping "escaped" quotes
-static char *UnquoteString(char *s, BOOL new)
-{
-  char *ans, *t, *o = s;
-
-  if(*s != '"')
-    return s;
-
-  if((ans = malloc(strlen(s)+1)))
-  {
-    ++s;
-    t = ans;
-
-    while(*s)
-    {
-      if(*s == '\\')
-        *t++ = *++s;
-      else if(*s == '"')
-        break;
-      else
-        *t++ = *s;
-
-      ++s;
-    }
-
-    *t = '\0';
-
-    // in case the user wants to have the copy lets do it
-    if(new)
-      return ans;
-
-    // otherwise overwrite the original string array
-    strcpy(o, ans);
-
-    free(ans);
-  }
-
-  return o;
-}
-///
 /// RE_ParseContentParameters
 //  Parses parameters of Content-Type header field
 enum parameterType { PT_CONTENTTYPE, PT_CONTENTDISPOSITION };
