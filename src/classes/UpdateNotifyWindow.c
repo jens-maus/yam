@@ -241,7 +241,13 @@ OVERLOAD(OM_SET)
       {
         // if the object should be hided we clean it up also
         if(tag->ti_Data == FALSE)
-          DoMethod(obj, MUIM_UpdateNotifyWindow_Clear);
+        {
+          // we only clear the notify window's content if this
+          // close request wasn't issue due to an application iconification
+          // request
+          if(xget(G->App, MUIA_Application_Iconified) == FALSE)
+            DoMethod(obj, MUIM_UpdateNotifyWindow_Clear);
+        }
         else
         {
           char buf[64];
@@ -256,7 +262,8 @@ OVERLOAD(OM_SET)
           set(obj, MUIA_Window_Title, data->WindowTitle);
 
           // we also make sure the application in uniconified.
-          set(G->App, MUIA_Application_Iconified, FALSE);
+          if(xget(G->App, MUIA_Application_Iconified))
+            set(G->App, MUIA_Application_Iconified, FALSE);
         }
       }
       break;
