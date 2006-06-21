@@ -1835,70 +1835,135 @@ MakeStaticHook(WR_AddFileHook, WR_AddFileFunc);
 /*** WR_AddArchiveFunc - Creates an archive of one or more files and adds it to the attachment list ***/
 HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
 {
-   int i, winnum = *arg;
-   char *src, *dst, filename[SIZE_PATHFILE], arcpath[SIZE_PATHFILE], arcname[SIZE_FILE];
-   struct TempFile *tf = NULL;
-   struct FileRequester *ar = G->ASLReq[ASL_ATTACH];
-   BPTR olddir, filedir;
+  int winnum = *arg;
+  BOOL result = FALSE;
+  struct FileRequester *ar = G->ASLReq[ASL_ATTACH];
 
-   if (ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, ""))
-   {
-      strsfn((char *)ar->fr_ArgList[0].wa_Name, NULL, NULL, arcname, NULL);
-      if (!*arcname) strsfn((char *)ar->fr_ArgList[0].wa_Name, NULL, NULL, NULL, arcname);
-      if (!StringRequest(arcname, SIZE_FILE, GetStr(MSG_WR_CreateArc), GetStr(MSG_WR_CreateArcReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->WR[winnum]->GUI.WI)) return;
+  ENTER();
+
+  // request files from the user via asl.library
+  if(ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, "") && ar->fr_NumArgs > 0)
+  {
+    char *p;
+    char arcname[SIZE_FILE];
+
+    // get the basename of the first selected file and prepare it to the user
+    // as a suggestion for an archive name
+    strlcpy(arcname, FilePart(ar->fr_ArgList[0].wa_Name), sizeof(arcname));
+    if((p = strrchr(arcname, '.')))
+      *p = '\0';
+
+    // now ask the user for the choosen archive name
+    if(StringRequest(arcname, SIZE_FILE, GetStr(MSG_WR_CreateArc), GetStr(MSG_WR_CreateArcReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->WR[winnum]->GUI.WI))
+    {
+      char *command;
+      char filename[SIZE_PATHFILE];
+      char arcpath[SIZE_PATHFILE];
+      struct TempFile *tf = NULL;
+
+      // create the destination archive name
       strmfp(filename, C->TempDir, arcname);
       snprintf(arcpath, sizeof(arcpath), strchr(filename, ' ') ? "\"%s\"" : "%s", filename);
-      if (strstr(C->PackerCommand, "%l")) if ((tf = OpenTempFile("w")))
+
+      // now we generate the temporary file containing the file names
+      // which we are going to put in the archive.
+      if(strstr(C->PackerCommand, "%l") && (tf = OpenTempFile("w")))
       {
-         for (i = 0; i < ar->fr_NumArgs; i++)
-         {
-//            strmfp(filename, ar->fr_Drawer, ar->fr_ArgList[i].wa_Name);
-//            fprintf(tf->FP, strchr(filename, ' ') ? "\"%s\"\n" : "%s\n", filename);
-            fprintf(tf->FP, strchr((char *)ar->fr_ArgList[i].wa_Name, ' ') ? "\"%s\"\n" : "%s\n", ar->fr_ArgList[i].wa_Name);
-         }
-         fclose(tf->FP); tf->FP = NULL;
+        int i;
+
+        for(i=0; i < ar->fr_NumArgs; i++)
+        {
+          fprintf(tf->FP, strchr((char *)ar->fr_ArgList[i].wa_Name, ' ') ? "\"%s\"\n" : "%s\n", ar->fr_ArgList[i].wa_Name);
+        }
+
+        // just close here as we delete it later on
+        fclose(tf->FP);
+        tf->FP = NULL;
       }
-      dst = AllocStrBuf(SIZE_DEFAULT);
-      for (src = C->PackerCommand; *src; src++)
-         if (*src == '%') switch (*++src)
-         {
-            case '%': dst = StrBufCat(dst, "%"); break;
-            case 'a': dst = StrBufCat(dst, arcpath); break;
-            case 'l': dst = StrBufCat(dst, tf->Filename); break;
-            case 'f': for (i = 0; i < ar->fr_NumArgs; i++)
-                      {
-//                         strlcpy(filename, "\"", sizeof(filename));
-//                         strmfp(&filename[1], ar->fr_Drawer, ar->fr_ArgList[i].wa_Name);
-//                         strlcat(filename, "\" ", sizeof(filename));
-                         snprintf(filename, sizeof(filename), "\"%s\"", ar->fr_ArgList[i].wa_Name);
-                         dst = StrBufCat(dst, filename);
-                      }
-                      break;
-         }
-         else
-         {
-            static char chr[2] = { 0,0 };
+
+      // now we create the command we are going to
+      // execute for generating the archive.
+      if((command = AllocStrBuf(SIZE_DEFAULT)))
+      {
+        char *src;
+        BPTR filedir;
+
+        for(src = C->PackerCommand; *src; src++)
+        {
+          if(*src == '%')
+          {
+            switch (*(++src))
+            {
+              case '%': command = StrBufCat(command, "%"); break;
+              case 'a': command = StrBufCat(command, arcpath); break;
+              case 'l': command = StrBufCat(command, tf->Filename); break;
+
+              case 'f':
+              {
+                int i;
+
+                for(i=0; i < ar->fr_NumArgs; i++)
+                {
+                  snprintf(filename, sizeof(filename), "\"%s\" ", ar->fr_ArgList[i].wa_Name);
+                  command = StrBufCat(command, filename);
+                }
+                break;
+              }
+              break;
+            }
+          }
+          else
+          {
+            char chr[2];
             chr[0] = *src;
-            dst = StrBufCat(dst, chr);
-         }
-      filedir = Lock(ar->fr_Drawer, ACCESS_READ); olddir = CurrentDir(filedir);
-      ExecuteCommand(dst, FALSE, OUT_NIL);
-      CurrentDir(olddir); UnLock(filedir);
-      FreeStrBuf(dst);
-      CloseTempFile(tf);
-      strlcpy(filename, arcpath, sizeof(filename));
-      if (FileSize(filename) == -1)
-      {
-         snprintf(filename, sizeof(filename), "%s.lha", arcpath);
-         if (FileSize(filename) == -1)
-         {
-            snprintf(filename, sizeof(filename), "%s.lzx", arcpath);
-            if (FileSize(filename) == -1)
-               snprintf(filename, sizeof(filename), "%s.zip", arcpath);
-         }
+            chr[1] = '\0';
+
+            command = StrBufCat(command, chr);
+          }
+        }
+
+        // now we make the request drawer the current one temporarly.
+        if((filedir = Lock(ar->fr_Drawer, ACCESS_READ)))
+        {
+          BPTR olddir = CurrentDir(filedir);
+
+          // now we do the archive generation right here.
+          result = ExecuteCommand(command, FALSE, OUT_NIL);
+
+          // make the old directory the new current one again
+          CurrentDir(olddir);
+          UnLock(filedir);
+        }
+
+        // free our private resources
+        FreeStrBuf(command);
+        CloseTempFile(tf);
+
+        // if everything worked out fine we go
+        // and find out the real final attachment name
+        if(result)
+        {
+          strlcpy(filename, arcpath, sizeof(filename));
+          if(FileSize(filename) == -1)
+          {
+            snprintf(filename, sizeof(filename), "%s.lha", arcpath);
+            if(FileSize(filename) == -1)
+            {
+              snprintf(filename, sizeof(filename), "%s.lzx", arcpath);
+              if(FileSize(filename) == -1)
+                snprintf(filename, sizeof(filename), "%s.zip", arcpath);
+            }
+          }
+
+          WR_AddFileToList(winnum, filename, NULL, TRUE);
+        }
+        else
+          ER_NewError(GetStr(MSG_ER_PACKERROR));
       }
-      WR_AddFileToList(winnum, filename, NULL, TRUE);
-   }
+    }
+  }
+
+  LEAVE();
 }
 MakeStaticHook(WR_AddArchiveHook, WR_AddArchiveFunc);
 

@@ -27,7 +27,6 @@
 
 #include "extrasrc/stcgfe.c"
 #include "extrasrc/strmfp.c"
-#include "extrasrc/strsfn.c"
 #include "extrasrc/NewReadArgs.c"
 #include "extrasrc/dice.c"
 #include "extrasrc/strdup.c"

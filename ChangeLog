@@ -6,6 +6,11 @@ $Id$
 
 2006-06-21  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c: reworked the WR_AddArchiveFunc() to be somewhat more clear and less
+    error prone in case something goes wrong. In addition, the strsfn() use is
+    now obsolete, hence our own implementation was removed from our sources. All
+    in all, the "Pack & Add" functionality of YAM should now we a bit more safe
+    and flexible.
   * YAM_WR.c: fixed bug #1412251 where YAM didn't output any warning to the user
     in case he tries to add a read protected file as an attachment.
   * misc: the folder, foldergroup and mail status-based highlighting is now

@@ -29,7 +29,6 @@
 #if !defined(__MORPHOS__) || !defined(__libnix)
   #include "extrasrc/stcgfe.c"
   #include "extrasrc/strmfp.c"
-  #include "extrasrc/strsfn.c"
 #endif
 #include "extrasrc/NewReadArgs.c"
 #include "extrasrc/dice.c"

@@ -5838,3 +5838,10 @@ as an attachment to the current mail.\n\
 \n\
 Please make sure that the file is accessible \
 and that you have proper read permissions.
+;
+MSG_ER_PACKERROR (1712//)
+An error occurred while trying to create \
+an archive out of the selected files.\n\
+\n\
+Please make sure that all files are accessible \
+and that you have proper permissions.
