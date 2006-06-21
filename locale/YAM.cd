@@ -5832,3 +5832,9 @@ Header Display
 MSG_RE_MAILDETAILS (1710//)
 Mail Details
 ;
+MSG_ER_ADDFILEERROR (1711//)
+The selected file '%s' couldn't be added \
+as an attachment to the current mail.\n\
+\n\
+Please make sure that the file is accessible \
+and that you have proper read permissions.

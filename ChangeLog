@@ -6,6 +6,8 @@ $Id$
 
 2006-06-21  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c: fixed bug #1412251 where YAM didn't output any warning to the user
+    in case he tries to add a read protected file as an attachment.
   * misc: the folder, foldergroup and mail status-based highlighting is now
     user configurable in the hidden [Advanced] section of the YAM configuration.
     A user might now perfectly specify the soft-style which should be used

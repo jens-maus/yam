@@ -168,7 +168,7 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
 
     // we try to get the filesize and comment and copy
     // it into our attchement structure.
-    if((lock = Lock((STRPTR)filename,ACCESS_READ)))
+    if((lock = Lock((STRPTR)filename, ACCESS_READ)))
     {
       struct FileInfoBlock *fib;
 
@@ -178,9 +178,18 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
         {
           attach.Size = fib->fib_Size;
           strlcpy(attach.Description, fib->fib_Comment, sizeof(attach.Description));
+
+          // check the dir type and protection
+          if(fib->fib_DirEntryType < 0 &&
+             isFlagClear(fib->fib_Protection, FIBF_READ))
+          {
+            result = TRUE;
+          }
         }
+
         FreeDosObject(DOS_FIB, fib);
       }
+
       UnLock(lock);
     }
 
@@ -188,7 +197,7 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
     // attachment by using the IdentifyFile() function which will
     // do certain checks to guess the content-type out of the file name
     // and content.
-    if((ctype = IdentifyFile(filename)) && ctype[0] != '\0')
+    if(result == TRUE && (ctype = IdentifyFile(filename)) && ctype[0] != '\0')
     {
       int encoding = xget(gui->RA_ENCODING, MUIA_Radio_Active);
 
@@ -204,8 +213,12 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
       // it active.
       DoMethod(gui->LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
       set(gui->LV_ATTACH, MUIA_NList_Active, MUIV_NList_Active_Bottom);
+    }
+    else
+    {
+      ER_NewError(GetStr(MSG_ER_ADDFILEERROR), filename);
 
-      result = TRUE;
+      result = FALSE;
     }
   }
 
