@@ -4,6 +4,24 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-21  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: the folder, foldergroup and mail status-based highlighting is now
+    user configurable in the hidden [Advanced] section of the YAM configuration.
+    A user might now perfectly specify the soft-style which should be used
+    in case a folder carries unread mail. The same applies for the mail
+    highlighting in case a mail is considered to be new. Please note that
+    this configuration is hidden on purpose as an ordinary user might not be
+    interested in changing the defaults. However, in one of the next versions
+    we might probably introduce a GUI based configuration as well.
+    For changing the soft-style, YAM currently recognized the following tokens,
+    whereas they can be combine with a ':' char:
+
+    b  - bold
+    i  - italic
+    u  - underline
+    $X - where X can be between 2-9 and  represents the pen number to use
+
 2006-06-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: reworked the ExtractAddress() function to also take care of

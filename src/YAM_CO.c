@@ -1059,6 +1059,16 @@ void CO_SetDefaults(struct Config *co, int page)
       co->TRBufferSize = 8192;
       co->EmbeddedMailDelay = 200; // 200ms delay per default
       co->KeepAliveInterval = 30;  // 30s interval per default
+
+      // set the default styles of the folder listtree and
+      // mail list items.
+      strlcpy(co->StyleFGroupUnread, MUIX_B MUIX_I,         sizeof(co->StyleFGroupUnread));
+      strlcpy(co->StyleFGroupRead,   MUIX_B MUIX_I "\0334", sizeof(co->StyleFGroupRead));
+      strlcpy(co->StyleFolderUnread, MUIX_B        "\0334", sizeof(co->StyleFolderUnread));
+      strlcpy(co->StyleFolderRead,   "",                    sizeof(co->StyleFolderRead));
+      strlcpy(co->StyleFolderNew,    MUIX_B,                sizeof(co->StyleFolderNew));
+      strlcpy(co->StyleMailUnread,   MUIX_B,                sizeof(co->StyleMailUnread));
+      strlcpy(co->StyleMailRead,     "",                    sizeof(co->StyleMailRead));
    }
 
    LEAVE();

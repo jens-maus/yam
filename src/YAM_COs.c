@@ -54,6 +54,92 @@
  Module: Configuration - Basic Get/Put routines
 ***************************************************************************/
 
+/// MUIStyle2String()
+// converts a MUI style string which contains common \033 sequences into a
+// human-readable form which we can save to our configuration file.
+char *MUIStyle2String(const char *style)
+{
+  static char buf[SIZE_SMALL];
+  char *s = (char *)style;
+
+  ENTER();
+
+  // clear the string first
+  buf[0] = '\0';
+
+  // Now we have to identify each \033 sequence
+  // in our source string
+  while(*s)
+  {
+    char *e;
+
+    if((e = strpbrk(s, "\033")))
+    {
+      if(e[1] == 'b') // MUIX_B
+        strlcat(buf, "b:", sizeof(buf));
+      else if(e[1] == 'i') // MUIX_I
+        strlcat(buf, "i:", sizeof(buf));
+      else if(e[1] == 'u') // MUIX_B
+        strlcat(buf, "u:", sizeof(buf));
+      else if(e[1] >= '2' || e[1] <= '9')
+        snprintf(buf, sizeof(buf), "%s$%c:", buf, e[1]);
+
+      s = ++e;
+    }
+    else
+      break;
+  }
+
+  // strip the last ':' if it is there.
+  if(strlen(buf) > 0 && buf[strlen(buf)-1] == ':')
+    buf[strlen(buf)-1] = '\0';
+
+  LEAVE();
+  return buf;
+}
+///
+/// String2MUIStyle()
+// converts a string with style definitions into a MUI style
+// conform string with \033 sequences
+void String2MUIStyle(const char *string, char *muistr)
+{
+  char *s = (char *)string;
+
+  ENTER();
+
+  // clear the muistr first
+  muistr[0] = '\0';
+
+  // Now we have to identify each style tag one by one
+  while(*s)
+  {
+    char *e;
+    char c;
+
+    if((e = strpbrk(s, ": |;,")) == NULL)
+      e = s+strlen(s);
+
+    c = tolower(*s);
+
+    if(c == 'b') // MUIX_B
+      strlcat(muistr, MUIX_B, SIZE_SMALL);
+    else if(c == 'i') // MUIX_I
+      strlcat(muistr, MUIX_I, SIZE_SMALL);
+    else if(c == 'u') // MUIX_U
+      strlcat(muistr, MUIX_U, SIZE_SMALL);
+    else if(c == '$' && (s[1] >= '2' || s[1] <= '9')) // screen pen number (2..9)
+      snprintf(muistr, SIZE_SMALL, "%s\033%c", muistr, s[1]);
+
+    // set the next start to our last search
+    if(*e)
+      s = ++e;
+    else
+      break;
+  }
+
+  LEAVE();
+}
+///
 /// MapTZ
 //
 static int MapTZ(int value, BOOL forward)
@@ -449,6 +535,13 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "TRBufferSize     = %d\n", co->TRBufferSize);
       fprintf(fh, "EmbeddedMailDelay= %d\n", co->EmbeddedMailDelay);
       fprintf(fh, "KeepAliveInterval= %d\n", co->KeepAliveInterval);
+      fprintf(fh, "StyleFGroupUnread= %s\n", MUIStyle2String(co->StyleFGroupUnread));
+      fprintf(fh, "StyleFGroupRead  = %s\n", MUIStyle2String(co->StyleFGroupRead));
+      fprintf(fh, "StyleFolderUnread= %s\n", MUIStyle2String(co->StyleFolderUnread));
+      fprintf(fh, "StyleFolderRead  = %s\n", MUIStyle2String(co->StyleFolderRead));
+      fprintf(fh, "StyleFolderNew   = %s\n", MUIStyle2String(co->StyleFolderNew));
+      fprintf(fh, "StyleMailUnread  = %s\n", MUIStyle2String(co->StyleMailUnread));
+      fprintf(fh, "StyleMailRead    = %s\n", MUIStyle2String(co->StyleMailRead));
 
       fclose(fh);
       AppendLogVerbose(60, GetStr(MSG_LOG_SavingConfig), fname, "", "", "");
@@ -1050,13 +1143,26 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "TRBufferSize")) co->TRBufferSize = atoi(value);
                else if (!stricmp(buffer, "EmbeddedMailDelay")) co->EmbeddedMailDelay = atoi(value);
                else if (!stricmp(buffer, "KeepAliveInterval")) co->KeepAliveInterval = atoi(value);
+               else if (!stricmp(buffer, "StyleFGroupUnread")) String2MUIStyle(value, co->StyleFGroupUnread);
+               else if (!stricmp(buffer, "StyleFGroupRead")) String2MUIStyle(value, co->StyleFGroupRead);
+               else if (!stricmp(buffer, "StyleFolderUnread")) String2MUIStyle(value, co->StyleFolderUnread);
+               else if (!stricmp(buffer, "StyleFolderRead")) String2MUIStyle(value, co->StyleFolderRead);
+               else if (!stricmp(buffer, "StyleFolderNew")) String2MUIStyle(value, co->StyleFolderNew);
+               else if (!stricmp(buffer, "StyleMailUnread")) String2MUIStyle(value, co->StyleMailUnread);
+               else if (!stricmp(buffer, "StyleMailRead")) String2MUIStyle(value, co->StyleMailRead);
+               else
+                 W(DBF_CONFIG, "unknown config option: '%s' = '%s'", buffer, value);
             }
          }
+
          fclose(fh);
+
          return TRUE;
       }
+
       fclose(fh);
    }
+
    return FALSE;
 }
 

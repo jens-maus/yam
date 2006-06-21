@@ -2152,7 +2152,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
         case FT_GROUP:
         {
           snprintf(msg->Array[0] = dispfold, sizeof(dispfold), "\033o[%d] %s", (isFlagSet(msg->TreeNode->tn_Flags, TNF_OPEN) ? FICON_ID_UNFOLD : FICON_ID_FOLD), entry->Name);
-          msg->Preparse[0] = (entry->New+entry->Unread) ? (MUIX_B MUIX_I ) : MUIX_B MUIX_I "\0334";
+          msg->Preparse[0] = (entry->New+entry->Unread) ? C->StyleFGroupUnread : C->StyleFGroupRead;
         }
         break;
 
@@ -2172,16 +2172,18 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
           {
             if(entry->New)
             {
-              msg->Preparse[0] = MUIX_B;
+              msg->Preparse[0] = C->StyleFolderNew;
               if((C->FolderCols & (1<<3)) == 0)
                 snprintf(dispfold, sizeof(dispfold), "%s (%d)", dispfold, entry->Unread);
             }
             else if(entry->Unread)
             {
-              msg->Preparse[0] = MUIX_B "\0334";
+              msg->Preparse[0] = C->StyleFolderUnread;
               if((C->FolderCols & (1<<2)) == 0)
                 snprintf(dispfold, sizeof(dispfold), "%s (%d)", dispfold, entry->Unread);
             }
+            else
+              msg->Preparse[0] = C->StyleFolderRead;
 
             // if other folder columns are enabled lets fill the values
             // in

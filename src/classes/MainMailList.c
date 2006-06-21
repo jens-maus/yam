@@ -324,7 +324,9 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 
       // depending on the mail status we set the font to bold or plain
       if(hasStatusUnread(entry) || hasStatusNew(entry))
-       msg->preparses[1] = msg->preparses[2] = msg->preparses[3] = msg->preparses[4] = msg->preparses[5] = MUIX_B;
+        msg->preparses[1] = msg->preparses[2] = msg->preparses[3] = msg->preparses[4] = msg->preparses[5] = C->StyleMailUnread;
+      else
+        msg->preparses[1] = msg->preparses[2] = msg->preparses[3] = msg->preparses[4] = msg->preparses[5] = C->StyleMailRead;
     }
   }
   else
