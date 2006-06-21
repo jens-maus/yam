@@ -137,7 +137,7 @@ static BPTR CloneSearchPath(void)
   // workbench search path here it is very likely that
   // we are running on a system without workench.library < 44 or
   // on a MorphOS with not the very latets workbench.lib.
-  if(path == NULL)
+  if(path == 0)
   {
     struct Process *pr = (struct Process*)FindTask(NULL);
 
