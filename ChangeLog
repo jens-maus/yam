@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-22  Jens Langner <Jens.Langner@light-speed.de>
+
+  * classes/MainMailList.c: fixed bug #1347064 where YAM didn't take respect of
+    an addressbook resolved mail address when sorting the main mail list by
+    the recipient/sender or by the ReplyTo address.
+
 2006-06-21  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: reworked the WR_AddArchiveFunc() to be somewhat more clear and less

@@ -40,117 +40,8 @@ struct Data
 };
 */
 
-/* Private Functions */
-/// MailCompare
-//  Compares two messages
-static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
-{
-  switch (column)
-  {
-    case 0:
-    {
-      // lets calculate each value
-      int status1 = 0;
-      int status2 = 0;
-
-      // We do not sort on other things than the real status and the Importance+Marked flag of
-      // the message because this would be confusing if you use "Status" as a sorting
-      // criteria within the folder config. Why should a MultiPart mail be sorted with
-      // other multipart messages? It`s more important to sort just for New/Unread/Read aso
-      // and then be able to sort as a second criteria for the date. Sorting the message
-      // depending on other stuff than importance will make it impossible to sort for
-      // status+date in the folder config. Perhaps we need to have a configuable way for
-      // sorting by status later, but this is future stuff..
-      status1 += hasStatusNew(entry1) ? 512 : 0;
-      status2 += hasStatusNew(entry2) ? 512 : 0;
-      status1 += !hasStatusRead(entry1) ? 256 : 0;
-      status2 += !hasStatusRead(entry2) ? 256 : 0;
-      status1 += !hasStatusError(entry1) ? 256 : 0;
-      status2 += !hasStatusError(entry2) ? 256 : 0;
-      status1 += hasStatusHold(entry1) ? 128 : 0;
-      status2 += hasStatusHold(entry2) ? 128 : 0;
-      status1 += hasStatusReplied(entry1) ? 64 : 0;
-      status2 += hasStatusReplied(entry2) ? 64 : 0;
-      status1 += hasStatusQueued(entry1) ? 64 : 0;
-      status2 += hasStatusQueued(entry2) ? 64 : 0;
-      status1 += hasStatusForwarded(entry1) ? 32 : 0;
-      status2 += hasStatusForwarded(entry2) ? 32 : 0;
-      status1 += hasStatusSent(entry1) ? 32 : 0;
-      status2 += hasStatusSent(entry2) ? 32 : 0;
-      status1 += hasStatusDeleted(entry1) ? 16 : 0;
-      status2 += hasStatusDeleted(entry2) ? 16 : 0;
-      status1 += hasStatusMarked(entry1) ? 8  : 0;
-      status2 += hasStatusMarked(entry2) ? 8  : 0;
-      status1 += (getImportanceLevel(entry1) == IMP_HIGH)  ? 16 : 0;
-      status2 += (getImportanceLevel(entry2) == IMP_HIGH)  ? 16 : 0;
-
-      return -(status1)+(status2);
-    }
-    break;
-
-    case 1:
-    {
-      if(isOutgoingFolder(entry1->Folder))
-      {
-        return stricmp(*entry1->To.RealName ? entry1->To.RealName : entry1->To.Address,
-                       *entry2->To.RealName ? entry2->To.RealName : entry2->To.Address);
-      }
-      else
-      {
-        return stricmp(*entry1->From.RealName ? entry1->From.RealName : entry1->From.Address,
-                       *entry2->From.RealName ? entry2->From.RealName : entry2->From.Address);
-      }
-    }
-    break;
-
-    case 2:
-    {
-      return stricmp(*entry1->ReplyTo.RealName ? entry1->ReplyTo.RealName : entry1->ReplyTo.Address,
-                     *entry2->ReplyTo.RealName ? entry2->ReplyTo.RealName : entry2->ReplyTo.Address);
-    }
-    break;
-
-    case 3:
-    {
-      return stricmp(MA_GetRealSubject(entry1->Subject), MA_GetRealSubject(entry2->Subject));
-    }
-    break;
-
-    case 4:
-    {
-      return CompareDates(&entry2->Date, &entry1->Date);
-    }
-    break;
-
-    case 5:
-    {
-      return entry1->Size-entry2->Size;
-    }
-    break;
-
-    case 6:
-    {
-      return strcmp(entry1->MailFile, entry2->MailFile);
-    }
-    break;
-
-    case 7:
-    {
-      return CmpTime(TIMEVAL(&entry2->transDate), TIMEVAL(&entry1->transDate));
-    }
-    break;
-
-    case 8:
-    {
-      return stricmp(entry1->Folder->Name, entry2->Folder->Name);
-    }
-    break;
-  }
-
-  return 0;
-}
-
-///
+/* local prototypes */
+static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column);
 
 /* Hooks */
 /// FindAddressHook
@@ -369,6 +260,149 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
   return 0;
 }
 MakeStaticHook(DisplayHook, DisplayFunc);
+
+///
+
+/* Private Functions */
+/// MailCompare
+//  Compares two messages
+static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
+{
+  switch (column)
+  {
+    case 0:
+    {
+      // lets calculate each value
+      int status1 = 0;
+      int status2 = 0;
+
+      // We do not sort on other things than the real status and the Importance+Marked flag of
+      // the message because this would be confusing if you use "Status" as a sorting
+      // criteria within the folder config. Why should a MultiPart mail be sorted with
+      // other multipart messages? It`s more important to sort just for New/Unread/Read aso
+      // and then be able to sort as a second criteria for the date. Sorting the message
+      // depending on other stuff than importance will make it impossible to sort for
+      // status+date in the folder config. Perhaps we need to have a configuable way for
+      // sorting by status later, but this is future stuff..
+      status1 += hasStatusNew(entry1) ? 512 : 0;
+      status2 += hasStatusNew(entry2) ? 512 : 0;
+      status1 += !hasStatusRead(entry1) ? 256 : 0;
+      status2 += !hasStatusRead(entry2) ? 256 : 0;
+      status1 += !hasStatusError(entry1) ? 256 : 0;
+      status2 += !hasStatusError(entry2) ? 256 : 0;
+      status1 += hasStatusHold(entry1) ? 128 : 0;
+      status2 += hasStatusHold(entry2) ? 128 : 0;
+      status1 += hasStatusReplied(entry1) ? 64 : 0;
+      status2 += hasStatusReplied(entry2) ? 64 : 0;
+      status1 += hasStatusQueued(entry1) ? 64 : 0;
+      status2 += hasStatusQueued(entry2) ? 64 : 0;
+      status1 += hasStatusForwarded(entry1) ? 32 : 0;
+      status2 += hasStatusForwarded(entry2) ? 32 : 0;
+      status1 += hasStatusSent(entry1) ? 32 : 0;
+      status2 += hasStatusSent(entry2) ? 32 : 0;
+      status1 += hasStatusDeleted(entry1) ? 16 : 0;
+      status2 += hasStatusDeleted(entry2) ? 16 : 0;
+      status1 += hasStatusMarked(entry1) ? 8  : 0;
+      status2 += hasStatusMarked(entry2) ? 8  : 0;
+      status1 += (getImportanceLevel(entry1) == IMP_HIGH)  ? 16 : 0;
+      status2 += (getImportanceLevel(entry2) == IMP_HIGH)  ? 16 : 0;
+
+      return -(status1)+(status2);
+    }
+    break;
+
+    case 1:
+    case 2:
+    {
+      struct Person *pe1;
+      struct Person *pe2;
+      char *addr1;
+      char *addr2;
+
+      if(column == 1)
+      {
+        if(isOutgoingFolder(entry1->Folder))
+        {
+          pe1 = &entry1->To;
+          pe2 = &entry2->To;
+        }
+        else
+        {
+          pe1 = &entry1->From;
+          pe2 = &entry2->From;
+        }
+      }
+      else
+      {
+        pe1 = &entry1->ReplyTo;
+        pe2 = &entry2->ReplyTo;
+      }
+
+      #ifndef DISABLE_ADDRESSBOOK_LOOKUP
+      {
+        struct MUI_NListtree_TreeNode *tn1;
+        struct MUI_NListtree_TreeNode *tn2;
+
+        set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
+
+        if((tn1 = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe1->Address[0], MUIF_NONE)))
+          addr1 = ((struct ABEntry *)tn1->tn_User)->RealName[0] ? ((struct ABEntry *)tn1->tn_User)->RealName : AddrName((*pe1));
+        else
+          addr1 = AddrName((*pe1));
+
+        if((tn2 = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe2->Address[0], MUIF_NONE)))
+          addr2 = ((struct ABEntry *)tn2->tn_User)->RealName[0] ? ((struct ABEntry *)tn2->tn_User)->RealName : AddrName((*pe2));
+        else
+          addr2 = AddrName((*pe2));
+      }
+      #else
+      addr1 = AddrName((*pe1));
+      addr2 = AddrName((*pe2));
+      #endif
+
+      return stricmp(addr1, addr2);
+    }
+    break;
+
+    case 3:
+    {
+      return stricmp(MA_GetRealSubject(entry1->Subject), MA_GetRealSubject(entry2->Subject));
+    }
+    break;
+
+    case 4:
+    {
+      return CompareDates(&entry2->Date, &entry1->Date);
+    }
+    break;
+
+    case 5:
+    {
+      return entry1->Size-entry2->Size;
+    }
+    break;
+
+    case 6:
+    {
+      return strcmp(entry1->MailFile, entry2->MailFile);
+    }
+    break;
+
+    case 7:
+    {
+      return CmpTime(TIMEVAL(&entry2->transDate), TIMEVAL(&entry1->transDate));
+    }
+    break;
+
+    case 8:
+    {
+      return stricmp(entry1->Folder->Name, entry2->Folder->Name);
+    }
+    break;
+  }
+
+  return 0;
+}
 
 ///
 
