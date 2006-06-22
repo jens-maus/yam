@@ -92,9 +92,9 @@ static inline LONG SelectMessage(struct Mail *mail)
 ///
 
 /* Hooks */
-/// ClosedReadWindowHook()
+/// CloseReadWindowHook()
 //  Hook that will be called as soon as a read window is closed
-HOOKPROTONHNO(ClosedReadWindowFunc, void, struct ReadMailData **arg)
+HOOKPROTONHNO(CloseReadWindowFunc, void, struct ReadMailData **arg)
 {
   struct ReadMailData *rmData = *arg;
 
@@ -117,7 +117,7 @@ HOOKPROTONHNO(ClosedReadWindowFunc, void, struct ReadMailData **arg)
 
   LEAVE();
 }
-MakeStaticHook(ClosedReadWindowHook, ClosedReadWindowFunc);
+MakeStaticHook(CloseReadWindowHook, CloseReadWindowFunc);
 ///
 
 /* Overloaded Methods */
@@ -371,7 +371,6 @@ OVERLOAD(OM_NEW)
     DoMethod(data->windowToolbar, MUIM_Toolbar_Notify,10, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 1, MUIM_ReadWindow_MoveMailRequest);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 3, MUIM_ReadWindow_NewMail, NEW_REPLY, MUIV_Toolbar_Qualifier);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Notify,12, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 3, MUIM_ReadWindow_NewMail, NEW_FORWARD, MUIV_Toolbar_Qualifier);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-capslock del",                 obj, 2, MUIM_ReadWindow_DeleteMailRequest, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-capslock shift del",            obj, 2, MUIM_ReadWindow_DeleteMailRequest, IEQUALIFIER_LSHIFT);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock space",       data->readMailGroup, 2, MUIM_TextEditor_ARexxCmd, "Next Page");
@@ -385,11 +384,11 @@ OVERLOAD(OM_NEW)
     // so that we get informed if the window is closed and therefore can be
     // disposed
     // However, please note that because we do kill the window upon closing it
-    // we have to use MUIM_Application_PushMethod instead of calling the ClosedReadWindowHook
+    // we have to use MUIM_Application_PushMethod instead of calling the CloseReadWindowHook
     // directly
-    DoMethod(obj, MUIM_Notify, MUIA_Window_Open, FALSE,
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE,
                   MUIV_Notify_Application, 6,
-                    MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &ClosedReadWindowHook, rmData);
+                    MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
   }
 
   // free the temporary mem we allocated before
@@ -424,12 +423,12 @@ OVERLOAD(OM_SET)
     switch(tag->ti_Tag)
     {
       // we also catch foreign attributes
-      case MUIA_Window_Open:
+      case MUIA_Window_CloseRequest:
       {
         // if the window is supposed to be closed and the StatusChangeDelay is
         // active and no embeddedReadPane is active we have to cancel an eventually
         // existing timerequest to set the status of a mail to read.
-        if(tag->ti_Data == FALSE &&
+        if(tag->ti_Data == TRUE &&
            C->StatusChangeDelayOn == TRUE && C->EmbeddedReadPane == FALSE &&
            xget(obj, MUIA_Window_Open) == TRUE)
         {
@@ -687,7 +686,7 @@ DECLARE(MoveMailRequest)
       // make sure the read window is closed in case there is no further
       // mail for deletion in this direction
       if(closeAfter)
-        set(obj, MUIA_Window_Open, FALSE);
+        DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
 
       AppendLogNormal(22, GetStr(MSG_LOG_Moving), (void *)1, srcfolder->Name, dstfolder->Name, "");
     }
@@ -784,7 +783,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
     // make sure the read window is closed in case there is no further
     // mail for deletion in this direction
     if(closeAfter)
-      set(obj, MUIA_Window_Open, FALSE);
+      DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
 
     if(delatonce)
       AppendLogNormal(20, GetStr(MSG_LOG_Deleting), (void *)1, folder->Name, "", "");
@@ -994,7 +993,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
   // we can close the window accordingly. This signals a user that he/she
   // reached the end of the mail list
   if(found == FALSE)
-    set(obj, MUIA_Window_Open, FALSE);
+    DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
 
   return 0;
 }

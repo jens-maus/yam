@@ -6,6 +6,10 @@ $Id$
 
 2006-06-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/ReadWindow.c: fixed bug #1374262 where YAM did close and dispose a
+    read window on each "MUIA_Window_Open, FALSE" which in fact caused it to
+    loose eventually opened read windows in case MUI itself instructs a read
+    window to close due to a settings change.
   * classes/YAM.c: YAM will now listen for the MUIA_Application_Active attribute
     and set the application to sleep accordingly.
   * classes/MainMailList.c: fixed bug #1347064 where YAM didn't take respect of
