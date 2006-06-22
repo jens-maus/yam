@@ -506,10 +506,18 @@ OVERLOAD(OM_SET)
           SetApplicationAttrs(G->applicationID,
                               APPATTR_Hidden,   tag->ti_Data,
                               TAG_DONE);
-
-          D(DBF_STARTUP, "Application was %s", tag->ti_Data ? "iconified" : "uniconified");
         }
         #endif
+
+        D(DBF_STARTUP, "Application was %s", tag->ti_Data ? "iconified" : "uniconified");
+      }
+      break;
+
+      case MUIA_Application_Active:
+      {
+        D(DBF_STARTUP, "Application is %s", tag->ti_Data ? "active" : "inactive");
+
+        set(obj, MUIA_Application_Sleep, !tag->ti_Data);
       }
       break;
     }

@@ -6,6 +6,8 @@ $Id$
 
 2006-06-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/YAM.c: YAM will now listen for the MUIA_Application_Active attribute
+    and set the application to sleep accordingly.
   * classes/MainMailList.c: fixed bug #1347064 where YAM didn't take respect of
     an addressbook resolved mail address when sorting the main mail list by
     the recipient/sender or by the ReplyTo address.
