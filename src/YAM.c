@@ -821,54 +821,59 @@ static void SplashProgress(char *txt, int percent)
 //  Un-iconify YAM
 void PopUp(void)
 {
-   int i;
-   Object *window = G->MA->GUI.WI;
+  int i;
+  Object *window = G->MA->GUI.WI;
 
-   nnset(G->App, MUIA_Application_Iconified, FALSE);
+  ENTER();
 
-   // avoid MUIA_Window_Open's side effect of activating the window if it was already open
-   if(!xget(G->MA->GUI.WI, MUIA_Window_Open))
-     set(G->MA->GUI.WI, MUIA_Window_Open, TRUE);
+  nnset(G->App, MUIA_Application_Iconified, FALSE);
 
-   DoMethod(G->MA->GUI.WI, MUIM_Window_ScreenToFront);
-   DoMethod(G->MA->GUI.WI, MUIM_Window_ToFront);
+  // avoid MUIA_Window_Open's side effect of activating the window if it was already open
+  if(!xget(G->MA->GUI.WI, MUIA_Window_Open))
+    set(G->MA->GUI.WI, MUIA_Window_Open, TRUE);
 
-   // Now we check if there is any read and write window open and bring it also
-   // to the front
-   if(IsMinListEmpty(&G->readMailDataList) == FALSE)
-   {
-      // search through our ReadDataList
-      struct MinNode *curNode;
-      for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  DoMethod(G->MA->GUI.WI, MUIM_Window_ScreenToFront);
+  DoMethod(G->MA->GUI.WI, MUIM_Window_ToFront);
+
+  // Now we check if there is any read and write window open and bring it also
+  // to the front
+  if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+  {
+    // search through our ReadDataList
+    struct MinNode *curNode;
+    for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+      if(rmData->readWindow)
       {
-        struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-        if(rmData->readWindow)
-        {
-          DoMethod(rmData->readWindow, MUIM_Window_ToFront);
-          window = rmData->readWindow;
-        }
+        DoMethod(rmData->readWindow, MUIM_Window_ToFront);
+        window = rmData->readWindow;
       }
-   }
+    }
+  }
 
-   // Bring the write window to the front
-   for(i = 0; i < MAXWR; i++)
-   {
-     if(G->WR[i])
-     {
-       DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
-       window = G->WR[i]->GUI.WI;
-     }
-   }
+  // Bring the write window to the front
+  for(i = 0; i < MAXWR; i++)
+  {
+    if(G->WR[i])
+    {
+      DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
+      window = G->WR[i]->GUI.WI;
+    }
+  }
 
-   // now we activate the window that is on the top
-   set(window, MUIA_Window_Activate, TRUE);
+  // now we activate the window that is on the top
+  set(window, MUIA_Window_Activate, TRUE);
+
+  LEAVE();
 }
 ///
 /// DoublestartHook
 //  A second copy of YAM was started
 HOOKPROTONHNONP(DoublestartFunc, void)
 {
-   if(G->App && G->MA && G->MA->GUI.WI) PopUp();
+  if(G->App && G->MA && G->MA->GUI.WI)
+    PopUp();
 }
 MakeStaticHook(DoublestartHook, DoublestartFunc);
 ///
