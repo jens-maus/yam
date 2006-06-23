@@ -4,6 +4,17 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * classes/AttachmentGroup.c: fixed bug #1327203 where upon dropping a #?.info
+    file as an attachment onto a workbench drawer, a separate .info file was
+    also put beside the icon object. This more or less was redundant and not
+    necessary. Unfortunately the used UpdateWorkbench() function seems to be
+    only available on AmigaOS4 that's why YAM will only check on OS4 for the
+    .info and then notifies the workbench afterwards so that the drawer will show
+    the info file immediately. On all other systems the workbench drawer may
+    require a simple refresh to show the icon.
+
 2006-06-22  Jens Langner <Jens.Langner@light-speed.de>
 
   * classes/ReadWindow.c: fixed bug #1374262 where YAM did close and dispose a

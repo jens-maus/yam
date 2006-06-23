@@ -817,8 +817,41 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
       struct DiskObject *diskObject = (struct DiskObject *)xget(msg->imageObject, MUIA_AttachmentImage_DiskObject);
 
       // make sure to write out the diskObject of our attachment as well
+      // but only if the filename doesn't end with a ".info" itself or it
+      // clearly suggests that this might be a diskobject itself.
       if(diskObject)
-        PutDiskObject(filePathBuf, diskObject);
+      {
+        char ext[SIZE_FILE];
+
+        // extract the file extension.
+        stcgfe(ext, fileName);
+
+        if(stricmp(ext, "info") != 0)
+          PutDiskObject(filePathBuf, diskObject);
+        #if defined(__amigaos4__)
+        else
+        {
+          // the following code makes sure that the workbench
+          // gets notified of the .info file
+          BPTR dlock;
+
+          if((dlock = Lock(msg->dropPath, SHARED_LOCK)))
+          {
+            char *p;
+
+            // strip an eventually existing extension
+            if((p = strrchr(fileName, '.')))
+              *p = '\0';
+
+            // UpdateWorkbench() seems to be only supported
+            // by OS4. That's why this stuff is OS4 only.
+            UpdateWorkbench(fileName, dlock, UPDATEWB_ObjectAdded);
+
+            UnLock(dlock);
+          }
+        }
+        #endif
+      }
       
       // Now that the workbench knows about the new object we also have to make sure the icon
       // is actually visible in the window
@@ -829,7 +862,6 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
       DisplayBeep(_screen(obj));
 
     BusyEnd();
-
   }
 
   return 0;
