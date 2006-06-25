@@ -5,7 +5,7 @@
 ## chunk AUTH Alexandre Balaban
 ; YAM.cd - YAM 2.5 catalog description file
 ; $Id$
-; based on YAM.cd 2124 2006-04-27 00:42:50Z
+; based on YAM.cd 2231 2006-06-21 23:29:45Z
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -235,10 +235,6 @@ De
 MSG_To
 À
 ; To
-;
-MSG_Default
-défaut
-; default
 ;
 MSG_Columns
 Colonnes
@@ -739,10 +735,6 @@ Entrez un nouveau sujet :
 MSG_MA_All
 Tous
 ; All
-;
-MSG_MA_Cancel
-\ebAnnuler
-; \ebCancel
 ;
 MSG_MA_TitleStatus
 Statut
@@ -1818,15 +1810,11 @@ P_rogramme
 ;
 MSG_CO_Extension
 E_xtension
-; E_xtension
+; File e_xtension
 ;
 MSG_CO_DefaultViewer
 Prog par _défaut
 ; De_fault viewer
-;
-MSG_CO_IdentifyBin
-_Identifier les documents binaires
-; _Identify binary attachments
 ;
 MSG_CO_MessageHeader
 Message d'en-tête
@@ -2697,9 +2685,9 @@ Supprime le programme MIME sélectionné
 ; Remove selected MIME viewer
 ;
 MSG_HELP_CO_ST_EXTENS
-Suffixe de fichier utilisé\n\
-pour ce type de données
-; Filename extensions used\n\
+Extension utilisée par\n\
+ce type de fichier
+; File extensions used\n\
 ; by this file type
 ;
 MSG_HELP_CO_ST_DEFVIEWER
@@ -2707,12 +2695,6 @@ Programme à utiliser pour afficher\n\
 les données de types inconnus
 ; Program used to display\n\
 ; attachments of unknown type
-;
-MSG_HELP_CO_CH_IDENTBIN
-Essaye d'identifier le type de fichier\n\
-avant d'utiliser le programme par défaut
-; Try to identify the file type\n\
-; before using the default viewer
 ;
 MSG_HELP_CO_ST_REPLYTO
 Entrez une adresse de réponse\n\
@@ -3494,39 +3476,6 @@ pour l'envoi en « copie cachée »
 ; for new message
 ;
 ;
-; Module CL
-;
-MSG_CL_ErrorEmptyCB
-Le presse-papier est vide !
-; The clipboard is empty.
-;
-MSG_CL_ErrorNotFTXT
-Le presse-papiers ne contient pas de texte.
-; The clipboard does not contain text.
-;
-MSG_CL_ErrorNoArea
-Pas de texte sélectionné.
-; No area marked.
-;
-MSG_CL_ErrorNoRedo
-Rien à refaire.
-; Nothing to redo.
-;
-MSG_CL_ErrorNoUndo
-Rien à défaire.
-; Nothing to undo.
-;
-MSG_CL_ErrorNoUndoMem
-Mémoire insuffisante pour conserver\n\
-le tampon défaire/refaire.\n\
-\n\
-Le tampon est supprimé.
-; There is not enough memory\n\
-; to keep the undo buffer.\n\
-; \n\
-; The undo buffer is lost.
-;
-;
 ; Module EA - Procedures
 ;
 MSG_EA_EditUser
@@ -3607,10 +3556,6 @@ Portrait
 MSG_EA_SelectPhoto
 _Sélectionner
 ; Se_lect
-;
-MSG_EA_LoadPhoto
-_Télécharger
-; _Download
 ;
 MSG_EA_ReturnAddress
 Adresse de _retour
@@ -3706,12 +3651,6 @@ Charge une image depuis le disque\n\
 (les datatypes sont supportés)
 ; Select a picture file from disk\n\
 ; (image datatypes supported)
-;
-MSG_HELP_EA_BT_LOADPHOTO
-Télécharge le portrait de cette personne\n\
-depuis la galerie des utilisateurs de Yam
-; Download a picture of the person\n\
-; from the YAM User Gallery
 ;
 MSG_HELP_EA_ST_REALNAME_L
 Nom complet de cette liste de distribution\n\
@@ -4005,14 +3944,6 @@ dans votre carnet d'adresses ?
 MSG_RE_NewGroupTitle
 Entrées ajoutées automatiquement
 ; Automatically added entries
-;
-MSG_RE_DownloadPhotoReq
-Voulez-vous télécharger la photo de l'expéditeur\n\
-et l'ajouter à votre collection ? ;-)\n\
-(Vous devez être connecté avant de choisir « Ok »)
-; Do you want to download the photo of the sender\n\
-; and add it to your personal gallery?\n\
-; (You must be online before clicking the OKAY button)
 ;
 MSG_RE_ContentType
 Type de contenu
@@ -4404,12 +4335,12 @@ D_escription
 ; D_escription
 ;
 MSG_WR_CopyTo
-_Copier à (CC)
-; C_opies to
+_Copie à (CC)
+; C_opies to (CC)
 ;
 MSG_WR_BlindCopyTo
 Copie cac_hée à (BCC)
-; Hidde_n copies to
+; Hidde_n copies to (BCC)
 ;
 MSG_WR_From
 _De
@@ -5129,13 +5060,6 @@ _Fermer la fenêtre
 ;
 ; Module ER - Error Messages
 ;
-MSG_ER_ErrorTTable
-Impossible d'ouvrir la table de conversion « %s »\n\
-(inexistante ou au mauvais format).
-; Couldn't open translation table '%s'\n\
-; (non existent or wrong format).
-; FILENAME
-;
 MSG_ER_CantCreateFile
 Impossible d'écrire le fichier « %s ».\n\
 \n\
@@ -5168,12 +5092,6 @@ La date de naissance n'est pas au bon format. \
 Il faut utiliser JJ-MMM-AAAA. (Noms des mois en Anglais).
 ; Date of birth is in wrong format. The correct format is \
 ; DD-MMM-YYYY (month names in English).
-;
-MSG_ER_NotInGallery
-Je ne trouve pas cette personne dans la galerie des utilisateurs de YAM. \
-Soit elle n'est pas dans la galerie soit son nom ou son adresse est erroné.
-; Couldn't find this person in the YAM user gallery. Either the person \
-; doesn't exist in the database or his/her name or address is mispelt.
 ;
 MSG_ER_ErrorDateFormat
 Format date/heure invalide.\n\
@@ -5257,9 +5175,10 @@ YAM ne peut pas afficher correctement cet en-tête.
 ; ENCODING_TYPE
 ;
 MSG_ER_MultipartEOF
-Message multipartie incomplet : fin de fichier non trouvé. \
-Le message semble tronqué.
-; Unexpected EOF while decoding multipart message. \
+Fin de fichier inattendue lors du décodage \
+d'un message multipartie. \
+Le message semble être tronqué.
+; Unexpected EOF while decoding a multipart message. \
 ; The message seems to be truncated.
 ;
 MSG_ER_MIMEError
@@ -5269,10 +5188,6 @@ Le message est mal composé ou il est vide ou tronqué !
 ; Couldn't extract MIME message.\n\
 ; \n\
 ; The message contains badly formed MIME parts or it's empty or truncated.
-;
-MSG_ER_MissingBoundary
-Ofset manquant dans ce message multi-partie. Le message doit être tronqué.
-; Missing boundary in multipart message. The message seems to be truncated.
 ;
 MSG_ER_CantOpenFile
 Impossible de lire le fichier « %s ».\n\
@@ -6074,11 +5989,6 @@ Sauve le glossaire...
 MSG_BusyLoadingDI
 Charge le glossaire...
 ; Loading glossary...
-;
-MSG_BusyDownloadingPic
-Chargement de la photo de %s...
-; Downloading portrait of %s...
-; NAME
 ;
 MSG_BusyUncompressingFO
 (Dé)compresse les dossiers...
@@ -7947,12 +7857,9 @@ MSG_BUSY_OPENINGCONFIG
 Ouverture de la configuration...
 ; Opening configuration...
 ;
-;
 MSG_CO_TIMEZONEWARN_TITLE
 Avertissement de réglage de Timezone
 ; Timezone setting warning
-;
-; ***NEW***
 ;
 MSG_CO_TIMEZONEWARN
 Le réglage de Timezone dans YAM ne correspond\n\
@@ -7964,16 +7871,13 @@ Que désirez-vous faire ?
 ; \n\
 ; How do you want to proceed?
 ;
-;
 MSG_CO_TIMEZONEWARN_BT
 *_Changer|_Toujours ignorer|_Ignorer
 ; *_Change|Ignore _always|_Ignore
 ;
-;
 MSG_CO_AUTODSTWARN_TITLE
 Avertissement AutoDST
 ; AutoDST warning
-;
 ;
 MSG_CO_AUTODSTWARN
 YAM a détecté un utilitaire AutoDST actif et\n\
@@ -7987,76 +7891,61 @@ Que désirez-vous faire ?
 ; \n\
 ; How do you want to proceed?
 ;
-;
 MSG_CO_AUTODSTWARN_BT
 _Changer|_Toujours ignorer|_Ignorer
 ; *_Change|Ignore _always|_Ignore
-;
 ;
 MSG_MA_UPDATECHECK
 Rechercher des mises à jour...
 ; Check for updates...
 ;
-;
 MSG_CO_SOFTWAREUPDATE
 Mise à jour logicielle
 ; Software Update
-;
 ;
 MSG_CO_UPDATE_DAILY
 Quotidienne
 ; Daily
 ;
-;
 MSG_CO_UPDATE_WEEKLY
 Hebdomadaire
 ; Weekly
-;
 ;
 MSG_CO_UPDATE_MONTHLY
 Mensuelle
 ; Monthly
 ;
-;
 MSG_CO_SEARCHFORUPDATES
 Recherche de _mises à jour
 ; Search for _Updates:
-;
 ;
 MSG_CO_SEARCHFORUPDATESINFO
 Vous serez notifié dès que des mises à jour sont disponibles.
 ; You will be notified as soon as updates are available.
 ;
-;
 MSG_CO_SEARCHNOW
 Vérifier mai_ntenant
 ; Search _now
-;
 ;
 MSG_CO_LASTSEARCH
 Dernière vérification :
 ; Last Search:
 ;
-;
 MSG_CO_LASTSTATUS_NOCHECK
 Aucune jusqu'à présent.
 ; No check performed yet.
-;
 ;
 MSG_CO_LASTSTATUS_NOUPDATE
 Aucune mise à jour disponible.
 ; No new software updates were available.
 ;
-;
 MSG_CO_LASTSTATUS_NOQUERY
 Impossible de contacter le serveur de mise à jour.
 ; Couldn't query update server for updates.
 ;
-;
 MSG_CO_LASTSTATUS_UPDATESUCCESS
 Nouvelle(s) mise(s) à jour trouvée(s) et traitée(s)
 ; Successfully found and processed new updates.
-;
 ;
 MSG_WR_SECURITYREQ
 Les destinataires de ce courrier ont des réglages\n\
@@ -8068,11 +7957,9 @@ Comment désirez-vous composer ce mail ?
 ; \n\
 ; How do you want to compose the mail?
 ;
-;
 MSG_WR_SECURITYREQ_GADS
 *A_ucune[_Signé|_Crypté|S_igné & crypté[Envoi A_nonyme|_Annuler
 ; *_Plain|_Signed|_Encrypted|S_igned&Encrypted|_Anonymous|_Cancel
-;
 ;
 MSG_ER_OPENTCPIP
 YAM n'a pas été en mesure d'ouvrir l'interface\n\
@@ -8088,64 +7975,173 @@ interface réseau est active et fonctionnelle.
 ; installed, correctly configured and that your network \
 ; interface is up and running.
 ;
-;
 MSG_WR_UUCODE
 Texte UUencodé
 ; UUencoded text
-;
 ;
 MSG_UPD_NOTIFICATION_WTITLE
 Notification de mise à jour
 ; Update Notification
 ;
-;
 MSG_UPD_NOTIFICATION_TITLE
 Mise(s) à jour disponible(s)
 ; Updates available
-;
 ;
 MSG_UPD_NOTIFICATION_SUMMARY
 YAM a trouvé les mises à jour suivantes :
 ; YAM has found the following updates to be available:
 ;
-;
 MSG_UPD_NOTIFICATION_CHANGES
 Modifications (en anglais) :
 ; Changes:
-;
 ;
 MSG_UPD_NOTIFICATION_NOUPDATE
 Ne plus me notifier des mises à jour
 ; Do not notify me on updates in future
 ;
-;
 MSG_UPD_NOTIFICATION_VISITURL
 Visiter l'URL
 ; Visit URL
-;
 ;
 MSG_UPD_NOTIFICATION_CLOSE
 Fermer
 ; Close
 ;
-;
 MSG_UPD_NOTIFICATION_COMP
 Composant
 ; Component
-;
 ;
 MSG_UPD_NOTIFICATION_RECENT
 Disponible
 ; Recent
 ;
-;
 MSG_UPD_NOTIFICATION_INSTALLED
 Installé
 ; Installed
-;
 ;
 MSG_UPD_NOTIFICATION_URL
 URL
 ; URL
 ;
+MSG_CO_MIME_DESCRIPTION
+_Description
+; _Description
 ;
+MSG_CTapplicationgz
+Archive GNU zip
+; GNU zip archive
+;
+MSG_CTapplicationhqx
+Archive Macintosh
+; Macintosh archive
+;
+MSG_CTapplicationxls
+Fichier Microsoft Excel
+; Microsoft Excel file
+;
+MSG_CTapplicationppt
+Fichier Microsoft Powerpoint
+; Microsoft Powerpoint file
+;
+MSG_CTapplicationdoc
+Fichier Microsoft Word
+; Microsoft Word file
+;
+MSG_CTtextxml
+Fichier XML
+; XML file
+;
+MSG_CTapplicationz
+Fichier compressé par ZLib
+; zlib compressed file
+;
+MSG_CTapplicationtar
+Archive tar
+; tar archive
+;
+MSG_CTaudioaiff
+Fichier audio AIFF
+; AIFF audio file
+;
+MSG_CTaudiomidi
+Fichier audio MIDI
+; MIDI audio file
+;
+MSG_CTaudiompeg
+Fichier audio MPEG
+; MPEG audio file
+;
+MSG_CTimagebmp
+Fichier image Bitmap
+; Bitmap image file
+;
+MSG_CTapplicationtgz
+Archive tar gzippée
+; gzipped tar archive
+;
+MSG_CTapplicationpgp
+Fichier crypté PGP
+; PGP encrypted file
+;
+MSG_CTapplicationbz2
+Archive BZIP2
+; BZIP2 archive
+;
+MSG_CO_DETECT_CYRILLIC
+Auto-détection des caractères cyrilliques
+; Auto-detect cyrillic charsets
+;
+MSG_HELP_CO_DETECT_CYRILLIC
+Tente d'utiliser la fonctionnalité\n\
+d'auto-détection de codesets.library\n\
+pour identifier automatiquement le\n\
+jeu de caractères cyrillique correct.\n\
+(utile qu'aux utilisateurs cyrilliques)
+; Tries to use the auto-detect feature\n\
+; of codesets.library to automatically\n\
+; identify the correct cyrillic codeset.\n\
+; (only relevant for cyrillic users)
+;
+MSG_WR_ErrorNotEnoughUndoMem
+Le texte effacé était trop important pour\n\
+être conservé dans le tampon d'annulation.\n\
+\n\
+De plus le tampon d'annulation est perdu.
+; The erased text was too large to be\n\
+; put into the undo buffer.\n\
+; \n\
+; Therefore, the undo buffer is lost.
+;
+MSG_RE_HEADERDISPLAY
+Affichage des entêtes
+; Header Display
+;
+MSG_RE_MAILDETAILS
+Détails du mail
+; Mail Details
+;
+MSG_ER_ADDFILEERROR
+Le fichier sélectionné '%s' ne peut pas être\
+ajouté comme attachement au mail courant.\n\
+\n\
+Veuillez vous assurer que le fichier est\
+accessible et que vous possédez  les permissions\
+de lecture adéquates.
+; The selected file '%s' couldn't be added \
+; as an attachment to the current mail.\n\
+; \n\
+; Please make sure that the file is accessible \
+; and that you have proper read permissions.
+;
+MSG_ER_PACKERROR
+Une erreur est survenue lors de la création de\
+l'archive à partir des fichiers sélectionnés.\n\
+\n\
+Veuillez vous assurer que tous les fichiers sont\
+accessibles et que vous possédez les permissions\
+d'accès adéquates.
+; An error occurred while trying to create \
+; an archive out of the selected files.\n\
+; \n\
+; Please make sure that all files are accessible \
+; and that you have proper permissions.
