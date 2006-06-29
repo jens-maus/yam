@@ -6,6 +6,11 @@ $Id$
 
 2006-06-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_rexx.c: fixed bug #667192 where rexx scripts with a space in a
+    filename couldn't be executed properly via the "Execute script..." menu
+    item. However, please note that the involved fix only works on systems
+    with rexxsyslib.library version >= 45 as previous versions can't be
+    instructed to take case of files with spaces included.
   * YAM.c: fixed bug #1241268 where the Splash window was closed after having
     opened the main mail list which in turned may have kept the splash window
     open way too long and may have been irritating for the end user.

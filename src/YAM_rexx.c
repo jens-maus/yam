@@ -132,7 +132,7 @@ void FreeRexxCommand( struct RexxMsg *rexxmessage )
 
 ///
 /// CreateRexxCommand
-static struct RexxMsg *CreateRexxCommand( struct RexxHost *host, char *buff, BPTR fh )
+static struct RexxMsg *CreateRexxCommand(struct RexxHost *host, char *buff, BPTR fh, int addFlags)
 {
    struct RexxMsg *rexx_command_message;
 
@@ -149,7 +149,7 @@ static struct RexxMsg *CreateRexxCommand( struct RexxHost *host, char *buff, BPT
       return( NULL );
    }
 
-   rexx_command_message->rm_Action = RXCOMM | RXFF_RESULT;
+   rexx_command_message->rm_Action = RXCOMM | RXFF_RESULT | addFlags;
    rexx_command_message->rm_Stdin  = fh;
    rexx_command_message->rm_Stdout = fh;
 
@@ -181,14 +181,54 @@ static struct RexxMsg *CommandToRexx( struct RexxHost *host, struct RexxMsg *rex
 
 ///
 /// SendRexxCommand
-struct RexxMsg *SendRexxCommand( struct RexxHost *host, char *buff, BPTR fh )
+struct RexxMsg *SendRexxCommand(struct RexxHost *host, char *buff, BPTR fh)
 {
-   struct RexxMsg *rcm;
-   
-   if((rcm = CreateRexxCommand(host, buff, fh)))
-      return CommandToRexx( host, rcm );
-   else
-      return NULL;
+  struct RexxMsg *result = NULL;
+  struct RexxMsg *rcm;
+
+  ENTER();
+
+  // only RexxSysBase v45+ seems to support properly quoted
+  // strings via the new RXFF_SCRIPT flag
+  if(((struct Library *)RexxSysBase)->lib_Version >= 45)
+  {
+    char *quotedBuf;
+
+    // not all SDKs do supply that new flag already
+    #ifndef RXFF_SCRIPT
+    #define RXFF_SCRIPT (1 << 21)
+    #endif
+
+    // check that the string is quoted
+    if(buff[0] != '"' && strchr(buff, ' '))
+    {
+      if((quotedBuf = malloc(strlen(buff)+3)))
+        snprintf(quotedBuf, strlen(buff)+3, "\"%s\"", buff);
+      else
+        return NULL;
+    }
+    else
+      quotedBuf = buff;
+
+    D(DBF_REXX, "executing quoted rexx script: '%s'", quotedBuf);
+
+    rcm = CreateRexxCommand(host, quotedBuf, fh, RXFF_SCRIPT);
+
+    if(quotedBuf != buff)
+      free(quotedBuf);
+  }
+  else
+  {
+    D(DBF_REXX, "executing rexx script: '%s'", buff);
+
+    rcm = CreateRexxCommand(host, buff, fh, 0);
+  }
+
+  if(rcm != NULL)
+    result =  CommandToRexx(host, rcm);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -656,7 +696,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       /* Msg an ARexx schicken, vielleicht existiert ein Skript */
       struct RexxMsg *rm;
       
-      if((rm = CreateRexxCommand(host, (char *) ARG0(rexxmsg), 0)))
+      if((rm = CreateRexxCommand(host, (char *) ARG0(rexxmsg), 0, 0)))
       {
          /* Original-Msg merken */
          rm->rm_Args[15] = (STRPTR) rexxmsg;
