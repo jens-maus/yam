@@ -2065,8 +2065,9 @@ Object *CO_Page8(struct CO_ClassData *data)
              End,
            End,
            Child, VGroup, GroupFrameT(GetStr(MSG_CO_GENLISTCFG)),
-             Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFLIST,  GetStr(MSG_CO_FixedFontList)),
-             Child, MakeCheckGroup((Object **)&data->GUI.CH_BEAT,      GetStr(MSG_CO_SwatchBeat)),
+             Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFLIST, GetStr(MSG_CO_FixedFontList)),
+             Child, MakeCheckGroup((Object **)&data->GUI.CH_BEAT, GetStr(MSG_CO_SwatchBeat)),
+             Child, MakeCheckGroup((Object **)&data->GUI.CH_ABOOKLOOKUP, GetStr(MSG_CO_ABOOKLOOKUP)),
              Child, MakeCheckGroup((Object **)&data->GUI.CH_QUICKSEARCHBAR, GetStr(MSG_CO_QUICKSEARCHBAR)),
              Child, HGroup,
                Child, Label1(GetStr(MSG_CO_SIZEFORMAT)),
@@ -2086,14 +2087,15 @@ Object *CO_Page8(struct CO_ClassData *data)
          End,
       End))
    {
-      SetHelp(data->GUI.CH_FIXFLIST,MSG_HELP_CO_CH_FIXFLIST);
-      SetHelp(data->GUI.CH_BEAT    ,MSG_HELP_CO_CH_BEAT);
-      SetHelp(data->GUI.CH_QUICKSEARCHBAR,  MSG_HELP_CO_CH_QUICKSEARCHBAR);
-      SetHelp(data->GUI.CY_INFOBAR ,MSG_HELP_CO_CH_INFOBAR);
-      SetHelp(data->GUI.ST_INFOBARTXT,MSG_HELP_CO_ST_INFOBARTXT);
-      SetHelp(data->GUI.CY_SIZE    ,MSG_HELP_CO_CY_SIZE);
-      SetHelp(data->GUI.CH_FCNTMENU,MSG_HELP_CO_CONTEXTMENU);
-      SetHelp(data->GUI.CH_MCNTMENU,MSG_HELP_CO_CONTEXTMENU);
+      SetHelp(data->GUI.CH_FIXFLIST,      MSG_HELP_CO_CH_FIXFLIST);
+      SetHelp(data->GUI.CH_BEAT,          MSG_HELP_CO_CH_BEAT);
+      SetHelp(data->GUI.CH_ABOOKLOOKUP,   MSG_HELP_CO_CH_ABOOKLOOKUP);
+      SetHelp(data->GUI.CH_QUICKSEARCHBAR,MSG_HELP_CO_CH_QUICKSEARCHBAR);
+      SetHelp(data->GUI.CY_INFOBAR,       MSG_HELP_CO_CH_INFOBAR);
+      SetHelp(data->GUI.ST_INFOBARTXT,    MSG_HELP_CO_ST_INFOBARTXT);
+      SetHelp(data->GUI.CY_SIZE,          MSG_HELP_CO_CY_SIZE);
+      SetHelp(data->GUI.CH_FCNTMENU,      MSG_HELP_CO_CONTEXTMENU);
+      SetHelp(data->GUI.CH_MCNTMENU,      MSG_HELP_CO_CONTEXTMENU);
    }
    return grp;
 }

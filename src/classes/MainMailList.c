@@ -155,7 +155,10 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
         else
           pe = isOutgoingFolder(entry->Folder) ? &entry->To : &entry->From;
 
-        #ifndef DISABLE_ADDRESSBOOK_LOOKUP
+        // in case the user wants to take the additional pain
+        // of performing an addressbook lookup for every entry in the
+        // list we do it right here.
+        if(C->ABookLookup)
         {
           struct MUI_NListtree_TreeNode *tn;
 
@@ -163,20 +166,19 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 
           if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], MUIF_NONE)))
           {
-            addr = ((struct ABEntry *)tn->tn_User)->RealName[0] ? ((struct ABEntry *)tn->tn_User)->RealName : AddrName((*pe));
+            addr = ((struct ABEntry *)tn->tn_User)->RealName[0] ? ((struct ABEntry *)tn->tn_User)->RealName : AddrName(*pe);
           }
           else
-            addr = AddrName((*pe));
+            addr = AddrName(*pe);
         }
-        #else
-        addr = AddrName((*pe));
-        #endif
+        else
+          addr = AddrName(*pe);
 
         // lets put the string together
         snprintf(dispfro, sizeof(dispfro), "%s%s%s%s", isMultiRCPTMail(entry) ? SICON_GROUP : "",
                                                        toPrefix ? GetStr(MSG_MA_ToPrefix) : "",
                                                        addr,
-                                                       isMultiSenderMail(entry) ? ", ..." : "");
+                                                       isMultiSenderMail(entry) && toPrefix == FALSE ? ", ..." : "");
 
         array[1] = dispfro;
       }
@@ -340,7 +342,10 @@ static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
         pe2 = &entry2->From;
       }
 
-      #ifndef DISABLE_ADDRESSBOOK_LOOKUP
+      // in case the user wants to take the additional pain
+      // of performing an addressbook lookup for every entry in the
+      // list we do it right here.
+      if(C->ABookLookup)
       {
         struct MUI_NListtree_TreeNode *tn1;
         struct MUI_NListtree_TreeNode *tn2;
@@ -357,10 +362,11 @@ static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
         else
           addr2 = AddrName(*pe2);
       }
-      #else
-      addr1 = AddrName(*pe1);
-      addr2 = AddrName(*pe2);
-      #endif
+      else
+      {
+        addr1 = AddrName(*pe1);
+        addr2 = AddrName(*pe2);
+      }
 
       return stricmp(addr1, addr2);
     }

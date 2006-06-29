@@ -260,6 +260,7 @@ struct CO_GUIData
    Object *TX_UPDATESTATUS;
    Object *TX_UPDATEDATE;
    Object *CH_DETECTCYRILLIC;
+   Object *CH_ABOOKLOOKUP;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -427,6 +428,7 @@ struct Config
    BOOL  TimeZoneCheck;
    BOOL  AutoDSTCheck;
    BOOL  DetectCyrillic;
+   BOOL  ABookLookup;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color1stLevel;

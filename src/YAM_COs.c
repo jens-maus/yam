@@ -395,6 +395,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "MessageCols      = %d\n", co->MessageCols);
       fprintf(fh, "FixedFontList    = %s\n", Bool2Txt(co->FixedFontList));
       fprintf(fh, "SwatchBeat       = %s\n", Bool2Txt(co->SwatchBeat));
+      fprintf(fh, "ABookLookup      = %s\n", Bool2Txt(co->ABookLookup));
       fprintf(fh, "SizeFormat       = %d\n", co->SizeFormat);
       fprintf(fh, "FolderCntMenu    = %s\n", Bool2Txt(co->FolderCntMenu));
       fprintf(fh, "MessageCntMenu   = %s\n", Bool2Txt(co->MessageCntMenu));
@@ -926,6 +927,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "MessageCols"))    co->MessageCols = atoi(value);
                else if (!stricmp(buffer, "FixedFontList"))  co->FixedFontList = Txt2Bool(value);
                else if (!stricmp(buffer, "SwatchBeat"))     co->SwatchBeat = Txt2Bool(value);
+               else if (!stricmp(buffer, "ABookLookup"))    co->ABookLookup = Txt2Bool(value);
                else if (!stricmp(buffer, "SizeFormat"))     co->SizeFormat = atoi(value);
                else if (!stricmp(buffer, "FolderCntMenu"))  co->FolderCntMenu = Txt2Bool(value);
                else if (!stricmp(buffer, "MessageCntMenu")) co->MessageCntMenu = Txt2Bool(value);
@@ -1304,6 +1306,7 @@ void CO_GetConfig(void)
          CE->MessageCols = 1; for (i = 1; i < MACOLNUM; i++) if (GetMUICheck(gui->CH_MCOLS[i])) CE->MessageCols += (1<<i);
          CE->FixedFontList = GetMUICheck(gui->CH_FIXFLIST);
          CE->SwatchBeat    = GetMUICheck(gui->CH_BEAT);
+         CE->ABookLookup   = GetMUICheck(gui->CH_ABOOKLOOKUP);
          CE->SizeFormat    = GetMUICycle(gui->CY_SIZE);
          CE->FolderCntMenu = GetMUICheck(gui->CH_FCNTMENU);
          CE->MessageCntMenu= GetMUICheck(gui->CH_MCNTMENU);
@@ -1561,6 +1564,7 @@ void CO_SetConfig(void)
          for (i = 0; i < MACOLNUM; i++) setcheckmark(gui->CH_MCOLS[i], (CE->MessageCols & (1<<i)) != 0);
          setcheckmark(gui->CH_FIXFLIST  ,CE->FixedFontList);
          setcheckmark(gui->CH_BEAT      ,CE->SwatchBeat);
+         setcheckmark(gui->CH_ABOOKLOOKUP, CE->ABookLookup);
          setcycle(gui->CY_SIZE, CE->SizeFormat);
          setcheckmark(gui->CH_FCNTMENU  ,CE->FolderCntMenu);
          setcheckmark(gui->CH_MCNTMENU  ,CE->MessageCntMenu);

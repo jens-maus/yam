@@ -6,6 +6,13 @@ $Id$
 
 2006-06-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/MainMailList.c, misc: due to the fact that the addressbook lookup
+    in the DisplayHook and CompareHook of the main mail list is quite a time
+    consuming operation - especially on slow systems and/or with large
+    addressbook, the generally enabled lookup is now disabled per default
+    and a user might enable it in the Configuration->Lists setup. However,
+    as most mails today carry a suitable real name this option would hardly
+    bring any benefit and may serve best in kept disabled.
   * misc: reworked/fixed a large portion of code due to a fix for bug #1251072
     where YAM wasn't able to correctly filter/find mails by a Reply-To:
     if the mail in question had multiple ReplyTo: addresses involved. The

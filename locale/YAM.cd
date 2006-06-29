@@ -5845,3 +5845,16 @@ an archive out of the selected files.\n\
 \n\
 Please make sure that all files are accessible \
 and that you have proper permissions.
+;
+MSG_CO_ABOOKLOOKUP (1713//)
+Perform addressbook lookup in main list
+;
+MSG_HELP_CO_CH_ABOOKLOOKUP (1714//)
+Performs an addressbook lookup for every main\n\
+mail recipient in the mail list and shows the\n\
+real name of the addressbook entry instead.\n\
+\n\
+Please note: This is a quite time consuming job\n\
+and may bring down the performance of the list\n\
+display - especially on setups with a large\n\
+addressbook.

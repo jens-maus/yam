@@ -912,7 +912,9 @@ void CO_SetDefaults(struct Config *co, int page)
    {
       co->FolderCols = 1+2+16;
       co->MessageCols = 1+2+8+16;
-      co->FixedFontList = C->SwatchBeat = FALSE;
+      co->FixedFontList = FALSE;
+      co->SwatchBeat = FALSE;
+      co->ABookLookup = FALSE;
       co->FolderCntMenu = TRUE;
       co->MessageCntMenu = TRUE;
       co->InfoBar = IB_POS_CENTER;
