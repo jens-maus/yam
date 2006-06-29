@@ -6,6 +6,9 @@ $Id$
 
 2006-06-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: fixed bug #1241268 where the Splash window was closed after having
+    opened the main mail list which in turned may have kept the splash window
+    open way too long and may have been irritating for the end user.
   * YAM_FI.c: fixed an issue with the context menu display of the find
     result window where a user was able to override the default of having NO
     context menu for the find window which in fact wasn't expected and

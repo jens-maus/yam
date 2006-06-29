@@ -1419,6 +1419,7 @@ void SetupAppIcons(void)
 static void Initialise2(void)
 {
    BOOL newfolders = FALSE;
+   BOOL splashWasActive = FALSE;
    int i;
    struct Folder *folder, **oldfolders = NULL;
 
@@ -1598,16 +1599,19 @@ static void Initialise2(void)
    SplashProgress(GetStr(MSG_OPENGUI), 100);
    G->InStartupPhase = FALSE;
 
+   // close the splash window right before we open our main YAM window
+   // but ask it before closing if it was activated or not.
+   splashWasActive = xget(G->SplashWinObject, MUIA_Window_Activate);
+   set(G->SplashWinObject, MUIA_Window_Open, FALSE);
+
    // only activate the main window if the about window is activ
    // and open it immediatly
    // we always start YAM with Window_Open TRUE or else YAM the hide
    // functionality doesn`t work as expected.
    SetAttrs(G->MA->GUI.WI,
-            MUIA_Window_Activate, xget(G->SplashWinObject, MUIA_Window_Activate),
+            MUIA_Window_Activate, splashWasActive,
             MUIA_Window_Open,     TRUE,
             TAG_DONE);
-
-   set(G->SplashWinObject, MUIA_Window_Open, FALSE);
 
    LEAVE();
 }
