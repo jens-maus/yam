@@ -39,19 +39,21 @@
 // Warning: Please note that if you change something here you have to make
 //          sure to increase the version number of the .index file in YAM_MAf.c!
 //          However, if only additions are made no index version bump is necessary.
-#define MFLAG_MULTIRCPT   (1<<0)
-#define MFLAG_MP_MIXED    (1<<1)      // multipart/mixed
-#define MFLAG_MP_REPORT   (1<<2)      // multipart/report
-#define MFLAG_MP_CRYPT    (1<<3)      // multipart/encrypted
-#define MFLAG_MP_SIGNED   (1<<4)      // multipart/signed
-#define MFLAG_MP_ALTERN   (1<<5)      // multipart/alternative
-#define MFLAG_PARTIAL     (1<<6)      // message/partial
-#define MFLAG_SENDERINFO  (1<<7)
-#define MFLAG_SENDMDN     (1<<8)
-#define MFLAG_NOFOLDER    (1<<9)
-#define MFLAG_PERFIELD        10      // reserve 3 bits of the flags for the permanent flag section
-#define MFLAG_VOLFIELD        13      // reserve 3 bits of the flags for the volatile flag section
-#define MFLAG_IMPORTANCE      16      // reserve 2 bits to store the level of importance
+#define MFLAG_MULTIRCPT     (1<<0)
+#define MFLAG_MP_MIXED      (1<<1)      // multipart/mixed
+#define MFLAG_MP_REPORT     (1<<2)      // multipart/report
+#define MFLAG_MP_CRYPT      (1<<3)      // multipart/encrypted
+#define MFLAG_MP_SIGNED     (1<<4)      // multipart/signed
+#define MFLAG_MP_ALTERN     (1<<5)      // multipart/alternative
+#define MFLAG_PARTIAL       (1<<6)      // message/partial
+#define MFLAG_SENDERINFO    (1<<7)
+#define MFLAG_SENDMDN       (1<<8)
+#define MFLAG_NOFOLDER      (1<<9)
+#define MFLAG_PERFIELD          10      // reserve 3 bits of the flags for the permanent flag section
+#define MFLAG_VOLFIELD          13      // reserve 3 bits of the flags for the volatile flag section
+#define MFLAG_IMPORTANCE        16      // reserve 2 bits to store the level of importance
+#define MFLAG_MULTISENDER   (1<<18)
+#define MFLAG_MULTIREPLYTO  (1<<19)
 #define isMultiRCPTMail(mail)         (isFlagSet((mail)->mflags, MFLAG_MULTIRCPT))
 #define isMultiPartMail(mail)         (hasFlag((mail)->mflags, MFLAG_MP_MIXED | MFLAG_MP_REPORT | MFLAG_MP_CRYPT | MFLAG_MP_SIGNED | MFLAG_MP_ALTERN))
 #define isMP_MixedMail(mail)          (isFlagSet((mail)->mflags, MFLAG_MP_MIXED))
@@ -69,6 +71,8 @@
 #define getPERValue(mail)             (((mail)->mflags & (7<<MFLAG_PERFIELD)) >> MFLAG_PERFIELD)
 #define getVOLValue(mail)             (((mail)->mflags & (7<<MFLAG_VOLFIELD)) >> MFLAG_VOLFIELD)
 #define getImportanceLevel(mail)      (((mail)->mflags & (3<<MFLAG_IMPORTANCE)) >> MFLAG_IMPORTANCE)
+#define isMultiSenderMail(mail)       (isFlagSet((mail)->mflags, MFLAG_MULTISENDER))
+#define isMultiReplyToMail(mail)      (isFlagSet((mail)->mflags, MFLAG_MULTIREPLYTO))
 
 // Status information flags of a mail (also partly stored in file comments)
 // Warning: Please note that if you change something here you have to make

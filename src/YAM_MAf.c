@@ -1236,15 +1236,60 @@ BOOL MA_ReadHeader(FILE *fh, struct MinList *headerList)
 //  Frees an extended email structure
 void MA_FreeEMailStruct(struct ExtendedMail *email)
 {
-   if(email)
-   {
-      FreeStrBuf(email->SenderInfo);
-      FreeStrBuf(email->extraHeaders);
-      if (email->NoSTo) free(email->STo);
-      if (email->NoCC ) free(email->CC );
-      if (email->NoBCC) free(email->BCC);
-      free(email);
-   }
+  ENTER();
+
+  if(email)
+  {
+    FreeStrBuf(email->SenderInfo);
+    email->SenderInfo = NULL;
+
+    FreeStrBuf(email->extraHeaders);
+    email->extraHeaders = NULL;
+
+    if(email->SFrom != NULL)
+    {
+      ASSERT(email->NoSFrom > 0);
+
+      free(email->SFrom);
+      email->SFrom = NULL;
+    }
+
+    if(email->STo != NULL)
+    {
+      ASSERT(email->NoSTo > 0);
+
+      free(email->STo);
+      email->STo = NULL;
+    }
+
+    if(email->SReplyTo != NULL)
+    {
+      ASSERT(email->NoSReplyTo > 0);
+
+      free(email->SReplyTo);
+      email->SReplyTo = NULL;
+    }
+
+    if(email->CC != NULL)
+    {
+      ASSERT(email->NoCC > 0);
+
+      free(email->CC);
+      email->CC = NULL;
+    }
+
+    if(email->BCC != NULL)
+    {
+      ASSERT(email->NoBCC > 0);
+
+      free(email->BCC);
+      email->BCC = NULL;
+    }
+
+    free(email);
+  }
+
+  LEAVE();
 }
 
 ///
@@ -1370,14 +1415,61 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
          if(!stricmp(field, "from"))
          {
            SET_FLAG(ok, 1);
+
+           // find out if there are more than one From: address
+           if((p = MyStrChr(value, ',')))
+            *p++ = '\0';
+
+           // extract the main mail address
            ExtractAddress(value, &pe);
            mail->From = pe;
+
+           // if we have more addresses waiting we
+           // go and process them yet
+           if(p)
+           {
+             if(deep)
+             {
+               if(email->NoSFrom == 0)
+                 email->NoSFrom = MA_GetRecipients(p, &(email->SFrom));
+
+               if(email->NoSFrom > 0)
+                 SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
+             }
+             else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
+               SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
+           }
+
+           D(DBF_MIME, "'From' senders: %d", email->NoSFrom+1);
          }
          else if(!stricmp(field, "reply-to"))
          {
            SET_FLAG(ok, 8);
+
+           // find out if there are more than one ReplyTo: address
+           if((p = MyStrChr(value, ',')))
+            *p++ = '\0';
+
            ExtractAddress(value, &pe);
            mail->ReplyTo = pe;
+
+           // if we have more addresses waiting we
+           // go and process them yet
+           if(p)
+           {
+             if(deep)
+             {
+               if(email->NoSReplyTo == 0)
+                 email->NoSReplyTo = MA_GetRecipients(p, &(email->SReplyTo));
+
+               if(email->NoSReplyTo > 0)
+                 SET_FLAG(mail->mflags, MFLAG_MULTIREPLYTO);
+             }
+             else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
+               SET_FLAG(mail->mflags, MFLAG_MULTIREPLYTO);
+           }
+
+           D(DBF_MIME, "'ReplyTo' recipients: %d", email->NoSReplyTo+1);
          }
          else if(!stricmp(field, "original-recipient"))
          {
@@ -1572,9 +1664,11 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
       fclose(fh);
       FreeHeaderList(&headerList);
 
+      // in case the replyTo recipient doesn't have a realname yet and it is
+      // completly the same like the from address we go and copy the realname as both
+      // are the same.
       if((ok & 8) && !mail->ReplyTo.RealName[0] && !stricmp(mail->ReplyTo.Address, mail->From.Address))
         strlcpy(mail->ReplyTo.RealName, mail->From.RealName, sizeof(mail->ReplyTo.RealName));
-
 
       // if this function call has a folder of NULL then we are examining a virtual mail
       // which means this mail doesn't have any folder and also no filename that may contain

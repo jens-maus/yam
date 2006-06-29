@@ -1347,8 +1347,8 @@ BOOL WriteOutMessage(struct Compose *comp)
    if (comp->Security) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",%s", SecCodes[comp->Security]);
    if (comp->Signature) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",sigfile%d", comp->Signature-1);
    if (*options) EmitHeader(fh, "X-YAM-Options", &options[1]);
-   EmitHeader(fh, "From", comp->From ? comp->From : BuildAddrName(C->EmailAddress, C->RealName));
-   if (comp->ReplyTo) EmitHeader(fh, "Reply-To", comp->ReplyTo);
+   EmitRcptHeader(fh, "From", comp->From ? comp->From : BuildAddrName(C->EmailAddress, C->RealName));
+   if (comp->ReplyTo) EmitRcptHeader(fh, "Reply-To", comp->ReplyTo);
    if (comp->MailTo) EmitRcptHeader(fh, "To", comp->Security == 4 ? C->ReMailer : comp->MailTo);
    if (comp->MailCC) EmitRcptHeader(fh, "CC", comp->MailCC);
    if (comp->MailBCC) EmitRcptHeader(fh, "BCC", comp->MailBCC);
@@ -1356,8 +1356,8 @@ BOOL WriteOutMessage(struct Compose *comp)
    fprintf(fh, "Message-ID: <%s>\n", NewID(TRUE));
    if (comp->IRTMsgID) EmitHeader(fh, "In-Reply-To", comp->IRTMsgID);
    rcptto = comp->ReplyTo ? comp->ReplyTo : (comp->From ? comp->From : C->EmailAddress);
-   if (hasReturnRcptFlag(comp)) EmitHeader(fh, "Return-Receipt-To", rcptto);
-   if (hasMDNRcptFlag(comp)) EmitHeader(fh, "Disposition-Notification-To", rcptto);
+   if (hasReturnRcptFlag(comp)) EmitRcptHeader(fh, "Return-Receipt-To", rcptto);
+   if (hasMDNRcptFlag(comp)) EmitRcptHeader(fh, "Disposition-Notification-To", rcptto);
    if (comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
    fprintf(fh, "X-Mailer: %s\n", yamverxmailer);
    if (comp->UserInfo) WR_WriteUserInfo(fh, comp->From);
@@ -2719,9 +2719,9 @@ static struct WR_ClassData *WR_New(int winnum)
                      Child, Label(GetStr(MSG_WR_BlindCopyTo)),
                      Child, MakeAddressField(&data->GUI.ST_BCC, GetStr(MSG_WR_BlindCopyTo), MSG_HELP_WR_ST_BCC, ABM_BCC, winnum, TRUE),
                      Child, Label(GetStr(MSG_WR_From)),
-                     Child, MakeAddressField(&data->GUI.ST_FROM, GetStr(MSG_WR_From), MSG_HELP_WR_ST_FROM, ABM_FROM, winnum, FALSE),
+                     Child, MakeAddressField(&data->GUI.ST_FROM, GetStr(MSG_WR_From), MSG_HELP_WR_ST_FROM, ABM_FROM, winnum, TRUE),
                      Child, Label(GetStr(MSG_WR_ReplyTo)),
-                     Child, MakeAddressField(&data->GUI.ST_REPLYTO, GetStr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, winnum, FALSE),
+                     Child, MakeAddressField(&data->GUI.ST_REPLYTO, GetStr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, winnum, TRUE),
                      Child, Label(GetStr(MSG_WR_ExtraHeaders)),
                      Child, data->GUI.ST_EXTHEADER = MakeString(SIZE_LARGE,GetStr(MSG_WR_ExtraHeaders)),
                   End,

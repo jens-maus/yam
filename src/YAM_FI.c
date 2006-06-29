@@ -140,61 +140,158 @@ static BOOL FI_MatchPerson(struct Search *search, struct Person *pe)
 //  Searches string in standard header fields
 static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
 {
-   struct ExtendedMail *email;
-   int j;
-   BOOL found = FALSE;
+  BOOL found = FALSE;
 
-   switch (search->Fast)
-   {
-      case FS_FROM:
-         if (FI_MatchPerson(search, &mail->From)) found = TRUE;
-         break;
-      case FS_TO:
-         if (FI_MatchPerson(search, &mail->To)) found = TRUE;
-         if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
-         {
-            for (j = 0; j < email->NoSTo; j++) if (FI_MatchPerson(search, &email->STo[j])) found = TRUE;
-            MA_FreeEMailStruct(email);
-         }
-         break;
-      case FS_CC:
-         if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
-         {
-            for (j = 0; j < email->NoCC; j++)  if (FI_MatchPerson(search, &email->CC[j])) found = TRUE;
-            MA_FreeEMailStruct(email);
-         }
-         break;
-      case FS_REPLYTO:
-         if (FI_MatchPerson(search, &mail->ReplyTo)) found = TRUE;
-        break;
-      case FS_SUBJECT:
-         if ((search->Compare == 4) ? FI_MatchListPattern(search, mail->Subject) : FI_MatchString(search, mail->Subject)) found = TRUE;
-         break;
-      case FS_DATE:
-         {
-            struct DateStamp *pdat = (struct DateStamp *)search->Pattern;
-            int cmp = (pdat->ds_Minute) ? CompareDates(&(mail->Date), pdat) : pdat->ds_Days-mail->Date.ds_Days;
-            if ((search->Compare == 0 && cmp == 0) ||
-                (search->Compare == 1 && cmp != 0) ||
-                (search->Compare == 2 && cmp > 0) ||
-                (search->Compare == 3 && cmp < 0)) found = TRUE;
-            break;
-         }
-      case FS_SIZE:
-         {
-            long cmp = search->Size - mail->Size;
-            if ((search->Compare == 0 && cmp == 0) ||
-                (search->Compare == 1 && cmp != 0) ||
-                (search->Compare == 2 && cmp > 0) ||
-                (search->Compare == 3 && cmp < 0)) found = TRUE;
-            break;
-         }
+  ENTER();
 
-      default:
-        // nothing
-      break;
-   }
-   return found;
+  switch(search->Fast)
+  {
+    // search all "From:" addresses
+    case FS_FROM:
+    {
+      struct ExtendedMail *email;
+
+      if(FI_MatchPerson(search, &mail->From))
+        found = TRUE;
+      else if(isMultiSenderMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+      {
+        int i;
+
+        for(i=0; i < email->NoSFrom; i++)
+        {
+          if(FI_MatchPerson(search, &email->SFrom[i]))
+          {
+            found = TRUE;
+            break;
+          }
+        }
+
+        MA_FreeEMailStruct(email);
+      }
+    }
+    break;
+
+    // search all "To:" addresses
+    case FS_TO:
+    {
+      struct ExtendedMail *email;
+
+      if(FI_MatchPerson(search, &mail->To))
+        found = TRUE;
+      else if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+      {
+        int i;
+
+        for(i=0; i < email->NoSTo; i++)
+        {
+          if(FI_MatchPerson(search, &email->STo[i]))
+          {
+            found = TRUE;
+            break;
+          }
+        }
+
+        MA_FreeEMailStruct(email);
+      }
+    }
+    break;
+
+    // search all "Cc:" addresses
+    case FS_CC:
+    {
+      struct ExtendedMail *email;
+
+      if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+      {
+        int i;
+
+        for(i=0; i < email->NoCC; i++)
+        {
+          if(FI_MatchPerson(search, &email->CC[i]))
+          {
+            found = TRUE;
+            break;
+          }
+        }
+
+        MA_FreeEMailStruct(email);
+      }
+    }
+    break;
+
+    // search all "ReplyTo:" addresses
+    case FS_REPLYTO:
+    {
+      struct ExtendedMail *email;
+
+      if(FI_MatchPerson(search, &mail->ReplyTo))
+        found = TRUE;
+      else if(isMultiReplyToMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+      {
+        int i;
+
+        for(i=0; i < email->NoSReplyTo; i++)
+        {
+          if(FI_MatchPerson(search, &email->SReplyTo[i]))
+          {
+            found = TRUE;
+            break;
+          }
+        }
+
+        MA_FreeEMailStruct(email);
+      }
+    }
+    break;
+
+    // search the "Subject:" line
+    case FS_SUBJECT:
+    {
+      if(search->Compare == 4)
+        found = FI_MatchListPattern(search, mail->Subject);
+      else
+        found = FI_MatchString(search, mail->Subject);
+    }
+    break;
+
+    // search the "Date:" line
+    case FS_DATE:
+    {
+      struct DateStamp *pdat = (struct DateStamp *)search->Pattern;
+
+      int cmp = (pdat->ds_Minute) ? CompareDates(&(mail->Date), pdat) : pdat->ds_Days-mail->Date.ds_Days;
+      if((search->Compare == 0 && cmp == 0) ||
+         (search->Compare == 1 && cmp != 0) ||
+         (search->Compare == 2 && cmp > 0) ||
+         (search->Compare == 3 && cmp < 0))
+      {
+        found = TRUE;
+      }
+    }
+    break;
+
+    // search the message size
+    case FS_SIZE:
+    {
+      long cmp = search->Size - mail->Size;
+
+      if((search->Compare == 0 && cmp == 0) ||
+         (search->Compare == 1 && cmp != 0) ||
+         (search->Compare == 2 && cmp > 0) ||
+         (search->Compare == 3 && cmp < 0))
+      {
+        found = TRUE;
+      }
+    }
+    break;
+
+    default:
+      // nothing
+    break;
+  }
+
+  RETURN(found);
+  return found;
 }
 
 ///

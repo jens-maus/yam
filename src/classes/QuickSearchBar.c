@@ -115,6 +115,24 @@ static inline BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
 
       foundMatch = (DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData,
                                                       MUIV_NListtree_FindUserData_ListNode_Root, &mail->From.Address[0], MUIF_NONE) != 0);
+
+      if(foundMatch == FALSE && isMultiSenderMail(mail))
+      {
+        struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE);
+
+        if(email)
+        {
+          int j;
+
+          for(j=0; j < email->NoSFrom && foundMatch == FALSE; j++)
+          {
+            foundMatch = (DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData,
+                                                            MUIV_NListtree_FindUserData_ListNode_Root, &email->SFrom[j].Address[0], MUIF_NONE) != 0);
+          }
+
+          MA_FreeEMailStruct(email);
+        }
+      }
     }
     break;
 
@@ -152,6 +170,27 @@ static inline BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
       {
         foundMatch = (stristr(mail->From.Address, searchString) != NULL ||
                       (mail->From.RealName[0] && stristr(mail->From.RealName, searchString) != NULL));
+
+
+        if(foundMatch == FALSE && isMultiSenderMail(mail))
+        {
+          struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE);
+
+          if(email)
+          {
+            int j;
+
+            for(j=0; j < email->NoSFrom && foundMatch == FALSE; j++)
+            {
+              struct Person *pe = &email->SFrom[j];
+
+              foundMatch = (stristr(pe->Address, searchString) != NULL ||
+                           (pe->RealName[0] && stristr(pe->RealName, searchString) != NULL));
+            }
+
+            MA_FreeEMailStruct(email);
+          }
+        }
       }
       break;
 
@@ -162,6 +201,25 @@ static inline BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
                       stristr(mail->From.Address, searchString) != NULL ||
                       (mail->From.RealName[0] && stristr(mail->From.RealName, searchString) != NULL));
 
+        if(foundMatch == FALSE && isMultiSenderMail(mail))
+        {
+          struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE);
+
+          if(email)
+          {
+            int j;
+
+            for(j=0; j < email->NoSFrom && foundMatch == FALSE; j++)
+            {
+              struct Person *pe = &email->SFrom[j];
+
+              foundMatch = (stristr(pe->Address, searchString) != NULL ||
+                           (pe->RealName[0] && stristr(pe->RealName, searchString) != NULL));
+            }
+
+            MA_FreeEMailStruct(email);
+          }
+        }
       }
       break;
 
@@ -173,19 +231,29 @@ static inline BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
 
         // if we still haven't found a match with the To: string we go
         // and do a deeper search
-        if(foundMatch == FALSE)
+        if(foundMatch == FALSE && isMultiRCPTMail(mail))
         {
           struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE);
 
           if(email)
           {
-            int i;
-    
-            for(i = 0; foundMatch == FALSE && i < email->NoCC; i++)
+            int j;
+
+            // search the additional To: recipients
+            for(j=0; j < email->NoSTo && foundMatch == FALSE; j++)
             {
-              struct Person *cc = &email->CC[i];
+              struct Person *to = &email->STo[j];
+
+              foundMatch = stristr(to->Address, searchString) != NULL ||
+                           (to->RealName[0] && stristr(to->RealName, searchString) != NULL);
+            }
+    
+            for(j=0; j < email->NoCC && foundMatch == FALSE; j++)
+            {
+              struct Person *cc = &email->CC[j];
+
               foundMatch = stristr(cc->Address, searchString) != NULL ||
-                            (cc->RealName[0] && stristr(cc->RealName, searchString) != NULL);
+                           (cc->RealName[0] && stristr(cc->RealName, searchString) != NULL);
             }
 
             MA_FreeEMailStruct(email);

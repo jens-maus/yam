@@ -1737,7 +1737,7 @@ Object *CO_Page5(struct CO_ClassData *data)
 
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_MessageHeader)),
             Child, Label2(GetStr(MSG_CO_ReplyTo)),
-            Child, MakeAddressField(&data->GUI.ST_REPLYTO, GetStr(MSG_CO_ReplyTo), MSG_HELP_CO_ST_REPLYTO, ABM_TO, -1, FALSE),
+            Child, MakeAddressField(&data->GUI.ST_REPLYTO, GetStr(MSG_CO_ReplyTo), MSG_HELP_CO_ST_REPLYTO, ABM_TO, -1, TRUE),
             Child, Label2(GetStr(MSG_CO_Organization)),
             Child, data->GUI.ST_ORGAN = MakeString(SIZE_DEFAULT,GetStr(MSG_CO_Organization)),
             Child, Label2(GetStr(MSG_CO_ExtraHeaders)),

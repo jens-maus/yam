@@ -48,9 +48,9 @@ struct Mail
    int              tzone;      // the timezone which this mail is based on
    struct DateStamp Date;       // the datestamp of the mail (UTC)
    struct TimeVal   transDate;  // the date/time when this messages arrived/was sent. (UTC)
-   struct Person    From;       // The sender of the mail
-   struct Person    To;         // The mail recipient of the mail
-   struct Person    ReplyTo;    // ReplyTo address of the mail
+   struct Person    From;       // The main sender (normally first entry in "From:")
+   struct Person    To;         // The main mail recipient (first entry in "To:")
+   struct Person    ReplyTo;    // The main Reply-To recipients (first entry in "Reply-To:")
 
    char             Subject[SIZE_SUBJECT];
    char             MailFile[SIZE_MFILE];
@@ -61,12 +61,16 @@ enum ReceiptType { RCPT_TYPE_ALL=1, RCPT_TYPE_READ };
 struct ExtendedMail
 {
    struct Mail      Mail;
-   struct Person *  STo;          // ptr to an array of "To:" recipients (exlucing the main To:)
-   struct Person *  CC;           // ptr to an array of "CC:" recipients
-   struct Person *  BCC;          // ptr to an array of "BCC:" recipients
+   struct Person *  SFrom;        // ptr to an array of additional "From:" senders (excluding the main From:)
+   struct Person *  STo;          // ptr to an array of additional "To:" recipients (excluding the main To:)
+   struct Person *  SReplyTo;     // ptr to an array of additional "Reply-To:" recipients (excluding the main Reply-To:)
+   struct Person *  CC;           // ptr to an array of all "CC:" recipients
+   struct Person *  BCC;          // ptr to an array of all "BCC:" recipients
    char *           extraHeaders; // YAM internal headers (X-YAM-...)
    char *           SenderInfo;
-   int              NoSTo;        // number of recipients in STo (minus one)
+   int              NoSFrom;      // number of additional senders in SFrom (minus one)
+   int              NoSTo;        // number of additional recipients in STo (minus one)
+   int              NoSReplyTo;   // number of additional recipients in SReplyTo (minus one)
    int              NoCC;         // number of recipients in CC
    int              NoBCC;        // number of recipients in BCC
    int              Signature;

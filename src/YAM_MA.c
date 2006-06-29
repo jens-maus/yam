@@ -92,7 +92,6 @@ static void MA_InsertIntroText(FILE*, char*, struct ExpandTextData*);
 static void MA_EditorNotification(int);
 static void MA_SetupQuoteString(struct WR_ClassData*, struct ExpandTextData*, struct Mail*);
 static int MA_CheckWriteWindow(int);
-static struct Person *MA_GetAddressSelect(struct Mail*);
 
 /***************************************************************************
  Module: Main
@@ -1098,26 +1097,46 @@ MakeHook(MA_ReadMessageHook, MA_ReadMessage);
 //  Appends a recipient address to a string
 static char *MA_AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
 {
-   char *ins;
+  char *ins;
 
-   if(!pe) return sbuf;
+  ENTER();
 
-   if (strchr(pe->Address,'@'))
-   {
-      ins = BuildAddrName2(pe);
-   }
-   else
-   {
-      char addr[SIZE_ADDRESS];
-      char *p = strchr(C->EmailAddress, '@');
+  if(!pe)
+  {
+    RETURN(sbuf);
+    return sbuf;
+  }
 
-      snprintf(addr, sizeof(addr), "%s%s", pe->Address, p ? p : "");
-      ins = BuildAddrName(addr, pe->RealName);
-   }
-   if (excludeme) if (!stricmp(pe->Address, C->EmailAddress)) return sbuf;
-   if (stristr(sbuf, ins)) return sbuf;
-   if (*sbuf) sbuf = StrBufCat(sbuf, ", ");
-   return StrBufCat(sbuf, ins);
+  if(strchr(pe->Address,'@'))
+    ins = BuildAddrName2(pe);
+  else
+  {
+    char addr[SIZE_ADDRESS];
+    char *p = strchr(C->EmailAddress, '@');
+
+    snprintf(addr, sizeof(addr), "%s%s", pe->Address, p ? p : "");
+    ins = BuildAddrName(addr, pe->RealName);
+  }
+
+  if(excludeme && stricmp(pe->Address, C->EmailAddress) == 0)
+  {
+    RETURN(sbuf);
+    return sbuf;
+  }
+
+  if(stristr(sbuf, ins))
+  {
+    RETURN(sbuf);
+    return sbuf;
+  }
+
+  // lets prepend a ", " sequence in case sbuf
+  // is not empty
+  if(*sbuf)
+    sbuf = StrBufCat(sbuf, ", ");
+
+  LEAVE();
+  return StrBufCat(sbuf, ins);
 }
 
 ///
@@ -1125,7 +1144,7 @@ static char *MA_AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
 //  Compares two messages by date
 static int MA_CmpDate(struct Mail **pentry1, struct Mail **pentry2)
 {
-   return CompareDates(&(pentry2[0]->Date), &(pentry1[0]->Date));
+  return CompareDates(&(pentry2[0]->Date), &(pentry1[0]->Date));
 }
 
 ///
@@ -1223,53 +1242,122 @@ static int MA_CheckWriteWindow(int winnum)
 //  Creates a new, empty message
 int MA_NewNew(struct Mail *mail, int flags)
 {
-   BOOL quiet = hasQuietFlag(flags);
-   struct Folder *folder = FO_GetCurrentFolder();
-   int winnum = -1;
-   struct WR_ClassData *wr;
-   FILE *out;
+  BOOL quiet = hasQuietFlag(flags);
+  struct Folder *folder = FO_GetCurrentFolder();
+  int winnum = -1;
 
-   if(!folder) return(-1);
+  ENTER();
 
-   /* First check if the basic configuration is okay, then open write window */
-   if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
-   {
-      if ((out = fopen(G->WR_Filename[winnum], "w")))
+  // First check if the basic configuration is okay, then open write window */
+  if(folder != NULL && CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+  {
+    FILE *out;
+
+    if((out = fopen(G->WR_Filename[winnum], "w")))
+    {
+      struct WR_ClassData *wr = G->WR[winnum];
+
+      wr->Mode = NEW_NEW;
+      wr->Mail = mail;
+
+      if(mail)
       {
-         wr = G->WR[winnum];
-         wr->Mode = NEW_NEW;
-         wr->Mail = mail;
-         if (mail) setstring(wr->GUI.ST_TO, BuildAddrName2(GetReturnAddress(mail)));
-         else if(folder->MLSupport)
-         {
-            if(folder->MLAddress[0]) setstring(wr->GUI.ST_TO, folder->MLAddress);
-            if(folder->MLFromAddress[0]) setstring(wr->GUI.ST_FROM, folder->MLFromAddress);
-            if(folder->MLReplyToAddress[0]) setstring(wr->GUI.ST_REPLYTO, folder->MLReplyToAddress);
-         }
+        struct ExtendedMail *email;
 
-         MA_SetupQuoteString(wr, NULL, NULL);
+        // check wheter the old mail contains a ReplyTo: address
+        // or not. And if so we prefer that one instead of using the
+        // To: adresses
+        if(mail->ReplyTo.Address[0] != '\0')
+        {
+          if(isMultiReplyToMail(mail) &&
+             (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+          {
+            char *sbuf;
+            int i;
 
-         if(folder->WriteIntro[0]) MA_InsertIntroText(out, folder->WriteIntro, NULL);
-         else MA_InsertIntroText(out, C->NewIntro, NULL);
-         if(folder->WriteGreetings[0]) MA_InsertIntroText(out, folder->WriteGreetings, NULL);
-         else MA_InsertIntroText(out, C->Greetings, NULL);
-         fclose(out);
+            // add all "ReplyTo:" recipients of the mail
+            sbuf = StrBufCpy(NULL, BuildAddrName2(&mail->ReplyTo));
+            for(i=0; i < email->NoSReplyTo; i++)
+            {
+              sbuf = MA_AppendRcpt(sbuf, &email->SReplyTo[i], FALSE);
+            }
+            setstring(wr->GUI.ST_TO, sbuf);
 
-         // add a signature to the mail depending on the selected signature for this list
-         WR_AddSignature(winnum, folder->MLSupport ? folder->MLSignature: -1);
+            FreeStrBuf(sbuf);
+          }
+          else
+            setstring(wr->GUI.ST_TO, BuildAddrName2(&mail->ReplyTo));
+        }
+        else
+        {
+          if(isMultiSenderMail(mail) &&
+            (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+          {
+            char *sbuf;
+            int i;
 
-         if (!quiet) set(wr->GUI.WI, MUIA_Window_Open, TRUE);
-         MA_EditorNotification(winnum);
-         set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
-         if (C->LaunchAlways && !quiet) DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
+            // add all "From:" recipients of the mail
+            sbuf = StrBufCpy(NULL, BuildAddrName2(&mail->From));
+            for(i=0; i < email->NoSFrom; i++)
+            {
+              sbuf = MA_AppendRcpt(sbuf, &email->SFrom[i], FALSE);
+            }
+            setstring(wr->GUI.ST_TO, sbuf);
+
+            FreeStrBuf(sbuf);
+          }
+          else
+            setstring(wr->GUI.ST_TO, BuildAddrName2(&mail->From));
+        }
       }
+      else if(folder->MLSupport)
+      {
+        if(folder->MLAddress[0])
+          setstring(wr->GUI.ST_TO, folder->MLAddress);
+
+        if(folder->MLFromAddress[0])
+          setstring(wr->GUI.ST_FROM, folder->MLFromAddress);
+
+        if(folder->MLReplyToAddress[0])
+          setstring(wr->GUI.ST_REPLYTO, folder->MLReplyToAddress);
+      }
+
+      MA_SetupQuoteString(wr, NULL, NULL);
+
+      if(folder->WriteIntro[0])
+        MA_InsertIntroText(out, folder->WriteIntro, NULL);
       else
-      {
-        DisposeModulePush(&G->WR[winnum]);
-      }
-   }
-   if (winnum >= 0 && !quiet) return MA_CheckWriteWindow(winnum);
-   return winnum;
+        MA_InsertIntroText(out, C->NewIntro, NULL);
+
+      if(folder->WriteGreetings[0])
+        MA_InsertIntroText(out, folder->WriteGreetings, NULL);
+      else
+        MA_InsertIntroText(out, C->Greetings, NULL);
+
+      // close the output file handle
+      fclose(out);
+
+      // add a signature to the mail depending on the selected signature for this list
+      WR_AddSignature(winnum, folder->MLSupport ? folder->MLSignature: -1);
+
+      if(!quiet)
+        set(wr->GUI.WI, MUIA_Window_Open, TRUE);
+
+      MA_EditorNotification(winnum);
+      set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
+
+      if(C->LaunchAlways && !quiet)
+        DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
+    }
+    else
+      DisposeModulePush(&G->WR[winnum]);
+  }
+
+  if(winnum >= 0 && !quiet)
+    winnum = MA_CheckWriteWindow(winnum);
+
+  RETURN(winnum);
+  return winnum;
 }
 
 ///
@@ -1277,146 +1365,174 @@ int MA_NewNew(struct Mail *mail, int flags)
 //  Edits a message
 int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
 {
-   BOOL quiet = hasQuietFlag(flags);
-   int i, winnum = -1;
-   struct Folder *folder;
-   struct WR_ClassData *wr;
-   struct ExtendedMail *email;
-   FILE *out;
-   char *cmsg, *sbuf;
+  BOOL quiet = hasQuietFlag(flags);
+  int i;
+  int winnum = -1;
+  struct Folder *folder;
 
-   // return if mail is already being written/edited
-   for(i = 0; i < MAXWR; i++)
-   {
-     if(G->WR[i] && G->WR[i]->Mail == mail)
-     {
-       DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
-       return -1;
-     }
-   }
+  ENTER();
 
-   // check if necessary settings fror writing are OK and open new window
-   if(CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
-   {
-      if((out = fopen(G->WR_Filename[winnum], "w")))
+  // return if mail is already being written/edited
+  for(i=0; i < MAXWR; i++)
+  {
+    if(G->WR[i] && G->WR[i]->Mail == mail)
+    {
+      DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
+
+      RETURN(-1);
+      return -1;
+    }
+  }
+
+  // check if necessary settings fror writing are OK and open new window
+  if(CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+  {
+    FILE *out;
+
+    if((out = fopen(G->WR_Filename[winnum], "w")))
+    {
+      char *sbuf;
+      struct ReadMailData *rmData;
+      struct ExtendedMail *email;
+      struct WR_ClassData *wr = G->WR[winnum];
+
+      wr->Mode = NEW_EDIT;
+      wr->Mail = mail;
+      wr->readWindow = readWindow;
+      folder = mail->Folder;
+
+      if(!(email = MA_ExamineMail(folder, mail->MailFile, TRUE)))
       {
-         struct ReadMailData *rmData;
-
-         wr = G->WR[winnum];
-         wr->Mode = NEW_EDIT;
-         wr->Mail = mail;
-         wr->readWindow = readWindow;
-         folder = mail->Folder;
-
-         if(!(email = MA_ExamineMail(folder, mail->MailFile, TRUE)))
-         {
-            ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
-            fclose(out);
-            DisposeModulePush(&G->WR[winnum]);
-            return winnum;
-         }
-
-         MA_SetupQuoteString(wr, NULL, mail);
-
-         if((rmData = AllocPrivateRMData(mail, PM_ALL)))
-         {
-            if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)))
-            {
-              int msglen = strlen(cmsg);
-
-              // we check whether cmsg contains any text and if so we
-              // write out the whole text to our temporary file.
-              if(msglen == 0 || fwrite(cmsg, msglen, 1, out) == 1)
-              {
-                // free our temp text now
-                free(cmsg);
-
-                strlcpy(wr->MsgID, email->IRTMsgID, sizeof(wr->MsgID));
-                setstring(wr->GUI.ST_SUBJECT, mail->Subject);
-                setstring(wr->GUI.ST_FROM, BuildAddrName2(&mail->From));
-                setstring(wr->GUI.ST_REPLYTO, BuildAddrName2(&mail->ReplyTo));
-                sbuf = StrBufCpy(NULL, BuildAddrName2(&mail->To));
-
-                if(isMultiRCPTMail(mail))
-                {
-                  *sbuf = '\0';
-                  sbuf = MA_AppendRcpt(sbuf, &mail->To, FALSE);
-
-                  for(i = 0; i < email->NoSTo; i++)
-                    sbuf = MA_AppendRcpt(sbuf, &email->STo[i], FALSE);
-
-                  setstring(wr->GUI.ST_TO, sbuf);
-                  *sbuf = '\0';
-
-                  for(i = 0; i < email->NoCC; i++)
-                    sbuf = MA_AppendRcpt(sbuf, &email->CC[i], FALSE);
-
-                  setstring(wr->GUI.ST_CC, sbuf);
-                  *sbuf = '\0';
-
-                  for(i = 0; i < email->NoBCC; i++)
-                    sbuf = MA_AppendRcpt(sbuf, &email->BCC[i], FALSE);
-
-                  setstring(wr->GUI.ST_BCC, sbuf);
-                }
-                else
-                  setstring(wr->GUI.ST_TO, sbuf);
-
-                FreeStrBuf(sbuf);
-                if(email->extraHeaders)
-                  setstring(wr->GUI.ST_EXTHEADER, email->extraHeaders);
-
-                setcheckmark(wr->GUI.CH_DELSEND, email->DelSend);
-                setcheckmark(wr->GUI.CH_RECEIPT, email->RetRcpt);
-                setcheckmark(wr->GUI.CH_DISPNOTI, email->ReceiptType == RCPT_TYPE_ALL);
-                setcheckmark(wr->GUI.CH_ADDINFO, isSenderInfoMail(mail));
-                setcycle(wr->GUI.CY_IMPORTANCE, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1);
-                setmutex(wr->GUI.RA_SIGNATURE, email->Signature);
-                setmutex(wr->GUI.RA_SECURITY, wr->OldSecurity = email->Security);
-
-                if(folder->Type != FT_OUTGOING)
-                  DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, wr->GUI.BT_SEND, wr->GUI.BT_HOLD, NULL);
-
-                WR_SetupOldMail(winnum, rmData);
-              }
-              else
-              {
-                E(DBF_MAIL, "Error while writing cmsg to out FH");
-
-                // an error occurred while trying to write the text to out
-                free(cmsg);
-                FreePrivateRMData(rmData);
-                fclose(out);
-                MA_FreeEMailStruct(email);
-                DisposeModulePush(&G->WR[winnum]);
-                return winnum;
-              }
-            }
-
-            FreePrivateRMData(rmData);
-         }
-
-         fclose(out);
-         MA_FreeEMailStruct(email);
-
-         if(!quiet)
-           set(wr->GUI.WI, MUIA_Window_Open, TRUE);
-
-         MA_EditorNotification(winnum);
-         sbuf = (STRPTR)xget(wr->GUI.ST_TO, MUIA_String_Contents);
-         set(wr->GUI.WI, MUIA_Window_ActiveObject, *sbuf ? wr->GUI.TE_EDIT : wr->GUI.ST_TO);
-
-         if(C->LaunchAlways && !quiet)
-           DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
-      }
-      else
+        ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
+        fclose(out);
         DisposeModulePush(&G->WR[winnum]);
-   }
 
-   if(winnum >= 0 && !quiet)
-     return MA_CheckWriteWindow(winnum);
+        RETURN(winnum);
+        return winnum;
+      }
 
-   return winnum;
+      MA_SetupQuoteString(wr, NULL, mail);
+
+      if((rmData = AllocPrivateRMData(mail, PM_ALL)))
+      {
+        char *cmsg;
+
+        if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)))
+        {
+          int msglen = strlen(cmsg);
+
+          // we check whether cmsg contains any text and if so we
+          // write out the whole text to our temporary file.
+          if(msglen == 0 || fwrite(cmsg, msglen, 1, out) == 1)
+          {
+            // free our temp text now
+            free(cmsg);
+
+            strlcpy(wr->MsgID, email->IRTMsgID, sizeof(wr->MsgID));
+
+            // set the subject gadget
+            setstring(wr->GUI.ST_SUBJECT, mail->Subject);
+
+            // add all From: senders
+            sbuf = StrBufCpy(NULL, BuildAddrName2(&mail->From));
+            for(i=0; i < email->NoSFrom; i++)
+            {
+              sbuf = MA_AppendRcpt(sbuf, &email->SFrom[i], FALSE);
+            }
+            setstring(wr->GUI.ST_FROM, sbuf);
+
+            // add all ReplyTo: recipients
+            sbuf = StrBufCpy(sbuf, BuildAddrName2(&mail->ReplyTo));
+            for(i=0; i < email->NoSReplyTo; i++)
+            {
+              sbuf = MA_AppendRcpt(sbuf, &email->SReplyTo[i], FALSE);
+            }
+            setstring(wr->GUI.ST_REPLYTO, sbuf);
+
+            // add all "To:" recipients of the mail
+            sbuf = StrBufCpy(sbuf, BuildAddrName2(&mail->To));
+            for(i=0; i < email->NoSTo; i++)
+            {
+              sbuf = MA_AppendRcpt(sbuf, &email->STo[i], FALSE);
+            }
+            setstring(wr->GUI.ST_TO, sbuf);
+
+            // add all "CC:" recipients of the mail
+            sbuf[0] = '\0';
+            for(i=0; i < email->NoCC; i++)
+            {
+              sbuf = MA_AppendRcpt(sbuf, &email->CC[i], FALSE);
+            }
+            setstring(wr->GUI.ST_CC, sbuf);
+
+            // add all "BCC:" recipients of the mail
+            sbuf[0] = '\0';
+            for(i=0; i < email->NoBCC; i++)
+            {
+              sbuf = MA_AppendRcpt(sbuf, &email->BCC[i], FALSE);
+            }
+            setstring(wr->GUI.ST_BCC, sbuf);
+
+            // free our temporary buffer
+            FreeStrBuf(sbuf);
+
+            if(email->extraHeaders)
+              setstring(wr->GUI.ST_EXTHEADER, email->extraHeaders);
+
+            setcheckmark(wr->GUI.CH_DELSEND, email->DelSend);
+            setcheckmark(wr->GUI.CH_RECEIPT, email->RetRcpt);
+            setcheckmark(wr->GUI.CH_DISPNOTI, email->ReceiptType == RCPT_TYPE_ALL);
+            setcheckmark(wr->GUI.CH_ADDINFO, isSenderInfoMail(mail));
+            setcycle(wr->GUI.CY_IMPORTANCE, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1);
+            setmutex(wr->GUI.RA_SIGNATURE, email->Signature);
+            setmutex(wr->GUI.RA_SECURITY, wr->OldSecurity = email->Security);
+
+            if(folder->Type != FT_OUTGOING)
+              DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, wr->GUI.BT_SEND, wr->GUI.BT_HOLD, NULL);
+
+            WR_SetupOldMail(winnum, rmData);
+          }
+          else
+          {
+            E(DBF_MAIL, "Error while writing cmsg to out FH");
+
+            // an error occurred while trying to write the text to out
+            free(cmsg);
+            FreePrivateRMData(rmData);
+            fclose(out);
+            MA_FreeEMailStruct(email);
+            DisposeModulePush(&G->WR[winnum]);
+
+            RETURN(winnum);
+            return winnum;
+          }
+        }
+
+        FreePrivateRMData(rmData);
+      }
+
+      fclose(out);
+      MA_FreeEMailStruct(email);
+
+      if(!quiet)
+        set(wr->GUI.WI, MUIA_Window_Open, TRUE);
+
+      MA_EditorNotification(winnum);
+      sbuf = (STRPTR)xget(wr->GUI.ST_TO, MUIA_String_Contents);
+      set(wr->GUI.WI, MUIA_Window_ActiveObject, *sbuf ? wr->GUI.TE_EDIT : wr->GUI.ST_TO);
+
+      if(C->LaunchAlways && !quiet)
+        DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
+    }
+    else
+      DisposeModulePush(&G->WR[winnum]);
+  }
+
+  if(winnum >= 0 && !quiet)
+    winnum = MA_CheckWriteWindow(winnum);
+
+  RETURN(winnum);
+  return winnum;
 }
 
 ///
@@ -1424,20 +1540,29 @@ int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
 //  Bounces a message
 int MA_NewBounce(struct Mail *mail, int flags)
 {
-   BOOL quiet = hasQuietFlag(flags);
-   int winnum = -1;
-   struct WR_ClassData *wr;
+  BOOL quiet = hasQuietFlag(flags);
+  int winnum = -1;
 
-   if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, TRUE)) >= 0)
-   {
-      wr = G->WR[winnum];
-      wr->Mode = NEW_BOUNCE;
-      wr->Mail = mail;
-      if (!quiet) set(wr->GUI.WI, MUIA_Window_Open, TRUE);
-      set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
-   }
-   if (winnum >= 0 && !quiet) return MA_CheckWriteWindow(winnum);
-   return winnum;
+  ENTER();
+
+  if(CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, TRUE)) >= 0)
+  {
+    struct WR_ClassData *wr = G->WR[winnum];
+
+    wr->Mode = NEW_BOUNCE;
+    wr->Mail = mail;
+
+    if(!quiet)
+      set(wr->GUI.WI, MUIA_Window_Open, TRUE);
+
+    set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
+  }
+
+  if(winnum >= 0 && !quiet)
+    winnum = MA_CheckWriteWindow(winnum);
+
+  RETURN(winnum);
+  return winnum;
 }
 
 ///
@@ -1445,94 +1570,127 @@ int MA_NewBounce(struct Mail *mail, int flags)
 //  Forwards a list of messages
 int MA_NewForward(struct Mail **mlist, int flags)
 {
-   BOOL quiet = hasQuietFlag(flags);
-   char buffer[SIZE_LARGE];
-   int i, winnum = -1, mlen = (2+(int)mlist[0])*sizeof(struct Mail *);
-   struct WR_ClassData *wr;
-   struct Mail *mail = NULL;
-   struct ExtendedMail *email;
-   struct ExpandTextData etd;
-   FILE *out;
-   char *cmsg, *rsub;
+  BOOL quiet = hasQuietFlag(flags);
+  int winnum = -1;
 
-   if(CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
-   {
-      if ((out = fopen(G->WR_Filename[winnum], "w")))
+  ENTER();
+
+  if(CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+  {
+    FILE *out;
+
+    if((out = fopen(G->WR_Filename[winnum], "w")))
+    {
+      int i;
+      int mlen = (2+(int)mlist[0])*sizeof(struct Mail *);
+      int signature = -1;
+      struct WR_ClassData *wr = G->WR[winnum];
+      char *rsub = AllocStrBuf(SIZE_SUBJECT);
+
+      wr->Mode = NEW_FORWARD;
+      wr->MList = malloc(mlen);
+      if(wr->MList)
+        memcpy(wr->MList, mlist, mlen);
+
+      qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), (int (*)(const void *, const void *))MA_CmpDate);
+
+      MA_InsertIntroText(out, C->NewIntro, NULL);
+
+      for(i=0; i < (int)mlist[0]; i++)
       {
-         wr = G->WR[winnum];
-         wr->Mode = NEW_FORWARD;
-         wr->MList = memcpy(malloc(mlen), mlist, mlen);
-         rsub = AllocStrBuf(SIZE_SUBJECT);
-         qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), (int (*)(const void *, const void *))MA_CmpDate);
-         MA_InsertIntroText(out, C->NewIntro, NULL);
-         for (i = 0; i < (int)mlist[0]; i++)
-         {
-            struct ReadMailData *rmData;
+        struct ExtendedMail *email;
+        struct ReadMailData *rmData;
+        struct ExpandTextData etd;
+        struct Mail *mail = mlist[i+2];
 
-            mail = mlist[i+2];
+        if(signature == -1 && mail->Folder)
+        {
+          if(mail->Folder->MLSupport)
+            signature = mail->Folder->MLSignature;
+        }
 
-            if(!(email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
-            {
-              ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, mail->Folder, mail));
-              fclose(out);
-              FreeStrBuf(rsub);
-              DisposeModulePush(&G->WR[winnum]);
-              return winnum;
-            }
+        if(!(email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+        {
+          ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, mail->Folder, mail));
+          fclose(out);
+          FreeStrBuf(rsub);
+          DisposeModulePush(&G->WR[winnum]);
 
-            MA_SetupQuoteString(wr, &etd, &email->Mail);
-            etd.OM_MessageID = email->MsgID;
-            etd.R_Name = *mail->To.RealName ? mail->To.RealName : mail->To.Address;
-            etd.R_Address = mail->To.Address;
+          RETURN(winnum);
+          return winnum;
+        }
 
-            if (*mail->Subject)
-            {
-               snprintf(buffer, sizeof(buffer), "%s (fwd)", mail->Subject);
-               if (!strstr(rsub, buffer))
-               {
-                  if (*rsub) rsub = StrBufCat(rsub, "; ");
-                  rsub = StrBufCat(rsub, buffer);
-               }
-            }
+        MA_SetupQuoteString(wr, &etd, &email->Mail);
+        etd.OM_MessageID = email->MsgID;
+        etd.R_Name = mail->To.RealName[0] != '\0' ? mail->To.RealName : mail->To.Address;
+        etd.R_Address = mail->To.Address;
 
-            if((rmData = AllocPrivateRMData(mail, PM_ALL)))
-            {
-              etd.HeaderFile = rmData->firstPart->Filename;
-              MA_InsertIntroText(out, C->ForwardIntro, &etd);
-              MA_FreeEMailStruct(email);
+        if(mail->Subject != '\0')
+        {
+          char buffer[SIZE_LARGE];
 
-              if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)))
-              {
-                fputs(cmsg, out);
-                free(cmsg);
+          snprintf(buffer, sizeof(buffer), "%s (fwd)", mail->Subject);
+          if(!strstr(rsub, buffer))
+          {
+            if(rsub[0] != '\0')
+              rsub = StrBufCat(rsub, "; ");
 
-                MA_InsertIntroText(out, C->ForwardFinish, &etd);
+            rsub = StrBufCat(rsub, buffer);
+          }
+        }
 
-                if(!hasNoAttachFlag(flags))
-                  WR_SetupOldMail(winnum, rmData);
-              }
+        if((rmData = AllocPrivateRMData(mail, PM_ALL)))
+        {
+          char *cmsg;
 
-              FreePrivateRMData(rmData);
-            }
-         }
-         MA_InsertIntroText(out, C->Greetings, NULL);
-         fclose(out);
+          etd.HeaderFile = rmData->firstPart->Filename;
+          MA_InsertIntroText(out, C->ForwardIntro, &etd);
+          MA_FreeEMailStruct(email);
 
-         // add a signature to the mail depending on the selected signature for this list
-         WR_AddSignature(winnum, (mail->Folder && mail->Folder->MLSupport) ? mail->Folder->MLSignature: -1);
+          if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)))
+          {
+            fputs(cmsg, out);
+            free(cmsg);
 
-         setstring(wr->GUI.ST_SUBJECT, rsub);
-         FreeStrBuf(rsub);
-         if (!quiet) set(wr->GUI.WI, MUIA_Window_Open, TRUE);
-         MA_EditorNotification(winnum);
-         set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
-         if (C->LaunchAlways && !quiet) DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
+            MA_InsertIntroText(out, C->ForwardFinish, &etd);
+
+            if(!hasNoAttachFlag(flags))
+              WR_SetupOldMail(winnum, rmData);
+          }
+
+          FreePrivateRMData(rmData);
+        }
       }
-      else
-        DisposeModulePush(&G->WR[winnum]);
-   }
-   if (winnum >= 0 && !quiet) return MA_CheckWriteWindow(winnum);
-   return winnum;
+
+      // add some footer with greatings.
+      MA_InsertIntroText(out, C->Greetings, NULL);
+      fclose(out);
+
+      // add a signature to the mail depending on the selected signature for this list
+      WR_AddSignature(winnum, signature);
+
+      setstring(wr->GUI.ST_SUBJECT, rsub);
+      FreeStrBuf(rsub);
+
+      // make sure the window is open
+      if(!quiet)
+        set(wr->GUI.WI, MUIA_Window_Open, TRUE);
+
+      MA_EditorNotification(winnum);
+      set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
+
+      if(C->LaunchAlways && !quiet)
+        DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
+    }
+    else
+      DisposeModulePush(&G->WR[winnum]);
+  }
+
+  if(winnum >= 0 && !quiet)
+    winnum = MA_CheckWriteWindow(winnum);
+
+  RETURN(winnum);
+  return winnum;
 }
 
 ///
@@ -1540,242 +1698,493 @@ int MA_NewForward(struct Mail **mlist, int flags)
 //  Creates a reply to a list of messages
 int MA_NewReply(struct Mail **mlist, int flags)
 {
-   int j, i, repmode = 1, winnum = -1, mlen = (2+(int)mlist[0])*sizeof(struct Mail *);
-   BOOL doabort = FALSE, multi = (int)mlist[0] > 1, altpat = FALSE, quiet = hasQuietFlag(flags);
-   struct WR_ClassData *wr;
-   struct Mail *mail;
-   struct ExtendedMail *email;
-   struct ExpandTextData etd;
-   struct Person *repto, rtml;
-   struct Folder *folder = NULL;
-   FILE *out;
-   char *mlistad = NULL, buffer[SIZE_LARGE];
-   char *cmsg, *rfrom = NULL, *rrepto = NULL, *rto = NULL, *rcc = NULL, *rsub = NULL;
-   char *domain;
+  int winnum = -1;
+  BOOL doabort = FALSE;
+  BOOL quiet = hasQuietFlag(flags);
 
-   if (CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
-   {
-      if ((out = fopen(G->WR_Filename[winnum], "w")))
+  ENTER();
+
+  // check if the configuration is valid and open a new
+  // write window immediately
+  if(CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+  {
+    FILE *out;
+
+    // open a new output file handle for generating
+    // a new output file
+    if((out = fopen(G->WR_Filename[winnum], "w")))
+    {
+      int j;
+      int mlen = (2+(int)mlist[0])*sizeof(struct Mail *);
+      int repmode = 1;
+      int signature = -1;
+      BOOL altpat = FALSE;
+      char *domain = NULL;
+      char *mlistad = NULL;
+      char *rfrom = NULL;
+      char *rrepto = NULL;
+      char *rto = AllocStrBuf(SIZE_ADDRESS);
+      char *rcc = AllocStrBuf(SIZE_ADDRESS);
+      char *rsub = AllocStrBuf(SIZE_SUBJECT);
+      char buffer[SIZE_LARGE];
+      struct WR_ClassData *wr = G->WR[winnum];
+      struct ExpandTextData etd;
+      BOOL mlIntro = FALSE;
+
+      // make sure the write window know of the
+      // operation and knows which mails to process
+      wr->Mode = NEW_REPLY;
+      wr->MList = malloc(mlen);
+      if(wr->MList)
+        memcpy(wr->MList, mlist, mlen);
+
+      // make sure we sort the nlist according to
+      // the mail date
+      qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), (int (*)(const void *, const void *))MA_CmpDate);
+
+      // Now we iterate through all selected mails
+      for(j=0; j < (int)mlist[0]; j++)
       {
-         wr = G->WR[winnum];
-         wr->Mode = NEW_REPLY;
-         wr->MList = memcpy(malloc(mlen), mlist, mlen);
-         rto = AllocStrBuf(SIZE_ADDRESS);
-         rcc = AllocStrBuf(SIZE_ADDRESS);
-         rsub = AllocStrBuf(SIZE_SUBJECT);
-         qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), (int (*)(const void *, const void *))MA_CmpDate);
+        int i;
+        struct Mail *mail = mlist[j+2];
+        struct Folder *folder = mail->Folder;
+        struct ExtendedMail *email;
+        struct Person pe;
+        BOOL foundMLFolder = FALSE;
 
-         // Now we iterate through all selected mails
-         for (j = 0; j < (int)mlist[0]; j++)
-         {
-            mail = mlist[j+2];
-            folder = mail->Folder;
+        if(!(email = MA_ExamineMail(folder, mail->MailFile, TRUE)))
+        {
+          ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
+          fclose(out);
+          DisposeModulePush(&G->WR[winnum]);
+          FreeStrBuf(rto);
+          FreeStrBuf(rcc);
+          FreeStrBuf(rsub);
 
-            if(!(email = MA_ExamineMail(folder, mail->MailFile, TRUE)))
+          RETURN(winnum);
+          return winnum;
+        }
+
+        // make sure we setup the quote string
+        // correctly.
+        MA_SetupQuoteString(wr, &etd, &email->Mail);
+        etd.OM_MessageID = email->MsgID;
+
+        // If the mail which we are going to reply to already has a subject,
+        // we are going to add a "Re:" to it.
+        if(mail->Subject[0] != '\0')
+        {
+          if(j > 0)
+            strlcpy(buffer, mail->Subject, sizeof(buffer));
+          else
+            snprintf(buffer, sizeof(buffer), "Re: %s", MA_GetRealSubject(mail->Subject));
+
+          if(!strstr(rsub, buffer))
+          {
+            if(rsub[0] != '\0')
+              rsub = StrBufCat(rsub, "; ");
+
+            rsub = StrBufCat(rsub, buffer);
+          }
+        }
+
+        // in case we are replying to a single message we also have to
+        // save the messageID of it.
+        if((int)mlist[0] == 1)
+          strlcpy(wr->MsgID, email->MsgID, sizeof(wr->MsgID));
+
+        // Now we analyse the folder of the selected mail and if it
+        // is a mailing list we have to do some special operation
+        if(folder)
+        {
+          // if the mail we are going to reply resists in the incoming folder
+          // we have to check all other folders first.
+          if(folder->Type == FT_INCOMING)
+          {
+            struct Folder **flist;
+
+            // walk through all our folders
+            // and check if it matches a pattern
+            if((flist = FO_CreateList()))
             {
-              ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
-              fclose(out);
-              DisposeModulePush(&G->WR[winnum]);
-              FreeStrBuf(rto);
-              FreeStrBuf(rcc);
-              FreeStrBuf(rsub);
-              return winnum;
-            }
+              int i;
 
-            MA_SetupQuoteString(wr, &etd, &email->Mail);
-            etd.OM_MessageID = email->MsgID;
-
-            // If this mail already have a subject we are going to add a "Re:" to it.
-            if (*mail->Subject)
-            {
-               if(j)
-                strlcpy(buffer, mail->Subject, sizeof(buffer));
-               else
-                snprintf(buffer, sizeof(buffer), "Re: %s", MA_GetRealSubject(mail->Subject));
-
-               if (!strstr(rsub, buffer))
-               {
-                  if (*rsub) rsub = StrBufCat(rsub, "; ");
-                  rsub = StrBufCat(rsub, buffer);
-               }
-            }
-
-            if(!multi)
-              strlcpy(wr->MsgID, email->MsgID, sizeof(wr->MsgID));
-
-            // Now we analyse the folder of the selected mail and if it
-            // is a mailing list we have to do some operation
-            if (folder)
-            {
-               char tofld[SIZE_LARGE], fromfld[SIZE_LARGE];
-
-               strlcpy(tofld, BuildAddrName2(&mail->To), sizeof(tofld));
-               strlcpy(fromfld, BuildAddrName2(&mail->From), sizeof(fromfld));
-
-               // if the mail we are going to reply resists in the incoming folder
-               // we have to check all other folders first.
-               if (folder->Type == FT_INCOMING)
-               {
-                  struct Folder **flist;
-
-                  if ((flist = FO_CreateList()))
-                  {
-                     for (i = 1; i <= (int)*flist; i++)
-                     {
-                       if (flist[i]->MLSupport && flist[i]->MLPattern[0] && MatchNoCase(tofld, flist[i]->MLPattern))
-                       {
-                          mlistad = flist[i]->MLAddress[0] ? flist[i]->MLAddress : fromfld;
-                          folder = flist[i];
-                          if (flist[i]->MLFromAddress[0])    rfrom  = flist[i]->MLFromAddress;
-                          if (flist[i]->MLReplyToAddress[0]) rrepto = flist[i]->MLReplyToAddress;
-                          break;
-                       }
-                     }
-                     free(flist);
-                  }
-               }
-               else if (folder->MLSupport && folder->MLPattern[0] && MatchNoCase(tofld, folder->MLPattern))
-               {
-                  mlistad = folder->MLAddress[0] ? folder->MLAddress : fromfld;
-                  if (folder->MLFromAddress[0])    rfrom  = folder->MLFromAddress;
-                  if (folder->MLReplyToAddress[0]) rrepto = folder->MLReplyToAddress;
-               }
-            }
-
-            if(mlistad && !hasPrivateFlag(flags) && !hasMListFlag(flags))
-            {
-               ExtractAddress(mlistad, repto = &rtml);
-               if (!strstr(rto, mlistad))
-               {
-                  if (*rto) rto = StrBufCat(rto, ", ");
-                  rto = StrBufCat(rto, mlistad);
-               }
-            }
-            else repto = GetReturnAddress(mail);
-
-            // If this mail is a standard (non-ML) mail and the user hasn`t pressed shift
-            if(isMultiRCPTMail(mail) && !hasPrivateFlag(flags) && !hasMListFlag(flags))
-            {
-              if (!(repmode = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ReplyReqOpt), GetStr(MSG_MA_ReplyReq))))
+              for(i=1; i <= (int)*flist; i++)
               {
-                MA_FreeEMailStruct(email);
-                fclose(out);
-                DisposeModulePush(&G->WR[winnum]);
-                FreeStrBuf(rto);
-                FreeStrBuf(rcc);
-                FreeStrBuf(rsub);
-                return winnum;
+                if(flist[i]->MLSupport && flist[i]->MLPattern[0])
+                {
+                  if(MatchNoCase(mail->To.Address, flist[i]->MLPattern) == FALSE &&
+                     MatchNoCase(mail->To.RealName, flist[i]->MLPattern) == FALSE)
+                  {
+                    int j;
+
+                    for(j=0; j < email->NoSTo; i++)
+                    {
+                      if(MatchNoCase(email->STo[j].Address, flist[i]->MLPattern) ||
+                         MatchNoCase(email->STo[j].RealName, flist[i]->MLPattern))
+                      {
+                        foundMLFolder = TRUE;
+                        break;
+                      }
+                    }
+                  }
+                  else
+                    foundMLFolder = TRUE;
+
+                  if(foundMLFolder)
+                  {
+                    mlistad = flist[i]->MLAddress[0] ? flist[i]->MLAddress : NULL;
+                    folder = flist[i];
+
+                    if(flist[i]->MLFromAddress[0])
+                      rfrom  = flist[i]->MLFromAddress;
+
+                    if(flist[i]->MLReplyToAddress[0])
+                      rrepto = flist[i]->MLReplyToAddress;
+
+                    break;
+                  }
+                }
+              }
+
+              free(flist);
+            }
+          }
+          else if(folder->MLSupport && folder->MLPattern[0])
+          {
+            if(MatchNoCase(mail->To.Address, folder->MLPattern) == FALSE &&
+               MatchNoCase(mail->To.RealName, folder->MLPattern) == FALSE)
+            {
+              int j;
+
+              for(j=0; j < email->NoSTo; i++)
+              {
+                if(MatchNoCase(email->STo[j].Address, folder->MLPattern) ||
+                   MatchNoCase(email->STo[j].RealName, folder->MLPattern))
+                {
+                  foundMLFolder = TRUE;
+                  break;
+                }
               }
             }
+            else
+              foundMLFolder = TRUE;
 
-            if (repmode == 1)
+            if(foundMLFolder)
             {
-               if(hasPrivateFlag(flags)) repto = &mail->From;
-               else if(hasMListFlag(flags) || mlistad) ; // do nothing
-               else if (C->CompareAddress && *mail->ReplyTo.Address && stricmp(mail->From.Address, mail->ReplyTo.Address))
-               {
-                  snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
-                  switch (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_Compare3ReqOpt), buffer))
+              mlistad = folder->MLAddress[0] ? folder->MLAddress : NULL;
+
+              if(folder->MLFromAddress[0])
+                rfrom  = folder->MLFromAddress;
+
+              if(folder->MLReplyToAddress[0])
+                rrepto = folder->MLReplyToAddress;
+            }
+          }
+        }
+
+        // If this mail is a standard multi-recipient mail and the user hasn't pressed SHIFT
+        // or ALT we going to ask him to which recipient he want to send the mail to.
+        if(isMultiRCPTMail(mail) && !hasPrivateFlag(flags) && !hasMListFlag(flags))
+        {
+          // ask the user and in case he want to abort, quit this
+          // function immediately.
+          if(!(repmode = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ReplyReqOpt), GetStr(MSG_MA_ReplyReq))))
+          {
+            MA_FreeEMailStruct(email);
+            fclose(out);
+            DisposeModulePush(&G->WR[winnum]);
+            FreeStrBuf(rto);
+            FreeStrBuf(rcc);
+            FreeStrBuf(rsub);
+
+            RETURN(winnum);
+            return winnum;
+          }
+        }
+
+        // now we should know how the user wants to
+        // reply to the mail. The possible reply modes are:
+        //
+        // repmode == 1 : To Sender (From:/ReplyTo:)
+        // repmode == 2 : To Sender and all recipients (From:/ReplyTo:, To:, CC:)
+        // repmode == 3 : To Recipients (To:, CC:)
+        if(repmode == 1)
+        {
+          BOOL addDefault = FALSE;
+
+          // the user wants to reply to the Sender (From:), however we
+          // need to check wheter he want to get asked or directly reply to
+          // the wanted address.
+          if(hasPrivateFlag(flags))
+          {
+            // the user seem to have pressed the SHIFT key, so
+            // we are going to "just"reply to the "From:" addresses of
+            // the original mail. so we add them accordingly.
+            rto = MA_AppendRcpt(rto, &mail->From, FALSE);
+            for(i=0; i < email->NoSFrom; i++)
+              rto = MA_AppendRcpt(rto, &email->SFrom[i], FALSE);
+          }
+          else if(foundMLFolder && mlistad != NULL)
+          {
+            char *p = strdup(mlistad);
+            struct Person pe;
+
+            // we found a matching folder for the mail we are going to
+            // reply to, so we go and add the 'mlistad' to our To: addresses
+            while(*p)
+            {
+              char *next;
+
+              if((next = MyStrChr(p, ',')))
+                *next++ = '\0';
+
+              ExtractAddress(p, &pe);
+              rto = MA_AppendRcpt(rto, &pe, FALSE);
+
+              if(!(p = next))
+                break;
+            }
+
+            free(p);
+          }
+          else if(C->CompareAddress && !hasMListFlag(flags) &&
+                  mail->ReplyTo.Address[0] != '\0')
+          {
+            BOOL askUser = FALSE;
+
+            // now we have to check wheter the ReplyTo: and From: of the original are the
+            // very same or not.
+            if(stricmp(mail->From.Address, mail->ReplyTo.Address) == 0)
+            {
+              if(email->NoSFrom == email->NoSReplyTo)
+              {
+                for(i=0; i < email->NoSFrom; i++)
+                {
+                  if(stricmp(email->SFrom[i].Address, email->SReplyTo[i].Address) != 0)
                   {
-                     case 3:
-                     {
-                        rcc = MA_AppendRcpt(rcc, &mail->From, FALSE);
-                     }
-                     // continue
-
-                     case 2:
-                     {
-                        repto = &mail->ReplyTo;
-                     }
-                     break;
-
-                     case 1:
-                     {
-                        repto = &mail->From;
-                     }
-                     break;
-
-                     case 0:
-                     {
-                        MA_FreeEMailStruct(email);
-                        fclose(out);
-                        DisposeModulePush(&G->WR[winnum]);
-                        FreeStrBuf(rto);
-                        FreeStrBuf(rcc);
-                        FreeStrBuf(rsub);
-                        return winnum;
-                     }
+                    askUser = TRUE;
+                    break;
                   }
-               }
-               rto = MA_AppendRcpt(rto, repto, FALSE);
+                }
+              }
+              else
+                askUser = TRUE;
+            }
+            else
+              askUser = TRUE;
+
+            // if askUser == TRUE, we go and
+            // ask the user which address he wants to reply to.
+            if(askUser)
+            {
+              snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
+              switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_Compare3ReqOpt), buffer))
+              {
+                // Both (From:/ReplyTo:) address
+                case 3:
+                {
+                  // add all From: addresses to the CC: list
+                  rcc = MA_AppendRcpt(rcc, &mail->From, FALSE);
+                  for(i=0; i < email->NoSFrom; i++)
+                    rcc = MA_AppendRcpt(rcc, &email->SFrom[i], FALSE);
+                }
+                // continue
+
+                // Reply-To: addresses
+                case 2:
+                {
+                  rto = MA_AppendRcpt(rto, &mail->ReplyTo, FALSE);
+                  for(i=0; i < email->NoSReplyTo; i++)
+                    rto = MA_AppendRcpt(rto, &email->SReplyTo[i], FALSE);
+                }
+                break;
+
+                // only From: addresses
+                case 1:
+                {
+                  rto = MA_AppendRcpt(rto, &mail->From, FALSE);
+                  for(i=0; i < email->NoSFrom; i++)
+                    rto = MA_AppendRcpt(rto, &email->SFrom[i], FALSE);
+                }
+                break;
+
+                // cancel operation
+                case 0:
+                {
+                  MA_FreeEMailStruct(email);
+                  fclose(out);
+                  DisposeModulePush(&G->WR[winnum]);
+                  FreeStrBuf(rto);
+                  FreeStrBuf(rcc);
+                  FreeStrBuf(rsub);
+
+                  RETURN(winnum);
+                  return winnum;
+                }
+              }
+            }
+            else
+              addDefault = TRUE;
+          }
+          else
+            addDefault = TRUE;
+
+          if(addDefault)
+          {
+            // otherwise we check wheter to use the ReplyTo: or From: addresses as the
+            // To: adress of our reply. If a ReplyTo: exists we use that one instead
+            if(mail->ReplyTo.Address[0] != '\0')
+            {
+              rto = MA_AppendRcpt(rto, &mail->ReplyTo, FALSE);
+              for(i=0; i < email->NoSReplyTo; i++)
+                rto = MA_AppendRcpt(rto, &email->SReplyTo[i], FALSE);
             }
             else
             {
-               if (repmode == 2) rto = MA_AppendRcpt(rto, GetReturnAddress(mail), FALSE);
-               rto = MA_AppendRcpt(rto, &mail->To, TRUE);
-               for (i = 0; i < email->NoSTo; i++) rto = MA_AppendRcpt(rto, &email->STo[i], TRUE);
-               for (i = 0; i < email->NoCC; i++) rcc = MA_AppendRcpt(rcc, &email->CC[i], TRUE);
+              rto = MA_AppendRcpt(rto, &mail->From, FALSE);
+              for(i=0; i < email->NoSFrom; i++)
+                rto = MA_AppendRcpt(rto, &email->SFrom[i], FALSE);
             }
-
-            etd.R_Name = repto->RealName;
-            etd.R_Address = repto->Address;
-            altpat = FALSE;
-            if (!(domain = strchr(repto->Address,'@'))) domain = strchr(C->EmailAddress,'@');
-            if (*C->AltReplyPattern) if (MatchNoCase(domain, C->AltReplyPattern)) altpat = TRUE;
-            if (!j) MA_InsertIntroText(out, mlistad ? C->MLReplyHello : (altpat ? C->AltReplyHello : C->ReplyHello), &etd);
-            if(C->QuoteMessage && !hasNoQuoteFlag(flags))
+          }
+        }
+        else
+        {
+          // user wants to replyd to all senders and recipients
+          // so lets add
+          if(repmode == 2)
+          {
+            if(mail->ReplyTo.Address[0] != '\0')
             {
-               struct ReadMailData *rmData;
-
-               if(j)
-                 fputc('\n', out);
-
-               if((rmData = AllocPrivateRMData(mail, PM_TEXTS)))
-               {
-                 etd.HeaderFile = rmData->firstPart->Filename;
-                 MA_InsertIntroText(out, mlistad ? C->MLReplyIntro : (altpat ? C->AltReplyIntro : C->ReplyIntro), &etd);
-                 if((cmsg = RE_ReadInMessage(rmData, RIM_QUOTE)))
-                 {
-                   Quote_Text(out, cmsg, strlen(cmsg), C->EdWrapMode ? C->EdWrapCol-strlen(wr->QuoteText)-1 : 1024, wr->QuoteText);
-                   free(cmsg);
-                 }
-
-                 FreePrivateRMData(rmData);
-               }
+              rto = MA_AppendRcpt(rto, &mail->ReplyTo, FALSE);
+              for(i=0; i < email->NoSReplyTo; i++)
+                rto = MA_AppendRcpt(rto, &email->SReplyTo[i], FALSE);
             }
-            MA_FreeEMailStruct(email);
-         }
-         MA_InsertIntroText(out, mlistad ? C->MLReplyBye : (altpat ? C->AltReplyBye: C->ReplyBye), &etd);
-         fclose(out);
+            else
+            {
+              rto = MA_AppendRcpt(rto, &mail->From, FALSE);
+              for(i=0; i < email->NoSFrom; i++)
+                rto = MA_AppendRcpt(rto, &email->SFrom[i], FALSE);
+            }
+          }
 
-         // now we add the configured signature to the reply
-         WR_AddSignature(winnum, (folder && folder->MLSupport) ? folder->MLSignature: -1);
+          // now add all original To: addresses
+          rto = MA_AppendRcpt(rto, &mail->To, TRUE);
+          for(i=0; i < email->NoSTo; i++)
+            rto = MA_AppendRcpt(rto, &email->STo[i], TRUE);
 
-         /* If this is a reply to a mail belonging to a mailing list,
-            set the "From:" and "Reply-To:" addresses accordingly */
-         if (rfrom)  setstring(wr->GUI.ST_FROM,    rfrom);
-         if (rrepto) setstring(wr->GUI.ST_REPLYTO, rrepto);
+          // add the CC: addresses as well
+          for(i=0; i < email->NoCC; i++)
+            rcc = MA_AppendRcpt(rcc, &email->CC[i], TRUE);
+        }
 
-         setstring(wr->GUI.ST_TO, rto);
-         setstring(*rto ? wr->GUI.ST_CC : wr->GUI.ST_TO, rcc);
-         setstring(wr->GUI.ST_SUBJECT, rsub);
-         if (!quiet) set(wr->GUI.WI, MUIA_Window_Open, TRUE);
-         MA_EditorNotification(winnum);
-         set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.TE_EDIT);
-         if (C->LaunchAlways && !quiet) DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
+        // extract the first address/name from our generated
+        // To: address string
+        ExtractAddress(rto, &pe);
+        etd.R_Name = pe.RealName;
+        etd.R_Address = pe.Address;
+
+        // extract the domain name from the To address or respective
+        // the default To: mail address
+        if(!(domain = strchr(pe.Address, '@')))
+          domain = strchr(C->EmailAddress, '@');
+
+        if(C->AltReplyPattern[0] != '\0' && domain && MatchNoCase(domain, C->AltReplyPattern))
+          altpat = TRUE;
+        else
+          altpat = FALSE;
+
+        // insert a "Hello" text as the first intro text in case
+        // this is our first iteration
+        if(j == 0)
+        {
+          if(foundMLFolder)
+          {
+            signature = folder->MLSignature;
+            mlIntro = TRUE;
+          }
+
+          MA_InsertIntroText(out, foundMLFolder ? C->MLReplyHello : (altpat ? C->AltReplyHello : C->ReplyHello), &etd);
+        }
+
+        // if the user wants to quote the mail text of the original mail,
+        // we process it right now.
+        if(C->QuoteMessage && !hasNoQuoteFlag(flags))
+        {
+          struct ReadMailData *rmData;
+
+          if(j > 0)
+            fputc('\n', out);
+
+          if((rmData = AllocPrivateRMData(mail, PM_TEXTS)))
+          {
+            char *cmsg;
+
+            etd.HeaderFile = rmData->firstPart->Filename;
+
+            // put some introduction right before the quoted text.
+            MA_InsertIntroText(out, foundMLFolder ? C->MLReplyIntro : (altpat ? C->AltReplyIntro : C->ReplyIntro), &etd);
+
+            if((cmsg = RE_ReadInMessage(rmData, RIM_QUOTE)))
+            {
+              Quote_Text(out, cmsg, strlen(cmsg), C->EdWrapMode ? C->EdWrapCol-strlen(wr->QuoteText)-1 : 1024, wr->QuoteText);
+              free(cmsg);
+            }
+
+            FreePrivateRMData(rmData);
+          }
+        }
+
+        // free out temporary extended mail structure again.
+        MA_FreeEMailStruct(email);
       }
-      else doabort = TRUE;
-   }
-   if (winnum >= 0 && !quiet && !doabort) return MA_CheckWriteWindow(winnum);
 
-   if (doabort)
-   {
+      // now that the mail is finished, we go and output some footer message to
+      // the reply text.
+      MA_InsertIntroText(out, mlIntro ? C->MLReplyBye : (altpat ? C->AltReplyBye: C->ReplyBye), &etd);
+      fclose(out);
+
+      // now we add the configured signature to the reply
+      WR_AddSignature(winnum, signature);
+
+      // If this is a reply to a mail belonging to a mailing list,
+      // set the "From:" and "Reply-To:" addresses accordingly */
+      if(rfrom)
+        setstring(wr->GUI.ST_FROM,    rfrom);
+
+      if(rrepto)
+        setstring(wr->GUI.ST_REPLYTO, rrepto);
+
+      setstring(wr->GUI.ST_TO, rto);
+      setstring(rto[0] != '\0' ? wr->GUI.ST_CC : wr->GUI.ST_TO, rcc);
+      setstring(wr->GUI.ST_SUBJECT, rsub);
+
+      if(!quiet)
+        set(wr->GUI.WI, MUIA_Window_Open, TRUE);
+
+      MA_EditorNotification(winnum);
+      set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.TE_EDIT);
+
+      if(C->LaunchAlways && !quiet)
+        DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
+
+      // free our temporary buffers
+      FreeStrBuf(rto);
+      FreeStrBuf(rcc);
+      FreeStrBuf(rsub);
+    }
+    else
+      doabort = TRUE;
+  }
+
+  if(winnum >= 0 && !quiet && !doabort)
+    winnum = MA_CheckWriteWindow(winnum);
+
+  if(doabort)
     DisposeModulePush(&G->WR[winnum]);
-   }
-   FreeStrBuf(rto);
-   FreeStrBuf(rcc);
-   FreeStrBuf(rsub);
-   return winnum;
+
+  RETURN(winnum);
+  return winnum;
 }
 
 ///
@@ -2133,90 +2542,139 @@ HOOKPROTONHNO(MA_DelKeyFunc, void, int *arg)
 MakeStaticHook(MA_DelKeyHook, MA_DelKeyFunc);
 
 ///
-/// MA_GetAddressSelect
-//  Asks user which address (from/replyto) to store
-static struct Person *MA_GetAddressSelect(struct Mail *mail)
-{
-   struct Person *pe = GetReturnAddress(mail);
-   if (C->CompareAddress && *mail->ReplyTo.Address) if (stricmp(mail->From.Address, mail->ReplyTo.Address))
-   {
-      char buffer[SIZE_LARGE];
-      snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
-      switch (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_Compare2ReqOpt), buffer))
-      {
-         case 2: pe = &mail->ReplyTo; break;
-         case 1: pe = &mail->From; break;
-         case 0: pe = NULL;
-      }
-   }
-   return pe;
-}
-
-///
 /// MA_GetAddress
 //  Stores address from a list of messages to the address book
 void MA_GetAddress(struct Mail **mlist)
 {
-   int i, j, mode, winnum, num = (int)mlist[0];
-   struct Folder *folder = mlist[2]->Folder;
-   BOOL outgoing = folder ? isOutgoingFolder(folder) : FALSE;
-   struct ExtendedMail *email;
-   struct Person *pe = NULL;
+  int winnum;
+  int num = (int)mlist[0];
+  enum ABEntry_Type mode;
+  struct Mail *mail = mlist[2];
+  struct Folder *folder = mail->Folder;
+  BOOL outgoing = folder ? isOutgoingFolder(folder) : FALSE;
+  struct ExtendedMail *email;
+  struct Person *pe = NULL;
 
-   if (num == 1 && !(outgoing && isMultiRCPTMail(mlist[2])))
-   {
-      if (outgoing)
+  ENTER();
+
+  // check wheter we want to create a single addressbook
+  // entry or a list of addresses
+  if(num == 1 && !(outgoing && isMultiRCPTMail(mail)))
+  {
+    if(outgoing)
+      pe = &mail->To;
+    else
+    {
+      // now ask the user which one of the two
+      // adresses it should consider for adding it to the
+      // addressbook
+      if(C->CompareAddress && mail->ReplyTo.Address[0] != '\0' &&
+         stricmp(mail->From.Address, mail->ReplyTo.Address) != 0)
       {
-         pe = &mlist[2]->To;
-      }
-      else
-      {
-         pe = MA_GetAddressSelect(mlist[2]);
-         if (!pe)
+        char buffer[SIZE_LARGE];
+        snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
+
+        switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_Compare2ReqOpt), buffer))
+        {
+          case 2: pe = &mail->ReplyTo; break;
+          case 1: pe = &mail->From; break;
+          case 0:
+          {
+            // make a user abort
+            LEAVE();
             return;
+          }
+        }
       }
-      mode = AET_USER;
-   }
-   else
-      mode = AET_LIST;
-
-   DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
-
-   winnum = EA_Init(mode, NULL);
-   if (winnum >= 0)
-   {
-      if (mode == AET_USER)
-      {
-        setstring(G->EA[winnum]->GUI.ST_REALNAME, pe->RealName);
-        setstring(G->EA[winnum]->GUI.ST_ADDRESS, pe->Address);
-      }
+      else if(mail->ReplyTo.Address[0] != '\0')
+        pe = &mail->ReplyTo;
       else
+        pe = &mail->From;
+    }
+
+    mode = AET_USER;
+  }
+  else
+    mode = AET_LIST;
+
+  DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
+
+  winnum = EA_Init(mode, NULL);
+  if(winnum >= 0)
+  {
+    if(mode == AET_USER)
+    {
+      setstring(G->EA[winnum]->GUI.ST_REALNAME, pe->RealName);
+      setstring(G->EA[winnum]->GUI.ST_ADDRESS, pe->Address);
+    }
+    else
+    {
+      int i;
+
+      for(i=2; i < num+2; i++)
       {
-         for (i = 2; i < num+2; i++)
-         {
-            if (outgoing)
-            {
-               DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&mlist[i]->To), MUIV_List_Insert_Bottom);
-               if(isMultiRCPTMail(mlist[i]) &&
-                  (email = MA_ExamineMail(mlist[i]->Folder, mlist[i]->MailFile, TRUE)))
-               {
-                  for(j = 0; j < email->NoSTo; j++)
-                    DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&email->STo[j]), MUIV_List_Insert_Bottom);
+        struct Mail *mail = mlist[i];
 
-                  for(j = 0; j < email->NoCC; j++)
-                    DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&email->CC[j]), MUIV_List_Insert_Bottom);
+        if(outgoing)
+        {
+          DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&mail->To), MUIV_List_Insert_Bottom);
 
-                  MA_FreeEMailStruct(email);
-               }
-            }
-            else
+          if(isMultiRCPTMail(mail) &&
+             (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+          {
+            int j;
+
+            for(j=0; j < email->NoSTo; j++)
+              DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&email->STo[j]), MUIV_List_Insert_Bottom);
+
+            for(j=0; j < email->NoCC; j++)
+              DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&email->CC[j]), MUIV_List_Insert_Bottom);
+
+            MA_FreeEMailStruct(email);
+          }
+        }
+        else
+        {
+          // now we check whether the mail got ReplyTo addresses which we should add
+          // or if we should add all From: addresses
+          if(mail->ReplyTo.Address[0] != '\0')
+          {
+            DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&mail->ReplyTo), MUIV_List_Insert_Bottom);
+
+            if(isMultiReplyToMail(mail) &&
+               (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
             {
-               struct Person *pe1 = GetReturnAddress(mlist[i]);
-               DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(pe1), MUIV_List_Insert_Bottom);
+              int j;
+
+              for(j=0; j < email->NoSReplyTo; j++)
+                DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&email->SReplyTo[j]), MUIV_List_Insert_Bottom);
+
+              MA_FreeEMailStruct(email);
             }
-         }
+          }
+          else
+          {
+            // there seem to exist no ReplyTo: addresses, so lets go and
+            // add all From: addresses to our addressbook.
+            DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&mail->From), MUIV_List_Insert_Bottom);
+
+            if(isMultiSenderMail(mail) &&
+               (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+            {
+              int j;
+
+              for(j=0; j < email->NoSFrom; j++)
+                DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&email->SFrom[j]), MUIV_List_Insert_Bottom);
+
+              MA_FreeEMailStruct(email);
+            }
+          }
+        }
       }
-   }
+    }
+  }
+
+  LEAVE();
 }
 
 ///

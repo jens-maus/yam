@@ -4,6 +4,23 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-29  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: reworked/fixed a large portion of code due to a fix for bug #1251072
+    where YAM wasn't able to correctly filter/find mails by a Reply-To:
+    if the mail in question had multiple ReplyTo: addresses involved. The
+    problem was, that YAM wasn't able to deal with "Reply-To:" header
+    lines where more than one recipient was specified. The same applied also
+    to "From:" headers where for multiple recipients wasn't checked as well.
+    Somehow YAM didn't even allow to specify a "From:" address with multiple
+    persons involved even if that is clearly allowed (see RFC2822)
+    Unfortunately, that fix/change required a quite large amount of changes to
+    make YAM aware of From:/Reply-To: header lines with multiple addresses
+    in mind. Therefore, testers are highly encouraged to test all kind of
+    mail forwarding/replying/reediting as well as mail find/filter routines
+    again, so that the adapted functions will be properly verified before the
+    upcoming 2.5 release...
+
 2006-06-25  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: updated according to the latest changes.

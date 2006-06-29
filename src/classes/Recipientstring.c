@@ -327,10 +327,13 @@ OVERLOAD(MUIM_DragDrop)
   else if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
   {
     struct Mail *mail;
+
     DoMethod(d->obj, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+
     if(isOutgoingFolder(mail->Folder))
-        AB_InsertAddress(obj, "", mail->To.RealName,   mail->To.Address);
-    else  AB_InsertAddress(obj, "", mail->From.RealName, mail->From.Address);
+      AB_InsertAddress(obj, "", mail->To.RealName,   mail->To.Address);
+    else
+      AB_InsertAddress(obj, "", mail->From.RealName, mail->From.Address);
   }
 
   return 0;

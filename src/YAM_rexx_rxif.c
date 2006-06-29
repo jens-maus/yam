@@ -865,8 +865,6 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
 
          if (mail)
          {
-            struct Person *pe = GetReturnAddress(mail);
-
             pf = getPERValue(mail);
             vf = getVOLValue(mail);
             GetMailFile(rd->rd.res.filename = rd->filename, folder, mail);
@@ -896,7 +894,7 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
 
             strlcpy(rd->rd.res.from = rd->from, BuildAddrName2(&mail->From), sizeof(rd->from));
             strlcpy(rd->rd.res.to = rd->to, BuildAddrName2(&mail->To), sizeof(rd->to));
-            strlcpy(rd->rd.res.replyto = rd->replyto, BuildAddrName2(pe), sizeof(rd->replyto));
+            strlcpy(rd->rd.res.replyto = rd->replyto, BuildAddrName2(mail->ReplyTo.Address[0] != '\0' ? &mail->ReplyTo : &mail->From), sizeof(rd->replyto));
             DateStamp2String(rd->rd.res.date = rd->date, sizeof(rd->date), &mail->Date, DSS_USDATETIME, TZC_LOCAL);
             rd->rd.res.subject = mail->Subject;
             rd->rd.res.size = &mail->Size;
@@ -1134,8 +1132,6 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
       case RXIF_ACTION:
          if ((mail = MA_GetActiveMail(ANYBOX, NULL, &active)))
          {
-            struct Person *pe = GetReturnAddress(mail);
-
             rd->rd.res.value = rd->result;
             key = rd->rd.arg.item;
             if (!strnicmp(key, "ACT", 3)) snprintf(rd->result, sizeof(rd->result), "%d", active);
@@ -1165,7 +1161,7 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
             }
             else if (!strnicmp(key, "FRO", 3)) strlcpy(rd->result, BuildAddrName2(&mail->From), sizeof(rd->result));
             else if (!strnicmp(key, "TO" , 2)) strlcpy(rd->result, BuildAddrName2(&mail->To), sizeof(rd->result));
-            else if (!strnicmp(key, "REP", 3)) strlcpy(rd->result, BuildAddrName2(pe), sizeof(rd->result));
+            else if (!strnicmp(key, "REP", 3)) strlcpy(rd->result, BuildAddrName2(mail->ReplyTo.Address[0] != '\0' ? &mail->ReplyTo : &mail->From), sizeof(rd->result));
             else if (!strnicmp(key, "SUB", 3)) rd->rd.res.value = mail->Subject;
             else if (!strnicmp(key, "FIL", 3)) GetMailFile(rd->rd.res.value = rd->result, mail->Folder, mail);
             else rd->rd.rc = RETURN_ERROR;

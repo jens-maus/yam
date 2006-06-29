@@ -141,20 +141,16 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
       if(C->MessageCols & (1<<1) || searchWinHook)
       {
         static char dispfro[SIZE_DEFAULT];
-
-        array[1] = dispfro;
-
-        if(isMultiRCPTMail(entry))
-          strlcpy(dispfro, SICON_GROUP, sizeof(dispfro));
-        else
-          dispfro[0] = '\0';
+        BOOL toPrefix = FALSE;
 
         if(((entry->Folder->Type == FT_CUSTOMMIXED || entry->Folder->Type == FT_DELETED) &&
             (hasStatusSent(entry) || hasStatusQueued(entry) || hasStatusHold(entry) ||
              hasStatusError(entry))) || (searchWinHook && isOutgoingFolder(entry->Folder)))
         {
           pe = &entry->To;
-          strlcat(dispfro, GetStr(MSG_MA_ToPrefix), sizeof(dispfro));
+
+          // put a To: prefix before our sender name
+          toPrefix = TRUE;
         }
         else
           pe = isOutgoingFolder(entry->Folder) ? &entry->To : &entry->From;
@@ -177,12 +173,27 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
         #endif
 
         // lets put the string together
-        strlcat(dispfro, addr, sizeof(dispfro)-strlen(dispfro)-1);
+        snprintf(dispfro, sizeof(dispfro), "%s%s%s%s", isMultiRCPTMail(entry) ? SICON_GROUP : "",
+                                                       toPrefix ? GetStr(MSG_MA_ToPrefix) : "",
+                                                       addr,
+                                                       isMultiSenderMail(entry) ? ", ..." : "");
+
+        array[1] = dispfro;
       }
 
       // lets set all other fields now
       if(!searchWinHook && C->MessageCols & (1<<2))
-       array[2] = AddrName((entry->ReplyTo));
+      {
+        if(isMultiReplyToMail(entry))
+        {
+          static char dispreplyto[SIZE_DEFAULT];
+
+          snprintf(dispreplyto, sizeof(dispreplyto), "%s, ...", AddrName(entry->ReplyTo));
+          array[2] = dispreplyto;
+        }
+        else
+          array[2] = AddrName(entry->ReplyTo);
+      }
 
       // then the Subject
       array[3] = entry->Subject;
@@ -312,30 +323,21 @@ static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
     break;
 
     case 1:
-    case 2:
     {
       struct Person *pe1;
       struct Person *pe2;
       char *addr1;
       char *addr2;
 
-      if(column == 1)
+      if(isOutgoingFolder(entry1->Folder))
       {
-        if(isOutgoingFolder(entry1->Folder))
-        {
-          pe1 = &entry1->To;
-          pe2 = &entry2->To;
-        }
-        else
-        {
-          pe1 = &entry1->From;
-          pe2 = &entry2->From;
-        }
+        pe1 = &entry1->To;
+        pe2 = &entry2->To;
       }
       else
       {
-        pe1 = &entry1->ReplyTo;
-        pe2 = &entry2->ReplyTo;
+        pe1 = &entry1->From;
+        pe2 = &entry2->From;
       }
 
       #ifndef DISABLE_ADDRESSBOOK_LOOKUP
@@ -348,19 +350,25 @@ static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
         if((tn1 = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe1->Address[0], MUIF_NONE)))
           addr1 = ((struct ABEntry *)tn1->tn_User)->RealName[0] ? ((struct ABEntry *)tn1->tn_User)->RealName : AddrName((*pe1));
         else
-          addr1 = AddrName((*pe1));
+          addr1 = AddrName(*pe1);
 
         if((tn2 = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe2->Address[0], MUIF_NONE)))
           addr2 = ((struct ABEntry *)tn2->tn_User)->RealName[0] ? ((struct ABEntry *)tn2->tn_User)->RealName : AddrName((*pe2));
         else
-          addr2 = AddrName((*pe2));
+          addr2 = AddrName(*pe2);
       }
       #else
-      addr1 = AddrName((*pe1));
-      addr2 = AddrName((*pe2));
+      addr1 = AddrName(*pe1);
+      addr2 = AddrName(*pe2);
       #endif
 
       return stricmp(addr1, addr2);
+    }
+    break;
+
+    case 2:
+    {
+      return stricmp(AddrName(entry1->ReplyTo), AddrName(entry2->ReplyTo));
     }
     break;
 

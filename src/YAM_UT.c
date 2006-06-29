@@ -2238,14 +2238,6 @@ char *GetMailFile(char *string, struct Folder *folder, struct Mail *mail)
   return string;
 }
 ///
-/// GetReturnAddress
-//  Gets return address of a message
-struct Person *GetReturnAddress(struct Mail *mail)
-{
-   if (mail->ReplyTo.Address[0]) return &mail->ReplyTo;
-   return &mail->From;
-}
-///
 /// BuildAddrName
 //  Creates "Real Name" <E-mail> string
 char *BuildAddrName(char *address, char *name)

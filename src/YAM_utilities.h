@@ -309,7 +309,6 @@ int      GetMUIInteger(Object *obj);
 int      GetMUINumer(Object *obj);
 int      GetMUIRadio(Object *obj);
 char *   GetNextLine(char *p1);
-struct Person *GetReturnAddress(struct Mail *mail);
 int      GetSimpleID(void);
 void     GotoURL(char *url);
 char *   IdentifyFile(char *fname);
