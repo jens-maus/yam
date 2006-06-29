@@ -3423,21 +3423,26 @@ BOOL MA_StartMacro(enum Macro num, char *param)
 //  Launches a script from the ARexx menu
 HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
 {
-   char scname[SIZE_COMMAND];
-   int script = *arg;
-   if (script >= 0)
-   {
-      MA_StartMacro(MACRO_MEN0+script, NULL);
-   }
-   else
-   {
-      strmfp(scname, G->ProgDir, "rexx");
-      if (ReqFile(ASL_REXX, G->MA->GUI.WI, GetStr(MSG_MA_ExecuteScript), REQF_NONE, scname, ""))
-      {
-         strmfp(scname, G->ASLReq[ASL_REXX]->fr_Drawer, G->ASLReq[ASL_REXX]->fr_File);
-         SendRexxCommand(G->RexxHost, scname, 0);
-      }
-   }
+  int script = *arg;
+
+  ENTER();
+
+  if(script >= 0)
+    MA_StartMacro(MACRO_MEN0+script, NULL);
+  else
+  {
+    char scname[SIZE_COMMAND];
+
+    strmfp(scname, G->ProgDir, "rexx");
+
+    if(ReqFile(ASL_REXX, G->MA->GUI.WI, GetStr(MSG_MA_ExecuteScript), REQF_NONE, scname, ""))
+    {
+      strmfp(scname, G->ASLReq[ASL_REXX]->fr_Drawer, G->ASLReq[ASL_REXX]->fr_File);
+      SendRexxCommand(G->RexxHost, scname, 0);
+    }
+  }
+
+  LEAVE();
 }
 MakeStaticHook(MA_CallRexxHook, MA_CallRexxFunc);
 ///
