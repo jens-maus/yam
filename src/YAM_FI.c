@@ -1631,6 +1631,7 @@ static struct FI_ClassData *FI_New(void)
                   MUIA_CycleChain,  TRUE,
                   MUIA_NListview_NList, data->GUI.LV_MAILS = MainMailListObject,
                      MUIA_NList_Format, "COL=8 W=-1 BAR, COL=1 MICW=20 BAR,COL=3 MICW=16 BAR,COL=4 MICW=9 MACW=15 BAR,COL=7 MICW=9 MACW=15 BAR,COL=5 W=-1 MACW=9 P=\33r BAR",
+                     MUIA_ContextMenu,  NULL,
                   End,
                End,
             End,

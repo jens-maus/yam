@@ -6,6 +6,11 @@ $Id$
 
 2006-06-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_FI.c: fixed an issue with the context menu display of the find
+    result window where a user was able to override the default of having NO
+    context menu for the find window which in fact wasn't expected and
+    resulted in the context menu to perform weird operations. Now YAM makes
+    sure that no context menu can be enabled for the simple find window.
   * classes/MainMailList.c, misc: due to the fact that the addressbook lookup
     in the DisplayHook and CompareHook of the main mail list is quite a time
     consuming operation - especially on slow systems and/or with large
