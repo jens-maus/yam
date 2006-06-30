@@ -2466,6 +2466,24 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
    G->TR->POP_Nr = pop;
    G->TR_Allow = G->TR->Abort = G->TR->Pause = G->TR->Start = G->Error = FALSE;
 
+   // if the window isn`t open we don`t need to update it, do we?
+   if(isfirst == FALSE && xget(G->TR->GUI.WI, MUIA_Window_Open))
+   {
+     // reset the statistics display
+     SPrintF(G->TR->CountLabel, GetStr(MSG_TR_MessageGauge), "%ld", 0);
+     SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_Current,  0,
+                                   MUIA_Gauge_InfoText, G->TR->CountLabel,
+                                   MUIA_Gauge_Max,      0,
+                                   TAG_DONE);
+
+     // and last, but not least update the gauge.
+     SPrintF(G->TR->BytesLabel, GetStr(MSG_TR_SizeGauge), 0);
+     SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current,  0,
+                                   MUIA_Gauge_InfoText, G->TR->BytesLabel,
+                                   MUIA_Gauge_Max,      0,
+                                   TAG_DONE);
+   }
+
    if ((msgs = TR_ConnectPOP(G->TR->GUIlevel)) != -1)    // connection succeeded
    {
       if (msgs)                                          // there are messages on the server

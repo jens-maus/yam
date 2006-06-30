@@ -6,6 +6,8 @@ $Id$
 
 2006-06-30  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c: fixed bug #1230324 where YAM didn't correctly update the
+    transfer window in case a subsequent POP server was about to be checked.
   * YAM.c: fixed bug #1211693 and changed YAM to not delete the autosave file
     immediately after having added its content to a write window. This may
     have been critical in the event YAM immediately crashes again after having
