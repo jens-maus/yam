@@ -2253,9 +2253,6 @@ int main(int argc, char **argv)
 
               // make sure the texteditor gadget is marked as being changed
               set(G->WR[wrwin]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, TRUE);
-
-              // delete the autosave file
-              DeleteFile(fileName);
             }
           }
           else if(reqres == 2)

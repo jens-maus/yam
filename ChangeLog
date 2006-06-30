@@ -6,6 +6,12 @@ $Id$
 
 2006-06-30  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: fixed bug #1211693 and changed YAM to not delete the autosave file
+    immediately after having added its content to a write window. This may
+    have been critical in the event YAM immediately crashes again after having
+    recovered the content from the autosave file. Now the autosave file will
+    automatically overwrite after the specified autosave time period and
+    deleted when closing the opened write window.
   * YAM_WR.c: fixed a crash issue in case the "WRITEQUEUE" arexx command is
     used on hided write windows. This seems to be due to a MUI bug with
     setting MUIA_Group_ActivePage in a closed window. Now YAM will properly
