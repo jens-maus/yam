@@ -1436,8 +1436,6 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    mlist[0] = (struct Mail *)1;
    mlist[1] = NULL;
 
-   D(DBF_STARTUP, "blah1 %d", winnum);
-
    // get the contents of the TO: String gadget and check if it is valid
    addr = (STRPTR)DoMethod(gui->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
    if(!addr)
@@ -1473,8 +1471,6 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    }
    else comp.MailTo = addr;
 
-   D(DBF_STARTUP, "blah2");
-
    // get the content of the Subject: String gadget and check if it is empty or not.
    get(gui->ST_SUBJECT, MUIA_String_Contents, &comp.Subject);
    if(wr->Mode != NEW_BOUNCE && quietMode == FALSE && C->WarnSubject && strlen(comp.Subject) == 0)
@@ -1497,8 +1493,6 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    comp.Mode = wr->Mode;
    comp.OrigMail = wr->Mail;
    comp.OldSecurity = wr->OldSecurity;
-
-   D(DBF_STARTUP, "blah3");
 
    if (wr->Mode != NEW_BOUNCE)
    {
@@ -1606,8 +1600,6 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       comp.FirstPart = BuildPartsList(winnum);
    }
 
-   D(DBF_STARTUP, "blah4");
-
    if (wr->Mode == NEW_EDIT)
    {
       struct Mail *edmail = wr->Mail;
@@ -1625,8 +1617,6 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    }
    else
      comp.FH = fopen(MA_NewMailFile(outfolder, mail.MailFile), "w");
-
-   D(DBF_STARTUP, "blah5");
 
    if(comp.FH)
    {
@@ -1735,8 +1725,6 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    }
    else
      ER_NewError(GetStr(MSG_ER_CreateMailError));
-
-   D(DBF_STARTUP, "blah6");
 
    FreePartsList(comp.FirstPart);
 
