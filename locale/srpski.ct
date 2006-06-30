@@ -4761,11 +4761,6 @@ MSG_TR_SendHello
 Ãaljem \"HELO\"...
 ; Sending 'Hello'...
 ;
-MSG_TR_MessageGauge
-Poruka %s od %ld
-; Message %s of %ld
-; COUNT, COUNT
-;
 MSG_TR_SizeGauge
 %%ld od %ld bajtova
 ; %%ld of %ld bytes
@@ -6087,4 +6082,9 @@ Deo
 MSG_ABOUT_OKAY_GAD
 OK
 ; OK
+;
+MSG_TR_MESSAGEGAUGE
+Poruka %%ld od %ld
+; Message %%ld of %ld
+; COUNT, COUNT
 ;

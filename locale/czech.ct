@@ -4949,11 +4949,6 @@ MSG_TR_SendHello
 Odesílání 'Hello'...
 ; Sending 'Hello'...
 ;
-MSG_TR_MessageGauge
-%s z %ld zpráv
-; Message %s of %ld
-; COUNT, COUNT
-;
 MSG_TR_SizeGauge
 %%ld z %ld bajtû
 ; %%ld of %ld bytes
@@ -7193,4 +7188,9 @@ Text that should be displayed\n\
 in the status bar
 ; Text that should be displayed\n\
 ; in the status bar
+;
+MSG_TR_MESSAGEGAUGE
+%%ld z %ld zpráv
+; Message %%ld of %ld
+; COUNT, COUNT
 ;

@@ -4651,11 +4651,6 @@ MSG_TR_SendHello
 Sende 'HELO'...
 ; Sending 'Hello'...
 ;
-MSG_TR_MessageGauge
-Nachricht %s von %ld
-; Message %s of %ld
-; COUNT, COUNT
-;
 MSG_TR_SizeGauge
 %%ld von %ld Bytes
 ; %%ld of %ld bytes
@@ -7134,4 +7129,9 @@ Nachrichtenexport als MBOX konforme Datei...
 ;
 MSG_YAMINFO
 Open Source E-Mail Software für den Amiga
+;
+MSG_TR_MESSAGEGAUGE
+Nachricht %%ld von %ld
+; Message %%ld of %ld
+; COUNT, COUNT
 ;

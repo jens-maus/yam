@@ -4859,11 +4859,6 @@ MSG_TR_SendHello
 Envoie « Hello »...
 ; Sending 'Hello'...
 ;
-MSG_TR_MessageGauge
-Message %s sur %ld
-; Message %s of %ld
-; COUNT, COUNT
-;
 MSG_TR_SizeGauge
 %%ld sur %ld octets
 ; %%ld of %ld bytes
@@ -8145,3 +8140,9 @@ d'accès adéquates.
 ; \n\
 ; Please make sure that all files are accessible \
 ; and that you have proper permissions.
+;
+MSG_TR_MESSAGEGAUGE
+Message %%ld sur %ld
+; Message %%ld of %ld
+; COUNT, COUNT
+;

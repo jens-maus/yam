@@ -2470,7 +2470,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
    if(isfirst == FALSE && xget(G->TR->GUI.WI, MUIA_Window_Open))
    {
      // reset the statistics display
-     SPrintF(G->TR->CountLabel, GetStr(MSG_TR_MessageGauge), "%ld", 0);
+     SPrintF(G->TR->CountLabel, GetStr(MSG_TR_MESSAGEGAUGE), 0);
      SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_Current,  0,
                                    MUIA_Gauge_InfoText, G->TR->CountLabel,
                                    MUIA_Gauge_Max,      0,
@@ -2877,7 +2877,7 @@ static void TR_TransStat_Start(struct TransStat *ts)
    GetSysTime(TIMEVAL(&ts->Clock_Last));
    ts->Clock_Start = ts->Clock_Last.Seconds;
 
-   SPrintF(G->TR->CountLabel, GetStr(MSG_TR_MessageGauge), "%ld", ts->Msgs_Tot);
+   SPrintF(G->TR->CountLabel, GetStr(MSG_TR_MESSAGEGAUGE), ts->Msgs_Tot);
    SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
                                  MUIA_Gauge_Max,      ts->Msgs_Tot,
                                  TAG_DONE);

@@ -4255,10 +4255,6 @@ MSG_TR_SendHello
 Αποστολή 'Hello'...
 ;Sending 'Hello'...
 ;
-MSG_TR_MessageGauge
-Μήνυμα %s από %ld
-;Message %s of %ld
-;
 MSG_TR_SizeGauge
 %%ld από %ld bytes
 ;%%ld of %ld bytes
@@ -5810,4 +5806,8 @@ MSG_FO_EDIT_FGROUPREQ
 MSG_ERR_OPENMCC
 Αδύνατη η εύρεση της έκδοσης v%lu.%lu του MUI '%s' εγκατεστημένου.\nΓια λόγους συμβατότητας απαιτείται τουλάχιστον αυτή\nη έκδοση από το YAM. Παρακαλώ σιγουρευτείτε ότι την έχετε\nσωστά εγκατεστημένη.
 ;Couldn`t find version v%lu.%lu of MUI '%s' installed.\nFor compatibility reasons at least this version is\nrequired by YAM. Please make sure you have installed\nit correctly.
+;
+MSG_TR_MESSAGEGAUGE
+Μήνυμα %%ld από %ld
+;Message %%ld of %ld
 ;

@@ -5023,11 +5023,6 @@ MSG_TR_SendHello
 Enviando 'Hello'...
 ; Sending 'Hello'...
 ;
-MSG_TR_MessageGauge
-Mensaje %s de %ld
-; Message %s of %ld
-; COUNT, COUNT
-;
 MSG_TR_SizeGauge
 %%ld de %ld bytes
 ; %%ld of %ld bytes
@@ -7307,3 +7302,9 @@ MSG_YesNoReq2
 _Sí|*_No
 ; _Yes|*_No
 ;
+MSG_TR_MESSAGEGAUGE
+Mensaje %%ld de %ld
+; Message %%ld of %ld
+; COUNT, COUNT
+;
+

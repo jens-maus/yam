@@ -5062,11 +5062,6 @@ MSG_TR_SendHello
 Sender 'Hello'...
 ; Sending 'Hello'...
 ;
-MSG_TR_MessageGauge
-Besked %s af %ld
-; Message %s of %ld
-; COUNT, COUNT
-;
 MSG_TR_SizeGauge
 %%ld af %ld tegn
 ; %%ld of %ld bytes
@@ -7319,4 +7314,9 @@ Er du sikker på at du vil fortsætte?
 MSG_YesNoReq2
 _Ja|*_Nej
 ; _Yes|*_No
+;
+MSG_TR_MESSAGEGAUGE
+Besked %%ld af %ld
+; Message %%ld of %ld
+; COUNT, COUNT
 ;

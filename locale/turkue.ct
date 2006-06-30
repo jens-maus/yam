@@ -5003,11 +5003,6 @@ MSG_TR_SendHello
 'Merhaba' yollanýyor...
 ; Sending 'Hello'...
 ;
-MSG_TR_MessageGauge
-%s / %ld mesaj
-; Message %s of %ld
-; COUNT, COUNT
-;
 MSG_TR_SizeGauge
 %%ld / %ld bayt
 ; %%ld of %ld bytes
@@ -6396,3 +6391,9 @@ Bölüm
 MSG_ABOUT_OKAY_GAD
 Tamam
 ; OK
+;
+MSG_TR_MESSAGEGAUGE
+%%ld / %ld mesaj
+; Message %%ld of %ld
+; COUNT, COUNT
+;

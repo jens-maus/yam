@@ -5018,12 +5018,6 @@ MSG_TR_SendHello
 Посылаю «Hello»...
 ;Sending 'Hello'...
 ;
-MSG_TR_MessageGauge
-Сообщение %s из %ld
-;Message %s of %ld
-;
-;COUNT, COUNT
-;
 MSG_TR_SizeGauge
 %%ld из %ld байт
 ;%%ld of %ld bytes
@@ -6451,4 +6445,10 @@ MSG_ATTACH_PART
 MSG_ABOUT_OKAY_GAD
 \x20О'кей\x20
 ;OK
+;
+MSG_TR_MESSAGEGAUGE
+Сообщение %%ld из %ld
+;Message %%ld of %ld
+;
+;COUNT, COUNT
 ;

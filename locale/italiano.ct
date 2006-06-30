@@ -3394,9 +3394,6 @@ Applico i filtri remoti...
 MSG_TR_SendHello
 Mando la richiesta di connessione...
 ;
-MSG_TR_MessageGauge
-Messaggio %s di %ld
-;
 MSG_TR_SizeGauge
 %%ld di %ld byte
 ;
@@ -5537,4 +5534,7 @@ Visualizzazione header (intestazione)
 ;
 MSG_RE_MAILDETAILS
 Dettagli messaggio
+;
+MSG_TR_MESSAGEGAUGE
+Messaggio %%ld di %ld
 ;

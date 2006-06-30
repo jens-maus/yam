@@ -4097,10 +4097,6 @@ MSG_TR_SendHello
 Skickar 'Hallå'...
 ;#DEF Sending 'Hello'...
 ;#SET (1061//)
-MSG_TR_MessageGauge
-Brev %s av %ld
-;#DEF Message %s of %ld
-;#SET (1062//)
 MSG_TR_SizeGauge
 %%ld av %ld byte
 ;#DEF %%ld of %ld bytes
@@ -6569,3 +6565,8 @@ MSG_RE_MAILDETAILS
 Brevdetaljer
 ;#DEF Mail Details
 ;#SET (1710//)
+MSG_TR_MESSAGEGAUGE
+Brev %%ld av %ld
+;#DEF Message %%ld of %ld
+;#SET (1715//)
+

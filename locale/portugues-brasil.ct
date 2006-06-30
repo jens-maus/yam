@@ -3516,9 +3516,6 @@ Aplicando filtros remotos...
 MSG_TR_SendHello
 Enviando 'Hello'...
 ;
-MSG_TR_MessageGauge
-Mensagem %s de %ld
-;
 MSG_TR_SizeGauge
 %%ld de %ld bytes
 ;
@@ -4360,3 +4357,8 @@ K\000Configuração...
 ;
 MSG_SETTINGS_USERS
 Usuários...
+;
+MSG_TR_MESSAGEGAUGE
+Mensagem %%ld de %ld
+;
+

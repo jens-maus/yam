@@ -4428,11 +4428,6 @@ MSG_TR_SendHello
 Lähetän 'Hei'...
 ; Sending 'Hello'...
 ;
-MSG_TR_MessageGauge
-Viesti %s / %ld
-; Message %s of %ld
-; COUNT, COUNT
-;
 MSG_TR_SizeGauge
 %%ld / %ld tavua
 ; %%ld of %ld bytes
@@ -5677,3 +5672,9 @@ Osittain
 MSG_ABOUT_OKAY_GAD
 OK
 ; OK
+;
+MSG_TR_MESSAGEGAUGE
+Viesti %%ld / %ld
+; Message %%ld of %ld
+; COUNT, COUNT
+;

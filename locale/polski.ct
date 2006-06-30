@@ -4999,11 +4999,6 @@ MSG_TR_SendHello
 Wysyîam \"Hello\"...
 ; Sending 'Hello'...
 ;
-MSG_TR_MessageGauge
-Wiadomoôê %s z %ld
-; Message %s of %ld
-; COUNT, COUNT
-;
 MSG_TR_SizeGauge
 %%ld z %ld bajtów
 ; %%ld of %ld bytes
@@ -7270,4 +7265,9 @@ Czy na pewno chcesz kontynuowaê?
 MSG_YesNoReq2
 _Tak|*_Nie
 ; _Yes|*_No
+;
+MSG_TR_MessageGauge
+Wiadomoôê %%ld z %ld
+; Message %%ld of %ld
+; COUNT, COUNT
 ;

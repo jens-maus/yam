@@ -3524,10 +3524,6 @@ Applying remote filters...
 MSG_TR_SendHello (1061//)
 Sending 'Hello'...
 ;
-MSG_TR_MessageGauge (1062//)
-Message %s of %ld
-; COUNT, COUNT
-;
 MSG_TR_SizeGauge (1063//)
 %%ld of %ld bytes
 ; SIZE, SIZE
@@ -3788,7 +3784,7 @@ Bad %s command response:\n\
 %s\n\
 \n\
 The mail server couldn't execute the command \
-and replied with the error message.
+and replied with the above error message.
 ; COMMAND, TEXT
 ;
 MSG_ER_UnknownPOP (1128//)
@@ -5859,3 +5855,8 @@ Please note: This is a quite time consuming job\n\
 and may bring down the performance of the list\n\
 display - especially on setups with a large\n\
 addressbook.
+;
+MSG_TR_MESSAGEGAUGE (1715//)
+Message %%ld of %ld
+; COUNT, COUNT
+;

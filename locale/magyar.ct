@@ -4828,11 +4828,6 @@ MSG_TR_SendHello
 'Hello' küldése...
 ; Sending 'Hello'...
 ;
-MSG_TR_MessageGauge
-Üzenet: %s - %ld
-; Message %s of %ld
-; COUNT, COUNT
-;
 MSG_TR_SizeGauge
 %%ld - %ld byte
 ; %%ld of %ld bytes
@@ -7030,4 +7025,9 @@ Tényleg folytatni akarod?
 MSG_YesNoReq2
 Igen|*_Nem
 ; _Yes|*_No
+;
+MSG_TR_MESSAGEGAUGE
+Üzenet: %%ld - %ld
+; Message %%ld of %ld
+; COUNT, COUNT
 ;

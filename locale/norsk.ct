@@ -5061,11 +5061,6 @@ MSG_TR_SendHello
 Sender 'Hallo'...
 ; Sending 'Hello'...
 ;
-MSG_TR_MessageGauge
-Beskjed %s av %ld
-; Message %s of %ld
-; COUNT, COUNT
-;
 MSG_TR_SizeGauge
 %%ld av %ld bytes
 ; %%ld of %ld bytes
@@ -6455,3 +6450,9 @@ Del
 MSG_ABOUT_OKAY_GAD
 OK
 ; OK
+;
+MSG_TR_MESSAGEGAUGE
+Beskjed %%ld av %ld
+; Message %%ld of %ld
+; COUNT, COUNT
+;

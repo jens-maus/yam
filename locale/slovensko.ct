@@ -4813,11 +4813,6 @@ MSG_TR_SendHello
 Po¹iljam pozdravno vrstico...
 ; Sending 'Hello'...
 ;
-MSG_TR_MessageGauge
-Sporoèilo %s od %ld
-; Message %s of %ld
-; COUNT, COUNT
-;
 MSG_TR_SizeGauge
 %%ld od %ld bajtov
 ; %%ld of %ld bytes
@@ -7035,4 +7030,9 @@ Ali res ¾elite nadaljevati?
 MSG_YesNoReq2
 _Da|*_Ne
 ; _Yes|*_No
+;
+MSG_TR_MESSAGEGAUGE
+Sporoèilo %%ld od %ld
+; Message %%ld of %ld
+; COUNT, COUNT
 ;
