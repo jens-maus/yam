@@ -5844,7 +5844,7 @@ Please make sure that all files are accessible \
 and that you have proper permissions.
 ;
 MSG_CO_ABOOKLOOKUP (1713//)
-Perform addressbook lookup in main list
+Perform addressbook lookup in message list
 ;
 MSG_HELP_CO_CH_ABOOKLOOKUP (1714//)
 Performs an addressbook lookup for every main\n\
