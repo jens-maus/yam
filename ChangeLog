@@ -4,6 +4,15 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-06-30  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c: fixed a crash issue in case the "WRITEQUEUE" arexx command is
+    used on hided write windows. This seems to be due to a MUI bug with
+    setting MUIA_Group_ActivePage in a closed window. Now YAM will properly
+    check if the window in question is open. In addition, the WR_NewMail()
+    function will now check wheter the window in question is a virtual/hided
+    window and process the function in quiet mode instead.
+
 2006-06-29  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_rexx.c: fixed bug #667192 where rexx scripts with a space in a

@@ -1422,57 +1422,83 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    struct WR_ClassData *wr = G->WR[winnum];
    struct WR_GUIData *gui = &wr->GUI;
    struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-   long winopen;
+   BOOL quietMode = (winnum == 2);
+   BOOL winOpen = xget(gui->WI, MUIA_Window_Open);
 
-   get(gui->WI, MUIA_Window_Open, &winopen);
-   if (winopen) set(gui->RG_PAGE, MUIA_Group_ActivePage, xget(gui->RG_PAGE, MUIA_Group_ActivePage));
-   /* Workaround for a MUI bug */
+   ENTER();
+
+   // Workaround for a MUI bug
+   if(winOpen)
+     set(gui->RG_PAGE, MUIA_Group_ActivePage, xget(gui->RG_PAGE, MUIA_Group_ActivePage));
 
    memset(&mail, 0, sizeof(struct Mail));
    memset(&comp, 0, sizeof(struct Compose));
    mlist[0] = (struct Mail *)1;
    mlist[1] = NULL;
 
+   D(DBF_STARTUP, "blah1 %d", winnum);
+
    // get the contents of the TO: String gadget and check if it is valid
    addr = (STRPTR)DoMethod(gui->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
    if(!addr)
    {
       ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_TO, MUIA_String_Contents));
-      set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+
+      if(winOpen)
+        set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+
       set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
+
+      LEAVE();
       return;
    }
-   else if(!addr[0])
+   else if(!addr[0] && quietMode == FALSE)
    {
       // CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
       char *err = GetStr(MSG_WR_ErrorNoRcpt);
 
       // set the TO Field active and go back
-      set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+      if(winOpen)
+        set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+
       set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
 
-      if(MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), err)) mode = WRITE_HOLD;
-      else return;
+      if(MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), err))
+        mode = WRITE_HOLD;
+      else
+      {
+        LEAVE();
+        return;
+      }
    }
    else comp.MailTo = addr;
 
+   D(DBF_STARTUP, "blah2");
+
    // get the content of the Subject: String gadget and check if it is empty or not.
    get(gui->ST_SUBJECT, MUIA_String_Contents, &comp.Subject);
-   if (wr->Mode != NEW_BOUNCE && C->WarnSubject && strlen(comp.Subject) == 0)
+   if(wr->Mode != NEW_BOUNCE && quietMode == FALSE && C->WarnSubject && strlen(comp.Subject) == 0)
    {
       // CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
       char *err = GetStr(MSG_WR_NOSUBJECTREQ);
 
-      set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+      if(winOpen)
+        set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+
       set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
 
       if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_OKAYCANCELREQ), err))
-         return;
+      {
+        LEAVE();
+        return;
+      }
    }
 
    comp.Mode = wr->Mode;
    comp.OrigMail = wr->Mail;
    comp.OldSecurity = wr->OldSecurity;
+
+   D(DBF_STARTUP, "blah3");
 
    if (wr->Mode != NEW_BOUNCE)
    {
@@ -1481,21 +1507,31 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       if(!addr)
       {
          ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_FROM, MUIA_String_Contents));
-         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+
+         if(winOpen)
+           set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
+
+         LEAVE();
          return;
       }
-      else if(!addr[0])
+      else if(!addr[0] && quietMode == FALSE)
       {
          // CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
          char *err = GetStr(MSG_WR_ERRORNOSENDER);
 
          // set the TO Field active and go back
-         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+         if(winOpen)
+           set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
 
          if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NOSENDERREQGAD), err))
-            return;
+         {
+           LEAVE();
+           return;
+         }
       }
       else comp.From = addr;
 
@@ -1504,8 +1540,13 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       if(!addr)
       {
          ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_CC, MUIA_String_Contents));
-         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+
+         if(winOpen)
+           set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_CC);
+
+         LEAVE();
          return;
       }
       else if(addr[0]) comp.MailCC = addr;
@@ -1515,8 +1556,13 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       if(!addr)
       {
          ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_BCC, MUIA_String_Contents));
-         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+
+         if(winOpen)
+           set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_BCC);
+
+         LEAVE();
          return;
       }
       else if(addr[0]) comp.MailBCC = addr;
@@ -1526,8 +1572,13 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       if(!addr)
       {
          ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_REPLYTO, MUIA_String_Contents));
-         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+
+         if(winOpen)
+           set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_REPLYTO);
+
+         LEAVE();
          return;
       }
       else if(addr[0]) comp.ReplyTo = addr;
@@ -1542,7 +1593,10 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       if((comp.Security = GetMUIRadio(gui->RA_SECURITY)) == SEC_DEFAULTS)
       {
         if(SetDefaultSecurity(&comp) == FALSE)
+        {
+          LEAVE();
           return;
+        }
       }
 
       comp.DelSend = GetMUICheck(gui->CH_DELSEND);
@@ -1551,6 +1605,8 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       EditorToFile(gui->TE_EDIT, G->WR_Filename[winnum]);
       comp.FirstPart = BuildPartsList(winnum);
    }
+
+   D(DBF_STARTUP, "blah4");
 
    if (wr->Mode == NEW_EDIT)
    {
@@ -1570,6 +1626,8 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    else
      comp.FH = fopen(MA_NewMailFile(outfolder, mail.MailFile), "w");
 
+   D(DBF_STARTUP, "blah5");
+
    if(comp.FH)
    {
       struct ExtendedMail *email;
@@ -1580,6 +1638,8 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       if (!done)
       {
          DeleteFile(GetMailFile(NULL, outfolder, &mail));
+
+         LEAVE();
          return;
       }
 
@@ -1676,6 +1736,8 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    else
      ER_NewError(GetStr(MSG_ER_CreateMailError));
 
+   D(DBF_STARTUP, "blah6");
+
    FreePartsList(comp.FirstPart);
 
    if(wr->MList)
@@ -1692,6 +1754,8 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
    DisposeModulePush(&G->WR[winnum]);
    DisplayStatistics(outfolder, TRUE);
+
+   LEAVE();
 }
 
 HOOKPROTONHNO(WR_NewMailFunc, void, int *arg)
@@ -1766,7 +1830,10 @@ MakeStaticHook(WR_CancelHook, WR_CancelFunc);
 HOOKPROTONHNO(WR_SaveAsFunc, void, int *arg)
 {
    int winnum = *arg;
-   set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
+
+   if(xget(G->WR[winnum]->GUI.WI, MUIA_Window_Open))
+    set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
+
    if (ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_SaveTextAs), REQF_SAVEMODE, C->AttachDir, ""))
    {
       char filename[SIZE_PATHFILE];
@@ -1786,12 +1853,11 @@ HOOKPROTONHNO(WR_Edit, void, int *arg)
    if (*(C->Editor))
    {
       int winnum = *arg;
-      long winopen;
       char buffer[SIZE_COMMAND+SIZE_PATHFILE];
 
-      get(G->WR[winnum]->GUI.WI, MUIA_Window_Open, &winopen);
-      if (winopen) set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
       /* Workaround for a MUI bug */
+      if(xget(G->WR[winnum]->GUI.WI, MUIA_Window_Open))
+        set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
 
       EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum]);
       snprintf(buffer, sizeof(buffer), "%s \"%s\"", C->Editor, GetRealPath(G->WR_Filename[winnum]));
