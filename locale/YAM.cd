@@ -483,9 +483,10 @@ _all recipients|...to the\n\
 _recipients|_Cancel
 ;
 MSG_MA_CompareReq (151//)
-Sender address (From) is <%s>, but\n\
-return address (Reply-To) is <%s>.\n\
-Which address do you want to use?
+Sender address (From) is \033b<%s>\033n, but\n\
+return address (Reply-To) is \033b<%s>\033n.\n\
+\n\
+To which address do you want to reply to?
 ; ADDRESS, ADDRESS
 ;
 MSG_MA_Compare3ReqOpt (152//)
