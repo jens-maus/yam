@@ -9,12 +9,21 @@
 #
 
 CDFILE="./YAM.cd"
+CTFILE="./*.ct"
 SOURCES="../src/*.c ../src/classes/*.c"
 TMPCD="/tmp/YAM.cd"
 
 ########################################################
 # Script starts here
 #
+
+if [ "$1" != "" ]; then
+  CTFILE="$1"
+fi
+
+######
+# We first check our YAM.cd file for orphaned catalogs IDs
+# by scanning through the whole source directory.
 echo "Scanning $CDFILE for orphaned catalog IDs:"
 
 # get all currently defined MSG_ tægs in the .cd file
@@ -59,5 +68,35 @@ for otag in $ORPHANEDTAGS; do
 done
 
 # copy the processed output file to YAM.cd.new
-cp $TMPCD.out $CDFILE.new 2>/dev/null
+cp $TMPCD.out $CDFILE 2>/dev/null
 rm $TMPCD.out $TMPCD.in 2>/dev/null
+
+######
+# Now we check all existing catalog translations and output
+# which orphaned catalogs IDs which can be deleted
+CTFILES=`ls ${CTFILE}`
+for ctfile in $CTFILES; do
+  echo ""
+  echo "Scanning $ctfile for orphaned catalogs IDs:"
+  CTTAGS=`awk '/^MSG_/ { print $1 }' $ctfile | xargs` 
+  for cttag in $CTTAGS; do
+    echo "$MSGTAGS" | grep "$cttag" >/dev/null
+    if [ $? == 1 ]; then
+      echo "'$cttag' is orphaned"
+    fi
+  done
+done
+
+######
+# Now we check all existing catalog translations and output
+# which catalogs IDs are actually missing
+for ctfile in $CTFILES; do
+  echo ""
+  echo "Scanning $ctfile for missing catalogs IDs:"
+  for tag in $MSGTAGS; do
+    grep "$tag" $ctfile >/dev/null
+    if [ $? == 1 ]; then
+      echo "'$tag' is missing"
+    fi
+  done
+done
