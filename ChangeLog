@@ -6,6 +6,8 @@ $Id$
 
 2006-07-01  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_AB.c, misc: fixed bug #585174 where the Bounce/Forward addressbook
+    popups didn't allow to directly select a recipient by double clicking.
   * classes/SearchControlGroup.c: the additional string gadget right beside
     the selection cycle gadget will now be hided instead of just disabled
     in case something other than "Other field:" is selected. This should

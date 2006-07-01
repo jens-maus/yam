@@ -53,9 +53,9 @@
 #define isGroupSearch(mode)     (isFlagSet((mode), ASM_GROUP))
 #define isCompleteSearch(mode)  (isFlagSet((mode), ASM_COMPLETE))
 
-enum AddressbookMode { ABM_EDIT, ABM_TO, ABM_CC, ABM_BCC, ABM_REPLYTO, ABM_FROM };
+enum AddressbookMode { ABM_NONE=0, ABM_EDIT, ABM_TO, ABM_CC, ABM_BCC, ABM_REPLYTO, ABM_FROM, ABM_CONFIG };
 
-enum AddressbookFind { ABF_USER, ABF_RX, ABF_RX_NAME, ABF_RX_EMAIL, ABF_RX_NAMEEMAIL };
+enum AddressbookFind { ABF_USER=0, ABF_RX, ABF_RX_NAME, ABF_RX_EMAIL, ABF_RX_NAMEEMAIL };
 
 struct AB_GUIData
 {
@@ -76,6 +76,7 @@ struct AB_ClassData  /* address book window */
    enum AddressbookMode Mode;
    BOOL                 Modified;
    char                 WTitle[SIZE_DEFAULT];
+   Object               *parentStringGadget; // in case ABM_CONFIG is used.
 };
 
 extern struct Hook AB_DeleteHook;

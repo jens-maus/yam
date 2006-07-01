@@ -4013,31 +4013,47 @@ Object *MakePGPKeyList(Object **st, BOOL secret, char *label)
 ///
 /// MakeAddressField
 //  Creates a recipient field
-Object *MakeAddressField(Object **string, char *label, APTR help, int abmode, int winnum, BOOL allowmulti)
+Object *MakeAddressField(Object **string, char *label, Object *help, int abmode, int winnum, BOOL allowmulti)
 {
-   Object *obj, *bt_adr;
+  Object *obj;
+  Object *bt_adr;
 
-   if ((obj = HGroup,
-      GroupSpacing(1),
-      Child, *string = RecipientstringObject,
-         StringFrame,
-         MUIA_CycleChain,                          TRUE,
-         MUIA_String_AdvanceOnCR,                  TRUE,
-         MUIA_Recipientstring_ResolveOnCR,         TRUE,
-         MUIA_Recipientstring_MultipleRecipients,  allowmulti,
-         MUIA_ControlChar, ShortCut(label),
-      End,
-      Child, bt_adr = PopButton(MUII_PopUp),
-   End))
-   {
-      SetHelp(*string,help);
-      SetHelp(bt_adr, MSG_HELP_WR_BT_ADR);
+  ENTER();
+
+  if((obj = HGroup,
+
+    GroupSpacing(1),
+    Child, *string = RecipientstringObject,
+      StringFrame,
+      MUIA_CycleChain,                          TRUE,
+      MUIA_String_AdvanceOnCR,                  TRUE,
+      MUIA_Recipientstring_ResolveOnCR,         TRUE,
+      MUIA_Recipientstring_MultipleRecipients,  allowmulti,
+      MUIA_ControlChar, ShortCut(label),
+    End,
+    Child, bt_adr = PopButton(MUII_PopUp),
+
+  End))
+  {
+    SetHelp(*string,help);
+    SetHelp(bt_adr, MSG_HELP_WR_BT_ADR);
+
+    if(abmode == ABM_CONFIG)
+    {
+      DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, *string);
+      DoMethod(*string, MUIM_Notify, MUIA_Recipientstring_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, *string);
+    }
+    else
+    {
       DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum);
       DoMethod(*string, MUIM_Notify, MUIA_Recipientstring_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum);
-      DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime,  bt_adr, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
-   }
+    }
 
-   return obj;
+    DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime,  bt_adr, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
+  }
+
+  RETURN(obj);
+  return obj;
 }
 ///
 /// MakeNumeric

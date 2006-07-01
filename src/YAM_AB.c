@@ -292,30 +292,45 @@ void AB_InsertAddress(APTR string, char *alias, char *name, char *address)
 /*** AB_FromAddrBook - Inserts an address book entry into a recipient string ***/
 HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
 {
-   APTR string;
-   struct MUI_NListtree_TreeNode *active;
+  struct MUI_NListtree_TreeNode *active;
 
-   if ((active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
-   {
-      int winnum = G->AB->WrWin;
-      struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
-      BOOL openwin = winnum < 0;
-      if (!openwin) openwin = !G->WR[winnum];
-      if (openwin) G->AB->WrWin = winnum = MA_NewNew(NULL, 0);
-      if (winnum >= 0)
+  ENTER();
+
+  if(arg[0] != ABM_NONE &&
+     (active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
+  {
+    int winnum = G->AB->WrWin;
+    struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
+    BOOL openwin = winnum < 0;
+
+    if(!openwin)
+      openwin = !G->WR[winnum];
+
+    if(openwin)
+      G->AB->WrWin = winnum = MA_NewNew(NULL, 0);
+
+    if(winnum >= 0)
+    {
+      Object *string;
+
+      switch(arg[0])
       {
-         switch (*arg)
-         {
-            case ABM_TO:      string = G->WR[winnum]->GUI.ST_TO; break;
-            case ABM_CC:      string = G->WR[winnum]->GUI.ST_CC; break;
-            case ABM_BCC:     string = G->WR[winnum]->GUI.ST_BCC; break;
-            case ABM_REPLYTO: string = G->WR[winnum]->GUI.ST_REPLYTO; break;
-            case ABM_FROM:    string = G->WR[winnum]->GUI.ST_FROM; break;
-            default: string = (APTR)*arg;
-         }
-         DoMethod(string, MUIM_Recipientstring_AddRecipient, addr->Alias ? addr->Alias : addr->RealName);
+        case ABM_TO:      string = G->WR[winnum]->GUI.ST_TO; break;
+        case ABM_CC:      string = G->WR[winnum]->GUI.ST_CC; break;
+        case ABM_BCC:     string = G->WR[winnum]->GUI.ST_BCC; break;
+        case ABM_REPLYTO: string = G->WR[winnum]->GUI.ST_REPLYTO; break;
+        case ABM_FROM:    string = G->WR[winnum]->GUI.ST_FROM; break;
+
+        default:
+          string = (Object *)arg[0];
+        break;
       }
-   }
+
+      DoMethod(string, MUIM_Recipientstring_AddRecipient, addr->Alias ? addr->Alias : addr->RealName);
+    }
+  }
+
+  LEAVE();
 }
 MakeStaticHook(AB_FromAddrBookHook, AB_FromAddrBook);
 
@@ -521,26 +536,50 @@ MakeStaticHook(AB_EditHook, AB_EditFunc);
 /*** AB_DoubleClick - User double-clicked in the address book ***/
 HOOKPROTONHNONP(AB_DoubleClick, void)
 {
-   if (G->AB->WrWin >= 0) if (G->WR[G->AB->WrWin])
-   {
-      struct WR_GUIData *gui = &G->WR[G->AB->WrWin]->GUI;
-      APTR obj = NULL;
-      switch (G->AB->Mode)
+  ENTER();
+
+  if(G->AB->WrWin >= 0 && G->WR[G->AB->WrWin])
+  {
+    struct WR_GUIData *gui = &G->WR[G->AB->WrWin]->GUI;
+    Object *obj = NULL;
+
+    switch(G->AB->Mode)
+    {
+      case ABM_TO:      obj = gui->ST_TO;      break;
+      case ABM_CC:      obj = gui->ST_CC;      break;
+      case ABM_BCC:     obj = gui->ST_BCC;     break;
+      case ABM_FROM:    obj = gui->ST_FROM;    break;
+      case ABM_REPLYTO: obj = gui->ST_REPLYTO; break;
+
+      default:
+        // nothing
+      break;
+    }
+
+    DoMethod(G->App, MUIM_CallHook, &AB_FromAddrBookHook, obj);
+    set(G->AB->GUI.WI, MUIA_Window_CloseRequest, TRUE);
+  }
+  else
+  {
+    if(G->AB->Mode == ABM_CONFIG &&
+       G->AB->parentStringGadget != NULL)
+    {
+      struct MUI_NListtree_TreeNode *active;
+
+      if((active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
       {
-         case ABM_TO:      obj = gui->ST_TO;      break;
-         case ABM_CC:      obj = gui->ST_CC;      break;
-         case ABM_BCC:     obj = gui->ST_BCC;     break;
-         case ABM_FROM:    obj = gui->ST_FROM;    break;
-         case ABM_REPLYTO: obj = gui->ST_REPLYTO; break;
-         default:
-          // nothing
-         break;
+        struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
+
+        DoMethod(G->AB->parentStringGadget, MUIM_Recipientstring_AddRecipient, addr->Alias ? addr->Alias : addr->RealName);
       }
-      DoMethod(G->App, MUIM_CallHook, &AB_FromAddrBookHook, obj, TAG_DONE);
+
       set(G->AB->GUI.WI, MUIA_Window_CloseRequest, TRUE);
-      return;
-   }
-   AB_EditFunc();
+    }
+    else
+      AB_EditFunc();
+  }
+
+  LEAVE();
 }
 MakeStaticHook(AB_DoubleClickHook, AB_DoubleClick);
 
@@ -931,29 +970,41 @@ MakeStaticHook(AB_FindHook, AB_FindFunc);
 ///
 /// AB_OpenFunc
 /*** AB_OpenFunc - Open address book window ***/
-HOOKPROTONHNO(AB_OpenFunc, void, int *arg)
+HOOKPROTONHNO(AB_OpenFunc, void, LONG *arg)
 {
-   struct AB_ClassData *ab = G->AB;
-   char *md = "";
+  struct AB_ClassData *ab = G->AB;
+  char *md = "";
 
-   switch (ab->Mode = arg[0])
-   {
-      case ABM_TO:      md = "(To)";      break;
-      case ABM_CC:      md = "(CC)";      break;
-      case ABM_BCC:     md = "(BCC)";     break;
-      case ABM_FROM:    md = "(From)";    break;
-      case ABM_REPLYTO: md = "(Reply-To)";break;
-      default:
-        // nothing
-      break;
-   }
+  ENTER();
 
-   ab->WrWin = *md ? arg[1] : -1;
-   ab->Modified = FALSE;
-   snprintf(ab->WTitle, sizeof(ab->WTitle), "%s %s", GetStr(MSG_MA_MAddrBook), md);
-   set(ab->GUI.WI, MUIA_Window_Title, ab->WTitle);
-   set(ab->GUI.LV_ADDRESSES, MUIA_NListtree_Active, MUIV_NListtree_Active_Off);
-   SafeOpenWindow(ab->GUI.WI);
+  switch((ab->Mode = arg[0]))
+  {
+    case ABM_TO:      md = "(To)";      break;
+    case ABM_CC:      md = "(CC)";      break;
+    case ABM_BCC:     md = "(BCC)";     break;
+    case ABM_FROM:    md = "(From)";    break;
+    case ABM_REPLYTO: md = "(Reply-To)";break;
+    case ABM_CONFIG:  ab->parentStringGadget = (Object *)arg[1]; break;
+    default:
+      // nothing
+    break;
+  }
+
+  ab->WrWin = *md ? arg[1] : -1;
+  ab->Modified = FALSE;
+
+  // disable some GUI components if necessary.
+  set(ab->GUI.BT_TO, MUIA_Disabled, ab->Mode == ABM_CONFIG);
+  set(ab->GUI.BT_CC, MUIA_Disabled, ab->Mode == ABM_CONFIG);
+  set(ab->GUI.BT_BCC,MUIA_Disabled, ab->Mode == ABM_CONFIG);
+
+  snprintf(ab->WTitle, sizeof(ab->WTitle), "%s %s", GetStr(MSG_MA_MAddrBook), md);
+  set(ab->GUI.WI, MUIA_Window_Title, ab->WTitle);
+  set(ab->GUI.LV_ADDRESSES, MUIA_NListtree_Active, MUIV_NListtree_Active_Off);
+
+  SafeOpenWindow(ab->GUI.WI);
+
+  LEAVE();
 }
 MakeHook(AB_OpenHook, AB_OpenFunc);
 
@@ -1325,7 +1376,7 @@ struct AB_ClassData *AB_New(void)
         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_SORTADDR ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_SortHook,4);
         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_FOLD     ,data->GUI.LV_ADDRESSES,4,MUIM_NListtree_Close ,NULL,MUIV_NListtree_Close_TreeNode_All, MUIF_NONE);
         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_UNFOLD   ,data->GUI.LV_ADDRESSES,4,MUIM_NListtree_Open  ,NULL,MUIV_NListtree_Open_TreeNode_All, MUIF_NONE);
-        DoMethod(data->GUI.LV_ADDRESSES,MUIM_Notify,MUIA_NListtree_DoubleClick,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&AB_DoubleClickHook,0);
+        DoMethod(data->GUI.LV_ADDRESSES,MUIM_Notify,MUIA_NListtree_DoubleClick,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&AB_DoubleClickHook);
         DoMethod(data->GUI.BT_TO      ,MUIM_Notify,MUIA_Pressed    ,FALSE,MUIV_Notify_Application           ,3,MUIM_CallHook       ,&AB_FromAddrBookHook,ABM_TO);
         DoMethod(data->GUI.BT_CC      ,MUIM_Notify,MUIA_Pressed    ,FALSE,MUIV_Notify_Application           ,3,MUIM_CallHook       ,&AB_FromAddrBookHook,ABM_CC);
         DoMethod(data->GUI.BT_BCC     ,MUIM_Notify,MUIA_Pressed    ,FALSE,MUIV_Notify_Application           ,3,MUIM_CallHook       ,&AB_FromAddrBookHook,ABM_BCC);
