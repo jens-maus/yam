@@ -341,7 +341,8 @@ OVERLOAD(OM_SET)
       
         set(data->CY_MODE[0], MUIA_Disabled, disabled);
         set(data->CY_MODE[1], MUIA_Disabled, disabled);
-        set(data->ST_FIELD, MUIA_Disabled, disabled || mode != 6);
+        set(data->ST_FIELD, MUIA_Disabled, disabled);
+        set(data->ST_FIELD, MUIA_ShowMe, mode == 6);
         set(data->RA_ADRMODE, MUIA_Disabled, disabled);
         set(data->CY_STATUS, MUIA_Disabled, disabled);
 
@@ -378,7 +379,6 @@ OVERLOAD(OM_GET)
   return DoSuperMethodA(cl, obj, msg);
 }
 ///
-
 
 /* Public Methods */
 /// DECLARE(Clear)
