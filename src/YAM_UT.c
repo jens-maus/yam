@@ -982,7 +982,7 @@ char *MyStrChr(const char *s, const char c)
 
   while(*s)
   {
-    if(*s == '\"')
+    if(*s == '"')
       nested = !nested;
     else if(*s == c && !nested)
       return (char *)s;
