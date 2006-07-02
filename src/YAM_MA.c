@@ -3349,73 +3349,120 @@ MakeStaticHook(MA_ShowErrorsHook, MA_ShowErrorsFunc);
 //  Launches user-defined ARexx script or AmigaDOS command
 BOOL MA_StartMacro(enum Macro num, char *param)
 {
-   BPTR fh;
-   char command[SIZE_LARGE], *wtitle = "CON:////YAM ARexx Window/AUTO";
-   struct RexxMsg *sentrm;
+  BOOL result = FALSE;
 
-   strlcpy(command, C->RX[num].Script, sizeof(command));
-   if (!*command) return 0;
+  ENTER();
 
-   if(param)
-   {
-     strlcat(command, " ", sizeof(command));
-     strlcat(command, param, sizeof(command));
-   }
+  if(C->RX[num].Script[0] != '\0')
+  {
+    char command[SIZE_LARGE];
 
-   if (C->RX[num].IsAmigaDOS)
-   {
+    // check if the script in question is an amigados
+    // or arexx script
+    if(C->RX[num].IsAmigaDOS)
+    {
+      // prepare the command string
+      if(param)
+        snprintf(command, sizeof(command), "%s %s", C->RX[num].Script, param);
+      else
+        strlcpy(command, C->RX[num].Script, sizeof(command));
+
+      // now execute the command
       BusyText(GetStr(MSG_MA_EXECUTINGCMD), "");
       ExecuteCommand(command, !C->RX[num].WaitTerm, C->RX[num].UseConsole ? OUT_DOS : OUT_NIL);
       BusyEnd();
-   }
-   else if(G->RexxHost) // make sure that rexx it available
-   {
-      if (!(fh = Open(C->RX[num].UseConsole ? wtitle : "NIL:", MODE_NEWFILE)))
+
+      result = TRUE;
+    }
+    else if(G->RexxHost) // make sure that rexx it available
+    {
+      BPTR fh;
+
+      // prepare the command string
+      // only RexxSysBase v45+ seems to support properly quoted
+      // strings via the new RXFF_SCRIPT flag
+      if(((struct Library *)RexxSysBase)->lib_Version >= 45 && MyStrChr(C->RX[num].Script, ' '))
       {
-         ER_NewError(GetStr(MSG_ER_ErrorConsole));
-         return FALSE;
+        if(param)
+          snprintf(command, sizeof(command), "\"%s\" %s", C->RX[num].Script, param);
+        else
+          snprintf(command, sizeof(command), "\"%s\"", C->RX[num].Script);
       }
-      if (!(sentrm = SendRexxCommand(G->RexxHost, command, fh)))
+      else
       {
-         Close(fh);
-         ER_NewError(GetStr(MSG_ER_ErrorARexxScript), command);
-         return FALSE;
+        if(param)
+          snprintf(command, sizeof(command), "%s %s", C->RX[num].Script, param);
+        else
+          snprintf(command, sizeof(command), "%s", C->RX[num].Script);
       }
-      if (C->RX[num].WaitTerm)
+
+      // make sure to open the output console handler
+      if((fh = Open(C->RX[num].UseConsole ? "CON:////YAM ARexx Window/AUTO" : "NIL:", MODE_NEWFILE)))
       {
-         extern void DoRXCommand( struct RexxHost *, struct RexxMsg *);
-         struct RexxMsg *rm;
-         BOOL waiting = TRUE;
-         BusyText(GetStr(MSG_MA_EXECUTINGCMD), "");
-         do
-         {
-            WaitPort(G->RexxHost->port);
-            while ((rm = (struct RexxMsg *)GetMsg(G->RexxHost->port)))
+        struct RexxMsg *sentrm;
+
+        // execute the Arexx command
+        if((sentrm = SendRexxCommand(G->RexxHost, command, fh)))
+        {
+          // if the user wants to wait for the termination
+          // of the script, we do so...
+          if(C->RX[num].WaitTerm)
+          {
+            struct RexxMsg *rm;
+            BOOL waiting = TRUE;
+
+            BusyText(GetStr(MSG_MA_EXECUTINGCMD), "");
+            do
             {
-               if ((rm->rm_Action & RXCODEMASK) != RXCOMM) ReplyMsg((struct Message *)rm);
-               else if (rm->rm_Node.mn_Node.ln_Type == NT_REPLYMSG)
-               {
+              WaitPort(G->RexxHost->port);
+
+              while((rm = (struct RexxMsg *)GetMsg(G->RexxHost->port)))
+              {
+                if((rm->rm_Action & RXCODEMASK) != RXCOMM)
+                  ReplyMsg((struct Message *)rm);
+                else if(rm->rm_Node.mn_Node.ln_Type == NT_REPLYMSG)
+                {
                   struct RexxMsg *org = (struct RexxMsg *)rm->rm_Args[15];
-                  if (org)
+
+                  if(org)
                   {
-                     if (rm->rm_Result1) ReplyRexxCommand(org, 20, ERROR_NOT_IMPLEMENTED, NULL);
-                     else ReplyRexxCommand(org, 0, 0, (char *)rm->rm_Result2);
+                    if(rm->rm_Result1)
+                      ReplyRexxCommand(org, 20, ERROR_NOT_IMPLEMENTED, NULL);
+                    else
+                      ReplyRexxCommand(org, 0, 0, (char *)rm->rm_Result2);
                   }
-                  if (rm == sentrm) waiting = FALSE;
+
+                  if(rm == sentrm)
+                    waiting = FALSE;
+
                   FreeRexxCommand(rm);
                   --G->RexxHost->replies;
-               }
-               else if (rm->rm_Args[0]) DoRXCommand(G->RexxHost, rm);
-               else ReplyMsg((struct Message *)rm);
+                }
+                else if(rm->rm_Args[0])
+                  DoRXCommand(G->RexxHost, rm);
+                else
+                  ReplyMsg((struct Message *)rm);
+              }
             }
-         }
-         while (waiting);
-         BusyEnd();
-      }
-   }
-   else return FALSE;
+            while(waiting);
+            BusyEnd();
+          }
 
-   return TRUE;
+          result = TRUE;
+        }
+        else
+        {
+          Close(fh);
+          ER_NewError(GetStr(MSG_ER_ErrorARexxScript), command);
+        }
+      }
+      else
+        ER_NewError(GetStr(MSG_ER_ErrorConsole));
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -3429,7 +3476,7 @@ HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
 
   if(script >= 0)
     MA_StartMacro(MACRO_MEN0+script, NULL);
-  else
+  else if(G->RexxHost)
   {
     char scname[SIZE_COMMAND];
 
@@ -3438,9 +3485,22 @@ HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
     if(ReqFile(ASL_REXX, G->MA->GUI.WI, GetStr(MSG_MA_ExecuteScript), REQF_NONE, scname, ""))
     {
       strmfp(scname, G->ASLReq[ASL_REXX]->fr_Drawer, G->ASLReq[ASL_REXX]->fr_File);
-      SendRexxCommand(G->RexxHost, scname, 0);
+
+      // only RexxSysBase v45+ seems to support properly quoted
+      // strings via the new RXFF_SCRIPT flag
+      if(((struct Library *)RexxSysBase)->lib_Version >= 45 && MyStrChr(scname, ' '))
+      {
+        char command[SIZE_COMMAND];
+
+        snprintf(command, sizeof(command), "\"%s\"", scname);
+        SendRexxCommand(G->RexxHost, command, 0);
+      }
+      else
+        SendRexxCommand(G->RexxHost, scname, 0);
     }
   }
+  else
+    E(DBF_REXX, "couldn't execute Arexx script '%ld'", script);
 
   LEAVE();
 }

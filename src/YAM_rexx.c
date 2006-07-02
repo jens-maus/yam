@@ -188,41 +188,21 @@ struct RexxMsg *SendRexxCommand(struct RexxHost *host, char *buff, BPTR fh)
 
   ENTER();
 
+  D(DBF_REXX, "executing ARexx script: '%s'", buff);
+
   // only RexxSysBase v45+ seems to support properly quoted
   // strings via the new RXFF_SCRIPT flag
   if(((struct Library *)RexxSysBase)->lib_Version >= 45)
   {
-    char *quotedBuf;
-
     // not all SDKs do supply that new flag already
     #ifndef RXFF_SCRIPT
     #define RXFF_SCRIPT (1 << 21)
     #endif
 
-    // check that the string is quoted
-    if(buff[0] != '"' && strchr(buff, ' '))
-    {
-      if((quotedBuf = malloc(strlen(buff)+3)))
-        snprintf(quotedBuf, strlen(buff)+3, "\"%s\"", buff);
-      else
-        return NULL;
-    }
-    else
-      quotedBuf = buff;
-
-    D(DBF_REXX, "executing quoted rexx script: '%s'", quotedBuf);
-
-    rcm = CreateRexxCommand(host, quotedBuf, fh, RXFF_SCRIPT);
-
-    if(quotedBuf != buff)
-      free(quotedBuf);
+    rcm = CreateRexxCommand(host, buff, fh, RXFF_SCRIPT);
   }
   else
-  {
-    D(DBF_REXX, "executing rexx script: '%s'", buff);
-
     rcm = CreateRexxCommand(host, buff, fh, 0);
-  }
 
   if(rcm != NULL)
     result =  CommandToRexx(host, rcm);

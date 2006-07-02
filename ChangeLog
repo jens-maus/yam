@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-07-02  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_rexx.c, YAM_MA.c: the fix for bug #667192 didn't work out as expected
+    and introduced some other issues regarding the quoting of rexx/command
+    strings with spaces involved. However, the issue should now be fully
+    addressed at the right place and hopefully under all situations.
+
 2006-07-01  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_AB.c, misc: fixed bug #585174 where the Bounce/Forward addressbook
