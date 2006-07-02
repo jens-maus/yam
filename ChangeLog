@@ -6,6 +6,9 @@ $Id$
 
 2006-07-02  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c, YAM_CO.c: the listview of the 'Scripts' configuration will now
+    immediately show its active/inactive status instead of only showing it on
+    a manual redraw operation.
   * YAM_rexx.c, YAM_MA.c: the fix for bug #667192 didn't work out as expected
     and introduced some other issues regarding the quoting of rexx/command
     strings with spaces involved. However, the issue should now be fully

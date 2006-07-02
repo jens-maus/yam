@@ -959,6 +959,48 @@ HOOKPROTONH(MimeTypeDisplayFunc, LONG, char **array, struct MimeTypeNode *mt)
 MakeStaticHook(MimeTypeDisplayHook, MimeTypeDisplayFunc);
 
 ///
+/// CO_GetRXEntry
+//  Fills form with data from selected list entry
+HOOKPROTONHNONP(CO_GetRXEntry, void)
+{
+  struct CO_GUIData *gui = &G->CO->GUI;
+  struct RxHook *rh;
+  int act = xget(gui->LV_REXX, MUIA_List_Active);
+
+  rh = &(CE->RX[act]);
+  nnset(gui->ST_RXNAME, MUIA_String_Contents, act < 10 ? rh->Name : "");
+  nnset(gui->ST_SCRIPT, MUIA_String_Contents, rh->Script);
+  nnset(gui->CY_ISADOS, MUIA_Cycle_Active, rh->IsAmigaDOS ? 1 : 0);
+  nnset(gui->CH_CONSOLE, MUIA_Selected, rh->UseConsole);
+  nnset(gui->CH_WAITTERM, MUIA_Selected, rh->WaitTerm);
+  set(gui->ST_RXNAME, MUIA_Disabled, act >= 10);
+
+  DoMethod(gui->LV_REXX, MUIM_List_Redraw, act);
+}
+MakeStaticHook(CO_GetRXEntryHook,CO_GetRXEntry);
+
+///
+/// CO_PutRXEntry
+//  Fills form data into selected list entry
+HOOKPROTONHNONP(CO_PutRXEntry, void)
+{
+  struct CO_GUIData *gui = &G->CO->GUI;
+  int act = xget(gui->LV_REXX, MUIA_List_Active);
+
+  if(act != MUIV_List_Active_Off)
+  {
+    struct RxHook *rh = &(CE->RX[act]);
+    GetMUIString(rh->Name, gui->ST_RXNAME, sizeof(rh->Name));
+    GetMUIString(rh->Script, gui->ST_SCRIPT, sizeof(rh->Script));
+    rh->IsAmigaDOS = GetMUICycle(gui->CY_ISADOS) == 1;
+    rh->UseConsole = GetMUICheck(gui->CH_CONSOLE);
+    rh->WaitTerm = GetMUICheck(gui->CH_WAITTERM);
+
+    DoMethod(gui->LV_REXX, MUIM_List_Redraw, act);
+  }
+}
+MakeStaticHook(CO_PutRXEntryHook,CO_PutRXEntry);
+///
 
 /*** Pages ***/
 /// CO_Page0  (Start)
