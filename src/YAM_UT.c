@@ -1672,7 +1672,7 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
           if(*src != '\n')
           {
             // add a space to if this was the first quoting
-            if(temp_len == 0 || (*src != ' ' && lastwasspace == FALSE))
+            if(lastwasspace == FALSE && (temp_len == 0 || *src != ' '))
             {
               fputc(' ', out);
               line_len++;

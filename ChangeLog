@@ -6,6 +6,9 @@ $Id$
 
 2006-07-02  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: applied a patch kindly supplied by Andrija Antonijevic which
+    fixes an issue where YAM always inserted an additional space on a new
+    quoted line even if the previously line ended with a space.
   * YAM_COg.c, YAM_CO.c: the listview of the 'Scripts' configuration will now
     immediately show its active/inactive status instead of only showing it on
     a manual redraw operation.
