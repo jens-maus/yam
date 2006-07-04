@@ -1672,7 +1672,7 @@ void CO_SetConfig(void)
           setcycle(gui->CY_UPDATEINTERVAL, 1);
 
         // now we set the information on the last update check
-        switch(C->LastUpdateStatus)
+        switch(CE->LastUpdateStatus)
         {
           case UST_NOCHECK:
             set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOCHECK));
@@ -1692,11 +1692,11 @@ void CO_SetConfig(void)
         }
 
         // set the lastUpdateCheckDate
-        if(C->LastUpdateStatus != UST_NOCHECK && C->LastUpdateCheck.Seconds > 0)
+        if(CE->LastUpdateStatus != UST_NOCHECK && CE->LastUpdateCheck.Seconds > 0)
         {
           char buf[SIZE_DEFAULT];
 
-          TimeVal2String(buf, sizeof(buf), &C->LastUpdateCheck, DSS_DATETIME, TZC_NONE);
+          TimeVal2String(buf, sizeof(buf), &CE->LastUpdateCheck, DSS_DATETIME, TZC_NONE);
           set(gui->TX_UPDATEDATE, MUIA_Text_Contents, buf);
         }
         else

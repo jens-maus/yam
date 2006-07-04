@@ -33,6 +33,8 @@
 #include <mui/NList_mcc.h>
 #include <mui/NFloattext_mcc.h>
 
+#include "YAM_configFile.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -382,6 +384,26 @@ DECLARE(Close)
     C->UpdateInterval = 0;
     InitUpdateCheck(FALSE);
   }
+  else if(C->UpdateInterval == 0)
+  {
+    // now we have to make sure we reactivate the updatecheck
+    // timer again as the user unchecked the skip checkbox.
+    C->UpdateInterval = 604800; // check weekly for updates per default
+    InitUpdateCheck(FALSE);
+  }
+
+  if(CE)
+  {
+    // now we make sure the C and CE config structure is in sync again
+    CE->UpdateInterval = C->UpdateInterval;
+    CE->LastUpdateStatus = C->LastUpdateStatus;
+    memcpy(&CE->LastUpdateCheck, &C->LastUpdateCheck, sizeof(struct TimeVal));
+  }
+
+  // make sure the update check config page is correctly refreshed
+  // if it is currently the active one.
+  if(G->CO && G->CO->VisiblePage == 15)
+    CO_SetConfig();
 
   // now close the window for real.
   set(obj, MUIA_Window_Open, FALSE);

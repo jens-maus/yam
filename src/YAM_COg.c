@@ -45,6 +45,7 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_config.h"
+#include "YAM_configFile.h"
 #include "YAM_find.h"
 #include "YAM_global.h"
 #include "YAM_locale.h"
@@ -793,45 +794,22 @@ MakeStaticHook(FilterDisplayHook, FilterDisplayFunc);
 // initiates an interactive update check
 HOOKPROTONHNONP(UpdateCheckFunc, void)
 {
-  struct CO_GUIData *gui = &G->CO->GUI;
+  ENTER();
+
+  // get the configuration settings
+  if(G->CO->VisiblePage == 15)
+    CO_GetConfig();
+
+  // now we make sure the C and CE config structure is in sync again
+  C->UpdateInterval = CE->UpdateInterval;
+  C->LastUpdateStatus = CE->LastUpdateStatus;
+  memcpy(&C->LastUpdateCheck, &CE->LastUpdateCheck, sizeof(struct TimeVal));
 
   // perform the update check and update our open GUI
   // elements accordingly.
   CheckForUpdates();
 
-  // update the status and lastupdatedate label
-  switch(C->LastUpdateStatus)
-  {
-    case UST_NOCHECK:
-      set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOCHECK));
-    break;
-
-    case UST_NOUPDATE:
-      set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOUPDATE));
-    break;
-
-    case UST_NOQUERY:
-      set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOQUERY));
-    break;
-
-    case UST_UPDATESUCCESS:
-      set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_UPDATESUCCESS));
-    break;
-  }
-
-  // set the lastUpdateCheckDate
-  if(C->LastUpdateStatus != UST_NOCHECK && C->LastUpdateCheck.Seconds > 0)
-  {
-    char buf[SIZE_DEFAULT];
-
-    TimeVal2String(buf, sizeof(buf), &C->LastUpdateCheck, DSS_DATETIME, TZC_NONE);
-    set(gui->TX_UPDATEDATE, MUIA_Text_Contents, buf);
-  }
-  else
-  {
-    // no update check was yet performed, so we clear our status gadgets
-    set(gui->TX_UPDATEDATE, MUIA_Text_Contents, "");
-  }
+  LEAVE();
 }
 MakeStaticHook(UpdateCheckHook, UpdateCheckFunc);
 

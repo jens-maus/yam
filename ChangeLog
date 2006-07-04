@@ -4,6 +4,15 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-07-04  Jens Langner <Jens.Langner@light-speed.de>
+
+  * classes/UpdateNotifyWindow.c, YAM_COg.c, YAM_COs.c: fixed some issues
+    related to the "Do not notify me on updates in future" checkbox in the
+    UpdateNotifyWindow when the YAM configuration window was open during
+    updatecheck processing. Now YAM should hopefully update the checkbox
+    correctly and also the configuration in case the update window is
+    closed.
+
 2006-07-02  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: applied a patch kindly supplied by Andrija Antonijevic which
