@@ -5705,7 +5705,7 @@ MSG_CO_LASTSTATUS_NOQUERY (1673//)
 Couldn't query update server for updates.
 ;
 MSG_CO_LASTSTATUS_UPDATESUCCESS (1674//)
-Successfully found and processed new updates.
+Successfully found and notified on new updates.
 ;
 MSG_WR_SECURITYREQ (1675//)
 The recipients of the mail have different\n\
