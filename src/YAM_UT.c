@@ -133,10 +133,9 @@ static BPTR CloneSearchPath(void)
     WorkbenchControl(NULL, WBCTRLA_DuplicateSearchPath, &path, TAG_DONE);
 
   #ifndef __amigaos4__
-  // if we couldn't obtain a duplicate copy of the
-  // workbench search path here it is very likely that
-  // we are running on a system without workench.library < 44 or
-  // on a MorphOS with not the very latets workbench.lib.
+  // if we couldn't obtain a duplicate copy of the workbench search
+  // path here it is very likely that we are running on a system with
+  // workbench.library < 44 or on MorphOS with an old workbench.lib.
   if(path == 0)
   {
     struct Process *pr = (struct Process*)FindTask(NULL);
@@ -4174,7 +4173,7 @@ BOOL SafeOpenWindow(Object *obj)
   // make sure we open the window object
   set(obj, MUIA_Window_Open, TRUE);
 
-  // now we check wheter the window was successfully
+  // now we check whether the window was successfully
   // open or the application has been in iconify state
   if(xget(obj, MUIA_Window_Open) == TRUE ||
      xget(_app(obj), MUIA_Application_Iconified) == TRUE)

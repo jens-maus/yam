@@ -1264,7 +1264,7 @@ int MA_NewNew(struct Mail *mail, int flags)
       {
         struct ExtendedMail *email;
 
-        // check wheter the old mail contains a ReplyTo: address
+        // check whether the old mail contains a ReplyTo: address
         // or not. And if so we prefer that one instead of using the
         // To: adresses
         if(mail->ReplyTo.Address[0] != '\0')
@@ -1914,7 +1914,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
           BOOL addDefault = FALSE;
 
           // the user wants to reply to the Sender (From:), however we
-          // need to check wheter he want to get asked or directly reply to
+          // need to check whether he want to get asked or directly reply to
           // the wanted address.
           if(hasPrivateFlag(flags))
           {
@@ -1953,7 +1953,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
           {
             BOOL askUser = FALSE;
 
-            // now we have to check wheter the ReplyTo: and From: of the original are the
+            // now we have to check whether the ReplyTo: and From: of the original are the
             // very same or not.
             if(stricmp(mail->From.Address, mail->ReplyTo.Address) == 0)
             {
@@ -2032,7 +2032,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
           if(addDefault)
           {
-            // otherwise we check wheter to use the ReplyTo: or From: addresses as the
+            // otherwise we check whether to use the ReplyTo: or From: addresses as the
             // To: adress of our reply. If a ReplyTo: exists we use that one instead
             if(mail->ReplyTo.Address[0] != '\0')
             {
@@ -2557,7 +2557,7 @@ void MA_GetAddress(struct Mail **mlist)
 
   ENTER();
 
-  // check wheter we want to create a single addressbook
+  // check whether we want to create a single addressbook
   // entry or a list of addresses
   if(num == 1 && !(outgoing && isMultiRCPTMail(mail)))
   {

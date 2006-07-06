@@ -450,7 +450,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param)
 
 
   // if an encoding is required, we go and process it accordingly but
-  // have to check wheter we do rfc2047 or rfc2231 based encoding
+  // have to check whether we do rfc2047 or rfc2231 based encoding
   if(doEncoding)
   {
     if(param)

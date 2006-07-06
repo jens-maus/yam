@@ -241,7 +241,7 @@ OVERLOAD(OM_SET)
       // we also catch foreign attributes
       case MUIA_Window_Open:
       {
-        // if the object should be hided we clean it up also
+        // if the object should be hidden we clean it up also
         if(tag->ti_Data == FALSE)
         {
           // we only clear the notify window's content if this

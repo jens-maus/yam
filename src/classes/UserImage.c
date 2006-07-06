@@ -219,7 +219,7 @@ OVERLOAD(MUIM_Setup)
   if(result == FALSE)
     data->scaledBitMap = NULL;
 
-  // return always true as we don't want to get that thing hided.
+  // return always true as we don't want to get that thing hidden.
   RETURN(TRUE);
   return TRUE;
 }

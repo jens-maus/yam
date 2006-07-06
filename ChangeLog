@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-07-06  Gunther Nikl <gni@gecko.de>
+
+  * ChangeLog, YAM.c, YAM_COg.c, YAM_MA.c, YAM_WR.c,YAM_UT.c,
+    classes/AttachmentGroup.c, classes/QuickSearchBar.c,
+    classes/UpdateNotifyWindow.c, classes/UserImage.c: Fixed spelling.
+
 2006-07-04  Jens Langner <Jens.Langner@light-speed.de>
 
   * classes/UpdateNotifyWindow.c, YAM_COg.c, YAM_COs.c: fixed some issues
@@ -31,7 +37,7 @@ $Id$
   * YAM_AB.c, misc: fixed bug #585174 where the Bounce/Forward addressbook
     popups didn't allow to directly select a recipient by double clicking.
   * classes/SearchControlGroup.c: the additional string gadget right beside
-    the selection cycle gadget will now be hided instead of just disabled
+    the selection cycle gadget will now be hidden instead of just disabled
     in case something other than "Other field:" is selected. This should
     make the look of that searchcontrolgroup more intuitive.
 
@@ -46,10 +52,10 @@ $Id$
     automatically overwrite after the specified autosave time period and
     deleted when closing the opened write window.
   * YAM_WR.c: fixed a crash issue in case the "WRITEQUEUE" arexx command is
-    used on hided write windows. This seems to be due to a MUI bug with
+    used on hidden write windows. This seems to be due to a MUI bug with
     setting MUIA_Group_ActivePage in a closed window. Now YAM will properly
     check if the window in question is open. In addition, the WR_NewMail()
-    function will now check wheter the window in question is a virtual/hided
+    function will now check whether the window in question is a virtual/hidden
     window and process the function in quiet mode instead.
 
 2006-06-29  Jens Langner <Jens.Langner@light-speed.de>
@@ -58,19 +64,19 @@ $Id$
     filename couldn't be executed properly via the "Execute script..." menu
     item. However, please note that the involved fix only works on systems
     with rexxsyslib.library version >= 45 as previous versions can't be
-    instructed to take case of files with spaces included.
+    instructed to take care of files with spaces included.
   * YAM.c: fixed bug #1241268 where the Splash window was closed after having
-    opened the main mail list which in turned may have kept the splash window
+    opened the main mail list which in turn may have kept the splash window
     open way too long and may have been irritating for the end user.
   * YAM_FI.c: fixed an issue with the context menu display of the find
-    result window where a user was able to override the default of having NO
-    context menu for the find window which in fact wasn't expected and
+    result window where a user was able to override the default of having
+    NO context menu for the find window which in fact wasn't expected and
     resulted in the context menu to perform weird operations. Now YAM makes
     sure that no context menu can be enabled for the simple find window.
   * classes/MainMailList.c, misc: due to the fact that the addressbook lookup
     in the DisplayHook and CompareHook of the main mail list is quite a time
     consuming operation - especially on slow systems and/or with large
-    addressbook, the generally enabled lookup is now disabled per default
+    addressbook, the generally enabled lookup is now disabled by default
     and a user might enable it in the Configuration->Lists setup. However,
     as most mails today carry a suitable real name this option would hardly
     bring any benefit and may serve best in kept disabled.
@@ -85,7 +91,7 @@ $Id$
     Unfortunately, that fix/change required a quite large amount of changes to
     make YAM aware of From:/Reply-To: header lines with multiple addresses
     in mind. Therefore, testers are highly encouraged to test all kind of
-    mail forwarding/replying/reediting as well as mail find/filter routines
+    mail forwarding/replying/re-editing as well as mail find/filter routines
     again, so that the adapted functions will be properly verified before the
     upcoming 2.5 release...
 
@@ -121,7 +127,7 @@ $Id$
   * YAM_WR.c: reworked the WR_AddArchiveFunc() to be somewhat more clear and less
     error prone in case something goes wrong. In addition, the strsfn() use is
     now obsolete, hence our own implementation was removed from our sources. All
-    in all, the "Pack & Add" functionality of YAM should now we a bit more safe
+    in all, the "Pack & Add" functionality of YAM should now be a bit more safe
     and flexible.
   * YAM_WR.c: fixed bug #1412251 where YAM didn't output any warning to the user
     in case he tries to add a read protected file as an attachment.
@@ -133,23 +139,23 @@ $Id$
     this configuration is hidden on purpose as an ordinary user might not be
     interested in changing the defaults. However, in one of the next versions
     we might probably introduce a GUI based configuration as well.
-    For changing the soft-style, YAM currently recognized the following tokens,
-    whereas they can be combine with a ':' char:
+    For changing the soft-style, YAM currently recognizes the following tokens,
+    whereas they can be combined with a ':' char:
 
     b  - bold
     i  - italic
     u  - underline
-    $X - where X can be between 2-9 and  represents the pen number to use
+    $X - where X can be between 2-9 and represents the pen number to use
 
 2006-06-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: reworked the ExtractAddress() function to also take care of
-    uoted and escaped realnames as well as realname with multiple nested
+    quoted and escaped realnames as well as realnames with multiple nested
     parenthesis.
   * classes/UpdateNotifyWindow.c: fixed an issue where in case an application
-    was iconfified while an updatenotification window was opened caused the
+    was iconified while an update-notification window was opened caused the
     application to enter an endless loop if the application was signaled to
-    uniconify again.
+    un-iconify again.
 
 2006-06-18  Jens Langner <Jens.Langner@light-speed.de>
 
@@ -165,7 +171,7 @@ $Id$
 
   * YAM_UT.c, YAM_TR.c, YAM_MAf.c: applied minor cosmetic optimizations/changes
     to the routines extracting a recipient address so that debugging of those
-    related functions shoule be more easy and intuitive in case something
+    related functions should be more easy and intuitive in case something
     goes wrong.
   * YAM_WR.c: fixed bug #1505424 where we did issue additional empty lines to
     the sender information and therefore left the mail content somehow
@@ -183,7 +189,7 @@ $Id$
     of bug #1464538 and caused YAM to throw "unexpected multipart" errors
     or didn't correctly extract all MIME information of a mail.
   * YAM_WR.c: fixed bug #1505068 where YAM didn't put MIME parameters which
-    are not encoded into quotes and therefore might left a MIME paramter as
+    are not encoded into quotes and therefore might left a MIME parameter as
     invalid according to the RFC.
   * YAM_UT.c: minor rework of the CloneSearchPath()/FreeSearchPath() functions
     to make them more compliant to MorphOS/Ambient environments.
@@ -200,7 +206,7 @@ $Id$
 2006-06-09  Jens Langner <Jens.Langner@light-speed.de>
 
   * classes/ReadMailGroup.c: fixed a minor bug in the header list compare hook
-    definition which may caused an illegal access to a non existing readmaildata
+    definition which may caused an illegal access to a non-existing readmaildata
     structure due to the fact that the hook wasn't defined in each INST_DATA
     of a readmailgroup object.
   * UpdateCheck.c: fixed bug #1503244 where while parsing the received update
@@ -223,14 +229,14 @@ $Id$
 2006-06-08  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: fixed bug #1487409 where executing a command in synchron mode
-    cause YAM to provocate a crash in dos.library due to freeing the PathNode
+    caused YAM to provocate a crash in dos.library due to freeing the PathNode
     specified with "NP_Path" value after the command manually.
   * YAM_AB.c, misc: fixed bug #1469130 where the addressbook search was
     slightly broken. In addition, the recursive use of AB_FindEntry() wasn't
     required at all, so it is now removed, which should slightly reduce
     stack usage on large addressbooks.
   * YAM_MA.c: fixed bug #806352 where the new menu shortcuts for the mail
-    status changes rendered the shortcut for the 'Execut script' menu
+    status changes rendered the shortcut for the 'Execute script' menu
     item of the main menu useless. In addition, slightly reworked the whole
     MA_SetupDynamicMenus() to act a bit more save on possible object
     creation failures as well as removed an unneeded strdup() which caused
@@ -239,9 +245,9 @@ $Id$
 2006-06-07  Jens Langner <Jens.Langner@light-speed.de>
 
   * classes/AddrBookListtree.c, YAM_AB.c: fixed bug #1032625 where manually
-    sorting of the addressbook was a hard job as well as searching through
+    sorting the addressbook was a hard job as well as searching through
     the addressbook didn't work as the user normally expected. Now an
-    addresbook search is always a substring search instead.
+    addressbook search is always a substring search instead.
   * classes/ReadWindow.c: fixed bug #1380548 where a subsequent use of a
     toolbar gadget caused the static Notify value to get overwritten.
   * src/YAM_EA.c: fixed bug #1458223 where in case a non image file had been
@@ -282,7 +288,7 @@ $Id$
     be refreshed instead of always the whole readmailgroup.
   * YAM_MAf.c: an enabled embedded read pane will now be automatically
     disabled in case a folder group is selected as the active folder. In
-    addition, in case a real folder is reactived, YAM now also make sure that
+    addition, in case a real folder is reactived, YAM now also makes sure that
     it refreshes the read pane correctly with the last active mail of that
     folder.
   * Debug.c: fixed a minor bug in the env-variable parsing routines.

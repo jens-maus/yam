@@ -2514,7 +2514,7 @@ int main(int argc, char **argv)
                   }
                   break;
 
-                  // simply make sure YAM will be iconified/hided
+                  // simply make sure YAM will be iconified/hidden
                   case APPLIBMT_Hide:
                   {
                     set(G->App, MUIA_Application_Iconified, TRUE);

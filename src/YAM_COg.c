@@ -95,7 +95,7 @@ HOOKPROTONH(PO_InitFolderList, BOOL, Object *pop, Object *str)
       {
         DoMethod(pop, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
 
-        // now we check wheter we make that item active or not.
+        // now we check whether we make that item active or not.
         if(s && stricmp(flist[i]->Name, s) == 0)
         {
           set(pop, MUIA_List_Active, i-1);

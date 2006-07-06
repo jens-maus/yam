@@ -417,7 +417,7 @@ OVERLOAD(OM_NEW)
 
   data = (struct Data *)INST_DATA(cl,obj);
 
-  // per default we set the clear button as hided
+  // per default we set the clear button as hidden
   set(clearButton, MUIA_ShowMe, FALSE);
 
   data->CY_VIEWOPTIONS = viewOptionCycle;
