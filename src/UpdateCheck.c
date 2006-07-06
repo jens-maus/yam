@@ -384,6 +384,9 @@ BOOL CheckForUpdates(void)
               else
                 C->LastUpdateStatus = UST_NOUPDATE; // we didn't find any new updates.
 
+              // the updatecheck was successfull
+              result = TRUE;
+
               fclose(tf->FP);
               tf->FP = NULL;
             }
@@ -419,6 +422,15 @@ BOOL CheckForUpdates(void)
   {
     memcpy(&CE->LastUpdateCheck, &C->LastUpdateCheck, sizeof(struct TimeVal));
     CE->LastUpdateStatus = C->LastUpdateStatus;
+
+    // in case the updatecheck resulted in no
+    // further update we have to check if we have to update the
+    // config page of an eventually opened YAM configuration window.
+    if(C->LastUpdateStatus == UST_NOUPDATE &&
+       G->CO && G->CO->VisiblePage == 15)
+    {
+      CO_SetConfig();
+    }
   }
 
   // make sure we reinit the updatecheck but without

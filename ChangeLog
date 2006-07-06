@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-07-06  Jens Langner <Jens.Langner@light-speed.de>
+
+  * UpdateCheck.c: fixed a minor issue where upon an opened YAM configuration
+    the "Search now" update processing didn't automatically update the
+    last search date in case no update was found to be available.
+
 2006-07-06  Gunther Nikl <gni@gecko.de>
 
   * ChangeLog, YAM.c, YAM_COg.c, YAM_MA.c, YAM_WR.c,YAM_UT.c,
