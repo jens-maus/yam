@@ -1745,7 +1745,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
       // Now we iterate through all selected mails
       for(j=0; j < (int)mlist[0]; j++)
       {
-        int i;
+        int k;
         struct Mail *mail = mlist[j+2];
         struct Folder *folder = mail->Folder;
         struct ExtendedMail *email;
@@ -1818,12 +1818,10 @@ int MA_NewReply(struct Mail **mlist, int flags)
                   if(MatchNoCase(mail->To.Address, pattern) == FALSE &&
                      MatchNoCase(mail->To.RealName, pattern) == FALSE)
                   {
-                    int j;
-
-                    for(j=0; j < email->NoSTo; j++)
+                    for(k=0; k < email->NoSTo; k++)
                     {
-                      if(MatchNoCase(email->STo[j].Address, pattern) ||
-                         MatchNoCase(email->STo[j].RealName, pattern))
+                      if(MatchNoCase(email->STo[k].Address, pattern) ||
+                         MatchNoCase(email->STo[k].RealName, pattern))
                       {
                         foundMLFolder = TRUE;
                         break;
@@ -1857,12 +1855,10 @@ int MA_NewReply(struct Mail **mlist, int flags)
             if(MatchNoCase(mail->To.Address, folder->MLPattern) == FALSE &&
                MatchNoCase(mail->To.RealName, folder->MLPattern) == FALSE)
             {
-              int j;
-
-              for(j=0; j < email->NoSTo; i++)
+              for(k=0; k < email->NoSTo; k++)
               {
-                if(MatchNoCase(email->STo[j].Address, folder->MLPattern) ||
-                   MatchNoCase(email->STo[j].RealName, folder->MLPattern))
+                if(MatchNoCase(email->STo[k].Address, folder->MLPattern) ||
+                   MatchNoCase(email->STo[k].RealName, folder->MLPattern))
                 {
                   foundMLFolder = TRUE;
                   break;
@@ -1924,8 +1920,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
             // we are going to "just"reply to the "From:" addresses of
             // the original mail. so we add them accordingly.
             rto = MA_AppendRcpt(rto, &mail->From, FALSE);
-            for(i=0; i < email->NoSFrom; i++)
-              rto = MA_AppendRcpt(rto, &email->SFrom[i], FALSE);
+            for(k=0; k < email->NoSFrom; k++)
+              rto = MA_AppendRcpt(rto, &email->SFrom[k], FALSE);
           }
           else if(foundMLFolder && mlistad != NULL)
           {
@@ -1961,9 +1957,9 @@ int MA_NewReply(struct Mail **mlist, int flags)
             {
               if(email->NoSFrom == email->NoSReplyTo)
               {
-                for(i=0; i < email->NoSFrom; i++)
+                for(k=0; k < email->NoSFrom; k++)
                 {
-                  if(stricmp(email->SFrom[i].Address, email->SReplyTo[i].Address) != 0)
+                  if(stricmp(email->SFrom[k].Address, email->SReplyTo[k].Address) != 0)
                   {
                     askUser = TRUE;
                     break;
@@ -1988,8 +1984,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
                 {
                   // add all From: addresses to the CC: list
                   rcc = MA_AppendRcpt(rcc, &mail->From, FALSE);
-                  for(i=0; i < email->NoSFrom; i++)
-                    rcc = MA_AppendRcpt(rcc, &email->SFrom[i], FALSE);
+                  for(k=0; k < email->NoSFrom; k++)
+                    rcc = MA_AppendRcpt(rcc, &email->SFrom[k], FALSE);
                 }
                 // continue
 
@@ -1997,8 +1993,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
                 case 2:
                 {
                   rto = MA_AppendRcpt(rto, &mail->ReplyTo, FALSE);
-                  for(i=0; i < email->NoSReplyTo; i++)
-                    rto = MA_AppendRcpt(rto, &email->SReplyTo[i], FALSE);
+                  for(k=0; k < email->NoSReplyTo; k++)
+                    rto = MA_AppendRcpt(rto, &email->SReplyTo[k], FALSE);
                 }
                 break;
 
@@ -2006,8 +2002,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
                 case 1:
                 {
                   rto = MA_AppendRcpt(rto, &mail->From, FALSE);
-                  for(i=0; i < email->NoSFrom; i++)
-                    rto = MA_AppendRcpt(rto, &email->SFrom[i], FALSE);
+                  for(k=0; k < email->NoSFrom; k++)
+                    rto = MA_AppendRcpt(rto, &email->SFrom[k], FALSE);
                 }
                 break;
 
@@ -2039,14 +2035,14 @@ int MA_NewReply(struct Mail **mlist, int flags)
             if(mail->ReplyTo.Address[0] != '\0')
             {
               rto = MA_AppendRcpt(rto, &mail->ReplyTo, FALSE);
-              for(i=0; i < email->NoSReplyTo; i++)
-                rto = MA_AppendRcpt(rto, &email->SReplyTo[i], FALSE);
+              for(k=0; k < email->NoSReplyTo; k++)
+                rto = MA_AppendRcpt(rto, &email->SReplyTo[k], FALSE);
             }
             else
             {
               rto = MA_AppendRcpt(rto, &mail->From, FALSE);
-              for(i=0; i < email->NoSFrom; i++)
-                rto = MA_AppendRcpt(rto, &email->SFrom[i], FALSE);
+              for(k=0; k < email->NoSFrom; k++)
+                rto = MA_AppendRcpt(rto, &email->SFrom[k], FALSE);
             }
           }
         }
@@ -2059,25 +2055,25 @@ int MA_NewReply(struct Mail **mlist, int flags)
             if(mail->ReplyTo.Address[0] != '\0')
             {
               rto = MA_AppendRcpt(rto, &mail->ReplyTo, FALSE);
-              for(i=0; i < email->NoSReplyTo; i++)
-                rto = MA_AppendRcpt(rto, &email->SReplyTo[i], FALSE);
+              for(k=0; k < email->NoSReplyTo; k++)
+                rto = MA_AppendRcpt(rto, &email->SReplyTo[k], FALSE);
             }
             else
             {
               rto = MA_AppendRcpt(rto, &mail->From, FALSE);
-              for(i=0; i < email->NoSFrom; i++)
-                rto = MA_AppendRcpt(rto, &email->SFrom[i], FALSE);
+              for(k=0; k < email->NoSFrom; k++)
+                rto = MA_AppendRcpt(rto, &email->SFrom[k], FALSE);
             }
           }
 
           // now add all original To: addresses
           rto = MA_AppendRcpt(rto, &mail->To, TRUE);
-          for(i=0; i < email->NoSTo; i++)
-            rto = MA_AppendRcpt(rto, &email->STo[i], TRUE);
+          for(k=0; k < email->NoSTo; k++)
+            rto = MA_AppendRcpt(rto, &email->STo[k], TRUE);
 
           // add the CC: addresses as well
-          for(i=0; i < email->NoCC; i++)
-            rcc = MA_AppendRcpt(rcc, &email->CC[i], TRUE);
+          for(k=0; k < email->NoCC; k++)
+            rcc = MA_AppendRcpt(rcc, &email->CC[k], TRUE);
         }
 
         // extract the first address/name from our generated

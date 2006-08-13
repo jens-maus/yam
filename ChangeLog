@@ -6,6 +6,8 @@ $Id$
 
 2006-08-13  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c: fixed another bunch of index variable mixups which may have caused
+    some serious trouble when replying to mails.
   * YAM_MA.c: fixed a serious bug where upon replying on a mail a wrong index
     variable was increased and caused an illegal memory access to happen under
     certain circumstances.
