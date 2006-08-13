@@ -1811,17 +1811,19 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
               for(i=1; i <= (int)*flist; i++)
               {
-                if(flist[i]->MLSupport && flist[i]->MLPattern[0])
+                if(flist[i] != NULL && flist[i]->MLSupport && flist[i]->MLPattern[0])
                 {
-                  if(MatchNoCase(mail->To.Address, flist[i]->MLPattern) == FALSE &&
-                     MatchNoCase(mail->To.RealName, flist[i]->MLPattern) == FALSE)
+                  char *pattern = flist[i]->MLPattern;
+
+                  if(MatchNoCase(mail->To.Address, pattern) == FALSE &&
+                     MatchNoCase(mail->To.RealName, pattern) == FALSE)
                   {
                     int j;
 
-                    for(j=0; j < email->NoSTo; i++)
+                    for(j=0; j < email->NoSTo; j++)
                     {
-                      if(MatchNoCase(email->STo[j].Address, flist[i]->MLPattern) ||
-                         MatchNoCase(email->STo[j].RealName, flist[i]->MLPattern))
+                      if(MatchNoCase(email->STo[j].Address, pattern) ||
+                         MatchNoCase(email->STo[j].RealName, pattern))
                       {
                         foundMLFolder = TRUE;
                         break;

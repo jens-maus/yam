@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-08-13  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c: fixed a serious bug where upon replying on a mail a wrong index
+    variable was increased and caused an illegal memory access to happen under
+    certain circumstances.
+  * YAM_UT.c: added some debug output to the MatchNoCase() function.
+
 2006-07-06  Jens Langner <Jens.Langner@light-speed.de>
 
   * UpdateCheck.c: fixed a minor issue where upon an opened YAM configuration
