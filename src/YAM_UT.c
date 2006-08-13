@@ -891,21 +891,22 @@ char *itoa(int val)
 //  Case insensitive pattern matching
 BOOL MatchNoCase(const char *string, const char *match)
 {
-   BOOL result=FALSE;
-   LONG patternlen = strlen(match)*2+2; // ParsePattern() needs at least 2*source+2 bytes buffer
-   char *pattern = malloc((size_t)patternlen);
+  BOOL result = FALSE;
+  LONG patternlen = strlen(match)*2+2; // ParsePattern() needs at least 2*source+2 bytes buffer
+  char *pattern = malloc((size_t)patternlen);
 
-   if(pattern)
-   {
-     if(ParsePatternNoCase((STRPTR)match, pattern, patternlen) != -1)
-     {
-        result = MatchPatternNoCase((STRPTR)pattern, (STRPTR)string);
-     }
+  ENTER();
 
-     free(pattern);
-   }
+  if(pattern)
+  {
+    if(ParsePatternNoCase((STRPTR)match, pattern, patternlen) != -1)
+      result = MatchPatternNoCase((STRPTR)pattern, (STRPTR)string);
 
-   return result;
+    free(pattern);
+  }
+
+  RETURN(result);
+  return result;
 }
 ///
 /// StripUnderscore
