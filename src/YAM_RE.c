@@ -3450,16 +3450,22 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   rmData->hasPGPKey = 0;
   rmData->letterPartNum = 0;
 
+  // now we have to check whether there is a .unp (unpack) file and delete
+  // it acoordingly (we can`t use the FinishUnpack() function because the
+  // window still refers to the file which will prevent the deletion.
+  if(rmData->mail && isXPKFolder(rmData->mail->Folder))
+  {
+    char ext[SIZE_FILE];
+
+    stcgfe(ext, rmData->readFile);
+    if(strcmp(ext, "unp") == 0)
+      DeleteFile(rmData->readFile);
+  }
+
   // if the caller wants to cleanup everything tidy we do it here or exit immediatly
   if(fullCleanup)
   {
     D(DBF_MAIL, "doing a full cleanup");
-
-    // now we have to check whether there is a .unp (unpack) file and delete
-    // it acoordingly (we can`t use the FinishUnpack() function because the
-    // window still refers to the file which will be prevent the deletion.
-    if(strstr(rmData->readFile, ".unp"))
-      DeleteFile(rmData->readFile);
 
     D(DBF_MAIL, "closing tempfile");
     // close any opened temporary file

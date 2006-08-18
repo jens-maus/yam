@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-08-18  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c, YAM_RE.c: fixed bug #1540297 where YAM didn't delete all temporary
+    files which are being created during unpacking of mail files of an XPK
+    compressed folder. Now all temporary files should be correctly deleted on
+    switching to another mail or by fully quitting YAM.
+
 2006-08-13  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c: fixed another bunch of index variable mixups which may have caused

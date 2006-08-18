@@ -1862,43 +1862,57 @@ int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *draw
 //  Creates or opens a temporary file
 struct TempFile *OpenTempFile(char *mode)
 {
-   static int count = 0;
-   struct TempFile *tf;
-   if ((tf = calloc(1, sizeof(struct TempFile))))
-   {
-      // the tempfile MUST be SIZE_MFILE long because we
-      // also use this tempfile routine for showing temporary mails which
-      // conform to SIZE_MFILE
-      char buf[SIZE_MFILE];
+  struct TempFile *tf;
 
-      // now format our temporary filename according to our Application data
-      // this format tries to make the temporary filename kinda unique.
-      snprintf(buf, sizeof(buf), "YAMt%d%02d.tmp", G->RexxHost->portnumber, ++count);
+  ENTER();
 
-      // now add the temporary path to the filename
-      strmfp(tf->Filename, C->TempDir, buf);
+  if((tf = calloc(1, sizeof(struct TempFile))))
+  {
+    static int count = 0;
 
-      if (!mode) return tf;
-      if ((tf->FP = fopen(tf->Filename, mode))) return tf;
+    // the tempfile MUST be SIZE_MFILE long because we
+    // also use this tempfile routine for showing temporary mails which
+    // conform to SIZE_MFILE
+    char buf[SIZE_MFILE];
+
+    // now format our temporary filename according to our Application data
+    // this format tries to make the temporary filename kinda unique.
+    snprintf(buf, sizeof(buf), "YAMt%08lx-%02d.tmp", (ULONG)G->RexxHost, ++count);
+
+    // now add the temporary path to the filename
+    strmfp(tf->Filename, C->TempDir, buf);
+
+    if(mode != NULL && (tf->FP = fopen(tf->Filename, mode)) == NULL)
+    {
+      E(DBF_UTIL, "couldn't create temporary file: '%s'", tf->Filename);
 
       // on error we free everything
       free(tf);
       count--;
-   }
-   return NULL;
+    }
+  }
+
+  RETURN(tf);
+  return tf;
 }
 ///
 /// CloseTempFile
 //  Closes a temporary file
 void CloseTempFile(struct TempFile *tf)
 {
-   if (tf)
-   {
-      if (tf->FP) fclose(tf->FP);
-      D(DBF_UTIL, "DeleteTempFile: %s\n", tf->Filename);
-      DeleteFile(tf->Filename);
-      free(tf);
-   }
+  ENTER();
+
+  if(tf)
+  {
+    if(tf->FP)
+      fclose(tf->FP);
+
+    D(DBF_UTIL, "DeleteTempFile: %s\n", tf->Filename);
+    DeleteFile(tf->Filename);
+    free(tf);
+  }
+
+  LEAVE();
 }
 ///
 /// DumpClipboard
@@ -3670,35 +3684,58 @@ BOOL DoPack(char *file, char *newfile, struct Folder *folder)
 //  Unpacks a file to a temporary file
 char *StartUnpack(char *file, char *newfile, struct Folder *folder)
 {
-   FILE *fh;
-   BOOL xpk = FALSE;
-   if ((fh = fopen(file, "r")))
-   {
-      if (fgetc(fh) == 'X') if (fgetc(fh) == 'P') if (fgetc(fh) == 'K') xpk = TRUE;
-      fclose(fh);
-      if (xpk)
-      {
-         char nfile[SIZE_FILE];
+  FILE *fh;
+  char *result = NULL;
 
-         snprintf(nfile, sizeof(nfile), "%s_%08lx.unp", FilePart(file), (ULONG)folder);
+  ENTER();
 
-         strmfp(newfile, C->TempDir, nfile);
-         if (FileSize(newfile) < 0) if (!UncompressMailFile(file, newfile, folder ? folder->Password : "")) return NULL;
-      }
-      else
-        strcpy(newfile, file);
+  if((fh = fopen(file, "r")))
+  {
+    static int count = 0;
+    BOOL xpk = FALSE;
 
-      return newfile;
-   }
-   return NULL;
+    // check if the source file is really XPK compressed or not.
+    if(fgetc(fh) == 'X' && fgetc(fh) == 'P' && fgetc(fh) == 'K')
+      xpk = TRUE;
+
+    fclose(fh);
+
+    // now we compose a temporary filename and start
+    // uncompressing the source file into it.
+    if(xpk)
+    {
+      char nfile[SIZE_FILE];
+
+      snprintf(nfile, sizeof(nfile), "YAMu%08lx-%02d.unp", (ULONG)G->RexxHost, ++count);
+      strmfp(newfile, C->TempDir, nfile);
+
+      // check that the destination filename
+      // doesn't already exist
+      if(FileSize(newfile) < 0 && UncompressMailFile(file, newfile, folder ? folder->Password : ""))
+        result = newfile;
+    }
+    else
+    {
+      strcpy(newfile, file);
+      result = newfile;
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 ///
 /// FinishUnpack
 //  Deletes temporary unpacked file
 void FinishUnpack(char *file)
 {
+  char ext[SIZE_FILE];
+
+  ENTER();
+
   // we just delete if this is really related to a unpack file
-  if(strstr(file, ".unp"))
+  stcgfe(ext, file);
+  if(strcmp(ext, "unp") == 0)
   {
     if(IsMinListEmpty(&G->readMailDataList) == FALSE)
     {
@@ -3707,13 +3744,21 @@ void FinishUnpack(char *file)
       for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
         struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+        // check if the file is still in use and if so we quit immediately
+        // leaving the file untouched.
         if(stricmp(file, rmData->readFile) == 0)
+        {
+          LEAVE();
           return;
+        }
       }
     }
 
     DeleteFile(file);
   }
+
+  LEAVE();
 }
 ///
 
