@@ -3453,9 +3453,12 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   // now we have to check whether there is a .unp (unpack) file and delete
   // it acoordingly (we can`t use the FinishUnpack() function because the
   // window still refers to the file which will prevent the deletion.
-  if(rmData->mail && isXPKFolder(rmData->mail->Folder))
+  if(rmData->mail && isVirtualMail(rmData->mail) == FALSE &&
+     rmData->mail->Folder && isXPKFolder(rmData->mail->Folder))
   {
     char ext[SIZE_FILE];
+
+    D(DBF_MAIL, "cleaning up unpacked mail file");
 
     stcgfe(ext, rmData->readFile);
     if(strcmp(ext, "unp") == 0)
