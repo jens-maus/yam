@@ -6,6 +6,9 @@ $Id$
 
 2006-08-18  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: now that the most stable TextEditor.mcc 15.18 was released we bump
+    the minimum required version to 15.18 so that people work with the very
+    latest stable build of it.
   * YAM_UT.c, YAM_RE.c: fixed bug #1540297 where YAM didn't delete all temporary
     files which are being created during unpacking of mail files of an XPK
     compressed folder. Now all temporary files should be correctly deleted on
