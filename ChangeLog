@@ -6,6 +6,10 @@ $Id$
 
 2006-08-20  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c: instead of just showing the POP3 server's name in the window
+    title of a transfer window we now show the full account name. This should
+    make it easier to distinguish between different accounts on the very same
+    POP3 server. Request #1543336
   * YAM.c: now that the most stable BetterString.mcc 11.8 was released we bump
     the minimum required version to 11.8 so that people work with the very
     latest stable build of it.

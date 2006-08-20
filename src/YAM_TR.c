@@ -1494,7 +1494,10 @@ static int TR_Send(char *ptr, int len, int flags)
 //  Sets the title of the transfer window
 void TR_SetWinTitle(BOOL from, char *host)
 {
+  // compose the window title
   snprintf(G->TR->WTitle, sizeof(G->TR->WTitle), GetStr(from ? MSG_TR_MailTransferFrom : MSG_TR_MailTransferTo), host);
+
+  // set the window title
   set(G->TR->GUI.WI, MUIA_Window_Title, G->TR->WTitle);
 }
 ///
@@ -1906,7 +1909,7 @@ static int TR_ConnectPOP(int guilevel)
    if ((p = strchr(host, ':'))) { *p = 0; port = atoi(++p); }
 
    BusyText(GetStr(MSG_TR_MailTransferFrom), host);
-   TR_SetWinTitle(TRUE, host);
+   TR_SetWinTitle(TRUE, C->P3[pop]->Account);
 
    if ((err = TR_Connect(host, port)))
    {
