@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-08-20  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: now that the most stable BetterString.mcc 11.8 was released we bump
+    the minimum required version to 11.8 so that people work with the very
+    latest stable build of it.
+
 2006-08-18  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: now that the most stable TextEditor.mcc 15.18 was released we bump
