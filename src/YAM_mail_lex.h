@@ -67,6 +67,4 @@ enum tokenType
 char *ParseEmailText(char *mailTxt);
 enum tokenType ExtractURL(char *text, char *resultBuffer);
 
-extern char *yytext;
-
 #endif /* YAM_MAIL_LEX_H */

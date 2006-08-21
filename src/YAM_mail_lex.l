@@ -33,14 +33,18 @@
 
 %option noyywrap
 %option never-interactive
+%option case-insensitive
+%option prefix="pm_"
+%option nodefault
+%option warn
 
 %{
     #include <string.h>
     #include <proto/exec.h>
+
     #include "YAM_mail_lex.h"
     #include "YAM_utilities.h"
 
-    #define YY_NEVER_INTERACTIVE 1
     #define YY_NO_INPUT 1
 %}
 
