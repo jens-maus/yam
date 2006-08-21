@@ -101,11 +101,12 @@ OBJS = \
 	$(OBJDIR)/all_gcc.o \
 	$(OBJDIR)/ImageCache.o \
 	$(OBJDIR)/UpdateCheck.o \
+  $(OBJDIR)/HTML2Mail.o \
 	$(OBJDIR)/Debug.o \
 	$(CLASSES)
 
 #
-all: $(OBJDIR) classinfo YAM_locale.c YAM_mail_lex.c $(TARGET)
+all: $(OBJDIR) classinfo YAM_locale.c YAM_mail_lex.c HTML2Mail.c $(TARGET)
 
 # make the object directories
 $(OBJDIR):
@@ -121,7 +122,7 @@ $(OBJDIR)/%.o: %.c
 
 %.c: %.l
 	@printf '\033[33mGenerating lexer $<\033[0m\n'
-	@$(FLEX) -Cfe -i -t $< > $@
+	@$(FLEX) -Cfe -i -o $@ $<
 
 $(LOCALE)/%.catalog: $(LOCALE)/%.ct
 	@printf '\033[33mGenerating $@\033[0m\n'
@@ -249,6 +250,9 @@ $(OBJDIR)/YAM_MI.o: YAM_MI.c YAM_error.h YAM_locale.h YAM_mime.h YAM_stringsizes
 
 $(OBJDIR)/YAM_mail_lex.o: YAM_mail_lex.c
 YAM_mail_lex.c: YAM_mail_lex.l YAM_mail_lex.h
+
+$(OBJDIR)/HTML2Mail.o: HTML2Mail.c
+HTML2Mail.c: HTML2Mail.l HTML2Mail.h
 
 $(OBJDIR)/YAM_RE.o: YAM_RE.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_config.h Debug.h YAM_error.h YAM_find.h \
