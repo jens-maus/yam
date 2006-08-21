@@ -261,6 +261,7 @@ struct CO_GUIData
    Object *TX_UPDATEDATE;
    Object *CH_DETECTCYRILLIC;
    Object *CH_ABOOKLOOKUP;
+   Object *CH_CONVERTHTML;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -429,6 +430,7 @@ struct Config
    BOOL  AutoDSTCheck;
    BOOL  DetectCyrillic;
    BOOL  ABookLookup;
+   BOOL  ConvertHTML;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color1stLevel;

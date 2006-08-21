@@ -65,6 +65,7 @@
 
 #include "classes/Classes.h"
 #include "UpdateCheck.h"
+#include "HTML2Mail.h"
 
 #include "Debug.h"
 
@@ -1649,6 +1650,22 @@ int MA_NewForward(struct Mail **mlist, int flags)
 
           if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)))
           {
+            // now we have to check if the mail text in
+            // question contain HTML stuff and if so we go
+            // and remove it.
+            if(C->ConvertHTML == TRUE && rmData->htmlFound)
+            {
+              // fire up the HTML converter which will convert HTML mails
+              // to somewhat RFC822 conform emails which we are going to
+              // show to the user instead.
+              char *body = html2mail(cmsg);
+
+              // we can free the original cmsg
+              // and make the converted text our new cmsg.
+              free(cmsg);
+              cmsg = body;
+            }
+
             fputs(cmsg, out);
             free(cmsg);
 
@@ -2125,7 +2142,25 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
             if((cmsg = RE_ReadInMessage(rmData, RIM_QUOTE)))
             {
+              // now we have to check if the mail text in
+              // question contain HTML stuff and if so we go
+              // and remove it.
+              if(C->ConvertHTML == TRUE && rmData->htmlFound)
+              {
+                // fire up the HTML converter which will convert HTML mails
+                // to somewhat RFC822 conform emails which we are going to
+                // show to the user instead.
+                char *body = html2mail(cmsg);
+
+                // we can free the original cmsg
+                // and make the converted text our new cmsg.
+                free(cmsg);
+                cmsg = body;
+              }
+
+              // make sure we quote the text in question.
               Quote_Text(out, cmsg, strlen(cmsg), C->EdWrapMode ? C->EdWrapCol-strlen(wr->QuoteText)-1 : 1024, wr->QuoteText);
+
               free(cmsg);
             }
 
@@ -2258,7 +2293,7 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
 
              CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
              SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
-              DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
+             DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
 
              DeleteFile(fname);
 

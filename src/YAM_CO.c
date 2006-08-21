@@ -823,6 +823,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->SigSepLine = 2;
       co->StatusChangeDelayOn = TRUE;
       co->StatusChangeDelay   = 1000; // 1s=1000ms delay by default
+      co->ConvertHTML = TRUE;
    }
 
    // [Write]

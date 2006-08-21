@@ -5860,3 +5860,11 @@ MSG_TR_MESSAGEGAUGE (1715//)
 Message %%ld of %ld
 ; COUNT, COUNT
 ;
+MSG_CO_CONVERTHTML (1716//)
+Convert viewable HTML message parts to plain text
+;
+MSG_HELP_CO_CONVERTHTML (1717//)
+If a mail contains viewable HTML parts as its main\n\
+message parts, YAM will convert them to plain text\n\
+when this option is enabled.
+;

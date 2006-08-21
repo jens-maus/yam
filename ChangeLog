@@ -6,6 +6,19 @@ $Id$
 
 2006-08-20  Jens Langner <Jens.Langner@light-speed.de>
 
+  * misc: propagated the new html2mail converter to all kind of mail read
+    functions and also added a new configuration options to enable/disable
+    this new functionality.
+  * HTML2Mail.c: implemented a first version of a simple, flex-based html to
+    plaintext converter which accepts html infected text and automatically
+    converts it to RFC822 conform mail text.
+    Please note that this html converter is meant to kept simple with only a
+    low amount of effort in properly converting all kind of HTML magic.
+    Especially, things like HTML tables/frames/css etc. will never be supported
+    by it. For displaying such complex HTML stuff a later version will contain
+    the functionality of viewing such HTML via htmlview.mcc. So this converter
+    is really only meant for simple stuff. So please, don't fire up your feature
+    requests too fast :)
   * YAM_TR.c: instead of just showing the POP3 server's name in the window
     title of a transfer window we now show the full account name. This should
     make it easier to distinguish between different accounts on the very same

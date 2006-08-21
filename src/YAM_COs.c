@@ -350,6 +350,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "MultipleWindows  = %s\n", Bool2Txt(co->MultipleWindows));
       fprintf(fh, "EmbeddedReadPane = %s\n", Bool2Txt(co->EmbeddedReadPane));
       fprintf(fh, "StatusChangeDelay= %d\n", co->StatusChangeDelayOn ? co->StatusChangeDelay : -co->StatusChangeDelay);
+      fprintf(fh, "ConvertHTML      = %s\n", Bool2Txt(co->ConvertHTML));
 
       fprintf(fh, "\n[Write]\n");
       fprintf(fh, "ReplyTo          = %s\n", co->ReplyTo);
@@ -890,6 +891,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                    co->StatusChangeDelayOn = TRUE;
                  }
                }
+               else if (!stricmp(buffer, "ConvertHTML"))    co->ConvertHTML = Txt2Bool(value);
 /*5*/          else if (!stricmp(buffer, "ReplyTo"))        strlcpy(co->ReplyTo,  value, sizeof(co->ReplyTo));
                else if (!stricmp(buffer, "Organization"))   strlcpy(co->Organization, value, sizeof(co->Organization));
                else if (!stricmp(buffer, "ExtraHeaders"))   strlcpy(co->ExtraHeaders, value, sizeof(co->ExtraHeaders));
@@ -1259,6 +1261,7 @@ void CO_GetConfig(void)
          CE->EmbeddedReadPane  = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
          CE->StatusChangeDelayOn  = GetMUICheck  (gui->CH_DELAYEDSTATUS);
          CE->StatusChangeDelay    = GetMUINumer  (gui->NB_DELAYEDSTATUS)*1000;
+         CE->ConvertHTML       = GetMUICheck(gui->CH_CONVERTHTML);
          break;
       case 5:
          GetMUIString(CE->ReplyTo, gui->ST_REPLYTO, sizeof(CE->ReplyTo));
@@ -1516,6 +1519,7 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
          setcheckmark(gui->CH_DELAYEDSTATUS, CE->StatusChangeDelayOn);
          set(gui->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay/1000);
+         setcheckmark(gui->CH_CONVERTHTML, CE->ConvertHTML);
          break;
       case 5:
          setstring   (gui->ST_REPLYTO   ,CE->ReplyTo);

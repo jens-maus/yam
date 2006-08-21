@@ -1688,6 +1688,7 @@ Object *CO_Page4(struct CO_ClassData *data)
                Child, Label2(GetStr(MSG_CO_SETSTATUSDELAYED2)),
                Child, HSpace(0),
             End,
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_CONVERTHTML, GetStr(MSG_CO_CONVERTHTML)),
          End,
          Child, HVSpace,
       End))
@@ -1712,6 +1713,7 @@ Object *CO_Page4(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_TEXTSTYLES,      MSG_HELP_CO_CH_TEXTSTYLES);
       SetHelp(data->GUI.CH_DELAYEDSTATUS,   MSG_HELP_CO_SETSTATUSDELAYED);
       SetHelp(data->GUI.NB_DELAYEDSTATUS,   MSG_HELP_CO_SETSTATUSDELAYED);
+      SetHelp(data->GUI.CH_CONVERTHTML,     MSG_HELP_CO_CONVERTHTML);
 
       DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,0             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,TRUE);
       DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,1             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,FALSE);

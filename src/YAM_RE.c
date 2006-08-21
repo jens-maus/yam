@@ -1882,7 +1882,7 @@ static void RE_SetPartInfo(struct Part *rp)
    }
 }
 ///
-/// RE_ParseMessage
+/// RE_ParseMessage (rec)
 //  Parses a complete message
 static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
                                     FILE *in,
@@ -2713,6 +2713,21 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               W(DBF_MAIL, "Warning: EOF detected at pos %ld of '%s'", ftell(fh), part->Filename);
             }
 
+            // now we analyze if that part of the mail text contains HTML
+            // tags or not so that our HTML converter routines can be fired
+            // up later on.
+            if(C->ConvertHTML == TRUE)
+            {
+              if(rmData->htmlFound == FALSE &&
+                 part->ContentType != NULL && stricmp(part->ContentType, "text/html") == 0)
+              {
+                D(DBF_MAIL, "found displayable part #%ld to contain HTML", part->Nr);
+                rmData->htmlFound = TRUE;
+              }
+            }
+            else
+              rmData->htmlFound = FALSE;
+
             // nothing serious happened so lets continue...
             rptr = msg+1;
 
@@ -3449,6 +3464,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   rmData->encryptionFlags = 0;
   rmData->hasPGPKey = 0;
   rmData->letterPartNum = 0;
+  rmData->htmlFound = FALSE;
 
   // now we have to check whether there is a .unp (unpack) file and delete
   // it acoordingly (we can`t use the FinishUnpack() function because the
