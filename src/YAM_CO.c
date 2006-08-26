@@ -1330,9 +1330,6 @@ void CO_Validate(struct Config *co, BOOL update)
             break;
       }
 
-      if(G->CO->Visited[1] || G->CO->Visited[13] || G->CO->UpdateAll)
-        MA_SetupDynamicMenus();
-
       if(G->CO->Visited[2] || G->CO->UpdateAll)
       {
         // requeue the timerequest for the CheckMailDelay
@@ -1452,6 +1449,10 @@ void CO_Validate(struct Config *co, BOOL update)
         // make sure we reinit the update check timer
         InitUpdateCheck(FALSE);
       }
+
+      // make sure the dynamic menus of the main window
+      // is properly refreshed.
+      MA_SetupDynamicMenus();
    }
 
    // if some items have modified the config we do save it again.

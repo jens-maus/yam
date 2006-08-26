@@ -6,6 +6,8 @@ $Id$
 
 2006-08-26  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_CO.c, YAM_MA.c: fixed bug #425212 once again because recent changes
+    caused the 'Folder/Check account' corruption to show up again.
   * YAM_MA.c: fixed bug #1546144 where YAM didn't delete a temporary unpacked
     mail file in case a mail status change was performed right before the
     unpacking.

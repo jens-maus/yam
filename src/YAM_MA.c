@@ -3693,7 +3693,10 @@ void MA_SetupDynamicMenus(void)
   // generate the dynamic REXX Menu of the main window.
   // make sure we remove an old dynamic menu first
   if(G->MA->GUI.MN_REXX)
+  {
     DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_Remove, G->MA->GUI.MN_REXX);
+    MUI_DisposeObject(G->MA->GUI.MN_REXX);
+  }
 
   // now we generate a new one.
   G->MA->GUI.MN_REXX = MenuObject,
@@ -3739,7 +3742,10 @@ void MA_SetupDynamicMenus(void)
 
   // dynamic Folder/Check menu items
   if(G->MA->GUI.MI_CSINGLE)
+  {
     DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Remove, G->MA->GUI.MI_CSINGLE);
+    MUI_DisposeObject(G->MA->GUI.MI_CSINGLE);
+  }
 
   G->MA->GUI.MI_CSINGLE = MenuitemObject,
     MUIA_Menuitem_Title, GetStr(MSG_MA_CheckSingle),
