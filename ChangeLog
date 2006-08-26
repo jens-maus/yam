@@ -6,6 +6,9 @@ $Id$
 
 2006-08-26  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c: fixed bug #1546144 where YAM didn't delete a temporary unpacked
+    mail file in case a mail status change was performed right before the
+    unpacking.
   * Makefile, misc: added -Wwrite-strings to all makefiles for forcing GCC
     to throw additional warnings about eventually existing ro-data accesses.
     As a consequence, we revisited all situations where warnings where thrown

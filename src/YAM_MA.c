@@ -420,6 +420,8 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
     // then rename it
     if(Rename(oldFilePath, newFilePath) != 0)
     {
+      D(DBF_MAIL, "renamed '%s' to '%s'", oldFilePath, newFilePath);
+
       strlcpy(mail->MailFile, newFileName, sizeof(mail->MailFile));
       success = TRUE;
 
@@ -434,7 +436,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
         for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
         {
           struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-          if(rmData->mail == mail)
+          if(rmData->mail == mail && strcmp(rmData->readFile, oldFilePath) == 0)
             strlcpy(rmData->readFile, newFilePath, sizeof(rmData->readFile));
         }
       }
