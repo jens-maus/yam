@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-08-26  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c, YAM_RE.c: fixed a problem when ClearMailList() was being called
+    while a ReadMailData object was still referencing to one of the mails
+    being cleared right away. This had the effect that upcon index rescanning
+    the system may have access some undefined areas and therefore crashed the
+    system right away.
+
 2006-08-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: propagated the new html2mail converter to all kind of mail read

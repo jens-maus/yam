@@ -3406,11 +3406,15 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   struct Part *next;
 
   ENTER();
+
   SHOWVALUE(DBF_MAIL, rmData);
   SHOWVALUE(DBF_MAIL, fullCleanup);
+  ASSERT(rmData != NULL);
 
   if(fullCleanup && rmData->readWindow)
   {
+    D(DBF_MAIL, "make sure the window is closed");
+
     // make sure the window is really closed
     nnset(rmData->readWindow, MUIA_Window_Open, FALSE);
 
@@ -3469,8 +3473,8 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   // now we have to check whether there is a .unp (unpack) file and delete
   // it acoordingly (we can`t use the FinishUnpack() function because the
   // window still refers to the file which will prevent the deletion.
-  if(rmData->mail && isVirtualMail(rmData->mail) == FALSE &&
-     rmData->mail->Folder && isXPKFolder(rmData->mail->Folder))
+  if(rmData->mail != NULL && isVirtualMail(rmData->mail) == FALSE &&
+     rmData->mail->Folder != NULL && isXPKFolder(rmData->mail->Folder))
   {
     char ext[SIZE_FILE];
 
@@ -3486,32 +3490,37 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   {
     D(DBF_MAIL, "doing a full cleanup");
 
-    D(DBF_MAIL, "closing tempfile");
     // close any opened temporary file
     if(rmData->tempFile)
     {
+      D(DBF_MAIL, "closing tempfile");
       CloseTempFile(rmData->tempFile);
       rmData->tempFile = NULL;
     }
 
-    D(DBF_MAIL, "checking virtual mail status");
     // if the rmData carries a virtual mail we have to clear it
     // aswell
     if(rmData->mail &&
        isVirtualMail(rmData->mail))
     {
+      D(DBF_MAIL, "freeing virtual mail pointer");
       free(rmData->mail);
-      rmData->mail = NULL;
     }
 
-    D(DBF_MAIL, "cleaning up readwindow");
+    // set the mail pointer to NULL
+    rmData->mail = NULL;
+
     // clean up the read window now
-    if(rmData->readWindow)
+    if(rmData->readWindow != NULL)
     {
+      D(DBF_MAIL, "cleaning up readwindow");
       DoMethod(G->App, OM_REMMEMBER, rmData->readWindow);
       MUI_DisposeObject(rmData->readWindow);
+      rmData->readWindow = NULL;
     }
   }
+  else
+    rmData->mail = NULL;
 
   RETURN(TRUE);
   return TRUE;

@@ -3331,6 +3331,8 @@ void RemoveMailFromList(struct Mail *mail)
 {
   struct Folder *folder = mail->Folder;
 
+  ENTER();
+
   // now we remove the mail from main mail
   // listviews in case the folder of it is the
   // currently active one.
@@ -3347,9 +3349,7 @@ void RemoveMailFromList(struct Mail *mail)
     folder->Unread--;
   }
   else if(!hasStatusRead(mail))
-  {
     folder->Unread--;
-  }
 
   // remove the mail from the folderlist now
   MyRemove(&(folder->Messages), mail);
@@ -3360,24 +3360,47 @@ void RemoveMailFromList(struct Mail *mail)
 
   // and last, but not least we have to free the mail
   free(mail);
+
+  LEAVE();
 }
 ///
 /// ClearMailList
 //  Removes all messages from a folder
 void ClearMailList(struct Folder *folder, BOOL resetstats)
 {
-   struct Mail *work, *next;
+  struct Mail *mail;
+  struct Mail *next;
 
-   for(work = folder->Messages; work; work = next)
-   {
-      next = work->Next;
-      free(work);
-   }
+  ENTER();
 
-   if(resetstats)
-     folder->Total = folder->New = folder->Unread = folder->Size = 0;
+  for(mail=folder->Messages; mail != NULL; mail=next)
+  {
+    next = mail->Next;
 
-   folder->Messages = NULL;
+    // Now we check if there is any read window with that very same
+    // mail currently open and if so we have to clean it.
+    if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+    {
+      // search through our ReadDataList
+      struct MinNode *curNode;
+      for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      {
+        struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+        if(rmData->mail == mail)
+          CleanupReadMailData(rmData, TRUE);
+      }
+    }
+
+    // free the mail pointer
+    free(mail);
+  }
+
+  if(resetstats)
+    folder->Total = folder->New = folder->Unread = folder->Size = 0;
+
+  folder->Messages = NULL;
+
+  LEAVE();
 }
 ///
 /// GetPackMethod
