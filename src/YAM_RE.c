@@ -188,7 +188,7 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
    };
    struct WritePart *p1 = NewPart(2), *p2, *p3;
    struct TempFile *tf1, *tf2, *tf3;
-   char buf[SIZE_LINE], disp[SIZE_DEFAULT], *mode;
+   char buf[SIZE_LINE], disp[SIZE_DEFAULT];
    struct Compose comp;
 
    ENTER();
@@ -199,6 +199,7 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
       char date[64];
       char *rcpt = BuildAddrName2(&mail->To);
       char *subj = mail->Subject;
+      const char *mode;
 
       DateStamp2String(date, sizeof(date), &mail->Date, DSS_DATETIME, TZC_NONE);
 
@@ -402,17 +403,17 @@ static char *RE_SuggestName(struct Mail *mail)
 ///
 /// RE_Export
 //  Saves message or attachments to disk
-BOOL RE_Export(struct ReadMailData *rmData, char *source,
-               char *dest, char *name, int nr, BOOL force, BOOL overwrite, char *ctype)
+BOOL RE_Export(struct ReadMailData *rmData, const char *source,
+               const char *dest, const char *name, int nr, BOOL force, BOOL overwrite, const char *ctype)
 {
   char buffer[SIZE_PATHFILE];
   char buffer2[SIZE_FILE+SIZE_DEFAULT];
   Object *win = rmData->readWindow ? rmData->readWindow : G->MA->GUI.WI;
   struct Mail *mail = rmData->mail;
 
-  if(!*dest)
+  if(*dest == '\0')
   {
-    if(*name)
+    if(*name != '\0')
     {
       strlcpy(buffer2, name, sizeof(buffer2));
     }
@@ -434,11 +435,13 @@ BOOL RE_Export(struct ReadMailData *rmData, char *source,
     }
 
     if(force)
-      strmfp(dest = buffer, C->DetachDir, buffer2);
+      strmfp(buffer, C->DetachDir, buffer2);
     else if(ReqFile(ASL_DETACH, win, GetStr(MSG_RE_SaveMessage), REQF_SAVEMODE, C->DetachDir, buffer2))
-      strmfp(dest = buffer, G->ASLReq[ASL_DETACH]->fr_Drawer, G->ASLReq[ASL_DETACH]->fr_File);
+      strmfp(buffer, G->ASLReq[ASL_DETACH]->fr_Drawer, G->ASLReq[ASL_DETACH]->fr_File);
     else
       return FALSE;
+
+    dest = buffer;
   }
 
   if(FileExists(dest) && !overwrite)
@@ -459,7 +462,7 @@ BOOL RE_Export(struct ReadMailData *rmData, char *source,
   else if(!stricmp(ctype, IntMimeTypeArray[MT_AP_SCRIPT].ContentType))
     SetProtection(dest, FIBF_SCRIPT);
 
-  AppendLogVerbose(80, GetStr(MSG_LOG_SavingAtt), dest, mail->MailFile, FolderName(mail->Folder), "");
+  AppendLogVerbose(80, GetStr(MSG_LOG_SavingAtt), dest, mail->MailFile, FolderName(mail->Folder));
 
   return TRUE;
 }
@@ -485,7 +488,7 @@ void RE_PrintFile(char *filename)
 ///
 /// RE_DisplayMIME
 //  Displays a message part (attachment) using a MIME viewer
-void RE_DisplayMIME(char *fname, char *ctype)
+void RE_DisplayMIME(char *fname, const char *ctype)
 {
   struct MinNode *curNode;
   struct MimeTypeNode *mt = NULL;
@@ -2161,7 +2164,8 @@ static void RE_HandleMDNReport(struct Part *frp)
 {
   struct Part *rp[3];
   char file[SIZE_FILE], buf[SIZE_PATHFILE], MDNtype[SIZE_DEFAULT];
-  char *msgdesc, *mode = "", *type;
+  char *msgdesc, *type;
+  const char *mode = "";
   int j;
   FILE *out, *fh;
 

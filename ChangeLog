@@ -6,6 +6,14 @@ $Id$
 
 2006-08-26  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Makefile, misc: added -Wwrite-strings to all makefiles for forcing GCC
+    to throw additional warnings about eventually existing ro-data accesses.
+    As a consequence, we revisited all situations where warnings where thrown
+    and added additional "const" statements wherever necessary.
+  * YAM_UT.c, YAM_utilities.h, misc: converted the AppendToLogfile() function
+    to a variable arguments function as that is what this function is all about.
+    In addition, the AppendLog(), AppendLogNormal() and AppendLogVerbose()
+    are now implemented as function macros instead.
   * YAM_UT.c, YAM_RE.c: fixed a problem when ClearMailList() was being called
     while a ReadMailData object was still referencing to one of the mails
     being cleared right away. This had the effect that upcon index rescanning

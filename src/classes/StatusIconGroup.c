@@ -120,7 +120,7 @@ OVERLOAD(OM_NEW)
 {
   // *don't* add MAXBCSTATUSIMG as size since it would fill the missing
   // entries with NULL values...
-  static const struct { int status; char *const name; } icon[] = {
+  static const struct { int status; const char *const name; } icon[] = {
     { SICON_ID_UNREAD,   "status_unread" },
     { SICON_ID_OLD,      "status_old" },
     { SICON_ID_FORWARD,  "status_forward" },

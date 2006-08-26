@@ -1163,8 +1163,13 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
             else if (!strnicmp(key, "TO" , 2)) strlcpy(rd->result, BuildAddrName2(&mail->To), sizeof(rd->result));
             else if (!strnicmp(key, "REP", 3)) strlcpy(rd->result, BuildAddrName2(mail->ReplyTo.Address[0] != '\0' ? &mail->ReplyTo : &mail->From), sizeof(rd->result));
             else if (!strnicmp(key, "SUB", 3)) rd->rd.res.value = mail->Subject;
-            else if (!strnicmp(key, "FIL", 3)) GetMailFile(rd->rd.res.value = rd->result, mail->Folder, mail);
-            else rd->rd.rc = RETURN_ERROR;
+            else if (!strnicmp(key, "FIL", 3))
+            {
+              GetMailFile(rd->result, mail->Folder, mail);
+              rd->rd.res.value = rd->result;
+            }
+            else
+              rd->rd.rc = RETURN_ERROR;
          }
          else rd->rd.rc = RETURN_ERROR;
          break;
@@ -1666,10 +1671,10 @@ void rx_addrinfo( UNUSED struct RexxHost *host, struct rxd_addrinfo **rxd, long 
       struct rxd_addrinfo rd;
       char *members, **memberptr;
    } *rd = (void *)*rxd;
-   static char *types[3] = { "P","L","G"};
    char *ptr;
    struct ABEntry *ab = NULL;
    int i, j;
+
    switch( action )
    {
       case RXIF_INIT:
@@ -1680,7 +1685,21 @@ void rx_addrinfo( UNUSED struct RexxHost *host, struct rxd_addrinfo **rxd, long 
       {
         if (AB_SearchEntry(rd->rd.arg.alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &ab) && (ab != NULL))
         {
-          rd->rd.res.type = types[ab->Type];
+          switch(ab->Type)
+          {
+            case AET_USER:
+              rd->rd.res.type = "P";
+            break;
+
+            case AET_LIST:
+              rd->rd.res.type = "L";
+            break;
+
+            case AET_GROUP:
+              rd->rd.res.type = "G";
+            break;
+          }
+
           rd->rd.res.name = ab->RealName;
           rd->rd.res.email = ab->Address;
           rd->rd.res.pgp = ab->PGPId;
@@ -2452,7 +2471,7 @@ void rx_addrnew( UNUSED struct RexxHost *host, struct rxd_addrnew **rxd, long ac
       case RXIF_ACTION:
          memset(&addr, 0, sizeof(struct ABEntry));
          addr.Type = AET_USER;
-         addr.Members = "";
+         addr.Members = (char *)"";
          if (rd->arg.type)
          {
             if(tolower(*rd->arg.type) == 'g')       addr.Type = AET_GROUP;
@@ -2473,7 +2492,7 @@ void rx_addrnew( UNUSED struct RexxHost *host, struct rxd_addrnew **rxd, long ac
             rd->res.alias = addr.Alias;
             EA_InsertBelowActive(&addr, addr.Type == AET_GROUP ? TNF_LIST : 0);
             G->AB->Modified = TRUE;
-            AppendLogVerbose(71, GetStr(MSG_LOG_NewAddress), addr.Alias, "", "", "");
+            AppendLogVerbose(71, GetStr(MSG_LOG_NewAddress), addr.Alias);
          }
          break;
       

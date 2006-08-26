@@ -224,7 +224,7 @@ OVERLOAD(MUIM_Setup)
     // with icon.library v44+ we can use GetIconTags again.
     if(IconBase->lib_Version >= 44 && mailPart->ContentType)
     {
-      char *def;
+      const char *def;
 
       // build the defaultname now
       if(!strnicmp(mailPart->ContentType, "image", 5))

@@ -206,14 +206,14 @@ struct MailTransferNode
 // static function prototypes
 static void TR_NewMailAlert(void);
 static void TR_CompleteMsgList(void);
-static char *TR_SendPOP3Cmd(enum POPCommand command, char *parmtext, APTR errorMsg);
-static char *TR_SendSMTPCmd(enum SMTPCommand command, char *parmtext, APTR errorMsg);
+static char *TR_SendPOP3Cmd(enum POPCommand command, char *parmtext, const void *errorMsg);
+static char *TR_SendSMTPCmd(enum SMTPCommand command, char *parmtext, const void *errorMsg);
 static int  TR_Recv(char *vptr, int maxlen);
 static int  TR_RecvToFile(FILE *fh, char *filename, struct TransStat *ts);
 static int  TR_ReadLine(LONG socket, char *vptr, int maxlen);
 static int  TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags);
-static int  TR_Send(char *vptr, int len, int flags);
-static int  TR_WriteBuffered(LONG socket, char *ptr, int maxlen, int flags);
+static int  TR_Send(const char *vptr, int len, int flags);
+static int  TR_WriteBuffered(LONG socket, const char *ptr, int maxlen, int flags);
 static void TR_TransStat_Update(struct TransStat *ts, int size_incr);
 
 #define TR_WriteLine(buf)       (TR_Send((buf), strlen(buf), TCPF_FLUSH))
@@ -406,7 +406,8 @@ static BOOL TR_InitSTARTTLS(int ServerFlags)
   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_INITTLS));
 
   // Now we initiate the STARTTLS command (RFC 2487)
-  if(!TR_SendSMTPCmd(ESMTP_STARTTLS, NULL, MSG_ER_BadResponse)) return FALSE;
+  if(!TR_SendSMTPCmd(ESMTP_STARTTLS, NULL, MSG_ER_BadResponse))
+    return FALSE;
 
   if(TR_InitTLS() && TR_StartTLS())
   {
@@ -1472,7 +1473,7 @@ static int TR_RecvToFile(FILE *fh, char *filename, struct TransStat *ts)
 /// TR_Send()
 // a own wrapper function for Send()/SSL_write() that writes buffered somehow
 // if called with flag != TCP_FLUSH - otherwise it will write and flush immediatly
-static int TR_Send(char *ptr, int len, int flags)
+static int TR_Send(const char *ptr, int len, int flags)
 {
   int nwritten;
 
@@ -1621,7 +1622,7 @@ static int TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags)
 // sure that a full buffer will be written out to the socket. i.e. if the
 // buffer is filled up so that the next call would flush it, we copy as
 // many data to the buffer as possible and flush it immediatly.
-static int TR_WriteBuffered(UNUSED LONG socket, char *ptr, int maxlen, int flags)
+static int TR_WriteBuffered(UNUSED LONG socket, const char *ptr, int maxlen, int flags)
 {
   static int write_cnt = 0;
   static char *write_buf = NULL;
@@ -1766,7 +1767,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
 
       strlcat(url, url2, sizeof(url));
    }
-   if ((path = strchr(url,'/'))) *path++ = 0; else path = "";
+   if ((path = strchr(url,'/'))) *path++ = 0; else path = (char *)"";
    strlcpy(host, noproxy ? url : C->ProxyServer, sizeof(host));
    if ((bufptr = strchr(host, ':'))) { *bufptr++ = 0; hport = atoi(bufptr); }
    else hport = noproxy ? 80 : 8080;
@@ -1834,7 +1835,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
 /*** POP3 routines ***/
 /// TR_SendPOP3Cmd
 //  Sends a command to the POP3 server
-static char *TR_SendPOP3Cmd(enum POPCommand command, char *parmtext, APTR errorMsg)
+static char *TR_SendPOP3Cmd(enum POPCommand command, char *parmtext, const void *errorMsg)
 {
    static char *buf = NULL;
 
@@ -2017,7 +2018,7 @@ static int TR_ConnectPOP(int guilevel)
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_GetStats));
    if (!(resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, MSG_ER_BadResponse))) return -1;
    sscanf(&resp[4], "%d", &msgs);
-   if (msgs) AppendLogVerbose(31, GetStr(MSG_LOG_ConnectPOP), C->P3[pop]->User, host, (void *)msgs, "");
+   if (msgs) AppendLogVerbose(31, GetStr(MSG_LOG_ConnectPOP), C->P3[pop]->User, host, (void *)msgs);
 
    return msgs;
 }
@@ -2275,13 +2276,16 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
       snprintf(cmdbuf, sizeof(cmdbuf), "%d 1", mtn->index);
       if(TR_SendPOP3Cmd(POPCMD_TOP, cmdbuf, NULL))
       {
-         char *tfname = "yamTOP.msg";
+         char tfname[SIZE_MFILE];
          char fname[SIZE_PATHFILE];
          FILE *f;
 
          // we generate a temporary file to buffer the TOP list
          // into it.
+         snprintf(tfname, sizeof(tfname), "YAMt%02d.tmp", G->RexxHost->portnumber);
          strmfp(fname, C->TempDir, tfname);
+
+         // open the
          if((f = fopen(fname, "w")))
          {
             struct ExtendedMail *email;
@@ -2411,7 +2415,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 
       TR_DisconnectPOP();
       TR_Cleanup();
-      AppendLogNormal(30, GetStr(MSG_LOG_Retrieving), (void *)(G->TR->Stats.Downloaded-laststats), p->User, p->Server, "");
+      AppendLog(30, GetStr(MSG_LOG_Retrieving), (void *)(G->TR->Stats.Downloaded-laststats), p->User, p->Server);
       if (G->TR->SinglePOP) pop = MAXP3;
       laststats = G->TR->Stats.Downloaded;
    }
@@ -2590,7 +2594,7 @@ BOOL TR_SendPOP3KeepAlive(void)
 /// TR_SendSMTPCmd
 //  Sends a command to the SMTP server and returns the response message
 //  described in (RFC 821)
-static char *TR_SendSMTPCmd(enum SMTPCommand command, char *parmtext, APTR errorMsg)
+static char *TR_SendSMTPCmd(enum SMTPCommand command, char *parmtext, const void *errorMsg)
 {
    int len, rc;
    static char *buf = NULL;
@@ -3251,7 +3255,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
          fclose(fh);
 
          // write the status to our logfile
-         AppendLog(51, GetStr(MSG_LOG_Exporting), (void *)ts.Msgs_Done, mlist[2]->Folder->Name, fname, "");
+         AppendLog(51, GetStr(MSG_LOG_Exporting), (void *)ts.Msgs_Done, mlist[2]->Folder->Name, fname);
       }
    }
 
@@ -3399,7 +3403,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                     GetSysTimeUTC(&mail->Reference->transDate);
 
                     result = email->DelSend ? 2 : 1;
-                    AppendLogVerbose(42, GetStr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, (void *)mail->Size, "");
+                    AppendLogVerbose(42, GetStr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, (void *)mail->Size);
                   }
                 }
 
@@ -3553,7 +3557,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
             struct MinNode *curNode;
 
             success = TRUE;
-            AppendLogVerbose(41, GetStr(MSG_LOG_ConnectSMTP), host, "", "", "");
+            AppendLogVerbose(41, GetStr(MSG_LOG_ConnectSMTP), host);
 
             for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
             {
@@ -3606,7 +3610,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                   break;
                }
             }
-            AppendLogNormal(40, GetStr(MSG_LOG_Sending), (void *)c, host, "", "");
+            AppendLogNormal(40, GetStr(MSG_LOG_Sending), (void *)c, host);
          }
          else err = 1;
 
@@ -4524,7 +4528,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
     }
 
     DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
-    AppendLog(50, GetStr(MSG_LOG_Importing), (void *)ts.Msgs_Done, G->TR->ImportFile, folder->Name, "");
+    AppendLog(50, GetStr(MSG_LOG_Importing), (void *)ts.Msgs_Done, G->TR->ImportFile, folder->Name);
     DisplayStatistics(folder, TRUE);
   }
 
@@ -4594,7 +4598,7 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
             if(FO_GetCurrentFolder() == infolder)
               DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
 
-            AppendLogVerbose(32, GetStr(MSG_LOG_RetrievingVerbose), AddrName(new->From), new->Subject, (void *)new->Size, "");
+            AppendLogVerbose(32, GetStr(MSG_LOG_RetrievingVerbose), AddrName(new->From), new->Subject, (void *)new->Size);
             MA_StartMacro(MACRO_NEWMSG, mfile);
             MA_FreeEMailStruct(mail);
          }

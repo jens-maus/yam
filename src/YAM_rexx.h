@@ -36,6 +36,6 @@ void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg);
 void FreeRexxCommand(struct RexxMsg *rxmsg);
 void ReplyRexxCommand(struct RexxMsg *rxmsg, long prim, long sec, char *res);
 struct RexxMsg *SendRexxCommand(struct RexxHost *host, char *buff, BPTR fh);
-struct RexxHost *SetupARexxHost(char *basename, struct MsgPort *usrport);
+struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport);
 
 #endif /* YAM_REXX_H */

@@ -42,7 +42,7 @@ struct Data
 struct PageList
 {
   int  Offset;
-  APTR PageLabel;
+  const void *PageLabel;
 };
 */
 

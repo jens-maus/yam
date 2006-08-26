@@ -355,7 +355,7 @@ void DisposeImage(struct imageCacheNode *node)
 /// IsImageInCache()
 // returns TRUE if the specified image filename is found to
 // be in the cache - may it be loaded or unloaded.
-BOOL IsImageInCache(char *filename)
+BOOL IsImageInCache(const char *filename)
 {
   struct MinNode *curNode;
   BOOL result = FALSE;

@@ -142,7 +142,7 @@ struct HeaderNode
 };
 
 BOOL  RE_DecodePart(struct Part *rp);
-void  RE_DisplayMIME(char *fname, char *ctype);
+void  RE_DisplayMIME(char *fname, const char *ctype);
 BOOL  RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi);
 
 struct ReadMailData *CreateReadWindow(BOOL forceNewWindow);
@@ -160,7 +160,7 @@ BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo);
 void RE_ClickedOnMessage(char *address);
 void RE_PrintFile(char *filename);
 struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAllFolder, Object *readWindow);
-BOOL RE_Export(struct ReadMailData *rmData, char *source, char *dest, char *name, int nr, BOOL force, BOOL overwrite, char *ctype);
+BOOL RE_Export(struct ReadMailData *rmData, const char *source, const char *dest, const char *name, int nr, BOOL force, BOOL overwrite, const char *ctype);
 void RE_SaveAll(struct ReadMailData *rmData, char *path);
 
 #endif /* YAM_READ_H */

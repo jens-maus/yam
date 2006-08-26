@@ -97,7 +97,7 @@ void ReplyRexxCommand(struct RexxMsg *rexxmessage, long primary, long secondary,
             result = (char *) secondary;
          }
          
-         SetRexxVar( REXXMSG(rexxmessage), "RC2", result, (LONG)strlen(result) );
+         SetRexxVar( REXXMSG(rexxmessage), (STRPTR)"RC2", result, (LONG)strlen(result) );
          
          secondary = 0;
       }
@@ -260,7 +260,7 @@ void CloseDownARexxHost( struct RexxHost *host )
 
 ///
 /// SetupARexxHost
-struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
+struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
 {
    struct RexxHost *host;
    int ext = 0;
@@ -326,7 +326,7 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
 /* StateMachine für FindRXCommand() */
 
 /// scmp
-static char *scmp( char *inp, char *str )
+static char *scmp(char *inp, const char *str)
 {
    while( *str && *inp )
       if( *inp++ != *str++ )
@@ -342,7 +342,9 @@ static int find( char *input )
 {
    struct arb_p_state *st = arb_p_state;
    struct arb_p_link *ad;
-   char *ni, tmp[36], *s;
+   char *ni;
+   char tmp[36];
+   const char *s;
    
    ni = tmp;
    while( *input && ni-tmp < 32 )
@@ -519,8 +521,10 @@ static char *StrDup(char *s)
 static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray, char *stembase )
 {
    struct rxs_stemnode *first = NULL, *old = NULL, *new;
-   char resb[512], *rs, *rb;
+   char resb[512];
+   char *rb;
    char longbuff[16];
+   const char *rs;
    
    rb = resb;
    if( stembase )
@@ -786,7 +790,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
                   *rb = toupper( *rb );
                
                if( SetRexxVar( REXXMSG(rexxmsg),
-                  *((char *)argarray[0]) ? (char *)argarray[0] : "RESULT",
+                  (STRPTR)(*((char *)argarray[0]) ? (char *)argarray[0] : "RESULT"),
                   result, (LONG)strlen(result) ) )
                {
                   rc = -10;

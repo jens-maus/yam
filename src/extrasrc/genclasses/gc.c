@@ -48,6 +48,9 @@
  *
  * History
  * -------
+ * 0.20 - modified generated code to be somewhat more compatible to compiling
+ *        with -Wwrite-strings
+ *
  * 0.19 - replaced all sprintf() uses by proper snprintf() ones.
  *
  * 0.18 - minor cosmetic changes to the generated source layout
@@ -136,7 +139,7 @@
  *
  */
 
-static const char *verstr = "0.19";
+static const char *verstr = "0.20";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -684,7 +687,7 @@ void gen_supportroutines( FILE *fp )
   char *bn = arg_basename;
   fprintf(fp,
 "%s%s%s"
-"Object * STDARGS VARARGS68K %s_NewObject(STRPTR class, ...)\n"
+"Object * STDARGS VARARGS68K %s_NewObject(CONST_STRPTR class, ...)\n"
 "{\n"
 "  unsigned int i;\n"
 "  for(i = 0; i < NUMBEROFCLASSES; i++)\n"
@@ -821,8 +824,8 @@ int gen_source( char *destfile, struct list *classlist )
   fprintf(fp,
     "const struct\n"
     "{\n"
-    "  STRPTR Name;\n"
-    "  STRPTR SuperClass;\n"
+    "  CONST_STRPTR Name;\n"
+    "  CONST_STRPTR SuperClass;\n"
     "  LONG SuperMCC;\n"
     "  ULONG (*GetSize)(void);\n"
     "  APTR Dispatcher;\n"
@@ -910,7 +913,7 @@ int gen_header( char *destfile, struct list *classlist )
     "#define NUMBEROFCLASSES %ld\n"
     "\n"
     "extern struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n"
-    "Object * STDARGS VARARGS68K %s_NewObject(STRPTR class, ...);\n"
+    "Object * STDARGS VARARGS68K %s_NewObject(CONST_STRPTR class, ...);\n"
     "BOOL %s_SetupClasses(void);\n"
     "void %s_CleanupClasses(void);\n"
     "\n",

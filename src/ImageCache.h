@@ -48,7 +48,7 @@ BOOL ImageCacheInit(const char *path);
 void ImageCacheCleanup(void);
 struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr);
 void DisposeImage(struct imageCacheNode *node);
-BOOL IsImageInCache(char *filename);
+BOOL IsImageInCache(const char *filename);
 
 // the imagelayout define which defines the current "version" of
 // the image layout we are currently using

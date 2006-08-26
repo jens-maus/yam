@@ -292,7 +292,6 @@ static inline BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
       case SO_ENTIREMSG:
       {
         struct Search search;
-        char *field = "";
 
         // we use our global find function for searching in the entire message
         // (including the headers)
@@ -303,7 +302,7 @@ static inline BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
                                      0,
                                      TRUE,
                                      searchString,
-                                     field))
+                                     ""))
         {
           foundMatch = FI_DoSearch(&search, mail);
         }

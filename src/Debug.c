@@ -64,7 +64,7 @@ void SetupDebug(void)
 
     // static list of our debugging classes tokens.
     // in the yamdebug variable these classes always start with a @
-    static const struct { char *token; unsigned long flag; } dbclasses[] =
+    static const struct { const char *token; unsigned long flag; } dbclasses[] =
     {
       { "ctrace",  DBC_CTRACE   },
       { "report",  DBC_REPORT   },
@@ -77,7 +77,7 @@ void SetupDebug(void)
       { NULL,      0            }
     };
 
-    static const struct { char *token; unsigned long flag; } dbflags[] =
+    static const struct { const char *token; unsigned long flag; } dbflags[] =
     {
       { "always",   DBF_ALWAYS  },
       { "startup",  DBF_STARTUP },
@@ -282,7 +282,7 @@ void _SHOWVALUE(unsigned long dclass, unsigned long dflags, unsigned long value,
   if(isFlagSet(debug_classes, dclass) &&
      isFlagSet(debug_flags, dflags))
   {
-    char *fmt;
+    const char *fmt;
 
     switch(size)
     {
@@ -328,7 +328,7 @@ void _SHOWPOINTER(unsigned long dclass, unsigned long dflags, const void *p, con
   if(isFlagSet(debug_classes, dclass) &&
      isFlagSet(debug_flags, dflags))
   {
-    char *fmt;
+    const char *fmt;
 
     _INDENT();
 
@@ -399,7 +399,7 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
 
     if(ansi_output)
     {
-      char *highlight = ANSI_ESC_FG_GREEN;
+      const char *highlight = ANSI_ESC_FG_GREEN;
 
       switch(dclass)
       {
@@ -436,7 +436,7 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
 
     if(ansi_output)
     {
-      char *highlight = ANSI_ESC_FG_GREEN;
+      const char *highlight = ANSI_ESC_FG_GREEN;
   
       switch(dclass)
       {

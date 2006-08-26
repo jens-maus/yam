@@ -72,15 +72,15 @@
 /* local structures */
 struct ExpandTextData
 {
-  char *            OS_Name;
-  char *            OS_Address;
-  char *            OM_Subject;
+  const char *      OS_Name;
+  const char *      OS_Address;
+  const char *      OM_Subject;
   struct DateStamp  OM_Date;
   int               OM_TimeZone;
-  char *            OM_MessageID;
-  char *            R_Name;
-  char *            R_Address;
-  char *            HeaderFile;
+  const char *      OM_MessageID;
+  const char *      R_Name;
+  const char *      R_Address;
+  const char *      HeaderFile;
 };
 
 /* local protos */
@@ -548,7 +548,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet)
 
    if(C->RemoveAtOnce || mailFolder->Type == FT_DELETED || forceatonce)
    {
-      AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name, "");
+      AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name);
 
       // make sure we delete the mailfile
       DeleteFile(GetMailFile(NULL, mailFolder, mail));
@@ -678,9 +678,9 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
 
   // write some log out
   if(copyit)
-    AppendLogNormal(24, GetStr(MSG_LOG_Copying), (void *)selected, FolderName(frombox), FolderName(tobox), "");
+    AppendLogNormal(24, GetStr(MSG_LOG_Copying), (void *)selected, FolderName(frombox), FolderName(tobox));
   else
-    AppendLogNormal(22, GetStr(MSG_LOG_Moving),  (void *)selected, FolderName(frombox), FolderName(tobox), "");
+    AppendLogNormal(22, GetStr(MSG_LOG_Moving),  (void *)selected, FolderName(frombox), FolderName(tobox));
 
   // refresh the folder statistics if necessary
   if(!copyit) DisplayStatistics(frombox, FALSE);
@@ -2302,7 +2302,7 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
              else
                RenameFile(tfname, fname);
 
-             AppendLog(81, GetStr(MSG_LOG_CroppingAtt), mail->MailFile, fo->Name, "", "");
+             AppendLog(81, GetStr(MSG_LOG_CroppingAtt), mail->MailFile, fo->Name);
           }
        }
 
@@ -2533,11 +2533,11 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
    if (delatonce || C->RemoveAtOnce || folder == delfolder)
    {
-      AppendLogNormal(20, GetStr(MSG_LOG_Deleting), (void *)selected, folder->Name, "", "");
+      AppendLogNormal(20, GetStr(MSG_LOG_Deleting), (void *)selected, folder->Name);
    }
    else
    {
-      AppendLogNormal(22, GetStr(MSG_LOG_Moving), (void *)selected, folder->Name, delfolder->Name, "");
+      AppendLogNormal(22, GetStr(MSG_LOG_Moving), (void *)selected, folder->Name, delfolder->Name);
       DisplayStatistics(delfolder, FALSE);
    }
    DisplayStatistics(NULL, TRUE);
@@ -2922,7 +2922,7 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
   for (mail = folder->Messages; mail; mail = mail->Next)
   {
     BusySet(++i);
-    AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name, "");
+    AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
     DeleteFile(GetMailFile(NULL, NULL, mail));
   }
 
@@ -2935,7 +2935,7 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
 
     if(FO_GetCurrentFolder() == folder) DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
 
-    AppendLogNormal(20, GetStr(MSG_LOG_Deleting), (void *)i, folder->Name, "", "");
+    AppendLogNormal(20, GetStr(MSG_LOG_Deleting), (void *)i, folder->Name);
 
     if(quiet == FALSE) DisplayStatistics(folder, TRUE);
   }
@@ -3585,7 +3585,7 @@ char *MA_GetRealSubject(char *sub)
    int sublen = strlen(sub);
 
    if (sublen < 3) return sub;
-   if (sub[2] == ':' && !sub[3]) return "";
+   if (sub[2] == ':' && !sub[3]) return (char *)"";
 
    // check if the subject contains some strings embedded in brackets like [test]
    // and return only the real subject after the last bracket.

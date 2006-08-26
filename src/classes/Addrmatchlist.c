@@ -63,7 +63,7 @@ MakeStaticHook(ConstructHook, ConstructFunc);
 
 ///
 /// DisplayHook
-HOOKPROTONH(DisplayFunc, LONG, STRPTR *array, struct CustomABEntry *e)
+HOOKPROTONH(DisplayFunc, LONG, CONST_STRPTR *array, struct CustomABEntry *e)
 {
   static char buf[SIZE_ADDRESS + 4];
 

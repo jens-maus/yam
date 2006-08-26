@@ -109,8 +109,7 @@ static int  Word_Length(const char *buf);
 static int  Quoting_Chars(char *buf, int len, char *text, int *post_spaces);
 static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff);
 static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff);
-static BOOL UncompressMailFile(char *src, char *dst, char *passwd);
-static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
+static BOOL UncompressMailFile(char *src, char *dst, const char *passwd);
 
 #if !defined(__amigaos4__) || (INCLUDE_VERSION < 50)
 struct PathNode
@@ -223,7 +222,7 @@ HOOKPROTONH(AttachDspFunc, long, char **array, struct Part *entry)
    if (entry)
    {
       static char dispnu[SIZE_SMALL], dispsz[SIZE_SMALL];
-      array[0] = array[2] = "";
+      array[0] = array[2] = (char *)"";
 
       if(entry->Nr > PART_RAW)
         snprintf(array[0] = dispnu, sizeof(dispnu), "%d", entry->Nr);
@@ -503,7 +502,7 @@ LONG STDARGS YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const ch
 ///
 /// StringRequest
 //  Puts up a string requester
-int StringRequest(char *string, int size, char *title, char *body, char *yestext, char *alttext, char *notext, BOOL secret, Object *parent)
+int StringRequest(char *string, int size, const char *title, char *body, char *yestext, char *alttext, char *notext, BOOL secret, Object *parent)
 {
   Object *bt_okay;
   Object *bt_middle;
@@ -1080,7 +1079,7 @@ char *StrBufCat(char *strbuf, const char *source)
 ///
 /// AppendToBuffer
 //  Appends a string to a dynamic-length buffer
-char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
+char *AppendToBuffer(char *buf, int *wptr, int *len, const char *add)
 {
    int nlen = *len, npos = (*wptr)+strlen(add);
    while (npos >= nlen-1) nlen = (nlen*3)/2;
@@ -1205,9 +1204,9 @@ char *GetLine(FILE *fh, char *buffer, int bufsize)
 ///
 /// FileExists
 //  return true/false if file exists
-BOOL FileExists(char *filename)
+BOOL FileExists(const char *filename)
 {
-  BPTR lock = Lock((STRPTR)filename, ACCESS_READ);
+  BPTR lock = Lock(filename, ACCESS_READ);
   if(!lock)
     return FALSE;
   UnLock(lock);
@@ -1216,7 +1215,7 @@ BOOL FileExists(char *filename)
 ///
 /// FileSize
 //  Returns size of a file
-int FileSize(char *filename)
+int FileSize(const char *filename)
 {
   BPTR lock;
   int size = -1;
@@ -1385,7 +1384,7 @@ long FileTime(const char *filename)
 ///
 /// RenameFile
 //  Renames a file and restores the protection bits
-BOOL RenameFile(char *oldname, char *newname)
+BOOL RenameFile(const char *oldname, const char *newname)
 {
    struct FileInfoBlock *fib;
    BPTR lock;
@@ -1415,7 +1414,7 @@ BOOL RenameFile(char *oldname, char *newname)
 ///
 /// CopyFile
 //  Copies a file
-BOOL CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh)
+BOOL CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh)
 {
    BOOL success = FALSE;
 
@@ -1454,7 +1453,7 @@ BOOL CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh)
 ///
 /// MoveFile
 //  Moves a file (also from one partition to another)
-BOOL MoveFile(char *oldfile, char *newfile)
+BOOL MoveFile(const char *oldfile, const char *newfile)
 {
   // we first try to rename the file with a standard Rename()
   // and if it doesn't work we do a raw copy
@@ -1817,7 +1816,7 @@ void SimpleWordWrap(char *filename, int wrapsize)
 ///
 /// ReqFile
 //  Puts up a file requester
-int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *drawer, char *file)
+int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, const char *drawer, const char *file)
 {
   // the following arrays depend on the ReqFileType enumeration
   static const char *pattern[MAXASL] =
@@ -1860,7 +1859,7 @@ int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *draw
 ///
 /// OpenTempFile
 //  Creates or opens a temporary file
-struct TempFile *OpenTempFile(char *mode)
+struct TempFile *OpenTempFile(const char *mode)
 {
   struct TempFile *tf;
 
@@ -1999,7 +1998,7 @@ BOOL AllFolderLoaded(void)
 ///
 /// PFExists
 //  Checks if a file exists in the specified directory
-BOOL PFExists(char *path, char *file)
+BOOL PFExists(char *path, const char *file)
 {
    char fname[SIZE_PATHFILE];
    strmfp(fname, path, file);
@@ -2099,7 +2098,7 @@ BOOL DeleteMailDir(char *dir, BOOL isroot)
 ///
 /// FileToBuffer
 //  Reads a complete file into memory
-char *FileToBuffer(char *file)
+char *FileToBuffer(const char *file)
 {
   FILE *fh;
   char *text = NULL;
@@ -2257,7 +2256,7 @@ char *GetMailFile(char *string, struct Folder *folder, struct Mail *mail)
 char *BuildAddrName(char *address, char *name)
 {
   static char buffer[SIZE_ADDRESS+SIZE_REALNAME+4];
-  char *delim;
+  const char *delim;
 
   if(*name)
   {
@@ -2945,7 +2944,7 @@ int TZtoMinutes(char *tzone)
 
    static const struct
    {
-     char *TZname;
+     const char *TZname;
      int   TZcorr;
    } time_zone_table[] =
    {
@@ -3156,7 +3155,7 @@ int TZtoMinutes(char *tzone)
 //  Displays large numbers using group separators
 void FormatSize(LONG size, char *buf, int buflen)
 {
-  char *dp = G->Locale ? (char *)G->Locale->loc_DecimalPoint : ".";
+  const char *dp = G->Locale ? (const char *)G->Locale->loc_DecimalPoint : ".";
   double dsize = (double)size;
 
   // we check what SizeFormat the user has choosen
@@ -3236,7 +3235,7 @@ void FormatSize(LONG size, char *buf, int buflen)
     */
     default:
     {
-      char *gs = G->Locale ? (char *)G->Locale->loc_GroupSeparator : ",";
+      const char *gs = G->Locale ? (const char *)G->Locale->loc_GroupSeparator : ",";
 
       // as we just split the size to another value, we redefine the KB/MB/GB values to base 10 variables
       enum { KB = 1000, MB = 1000 * 1000, GB = 1000 * 1000 * 1000 };
@@ -3449,7 +3448,7 @@ static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, i
 ///
 /// UncompressMailFile
 //  Expands a compressed message file
-static BOOL UncompressMailFile(char *src, char *dst, char *passwd)
+static BOOL UncompressMailFile(char *src, char *dst, const char *passwd)
 {
    D(DBF_UTIL, "UncompressMailFile: %08lx - [%s] -> [%s] - [%s]", XpkBase, src, dst, passwd);
 
@@ -3941,7 +3940,7 @@ MakeHook(PO_ListPublicKeysHook, PO_ListPublicKeys);
 /*** MUI related ***/
 /// ShortCut
 //  Finds keyboard shortcut in text label
-char ShortCut(char *label)
+char ShortCut(const char *label)
 {
    char *ptr = strchr(label, '_');
    if (!ptr) return 0;
@@ -3964,7 +3963,7 @@ static char *RemoveCut(char *label)
 ///
 /// MakeCycle
 //  Creates a MUI cycle object
-Object *MakeCycle(char **labels, char *label)
+Object *MakeCycle(const char **labels, const char *label)
 {
    Object *obj = KeyCycle(labels, ShortCut(label));
    if (obj) set(obj, MUIA_CycleChain, 1);
@@ -3973,7 +3972,7 @@ Object *MakeCycle(char **labels, char *label)
 ///
 /// MakeButton
 //  Creates a MUI button
-Object *MakeButton(char *txt)
+Object *MakeButton(const char *txt)
 {
    Object *obj = MUI_MakeObject(MUIO_Button,txt);
    if (obj) set(obj, MUIA_CycleChain, 1);
@@ -3982,7 +3981,7 @@ Object *MakeButton(char *txt)
 ///
 /// MakeCheck
 //  Creates a MUI checkmark object
-Object *MakeCheck(char *label)
+Object *MakeCheck(const char *label)
 {
    return
    ImageObject,
@@ -4010,7 +4009,7 @@ Object *MakeCheckGroup(Object **check, char *label)
 ///
 /// MakeString
 //  Creates a MUI string object
-Object *MakeString(int maxlen, char *label)
+Object *MakeString(int maxlen, const char *label)
 {
   return BetterStringObject,
     StringFrame,
@@ -4023,7 +4022,7 @@ Object *MakeString(int maxlen, char *label)
 ///
 /// MakePassString
 //  Creates a MUI string object with hidden text
-Object *MakePassString(char *label)
+Object *MakePassString(const char *label)
 {
   return BetterStringObject,
     StringFrame,
@@ -4037,7 +4036,7 @@ Object *MakePassString(char *label)
 ///
 /// MakeInteger
 //  Creates a MUI string object for numeric input
-Object *MakeInteger(int maxlen, char *label)
+Object *MakeInteger(int maxlen, const char *label)
 {
   return BetterStringObject,
     StringFrame,
@@ -4081,7 +4080,7 @@ Object *MakePGPKeyList(Object **st, BOOL secret, char *label)
 ///
 /// MakeAddressField
 //  Creates a recipient field
-Object *MakeAddressField(Object **string, char *label, Object *help, int abmode, int winnum, BOOL allowmulti)
+Object *MakeAddressField(Object **string, const char *label, const Object *help, int abmode, int winnum, BOOL allowmulti)
 {
   Object *obj;
   Object *bt_adr;
@@ -4160,12 +4159,12 @@ Object *MakeMenuitem(const char *str, ULONG ud)
 ///
 /// SetupToolbar
 //  Initializes a single button in a MUI toolbar object
-void SetupToolbar(struct MUIP_Toolbar_Description *tb, char *label, char *help, ULONG flags)
+void SetupToolbar(struct MUIP_Toolbar_Description *tb, const char *label, const char *help, ULONG flags)
 {
    tb->Type = label ? (*label ? TDT_BUTTON : TDT_SPACE) : TDT_END;
    tb->Flags = flags;
-   tb->ToolText = tb->Type == TDT_BUTTON ? label : NULL;
-   tb->HelpString = help;
+   tb->ToolText = (char *)(tb->Type == TDT_BUTTON ? label : NULL);
+   tb->HelpString = (char *)help;
    tb->MutualExclude = 0;
    tb->Key = 0;
 }
@@ -4283,7 +4282,7 @@ MakeHook(DisposeModuleHook,DisposeModuleFunc);
 //  Loads column widths from ENV:MUI/YAM.cfg
 void LoadLayout(void)
 {
-   char *ls;
+   const char *ls;
    char *endptr;
 
    ENTER();
@@ -4615,7 +4614,7 @@ void PGPClearPassPhrase(BOOL force)
 ///
 /// PGPCommand
 //  Launches a PGP command
-int PGPCommand(char *progname, char *options, int flags)
+int PGPCommand(const char *progname, const char *options, int flags)
 {
   BPTR fhi;
   char command[SIZE_LARGE];
@@ -4671,51 +4670,71 @@ int PGPCommand(char *progname, char *options, int flags)
 ///
 /// AppendToLogfile
 //  Appends a line to the logfile
-static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4)
+void STDARGS AppendToLogfile(enum LFMode mode, int id, char *text, ...)
 {
-   FILE *fh;
-   char logfile[SIZE_PATHFILE], filename[SIZE_FILE];
-   if (!C->LogAllEvents && (id < 30 || id > 49)) return;
-   if (C->SplitLogfile)
-   {
-      struct ClockData cd;
-      Amiga2Date(GetDateStamp(), &cd);
-      snprintf(filename, sizeof(filename), "YAM-%s%d.log", months[cd.month-1], cd.year);
-   }
-   else
-     strlcpy(filename, "YAM.log", sizeof(filename));
+  FILE *fh;
+  char logfile[SIZE_PATHFILE];
+  char filename[SIZE_FILE];
 
-   strmfp(logfile, *C->LogfilePath ? C->LogfilePath : G->ProgDir, filename);
+  ENTER();
 
-   if ((fh = fopen(logfile, "a")))
-   {
-      char datstr[64];
-      DateStamp2String(datstr, sizeof(datstr), NULL, DSS_DATETIME, TZC_NONE);
-      fprintf(fh, "%s [%02d] ", datstr, id);
-      fprintf(fh, text, a1, a2, a3, a4);
-      fprintf(fh, "\n");
-      fclose(fh);
-   }
-}
-///
-/// AppendLog
-//  Appends a line to the logfile, depending on log mode
-void AppendLog(int id, char *text, void *a1, void *a2, void *a3, void *a4)
-{
-   if (C->LogfileMode != 0) AppendToLogfile(id, text, a1, a2, a3, a4);
-}
-void AppendLogNormal(int id, char *text, void *a1, void *a2, void *a3, void *a4)
-{
-   if (C->LogfileMode == 1) AppendToLogfile(id, text, a1, a2, a3, a4);
-}
-void AppendLogVerbose(int id, char *text, void *a1, void *a2, void *a3, void *a4)
-{
-   if (C->LogfileMode == 2) AppendToLogfile(id, text, a1, a2, a3, a4);
+  // check the Logfile mode
+  if(C->LogfileMode == LF_NONE ||
+     (mode != LF_ALL && C->LogfileMode != mode))
+  {
+    LEAVE();
+    return;
+  }
+
+  // check if the event in question should really be logged or
+  // not.
+  if(C->LogAllEvents == FALSE && (id < 30 || id > 49))
+  {
+    LEAVE();
+    return;
+  }
+
+  // if the user wants to split the logfile by date
+  // we go and generate the filename now.
+  if(C->SplitLogfile)
+  {
+    struct ClockData cd;
+    Amiga2Date(GetDateStamp(), &cd);
+    snprintf(filename, sizeof(filename), "YAM-%s%d.log", months[cd.month-1], cd.year);
+  }
+  else
+    strlcpy(filename, "YAM.log", sizeof(filename));
+
+  // add the logfile path to the filename.
+  strmfp(logfile, *C->LogfilePath ? C->LogfilePath : G->ProgDir, filename);
+
+  // open the file handle in 'append' mode and output the
+  // text accordingly.
+  if((fh = fopen(logfile, "a")))
+  {
+    char datstr[64];
+    va_list args;
+
+    DateStamp2String(datstr, sizeof(datstr), NULL, DSS_DATETIME, TZC_NONE);
+
+    // output the header
+    fprintf(fh, "%s [%02d] ", datstr, id);
+
+    // compose the varags values
+    va_start(args, text);
+    vfprintf(fh, text, args);
+    va_end(args);
+
+    fprintf(fh, "\n");
+    fclose(fh);
+  }
+
+  LEAVE();
 }
 ///
 /// Busy
 //  Displays busy message
-void Busy(char *text, char *parameter, int cur, int max)
+void Busy(const char *text, const char *parameter, int cur, int max)
 {
    // we can have different busy levels (defined BUSYLEVEL)
    static char infotext[BUSYLEVEL][SIZE_DEFAULT];
@@ -5118,7 +5137,7 @@ void PlaySound(char *filename)
 ///
 /// MatchExtension
 //  Matches a file extension against a list of extension
-static BOOL MatchExtension(char *fileext, char *extlist)
+static BOOL MatchExtension(char *fileext, const char *extlist)
 {
   BOOL result = FALSE;
 
@@ -5126,12 +5145,12 @@ static BOOL MatchExtension(char *fileext, char *extlist)
 
   if(extlist)
   {
-    char *s = extlist;
+    const char *s = extlist;
 
     // now we search for our delimiters step by step
     while(*s)
     {
-      char *e;
+      const char *e;
 
       if((e = strpbrk(s, " |;,")) == NULL)
         e = s+strlen(s);
@@ -5161,10 +5180,10 @@ static BOOL MatchExtension(char *fileext, char *extlist)
 /// IdentifyFile
 // Tries to identify a file and returns its content-type if applicable
 // otherwise NULL
-char *IdentifyFile(char *fname)
+const char *IdentifyFile(const char *fname)
 {
   char ext[SIZE_FILE];
-  char *ctype = NULL;
+  const char *ctype = NULL;
 
   ENTER();
 
@@ -5297,7 +5316,7 @@ char *IdentifyFile(char *fname)
 
               if((dtn = ObtainDataTypeA(DTST_FILE, (APTR)lock, NULL)))
               {
-                char *type = NULL;
+                const char *type = NULL;
                 struct DataTypeHeader *dth = dtn->dtn_Header;
 
                 switch(dth->dth_GroupID)
@@ -5451,7 +5470,7 @@ int GetSimpleID(void)
 ///
 /// GotoURL
 //  Loads an URL using an ARexx script or openurl.library
-void GotoURL(char *url)
+void GotoURL(const char *url)
 {
   ENTER();
 
@@ -5469,7 +5488,7 @@ void GotoURL(char *url)
                                              { TAG_DONE, 0         } };
 
       // open the URL in a new window per default
-      URL_OpenA(url, (struct TagItem *)&tags[0]);
+      URL_OpenA((STRPTR)url, (struct TagItem *)&tags[0]);
 
       DROPINTERFACE(IOpenURL);
     }
@@ -5793,7 +5812,7 @@ MakeStaticHook(putCharHook, putCharFunc);
 
 /// SPrintF
 //  sprintf() replacement with Locale support
-void STDARGS VARARGS68K SPrintF(char *outstr, char *fmtstr, ...)
+void STDARGS VARARGS68K SPrintF(char *outstr, const char *fmtstr, ...)
 {
   struct Hook hook;
   VA_LIST args;
@@ -5802,7 +5821,7 @@ void STDARGS VARARGS68K SPrintF(char *outstr, char *fmtstr, ...)
   InitHook(&hook, putCharHook, outstr);
 
   VA_START(args, fmtstr);
-  FormatString(G->Locale, fmtstr, VA_ARG(args, void *), &hook);
+  FormatString(G->Locale, (STRPTR)fmtstr, VA_ARG(args, void *), &hook);
   VA_END(args);
 }
 ///

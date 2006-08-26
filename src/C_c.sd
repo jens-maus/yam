@@ -35,29 +35,29 @@
 
 #include "YAM.h"
 
-struct FC_Type { long ID; char * Str; };
+struct FC_Type { long ID; const char *Str; };
 
 const struct FC_Type _%i = { %d, %s };
 
 /*** Catalog functions ***/
 /// GetStr()
-char *GetStr(APTR fcstr)
+char *GetStr(const void *fcstr)
 {
-  char *defaultstr = ((struct FC_Type *)fcstr)->Str;
+  const char *defaultstr = ((struct FC_Type *)fcstr)->Str;
 
   if(G->Catalog)
     return (char *)GetCatalogStr(G->Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
 
-  return defaultstr;
+  return (char *)defaultstr;
 }
 ///
 /// GetStripStr()
 // function that will strip out the special menusigns
-char *GetStripStr(APTR fcstr)
+char *GetStripStr(const void *fcstr)
 {
   char *loc_str = GetStr(fcstr);
 
-  return (0 == loc_str[1] ? &loc_str[2] : loc_str);
+  return (loc_str[1] == 0 ? &loc_str[2] : loc_str);
 }
 ///
 /// Close%bCatalog()
@@ -80,6 +80,6 @@ void Open%bCatalog()
                                        };
 
   if(LocaleBase && G->Catalog == NULL)
-    G->Catalog = OpenCatalogA(NULL, "%b.catalog", (struct TagItem *)&tags[0]);
+    G->Catalog = OpenCatalogA(NULL, (STRPTR)"%b.catalog", (struct TagItem *)&tags[0]);
 }
 ///

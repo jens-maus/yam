@@ -78,11 +78,11 @@ DECLARE(EditFile) // int n
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  static char *fldopt[2][13];
-  static char *compopt[14];
-  static char *statopt[10];
-  static char *amode[3];
-  static char *bcrit[5];
+  static const char *fldopt[2][13];
+  static const char *compopt[14];
+  static const char *statopt[10];
+  static const char *amode[3];
+  static const char *bcrit[5];
   struct Data *data;
   struct Data *tmpData;
   struct TagItem *tags = inittags(msg), *tag;
@@ -413,11 +413,11 @@ DECLARE(PrepareSearch) // struct Search *search
 {
   GETDATA;
   int pg = xget(data->PG_SRCHOPT, MUIA_Group_ActivePage);
-  char *match;
+  const char *match;
   char *field;
 
   if(pg != 3) // Page 3 (Status) has no ST_MATCH
-    match = (char *)xget(data->ST_MATCH[pg], MUIA_String_Contents);
+    match = (const char *)xget(data->ST_MATCH[pg], MUIA_String_Contents);
   else
     match = "";
 

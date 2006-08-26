@@ -69,7 +69,7 @@ int EA_Init(enum ABEntry_Type type, struct ABEntry *ab)
 {
    struct EA_ClassData *ea;
    int winnum;
-   char *title = "";
+   const char *title = "";
 
    if ((winnum = EA_Open(type)) < 0) return -1;
    ea = G->EA[winnum];
@@ -374,7 +374,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
                       if (!old) EA_InsertBelowActive(addr, TNF_LIST);
    }
    if (old) DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_List_Redraw, MUIV_List_Redraw_All);
-   else AppendLogVerbose(71, GetStr(MSG_LOG_NewAddress), addr->Alias, "", "", "");
+   else AppendLogVerbose(71, GetStr(MSG_LOG_NewAddress), addr->Alias);
    DisposeModulePush(&G->EA[winnum]);
 }
 MakeStaticHook(EA_OkayHook, EA_Okay);
@@ -472,8 +472,12 @@ static struct EA_ClassData *EA_New(int winnum, int type)
    struct EA_ClassData *data = calloc(1, sizeof(struct EA_ClassData));
    if (data)
    {
-      static STRPTR SecurityCycleEntries[6] = {NULL};
-      APTR group = NULL, bt_homepage, bt_sort;
+      static STRPTR SecurityCycleEntries[6];
+      Object *group = NULL;
+      Object *bt_homepage;
+      Object *bt_sort;
+
+      memset(&SecurityCycleEntries, 0, sizeof(SecurityCycleEntries));
 
       data->Type = type;
       switch (type)
@@ -483,14 +487,18 @@ static struct EA_ClassData *EA_New(int winnum, int type)
           if(NULL == SecurityCycleEntries[0])
           {
             ULONG i;
-            static const APTR SecurityCycleStrings[ARRAY_SIZE(SecurityCycleEntries)-1] = {
-              MSG_WR_SecNone,MSG_WR_SecSign,MSG_WR_SecEncrypt,MSG_WR_SecBoth,MSG_WR_SecAnon
+            static const void *SecurityCycleStrings[ARRAY_SIZE(SecurityCycleEntries)] =
+            {
+              MSG_WR_SecNone,
+              MSG_WR_SecSign,
+              MSG_WR_SecEncrypt,
+              MSG_WR_SecBoth,
+              MSG_WR_SecAnon,
+              NULL
             };
 
             for(i=0; i<ARRAY_SIZE(SecurityCycleEntries)-1; i++)
-            {
               SecurityCycleEntries[i] = GetStr(SecurityCycleStrings[i]);
-            }
           }
 
           /* build MUI object tree */

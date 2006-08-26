@@ -62,7 +62,7 @@ enum VarPopMode { VPM_FORWARD=0, VPM_REPLYHELLO, VPM_REPLYINTRO, VPM_REPLYBYE,
                   VPM_QUOTE, VPM_ARCHIVE, VPM_MAILSTATS };
 
 /* local protos */
-static Object *MakeVarPop(Object **, enum VarPopMode, int, char *);
+static Object *MakeVarPop(Object **, enum VarPopMode, int, const char *);
 static Object *MakePhraseGroup(Object **, Object **, Object **, char*, char*);
 static Object *MakeStaticCheck(void);
 
@@ -327,7 +327,7 @@ MakeStaticHook(PO_CharsetCloseHook, PO_CharsetCloseFunc);
 ///
 /// PO_CharsetListDisplayHook
 //  Pastes an entry from the popup listview into string gadget
-HOOKPROTONH(PO_CharsetListDisplayFunc, LONG, char **array, STRPTR str)
+HOOKPROTONH(PO_CharsetListDisplayFunc, LONG, const char **array, STRPTR str)
 {
   if(str)
   {
@@ -614,7 +614,7 @@ MakeStaticHook(PO_HandleVarHook, PO_HandleVar);
 ///
 /// MakeVarPop
 //  Creates a popup list containing variables and descriptions for phrases etc.
-static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, char *shortcut)
+static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, const char *shortcut)
 {
    Object *lv, *po;
 
@@ -759,14 +759,14 @@ MakeStaticHook(CO_PlaySoundHook,CO_PlaySoundFunc);
 HOOKPROTONHNO(FilterDisplayFunc, LONG, struct NList_DisplayMessage *msg)
 {
   struct FilterNode *entry;
-  char **array;
+  const char **array;
 
   if(!msg)
     return 0;
 
   // now we set our local variables to the DisplayMessage structure ones
   entry = (struct FilterNode *)msg->entry;
-  array = msg->strings;
+  array = (const char **)msg->strings;
 
   if(entry)
   {
@@ -985,7 +985,7 @@ MakeStaticHook(CO_PutRXEntryHook,CO_PutRXEntry);
 Object *CO_Page0(struct CO_ClassData *data)
 {
    Object *grp;
-   static char *tzone[34];
+   static const char *tzone[34];
 
    ENTER();
 
@@ -1256,7 +1256,8 @@ Object *CO_Page1(struct CO_ClassData *data)
 /// CO_Page2  (New Mail)
 Object *CO_Page2(struct CO_ClassData *data)
 {
-   static char *mpsopt[5], *trwopt[4];
+   static const char *mpsopt[5];
+   static const char *trwopt[4];
    Object *grp;
    Object *pa_notisound;
    Object *bt_notisound;
@@ -1267,6 +1268,7 @@ Object *CO_Page2(struct CO_ClassData *data)
    mpsopt[2] = GetStr(MSG_CO_PSAlways);
    mpsopt[3] = GetStr(MSG_CO_PSAlwaysFast);
    mpsopt[4] = NULL;
+
    trwopt[0] = GetStr(MSG_CO_TWNever);
    trwopt[1] = GetStr(MSG_CO_TWAuto);
    trwopt[2] = GetStr(MSG_CO_TWAlways);
@@ -1608,21 +1610,27 @@ Object *CO_Page3(struct CO_ClassData *data)
 Object *CO_Page4(struct CO_ClassData *data)
 {
    Object *grp;
-   static char *headopt[4], *siopt[5], *slopt[5];
+   static const char *headopt[4];
+   static const char *siopt[5];
+   static const char *slopt[5];
+
    headopt[0] = GetStr(MSG_CO_HeadNone);
    headopt[1] = GetStr(MSG_CO_HeadShort);
    headopt[2] = GetStr(MSG_CO_HeadFull);
    headopt[3] = NULL;
+
    siopt[0] = GetStr(MSG_CO_SINone);
    siopt[1] = GetStr(MSG_CO_SIFields);
    siopt[2] = GetStr(MSG_CO_SIAll);
    siopt[3] = GetStr(MSG_CO_SImageOnly);
    siopt[4] = NULL;
+
    slopt[0] = GetStr(MSG_CO_SLBlank);
    slopt[1] = GetStr(MSG_CO_SLDash);
    slopt[2] = GetStr(MSG_CO_SLBar);
    slopt[3] = GetStr(MSG_CO_SLSkip);
    slopt[4] = NULL;
+
    if ((grp = VGroup,
          MUIA_HelpNode, "CO04",
 
@@ -1728,11 +1736,13 @@ Object *CO_Page4(struct CO_ClassData *data)
 Object *CO_Page5(struct CO_ClassData *data)
 {
    Object *grp;
-   static char *wrapmode[4];
+   static const char *wrapmode[4];
+
    wrapmode[0] = GetStr(MSG_CO_EWOff);
    wrapmode[1] = GetStr(MSG_CO_EWAsYouType);
    wrapmode[2] = GetStr(MSG_CO_EWBeforeSend);
    wrapmode[3] = NULL;
+
    if ((grp = VGroup,
          MUIA_HelpNode, "CO05",
 
@@ -1910,7 +1920,7 @@ Object *CO_Page6(struct CO_ClassData *data)
 /// CO_Page7  (Signature)
 Object *CO_Page7(struct CO_ClassData *data)
 {
-   static char *signat[4];
+   static const char *signat[4];
    Object *grp;
    Object *slider = ScrollbarObject, End;
 
@@ -2001,8 +2011,8 @@ Object *CO_Page7(struct CO_ClassData *data)
 Object *CO_Page8(struct CO_ClassData *data)
 {
    Object *grp;
-   static char *sizef[6];
-   static char *infob[5];
+   static const char *sizef[6];
+   static const char *infob[5];
 
    sizef[0] = GetStr(MSG_CO_SIZEFORMAT01);
    sizef[1] = GetStr(MSG_CO_SIZEFORMAT02);
@@ -2127,11 +2137,13 @@ Object *CO_Page8(struct CO_ClassData *data)
 Object *CO_Page9(struct CO_ClassData *data)
 {
    Object *grp;
-   static char *logfmode[4];
+   static const char *logfmode[4];
+
    logfmode[0] = GetStr(MSG_CO_LogNone);
    logfmode[1] = GetStr(MSG_CO_LogNormal);
    logfmode[2] = GetStr(MSG_CO_LogVerbose);
    logfmode[3] = NULL;
+
    if ((grp = VGroup,
          MUIA_HelpNode, "CO09",
 
@@ -2398,7 +2410,7 @@ Object *CO_Page11(struct CO_ClassData *data)
 Object *CO_Page12(struct CO_ClassData *data)
 {
    Object *grp;
-   static char *atab[6];
+   static const char *atab[6];
 
    atab[0] = GetStr(MSG_CO_ATABnever);
    atab[1] = GetStr(MSG_CO_ATABinfoask);
@@ -2496,7 +2508,8 @@ Object *CO_Page12(struct CO_ClassData *data)
 Object *CO_Page13(struct CO_ClassData *data)
 {
    Object *grp;
-   static char *stype[3] = {
+   static const char *stype[3] =
+   {
      "ARexx", "AmigaDOS", NULL
    };
 
@@ -2574,7 +2587,7 @@ Object *CO_Page13(struct CO_ClassData *data)
 Object *CO_Page14(struct CO_ClassData *data)
 {
    Object *grp;
-   static char *empty[5];
+   static const char *empty[5];
 
    empty[0] = empty[1] = empty[2] = empty[3] = "";
    empty[4] = NULL;
@@ -2726,7 +2739,7 @@ Object *CO_Page14(struct CO_ClassData *data)
 Object *CO_Page15(struct CO_ClassData *data)
 {
   Object *grp;
-  static char *updateInterval[4];
+  static const char *updateInterval[4];
 
   updateInterval[0] = GetStr(MSG_CO_UPDATE_DAILY);
   updateInterval[1] = GetStr(MSG_CO_UPDATE_WEEKLY);

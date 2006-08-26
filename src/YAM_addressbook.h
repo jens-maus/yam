@@ -92,7 +92,7 @@ long   AB_CompressBD(char *datestr);
 char * AB_ExpandBD(long date);
 int    AB_FindEntry(char *pattern, enum AddressbookFind mode, char **result);
 APTR   AB_GotoEntry(char *alias);
-void   AB_InsertAddress(APTR string, char *alias, char *name, char *address);
+void   AB_InsertAddress(APTR string, const char *alias, const char *name, const char *address);
 BOOL   AB_LoadTree(char *fname, BOOL append, BOOL sorted);
 void   AB_MakeABFormat(APTR lv);
 struct AB_ClassData *AB_New(void);

@@ -49,6 +49,8 @@
 #include "YAM_userlist.h"
 #include "YAM_utilities.h"
 
+#include "Debug.h"
+
 /* local protos */
 static void US_SaveUsers(void);
 static void US_LoadUsers(void);
@@ -74,25 +76,39 @@ struct User *US_GetCurrentUser(void)
 //  Saves user database to .users
 static void US_SaveUsers(void)
 {
-   FILE *fh;
-   char *fname = "PROGDIR:.users";
-   int i;
+  FILE *fh;
+  const char *fname = "PROGDIR:.users";
+  int i;
 
-   for (i = 0; i < G->Users.Num; i++) if (!G->Users.User[i].Limited) break;
-   if (i == G->Users.Num) G->Users.User[0].Limited = FALSE;
-   if ((fh = fopen(fname, "w")))
-   {
-      int i;
-      fputs("YUS2 - YAM Users\n", fh);
-      for (i = 0; i < G->Users.Num; i++)
-      {
-         struct User *u = &G->Users.User[i];
-         if (u->Name) fprintf(fh, "@USER %s\n%s\n%d\n%s\n@ENDUSER\n", u->Name, u->MailDir, u->Limited*4+u->UseAddr*2+u->UseDict, Encrypt(u->Password));
-      }
-      fclose(fh);
-      AppendLogVerbose(62, GetStr(MSG_LOG_SavingUsers), "", "", "", "");
-   }
-   else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname);
+  ENTER();
+
+  for(i = 0; i < G->Users.Num; i++)
+  {
+    if(!G->Users.User[i].Limited)
+      break;
+  }
+
+  if(i == G->Users.Num)
+    G->Users.User[0].Limited = FALSE;
+
+  if((fh = fopen(fname, "w")))
+  {
+    int i;
+
+    fputs("YUS2 - YAM Users\n", fh);
+    for(i = 0; i < G->Users.Num; i++)
+    {
+      struct User *u = &G->Users.User[i];
+      if(u->Name)
+        fprintf(fh, "@USER %s\n%s\n%d\n%s\n@ENDUSER\n", u->Name, u->MailDir, u->Limited*4+u->UseAddr*2+u->UseDict, Encrypt(u->Password));
+    }
+    fclose(fh);
+    AppendLogVerbose(62, GetStr(MSG_LOG_SavingUsers));
+  }
+  else
+    ER_NewError(GetStr(MSG_ER_CantCreateFile), fname);
+
+  LEAVE();
 }
 
 ///
@@ -167,7 +183,8 @@ static void US_LoadUsers(void)
 ///
 /// US_Login
 //  User login: puts up user list and waits for a selection
-BOOL US_Login(char *username, char *password, char *maildir, char *prefsfile)
+BOOL US_Login(const char *username, const char *password,
+              const char *maildir, const char *prefsfile)
 {
    int i, user = -1;
    struct User *u;
@@ -431,18 +448,20 @@ MakeStaticHook(US_LV_ConHook, US_LV_ConFunc);
 //  User listview display hook
 HOOKPROTONH(US_LV_DspFunc, long, char **array, struct User *entry)
 {
-   if (entry)
-   {
-      array[0] = entry->Name;
-      array[1] = entry->MailDir;
-      if (entry->ID == G->Users.CurrentID) array[DISPLAY_ARRAY_MAX] = "\0338";
-   }
-   else
-   {
-      array[0] = GetStr(MSG_US_TitleUserName);
-      array[1] = GetStr(MSG_US_TitleMailDir);
-   }
-   return 0;
+  if(entry)
+  {
+    array[0] = entry->Name;
+    array[1] = entry->MailDir;
+    if(entry->ID == G->Users.CurrentID)
+      array[DISPLAY_ARRAY_MAX] = (char *)"\0338";
+  }
+  else
+  {
+    array[0] = GetStr(MSG_US_TitleUserName);
+    array[1] = GetStr(MSG_US_TitleMailDir);
+  }
+
+  return 0;
 }
 MakeStaticHook(US_LV_DspHook,US_LV_DspFunc);
 

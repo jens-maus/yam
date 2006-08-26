@@ -339,7 +339,6 @@ struct Config
    int   EdWrapMode;
    int   FolderCols;
    int   MessageCols;
-   int   LogfileMode;
    int   AddToAddrbook;
    int   AddrbookCols;
    int   IconPositionX;
@@ -366,9 +365,10 @@ struct Config
    int   KeepAliveInterval;
    int   UpdateInterval;
 
-   enum  PrintMethod   PrintMethod;
-   enum  SMTPSecMethod SMTP_SecureMethod;
-   enum  UpdateCheckStatus LastUpdateStatus;
+   enum  PrintMethod        PrintMethod;
+   enum  SMTPSecMethod      SMTP_SecureMethod;
+   enum  UpdateCheckStatus  LastUpdateStatus;
+   enum  LFMode             LogfileMode;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;

@@ -184,7 +184,7 @@ char *ParseEmailText(char *mailTxt)
     if((cmsg = calloc(len=(strlen(mailTxt)*3)/2+1, sizeof(char))))
     {
       BOOL centerActivated = FALSE;
-      char *colorTag = NULL;
+      const char *colorTag = NULL;
 
       while((type = yylex()))
       {

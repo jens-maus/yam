@@ -546,7 +546,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "StyleMailRead    = %s\n", MUIStyle2String(co->StyleMailRead));
 
       fclose(fh);
-      AppendLogVerbose(60, GetStr(MSG_LOG_SavingConfig), fname, "", "", "");
+      AppendLogVerbose(60, GetStr(MSG_LOG_SavingConfig), fname);
    }
    else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname);
 }
@@ -571,7 +571,9 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 
          while (fgets(buffer, SIZE_LARGE, fh))
          {
-            char *p, *value, *value2 = "";
+            char *p;
+            char *value;
+            const char *value2 = "";
 
             if ((value = strchr(buffer, '='))) for (value2 = (++value)+1; isspace(*value); value++);
             if ((p = strpbrk(buffer,"\r\n"))) *p = 0;

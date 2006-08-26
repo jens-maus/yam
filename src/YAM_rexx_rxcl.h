@@ -35,22 +35,24 @@
 
 struct rxs_command
 {
-   char *command, *args, *results;
-   long resindex;
-   void (*function)( struct RexxHost *, void **, long, struct RexxMsg * );
-   long flags;
+  const char *command;
+  const char *args;
+  const char *results;
+  long resindex;
+  void (*function)( struct RexxHost *, void **, long, struct RexxMsg * );
+  long flags;
 };
 
 struct arb_p_link
 {
-   char *str;
-   int   dst;
+  const char *str;
+  int dst;
 };
 
 struct arb_p_state
 {
-   int                cmd;
-   struct arb_p_link *pa;
+  int cmd;
+  struct arb_p_link *pa;
 };
 
 extern struct rxs_command rxs_commandlist[];

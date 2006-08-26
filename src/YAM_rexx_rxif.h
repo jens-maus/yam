@@ -118,26 +118,28 @@ void rx_addrgoto( struct RexxHost *, struct rxd_addrgoto **, long, struct RexxMs
 
 struct rxd_addrinfo
 {
-        long rc, rc2;
-        struct {
-                char *var, *stem;
-                char *alias;
-        } arg;
-        struct {
-                char *type;
-                char *name;
-                char *email;
-                char *pgp;
-                char *homepage;
-                char *street;
-                char *city;
-                char *country;
-                char *phone;
-                char *comment;
-                long *birthdate;
-                char *image;
-                char **members;
-        } res;
+  long rc, rc2;
+  struct
+  {
+    char *var, *stem;
+    char *alias;
+  } arg;
+  struct
+  {
+    const char *type;
+    char *name;
+    char *email;
+    char *pgp;
+    char *homepage;
+    char *street;
+    char *city;
+    char *country;
+    char *phone;
+    char *comment;
+    long *birthdate;
+    char *image;
+    char **members;
+  } res;
 };
 
 void rx_addrinfo( struct RexxHost *, struct rxd_addrinfo **, long, struct RexxMsg * );
@@ -261,14 +263,16 @@ void rx_getfolderinfo( struct RexxHost *, struct rxd_getfolderinfo **, long, str
 
 struct rxd_getmailinfo
 {
-        long rc, rc2;
-        struct {
-                char *var, *stem;
-                char *item;
-        } arg;
-        struct {
-                char *value;
-        } res;
+  long rc, rc2;
+  struct
+  {
+    char *var, *stem;
+    char *item;
+  } arg;
+  struct
+  {
+    const char *value;
+  } res;
 };
 
 void rx_getmailinfo( struct RexxHost *, struct rxd_getmailinfo **, long, struct RexxMsg * );
@@ -316,14 +320,16 @@ void rx_hide( struct RexxHost *, struct rxd_hide **, long, struct RexxMsg * );
 
 struct rxd_info
 {
-        long rc, rc2;
-        struct {
-                char *var, *stem;
-                char *item;
-        } arg;
-        struct {
-                char *value;
-        } res;
+  long rc, rc2;
+  struct
+  {
+    char *var, *stem;
+    char *item;
+  } arg;
+  struct
+  {
+    const char *value;
+  } res;
 };
 
 void rx_info( struct RexxHost *, struct rxd_info **, long, struct RexxMsg * );
@@ -491,24 +497,26 @@ void rx_mailimport( struct RexxHost *, struct rxd_mailimport **, long, struct Re
 
 struct rxd_mailinfo
 {
-        long rc, rc2;
-        struct {
-                char *var, *stem;
-                long *index;
-        } arg;
-        struct {
-                long *index;
-                char *status;
-                char *from;
-                char *to;
-                char *replyto;
-                char *subject;
-                char *filename;
-                long *size;
-                char *date;
-                char *flags;
-                char *msgid;
-        } res;
+  long rc, rc2;
+  struct
+  {
+    char *var, *stem;
+    long *index;
+  } arg;
+  struct
+  {
+    long *index;
+    const char *status;
+    char *from;
+    char *to;
+    char *replyto;
+    char *subject;
+    char *filename;
+    long *size;
+    char *date;
+    char *flags;
+    char *msgid;
+  } res;
 };
 
 void rx_mailinfo( struct RexxHost *, struct rxd_mailinfo **, long, struct RexxMsg * );

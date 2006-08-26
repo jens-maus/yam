@@ -64,7 +64,7 @@ static BOOL FI_MatchPerson(struct Search*, struct Person*);
 static BOOL FI_SearchPatternFast(struct Search*, struct Mail*);
 static BOOL FI_SearchPatternInBody(struct Search*, struct Mail*);
 static BOOL FI_SearchPatternInHeader(struct Search*, struct Mail*);
-static enum FastSearch FI_IsFastSearch(char*);
+static enum FastSearch FI_IsFastSearch(const char*);
 static void FI_GenerateListPatterns(struct Search*);
 static struct FI_ClassData *FI_New(void);
 static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch);
@@ -397,7 +397,7 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 ///
 /// FI_IsFastSearch
 //  Checks if quick search is available for selected header field
-static enum FastSearch FI_IsFastSearch(char *field)
+static enum FastSearch FI_IsFastSearch(const char *field)
 {
    if (!stricmp(field, "from"))     return FS_FROM;
    if (!stricmp(field, "to"))       return FS_TO;
@@ -453,7 +453,7 @@ static void FI_GenerateListPatterns(struct Search *search)
 //  Initializes Search structure
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
                       BOOL casesens, int persmode, int compar,
-                      char stat, BOOL substr, char *match, char *field)
+                      char stat, BOOL substr, const char *match, const char *field)
 {
    memset(search, 0, sizeof(struct Search));
    search->Mode      = mode;
@@ -481,8 +481,8 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
         char *time;
         search->Fast = FS_DATE;
         search->DT.dat_Format = FORMAT_DEF;
-        search->DT.dat_StrDate = match;
-        search->DT.dat_StrTime = (time = strchr(match,' ')) ? time+1 : "00:00:00";
+        search->DT.dat_StrDate = (STRPTR)match;
+        search->DT.dat_StrTime = (STRPTR)((time = strchr(match,' ')) ? time+1 : "00:00:00");
 
         if(!StrToDate(&(search->DT)))
         {
@@ -1326,7 +1326,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
       free(mlist);
 
       if(G->RRs.Checked)
-        AppendLog(26, GetStr(MSG_LOG_Filtering), (void *)(G->RRs.Checked), folder->Name, (void *)matches, "");
+        AppendLog(26, GetStr(MSG_LOG_Filtering), (void *)(G->RRs.Checked), folder->Name, (void *)matches);
 
       BusyEnd();
     }

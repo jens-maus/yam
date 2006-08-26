@@ -35,13 +35,13 @@
 #define %b_LOCALE_H
 #include <exec/types.h>
 
-#define MSG_Space ((APTR)1)
+#define MSG_Space ((const void *)1)
 
-extern char *GetStr(APTR);
-extern char *GetStripStr(APTR);
+extern char *GetStr(const void *);
+extern char *GetStripStr(const void *);
 extern void Open%bCatalog(void);
 extern void Close%bCatalog(void);
 
-extern const APTR _%i;\n#define %i ((APTR) &_%i)
+extern const void *_%i;\n#define %i ((const void *)&_%i)
 
 #endif /* %b_LOCALE_H */

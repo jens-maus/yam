@@ -209,7 +209,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
         array[7] = datstr;
       }
       else
-        array[7] = "";
+        array[7] = (STRPTR)"";
 
       if(C->MessageCols & (1<<4) || searchWinHook)
       {

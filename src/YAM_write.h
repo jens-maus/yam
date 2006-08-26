@@ -119,7 +119,7 @@ enum Encoding { ENC_NONE, ENC_QP, ENC_B64, ENC_UUE, ENC_BIN, ENC_8BIT };
 struct WritePart
 {
    struct WritePart *Next;
-   char *            ContentType;
+   const char *      ContentType;
    char *            Filename;
    char *            Description;
    char *            Name;
@@ -142,7 +142,7 @@ struct Compose
    char *             From;
    char *             ReplyTo;
    char *             RealName;
-   char *             Subject;
+   const char *       Subject;
    char *             ExtHeader;
    char *             IRTMsgID;
    struct WritePart * FirstPart;
@@ -167,10 +167,10 @@ struct Compose
 extern struct Hook WR_EditHook;
 extern struct Hook WR_NewMailHook;
 
-void  EmitHeader(FILE *fh, char *hdr, char *body);
+void  EmitHeader(FILE *fh, const char *hdr, const char *body);
 void  FreePartsList(struct WritePart *p);
 struct WritePart *NewPart(int winnum);
-BOOL  WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp);
+BOOL  WR_AddFileToList(int winnum, const char *filename, const char *name, BOOL istemp);
 void  WR_AddSignature(int winnum, int signat);
 void  WR_App(int winnum, STRPTR fileName);
 char *WR_AutoSaveFile(int winnr);

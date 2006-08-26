@@ -22,8 +22,8 @@ extern "C" {
 /* functions to be used in applications */
 /****************************************/
 
-Object *MUI_NewObjectA         (char *classname,struct TagItem *tags);
-Object *MUI_NewObject          (char *classname,Tag tag1,...);
+Object *MUI_NewObjectA         (const char *classname,struct TagItem *tags);
+Object *MUI_NewObject          (const char *classname,Tag tag1,...);
 Object *MUI_MakeObjectA        (LONG type,ULONG *params);
 Object *MUI_MakeObject         (LONG type,...);
 VOID    MUI_DisposeObject      (Object *obj);
@@ -41,7 +41,7 @@ BOOL    MUI_AslRequestTags     (APTR requester, Tag Tag1, ...);
 /******************************************/
 
 LONG                    MUI_SetError         (LONG num);
-struct IClass *         MUI_GetClass         (char *classname);
+struct IClass *         MUI_GetClass         (const char *classname);
 VOID                    MUI_FreeClass        (struct IClass *classptr);
 VOID                    MUI_RequestIDCMP     (Object *obj,ULONG flags);
 VOID                    MUI_RejectIDCMP      (Object *obj,ULONG flags);
@@ -52,7 +52,7 @@ APTR                    MUI_AddClipRegion    (struct MUI_RenderInfo *mri,struct 
 VOID                    MUI_RemoveClipRegion (struct MUI_RenderInfo *mri,APTR handle);
 BOOL                    MUI_BeginRefresh     (struct MUI_RenderInfo *mri,ULONG flags);
 VOID                    MUI_EndRefresh       (struct MUI_RenderInfo *mri,ULONG flags);
-struct MUI_CustomClass *MUI_CreateCustomClass(struct Library *base,char *supername,struct MUI_CustomClass *supermcc,int datasize,APTR dispatcher);
+struct MUI_CustomClass *MUI_CreateCustomClass(struct Library *base,const char *supername,struct MUI_CustomClass *supermcc,int datasize,APTR dispatcher);
 BOOL                    MUI_DeleteCustomClass(struct MUI_CustomClass *mcc);
 LONG                    MUI_ObtainPen        (struct MUI_RenderInfo *mri,struct MUI_PenSpec *spec,ULONG flags);
 VOID                    MUI_ReleasePen       (struct MUI_RenderInfo *mri,LONG pen);

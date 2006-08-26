@@ -74,8 +74,8 @@ struct TempFile
 
 struct NewToolbarEntry
 {
-  Object *label;
-  Object *help;
+  const void *label;
+  const void *help;
 };
 
 // since the Amiga's timeval structure was renamed to
@@ -226,6 +226,14 @@ struct TimeRequest
 #define IsMinListEmpty(x)     (((x)->mlh_TailPred) == (struct MinNode *)(x))
 #endif
 
+// LogFile enums and macros
+enum LFMode { LF_NONE=0, LF_NORMAL, LF_VERBOSE, LF_ALL };
+
+#define AppendLog(id, text, vargs...)         AppendToLogfile(LF_ALL, id, text, ## vargs)
+#define AppendLogNormal(id, text, vargs...)   AppendToLogfile(LF_NORMAL, id, text, ## vargs)
+#define AppendLogVerbose(id, text, vargs...)  AppendToLogfile(LF_VERBOSE, id, text, ## vargs)
+
+// external variables
 extern int            BusyLevel;
 extern struct Hook    GeneralDesHook;
 extern struct Hook    DisposeModuleHook;
@@ -240,12 +248,10 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder);
 APTR     AllocCopy(APTR source, int size);
 char *   AllocReqText(char *s);
 char *   AllocStrBuf(size_t initlen);
-void     AppendLog(int id, char *text, void *a1, void *a2, void *a3, void *a4);
-void     AppendLogNormal(int id, char *text, void *a1, void *a2, void *a3, void *a4);
-void     AppendLogVerbose(int id, char *text, void *a1, void *a2, void *a3, void *a4);
+void STDARGS AppendToLogfile(enum LFMode, int id, char *text, ...);
 struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext, int mode, struct ReadMailData *rmData);
 char *   BuildAddrName(char *address, char *name);
-void     Busy(char *text, char *parameter, int cur, int max);
+void     Busy(const char *text, const char *parameter, int cur, int max);
 BOOL     CheckPrinter(void);
 void     ClearMailList(struct Folder *folder, BOOL resetstats);
 void     CloseTempFile(struct TempFile *tf);
@@ -255,8 +261,8 @@ BOOL     ConvertCRLF(char *in, char *out, BOOL to);
 ULONG    ConvertKey(struct IntuiMessage *imsg);
 BOOL     isChildOfGroup(Object *group, Object *child);
 void     MyBltMaskBitMapRastPort(struct BitMap *srcBitMap, LONG xSrc, LONG ySrc, struct RastPort *destRP, LONG xDest, LONG yDest, LONG xSize, LONG ySize, ULONG minterm, APTR bltMask);
-BOOL     CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh);
-BOOL     MoveFile(char *oldname, char *newname);
+BOOL     CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh);
+BOOL     MoveFile(const char *oldname, const char *newname);
 char *   CreateFilename(const char * const file);
 BOOL     CreateDirectory(char *dir);
 int      TZtoMinutes(char *tzone);
@@ -286,10 +292,10 @@ char *   Encrypt(char *source);
 char *   GetRealPath(char *path);
 BOOL     ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef);
 void     ExtractAddress(const char *line, struct Person *pe);
-BOOL     FileExists(char *filename);
-int      FileSize(char *filename);
+BOOL     FileExists(const char *filename);
+int      FileSize(const char *filename);
 long     FileProtection(const char *filename);
-char *   FileToBuffer(char *file);
+char *   FileToBuffer(const char *file);
 BOOL     FileToEditor(char *file, Object *editor);
 enum FType FileType(char *filename);
 char *   FileComment(char *filename);
@@ -310,49 +316,49 @@ int      GetMUINumer(Object *obj);
 int      GetMUIRadio(Object *obj);
 char *   GetNextLine(char *p1);
 int      GetSimpleID(void);
-void     GotoURL(char *url);
-char *   IdentifyFile(char *fname);
+void     GotoURL(const char *url);
+const char *IdentifyFile(const char *fname);
 void     InfoWindow(char *title, char *body, char *oktext, APTR parent);
 void     InsertAddresses(APTR obj, char **addr, BOOL add);
 char *   itoa(int val);
 void     LoadLayout(void);
 BOOL     MailExists(struct Mail *mailptr, struct Folder *folder);
-Object * MakeButton(char *txt);
-Object * MakeCheck(char *label);
+Object * MakeButton(const char *txt);
+Object * MakeCheck(const char *label);
 Object * MakeCheckGroup(Object **check, char *label);
-Object * MakeCycle(char **labels, char *label);
-Object * MakeInteger(int maxlen, char *label);
+Object * MakeCycle(const char **labels, const char *label);
+Object * MakeInteger(int maxlen, const char *label);
 Object * MakeMenuitem(const char *str, ULONG ud);
 Object * MakeNumeric(int min, int max, BOOL percent);
-Object * MakePassString(char *label);
+Object * MakePassString(const char *label);
 Object * MakePGPKeyList(Object **st, BOOL secret, char *label);
-Object * MakeString(int maxlen, char *label);
-Object * MakeAddressField(Object **string, char *label, Object *help, int abmode, int winnum, BOOL allowmulti);
+Object * MakeString(int maxlen, const char *label);
+Object * MakeAddressField(Object **string, const char *label, const Object *help, int abmode, int winnum, BOOL allowmulti);
 BOOL     MatchNoCase(const char *string, const char *match);
 char *   MyStrChr(const char *s, const char c);
-struct TempFile *OpenTempFile(char *mode);
+struct TempFile *OpenTempFile(const char *mode);
 BOOL     AllFolderLoaded(void);
-BOOL     PFExists(char *path, char *file);
+BOOL     PFExists(char *path, const char *file);
 void     PGPClearPassPhrase(BOOL force);
-int      PGPCommand(char *progname, char *options, int flags);
+int      PGPCommand(const char *progname, const char *options, int flags);
 void     PGPGetPassPhrase(void);
 void     PlaySound(char *filename);
 void     Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix);
 void     RemoveMailFromList(struct Mail *mail);
-BOOL     RenameFile(char *oldname, char *newname);
+BOOL     RenameFile(const char *oldname, const char *newname);
 BOOL     RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd);
-int      ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *drawer, char *file);
+int      ReqFile(enum ReqFileType num, Object *win, char *title, int mode, const char *drawer, const char *file);
 BOOL     SafeOpenWindow(Object *obj);
 void     SaveLayout(BOOL permanent);
-void     SetupToolbar(struct MUIP_Toolbar_Description *tb, char *label, char *help, ULONG flags);
-char     ShortCut(char *label);
+void     SetupToolbar(struct MUIP_Toolbar_Description *tb, const char *label, const char *help, ULONG flags);
+char     ShortCut(const char *label);
 void     SimpleWordWrap(char *filename, int wrapsize);
-void STDARGS VARARGS68K SPrintF(char *outstr, char *fmtstr, ...);
+void STDARGS VARARGS68K SPrintF(char *outstr, const char *fmtstr, ...);
 char *   StartUnpack(char *file, char *newfile, struct Folder *folder);
 char *   StrBufCat(char *strbuf, const char *source);
 char *   StrBufCpy(char *strbuf, const char *source);
-char *   AppendToBuffer(char *buf, int *wptr, int *len, char *add);
-int      StringRequest(char *string, int size, char *title, char *body,
+char *   AppendToBuffer(char *buf, int *wptr, int *len, const char *add);
+int      StringRequest(char *string, int size, const char *title, char *body,
                        char *yestext, char *alttext, char *notext, BOOL secret, Object *parent);
 char *   StripUnderscore(char *label);
 char *   stristr(const char *a, const char *b);

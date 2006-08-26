@@ -2238,7 +2238,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
 
       struct Folder *entry = (struct Folder *)msg->TreeNode->tn_User;
 
-      msg->Array[0] = msg->Array[1] = msg->Array[2] = msg->Array[3] = msg->Array[4] = "";
+      msg->Array[0] = msg->Array[1] = msg->Array[2] = msg->Array[3] = msg->Array[4] = (char *)"";
       *dispsiz = 0;
 
       switch(entry->Type)
@@ -2294,7 +2294,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
               FormatSize(entry->Size, msg->Array[4] = dispsiz, sizeof(dispsiz));
           }
           else
-            msg->Preparse[0] = MUIX_I;
+            msg->Preparse[0] = (char *)MUIX_I;
 
           if(isProtectedFolder(entry))
             snprintf(dispfold, sizeof(dispfold), "%s \033o[%d]", dispfold, FICON_ID_PROTECTED);

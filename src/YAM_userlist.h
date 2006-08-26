@@ -77,6 +77,7 @@ struct Users
 extern struct Hook US_OpenHook;
 
 struct User *US_GetCurrentUser(void);
-BOOL         US_Login(char *username, char *password, char *maildir, char *prefsfile);
+BOOL         US_Login(const char *username, const char *password,
+                      const char *maildir, const char *prefsfile);
 
 #endif /* YAM_USERLIST_H */

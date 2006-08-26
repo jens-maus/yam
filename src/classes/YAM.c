@@ -379,14 +379,14 @@ OVERLOAD(OM_NEW)
   // prepare a string pointer array with all the
   // names of the used classes within. This array is only usefull if MUI v20
   // is used and the user wants to alter the MUI settings of the application
-  static const STRPTR Classes[] = { "TextEditor.mcc",
-                                    "Toolbar.mcc",
-                                    "BetterString.mcc",
-                                    "NListtree.mcc",
-                                    "NList.mcc",
-                                    "NListviews.mcc",
-                                    NULL
-                                  };
+  static const char *Classes[] = { "TextEditor.mcc",
+                                   "Toolbar.mcc",
+                                   "BetterString.mcc",
+                                   "NListtree.mcc",
+                                   "NList.mcc",
+                                   "NListviews.mcc",
+                                   NULL
+                                 };
 
   // let us check if there is a "MultipleYAM" env variable and if
   // so we set SingleTask to true
@@ -421,7 +421,7 @@ OVERLOAD(OM_NEW)
     struct DateTime dt;
     struct TagItem *tags = inittags(msg), *tag;
 
-    data->EMailCacheName = EMAILCACHENAME;
+    data->EMailCacheName = (STRPTR)EMAILCACHENAME;
 
     // now we generate some static default for our whole application
     dt.dat_Stamp.ds_Days   = yamversiondays;

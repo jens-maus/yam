@@ -1177,7 +1177,7 @@ static void Terminate(void)
 ///
 /// Abort
 //  Shows error requester, then terminates the program
-static void Abort(APTR formatnum, ...)
+static void Abort(const void *formatnum, ...)
 {
    static char error[SIZE_LINE];
    va_list a;
@@ -1215,7 +1215,7 @@ static void Abort(APTR formatnum, ...)
 ///
 /// CheckMCC
 //  Checks if a certain version of a MCC is available
-static BOOL CheckMCC(char *name, ULONG minver, ULONG minrev, BOOL req, STRPTR url)
+static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, const char *url)
 {
   BOOL flush = TRUE;
 
@@ -1318,21 +1318,21 @@ static BOOL CheckMCC(char *name, ULONG minver, ULONG minrev, BOOL req, STRPTR ur
 /// InitLib
 //  Opens a library & on OS4 also the interface
 #if defined(__amigaos4__)
-static BOOL InitLib(STRPTR libname,
+static BOOL InitLib(const char *libname,
                     ULONG version,
                     ULONG revision,
                     struct Library **libbase,
-                    STRPTR iname,
+                    const char *iname,
                     struct Interface **iface,
                     BOOL required,
-                    STRPTR homepage)
+                    const char *homepage)
 #else
-static BOOL InitLib(STRPTR libname,
+static BOOL InitLib(const char *libname,
                     ULONG version,
                     ULONG revision,
                     struct Library **libbase,
                     BOOL required,
-                    STRPTR homepage)
+                    const char *homepage)
 #endif
 {
   struct Library *base;
@@ -1940,7 +1940,8 @@ static void DoStartup(BOOL nocheck, BOOL hide)
 ///
 /// Login
 //  Allows automatic login for AmiTCP-Genesis users
-static void Login(char *user, char *password, char *maildir, char *prefsfile)
+static void Login(const char *user, const char *password,
+                  const char *maildir, const char *prefsfile)
 {
   BOOL terminate = FALSE;
   BOOL loggedin = FALSE;
@@ -1955,7 +1956,7 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
     {
       D(DBF_STARTUP, "GetGlobalUser returned: '%s'", guser->us_name);
 
-      loggedin = US_Login((char *)guser->us_name, "\01", maildir, prefsfile);
+      loggedin = US_Login((const char *)guser->us_name, "\01", maildir, prefsfile);
 
       D(DBF_STARTUP, "US_Login returned: %ld %ld", terminate, loggedin);
 
@@ -2039,10 +2040,10 @@ int main(int argc, char **argv)
         ErrReq.es_StructSize = sizeof(struct EasyStruct);
         ErrReq.es_Flags      = 0;
 
-        ErrReq.es_Title        = "YAM Startup Error";
-        ErrReq.es_TextFormat   = "This version of YAM requires at least\n"
-                                 "an AmigaOS4 kernel version 51.4";
-        ErrReq.es_GadgetFormat = "Exit";
+        ErrReq.es_Title        = (STRPTR)"YAM Startup Error";
+        ErrReq.es_TextFormat   = (STRPTR)"This version of YAM requires at least\n"
+                                         "an AmigaOS4 kernel version 51.4";
+        ErrReq.es_GadgetFormat = (STRPTR)"Exit";
 
         EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
 
@@ -2072,8 +2073,8 @@ int main(int argc, char **argv)
 
          if(EXPDATE <= ds.ds_Days)
          {
-           ErrReq.es_Title        = "YAM Developer Version Expired!";
-           ErrReq.es_TextFormat   = "This developer version of YAM has expired!\n\n"
+           ErrReq.es_Title        = (STRPTR)"YAM Developer Version Expired!";
+           ErrReq.es_TextFormat   = (STRPTR)"This developer version of YAM has expired!\n\n"
                                     "Please note that you may download a new, updated\n"
                                     "version from the YAM nightly build page at:\n\n"
                                     "http://nightly.yam.ch/\n\n"
@@ -2082,7 +2083,7 @@ int main(int argc, char **argv)
                                     "that no old versions are floating around causing\n"
                                     "users to report bugs on old versions.\n\n"
                                     "Thanks for your help in improving YAM!";
-           ErrReq.es_GadgetFormat = "Exit";
+           ErrReq.es_GadgetFormat = (STRPTR)"Exit";
 
            DisplayBeep(NULL);
            EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
@@ -2092,8 +2093,8 @@ int main(int argc, char **argv)
 
          if(goon && GetVar("I_KNOW_YAM_IS_UNDER_DEVELOPMENT", &var, sizeof(char), 0) == -1)
          {
-           ErrReq.es_Title        = "YAM Developer Version Warning!";
-           ErrReq.es_TextFormat   = "This is an *internal* developer version and\n"
+           ErrReq.es_Title        = (STRPTR)"YAM Developer Version Warning!";
+           ErrReq.es_TextFormat   = (STRPTR)"This is an *internal* developer version and\n"
                                     "not recommended or intended for public use.\n"
                                     "It may contain bugs that can lead to any loss\n"
                                     "of data and no regular support for this version\n"
@@ -2106,7 +2107,7 @@ int main(int argc, char **argv)
                                     "stable release version available from:\n\n"
                                     "http://www.yam.ch/\n\n"
                                     "Thanks for your help in improving YAM!";
-           ErrReq.es_GadgetFormat = "Go on|Exit";
+           ErrReq.es_GadgetFormat = (STRPTR)"Go on|Exit";
 
            DisplayBeep(NULL);
            if(!EasyRequestArgs(NULL, &ErrReq, NULL, NULL))
@@ -2140,7 +2141,7 @@ int main(int argc, char **argv)
    INITLIB("utility.library",   36, 0, &UtilityBase,   "main", &IUtility,   TRUE, NULL);
    INITLIB("diskfont.library",  37, 0, &DiskfontBase,  "main", &IDiskfont,  TRUE, NULL);
 
-   nrda.Template = "USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M,NOIMGWARNING/S";
+   nrda.Template = (STRPTR)"USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M,NOIMGWARNING/S";
    nrda.ExtHelp = NULL;
    nrda.Window = NULL;
    nrda.Parameters = (LONG *)&args;
@@ -2224,7 +2225,7 @@ int main(int argc, char **argv)
       }
 
       DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
-      AppendLog(0, GetStr(MSG_LOG_Started), "", "", "", "");
+      AppendLog(0, GetStr(MSG_LOG_Started));
       MA_StartMacro(MACRO_STARTUP, NULL);
 
       // before we go on we check whether there is any .autosaveX.txt file in the
@@ -2285,8 +2286,8 @@ int main(int argc, char **argv)
       else DisplayAppIconStatistics();
 
       user = US_GetCurrentUser();
-      AppendLogNormal(1, GetStr(MSG_LOG_LoggedIn), user->Name, "", "", "");
-      AppendLogVerbose(2, GetStr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir, "");
+      AppendLogNormal(1, GetStr(MSG_LOG_LoggedIn), user->Name);
+      AppendLogVerbose(2, GetStr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir);
 
       // Now start the NotifyRequest for the AutoDST file
       if(ADSTnotify_start())
@@ -2622,7 +2623,7 @@ int main(int argc, char **argv)
       if(C->RemoveOnQuit)
         DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, TRUE);
 
-      AppendLog(99, GetStr(MSG_LOG_Terminated), "", "", "", "");
+      AppendLog(99, GetStr(MSG_LOG_Terminated));
       MA_StartMacro(MACRO_QUIT, NULL);
 
       // if the user really wants to exit, do it now as Terminate() is broken !

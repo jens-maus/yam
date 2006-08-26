@@ -109,14 +109,18 @@ APTR AB_GotoEntry(char *alias)
 //  Converts date from numeric into textual format
 char *AB_ExpandBD(long date)
 {
-   static char datestr[SIZE_SMALL];
+  static char datestr[SIZE_SMALL];
 
-   // check first if it could be a valid date!
-   if (!date || date/1000000 > 31 || date/1000000 < 1 || ((date/10000)%100) > 12 || ((date/10000)%100) < 1 || date%10000 < 1000)
-     return "";
+  ENTER();
 
-   snprintf(datestr, sizeof(datestr), "%02ld-%s-%ld", date/1000000, months[((date/10000)%100)-1], date%10000);
-   return datestr;
+  // check first if it could be a valid date!
+  if(!date || date/1000000 > 31 || date/1000000 < 1 || ((date/10000)%100) > 12 || ((date/10000)%100) < 1 || date%10000 < 1000)
+    datestr[0] = '\0';
+  else
+    snprintf(datestr, sizeof(datestr), "%02ld-%s-%ld", date/1000000, months[((date/10000)%100)-1], date%10000);
+
+  RETURN(datestr);
+  return datestr;
 }
 
 ///
@@ -260,29 +264,29 @@ char *AB_CompleteAlias(char *text)
 ///
 /// AB_InsertAddress
 //  Adds a new recipient to a recipient field
-void AB_InsertAddress(APTR string, char *alias, char *name, char *address)
+void AB_InsertAddress(APTR string, const char *alias, const char *name, const char *address)
 {
    char *p = (char *)xget(string, MUIA_UserData);
    if (p)
    {
       p = (char *)xget(string, MUIA_String_Contents);
-      if (*p) DoMethod(string, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString, TAG_DONE);
+      if (*p) DoMethod(string, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
    }
    else setstring(string, "");
-   if (*alias) DoMethod(string, MUIM_BetterString_Insert, alias, MUIV_BetterString_Insert_EndOfString, TAG_DONE);
+   if (*alias) DoMethod(string, MUIM_BetterString_Insert, alias, MUIV_BetterString_Insert_EndOfString);
    else
    {
       if (*name)
       {
-         if (strchr(name, ',')) DoMethod(string, MUIM_BetterString_Insert, "\"", MUIV_BetterString_Insert_EndOfString, TAG_DONE);
-         DoMethod(string, MUIM_BetterString_Insert, name, MUIV_BetterString_Insert_EndOfString, TAG_DONE);
-         if (strchr(name, ',')) DoMethod(string, MUIM_BetterString_Insert, "\"", MUIV_BetterString_Insert_EndOfString, TAG_DONE);
+         if (strchr(name, ',')) DoMethod(string, MUIM_BetterString_Insert, "\"", MUIV_BetterString_Insert_EndOfString);
+         DoMethod(string, MUIM_BetterString_Insert, name, MUIV_BetterString_Insert_EndOfString);
+         if (strchr(name, ',')) DoMethod(string, MUIM_BetterString_Insert, "\"", MUIV_BetterString_Insert_EndOfString);
       }
       if (*address)
       {
-         if (*name) DoMethod(string, MUIM_BetterString_Insert, " <", MUIV_BetterString_Insert_EndOfString, TAG_DONE);
-         DoMethod(string, MUIM_BetterString_Insert, address, MUIV_BetterString_Insert_EndOfString, TAG_DONE);
-         if (*name) DoMethod(string, MUIM_BetterString_Insert, ">", MUIV_BetterString_Insert_EndOfString, TAG_DONE);
+         if (*name) DoMethod(string, MUIM_BetterString_Insert, " <", MUIV_BetterString_Insert_EndOfString);
+         DoMethod(string, MUIM_BetterString_Insert, address, MUIV_BetterString_Insert_EndOfString);
+         if (*name) DoMethod(string, MUIM_BetterString_Insert, ">", MUIV_BetterString_Insert_EndOfString);
       }
    }
 }
@@ -509,7 +513,7 @@ BOOL AB_SaveTree(char *fname)
       fputs("YAB4 - YAM Addressbook\n", fh);
       AB_SaveTreeNode(fh, MUIV_NListtree_GetEntry_ListNode_Root);
       fclose(fh);
-      AppendLogVerbose(70, GetStr(MSG_LOG_SavingABook), fname, "", "", "");
+      AppendLogVerbose(70, GetStr(MSG_LOG_SavingABook), fname);
       return TRUE;
    }
    ER_NewError(GetStr(MSG_ER_CantCreateFile), fname);
@@ -973,7 +977,7 @@ MakeStaticHook(AB_FindHook, AB_FindFunc);
 HOOKPROTONHNO(AB_OpenFunc, void, LONG *arg)
 {
   struct AB_ClassData *ab = G->AB;
-  char *md = "";
+  const char *md = "";
 
   ENTER();
 
@@ -1103,8 +1107,8 @@ HOOKPROTONHNO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 
             case AET_GROUP:
             {
-              msg->Preparse[0] = MUIX_B;
-              msg->Preparse[2] = MUIX_B;
+              msg->Preparse[0] = (char *)MUIX_B;
+              msg->Preparse[2] = (char *)MUIX_B;
             }
             break;
 
@@ -1252,7 +1256,9 @@ struct AB_ClassData *AB_New(void)
 
       for(i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
       {
-        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i].label?(tb_butt[i].label==MSG_Space?"":GetStr(tb_butt[i].label)):NULL, tb_butt[i].help?GetStr(tb_butt[i].help):NULL, 0);
+        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]),
+                     tb_butt[i].label ? (tb_butt[i].label==MSG_Space ? "" : GetStr(tb_butt[i].label)) : NULL,
+                     tb_butt[i].help ? GetStr(tb_butt[i].help) : NULL, 0);
       }
 
       data->GUI.WI = WindowObject,

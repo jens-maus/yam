@@ -900,7 +900,7 @@ void CO_SetDefaults(struct Config *co, int page)
       strlcpy(co->ReMailer, "Remailer <remailer@remailer.xganon.com>", sizeof(co->ReMailer));
       strlcpy(co->RMCommands, "Anon-To: %s", sizeof(co->RMCommands));
       strlcpy(co->LogfilePath, G->ProgDir, sizeof(co->LogfilePath));
-      co->LogfileMode = 1;
+      co->LogfileMode = LF_NORMAL;
       co->SplitLogfile = FALSE;
    }
 
@@ -1491,8 +1491,8 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
           struct MimeTypeNode *mt = NULL;
           struct MinNode *curNode;
           char *ctype = buffer;
-          char *ext = "";
-          char *command = "";
+          const char *ext = "";
+          const char *command = "";
           char *p;
           char *p2;
 

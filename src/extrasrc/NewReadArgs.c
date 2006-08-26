@@ -105,7 +105,7 @@ void NewFreeArgs(struct NewRDArgs *rdargs)
 
 /****************************************************************************/
 
-STATIC LONG IsArg(STRPTR template, STRPTR keyword)
+STATIC LONG IsArg(CONST_STRPTR template, STRPTR keyword)
 {
   UBYTE buffer[128], c;
   STRPTR ptr = (STRPTR)buffer;
@@ -146,7 +146,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
     #else
     APTR pool = NULL;
     #endif
-    STRPTR ToolWindow = nrdargs->Window;
+    CONST_STRPTR ToolWindow = nrdargs->Window;
 
     if(WBStartup)
     {
@@ -360,7 +360,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                     #else
                     if((ToolWindow = AllocPooled(pool, i)))
                     #endif
-                      CopyMem((src+7L), ToolWindow, i);
+                      CopyMem((src+7L), (STRPTR)ToolWindow, i);
                   }
                   else
                     ToolWindow = "CON:";

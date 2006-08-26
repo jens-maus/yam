@@ -1580,12 +1580,22 @@ static struct FO_ClassData *FO_New(void)
 
    if (data)
    {
-      static char *ftypes[4], *fmodes[5], *sortopt[8], *fsignat[5];
-      fsignat[0] = GetStr(MSG_WR_NoSig);
-      fsignat[1] = GetStr(MSG_WR_DefSig);
-      fsignat[2] = GetStr(MSG_WR_AltSig1);
-      fsignat[3] = GetStr(MSG_WR_AltSig2);
-      fsignat[4] = NULL;
+      static const char *ftypes[4];
+      static const char *fmodes[5];
+      static const char *sortopt[8];
+      static const char *fsignat[5];
+
+      ftypes[0]  = GetStr(MSG_FO_FTRcvdMail);
+      ftypes[1]  = GetStr(MSG_FO_FTSentMail);
+      ftypes[2]  = GetStr(MSG_FO_FTBothMail);
+      ftypes[3]  = NULL;
+
+      fmodes[0]  = GetStr(MSG_FO_FMNormal);
+      fmodes[1]  = GetStr(MSG_FO_FMSimple);
+      fmodes[2]  = GetStr(MSG_FO_FMPack);
+      fmodes[3]  = GetStr(MSG_FO_FMEncPack);
+      fmodes[4]  = NULL;
+
       sortopt[0] = GetStr(MSG_FO_MessageDate);
       sortopt[1] = GetStr(MSG_FO_DateRecvd);
       sortopt[2] = GetStr(MSG_Sender);
@@ -1594,15 +1604,12 @@ static struct FO_ClassData *FO_New(void)
       sortopt[5] = GetStr(MSG_Size);
       sortopt[6] = GetStr(MSG_Status);
       sortopt[7] = NULL;
-      fmodes[0]  = GetStr(MSG_FO_FMNormal);
-      fmodes[1]  = GetStr(MSG_FO_FMSimple);
-      fmodes[2]  = GetStr(MSG_FO_FMPack);
-      fmodes[3]  = GetStr(MSG_FO_FMEncPack);
-      fmodes[4]  = NULL;
-      ftypes[0]  = GetStr(MSG_FO_FTRcvdMail);
-      ftypes[1]  = GetStr(MSG_FO_FTSentMail);
-      ftypes[2]  = GetStr(MSG_FO_FTBothMail);
-      ftypes[3]  = NULL;
+
+      fsignat[0] = GetStr(MSG_WR_NoSig);
+      fsignat[1] = GetStr(MSG_WR_DefSig);
+      fsignat[2] = GetStr(MSG_WR_AltSig1);
+      fsignat[3] = GetStr(MSG_WR_AltSig2);
+      fsignat[4] = NULL;
 
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, GetStr(MSG_FO_EditFolder),

@@ -81,9 +81,9 @@ struct MimeTypeNode *CreateNewMimeType(void);
 // the IntMimeTypes array.
 struct IntMimeType
 {
-  char *ContentType;  // IANA conform content-type (e.g. 'application/pdf')
-  char *Extension;    // space separated string list of extensions
-  char *Description;  // a short description of the MIME type
+  const char *ContentType;  // IANA conform content-type (e.g. 'application/pdf')
+  const char *Extension;    // space separated string list of extensions
+  const char *Description;  // a short description of the MIME type
 };
 
 extern const struct IntMimeType IntMimeTypeArray[];

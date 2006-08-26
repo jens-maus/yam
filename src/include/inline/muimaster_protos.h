@@ -1,7 +1,7 @@
 #ifndef _VBCCINLINE_MUIMASTER_H
 #define _VBCCINLINE_MUIMASTER_H
 
-Object * __MUI_NewObjectA(__reg("a0") char * a0arg, __reg("a1") struct TagItem * tags, __reg("a6") void *)="\tjsr\t-30(a6)";
+Object * __MUI_NewObjectA(__reg("a0") const char * a0arg, __reg("a1") struct TagItem * tags, __reg("a6") void *)="\tjsr\t-30(a6)";
 #define MUI_NewObjectA(a0arg, tags) __MUI_NewObjectA((a0arg), (tags), MUIMasterBase)
 
 VOID __MUI_DisposeObject(__reg("a0") Object * obj, __reg("a6") void *)="\tjsr\t-36(a6)";
@@ -25,7 +25,7 @@ LONG __MUI_Error(__reg("a6") void *)="\tjsr\t-66(a6)";
 LONG __MUI_SetError(__reg("d0") LONG errnum, __reg("a6") void *)="\tjsr\t-72(a6)";
 #define MUI_SetError(errnum) __MUI_SetError((errnum), MUIMasterBase)
 
-struct IClass * __MUI_GetClass(__reg("a0") char * name, __reg("a6") void *)="\tjsr\t-78(a6)";
+struct IClass * __MUI_GetClass(__reg("a0") const char * name, __reg("a6") void *)="\tjsr\t-78(a6)";
 #define MUI_GetClass(name) __MUI_GetClass((name), MUIMasterBase)
 
 VOID __MUI_FreeClass(__reg("a0") struct IClass * cl, __reg("a6") void *)="\tjsr\t-84(a6)";
@@ -40,7 +40,7 @@ VOID __MUI_RejectIDCMP(__reg("a0") Object * obj, __reg("d0") ULONG flags, __reg(
 VOID __MUI_Redraw(__reg("a0") Object * obj, __reg("d0") ULONG flags, __reg("a6") void *)="\tjsr\t-102(a6)";
 #define MUI_Redraw(obj, flags) __MUI_Redraw((obj), (flags), MUIMasterBase)
 
-struct MUI_CustomClass * __MUI_CreateCustomClass(__reg("a0") struct Library * base, __reg("a1") char * supername, __reg("a2") struct MUI_CustomClass * supermcc, __reg("d0") int datasize, __reg("a3") APTR dispatcher, __reg("a6") void *)="\tjsr\t-108(a6)";
+struct MUI_CustomClass * __MUI_CreateCustomClass(__reg("a0") struct Library * base, __reg("a1") const char * supername, __reg("a2") struct MUI_CustomClass * supermcc, __reg("d0") int datasize, __reg("a3") APTR dispatcher, __reg("a6") void *)="\tjsr\t-108(a6)";
 #define MUI_CreateCustomClass(base, supername, supermcc, datasize, dispatcher) __MUI_CreateCustomClass((base), (supername), (supermcc), (datasize), (dispatcher), MUIMasterBase)
 
 BOOL __MUI_DeleteCustomClass(__reg("a0") struct MUI_CustomClass * mcc, __reg("a6") void *)="\tjsr\t-114(a6)";

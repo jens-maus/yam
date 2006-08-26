@@ -80,10 +80,10 @@ static void WR_ComposeMulti(FILE*, struct Compose*, char*);
 static struct WritePart *BuildPartsList(int);
 static char *GetDateTime(void);
 static char *NewID(BOOL);
-static enum Encoding WhichEncodingForFile(char*, char*);
+static enum Encoding WhichEncodingForFile(const char*, const char*);
 static void HeaderFputs(FILE *, const char *, const char *);
-static void EmitRcptField(FILE*, char*);
-static void EmitRcptHeader(FILE*, char*, char*);
+static void EmitRcptField(FILE*, const char*);
+static void EmitRcptHeader(FILE*, const char*, const char*);
 static void WriteContentTypeAndEncoding(FILE*, struct WritePart*);
 static void WR_WriteUserInfo(FILE *, char *);
 static void EncodePart(FILE*, struct WritePart*);
@@ -99,7 +99,7 @@ static void WR_EmitExtHeader(FILE*, struct Compose*);
 static void WR_ComposeReport(FILE*, struct Compose*, char*);
 static BOOL SetDefaultSecurity(struct Compose*);
 static BOOL WR_ComposePGP(FILE*, struct Compose*, char*);
-static char *WR_TransformText(char*, enum TransformMode, char*);
+static char *WR_TransformText(char*, enum TransformMode, const char*);
 static void WR_SharedSetup(struct WR_ClassData*, int);
 static struct WR_ClassData *WR_NewBounce(int);
 static struct WR_ClassData *WR_New(int winnum);
@@ -151,7 +151,7 @@ MakeStaticHook(WR_PutFileEntryHook, WR_PutFileEntry);
 ///
 /// WR_AddFileToList
 /*** WR_AddFileToList - Adds a file to the attachment list, gets its size and type ***/
-BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
+BOOL WR_AddFileToList(int winnum, const char *filename, const char *name, BOOL istemp)
 {
   struct WR_GUIData *gui = &G->WR[winnum]->GUI;
   BOOL result = FALSE;
@@ -161,7 +161,7 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
   if(filename)
   {
     static struct Attach attach;
-    char *ctype;
+    const char *ctype;
     BPTR lock;
 
     memset(&attach, 0, sizeof(struct Attach));
@@ -273,7 +273,7 @@ static char *NewID(BOOL is_msgid)
 ///
 /// WhichEncodingForFile
 //  Determines best MIME encoding mode for a file
-static enum Encoding WhichEncodingForFile(char *fname, char *ctype)
+static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
 {
    int c, linesize=0, total=0, unsafechars=0, binarychars=0, longlines=0;
    FILE *fh = fopen(fname, "r");
@@ -485,7 +485,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param)
 ///
 /// EmitHeader
 //  Outputs a complete header line
-void EmitHeader(FILE *fh, char *hdr, char *body)
+void EmitHeader(FILE *fh, const char *hdr, const char *body)
 {
   fprintf(fh, "%s: ", hdr);
   HeaderFputs(fh, body, NULL);
@@ -495,7 +495,7 @@ void EmitHeader(FILE *fh, char *hdr, char *body)
 ///
 /// EmitRcptField
 //  Outputs the value of a recipient header line, one entry per line
-static void EmitRcptField(FILE *fh, char *body)
+static void EmitRcptField(FILE *fh, const char *body)
 {
   char *bodycpy;
 
@@ -526,7 +526,7 @@ static void EmitRcptField(FILE *fh, char *body)
 ///
 /// EmitRcptHeader
 //  Outputs a complete recipient header line
-static void EmitRcptHeader(FILE *fh, char *hdr, char *body)
+static void EmitRcptHeader(FILE *fh, const char *hdr, const char *body)
 {
   fprintf(fh, "%s: ", hdr);
   EmitRcptField(fh, body ? body : "");
@@ -561,7 +561,7 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
   // output the Content-Transfer-Encoding:
   if(part->EncType != ENC_NONE)
   {
-    char *enc = NULL;
+    const char *enc = NULL;
 
     switch(part->EncType)
     {
@@ -1715,11 +1715,11 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
       switch (wr->Mode)
       {
-         case NEW_NEW:     AppendLog(10, GetStr(MSG_LOG_Creating),   AddrName(new->To), new->Subject, (void *)att, ""); break;
-         case NEW_REPLY:   AppendLog(11, GetStr(MSG_LOG_Replying),   AddrName(wr->MList[2]->From), wr->MList[2]->Subject, "", ""); break;
-         case NEW_FORWARD: AppendLog(12, GetStr(MSG_LOG_Forwarding), AddrName(wr->MList[2]->From), wr->MList[2]->Subject, AddrName(new->To), ""); break;
-         case NEW_BOUNCE:  AppendLog(13, GetStr(MSG_LOG_Bouncing),   AddrName(wr->Mail->From), wr->Mail->Subject, AddrName(new->To), ""); break;
-         case NEW_EDIT:    AppendLog(14, GetStr(MSG_LOG_Editing),    AddrName(new->From), AddrName(new->To), new->Subject, ""); break;
+         case NEW_NEW:     AppendLog(10, GetStr(MSG_LOG_Creating),   AddrName(new->To), new->Subject, (void *)att); break;
+         case NEW_REPLY:   AppendLog(11, GetStr(MSG_LOG_Replying),   AddrName(wr->MList[2]->From), wr->MList[2]->Subject); break;
+         case NEW_FORWARD: AppendLog(12, GetStr(MSG_LOG_Forwarding), AddrName(wr->MList[2]->From), wr->MList[2]->Subject, AddrName(new->To)); break;
+         case NEW_BOUNCE:  AppendLog(13, GetStr(MSG_LOG_Bouncing),   AddrName(wr->Mail->From), wr->Mail->Subject, AddrName(new->To)); break;
+         case NEW_EDIT:    AppendLog(14, GetStr(MSG_LOG_Editing),    AddrName(new->From), AddrName(new->To), new->Subject); break;
       }
       MA_StartMacro(MACRO_POSTWRITE, itoa(winnum));
    }
@@ -2085,7 +2085,7 @@ MakeStaticHook(WR_ChangeSignatureHook, WR_ChangeSignatureFunc);
 /*** Menus ***/
 /// WR_TransformText
 //  Inserts or pastes text as plain, ROT13 or quoted
-static char *WR_TransformText(char *source, enum TransformMode mode, char *qtext)
+static char *WR_TransformText(char *source, enum TransformMode mode, const char *qtext)
 {
    FILE *fp;
    char *dest = NULL;
@@ -2272,19 +2272,23 @@ MakeStaticHook(WR_AddClipboardHook, WR_AddClipboardFunc);
 /*** WR_AddPGPKeyFunc - Adds ASCII version of user's public PGP key as attachment ***/
 HOOKPROTONHNO(WR_AddPGPKeyFunc, void, int *arg)
 {
-   int winnum = *arg;
-   char *myid = *C->MyPGPID ? C->MyPGPID : C->EmailAddress;
-   char options[SIZE_LARGE], *fname = "T:PubKey.asc";
-   snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-x %s -o %s +force +batchmode=1" : "-kxa %s %s +f +bat", myid, fname);
-   if (!PGPCommand((G->PGPVersion == 5) ? "pgpk" : "pgp", options, 0))
-   {
-    if (FileSize(fname) > 0)
+  int winnum = *arg;
+  char *myid = *C->MyPGPID ? C->MyPGPID : C->EmailAddress;
+  char options[SIZE_LARGE];
+  const char  *fname = "T:PubKey.asc";
+
+  snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-x %s -o %s +force +batchmode=1" : "-kxa %s %s +f +bat", myid, fname);
+
+  if(!PGPCommand((G->PGPVersion == 5) ? "pgpk" : "pgp", options, 0))
+  {
+    if(FileSize(fname) > 0)
     {
       WR_AddFileToList(winnum, fname, NULL, TRUE);
       setstring(G->WR[winnum]->GUI.ST_CTYPE, "application/pgp-keys");
     }
-    else ER_NewError(GetStr(MSG_ER_ErrorAppendKey), myid);
-   }
+    else
+      ER_NewError(GetStr(MSG_ER_ErrorAppendKey), myid);
+  }
 }
 MakeStaticHook(WR_AddPGPKeyHook, WR_AddPGPKeyFunc);
 ///
@@ -2477,7 +2481,7 @@ HOOKPROTONH(WR_LV_DspFunc, long, char **array, struct Attach *entry)
       array[0] = entry->Name;
       snprintf(array[1] = dispsz, sizeof(dispsz), "%d", entry->Size);
       array[2] = DescribeCT(entry->ContentType);
-      array[3] = entry->IsMIME ? "MIME" : "UU";
+      array[3] = (char *)(entry->IsMIME ? "MIME" : "UU");
       array[4] = entry->Description;
    }
    else
@@ -2530,10 +2534,17 @@ static struct WR_ClassData *WR_New(int winnum)
         WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5, WMEN_INSUUCODE
       };
 
-      static char *rtitles[4]={NULL}, *encoding[3], *security[SEC_MAXDUMMY+1], *priority[4], *signat[5];
-      static const char *emoticons[4] = {
+      static const char *rtitles[4] = { NULL };
+      static const char *encoding[3];
+      static const char *security[SEC_MAXDUMMY+1];
+      static const char *priority[4];
+      static const char *signat[5];
+
+      static const char *emoticons[4] =
+      {
         ":-)", ":-|", ":-(", ";-)"
       };
+
       static const struct NewToolbarEntry tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
         { MSG_WR_TBEditor,     MSG_HELP_WR_BT_EDITOR },
         { MSG_WR_TBInsert,     MSG_HELP_WR_BT_LOAD   },
@@ -2562,15 +2573,17 @@ static struct WR_ClassData *WR_New(int winnum)
         SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i].label?(tb_butt[i].label==MSG_Space?"":GetStr(tb_butt[i].label)):NULL, tb_butt[i].help?GetStr(tb_butt[i].help):NULL, 0);
       }
 
-      if(NULL == rtitles[0])   // only initialize static data on first call
+      if(rtitles[0] == '\0')   // only initialize static data on first call
       {
          rtitles[0] = GetStr(MSG_Message);
          rtitles[1] = GetStr(MSG_Attachments);
          rtitles[2] = GetStr(MSG_Options);
          rtitles[3] = NULL;
+
          encoding[0] = "Base64/QP";
          encoding[1] = "UUencode";
          encoding[2] = NULL;
+
          security[SEC_NONE]    = GetStr(MSG_WR_SecNone);
          security[SEC_SIGN]    = GetStr(MSG_WR_SecSign);
          security[SEC_ENCRYPT] = GetStr(MSG_WR_SecEncrypt);
@@ -2578,16 +2591,19 @@ static struct WR_ClassData *WR_New(int winnum)
          security[SEC_SENDANON]= GetStr(MSG_WR_SecAnon);
          security[SEC_DEFAULTS]= GetStr(MSG_WR_SecDefaults);
          security[SEC_MAXDUMMY]= NULL;
+
          priority[0] = GetStr(MSG_WR_ImpHigh);
          priority[1] = GetStr(MSG_WR_ImpNormal);
          priority[2] = GetStr(MSG_WR_ImpLow);
          priority[3] = NULL;
+
          signat[0] = GetStr(MSG_WR_NoSig);
          signat[1] = GetStr(MSG_WR_DefSig);
          signat[2] = GetStr(MSG_WR_AltSig1);
          signat[3] = GetStr(MSG_WR_AltSig2);
          signat[4] = NULL;
       }
+
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, GetStr(MSG_WR_WriteWT),
          MUIA_HelpNode, "WR_W",
