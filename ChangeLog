@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-08-27  David Rey <tactica@users.sourceforge.net>
+
+  * YAM_MA.c: corrected the fix for bug #806352 as the new shortcut
+    was unusable on PC keyboards.
+
 2006-08-26  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_CO.c, YAM_MA.c: fixed bug #425212 once again because recent changes

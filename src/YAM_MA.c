@@ -3703,7 +3703,7 @@ void MA_SetupDynamicMenus(void)
     MUIA_Menu_Title, GetStr(MSG_MA_Scripts),
     MUIA_Family_Child, MenuitemObject,
       MUIA_Menuitem_Title,    GetStr(MSG_MA_ExecuteScript),
-      MUIA_Menuitem_Shortcut, "^",
+      MUIA_Menuitem_Shortcut, "_",
       MUIA_UserData,          MMEN_SCRIPT,
     End,
     MUIA_Family_Child, MenuitemObject,
