@@ -99,7 +99,6 @@ struct ReadMailData
   BOOL            useTextstyles;  // use Textstyles for displaying the mail
   BOOL            wrapHeaders;    // Wrap the headers if necessary
   BOOL            useFixedFont;   // use a fixed font for displaying the mail
-  BOOL            htmlFound;      // true if main mail text if found to contain HTML tags
 
   char readFile[SIZE_PATHFILE];   // filename from which we read the mail from
   char sigAuthor[SIZE_ADDRESS];   // the author of an existing PGP signature

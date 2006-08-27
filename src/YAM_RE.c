@@ -60,6 +60,8 @@
 #include "YAM_read.h"
 #include "YAM_write.h"
 #include "YAM_utilities.h"
+#include "HTML2Mail.h"
+
 #include "classes/Classes.h"
 
 #include "Debug.h"
@@ -2576,7 +2578,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
   int totsize, len;
 
   ENTER();
-  D(DBF_MAIL, "0x%08lx, mode: %d", rmData, mode);
+  D(DBF_MAIL, "rmData: 0x%08lx, mode: %d", rmData, mode);
 
   // save exit conditions
   if(!rmData || !(first = rmData->firstPart))
@@ -2652,7 +2654,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
           char buffer[SIZE_LARGE];
 
           // lets generate the separator bar.
-          snprintf(buffer, sizeof(buffer), "\033c\033[s:18]\033p[7]%s:%s%s\033p[0]\n"
+          snprintf(buffer, sizeof(buffer), "\n\033c\033[s:18]\033p[7]%s:%s%s\033p[0]\n"
                                            "\033l\033b%s:\033n %s <%s>\n", GetStr(MSG_MA_ATTACHMENT),
                                                                            *part->Name ? " " : "",
                                                                            part->Name,
@@ -2719,21 +2721,28 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
             // now we analyze if that part of the mail text contains HTML
             // tags or not so that our HTML converter routines can be fired
-            // up later on.
-            if(C->ConvertHTML == TRUE)
+            // up accordingly.
+            if(C->ConvertHTML == TRUE && (mode == RIM_EDIT || mode == RIM_QUOTE || mode == RIM_READ) &&
+               part->ContentType != NULL && stricmp(part->ContentType, "text/html") == 0)
             {
-              if(rmData->htmlFound == FALSE &&
-                 part->ContentType != NULL && stricmp(part->ContentType, "text/html") == 0)
-              {
-                D(DBF_MAIL, "found displayable part #%ld to contain HTML", part->Nr);
-                rmData->htmlFound = TRUE;
-              }
+              char *converted;
+
+              D(DBF_MAIL, "converting HTMLized part #%ld to plain-text", part->Nr);
+
+              // convert all HTML stuff to plain text
+              converted = html2mail(msg+1);
+
+              // free the old HTMLized message
+              free(msg);
+
+              // overwrite the old values
+              nread = strlen(converted);
+              msg = converted;
+
+              rptr = msg;
             }
             else
-              rmData->htmlFound = FALSE;
-
-            // nothing serious happened so lets continue...
-            rptr = msg+1;
+              rptr = msg+1; // nothing serious happened so lets continue...
 
             // find signature first if it should be stripped
             if(mode == RIM_QUOTE && C->StripSignature)
@@ -3472,7 +3481,6 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   rmData->encryptionFlags = 0;
   rmData->hasPGPKey = 0;
   rmData->letterPartNum = 0;
-  rmData->htmlFound = FALSE;
 
   // now we have to check whether there is a .unp (unpack) file and delete
   // it acoordingly (we can`t use the FinishUnpack() function because the

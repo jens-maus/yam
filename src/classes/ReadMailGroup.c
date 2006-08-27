@@ -675,22 +675,6 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
       if(!hasUpdateTextOnlyFlag(msg->flags))
         DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, msg->flags);
 
-      // in case the user wants to take care of HTML only main message parts
-      // we have to check if this mail is really HTML only and then fire up
-      // our simple, but smart, HTML converter
-      if(C->ConvertHTML == TRUE && rmData->htmlFound)
-      {
-        // fire up the HTML converter which will convert HTML mails
-        // to somewhat RFC822 conform emails which we are going to
-        // show to the user instead.
-        body = html2mail(cmsg);
-
-        // we can free the original cmsg
-        // and make the converted text our new cmsg.
-        free(cmsg);
-        cmsg = body;
-      }
-
       // before we can put the message body into the TextEditor, we have to preparse the text and
       // try to set some styles, as we don`t use the buggy ImportHooks of TextEditor anymore and are anyway
       // more powerful this way.
