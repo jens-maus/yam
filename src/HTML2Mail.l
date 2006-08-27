@@ -59,25 +59,35 @@
 
 /* common 'HTML' tag rules */
 
-PARAGRAPH   "<""/"?"p"[^>]*">"
-BR          "<br"[^>]*">"
-HR          "<hr"[^>]*">"
-UNKNOWN     "<""/"?[^>]*">"
+PARAGRAPH     "<""/"?"p"[^>]*">"
+BR            "<br"[^>]*">"
+HR            "<hr"[^>]*">"
+UNKNOWN       "<""/"?[^>]*">"
+UNKNOWN_CHAR  "&""#"?[[:alnum:]]+";"
 
 %%
-{PARAGRAPH} { return ht_PARAGRAPH;  }
-{BR}        { return ht_BR;         }
-{HR}        { return ht_HR;         }
-{UNKNOWN}   { return ht_UNKNOWN;    }
+{PARAGRAPH}     { return ht_PARAGRAPH;    }
+{BR}            { return ht_BR;           }
+{HR}            { return ht_HR;           }
+{UNKNOWN}       { return ht_UNKNOWN;      }
 
-"&nbsp;"    { return ht_NBSP;       }
-"&amp;"     { return ht_AMP;        }
-"&gt;"      { return ht_GT;         }
-"&lt;"      { return ht_LT;         }
-"&quot"     { return ht_QUOT;       }
+"&nbsp;"        { return ht_NBSP;         }
+"&amp;"         { return ht_AMP;          }
+"&gt;"          { return ht_GT;           }
+"&lt;"          { return ht_LT;           }
+"&quot;"        { return ht_QUOT;         }
+"&auml;"        { return ht_AUML;         }
+"&ouml;"        { return ht_OUML;         }
+"&uuml;"        { return ht_UUML;         }
+"&szlig;"       { return ht_SZLIG;        }
+"&sup2;"        { return ht_SUP2;         }
+"&sup3;"        { return ht_SUP3;         }
+"&reg;"         { return ht_REG;          }
+"&copy;"        { return ht_COPY;         }
+{UNKNOWN_CHAR}  { return ht_UNKNOWN_CHAR; }
 
-\n          { return ht_UNKNOWN;    }
-.           { return ht_NORMALTEXT; }
+\n              { return ht_UNKNOWN;      }
+.               { return ht_NORMALTEXT;   }
 
 %%
 /// html2mail()
@@ -116,7 +126,7 @@ char *html2mail(char *htmlTxt)
           break;
 
           case ht_HR:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "<sb>\n");
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n<sb>\n");
           break;
 
           case ht_UNKNOWN:
@@ -141,6 +151,58 @@ char *html2mail(char *htmlTxt)
 
           case ht_QUOT:
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\"");
+          break;
+
+          case ht_AUML:
+          {
+            if(yytext[1] == 'A')
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "Ä");
+            else
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "ä");
+          }
+          break;
+
+          case ht_OUML:
+          {
+            if(yytext[1] == 'O')
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "Ö");
+            else
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "ö");
+          }
+          break;
+
+          case ht_UUML:
+          {
+            if(yytext[1] == 'U')
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "Ü");
+            else
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "ü");
+          }
+          break;
+
+          case ht_SZLIG:
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "ß");
+          break;
+
+          case ht_SUP2:
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "²");
+          break;
+
+          case ht_SUP3:
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "³");
+          break;
+
+          case ht_REG:
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "®");
+          break;
+
+          case ht_COPY:
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "©");
+          break;
+
+          case ht_UNKNOWN_CHAR:
+            W(DBF_STARTUP, "unknown HTML char: '%s'", yytext);
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "?");
           break;
 
           case ht_NORMALTEXT:

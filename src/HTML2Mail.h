@@ -39,6 +39,15 @@ enum htmlTagType
   ht_GT,
   ht_LT,
   ht_QUOT,
+  ht_AUML,
+  ht_OUML,
+  ht_UUML,
+  ht_SZLIG,
+  ht_SUP2,
+  ht_SUP3,
+  ht_REG,
+  ht_COPY,
+  ht_UNKNOWN_CHAR,
   ht_NORMALTEXT
 };
 

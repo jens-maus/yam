@@ -4,6 +4,15 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-08-27  Jens Langner <Jens.Langner@light-speed.de>
+
+  * HTML2Mail.l: enhanced the html2mail converter to also convert most common
+    "&XXXX;" sequences in a HTML mail.
+  * YAM_MA.c, YAM_RE.c, ReadMailGroup.c: the HTML conversion will now be
+    done in the MA_ReadInMessage() function for every single mail part instead
+    of running it through the whole preparsed mail message. Aside a smoother
+    conversion it should also fix bug #1547080.
+
 2006-08-27  David Rey <tactica@users.sourceforge.net>
 
   * YAM_MA.c: corrected the fix for bug #806352 as the new shortcut
