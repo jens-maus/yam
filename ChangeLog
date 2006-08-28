@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-08-28  Jens Langner <Jens.Langner@light-speed.de>
+
+  * HTML2Mail.l: adapted HTML converter engine once more to take respect of
+    all known HTML character abbreviations throughout described at
+    (http://www.bbsinc.com/iso8859.html). In addition, the engine should now
+    properly strip all kind of CSS definitions and take respect of <div>.
+
 2006-08-27  Jens Langner <Jens.Langner@light-speed.de>
 
   * HTML2Mail.l: enhanced the html2mail converter to also convert most common
