@@ -61,22 +61,27 @@
 
 /* common 'HTML' tag rules */
 
-STYLE         "<style"[^>]*">"(.|\n)*"</style>"
-PARAGRAPH     "<""/"?"p"[^>]*">"
-BR            "<br"[^>]*">"
-DIV           "<div"[^>]*">"
-HR            "<hr"[^>]*">"
-BOLD          "<""/"?("b"|"strong")[^>]*">"
-ITALIC        "<""/"?("i"|"em")[^>]*">"
-UNDERLINE     "<""/"?"u"[^>]*">"
+ALL           (.|\n)*
+NOT_GT        [^>]*
+
+STYLE         "<style"{NOT_GT}">"{ALL}"</style>"
+COMMENT       "<!--"{ALL}"-->"
+PARAGRAPH     "<""/"?"p"{NOT_GT}">"
+BR            "<br"{NOT_GT}">"
+DIV           "<div"{NOT_GT}">"
+HR            "<hr"{NOT_GT}">"
+BOLD          "<""/"?("b"|"strong"){NOT_GT}">"
+ITALIC        "<""/"?("i"|"em"){NOT_GT}">"
+UNDERLINE     "<""/"?"u"{NOT_GT}">"
 ASCII_CHAR    "&#"[[:digit:]]{1,3}";"
 
-UNKNOWN       "<""/"?[^>]*">"
+UNKNOWN       "<""/"?{NOT_GT}">"
 UNKNOWN_CHAR  "&""#"?[[:alnum:]]+";"
 
 %%
 
 {STYLE}         { return ht_STYLE;        }
+{COMMENT}       { return ht_COMMENT;      }
 {PARAGRAPH}     { return ht_PARAGRAPH;    }
 {BR}            { return ht_BR;           }
 {DIV}           { return ht_DIV;          }
@@ -258,6 +263,7 @@ char *html2mail(char *htmlTxt)
           break;
 
           case ht_STYLE:
+          case ht_COMMENT:
           case ht_UNKNOWN:
             // nothing
           break;

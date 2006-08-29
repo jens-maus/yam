@@ -38,6 +38,7 @@ enum htmlTagType
   ht_BOLD,
   ht_ITALIC,
   ht_UNDERLINE,
+  ht_COMMENT,
   ht_UNKNOWN,
 
   ht_SP = 32,
