@@ -145,6 +145,7 @@ enum htmlTagType
 
   ht_TRADE,
 
+  ht_ASCII_CHAR,
   ht_UNKNOWN_CHAR,
 
   ht_NORMALTEXT

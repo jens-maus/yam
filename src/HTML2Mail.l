@@ -69,6 +69,8 @@ HR            "<hr"[^>]*">"
 BOLD          "<""/"?("b"|"strong")[^>]*">"
 ITALIC        "<""/"?("i"|"em")[^>]*">"
 UNDERLINE     "<""/"?"u"[^>]*">"
+ASCII_CHAR    "&#"[[:digit:]]{1,3}";"
+
 UNKNOWN       "<""/"?[^>]*">"
 UNKNOWN_CHAR  "&""#"?[[:alnum:]]+";"
 
@@ -81,346 +83,121 @@ UNKNOWN_CHAR  "&""#"?[[:alnum:]]+";"
 {HR}            { return ht_HR;           }
 {UNKNOWN}       { return ht_UNKNOWN;      }
 
-"&#032;"        |
 "&sp;"          { return ht_SP;           }
-
-"&#033;"        |
 "&excl;"        { return ht_EXCL;         }
-
-"&#034;"        |
 "&quot;"        { return ht_QUOT;         }
-
-"&#035;"        |
 "&num;"         { return ht_NUM;          }
-
-"&#036;"        |
 "&dollar;"      { return ht_DOLLAR;       }
-
-"&#037;"        |
 "&percnt;"      { return ht_PERCNT;       }
-
-"&#038;"        |
 "&amp;"         { return ht_AMP;          }
-
-"&#039;"        |
 "&apos;"        { return ht_APOS;         }
-
-"&#040;"        |
 "&lpar;"        { return ht_LPAR;         }
-
-"&#041;"        |
 "&rpar;"        { return ht_RPAR;         }
-
-"&#042;"        |
 "&ast;"         { return ht_AST;          }
-
-"&#043;"        |
 "&plus;"        { return ht_PLUS;         }
-
-"&#044;"        |
 "&comma;"       { return ht_COMMA;        }
-
-"&#045;"        |
 "&minus;"       |
 "&ndash;"       |
 "&mdash;"       |
 "&hyphen;"      { return ht_HYPHEN;       }
-
-"&#046;"        |
 "&period;"      { return ht_PERIOD;       }
-
-"&#047;"        |
 "&sol;"         { return ht_SOL;          }
-
-"&#058;"        |
 "&colon;"       { return ht_COLON;        }
-
-"&#059;"        |
 "&semi;"        { return ht_SEMI;         }
-
-"&#060;"        |
 "&lt;"          { return ht_LT;           }
-
-"&#061;"        |
 "&equals;"      { return ht_EQUALS;       }
-
-"&#062;"        |
 "&gt;"          { return ht_GT;           }
-
-"&#063;"        |
 "&quest;"       { return ht_QUEST;        }
-
-"&#064;"        |
 "&commat;"      { return ht_COMMAT;       }
-
-"&#091;"        |
 "&lsgb;"        { return ht_LSGB;         }
-
-"&#092;"        |
 "&bsol;"        { return ht_BSOL;         }
-
-"&#093;"        |
 "&rsgb;"        { return ht_RSGB;         }
-
-"&#094;"        |
 "&circ;"        { return ht_CIRC;         }
-
-"&#095;"        |
 "&horbar;"      |
 "&lowbar;"      { return ht_LOWBAR;       }
-
-"&#096;"        |
 "&grave;"       { return ht_GRAVE;        }
-
-"&#123;"        |
 "&lcub;"        { return ht_LCUB;         }
-
-"&#124;"        |
 "&verbar;"      { return ht_VERBAR;       }
-
-"&#125;"        |
 "&rcub;"        { return ht_RCUB;         }
-
-"&#126;"        |
 "&tilde;"       { return ht_TILDE;        }
 
-
-"&#160;"        |
 "&nbsp;"        { return ht_NBSP;         }
-
-"&#161;"        |
 "&iexcl;"       { return ht_IEXCL;        }
-
-"&#162;"        |
 "&cent;"        { return ht_CENT;         }
-
-"&#163;"        |
 "&pound;"       { return ht_POUND;        }
-
-"&#164;"        |
 "&euro;"        |
 "&curren;"      { return ht_CURREN;       }
-
-"&#165;"        |
 "&yen;"         { return ht_YEN;          }
-
-"&#166;"        |
 "&brvbar;"      |
 "&brkbar;"      { return ht_BRKBAR;       }
-
-"&#167;"        |
 "&sect;"        { return ht_SECT;         }
-
-"&#168;"        |
 "&uml;"         |
 "&die;"         { return ht_UML;          }
-
-"&#169;"        |
 "&copy;"        { return ht_COPY;         }
-
-"&#170;"        |
 "&ordf;"        { return ht_ORDF;         }
-
-"&#171;"        |
 "&laquo;"       { return ht_LAQUO;        }
-
-"&#172;"        |
 "&not;"         { return ht_NOT;          }
-
-"&#173;"        |
 "&shy;"         { return ht_SHY;          }
-
-"&#174;"        |
 "&reg;"         { return ht_REG;          }
-
-"&#175;"        |
 "&macr;"        { return ht_MACR;         }
-
-"&#176;"        |
 "&deg;"         { return ht_DEG;          }
-
-"&#177;"        |
 "&plusmn;"      { return ht_PLUSMN;       }
-
-"&#178;"        |
 "&sup2;"        { return ht_SUP2;         }
-
-"&#179;"        |
 "&sup3;"        { return ht_SUP3;         }
-
-"&#180;"        |
 "&acute;"       { return ht_ACUTE;        }
-
-"&#181;"        |
 "&micro;"       { return ht_MICRO;        }
-
-"&#182;"        |
 "&para;"        { return ht_PARA;         }
-
-"&#183;"        |
 "&middot;"      { return ht_MIDDOT;       }
-
-"&#184;"        |
 "&cedil;"       { return ht_CEDIL;        }
-
-"&#185;"        |
 "&sup1;"        { return ht_SUP1;         }
-
-"&#186;"        |
 "&ordm;"        { return ht_ORDM;         }
-
-"&#187;"        |
 "&raquo;"       { return ht_RAQUO;        }
-
-"&#188;"        |
 "&frac14;"      { return ht_FRAC14;       }
-
-"&#189;"        |
 "&half;"        |
 "&frac12;"      { return ht_FRAC12;       }
-
-"&#190;"        |
 "&frac34;"      { return ht_FRAC34;       }
-
-"&#191;"        |
 "&iquest;"      { return ht_IQUEST;       }
 
-
-"&#192;"        |
-"&#224;"        |
 "&agrave;"      { return ht_AGRAVE;       }
-
-"&#193;"        |
-"&#225;"        |
 "&aacute;"      { return ht_AACUTE;       }
-
-"&#194;"        |
-"&#226;"        |
 "&acirc;"       { return ht_ACIRC;        }
-
-"&#195;"        |
-"&#227;"        |
 "&atilde;"      { return ht_ATILDE;       }
-
-"&#196;"        |
-"&#228;"        |
 "&auml;"        { return ht_AUML;         }
-
-"&#197;"        |
-"&#229;"        |
 "&aring;"       { return ht_ARING;        }
-
-"&#198;"        |
-"&#230;"        |
 "&aeling;"      { return ht_AELING;       }
-
-"&#199;"        |
-"&#231;"        |
 "&ccedil;"      { return ht_CCEDIL;       }
-
-"&#200;"        |
-"&#232;"        |
 "&egrave;"      { return ht_EGRAVE;       }
-
-"&#201;"        |
-"&#233;"        |
 "&eacute;"      { return ht_EACUTE;       }
-
-"&#202;"        |
-"&#234;"        |
 "&ecirc;"       { return ht_ECIRC;        }
-
-"&#203;"        |
-"&#235;"        |
 "&euml;"        { return ht_EUML;         }
-
-"&#204;"        |
-"&#236;"        |
 "&igrave;"      { return ht_IGRAVE;       }
-
-"&#205;"        |
-"&#237;"        |
 "&iacute;"      { return ht_IACUTE;       }
-
-"&#206;"        |
-"&#238;"        |
 "&icirc;"       { return ht_ICIRC;        }
-
-"&#207;"        |
-"&#239;"        |
 "&iuml;"        { return ht_IUML;         }
-
-"&#208;"        |
-"&#240;"        |
 "&eth;"         { return ht_ETH;          }
-
-"&#209;"        |
-"&#241;"        |
 "&ntilde;"      { return ht_NTILDE;       }
-
-"&#210;"        |
-"&#242;"        |
 "&ograve;"      { return ht_OGRAVE;       }
-
-"&#211;"        |
-"&#243;"        |
 "&oacute;"      { return ht_OACUTE;       }
-
-"&#212;"        |
-"&#244;"        |
 "&ocirc;"       { return ht_OCIRC;        }
-
-"&#213;"        |
-"&#245;"        |
 "&otilde;"      { return ht_OTILDE;       }
-
-"&#214;"        |
-"&#246;"        |
 "&ouml;"        { return ht_OUML;         }
-
-"&#215;"        |
 "&times;"       { return ht_TIMES;        }
-
-"&#216;"        |
-"&#248;"        |
 "&oslash;"      { return ht_OSLASH;       }
-
-"&#217;"        |
-"&#249;"        |
 "&ugrave;"      { return ht_UGRAVE;       }
-
-"&#218;"        |
-"&#250;"        |
 "&uacute;"      { return ht_UACUTE;       }
-
-"&#219;"        |
-"&#251;"        |
 "&ucirc;"       { return ht_UCIRC;        }
-
-"&#220;"        |
-"&#252;"        |
 "&uuml;"        { return ht_UUML;         }
-
-"&#221;"        |
-"&#253;"        |
 "&yacute;"      { return ht_YACUTE;       }
-
-"&#222;"        |
-"&#254;"        |
 "&thorn;"       { return ht_THORN;        }
 
-"&#223;"        |
 "&szlig;"       { return ht_SZLIG;        }
-
-"&#247;"        |
 "&divide;"      { return ht_DIVIDE;       }
-
-"&#255;"        |
 "&yuml;"        { return ht_YUML;         }
 
 "&#8482;"       |
 "&trade;"       { return ht_TRADE;        }
 
+{ASCII_CHAR}    { return ht_ASCII_CHAR;   }
 {UNKNOWN_CHAR}  { return ht_UNKNOWN_CHAR; }
 
 
@@ -595,29 +372,37 @@ char *html2mail(char *htmlTxt)
           case ht_THORN:
           {
             char tmp[] = " \0";
-            unsigned char num;
 
-            if(yytext[1] == '#')
-            {
-              num = atoi(&yytext[2]);
-              if(num != type)
-                num = type+32;
-            }
-            else if(tolower(yytext[1]) == yytext[1])
-            {
-              // the first char is a lowercase char
-              num = type+32;
-            }
+            // check if the first char is lowercase
+            // and if so we have to add 32 to our current
+            // character value.
+            if(tolower(yytext[1]) == yytext[1])
+              tmp[0] = type + 32;
             else
-              num = type;
+              tmp[0] = type;
 
-            tmp[0] = num;
             cmsg = AppendToBuffer(cmsg, &wptr, &len, tmp);
           }
           break;
 
           case ht_TRADE:
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "(tm)");
+          break;
+
+          case ht_ASCII_CHAR:
+          {
+            unsigned int c = atoi(&yytext[2]);
+
+            if(c >= 32 && c <= 255)
+            {
+              char tmp[] = " \0";
+
+              tmp[0] = c;
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, tmp);
+            }
+            else
+              W(DBF_STARTUP, "found HTML ASCII char out of bounds: '%s'", yytext);
+          }
           break;
 
           case ht_UNKNOWN_CHAR:

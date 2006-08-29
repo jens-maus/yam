@@ -6,6 +6,9 @@ $Id$
 
 2006-08-28  Jens Langner <Jens.Langner@light-speed.de>
 
+  * HTML2Mail.l: all "&#XXX;" char interpretation abbrev. will now be handled
+    dynamically instead of specifying them separately in our language file.
+    This should sage quite an amount of parsing.
   * HTML2Mail.l: adapted HTML converter engine once more to take respect of
     all known HTML character abbreviations throughout described at
     (http://www.bbsinc.com/iso8859.html). In addition, the engine should now
