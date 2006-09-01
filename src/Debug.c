@@ -95,6 +95,7 @@ void SetupDebug(void)
       { "xpk",      DBF_XPK     },
       { "image",    DBF_IMAGE   },
       { "update",   DBF_UPDATE  },
+      { "html",     DBF_HTML    },
       { "all",      DBF_ALL     },
       { NULL,       0           }
     };

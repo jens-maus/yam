@@ -39,6 +39,8 @@ enum htmlTagType
   ht_ITALIC,
   ht_UNDERLINE,
   ht_COMMENT,
+  ht_HREF,
+  ht_HREF_END,
   ht_UNKNOWN,
 
   ht_SP = 32,

@@ -6,6 +6,14 @@ $Id$
 
 2006-08-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * HTML2Mail.l: improved the html2mail converter to use better syntax rules
+    with start/end conditions which should make the converter a bit more
+    accurate. In addition, <a href=...></a> tags should now be converted
+    by adding the relavant link in "<..>" brackets so that they always show
+    up in the converted plain text.
+
+2006-08-29  Jens Langner <Jens.Langner@light-speed.de>
+
   * HTML2Mail.l: we are catching HTML comment tags "<!-- -->" as well now.
 
 2006-08-28  Jens Langner <Jens.Langner@light-speed.de>

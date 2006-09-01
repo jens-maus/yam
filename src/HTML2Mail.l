@@ -59,34 +59,46 @@
  *
  */
 
+%x tag_s tag_e comment style href
+
 /* common 'HTML' tag rules */
 
-ALL           (.|\n)*
 NOT_GT        [^>]*
+TAGEND        ("/"?">"|" "{NOT_GT}"/"?">")
 
-STYLE         "<style"{NOT_GT}">"{ALL}"</style>"
-COMMENT       "<!--"{ALL}"-->"
-PARAGRAPH     "<""/"?"p"{NOT_GT}">"
-BR            "<br"{NOT_GT}">"
-DIV           "<div"{NOT_GT}">"
-HR            "<hr"{NOT_GT}">"
 BOLD          "<""/"?("b"|"strong"){NOT_GT}">"
 ITALIC        "<""/"?("i"|"em"){NOT_GT}">"
 UNDERLINE     "<""/"?"u"{NOT_GT}">"
-ASCII_CHAR    "&#"[[:digit:]]{1,3}";"
 
-UNKNOWN       "<""/"?{NOT_GT}">"
+ASCII_CHAR    "&#"[[:digit:]]{1,3}";"
+UNKNOWN       "<"{NOT_GT}">"
 UNKNOWN_CHAR  "&""#"?[[:alnum:]]+";"
 
 %%
 
-{STYLE}         { return ht_STYLE;        }
-{COMMENT}       { return ht_COMMENT;      }
-{PARAGRAPH}     { return ht_PARAGRAPH;    }
-{BR}            { return ht_BR;           }
-{DIV}           { return ht_DIV;          }
-{HR}            { return ht_HR;           }
-{UNKNOWN}       { return ht_UNKNOWN;      }
+"<"                         BEGIN(tag_s);
+<tag_s>"!--"                { BEGIN(comment); D(DBF_HTML, "<!--:     '%s'", yytext); }
+<tag_s>"style"{TAGEND}      { BEGIN(style);   D(DBF_HTML, "<style>:  '%s'", yytext); }
+<tag_s>"br"{TAGEND}         { BEGIN(INITIAL); return ht_BR;         }
+<tag_s>"div"{TAGEND}        { BEGIN(INITIAL); return ht_DIV;        }
+<tag_s>"hr"{TAGEND}         { BEGIN(INITIAL); return ht_HR;         }
+<tag_s>"/"?"p"{TAGEND}      { BEGIN(INITIAL); return ht_PARAGRAPH;  }
+<tag_s>"a "{NOT_GT}"href="  { BEGIN(href);    D(DBF_HTML, "<a href=: '%s'", yytext); }
+<tag_s>"/a>"                { BEGIN(INITIAL); return ht_HREF_END;   }
+<tag_s>">"                  BEGIN(INITIAL);
+<tag_s,tag_e>">"            BEGIN(INITIAL);
+<tag_s>.|\n                 BEGIN(tag_e);
+<tag_e>.|\n                 /* eat up everything else */
+
+<comment>"-->"              { BEGIN(INITIAL); D(DBF_HTML, "--> :     '%s'", yytext); }
+<comment>.|\n               /* eat up everything else */
+
+<style>"</style>"           { BEGIN(INITIAL); D(DBF_HTML, "</style>: '%s'", yytext); }
+<style>.|\n                 /* eat up everything else */
+
+<href>"\""                  /* eat up quotes */
+<href>[^ >"]+               { BEGIN(tag_e); return ht_HREF; }
+<href>.|\n                  BEGIN(tag_e);
 
 "&sp;"          { return ht_SP;           }
 "&excl;"        { return ht_EXCL;         }
@@ -235,6 +247,7 @@ char *html2mail(char *htmlTxt)
     if((cmsg = calloc(len=(strlen(htmlTxt)*3)/2+1, sizeof(char))))
     {
       enum htmlTagType type;
+      char *lastHref = NULL;
 
       while((type = yylex()))
       {
@@ -260,6 +273,29 @@ char *html2mail(char *htmlTxt)
 
           case ht_UNDERLINE:
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "_");
+          break;
+
+          case ht_HREF:
+          {
+            if(lastHref != NULL)
+              free(lastHref);
+
+            lastHref = strdup(yytext);
+          }
+          break;
+
+          case ht_HREF_END:
+          {
+            if(lastHref != NULL)
+            {
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, " <");
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, lastHref);
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "> ");
+
+              free(lastHref);
+              lastHref = NULL;
+            }
+          }
           break;
 
           case ht_STYLE:
@@ -407,12 +443,12 @@ char *html2mail(char *htmlTxt)
               cmsg = AppendToBuffer(cmsg, &wptr, &len, tmp);
             }
             else
-              W(DBF_STARTUP, "found HTML ASCII char out of bounds: '%s'", yytext);
+              D(DBF_HTML, "found HTML ASCII char out of bounds: '%s'", yytext);
           }
           break;
 
           case ht_UNKNOWN_CHAR:
-            W(DBF_STARTUP, "unknown HTML char: '%s'", yytext);
+            D(DBF_HTML, "unknown HTML char: '%s'", yytext);
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "?");
           break;
 
@@ -421,6 +457,9 @@ char *html2mail(char *htmlTxt)
           break;
         }
       }
+
+      if(lastHref != NULL)
+        free(lastHref);
     }
 
     yy_delete_buffer(buffer);
