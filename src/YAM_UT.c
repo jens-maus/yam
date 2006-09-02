@@ -5484,17 +5484,19 @@ void GotoURL(const char *url)
   {
     if(GETINTERFACE("main", IOpenURL, OpenURLBase))
     {
-      static const struct TagItem tags[] = { { URL_NewWindow, TRUE },
-                                             { TAG_DONE, 0         } };
-
-      // open the URL in a new window per default
-      URL_OpenA((STRPTR)url, (struct TagItem *)&tags[0]);
+      // open the URL in a defined web browser and
+      // let the user define himself if he wants to see
+      // it popping up in a new window or not (via OpenURL
+      // prefs)
+      URL_OpenA((STRPTR)url, NULL);
 
       DROPINTERFACE(IOpenURL);
     }
     CloseLibrary(OpenURLBase);
     OpenURLBase = NULL;
   }
+  else
+    W(DBF_HTML, "No openurl.library v1+ found");
 
   LEAVE();
 }

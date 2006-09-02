@@ -4,7 +4,15 @@ YAM Open Source - ChangeLog
 
 $Id$
 
-2006-08-29  Jens Langner <Jens.Langner@light-speed.de>
+2006-09-02  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c: as properly described in bug #1550417 there should be no reason
+    to force OpenURL to open an URL in a new browser window because a user
+    can perfectly configurate that himself via the OpenURL preferences. So
+    we are back to open the plain URL via URL_OpenA() and let OpenURL handle
+    the rest.
+
+2006-09-01  Jens Langner <Jens.Langner@light-speed.de>
 
   * HTML2Mail.l: improved the html2mail converter to use better syntax rules
     with start/end conditions which should make the converter a bit more
