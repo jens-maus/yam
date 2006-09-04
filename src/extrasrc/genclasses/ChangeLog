@@ -3,7 +3,14 @@ GenClasses Tool - ChangeLog
 ---------------------------
 
 $Id$
-$Source$
+
+2006-09-05  Jens Langner <Jens.Langner@light-speed.de>
+
+    * gc.c: raised the default warning level to "-pedantic" for GCC
+      as we want to make sure it compiles on almost every system with
+      every compiler involved. However, the "-Wno-strict-aliasing" is
+      required as well or otherwise GCC will warn about some stupid
+      strict aliasing.
 
 2005-11-11  Jens Langner <Jens.Langner@light-speed.de>
 

@@ -48,6 +48,9 @@
  *
  * History
  * -------
+ * 0.21 - raised the warning levels to -pedantic and fixed some compilation
+ *        warnings triggers by some oddities in our code.
+ *
  * 0.20 - modified generated code to be somewhat more compatible to compiling
  *        with -Wwrite-strings
  *
@@ -139,7 +142,7 @@
  *
  */
 
-static const char *verstr = "0.20";
+static const char * const verstr = "0.21";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -326,14 +329,14 @@ static unsigned int gettagvalue(char *tag, int checkcol)
   /* now we check that val is definitly between TAG_USER and the MUI tag base
      because anything above/below that might cause problems. */
   if(val < TAG_USER || val >= 0x80010000)
-    printf("WARNING: generate tag value '%lx' of class '%s' collides with BOOPSI/MUI tag values!\n", val, tag);
+    printf("WARNING: generate tag value '%x' of class '%s' collides with BOOPSI/MUI tag values!\n", val, tag);
 
   /* if we should check for a collision we do so */
   if(checkcol)
     ++collision_cnts[hash];
 
   if(arg_v)
-    printf("Assigning tag %-35s with value %lx\n", tag, val);
+    printf("Assigning tag %-35s with value %x\n", tag, val);
   
   return val;
 }
@@ -377,22 +380,31 @@ void free_classdef( struct classdef *cd )
   struct node *n;
   if (!cd) return;
   if (cd->classdata) free(cd->classdata);
-  while (n = list_remhead(&cd->overloadlist)) {
+
+  while((n = list_remhead(&cd->overloadlist)))
+  {
     free_overload(n->data);
     free(n);
   }  
-  while (n = list_remhead(&cd->declarelist)) {
+
+  while((n = list_remhead(&cd->declarelist)))
+  {
     free_declare(n->data);
     free(n);
   }  
-  while (n = list_remhead(&cd->attrlist)) {
+
+  while((n = list_remhead(&cd->attrlist)))
+  {
     free_attr(n->data);
     free(n);
   }  
-  while (n = list_remhead(&cd->exportlist)) {
+
+  while((n = list_remhead(&cd->exportlist)))
+  {
     free_exportblk(n->data);
     free(n);
   }  
+
   free(cd);
 }
 
@@ -476,19 +488,19 @@ struct classdef *processclasssrc( char *path )
     /******** Scan line for keywords and extract the associated information... ********/
     if (!cd->superclass && (sub = strstr(p, KEYWD_SUPERCLASS)))
     {
-      if (arg_v) printf(KEYWD_SUPERCLASS " keyword found at line %ld in file %s\n", lineno, path);
+      if (arg_v) printf(KEYWD_SUPERCLASS " keyword found at line %d in file %s\n", lineno, path);
       sub += sizeof(KEYWD_SUPERCLASS) - 1;
       cd->superclass = stralloc(skipwhitespaces(sub));
     }
     else if (!cd->desc && (sub = strstr(p, KEYWD_DESC)))
     {
-      if (arg_v) printf(KEYWD_DESC " keyword found at line %ld\n", lineno);
+      if (arg_v) printf(KEYWD_DESC " keyword found at line %d\n", lineno);
       sub += sizeof(KEYWD_DESC) - 1;
       cd->desc = stralloc(skipwhitespaces(sub));
     }
     else if (!cd->classdata && strstr(line, KEYWD_CLASSDATA))
     {
-      if (arg_v) printf(KEYWD_CLASSDATA " keyword found at line %ld\n", lineno);
+      if (arg_v) printf(KEYWD_CLASSDATA " keyword found at line %d\n", lineno);
       spos = ftell(fp);
       while(fgets(p = line, 255, fp))
       {
@@ -498,7 +510,7 @@ struct classdef *processclasssrc( char *path )
         fseek(fp, spos, SEEK_SET);
         if (!(blk = calloc(1, (size_t)(epos - spos + 1))))
         {
-          printf("WARNING: Cannot read " KEYWD_CLASSDATA " block at line %ld, out of memory!\n", exlineno); break;
+          printf("WARNING: Cannot read " KEYWD_CLASSDATA " block at line %d, out of memory!\n", exlineno); break;
         }
         fread(blk, (size_t)(epos - spos), 1, fp);
         if ((ob = strchr(blk, '{')))
@@ -517,7 +529,7 @@ struct classdef *processclasssrc( char *path )
     }
     else if (strncmp(KEYWD_OVERLOAD, p, sizeof(KEYWD_OVERLOAD) - 1) == 0)
     {
-      if (arg_v) printf(KEYWD_OVERLOAD " keyword found at line %ld in file %s\n", lineno, path);
+      if (arg_v) printf(KEYWD_OVERLOAD " keyword found at line %d in file %s\n", lineno, path);
       p += sizeof(KEYWD_OVERLOAD) - 1;
       if (!(ob = strchr(p, '('))) continue; /* There's no open bracket, ignore it... */
       if (!(cb = strchr(ob, ')'))) cb = p + strlen(p);
@@ -525,7 +537,7 @@ struct classdef *processclasssrc( char *path )
     }
     else if (strncmp(KEYWD_DECLARE, p, sizeof(KEYWD_DECLARE) - 1) == 0)
     {
-      if (arg_v) printf(KEYWD_DECLARE " keyword found at line %ld in file %s\n", lineno, path);
+      if (arg_v) printf(KEYWD_DECLARE " keyword found at line %d in file %s\n", lineno, path);
       p += sizeof(KEYWD_DECLARE) - 1;
       if (!(ob = strchr(p, '('))) continue; /* There's no open bracket, ignore it... */
       if (!(cb = strchr(ob, ')'))) cb = p + strlen(p);
@@ -534,7 +546,7 @@ struct classdef *processclasssrc( char *path )
     }
     else if (strncmp(KEYWD_ATTR, p, sizeof(KEYWD_ATTR) - 1) == 0)
     {
-      if (arg_v) printf(KEYWD_ATTR " keyword found at line %ld in file %s\n", lineno, path);
+      if (arg_v) printf(KEYWD_ATTR " keyword found at line %d in file %s\n", lineno, path);
       p += sizeof(KEYWD_ATTR) - 1;
       if (!(ob = strchr(p, '('))) continue; /* There's no open bracket, ignore it... */
       if (!(cb = strchr(ob, ')'))) cb = p + strlen(p);
@@ -545,7 +557,7 @@ struct classdef *processclasssrc( char *path )
       p = skipwhitespaces(p + 2);
       if (strncmp(KEYWD_EXPORT, p, sizeof(KEYWD_EXPORT) - 1) == 0)
       {
-        if (arg_v) printf(KEYWD_EXPORT " keyword found at line %ld in file %s\n", lineno, path);
+        if (arg_v) printf(KEYWD_EXPORT " keyword found at line %d in file %s\n", lineno, path);
         p += sizeof(KEYWD_EXPORT) - 1;
         spos = ftell(fp);
         while(fgets(p = line, 255, fp))
@@ -556,14 +568,14 @@ struct classdef *processclasssrc( char *path )
           fseek(fp, spos, SEEK_SET);
           if (!(blk = calloc(1, (size_t)(epos - spos + 1))))
           {
-            printf("WARNING: Cannot read " KEYWD_EXPORT " block at line %ld, out of memory!\n", exlineno); break;
+            printf("WARNING: Cannot read " KEYWD_EXPORT " block at line %d, out of memory!\n", exlineno); break;
           }
           fread(blk, (size_t)(epos - spos), 1, fp);
           add_exportblk(cd, blk);
           free(blk);
           break;
         }
-        if (epos == 0) printf("WARNING: Unterminated EXPORT block at line %ld\n", lineno);
+        if (epos == 0) printf("WARNING: Unterminated EXPORT block at line %d\n", lineno);
       }
     }
   }  /* while() */
@@ -588,15 +600,17 @@ void printclasslist( struct list *classlist )
   struct declaredef *dd;
   struct attrdef *ad;
   struct node *n, *nn;
+
   printf("The following keywords were extracted:\n");
-  for (nn = NULL; nn = list_getnext(classlist, nn, (void **) &cd);)
+
+  for(nn = NULL; (nn = list_getnext(classlist, nn, (void **)&cd)); )
   {
     printf("CLASS: %s\n", cd->name);
-    for (n = NULL; n = list_getnext(&cd->overloadlist, n, (void **) &od);)
+    for(n = NULL; (n = list_getnext(&cd->overloadlist, n, (void **) &od)); )
       printf("  OVERLOAD: %s\n", od->name);
-    for (n = NULL; n = list_getnext(&cd->declarelist, n, (void **) &dd);)
+    for(n = NULL; (n = list_getnext(&cd->declarelist, n, (void **) &dd)); )
       printf("   DECLARE: %s\n", dd->name);
-    for (n = NULL; n = list_getnext(&cd->attrlist, n, (void **) &ad);)
+    for(n = NULL; (n = list_getnext(&cd->attrlist, n, (void **) &ad)); )
       printf("      ATTR: %s\n", ad->name);
   }
 }
@@ -653,6 +667,7 @@ int scanclasses( char *dirname, struct list *classlist )
 void gen_gpl( FILE *fp )
 {
   if (!fp || !arg_gpl) return;
+
   fprintf(fp,
   "/***************************************************************************\n"
   "\n"
@@ -664,12 +679,16 @@ void gen_gpl( FILE *fp )
   " it under the terms of the GNU General Public License as published by\n"
   " the Free Software Foundation; either version 2 of the License, or\n"
   " (at your option) any later version.\n"
-  "\n"
+  "\n");
+
+  fprintf(fp,
   " This program is distributed in the hope that it will be useful,\n"
   " but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
   " MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
   " GNU General Public License for more details.\n"
-  "\n"
+  "\n");
+
+  fprintf(fp,
   " You should have received a copy of the GNU General Public License\n"
   " along with this program; if not, write to the Free Software\n"
   " Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
@@ -706,7 +725,20 @@ void gen_supportroutines( FILE *fp )
 "}\n"
 "%s"
 "\n"
-"%s%s%s"
+"%s%s%s",
+
+  arg_storm ? "/// "                : "",
+  arg_storm ? bn                    : "",
+  arg_storm ? "_NewObject()\n"      : "",
+  bn, bn,
+  arg_storm ? "\n///"               : "",
+
+  arg_storm ? "/// "                : "",
+  arg_storm ? bn                    : "",
+  arg_storm ? "_SetupClasses()\n"   : ""
+);
+
+  fprintf(fp,
 "BOOL %s_SetupClasses(void)\n"
 "{\n"
 "  unsigned int i;\n"
@@ -724,7 +756,13 @@ void gen_supportroutines( FILE *fp )
 "  return TRUE;\n"
 "}\n"
 "%s"
-"\n"
+"\n",
+
+  bn, bn, bn, bn, bn, bn, bn,
+  arg_storm ? "\n///" : ""
+);
+
+  fprintf(fp,
 "%s%s%s"
 "void %s_CleanupClasses(void)\n"
 "{\n"
@@ -738,18 +776,6 @@ void gen_supportroutines( FILE *fp )
 "}\n"
 "%s"
 "\n",
-
-  arg_storm ? "/// "                : "",  
-  arg_storm ? bn                    : "",  
-  arg_storm ? "_NewObject()\n"      : "",
-  bn, bn,
-  arg_storm ? "\n///"               : "",
-
-  arg_storm ? "/// "                : "",  
-  arg_storm ? bn                    : "",  
-  arg_storm ? "_SetupClasses()\n"   : "",
-  bn, bn, bn, bn, bn, bn, bn,
-  arg_storm ? "\n///"               : "",
 
   arg_storm ? "/// "                : "",  
   arg_storm ? bn                    : "",  
@@ -790,19 +816,19 @@ int gen_source( char *destfile, struct list *classlist )
   /***************************************/
   
   fprintf(fp, "/*** Custom Class Dispatchers ***/\n");
-  for (nn = NULL; nn = list_getnext(classlist, nn, (void **) &nextcd);)
+  for(nn = NULL; (nn = list_getnext(classlist, nn, (void **) &nextcd)); )
   {
     if (arg_storm) fprintf(fp, "/// %sDispatcher()\n", nextcd->name);
     fprintf(fp, "DISPATCHERPROTO(%sDispatcher)\n"
       "{\n  switch(msg->MethodID)\n  {\n", nextcd->name);
     /* Write OVERLOADs */
-    for (n = NULL; n = list_getnext(&nextcd->overloadlist, n, (void **) &nextod);)
+    for(n = NULL; (n = list_getnext(&nextcd->overloadlist, n, (void **) &nextod)); )
     {
       fprintf(fp, "    case %-40s: return m_%s_%-20s(cl, obj, msg);\n",
         nextod->name, nextcd->name, nextod->name);
     }
     /* Write DECLAREs */
-    for (n = NULL; n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd);)
+    for(n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd)); )
     {
       char name[128];
       snprintf(name, sizeof(name), "MUIM_%s_%s", nextcd->name, nextdd->name);
@@ -832,7 +858,7 @@ int gen_source( char *destfile, struct list *classlist )
     "} MCCInfo[NUMBEROFCLASSES] =\n"
     "{\n");
 
-  for (n = NULL; n = list_getnext(classlist, n, (void **) &nextcd);)
+  for(n = NULL; (n = list_getnext(classlist, n, (void **) &nextcd)); )
   {
     fprintf(fp, "  { MUIC_%s, %s, -1, %sGetSize, ENTRY(%sDispatcher) }",
       nextcd->name, nextcd->superclass, nextcd->name, nextcd->name);
@@ -923,7 +949,7 @@ int gen_header( char *destfile, struct list *classlist )
   /*             Class loop              */
   /***************************************/
 
-  for (nn = NULL; nn = list_getnext(classlist, nn, (void **) &nextcd);)
+  for(nn = NULL; (nn = list_getnext(classlist, nn, (void **) &nextcd)); )
   {
     cn = nextcd->name;
 
@@ -932,28 +958,28 @@ int gen_header( char *destfile, struct list *classlist )
     /***********************************************/
 
     fprintf(fp, 
-      "/******** Class: %s (0x%lx) ********/\n"
+      "/******** Class: %s (0x%08x) ********/\n"
       "\n"
       "#define MUIC_%s \"%s_%s\"\n"
       "#define %sObject %s_NewObject(MUIC_%s\n",
       cn, gettagvalue(cn, 0), cn, bn, cn, cn, bn, cn);
 
-    for (n = NULL; n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd);)
+    for (n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd));)
     {
       char name[128];
       snprintf(name, sizeof(name), "MUIM_%s_%s", cn, nextdd->name);
-      fprintf(fp, "#define %-45s 0x%08lx\n", name, gettagvalue(cn, 1));
+      fprintf(fp, "#define %-45s 0x%08x\n", name, gettagvalue(cn, 1));
     }
 
     /***************************************/
     /* Write attributes for this class     */
     /***************************************/
 
-    for (n = NULL; n = list_getnext(&nextcd->attrlist, n, (void **) &nextad);)
+    for (n = NULL; (n = list_getnext(&nextcd->attrlist, n, (void **) &nextad));)
     {
       char name[128];
       snprintf(name, sizeof(name), "MUIA_%s_%s", cn, nextad->name);
-      fprintf(fp, "#define %-45s 0x%08lx\n", name, gettagvalue(cn, 1));
+      fprintf(fp, "#define %-45s 0x%08x\n", name, gettagvalue(cn, 1));
     }
     fprintf(fp, "\n");
 
@@ -964,7 +990,7 @@ int gen_header( char *destfile, struct list *classlist )
     if (nextcd->exportlist.cnt)
     {
       fprintf(fp, "/* Exported text */\n\n");
-      for (n = NULL; n = list_getnext(&nextcd->exportlist, n, (void **) &nexted);)
+      for (n = NULL; (n = list_getnext(&nextcd->exportlist, n, (void **) &nexted));)
         fprintf(fp, "%s\n\n", nexted->exporttext);
 
     }
@@ -973,7 +999,7 @@ int gen_header( char *destfile, struct list *classlist )
     /* Write MUIP_ structures for this class */
     /*****************************************/
 
-    for (n = NULL; n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd);)
+    for (n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd));)
     {
       fprintf(fp,
         "struct MUIP_%s_%s\n"
@@ -995,13 +1021,13 @@ int gen_header( char *destfile, struct list *classlist )
     fprintf(fp, "ULONG %sGetSize(void);\n", cn);
 
     /* Write OVERLOADs */
-    for (n = NULL; n = list_getnext(&nextcd->overloadlist, n, (void **) &nextod);)
+    for (n = NULL; (n = list_getnext(&nextcd->overloadlist, n, (void **) &nextod));)
     {
       fprintf(fp, "ULONG m_%s_%s(struct IClass *cl, Object *obj, Msg msg);\n",
         nextcd->name, nextod->name);
     }
     /* Write DECLAREs */
-    for (n = NULL; n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd);)
+    for (n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd));)
     {
       fprintf(fp, "ULONG m_%s_%s(struct IClass *cl, Object *obj, struct MUIP_%s_%s *msg);\n",
         nextcd->name, nextdd->name, cn, nextdd->name);
@@ -1019,7 +1045,7 @@ int gen_classheaders( struct list *classlist )
   struct node *n;
   struct classdef *nextcd;
   FILE *fp;
-  for (n = NULL; n = list_getnext(classlist, n, (void **) &nextcd);)
+  for (n = NULL; (n = list_getnext(classlist, n, (void **) &nextcd));)
   {
     char name[128], buf[128], *p;
     char *cn = nextcd->name;
@@ -1046,7 +1072,12 @@ int gen_classheaders( struct list *classlist )
       "#ifndef CLASSES_CLASSES_H\n"
       "#include \"Classes.h\"\n"
       "#endif /* CLASSES_CLASSES_H */\n"
-      "\n"
+      "\n",
+      buf,
+      buf
+    );
+
+    fprintf(fp,
       "#define DECLARE(method)  ULONG m_%s_## method(UNUSED struct IClass *cl, UNUSED Object *obj, UNUSED struct MUIP_%s_## method *msg )\n"
       "#define OVERLOAD(method) ULONG m_%s_## method(UNUSED struct IClass *cl, UNUSED Object *obj, UNUSED Msg msg )\n"
       "#define ATTR(attr)       case MUIA_%s_## attr\n"
@@ -1061,7 +1092,14 @@ int gen_classheaders( struct list *classlist )
       "ULONG %sGetSize( void ) { return sizeof(struct Data); }\n"
       "\n"
       "#endif /* %s_H */\n",
-        buf, buf, cn, cn, cn, cn, nextcd->classdata, cn, buf);  
+      cn,
+      cn,
+      cn,
+      cn,
+      nextcd->classdata,
+      cn,
+      buf
+    );
 
     *mypathpart(arg_classdir) = 0;
     fclose(fp);
@@ -1101,16 +1139,16 @@ int gen_makefile( char *destfile, struct list *classlist )
   fprintf(fp, "\nCC = %s\n"
         "CCOPTS = %s\n\n", arg_mkfile_cc, arg_mkfile_ccopts);
   fprintf(fp, "all.o : %s ", OBJECT_NAME);
-  for (n = NULL; n = list_getnext(classlist, n, (void **) &nextcd);)
+  for (n = NULL; (n = list_getnext(classlist, n, (void **) &nextcd));)
     fprintf(fp, "%s.o ", nextcd->name);
   fprintf(fp, "\n\tjoin " OBJECT_NAME " ");
-  for (n = NULL; n = list_getnext(classlist, n, (void **) &nextcd);)
+  for (n = NULL; (n = list_getnext(classlist, n, (void **) &nextcd));)
     fprintf(fp, "%s.o ", nextcd->name);
   fprintf(fp, "AS all.o\n\n");
   fprintf(fp, "%s : %s %s ", OBJECT_NAME, SOURCE_NAME, HEADER_NAME);
   fprintf(fp, "\n\t$(CC) %s %s %s $(CCOPTS)\n\n",
         SOURCE_NAME, arg_mkfile_outarg, OBJECT_NAME);
-  for (n = NULL; n = list_getnext(classlist, n, (void **) &nextcd);)
+  for (n = NULL; (n = list_getnext(classlist, n, (void **) &nextcd));)
   {
     cn = nextcd->name;
     fprintf(fp, "%s.o : %s.c\n"
@@ -1146,7 +1184,7 @@ int getblnarg( char *argid, char *argline, int *blnlong )
   return 1;
 }
 
-int doargs( int argc, char *argv[] )
+int doargs( unsigned int argc, char *argv[] )
 {
   unsigned int i, success;
 
@@ -1158,12 +1196,15 @@ int doargs( int argc, char *argv[] )
       "Options:\n"
       "\n"
       " -b<basename>                                 - basename (.i.e. YAM) used in sources (required)\n"
-      " -gpl                                         - write GPL headers onto sources\n"
+      " -gpl                                         - write GPL headers onto sources\n");
+
+    printf(
       " -storm                                       - include storm/GoldED fold markers\n"
       " -i<includes>                                 - includes for Classes.h (.i.e. -i\"YAM.h\",\"YAM_hook.h\",<stdlib.h>\n"
       " -v                                           - verbose output while generating files\n"
       " -mkfile<makefile>,<cc>,<outarg>,<ccopts,...> - Create a makefile\n"
       "    (.i.e. -mkfileVMakefile,vc,-o,-O3,-+\n");
+
     return 0;
   }
   arg_gpl = 0;
@@ -1240,7 +1281,9 @@ int main( int argc, char *argv[] )
     gen_classheaders(&classlist);
     if (arg_mkfile_dest[0]) gen_makefile(arg_mkfile_dest, &classlist);
   }
-  while (n = list_remhead(&classlist)) {
+
+  while((n = list_remhead(&classlist)))
+  {
     free_classdef(n->data);
     free(n);
   }
