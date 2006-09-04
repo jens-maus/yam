@@ -2979,10 +2979,7 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
 
       if(FileExists(filename))
       {
-        char * a = GetStr(MSG_MA_ExportAppendOpts);
-        char * b = GetStr(MSG_MA_ExportAppendReq);
-
-        switch(MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_MESSAGEEXPORT), a, b))
+        switch(MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_MESSAGEEXPORT), GetStr(MSG_MA_ExportAppendOpts), GetStr(MSG_MA_ExportAppendReq)))
         {
           case 1: append = FALSE; break;
           case 2: append = TRUE; break;

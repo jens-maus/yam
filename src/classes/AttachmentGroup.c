@@ -144,7 +144,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 
         if(mailPart)
         {
-          char *ctDescr = DescribeCT(mailPart->ContentType);
+          const char *ctDescr = DescribeCT(mailPart->ContentType);
           LONG partNameLen = TextLength(&rp, mailPart->Name, strlen(mailPart->Name));
           LONG contentTypeLen = TextLength(&rp, ctDescr, strlen(ctDescr));
           LONG sizeLabelLen;
@@ -345,7 +345,7 @@ OVERLOAD(MUIM_Draw)
   // draw different text objects into our group
   if(((struct MUIP_Draw *)msg)->flags & MADF_DRAWOBJECT)
   {
-    char *attachmentLabel = GetStr(MSG_MA_ATTACHMENTS);
+    const char *attachmentLabel = GetStr(MSG_MA_ATTACHMENTS);
     struct List *childList = (struct List *)xget(obj, MUIA_Group_ChildList);
     struct TextExtent te;
     int cnt;
@@ -418,7 +418,7 @@ OVERLOAD(MUIM_Draw)
               topPosition += _font(obj)->tf_YSize;
               if(textSpaceHeight > 0)
               {
-                char *ctDescr = DescribeCT(mailPart->ContentType);
+                const char *ctDescr = DescribeCT(mailPart->ContentType);
                 cnt = TextFit(_rp(obj), ctDescr, strlen(ctDescr), &te, NULL, 1, textSpaceWidth, textSpaceHeight);
                 if(cnt > 0)
                 {

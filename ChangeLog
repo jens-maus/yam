@@ -4,6 +4,15 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-05  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_locale.c,h, misc: changed the GetStr() localization function to
+    return a "const char*" instead of a writeable char pointer. That should
+    make a write operation to the read-only defined locale strings impossible
+    and safe us for possible illegal memory accesses. Adapted the whole
+    YAM sources accordingly and propagated more "const" changes resulting
+    from the GetStr() change.
+
 2006-09-02  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: as properly described in bug #1550417 there should be no reason

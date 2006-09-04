@@ -41,21 +41,21 @@ const struct FC_Type _%i = { %d, %s };
 
 /*** Catalog functions ***/
 /// GetStr()
-char *GetStr(const void *fcstr)
+const char *GetStr(const void *fcstr)
 {
   const char *defaultstr = ((struct FC_Type *)fcstr)->Str;
 
   if(G->Catalog)
-    return (char *)GetCatalogStr(G->Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
+    return GetCatalogStr(G->Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
 
-  return (char *)defaultstr;
+  return defaultstr;
 }
 ///
 /// GetStripStr()
 // function that will strip out the special menusigns
-char *GetStripStr(const void *fcstr)
+const char *GetStripStr(const void *fcstr)
 {
-  char *loc_str = GetStr(fcstr);
+  const char *loc_str = GetStr(fcstr);
 
   return (loc_str[1] == 0 ? &loc_str[2] : loc_str);
 }

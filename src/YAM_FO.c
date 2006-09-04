@@ -392,7 +392,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
 ///
 /// FO_NewFolder
 //  Initializes a new folder and creates its directory
-struct Folder *FO_NewFolder(enum FolderType type, char *path, char *name)
+struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *name)
 {
    struct Folder *folder = calloc(1, sizeof(struct Folder));
    if (folder)
@@ -445,9 +445,9 @@ BOOL FO_FreeFolder(struct Folder *folder)
 ///
 /// FO_CreateFolder
 //  Adds a new entry to the folder list
-BOOL FO_CreateFolder(enum FolderType type, const char * const path, char *name)
+BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *name)
 {
-   struct Folder *folder = FO_NewFolder(type, (char *)path, name);
+   struct Folder *folder = FO_NewFolder(type, path, name);
 
    if (folder)
    {
@@ -1134,10 +1134,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
     case FT_CUSTOMSENT:
     case FT_CUSTOMMIXED:
     {
-      // CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
-      char *err = GetStr(MSG_CO_ConfirmDelete);
-
-      if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), err)))
+      if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_ConfirmDelete))))
       {
          DeleteMailDir(GetFolderDir(folder), FALSE);
          ClearMailList(folder, TRUE);
@@ -1167,11 +1164,8 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
       // get known if the active entry has subentries.
       if((tn_sub = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_group, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE)))
       {
-         // CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
-         char *err = GetStr(MSG_FO_GROUP_CONFDEL);
-
          // Now we popup a requester and if this requester is confirmed we move the subentries to the parent node.
-         if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), err)))
+         if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_FO_GROUP_CONFDEL))))
          {
             struct MUI_NListtree_TreeNode *tn_sub_next = tn_sub;
 
@@ -1476,8 +1470,12 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
 {
   #define SCANMSGS  5
 
-  char *toPattern,*toAddress,*notRecog,*res=NULL;
-  BOOL takePattern=TRUE,takeAddress=TRUE;
+  char *toPattern;
+  char *toAddress;
+  char *res=NULL;
+  const char *notRecog;
+  BOOL takePattern = TRUE;
+  BOOL takeAddress = TRUE;
   struct Folder *folder;
   struct Mail *mail;
   int i;

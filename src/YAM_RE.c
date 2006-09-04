@@ -3240,7 +3240,7 @@ void RE_ClickedOnMessage(char *address)
 {
    struct ABEntry *ab = NULL;
    int l, win, hits;
-   char *p, *gads, buf[SIZE_LARGE];
+   char *p, buf[SIZE_LARGE];
    char *body = NULL, *subject = NULL, *cc = NULL, *bcc = NULL;
 
    ENTER();
@@ -3280,9 +3280,8 @@ void RE_ClickedOnMessage(char *address)
    hits = AB_SearchEntry(address, ASM_ADDRESS|ASM_USER|ASM_LIST, &ab);
 
    snprintf(buf, sizeof(buf), GetStr(MSG_RE_SelectAddressReq), address);
-   gads = GetStr(hits ? MSG_RE_SelectAddressEdit : MSG_RE_SelectAddressAdd);
 
-   switch (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, gads, buf))
+   switch (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(hits ? MSG_RE_SelectAddressEdit : MSG_RE_SelectAddressAdd), buf))
    {
       case 1:
       {

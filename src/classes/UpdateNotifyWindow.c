@@ -74,10 +74,10 @@ HOOKPROTONHNO(DisplayFunc, LONG, struct NList_DisplayMessage *msg)
   else
   {
     // setup the listview titles
-    array[0] = GetStr(MSG_UPD_NOTIFICATION_COMP);
-    array[1] = GetStr(MSG_UPD_NOTIFICATION_RECENT);
-    array[2] = GetStr(MSG_UPD_NOTIFICATION_INSTALLED);
-    array[3] = GetStr(MSG_UPD_NOTIFICATION_URL);
+    array[0] = (STRPTR)GetStr(MSG_UPD_NOTIFICATION_COMP);
+    array[1] = (STRPTR)GetStr(MSG_UPD_NOTIFICATION_RECENT);
+    array[2] = (STRPTR)GetStr(MSG_UPD_NOTIFICATION_INSTALLED);
+    array[3] = (STRPTR)GetStr(MSG_UPD_NOTIFICATION_URL);
   }
 
   return 0;

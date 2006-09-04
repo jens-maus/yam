@@ -241,33 +241,33 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
     if(!searchWinHook && !(folder = FO_GetCurrentFolder()))
       return 0;
 
-    array[0] = GetStr(MSG_MA_TitleStatus);
+    array[0] = (STRPTR)GetStr(MSG_MA_TitleStatus);
 
     // depending on the current folder and the parent object we
     // display different titles for different columns
     if(!searchWinHook && isOutgoingFolder(folder))
     {
-      array[1] = GetStr(MSG_To);
-      array[7] = GetStr(MSG_DATE_SENT);
+      array[1] = (STRPTR)GetStr(MSG_To);
+      array[7] = (STRPTR)GetStr(MSG_DATE_SENT);
     }
     else if(searchWinHook || folder->Type == FT_CUSTOMMIXED || folder->Type == FT_DELETED)
     {
-      array[1] = GetStr(MSG_FROMTO);
-      array[7] = GetStr(MSG_DATE_SNTRCVD);
+      array[1] = (STRPTR)GetStr(MSG_FROMTO);
+      array[7] = (STRPTR)GetStr(MSG_DATE_SNTRCVD);
     }
     else
     {
-      array[1] = GetStr(MSG_From);
-      array[7] = GetStr(MSG_DATE_RECEIVED);
+      array[1] = (STRPTR)GetStr(MSG_From);
+      array[7] = (STRPTR)GetStr(MSG_DATE_RECEIVED);
     }
 
-    array[2] = GetStr(MSG_ReturnAddress);
-    array[3] = GetStr(MSG_Subject);
-    array[4] = GetStr(MSG_Date);
-    array[5] = GetStr(MSG_Size);
-    array[6] = GetStr(MSG_Filename);
+    array[2] = (STRPTR)GetStr(MSG_ReturnAddress);
+    array[3] = (STRPTR)GetStr(MSG_Subject);
+    array[4] = (STRPTR)GetStr(MSG_Date);
+    array[5] = (STRPTR)GetStr(MSG_Size);
+    array[6] = (STRPTR)GetStr(MSG_Filename);
 
-    array[8] = GetStr(MSG_Folder); // The Folder is just a dummy entry to serve the SearchWindowDisplayHook
+    array[8] = (STRPTR)GetStr(MSG_Folder); // The Folder is just a dummy entry to serve the SearchWindowDisplayHook
   }
 
   return 0;

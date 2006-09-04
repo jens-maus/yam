@@ -812,7 +812,7 @@ static void FreeXPKPackerList(void)
 
 /// SplashProgress
 //  Shows progress of program initialization in the splash window
-static void SplashProgress(char *txt, int percent)
+static void SplashProgress(const char *txt, int percent)
 {
   DoMethod(G->SplashWinObject, MUIM_Splashwindow_StatusChange, txt, percent);
 }
@@ -1198,9 +1198,9 @@ static void Abort(const void *formatnum, ...)
 
          ErrReq.es_StructSize   = sizeof(struct EasyStruct);
          ErrReq.es_Flags        = 0;
-         ErrReq.es_Title        = GetStr(MSG_ErrorStartup);
+         ErrReq.es_Title        = (STRPTR)GetStr(MSG_ErrorStartup);
          ErrReq.es_TextFormat   = error;
-         ErrReq.es_GadgetFormat = GetStr(MSG_Quit);
+         ErrReq.es_GadgetFormat = (STRPTR)GetStr(MSG_Quit);
 
          EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
       }
@@ -1621,7 +1621,7 @@ static void Initialise2(void)
 static void Initialise(BOOL hidden)
 {
    int i;
-   char *errorMsg = NULL;
+   const char *errorMsg = NULL;
    char pathbuf[SIZE_PATH];
    char filebuf[SIZE_PATHFILE];
    static const char *icnames[MAXICONS] =

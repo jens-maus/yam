@@ -327,8 +327,8 @@ OVERLOAD(OM_NEW)
   Object *searchOptionsList;
   Object *searchString;
   Object *clearButton;
-  static char *searchOptions[7];
-  static char *viewOptions[10];
+  static const char *searchOptions[7];
+  static const char *viewOptions[10];
   
   searchOptions[0] = GetStr(MSG_QUICKSEARCH_SO_SUBJECT);
   searchOptions[1] = GetStr(MSG_QUICKSEARCH_SO_SENDER);

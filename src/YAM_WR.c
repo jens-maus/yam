@@ -1452,16 +1452,13 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    }
    else if(!addr[0] && quietMode == FALSE)
    {
-      // CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
-      char *err = GetStr(MSG_WR_ErrorNoRcpt);
-
       // set the TO Field active and go back
       if(winOpen)
         set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
 
       set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
 
-      if(MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), err))
+      if(MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), GetStr(MSG_WR_ErrorNoRcpt)))
         mode = WRITE_HOLD;
       else
       {
@@ -1475,15 +1472,12 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    get(gui->ST_SUBJECT, MUIA_String_Contents, &comp.Subject);
    if(wr->Mode != NEW_BOUNCE && quietMode == FALSE && C->WarnSubject && strlen(comp.Subject) == 0)
    {
-      // CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
-      char *err = GetStr(MSG_WR_NOSUBJECTREQ);
-
       if(winOpen)
         set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
 
       set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
 
-      if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_OKAYCANCELREQ), err))
+      if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_OKAYCANCELREQ), GetStr(MSG_WR_NOSUBJECTREQ)))
       {
         LEAVE();
         return;
@@ -1512,16 +1506,13 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       }
       else if(!addr[0] && quietMode == FALSE)
       {
-         // CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
-         char *err = GetStr(MSG_WR_ERRORNOSENDER);
-
          // set the TO Field active and go back
          if(winOpen)
            set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
 
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
 
-         if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NOSENDERREQGAD), err))
+         if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NOSENDERREQGAD), GetStr(MSG_WR_ERRORNOSENDER)))
          {
            LEAVE();
            return;
@@ -2480,17 +2471,17 @@ HOOKPROTONH(WR_LV_DspFunc, long, char **array, struct Attach *entry)
    {
       array[0] = entry->Name;
       snprintf(array[1] = dispsz, sizeof(dispsz), "%d", entry->Size);
-      array[2] = DescribeCT(entry->ContentType);
-      array[3] = (char *)(entry->IsMIME ? "MIME" : "UU");
+      array[2] = (STRPTR)DescribeCT(entry->ContentType);
+      array[3] = (STRPTR)(entry->IsMIME ? "MIME" : "UU");
       array[4] = entry->Description;
    }
    else
    {
-      array[0] = GetStr(MSG_WR_TitleFile);
-      array[1] = GetStr(MSG_WR_TitleSize);
-      array[2] = GetStr(MSG_WR_TitleContents);
-      array[3] = GetStr(MSG_WR_TitleEncoding);
-      array[4] = GetStr(MSG_WR_TitleDescription);
+      array[0] = (STRPTR)GetStr(MSG_WR_TitleFile);
+      array[1] = (STRPTR)GetStr(MSG_WR_TitleSize);
+      array[2] = (STRPTR)GetStr(MSG_WR_TitleContents);
+      array[3] = (STRPTR)GetStr(MSG_WR_TitleEncoding);
+      array[4] = (STRPTR)GetStr(MSG_WR_TitleDescription);
    }
    return 0;
 }

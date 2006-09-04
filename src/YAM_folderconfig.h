@@ -155,7 +155,7 @@ extern struct Hook FO_NewFolderGroupHook;
 extern struct Hook FO_NewFolderHook;
 extern struct Hook FO_SetOrderHook;
 
-BOOL            FO_CreateFolder(enum FolderType type, const char * const path, char *name);
+BOOL            FO_CreateFolder(enum FolderType type, const char * const path, const char *name);
 struct Folder **FO_CreateList(void);
 BOOL            FO_FreeFolder(struct Folder *folder);
 struct Folder * FO_GetCurrentFolder(void);
@@ -167,7 +167,7 @@ int             FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups);
 BOOL            FO_LoadConfig(struct Folder *fo);
 BOOL            FO_LoadTree(char *fname);
 BOOL            FO_LoadFolderImages(struct Folder *fo);
-struct Folder * FO_NewFolder(enum FolderType type, char *path, char *name);
+struct Folder * FO_NewFolder(enum FolderType type, const char *path, const char *name);
 BOOL            FO_SaveConfig(struct Folder *fo);
 BOOL            FO_SaveTree(char *fname);
 

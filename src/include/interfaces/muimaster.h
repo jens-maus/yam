@@ -37,8 +37,8 @@ struct MUIMasterIFace
 	Object * APICALL (*MUI_NewObjectA)(struct MUIMasterIFace *Self, const char * par1, struct TagItem * last);
 	Object * APICALL (*MUI_NewObject)(struct MUIMasterIFace *Self, const char * par1, ...);
 	VOID APICALL (*MUI_DisposeObject)(struct MUIMasterIFace *Self, Object * last);
-	LONG APICALL (*MUI_RequestA)(struct MUIMasterIFace *Self, APTR par1, APTR par2, LONGBITS par3, char * par4, char * par5, char * par6, APTR last);
-	LONG APICALL (*MUI_Request)(struct MUIMasterIFace *Self, APTR par1, APTR par2, LONGBITS par3, char * par4, char * par5, char * par6, ...);
+	LONG APICALL (*MUI_RequestA)(struct MUIMasterIFace *Self, APTR par1, APTR par2, LONGBITS par3, const char * par4, const char * par5, const char * par6, APTR last);
+	LONG APICALL (*MUI_Request)(struct MUIMasterIFace *Self, APTR par1, APTR par2, LONGBITS par3, const char * par4, const char * par5, const char * par6, ...);
 	APTR APICALL (*MUI_AllocAslRequest)(struct MUIMasterIFace *Self, unsigned long par1, struct TagItem * last);
 	APTR APICALL (*MUI_AllocAslRequestTags)(struct MUIMasterIFace *Self, unsigned long par1, ...);
 	BOOL APICALL (*MUI_AslRequest)(struct MUIMasterIFace *Self, APTR par1, struct TagItem * last);

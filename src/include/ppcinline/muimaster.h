@@ -106,9 +106,9 @@
 		APTR , __p0, d0, \
 		APTR , __p1, d1, \
 		LONGBITS , __p2, d2, \
-		char *, __p3, a0, \
-		char *, __p4, a1, \
-		char *, __p5, a2, \
+		const char *, __p3, a0, \
+		const char *, __p4, a1, \
+		const char *, __p5, a2, \
 		APTR , __p6, a3, \
 		, MUIMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
 

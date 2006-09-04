@@ -71,7 +71,7 @@ MakeStaticHook(putCharHook, putCharFunc);
 ///
 /// ER_NewError
 /*** ER_NewError - Adds a new error message and displays it ***/
-void STDARGS VARARGS68K ER_NewError(char *error, ...)
+void STDARGS VARARGS68K ER_NewError(const char *error, ...)
 {
    static char label[SIZE_SMALL];
    struct ER_GUIData *gui;

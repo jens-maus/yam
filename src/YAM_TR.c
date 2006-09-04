@@ -2892,7 +2892,7 @@ static void TR_TransStat_Start(struct TransStat *ts)
 ///
 /// TR_TransStat_NextMsg
 //  Updates statistics display for next message
-static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, LONG size, char *status)
+static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, LONG size, const char *status)
 {
    ts->Size_Curr = 0;
    ts->Size_Curr_Max = size;
@@ -4862,11 +4862,11 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
   }
   else
   {
-    array[0] = GetStr(MSG_MA_TitleStatus);
-    array[1] = GetStr(MSG_Size);
-    array[2] = GetStr(MSG_From);
-    array[3] = GetStr(MSG_Subject);
-    array[4] = GetStr(MSG_Date);
+    array[0] = (STRPTR)GetStr(MSG_MA_TitleStatus);
+    array[1] = (STRPTR)GetStr(MSG_Size);
+    array[2] = (STRPTR)GetStr(MSG_From);
+    array[3] = (STRPTR)GetStr(MSG_Subject);
+    array[4] = (STRPTR)GetStr(MSG_Date);
   }
 
   return 0;

@@ -47,6 +47,6 @@ Object *CO_Page13(struct CO_ClassData *data);
 Object *CO_Page14(struct CO_ClassData *data);
 Object *CO_Page15(struct CO_ClassData *data);
 
-Object *MakeMimeTypePop(Object **string, char *desc);
+Object *MakeMimeTypePop(Object **string, const char *desc);
 
 #endif /* YAM_CONFIGGUI_H */

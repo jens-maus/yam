@@ -457,8 +457,8 @@ HOOKPROTONH(US_LV_DspFunc, long, char **array, struct User *entry)
   }
   else
   {
-    array[0] = GetStr(MSG_US_TitleUserName);
-    array[1] = GetStr(MSG_US_TitleMailDir);
+    array[0] = (STRPTR)GetStr(MSG_US_TitleUserName);
+    array[1] = (STRPTR)GetStr(MSG_US_TitleMailDir);
   }
 
   return 0;

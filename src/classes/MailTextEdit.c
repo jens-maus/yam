@@ -201,7 +201,7 @@ OVERLOAD(MUIM_HandleEvent)
 /// OVERLOAD(MUIM_TextEditor_HandleError)
 OVERLOAD(MUIM_TextEditor_HandleError)
 {
-  char *errortxt = NULL;
+  const char *errortxt = NULL;
 
   ENTER();
 

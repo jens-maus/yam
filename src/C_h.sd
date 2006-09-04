@@ -37,8 +37,8 @@
 
 #define MSG_Space ((const void *)1)
 
-extern char *GetStr(const void *);
-extern char *GetStripStr(const void *);
+extern const char *GetStr(const void *);
+extern const char *GetStripStr(const void *);
 extern void Open%bCatalog(void);
 extern void Close%bCatalog(void);
 

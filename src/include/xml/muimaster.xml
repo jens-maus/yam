@@ -12,11 +12,11 @@
 		<method name="Expunge" result="void" status="unimplemented"/>
 		<method name="Clone" result="struct Interface *" status="unimplemented"/>
 		<method name="MUI_NewObjectA" result="Object *" inline4="normal">
-			<arg name="par1" type="char *"/>
+			<arg name="par1" type="const char *"/>
 			<arg name="last" type="struct TagItem *"/>
 		</method>
 		<method name="MUI_NewObject" result="Object *" inline4="simple">
-			<arg name="par1" type="char *"/>
+			<arg name="par1" type="const char *"/>
 			<vararg name="last" type="Tag"/>
 		</method>
 		<method name="MUI_DisposeObject" result="VOID" inline4="normal">
@@ -26,18 +26,18 @@
 			<arg name="par1" type="APTR"/>
 			<arg name="par2" type="APTR"/>
 			<arg name="par3" type="LONGBITS"/>
-			<arg name="par4" type="char *"/>
-			<arg name="par5" type="char *"/>
-			<arg name="par6" type="char *"/>
+			<arg name="par4" type="const char *"/>
+			<arg name="par5" type="const char *"/>
+			<arg name="par6" type="const char *"/>
 			<arg name="last" type="APTR"/>
 		</method>
 		<method name="MUI_Request" result="LONG" inline4="normal">
 			<arg name="par1" type="APTR"/>
 			<arg name="par2" type="APTR"/>
 			<arg name="par3" type="LONGBITS"/>
-			<arg name="par4" type="char *"/>
-			<arg name="par5" type="char *"/>
-			<arg name="par6" type="char *"/>
+			<arg name="par4" type="const char *"/>
+			<arg name="par5" type="const char *"/>
+			<arg name="par6" type="const char *"/>
 			<vararg name="tag1" type="ULONG"/>
 		</method>
 		<method name="MUI_AllocAslRequest" result="APTR" inline4="normal">
@@ -65,7 +65,7 @@
 			<arg name="last" type="LONG"/>
 		</method>
 		<method name="MUI_GetClass" result="struct IClass *" inline4="normal">
-			<arg name="last" type="char *"/>
+			<arg name="last" type="const char *"/>
 		</method>
 		<method name="MUI_FreeClass" result="VOID" inline4="normal">
 			<arg name="last" type="struct IClass *"/>
@@ -84,7 +84,7 @@
 		</method>
 		<method name="MUI_CreateCustomClass" result="struct MUI_CustomClass *" inline4="normal">
 			<arg name="par1" type="struct Library *"/>
-			<arg name="par2" type="char *"/>
+			<arg name="par2" type="const char *"/>
 			<arg name="par3" type="struct MUI_CustomClass *"/>
 			<arg name="par4" type="int"/>
 			<arg name="last" type="APTR"/>

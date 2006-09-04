@@ -61,7 +61,7 @@
 /* local protos */
 static STACKEXT BOOL AB_FindTodaysBirthdates(struct MUI_NListtree_TreeNode*, long);
 static STACKEXT void AB_SaveTreeNode(FILE*, struct MUI_NListtree_TreeNode *);
-static void AB_PrintField(FILE*, char*, char*);
+static void AB_PrintField(FILE*, const char*, const char*);
 static void AB_PrintShortEntry(FILE*, struct ABEntry*);
 static void AB_PrintLongEntry(FILE*, struct ABEntry*);
 static STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode*, FILE*, int);
@@ -669,7 +669,7 @@ MakeStaticHook(AB_SaveABookAsHook, AB_SaveABookAsFunc);
 ///
 /// AB_PrintField
 //  Formats and prints a single field
-static void AB_PrintField(FILE *prt, char *fieldname, char *field)
+static void AB_PrintField(FILE *prt, const char *fieldname, const char *field)
 {
    if (*field) fprintf(prt, "%-20.20s: %-50.50s\n", StripUnderscore(fieldname), field);
 }
@@ -1120,17 +1120,17 @@ HOOKPROTONHNO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
    }
    else
    {
-      msg->Array[0] = GetStr(MSG_AB_TitleAlias);
-      msg->Array[1] = GetStr(MSG_AB_TitleName);
-      msg->Array[2] = GetStr(MSG_AB_TitleDescription);
-      msg->Array[3] = GetStr(MSG_AB_TitleAddress);
-      msg->Array[4] = GetStr(MSG_AB_TitleStreet);
-      msg->Array[5] = GetStr(MSG_AB_TitleCity);
-      msg->Array[6] = GetStr(MSG_AB_TitleCountry);
-      msg->Array[7] = GetStr(MSG_AB_TitlePhone);
-      msg->Array[8] = GetStr(MSG_AB_TitleBirthDate);
-      msg->Array[9] = GetStr(MSG_AB_TitlePGPId);
-      msg->Array[10]= GetStr(MSG_AB_TitleHomepage);
+      msg->Array[0] = (STRPTR)GetStr(MSG_AB_TitleAlias);
+      msg->Array[1] = (STRPTR)GetStr(MSG_AB_TitleName);
+      msg->Array[2] = (STRPTR)GetStr(MSG_AB_TitleDescription);
+      msg->Array[3] = (STRPTR)GetStr(MSG_AB_TitleAddress);
+      msg->Array[4] = (STRPTR)GetStr(MSG_AB_TitleStreet);
+      msg->Array[5] = (STRPTR)GetStr(MSG_AB_TitleCity);
+      msg->Array[6] = (STRPTR)GetStr(MSG_AB_TitleCountry);
+      msg->Array[7] = (STRPTR)GetStr(MSG_AB_TitlePhone);
+      msg->Array[8] = (STRPTR)GetStr(MSG_AB_TitleBirthDate);
+      msg->Array[9] = (STRPTR)GetStr(MSG_AB_TitlePGPId);
+      msg->Array[10]= (STRPTR)GetStr(MSG_AB_TitleHomepage);
    }
 
    return 0;

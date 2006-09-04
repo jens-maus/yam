@@ -2303,11 +2303,11 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
    }
    else
    {
-      msg->Array[0] = GetStr(MSG_Folder);
-      msg->Array[1] = GetStr(MSG_Total);
-      msg->Array[2] = GetStr(MSG_Unread);
-      msg->Array[3] = GetStr(MSG_New);
-      msg->Array[4] = GetStr(MSG_Size);
+      msg->Array[0] = (STRPTR)GetStr(MSG_Folder);
+      msg->Array[1] = (STRPTR)GetStr(MSG_Total);
+      msg->Array[2] = (STRPTR)GetStr(MSG_Unread);
+      msg->Array[3] = (STRPTR)GetStr(MSG_New);
+      msg->Array[4] = (STRPTR)GetStr(MSG_Size);
    }
 
    return 0;

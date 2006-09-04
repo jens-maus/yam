@@ -228,7 +228,7 @@ HOOKPROTONH(AttachDspFunc, long, char **array, struct Part *entry)
         snprintf(array[0] = dispnu, sizeof(dispnu), "%d", entry->Nr);
 
       if(*entry->Name) array[1] = entry->Name;
-      else             array[1] = DescribeCT(entry->ContentType);
+      else             array[1] = (STRPTR)DescribeCT(entry->ContentType);
 
       if(entry->Size > 0)
       {
@@ -245,9 +245,9 @@ HOOKPROTONH(AttachDspFunc, long, char **array, struct Part *entry)
    }
    else
    {
-      array[0] = GetStr(MSG_ATTACH_NO);
-      array[1] = GetStr(MSG_ATTACH_PART);
-      array[2] = GetStr(MSG_Size);
+      array[0] = (STRPTR)GetStr(MSG_ATTACH_NO);
+      array[1] = (STRPTR)GetStr(MSG_ATTACH_PART);
+      array[2] = (STRPTR)GetStr(MSG_Size);
    }
 
    return 0;
@@ -502,7 +502,9 @@ LONG STDARGS YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const ch
 ///
 /// StringRequest
 //  Puts up a string requester
-int StringRequest(char *string, int size, const char *title, char *body, char *yestext, char *alttext, char *notext, BOOL secret, Object *parent)
+int StringRequest(char *string, int size, const char *title, const char *body,
+                  const char *yestext, const char *alttext, const char *notext,
+                  BOOL secret, Object *parent)
 {
   Object *bt_okay;
   Object *bt_middle;
@@ -590,7 +592,8 @@ int StringRequest(char *string, int size, const char *title, char *body, char *y
 ///
 /// FolderRequest
 //  Allows user to choose a folder from a list
-struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notext, struct Folder *exclude, Object *parent)
+struct Folder *FolderRequest(const char *title, const char *body, const char *yestext, const char *notext,
+                             struct Folder *exclude, Object *parent)
 {
   struct Folder *folder = (struct Folder *)-1;
   Object *bt_okay;
@@ -702,7 +705,8 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
 ///
 /// AttachRequest
 //  Allows user to select a message part (attachment) from a list
-struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext, int mode, struct ReadMailData *rmData)
+struct Part *AttachRequest(const char *title, const char *body, const char *yestext,
+                           const char *notext, int mode, struct ReadMailData *rmData)
 {
   struct Part *retpart = (struct Part *)-1, *part;
   APTR bt_okay, bt_cancel, wi_ar, lv_attach;
@@ -846,7 +850,7 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
 ///
 /// InfoWindow
 //  Displays a text in an own modeless window
-void InfoWindow(char *title, char *body, char *oktext, APTR parent)
+void InfoWindow(const char *title, const char *body, const char *oktext, APTR parent)
 {
    Object *bt_okay;
    Object *wi_iw;
@@ -910,17 +914,19 @@ BOOL MatchNoCase(const char *string, const char *match)
 ///
 /// StripUnderscore
 //  Removes underscore from button labels
-char *StripUnderscore(char *label)
+char *StripUnderscore(const char *label)
 {
-   if (strchr(label,'_'))
-   {
-      static char newlabel[SIZE_DEFAULT];
-      char *p = newlabel;
-      for (; *label; label++) if (*label != '_') *p++ = *label;
-      *p = 0;
-      return newlabel;
-   }
-   else return label;
+  static char newlabel[SIZE_DEFAULT];
+  char *p;
+
+  for(p=newlabel; *label; label++)
+  {
+    if(*label != '_')
+      *p++ = *label;
+  }
+  *p = '\0';
+
+  return newlabel;
 }
 ///
 /// GetNextLine
@@ -1816,7 +1822,7 @@ void SimpleWordWrap(char *filename, int wrapsize)
 ///
 /// ReqFile
 //  Puts up a file requester
-int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, const char *drawer, const char *file)
+int ReqFile(enum ReqFileType num, Object *win, const char *title, int mode, const char *drawer, const char *file)
 {
   // the following arrays depend on the ReqFileType enumeration
   static const char *pattern[MAXASL] =
@@ -1836,7 +1842,6 @@ int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, const char
    {
      FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE
    };
-   char *postext = hasSaveModeFlag(mode) ? GetStr(MSG_UT_Save) : GetStr(MSG_UT_Load);
    int skip = *file ? 1 : 2;
    struct Window *truewin = (struct Window *)xget(win, MUIA_Window_Window);
 
@@ -1845,7 +1850,7 @@ int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, const char
    return MUI_AslRequestTags( G->ASLReq[num],
                               ASLFR_Window,        truewin,
                               ASLFR_TitleText,     title,
-                              ASLFR_PositiveText,  postext,
+                              ASLFR_PositiveText,  hasSaveModeFlag(mode) ? GetStr(MSG_UT_Save) : GetStr(MSG_UT_Load),
                               ASLFR_InitialFile,   file,
                               ASLFR_DoSaveMode,    hasSaveModeFlag(mode),
                               ASLFR_DoMultiSelect, hasMultiSelectFlag(mode),
@@ -2426,9 +2431,9 @@ ULONG CompressMsgID(char *msgid)
 ///
 /// DescribeCT
 //  Returns description of a content type
-char *DescribeCT(const char *ct)
+const char *DescribeCT(const char *ct)
 {
-  char *ret = (char *)ct;
+  const char *ret = ct;
 
   ENTER();
 
@@ -3997,7 +4002,7 @@ Object *MakeCheck(const char *label)
 ///
 /// MakeCheckGroup
 //  Creates a labelled MUI checkmark object
-Object *MakeCheckGroup(Object **check, char *label)
+Object *MakeCheckGroup(Object **check, const char *label)
 {
    return
    HGroup,
@@ -4051,7 +4056,7 @@ Object *MakeInteger(int maxlen, const char *label)
 ///
 /// MakePGPKeyList
 //  Creates a PGP id popup list
-Object *MakePGPKeyList(Object **st, BOOL secret, char *label)
+Object *MakePGPKeyList(Object **st, BOOL secret, const char *label)
 {
    Object *po, *lv;
 
@@ -4670,7 +4675,7 @@ int PGPCommand(const char *progname, const char *options, int flags)
 ///
 /// AppendToLogfile
 //  Appends a line to the logfile
-void STDARGS AppendToLogfile(enum LFMode mode, int id, char *text, ...)
+void STDARGS AppendToLogfile(enum LFMode mode, int id, const char *text, ...)
 {
   FILE *fh;
   char logfile[SIZE_PATHFILE];
@@ -5075,7 +5080,7 @@ BOOL CheckPrinter(void)
 {
    struct MsgPort *PrintPort;
    struct IOStdReq *PrintIO;
-   char *error = NULL;
+   const char *error = NULL;
 
    if ((PrintPort = CreateMsgPort()))
    {

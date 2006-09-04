@@ -7,7 +7,7 @@ Object * __MUI_NewObjectA(__reg("a0") const char * a0arg, __reg("a1") struct Tag
 VOID __MUI_DisposeObject(__reg("a0") Object * obj, __reg("a6") void *)="\tjsr\t-36(a6)";
 #define MUI_DisposeObject(obj) __MUI_DisposeObject((obj), MUIMasterBase)
 
-LONG __MUI_RequestA(__reg("d0") APTR app, __reg("d1") APTR win, __reg("d2") LONGBITS flags, __reg("a0") char * title, __reg("a1") char * gadgets, __reg("a2") char * format, __reg("a3") APTR params, __reg("a6") void *)="\tjsr\t-42(a6)";
+LONG __MUI_RequestA(__reg("d0") APTR app, __reg("d1") APTR win, __reg("d2") LONGBITS flags, __reg("a0") const char * title, __reg("a1") const char * gadgets, __reg("a2") const char * format, __reg("a3") APTR params, __reg("a6") void *)="\tjsr\t-42(a6)";
 #define MUI_RequestA(app, win, flags, title, gadgets, format, params) __MUI_RequestA((app), (win), (flags), (title), (gadgets), (format), (params), MUIMasterBase)
 
 APTR __MUI_AllocAslRequest(__reg("d0") unsigned long type, __reg("a0") struct TagItem * tags, __reg("a6") void *)="\tjsr\t-48(a6)";

@@ -63,7 +63,7 @@ enum VarPopMode { VPM_FORWARD=0, VPM_REPLYHELLO, VPM_REPLYINTRO, VPM_REPLYBYE,
 
 /* local protos */
 static Object *MakeVarPop(Object **, enum VarPopMode, int, const char *);
-static Object *MakePhraseGroup(Object **, Object **, Object **, char*, char*);
+static Object *MakePhraseGroup(Object **, Object **, Object **, const char*, const char*);
 static Object *MakeStaticCheck(void);
 
 /***************************************************************************
@@ -550,7 +550,7 @@ MakeStaticHook(PO_MimeTypeListCloseHook, PO_MimeTypeListCloseFunc);
 ///
 /// MakeMimeTypePop
 //  Creates a popup list of available internal MIME types
-Object *MakeMimeTypePop(Object **string, char *desc)
+Object *MakeMimeTypePop(Object **string, const char *desc)
 {
   Object *lv;
   Object *po;
@@ -697,10 +697,11 @@ static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, const
 ///
 /// MakePhraseGroup
 //  Creates a cycle/string gadgets for forward and reply phrases
-static Object *MakePhraseGroup(Object **hello, Object **intro, Object **bye, char *label, char *help)
+static Object *MakePhraseGroup(Object **hello, Object **intro, Object **bye,
+                               const char *label, const char *help)
 {
    Object *grp, *cycl, *pgrp;
-   static char *cytext[4];
+   static const char *cytext[4];
 
    cytext[0] = GetStr(MSG_CO_PhraseOpen);
    cytext[1] = GetStr(MSG_CO_PhraseIntro);
@@ -1093,7 +1094,7 @@ Object *CO_Page0(struct CO_ClassData *data)
 Object *CO_Page1(struct CO_ClassData *data)
 {
    Object *grp;
-   static char *secureMethods[4];
+   static const char *secureMethods[4];
 
    secureMethods[0] = GetStr(MSG_CO_SMTPSECURE_NO);
    secureMethods[1] = GetStr(MSG_CO_SMTPSECURE_TLS);
@@ -1388,7 +1389,7 @@ Object *CO_Page2(struct CO_ClassData *data)
 /// CO_Page3  (Filters)
 Object *CO_Page3(struct CO_ClassData *data)
 {
-   static char *rtitles[4];
+   static const char *rtitles[4];
    Object *grp;
    Object *bt_moveto;
 

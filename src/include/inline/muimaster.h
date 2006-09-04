@@ -120,7 +120,7 @@
 	, MUIMASTER_BASE_NAME)
 
 #define MUI_RequestA(app, win, flags, title, gadgets, format, params) \
-	LP7(0x2a, LONG, MUI_RequestA, APTR, app, d0, APTR, win, d1, LONGBITS, flags, d2, char *, title, a0, char *, gadgets, a1, char *, format, a2, APTR, params, a3, \
+	LP7(0x2a, LONG, MUI_RequestA, APTR, app, d0, APTR, win, d1, LONGBITS, flags, d2, const char *, title, a0, const char *, gadgets, a1, const char *, format, a2, APTR, params, a3, \
 	, MUIMASTER_BASE_NAME)
 
 #ifndef NO_INLINE_STDARG

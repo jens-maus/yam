@@ -472,34 +472,23 @@ static struct EA_ClassData *EA_New(int winnum, int type)
    struct EA_ClassData *data = calloc(1, sizeof(struct EA_ClassData));
    if (data)
    {
-      static STRPTR SecurityCycleEntries[6];
       Object *group = NULL;
       Object *bt_homepage;
       Object *bt_sort;
-
-      memset(&SecurityCycleEntries, 0, sizeof(SecurityCycleEntries));
 
       data->Type = type;
       switch (type)
       {
          case AET_USER:
-          /* initialize string array for cycle object on first invocation */
-          if(NULL == SecurityCycleEntries[0])
-          {
-            ULONG i;
-            static const void *SecurityCycleStrings[ARRAY_SIZE(SecurityCycleEntries)] =
-            {
-              MSG_WR_SecNone,
-              MSG_WR_SecSign,
-              MSG_WR_SecEncrypt,
-              MSG_WR_SecBoth,
-              MSG_WR_SecAnon,
-              NULL
-            };
+         {
+          static const char *SecurityCycleEntries[6];
 
-            for(i=0; i<ARRAY_SIZE(SecurityCycleEntries)-1; i++)
-              SecurityCycleEntries[i] = GetStr(SecurityCycleStrings[i]);
-          }
+          SecurityCycleEntries[0] = GetStr(MSG_WR_SecNone);
+          SecurityCycleEntries[1] = GetStr(MSG_WR_SecSign);
+          SecurityCycleEntries[2] = GetStr(MSG_WR_SecEncrypt);
+          SecurityCycleEntries[3] = GetStr(MSG_WR_SecBoth);
+          SecurityCycleEntries[4] = GetStr(MSG_WR_SecAnon);
+          SecurityCycleEntries[5] = NULL;
 
           /* build MUI object tree */
           group = HGroup,
@@ -584,7 +573,9 @@ static struct EA_ClassData *EA_New(int winnum, int type)
 
                DoMethod(bt_homepage, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &EA_HomepageHook, winnum);
             }
-            break;
+         }
+         break;
+
          case AET_GROUP: group = ColGroup(2), GroupFrame,
                MUIA_Background, MUII_GroupBack,
                Child, Label2(GetStr(MSG_EA_Alias)),
