@@ -491,7 +491,7 @@ OVERLOAD(OM_GET)
 
 /* Public Methods */
 /// DECLARE(SearchContentChanged)
-DECLARE(SearchContentChanged) // char* content;
+DECLARE(SearchContentChanged) // char* content
 {
   GETDATA;
 
@@ -541,7 +541,7 @@ DECLARE(SearchContentChanged) // char* content;
 
 ///
 /// DECLARE(SearchOptionChanged)
-DECLARE(SearchOptionChanged) // int activeSearchOption;
+DECLARE(SearchOptionChanged) // int activeSearchOption
 {
   GETDATA;
   char *searchContent = (char *)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
@@ -569,7 +569,7 @@ DECLARE(SearchOptionChanged) // int activeSearchOption;
 
 ///
 /// DECLARE(ViewOptionChanged)
-DECLARE(ViewOptionChanged) // int activeCycle;
+DECLARE(ViewOptionChanged) // int activeCycle
 {
   GETDATA;
   char *searchContent = (char *)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
