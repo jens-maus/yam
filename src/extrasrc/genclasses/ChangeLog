@@ -6,6 +6,8 @@ $Id$
 
 2006-09-05  Jens Langner <Jens.Langner@light-speed.de>
 
+    * gc.c: added workaround to catch cases where doubled ';' chars
+      in MUIP structures will be suppressed.
     * gc.c: raised the default warning level to "-pedantic" for GCC
       as we want to make sure it compiles on almost every system with
       every compiler involved. However, the "-Wno-strict-aliasing" is

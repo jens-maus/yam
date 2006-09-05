@@ -1005,10 +1005,29 @@ int gen_header( char *destfile, struct list *classlist )
         "struct MUIP_%s_%s\n"
         "{\n"
         "  ULONG methodID;\n", cn, nextdd->name);
-      if (strlen(nextdd->params) > 0)
+
+      if(strlen(nextdd->params) > 0)
       {
-        for (p = nextdd->params;;) if ((p = strchr(p, ','))) *p++ = ';'; else break;
-        fprintf(fp, "  %s;\n", nextdd->params);
+        char *lp;
+
+        for(p = lp = nextdd->params;;)
+        {
+          if((p = strpbrk(lp, ",;")))
+          {
+            *p++ = '\0';
+
+            fprintf(fp, "  %s;\n", lp);
+
+            lp = p;
+          }
+          else
+          {
+            if(strlen(lp) > 0)
+              fprintf(fp, "  %s;\n", lp);
+
+            break;
+          }
+        }
       }
       fprintf(fp, "};\n\n");
     }
