@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_compiler.h
-        Versionstring:  $VER: SDI_compiler.h 1.21 (28.02.2005)
+        Versionstring:  $VER: SDI_compiler.h 1.24 (06.05.2006)
         Author:         Dirk Stöcker & Jens Langner
         Distribution:   PD
         Project page:   http://www.sf.net/projects/sditools/
@@ -40,6 +40,9 @@
                   added missing vbcc/VARARGS68K define.
                   moved morphos SDI_EmulLib Stuff into compilers.h. I know it's not
                   compiler specific,  (Guido Mersmann)
+ 1.23  30.04.06 : modified to get it compatible to AROS. (Guido Mersmann)
+ 1.24  06.05.06 : __linearvarargs is only valid for vbcc and PPC, so I moved VARARGS68K
+                  to prevent problems with 68K and i86 targets. (Guido Mersmann)
 */
 
 /*
@@ -89,7 +92,6 @@
   #define STDARGS
   #define STACKEXT
   #define REGARGS
-  #define VARARGS68K __linearvarargs
   #if (__STDC__ == 1L) && (__STDC_VERSION__ >= 199901L)
     #define INLINE inline
   #else
@@ -98,6 +100,7 @@
   #define OFFSET(p,m) __offsetof(struct p,m)
 
   #if defined(__PPC__)
+    #define VARARGS68K __linearvarargs
     #define REG(reg,arg) arg
   #else
     #define REG(reg,arg) __reg(#reg) arg
@@ -197,5 +200,19 @@
 #if !defined(USED_VAR)
   #define USED_VAR
 #endif
+
+/*************************************************************************/
+#ifdef __AROS__
+
+  #undef REG
+  #define REG(reg, arg) arg
+
+  #undef SAVEDS
+  #define SAVEDS
+
+  #undef ASM
+  #define ASM
+
+#endif /* __AROS__ */
 
 #endif /* SDI_COMPILER_H */

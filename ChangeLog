@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-06  Jens Langner <Jens.Langner@light-speed.de>
+
+  * include/SDI_#?: updated SDI headers to very latest available versions which
+    should fix compilation issues with VBCC and the VARARGS68K definition.
+
 2006-09-05  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_locale.c,h, misc: changed the GetStr() localization function to
