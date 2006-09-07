@@ -110,7 +110,7 @@ void STDARGS VARARGS68K ER_NewError(const char *error, ...)
       InitHook(&hook, putCharHook, buf);
 
       VA_START(args, error);
-      FormatString(G->Locale, error, VA_ARG(args, void *), &hook);
+      FormatString(G->Locale, (STRPTR)error, VA_ARG(args, void *), &hook);
       VA_END(args);
 
       strlcat(buf, "\n\n(", sizeof(buf));
