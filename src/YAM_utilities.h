@@ -229,9 +229,9 @@ struct TimeRequest
 // LogFile enums and macros
 enum LFMode { LF_NONE=0, LF_NORMAL, LF_VERBOSE, LF_ALL };
 
-#define AppendLog(id, text, vargs...)         AppendToLogfile(LF_ALL, id, text, ## vargs)
-#define AppendLogNormal(id, text, vargs...)   AppendToLogfile(LF_NORMAL, id, text, ## vargs)
-#define AppendLogVerbose(id, text, vargs...)  AppendToLogfile(LF_VERBOSE, id, text, ## vargs)
+#define AppendLog(id, ...)         AppendToLogfile(LF_ALL, id, __VA_ARGS__)
+#define AppendLogNormal(id, ...)   AppendToLogfile(LF_NORMAL, id, __VA_ARGS__)
+#define AppendLogVerbose(id, ...)  AppendToLogfile(LF_VERBOSE, id, __VA_ARGS__)
 
 // external variables
 extern int            BusyLevel;
@@ -376,7 +376,7 @@ char *   UnquoteString(const char *s, BOOL new);
 /// xget()
 //  Gets an attribute value from a MUI object
 ULONG xget(Object *obj, const ULONG attr);
-#if defined(__GNUC__) || ((__STDC__ == 1L) && (__STDC_VERSION__ >= 199901L))
+#if defined(__GNUC__)
   // please note that we do not evaluate the return value of GetAttr()
   // as some attributes (e.g. MUIA_Selected) always return FALSE, even
   // when they are supported by the object. But setting b=0 right before

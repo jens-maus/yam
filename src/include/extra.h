@@ -25,6 +25,10 @@ extern void strsfn(const char *, char *, char *, char *, char *);
 
 #if defined(__VBCC__)
   extern char *strdup(const char *);
+  extern char *strtok_r(char *str, const char *separator_set,char ** state_ptr);
+  #define isascii(c) (((c) & ~0177) == 0)
+  #define stricmp(s1, s2) strcasecmp((s1), (s2))
+  #define strnicmp(s1, s2, len) strncasecmp((s1), (s2), (len))
 #endif
 
 /*

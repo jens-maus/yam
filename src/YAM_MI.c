@@ -38,6 +38,7 @@
 #include "YAM_mime.h"
 #include "YAM_utilities.h"
 
+#include "extra.h"
 #include "Debug.h"
 
 /* local */

@@ -58,7 +58,7 @@
     #endif
   #endif
   #ifndef kprintf
-    #define kprintf(format, args...)  ((struct ExecIFace *)((*(struct ExecBase **)4)->MainInterface))->DebugPrintF(format, ## args)
+    #define kprintf(...)  ((struct ExecIFace *)((*(struct ExecBase **)4)->MainInterface))->DebugPrintF(__VA_ARGS__)
   #endif
 #elif defined(__MORPHOS__)
   #include <exec/rawfmt.h>
@@ -116,11 +116,11 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
 #define RETURN(r)             _RETURN(DBC_CTRACE, __FILE__, __LINE__, __FUNCTION__, (long)r)
 #define SHOWVALUE(f, v)       _SHOWVALUE(DBC_REPORT, f, (long)v, sizeof(v), #v, __FILE__, __LINE__)
 #define SHOWPOINTER(f, p)     _SHOWPOINTER(DBC_REPORT, f, p, #p, __FILE__, __LINE__)
-#define SHOWSTRING(f, s)     _SHOWSTRING(DBC_REPORT, f, s, #s, __FILE__, __LINE__)
+#define SHOWSTRING(f, s)      _SHOWSTRING(DBC_REPORT, f, s, #s, __FILE__, __LINE__)
 #define SHOWMSG(f, m)         _SHOWMSG(DBC_REPORT, f, m, __FILE__, __LINE__)
-#define D(f, s, vargs...)     _DPRINTF(DBC_DEBUG, f, __FILE__, __LINE__, s, ## vargs)
-#define E(f, s, vargs...)     _DPRINTF(DBC_ERROR, f, __FILE__, __LINE__, s, ## vargs)
-#define W(f, s, vargs...)     _DPRINTF(DBC_WARNING, f, __FILE__, __LINE__, s, ## vargs)
+#define D(f, ...)             _DPRINTF(DBC_DEBUG, f, __FILE__, __LINE__, __VA_ARGS__)
+#define E(f, ...)             _DPRINTF(DBC_ERROR, f, __FILE__, __LINE__, __VA_ARGS__)
+#define W(f, ...)             _DPRINTF(DBC_WARNING, f, __FILE__, __LINE__, __VA_ARGS__)
 #define ASSERT(expression)      \
   ((void)                       \
    ((expression) ? 0 :          \
@@ -139,17 +139,18 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
 
 #else // DEBUG
 
+// to replace with NOPs is important here!
 #define ENTER()              ((void)0)
 #define LEAVE()              ((void)0)
 #define RETURN(r)            ((void)0)
 #define SHOWVALUE(f, v)      ((void)0)
 #define SHOWPOINTER(f, p)    ((void)0)
-#define SHOWSTRING(f, s)    ((void)0)
+#define SHOWSTRING(f, s)     ((void)0)
 #define SHOWMSG(f, m)        ((void)0)
-#define D(f, s, vargs...)    ((void)0)
-#define E(f, s, vargs...)    ((void)0)
-#define W(f, s, vargs...)    ((void)0)
-#define ASSERT(expression)  ((void)0)
+#define D(f, ...)            ((void)0)
+#define E(f, ...)            ((void)0)
+#define W(f, ...)            ((void)0)
+#define ASSERT(expression)   ((void)0)
 
 #endif // DEBUG
 

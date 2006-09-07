@@ -25,12 +25,16 @@
 
 ***************************************************************************/
 
-// if we don`t have MorphOS libnix lets use our own implementations
+// missing POSIX functions
 #if !defined(__MORPHOS__) || !defined(__libnix)
   #include "extrasrc/stcgfe.c"
   #include "extrasrc/strmfp.c"
 #endif
+
+// required Amiga functions
 #include "extrasrc/NewReadArgs.c"
-#include "extrasrc/dice.c"
+
+// Amiga vargs function stubs
+#include "extrasrc/vastubs.c"
 
 void __chkabort(void) {}

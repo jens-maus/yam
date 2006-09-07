@@ -294,7 +294,7 @@ $(OBJDIR)/YAM_WR.o: YAM_WR.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 
 $(OBJDIR)/all_gcc.o: all_gcc.c \
 	$(EXTRASRC)/stcgfe.c $(EXTRASRC)/strmfp.c \
-	$(EXTRASRC)/NewReadArgs.c $(EXTRASRC)/dice.c
+	$(EXTRASRC)/NewReadArgs.c $(EXTRASRC)/vastubs.c
 
 ## CLASS DEPENDENCIES #################
 

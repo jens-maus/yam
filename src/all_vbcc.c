@@ -25,10 +25,17 @@
 
 ***************************************************************************/
 
+// missing POSIX functions
 #include "extrasrc/stcgfe.c"
 #include "extrasrc/strmfp.c"
-#include "extrasrc/NewReadArgs.c"
-#include "extrasrc/dice.c"
 #include "extrasrc/strdup.c"
+#include "extrasrc/strtok_r.c"
+
+// required Amiga functions
+#include "extrasrc/NewReadArgs.c"
+#include "extrasrc/xget.c"
+
+// Amiga vargs function stubs
+#include "extrasrc/vastubs.c"
 
 void _chkabort(void) {}

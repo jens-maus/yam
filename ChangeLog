@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-07  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: applied VBCC compatibility patch kindly provided by Jools Smyth after
+    some additional minor modifications. Now YAM should hopefully build with
+    VBCC again, which should help us to find some issues hided due to our GCC
+    bound compilation structure.
+
 2006-09-06  Jens Langner <Jens.Langner@light-speed.de>
 
   * include/SDI_#?: updated SDI headers to very latest available versions which

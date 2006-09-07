@@ -25,12 +25,7 @@
 
 ***************************************************************************/
 
-#include <proto/intuition.h>
-
-ULONG xget(Object *obj, ULONG attr)
-{ ULONG b = 0;
-  GetAttr(attr, obj, &b);
-  return b;
-}
-
+// required Amiga functions
 #include "extrasrc/NewReadArgs.c"
+#include "extrasrc/xget.c"
+

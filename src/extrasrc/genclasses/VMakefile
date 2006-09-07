@@ -1,6 +1,6 @@
 
 CC = vc
-CCOPTS = -DEMULATE_DIRENT
+CCOPTS = -DEMULATE_DIRENT -I$(POSIXLIBINC)
 
 GenClasses : gc.o lists.o
 	$(CC) gc.o lists.o -o GenClasses $(CCOPTS)
