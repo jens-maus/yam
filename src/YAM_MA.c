@@ -2607,7 +2607,18 @@ void MA_GetAddress(struct Mail **mlist)
   {
     if(mode == AET_USER)
     {
-      setstring(G->EA[winnum]->GUI.ST_REALNAME, pe->RealName);
+      // if there is a "," in the realname of the new address
+      // we have to encapsulate it in quotes
+      if(strchr(pe->RealName, ','))
+      {
+        char quotedRealName[SIZE_REALNAME];
+
+        snprintf(quotedRealName, sizeof(quotedRealName), "\"%s\"", pe->RealName);
+        setstring(G->EA[winnum]->GUI.ST_REALNAME, quotedRealName);
+      }
+      else
+        setstring(G->EA[winnum]->GUI.ST_REALNAME, pe->RealName);
+
       setstring(G->EA[winnum]->GUI.ST_ADDRESS, pe->Address);
     }
     else

@@ -6,6 +6,9 @@ $Id$
 
 2006-09-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c, YAM_EA.c: fixed bug #777363 where it might have happened that
+    upon putting an address from a mail to the addressbook, a realname contained
+    a "," character without quoting it correctly.
   * YAM_MAf.c, YAM_folderconfig.h: fixed bug #1553621, #1232127, #728100 where
     the index rescanning wasn't at all a mutual exclusive operation and may have
     caused several different problems in case a user tried to issue an index
