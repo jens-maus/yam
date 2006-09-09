@@ -143,7 +143,7 @@ clean:
 	-$(RM) $(TARGET) $(TARGET).debug $(OBJS)
 
 cleanall: clean
-	-$(RM) YAM_locale.? YAM_mail_lex.c $(CLASSDIR)/Classes.? $(CLASSDIR)/*_cl.h
+	-$(RM) YAM_locale.? YAM_mail_lex.c HTML2Mail.c $(CLASSDIR)/Classes.? $(CLASSDIR)/*_cl.h
 	-$(RMDIR) $(OBJDIR)
 
 distclean: cleanall
