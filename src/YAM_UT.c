@@ -2141,6 +2141,8 @@ long FileCount(char *directory)
   BPTR dirLock;
   long result = 0;
 
+  ENTER();
+
   if((dirLock = Lock(directory, ACCESS_READ)))
   {
     struct ExAllControl *eac;
@@ -2171,16 +2173,20 @@ long FileCount(char *directory)
 
         free(eabuffer);
       }
-      else result = -1;
+      else
+        result = -1;
 
       FreeDosObject(DOS_EXALLCONTROL, eac);
     }
-    else result = -1;
+    else
+      result = -1;
 
     UnLock(dirLock);
   }
-  else result = -1;
+  else
+    result = -1;
 
+  RETURN(result);
   return result;
 }
 ///
