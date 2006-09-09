@@ -6,6 +6,11 @@ $Id$
 
 2006-09-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c, misc: reworked the transfer window statistics to show more
+    modern values and units like KB/s instead of cps. In addition, the transfer
+    gauge is now based on the transfered time rather than on the bytes already
+    transfered. This should e.g. work around bug #1555275 on systems with older
+    non-fixed MUI versions.
   * YAM_MAf.c, YAM_UT.c: fixed an issue in the "Date:" header parsing routine
     where double-spaces as separators caused the MA_ScanDate() function to fail
     and return an incorrectly converted time.

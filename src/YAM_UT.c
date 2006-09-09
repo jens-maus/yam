@@ -235,11 +235,11 @@ HOOKPROTONH(AttachDspFunc, long, char **array, struct Part *entry)
         array[2] = dispsz;
 
         if(entry->Decoded)
-          FormatSize(entry->Size, dispsz, sizeof(dispsz));
+          FormatSize(entry->Size, dispsz, sizeof(dispsz), SF_AUTO);
         else
         {
           dispsz[0] = '~';
-          FormatSize(entry->Size, &dispsz[1], sizeof(dispsz)-1);
+          FormatSize(entry->Size, &dispsz[1], sizeof(dispsz)-1, SF_AUTO);
         }
       }
    }
@@ -3167,13 +3167,18 @@ int TZtoMinutes(char *tzone)
 ///
 /// FormatSize
 //  Displays large numbers using group separators
-void FormatSize(LONG size, char *buf, int buflen)
+void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecision)
 {
   const char *dp = G->Locale ? (const char *)G->Locale->loc_DecimalPoint : ".";
   double dsize = (double)size;
 
+  // see if the user wants to force a precision output or if he simply
+  // wants to output based on C->SizeFormat (forcedPrecision = SF_AUTO)
+  if(forcedPrecision == SF_AUTO)
+    forcedPrecision = C->SizeFormat;
+
   // we check what SizeFormat the user has choosen
-  switch(C->SizeFormat)
+  switch(forcedPrecision)
   {
     // the precision modes use sizes as base of 2
     enum { KB = 1024, MB = 1024 * 1024, GB = 1024 * 1024 * 1024 };
@@ -3247,6 +3252,7 @@ void FormatSize(LONG size, char *buf, int buflen)
     ** This will result in the following output:
     ** 1,234,567 (bytes)
     */
+    case SF_AUTO:
     default:
     {
       const char *gs = G->Locale ? (const char *)G->Locale->loc_GroupSeparator : ",";

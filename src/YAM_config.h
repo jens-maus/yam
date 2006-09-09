@@ -504,7 +504,6 @@ struct Config
    char StyleMailRead[SIZE_SMALL];
 };
 
-enum SizeFormat { SF_DEFAULT=0, SF_MIXED, SF_1PREC, SF_2PREC, SF_3PREC };
 enum InfoBarPos { IB_POS_TOP=0, IB_POS_CENTER, IB_POS_BOTTOM, IB_POS_OFF };
 
 extern struct Config *C;

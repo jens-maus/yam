@@ -36,6 +36,7 @@
 #include <mui/Toolbar_mcc.h>
 
 #include "SDI_compiler.h"
+
 #include "YAM_folderconfig.h"
 #include "YAM_stringsizes.h"
 
@@ -59,6 +60,14 @@ enum ReqFileType { ASL_ABOOK=0, ASL_CONFIG, ASL_DETACH, ASL_ATTACH,
 enum OutputDefType { OUT_DOS=0, OUT_NIL };
 
 enum FType { FIT_NONEXIST=0, FIT_FILE, FIT_DRAWER };
+
+enum SizeFormat { SF_DEFAULT=0, // format sizes in old-style   1,234,567 (bytes)
+                  SF_MIXED,     // format in mixed mode        1.234 GB - 12.34 MB - 123.4 KB - 1234 B
+                  SF_1PREC,     // format in one-precision     1.2 GB - 12.3 MB - 123.4 KB - 1234 B
+                  SF_2PREC,     // format in two-precision     1.23 GB - 12.34 MB - 123.45 KB - 1234 B
+                  SF_3PREC,     // format in three precision   1.234 GB - 12.345 MB - 123.456 KB - 1234 B
+                  SF_AUTO       // format automatically via C->SizeFormat
+                };
 
 struct Person
 {       
@@ -304,7 +313,7 @@ long     FileTime(const char *filename);
 long     FileCount(char *directory);
 void     FinishUnpack(char *file);
 struct Folder *FolderRequest(const char *title, const char *body, const char *yestext, const char *notext, struct Folder *exclude, Object *parent);
-void     FormatSize(LONG size, char *buffer, int buflen);
+void     FormatSize(LONG size, char *buffer, int buflen, enum SizeFormat forcedPrecision);
 time_t   GetDateStamp(void);
 char *   GetFolderDir(struct Folder *fo);
 char *   GetLine(FILE *fh, char *buffer, int bufsize);
