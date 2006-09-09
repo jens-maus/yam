@@ -6,6 +6,23 @@ $Id$
 
 2006-09-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c, HTML2Mail.l, YAM_mail_lex.l: mails with bold/italic/underline and
+    color markers are now displayed with their actual style markers included. This
+    should be more intuitive and should make it possible to cut&paste the text
+    correctly from the texteditor. In addition, we enforce this way, that we don't
+    mangle any incorrectly detected soft style markers. Furthermore, the
+    possibility to directly insert the old-style <sb> and <tsb> markers with own
+    menu items was removed as these markers are way too uncommon and should be
+    considered obsolete - however, YAM will still show them as usual if found.
+    But users should not be suggested to use them anymore. The soft-style
+    toolbar buttons are now also working mutual exclusive to make the write
+    window bold/italic/underline functionality somewhat more consistant to what
+    YAM can/should allow to display. However, please note that TextEditor.mcc
+    seems to be somewhat limited and needs some work to get the mutual exclusive
+    nature of the soft style fully working under all conditions.
+    Overall, this change should definitly make YAM more conform to other modern
+    mail clients as all these soft-style additions are not really standardized
+    via a RFC and a mail client should definitly not mangle any text display.
   * YAM_TR.c, misc: reworked the transfer window statistics to show more
     modern values and units like KB/s instead of cps. In addition, the transfer
     gauge is now based on the transfered time rather than on the bytes already

@@ -260,7 +260,7 @@ char *html2mail(char *htmlTxt)
           break;
 
           case ht_HR:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n<sb>\n");
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n---------------------------------------------------------------------------\n");
           break;
 
           case ht_BOLD:

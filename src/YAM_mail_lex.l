@@ -32,6 +32,7 @@
  */
 
 %option noyywrap
+%option nounput
 %option never-interactive
 %option case-insensitive
 %option prefix="pm_"
@@ -44,6 +45,8 @@
 
     #include "YAM_mail_lex.h"
     #include "YAM_utilities.h"
+
+    #include "Debug.h"
 
     #define YY_NO_INPUT 1
 %}
@@ -171,12 +174,17 @@ NOTATEOL    ([^[:punct:][:space:]]|{ESCAPE}|"/"|"=")
 char *ParseEmailText(char *mailTxt)
 {
   char *cmsg = NULL;
-  char tmp[] = " ";
   int len, wptr=0;
   YY_BUFFER_STATE buffer;
   enum tokenType type;
 
-  if(!mailTxt) return NULL;
+  ENTER();
+
+  if(!mailTxt)
+  {
+    RETURN(NULL);
+    return NULL;
+  }
 
   // lets prepare the mailTxt for the lexer
   if((buffer = yy_scan_string(mailTxt)))
@@ -224,77 +232,114 @@ char *ParseEmailText(char *mailTxt)
 
           case tBOLD:
           {
-            // first we check if we have to write something back
-            if(yytext[0] != '*')
-            {
-              tmp[0] = yytext[0];
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, tmp);
-              yytext++;
-              yyleng--;
-            }
+            char *p;
+            char *q;
 
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b");
-            yytext[yyleng-2] = '\0';
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, &yytext[1]);
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033n");
-            yyunput(yytext[yyleng-1], yytext);
+            if((p = strchr(yytext, '*')))
+            {
+              *p++ = '\0';
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+
+              q = p;
+              if((q = strchr(p, '*')))
+              {
+                *q++ = '\0';
+
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b*");
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, "*\033n");
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, q);
+              }
+              else
+                W(DBF_MAIL, "couldn't find ending '*'");
+            }
+            else
+              W(DBF_MAIL, "couldn't find starting '*'");
           }
           break;
 
           case tITALIC:
           {
-            // first we check if we have to write something back
-            if(yytext[0] != '/')
-            {
-              tmp[0] = yytext[0];
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, tmp);
-              yytext++;
-              yyleng--;
-            }
+            char *p;
+            char *q;
 
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033i");
-            yytext[yyleng-2] = '\0';
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, &yytext[1]);
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033n");
-            yyunput(yytext[yyleng-1], yytext);
+            if((p = strchr(yytext, '/')))
+            {
+              *p++ = '\0';
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+
+              q = p;
+              if((q = strchr(p, '/')))
+              {
+                *q++ = '\0';
+
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033i/");
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, "/\033n");
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, q);
+              }
+              else
+                W(DBF_MAIL, "couldn't find ending '/'");
+            }
+            else
+              W(DBF_MAIL, "couldn't find starting '/'");
           }
           break;
 
           case tUNDERLINE:
           {
-            // first we check if we have to write something back
-            if(yytext[0] != '_')
-            {
-              tmp[0] = yytext[0];
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, tmp);
-              yytext++;
-              yyleng--;
-            }
+            char *p;
+            char *q;
 
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033u");
-            yytext[yyleng-2] = '\0';
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, &yytext[1]);
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033n");
-            yyunput(yytext[yyleng-1], yytext);
+            if((p = strchr(yytext, '_')))
+            {
+              *p++ = '\0';
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+
+              q = p;
+              if((q = strchr(p, '_')))
+              {
+                *q++ = '\0';
+
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033u_");
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, "_\033n");
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, q);
+              }
+              else
+                W(DBF_MAIL, "couldn't find ending '_'");
+            }
+            else
+              W(DBF_MAIL, "couldn't find starting '_'");
           }
           break;
 
           case tCOLORED:
           {
-            // first we check if we have to write something back
-            if(yytext[0] != '#')
-            {
-              tmp[0] = yytext[0];
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, tmp);
-              yytext++;
-              yyleng--;
-            }
+            char *p;
+            char *q;
 
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[7]");
-            yytext[yyleng-2] = '\0';
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, &yytext[1]);
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, colorTag ? colorTag : "\033p[0]");
-            yyunput(yytext[yyleng-1], yytext);
+            if((p = strchr(yytext, '#')))
+            {
+              *p++ = '\0';
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+
+              q = p;
+              if((q = strchr(p, '#')))
+              {
+                *q++ = '\0';
+
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[7]#");
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, "#");
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, colorTag ? colorTag : "\033p[0]");
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, q);
+              }
+              else
+                W(DBF_MAIL, "couldn't find ending '*'");
+            }
+            else
+              W(DBF_MAIL, "couldn't find starting '*'");
           }
           break;
 
@@ -343,6 +388,7 @@ char *ParseEmailText(char *mailTxt)
     yy_delete_buffer(buffer);
   }
 
+  RETURN(cmsg);
   return cmsg;
 }
 
