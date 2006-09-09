@@ -4,6 +4,15 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-09  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MAf.c, YAM_folderconfig.h: fixed bug #1553621, #1232127, #728100 where
+    the index rescanning wasn't at all a mutual exclusive operation and may have
+    caused several different problems in case a user tried to issue an index
+    rescanning on multiple folders. Now only one single rescanning operation will
+    be permitted at a time, while certain normal operations should normally not
+    get blocked.
+
 2006-09-07  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: applied VBCC compatibility patch kindly provided by Jools Smyth after

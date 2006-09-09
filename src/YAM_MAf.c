@@ -212,6 +212,8 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
    BOOL corrupt = FALSE;
    BOOL error = FALSE;
 
+   ENTER();
+
    D(DBF_FOLDER, "Loading index for folder '%s'", folder->Name);
 
    if((fh = fopen(MA_IndexFileName(folder), "r")))
@@ -310,6 +312,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
      E(DBF_FOLDER, "an error occurred while trying to load the index file '%s'", MA_IndexFileName(folder));
      ClearMailList(folder, TRUE);
 
+     RETURN(LM_UNLOAD);
      return LM_UNLOAD;
    }
 
@@ -325,10 +328,12 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
      // rescan the index accordingly
      if(full)
      {
-        MA_ScanMailBox(folder);
-
-        if(MA_SaveIndex(folder))
+        // rebuild the index (rescanning the mailbox directory)
+        if(MA_ScanMailBox(folder) &&
+           MA_SaveIndex(folder))
+        {
           indexloaded = LM_VALID;
+        }
      }
    }
    else if(full)
@@ -337,6 +342,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
      CLEAR_FLAG(folder->Flags, FOFL_MODIFY);
    }
 
+   RETURN(indexloaded);
    return indexloaded;
 }
 
@@ -404,41 +410,45 @@ BOOL MA_SaveIndex(struct Folder *folder)
 //  Opens/unlocks a folder
 BOOL MA_GetIndex(struct Folder *folder)
 {
-   ENTER();
+  BOOL result = FALSE;
+  ENTER();
 
-   if(!folder || folder->Type == FT_GROUP)
-   {
-     RETURN(FALSE);
-     return FALSE;
-   }
+  if(folder && folder->Type != FT_GROUP)
+  {
+    SHOWSTRING(DBF_FOLDER, folder->Name);
 
-   SHOWSTRING(DBF_FOLDER, folder->Name);
-
-   if(folder->LoadedMode != LM_VALID)
-   {
-      if(isProtectedFolder(folder) && *folder->Password &&
-         !MA_PromptFolderPassword(folder, G->MA->GUI.WI))
+    // check that the folder is in a valid state for
+    // getting the index
+    if(folder->LoadedMode != LM_VALID &&
+       folder->LoadedMode != LM_REBUILD)
+    {
+      // check the protected status of the folder and prompt
+      // the user for the password in case it is required.
+      if(isProtectedFolder(folder) == FALSE ||
+         folder->Password[0] == '\0' ||
+         MA_PromptFolderPassword(folder, G->MA->GUI.WI))
       {
-        RETURN(FALSE);
-        return FALSE;
+        // load the index file (and eventually rebuild it)
+        folder->LoadedMode = MA_LoadIndex(folder, TRUE);
+
+        // we need to refresh the entry in the folder listtree this folder belongs to
+        // but only if there is a GUI already!
+        if(folder->LoadedMode == LM_VALID)
+        {
+          MA_ValidateStatus(folder);
+
+          if(G->MA)
+            DisplayStatistics(folder, FALSE);
+        }
       }
+    }
 
-      // load the index file
-      folder->LoadedMode = MA_LoadIndex(folder, TRUE);
+    // check if the load status is valid or not
+    result = (BOOL)(folder->LoadedMode == LM_VALID);
+  }
 
-      // we need to refresh the entry in the folder listtree this folder belongs to
-      // but only if there is a GUI already!
-      if(folder->LoadedMode == LM_VALID)
-      {
-        MA_ValidateStatus(folder);
-
-        if(G->MA)
-          DisplayStatistics(folder, FALSE);
-      }
-   }
-
-   RETURN((BOOL)(folder->LoadedMode == LM_VALID));
-   return (BOOL)(folder->LoadedMode == LM_VALID);
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -656,7 +666,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
     // folder the main mail list will get updated accordingly.
     MA_ChangeSelected(TRUE);
   }
-  else
+  else if(FO_GetCurrentFolder() == folder) // check again for the current folder
   {
     // set the SortFlag in the NList accordingly
     MA_SetSortFlag();
@@ -1830,9 +1840,28 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
   long filecount = FileCount(GetFolderDir(folder));
   long processedFiles = 0;
   BOOL result = TRUE;
+  static BOOL alreadyScanning = FALSE;
 
+  ENTER();
+
+  // check if there are files in this mailbox or not.
   if(filecount < 1)
+  {
+    RETURN(filecount == 0);
+    return filecount == 0;
+  }
+
+  // check if we are already in this function or not
+  // (due to a previously started scanning
+  if(alreadyScanning == TRUE)
+  {
+    RETURN(FALSE);
     return FALSE;
+  }
+
+  // make sure others notice that a index scanning already
+  // runs
+  alreadyScanning = TRUE;
 
   BusyGauge(GetStr(MSG_BusyScanning), folder->Name, filecount-1);
   ClearMailList(folder, TRUE);
@@ -1842,6 +1871,11 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
   if((dirLock = Lock(GetFolderDir(folder), ACCESS_READ)))
   {
     struct ExAllControl *eac;
+
+    // now that the folder is locked we go and define its
+    // loaded mode to LM_REBUILD so that others don't try to access
+    // it anymore
+    folder->LoadedMode = LM_REBUILD;
 
     if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)))
     {
@@ -1955,7 +1989,8 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                       continue;
                     }
                   }
-                  else continue;
+                  else
+                    continue;
                 }
                 else if(fname[0] != '.')
                 {
@@ -2015,9 +2050,11 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                       continue;
                     }
                   }
-                  else continue;
+                  else
+                    continue;
                 }
-                else continue;
+                else
+                  continue;
               }
 
               if(ead->ed_Size)
@@ -2064,17 +2101,28 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
         free(eabuffer);
       }
-      else result = FALSE;
+      else
+        result = FALSE;
 
       FreeDosObject(DOS_EXALLCONTROL, eac);
     }
-    else result = FALSE;
+    else
+      result = FALSE;
 
     UnLock(dirLock);
+
+    // we don't need to set the LoadedMode of the folder back from LM_REBUILD
+    // because other functions will do that for us - hopefully.
   }
-  else result = FALSE;
+  else
+    result = FALSE;
 
   BusyEnd();
+
+  // make sure others scan use this function again
+  alreadyScanning = FALSE;
+
+  RETURN(result);
   return result;
 }
 ///
@@ -2262,7 +2310,8 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
           else
             snprintf(dispfold, sizeof(dispfold), "[%s]", FilePart(entry->Path));
 
-          if(entry->LoadedMode != LM_UNLOAD)
+          if(entry->LoadedMode != LM_UNLOAD &&
+             entry->LoadedMode != LM_REBUILD)
           {
             if(entry->New)
             {

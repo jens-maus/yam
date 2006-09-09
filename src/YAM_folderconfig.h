@@ -69,7 +69,11 @@ enum FolderType { FT_CUSTOM=0, FT_INCOMING, FT_OUTGOING, FT_SENT, FT_DELETED, FT
 enum SetOrder   { SO_SAVE=0, SO_RESET };
 
 // LoadedMode enum (if folder index is valid/flushed or unloaded)
-enum LoadedMode { LM_UNLOAD=0, LM_FLUSHED, LM_VALID };
+enum LoadedMode { LM_UNLOAD=0,  // invalid/unloaded
+                  LM_FLUSHED,   // flushed
+                  LM_VALID,     // valid index
+                  LM_REBUILD,   // currently rebuilding
+                };
 
 // Folder modes
 enum FolderMode { FM_NORMAL=0,  // normal folder
