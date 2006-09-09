@@ -6,6 +6,8 @@ $Id$
 
 2006-09-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/ReadWindow.c, YAM_RE.c: fixed bug #818863 where the requester asking
+    to allow additional folder index reloading popped up way too frequently.
   * YAM_MA.c, YAM_EA.c: fixed bug #777363 where it might have happened that
     upon putting an address from a mail to the addressbook, a realname contained
     a "," character without quoting it correctly.

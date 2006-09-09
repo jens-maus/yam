@@ -117,8 +117,10 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
 
         for(i=1; i <= (int)*flist && !found; i++)
         {
-          // we already scanned this folder so lets skip it.
-          if(flist[i] != srcMail->Folder)
+          // check if this folder isn't a group and that we haven't scanned
+          // it already.
+          if(flist[i]->Type != FT_GROUP &&
+             flist[i] != srcMail->Folder)
           {
             if(flist[i]->LoadedMode != LM_VALID)
             {
@@ -130,7 +132,7 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
                   if(MUI_Request(G->App, readWindow, 0,
                                  GetStr(MSG_MA_ConfirmReq),
                                  GetStr(MSG_YesNoReq),
-                                 GetStr(MSG_RE_FollowThreadReq)))
+                                 GetStr(MSG_RE_FOLLOWTHREAD)))
                   {
                     autoloadindex = 1;
                   }

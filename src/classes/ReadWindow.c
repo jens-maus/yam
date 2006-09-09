@@ -56,6 +56,8 @@ struct Data
   Object *MI_SAVEDEC;
   Object *MI_REPLY;
   Object *MI_BOUNCE;
+  Object *MI_NEXTTHREAD;
+  Object *MI_PREVTHREAD;
   Object *windowToolbar;
   Object *statusIconGroup;
   Object *readMailGroup;
@@ -142,7 +144,7 @@ OVERLOAD(OM_NEW)
   // Our static Toolbar description field
   static const struct NewToolbarEntry tb_butt[MUIV_ReadWindow_ToolbarItems] =
   {
-    {  MSG_RE_TBPrev,    MSG_HELP_RE_BT_PREVIOUS },
+    { MSG_RE_TBPrev,    MSG_HELP_RE_BT_PREVIOUS },
     { MSG_RE_TBNext,    MSG_HELP_RE_BT_NEXT     },
     { MSG_RE_TBPrevTh,  MSG_HELP_RE_BT_QUESTION },
     { MSG_RE_TBNextTh,  MSG_HELP_RE_BT_ANSWER   },
@@ -242,8 +244,8 @@ OVERLOAD(OM_NEW)
         MenuChild, Menuitem(GetStr(MSG_RE_MPrev),     "left",  TRUE, TRUE, RMEN_PREV),
         MenuChild, Menuitem(GetStr(MSG_RE_MURNext),  "shift right", TRUE, TRUE, RMEN_URNEXT),
         MenuChild, Menuitem(GetStr(MSG_RE_MURPrev),  "shift left",  TRUE, TRUE, RMEN_URPREV),
-        MenuChild, Menuitem(GetStr(MSG_RE_MNextTh),   ">", TRUE, FALSE, RMEN_NEXTTH),
-        MenuChild, Menuitem(GetStr(MSG_RE_MPrevTh),  "<", TRUE, FALSE, RMEN_PREVTH),
+        MenuChild, data->MI_NEXTTHREAD = Menuitem(GetStr(MSG_RE_MNextTh), ">", TRUE, FALSE, RMEN_NEXTTH),
+        MenuChild, data->MI_PREVTHREAD = Menuitem(GetStr(MSG_RE_MPrevTh), "<", TRUE, FALSE, RMEN_PREVTH),
       End,
       MenuChild, MenuObject, MUIA_Menu_Title, "PGP",
         MenuChild, data->MI_EXTKEY = Menuitem(GetStr(MSG_RE_ExtractKey), "X", TRUE, FALSE, RMEN_EXTKEY),
@@ -470,19 +472,38 @@ DECLARE(ReadMail) // struct Mail *mail
   BOOL isOutgoingMail = isRealMail ? isOutgoingFolder(folder) : FALSE;
   BOOL result = FALSE;
   BOOL initialCall = data->title[0] == '\0'; // TRUE if this is the first call
+  BOOL prevMailAvailable = FALSE;
+  BOOL nextMailAvailable = FALSE;
   int titleLen;
 
   D(DBF_GUI, "setting up readWindow for reading a mail");
 
+  // check the status of the next/prev thread nagivation
+  if(isRealMail)
+  {
+    if(AllFolderLoaded())
+    {
+      prevMailAvailable = RE_GetThread(mail, FALSE, FALSE, obj) != NULL;
+      nextMailAvailable = RE_GetThread(mail, TRUE, FALSE, obj) != NULL;
+    }
+    else
+    {
+      prevMailAvailable = TRUE;
+      nextMailAvailable = TRUE;
+    }
+  }
+
   // enable/disable some menuitems in advance
-  set(data->MI_EDIT,   MUIA_Menuitem_Enabled, isOutgoingMail);
-  set(data->MI_MOVE,   MUIA_Menuitem_Enabled, isRealMail);
-  set(data->MI_DELETE, MUIA_Menuitem_Enabled, isRealMail);
-  set(data->MI_CROP,   MUIA_Menuitem_Enabled, isRealMail);
-  set(data->MI_CHSUBJ, MUIA_Menuitem_Enabled, isRealMail);
-  set(data->MI_NAVIG,  MUIA_Menuitem_Enabled, isRealMail);
-  set(data->MI_REPLY,  MUIA_Menuitem_Enabled, !isOutgoingMail);
-  set(data->MI_BOUNCE, MUIA_Menuitem_Enabled, !isOutgoingMail);
+  set(data->MI_EDIT,      MUIA_Menuitem_Enabled, isOutgoingMail);
+  set(data->MI_MOVE,      MUIA_Menuitem_Enabled, isRealMail);
+  set(data->MI_DELETE,    MUIA_Menuitem_Enabled, isRealMail);
+  set(data->MI_CROP,      MUIA_Menuitem_Enabled, isRealMail);
+  set(data->MI_CHSUBJ,    MUIA_Menuitem_Enabled, isRealMail);
+  set(data->MI_NAVIG,     MUIA_Menuitem_Enabled, isRealMail);
+  set(data->MI_REPLY,     MUIA_Menuitem_Enabled, !isOutgoingMail);
+  set(data->MI_BOUNCE,    MUIA_Menuitem_Enabled, !isOutgoingMail);
+  set(data->MI_NEXTTHREAD,MUIA_Menuitem_Enabled, nextMailAvailable);
+  set(data->MI_PREVTHREAD,MUIA_Menuitem_Enabled, prevMailAvailable);
 
   if(data->windowToolbar)
   {
@@ -494,24 +515,11 @@ DECLARE(ReadMail) // struct Mail *mail
     // now set some items of the toolbar ghosted/enabled
     DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 0, MUIV_Toolbar_Set_Ghosted, isRealMail ? pos == 0 : TRUE);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 1, MUIV_Toolbar_Set_Ghosted, isRealMail ? pos == (folder->Total-1) : TRUE);
+    DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 2, MUIV_Toolbar_Set_Ghosted, !prevMailAvailable);
+    DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 3, MUIV_Toolbar_Set_Ghosted, !nextMailAvailable);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 9, MUIV_Toolbar_Set_Ghosted, !isRealMail);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Set,10, MUIV_Toolbar_Set_Ghosted, !isRealMail);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Set,11, MUIV_Toolbar_Set_Ghosted, isOutgoingMail);
-  }
-  
-  if(isRealMail)
-  {
-    if(AllFolderLoaded() &&
-       data->windowToolbar)
-    {
-      DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 2, MUIV_Toolbar_Set_Ghosted, !RE_GetThread(mail, FALSE, FALSE, obj));
-      DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 3, MUIV_Toolbar_Set_Ghosted, !RE_GetThread(mail, TRUE, FALSE, obj));
-    }
-  }
-  else if(data->windowToolbar)
-  {
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 2, MUIV_Toolbar_Set_Ghosted, TRUE);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 3, MUIV_Toolbar_Set_Ghosted, TRUE);
   }
 
   // Update the status groups
@@ -1028,7 +1036,21 @@ DECLARE(FollowThread) // LONG direction
     DoMethod(obj, MUIM_ReadWindow_ReadMail, fmail);
   }
   else
+  {
+    // set the correct toolbar image and menuitem ghosted
+    if(msg->direction <= 0)
+    {
+      DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 2, MUIV_Toolbar_Set_Ghosted, TRUE);
+      set(data->MI_PREVTHREAD, MUIA_Menuitem_Enabled, FALSE);
+    }
+    else
+    {
+      DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 3, MUIV_Toolbar_Set_Ghosted, TRUE);
+      set(data->MI_NEXTTHREAD, MUIA_Menuitem_Enabled, FALSE);
+    }
+
     DisplayBeep(_screen(obj));
+  }
 
   return 0;
 }
