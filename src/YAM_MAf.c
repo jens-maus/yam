@@ -2169,8 +2169,9 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
       {
         if(!isdigit(*s) || (day = atoi(s)) > 31)
         {
-          RETURN(FALSE);
-          return FALSE;
+          W(DBF_MAIL, "couldn't parse day from '%s'", s);
+
+          day = 1;
         }
       }
       break;
@@ -2186,8 +2187,9 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
 
         if(mon > 12)
         {
-          RETURN(FALSE);
-          return FALSE;
+          W(DBF_MAIL, "couldn't parse month from '%s'", s);
+
+          mon = 1;
         }
       }
       break;
@@ -2195,7 +2197,14 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
       // get the year
       case 2:
       {
-        year = atoi(s);
+        if(isdigit(*s))
+          year = atoi(s);
+        else
+        {
+          W(DBF_MAIL, "couldn't parse year from '%s'", s);
+
+          year = 1978;
+        }
       }
       break;
 
@@ -2208,8 +2217,11 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
             sec = 0;
           else
           {
-            RETURN(FALSE);
-            return FALSE;
+            W(DBF_MAIL, "couldn't parse time from '%s'", s);
+
+            hour = 0;
+            min = 0;
+            sec = 0;
           }
         }
       }
@@ -2218,7 +2230,7 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
       // get the time zone
       case 4:
       {
-        while(*s && (isspace(*s) || *s == '('))
+        while(*s && *s == '(')
           s++;
 
         strlcpy(tzone, s, MIN(sizeof(tzone), (unsigned int)(e-s+1)));
@@ -2234,7 +2246,13 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
 
     // set the next start to our last search
     if(*e)
-      s = ++e;
+    {
+      // skip leading spaces
+      while(*e && isspace(*e))
+        e++;
+
+      s = e;
+    }
     else
       break;
   }

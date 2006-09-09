@@ -6,6 +6,9 @@ $Id$
 
 2006-09-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MAf.c, YAM_UT.c: fixed an issue in the "Date:" header parsing routine
+    where double-spaces as separators caused the MA_ScanDate() function to fail
+    and return an incorrectly converted time.
   * classes/ReadWindow.c, YAM_RE.c: fixed bug #818863 where the requester asking
     to allow additional folder index reloading popped up way too frequently.
   * YAM_MA.c, YAM_EA.c: fixed bug #777363 where it might have happened that

@@ -3155,9 +3155,12 @@ int TZtoMinutes(char *tzone)
         }
 
         if(tzcorr == -1)
-          D(DBF_UTIL, "TZtoMinutes: abbreviation '%s' NOT found!", tzone);
+          W(DBF_UTIL, "TZtoMinutes: abbreviation '%s' NOT found!", tzone);
       }
    }
+
+   if(tzcorr == -1)
+     W(DBF_UTIL, "couldn't parse timezone from '%s'", tzone);
 
    return tzcorr == -1 ? 0 : (tzcorr/100)*60 + (tzcorr%100);
 }
