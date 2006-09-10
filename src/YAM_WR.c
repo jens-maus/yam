@@ -2480,10 +2480,11 @@ MakeStaticHook(WR_LV_DspFuncHook, WR_LV_DspFunc);
 /// WR_SetBoldFunc
 HOOKPROTONHNO(WR_SetBoldFunc, void, ULONG *arg)
 {
-  ENTER();
   BOOL enableBold = (BOOL)arg[0];
   int winnum = (int)arg[1];
   Object *textEdit = G->WR[winnum]->GUI.TE_EDIT;
+
+  ENTER();
 
   if(enableBold)
   {
@@ -2504,10 +2505,11 @@ MakeStaticHook(WR_SetBoldHook, WR_SetBoldFunc);
 /// WR_SetItalicFunc
 HOOKPROTONHNO(WR_SetItalicFunc, void, ULONG *arg)
 {
-  ENTER();
   BOOL enableItalic = (BOOL)arg[0];
   int winnum = (int)arg[1];
   Object *textEdit = G->WR[winnum]->GUI.TE_EDIT;
+
+  ENTER();
 
   if(enableItalic)
   {
@@ -2528,10 +2530,11 @@ MakeStaticHook(WR_SetItalicHook, WR_SetItalicFunc);
 /// WR_SetUnderlineFunc
 HOOKPROTONHNO(WR_SetUnderlineFunc, void, ULONG *arg)
 {
-  ENTER();
   BOOL enableUnderline = (BOOL)arg[0];
   int winnum = (int)arg[1];
   Object *textEdit = G->WR[winnum]->GUI.TE_EDIT;
+
+  ENTER();
 
   if(enableUnderline)
   {
@@ -2552,10 +2555,11 @@ MakeStaticHook(WR_SetUnderlineHook, WR_SetUnderlineFunc);
 /// WR_SetColoredFunc
 HOOKPROTONHNO(WR_SetColoredFunc, void, ULONG *arg)
 {
-  ENTER();
   BOOL enableColored = (BOOL)arg[0];
   int winnum = (int)arg[1];
   Object *textEdit = G->WR[winnum]->GUI.TE_EDIT;
+
+  ENTER();
 
   if(enableColored)
   {
