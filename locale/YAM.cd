@@ -3291,15 +3291,6 @@ Underlined
 MSG_WR_Colored (996//)
 Alternative color
 ;
-MSG_WR_Separators (997//)
-Separators
-;
-MSG_WR_Thin (998//)
-Thin
-;
-MSG_WR_Thick (999//)
-Thick
-;
 MSG_WR_Emoticons (1000//)
 Emoticons
 ;
@@ -3524,15 +3515,6 @@ Applying remote filters...
 MSG_TR_SendHello (1061//)
 Sending 'Hello'...
 ;
-MSG_TR_SizeGauge (1063//)
-%%ld of %ld bytes
-; SIZE, SIZE
-;
-MSG_TR_TransferStats (1064//)
-%lD of %lD kB transmitted at %lD cps\n\
-Remaining time: %lD min %ld sec
-; SIZE, SIZE, SPEED, MINS, SECS
-;
 MSG_TR_Exporting (1065//)
 Exporting message...
 ;
@@ -3624,17 +3606,6 @@ Status
 ;
 MSG_TR_Abort (1088//)
 _Abort
-;
-MSG_TR_TransferStats0 (1089//)
-  0 of   0 kB transmitted at    0 cps\n\
-Remaining time:  0 min  0 sec
-;
-MSG_TR_BytesGauge0 (1090//)
-   0 of    0 bytes
-;
-MSG_TR_MessageGauge0 (1091//)
-Message  0 of  0
-;
 ;
 ; Module TR - Bubblehelp
 ;
@@ -4389,12 +4360,6 @@ Decoding/displaying...
 ;
 ;
 ; ADDED AFTER 13-MAR-1999
-;
-MSG_RE_FollowThreadReq (1295//)
-In order to follow the thread, YAM has to load all indices.\n\
-This may be quite time and memory consuming.\n\
-\n\
-Do you want to continue?
 ;
 MSG_CTapplicationadosscript (1296//)
 AmigaDOS script
@@ -5867,4 +5832,20 @@ MSG_HELP_CO_CONVERTHTML (1717//)
 If a mail contains viewable HTML parts as its main\n\
 message parts, YAM will convert them to plain text\n\
 when this option is enabled.
+;
+MSG_RE_FOLLOWTHREAD (1718//)
+In order to search for more mails of the same thread,\n\
+YAM has to load additional folder indices. This may be\n\
+quite time and memory consuming.\n\
+\n\
+Do you want to continue?
+;
+MSG_TR_TRANSFERSTATUS (1719//)
+%s of %s @ %s/s\n\
+%02ld'%02ld'' running - %02ld'%02ld'' left
+; SIZE, SIZE, SPEED, MINS, SECS
+;
+MSG_TR_TRANSFERSIZE (1720//)
+%s of %s
+; SIZE, SIZE
 ;
