@@ -440,8 +440,14 @@ BOOL MA_GetIndex(struct Folder *folder)
           if(G->MA)
             DisplayStatistics(folder, FALSE);
         }
+        else
+          W(DBF_MAIL, "status of loaded folder != LM_VALID (%ld)", folder->LoadedMode);
       }
+      else
+        W(DBF_MAIL, "password of protected folder couldn't be verified!");
     }
+    else
+      W(DBF_MAIL, "skipping index loading due to folder->LoadedMode: %ld", folder->LoadedMode);
 
     // check if the load status is valid or not
     result = (BOOL)(folder->LoadedMode == LM_VALID);

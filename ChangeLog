@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-10  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c, YAM_MAf.c: added somewhat more detailed debug information.
+
 2006-09-09  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, HTML2Mail.l, YAM_mail_lex.l: mails with bold/italic/underline and

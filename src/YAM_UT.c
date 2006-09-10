@@ -4870,6 +4870,8 @@ void DisplayAppIconStatistics(void)
   int snt_msg = 0;
   int del_msg = 0;
 
+  ENTER();
+
   // if the user wants to show an AppIcon on the workbench,
   // we go and calculate the mail stats for all folders out there.
   if((flist = FO_CreateList()))
@@ -4977,6 +4979,8 @@ void DisplayAppIconStatistics(void)
     }
     #endif
   }
+
+  LEAVE();
 }
 
 ///
@@ -4984,108 +4988,119 @@ void DisplayAppIconStatistics(void)
 //  Calculates folder statistics and update mailbox status icon
 void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
 {
-   int pos;
-   struct Mail *mail;
-   struct MUI_NListtree_TreeNode *tn;
-   struct Folder *actfo = FO_GetCurrentFolder();
+  int pos;
+  struct Mail *mail;
+  struct MUI_NListtree_TreeNode *tn;
+  struct Folder *actfo = FO_GetCurrentFolder();
 
-   // If the parsed argument is NULL we want to show the statistics from the actual folder
-   if (!fo) fo = actfo;
-   else if (fo == (struct Folder *)-1)
-   {
-     fo = FO_GetFolderByType(FT_INCOMING, NULL);
-   }
+  ENTER();
 
-   // Get Position of Folder
-   pos = FO_GetFolderPosition(fo, TRUE);
-   if(pos < 0) return;
+  // If the parsed argument is NULL we want to show the statistics from the actual folder
+  if(!fo)
+    fo = actfo;
+  else if(fo == (struct Folder *)-1)
+    fo = FO_GetFolderByType(FT_INCOMING, NULL);
 
-   // Now we recount the amount of Messages of this Folder
-   for (mail = fo->Messages, fo->Unread = fo->New = fo->Total = fo->Sent = fo->Deleted = 0; mail; mail = mail->Next)
-   {
-      fo->Total++;
+  // Get Position of Folder
+  pos = FO_GetFolderPosition(fo, TRUE);
+  if(pos < 0)
+  {
+    LEAVE();
+    return;
+  }
 
-      if(hasStatusNew(mail))
-        fo->New++;
+  // Now we recount the amount of Messages of this Folder
+  for(mail = fo->Messages, fo->Unread = fo->New = fo->Total = fo->Sent = fo->Deleted = 0; mail; mail = mail->Next)
+  {
+    fo->Total++;
 
-      if(!hasStatusRead(mail))
-        fo->Unread++;
+    if(hasStatusNew(mail))
+      fo->New++;
 
-      if(hasStatusSent(mail))
-        fo->Sent++;
+    if(!hasStatusRead(mail))
+      fo->Unread++;
 
-      if(hasStatusDeleted(mail))
-        fo->Deleted++;
-   }
+    if(hasStatusSent(mail))
+      fo->Sent++;
 
-   // if this folder hasn`t got any own folder image in the folder
-   // directory and it is one of our standard folders we have to check which image we put in front of it
-   if(fo->imageObject == NULL)
-   {
-      if(fo->Type == FT_INCOMING)      fo->ImageIndex = (fo->New+fo->Unread) ? 3 : 2;
-      else if(fo->Type == FT_OUTGOING) fo->ImageIndex = (fo->Total > 0) ? 5 : 4;
-      else if(fo->Type == FT_DELETED)  fo->ImageIndex = (fo->Total > 0) ? 7 : 6;
-      else if(fo->Type == FT_SENT)     fo->ImageIndex = 8;
-      else fo->ImageIndex = -1;
-   }
+    if(hasStatusDeleted(mail))
+      fo->Deleted++;
+  }
 
-   if (fo == actfo)
-   {
-      CallHookPkt(&MA_SetMessageInfoHook, 0, 0);
-      CallHookPkt(&MA_SetFolderInfoHook, 0, 0);
-      DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, fo);
-   }
+  // if this folder hasn`t got any own folder image in the folder
+  // directory and it is one of our standard folders we have to check which image we put in front of it
+  if(fo->imageObject == NULL)
+  {
+    if(fo->Type == FT_INCOMING)      fo->ImageIndex = (fo->New+fo->Unread) ? 3 : 2;
+    else if(fo->Type == FT_OUTGOING) fo->ImageIndex = (fo->Total > 0) ? 5 : 4;
+    else if(fo->Type == FT_DELETED)  fo->ImageIndex = (fo->Total > 0) ? 7 : 6;
+    else if(fo->Type == FT_SENT)     fo->ImageIndex = 8;
+    else fo->ImageIndex = -1;
+  }
 
-   // Recalc the number of messages of the folder group
-   if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, pos, MUIF_NONE)))
-   {
-      struct MUI_NListtree_TreeNode *tn_parent;
+  if(fo == actfo)
+  {
+    CallHookPkt(&MA_SetMessageInfoHook, 0, 0);
+    CallHookPkt(&MA_SetFolderInfoHook, 0, 0);
+    DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, fo);
+  }
 
-      // Now lets redraw the folderentry in the listtree
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn, MUIF_NONE);
+  // Recalc the number of messages of the folder group
+  if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, pos, MUIF_NONE)))
+  {
+    struct MUI_NListtree_TreeNode *tn_parent;
 
-      // Now we have to recalculate all parent and grandparents treenodes to
-      // set their status accordingly.
-      while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
+    // Now lets redraw the folderentry in the listtree
+    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn, MUIF_NONE);
+
+    // Now we have to recalculate all parent and grandparents treenodes to
+    // set their status accordingly.
+    while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
+    {
+      // fo_parent is NULL then it`s ROOT and we have to skip here
+      struct Folder *fo_parent = (struct Folder *)tn_parent->tn_User;
+
+      if(fo_parent)
       {
-         // fo_parent is NULL then it`s ROOT and we have to skip here
-         struct Folder *fo_parent = (struct Folder *)tn_parent->tn_User;
-         if(fo_parent)
-         {
-            int i;
+        int i;
 
-            // clear the parent mailvariables first
-            fo_parent->Unread = fo_parent->New = fo_parent->Total = fo_parent->Sent = fo_parent->Deleted = 0;
+        // clear the parent mailvariables first
+        fo_parent->Unread = fo_parent->New = fo_parent->Total = fo_parent->Sent = fo_parent->Deleted = 0;
 
-            // Now we scan every child of the parent and count the mails
-            for(i=0;;i++)
-            {
-               struct MUI_NListtree_TreeNode *tn_child;
-               struct Folder *fo_child;
+        // Now we scan every child of the parent and count the mails
+        for(i=0;;i++)
+        {
+          struct MUI_NListtree_TreeNode *tn_child;
+          struct Folder *fo_child;
 
-               tn_child = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn_parent, i, MUIV_NListtree_GetEntry_Flag_SameLevel);
-               if(!tn_child) break;
+          tn_child = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn_parent, i, MUIV_NListtree_GetEntry_Flag_SameLevel);
+          if(!tn_child)
+            break;
 
-               fo_child = (struct Folder *)tn_child->tn_User;
+          fo_child = (struct Folder *)tn_child->tn_User;
 
-               fo_parent->Unread    += fo_child->Unread;
-               fo_parent->New       += fo_child->New;
-               fo_parent->Total     += fo_child->Total;
-               fo_parent->Sent      += fo_child->Sent;
-               fo_parent->Deleted   += fo_child->Deleted;
-            }
+          fo_parent->Unread    += fo_child->Unread;
+          fo_parent->New       += fo_child->New;
+          fo_parent->Total     += fo_child->Total;
+          fo_parent->Sent      += fo_child->Sent;
+          fo_parent->Deleted   += fo_child->Deleted;
+        }
 
-            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn_parent, MUIF_NONE);
+        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn_parent, MUIF_NONE);
 
-            // for the next step we set tn to the current parent so that we get the
-            // grandparents ;)
-            tn = tn_parent;
-         }
-         else break;
+        // for the next step we set tn to the current parent so that we get the
+        // grandparents ;)
+        tn = tn_parent;
       }
-   }
+      else
+        break;
+    }
+  }
 
-   if (!G->AppIconQuiet && updateAppIcon) DisplayAppIconStatistics();
+  if(!G->AppIconQuiet && updateAppIcon)
+    DisplayAppIconStatistics();
+
+  LEAVE();
 }
 
 ///
