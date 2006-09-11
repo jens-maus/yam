@@ -120,7 +120,7 @@ void STDARGS VARARGS68K ER_NewError(const char *error, ...)
       G->ER_Message[G->ER_NumErr-1] = strdup(buf);
    }
 
-   snprintf(label, sizeof(label), "\033c%s %%ld/%ld", GetStr(MSG_ErrorReq), G->ER_NumErr);
+   snprintf(label, sizeof(label), "\033c%s %%ld/%d", GetStr(MSG_ErrorReq), G->ER_NumErr);
 
    SetAttrs(gui->NB_ERROR,
               MUIA_Numeric_Format, label,
