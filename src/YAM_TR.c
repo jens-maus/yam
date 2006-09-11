@@ -4950,7 +4950,7 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
 
       // prepare the initial text object content
       snprintf(status_label, sizeof(status_label), GetStr(MSG_TR_TRANSFERSTATUS),
-                                                   "0 MB", "0 MB", "0 KB/s", 0, 0, 0, 0);
+                                                   "0 MB", "0 MB", "0 KB", 0, 0, 0, 0);
 
       snprintf(msg_gauge_label, sizeof(msg_gauge_label), GetStr(MSG_TR_MESSAGEGAUGE), 0);
       snprintf(size_gauge_label, sizeof(size_gauge_label), GetStr(MSG_TR_TRANSFERSIZE),
