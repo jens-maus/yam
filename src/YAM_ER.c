@@ -56,80 +56,77 @@ static struct ER_ClassData *ER_New(void);
  Module: Error window
 ***************************************************************************/
 
-/// putCharFunc
-//  Hook used by FormatString()
-HOOKPROTONO(putCharFunc, void, int c)
-{
-  char **tmp;
-
-  ((char *)hook->h_Data)[0] = c;
-  tmp = (char **)(&hook->h_Data);
-  (*tmp)++;
-}
-MakeStaticHook(putCharHook, putCharFunc);
-
-///
 /// ER_NewError
 /*** ER_NewError - Adds a new error message and displays it ***/
-void STDARGS VARARGS68K ER_NewError(const char *error, ...)
+void STDARGS ER_NewError(const char *error, ...)
 {
-   static char label[SIZE_SMALL];
-   struct ER_GUIData *gui;
-   int i;
+  static char label[SIZE_SMALL];
 
-   // we only signal an error if we really have one,
-   // otherwise calling this function with error=NULL is just
-   // for showing the last errors,
-   if(error) G->Error = TRUE;
+  ENTER();
 
-   if (!G->ER)
-   {
-      if (!(G->ER = ER_New())) return;
-      if (!SafeOpenWindow(G->ER->GUI.WI)) { DisposeModule(&G->ER); return; }
-   }
+  // we only signal an error if we really have one,
+  // otherwise calling this function with error=NULL is just
+  // for showing the last errors,
+  if(error)
+    G->Error = TRUE;
 
-   gui = &(G->ER->GUI);
+  if(!G->ER)
+  {
+    if(!(G->ER = ER_New()))
+    {
+      LEAVE();
+      return;
+    }
 
-   if(error)
-   {
-      char buf[SIZE_LARGE];
-      char datstr[64];
-      struct Hook hook;
-      VA_LIST args;
+    if(!SafeOpenWindow(G->ER->GUI.WI))
+    {
+      DisposeModule(&G->ER);
 
-      if (++G->ER_NumErr > MAXERR)
-      {
-         free(G->ER_Message[0]);
-         for (--G->ER_NumErr, i = 1; i < G->ER_NumErr; i++) G->ER_Message[i-1] = G->ER_Message[i];
-      }
+      LEAVE();
+      return;
+    }
+  }
 
-      // get actual date as a string
-      DateStamp2String(datstr, sizeof(datstr), NULL, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE);
+  if(error)
+  {
+    char buf[SIZE_LARGE];
+    char datstr[64];
+    va_list args;
+    int i;
 
-      // initialize the hook
-      InitHook(&hook, putCharHook, buf);
+    if(++G->ER_NumErr > MAXERR)
+    {
+      free(G->ER_Message[0]);
 
-      VA_START(args, error);
-      FormatString(G->Locale, (STRPTR)error, VA_ARG(args, void *), &hook);
-      VA_END(args);
+      for(--G->ER_NumErr, i = 1; i < G->ER_NumErr; i++)
+        G->ER_Message[i-1] = G->ER_Message[i];
+    }
 
-      strlcat(buf, "\n\n(", sizeof(buf));
-      strlcat(buf, datstr, sizeof(buf));
-      strlcat(buf, ")", sizeof(buf));
+    // get actual date as a string
+    DateStamp2String(datstr, sizeof(datstr), NULL, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE);
 
-      G->ER_Message[G->ER_NumErr-1] = strdup(buf);
-   }
+    va_start(args, error);
+    vsnprintf(buf, sizeof(buf), error, args);
+    va_end(args);
 
-   snprintf(label, sizeof(label), "\033c%s %%ld/%d", GetStr(MSG_ErrorReq), G->ER_NumErr);
+    // append the datestring
+    snprintf(buf, sizeof(buf), "%s\n\n(%s)", buf, datstr);
 
-   SetAttrs(gui->NB_ERROR,
-              MUIA_Numeric_Format, label,
-              MUIA_Numeric_Min,    1,
-              MUIA_Numeric_Max,    G->ER_NumErr,
-              MUIA_Numeric_Value,  G->ER_NumErr,
-              TAG_DONE);
+    // allocate an own buffer for our error string.
+    G->ER_Message[G->ER_NumErr-1] = strdup(buf);
+  }
 
-   if (G->MA) set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
+  snprintf(label, sizeof(label), "\033c%s %%ld/%d", GetStr(MSG_ErrorReq), G->ER_NumErr);
+  SetAttrs(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, label,
+                                MUIA_Numeric_Min,    1,
+                                MUIA_Numeric_Max,    G->ER_NumErr,
+                                MUIA_Numeric_Value,  G->ER_NumErr,
+                                TAG_DONE);
+
+  if(G->MA)
+    set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
+
+  LEAVE();
 }
 
 ///

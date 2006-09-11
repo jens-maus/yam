@@ -6,6 +6,9 @@ $Id$
 
 2006-09-11  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_ER.c: get rid of the last FormatString() use which, apart from the
+    separate putCharHook usage was also prone to buffer overflows. Now vsnprintf()
+    will be used instead.
   * YAM_UT.c, misc: removed the mroe or less unused and buffer overflow prone
     SPrintF() implementation and replaced all occurances with the more safe
     snprintf() equivalent.
