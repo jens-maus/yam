@@ -5833,32 +5833,3 @@ char *AllocReqText(char *s)
    return reqtext;
 }
 ///
-
-/// putCharFunc
-//  Hook used by FormatString()
-HOOKPROTONO(putCharFunc, void, int c)
-{
-  char **tmp;
-
-  ((char *)hook->h_Data)[0] = c;
-  tmp = (char **)(&hook->h_Data);
-  (*tmp)++;
-}
-MakeStaticHook(putCharHook, putCharFunc);
-///
-
-/// SPrintF
-//  sprintf() replacement with Locale support
-void STDARGS VARARGS68K SPrintF(char *outstr, const char *fmtstr, ...)
-{
-  struct Hook hook;
-  VA_LIST args;
-
-  // initialize the hook
-  InitHook(&hook, putCharHook, outstr);
-
-  VA_START(args, fmtstr);
-  FormatString(G->Locale, (STRPTR)fmtstr, VA_ARG(args, void *), &hook);
-  VA_END(args);
-}
-///

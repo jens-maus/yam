@@ -150,13 +150,16 @@ OVERLOAD(OM_NEW)
     if(data->mailPart)
     {
       struct Part *mp = data->mailPart;
+      char sizestr[SIZE_DEFAULT];
 
-      SPrintF(data->shortHelp, GetStr(MSG_MA_ATTACHMENTINFO), mp->Nr,
-                                                              mp->Name,
-                                                              mp->Description,
-                                                              DescribeCT(mp->ContentType),
-                                                              mp->ContentType,
-                                                              mp->Size);
+      FormatSize(mp->Size, sizestr, sizeof(sizestr), SF_AUTO);
+
+      snprintf(data->shortHelp, sizeof(data->shortHelp), GetStr(MSG_MA_MIMEPART_INFO), mp->Nr,
+                                                                                       mp->Name,
+                                                                                       mp->Description,
+                                                                                       DescribeCT(mp->ContentType),
+                                                                                       mp->ContentType,
+                                                                                       sizestr);
       set(obj, MUIA_ShortHelp, data->shortHelp);
     }
   }

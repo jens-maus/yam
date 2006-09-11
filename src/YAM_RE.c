@@ -2936,7 +2936,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                         int expsize = atoi(&endptr[5]);
 
                         if(uup->Size != expsize)
-                          ER_NewError(GetStr(MSG_ER_UUSize), (char *)uup->Size, (char *)expsize);
+                          ER_NewError(GetStr(MSG_ER_UUSize), uup->Size, expsize);
                       }
                     }
                     else

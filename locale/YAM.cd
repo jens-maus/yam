@@ -508,10 +508,6 @@ Please confirm deletion.
 MSG_MA_1Selected (157//)
 One message selected.\n
 ;
-MSG_MA_xSelected (158//)
-%lD messages selected.\n
-; COUNT
-;
 MSG_MA_ConfirmFilter (159//)
 Is it okay to filter messages\n\
 in folder '%s'?
@@ -565,24 +561,6 @@ Execute script...
 ;
 MSG_MA_CheckSingle (174//)
 Check single account
-;
-MSG_MA_FolderInfo (175//)
-\ebCurrent folder\en\n\
-Name: %s\n\
-Path: %s\n\
-Size: %lD bytes\n\
-Messages: %lD (%lD new, %lD unread)
-; NAME, PATH, SIZE, COUNT, COUNT, COUNT
-;
-MSG_MA_MessageInfo (176//)
-\ebCurrent message\en\n\
-From: %s <%s>\n\
-To: %s <%s>\n\
-Subject: %s\n\
-Date: %s\n\
-Filename: %s\n\
-Size: %lD bytes
-; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle (177//)
 YAM %s  -  User: %s
@@ -3690,7 +3668,7 @@ Unexpected EOF while decoding a UUencoded file. \
 The message seems to be truncated.
 ;
 MSG_ER_InvalidLength (1115//)
-Invalid line length in UUencoded file: %lD.\n\
+Invalid line length in UUencoded file: %ld.\n\
 \n\
 A defective UUencoder was used or the message is truncated.
 ; SIZE
@@ -3729,7 +3707,7 @@ The file doesn't seem to exist.
 ; FILENAME
 ;
 MSG_ER_UUSize (1123//)
-Decoded size [%lD] does not match original size [%lD].\n\
+Decoded size [%ld] does not match original size [%ld].\n\
 \n\
 A defective UUencoder was used or the message is truncated.
 ; SIZE, SIZE
@@ -3887,10 +3865,6 @@ position in the text editor
 ;
 ;
 ; Module FI - Procedures
-;
-MSG_FI_GaugeText (1159//)
-%%ld of %lD messages
-; COUNT, COUNT
 ;
 MSG_FI_AddFilter (1160//)
 Add filter
@@ -5126,16 +5100,6 @@ Attachment
 MSG_MA_ATTACHMENTS (1529//)
 Attachments:
 ;
-MSG_MA_ATTACHMENTINFO (1530//)
-\ebAttachment - MIME-Part #%lD\en\n\
-Name: %s\n\
-Description: %s\n\
-Content-Type: %s <%s>\n\
-Size: ~%lD bytes
-; PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
-MSG_MA_ATTACHMENT_PART (1531//)
-Attachment/MIME-Part #%lD
-;
 MSG_MA_ATTACHMENT_DISPLAY (1532//)
 Display
 ;
@@ -5848,4 +5812,41 @@ MSG_TR_TRANSFERSTATUS (1719//)
 MSG_TR_TRANSFERSIZE (1720//)
 %s of %s
 ; SIZE, SIZE
+;
+MSG_FI_GAUGETEXT (1721//)
+%%ld of %ld messages
+; COUNT, COUNT
+;
+MSG_MA_MESSAGEINFO (1722//)
+\ebCurrent message\en\n\
+From: %s <%s>\n\
+To: %s <%s>\n\
+Subject: %s\n\
+Date: %s\n\
+Filename: %s\n\
+Size: %s
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
+;
+MSG_MA_FOLDERINFO (1723//)
+\ebCurrent folder\en\n\
+Name: %s\n\
+Path: %s\n\
+Size: %s\n\
+Messages: %ld (%ld new, %ld unread)
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
+;
+MSG_MA_XSELECTED (1724//)
+%ld messages selected.\n
+; COUNT
+;
+MSG_MA_MIMEPART_INFO (1725//)
+\ebAttachment - MIME-Part #%ld\en\n\
+Name: %s\n\
+Description: %s\n\
+Content-Type: %s <%s>\n\
+Size: ~%s
+; PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
+;
+MSG_MA_MIMEPART_MENU (1726//)
+Attachment/MIME-Part #%ld
 ;

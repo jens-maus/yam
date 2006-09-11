@@ -261,26 +261,38 @@ MakeHook(MA_ChangeSelectedHook, MA_ChangeSelectedFunc);
 //  Builds help bubble for message list
 HOOKPROTONHNONP(MA_SetMessageInfoFunc, void)
 {
-  static char buffer[SIZE_DEFAULT+SIZE_SUBJECT+2*SIZE_REALNAME+2*SIZE_ADDRESS+SIZE_MFILE];
-  char *sh = NULL;
-  struct Mail *mail = MA_GetActiveMail(NULL, NULL, NULL);
+  struct Mail *mail;
 
-  if(mail)
+  ENTER();
+
+  if((mail = MA_GetActiveMail(NULL, NULL, NULL)))
   {
+    static char buffer[SIZE_DEFAULT+SIZE_SUBJECT+2*SIZE_REALNAME+2*SIZE_ADDRESS+SIZE_MFILE];
     char datstr[64];
+    char sizestr[SIZE_DEFAULT];
 
+    // convert the datestamp of the mail to
+    // well defined string
     DateStamp2String(datstr, sizeof(datstr), &mail->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
-    SPrintF(sh = buffer, GetStr(MSG_MA_MessageInfo), mail->From.RealName,
-                                                     mail->From.Address,
-                                                     mail->To.RealName,
-                                                     mail->To.Address,
-                                                     mail->Subject,
-                                                     datstr,
-                                                     mail->MailFile,
-                                                     mail->Size);
-  }
 
-  set(G->MA->GUI.PG_MAILLIST, MUIA_ShortHelp, sh);
+    // use FormatSize() to prettify the size display of the mail info
+    FormatSize(mail->Size, sizestr, sizeof(sizestr), SF_AUTO);
+
+    snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_MESSAGEINFO), mail->From.RealName,
+                                                                 mail->From.Address,
+                                                                 mail->To.RealName,
+                                                                 mail->To.Address,
+                                                                 mail->Subject,
+                                                                 datstr,
+                                                                 mail->MailFile,
+                                                                 sizestr);
+
+    set(G->MA->GUI.PG_MAILLIST, MUIA_ShortHelp, buffer);
+  }
+  else
+    set(G->MA->GUI.PG_MAILLIST, MUIA_ShortHelp, NULL);
+
+  LEAVE();
 }
 MakeHook(MA_SetMessageInfoHook, MA_SetMessageInfoFunc);
 
@@ -289,16 +301,31 @@ MakeHook(MA_SetMessageInfoHook, MA_SetMessageInfoFunc);
 //  Builds help bubble for folder list
 HOOKPROTONHNONP(MA_SetFolderInfoFunc, void)
 {
-   static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
-   char *sh = NULL;
-   struct Folder *fo = FO_GetCurrentFolder();
+  struct Folder *fo;
 
-   if (fo && (fo->Type != FT_GROUP))
-   {
-      SPrintF(sh = buffer, GetStr(MSG_MA_FolderInfo), fo->Name, fo->Path, fo->Size, fo->Total, fo->New, fo->Unread);
-   }
+  ENTER();
 
-   set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, sh);
+  if((fo = FO_GetCurrentFolder()) &&
+     (fo->Type != FT_GROUP))
+  {
+    static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
+    char sizestr[SIZE_DEFAULT];
+
+    FormatSize(fo->Size, sizestr, sizeof(sizestr), SF_AUTO);
+
+    snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_FOLDERINFO), fo->Name,
+                                                                fo->Path,
+                                                                sizestr,
+                                                                fo->Total,
+                                                                fo->New,
+                                                                fo->Unread);
+
+    set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, buffer);
+  }
+  else
+    set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, NULL);
+
+  LEAVE();
 }
 MakeHook(MA_SetFolderInfoHook, MA_SetFolderInfoFunc);
 
@@ -2471,8 +2498,13 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    selected = (int)*mlist;
    if (C->Confirm && selected >= C->ConfirmDelete && !force)
    {
-      SPrintF(buffer, selected==1 ? GetStr(MSG_MA_1Selected) : GetStr(MSG_MA_xSelected), selected);
-      strlcat(buffer, GetStr(MSG_MA_ConfirmDel), sizeof(buffer));
+      if(selected == 1)
+        snprintf(buffer, sizeof(buffer), "%s%s", GetStr(MSG_MA_1Selected), GetStr(MSG_MA_ConfirmDel));
+      else
+      {
+        snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_XSELECTED), selected);
+        strlcat(buffer, GetStr(MSG_MA_ConfirmDel), sizeof(buffer));
+      }
 
       if (!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_OkayCancelReq), buffer))
       {

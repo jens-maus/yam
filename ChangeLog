@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-11  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c, misc: removed the mroe or less unused and buffer overflow prone
+    SPrintF() implementation and replaced all occurances with the more safe
+    snprintf() equivalent.
+
 2006-09-10  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c, YAM_MAf.c: added somewhat more detailed debug information.

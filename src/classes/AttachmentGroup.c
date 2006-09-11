@@ -472,7 +472,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
   // generate a context menu title now
   if(mailPart)
   {
-    SPrintF(data->menuTitle, GetStr(MSG_MA_ATTACHMENT_PART), mailPart->Nr);
+    snprintf(data->menuTitle, sizeof(data->menuTitle), GetStr(MSG_MA_MIMEPART_MENU), mailPart->Nr);
     data->selectedPart = mailPart;
   }
   else

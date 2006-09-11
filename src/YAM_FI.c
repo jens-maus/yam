@@ -749,8 +749,8 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
    // lets prepare the search
    DoMethod(gui->GR_SEARCH, MUIM_SearchControlGroup_PrepareSearch, &search);
 
-   SPrintF(gauge, GetStr(MSG_FI_GaugeText), totmsg);
-
+   // set the gauge
+   snprintf(gauge, sizeof(gauge), GetStr(MSG_FI_GAUGETEXT), totmsg);
    SetAttrs(ga, MUIA_Gauge_InfoText, gauge,
                 MUIA_Gauge_Max,      totmsg,
                 MUIA_Gauge_Current,  0,

@@ -362,7 +362,6 @@ void     SaveLayout(BOOL permanent);
 void     SetupToolbar(struct MUIP_Toolbar_Description *tb, const char *label, const char *help, ULONG flags);
 char     ShortCut(const char *label);
 void     SimpleWordWrap(char *filename, int wrapsize);
-void STDARGS VARARGS68K SPrintF(char *outstr, const char *fmtstr, ...);
 char *   StartUnpack(char *file, char *newfile, struct Folder *folder);
 char *   StrBufCat(char *strbuf, const char *source);
 char *   StrBufCpy(char *strbuf, const char *source);
