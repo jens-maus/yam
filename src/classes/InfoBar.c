@@ -30,6 +30,8 @@
 
 #include "InfoBar_cl.h"
 
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
@@ -155,13 +157,17 @@ OVERLOAD(OM_NEW)
 DECLARE(SetFolder) // struct Folder *newFolder
 {
   GETDATA;
-
   struct Folder *folder = msg->newFolder;
+
+  ENTER();
 
   data->actualFolder = folder;
 
-  if(!folder)
+  if(folder == NULL)
+  {
+    RETURN(-1);
     return -1;
+  }
 
   // prepare the object for a change
   if(DoMethod(obj, MUIM_Group_InitChange))
@@ -204,6 +210,7 @@ DECLARE(SetFolder) // struct Folder *newFolder
     DoMethod(obj, MUIM_Group_ExitChange);
   }
 
+  RETURN(0);
   return 0;
 }
 ///
