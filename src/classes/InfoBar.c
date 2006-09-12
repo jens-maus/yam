@@ -184,6 +184,8 @@ DECLARE(SetFolder) // struct Folder *newFolder
        stricmp((char *)xget(data->actualImage, MUIA_ImageArea_Filename),
                (char *)xget(folder->imageObject, MUIA_ImageArea_Filename)) != 0))
     {
+      D(DBF_GUI, "disposing imageare: '%s'", xget(data->actualImage, MUIA_ImageArea_Filename));
+
       DoMethod(obj, OM_REMMEMBER, data->actualImage);
       MUI_DisposeObject(data->actualImage);
       data->actualImage = NULL;
@@ -193,6 +195,8 @@ DECLARE(SetFolder) // struct Folder *newFolder
     // to the grouplist of this infobar
     if(data->actualImage == NULL)
     {
+      D(DBF_GUI, "init imagearea: '%s'", xget(folder->imageObject, MUIA_ImageArea_Filename));
+
       if(folder->imageObject)
         data->actualImage = MakeImageObject(xget(folder->imageObject, MUIA_ImageArea_Filename));
       else if(folder->ImageIndex >= 0 && folder->ImageIndex < MAX_FOLDERIMG)
