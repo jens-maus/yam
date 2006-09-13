@@ -56,7 +56,7 @@ void SetupDebug(void)
   char var[256];
 
   kprintf("** %s build: %s startup **********************\n", yamversion, yambuildid);
-  kprintf("Exec version: v%ld.%ld\n", SysBase->lib_Version, SysBase->lib_Revision);
+  kprintf("Exec version: v%ld.%ld\n", ((struct Library *)SysBase)->lib_Version, ((struct Library *)SysBase)->lib_Revision);
   kprintf("Initializing runtime debugging:\n");
 
   if(GetVar("yamdebug", var, sizeof(var), 0) > 0)
