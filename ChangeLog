@@ -4,6 +4,28 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-14  Gunther Nikl <gni@gecko.de>
+
+  * YAM_UT.c (MUIStyle2String): Remove cast.
+  * YAM.c (Initialise2): Remove superfluous initialization.
+    YAM_FI.c (GetFilterRule): Likewise.
+  * YAM.c (main): Fix broken array pointer/usage (detected by SAS/C)
+  * extrasrc/genclasses/gc.c (doargs): Use proper type.
+  * C_c.sd (Open%bCatalog): Use void.
+    YAM.c (StayInProg), YAM_TR.c (TR_GetMessageList_IMPORT),
+    YAM_transfer.h (TR_GetMessageList_IMPORT): Likewise.
+  * include/openssl/evp.h: Remove superfluous forward declarations.
+  * include/openssl/ocsp.h (PEM_read_bio_OCSP_RESPONSE): Add missing space.
+  * UpdateCheck.c, YAM_DI.c, YAM_ER.c, YAM_FO.c, YAM_MI.c, YAM_rexx.c: Add
+    extra.h.
+  * extra.h: add prototypes for strlcpy, strlcat, strtok_r when necessary.
+  * extrasrc/strlcat.c, extrasrc/strlcpy.c: New files.
+  * Debug.h, Debug.c: Move kprintf stuff from .h to .c (only used there),
+    trim headers.
+  * Moved all proto/ headers to appropriate .c files. Removed duplicated
+    headers and reordered some. Don't rely on ClassesExtra.h to provided
+    required headers.
+
 2006-09-14  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: fixed bug #1558215 where the PGP Id wasn't correctly stripped
