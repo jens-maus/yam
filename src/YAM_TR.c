@@ -4119,7 +4119,7 @@ static BOOL ReadDBXNode(FILE *fh, char *outFileName, unsigned int addr, int *mai
 ///
 /// TR_GetMessageList_IMPORT
 //  Collects messages from our different supported import formats
-BOOL TR_GetMessageList_IMPORT()
+BOOL TR_GetMessageList_IMPORT(void)
 {
   BOOL result = FALSE;
   char tfname[SIZE_MFILE];

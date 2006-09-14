@@ -71,7 +71,7 @@ void Close%bCatalog(void)
 }
 ///
 /// Open%bCatalog()
-void Open%bCatalog()
+void Open%bCatalog(void)
 {
   static const struct TagItem tags[] = {
                                          { OC_BuiltInLanguage, (ULONG)%l },

@@ -879,7 +879,7 @@ MakeStaticHook(DoublestartHook, DoublestartFunc);
 ///
 /// StayInProg
 //  Makes sure that the user really wants to quit the program
-static BOOL StayInProg()
+static BOOL StayInProg(void)
 {
    int i;
    BOOL req = FALSE;
