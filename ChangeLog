@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-14  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c: fixed bug #1558215 where the PGP Id wasn't correctly stripped
+    out of the keylist listview either in the config or addressbook window.
+
 2006-09-12  Jens Langner <Jens.Langner@light-speed.de>
 
   * ImageArea.c: added somewhat more debug output to try to catch a still

@@ -3873,8 +3873,11 @@ HOOKPROTONH(PO_SetPublicKey, void, Object *pop, Object *string)
   DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &var);
   if(var)
   {
-    char buf[SIZE_SMALL];
-    snprintf(buf, sizeof(buf), "0x%s", var);
+    char buf[8+2+1]; // 8 chars + 2 extra chars required.
+
+    strlcpy(buf, "0x", sizeof(buf));
+    strlcat(buf, var, sizeof(buf));
+
     setstring(string, buf);
   }
 }
