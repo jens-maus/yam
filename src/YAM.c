@@ -1418,10 +1418,10 @@ void SetupAppIcons(void)
 //  Phase 2 of program initialization (after user logs in)
 static void Initialise2(void)
 {
-   BOOL newfolders = FALSE;
-   BOOL splashWasActive = FALSE;
-   int i;
    struct Folder *folder, **oldfolders = NULL;
+   BOOL newfolders = FALSE;
+   BOOL splashWasActive;
+   int i;
 
    ENTER();
 
@@ -2181,7 +2181,7 @@ int main(int argc, char **argv)
       {
         char buf[SIZE_PATHFILE];
 
-        GetProgramName((STRPTR)&buf, sizeof(buf));
+        GetProgramName((STRPTR)&buf[0], sizeof(buf));
 
         strlcpy(G->ProgName, (char *)FilePart(buf), sizeof(G->ProgName));
       }

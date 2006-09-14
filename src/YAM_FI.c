@@ -1503,8 +1503,8 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter)
 //  return a pointer to the rule depending on the position in the ruleList
 struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos)
 {
+  struct MinNode *curNode;
   int i;
-  struct MinNode *curNode = NULL;
 
   // we do have to iterate through the ruleList of the filter
   // and count for rule at position 'pos'

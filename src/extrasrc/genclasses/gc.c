@@ -1205,7 +1205,8 @@ int getblnarg( char *argid, char *argline, int *blnlong )
 
 int doargs( unsigned int argc, char *argv[] )
 {
-  unsigned int i, success;
+  unsigned int i;
+  int success;
 
   if (argc < 2)
   {
