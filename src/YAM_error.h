@@ -28,8 +28,7 @@
 
 ***************************************************************************/
 
-#include <exec/types.h>
-#include <proto/intuition.h>
+#include <intuition/classusr.h>
 
 struct ER_GUIData
 {
