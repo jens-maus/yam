@@ -30,7 +30,7 @@
 
 #include <stdio.h>
 
-#include <proto/codesets.h>
+#include <libraries/codesets.h>
 
 #include "YAM_stringsizes.h"
 
