@@ -41,13 +41,21 @@
 
 #include "Debug.h"
 
+// redefinition section
 #if defined(__amigaos4__)
   #undef DebugPrintF
   #ifndef kprintf
-    #define kprintf(format, args...) IExec->DebugPrintF(format, __VA_ARGS__)
+    #define kprintf(...) IExec->DebugPrintF(__VA_ARGS__)
   #endif
 #else
-  void kprintf(const char *formatString,...);
+  void kprintf(const char *formatString, ...);
+
+  #if defined(__MORPHOS__)
+    #include <exec/rawfmt.h>
+    #define KPutFmt(format, args) VNewRawDoFmt(format, (APTR)RAWFMTFUNC_SERIAL, NULL, args)
+  #else
+    void STDARGS KPutFmt(const char *format, va_list arg);
+  #endif
 #endif
 
 // our static variables with default values
@@ -427,14 +435,8 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
       IExec->DebugPrintF("%s:%ld:%s\n", file, line, buf);
   }
 }
-#else
 
-#if defined(__MORPHOS__)
-#include <exec/rawfmt.h>
-#define KPutFmt(format, args) VNewRawDoFmt(format, (APTR)RAWFMTFUNC_SERIAL, NULL, args)
 #else
-void STDARGS KPutFmt(const char *format, va_list arg);
-#endif
 
 void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int line, const char *format, ...)
 {
