@@ -6,6 +6,10 @@ $Id$
 
 2006-09-14  Jens Langner <Jens.Langner@light-speed.de>
 
+  * tools, genclasses: generated new 'tools' subdir and moved the whole
+    extrasrc/genclasses dir to it. In future this directory should carry all
+    kind of (build) tools. extrasrc should only carry source files which
+    will be included conditionally by extrasrc.c.
   * all_#?.c, misc: removed all all_#?.c files and replaced it by a single
     extrasrc.c,h combo which contains a bunch of HAVE_XXXX defines instead.
   * UpdateCheck.c, YAM_COg.c: added missing <clib/alib_protos.h> for non-OS4

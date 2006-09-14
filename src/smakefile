@@ -41,7 +41,8 @@ PREFIX     =
 CLASSDIR   = $(PREFIX)classes
 LOCALE     = /$(PREFIX)locale
 EXTSRC     = $(PREFIX)extrasrc
-GENCLASSES = $(EXTSRC)/genclasses
+TOOLS      = $(PREFIX)tools
+GENCLASSES = $(TOOLS)/genclasses
 OBJDIR     = .obj_sas
 
 # Compiler/Linker flags
@@ -191,7 +192,7 @@ cleanall: clean
 
 distclean: cleanall
   @execute <<
-    cd $(EXTSRC)/genclasses
+    cd $(GENCLASSES)
     smake -s clean
   <
 
@@ -203,7 +204,7 @@ $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h\
   $(GENCLASSES)/lists.c $(GENCLASSES)/lists.h
   @echo "*e[33mMaking $@ tool...*e[0m"
   @execute <<
-    cd $(EXTSRC)/genclasses
+    cd $(GENCLASSES)
     smake -s
   <
 

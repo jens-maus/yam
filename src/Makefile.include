@@ -35,6 +35,9 @@
 # as it may be included be more than one target Makefile!
 #
 
+# General vars
+GENCLASSES= $(TOOLS)/genclasses
+
 # Special flags
 DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
 

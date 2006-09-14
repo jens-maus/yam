@@ -44,7 +44,7 @@ PREFIX    = .
 CLASSDIR  = $(PREFIX)/classes
 LOCALE    = $(PREFIX)/../locale
 EXTRASRC  = $(PREFIX)/extrasrc
-GENCLASSES= $(EXTRASRC)/genclasses
+TOOLS     = $(PREFIX)/tools
 OBJDIR    = .obj_mos
 
 # Compiler/Linker flags
