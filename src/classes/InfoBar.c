@@ -184,7 +184,7 @@ DECLARE(SetFolder) // struct Folder *newFolder
        stricmp((char *)xget(data->actualImage, MUIA_ImageArea_Filename),
                (char *)xget(folder->imageObject, MUIA_ImageArea_Filename)) != 0))
     {
-      D(DBF_GUI, "disposing imageare: '%s'", xget(data->actualImage, MUIA_ImageArea_Filename));
+      D(DBF_GUI, "disposing imagearea: '%s'", xget(data->actualImage, MUIA_ImageArea_Filename));
 
       DoMethod(obj, OM_REMMEMBER, data->actualImage);
       MUI_DisposeObject(data->actualImage);
@@ -195,20 +195,29 @@ DECLARE(SetFolder) // struct Folder *newFolder
     // to the grouplist of this infobar
     if(data->actualImage == NULL)
     {
-      D(DBF_GUI, "init imagearea: '%s'", xget(folder->imageObject, MUIA_ImageArea_Filename));
-
       if(folder->imageObject)
+      {
         data->actualImage = MakeImageObject(xget(folder->imageObject, MUIA_ImageArea_Filename));
+
+        D(DBF_GUI, "init imagearea: '%s'", xget(folder->imageObject, MUIA_ImageArea_Filename));
+      }
       else if(folder->ImageIndex >= 0 && folder->ImageIndex < MAX_FOLDERIMG)
       {
         Object **imageArray = (Object **)xget(G->MA->GUI.NL_FOLDERS, MUIA_MainFolderListtree_ImageArray);
+
+        D(DBF_GUI, "init imagearea: num %ld %lx", folder->ImageIndex, imageArray);
+
         if(imageArray && imageArray[folder->ImageIndex])
           data->actualImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
       }
 
+      D(DBF_GUI, "init finished..: %lx %ld", data->actualImage, folder->ImageIndex);
+
       if(data->actualImage)
         DoMethod(obj, OM_ADDMEMBER, data->actualImage);
     }
+
+    D(DBF_GUI, "before ExitChange");
 
     // now that we are finished we can call ExitChange to refresh the infobar
     DoMethod(obj, MUIM_Group_ExitChange);
