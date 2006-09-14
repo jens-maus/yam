@@ -28,8 +28,6 @@
 
 ***************************************************************************/
 
-#include <mui/NList_mcc.h>
-
 #include "YAM_folderconfig.h"
 #include "YAM_utilities.h"
 
