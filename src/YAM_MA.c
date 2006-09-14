@@ -38,6 +38,7 @@
 #include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
+extern struct Library *RexxSysBase;
 #include <proto/utility.h>
 #include <proto/timer.h>
 #include <rexx/storage.h>

@@ -32,8 +32,6 @@
 #define RXIF_ACTION 2
 #define RXIF_FREE   3
 
-#include <proto/rexxsyslib.h>
-
 struct RexxHost
 {
    struct MsgPort *port;
