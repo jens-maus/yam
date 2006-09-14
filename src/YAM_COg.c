@@ -28,22 +28,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <clib/alib_protos.h>
 #include <libraries/asl.h>
 #include <mui/BetterString_mcc.h>
-#include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#include <proto/codesets.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
-#include <proto/xpkmaster.h>
-#include <proto/codesets.h>
 
 #include "extra.h"
 #include "SDI_hook.h"
-#include "classes/Classes.h"
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
@@ -56,6 +52,7 @@
 #include "YAM_mainFolder.h"
 #include "YAM_mime.h"
 #include "YAM_utilities.h"
+#include "classes/Classes.h"
 
 #include "UpdateCheck.h"
 

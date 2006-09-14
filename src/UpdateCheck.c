@@ -25,16 +25,18 @@
 
 ***************************************************************************/
 
-#include <proto/bsdsocket.h>
-#include <proto/exec.h>
-#include <proto/muimaster.h>
-#include <proto/locale.h>
-#include <proto/timer.h>
-#include <proto/amisslmaster.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
+#include <libraries/locale.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/NFloattext_mcc.h>
 #include <mui/TextEditor_mcc.h>
+
+#include <proto/exec.h>
+#include <proto/muimaster.h>
+#include <proto/timer.h>
 
 #include "extra.h"
 
@@ -43,17 +45,17 @@
 #include "YAM_configFile.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
-#include "YAM_mime.h"
 #include "YAM_locale.h"
+#include "YAM_mime.h"
 #include "YAM_transfer.h"
 #include "YAM_utilities.h"
-
 #include "classes/Classes.h"
+
 #include "UpdateCheck.h"
 
 #include "Debug.h"
 
-extern struct Library *CodesetsBase, *XpkBase;
+extern struct Library *AmiSSLMasterBase, *CodesetsBase, *SocketBase, *XpkBase;
 
 /*** Static variables/functions ***/
 

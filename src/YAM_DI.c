@@ -25,7 +25,6 @@
 
 ***************************************************************************/
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -38,7 +37,6 @@
 
 #include "extra.h"
 #include "SDI_hook.h"
-#include "classes/Classes.h"
 
 #include "YAM.h"
 #include "YAM_error.h"
@@ -46,6 +44,7 @@
 #include "YAM_locale.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"
+#include "classes/Classes.h"
 
 /* local protos */
 static void DI_FinishEdit(void);

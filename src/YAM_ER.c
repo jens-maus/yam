@@ -30,12 +30,11 @@
 
 #include <clib/alib_protos.h>
 #include <libraries/iffparse.h>
-#include <proto/intuition.h>
-#include <proto/muimaster.h>
-#include <proto/locale.h>
-
 #include <mui/NListview_mcc.h>
 #include <mui/NFloattext_mcc.h>
+#include <proto/intuition.h>
+#include <proto/locale.h>
+#include <proto/muimaster.h>
 
 #include "extra.h"
 #include "SDI_hook.h"
@@ -44,8 +43,8 @@
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
-#include "YAM_main.h"
 #include "YAM_locale.h"
+#include "YAM_main.h"
 #include "YAM_utilities.h"
 
 #include "Debug.h"

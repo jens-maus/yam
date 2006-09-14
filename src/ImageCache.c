@@ -25,29 +25,28 @@
 
 ***************************************************************************/
 
-#include <ctype.h>
-#include <string.h>
 #include <stdlib.h>
-#include <stdio.h>
+#include <string.h>
 
 #include <datatypes/pictureclass.h>
 
 #include <clib/alib_protos.h>
 
-#include <proto/exec.h>
-#include <proto/dos.h>
 #include <proto/datatypes.h>
-#include <proto/graphics.h>
+#include <proto/dos.h>
+#include <proto/exec.h>
 #include <proto/intuition.h>
+
+#include "extra.h"
 
 #include "YAM.h"
 #include "YAM_locale.h"
 #include "YAM_stringsizes.h"
 #include "YAM_utilities.h"
 
-#include "extra.h"
-#include "Debug.h"
 #include "ImageCache.h"
+
+#include "Debug.h"
 
 /*** Static variables/functions ***/
 /// imageFileArray[]

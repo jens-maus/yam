@@ -40,7 +40,6 @@
 
 #include "extra.h"
 #include "SDI_hook.h"
-#include "classes/Classes.h"
 
 #include "YAM.h"
 #include "YAM_config.h"
@@ -48,6 +47,7 @@
 #include "YAM_locale.h"
 #include "YAM_userlist.h"
 #include "YAM_utilities.h"
+#include "classes/Classes.h"
 
 #include "Debug.h"
 

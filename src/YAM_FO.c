@@ -29,11 +29,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <clib/alib_protos.h>
 #include <libraries/asl.h>
 #include <libraries/iffparse.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
-#include <clib/alib_protos.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>

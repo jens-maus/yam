@@ -26,10 +26,10 @@
 ***************************************************************************/
 
 #include <ctype.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
 
 #include <clib/alib_protos.h>
 #include <clib/macros.h>
@@ -48,15 +48,16 @@
 #include <mui/NListtree_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
-#include <proto/exec.h>
+#include <workbench/startup.h>
 #include <proto/datatypes.h>
 #include <proto/dos.h>
+#include <proto/exec.h>
 #include <proto/icon.h>
 #include <proto/iffparse.h>
 #include <proto/intuition.h>
 #include <proto/graphics.h>
-#include <proto/layers.h>
 #include <proto/keymap.h>
+#include <proto/layers.h>
 #include <proto/locale.h>
 #include <proto/muimaster.h>
 #include <proto/openurl.h>
@@ -64,7 +65,6 @@
 #include <proto/utility.h>
 #include <proto/wb.h>
 #include <proto/xpkmaster.h>
-#include <workbench/startup.h>
 
 #if defined(__amigaos4__)
 #include <proto/application.h>
@@ -86,7 +86,6 @@
 #include "YAM_read.h"
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
-#include "classes/ClassesExtra.h"
 
 #include "Debug.h"
 

@@ -25,28 +25,21 @@
 
 ***************************************************************************/
 
-#include <exec/types.h>
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <dos/dos.h>
+#include <dos/rdargs.h>
 #include <exec/memory.h>
 #include <rexx/storage.h>
 #include <rexx/rxslib.h>
-#include <dos/rdargs.h>
-#include <dos/dos.h>
 
 #include <clib/alib_protos.h>
-#include <proto/rexxsyslib.h>
-#include <proto/exec.h>
 #include <proto/dos.h>
-
-#if INCLUDE_VERSION >= 44
-#define REXXMSG(msg) msg
-#else
-#define REXXMSG(msg) &msg->rm_Node
-#endif
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
+#include <proto/exec.h>
+#include <proto/rexxsyslib.h>
 
 #include "extra.h"
 
@@ -59,6 +52,12 @@
 
 #define RexxPortBaseName "YAM"
 #define RexxMsgExtension "YAM"
+
+#if INCLUDE_VERSION >= 44
+#define REXXMSG(msg) msg
+#else
+#define REXXMSG(msg) &msg->rm_Node
+#endif
 
 #if defined(__amigaos4__)
 #define SetRexxVar(msg, var, val, len)  SetRexxVarFromMsg((var), (val), (msg))

@@ -32,11 +32,11 @@
 #include <clib/alib_protos.h>
 #include <libraries/asl.h>
 #include <libraries/iffparse.h>
+#include <mui/NListview_mcc.h>
 #include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/locale.h>
 #include <proto/muimaster.h>
-#include <mui/NListview_mcc.h>
 
 #include "extra.h"
 #include "SDI_hook.h"

@@ -40,6 +40,9 @@
 #include <mui/NListview_mcc.h>
 #include <mui/NFloattext_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#include <proto/amissl.h>
+#include <proto/amisslmaster.h>
+#include <proto/codesets.h>
 #include <proto/datatypes.h>
 #include <proto/diskfont.h>
 #include <proto/dos.h>
@@ -58,9 +61,6 @@
 #include <proto/utility.h>
 #include <proto/wb.h>
 #include <proto/xpkmaster.h>
-#include <proto/amissl.h>
-#include <proto/amisslmaster.h>
-#include <proto/codesets.h>
 
 #if defined(__amigaos4__)
 #include <proto/application.h>
@@ -81,11 +81,12 @@
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 #include "YAM_rexx.h"
-#include "YAM_utilities.h"
 #include "YAM_write.h"
+#include "YAM_utilities.h"
 
 #include "ImageCache.h"
 #include "UpdateCheck.h"
+
 #include "classes/Classes.h"
 
 #include "Debug.h"

@@ -43,12 +43,12 @@
 #include <mui/NListtree_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#include <workbench/workbench.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/utility.h>
-#include <workbench/workbench.h>
 
 #include "extra.h"
 #include "SDI_hook.h"
@@ -69,7 +69,6 @@
 #include "YAM_read.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"
-#include "YAM_locale.h"
 #include "classes/Classes.h"
 
 #include "Debug.h"

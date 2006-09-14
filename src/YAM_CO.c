@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include <ctype.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -36,16 +37,13 @@
 #include <libraries/iffparse.h>
 #include <libraries/locale.h>
 #include <mui/BetterString_mcc.h>
-#include <mui/NList_mcc.h>
-#include <mui/NListtree_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
-#include <proto/amissl.h>
-#include <proto/amisslmaster.h>
+extern void *AmiSSLBase, *AmiSSLMasterBase;
 #include <proto/codesets.h>
-#include <proto/diskfont.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
+#include <proto/diskfont.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/utility.h>

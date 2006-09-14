@@ -25,23 +25,23 @@
 
 ***************************************************************************/
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <clib/alib_protos.h>
 #include <exec/memory.h>
 #include <mui/NList_mcc.h>
 #include <mui/TextEditor_mcc.h>
-#include <proto/exec.h>
+#include <rexx/rxslib.h>
+#include <rexx/storage.h>
 #include <proto/dos.h>
+#include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/rexxsyslib.h>
 #include <proto/utility.h>
-#include <rexx/storage.h>
-#include <rexx/rxslib.h>
 
 #include "extra.h"
 #include "YAM.h"
@@ -56,8 +56,8 @@
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 #include "YAM_rexx_rxcl.h"
-#include "YAM_utilities.h"
 #include "YAM_write.h"
+#include "YAM_utilities.h"
 #include "classes/Classes.h"
 
 extern struct Library *SocketBase;
@@ -2574,4 +2574,3 @@ void rx_geturl( UNUSED struct RexxHost *host, struct rxd_geturl **rxd, long acti
 }
 
 ///
-

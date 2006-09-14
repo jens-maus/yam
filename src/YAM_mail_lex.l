@@ -41,7 +41,6 @@
 
 %{
     #include <string.h>
-    #include <proto/exec.h>
 
     #include "YAM_mail_lex.h"
     #include "YAM_utilities.h"
@@ -443,4 +442,3 @@ enum tokenType ExtractURL(char *text, char *resultBuffer)
 }
 
 ///
-

@@ -30,6 +30,9 @@
 #include <string.h>
 #include <time.h>
 
+#include <netinet/ip.h>
+#include <netinet/tcp.h>
+
 #include <clib/alib_protos.h>
 #include <clib/macros.h>
 #include <libraries/iffparse.h>
@@ -37,18 +40,15 @@
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <proto/amissl.h>
+#include <proto/bsdsocket.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/genesis.h>
 #include <proto/intuition.h>
-#include <proto/bsdsocket.h>
 #include <proto/miami.h>
 #include <proto/muimaster.h>
 #include <proto/timer.h>
 #include <proto/utility.h>
-
-#include <netinet/ip.h>
-#include <netinet/tcp.h>
 
 #include "extra.h"
 #include "SDI_hook.h"
@@ -66,8 +66,8 @@
 #include "YAM_md5.h"
 #include "YAM_mime.h"
 #include "YAM_utilities.h"
-
 #include "classes/Classes.h"
+
 #include "Debug.h"
 
 struct TransStat

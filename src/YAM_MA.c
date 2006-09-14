@@ -31,19 +31,19 @@
 
 #include <clib/alib_protos.h>
 #include <libraries/asl.h>
-#include <libraries/iffparse.h>
 #include <libraries/gadtools.h>
+#include <libraries/iffparse.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#include <rexx/storage.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 extern struct Library *RexxSysBase;
-#include <proto/utility.h>
 #include <proto/timer.h>
-#include <rexx/storage.h>
+#include <proto/utility.h>
 
 #include "extra.h"
 #include "SDI_hook.h"
@@ -65,8 +65,8 @@ extern struct Library *RexxSysBase;
 #include "YAM_userlist.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"
-
 #include "classes/Classes.h"
+
 #include "UpdateCheck.h"
 #include "HTML2Mail.h"
 
