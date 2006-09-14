@@ -30,11 +30,13 @@
 #include <string.h>
 
 #include <clib/alib_protos.h>
+#include <clib/macros.h>
 #include <libraries/gadtools.h>
 #include <libraries/iffparse.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
 #include <proto/dos.h>
+#include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/utility.h>

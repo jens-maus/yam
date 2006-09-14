@@ -35,9 +35,11 @@
 #include <libraries/amisslmaster.h>
 #include <libraries/asl.h>
 #include <libraries/genesis.h>
+#include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/NFloattext_mcc.h>
+#include <mui/TextEditor_mcc.h>
 #include <proto/datatypes.h>
 #include <proto/diskfont.h>
 #include <proto/dos.h>
@@ -79,6 +81,7 @@
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 #include "YAM_rexx.h"
+#include "YAM_utilities.h"
 #include "YAM_write.h"
 
 #include "ImageCache.h"

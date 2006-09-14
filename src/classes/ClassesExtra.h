@@ -28,25 +28,26 @@
 #ifndef CLASSES_CLASSES_EXTRA_H
 #define CLASSES_CLASSES_EXTRA_H
 
+#if defined(INCLUDE_KITCHEN_SINK)
+
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include <clib/alib_protos.h>
 #include <clib/macros.h>
-#include <proto/dos.h>
-#include <proto/exec.h>
-#include <proto/intuition.h>
-#include <proto/muimaster.h>
-#include <proto/timer.h>
-#include <proto/utility.h>
-#include <libraries/gadtools.h>
 #include <libraries/iffparse.h>
+#include <libraries/gadtools.h>
 #include <libraries/mui.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
-
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
+#include <proto/dos.h>
+#include <proto/exec.h>
+#include <proto/muimaster.h>
+#include <proto/timer.h>
+#include <proto/utility.h>
 
 #include "extra.h"
 #include "newmouse.h"
@@ -54,18 +55,16 @@
 #include "SDI_stdarg.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
 #include "YAM_config.h"
-#include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_locale.h"
-#include "YAM_locale.h"
 #include "YAM_mail_lex.h"
-#include "YAM_main.h"
-#include "YAM_mainFolder.h"
-#include "YAM_read.h"
 #include "YAM_utilities.h"
-#include "YAM_write.h"
+
+#endif /* INCLUDE_KITCHEN_SINK */
+
+#include "YAM_main.h" // NewMode
+#include "YAM_read.h" // HeaderMode,SInfoMode
 
 // some own MUI macros (not official)
 #ifndef MUIF_NONE

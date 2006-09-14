@@ -56,6 +56,7 @@
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 #include "YAM_rexx_rxcl.h"
+#include "YAM_utilities.h"
 #include "YAM_write.h"
 #include "classes/Classes.h"
 

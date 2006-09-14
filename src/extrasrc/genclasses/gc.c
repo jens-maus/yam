@@ -805,8 +805,7 @@ int gen_source( char *destfile, struct list *classlist )
 
   gen_gpl(fp);
   fprintf(fp, "\n /* " EDIT_WARNING " */\n\n"
-      "#include <stdarg.h>\n"
-    "#include <string.h>\n"
+    "#define INCLUDE_KITCHEN_SINK 1\n"
     "#include \"Classes.h\"\n\n"
     "struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n\n",
     arg_basename);
@@ -911,6 +910,7 @@ int gen_header( char *destfile, struct list *classlist )
   /*          Write includes...          */
   /***************************************/
   
+if (0)
   fprintf(fp, 
     "#include <clib/alib_protos.h>\n"
     "#include <libraries/mui.h>\n"
@@ -1089,6 +1089,7 @@ int gen_classheaders( struct list *classlist )
       "#define %s_H\n"
       "\n"
       "#ifndef CLASSES_CLASSES_H\n"
+      "#define INCLUDE_KITCHEN_SINK 1\n"
       "#include \"Classes.h\"\n"
       "#endif /* CLASSES_CLASSES_H */\n"
       "\n",

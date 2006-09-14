@@ -32,7 +32,9 @@
 #include <proto/timer.h>
 #include <proto/amisslmaster.h>
 
+#include <mui/BetterString_mcc.h>
 #include <mui/NFloattext_mcc.h>
+#include <mui/TextEditor_mcc.h>
 
 #include "extra.h"
 
@@ -44,6 +46,7 @@
 #include "YAM_mime.h"
 #include "YAM_locale.h"
 #include "YAM_transfer.h"
+#include "YAM_utilities.h"
 
 #include "classes/Classes.h"
 #include "UpdateCheck.h"

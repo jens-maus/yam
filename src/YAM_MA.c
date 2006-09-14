@@ -25,12 +25,14 @@
 
 ***************************************************************************/
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include <clib/alib_protos.h>
 #include <libraries/asl.h>
 #include <libraries/iffparse.h>
+#include <libraries/gadtools.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>

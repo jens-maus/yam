@@ -25,6 +25,7 @@
 
 ***************************************************************************/
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -64,6 +65,7 @@
 #include "YAM_mainFolder.h"
 #include "YAM_md5.h"
 #include "YAM_mime.h"
+#include "YAM_utilities.h"
 
 #include "classes/Classes.h"
 #include "Debug.h"

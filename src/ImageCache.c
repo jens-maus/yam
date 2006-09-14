@@ -43,6 +43,7 @@
 #include "YAM.h"
 #include "YAM_locale.h"
 #include "YAM_stringsizes.h"
+#include "YAM_utilities.h"
 
 #include "extra.h"
 #include "Debug.h"

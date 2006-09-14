@@ -30,6 +30,7 @@
 #include <string.h>
 
 #include <clib/alib_protos.h>
+#include <clib/macros.h>
 #include <libraries/asl.h>
 #include <libraries/iffparse.h>
 #include <libraries/gadtools.h>
@@ -38,6 +39,7 @@
 #include <mui/TextEditor_mcc.h>
 #include <proto/codesets.h>
 #include <proto/dos.h>
+#include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/utility.h>

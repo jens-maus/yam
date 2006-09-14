@@ -34,6 +34,7 @@
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <proto/dos.h>
+#include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/timer.h>
@@ -53,6 +54,7 @@
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
+#include "YAM_utilities.h"
 #include "classes/Classes.h"
 
 #include "Debug.h"
