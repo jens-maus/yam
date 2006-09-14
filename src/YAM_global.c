@@ -25,10 +25,11 @@
 
 ***************************************************************************/
 
-#include "YAM_global.h"
-#include "YAM_locale.h"
+#include <exec/types.h>
 
 #include "SDI_compiler.h"
+
+#include "YAM_global.h"
 
 // some platform/compiler dependent stack definitions.
 static const char USED_VAR yam_stack_size[] = "$STACK:65536\n";  // Shell v45 and later

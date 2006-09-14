@@ -28,8 +28,6 @@
 
 ***************************************************************************/
 
-#include "YAM_stringsizes.h"
-
 extern const char* const FolderNames[4];
 extern const char* const months[12];
 extern const char* const SecCodes[5];
