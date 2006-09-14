@@ -31,9 +31,17 @@
   #include "extrasrc/strmfp.c"
 #endif
 
-#include "extrasrc/strlcpy.c"
-#include "extrasrc/strlcat.c"
-#include "extrasrc/strtok_r.c"
+#if defined(NEED_STRLCPY)
+  #include "extrasrc/strlcpy.c"
+#endif /* NEED_STRLCPY */
+
+#if defined(NEED_STRLCAT)
+  #include "extrasrc/strlcat.c"
+#endif /* NEED_STRLCAT */
+
+#if defined(NEED_STRTOK_R)
+  #include "extrasrc/strtok_r.c"
+#endif /* NEED_STRTOK_R */
 
 // required Amiga functions
 #include "extrasrc/NewReadArgs.c"
