@@ -25,6 +25,7 @@
 
 ***************************************************************************/
 
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -38,7 +39,6 @@
 
 #include "extra.h"
 #include "SDI_hook.h"
-#include "SDI_stdarg.h"
 
 #include "YAM.h"
 #include "YAM_config.h"
@@ -58,7 +58,7 @@ static struct ER_ClassData *ER_New(void);
 
 /// ER_NewError
 /*** ER_NewError - Adds a new error message and displays it ***/
-void STDARGS ER_NewError(const char *error, ...)
+void ER_NewError(const char *error, ...)
 {
   static char label[SIZE_SMALL];
 

@@ -25,6 +25,7 @@ $Id$
   * Moved all proto/ headers to appropriate .c files. Removed duplicated
     headers and reordered some. Don't rely on ClassesExtra.h to provided
     required headers.
+  * YAM_error.h, YAM_ER.c (ER_NewError): Remove STDARGS.
 
 2006-09-14  Jens Langner <Jens.Langner@light-speed.de>
 
