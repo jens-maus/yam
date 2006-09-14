@@ -36,6 +36,7 @@
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 
+#include "extra.h"
 #include "SDI_hook.h"
 #include "classes/Classes.h"
 

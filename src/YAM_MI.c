@@ -31,6 +31,8 @@
 
 #include <proto/codesets.h>
 
+#include "extra.h"
+
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_error.h"

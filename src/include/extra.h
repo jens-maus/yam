@@ -9,6 +9,38 @@
 #define PROTO_SOCKET_H 1
 #endif
 
+/*
+** size-bounded string copying and concatenation
+*/
+
+#if (defined(__mc68000) && (defined(__ixemul) || defined(__libnix))) || defined(__SASC)
+
+#if !defined(HAVE_STRLCPY)
+#define NEED_STRLCPY
+#endif /* HAVE_STRLCPY */
+
+#if !defined(HAVE_STRLCAT)
+#define NEED_STRLCAT
+#endif /* HAVE_STRLCAT */
+
+#if !defined(HAVE_STRTOK_R)
+#define NEED_STRTOK_R
+#endif /* HAVE_STRTOK_R */
+
+#endif /* m68k && !clib2 || __SASC */
+
+#if defined(NEED_STRLCPY)
+size_t strlcpy(char *, const char *, size_t);
+#endif /* NEED_STRLCPY */
+
+#if defined(NEED_STRLCAT)
+size_t strlcat(char *, const char *, size_t);
+#endif /* NEED_STRLCAT */
+
+#if defined(NEED_STRTOK_R)
+char *strtok_r(char *, const char *, char **);
+#endif /* NEED_STRTOK_R */
+
 #ifdef __SASC
 
 #include <dos.h>

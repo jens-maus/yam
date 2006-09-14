@@ -31,6 +31,10 @@
   #include "extrasrc/strmfp.c"
 #endif
 
+#include "extrasrc/strlcpy.c"
+#include "extrasrc/strlcat.c"
+#include "extrasrc/strtok_r.c"
+
 // required Amiga functions
 #include "extrasrc/NewReadArgs.c"
 

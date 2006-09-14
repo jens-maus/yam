@@ -48,6 +48,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "extra.h"
+
 #include "YAM_mime.h"
 #include "YAM_rexx.h"
 #include "YAM_rexx_rxcl.h"

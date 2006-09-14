@@ -37,6 +37,7 @@
 #include <mui/NListview_mcc.h>
 #include <mui/NFloattext_mcc.h>
 
+#include "extra.h"
 #include "SDI_hook.h"
 #include "SDI_stdarg.h"
 

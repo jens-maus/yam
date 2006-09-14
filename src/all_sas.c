@@ -25,7 +25,11 @@
 
 ***************************************************************************/
 
+// Missing functions.
+#include "extrasrc/strlcpy.c"
+#include "extrasrc/strlcat.c"
+#include "extrasrc/strtok_r.c"
+
 // required Amiga functions
 #include "extrasrc/NewReadArgs.c"
 #include "extrasrc/xget.c"
-
