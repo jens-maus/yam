@@ -38,6 +38,10 @@
 #include <proto/muimaster.h>
 #include <proto/timer.h>
 
+#if !defined(__amigaos4__)
+#include <clib/alib_protos.h> // DoMethod
+#endif
+
 #include "extra.h"
 
 #include "YAM.h"
@@ -55,7 +59,11 @@
 
 #include "Debug.h"
 
-extern struct Library *AmiSSLMasterBase, *CodesetsBase, *SocketBase, *XpkBase;
+/*** Required library bases ***/
+extern struct Library *AmiSSLMasterBase;
+extern struct Library *CodesetsBase;
+extern struct Library *SocketBase;
+extern struct Library *XpkBase;
 
 /*** Static variables/functions ***/
 

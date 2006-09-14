@@ -38,6 +38,10 @@
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 
+#if !defined(__amigaos4__)
+#include <clib/alib_protos.h> // DoMethod
+#endif
+
 #include "extra.h"
 #include "SDI_hook.h"
 
