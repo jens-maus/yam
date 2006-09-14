@@ -50,6 +50,8 @@
 
 #include "Debug.h"
 
+extern struct Library *CodesetsBase, *XpkBase;
+
 /*** Static variables/functions ***/
 
 /*** Update-Check mechanisms ***/

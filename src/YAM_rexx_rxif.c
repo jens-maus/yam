@@ -59,6 +59,8 @@
 #include "YAM_write.h"
 #include "classes/Classes.h"
 
+extern struct Library *SocketBase;
+
 /** REXX Commands **/
 
 /// rx_show

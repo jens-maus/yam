@@ -29,13 +29,11 @@
 ***************************************************************************/
 
 #include <dos/notify.h>
-#include <exec/types.h>
 #include <libraries/asl.h>
 #include <libraries/mui.h>
+#include <xpk/xpk.h>
 
-#include <proto/bsdsocket.h>
-#include <proto/codesets.h>
-#include <proto/xpkmaster.h>
+#include "netinet/in.h"
 
 #include "YAM_rexx_rxif.h"   /* struct RuleResult */
 #include "YAM_stringsizes.h"
