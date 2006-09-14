@@ -6,6 +6,8 @@ $Id$
 
 2006-09-14  Jens Langner <Jens.Langner@light-speed.de>
 
+  * all_#?.c, misc: removed all all_#?.c files and replaced it by a single
+    extrasrc.c,h combo which contains a bunch of HAVE_XXXX defines instead.
   * UpdateCheck.c, YAM_COg.c: added missing <clib/alib_protos.h> for non-OS4
     targets still using amiga.lib.
   * Debug.c: repaired kprintf() macro for OS4 build. cleanup.

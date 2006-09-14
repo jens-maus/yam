@@ -31,7 +31,7 @@
 
 #include <proto/codesets.h>
 
-#include "extra.h"
+#include "extrasrc.h"
 
 #include "YAM.h"
 #include "YAM_config.h"
@@ -40,7 +40,6 @@
 #include "YAM_mime.h"
 #include "YAM_utilities.h"
 
-#include "extra.h"
 #include "Debug.h"
 
 /* local */

@@ -42,7 +42,8 @@
 #include <clib/alib_protos.h> // DoMethod
 #endif
 
-#include "extra.h"
+#include "extrasrc.h"
+
 #include "SDI_hook.h"
 
 #include "YAM.h"

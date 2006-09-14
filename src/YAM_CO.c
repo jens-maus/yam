@@ -39,7 +39,6 @@
 #include <mui/BetterString_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
-extern void *AmiSSLBase, *AmiSSLMasterBase;
 #include <proto/codesets.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
@@ -52,7 +51,8 @@ extern void *AmiSSLBase, *AmiSSLMasterBase;
 #include <proto/application.h>
 #endif
 
-#include "extra.h"
+#include "extrasrc.h"
+
 #include "SDI_hook.h"
 
 #include "YAM.h"
@@ -71,6 +71,9 @@ extern void *AmiSSLBase, *AmiSSLMasterBase;
 #include "classes/Classes.h"
 
 #include "Debug.h"
+
+extern struct Library *AmiSSLBase;
+extern struct Library *AmiSSLMasterBase;
 
 struct Config *C = NULL;
 struct Config *CE = NULL;

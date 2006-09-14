@@ -49,7 +49,8 @@
 #include <proto/timer.h>
 #include <proto/utility.h>
 
-#include "extra.h"
+#include "extrasrc.h"
+
 #include "newmouse.h"
 #include "SDI_hook.h"
 #include "SDI_stdarg.h"

@@ -63,7 +63,7 @@ LONG XpkUnpackTags(Tag tag, ...)
 { return XpkUnpack((struct TagItem *)&tag); }
 
 #include <proto/amissl.h>
-long InitAmiSSL(Tag tag, ...)
+LONG InitAmiSSL(Tag tag, ...)
 { return InitAmiSSLA((struct TagItem *)&tag); }
 
 #include <proto/codesets.h>

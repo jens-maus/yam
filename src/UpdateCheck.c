@@ -42,7 +42,7 @@
 #include <clib/alib_protos.h> // DoMethod
 #endif
 
-#include "extra.h"
+#include "extrasrc.h"
 
 #include "YAM.h"
 #include "YAM_config.h"

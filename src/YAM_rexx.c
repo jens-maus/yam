@@ -41,7 +41,7 @@
 #include <proto/exec.h>
 #include <proto/rexxsyslib.h>
 
-#include "extra.h"
+#include "extrasrc.h"
 
 #include "YAM_mime.h"
 #include "YAM_rexx.h"

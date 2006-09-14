@@ -1,5 +1,4 @@
 #include <string.h>
-#include "extra.h"
 
 /* Get the filename extension. */
 

@@ -41,7 +41,8 @@
 #include <proto/muimaster.h>
 #include <proto/utility.h>
 
-#include "extra.h"
+#include "extrasrc.h"
+
 #include "SDI_hook.h"
 
 #include "YAM.h"

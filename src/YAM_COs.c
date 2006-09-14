@@ -38,7 +38,8 @@
 #include <proto/locale.h>
 #include <proto/utility.h>
 
-#include "extra.h"
+#include "extrasrc.h"
+
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_error.h"

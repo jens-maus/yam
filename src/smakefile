@@ -135,8 +135,9 @@ OBJS = \
   $(OBJDIR)/YAM_WR.o \
   $(OBJDIR)/ImageCache.o \
   $(OBJDIR)/UpdateCheck.o \
+  $(OBJDIR)/HTML2Mail.o \
   $(CLASSES) \
-  $(OBJDIR)/all_sas.o \
+  $(OBJDIR)/extrasrc.o \
   $(OBJDIR)/Debug.o
 
 #

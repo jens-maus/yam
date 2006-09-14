@@ -70,7 +70,8 @@
 #include <proto/application.h>
 #endif
 
-#include "extra.h"
+#include "extrasrc.h"
+
 #include "SDI_hook.h"
 #include "SDI_stdarg.h"
 

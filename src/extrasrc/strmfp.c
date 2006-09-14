@@ -1,5 +1,4 @@
 #include <string.h>
-#include "extra.h"
 
 /* Append a file name to a path. */
 

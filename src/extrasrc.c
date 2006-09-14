@@ -21,32 +21,57 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
- $Id$
+ $Id: all_gcc.c 2335 2006-09-14 22:34:28Z damato $
 
 ***************************************************************************/
 
-// missing POSIX functions
-#if !defined(__MORPHOS__) || !defined(__libnix)
+/*
+   YAM tries to be compileable on most compiler/clib/operating system
+   combinations for Amiga computers. Therefore, we use that file to
+   include some common function which might either be missing on one
+   C runtime library environment or requested by the compiling user.
+
+   Please note that NEED_XXXXX defines are used to include missing
+   function. Thse NEED_XXXXX macros are automatically defined in
+   extrasrc.h and correctly setup per default. However, if a function
+   might be missing on your runtime library, go and add such a define
+   to your make call.
+*/
+
+#include "extrasrc.h"
+
+// POSIX a-like string functions
+#if defined(NEED_STCGFE)
   #include "extrasrc/stcgfe.c"
+#endif
+
+#if defined(NEED_STRMFP)
   #include "extrasrc/strmfp.c"
 #endif
 
 #if defined(NEED_STRLCPY)
   #include "extrasrc/strlcpy.c"
-#endif /* NEED_STRLCPY */
+#endif
 
 #if defined(NEED_STRLCAT)
   #include "extrasrc/strlcat.c"
-#endif /* NEED_STRLCAT */
+#endif
 
 #if defined(NEED_STRTOK_R)
   #include "extrasrc/strtok_r.c"
-#endif /* NEED_STRTOK_R */
+#endif
 
-// required Amiga functions
-#include "extrasrc/NewReadArgs.c"
+// Amiga specific functions
+#if defined(NEED_NEWREADARGS)
+  #include "extrasrc/NewReadArgs.c"
+#endif
 
-// Amiga vargs function stubs
-#include "extrasrc/vastubs.c"
+#if defined(NEED_VASTUBS)
+  #include "extrasrc/vastubs.c"
+#endif
 
-void __chkabort(void) {}
+#if defined(__GCC__)
+  void __chkabort(void) {}
+#elif defined(__VBCC__)
+  void _chkabort(void) {}
+#endif

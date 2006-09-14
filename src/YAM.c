@@ -66,7 +66,8 @@
 #include <proto/application.h>
 #endif
 
-#include "extra.h"
+#include "extrasrc.h"
+
 #include "NewReadArgs.h"
 #include "SDI_hook.h"
 

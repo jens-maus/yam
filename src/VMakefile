@@ -127,12 +127,12 @@ OBJS = \
   $(OBJDIR)/YAM_US.o \
   $(OBJDIR)/YAM_UT.o \
   $(OBJDIR)/YAM_WR.o \
-  $(OBJDIR)/all_vbcc.o \
   $(OBJDIR)/ImageCache.o \
   $(OBJDIR)/UpdateCheck.o \
   $(OBJDIR)/HTML2Mail.o \
-  $(OBJDIR)/Debug.o \
-  $(CLASSES)
+  $(CLASSES) \
+  $(OBJDIR)/extrasrc.o \
+  $(OBJDIR)/Debug.o
 
 #
 
@@ -345,7 +345,7 @@ $(OBJDIR)/UpdateCheck.o: UpdateCheck.c UpdateCheck.h
 $(OBJDIR)/HTML2Mail.o: HTML2Mail.c
 HTML2Mail.c: HTML2Mail.l HTML2Mail.h
 
-$(OBJDIR)/all_vbcc.o: all_vbcc.c $(EXTSRC)/NewReadArgs.c \
+$(OBJDIR)/extrasrc.o: extrasrc.c $(EXTSRC)/NewReadArgs.c \
     $(EXTSRC)/vastubs.c $(EXTSRC)/NewReadArgs.c \
     $(EXTSRC)/stcgfe.c $(EXTSRC)/strdup.c \
     $(EXTSRC)/strmfp.c $(EXTSRC)/strtok_r.c

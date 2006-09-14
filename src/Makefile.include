@@ -98,12 +98,12 @@ OBJS = \
 	$(OBJDIR)/YAM_US.o \
 	$(OBJDIR)/YAM_UT.o \
 	$(OBJDIR)/YAM_WR.o \
-	$(OBJDIR)/all_gcc.o \
 	$(OBJDIR)/ImageCache.o \
 	$(OBJDIR)/UpdateCheck.o \
-  $(OBJDIR)/HTML2Mail.o \
-	$(OBJDIR)/Debug.o \
-	$(CLASSES)
+	$(OBJDIR)/HTML2Mail.o \
+	$(CLASSES) \
+	$(OBJDIR)/extrasrc.o \
+	$(OBJDIR)/Debug.o
 
 #
 all: $(OBJDIR) classinfo YAM_locale.c YAM_mail_lex.c HTML2Mail.c $(TARGET)
@@ -292,7 +292,7 @@ $(OBJDIR)/YAM_WR.o: YAM_WR.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
 	YAM_utilities.h YAM_write.h
 
-$(OBJDIR)/all_gcc.o: all_gcc.c \
+$(OBJDIR)/extrasrc.o: extrasrc.c \
 	$(EXTRASRC)/stcgfe.c $(EXTRASRC)/strmfp.c \
 	$(EXTRASRC)/NewReadArgs.c $(EXTRASRC)/vastubs.c
 

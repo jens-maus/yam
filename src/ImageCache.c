@@ -37,7 +37,7 @@
 #include <proto/exec.h>
 #include <proto/intuition.h>
 
-#include "extra.h"
+#include "extrasrc.h"
 
 #include "YAM.h"
 #include "YAM_locale.h"

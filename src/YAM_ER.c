@@ -37,7 +37,8 @@
 #include <proto/locale.h>
 #include <proto/muimaster.h>
 
-#include "extra.h"
+#include "extrasrc.h"
+
 #include "SDI_hook.h"
 
 #include "YAM.h"

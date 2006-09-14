@@ -41,11 +41,11 @@
 #include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
-extern struct Library *RexxSysBase;
 #include <proto/timer.h>
 #include <proto/utility.h>
 
-#include "extra.h"
+#include "extrasrc.h"
+
 #include "SDI_hook.h"
 
 #include "YAM.h"
@@ -71,6 +71,8 @@ extern struct Library *RexxSysBase;
 #include "HTML2Mail.h"
 
 #include "Debug.h"
+
+extern struct Library *RexxSysBase;
 
 /* local structures */
 struct ExpandTextData
