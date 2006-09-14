@@ -326,9 +326,6 @@ OVERLOAD(MUIM_AskMinMax)
       minwidth = width;
   }
 
-  SHOWVALUE(DBF_GUI, minheight);
-  SHOWVALUE(DBF_GUI, minwidth);
-
   mi->MinHeight += minheight;
   mi->DefHeight += minheight;
   if(data->free_vert)
