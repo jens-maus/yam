@@ -4,6 +4,18 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-14  Jens Langner <Jens.Langner@light-speed.de>
+
+  * UpdateCheck.c, YAM_COg.c: added missing <clib/alib_protos.h> for non-OS4
+    targets still using amiga.lib.
+  * Debug.c: repaired kprintf() macro for OS4 build. cleanup.
+  * all_gcc.c: added missing HAVE_XXXX alternations which broke our main
+    builds.
+  * YAM_rexx_rcif.h: <rexx/storage.h> is required for 'struct RexxMsg'
+    definition.
+  * YAM_UT.c: fixed bug #1558215 where the PGP Id wasn't correctly stripped
+    out of the keylist listview either in the config or addressbook window.
+
 2006-09-14  Gunther Nikl <gni@gecko.de>
 
   * YAM_UT.c (MUIStyle2String): Remove cast.
@@ -27,11 +39,6 @@ $Id$
     required headers.
   * YAM_error.h, YAM_ER.c (ER_NewError): Remove STDARGS.
   * QuickSearchBar.c, ReadWindow.c: Use INLINE.
-
-2006-09-14  Jens Langner <Jens.Langner@light-speed.de>
-
-  * YAM_UT.c: fixed bug #1558215 where the PGP Id wasn't correctly stripped
-    out of the keylist listview either in the config or addressbook window.
 
 2006-09-12  Jens Langner <Jens.Langner@light-speed.de>
 
