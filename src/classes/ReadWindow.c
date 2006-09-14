@@ -72,7 +72,7 @@ struct Data
 /* Private Functions */
 /// SelectMessage()
 //  Activates a message in the main window's message listview
-static inline LONG SelectMessage(struct Mail *mail)
+INLINE LONG SelectMessage(struct Mail *mail)
 {
   LONG pos = MUIV_NList_GetPos_Start;
 

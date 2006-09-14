@@ -26,6 +26,7 @@ $Id$
     headers and reordered some. Don't rely on ClassesExtra.h to provided
     required headers.
   * YAM_error.h, YAM_ER.c (ER_NewError): Remove STDARGS.
+  * QuickSearchBar.c, ReadWindow.c: Use INLINE.
 
 2006-09-14  Jens Langner <Jens.Langner@light-speed.de>
 

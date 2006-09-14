@@ -62,8 +62,8 @@ enum ViewOptions { VO_ALL=0, VO_UNREAD, VO_NEW, VO_MARKED, VO_IMPORTANT, VO_LAST
 /// MatchMail()
 // function to actually check if a struct Mail* matches
 // the currently active criteria
-static inline BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
-                             enum SearchOptions so, char* searchString, struct TimeVal* curTimeUTC)
+INLINE BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
+                      enum SearchOptions so, char* searchString, struct TimeVal* curTimeUTC)
 {
   BOOL foundMatch = FALSE;
 
