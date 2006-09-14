@@ -60,7 +60,7 @@
 char *MUIStyle2String(const char *style)
 {
   static char buf[SIZE_SMALL];
-  char *s = (char *)style;
+  const char *s = style;
 
   ENTER();
 
