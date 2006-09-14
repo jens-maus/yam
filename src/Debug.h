@@ -46,29 +46,6 @@
 
 #if defined(DEBUG)
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif
-
-#if defined(__amigaos4__)
-  #include <proto/exec.h>
-  #ifdef __USE_INLINE__
-    #ifdef DebugPrintF
-      #undef DebugPrintF
-    #endif
-  #endif
-  #ifndef kprintf
-    #define kprintf(...)  ((struct ExecIFace *)((*(struct ExecBase **)4)->MainInterface))->DebugPrintF(__VA_ARGS__)
-  #endif
-#elif defined(__MORPHOS__)
-  #include <exec/rawfmt.h>
-  #include <proto/exec.h>
-  #define KPutFmt(format, args)  VNewRawDoFmt(format, (APTR)RAWFMTFUNC_SERIAL, NULL, args)
-  void kprintf(const char *formatString,...);
-#else
-  void kprintf(const char *formatString,...);
-#endif
-
 // debug classes
 #define DBC_CTRACE   (1<<0) // call tracing (ENTER/LEAVE etc.)
 #define DBC_REPORT   (1<<1) // reports (SHOWVALUE/SHOWSTRING etc.)

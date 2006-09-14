@@ -27,21 +27,28 @@
 
 #ifdef DEBUG
 
-#include <stdlib.h>
+#include <stdio.h> // vsnprintf
 #include <string.h>
 #include <stdarg.h>
 
-#include <proto/intuition.h>
-#include <proto/utility.h>
-#include <proto/dos.h>
 #include <proto/exec.h>
+#include <proto/dos.h>
 
 #include "YAM_global.h"
-#include "YAM_utilities.h"
+#include "YAM_utilities.h" // CLEAR_FLAG,SET_FLAG 
 
-#include "SDI_stdarg.h"
+#include "SDI_compiler.h"
 
 #include "Debug.h"
+
+#if defined(__amigaos4__)
+  #undef DebugPrintF
+  #ifndef kprintf
+    #define kprintf(format, args...) IExec->DebugPrintF(format, __VA_ARGS__)
+  #endif
+#else
+  void kprintf(const char *formatString,...);
+#endif
 
 // our static variables with default values
 static int indent_level = 0;
@@ -390,8 +397,8 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
   if((isFlagSet(debug_classes, dclass) && isFlagSet(debug_flags, dflags)) ||
      (isFlagSet(dclass, DBC_ERROR) || isFlagSet(dclass, DBC_WARNING)))
   {
-    va_list args;
     static char buf[1024];
+    va_list args;
 
     _INDENT();
 
@@ -421,8 +428,12 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
   }
 }
 #else
-#if !defined(__MORPHOS__)
-extern void KPutFmt(const char *format, va_list arg);
+
+#if defined(__MORPHOS__)
+#include <exec/rawfmt.h>
+#define KPutFmt(format, args) VNewRawDoFmt(format, (APTR)RAWFMTFUNC_SERIAL, NULL, args)
+#else
+void STDARGS KPutFmt(const char *format, va_list arg);
 #endif
 
 void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int line, const char *format, ...)
@@ -470,6 +481,7 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
   }
 }
 #endif
+
 /****************************************************************************/
 
-#endif
+#endif /* DEBUG */
