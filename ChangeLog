@@ -6,6 +6,7 @@ $Id$
 
 2006-09-14  Jens Langner <Jens.Langner@light-speed.de>
 
+  * lib/os3/libmui.a: added and propagated to Makefile.os3
   * tools, genclasses: generated new 'tools' subdir and moved the whole
     extrasrc/genclasses dir to it. In future this directory should carry all
     kind of (build) tools. extrasrc should only carry source files which

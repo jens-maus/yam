@@ -45,6 +45,7 @@ CLASSDIR  = $(PREFIX)/classes
 LOCALE    = $(PREFIX)/../locale
 EXTRASRC  = $(PREFIX)/extrasrc
 TOOLS     = $(PREFIX)/tools
+LIB       = $(PREFIX)/lib/mos
 OBJDIR    = .obj_mos
 
 # Compiler/Linker flags
@@ -59,7 +60,7 @@ DEBUG    = -DDEBUG -O0
 CFLAGS   = -noixemul -pipe -I. -I./include -I./include/netinclude $(CPU) \
             $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -g -c
 LDFLAGS  = -noixemul $(CPU)
-LDLIBS   = -lm -ldebug -L./lib/mos -lxpk -lamissl -lcodesets
+LDLIBS   = -lm -ldebug -L$(LIB) -lxpk -lamissl -lcodesets
 
 # Special flags
 DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
