@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-15  Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc.c: fixed the __check_abort() definitions for the various runtime
+    libraries.
+
 2006-09-14  Jens Langner <Jens.Langner@light-speed.de>
 
   * lib/os3/libmui.a: added and propagated to Makefile.os3

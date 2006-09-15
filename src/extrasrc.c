@@ -70,8 +70,19 @@
   #include "extrasrc/vastubs.c"
 #endif
 
-#if defined(__GCC__)
-  void __chkabort(void) {}
-#elif defined(__VBCC__)
-  void _chkabort(void) {}
+// we replace the function which checks
+// for an abort() condition in case we
+// didn't compile any debug version because
+// our debug version itself may use abort()
+// for the ASSERT() macro.
+#if !defined(DEBUG)
+  #if defined(__GNUC__)
+    #if defined(__libnix)
+      void __chkabort(void) {}
+    #elif !defined(__NEWLIB__)
+      void __check_abort(void) {}
+    #endif
+  #elif defined(__VBCC__)
+    void _chkabort(void) {}
+  #endif
 #endif
