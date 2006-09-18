@@ -1706,7 +1706,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
       switch (wr->Mode)
       {
-         case NEW_NEW:     AppendLog(10, GetStr(MSG_LOG_Creating),   AddrName(new->To), new->Subject, (void *)att); break;
+         case NEW_NEW:     AppendLog(10, GetStr(MSG_LOG_Creating),   AddrName(new->To), new->Subject, att); break;
          case NEW_REPLY:   AppendLog(11, GetStr(MSG_LOG_Replying),   AddrName(wr->MList[2]->From), wr->MList[2]->Subject); break;
          case NEW_FORWARD: AppendLog(12, GetStr(MSG_LOG_Forwarding), AddrName(wr->MList[2]->From), wr->MList[2]->Subject, AddrName(new->To)); break;
          case NEW_BOUNCE:  AppendLog(13, GetStr(MSG_LOG_Bouncing),   AddrName(wr->Mail->From), wr->Mail->Subject, AddrName(new->To)); break;

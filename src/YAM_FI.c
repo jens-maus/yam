@@ -1329,7 +1329,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
       free(mlist);
 
       if(G->RRs.Checked)
-        AppendLog(26, GetStr(MSG_LOG_Filtering), (void *)(G->RRs.Checked), folder->Name, (void *)matches);
+        AppendLog(26, GetStr(MSG_LOG_Filtering), G->RRs.Checked, folder->Name, matches);
 
       BusyEnd();
     }

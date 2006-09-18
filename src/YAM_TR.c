@@ -2026,7 +2026,7 @@ static int TR_ConnectPOP(int guilevel)
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_GetStats));
    if (!(resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, MSG_ER_BadResponse))) return -1;
    sscanf(&resp[4], "%d", &msgs);
-   if (msgs) AppendLogVerbose(31, GetStr(MSG_LOG_ConnectPOP), C->P3[pop]->User, host, (void *)msgs);
+   if (msgs) AppendLogVerbose(31, GetStr(MSG_LOG_ConnectPOP), C->P3[pop]->User, host, msgs);
 
    return msgs;
 }
@@ -2423,7 +2423,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 
       TR_DisconnectPOP();
       TR_Cleanup();
-      AppendLog(30, GetStr(MSG_LOG_Retrieving), (void *)(G->TR->Stats.Downloaded-laststats), p->User, p->Server);
+      AppendLog(30, GetStr(MSG_LOG_Retrieving), G->TR->Stats.Downloaded-laststats, p->User, p->Server);
       if (G->TR->SinglePOP) pop = MAXP3;
       laststats = G->TR->Stats.Downloaded;
    }
@@ -3317,7 +3317,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
          fclose(fh);
 
          // write the status to our logfile
-         AppendLog(51, GetStr(MSG_LOG_Exporting), (void *)ts.Msgs_Done, mlist[2]->Folder->Name, fname);
+         AppendLog(51, GetStr(MSG_LOG_Exporting), ts.Msgs_Done, mlist[2]->Folder->Name, fname);
       }
    }
 
@@ -3465,7 +3465,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                     GetSysTimeUTC(&mail->Reference->transDate);
 
                     result = email->DelSend ? 2 : 1;
-                    AppendLogVerbose(42, GetStr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, (void *)mail->Size);
+                    AppendLogVerbose(42, GetStr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, mail->Size);
                   }
                 }
 
@@ -3672,7 +3672,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                   break;
                }
             }
-            AppendLogNormal(40, GetStr(MSG_LOG_Sending), (void *)c, host);
+            AppendLogNormal(40, GetStr(MSG_LOG_Sending), c, host);
          }
          else err = 1;
 
@@ -4590,7 +4590,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
     }
 
     DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
-    AppendLog(50, GetStr(MSG_LOG_Importing), (void *)ts.Msgs_Done, G->TR->ImportFile, folder->Name);
+    AppendLog(50, GetStr(MSG_LOG_Importing), ts.Msgs_Done, G->TR->ImportFile, folder->Name);
     DisplayStatistics(folder, TRUE);
   }
 
@@ -4660,7 +4660,7 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
             if(FO_GetCurrentFolder() == infolder)
               DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
 
-            AppendLogVerbose(32, GetStr(MSG_LOG_RetrievingVerbose), AddrName(new->From), new->Subject, (void *)new->Size);
+            AppendLogVerbose(32, GetStr(MSG_LOG_RetrievingVerbose), AddrName(new->From), new->Subject, new->Size);
             MA_StartMacro(MACRO_NEWMSG, mfile);
             MA_FreeEMailStruct(mail);
          }

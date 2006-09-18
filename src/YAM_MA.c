@@ -712,9 +712,9 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
 
   // write some log out
   if(copyit)
-    AppendLogNormal(24, GetStr(MSG_LOG_Copying), (void *)selected, FolderName(frombox), FolderName(tobox));
+    AppendLogNormal(24, GetStr(MSG_LOG_Copying), selected, FolderName(frombox), FolderName(tobox));
   else
-    AppendLogNormal(22, GetStr(MSG_LOG_Moving),  (void *)selected, FolderName(frombox), FolderName(tobox));
+    AppendLogNormal(22, GetStr(MSG_LOG_Moving), selected, FolderName(frombox), FolderName(tobox));
 
   // refresh the folder statistics if necessary
   if(!copyit) DisplayStatistics(frombox, FALSE);
@@ -2540,11 +2540,11 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
    if (delatonce || C->RemoveAtOnce || folder == delfolder)
    {
-      AppendLogNormal(20, GetStr(MSG_LOG_Deleting), (void *)selected, folder->Name);
+      AppendLogNormal(20, GetStr(MSG_LOG_Deleting), selected, folder->Name);
    }
    else
    {
-      AppendLogNormal(22, GetStr(MSG_LOG_Moving), (void *)selected, folder->Name, delfolder->Name);
+      AppendLogNormal(22, GetStr(MSG_LOG_Moving), selected, folder->Name, delfolder->Name);
       DisplayStatistics(delfolder, FALSE);
    }
    DisplayStatistics(NULL, TRUE);
@@ -2953,7 +2953,7 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
 
     if(FO_GetCurrentFolder() == folder) DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
 
-    AppendLogNormal(20, GetStr(MSG_LOG_Deleting), (void *)i, folder->Name);
+    AppendLogNormal(20, GetStr(MSG_LOG_Deleting), i, folder->Name);
 
     if(quiet == FALSE) DisplayStatistics(folder, TRUE);
   }

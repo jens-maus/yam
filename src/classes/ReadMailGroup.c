@@ -1408,7 +1408,7 @@ DECLARE(DeleteMail)
 
     // delete the mail
     MA_DeleteSingle(mail, FALSE, FALSE);
-    AppendLogNormal(22, GetStr(MSG_LOG_Moving), (void *)1, folder->Name, delfolder->Name);
+    AppendLogNormal(22, GetStr(MSG_LOG_Moving), 1, folder->Name, delfolder->Name);
   }
 
   RETURN(0);
