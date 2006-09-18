@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-18  Gunther Nikl <gni@gecko.de>
+
+  * extrasrc/strlcat.c, extrasrc/strlcpy.c: New files.
+
 2006-09-15  Jens Langner <Jens.Langner@light-speed.de>
 
   * extrasrc.c: fixed the __check_abort() definitions for the various runtime
@@ -43,7 +47,6 @@ $Id$
   * UpdateCheck.c, YAM_DI.c, YAM_ER.c, YAM_FO.c, YAM_MI.c, YAM_rexx.c: Add
     extra.h.
   * extra.h: add prototypes for strlcpy, strlcat, strtok_r when necessary.
-  * extrasrc/strlcat.c, extrasrc/strlcpy.c: New files.
   * Debug.h, Debug.c: Move kprintf stuff from .h to .c (only used there),
     trim headers.
   * Moved all proto/ headers to appropriate .c files. Removed duplicated
