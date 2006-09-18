@@ -10,6 +10,7 @@ $Id$
   * Makefile.os3: Remove __USE_SYSBASE define.
   * Removed all (void *) casts from arguments to AppendToLogfile.
   * C_h.sd: Removed now superfluous include.
+  * YAM.c (TC_Start, TC_Stop): No casts required here.
 
 2006-09-15  Jens Langner <Jens.Langner@light-speed.de>
 

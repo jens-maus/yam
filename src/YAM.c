@@ -200,7 +200,7 @@ static void TC_Start(enum TimerIO tio)
     #endif
 
     // fire the timer by doing a SendIO()
-    SendIO((struct IORequest *)timer->tr);
+    SendIO(&timer->tr->Request);
 
     // signal that our timer is running
     timer->isRunning = TRUE;
@@ -226,7 +226,7 @@ void TC_Stop(enum TimerIO tio)
   // check if we have a already issued ioreq running
   if(timer->isRunning)
   {
-    struct IORequest *ioreq = (struct IORequest *)timer->tr;
+    struct IORequest *ioreq = &timer->tr->Request;
 
     if(ioreq->io_Command != 0)
     {
