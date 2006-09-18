@@ -51,13 +51,13 @@ OBJDIR    = .obj_os3
 # Compiler/Linker flags
 CPU	= -m68020-60 -msoft-float
 CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" \
-        -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`" \
-        -D__YAM_BUILDID="$(BUILDID)"
+          -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`" \
+          -D__YAM_BUILDID="$(BUILDID)"
 WARN	= -W -Wall -Wwrite-strings
 OPTFLAGS= -O3 -fomit-frame-pointer -funroll-loops
 DEBUG	= -DDEBUG -O0
-CFLAGS  = -I. -I./include -I./include/netinclude -D__USE_SYSBASE \
-          -DNO_INLINE_STDARG $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -g -c
+CFLAGS  = -I. -I./include -I./include/netinclude -DNO_INLINE_STDARG \
+          $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -g -c
 LDFLAGS = -noixemul -mstackextend $(CPU)
 LDLIBS  = -lm -ldebug -L$(LIB) -lmui
 
