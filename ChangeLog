@@ -9,6 +9,7 @@ $Id$
   * extrasrc/strlcat.c, extrasrc/strlcpy.c: New files.
   * Makefile.os3: Remove __USE_SYSBASE define.
   * Removed all (void *) casts from arguments to AppendToLogfile.
+  * C_h.sd: Removed now superfluous include.
 
 2006-09-15  Jens Langner <Jens.Langner@light-speed.de>
 

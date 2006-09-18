@@ -33,7 +33,6 @@
 
 #ifndef %b_LOCALE_H
 #define %b_LOCALE_H
-#include <exec/types.h>
 
 #define MSG_Space ((const void *)1)
 
