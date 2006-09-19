@@ -70,6 +70,10 @@
   #include "extrasrc/vastubs.c"
 #endif
 
+#if defined(NEED_XGET)
+  #include "extrasrc/xget.c"
+#endif
+
 // we replace the function which checks
 // for an abort() condition in case we
 // didn't compile any debug version because

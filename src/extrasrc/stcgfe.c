@@ -1,7 +1,10 @@
 #include <string.h>
 
-/* Get the filename extension. */
+#ifndef FESIZE
+#define FESIZE 32
+#endif
 
+/* Get the filename extension. */
 int stcgfe(char *ext, const char *name)
 {
    const char *p = name + strlen(name);

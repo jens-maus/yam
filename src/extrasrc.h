@@ -38,7 +38,7 @@
 
 
 /*
- * Differentations between compilers/runtime libs and operating system
+ * Differentations between runtime libs and operating system
  */
 #if (defined(__mc68000) && (defined(__ixemul) || defined(__libnix))) || defined(__SASC)
 
@@ -68,10 +68,17 @@
 
 #endif /* !__MORPHOS__ || !__libnix */
 
+/*
+ * Differentations between compilers
+ */
 #if defined(__VBCC__)
 
 #if !defined(HAVE_STRDUP)
 #define NEED_STRDUP
+#endif
+
+#if !defined(HAVE_STRTOK_R)
+#define NEED_STRTOK_R
 #endif
 
 #endif /* __VBCC__ */
@@ -85,6 +92,17 @@
 #endif /* !__SASC */
 
 
+#if !defined(__GNUC__)
+
+#if !defined(HAVE_XGET)
+#define NEED_XGET
+#endif
+
+#endif /* !__GNUC__ */
+
+/*
+ * Stuff we always require
+ */
 #if !defined(HAVE_NEWREADARGS)
 #define NEED_NEWREADARGS
 #endif
@@ -116,6 +134,10 @@ void strmfp(char *, const char *, const char *);
 char *strdup(const char *);
 #endif
 
+#if defined(NEED_XGET)
+ULONG xget(Object *obj, const ULONG attr);
+#endif
+
 
 /*
  * Additional defines
@@ -125,16 +147,6 @@ char *strdup(const char *);
   #define isascii(c) (((c) & ~0177) == 0)
   #define stricmp(s1, s2) strcasecmp((s1), (s2))
   #define strnicmp(s1, s2, len) strncasecmp((s1), (s2), (len))
-
-#elif defined(__SASC)
-
-  #include <dos.h>
-
-#else
-
-  #define FNSIZE 108
-  #define FMSIZE 256
-  #define FESIZE 32
 
 #endif /* __VBCC__ */
 
