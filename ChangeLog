@@ -4,6 +4,17 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c, misc: added new PassphraseRequest() function which includes
+    a separate checkbox for selecting a new option to remember the entered
+    passphrase for a predefined amount of time. This should make the handling
+    of large amounts of PGP mails much easier as YAM will remember the
+    entered passphrase for a while and doesn't request it for every single
+    operation. The predefined time is 10 minutes but can be changed in the
+    YAM configuration.
+  * extrasrc.c: removed unnecessary #ifdef around check_abort() definitions
+
 2006-09-18  Gunther Nikl <gni@gecko.de>
 
   * extrasrc/strlcat.c, extrasrc/strlcpy.c: New files.

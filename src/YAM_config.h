@@ -262,6 +262,8 @@ struct CO_GUIData
    Object *CH_DETECTCYRILLIC;
    Object *CH_ABOOKLOOKUP;
    Object *CH_CONVERTHTML;
+   Object *CH_PGPPASSINTERVAL;
+   Object *NM_PGPPASSINTERVAL;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -364,6 +366,7 @@ struct Config
    int   StatusChangeDelay;
    int   KeepAliveInterval;
    int   UpdateInterval;
+   int   PGPPassInterval;
 
    enum  PrintMethod        PrintMethod;
    enum  SMTPSecMethod      SMTP_SecureMethod;

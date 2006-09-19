@@ -903,6 +903,7 @@ void CO_SetDefaults(struct Config *co, int page)
       }
       *co->MyPGPID = 0;
       co->EncryptToSelf = co->LogAllEvents = TRUE;
+      co->PGPPassInterval = 10; // 10 min per default
       strlcpy(co->ReMailer, "Remailer <remailer@remailer.xganon.com>", sizeof(co->ReMailer));
       strlcpy(co->RMCommands, "Anon-To: %s", sizeof(co->RMCommands));
       strlcpy(co->LogfilePath, G->ProgDir, sizeof(co->LogfilePath));

@@ -410,6 +410,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "PGPCmdPath       = %s\n", co->PGPCmdPath);
       fprintf(fh, "MyPGPID          = %s\n", co->MyPGPID);
       fprintf(fh, "EncryptToSelf    = %s\n", Bool2Txt(co->EncryptToSelf));
+      fprintf(fh, "PGPPassInterval  = %d\n", co->PGPPassInterval);
       fprintf(fh, "ReMailer         = %s\n", co->ReMailer);
       fprintf(fh, "RMCommands       = %s\n", co->RMCommands);
       fprintf(fh, "LogfilePath      = %s\n", co->LogfilePath);
@@ -943,6 +944,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 /*9*/          else if (!stricmp(buffer, "PGPCmdPath"))     strlcpy(co->PGPCmdPath, value, sizeof(co->PGPCmdPath));
                else if (!stricmp(buffer, "MyPGPID"))        strlcpy(co->MyPGPID, value, sizeof(co->MyPGPID));
                else if (!stricmp(buffer, "EncryptToSelf"))  co->EncryptToSelf = Txt2Bool(value);
+               else if (!stricmp(buffer, "PGPPassInterval"))co->PGPPassInterval = atoi(value);
                else if (!stricmp(buffer, "ReMailer"))       strlcpy(co->ReMailer, value, sizeof(co->ReMailer));
                else if (!stricmp(buffer, "RMCommands"))     strlcpy(co->RMCommands, value2, sizeof(co->RMCommands));
                else if (!stricmp(buffer, "LogfilePath"))    strlcpy(co->LogfilePath, value, sizeof(co->LogfilePath));
@@ -1219,6 +1221,7 @@ void CO_GetConfig(void)
          GetMUIString(CE->NotifyCommand, gui->ST_NOTICMD, sizeof(CE->NotifyCommand));
          break;
 
+      // [Filters]
       case 3:
       {
         int i=0;
@@ -1321,17 +1324,27 @@ void CO_GetConfig(void)
          GetMUIString(CE->InfoBarText, gui->ST_INFOBARTXT, sizeof(CE->InfoBarText));
          CE->QuickSearchBar= GetMUICheck(gui->CH_QUICKSEARCHBAR);
          break;
+
+      // [Security]
       case 9:
-         GetMUIString(CE->PGPCmdPath, gui->ST_PGPCMD, sizeof(CE->PGPCmdPath));
-         GetMUIString(CE->MyPGPID, gui->ST_MYPGPID, sizeof(CE->MyPGPID));
-         CE->EncryptToSelf     = GetMUICheck  (gui->CH_ENCSELF);
-         GetMUIString(CE->ReMailer, gui->ST_REMAILER, sizeof(CE->ReMailer));
-         GetMUIString(CE->RMCommands, gui->ST_FIRSTLINE, sizeof(CE->RMCommands));
-         GetMUIString(CE->LogfilePath, gui->ST_LOGFILE, sizeof(CE->LogfilePath));
-         CE->LogfileMode       = GetMUICycle  (gui->CY_LOGMODE);
-         CE->SplitLogfile      = GetMUICheck  (gui->CH_SPLITLOG);
-         CE->LogAllEvents      = GetMUICheck  (gui->CH_LOGALL);
-         break;
+      {
+        GetMUIString(CE->PGPCmdPath, gui->ST_PGPCMD, sizeof(CE->PGPCmdPath));
+        GetMUIString(CE->MyPGPID, gui->ST_MYPGPID, sizeof(CE->MyPGPID));
+        CE->EncryptToSelf = GetMUICheck(gui->CH_ENCSELF);
+        GetMUIString(CE->ReMailer, gui->ST_REMAILER, sizeof(CE->ReMailer));
+        GetMUIString(CE->RMCommands, gui->ST_FIRSTLINE, sizeof(CE->RMCommands));
+        GetMUIString(CE->LogfilePath, gui->ST_LOGFILE, sizeof(CE->LogfilePath));
+        CE->LogfileMode = GetMUICycle(gui->CY_LOGMODE);
+        CE->SplitLogfile = GetMUICheck(gui->CH_SPLITLOG);
+        CE->LogAllEvents = GetMUICheck(gui->CH_LOGALL);
+
+        if(GetMUICheck(gui->CH_PGPPASSINTERVAL) == TRUE)
+          CE->PGPPassInterval = GetMUINumer(gui->NM_PGPPASSINTERVAL);
+        else
+          CE->PGPPassInterval = -GetMUINumer(gui->NM_PGPPASSINTERVAL);
+      }
+      break;
+
       case 10:
          CE->GetOnStartup      = GetMUICheck  (gui->CH_POPSTART);
          CE->SendOnStartup     = GetMUICheck  (gui->CH_SENDSTART);
@@ -1485,6 +1498,7 @@ void CO_SetConfig(void)
          setstring   (gui->ST_NOTICMD   ,CE->NotifyCommand);
          break;
 
+      // [Filters]
       case 3:
       {
          struct MinNode *curNode;
@@ -1580,17 +1594,24 @@ void CO_SetConfig(void)
          setstring(gui->ST_INFOBARTXT   ,CE->InfoBarText);
          setcheckmark(gui->CH_QUICKSEARCHBAR, CE->QuickSearchBar);
          break;
+
+      // [Security]
       case 9:
-         setstring   (gui->ST_PGPCMD    ,CE->PGPCmdPath);
-         setstring   (gui->ST_MYPGPID   ,CE->MyPGPID);
-         setcheckmark(gui->CH_ENCSELF   ,CE->EncryptToSelf);
-         setstring   (gui->ST_REMAILER  ,CE->ReMailer);
-         setstring   (gui->ST_FIRSTLINE ,CE->RMCommands);
-         setstring   (gui->ST_LOGFILE   ,CE->LogfilePath);
-         setcycle    (gui->CY_LOGMODE   ,CE->LogfileMode);
-         setcheckmark(gui->CH_SPLITLOG  ,CE->SplitLogfile);
-         setcheckmark(gui->CH_LOGALL    ,CE->LogAllEvents);
-         break;
+      {
+        setstring(gui->ST_PGPCMD, CE->PGPCmdPath);
+        setstring(gui->ST_MYPGPID, CE->MyPGPID);
+        setcheckmark(gui->CH_ENCSELF, CE->EncryptToSelf);
+        setstring(gui->ST_REMAILER, CE->ReMailer);
+        setstring(gui->ST_FIRSTLINE, CE->RMCommands);
+        setstring(gui->ST_LOGFILE, CE->LogfilePath);
+        setcycle(gui->CY_LOGMODE, CE->LogfileMode);
+        setcheckmark(gui->CH_SPLITLOG, CE->SplitLogfile);
+        setcheckmark(gui->CH_LOGALL, CE->LogAllEvents);
+        setcheckmark(gui->CH_PGPPASSINTERVAL, CE->PGPPassInterval > 0);
+        set(gui->NM_PGPPASSINTERVAL, MUIA_Numeric_Value, abs(CE->PGPPassInterval));
+      }
+      break;
+
       case 10:
          setcheckmark(gui->CH_POPSTART   ,CE->GetOnStartup);
          setcheckmark(gui->CH_SENDSTART  ,CE->SendOnStartup);

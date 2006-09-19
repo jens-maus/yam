@@ -102,6 +102,7 @@ struct Global
    int                      CO_DST;
    int                      ER_NumErr;
    int                      ActiveWriteWin;
+   time_t                   LastPGPUsage;
 
    #if defined(__amigaos4__)
    uint32                   applicationID;

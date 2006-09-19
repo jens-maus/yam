@@ -454,7 +454,7 @@ MSG_UT_Load (139//)
 Load
 ;
 MSG_UT_PGPPassReq (140//)
-Please enter your PGP pass phrase:
+Please enter your PGP passphrase:
 ;
 ; Replaced by MSG_APPICON_STATS
 MSG_UT_NoPrinter (142//)
@@ -4995,8 +4995,8 @@ data stream.
 ; FILENAME
 ;
 MSG_ER_QPDEC_CHAR (1506//)
-Some not allowed characters have been spotted during the quoted-printable \
-decoding of file '%s' and where therefore removed during the decoding.
+Some disallowed characters were spotted during the quoted-printable \
+decoding of file '%s' and were therefore removed during the decoding.
 ; FILENAME
 ;
 MSG_ER_UUDEC_TAGMISS (1507//)
@@ -5849,4 +5849,19 @@ Size: ~%s
 ;
 MSG_MA_MIMEPART_MENU (1726//)
 Attachment/MIME-Part #%ld
+;
+MSG_CO_PGPPASSINTERVAL1 (1727//)
+Remember passphrase for
+;
+MSG_CO_PGPPASSINTERVAL2 (1728//)
+minute(s)
+;
+MSG_HELP_CO_PGPPASSINTERVAL (1729//)
+If selected, an entered PGP passphrase will be\n\
+remembered for the specified amount of time so\n\
+that subsequent PGP operations doesn't have to\n\
+query for it again.
+;
+MSG_UT_PGPPASSREQ_TITLE (1730//)
+PGP passphrase request
 ;

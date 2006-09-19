@@ -590,6 +590,118 @@ int StringRequest(char *string, int size, const char *title, const char *body,
   return ret_code;
 }
 ///
+/// PassphraseRequest
+//  Puts up a string requester for entering a PGP passphrase
+static int PassphraseRequest(char *string, int size, Object *parent)
+{
+  char pgprem[SIZE_DEFAULT];
+  Object *bt_okay;
+  Object *bt_cancel;
+  Object *wi_sr;
+  Object *st_in;
+  Object *ch_rem;
+  int ret_code = -1;
+
+  ENTER();
+
+  snprintf(pgprem, sizeof(pgprem), "%s %d %s", GetStr(MSG_CO_PGPPASSINTERVAL1),
+                                               abs(C->PGPPassInterval),
+                                               GetStr(MSG_CO_PGPPASSINTERVAL2));
+
+  wi_sr = WindowObject,
+    MUIA_Window_Title,      GetStr(MSG_UT_PGPPASSREQ_TITLE),
+    MUIA_Window_ID,         MAKE_ID('P','R','E','Q'),
+    MUIA_Window_RefWindow,  parent,
+    MUIA_Window_LeftEdge,   MUIV_Window_LeftEdge_Centered,
+    MUIA_Window_TopEdge,    MUIV_Window_TopEdge_Centered,
+    MUIA_Window_Width,      MUIV_Window_Width_MinMax(20),
+    MUIA_Window_Height,     MUIV_Window_Height_MinMax(20),
+    WindowContents, VGroup,
+      MUIA_Background, MUII_RequesterBack,
+      Child, VGroup,
+        GroupFrame,
+        MUIA_Background, MUII_GroupBack,
+        Child, LLabel(GetStr(MSG_UT_PGPPassReq)),
+        Child, st_in = MakePassString(""),
+        Child, HGroup,
+          Child, ch_rem = MakeCheck(GetStr(MSG_CO_PGPPASSINTERVAL1)),
+          Child, Label2(pgprem),
+          Child, HSpace(0),
+        End,
+      End,
+      Child, ColGroup(3),
+        Child, bt_okay = MakeButton(GetStr(MSG_Okay)),
+        Child, HSpace(0),
+        Child, bt_cancel = MakeButton(GetStr(MSG_Cancel)),
+      End,
+    End,
+  End;
+
+  if(wi_sr)
+  {
+    setstring(st_in, string);
+    set(wi_sr, MUIA_Window_ActiveObject, st_in);
+    set(ch_rem, MUIA_Selected, C->PGPPassInterval > 0);
+
+    set(G->App, MUIA_Application_Sleep, TRUE);
+
+    DoMethod(G->App, OM_ADDMEMBER, wi_sr);
+
+    DoMethod(bt_okay,   MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 1);
+    DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 3);
+    DoMethod(st_in,     MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, G->App, 2, MUIM_Application_ReturnID, 1);
+    DoMethod(wi_sr,     MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->App, 2, MUIM_Application_ReturnID, 3);
+
+    // lets collect the waiting returnIDs now
+    COLLECT_RETURNIDS;
+
+    if(!SafeOpenWindow(wi_sr))
+      ret_code = 0;
+    else while(ret_code == -1)
+    {
+      static ULONG signals=0;
+
+      switch(DoMethod(G->App, MUIM_Application_NewInput, &signals))
+      {
+        case 1: ret_code = 1; break;
+        case 3: ret_code = 0; break;
+      }
+
+      if(ret_code == -1 && signals)
+        signals = Wait(signals);
+    }
+
+    // now lets reissue the collected returnIDs again
+    REISSUE_RETURNIDS;
+
+    // if the user entered something reasonable
+    // we get it.
+    if(ret_code > 0)
+    {
+      GetMUIString(string, st_in, size);
+
+      // in case the checkmark of the pgppassinterval
+      // was enabled we have to enable the passinterval as
+      // well
+      if(GetMUICheck(ch_rem))
+        C->PGPPassInterval = abs(C->PGPPassInterval);
+      else if(C->PGPPassInterval > 0)
+        C->PGPPassInterval = -C->PGPPassInterval;
+    }
+
+    // remove & dispose the requester object
+    DoMethod(G->App, OM_REMMEMBER, wi_sr);
+    MUI_DisposeObject(wi_sr);
+
+    // wake up the application
+    set(G->App, MUIA_Application_Sleep, FALSE);
+  }
+
+  RETURN(ret_code);
+  return ret_code;
+}
+///
+
 /// FolderRequest
 //  Allows user to choose a folder from a list
 struct Folder *FolderRequest(const char *title, const char *body, const char *yestext, const char *notext,
@@ -4612,27 +4724,70 @@ void MyBltMaskBitMapRastPort(struct BitMap *srcBitMap, LONG xSrc, LONG ySrc, str
 //  Asks user for the PGP passphrase
 void PGPGetPassPhrase(void)
 {
-   if (!G->PGPPassPhrase[0])
-   {
-      G->PGPPassVolatile = FALSE;
-      if(GetVar("PGPPASS", G->PGPPassPhrase, SIZE_DEFAULT, 0) < 0)
-      {
-         char pgppass[SIZE_DEFAULT];
-         G->PGPPassVolatile = TRUE; *pgppass = 0;
-         if (StringRequest(pgppass, SIZE_DEFAULT, "PGP", GetStr(MSG_UT_PGPPassReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->MA->GUI.WI))
-            strlcpy(G->PGPPassPhrase, pgppass, sizeof(G->PGPPassPhrase));
-      }
-      else return;
-   }
-   SetVar("PGPPASS", G->PGPPassPhrase, -1, GVF_GLOBAL_ONLY);
+  char pgppass[SIZE_DEFAULT];
+
+  ENTER();
+
+  // check if a PGPPASS variable exists already
+  if(GetVar("PGPPASS", pgppass, sizeof(pgppass), GVF_GLOBAL_ONLY) < 0)
+  {
+    // check if we really require to request a passphrase from
+    // the user
+    if(G->PGPPassPhrase[0] != '\0' &&
+       C->PGPPassInterval > 0 && G->LastPGPUsage > 0 &&
+       time(NULL)-G->LastPGPUsage <= C->PGPPassInterval*60)
+    {
+      // nothing
+    }
+    else
+    {
+      pgppass[0] = '\0';
+
+      if(PassphraseRequest(pgppass, SIZE_DEFAULT, G->MA->GUI.WI) > 0)
+        G->LastPGPUsage = time(NULL);
+      else
+        G->LastPGPUsage = 0;
+
+      strlcpy(G->PGPPassPhrase, pgppass, sizeof(G->PGPPassPhrase));
+    }
+
+    // make sure we delete the passphrase variable immediately after
+    // having processed the PGP command
+    G->PGPPassVolatile = TRUE;
+
+    // set a global PGPPASS variable, but do not write it
+    // to ENVARC:
+    SetVar("PGPPASS", G->PGPPassPhrase, -1, GVF_GLOBAL_ONLY);
+  }
+  else
+  {
+    W(DBF_MAIL, "ENV:PGPPASS already exists!");
+
+    // don't delete env-variable on PGPClearPassPhrase()
+    G->PGPPassVolatile = FALSE;
+
+    // copy the content of the env variable to our
+    // global passphrase variable
+    strlcpy(G->PGPPassPhrase, pgppass, sizeof(G->PGPPassPhrase));
+    G->LastPGPUsage = 0;
+  }
+
+  LEAVE();
 }
 ///
 /// PGPClearPassPhrase
 //  Clears the ENV variable containing the PGP passphrase
 void PGPClearPassPhrase(BOOL force)
 {
-   if (G->PGPPassVolatile) DeleteVar("PGPPASS", 0);
-   if (force) G->PGPPassPhrase[0] = 0;
+  ENTER();
+
+  if(G->PGPPassVolatile)
+    DeleteVar("PGPPASS", GVF_GLOBAL_ONLY);
+
+  if(force)
+    G->PGPPassPhrase[0] = '\0';
+
+  LEAVE();
 }
 ///
 /// PGPCommand

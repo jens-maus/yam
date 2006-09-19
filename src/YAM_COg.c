@@ -2174,20 +2174,29 @@ Object *CO_Page9(struct CO_ClassData *data)
             MUIA_FixHeight,      4,
          End,
 
-         Child, ColGroup(2), GroupFrameT("PGP"),
-            Child, Label2(GetStr(MSG_CO_PGPExe)),
-            Child, PopaslObject,
-               MUIA_Popasl_Type     ,ASL_FileRequest,
-               MUIA_Popstring_String,data->GUI.ST_PGPCMD= MakeString(SIZE_PATHFILE,GetStr(MSG_CO_PGPExe)),
-               MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
-               ASLFR_DrawersOnly, TRUE,
+         Child, VGroup, GroupFrameT("PGP"),
+            Child, ColGroup(2),
+              Child, Label2(GetStr(MSG_CO_PGPExe)),
+              Child, PopaslObject,
+                 MUIA_Popasl_Type     ,ASL_FileRequest,
+                 MUIA_Popstring_String,data->GUI.ST_PGPCMD= MakeString(SIZE_PATHFILE,GetStr(MSG_CO_PGPExe)),
+                 MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
+                 ASLFR_DrawersOnly, TRUE,
+              End,
+              Child, Label2(GetStr(MSG_CO_PGPKey)),
+              Child, HGroup,
+                 Child, MakePGPKeyList(&(data->GUI.ST_MYPGPID), TRUE, GetStr(MSG_CO_PGPKey)),
+                 Child, HSpace(8),
+                 Child, data->GUI.CH_ENCSELF = MakeCheck(GetStr(MSG_CO_EncryptToSelf)),
+                 Child, Label1(GetStr(MSG_CO_EncryptToSelf)),
+              End,
             End,
-            Child, Label2(GetStr(MSG_CO_PGPKey)),
             Child, HGroup,
-               Child, MakePGPKeyList(&(data->GUI.ST_MYPGPID), TRUE, GetStr(MSG_CO_PGPKey)),
-               Child, HSpace(8),
-               Child, data->GUI.CH_ENCSELF = MakeCheck(GetStr(MSG_CO_EncryptToSelf)),
-               Child, Label1(GetStr(MSG_CO_EncryptToSelf)),
+              Child, data->GUI.CH_PGPPASSINTERVAL = MakeCheck(GetStr(MSG_CO_PGPPASSINTERVAL1)),
+              Child, Label2(GetStr(MSG_CO_PGPPASSINTERVAL1)),
+              Child, data->GUI.NM_PGPPASSINTERVAL = MakeNumeric(1, 90, FALSE),
+              Child, Label2(GetStr(MSG_CO_PGPPASSINTERVAL2)),
+              Child, HSpace(0),
             End,
          End,
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_AnonMail)),
@@ -2225,6 +2234,9 @@ Object *CO_Page9(struct CO_ClassData *data)
       SetHelp(data->GUI.ST_PGPCMD    ,MSG_HELP_CO_ST_PGPCMD   );
       SetHelp(data->GUI.ST_MYPGPID   ,MSG_HELP_CO_ST_MYPGPID  );
       SetHelp(data->GUI.CH_ENCSELF   ,MSG_HELP_CO_CH_ENCSELF  );
+      SetHelp(data->GUI.CH_PGPPASSINTERVAL, MSG_HELP_CO_PGPPASSINTERVAL);
+      SetHelp(data->GUI.NM_PGPPASSINTERVAL, MSG_HELP_CO_PGPPASSINTERVAL);
+      SetHelp(data->GUI.CH_ENCSELF   ,MSG_HELP_CO_CH_ENCSELF  );
       SetHelp(data->GUI.ST_REMAILER  ,MSG_HELP_CO_ST_REMAILER );
       SetHelp(data->GUI.ST_FIRSTLINE ,MSG_HELP_CO_ST_FIRSTLINE);
       SetHelp(data->GUI.ST_LOGFILE   ,MSG_HELP_CO_ST_LOGFILE  );
@@ -2232,6 +2244,7 @@ Object *CO_Page9(struct CO_ClassData *data)
       SetHelp(data->GUI.CY_LOGMODE   ,MSG_HELP_CO_CY_LOGMODE  );
       SetHelp(data->GUI.CH_LOGALL    ,MSG_HELP_CO_CH_LOGALL   );
    }
+
    return grp;
 }
 
