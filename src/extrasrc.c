@@ -21,7 +21,7 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
- $Id: all_gcc.c 2335 2006-09-14 22:34:28Z damato $
+ $Id$
 
 ***************************************************************************/
 
@@ -75,14 +75,12 @@
 // didn't compile any debug version because
 // our debug version itself may use abort()
 // for the ASSERT() macro.
-#if !defined(DEBUG)
-  #if defined(__GNUC__)
-    #if defined(__libnix)
-      void __chkabort(void) {}
-    #elif !defined(__NEWLIB__)
-      void __check_abort(void) {}
-    #endif
-  #elif defined(__VBCC__)
-    void _chkabort(void) {}
+#if defined(__GNUC__)
+  #if defined(__libnix)
+    void __chkabort(void) {}
+  #elif !defined(__NEWLIB__)
+    void __check_abort(void) {}
   #endif
+#elif defined(__VBCC__)
+  void _chkabort(void) {}
 #endif

@@ -24,7 +24,7 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
- $Id: all_gcc.c 2335 2006-09-14 22:34:28Z damato $
+ $Id$
 
 ***************************************************************************/
 
