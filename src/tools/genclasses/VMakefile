@@ -1,5 +1,6 @@
 
 CC = vc
+POSIXLIBINC = vbcc:PosixLib/Include
 CCOPTS = -DEMULATE_DIRENT -I$(POSIXLIBINC)
 
 GenClasses : gc.o lists.o
