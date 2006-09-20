@@ -971,9 +971,6 @@ Read
 MSG_CO_CrdWrite (305//)
 Write
 ;
-MSG_CO_CrdReply (306//)
-Reply
-;
 MSG_CO_CrdSignature (307//)
 Signature
 ;
@@ -988,12 +985,6 @@ Security
 ;
 MSG_CO_CrdMixed (311//)
 Miscellaneous
-;
-MSG_CO_CrdScripts (312//)
-ARexx
-;
-MSG_CO_CrdStartQuit (313//)
-Start/Quit
 ;
 MSG_CO_CrdABook (314//)
 Address book
@@ -5864,4 +5855,13 @@ query for it again.
 ;
 MSG_UT_PGPPASSREQ_TITLE (1730//)
 PGP passphrase request
+;
+MSG_CO_GR_REPLYFORWARD (1731//)
+Reply/Forward
+;
+MSG_CO_GR_SCRIPTS (1732//)
+Scripts
+;
+MSG_CO_GR_STARTUPQUIT (1733//)
+Startup/Quit
 ;

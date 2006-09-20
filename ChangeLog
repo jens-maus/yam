@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-20  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_CO.c, YAM.cd: revised the naming of some config page titles as they
+    weren't exactly named correctly/precisely.
+
 2006-09-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c, misc: added new PassphraseRequest() function which includes

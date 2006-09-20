@@ -1857,14 +1857,14 @@ static struct CO_ClassData *CO_New(void)
       page[ 3].PageLabel = MSG_CO_CrdFilters;
       page[ 4].PageLabel = MSG_CO_CrdRead;
       page[ 5].PageLabel = MSG_CO_CrdWrite;
-      page[ 6].PageLabel = MSG_CO_CrdReply;
+      page[ 6].PageLabel = MSG_CO_GR_REPLYFORWARD;
       page[ 7].PageLabel = MSG_CO_CrdSignature;
       page[ 8].PageLabel = MSG_CO_CrdLists;
       page[ 9].PageLabel = MSG_CO_CrdSecurity;
-      page[10].PageLabel = MSG_CO_CrdStartQuit;
+      page[10].PageLabel = MSG_CO_GR_STARTUPQUIT;
       page[11].PageLabel = MSG_CO_CrdMIME;
       page[12].PageLabel = MSG_CO_CrdABook;
-      page[13].PageLabel = MSG_CO_CrdScripts;
+      page[13].PageLabel = MSG_CO_GR_SCRIPTS;
       page[14].PageLabel = MSG_CO_CrdMixed;
       page[15].PageLabel = MSG_CO_CrdUpdate;
 

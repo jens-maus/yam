@@ -987,7 +987,7 @@ MakeStaticHook(CO_PutRXEntryHook,CO_PutRXEntry);
 ///
 
 /*** Pages ***/
-/// CO_Page0  (Start)
+/// CO_Page0  (First steps)
 Object *CO_Page0(struct CO_ClassData *data)
 {
    Object *grp;
@@ -2249,7 +2249,7 @@ Object *CO_Page9(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page10 (Start/Quit)
+/// CO_Page10 (Startup/Quit)
 Object *CO_Page10(struct CO_ClassData *data)
 {
    Object *grp;
@@ -2602,7 +2602,7 @@ Object *CO_Page13(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page14 (Mixed)
+/// CO_Page14 (Miscellaneous)
 Object *CO_Page14(struct CO_ClassData *data)
 {
    Object *grp;
