@@ -29,9 +29,9 @@ struct CodesetsIFace
 	void APICALL (*Expunge)(struct CodesetsIFace *Self);
 	struct Interface * APICALL (*Clone)(struct CodesetsIFace *Self);
 	void APICALL (*Reserved1)(struct CodesetsIFace *Self);
-	ULONG APICALL (*CodesetsConvertUTF32toUTF16)(struct CodesetsIFace *Self, const UTF32 ** sourceStart, const UTF32 ** sourceEnd, UTF16 ** targetStart, UTF16 * targetEnd, ULONG flags);
-	ULONG APICALL (*CodesetsConvertUTF16toUTF32)(struct CodesetsIFace *Self, const UTF16 ** sourceStart, const UTF16 ** sourceEnd, UTF32 ** targetStart, UTF32 * targetEnd, ULONG flags);
-	ULONG APICALL (*CodesetsConvertUTF16toUTF8)(struct CodesetsIFace *Self, const UTF16 ** sourceStart, const UTF16 ** sourceEnd, UTF8 ** targetStart, UTF8 * targetEnd, ULONG flags);
+	ULONG APICALL (*CodesetsConvertUTF32toUTF16)(struct CodesetsIFace *Self, const UTF32 ** sourceStart, const UTF32 * sourceEnd, UTF16 ** targetStart, UTF16 * targetEnd, ULONG flags);
+	ULONG APICALL (*CodesetsConvertUTF16toUTF32)(struct CodesetsIFace *Self, const UTF16 ** sourceStart, const UTF16 * sourceEnd, UTF32 ** targetStart, UTF32 * targetEnd, ULONG flags);
+	ULONG APICALL (*CodesetsConvertUTF16toUTF8)(struct CodesetsIFace *Self, const UTF16 ** sourceStart, const UTF16 * sourceEnd, UTF8 ** targetStart, UTF8 * targetEnd, ULONG flags);
 	BOOL APICALL (*CodesetsIsLegalUTF8)(struct CodesetsIFace *Self, const UTF8 * source, ULONG length);
 	BOOL APICALL (*CodesetsIsLegalUTF8Sequence)(struct CodesetsIFace *Self, const UTF8 * source, const UTF8 * sourceEnd);
 	ULONG APICALL (*CodesetsConvertUTF8toUTF16)(struct CodesetsIFace *Self, const UTF8 ** sourceStart, const UTF8 * sourceEnd, UTF16 ** targetStart, UTF16 * targetEnd, ULONG flags);

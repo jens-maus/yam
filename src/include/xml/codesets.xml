@@ -11,21 +11,21 @@
 		<method name="Reserved1" result="void" status="unimplemented"/>
 		<method name="CodesetsConvertUTF32toUTF16" result="ULONG">
 			<arg name="sourceStart" type="const UTF32 **"/>
-			<arg name="sourceEnd" type="const UTF32 **"/>
+			<arg name="sourceEnd" type="const UTF32 *"/>
 			<arg name="targetStart" type="UTF16 **"/>
 			<arg name="targetEnd" type="UTF16 *"/>
 			<arg name="flags" type="ULONG"/>
 		</method>
 		<method name="CodesetsConvertUTF16toUTF32" result="ULONG">
 			<arg name="sourceStart" type="const UTF16 **"/>
-			<arg name="sourceEnd" type="const UTF16 **"/>
+			<arg name="sourceEnd" type="const UTF16 *"/>
 			<arg name="targetStart" type="UTF32 **"/>
 			<arg name="targetEnd" type="UTF32 *"/>
 			<arg name="flags" type="ULONG"/>
 		</method>
 		<method name="CodesetsConvertUTF16toUTF8" result="ULONG">
 			<arg name="sourceStart" type="const UTF16 **"/>
-			<arg name="sourceEnd" type="const UTF16 **"/>
+			<arg name="sourceEnd" type="const UTF16 *"/>
 			<arg name="targetStart" type="UTF8 **"/>
 			<arg name="targetEnd" type="UTF8 *"/>
 			<arg name="flags" type="ULONG"/>
