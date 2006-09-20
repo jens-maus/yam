@@ -4735,7 +4735,7 @@ void PGPGetPassPhrase(void)
     // the user
     if(G->PGPPassPhrase[0] != '\0' &&
        C->PGPPassInterval > 0 && G->LastPGPUsage > 0 &&
-       time(NULL)-G->LastPGPUsage <= C->PGPPassInterval*60)
+       time(NULL)-G->LastPGPUsage <= (time_t)(C->PGPPassInterval*60))
     {
       // nothing
     }
