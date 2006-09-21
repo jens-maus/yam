@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: in.h,v 1.7 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -51,9 +51,13 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
+
+#ifndef _SYS_SOCKET_H
+#include <sys/socket.h>
+#endif /* _SYS_SOCKET_H */
 
 /****************************************************************************/
 
@@ -77,6 +81,12 @@ extern "C" {
  * Constants and structures defined by the internet system,
  * Per RFC 790, September 1981, and numerous additions.
  */
+
+/*
+ * Data types.
+ */
+typedef unsigned long	in_addr_t;
+typedef unsigned short	in_port_t;
 
 /*
  * Protocols
@@ -111,42 +121,40 @@ extern "C" {
 /*
  * Internet address (a structure for historical reasons)
  */
-#if !defined(_UNISTD_H)
 struct in_addr {
-	ULONG s_addr;
+	in_addr_t s_addr;
 };
-#endif
 
 /*
  * Definitions of bits in internet address integers.
  * On subnets, the decomposition of addresses to host and net parts
  * is done according to subnet mask, not the masks here.
  */
-#define	IN_CLASSA(i)		(((LONG)(i) & 0x80000000) == 0)
+#define	IN_CLASSA(i)		(((__ULONG)(i) & 0x80000000) == 0)
 #define	IN_CLASSA_NET		0xff000000
 #define	IN_CLASSA_NSHIFT	24
 #define	IN_CLASSA_HOST		0x00ffffff
 #define	IN_CLASSA_MAX		128
 
-#define	IN_CLASSB(i)		(((LONG)(i) & 0xc0000000) == 0x80000000)
+#define	IN_CLASSB(i)		(((__ULONG)(i) & 0xc0000000) == 0x80000000)
 #define	IN_CLASSB_NET		0xffff0000
 #define	IN_CLASSB_NSHIFT	16
 #define	IN_CLASSB_HOST		0x0000ffff
 #define	IN_CLASSB_MAX		65536
 
-#define	IN_CLASSC(i)		(((LONG)(i) & 0xe0000000) == 0xc0000000)
+#define	IN_CLASSC(i)		(((__ULONG)(i) & 0xe0000000) == 0xc0000000)
 #define	IN_CLASSC_NET		0xffffff00
 #define	IN_CLASSC_NSHIFT	8
 #define	IN_CLASSC_HOST		0x000000ff
 
-#define	IN_CLASSD(i)		(((LONG)(i) & 0xf0000000) == 0xe0000000)
+#define	IN_CLASSD(i)		(((__ULONG)(i) & 0xf0000000) == 0xe0000000)
 #define	IN_CLASSD_NET		0xf0000000	/* These ones aren't really */
 #define	IN_CLASSD_NSHIFT	28		/* net and host fields, but */
 #define	IN_CLASSD_HOST		0x0fffffff	/* routing needn't know.    */
 #define	IN_MULTICAST(i)		IN_CLASSD(i)
 
-#define	IN_EXPERIMENTAL(i)	(((LONG)(i) & 0xf0000000) == 0xf0000000)
-#define	IN_BADCLASS(i)		(((LONG)(i) & 0xf0000000) == 0xf0000000)
+#define	IN_EXPERIMENTAL(i)	(((__ULONG)(i) & 0xf0000000) == 0xf0000000)
+#define	IN_BADCLASS(i)		(((__ULONG)(i) & 0xf0000000) == 0xf0000000)
 
 #define	INADDR_ANY		0x00000000UL
 #define	INADDR_BROADCAST	0xffffffffUL	/* must be masked */
@@ -162,11 +170,11 @@ struct in_addr {
  * Socket address, internet style.
  */
 struct sockaddr_in {
-	UBYTE	sin_len;
-	UBYTE	sin_family;
-	UWORD	sin_port;
-	struct	in_addr sin_addr;
-	UBYTE	sin_zero[8];
+	__UBYTE		sin_len;
+	sa_family_t	sin_family;
+	in_port_t	sin_port;
+	struct		in_addr sin_addr;
+	__UBYTE		sin_zero[8];
 };
 
 /*
@@ -178,7 +186,7 @@ struct sockaddr_in {
  */
 struct ip_opts {
 	struct	in_addr ip_dst;		/* first hop, 0 w/o src rt */
-	UBYTE	ip_options[40];		/* actually variable in size */
+	__UBYTE	ip_options[40];		/* actually variable in size */
 };
 
 /*
@@ -186,16 +194,16 @@ struct ip_opts {
  * First word of comment is data type; bool is stored in int.
  */
 #define	IP_OPTIONS		1    /* buf/ip_opts; set/get IP options */
-#define	IP_HDRINCL		2    /* int; header is included with data */
-#define	IP_TOS			3    /* int; IP type of service and preced. */
-#define	IP_TTL			4    /* int; IP time to live */
+#define	IP_HDRINCL		2    /* __LONG; header is included with data */
+#define	IP_TOS			3    /* __LONG; IP type of service and preced. */
+#define	IP_TTL			4    /* __LONG; IP time to live */
 #define	IP_RECVOPTS		5    /* bool; receive all IP opts w/dgram */
 #define	IP_RECVRETOPTS		6    /* bool; receive IP opts for response */
 #define	IP_RECVDSTADDR		7    /* bool; receive IP dst addr w/dgram */
 #define	IP_RETOPTS		8    /* ip_opts; set/get IP options */
-#define	IP_MULTICAST_IF		9    /* UBYTE; set/get IP multicast i/f  */
-#define	IP_MULTICAST_TTL	10   /* UBYTE; set/get IP multicast ttl */
-#define	IP_MULTICAST_LOOP	11   /* UBYTE; set/get IP multicast loopback */
+#define	IP_MULTICAST_IF		9    /* __UBYTE; set/get IP multicast i/f  */
+#define	IP_MULTICAST_TTL	10   /* __UBYTE; set/get IP multicast ttl */
+#define	IP_MULTICAST_LOOP	11   /* __UBYTE; set/get IP multicast loopback */
 #define	IP_ADD_MEMBERSHIP	12   /* ip_mreq; add an IP group membership */
 #define	IP_DROP_MEMBERSHIP	13   /* ip_mreq; drop an IP group membership */
 

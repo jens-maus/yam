@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: socket.h,v 1.13 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -46,23 +46,43 @@
  *	@(#)socket.h	8.6 (Berkeley) 5/3/95
  */
 
-#ifndef _SYS_SOCKET_H_
-#define	_SYS_SOCKET_H_
+#ifndef _SYS_SOCKET_H
+#define	_SYS_SOCKET_H
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+/* NOTE: the 'struct timeval' structure definition differs slightly between
+         the AmigaOS usage (as defined in <devices/timer.h>) and the POSIX
+         usage (as defined in <sys/time.h>. By default, this header file
+         will include <devices/timer.h> under the assumption that there
+         will be no problem as a result of that. However, if there are
+         compilation issues, you might want to define the 'struct timeval'
+         separately and disable the inclusion of <devices/timer.h>,
+         which can be achieved by defining the preprocessor symbol
+         __NO_NETINCLUDE_TIMEVAL before you include this header file. */
+
+/****************************************************************************/
+
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 /****************************************************************************/
 
 /*
- * We might reference memcpy() and memset() below, which is why
+ * We might reference memmove() and memset() below, which is why
  * we need to make sure that both are declared somewhere.
  */
 #include <string.h>
 #include <stdlib.h>
+#include <stddef.h>
+
+/****************************************************************************/
+
+/* 'struct iovec', as used in a 'struct msghdr' is defined in <sys/uio.h>. */
+#ifndef _SYS_UIO_H
+#include <sys/uio.h>
+#endif /* _SYS_UIO_H */
 
 /****************************************************************************/
 
@@ -85,6 +105,12 @@ extern "C" {
 /*
  * Definitions related to sockets: types, address families, options.
  */
+
+/*
+ * Data types.
+ */
+typedef unsigned char	sa_family_t;
+typedef unsigned long	socklen_t;
 
 /*
  * Types
@@ -131,8 +157,8 @@ extern "C" {
  * Structure used for manipulating linger option.
  */
 struct	linger {
-	LONG	l_onoff;		/* option on/off */
-	LONG	l_linger;		/* linger time in seconds */
+	__LONG	l_onoff;		/* option on/off */
+	__LONG	l_linger;		/* linger time in seconds */
 };
 
 /*
@@ -179,9 +205,9 @@ struct	linger {
  * addresses.
  */
 struct sockaddr {
-	UBYTE	sa_len;			/* total length */
-	UBYTE	sa_family;		/* address family */
-	UBYTE	sa_data[14];		/* actually longer; address value */
+	__UBYTE		sa_len;			/* total length */
+	sa_family_t	sa_family;		/* address family */
+	__UBYTE		sa_data[14];		/* actually longer; address value */
 };
 
 /*
@@ -189,8 +215,8 @@ struct sockaddr {
  * information in raw sockets.
  */
 struct sockproto {
-	UWORD	sp_family;		/* address family */
-	UWORD	sp_protocol;		/* protocol */
+	__UWORD	sp_family;		/* address family */
+	__UWORD	sp_protocol;		/* protocol */
 };
 
 /*
@@ -256,25 +282,17 @@ struct sockproto {
 #define	SOMAXCONN	5
 
 /*
- * This is from <sys/uio.h>
- */
-struct iovec {
-	APTR	iov_base;	/* Base address. */
-	LONG	iov_len;	/* Length. */
-};
-
-/*
  * Message header for recvmsg and sendmsg calls.
  * Used value-result for recvmsg, value only for sendmsg.
  */
 struct msghdr {
-	APTR	msg_name;		/* optional address */
-	ULONG	msg_namelen;		/* size of address */
-	struct	iovec *msg_iov;		/* scatter/gather array */
-	ULONG	msg_iovlen;		/* # elements in msg_iov */
-	APTR	msg_control;		/* ancillary data, see below */
-	ULONG	msg_controllen;		/* ancillary data buffer len */
-	LONG	msg_flags;		/* flags on received message */
+	__APTR		msg_name;		/* optional address */
+	socklen_t	msg_namelen;		/* size of address */
+	struct iovec *	msg_iov;		/* scatter/gather array */
+	__ULONG		msg_iovlen;		/* # elements in msg_iov */
+	__APTR		msg_control;		/* ancillary data, see below */
+	socklen_t	msg_controllen;		/* ancillary data buffer len */
+	__LONG		msg_flags;		/* flags on received message */
 };
 
 #define	MSG_OOB		0x1		/* process out-of-band data */
@@ -293,30 +311,30 @@ struct msghdr {
  * of message elements headed by cmsghdr structures.
  */
 struct cmsghdr {
-	ULONG	cmsg_len;		/* data byte count, including hdr */
-	LONG	cmsg_level;		/* originating protocol */
-	LONG	cmsg_type;		/* protocol-specific type */
-/* followed by	UBYTE  cmsg_data[]; */
+	socklen_t	cmsg_len;		/* data byte count, including hdr */
+	__LONG		cmsg_level;		/* originating protocol */
+	__LONG		cmsg_type;		/* protocol-specific type */
+/* followed by	__UBYTE  cmsg_data[]; */
 };
 
 /* given pointer to struct cmsghdr, return pointer to data */
-#define	CMSG_DATA(cmsg)		((UBYTE *)((cmsg) + 1))
+#define	CMSG_DATA(cmsg)		((__UBYTE *)((cmsg) + 1))
 
 /* given pointer to struct cmsghdr, return pointer to next cmsghdr */
 #define	CMSG_NXTHDR(mhdr, cmsg)	\
-	(((APTR)(cmsg) + (cmsg)->cmsg_len + sizeof(struct cmsghdr) > \
+	(((__APTR)(cmsg) + (cmsg)->cmsg_len + sizeof(struct cmsghdr) > \
 	    (mhdr)->msg_control + (mhdr)->msg_controllen) ? \
 	    (struct cmsghdr *)NULL : \
-	    (struct cmsghdr *)((APTR)(cmsg) + ALIGN((cmsg)->cmsg_len)))
+	    (struct cmsghdr *)((__APTR)(cmsg) + ALIGN((cmsg)->cmsg_len)))
 
 #define	CMSG_FIRSTHDR(mhdr)	((struct cmsghdr *)(mhdr)->msg_control)
 
 /* "Socket"-level control message types: */
-#define	SCM_RIGHTS	0x01		/* access rights (array of LONG) */
+#define	SCM_RIGHTS	0x01		/* access rights (array of __LONG) */
 
 /*
  * The following comes from the original <sys/types.h> header file,
- * which has been retired in favour of the Amiga specific <exec/types.h>
+ * which has been retired in favour of the <sys/netinclude_types.h>
  * type definitions. What remains are the macros in support of the
  * "select()" call and those for endian-neutral operations.
  */
@@ -342,7 +360,7 @@ struct cmsghdr {
 #define	FD_SETSIZE 256
 #endif
 
-typedef LONG fd_mask;
+typedef unsigned long fd_mask;
 #define NFDBITS	(sizeof(fd_mask) * NBBY) /* bits per mask */
 
 #ifndef howmany
@@ -353,10 +371,10 @@ typedef	struct fd_set {
 	fd_mask	fds_bits[howmany(FD_SETSIZE, NFDBITS)];
 } fd_set;
 
-#define	FD_SET(n, p)	((void)((p)->fds_bits[(n)/NFDBITS] |= (1 << ((n) % NFDBITS))))
-#define	FD_CLR(n, p)	((void)((p)->fds_bits[(n)/NFDBITS] &= ~(1 << ((n) % NFDBITS))))
-#define	FD_ISSET(n, p)	((p)->fds_bits[(n)/NFDBITS] & (1 << ((n) % NFDBITS)))
-#define	FD_COPY(f, t)	((void)memcpy((t), (f), sizeof(*(f))))
+#define	FD_SET(n, p)	((void)(((unsigned long)n) < FD_SETSIZE ? (p)->fds_bits[((unsigned long)n)/NFDBITS] |=  (1 << (((unsigned long)n) % NFDBITS)) : 0))
+#define	FD_CLR(n, p)	((void)(((unsigned long)n) < FD_SETSIZE ? (p)->fds_bits[((unsigned long)n)/NFDBITS] &= ~(1 << (((unsigned long)n) % NFDBITS)) : 0))
+#define	FD_ISSET(n, p)	(((unsigned long)n) < FD_SETSIZE && ((p)->fds_bits[((unsigned long)n)/NFDBITS] & (1 << (((unsigned long)n) % NFDBITS))))
+#define	FD_COPY(f, t)	((void)memmove((t), (f), sizeof(*(f))))
 #define	FD_ZERO(p)	((void)memset((p), 0, sizeof(*(p))))
 
 #endif /* FD_SET */
@@ -379,6 +397,8 @@ typedef	struct fd_set {
 
 /****************************************************************************/
 
+#ifndef __NO_NETINCLUDE_TIMEVAL
+
 /*
  * This is for compatibility with POSIX-like 'timeval' structures
  * which are remarkably similar to the Amiga 'timeval' except for
@@ -395,6 +415,8 @@ typedef	struct fd_set {
 #ifndef tv_usec
 #define tv_usec tv_micro
 #endif /* tv_usec */
+
+#endif /* __NO_NETINCLUDE_TIMEVAL */
 
 /****************************************************************************/
 

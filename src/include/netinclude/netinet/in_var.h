@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: in_var.h,v 1.6 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -51,6 +51,10 @@
 
 /****************************************************************************/
 
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
+
 #ifndef _NETINET_IN_H
 #include <netinet/in.h>
 #endif /* _NETINET_IN_H */
@@ -88,10 +92,10 @@ struct in_ifaddr {
 #define	ia_ifp		ia_ifa.ifa_ifp
 #define ia_flags	ia_ifa.ifa_flags
 					/* ia_{,sub}net{,mask} in host order */
-	ULONG	ia_net;			/* network number of interface */
-	ULONG	ia_netmask;		/* mask of net part */
-	ULONG	ia_subnet;		/* subnet number, including net */
-	ULONG	ia_subnetmask;		/* mask of subnet part */
+	__ULONG	ia_net;			/* network number of interface */
+	__ULONG	ia_netmask;		/* mask of net part */
+	__ULONG	ia_subnet;		/* subnet number, including net */
+	__ULONG	ia_subnetmask;		/* mask of subnet part */
 	struct	in_addr ia_netbroadcast; /* to recognize net broadcasts */
 	struct	in_ifaddr *ia_next;	/* next in list of internet addresses */
 	struct	sockaddr_in ia_addr;	/* reserve space for interface name */
@@ -102,7 +106,7 @@ struct in_ifaddr {
 };
 
 struct	in_aliasreq {
-	UBYTE	ifra_name[IFNAMSIZ];		/* if name, e.g. "en0" */
+	__TEXT	ifra_name[IFNAMSIZ];		/* if name, e.g. "en0" */
 	struct	sockaddr_in ifra_addr;
 	struct	sockaddr_in ifra_broadaddr;
 #define ifra_dstaddr ifra_broadaddr
@@ -128,8 +132,8 @@ struct in_multi {
 	struct	in_addr inm_addr;	/* IP multicast address */
 	struct	ifnet *inm_ifp;		/* back pointer to ifnet */
 	struct	in_ifaddr *inm_ia;	/* back pointer to in_ifaddr */
-	ULONG	inm_refcount;		/* no. membership claims by sockets */
-	ULONG	inm_timer;		/* IGMP membership report timer */
+	__ULONG	inm_refcount;		/* no. membership claims by sockets */
+	__ULONG	inm_timer;		/* IGMP membership report timer */
 	struct	in_multi *inm_next;	/* ptr to next multicast address */
 };
 

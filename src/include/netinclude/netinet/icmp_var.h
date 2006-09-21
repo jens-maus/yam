@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: icmp_var.h,v 1.5 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -51,9 +51,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 #ifndef _NETINET_IN_H
 #include <netinet/in.h>
@@ -87,17 +87,17 @@ extern "C" {
  */
 struct	icmpstat {
 /* statistics related to icmp packets generated */
-	ULONG	icps_error;		/* # of calls to icmp_error */
-	ULONG	icps_oldshort;		/* no error 'cuz old ip too short */
-	ULONG	icps_oldicmp;		/* no error 'cuz old was icmp */
-	ULONG	icps_outhist[ICMP_MAXTYPE + 1];
+	__ULONG	icps_error;		/* # of calls to icmp_error */
+	__ULONG	icps_oldshort;		/* no error 'cuz old ip too short */
+	__ULONG	icps_oldicmp;		/* no error 'cuz old was icmp */
+	__ULONG	icps_outhist[ICMP_MAXTYPE + 1];
 /* statistics related to input messages processed */
- 	ULONG	icps_badcode;		/* icmp_code out of range */
-	ULONG	icps_tooshort;		/* packet < ICMP_MINLEN */
-	ULONG	icps_checksum;		/* bad checksum */
-	ULONG	icps_badlen;		/* calculated bound mismatch */
-	ULONG	icps_reflect;		/* number of responses */
-	ULONG	icps_inhist[ICMP_MAXTYPE + 1];
+ 	__ULONG	icps_badcode;		/* icmp_code out of range */
+	__ULONG	icps_tooshort;		/* packet < ICMP_MINLEN */
+	__ULONG	icps_checksum;		/* bad checksum */
+	__ULONG	icps_badlen;		/* calculated bound mismatch */
+	__ULONG	icps_reflect;		/* number of responses */
+	__ULONG	icps_inhist[ICMP_MAXTYPE + 1];
 };
 
 /*

@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: ip_icmp.h,v 1.5 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -51,9 +51,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 #ifndef _NETINET_IP_H
 #include <netinet/ip.h>
@@ -86,22 +86,22 @@ extern "C" {
  * Structure of an icmp header.
  */
 struct icmp {
-	UBYTE	icmp_type;		/* type of message, see below */
-	UBYTE	icmp_code;		/* type sub code */
-	UWORD	icmp_cksum;		/* ones complement cksum of struct */
+	__UBYTE	icmp_type;		/* type of message, see below */
+	__UBYTE	icmp_code;		/* type sub code */
+	__UWORD	icmp_cksum;		/* ones complement cksum of struct */
 	union {
-		UBYTE ih_pptr;			/* ICMP_PARAMPROB */
+		__UBYTE ih_pptr;		/* ICMP_PARAMPROB */
 		struct in_addr ih_gwaddr;	/* ICMP_REDIRECT */
 		struct ih_idseq {
-			UWORD	icd_id;
-			UWORD	icd_seq;
+			__UWORD	icd_id;
+			__UWORD	icd_seq;
 		} ih_idseq;
-		LONG ih_void;
+		__LONG ih_void;
 
 		/* ICMP_UNREACH_NEEDFRAG -- Path MTU Discovery (RFC1191) */
 		struct ih_pmtu {
-			UWORD ipm_void;    
-			UWORD ipm_nextmtu;
+			__UWORD ipm_void;    
+			__UWORD ipm_nextmtu;
 		} ih_pmtu;
 	} icmp_hun;
 #define	icmp_pptr	icmp_hun.ih_pptr
@@ -113,16 +113,16 @@ struct icmp {
 #define	icmp_nextmtu	icmp_hun.ih_pmtu.ipm_nextmtu
 	union {
 		struct id_ts {
-			ULONG its_otime;
-			ULONG its_rtime;
-			ULONG its_ttime;
+			__ULONG its_otime;
+			__ULONG its_rtime;
+			__ULONG its_ttime;
 		} id_ts;
 		struct id_ip  {
 			struct ip idi_ip;
 			/* options and then 64 bits of data */
 		} id_ip;
-		ULONG	id_mask;
-		UBYTE	id_data[1];
+		__ULONG	id_mask;
+		__UBYTE	id_data[1];
 	} icmp_dun;
 #define	icmp_otime	icmp_dun.id_ts.its_otime
 #define	icmp_rtime	icmp_dun.id_ts.its_rtime
@@ -141,7 +141,7 @@ struct icmp {
  * ip header length.
  */
 #define	ICMP_MINLEN	8				/* abs minimum */
-#define	ICMP_TSLEN	(8 + 3 * sizeof (ULONG))	/* timestamp */
+#define	ICMP_TSLEN	(8 + 3 * sizeof (__ULONG))	/* timestamp */
 #define	ICMP_MASKLEN	12				/* address mask */
 #define	ICMP_ADVLENMIN	(8 + sizeof (struct ip) + 8)	/* min */
 #define	ICMP_ADVLEN(p)	(8 + ((p)->icmp_ip.ip_hl << 2) + 8)

@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: bpf.h,v 1.5 2006/01/08 11:15:47 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -50,7 +50,7 @@
  *
  *      @(#)bpf.h	8.2 (Berkeley) 1/9/95
  *
- * @(#) $Header$ (LBL)
+ * @(#) $Header: /usr/local/amigaos-cvsroot/contrib/roadshow/include-sdk/net/bpf.h,v 1.5 2006/01/08 11:15:47 obarthel Exp $ (LBL)
  */
 
 #ifndef _NET_BPF_H
@@ -58,9 +58,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 #ifndef _SYS_IOCCOM_H
 #include <sys/ioccom.h>
@@ -92,7 +92,7 @@ extern "C" {
  * Alignment macros.  BPF_WORDALIGN rounds up to the next 
  * even multiple of BPF_ALIGNMENT. 
  */
-#define BPF_ALIGNMENT sizeof(LONG)
+#define BPF_ALIGNMENT sizeof(__LONG)
 #define BPF_WORDALIGN(x) (((x)+(BPF_ALIGNMENT-1))&~(BPF_ALIGNMENT-1))
 
 #define BPF_MAXINSNS 512
@@ -103,7 +103,7 @@ extern "C" {
  *  Structure for BIOCSETF.
  */
 struct bpf_program {
-	ULONG bf_len;
+	__ULONG bf_len;
 	struct bpf_insn *bf_insns;
 };
  
@@ -111,8 +111,8 @@ struct bpf_program {
  * Struct returned by BIOCGSTATS.
  */
 struct bpf_stat {
-	ULONG bs_recv;		/* number of packets received */
-	ULONG bs_drop;		/* number of packets dropped */
+	__ULONG bs_recv;		/* number of packets received */
+	__ULONG bs_drop;		/* number of packets dropped */
 };
 
 /*
@@ -127,8 +127,8 @@ struct bpf_stat {
  * It has nothing to do with the source code version.
  */
 struct bpf_version {
-	UWORD bv_major;
-	UWORD bv_minor;
+	__UWORD bv_major;
+	__UWORD bv_minor;
 };
 /* Current version number. */
 #define BPF_MAJOR_VERSION 1
@@ -142,32 +142,32 @@ struct bpf_version {
  * have run fixincludes so the latter set should work.
  */
 #if (defined(sun) || defined(ibm032)) && !defined(__GNUC__)
-#define	BIOCGBLEN	_IOR(B,102, ULONG)
-#define	BIOCSBLEN	_IOWR(B,102, ULONG)
+#define	BIOCGBLEN	_IOR(B,102, __ULONG)
+#define	BIOCSBLEN	_IOWR(B,102, __ULONG)
 #define	BIOCSETF	_IOW(B,103, struct bpf_program)
 #define	BIOCFLUSH	_IO(B,104)
 #define BIOCPROMISC	_IO(B,105)
-#define	BIOCGDLT	_IOR(B,106, ULONG)
+#define	BIOCGDLT	_IOR(B,106, __ULONG)
 #define BIOCGETIF	_IOR(B,107, struct ifreq)
 #define BIOCSETIF	_IOW(B,108, struct ifreq)
 #define BIOCSRTIMEOUT	_IOW(B,109, struct timeval)
 #define BIOCGRTIMEOUT	_IOR(B,110, struct timeval)
 #define BIOCGSTATS	_IOR(B,111, struct bpf_stat)
-#define BIOCIMMEDIATE	_IOW(B,112, ULONG)
+#define BIOCIMMEDIATE	_IOW(B,112, __ULONG)
 #define BIOCVERSION	_IOR(B,113, struct bpf_version)
 #else
-#define	BIOCGBLEN	_IOR('B',102, ULONG)
-#define	BIOCSBLEN	_IOWR('B',102, ULONG)
+#define	BIOCGBLEN	_IOR('B',102, __ULONG)
+#define	BIOCSBLEN	_IOWR('B',102, __ULONG)
 #define	BIOCSETF	_IOW('B',103, struct bpf_program)
 #define	BIOCFLUSH	_IO('B',104)
 #define BIOCPROMISC	_IO('B',105)
-#define	BIOCGDLT	_IOR('B',106, ULONG)
+#define	BIOCGDLT	_IOR('B',106, __ULONG)
 #define BIOCGETIF	_IOR('B',107, struct ifreq)
 #define BIOCSETIF	_IOW('B',108, struct ifreq)
 #define BIOCSRTIMEOUT	_IOW('B',109, struct timeval)
 #define BIOCGRTIMEOUT	_IOR('B',110, struct timeval)
 #define BIOCGSTATS	_IOR('B',111, struct bpf_stat)
-#define BIOCIMMEDIATE	_IOW('B',112, ULONG)
+#define BIOCIMMEDIATE	_IOW('B',112, __ULONG)
 #define BIOCVERSION	_IOR('B',113, struct bpf_version)
 #endif
 
@@ -176,9 +176,9 @@ struct bpf_version {
  */
 struct bpf_hdr {
 	struct timeval	bh_tstamp;	/* time stamp */
-	ULONG		bh_caplen;	/* length of captured portion */
-	ULONG		bh_datalen;	/* original length of packet */
-	UWORD		bh_hdrlen;	/* length of bpf header (this struct
+	__ULONG		bh_caplen;	/* length of captured portion */
+	__ULONG		bh_datalen;	/* original length of packet */
+	__UWORD		bh_hdrlen;	/* length of bpf header (this struct
 					   plus alignment padding) */
 };
 /*
@@ -257,17 +257,17 @@ struct bpf_hdr {
  * The instruction data structure.
  */
 struct bpf_insn {
-	UWORD	code;
-	UBYTE 	jt;
-	UBYTE 	jf;
-	LONG	k;
+	__UWORD	code;
+	__UBYTE jt;
+	__UBYTE jf;
+	__LONG	k;
 };
 
 /*
  * Macros for insn array initializers.
  */
-#define BPF_STMT(code, k) { (UWORD)(code), 0, 0, k }
-#define BPF_JUMP(code, k, jt, jf) { (UWORD)(code), jt, jf, k }
+#define BPF_STMT(code, k) { (__UWORD)(code), 0, 0, k }
+#define BPF_JUMP(code, k, jt, jf) { (__UWORD)(code), jt, jf, k }
 
 /*
  * Number of scratch memory words (for BPF_LD|BPF_MEM and BPF_ST).

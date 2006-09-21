@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: errno.h,v 1.5 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -56,7 +56,19 @@
 
 /****************************************************************************/
 
+/* NOTE: the global 'extern int errno;' declaration below may conflict with
+         what your 'C' runtime library uses for its own 'errno' declaration.
+         While you should not need to #include this header file, and use
+         your 'C' runtime library version instead, it is sometimes not
+         possible to do without the error codes defined in this file. If
+         this is the case, define the preprocessor symbol __NO_NETINCLUDE_ERRNO
+         before you include this header file. */
+
+/****************************************************************************/
+
+#ifndef __NO_NETINCLUDE_ERRNO
 extern int errno; /* global error number */
+#endif /* __NO_NETINCLUDE_ERRNO */
 
 /****************************************************************************/
 

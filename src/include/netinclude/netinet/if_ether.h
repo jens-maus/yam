@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: if_ether.h,v 1.6 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -51,9 +51,17 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
+
+#ifndef _NET_IF_ARP_H
+#include <net/if_arp.h>
+#endif /* _NET_IF_ARP_H */
+
+#ifndef _NETINET_IN_H
+#include <netinet/in.h>
+#endif /* _NETINET_IN_H */
 
 /****************************************************************************/
 
@@ -77,9 +85,9 @@ extern "C" {
  * Structure of a 10Mb/s Ethernet header.
  */
 struct ether_header {
-	UBYTE	ether_dhost[6];
-	UBYTE	ether_shost[6];
-	UWORD	ether_type;
+	__UBYTE	ether_dhost[6];
+	__UBYTE	ether_shost[6];
+	__UWORD	ether_type;
 };
 
 #define	ETHERTYPE_PUP		0x0200	/* PUP protocol */
@@ -107,10 +115,10 @@ struct ether_header {
  */
 struct ether_arp {
 	struct arphdr	ea_hdr;		/* fixed-size header */
-	UBYTE		arp_sha[6];	/* sender hardware address */
-	UBYTE		arp_spa[4];	/* sender protocol address */
-	UBYTE		arp_tha[6];	/* target hardware address */
-	UBYTE		arp_tpa[4];	/* target protocol address */
+	__UBYTE		arp_sha[6];	/* sender hardware address */
+	__UBYTE		arp_spa[4];	/* sender protocol address */
+	__UBYTE		arp_tha[6];	/* target hardware address */
+	__UBYTE		arp_tpa[4];	/* target protocol address */
 };
 
 #define	arp_hrd	ea_hdr.ar_hrd
@@ -120,13 +128,13 @@ struct ether_arp {
 #define	arp_op	ea_hdr.ar_op
 
 struct sockaddr_inarp {
-	UBYTE		sin_len;
-	UBYTE		sin_family;
-	UWORD		sin_port;
+	__UBYTE		sin_len;
+	__UBYTE		sin_family;
+	__UWORD		sin_port;
 	struct in_addr	sin_addr;
 	struct in_addr	sin_srcaddr;
-	UWORD		sin_tos;
-	UWORD		sin_other;
+	__UWORD		sin_tos;
+	__UWORD		sin_other;
 };
 
 #define SIN_PROXY 1

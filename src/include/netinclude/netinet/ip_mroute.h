@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: ip_mroute.h,v 1.5 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -55,9 +55,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 #ifndef _NETINET_IN_H
 #include <netinet/in.h>
@@ -110,8 +110,8 @@ extern "C" {
  * Types and macros for handling bitmaps with one bit per virtual interface.
  */
 #define	MAXVIFS 32
-typedef ULONG vifbitmap_t;
-typedef UWORD vifi_t;		/* type of a vif index */
+typedef __ULONG vifbitmap_t;
+typedef __UWORD vifi_t;		/* type of a vif index */
 
 #define	VIFM_SET(n, m)		((m) |= (1 << (n)))
 #define	VIFM_CLR(n, m)		((m) &= ~(1 << (n)))
@@ -127,8 +127,8 @@ typedef UWORD vifi_t;		/* type of a vif index */
  */
 struct vifctl {
 	vifi_t	    vifc_vifi;	    	/* the index of the vif to be added */
-	UBYTE	    vifc_flags;     	/* VIFF_ flags defined below */
-	UBYTE	    vifc_threshold; 	/* min ttl required to forward on vif */
+	__UBYTE	    vifc_flags;     	/* VIFF_ flags defined below */
+	__UBYTE	    vifc_threshold; 	/* min ttl required to forward on vif */
 	struct	in_addr vifc_lcl_addr;	/* local interface address */
 	struct	in_addr vifc_rmt_addr;	/* remote address (tunnels only) */
 };
@@ -161,14 +161,14 @@ struct mrtctl {
  * The kernel's multicast routing statistics.
  */
 struct mrtstat {
-	ULONG	mrts_mrt_lookups;	/* # multicast route lookups */
-	ULONG	mrts_mrt_misses;	/* # multicast route cache misses */
-	ULONG	mrts_grp_lookups;	/* # group address lookups */
-	ULONG	mrts_grp_misses;	/* # group address cache misses */
-	ULONG	mrts_no_route;		/* no route for packet's origin */
-	ULONG	mrts_bad_tunnel;	/* malformed tunnel options */
-	ULONG	mrts_cant_tunnel;	/* no room for tunnel options */
-	ULONG	mrts_wrong_if;		/* arrived on the wrong interface */
+	__ULONG	mrts_mrt_lookups;	/* # multicast route lookups */
+	__ULONG	mrts_mrt_misses;	/* # multicast route cache misses */
+	__ULONG	mrts_grp_lookups;	/* # group address lookups */
+	__ULONG	mrts_grp_misses;	/* # group address cache misses */
+	__ULONG	mrts_no_route;		/* no route for packet's origin */
+	__ULONG	mrts_bad_tunnel;	/* malformed tunnel options */
+	__ULONG	mrts_cant_tunnel;	/* no room for tunnel options */
+	__ULONG	mrts_wrong_if;		/* arrived on the wrong interface */
 };
 
 /****************************************************************************/

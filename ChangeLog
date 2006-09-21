@@ -6,6 +6,9 @@ $Id$
 
 2006-09-21  Jens Langner <Jens.Langner@light-speed.de>
 
+  * include/netinclude: updated whole netinclude SDK headers to latest
+    RoadShow includes available which is also compatible to other bsdsocket
+    based TCP/IP stacks.
   * YAM_COg.c, YAM.cd, misc: the macro scripts configuration now takes
     predefined "%p" parameter specification holders which will be evaluated
     during macro execution. That way macros can now be specified where the

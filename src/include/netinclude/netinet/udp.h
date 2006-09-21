@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: udp.h,v 1.5 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -51,9 +51,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 /****************************************************************************/
 
@@ -78,10 +78,10 @@ extern "C" {
  * Per RFC 768, September, 1981.
  */
 struct udphdr {
-	UWORD	uh_sport;		/* source port */
-	UWORD	uh_dport;		/* destination port */
-	WORD	uh_ulen;		/* udp length */
-	UWORD	uh_sum;			/* udp checksum */
+	__UWORD	uh_sport;		/* source port */
+	__UWORD	uh_dport;		/* destination port */
+	__WORD	uh_ulen;		/* udp length */
+	__UWORD	uh_sum;			/* udp checksum */
 };
 
 /****************************************************************************/

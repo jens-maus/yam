@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: tftp.h,v 1.6 2006/01/08 11:15:47 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -46,8 +46,14 @@
  *	@(#)tftp.h	8.1 (Berkeley) 6/2/93
  */
 
-#ifndef _ARPA_TFTP_H_
-#define	_ARPA_TFTP_H_
+#ifndef _ARPA_TFTP_H
+#define	_ARPA_TFTP_H
+
+/****************************************************************************/
+
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 /****************************************************************************/
 
@@ -79,18 +85,18 @@ extern "C" {
 #define	WRQ	02			/* write request */
 #define	DATA	03			/* data packet */
 #define	ACK	04			/* acknowledgement */
-#ifndef _ARPA_FTP_H_
+#ifndef _ARPA_FTP_H
 #define	ERROR	05			/* error code */
-#endif /* _ARPA_FTP_H_ */
+#endif /* _ARPA_FTP_H */
 
 struct	tftphdr {
-	short	th_opcode;		/* packet type */
+	__WORD	th_opcode;		/* packet type */
 	union {
-		short	tu_block;	/* block # */
-		short	tu_code;	/* error code */
-		char	tu_stuff[1];	/* request packet stuff */
+		__WORD	tu_block;	/* block # */
+		__WORD	tu_code;	/* error code */
+		__BYTE	tu_stuff[1];	/* request packet stuff */
 	} th_u;
-	char	th_data[1];		/* data or error string */
+	__BYTE	th_data[1];		/* data or error string */
 };
 
 #define	th_block	th_u.tu_block
@@ -128,4 +134,4 @@ struct	tftphdr {
 
 /****************************************************************************/
 
-#endif /* _ARPA_TFTP_H_ */
+#endif /* _ARPA_TFTP_H */

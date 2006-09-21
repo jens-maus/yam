@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: ip_var.h,v 1.6 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -51,9 +51,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 #ifndef _NETINET_IN_H
 #include <netinet/in.h>
@@ -85,10 +85,10 @@ extern "C" {
  * Overlay for ip header used by other protocols (tcp, udp).
  */
 struct ipovly {
-	APTR	ih_next, ih_prev;	/* for protocol sequence q's */
-	UBYTE	ih_x1;			/* (unused) */
-	UBYTE	ih_pr;			/* protocol */
-	WORD	ih_len;			/* protocol length */
+	__APTR	ih_next, ih_prev;	/* for protocol sequence q's */
+	__UBYTE	ih_x1;			/* (unused) */
+	__UBYTE	ih_pr;			/* protocol */
+	__WORD	ih_len;			/* protocol length */
 	struct	in_addr ih_src;		/* source internet address */
 	struct	in_addr ih_dst;		/* destination internet address */
 };
@@ -102,35 +102,35 @@ struct ipovly {
 #define MAX_IPOPTLEN	40
 
 struct ipoption {
-	struct	in_addr ipopt_dst;	/* first-hop dst if source routed */
-	char	ipopt_list[MAX_IPOPTLEN];	/* options proper */
+	struct	in_addr ipopt_dst;		/* first-hop dst if source routed */
+	__BYTE	ipopt_list[MAX_IPOPTLEN];	/* options proper */
 };
 
 struct	ipstat {
-	ULONG	ips_total;		/* total packets received */
-	ULONG	ips_badsum;		/* checksum bad */
-	ULONG	ips_tooshort;		/* packet too short */
-	ULONG	ips_toosmall;		/* not enough data */
-	ULONG	ips_badhlen;		/* ip header length < data size */
-	ULONG	ips_badlen;		/* ip length < ip header length */
-	ULONG	ips_fragments;		/* fragments received */
-	ULONG	ips_fragdropped;	/* frags dropped (dups, out of space) */
-	ULONG	ips_fragtimeout;	/* fragments timed out */
-	ULONG	ips_forward;		/* packets forwarded */
-	ULONG	ips_cantforward;	/* packets rcvd for unreachable dest */
-	ULONG	ips_redirectsent;	/* packets forwarded on same net */
-	ULONG	ips_noproto;		/* unknown or unsupported protocol */
-	ULONG	ips_delivered;		/* datagrams delivered to upper level*/
-	ULONG	ips_localout;		/* total ip packets generated here */
-	ULONG	ips_odropped;		/* lost packets due to nobufs, etc. */
-	ULONG	ips_reassembled;	/* total packets reassembled ok */
-	ULONG	ips_fragmented;		/* datagrams sucessfully fragmented */
-	ULONG	ips_ofragments;		/* output fragments created */
-	ULONG	ips_cantfrag;		/* don't fragment flag was set, etc. */
-	ULONG	ips_badoptions;		/* error in option processing */
-	ULONG	ips_noroute;		/* packets discarded due to no route */
-	ULONG	ips_badvers;		/* ip version != 4 */
-	ULONG	ips_rawout;		/* total raw ip packets generated */
+	__ULONG	ips_total;		/* total packets received */
+	__ULONG	ips_badsum;		/* checksum bad */
+	__ULONG	ips_tooshort;		/* packet too short */
+	__ULONG	ips_toosmall;		/* not enough data */
+	__ULONG	ips_badhlen;		/* ip header length < data size */
+	__ULONG	ips_badlen;		/* ip length < ip header length */
+	__ULONG	ips_fragments;		/* fragments received */
+	__ULONG	ips_fragdropped;	/* frags dropped (dups, out of space) */
+	__ULONG	ips_fragtimeout;	/* fragments timed out */
+	__ULONG	ips_forward;		/* packets forwarded */
+	__ULONG	ips_cantforward;	/* packets rcvd for unreachable dest */
+	__ULONG	ips_redirectsent;	/* packets forwarded on same net */
+	__ULONG	ips_noproto;		/* unknown or unsupported protocol */
+	__ULONG	ips_delivered;		/* datagrams delivered to upper level*/
+	__ULONG	ips_localout;		/* total ip packets generated here */
+	__ULONG	ips_odropped;		/* lost packets due to nobufs, etc. */
+	__ULONG	ips_reassembled;	/* total packets reassembled ok */
+	__ULONG	ips_fragmented;		/* datagrams sucessfully fragmented */
+	__ULONG	ips_ofragments;		/* output fragments created */
+	__ULONG	ips_cantfrag;		/* don't fragment flag was set, etc. */
+	__ULONG	ips_badoptions;		/* error in option processing */
+	__ULONG	ips_noroute;		/* packets discarded due to no route */
+	__ULONG	ips_badvers;		/* ip version != 4 */
+	__ULONG	ips_rawout;		/* total raw ip packets generated */
 };
 
 /****************************************************************************/

@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: mbuf.h,v 1.6 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -51,9 +51,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 #ifndef _NET_IF_H
 #include <net/if.h>
@@ -100,7 +100,7 @@ extern "C" {
 #define	MLEN		(MSIZE - sizeof(struct m_hdr))	/* normal data len */
 #define	MHLEN		(MLEN - sizeof(struct pkthdr))	/* data len w/pkthdr */
 
-#define	MINCLSIZE	(MHLEN + MLEN)	/* smallest amount to put in cluster */
+#define	MINCLSIZE	(MHLEN + 1)	/* smallest amount to put in cluster */
 #define	M_MAXCOMPRESS	(MHLEN / 2)	/* max amount to copy for compression */
 
 /*
@@ -109,29 +109,29 @@ extern "C" {
  * dtom(x) -	convert data pointer within mbuf to mbuf pointer (XXX)
  */
 #define	mtod(m,t)	((t)((m)->m_data))
-#define	dtom(x)		((struct mbuf *)((long)(x) & ~(MSIZE-1)))
+#define	dtom(x)		((struct mbuf *)((__ULONG)(x) & ~(MSIZE-1)))
 
 /* header at beginning of each mbuf: */
 struct m_hdr {
 	struct	mbuf *mh_next;		/* next buffer in chain */
 	struct	mbuf *mh_nextpkt;	/* next chain in queue/record */
-	APTR	mh_data;		/* location of data */
-	LONG	mh_len;			/* amount of data in this mbuf */
-	WORD	mh_type;		/* type of data in this mbuf */
-	WORD	mh_flags;		/* flags; see below */
+	__APTR	mh_data;		/* location of data */
+	__LONG	mh_len;			/* amount of data in this mbuf */
+	__WORD	mh_type;		/* type of data in this mbuf */
+	__WORD	mh_flags;		/* flags; see below */
 };
 
 /* record/packet header in first mbuf of chain; valid if M_PKTHDR set */
 struct	pkthdr {
 	struct	ifnet *rcvif;		/* rcv interface */
-	LONG	len;			/* total packet length */
+	__LONG	len;			/* total packet length */
 };
 
 /* description of external storage mapped into mbuf, valid if M_EXT set */
 struct m_ext {
-	APTR	ext_buf;		/* start of buffer */
-	APTR	ext_free;		/* free routine if not the usual */
-	ULONG	ext_size;		/* size of buffer, for ext_free */
+	__APTR	ext_buf;		/* start of buffer */
+	__APTR	ext_free;		/* free routine if not the usual */
+	__ULONG	ext_size;		/* size of buffer, for ext_free */
 };
 
 struct mbuf {
@@ -141,10 +141,10 @@ struct mbuf {
 			struct	pkthdr MH_pkthdr;	/* M_PKTHDR set */
 			union {
 				struct	m_ext MH_ext;	/* M_EXT set */
-				UBYTE	MH_databuf[MHLEN];
+				__UBYTE	MH_databuf[MHLEN];
 			} MH_dat;
 		} MH;
-		UBYTE	M_databuf[MLEN];		/* !M_PKTHDR, !M_EXT */
+		__UBYTE	M_databuf[MLEN];		/* !M_PKTHDR, !M_EXT */
 	} M_dat;
 };
 #define	m_next		m_hdr.mh_next
@@ -178,13 +178,13 @@ struct mbuf {
  * Mbuf statistics.
  */
 struct mbstat {
-	ULONG	m_mbufs;	/* mbufs obtained from page pool */
-	ULONG	m_clusters;	/* clusters obtained from page pool */
-	ULONG	m_spare;	/* spare field */
-	ULONG	m_clfree;	/* free clusters */
-	ULONG	m_drops;	/* times failed to find space */
-	ULONG	m_wait;		/* times waited for space */
-	ULONG	m_drain;	/* times drained protocols for space */
+	__ULONG	m_mbufs;	/* mbufs obtained from page pool */
+	__ULONG	m_clusters;	/* clusters obtained from page pool */
+	__ULONG	m_spare;	/* spare field */
+	__ULONG	m_clfree;	/* free clusters */
+	__ULONG	m_drops;	/* times failed to find space */
+	__ULONG	m_wait;		/* times waited for space */
+	__ULONG	m_drain;	/* times drained protocols for space */
 };
 
 /****************************************************************************/

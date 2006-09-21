@@ -1,18 +1,20 @@
-#ifndef _LIBRARIES_BSDSOCKET_H
-#define _LIBRARIES_BSDSOCKET_H
-
 /*
- * $Id$
+ * $Id: bsdsocket.h,v 1.20 2006/01/08 11:15:47 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
  * Freely Distributable
  */
+
+/****************************************************************************/
+
+#ifndef _LIBRARIES_BSDSOCKET_H
+#define _LIBRARIES_BSDSOCKET_H
 
 /****************************************************************************/
 
@@ -65,31 +67,42 @@ extern "C" {
 /****************************************************************************/
 
 /*
- * Parameters for SocketBaseTagList().
+ * Parameter passing macros for use with SocketBaseTagList()
  */
 
-/* Argument passed by reference or by value. */
-#define SBTF_VAL 0x0000
-#define SBTF_REF 0x8000
+/* Argument passing: either by value or by reference. */
+#define SBTF_VAL 0x0000	/* Tag->ti_Data contains the value */
+#define SBTF_REF 0x8000	/* Tag->ti_Data contains a pointer to the value */
 
-/* Code value. */
+/* Code value: this is one of the SBTC_.. values from the table below */
 #define SBTB_CODE 1
 #define SBTS_CODE 0x3FFF
+
 #define SBTM_CODE(td) (((td) >> SBTB_CODE) & SBTS_CODE)
 
-/* Get/Set (read/write) selection. */
-#define SBTF_GET 0
-#define SBTF_SET 1
+/* Read or write access control. */
+#define SBTF_GET 0	/* Modify either Tag->ti_Data (SBTF_VAL) or the value
+			   pointed to by Tag->ti_Data (SBTF_REF) */
+#define SBTF_SET 1	/* Use either Tag->ti_Data (SBTF_VAL) or the value
+			   pointed to by Tag->ti_Data (SBTF_REF) */
 
 /* Macros for passing the individual tag item parameters. */
 #define SBTM_GETREF(code) \
-	(TAG_USER | SBTF_REF | (((code) & SBTS_CODE) << SBTB_CODE))
+	(TAG_USER | SBTF_REF | (((code) & SBTS_CODE) << SBTB_CODE) | SBTF_GET)
 #define SBTM_GETVAL(code) \
-	(TAG_USER | (((code) & SBTS_CODE) << SBTB_CODE))
+	(TAG_USER | SBTF_VAL | (((code) & SBTS_CODE) << SBTB_CODE) | SBTF_GET)
 #define SBTM_SETREF(code) \
 	(TAG_USER | SBTF_REF | (((code) & SBTS_CODE) << SBTB_CODE) | SBTF_SET)
 #define SBTM_SETVAL(code) \
-	(TAG_USER | (((code) & SBTS_CODE) << SBTB_CODE) | SBTF_SET)
+	(TAG_USER | SBTF_VAL | (((code) & SBTS_CODE) << SBTB_CODE) | SBTF_SET)
+
+/****************************************************************************/
+
+/*
+ * Parameters for SocketBaseTagList(); these must be wrapped into the
+ * SBTM_GETREF/SBTM_GETVAL/SBTM_SETREF/SBTM_SETVAL macros defined
+ * above.
+ */
 
 /* Masks defining the signals for Task notification */
 #define SBTC_BREAKMASK		1
@@ -105,8 +118,7 @@ extern "C" {
 #define SBTC_DTABLESIZE		8
 
 /* Link library fd allocation callback; don't use this in
- * new code!
- */
+   new code! */
 #define SBTC_FDCALLBACK		9
 
 /* Callback actions; don't use these in new code! */
@@ -127,7 +139,7 @@ extern "C" {
 #define SBTC_S2ERRNOSTRPTR	17
 #define SBTC_S2WERRNOSTRPTR	18
 
-/* errno pointer & size */
+/* 'errno' pointer & size */
 #define SBTC_ERRNOBYTEPTR	21
 #define SBTC_ERRNOWORDPTR	22
 #define SBTC_ERRNOLONGPTR	24
@@ -230,6 +242,31 @@ extern "C" {
 
 /* Query the number of bytes sent so far. */
 #define SBTC_GET_BYTES_SENT 65
+
+/* International Domain Name support: which character set should be assumed
+   when performing translations between the name provided to the resolver
+   and the encoded form sent to the Domain Name System server? See below
+   for a list of choices. */
+#define SBTC_IDN_DEFAULT_CHARACTER_SET 66
+
+/* Whether or not the RoadshowData API is supported. */
+#define SBTC_HAVE_ROADSHOWDATA_API 67
+
+/* Install or remove the error code hook. */
+#define SBTC_ERROR_HOOK 68
+
+/****************************************************************************/
+
+/*
+ * International Domain Name support: character sets that can be used
+ * with SocketBaseTagList() and the SBTC_IDN_DEFAULT_CHARACTER_SET
+ * feature.
+ */
+
+#define IDNCS_ASCII		0	/* Plain ASCII encoding; this will
+					   disable the transparent domain
+					   name translation feature. */
+#define IDNCS_ISO_8859_LATIN_1	1	/* The native Amiga character set. */
 
 /****************************************************************************/
 
@@ -374,6 +411,8 @@ struct LogHookMessage
 						   value. */
 #define IFA_SetDebugMode	(IFA_BASE+15)	/* Enable or disable debugging
 						   mode for this interface. */
+#define IFA_LimitMTU		(IFA_BASE+16)	/* Set the maximum hardware
+						   transmission unit. */
 
 /****************************************************************************/
 
@@ -452,6 +491,8 @@ struct InterfaceHardwareAddress
 						   mode for this interface. */
 #define IFC_Complete		(IFC_BASE+16)	/* Indicate that the configuration
 						   for this interface is complete */
+#define IFC_LimitMTU		(IFC_BASE+17)	/* Set the maximum hardware
+						   transmission unit */
 
 /****************************************************************************/
 
@@ -470,7 +511,8 @@ struct InterfaceHardwareAddress
 #define IFQ_HardwareAddress	(IFQ_BASE+4)	/* Query the hardware
 						   address */
 #define IFQ_MTU			(IFQ_BASE+5)	/* Query the maximum
-						   transmission unit */
+						   transmission unit currently
+						   in use */
 #define IFQ_BPS			(IFQ_BASE+6)	/* Query the transmission
 						   speed */
 #define IFQ_HardwareType	(IFQ_BASE+7)	/* Query the SANA-II hardware
@@ -547,6 +589,35 @@ struct InterfaceHardwareAddress
 						   still pending to be
 						   satisfied on this
 						   interface */
+#define IFQ_HardwareMTU		(IFQ_BASE+34)	/* Query the maximum hardware
+						   transmission unit */
+
+#define IFQ_OutputDrops		(IFQ_BASE+35)	/* Query the number of packets
+						   dropped during transmission */
+
+#define IFQ_InputDrops		(IFQ_BASE+36)	/* Query the number of packets
+						   dropped during reception */
+
+#define IFQ_OutputErrors	(IFQ_BASE+37)	/* Query the number errors
+						   encountered during data
+						   transmission */
+
+#define IFQ_InputErrors		(IFQ_BASE+38)	/* Query the number errors
+						   encountered during data
+						   reception */
+
+#define IFQ_OutputMulticasts	(IFQ_BASE+39)	/* Query the number of
+						   multicast packets sent */
+
+#define IFQ_InputMulticasts	(IFQ_BASE+40)	/* Query the number of
+						   multicast packets
+						   received */
+
+#define IFQ_IPDrops		(IFQ_BASE+41)	/* Query the total number
+						   of all IP packets dropped */
+
+#define IFQ_ARPDrops		(IFQ_BASE+42)	/* Query the total number
+						   of all ARP packets dropped */
 
 /****************************************************************************/
 
@@ -627,8 +698,7 @@ typedef struct
  */
 
 /* This type of message parameter is passed to 'MHT_Connect'
- * type monitoring hooks.
- */
+   type monitoring hooks. */
 struct ConnectMonitorMsg
 {
 	LONG		cmm_Size;	/* Size of this data
@@ -645,8 +715,7 @@ struct ConnectMonitorMsg
 };
 
 /* This type of message parameter is passed to 'MHT_Bind'
- * type monitoring hooks.
- */
+   type monitoring hooks. */
 struct BindMonitorMsg
 {
 	LONG		bmm_Size;	/* Size of this data
@@ -685,8 +754,7 @@ struct SendMonitorMessage
 };
 
 /* This type of message is passed to 'MHT_TCP_Connect' type
- * monitoring hooks.
- */
+   monitoring hooks. */
 struct TCPConnectMonitorMessage
 {
 	LONG		tcmm_Size;	/* Size of this data structure */
@@ -911,6 +979,8 @@ struct AddressAllocationMessage
 					   not be changed. */
 #define AAMR_MaskChangeFailed	10	/* The interface subnet mask could
 					   not be changed. */
+#define AAMR_Busy		11	/* Address allocation is already in
+					   progress for this interface. */
 #define AAMR_Ignored		-1	/* The message type was not
 					   understood */
 
@@ -936,73 +1006,59 @@ struct AddressAllocationMessage
 #define CAAMTA_BASE (TAG_USER+2000)
 
 /* This corresponds to the 'aam_Timeout' member of the
- * AddressAllocationMessage.
- */
+   AddressAllocationMessage. */
 #define CAAMTA_Timeout			(CAAMTA_BASE+1)
 
 /* This corresponds to the 'aam_LeaseTime' member of the
- * AddressAllocationMessage.
- */
+   AddressAllocationMessage. */
 #define CAAMTA_LeaseTime		(CAAMTA_BASE+2)
 
 /* This corresponds to the 'aam_RequestedAddress' member of the
- * AddressAllocationMessage.
- */
+   AddressAllocationMessage. */
 #define CAAMTA_RequestedAddress		(CAAMTA_BASE+3)
 
 /* Pointer to the client identifier string to be used; this
- * string must be at least 2 characters long. The string will
- * be duplicated and stored in the 'aam_ClientIdentifier' member
- * of the AddressAllocationMessage.
- */
+   string must be at least 2 characters long. The string will
+   be duplicated and stored in the 'aam_ClientIdentifier' member
+   of the AddressAllocationMessage. */
 #define CAAMTA_ClientIdentifier		(CAAMTA_BASE+4)
 
 /* Size of the buffer to allocate for the NAK message, as
- * stored in the 'aam_NAKMessage' member of the AddressAllocationMessage.
- */
+   stored in the 'aam_NAKMessage' member of the AddressAllocationMessage. */
 #define CAAMTA_NAKMessageSize		(CAAMTA_BASE+5)
 
 /* Size of the buffer to allocate for the router address table, as
- * stored in the 'aam_RouterTable' member of the
- * AddressAllocationMessage.
- */
+   stored in the 'aam_RouterTable' member of the AddressAllocationMessage. */
 #define CAAMTA_RouterTableSize		(CAAMTA_BASE+6)
 
 /* Size of the buffer to allocate for the DNS address table, as
- * stored in the 'aam_DNSTable' member of the AddressAllocationMessage.
- */
+   stored in the 'aam_DNSTable' member of the AddressAllocationMessage. */
 #define CAAMTA_DNSTableSize		(CAAMTA_BASE+7)
 
 /* Size of the buffer to allocate for the static route address table, as
- * stored in the 'aam_StaticRouteTable' member of the
- * AddressAllocationMessage.
- */
+   stored in the 'aam_StaticRouteTable' member of the
+   AddressAllocationMessage. */
 #define CAAMTA_StaticRouteTableSize	(CAAMTA_BASE+8)
 
 /* Size of the buffer to allocate for the host name, as stored in
- * the 'aam_HostName' member of the AddressAllocationMessage.
- */
+   the 'aam_HostName' member of the AddressAllocationMessage. */
 #define CAAMTA_HostNameSize		(CAAMTA_BASE+9)
 
 /* Size of the buffer to allocate for the domain name, as stored in
- * the 'aam_DomainName' member of the AddressAllocationMessage.
- */
+   the 'aam_DomainName' member of the AddressAllocationMessage. */
 #define CAAMTA_DomainNameSize		(CAAMTA_BASE+10)
 
 /* Size of the buffer to allocate for the BOOTP message, as stored in
- * the 'aam_BOOTPMessage' member of the AddressAllocationMessage.
- */
+   the 'aam_BOOTPMessage' member of the AddressAllocationMessage. */
 #define CAAMTA_BOOTPMessageSize		(CAAMTA_BASE+11)
 
 /* Either FALSE or TRUE; if TRUE, will allocate a buffer for a
- * DateStamp and put its address into the 'aam_LeaseExpires'
- * member of the AddressAllocationMessage.
- */
+   DateStamp and put its address into the 'aam_LeaseExpires'
+   member of the AddressAllocationMessage. */
 #define CAAMTA_RecordLeaseExpiration	(CAAMTA_BASE+12)
 
 /* The MsgPort to send the AddressAllocationMessage to after
- * the configuration has finished.
- */
+   the configuration has finished. */
 #define CAAMTA_ReplyPort		(CAAMTA_BASE+13)
 
 /* Codes returned by CreateAddressAllocationMessage(). */
@@ -1052,15 +1108,13 @@ struct DomainNameServerNode
  */
 
 /* This identifies whether a packet was received or is about
- * to be sent. Check the IPFilterMsg->ifm_Direction field to
- * find out.
- */
+   to be sent. Check the IPFilterMsg->ifm_Direction field to
+   find out. */
 #define IFMD_Incoming 0	/* Packet was received */
 #define IFMD_Outgoing 1	/* Packet is about to be sent */
 
 /* The packet filter hook is invoked with a message of
- * this type:
- */
+   this type: */
 struct IPFilterMsg
 {
 	LONG		ifm_Size;	/* Size of this data structure */
@@ -1082,8 +1136,7 @@ struct IPFilterMsg
  */
 
 /* To shut down the network, send a message of the following form to the
- * network controller message port.
- */
+   network controller message port. */
 struct NetShutdownMessage
 {
 	struct Message	nsm_Message;	/* Standard Message header */
@@ -1099,8 +1152,7 @@ struct NetShutdownMessage
 };
 
 /* The command to be sent to the network controller message port must
- * be one of the following:
- */
+   be one of the following: */
 
 #define NSMC_Shutdown	1	/* Shut down the network; a pointer to an
 				   ULONG may be placed in nsm_Data (if the
@@ -1130,9 +1182,11 @@ struct NetShutdownMessage
 /* The name of the public network controller message port: */
 #define NETWORK_CONTROLLER_PORT_NAME "TCP/IP Control"
 
-/* The network controller message port data structure; check the magic
- * cookie before you post a message to it!
- */
+/* The network controller message port data structure; you must check the
+   magic cookie before you post a message to it. If the cookie value is
+   missing, don't send your message: the controller may not be listening
+   to it. To be on the safe side, look for the port under Forbid(),
+   check the cookie, then post the message. */
 struct NetControlPort
 {
 	struct MsgPort	ncp_Port;
@@ -1141,6 +1195,107 @@ struct NetControlPort
 
 /* The magic cookie stored in ncp_Magic: */
 #define NCPM_Cookie	0x20040306
+
+/****************************************************************************/
+
+/*
+ * System data access
+ */
+
+/* ObtainRoadshowData() returns a pointer to a list of data items which
+   may be viewed or modified. Here is how the list items look like. */
+struct RoadshowDataNode
+{
+	struct MinNode	rdn_MinNode;
+
+	STRPTR		rdn_Name;	/* Name assigned to this item */
+	UWORD		rdn_Flags;	/* Properties of this data (see
+					   below) */
+	WORD		rdn_Type;	/* What kind of data this
+					   is (see below) */
+	ULONG		rdn_Length;	/* Size of this data */
+	APTR		rdn_Data;	/* Points to the data */
+};
+
+/* What kind of data is represented by a RoadshowDataNode. */
+#define RDNT_Integer	0	/* Signed 32 bit integer */
+
+/* What properties the data associated with a RoadshowDataNode has */
+#define RDNF_ReadOnly	(1<<0)	/* This option cannot be modified */
+
+/* Parameter to pass to ObtainRoadshowData(); you can either request read
+   or write access. */
+#define ORD_ReadAccess	0
+#define ORD_WriteAccess	1
+
+/****************************************************************************/
+
+/*
+ * Call-back hook for use with SBTC_ERROR_HOOK
+ */
+struct ErrorHookMsg
+{
+	ULONG	ehm_Size;	/* Size of this data structure; this
+				   must be >= 12 */
+	ULONG	ehm_Action;	/* See below for a list of definitions */
+
+	LONG	ehm_Code;	/* The error code to use */
+};
+
+/* Which action the hook is to perform */
+#define EHMA_Set_errno		1	/* Set the local 'errno' to what is
+					   found in ehm_Code */
+#define EHMA_Set_h_errno	2	/* Set the local 'h_errno' to what is
+					   found in ehm_Code */
+
+/****************************************************************************/
+
+/*
+ * A pointer to the following data structure can be found in a Process
+ * pr_ExitData field if the associated program was launched as a server
+ * by the Internet super-server (inetd). You should check it only if your
+ * program is known to act as a server because otherwise the contents of
+ * the pr_ExitData field are unreliable.
+ *
+ * The purpose of this data structure is to let your application access the
+ * socket allocated for it by the Internet super-server, which can be
+ * accomplished as follows:
+ * 
+ *     extern struct Library * DOSBase;
+ *
+ *     struct Process * this_process = (struct Process *)FindTask(NULL);
+ *     LONG have_server_api = FALSE;
+ *     struct DaemonMessage * dm;
+ *     LONG socket = -1;
+ *
+ *     if(SocketBaseTags(
+ *         SBTM_GETREF(SBTC_HAVE_SERVER_API),&have_server_api,
+ *     TAG_END) == 0)
+ *     {
+ *         if(have_server_api && ProcessIsServer(this_process))
+ *         {
+ *             if(DOSBase->lib_Version < 50)
+ *                 dm = (struct DaemonMessage *)this_process->pr_ExitData;
+ *             else
+ *                 dm = (struct DaemonMessage *)GetExitData();
+ *
+ *             socket = ObtainSocket(dm->dm_ID,dm->dm_Family,dm->dm_Type,0);
+ *         }
+ *     }
+ */
+
+struct DaemonMessage
+{
+	struct Message	dm_Message;	/* Used by super-server; don't touch! */
+	ULONG		dm_Pad1;	/* Used by super-server; don't touch! */
+	ULONG		dm_Pad2;	/* Used by super-server; don't touch! */
+	LONG		dm_ID;		/* Public socket identifier; this must
+					   be passed to ObtainSocket() to
+					   access the socket allocated for you */
+	ULONG		dm_Pad3;	/* Used by super-server; don't touch! */
+	UBYTE		dm_Family;	/* Socket family type */
+	UBYTE		dm_Type;	/* Socket type */
+};
 
 /****************************************************************************/
 

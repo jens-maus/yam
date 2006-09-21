@@ -1,22 +1,18 @@
-#ifndef PROTO_BSDSOCKET_H
-#define PROTO_BSDSOCKET_H
-
-#ifndef PROTO_SOCKET_H
-#define PROTO_SOCKET_H 1
-#endif
-
 /*
- * $Id$
+ * $Id: bsdsocket.h,v 1.9 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Generic prototype and direct ROM interface definitions
  * Freely Distributable
  */
+
+#ifndef PROTO_BSDSOCKET_H
+#define PROTO_BSDSOCKET_H
 
 #ifndef EXEC_LISTS_H
 #include <exec/lists.h>
@@ -30,28 +26,19 @@
 #ifndef UTILITY_HOOKS_H
 #include <utility/hooks.h>
 #endif
-#ifndef _NETINET_IN_H
+#ifndef NETINET_IN_H
 #include <netinet/in.h>
 #endif
-#ifndef _NETINET_IP_H
-#include <netinet/ip.h>
-#endif
-#ifndef _NETINET_TCP_H
-#include <netinet/tcp.h>
-#endif
-#ifndef _SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifndef _SYS_SOCKET_H
+#ifndef SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
-#ifndef _SYS_MBUF_H
+#ifndef SYS_MBUF_H
 #include <sys/mbuf.h>
 #endif
-#ifndef _NET_ROUTE_H
+#ifndef NET_ROUTE_H
 #include <net/route.h>
 #endif
-#ifndef _NETDB_H
+#ifndef NETDB_H
 #include <netdb.h>
 #endif
 #ifndef LIBRARIES_BSDSOCKET_H
@@ -81,12 +68,15 @@ extern struct Library * SocketBase;
   extern struct SocketIFace *ISocket;
  #endif /* __NOGLOBALIFACE__ */
 #else /* __amigaos4__ */
+ #ifndef CLIB_BSDSOCKET_PROTOS_H
+  #include <clib/bsdsocket_protos.h>
+ #endif /* CLIB_BSDSOCKET_PROTOS_H */
  #if defined(__GNUC__)
   #ifndef __PPC__
    #include <inline/bsdsocket.h>
   #else
    #include <ppcinline/bsdsocket.h>
-  #endif
+  #endif /* __PPC__ */
  #elif defined(__VBCC__)
   #ifndef __PPC__
    #include <inline/bsdsocket_protos.h>

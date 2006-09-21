@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: route.h,v 1.5 2006/01/08 11:15:47 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -51,9 +51,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 #ifndef _SYS_SOCKET_H
 #include <sys/socket.h>
@@ -111,16 +111,16 @@ struct route {
  * retransmission behavior and are included in the routing structure.
  */
 struct rt_metrics {
-	ULONG	rmx_locks;	/* Kernel must leave these values alone */
-	ULONG	rmx_mtu;	/* MTU for this path */
-	ULONG	rmx_hopcount;	/* max hops expected */
-	ULONG	rmx_expire;	/* lifetime for route, e.g. redirect */
-	ULONG	rmx_recvpipe;	/* inbound delay-bandwith product */
-	ULONG	rmx_sendpipe;	/* outbound delay-bandwith product */
-	ULONG	rmx_ssthresh;	/* outbound gateway buffer limit */
-	ULONG	rmx_rtt;	/* estimated round trip time */
-	ULONG	rmx_rttvar;	/* estimated rtt variance */
-	ULONG	rmx_pksent;	/* packets sent using this route */
+	__ULONG	rmx_locks;	/* Kernel must leave these values alone */
+	__ULONG	rmx_mtu;	/* MTU for this path */
+	__ULONG	rmx_hopcount;	/* max hops expected */
+	__ULONG	rmx_expire;	/* lifetime for route, e.g. redirect */
+	__ULONG	rmx_recvpipe;	/* inbound delay-bandwith product */
+	__ULONG	rmx_sendpipe;	/* outbound delay-bandwith product */
+	__ULONG	rmx_ssthresh;	/* outbound gateway buffer limit */
+	__ULONG	rmx_rtt;	/* estimated round trip time */
+	__ULONG	rmx_rttvar;	/* estimated rtt variance */
+	__ULONG	rmx_pksent;	/* packets sent using this route */
 };
 
 /*
@@ -145,13 +145,13 @@ struct rtentry {
 #define	rt_key(r)	((struct sockaddr *)((r)->rt_nodes->rn_key))
 #define	rt_mask(r)	((struct sockaddr *)((r)->rt_nodes->rn_mask))
 	struct	sockaddr *rt_gateway;	/* value */
-	WORD	rt_flags;		/* up/down?, host/net */
-	WORD	rt_refcnt;		/* # held references */
-	ULONG	rt_use;			/* raw # packets forwarded */
+	__WORD	rt_flags;		/* up/down?, host/net */
+	__WORD	rt_refcnt;		/* # held references */
+	__ULONG	rt_use;			/* raw # packets forwarded */
 	struct	ifnet *rt_ifp;		/* the answer: interface to use */
 	struct	ifaddr *rt_ifa;		/* the answer: interface to use */
 	struct	sockaddr *rt_genmask;	/* for generation of cloned routes */
-	APTR	rt_llinfo;		/* pointer to link level info cache */
+	__APTR	rt_llinfo;		/* pointer to link level info cache */
 	struct	rt_metrics rt_rmx;	/* metrics used by rx'ing protocols */
 	struct	rtentry *rt_gwroute;	/* implied entry for gatewayed routes */
 };
@@ -161,12 +161,12 @@ struct rtentry {
  * We should eventually move it to a compat file.
  */
 struct ortentry {
-	ULONG	rt_hash;		/* to speed lookups */
+	__ULONG	rt_hash;		/* to speed lookups */
 	struct	sockaddr rt_dst;	/* key */
 	struct	sockaddr rt_gateway;	/* value */
-	WORD	rt_flags;		/* up/down?, host/net */
-	WORD	rt_refcnt;		/* # held references */
-	ULONG	rt_use;			/* raw # packets forwarded */
+	__WORD	rt_flags;		/* up/down?, host/net */
+	__WORD	rt_refcnt;		/* # held references */
+	__ULONG	rt_use;			/* raw # packets forwarded */
 	struct	ifnet *rt_ifp;		/* the answer: interface to use */
 };
 
@@ -191,27 +191,27 @@ struct ortentry {
  * Routing statistics.
  */
 struct	rtstat {
-	WORD	rts_badredirect;	/* bogus redirect calls */
-	WORD	rts_dynamic;		/* routes created by redirects */
-	WORD	rts_newgateway;		/* routes modified by redirects */
-	WORD	rts_unreach;		/* lookups which failed */
-	WORD	rts_wildcard;		/* lookups satisfied by a wildcard */
+	__WORD	rts_badredirect;	/* bogus redirect calls */
+	__WORD	rts_dynamic;		/* routes created by redirects */
+	__WORD	rts_newgateway;		/* routes modified by redirects */
+	__WORD	rts_unreach;		/* lookups which failed */
+	__WORD	rts_wildcard;		/* lookups satisfied by a wildcard */
 };
 /*
  * Structures for routing messages.
  */
 struct rt_msghdr {
-	UWORD	rtm_msglen;	/* to skip over non-understood messages */
-	UBYTE	rtm_version;	/* future binary compatibility */
-	UBYTE	rtm_type;	/* message type */
-	UWORD	rtm_index;	/* index for associated ifp */
-	LONG	rtm_flags;	/* flags, incl. kern & message, e.g. DONE */
-	LONG	rtm_addrs;	/* bitmask identifying sockaddrs in msg */
-	LONG	rtm_pid;	/* identify sender */
-	LONG	rtm_seq;	/* for sender to identify action */
-	LONG	rtm_errno;	/* why failed */
-	LONG	rtm_use;	/* from rtentry */
-	ULONG	rtm_inits;	/* which metrics we are initializing */
+	__UWORD	rtm_msglen;	/* to skip over non-understood messages */
+	__UBYTE	rtm_version;	/* future binary compatibility */
+	__UBYTE	rtm_type;	/* message type */
+	__UWORD	rtm_index;	/* index for associated ifp */
+	__LONG	rtm_flags;	/* flags, incl. kern & message, e.g. DONE */
+	__LONG	rtm_addrs;	/* bitmask identifying sockaddrs in msg */
+	__LONG	rtm_pid;	/* identify sender */
+	__LONG	rtm_seq;	/* for sender to identify action */
+	__LONG	rtm_errno;	/* why failed */
+	__LONG	rtm_use;	/* from rtentry */
+	__ULONG	rtm_inits;	/* which metrics we are initializing */
 	struct	rt_metrics rtm_rmx; /* metrics themselves */
 };
 
@@ -267,15 +267,15 @@ struct rt_msghdr {
 #define RTAX_MAX	8	/* size of array to allocate */
 
 struct rt_addrinfo {
-	LONG	rti_addrs;
+	__LONG	rti_addrs;
 	struct	sockaddr *rti_info[RTAX_MAX];
 };
 
 struct route_cb {
-	LONG	ip_count;
-	LONG	ns_count;
-	LONG	iso_count;
-	LONG	any_count;
+	__LONG	ip_count;
+	__LONG	ns_count;
+	__LONG	iso_count;
+	__LONG	any_count;
 };
 
 /****************************************************************************/

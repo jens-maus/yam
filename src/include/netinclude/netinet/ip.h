@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: ip.h,v 1.5 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -51,9 +51,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 #ifndef _NETINET_IN_H
 #include <netinet/in.h>
@@ -86,7 +86,7 @@ extern "C" {
 /*
  * Structure of an internet header, naked of options.
  *
- * We declare ip_len and ip_off to be WORD, rather than UWORD
+ * We declare ip_len and ip_off to be __WORD, rather than __UWORD
  * pragmatically since otherwise unsigned comparisons can result
  * against negative integers quite easily, and fail in subtle ways.
  */
@@ -94,16 +94,16 @@ struct ip {
 	unsigned int
 		ip_v:4,			/* version */
 		ip_hl:4;		/* header length */
-	UBYTE	ip_tos;			/* type of service */
-	WORD	ip_len;			/* total length */
-	UWORD	ip_id;			/* identification */
-	WORD	ip_off;			/* fragment offset field */
+	__UBYTE	ip_tos;			/* type of service */
+	__WORD	ip_len;			/* total length */
+	__UWORD	ip_id;			/* identification */
+	__WORD	ip_off;			/* fragment offset field */
 #define	IP_DF 0x4000			/* dont fragment flag */
 #define	IP_MF 0x2000			/* more fragments flag */
 #define	IP_OFFMASK 0x1fff		/* mask for fragmenting bits */
-	UBYTE	ip_ttl;			/* time to live */
-	UBYTE	ip_p;			/* protocol */
-	UWORD	ip_sum;			/* checksum */
+	__UBYTE	ip_ttl;			/* time to live */
+	__UBYTE	ip_p;			/* protocol */
+	__UWORD	ip_sum;			/* checksum */
 	struct	in_addr ip_src,ip_dst;	/* source and dest address */
 };
 
@@ -162,17 +162,17 @@ struct ip {
  * Time stamp option structure.
  */
 struct	ip_timestamp {
-	UBYTE	ipt_code;		/* IPOPT_TS */
-	UBYTE	ipt_len;		/* size of structure (variable) */
-	UBYTE	ipt_ptr;		/* index of current entry */
+	__UBYTE	ipt_code;		/* IPOPT_TS */
+	__UBYTE	ipt_len;		/* size of structure (variable) */
+	__UBYTE	ipt_ptr;		/* index of current entry */
 	unsigned int
 		ipt_oflw:4,		/* overflow counter */
 		ipt_flg:4;		/* flags, see below */
 	union ipt_timestamp {
-		ULONG	ipt_time[1];
+		__ULONG	ipt_time[1];
 		struct	ipt_ta {
 			struct in_addr ipt_addr;
-			ULONG ipt_time;
+			__ULONG ipt_time;
 		} ipt_ta[1];
 	} ipt_timestamp;
 };

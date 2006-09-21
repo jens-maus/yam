@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: telnet.h,v 1.5 2006/01/08 11:15:47 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -46,8 +46,8 @@
  *	@(#)telnet.h	8.2 (Berkeley) 12/15/93
  */
 
-#ifndef _ARPA_TELNET_H_
-#define	_ARPA_TELNET_H_
+#ifndef _ARPA_TELNET_H
+#define	_ARPA_TELNET_H
 
 /****************************************************************************/
 
@@ -334,4 +334,4 @@ extern char *enctype_names[];
 
 /****************************************************************************/
 
-#endif /* _ARPA_TELNET_H_ */
+#endif /* _ARPA_TELNET_H */

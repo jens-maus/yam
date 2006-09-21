@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: igmp_var.h,v 1.5 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -55,9 +55,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 /****************************************************************************/
 
@@ -87,15 +87,15 @@ extern "C" {
  */
 
 struct igmpstat {
-	ULONG	igps_rcv_total;		/* total IGMP messages received */
-	ULONG	igps_rcv_tooshort;	/* received with too few bytes */
-	ULONG	igps_rcv_badsum;	/* received with bad checksum */
-	ULONG	igps_rcv_queries;	/* received membership queries */
-	ULONG	igps_rcv_badqueries;	/* received invalid queries */
-	ULONG	igps_rcv_reports;	/* received membership reports */
-	ULONG	igps_rcv_badreports;	/* received invalid reports */
-	ULONG	igps_rcv_ourreports;	/* received reports for our groups */
-	ULONG	igps_snd_reports;	/* sent membership reports */
+	__ULONG	igps_rcv_total;		/* total IGMP messages received */
+	__ULONG	igps_rcv_tooshort;	/* received with too few bytes */
+	__ULONG	igps_rcv_badsum;	/* received with bad checksum */
+	__ULONG	igps_rcv_queries;	/* received membership queries */
+	__ULONG	igps_rcv_badqueries;	/* received invalid queries */
+	__ULONG	igps_rcv_reports;	/* received membership reports */
+	__ULONG	igps_rcv_badreports;	/* received invalid reports */
+	__ULONG	igps_rcv_ourreports;	/* received reports for our groups */
+	__ULONG	igps_snd_reports;	/* sent membership reports */
 };
 
 /****************************************************************************/

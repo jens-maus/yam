@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: ftp.h,v 1.5 2006/01/08 11:15:47 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -46,8 +46,8 @@
  *	@(#)ftp.h	8.1 (Berkeley) 6/2/93
  */
 
-#ifndef _ARPA_FTP_H_
-#define	_ARPA_FTP_H_
+#ifndef _ARPA_FTP_H
+#define	_ARPA_FTP_H
 
 /****************************************************************************/
 
@@ -60,9 +60,9 @@
 #define COMPLETE	2	/* positive completion */
 #define CONTINUE	3	/* positive intermediate */
 #define TRANSIENT	4	/* transient negative completion */
-#ifndef _ARPA_TFTP_H_
+#ifndef _ARPA_TFTP_H
 #define ERROR		5	/* permanent negative completion */
-#endif /* _ARPA_TFTP_H_ */
+#endif /* _ARPA_TFTP_H */
 
 /*
  * Type codes
@@ -112,4 +112,4 @@
 
 /****************************************************************************/
 
-#endif /* _ARPA_FTP_H_ */
+#endif /* _ARPA_FTP_H */

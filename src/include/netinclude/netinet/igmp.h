@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: igmp.h,v 1.5 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -55,9 +55,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 #ifndef _NETINET_IP_H
 #include <netinet/ip.h>
@@ -87,9 +87,9 @@ extern "C" {
  * IGMP packet format.
  */
 struct igmp {
-	UBYTE		igmp_type;	/* version & type of IGMP message  */
-	UBYTE		igmp_code;	/* unused, should be zero          */
-	UWORD		igmp_cksum;	/* IP-style checksum               */
+	__UBYTE		igmp_type;	/* version & type of IGMP message  */
+	__UBYTE		igmp_code;	/* unused, should be zero          */
+	__UWORD		igmp_cksum;	/* IP-style checksum               */
 	struct in_addr	igmp_group;	/* group address being reported    */
 };					/*  (zero for queries)             */
 

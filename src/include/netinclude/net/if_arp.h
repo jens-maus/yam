@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: if_arp.h,v 1.5 2006/01/08 11:15:47 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -51,9 +51,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 #ifndef _SYS_SOCKET_H
 #include <sys/socket.h>
@@ -88,13 +88,13 @@ extern "C" {
  * specified.  Field names used correspond to RFC 826.
  */
 struct	arphdr {
-	UWORD	ar_hrd;		/* format of hardware address */
+	__UWORD	ar_hrd;		/* format of hardware address */
 #define ARPHRD_ETHER 	1	/* ethernet hardware format */
 #define ARPHRD_FRELAY 	15	/* frame relay hardware format */
-	UWORD	ar_pro;		/* format of protocol address */
-	UBYTE	ar_hln;		/* length of hardware address */
-	UBYTE	ar_pln;		/* length of protocol address */
-	UWORD	ar_op;		/* one of: */
+	__UWORD	ar_pro;		/* format of protocol address */
+	__UBYTE	ar_hln;		/* length of hardware address */
+	__UBYTE	ar_pln;		/* length of protocol address */
+	__UWORD	ar_op;		/* one of: */
 #define	ARPOP_REQUEST	1	/* request to resolve address */
 #define	ARPOP_REPLY	2	/* response to previous request */
 #define	ARPOP_REVREQUEST 3	/* request protocol address given hardware */
@@ -106,10 +106,10 @@ struct	arphdr {
  * according to the sizes above.
  */
 #ifdef COMMENT_ONLY
-	UBYTE	ar_sha[];	/* sender hardware address */
-	UBYTE	ar_spa[];	/* sender protocol address */
-	UBYTE	ar_tha[];	/* target hardware address */
-	UBYTE	ar_tpa[];	/* target protocol address */
+	__UBYTE	ar_sha[];	/* sender hardware address */
+	__UBYTE	ar_spa[];	/* sender protocol address */
+	__UBYTE	ar_tha[];	/* target hardware address */
+	__UBYTE	ar_tpa[];	/* target protocol address */
 #endif
 };
 
@@ -119,7 +119,7 @@ struct	arphdr {
 struct arpreq {
 	struct	sockaddr arp_pa;		/* protocol address */
 	struct	sockaddr arp_ha;		/* hardware address */
-	LONG	arp_flags;			/* flags */
+	__LONG	arp_flags;			/* flags */
 };
 /*  arp_flags and at_flags field values */
 #define	ATF_INUSE	0x01	/* entry in use */

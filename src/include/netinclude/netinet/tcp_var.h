@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: tcp_var.h,v 1.5 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -51,9 +51,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 #ifndef _NETINET_TCP_TIMER_H
 #include <netinet/tcp_timer.h>
@@ -87,60 +87,60 @@ extern "C" {
  * but that's inconvenient at the moment.
  */
 struct	tcpstat {
-	ULONG	tcps_connattempt;	/* connections initiated */
-	ULONG	tcps_accepts;		/* connections accepted */
-	ULONG	tcps_connects;		/* connections established */
-	ULONG	tcps_drops;		/* connections dropped */
-	ULONG	tcps_conndrops;		/* embryonic connections dropped */
-	ULONG	tcps_closed;		/* conn. closed (includes drops) */
-	ULONG	tcps_segstimed;		/* segs where we tried to get rtt */
-	ULONG	tcps_rttupdated;	/* times we succeeded */
-	ULONG	tcps_delack;		/* delayed acks sent */
-	ULONG	tcps_timeoutdrop;	/* conn. dropped in rxmt timeout */
-	ULONG	tcps_rexmttimeo;	/* retransmit timeouts */
-	ULONG	tcps_persisttimeo;	/* persist timeouts */
-	ULONG	tcps_keeptimeo;		/* keepalive timeouts */
-	ULONG	tcps_keepprobe;		/* keepalive probes sent */
-	ULONG	tcps_keepdrops;		/* connections dropped in keepalive */
+	__ULONG	tcps_connattempt;	/* connections initiated */
+	__ULONG	tcps_accepts;		/* connections accepted */
+	__ULONG	tcps_connects;		/* connections established */
+	__ULONG	tcps_drops;		/* connections dropped */
+	__ULONG	tcps_conndrops;		/* embryonic connections dropped */
+	__ULONG	tcps_closed;		/* conn. closed (includes drops) */
+	__ULONG	tcps_segstimed;		/* segs where we tried to get rtt */
+	__ULONG	tcps_rttupdated;	/* times we succeeded */
+	__ULONG	tcps_delack;		/* delayed acks sent */
+	__ULONG	tcps_timeoutdrop;	/* conn. dropped in rxmt timeout */
+	__ULONG	tcps_rexmttimeo;	/* retransmit timeouts */
+	__ULONG	tcps_persisttimeo;	/* persist timeouts */
+	__ULONG	tcps_keeptimeo;		/* keepalive timeouts */
+	__ULONG	tcps_keepprobe;		/* keepalive probes sent */
+	__ULONG	tcps_keepdrops;		/* connections dropped in keepalive */
 
-	ULONG	tcps_sndtotal;		/* total packets sent */
-	ULONG	tcps_sndpack;		/* data packets sent */
-	ULONG	tcps_sndbyte;		/* data bytes sent */
-	ULONG	tcps_sndrexmitpack;	/* data packets retransmitted */
-	ULONG	tcps_sndrexmitbyte;	/* data bytes retransmitted */
-	ULONG	tcps_sndacks;		/* ack-only packets sent */
-	ULONG	tcps_sndprobe;		/* window probes sent */
-	ULONG	tcps_sndurg;		/* packets sent with URG only */
-	ULONG	tcps_sndwinup;		/* window update-only packets sent */
-	ULONG	tcps_sndctrl;		/* control (SYN|FIN|RST) packets sent */
+	__ULONG	tcps_sndtotal;		/* total packets sent */
+	__ULONG	tcps_sndpack;		/* data packets sent */
+	__ULONG	tcps_sndbyte;		/* data bytes sent */
+	__ULONG	tcps_sndrexmitpack;	/* data packets retransmitted */
+	__ULONG	tcps_sndrexmitbyte;	/* data bytes retransmitted */
+	__ULONG	tcps_sndacks;		/* ack-only packets sent */
+	__ULONG	tcps_sndprobe;		/* window probes sent */
+	__ULONG	tcps_sndurg;		/* packets sent with URG only */
+	__ULONG	tcps_sndwinup;		/* window update-only packets sent */
+	__ULONG	tcps_sndctrl;		/* control (SYN|FIN|RST) packets sent */
 
-	ULONG	tcps_rcvtotal;		/* total packets received */
-	ULONG	tcps_rcvpack;		/* packets received in sequence */
-	ULONG	tcps_rcvbyte;		/* bytes received in sequence */
-	ULONG	tcps_rcvbadsum;		/* packets received with ccksum errs */
-	ULONG	tcps_rcvbadoff;		/* packets received with bad offset */
-	ULONG	tcps_rcvshort;		/* packets received too short */
-	ULONG	tcps_rcvduppack;	/* duplicate-only packets received */
-	ULONG	tcps_rcvdupbyte;	/* duplicate-only bytes received */
-	ULONG	tcps_rcvpartduppack;	/* packets with some duplicate data */
-	ULONG	tcps_rcvpartdupbyte;	/* dup. bytes in part-dup. packets */
-	ULONG	tcps_rcvoopack;		/* out-of-order packets received */
-	ULONG	tcps_rcvoobyte;		/* out-of-order bytes received */
-	ULONG	tcps_rcvpackafterwin;	/* packets with data after window */
-	ULONG	tcps_rcvbyteafterwin;	/* bytes rcvd after window */
-	ULONG	tcps_rcvafterclose;	/* packets rcvd after "close" */
-	ULONG	tcps_rcvwinprobe;	/* rcvd window probe packets */
-	ULONG	tcps_rcvdupack;		/* rcvd duplicate acks */
-	ULONG	tcps_rcvacktoomuch;	/* rcvd acks for unsent data */
-	ULONG	tcps_rcvackpack;	/* rcvd ack packets */
-	ULONG	tcps_rcvackbyte;	/* bytes acked by rcvd acks */
-	ULONG	tcps_rcvwinupd;		/* rcvd window update packets */
-	ULONG	tcps_pawsdrop;		/* segments dropped due to PAWS */
-	ULONG	tcps_predack;		/* times hdr predict ok for acks */
-	ULONG	tcps_preddat;		/* times hdr predict ok for data pkts */
-	ULONG	tcps_pcbcachemiss;
-	ULONG	tcps_persistdrop;	/* timeout in persist state */
-	ULONG	tcps_badsyn;		/* bogus SYN, e.g. premature ACK */
+	__ULONG	tcps_rcvtotal;		/* total packets received */
+	__ULONG	tcps_rcvpack;		/* packets received in sequence */
+	__ULONG	tcps_rcvbyte;		/* bytes received in sequence */
+	__ULONG	tcps_rcvbadsum;		/* packets received with ccksum errs */
+	__ULONG	tcps_rcvbadoff;		/* packets received with bad offset */
+	__ULONG	tcps_rcvshort;		/* packets received too short */
+	__ULONG	tcps_rcvduppack;	/* duplicate-only packets received */
+	__ULONG	tcps_rcvdupbyte;	/* duplicate-only bytes received */
+	__ULONG	tcps_rcvpartduppack;	/* packets with some duplicate data */
+	__ULONG	tcps_rcvpartdupbyte;	/* dup. bytes in part-dup. packets */
+	__ULONG	tcps_rcvoopack;		/* out-of-order packets received */
+	__ULONG	tcps_rcvoobyte;		/* out-of-order bytes received */
+	__ULONG	tcps_rcvpackafterwin;	/* packets with data after window */
+	__ULONG	tcps_rcvbyteafterwin;	/* bytes rcvd after window */
+	__ULONG	tcps_rcvafterclose;	/* packets rcvd after "close" */
+	__ULONG	tcps_rcvwinprobe;	/* rcvd window probe packets */
+	__ULONG	tcps_rcvdupack;		/* rcvd duplicate acks */
+	__ULONG	tcps_rcvacktoomuch;	/* rcvd acks for unsent data */
+	__ULONG	tcps_rcvackpack;	/* rcvd ack packets */
+	__ULONG	tcps_rcvackbyte;	/* bytes acked by rcvd acks */
+	__ULONG	tcps_rcvwinupd;		/* rcvd window update packets */
+	__ULONG	tcps_pawsdrop;		/* segments dropped due to PAWS */
+	__ULONG	tcps_predack;		/* times hdr predict ok for acks */
+	__ULONG	tcps_preddat;		/* times hdr predict ok for data pkts */
+	__ULONG	tcps_pcbcachemiss;
+	__ULONG	tcps_persistdrop;	/* timeout in persist state */
+	__ULONG	tcps_badsyn;		/* bogus SYN, e.g. premature ACK */
 };
 
 /****************************************************************************/

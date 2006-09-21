@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: udp_var.h,v 1.5 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -51,9 +51,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 #ifndef _NETINET_UDP_H
 #include <netinet/udp.h>
@@ -101,17 +101,17 @@ struct	udpiphdr {
 #define	ui_sum		ui_u.uh_sum
 
 struct	udpstat {
-				/* input statistics: */
-	ULONG	udps_ipackets;		/* total input packets */
-	ULONG	udps_hdrops;		/* packet shorter than header */
-	ULONG	udps_badsum;		/* checksum error */
-	ULONG	udps_badlen;		/* data length larger than packet */
-	ULONG	udps_noport;		/* no socket on port */
-	ULONG	udps_noportbcast;	/* of above, arrived as broadcast */
-	ULONG	udps_fullsock;		/* not delivered, input socket full */
-	ULONG	udpps_pcbcachemiss;	/* input packets missing pcb cache */
-				/* output statistics: */
-	ULONG	udps_opackets;		/* total output packets */
+					/* input statistics: */
+	__ULONG	udps_ipackets;		/* total input packets */
+	__ULONG	udps_hdrops;		/* packet shorter than header */
+	__ULONG	udps_badsum;		/* checksum error */
+	__ULONG	udps_badlen;		/* data length larger than packet */
+	__ULONG	udps_noport;		/* no socket on port */
+	__ULONG	udps_noportbcast;	/* of above, arrived as broadcast */
+	__ULONG	udps_fullsock;		/* not delivered, input socket full */
+	__ULONG	udpps_pcbcachemiss;	/* input packets missing pcb cache */
+					/* output statistics: */
+	__ULONG	udps_opackets;		/* total output packets */
 };
 
 /*

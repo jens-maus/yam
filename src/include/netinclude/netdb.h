@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: netdb.h,v 1.7 2006/01/08 11:15:46 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -71,18 +71,22 @@
  *	$NetBSD: netdb.h,v 1.8 1997/10/13 09:26:06 lukem Exp $
  */
 
-#ifndef _NETDB_H_
-#define _NETDB_H_
+#ifndef _NETDB_H
+#define _NETDB_H
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 #ifndef _SYS_ERRNO_H
 #include <sys/errno.h>
 #endif /* _SYS_ERRNO_H */
+
+#ifndef _NETINET_IN_H
+#include <netinet/in.h>
+#endif /* _NETINET_IN_H */
 
 /****************************************************************************/
 
@@ -112,11 +116,11 @@ extern "C" {
  */
 struct hostent
 {
-	STRPTR		h_name;		/* official name of host */
-	STRPTR *	h_aliases;	/* alias list */
-	LONG		h_addrtype;	/* host address type */
-	LONG		h_length;	/* length of address */
-	STRPTR *	h_addr_list;	/* list of addresses from name server */
+	__STRPTR	h_name;		/* official name of host */
+	__STRPTR *	h_aliases;	/* alias list */
+	__LONG		h_addrtype;	/* host address type */
+	__LONG		h_length;	/* length of address */
+	__BYTE **	h_addr_list;	/* list of addresses from name server */
 #define	h_addr		h_addr_list[0]	/* address, for backward compatiblity */
 };
 
@@ -126,25 +130,25 @@ struct hostent
  */
 struct netent
 {
-	STRPTR		n_name;		/* official name of net */
-	STRPTR *	n_aliases;	/* alias list */
-	LONG		n_addrtype;	/* net address type */
-	ULONG		n_net;		/* network # */
+	__STRPTR	n_name;		/* official name of net */
+	__STRPTR *	n_aliases;	/* alias list */
+	__LONG		n_addrtype;	/* net address type */
+	in_addr_t	n_net;		/* network # */
 };
 
 struct servent
 {
-	STRPTR		s_name;		/* official service name */
-	STRPTR *	s_aliases;	/* alias list */
-	LONG		s_port;		/* port # */
-	STRPTR		s_proto;	/* protocol to use */
+	__STRPTR	s_name;		/* official service name */
+	__STRPTR *	s_aliases;	/* alias list */
+	__LONG		s_port;		/* port # */
+	__STRPTR	s_proto;	/* protocol to use */
 };
 
 struct protoent
 {
-	STRPTR		p_name;		/* official protocol name */
-	STRPTR *	p_aliases;	/* alias list */
-	LONG		p_proto;	/* protocol # */
+	__STRPTR	p_name;		/* official protocol name */
+	__STRPTR *	p_aliases;	/* alias list */
+	__LONG		p_proto;	/* protocol # */
 };
 
 /*
@@ -178,4 +182,4 @@ struct protoent
 
 /****************************************************************************/
 
-#endif /* !_NETDB_H_ */
+#endif /* !_NETDB_H */

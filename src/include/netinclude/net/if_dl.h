@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: if_dl.h,v 1.5 2006/01/08 11:15:47 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -51,9 +51,9 @@
 
 /****************************************************************************/
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif /* EXEC_TYPES_H */
+#ifndef _SYS_NETINCLUDE_TYPES_H
+#include <sys/netinclude_types.h>
+#endif /* _SYS_NETINCLUDE_TYPES_H */
 
 /****************************************************************************/
 
@@ -95,18 +95,18 @@ extern "C" {
  * Structure of a Link-Level sockaddr:
  */
 struct sockaddr_dl {
-	UBYTE	sdl_len;	/* Total length of sockaddr */
-	UBYTE	sdl_family;	/* AF_DLI */
-	UWORD	sdl_index;	/* if != 0, system given index for interface */
-	UBYTE	sdl_type;	/* interface type */
-	UBYTE	sdl_nlen;	/* interface name length, no trailing 0 reqd. */
-	UBYTE	sdl_alen;	/* link level address length */
-	UBYTE	sdl_slen;	/* link layer selector length */
-	BYTE	sdl_data[12];	/* minimum work area, can be larger;
+	__UBYTE	sdl_len;	/* Total length of sockaddr */
+	__UBYTE	sdl_family;	/* AF_DLI */
+	__UWORD	sdl_index;	/* if != 0, system given index for interface */
+	__UBYTE	sdl_type;	/* interface type */
+	__UBYTE	sdl_nlen;	/* interface name length, no trailing 0 reqd. */
+	__UBYTE	sdl_alen;	/* link level address length */
+	__UBYTE	sdl_slen;	/* link layer selector length */
+	__BYTE	sdl_data[12];	/* minimum work area, can be larger;
 				   contains both if name and ll address */
 };
 
-#define LLADDR(s) ((APTR)((s)->sdl_data + (s)->sdl_nlen))
+#define LLADDR(s) ((__APTR)((s)->sdl_data + (s)->sdl_nlen))
 
 /****************************************************************************/
 

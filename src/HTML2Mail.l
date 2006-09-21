@@ -51,6 +51,7 @@
     #include "Debug.h"
 
     #define YY_NO_INPUT 1
+    #define YY_NO_UNISTD_H 1
 %}
 
 /*

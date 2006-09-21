@@ -1,16 +1,18 @@
-#ifndef PRAGMAS_BSDSOCKET_PRAGMAS_H
-#define PRAGMAS_BSDSOCKET_PRAGMAS_H
-
 /*
- * $Id$
+ * $Id: bsdsocket_pragmas.h,v 1.9 2006/02/18 11:04:35 obarthel Exp $
+ *
+ * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
- * Direct ROM interface (pragma) definitions.
+ * Amiga specific TCP/IP 'C' header files;
  * Freely Distributable
  */
+
+#ifndef PRAGMAS_BSDSOCKET_PRAGMAS_H
+#define PRAGMAS_BSDSOCKET_PRAGMAS_H
 
 #ifndef CLIB_BSDSOCKET_PROTOS_H
 #include <clib/bsdsocket_protos.h>
@@ -118,6 +120,12 @@
 #pragma amicall(SocketBase,0x2ac,mbuf_pullup(a0,d0))
 #pragma amicall(SocketBase,0x2b2,ProcessIsServer(a0))
 #pragma amicall(SocketBase,0x2b8,ObtainServerSocket())
+#pragma amicall(SocketBase,0x2be,GetDefaultDomainName(a0,d0))
+#pragma amicall(SocketBase,0x2c4,SetDefaultDomainName(a0))
+#pragma amicall(SocketBase,0x2ca,ObtainRoadshowData(d0))
+#pragma amicall(SocketBase,0x2d0,ReleaseRoadshowData(a0))
+#pragma amicall(SocketBase,0x2d6,ChangeRoadshowData(a0,a1,d0,a2))
+#pragma amicall(SocketBase,0x2dc,RemoveInterface(a0,d0))
 #endif
 #if defined(_DCC) || defined(__SASC)
 #pragma  libcall SocketBase socket                 01e 21003
@@ -221,6 +229,12 @@
 #pragma  libcall SocketBase mbuf_pullup            2ac 0802
 #pragma  libcall SocketBase ProcessIsServer        2b2 801
 #pragma  libcall SocketBase ObtainServerSocket     2b8 00
+#pragma  libcall SocketBase GetDefaultDomainName   2be 0802
+#pragma  libcall SocketBase SetDefaultDomainName   2c4 801
+#pragma  libcall SocketBase ObtainRoadshowData     2ca 001
+#pragma  libcall SocketBase ReleaseRoadshowData    2d0 801
+#pragma  libcall SocketBase ChangeRoadshowData     2d6 a09804
+#pragma  libcall SocketBase RemoveInterface        2dc 0802
 #endif
 #ifdef __STORM__
 #pragma tagcall(SocketBase,0x102,syslog(d0,a0,a1))

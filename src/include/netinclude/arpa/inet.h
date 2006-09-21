@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: inet.h,v 1.6 2006/01/08 11:15:47 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -46,13 +46,6 @@
  *	@(#)inet.h	8.1 (Berkeley) 6/2/93
  */
 
-#ifndef _ARPA_INET_H_
-#define	_ARPA_INET_H_
-
-/****************************************************************************/
-
-/* External definitions for functions in inet(3) */
-
-/****************************************************************************/
-
-#endif /* _ARPA_INET_H_ */
+#ifndef _ARPA_INET_H
+#define	_ARPA_INET_H
+#endif /* _ARPA_INET_H */

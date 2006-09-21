@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id: in_systm.h,v 1.5 2006/01/08 11:15:48 obarthel Exp $
  *
  * :ts=8
  *
  * 'Roadshow' -- Amiga TCP/IP stack
- * Copyright © 2001-2004 by Olaf Barthel.
+ * Copyright © 2001-2006 by Olaf Barthel.
  * All Rights Reserved.
  *
  * Amiga specific TCP/IP 'C' header files;
@@ -45,3 +45,7 @@
  *
  *	@(#)in_systm.h	8.1 (Berkeley) 6/10/93
  */
+
+#ifndef _IN_SYSTM_H
+#define _IN_SYSTM_H
+#endif /* _IN_SYSTM_H */
