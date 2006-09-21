@@ -1673,15 +1673,14 @@ static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
   int skip_chars = 0;
   int pre_spaces = 0;
 
+  ENTER();
+
   (*post_spaces) = 0;
 
   while((c = *text++) && i < len-1)
   {
     if(c == '>')
     {
-      if(pre_spaces > 0)
-        break;
-
       last_bracket = i+1;
 
       quote_found = TRUE;
@@ -1708,7 +1707,7 @@ static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
         else
           break;
       }
-      else if(quote_found == TRUE || pre_spaces > 0 || skip_chars > 2)
+      else if(quote_found == TRUE || skip_chars > 2)
       {
         break;
       }
@@ -1729,7 +1728,8 @@ static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
 
   // return the number of skipped chars before
   // any quote char was found.
-  return last_bracket ? skip_chars : 0;
+  RETURN(last_bracket ? skip_chars+pre_spaces : 0);
+  return last_bracket ? skip_chars+pre_spaces : 0;
 }
 
 ///
@@ -1741,6 +1741,8 @@ static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
 //  All output is directly written to the already opened filehandle "out".
 void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
 {
+  ENTER();
+
   // make sure the output file handle is valid
   if(out)
   {
@@ -1919,6 +1921,8 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
     if(newline == FALSE)
       fputc('\n', out);
   }
+
+  LEAVE();
 }
 ///
 /// SimpleWordWrap

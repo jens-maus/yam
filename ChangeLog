@@ -6,6 +6,9 @@ $Id$
 
 2006-09-21  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: fixed a bug in the Quoting_Chars() analysis function where it
+    didn't return the correct number of skipable characters in case spaces
+    where found in front of a quoted line with initials of the quoter.
   * extrasrc.h: removed the faking of PROTO_SOCKET_H as the update socket
     SDK doesn't require that anymore.
   * include/netinclude: updated whole netinclude SDK headers to latest
