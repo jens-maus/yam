@@ -6,6 +6,8 @@ $Id$
 
 2006-09-21  Jens Langner <Jens.Langner@light-speed.de>
 
+  * extrasrc.h: removed the faking of PROTO_SOCKET_H as the update socket
+    SDK doesn't require that anymore.
   * include/netinclude: updated whole netinclude SDK headers to latest
     RoadShow includes available which is also compatible to other bsdsocket
     based TCP/IP stacks.

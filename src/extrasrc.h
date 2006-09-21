@@ -28,15 +28,6 @@
 
 ***************************************************************************/
 
-// do a "fake" proto/socket.h define here
-// because we assure that bsdsocket.h is used
-// only and doesn`t conflict with other socket
-// definitions.
-#ifndef PROTO_SOCKET_H
-#define PROTO_SOCKET_H 1
-#endif
-
-
 /*
  * Differentations between runtime libs and operating system
  */
