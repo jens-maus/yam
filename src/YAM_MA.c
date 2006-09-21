@@ -29,7 +29,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if !defined(__amigaos4__)
 #include <clib/alib_protos.h>
+#endif
+
+#include <clib/macros.h>
 #include <libraries/asl.h>
 #include <libraries/gadtools.h>
 #include <libraries/iffparse.h>
@@ -2745,12 +2749,22 @@ MakeHook(MA_GetAddressHook, MA_GetAddressFunc);
 ///
 /// MA_PopNow
 //  Fetches new mail from POP3 account(s)
-void MA_PopNow(int mode, int pop)
+void MA_PopNow(enum GuiLevel mode, int pop)
 {
-   if (G->TR) return; // Don't proceed if another transfer is in progress
-   if (C->UpdateStatus) MA_UpdateStatus();
-   MA_StartMacro(MACRO_PREGET, itoa(mode-POP_USER));
-   TR_GetMailFromNextPOP(TRUE, pop, mode);
+  ENTER();
+
+  // Don't proceed if another transfer is in progress
+  if(G->TR == NULL)
+  {
+    if(C->UpdateStatus)
+      MA_UpdateStatus();
+
+    MA_StartMacro(MACRO_PREGET, itoa(mode));
+
+    TR_GetMailFromNextPOP(TRUE, pop, mode);
+  }
+
+  LEAVE();
 }
 
 ///
@@ -3404,17 +3418,31 @@ BOOL MA_StartMacro(enum Macro num, char *param)
   if(C->RX[num].Script[0] != '\0')
   {
     char command[SIZE_LARGE];
+    char *s = C->RX[num].Script;
+    char *p;
+
+    command[0] = '\0';
+
+    // now we check if the script command contains
+    // the '%p' placeholder and if so we go and replace
+    // it with our parameter
+    while((p = strstr(s, "%p")))
+    {
+      strlcat(command, s, MIN(p-s+1, (LONG)sizeof(command)));
+
+      if(param)
+        strlcat(command, param, sizeof(command));
+
+      s = p+2;
+    }
+
+    // add the rest
+    strlcat(command, s, sizeof(command));
 
     // check if the script in question is an amigados
     // or arexx script
     if(C->RX[num].IsAmigaDOS)
     {
-      // prepare the command string
-      if(param)
-        snprintf(command, sizeof(command), "%s %s", C->RX[num].Script, param);
-      else
-        strlcpy(command, C->RX[num].Script, sizeof(command));
-
       // now execute the command
       BusyText(GetStr(MSG_MA_EXECUTINGCMD), "");
       ExecuteCommand(command, !C->RX[num].WaitTerm, C->RX[num].UseConsole ? OUT_DOS : OUT_NIL);
@@ -3429,20 +3457,8 @@ BOOL MA_StartMacro(enum Macro num, char *param)
       // prepare the command string
       // only RexxSysBase v45+ seems to support properly quoted
       // strings via the new RXFF_SCRIPT flag
-      if(((struct Library *)RexxSysBase)->lib_Version >= 45 && MyStrChr(C->RX[num].Script, ' '))
-      {
-        if(param)
-          snprintf(command, sizeof(command), "\"%s\" %s", C->RX[num].Script, param);
-        else
-          snprintf(command, sizeof(command), "\"%s\"", C->RX[num].Script);
-      }
-      else
-      {
-        if(param)
-          snprintf(command, sizeof(command), "%s %s", C->RX[num].Script, param);
-        else
-          snprintf(command, sizeof(command), "%s", C->RX[num].Script);
-      }
+      if(((struct Library *)RexxSysBase)->lib_Version < 45)
+        UnquoteString(command, FALSE);
 
       // make sure to open the output console handler
       if((fh = Open(C->RX[num].UseConsole ? "CON:////YAM ARexx Window/AUTO" : "NIL:", MODE_NEWFILE)))

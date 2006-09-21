@@ -5865,3 +5865,21 @@ Scripts
 MSG_CO_GR_STARTUPQUIT (1733//)
 Startup/Quit
 ;
+MSG_CO_SCRIPTS_PREGET (1734//)
+%p  Type of download action
+;
+MSG_CO_SCRIPTS_POSTGET (1735//)
+%p  Number of messages downloaded
+;
+MSG_CO_SCRIPTS_NEWMSG (1736//)
+%p  Name of mail file of the new message
+;
+MSG_CO_SCRIPTS_READ (1737//)
+%p  Number of read window
+;
+MSG_CO_SCRIPTS_WRITE (1738//)
+%p  Number of write window
+;
+MSG_CO_SCRIPTS_URL (1739//)
+%p  Full URL path
+;

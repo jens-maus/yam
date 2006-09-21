@@ -1254,22 +1254,34 @@ char *Encrypt(char *source)
 //  Removes quotes from a string, skipping "escaped" quotes
 char *UnquoteString(const char *s, BOOL new)
 {
-  char *ans, *t, *o = (char *)s;
+  char *ans;
+  char *o = (char *)s;
 
-  if(*s != '"')
-    return (char *)s;
+  ENTER();
 
+  // check if the string conatins any quotes
+  if(strchr(s, '"') == NULL)
+  {
+    if(new)
+      o = strdup(s);
+
+    RETURN(o);
+    return(o);
+  }
+
+  // now start unquoting the string
   if((ans = malloc(strlen(s)+1)))
   {
+    char *t = ans;
+
     ++s;
-    t = ans;
 
     while(*s)
     {
       if(*s == '\\')
         *t++ = *++s;
       else if(*s == '"')
-        break;
+        ; // nothing
       else
         *t++ = *s;
 
@@ -1280,7 +1292,10 @@ char *UnquoteString(const char *s, BOOL new)
 
     // in case the user wants to have the copy lets do it
     if(new)
+    {
+      RETURN(ans);
       return ans;
+    }
 
     // otherwise overwrite the original string array
     strcpy(o, ans);
@@ -1288,6 +1303,7 @@ char *UnquoteString(const char *s, BOOL new)
     free(ans);
   }
 
+  RETURN(o);
   return o;
 }
 ///

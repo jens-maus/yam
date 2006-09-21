@@ -28,6 +28,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <clib/macros.h>
+
 #include <libraries/asl.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/NListview_mcc.h>
@@ -64,7 +66,7 @@
 #include "Debug.h"
 
 enum VarPopMode { VPM_FORWARD=0, VPM_REPLYHELLO, VPM_REPLYINTRO, VPM_REPLYBYE,
-                  VPM_QUOTE, VPM_ARCHIVE, VPM_MAILSTATS };
+                  VPM_QUOTE, VPM_ARCHIVE, VPM_MAILSTATS, VPM_SCRIPTS };
 
 /* local protos */
 static Object *MakeVarPop(Object **, enum VarPopMode, int, const char *);
@@ -601,20 +603,120 @@ Object *MakeMimeTypePop(Object **string, const char *desc)
 }
 
 ///
-/// PO_HandleVar
+/// PO_HandleVarHook
 //  Pastes an entry from variable listview into string gadget
-HOOKPROTONH(PO_HandleVar, void, Object *pop, Object *string)
+HOOKPROTONH(PO_HandleVarFunc, void, Object *pop, Object *string)
 {
-   char *var, buf[3];
+  char *var;
 
-   DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &var);
-   if (var)
-   {
-      buf[0] = var[0]; buf[1] = var[1]; buf[2] = 0;
-      DoMethod(string, MUIM_BetterString_Insert, buf, MUIV_BetterString_Insert_BufferPos);
-   }
+  ENTER();
+
+  DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &var);
+  if(var)
+  {
+    char addstr[3];
+    char *str = (char *)xget(string, MUIA_String_Contents);
+    LONG pos = xget(string, MUIA_String_BufferPos);
+
+    strlcpy(addstr, var, sizeof(addstr));
+
+    if(str && str[0] != '\0')
+    {
+      int len = strlen(str)+sizeof(addstr);
+      char *buf = calloc(len, 1);
+
+      if(buf == NULL)
+      {
+        LEAVE();
+        return;
+      }
+
+      // append the addstr to the right position
+
+      if(pos > 0)
+        strlcpy(buf, str, pos+1);
+
+      strlcat(buf, addstr, len);
+
+      if(pos >= 0)
+        strlcat(buf, str+pos, len);
+
+      set(string, MUIA_String_Contents, buf);
+
+      free(buf);
+    }
+    else
+      set(string, MUIA_String_Contents, addstr);
+  }
+
+  LEAVE();
 }
-MakeStaticHook(PO_HandleVarHook, PO_HandleVar);
+MakeStaticHook(PO_HandleVarHook, PO_HandleVarFunc);
+
+///
+HOOKPROTONHNP(PO_HandleScriptsOpenFunc, BOOL, Object *list)
+{
+  LONG active;
+
+  ENTER();
+
+  // clear the list first
+  DoMethod(list, MUIM_List_Clear);
+
+  if((active = xget(G->CO->GUI.LV_REXX, MUIA_List_Active)) >= 0)
+  {
+    enum Macro macro = (enum Macro)active;
+
+    switch(macro)
+    {
+      case MACRO_MEN0:
+      case MACRO_MEN1:
+      case MACRO_MEN2:
+      case MACRO_MEN3:
+      case MACRO_MEN4:
+      case MACRO_MEN5:
+      case MACRO_MEN6:
+      case MACRO_MEN7:
+      case MACRO_MEN8:
+      case MACRO_MEN9:
+      case MACRO_STARTUP:
+      case MACRO_QUIT:
+      case MACRO_PRESEND:
+      case MACRO_POSTSEND:
+        // nothing;
+      break;
+
+      case MACRO_PREGET:
+        DoMethod(list, MUIM_List_InsertSingle, GetStr(MSG_CO_SCRIPTS_PREGET), MUIV_List_Insert_Bottom);
+      break;
+
+      case MACRO_POSTGET:
+        DoMethod(list, MUIM_List_InsertSingle, GetStr(MSG_CO_SCRIPTS_POSTGET), MUIV_List_Insert_Bottom);
+      break;
+
+      case MACRO_NEWMSG:
+        DoMethod(list, MUIM_List_InsertSingle, GetStr(MSG_CO_SCRIPTS_NEWMSG), MUIV_List_Insert_Bottom);
+      break;
+
+      case MACRO_READ:
+        DoMethod(list, MUIM_List_InsertSingle, GetStr(MSG_CO_SCRIPTS_READ), MUIV_List_Insert_Bottom);
+      break;
+
+      case MACRO_PREWRITE:
+      case MACRO_POSTWRITE:
+        DoMethod(list, MUIM_List_InsertSingle, GetStr(MSG_CO_SCRIPTS_WRITE), MUIV_List_Insert_Bottom);
+      break;
+
+      case MACRO_URL:
+        DoMethod(list, MUIM_List_InsertSingle, GetStr(MSG_CO_SCRIPTS_URL), MUIV_List_Insert_Bottom);
+      break;
+    }
+  }
+
+  RETURN(TRUE);
+  return TRUE;
+}
+MakeStaticHook(PO_HandleScriptsOpenHook, PO_HandleScriptsOpenFunc);
 
 ///
 /// MakeVarPop
@@ -623,7 +725,8 @@ static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, const
 {
    Object *lv, *po;
 
-   if ((po = PopobjectObject,
+   if((po = PopobjectObject,
+
       MUIA_Popstring_String, *string = MakeString(size, shortcut),
       MUIA_Popstring_Button, PopButton(MUII_PopUp),
       MUIA_Popobject_ObjStrHook, &PO_HandleVarHook,
@@ -635,6 +738,7 @@ static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, const
             MUIA_List_AdjustHeight, TRUE,
          End,
       End,
+
    End))
    {
       switch (mode)
@@ -661,9 +765,7 @@ static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, const
 
             // depending on the mode we have the "CompleteHeader" feature or not.
             if(mode == VPM_FORWARD || mode == VPM_REPLYINTRO)
-            {
               DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_CompleteHeader), MUIV_List_Insert_Bottom);
-            }
          }
          break;
 
@@ -689,6 +791,13 @@ static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, const
             DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_TOTALMSGS), MUIV_List_Insert_Bottom);
             DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_DELMSGS), MUIV_List_Insert_Bottom);
             DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SENTMSGS), MUIV_List_Insert_Bottom);
+         }
+         break;
+
+         case VPM_SCRIPTS:
+         {
+            // we let the openhook handle the list management
+            set(po, MUIA_Popobject_StrObjHook, &PO_HandleScriptsOpenHook);
          }
          break;
       }
@@ -943,9 +1052,9 @@ HOOKPROTONH(MimeTypeDisplayFunc, LONG, char **array, struct MimeTypeNode *mt)
 MakeStaticHook(MimeTypeDisplayHook, MimeTypeDisplayFunc);
 
 ///
-/// CO_GetRXEntry
+/// CO_GetRXEntryHook
 //  Fills form with data from selected list entry
-HOOKPROTONHNONP(CO_GetRXEntry, void)
+HOOKPROTONHNONP(CO_GetRXEntryFunc, void)
 {
   struct CO_GUIData *gui = &G->CO->GUI;
   struct RxHook *rh;
@@ -961,12 +1070,12 @@ HOOKPROTONHNONP(CO_GetRXEntry, void)
 
   DoMethod(gui->LV_REXX, MUIM_List_Redraw, act);
 }
-MakeStaticHook(CO_GetRXEntryHook,CO_GetRXEntry);
+MakeStaticHook(CO_GetRXEntryHook, CO_GetRXEntryFunc);
 
 ///
-/// CO_PutRXEntry
+/// CO_PutRXEntryHook
 //  Fills form data into selected list entry
-HOOKPROTONHNONP(CO_PutRXEntry, void)
+HOOKPROTONHNONP(CO_PutRXEntryFunc, void)
 {
   struct CO_GUIData *gui = &G->CO->GUI;
   int act = xget(gui->LV_REXX, MUIA_List_Active);
@@ -983,7 +1092,83 @@ HOOKPROTONHNONP(CO_PutRXEntry, void)
     DoMethod(gui->LV_REXX, MUIM_List_Redraw, act);
   }
 }
-MakeStaticHook(CO_PutRXEntryHook,CO_PutRXEntry);
+MakeStaticHook(CO_PutRXEntryHook, CO_PutRXEntryFunc);
+///
+/// ScriptsStartHook
+//  Will be executed as soon as the user wants to popup a script selection
+//  ASL requester
+HOOKPROTONHNO(ScriptsStartFunc, BOOL, struct TagItem *tags)
+{
+  char *str;
+
+  ENTER();
+
+  str = (char *)xget(G->CO->GUI.ST_SCRIPT, MUIA_String_Contents);
+  if(str != NULL && str[0] != '\0')
+  {
+    int i=0;
+    static char buf[SIZE_PATHFILE];
+    char *p;
+
+    // make sure the string is unquoted.
+    strlcpy(buf, str, sizeof(buf));
+    UnquoteString(buf, FALSE);
+
+    if((p = PathPart(buf)))
+    {
+      static char drawer[SIZE_PATHFILE];
+
+      strlcpy(drawer, buf, MIN(p-buf+1, SIZE_PATHFILE));
+
+      tags[i].ti_Tag = ASLFR_InitialDrawer;
+      tags[i].ti_Data= (ULONG)drawer;
+      i++;
+    }
+
+    tags[i].ti_Tag = ASLFR_InitialFile;
+    tags[i].ti_Data= (ULONG)FilePart(buf);
+    i++;
+
+    tags[i].ti_Tag = TAG_DONE;
+  }
+
+  RETURN(TRUE);
+  return TRUE;
+}
+MakeStaticHook(ScriptsStartHook, ScriptsStartFunc);
+///
+/// ScriptsStopHook
+//  Will be executed as soon as the user selected a file
+HOOKPROTONHNO(ScriptsStopFunc, void, struct FileRequester *fileReq)
+{
+  ENTER();
+
+  // check if a file was selected or not
+  if(fileReq->fr_File != NULL &&
+     fileReq->fr_File[0] != '\0')
+  {
+    char buf[SIZE_PATHFILE];
+
+    strlcpy(buf, fileReq->fr_Drawer, sizeof(buf));
+    AddPart(buf, fileReq->fr_File, SIZE_PATHFILE);
+
+    // check if there is any space in our path
+    if(strchr(buf, ' ') != NULL)
+    {
+      int len = strlen(buf);
+
+      memmove(&buf[1], buf, len+1);
+      buf[0] = '"';
+      buf[len+1] = '"';
+      buf[len+2] = '\0';
+    }
+
+    set(G->CO->GUI.ST_SCRIPT, MUIA_String_Contents, buf);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(ScriptsStopHook, ScriptsStopFunc);
 ///
 
 /*** Pages ***/
@@ -2558,45 +2743,59 @@ Object *CO_Page13(struct CO_ClassData *data)
 
          Child, VGroup,
             Child, data->GUI.LV_REXX = ListviewObject,
-               MUIA_CycleChain, 1,
+               MUIA_CycleChain, TRUE,
                MUIA_Listview_List, ListObject,
                   InputListFrame,
                   MUIA_List_DisplayHook, &CO_LV_RxDspHook,
                End,
             End,
             Child, ColGroup(2),
+
                Child, Label2(GetStr(MSG_CO_Name)),
                Child, HGroup,
                   Child, data->GUI.ST_RXNAME = MakeString(SIZE_NAME,GetStr(MSG_CO_Name)),
                   Child, data->GUI.CY_ISADOS = MakeCycle(stype,""),
                End,
+
                Child, Label2(GetStr(MSG_CO_Script)),
-               Child, PopaslObject,
-                  MUIA_Popasl_Type     ,ASL_FileRequest,
-                  MUIA_Popstring_String,data->GUI.ST_SCRIPT = MakeString(SIZE_PATHFILE,GetStr(MSG_CO_Script)),
-                  MUIA_Popstring_Button,PopButton(MUII_PopFile),
+               Child, HGroup,
+                 MUIA_Group_HorizSpacing, 0,
+                 Child, MakeVarPop(&data->GUI.ST_SCRIPT, VPM_SCRIPTS, SIZE_PATHFILE, GetStr(MSG_CO_Script)),
+                 Child, PopaslObject,
+                    MUIA_Popasl_Type,       ASL_FileRequest,
+                    MUIA_Popasl_StartHook,  &ScriptsStartHook,
+                    MUIA_Popasl_StopHook,   &ScriptsStopHook,
+                    MUIA_Popstring_Button,  PopButton(MUII_PopFile),
+                 End,
                End,
-            End,
-            Child, HGroup,
+
+               Child, HSpace(1),
                Child, MakeCheckGroup((Object **)&data->GUI.CH_CONSOLE, GetStr(MSG_CO_OpenConsole)),
+
+               Child, HSpace(1),
                Child, MakeCheckGroup((Object **)&data->GUI.CH_WAITTERM, GetStr(MSG_CO_WaitTerm)),
+
             End,
          End,
       End))
    {
       int i;
-      for (i = 1; i <= MAXRX; i++) DoMethod(data->GUI.LV_REXX, MUIM_List_InsertSingle, i, MUIV_List_Insert_Bottom);
+
+      for(i = 1; i <= MAXRX; i++)
+        DoMethod(data->GUI.LV_REXX, MUIM_List_InsertSingle, i, MUIV_List_Insert_Bottom);
+
       SetHelp(data->GUI.ST_RXNAME    ,MSG_HELP_CO_ST_RXNAME    );
       SetHelp(data->GUI.ST_SCRIPT    ,MSG_HELP_CO_ST_SCRIPT    );
       SetHelp(data->GUI.CY_ISADOS    ,MSG_HELP_CO_CY_ISADOS    );
       SetHelp(data->GUI.CH_CONSOLE   ,MSG_HELP_CO_CH_CONSOLE   );
       SetHelp(data->GUI.CH_WAITTERM  ,MSG_HELP_CO_CH_WAITTERM  );
-      DoMethod(data->GUI.LV_REXX     ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&CO_GetRXEntryHook,0);
-      DoMethod(data->GUI.ST_RXNAME   ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&CO_PutRXEntryHook,0);
-      DoMethod(data->GUI.ST_SCRIPT   ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&CO_PutRXEntryHook,0);
-      DoMethod(data->GUI.CY_ISADOS   ,MUIM_Notify,MUIA_Cycle_Active   ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&CO_PutRXEntryHook,0);
-      DoMethod(data->GUI.CH_CONSOLE  ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&CO_PutRXEntryHook,0);
-      DoMethod(data->GUI.CH_WAITTERM ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&CO_PutRXEntryHook,0);
+
+      DoMethod(data->GUI.LV_REXX     ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_GetRXEntryHook);
+      DoMethod(data->GUI.ST_RXNAME   ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRXEntryHook);
+      DoMethod(data->GUI.ST_SCRIPT   ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRXEntryHook);
+      DoMethod(data->GUI.CY_ISADOS   ,MUIM_Notify,MUIA_Cycle_Active   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRXEntryHook);
+      DoMethod(data->GUI.CH_CONSOLE  ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRXEntryHook);
+      DoMethod(data->GUI.CH_WAITTERM ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRXEntryHook);
    }
    return grp;
 }

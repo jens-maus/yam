@@ -4,6 +4,17 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-21  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_COg.c, YAM.cd, misc: the macro scripts configuration now takes
+    predefined "%p" parameter specification holders which will be evaluated
+    during macro execution. That way macros can now be specified where the
+    paramater will not always be appended to the command string and can now
+    even be inserted in between a whole command sequence. This should make
+    the whole macro scripts management a bit more intuitive and consistent
+    on how other scripts/commands can be specified in YAM. In future a
+    script may now even take multiple parameters if that becomes necessary.
+
 2006-09-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_CO.c, YAM.cd: revised the naming of some config page titles as they
