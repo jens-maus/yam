@@ -6,6 +6,10 @@ $Id$
 
 2006-09-21  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c, YAM_UT.c: the MIME configuration pane also carries now
+    popup listviews whereever appropriate so that a user might use the popup
+    gadget for seeing which options he can add to the mime viewer string
+    gadget.
   * YAM_UT.c: fixed a bug in the Quoting_Chars() analysis function where it
     didn't return the correct number of skipable characters in case spaces
     where found in front of a quoted line with initials of the quoter.

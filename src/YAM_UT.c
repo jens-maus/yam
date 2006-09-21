@@ -1274,8 +1274,6 @@ char *UnquoteString(const char *s, BOOL new)
   {
     char *t = ans;
 
-    ++s;
-
     while(*s)
     {
       if(*s == '\\')

@@ -65,8 +65,17 @@
 
 #include "Debug.h"
 
-enum VarPopMode { VPM_FORWARD=0, VPM_REPLYHELLO, VPM_REPLYINTRO, VPM_REPLYBYE,
-                  VPM_QUOTE, VPM_ARCHIVE, VPM_MAILSTATS, VPM_SCRIPTS };
+enum VarPopMode { VPM_FORWARD=0,
+                  VPM_REPLYHELLO,
+                  VPM_REPLYINTRO,
+                  VPM_REPLYBYE,
+                  VPM_QUOTE,
+                  VPM_ARCHIVE,
+                  VPM_MAILSTATS,
+                  VPM_SCRIPTS,
+                  VPM_MIME_DEFVIEWER,
+                  VPM_MIME_COMMAND
+                };
 
 /* local protos */
 static Object *MakeVarPop(Object **, enum VarPopMode, int, const char *);
@@ -654,6 +663,9 @@ HOOKPROTONH(PO_HandleVarFunc, void, Object *pop, Object *string)
 MakeStaticHook(PO_HandleVarHook, PO_HandleVarFunc);
 
 ///
+/// PO_HandleScriptsOpenHook
+// Hook which is used when the arexx/dos scripts popup window will
+// be opened and populate the listview.
 HOOKPROTONHNP(PO_HandleScriptsOpenFunc, BOOL, Object *list)
 {
   LONG active;
@@ -723,89 +735,101 @@ MakeStaticHook(PO_HandleScriptsOpenHook, PO_HandleScriptsOpenFunc);
 //  Creates a popup list containing variables and descriptions for phrases etc.
 static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, const char *shortcut)
 {
-   Object *lv, *po;
+  Object *lv;
+  Object *po;
 
-   if((po = PopobjectObject,
+  ENTER();
 
-      MUIA_Popstring_String, *string = MakeString(size, shortcut),
-      MUIA_Popstring_Button, PopButton(MUII_PopUp),
-      MUIA_Popobject_ObjStrHook, &PO_HandleVarHook,
-      MUIA_Popobject_WindowHook, &PO_WindowHook,
-      MUIA_Popobject_Object, lv = ListviewObject,
-         MUIA_Listview_ScrollerPos, MUIV_Listview_ScrollerPos_None,
-         MUIA_Listview_List, ListObject,
-            InputListFrame,
-            MUIA_List_AdjustHeight, TRUE,
-         End,
+  if((po = PopobjectObject,
+
+    MUIA_Popstring_String, *string = MakeString(size, shortcut),
+    MUIA_Popstring_Button, PopButton(MUII_PopUp),
+    MUIA_Popobject_ObjStrHook, &PO_HandleVarHook,
+    MUIA_Popobject_WindowHook, &PO_WindowHook,
+    MUIA_Popobject_Object, lv = ListviewObject,
+      MUIA_Listview_ScrollerPos, MUIV_Listview_ScrollerPos_None,
+      MUIA_Listview_List, ListObject,
+        InputListFrame,
+        MUIA_List_AdjustHeight, TRUE,
       End,
+    End,
 
-   End))
-   {
-      switch (mode)
+  End))
+  {
+    switch (mode)
+    {
+      case VPM_FORWARD:
+      case VPM_REPLYHELLO:
+      case VPM_REPLYINTRO:
+      case VPM_REPLYBYE:
       {
-         case VPM_FORWARD:
-         case VPM_REPLYHELLO:
-         case VPM_REPLYINTRO:
-         case VPM_REPLYBYE:
-         {
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_LineBreak), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(mode?MSG_CO_RecptName:MSG_CO_ORecptName), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(mode?MSG_CO_RecptFirstname:MSG_CO_ORecptFirstname), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(mode?MSG_CO_RecptAddress:MSG_CO_ORecptAddress), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderName), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderFirstname), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderAddress), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderSubject), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderRFCDateTime), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderDate), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderTime), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderTimeZone), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderDOW), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderMsgID), MUIV_List_Insert_Bottom);
+        DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_LineBreak), MUIV_List_Insert_Bottom);
+        DoMethod(lv, MUIM_List_InsertSingle, GetStr(mode?MSG_CO_RecptName:MSG_CO_ORecptName), MUIV_List_Insert_Bottom);
+        DoMethod(lv, MUIM_List_InsertSingle, GetStr(mode?MSG_CO_RecptFirstname:MSG_CO_ORecptFirstname), MUIV_List_Insert_Bottom);
+        DoMethod(lv, MUIM_List_InsertSingle, GetStr(mode?MSG_CO_RecptAddress:MSG_CO_ORecptAddress), MUIV_List_Insert_Bottom);
+        DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderName), MUIV_List_Insert_Bottom);
+        DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderFirstname), MUIV_List_Insert_Bottom);
+        DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderAddress), MUIV_List_Insert_Bottom);
+        DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderSubject), MUIV_List_Insert_Bottom);
+        DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderRFCDateTime), MUIV_List_Insert_Bottom);
+        DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderDate), MUIV_List_Insert_Bottom);
+        DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderTime), MUIV_List_Insert_Bottom);
+        DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderTimeZone), MUIV_List_Insert_Bottom);
+        DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderDOW), MUIV_List_Insert_Bottom);
+        DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderMsgID), MUIV_List_Insert_Bottom);
 
-            // depending on the mode we have the "CompleteHeader" feature or not.
-            if(mode == VPM_FORWARD || mode == VPM_REPLYINTRO)
-              DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_CompleteHeader), MUIV_List_Insert_Bottom);
-         }
-         break;
-
-         case VPM_QUOTE:
-         {
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderInitials), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_Sender2Initials), MUIV_List_Insert_Bottom);
-         }
-         break;
-
-         case VPM_ARCHIVE:
-         {
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_ArchiveName), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_ArchiveFiles), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_ArchiveFilelist), MUIV_List_Insert_Bottom);
-         }
-         break;
-
-         case VPM_MAILSTATS:
-         {
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_NEWMSGS), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_UNREADMSGS), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_TOTALMSGS), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_DELMSGS), MUIV_List_Insert_Bottom);
-            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SENTMSGS), MUIV_List_Insert_Bottom);
-         }
-         break;
-
-         case VPM_SCRIPTS:
-         {
-            // we let the openhook handle the list management
-            set(po, MUIA_Popobject_StrObjHook, &PO_HandleScriptsOpenHook);
-         }
-         break;
+        // depending on the mode we have the "CompleteHeader" feature or not.
+        if(mode == VPM_FORWARD || mode == VPM_REPLYINTRO)
+          DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_CompleteHeader), MUIV_List_Insert_Bottom);
       }
+      break;
 
-      DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,po,2,MUIM_Popstring_Close,TRUE);
-      DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime, po, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
-   }
-   return po;
+      case VPM_QUOTE:
+      {
+         DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderInitials), MUIV_List_Insert_Bottom);
+         DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_Sender2Initials), MUIV_List_Insert_Bottom);
+      }
+      break;
+
+      case VPM_ARCHIVE:
+      {
+         DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_ArchiveName), MUIV_List_Insert_Bottom);
+         DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_ArchiveFiles), MUIV_List_Insert_Bottom);
+         DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_ArchiveFilelist), MUIV_List_Insert_Bottom);
+      }
+      break;
+
+      case VPM_MAILSTATS:
+      {
+         DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_NEWMSGS), MUIV_List_Insert_Bottom);
+         DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_UNREADMSGS), MUIV_List_Insert_Bottom);
+         DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_TOTALMSGS), MUIV_List_Insert_Bottom);
+         DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_DELMSGS), MUIV_List_Insert_Bottom);
+         DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SENTMSGS), MUIV_List_Insert_Bottom);
+      }
+      break;
+
+      case VPM_SCRIPTS:
+      {
+         // we let the openhook handle the list management
+         set(po, MUIA_Popobject_StrObjHook, &PO_HandleScriptsOpenHook);
+      }
+      break;
+
+      case VPM_MIME_DEFVIEWER:
+      case VPM_MIME_COMMAND:
+      {
+         DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_MIMECMD_PARAMETER), MUIV_List_Insert_Bottom);
+      }
+      break;
+    }
+
+    DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,po,2,MUIM_Popstring_Close,TRUE);
+    DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime, po, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
+  }
+
+  RETURN(po);
+  return po;
 }
 
 ///
@@ -1094,16 +1118,36 @@ HOOKPROTONHNONP(CO_PutRXEntryFunc, void)
 }
 MakeStaticHook(CO_PutRXEntryHook, CO_PutRXEntryFunc);
 ///
-/// ScriptsStartHook
-//  Will be executed as soon as the user wants to popup a script selection
-//  ASL requester
-HOOKPROTONHNO(ScriptsStartFunc, BOOL, struct TagItem *tags)
+/// FileRequestStartFunc
+//  Will be executed as soon as the user wants to popup a file requester
+//  for selecting files
+HOOKPROTONO(FileRequestStartFunc, BOOL, struct TagItem *tags)
 {
   char *str;
+  Object *strObj;
 
   ENTER();
 
-  str = (char *)xget(G->CO->GUI.ST_SCRIPT, MUIA_String_Contents);
+  switch((enum VarPopMode)hook->h_Data)
+  {
+    case VPM_SCRIPTS:
+      strObj = G->CO->GUI.ST_SCRIPT;
+    break;
+
+    case VPM_MIME_DEFVIEWER:
+      strObj = G->CO->GUI.ST_DEFVIEWER;
+    break;
+
+    case VPM_MIME_COMMAND:
+      strObj = G->CO->GUI.ST_COMMAND;
+    break;
+
+    default:
+      RETURN(FALSE);
+      return FALSE;
+  }
+
+  str = (char *)xget(strObj, MUIA_String_Contents);
   if(str != NULL && str[0] != '\0')
   {
     int i=0;
@@ -1135,13 +1179,37 @@ HOOKPROTONHNO(ScriptsStartFunc, BOOL, struct TagItem *tags)
   RETURN(TRUE);
   return TRUE;
 }
-MakeStaticHook(ScriptsStartHook, ScriptsStartFunc);
+MakeHookWithData(ScriptsReqStartHook,       FileRequestStartFunc, VPM_SCRIPTS);
+MakeHookWithData(MimeDefViewerReqStartHook, FileRequestStartFunc, VPM_MIME_DEFVIEWER);
+MakeHookWithData(MimeCommandReqStartHook,   FileRequestStartFunc, VPM_MIME_COMMAND);
+
 ///
-/// ScriptsStopHook
+/// FileRequestStopFunc
 //  Will be executed as soon as the user selected a file
-HOOKPROTONHNO(ScriptsStopFunc, void, struct FileRequester *fileReq)
+HOOKPROTONO(FileRequestStopFunc, void, struct FileRequester *fileReq)
 {
+  Object *strObj;
+
   ENTER();
+
+  switch((enum VarPopMode)hook->h_Data)
+  {
+    case VPM_SCRIPTS:
+      strObj = G->CO->GUI.ST_SCRIPT;
+    break;
+
+    case VPM_MIME_DEFVIEWER:
+      strObj = G->CO->GUI.ST_DEFVIEWER;
+    break;
+
+    case VPM_MIME_COMMAND:
+      strObj = G->CO->GUI.ST_COMMAND;
+    break;
+
+    default:
+      LEAVE();
+      return;
+  }
 
   // check if a file was selected or not
   if(fileReq->fr_File != NULL &&
@@ -1163,12 +1231,14 @@ HOOKPROTONHNO(ScriptsStopFunc, void, struct FileRequester *fileReq)
       buf[len+2] = '\0';
     }
 
-    set(G->CO->GUI.ST_SCRIPT, MUIA_String_Contents, buf);
+    set(strObj, MUIA_String_Contents, buf);
   }
 
   LEAVE();
 }
-MakeStaticHook(ScriptsStopHook, ScriptsStopFunc);
+MakeHookWithData(ScriptsReqStopHook,       FileRequestStopFunc, VPM_SCRIPTS);
+MakeHookWithData(MimeDefViewerReqStopHook, FileRequestStopFunc, VPM_MIME_DEFVIEWER);
+MakeHookWithData(MimeCommandReqStopHook,   FileRequestStopFunc, VPM_MIME_COMMAND);
 ///
 
 /*** Pages ***/
@@ -2549,9 +2619,14 @@ Object *CO_Page11(struct CO_ClassData *data)
                      Child, Label2(GetStr(MSG_CO_MIME_DESCRIPTION)),
                      Child, data->GUI.ST_DESCRIPTION = MakeString(SIZE_DEFAULT, GetStr(MSG_CO_MIME_DESCRIPTION)),
                      Child, Label2(GetStr(MSG_CO_MimeCmd)),
-                     Child, PopaslObject,
-                        MUIA_Popstring_String, data->GUI.ST_COMMAND = MakeString(SIZE_COMMAND,GetStr(MSG_CO_MimeCmd)),
-                        MUIA_Popstring_Button, PopButton(MUII_PopFile),
+                     Child, HGroup,
+                       MUIA_Group_HorizSpacing, 0,
+                       Child, MakeVarPop(&data->GUI.ST_COMMAND, VPM_MIME_COMMAND, SIZE_COMMAND, GetStr(MSG_CO_MimeCmd)),
+                       Child, PopaslObject,
+                         MUIA_Popasl_StartHook, &MimeCommandReqStartHook,
+                         MUIA_Popasl_StopHook,  &MimeCommandReqStopHook,
+                         MUIA_Popstring_Button, PopButton(MUII_PopFile),
+                       End,
                      End,
                   End,
                   Child, VSpace(0),
@@ -2563,9 +2638,14 @@ Object *CO_Page11(struct CO_ClassData *data)
             End,
             Child, HGroup,
                Child, Label2(GetStr(MSG_CO_DefaultViewer)),
-               Child, PopaslObject,
-                  MUIA_Popstring_String, data->GUI.ST_DEFVIEWER = MakeString(SIZE_COMMAND,GetStr(MSG_CO_DefaultViewer)),
-                  MUIA_Popstring_Button, PopButton(MUII_PopFile),
+               Child, HGroup,
+                 MUIA_Group_HorizSpacing, 0,
+                 Child, MakeVarPop(&data->GUI.ST_DEFVIEWER, VPM_MIME_DEFVIEWER, SIZE_COMMAND, GetStr(MSG_CO_DefaultViewer)),
+                 Child, PopaslObject,
+                   MUIA_Popasl_StartHook, &MimeDefViewerReqStartHook,
+                   MUIA_Popasl_StopHook,  &MimeDefViewerReqStopHook,
+                   MUIA_Popstring_Button, PopButton(MUII_PopFile),
+                 End,
                End,
             End,
          End,
@@ -2763,8 +2843,8 @@ Object *CO_Page13(struct CO_ClassData *data)
                  Child, MakeVarPop(&data->GUI.ST_SCRIPT, VPM_SCRIPTS, SIZE_PATHFILE, GetStr(MSG_CO_Script)),
                  Child, PopaslObject,
                     MUIA_Popasl_Type,       ASL_FileRequest,
-                    MUIA_Popasl_StartHook,  &ScriptsStartHook,
-                    MUIA_Popasl_StopHook,   &ScriptsStopHook,
+                    MUIA_Popasl_StartHook,  &ScriptsReqStartHook,
+                    MUIA_Popasl_StopHook,   &ScriptsReqStopHook,
                     MUIA_Popstring_Button,  PopButton(MUII_PopFile),
                  End,
                End,
