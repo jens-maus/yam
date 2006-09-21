@@ -16,7 +16,7 @@
 
  BetterString class Support Site:  http://www.sf.net/projects/bstring-mcc/
 
- $Id$
+ $Id: BetterString_mcc.h 2024 2006-03-05 10:27:25Z damato $
 
 ***************************************************************************/
 

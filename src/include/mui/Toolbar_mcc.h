@@ -16,7 +16,7 @@
 
  Toolbar class Support Site:  http://www.sf.net/projects/toolbar-mcc
 
- $Id$
+ $Id: Toolbar_mcc.h 2024 2006-03-05 10:27:25Z damato $
 
 ***************************************************************************/
 

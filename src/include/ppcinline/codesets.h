@@ -16,7 +16,7 @@
 
  codesets.library project: http://sourceforge.net/projects/codesetslib/
 
- $Id$
+ $Id: codesets.h 2169 2006-05-29 21:57:54Z damato $
 
 ***************************************************************************/
 

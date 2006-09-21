@@ -2,7 +2,7 @@
 #define PROTO_GENESIS_H
 
 /*
-**	$Id$
+**	$Id: genesis.h 2024 2006-03-05 10:27:25Z damato $
 **	Includes Release 50.1
 **
 **	Prototype/inline/pragma header file combo

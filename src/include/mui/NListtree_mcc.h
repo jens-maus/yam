@@ -16,7 +16,7 @@
 
  NList classes Support Site:  http://www.sf.net/projects/nlist-classes
 
- $Id$
+ $Id: NListtree_mcc.h 2024 2006-03-05 10:27:25Z damato $
 
 ***************************************************************************/
 
