@@ -1061,12 +1061,16 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
 
       case 3:
       {
-         if(!ReqFile(ASL_FOLDER, G->MA->GUI.WI, GetStr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->MA_MailDir, ""))
-           return;
+        struct FileReqCache *frc;
 
-         strlcpy(folder.Path, G->ASLReq[ASL_FOLDER]->fr_Drawer, sizeof(folder.Path));
+        if((frc = ReqFile(ASL_FOLDER, G->MA->GUI.WI, GetStr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->MA_MailDir, "")))
+        {
+          strlcpy(folder.Path, frc->drawer, sizeof(folder.Path));
 
-         FO_LoadConfig(&folder);
+          FO_LoadConfig(&folder);
+        }
+        else
+          return;
       }
       break;
 

@@ -1055,11 +1055,34 @@ static void Terminate(void)
   if(G->MA)
     DisposeModule(&G->MA);
 
-  D(DBF_STARTUP, "freeing ASL structures...");
-  for(i = 0; i < MAXASL; i++)
+  D(DBF_STARTUP, "freeing FileReqCache structures...");
+  for(i=0; i < MAXASL; i++)
   {
-    if(G->ASLReq[i])
-      MUI_FreeAslRequest(G->ASLReq[i]);
+    struct FileReqCache *frc;
+
+    if((frc = G->FileReqCache[i]))
+    {
+      if(frc->file)
+        free(frc->file);
+
+      if(frc->drawer)
+        free(frc->drawer);
+
+      if(frc->pattern)
+        free(frc->pattern);
+
+      if(frc->numArgs > 0)
+      {
+        int j;
+
+        for(j=0; j < frc->numArgs; j++)
+          free(frc->argList[j]);
+
+        free(frc->argList);
+      }
+
+      free(frc);
+    }
   }
 
   D(DBF_STARTUP, "freeing write window notifies...");
@@ -1813,22 +1836,25 @@ static void Initialise(BOOL hidden)
 
    // initialize our timers
    if(!TC_Init())
-    Abort(MSG_ErrorTimer);
+     Abort(MSG_ErrorTimer);
 
-   // initialize our ASL stuff
+   // initialize our ASL FileRequester cache stuff
    for(i=0; i < MAXASL; i++)
    {
-     if(!(G->ASLReq[i] = MUI_AllocAslRequest(ASL_FileRequest, NULL)))
-       Abort(MSG_ErrorAslStruct);
+     if((G->FileReqCache[i] = calloc(sizeof(struct FileReqCache), 1)) == NULL)
+       Abort(NULL);
    }
 
    // create the main message port
-   G->AppPort = CreateMsgPort();
+   if((G->AppPort = CreateMsgPort()) == NULL)
+     Abort(NULL);
 
    // initialize the file nofifications
    for(i=0; i <= MAXWR; i++)
    {
-      G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreateMsgPort();
+      if((G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreateMsgPort()) == NULL)
+        Abort(NULL);
+
       G->WR_NRequest[i].nr_Name = (STRPTR)G->WR_Filename[i];
       G->WR_NRequest[i].nr_Flags = NRF_SEND_MESSAGE;
    }

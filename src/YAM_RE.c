@@ -418,8 +418,12 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
   Object *win = rmData->readWindow ? rmData->readWindow : G->MA->GUI.WI;
   struct Mail *mail = rmData->mail;
 
+  ENTER();
+
   if(*dest == '\0')
   {
+    struct FileReqCache *frc;
+
     if(*name != '\0')
     {
       strlcpy(buffer2, name, sizeof(buffer2));
@@ -443,10 +447,13 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
 
     if(force)
       strmfp(buffer, C->DetachDir, buffer2);
-    else if(ReqFile(ASL_DETACH, win, GetStr(MSG_RE_SaveMessage), REQF_SAVEMODE, C->DetachDir, buffer2))
-      strmfp(buffer, G->ASLReq[ASL_DETACH]->fr_Drawer, G->ASLReq[ASL_DETACH]->fr_File);
+    else if((frc = ReqFile(ASL_DETACH, win, GetStr(MSG_RE_SaveMessage), REQF_SAVEMODE, C->DetachDir, buffer2)))
+      strmfp(buffer, frc->drawer, frc->file);
     else
+    {
+      RETURN(FALSE);
       return FALSE;
+    }
 
     dest = buffer;
   }
@@ -454,12 +461,17 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
   if(FileExists(dest) && !overwrite)
   {
     if(!MUI_Request(G->App, win, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_OkayCancelReq), GetStr(MSG_RE_Overwrite), FilePart(dest)))
+    {
+      RETURN(FALSE);
       return FALSE;
+    }
   }
 
   if(!CopyFile(dest, 0, source, 0))
   {
     ER_NewError(GetStr(MSG_ER_CantCreateFile), dest);
+
+    RETURN(FALSE);
     return FALSE;
   }
   SetComment(dest, BuildAddrName2(&mail->From));
@@ -471,6 +483,7 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
 
   AppendLogVerbose(80, GetStr(MSG_LOG_SavingAtt), dest, mail->MailFile, FolderName(mail->Folder));
 
+  RETURN(TRUE);
   return TRUE;
 }
 ///

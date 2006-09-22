@@ -2354,45 +2354,50 @@ MakeHook(MA_RemoveAttachHook, MA_RemoveAttachFunc);
 //  Saves all attachments of selected messages to disk
 HOOKPROTONHNONP(MA_SaveAttachFunc, void)
 {
-   struct Mail **mlist;
+  struct Mail **mlist;
 
-   if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
-   {
-      if(ReqFile(ASL_DETACH, G->MA->GUI.WI, GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, ""))
+  ENTER();
+
+  if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
+  {
+    struct FileReqCache *frc;
+
+    if((frc = ReqFile(ASL_DETACH, G->MA->GUI.WI, GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, "")))
+    {
+      int i;
+
+      BusyText(GetStr(MSG_BusyDecSaving), "");
+
+      for(i=0; i < (int)*mlist; i++)
       {
-         int i;
+        struct ReadMailData *rmData;
 
-         BusyText(GetStr(MSG_BusyDecSaving), "");
+        if((rmData = AllocPrivateRMData(mlist[i+2], PM_ALL)))
+        {
+          char *cmsg;
 
-         for (i = 0; i < (int)*mlist; i++)
-         {
-            struct ReadMailData *rmData;
+          if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)))
+          {
+            struct Part *part;
 
-            if((rmData = AllocPrivateRMData(mlist[i+2], PM_ALL)))
-            {
-              char *cmsg;
+            // free the message again as we don't need its content here.
+            free(cmsg);
 
-              if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)))
-              {
-                struct Part *part;
+            if((part = rmData->firstPart->Next) && part->Next)
+              RE_SaveAll(rmData, frc->drawer);
+          }
 
-                // free the message again as we don't need its content here.
-                free(cmsg);
-
-                if((part = rmData->firstPart->Next) && part->Next)
-                {
-                  RE_SaveAll(rmData, G->ASLReq[ASL_DETACH]->fr_Drawer);
-                }
-              }
-
-              FreePrivateRMData(rmData);
-            }
-         }
-
-         BusyEnd();
+          FreePrivateRMData(rmData);
+        }
       }
-      free(mlist);
-   }
+
+      BusyEnd();
+    }
+
+    free(mlist);
+  }
+
+  LEAVE();
 }
 MakeHook(MA_SaveAttachHook, MA_SaveAttachFunc);
 
@@ -3035,9 +3040,11 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
 
   if(mlist)
   {
-    if(!filename && ReqFile(ASL_EXPORT, G->MA->GUI.WI, GetStr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, ""))
+    struct FileReqCache *frc;
+
+    if(!filename && (frc = ReqFile(ASL_EXPORT, G->MA->GUI.WI, GetStr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, "")))
     {
-      strmfp(filename = outname, G->ASLReq[ASL_EXPORT]->fr_Drawer, G->ASLReq[ASL_EXPORT]->fr_File);
+      strmfp(filename = outname, frc->drawer, frc->file);
 
       if(FileExists(filename))
       {
@@ -3215,21 +3222,30 @@ BOOL MA_ImportMessages(char *fname)
 /// MA_ImportMessagesFunc
 HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
 {
+  struct FileReqCache *frc;
   struct Folder *actfo = FO_GetCurrentFolder();
 
+  ENTER();
+
   if(!actfo || actfo->Type == FT_GROUP)
+  {
+    LEAVE();
     return;
+  }
 
   // put up an Requester to query the user for the input file.
-  if(ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_MessageImport), REQF_NONE, C->DetachDir, ""))
+  if((frc = ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_MessageImport), REQF_NONE, C->DetachDir, "")))
   {
     char inname[SIZE_PATHFILE];
-    strmfp(inname, G->ASLReq[ASL_IMPORT]->fr_Drawer, G->ASLReq[ASL_IMPORT]->fr_File);
+
+    strmfp(inname, frc->drawer, frc->file);
 
     // now start the actual importing of the messages
     if(!MA_ImportMessages(inname))
       ER_NewError(GetStr(MSG_ER_MESSAGEIMPORT), inname);
   }
+
+  LEAVE();
 }
 MakeStaticHook(MA_ImportMessagesHook, MA_ImportMessagesFunc);
 
@@ -3542,13 +3558,14 @@ HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
     MA_StartMacro(MACRO_MEN0+script, NULL);
   else if(G->RexxHost)
   {
+    struct FileReqCache *frc;
     char scname[SIZE_COMMAND];
 
     strmfp(scname, G->ProgDir, "rexx");
 
-    if(ReqFile(ASL_REXX, G->MA->GUI.WI, GetStr(MSG_MA_ExecuteScript), REQF_NONE, scname, ""))
+    if((frc = ReqFile(ASL_REXX, G->MA->GUI.WI, GetStr(MSG_MA_ExecuteScript), REQF_NONE, scname, "")))
     {
-      strmfp(scname, G->ASLReq[ASL_REXX]->fr_Drawer, G->ASLReq[ASL_REXX]->fr_File);
+      strmfp(scname, frc->drawer, frc->file);
 
       // only RexxSysBase v45+ seems to support properly quoted
       // strings via the new RXFF_SCRIPT flag

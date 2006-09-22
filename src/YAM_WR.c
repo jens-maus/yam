@@ -1808,19 +1808,27 @@ MakeStaticHook(WR_CancelHook, WR_CancelFunc);
 /*** WR_SaveAsFunc - Saves contents of internal editor to a file ***/
 HOOKPROTONHNO(WR_SaveAsFunc, void, int *arg)
 {
-   int winnum = *arg;
+  struct FileReqCache *frc;
+  int winnum = *arg;
 
-   if(xget(G->WR[winnum]->GUI.WI, MUIA_Window_Open))
+  ENTER();
+
+  if(xget(G->WR[winnum]->GUI.WI, MUIA_Window_Open))
     set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
 
-   if (ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_SaveTextAs), REQF_SAVEMODE, C->AttachDir, ""))
-   {
-      char filename[SIZE_PATHFILE];
-      strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
-      EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum]);
-      if (!CopyFile(filename, NULL, G->WR_Filename[winnum], NULL))
-         ER_NewError(GetStr(MSG_ER_CantCreateFile), filename);
-   }
+  if((frc = ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_SaveTextAs), REQF_SAVEMODE, C->AttachDir, "")))
+  {
+    char filename[SIZE_PATHFILE];
+
+    strmfp(filename, frc->drawer, frc->file);
+
+    EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum]);
+
+    if(!CopyFile(filename, NULL, G->WR_Filename[winnum], NULL))
+      ER_NewError(GetStr(MSG_ER_CantCreateFile), filename);
+  }
+
+  LEAVE();
 }
 MakeStaticHook(WR_SaveAsHook, WR_SaveAsFunc);
 
@@ -1850,28 +1858,37 @@ MakeHook(WR_EditHook, WR_Edit);
 /*** WR_AddFileFunc - Adds one or more files to the attachment list ***/
 HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
 {
-   int i, winnum = *arg;
-   char filename[SIZE_PATHFILE];
-   struct FileRequester *ar = G->ASLReq[ASL_ATTACH];
+  int winnum = *arg;
+  struct FileReqCache *frc;
 
-   if(ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, ""))
-   {
-      if (!ar->fr_NumArgs)
+  ENTER();
+
+  if((frc = ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, "")))
+  {
+    char filename[SIZE_PATHFILE];
+
+    if(frc->numArgs == 0)
+    {
+      D(DBF_GUI, "choosen file: [%s] from drawer: [%s]", frc->file, frc->drawer);
+
+      strmfp(filename, frc->drawer, frc->file);
+      WR_AddFileToList(winnum, filename, NULL, FALSE);
+    }
+    else
+    {
+      int i;
+
+      for(i=0; i < frc->numArgs; i++)
       {
-         D(DBF_GUI, "choosen file: [%s] from drawer: [%s]", ar->fr_File, ar->fr_Drawer);
+        D(DBF_GUI, "choosen file: [%s] from drawer: [%s]", frc->argList[i], frc->drawer);
 
-         strmfp(filename, ar->fr_Drawer, ar->fr_File);
-         WR_AddFileToList(winnum, filename, NULL, FALSE);
+        strmfp(filename, frc->drawer, frc->argList[i]);
+        WR_AddFileToList(winnum, filename, NULL, FALSE);
       }
-      else for (i = 0; i < ar->fr_NumArgs; i++)
-      {
-         D(DBF_GUI, "choosen file: [%s] from drawer: [%s]", ar->fr_ArgList[i].wa_Name, ar->fr_Drawer);
+    }
+  }
 
-         strmfp(filename, ar->fr_Drawer, (char *)ar->fr_ArgList[i].wa_Name);
-         WR_AddFileToList(winnum, filename, NULL, FALSE);
-      }
-
-   }
+  LEAVE();
 }
 MakeStaticHook(WR_AddFileHook, WR_AddFileFunc);
 
@@ -1882,19 +1899,20 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
 {
   int winnum = *arg;
   BOOL result = FALSE;
-  struct FileRequester *ar = G->ASLReq[ASL_ATTACH];
+  struct FileReqCache *frc;
 
   ENTER();
 
   // request files from the user via asl.library
-  if(ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, "") && ar->fr_NumArgs > 0)
+  if((frc = ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, "")) &&
+      frc->numArgs > 0)
   {
     char *p;
     char arcname[SIZE_FILE];
 
     // get the basename of the first selected file and prepare it to the user
     // as a suggestion for an archive name
-    strlcpy(arcname, FilePart(ar->fr_ArgList[0].wa_Name), sizeof(arcname));
+    strlcpy(arcname, FilePart(frc->argList[0]), sizeof(arcname));
     if((p = strrchr(arcname, '.')))
       *p = '\0';
 
@@ -1916,10 +1934,8 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
       {
         int i;
 
-        for(i=0; i < ar->fr_NumArgs; i++)
-        {
-          fprintf(tf->FP, strchr((char *)ar->fr_ArgList[i].wa_Name, ' ') ? "\"%s\"\n" : "%s\n", ar->fr_ArgList[i].wa_Name);
-        }
+        for(i=0; i < frc->numArgs; i++)
+          fprintf(tf->FP, strchr(frc->argList[i], ' ') ? "\"%s\"\n" : "%s\n", frc->argList[i]);
 
         // just close here as we delete it later on
         fclose(tf->FP);
@@ -1947,9 +1963,9 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
               {
                 int i;
 
-                for(i=0; i < ar->fr_NumArgs; i++)
+                for(i=0; i < frc->numArgs; i++)
                 {
-                  snprintf(filename, sizeof(filename), "\"%s\" ", ar->fr_ArgList[i].wa_Name);
+                  snprintf(filename, sizeof(filename), "\"%s\" ", frc->argList[i]);
                   command = StrBufCat(command, filename);
                 }
                 break;
@@ -1968,7 +1984,7 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
         }
 
         // now we make the request drawer the current one temporarly.
-        if((filedir = Lock(ar->fr_Drawer, ACCESS_READ)))
+        if((filedir = Lock(frc->drawer, ACCESS_READ)))
         {
           BPTR olddir = CurrentDir(filedir);
 
@@ -2136,85 +2152,112 @@ static char *WR_TransformText(char *source, enum TransformMode mode, const char 
 /*** WR_EditorCmd - Inserts file or clipboard into editor ***/
 HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
 {
-   enum TransformMode cmd = arg[0];
-   int winnum = arg[1];
-   char *text = NULL;
-   char *quotetext;
-   char filename[SIZE_PATHFILE];
-   struct TempFile *tf;
-   struct WR_ClassData *wr = G->WR[winnum];
+  enum TransformMode cmd = arg[0];
+  int winnum = arg[1];
+  char *text = NULL;
+  char *quotetext;
+  char filename[SIZE_PATHFILE];
+  struct TempFile *tf;
+  struct WR_ClassData *wr = G->WR[winnum];
 
-   quotetext = (cmd == ED_INSALTQUOT || cmd == ED_PASALTQUOT) ?
-                  wr->AltQuoteText : wr->QuoteText;
-   switch(cmd)
-   {
-      case ED_INSERT:
-      case ED_INSQUOT:
-      case ED_INSALTQUOT:
-      case ED_INSROT13:
-      case ED_OPEN:
-         if (!ReqFile(ASL_ATTACH, wr->GUI.WI, GetStr(MSG_WR_InsertFile), REQF_NONE, C->AttachDir, "")) return;
-         strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
-         text = WR_TransformText(filename, cmd, quotetext);
-         break;
+  ENTER();
 
-      // the user wants to insert a file as
-      // a uuencoded text passage.
-      case ED_INSUUCODE:
+  quotetext = (cmd == ED_INSALTQUOT || cmd == ED_PASALTQUOT) ?
+                wr->AltQuoteText : wr->QuoteText;
+  switch(cmd)
+  {
+    case ED_INSERT:
+    case ED_INSQUOT:
+    case ED_INSALTQUOT:
+    case ED_INSROT13:
+    case ED_OPEN:
+    {
+      struct FileReqCache *frc;
+
+      if((frc = ReqFile(ASL_ATTACH, wr->GUI.WI, GetStr(MSG_WR_InsertFile), REQF_NONE, C->AttachDir, "")))
       {
-        // first we request the filename of the file we want to its
-        // uuencoded interpretation to be inserted into the editor
-        if(ReqFile(ASL_ATTACH, wr->GUI.WI, GetStr(MSG_WR_InsertFile), REQF_NONE, C->AttachDir, ""))
+        strmfp(filename, frc->drawer, frc->file);
+        text = WR_TransformText(filename, cmd, quotetext);
+      }
+      else
+      {
+        LEAVE();
+        return;
+      }
+    }
+    break;
+
+    // the user wants to insert a file as
+    // a uuencoded text passage.
+    case ED_INSUUCODE:
+    {
+      struct FileReqCache *frc;
+
+      // first we request the filename of the file we want to its
+      // uuencoded interpretation to be inserted into the editor
+      if((frc = ReqFile(ASL_ATTACH, wr->GUI.WI, GetStr(MSG_WR_InsertFile), REQF_NONE, C->AttachDir, "")))
+      {
+        strmfp(filename, frc->drawer, frc->file);
+
+        // open a temporary file
+        if((tf = OpenTempFile("w")))
         {
-          strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
-
-          // open a temporary file
-          if((tf = OpenTempFile("w")))
+          // open both files and start the uuencoding
+          FILE *in = fopen(filename, "r");
+          if(in)
           {
-            // open both files and start the uuencoding
-            FILE *in = fopen(filename, "r");
-            if(in)
+            // lets uuencode the file now.
+            if(uuencode_file(in, tf->FP) > 0)
             {
-              // lets uuencode the file now.
-              if(uuencode_file(in, tf->FP) > 0)
-              {
-                // we successfully encoded the file, so lets
-                // close our tempfile file pointer and call the tranformtext function
-                fclose(tf->FP);
-                tf->FP = NULL;
+              // we successfully encoded the file, so lets
+              // close our tempfile file pointer and call the tranformtext function
+              fclose(tf->FP);
+              tf->FP = NULL;
 
-                // now transform the text
-                text = WR_TransformText(tf->Filename, cmd, filename);
-              }
-
-              fclose(in);
+              // now transform the text
+              text = WR_TransformText(tf->Filename, cmd, filename);
             }
 
-            CloseTempFile(tf);
+            fclose(in);
           }
+
+          CloseTempFile(tf);
         }
       }
-      break;
+    }
+    break;
 
-      default:
-         if (!(tf = OpenTempFile("w"))) return;
-         DumpClipboard(tf->FP);
-         fclose(tf->FP); tf->FP = NULL;
-         text = WR_TransformText(tf->Filename, cmd, quotetext);
-         CloseTempFile(tf);
-         break;
-   }
+    default:
+    {
+      if((tf = OpenTempFile("w")))
+      {
+        DumpClipboard(tf->FP);
+        fclose(tf->FP);
+        tf->FP = NULL;
+        text = WR_TransformText(tf->Filename, cmd, quotetext);
+        CloseTempFile(tf);
+      }
+      else
+      {
+        LEAVE();
+        return;
+      }
+    }
+    break;
+  }
 
-   if(text)
-   {
-      if(cmd == ED_OPEN)
-        DoMethod(wr->GUI.TE_EDIT, MUIM_TextEditor_ClearText);
+  if(text)
+  {
+    if(cmd == ED_OPEN)
+      DoMethod(wr->GUI.TE_EDIT, MUIM_TextEditor_ClearText);
 
-      DoMethod(wr->GUI.TE_EDIT, MUIM_TextEditor_InsertText, text);
+    DoMethod(wr->GUI.TE_EDIT, MUIM_TextEditor_InsertText, text);
 
-      // free our allocated text
-      free(text);
-   }
+    // free our allocated text
+    free(text);
+  }
+
+  LEAVE();
 }
 MakeStaticHook(WR_EditorCmdHook, WR_EditorCmd);
 

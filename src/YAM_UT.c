@@ -1952,45 +1952,132 @@ void SimpleWordWrap(char *filename, int wrapsize)
 ///
 /// ReqFile
 //  Puts up a file requester
-int ReqFile(enum ReqFileType num, Object *win, const char *title, int mode, const char *drawer, const char *file)
+struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
+                             const char *title, int mode,
+                             const char *drawer, const char *file)
 {
   // the following arrays depend on the ReqFileType enumeration
-  static const char *pattern[MAXASL] =
+  static const char *acceptPattern[MAXASL] =
   {
     "#?.addressbook#?",               // ASL_ABOOK
     "#?.config#?",                    // ASL_CONFIG
     NULL,                             // ASL_DETACH
     "~(#?.info)",                     // ASL_ATTACH
-    "#?.(yam|rexx)",                  // ASL_REXX
+    "#?.(yam|rexx|rx)",               // ASL_REXX
     "#?.(gif|jpg|jpeg|png|iff|ilbm)", // ASL_PHOTO
     "#?.((mbx|eml|dbx|msg)|#?,#?)",   // ASL_IMPORT
     "#?.mbx",                         // ASL_EXPORT
     NULL                              // ASL_FOLDER
   };
 
-   static BOOL init[MAXASL] =
-   {
-     FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE
-   };
-   int skip = *file ? 1 : 2;
-   struct Window *truewin = (struct Window *)xget(win, MUIA_Window_Window);
 
-   if (!init[num]) { init[num] = TRUE; skip = 0; }
+  struct FileRequester *fileReq;
+  struct FileReqCache *result = NULL;
 
-   return MUI_AslRequestTags( G->ASLReq[num],
-                              ASLFR_Window,        truewin,
-                              ASLFR_TitleText,     title,
-                              ASLFR_PositiveText,  hasSaveModeFlag(mode) ? GetStr(MSG_UT_Save) : GetStr(MSG_UT_Load),
-                              ASLFR_InitialFile,   file,
-                              ASLFR_DoSaveMode,    hasSaveModeFlag(mode),
-                              ASLFR_DoMultiSelect, hasMultiSelectFlag(mode),
-                              ASLFR_DrawersOnly,   hasDrawersOnlyFlag(mode),
-                              ASLFR_RejectIcons,   FALSE,
-                              ASLFR_DoPatterns,    pattern[num] != NULL,
-                              skip ? TAG_DONE : ASLFR_InitialDrawer, drawer,
-                              ASLFR_InitialPattern, pattern[num] ? pattern[num] : "#?",
-                              TAG_DONE
-                            );
+
+  ENTER();
+
+  // allocate the required data for our file requester
+  if((fileReq = MUI_AllocAslRequest(ASL_FileRequest, NULL)))
+  {
+    const char *pattern = acceptPattern[num];
+    struct FileReqCache *frc = G->FileReqCache[num];
+    BOOL reqResult;
+    BOOL usefrc = frc->used;
+
+    // do the actual file request now
+    reqResult = MUI_AslRequestTags(fileReq,
+                                   ASLFR_Window,         xget(win, MUIA_Window_Window),
+                                   ASLFR_TitleText,      title,
+                                   ASLFR_PositiveText,   hasSaveModeFlag(mode) ? GetStr(MSG_UT_Save) : GetStr(MSG_UT_Load),
+                                   ASLFR_DoSaveMode,     hasSaveModeFlag(mode),
+                                   ASLFR_DoMultiSelect,  hasMultiSelectFlag(mode),
+                                   ASLFR_DrawersOnly,    hasDrawersOnlyFlag(mode),
+                                   ASLFR_RejectIcons,    FALSE,
+                                   ASLFR_DoPatterns,     pattern != NULL,
+                                   ASLFR_InitialFile,    file,
+                                   ASLFR_InitialDrawer,  usefrc ? frc->drawer : drawer,
+                                   ASLFR_InitialPattern, pattern ? pattern : "#?",
+                                   usefrc ? ASLFR_InitialLeftEdge : TAG_IGNORE, frc->left_edge,
+                                   usefrc ? ASLFR_InitialTopEdge  : TAG_IGNORE, frc->top_edge,
+                                   usefrc ? ASLFR_InitialWidth    : TAG_IGNORE, frc->width,
+                                   usefrc ? ASLFR_InitialHeight   : TAG_IGNORE, frc->height,
+                                   TAG_DONE);
+
+    // copy the data out of our fileRequester into our
+    // own cached structure we return to the user
+    if(reqResult)
+    {
+      // free previous resources
+      if(frc->file)
+        free(frc->file);
+
+      if(frc->drawer)
+        free(frc->drawer);
+
+      if(frc->pattern)
+        free(frc->pattern);
+
+      if(frc->numArgs > 0)
+      {
+        int j;
+
+        for(j=0; j < frc->numArgs; j++)
+          free(frc->argList[j]);
+
+        free(frc->argList);
+      }
+
+      // copy all necessary data from the ASL filerequester structure
+      // to our cache
+      frc->file     = strdup(fileReq->fr_File);
+      frc->drawer   = strdup(fileReq->fr_Drawer);
+      frc->pattern  = strdup(fileReq->fr_Pattern);
+      frc->numArgs  = fileReq->fr_NumArgs;
+      frc->left_edge= fileReq->fr_LeftEdge;
+      frc->top_edge = fileReq->fr_TopEdge;
+      frc->width    = fileReq->fr_Width;
+      frc->height   = fileReq->fr_Height;
+      frc->used     = TRUE;
+
+      // now we copy the optional arglist
+      if(fileReq->fr_NumArgs > 0)
+      {
+        if((frc->argList = calloc(sizeof(char*), fileReq->fr_NumArgs)))
+        {
+          int i;
+
+          for(i=0; i < fileReq->fr_NumArgs; i++)
+            frc->argList[i] = strdup(fileReq->fr_ArgList[i].wa_Name);
+        }
+      }
+      else
+        frc->argList = NULL;
+
+      // everything worked out fine, so lets return
+      // our globally cached filereq structure.
+      result = frc;
+    }
+    else if(IoErr() != 0)
+    {
+      // and IoErr() != 0 signals that something
+      // serious happend and that we have to inform the
+      // user
+      ER_NewError(GetStr(MSG_ER_CANTOPENASL));
+
+      // beep the display as well
+      DisplayBeep(NULL);
+    }
+
+
+    // free the ASL request structure again.
+    MUI_FreeAslRequest(fileReq);
+  }
+  else
+    ER_NewError(GetStr(MSG_ErrorAslStruct));
+
+  RETURN(result);
+  return result;
 }
 ///
 /// OpenTempFile
@@ -4389,7 +4476,7 @@ BOOL SafeOpenWindow(Object *obj)
   }
 
   // otherwise we perform a DisplaBeep()
-  DisplayBeep(0);
+  DisplayBeep(NULL);
 
   RETURN(FALSE);
   return FALSE;

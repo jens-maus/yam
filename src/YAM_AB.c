@@ -620,11 +620,17 @@ MakeStaticHook(AB_NewABookHook, AB_NewABookFunc);
 /*** AB_OpenABookFunc - Loads selected address book ***/
 HOOKPROTONHNONP(AB_OpenABookFunc, void)
 {
-   if (ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_Open), REQF_NONE, G->MA_MailDir, ""))
-   {
-      strmfp(G->AB_Filename, G->ASLReq[ASL_ABOOK]->fr_Drawer, G->ASLReq[ASL_ABOOK]->fr_File);
-      AB_LoadTree(G->AB_Filename, FALSE, FALSE);
-   }
+  struct FileReqCache *frc;
+
+  ENTER();
+
+  if((frc = ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_Open), REQF_NONE, G->MA_MailDir, "")))
+  {
+    strmfp(G->AB_Filename, frc->drawer, frc->file);
+    AB_LoadTree(G->AB_Filename, FALSE, FALSE);
+  }
+
+  LEAVE();
 }
 MakeStaticHook(AB_OpenABookHook, AB_OpenABookFunc);
 
@@ -633,12 +639,19 @@ MakeStaticHook(AB_OpenABookHook, AB_OpenABookFunc);
 /*** AB_AppendABookFunc - Appends selected address book ***/
 HOOKPROTONHNONP(AB_AppendABookFunc, void)
 {
-   if (ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_Append), REQF_NONE, G->MA_MailDir, ""))
-   {
-      char aname[SIZE_PATHFILE];
-      strmfp(aname, G->ASLReq[ASL_ABOOK]->fr_Drawer, G->ASLReq[ASL_ABOOK]->fr_File);
-      AB_LoadTree(aname, TRUE, FALSE);
-   }
+  struct FileReqCache *frc;
+
+  ENTER();
+
+  if((frc = ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_Append), REQF_NONE, G->MA_MailDir, "")))
+  {
+    char aname[SIZE_PATHFILE];
+
+    strmfp(aname, frc->drawer, frc->file);
+    AB_LoadTree(aname, TRUE, FALSE);
+  }
+
+  LEAVE();
 }
 MakeStaticHook(AB_AppendABookHook, AB_AppendABookFunc);
 
@@ -659,11 +672,17 @@ MakeHook(AB_SaveABookHook, AB_SaveABookFunc);
 /*** AB_SaveABookAsFunc - Saves address book under a different name ***/
 HOOKPROTONHNONP(AB_SaveABookAsFunc, void)
 {
-   if (ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_SaveAs), REQF_SAVEMODE, G->MA_MailDir, ""))
-   {
-      strmfp(G->AB_Filename, G->ASLReq[ASL_ABOOK]->fr_Drawer, G->ASLReq[ASL_ABOOK]->fr_File);
-      AB_SaveABookFunc();
-   }
+  struct FileReqCache *frc;
+
+  ENTER();
+
+  if((frc = ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_SaveAs), REQF_SAVEMODE, G->MA_MailDir, "")))
+  {
+    strmfp(G->AB_Filename, frc->drawer, frc->file);
+    AB_SaveABookFunc();
+  }
+
+  LEAVE();
 }
 MakeStaticHook(AB_SaveABookAsHook, AB_SaveABookAsFunc);
 

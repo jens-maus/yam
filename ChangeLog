@@ -6,6 +6,14 @@ $Id$
 
 2006-09-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c, misc: reworked the ReqFile() functionality for popping up
+    ASL FileRequesters. Previously all possible requesters were allocated
+    right on the start of YAM. Now these requesters are dynamically allocated
+    when they are needed. However, necessary information between usage of the
+    same requester type (position, drawer, etc.) is now cached in a separate
+    "struct FileReqCache" structure. Aside from a much nicer implementation
+    that should also finally fix the long-standing "directory locking"
+    bug #1114999 reported often.
   * extrasrc, YAM_UT.c: moved DoSuperNew() wrapper functions to our new
     place for Amiga-like wrapper functions.
   * YAM_UT.c: fixed bug #1424457 where #?.info files where always rejected,

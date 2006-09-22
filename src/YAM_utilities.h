@@ -87,6 +87,20 @@ struct NewToolbarEntry
   const void *help;
 };
 
+struct FileReqCache
+{
+  char *file;     // pointer to filename string
+  char *drawer;   // pointer to drawer string
+  char *pattern;  // pointer to pattern string
+  int  numArgs;   // if more than one file was selected > 0
+  char **argList; // pointer list to arguments.
+  long left_edge; // last left edge position of requester
+  long top_edge;  // last top edge position of requester
+  long width;     // last width of requester
+  long height;    // last height of requester
+  BOOL used;      // cache is in use
+};
+
 // since the Amiga's timeval structure was renamed to
 // "struct TimeVal" in OS4 (to prevent clashes with the POSIX one)
 // we require to define that slightly compatible structure on our
@@ -351,7 +365,7 @@ void     Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix);
 void     RemoveMailFromList(struct Mail *mail);
 BOOL     RenameFile(const char *oldname, const char *newname);
 BOOL     RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd);
-int      ReqFile(enum ReqFileType num, Object *win, const char *title, int mode, const char *drawer, const char *file);
+struct FileReqCache *ReqFile(enum ReqFileType num, Object *win, const char *title, int mode, const char *drawer, const char *file);
 BOOL     SafeOpenWindow(Object *obj);
 void     SaveLayout(BOOL permanent);
 void     SetupToolbar(struct MUIP_Toolbar_Description *tb, const char *label, const char *help, ULONG flags);

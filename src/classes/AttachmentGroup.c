@@ -58,7 +58,7 @@ struct Data
 */
 
 #define BORDER    2 // border around our object
-#define SPACING    2 // pixels taken as space between our images/text
+#define SPACING   2 // pixels taken as space between our images/text
 #define TEXTROWS  3 // how many text rows does a attachmentimage normally have?
 
 /// LayoutHook
@@ -684,18 +684,23 @@ DECLARE(SaveAll)
   GETDATA;
   struct Part *part = data->firstPart->Next;
 
+  ENTER();
+
   SHOWPOINTER(DBF_MAIL, part);
 
   if(part)
   {
-    if(ReqFile(ASL_DETACH, _win(obj), GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, ""))
+    struct FileReqCache *frc;
+
+    if((frc = ReqFile(ASL_DETACH, _win(obj), GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, "")))
     {
       BusyText(GetStr(MSG_BusyDecSaving), "");
-      RE_SaveAll(part->rmData, G->ASLReq[ASL_DETACH]->fr_Drawer);
+      RE_SaveAll(part->rmData, frc->drawer);
       BusyEnd();
     }
   }
 
+  RETURN(0);
   return 0;
 }
 ///

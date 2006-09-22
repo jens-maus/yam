@@ -5886,3 +5886,10 @@ MSG_CO_SCRIPTS_URL (1739//)
 MSG_CO_MIMECMD_PARAMETER (1740//)
 %s  Full path of file
 ;
+MSG_ER_CANTOPENASL (1741//)
+An error occurred while trying to popup \
+an ASL requester.\n\
+\n\
+Please make sure that your ASL setup is \
+valid and that you have enough resources.
+;

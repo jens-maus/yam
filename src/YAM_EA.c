@@ -420,13 +420,18 @@ static void EA_SetPhoto(int winnum, char *fname)
 //  Lets user select an image file to be used as portrait
 HOOKPROTONHNO(EA_SelectPhotoFunc, void, int *arg)
 {
-   int winnum = *arg;
+  struct FileReqCache *frc;
+  int winnum = *arg;
 
-   if (ReqFile(ASL_PHOTO,G->EA[winnum]->GUI.WI, GetStr(MSG_EA_SelectPhoto_Title), REQF_NONE, C->GalleryDir, ""))
-   {
-      strmfp(G->EA[winnum]->PhotoName, G->ASLReq[ASL_PHOTO]->fr_Drawer, G->ASLReq[ASL_PHOTO]->fr_File);
-      EA_SetPhoto(winnum, NULL);
-   }
+  ENTER();
+
+  if((frc = ReqFile(ASL_PHOTO,G->EA[winnum]->GUI.WI, GetStr(MSG_EA_SelectPhoto_Title), REQF_NONE, C->GalleryDir, "")))
+  {
+    strmfp(G->EA[winnum]->PhotoName, frc->drawer, frc->file);
+    EA_SetPhoto(winnum, NULL);
+  }
+
+  LEAVE();
 }
 MakeStaticHook(EA_SelectPhotoHook, EA_SelectPhotoFunc);
 

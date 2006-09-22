@@ -1480,12 +1480,14 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
 
   if((mode = MUI_Request(G->App, G->CO->GUI.WI, 0, GetStr(MSG_CO_ImportMIME), GetStr(MSG_CO_ImportMIMEGads), GetStr(MSG_CO_ImportMIMEReq))))
   {
-    if(ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_IMPORTMIMETITLE), REQF_NONE, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types"))))
+    struct FileReqCache *frc;
+
+    if((frc = ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_IMPORTMIMETITLE), REQF_NONE, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types")))))
     {
       char fname[SIZE_PATHFILE];
       FILE *fh;
 
-      strmfp(fname, G->ASLReq[ASL_CONFIG]->fr_Drawer, G->ASLReq[ASL_CONFIG]->fr_File);
+      strmfp(fname, frc->drawer, frc->file);
 
       if((fh = fopen(fname, "r")))
       {
@@ -1691,14 +1693,24 @@ MakeHook(CO_SwitchSignatHook, CO_SwitchSignatFunc);
 //  Opens a different configuration file
 HOOKPROTONHNONP(CO_OpenConfig, void)
 {
-   if (ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_Open), REQF_NONE, G->MA_MailDir, ""))
-   {
-      char cname[SIZE_PATHFILE];
-      strmfp(cname, G->ASLReq[ASL_CONFIG]->fr_Drawer, G->ASLReq[ASL_CONFIG]->fr_File);
-      if (CO_LoadConfig(CE, cname, NULL)) CO_NewPrefsFile(cname);
-      CO_SetConfig();
-      G->CO->UpdateAll = TRUE;
-   }
+  struct FileReqCache *frc;
+
+  ENTER();
+
+  if((frc = ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_Open), REQF_NONE, G->MA_MailDir, "")))
+  {
+    char cname[SIZE_PATHFILE];
+
+    strmfp(cname, frc->drawer, frc->file);
+
+    if(CO_LoadConfig(CE, cname, NULL))
+      CO_NewPrefsFile(cname);
+
+    CO_SetConfig();
+    G->CO->UpdateAll = TRUE;
+  }
+
+  LEAVE();
 }
 MakeStaticHook(CO_OpenConfigHook, CO_OpenConfig);
 
@@ -1707,15 +1719,23 @@ MakeStaticHook(CO_OpenConfigHook, CO_OpenConfig);
 //  Saves configuration to a file using an alternative name
 HOOKPROTONHNONP(CO_SaveConfigAs, void)
 {
-   if (ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_SaveAs), REQF_SAVEMODE, G->MA_MailDir, ""))
-   {
-      char cname[SIZE_PATHFILE];
-      strmfp(cname, G->ASLReq[ASL_CONFIG]->fr_Drawer, G->ASLReq[ASL_CONFIG]->fr_File);
-      CO_GetConfig();
-      CO_Validate(CE, TRUE);
-      CO_NewPrefsFile(cname);
-      CO_SaveConfig(CE, cname);
-   }
+  struct FileReqCache *frc;
+
+  ENTER();
+
+  if((frc = ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_SaveAs), REQF_SAVEMODE, G->MA_MailDir, "")))
+  {
+    char cname[SIZE_PATHFILE];
+
+    strmfp(cname, frc->drawer, frc->file);
+
+    CO_GetConfig();
+    CO_Validate(CE, TRUE);
+    CO_NewPrefsFile(cname);
+    CO_SaveConfig(CE, cname);
+  }
+
+  LEAVE();
 }
 MakeStaticHook(CO_SaveConfigAsHook, CO_SaveConfigAs);
 
