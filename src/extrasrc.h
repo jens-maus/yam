@@ -31,7 +31,6 @@
 #include <proto/intuition.h>
 
 #include "SDI_compiler.h"
-#include "SDI_stdarg.h"
 
 /*
  * Differentations between runtime libs and operating system
