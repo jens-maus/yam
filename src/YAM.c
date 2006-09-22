@@ -1818,7 +1818,7 @@ static void Initialise(BOOL hidden)
    // initialize our ASL stuff
    for(i=0; i < MAXASL; i++)
    {
-     if(!(G->ASLReq[i] = MUI_AllocAslRequestTags(ASL_FileRequest, ASLFR_RejectIcons, TRUE, TAG_END)))
+     if(!(G->ASLReq[i] = MUI_AllocAslRequest(ASL_FileRequest, NULL)))
        Abort(MSG_ErrorAslStruct);
    }
 
