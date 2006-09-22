@@ -6,6 +6,12 @@ $Id$
 
 2006-09-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c: fixed bug #756805 where it wasn't possible to use a script
+    which's intention is to modify the content of the write window right
+    before the real message is generated (POSTWRITE). Now that's finally
+    possible which should help spell checkers to hook into YAM more easily.
+    However, please note that for an ARexx script, the "Wait termination"
+    have to be turned on to let it immediately change the editor content.
   * YAM_UT.c, misc: reworked the ReqFile() functionality for popping up
     ASL FileRequesters. Previously all possible requesters were allocated
     right on the start of YAM. Now these requesters are dynamically allocated

@@ -1488,7 +1488,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    comp.OrigMail = wr->Mail;
    comp.OldSecurity = wr->OldSecurity;
 
-   if (wr->Mode != NEW_BOUNCE)
+   if(wr->Mode != NEW_BOUNCE)
    {
       // now we check the From gadget and raise an error if is invalid
       addr = (STRPTR)DoMethod(gui->ST_FROM, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
@@ -1587,11 +1587,20 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       comp.DelSend = GetMUICheck(gui->CH_DELSEND);
       comp.UserInfo = GetMUICheck(gui->CH_ADDINFO);
       att = xget(gui->LV_ATTACH, MUIA_NList_Entries);
+
+      // we execute the POSTWRITE macro right before writing out
+      // the message because the postwrite macro may want to modify the
+      // text in the editor beforehand.
+      MA_StartMacro(MACRO_POSTWRITE, itoa(winnum));
+
+      // export the text of our texteditor to a file
       EditorToFile(gui->TE_EDIT, G->WR_Filename[winnum]);
       comp.FirstPart = BuildPartsList(winnum);
    }
+   else
+      MA_StartMacro(MACRO_POSTWRITE, itoa(winnum));
 
-   if (wr->Mode == NEW_EDIT)
+   if(wr->Mode == NEW_EDIT)
    {
       struct Mail *edmail = wr->Mail;
 
@@ -1613,16 +1622,19 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    {
       struct ExtendedMail *email;
       int stat = mode == WRITE_HOLD ? SFLAG_HOLD : SFLAG_QUEUED;
-      BOOL done = WriteOutMessage(&comp);
-      fclose(comp.FH);
 
-      if (!done)
+      // write out the message to our file and
+      // check that everything worked out fine.
+      if(WriteOutMessage(&comp) == FALSE)
       {
+         fclose(comp.FH);
+
          DeleteFile(GetMailFile(NULL, outfolder, &mail));
 
          LEAVE();
          return;
       }
+      fclose(comp.FH);
 
       if(wr->Mode != NEW_BOUNCE)
         EndNotify(&G->WR_NRequest[winnum]);
@@ -1712,7 +1724,6 @@ void WR_NewMail(enum WriteMode mode, int winnum)
          case NEW_BOUNCE:  AppendLog(13, GetStr(MSG_LOG_Bouncing),   AddrName(wr->Mail->From), wr->Mail->Subject, AddrName(new->To)); break;
          case NEW_EDIT:    AppendLog(14, GetStr(MSG_LOG_Editing),    AddrName(new->From), AddrName(new->To), new->Subject); break;
       }
-      MA_StartMacro(MACRO_POSTWRITE, itoa(winnum));
    }
    else
      ER_NewError(GetStr(MSG_ER_CreateMailError));
@@ -1725,7 +1736,8 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    if(mode == WRITE_SEND && new && !G->TR)
    {
       set(gui->WI, MUIA_Window_Open, FALSE);
-      mlist[2] = new; MA_SendMList(mlist);
+      mlist[2] = new;
+      MA_SendMList(mlist);
    }
 
    // delete a possible autosave file
