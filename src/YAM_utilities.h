@@ -247,11 +247,6 @@ extern int            BusyLevel;
 extern struct Hook    GeneralDesHook;
 extern struct Hook    DisposeModuleHook;
 
-// only prototypes needed for AmigaOS
-#if !defined(__MORPHOS__)
-Object * STDARGS VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
-#endif
-
 // all the utility prototypes
 struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder);
 APTR     AllocCopy(APTR source, int size);

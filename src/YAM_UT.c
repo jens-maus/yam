@@ -4335,22 +4335,6 @@ void SetupMenu(int type, struct NewMenu *menu, char *label, char *shortcut, int 
    menu->nm_UserData = (APTR)id;
 }
 ///
-/// DoSuperNew
-//  Calls parent NEW method within a subclass
-#if !defined(__MORPHOS__)
-Object * STDARGS VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
-{
-  Object *rc;
-  VA_LIST args;
-
-  VA_START(args, obj);
-  rc = (Object *)DoSuperMethod(cl, obj, OM_NEW, VA_ARG(args, ULONG), NULL);
-  VA_END(args);
-
-  return rc;
-}
-#endif
-///
 /// GetMUIInteger
 //  Returns the numeric value of a MUI string object
 int GetMUIInteger(Object *obj)

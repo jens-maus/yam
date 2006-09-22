@@ -28,6 +28,11 @@
 
 ***************************************************************************/
 
+#include <proto/intuition.h>
+
+#include "SDI_compiler.h"
+#include "SDI_stdarg.h"
+
 /*
  * Differentations between runtime libs and operating system
  */
@@ -55,6 +60,10 @@
 
 #if !defined(HAVE_STRMFP)
 #define NEED_STRMFP
+#endif
+
+#if !defined(HAVE_DOSUPERNEW)
+#define NEED_DOSUPERNEW
 #endif
 
 #endif /* !__MORPHOS__ || !__libnix */
@@ -127,6 +136,10 @@ char *strdup(const char *);
 
 #if defined(NEED_XGET)
 ULONG xget(Object *obj, const ULONG attr);
+#endif
+
+#if defined(NEED_DOSUPERNEW)
+Object * STDARGS VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
 #endif
 
 

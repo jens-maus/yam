@@ -74,6 +74,10 @@
   #include "extrasrc/xget.c"
 #endif
 
+#if defined(NEED_DOSUPERNEW)
+  #include "extrasrc/DoSuperNew.c"
+#endif
+
 // we replace the function which checks
 // for an abort() condition in case we
 // didn't compile any debug version because
