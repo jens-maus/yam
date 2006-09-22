@@ -1985,6 +1985,7 @@ int ReqFile(enum ReqFileType num, Object *win, const char *title, int mode, cons
                               ASLFR_DoSaveMode,    hasSaveModeFlag(mode),
                               ASLFR_DoMultiSelect, hasMultiSelectFlag(mode),
                               ASLFR_DrawersOnly,   hasDrawersOnlyFlag(mode),
+                              ASLFR_RejectIcons,   FALSE,
                               ASLFR_DoPatterns,    pattern[num] != NULL,
                               skip ? TAG_DONE : ASLFR_InitialDrawer, drawer,
                               ASLFR_InitialPattern, pattern[num] ? pattern[num] : "#?",

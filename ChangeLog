@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-22  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c: fixed bug #1424457 where #?.info files where always rejected,
+    even if the accept/reject pattern wasn't matching them.
+
 2006-09-21  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c, YAM_UT.c: the MIME configuration pane also carries now
