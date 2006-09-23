@@ -2786,29 +2786,49 @@ MakeStaticHook(MA_PopNowHook, MA_PopNowFunc);
 /*** Sub-button functions ***/
 /// MA_Send
 //  Sends selected or all messages
-BOOL MA_Send(enum SendMode sendpos)
+BOOL MA_Send(enum SendMode mode)
 {
-   struct Mail **mlist;
-   APTR lv = G->MA->GUI.PG_MAILLIST;
-   BOOL success = FALSE;
-   if (!G->TR)
-   {
-      MA_ChangeFolder(FO_GetFolderByType(FT_OUTGOING, NULL), TRUE);
-      if (sendpos == SEND_ALL) DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
-      if ((mlist = MA_CreateMarkedList(lv, FALSE)))
+  BOOL success = FALSE;
+
+  ENTER();
+
+  // we only proceed if there isn't already a transfer
+  // window/process in action
+  if(G->TR == NULL)
+  {
+    struct Mail **mlist = NULL;
+    struct Folder *fo = FO_GetFolderByType(FT_OUTGOING, NULL);
+
+    switch(mode)
+    {
+      case SEND_ALL:
+        mlist = MA_CreateFullList(fo, FALSE);
+      break;
+
+      case SEND_ACTIVE:
       {
-         success = TR_ProcessSEND(mlist);
-         free(mlist);
+        if(fo == FO_GetCurrentFolder())
+          mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE);
       }
-   }
-   return success;
+      break;
+    }
+
+    if(mlist != NULL)
+    {
+      success = TR_ProcessSEND(mlist);
+      free(mlist);
+    }
+  }
+
+  RETURN(success);
+  return success;
 }
 
 ///
-/// MA_SendFunc
+/// MA_SendHook
 HOOKPROTONHNO(MA_SendFunc, void, int *arg)
 {
-   MA_Send(arg[0]);
+  MA_Send(arg[0]);
 }
 MakeHook(MA_SendHook, MA_SendFunc);
 ///

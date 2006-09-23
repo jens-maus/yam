@@ -6,6 +6,11 @@ $Id$
 
 2006-09-23  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c: YAM will not automatically switch to the send folder
+    anymore in case mail is going to be sent. That forced folder switching
+    was somehow unnecessary and disturbing to the user. YAM will create
+    the selection list internally now instead of relying on the main
+    mail list NList object's selection.
   * YAM_TR.c, YAM_MA.c, misc: merged the MA_SendMList() function with
     the more intuitive usage of TR_ProcessSEND() which also accepts
     an array of mails to send.
