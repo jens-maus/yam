@@ -1864,109 +1864,126 @@ static void Initialise(BOOL hidden)
 ///
 /// SendWaitingMail
 //  Sends pending mail on startup
-static void SendWaitingMail(void)
+static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
 {
-  struct Folder *fo = FO_GetFolderByType(FT_OUTGOING, NULL);
-  struct Mail *mail;
-  int tots = 0;
+  struct Folder *fo;
+  BOOL sentableMail = FALSE;
 
   ENTER();
 
-  if(!fo)
+  if((fo = FO_GetFolderByType(FT_OUTGOING, NULL)))
   {
-    LEAVE();
-    return;
-  }
+    struct Mail *mail;
 
-  for(mail=fo->Messages; mail; mail = mail->Next)
-  {
-    if(!hasStatusHold(mail) && !hasStatusError(mail))
-      tots++;
-  }
-
-  if(tots > 0)
-  {
-    MA_ChangeFolder(fo, TRUE);
-
-    if(xget(G->App, MUIA_Application_Iconified) ||
-       MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_SendStartReq)))
+    for(mail=fo->Messages; mail; mail = mail->Next)
     {
-      MA_Send(SEND_ALL);
+      if(!hasStatusHold(mail) && !hasStatusError(mail))
+      {
+        sentableMail = TRUE;
+        break;
+      }
+    }
+
+    // in case the folder contains
+    // mail which could be sent, we ask the
+    // user what to do with it
+    if(sentableMail &&
+       (hideDisplay == FALSE && xget(G->App, MUIA_Application_Iconified) == FALSE))
+    {
+      // change the folder first so that the user
+      // might have a look at the mails
+      MA_ChangeFolder(fo, TRUE);
+
+      // now ask the user for permission to send the mail.
+      sentableMail = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_SendStartReq));
     }
   }
 
-  LEAVE();
+  if(skipSend == FALSE && sentableMail)
+    MA_Send(SEND_ALL);
+
+  RETURN(sentableMail);
+  return(sentableMail);
 }
 ///
 /// DoStartup
 //  Performs different checks/cleanup operations on startup
 static void DoStartup(BOOL nocheck, BOOL hide)
 {
-   ENTER();
+  ENTER();
 
-   // Display the AppIcon now because if non of the below
-   // do it it could happen that no AppIcon will be displayed at all.
-   DisplayAppIconStatistics();
+  // Display the AppIcon now because if non of the below
+  // do it it could happen that no AppIcon will be displayed at all.
+  DisplayAppIconStatistics();
 
-   // if the user wishs to delete all old mail during startup of YAM,
-   // we do it now
-   if(C->CleanupOnStartup)
-     DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
+  // if the user wishs to delete all old mail during startup of YAM,
+  // we do it now
+  if(C->CleanupOnStartup)
+    DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
 
-   // if the user wants to clean the trash upon starting YAM, do it
-   if(C->RemoveOnStartup)
-     DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook);
+  // if the user wants to clean the trash upon starting YAM, do it
+  if(C->RemoveOnStartup)
+    DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook);
 
-   // check for current birth days in our addressbook if the user
-   // selected it
-   if(C->CheckBirthdates && !nocheck && !hide)
-     AB_CheckBirthdates();
+  // check for current birth days in our addressbook if the user
+  // selected it
+  if(C->CheckBirthdates && !nocheck && !hide)
+    AB_CheckBirthdates();
 
-   // the rest of the startup jobs require a running TCP/IP stack,
-   // so check if it is properly running.
-   if(!nocheck && TR_IsOnline())
-   {
-      BOOL noSendOnStartup = FALSE;
+  // the rest of the startup jobs require a running TCP/IP stack,
+  // so check if it is properly running.
+  if(!nocheck && TR_IsOnline())
+  {
+    BOOL noSendOnStartup = FALSE;
 
-      // first get all mail waiting on the POP3 servers (SMTP-after-POP3
-      if(C->GetOnStartup)
+    // first get all mail waiting on the POP3 servers (SMTP-after-POP3
+    if(C->GetOnStartup)
+    {
+      if(hide || C->PreSelection == 0)
       {
-         if(hide || C->PreSelection == 0)
-         {
-            MA_PopNow(POP_START, -1);
-            if(G->TR)
-               DisposeModule(&G->TR);
+        MA_PopNow(POP_START, -1);
+        if(G->TR)
+          DisposeModule(&G->TR);
 
-            DoMethod(G->App, MUIM_Application_InputBuffered);
-         }
-         else
-         {
-            // if SendOnStartup is active as well we do a full exchange
-            // to preserve the SMTP-after-POP3 rule.
-            if(C->SendOnStartup)
-            {
-              if(hide || MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_SendStartReq)))
-                G->TR_Exchange = TRUE;
-
-              noSendOnStartup = TRUE;
-            }
-
-            MA_PopNow(POP_USER, -1);
-         }
+        DoMethod(G->App, MUIM_Application_InputBuffered);
       }
-
-      // send all mail from the Outgoing folder
-      if(C->SendOnStartup && !noSendOnStartup)
+      else
       {
-         SendWaitingMail();
-         if(G->TR)
-           DisposeModule(&G->TR);
+        // if SendOnStartup is active as well we do a full exchange
+        // to preserve the SMTP-after-POP3 rule.
+        if(C->SendOnStartup)
+        {
+          // see if there is any mail to send and
+          // if so ask the user. However we do not
+          // immediately send it, but set the Exchange mode
+          // so that the next POP operation will also do
+          // and SMTP checkup.
+          if(SendWaitingMail(hide, TRUE))
+            G->TR_Exchange = TRUE;
 
-         DoMethod(G->App, MUIM_Application_InputBuffered);
+          noSendOnStartup = TRUE;
+        }
+
+        MA_PopNow(POP_USER, -1);
       }
-   }
+    }
 
-   LEAVE();
+    // send all wariting mail from the Outgoing folder
+    if(C->SendOnStartup && !noSendOnStartup)
+    {
+      // check for any waiting mail in our
+      // outgoing folder and ask the user
+      // if he wants to send it.
+      SendWaitingMail(hide, FALSE);
+
+      if(G->TR)
+        DisposeModule(&G->TR);
+
+      DoMethod(G->App, MUIM_Application_InputBuffered);
+    }
+  }
+
+  LEAVE();
 }
 ///
 /// Login
@@ -2646,7 +2663,7 @@ int main(int argc, char **argv)
       }
 
       if(C->SendOnQuit && !args.nocheck && TR_IsOnline())
-        SendWaitingMail();
+        SendWaitingMail(FALSE, FALSE);
 
       if(C->CleanupOnQuit)
         DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);

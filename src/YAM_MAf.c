@@ -418,7 +418,7 @@ BOOL MA_GetIndex(struct Folder *folder)
 
   if(folder && folder->Type != FT_GROUP)
   {
-    SHOWSTRING(DBF_FOLDER, folder->Name);
+    D(DBF_FOLDER, "folder: '%s' path: '%s' type: %ld", folder->Name, folder->Path, folder->Type);
 
     // check that the folder is in a valid state for
     // getting the index

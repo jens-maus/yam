@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: fixed bug #1523160 where upon startup YAM could have asked to
+    send waiting outgoing mail even if there wasn't really waiting mail.
+
 2006-09-22  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: fixed bug #756805 where it wasn't possible to use a script
