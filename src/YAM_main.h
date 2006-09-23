@@ -310,7 +310,6 @@ int   MA_NewReply(struct Mail **mlist, int flags);
 void  MA_PopNow(enum GuiLevel mode, int pop);
 void  MA_RemoveAttach(struct Mail *mail, BOOL warning);
 BOOL  MA_Send(enum SendMode sendpos);
-BOOL  MA_SendMList(struct Mail **mlist);
 void  MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags);
 BOOL  MA_UpdateMailFile(struct Mail *mail);
 void  MA_SetSortFlag(void);

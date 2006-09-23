@@ -2784,34 +2784,6 @@ MakeStaticHook(MA_PopNowHook, MA_PopNowFunc);
 ///
 
 /*** Sub-button functions ***/
-/// MA_SendMList
-//  Sends a list of messages
-BOOL MA_SendMList(struct Mail **mlist)
-{
-   BOOL success = FALSE;
-   MA_StartMacro(MACRO_PRESEND, NULL);
-   if (TR_OpenTCPIP())
-   {
-      if (CO_IsValid()) if ((G->TR = TR_New(TR_SEND)))
-      {
-         if (SafeOpenWindow(G->TR->GUI.WI)) success = TR_ProcessSEND(mlist);
-
-         if(success == FALSE)
-         {
-            MA_ChangeTransfer(TRUE);
-            DisposeModulePush(&G->TR);
-         }
-      }
-      TR_CloseTCPIP();
-   }
-   else
-     ER_NewError(GetStr(MSG_ER_OPENTCPIP));
-
-   MA_StartMacro(MACRO_POSTSEND, NULL);
-   return success;
-}
-
-///
 /// MA_Send
 //  Sends selected or all messages
 BOOL MA_Send(enum SendMode sendpos)
@@ -2825,7 +2797,7 @@ BOOL MA_Send(enum SendMode sendpos)
       if (sendpos == SEND_ALL) DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
       if ((mlist = MA_CreateMarkedList(lv, FALSE)))
       {
-         success = MA_SendMList(mlist);
+         success = TR_ProcessSEND(mlist);
          free(mlist);
       }
    }

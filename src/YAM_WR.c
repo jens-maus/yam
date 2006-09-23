@@ -1737,7 +1737,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    {
       set(gui->WI, MUIA_Window_Open, FALSE);
       mlist[2] = new;
-      MA_SendMList(mlist);
+      TR_ProcessSEND(mlist);
    }
 
    // delete a possible autosave file

@@ -292,7 +292,7 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
                 }
 
                 if(sendnow && mlist[2] && !G->TR)
-                  MA_SendMList(mlist);
+                  TR_ProcessSEND(mlist);
 
                 // refresh the folder statistics
                 DisplayStatistics(outfolder, TRUE);

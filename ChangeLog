@@ -6,6 +6,9 @@ $Id$
 
 2006-09-23  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c, YAM_MA.c, misc: merged the MA_SendMList() function with
+    the more intuitive usage of TR_ProcessSEND() which also accepts
+    an array of mails to send.
   * YAM.c: fixed bug #1523160 where upon startup YAM could have asked to
     send waiting outgoing mail even if there wasn't really waiting mail.
 

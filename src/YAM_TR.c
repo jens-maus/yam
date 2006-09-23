@@ -3487,153 +3487,180 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 //  Sends a list of messages
 BOOL TR_ProcessSEND(struct Mail **mlist)
 {
-   struct TransStat ts;
-   int c, i, err;
-   int port = C->SMTP_Port;
-   struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-   struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
-   BOOL success = FALSE;
-   char *p;
+  BOOL success = FALSE;
 
-   NewList((struct List *)&G->TR->transferList);
-   G->TR_Allow = G->TR->Abort = G->Error = FALSE;
+  ENTER();
 
-   for(c = i = 0; i < (int)*mlist; i++)
-   {
-      struct Mail *mail;
-      mail = mlist[i+2];
+  // start the PRESEND macro first
+  MA_StartMacro(MACRO_PRESEND, NULL);
 
-      if(hasStatusQueued(mail) || hasStatusError(mail))
+  // try to open the TCP/IP stack
+  if(TR_OpenTCPIP())
+  {
+    // verify that the configuration is ready for sending mail
+    if(CO_IsValid() && (G->TR = TR_New(TR_SEND)))
+    {
+      // open the transfer window
+      if(SafeOpenWindow(G->TR->GUI.WI))
       {
-        struct MailTransferNode *mtn;
-        if((mtn = calloc(1, sizeof(struct MailTransferNode))))
+        int c;
+        int i;
+
+        NewList((struct List *)&G->TR->transferList);
+        G->TR_Allow = G->TR->Abort = G->Error = FALSE;
+
+        // now we build the list of mails which should
+        // be transfered.
+        for(c=i=0; i < (int)*mlist; i++)
         {
-          struct Mail *newMail;
-          if((newMail = malloc(sizeof(struct Mail))))
+          struct Mail *mail = mlist[i+2];
+
+          if(hasStatusQueued(mail) || hasStatusError(mail))
           {
-            memcpy(newMail, mail, sizeof(struct Mail));
-            newMail->Reference = mail;
-            newMail->Next = NULL;
+            struct MailTransferNode *mtn;
+            if((mtn = calloc(1, sizeof(struct MailTransferNode))))
+            {
+              struct Mail *newMail;
+              if((newMail = malloc(sizeof(struct Mail))))
+              {
+                memcpy(newMail, mail, sizeof(struct Mail));
+                newMail->Reference = mail;
+                newMail->Next = NULL;
 
-            // set index and transfer flags to LOAD
-            mtn->index = ++c;
-            mtn->tflags = TRF_LOAD;
-            mtn->mail = newMail;
+                // set index and transfer flags to LOAD
+                mtn->index = ++c;
+                mtn->tflags = TRF_LOAD;
+                mtn->mail = newMail;
 
-            AddTail((struct List *)&G->TR->transferList, (struct Node *)mtn);
+                AddTail((struct List *)&G->TR->transferList, (struct Node *)mtn);
+              }
+              else
+                free(mtn);
+            }
+          }
+        }
+
+        // just go on if we really have something
+        if(c > 0)
+        {
+          int err;
+          int port;
+          char *p;
+          char host[SIZE_HOST];
+          struct TransStat ts;
+
+          // now we have to check whether SSL/TLS is selected for SMTP account,
+          // but perhaps TLS is not working.
+          if(C->SMTP_SecureMethod != SMTPSEC_NONE &&
+             !G->TR_UseableTLS)
+          {
+            ER_NewError(GetStr(MSG_ER_UNUSABLEAMISSL));
+
+            RETURN(FALSE);
+            return FALSE;
+          }
+
+          G->TR->SearchCount = AllocFilterSearch(APPLY_SENT);
+          TR_TransStat_Init(&ts);
+          TR_TransStat_Start(&ts);
+          strlcpy(host, C->SMTP_Server, sizeof(host));
+
+          // If the hostname has a explicit :xxxxx port statement at the end we
+          // take this one, even if its not needed anymore.
+          if((p = strchr(host, ':')))
+          {
+            *p = '\0';
+            port = atoi(++p);
           }
           else
-            free(mtn);
-        }
-      }
-   }
+            port = C->SMTP_Port;
 
-   if (c)
-   {
-      char host[SIZE_HOST];
+          set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_Connecting));
 
-      // now we have to check whether SSL/TLS is selected for SMTP account,
-      // but perhaps TLS is not working.
-      if(C->SMTP_SecureMethod != SMTPSEC_NONE &&
-         !G->TR_UseableTLS)
-      {
-        ER_NewError(GetStr(MSG_ER_UNUSABLEAMISSL));
-        return FALSE;
-      }
+          BusyText(GetStr(MSG_TR_MailTransferTo), host);
 
-      G->TR->SearchCount = AllocFilterSearch(APPLY_SENT);
-      TR_TransStat_Init(&ts);
-      TR_TransStat_Start(&ts);
-      strlcpy(host, C->SMTP_Server, sizeof(host));
+          TR_SetWinTitle(FALSE, host);
 
-      // If the hostname has a explicit :xxxxx port statement at the end we
-      // take this one, even if its not needed anymore.
-      if ((p = strchr(host, ':'))) { *p = 0; port = atoi(++p); }
+          if(!(err = TR_Connect(host, port)))
+          {
+            BOOL connected = TRUE;
 
-      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_Connecting));
-
-      BusyText(GetStr(MSG_TR_MailTransferTo), host);
-
-      TR_SetWinTitle(FALSE, host);
-
-      if (!(err = TR_Connect(host, port)))
-      {
-         BOOL connected = TRUE;
-
-         // first we check whether the user wants to connect to a plain SSLv3 server
-         // so that we initiate the SSL connection now
-         if(C->SMTP_SecureMethod == SMTPSEC_SSL)
-         {
-            // lets try to establish the SSL connection via AmiSSL
-            if(TR_InitTLS() && TR_StartTLS())
+            // first we check whether the user wants to connect to a plain SSLv3 server
+            // so that we initiate the SSL connection now
+            if(C->SMTP_SecureMethod == SMTPSEC_SSL)
             {
-              G->TR_UseTLS = TRUE;
-            }
-            else
-            {
-              ER_NewError(GetStr(MSG_ER_INITTLS), host);
-              return FALSE;
-            }
-         }
-
-         // first we have to check whether the user requested some
-         // feature that requires a ESMTP Server, and if so we connect via ESMTP
-         if(C->Use_SMTP_AUTH || C->SMTP_SecureMethod == SMTPSEC_TLS)
-         {
-            int ServerFlags = TR_ConnectESMTP();
-
-            // Now we have to check whether the user has selected SSL/TLS
-            // and then we have to initiate the STARTTLS command followed by the TLS negotiation
-            if(C->SMTP_SecureMethod == SMTPSEC_TLS)
-            {
-              connected = TR_InitSTARTTLS(ServerFlags);
-
-              // then we have to refresh the ServerFlags and check
-              // again what features we have after the STARTTLS
-              if(connected)
-              {
-                // first we flag this connection as a sucessfull
-                // TLS session
+              // lets try to establish the SSL connection via AmiSSL
+              if(TR_InitTLS() && TR_StartTLS())
                 G->TR_UseTLS = TRUE;
+              else
+              {
+                ER_NewError(GetStr(MSG_ER_INITTLS), host);
 
-                ServerFlags = TR_ConnectESMTP();
+                RETURN(FALSE);
+                return FALSE;
               }
             }
 
-            // If the user selected SMTP_AUTH we have to initiate
-            // a AUTH connection
-            if(connected && C->Use_SMTP_AUTH)
+            // first we have to check whether the user requested some
+            // feature that requires a ESMTP Server, and if so we connect via ESMTP
+            if(C->Use_SMTP_AUTH || C->SMTP_SecureMethod == SMTPSEC_TLS)
             {
-              connected = TR_InitSMTPAUTH(ServerFlags);
+              int ServerFlags = TR_ConnectESMTP();
+
+              // Now we have to check whether the user has selected SSL/TLS
+              // and then we have to initiate the STARTTLS command followed by the TLS negotiation
+              if(C->SMTP_SecureMethod == SMTPSEC_TLS)
+              {
+                connected = TR_InitSTARTTLS(ServerFlags);
+
+                // then we have to refresh the ServerFlags and check
+                // again what features we have after the STARTTLS
+                if(connected)
+                {
+                  // first we flag this connection as a sucessfull
+                  // TLS session
+                  G->TR_UseTLS = TRUE;
+
+                  ServerFlags = TR_ConnectESMTP();
+                }
+              }
+
+              // If the user selected SMTP_AUTH we have to initiate
+              // a AUTH connection
+              if(connected && C->Use_SMTP_AUTH)
+                connected = TR_InitSMTPAUTH(ServerFlags);
             }
-         }
-         else
-         {
-            // Init a normal non-ESMTP connection by sending a HELO
-            connected = TR_ConnectSMTP();
-         }
-
-         // If we are still "connected" we can proceed with transfering the data
-         if(connected)
-         {
-            struct MinNode *curNode;
-
-            success = TRUE;
-            AppendLogVerbose(41, GetStr(MSG_LOG_ConnectSMTP), host);
-
-            for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+            else
             {
-               struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-               struct Mail *mail = mtn->mail;
+              // Init a normal non-ESMTP connection by sending a HELO
+              connected = TR_ConnectSMTP();
+            }
 
-               if(G->TR->Abort || G->Error)
-                 break;
+            // If we are still "connected" we can proceed with transfering the data
+            if(connected)
+            {
+              struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
+              struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
+              struct MinNode *curNode;
 
-               ts.Msgs_Done++;
-               TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, GetStr(MSG_TR_Sending));
+              // set the success to TRUE as everything worked out fine
+              // until here.
+              success = TRUE;
+              AppendLogVerbose(41, GetStr(MSG_LOG_ConnectSMTP), host);
 
-               switch (TR_SendMessage(&ts, mail))
-               {
+              for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+              {
+                struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+                struct Mail *mail = mtn->mail;
+
+                if(G->TR->Abort || G->Error)
+                  break;
+
+                ts.Msgs_Done++;
+                TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, GetStr(MSG_TR_Sending));
+
+                switch(TR_SendMessage(&ts, mail))
+                {
                   // -1 means that SendMessage was aborted within the
                   // DATA part and so we cannot issue a RSET command and have to abort
                   // immediatly by leaving the mailserver alone.
@@ -3670,33 +3697,57 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                       MA_DeleteSingle(mail->Reference, FALSE, FALSE);
                   }
                   break;
-               }
+                }
+              }
+              AppendLogNormal(40, GetStr(MSG_LOG_Sending), c, host);
             }
-            AppendLogNormal(40, GetStr(MSG_LOG_Sending), c, host);
-         }
-         else err = 1;
+            else
+              err = 1;
 
-         TR_DisconnectSMTP();
-      }
+            TR_DisconnectSMTP();
+          }
 
-      // if we got an error here, let`s throw it
-      if(err != 0)
-      {
-        switch (err)
-        {
-          case -1: ER_NewError(GetStr(MSG_ER_UnknownSMTP), C->SMTP_Server); break;
-          default: ER_NewError(GetStr(MSG_ER_CantConnect), C->SMTP_Server);
+          // if we got an error here, let`s throw it
+          switch(err)
+          {
+            case 0:
+              // nothing
+            break;
+
+            case -1:
+              ER_NewError(GetStr(MSG_ER_UnknownSMTP), C->SMTP_Server);
+            break;
+
+            default:
+              ER_NewError(GetStr(MSG_ER_CantConnect), C->SMTP_Server);
+          }
+
+          FreeFilterSearch();
+          G->TR->SearchCount = 0;
+
+          BusyEnd();
         }
+
+        TR_AbortnClose();
       }
 
-      FreeFilterSearch();
-      G->TR->SearchCount = 0;
-   }
+      if(success == FALSE)
+      {
+        MA_ChangeTransfer(TRUE);
+        DisposeModulePush(&G->TR);
+      }
+    }
+    TR_CloseTCPIP();
+  }
+  else
+    ER_NewError(GetStr(MSG_ER_OPENTCPIP));
 
-   TR_AbortnClose();
+  // start the POSTSEND macro so that others
+  // notice that the send process finished.
+  MA_StartMacro(MACRO_POSTSEND, NULL);
 
-   BusyEnd();
-   return success;
+  RETURN(success);
+  return success;
 }
 ///
 
