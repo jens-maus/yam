@@ -3434,6 +3434,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
 {
   struct Part *part;
   struct Part *next;
+  struct Mail *mail;
 
   ENTER();
 
@@ -3441,6 +3442,11 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   SHOWVALUE(DBF_MAIL, fullCleanup);
   ASSERT(rmData != NULL);
 
+  // safe some pointer in advance
+  mail = rmData->mail;
+
+  // check if we also have to close an existing read window
+  // or not.
   if(fullCleanup && rmData->readWindow)
   {
     D(DBF_MAIL, "make sure the window is closed");
@@ -3502,8 +3508,8 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   // now we have to check whether there is a .unp (unpack) file and delete
   // it acoordingly (we can`t use the FinishUnpack() function because the
   // window still refers to the file which will prevent the deletion.
-  if(rmData->mail != NULL && isVirtualMail(rmData->mail) == FALSE &&
-     rmData->mail->Folder != NULL && isXPKFolder(rmData->mail->Folder))
+  if(mail != NULL && isVirtualMail(mail) == FALSE &&
+     mail->Folder != NULL && isXPKFolder(mail->Folder))
   {
     char ext[SIZE_FILE];
 
@@ -3529,11 +3535,10 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
 
     // if the rmData carries a virtual mail we have to clear it
     // aswell
-    if(rmData->mail &&
-       isVirtualMail(rmData->mail))
+    if(mail && isVirtualMail(mail))
     {
       D(DBF_MAIL, "freeing virtual mail pointer");
-      free(rmData->mail);
+      free(mail);
     }
 
     // set the mail pointer to NULL
