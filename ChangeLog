@@ -6,6 +6,11 @@ $Id$
 
 2006-09-24  Jens Langner <Jens.Langner@light-speed.de>
 
+  * QuickSearchBar.c: the search string now directly accepts return
+    for initiating an immediate search. In addition, the autosearch
+    delay is now increased to 500ms and will only be triggered after
+    a minimum of two characters are entered. That should make the
+    gadgets slightly more intuitiv in its behaviour.
   * deutsch.ct: updated german catalog to latest v6 version changes.
   * YAM.cd, C_c.sd, C_h.sd, misc: the OpenYAMCatalog() function
     checks now the version of the loaded native catalog against the

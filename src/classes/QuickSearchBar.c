@@ -56,9 +56,11 @@ MakeStaticHook(FindAddressHook, FindAddressFunc);
 
 ///
 
-/* Private Functions */
+/* Enumerations */
 enum SearchOptions { SO_SUBJECT=0, SO_SENDER, SO_SUBJORSENDER, SO_TOORCC, SO_INMSG, SO_ENTIREMSG };
 enum ViewOptions { VO_ALL=0, VO_UNREAD, VO_NEW, VO_MARKED, VO_IMPORTANT, VO_LAST5DAYS, VO_KNOWNPEOPLE, VO_HASATTACHMENTS, VO_MINSIZE };
+
+/* Private Functions */
 /// MatchMail()
 // function to actually check if a struct Mail* matches
 // the currently active criteria
@@ -395,16 +397,17 @@ OVERLOAD(OM_NEW)
       End,
       Child, searchString =  BetterStringObject,
         StringFrame,
-        MUIA_CycleChain,  TRUE,
-        MUIA_Font,        MUIV_Font_Tiny,
+        MUIA_CycleChain,          TRUE,
+        MUIA_Font,                MUIV_Font_Tiny,
+        MUIA_String_AdvanceOnCR,  FALSE,
       End,
       Child, clearButton = TextObject,
         ButtonFrame,
         MUIA_CycleChain,     TRUE,
         MUIA_Font,           MUIV_Font_Tiny,
-        MUIA_Text_Contents, "\033bX",
-        MUIA_InputMode,     MUIV_InputMode_RelVerify,
-        MUIA_Background,    MUII_ButtonBack,
+        MUIA_Text_Contents,  "\033bX",
+        MUIA_InputMode,      MUIV_InputMode_RelVerify,
+        MUIA_Background,     MUII_ButtonBack,
         MUIA_Text_SetMax,    TRUE,
       End,
     End,
@@ -428,14 +431,15 @@ OVERLOAD(OM_NEW)
 
   // set the help text for each GUI element
   SetHelp(data->CY_VIEWOPTIONS,       MSG_HELP_QUICKSEARCH_VIEWOPTIONS);
-  SetHelp(data->ST_SEARCHSTRING,       MSG_HELP_QUICKSEARCH_SEARCHSTRING);
+  SetHelp(data->ST_SEARCHSTRING,      MSG_HELP_QUICKSEARCH_SEARCHSTRING);
   SetHelp(data->PO_SEARCHOPTIONPOPUP, MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP);
 
   // set notifies
   DoMethod(data->NL_SEARCHOPTIONS,MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_SearchOptionChanged, MUIV_TriggerValue);
-  DoMethod(data->CY_VIEWOPTIONS,   MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_ViewOptionChanged, MUIV_TriggerValue);
-  DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_SearchContentChanged, MUIV_TriggerValue);
-  DoMethod(data->BT_CLEARBUTTON,   MUIM_Notify, MUIA_Pressed, FALSE, data->ST_SEARCHSTRING, 3, MUIM_Set, MUIA_String_Contents, "");
+  DoMethod(data->CY_VIEWOPTIONS,  MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_ViewOptionChanged, MUIV_TriggerValue);
+  DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_QuickSearchBar_SearchContentChanged, MUIV_TriggerValue, FALSE);
+  DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 3, MUIM_QuickSearchBar_SearchContentChanged, MUIV_TriggerValue, TRUE);
+  DoMethod(data->BT_CLEARBUTTON,  MUIM_Notify, MUIA_Pressed, FALSE, data->ST_SEARCHSTRING, 3, MUIM_Set, MUIA_String_Contents, "");
 
   return (ULONG)obj;
 }
@@ -491,7 +495,7 @@ OVERLOAD(OM_GET)
 
 /* Public Methods */
 /// DECLARE(SearchContentChanged)
-DECLARE(SearchContentChanged) // char* content
+DECLARE(SearchContentChanged) // char* content, ULONG force
 {
   GETDATA;
 
@@ -502,15 +506,20 @@ DECLARE(SearchContentChanged) // char* content
 
   // depending on if there is something to search for
   // we have to prepare something different
-  if(msg->content[0] != '\0')
+  if(msg->content && msg->content[0] != '\0')
   {
-    // make sure the clear button is shown and that
-    // the correct mailview is displayed to the user
-    set(data->BT_CLEARBUTTON, MUIA_ShowMe, TRUE);
+    // we only start the actual search in case a minimum of two
+    // characters are specified or the user pressed return explicitly
+    if(msg->force || msg->content[1] != '\0')
+    {
+      // make sure the clear button is shown and that
+      // the correct mailview is displayed to the user
+      set(data->BT_CLEARBUTTON, MUIA_ShowMe, TRUE);
 
-    // now we issue a TC_Restart() command to schedule
-    // the actual search in about 400ms from now on
-    TC_Restart(TIO_PROCESSQUICKSEARCH, 0, 400000);
+      // now we issue a TC_Restart() command to schedule
+      // the actual search in about 400ms from now on
+      TC_Restart(TIO_PROCESSQUICKSEARCH, 0, msg->force ? 1 : 500000);
+    }
   }
   else
   {
@@ -531,7 +540,7 @@ DECLARE(SearchContentChanged) // char* content
     else
     {
       // otherwise we issue a quicksearch start as well
-      TC_Restart(TIO_PROCESSQUICKSEARCH, 0, 400000);
+      TC_Restart(TIO_PROCESSQUICKSEARCH, 0, 500000);
     }
   }
 
