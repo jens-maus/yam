@@ -955,7 +955,7 @@ MSG_MA_ToRead
 ; ]\000Read
 ;
 MSG_MA_ToHold
-{\000Gesperrt
+{\000Gehalten
 ; {\000Hold
 ;
 MSG_MA_ToQueued
@@ -4066,15 +4066,15 @@ Sicherheit
 ; Security
 ;
 MSG_WR_ToQueue
-_Später senden
+S_päter senden
 ; Send _later
 ;
 MSG_WR_Send
-_Jetzt senden
+Jetzt _senden
 ; _Send now
 ;
 MSG_WR_Hold
-Spe_rren
+_Halten
 ; _Hold
 ;
 MSG_WR_BounceWT
@@ -4422,7 +4422,7 @@ Wählen Sie eine dieser Sicherheitsoptionen\num Ihre Nachricht PGP signiert, vers
 ; or anonymously
 ;
 MSG_HELP_WR_BT_HOLD
-Kopiert die erstellte Nachricht\nin den Postausgang und\nsperrt sie für den Versand
+Kopiert die erstellte Nachricht\nin den Postausgang und\nhält sie für den Versand
 ; Copy the created message to\n\
 ; the outgoing mail folder and\n\
 ; set its status to HOLD
@@ -4983,7 +4983,7 @@ Sendefehler
 ; Send failed
 ;
 MSG_FI_StatHold
-Gesperrt
+Gehalten
 ; On hold
 ;
 MSG_FI_StatSent
