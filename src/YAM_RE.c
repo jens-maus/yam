@@ -3535,7 +3535,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
 
     // if the rmData carries a virtual mail we have to clear it
     // aswell
-    if(mail && isVirtualMail(mail))
+    if(mail != NULL && isVirtualMail(mail))
     {
       D(DBF_MAIL, "freeing virtual mail pointer");
       free(mail);
