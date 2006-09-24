@@ -188,6 +188,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
 
   // ask the mail list how many entries as currently selected
   DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
+  SHOWVALUE(DBF_MAIL, numSelected);
 
   // make sure the mail is displayed in our readMailGroup of the main window
   // (if enabled) - but we do only issue a timer event here so the read pane
@@ -219,6 +220,8 @@ void MA_ChangeSelected(BOOL forceUpdate)
   if((active = (mail != NULL)) && isMultiPartMail(mail))
     hasattach = TRUE;
 
+  SHOWVALUE(DBF_MAIL, active);
+
   for(i = 0; i < MAXWR; i++)
   {
     if(mail && G->WR[i] && G->WR[i]->Mail == mail)
@@ -237,8 +240,8 @@ void MA_ChangeSelected(BOOL forceUpdate)
   {
     DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 0, MUIV_Toolbar_Set_Ghosted, !active);
     DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 1, MUIV_Toolbar_Set_Ghosted, !active || !isOutgoingFolder(fo) || numSelected > 1 || beingedited);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !active || numSelected == 0, 2,3,4,8, -1);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 7, MUIV_Toolbar_Set_Ghosted, !active || numSelected == 0 || isOutgoingFolder(fo));
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !active && numSelected == 0, 2,3,4,8, -1);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 7, MUIV_Toolbar_Set_Ghosted, (!active && numSelected == 0) || isOutgoingFolder(fo));
     DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 13, MUIV_Toolbar_Set_Ghosted, !folderEnabled);
   }
 

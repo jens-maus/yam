@@ -6,6 +6,9 @@ $Id$
 
 2006-09-24  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c: fixed bug #1549093 where some toolbar gadgets were
+    kept ghosted under certain conditions due to the way NList handles
+    the "active" and "selected" state.
   * QuickSearchBar.c: the search string now directly accepts return
     for initiating an immediate search. In addition, the autosearch
     delay is now increased to 500ms and will only be triggered after
