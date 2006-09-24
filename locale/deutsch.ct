@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 5.15 (19.05.2006)
+## version $VER: YAM.catalog 6.0 (24.09.2006)
 ## language deutsch
 ## codeset 0
 ;
@@ -218,10 +218,6 @@ Von
 MSG_To
 An
 ; To
-;
-MSG_Default
-Voreinstellung
-; default
 ;
 MSG_Columns
 Spalten
@@ -603,26 +599,6 @@ Das Postfach '%s' ist geschützt.\nGeben Sie das Passwort ein, um es zu öffnen:
 ; Please enter the password to unlock it:
 ; FOLDER
 ;
-MSG_MA_LatestVersion
-Neueste Version: %s (%2ld.%02ld.%ld)\nDiese Version: %s (%s)\n\n%s
-; Latest version: %s (%2ld.%02ld.%ld)\n\
-; This version: %s (%s)\n\
-; \n\
-; %s
-; VERSION_NUMBER, DAY, MONTH, YEAR, VERSION_NUMBER, DATE, TEXT
-;
-MSG_MA_NewVersion
-\e8Eine neue Version ist auf der YAM Homepage verfügbar!
-; \e8A new version is available at the YAM homepage!
-;
-MSG_MA_NoNewVersion
-Sie benutzen bereits die aktuellste Version.
-; You're already using the latest version.
-;
-MSG_MA_VersionReqOpt
-_Besuche Homepage|*_Abbrechen
-; _Visit homepage|*_Cancel
-;
 MSG_MA_ReplyReq
 Die Nachricht hat mehrere Empfänger.\n\
 \n\
@@ -668,19 +644,6 @@ MSG_MA_AttachRemoved
 MSG_MA_ConfirmReq
 Bitte bestätigen Sie...
 ; Please confirm...
-;
-MSG_MA_ConfirmDel
-Bitte bestätigen Sie die Löschung.
-; Please confirm deletion.
-;
-MSG_MA_1Selected
-Eine Nachricht ausgewählt.\n
-; One message selected.\n
-;
-MSG_MA_xSelected
-%lD Nachrichten ausgewählt.\n
-; %lD messages selected.\n
-; COUNT
 ;
 MSG_MA_ConfirmFilter
 Sollen wirklich Nachrichten im\nPostfach '%s' gefiltert werden?
@@ -735,10 +698,6 @@ MSG_MA_All
 Alle
 ; All
 ;
-MSG_MA_Cancel
-\ebAbbrechen
-; \ebCancel
-;
 MSG_MA_TitleStatus
 Status
 ; Status
@@ -754,26 +713,6 @@ Skript ausführen...
 MSG_MA_CheckSingle
 Einzelnes Konto überprüfen
 ; Check single account
-;
-MSG_MA_FolderInfo
-\ebAktives Postfach\en\nName: %s\nPfad: %s\nGröße: %lD Bytes\nNachrichten: %lD (%lD neu, %lD ungelesen)
-; \ebCurrent folder\en\n\
-; Name: %s\n\
-; Path: %s\n\
-; Size: %lD bytes\n\
-; Messages: %lD (%lD new, %lD unread)
-; NAME, PATH, SIZE, COUNT, COUNT, COUNT
-;
-MSG_MA_MessageInfo
-\ebAktive Nachricht\en\nVon: %s <%s>\nAn: %s <%s>\nBetreff: %s\nDatum: %s\nDateiname: %s\nGröße: %lD Bytes
-; \ebCurrent message\en\n\
-; From: %s <%s>\n\
-; To: %s <%s>\n\
-; Subject: %s\n\
-; Date: %s\n\
-; Filename: %s\n\
-; Size: %lD bytes
-; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle
 YAM %s  -  Benutzer: %s
@@ -877,11 +816,6 @@ MSG_MA_About
 MSG_MA_AboutMUI
 Über MUI...
 ; About MUI...
-;
-MSG_MA_CheckVersion
-Überprüfe Version
-; Check version
-;This is the title of the check version window, not the menu item.
 ;
 MSG_MA_LastErrors
 Letzte Meldung zeigen
@@ -1315,10 +1249,6 @@ MSG_CO_CrdWrite
 Schreiben
 ; Write
 ;
-MSG_CO_CrdReply
-Antworten
-; Reply
-;
 MSG_CO_CrdSignature
 Signatur
 ; Signature
@@ -1338,14 +1268,6 @@ Sicherheit
 MSG_CO_CrdMixed
 Diverses
 ; Miscellaneous
-;
-MSG_CO_CrdScripts
-ARexx
-; ARexx
-;
-MSG_CO_CrdStartQuit
-Start/Ende
-; Start/Quit
 ;
 MSG_CO_CrdABook
 Adressbuch
@@ -1771,10 +1693,6 @@ MSG_CO_MultiReadWin
 _Mehrere Fenster
 ; _Multiple windows
 ;
-MSG_CO_CharsetTrans
-_Zeichensatzkonverter
-; Charset _translation
-;
 MSG_CO_DisplayAll
 Alle _Texte
 ; Display _all texts
@@ -1802,10 +1720,6 @@ Datei_endung
 MSG_CO_DefaultViewer
 S_tandardanzeigeprogramm
 ; De_fault viewer
-;
-MSG_CO_IdentifyBin
-_Identifiziere binäre Anhänge
-; _Identify binary attachments
 ;
 MSG_CO_MessageHeader
 Nachrichtenkopf
@@ -2577,11 +2491,6 @@ Art der Signaturtrennlinie
 ; Type of the signature\n\
 ; separation line
 ;
-MSG_HELP_CO_ST_INTRANS
-Verwende diese Zeichensatzkonvertierung\nbeim Lesen von Nachrichten
-; Apply this character set translation\n\
-; when reading messages
-;
 MSG_HELP_CO_CH_ALLTEXTS
 Alle Textteile einer\nmehrteiligen Nachricht anzeigen
 ; Display all textual parts\n\
@@ -2631,11 +2540,6 @@ Programm, mit dem Anhänge unbe-\nkannten Typs angezeigt werden
 ; Program used to display\n\
 ; attachments of unknown type
 ;
-MSG_HELP_CO_CH_IDENTBIN
-Versucht die Datei zu identifizieren, bevor\ndas Standardanzeigeprogramm benutzt wird
-; Try to identify the file type\n\
-; before using the default viewer
-;
 MSG_HELP_CO_ST_REPLYTO
 Geben Sie die voreingestellte\nAntwortadresse ein, falls diese sich\nvon Ihrer E-Mail-Adresse unterscheidet.
 ; Enter the default return address, if\n\
@@ -2660,11 +2564,6 @@ MSG_HELP_CO_ST_BYETEXT
 Text, welcher am Ende einer\nneuen Nachricht eingefügt wird
 ; Text to insert at the\n\
 ; bottom of a new message
-;
-MSG_HELP_CO_ST_OUTTRANS
-Verwendet diese Zeichensatzkonvertierung\nbei neuen Nachrichten
-; Apply this character set translation\n\
-; on new messages
 ;
 MSG_HELP_CO_ST_EDWRAP
 Spalte, bei der Nachrichtentext umgebrochen wird
@@ -3326,37 +3225,6 @@ Empfänger der versteckten Kopie\nder neuen Nachricht festlegen
 ; Set blind copy recipient(s)\n\
 ; for new message
 ;
-;
-; Module CL
-;
-MSG_CL_ErrorEmptyCB
-Das Klemmbrett ist leer.
-; The clipboard is empty.
-;
-MSG_CL_ErrorNotFTXT
-Das Klemmbrett enthält keinen Text.
-; The clipboard does not contain text.
-;
-MSG_CL_ErrorNoArea
-Kein Bereich markiert.
-; No area marked.
-;
-MSG_CL_ErrorNoRedo
-Es kann nichts wiederholt werden.
-; Nothing to redo.
-;
-MSG_CL_ErrorNoUndo
-Es gibt nichts rückgängig zu machen.
-; Nothing to undo.
-;
-MSG_CL_ErrorNoUndoMem
-Zuwenig Speicher, um den Undo-\nBuffer aufrecht zu erhalten.\nEr wird gelöscht.
-; There is not enough memory\n\
-; to keep the undo buffer.\n\
-; \n\
-; The undo buffer is lost.
-;
-;
 ; Module EA - Procedures
 ;
 MSG_EA_EditUser
@@ -3437,10 +3305,6 @@ Porträt
 MSG_EA_SelectPhoto
 Aus_wählen
 ; Se_lect
-;
-MSG_EA_LoadPhoto
-_Runterladen
-; _Download
 ;
 MSG_EA_ReturnAddress
 Ant_wortadresse
@@ -3524,11 +3388,6 @@ MSG_HELP_EA_BT_SELECTPHOTO
 Bilddatei von der Festplatte laden\n(Bild-Datentypes werden unterstützt)
 ; Select a picture file from disk\n\
 ; (image datatypes supported)
-;
-MSG_HELP_EA_BT_LOADPHOTO
-Lädt ein Bild dieser Person von\nder YAM Benutzergalerie herunter
-; Download a picture of the person\n\
-; from the YAM User Gallery
 ;
 MSG_HELP_EA_ST_REALNAME_L
 Voller Name dieser Verteilerliste\n(wird in To-Feld benutzt)
@@ -3779,12 +3638,6 @@ Wollen Sie den Absender\n\eb%s\en\nin Ihr Adressbuch aufnehmen?
 MSG_RE_NewGroupTitle
 Automatisch hinzugefügte Einträge
 ; Automatically added entries
-;
-MSG_RE_DownloadPhotoReq
-Wollen Sie das Foto des Absenders runterladen und\nin Ihre persönliche Galerie aufnehmen\n(Sie müssen online sein, bevor Sie den OKAY-Knopf klicken)
-; Do you want to download the photo of the sender\n\
-; and add it to your personal gallery?\n\
-; (You must be online before clicking the OKAY button)
 ;
 MSG_RE_ContentType
 Content-Type
@@ -4354,18 +4207,6 @@ MSG_WR_Colored
 Alternative Farbe
 ; Alternative color
 ;
-MSG_WR_Separators
-Trennlinien
-; Separators
-;
-MSG_WR_Thin
-Dünn
-; Thin
-;
-MSG_WR_Thick
-Dick
-; Thick
-;
 MSG_WR_Emoticons
 Smilies
 ; Emoticons
@@ -4651,17 +4492,6 @@ MSG_TR_SendHello
 Sende 'HELO'...
 ; Sending 'Hello'...
 ;
-MSG_TR_SizeGauge
-%%ld von %ld Bytes
-; %%ld of %ld bytes
-; SIZE, SIZE
-;
-MSG_TR_TransferStats
-%lD von %lD KB übertragen mit %lD cps\nVerbleibende Zeit: %lD Min %ld Sec
-; %lD of %lD kB transmitted at %lD cps\n\
-; Remaining time: %lD min %ld sec
-; SIZE, SIZE, SPEED, MINS, SECS
-;
 MSG_TR_Exporting
 Exportiere Nachricht...
 ; Exporting message...
@@ -4778,19 +4608,6 @@ MSG_TR_Abort
 _Abbrechen
 ; _Abort
 ;
-MSG_TR_TransferStats0
-   0 von   0 KB übertragen mit    0 cps\nVerbleibende Zeit:  0 Min  0 Sek
-;   0 of   0 kB transmitted at    0 cps\n\
-; Remaining time:  0 min  0 sec
-;
-MSG_TR_BytesGauge0
-   0 von    0 Bytes
-;    0 of    0 bytes
-;
-MSG_TR_MessageGauge0
-Nachricht  0 von  0
-; Message  0 of  0
-;
 ;
 ; Module TR - Bubblehelp
 ;
@@ -4830,12 +4647,6 @@ _Fenster schließen
 ;
 ; Module ER - Error Messages
 ;
-MSG_ER_ErrorTTable
-Kann Zeichensatzkonverter '%s' nicht öffnen\n(nicht existent oder falsches Format).
-; Couldn't open translation table '%s'\n\
-; (non existent or wrong format).
-; FILENAME
-;
 MSG_ER_CantCreateFile
 Kann Datei '%s' nicht erstellen.\n\nVersichern Sie sich, dass der Pfad existiert und das Laufwerk nicht schreibgeschützt ist.
 ; Couldn't write to file '%s'.\n\
@@ -4862,16 +4673,6 @@ MSG_ER_ErrorDOBformat
 Das Geburtsdatum ist im falschen Format. Das korrekte Format ist TT-MMM-JJJJ (englische Monatsnamen).
 ; Date of birth is in wrong format. The correct format is \
 ; DD-MMM-YYYY (month names in English).
-;
-MSG_ER_NotInGallery
-Konnte diese Person in der YAM Benutzergalerie nicht finden. Entweder existiert diese Person in der Datenbank nicht, oder ihr Name/ihre Adresse ist falsch geschrieben.
-; Couldn't find this person in the YAM user gallery. Either the person \
-; doesn't exist in the database or his/her name or address is mispelt.
-;
-MSG_ER_NoTCP
-Es läuft kein TCP/IP-Stack! Starten Sie eine bsdsocket.library-kompatible Internetsoftware bevor Sie diese Funktion benutzen.
-; No TCP/IP stack running! A bsdsocket.library-compatible internet \
-; stack must be started before you can use this function.
 ;
 MSG_ER_ErrorDateFormat
 Ungültiges Datums/Zeit-Format.\n\nDas Datum muss in AmigaDOS-Format sein.\nBeispiel: %s
@@ -4946,10 +4747,6 @@ Kann MIME-Nachricht nicht extrahieren.\n\nDie Nachricht enthält falsche MIME-Kod
 ; Couldn't extract MIME message.\n\
 ; \n\
 ; The message contains badly formed MIME parts or it's empty or truncated.
-;
-MSG_ER_MissingBoundary
-Fehlende Begrenzung in einer Multipart-Nachricht. Die Nachricht scheint unvollständig zu sein.
-; Missing boundary in multipart message. The message seems to be truncated.
 ;
 MSG_ER_CantOpenFile
 Kann Datei '%s' nicht öffnen.\n\nDie Datei scheint nicht zu existieren.
@@ -5149,11 +4946,6 @@ Ausgewählten Eintrag an der aktuellen\nPosition im Texteditor einfügen
 ;
 ;
 ; Module FI - Procedures
-;
-MSG_FI_GaugeText
-%%ld von %lD Nachrichten
-; %%ld of %lD messages
-; COUNT, COUNT
 ;
 MSG_FI_AddFilter
 Filter hinzufügen
@@ -5672,11 +5464,6 @@ MSG_BusyLoadingDI
 Lade Glossar...
 ; Loading glossary...
 ;
-MSG_BusyDownloadingPic
-Lade Porträt von %s herunter...
-; Downloading portrait of %s...
-; NAME
-;
 MSG_BusyUncompressingFO
 (De)komprimiere Postfächer...
 ; (De)compressing folders...
@@ -5758,16 +5545,6 @@ MSG_BusyDecDisplaying
 Dekodiere/zeige an...
 ; Decoding/displaying...
 ;
-;
-; ADDED AFTER 13-MAR-1999
-;
-MSG_RE_FollowThreadReq
-Um Nachrichten zum Thema zu finden, muss YAM sämtliche\nIndizes laden. Dies kann dauern.\n\nWollen Sie fortfahren?
-; In order to follow the thread, YAM has to load all indices.\n\
-; This may be quite time and memory consuming.\n\
-; \n\
-; Do you want to continue?
-;
 MSG_CTapplicationadosscript
 AmigaDOS-Skript
 ; AmigaDOS script
@@ -5782,10 +5559,6 @@ Rexx-Skript
 MSG_PROJECT_ABOUT
 ?\000Über...
 ; ?\000About...
-;
-MSG_PROJECT_CHECKVERSION
-Überprüfe Version
-; Check version
 ;
 MSG_FOLDER_NEWFOLDER
 Neues Postfach...
@@ -5905,15 +5678,6 @@ MSG_HELP_MA_CY_DEFSECURITY
 Standardsicherheit beim Senden von\nNachrichten an diese Person
 ; Default security for sending\n\
 ; mail to this person
-;
-MSG_WR_DefSecurityConflict
-Die Empfänger dieser Nachricht haben unterschiedliche\nStandardsicherheiten. Welche Sicherheit soll benutzt werden?
-; The recipients of this mail have different default\n\
-; security settings. What kind of security do you want?
-;
-MSG_WR_DefSecurityConflictGads
-*Kei_ne|_Signiert|V_erschlüsselt|_Beides|_Anonym senden
-; *_None|_Sign|_Encrypt|_Both|Send _anonymously
 ;
 MSG_WR_SecDefaults
 Standard
@@ -6104,11 +5868,6 @@ Sollen die Postfachstatistiken im\nAppIcon-Text von YAM angezeigt werden?
 MSG_OPENGUI
 Oberfläche wird geöffnet...
 ; Opening GUI...
-;
-MSG_ERR_OPENLIB
-Fehler beim Öffnen von '%s', Version v%lu.%lu
-; Can't open '%s', version v%lu.%lu
-; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
 ;
 MSG_CO_CONTEXTMENU
 Kontextmenü
@@ -6358,15 +6117,6 @@ MSG_TR_SENDAUTH
 Sende SMTP AUTH Anfrage...
 ; Sending SMTP AUTH request...
 ;
-MSG_CO_AutoTranslateIn
-Codepage Autoe_rkennung/Umsetzung
-; Codepage Autodetect/T_ranslation
-;
-MSG_HELP_CO_CH_AUTOTRANSLATEIN
-Hilft beim Erkennen fremdartiger Zeichensätze.\nHauptsächlich für Benutzer kyrillischer Zeichen.
-; Helps reading strange character sets.\n\
-; Mainly for cyrillic users.
-;
 MSG_CO_IMPORTMIMETITLE
 Import MIME Anzeiger & Typen
 ; Import MIME viewers & types
@@ -6419,32 +6169,6 @@ die TLS/SSL Unterstützung für diese Verbindung aus.
 ; You have selected TLSv1/SSLv3 for this connection, but AmiSSL \
 ; couldn't be initialized. Please check your AmiSSL installation \
 ; or disable TLS/SSL for this connection.
-;
-MSG_NO_MCC
-Konnte die MUI Klasse '%s' v%lu.%lu nicht öffnen.\n\
-Die Klasse ist nicht installiert.
-; Couldn't open MUI custom class '%s' V%lu.%lu.\n\
-; The class is not installed.
-;
-MSG_MCC_OLD
-Konnte die MUI Klasse '%s' v%lu.%lu nicht öffnen.\n\n\
-Sie haben momentan Version v%lu.%lu installiert und\n\
-sollten daher upgraden.
-; Couldn't open MUI custom class '%s' V%lu.%lu.\n\
-; \n\
-; Currently installed is V%lu.%lu, please upgrade!
-;
-MSG_MCC_IN_USE
-Konnte die MUI Klasse '%s' v%lu.%lu nicht öffnen.\n\n\
-Version %lu.%lu wird momentan von einer anderen Anwendung\n\
-verwendet. Wenn sie die benötigte Version installiert haben,\n\
-schliessen sie alle MUI Programme und probieren es erneut.
-; Couldn't open MUI custom class '%s' V%lu.%lu.\n\
-; %lu.%lu is currently in use by other applications.\n\
-; \n\
-; Once you have installed the required version,\n\
-; close all MUI programs, make sure the old class\n\
-; is flushed from memory and try again.
 ;
 MSG_RETRY_QUIT_GAD
 Wiederholen|Beenden
@@ -6800,16 +6524,6 @@ Anhang
 MSG_MA_ATTACHMENTS
 Anhänge:
 ;
-MSG_MA_ATTACHMENTINFO
-\ebAnhang - MIME-Part #%lD\en\n\
-Name: %s\n\
-Beschreibung: %s\n\
-Content-Type: %s <%s>\n\
-Grösse: ~%lD Bytes
-; PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
-MSG_MA_ATTACHMENT_PART
-Anhang/MIME-Part #%lD
-;
 MSG_MA_ATTACHMENT_DISPLAY
 Anzeigen
 ;
@@ -7130,8 +6844,519 @@ Nachrichtenexport als MBOX konforme Datei...
 MSG_YAMINFO
 Open Source E-Mail Software für den Amiga
 ;
+MSG_CO_SYSTEMSETTINGS
+Systemeinstellungen
+;
+MSG_CO_DEFAULTCHARSET
+Standard-Zeichenkodierung
+;
+MSG_CO_CHARSETUNKNOWNWARN
+Die eingestellte Zeichenkodierung ist '%s' und wird\n\
+leider von der installierten codesets.library version\n\
+nicht unterstützt.\n\
+\n\
+Wie möchten Sie fortfahren?
+; LOCALCHARSET
+;
+MSG_CO_CHARSETUNKNOWNWARN_BT
+*_Standard verwenden|_Ignorieren
+;
+MSG_ER_LIB
+Kann benötigte '%s', Version v%lu.%lu nicht öffnen.\n\
+\n\
+Bitte stellen Sie sicher das sie diese oder eine neuere\n\
+Version in Ihrem Bibliothekspfad installiert haben.
+; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
+;
+MSG_ER_LIB_URL
+Kann benötigte '%s', Version v%lu.%lu nicht öffnen.\n\
+\n\
+Bitte besuchen Sie '%s'\n\
+um die neueste Version herunterzuladen und stellen Sie\n\
+sicher das Sie diese in Ihrem Bibliothekspfad korrekt\n\
+installiert haben.
+; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION, LIBRARY_URL
+;
+MSG_ER_NO_MCC
+Konnte die benötigte MUI custom Klasse '%s' v%lu.%lu\n\
+nicht öffnen.\n\
+\n\
+Bitte besuchen Sie '%s'\n\
+und stellen Sie sicher das sie die neueste Version\n\
+installiert haben.
+; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
+;
+MSG_ER_MCC_OLD
+Konnte die benötigte MUI custom Klasse '%s' v%lu.%lu\n\
+nicht öffnen.\n\
+\n\
+Momentan installiert ist v%lu.%lu, bitte stellen Sie\n\
+sicher das sie die neueste version von '%s'\n\
+korrekt installiert haben.
+; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
+;
+MSG_ER_MCC_IN_USE
+Konnte die benötigte MUI custom Klasse '%s' v%lu.%lu\n\
+nicht öffnen da die Version %lu.%lu bereits verwendet wird.\n\
+\n\
+Bitte besuchen Sie '%s'.\n\
+Sobald Sie die benötigte Version installiert haben,\n\
+schließen Sie alle MUI Programme und stellen sicher das\n\
+alle nicht benötigten Bibliotheken aus dem Speicher entfernt\n\
+werden. Versuchen Sie es dann erneut YAM zu starten.
+; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
+;
+MSG_CO_FIRSTSTEPS_TITLE
+Erste Schritte Einstellungen
+;
+MSG_CO_FIRSTSTEPS_SUMMARY
+Um schnell die minimalen Einstellungen vorzunehmen...
+;
+MSG_CO_TCPIP_TITLE
+TCP/IP Einstellungen
+;
+MSG_CO_TCPIP_SUMMARY
+Um Ihre SMTP und POP3 Server zu konfigurieren...
+;
+MSG_CO_NEWMAIL_TITLE
+Neue Post Einstellungen
+;
+MSG_CO_NEWMAIL_SUMMARY
+Wie beim Eintreffen neuer Post agiert werden soll...
+;
+MSG_CO_FILTER_TITLE
+Nachrichtenfilter Einstellungen
+;
+MSG_CO_FILTER_SUMMARY
+Definieren Sie Ihre eigenen Nachrichtenfilter...
+;
+MSG_CO_READ_TITLE
+Nachrichten Leseeinstellungen
+;
+MSG_CO_READ_SUMMARY
+Konfigurieren Sie die Leseeinstellungen...
+;
+MSG_CO_WRITE_TITLE
+Nachrichten Schreibeinstellungen
+;
+MSG_CO_WRITE_SUMMARY
+Konfigurieren Sie die Schreibeinstellungen...
+;
+MSG_CO_REPLY_TITLE
+Nachrichten Antworteinstellungen
+;
+MSG_CO_REPLY_SUMMARY
+Konfigurieren Sie die Antworteinstellungen...
+;
+MSG_CO_SIGNATURE_TITLE
+Nachrichtensignatur Einstellungen
+;
+MSG_CO_SIGNATURE_SUMMARY
+Nachrichtensignaturen konfigurieren...
+;
+MSG_CO_LISTS_TITLE
+Nachrichtenlisten Einstellungen
+;
+MSG_CO_LISTS_SUMMARY
+Ändern Sie die Nachrichtenauflistungen...
+;
+MSG_CO_SECURITY_TITLE
+Sicherheitseinstellungen
+;
+MSG_CO_SECURITY_SUMMARY
+Konfigurieren Sie die Sicherheitseinstellungen...
+;
+MSG_CO_STARTUP_TITLE
+Start/Beenden Aktionen konfigurieren
+;
+MSG_CO_STARTUP_SUMMARY
+Konfigurieren Sie Start/Beenden Aktionen von YAM...
+;
+MSG_CO_MIME_TITLE
+MIME-Datentyp Einstellungen
+;
+MSG_CO_MIME_SUMMARY
+Konfigurieren Sie Ihre eigenen MIME Typen...
+;
+MSG_CO_ABOOK_TITLE
+Addressbuch Einstellungen
+;
+MSG_CO_ABOOK_SUMMARY
+Konfigurieren Sie ihr Addressbuch...
+;
+MSG_CO_SCRIPTS_TITLE
+Benutzer-definierte Skripte
+;
+MSG_CO_SCRIPTS_SUMMARY
+Konfigurieren Sie ihre Hilfsskripte...
+;
+MSG_CO_MIXED_TITLE
+Verschiedenes
+;
+MSG_CO_MIXED_SUMMARY
+Konfigurieren Sie allgemeine Einstellungen...
+;
+MSG_CO_UPDATE_TITLE
+Software Update
+;
+MSG_CO_UPDATE_SUMMARY
+Suchen Sie nach neuen YAM updates...
+;
+MSG_CO_CrdUpdate
+Update
+;
+MSG_CO_AMISSLWARN_TITLE
+AmiSSL Warnung
+;
+MSG_CO_AMISSLWARN
+YAM konnte keine aktuelle AmiSSL Installation finden\n\
+und es wurde daher die interne SSLv3/TLSv1 Funktionalität\n\
+deaktiviert. Eine Verbinden über einen verschlüsselten\n\
+Kanal ist daher nicht möglich.\n\
+\n\
+Bitte stellen Sie sicher das sie die Version v%lu.%lu\n\
+von AmiSSL korrekt installiert haben und starten Sie YAM\n\
+danach erneut.
+; AMISSL_VERSION, AMISSL_REVISION
+;
+MSG_CO_AMISSLWARN_BT
+*_Beenden|_Dauerhaft Ignorieren|_Ignorieren
+;
+MSG_BUSY_OPENINGCONFIG
+Öffne Konfiguration...
+;
+MSG_CO_TIMEZONEWARN_TITLE
+Zeitzonen Warnung
+;
+MSG_CO_TIMEZONEWARN
+Die Zeitzonen Einstellung in YAM stimmt nicht\n\
+mit der des Systems überein.\n\
+\n\
+Wie möchten Sie fortfahren?
+;
+MSG_CO_TIMEZONEWARN_BT
+*_Anpassen|_Dauerhaft Ignorieren|_Ignorieren
+;
+MSG_CO_AUTODSTWARN_TITLE
+AutoDST Warnung
+;
+MSG_CO_AUTODSTWARN
+YAM hat ein aktives AutoDST Tool gefunden und\n\
+dieses meldet eine unterschiedliche Sommerzeit\n\
+Einstellung als YAM selber.\n\
+\n\
+Wie möchten Sie fortfahren?
+;
+MSG_CO_AUTODSTWARN_BT
+*_Anpassen|_Dauerhaft Ignorieren|_Ignorieren
+;
+MSG_MA_UPDATECHECK
+Nach Updates suchen...
+;
+MSG_CO_SOFTWAREUPDATE
+Software Update
+;
+MSG_CO_UPDATE_DAILY
+Täglich
+;
+MSG_CO_UPDATE_WEEKLY
+Wöchentlich
+;
+MSG_CO_UPDATE_MONTHLY
+Monatlich
+;
+MSG_CO_SEARCHFORUPDATES
+Suche nach _Updates:
+;
+MSG_CO_SEARCHFORUPDATESINFO
+Sie werden benachrichtigt, sobald Updates verfügbar sind.
+;
+MSG_CO_SEARCHNOW
+_Jetzt suchen
+;
+MSG_CO_LASTSEARCH
+Letzte Suche:
+;
+MSG_CO_LASTSTATUS_NOCHECK
+Keinerlei Updatechecks vorgenommen bis jetzt.
+;
+MSG_CO_LASTSTATUS_NOUPDATE
+Keine neuen Software Updates waren verfügbar.
+;
+MSG_CO_LASTSTATUS_NOQUERY
+Konnte Update Server nicht erreichen.
+;
+MSG_CO_LASTSTATUS_UPDATESUCCESS
+Konnte neue Updates erfolgreich finden.
+;
+MSG_WR_SECURITYREQ
+Die Empfänger der Nachricht haben verschiedene\n\
+Sicherheitseinstellungen.\n\
+\n\
+Wie möchten Sie die Nachricht verfassen?
+;
+MSG_WR_SECURITYREQ_GADS
+*_Unbehandelt|_Signiert|_Verschlüsselt|S_igniert&Verschl.|_Anonym|_Abbrechen
+;
+MSG_ER_OPENTCPIP
+YAM konnte die notwendige bsdsocket.library Schnittstelle \
+für TCP/IP Verbindungen nicht öffnen.\n\
+\n\
+Bitte stellen Sie sicher das sie einen kompatiblen TCP/IP \
+stack installiert haben, dieser korrekt konfiguriert und \
+zur Zeit auch aktiviert ist.
+;
+MSG_WR_UUCODE
+UUencoded Text
+;
+MSG_UPD_NOTIFICATION_WTITLE
+Update Benachrichtigung
+;
+MSG_UPD_NOTIFICATION_TITLE
+Updates verfügbar
+;
+MSG_UPD_NOTIFICATION_SUMMARY
+YAM konnte die folgenden verfügbaren Updates finden:
+;
+MSG_UPD_NOTIFICATION_CHANGES
+Änderungen:
+;
+MSG_UPD_NOTIFICATION_NOUPDATE
+In Zukunft nicht mehr benachrichtigen
+;
+MSG_UPD_NOTIFICATION_VISITURL
+URL aufsuchen
+;
+MSG_UPD_NOTIFICATION_CLOSE
+Schliessen
+;
+MSG_UPD_NOTIFICATION_COMP
+Komponente
+;
+MSG_UPD_NOTIFICATION_RECENT
+Neueste
+;
+MSG_UPD_NOTIFICATION_INSTALLED
+Installiert
+;
+MSG_UPD_NOTIFICATION_URL
+URL
+;
+MSG_CO_MIME_DESCRIPTION
+_Beschreibung
+;
+MSG_CTapplicationgz
+GNU zip Archiv
+;
+MSG_CTapplicationhqx
+Macintosh Archiv
+;
+MSG_CTapplicationxls
+Microsoft Excel Datei
+;
+MSG_CTapplicationppt
+Microsoft Powerpoint Datei
+;
+MSG_CTapplicationdoc
+Microsoft Word Datei
+;
+MSG_CTtextxml
+XML Datei
+;
+MSG_CTapplicationz
+zlib komprimierte Datei
+;
+MSG_CTapplicationtar
+tar Archiv
+;
+MSG_CTaudioaiff
+AIFF Audiodatei
+;
+MSG_CTaudiomidi
+MIDI Audiodatei
+;
+MSG_CTaudiompeg
+MPEG Audiodatei
+;
+MSG_CTimagebmp
+Bitmap Bilddatei
+;
+MSG_CTapplicationtgz
+gzipped tar Archiv
+;
+MSG_CTapplicationpgp
+PGP verschlüsselte Datei
+;
+MSG_CTapplicationbz2
+BZIP2 Archiv
+;
+MSG_CO_DETECT_CYRILLIC
+Autoerkennung kyrillischer Zeichensätze
+;
+MSG_HELP_CO_DETECT_CYRILLIC
+Versucht mittels einer automatischen\n\
+Methode in der codesets.library, den\n\
+benutzen kyrillischen Zeichensatz zu\n\
+identifizieren.\n\
+(nur für kyrillische Benutzer relevant)
+;
+MSG_WR_ErrorNotEnoughUndoMem
+Der gelöschte Text war zu lang um diesen\n\
+in den Undobuffer zu kopieren.\n\
+\n\
+Ein wiederrufen des Löschens ist daher\n\
+nicht möglich.
+;
+MSG_RE_HEADERDISPLAY
+Kopfzeilen
+;
+MSG_RE_MAILDETAILS
+Nachrichtendetails
+;
+MSG_ER_ADDFILEERROR
+Die ausgewählte Datei '%s' konnte nicht \
+and die Nachricht angehängt werden.\n\
+\n\
+Bitte stellen Sie sicher das die Datei \
+existiert und Sie Leserechte besitzen.
+;
+MSG_ER_PACKERROR
+Ein Fehler trat bei dem Versuch auf ein \
+Archiv aus den gewählten Dateien zu erzeugen.\n\
+\n\
+Bitte stellen Sie sicher das die Dateien \
+existieren und Sie Leserechte besitzen.
+;
+MSG_CO_ABOOKLOOKUP
+Nutze Addressbuch zur Namensanzeige
+;
+MSG_HELP_CO_CH_ABOOKLOOKUP
+Führt eine Addressbuchabfrage für jede\n\
+angezeigte Person einer Nachricht durch\n\
+und zeigt den Namen anstelle der reinen\n\
+Mailadresse dar.\n\
+\n\
+Bitte beachten: Dies kann mitunter eine\n\
+sehr aufwendige Prozedur sein und besonders\n\
+bei grossen Addressbüchern zu Geschwindigkeits-\n\
+einbußen beim Anzeigen führen.
+;
 MSG_TR_MESSAGEGAUGE
 Nachricht %%ld von %ld
-; Message %%ld of %ld
 ; COUNT, COUNT
 ;
+MSG_CO_CONVERTHTML
+Konvertiere anzuzeigende HTML Teile in Kartext
+;
+MSG_HELP_CO_CONVERTHTML
+Konvertiert anzuzeigende HTML Teile einer Nachricht\n\
+in Kartext, falls diese Option aktiviert ist.
+;
+MSG_RE_FOLLOWTHREAD
+Um nach mehr Nachrichten des selben Themas zu suchen,\n\
+muss YAM zusätzliche Postfach Indizes nachladen. Dies\n\
+könnte sehr Zeit- und Speicheraufwendig sein.\n\
+\n\
+Möchten Sie fortfahren?
+;
+MSG_TR_TRANSFERSTATUS
+%s von %s @ %s/s\n\
+%02ld'%02ld'' aktiv - %02ld'%02ld'' verbleibend
+; SIZE, SIZE, SPEED, MINS, SECS
+;
+MSG_TR_TRANSFERSIZE
+%s von %s
+; SIZE, SIZE
+;
+MSG_FI_GAUGETEXT
+%%ld von %ld Nachrichten
+; COUNT, COUNT
+;
+MSG_MA_MESSAGEINFO
+\ebAktuelle Nachricht\en\n\
+Von: %s <%s>\n\
+An: %s <%s>\n\
+Betreff: %s\n\
+Datum: %s\n\
+Dateiname: %s\n\
+Grösse: %s
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
+;
+MSG_MA_FOLDERINFO
+\ebAktuelles Postfach\en\n\
+Name: %s\n\
+Pfad: %s\n\
+Grösse: %s\n\
+Nachrichten: %ld (%ld Neu, %ld Ungelesen)
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
+;
+MSG_MA_MIMEPART_INFO
+\ebAnhang - MIME-Part #%ld\en\n\
+Name: %s\n\
+Beschreibung: %s\n\
+Content-Type: %s <%s>\n\
+Grösse: ~%s
+; PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
+;
+MSG_MA_MIMEPART_MENU
+Anhang/MIME-Part #%ld
+;
+MSG_CO_PGPPASSINTERVAL1
+Passphrase erst nach
+;
+MSG_CO_PGPPASSINTERVAL2
+Minute(n) Untätigkeit vergessen
+;
+MSG_HELP_CO_PGPPASSINTERVAL
+Wenn diese Option aktiviert ist, wird ein einge-\n\
+gebendes PGP Passphrase erst nach der definierten\n\
+Zeit einer Untätigkeit vergessen. Dies erlaubt die\n\
+Nutzung mehrerer PGP Operationen ohne jedesmal das\n\
+Passphrase erneut eingeben zu müssen.
+;
+MSG_UT_PGPPASSREQ_TITLE
+PGP Passphrase Anfrage
+;
+MSG_CO_GR_REPLYFORWARD
+Antwort/Weiterl.
+;
+MSG_CO_GR_SCRIPTS
+Skripte
+;
+MSG_CO_GR_STARTUPQUIT
+Start/Ende
+;
+MSG_CO_SCRIPTS_PREGET
+%p  Typ der Transferaktion
+;
+MSG_CO_SCRIPTS_POSTGET
+%p  Anzahl der erhaltenen Nachrichten
+;
+MSG_CO_SCRIPTS_NEWMSG
+%p  Name der neuen Nachrichtendatei
+;
+MSG_CO_SCRIPTS_READ
+%p  Index des Lesefensters
+;
+MSG_CO_SCRIPTS_WRITE
+%p  Index des Schreibfensters
+;
+MSG_CO_SCRIPTS_URL
+%p  Kompletter URL Pfad
+;
+MSG_CO_MIMECMD_PARAMETER
+%s  Kompletter Dateipfad
+;
+MSG_ER_CANTOPENASL
+Es trat ein Fehler beim Versuch auf, ein \
+ASL Fenster zu öffnen.\n\
+\n\
+Bitte stellen Sie sicher, das ihre ASL \
+Einstellung korrekt sind und ASL korrekt \
+funktioniert.
+;
+MSG_MA_CONFIRMDELETION
+%ld Nachrichte(n) sind ausgewählt.\n\
+\n\
+Möchten Sie diese wirklich löschen?
+; AMOUNT

@@ -4,6 +4,17 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * deutsch.ct: updated german catalog to latest v6 version changes.
+  * YAM.cd, C_c.sd, C_h.sd, misc: the OpenYAMCatalog() function
+    checks now the version of the loaded native catalog against the
+    version of the internal one. And if both are not matching it will
+    popup a requester to the user upon startup. In addition, it will
+    refuse to keep that outdated catalog translation to be activ. That
+    should force/remind users of the fact that they might have an
+    outdated catalog running in case they updated their YAM.
+
 2006-09-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c: YAM will not automatically switch to the outgoing folder
