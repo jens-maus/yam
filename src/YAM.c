@@ -1671,7 +1671,8 @@ static void Initialise(BOOL hidden)
      G->Locale = OpenLocale(NULL);
 
    // Now load the catalog of YAM
-   OpenYAMCatalog();
+   if(OpenYAMCatalog() == FALSE)
+     Abort(NULL);
 
    // load&initialize all required libraries
    INITLIB("graphics.library",  36, 0, &GfxBase,      "main", &IGraphics, TRUE, NULL);

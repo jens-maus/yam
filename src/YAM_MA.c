@@ -2512,15 +2512,9 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    selected = (int)*mlist;
    if (C->Confirm && selected >= C->ConfirmDelete && !force)
    {
-      if(selected == 1)
-        snprintf(buffer, sizeof(buffer), "%s%s", GetStr(MSG_MA_1Selected), GetStr(MSG_MA_ConfirmDel));
-      else
-      {
-        snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_XSELECTED), selected);
-        strlcat(buffer, GetStr(MSG_MA_ConfirmDel), sizeof(buffer));
-      }
+      snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_CONFIRMDELETION), selected);
 
-      if (!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_OkayCancelReq), buffer))
+      if(!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), buffer))
       {
          free(mlist);
          return;

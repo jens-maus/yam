@@ -13,7 +13,7 @@
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
 ; 
-#version 5
+#version 6
 #language english
 ;
 ; General
@@ -501,12 +501,6 @@ _The following attachments have been removed manually:_\n
 ;
 MSG_MA_ConfirmReq (155//)
 Please confirm...
-;
-MSG_MA_ConfirmDel (156//)
-Please confirm deletion.
-;
-MSG_MA_1Selected (157//)
-One message selected.\n
 ;
 MSG_MA_ConfirmFilter (159//)
 Is it okay to filter messages\n\
@@ -5826,10 +5820,6 @@ Size: %s\n\
 Messages: %ld (%ld new, %ld unread)
 ; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
-MSG_MA_XSELECTED (1724//)
-%ld messages selected.\n
-; COUNT
-;
 MSG_MA_MIMEPART_INFO (1725//)
 \ebAttachment - MIME-Part #%ld\en\n\
 Name: %s\n\
@@ -5845,12 +5835,12 @@ MSG_CO_PGPPASSINTERVAL1 (1727//)
 Remember passphrase for
 ;
 MSG_CO_PGPPASSINTERVAL2 (1728//)
-minute(s)
+idle minute(s)
 ;
 MSG_HELP_CO_PGPPASSINTERVAL (1729//)
 If selected, an entered PGP passphrase will be\n\
-remembered for the specified amount of time so\n\
-that subsequent PGP operations doesn't have to\n\
+remembered for the specified amount of idle minutes\n\
+so that subsequent PGP operations doesn't have to\n\
 query for it again.
 ;
 MSG_UT_PGPPASSREQ_TITLE (1730//)
@@ -5893,3 +5883,9 @@ an ASL requester.\n\
 Please make sure that your ASL setup is \
 valid and that you have enough resources.
 ;
+MSG_MA_CONFIRMDELETION (1742//)
+%ld message(s) are selected.\n\
+\n\
+Do you really want to delete these\n\
+messages?
+; AMOUNT

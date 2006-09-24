@@ -38,9 +38,9 @@
 
 extern const char *GetStr(const void *);
 extern const char *GetStripStr(const void *);
-extern void Open%bCatalog(void);
+extern BOOL Open%bCatalog(void);
 extern void Close%bCatalog(void);
 
-extern const void *_%i;\n#define %i ((const void *)&_%i)
+extern const void const *_%i;\n#define %i ((const void *)&_%i)
 
 #endif /* %b_LOCALE_H */
