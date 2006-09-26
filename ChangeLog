@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-25  Jens Langner <Jens.Langner@light-speed.de>
+
+  * MainMailListGroup.c: if doubleclicking on a mail in the outgoing
+    folder, YAM will now popup an edit window instead of a read window
+    as that is normally the more native action for the outgoing folder.
+    All other folder types will keep their old behaviour and popup
+    a read window instead.
+
 2006-09-24  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c: fixed bug #1549093 where some toolbar gadgets were

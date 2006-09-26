@@ -91,9 +91,9 @@ OVERLOAD(OM_NEW)
   for(i=LT_MAIN; i <= LT_QUICKVIEW; i++)
   {
     DoMethod(data->mainListObjects[i], MUIM_MainMailList_MakeFormat);
-    DoMethod(data->mainListObjects[i], MUIM_Notify, MUIA_NList_SelectChange,TRUE,           MUIV_Notify_Application,  2, MUIM_CallHook, &MA_ChangeSelectedHook);
-    DoMethod(data->mainListObjects[i], MUIM_Notify, MUIA_NList_Active,      MUIV_EveryTime, MUIV_Notify_Application,  2, MUIM_CallHook, &MA_SetMessageInfoHook);
-    DoMethod(data->mainListObjects[i], MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, MUIV_Notify_Application,  3, MUIM_CallHook, &MA_ReadMessageHook,   FALSE);
+    DoMethod(data->mainListObjects[i], MUIM_Notify, MUIA_NList_SelectChange,TRUE,           MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ChangeSelectedHook);
+    DoMethod(data->mainListObjects[i], MUIM_Notify, MUIA_NList_Active,      MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &MA_SetMessageInfoHook);
+    DoMethod(data->mainListObjects[i], MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj,                     2, MUIM_MainMailListGroup_DoubleClicked, MUIV_TriggerValue);
   }
 
   return (ULONG)obj;
@@ -310,6 +310,41 @@ OVERLOAD(MUIM_NList_Sort)
   DoMethodA(data->mainListObjects[LT_MAIN], msg);
   DoMethodA(data->mainListObjects[LT_QUICKVIEW], msg);
 
+  return 0;
+}
+
+///
+
+/* Private Methods */
+/// DECLARE(DoubleClicked)
+// if the user double-clicked in the mail list we either
+// have to open the message in a read window or if it is currently in
+// the outgoing folder we open it for editing.
+DECLARE(DoubleClicked) // LONG entryNum
+{
+  ENTER();
+
+  if(msg->entryNum >= 0)
+  {
+    struct Folder *folder;
+
+    if((folder = FO_GetCurrentFolder()))
+    {
+      if(isOutgoingFolder(folder))
+      {
+        // in case the folder is the "outgoing" folder
+        // we edit the mail instead.
+        DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NEW_EDIT, 0);
+      }
+      else
+      {
+        // if not, then we open a read window instead
+        DoMethod(G->App, MUIM_CallHook, &MA_ReadMessageHook);
+      }
+    }
+  }
+
+  RETURN(0);
   return 0;
 }
 
