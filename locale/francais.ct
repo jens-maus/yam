@@ -1,11 +1,10 @@
-## version $VER: YAM.catalog 5.102 (23.03.2006)
+## version $VER: YAM.catalog 6.0 (23.03.2006)
 ## language français
-## codeset 0
+## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
-; YAM.cd - YAM 2.5 catalog description file
 ; $Id$
-; based on YAM.cd 2231 2006-06-21 23:29:45Z
+; based on YAM.cd 2373 2006-09-24 13:19:27
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -19,7 +18,7 @@
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
 ; 
-;#version 5
+;#version 6
 ;#language english
 ;
 ; General
@@ -597,7 +596,7 @@ Charger
 ;
 MSG_UT_PGPPassReq
 Entrez votre phrase secrète PGP :
-; Please enter your PGP pass phrase:
+; Please enter your PGP passphrase:
 ;
 ; Replaced by MSG_APPICON_STATS
 MSG_UT_NoPrinter
@@ -637,12 +636,13 @@ _destinataires|_Annuler
 ; _recipients|_Cancel
 ;
 MSG_MA_CompareReq
-L'expéditeur est <%s>, mais\n\
-l'adresse de réponse (Répondre à) est <%s>.\n\
-Quelle(s) adresse(s) voulez-vous utiliser ?
-; Sender address (From) is <%s>, but\n\
-; return address (Reply-To) is <%s>.\n\
-; Which address do you want to use?
+L'expéditeur est \033b<%s>\033n, mais\n\
+l'adresse de réponse (Répondre à) est \033b<%s>\033n.\n\
+A quelle adresse souhaitez-vous répondre ?
+; Sender address (From) is \033b<%s>\033n, but\n\
+; return address (Reply-To) is \033b<%s>\033n.\n\
+; \n\
+; To which address do you want to reply to?
 ; ADDRESS, ADDRESS
 ;
 MSG_MA_Compare3ReqOpt
@@ -662,19 +662,6 @@ MSG_MA_AttachRemoved
 MSG_MA_ConfirmReq
 Confirmez s.v.p. ...
 ; Please confirm...
-;
-MSG_MA_ConfirmDel
-Confirmez la suppression.
-; Please confirm deletion.
-;
-MSG_MA_1Selected
-Un message sélectionné.\n
-; One message selected.\n
-;
-MSG_MA_xSelected
-%lD messages sélectionnés.\n
-; %lD messages selected.\n
-; COUNT
 ;
 MSG_MA_ConfirmFilter
 Confirmez l'application des filtres sur\n\
@@ -751,36 +738,6 @@ Exécuter un script...
 MSG_MA_CheckSingle
 Vérifier une BAL
 ; Check single account
-;
-MSG_MA_FolderInfo
-\ebDossier actuel\en\n\
-Nom : %s\n\
-Chemin : %s\n\
-Taille : %lD octets\n\
-Messages : %lD (%lD nouveaux, %lD non lus)
-; \ebCurrent folder\en\n\
-; Name: %s\n\
-; Path: %s\n\
-; Size: %lD bytes\n\
-; Messages: %lD (%lD new, %lD unread)
-; NAME, PATH, SIZE, COUNT, COUNT, COUNT
-;
-MSG_MA_MessageInfo
-\ebMessage actuel\en\n\
-Expéditeur : %s <%s>\n\
-Destinataire : %s <%s>\n\
-Sujet : %s\n\
-Date : %s\n\
-Fichier : %s\n\
-Taille : %lD octets
-; \ebCurrent message\en\n\
-; From: %s <%s>\n\
-; To: %s <%s>\n\
-; Subject: %s\n\
-; Date: %s\n\
-; Filename: %s\n\
-; Size: %lD bytes
-; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle
 YAM %s - Utilisateur : %s
@@ -1332,10 +1289,6 @@ MSG_CO_CrdWrite
 Écriture
 ; Write
 ;
-MSG_CO_CrdReply
-Répondre
-; Reply
-;
 MSG_CO_CrdSignature
 Signature
 ; Signature
@@ -1355,14 +1308,6 @@ Sécurité
 MSG_CO_CrdMixed
 Divers
 ; Miscellaneous
-;
-MSG_CO_CrdScripts
-ARexx
-; ARexx
-;
-MSG_CO_CrdStartQuit
-Début/Fin
-; Start/Quit
 ;
 MSG_CO_CrdABook
 Carnet d'adresses
@@ -4528,18 +4473,6 @@ MSG_WR_Colored
 Couleur
 ; Alternative color
 ;
-MSG_WR_Separators
-Ligne de séparation
-; Separators
-;
-MSG_WR_Thin
-Fine
-; Thin
-;
-MSG_WR_Thick
-Épaisse
-; Thick
-;
 MSG_WR_Emoticons
 Émotions
 ; Emoticons
@@ -4859,18 +4792,6 @@ MSG_TR_SendHello
 Envoie « Hello »...
 ; Sending 'Hello'...
 ;
-MSG_TR_SizeGauge
-%%ld sur %ld octets
-; %%ld of %ld bytes
-; SIZE, SIZE
-;
-MSG_TR_TransferStats
-%lD sur %lD Ko de transférés à %lD cps\n\
-Temps restant estimé : %lD min %ld sec
-; %lD of %lD kB transmitted at %lD cps\n\
-; Remaining time: %lD min %ld sec
-; SIZE, SIZE, SPEED, MINS, SECS
-;
 MSG_TR_Exporting
 Exporte les messages...
 ; Exporting message...
@@ -5000,21 +4921,6 @@ MSG_TR_Abort
 _Annuler
 ; _Abort
 ;
-MSG_TR_TransferStats0
-  0 sur   0 Ko transférés à    0 cps\n\
-Temps restant :  0 min  0 sec
-;   0 of   0 kB transmitted at    0 cps\n\
-; Remaining time:  0 min  0 sec
-;
-MSG_TR_BytesGauge0
-   0 sur    0 octets
-;    0 of    0 bytes
-;
-MSG_TR_MessageGauge0
-  0 messages sur  0
-; Message  0 of  0
-;
-;
 ; Module TR - Bubblehelp
 ;
 MSG_HELP_TR_TX_STATUS
@@ -5133,10 +5039,10 @@ Le message semble être tronqué.
 ; The message seems to be truncated.
 ;
 MSG_ER_InvalidLength
-Longueur de ligne du fichier UU invalide : %lD.\n\
+Longueur de ligne du fichier UU invalide : %ld.\n\
 \n\
 Un mauvais encodeur UU a été utilisé ou le message est tronqué.
-; Invalid line length in UUencoded file: %lD.\n\
+; Invalid line length in UUencoded file: %ld.\n\
 ; \n\
 ; A defective UUencoder was used or the message is truncated.
 ; SIZE
@@ -5194,11 +5100,11 @@ Ce fichier ne semble pas exister.
 ; FILENAME
 ;
 MSG_ER_UUSize
-La taille décodée [%lD] ne correspond pas\n\
-à la taille d'origine [%lD].\n\
+La taille décodée [%ld] ne correspond pas\n\
+à la taille d'origine [%ld].\n\
 \n\
 Un mauvais encodeur UU a été utilisé ou le message est tronqué.
-; Decoded size [%lD] does not match original size [%lD].\n\
+; Decoded size [%ld] does not match original size [%ld].\n\
 ; \n\
 ; A defective UUencoder was used or the message is truncated.
 ; SIZE, SIZE
@@ -5229,16 +5135,16 @@ ou ne supporte pas les requêtes HTTP.
 ; HOST
 ;
 MSG_ER_BadResponse
-Mauvaise commande %s, résultat :\n\
+Mauvaise commande %s, réponse :\n\
 %s.\n\
 \n\
 Le serveur ne peut pas exécuter cette commande \
-et a répondu avec un message d'erreur.
+et a répondu avec le message d'erreur précédent.
 ; Bad %s command response:\n\
 ; %s\n\
 ; \n\
 ; The mail server couldn't execute the command \
-; and replied with the error message.
+; and replied with the above error message.
 ; COMMAND, TEXT
 ;
 MSG_ER_UnknownPOP
@@ -5426,11 +5332,6 @@ Insérer l'enregistrement sélectionné\n\
 ;
 ;
 ; Module FI - Procedures
-;
-MSG_FI_GaugeText
-%%ld sur %lD messages
-; %%ld of %lD messages
-; COUNT, COUNT
 ;
 MSG_FI_AddFilter
 Ajouter filtre
@@ -6068,16 +5969,6 @@ Décode et affiche...
 ;
 ;
 ; ADDED AFTER 13-MAR-1999
-;
-MSG_RE_FollowThreadReq
-Afin de suivre le thème, YAM doit charger tous les indices.\n\
-Ceci peut prendre un certain temps.\n\
-\n\
-Voulez-vous poursuivre ?
-; In order to follow the thread, YAM has to load all indices.\n\
-; This may be quite time and memory consuming.\n\
-; \n\
-; Do you want to continue?
 ;
 MSG_CTapplicationadosscript
 Script AmigaDOS
@@ -7003,8 +6894,8 @@ Lors du décodage \"quoted-printable\" du fichier '%s', des séquences de control 
 ;
 MSG_ER_QPDEC_CHAR
 Des caractères interdits ont été détectés lors du décodage \"quoted-printable\" du fichier '%s' et on donc été supprimés lors du décodage.
-; Some not allowed characters have been spotted during the quoted-printable \
-; decoding of file '%s' and where therefore removed during the decoding.
+; Some disallowed characters were spotted during the quoted-printable \
+; decoding of file '%s' and were therefore removed during the decoding.
 ; FILENAME
 ;
 MSG_ER_UUDEC_TAGMISS
@@ -7149,22 +7040,6 @@ Pièce jointe
 MSG_MA_ATTACHMENTS
 Pièces jointes :
 ; Attachments:
-;
-MSG_MA_ATTACHMENTINFO
-\ebPièce jointe - Partie #%lD\en\n\
-Nom: %s\n\
-Description: %s\n\
-Content-Type: %s <%s>\n\
-Taille: ~%lD octets
-; \ebAttachment - MIME-Part #%lD\en\n\
-; Name: %s\n\
-; Description: %s\n\
-; Content-Type: %s <%s>\n\
-; Size: ~%lD bytes
-; PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
-MSG_MA_ATTACHMENT_PART
-Pièce jointe/Partie #%lD
-; Attachment/MIME-Part #%lD
 ;
 MSG_MA_ATTACHMENT_DISPLAY
 Montrer
@@ -7939,8 +7814,8 @@ Impossible de contacter le serveur de mise à jour.
 ; Couldn't query update server for updates.
 ;
 MSG_CO_LASTSTATUS_UPDATESUCCESS
-Nouvelle(s) mise(s) à jour trouvée(s) et traitée(s)
-; Successfully found and processed new updates.
+Nouvelle(s) mise(s) à jour trouvée(s) et notifiée(s)
+; Successfully found and notified on new updates.
 ;
 MSG_WR_SECURITYREQ
 Les destinataires de ce courrier ont des réglages\n\
@@ -8141,8 +8016,231 @@ d'accès adéquates.
 ; Please make sure that all files are accessible \
 ; and that you have proper permissions.
 ;
+MSG_CO_ABOOKLOOKUP
+Recherche dans le carnet d'adresses pour la liste des messages
+; Perform addressbook lookup in message list
+;
+;
+MSG_HELP_CO_CH_ABOOKLOOKUP
+Effectue une recherche dans le carnet d'adresses\n\
+pour le destinataire principal de mail et affiche\n\
+le nom réel du l'entrée du carnet à la place.\n\
+\n\
+Veuillez noter : Ceci est très consommateur de\n\
+temps et peut faire baisser les performances\n\
+d'affichage de la liste, en particulier avec de\n\
+gros carnets d'adresses.
+; Performs an addressbook lookup for every main\n\
+; mail recipient in the mail list and shows the\n\
+; real name of the addressbook entry instead.\n\
+; \n\
+; Please note: This is a quite time consuming job\n\
+; and may bring down the performance of the list\n\
+; display - especially on setups with a large\n\
+; addressbook.
+;
+;
 MSG_TR_MESSAGEGAUGE
 Message %%ld sur %ld
 ; Message %%ld of %ld
 ; COUNT, COUNT
 ;
+MSG_CO_CONVERTHTML
+Convertir les parties HTML affichables du message en texte brut
+; Convert viewable HTML message parts to plain text
+;
+;
+MSG_HELP_CO_CONVERTHTML
+Si un mail contient des parties HTML affichables comme\n\
+partie principale, YAM les convertira en texte brut si\n\
+cette option est activée.
+; If a mail contains viewable HTML parts as its main\n\
+; message parts, YAM will convert them to plain text\n\
+; when this option is enabled.
+;
+;
+MSG_RE_FOLLOWTHREAD
+ Afin de rechercher d'autres mails appartenant au même\n\
+ fil de discussion, YAM doit charger des index supplémentaires.\n\
+ Cela peut s'avérer assez consommateur en temps et en mémoire.\n\
+ \n\
+ Voulez-vous continuer ?
+; In order to search for more mails of the same thread,\n\
+; YAM has to load additional folder indices. This may be\n\
+; quite time and memory consuming.\n\
+; \n\
+; Do you want to continue?
+;
+;
+MSG_TR_TRANSFERSTATUS
+%s sur %s à %s/s\n\
+%02ld'%02ld" écoulées - %02ld'%02ld" restantes
+; %s of %s @ %s/s\n\
+; %02ld'%02ld'' running - %02ld'%02ld'' left
+;
+; SIZE, SIZE, SPEED, MINS, SECS
+;
+MSG_TR_TRANSFERSIZE
+%s sur %s
+; %s of %s
+;
+; SIZE, SIZE
+;
+MSG_FI_GAUGETEXT
+Message %%ld sur %ld
+; %%ld of %ld messages
+;
+; COUNT, COUNT
+;
+MSG_MA_MESSAGEINFO
+\ebMessage actuel\en\n\
+Expéditeur : %s <%s>\n\
+Destinataire : %s <%s>\n\
+Sujet : %s\n\
+Date : %s\n\
+Fichier : %s\n\
+Taille : %s
+; \ebCurrent message\en\n\
+; From: %s <%s>\n\
+; To: %s <%s>\n\
+; Subject: %s\n\
+; Date: %s\n\
+; Filename: %s\n\
+; Size: %s
+;
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
+;
+MSG_MA_FOLDERINFO
+\ebDossier actuel\en\n\
+Nom : %s\n\
+Chemin : %s\n\
+Taille : %s octets\n\
+Messages : %ld (%ld nouveaux, %ld non lus)
+; \ebCurrent folder\en\n\
+; Name: %s\n\
+; Path: %s\n\
+; Size: %s\n\
+; Messages: %ld (%ld new, %ld unread)
+;
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
+;
+MSG_MA_MIMEPART_INFO
+\ebPièce jointe - Partie #%lD\en\n\
+Nom: %s\n\
+Description: %s\n\
+Content-Type: %s <%s>\n\
+Taille: %s
+; \ebAttachment - MIME-Part #%ld\en\n\
+; Name: %s\n\
+; Description: %s\n\
+; Content-Type: %s <%s>\n\
+; Size: ~%s
+;
+; PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
+;
+MSG_MA_MIMEPART_MENU
+Pièce jointe #%ld
+; Attachment/MIME-Part #%ld
+;
+;
+MSG_CO_PGPPASSINTERVAL1
+Mémorise la phrase secrète pendant
+; Remember passphrase for
+;
+; ***NEW***
+;
+MSG_CO_PGPPASSINTERVAL2
+minute(s) d'inactivités
+; idle minute(s)
+;
+;
+MSG_HELP_CO_PGPPASSINTERVAL
+Une phrase secrète de PGP saisie sera mémorisée pendant\n\
+le nombre de minutes d'inactivité spécifié de manière\n\
+à ce que les opérations PGP suivantes ne la redemande pas.
+; If selected, an entered PGP passphrase will be\n\
+; remembered for the specified amount of idle minutes\n\
+; so that subsequent PGP operations doesn't have to\n\
+; query for it again.
+;
+;
+MSG_UT_PGPPASSREQ_TITLE
+Demande de phrase secrête PGP
+; PGP passphrase request
+;
+;
+MSG_CO_GR_REPLYFORWARD
+Répondre/Transférer
+; Reply/Forward
+;
+;
+MSG_CO_GR_SCRIPTS
+Scripts
+; Scripts
+;
+;
+MSG_CO_GR_STARTUPQUIT
+Démarrage/Arrêt
+; Startup/Quit
+;
+;
+MSG_CO_SCRIPTS_PREGET
+%p  Type d'action de téléchargement
+; %p  Type of download action
+;
+;
+MSG_CO_SCRIPTS_POSTGET
+%p  Nombre de messages reçus
+; %p  Number of messages received
+;
+;
+MSG_CO_SCRIPTS_NEWMSG
+%p  Nom du nouveau fichier message
+; %p  Name of new message file
+;
+;
+MSG_CO_SCRIPTS_READ
+%p  Nombre de fenêtre(s) de lecture
+; %p  Number of read window
+;
+;
+MSG_CO_SCRIPTS_WRITE
+%p  Nombre de fenêtre de rédaction
+; %p  Number of write window
+;
+;
+MSG_CO_SCRIPTS_URL
+%p  Chemin URL complet
+; %p  Full URL path
+;
+;
+MSG_CO_MIMECMD_PARAMETER
+%p  Chemin complet du fichier
+; %s  Full path of file
+;
+;
+MSG_ER_CANTOPENASL
+Une erreur est survenue lors de l'ouverture \
+d'une requête ASL.\n\
+\n\
+Veuillez vous assurer que votre installation \
+ASL est valide et que vous disposez de ressources \
+suffisantes.
+; An error occurred while trying to popup \
+; an ASL requester.\n\
+; \n\
+; Please make sure that your ASL setup is \
+; valid and that you have enough resources.
+;
+;
+MSG_MA_CONFIRMDELETION
+%ld message(s) sont sélectionnés.\n\
+\n\
+Voulez-vous réellement supprimer ces\n\
+messages ?
+; %ld message(s) are selected.\n\
+; \n\
+; Do you really want to delete these\n\
+; messages?
+;
+; AMOUNT
