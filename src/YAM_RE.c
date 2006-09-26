@@ -3406,6 +3406,8 @@ struct ReadMailData *AllocPrivateRMData(struct Mail *mail, enum ParseMode pMode)
 {
   struct ReadMailData *rmData = calloc(1, sizeof(struct ReadMailData));
 
+  ENTER();
+
   if(rmData)
   {
     rmData->mail = mail;
@@ -3417,6 +3419,7 @@ struct ReadMailData *AllocPrivateRMData(struct Mail *mail, enum ParseMode pMode)
     }
   }
 
+  RETURN(rmData);
   return rmData;
 }
 ///
@@ -3424,8 +3427,12 @@ struct ReadMailData *AllocPrivateRMData(struct Mail *mail, enum ParseMode pMode)
 //  Frees resources used by background message parsing
 void FreePrivateRMData(struct ReadMailData *rmData)
 {
+  ENTER();
+
   if(CleanupReadMailData(rmData, FALSE))
     free(rmData);
+
+  LEAVE();
 }
 ///
 /// CleanupReadMailData()
@@ -3498,12 +3505,16 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   }
   rmData->firstPart = NULL;
 
+  SHOWVALUE(DBF_MAIL, rmData);
+
   // now clear some flags and stuff so that others may have a clean readmaildata
   // structure
   rmData->signedFlags = 0;
   rmData->encryptionFlags = 0;
   rmData->hasPGPKey = 0;
   rmData->letterPartNum = 0;
+
+  SHOWVALUE(DBF_MAIL, rmData);
 
   // now we have to check whether there is a .unp (unpack) file and delete
   // it acoordingly (we can`t use the FinishUnpack() function because the
