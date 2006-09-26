@@ -233,15 +233,15 @@ void MA_ChangeSelected(BOOL forceUpdate)
 
   // now we have to make sure that all toolbar and menu items are
   // enabled and disabled according to the folder/mail status
-  folderEnabled = !(fo->Type == FT_GROUP);
+  folderEnabled = !isGroupFolder(fo);
 
   // deal with the toolbar
   if(gui->TO_TOOLBAR)
   {
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 0, MUIV_Toolbar_Set_Ghosted, !active);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 1, MUIV_Toolbar_Set_Ghosted, !active || !isOutgoingFolder(fo) || numSelected > 1 || beingedited);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !active && numSelected == 0, 2,3,4,8, -1);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 7, MUIV_Toolbar_Set_Ghosted, (!active && numSelected == 0) || isOutgoingFolder(fo));
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 0,  MUIV_Toolbar_Set_Ghosted, !active);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 1,  MUIV_Toolbar_Set_Ghosted, !active || !isOutgoingFolder(fo) || numSelected > 1 || beingedited);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet,MUIV_Toolbar_Set_Ghosted, !active && numSelected == 0, 2,3,4,8, -1);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 7,  MUIV_Toolbar_Set_Ghosted, (!active && numSelected == 0) || isSentMailFolder(fo));
     DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 13, MUIV_Toolbar_Set_Ghosted, !folderEnabled);
   }
 
@@ -252,8 +252,8 @@ void MA_ChangeSelected(BOOL forceUpdate)
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled, gui->MI_FILTER, gui->MI_UPDINDEX, gui->MI_IMPORT, gui->MI_EXPORT, gui->MI_SELECT, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active, gui->MI_READ, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active && isOutgoingFolder(fo) && !beingedited, gui->MI_EDIT, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, fo->Type == FT_OUTGOING && (active || numSelected > 0), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isOutgoingFolder(fo) && (active || numSelected > 0) , gui->MI_TOREAD, gui->MI_TOUNREAD, gui->MI_ALLTOREAD, gui->MI_REPLY, gui->MI_BOUNCE, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, isOutgoingFolder(fo) && (active || numSelected > 0), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isSentMailFolder(fo) && (active || numSelected > 0), gui->MI_TOREAD, gui->MI_TOUNREAD, gui->MI_ALLTOREAD, gui->MI_REPLY, gui->MI_BOUNCE, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, hasattach && (active || numSelected > 0), gui->MI_ATTACH, gui->MI_SAVEATT, gui->MI_REMATT, NULL);
 
   LEAVE();
@@ -317,8 +317,7 @@ HOOKPROTONHNONP(MA_SetFolderInfoFunc, void)
 
   ENTER();
 
-  if((fo = FO_GetCurrentFolder()) &&
-     (fo->Type != FT_GROUP))
+  if((fo = FO_GetCurrentFolder()) && !isGroupFolder(fo))
   {
     static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
     char sizestr[SIZE_DEFAULT];
@@ -344,23 +343,29 @@ MakeHook(MA_SetFolderInfoHook, MA_SetFolderInfoFunc);
 ///
 /// MA_GetActiveMail
 //  Returns pointers to the active message and folder
-struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folderp, int *activep)
+struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folderp, LONG *activep)
 {
-   struct Folder *folder;
-   int active;
-   struct Mail *mail = NULL;
+  struct Folder *folder = forcefolder != NULL ? forcefolder : FO_GetCurrentFolder();
+  struct Mail *mail = NULL;
 
-   folder = forcefolder ? forcefolder : FO_GetCurrentFolder();
+  ENTER();
 
-   if(!folder) return(NULL);
+  if(folder)
+  {
+    LONG active = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active);
 
-   MA_GetIndex(folder);
-   active = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active);
-   if (active != MUIV_NList_Active_Off) DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, active, &mail);
-   if (folderp) *folderp = folder;
-   if (activep) *activep = active;
+    if(active != MUIV_NList_Active_Off)
+      DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, active, &mail);
 
-   return mail;
+    if(folderp)
+      *folderp = folder;
+
+    if(activep)
+      *activep = active;
+  }
+
+  RETURN(mail);
+  return mail;
 }
 
 ///
@@ -535,7 +540,8 @@ struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
 
    // we first have to check whether this is a valid folder or not
    folder = FO_GetCurrentFolder();
-   if(!folder || folder->Type == FT_GROUP) return NULL;
+   if(!folder || isGroupFolder(folder))
+     return NULL;
 
    DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
    if (selected)
@@ -587,7 +593,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet)
 {
    struct Folder *mailFolder = mail->Folder;
 
-   if(C->RemoveAtOnce || mailFolder->Type == FT_DELETED || forceatonce)
+   if(C->RemoveAtOnce || isDeletedFolder(mailFolder) || forceatonce)
    {
       AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name);
 
@@ -653,7 +659,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 
       // check the status flags and set the mail statues to queued if the mail was copied into
       // the outgoing folder
-      if(to->Type == FT_OUTGOING && hasStatusSent(mail))
+      if(isOutgoingFolder(to) && hasStatusSent(mail))
       {
         setStatusToQueued(mail);
       }
@@ -743,7 +749,7 @@ static void MA_UpdateStatus(void)
    {
       for(i = 1; i <= (int)*flist; i++)
       {
-        if(!isOutgoingFolder(flist[i]) && flist[i]->LoadedMode == LM_VALID)
+        if(!isSentMailFolder(flist[i]) && flist[i]->LoadedMode == LM_VALID)
         {
           BOOL updated = FALSE;
 
@@ -1092,7 +1098,7 @@ HOOKPROTONHNONP(MA_ReadMessage, void)
 {
   struct Mail *mail;
 
-  if((mail = MA_GetActiveMail(ANYBOX, NULL, NULL)))
+  if((mail = MA_GetActiveMail(NULL, NULL, NULL)))
   {
     struct ReadMailData *rmData;
 
@@ -1529,7 +1535,7 @@ int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
             setmutex(wr->GUI.RA_SIGNATURE, email->Signature);
             setmutex(wr->GUI.RA_SECURITY, wr->OldSecurity = email->Security);
 
-            if(folder->Type != FT_OUTGOING)
+            if(!isOutgoingFolder(folder))
               DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, wr->GUI.BT_SEND, wr->GUI.BT_HOLD, NULL);
 
             WR_SetupOldMail(winnum, rmData);
@@ -1841,7 +1847,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
         {
           // if the mail we are going to reply resists in the incoming folder
           // we have to check all other folders first.
-          if(folder->Type == FT_INCOMING)
+          if(isIncomingFolder(folder))
           {
             struct Folder **flist;
 
@@ -2467,9 +2473,9 @@ int MA_NewMessage(int mode, int flags)
    {
       case NEW_NEW:     winnr = MA_NewNew(NULL, flags);
                         break;
-      case NEW_EDIT:    if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL))) winnr = MA_NewEdit(mail, flags, NULL);
+      case NEW_EDIT:    if ((mail = MA_GetActiveMail(NULL, NULL, NULL))) winnr = MA_NewEdit(mail, flags, NULL);
                         break;
-      case NEW_BOUNCE:  if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL))) winnr = MA_NewBounce(mail, flags);
+      case NEW_BOUNCE:  if ((mail = MA_GetActiveMail(NULL, NULL, NULL))) winnr = MA_NewBounce(mail, flags);
                         break;
       case NEW_FORWARD: if ((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE))) winnr = MA_NewForward(mlist, flags);
                         break;
@@ -2597,7 +2603,7 @@ void MA_GetAddress(struct Mail **mlist)
   enum ABEntry_Type mode;
   struct Mail *mail = mlist[2];
   struct Folder *folder = mail->Folder;
-  BOOL outgoing = folder ? isOutgoingFolder(folder) : FALSE;
+  BOOL isSentMail = folder ? isSentMailFolder(folder) : FALSE;
   struct ExtendedMail *email;
   struct Person *pe = NULL;
 
@@ -2605,9 +2611,9 @@ void MA_GetAddress(struct Mail **mlist)
 
   // check whether we want to create a single addressbook
   // entry or a list of addresses
-  if(num == 1 && !(outgoing && isMultiRCPTMail(mail)))
+  if(num == 1 && !(isSentMail && isMultiRCPTMail(mail)))
   {
-    if(outgoing)
+    if(isSentMail)
       pe = &mail->To;
     else
     {
@@ -2672,7 +2678,7 @@ void MA_GetAddress(struct Mail **mlist)
       {
         struct Mail *mail = mlist[i];
 
-        if(outgoing)
+        if(isSentMail)
         {
           DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&mail->To), MUIV_List_Insert_Bottom);
 
@@ -2907,7 +2913,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
               today.ds_Days = today_days - flist[f]->MaxAge;
               if (CompareDates(&today, &(mail->Date)) < 0)
               {
-                if(flist[f]->Type == FT_DELETED ||
+                if(isDeletedFolder(flist[f]) ||
                    (!hasStatusNew(mail) && hasStatusRead(mail)))
                 {
                   MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE);
@@ -2978,7 +2984,7 @@ HOOKPROTONHNONP(MA_RescanIndexFunc, void)
    struct Folder *folder = FO_GetCurrentFolder();
 
    // on groups we don't allow any index rescanning operation
-   if(!folder || folder->Type == FT_GROUP)
+   if(!folder || isGroupFolder(folder))
      return;
 
    // we make sure that the Listview is disabled before the
@@ -3016,7 +3022,7 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
   ENTER();
 
   // check that a real folder is active
-  if(!actfo || actfo->Type == FT_GROUP)
+  if(!actfo || isGroupFolder(actfo))
   {
     RETURN(FALSE);
     return FALSE;
@@ -3086,7 +3092,7 @@ BOOL MA_ImportMessages(char *fname)
   ENTER();
 
   // check that a real folder is active
-  if(!actfo || actfo->Type == FT_GROUP)
+  if(!actfo || isGroupFolder(actfo))
   {
     RETURN(FALSE);
     return FALSE;
@@ -3216,7 +3222,7 @@ HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
 
   ENTER();
 
-  if(!actfo || actfo->Type == FT_GROUP)
+  if(!actfo || isGroupFolder(actfo))
   {
     LEAVE();
     return;
@@ -3710,7 +3716,8 @@ HOOKPROTONHNONP(MA_FolderClickFunc, void)
 {
   struct Folder *folder = FO_GetCurrentFolder();
 
-  if(!folder || folder->Type == FT_GROUP) return;
+  if(!folder || isGroupFolder(folder))
+    return;
 
   DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);
 }

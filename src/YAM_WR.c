@@ -1686,7 +1686,8 @@ void WR_NewMail(enum WriteMode mode, int winnum)
          for(i = 0; i < (int)ml[0]; i++)
          {
             m = ml[i+2];
-            if(!isVirtualMail(m) && m->Folder->Type != FT_OUTGOING && m->Folder->Type != FT_SENT)
+            if(!isVirtualMail(m) && m->Folder != NULL &&
+               !isOutgoingFolder(m->Folder) && !isSentFolder(m->Folder))
             {
                if(hasStatusNew(m) || !hasStatusRead(m))
                {

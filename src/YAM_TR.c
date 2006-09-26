@@ -2445,6 +2445,8 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       // we only apply the filters if we downloaded something, or it`s wasted
       if(G->TR->Stats.Downloaded > 0)
       {
+        struct Folder *folder;
+
         DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, APPLY_AUTO, 0);
 
         // Now we jump to the first new mail we received if the number of messages has changed
@@ -2453,8 +2455,10 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 
         // only call the DisplayStatistics() function if the actual folder wasn`t already the INCOMING
         // one or we would hav refreshed it twice
-        if(FO_GetCurrentFolder()->Type != FT_INCOMING) DisplayStatistics((struct Folder *)-1, TRUE);
-        else DisplayAppIconStatistics();
+        if((folder = FO_GetCurrentFolder()) && !isIncomingFolder(folder))
+          DisplayStatistics((struct Folder *)-1, TRUE);
+        else
+          DisplayAppIconStatistics();
 
         TR_NewMailAlert();
       }

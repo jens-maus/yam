@@ -167,10 +167,9 @@ static void MA_ValidateStatus(struct Folder *folder)
 
    ENTER();
 
-   if(C->UpdateNewMail            ||
-      folder->Type == FT_OUTGOING ||
-      folder->Type == FT_SENT
-     )
+   if(C->UpdateNewMail          ||
+      isOutgoingFolder(folder)  ||
+      isSentFolder(folder))
    {
       D(DBF_FOLDER, "Validating status of new msgs in folder %s", folder->Name);
 
@@ -178,9 +177,9 @@ static void MA_ValidateStatus(struct Folder *folder)
       {
         if(hasStatusNew(mail))
         {
-          if(folder->Type == FT_OUTGOING)
+          if(isOutgoingFolder(folder))
             setStatusToQueued(mail);
-          else if(folder->Type == FT_SENT)
+          else if(isSentFolder(folder))
             setStatusToSent(mail);
           else
             setStatusToUnread(mail);
@@ -416,7 +415,7 @@ BOOL MA_GetIndex(struct Folder *folder)
   BOOL result = FALSE;
   ENTER();
 
-  if(folder && folder->Type != FT_GROUP)
+  if(folder && !isGroupFolder(folder))
   {
     D(DBF_FOLDER, "folder: '%s' path: '%s' type: %ld", folder->Name, folder->Path, folder->Type);
 
@@ -487,7 +486,7 @@ void MA_UpdateIndexes(BOOL initial)
     {
       struct Folder *folder = flist[i];
 
-      if(folder && folder->Type != FT_GROUP)
+      if(folder && !isGroupFolder(folder))
       {
         if(initial)
         {
@@ -521,8 +520,8 @@ void MA_UpdateIndexes(BOOL initial)
               // then lets call GetIndex() to start rebuilding
               // the .index - but only if this folder is one of the folders
               // that should update it indexes during startup
-              if((folder->Type == FT_INCOMING || folder->Type == FT_OUTGOING ||
-                 folder->Type == FT_DELETED || C->LoadAllFolders) &&
+              if((isIncomingFolder(folder) || isOutgoingFolder(folder) ||
+                  isDeletedFolder(folder) || C->LoadAllFolders) &&
                  !isProtectedFolder(folder))
               {
                 if(MA_GetIndex(folder) == TRUE)
@@ -531,9 +530,7 @@ void MA_UpdateIndexes(BOOL initial)
                   // immediatly flush it here so that another
                   // following index rebuild doesn't take
                   // all remaining memory.
-                  if((folder->Type == FT_SENT   ||
-                      folder->Type == FT_CUSTOM ||
-                      folder->Type == FT_CUSTOMSENT) &&
+                  if((isSentFolder(folder) || !isDefaultFolder(folder)) &&
                       folder->LoadedMode == LM_VALID &&
                       isFreeAccess(folder))
                   {
@@ -597,9 +594,7 @@ void MA_FlushIndexes(BOOL all)
       // a folder where this should really be done and also not
       // on the actual folder or otherwise we risk to run into
       // problems.
-      if((folder->Type == FT_SENT ||
-          folder->Type == FT_CUSTOM ||
-          folder->Type == FT_CUSTOMSENT) &&
+      if((isSentFolder(folder) || !isDefaultFolder(folder)) &&
           folder->LoadedMode == LM_VALID &&
           (all || isFreeAccess(folder)) &&
           folder != actfolder)
@@ -653,7 +648,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
     DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, FALSE);
 
   // if this folder should be disabled, lets do it now
-  if(folder->Type == FT_GROUP || MA_GetIndex(folder) == FALSE)
+  if(isGroupFolder(folder) || MA_GetIndex(folder) == FALSE)
   {
     SetAttrs(gui->PG_MAILLIST, MUIA_Disabled,     TRUE,
                                MUIA_ShortHelp,    NULL,

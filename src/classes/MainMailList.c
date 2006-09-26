@@ -143,9 +143,9 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
         static char dispfro[SIZE_DEFAULT];
         BOOL toPrefix = FALSE;
 
-        if(((entry->Folder->Type == FT_CUSTOMMIXED || entry->Folder->Type == FT_DELETED) &&
+        if(((isCustomMixedFolder(entry->Folder) || isDeletedFolder(entry->Folder)) &&
             (hasStatusSent(entry) || hasStatusQueued(entry) || hasStatusHold(entry) ||
-             hasStatusError(entry))) || (searchWinHook && isOutgoingFolder(entry->Folder)))
+             hasStatusError(entry))) || (searchWinHook && isSentMailFolder(entry->Folder)))
         {
           pe = &entry->To;
 
@@ -153,7 +153,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
           toPrefix = TRUE;
         }
         else
-          pe = isOutgoingFolder(entry->Folder) ? &entry->To : &entry->From;
+          pe = isSentMailFolder(entry->Folder) ? &entry->To : &entry->From;
 
         // in case the user wants to take the additional pain
         // of performing an addressbook lookup for every entry in the
@@ -243,12 +243,12 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 
     // depending on the current folder and the parent object we
     // display different titles for different columns
-    if(!searchWinHook && isOutgoingFolder(folder))
+    if(!searchWinHook && isSentMailFolder(folder))
     {
       array[1] = (STRPTR)GetStr(MSG_To);
       array[7] = (STRPTR)GetStr(MSG_DATE_SENT);
     }
-    else if(searchWinHook || folder->Type == FT_CUSTOMMIXED || folder->Type == FT_DELETED)
+    else if(searchWinHook || isCustomMixedFolder(folder) || isDeletedFolder(folder))
     {
       array[1] = (STRPTR)GetStr(MSG_FROMTO);
       array[7] = (STRPTR)GetStr(MSG_DATE_SNTRCVD);
@@ -329,7 +329,7 @@ static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
       char *addr1;
       char *addr2;
 
-      if(isOutgoingFolder(entry1->Folder))
+      if(isSentMailFolder(entry1->Folder))
       {
         pe1 = &entry1->To;
         pe2 = &entry2->To;
@@ -517,6 +517,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   struct Mail *mail = NULL;
   struct Folder *fo = FO_GetCurrentFolder();
   BOOL isOutBox = isOutgoingFolder(fo);
+  BOOL isSentMail = isSentMailFolder(fo);
   BOOL beingedited = FALSE, hasattach = FALSE;
 
   // dispose the old context_menu if it still exists
@@ -581,9 +582,9 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   // now we create the menu title of the context menu
   if(mail)
   {
-    struct Person *pers = isOutBox ? &mail->To : &mail->From;
+    struct Person *pers = isSentMail ? &mail->To : &mail->From;
 
-    snprintf(menutitle, sizeof(menutitle), "%s: ", GetStr(isOutBox ? MSG_To : MSG_From));
+    snprintf(menutitle, sizeof(menutitle), "%s: ", GetStr(isSentMail ? MSG_To : MSG_From));
     strlcat(menutitle, BuildAddrName2(pers), 20-strlen(menutitle) > 0 ? 20-strlen(menutitle) : 0);
     strlcat(menutitle, "...", sizeof(menutitle));
   }
@@ -594,20 +595,20 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     Child, MenuObjectT(menutitle),
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_MRead),        MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_READ,       End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_EDIT),    MUIA_Menuitem_Enabled, mail && isOutBox && !beingedited,   MUIA_UserData, MMEN_EDIT,       End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_REPLY),   MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_REPLY,      End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_REPLY),   MUIA_Menuitem_Enabled, mail && !isSentMail,MUIA_UserData, MMEN_REPLY,      End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_FORWARD), MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_FORWARD,    End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_BOUNCE),  MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_BOUNCE,     End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_MSend),        MUIA_Menuitem_Enabled, mail && (fo->Type != FT_OUTGOING), MUIA_UserData, MMEN_SEND, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_MSend),        MUIA_Menuitem_Enabled, mail && !isOutBox,  MUIA_UserData, MMEN_SEND, End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ChangeSubj),   MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_CHSUBJ,     End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_SetStatus),         MUIA_Menuitem_Enabled, mail,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_TOMARKED),   MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_TOMARKED,   End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_TOUNMARKED), MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_TOUNMARKED, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToUnread),   MUIA_Menuitem_Enabled, mail && !isOutBox,  MUIA_UserData, MMEN_TOUNREAD,   End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToRead),     MUIA_Menuitem_Enabled, mail && !isOutBox,  MUIA_UserData, MMEN_TOREAD,     End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToUnread),   MUIA_Menuitem_Enabled, mail && !isSentMail,MUIA_UserData, MMEN_TOUNREAD,   End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToRead),     MUIA_Menuitem_Enabled, mail && !isSentMail,MUIA_UserData, MMEN_TOREAD,     End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToHold),     MUIA_Menuitem_Enabled, mail && isOutBox,   MUIA_UserData, MMEN_TOHOLD,     End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToQueued),   MUIA_Menuitem_Enabled, mail && isOutBox,   MUIA_UserData, MMEN_TOQUEUED,   End,
         Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ALLTOREAD),  MUIA_Menuitem_Enabled, mail && !isOutBox,  MUIA_UserData, MMEN_ALLTOREAD,  End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ALLTOREAD),  MUIA_Menuitem_Enabled, mail && !isSentMail,  MUIA_UserData, MMEN_ALLTOREAD,  End,
       End,
       Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_GETADDRESS),  MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_SAVEADDR, End,

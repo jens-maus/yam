@@ -469,7 +469,7 @@ DECLARE(ReadMail) // struct Mail *mail
   struct Mail *mail = msg->mail;
   struct Folder *folder = mail->Folder;
   BOOL isRealMail = !isVirtualMail(mail);
-  BOOL isOutgoingMail = isRealMail ? isOutgoingFolder(folder) : FALSE;
+  BOOL isSentMail = isRealMail ? isSentMailFolder(folder) : FALSE;
   BOOL result = FALSE;
   BOOL initialCall = data->title[0] == '\0'; // TRUE if this is the first call
   BOOL prevMailAvailable = FALSE;
@@ -494,14 +494,14 @@ DECLARE(ReadMail) // struct Mail *mail
   }
 
   // enable/disable some menuitems in advance
-  set(data->MI_EDIT,      MUIA_Menuitem_Enabled, isOutgoingMail);
+  set(data->MI_EDIT,      MUIA_Menuitem_Enabled, isSentMail);
   set(data->MI_MOVE,      MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_DELETE,    MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_CROP,      MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_CHSUBJ,    MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_NAVIG,     MUIA_Menuitem_Enabled, isRealMail);
-  set(data->MI_REPLY,     MUIA_Menuitem_Enabled, !isOutgoingMail);
-  set(data->MI_BOUNCE,    MUIA_Menuitem_Enabled, !isOutgoingMail);
+  set(data->MI_REPLY,     MUIA_Menuitem_Enabled, !isSentMail);
+  set(data->MI_BOUNCE,    MUIA_Menuitem_Enabled, !isSentMail);
   set(data->MI_NEXTTHREAD,MUIA_Menuitem_Enabled, nextMailAvailable);
   set(data->MI_PREVTHREAD,MUIA_Menuitem_Enabled, prevMailAvailable);
 
@@ -519,7 +519,7 @@ DECLARE(ReadMail) // struct Mail *mail
     DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 3, MUIV_Toolbar_Set_Ghosted, !nextMailAvailable);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 9, MUIV_Toolbar_Set_Ghosted, !isRealMail);
     DoMethod(data->windowToolbar, MUIM_Toolbar_Set,10, MUIV_Toolbar_Set_Ghosted, !isRealMail);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Set,11, MUIV_Toolbar_Set_Ghosted, isOutgoingMail);
+    DoMethod(data->windowToolbar, MUIM_Toolbar_Set,11, MUIV_Toolbar_Set_Ghosted, isSentMail);
   }
 
   // Update the status groups
@@ -543,14 +543,14 @@ DECLARE(ReadMail) // struct Mail *mail
        rmData == G->ActiveRexxRMData)
     {
       titleLen = snprintf(data->title, sizeof(data->title), "[%d] %s %s: ", data->windowNumber,
-                                                            isOutgoingMail ? GetStr(MSG_To) : GetStr(MSG_From),
-                                                            isOutgoingMail ? AddrName(mail->To) : AddrName(mail->From));
+                                                            isSentMail ? GetStr(MSG_To) : GetStr(MSG_From),
+                                                            isSentMail ? AddrName(mail->To) : AddrName(mail->From));
     }
     else
     {
       titleLen = snprintf(data->title, sizeof(data->title), "%s %s: ",
-                                                            isOutgoingMail ? GetStr(MSG_To) : GetStr(MSG_From),
-                                                            isOutgoingMail ? AddrName(mail->To) : AddrName(mail->From));
+                                                            isSentMail ? GetStr(MSG_To) : GetStr(MSG_From),
+                                                            isSentMail ? AddrName(mail->To) : AddrName(mail->From));
     }
 
     if(strlen(mail->Subject)+titleLen > SIZE_DEFAULT)
@@ -964,7 +964,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
         // and if found read that mail
         for(i += direction; i <= (int)*flist && i >= 1; i += direction)
         {
-          if(flist[i]->Type != FT_GROUP && flist[i]->Unread > 0)
+          if(!isGroupFolder(flist[i]) && flist[i]->Unread > 0)
           {
             if(!MUI_Request(G->App, obj, 0, GetStr(MSG_MA_ConfirmReq),
                                             GetStr(MSG_YesNoReq),

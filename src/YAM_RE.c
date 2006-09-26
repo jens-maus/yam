@@ -122,7 +122,7 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
         {
           // check if this folder isn't a group and that we haven't scanned
           // it already.
-          if(flist[i]->Type != FT_GROUP &&
+          if(!isGroupFolder(flist[i]) &&
              flist[i] != srcMail->Folder)
           {
             if(flist[i]->LoadedMode != LM_VALID)

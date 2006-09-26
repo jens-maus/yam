@@ -583,7 +583,7 @@ void rx_mailread( UNUSED struct RexxHost *host, struct rxd_mailread **rxd, long 
 
         if(rd->arg.window == NULL)
         {
-          if((mail = MA_GetActiveMail(ANYBOX, NULL, NULL)))
+          if((mail = MA_GetActiveMail(NULL, NULL, NULL)))
           {
             struct ReadMailData *rmData;
 
@@ -865,7 +865,8 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
             rd->active = *rd->rd.arg.index;
             DoMethod(lv, MUIM_NList_GetEntry, rd->active, &mail);
          }
-         else mail = MA_GetActiveMail(ANYBOX, &folder, (int *)&rd->active);
+         else
+            mail = MA_GetActiveMail(NULL, &folder, (LONG *)&rd->active);
 
          if (mail)
          {
@@ -1095,7 +1096,7 @@ void rx_getfolderinfo( UNUSED struct RexxHost *host, struct rxd_getfolderinfo **
 
          // this command should only act on a folder folder and
          // also only on a non-group
-         if(fo && fo->Type != FT_GROUP)
+         if(fo && !isGroupFolder(fo))
          {
             num = FO_GetFolderPosition(fo, FALSE);
             if (!strnicmp(key, "NUM", 3))      snprintf(rd->rd.res.value = rd->result, sizeof(rd->result), "%d", num);
@@ -1124,7 +1125,7 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
       char result[SIZE_LARGE];
    } *rd = (void *)*rxd;
    struct Mail *mail;
-   int active;
+   LONG active;
    char *key;
 
    switch( action )
@@ -1134,11 +1135,11 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
          break;
          
       case RXIF_ACTION:
-         if ((mail = MA_GetActiveMail(ANYBOX, NULL, &active)))
+         if ((mail = MA_GetActiveMail(NULL, NULL, &active)))
          {
             rd->rd.res.value = rd->result;
             key = rd->rd.arg.item;
-            if (!strnicmp(key, "ACT", 3)) snprintf(rd->result, sizeof(rd->result), "%d", active);
+            if (!strnicmp(key, "ACT", 3)) snprintf(rd->result, sizeof(rd->result), "%ld", active);
             else if (!strnicmp(key, "STA", 3))
             {
               if(hasStatusError(mail))
@@ -1229,7 +1230,7 @@ void rx_folderinfo( UNUSED struct RexxHost *host, struct rxd_folderinfo **rxd, l
 
          // this command should only act on a folder and
          // only on a non-group
-         if (fo && fo->Type != FT_GROUP)
+         if(fo && !isGroupFolder(fo))
          {
             num = FO_GetFolderPosition(fo, FALSE);
             rd->res.number = &num;
@@ -1338,7 +1339,7 @@ void rx_setflag( UNUSED struct RexxHost *host, struct rxd_setflag **rxd, long ac
          
       case RXIF_ACTION:
       {
-         if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL)))
+         if ((mail = MA_GetActiveMail(NULL, NULL, NULL)))
          {
             if(rd->arg.vol)
             {
@@ -1802,9 +1803,11 @@ void rx_newmailfile( UNUSED struct RexxHost *host, struct rxd_newmailfile **rxd,
          break;
          
       case RXIF_ACTION:
+
          if (rd->rd.arg.folder) folder = FO_GetFolderRexx(rd->rd.arg.folder, NULL);
          else folder = FO_GetCurrentFolder();
-         if (folder && folder->Type != FT_GROUP)
+
+         if(folder && !isGroupFolder(folder))
          {
            char mfile[SIZE_MFILE];
            strlcpy(rd->rd.res.filename = rd->result, MA_NewMailFile(folder, mfile), sizeof(rd->result));

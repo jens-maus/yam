@@ -107,7 +107,7 @@ HOOKPROTONH(PO_InitFolderList, BOOL, Object *pop, Object *str)
 
     for(i=1; i <= (int)*flist; i++)
     {
-      if(flist[i]->Type != FT_GROUP)
+      if(isGroupFolder(flist[i]) == FALSE)
       {
         DoMethod(pop, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
 

@@ -877,11 +877,17 @@ HOOKPROTONHNONP(FI_Open, void)
       folder = FO_GetCurrentFolder();
       if(!folder) return;
       flist = FO_CreateList();
-      for (j = 0, i = 1; i <= (int)*flist; i++) if (flist[i]->Type != FT_GROUP)
+      for(j = 0, i = 1; i <= (int)*flist; i++)
       {
-         DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
-         if (flist[i] == folder) apos = j;
-         j++;
+        if(isGroupFolder(flist[i]) == FALSE)
+        {
+          DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
+
+          if(flist[i] == folder)
+            apos = j;
+
+          j++;
+        }
       }
       set(G->FI->GUI.LV_FOLDERS, MUIA_List_Active, apos);
       free(flist);

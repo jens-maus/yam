@@ -138,7 +138,7 @@ OVERLOAD(MUIM_DragReport)
     // is allowed
     if(dr->obj == obj)
     {
-      if(folder->Type != FT_GROUP && res.tpr_Type == MUIV_NListtree_TestPos_Result_Onto)
+      if(!isGroupFolder(folder) && res.tpr_Type == MUIV_NListtree_TestPos_Result_Onto)
       {
         return(MUIV_DragReport_Abort);
       }
@@ -146,7 +146,7 @@ OVERLOAD(MUIM_DragReport)
     else
     {
       // If we drag a mail onto a folder we allow only dragging on and not below or above
-      if(folder->Type == FT_GROUP || res.tpr_Type != MUIV_NListtree_TestPos_Result_Onto)
+      if(isGroupFolder(folder) || res.tpr_Type != MUIV_NListtree_TestPos_Result_Onto)
       {
         return(MUIV_DragReport_Abort);
       }
@@ -199,7 +199,7 @@ OVERLOAD(MUIM_DragDrop)
     
     srcfolder = tn_src->tn_User;
 
-    if(dstfolder->Type != FT_GROUP)
+    if(!isGroupFolder(dstfolder))
       MA_MoveCopy(NULL, srcfolder, dstfolder, FALSE);
     
     return 0;
@@ -274,17 +274,17 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     }
 
     // Now we have to set the disabled flag if this is not a custom folder
-    if(folder->Type != FT_CUSTOM && folder->Type != FT_CUSTOMSENT && folder->Type != FT_CUSTOMMIXED && folder->Type != FT_GROUP)
+    if(isDefaultFolder(folder) && !isGroupFolder(folder))
     {
       disable_delete = TRUE;
     }
 
-    if(folder->Type == FT_GROUP)
+    if(isGroupFolder(folder))
     {
       disable_update = TRUE;
     }
 
-    if(folder->Type != FT_DELETED)
+    if(!isDeletedFolder(folder))
     {
       disable_expunge = TRUE;
     }

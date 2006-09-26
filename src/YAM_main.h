@@ -33,8 +33,6 @@
 #include "YAM_mainFolder.h"
 #include "YAM_stringsizes.h"
 
-#define ANYBOX NULL
-
 // General internal flags of a mail (no status information)
 // Warning: Please note that if you change something here you have to make
 //          sure to increase the version number of the .index file in YAM_MAf.c!
@@ -295,7 +293,7 @@ struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew);
 void  MA_DeleteMessage(BOOL delatonce, BOOL force);
 void  MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet);
 BOOL  MA_ExportMessages(BOOL all, char *filename, BOOL append);
-struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folderp, int *activep);
+struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folderp, LONG *activep);
 void  MA_GetAddress(struct Mail **mlist);
 BOOL  MA_ImportMessages(char *fname);
 struct MA_ClassData *MA_New(void);

@@ -755,7 +755,7 @@ struct Folder *FolderRequest(const char *title, const char *body, const char *ye
     flist = FO_CreateList();
     for(i = 1; i <= (int)*flist; i++)
     {
-      if(flist[i] != exclude && flist[i]->Type != FT_GROUP)
+      if(flist[i] != exclude && !isGroupFolder(flist[i]))
         DoMethod(lv_folder, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
     }
 
@@ -2206,7 +2206,7 @@ BOOL AllFolderLoaded(void)
 
       for (i = 1; i <= (int)*flist; i++)
       {
-        if (flist[i]->LoadedMode != LM_VALID && flist[i]->Type != FT_GROUP)
+        if(flist[i]->LoadedMode != LM_VALID && !isGroupFolder(flist[i]))
         {
           allloaded = FALSE;
           break;
@@ -5279,10 +5279,10 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
   // directory and it is one of our standard folders we have to check which image we put in front of it
   if(fo->imageObject == NULL)
   {
-    if(fo->Type == FT_INCOMING)      fo->ImageIndex = (fo->New+fo->Unread) ? 3 : 2;
-    else if(fo->Type == FT_OUTGOING) fo->ImageIndex = (fo->Total > 0) ? 5 : 4;
-    else if(fo->Type == FT_DELETED)  fo->ImageIndex = (fo->Total > 0) ? 7 : 6;
-    else if(fo->Type == FT_SENT)     fo->ImageIndex = 8;
+    if(isIncomingFolder(fo))      fo->ImageIndex = (fo->New+fo->Unread) ? 3 : 2;
+    else if(isOutgoingFolder(fo)) fo->ImageIndex = (fo->Total > 0) ? 5 : 4;
+    else if(isDeletedFolder(fo))  fo->ImageIndex = (fo->Total > 0) ? 7 : 6;
+    else if(isSentFolder(fo))     fo->ImageIndex = 8;
     else fo->ImageIndex = -1;
   }
 

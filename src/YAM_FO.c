@@ -166,7 +166,7 @@ struct Folder *FO_GetFolderRexx(char *arg, int *pos)
           {
             // if the current one is a FT_GROUP we go to the next one until we find
             // the correct one
-            if(flist[j]->Type != FT_GROUP)
+            if(isGroupFolder(flist[j]) == FALSE)
             {
               if(k == i)
               {
@@ -180,12 +180,21 @@ struct Folder *FO_GetFolderRexx(char *arg, int *pos)
       }
 
       // for string folder search
-      if (!nr) for (i = 1; i <= (int)*flist; i++)
-         if ((!Stricmp(arg, flist[i]->Name) && flist[i]->Type != FT_GROUP) ||
-             (!stricmp(arg, "incoming")     && flist[i]->Type == FT_INCOMING) ||
-             (!stricmp(arg, "outgoing")     && flist[i]->Type == FT_OUTGOING) ||
-             (!stricmp(arg, "sent")         && flist[i]->Type == FT_SENT) ||
-             (!stricmp(arg, "deleted")      && flist[i]->Type == FT_DELETED)) { nr = i; break; }
+      if(!nr)
+      {
+        for(i=1; i <= (int)*flist; i++)
+        {
+          if((!Stricmp(arg, flist[i]->Name) && !isGroupFolder(flist[i]))    ||
+             (!stricmp(arg, "incoming")     && isIncomingFolder(flist[i]))  ||
+             (!stricmp(arg, "outgoing")     && isOutgoingFolder(flist[i]))  ||
+             (!stricmp(arg, "sent")         && isSentFolder(flist[i]))      ||
+             (!stricmp(arg, "deleted")      && isDeletedFolder(flist[i])))
+          {
+            nr = i;
+            break;
+          }
+        }
+      }
 
       if (nr)
       {
@@ -244,7 +253,7 @@ struct Folder *FO_GetFolderByName(char *name, int *pos)
 // comparison function for FO_GetFolderByName
 static BOOL FO_GetFolderByName_cmp(struct Folder *f, char *name)
 {
-   return (BOOL)(!strcmp(f->Name, name) && (f->Type != FT_GROUP));
+  return (BOOL)(!strcmp(f->Name, name) && (!isGroupFolder(f)));
 }
 
 ///
@@ -262,7 +271,7 @@ int FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups)
       if (!tn || !tn->tn_User) return(-1);
 
       fo = tn->tn_User;
-      if(!withGroups && fo->Type == FT_GROUP) j--;
+      if(!withGroups && isGroupFolder(fo)) j--;
       if (fo == findfo) return(j);
    }
 }
@@ -322,7 +331,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
 
          if(!statsproc)
          {
-            if(fo->Type != FT_INCOMING)
+            if(isIncomingFolder(fo))
             {
               fo->Stats = FALSE;
             }
@@ -334,7 +343,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
 
          // check for non custom folder
          // and set some values which shouldn`t be changed
-         if(!isCustomFolder(fo))
+         if(isDefaultFolder(fo))
          {
            fo->MLSignature  = -1;
            fo->MLSupport    = FALSE;
@@ -538,10 +547,10 @@ BOOL FO_LoadTree(char *fname)
                   {
                     // we cannot find out if there is new/unread mail in the folder,
                     // so we initialize the folder with the std ImageIndex.
-                    if(fo.Type == FT_INCOMING)      fo.ImageIndex = 2;
-                    else if(fo.Type == FT_OUTGOING) fo.ImageIndex = 4;
-                    else if(fo.Type == FT_DELETED)  fo.ImageIndex = 6;
-                    else if(fo.Type == FT_SENT)     fo.ImageIndex = 8;
+                    if(isIncomingFolder(&fo))      fo.ImageIndex = 2;
+                    else if(isOutgoingFolder(&fo)) fo.ImageIndex = 4;
+                    else if(isDeletedFolder(&fo))  fo.ImageIndex = 6;
+                    else if(isSentFolder(&fo))     fo.ImageIndex = 8;
                     else fo.ImageIndex = -1; // or with -1 for a non std folder.
                   }
 
@@ -731,23 +740,15 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
       if (!fo) break;
       fo->SortIndex = i;
 
-      switch (fo->Type)
+      if(isGroupFolder(fo))
       {
-        case FT_GROUP:
-        {
-          fprintf(fh, "@GROUP %s\n%d\n", fo->Name, isFlagSet(tn->tn_Flags, TNF_OPEN));
+        fprintf(fh, "@GROUP %s\n%d\n", fo->Name, isFlagSet(tn->tn_Flags, TNF_OPEN));
 
-          // Now we recursively save this subtree first
-          success = FO_SaveSubTree(fh, tn);
-        }
-        break;
-
-        default:
-        {
-           fprintf(fh, "@FOLDER %s\n%s\n@ENDFOLDER\n", fo->Name, fo->Path);
-        }
-        break;
+        // Now we recursively save this subtree first
+        success = FO_SaveSubTree(fh, tn);
       }
+      else
+        fprintf(fh, "@FOLDER %s\n%s\n@ENDFOLDER\n", fo->Name, fo->Path);
 
       tn_root = tn;
     }
@@ -879,7 +880,7 @@ static BOOL FO_EnterPassword(struct Folder *fo)
 static void FO_GetFolder(struct Folder *folder)
 {
    struct FO_GUIData *gui = &G->FO->GUI;
-   BOOL isdefault = !isCustomFolder(folder);
+   BOOL isdefault = isDefaultFolder(folder);
    static const int type2cycle[9] = { FT_CUSTOM, FT_CUSTOM, FT_INCOMING, FT_INCOMING, FT_OUTGOING, -1, FT_INCOMING, FT_OUTGOING, -1 };
    int i;
 
@@ -955,7 +956,7 @@ static void FO_GetFolder(struct Folder *folder)
 static void FO_PutFolder(struct Folder *folder)
 {
    struct FO_GUIData *gui = &G->FO->GUI;
-   BOOL isdefault = !isCustomFolder(folder);
+   BOOL isdefault = isDefaultFolder(folder);
    static const int cycle2type[3] = { FT_CUSTOM, FT_CUSTOMSENT, FT_CUSTOMMIXED };
    int i;
 
@@ -1045,9 +1046,9 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
          // the current one to our new one.
          memcpy(&folder, currfolder, sizeof(struct Folder));
 
-         if (folder.Type == FT_GROUP) { FO_NewFolderGroupFunc(); return; }
-         else if (folder.Type == FT_INCOMING || folder.Type == FT_DELETED) folder.Type = FT_CUSTOM;
-         else if (folder.Type == FT_OUTGOING || folder.Type == FT_SENT) folder.Type = FT_CUSTOMSENT;
+         if(isGroupFolder(&folder)) { FO_NewFolderGroupFunc(); return; }
+         else if(isIncomingFolder(&folder) || isDeletedFolder(&folder)) folder.Type = FT_CUSTOM;
+         else if(isOutgoingFolder(&folder) || isSentFolder(&folder))    folder.Type = FT_CUSTOMSENT;
 
          // now that we have the correct folder type, we set some default values for the new
          // folder
@@ -1097,29 +1098,39 @@ HOOKPROTONHNONP(FO_EditFolderFunc, void)
 {
   struct Folder *folder = FO_GetCurrentFolder();
 
-  if(!folder) return;
+  ENTER();
 
-  switch(folder->Type)
+  if(folder)
   {
-    case FT_GROUP:
+    if(isGroupFolder(folder))
     {
       if(StringRequest(folder->Name, SIZE_NAME, GetStr(MSG_FO_EDIT_FGROUP), GetStr(MSG_FO_EDIT_FGROUPREQ), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
-      {
         DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
-      }
     }
-    break;
-
-    default:
+    else
     {
-      if (!G->FO)
+      if(!G->FO)
       {
-        if (!(G->FO = FO_New())) return;
-        if (!SafeOpenWindow(G->FO->GUI.WI)) { DisposeModulePush(&G->FO); return; }
+        if(!(G->FO = FO_New()))
+        {
+          LEAVE();
+          return;
+        }
+
+        if(!SafeOpenWindow(G->FO->GUI.WI))
+        {
+          DisposeModulePush(&G->FO);
+
+          LEAVE();
+          return;
+        }
       }
+
       FO_GetFolder(G->FO->EditFolder = folder);
     }
   }
+
+  LEAVE();
 }
 MakeHook(FO_EditFolderHook, FO_EditFolderFunc);
 

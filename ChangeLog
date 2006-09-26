@@ -6,6 +6,11 @@ $Id$
 
 2006-09-25  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_folderconfig.h, misc: added a new set of folder type macros
+    for querying the folder type more easily and more intuitive so
+    that menu items and context menus as well as toolbar images can
+    be more easily setup to disable certain things upon the specific
+    folder type.
   * MainMailListGroup.c: if doubleclicking on a mail in the outgoing
     folder, YAM will now popup an edit window instead of a read window
     as that is normally the more native action for the outgoing folder.

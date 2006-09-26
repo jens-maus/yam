@@ -1554,12 +1554,11 @@ static void Initialise2(void)
       folder = tn->tn_User;
 
       // if this entry is a group lets skip here immediatly
-      if(folder->Type == FT_GROUP)
+      if(isGroupFolder(folder))
         continue;
 
-      if((folder->Type == FT_INCOMING || folder->Type == FT_OUTGOING ||
-          folder->Type == FT_DELETED || C->LoadAllFolders) &&
-          !isProtectedFolder(folder))
+      if((isIncomingFolder(folder) || isOutgoingFolder(folder) || isDeletedFolder(folder) ||
+          C->LoadAllFolders) && !isProtectedFolder(folder))
       {
         // call the getIndex function which on one hand loads the full .index file
         // and makes sure that all "new" mail is marked to unread if the user
@@ -1583,10 +1582,10 @@ static void Initialise2(void)
       // directory and it is one of our standard folders we have to check which image we put in front of it
       if(folder->imageObject == NULL)
       {
-        if(folder->Type == FT_INCOMING)      folder->ImageIndex = (folder->New+folder->Unread) ? 3 : 2;
-        else if(folder->Type == FT_OUTGOING) folder->ImageIndex = (folder->Total > 0) ? 5 : 4;
-        else if(folder->Type == FT_DELETED)  folder->ImageIndex = (folder->Total > 0) ? 7 : 6;
-        else if(folder->Type == FT_SENT)     folder->ImageIndex = 8;
+        if(isIncomingFolder(folder))      folder->ImageIndex = (folder->New+folder->Unread) ? 3 : 2;
+        else if(isOutgoingFolder(folder)) folder->ImageIndex = (folder->Total > 0) ? 5 : 4;
+        else if(isDeletedFolder(folder))  folder->ImageIndex = (folder->Total > 0) ? 7 : 6;
+        else if(isSentFolder(folder))     folder->ImageIndex = 8;
         else folder->ImageIndex = -1;
       }
 

@@ -619,7 +619,7 @@ DECLARE(ProcessSearch)
 
   // a use of the quicksearchbar is only possible on
   // normale folders
-  if(curFolder->Type != FT_GROUP)
+  if(!isGroupFolder(curFolder))
   {
     struct Mail* curMail;
     enum ViewOptions viewOption = xget(data->CY_VIEWOPTIONS, MUIA_Cycle_Active);

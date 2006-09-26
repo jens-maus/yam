@@ -61,9 +61,33 @@ struct FO_ClassData  /* folder configuration window */
 };
 
 // Foldertype macros
-enum FolderType { FT_CUSTOM=0, FT_INCOMING, FT_OUTGOING, FT_SENT, FT_DELETED, FT_GROUP, FT_CUSTOMSENT, FT_CUSTOMMIXED };
-#define isOutgoingFolder(folder)  ((folder)->Type == FT_OUTGOING || (folder)->Type == FT_SENT || (folder)->Type == FT_CUSTOMSENT)
-#define isCustomFolder(folder)    ((folder)->Type == FT_CUSTOM || (folder)->Type == FT_CUSTOMSENT || (folder)->Type == FT_CUSTOMMIXED)
+enum FolderType { FT_CUSTOM=0,  // custom folder with received mail
+                  FT_INCOMING,  // the mandatory INCOMING folder
+                  FT_OUTGOING,  // the mandatory OUTGOING folder
+                  FT_SENT,      // the mandatory SENT folder
+                  FT_DELETED,   // the mandatory DELETED folder
+                  FT_GROUP,     // folder is a group and not a real folder
+                  FT_CUSTOMSENT,// custom folder with sent mail
+                  FT_CUSTOMMIXED// custom folder with sent&received mail
+                };
+
+#define isCustomFolder(folder)      ((folder)->Type == FT_CUSTOM)
+#define isIncomingFolder(folder)    ((folder)->Type == FT_INCOMING)
+#define isOutgoingFolder(folder)    ((folder)->Type == FT_OUTGOING)
+#define isSentFolder(folder)        ((folder)->Type == FT_SENT)
+#define isDeletedFolder(folder)     ((folder)->Type == FT_DELETED)
+#define isGroupFolder(folder)       ((folder)->Type == FT_GROUP)
+#define isCustomSentFolder(folder)  ((folder)->Type == FT_CUSTOMSENT)
+#define isCustomMixedFolder(folder) ((folder)->Type == FT_CUSTOMMIXED)
+
+#define isDefaultFolder(folder)     (isIncomingFolder(folder) || \
+                                     isOutgoingFolder(folder) || \
+                                     isSentFolder(folder)     || \
+                                     isDeletedFolder(folder))
+
+#define isSentMailFolder(folder) (isOutgoingFolder(folder)   || \
+                                  isSentFolder(folder)       || \
+                                  isCustomSentFolder(folder))
 
 // SetOrder enum
 enum SetOrder   { SO_SAVE=0, SO_RESET };

@@ -330,7 +330,7 @@ OVERLOAD(MUIM_DragDrop)
 
     DoMethod(d->obj, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
 
-    if(isOutgoingFolder(mail->Folder))
+    if(isSentMailFolder(mail->Folder))
       AB_InsertAddress(obj, "", mail->To.RealName,   mail->To.Address);
     else
       AB_InsertAddress(obj, "", mail->From.RealName, mail->From.Address);
