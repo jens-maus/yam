@@ -34,13 +34,17 @@
 #ifndef %b_LOCALE_H
 #define %b_LOCALE_H
 
-#define MSG_Space ((const void *)1)
-
+// catalog translation functions
 extern const char *GetStr(const void *);
 extern const char *GetStripStr(const void *);
 extern BOOL Open%bCatalog(void);
 extern void Close%bCatalog(void);
 
-extern const void const *_%i;\n#define %i ((const void *)&_%i)
+// const pointers to internal strings
+extern const void* const _%i;
+
+// substiting defines to directly use MSG_XXXXX strings
+#define MSG_Space ((const void* const)1)
+#define %i ((const void* const)&_%i)
 
 #endif /* %b_LOCALE_H */

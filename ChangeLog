@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-26  Jens Langner <Jens.Langner@light-speed.de>
+
+  * C_c.sd, C_h.sd: fixed the mixed up const usage which broke compiles
+    with GCC 2.95.3
+
 2006-09-25  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_folderconfig.h, misc: added a new set of folder type macros

@@ -41,7 +41,7 @@
 
 struct FC_Type { const long ID; const char * const Str; };
 
-const struct FC_Type const _%i = { %d, %s };
+const struct FC_Type _%i = { %d, %s };
 
 /*** Catalog functions ***/
 /// GetStr()
