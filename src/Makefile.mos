@@ -38,6 +38,7 @@ MKDIR     = mkdir
 CHMOD     = chmod
 FLEX      = flex
 FC        = flexcat
+SED       = sed
 
 # Directories
 PREFIX    = .
@@ -51,9 +52,6 @@ OBJDIR    = .obj_mos
 # Compiler/Linker flags
 CPU      = -mcpu=750
 CPUFLAGS = -mmultiple
-CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" \
-           -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`" \
-           -D__YAM_BUILDID="$(BUILDID)"
 WARN	   = -W -Wall -Wwrite-strings
 OPTFLAGS = -O3 -fomit-frame-pointer -funroll-loops
 DEBUG    = -DDEBUG -O0
@@ -61,9 +59,6 @@ CFLAGS   = -noixemul -pipe -I. -I./include -I./include/netinclude $(CPU) \
             $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -g -c
 LDFLAGS  = -noixemul $(CPU)
 LDLIBS   = -lm -ldebug -L$(LIB) -lxpk -lamissl -lcodesets
-
-# Special flags
-DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
 
 # CPU and DEBUG can be defined outside, defaults to above
 # using e.g. "make DEBUG= CPU=-mcpu=603e" produces optimized non-debug PPC-603e version

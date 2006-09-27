@@ -38,6 +38,7 @@ MKDIR     = mkdir
 CHMOD     = chmod
 FLEX      = flex
 FC        = flexcat
+SED       = sed
 
 # Directories
 PREFIX    = .
@@ -51,15 +52,12 @@ OBJDIR    = .obj_os4
 CRT      = newlib
 CPU      = -mcpu=604e
 CPUFLAGS = -mmultiple -Wa,-mregnames
-CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" \
-           -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`" \
-           -D__YAM_BUILDID="$(BUILDID)"
 WARN     = -W -Wall -Wwrite-strings
 OPTFLAGS = -O3 -fomit-frame-pointer -funroll-loops
 DEBUG    = -DDEBUG #-O0
 REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod \
            -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
-CFLAGS   = -pipe -mcrt=$(CRT) -g -I. -I./include $(CPU) $(CPUFLAGS) $(WARN) \
+CFLAGS   = -mcrt=$(CRT) -g -I. -I./include $(CPU) $(CPUFLAGS) $(WARN) \
            $(OPTFLAGS) $(DEBUG) -D__USE_INLINE__ \
            $(REDEFINE) -c
 LDFLAGS  = $(CPU) -mcrt=$(CRT)

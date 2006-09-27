@@ -29,40 +29,35 @@ TARGET	= YAM.os3
 BUILDID	= 0
 
 # Programs
-CC	= m68k-amigaos-gcc
-STRIP	= m68k-amigaos-strip
+CC      = m68k-amigaos-gcc
+STRIP   = m68k-amigaos-strip
 OBJDUMP = m68k-amigaos-objdump
-RM	= rm -f
-RMDIR	= rm -rf
-MKDIR	= mkdir
-CHMOD	= chmod
-FLEX	= flex
-FC	= flexcat
+RM      = rm -f
+RMDIR   = rm -rf
+MKDIR   = mkdir
+CHMOD   = chmod
+FLEX    = flex
+FC      = flexcat
+SED     = sed
 
 # Directories
-PREFIX    = .
-CLASSDIR  = $(PREFIX)/classes
-LOCALE    = $(PREFIX)/../locale
-EXTRASRC  = $(PREFIX)/extrasrc
-TOOLS     = $(PREFIX)/tools
-LIB       = $(PREFIX)/lib/os3
-OBJDIR    = .obj_os3
+PREFIX  = .
+CLASSDIR= $(PREFIX)/classes
+LOCALE  = $(PREFIX)/../locale
+EXTRASRC= $(PREFIX)/extrasrc
+TOOLS   = $(PREFIX)/tools
+LIB     = $(PREFIX)/lib/os3
+OBJDIR  = .obj_os3
 
 # Compiler/Linker flags
-CPU	= -m68020-60 -msoft-float
-CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" \
-          -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`" \
-          -D__YAM_BUILDID="$(BUILDID)"
-WARN	= -W -Wall -Wwrite-strings
+CPU	    = -m68020-60 -msoft-float
+WARN	  = -W -Wall -Wwrite-strings
 OPTFLAGS= -O3 -fomit-frame-pointer -funroll-loops
-DEBUG	= -DDEBUG -O0
+DEBUG	  = -DDEBUG -O0
 CFLAGS  = -I. -I./include -I./include/netinclude -DNO_INLINE_STDARG \
           $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -g -c
 LDFLAGS = -noixemul -mstackextend $(CPU)
 LDLIBS  = -lm -ldebug -L$(LIB) -lmui
-
-# Special flags
-DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
 
 # CPU and DEBUG can be defined outside, defaults to above
 # using e.g. "make DEBUG= CPU=-m68060" produces optimized non-debug 68060 version

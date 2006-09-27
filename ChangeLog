@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-27  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile.#?: added new 'Makefile.depend' file which can now be
+    generated via 'make depend' and carries all source file dependencies
+    collected with a "gcc -MM" call over all files. This should hopefully
+    improve the whole dependency handling with the YAM sources and prove
+    usefull for further development.
+ 
 2006-09-27  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: updated according to the latest changes.
