@@ -6,6 +6,9 @@ $Id$
 
 2006-09-27  Jens Langner <Jens.Langner@light-speed.de>
 
+  * deutsch.ct: the 'p' shortcut for the "Später senden" gadget of the
+    write window was interfering with the AMIGA+P Shortcut of the window
+    menu. Now 't' is used instead.
   * misc: removed unncesessary STDARGS definitions.
   * Makefile.#?: added new 'Makefile.depend' file which can now be
     generated via 'make depend' and carries all source file dependencies

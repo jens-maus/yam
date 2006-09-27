@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (24.09.2006)
+## version $VER: YAM.catalog 6.0 (27.09.2006)
 ## language deutsch
 ## codeset 0
 ;
@@ -4066,7 +4066,7 @@ Sicherheit
 ; Security
 ;
 MSG_WR_ToQueue
-S_päter senden
+Spä_ter senden
 ; Send _later
 ;
 MSG_WR_Send
