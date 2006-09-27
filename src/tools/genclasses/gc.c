@@ -48,6 +48,8 @@
  *
  * History
  * -------
+ * 0.22 - removed unncesessary STDARGS uses
+ *
  * 0.21 - raised the warning levels to -pedantic and fixed some compilation
  *        warnings triggers by some oddities in our code.
  *
@@ -706,7 +708,7 @@ void gen_supportroutines( FILE *fp )
   char *bn = arg_basename;
   fprintf(fp,
 "%s%s%s"
-"Object * STDARGS VARARGS68K %s_NewObject(CONST_STRPTR class, ...)\n"
+"Object * VARARGS68K %s_NewObject(CONST_STRPTR class, ...)\n"
 "{\n"
 "  unsigned int i;\n"
 "  for(i = 0; i < NUMBEROFCLASSES; i++)\n"
@@ -939,7 +941,7 @@ if (0)
     "#define NUMBEROFCLASSES %ld\n"
     "\n"
     "extern struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n"
-    "Object * STDARGS VARARGS68K %s_NewObject(CONST_STRPTR class, ...);\n"
+    "Object * VARARGS68K %s_NewObject(CONST_STRPTR class, ...);\n"
     "BOOL %s_SetupClasses(void);\n"
     "void %s_CleanupClasses(void);\n"
     "\n",

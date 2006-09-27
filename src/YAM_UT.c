@@ -259,7 +259,7 @@ MakeStaticHook(AttachDspHook, AttachDspFunc);
 /// YAMMUIRequest
 // Own -secure- implementation of MUI_Request with collecting and reissueing ReturnIDs
 // We also have a wrapper #define MUI_Request for calling that function instead.
-LONG STDARGS YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const char *tit, const char *gad, const char *format, ...)
+LONG YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const char *tit, const char *gad, const char *format, ...)
 {
   LONG result = -1;
   char reqtxt[SIZE_LINE];
@@ -4938,7 +4938,7 @@ int PGPCommand(const char *progname, const char *options, int flags)
 ///
 /// AppendToLogfile
 //  Appends a line to the logfile
-void STDARGS AppendToLogfile(enum LFMode mode, int id, const char *text, ...)
+void AppendToLogfile(enum LFMode mode, int id, const char *text, ...)
 {
   FILE *fh;
   char logfile[SIZE_PATHFILE];

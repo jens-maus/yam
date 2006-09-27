@@ -4,6 +4,10 @@ GenClasses Tool - ChangeLog
 
 $Id$
 
+2006-09-27  Jens Langner <Jens.Langner@light-speed.de>
+
+    * gc.c: removed unnecessary STDARGS uses
+
 2006-09-05  Jens Langner <Jens.Langner@light-speed.de>
 
     * gc.c: added workaround to catch cases where doubled ';' chars

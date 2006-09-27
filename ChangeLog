@@ -6,7 +6,7 @@ $Id$
 
 2006-09-27  Jens Langner <Jens.Langner@light-speed.de>
 
-  * extrasrc: removed the unncesessary STDARGS definition in DoSuperNew().
+  * misc: removed unncesessary STDARGS definitions.
   * Makefile.#?: added new 'Makefile.depend' file which can now be
     generated via 'make depend' and carries all source file dependencies
     collected with a "gcc -MM" call over all files. This should hopefully

@@ -266,7 +266,7 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder);
 APTR     AllocCopy(APTR source, int size);
 char *   AllocReqText(char *s);
 char *   AllocStrBuf(size_t initlen);
-void STDARGS AppendToLogfile(enum LFMode, int id, const char *text, ...);
+void     AppendToLogfile(enum LFMode, int id, const char *text, ...);
 struct Part *AttachRequest(const char *title, const char *body, const char *yestext, const char *notext, int mode, struct ReadMailData *rmData);
 char *   BuildAddrName(char *address, char *name);
 void     Busy(const char *text, const char *parameter, int cur, int max);
@@ -384,7 +384,7 @@ int      TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfold
 char *   Trim(char *s);
 char *   TrimEnd(char *s);
 char *   TrimStart(char *s);
-LONG STDARGS YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const char *title, const char *gadgets, const char *format, ...);
+LONG     YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const char *title, const char *gadgets, const char *format, ...);
 char *   UnquoteString(const char *s, BOOL new);
 
 // Here we define inline functions that should be inlined by
