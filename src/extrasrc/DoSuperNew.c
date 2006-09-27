@@ -8,7 +8,7 @@
 // DoSuperNew()
 // Calls parent NEW method within a subclass
 
-Object * STDARGS VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
+Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
 {
   Object *rc;
   VA_LIST args;

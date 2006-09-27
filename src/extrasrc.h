@@ -138,7 +138,7 @@ ULONG xget(Object *obj, const ULONG attr);
 #endif
 
 #if defined(NEED_DOSUPERNEW)
-Object * STDARGS VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
+Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
 #endif
 
 
