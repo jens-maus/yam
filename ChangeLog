@@ -6,6 +6,11 @@ $Id$
 
 2006-09-28  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c, MainMailList: reenabled the Reply toolbar button and menu
+    items even in SentMail folders. After having rethought on the behaviour
+    it indeed makes sense to have the reply operations also active as
+    a user might want to quickly reply to one of his own mails to e.g.
+    send a corrected mail afterwards.
   * MainMailListGroup: changed the "Write window on doubleclick" feature
     to just popup a write window in case the embedded read pane is active.
     Otherwise a read window will be opened like it was with earlier

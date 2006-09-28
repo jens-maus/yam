@@ -240,8 +240,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
   {
     DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 0,  MUIV_Toolbar_Set_Ghosted, !active);
     DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 1,  MUIV_Toolbar_Set_Ghosted, !active || !isOutgoingFolder(fo) || numSelected > 1 || beingedited);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet,MUIV_Toolbar_Set_Ghosted, !active && numSelected == 0, 2,3,4,8, -1);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 7,  MUIV_Toolbar_Set_Ghosted, (!active && numSelected == 0) || isSentMailFolder(fo));
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet,MUIV_Toolbar_Set_Ghosted, !folderEnabled || (!active && numSelected == 0), 2,3,4,7,8, -1);
     DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 13, MUIV_Toolbar_Set_Ghosted, !folderEnabled);
   }
 
@@ -250,10 +249,10 @@ void MA_ChangeSelected(BOOL forceUpdate)
                    gui->MI_MOVE, gui->MI_DELETE, gui->MI_GETADDRESS, gui->MI_FORWARD, gui->MI_STATUS,
                    gui->MI_EXPMSG, gui->MI_COPY, gui->MI_PRINT, gui->MI_SAVE, gui->MI_CHSUBJ, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled, gui->MI_FILTER, gui->MI_UPDINDEX, gui->MI_IMPORT, gui->MI_EXPORT, gui->MI_SELECT, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active, gui->MI_READ, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active, gui->MI_READ, gui->MI_REPLY, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active && isOutgoingFolder(fo) && !beingedited, gui->MI_EDIT, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, isOutgoingFolder(fo) && (active || numSelected > 0), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isSentMailFolder(fo) && (active || numSelected > 0), gui->MI_TOREAD, gui->MI_TOUNREAD, gui->MI_ALLTOREAD, gui->MI_REPLY, gui->MI_BOUNCE, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isSentMailFolder(fo) && (active || numSelected > 0), gui->MI_TOREAD, gui->MI_TOUNREAD, gui->MI_ALLTOREAD, gui->MI_BOUNCE, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, hasattach && (active || numSelected > 0), gui->MI_ATTACH, gui->MI_SAVEATT, gui->MI_REMATT, NULL);
 
   LEAVE();

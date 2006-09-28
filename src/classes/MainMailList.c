@@ -595,7 +595,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     Child, MenuObjectT(menutitle),
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_MRead),        MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_READ,       End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_EDIT),    MUIA_Menuitem_Enabled, mail && isOutBox && !beingedited,   MUIA_UserData, MMEN_EDIT,       End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_REPLY),   MUIA_Menuitem_Enabled, mail && !isSentMail,MUIA_UserData, MMEN_REPLY,      End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_REPLY),   MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_REPLY,      End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_FORWARD), MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_FORWARD,    End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_BOUNCE),  MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_BOUNCE,     End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_MSend),        MUIA_Menuitem_Enabled, mail && !isOutBox,  MUIA_UserData, MMEN_SEND, End,
