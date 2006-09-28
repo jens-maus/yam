@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-09-28  Jens Langner <Jens.Langner@light-speed.de>
+
+  * MainMailListGroup: changed the "Write window on doubleclick" feature
+    to just popup a write window in case the embedded read pane is active.
+    Otherwise a read window will be opened like it was with earlier
+    versions. That should be more the intuitive than always forcing a
+    write window.
+
 2006-09-27  Jens Langner <Jens.Langner@light-speed.de>
 
   * deutsch.ct: the 'p' shortcut for the "Später senden" gadget of the

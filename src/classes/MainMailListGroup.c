@@ -328,19 +328,19 @@ DECLARE(DoubleClicked) // LONG entryNum
   {
     struct Folder *folder;
 
-    if((folder = FO_GetCurrentFolder()))
+    // in case the embedded read pane is used, a double click
+    // in the outgoing folder should popup a write window instead.
+    if(C->EmbeddedReadPane == TRUE &&
+       (folder = FO_GetCurrentFolder()) != NULL && isOutgoingFolder(folder))
     {
-      if(isOutgoingFolder(folder))
-      {
-        // in case the folder is the "outgoing" folder
-        // we edit the mail instead.
-        DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NEW_EDIT, 0);
-      }
-      else
-      {
-        // if not, then we open a read window instead
-        DoMethod(G->App, MUIM_CallHook, &MA_ReadMessageHook);
-      }
+      // in case the folder is the "outgoing" folder
+      // we edit the mail instead.
+      DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NEW_EDIT, 0);
+    }
+    else
+    {
+      // if not, then we open a read window instead
+      DoMethod(G->App, MUIM_CallHook, &MA_ReadMessageHook);
     }
   }
 
