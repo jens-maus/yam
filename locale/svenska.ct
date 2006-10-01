@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 5.8 (13.06.06)
+## version $VER: YAM.ct 6.0 (01.10.06)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -535,7 +535,7 @@ Ladda
 ;#SET (139//)
 MSG_UT_PGPPassReq
 Ange ditt lösenord för PGP:
-;#DEF Please enter your PGP pass phrase:
+;#DEF Please enter your PGP passphrase:
 ;#SET (140//)
 MSG_UT_NoPrinter
 Skrivaren är ej ansluten eller offline!
@@ -558,8 +558,8 @@ MSG_MA_ReplyReqOpt
 ;#DEF *...to the\n_sender|...to the sender and\n_all recipients|...to the\n_recipients|_Cancel
 ;#SET (150//)
 MSG_MA_CompareReq
-Avsändarens adress ('From:'-fältet; från) är\n<%s>, men svarsadressen\n('Reply-To:'-fältet; svar till) är\n<%s>.\nVilken adress vill du använda?
-;#DEF Sender address (From) is <%s>, but\nreturn address (Reply-To) is <%s>.\nWhich address do you want to use?
+Avsändarens adress (Från) är \033b<%s>\033n, men\nsvarsadressen (Svar till) är \033b<%s>\033n.\n\nVilken adress vill du använda?
+;#DEF Sender address (From) is \033b<%s>\033n, but\nreturn address (Reply-To) is \033b<%s>\033n.\n\nTo which address do you want to reply to?
 ;#SET (151//)
 MSG_MA_Compare3ReqOpt
 _Från|*Sva_r till|_Båda|A_vbryt
@@ -577,18 +577,6 @@ MSG_MA_ConfirmReq
 Var god bekräfta...
 ;#DEF Please confirm...
 ;#SET (155//)
-MSG_MA_ConfirmDel
-Var god bekräfta radering.
-;#DEF Please confirm deletion.
-;#SET (156//)
-MSG_MA_1Selected
-Ett brev valt.\n
-;#DEF One message selected.\n
-;#SET (157//)
-MSG_MA_xSelected
-%lD brev valda.\n
-;#DEF %lD messages selected.\n
-;#SET (158//)
 MSG_MA_ConfirmFilter
 Är det OK att filtrera alla brev\ni mappen '%s'?
 ;#DEF Is it okay to filter messages\nin folder '%s'?
@@ -649,14 +637,6 @@ MSG_MA_CheckSingle
 Kontrollera ett konto
 ;#DEF Check single account
 ;#SET (174//)
-MSG_MA_FolderInfo
-\ebDenna mapp\en\nNamn: %s\nSökväg: %s\nStorlek: %lD byte\nBrev: %lD (%lD nya, %lD olästa)
-;#DEF \ebCurrent folder\en\nName: %s\nPath: %s\nSize: %lD bytes\nMessages: %lD (%lD new, %lD unread)
-;#SET (175//)
-MSG_MA_MessageInfo
-\ebDetta brev\en\nFrån: %s <%s>\nTill: %s <%s>\nÄrende: %s\nDatum: %s\nFilnamn: %s\nStorlek: %lD byte
-;#DEF \ebCurrent message\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %lD bytes
-;#SET (176//)
 MSG_MA_WinTitle
 YAM %s  -  Användare: %s
 ;#DEF YAM %s  -  User: %s
@@ -1149,10 +1129,6 @@ MSG_CO_CrdWrite
 Skriva
 ;#DEF Write
 ;#SET (305//)
-MSG_CO_CrdReply
-Svara
-;#DEF Reply
-;#SET (306//)
 MSG_CO_CrdSignature
 Signatur
 ;#DEF Signature
@@ -1173,14 +1149,6 @@ MSG_CO_CrdMixed
 Diverse
 ;#DEF Miscellaneous
 ;#SET (311//)
-MSG_CO_CrdScripts
-ARexx
-;#DEF ARexx
-;#SET (312//)
-MSG_CO_CrdStartQuit
-Börja/Sluta
-;#DEF Start/Quit
-;#SET (313//)
 MSG_CO_CrdABook
 Adressbok
 ;#DEF Address book
@@ -3841,18 +3809,6 @@ MSG_WR_Colored
 Alternativ färg
 ;#DEF Alternative color
 ;#SET (996//)
-MSG_WR_Separators
-Avdelare
-;#DEF Separators
-;#SET (997//)
-MSG_WR_Thin
-Tunn
-;#DEF Thin
-;#SET (998//)
-MSG_WR_Thick
-Tjock
-;#DEF Thick
-;#SET (999//)
 MSG_WR_Emoticons
 Smilisar
 ;#DEF Emoticons
@@ -4097,14 +4053,6 @@ MSG_TR_SendHello
 Skickar 'Hallå'...
 ;#DEF Sending 'Hello'...
 ;#SET (1061//)
-MSG_TR_SizeGauge
-%%ld av %ld byte
-;#DEF %%ld of %ld bytes
-;#SET (1063//)
-MSG_TR_TransferStats
-%lD av %lD kbyte överfört med %lD tps\nKvarvarande tid: %lD min %ld sek
-;#DEF %lD of %lD kB transmitted at %lD cps\nRemaining time: %lD min %ld sec
-;#SET (1064//)
 MSG_TR_Exporting
 Exporterar brev...
 ;#DEF Exporting message...
@@ -4201,18 +4149,6 @@ MSG_TR_Abort
 A_vbryt
 ;#DEF _Abort
 ;#SET (1088//)
-MSG_TR_TransferStats0
-  0 av   0 kbyte överfört med   0 tps\nKvarvarande tid:  0 min  0 sek
-;#DEF   0 of   0 kB transmitted at    0 cps\nRemaining time:  0 min  0 sec
-;#SET (1089//)
-MSG_TR_BytesGauge0
-   0 av    0 byte
-;#DEF    0 of    0 bytes
-;#SET (1090//)
-MSG_TR_MessageGauge0
-Brev  0 av  0
-;#DEF Message  0 of  0
-;#SET (1091//)
 MSG_HELP_TR_TX_STATUS
 Nuvarande status\npå överföringen.
 ;#DEF Current state\nof mail transfer
@@ -4286,8 +4222,8 @@ Oväntat filslut vid avkodning av UU-kodad fil. Brevet verkar ha klippts av.
 ;#DEF Unexpected EOF while decoding a UUencoded file. The message seems to be truncated.
 ;#SET (1114//)
 MSG_ER_InvalidLength
-Felaktig radlängd i UU-kodad fil: %lD.\n\nEn trasig UU-kodare har använts eller så har brevet klippts av.
-;#DEF Invalid line length in UUencoded file: %lD.\n\nA defective UUencoder was used or the message is truncated.
+Felaktig radlängd i UU-kodad fil: %ld.\n\nEn trasig UU-kodare har använts eller så har brevet klippts av.
+;#DEF Invalid line length in UUencoded file: %ld.\n\nA defective UUencoder was used or the message is truncated.
 ;#SET (1115//)
 MSG_ER_CreateMailError
 Kunde inte skapa brevfil.\n\nSökvägen kan vara felaktig eller så kan disken vara full.
@@ -4302,8 +4238,8 @@ Okänd brevhuvudskodning: %s.\n\nYAM kan inte visa ett visst brevhuvud korrekt.
 ;#DEF Unknown header encoding: %s.\n\nYAM cannot display a particular message header correctly.
 ;#SET (1118//)
 MSG_ER_MultipartEOF
-Ofullständigt flerpartsbrev: oväntat filslut. Brevet verkar ha klippts av.
-;#DEF Unexpected EOF while decoding multipart message. The message seems to be truncated.
+Oväntat filslut vid avkodning av flerpartsbrev. Brevet verkar ha klippts av.
+;#DEF Unexpected EOF while decoding a multipart message. The message seems to be truncated.
 ;#SET (1119//)
 MSG_ER_MIMEError
 Kunde inte avkoda MIME-brev.\n\nBrevet innehåller felaktiga MIME-delar, är tomt, eller har klippts av.
@@ -4314,8 +4250,8 @@ Kunde inte läsa filen '%s'.\n\nFilen verkar inte existera.
 ;#DEF Couldn't read from file '%s'.\n\nThe file doesn't seem to exist.
 ;#SET (1122//)
 MSG_ER_UUSize
-Avkodad storlek [%lD] är inte samma som orginalstorleken [%lD].\n\nEn felaktig UU-kodare har använts eller så har brevet klippts av.
-;#DEF Decoded size [%lD] does not match original size [%lD].\n\nA defective UUencoder was used or the message is truncated.
+Avkodad storlek [%ld] är inte samma som orginalstorleken [%ld].\n\nEn felaktig UU-kodare har använts eller så har brevet klippts av.
+;#DEF Decoded size [%ld] does not match original size [%ld].\n\nA defective UUencoder was used or the message is truncated.
 ;#SET (1123//)
 MSG_ER_DocNotFound
 HTML-dokumentet '%s' hittades inte.\n\nFilen finns inte på webbservern.
@@ -4331,7 +4267,7 @@ Kunde inte ansluta till webbservern '%s'.\n\nMöjliga felorsaker: TCP/IP-stacken 
 ;#SET (1126//)
 MSG_ER_BadResponse
 Felaktigt %s svar på kommandot:\n%s\n\nE-postservern kunde inte exekvera kommandot och svarade med felmeddelandet.
-;#DEF Bad %s command response:\n%s\n\nThe mail server couldn't execute the command and replied with the error message.
+;#DEF Bad %s command response:\n%s\n\nThe mail server couldn't execute the command and replied with the above error message.
 ;#SET (1127//)
 MSG_ER_UnknownPOP
 Okänd POP3-server: '%s'.\n\nTCP/IP-stacken är inte uppkopplad eller så är serverns adress felaktig.
@@ -4441,10 +4377,6 @@ MSG_HELP_DI_BT_PASTE
 Infoga vald post på nuvarande\nposition i textredigeraren.
 ;#DEF Insert selected entry at the current\nposition in the text editor
 ;#SET (1158//)
-MSG_FI_GaugeText
-%%ld av %lD brev
-;#DEF %%ld of %lD messages
-;#SET (1159//)
 MSG_FI_AddFilter
 Nytt filter
 ;#DEF Add filter
@@ -4973,10 +4905,6 @@ MSG_BusyDecDisplaying
 Avkodar/visar...
 ;#DEF Decoding/displaying...
 ;#SET (1294//)
-MSG_RE_FollowThreadReq
-För att följa kedjan, måste YAM ladda alla index.\nDetta kan kräva en hel del tid och minne.\n\nVill du fortsätta?
-;#DEF In order to follow the thread, YAM has to load all indices.\nThis may be quite time and memory consuming.\n\nDo you want to continue?
-;#SET (1295//)
 MSG_CTapplicationadosscript
 AmigaDOS skript
 ;#DEF AmigaDOS script
@@ -5747,7 +5675,7 @@ Under avkodningen av quoted-printable filen '%s', hittades några trasiga kontrol
 ;#SET (1505//)
 MSG_ER_QPDEC_CHAR
 Vissa icke tillåtna tecken har upptäckts under avkodningen av quoted-printable filen '%s' och togs därför bort under avkodningen.
-;#DEF Some not allowed characters have been spotted during the quoted-printable decoding of file '%s' and where therefore removed during the decoding.
+;#DEF Some disallowed characters were spotted during the quoted-printable decoding of file '%s' and were therefore removed during the decoding.
 ;#SET (1506//)
 MSG_ER_UUDEC_TAGMISS
 Vid försök att avkoda UU-kod filen '%s', kunde YAM inte hitta den '%s' tagg som krävs enligt UUcode standarden.
@@ -5841,14 +5769,6 @@ MSG_MA_ATTACHMENTS
 Bilagor:
 ;#DEF Attachments:
 ;#SET (1529//)
-MSG_MA_ATTACHMENTINFO
-\ebBilaga - MIME-del #%lD\en\nNamn: %s\nBeskrivning: %s\nInnehållstyp: %s <%s>\nStorlek: ~%lD byte
-;#DEF \ebAttachment - MIME-Part #%lD\en\nName: %s\nDescription: %s\nContent-Type: %s <%s>\nSize: ~%lD bytes
-;#SET (1530//)
-MSG_MA_ATTACHMENT_PART
-Bilaga/MIME-del #%ID
-;#DEF Attachment/MIME-Part #%lD
-;#SET (1531//)
 MSG_MA_ATTACHMENT_DISPLAY
 Visa
 ;#DEF Display
@@ -6114,7 +6034,7 @@ Text som skrivs in här kommer att användas som\nsökkriterium för visning av brev
 ;#DEF Text inserted here will be used as the search\ncriteria for displaying mail in the current folder.
 ;#SET (1597//)
 MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
-Genom att använda denna popup kan du välja\nkriterium för den specifierade söktexten.
+Genom att använda denna popupp kan du välja\nkriterium för den specifierade söktexten.
 ;#DEF By using this popup you can select the criteria\nfor the specified search text.
 ;#SET (1598//)
 MSG_BUSY_SEARCHINGFOLDER
@@ -6419,7 +6339,7 @@ Kunde inte fråga uppdateringsservern om uppdateringar.
 ;#SET (1673//)
 MSG_CO_LASTSTATUS_UPDATESUCCESS
 Hittade och bearbetade nya uppdateringar framgångsrikt.
-;#DEF Successfully found and processed new updates.
+;#DEF Successfully found and notified on new updates.
 ;#SET (1674//)
 MSG_WR_SECURITYREQ
 Brevets mottagare har olika förvalda\nbrevsäkerhetsinställningar.\n\nHur vill du komponera brevet?
@@ -6565,8 +6485,127 @@ MSG_RE_MAILDETAILS
 Brevdetaljer
 ;#DEF Mail Details
 ;#SET (1710//)
+MSG_ER_ADDFILEERROR
+Den valda filen '%s' kunde inte läggas till som bilaga till nuvarande brev.\n\nVar god kontrollera att filen är åtkomstbar och att du har rätt läsbehörigheter.
+;#DEF The selected file '%s' couldn't be added as an attachment to the current mail.\n\nPlease make sure that the file is accessible and that you have proper read permissions.
+;#SET (1711//)
+MSG_ER_PACKERROR
+Ett fel uppstod vid arkivskapelse av de valda filerna.\n\nVar god kontrollera att alla filer är åtkomstbara och att du har rätt behörigheter.
+;#DEF An error occurred while trying to create an archive out of the selected files.\n\nPlease make sure that all files are accessible and that you have proper permissions.
+;#SET (1712//)
+MSG_CO_ABOOKLOOKUP
+Genomför adressbokssökning i brevlistan
+;#DEF Perform addressbook lookup in message list
+;#SET (1713//)
+MSG_HELP_CO_CH_ABOOKLOOKUP
+Genomför en adressbokssökning för varje\nhuvudmottagare i brevlistan och visar det\nriktiga namnet från adressboken istället.\n\nOBS: Detta är ett ganska tidskrävande jobb\noch kan minska prestandan i brevlistan\n - speciellt om man har en stor adressbok.
+;#DEF Performs an addressbook lookup for every main\nmail recipient in the mail list and shows the\nreal name of the addressbook entry instead.\n\nPlease note: This is a quite time consuming job\nand may bring down the performance of the list\ndisplay - especially on setups with a large\naddressbook.
+;#SET (1714//)
 MSG_TR_MESSAGEGAUGE
 Brev %%ld av %ld
 ;#DEF Message %%ld of %ld
 ;#SET (1715//)
-
+MSG_CO_CONVERTHTML
+Konvertera delar av HTML meddelande till vanlig text
+;#DEF Convert viewable HTML message parts to plain text
+;#SET (1716//)
+MSG_HELP_CO_CONVERTHTML
+Om ett brev innehåller delar av HTML i delar av\nhuvudmeddelandet, kommer YAM att konvertera dem\ntill vanlig text.
+;#DEF If a mail contains viewable HTML parts as its main\nmessage parts, YAM will convert them to plain text\nwhen this option is enabled.
+;#SET (1717//)
+MSG_RE_FOLLOWTHREAD
+För att söka efter fler brev av samma tråd,\nså måste YAM ladda extra mapp index. Detta kan ta tid\noch vara minneskrävande.\n\nVill du fortsätta?
+;#DEF In order to search for more mails of the same thread,\nYAM has to load additional folder indices. This may be\nquite time and memory consuming.\n\nDo you want to continue?
+;#SET (1718//)
+MSG_TR_TRANSFERSTATUS
+%s av %s @ %s/s\n%02ld'%02ld'' körs - %02ld'%02ld'' kvar
+;#DEF %s of %s @ %s/s\n%02ld'%02ld'' running - %02ld'%02ld'' left
+;#SET (1719//)
+MSG_TR_TRANSFERSIZE
+%s av %s
+;#DEF %s of %s
+;#SET (1720//)
+MSG_FI_GAUGETEXT
+%%ld av %ld meddelanden
+;#DEF %%ld of %ld messages
+;#SET (1721//)
+MSG_MA_MESSAGEINFO
+\ebNuvarande meddelande\en\nFrån: %s <%s>\nTill: %s <%s>\nÄrende: %s\nDatum: %s\nFilnamn: %s\nStorlek: %s
+;#DEF \ebCurrent message\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %s
+;#SET (1722//)
+MSG_MA_FOLDERINFO
+\ebNuvarande mapp\en\nNamn: %s\nSökväg: %s\nStorlek: %s\nMeddelanden: %ld (%ld nya, %ld olästa)
+;#DEF \ebCurrent folder\en\nName: %s\nPath: %s\nSize: %s\nMessages: %ld (%ld new, %ld unread)
+;#SET (1723//)
+MSG_MA_MIMEPART_INFO
+\ebBilaga - MIME-del #%ld\en\nNamn: %s\nBeskrivning: %s\nInnehållstyp: %s <%s>\nStorlek: ~%s
+;#DEF \ebAttachment - MIME-Part #%ld\en\nName: %s\nDescription: %s\nContent-Type: %s <%s>\nSize: ~%s
+;#SET (1725//)
+MSG_MA_MIMEPART_MENU
+Bilaga/MIME-del #%ld
+;#DEF Attachment/MIME-Part #%ld
+;#SET (1726//)
+MSG_CO_PGPPASSINTERVAL1
+Kom ihåg lösenord i
+;#DEF Remember passphrase for
+;#SET (1727//)
+MSG_CO_PGPPASSINTERVAL2
+inaktiv(a) minut(er)
+;#DEF idle minute(s)
+;#SET (1728//)
+MSG_HELP_CO_PGPPASSINTERVAL
+Om vald, så kommer det inmatade PGP lösenordet\natt kommas ihåg, enligt det specifierade antal minuter\nså att efterföljande PGP operationer inte\nbehöver fråga om det igen.
+;#DEF If selected, an entered PGP passphrase will be\nremembered for the specified amount of idle minutes\nso that subsequent PGP operations doesn't have to\nquery for it again.
+;#SET (1729//)
+MSG_UT_PGPPASSREQ_TITLE
+PGP lösenord förfrågan
+;#DEF PGP passphrase request
+;#SET (1730//)
+MSG_CO_GR_REPLYFORWARD
+Svara/Vidareb.
+;#DEF Reply/Forward
+;#SET (1731//)
+MSG_CO_GR_SCRIPTS
+Skript
+;#DEF Scripts
+;#SET (1732//)
+MSG_CO_GR_STARTUPQUIT
+Uppstart/Avslut
+;#DEF Startup/Quit
+;#SET (1733//)
+MSG_CO_SCRIPTS_PREGET
+%p  Typ av nedladdningshändelse
+;#DEF %p  Type of download action
+;#SET (1734//)
+MSG_CO_SCRIPTS_POSTGET
+%p  Antal meddelanden mottagna
+;#DEF %p  Number of messages received
+;#SET (1735//)
+MSG_CO_SCRIPTS_NEWMSG
+%p  Namn på ny meddelande fil
+;#DEF %p  Name of new message file
+;#SET (1736//)
+MSG_CO_SCRIPTS_READ
+%p  Nummer på läsfönster
+;#DEF %p  Number of read window
+;#SET (1737//)
+MSG_CO_SCRIPTS_WRITE
+%p  Nummer på skrivfönster
+;#DEF %p  Number of write window
+;#SET (1738//)
+MSG_CO_SCRIPTS_URL
+%p  Full URL sökväg
+;#DEF %p  Full URL path
+;#SET (1739//)
+MSG_CO_MIMECMD_PARAMETER
+%s  Full sökväg av fil
+;#DEF %s  Full path of file
+;#SET (1740//)
+MSG_ER_CANTOPENASL
+Ett fel uppstod vid försök att öppna ett ASL dialogfönster.\n\nVar god kontrollera att ditt ASL system fungerar och att du har tillräckligt med resurser.
+;#DEF An error occurred while trying to popup an ASL requester.\n\nPlease make sure that your ASL setup is valid and that you have enough resources.
+;#SET (1741//)
+MSG_MA_CONFIRMDELETION
+%ld meddelande(n) är valda.\n\nVill du verkligen radera dessa\nmeddelanden?
+;#DEF %ld message(s) are selected.\n\nDo you really want to delete these\nmessages?
+;#SET (1742//)

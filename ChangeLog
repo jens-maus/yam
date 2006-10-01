@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-10-01  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: updated according to the latest changes.
+
 2006-09-28  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c, MainMailList: reenabled the Reply toolbar button and menu
