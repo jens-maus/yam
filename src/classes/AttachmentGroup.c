@@ -50,6 +50,8 @@ struct Data
 
   Object *context_menu;
 
+  struct MUI_EventHandlerNode ehnode;
+
   char menuTitle[SIZE_DEFAULT];
 
   ULONG minHeight;
@@ -335,6 +337,51 @@ OVERLOAD(OM_SET)
   return DoSuperMethodA(cl, obj, msg);
 }
 ///
+/// OVERLOAD(MUIM_Setup)
+OVERLOAD(MUIM_Setup)
+{
+  GETDATA;
+  BOOL result = FALSE;
+
+  ENTER();
+
+  // add an event handler for clearing the selection state
+  // in case someone clicks in our area
+  if(DoSuperMethodA(cl, obj, msg))
+  {
+    data->ehnode.ehn_Priority = -2; // attachmentimage has priority -1
+    data->ehnode.ehn_Flags    = 0;
+    data->ehnode.ehn_Object   = obj;
+    data->ehnode.ehn_Class    = cl;
+    data->ehnode.ehn_Events   = IDCMP_MOUSEBUTTONS;
+
+    DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+
+    result = TRUE;
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// OVERLOAD(MUIM_Cleanup)
+OVERLOAD(MUIM_Cleanup)
+{
+  GETDATA;
+
+  ENTER();
+
+  // remove the eventhandler first
+  DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+
+  DoSuperMethodA(cl, obj, msg);
+
+  RETURN(0);
+  return 0;
+}
+
+///
 /// OVERLOAD(MUIM_Draw)
 OVERLOAD(MUIM_Draw)
 {
@@ -534,6 +581,32 @@ OVERLOAD(MUIM_ContextMenuChoice)
 
   return 0;
 }
+///
+/// OVERLOAD(MUIM_HandleEvent)
+OVERLOAD(MUIM_HandleEvent)
+{
+  struct IntuiMessage *imsg = ((struct MUIP_HandleEvent *)msg)->imsg;
+  LONG result = 0;
+
+  ENTER();
+
+  if(imsg && imsg->Class == IDCMP_MOUSEBUTTONS)
+  {
+    // we clear the selection state in case the user clicked in
+    // our area (= not an attachment image)
+    if((imsg->Code == SELECTDOWN || imsg->Code == SELECTUP) &&
+       _isinobject(obj, imsg->MouseX, imsg->MouseY))
+    {
+      DoMethod(obj, MUIM_AttachmentGroup_ClearSelection);
+
+      result = MUI_EventHandlerRC_Eat;
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+
 ///
 
 /* Private Functions */
@@ -871,4 +944,24 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
 
   return 0;
 }
+///
+/// DECLARE(ClearSelection)
+DECLARE(ClearSelection)
+{
+  struct List *childList = (struct List *)xget(obj, MUIA_Group_ChildList);
+  ENTER();
+
+  if(childList)
+  {
+    Object *cstate = (Object *)childList->lh_Head;
+    Object *child;
+
+    while((child = NextObject(&cstate)))
+      set(child, MUIA_Selected, FALSE);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
 ///

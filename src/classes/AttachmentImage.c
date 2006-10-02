@@ -54,6 +54,9 @@ struct Data
   struct BitMap *normalBitMap;
   struct BitMap *selectedBitMap;
 
+  PLANEPTR normalBitMask;
+  PLANEPTR selectedBitMask;
+
   char *dropPath;
   char shortHelp[SIZE_LARGE];
 
@@ -141,9 +144,9 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        ATTR(MailPart)     : data->mailPart = (struct Part *)tag->ti_Data; break;
-        ATTR(MaxHeight)   : data->maxHeight = (ULONG)tag->ti_Data; break;
-        ATTR(MaxWidth)    : data->maxWidth  = (ULONG)tag->ti_Data; break;
+        ATTR(MailPart)  : data->mailPart = (struct Part *)tag->ti_Data; break;
+        ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
+        ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
       }
     }
 
@@ -285,6 +288,8 @@ OVERLOAD(MUIM_Setup)
   {
     struct BitMap *orgBitMap;
     struct BitMap *screenBitMap = _screen(obj)->RastPort.BitMap;
+    PLANEPTR normalBitMask;
+    PLANEPTR selectedBitMask;
     struct RastPort rp;
     ULONG orgWidth;
     ULONG orgHeight;
@@ -292,37 +297,47 @@ OVERLOAD(MUIM_Setup)
 
     // prepare the drawIcon/GetIconRentagle tags
     #ifdef ICONDRAWA_Transparency // defined starting from icon.lib v51+
-    static const struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,    TRUE  },
-                                                   { ICONDRAWA_Frameless,      TRUE  },
-                                                   { ICONDRAWA_Transparency, 255   },
-                                                   { TAG_DONE,                FALSE } };
+    static const struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,      TRUE  },
+                                                   { ICONDRAWA_Frameless,       TRUE  },
+                                                   { ICONDRAWA_Transparency,    255   },
+                                                   { TAG_DONE,                  FALSE } };
     #else
-    static const struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless, TRUE  },
-                                                   { ICONDRAWA_Frameless,   TRUE  },
-                                                   { TAG_DONE,              FALSE } };
+    static const struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,      TRUE  },
+                                                   { ICONDRAWA_Frameless,       TRUE  },
+                                                   { TAG_DONE,                  FALSE } };
     #endif
 
     // initialize our temporary rastport
     InitRastPort(&rp);
 
     // get some information about our diskObject like width/height
+    // and the bitmask for transparency drawing
     if(IconBase->lib_Version >= 44)
     {
       struct Rectangle rect;
+      struct TagItem iconCtrlTags[] = { { ICONCTRLA_GetImageMask1, (ULONG)&normalBitMask   },
+                                        { ICONCTRLA_GetImageMask2, (ULONG)&selectedBitMask },
+                                        { TAG_DONE,                FALSE                   } };
   
       GetIconRectangleA(NULL, diskObject, NULL, &rect, drawIconTags);
 
       orgWidth  = rect.MaxX - rect.MinX + 1;
       orgHeight = rect.MaxY - rect.MinY + 1;
+
+      // query the bitmask
+      IconControlA(diskObject, iconCtrlTags);
     }
     else
     {
       orgWidth  = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Width + 1;
       orgHeight = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Height + 1;
+
+      normalBitMask = NULL;
+      selectedBitMask = NULL;
     }
 
     // we first allocate a source bitmap with equal size to the icon size of the diskObject
-    orgBitMap = AllocBitMap(orgWidth, orgHeight, screenDepth, BMF_CLEAR|BMF_MINPLANES, screenBitMap);
+    orgBitMap = AllocBitMap(orgWidth, orgHeight, screenDepth, 0, screenBitMap);
     if(orgBitMap)
     {
       LONG scaleHeightDiff = orgHeight - data->maxHeight;
@@ -370,7 +385,7 @@ OVERLOAD(MUIM_Setup)
       }
 
       // now we can allocate a new bitmap which should carry the scaled selected image
-      data->selectedBitMap = AllocBitMap(newWidth, newHeight, screenDepth, BMF_CLEAR|BMF_MINPLANES, orgBitMap);
+      data->selectedBitMap = AllocBitMap(newWidth, newHeight, screenDepth, 0, orgBitMap);
       if(data->selectedBitMap)
       {
         struct BitScaleArgs args;
@@ -407,6 +422,42 @@ OVERLOAD(MUIM_Setup)
                                                                                    data->scaledHeight);
       }
 
+      // now we also scale the selected BitMask down, if it exists
+      #if defined(USE_BITMASK)
+      if(selectedBitMask &&
+         (data->selectedBitMask = (PLANEPTR)AllocBitMap(newWidth, newHeight, 1, 0, (struct BitMap *)selectedBitMask)))
+      {
+        struct BitScaleArgs args;
+
+        args.bsa_SrcBitMap = (struct BitMap *)selectedBitMask;
+        args.bsa_DestBitMap = (struct BitMap *)data->selectedBitMask;
+        args.bsa_Flags = 0;
+
+        args.bsa_SrcY = 0;
+        args.bsa_DestY = 0;
+
+        args.bsa_SrcWidth = orgWidth;
+        args.bsa_SrcHeight = orgHeight;
+
+        args.bsa_XSrcFactor = orgWidth;
+        args.bsa_XDestFactor = newWidth;
+
+        args.bsa_YSrcFactor = orgHeight;
+        args.bsa_YDestFactor = newHeight;
+
+        args.bsa_SrcX = 0;
+        args.bsa_DestX = 0;
+
+        // scale the image now with the arguments set
+        BitMapScale(&args);
+      }
+      else
+      #endif
+        data->selectedBitMask = NULL;
+
+      data->selectedBitMask = selectedBitMask;
+      data->normalBitMask = normalBitMask;
+
       // now that we have the selectedBitMap filled we have to scale down the unselected state
       // of the icon as well.
       if(IconBase->lib_Version >= 44)
@@ -415,7 +466,7 @@ OVERLOAD(MUIM_Setup)
         DrawImage(&rp, ((struct Image*)diskObject->do_Gadget.GadgetRender), 0, 0);
 
       // now we can allocate a new bitmap which should carry the scaled unselected normal image
-      data->normalBitMap = AllocBitMap(newWidth, newHeight, screenDepth, BMF_CLEAR|BMF_MINPLANES, orgBitMap);
+      data->normalBitMap = AllocBitMap(newWidth, newHeight, screenDepth, 0, orgBitMap);
       if(data->normalBitMap)
       {
         struct BitScaleArgs args;
@@ -451,6 +502,39 @@ OVERLOAD(MUIM_Setup)
                                                                                  data->scaledWidth,
                                                                                  data->scaledHeight);
       }
+
+      // now we also scale the normal BitMask down, if it exists
+      #if defined(USE_BITMASK)
+      if(normalBitMask &&
+         (data->normalBitMask = (PLANEPTR)AllocBitMap(newWidth, newHeight, 1, 0, (struct BitMap *)normalBitMask)))
+      {
+        struct BitScaleArgs args;
+
+        args.bsa_SrcBitMap = (struct BitMap *)normalBitMask;
+        args.bsa_DestBitMap = (struct BitMap *)data->normalBitMask;
+        args.bsa_Flags = 0;
+
+        args.bsa_SrcY = 0;
+        args.bsa_DestY = 0;
+
+        args.bsa_SrcWidth = orgWidth;
+        args.bsa_SrcHeight = orgHeight;
+
+        args.bsa_XSrcFactor = orgWidth;
+        args.bsa_XDestFactor = newWidth;
+
+        args.bsa_YSrcFactor = orgHeight;
+        args.bsa_YDestFactor = newHeight;
+
+        args.bsa_SrcX = 0;
+        args.bsa_DestX = 0;
+
+        // scale the image now with the arguments set
+        BitMapScale(&args);
+      }
+      else
+      #endif
+        data->normalBitMask = NULL;
 
       FreeBitMap(orgBitMap);
     }
@@ -537,12 +621,33 @@ OVERLOAD(MUIM_Draw)
 
   if(((struct MUIP_Draw *)msg)->flags & MADF_DRAWOBJECT)
   {
-    BOOL sel = xget(obj, MUIA_Selected);
+    struct BitMap *bitmap;
+    PLANEPTR bitmask;
 
-    if(sel && data->selectedBitMap)
-      BltBitMapRastPort(data->selectedBitMap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0);
-    else if(data->normalBitMap)
-      BltBitMapRastPort(data->normalBitMap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0);
+    // check the selected state
+    if(xget(obj, MUIA_Selected))
+    {
+      bitmap = data->selectedBitMap;
+      bitmask = data->selectedBitMask;
+    }
+    else
+    {
+      bitmap = data->normalBitMap;
+      bitmask = data->normalBitMask;
+    }
+
+    if(bitmask)
+    {
+      #warning "TODO: Full Icon/Image transparency NOT working!"
+
+      // we use an own BltMaskBitMapRastPort() implemenation to also support
+      // interleaved images.
+      BltMaskBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0, bitmask);
+    }
+    else
+    {
+      BltBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0);
+    }
   }
 
   return 0;
@@ -554,8 +659,13 @@ OVERLOAD(MUIM_HandleEvent)
   GETDATA;
   struct IntuiMessage *imsg = ((struct MUIP_HandleEvent *)msg)->imsg;
 
+  ENTER();
+
   if(!imsg)
+  {
+    RETURN(0);
     return 0;
+  }
   
   if(imsg->Class == IDCMP_MOUSEBUTTONS)
   {
@@ -564,30 +674,43 @@ OVERLOAD(MUIM_HandleEvent)
       data->selectSecs = 0;
       data->selectMicros = 0;
 
+      RETURN(0);
       return 0;
     }
 
     // in case the image is selected
     if(imsg->Code == SELECTDOWN)
     {
-      ULONG secs;
-      ULONG micros;
-
-      // get the currentTime
-      CurrentTime(&secs, &micros);
-
       // check if this has been a double click at the image
-      if(DoubleClick(data->selectSecs, data->selectMicros, secs, micros))
+      if(DoubleClick(data->selectSecs, data->selectMicros, imsg->Seconds, imsg->Micros))
       {
         set(obj, MUIA_AttachmentImage_DoubleClick, TRUE);
         set(obj, MUIA_Selected, TRUE);
       }
       else
-        set(obj, MUIA_Selected, !xget(obj, MUIA_Selected)); // toggle selection
+      {
+        Object *parent = (Object *)xget(obj, MUIA_Parent);
+
+        // only clear the selection if the user hasn't used
+        // the SHIFT key to select multiple items.
+        if(parent && hasFlag(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
+          DoMethod(parent, MUIM_AttachmentGroup_ClearSelection);
+
+        // invert the selection state
+        set(obj, MUIA_Selected, !xget(obj, MUIA_Selected));
+      }
 
       // save the seconds/micros for the next handleEvent call
-      data->selectSecs   = secs;
-      data->selectMicros= micros;
+      if(xget(obj, MUIA_Selected) == TRUE)
+      {
+        data->selectSecs  = imsg->Seconds;
+        data->selectMicros= imsg->Micros;
+      }
+      else
+      {
+        data->selectSecs  = 0;
+        data->selectMicros= 0;
+      }
 
       if(WorkbenchBase->lib_Version >= 45)
       {
@@ -596,6 +719,7 @@ OVERLOAD(MUIM_HandleEvent)
         DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
       }
 
+      RETURN(MUI_EventHandlerRC_Eat);
       return MUI_EventHandlerRC_Eat;
     }
 
@@ -609,6 +733,7 @@ OVERLOAD(MUIM_HandleEvent)
         DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
       }
 
+      RETURN(MUI_EventHandlerRC_Eat);
       return MUI_EventHandlerRC_Eat;
     }
 
@@ -632,6 +757,7 @@ OVERLOAD(MUIM_HandleEvent)
         {
           set(obj, MUIA_AttachmentImage_DoubleClick, TRUE);
 
+          RETURN(MUI_EventHandlerRC_Eat);
           return MUI_EventHandlerRC_Eat;
         }
       }
@@ -641,8 +767,16 @@ OVERLOAD(MUIM_HandleEvent)
       {
         if(obj == (Object *)xget(_win(obj), MUIA_Window_ActiveObject))
         {
+          Object *parent = (Object *)xget(obj, MUIA_Parent);
+
+          // only clear the selection if the user hasn't used
+          // the SHIFT key to select multiple items.
+          if(parent && hasFlag(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
+            DoMethod(parent, MUIM_AttachmentGroup_ClearSelection);
+
           set(obj, MUIA_Selected, !xget(obj, MUIA_Selected));
 
+          RETURN(MUI_EventHandlerRC_Eat);
           return MUI_EventHandlerRC_Eat;
         }
       }
@@ -650,6 +784,7 @@ OVERLOAD(MUIM_HandleEvent)
     }
   }
 
+  RETURN(0);
   return 0;
 }
 ///
