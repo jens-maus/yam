@@ -611,10 +611,10 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet)
 
           for(j=0; j < (int)writeWin->refMailList[0]; j++)
           {
-            struct Mail *curMail = writeWin->refMailList[j];
+            struct Mail *curMail = writeWin->refMailList[j+2];
 
             if(curMail == mail)
-              writeWin->refMailList[j] = NULL;
+              writeWin->refMailList[j+2] = NULL;
           }
         }
       }
@@ -706,10 +706,10 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 
             for(j=0; j < (int)writeWin->refMailList[0]; j++)
             {
-              struct Mail *curMail = writeWin->refMailList[j];
+              struct Mail *curMail = writeWin->refMailList[j+2];
 
               if(curMail == mail)
-                writeWin->refMailList[j] = newMail;
+                writeWin->refMailList[j+2] = newMail;
             }
           }
         }
