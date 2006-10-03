@@ -573,10 +573,22 @@ OVERLOAD(MUIM_Cleanup)
     data->normalBitMap = NULL;
   }
 
+  if(data->normalBitMask)
+  {
+    FreeBitMap(data->normalBitMask);
+    data->normalBitMask = NULL;
+  }
+
   if(data->selectedBitMap)
   {
     FreeBitMap(data->selectedBitMap);
     data->selectedBitMap = NULL;
+  }
+
+  if(data->selectedBitMask)
+  {
+    FreeBitMap(data->selectedBitMask);
+    data->selectedBitMask = NULL;
   }
 
   if(data->diskObject)
