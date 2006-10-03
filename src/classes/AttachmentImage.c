@@ -54,8 +54,8 @@ struct Data
   struct BitMap *normalBitMap;
   struct BitMap *selectedBitMap;
 
-  PLANEPTR normalBitMask;
-  PLANEPTR selectedBitMask;
+  struct BitMap *normalBitMask;
+  struct BitMap *selectedBitMask;
 
   char *dropPath;
   char shortHelp[SIZE_LARGE];
@@ -423,14 +423,17 @@ OVERLOAD(MUIM_Setup)
       }
 
       // now we also scale the selected BitMask down, if it exists
-      #if defined(USE_BITMASK)
       if(selectedBitMask &&
-         (data->selectedBitMask = (PLANEPTR)AllocBitMap(newWidth, newHeight, 1, 0, (struct BitMap *)selectedBitMask)))
+         (data->selectedBitMask = AllocBitMap(newWidth, newHeight, 1L, 0, NULL)))
       {
         struct BitScaleArgs args;
+        struct BitMap bm;
 
-        args.bsa_SrcBitMap = (struct BitMap *)selectedBitMask;
-        args.bsa_DestBitMap = (struct BitMap *)data->selectedBitMask;
+        InitBitMap(&bm, 1L, orgWidth, orgHeight);
+        bm.Planes[0] = selectedBitMask;
+
+        args.bsa_SrcBitMap = &bm;
+        args.bsa_DestBitMap = data->selectedBitMask;
         args.bsa_Flags = 0;
 
         args.bsa_SrcY = 0;
@@ -452,11 +455,7 @@ OVERLOAD(MUIM_Setup)
         BitMapScale(&args);
       }
       else
-      #endif
         data->selectedBitMask = NULL;
-
-      data->selectedBitMask = selectedBitMask;
-      data->normalBitMask = normalBitMask;
 
       // now that we have the selectedBitMap filled we have to scale down the unselected state
       // of the icon as well.
@@ -504,14 +503,17 @@ OVERLOAD(MUIM_Setup)
       }
 
       // now we also scale the normal BitMask down, if it exists
-      #if defined(USE_BITMASK)
       if(normalBitMask &&
-         (data->normalBitMask = (PLANEPTR)AllocBitMap(newWidth, newHeight, 1, 0, (struct BitMap *)normalBitMask)))
+         (data->normalBitMask = AllocBitMap(newWidth, newHeight, 1L, 0, NULL)))
       {
         struct BitScaleArgs args;
+        struct BitMap bm;
 
-        args.bsa_SrcBitMap = (struct BitMap *)normalBitMask;
-        args.bsa_DestBitMap = (struct BitMap *)data->normalBitMask;
+        InitBitMap(&bm, 1L, orgWidth, orgHeight);
+        bm.Planes[0] = normalBitMask;
+
+        args.bsa_SrcBitMap = &bm;
+        args.bsa_DestBitMap = data->normalBitMask;
         args.bsa_Flags = 0;
 
         args.bsa_SrcY = 0;
@@ -533,7 +535,6 @@ OVERLOAD(MUIM_Setup)
         BitMapScale(&args);
       }
       else
-      #endif
         data->normalBitMask = NULL;
 
       FreeBitMap(orgBitMap);
@@ -622,7 +623,7 @@ OVERLOAD(MUIM_Draw)
   if(((struct MUIP_Draw *)msg)->flags & MADF_DRAWOBJECT)
   {
     struct BitMap *bitmap;
-    PLANEPTR bitmask;
+    struct BitMap *bitmask;
 
     // check the selected state
     if(xget(obj, MUIA_Selected))
@@ -638,11 +639,9 @@ OVERLOAD(MUIM_Draw)
 
     if(bitmask)
     {
-      #warning "TODO: Full Icon/Image transparency NOT working!"
-
       // we use an own BltMaskBitMapRastPort() implemenation to also support
       // interleaved images.
-      BltMaskBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0, bitmask);
+      MyBltMaskBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0, bitmask->Planes[0]);
     }
     else
     {

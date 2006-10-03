@@ -6,6 +6,11 @@ $Id$
 
 2006-10-03  Jens Langner <Jens.Langner@light-speed.de>
 
+  * AttachmentImage.c, AttachmentGroup.c: finally fixed bug #1562791 where
+    attachment images were always displayed without any transparency. Now,
+    if the icon image contains a transparency bitmask it will be used and
+    the image should show up with proper transparency. Please note that
+    this feature requires icon.library v44 or newer.
   * YAM_WR.c, YAM_MA.c, misc: generally enabled the "Edit" toolbar, menu
     and context menu item and implemented a new "Edit as new" functionality.
     If a user uses edit now on received or sent mail not in the outgoing

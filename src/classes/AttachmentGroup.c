@@ -668,9 +668,9 @@ DECLARE(Refresh) // struct Part *firstPart
     {
       Object *newImage = AttachmentImageObject,
                            MUIA_CycleChain,                 TRUE,
-                           MUIA_AttachmentImage_MailPart,  rp,
-                           MUIA_AttachmentImage_MaxHeight, _font(obj) ? TEXTROWS*_font(obj)->tf_YSize : 0,
-                           MUIA_AttachmentImage_MaxWidth,   _font(obj) ? TEXTROWS*_font(obj)->tf_YSize : 0,
+                           MUIA_AttachmentImage_MailPart,   rp,
+                           MUIA_AttachmentImage_MaxHeight,  _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0,
+                           MUIA_AttachmentImage_MaxWidth,   _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0,
                          End;
 
       // connect some notifies which we might be interested in
