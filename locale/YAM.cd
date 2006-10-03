@@ -5889,3 +5889,6 @@ MSG_MA_CONFIRMDELETION (1742//)
 Do you really want to delete these\n\
 messages?
 ; AMOUNT
+MSG_MESSAGE_EDITASNEW (1743//)
+E\000Edit As New...
+;

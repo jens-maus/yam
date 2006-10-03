@@ -164,8 +164,21 @@
 #define SICON_SIGNED        "\033o[" STR(SICON_ID_SIGNED)   "]"
 #define SICON_MARK          "\033o[" STR(SICON_ID_MARK)     "]"
 
-enum ImportanceLevel { IMP_NORMAL=0, IMP_LOW, IMP_HIGH };
-enum NewMode { NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NEW_EDIT, NEW_SAVEDEC };
+// Mail importance levels
+enum ImportanceLevel { IMP_NORMAL=0, // normal (default)
+                       IMP_LOW,      // low
+                       IMP_HIGH      // high
+                     };
+
+// Mail creation modes
+enum NewMode { NEW_NEW=0,     // composing a new mail
+               NEW_REPLY,     // replying to an existing mail
+               NEW_FORWARD,   // forwarding an existing mail
+               NEW_BOUNCE,    // bounce an existing mail back to the sender
+               NEW_EDIT,      // edit a mail in the outgoing folder
+               NEW_EDITASNEW, // edit an existing sent/received mail
+               NEW_SAVEDEC    // create a decrypted copy of a PGP mail
+             };
 
 // flags and macros for creating new mails
 #define NEWF_QUIET        (1<<0)
@@ -300,9 +313,9 @@ struct MA_ClassData *MA_New(void);
 BOOL  MA_SortWindow(void);
 void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit);
 int   MA_NewBounce(struct Mail *mail, int flags);
-int   MA_NewEdit(struct Mail *mail, int flags, Object *readWindow);
+int   MA_NewEdit(struct Mail *mail, int flags);
 int   MA_NewForward(struct Mail **mlist, int flags);
-int   MA_NewMessage(int mode, int flags);
+int   MA_NewMessage(enum NewMode mode, int flags);
 int   MA_NewNew(struct Mail *mail, int flags);
 int   MA_NewReply(struct Mail **mlist, int flags);
 void  MA_PopNow(enum GuiLevel mode, int pop);

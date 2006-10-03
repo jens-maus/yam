@@ -4,6 +4,19 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-10-03  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, YAM_MA.c, misc: generally enabled the "Edit" toolbar, menu
+    and context menu item and implemented a new "Edit as new" functionality.
+    If a user uses edit now on received or sent mail not in the outgoing
+    folder, YAM will now open a write window with the mail in question.
+    However, as soon as the mail it is sent/saved/hold it will be a new
+    mail and doesn't touch the existing mail. This should be more intuitive
+    and allow to create a new mail out of an already existing one without
+    having to move it into the outgoing folder. As for the outgoing folder,
+    the "Edit" operation still works as a real edit operation and replaces
+    the existing mail.
+
 2006-10-02  Jens Langner <Jens.Langner@light-speed.de>
 
   * AttachmentImage.c, AttachmentGroup.c: changed the icon image selection

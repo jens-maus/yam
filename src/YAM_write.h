@@ -30,6 +30,7 @@
 
 #include <mui/Toolbar_mcc.h>
 
+#include "YAM_main.h"
 #include "YAM_stringsizes.h"
 
 #ifndef WORKBENCH_WORKBENCH_H
@@ -76,21 +77,18 @@ struct WR_GUIData
 
 struct WR_ClassData  /* write window */
 {
-   struct WR_GUIData GUI;
+  struct WR_GUIData GUI;
 
-   struct Mail *     Mail;
-   struct Mail **    MList;
-   Object *          readWindow; // ptr to read window the editor was invoked from, or NULL
+  struct Mail *     refMail;      // ptr to the original mail this write window was created from
+  struct Mail **    refMailList;  // ptr to a list of orginal mails.
 
-   int               Mode;
-   int               OldSecurity;
+  enum NewMode      Mode;
+  int               OldSecurity;
 
-   BOOL              Bounce;
-
-   char              MsgID[SIZE_MSGID];
-   char              QuoteText[SIZE_DEFAULT];
-   char              AltQuoteText[SIZE_SMALL]; /* no variable substitution -> SIZE_SMALL! */
-   char              WTitle[SIZE_DEFAULT];
+  char              MsgID[SIZE_MSGID];
+  char              QuoteText[SIZE_DEFAULT];
+  char              AltQuoteText[SIZE_SMALL]; /* no variable substitution -> SIZE_SMALL! */
+  char              WTitle[SIZE_DEFAULT];
 };
 
 struct Attach
@@ -146,7 +144,7 @@ struct Compose
    char *             ExtHeader;
    char *             IRTMsgID;
    struct WritePart * FirstPart;
-   struct Mail *      OrigMail;
+   struct Mail *      refMail;    // ptr to the original mail we composing a new one from.
    int                Mode;
    int                Importance;
    int                Receipt;

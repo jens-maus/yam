@@ -152,13 +152,12 @@ void MA_ChangeSelected(BOOL forceUpdate)
   static struct Mail *lastMail = NULL;
   struct MA_GUIData *gui = &G->MA->GUI;
   struct Folder *fo = FO_GetCurrentFolder();
-  int i;
   BOOL active;
   BOOL hasattach = FALSE;
-  BOOL beingedited = FALSE;
   BOOL folderEnabled;
   ULONG numSelected = 0;
   struct Mail *mail;
+  const char *p;
 
   ENTER();
 
@@ -222,35 +221,32 @@ void MA_ChangeSelected(BOOL forceUpdate)
 
   SHOWVALUE(DBF_MAIL, active);
 
-  for(i = 0; i < MAXWR; i++)
-  {
-    if(mail && G->WR[i] && G->WR[i]->Mail == mail)
-    {
-      beingedited = TRUE;
-      break;
-    }
-  }
-
   // now we have to make sure that all toolbar and menu items are
   // enabled and disabled according to the folder/mail status
   folderEnabled = !isGroupFolder(fo);
 
   // deal with the toolbar
   if(gui->TO_TOOLBAR)
-  {
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 0,  MUIV_Toolbar_Set_Ghosted, !active);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 1,  MUIV_Toolbar_Set_Ghosted, !active || !isOutgoingFolder(fo) || numSelected > 1 || beingedited);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet,MUIV_Toolbar_Set_Ghosted, !folderEnabled || (!active && numSelected == 0), 2,3,4,7,8, -1);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 13, MUIV_Toolbar_Set_Ghosted, !folderEnabled);
-  }
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet,MUIV_Toolbar_Set_Ghosted, !folderEnabled || (!active && numSelected == 0), 0,1,2,3,4,7,8,13, -1);
 
   // enable/disable menu items
+  if(isOutgoingFolder(fo))
+    p = GetStr(MSG_MESSAGE_EDIT);
+  else
+    p = GetStr(MSG_MESSAGE_EDITASNEW);
+
+  if(p)
+  {
+    if(p[1] == '\0')
+      set(gui->MI_EDIT, MUIA_Menuitem_Title, p+2);
+    else
+      set(gui->MI_EDIT, MUIA_Menuitem_Title, p);
+  }
+
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, (active || numSelected > 0) && folderEnabled,
                    gui->MI_MOVE, gui->MI_DELETE, gui->MI_GETADDRESS, gui->MI_FORWARD, gui->MI_STATUS,
-                   gui->MI_EXPMSG, gui->MI_COPY, gui->MI_PRINT, gui->MI_SAVE, gui->MI_CHSUBJ, NULL);
+                   gui->MI_EXPMSG, gui->MI_COPY, gui->MI_PRINT, gui->MI_SAVE, gui->MI_CHSUBJ, gui->MI_READ, gui->MI_REPLY, gui->MI_EDIT, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled, gui->MI_FILTER, gui->MI_UPDINDEX, gui->MI_IMPORT, gui->MI_EXPORT, gui->MI_SELECT, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active, gui->MI_READ, gui->MI_REPLY, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active && isOutgoingFolder(fo) && !beingedited, gui->MI_EDIT, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, isOutgoingFolder(fo) && (active || numSelected > 0), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isSentMailFolder(fo) && (active || numSelected > 0), gui->MI_TOREAD, gui->MI_TOUNREAD, gui->MI_ALLTOREAD, gui->MI_BOUNCE, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, hasattach && (active || numSelected > 0), gui->MI_ATTACH, gui->MI_SAVEATT, gui->MI_REMATT, NULL);
@@ -590,37 +586,69 @@ struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
 //  Deletes a single message
 void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet)
 {
-   struct Folder *mailFolder = mail->Folder;
+  struct Folder *mailFolder = mail->Folder;
 
-   if(C->RemoveAtOnce || isDeletedFolder(mailFolder) || forceatonce)
-   {
-      AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name);
+  ENTER();
 
-      // make sure we delete the mailfile
-      DeleteFile(GetMailFile(NULL, mailFolder, mail));
+  if(C->RemoveAtOnce || isDeletedFolder(mailFolder) || forceatonce)
+  {
+    int i;
 
-      // now remove the mail from its folder/mail list
-      RemoveMailFromList(mail);
+    // before we go and delete/free the mail we have to check
+    // all possible write windows if they are refering to it
+    for(i=0; i < MAXWR; i++)
+    {
+      struct WR_ClassData *writeWin = G->WR[i];
 
-      // if we are allowed to make some noise we
-      // update our Statistics
-      if(!quiet)
-        DisplayStatistics(mailFolder, TRUE);
-   }
-   else
-   {
-      struct Folder *delfolder = FO_GetFolderByType(FT_DELETED, NULL);
-
-      MA_MoveCopySingle(mail, mailFolder, delfolder, FALSE);
-
-      // if we are allowed to make some noise we
-      // update our Statistics
-      if(!quiet)
+      if(writeWin)
       {
-        DisplayStatistics(delfolder, FALSE);  // don`t update the appicon
-        DisplayStatistics(mailFolder, TRUE);  // but update it now.
+        if(writeWin->refMail == mail)
+          writeWin->refMail = NULL;
+
+        if(writeWin->refMailList)
+        {
+          int j;
+
+          for(j=0; j < (int)writeWin->refMailList[0]; j++)
+          {
+            struct Mail *curMail = writeWin->refMailList[j];
+
+            if(curMail == mail)
+              writeWin->refMailList[j] = NULL;
+          }
+        }
       }
-   }
+    }
+
+    AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name);
+
+    // make sure we delete the mailfile
+    DeleteFile(GetMailFile(NULL, mailFolder, mail));
+
+    // now remove the mail from its folder/mail list
+    RemoveMailFromList(mail);
+
+    // if we are allowed to make some noise we
+    // update our Statistics
+    if(!quiet)
+      DisplayStatistics(mailFolder, TRUE);
+  }
+  else
+  {
+    struct Folder *delfolder = FO_GetFolderByType(FT_DELETED, NULL);
+
+    MA_MoveCopySingle(mail, mailFolder, delfolder, FALSE);
+
+    // if we are allowed to make some noise we
+    // update our Statistics
+    if(!quiet)
+    {
+      DisplayStatistics(delfolder, FALSE);  // don`t update the appicon
+      DisplayStatistics(mailFolder, TRUE);  // but update it now.
+    }
+  }
+
+  LEAVE();
 }
 
 ///
@@ -628,59 +656,97 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet)
 //  Moves or copies a single message from one folder to another
 static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, struct Folder *to, BOOL copyit)
 {
-   struct Mail cmail = *mail;
-   char mfile[SIZE_MFILE];
-   int result;
+  struct Mail cmail = *mail;
+  char mfile[SIZE_MFILE];
+  int result;
 
-   strlcpy(mfile, mail->MailFile, sizeof(mfile));
+  ENTER();
 
-   if((result = TransferMailFile(copyit, mail, to)) >= 0)
-   {
-      strlcpy(cmail.MailFile, mail->MailFile, sizeof(cmail.MailFile));
+  strlcpy(mfile, mail->MailFile, sizeof(mfile));
 
-      if(copyit)
+  if((result = TransferMailFile(copyit, mail, to)) >= 0)
+  {
+    struct Mail *newMail;
+
+    strlcpy(cmail.MailFile, mail->MailFile, sizeof(cmail.MailFile));
+
+    if(copyit)
+    {
+      AppendLogVerbose(25, GetStr(MSG_LOG_CopyingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
+
+      strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
+
+      // add the new mail
+      newMail = AddMailToList(&cmail, to);
+    }
+    else
+    {
+      int i;
+
+      AppendLogVerbose(23, GetStr(MSG_LOG_MovingVerbose),  AddrName(mail->From), mail->Subject, from->Name, to->Name);
+
+      // add the new mail
+      newMail = AddMailToList(&cmail, to);
+
+      // now we have to check all opened write windows
+      // for still valid references to the old mail and
+      // change it accordingly.
+      for(i=0; i < MAXWR; i++)
       {
-        AppendLogVerbose(25, GetStr(MSG_LOG_CopyingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
+        struct WR_ClassData *writeWin = G->WR[i];
 
-        strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
+        if(writeWin)
+        {
+          if(writeWin->refMail == mail)
+            writeWin->refMail = newMail;
+
+          if(writeWin->refMailList)
+          {
+            int j;
+
+            for(j=0; j < (int)writeWin->refMailList[0]; j++)
+            {
+              struct Mail *curMail = writeWin->refMailList[j];
+
+              if(curMail == mail)
+                writeWin->refMailList[j] = newMail;
+            }
+          }
+        }
       }
-      else
-      {
-        AppendLogVerbose(23, GetStr(MSG_LOG_MovingVerbose),  AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
-        // now remove the mail from its folder/mail list
-        RemoveMailFromList(mail);
-      }
+      // now remove the mail from its folder/mail list
+      RemoveMailFromList(mail);
+    }
 
-      mail = AddMailToList(&cmail, to);
-      if(to == FO_GetCurrentFolder())
-        DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
+    if(to == FO_GetCurrentFolder())
+      DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
 
-      // check the status flags and set the mail statues to queued if the mail was copied into
-      // the outgoing folder
-      if(isOutgoingFolder(to) && hasStatusSent(mail))
-      {
-        setStatusToQueued(mail);
-      }
+    // check the status flags and set the mail statues to queued if the mail was copied into
+    // the outgoing folder
+    if(isOutgoingFolder(to) && hasStatusSent(newMail))
+      setStatusToQueued(newMail);
 
-      return mail;
-   }
-   else
-   {
-      W(DBF_MAIL, "MA_MoveCopySingle error: %ld", result);
+    RETURN(newMail);
+    return newMail;
+  }
+  else
+  {
+    E(DBF_MAIL, "MA_MoveCopySingle error: %ld", result);
 
-      switch(result)
-      {
-        case -2:
-          ER_NewError(GetStr(MSG_ER_XPKUSAGE), mail->MailFile);
-        break;
+    switch(result)
+    {
+      case -2:
+        ER_NewError(GetStr(MSG_ER_XPKUSAGE), mail->MailFile);
+      break;
 
-        default:
-          ER_NewError(GetStr(MSG_ER_TRANSFERMAIL), mail->MailFile, to->Name);
-      }
-   }
+      default:
+        ER_NewError(GetStr(MSG_ER_TRANSFERMAIL), mail->MailFile, to->Name);
+    }
+  }
 
-   return NULL;
+  RETURN(NULL);
+  return NULL;
 }
 
 ///
@@ -1305,7 +1371,7 @@ int MA_NewNew(struct Mail *mail, int flags)
       struct WR_ClassData *wr = G->WR[winnum];
 
       wr->Mode = NEW_NEW;
-      wr->Mail = mail;
+      wr->refMail = mail;
 
       if(mail)
       {
@@ -1410,7 +1476,7 @@ int MA_NewNew(struct Mail *mail, int flags)
 ///
 /// MA_NewEdit
 //  Edits a message
-int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
+int MA_NewEdit(struct Mail *mail, int flags)
 {
   BOOL quiet = hasQuietFlag(flags);
   int i;
@@ -1419,15 +1485,27 @@ int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
 
   ENTER();
 
-  // return if mail is already being written/edited
-  for(i=0; i < MAXWR; i++)
+  // check the parameters
+  if(mail == NULL || (folder = mail->Folder) == NULL)
   {
-    if(G->WR[i] && G->WR[i]->Mail == mail)
-    {
-      DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
+    RETURN(winnum);
+    return winnum;
+  }
 
-      RETURN(-1);
-      return -1;
+  // check if the mail in question resists in the outgoing
+  // folder
+  if(isOutgoingFolder(folder))
+  {
+    // return if mail is already being written/edited
+    for(i=0; i < MAXWR; i++)
+    {
+      if(G->WR[i] && G->WR[i]->refMail == mail)
+      {
+        DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
+
+        RETURN(-1);
+        return -1;
+      }
     }
   }
 
@@ -1443,10 +1521,13 @@ int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
       struct ExtendedMail *email;
       struct WR_ClassData *wr = G->WR[winnum];
 
-      wr->Mode = NEW_EDIT;
-      wr->Mail = mail;
-      wr->readWindow = readWindow;
-      folder = mail->Folder;
+      // flag the exact creation mode
+      if(isOutgoingFolder(folder))
+        wr->Mode = NEW_EDIT;
+      else
+        wr->Mode = NEW_EDITASNEW;
+
+      wr->refMail = mail;
 
       if(!(email = MA_ExamineMail(folder, mail->MailFile, TRUE)))
       {
@@ -1534,9 +1615,6 @@ int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
             setmutex(wr->GUI.RA_SIGNATURE, email->Signature);
             setmutex(wr->GUI.RA_SECURITY, wr->OldSecurity = email->Security);
 
-            if(!isOutgoingFolder(folder))
-              DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, wr->GUI.BT_SEND, wr->GUI.BT_HOLD, NULL);
-
             WR_SetupOldMail(winnum, rmData);
           }
           else
@@ -1597,7 +1675,7 @@ int MA_NewBounce(struct Mail *mail, int flags)
     struct WR_ClassData *wr = G->WR[winnum];
 
     wr->Mode = NEW_BOUNCE;
-    wr->Mail = mail;
+    wr->refMail = mail;
 
     if(!quiet)
       set(wr->GUI.WI, MUIA_Window_Open, TRUE);
@@ -1635,9 +1713,8 @@ int MA_NewForward(struct Mail **mlist, int flags)
       char *rsub = AllocStrBuf(SIZE_SUBJECT);
 
       wr->Mode = NEW_FORWARD;
-      wr->MList = malloc(mlen);
-      if(wr->MList)
-        memcpy(wr->MList, mlist, mlen);
+      if((wr->refMailList = malloc(mlen)))
+        memcpy(wr->refMailList, mlist, mlen);
 
       qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), (int (*)(const void *, const void *))MA_CmpDate);
 
@@ -1781,11 +1858,10 @@ int MA_NewReply(struct Mail **mlist, int flags)
       // make sure the write window know of the
       // operation and knows which mails to process
       wr->Mode = NEW_REPLY;
-      wr->MList = malloc(mlen);
-      if(wr->MList)
-        memcpy(wr->MList, mlist, mlen);
+      if((wr->refMailList = malloc(mlen)))
+        memcpy(wr->refMailList, mlist, mlen);
 
-      // make sure we sort the nlist according to
+      // make sure we sort the mlist according to
       // the mail date
       qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), (int (*)(const void *, const void *))MA_CmpDate);
 
@@ -2464,41 +2540,91 @@ MakeHook(MA_SavePrintHook, MA_SavePrintFunc);
 ///
 /// MA_NewMessage
 //  Starts a new message
-int MA_NewMessage(int mode, int flags)
+int MA_NewMessage(enum NewMode mode, int flags)
 {
-   struct Mail *mail, **mlist = NULL;
-   int winnr = -1;
-   switch (mode)
-   {
-      case NEW_NEW:     winnr = MA_NewNew(NULL, flags);
-                        break;
-      case NEW_EDIT:    if ((mail = MA_GetActiveMail(NULL, NULL, NULL))) winnr = MA_NewEdit(mail, flags, NULL);
-                        break;
-      case NEW_BOUNCE:  if ((mail = MA_GetActiveMail(NULL, NULL, NULL))) winnr = MA_NewBounce(mail, flags);
-                        break;
-      case NEW_FORWARD: if ((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE))) winnr = MA_NewForward(mlist, flags);
-                        break;
-      case NEW_REPLY:   if ((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE))) winnr = MA_NewReply(mlist, flags);
-                        break;
-   }
-   if (mlist) free(mlist);
-   return winnr;
+  int winnr = -1;
+
+  ENTER();
+
+  switch(mode)
+  {
+    case NEW_NEW:
+      winnr = MA_NewNew(NULL, flags);
+    break;
+
+    case NEW_EDIT:
+    {
+      struct Mail *mail;
+
+      if((mail = MA_GetActiveMail(NULL, NULL, NULL)))
+        winnr = MA_NewEdit(mail, flags);
+    }
+    break;
+
+    case NEW_BOUNCE:
+    {
+      struct Mail *mail;
+
+      if((mail = MA_GetActiveMail(NULL, NULL, NULL)))
+        winnr = MA_NewBounce(mail, flags);
+    }
+    break;
+
+    case NEW_FORWARD:
+    {
+      struct Mail **mlist;
+
+      if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
+      {
+        winnr = MA_NewForward(mlist, flags);
+
+        free(mlist);
+      }
+    }
+    break;
+
+    case NEW_REPLY:
+    {
+      struct Mail **mlist;
+
+      if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
+      {
+        winnr = MA_NewReply(mlist, flags);
+
+        free(mlist);
+      }
+    }
+    break;
+
+    case NEW_EDITASNEW:
+    case NEW_SAVEDEC:
+      // not used
+    break;
+  }
+
+  RETURN(winnr);
+  return winnr;
 }
 
 ///
 /// MA_NewMessageFunc
 HOOKPROTONHNO(MA_NewMessageFunc, void, int *arg)
 {
-   int mode = arg[0], flags = 0;
-   ULONG qual = arg[1];
+  int mode = arg[0];
+  int flags = 0;
+  ULONG qual = arg[1];
 
-   if (mode == NEW_FORWARD &&   hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) mode = NEW_BOUNCE;
-   if (mode == NEW_FORWARD && isFlagSet(qual, IEQUALIFIER_CONTROL))                     SET_FLAG(flags, NEWF_FWD_NOATTACH);
-   if (mode == NEW_REPLY   &&   hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) SET_FLAG(flags, NEWF_REP_PRIVATE);
-   if (mode == NEW_REPLY   &&   hasFlag(qual, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))     SET_FLAG(flags, NEWF_REP_MLIST);
-   if (mode == NEW_REPLY   && isFlagSet(qual, IEQUALIFIER_CONTROL))                     SET_FLAG(flags, NEWF_REP_NOQUOTE);
+  ENTER();
 
-   MA_NewMessage(mode, flags);
+  if(mode == NEW_FORWARD &&   hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) mode = NEW_BOUNCE;
+  if(mode == NEW_FORWARD && isFlagSet(qual, IEQUALIFIER_CONTROL))                     SET_FLAG(flags, NEWF_FWD_NOATTACH);
+  if(mode == NEW_REPLY   &&   hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) SET_FLAG(flags, NEWF_REP_PRIVATE);
+  if(mode == NEW_REPLY   &&   hasFlag(qual, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))     SET_FLAG(flags, NEWF_REP_MLIST);
+  if(mode == NEW_REPLY   && isFlagSet(qual, IEQUALIFIER_CONTROL))                     SET_FLAG(flags, NEWF_REP_NOQUOTE);
+
+  MA_NewMessage(mode, flags);
+
+  LEAVE();
 }
 MakeHook(MA_NewMessageHook, MA_NewMessageFunc);
 
@@ -4043,7 +4169,7 @@ struct MA_ClassData *MA_New(void)
         End,
          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_Message),
             MUIA_Family_Child, data->GUI.MI_READ = MakeMenuitem(GetStr(MSG_MA_MRead), MMEN_READ),
-            MUIA_Family_Child, data->GUI.MI_EDIT = MakeMenuitem(GetStr(MSG_MESSAGE_EDIT), MMEN_EDIT),
+            MUIA_Family_Child, data->GUI.MI_EDIT = MakeMenuitem(GetStr(MSG_MESSAGE_EDITASNEW), MMEN_EDIT),
             MUIA_Family_Child, data->GUI.MI_MOVE = MakeMenuitem(GetStr(MSG_MESSAGE_MOVE), MMEN_MOVE),
             MUIA_Family_Child, data->GUI.MI_COPY = MakeMenuitem(GetStr(MSG_MESSAGE_COPY), MMEN_COPY),
             MUIA_Family_Child, data->GUI.MI_DELETE = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_MDelete), MUIA_Menuitem_Shortcut, "Del", MUIA_Menuitem_CommandString,TRUE, MUIA_UserData, MMEN_DELETE, End,

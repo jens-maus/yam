@@ -626,11 +626,11 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
 
     switch(mode)
     {
-      case NEW_NEW:     MA_NewNew(mail, flags);       break;
-      case NEW_EDIT:    MA_NewEdit(mail, flags, obj); break;
-      case NEW_BOUNCE:  MA_NewBounce(mail, flags);    break;
-      case NEW_FORWARD: MA_NewForward(mlist, flags);   break;
-      case NEW_REPLY:   MA_NewReply(mlist, flags);     break;
+      case NEW_NEW:     MA_NewNew(mail, flags);     break;
+      case NEW_EDIT:    MA_NewEdit(mail, flags);    break;
+      case NEW_BOUNCE:  MA_NewBounce(mail, flags);  break;
+      case NEW_FORWARD: MA_NewForward(mlist, flags);break;
+      case NEW_REPLY:   MA_NewReply(mlist, flags);  break;
 
       default:
        // nothing

@@ -518,7 +518,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   struct Folder *fo = FO_GetCurrentFolder();
   BOOL isOutBox = isOutgoingFolder(fo);
   BOOL isSentMail = isSentMailFolder(fo);
-  BOOL beingedited = FALSE, hasattach = FALSE;
+  BOOL hasattach = FALSE;
 
   // dispose the old context_menu if it still exists
   if(data->context_menu)
@@ -559,8 +559,6 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 
   if(res.entry >= 0)
   {
-    int i;
-    
     DoMethod(obj, MUIM_NList_GetEntry, res.entry, &mail);
     if(!mail)
       return(0);
@@ -570,13 +568,9 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     if(isMultiPartMail(mail))
       hasattach = TRUE;
 
-    for (i = 0; i < MAXWR; i++)
-    {
-      if (G->WR[i] && G->WR[i]->Mail == mail) beingedited = TRUE;
-    }
-
     // Now we set this entry as activ
-    if(fo->LastActive != res.entry) set(obj, MUIA_NList_Active, res.entry);
+    if(fo->LastActive != res.entry)
+      set(obj, MUIA_NList_Active, res.entry);
   }
 
   // now we create the menu title of the context menu
@@ -594,7 +588,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   data->context_menu = MenustripObject,
     Child, MenuObjectT(menutitle),
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_MRead),        MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_READ,       End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_EDIT),    MUIA_Menuitem_Enabled, mail && isOutBox && !beingedited,   MUIA_UserData, MMEN_EDIT,       End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, isOutBox ? GetStripStr(MSG_MESSAGE_EDIT) : GetStripStr(MSG_MESSAGE_EDITASNEW), MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_EDIT,       End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_REPLY),   MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_REPLY,      End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_FORWARD), MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_FORWARD,    End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_BOUNCE),  MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_BOUNCE,     End,

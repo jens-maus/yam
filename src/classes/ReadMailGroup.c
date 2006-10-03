@@ -1175,7 +1175,7 @@ DECLARE(SaveDecryptedMail)
       struct ExtendedMail *email;
 
       comp.Mode = NEW_SAVEDEC;
-      comp.OrigMail = mail;
+      comp.refMail = mail;
       comp.FirstPart = p1 = NewPart(2);
       p1->Filename = rmData->firstPart->Next->Filename;
       WriteOutMessage(&comp);

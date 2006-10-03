@@ -883,27 +883,40 @@ static char *WR_GetPGPIds(char *source, char *ids)
 //  Bounce message: inserts resent-headers while copying the message
 static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
 {
-   FILE *oldfh;
-   if ((oldfh = fopen(GetMailFile(NULL, NULL, comp->OrigMail), "r")))
-   {
-      BOOL infield = FALSE, inbody = FALSE;
-      char buf[SIZE_LINE];
-      while (fgets(buf, SIZE_LINE, oldfh))
+  FILE *oldfh;
+
+  ENTER();
+
+  if(comp->refMail != NULL && (oldfh = fopen(GetMailFile(NULL, NULL, comp->refMail), "r")))
+  {
+    char buf[SIZE_LINE];
+    BOOL infield = FALSE;
+    BOOL inbody = FALSE;
+
+    while(fgets(buf, SIZE_LINE, oldfh))
+    {
+      if(*buf == '\n' && !inbody)
       {
-         if (*buf == '\n' && !inbody)
-         {
-            inbody = TRUE;
-            EmitRcptHeader(fh, "To", comp->MailTo);
-            EmitHeader(fh, "Resent-From", BuildAddrName(C->EmailAddress, C->RealName));
-            EmitHeader(fh, "Resent-Date", GetDateTime());
-         }
-         if (!isspace(*buf) && !inbody) infield = !strnicmp(buf, "to:", 3);
-         if (!infield || inbody) fputs(buf, fh);
+        inbody = TRUE;
+        EmitRcptHeader(fh, "To", comp->MailTo);
+        EmitHeader(fh, "Resent-From", BuildAddrName(C->EmailAddress, C->RealName));
+        EmitHeader(fh, "Resent-Date", GetDateTime());
       }
-      fclose(oldfh);
-      return TRUE;
-   }
-   return FALSE;
+
+      if(!isspace(*buf) && !inbody)
+        infield = !strnicmp(buf, "to:", 3);
+
+      if(!infield || inbody)
+        fputs(buf, fh);
+    }
+    fclose(oldfh);
+
+    RETURN(TRUE);
+    return TRUE;
+  }
+
+  RETURN(FALSE);
+  return FALSE;
 }
 
 ///
@@ -911,46 +924,69 @@ static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
 //  Creates decrypted copy of a PGP encrypted message
 static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
 {
-   FILE *oldfh;
-   char *mailfile = GetMailFile(NULL, NULL, comp->OrigMail);
-   char unpFile[SIZE_PATHFILE];
-   BOOL xpkPacked = FALSE;
-   BOOL result = FALSE;
+  char *mailfile;
+  BOOL result = FALSE;
 
-   // we need to analyze if the folder we are reading this mail from
-   // is encrypted or compressed and then first unpacking it to a temporary file
-   if(isXPKFolder(comp->OrigMail->Folder))
-   {
+  ENTER();
+
+  if(comp->refMail != NULL && (mailfile = GetMailFile(NULL, NULL, comp->refMail)))
+  {
+    char unpFile[SIZE_PATHFILE];
+    BOOL xpkPacked = FALSE;
+    FILE *oldfh;
+
+    // we need to analyze if the folder we are reading this mail from
+    // is encrypted or compressed and then first unpacking it to a temporary file
+    if(isXPKFolder(comp->refMail->Folder))
+    {
       // so, this mail seems to be packed, so we need to unpack it to a temporary file
-      if(StartUnpack(mailfile, unpFile, comp->OrigMail->Folder) &&
+      if(StartUnpack(mailfile, unpFile, comp->refMail->Folder) &&
          stricmp(mailfile, unpFile) != 0)
       {
         xpkPacked = TRUE;
       }
-      else return FALSE;
-   }
+      else
+      {
+        RETURN(FALSE);
+        return FALSE;
+      }
+    }
 
-   if ((oldfh = fopen(xpkPacked ? unpFile : mailfile, "r")))
-   {
+    if((oldfh = fopen(xpkPacked ? unpFile : mailfile, "r")))
+    {
       BOOL infield = FALSE;
       char buf[SIZE_LINE];
-      while (fgets(buf, SIZE_LINE, oldfh))
+
+      while(fgets(buf, SIZE_LINE, oldfh))
       {
-         if (*buf == '\n') { fprintf(fh, "X-YAM-Decrypted: PGP; %s\n", GetDateTime()); break; }
-         if (!isspace(*buf)) infield = !strnicmp(buf, "content-type:", 13)
-                                   || !strnicmp(buf, "content-transfer-encoding", 25)
-                                   || !strnicmp(buf, "mime-version:", 13);
-         if (!infield) fputs(buf, fh);
+        if(*buf == '\n')
+        {
+          fprintf(fh, "X-YAM-Decrypted: PGP; %s\n", GetDateTime());
+          break;
+        }
+
+        if(!isspace(*buf))
+        {
+          infield = !strnicmp(buf, "content-type:", 13) ||
+                    !strnicmp(buf, "content-transfer-encoding", 25) ||
+                    !strnicmp(buf, "mime-version:", 13);
+        }
+
+        if(!infield)
+          fputs(buf, fh);
       }
+
       fclose(oldfh);
-
       result = TRUE;
-   }
+    }
 
-   // if we temporary unpacked the file we delete it now
-   if(xpkPacked) DeleteFile(unpFile);
+    // if we temporary unpacked the file we delete it now
+    if(xpkPacked)
+      DeleteFile(unpFile);
+  }
 
-   return result;
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -1255,7 +1291,7 @@ static void WR_ComposeMulti(FILE *fh, struct Compose *comp, char *boundary)
 }
 
 ///
-/// WriteOutMessage
+/// WriteOutMessage() (rec)
 //  Outputs header and body of a new message
 BOOL WriteOutMessage(struct Compose *comp)
 {
@@ -1269,8 +1305,13 @@ BOOL WriteOutMessage(struct Compose *comp)
 
    if (comp->Mode == NEW_BOUNCE)
    {
-      if (comp->DelSend) EmitHeader(fh, "X-YAM-Options", "delsent");
-      return WR_Bounce(fh, comp);
+     if(comp->DelSend)
+       EmitHeader(fh, "X-YAM-Options", "delsent");
+
+     success = WR_Bounce(fh, comp);
+
+     RETURN(success);
+     return success;
    }
    else if (comp->Mode == NEW_SAVEDEC)
    {
@@ -1414,347 +1455,457 @@ char *WR_AutoSaveFile(int winnr)
 //  Validates write window options and generates a new message
 void WR_NewMail(enum WriteMode mode, int winnum)
 {
-   struct Compose comp;
-   STRPTR addr;
-   static struct Mail mail;
-   struct Mail *new = NULL, *mlist[3];
-   int i, att = 0;
-   struct WR_ClassData *wr = G->WR[winnum];
-   struct WR_GUIData *gui = &wr->GUI;
-   struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-   BOOL quietMode = (winnum == 2);
-   BOOL winOpen = xget(gui->WI, MUIA_Window_Open);
+  char newMailFile[SIZE_PATHFILE];
+  struct Compose comp;
+  struct Mail *newMail = NULL;
+  char *addr;
 
-   ENTER();
 
-   // Workaround for a MUI bug
-   if(winOpen)
-     set(gui->RG_PAGE, MUIA_Group_ActivePage, xget(gui->RG_PAGE, MUIA_Group_ActivePage));
+  struct Mail *mlist[3];
+  int numAttachments = 0;
+  struct WR_ClassData *wr = G->WR[winnum];
+  struct WR_GUIData *gui = &wr->GUI;
+  struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
+  BOOL quietMode = (winnum == 2);
+  BOOL winOpen = xget(gui->WI, MUIA_Window_Open);
 
-   memset(&mail, 0, sizeof(struct Mail));
-   memset(&comp, 0, sizeof(struct Compose));
-   mlist[0] = (struct Mail *)1;
-   mlist[1] = NULL;
+  ENTER();
 
-   // get the contents of the TO: String gadget and check if it is valid
-   addr = (STRPTR)DoMethod(gui->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-   if(!addr)
-   {
-      ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_TO, MUIA_String_Contents));
+  // Workaround for a MUI bug
+  if(winOpen)
+    set(gui->RG_PAGE, MUIA_Group_ActivePage, xget(gui->RG_PAGE, MUIA_Group_ActivePage));
+
+  // clear some variables we fill up later on
+  memset(&comp, 0, sizeof(struct Compose));
+  mlist[0] = (struct Mail *)1;
+  mlist[1] = NULL;
+  mlist[2] = NULL;
+
+  // first we check all input values and fill up
+  // the struct Compose variable
+
+  // get the contents of the TO: String gadget and check if it is valid
+  addr = (char *)DoMethod(gui->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
+  if(!addr)
+  {
+    ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_TO, MUIA_String_Contents));
+
+    if(winOpen)
+      set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+
+    set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
+
+    LEAVE();
+    return;
+  }
+  else if(!addr[0] && quietMode == FALSE)
+  {
+    // set the TO Field active and go back
+    if(winOpen)
+      set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+
+    set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
+
+    if(MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), GetStr(MSG_WR_ErrorNoRcpt)))
+      mode = WRITE_HOLD;
+    else
+    {
+      LEAVE();
+      return;
+    }
+  }
+  else
+    comp.MailTo = addr; // To: address
+
+  // get the content of the Subject: String gadget and check if it is empty or not.
+  comp.Subject = (char *)xget(gui->ST_SUBJECT, MUIA_String_Contents);
+  if(wr->Mode != NEW_BOUNCE && quietMode == FALSE && C->WarnSubject &&
+     (comp.Subject == NULL || comp.Subject[0] == '\0'))
+  {
+    if(winOpen)
+      set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+
+    set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
+
+    if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_OKAYCANCELREQ), GetStr(MSG_WR_NOSUBJECTREQ)))
+    {
+      LEAVE();
+      return;
+    }
+  }
+
+  comp.Mode = wr->Mode;
+  comp.refMail = wr->refMail;
+  comp.OldSecurity = wr->OldSecurity;
+
+  if(wr->Mode != NEW_BOUNCE)
+  {
+    // now we check the From gadget and raise an error if is invalid
+    addr = (char *)DoMethod(gui->ST_FROM, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
+    if(!addr)
+    {
+      ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_FROM, MUIA_String_Contents));
 
       if(winOpen)
-        set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+        set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
 
-      set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
+      set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
 
       LEAVE();
       return;
-   }
-   else if(!addr[0] && quietMode == FALSE)
-   {
+    }
+    else if(!addr[0] && quietMode == FALSE)
+    {
       // set the TO Field active and go back
       if(winOpen)
-        set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+        set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
 
-      set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
+      set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
 
-      if(MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), GetStr(MSG_WR_ErrorNoRcpt)))
-        mode = WRITE_HOLD;
-      else
+      if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NOSENDERREQGAD), GetStr(MSG_WR_ERRORNOSENDER)))
       {
         LEAVE();
         return;
       }
-   }
-   else comp.MailTo = addr;
+    }
+    else
+      comp.From = addr;
 
-   // get the content of the Subject: String gadget and check if it is empty or not.
-   get(gui->ST_SUBJECT, MUIA_String_Contents, &comp.Subject);
-   if(wr->Mode != NEW_BOUNCE && quietMode == FALSE && C->WarnSubject && strlen(comp.Subject) == 0)
-   {
+    // then we check the CC string gadget
+    addr = (char *)DoMethod(gui->ST_CC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
+    if(!addr)
+    {
+      ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_CC, MUIA_String_Contents));
+
       if(winOpen)
-        set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+        set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
 
-      set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
+      set(gui->WI, MUIA_Window_ActiveObject, gui->ST_CC);
 
-      if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_OKAYCANCELREQ), GetStr(MSG_WR_NOSUBJECTREQ)))
+      LEAVE();
+      return;
+    }
+    else if(addr[0] != '\0')
+      comp.MailCC = addr;
+
+    // then we check the BCC string gadget
+    addr = (char *)DoMethod(gui->ST_BCC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
+    if(!addr)
+    {
+      ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_BCC, MUIA_String_Contents));
+
+      if(winOpen)
+        set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+
+      set(gui->WI, MUIA_Window_ActiveObject, gui->ST_BCC);
+
+      LEAVE();
+      return;
+    }
+    else if(addr[0] != '\0')
+      comp.MailBCC = addr;
+
+    // then we check the ReplyTo string gadget
+    addr = (char *)DoMethod(gui->ST_REPLYTO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
+    if(!addr)
+    {
+      ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_REPLYTO, MUIA_String_Contents));
+
+      if(winOpen)
+        set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+
+      set(gui->WI, MUIA_Window_ActiveObject, gui->ST_REPLYTO);
+
+      LEAVE();
+      return;
+    }
+    else if(addr[0] != '\0')
+      comp.ReplyTo = addr;
+
+    comp.ExtHeader = (char *)xget(gui->ST_EXTHEADER, MUIA_String_Contents);
+
+    if(wr->MsgID[0] != '\0')
+      comp.IRTMsgID = wr->MsgID;
+
+    comp.Importance = 1-GetMUICycle(gui->CY_IMPORTANCE);
+
+    if(GetMUICheck(gui->CH_RECEIPT))
+      SET_FLAG(comp.Receipt, RCPT_RETURN);
+
+    if(GetMUICheck(gui->CH_DISPNOTI))
+      SET_FLAG(comp.Receipt, RCPT_MDN);
+
+    comp.Signature = GetMUIRadio(gui->RA_SIGNATURE);
+
+    if((comp.Security = GetMUIRadio(gui->RA_SECURITY)) == SEC_DEFAULTS &&
+       SetDefaultSecurity(&comp) == FALSE)
+    {
+      LEAVE();
+      return;
+    }
+
+    comp.DelSend = GetMUICheck(gui->CH_DELSEND);
+    comp.UserInfo = GetMUICheck(gui->CH_ADDINFO);
+
+    numAttachments = xget(gui->LV_ATTACH, MUIA_NList_Entries);
+
+    // we execute the POSTWRITE macro right before writing out
+    // the message because the postwrite macro may want to modify the
+    // text in the editor beforehand.
+    MA_StartMacro(MACRO_POSTWRITE, itoa(winnum));
+
+    // export the text of our texteditor to a file
+    EditorToFile(gui->TE_EDIT, G->WR_Filename[winnum]);
+    comp.FirstPart = BuildPartsList(winnum);
+  }
+  else
+    MA_StartMacro(MACRO_POSTWRITE, itoa(winnum));
+
+  // now we check how the new mail file should be named
+  // or created off.
+  switch(wr->Mode)
+  {
+    case NEW_EDIT:
+    {
+      if(wr->refMail != NULL && MailExists(wr->refMail, NULL))
       {
-        LEAVE();
-        return;
+        GetMailFile(newMailFile, outfolder, wr->refMail);
+        break;
       }
-   }
+    }
+    // continue
 
-   comp.Mode = wr->Mode;
-   comp.OrigMail = wr->Mail;
-   comp.OldSecurity = wr->OldSecurity;
+    case NEW_EDITASNEW:
+      wr->Mode = NEW_NEW;
+    // continue
 
-   if(wr->Mode != NEW_BOUNCE)
-   {
-      // now we check the From gadget and raise an error if is invalid
-      addr = (STRPTR)DoMethod(gui->ST_FROM, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-      if(!addr)
+    default:
+      strlcpy(newMailFile, MA_NewMailFile(outfolder, NULL), sizeof(newMailFile));
+  }
+
+  // now open the new mail file for write operations
+  if(newMailFile[0] != '\0' &&
+     (comp.FH = fopen(newMailFile, "w")))
+  {
+    struct ExtendedMail *email;
+    int stat = mode == WRITE_HOLD ? SFLAG_HOLD : SFLAG_QUEUED;
+
+    // write out the message to our file and
+    // check that everything worked out fine.
+    if(WriteOutMessage(&comp) == FALSE)
+    {
+      fclose(comp.FH);
+
+      DeleteFile(newMailFile);
+
+      LEAVE();
+      return;
+    }
+    fclose(comp.FH);
+
+    if(wr->Mode != NEW_BOUNCE)
+      EndNotify(&G->WR_NRequest[winnum]);
+
+    if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)))
+    {
+      email->Mail.sflags = stat;
+
+      newMail = AddMailToList((struct Mail *)email, outfolder);
+
+      // Now we have to check whether we have to add the To & CC addresses
+      // to the emailCache
+      if(C->EmailCache > 0)
       {
-         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_FROM, MUIA_String_Contents));
+        DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &newMail->To);
 
-         if(winOpen)
-           set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
-
-         set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
-
-         LEAVE();
-         return;
-      }
-      else if(!addr[0] && quietMode == FALSE)
-      {
-         // set the TO Field active and go back
-         if(winOpen)
-           set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
-
-         set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
-
-         if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NOSENDERREQGAD), GetStr(MSG_WR_ERRORNOSENDER)))
-         {
-           LEAVE();
-           return;
-         }
-      }
-      else comp.From = addr;
-
-      // then we check the CC string gadget
-      addr = (STRPTR)DoMethod(gui->ST_CC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-      if(!addr)
-      {
-         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_CC, MUIA_String_Contents));
-
-         if(winOpen)
-           set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
-
-         set(gui->WI, MUIA_Window_ActiveObject, gui->ST_CC);
-
-         LEAVE();
-         return;
-      }
-      else if(addr[0]) comp.MailCC = addr;
-
-      // then we check the BCC string gadget
-      addr = (STRPTR)DoMethod(gui->ST_BCC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-      if(!addr)
-      {
-         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_BCC, MUIA_String_Contents));
-
-         if(winOpen)
-           set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
-
-         set(gui->WI, MUIA_Window_ActiveObject, gui->ST_BCC);
-
-         LEAVE();
-         return;
-      }
-      else if(addr[0]) comp.MailBCC = addr;
-
-      // then we check the ReplyTo string gadget
-      addr = (STRPTR)DoMethod(gui->ST_REPLYTO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-      if(!addr)
-      {
-         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_REPLYTO, MUIA_String_Contents));
-
-         if(winOpen)
-           set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
-
-         set(gui->WI, MUIA_Window_ActiveObject, gui->ST_REPLYTO);
-
-         LEAVE();
-         return;
-      }
-      else if(addr[0]) comp.ReplyTo = addr;
-
-      get(gui->ST_EXTHEADER, MUIA_String_Contents, &comp.ExtHeader);
-      if (wr->MsgID[0]) comp.IRTMsgID = wr->MsgID;
-      comp.Importance = 1-GetMUICycle(gui->CY_IMPORTANCE);
-      if (GetMUICheck(gui->CH_RECEIPT)) SET_FLAG(comp.Receipt, RCPT_RETURN);
-      if (GetMUICheck(gui->CH_DISPNOTI)) SET_FLAG(comp.Receipt, RCPT_MDN);
-      comp.Signature = GetMUIRadio(gui->RA_SIGNATURE);
-
-      if((comp.Security = GetMUIRadio(gui->RA_SECURITY)) == SEC_DEFAULTS)
-      {
-        if(SetDefaultSecurity(&comp) == FALSE)
+        // if this mail has more than one recipient we have to add the others too
+        if(isMultiRCPTMail(newMail))
         {
-          LEAVE();
-          return;
+          int j;
+
+          for(j = 0; j < email->NoSTo; j++)
+            DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->STo[j]);
+
+          for(j = 0; j < email->NoCC; j++)
+            DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->CC[j]);
         }
       }
 
-      comp.DelSend = GetMUICheck(gui->CH_DELSEND);
-      comp.UserInfo = GetMUICheck(gui->CH_ADDINFO);
-      att = xget(gui->LV_ATTACH, MUIA_NList_Entries);
+      // cleanup the email structure
+      MA_FreeEMailStruct(email);
 
-      // we execute the POSTWRITE macro right before writing out
-      // the message because the postwrite macro may want to modify the
-      // text in the editor beforehand.
-      MA_StartMacro(MACRO_POSTWRITE, itoa(winnum));
+      if(FO_GetCurrentFolder() == outfolder)
+        DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
 
-      // export the text of our texteditor to a file
-      EditorToFile(gui->TE_EDIT, G->WR_Filename[winnum]);
-      comp.FirstPart = BuildPartsList(winnum);
-   }
-   else
-      MA_StartMacro(MACRO_POSTWRITE, itoa(winnum));
+      MA_UpdateMailFile(newMail);
 
-   if(wr->Mode == NEW_EDIT)
-   {
-      struct Mail *edmail = wr->Mail;
-
-      if(MailExists(edmail, NULL))
+      // if this write operation was an edit mode
+      // we have to check all existing readmail objects for
+      // references and update them accordingly.
+      if(wr->Mode == NEW_EDIT && wr->refMail != NULL)
       {
-         comp.FH = fopen(GetMailFile(NULL, outfolder, edmail), "w");
-         strlcpy(mail.MailFile, edmail->MailFile, sizeof(mail.MailFile));
+        struct MinNode *curNode;
+
+        // now we search through our existing readMailData
+        // objects and see some of them are pointing to the old mail
+        // and if so we signal them to display the new revised mail instead
+        for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+        {
+          struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+          if(rmData->mail == wr->refMail)
+          {
+            if(rmData->readWindow)
+              DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, newMail);
+            else if(rmData->readMailGroup)
+              DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, newMail);
+          }
+        }
+
+        RemoveMailFromList(wr->refMail);
+        wr->refMail = newMail;
+      }
+    }
+
+    if(wr->Mode != NEW_NEW)
+    {
+      struct Mail **ml;
+
+      if(wr->refMailList != NULL)
+      {
+        ml = wr->refMailList;
+      }
+      else if(wr->refMail)
+      {
+        ml = mlist;
+        mlist[2] = wr->refMail;
       }
       else
+        ml = NULL;
+
+      if(ml)
       {
-         wr->Mode = NEW_NEW;
-         comp.FH = fopen(MA_NewMailFile(outfolder, mail.MailFile), "w");
-      }
-   }
-   else
-     comp.FH = fopen(MA_NewMailFile(outfolder, mail.MailFile), "w");
+        int i;
 
-   if(comp.FH)
-   {
-      struct ExtendedMail *email;
-      int stat = mode == WRITE_HOLD ? SFLAG_HOLD : SFLAG_QUEUED;
+        for(i=0; i < (int)ml[0]; i++)
+        {
+          struct Mail *m = ml[i+2];
 
-      // write out the message to our file and
-      // check that everything worked out fine.
-      if(WriteOutMessage(&comp) == FALSE)
-      {
-         fclose(comp.FH);
-
-         DeleteFile(GetMailFile(NULL, outfolder, &mail));
-
-         LEAVE();
-         return;
-      }
-      fclose(comp.FH);
-
-      if(wr->Mode != NEW_BOUNCE)
-        EndNotify(&G->WR_NRequest[winnum]);
-
-      if((email = MA_ExamineMail(outfolder, mail.MailFile, C->EmailCache > 0 ? TRUE : FALSE)))
-      {
-         email->Mail.sflags = stat;
-         new = AddMailToList((struct Mail *)email, outfolder);
-
-         // Now we have to check whether we have to add the To & CC addresses
-         // to the emailCache
-         if(C->EmailCache > 0)
-         {
-            DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &new->To);
-
-            // if this mail has more than one recipient we have to add the others too
-            if(isMultiRCPTMail(new))
+          if(m != NULL && !isVirtualMail(m) && m->Folder != NULL &&
+             !isOutgoingFolder(m->Folder) && !isSentFolder(m->Folder))
+          {
+            if(hasStatusNew(m) || !hasStatusRead(m))
             {
-              int j;
+              int mdntype = wr->Mode == NEW_REPLY ? MDN_DISP : MDN_PROC;
 
-              for(j = 0; j < email->NoSTo; j++)
-                DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->STo[j]);
+              if(winnum == 2)
+                SET_FLAG(mdntype, MDN_AUTOACT);
 
-              for(j = 0; j < email->NoCC; j++)
-                DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->CC[j]);
+              RE_DoMDN(mdntype, m, FALSE);
             }
-         }
-         MA_FreeEMailStruct(email);
 
-         if(FO_GetCurrentFolder() == outfolder)
-           DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
-
-         MA_UpdateMailFile(new);
-
-         if (wr->Mode == NEW_EDIT)
-         {
-            RemoveMailFromList(wr->Mail);
-            wr->Mail = new;
-
-            if(wr->readWindow != NULL)
-              DoMethod(wr->readWindow, MUIM_ReadWindow_ReadMail, new);
-         }
-      }
-      if (wr->Mode != NEW_NEW)
-      {
-         struct Mail *m, **ml = wr->MList ? wr->MList : mlist;
-         mlist[2] = wr->Mail;
-
-         for(i = 0; i < (int)ml[0]; i++)
-         {
-            m = ml[i+2];
-            if(!isVirtualMail(m) && m->Folder != NULL &&
-               !isOutgoingFolder(m->Folder) && !isSentFolder(m->Folder))
+            switch(wr->Mode)
             {
-               if(hasStatusNew(m) || !hasStatusRead(m))
-               {
-                  int mdntype = wr->Mode == NEW_REPLY ? MDN_DISP : MDN_PROC;
-                  if (winnum == 2) SET_FLAG(mdntype, MDN_AUTOACT);
-                  RE_DoMDN(mdntype, m, FALSE);
-               }
+              case NEW_REPLY:
+              {
+                setStatusToReplied(m);
+                DisplayStatistics(m->Folder, FALSE);
+              }
+              break;
 
-               switch(wr->Mode)
-               {
-                  case NEW_REPLY:
-                  {
-                    setStatusToReplied(m);
-                    DisplayStatistics(m->Folder, FALSE);
-                  }
-                  break;
+              case NEW_FORWARD:
+              case NEW_BOUNCE:
+              {
+                setStatusToForwarded(m);
+                DisplayStatistics(m->Folder, FALSE);
+              }
+              break;
 
-                  case NEW_FORWARD:
-                  case NEW_BOUNCE:
-                  {
-                    setStatusToForwarded(m);
-                    DisplayStatistics(m->Folder, FALSE);
-                  }
-                  break;
-               }
+              default:
+                // nothing
+              break;
             }
-         }
+          }
+        }
       }
+    }
 
-      switch (wr->Mode)
+    // if requested we make sure we also
+    // output a log entry about the write operation
+    switch(wr->Mode)
+    {
+      case NEW_NEW:
+      case NEW_EDITASNEW:
+        AppendLog(10, GetStr(MSG_LOG_Creating), AddrName(newMail->To), newMail->Subject, numAttachments);
+      break;
+
+      case NEW_REPLY:
       {
-         case NEW_NEW:     AppendLog(10, GetStr(MSG_LOG_Creating),   AddrName(new->To), new->Subject, att); break;
-         case NEW_REPLY:   AppendLog(11, GetStr(MSG_LOG_Replying),   AddrName(wr->MList[2]->From), wr->MList[2]->Subject); break;
-         case NEW_FORWARD: AppendLog(12, GetStr(MSG_LOG_Forwarding), AddrName(wr->MList[2]->From), wr->MList[2]->Subject, AddrName(new->To)); break;
-         case NEW_BOUNCE:  AppendLog(13, GetStr(MSG_LOG_Bouncing),   AddrName(wr->Mail->From), wr->Mail->Subject, AddrName(new->To)); break;
-         case NEW_EDIT:    AppendLog(14, GetStr(MSG_LOG_Editing),    AddrName(new->From), AddrName(new->To), new->Subject); break;
+        if(wr->refMailList && wr->refMailList[2])
+          AppendLog(11, GetStr(MSG_LOG_Replying), AddrName(wr->refMailList[2]->From), wr->refMailList[2]->Subject);
+        else
+          AppendLog(11, GetStr(MSG_LOG_Replying), "<unknown>", "<unknown>");
       }
-   }
-   else
+      break;
+
+      case NEW_FORWARD:
+      {
+        if(wr->refMailList && wr->refMailList[2])
+          AppendLog(12, GetStr(MSG_LOG_Forwarding), AddrName(wr->refMailList[2]->From), wr->refMailList[2]->Subject, AddrName(newMail->To));
+        else
+          AppendLog(12, GetStr(MSG_LOG_Forwarding), "<unknown>", "<unknown>", AddrName(newMail->To));
+      }
+      break;
+
+      case NEW_BOUNCE:
+      {
+        if(wr->refMail)
+          AppendLog(13, GetStr(MSG_LOG_Bouncing), AddrName(wr->refMail->From), wr->refMail->Subject, AddrName(newMail->To));
+        else
+          AppendLog(13, GetStr(MSG_LOG_Bouncing), "<unknown>", "<unknown>", AddrName(newMail->To));
+      }
+      break;
+
+      case NEW_EDIT:
+      {
+        AppendLog(14, GetStr(MSG_LOG_Editing), AddrName(newMail->From), AddrName(newMail->To), newMail->Subject);
+      }
+      break;
+
+      case NEW_SAVEDEC:
+        // not used
+      break;
+    }
+  }
+  else
      ER_NewError(GetStr(MSG_ER_CreateMailError));
 
-   FreePartsList(comp.FirstPart);
+  FreePartsList(comp.FirstPart);
 
-   if(wr->MList)
-     free(wr->MList);
+  if(wr->refMailList)
+    free(wr->refMailList);
 
-   if(mode == WRITE_SEND && new && !G->TR)
-   {
-      set(gui->WI, MUIA_Window_Open, FALSE);
-      mlist[2] = new;
-      TR_ProcessSEND(mlist);
-   }
+  if(mode == WRITE_SEND && newMail && !G->TR)
+  {
+    set(gui->WI, MUIA_Window_Open, FALSE);
+    mlist[2] = newMail;
+    TR_ProcessSEND(mlist);
+  }
 
-   // delete a possible autosave file
-   DeleteFile(WR_AutoSaveFile(winnum));
+  // delete a possible autosave file
+  DeleteFile(WR_AutoSaveFile(winnum));
 
-   DisposeModulePush(&G->WR[winnum]);
-   DisplayStatistics(outfolder, TRUE);
+  DisposeModulePush(&G->WR[winnum]);
+  DisplayStatistics(outfolder, TRUE);
 
-   LEAVE();
+  LEAVE();
 }
 
 HOOKPROTONHNO(WR_NewMailFunc, void, int *arg)
 {
-   BusyText(GetStr(MSG_BusyComposing), "");
-   WR_NewMail(arg[0], arg[1]);
-   BusyEnd();
+  BusyText(GetStr(MSG_BusyComposing), "");
+  WR_NewMail(arg[0], arg[1]);
+  BusyEnd();
 }
 MakeHook(WR_NewMailHook, WR_NewMailFunc);
 
