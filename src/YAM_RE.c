@@ -1015,10 +1015,9 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
   // corresponding parameters.
   while(*p)
   {
-    if(*p == ';')
+    if(isspace(*p) || *p == ';')
       break;
-
-    if(!isspace(*p))
+    else
       size++;
 
     p++;
@@ -1035,10 +1034,9 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
 
     while(*p)
     {
-      if(*p == ';')
+      if(isspace(*p) || *p == ';')
         break;
-
-      if(!isspace(*p))
+      else
         *q++ = *p;
 
       p++;
@@ -1072,7 +1070,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
 
   // if we have additional content parameters we go and
   // try to separate them accordingly.
-  if(*p == ';')
+  if(*p == ';' || isspace(*p))
   {
     char *next = ++p;
     char *attribute;

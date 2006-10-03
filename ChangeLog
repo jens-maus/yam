@@ -6,6 +6,9 @@ $Id$
 
 2006-10-03  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c: added some minor workaround so that mails from some broken
+    mail clients which do not properly add ';' separators for the
+    content-type: paramaters still show up fine.
   * UpdateNotifyWindow.c: fixed bug #1568402 where the component history
     listview wasn't in the MUI tab cyclechain and therefore not useable
     via keyboard.
