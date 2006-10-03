@@ -1249,11 +1249,21 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
       // we have to keep the default "text/plain" content-type value the
       // OpenNewPart() function sets
       if(value[0] != '\0')
-      {
         RE_ParseContentParameters(value, rp, PT_CONTENTTYPE);
-      }
       else
         W(DBF_MAIL, "Empty 'Content-Type' headerline found.. using default '%s'.", rp->ContentType);
+
+      // check the alternative part status
+      // and try to find out if this is the main alternative part
+      // which we might show later
+      if(rp->isAltPart && rp->Parent)
+      {
+        if(stricmp(rp->ContentType, "text/plain") == 0 ||
+           rp->Parent->MainAltPart == NULL)
+        {
+          rp->Parent->MainAltPart = rp;
+        }
+      }
     }
     else if(!stricmp(field, "content-transfer-encoding"))
     {
@@ -1663,7 +1673,7 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
       newPart->Nr = prev->Nr+1;
     }
 
-    if(first && strnicmp(first->ContentType, "multipart", 9))
+    if(first && strnicmp(first->ContentType, "multipart", 9) != 0)
     {
       newPart->ContentType = strdup(first->ContentType);
       newPart->CParCSet = first->CParCSet ? strdup(first->CParCSet) : NULL;
@@ -1673,7 +1683,16 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
     {
       newPart->ContentType = strdup("text/plain");
       newPart->EncodingCode = ENC_NONE;
+
+      if(first && first->ContentType[9] != '\0' &&
+         strnicmp(&first->ContentType[10], "alternative", 11) == 0)
+      {
+        newPart->isAltPart = TRUE;
+      }
     }
+
+    // make sure we make the hierarchy clear
+    newPart->Parent = first;
 
     // copy the boundary specification
     newPart->CParBndr = strdup(first ? first->CParBndr : (prev ? prev->CParBndr : ""));
@@ -1705,7 +1724,7 @@ static void RE_UndoPart(struct Part *rp)
 
   ENTER();
 
-  D(DBF_MAIL, "undoing part #%ld", rp->Nr);
+  D(DBF_MAIL, "undoing part #%ld [%lx]", rp->Nr, rp);
 
   // lets delete the file first so that we can cleanly "undo" the part
   DeleteFile(rp->Filename);
@@ -1802,6 +1821,17 @@ static void RE_UndoPart(struct Part *rp)
     D(DBF_MAIL, "new letterpart is #%ld", rmData->letterPartNum);
   }
 
+  // now we also have to relink the Parent pointer
+  for(trp=rp; trp; trp = trp->Next)
+  {
+    if(trp->Parent == rp)
+      trp->Parent = rp->Parent;
+  }
+
+  // relink the MainAltPart pointer as well
+  if(rp->Parent)
+    rp->Parent->MainAltPart = rp->MainAltPart;
+
   // and last, but not least we free the part
   free(rp);
 
@@ -1883,7 +1913,8 @@ static void RE_SetPartInfo(struct Part *rp)
    // to check whether our readMailData structure already contains a reference
    // to the actual readable letterPart or not and if not we do make this
    // part the actual letterPart
-   if(rp->rmData->letterPartNum < PART_LETTER &&
+   if((rp->rmData->letterPartNum < PART_LETTER ||
+       (rp->isAltPart == TRUE && rp->Parent != NULL && rp->Parent->MainAltPart == rp)) &&
       rp->Printable &&
       rp->Nr >= PART_LETTER)
    {
@@ -1958,15 +1989,19 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
             break;
           }
 
-          if(!strnicmp(rp->ContentType, "multipart", 9))
+          if(strnicmp(rp->ContentType, "multipart", 9) == 0)
           {
             fclose(out);
 
             if(RE_ParseMessage(rmData, in, NULL, rp))
             {
+              // undo the dummy part
               RE_UndoPart(rp);
+
+              // but consume all rest of the part
               done = RE_ConsumeRestOfPart(in, NULL, NULL, prev, FALSE);
-              for (rp = prev; rp->Next; rp = rp->Next);
+              for(rp = prev; rp->Next; rp = rp->Next)
+                ;
             }
           }
           else if (RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
@@ -2018,13 +2053,17 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
       D(DBF_MAIL, "Part[%lx]:#%ld%s", rp, rp->Nr, rp->Nr == rp->rmData->letterPartNum ? ":LETTERPART" : "");
       D(DBF_MAIL, "  Name.......: [%s]", rp->Name);
       D(DBF_MAIL, "  ContentType: [%s]", rp->ContentType);
+      D(DBF_MAIL, "  Boundary...: [%s]", rp->CParBndr ? rp->CParBndr : "NULL");
       D(DBF_MAIL, "  Charset....: [%s]", rp->CParCSet ? rp->CParCSet : "NULL");
+      D(DBF_MAIL, "  IsAltPart..: %ld",  rp->isAltPart);
       D(DBF_MAIL, "  Printable..: %ld",  rp->Printable);
       D(DBF_MAIL, "  Encoding...: %ld",  rp->EncodingCode);
       D(DBF_MAIL, "  Filename...: [%s]", rp->Filename);
       D(DBF_MAIL, "  Size.......: %ld",  rp->Size);
       D(DBF_MAIL, "  Nextptr....: %lx",  rp->Next);
       D(DBF_MAIL, "  Prevptr....: %lx",  rp->Prev);
+      D(DBF_MAIL, "  Parentptr..: %lx",  rp->Parent);
+      D(DBF_MAIL, "  MainAltPart: %lx",  rp->MainAltPart);
       D(DBF_MAIL, "  headerList.: %lx",  rp->headerList);
     }
   }
@@ -2654,6 +2693,17 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
     {
       BOOL dodisp = (part->Nr == PART_RAW || part->Nr == rmData->letterPartNum) ||
                     (part->Printable && C->DisplayAllTexts && part->Decoded);
+
+      // before we go on we check whether this is an alternative multipart
+      // and if so we check that we only display the plain text one
+      if(dodisp)
+      {
+        if(part->isAltPart == TRUE && part->Parent != NULL &&
+           part->Parent->MainAltPart != part)
+        {
+          dodisp = FALSE;
+        }
+      }
 
       prewptr = wptr;
 

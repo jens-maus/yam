@@ -664,7 +664,8 @@ DECLARE(Refresh) // struct Part *firstPart
   // generate an own attachment image for each attachment
   for(rp = msg->firstPart; rp; rp = rp->Next)
   {
-    if(rp->Nr > PART_RAW && rp->Nr != rp->rmData->letterPartNum)
+    if(rp->Nr > PART_RAW && rp->Nr != rp->rmData->letterPartNum &&
+       (rp->isAltPart == FALSE || rp->Parent == NULL || rp->Parent->MainAltPart == rp))
     {
       Object *newImage = AttachmentImageObject,
                            MUIA_CycleChain,                 TRUE,

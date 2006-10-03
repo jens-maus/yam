@@ -6,6 +6,13 @@ $Id$
 
 2006-10-03  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c, YAM_UT.c, misc: upon recognition of multipart/alternative
+    mails, YAM will now automatically decide which of the alternative parts
+    to select for display and hide the others. This should make it more
+    conform to RFC 2046 section 5.1.4. However, a user might still have
+    a look at all alternative parts by using the normal "Display" operation
+    in a read window. The attachment selection window will then show
+    all hided alternative parts in italic style.
   * YAM_RE.c: added some minor workaround so that mails from some broken
     mail clients which do not properly add ';' separators for the
     content-type: paramaters still show up fine.

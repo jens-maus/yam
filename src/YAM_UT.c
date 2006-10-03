@@ -217,40 +217,66 @@ static void FreeSearchPath(BPTR path)
 /*** Hooks ***/
 /// AttachDspFunc
 //  Attachment listview display hook
-HOOKPROTONH(AttachDspFunc, long, char **array, struct Part *entry)
+HOOKPROTONHNO(AttachDspFunc, LONG, struct NList_DisplayMessage *msg)
 {
-   if (entry)
-   {
-      static char dispnu[SIZE_SMALL], dispsz[SIZE_SMALL];
-      array[0] = array[2] = (char *)"";
+  struct Part *entry;
+  char **array;
 
-      if(entry->Nr > PART_RAW)
-        snprintf(array[0] = dispnu, sizeof(dispnu), "%d", entry->Nr);
+  ENTER();
 
-      if(*entry->Name) array[1] = entry->Name;
-      else             array[1] = (STRPTR)DescribeCT(entry->ContentType);
+  if(!msg)
+  {
+    RETURN(0);
+    return 0;
+  }
 
-      if(entry->Size > 0)
+  // now we set our local variables to the DisplayMessage structure ones
+  entry = (struct Part *)msg->entry;
+  array = msg->strings;
+
+  if(entry)
+  {
+    static char dispnu[SIZE_SMALL];
+    static char dispsz[SIZE_SMALL];
+
+    if(entry->Nr > PART_RAW)
+      snprintf(array[0] = dispnu, sizeof(dispnu), "%d%s", entry->Nr, (entry->rmData && entry->Nr == entry->rmData->letterPartNum) ? "*" : "");
+    else
+      array[0] = (char *)"";
+
+    if(*entry->Name)
+      array[1] = entry->Name;
+    else
+      array[1] = (STRPTR)DescribeCT(entry->ContentType);
+
+    // check the alternative status
+    if(entry->isAltPart == TRUE && entry->Parent != NULL && entry->Parent->MainAltPart != entry)
+      msg->preparses[1] = (char *)MUIX_I;
+
+    if(entry->Size > 0)
+    {
+      array[2] = dispsz;
+
+      if(entry->Decoded)
+        FormatSize(entry->Size, dispsz, sizeof(dispsz), SF_AUTO);
+      else
       {
-        array[2] = dispsz;
-
-        if(entry->Decoded)
-          FormatSize(entry->Size, dispsz, sizeof(dispsz), SF_AUTO);
-        else
-        {
-          dispsz[0] = '~';
-          FormatSize(entry->Size, &dispsz[1], sizeof(dispsz)-1, SF_AUTO);
-        }
+        dispsz[0] = '~';
+        FormatSize(entry->Size, &dispsz[1], sizeof(dispsz)-1, SF_AUTO);
       }
-   }
-   else
-   {
-      array[0] = (STRPTR)GetStr(MSG_ATTACH_NO);
-      array[1] = (STRPTR)GetStr(MSG_ATTACH_PART);
-      array[2] = (STRPTR)GetStr(MSG_Size);
-   }
+    }
+    else
+      array[2] = (char *)"";
+  }
+  else
+  {
+    array[0] = (STRPTR)GetStr(MSG_ATTACH_NO);
+    array[1] = (STRPTR)GetStr(MSG_ATTACH_PART);
+    array[2] = (STRPTR)GetStr(MSG_Size);
+  }
 
-   return 0;
+  RETURN(0);
+  return 0;
 }
 MakeStaticHook(AttachDspHook, AttachDspFunc);
 ///
@@ -840,11 +866,11 @@ struct Part *AttachRequest(const char *title, const char *body, const char *yest
           MUIA_CycleChain, TRUE,
           MUIA_NListview_NList, NListObject,
             InputListFrame,
-            MUIA_NList_Title,       TRUE,
-            MUIA_NList_DoubleClick, TRUE,
-            MUIA_NList_MultiSelect, isMultiReq(mode) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
-            MUIA_NList_DisplayHook, &AttachDspHook,
-            MUIA_NList_Format,      "BAR,BAR,",
+            MUIA_NList_Title,        TRUE,
+            MUIA_NList_DoubleClick,  TRUE,
+            MUIA_NList_MultiSelect,  isMultiReq(mode) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
+            MUIA_NList_DisplayHook2, &AttachDspHook,
+            MUIA_NList_Format,       "BAR,BAR,",
           End,
         End,
       End,

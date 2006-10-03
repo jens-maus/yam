@@ -108,7 +108,9 @@ struct Part
 {
    struct Part         *Prev;               // ptr to previous part or NULL
    struct Part         *Next;               // ptr to next part or NULL
+   struct Part         *Parent;             // ptr to the parent part or NULL
    struct Part         *NextSelected;       // ptr to next selected or NULL
+   struct Part         *MainAltPart;        // ptr to the main alternative part.
    struct ReadMailData *rmData;             // ptr to the parent readmail Data
    struct MinList      *headerList;         // ptr to a list of headers or NULL
    char                *ContentType;        // ptr to the content-type "text/plain"
@@ -126,6 +128,7 @@ struct Part
    BOOL                 HasHeaders;
    BOOL                 Printable;
    BOOL                 Decoded;
+   BOOL                 isAltPart;          // is an alternative multipart
    enum Encoding        EncodingCode;
 
    char                 Name[SIZE_DEFAULT];
