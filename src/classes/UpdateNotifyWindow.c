@@ -173,6 +173,7 @@ OVERLOAD(OM_NEW)
         MUIA_Font,          MUIV_Font_Tiny,
       End,
       Child, NListviewObject,
+        MUIA_CycleChain, TRUE,
         MUIA_NListview_NList, nf_componenthistory = NFloattextObject,
           MUIA_Font,             MUIV_Font_Fixed,
           MUIA_NList_Format,     "P=\33l",
@@ -215,10 +216,7 @@ OVERLOAD(OM_NEW)
     DoMethod(bt_visit,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, MUIM_UpdateNotifyWindow_VisitURL);
     DoMethod(bt_close,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_UpdateNotifyWindow_Close);
 
-    SetAttrs(obj,
-      MUIA_Window_Activate,      TRUE,
-      MUIA_Window_DefaultObject, bt_visit,
-    TAG_DONE);
+    set(obj, MUIA_Window_Activate, TRUE);
   }
 
   RETURN((ULONG)obj);
@@ -261,7 +259,10 @@ OVERLOAD(OM_SET)
           // we now specify the window title as we add the date/time to it
           DateStamp2String(buf, sizeof(buf), NULL, DSS_DATETIME, TZC_NONE);
           snprintf(data->WindowTitle, sizeof(data->WindowTitle), "%s - %s", GetStr(MSG_UPD_NOTIFICATION_WTITLE), buf);
-          set(obj, MUIA_Window_Title, data->WindowTitle);
+
+          SetAttrs(obj, MUIA_Window_Title,         data->WindowTitle,
+                        MUIA_Window_DefaultObject, data->ComponentList,
+                        TAG_DONE);
 
           // we also make sure the application in uniconified.
           if(xget(G->App, MUIA_Application_Iconified))

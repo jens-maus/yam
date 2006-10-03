@@ -6,6 +6,9 @@ $Id$
 
 2006-10-03  Jens Langner <Jens.Langner@light-speed.de>
 
+  * UpdateNotifyWindow.c: fixed bug #1568402 where the component history
+    listview wasn't in the MUI tab cyclechain and therefore not useable
+    via keyboard.
   * AttachmentImage.c, AttachmentGroup.c: finally fixed bug #1562791 where
     attachment images were always displayed without any transparency. Now,
     if the icon image contains a transparency bitmask it will be used and
