@@ -704,6 +704,8 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
           {
             int j;
 
+            D(DBF_MAIL, "refMailList: %ld entries", writeWin->refMailList[0]);
+
             for(j=0; j < (int)writeWin->refMailList[0]; j++)
             {
               struct Mail *curMail = writeWin->refMailList[j+2];

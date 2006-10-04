@@ -1882,9 +1882,16 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
   FreePartsList(comp.FirstPart);
 
-  if(wr->refMailList)
-    free(wr->refMailList);
+  // cleanup certain references
+  wr->refMail = NULL;
 
+  if(wr->refMailList)
+  {
+    free(wr->refMailList);
+    wr->refMailList = NULL;
+  }
+
+  // now we make sure we immediately send out the mail.
   if(mode == WRITE_SEND && newMail && !G->TR)
   {
     set(gui->WI, MUIA_Window_Open, FALSE);

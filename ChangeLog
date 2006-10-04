@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-10-04  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c, YAM_WR.c: fixed a minor crash bug where under certain
+    situations a reply operation caused a crash in MA_MoveCopySingle().
+
 2006-10-03  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c, YAM_UT.c, misc: upon recognition of multipart/alternative
