@@ -3563,6 +3563,9 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   rmData->letterPartNum = 0;
 
   SHOWVALUE(DBF_MAIL, rmData);
+  SHOWPOINTER(DBF_MAIL, mail);
+  D(DBF_MAIL, "isVirtual: %ld", mail != NULL ? isVirtualMail(mail) : FALSE);
+  D(DBF_MAIL, "isXPK: %ld", mail != NULL && mail->Folder != NULL ? isXPKFolder(mail->Folder) : FALSE);
 
   // now we have to check whether there is a .unp (unpack) file and delete
   // it acoordingly (we can`t use the FinishUnpack() function because the
