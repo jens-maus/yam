@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-10-07  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: updated according to the latest changes.
+
 2006-10-07  Jens Langner <Jens.Langner@light-speed.de>
 
   * include/SDI_hook.h: updated to latest version and adapted our sources

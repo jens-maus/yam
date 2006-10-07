@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.0 (01.10.06)
+## version $VER: YAM.ct 6.1 (07.10.06)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -6609,3 +6609,7 @@ MSG_MA_CONFIRMDELETION
 %ld meddelande(n) är valda.\n\nVill du verkligen radera dessa\nmeddelanden?
 ;#DEF %ld message(s) are selected.\n\nDo you really want to delete these\nmessages?
 ;#SET (1742//)
+MSG_MESSAGE_EDITASNEW
+E\000Redigera som nytt...
+;#DEF E\000Edit As New...
+;#SET (1743//)
