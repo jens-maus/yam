@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_hook.h
-        Versionstring:  $VER: SDI_hook.h 1.15 (30.04.2006)
+        Versionstring:  $VER: SDI_hook.h 1.16 (06.10.2006)
         Author:         SDI & Jens Langner
         Distribution:   PD
         Project page:   http://www.sf.net/projects/sditools/
@@ -38,6 +38,10 @@
                   (Jens Langner)
  1.14  20.04.06 : unified static of MorphOs with non-MorphOS vesion
  1.15  30.04.06 : modified to get it compatible to AROS. (Guido Mersmann)
+ 1.16  06.10.06 : added new DISPATCHER() macro and separated it from the
+                  DISPATCHERPROTO() definition. Now the DISPATCHERPROTO() should
+                  only be used to get the correct prototype and the plain
+                  DISPATCHER() for defining the dispatcher itself.
 */
 
 /*
@@ -53,7 +57,7 @@
 ** http://cvs.sourceforge.net/viewcvs.py/sditools/sditools/headers/
 **
 ** Jens Langner <Jens.Langner@light-speed.de> and
-** Dirk Stöcker <soft@dstoecker.de>
+** Dirk Stoecker <soft@dstoecker.de>
 */
 
 #include "SDI_compiler.h"
@@ -156,14 +160,17 @@
     {{NULL, NULL}, (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, (APTR)data}
   #define MakeStaticHook(hookname, funcname) static struct Hook hookname =   \
     {{NULL, NULL}, (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, NULL}
-  #define DISPATCHERPROTO(name)                                              \
+  #define DISPATCHERPROTO(name) ULONG name(struct IClass * cl, Object * obj, \
+    Msg msg);                                                                \
+    extern const struct SDI_EmulLibEntry Gate_##name
+  #define DISPATCHER(name)                                                   \
     struct IClass;                                                           \
-    static ULONG name(struct IClass * cl, Object * obj, Msg msg);            \
+    ULONG name(struct IClass * cl, Object * obj, Msg msg);                   \
     static ULONG Trampoline_##name(void) {return name((struct IClass *)      \
     REG_A0, (Object *) REG_A2, (Msg) REG_A1);}                               \
     const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,            \
     (APTR) Trampoline_##name};                                               \
-    static ULONG name(struct IClass * cl, Object * obj, Msg msg)
+    ULONG name(struct IClass * cl, Object * obj, Msg msg)
   #define ENTRY(func) (APTR)&Gate_##func
 
 #else /* !__MORPHOS__ */
@@ -182,6 +189,8 @@
     #define DISPATCHERPROTO(name) SAVEDS ASM ULONG  name(REG(a0,             \
     struct IClass * cl), REG(a2, Object * obj), REG(a1, Msg msg))
   #endif
+
+  #define DISPATCHER(name) DISPATCHERPROTO(name)
 
 #endif
 

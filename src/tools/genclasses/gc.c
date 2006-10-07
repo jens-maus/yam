@@ -26,7 +26,6 @@
     - Handle object creation order.
     - Improve tag value generation.
     - Generation of desciptive class tree in header comment.
-    - DISPATCHERPROTO macro should be included in generated source.
     - DECLARE param parser should allow normal C style comments to be used
       too.
 
@@ -48,6 +47,8 @@
  *
  * History
  * -------
+ * 0.23 - use new DISPATCHER() macro instead of DISPATCHERPROTO()
+ *
  * 0.22 - removed unncesessary STDARGS uses
  *
  * 0.21 - raised the warning levels to -pedantic and fixed some compilation
@@ -144,7 +145,7 @@
  *
  */
 
-static const char * const verstr = "0.21";
+static const char * const verstr = "0.23";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -820,7 +821,7 @@ int gen_source( char *destfile, struct list *classlist )
   for(nn = NULL; (nn = list_getnext(classlist, nn, (void **) &nextcd)); )
   {
     if (arg_storm) fprintf(fp, "/// %sDispatcher()\n", nextcd->name);
-    fprintf(fp, "DISPATCHERPROTO(%sDispatcher)\n"
+    fprintf(fp, "DISPATCHER(%sDispatcher)\n"
       "{\n  switch(msg->MethodID)\n  {\n", nextcd->name);
     /* Write OVERLOADs */
     for(n = NULL; (n = list_getnext(&nextcd->overloadlist, n, (void **) &nextod)); )

@@ -6,6 +6,8 @@ $Id$
 
 2006-10-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * include/SDI_hook.h: updated to latest version and adapted our sources
+    and genclasses accordingly.
   * AttachmentImage.c: forgot to explicitly draw the background right
     before doing the final Blit operation in MUIM_Draw and therefore mixed
     up the transparency display on attachment images when selecting them.

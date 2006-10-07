@@ -4,6 +4,10 @@ GenClasses Tool - ChangeLog
 
 $Id$
 
+2006-10-07  Jens Langner <Jens.Langner@light-speed.de>
+
+    * gc.c: use new DISPATCHER() macro instead of DISPATCHERPROTO()
+
 2006-09-27  Jens Langner <Jens.Langner@light-speed.de>
 
     * gc.c: removed unnecessary STDARGS uses
