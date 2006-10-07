@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-10-07  Jens Langner <Jens.Langner@light-speed.de>
+
+  * AttachmentImage.c: forgot to explicitly draw the background right
+    before doing the final Blit operation in MUIM_Draw and therefore mixed
+    up the transparency display on attachment images when selecting them.
+
 2006-10-04  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c, YAM_WR.c: fixed a minor crash bug where under certain
