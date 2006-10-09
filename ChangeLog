@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-10-09  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/francais.ct: updated according to the latest changes and some
+    minor typo corrections.
+
 2006-10-07  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: updated according to the latest changes.

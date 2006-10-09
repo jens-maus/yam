@@ -1,10 +1,10 @@
-## version $VER: YAM.catalog 6.0 (27.09.2006)
+## version $VER: YAM.catalog 6.0 (09.10.2006)
 ## language français
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
 ; $Id$
-; based on YAM.cd 2373 2006-09-24 13:19:27
+; based on YAM.cd 2395 2006-09-24 13:19:27
 ;
 ; General
 ;
@@ -4731,11 +4731,11 @@ de ce message
 ; Module TR - Procedures
 ;
 MSG_TR_Connecting
-Connexion au serveur de courriers...
+Connexion au serveur de courrier...
 ; Connecting to mail server...
 ;
 MSG_TR_WaitWelcome
-Connecté, attend le message d'accueil...
+Connecté, attente du message d'accueil...
 ; Connected, awaiting welcome message...
 ;
 MSG_TR_PopLoginReq
@@ -5902,7 +5902,7 @@ Vide le dossier « Effacés »...
 ; Emptying trash folder...
 ;
 MSG_BusyGettingVerInfo
-Mise à jour des informations...
+Récupération des informations de mise à jour...
 ; Getting update information...
 ;
 MSG_BusyLoadingIndex
@@ -7130,7 +7130,7 @@ l'icône '%s.info' depuis le répertoire '%s'.\n\
 \n\
 Veuillez vous assurer que votre répertoire d'images\n\
 contient bien tous les icônes nécessaires définis\n\
-dans le dernier layout d'image.
+dans le dernier layout d'images.
 ; An error occurred while trying to load the icon\n\
 ; object '%s.info' from directory '%s'.\n\
 ; \n\
@@ -7142,7 +7142,7 @@ Erreur de chargement d'image !
 ; Error on loading image!
 ;
 MSG_ER_IMAGEOBJECT
-Une erreur est surevenue lors du chargement du\n\
+Une erreur est survenue lors du chargement du\n\
 fichier '%s' dans le répertoire '%s'.\n\
 \n\
 Veuillez vous assurer que votre répertoire d'images\n\
@@ -7159,16 +7159,17 @@ Erreur dans le layout d'image !
 ; Image layout failure!
 ;
 MSG_ER_EXITIGNORE
-*_Sortitr|_Ignorer
+*_Sortir|_Ignorer
 ; *_Exit|_Ignore
 ;
 MSG_ER_MISSINGIMGVERFILE
-The layout of your '%s' image directory\n\
-contains no version information and needs to be updated\n\
-accordingly.\n\
+Le layout de votre répertoire d'image '%s' ne contient\n\
+pas d'information de version et nécessite d'être mis à\n\
+jour correctement.\n\
 \n\
-Please make sure you are using a compatible image layout\n\
-or some images may be displayed incorrectly in YAM.
+Veuillez vous assurer que vous utilisez un layout d'image\n\
+compatible ou certaines images risquent de ne pas être\n\
+affichées correctement dans YAM.
 ; The layout of your '%s' image directory\n\
 ; contains no version information and needs to be updated\n\
 ; accordingly.\n\
@@ -7177,11 +7178,12 @@ or some images may be displayed incorrectly in YAM.
 ; or some images may be displayed incorrectly in YAM.
 ;
 MSG_ER_LOADIMGLAYOUTFAILED
-An error occurred while trying to load the image\n\
-layout information from your '%s' directory.\n\
+Une erreur est survenue lors du chargement des informations\n\
+du layout d'images depuis votre répertoire '%s'.\n\
 \n\
-Please make sure you are using a compatible image layout\n\
-or some images may be displayed incorrectly in YAM.
+Veuillez vous assurer que vous utilisez un layout d'images\n\
+compatible, ou certaines images risquent de ne pas être\n\
+affichées correctement dans YAM.
 ; An error occurred while trying to load the image\n\
 ; layout information from your '%s' directory.\n\
 ; \n\
@@ -8229,3 +8231,7 @@ messages ?
 ; messages?
 ;
 ; AMOUNT
+;
+MSG_MESSAGE_EDITASNEW
+E\000Editer comme nouveau...
+; E\000Edit As New...
