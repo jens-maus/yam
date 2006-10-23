@@ -25,7 +25,7 @@
 		<method name="bind" result="LONG">
 			<arg name="sock" type="LONG"/>
 			<arg name="name" type="struct sockaddr *"/>
-			<arg name="namelen" type="LONG"/>
+			<arg name="namelen" type="socklen_t"/>
 		</method>
 		<method name="listen" result="LONG">
 			<arg name="sock" type="LONG"/>
@@ -34,12 +34,12 @@
 		<method name="accept" result="LONG">
 			<arg name="sock" type="LONG"/>
 			<arg name="addr" type="struct sockaddr *"/>
-			<arg name="addrlen" type="LONG *"/>
+			<arg name="addrlen" type="socklen_t *"/>
 		</method>
 		<method name="connect" result="LONG">
 			<arg name="sock" type="LONG"/>
 			<arg name="name" type="struct sockaddr *"/>
-			<arg name="namelen" type="LONG"/>
+			<arg name="namelen" type="socklen_t"/>
 		</method>
 		<method name="sendto" result="LONG">
 			<arg name="sock" type="LONG"/>
@@ -47,7 +47,7 @@
 			<arg name="len" type="LONG"/>
 			<arg name="flags" type="LONG"/>
 			<arg name="to" type="struct sockaddr *"/>
-			<arg name="tolen" type="LONG"/>
+			<arg name="tolen" type="socklen_t"/>
 		</method>
 		<method name="send" result="LONG">
 			<arg name="sock" type="LONG"/>
@@ -61,7 +61,7 @@
 			<arg name="len" type="LONG"/>
 			<arg name="flags" type="LONG"/>
 			<arg name="addr" type="struct sockaddr *"/>
-			<arg name="addrlen" type="LONG *"/>
+			<arg name="addrlen" type="socklen_t *"/>
 		</method>
 		<method name="recv" result="LONG">
 			<arg name="sock" type="LONG"/>
@@ -78,24 +78,24 @@
 			<arg name="level" type="LONG"/>
 			<arg name="optname" type="LONG"/>
 			<arg name="optval" type="APTR"/>
-			<arg name="optlen" type="LONG"/>
+			<arg name="optlen" type="socklen_t"/>
 		</method>
 		<method name="getsockopt" result="LONG">
 			<arg name="sock" type="LONG"/>
 			<arg name="level" type="LONG"/>
 			<arg name="optname" type="LONG"/>
 			<arg name="optval" type="APTR"/>
-			<arg name="optlen" type="LONG *"/>
+			<arg name="optlen" type="socklen_t *"/>
 		</method>
 		<method name="getsockname" result="LONG">
 			<arg name="sock" type="LONG"/>
 			<arg name="name" type="struct sockaddr *"/>
-			<arg name="namelen" type="LONG *"/>
+			<arg name="namelen" type="socklen_t *"/>
 		</method>
 		<method name="getpeername" result="LONG">
 			<arg name="sock" type="LONG"/>
 			<arg name="name" type="struct sockaddr *"/>
-			<arg name="namelen" type="LONG *"/>
+			<arg name="namelen" type="socklen_t *"/>
 		</method>
 		<method name="IoctlSocket" result="LONG">
 			<arg name="sock" type="LONG"/>
@@ -141,22 +141,22 @@
 			<arg name="size" type="LONG"/>
 		</method>
 		<method name="Inet_NtoA" result="STRPTR">
-			<arg name="ip" type="ULONG"/>
+			<arg name="ip" type="in_addr_t"/>
 		</method>
-		<method name="inet_addr" result="ULONG">
+		<method name="inet_addr" result="in_addr_t">
 			<arg name="cp" type="STRPTR"/>
 		</method>
-		<method name="Inet_LnaOf" result="ULONG">
-			<arg name="in" type="ULONG"/>
+		<method name="Inet_LnaOf" result="in_addr_t">
+			<arg name="in" type="in_addr_t"/>
 		</method>
-		<method name="Inet_NetOf" result="ULONG">
-			<arg name="in" type="ULONG"/>
+		<method name="Inet_NetOf" result="in_addr_t">
+			<arg name="in" type="in_addr_t"/>
 		</method>
-		<method name="Inet_MakeAddr" result="ULONG">
-			<arg name="net" type="ULONG"/>
-			<arg name="host" type="ULONG"/>
+		<method name="Inet_MakeAddr" result="in_addr_t">
+			<arg name="net" type="in_addr_t"/>
+			<arg name="host" type="in_addr_t"/>
 		</method>
-		<method name="inet_network" result="ULONG">
+		<method name="inet_network" result="in_addr_t">
 			<arg name="cp" type="STRPTR"/>
 		</method>
 		<method name="gethostbyname" result="struct hostent *">
@@ -171,7 +171,7 @@
 			<arg name="name" type="STRPTR"/>
 		</method>
 		<method name="getnetbyaddr" result="struct netent *">
-			<arg name="net" type="ULONG"/>
+			<arg name="net" type="in_addr_t"/>
 			<arg name="type" type="LONG"/>
 		</method>
 		<method name="getservbyname" result="struct servent *">
@@ -216,7 +216,7 @@
 			<arg name="name" type="STRPTR"/>
 			<arg name="namelen" type="LONG"/>
 		</method>
-		<method name="gethostid" result="ULONG">
+		<method name="gethostid" result="in_addr_t">
 		</method>
 		<method name="SocketBaseTagList" result="LONG">
 			<arg name="tags" type="struct TagItem *"/>
@@ -417,10 +417,10 @@
 			<arg name="dst" type="APTR"/>
 		</method>
 		<method name="In_LocalAddr" result="LONG">
-			<arg name="address" type="ULONG"/>
+			<arg name="address" type="in_addr_t"/>
 		</method>
 		<method name="In_CanForward" result="LONG">
-			<arg name="address" type="ULONG"/>
+			<arg name="address" type="in_addr_t"/>
 		</method>
 		<method name="mbuf_copym" result="struct mbuf *">
 			<arg name="m" type="struct mbuf *"/>
@@ -470,16 +470,33 @@
 		</method>
 		<method name="ObtainServerSocket" result="LONG">
 		</method>
-		<method name="Reserved11" result="void" status="unimplemented"/>
-		<method name="Reserved12" result="void" status="unimplemented"/>
-		<method name="Reserved13" result="void" status="unimplemented"/>
-		<method name="Reserved14" result="void" status="unimplemented"/>
-		<method name="Reserved15" result="void" status="unimplemented"/>
+		<method name="GetDefaultDomainName" result="BOOL">
+			<arg name="buffer" type="STRPTR"/>
+			<arg name="buffer_size" type="LONG"/>
+		</method>
+		<method name="SetDefaultDomainName" result="VOID">
+			<arg name="buffer" type="STRPTR"/>
+		</method>
+		<method name="ObtainRoadshowData" result="struct List *">
+			<arg name="access" type="LONG"/>
+		</method>
+		<method name="ReleaseRoadshowData" result="VOID">
+			<arg name="list" type="struct List *"/>
+		</method>
+		<method name="ChangeRoadshowData" result="BOOL">
+			<arg name="list" type="struct List *"/>
+			<arg name="name" type="STRPTR"/>
+			<arg name="length" type="ULONG"/>
+			<arg name="data" type="APTR"/>
+		</method>
+		<method name="RemoveInterface" result="LONG">
+			<arg name="interface_name" type="STRPTR"/>
+			<arg name="force" type="LONG"/>
+		</method>
 		<method name="Reserved16" result="void" status="unimplemented"/>
 		<method name="Reserved17" result="void" status="unimplemented"/>
 		<method name="Reserved18" result="void" status="unimplemented"/>
 		<method name="Reserved19" result="void" status="unimplemented"/>
-		<method name="Reserved20" result="void" status="unimplemented"/>
 		<method name="ipf_open" result="LONG">
 			<arg name="channel" type="LONG"/>
 		</method>
