@@ -4632,7 +4632,8 @@ void LoadLayout(void)
    {
      SetAttrs(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight,                 G->Weights[7],
                                               MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
-                                              MUIA_ReadMailGroup_TGVertWeight, G->Weights[9]);
+                                              MUIA_ReadMailGroup_TGVertWeight, G->Weights[9],
+                                              TAG_DONE);
    }
 
    LEAVE();

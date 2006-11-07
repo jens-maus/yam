@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-08  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c, YAM_UT.c, YAM_FO.c: fixed some missing/incorrect TAG_DONE
+    definitions necessary for SetAttrs().
+
 2006-10-09  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: updated according to the latest changes and some

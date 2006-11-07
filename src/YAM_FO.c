@@ -637,9 +637,8 @@ BOOL FO_LoadTree(char *fname)
          }
 
          SetAttrs(lv, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible,
-                      MUIA_NListtree_Quiet, FALSE,
-                      TAG_DONE
-                 );
+                      MUIA_NListtree_Quiet,  FALSE,
+                      TAG_DONE);
       }
       fclose(fh);
       success = TRUE;

@@ -124,13 +124,18 @@ static ULONG MA_GetSortType(int sort)
 //  Sets sort indicators in message listview header
 void MA_SetSortFlag(void)
 {
-  struct Folder *fo = FO_GetCurrentFolder();
-  if(!fo)
-    return;
+  struct Folder *fo;
 
-  SetAttrs(G->MA->GUI.PG_MAILLIST, MUIA_NList_SortType, MA_GetSortType(fo->Sort[0]),
-                                   MUIA_NList_SortType2, MA_GetSortType(fo->Sort[1]),
-                                   NULL);
+  ENTER();
+
+  if((fo = FO_GetCurrentFolder()))
+  {
+    SetAttrs(G->MA->GUI.PG_MAILLIST, MUIA_NList_SortType,  MA_GetSortType(fo->Sort[0]),
+                                     MUIA_NList_SortType2, MA_GetSortType(fo->Sort[1]),
+                                     TAG_DONE);
+  }
+
+  LEAVE();
 }
 
 ///
