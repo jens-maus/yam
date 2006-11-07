@@ -1870,7 +1870,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
   BusyGauge(GetStr(MSG_BusyScanning), folder->Name, filecount-1);
   ClearMailList(folder, TRUE);
 
-  D(DBF_FOLDER, "Recanning index for folder: '%s'...", folder->Name);
+  D(DBF_FOLDER, "Rescanning index for folder: '%s'...", folder->Name);
 
   if((dirLock = Lock(GetFolderDir(folder), ACCESS_READ)))
   {
@@ -2150,10 +2150,22 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
 
   ENTER();
 
-  if((s = strchr(date, ',')))
-    s++;
+  // make sure to skip the weekday definition if it exists
+  if((s = strpbrk(date, " |;,")) != NULL)
+  {
+    // check if we did reach here because the whole
+    // weekday definition was missing
+    if(isspace(*s) && isdigit(*date))
+      s = (char *)date;
+    else
+      s++;
+  }
   else
+  {
+    W(DBF_MAIL, "no starting separator found!!");
+
     s = (char *)date;
+  }
 
   // skip leading spaces
   while(*s && isspace(*s))
