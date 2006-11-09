@@ -4782,7 +4782,7 @@ Keine Verbindung mit WWW-Server '%s'. Mögliche Gründe: TCP/IP offline, ungültige
 ; HOST
 ;
 MSG_ER_BadResponse
-Befehl %s antwortet mit Fehler:\n%s\n\nDer Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
+Falsche Antwort auf Befehl %s:\n%s\n\nDer Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
 ; Bad %s command response:\n\
 ; %s\n\
 ; \n\

@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-09  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/deutsch.ct: changed one string, because the old one was not really
+    good german language.
+
 2006-11-08  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MAf.c: added a minor workaround for some broken Date: header lines
