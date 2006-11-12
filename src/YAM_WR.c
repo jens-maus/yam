@@ -105,6 +105,10 @@ static struct WR_ClassData *WR_NewBounce(int);
 static struct WR_ClassData *WR_New(int winnum);
 
 /**************************************************************************/
+/* Soft-style modes for text */
+enum SoftStyleMode { SSM_NORMAL, SSM_BOLD, SSM_ITALIC, SSM_UNDERLINE, SSM_COLOR };
+
+/**************************************************************************/
 
 /*** Attachments list ***/
 /// WR_GetFileEntry
@@ -2691,104 +2695,194 @@ HOOKPROTONH(WR_LV_DspFunc, long, char **array, struct Attach *entry)
 }
 MakeStaticHook(WR_LV_DspFuncHook, WR_LV_DspFunc);
 ///
-/// WR_SetBoldFunc
-HOOKPROTONHNO(WR_SetBoldFunc, void, ULONG *arg)
+/// WR_SetSoftStyleFunc
+HOOKPROTONHNO(WR_SetSoftStyleFunc, void, ULONG *arg)
 {
-  BOOL enableBold = (BOOL)arg[0];
+  enum SoftStyleMode ssm = (enum SoftStyleMode)arg[0];
   int winnum = (int)arg[1];
   Object *textEdit = G->WR[winnum]->GUI.TE_EDIT;
+  ULONG x1=0;
+  ULONG y1=0;
+  ULONG x2=0;
+  ULONG y2=0;
+  char *txt;
 
   ENTER();
 
-  if(enableBold)
+  // check the marked text status
+  if(DoMethod(textEdit, MUIM_TextEditor_BlockInfo, &x1, &y1, &x2, &y2) == FALSE)
   {
-    SetAttrs(textEdit, MUIA_TextEditor_StyleBold,     TRUE,
-                       MUIA_TextEditor_StyleItalic,   FALSE,
-                       MUIA_TextEditor_StyleUnderline,FALSE,
-                       MUIA_TextEditor_Pen,           0,
-                       TAG_DONE);
+    x1 = xget(textEdit, MUIA_TextEditor_CursorX);
+    y1 = xget(textEdit, MUIA_TextEditor_CursorY);
   }
-  else
-    set(textEdit, MUIA_TextEditor_StyleBold, FALSE);
+
+  // retrieve the whole text lines where the cursor/block is currently
+  // active at.
+  if((txt = (char *)DoMethod(textEdit, MUIM_TextEditor_ExportBlock, MUIF_TextEditor_ExportBlock_FullLines)))
+  {
+    int txtlen = strlen(txt);
+
+    if(txtlen > 0)
+    {
+      LONG nx1=x1;
+      LONG nx2=x1;
+      char *ntxt;
+
+      // now we walk back from the starting (x1) position searching for the next space
+      // or start of line
+      while(nx1 > 0 && !isspace(txt[nx1]))
+        nx1--;
+
+      if(nx1 > 0 && (ULONG)nx1 != x1)
+        nx1++;
+
+      while(nx2 < txtlen && !isspace(txt[nx2]))
+        nx2++;
+
+      if(nx2-nx1 > 0)
+      {
+        char marker[2] = " ";
+        BOOL disableStyle = FALSE;
+
+        // define the marker for the
+        // selected soft-style
+        switch(ssm)
+        {
+          case SSM_NORMAL:
+            // nothing;
+          break;
+
+          case SSM_BOLD:
+            marker[0] = '*';
+          break;
+
+          case SSM_ITALIC:
+            marker[0] = '/';
+          break;
+
+          case SSM_UNDERLINE:
+            marker[0] = '_';
+          break;
+
+          case SSM_COLOR:
+            marker[0] = '#';
+          break;
+        }
+
+        // check if there is already some soft-style active
+        // and if yes, we go and strip
+        if(ssm != SSM_NORMAL &&
+           (txt[nx1] == marker[0] && txt[nx2-1] == marker[0]))
+        {
+          if((ntxt = calloc(1, nx2-2-nx1+1+1)))
+            strlcpy(ntxt, &txt[nx1+1], nx2-2-nx1+1);
+
+          disableStyle = TRUE;
+        }
+        else
+        {
+          if((ntxt = calloc(1, nx2-nx1+2+1)))
+          {
+            ntxt[0] = marker[0];
+
+            // strip foreign soft-style markers
+            if((txt[nx1] == '*' && txt[nx2-1] == '*') ||
+               (txt[nx1] == '/' && txt[nx2-1] == '/') ||
+               (txt[nx1] == '_' && txt[nx2-1] == '_') ||
+               (txt[nx1] == '#' && txt[nx2-1] == '#'))
+            {
+              strlcat(ntxt, &txt[nx1+1], nx2-nx1);
+            }
+            else
+              strlcat(ntxt, &txt[nx1], nx2-nx1+2);
+
+            strlcat(ntxt, marker, nx2-nx1+2+1);
+          }
+        }
+
+        if(ntxt)
+        {
+          // now we mark the area we found to be the one we want to
+          // set bold
+          DoMethod(textEdit, MUIM_TextEditor_MarkText, nx1, y1, nx2, y1);
+
+          // now we replace the marked area with the text we extract but adding two
+          // bold signs at the back and setting the area bold
+          DoMethod(textEdit, MUIM_TextEditor_Replace, ntxt, MUIF_NONE);
+
+          // set the soft-style accordingly.
+          if(disableStyle == FALSE)
+          {
+            DoMethod(textEdit, MUIM_TextEditor_MarkText, nx1, y1, nx1+strlen(ntxt), y1);
+
+            // make sure the text in question is really in the style we want
+            switch(ssm)
+            {
+              case SSM_NORMAL:
+              {
+                SetAttrs(textEdit, MUIA_TextEditor_StyleBold,      FALSE,
+                                   MUIA_TextEditor_StyleItalic,    FALSE,
+                                   MUIA_TextEditor_StyleUnderline, FALSE,
+                                   MUIA_TextEditor_Pen,            0,
+                                   TAG_DONE);
+              }
+              break;
+
+              case SSM_BOLD:
+              {
+                SetAttrs(textEdit, MUIA_TextEditor_StyleBold,      TRUE,
+                                   MUIA_TextEditor_StyleItalic,    FALSE,
+                                   MUIA_TextEditor_StyleUnderline, FALSE,
+                                   MUIA_TextEditor_Pen,            0,
+                                   TAG_DONE);
+              }
+              break;
+
+              case SSM_ITALIC:
+              {
+                SetAttrs(textEdit, MUIA_TextEditor_StyleBold,      FALSE,
+                                   MUIA_TextEditor_StyleItalic,    TRUE,
+                                   MUIA_TextEditor_StyleUnderline, FALSE,
+                                   MUIA_TextEditor_Pen,            0,
+                                   TAG_DONE);
+              }
+              break;
+
+              case SSM_UNDERLINE:
+              {
+                SetAttrs(textEdit, MUIA_TextEditor_StyleBold,      FALSE,
+                                   MUIA_TextEditor_StyleItalic,    FALSE,
+                                   MUIA_TextEditor_StyleUnderline, TRUE,
+                                   MUIA_TextEditor_Pen,            0,
+                                   TAG_DONE);
+              }
+              break;
+
+              case SSM_COLOR:
+              {
+                SetAttrs(textEdit, MUIA_TextEditor_StyleBold,      FALSE,
+                                   MUIA_TextEditor_StyleItalic,    FALSE,
+                                   MUIA_TextEditor_StyleUnderline, FALSE,
+                                   MUIA_TextEditor_Pen,            7,
+                                   TAG_DONE);
+              }
+              break;
+            }
+          }
+          else
+            DoMethod(textEdit, MUIM_TextEditor_MarkText, nx1, y1, nx2-2, y1);
+
+          free(ntxt);
+        }
+      }
+    }
+
+    FreeVec(txt);
+  }
 
   LEAVE();
 }
-MakeStaticHook(WR_SetBoldHook, WR_SetBoldFunc);
-
-///
-/// WR_SetItalicFunc
-HOOKPROTONHNO(WR_SetItalicFunc, void, ULONG *arg)
-{
-  BOOL enableItalic = (BOOL)arg[0];
-  int winnum = (int)arg[1];
-  Object *textEdit = G->WR[winnum]->GUI.TE_EDIT;
-
-  ENTER();
-
-  if(enableItalic)
-  {
-    SetAttrs(textEdit, MUIA_TextEditor_StyleBold,     FALSE,
-                       MUIA_TextEditor_StyleItalic,   TRUE,
-                       MUIA_TextEditor_StyleUnderline,FALSE,
-                       MUIA_TextEditor_Pen,           0,
-                       TAG_DONE);
-  }
-  else
-    set(textEdit, MUIA_TextEditor_StyleItalic, FALSE);
-
-  LEAVE();
-}
-MakeStaticHook(WR_SetItalicHook, WR_SetItalicFunc);
-
-///
-/// WR_SetUnderlineFunc
-HOOKPROTONHNO(WR_SetUnderlineFunc, void, ULONG *arg)
-{
-  BOOL enableUnderline = (BOOL)arg[0];
-  int winnum = (int)arg[1];
-  Object *textEdit = G->WR[winnum]->GUI.TE_EDIT;
-
-  ENTER();
-
-  if(enableUnderline)
-  {
-    SetAttrs(textEdit, MUIA_TextEditor_StyleBold,     FALSE,
-                       MUIA_TextEditor_StyleItalic,   FALSE,
-                       MUIA_TextEditor_StyleUnderline,TRUE,
-                       MUIA_TextEditor_Pen,           0,
-                       TAG_DONE);
-  }
-  else
-    set(textEdit, MUIA_TextEditor_StyleUnderline, FALSE);
-
-  LEAVE();
-}
-MakeStaticHook(WR_SetUnderlineHook, WR_SetUnderlineFunc);
-
-///
-/// WR_SetColoredFunc
-HOOKPROTONHNO(WR_SetColoredFunc, void, ULONG *arg)
-{
-  BOOL enableColored = (BOOL)arg[0];
-  int winnum = (int)arg[1];
-  Object *textEdit = G->WR[winnum]->GUI.TE_EDIT;
-
-  ENTER();
-
-  if(enableColored)
-  {
-    SetAttrs(textEdit, MUIA_TextEditor_StyleBold,     FALSE,
-                       MUIA_TextEditor_StyleItalic,   FALSE,
-                       MUIA_TextEditor_StyleUnderline,FALSE,
-                       MUIA_TextEditor_Pen,           7,
-                       TAG_DONE);
-  }
-  else
-    set(textEdit, MUIA_TextEditor_Pen, 0);
-
-  LEAVE();
-}
-MakeStaticHook(WR_SetColoredHook, WR_SetColoredFunc);
+MakeStaticHook(WR_SetSoftStyleHook, WR_SetSoftStyleFunc);
 
 ///
 
@@ -2821,8 +2915,8 @@ static struct WR_ClassData *WR_New(int winnum)
       enum {
         WMEN_NEW=1,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,WMEN_INSALTQUOT,
         WMEN_INSROT13,WMEN_EDIT,WMEN_CUT,WMEN_COPY,WMEN_PASTE,
-        WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_DICT,WMEN_STYLE1,WMEN_STYLE2,WMEN_STYLE3,
-        WMEN_STYLE4,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
+        WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_DICT,WMEN_STYLE_BOLD,WMEN_STYLE_ITALIC,WMEN_STYLE_UNDERLINE,
+        WMEN_STYLE_COLORED,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
         WMEN_AUTOSP,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
         WMEN_DELSEND,WMEN_RECEIPT,WMEN_DISPNOTI,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
         WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
@@ -2934,10 +3028,10 @@ static struct WR_ClassData *WR_New(int winnum)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Dictionary), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,WMEN_DICT, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Textstyle),
-                  MUIA_Family_Child, mi_bold = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Bold), MUIA_Menuitem_Shortcut,"B", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE1, End,
-                  MUIA_Family_Child, mi_italic = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Italic), MUIA_Menuitem_Shortcut,"I", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE2, End,
-                  MUIA_Family_Child, mi_underl = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Underlined), MUIA_Menuitem_Shortcut,"U", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE3, End,
-                  MUIA_Family_Child, mi_color = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Colored), MUIA_Menuitem_Shortcut,"A", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE4, End,
+                  MUIA_Family_Child, mi_bold = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Bold), MUIA_Menuitem_Shortcut,"B", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_BOLD, End,
+                  MUIA_Family_Child, mi_italic = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Italic), MUIA_Menuitem_Shortcut,"I", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_ITALIC, End,
+                  MUIA_Family_Child, mi_underl = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Underlined), MUIA_Menuitem_Shortcut,"U", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_UNDERLINE, End,
+                  MUIA_Family_Child, mi_color = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Colored), MUIA_Menuitem_Shortcut,"A", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_COLORED, End,
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Emoticons),
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Happy), MUIA_UserData,WMEN_EMOT0, End,
@@ -3022,14 +3116,14 @@ static struct WR_ClassData *WR_New(int winnum)
                      MUIA_Group_Spacing, 0,
                      Child, data->GUI.TE_EDIT = MailTextEditObject,
                         InputListFrame,
+                        MUIA_CycleChain, TRUE,
                         MUIA_TextEditor_Slider, slider,
                         MUIA_TextEditor_ColorMap, G->EdColMap,
                         MUIA_TextEditor_FixedFont, C->FixedFontEdit,
                         MUIA_TextEditor_WrapBorder, C->EdWrapMode == 1 ? C->EdWrapCol : 0,
                         MUIA_TextEditor_ExportWrap, C->EdWrapMode == 2 ? C->EdWrapCol : 0,
                         MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_Plain,
-                        MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_EMail,
-                        MUIA_CycleChain, TRUE,
+                        MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_NoStyle,
                      End,
                      Child, slider,
                   End,
@@ -3190,10 +3284,10 @@ static struct WR_ClassData *WR_New(int winnum)
             DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 4, MUIV_Toolbar_Notify_Pressed,FALSE, data->GUI.TE_EDIT,2,MUIM_TextEditor_ARexxCmd, "COPY");
             DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 5, MUIV_Toolbar_Notify_Pressed,FALSE, data->GUI.TE_EDIT,2,MUIM_TextEditor_ARexxCmd, "PASTE");
             DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 6, MUIV_Toolbar_Notify_Pressed,FALSE, data->GUI.TE_EDIT,2,MUIM_TextEditor_ARexxCmd, "UNDO");
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 8, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetBoldHook, MUIV_TriggerValue, winnum);
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 9, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetItalicHook, MUIV_TriggerValue, winnum);
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,10, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetUnderlineHook, MUIV_TriggerValue, winnum);
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetColoredHook, MUIV_TriggerValue, winnum);
+            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 8, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_BOLD, winnum);
+            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 9, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_ITALIC, winnum);
+            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,10, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_UNDERLINE, winnum);
+            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_COLOR, winnum);
             DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,13, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,3,MUIM_CallHook,&WR_SearchHook,data->GUI.TE_EDIT);
             DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set, 8,MUIV_Toolbar_Set_Selected,MUIV_TriggerValue);
             DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set, 9,MUIV_Toolbar_Set_Selected,MUIV_TriggerValue);
@@ -3212,16 +3306,15 @@ static struct WR_ClassData *WR_New(int winnum)
             DoMethod(data->GUI.TE_EDIT ,MUIM_Notify,MUIA_TextEditor_CursorX,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&WR_UpdateWTitleHook,winnum);
             DoMethod(data->GUI.TE_EDIT ,MUIM_Notify,MUIA_TextEditor_CursorY,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&WR_UpdateWTitleHook,winnum);
          }
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, mi_bold        ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, mi_italic      ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, mi_underl      ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_Pen,            7,              mi_color       ,3,MUIM_Set        ,MUIA_Menuitem_Checked,TRUE);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_Pen,            0,              mi_color       ,3,MUIM_Set        ,MUIA_Menuitem_Checked,FALSE);
-         DoMethod(mi_bold              ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT,3,MUIM_Set,MUIA_TextEditor_StyleBold,     MUIV_TriggerValue);
-         DoMethod(mi_italic            ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT,3,MUIM_Set,MUIA_TextEditor_StyleItalic,   MUIV_TriggerValue);
-         DoMethod(mi_underl            ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT,3,MUIM_Set,MUIA_TextEditor_StyleUnderline,MUIV_TriggerValue);
-         DoMethod(mi_color             ,MUIM_Notify, MUIA_Menuitem_Checked,          TRUE,           data->GUI.TE_EDIT,3,MUIM_Set,MUIA_TextEditor_Pen,           7);
-         DoMethod(mi_color             ,MUIM_Notify, MUIA_Menuitem_Checked,          FALSE,          data->GUI.TE_EDIT,3,MUIM_Set,MUIA_TextEditor_Pen,           0);
+         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, mi_bold        ,3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
+         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, mi_italic      ,3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
+         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, mi_underl      ,3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
+         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_Pen,            7,              mi_color       ,3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, TRUE);
+         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_Pen,            0,              mi_color       ,3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+         DoMethod(mi_bold              ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_BOLD, winnum);
+         DoMethod(mi_italic            ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_ITALIC, winnum);
+         DoMethod(mi_underl            ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_UNDERLINE, winnum);
+         DoMethod(mi_color             ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_COLOR, winnum);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,0             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,FALSE);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,1             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,TRUE);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,2             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,TRUE);

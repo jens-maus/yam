@@ -19,7 +19,7 @@
 
  TextEditor class Support Site:  http://www.sf.net/projects/texteditor-mcc
 
- $VER: TextEditor_mcc.h v15.10 (09.04.2005)
+ $Id: TextEditor_mcc.h 263 2006-10-08 14:50:06Z damato $
 
 ***************************************************************************/
 
@@ -55,7 +55,6 @@ extern "C" {
 #define MUIA_TextEditor_FixedFont         (TextEditor_Dummy + 0x0a)
 #define MUIA_TextEditor_Flow              (TextEditor_Dummy + 0x0b)
 #define MUIA_TextEditor_HasChanged        (TextEditor_Dummy + 0x0c)
-#define MUIA_TextEditor_HorizontalScroll  (TextEditor_Dummy + 0x2d) /* Private and experimental! */
 #define MUIA_TextEditor_ImportHook        (TextEditor_Dummy + 0x0e)
 #define MUIA_TextEditor_ImportWrap        (TextEditor_Dummy + 0x10)
 #define MUIA_TextEditor_InsertMode        (TextEditor_Dummy + 0x0f)
@@ -64,11 +63,9 @@ extern "C" {
 #define MUIA_TextEditor_MultiColorQuoting (TextEditor_Dummy + 0x31)
 #define MUIA_TextEditor_NumLock           (TextEditor_Dummy + 0x18)
 #define MUIA_TextEditor_Pen               (TextEditor_Dummy + 0x2e)
-#define MUIA_TextEditor_PopWindow_Open    (TextEditor_Dummy + 0x03) /* Private!!! */
 #define MUIA_TextEditor_Prop_DeltaFactor  (TextEditor_Dummy + 0x0d)
 #define MUIA_TextEditor_Prop_Entries      (TextEditor_Dummy + 0x15)
 #define MUIA_TextEditor_Prop_First        (TextEditor_Dummy + 0x20)
-#define MUIA_TextEditor_Prop_Release      (TextEditor_Dummy + 0x01) /* Private!!! */
 #define MUIA_TextEditor_Prop_Visible      (TextEditor_Dummy + 0x16)
 #define MUIA_TextEditor_Quiet             (TextEditor_Dummy + 0x17)
 #define MUIA_TextEditor_ReadOnly          (TextEditor_Dummy + 0x19)
@@ -91,6 +88,7 @@ extern "C" {
 #define MUIM_TextEditor_ARexxCmd          (TextEditor_Dummy + 0x23)
 #define MUIM_TextEditor_BlockInfo         (TextEditor_Dummy + 0x30)
 #define MUIM_TextEditor_ClearText         (TextEditor_Dummy + 0x24)
+#define MUIM_TextEditor_ExportBlock       (TextEditor_Dummy + 0x37)
 #define MUIM_TextEditor_ExportText        (TextEditor_Dummy + 0x25)
 #define MUIM_TextEditor_HandleError       (TextEditor_Dummy + 0x1f)
 #define MUIM_TextEditor_InsertText        (TextEditor_Dummy + 0x26)
@@ -104,6 +102,7 @@ extern "C" {
 struct MUIP_TextEditor_ARexxCmd          { ULONG MethodID; STRPTR command; };
 struct MUIP_TextEditor_BlockInfo         { ULONG MethodID; ULONG *startx; ULONG *starty; ULONG *stopx; ULONG *stopy; };
 struct MUIP_TextEditor_ClearText         { ULONG MethodID; };
+struct MUIP_TextEditor_ExportBlock       { ULONG MethodID; ULONG flags; };
 struct MUIP_TextEditor_ExportText        { ULONG MethodID; };
 struct MUIP_TextEditor_HandleError       { ULONG MethodID; ULONG errorcode; }; /* See below for error codes */
 struct MUIP_TextEditor_InsertText        { ULONG MethodID; STRPTR text; LONG pos; }; /* See below for positions */
@@ -113,6 +112,7 @@ struct MUIP_TextEditor_Replace           { ULONG MethodID; STRPTR NewString; ULO
 
 #define MUIV_TextEditor_ExportHook_Plain       0x00000000
 #define MUIV_TextEditor_ExportHook_EMail       0x00000001
+#define MUIV_TextEditor_ExportHook_NoStyle     0x00000002
 
 #define MUIV_TextEditor_Flow_Left              0x00000000
 #define MUIV_TextEditor_Flow_Center            0x00000001
@@ -128,17 +128,15 @@ struct MUIP_TextEditor_Replace           { ULONG MethodID; STRPTR NewString; ULO
 #define MUIV_TextEditor_InsertText_Top         0x00000001
 #define MUIV_TextEditor_InsertText_Bottom      0x00000002
 
-#define MUIV_TextEditor_LengthHook_Plain       0x00000000
-#define MUIV_TextEditor_LengthHook_ANSI        0x00000001
-#define MUIV_TextEditor_LengthHook_HTML        0x00000002
-#define MUIV_TextEditor_LengthHook_MAIL        0x00000003
-
 /* Flags for MUIM_TextEditor_Search */
-#define MUIF_TextEditor_Search_FromTop       (1 << 0)
-#define MUIF_TextEditor_Search_Next          (1 << 1)
-#define MUIF_TextEditor_Search_CaseSensitive (1 << 2)
-#define MUIF_TextEditor_Search_DOSPattern    (1 << 3)
-#define MUIF_TextEditor_Search_Backwards     (1 << 4)
+#define MUIF_TextEditor_Search_FromTop         (1 << 0)
+#define MUIF_TextEditor_Search_Next            (1 << 1)
+#define MUIF_TextEditor_Search_CaseSensitive   (1 << 2)
+#define MUIF_TextEditor_Search_DOSPattern      (1 << 3)
+#define MUIF_TextEditor_Search_Backwards       (1 << 4)
+
+/* Flags for MUIM_TextEditor_ExportBlock */
+#define MUIF_TextEditor_ExportBlock_FullLines  (1 << 0)
 
 /* Error codes given as argument to MUIM_TextEditor_HandleError */
 #define Error_ClipboardIsEmpty         0x01

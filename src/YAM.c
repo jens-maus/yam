@@ -1710,7 +1710,7 @@ static void Initialise(BOOL hidden)
    CheckMCC(MUIC_Toolbar, 15, 12, TRUE, "http://www.sf.net/projects/toolbar-mcc/");
 
    // Lets check for the correct TextEditor.mcc version
-   CheckMCC(MUIC_TextEditor, 15, 18, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
+   CheckMCC(MUIC_TextEditor, 15, 19, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
 
    // Lets check for the correct BetterString.mcc version
    CheckMCC(MUIC_BetterString, 11, 8, TRUE, "http://www.sf.net/projects/bstring-mcc/");

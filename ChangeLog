@@ -4,6 +4,21 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-12  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, YAM.c: changed write window class to use the new NoStyle Export
+    hook of TextEditor.mcc 15.19 as well as the ExportBlock method for
+    more precisly identifying where the soft-style marker should be added.
+    Now the Bold, Italic, Underline and Colored buttons/menuitems are fully
+    mutual exclusive and work only wordwise. That means you are not allowed
+    to set a soft-style only on parts of a word. In addition, only one
+    soft-style at a time is allowed and setting a softstyle on more than one
+    word will also not work anymore. This change should now make the whole
+    non-standarized softstyle management in YAM more consistent and
+    interoperatable with other non-Amiga mail clients. Please note that
+    for the change to work the minimum required version of TextEditor.mcc
+    has been bumped to 15.19.
+
 2006-11-09  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/deutsch.ct: changed one string, because the old one was not really
