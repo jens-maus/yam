@@ -3020,54 +3020,63 @@ MakeHook(MA_SetAllStatusToHook, MA_SetAllStatusToFunc);
 //  Deletes old messages
 HOOKPROTONHNONP(MA_DeleteOldFunc, void)
 {
-   struct Folder **flist, *mailFolder;
-   struct DateStamp today;
-   long today_days;
-   int f;
-   struct Mail *mail, *next;
+  struct Folder **flist;
+  struct DateStamp today;
+  ULONG today_days;
 
-   DateStampUTC(&today);
-   today_days = today.ds_Days;
+  ENTER();
 
-   if ((flist = FO_CreateList()))
-   {
-      BusyGauge(GetStr(MSG_BusyDeletingOld), "", (int)*flist);
+  DateStampUTC(&today);
+  today_days = today.ds_Days;
 
-      for (f = 1; f <= (int)*flist; f++)
+  // generate a full list which we can walk through
+  // later on
+  if((flist = FO_CreateList()))
+  {
+    int f;
+
+    BusyGauge(GetStr(MSG_BusyDeletingOld), "", (int)*flist);
+
+    for(f=1; f <= (int)*flist; f++)
+    {
+      struct Folder *folder = flist[f];
+
+      if(folder->MaxAge > 0 &&
+         MA_GetIndex(folder))
       {
-        if (flist[f]->MaxAge)
+        struct Mail *mail;
+        struct Mail *next;
+
+        for(mail=folder->Messages; mail; mail = next)
         {
-          if (MA_GetIndex(flist[f]))
+          next = mail->Next;
+          today.ds_Days = today_days - folder->MaxAge;
+
+          if(CompareDates(&today, &(mail->Date)) < 0)
           {
-            for(mail = flist[f]->Messages; mail; mail = next)
+            if(isDeletedFolder(folder) ||
+               (!hasStatusNew(mail) && hasStatusRead(mail)))
             {
-              next = mail->Next;
-              today.ds_Days = today_days - flist[f]->MaxAge;
-              if (CompareDates(&today, &(mail->Date)) < 0)
-              {
-                if(isDeletedFolder(flist[f]) ||
-                   (!hasStatusNew(mail) && hasStatusRead(mail)))
-                {
-                  mailFolder = mail->Folder;
-
-                  MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE);
-
-                  DisplayStatistics(mailFolder, FALSE);
-                }
-              }
+              MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE);
             }
           }
         }
 
-        BusySet(f);
+        DisplayStatistics(folder, FALSE);
       }
-      free(flist);
 
-      // and last but not least we update the appIcon also
-      DisplayStatistics(NULL, TRUE);
+      BusySet(f);
+    }
 
-      BusyEnd();
-   }
+    free(flist);
+
+    // and last but not least we update the appIcon also
+    DisplayStatistics(NULL, TRUE);
+
+    BusyEnd();
+  }
+
+  LEAVE();
 }
 MakeHook(MA_DeleteOldHook, MA_DeleteOldFunc);
 

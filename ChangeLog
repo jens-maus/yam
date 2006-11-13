@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-13  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c: minor optimizations and general styleguide fixage of the
+    MA_DeleteOldHook. Now the statistics for a folder will only be updated
+    after having scanned through all messages (should be faster) and
+    without having to save the mail's folder pointer.
+
 2006-11-13  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: the mail structure must not be accessed after a call to
