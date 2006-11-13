@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-13  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ReadWindow, ReadMailGroup: after a call to either MA_DeleteSingle() or
+    MA_MoveCopy() the pointer to the current mail in the ReadMailData must
+    be invalidated, because these two functions call RemoveMailFromList()
+    which free()s the mail data. Hence the pointer must not be used after
+    such a call anymore. This should fix bug #1460858.
+
 2006-11-13  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c: minor optimizations and general styleguide fixage of the

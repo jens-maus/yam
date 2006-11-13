@@ -677,6 +677,9 @@ DECLARE(MoveMailRequest)
       // move the mail to the selected destination folder
       MA_MoveCopy(mail, srcfolder, dstfolder, FALSE);
 
+      // erase the old pointer as this has been free()ed by MA_MoveCopy()
+      rmData->mail = NULL;
+
       // if there are still mails in the current folder we make sure
       // it is displayed in this window now or close it
       if(closeAfter == FALSE &&
@@ -773,6 +776,9 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
 
     // delete the mail
     MA_DeleteSingle(mail, delatonce, FALSE);
+
+    // erase the old pointer as this has been free()ed by MA_DeleteSingle()
+    rmData->mail = NULL;
 
     // if there are still mails in the current folder we make sure
     // it is displayed in this window now or close it

@@ -1205,6 +1205,9 @@ DECLARE(SaveDecryptedMail)
         {
           MA_DeleteSingle(mail, FALSE, FALSE);
 
+          // erase the old pointer as this has been free()ed by MA_DeleteSingle()
+          rmData->mail = NULL;
+
           DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, newmail);
         }
       }
@@ -1409,6 +1412,9 @@ DECLARE(DeleteMail)
     // delete the mail
     MA_DeleteSingle(mail, FALSE, FALSE);
     AppendLogNormal(22, GetStr(MSG_LOG_Moving), 1, folder->Name, delfolder->Name);
+
+    // erase the old pointer as this has been free()ed by MA_DeleteSingle()
+    rmData->mail = NULL;
   }
 
   RETURN(0);
