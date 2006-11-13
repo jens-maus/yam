@@ -6,6 +6,8 @@ $Id$
 
 2006-11-13  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: the mail structure must not be accessed after a call to
+    MA_DeleteSingle(), because it is free()ed in that function.
   * YAM_TR.c: after a bad reponse to the PASS command the password is over-
     written with 'X' chars to avoid that anybody else can read a password by
     accident. This fixes bug #1592268.

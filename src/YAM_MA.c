@@ -3020,7 +3020,7 @@ MakeHook(MA_SetAllStatusToHook, MA_SetAllStatusToFunc);
 //  Deletes old messages
 HOOKPROTONHNONP(MA_DeleteOldFunc, void)
 {
-   struct Folder **flist;
+   struct Folder **flist, *mailFolder;
    struct DateStamp today;
    long today_days;
    int f;
@@ -3048,9 +3048,11 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
                 if(isDeletedFolder(flist[f]) ||
                    (!hasStatusNew(mail) && hasStatusRead(mail)))
                 {
+                  mailFolder = mail->Folder;
+
                   MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE);
 
-                  DisplayStatistics(mail->Folder, FALSE);
+                  DisplayStatistics(mailFolder, FALSE);
                 }
               }
             }
