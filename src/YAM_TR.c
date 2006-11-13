@@ -1874,12 +1874,33 @@ static char *TR_SendPOP3Cmd(enum POPCommand command, char *parmtext, const void 
    if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) <= 0 ||
       strncmp(buf, POP_RESP_OKAY, strlen(POP_RESP_OKAY)) != 0)
    {
-      // only report a error if wished
-      if(errorMsg) ER_NewError(GetStr(errorMsg), (char *)POPcmd[command], buf);
-      FreeStrBuf(buf);
-      buf = NULL;
+       // only report a error if wished
+       if (errorMsg)
+       {
+           // if we just issued a PASS command and that failed, then overwrite the visible
+           // password with X chars now, so that nobody else can read your password
+           if (command == POPCMD_PASS)
+           {
+               char *p;
 
-      return NULL;
+               // find the beginning of the password
+               if ((p = strstr(buf, POPcmd[POPCMD_PASS])) != NULL)
+               {
+                   if ((p = strchr(p, ' ')) != NULL)
+                   {
+                       // now cross it out
+                       while (*p != '\0' && *p != ' ' && *p != '\n' && *p != '\r')
+                           *p++ = 'X';
+                   }
+               }
+           }
+
+           ER_NewError(GetStr(errorMsg), (char *)POPcmd[command], buf);
+       }
+       FreeStrBuf(buf);
+       buf = NULL;
+
+       return NULL;
    }
 
    return buf;

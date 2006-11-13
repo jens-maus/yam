@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-13  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: after a bad reponse to the PASS command the password is over-
+    written with 'X' chars to avoid that anybody else can read a password by
+    accident. This fixes bug #1592268.
+
 2006-11-12  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, YAM.c: changed write window class to use the new NoStyle Export
