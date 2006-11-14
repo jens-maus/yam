@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-14  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: the info window after a mail download is opened in inactive state
+    now to avoid the problem that this window steals the focus of other windows
+    one is typing in.
+
 2006-11-13  Thore Böckelmann <tboeckel@gmx.de>
 
   * ReadWindow, ReadMailGroup: after a call to either MA_DeleteSingle() or

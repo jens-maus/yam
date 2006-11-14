@@ -998,6 +998,7 @@ void InfoWindow(const char *title, const char *body, const char *oktext, APTR pa
          MUIA_Window_RefWindow, parent,
          MUIA_Window_LeftEdge,  MUIV_Window_LeftEdge_Centered,
          MUIA_Window_TopEdge,   MUIV_Window_TopEdge_Centered,
+         MUIA_Window_Activate,  FALSE,
          WindowContents, VGroup,
             MUIA_Background, MUII_RequesterBack,
             Child, VGroup,
