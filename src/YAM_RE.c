@@ -1261,6 +1261,8 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
         if(stricmp(rp->ContentType, "text/plain") == 0 ||
            rp->Parent->MainAltPart == NULL)
         {
+          D(DBF_MAIL, "setting new main alternative part in parent #%d [%lx] to #%d [%lx]", rp->Parent->Nr, rp->Parent, rp->Nr, rp);
+
           rp->Parent->MainAltPart = rp;
         }
       }
@@ -1659,7 +1661,6 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
   struct Part *newPart;
 
   ENTER();
-  D(DBF_MAIL, "%08lx, %08lx, %08lx, %08lx", rmData, new, prev, first);
 
   if(((*new) = newPart = calloc(1,sizeof(struct Part))))
   {
@@ -1701,7 +1702,14 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
     snprintf(file, sizeof(file), "YAMr%08lx-p%d.txt", readMailDataID(rmData), newPart->Nr);
     strmfp(newPart->Filename, C->TempDir, file);
 
-    SHOWSTRING(DBF_MAIL, newPart->Filename);
+    D(DBF_MAIL, "New Part #%d [%lx]", newPart->Nr, newPart);
+    D(DBF_MAIL, "  IsAltPart..: %ld",  newPart->isAltPart);
+    D(DBF_MAIL, "  Filename...: [%s]", newPart->Filename);
+    D(DBF_MAIL, "  Nextptr....: %lx",  newPart->Next);
+    D(DBF_MAIL, "  Prevptr....: %lx",  newPart->Prev);
+    D(DBF_MAIL, "  Parentptr..: %lx",  newPart->Parent);
+    D(DBF_MAIL, "  MainAltPart: %lx",  newPart->MainAltPart);
+
     if((fp = fopen(newPart->Filename, "w")))
     {
       RETURN(fp);
@@ -1711,6 +1719,8 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
     free(newPart);
     *new = NULL;
   }
+
+  E(DBF_MAIL, "Error: Couldn't create a new Part!");
 
   RETURN(NULL);
   return NULL;
@@ -1724,7 +1734,7 @@ static void RE_UndoPart(struct Part *rp)
 
   ENTER();
 
-  D(DBF_MAIL, "undoing part #%ld [%lx]", rp->Nr, rp);
+  D(DBF_MAIL, "Undoing part #%ld [%lx]", rp->Nr, rp);
 
   // lets delete the file first so that we can cleanly "undo" the part
   DeleteFile(rp->Filename);
@@ -1829,8 +1839,12 @@ static void RE_UndoPart(struct Part *rp)
   }
 
   // relink the MainAltPart pointer as well
-  if(rp->Parent)
+  if(rp->Parent && rp->Parent->MainAltPart == NULL)
+  {
+    D(DBF_MAIL, "setting parent #%d [%lx] MainAltPart to %lx", rp->Parent->Nr, rp->Parent, rp->MainAltPart);
+
     rp->Parent->MainAltPart = rp->MainAltPart;
+  }
 
   // and last, but not least we free the part
   free(rp);
@@ -1942,7 +1956,8 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
                                     struct Part *hrp)
 {
   ENTER();
-  D(DBF_MAIL, "%08lx, %08lx, %08lx, %08lx", rmData, in, fname, hrp);
+
+  D(DBF_MAIL, "ParseMessage(): %08lx, %08lx, %08lx, %08lx", rmData, in, fname, hrp);
 
   if(in == NULL && fname)
     in = fopen(fname, "r");
@@ -2633,6 +2648,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
   int totsize, len;
 
   ENTER();
+
   D(DBF_MAIL, "rmData: 0x%08lx, mode: %d", rmData, mode);
 
   // save exit conditions
@@ -2641,6 +2657,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
     RETURN(NULL);
     return NULL;
   }
+
+  SHOWVALUE(DBF_MAIL, rmData->letterPartNum);
 
   // first we precalculate the size of the final buffer where the message text will be put in
   for(totsize = 1000, part = first; part; part = part->Next)
@@ -2701,6 +2719,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
         if(part->isAltPart == TRUE && part->Parent != NULL &&
            part->Parent->MainAltPart != part)
         {
+          D(DBF_MAIL, "flagging part #%d as not displayable!", part->Nr);
+
           dodisp = FALSE;
         }
       }
@@ -2739,12 +2759,16 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
         }
       }
 
+      D(DBF_MAIL, "Checking if part #%d [%ld] (%d) should be displayed", part->Nr, part->Size, dodisp);
+
       // only continue of this part should be displayed
       // and is greater than zero, or else we don`t have
       // to parse anything at all.
       if(dodisp && part->Size > 0)
       {
         FILE *fh;
+
+        D(DBF_MAIL, "  adding text of [%s] to display", part->Filename);
 
         if((fh = fopen(part->Filename, "r")))
         {
