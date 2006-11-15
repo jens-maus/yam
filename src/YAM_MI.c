@@ -687,7 +687,7 @@ long base64decode_file(FILE *in, FILE *out,
 
     // in case the user wants us to detect the correct cyrillic codeset
     // we do it now
-    if(C->DetectCyrillic)
+    if(convCRLF && C->DetectCyrillic)
     {
       struct codeset *cs = CodesetsFindBest(CSA_Source,         outbuffer,
                                             CSA_SourceLen,      outLength,

@@ -4,11 +4,16 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-15  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MI.c: fixed bug #1573693 where binary attachments were saved truncated
+    in case the "autodetect cyrillic charsets" option was enabled.
+
 2006-11-14  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_TR.c: reworked/revised some of our raw POP3 data transfer functions to
     include some debug output as well as make sure all memory is immediately
-	 freed upon an error.
+    freed upon an error.
 
 2006-11-14  Thore Böckelmann <tboeckel@gmx.de>
 
