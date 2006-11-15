@@ -1483,18 +1483,30 @@ static int TR_RecvToFile(FILE *fh, char *filename, struct TransStat *ts)
 // if called with flag != TCP_FLUSH - otherwise it will write and flush immediatly
 static int TR_Send(const char *ptr, int len, int flags)
 {
-  int nwritten;
+  int nwritten = -1;
 
-  DoMethod(G->App,MUIM_Application_InputBuffered);
-  if (G->TR_Socket == SMTP_NO_SOCKET) return -1;
-  if (G->TR_Debug && ptr) printf("CLIENT[%04d]: %s", len, ptr);
+  ENTER();
 
-  // we call the WriteBuffered() function to write this characters
-  // out to the socket. the provided flag will define if it
-  // really will be buffered or if we write and flush the buffer
-  // immediatly
-  nwritten = TR_WriteBuffered(G->TR_Socket, ptr, len, flags);
+  // make sure the GUI can still update itself during this
+  // operation
+  DoMethod(G->App, MUIM_Application_InputBuffered);
 
+  // make sure the socket is active.
+  if(G->TR_Socket != SMTP_NO_SOCKET)
+  {
+    // perform some debug output on the console if requested
+    // by the user
+    if(G->TR_Debug && ptr)
+      printf("CLIENT[%04d]: %s", len, ptr);
+
+    // we call the WriteBuffered() function to write this characters
+    // out to the socket. the provided flag will define if it
+    // really will be buffered or if we write and flush the buffer
+    // immediatly
+    nwritten = TR_WriteBuffered(G->TR_Socket, ptr, len, flags);
+  }
+
+  RETURN(nwritten);
   return nwritten;
 }
 
@@ -1513,40 +1525,70 @@ void TR_SetWinTitle(BOOL from, char *host)
 /// TR_ReadLine()
 // a buffered version of readline() that reads out charwise from the
 // socket via TR_ReadBuffered and returns the amount of chars copied
-// into the provided character array.
+// into the provided character array or -1 on error.
 //
 // This implementation is a slightly adapted version of readline()/my_read()
 // examples from (W.Richard Stevens - Unix Network Programming) - Page 80
 static int TR_ReadLine(LONG socket, char *vptr, int maxlen)
 {
-  int n, rc;
-  char c, *ptr;
+  int result = -1;
 
-  DoMethod(G->App,MUIM_Application_InputBuffered);
-  if (G->TR_Socket == SMTP_NO_SOCKET) return FALSE;
+  ENTER();
 
-  ptr = vptr;
-  for(n = 1; n < maxlen; n++)
+  // make sure the GUI can still update itself during this
+  // operation
+  DoMethod(G->App, MUIM_Application_InputBuffered);
+
+  // make sure the socket is active.
+  if(G->TR_Socket != SMTP_NO_SOCKET)
   {
-    // read out one buffered char only.
-    if((rc = TR_ReadBuffered(socket, &c, 1, TCPF_NONE)) == 1)
+    int n;
+    char *ptr;
+
+    ptr = vptr;
+
+    for(n = 1; n < maxlen; n++)
     {
-      *ptr++ = c;
-      if(c == '\n') break;  // newline is stored, like fgets()
+      int rc;
+      char c;
+
+      // read out one buffered char only.
+      if((rc = TR_ReadBuffered(socket, &c, 1, TCPF_NONE)) == 1)
+      {
+        *ptr++ = c;
+        if(c == '\n')
+          break;  // newline is stored, like fgets()
+      }
+      else if(rc == 0)
+      {
+        // if n==1 then EOF, no data read
+        // otherwise    EOF, some data was read
+        if(n == 1)
+          n = 0;
+
+        break;
+      }
+      else
+      {
+        // error, errno set by readchar()
+        n = -1;
+        break;
+      }
     }
-    else if(rc == 0)
-    {
-      if(n == 1) return 0;  // EOF, no data read
-      else       break;     // EOF, some data was read
-    }
-    else return -1;         // error, errno set by readchar()
+
+    *ptr = '\0';              // null terminate like fgets()
+
+    // perform some debug output on the console if requested
+    // by the user
+    if(G->TR_Debug)
+      printf("SERVER[%04d]: %s", n, vptr);
+
+    // return the number of chars we read
+    result = n;
   }
 
-  *ptr = 0;                 // null terminate like fgets()
-
-  if(G->TR_Debug) printf("SERVER[%04d]: %s", n, vptr);
-
-  return n; // return the number of chars we read
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -1845,65 +1887,82 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
 //  Sends a command to the POP3 server
 static char *TR_SendPOP3Cmd(enum POPCommand command, char *parmtext, const void *errorMsg)
 {
-   static char *buf = NULL;
+  static char *buf = NULL;
+  char *result = NULL;
 
-   // first we check if the socket is in a valid state to proceed
-   if (G->TR_Socket == SMTP_NO_SOCKET) return NULL;
+  ENTER();
 
-   // if we are here for the first time lets generate a minimum buffer
-   if(buf == NULL)
-   {
+  // first we check if the socket is in a valid state to proceed
+  if(G->TR_Socket != SMTP_NO_SOCKET)
+  {
+    // if we are here for the first time lets generate a minimum buffer
+    if(buf == NULL)
+    {
       // by lookin at the RFC a buffer of 1000 chars for one line
       // should really be enough
-      if(!(buf = AllocStrBuf(SIZE_LINE))) return NULL;
-   }
+      buf = AllocStrBuf(SIZE_LINE);
+    }
 
-   // if we specified a parameter for the pop command lets add it now
-   if(!parmtext || !*parmtext)
-    snprintf(buf, SIZE_LINE, "%s\r\n", POPcmd[command]);
-   else
-    snprintf(buf, SIZE_LINE, "%s %s\r\n", POPcmd[command], parmtext);
+    if(buf != NULL)
+    {
+      // if we specified a parameter for the pop command lets add it now
+      if(!parmtext || !*parmtext)
+        snprintf(buf, SIZE_LINE, "%s\r\n", POPcmd[command]);
+      else
+        snprintf(buf, SIZE_LINE, "%s %s\r\n", POPcmd[command], parmtext);
 
-   // send the pop command to the server and see if it was received somehow
-   // and for a connect we don`t send something or the server will get
-   // confused.
-   if(command != POPCMD_CONNECT && TR_WriteLine(buf) <= 0) return NULL;
+      // send the pop command to the server and see if it was received somehow
+      // and for a connect we don`t send something or the server will get
+      // confused.
+      if(command == POPCMD_CONNECT || TR_WriteLine(buf) > 0)
+      {
+        // let us read the next line from the server and check if
+        // some status message can be retrieved.
+        if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) > 0 &&
+           strncmp(buf, POP_RESP_OKAY, strlen(POP_RESP_OKAY)) == 0)
+        {
+          // everything worked out fine so lets set
+          // the result to our allocated buffer
+          result = buf;
+        }
+        else
+        {
+          // only report a error if wished
+          if(errorMsg)
+          {
+            // if we just issued a PASS command and that failed, then overwrite the visible
+            // password with X chars now, so that nobody else can read your password
+            if(command == POPCMD_PASS)
+            {
+              char *p;
 
-   // let us read the next line from the server and check if
-   // some status message can be retrieved.
-   if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) <= 0 ||
-      strncmp(buf, POP_RESP_OKAY, strlen(POP_RESP_OKAY)) != 0)
-   {
-       // only report a error if wished
-       if (errorMsg)
-       {
-           // if we just issued a PASS command and that failed, then overwrite the visible
-           // password with X chars now, so that nobody else can read your password
-           if (command == POPCMD_PASS)
-           {
-               char *p;
+              // find the beginning of the password
+              if((p = strstr(buf, POPcmd[POPCMD_PASS])) != NULL &&
+                 (p = strchr(p, ' ')) != NULL)
+              {
+                // now cross it out
+                while(*p != '\0' && *p != ' ' && *p != '\n' && *p != '\r')
+                  *p++ = 'X';
+              }
+            }
 
-               // find the beginning of the password
-               if ((p = strstr(buf, POPcmd[POPCMD_PASS])) != NULL)
-               {
-                   if ((p = strchr(p, ' ')) != NULL)
-                   {
-                       // now cross it out
-                       while (*p != '\0' && *p != ' ' && *p != '\n' && *p != '\r')
-                           *p++ = 'X';
-                   }
-               }
-           }
+            ER_NewError(GetStr(errorMsg), (char *)POPcmd[command], buf);
+          }
+        }
+      }
+    }
+  }
 
-           ER_NewError(GetStr(errorMsg), (char *)POPcmd[command], buf);
-       }
-       FreeStrBuf(buf);
-       buf = NULL;
+  // make sure to free all memory in case
+  // an error occurred.
+  if(buf && result == NULL)
+  {
+    FreeStrBuf(buf);
+    buf = NULL;
+  }
 
-       return NULL;
-   }
-
-   return buf;
+  RETURN(result);
+  return result;
 }
 ///
 /// TR_ConnectPOP
