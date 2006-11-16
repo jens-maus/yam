@@ -1685,8 +1685,8 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
       newPart->ContentType = strdup("text/plain");
       newPart->EncodingCode = ENC_NONE;
 
-      if(first && first->ContentType[9] != '\0' &&
-         strnicmp(&first->ContentType[10], "alternative", 11) == 0)
+      if(first && (first->isAltPart ||
+         (first->ContentType[9] != '\0' && strnicmp(&first->ContentType[10], "alternative", 11) == 0)))
       {
         newPart->isAltPart = TRUE;
       }

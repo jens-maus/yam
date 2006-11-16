@@ -6,6 +6,9 @@ $Id$
 
 2006-11-15  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c: fixed another issue with "multipart/alternative" mails which
+    contain an aggregate "multipart/related" part, ending up in not hiding
+    all non "text/plain" parts.
   * YAM_RE.c: fixed bug #1592829 where on some "multipart/alternative" mails
     a reply action ended up in an empty reply/edit window.
   * YAM_MI.c: fixed bug #1573693 where binary attachments were saved truncated
