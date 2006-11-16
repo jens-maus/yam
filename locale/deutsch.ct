@@ -6808,8 +6808,8 @@ Part %ld der Nachricht '%s' mittels base64 zu dekodieren. \
 Der Vorgang wurde daraufhin abgebrochen.\n\
 \n\
 Dies könnte durch eine falsche Kodierung der Nachricht \
-durch den Sender hervorgerufen worden sein oder da der \
-base64 kodierte Teil der Nachricht während der Transmission \
+durch den Sender hervorgerufen worden sein oder daß der \
+base64 kodierte Teil der Nachricht während der Übertragung \
 verstümmelt wurde.
 ; PARTNR, MSGFILE
 MSG_ER_B64DECTRUNCTXT
@@ -6818,8 +6818,8 @@ konnte nicht base64 dekodiert werden und könnte inkorrekt \
 oder garnicht dargestellt werden.\n\
 \n\
 Dies könnte durch eine falsche Kodierung der Nachricht \
-durch den Sender hervorgerufen worden sein oder da der \
-base64 kodierte Teil der Nachricht während der Transmission \
+durch den Sender hervorgerufen worden sein oder daß der \
+base64 kodierte Teil der Nachricht während der Übertragung \
 verstümmelt wurde.
 ; PARTNR, MSGFILE
 MSG_MA_MessageImport
