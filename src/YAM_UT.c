@@ -3622,6 +3622,29 @@ void RemoveMailFromList(struct Mail *mail)
   // that it will be saved next time.
   MA_ExpireIndex(folder);
 
+  // Now we check if there is any read window with that very same
+  // mail currently open and if so we have to close it.
+  if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+  {
+    // search through our ReadDataList
+    struct MinNode *curNode;
+
+    for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+      if(rmData->mail == mail)
+      {
+        // clear the pointer to this mail
+        rmData->mail = NULL;
+
+        // and ask the window to close itself
+        if(rmData->readWindow != NULL)
+          set(rmData->readWindow, MUIA_Window_Open, FALSE);
+      }
+    }
+  }
+
   // and last, but not least we have to free the mail
   free(mail);
 

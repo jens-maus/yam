@@ -4,6 +4,17 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-16  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: bug #1460858 was only partly fixed by clearing the mail pointer
+    in the struct ReadMailData directly after calling RemoveMailFromList(). But
+    this did not cover the case that a mail was displayed in a read window
+    while several mails were deleted at once, the one being displayed among
+    them. In this case the read window was left open. If one switched to the
+    next/previous mail after that YAM jumped to a random mail. Now a possibly
+    open read window is also closed and the ReadMailData is cleaned up by the
+    window itself.
+
 2006-11-15  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c: fixed another issue with "multipart/alternative" mails which
