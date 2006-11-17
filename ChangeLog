@@ -6,6 +6,29 @@ $Id$
 
 2006-11-16  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: Too many changes to list each of them, but finally YAM got a working
+    spam filter!!
+    The supplied images in the nightly builds contain just a trashcan icon for
+    everything concerning the spam filter, so these *really* need to be replaced
+    by nicer ones.
+    While implementing the spam filter two new buttons made it into the toolbars
+    of the main window and of the read window. That also means you need new
+    images for these two toolbars. The nightly build should contain updated
+    standard icons. If not, ask me. At least I can supply nice glow icons, but
+    still with lots of trashcans :) As long as we are stuck with ToolBar.mcc we
+    will have to live with this inconvenience.
+    By default the spam filter is inactive and has to be activated on the
+    according page in the configuration window. After that it is very likely
+    that *ALL* of your newly received mails will be marked as spam. That is
+    absolutely normal, because the filter must be trained to distinguish between
+    normal wanted mails and spam mails. Just mark these "false negatives" as
+    normal mails and move them to other mail folders if you like. After a time
+    YAM will become better and just filter out real spam. The other new items in
+    then configuration window should be quite self explaining.
+    Please try to stress the filter as much as possible. Hopefully it will make
+    it in the 2.5 release if no major bugs make it a show stopper. Especially
+    the possibility to (de)activate the filter while YAM is running is largely
+    untested and I suspect it not to work 100%.
   * YAM_UT.c: bug #1460858 was only partly fixed by clearing the mail pointer
     in the struct ReadMailData directly after calling RemoveMailFromList(). But
     this did not cover the case that a mail was displayed in a read window

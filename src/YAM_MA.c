@@ -73,6 +73,7 @@
 
 #include "UpdateCheck.h"
 #include "HTML2Mail.h"
+#include "BayesFilter.h"
 
 #include "Debug.h"
 
@@ -144,7 +145,7 @@ void MA_SetSortFlag(void)
 void MA_ChangeTransfer(BOOL on)
 {
    struct MA_GUIData *gui = &G->MA->GUI;
-   if (gui->TO_TOOLBAR) DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !on, 10,11, -1);
+   if (gui->TO_TOOLBAR) DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !on, 13,14, -1);
    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, on, gui->MI_IMPORT, gui->MI_EXPORT, gui->MI_SENDALL, gui->MI_EXCHANGE, gui->MI_GETMAIL, gui->MI_CSINGLE, NULL);
 }
 
@@ -232,7 +233,12 @@ void MA_ChangeSelected(BOOL forceUpdate)
 
   // deal with the toolbar
   if(gui->TO_TOOLBAR)
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet,MUIV_Toolbar_Set_Ghosted, !folderEnabled || (!active && numSelected == 0), 0,1,2,3,4,7,8,13, -1);
+  {
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !folderEnabled || (!active && numSelected == 0), 0,1,2,3,4,7,8,16, -1);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !folderEnabled || isSpamFolder(fo), 1,6,7,8, -1);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !folderEnabled || !C->SpamFilterEnabled || !mail || hasStatusSpam(mail), 10, -1);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !folderEnabled || !C->SpamFilterEnabled || !mail || hasStatusHam(mail), 11, -1);
+  }
 
   // enable/disable menu items
   if(isOutgoingFolder(fo))
@@ -249,12 +255,14 @@ void MA_ChangeSelected(BOOL forceUpdate)
   }
 
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, (active || numSelected > 0) && folderEnabled,
-                   gui->MI_MOVE, gui->MI_DELETE, gui->MI_GETADDRESS, gui->MI_FORWARD, gui->MI_STATUS,
-                   gui->MI_EXPMSG, gui->MI_COPY, gui->MI_PRINT, gui->MI_SAVE, gui->MI_CHSUBJ, gui->MI_READ, gui->MI_REPLY, gui->MI_EDIT, NULL);
+                   gui->MI_READ, gui->MI_MOVE, gui->MI_DELETE, gui->MI_GETADDRESS, gui->MI_STATUS, gui->MI_EXPMSG, gui->MI_COPY, gui->MI_PRINT, gui->MI_SAVE, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, (active || numSelected > 0) && folderEnabled && !isSpamFolder(fo),
+                   gui->MI_FORWARD, gui->MI_CHSUBJ, gui->MI_NEW, gui->MI_REPLY, gui->MI_EDIT, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled, gui->MI_FILTER, gui->MI_UPDINDEX, gui->MI_IMPORT, gui->MI_EXPORT, gui->MI_SELECT, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, isOutgoingFolder(fo) && (active || numSelected > 0), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isSentMailFolder(fo) && (active || numSelected > 0), gui->MI_TOREAD, gui->MI_TOUNREAD, gui->MI_ALLTOREAD, gui->MI_BOUNCE, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, hasattach && (active || numSelected > 0), gui->MI_ATTACH, gui->MI_SAVEATT, gui->MI_REMATT, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && C->SpamFilterEnabled && mail && !hasStatusSpam(mail), gui->MI_TOSPAM, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && C->SpamFilterEnabled && mail && !hasStatusHam(mail), gui->MI_TOHAM, NULL);
 
   LEAVE();
 }
@@ -437,6 +445,9 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   if(hasStatusDeleted(mail))    *ptr++ = SCHAR_DELETED;
   if(hasStatusMarked(mail))     *ptr++ = SCHAR_MARKED;
   if(hasStatusError(mail))      *ptr++ = SCHAR_ERROR;
+  if(hasStatusUserSpam(mail))   *ptr++ = SCHAR_USERSPAM;
+  if(hasStatusAutoSpam(mail))   *ptr++ = SCHAR_AUTOSPAM;
+  if(hasStatusHam(mail))        *ptr++ = SCHAR_HAM;
   if(getPERValue(mail) > 0)     *ptr++ = '0'+getPERValue(mail);
 
   *ptr = '\0'; // NUL terminate it
@@ -595,7 +606,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet)
 
   ENTER();
 
-  if(C->RemoveAtOnce || isDeletedFolder(mailFolder) || forceatonce)
+  if(C->RemoveAtOnce || isDeletedFolder(mailFolder) || isSpamFolder(mailFolder) || forceatonce)
   {
     int i;
 
@@ -733,6 +744,16 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
     // the outgoing folder
     if(isOutgoingFolder(to) && hasStatusSent(newMail))
       setStatusToQueued(newMail);
+
+    // if we are moving a non-spam mail to the spam folder then this one will be marked as spam
+    if (C->SpamFilterEnabled)
+    {
+      if (isSpamFolder(to) && !hasStatusSpam(newMail) && C->SpamMarkOnMove)
+      {
+        BayesFilterSetClassification(newMail, BC_SPAM);
+        setStatusToUserSpam(newMail);
+      }
+    }
 
     RETURN(newMail);
     return newMail;
@@ -886,7 +907,7 @@ char *MA_ToStatusHeader(struct Mail *mail)
 // to "X-Status:" headerline flags
 char *MA_ToXStatusHeader(struct Mail *mail)
 {
-  static char flags[6]; // should not be more than 5+1 bytes
+  static char flags[10]; // should not be more than 9+1 bytes
   char *ptr = flags;
 
   if(hasStatusRead(mail))
@@ -903,6 +924,15 @@ char *MA_ToXStatusHeader(struct Mail *mail)
 
   if(hasStatusHold(mail))
     *ptr++ = 'T';
+
+  if(hasStatusUserSpam(mail))
+    *ptr++ = 'X';
+
+  if(hasStatusAutoSpam(mail))
+    *ptr++ = 'J';
+
+  if(hasStatusHam(mail))
+    *ptr++ = 'Y';
 
   // NUL terminate it
   *ptr = '\0';
@@ -968,6 +998,24 @@ unsigned int MA_FromXStatusHeader(char *xstatusflags)
 
       case 'T':
         SET_FLAG(sflags, SFLAG_HOLD);
+      break;
+
+      case 'X':
+        SET_FLAG(sflags, SFLAG_USERSPAM);
+        CLEAR_FLAG(sflags, SFLAG_AUTOSPAM);
+        CLEAR_FLAG(sflags, SFLAG_HAM);
+      break;
+
+      case 'J':
+        SET_FLAG(sflags, SFLAG_AUTOSPAM);
+        CLEAR_FLAG(sflags, SFLAG_USERSPAM);
+        CLEAR_FLAG(sflags, SFLAG_HAM);
+      break;
+
+      case 'Y':
+        SET_FLAG(sflags, SFLAG_HAM);
+        CLEAR_FLAG(sflags, SFLAG_USERSPAM);
+        CLEAR_FLAG(sflags, SFLAG_AUTOSPAM);
       break;
     }
 
@@ -1255,8 +1303,10 @@ static char *MA_AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
   if(*sbuf)
     sbuf = StrBufCat(sbuf, ", ");
 
-  LEAVE();
-  return StrBufCat(sbuf, ins);
+  sbuf = StrBufCat(sbuf, ins);
+
+  RETURN(sbuf);
+  return sbuf;
 }
 
 ///
@@ -2682,7 +2732,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    set(lv, MUIA_NList_Quiet, FALSE);
    free(mlist);
 
-   if (delatonce || C->RemoveAtOnce || folder == delfolder)
+   if (delatonce || C->RemoveAtOnce || folder == delfolder || isSpamFolder(folder))
    {
       AppendLogNormal(20, GetStr(MSG_LOG_Deleting), selected, folder->Name);
    }
@@ -2703,6 +2753,65 @@ HOOKPROTONHNO(MA_DeleteMessageFunc, void, int *arg)
    MA_DeleteMessage(delatonce, FALSE);
 }
 MakeHook(MA_DeleteMessageHook, MA_DeleteMessageFunc);
+
+///
+/// MA_ClassifyMessage
+//  Classifies a message and moves it to spam folder if spam
+void MA_ClassifyMessage(enum BayesClassification class)
+{
+   struct Mail **mlist, *mail;
+   int i, selected;
+   APTR lv = G->MA->GUI.PG_MAILLIST;
+   struct Folder *spamfolder = FO_GetFolderByType(FT_SPAM, NULL), *folder = FO_GetCurrentFolder();
+
+   if(!folder || !spamfolder) return;
+
+   if (!(mlist = MA_CreateMarkedList(lv, FALSE))) return;
+   selected = (int)*mlist;
+   set(lv, MUIA_NList_Quiet, TRUE);
+
+   BusyGauge(GetStr(MSG_BusyMoving), itoa(selected), selected);
+   for (i = 0; i < selected; i++)
+   {
+      mail = mlist[i+2];
+
+      if(!hasStatusSpam(mail) && class == BC_SPAM)
+      {
+          // mark the mail as spam
+          AppendLogVerbose(90, GetStr(MSG_LOG_MAILISSPAM), AddrName(mail->From), mail->Subject);
+          BayesFilterSetClassification(mail, BC_SPAM);
+          setStatusToUserSpam(mail);
+          // move the mail
+          MA_MoveCopySingle(mail, folder, spamfolder, FALSE);
+      }
+      else if(!hasStatusHam(mail) && class == BC_HAM)
+      {
+          // mark the mail as ham
+          AppendLogVerbose(90, GetStr(MSG_LOG_MAILISNOTSPAM), AddrName(mail->From), mail->Subject);
+          BayesFilterSetClassification(mail, BC_HAM);
+          setStatusToHam(mail);
+      }
+
+      BusySet(i+1);
+   }
+   BusyEnd();
+   set(lv, MUIA_NList_Quiet, FALSE);
+   free(mlist);
+
+   AppendLogNormal(22, GetStr(MSG_LOG_Moving), selected, folder->Name, spamfolder->Name);
+   DisplayStatistics(spamfolder, FALSE);
+
+   DisplayStatistics(NULL, TRUE);
+   MA_ChangeSelected(FALSE);
+}
+
+///
+/// MA_ClassifyMessageFunc
+HOOKPROTONHNO(MA_ClassifyMessageFunc, void, int *arg)
+{
+   MA_ClassifyMessage(arg[0]);
+}
+MakeHook(MA_ClassifyMessageHook, MA_ClassifyMessageFunc);
 
 ///
 /// MA_DelKey
@@ -3057,7 +3166,18 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
             if(isDeletedFolder(folder) ||
                (!hasStatusNew(mail) && hasStatusRead(mail)))
             {
-              MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE);
+              next = mail->Next;
+              today.ds_Days = today_days - flist[f]->MaxAge;
+
+              if (CompareDates(&today, &(mail->Date)) < 0)
+              {
+                if(isDeletedFolder(flist[f]) ||
+                   isSpamFolder(flist[f]) ||
+                   (!hasStatusNew(mail) && hasStatusRead(mail)))
+                {
+                  MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE);
+                }
+              }
             }
           }
         }
@@ -4127,6 +4247,9 @@ struct MA_ClassData *MA_New(void)
         { MSG_MA_TBReply,    MSG_HELP_MA_BT_REPLY      },
         { MSG_MA_TBForward,  MSG_HELP_MA_BT_FORWARD    },
         { MSG_Space,         NULL                      },
+        { MSG_MA_TBSPAM,     MSG_HELP_MA_BT_SPAM       },
+        { MSG_MA_TBNOTSPAM,  MSG_HELP_MA_BT_NOTSPAM    },
+        { MSG_Space,         NULL                      },
         { MSG_MA_TBGetMail,  MSG_HELP_MA_BT_POPNOW     },
         { MSG_MA_TBSendAll,  MSG_HELP_MA_BT_SENDALL    },
         { MSG_Space,         NULL                      },
@@ -4200,7 +4323,7 @@ struct MA_ClassData *MA_New(void)
             End,
             MUIA_Family_Child, data->GUI.MI_EXPMSG = MakeMenuitem(GetStr(MSG_MESSAGE_EXPORT), MMEN_EXPMSG),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MESSAGE_NEW), MMEN_NEW),
+            MUIA_Family_Child, data->GUI.MI_NEW = MakeMenuitem(GetStr(MSG_MESSAGE_NEW), MMEN_NEW),
             MUIA_Family_Child, data->GUI.MI_REPLY = MakeMenuitem(GetStr(MSG_MESSAGE_REPLY), MMEN_REPLY),
             MUIA_Family_Child, data->GUI.MI_FORWARD = MakeMenuitem(GetStr(MSG_MESSAGE_FORWARD), MMEN_FORWARD),
             MUIA_Family_Child, data->GUI.MI_BOUNCE = MakeMenuitem(GetStr(MSG_MESSAGE_BOUNCE), MMEN_BOUNCE),
@@ -4218,6 +4341,8 @@ struct MA_ClassData *MA_New(void)
                MUIA_Family_Child, data->GUI.MI_TOREAD = MakeMenuitem(GetStr(MSG_MA_ToRead), MMEN_TOREAD),
                MUIA_Family_Child, data->GUI.MI_TOHOLD = MakeMenuitem(GetStr(MSG_MA_ToHold), MMEN_TOHOLD),
                MUIA_Family_Child, data->GUI.MI_TOQUEUED = MakeMenuitem(GetStr(MSG_MA_ToQueued), MMEN_TOQUEUED),
+               MUIA_Family_Child, data->GUI.MI_TOSPAM = MakeMenuitem(GetStr(MSG_MA_TOSPAM), MMEN_TOSPAM),
+               MUIA_Family_Child, data->GUI.MI_TOHAM = MakeMenuitem(GetStr(MSG_MA_TONOTSPAM), MMEN_TOHAM),
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
                MUIA_Family_Child, data->GUI.MI_ALLTOREAD = MakeMenuitem(GetStr(MSG_MA_ALLTOREAD), MMEN_ALLTOREAD),
             End,
@@ -4369,6 +4494,8 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOMARKED  ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetStatusToHook, SFLAG_MARKED, SFLAG_NONE);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOUNMARKED,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetStatusToHook, SFLAG_NONE,   SFLAG_MARKED);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ALLTOREAD ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOSPAM    ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&MA_ClassifyMessageHook, BC_SPAM);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOHAM     ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&MA_ClassifyMessageHook, BC_HAM);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_CONFIG    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&CO_OpenHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_USER      ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&US_OpenHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_MUI       ,MUIV_Notify_Application  ,2,MUIM_Application_OpenConfigWindow,0);
@@ -4391,12 +4518,14 @@ struct MA_ClassData *MA_New(void)
             DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify, 6, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,4,MUIM_CallHook,&MA_NewMessageHook,NEW_NEW,MUIV_Toolbar_Qualifier);
             DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify, 7, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,4,MUIM_CallHook,&MA_NewMessageHook,NEW_REPLY,MUIV_Toolbar_Qualifier);
             DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify, 8, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,4,MUIM_CallHook,&MA_NewMessageHook,NEW_FORWARD,MUIV_Toolbar_Qualifier);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,10, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,9,MUIM_Application_PushMethod,G->App,5,MUIM_CallHook,&MA_PopNowHook,POP_USER,-1,MUIV_Toolbar_Qualifier);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,7,MUIM_Application_PushMethod,G->App,3,MUIM_CallHook,&MA_SendHook,SEND_ALL);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,13, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,4,MUIM_CallHook,&ApplyFiltersHook,APPLY_USER,MUIV_Toolbar_Qualifier);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,14, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&FI_OpenHook);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,15, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,3,MUIM_CallHook,&AB_OpenHook,ABM_EDIT);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,16, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&CO_OpenHook);
+            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,10, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,3,MUIM_CallHook,&MA_ClassifyMessageHook,BC_SPAM);
+            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,3,MUIM_CallHook,&MA_ClassifyMessageHook,BC_HAM);
+            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,13, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,9,MUIM_Application_PushMethod,G->App,5,MUIM_CallHook,&MA_PopNowHook,POP_USER,-1,MUIV_Toolbar_Qualifier);
+            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,14, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,7,MUIM_Application_PushMethod,G->App,3,MUIM_CallHook,&MA_SendHook,SEND_ALL);
+            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,16, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,4,MUIM_CallHook,&ApplyFiltersHook,APPLY_USER,MUIV_Toolbar_Qualifier);
+            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,17, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&FI_OpenHook);
+            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,18, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,3,MUIM_CallHook,&AB_OpenHook,ABM_EDIT);
+            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,19, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&CO_OpenHook);
          }
 
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_DoubleClick   ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_FolderClickHook);

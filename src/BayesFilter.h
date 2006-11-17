@@ -1,5 +1,5 @@
-#ifndef YAM_GLOBAL_H
-#define YAM_GLOBAL_H
+#ifndef BAYES_FILTER_H
+#define BAYES_FILTER_H 1
 
 /***************************************************************************
 
@@ -28,25 +28,27 @@
 
 ***************************************************************************/
 
-extern const char* const FolderNames[5];
-extern const char* const months[12];
-extern const char* const SecCodes[5];
-extern const char* const SigNames[3];
-extern const char* const wdays[7];
-extern const char* const yamversion;
-extern const char* const yamversionver;
-extern const char* const yamversionstring;
-extern const char* const yamverxmailer;
-extern const char* const yambuildid;
-extern const char* const yamversiondate;
-extern const char* const yamcopyright;
-extern const char* const yamfullcopyright;
-extern const char* const yamcompiler;
-extern const unsigned long yamversiondays;
-extern struct WBStartup * WBmsg;
+#include "YAM.h"
+#include "YAM_mainFolder.h"
 
-// transforms a define into a string
-#define STR(x)  STR2(x)
-#define STR2(x) #x
+enum BayesClassification {
+    BC_SPAM = 0,
+    BC_HAM,
+    BC_OTHER,
+};
 
-#endif /* YAM_GLOBAL_H */
+#define DEFAULT_SPAM_PROBABILITY_THRESHOLD                  99
+#define DEFAULT_FLUSH_TRAINING_DATA_INTERVAL                (15 * 60)
+#define DEFAULT_FLUSH_TRAINING_DATA_THRESHOLD               50
+
+BOOL BayesFilterInit(void);
+void BayesFilterCleanup(void);
+BOOL BayesFilterClassifyMessage(struct Mail *mail);
+void BayesFilterSetClassification(struct Mail *mail, enum BayesClassification newClass);
+ULONG BayesFilterNumberOfSpamClassifiedMails(void);
+ULONG BayesFilterNumberOfHamClassifiedMails(void);
+void BayesFilterFlushTrainingData(void);
+void BayesFilterResetTrainingData(void);
+
+#endif /* BAYES_FILTER_H */
+

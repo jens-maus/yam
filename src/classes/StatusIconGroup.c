@@ -138,7 +138,8 @@ OVERLOAD(OM_NEW)
     { SICON_ID_REPORT,   "status_report" },
     { SICON_ID_CRYPT,    "status_crypt" },
     { SICON_ID_SIGNED,   "status_signed" },
-    { SICON_ID_MARK,     "status_mark" }
+    { SICON_ID_MARK,     "status_mark" },
+    { SICON_ID_SPAM,     "status_spam" }
   };
   Object *statusIcon[MAX_STATUSIMG];
   unsigned int i;
@@ -299,6 +300,10 @@ DECLARE(Update) // struct Mail *mail
     // StatusGroup 8 (Forwarded status)
     if(hasStatusForwarded(mail) && data->statusIcon[SICON_ID_FORWARD])
       DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_FORWARD]);
+
+    // StatusGroup 9(Spam status)
+    if(hasStatusSpam(mail) && data->statusIcon[SICON_ID_SPAM])
+      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_SPAM]);
   }
 
   // signal that we have added/modified the status Group successfully

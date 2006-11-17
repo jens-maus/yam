@@ -87,6 +87,7 @@
 
 #include "ImageCache.h"
 #include "UpdateCheck.h"
+#include "BayesFilter.h"
 
 #include "classes/Classes.h"
 
@@ -562,6 +563,18 @@ static void TC_Dispatcher(enum TimerIO tio)
     }
     break;
 
+    case TIO_SPAMFLUSHTRAININGDATA:
+    {
+      D(DBF_TIMERIO, "timer[%ld]: TIO_SPAMFLUSHTRAININGDATA received: %s", tio, dateString);
+
+      BusyText(GetStr(MSG_BUSYFLUSHINGSPAMTRAININGDATA), "");
+      BayesFilterFlushTrainingData();
+      BusyEnd();
+
+      TC_Prepare(tio, C->SpamFlushTrainingDataInterval, 0);
+    }
+    break;
+
     // dummy to please GCC
     case TIO_NUM:
       // nothing
@@ -793,7 +806,10 @@ static void FreeXPKPackerList(void)
   ENTER();
 
   if(IsMinListEmpty(&G->xpkPackerList) == TRUE)
+  {
+    LEAVE();
     return;
+  }
 
   // Now we process the read header to set all flags accordingly
   for(curNode = G->xpkPackerList.mlh_Head; curNode->mln_Succ;)
@@ -986,6 +1002,9 @@ static void Terminate(void)
   int i;
 
   ENTER();
+
+  D(DBF_STARTUP, "freeing spam filter module...");
+  BayesFilterCleanup();
 
   D(DBF_STARTUP, "freeing config module...");
   if(G->CO)
@@ -1532,6 +1551,12 @@ static void Initialise2(void)
    if(!FO_GetFolderByType(FT_DELETED ,NULL))
      newfolders |= FO_CreateFolder(FT_DELETED , FolderNames[3], GetStr(MSG_MA_Deleted));
 
+   if (C->SpamFilterEnabled)
+   {
+     if(!FO_GetFolderByType(FT_SPAM    ,NULL))
+       newfolders |= FO_CreateFolder(FT_SPAM  , FolderNames[4], GetStr(MSG_MA_SPAM));
+   }
+
    if(newfolders)
    {
       set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible);
@@ -1540,6 +1565,9 @@ static void Initialise2(void)
 
    SplashProgress(GetStr(MSG_RebuildIndices), 60);
    MA_UpdateIndexes(TRUE);
+
+   SplashProgress(GetStr(MSG_LOADINGSPAMTRAININGDATA), 70);
+   BayesFilterInit();
 
    SplashProgress(GetStr(MSG_LoadingFolders), 75);
    for(i = 0; ;i++)
@@ -1582,10 +1610,11 @@ static void Initialise2(void)
       // directory and it is one of our standard folders we have to check which image we put in front of it
       if(folder->imageObject == NULL)
       {
-        if(isIncomingFolder(folder))      folder->ImageIndex = (folder->New+folder->Unread) ? 3 : 2;
-        else if(isOutgoingFolder(folder)) folder->ImageIndex = (folder->Total > 0) ? 5 : 4;
-        else if(isDeletedFolder(folder))  folder->ImageIndex = (folder->Total > 0) ? 7 : 6;
-        else if(isSentFolder(folder))     folder->ImageIndex = 8;
+        if(isIncomingFolder(folder))      folder->ImageIndex = (folder->New+folder->Unread) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
+        else if(isOutgoingFolder(folder)) folder->ImageIndex = (folder->Total > 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
+        else if(isDeletedFolder(folder))  folder->ImageIndex = (folder->Total > 0) ? FICON_ID_DELETED_NEW : FICON_ID_DELETED;
+        else if(isSentFolder(folder))     folder->ImageIndex = FICON_ID_SENT;
+        else if(isSpamFolder(folder))     folder->ImageIndex = (folder->Total > 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
         else folder->ImageIndex = -1;
       }
 
@@ -2390,6 +2419,9 @@ int main(int argc, char **argv)
       TC_Start(TIO_CHECKMAIL);
       TC_Start(TIO_AUTOSAVE);
 
+      TC_Prepare(TIO_SPAMFLUSHTRAININGDATA, C->SpamFlushTrainingDataInterval, 0);
+      TC_Start(TIO_SPAMFLUSHTRAININGDATA);
+
       // initialize the automatic UpdateCheck facility and schedule an
       // automatic update check during startup if necessary
       InitUpdateCheck(TRUE);
@@ -2469,6 +2501,9 @@ int main(int argc, char **argv)
 
                 if(TCData.timer[TIO_UPDATECHECK].isPrepared)
                   TC_Start(TIO_UPDATECHECK);
+
+                if(TCData.timer[TIO_SPAMFLUSHTRAININGDATA].isPrepared)
+                  TC_Start(TIO_SPAMFLUSHTRAININGDATA);
               }
               else
                 W(DBF_TIMERIO, "timer signal received, but no timer request was processed!!!");

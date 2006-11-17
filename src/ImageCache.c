@@ -61,18 +61,19 @@ static const char *imageFileArray[MAX_IMAGES] =
   "status_waitsend", "status_error",  "status_hold",     "status_sent",
   "status_new",      "status_delete", "status_download", "status_group",
   "status_urgent",   "status_attach", "status_report",   "status_crypt",
-  "status_signed",   "status_mark",
+  "status_signed",   "status_mark",   "status_spam",
 
   // Default images for the folder list
   "folder_fold",     "folder_unfold",       "folder_incoming", "folder_incoming_new",
   "folder_outgoing", "folder_outgoing_new", "folder_deleted",  "folder_deleted_new",
-  "folder_sent",
+  "folder_sent",     "folder_spam",         "folder_spam_new",
 
   // Images for the YAM configuration window
   "config_firststep", "config_firststep_big",
   "config_network",   "config_network_big",
   "config_newmail",   "config_newmail_big",
   "config_filters",   "config_filters_big",
+  "config_spam",      "config_spam_big",
   "config_read",      "config_read_big",
   "config_write",     "config_write_big",
   "config_answer",    "config_answer_big",
@@ -84,7 +85,7 @@ static const char *imageFileArray[MAX_IMAGES] =
   "config_abook",     "config_abook_big",
   "config_scripts",   "config_scripts_big",
   "config_misc",      "config_misc_big",
-  "config_update",    "config_update_big"
+  "config_update",    "config_update_big",
 };
 
 ///
@@ -313,7 +314,7 @@ struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr)
           node->height = bmhd->bmh_Height;
         }
         else
-          W(DBF_IMAGE, "couldn't found BitMap header of file '%s'", filename);
+          W(DBF_IMAGE, "couldn't find BitMap header of file '%s'", filename);
 
         node->filename = strdup(filename);
         node->scr = (struct Screen *)scr;
@@ -346,7 +347,7 @@ void DisposeImage(struct imageCacheNode *node)
     D(DBF_IMAGE, "reduced open count of image '%s' : %d", node->filename != NULL ? node->filename : "<NULL>", node->openCount);
   }
   else
-    W(DBF_IMAGE, "couldn't reduce opencount of imageCacheNode 0x%08lx/openCount=%d", node, node ? (int)node->openCount : -1);
+    W(DBF_IMAGE, "couldn't reduce opencount of imageCacheNode 0x%08lx (%s)/openCount=%d", node, (node && node->filename) ? node->filename : "<NULL>", node ? (int)node->openCount : -1);
 
   LEAVE();
 }

@@ -827,6 +827,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
       case 'N':
       default:
         *statusPartPtr++ = SCHAR_NEW;
+      break;
     }
 
     // now we check if second char is present and if we set the mailfag
@@ -1769,6 +1770,18 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
 
               case SCHAR_ERROR:
                 SET_FLAG(mail->sflags, SFLAG_ERROR);
+              break;
+
+              case SCHAR_USERSPAM:
+                SET_FLAG(mail->sflags, SFLAG_USERSPAM);
+              break;
+
+              case SCHAR_AUTOSPAM:
+                SET_FLAG(mail->sflags, SFLAG_AUTOSPAM);
+              break;
+
+              case SCHAR_HAM:
+                SET_FLAG(mail->sflags, SFLAG_HAM);
               break;
             }
           }

@@ -57,6 +57,7 @@
 #include "YAM_read.h"
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
+#include "BayesFilter.h"
 
 #include "Debug.h"
 
@@ -90,7 +91,8 @@ const int Mode2Group[12] = { 0,0,0,0,1,2,1,2,4,4,4,3 };
 // H - Hold
 // S - Sent
 // M - Marked/Flagged
-const char mailStatusCycleMap[10] = { 'U', 'O', 'F', 'R', 'W', 'E', 'H', 'S', 'M', '\0' };
+// X - Spam
+const char mailStatusCycleMap[11] = { 'U', 'O', 'F', 'R', 'W', 'E', 'H', 'S', 'M', 'X', '\0' };
 
 ///
 /// FI_MatchString
@@ -633,6 +635,10 @@ BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
           case 'M':
             statusFound = hasStatusMarked(mail);
           break;
+
+          case 'X':
+            statusFound = hasStatusSpam(mail);
+          break;
         }
 
         if((search->Compare == 0 && statusFound == TRUE) ||
@@ -640,6 +646,16 @@ BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
         {
           found = TRUE;
         }
+      }
+      break;
+
+      case SM_SPAM:
+      {
+        D(DBF_FILTER, "search for spam");
+      	if(C->SpamFilterEnabled && BayesFilterClassifyMessage(mail))
+      	{
+      	  found = TRUE;
+      	}
       }
       break;
    }
@@ -1093,13 +1109,13 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
         if(rule->search == NULL &&
            (rule->search = calloc(1, sizeof(struct Search))))
         {
-          int stat = 9;
+          int stat = sizeof(mailStatusCycleMap);
 
           // we check the status field first and if we find a match
           // we can immediatly break up here because we don`t need to prepare the search
           if(rule->searchMode == SM_STATUS)
           {
-            for(stat=0; stat <= 8; stat++)
+            for(stat=0; stat <= (int)sizeof(mailStatusCycleMap) - 1; stat++)
             {
               if(*rule->matchPattern == mailStatusCycleMap[stat])
                 break;
@@ -1306,6 +1322,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
       for(m = 0; m < (int)*mlist; m++)
       {
         struct MinNode *curNode;
+        BOOL tryNext;
 
         mail = mlist[m+2];
 
@@ -1314,19 +1331,71 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 
         G->RRs.Checked++;
 
-        // now we process the search
-        for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+		// first check for spam by status
+        tryNext = TRUE;
+		if (C->SpamFilterEnabled && C->SpamFilterForNewMail)
         {
-          struct FilterNode *filter = (struct FilterNode *)curNode;
+          struct Folder *spamFolder;
+          struct Search spamStatusSearch;
+          struct RuleNode spamStatusRule;
+          struct FilterNode spamStatusFilter;
 
-          if(DoFilterSearch(filter, mail))
+          spamFolder = FO_GetFolderByType(FT_SPAM, NULL);
+
+          memset(&spamStatusSearch, 0, sizeof(spamStatusSearch));
+          spamStatusSearch.Mode = SM_STATUS;
+          spamStatusSearch.Status = 'X';
+
+          memset(&spamStatusRule, 0, sizeof(spamStatusRule));
+          spamStatusRule.search = &spamStatusSearch;
+          spamStatusRule.combine = CB_NONE;
+          spamStatusRule.searchMode = SM_STATUS;
+          spamStatusRule.subSearchMode = SSM_ADDRESS;
+          spamStatusRule.comparison = CP_INPUT;
+          spamStatusRule.caseSensitive = FALSE;
+          spamStatusRule.subString = FALSE;
+          strlcpy(spamStatusRule.matchPattern, "#?", sizeof(spamStatusRule.matchPattern));
+          spamStatusRule.customField[0] = '\0';
+
+          memset(&spamStatusFilter, 0, sizeof(spamStatusFilter));
+          spamStatusFilter.actions = FA_MOVE;
+          spamStatusFilter.remote = FALSE;
+          spamStatusFilter.applyToNew = TRUE;
+          spamStatusFilter.applyOnReq = FALSE;
+          spamStatusFilter.applyToSent = FALSE;
+          strlcpy(spamStatusFilter.moveTo, spamFolder->Name, sizeof(spamStatusFilter.moveTo));
+          NewList((struct List *)&spamStatusFilter.ruleList);
+          AddTail((struct List *)&spamStatusFilter.ruleList, (struct Node *)&spamStatusRule);
+
+          if (DoFilterSearch(&spamStatusFilter, mail))
           {
-            matches++;
+  		    matches++;
 
             // if ExecuteFilterAction return FALSE then the filter search should be aborted
             // completley
-            if(ExecuteFilterAction(filter, mail) == FALSE)
-              break;
+	  	    if(ExecuteFilterAction(&spamStatusFilter, mail) == FALSE)
+	  	    {
+	  	      tryNext = FALSE;
+	  	    }
+          }
+		}
+
+        if(tryNext)
+        {
+          // now we process the search
+          for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          {
+            struct FilterNode *filter = (struct FilterNode *)curNode;
+
+            if(DoFilterSearch(filter, mail))
+            {
+              matches++;
+
+              // if ExecuteFilterAction return FALSE then the filter search should be aborted
+              // completley
+              if(ExecuteFilterAction(filter, mail) == FALSE)
+                break;
+            }
           }
         }
 

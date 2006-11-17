@@ -188,7 +188,8 @@ struct Folder *FO_GetFolderRexx(char *arg, int *pos)
              (!stricmp(arg, "incoming")     && isIncomingFolder(flist[i]))  ||
              (!stricmp(arg, "outgoing")     && isOutgoingFolder(flist[i]))  ||
              (!stricmp(arg, "sent")         && isSentFolder(flist[i]))      ||
-             (!stricmp(arg, "deleted")      && isDeletedFolder(flist[i])))
+             (!stricmp(arg, "deleted")      && isDeletedFolder(flist[i]))   ||
+             (!stricmp(arg, "spam")         && isSpamFolder(flist[i])))
           {
             nr = i;
             break;
@@ -526,6 +527,7 @@ BOOL FO_LoadTree(char *fname)
                      else if(stricmp(folderpath, FolderNames[1]) == 0) fo.Type = FT_OUTGOING;
                      else if(stricmp(folderpath, FolderNames[2]) == 0) fo.Type = FT_SENT;
                      else if(stricmp(folderpath, FolderNames[3]) == 0) fo.Type = FT_DELETED;
+                     else if(stricmp(folderpath, FolderNames[4]) == 0) fo.Type = FT_SPAM;
 
                      // Save the config now because it could be changed in the meantime
                      if(!FO_SaveConfig(&fo))
@@ -547,10 +549,11 @@ BOOL FO_LoadTree(char *fname)
                   {
                     // we cannot find out if there is new/unread mail in the folder,
                     // so we initialize the folder with the std ImageIndex.
-                    if(isIncomingFolder(&fo))      fo.ImageIndex = 2;
-                    else if(isOutgoingFolder(&fo)) fo.ImageIndex = 4;
-                    else if(isDeletedFolder(&fo))  fo.ImageIndex = 6;
-                    else if(isSentFolder(&fo))     fo.ImageIndex = 8;
+                    if(isIncomingFolder(&fo))      fo.ImageIndex = FICON_ID_INCOMING;
+                    else if(isOutgoingFolder(&fo)) fo.ImageIndex = FICON_ID_OUTGOING;
+                    else if(isDeletedFolder(&fo))  fo.ImageIndex = FICON_ID_DELETED;
+                    else if(isSentFolder(&fo))     fo.ImageIndex = FICON_ID_SENT;
+                    else if(isSpamFolder(&fo))     fo.ImageIndex = FICON_ID_SPAM;
                     else fo.ImageIndex = -1; // or with -1 for a non std folder.
                   }
 

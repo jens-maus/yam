@@ -112,6 +112,7 @@ void SetupDebug(void)
       { "image",    DBF_IMAGE   },
       { "update",   DBF_UPDATE  },
       { "html",     DBF_HTML    },
+      { "spam",     DBF_SPAM    },
       { "all",      DBF_ALL     },
       { NULL,       0           }
     };

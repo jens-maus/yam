@@ -53,11 +53,12 @@ enum TimerIO { TIO_WRINDEX=0,
                TIO_PROCESSQUICKSEARCH,
                TIO_POP3_KEEPALIVE,
                TIO_UPDATECHECK,
+               TIO_SPAMFLUSHTRAININGDATA,
                TIO_NUM
              };
 
 /*** Global Structure ***/
-struct Global 
+struct Global
 {
    // pointers first
    Object *                 App;

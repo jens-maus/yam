@@ -30,6 +30,8 @@
 
 #include "MainMailList_cl.h"
 
+#include "BayesFilter.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -123,6 +125,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 
       // then we add the 2. level if icons with the additional mail information
       // like importance, signed/crypted, report and attachment information
+      if(hasStatusSpam(entry))                   strlcat(dispsta, SICON_SPAM, sizeof(dispsta));
       if(getImportanceLevel(entry) == IMP_HIGH)  strlcat(dispsta, SICON_URGENT, sizeof(dispsta));
       if(isMP_CryptedMail(entry))                strlcat(dispsta, SICON_CRYPT, sizeof(dispsta));
       else if(isMP_SignedMail(entry))            strlcat(dispsta, SICON_SIGNED, sizeof(dispsta));
@@ -143,7 +146,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
         static char dispfro[SIZE_DEFAULT];
         BOOL toPrefix = FALSE;
 
-        if(((isCustomMixedFolder(entry->Folder) || isDeletedFolder(entry->Folder)) &&
+        if(((isCustomMixedFolder(entry->Folder) || isDeletedFolder(entry->Folder) || isSpamFolder(entry->Folder)) &&
             (hasStatusSent(entry) || hasStatusQueued(entry) || hasStatusHold(entry) ||
              hasStatusError(entry))) || (searchWinHook && isSentMailFolder(entry->Folder)))
         {
@@ -248,7 +251,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
       array[1] = (STRPTR)GetStr(MSG_To);
       array[7] = (STRPTR)GetStr(MSG_DATE_SENT);
     }
-    else if(searchWinHook || isCustomMixedFolder(folder) || isDeletedFolder(folder))
+    else if(searchWinHook || isCustomMixedFolder(folder) || isDeletedFolder(folder) || isSpamFolder(folder))
     {
       array[1] = (STRPTR)GetStr(MSG_FROMTO);
       array[7] = (STRPTR)GetStr(MSG_DATE_SNTRCVD);
@@ -469,6 +472,7 @@ OVERLOAD(OM_NEW)
   data->statusImage[SICON_ID_CRYPT]    = MakeImageObject("status_crypt");
   data->statusImage[SICON_ID_SIGNED]   = MakeImageObject("status_signed");
   data->statusImage[SICON_ID_MARK]     = MakeImageObject("status_mark");
+  data->statusImage[SICON_ID_SPAM]     = MakeImageObject("status_spam");
   for(i=0; i < MAX_STATUSIMG; i++)
     DoMethod(obj, MUIM_NList_UseImage, data->statusImage[i], i, MUIF_NONE);
 
@@ -601,6 +605,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToRead),     MUIA_Menuitem_Enabled, mail && !isSentMail,MUIA_UserData, MMEN_TOREAD,     End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToHold),     MUIA_Menuitem_Enabled, mail && isOutBox,   MUIA_UserData, MMEN_TOHOLD,     End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToQueued),   MUIA_Menuitem_Enabled, mail && isOutBox,   MUIA_UserData, MMEN_TOQUEUED,   End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_TOSPAM),     MUIA_Menuitem_Enabled, mail && !hasStatusSpam(mail),MUIA_UserData, MMEN_TOSPAM,     End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_TONOTSPAM),  MUIA_Menuitem_Enabled, mail && !hasStatusHam(mail), MUIA_UserData, MMEN_TOHAM,      End,
         Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ALLTOREAD),  MUIA_Menuitem_Enabled, mail && !isSentMail,  MUIA_UserData, MMEN_ALLTOREAD,  End,
       End,
@@ -672,6 +678,8 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case MMEN_TOMARKED:   DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    SFLAG_MARKED,           SFLAG_NONE);                        break;
     case MMEN_TOUNMARKED: DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    SFLAG_NONE,             SFLAG_MARKED);                      break;
     case MMEN_ALLTOREAD:  DoMethod(G->App, MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ,             SFLAG_NEW);                         break;
+    case MMEN_TOSPAM:     DoMethod(G->App, MUIM_CallHook, &MA_ClassifyMessageHook, BC_SPAM); break;
+    case MMEN_TOHAM:      DoMethod(G->App, MUIM_CallHook, &MA_ClassifyMessageHook, BC_HAM); break;
     case MMEN_SAVEADDR:   DoMethod(G->App, MUIM_CallHook, &MA_GetAddressHook); break;
     case MMEN_MOVE:       DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook); break;
     case MMEN_COPY:       DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook); break;

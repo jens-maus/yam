@@ -61,7 +61,7 @@ struct FI_ClassData
 enum ApplyFilterMode  { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE, APPLY_RX_ALL, APPLY_RX };
 enum FastSearch       { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
 enum SearchMode       { SM_FROM=0, SM_TO, SM_CC, SM_REPLYTO, SM_SUBJECT, SM_DATE, SM_HEADLINE,
-                        SM_SIZE, SM_HEADER, SM_BODY, SM_WHOLE, SM_STATUS };
+                        SM_SIZE, SM_HEADER, SM_BODY, SM_WHOLE, SM_STATUS, SM_SPAM };
 enum CombineMode      { CB_NONE=0, CB_OR, CB_AND, CB_XOR };
 enum SubSearchMode    { SSM_ADDRESS=0, SSM_NAME };
 enum Comparison       { CP_EQUAL=0, CP_NOTEQUAL, CP_LOWER, CP_GREATER, CP_INPUT };
@@ -151,7 +151,7 @@ extern struct Hook FI_OpenHook;
 extern struct Hook ApplyFiltersHook;
 
 extern const int Mode2Group[12];
-extern const char mailStatusCycleMap[10];
+extern const char mailStatusCycleMap[11];
 
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode,
                       int compar, char stat, BOOL substr, const char *match, const char *field);

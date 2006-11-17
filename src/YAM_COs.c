@@ -50,6 +50,8 @@
 #include "YAM_mime.h"
 #include "YAM_utilities.h"
 
+#include "BayesFilter.h"
+
 #include "Debug.h"
 
 /***************************************************************************
@@ -494,6 +496,15 @@ void CO_SaveConfig(struct Config *co, char *fname)
       TimeVal2String(buf, sizeof(buf), &co->LastUpdateCheck, DSS_USDATETIME, TZC_NONE);
       fprintf(fh, "LastUpdateCheck  = %s\n", buf);
       fprintf(fh, "LastUpdateStatus = %d\n", co->LastUpdateStatus);
+
+      fprintf(fh, "\n[Spam filter]\n");
+      fprintf(fh, "SpamFilterEnabled = %s\n", Bool2Txt(co->SpamFilterEnabled));
+      fprintf(fh, "SpamFilterForNewMail = %s\n", Bool2Txt(co->SpamFilterForNewMail));
+      fprintf(fh, "SpamMarkOnMove = %s\n", Bool2Txt(co->SpamMarkOnMove));
+      fprintf(fh, "SpamAddressBookIsWhiteList = %s\n", Bool2Txt(co->SpamAddressBookIsWhiteList));
+      fprintf(fh, "SpamProbabilityThreshold = %d\n", co->SpamProbabilityThreshold);
+      fprintf(fh, "SpamFlushTrainingDataInterval = %d\n", co->SpamFlushTrainingDataInterval);
+      fprintf(fh, "SpamFlushTrainingDataThreshold = %d\n", co->SpamFlushTrainingDataThreshold);
 
       fprintf(fh, "\n[Advanced]\n");
       fprintf(fh, "LetterPart       = %d\n", co->LetterPart);
@@ -1069,6 +1080,13 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "UpdateServer"))   strlcpy(co->UpdateServer, value, sizeof(co->UpdateServer));
                else if (!stricmp(buffer, "LastUpdateCheck"))String2TimeVal(&co->LastUpdateCheck, value, DSS_USDATETIME, TZC_NONE);
                else if (!stricmp(buffer, "LastUpdateStatus")) co->LastUpdateStatus = atoi(value);
+/*Spam*/       else if (!stricmp(buffer, "SpamFilterEnabled")) co->SpamFilterEnabled = Txt2Bool(value);
+               else if (!stricmp(buffer, "SpamFilterForNewMail")) co->SpamFilterForNewMail = Txt2Bool(value);
+               else if (!stricmp(buffer, "SpamMarkOnMove")) co->SpamMarkOnMove = Txt2Bool(value);
+               else if (!stricmp(buffer, "SpamAddressBookIsWhiteList")) co->SpamAddressBookIsWhiteList = Txt2Bool(value);
+               else if (!stricmp(buffer, "SpamProbabilityThreshold")) co->SpamProbabilityThreshold = atoi(value);
+               else if (!stricmp(buffer, "SpamFlushTrainingDataInterval")) co->SpamFlushTrainingDataInterval = atoi(value);
+               else if (!stricmp(buffer, "SpamFlushTrainingDataThreshold")) co->SpamFlushTrainingDataThreshold = atoi(value);
 /*Advanced*/   else if (!stricmp(buffer, "LetterPart"))     { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
                else if (!stricmp(buffer, "WriteIndexes"))   co->WriteIndexes = atoi(value);
                else if (!stricmp(buffer, "SupportSite"))    strlcpy(co->SupportSite, value, sizeof(co->SupportSite));
@@ -1188,7 +1206,10 @@ void CO_GetConfig(void)
 
    switch (G->CO->VisiblePage)
    {
-      case 0:
+      case cp_AllPages:
+         break;
+
+      case cp_FirstSteps:
          GetMUIString(CE->RealName, gui->ST_REALNAME, sizeof(CE->RealName));
          GetMUIString(CE->EmailAddress, gui->ST_EMAIL, sizeof(CE->EmailAddress));
          CE->TimeZone          = MapTZ(GetMUICycle(gui->CY_TZONE), TRUE);
@@ -1196,7 +1217,8 @@ void CO_GetConfig(void)
          GetMUIString(CE->LocalCharset, gui->ST_DEFAULTCHARSET, sizeof(CE->LocalCharset));
          CE->DetectCyrillic= GetMUICheck(gui->CH_DETECTCYRILLIC);
          break;
-      case 1:
+
+      case cp_TCPIP:
          GetMUIString(CE->SMTP_Server, gui->ST_SMTPHOST, sizeof(CE->SMTP_Server));
          CE->SMTP_Port = GetMUIInteger(gui->ST_SMTPPORT);
          GetMUIString(CE->SMTP_Domain, gui->ST_DOMAIN, sizeof(CE->SMTP_Domain));
@@ -1206,7 +1228,8 @@ void CO_GetConfig(void)
          GetMUIString(CE->SMTP_AUTH_User, gui->ST_SMTPAUTHUSER, sizeof(CE->SMTP_AUTH_User));
          GetMUIString(CE->SMTP_AUTH_Pass, gui->ST_SMTPAUTHPASS, sizeof(CE->SMTP_AUTH_Pass));
          break;
-      case 2:
+
+      case cp_NewMail:
          CE->PreSelection      = GetMUICycle  (gui->CY_MSGSELECT);
          CE->TransferWindow    = GetMUICycle  (gui->CY_TRANSWIN);
          CE->AvoidDuplicates   = GetMUICheck  (gui->CH_AVOIDDUP);
@@ -1221,8 +1244,7 @@ void CO_GetConfig(void)
          GetMUIString(CE->NotifyCommand, gui->ST_NOTICMD, sizeof(CE->NotifyCommand));
          break;
 
-      // [Filters]
-      case 3:
+      case cp_Filters:
       {
         int i=0;
 
@@ -1249,7 +1271,15 @@ void CO_GetConfig(void)
       }
       break;
 
-      case 4:
+      case cp_Spam:
+         CE->SpamFilterEnabled = GetMUICheck(gui->CH_SPAMFILTERENABLED);
+         CE->SpamFilterForNewMail = GetMUICheck(gui->CH_SPAMFILTERFORNEWMAIL);
+         CE->SpamMarkOnMove = GetMUICheck(gui->CH_SPAMMARKONMOVE);
+         CE->SpamAddressBookIsWhiteList = GetMUICheck(gui->CH_SPAMABOOKISWHITELIST);
+         CE->SpamProbabilityThreshold = GetMUINumer(gui->NB_SPAMPROBTHRESHOLD);
+         break;
+
+      case cp_Read:
          CE->ShowHeader        = GetMUICycle  (gui->CY_HEADER);
          GetMUIString(CE->ShortHeaders, gui->ST_HEADERS, sizeof(CE->ShortHeaders));
          CE->ShowSenderInfo    = GetMUICycle  (gui->CY_SENDERINFO);
@@ -1270,7 +1300,8 @@ void CO_GetConfig(void)
          CE->StatusChangeDelay    = GetMUINumer  (gui->NB_DELAYEDSTATUS)*1000;
          CE->ConvertHTML       = GetMUICheck(gui->CH_CONVERTHTML);
          break;
-      case 5:
+
+      case cp_Write:
          GetMUIString(CE->ReplyTo, gui->ST_REPLYTO, sizeof(CE->ReplyTo));
          GetMUIString(CE->Organization, gui->ST_ORGAN, sizeof(CE->Organization));
          GetMUIString(CE->ExtraHeaders, gui->ST_EXTHEADER, sizeof(CE->ExtraHeaders));
@@ -1284,7 +1315,8 @@ void CO_GetConfig(void)
          CE->EmailCache        = GetMUINumer  (gui->NB_EMAILCACHE);
          CE->AutoSave          = GetMUINumer  (gui->NB_AUTOSAVE)*60; // in seconds
          break;
-      case 6:
+
+      case cp_ReplyForward:
          GetMUIString(CE->ReplyHello, gui->ST_REPLYHI, sizeof(CE->ReplyHello));
          GetMUIString(CE->ReplyIntro, gui->ST_REPLYTEXT, sizeof(CE->ReplyIntro));
          GetMUIString(CE->ReplyBye, gui->ST_REPLYBYE, sizeof(CE->ReplyBye));
@@ -1304,14 +1336,16 @@ void CO_GetConfig(void)
          CE->CompareAddress    = GetMUICheck  (gui->CH_COMPADDR);
          CE->StripSignature    = GetMUICheck  (gui->CH_STRIPSIG);
          break;
-      case 7:
+
+      case cp_Signature:
          CE->UseSignature      = GetMUICheck  (gui->CH_USESIG);
          GetMUIString(CE->TagsFile, gui->ST_TAGFILE, sizeof(CE->TagsFile));
          GetMUIString(CE->TagsSeparator, gui->ST_TAGSEP, sizeof(CE->TagsSeparator));
          if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged))
             EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig]));
          break;
-      case 8:
+
+      case cp_Lists:
          CE->FolderCols = 1; for (i = 1; i < FOCOLNUM; i++) if (GetMUICheck(gui->CH_FCOLS[i])) CE->FolderCols += (1<<i);
          CE->MessageCols = 1; for (i = 1; i < MACOLNUM; i++) if (GetMUICheck(gui->CH_MCOLS[i])) CE->MessageCols += (1<<i);
          CE->FixedFontList = GetMUICheck(gui->CH_FIXFLIST);
@@ -1325,8 +1359,7 @@ void CO_GetConfig(void)
          CE->QuickSearchBar= GetMUICheck(gui->CH_QUICKSEARCHBAR);
          break;
 
-      // [Security]
-      case 9:
+      case cp_Security:
       {
         GetMUIString(CE->PGPCmdPath, gui->ST_PGPCMD, sizeof(CE->PGPCmdPath));
         GetMUIString(CE->MyPGPID, gui->ST_MYPGPID, sizeof(CE->MyPGPID));
@@ -1339,13 +1372,13 @@ void CO_GetConfig(void)
         CE->LogAllEvents = GetMUICheck(gui->CH_LOGALL);
 
         if(GetMUICheck(gui->CH_PGPPASSINTERVAL) == TRUE)
-          CE->PGPPassInterval = GetMUINumer(gui->NM_PGPPASSINTERVAL);
+          CE->PGPPassInterval = GetMUINumer(gui->NB_PGPPASSINTERVAL);
         else
-          CE->PGPPassInterval = -GetMUINumer(gui->NM_PGPPASSINTERVAL);
+          CE->PGPPassInterval = -GetMUINumer(gui->NB_PGPPASSINTERVAL);
       }
       break;
 
-      case 10:
+      case cp_StartupQuit:
          CE->GetOnStartup      = GetMUICheck  (gui->CH_POPSTART);
          CE->SendOnStartup     = GetMUICheck  (gui->CH_SENDSTART);
          CE->CleanupOnStartup  = GetMUICheck  (gui->CH_DELETESTART);
@@ -1357,12 +1390,14 @@ void CO_GetConfig(void)
          CE->CleanupOnQuit     = GetMUICheck  (gui->CH_DELETEQUIT);
          CE->RemoveOnQuit      = GetMUICheck  (gui->CH_REMOVEQUIT);
          break;
-      case 11:
+
+      case cp_MIME:
          GetMUIString(CE->DefaultMimeViewer, gui->ST_DEFVIEWER, sizeof(CE->DefaultMimeViewer));
          GetMUIString(CE->DetachDir, gui->ST_DETACHDIR, sizeof(CE->DetachDir));
          GetMUIString(CE->AttachDir, gui->ST_ATTACHDIR, sizeof(CE->AttachDir));
          break;
-      case 12:
+
+      case cp_AddressBook:
          GetMUIString(CE->GalleryDir, gui->ST_GALLDIR, sizeof(CE->GalleryDir));
          GetMUIString(CE->MyPictureURL, gui->ST_PHOTOURL, sizeof(CE->MyPictureURL));
          GetMUIString(CE->NewAddrGroup, gui->ST_NEWGROUP, sizeof(CE->NewAddrGroup));
@@ -1371,7 +1406,11 @@ void CO_GetConfig(void)
          CE->AddMyInfo         = GetMUICheck  (gui->CH_ADDINFO);
          CE->AddrbookCols = 1; for (i = 1; i < ABCOLNUM; i++) if (GetMUICheck(gui->CH_ACOLS[i])) CE->AddrbookCols += (1<<i);
          break;
-      case 14:
+
+      case cp_Scripts:
+         break;
+
+      case cp_Mixed:
          GetMUIString(CE->TempDir, gui->ST_TEMPDIR, sizeof(CE->TempDir));
          CE->WBAppIcon         = GetMUICheck  (gui->CH_WBAPPICON);
          CE->IconPositionX     = GetMUIInteger(gui->ST_APPX);
@@ -1395,9 +1434,7 @@ void CO_GetConfig(void)
          GetMUIString(CE->PackerCommand, gui->ST_ARCHIVER, sizeof(CE->PackerCommand));
       break;
 
-      // [Update]
-      case 15:
-      {
+      case cp_Update:
         if(GetMUICheck(gui->CH_UPDATECHECK) == TRUE)
         {
           int interval = GetMUICycle(gui->CY_UPDATEINTERVAL);
@@ -1422,8 +1459,10 @@ void CO_GetConfig(void)
         }
         else
           CE->UpdateInterval = 0; // disabled
-      }
       break;
+
+      case cp_Max:
+        break;
    }
 
    LEAVE();
@@ -1441,7 +1480,10 @@ void CO_SetConfig(void)
 
    switch (G->CO->VisiblePage)
    {
-      case 0:
+      case cp_AllPages:
+         break;
+
+      case cp_FirstSteps:
          setstring(gui->ST_REALNAME  ,CE->RealName);
          setstring(gui->ST_EMAIL     ,CE->EmailAddress);
          setcycle(gui->CY_TZONE, MapTZ(CE->TimeZone, FALSE));
@@ -1452,7 +1494,7 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_DETECTCYRILLIC, CE->DetectCyrillic);
          break;
 
-      case 1:
+      case cp_TCPIP:
       {
          setstring(gui->ST_SMTPHOST, CE->SMTP_Server);
          set(gui->ST_SMTPPORT, MUIA_String_Integer, CE->SMTP_Port);
@@ -1483,7 +1525,7 @@ void CO_SetConfig(void)
       }
       break;
 
-      case 2:
+      case cp_NewMail:
          setcheckmark(gui->CH_AVOIDDUP  ,CE->AvoidDuplicates);
          setcycle    (gui->CY_MSGSELECT ,CE->PreSelection);
          setcycle    (gui->CY_TRANSWIN  ,CE->TransferWindow);
@@ -1498,8 +1540,7 @@ void CO_SetConfig(void)
          setstring   (gui->ST_NOTICMD   ,CE->NotifyCommand);
          break;
 
-      // [Filters]
-      case 3:
+      case cp_Filters:
       {
          struct MinNode *curNode;
 
@@ -1518,7 +1559,23 @@ void CO_SetConfig(void)
       }
       break;
 
-      case 4:
+      case cp_Spam:
+      {
+         char buf[SIZE_DEFAULT];
+
+         setcheckmark(gui->CH_SPAMFILTERENABLED, CE->SpamFilterEnabled);
+         setcheckmark(gui->CH_SPAMFILTERFORNEWMAIL, CE->SpamFilterForNewMail);
+         setcheckmark(gui->CH_SPAMMARKONMOVE, CE->SpamMarkOnMove);
+         setcheckmark(gui->CH_SPAMABOOKISWHITELIST, CE->SpamAddressBookIsWhiteList);
+         set(gui->NB_SPAMPROBTHRESHOLD, MUIA_Numeric_Value, CE->SpamProbabilityThreshold);
+         snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfHamClassifiedMails());
+         set(gui->TX_SPAMGOODCOUNT, MUIA_Text_Contents, buf);
+         snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfSpamClassifiedMails());
+         set(gui->TX_SPAMBADCOUNT, MUIA_Text_Contents, buf);
+      }
+      break;
+
+      case cp_Read:
          setcycle    (gui->CY_HEADER    ,CE->ShowHeader);
          setstring   (gui->ST_HEADERS   ,CE->ShortHeaders);
          setcycle    (gui->CY_SENDERINFO,CE->ShowSenderInfo);
@@ -1539,7 +1596,8 @@ void CO_SetConfig(void)
          set(gui->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay/1000);
          setcheckmark(gui->CH_CONVERTHTML, CE->ConvertHTML);
          break;
-      case 5:
+
+      case cp_Write:
          setstring   (gui->ST_REPLYTO   ,CE->ReplyTo);
          setstring   (gui->ST_ORGAN     ,CE->Organization);
          setstring   (gui->ST_EXTHEADER ,CE->ExtraHeaders);
@@ -1553,7 +1611,8 @@ void CO_SetConfig(void)
          setslider   (gui->NB_EMAILCACHE,CE->EmailCache);
          setslider   (gui->NB_AUTOSAVE,  CE->AutoSave/60);
          break;
-      case 6:
+
+      case cp_ReplyForward:
          setstring   (gui->ST_REPLYHI     ,CE->ReplyHello);
          setstring   (gui->ST_REPLYTEXT   ,CE->ReplyIntro);
          setstring   (gui->ST_REPLYBYE    ,CE->ReplyBye);
@@ -1573,7 +1632,8 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_COMPADDR    ,CE->CompareAddress);
          setcheckmark(gui->CH_STRIPSIG    ,CE->StripSignature);
          break;
-      case 7:
+
+      case cp_Signature:
          setcheckmark(gui->CH_USESIG      ,CE->UseSignature);
          setstring   (gui->ST_TAGFILE     ,CE->TagsFile);
          setstring   (gui->ST_TAGSEP      ,CE->TagsSeparator);
@@ -1581,7 +1641,8 @@ void CO_SetConfig(void)
          FileToEditor(CreateFilename(SigNames[G->CO->LastSig]), gui->TE_SIGEDIT);
          DoMethod(G->App, MUIM_CallHook, &CO_SwitchSignatHook, !CE->UseSignature);
          break;
-      case 8:
+
+      case cp_Lists:
          for (i = 0; i < FOCOLNUM; i++) setcheckmark(gui->CH_FCOLS[i], (CE->FolderCols & (1<<i)) != 0);
          for (i = 0; i < MACOLNUM; i++) setcheckmark(gui->CH_MCOLS[i], (CE->MessageCols & (1<<i)) != 0);
          setcheckmark(gui->CH_FIXFLIST  ,CE->FixedFontList);
@@ -1595,8 +1656,7 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_QUICKSEARCHBAR, CE->QuickSearchBar);
          break;
 
-      // [Security]
-      case 9:
+      case cp_Security:
       {
         setstring(gui->ST_PGPCMD, CE->PGPCmdPath);
         setstring(gui->ST_MYPGPID, CE->MyPGPID);
@@ -1608,11 +1668,11 @@ void CO_SetConfig(void)
         setcheckmark(gui->CH_SPLITLOG, CE->SplitLogfile);
         setcheckmark(gui->CH_LOGALL, CE->LogAllEvents);
         setcheckmark(gui->CH_PGPPASSINTERVAL, CE->PGPPassInterval > 0);
-        set(gui->NM_PGPPASSINTERVAL, MUIA_Numeric_Value, abs(CE->PGPPassInterval));
+        set(gui->NB_PGPPASSINTERVAL, MUIA_Numeric_Value, abs(CE->PGPPassInterval));
       }
       break;
 
-      case 10:
+      case cp_StartupQuit:
          setcheckmark(gui->CH_POPSTART   ,CE->GetOnStartup);
          setcheckmark(gui->CH_SENDSTART  ,CE->SendOnStartup);
          setcheckmark(gui->CH_DELETESTART,CE->CleanupOnStartup);
@@ -1625,7 +1685,7 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_REMOVEQUIT ,CE->RemoveOnQuit);
          break;
 
-      case 11:
+      case cp_MIME:
       {
          struct MinNode *curNode;
 
@@ -1646,7 +1706,7 @@ void CO_SetConfig(void)
       }
       break;
 
-      case 12:
+      case cp_AddressBook:
          setstring   (gui->ST_GALLDIR   ,CE->GalleryDir);
          setstring   (gui->ST_PHOTOURL  ,CE->MyPictureURL);
          setstring   (gui->ST_NEWGROUP  ,CE->NewAddrGroup);
@@ -1656,10 +1716,12 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_ADDINFO   ,CE->AddMyInfo);
          for (i = 0; i < ABCOLNUM; i++) setcheckmark(gui->CH_ACOLS[i], (CE->AddrbookCols & (1<<i)) != 0);
          break;
-      case 13:
+
+      case cp_Scripts:
          set(G->CO->GUI.LV_REXX, MUIA_List_Active, 0);
          break;
-      case 14:
+
+      case cp_Mixed:
          setstring   (gui->ST_TEMPDIR   ,CE->TempDir);
          setcheckmark(gui->CH_WBAPPICON ,CE->WBAppIcon);
          set(gui->ST_APPX, MUIA_String_Integer, CE->IconPositionX);
@@ -1683,8 +1745,7 @@ void CO_SetConfig(void)
          setstring   (gui->ST_ARCHIVER  ,CE->PackerCommand);
          break;
 
-      // [Update]
-      case 15:
+      case cp_Update:
       {
         setcheckmark(gui->CH_UPDATECHECK, CE->UpdateInterval > 0);
 
@@ -1736,6 +1797,8 @@ void CO_SetConfig(void)
       }
       break;
 
+      case cp_Max:
+        break;
    }
 
    LEAVE();

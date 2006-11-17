@@ -6982,7 +6982,7 @@ MSG_CO_ABOOK_TITLE
 Addressbuch Einstellungen
 ;
 MSG_CO_ABOOK_SUMMARY
-Konfigurieren Sie ihr Addressbuch...
+Konfigurieren Sie ihr Adressbuch...
 ;
 MSG_CO_SCRIPTS_TITLE
 Benutzer-definierte Skripte
@@ -7000,7 +7000,7 @@ MSG_CO_UPDATE_TITLE
 Software Update
 ;
 MSG_CO_UPDATE_SUMMARY
-Suchen Sie nach neuen YAM updates...
+Suchen Sie nach neuen YAM-Updates...
 ;
 MSG_CO_CrdUpdate
 Update
@@ -7362,4 +7362,107 @@ Möchten Sie diese wirklich löschen?
 ; AMOUNT
 MSG_MESSAGE_EDITASNEW
 E\000Als neu editieren...
+;
+MSG_MA_SPAM
+Spam
+;
+MSG_LOADINGSPAMTRAININGDATA
+Lade Trainingsdaten des Spamfilters...
+;
+MSG_MA_TBSPAM
+Spam
+;
+MSG_MA_TBNOTSPAM
+k. Spam
+;
+MSG_HELP_MA_BT_SPAM
+Nachricht als Spam markieren
+;
+MSG_HELP_MA_BT_NOTSPAM
+Nachricht als kein Spam markieren
+;
+MSG_RE_TBSPAM
+Spam
+;
+MSG_RE_TBNOTSPAM
+k. Spam
+;
+MSG_HELP_RE_BT_SPAM
+Nachricht als Spam markieren
+;
+MSG_HELP_RE_BT_NOTSPAM
+Nachricht als kein Spam markieren
+;
+MSG_LOG_MAILISSPAM
+Nachricht von '%s' über '%s' wird als Spam behandelt
+;
+MSG_LOG_MAILISNOTSPAM
+Nachricht von '%s' über '%s' wird nicht mehr als Spam behandelt
+; SENDER, SUBJECT
+;
+MSG_FI_STATSPAM
+Spam
+;
+MSG_MA_TOSPAM
+Spam
+;
+MSG_MA_TONOTSPAM
+kein Spam
+;
+MSG_RE_SETSPAM
+Status auf Spam setzen
+;
+MSG_RE_SETNOTSPAM
+Status auf kein Spam setzen
+;
+MSG_CO_CRDSPAMFILTER
+Spam
+;
+MSG_CO_SPAMFILTER
+Spamfilter
+;
+MSG_CO_SPAMFILTER_TITLE
+Spamfilter
+;
+MSG_CO_SPAMFILTER_SUMMARY
+Konfigurieren Sie den Spamfilter...
+;
+MSG_CO_SPAM_FILTERFORNEWMAIL
+Neue Nachrichten auf Spamgehalt prüfen
+;
+MSG_CO_SPAM_RESETTRAININGDATA
+_Trainingsdaten zurücksetzen
+;
+MSG_CO_SPAM_GOODCOUNT
+Anzahl "Nicht-Spam"-klassifizierte Mails
+;
+MSG_CO_SPAM_BADCOUNT
+Anzahl "Spam"-klassifizierte Mails
+;
+MSG_CO_SPAM_PROBABILITYTHRESHOLD
+Nachrichten als Spam markieren, falls Spam-Wahrscheinlichkeit größer oder gleich
+;
+MSG_CO_NB_SPAMPROBTHRESHOLDFMT
+%ld%%
+;
+MSG_BUSYFLUSHINGSPAMTRAININGDATA
+Speichere Trainingsdata des Spamfilters...
+;
+MSG_CO_SPAM_MARKONMOVE
+Mails beim Verschieben in den Spam-Ordner als Spam markieren
+;
+MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
+Mails mit Absenderadresse im Adressbuch sind kein Spam
+;
+MSG_CO_SPAM_RECOGNITION
+Spamerkennung
+;
+MSG_CO_SPAM_FILTERENABLED
+Spamfilter aktiv
+;
+MSG_CO_SPAM_RESETTRAININGDATAASK
+Wollen Sie wirklich die Trainingsdaten\n\
+des Spamfilters zurücksetzen?\n\
+\n\
+Der Spamfilter muss danach erneut trainiert werden!
 ;

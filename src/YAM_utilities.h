@@ -380,6 +380,7 @@ int      StringRequest(char *string, int size, const char *title, const char *bo
 char *   StripUnderscore(const char *label);
 char *   stristr(const char *a, const char *b);
 char *   SWSSearch(char *str1, char*str2);
+void     ToLowerCase(char *str);
 int      TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder);
 char *   Trim(char *s);
 char *   TrimEnd(char *s);

@@ -741,7 +741,7 @@ void CO_FreeConfig(struct Config *co)
 ///
 /// CO_SetDefaults
 //  Sets configuration (or a part of it) to the factory settings
-void CO_SetDefaults(struct Config *co, int page)
+void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 {
    int i;
 
@@ -749,8 +749,7 @@ void CO_SetDefaults(struct Config *co, int page)
    SHOWVALUE(DBF_CONFIG, co);
    SHOWVALUE(DBF_CONFIG, page);
 
-   // [Start]
-   if(page == 0 || page < 0)
+   if(page == cp_FirstSteps || page == cp_AllPages)
    {
       *co->RealName = *co->EmailAddress = 0;
 
@@ -762,8 +761,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->DetectCyrillic = FALSE;
    }
 
-   // [TCP/IP]
-   if(page == 1 || page < 0)
+   if(page == cp_TCPIP || page == cp_AllPages)
    {
       for (i = 0; i < MAXP3; i++) { if (co->P3[i]) free(co->P3[i]); co->P3[i] = NULL; }
       *co->SMTP_Server = *co->SMTP_Domain = 0;
@@ -775,8 +773,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->P3[0] = CO_NewPOP3(co, TRUE); co->P3[0]->DeleteOnServer = TRUE;
    }
 
-   // [New Mail]
-   if(page == 2 || page < 0)
+   if(page == cp_NewMail || page == cp_AllPages)
    {
       co->AvoidDuplicates = FALSE;
       co->TransferWindow = 2;
@@ -788,8 +785,7 @@ void CO_SetDefaults(struct Config *co, int page)
       *co->NotifySound = *co->NotifyCommand = 0;
    }
 
-   // [Filters]
-   if(page == 3 || page < 0)
+   if(page == cp_Filters || page == cp_AllPages)
    {
       struct MinNode *curNode;
 
@@ -806,8 +802,18 @@ void CO_SetDefaults(struct Config *co, int page)
       NewList((struct List *)&co->filterList);
    }
 
-   // [Read]
-   if(page == 4 || page < 0)
+   if(page == cp_Spam || page == cp_AllPages)
+   {
+      co->SpamFilterEnabled = FALSE;
+      co->SpamFilterForNewMail = FALSE;
+      co->SpamMarkOnMove = FALSE;
+      co->SpamAddressBookIsWhiteList = FALSE;
+      co->SpamProbabilityThreshold = DEFAULT_SPAM_PROBABILITY_THRESHOLD;
+      co->SpamFlushTrainingDataInterval = DEFAULT_FLUSH_TRAINING_DATA_INTERVAL;
+      co->SpamFlushTrainingDataThreshold = DEFAULT_FLUSH_TRAINING_DATA_THRESHOLD;
+   }
+
+   if(page == cp_Read || page == cp_AllPages)
    {
       co->ShowHeader = 1;
       strlcpy(co->ShortHeaders, "(From|To|Date|Subject)", sizeof(co->ShortHeaders));
@@ -832,8 +838,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->ConvertHTML = TRUE;
    }
 
-   // [Write]
-   if(page == 5 || page < 0)
+   if(page == cp_Write || page == cp_AllPages)
    {
       *co->ReplyTo = *co->Organization = *co->ExtraHeaders = '\0';
       strlcpy(co->NewIntro, GetStr(MSG_CO_NewIntroDef), sizeof(co->NewIntro));
@@ -847,8 +852,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->AutoSave = 120;
    }
 
-   // [Reply/Forward]
-   if(page == 6 || page < 0)
+   if(page == cp_ReplyForward || page == cp_AllPages)
    {
       strlcpy(co->ReplyHello, "Hello %f\\n", sizeof(co->ReplyHello));
       strlcpy(co->ReplyIntro, "On %d, you wrote:\\n", sizeof(co->ReplyIntro));
@@ -867,16 +871,14 @@ void CO_SetDefaults(struct Config *co, int page)
       co->QuoteMessage = co->QuoteEmptyLines = co->CompareAddress = co->StripSignature = TRUE;
    }
 
-   // [Signature]
-   if(page == 7 || page < 0)
+   if(page == cp_Signature || page == cp_AllPages)
    {
       co->UseSignature = FALSE;
       strmfp(co->TagsFile, G->ProgDir, ".taglines");
       strlcpy(co->TagsSeparator, "%%", sizeof(co->TagsSeparator));
    }
 
-   // [Lists]
-   if(page == 8 || page < 0)
+   if(page == cp_Lists || page == cp_AllPages)
    {
       co->FolderCols = 1+2+16;
       co->MessageCols = 1+2+8+16;
@@ -889,8 +891,7 @@ void CO_SetDefaults(struct Config *co, int page)
       strlcpy(co->InfoBarText, GetStr(MSG_CO_InfoBarDef), sizeof(co->InfoBarText));
    }
 
-   // [Security]
-   if(page == 9 || page < 0)
+   if(page == cp_Security || page == cp_AllPages)
    {
       G->PGPVersion = 0;
       if(GetVar("PGPPATH", co->PGPCmdPath, SIZE_PATH, 0) >= 0)
@@ -911,16 +912,14 @@ void CO_SetDefaults(struct Config *co, int page)
       co->SplitLogfile = FALSE;
    }
 
-   // [Start/Quit]
-   if(page == 10 || page < 0)
+   if(page == cp_StartupQuit || page == cp_AllPages)
    {
       co->GetOnStartup = co->SendOnStartup = co->LoadAllFolders = co->SendOnQuit = FALSE;
       co->CleanupOnStartup = co->RemoveOnStartup = FALSE;
       co->UpdateNewMail = co->CheckBirthdates = co->CleanupOnQuit = co->RemoveOnQuit = TRUE;
    }
 
-   // [MIME]
-   if(page == 11 || page < 0)
+   if(page == cp_MIME || page == cp_AllPages)
    {
       struct MinNode *curNode;
 
@@ -941,8 +940,7 @@ void CO_SetDefaults(struct Config *co, int page)
       strlcpy(co->AttachDir, "RAM:", sizeof(co->AttachDir));
    }
 
-   // [Address book]
-   if(page == 12 || page < 0)
+   if(page == cp_AddressBook || page == cp_AllPages)
    {
       strlcpy(co->GalleryDir, "YAM:Gallery", sizeof(co->GalleryDir));
       strlcpy(co->NewAddrGroup, "NEW", sizeof(co->NewAddrGroup));
@@ -951,8 +949,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->AddrbookCols = 1+2+4;
    }
 
-   // [Scripts]
-   if(page == 13 || page < 0)
+   if(page == cp_Scripts || page == cp_AllPages)
    {
       for (i = 0; i < MAXRX; i++)
       {
@@ -962,8 +959,7 @@ void CO_SetDefaults(struct Config *co, int page)
       }
    }
 
-   // [Mixed]
-   if(page == 14 || page < 0)
+   if(page == cp_Mixed || page == cp_AllPages)
    {
       strlcpy(co->TempDir, "T:", sizeof(co->TempDir));
       strlcpy(co->PackerCommand, "LhA -a -m -i%l a \"%a\"", sizeof(co->PackerCommand));
@@ -992,15 +988,14 @@ void CO_SetDefaults(struct Config *co, int page)
         co->WBAppIcon = TRUE;
    }
 
-   // [Update]
-   if(page == 15 || page < 0)
+   if(page == cp_Update || page == cp_AllPages)
    {
       co->UpdateInterval = 604800; // check weekly for updates per default
       co->LastUpdateStatus = UST_NOCHECK;
    }
 
    // everything else
-   if(page < 0)
+   if(page == cp_AllPages)
    {
       co->LetterPart = 1;
       co->WriteIndexes = 120;
@@ -1323,11 +1318,11 @@ void CO_Validate(struct Config *co, BOOL update)
    {
       switch (G->CO->VisiblePage)
       {
-         case 0:
+         case cp_FirstSteps:
             setstring(G->CO->GUI.ST_POPHOST0, co->P3[0]->Server);
             break;
 
-         case 1:
+         case cp_TCPIP:
             setstring(G->CO->GUI.ST_SMTPHOST, co->SMTP_Server);
             set(G->CO->GUI.ST_SMTPPORT, MUIA_String_Integer, co->SMTP_Port);
             setstring(G->CO->GUI.ST_DOMAIN, co->SMTP_Domain);
@@ -1335,15 +1330,24 @@ void CO_Validate(struct Config *co, BOOL update)
             setstring(G->CO->GUI.ST_SMTPAUTHPASS, co->SMTP_AUTH_Pass);
             DoMethod(G->CO->GUI.LV_POP3, MUIM_List_Redraw, MUIV_List_Redraw_All);
             break;
+
+         default:
+            break;
       }
 
-      if(G->CO->Visited[2] || G->CO->UpdateAll)
+      if(G->CO->Visited[cp_NewMail] || G->CO->UpdateAll)
       {
         // requeue the timerequest for the CheckMailDelay
         TC_Restart(TIO_CHECKMAIL, co->CheckMailDelay*60, 0);
       }
 
-      if(G->CO->Visited[4] || G->CO->UpdateAll)
+      if(G->CO->Visited[cp_Spam] || G->CO->UpdateAll)
+      {
+        // if we enabled or disable the spam filter then we need to update the toolbar
+        MA_ChangeSelected(TRUE);
+      }
+
+      if(G->CO->Visited[cp_Read] || G->CO->UpdateAll)
       {
          // we signal the mainwindow that it may check whether to include the
          // embedded read pane part or not
@@ -1355,13 +1359,13 @@ void CO_Validate(struct Config *co, BOOL update)
            MA_ChangeSelected(TRUE);
       }
 
-      if(G->CO->Visited[5] || G->CO->UpdateAll)
+      if(G->CO->Visited[cp_Write] || G->CO->UpdateAll)
       {
         // requeue the timerequest for the AutoSave interval
         TC_Restart(TIO_AUTOSAVE, co->AutoSave, 0);
       }
 
-      if(G->CO->Visited[8] || G->CO->UpdateAll)
+      if(G->CO->Visited[cp_Lists] || G->CO->UpdateAll)
       {
          // First we set the PG_MAILLIST and NL_FOLDER Quiet
          set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     TRUE);
@@ -1391,10 +1395,10 @@ void CO_Validate(struct Config *co, BOOL update)
          set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
       }
 
-      if(G->CO->Visited[12] || G->CO->UpdateAll)
+      if(G->CO->Visited[cp_AddressBook] || G->CO->UpdateAll)
          AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
 
-      if(G->CO->Visited[14] || G->CO->UpdateAll)
+      if(G->CO->Visited[cp_Mixed] || G->CO->UpdateAll)
       {
         // in case the DockyIcon should be enabled we have reregister YAM
         // to application library for the DockyIcon to reappear
@@ -1450,8 +1454,7 @@ void CO_Validate(struct Config *co, BOOL update)
         #endif
       }
 
-      // [Update]
-      if(G->CO->Visited[15] || G->CO->UpdateAll)
+      if(G->CO->Visited[cp_Update] || G->CO->UpdateAll)
       {
         // make sure we reinit the update check timer
         InitUpdateCheck(FALSE);
@@ -1766,7 +1769,7 @@ MakeStaticHook(CO_LastSavedHook,CO_LastSaved);
 //  Resets configuration (or a part of it)
 HOOKPROTONHNO(CO_ResetToDefaultFunc, void, int *arg)
 {
-   if (*arg) { CO_SetDefaults(CE, -1); G->CO->UpdateAll = TRUE; }
+   if (*arg) { CO_SetDefaults(CE, cp_AllPages); G->CO->UpdateAll = TRUE; }
    else CO_SetDefaults(CE, G->CO->VisiblePage);
    CO_SetConfig();
 }
@@ -1777,14 +1780,16 @@ MakeStaticHook(CO_ResetToDefaultHook,CO_ResetToDefaultFunc);
 //  Selects a different section of the configuration
 HOOKPROTONHNO(CO_ChangePageFunc, void, int *arg)
 {
-  if(*arg < 0 || *arg >= MAXCPAGES)
+  enum ConfigPage page = (enum ConfigPage)(*arg);
+
+  if(page < cp_FirstSteps || page >= cp_Max)
     return;
 
   CO_GetConfig();
 
-  G->CO->VisiblePage = *arg;
-  G->CO->Visited[*arg] = TRUE;
-  set(G->CO->GUI.MI_IMPMIME, MUIA_Menuitem_Enabled, *arg == 11);
+  G->CO->VisiblePage = page;
+  G->CO->Visited[page] = TRUE;
+  set(G->CO->GUI.MI_IMPMIME, MUIA_Menuitem_Enabled, page == cp_MIME);
 
   CO_SetConfig();
 
@@ -1860,33 +1865,34 @@ static struct CO_ClassData *CO_New(void)
    struct CO_ClassData *data = calloc(1, sizeof(struct CO_ClassData));
    if (data)
    {
-      static struct PageList page[MAXCPAGES], *pages[MAXCPAGES+1];
+      static struct PageList page[cp_Max], *pages[cp_Max + 1];
       int i;
 
-      for(i = 0; i < MAXCPAGES; i++)
+      for(i = cp_FirstSteps; i < cp_Max; i++)
       {
         page[i].Offset = i;
         pages[i] = &page[i];
       }
-      pages[i] = NULL;
+      pages[cp_Max] = NULL;
 
       // put some labels on our configpagelist objects
-      page[ 0].PageLabel = MSG_CO_CrdFirstSteps;
-      page[ 1].PageLabel = MSG_CO_CrdTCPIP;
-      page[ 2].PageLabel = MSG_CO_CrdNewMail;
-      page[ 3].PageLabel = MSG_CO_CrdFilters;
-      page[ 4].PageLabel = MSG_CO_CrdRead;
-      page[ 5].PageLabel = MSG_CO_CrdWrite;
-      page[ 6].PageLabel = MSG_CO_GR_REPLYFORWARD;
-      page[ 7].PageLabel = MSG_CO_CrdSignature;
-      page[ 8].PageLabel = MSG_CO_CrdLists;
-      page[ 9].PageLabel = MSG_CO_CrdSecurity;
-      page[10].PageLabel = MSG_CO_GR_STARTUPQUIT;
-      page[11].PageLabel = MSG_CO_CrdMIME;
-      page[12].PageLabel = MSG_CO_CrdABook;
-      page[13].PageLabel = MSG_CO_GR_SCRIPTS;
-      page[14].PageLabel = MSG_CO_CrdMixed;
-      page[15].PageLabel = MSG_CO_CrdUpdate;
+      page[cp_FirstSteps  ].PageLabel = MSG_CO_CrdFirstSteps;
+      page[cp_TCPIP       ].PageLabel = MSG_CO_CrdTCPIP;
+      page[cp_NewMail     ].PageLabel = MSG_CO_CrdNewMail;
+      page[cp_Filters     ].PageLabel = MSG_CO_CrdFilters;
+      page[cp_Spam        ].PageLabel = MSG_CO_CRDSPAMFILTER;
+      page[cp_Read        ].PageLabel = MSG_CO_CrdRead;
+      page[cp_Write       ].PageLabel = MSG_CO_CrdWrite;
+      page[cp_ReplyForward].PageLabel = MSG_CO_GR_REPLYFORWARD;
+      page[cp_Signature   ].PageLabel = MSG_CO_CrdSignature;
+      page[cp_Lists       ].PageLabel = MSG_CO_CrdLists;
+      page[cp_Security    ].PageLabel = MSG_CO_CrdSecurity;
+      page[cp_StartupQuit ].PageLabel = MSG_CO_GR_STARTUPQUIT;
+      page[cp_MIME        ].PageLabel = MSG_CO_CrdMIME;
+      page[cp_AddressBook ].PageLabel = MSG_CO_CrdABook;
+      page[cp_Scripts     ].PageLabel = MSG_CO_GR_SCRIPTS;
+      page[cp_Mixed       ].PageLabel = MSG_CO_CrdMixed;
+      page[cp_Update      ].PageLabel = MSG_CO_CrdUpdate;
 
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, GetStr(MSG_MA_MConfig),
@@ -1924,22 +1930,23 @@ static struct CO_ClassData *CO_New(void)
                Child, data->GUI.GR_PAGE = PageGroup,
                   NoFrame,
                   MUIA_Group_ActivePage, 0,
-                  Child, CO_Page0(data),
-                  Child, CO_Page1(data),
-                  Child, CO_Page2(data),
-                  Child, CO_Page3(data),
-                  Child, CO_Page4(data),
-                  Child, CO_Page5(data),
-                  Child, CO_Page6(data),
-                  Child, CO_Page7(data),
-                  Child, CO_Page8(data),
-                  Child, CO_Page9(data),
-                  Child, CO_Page10(data),
-                  Child, CO_Page11(data),
-                  Child, CO_Page12(data),
-                  Child, CO_Page13(data),
-                  Child, CO_Page14(data),
-                  Child, CO_Page15(data),
+                  Child, CO_PageFirstSteps(data),
+                  Child, CO_PageTCPIP(data),
+                  Child, CO_PageNewMail(data),
+                  Child, CO_PageFilters(data),
+                  Child, CO_PageSpam(data),
+                  Child, CO_PageRead(data),
+                  Child, CO_PageWrite(data),
+                  Child, CO_PageReplyForward(data),
+                  Child, CO_PageSignature(data),
+                  Child, CO_PageLists(data),
+                  Child, CO_PageSecurity(data),
+                  Child, CO_PageStartupQuit(data),
+                  Child, CO_PageMIME(data),
+                  Child, CO_PageAddressBook(data),
+                  Child, CO_PageScripts(data),
+                  Child, CO_PageMixed(data),
+                  Child, CO_PageUpdate(data),
                End,
             End,
 

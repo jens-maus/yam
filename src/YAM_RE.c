@@ -570,7 +570,10 @@ void RE_DisplayMIME(char *fname, const char *ctype)
 
         mail = calloc(1, sizeof(struct Mail));
         if(!mail)
+        {
+          LEAVE();
           return;
+        }
 
         memcpy(mail, &(email->Mail), sizeof(struct Mail));
         mail->Next      = NULL;
@@ -2593,7 +2596,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
     // now we do a check because there might be mails with no actual
     // readable letterPart - however, they just have one part and it
     // is just a binary attachment (perhaps a jpg). For these mails we do
-    // have to do things a bit different and stll flag them as being a
+    // have to do things a bit different and still flag them as being a
     // multipart mail so that an attachment icon is shown.
     if(rmData->letterPartNum == 0 && i == 2)
     {

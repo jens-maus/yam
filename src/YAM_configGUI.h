@@ -30,22 +30,23 @@
 
 #include <exec/types.h>
 
-Object *CO_Page0(struct CO_ClassData *data);
-Object *CO_Page1(struct CO_ClassData *data);
-Object *CO_Page2(struct CO_ClassData *data);
-Object *CO_Page3(struct CO_ClassData *data);
-Object *CO_Page4(struct CO_ClassData *data);
-Object *CO_Page5(struct CO_ClassData *data);
-Object *CO_Page6(struct CO_ClassData *data);
-Object *CO_Page7(struct CO_ClassData *data);
-Object *CO_Page8(struct CO_ClassData *data);
-Object *CO_Page9(struct CO_ClassData *data);
-Object *CO_Page10(struct CO_ClassData *data);
-Object *CO_Page11(struct CO_ClassData *data);
-Object *CO_Page12(struct CO_ClassData *data);
-Object *CO_Page13(struct CO_ClassData *data);
-Object *CO_Page14(struct CO_ClassData *data);
-Object *CO_Page15(struct CO_ClassData *data);
+Object *CO_PageFirstSteps(struct CO_ClassData *data);
+Object *CO_PageTCPIP(struct CO_ClassData *data);
+Object *CO_PageNewMail(struct CO_ClassData *data);
+Object *CO_PageFilters(struct CO_ClassData *data);
+Object *CO_PageRead(struct CO_ClassData *data);
+Object *CO_PageWrite(struct CO_ClassData *data);
+Object *CO_PageReplyForward(struct CO_ClassData *data);
+Object *CO_PageSignature(struct CO_ClassData *data);
+Object *CO_PageLists(struct CO_ClassData *data);
+Object *CO_PageSecurity(struct CO_ClassData *data);
+Object *CO_PageStartupQuit(struct CO_ClassData *data);
+Object *CO_PageMIME(struct CO_ClassData *data);
+Object *CO_PageAddressBook(struct CO_ClassData *data);
+Object *CO_PageScripts(struct CO_ClassData *data);
+Object *CO_PageMixed(struct CO_ClassData *data);
+Object *CO_PageUpdate(struct CO_ClassData *data);
+Object *CO_PageSpam(struct CO_ClassData *data);
 
 Object *MakeMimeTypePop(Object **string, const char *desc);
 

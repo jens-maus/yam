@@ -68,6 +68,7 @@
 #include "YAM_mime.h"
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
+#include "BayesFilter.h"
 
 #include "Debug.h"
 
@@ -4790,6 +4791,9 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
             GetSysTimeUTC(&new->transDate);
 
             new->sflags = SFLAG_NEW;
+            if (C->SpamFilterEnabled && C->SpamFilterForNewMail && BayesFilterClassifyMessage(new))
+              SET_FLAG(new->sflags, SFLAG_AUTOSPAM);
+
             MA_UpdateMailFile(new);
 
             if(FO_GetCurrentFolder() == infolder)

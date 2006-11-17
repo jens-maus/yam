@@ -80,7 +80,7 @@ OVERLOAD(OM_NEW)
 {
   static const char *fldopt[2][13];
   static const char *compopt[14];
-  static const char *statopt[10];
+  static const char *statopt[11];
   static const char *amode[3];
   static const char *bcrit[5];
   struct Data *data;
@@ -102,7 +102,8 @@ OVERLOAD(OM_NEW)
   statopt[6] = GetStr(MSG_FI_StatHold);
   statopt[7] = GetStr(MSG_FI_StatSent);
   statopt[8] = GetStr(MSG_FI_StatMarked);
-  statopt[9] = NULL;
+  statopt[9] = GetStr(MSG_FI_STATSPAM);
+  statopt[10] = NULL;
 
   compopt[0] = compopt[5] = compopt[ 8] = " = ";
   compopt[1] = compopt[6] = compopt[ 9] = " <> ";

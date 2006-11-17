@@ -62,6 +62,7 @@
 #include "classes/Classes.h"
 
 #include "UpdateCheck.h"
+#include "BayesFilter.h"
 
 #include "Debug.h"
 
@@ -936,7 +937,7 @@ HOOKPROTONHNONP(UpdateCheckFunc, void)
   ENTER();
 
   // get the configuration settings
-  if(G->CO->VisiblePage == 15)
+  if(G->CO->VisiblePage == cp_Update)
     CO_GetConfig();
 
   // now we make sure the C and CE config structure is in sync again
@@ -1241,9 +1242,32 @@ MakeHookWithData(MimeDefViewerReqStopHook, FileRequestStopFunc, VPM_MIME_DEFVIEW
 MakeHookWithData(MimeCommandReqStopHook,   FileRequestStopFunc, VPM_MIME_COMMAND);
 ///
 
+///
+/// ResetSpamTrainingData()
+//  resets the spam training data
+HOOKPROTONHNONP(ResetSpamTrainingDataFunc, void)
+{
+  ENTER();
+
+  if (MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_SPAM_RESETTRAININGDATAASK)))
+  {
+    char buf[SIZE_DEFAULT];
+
+    BayesFilterResetTrainingData();
+
+    snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfHamClassifiedMails());
+    set(G->CO->GUI.TX_SPAMGOODCOUNT, MUIA_Text_Contents, buf);
+    snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfSpamClassifiedMails());
+    set(G->CO->GUI.TX_SPAMBADCOUNT, MUIA_Text_Contents, buf);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(ResetSpamTrainingDataHook, ResetSpamTrainingDataFunc);
+
 /*** Pages ***/
-/// CO_Page0  (First steps)
-Object *CO_Page0(struct CO_ClassData *data)
+/// CO_PageFirstSteps
+Object *CO_PageFirstSteps(struct CO_ClassData *data)
 {
    Object *grp;
    static const char *tzone[34];
@@ -1350,8 +1374,8 @@ Object *CO_Page0(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page1  (TCP/IP)
-Object *CO_Page1(struct CO_ClassData *data)
+/// CO_PageTCPIP
+Object *CO_PageTCPIP(struct CO_ClassData *data)
 {
    Object *grp;
    static const char *secureMethods[4];
@@ -1514,8 +1538,8 @@ Object *CO_Page1(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page2  (New Mail)
-Object *CO_Page2(struct CO_ClassData *data)
+/// CO_PageNewMail
+Object *CO_PageNewMail(struct CO_ClassData *data)
 {
    static const char *mpsopt[5];
    static const char *trwopt[4];
@@ -1646,8 +1670,8 @@ Object *CO_Page2(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page3  (Filters)
-Object *CO_Page3(struct CO_ClassData *data)
+/// CO_PageFilters
+Object *CO_PageFilters(struct CO_ClassData *data)
 {
    static const char *rtitles[4];
    Object *grp;
@@ -1867,8 +1891,8 @@ Object *CO_Page3(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page4  (Read)
-Object *CO_Page4(struct CO_ClassData *data)
+/// CO_PageRead
+Object *CO_PageRead(struct CO_ClassData *data)
 {
    Object *grp;
    static const char *headopt[4];
@@ -1993,8 +2017,8 @@ Object *CO_Page4(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page5  (Write)
-Object *CO_Page5(struct CO_ClassData *data)
+/// CO_PageWrite
+Object *CO_PageWrite(struct CO_ClassData *data)
 {
    Object *grp;
    static const char *wrapmode[4];
@@ -2102,8 +2126,8 @@ Object *CO_Page5(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page6  (Reply/Forward)
-Object *CO_Page6(struct CO_ClassData *data)
+/// CO_PageReplyForward
+Object *CO_PageReplyForward(struct CO_ClassData *data)
 {
    Object *grp;
    if ((grp = VGroup,
@@ -2178,8 +2202,8 @@ Object *CO_Page6(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page7  (Signature)
-Object *CO_Page7(struct CO_ClassData *data)
+/// CO_PageSignature
+Object *CO_PageSignature(struct CO_ClassData *data)
 {
    static const char *signat[4];
    Object *grp;
@@ -2268,8 +2292,8 @@ Object *CO_Page7(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page8  (Lists)
-Object *CO_Page8(struct CO_ClassData *data)
+/// CO_PageLists
+Object *CO_PageLists(struct CO_ClassData *data)
 {
    Object *grp;
    static const char *sizef[6];
@@ -2394,8 +2418,8 @@ Object *CO_Page8(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page9  (Security)
-Object *CO_Page9(struct CO_ClassData *data)
+/// CO_PageSecurity
+Object *CO_PageSecurity(struct CO_ClassData *data)
 {
    Object *grp;
    static const char *logfmode[4];
@@ -2449,7 +2473,7 @@ Object *CO_Page9(struct CO_ClassData *data)
             Child, HGroup,
               Child, data->GUI.CH_PGPPASSINTERVAL = MakeCheck(GetStr(MSG_CO_PGPPASSINTERVAL1)),
               Child, Label2(GetStr(MSG_CO_PGPPASSINTERVAL1)),
-              Child, data->GUI.NM_PGPPASSINTERVAL = MakeNumeric(1, 90, FALSE),
+              Child, data->GUI.NB_PGPPASSINTERVAL = MakeNumeric(1, 90, FALSE),
               Child, Label2(GetStr(MSG_CO_PGPPASSINTERVAL2)),
               Child, HSpace(0),
             End,
@@ -2490,7 +2514,7 @@ Object *CO_Page9(struct CO_ClassData *data)
       SetHelp(data->GUI.ST_MYPGPID   ,MSG_HELP_CO_ST_MYPGPID  );
       SetHelp(data->GUI.CH_ENCSELF   ,MSG_HELP_CO_CH_ENCSELF  );
       SetHelp(data->GUI.CH_PGPPASSINTERVAL, MSG_HELP_CO_PGPPASSINTERVAL);
-      SetHelp(data->GUI.NM_PGPPASSINTERVAL, MSG_HELP_CO_PGPPASSINTERVAL);
+      SetHelp(data->GUI.NB_PGPPASSINTERVAL, MSG_HELP_CO_PGPPASSINTERVAL);
       SetHelp(data->GUI.CH_ENCSELF   ,MSG_HELP_CO_CH_ENCSELF  );
       SetHelp(data->GUI.ST_REMAILER  ,MSG_HELP_CO_ST_REMAILER );
       SetHelp(data->GUI.ST_FIRSTLINE ,MSG_HELP_CO_ST_FIRSTLINE);
@@ -2504,8 +2528,8 @@ Object *CO_Page9(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page10 (Startup/Quit)
-Object *CO_Page10(struct CO_ClassData *data)
+/// CO_PageStartupQuit
+Object *CO_PageStartupQuit(struct CO_ClassData *data)
 {
    Object *grp;
    if ((grp = VGroup,
@@ -2564,8 +2588,8 @@ Object *CO_Page10(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page11 (MIME)
-Object *CO_Page11(struct CO_ClassData *data)
+/// CO_PageMIME
+Object *CO_PageMIME(struct CO_ClassData *data)
 {
    Object *grp;
 
@@ -2690,8 +2714,8 @@ Object *CO_Page11(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page12 (Address book)
-Object *CO_Page12(struct CO_ClassData *data)
+/// CO_PageAddressBook
+Object *CO_PageAddressBook(struct CO_ClassData *data)
 {
    Object *grp;
    static const char *atab[6];
@@ -2788,8 +2812,8 @@ Object *CO_Page12(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page13 (Scripts)
-Object *CO_Page13(struct CO_ClassData *data)
+/// CO_PageScripts
+Object *CO_PageScripts(struct CO_ClassData *data)
 {
    Object *grp;
    static const char *stype[3] =
@@ -2881,8 +2905,8 @@ Object *CO_Page13(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page14 (Miscellaneous)
-Object *CO_Page14(struct CO_ClassData *data)
+/// CO_PageMixed
+Object *CO_PageMixed(struct CO_ClassData *data)
 {
    Object *grp;
    static const char *empty[5];
@@ -3033,8 +3057,8 @@ Object *CO_Page14(struct CO_ClassData *data)
    return grp;
 }
 ///
-/// CO_Page15 (Update)
-Object *CO_Page15(struct CO_ClassData *data)
+/// CO_PageUpdate
+Object *CO_PageUpdate(struct CO_ClassData *data)
 {
   Object *grp;
   static const char *updateInterval[4];
@@ -3119,3 +3143,94 @@ Object *CO_Page15(struct CO_ClassData *data)
   return grp;
 }
 ///
+
+///
+/// CO_PageSpam
+Object *CO_PageSpam(struct CO_ClassData *data)
+{
+   Object *grp;
+   if ((grp = VGroup,
+         Child, HGroup,
+            Child, MakeImageObject("config_spam_big"),
+            Child, VGroup,
+              Child, TextObject,
+                MUIA_Text_PreParse, "\033b",
+                MUIA_Text_Contents, GetStr(MSG_CO_SPAMFILTER_TITLE),
+                MUIA_Weight,        100,
+              End,
+              Child, TextObject,
+                MUIA_Text_Contents, GetStr(MSG_CO_SPAMFILTER_SUMMARY),
+                MUIA_Font,          MUIV_Font_Tiny,
+                MUIA_Weight,        100,
+              End,
+           End,
+         End,
+
+         Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+         End,
+
+         Child, VGroup, GroupFrameT(GetStr(MSG_CO_SPAMFILTER)),
+           Child, ColGroup(3),
+             Child, data->GUI.CH_SPAMFILTERENABLED = MakeCheck(GetStr(MSG_CO_SPAM_FILTERENABLED)),
+             Child, LLabel(GetStr(MSG_CO_SPAM_FILTERENABLED)),
+             Child, HSpace(0),
+             Child, data->GUI.CH_SPAMFILTERFORNEWMAIL = MakeCheck(GetStr(MSG_CO_SPAM_FILTERFORNEWMAIL)),
+             Child, LLabel(GetStr(MSG_CO_SPAM_FILTERFORNEWMAIL)),
+             Child, HSpace(0),
+             Child, data->GUI.CH_SPAMMARKONMOVE = MakeCheck(GetStr(MSG_CO_SPAM_MARKONMOVE)),
+             Child, LLabel(GetStr(MSG_CO_SPAM_MARKONMOVE)),
+             Child, HSpace(0),
+           End,
+           Child, ColGroup(3),
+             Child, Label2(GetStr(MSG_CO_SPAM_GOODCOUNT)),
+             Child, data->GUI.TX_SPAMGOODCOUNT = TextObject,
+               TextFrame,
+               MUIA_Background,    MUII_TextBack,
+               MUIA_Text_SetMin,   TRUE,
+               MUIA_Text_PreParse, "\033r",
+             End,
+             Child, HSpace(0),
+             Child, Label2(GetStr(MSG_CO_SPAM_BADCOUNT)),
+             Child, data->GUI.TX_SPAMBADCOUNT = TextObject,
+               TextFrame,
+               MUIA_Background,    MUII_TextBack,
+               MUIA_Text_SetMin,   TRUE,
+               MUIA_Text_PreParse, "\033r",
+             End,
+             Child, HSpace(0),
+           End,
+           Child, HGroup,
+             Child, data->GUI.BT_SPAMRESETTRAININGDATA = MakeButton(GetStr(MSG_CO_SPAM_RESETTRAININGDATA)),
+             Child, HSpace(0),
+           End,
+         End,
+
+         Child, VGroup, GroupFrameT(GetStr(MSG_CO_SPAM_RECOGNITION)),
+           Child, HGroup,
+             Child, Label2(GetStr(MSG_CO_SPAM_PROBABILITYTHRESHOLD)),
+             Child, data->GUI.NB_SPAMPROBTHRESHOLD = NumericbuttonObject,
+               MUIA_CycleChain,      TRUE,
+               MUIA_Numeric_Min,     10,
+               MUIA_Numeric_Max,     99,
+               MUIA_Numeric_Format,  GetStr(MSG_CO_NB_SPAMPROBTHRESHOLDFMT),
+             End,
+             Child, HSpace(0),
+           End,
+           Child, HGroup,
+             Child, data->GUI.CH_SPAMABOOKISWHITELIST = MakeCheck(GetStr(MSG_CO_SPAM_ADDRESSBOOKISWHITELIST)),
+             Child, LLabel(GetStr(MSG_CO_SPAM_ADDRESSBOOKISWHITELIST)),
+             Child, HSpace(0),
+           End,
+         End,
+
+         Child, HVSpace,
+      End))
+   {
+      DoMethod(data->GUI.BT_SPAMRESETTRAININGDATA, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &ResetSpamTrainingDataHook);
+   }
+   return grp;
+}
+
+

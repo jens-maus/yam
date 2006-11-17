@@ -263,15 +263,45 @@ struct CO_GUIData
    Object *CH_ABOOKLOOKUP;
    Object *CH_CONVERTHTML;
    Object *CH_PGPPASSINTERVAL;
-   Object *NM_PGPPASSINTERVAL;
+   Object *NB_PGPPASSINTERVAL;
+   Object *CH_SPAMFILTERENABLED;
+   Object *CH_SPAMFILTERFORNEWMAIL;
+   Object *CH_SPAMMARKONMOVE;
+   Object *CH_SPAMABOOKISWHITELIST;
+   Object *BT_SPAMRESETTRAININGDATA;
+   Object *NB_SPAMPROBTHRESHOLD;
+   Object *TX_SPAMGOODCOUNT;
+   Object *TX_SPAMBADCOUNT;
+};
+
+enum ConfigPage {
+    cp_AllPages = -1,
+    cp_FirstSteps = 0,
+    cp_TCPIP,
+    cp_NewMail,
+    cp_Filters,
+    cp_Spam,
+    cp_Read,
+    cp_Write,
+    cp_ReplyForward,
+    cp_Signature,
+    cp_Lists,
+    cp_Security,
+    cp_StartupQuit,
+    cp_MIME,
+    cp_AddressBook,
+    cp_Scripts,
+    cp_Mixed,
+    cp_Update,
+    cp_Max,
 };
 
 struct CO_ClassData  /* configuration window */
 {
    struct CO_GUIData GUI;
-   int  VisiblePage;
+   enum ConfigPage VisiblePage;
    int  LastSig;
-   BOOL Visited[MAXCPAGES];
+   BOOL Visited[cp_Max];
    BOOL UpdateAll;
 };
 
@@ -367,6 +397,9 @@ struct Config
    int   KeepAliveInterval;
    int   UpdateInterval;
    int   PGPPassInterval;
+   int   SpamProbabilityThreshold;
+   int   SpamFlushTrainingDataInterval;
+   int   SpamFlushTrainingDataThreshold;
 
    enum  PrintMethod        PrintMethod;
    enum  SMTPSecMethod      SMTP_SecureMethod;
@@ -434,6 +467,10 @@ struct Config
    BOOL  DetectCyrillic;
    BOOL  ABookLookup;
    BOOL  ConvertHTML;
+   BOOL  SpamFilterEnabled;
+   BOOL  SpamFilterForNewMail;
+   BOOL  SpamMarkOnMove;
+   BOOL  SpamAddressBookIsWhiteList;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color1stLevel;
@@ -517,6 +554,7 @@ extern struct Hook CO_AddPOP3Hook;
 extern struct Hook CO_DelPOP3Hook;
 extern struct Hook CO_EditSignatHook;
 extern struct Hook CO_SwitchSignatHook;
+extern struct Hook CO_SwitchSpamFilterHook;
 extern struct Hook CO_GetDefaultPOPHook;
 extern struct Hook CO_GetP3EntryHook;
 extern struct Hook CO_OpenHook;
@@ -533,7 +571,7 @@ extern struct Hook RemoveLastRuleHook;
 void              CO_FreeConfig(struct Config *co);
 BOOL              CO_IsValid(void);
 struct POP3 *     CO_NewPOP3(struct Config *co, BOOL first);
-void              CO_SetDefaults(struct Config *co, int page);
+void              CO_SetDefaults(struct Config *co, enum ConfigPage page);
 void              CO_Validate(struct Config *co, BOOL update);
 
 void              GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);

@@ -87,6 +87,9 @@
 #define SFLAG_DELETED   (1<<7)      // Message was marked as deleted
 #define SFLAG_MARKED    (1<<8)      // Message is marked/flagged
 #define SFLAG_ERROR     (1<<9)      // This message is in an error state (error sending)
+#define SFLAG_USERSPAM  (1<<10)     // This message is marked as spam by user
+#define SFLAG_AUTOSPAM  (1<<11)     // This message is marked as spam automatically
+#define SFLAG_HAM       (1<<12)     // This message is marked as ham by user
 #define SCHAR_READ      'R'         // [R] - SFLAG_READ
 #define SCHAR_REPLIED   'A'         // [A] - SFLAG_REPLIED
 #define SCHAR_FORWARDED 'F'         // [F] - SFLAG_FORWARDED
@@ -97,6 +100,9 @@
 #define SCHAR_DELETED   'D'         // [D] - SFLAG_DELETED
 #define SCHAR_MARKED    'M'         // [M] - SFLAG_MARKED
 #define SCHAR_ERROR     'E'         // [E] - SFLAG_ERROR
+#define SCHAR_USERSPAM  'X'         // [X] - SFLAG_USERSPAM
+#define SCHAR_AUTOSPAM  'J'         // [J] - SFLAG_AUTOSPAM
+#define SCHAR_HAM       'Y'         // [Y] - SFLAG_HAM
 #define hasStatusRead(mail)         (isFlagSet((mail)->sflags, SFLAG_READ))
 #define hasStatusReplied(mail)      (isFlagSet((mail)->sflags, SFLAG_REPLIED))
 #define hasStatusForwarded(mail)    (isFlagSet((mail)->sflags, SFLAG_FORWARDED))
@@ -107,6 +113,10 @@
 #define hasStatusDeleted(mail)      (isFlagSet((mail)->sflags, SFLAG_DELETED))
 #define hasStatusMarked(mail)       (isFlagSet((mail)->sflags, SFLAG_MARKED))
 #define hasStatusError(mail)        (isFlagSet((mail)->sflags, SFLAG_ERROR))
+#define hasStatusSpam(mail)         (isFlagSet((mail)->sflags, SFLAG_USERSPAM) || isFlagSet((mail)->sflags, SFLAG_AUTOSPAM))
+#define hasStatusUserSpam(mail)     (isFlagSet((mail)->sflags, SFLAG_USERSPAM))
+#define hasStatusAutoSpam(mail)     (isFlagSet((mail)->sflags, SFLAG_AUTOSPAM))
+#define hasStatusHam(mail)          (isFlagSet((mail)->sflags, SFLAG_HAM))
 #define setStatusToRead(mail)       MA_ChangeMailStatus(mail, SFLAG_READ, SFLAG_NEW)
 #define setStatusToReplied(mail)    MA_ChangeMailStatus(mail, SFLAG_REPLIED|SFLAG_READ, SFLAG_NEW)
 #define setStatusToForwarded(mail)  MA_ChangeMailStatus(mail, SFLAG_FORWARDED, SFLAG_NEW)
@@ -117,6 +127,9 @@
 #define setStatusToDeleted(mail)    MA_ChangeMailStatus(mail, SFLAG_DELETED, SFLAG_NONE)
 #define setStatusToMarked(mail)     MA_ChangeMailStatus(mail, SFLAG_MARKED, SFLAG_NONE)
 #define setStatusToError(mail)      MA_ChangeMailStatus(mail, SFLAG_ERROR, SFLAG_NONE)
+#define setStatusToUserSpam(mail)   MA_ChangeMailStatus(mail, SFLAG_USERSPAM|SFLAG_READ, SFLAG_NEW|SFLAG_AUTOSPAM|SFLAG_HAM)
+#define setStatusToAutoSpam(mail)   MA_ChangeMailStatus(mail, SFLAG_AUTOSPAM|SFLAG_READ, SFLAG_NEW|SFLAG_USERSPAM|SFLAG_HAM)
+#define setStatusToHam(mail)        MA_ChangeMailStatus(mail, SFLAG_HAM, SFLAG_USERSPAM|SFLAG_AUTOSPAM)
 
 // For compatibility to the old status levels we use the following macros
 // But as soon as we have reworked the filename handling we can remove them again
@@ -144,6 +157,7 @@
 #define SICON_ID_CRYPT      15     // status_crypt
 #define SICON_ID_SIGNED     16     // status_signed
 #define SICON_ID_MARK       17     // status_mark
+#define SICON_ID_SPAM       18     // status_mark
 
 #define SICON_UNREAD        "\033o[" STR(SICON_ID_UNREAD)   "]"
 #define SICON_OLD           "\033o[" STR(SICON_ID_OLD)      "]"
@@ -163,6 +177,7 @@
 #define SICON_CRYPT         "\033o[" STR(SICON_ID_CRYPT)    "]"
 #define SICON_SIGNED        "\033o[" STR(SICON_ID_SIGNED)   "]"
 #define SICON_MARK          "\033o[" STR(SICON_ID_MARK)     "]"
+#define SICON_SPAM          "\033o[" STR(SICON_ID_SPAM)     "]"
 
 // Mail importance levels
 enum ImportanceLevel { IMP_NORMAL=0, // normal (default)
@@ -207,8 +222,8 @@ enum { MMEN_ABOUT=100,MMEN_ABOUTMUI,MMEN_VERSION,MMEN_ERRORS,MMEN_LOGIN,MMEN_HID
        MMEN_GETMAIL,MMEN_GET1MAIL,MMEN_SENDMAIL,MMEN_EXMAIL,MMEN_READ,MMEN_EDIT,MMEN_MOVE,MMEN_COPY,
        MMEN_DELETE,MMEN_PRINT,MMEN_SAVE,MMEN_DETACH,MMEN_CROP,MMEN_EXPMSG,MMEN_NEW,MMEN_REPLY,MMEN_FORWARD,
        MMEN_BOUNCE,MMEN_SAVEADDR,MMEN_TOUNREAD,MMEN_TOREAD,MMEN_TOHOLD,MMEN_TOQUEUED,MMEN_TOMARKED,
-       MMEN_TOUNMARKED,MMEN_ALLTOREAD,MMEN_CHSUBJ,MMEN_SEND,MMEN_ABOOK,MMEN_CONFIG,MMEN_USER,MMEN_MUI,
-       MMEN_SCRIPT,MMEN_POPHOST, MMEN_MACRO=MMEN_POPHOST+MAXP3
+       MMEN_TOUNMARKED,MMEN_ALLTOREAD,MMEN_TOSPAM, MMEN_TOHAM,MMEN_CHSUBJ,MMEN_SEND,MMEN_ABOOK,MMEN_CONFIG,
+       MMEN_USER,MMEN_MUI,MMEN_SCRIPT,MMEN_POPHOST,MMEN_MACRO=MMEN_POPHOST+MAXP3
      };
 
 struct MA_GUIData
@@ -237,6 +252,7 @@ struct MA_GUIData
    Object *MI_SAVEATT;
    Object *MI_REMATT;
    Object *MI_EXPMSG;
+   Object *MI_NEW;
    Object *MI_REPLY;
    Object *MI_FORWARD;
    Object *MI_BOUNCE;
@@ -249,6 +265,8 @@ struct MA_GUIData
    Object *MI_TOMARKED;
    Object *MI_TOUNMARKED;
    Object *MI_ALLTOREAD;
+   Object *MI_TOSPAM;
+   Object *MI_TOHAM;
    Object *MI_CHSUBJ;
    Object *MI_SEND;
    Object *MI_FILTER;
@@ -266,7 +284,7 @@ struct MA_GUIData
    Object *MN_EMBEDDEDREADPANE;
    Object *GR_QUICKSEARCHBAR;
    Object *PG_MAILLIST;
-   struct MUIP_Toolbar_Description TB_TOOLBAR[18];
+   struct MUIP_Toolbar_Description TB_TOOLBAR[21];
 };
 
 struct MA_ClassData  /* main window */
@@ -285,6 +303,7 @@ extern struct Hook MA_GetAddressHook;
 extern struct Hook MA_MoveMessageHook;
 extern struct Hook MA_CopyMessageHook;
 extern struct Hook MA_DeleteMessageHook;
+extern struct Hook MA_ClassifyMessageHook;
 extern struct Hook MA_SavePrintHook;
 extern struct Hook MA_SaveAttachHook;
 extern struct Hook MA_RemoveAttachHook;

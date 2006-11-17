@@ -55,9 +55,9 @@
 #define MAXP3           16
 #define MAXRX           21
 
-#define MAX_STATUSIMG   18
-#define MAX_FOLDERIMG    9
-#define MAX_CFGIMG      32
+#define MAX_STATUSIMG   19
+#define MAX_FOLDERIMG   11
+#define MAX_CFGIMG      34
 #define MAX_IMAGES      (MAX_STATUSIMG+MAX_FOLDERIMG+MAX_CFGIMG)
 
 #define MAXICONS         4
@@ -65,7 +65,6 @@
 #define MAXERR          50
 #define MAXUSERS        16
 #define MAXCTYPE        25
-#define MAXCPAGES       16
 #define MAXEA            4
 #define MAXWR            2 /* BEWARE: Don't change this value - it's hardcoded many places! */
 

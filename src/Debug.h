@@ -74,6 +74,7 @@
 #define DBF_IMAGE    (1<<14)    // for loading/mainting image files (and cache)
 #define DBF_UPDATE   (1<<15)    // for the updatecheck facility (UpdateCheck.c)
 #define DBF_HTML     (1<<16)    // for the html convert engine (HTML2Mail.c)
+#define DBF_SPAM     (1<<17)    // for the spam dectection engine (spam.c)
 #define DBF_ALL      0xffffffff
 
 void SetupDebug(void);

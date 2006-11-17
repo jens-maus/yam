@@ -3670,9 +3670,11 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
     {
       // search through our ReadDataList
       struct MinNode *curNode;
+
       for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
         struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
         if(rmData->mail == mail)
           CleanupReadMailData(rmData, TRUE);
       }
@@ -5330,10 +5332,11 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
   // directory and it is one of our standard folders we have to check which image we put in front of it
   if(fo->imageObject == NULL)
   {
-    if(isIncomingFolder(fo))      fo->ImageIndex = (fo->New+fo->Unread) ? 3 : 2;
-    else if(isOutgoingFolder(fo)) fo->ImageIndex = (fo->Total > 0) ? 5 : 4;
-    else if(isDeletedFolder(fo))  fo->ImageIndex = (fo->Total > 0) ? 7 : 6;
-    else if(isSentFolder(fo))     fo->ImageIndex = 8;
+    if(isIncomingFolder(fo))      fo->ImageIndex = (fo->New+fo->Unread) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
+    else if(isOutgoingFolder(fo)) fo->ImageIndex = (fo->Total > 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
+    else if(isDeletedFolder(fo))  fo->ImageIndex = (fo->Total > 0) ? FICON_ID_DELETED_NEW : FICON_ID_DELETED;
+    else if(isSentFolder(fo))     fo->ImageIndex = FICON_ID_SENT;
+    else if(isSpamFolder(fo))     fo->ImageIndex = (fo->Total > 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
     else fo->ImageIndex = -1;
   }
 
@@ -6120,6 +6123,7 @@ void InsertAddresses(APTR obj, char **addr, BOOL add)
    }
 }
 ///
+
 /// AllocReqText
 //  Prepare multi-line text for requesters, converts \n to line breaks
 char *AllocReqText(char *s)
@@ -6132,3 +6136,19 @@ char *AllocReqText(char *s)
    return reqtext;
 }
 ///
+
+/// ToLowerCase
+//  Change a complete string to lower case
+void ToLowerCase(char *str)
+{
+    char c;
+
+    ENTER();
+
+    while ((c = *str) != '\0')
+        *str++ = tolower(c);
+
+    LEAVE();
+}
+
+

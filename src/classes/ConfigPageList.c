@@ -30,11 +30,13 @@
 
 #include "ConfigPageList_cl.h"
 
+#include "YAM_config.h"
+
 /* CLASSDATA
 struct Data
 {
   struct Hook displayHook;
-  Object       *configIcon[MAXCPAGES];
+  Object       *configIcon[cp_Max];
 };
 */
 
@@ -68,32 +70,33 @@ OVERLOAD(OM_NEW)
     TAG_MORE, inittags(msg))))
   {
     GETDATA;
-    int i;
+    enum ConfigPage i;
 
     InitHook(&data->displayHook, DisplayHook, data);
     set(obj, MUIA_NList_DisplayHook, &data->displayHook);
 
     // create/load all bodychunkimages of our config icons
-    data->configIcon[0]  = MakeImageObject("config_firststep");
-    data->configIcon[1]  = MakeImageObject("config_network");
-    data->configIcon[2]  = MakeImageObject("config_newmail");
-    data->configIcon[3]  = MakeImageObject("config_filters");
-    data->configIcon[4]  = MakeImageObject("config_read");
-    data->configIcon[5]  = MakeImageObject("config_write");
-    data->configIcon[6]  = MakeImageObject("config_answer");
-    data->configIcon[7]  = MakeImageObject("config_signature");
-    data->configIcon[8]  = MakeImageObject("config_lists");
-    data->configIcon[9]  = MakeImageObject("config_security");
-    data->configIcon[10] = MakeImageObject("config_start");
-    data->configIcon[11] = MakeImageObject("config_mime");
-    data->configIcon[12] = MakeImageObject("config_abook");
-    data->configIcon[13] = MakeImageObject("config_scripts");
-    data->configIcon[14] = MakeImageObject("config_misc");
-    data->configIcon[15] = MakeImageObject("config_update");
+    data->configIcon[cp_FirstSteps  ]  = MakeImageObject("config_firststep");
+    data->configIcon[cp_TCPIP       ]  = MakeImageObject("config_network");
+    data->configIcon[cp_NewMail     ]  = MakeImageObject("config_newmail");
+    data->configIcon[cp_Filters     ]  = MakeImageObject("config_filters");
+    data->configIcon[cp_Spam        ] = MakeImageObject("config_spam");
+    data->configIcon[cp_Read        ]  = MakeImageObject("config_read");
+    data->configIcon[cp_Write       ]  = MakeImageObject("config_write");
+    data->configIcon[cp_ReplyForward]  = MakeImageObject("config_answer");
+    data->configIcon[cp_Signature   ]  = MakeImageObject("config_signature");
+    data->configIcon[cp_Lists       ]  = MakeImageObject("config_lists");
+    data->configIcon[cp_Security    ]  = MakeImageObject("config_security");
+    data->configIcon[cp_StartupQuit ] = MakeImageObject("config_start");
+    data->configIcon[cp_MIME        ] = MakeImageObject("config_mime");
+    data->configIcon[cp_AddressBook ] = MakeImageObject("config_abook");
+    data->configIcon[cp_Scripts     ] = MakeImageObject("config_scripts");
+    data->configIcon[cp_Mixed       ] = MakeImageObject("config_misc");
+    data->configIcon[cp_Update      ] = MakeImageObject("config_update");
 
     // now we can add the config icon objects and use UseImage
     // to prepare it for displaying it in the NList
-    for(i = 0; i < MAXCPAGES; i++)
+    for(i = cp_FirstSteps; i < cp_Max; i++)
       DoMethod(obj, MUIM_NList_UseImage, data->configIcon[i], i, MUIF_NONE);
   }
   
@@ -105,9 +108,9 @@ OVERLOAD(OM_NEW)
 OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
-  int i;
+  enum ConfigPage i;
 
-  for(i=0; i < MAXCPAGES; i++)
+  for(i = cp_FirstSteps; i < cp_Max; i++)
   {
     if(data->configIcon[i])
       MUI_DisposeObject(data->configIcon[i]);

@@ -54,11 +54,11 @@ CPU      = -mcpu=604e
 CPUFLAGS = -mmultiple -Wa,-mregnames
 WARN     = -W -Wall -Wwrite-strings
 OPTFLAGS = -O3 -fomit-frame-pointer -funroll-loops
-DEBUG    = -DDEBUG #-O0
+DEBUG    = -DDEBUG -O0 -g
 REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod \
            -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
 CFLAGS   = -mcrt=$(CRT) -g -I. -I./include $(CPU) $(CPUFLAGS) $(WARN) \
-           $(OPTFLAGS) $(DEBUG) -D__USE_INLINE__ \
+           $(OPTFLAGS) $(DEBUG) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
            $(REDEFINE) -c
 LDFLAGS  = $(CPU) -mcrt=$(CRT)
 LDLIBS   = -lm

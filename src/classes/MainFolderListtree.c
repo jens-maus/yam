@@ -71,6 +71,8 @@ OVERLOAD(OM_NEW)
   data->folderImage[FICON_ID_DELETED_NEW] = MakeImageObject("folder_deleted_new");
   data->folderImage[FICON_ID_SENT]        = MakeImageObject("folder_sent");
   data->folderImage[FICON_ID_PROTECTED]   = MakeImageObject("status_crypt");
+  data->folderImage[FICON_ID_SPAM]        = MakeImageObject("folder_spam");
+  data->folderImage[FICON_ID_SPAM_NEW]    = MakeImageObject("folder_spam_new");
   for(i=0; i < MAX_FOLDERIMG+1; i++)
     DoMethod(obj, MUIM_NList_UseImage, data->folderImage[i], i, MUIF_NONE);
 

@@ -179,7 +179,7 @@ struct UtilityIFace*      IUtility      = NULL;
 struct WBStartup *WBmsg;
 
 const char* const SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };
-const char* const FolderNames[4] = { "incoming", "outgoing", "sent", "deleted" };
+const char* const FolderNames[5] = { "incoming", "outgoing", "sent", "deleted", "spam" };
 const char* const wdays[7] = { "Sun","Mon","Tue","Wed","Thu","Fri","Sat" };
 const char* const months[12] = { "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
 const char* const SecCodes[5] = { "none","sign","encrypt","sign+encrypt","anonymous" };

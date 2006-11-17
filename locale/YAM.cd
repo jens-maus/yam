@@ -5892,3 +5892,107 @@ messages?
 MSG_MESSAGE_EDITASNEW (1743//)
 E\000Edit As New...
 ;
+MSG_MA_SPAM (1744//)
+Spam
+;
+MSG_LOADINGSPAMTRAININGDATA (1745//)
+Loading spam training data...
+;
+MSG_MA_TBSPAM (1746//)
+Spam
+;
+MSG_MA_TBNOTSPAM (1747//)
+Not Spam
+;
+MSG_HELP_MA_BT_SPAM (1748//)
+Mark mail as spam
+;
+MSG_HELP_MA_BT_NOTSPAM (1749//)
+Mark mail as not spam
+;
+MSG_RE_TBSPAM (1750//)
+Spam
+;
+MSG_RE_TBNOTSPAM (1751//)
+Not Spam
+;
+MSG_HELP_RE_BT_SPAM (1752//)
+Mark mail as spam
+;
+MSG_HELP_RE_BT_NOTSPAM (1753//)
+Mark mail as not spam
+;
+MSG_LOG_MAILISSPAM (1754//)
+Message from '%s' about '%s' is treated as spam
+; SENDER, SUBJECT
+;
+MSG_LOG_MAILISNOTSPAM (1755//)
+Message from '%s' about '%s' is no longer treated as spam
+; SENDER, SUBJECT
+;
+MSG_FI_STATSPAM (1756//)
+Spam
+;
+MSG_MA_TOSPAM (1757//)
+Spam
+;
+MSG_MA_TONOTSPAM (1758//)
+Not Spam
+;
+MSG_RE_SETSPAM (1759//)
+Set status to spam
+;
+MSG_RE_SETNOTSPAM (1760//)
+Set status to not spam
+;
+MSG_CO_CRDSPAMFILTER (1761//)
+Spam
+;
+MSG_CO_SPAMFILTER (1762//)
+Spam filter
+;
+MSG_CO_SPAMFILTER_TITLE (1763//)
+Spam filter
+;
+MSG_CO_SPAMFILTER_SUMMARY (1764//)
+Configure spam filter...
+;
+MSG_CO_SPAM_FILTERFORNEWMAIL (1765//)
+Check new mails for spam content
+;
+MSG_CO_SPAM_RESETTRAININGDATA (1766//)
+_Reset training data
+;
+MSG_CO_SPAM_GOODCOUNT (1767//)
+Number of "not spam" classified mails
+;
+MSG_CO_SPAM_BADCOUNT (1768//)
+Number of "spam" classified mails
+;
+MSG_CO_SPAM_PROBABILITYTHRESHOLD (1769//)
+Treat mails as spam if spam probability is greater or equal
+;
+MSG_CO_NB_SPAMPROBTHRESHOLDFMT (1770//)
+%ld%%
+;
+MSG_BUSYFLUSHINGSPAMTRAININGDATA (1771//)
+Flushing spam training data...
+;
+MSG_CO_SPAM_MARKONMOVE (1772//)
+Mark mails as spam when moved to the spam folder
+;
+MSG_CO_SPAM_ADDRESSBOOKISWHITELIST (1773//)
+Address book is white list
+;
+MSG_CO_SPAM_RECOGNITION (1774//)
+Spam recognition
+;
+MSG_CO_SPAM_FILTERENABLED (1775//)
+Spam filter enabled
+;
+MSG_CO_SPAM_RESETTRAININGDATAASK (1776//)
+Do you really want to reset\n\
+the spam filter's training data?\n\
+\n\
+The spam filter must be trained again afterwards!
+;

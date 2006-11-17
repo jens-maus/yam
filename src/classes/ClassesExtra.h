@@ -66,6 +66,7 @@
 
 #include "YAM_main.h" // NewMode
 #include "YAM_read.h" // HeaderMode,SInfoMode
+#include "BayesFilter.h" // BayesClassification
 
 // some own MUI macros (not official)
 #ifndef MUIF_NONE
