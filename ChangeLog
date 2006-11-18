@@ -6,6 +6,7 @@ $Id$
 
 2006-11-18  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: deleted a printf() call for debugging purposes.
   * misc: all delete and move functions can be told to close a possibly open
     read window when RemoveMailFromList() is called. This should fix the
     complaints on the mailing list about an always closing read window when

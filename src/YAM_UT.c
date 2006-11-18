@@ -3635,7 +3635,6 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 
       if(rmData->mail == mail)
       {
-        printf("%d %s\n", closeWindows, rmData->mail->Subject);
         // clear the pointer to this mail
         rmData->mail = NULL;
 
