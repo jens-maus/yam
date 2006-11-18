@@ -3770,7 +3770,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                   {
                     setStatusToSent(mail->Reference);
                     if(TR_ApplySentFilters(mail->Reference))
-                      MA_MoveCopy(mail->Reference, outfolder, sentfolder, FALSE);
+                      MA_MoveCopy(mail->Reference, outfolder, sentfolder, FALSE, TRUE);
                   }
                   break;
 
@@ -3779,7 +3779,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                   {
                     setStatusToSent(mail->Reference);
                     if (TR_ApplySentFilters(mail->Reference))
-                      MA_DeleteSingle(mail->Reference, FALSE, FALSE);
+                      MA_DeleteSingle(mail->Reference, FALSE, FALSE, FALSE);
                   }
                   break;
                 }

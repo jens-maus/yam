@@ -551,7 +551,7 @@ void rx_mailmove( UNUSED struct RexxHost *host, struct rxd_mailmove **rxd, long 
          
       case RXIF_ACTION:
          if ((folder = FO_GetFolderRexx(rd->arg.folder, NULL)))
-            MA_MoveCopy(NULL, FO_GetCurrentFolder(), folder, FALSE);
+            MA_MoveCopy(NULL, FO_GetCurrentFolder(), folder, FALSE, TRUE);
          else rd->rc = RETURN_ERROR;
          break;
       
@@ -1991,7 +1991,7 @@ void rx_mailcopy( UNUSED struct RexxHost *host, struct rxd_mailcopy **rxd, long 
          
       case RXIF_ACTION:
          if ((folder = FO_GetFolderRexx(rd->arg.folder, NULL)))
-            MA_MoveCopy(NULL, FO_GetCurrentFolder(), folder, TRUE);
+            MA_MoveCopy(NULL, FO_GetCurrentFolder(), folder, TRUE, FALSE);
          else rd->rc = RETURN_ERROR;
          break;
       

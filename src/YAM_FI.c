@@ -1240,7 +1240,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
         if(fo->LoadedMode != LM_VALID && isProtectedFolder(fo))
           SET_FLAG(fo->Flags, FOFL_FREEXS);
 
-        MA_MoveCopy(mail, mail->Folder, fo, FALSE);
+        MA_MoveCopy(mail, mail->Folder, fo, FALSE, TRUE);
 
         return FALSE;
       }
@@ -1260,7 +1260,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
       RE_DoMDN(MDN_DELE|MDN_AUTOACT, mail, FALSE);
     }
 
-    MA_DeleteSingle(mail, FALSE, FALSE);
+    MA_DeleteSingle(mail, FALSE, FALSE, TRUE);
 
     return FALSE;
   }

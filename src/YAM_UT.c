@@ -3591,7 +3591,7 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
 ///
 /// RemoveMailFromList
 //  Removes a message from a folder
-void RemoveMailFromList(struct Mail *mail)
+void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 {
   struct Folder *folder = mail->Folder;
 
@@ -3635,11 +3635,12 @@ void RemoveMailFromList(struct Mail *mail)
 
       if(rmData->mail == mail)
       {
+        printf("%d %s\n", closeWindows, rmData->mail->Subject);
         // clear the pointer to this mail
         rmData->mail = NULL;
 
         // and ask the window to close itself
-        if(rmData->readWindow != NULL)
+        if(closeWindows && rmData->readWindow != NULL)
           set(rmData->readWindow, MUIA_Window_Open, FALSE);
       }
     }

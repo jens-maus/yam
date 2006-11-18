@@ -695,7 +695,7 @@ DECLARE(MoveMailRequest)
       }
 
       // move the mail to the selected destination folder
-      MA_MoveCopy(mail, srcfolder, dstfolder, FALSE);
+      MA_MoveCopy(mail, srcfolder, dstfolder, FALSE, FALSE);
 
       // erase the old pointer as this has been free()ed by MA_MoveCopy()
       rmData->mail = NULL;
@@ -747,7 +747,7 @@ DECLARE(CopyMailRequest)
       // export to the destination folder
       if(srcfolder)
       {
-        MA_MoveCopy(mail, srcfolder, dstfolder, TRUE);
+        MA_MoveCopy(mail, srcfolder, dstfolder, TRUE, FALSE);
         
         AppendLogNormal(24, GetStr(MSG_LOG_Copying), 1, srcfolder->Name, dstfolder->Name);
       }
@@ -795,7 +795,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
     }
 
     // delete the mail
-    MA_DeleteSingle(mail, delatonce, FALSE);
+    MA_DeleteSingle(mail, delatonce, FALSE, FALSE);
 
     // erase the old pointer as this has been free()ed by MA_DeleteSingle()
     rmData->mail = NULL;
@@ -863,7 +863,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       setStatusToUserSpam(mail);
 
       // move the mail
-      MA_MoveCopy(mail, folder, spamfolder, FALSE);
+      MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
 
       // erase the old pointer as this has been free()ed by MA_MoveCopy()
       rmData->mail = NULL;

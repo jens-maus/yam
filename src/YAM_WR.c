@@ -1766,7 +1766,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
           }
         }
 
-        RemoveMailFromList(wr->refMail);
+        RemoveMailFromList(wr->refMail, TRUE);
         wr->refMail = newMail;
       }
     }

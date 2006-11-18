@@ -4,7 +4,21 @@ YAM Open Source - ChangeLog
 
 $Id$
 
-2006-11-16  Thore Böckelmann <tboeckel@gmx.de>
+2006-11-18  Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: all delete and move functions can be told to close a possibly open
+    read window when RemoveMailFromList() is called. This should fix the
+    complaints on the mailing list about an always closing read window when
+    deleting mails. The behaviour is now consistent in that way, that all
+    operations invoked from the read window will try to leave the window open
+    and show another mail after the operation. All operations invoked from the
+    main window will close an open read window affected by this operation,
+    because from the main window one can perform this operation one more than
+    one single mail. I hope this corresponds with most users' expectations. You
+    should keep in mind that is not always possible to keep the read window open
+    because of the invalid pointer problem.
+
+2006-11-17  Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: Too many changes to list each of them, but finally YAM got a working
     spam filter!!

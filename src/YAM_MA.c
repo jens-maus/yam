@@ -95,7 +95,7 @@ struct ExpandTextData
 
 /* local protos */
 static ULONG MA_GetSortType(int);
-static struct Mail *MA_MoveCopySingle(struct Mail*, struct Folder*, struct Folder*, BOOL);
+static struct Mail *MA_MoveCopySingle(struct Mail*, struct Folder*, struct Folder*, BOOL, BOOL);
 static void MA_UpdateStatus(void);
 static char *MA_AppendRcpt(char*, struct Person*, BOOL);
 static int MA_CmpDate(struct Mail**, struct Mail**);
@@ -600,7 +600,7 @@ struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
 ///
 /// MA_DeleteSingle
 //  Deletes a single message
-void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet)
+void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL closeWindows)
 {
   struct Folder *mailFolder = mail->Folder;
 
@@ -642,7 +642,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet)
     DeleteFile(GetMailFile(NULL, mailFolder, mail));
 
     // now remove the mail from its folder/mail list
-    RemoveMailFromList(mail);
+    RemoveMailFromList(mail, closeWindows);
 
     // if we are allowed to make some noise we
     // update our Statistics
@@ -653,7 +653,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet)
   {
     struct Folder *delfolder = FO_GetFolderByType(FT_DELETED, NULL);
 
-    MA_MoveCopySingle(mail, mailFolder, delfolder, FALSE);
+    MA_MoveCopySingle(mail, mailFolder, delfolder, FALSE, closeWindows);
 
     // if we are allowed to make some noise we
     // update our Statistics
@@ -670,7 +670,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet)
 ///
 /// MA_MoveCopySingle
 //  Moves or copies a single message from one folder to another
-static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, struct Folder *to, BOOL copyit)
+static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, struct Folder *to, BOOL copyit, BOOL closeWindows)
 {
   struct Mail cmail = *mail;
   char mfile[SIZE_MFILE];
@@ -734,7 +734,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
       }
 
       // now remove the mail from its folder/mail list
-      RemoveMailFromList(mail);
+      RemoveMailFromList(mail, closeWindows);
     }
 
     if(to == FO_GetCurrentFolder())
@@ -780,7 +780,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 ///
 /// MA_MoveCopy
 //  Moves or copies messages from one folder to another
-void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit)
+void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit, BOOL closeWindows)
 {
   struct Mail **mlist;
   int selected = 0;
@@ -795,7 +795,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
   if(mail)
   {
     selected = 1;
-    MA_MoveCopySingle(mail, frombox, tobox, copyit);
+    MA_MoveCopySingle(mail, frombox, tobox, copyit, closeWindows);
   }
   else if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
   {
@@ -808,7 +808,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
     for(i = 0; i < selected; i++)
     {
       mail = mlist[i+2];
-      MA_MoveCopySingle(mail, frombox, tobox, copyit);
+      MA_MoveCopySingle(mail, frombox, tobox, copyit, closeWindows);
       BusySet(i+1);
     }
     BusyEnd();
@@ -2724,7 +2724,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
       }
 
       // call our subroutine with quiet option
-      MA_DeleteSingle(mail, delatonce, TRUE);
+      MA_DeleteSingle(mail, delatonce, TRUE, TRUE);
 
       BusySet(i+1);
    }
@@ -2782,7 +2782,7 @@ void MA_ClassifyMessage(enum BayesClassification class)
           BayesFilterSetClassification(mail, BC_SPAM);
           setStatusToUserSpam(mail);
           // move the mail
-          MA_MoveCopySingle(mail, folder, spamfolder, FALSE);
+          MA_MoveCopySingle(mail, folder, spamfolder, FALSE, TRUE);
       }
       else if(!hasStatusHam(mail) && class == BC_HAM)
       {
@@ -3175,7 +3175,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
                    isSpamFolder(flist[f]) ||
                    (!hasStatusNew(mail) && hasStatusRead(mail)))
                 {
-                  MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE);
+                  MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE, FALSE);
                 }
               }
             }
@@ -3517,7 +3517,7 @@ HOOKPROTONHNONP(MA_MoveMessageFunc, void)
    if(!src) return;
 
    if ((dst = FolderRequest(GetStr(MSG_MA_MoveMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_MoveGad), GetStr(MSG_Cancel), src, G->MA->GUI.WI)))
-      MA_MoveCopy(NULL, src, dst, FALSE);
+      MA_MoveCopy(NULL, src, dst, FALSE, TRUE);
 }
 MakeHook(MA_MoveMessageHook, MA_MoveMessageFunc);
 
@@ -3531,7 +3531,7 @@ HOOKPROTONHNONP(MA_CopyMessageFunc, void)
    if(!src) return;
 
    if ((dst = FolderRequest(GetStr(MSG_MA_CopyMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_CopyGad), GetStr(MSG_Cancel), NULL, G->MA->GUI.WI)))
-      MA_MoveCopy(NULL, src, dst, TRUE);
+      MA_MoveCopy(NULL, src, dst, TRUE, FALSE);
 }
 MakeHook(MA_CopyMessageHook, MA_CopyMessageFunc);
 
