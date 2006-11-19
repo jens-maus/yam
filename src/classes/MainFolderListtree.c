@@ -202,7 +202,7 @@ OVERLOAD(MUIM_DragDrop)
     srcfolder = tn_src->tn_User;
 
     if(!isGroupFolder(dstfolder))
-      MA_MoveCopy(NULL, srcfolder, dstfolder, FALSE);
+      MA_MoveCopy(NULL, srcfolder, dstfolder, FALSE, TRUE);
     
     return 0;
   }
