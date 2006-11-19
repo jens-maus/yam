@@ -137,6 +137,8 @@ OBJS = \
   $(OBJDIR)/ImageCache.o \
   $(OBJDIR)/UpdateCheck.o \
   $(OBJDIR)/HTML2Mail.o \
+  $(OBJDIR)/BayesFilter.o \
+  $(OBJDIR)/HashTable.o \
   $(CLASSES) \
   $(OBJDIR)/extrasrc.o \
   $(OBJDIR)/Debug.o

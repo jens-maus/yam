@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-19  Thore Böckelmann <tboeckel@gmx.de>
+
+  * VMakefile, smakefile: added missing dependency lines for BayesFilter.o and
+    HashTable.o
+
 2006-11-18  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: deleted a printf() call for debugging purposes.
