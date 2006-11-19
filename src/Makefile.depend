@@ -49,8 +49,8 @@ $(OBJDIR)/YAM.o: YAM.c include/libraries/amisslmaster.h include/libraries/genesi
   YAM_userlist.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_addressbookEntry.h YAM_config.h YAM_find.h UpdateCheck.h \
   YAM_configFile.h YAM_global.h YAM_locale.h YAM_main.h YAM_read.h \
-  YAM_write.h YAM_rexx.h ImageCache.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h Debug.h
+  YAM_write.h YAM_rexx.h ImageCache.h BayesFilter.h classes/Classes.h \
+  classes/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/YAM_AB.o: YAM_AB.c include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/libraries/mui.h include/amiga-align.h include/default-align.h \
   include/mui/NListview_mcc.h include/proto/muimaster.h \
@@ -62,7 +62,8 @@ $(OBJDIR)/YAM_AB.o: YAM_AB.c include/mui/BetterString_mcc.h include/mui/NList_mc
   YAM_userlist.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_addressbookEntry.h YAM_config.h YAM_find.h UpdateCheck.h \
   YAM_error.h YAM_global.h YAM_locale.h YAM_main.h YAM_write.h \
-  classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h Debug.h
+  classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h Debug.h
 $(OBJDIR)/YAM_CO.o: YAM_CO.c include/libraries/amisslmaster.h \
   include/mui/BetterString_mcc.h include/mui/NListview_mcc.h \
   include/libraries/mui.h include/amiga-align.h include/default-align.h \
@@ -79,7 +80,7 @@ $(OBJDIR)/YAM_CO.o: YAM_CO.c include/libraries/amisslmaster.h \
   YAM_config.h YAM_find.h UpdateCheck.h YAM_configFile.h YAM_configGUI.h \
   YAM_error.h YAM_global.h YAM_locale.h YAM_main.h YAM_mime.h \
   classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h Debug.h
+  YAM_write.h BayesFilter.h Debug.h
 $(OBJDIR)/YAM_COg.o: YAM_COg.c include/mui/BetterString_mcc.h \
   include/mui/NListview_mcc.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h include/mui/NList_mcc.h \
@@ -95,7 +96,7 @@ $(OBJDIR)/YAM_COg.o: YAM_COg.c include/mui/BetterString_mcc.h \
   YAM_addressbookEntry.h YAM_config.h YAM_find.h UpdateCheck.h \
   YAM_configFile.h YAM_global.h YAM_locale.h YAM_main.h YAM_mime.h \
   classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h Debug.h
+  YAM_write.h BayesFilter.h BayesFilter.h Debug.h
 $(OBJDIR)/YAM_COs.o: YAM_COs.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
   include/mui/TextEditor_mcc.h extrasrc.h include/SDI_compiler.h YAM.h \
@@ -104,7 +105,7 @@ $(OBJDIR)/YAM_COs.o: YAM_COs.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_folderconfig.h YAM_utilities.h include/mui/Toolbar_mcc.h \
   YAM_userlist.h YAM_config.h YAM_find.h UpdateCheck.h YAM_error.h \
   YAM_global.h YAM_locale.h YAM_main.h YAM_mime.h \
-  include/libraries/codesets.h Debug.h
+  include/libraries/codesets.h BayesFilter.h Debug.h
 $(OBJDIR)/YAM_DI.o: YAM_DI.c include/mui/TextEditor_mcc.h include/proto/muimaster.h \
   include/libraries/mui.h include/amiga-align.h include/default-align.h \
   include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
@@ -113,9 +114,9 @@ $(OBJDIR)/YAM_DI.o: YAM_DI.c include/mui/TextEditor_mcc.h include/proto/muimaste
   YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_mainFolder.h \
   YAM_folderconfig.h YAM_utilities.h include/mui/Toolbar_mcc.h \
   YAM_userlist.h YAM_error.h YAM_glossarydisplay.h YAM_locale.h \
-  YAM_write.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h
+  YAM_write.h YAM_main.h classes/Classes.h classes/ClassesExtra.h \
+  YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
+  YAM_addressbookEntry.h BayesFilter.h
 $(OBJDIR)/YAM_EA.o: YAM_EA.c include/mui/NListview_mcc.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h include/mui/NList_mcc.h \
   include/proto/muimaster.h include/interfaces/muimaster.h \
@@ -127,7 +128,7 @@ $(OBJDIR)/YAM_EA.o: YAM_EA.c include/mui/NListview_mcc.h include/libraries/mui.h
   YAM_addressbook.h include/mui/NListtree_mcc.h YAM_addressbookEntry.h \
   YAM_config.h YAM_find.h UpdateCheck.h YAM_error.h YAM_locale.h \
   classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h Debug.h
+  YAM_write.h YAM_main.h BayesFilter.h Debug.h
 $(OBJDIR)/YAM_ER.o: YAM_ER.c include/mui/NListview_mcc.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h include/mui/NList_mcc.h \
   include/mui/NFloattext_mcc.h include/proto/muimaster.h \
@@ -150,7 +151,7 @@ $(OBJDIR)/YAM_FI.o: YAM_FI.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_error.h YAM_global.h YAM_locale.h YAM_main.h YAM_read.h \
   YAM_addressbook.h include/mui/NListtree_mcc.h YAM_addressbookEntry.h \
   YAM_write.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h Debug.h
+  YAM_read.h BayesFilter.h BayesFilter.h Debug.h
 $(OBJDIR)/YAM_FO.o: YAM_FO.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
   include/mui/NListtree_mcc.h include/proto/muimaster.h \
@@ -164,7 +165,7 @@ $(OBJDIR)/YAM_FO.o: YAM_FO.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_find.h UpdateCheck.h YAM_configFile.h YAM_error.h YAM_global.h \
   YAM_locale.h YAM_main.h classes/Classes.h classes/ClassesExtra.h \
   YAM_main.h YAM_read.h YAM_addressbook.h YAM_addressbookEntry.h \
-  YAM_write.h ImageCache.h Debug.h
+  YAM_write.h BayesFilter.h ImageCache.h Debug.h
 $(OBJDIR)/YAM_locale.o: YAM_locale.c YAM.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_rexx_rxif.h \
@@ -184,7 +185,8 @@ $(OBJDIR)/YAM_MA.o: YAM_MA.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_config.h YAM_find.h UpdateCheck.h YAM_error.h YAM_global.h \
   YAM_locale.h YAM_main.h YAM_mime.h include/libraries/codesets.h \
   YAM_read.h YAM_write.h YAM_rexx.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h HTML2Mail.h Debug.h
+  classes/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h HTML2Mail.h \
+  BayesFilter.h Debug.h
 $(OBJDIR)/YAM_MAf.o: YAM_MAf.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
   include/mui/NListtree_mcc.h include/proto/muimaster.h \
@@ -197,7 +199,7 @@ $(OBJDIR)/YAM_MAf.o: YAM_MAf.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_global.h YAM_locale.h YAM_main.h YAM_mime.h \
   include/libraries/codesets.h YAM_read.h YAM_addressbook.h \
   YAM_addressbookEntry.h YAM_write.h YAM_rexx.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h Debug.h \
+  classes/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h Debug.h \
   include/amiga-align.h include/default-align.h
 $(OBJDIR)/YAM_md5.o: YAM_md5.c YAM_md5.h
 $(OBJDIR)/YAM_MI.o: YAM_MI.c include/proto/codesets.h include/libraries/codesets.h \
@@ -227,7 +229,7 @@ $(OBJDIR)/YAM_RE.o: YAM_RE.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_config.h YAM_find.h UpdateCheck.h YAM_error.h YAM_global.h \
   YAM_locale.h YAM_mail_lex.h YAM_main.h YAM_mime.h YAM_read.h \
   YAM_write.h HTML2Mail.h classes/Classes.h classes/ClassesExtra.h \
-  YAM_main.h YAM_read.h Debug.h
+  YAM_main.h YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/YAM_rexx.o: YAM_rexx.c extrasrc.h include/SDI_compiler.h YAM_mime.h \
   include/libraries/codesets.h YAM_stringsizes.h YAM_rexx.h \
   YAM_rexx_rxif.h YAM_rexx_rxcl.h YAM_utilities.h \
@@ -246,7 +248,7 @@ $(OBJDIR)/YAM_rexx_rxif.o: YAM_rexx_rxif.c include/mui/NList_mcc.h \
   YAM_find.h UpdateCheck.h YAM_global.h YAM_locale.h YAM_main.h \
   YAM_mime.h include/libraries/codesets.h YAM_read.h YAM_write.h \
   YAM_rexx_rxcl.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h
+  YAM_read.h BayesFilter.h
 $(OBJDIR)/YAM_TR.o: YAM_TR.c include/libraries/genesis.h include/amiga-align.h \
   include/default-align.h include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListview_mcc.h include/proto/amissl.h \
@@ -291,7 +293,7 @@ $(OBJDIR)/YAM_TR.o: YAM_TR.c include/libraries/genesis.h include/amiga-align.h \
   YAM_find.h UpdateCheck.h YAM_error.h YAM_global.h YAM_locale.h \
   YAM_main.h YAM_md5.h YAM_mime.h include/libraries/codesets.h \
   classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_addressbook.h YAM_write.h Debug.h
+  YAM_addressbook.h YAM_write.h BayesFilter.h BayesFilter.h Debug.h
 $(OBJDIR)/YAM_US.o: YAM_US.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
   include/mui/NListview_mcc.h include/proto/muimaster.h \
@@ -303,7 +305,7 @@ $(OBJDIR)/YAM_US.o: YAM_US.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_userlist.h YAM_config.h YAM_find.h UpdateCheck.h YAM_error.h \
   YAM_locale.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
   YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h Debug.h
 $(OBJDIR)/YAM_UT.o: YAM_UT.c include/libraries/openurl.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/libraries/mui.h include/amiga-align.h include/default-align.h \
@@ -321,7 +323,7 @@ $(OBJDIR)/YAM_UT.o: YAM_UT.c include/libraries/openurl.h \
   UpdateCheck.h YAM_error.h YAM_global.h YAM_locale.h YAM_mail_lex.h \
   YAM_main.h YAM_mime.h include/libraries/codesets.h YAM_read.h \
   YAM_addressbook.h YAM_addressbookEntry.h YAM_write.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h Debug.h
+  classes/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/YAM_WR.o: YAM_WR.c include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/libraries/mui.h include/amiga-align.h include/default-align.h \
   include/mui/NListtree_mcc.h include/mui/NListview_mcc.h \
@@ -335,7 +337,7 @@ $(OBJDIR)/YAM_WR.o: YAM_WR.c include/mui/BetterString_mcc.h include/mui/NList_mc
   YAM_find.h UpdateCheck.h YAM_configGUI.h YAM_error.h YAM_global.h \
   YAM_glossarydisplay.h YAM_locale.h YAM_main.h YAM_mime.h \
   include/libraries/codesets.h YAM_read.h YAM_write.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h Debug.h
+  classes/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/ImageCache.o: ImageCache.c extrasrc.h include/SDI_compiler.h YAM.h \
   include/libraries/mui.h include/amiga-align.h include/default-align.h \
   include/xpk/xpk.h include/amiga-align.h include/default-align.h \
@@ -355,11 +357,21 @@ $(OBJDIR)/UpdateCheck.o: UpdateCheck.c include/mui/BetterString_mcc.h \
   UpdateCheck.h YAM_configFile.h YAM_error.h YAM_global.h YAM_locale.h \
   YAM_mime.h include/libraries/codesets.h classes/Classes.h \
   classes/ClassesExtra.h YAM_main.h YAM_read.h YAM_addressbook.h \
-  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h Debug.h
+  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h \
+  YAM_main.h BayesFilter.h Debug.h
 $(OBJDIR)/HTML2Mail.o: HTML2Mail.c HTML2Mail.h YAM_utilities.h \
   include/mui/Toolbar_mcc.h include/libraries/mui.h include/amiga-align.h \
   include/default-align.h include/SDI_compiler.h YAM_folderconfig.h \
   YAM_stringsizes.h Debug.h
+$(OBJDIR)/HashTable.o: HashTable.c HashTable.h include/SDI_compiler.h Debug.h
+$(OBJDIR)/BayesFilter.o: BayesFilter.c BayesFilter.h YAM.h include/libraries/mui.h \
+  include/amiga-align.h include/default-align.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_rexx_rxif.h \
+  YAM_stringsizes.h YAM_transfer.h YAM_mainFolder.h YAM_folderconfig.h \
+  YAM_utilities.h include/mui/Toolbar_mcc.h include/SDI_compiler.h \
+  YAM_userlist.h HashTable.h Debug.h YAM_config.h YAM_find.h \
+  UpdateCheck.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h
 $(OBJDIR)/Classes.o: classes/Classes.c classes/Classes.h classes/ClassesExtra.h \
   include/libraries/mui.h include/amiga-align.h include/default-align.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -373,7 +385,7 @@ $(OBJDIR)/Classes.o: classes/Classes.c classes/Classes.h classes/ClassesExtra.h 
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h
 $(OBJDIR)/Recipientstring.o: classes/Recipientstring.c classes/Recipientstring_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -388,7 +400,8 @@ $(OBJDIR)/Recipientstring.o: classes/Recipientstring.c classes/Recipientstring_c
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  Debug.h
 $(OBJDIR)/Searchwindow.o: classes/Searchwindow.c classes/Searchwindow_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -403,7 +416,7 @@ $(OBJDIR)/Searchwindow.o: classes/Searchwindow.c classes/Searchwindow_cl.h \
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h
 $(OBJDIR)/SearchControlGroup.o: classes/SearchControlGroup.c \
   classes/SearchControlGroup_cl.h classes/Classes.h \
   classes/ClassesExtra.h include/libraries/mui.h include/amiga-align.h \
@@ -418,7 +431,8 @@ $(OBJDIR)/SearchControlGroup.o: classes/SearchControlGroup.c \
   YAM_utilities.h include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h \
   YAM_find.h UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h \
   YAM_utilities.h YAM_main.h YAM_read.h YAM_addressbook.h \
-  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h
+  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h \
+  YAM_main.h BayesFilter.h YAM.h
 $(OBJDIR)/AddrBookEntryList.o: classes/AddrBookEntryList.c \
   classes/AddrBookEntryList_cl.h classes/Classes.h classes/ClassesExtra.h \
   include/libraries/mui.h include/amiga-align.h include/default-align.h \
@@ -433,7 +447,7 @@ $(OBJDIR)/AddrBookEntryList.o: classes/AddrBookEntryList.c \
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h
 $(OBJDIR)/AddrBookListtree.o: classes/AddrBookListtree.c \
   classes/AddrBookListtree_cl.h classes/Classes.h classes/ClassesExtra.h \
   include/libraries/mui.h include/amiga-align.h include/default-align.h \
@@ -448,7 +462,8 @@ $(OBJDIR)/AddrBookListtree.o: classes/AddrBookListtree.c \
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  Debug.h
 $(OBJDIR)/Addrmatchlist.o: classes/Addrmatchlist.c classes/Addrmatchlist_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -463,7 +478,8 @@ $(OBJDIR)/Addrmatchlist.o: classes/Addrmatchlist.c classes/Addrmatchlist_cl.h \
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  Debug.h
 $(OBJDIR)/Aboutwindow.o: classes/Aboutwindow.c classes/Aboutwindow_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -478,7 +494,8 @@ $(OBJDIR)/Aboutwindow.o: classes/Aboutwindow.c classes/Aboutwindow_cl.h \
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h include/mui/NFloattext_mcc.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  include/mui/NFloattext_mcc.h
 $(OBJDIR)/AttachmentGroup.o: classes/AttachmentGroup.c classes/AttachmentGroup_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -493,7 +510,8 @@ $(OBJDIR)/AttachmentGroup.o: classes/AttachmentGroup.c classes/AttachmentGroup_c
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  Debug.h
 $(OBJDIR)/AttachmentImage.o: classes/AttachmentImage.c classes/AttachmentImage_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -508,7 +526,8 @@ $(OBJDIR)/AttachmentImage.o: classes/AttachmentImage.c classes/AttachmentImage_c
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  Debug.h
 $(OBJDIR)/ConfigPageList.o: classes/ConfigPageList.c classes/ConfigPageList_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -523,7 +542,7 @@ $(OBJDIR)/ConfigPageList.o: classes/ConfigPageList.c classes/ConfigPageList_cl.h
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h
 $(OBJDIR)/ReadMailGroup.o: classes/ReadMailGroup.c classes/ReadMailGroup_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -538,8 +557,8 @@ $(OBJDIR)/ReadMailGroup.o: classes/ReadMailGroup.c classes/ReadMailGroup_cl.h \
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h YAM_error.h YAM_mime.h \
-  include/libraries/codesets.h HTML2Mail.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  YAM_error.h YAM_mime.h include/libraries/codesets.h HTML2Mail.h Debug.h
 $(OBJDIR)/ReadWindow.o: classes/ReadWindow.c classes/ReadWindow_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -554,8 +573,8 @@ $(OBJDIR)/ReadWindow.o: classes/ReadWindow.c classes/ReadWindow_cl.h \
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h YAM_mime.h \
-  include/libraries/codesets.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  YAM_mime.h include/libraries/codesets.h Debug.h
 $(OBJDIR)/Splashwindow.o: classes/Splashwindow.c classes/Splashwindow_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -570,7 +589,7 @@ $(OBJDIR)/Splashwindow.o: classes/Splashwindow.c classes/Splashwindow_cl.h \
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h
 $(OBJDIR)/StatusIconGroup.o: classes/StatusIconGroup.c classes/StatusIconGroup_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -585,7 +604,8 @@ $(OBJDIR)/StatusIconGroup.o: classes/StatusIconGroup.c classes/StatusIconGroup_c
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  Debug.h
 $(OBJDIR)/UserImage.o: classes/UserImage.c classes/UserImage_cl.h classes/Classes.h \
   classes/ClassesExtra.h include/libraries/mui.h include/amiga-align.h \
   include/default-align.h include/mui/BetterString_mcc.h \
@@ -599,7 +619,8 @@ $(OBJDIR)/UserImage.o: classes/UserImage.c classes/UserImage_cl.h classes/Classe
   YAM_utilities.h include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h \
   YAM_find.h UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h \
   YAM_utilities.h YAM_main.h YAM_read.h YAM_addressbook.h \
-  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h Debug.h
+  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h \
+  YAM_main.h BayesFilter.h YAM.h Debug.h
 $(OBJDIR)/MailTextEdit.o: classes/MailTextEdit.c classes/MailTextEdit_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -614,7 +635,8 @@ $(OBJDIR)/MailTextEdit.o: classes/MailTextEdit.c classes/MailTextEdit_cl.h \
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  Debug.h
 $(OBJDIR)/MainFolderListtree.o: classes/MainFolderListtree.c \
   classes/MainFolderListtree_cl.h classes/Classes.h \
   classes/ClassesExtra.h include/libraries/mui.h include/amiga-align.h \
@@ -629,7 +651,8 @@ $(OBJDIR)/MainFolderListtree.o: classes/MainFolderListtree.c \
   YAM_utilities.h include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h \
   YAM_find.h UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h \
   YAM_utilities.h YAM_main.h YAM_read.h YAM_addressbook.h \
-  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h Debug.h
+  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h \
+  YAM_main.h BayesFilter.h YAM.h Debug.h
 $(OBJDIR)/MainMailList.o: classes/MainMailList.c classes/MainMailList_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -644,7 +667,8 @@ $(OBJDIR)/MainMailList.o: classes/MainMailList.c classes/MainMailList_cl.h \
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  Debug.h
 $(OBJDIR)/MainMailListGroup.o: classes/MainMailListGroup.c \
   classes/MainMailListGroup_cl.h classes/Classes.h classes/ClassesExtra.h \
   include/libraries/mui.h include/amiga-align.h include/default-align.h \
@@ -659,7 +683,8 @@ $(OBJDIR)/MainMailListGroup.o: classes/MainMailListGroup.c \
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  Debug.h
 $(OBJDIR)/MainWindow.o: classes/MainWindow.c classes/MainWindow_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -674,7 +699,8 @@ $(OBJDIR)/MainWindow.o: classes/MainWindow.c classes/MainWindow_cl.h \
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  Debug.h
 $(OBJDIR)/InfoBar.o: classes/InfoBar.c classes/InfoBar_cl.h classes/Classes.h \
   classes/ClassesExtra.h include/libraries/mui.h include/amiga-align.h \
   include/default-align.h include/mui/BetterString_mcc.h \
@@ -688,7 +714,8 @@ $(OBJDIR)/InfoBar.o: classes/InfoBar.c classes/InfoBar_cl.h classes/Classes.h \
   YAM_utilities.h include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h \
   YAM_find.h UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h \
   YAM_utilities.h YAM_main.h YAM_read.h YAM_addressbook.h \
-  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h Debug.h
+  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h \
+  YAM_main.h BayesFilter.h YAM.h Debug.h
 $(OBJDIR)/WriteAttachmentList.o: classes/WriteAttachmentList.c \
   classes/WriteAttachmentList_cl.h classes/Classes.h \
   classes/ClassesExtra.h include/libraries/mui.h include/amiga-align.h \
@@ -703,7 +730,8 @@ $(OBJDIR)/WriteAttachmentList.o: classes/WriteAttachmentList.c \
   YAM_utilities.h include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h \
   YAM_find.h UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h \
   YAM_utilities.h YAM_main.h YAM_read.h YAM_addressbook.h \
-  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h
+  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h \
+  YAM_main.h BayesFilter.h YAM.h
 $(OBJDIR)/QuickSearchBar.o: classes/QuickSearchBar.c classes/QuickSearchBar_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/amiga-align.h include/default-align.h \
@@ -718,7 +746,8 @@ $(OBJDIR)/QuickSearchBar.o: classes/QuickSearchBar.c classes/QuickSearchBar_cl.h
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  Debug.h
 $(OBJDIR)/ImageArea.o: classes/ImageArea.c classes/ImageArea_cl.h classes/Classes.h \
   classes/ClassesExtra.h include/libraries/mui.h include/amiga-align.h \
   include/default-align.h include/mui/BetterString_mcc.h \
@@ -733,7 +762,7 @@ $(OBJDIR)/ImageArea.o: classes/ImageArea.c classes/ImageArea_cl.h classes/Classe
   YAM_find.h UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h \
   YAM_utilities.h YAM_main.h YAM_read.h YAM_addressbook.h \
   include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h \
-  ImageCache.h Debug.h
+  YAM_main.h BayesFilter.h YAM.h ImageCache.h Debug.h
 $(OBJDIR)/TransferMailList.o: classes/TransferMailList.c \
   classes/TransferMailList_cl.h classes/Classes.h classes/ClassesExtra.h \
   include/libraries/mui.h include/amiga-align.h include/default-align.h \
@@ -748,7 +777,8 @@ $(OBJDIR)/TransferMailList.o: classes/TransferMailList.c \
   include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h YAM_find.h \
   UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h YAM_utilities.h \
   YAM_main.h YAM_read.h YAM_addressbook.h include/mui/NListtree_mcc.h \
-  YAM_addressbookEntry.h YAM_write.h Debug.h
+  YAM_addressbookEntry.h YAM_write.h YAM_main.h BayesFilter.h YAM.h \
+  Debug.h
 $(OBJDIR)/UpdateNotifyWindow.o: classes/UpdateNotifyWindow.c \
   classes/UpdateNotifyWindow_cl.h classes/Classes.h \
   classes/ClassesExtra.h include/libraries/mui.h include/amiga-align.h \
@@ -764,7 +794,8 @@ $(OBJDIR)/UpdateNotifyWindow.o: classes/UpdateNotifyWindow.c \
   YAM_find.h UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h \
   YAM_utilities.h YAM_main.h YAM_read.h YAM_addressbook.h \
   include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h \
-  include/mui/NFloattext_mcc.h YAM_configFile.h Debug.h
+  YAM_main.h BayesFilter.h YAM.h include/mui/NFloattext_mcc.h \
+  YAM_configFile.h Debug.h
 $(OBJDIR)/YAM.o: classes/YAM.c classes/YAM_cl.h classes/Classes.h \
   classes/ClassesExtra.h include/libraries/mui.h include/amiga-align.h \
   include/default-align.h include/mui/BetterString_mcc.h \
@@ -778,7 +809,8 @@ $(OBJDIR)/YAM.o: classes/YAM.c classes/YAM_cl.h classes/Classes.h \
   YAM_utilities.h include/mui/Toolbar_mcc.h YAM_userlist.h YAM_config.h \
   YAM_find.h UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h \
   YAM_utilities.h YAM_main.h YAM_read.h YAM_addressbook.h \
-  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h Debug.h
+  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h \
+  YAM_main.h BayesFilter.h YAM.h Debug.h
 $(OBJDIR)/extrasrc.o: extrasrc.c extrasrc.h include/SDI_compiler.h \
   extrasrc/stcgfe.c extrasrc/strmfp.c extrasrc/NewReadArgs.c Debug.h \
   extrasrc/vastubs.c extrasrc/DoSuperNew.c include/SDI_compiler.h \
