@@ -745,10 +745,10 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
     if(isOutgoingFolder(to) && hasStatusSent(newMail))
       setStatusToQueued(newMail);
 
-    // if we are moving a non-spam mail to the spam folder then this one will be marked as spam
-    if (C->SpamFilterEnabled)
+    if (C->SpamFilterEnabled && C->SpamMarkOnMove)
     {
-      if (isSpamFolder(to) && !hasStatusSpam(newMail) && C->SpamMarkOnMove)
+      // if we are moving a non-spam mail to the spam folder then this one will be marked as spam
+      if (isSpamFolder(to) && !hasStatusSpam(newMail))
       {
         BayesFilterSetClassification(newMail, BC_SPAM);
         setStatusToUserSpam(newMail);

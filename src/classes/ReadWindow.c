@@ -865,6 +865,13 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       // move the mail
       MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
 
+      if (folder == spamfolder)
+      {
+        // update the toolbar
+        DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 14, MUIV_Toolbar_Set_Ghosted, TRUE);
+        DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 15, MUIV_Toolbar_Set_Ghosted, FALSE);
+      }
+
       // erase the old pointer as this has been free()ed by MA_MoveCopy()
       rmData->mail = NULL;
 
@@ -893,6 +900,10 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       AppendLogVerbose(90, GetStr(MSG_LOG_MAILISNOTSPAM), AddrName(mail->From), mail->Subject);
       BayesFilterSetClassification(mail, BC_HAM);
       setStatusToHam(mail);
+
+      // update the toolbar
+      DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 14, MUIV_Toolbar_Set_Ghosted, FALSE);
+      DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 15, MUIV_Toolbar_Set_Ghosted, TRUE);
     }
   }
 

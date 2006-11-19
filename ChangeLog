@@ -6,6 +6,8 @@ $Id$
 
 2006-11-19  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ReadWindow.c: the toolbar is updated accordingly if a mail in the spam
+    folder is reclassified.
   * HashTable.c: removed a warning because of comparing signed and unsigned
     values
   * BayesFilter.c: if the spam filter is globally disabled upon startup no
