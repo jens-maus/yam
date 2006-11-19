@@ -2316,7 +2316,7 @@ Schalten Sie diese Option ein, um den Inhalt\ndes POP3-Postfachs aufzulisten und
 ; and allow selection of the messages before downloading
 ;
 MSG_HELP_CO_CH_UPDSTAT
-Neue Nachrichten im Postausgang vor dem\nHolen neuer Post als ungelesen markieren
+Neue Nachrichten im Posteingang vor dem\nHolen neuer Post als ungelesen markieren
 ; Mark new messages in the incoming folder\n\
 ; as unread before downloading new mail
 ;

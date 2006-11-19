@@ -6,6 +6,7 @@ $Id$
 
 2006-11-19  Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/deutsch.ct: fixed bug #1597938.
   * ReadWindow.c: the toolbar is updated accordingly if a mail in the spam
     folder is reclassified.
   * HashTable.c: removed a warning because of comparing signed and unsigned
