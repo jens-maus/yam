@@ -6,6 +6,9 @@ $Id$
 
 2006-11-19  Thore Böckelmann <tboeckel@gmx.de>
 
+  * BayesFilter.c: if the spam filter is globally disabled upon startup no
+    training data will be read. If it is disabled on quit a possibly existing
+    data file will be deleted.
   * YAM_COg.c, YAM.cd: when the spam filter is disabled the user is now asked if
     he/she wants to reset the training data.
   * MainFolderListtree.c: added missing new parameter to call to MA_MoveCopy()

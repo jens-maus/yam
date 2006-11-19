@@ -21,7 +21,7 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
- $Id$
+ $Id:$
 
 ***************************************************************************/
 
@@ -778,17 +778,18 @@ static void tokenAnalyzerResetTrainingData(struct TokenAnalyzer *ta)
 {
     ENTER();
 
-    if(ta->goodCount != 0 && ta->goodTokens.tokenTable.entryCount != 0)
+    if(ta->goodCount != 0 || ta->goodTokens.tokenTable.entryCount != 0)
     {
         tokenizerClearTokens(&ta->goodTokens);
         ta->goodCount = 0;
     }
-    if(ta->badCount != 0 && ta->badTokens.tokenTable.entryCount != 0)
+    if(ta->badCount != 0 || ta->badTokens.tokenTable.entryCount != 0)
     {
         tokenizerClearTokens(&ta->badTokens);
         ta->badCount = 0;
     }
-    remove(SPAMDATAFILE);
+    if(FileExists(SPAMDATAFILE))
+        remove(SPAMDATAFILE);
 
     LEAVE();
 }
@@ -1234,7 +1235,8 @@ BOOL BayesFilterInit(void)
 
     if(tokenAnalyzerInit(&spamFilter))
     {
-        tokenAnalyzerReadTrainingData(&spamFilter);
+        if(C->SpamFilterEnabled)
+            tokenAnalyzerReadTrainingData(&spamFilter);
 
         result = TRUE;
     }
@@ -1247,7 +1249,13 @@ void BayesFilterCleanup(void)
 {
     ENTER();
 
-    tokenAnalyzerWriteTrainingData(&spamFilter);
+    if (C->SpamFilterEnabled)
+        // write the spam training data to disk
+        tokenAnalyzerWriteTrainingData(&spamFilter);
+    else if(FileExists(SPAMDATAFILE))
+        // the spam filter is not enabled, so delete the training data, if they exist
+        remove(SPAMDATAFILE);
+
     tokenAnalyzerCleanup(&spamFilter);
 
     LEAVE();
@@ -1366,7 +1374,7 @@ void BayesFilterFlushTrainingData(void)
 {
     ENTER();
 
-    if(spamFilter.numDirtyingMessages > (ULONG)C->SpamFlushTrainingDataThreshold)
+    if(C->SpamFlushTrainingDataThreshold > 0 && spamFilter.numDirtyingMessages > (ULONG)C->SpamFlushTrainingDataThreshold)
     {
         tokenAnalyzerWriteTrainingData(&spamFilter);
         spamFilter.numDirtyingMessages = 0;
