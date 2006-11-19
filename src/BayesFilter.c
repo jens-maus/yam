@@ -43,6 +43,11 @@
 
 #define SPAMDATAFILE                        ".spamdata"
 
+// some compilers (vbcc) don't define this, so by do it ourself
+#ifndef M_LN2
+#define M_LN2                               0.69314718055994530942
+#endif
+
 struct Token {
     struct HashEntryHeader hash;
     CONST_STRPTR word;
