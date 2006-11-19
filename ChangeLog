@@ -6,6 +6,8 @@ $Id$
 
 2006-11-19  Thore Böckelmann <tboeckel@gmx.de>
 
+  * QuickSearchBar.c: changed MatchMail() to a normal function instead of of an
+    inline function. This fixes a compiling bug with vbcc.
   * AttachmentImage.c: only gcc seems to be able to intitalize constants with
     variables as sometimes used for TagLists. Changed OM_SETUP method to use
     only constants in the definition of iconCtrlTags and assign the variable
