@@ -6,6 +6,8 @@ $Id$
 
 2006-11-19  Thore Böckelmann <tboeckel@gmx.de>
 
+  * HashTable.h: included SDI_compiler.h, because some functions need the UNUSED
+    definition.
   * BayesFilter.c: added definition of M_LN2 for compilers whose math.h doesn't
     define this number.
   * VMakefile, smakefile: added missing dependency lines for BayesFilter.o and

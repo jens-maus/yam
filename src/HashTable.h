@@ -30,6 +30,8 @@
 
 #include <exec/types.h>
 
+#include "SDI_compiler.h"
+
 struct HashTable {
     void *data;
     UWORD shift;
