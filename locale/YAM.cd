@@ -5991,8 +5991,14 @@ MSG_CO_SPAM_FILTERENABLED (1775//)
 Spam filter enabled
 ;
 MSG_CO_SPAM_RESETTRAININGDATAASK (1776//)
-Do you really want to reset\n\
-the spam filter's training data?\n\
+Do you really want to reset the spam filter's\n\
+training data?\n\
+\n\
+The spam filter must be trained again afterwards!
+;
+MSG_CO_SPAM_DISABLEFILTERASK (1777//)
+Do you also want to reset the spam filter's\n\
+training data?\n\
 \n\
 The spam filter must be trained again afterwards!
 ;

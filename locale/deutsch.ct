@@ -7461,7 +7461,13 @@ MSG_CO_SPAM_FILTERENABLED
 Spamfilter aktiv
 ;
 MSG_CO_SPAM_RESETTRAININGDATAASK
-Wollen Sie wirklich die Trainingsdaten\n\
+Wollen Sie wirklich die Trainingsdaten des\n\
+Spamfilters zurücksetzen?\n\
+\n\
+Der Spamfilter muss danach erneut trainiert werden!
+;
+MSG_CO_SPAM_DISABLEFILTERASK
+Wollen Sie zusätzlich auch die Trainingsdaten\n\
 des Spamfilters zurücksetzen?\n\
 \n\
 Der Spamfilter muss danach erneut trainiert werden!

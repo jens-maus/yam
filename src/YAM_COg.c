@@ -1243,6 +1243,26 @@ MakeHookWithData(MimeCommandReqStopHook,   FileRequestStopFunc, VPM_MIME_COMMAND
 ///
 
 ///
+/// DisableSpamFilterFunc
+//  asks the user if spam trainging data should be reset when filter is disabled
+HOOKPROTONHNONP(DisableSpamFilterFunc, void)
+{
+  ENTER();
+
+  if (MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_SPAM_DISABLEFILTERASK)))
+  {
+    BayesFilterResetTrainingData();
+
+    // good/bad count can only be zero after a reset
+    set(G->CO->GUI.TX_SPAMGOODCOUNT, MUIA_Text_Contents, "0");
+    set(G->CO->GUI.TX_SPAMBADCOUNT, MUIA_Text_Contents, "0");
+  }
+
+  LEAVE();
+}
+MakeStaticHook(DisableSpamFilterHook, DisableSpamFilterFunc);
+
+///
 /// ResetSpamTrainingData()
 //  resets the spam training data
 HOOKPROTONHNONP(ResetSpamTrainingDataFunc, void)
@@ -1251,14 +1271,11 @@ HOOKPROTONHNONP(ResetSpamTrainingDataFunc, void)
 
   if (MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_SPAM_RESETTRAININGDATAASK)))
   {
-    char buf[SIZE_DEFAULT];
-
     BayesFilterResetTrainingData();
 
-    snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfHamClassifiedMails());
-    set(G->CO->GUI.TX_SPAMGOODCOUNT, MUIA_Text_Contents, buf);
-    snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfSpamClassifiedMails());
-    set(G->CO->GUI.TX_SPAMBADCOUNT, MUIA_Text_Contents, buf);
+    // good/bad count can only be zero after a reset
+    set(G->CO->GUI.TX_SPAMGOODCOUNT, MUIA_Text_Contents, "0");
+    set(G->CO->GUI.TX_SPAMBADCOUNT, MUIA_Text_Contents, "0");
   }
 
   LEAVE();
@@ -3228,7 +3245,8 @@ Object *CO_PageSpam(struct CO_ClassData *data)
          Child, HVSpace,
       End))
    {
-      DoMethod(data->GUI.BT_SPAMRESETTRAININGDATA, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &ResetSpamTrainingDataHook);
+      DoMethod(data->GUI.CH_SPAMFILTERENABLED,     MUIM_Notify, MUIA_Selected, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &DisableSpamFilterHook);
+      DoMethod(data->GUI.BT_SPAMRESETTRAININGDATA, MUIM_Notify, MUIA_Pressed,  FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &ResetSpamTrainingDataHook);
    }
    return grp;
 }
