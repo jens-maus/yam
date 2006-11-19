@@ -315,10 +315,13 @@ OVERLOAD(MUIM_Setup)
     if(IconBase->lib_Version >= 44)
     {
       struct Rectangle rect;
-      struct TagItem iconCtrlTags[] = { { ICONCTRLA_GetImageMask1, (ULONG)&normalBitMask   },
-                                        { ICONCTRLA_GetImageMask2, (ULONG)&selectedBitMask },
-                                        { TAG_DONE,                FALSE                   } };
+      struct TagItem iconCtrlTags[] = { { ICONCTRLA_GetImageMask1, (ULONG)NULL },
+                                        { ICONCTRLA_GetImageMask2, (ULONG)NULL },
+                                        { TAG_DONE,                FALSE       } };
   
+      iconCtrlTags[0].ti_Data = (ULONG)&normalBitMask;
+      iconCtrlTags[1].ti_Data = (ULONG)&selectedBitMask;
+
       GetIconRectangleA(NULL, diskObject, NULL, &rect, drawIconTags);
 
       orgWidth  = rect.MaxX - rect.MinX + 1;
