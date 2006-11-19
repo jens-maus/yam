@@ -6,6 +6,8 @@ $Id$
 
 2006-11-19  Thore Böckelmann <tboeckel@gmx.de>
 
+  * HashTable.c: removed a warning because of comparing signed and unsigned
+    values
   * BayesFilter.c: if the spam filter is globally disabled upon startup no
     training data will be read. If it is disabled on quit a possibly existing
     data file will be deleted.

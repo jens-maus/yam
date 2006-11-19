@@ -21,7 +21,7 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
- $Id$
+ $Id:$
 
 ***************************************************************************/
 
@@ -131,7 +131,7 @@ void HashTableSetAlphaBounds(struct HashTable *table, float maxAlpha, float minA
     {
         if(minAlpha >= maxAlpha / 2.0)
         {
-            ULONG size;
+            LONG size;
 
             size = HASH_TABLE_SIZE(table);
             minAlpha = (size * maxAlpha - MAX(1, size / 256)) / (2 * size);
