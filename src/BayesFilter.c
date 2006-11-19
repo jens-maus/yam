@@ -942,9 +942,9 @@ static const double ln_2pi_2 = 0.918938533204672741803; // log(2*PI)/2
 static double nsLnGamma (double z_in, int *gsign)
 {
   double scale, z, sum, result;
+  int zi = (int) z_in;
   *gsign = 1;
 
-  int zi = (int) z_in;
   if (z_in == (double) zi)
   {
     if (0 < zi && zi <= FactTableLength)
