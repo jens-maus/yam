@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * HashTable.c: fixed a possible uninitialized variable use.
+
 2006-11-19  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/deutsch.ct: fixed bug #1597938.

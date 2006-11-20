@@ -331,7 +331,7 @@ static BOOL ChangeTable(struct HashTable *table, LONG deltaLog2)
 struct HashEntryHeader *HashTableOperate(struct HashTable *table, CONST void *key, HashOperator op)
 {
     HashNumber keyHash;
-    struct HashEntryHeader *entry;
+    struct HashEntryHeader *entry = NULL;
     ULONG size;
     LONG deltaLog2;
 
