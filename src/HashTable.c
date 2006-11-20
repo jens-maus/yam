@@ -27,7 +27,8 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <sys/param.h>
+
+#include <clib/macros.h>
 
 #include "HashTable.h"
 #include "Debug.h"
