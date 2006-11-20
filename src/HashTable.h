@@ -24,7 +24,7 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
- $Id:$
+ $Id$
 
 ***************************************************************************/
 
@@ -32,35 +32,39 @@
 
 #include "SDI_compiler.h"
 
-struct HashTable {
-    void *data;
-    UWORD shift;
-    UBYTE maxAlphaFrac;
-    UBYTE minAlphaFrac;
-    ULONG entrySize;
-    ULONG entryCount;
-    ULONG removedCount;
-    ULONG generation;
-    STRPTR entryStore;
+struct HashTable
+{
+  void *data;
+  UWORD shift;
+  UBYTE maxAlphaFrac;
+  UBYTE minAlphaFrac;
+  ULONG entrySize;
+  ULONG entryCount;
+  ULONG removedCount;
+  ULONG generation;
+  STRPTR entryStore;
 };
 
 typedef ULONG HashNumber;
 
-struct HashEntryHeader {
-    HashNumber keyHash;
+struct HashEntryHeader
+{
+  HashNumber keyHash;
 };
 
-struct HashEntry {
-    struct HashEntryHeader header;
-    void *key;
+struct HashEntry
+{
+  struct HashEntryHeader header;
+  void *key;
 };
 
-typedef enum {
-    htoLookup = 0,
-    htoAdd,
-    htoRemove,
-    htoNext,
-    htoStop,
+typedef enum
+{
+  htoLookup = 0,
+  htoAdd,
+  htoRemove,
+  htoNext,
+  htoStop,
 } HashOperator;
 
 #define HASH_BITS                   32

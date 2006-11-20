@@ -6,6 +6,7 @@ $Id$
 
 2006-11-20  Jens Langner <Jens.Langner@light-speed.de>
 
+  * HashTable.c: adapted sources to comply a bit more to the STYLEGUIDE.
   * BayesFilter.c: The ".spamdata" file will now respect the user's own maildir
     setting instead of being stored in PROGDIR:
 
