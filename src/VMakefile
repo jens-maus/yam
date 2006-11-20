@@ -61,7 +61,7 @@ DEBUG	= -DEBUG -O0
 CFLAGS  = -I -Iinclude -Iinclude/netinclude -I$(POSIXLIBINC) -D__USE_SYSBASE \
           -DNO_INLINE_STDARG -cpu=$(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -c99 -+ -c
 LDFLAGS = -L$(POSIXLIBLIB)
-LDLIBS  = -lamiga -ldebug -lmui -lposix -lmieee
+LDLIBS  = -lamiga -ldebug -lposix -lmieee
 
 # Special flags
 DEVFLAGS = -DDEVWARNING `rx "say '-DEXPDATE=' || date('I')+31"`
@@ -199,6 +199,21 @@ catalogs: $(LOCALE)/deutsch.catalog $(LOCALE)/bosanski.catalog $(LOCALE)/czech.c
   $(LOCALE)/magyar.catalog $(LOCALE)/norsk.catalog $(LOCALE)/polski.catalog\
   $(LOCALE)/russian.catalog $(LOCALE)/srpski.catalog $(LOCALE)/suomi.catalog\
   $(LOCALE)/svenska.catalog
+
+$(OBJDIR)/ImageCache.o: ImageCache.c extrasrc.h YAM.h YAM_locale.h \
+    YAM_stringsizes.h YAM_utilities.h ImageCache.h Debug.h
+
+$(OBJDIR)/UpdateCheck.o: UpdateCheck.c extrasrc.h YAM.h YAM_config.h \
+    YAM_configFile.h YAM_error.h YAM_global.h YAM_locale.h \
+    YAM_mime.h YAM_transfer.h YAM_utilities.h classes/Classes.h \
+    UpdateCheck.h Debug.h
+
+$(OBJDIR)/BayesFilter.o: BayesFilter.c BayesFilter.h HashTable.h \
+    Debug.h YAM_config.h YAM_read.h YAM_addressbook.h YAM_utilities.h
+
+$(OBJDIR)/HashTable.o: HashTable.c HashTable.h Debug.h
+
+$(OBJDIR)/Debug.o: Debug.c YAM_global.h YAM_utilities.h Debug.h
 
 ## MAIN DEPENDENCIES ##################
 
