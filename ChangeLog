@@ -6,6 +6,9 @@ $Id$
 
 2006-11-19  Jens Langner <Jens.Langner@light-speed.de>
 
+  * QuickSearchBar.c: changed recently changed MatchMail() function to be
+    at least a static function if some broken compilers really don't like the
+    INLINE statement.
   * HashTable.c: fixed a possible uninitialized variable use.
 
 2006-11-19  Thore Böckelmann <tboeckel@gmx.de>
