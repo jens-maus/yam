@@ -1,5 +1,5 @@
 #ifndef BAYES_FILTER_H
-#define BAYES_FILTER_H 1
+#define BAYES_FILTER_H
 
 /***************************************************************************
 
@@ -24,23 +24,25 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
- $Id:$
+ $Id$
 
 ***************************************************************************/
 
 #include "YAM.h"
 #include "YAM_mainFolder.h"
 
-enum BayesClassification {
-    BC_SPAM = 0,
-    BC_HAM,
-    BC_OTHER,
+enum BayesClassification
+{
+  BC_SPAM = 0,
+  BC_HAM,
+  BC_OTHER,
 };
 
-#define DEFAULT_SPAM_PROBABILITY_THRESHOLD                  99
-#define DEFAULT_FLUSH_TRAINING_DATA_INTERVAL                (15 * 60)
-#define DEFAULT_FLUSH_TRAINING_DATA_THRESHOLD               50
+#define DEFAULT_SPAM_PROBABILITY_THRESHOLD    99
+#define DEFAULT_FLUSH_TRAINING_DATA_INTERVAL  (15 * 60)
+#define DEFAULT_FLUSH_TRAINING_DATA_THRESHOLD 50
 
+/*** Public functions ***/
 BOOL BayesFilterInit(void);
 void BayesFilterCleanup(void);
 BOOL BayesFilterClassifyMessage(struct Mail *mail);

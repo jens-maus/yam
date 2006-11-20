@@ -6,6 +6,7 @@ $Id$
 
 2006-11-19  Jens Langner <Jens.Langner@light-speed.de>
 
+  * BayesFilter.c,h: strongly adapted new sources to STYLEGUIDE.
   * HashTable.?, BayesFilter.?: added "Id" svn:keywords property to newly added
     files.
   * HashTable.c: fixed broken AmigaOS3 compilation due to unknown <sys/param.h>
