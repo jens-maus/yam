@@ -1262,156 +1262,150 @@ INLINE double chi2P(double chi2, double nu, int *error)
 //
 static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta, struct Tokenizer *t, struct Mail *mail)
 {
-  struct Token *tokens = NULL;
-  ULONG i;
-  ULONG goodClues;
-  ULONG count;
-  double nGood, nBad;
-  double prob;
-  ULONG first, last;
-  double H, S;
-  ULONG Hexp, Sexp;
-  int e;
-  BOOL isSpam;
+  BOOL isSpam = FALSE;
 
   ENTER();
 
   // if the sender address is in the address book then we assume it's not spam
-  if(C->SpamAddressBookIsWhiteList && AB_FindEntry(mail->From.Address, ABF_RX_EMAIL, NULL) != 0)
+  if(C->SpamAddressBookIsWhiteList == FALSE || AB_FindEntry(mail->From.Address, ABF_RX_EMAIL, NULL) == 0)
   {
-    isSpam = FALSE;
-    goto out;
-  }
+    struct Token *tokens = NULL;
 
-  SHOWVALUE(DBF_SPAM, ta->goodCount);
-  SHOWVALUE(DBF_SPAM, ta->badCount);
+    SHOWVALUE(DBF_SPAM, ta->goodCount);
+    SHOWVALUE(DBF_SPAM, ta->badCount);
 
-  if((tokens = tokenizerCopyTokens(t)) == NULL)
-  {
-    isSpam = FALSE;
-    goto out;
-  }
-
-  nGood = ta->goodCount;
-  if(nGood == 0 && ta->goodTokens.tokenTable.entryCount == 0)
-  {
-    // assume spam
-    isSpam = TRUE;
-    goto out;
-  }
-
-  nBad = ta->badCount;
-  if(nBad == 0 && ta->badTokens.tokenTable.entryCount == 0)
-  {
-    // assume not spam
-    isSpam = FALSE;
-    goto out;
-  }
-
-  goodClues = 0;
-  count = t->tokenTable.entryCount;
-
-  for(i = 0; i < count; i++)
-  {
-    struct Token *token = &tokens[i];
-    CONST_STRPTR word = (CONST_STRPTR)token->word;
-    struct Token *t;
-    double hamCount, spamCount, denom, prob, n, distance;
-
-    t = tokenizerGet(&ta->goodTokens, word);
-    hamCount = (t != NULL) ? t->count : 0;
-    t = tokenizerGet(&ta->badTokens, word);
-    spamCount = (t != NULL) ? t->count : 0;
-
-    denom = hamCount * nBad + spamCount * nGood;
-    if(denom == 0.0)
-      denom = nBad + nGood;
-
-    prob = (spamCount * nGood) / denom;
-    n = hamCount + spamCount;
-    prob = (0.225 + n * prob) / (0.45 + n);
-    distance = fabs(prob - 0.5);
-
-    if(distance >= 0.1)
+    if((tokens = tokenizerCopyTokens(t)) != NULL)
     {
-      goodClues++;
-      token->distance = distance;
-      token->probability = prob;
-    }
-    else
-    {
-      // ignore clue
-      token->distance = -1;
-    }
-  }
+      double nGood = ta->goodCount;
 
-  // sort array of token distances
-  qsort(tokens, count, sizeof(*tokens), compareTokens);
-
-  first = (goodClues > 150) ? count - 150 : 0;
-  last = count;
-  H = 1.0;
-  S = 1.0;
-  Hexp = 0;
-  Sexp = 0;
-  e = 0;
-
-  for(i = first; i < last; ++i)
-  {
-    if(tokens[i].distance != -1)
-    {
-      double value;
-
-      goodClues++;
-      value = tokens[i].probability;
-      S *= (1.0 - value);
-      H *= value;
-
-      if(S < 1e-200)
+      if(nGood != 0 || ta->goodTokens.tokenTable.entryCount != 0)
       {
-        S = frexp(S, &e);
-        Sexp += e;
-      }
+        double nBad = ta->badCount;
 
-      if(H < 1e-200)
-      {
-        H = frexp(H, &e);
-        Hexp += e;
+        if(nBad != 0 || ta->badTokens.tokenTable.entryCount != 0)
+        {
+          ULONG i;
+          ULONG goodClues = 0;
+          ULONG count = t->tokenTable.entryCount;
+          ULONG first;
+          ULONG last;
+          ULONG Hexp;
+          ULONG Sexp;
+          double prob;
+          double H;
+          double S;
+          int e;
+
+          for(i=0; i < count; i++)
+          {
+            struct Token *token = &tokens[i];
+            CONST_STRPTR word = (CONST_STRPTR)token->word;
+            struct Token *t;
+            double hamCount;
+            double spamCount;
+            double denom;
+            double prob;
+            double n;
+            double distance;
+
+            t = tokenizerGet(&ta->goodTokens, word);
+            hamCount = (t != NULL) ? t->count : 0;
+            t = tokenizerGet(&ta->badTokens, word);
+            spamCount = (t != NULL) ? t->count : 0;
+
+            denom = hamCount * nBad + spamCount * nGood;
+            if(denom == 0.0)
+              denom = nBad + nGood;
+
+            prob = (spamCount * nGood) / denom;
+            n = hamCount + spamCount;
+            prob = (0.225 + n * prob) / (0.45 + n);
+            distance = fabs(prob - 0.5);
+
+            if(distance >= 0.1)
+            {
+              goodClues++;
+              token->distance = distance;
+              token->probability = prob;
+            }
+            else
+            {
+              // ignore clue
+              token->distance = -1;
+            }
+          }
+
+          // sort array of token distances
+          qsort(tokens, count, sizeof(*tokens), compareTokens);
+
+          first = (goodClues > 150) ? count - 150 : 0;
+          last = count;
+          H = 1.0;
+          S = 1.0;
+          Hexp = 0;
+          Sexp = 0;
+          e = 0;
+
+          for(i = first; i < last; ++i)
+          {
+            if(tokens[i].distance != -1)
+            {
+              double value;
+
+              goodClues++;
+              value = tokens[i].probability;
+              S *= (1.0 - value);
+              H *= value;
+
+              if(S < 1e-200)
+              {
+                S = frexp(S, &e);
+                Sexp += e;
+              }
+
+              if(H < 1e-200)
+              {
+                H = frexp(H, &e);
+                Hexp += e;
+              }
+            }
+          }
+
+          S = log(S) + Sexp * M_LN2;
+          H = log(H) + Hexp * M_LN2;
+
+          SHOWVALUE(DBF_SPAM, goodClues);
+          if(goodClues > 0)
+          {
+            int chiError;
+
+            S = chi2P(-2.0 * S, 2.0 * goodClues, &chiError);
+
+            if(!chiError)
+              H = chi2P(-2.0 * H, 2.0 * goodClues, &chiError);
+
+            // if any error, then toss the complete calculation
+            if(chiError)
+            {
+              D(DBF_SPAM, "chi2P error");
+              prob = 0.5;
+            }
+            else
+              prob = (S - H + 1.0) / 2.0;
+          }
+          else
+            prob = 0.5;
+
+          D(DBF_SPAM, "mail with subject \"%s\" has spam probability %.2f, ham score: %.2f, spam score: %.2f", mail->Subject, prob, H, S);
+          isSpam = (prob * 100 >= C->SpamProbabilityThreshold);
+        }
       }
+      else
+        isSpam = TRUE; // assume SPAM
+
+      free(tokens);
     }
   }
-
-  S = log(S) + Sexp * M_LN2;
-  H = log(H) + Hexp * M_LN2;
-
-  SHOWVALUE(DBF_SPAM, goodClues);
-  if(goodClues > 0)
-  {
-    int chiError;
-
-    S = chi2P(-2.0 * S, 2.0 * goodClues, &chiError);
-
-    if(!chiError)
-      H = chi2P(-2.0 * H, 2.0 * goodClues, &chiError);
-
-    // if any error, then toss the complete calculation
-    if(chiError)
-    {
-      D(DBF_SPAM, "chi2P error");
-      prob = 0.5;
-    }
-    else
-      prob = (S - H + 1.0) / 2.0;
-  }
-  else
-    prob = 0.5;
-
-  D(DBF_SPAM, "mail with subject \"%s\" has spam probability %.2f, ham score: %.2f, spam score: %.2f", mail->Subject, prob, H, S);
-  isSpam = (prob * 100 >= C->SpamProbabilityThreshold);
-
-out:
-  if(tokens != NULL)
-    free(tokens);
 
   RETURN(isSpam);
   return isSpam;

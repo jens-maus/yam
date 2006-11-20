@@ -21,7 +21,7 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
- $Id:$
+ $Id$
 
 ***************************************************************************/
 
@@ -408,7 +408,7 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table,
         if(!ChangeTable(table, deltaLog2) && table->entryCount + table->removedCount == size - 1)
         {
           entry = NULL;
-          goto out;
+          break;
         }
       }
 
@@ -453,7 +453,6 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table,
     break;
   }
 
-out:
   RETURN(entry);
   return entry;
 }

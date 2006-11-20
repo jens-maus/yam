@@ -6,6 +6,9 @@ $Id$
 
 2006-11-20  Jens Langner <Jens.Langner@light-speed.de>
 
+  * BayesFilter.c, HashTable.c: got rid of the "goto" statements in our newly
+    created code. Please note that "goto" are considered evil, so please try to
+    avoid them wherever you can.
   * HashTable.c,h: got rid of the typedef definitions as they just obfuscate code.
     Please no typedef's.
   * HashTable.c: adapted sources to comply a bit more to the STYLEGUIDE.
