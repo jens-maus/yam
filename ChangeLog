@@ -4,6 +4,17 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-20  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c, YAM_utilities.h: transferred ReadUInt32() and WriteUInt32()
+    functions from BayesFilter.c to here, because these two are no spam filter
+    specific functions, but for arbitrary use.
+  * BayesFilter.c,h, HashTable.c,h: introduced operation tables for the hash
+    tables. This makes it possible to use the hash tables for arbitrary things,
+    not just for the spam filter. A possible usage could be the management of
+    the UIDL data to speed up the recognition of duplicate mails. Also threw in
+    lots of comments to explain how things work.
+
 2006-11-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * BayesFilter.c, HashTable.c: got rid of the "goto" statements in our newly

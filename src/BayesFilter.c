@@ -21,7 +21,7 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
- $Id:$
+ $Id$
 
 ***************************************************************************/
 
@@ -53,7 +53,6 @@
 #endif
 
 /*** Structure definitions ***/
-
 struct Token
 {
   struct HashEntryHeader hash;
@@ -78,6 +77,19 @@ struct TokenAnalyzer
   ULONG numDirtyingMessages;
 };
 
+static const struct HashTableOps tokenTableOps =
+{
+  DefaultHashAllocTable,
+  DefaultHashFreeTable,
+  DefaultHashGetKey,
+  StringHashHashKey,
+  StringHashMatchEntry,
+  DefaultHashMoveEntry,
+  StringHashClearEntry,
+  DefaultHashFinalize,
+  NULL,
+};
+
 struct TokenEnumeration
 {
   ULONG entrySize;
@@ -87,27 +99,30 @@ struct TokenEnumeration
   STRPTR entryLimit;
 };
 
+// the spam filter itself
 static struct TokenAnalyzer spamFilter;
+
+// the magic data we expect upon reading the data file
 static const TEXT magicCookie[] = { '\xFE', '\xED', '\xFA', '\xCE' };
 
 /*** Static functions ***/
 /// tokenizerInit()
-//
+// initalize a token table
 static BOOL tokenizerInit(struct Tokenizer *t)
 {
   BOOL result;
 
   ENTER();
 
-  result = HashTableInit(&t->tokenTable, NULL, sizeof(struct Token), 1024);
+  result = HashTableInit(&t->tokenTable, &tokenTableOps, NULL, sizeof(struct Token), 1024);
 
   RETURN(result);
   return result;
 }
-
 ///
+
 /// tokenizerCleanup()
-//
+// cleanup a token table
 static void tokenizerCleanup(struct Tokenizer *t)
 {
   ENTER();
@@ -116,10 +131,10 @@ static void tokenizerCleanup(struct Tokenizer *t)
 
   LEAVE();
 }
-
 ///
+
 /// tokenizerClearTokens()
-//
+// reinitialize a token table
 static BOOL tokenizerClearTokens(struct Tokenizer *t)
 {
   BOOL ok = TRUE;
@@ -135,11 +150,12 @@ static BOOL tokenizerClearTokens(struct Tokenizer *t)
   RETURN(ok);
   return ok;
 }
-
 ///
+
 /// tokenizerGet()
-//
-static struct Token *tokenizerGet(struct Tokenizer *t, CONST_STRPTR word)
+// look up a word in the token table
+static struct Token *tokenizerGet(struct Tokenizer *t,
+                                  CONST_STRPTR word)
 {
   struct HashEntryHeader *entry;
 
@@ -152,11 +168,14 @@ static struct Token *tokenizerGet(struct Tokenizer *t, CONST_STRPTR word)
   RETURN(entry);
   return (struct Token *)entry;
 }
-
 ///
+
 /// tokenizerAdd()
-//
-static struct Token *tokenizerAdd(struct Tokenizer *t, CONST_STRPTR word, CONST_STRPTR prefix, ULONG count)
+// add a word to the token table with an arbitrary prefix (maybe NULL) and count
+static struct Token *tokenizerAdd(struct Tokenizer *t,
+                                  CONST_STRPTR word,
+                                  CONST_STRPTR prefix,
+                                  ULONG count)
 {
   struct Token *token = NULL;
   ULONG len;
@@ -201,10 +220,13 @@ static struct Token *tokenizerAdd(struct Tokenizer *t, CONST_STRPTR word, CONST_
   RETURN(token);
   return token;
 }
-
 ///
+
 /// tokenizerRemove()
-static void tokenizerRemove(struct Tokenizer *t, CONST_STRPTR word, ULONG count)
+// remove <count> occurences of word from the token table
+static void tokenizerRemove(struct Tokenizer *t,
+                            CONST_STRPTR word,
+                            ULONG count)
 {
   struct Token *token;
 
@@ -222,9 +244,10 @@ static void tokenizerRemove(struct Tokenizer *t, CONST_STRPTR word, ULONG count)
 
   LEAVE();
 }
-
 ///
+
 /// isDecimalNumber()
+// check if <word> is a decimal number
 static BOOL isDecimalNumber(CONST_STRPTR word)
 {
   CONST_STRPTR p = word;
@@ -247,9 +270,10 @@ static BOOL isDecimalNumber(CONST_STRPTR word)
   RETURN(TRUE);
   return TRUE;
 }
-
 ///
+
 /// isASCII()
+// check if <word> is an ASCII word
 static BOOL isASCII(CONST_STRPTR word)
 {
   CONST_STRPTR p = word;
@@ -269,11 +293,15 @@ static BOOL isASCII(CONST_STRPTR word)
   RETURN(TRUE);
   return TRUE;
 }
-
 ///
+
 /// tokenizerAddTokenForHeader()
-//
-static void tokenizerAddTokenForHeader(struct Tokenizer *t, CONST_STRPTR prefix, STRPTR value, BOOL tokenizeValue)
+// add a token for a mail header line, prefix may be NULL
+// the concatenated string can be chosen to be tokenized or be treated as one word
+static void tokenizerAddTokenForHeader(struct Tokenizer *t,
+                                       CONST_STRPTR prefix,
+                                       STRPTR value,
+                                       BOOL tokenizeValue)
 {
   ENTER();
 
@@ -299,17 +327,19 @@ static void tokenizerAddTokenForHeader(struct Tokenizer *t, CONST_STRPTR prefix,
 
         word = next;
       }
-      while (word != NULL);
+      while(word != NULL);
     }
   }
 
   LEAVE();
 }
-
 ///
+
 /// tokenizerTokenizeAttachment
-//
-static void tokenizerTokenizeAttachment(struct Tokenizer *t, STRPTR contentType, STRPTR fileName)
+// tokenize a mail attachment
+static void tokenizerTokenizeAttachment(struct Tokenizer *t,
+                                        STRPTR contentType,
+                                        STRPTR fileName)
 {
   STRPTR tmpContentType;
   STRPTR tmpFileName;
@@ -335,11 +365,12 @@ static void tokenizerTokenizeAttachment(struct Tokenizer *t, STRPTR contentType,
 
   LEAVE();
 }
-
 ///
+
 /// tokenizerTokenizeHeader()
-//
-static void tokenizerTokenizeHeaders(struct Tokenizer *t, struct Part *part)
+// tokenize all headers of a mail
+static void tokenizerTokenizeHeaders(struct Tokenizer *t,
+                                     struct Part *part)
 {
   struct MinNode *node;
   STRPTR contentType, charSet;
@@ -435,10 +466,10 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t, struct Part *part)
 
   LEAVE();
 }
-
 ///
+
 /// countChars()
-//
+// count occurences of <c> in string <str>
 static ULONG countChars(STRPTR str, TEXT c)
 {
   ULONG count = 0;
@@ -446,7 +477,7 @@ static ULONG countChars(STRPTR str, TEXT c)
 
   ENTER();
 
-  while ((cc = *str++) != '\0')
+  while((cc = *str++) != '\0')
   {
     if(cc == c)
       count++;
@@ -455,11 +486,12 @@ static ULONG countChars(STRPTR str, TEXT c)
   RETURN(count);
   return count;
 }
-
 ///
+
 /// tokenizerTokenizeASCIIWord()
-//
-static void tokenizerTokenizeASCIIWord(struct Tokenizer *t, STRPTR word)
+// tokenize an ASCII word
+static void tokenizerTokenizeASCIIWord(struct Tokenizer *t,
+                                       STRPTR word)
 {
   ULONG length;
 
@@ -510,11 +542,12 @@ static void tokenizerTokenizeASCIIWord(struct Tokenizer *t, STRPTR word)
 
   LEAVE();
 }
-
 ///
+
 /// tokenizeTokenize()
-//
-static void tokenizerTokenize(struct Tokenizer *t, STRPTR text)
+// tokenize an arbitrary text
+static void tokenizerTokenize(struct Tokenizer *t,
+                              STRPTR text)
 {
   STRPTR word = text;
   STRPTR next;
@@ -536,15 +569,16 @@ static void tokenizerTokenize(struct Tokenizer *t, STRPTR text)
 
     word = next;
   }
-  while (word != NULL);
+  while(word != NULL);
 
   LEAVE();
 }
-
 ///
+
 /// tokenEnumerationInit()
-//
-static void tokenEnumerationInit(struct TokenEnumeration *te, struct Tokenizer *t)
+// initialize a token enumeration
+static void tokenEnumerationInit(struct TokenEnumeration *te,
+                                 struct Tokenizer *t)
 {
   ENTER();
 
@@ -556,10 +590,10 @@ static void tokenEnumerationInit(struct TokenEnumeration *te, struct Tokenizer *
 
   LEAVE();
 }
-
 ///
+
 /// tokenEnumerationNext()
-//
+// advance one step in the enumeration
 static struct Token *tokenEnumerationNext(struct TokenEnumeration *te)
 {
   struct Token *token = NULL;
@@ -577,7 +611,6 @@ static struct Token *tokenEnumerationNext(struct TokenEnumeration *te)
       struct HashEntryHeader *entry = (struct HashEntryHeader *)entryAddr;
 
       entryAddr += entrySize;
-
       if(HASH_ENTRY_IS_LIVE(entry))
       {
         token = (struct Token *)entry;
@@ -592,10 +625,10 @@ static struct Token *tokenEnumerationNext(struct TokenEnumeration *te)
   RETURN(token);
   return token;
 }
-
 ///
+
 /// tokenizerCopyTokens()
-//
+// build a copy of the token table
 static struct Token *tokenizerCopyTokens(struct Tokenizer *t)
 {
   struct Token *tokens = NULL;
@@ -619,11 +652,12 @@ static struct Token *tokenizerCopyTokens(struct Tokenizer *t)
   RETURN(tokens);
   return tokens;
 }
-
 ///
+
 /// tokenizerForgetTokens()
-//
-static void tokenizerForgetTokens(struct Tokenizer *t, struct TokenEnumeration *te)
+// remove all words of the enumeration from the token table
+static void tokenizerForgetTokens(struct Tokenizer *t,
+                                  struct TokenEnumeration *te)
 {
   struct Token *token;
 
@@ -637,11 +671,12 @@ static void tokenizerForgetTokens(struct Tokenizer *t, struct TokenEnumeration *
 
   LEAVE();
 }
-
 ///
+
 /// tokenizerRememberTokens()
-//
-static void tokenizerRememberTokens(struct Tokenizer *t, struct TokenEnumeration *te)
+// put all words of the enumeration back into the token table
+static void tokenizerRememberTokens(struct Tokenizer *t,
+                                    struct TokenEnumeration *te)
 {
   struct Token *token;
 
@@ -655,7 +690,7 @@ static void tokenizerRememberTokens(struct Tokenizer *t, struct TokenEnumeration
 
 ///
 /// tokenAnalyzerInit()
-//
+// initialize the analyzer
 static BOOL tokenAnalyzerInit(struct TokenAnalyzer *ta)
 {
   BOOL result = FALSE;
@@ -672,10 +707,10 @@ static BOOL tokenAnalyzerInit(struct TokenAnalyzer *ta)
   RETURN(result);
   return result;
 }
-
 ///
+
 /// tokenAnalyzerCleanup()
-//
+// clean up the analyzer
 static void tokenAnalyzerCleanup(struct TokenAnalyzer *ta)
 {
   ENTER();
@@ -685,50 +720,18 @@ static void tokenAnalyzerCleanup(struct TokenAnalyzer *ta)
 
   LEAVE();
 }
-
 ///
-/// writeUInt32()
-//
-static ULONG writeUInt32(FILE *stream, ULONG value)
-{
-  ULONG n;
 
-  ENTER();
-
-  value = htonl(value);
-    
-  n = fwrite(&value, sizeof(value), 1, stream);
-
-  RETURN(n);
-  return n;
-}
-
-///
-/// readUInt32()
-//
-static ULONG readUInt32(FILE *stream, ULONG *value)
-{
-  ULONG n;
-
-  ENTER();
-
-  if((n = fread(value, sizeof(*value), 1, stream)) == 1)
-    *value = ntohl(*value);
-
-  RETURN(n);
-  return n;
-}
-
-///
 /// writeTokens()
-//
-static BOOL writeTokens(FILE *stream, struct Tokenizer *t)
+// write the tokens of a token table to a stream
+static BOOL writeTokens(FILE *stream,
+                        struct Tokenizer *t)
 {
   ULONG tokenCount = t->tokenTable.entryCount;
 
   ENTER();
 
-  if(writeUInt32(stream, tokenCount) != 1)
+  if(WriteUInt32(stream, tokenCount) != 1)
   {
     RETURN(FALSE);
     return FALSE;
@@ -745,10 +748,10 @@ static BOOL writeTokens(FILE *stream, struct Tokenizer *t)
       struct Token *token = tokenEnumerationNext(&te);
       ULONG length = token->length;
 
-      if(writeUInt32(stream, token->count) != 1)
+      if(WriteUInt32(stream, token->count) != 1)
         break;
 
-      if(writeUInt32(stream, length) != 1)
+      if(WriteUInt32(stream, length) != 1)
         break;
 
       if(fwrite(token->word, length, 1, stream) != 1)
@@ -759,11 +762,12 @@ static BOOL writeTokens(FILE *stream, struct Tokenizer *t)
   RETURN(TRUE);
   return TRUE;
 }
-
 ///
+
 /// readTokens()
-//
-static BOOL readTokens(FILE *stream, struct Tokenizer *t)
+// read tokens from a stream into the token table
+static BOOL readTokens(FILE *stream,
+                       struct Tokenizer *t)
 {
   ULONG tokenCount;
   ULONG bufferSize = 4096;
@@ -771,7 +775,7 @@ static BOOL readTokens(FILE *stream, struct Tokenizer *t)
 
   ENTER();
 
-  if(readUInt32(stream, &tokenCount) != 1)
+  if(ReadUInt32(stream, &tokenCount) != 1)
   {
     RETURN(FALSE);
     return FALSE;
@@ -786,10 +790,10 @@ static BOOL readTokens(FILE *stream, struct Tokenizer *t)
       ULONG count;
       ULONG size;
 
-      if(readUInt32(stream, &count) != 1)
+      if(ReadUInt32(stream, &count) != 1)
         break;
 
-      if(readUInt32(stream, &size) != 1)
+      if(ReadUInt32(stream, &size) != 1)
         break;
 
       if(size >= bufferSize)
@@ -824,10 +828,10 @@ static BOOL readTokens(FILE *stream, struct Tokenizer *t)
   RETURN(TRUE);
   return TRUE;
 }
-
 ///
+
 /// tokenAnalyzerWriteTraningData()
-//
+// write the accumulated training data to disk
 static void tokenAnalyzerWriteTrainingData(struct TokenAnalyzer *ta)
 {
   char fname[SIZE_PATHFILE];
@@ -842,11 +846,12 @@ static void tokenAnalyzerWriteTrainingData(struct TokenAnalyzer *ta)
   if((stream = fopen(fname, "wb")) != NULL)
   {
     if(fwrite(magicCookie, sizeof(magicCookie), 1, stream) == 1 &&
-       writeUInt32(stream, ta->goodCount) == 1 &&
-       writeUInt32(stream, ta->badCount) == 1 &&
+       WriteUInt32(stream, ta->goodCount) == 1 &&
+       WriteUInt32(stream, ta->badCount) == 1 &&
        writeTokens(stream, &ta->goodTokens) == 1 &&
        writeTokens(stream, &ta->badTokens) == 1)
     {
+      // everything is ok
       fclose(stream);
       ta->numDirtyingMessages = 0;
     }
@@ -861,10 +866,10 @@ static void tokenAnalyzerWriteTrainingData(struct TokenAnalyzer *ta)
 
   LEAVE();
 }
-
 ///
+
 /// tokenAnalyzerReadTrainingData()
-//
+// read the training data from disk
 static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
 {
   char fname[SIZE_PATHFILE];
@@ -884,10 +889,10 @@ static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
 
     if(memcmp(cookie, magicCookie, sizeof(cookie)) == 0)
     {
-      readUInt32(stream, &ta->goodCount);
+      ReadUInt32(stream, &ta->goodCount);
       SHOWVALUE(DBF_SPAM, ta->goodCount);
 
-      readUInt32(stream, &ta->badCount);
+      ReadUInt32(stream, &ta->badCount);
       SHOWVALUE(DBF_SPAM, ta->badCount);
 
       readTokens(stream, &ta->goodTokens);
@@ -899,10 +904,10 @@ static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
 
   LEAVE();
 }
-
 ///
+
 /// tokenAnalyzerResetTrainingData()
-//
+// reset the training data. The makes the spam filter stupid again
 static void tokenAnalyzerResetTrainingData(struct TokenAnalyzer *ta)
 {
   char fname[SIZE_PATHFILE];
@@ -929,10 +934,11 @@ static void tokenAnalyzerResetTrainingData(struct TokenAnalyzer *ta)
 
   LEAVE();
 }
-
 ///
+
 /// tokenAnalyzerSetClassification()
-//
+// set a new classification for a token table, substract the data from the old class
+// and add them to the new class, if possible
 static void tokenAnalyzerSetClassification(struct TokenAnalyzer *ta,
                                            struct Tokenizer *t,
                                            enum BayesClassification oldClass,
@@ -1005,11 +1011,12 @@ static void tokenAnalyzerSetClassification(struct TokenAnalyzer *ta,
 
   LEAVE();
 }
-
 ///
+
 /// compareTokens()
-//
-static int compareTokens(CONST void *p1, CONST void *p2)
+// compare to tokens to sort them
+static int compareTokens(const void *p1,
+                         const void *p2)
 {
   struct Token *t1 = (struct Token *)p1;
   struct Token *t2 = (struct Token *)p2;
@@ -1023,7 +1030,6 @@ static int compareTokens(CONST void *p1, CONST void *p2)
   RETURN(cmp);
   return cmp;
 }
-
 ///
 
 static const double C_1 = 1.0 / 12.0;
@@ -1119,8 +1125,8 @@ static double nsLnGamma (double z_in, int *gsign)
 
   return result;
 }
-
 ///
+
 /// lnPQfactoer()
 // log( e^(-x)*x^a/Gamma(a) )
 INLINE double lnPQfactor (double a, double x)
@@ -1143,17 +1149,17 @@ static double Pseries (double a, double x, int *error)
   {
       term *= x / (a + i);
       sum += term;
-      if (fabs (term) < eps * fabs (sum))
-      break;
+      if(fabs (term) < eps * fabs (sum))
+          break;
   }
 
-  if (i >= imax)
+  if(i >= imax)
       *error = 1;
 
   return sum;
 }
-
 ///
+
 /// Qcontfrac()
 //
 static double Qcontfrac (double a, double x, int *error)
@@ -1193,8 +1199,8 @@ static double Qcontfrac (double a, double x, int *error)
 
   return result;
 }
-
 ///
+
 /// incompleteGammaP()
 //
 double incompleteGammaP( double a, double x, int *error )
@@ -1242,8 +1248,8 @@ double incompleteGammaP( double a, double x, int *error )
 
   return result;
 }
-
 ///
+
 /// chi2P()
 //
 INLINE double chi2P(double chi2, double nu, int *error)
@@ -1256,11 +1262,13 @@ INLINE double chi2P(double chi2, double nu, int *error)
 
   return incompleteGammaP(nu / 2.0, chi2 / 2.0, error);
 }
-
 ///
+
 /// tokenAnalyzerClassifyMessage()
-//
-static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta, struct Tokenizer *t, struct Mail *mail)
+// classify a mail based upon the information gathered so far
+static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
+                                         struct Tokenizer *t,
+                                         struct Mail *mail)
 {
   BOOL isSpam = FALSE;
 
@@ -1410,11 +1418,10 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta, struct Tokeni
   RETURN(isSpam);
   return isSpam;
 }
-
 ///
 
 /// BayesFilterInit()
-//
+// initialize the spam filter structures and read the training data from disk
 BOOL BayesFilterInit(void)
 {
   BOOL result = FALSE;
@@ -1432,10 +1439,10 @@ BOOL BayesFilterInit(void)
   RETURN(result);
   return result;
 }
-
 ///
+
 /// BayesFilterCleanup()
-//
+// write the training data to disk and cleanup all structures
 void BayesFilterCleanup(void)
 {
   ENTER();
@@ -1461,11 +1468,12 @@ void BayesFilterCleanup(void)
 
   LEAVE();
 }
-
 ///
+
 /// tokenizeMail()
-//
-static void tokenizeMail(struct Tokenizer *t, struct Mail *mail)
+// tokenize a complete mail, including all headers
+static void tokenizeMail(struct Tokenizer *t,
+                         struct Mail *mail)
 {
   struct ReadMailData *rmData;
 
@@ -1503,10 +1511,10 @@ static void tokenizeMail(struct Tokenizer *t, struct Mail *mail)
 
   LEAVE();
 }
-
 ///
+
 /// BayesFilterClassifyMessage()
-//
+// classify a given message based upon the information gathered so far
 BOOL BayesFilterClassifyMessage(struct Mail *mail)
 {
   BOOL isSpam = FALSE;
@@ -1526,11 +1534,12 @@ BOOL BayesFilterClassifyMessage(struct Mail *mail)
   RETURN(isSpam);
   return isSpam;
 }
-
 ///
+
 /// BayesFilterSetClassification()
-//
-void BayesFilterSetClassification(struct Mail *mail, enum BayesClassification newClass)
+// change the classification of a message
+void BayesFilterSetClassification(struct Mail *mail,
+                                  enum BayesClassification newClass)
 {
   struct Tokenizer t;
 
@@ -1557,10 +1566,10 @@ void BayesFilterSetClassification(struct Mail *mail, enum BayesClassification ne
 
   LEAVE();
 }
-
 ///
+
 /// BayesFilterNumerOfSpamClassifiedMails()
-//
+// return the number of spam classified mail
 ULONG BayesFilterNumberOfSpamClassifiedMails(void)
 {
   ULONG num;
@@ -1572,10 +1581,10 @@ ULONG BayesFilterNumberOfSpamClassifiedMails(void)
   RETURN(num);
   return num;
 }
-
 ///
+
 /// BayesFilterNumberOfHamClassifiedMails()
-//
+// return the number of ham classified mail
 ULONG BayesFilterNumberOfHamClassifiedMails(void)
 {
   ULONG num;
@@ -1587,10 +1596,10 @@ ULONG BayesFilterNumberOfHamClassifiedMails(void)
   RETURN(num);
   return num;
 }
-
 ///
+
 /// BayesFilterFlushTrainingData()
-//
+// flush training data to disk
 void BayesFilterFlushTrainingData(void)
 {
   ENTER();
@@ -1603,10 +1612,10 @@ void BayesFilterFlushTrainingData(void)
 
   LEAVE();
 }
-
 ///
+
 /// BayesFilterResetTrainingData()
-//
+// reset the training data
 void BayesFilterResetTrainingData(void)
 {
   ENTER();
@@ -1615,5 +1624,5 @@ void BayesFilterResetTrainingData(void)
 
   LEAVE();
 }
-
 ///
+

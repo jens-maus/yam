@@ -31,6 +31,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <netinet/in.h>
+
 #include <clib/alib_protos.h>
 #include <clib/macros.h>
 #include <datatypes/pictureclass.h>
@@ -6151,4 +6153,42 @@ void ToLowerCase(char *str)
     LEAVE();
 }
 
+///
+/// WriteUInt32()
+//  write a 32bit variable to a stream, big endian style
+int WriteUInt32(FILE *stream, ULONG value)
+{
+  int n;
+
+  ENTER();
+
+  // convert the value to big endian style
+  value = htonl(value);
+
+  n = fwrite(&value, sizeof(value), 1, stream);
+
+  RETURN(n);
+  return n;
+}
+
+///
+/// ReadUInt32()
+//  read a 32bit variable from a stream, big endian style
+int ReadUInt32(FILE *stream, ULONG *value)
+{
+  int n;
+
+  ENTER();
+
+  if((n = fread(value, sizeof(*value), 1, stream)) == 1)
+  {
+    // convert the value to big endian style
+    *value = ntohl(*value);
+  }
+
+  RETURN(n);
+  return n;
+}
+
+///
 

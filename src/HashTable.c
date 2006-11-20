@@ -34,12 +34,22 @@
 
 #include "Debug.h"
 
-/*** Preprocessor macros ***/
-/// Macros
+/*** Macro definitions ***/
 // double hashing needs the second hash code to be relatively prime to table size, so we
 // simply make hash2 odd.
-#define HASH1(hash0, shift)         ((hash0) >> (shift))
-#define HASH2(hash0, log2, shift)   ((((hash0) << (log2)) >> (shift)) | 1)
+#define HASH1(hash0, shift)                 ((hash0) >> (shift))
+#define HASH2(hash0, log2, shift)           ((((hash0) << (log2)) >> (shift)) | 1)
+
+#define COLLISION_FLAG                      ((ULONG)1)
+#define MARK_ENTRY_FREE(entry)              ((entry)->keyHash = 0)
+#define MARK_ENTRY_REMOVED(entry)           ((entry)->keyHash = 1)
+#define ENTRY_IS_REMOVED(entry)             ((entry)->keyHash == 1)
+#define ENSURE_LIVE_KEYHASH(hash0)          if(hash0 < 2) hash0 -= 2; else (void)0;
+#define MATCH_ENTRY_KEYHASH(entry, hash0)   (((entry)->keyHash & ~COLLISION_FLAG) == (hash0))
+#define ADDRESS_ENTRY(table, index)         ((struct HashEntryHeader *)((table)->entryStore + (index) * (table)->entrySize))
+
+#define MAX_LOAD(table, size)               (((table)->maxAlphaFrac * (size)) >> 8)
+#define MIN_LOAD(table, size)               (((table)->minAlphaFrac * (size)) >> 8)
 
 #define CEILING_LOG2(_log2, _n) \
 { \
@@ -52,32 +62,19 @@
   if(j >>  1) (_log2) +=  1; \
 }
 
-#define MAX_LOAD(table, size)               (((table)->maxAlphaFrac * (size)) >> 8)
-#define MIN_LOAD(table, size)               (((table)->minAlphaFrac * (size)) >> 8)
-
-#define COLLISION_FLAG                      ((ULONG)1)
-#define MARK_ENTRY_FREE(entry)              ((entry)->keyHash = 0)
-#define MARK_ENTRY_REMOVED(entry)           ((entry)->keyHash = 1)
-#define ENTRY_IS_REMOVED(entry)             ((entry)->keyHash == 1)
-#define ENSURE_LIVE_KEYHASH(hash0)          if(hash0 < 2) hash0 -= 2; else (void)0;
-#define MATCH_ENTRY_KEYHASH(entry, hash0)   (((entry)->keyHash & ~COLLISION_FLAG) == (hash0))
-#define ADDRESS_ENTRY(table, index)         ((struct HashEntryHeader *)((table)->entryStore + (index) * (table)->entrySize))
-
-///
-
 /*** Static functions ***/
 /// SearchTable()
 //
 static struct HashEntryHeader *SearchTable(struct HashTable *table,
                                            const void *key,
                                            ULONG keyHash,
-                                           enum HashOperator op)
+                                           enum HashTableOperator op)
 {
   struct HashEntryHeader *result;
-  ULONG hash1;
-  ULONG hash2;
+  ULONG hash1, hash2;
   LONG hashShift, sizeLog2;
   struct HashEntryHeader *entry, *firstRemoved;
+  BOOL (* matchEntry)(struct HashTable *, const struct HashEntryHeader *, const void *);
   ULONG sizeMask;
 
   ENTER();
@@ -90,18 +87,22 @@ static struct HashEntryHeader *SearchTable(struct HashTable *table,
   // miss: return space for a new entry
   if(HASH_ENTRY_IS_FREE(entry))
   {
+    //D(DBF_SPAM, "search miss, creating new entry");
     RETURN(entry);
     return entry;
   }
 
   // hit: return entry
-  if(MATCH_ENTRY_KEYHASH(entry, keyHash) && HashMatchStringKey(table, entry, key))
+  matchEntry = table->ops->matchEntry;
+  if(MATCH_ENTRY_KEYHASH(entry, keyHash) && matchEntry(table, entry, key))
   {
+    //D(DBF_SPAM, "search hit, returning old entry");
     RETURN(entry);
     return entry;
   }
 
   // collision: hash again
+  //D(DBF_SPAM, "search collision, hashing again");
   sizeLog2 = HASH_BITS - table->shift;
   hash2 = HASH2(keyHash, sizeLog2, hashShift);
   sizeMask = (1L << sizeLog2) - 1;
@@ -123,16 +124,17 @@ static struct HashEntryHeader *SearchTable(struct HashTable *table,
     hash1 &= sizeMask;
 
     entry = ADDRESS_ENTRY(table, hash1);
-
     if(HASH_ENTRY_IS_FREE(entry))
     {
+      //D(DBF_SPAM, "search miss, creating new entry");
       result = (firstRemoved != NULL && op == htoAdd) ? firstRemoved : entry;
       RETURN(result);
       return result;
     }
 
-    if(MATCH_ENTRY_KEYHASH(entry, keyHash) && HashMatchStringKey(table, entry, key))
+    if(MATCH_ENTRY_KEYHASH(entry, keyHash) && matchEntry(table, entry, key))
     {
+      //D(DBF_SPAM, "search hit, returning old entry");
       result = entry;
       RETURN(result);
       return result;
@@ -151,11 +153,12 @@ static struct HashEntryHeader *SearchTable(struct HashTable *table,
   RETURN(NULL);
   return NULL;
 }
-
 ///
+
 /// ChangeTable()
 //
-static BOOL ChangeTable(struct HashTable *table, LONG deltaLog2)
+static BOOL ChangeTable(struct HashTable *table,
+                        LONG deltaLog2)
 {
   BOOL result = FALSE;
   LONG oldLog2, newLog2;
@@ -182,8 +185,14 @@ static BOOL ChangeTable(struct HashTable *table, LONG deltaLog2)
 
     entrySize = table->entrySize;
 
-    if((newEntryStore = calloc(newCapacity, entrySize)) != NULL)
+    if((newEntryStore = table->ops->allocTable(table, newCapacity, entrySize)) != NULL)
     {
+      const void * (* getKey)(struct HashTable *, const struct HashEntryHeader *);
+      void         (* moveEntry)(struct HashTable *, const struct HashEntryHeader *, struct HashEntryHeader *);
+
+      getKey = table->ops->getKey;
+      moveEntry = table->ops->moveEntry;
+
       oldEntryAddr = table->entryStore;
       oldEntryStore = table->entryStore;
 
@@ -193,23 +202,20 @@ static BOOL ChangeTable(struct HashTable *table, LONG deltaLog2)
       table->generation++;
       table->entryStore = newEntryStore;
 
-      // copy all live nodes, leaving removed one behind
+      // copy all live nodes, leaving removed ones behind
       for(i = 0; i < oldCapacity; i++)
       {
         oldEntry = (struct HashEntryHeader *)oldEntryAddr;
-
         if(HASH_ENTRY_IS_LIVE(oldEntry))
         {
           oldEntry->keyHash &= ~COLLISION_FLAG;
-          newEntry = SearchTable(table, ((struct HashEntry *)oldEntry)->key, oldEntry->keyHash, htoAdd);
-          memcpy(newEntry, oldEntry, table->entrySize);
+          newEntry = SearchTable(table, getKey(table, oldEntry), oldEntry->keyHash, htoAdd);
+          moveEntry(table, oldEntry, newEntry);
           newEntry->keyHash = oldEntry->keyHash;
         }
-
         oldEntryAddr += entrySize;
       }
-
-      free(oldEntryStore);
+      table->ops->freeTable(table, oldEntryStore);
 
       result = TRUE;
     }
@@ -221,10 +227,136 @@ static BOOL ChangeTable(struct HashTable *table, LONG deltaLog2)
 
 ///
 
-/*** Public functions ***/
-/// HashStringKey()
+/*** Public default operator functions ***/
+/// DefaultHashAllocTable()
 //
-ULONG HashStringKey(UNUSED struct HashTable *table, const void *key)
+void *DefaultHashAllocTable(UNUSED struct HashTable *table,
+                            ULONG capacity,
+                            ULONG entrySize)
+{
+  void *result;
+
+  ENTER();
+
+  result = calloc(capacity, entrySize);
+
+  RETURN(result);
+  return result;
+}
+///
+
+/// DefaultHashFreeTable()
+//
+void DefaultHashFreeTable(UNUSED struct HashTable *table,
+                          void *ptr)
+{
+  ENTER();
+
+  free(ptr);
+
+  LEAVE();
+}
+///
+
+/// DefaultHashGetKey()
+//
+const void *DefaultHashGetKey(UNUSED struct HashTable *table,
+                              const struct HashEntryHeader *entry)
+{
+  struct HashEntry *stub = (struct HashEntry *)entry;
+  const void *result;
+
+  ENTER();
+
+  result = stub->key;
+
+  RETURN(result);
+  return result;
+}
+///
+
+/// DefaultHashHashKey()
+//
+ULONG DefaultHashHashKey(UNUSED struct HashTable *table,
+                         const void *key)
+{
+  ULONG result;
+
+  ENTER();
+
+  result = (ULONG)((ULONG)key >> 2);
+
+  RETURN(result);
+  return result;
+}
+
+///
+
+/// DefaultHashMatchEntry()
+//
+BOOL DefaultHashMatchEntry(UNUSED struct HashTable *table,
+                           const struct HashEntryHeader *entry,
+                           const void *key)
+{
+  struct HashEntry *stub = (struct HashEntry *)entry;
+  BOOL result;
+
+  ENTER();
+
+  result = (stub->key == key);
+
+  RETURN(result);
+  return result;
+}
+
+///
+
+/// DefaultHashMoveEntry()
+//
+void DefaultHashMoveEntry(struct HashTable *table,
+                          const struct HashEntryHeader *from,
+                          struct HashEntryHeader *to)
+{
+  ENTER();
+
+  memcpy(to, from, table->entrySize);
+
+  LEAVE();
+}
+
+///
+
+/// DefaultHashClearEntry()
+//
+void DefaultHashClearEntry(struct HashTable *table,
+                           struct HashEntryHeader *entry)
+{
+  ENTER();
+
+  memset(entry, 0, table->entrySize);
+
+  LEAVE();
+}
+
+///
+
+/// DefaultHashFinalize()
+//
+void DefaultHashFinalize(UNUSED struct HashTable *table)
+{
+  ENTER();
+
+  // nop
+
+  LEAVE();
+}
+///
+
+/*** Public string operator functions ***/
+/// StringHashHashKey()
+//
+ULONG StringHashHashKey(UNUSED struct HashTable *table,
+                        const void *key)
 {
   ULONG h;
   CONST_STRPTR s = (CONST_STRPTR)key;
@@ -238,18 +370,20 @@ ULONG HashStringKey(UNUSED struct HashTable *table, const void *key)
   RETURN(h);
   return h;
 }
-
 ///
-/// HashMatchStringKey()
+
+/// StringHashMatchEntry()
 //
-BOOL HashMatchStringKey(UNUSED struct HashTable *table, struct HashEntryHeader *entry, CONST void *key)
+BOOL StringHashMatchEntry(UNUSED struct HashTable *table,
+                          const struct HashEntryHeader *entry,
+                          const void *key)
 {
-  struct HashEntry *he = (struct HashEntry *)entry;
+  struct HashEntry *stub = (struct HashEntry *)entry;
   BOOL result;
 
   ENTER();
 
-  if(he->key == key || (he->key != NULL && key != NULL && strcmp(he->key, key) == 0))
+  if(stub->key == key || (stub->key != NULL && key != NULL && strcmp(stub->key, key) == 0))
     result = TRUE;
   else
     result = FALSE;
@@ -257,22 +391,74 @@ BOOL HashMatchStringKey(UNUSED struct HashTable *table, struct HashEntryHeader *
   RETURN(result);
   return result;
 }
-
 ///
-/// HashFreeStringKey()
+
+/// StringHashClearEntry()
 //
-void HashFreeStringKey(struct HashTable *table, struct HashEntryHeader *heh)
+void StringHashClearEntry(struct HashTable *table,
+                          struct HashEntryHeader *entry)
 {
-  struct HashEntry *he = (struct HashEntry *)heh;
+  struct HashEntry *stub = (struct HashEntry *)entry;
 
-  free(he->key);
-  memset(heh, 0, table->entrySize);
+  free(stub->key);
+  memset(entry, 0, table->entrySize);
 }
-
 ///
+
+/*** Public functions ***/
+/// HashTableNew()
+//
+struct HashTable *HashTableNew(struct HashTableOps *ops,
+                               void *data,
+                               ULONG entrySize,
+                               ULONG capacity)
+{
+  struct HashTable *table;
+
+  ENTER();
+
+  if((table = malloc(sizeof(*table))) == NULL)
+  {
+    RETURN(NULL);
+    return NULL;
+  }
+
+  if(!HashTableInit(table, ops, data, entrySize, capacity))
+  {
+    free(table);
+
+    RETURN(NULL);
+    return NULL;
+  }
+
+  RETURN(table);
+  return table;
+}
+///
+
+/// HashTableDestroy()
+//
+void HashTableDestroy(struct HashTable *table)
+{
+  ENTER();
+
+  if(table != NULL)
+  {
+    HashTableCleanup(table);
+    free(table);
+  }
+
+  LEAVE();
+}
+///
+
 /// HashTableInit()
 //
-BOOL HashTableInit(struct HashTable *table, void *data, ULONG entrySize, ULONG capacity)
+BOOL HashTableInit(struct HashTable *table,
+                   const struct HashTableOps *ops,
+                   void *data,
+                   ULONG entrySize,
+                   ULONG capacity)
 {
   BOOL result;
   ULONG log2;
@@ -282,12 +468,13 @@ BOOL HashTableInit(struct HashTable *table, void *data, ULONG entrySize, ULONG c
   result = FALSE;
 
   table->data = data;
+  table->ops = ops;
+
   if(capacity < HASH_MIN_SIZE)
     capacity = HASH_MIN_SIZE;
 
   CEILING_LOG2(log2, capacity);
   capacity = 1 << log2;
-
   if(capacity < HASH_SIZE_LIMIT)
   {
     table->shift = HASH_BITS - log2;
@@ -298,18 +485,20 @@ BOOL HashTableInit(struct HashTable *table, void *data, ULONG entrySize, ULONG c
     table->removedCount = 0;
     table->generation = 0;
 
-    if((table->entryStore = calloc(capacity, entrySize)) != NULL)
+    if((table->entryStore = ops->allocTable(table, capacity, entrySize)) != NULL)
       result = TRUE;
   }
 
   RETURN(result);
   return result;
 }
-
 ///
-/// HashTableSetAlphaBounds()
+
+/// HashTableSetAlphaBound()
 //
-void HashTableSetAlphaBounds(struct HashTable *table, float maxAlpha, float minAlpha)
+void HashTableSetAlphaBounds(struct HashTable *table,
+                             float maxAlpha,
+                             float minAlpha)
 {
   ENTER();
 
@@ -329,9 +518,9 @@ void HashTableSetAlphaBounds(struct HashTable *table, float maxAlpha, float minA
 
   LEAVE();
 }
-
 ///
-/// HashTableCleanup
+
+/// HashTableCleanup()
 //
 void HashTableCleanup(struct HashTable *table)
 {
@@ -345,32 +534,30 @@ void HashTableCleanup(struct HashTable *table)
     entryAddr = table->entryStore;
     entrySize = table->entrySize;
     entryLimit = entryAddr + HASH_TABLE_SIZE(table) * entrySize;
-
     while(entryAddr < entryLimit)
     {
       struct HashEntryHeader *entry;
 
       entry = (struct HashEntryHeader *)entryAddr;
-
       if(HASH_ENTRY_IS_LIVE(entry))
-        HashFreeStringKey(table, entry);
+        table->ops->clearEntry(table, entry);
 
       entryAddr += entrySize;
     }
 
-    free(table->entryStore);
+    table->ops->freeTable(table, table->entryStore);
     table->entryStore = NULL;
   }
 
   LEAVE();
 }
-
 ///
+
 /// HashTableOperate()
 //
 struct HashEntryHeader *HashTableOperate(struct HashTable *table,
-                                         CONST void *key,
-                                         enum HashOperator op)
+                                         const void *key,
+                                         enum HashTableOperator op)
 {
   ULONG keyHash;
   struct HashEntryHeader *entry = NULL;
@@ -379,7 +566,7 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table,
 
   ENTER();
 
-  keyHash = HashStringKey(table, key);
+  keyHash = table->ops->hashKey(table, key);
   keyHash *= HASH_GOLDEN_RATIO;
 
   // avoid 0 and 1 hash codes, they indicate free and removed entries
@@ -393,7 +580,6 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table,
     break;
 
     case htoAdd:
-    {
       // if alpha is >= 0.75 grow or compress the table. If key is already in the table,
       // we may grow once more, but only if we are on the edge of being overloaded
       size = HASH_TABLE_SIZE(table);
@@ -407,8 +593,8 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table,
 
         if(!ChangeTable(table, deltaLog2) && table->entryCount + table->removedCount == size - 1)
         {
-          entry = NULL;
-          break;
+          RETURN(NULL);
+          return NULL;
         }
       }
 
@@ -423,15 +609,19 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table,
           table->removedCount--;
           keyHash |= COLLISION_FLAG;
         }
-
+        if(table->ops->initEntry != NULL && !table->ops->initEntry(table, entry, key))
+        {
+          // we haven't claimed entry yet; fail with null return.
+          memset(entry + 1, 0, table->entrySize - sizeof(*entry));
+          RETURN(NULL);
+          return NULL;
+        }
         entry->keyHash = keyHash;
         table->entryCount++;
       }
-    }
     break;
 
     case htoRemove:
-    {
       entry = SearchTable(table, key, keyHash, op);
       if(HASH_ENTRY_IS_LIVE(entry))
       {
@@ -445,7 +635,6 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table,
 
         entry = NULL;
       }
-    }
     break;
 
     default:
@@ -456,22 +645,53 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table,
   RETURN(entry);
   return entry;
 }
-
 ///
+
 /// HashTableRawRemove()
 //
-void HashTableRawRemove(struct HashTable *table, struct HashEntryHeader *entry)
+void HashTableRawRemove(struct HashTable *table,
+                        struct HashEntryHeader *entry)
 {
   ULONG keyHash;
 
+  // copy the hash value before we free the entry
   keyHash = entry->keyHash;
-  HashFreeStringKey(table, entry);
+
+  table->ops->clearEntry(table, entry);
 
   if(keyHash & COLLISION_FLAG)
     table->removedCount++;
   else
     MARK_ENTRY_FREE(entry);
+
   table->entryCount--;
 }
-
 ///
+
+static const struct HashTableOps defaultOps = {
+  DefaultHashAllocTable,
+  DefaultHashFreeTable,
+  DefaultHashGetKey,
+  DefaultHashHashKey,
+  DefaultHashMatchEntry,
+  DefaultHashMoveEntry,
+  DefaultHashClearEntry,
+  DefaultHashFinalize,
+  NULL,
+};
+
+/// HashTableGetDefaultOps()
+//
+const struct HashTableOps *HashTableGetDefaultOps(void)
+{
+  const struct HashTableOps *result;
+
+  ENTER();
+
+  result = &defaultOps;
+
+  RETURN(result);
+  return result;
+}
+///
+

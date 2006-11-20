@@ -31,6 +31,12 @@
 #include "YAM.h"
 #include "YAM_mainFolder.h"
 
+/*
+ YAM's spam filter is based upon Mozilla Thunderbird's spam filter.
+ For further information on Thunderbird go to http://www.mozilla.com.
+*/
+
+// a mail can either be spam, ham (no spam) or not yet classified
 enum BayesClassification
 {
   BC_SPAM = 0,
