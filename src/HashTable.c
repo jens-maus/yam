@@ -154,7 +154,6 @@ static struct HashEntryHeader *SearchTable(struct HashTable *table,
   return NULL;
 }
 ///
-
 /// ChangeTable()
 //
 static BOOL ChangeTable(struct HashTable *table,
@@ -244,7 +243,6 @@ void *DefaultHashAllocTable(UNUSED struct HashTable *table,
   return result;
 }
 ///
-
 /// DefaultHashFreeTable()
 //
 void DefaultHashFreeTable(UNUSED struct HashTable *table,
@@ -257,7 +255,6 @@ void DefaultHashFreeTable(UNUSED struct HashTable *table,
   LEAVE();
 }
 ///
-
 /// DefaultHashGetKey()
 //
 const void *DefaultHashGetKey(UNUSED struct HashTable *table,
@@ -274,7 +271,6 @@ const void *DefaultHashGetKey(UNUSED struct HashTable *table,
   return result;
 }
 ///
-
 /// DefaultHashHashKey()
 //
 ULONG DefaultHashHashKey(UNUSED struct HashTable *table,
@@ -291,7 +287,6 @@ ULONG DefaultHashHashKey(UNUSED struct HashTable *table,
 }
 
 ///
-
 /// DefaultHashMatchEntry()
 //
 BOOL DefaultHashMatchEntry(UNUSED struct HashTable *table,
@@ -310,7 +305,6 @@ BOOL DefaultHashMatchEntry(UNUSED struct HashTable *table,
 }
 
 ///
-
 /// DefaultHashMoveEntry()
 //
 void DefaultHashMoveEntry(struct HashTable *table,
@@ -325,7 +319,6 @@ void DefaultHashMoveEntry(struct HashTable *table,
 }
 
 ///
-
 /// DefaultHashClearEntry()
 //
 void DefaultHashClearEntry(struct HashTable *table,
@@ -339,7 +332,6 @@ void DefaultHashClearEntry(struct HashTable *table,
 }
 
 ///
-
 /// DefaultHashFinalize()
 //
 void DefaultHashFinalize(UNUSED struct HashTable *table)
@@ -371,7 +363,6 @@ ULONG StringHashHashKey(UNUSED struct HashTable *table,
   return h;
 }
 ///
-
 /// StringHashMatchEntry()
 //
 BOOL StringHashMatchEntry(UNUSED struct HashTable *table,
@@ -392,7 +383,6 @@ BOOL StringHashMatchEntry(UNUSED struct HashTable *table,
   return result;
 }
 ///
-
 /// StringHashClearEntry()
 //
 void StringHashClearEntry(struct HashTable *table,
@@ -435,7 +425,6 @@ struct HashTable *HashTableNew(struct HashTableOps *ops,
   return table;
 }
 ///
-
 /// HashTableDestroy()
 //
 void HashTableDestroy(struct HashTable *table)
@@ -451,7 +440,6 @@ void HashTableDestroy(struct HashTable *table)
   LEAVE();
 }
 ///
-
 /// HashTableInit()
 //
 BOOL HashTableInit(struct HashTable *table,
@@ -493,7 +481,6 @@ BOOL HashTableInit(struct HashTable *table,
   return result;
 }
 ///
-
 /// HashTableSetAlphaBound()
 //
 void HashTableSetAlphaBounds(struct HashTable *table,
@@ -519,7 +506,6 @@ void HashTableSetAlphaBounds(struct HashTable *table,
   LEAVE();
 }
 ///
-
 /// HashTableCleanup()
 //
 void HashTableCleanup(struct HashTable *table)
@@ -552,7 +538,6 @@ void HashTableCleanup(struct HashTable *table)
   LEAVE();
 }
 ///
-
 /// HashTableOperate()
 //
 struct HashEntryHeader *HashTableOperate(struct HashTable *table,
@@ -646,7 +631,6 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table,
   return entry;
 }
 ///
-
 /// HashTableRawRemove()
 //
 void HashTableRawRemove(struct HashTable *table,
@@ -667,31 +651,26 @@ void HashTableRawRemove(struct HashTable *table,
   table->entryCount--;
 }
 ///
-
-static const struct HashTableOps defaultOps = {
-  DefaultHashAllocTable,
-  DefaultHashFreeTable,
-  DefaultHashGetKey,
-  DefaultHashHashKey,
-  DefaultHashMatchEntry,
-  DefaultHashMoveEntry,
-  DefaultHashClearEntry,
-  DefaultHashFinalize,
-  NULL,
-};
-
 /// HashTableGetDefaultOps()
 //
 const struct HashTableOps *HashTableGetDefaultOps(void)
 {
-  const struct HashTableOps *result;
+  static const struct HashTableOps defaultOps =
+  {
+    DefaultHashAllocTable,
+    DefaultHashFreeTable,
+    DefaultHashGetKey,
+    DefaultHashHashKey,
+    DefaultHashMatchEntry,
+    DefaultHashMoveEntry,
+    DefaultHashClearEntry,
+    DefaultHashFinalize,
+    NULL,
+  };
 
   ENTER();
-
-  result = &defaultOps;
-
-  RETURN(result);
-  return result;
+  RETURN(&defaultOps);
+  return &defaultOps;
 }
 ///
 
