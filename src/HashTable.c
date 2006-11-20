@@ -55,7 +55,7 @@
 #define MAX_LOAD(table, size)               (((table)->maxAlphaFrac * (size)) >> 8)
 #define MIN_LOAD(table, size)               (((table)->minAlphaFrac * (size)) >> 8)
 
-#define COLLISION_FLAG                      ((HashNumber)1)
+#define COLLISION_FLAG                      ((ULONG)1)
 #define MARK_ENTRY_FREE(entry)              ((entry)->keyHash = 0)
 #define MARK_ENTRY_REMOVED(entry)           ((entry)->keyHash = 1)
 #define ENTRY_IS_REMOVED(entry)             ((entry)->keyHash == 1)
@@ -68,10 +68,14 @@
 /*** Static functions ***/
 /// SearchTable()
 //
-static struct HashEntryHeader *SearchTable(struct HashTable *table, CONST void *key, HashNumber keyHash, HashOperator op)
+static struct HashEntryHeader *SearchTable(struct HashTable *table,
+                                           const void *key,
+                                           ULONG keyHash,
+                                           enum HashOperator op)
 {
   struct HashEntryHeader *result;
-  HashNumber hash1, hash2;
+  ULONG hash1;
+  ULONG hash2;
   LONG hashShift, sizeLog2;
   struct HashEntryHeader *entry, *firstRemoved;
   ULONG sizeMask;
@@ -220,9 +224,9 @@ static BOOL ChangeTable(struct HashTable *table, LONG deltaLog2)
 /*** Public functions ***/
 /// HashStringKey()
 //
-HashNumber HashStringKey(UNUSED struct HashTable *table, CONST void *key)
+ULONG HashStringKey(UNUSED struct HashTable *table, const void *key)
 {
-  HashNumber h;
+  ULONG h;
   CONST_STRPTR s = (CONST_STRPTR)key;
 
   ENTER();
@@ -364,9 +368,11 @@ void HashTableCleanup(struct HashTable *table)
 ///
 /// HashTableOperate()
 //
-struct HashEntryHeader *HashTableOperate(struct HashTable *table, CONST void *key, HashOperator op)
+struct HashEntryHeader *HashTableOperate(struct HashTable *table,
+                                         CONST void *key,
+                                         enum HashOperator op)
 {
-  HashNumber keyHash;
+  ULONG keyHash;
   struct HashEntryHeader *entry = NULL;
   ULONG size;
   LONG deltaLog2;
@@ -457,7 +463,7 @@ out:
 //
 void HashTableRawRemove(struct HashTable *table, struct HashEntryHeader *entry)
 {
-  HashNumber keyHash;
+  ULONG keyHash;
 
   keyHash = entry->keyHash;
   HashFreeStringKey(table, entry);

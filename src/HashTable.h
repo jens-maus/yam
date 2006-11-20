@@ -45,11 +45,9 @@ struct HashTable
   STRPTR entryStore;
 };
 
-typedef ULONG HashNumber;
-
 struct HashEntryHeader
 {
-  HashNumber keyHash;
+  ULONG keyHash;
 };
 
 struct HashEntry
@@ -58,14 +56,14 @@ struct HashEntry
   void *key;
 };
 
-typedef enum
+enum HashOperator
 {
   htoLookup = 0,
   htoAdd,
   htoRemove,
   htoNext,
   htoStop,
-} HashOperator;
+};
 
 #define HASH_BITS                   32
 #define HASH_GOLDEN_RATIO           0x9e3778b9U
@@ -78,13 +76,13 @@ typedef enum
 #define HASH_ENTRY_IS_FREE(entry)   ((entry)->keyHash == 0)
 #define HASH_ENTRY_IS_BUSY(entry)   (!HASH_ENTRY_IS_FREE(entry))
 
-HashNumber HashStringKey(struct HashTable *table, CONST void *key);
+ULONG HashStringKey(UNUSED struct HashTable *table, const void *key);
 BOOL HashMatchStringKey(UNUSED struct HashTable *table, struct HashEntryHeader *entry, CONST void *key);
 void HashFreeStringKey(struct HashTable *table, struct HashEntryHeader *heh);
 BOOL HashTableInit(struct HashTable *table, void *data, ULONG entrySize, ULONG capacity);
 void HashTableSetAlphaBounds(struct HashTable *table, float maxAlpha, float minAlpha);
 void HashTableCleanup(struct HashTable *table);
-struct HashEntryHeader *HashTableOperate(struct HashTable *table, CONST void *key, HashOperator op);
+struct HashEntryHeader *HashTableOperate(struct HashTable *table, CONST void *key, enum HashOperator op);
 void HashTableRawRemove(struct HashTable *table, struct HashEntryHeader *entry);
 
 #endif /* HASH_TABLE_H */
