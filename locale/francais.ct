@@ -1,10 +1,10 @@
-## version $VER: YAM.catalog 6.0 (09.10.2006)
+## version $VER: YAM.catalog 6.0 (20.11.2006)
 ## language français
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
 ; $Id$
-; based on YAM.cd 2395 2006-09-24 13:19:27
+; based on YAM.cd 2437 2006-11-19 13:00:47Z
 ;
 ; General
 ;
@@ -269,7 +269,7 @@ Chargement de la configuration...
 ; Loading configuration...
 ;
 MSG_CreatingGUI
-Crée l'interface...
+Création de l'interface...
 ; Creating user interface...
 ;
 MSG_ErrorMuiApp
@@ -277,7 +277,7 @@ Impossible de créer l'application
 ; Can't create application
 ;
 MSG_RebuildIndices
-Recrée les index des dossiers...
+Réindexation des dossiers...
 ; Rebuilding folders' indices...
 ;
 MSG_LoadingFolders
@@ -285,11 +285,11 @@ Chargement des dossiers...
 ; Loading folders...
 ;
 MSG_LoadingABook
-Charge le carnet d'adresses...
+Chargement du carnet d'adresses...
 ; Loading address book...
 ;
 MSG_InitLibs
-Initialise bibliothèques et classes...
+Initialisation des bibliothèques et classes...
 ; Initializing libraries and classes...
 ;
 MSG_ErrorClasses
@@ -2189,7 +2189,7 @@ Après avoir écrit un message
 ;
 MSG_CO_ScriptClickURL
 En double-cliquant sur une URL
-; When double-clicking an URL
+; When double-clicking a URL
 ;
 MSG_CO_Script
 Sc_ript
@@ -3136,7 +3136,7 @@ Alias : \eb%s\en\n\
 ; ALIAS, NAME
 ;
 MSG_AB_FindEntry
-Rechercher un enregistrement...
+Rechercher une entrée...
 ; Find Entry
 ;
 MSG_AB_FindEntryReq
@@ -3513,7 +3513,7 @@ abréviation) de cette entrée
 ; abbreviation) of this entry
 ;
 MSG_HELP_EA_ST_DESCRIPTION
-Commentaire à associer ...
+Commentaire à associer...
 ; Comment for this entry
 ;
 MSG_HELP_EA_ST_REALNAME
@@ -5864,15 +5864,15 @@ Impression du carnet d'adresses...
 ; Printing address book...
 ;
 MSG_BusySavingDI
-Sauve le glossaire...
+Sauvegarde du glossaire...
 ; Saving glossary...
 ;
 MSG_BusyLoadingDI
-Charge le glossaire...
+Chargement du glossaire...
 ; Loading glossary...
 ;
 MSG_BusyUncompressingFO
-(Dé)compresse les dossiers...
+(Dé)compression des dossiers...
 ; (De)compressing folders...
 ;
 MSG_BusyMoving
@@ -5890,11 +5890,11 @@ Effacement des %s messages...
 ; COUNT
 ;
 MSG_BusyFiltering
-Applique les filtres...
+Application des filtres...
 ; Applying filters...
 ;
 MSG_BusyDeletingOld
-Efface les vieux courriers...
+Effacement des vieux courriers...
 ; Deleting old mail...
 ;
 MSG_BusyEmptyingTrash
@@ -5906,30 +5906,30 @@ Récupération des informations de mise à jour...
 ; Getting update information...
 ;
 MSG_BusyLoadingIndex
-Charge l'index du dossier « %s »...
+Chargement de l'index du dossier « %s »...
 ; Loading index of folder '%s'...
 ; FOLDER
 ;
 MSG_BusySavingIndex
-Sauve l'index du dossier « %s »...
+Sauvegarde de l'index du dossier « %s »...
 ; Saving index of folder '%s'...
 ; FOLDER
 ;
 MSG_BusyScanning
-Analyse le dossier « %s »...
+Analyse du dossier « %s »...
 ; Scanning directory of folder '%s'...
 ; FOLDER
 ;
 MSG_BusyReading
-Lit un message...
+Lecture du message...
 ; Reading message...
 ;
 MSG_BusyDisplaying
-Affiche un message...
+Affichage du message...
 ; Displaying message...
 ;
 MSG_BusyDisplayingList
-Affiche les messages...
+Affichage des messages...
 ; Displaying messages...
 ;
 MSG_BusyPGPrunning
@@ -5941,15 +5941,15 @@ Compose le message...
 ; Composing message...
 ;
 MSG_BusyDecPrinting
-Décode et imprime...
+Décodage et impression...
 ; Decoding/printing...
 ;
 MSG_BusyDecSaving
-Décode et sauve...
+Décodage et sauvegarde...
 ; Decoding/saving...
 ;
 MSG_BusyDecDisplaying
-Décode et affiche...
+Décodage et affichage...
 ; Decoding/displaying...
 ;
 ;
@@ -8007,7 +8007,6 @@ MSG_CO_ABOOKLOOKUP
 Recherche dans le carnet d'adresses pour la liste des messages
 ; Perform addressbook lookup in message list
 ;
-;
 MSG_HELP_CO_CH_ABOOKLOOKUP
 Effectue une recherche dans le carnet d'adresses\n\
 pour le destinataire principal de mail et affiche\n\
@@ -8026,7 +8025,6 @@ gros carnets d'adresses.
 ; display - especially on setups with a large\n\
 ; addressbook.
 ;
-;
 MSG_TR_MESSAGEGAUGE
 Message %%ld sur %ld
 ; Message %%ld of %ld
@@ -8036,7 +8034,6 @@ MSG_CO_CONVERTHTML
 Convertir les parties HTML affichables du message en texte brut
 ; Convert viewable HTML message parts to plain text
 ;
-;
 MSG_HELP_CO_CONVERTHTML
 Si un mail contient des parties HTML affichables comme\n\
 partie principale, YAM les convertira en texte brut si\n\
@@ -8044,7 +8041,6 @@ cette option est activée.
 ; If a mail contains viewable HTML parts as its main\n\
 ; message parts, YAM will convert them to plain text\n\
 ; when this option is enabled.
-;
 ;
 MSG_RE_FOLLOWTHREAD
  Afin de rechercher d'autres mails appartenant au même\n\
@@ -8058,25 +8054,21 @@ MSG_RE_FOLLOWTHREAD
 ; \n\
 ; Do you want to continue?
 ;
-;
 MSG_TR_TRANSFERSTATUS
 %s sur %s à %s/s\n\
 %02ld'%02ld" écoulées - %02ld'%02ld" restantes
 ; %s of %s @ %s/s\n\
 ; %02ld'%02ld'' running - %02ld'%02ld'' left
-;
 ; SIZE, SIZE, SPEED, MINS, SECS
 ;
 MSG_TR_TRANSFERSIZE
 %s sur %s
 ; %s of %s
-;
 ; SIZE, SIZE
 ;
 MSG_FI_GAUGETEXT
 Message %%ld sur %ld
 ; %%ld of %ld messages
-;
 ; COUNT, COUNT
 ;
 MSG_MA_MESSAGEINFO
@@ -8094,7 +8086,6 @@ Taille : %s
 ; Date: %s\n\
 ; Filename: %s\n\
 ; Size: %s
-;
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_FOLDERINFO
@@ -8108,7 +8099,6 @@ Messages : %ld (%ld nouveaux, %ld non lus)
 ; Path: %s\n\
 ; Size: %s\n\
 ; Messages: %ld (%ld new, %ld unread)
-;
 ; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MA_MIMEPART_INFO
@@ -8122,24 +8112,19 @@ Taille: %s
 ; Description: %s\n\
 ; Content-Type: %s <%s>\n\
 ; Size: ~%s
-;
 ; PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
 ;
 MSG_MA_MIMEPART_MENU
 Pièce jointe #%ld
 ; Attachment/MIME-Part #%ld
 ;
-;
 MSG_CO_PGPPASSINTERVAL1
 Mémorise la phrase secrète pendant
 ; Remember passphrase for
 ;
-; ***NEW***
-;
 MSG_CO_PGPPASSINTERVAL2
 minute(s) d'inactivités
 ; idle minute(s)
-;
 ;
 MSG_HELP_CO_PGPPASSINTERVAL
 Une phrase secrète de PGP saisie sera mémorisée pendant\n\
@@ -8150,61 +8135,49 @@ le nombre de minutes d'inactivité spécifié de manière\n\
 ; so that subsequent PGP operations doesn't have to\n\
 ; query for it again.
 ;
-;
 MSG_UT_PGPPASSREQ_TITLE
 Demande de phrase secrête PGP
 ; PGP passphrase request
-;
 ;
 MSG_CO_GR_REPLYFORWARD
 Répondre/Transférer
 ; Reply/Forward
 ;
-;
 MSG_CO_GR_SCRIPTS
 Scripts
 ; Scripts
-;
 ;
 MSG_CO_GR_STARTUPQUIT
 Démarrage/Arrêt
 ; Startup/Quit
 ;
-;
 MSG_CO_SCRIPTS_PREGET
 %p  Type d'action de téléchargement
 ; %p  Type of download action
-;
 ;
 MSG_CO_SCRIPTS_POSTGET
 %p  Nombre de messages reçus
 ; %p  Number of messages received
 ;
-;
 MSG_CO_SCRIPTS_NEWMSG
 %p  Nom du nouveau fichier message
 ; %p  Name of new message file
-;
 ;
 MSG_CO_SCRIPTS_READ
 %p  Nombre de fenêtre(s) de lecture
 ; %p  Number of read window
 ;
-;
 MSG_CO_SCRIPTS_WRITE
 %p  Nombre de fenêtre de rédaction
 ; %p  Number of write window
-;
 ;
 MSG_CO_SCRIPTS_URL
 %p  Chemin URL complet
 ; %p  Full URL path
 ;
-;
 MSG_CO_MIMECMD_PARAMETER
 %p  Chemin complet du fichier
 ; %s  Full path of file
-;
 ;
 MSG_ER_CANTOPENASL
 Une erreur est survenue lors de l'ouverture \
@@ -8219,7 +8192,6 @@ suffisantes.
 ; Please make sure that your ASL setup is \
 ; valid and that you have enough resources.
 ;
-;
 MSG_MA_CONFIRMDELETION
 %ld message(s) sont sélectionnés.\n\
 \n\
@@ -8229,9 +8201,196 @@ messages ?
 ; \n\
 ; Do you really want to delete these\n\
 ; messages?
-;
 ; AMOUNT
-;
 MSG_MESSAGE_EDITASNEW
 E\000Editer comme nouveau...
 ; E\000Edit As New...
+;
+MSG_MA_SPAM
+Courrier indésirable
+; Spam
+;
+;
+MSG_LOADINGSPAMTRAININGDATA
+Chargement de l'apprentissage sur les courriers indésirables...
+; Loading spam training data...
+;
+;
+MSG_MA_TBSPAM
+Indésirable
+; Spam
+;
+;
+MSG_MA_TBNOTSPAM
+Acceptable
+; Not Spam
+;
+;
+MSG_HELP_MA_BT_SPAM
+Marque ce message comme indésirable
+; Mark mail as spam
+;
+;
+MSG_HELP_MA_BT_NOTSPAM
+Marque ce message comme acceptable
+; Mark mail as not spam
+;
+;
+MSG_RE_TBSPAM
+Indésirable
+; Spam
+;
+;
+MSG_RE_TBNOTSPAM
+Acceptable
+; Not Spam
+;
+;
+MSG_HELP_RE_BT_SPAM
+Marque ce message comme indésirable
+; Mark mail as spam
+;
+;
+MSG_HELP_RE_BT_NOTSPAM
+Marque ce message comme acceptable
+; Mark mail as not spam
+;
+;
+MSG_LOG_MAILISSPAM
+Le message de '%s' à propos de '%s' est considéré comme indésirable
+; Message from '%s' about '%s' is treated as spam
+;
+; SENDER, SUBJECT
+;
+MSG_LOG_MAILISNOTSPAM
+Le message de '%s' à propos de '%s' n'est plus considéré comme indésirable
+; Message from '%s' about '%s' is no longer treated as spam
+;
+; SENDER, SUBJECT
+;
+MSG_FI_STATSPAM
+Courrier indésirable
+; Spam
+;
+;
+MSG_MA_TOSPAM
+Courrier indésirable
+; Spam
+;
+;
+MSG_MA_TONOTSPAM
+Courrier acceptable
+; Not Spam
+;
+;
+MSG_RE_SETSPAM
+Positionner le statut à indésirable
+; Set status to spam
+;
+;
+MSG_RE_SETNOTSPAM
+Positionner le statut à acceptable
+; Set status to not spam
+;
+;
+MSG_CO_CRDSPAMFILTER
+Courrier indésirable
+; Spam
+;
+;
+MSG_CO_SPAMFILTER
+Filtre de courrier indésirable
+; Spam filter
+;
+;
+MSG_CO_SPAMFILTER_TITLE
+Filtre des courriers indésirables
+; Spam filter
+;
+;
+MSG_CO_SPAMFILTER_SUMMARY
+Pour configurer le filtre des courriers indésirables...
+; Configure spam filter...
+;
+;
+MSG_CO_SPAM_FILTERFORNEWMAIL
+Vérifier les messages pour le contenu indésirable
+; Check new mails for spam content
+;
+;
+MSG_CO_SPAM_RESETTRAININGDATA
+_Réinitialiser l'apprentissage
+; _Reset training data
+;
+;
+MSG_CO_SPAM_GOODCOUNT
+Nombre de courriers classés comme "acceptables"
+; Number of "not spam" classified mails
+;
+;
+MSG_CO_SPAM_BADCOUNT
+Nombre de courriers classés comme "indésirables"
+; Number of "spam" classified mails
+;
+;
+MSG_CO_SPAM_PROBABILITYTHRESHOLD
+Considérer comme indésirable lorsque la probabilité est supérieure ou égale à
+; Treat mails as spam if spam probability is greater or equal
+;
+;
+MSG_CO_NB_SPAMPROBTHRESHOLDFMT
+%ld%%
+; %ld%%
+;
+;
+MSG_BUSYFLUSHINGSPAMTRAININGDATA
+Nettoyage de l'apprentissage des indésirables...
+; Flushing spam training data...
+;
+;
+MSG_CO_SPAM_MARKONMOVE
+Marquer comme indésirables les courriers déplacés vers le dossier 'Indésirable'
+; Mark mails as spam when moved to the spam folder
+;
+;
+MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
+Le carnet d'adresse est une liste blanche
+; Address book is white list
+;
+;
+MSG_CO_SPAM_RECOGNITION
+Reconnaissance des courriers indésirables
+; Spam recognition
+;
+;
+MSG_CO_SPAM_FILTERENABLED
+Activer le filtrage des courriers indésirables
+; Spam filter enabled
+;
+;
+MSG_CO_SPAM_RESETTRAININGDATAASK
+Voulez-vous réellement réinitialiser les\n\
+données d'apprentissage de détection des\n\
+courriers indésirables ?\n\
+\n\
+Le filtre de courriers indésirable devra\n\
+alors être entraîné à nouveau après ça !
+; Do you really want to reset the spam filter's\n\
+; training data?\n\
+; \n\
+; The spam filter must be trained again afterwards!
+;
+;
+MSG_CO_SPAM_DISABLEFILTERASK
+Voulez-vous également réinitialiser les\n\
+données d'apprentissage de détection des\n\
+courriers indésirables ?\n\
+\n\
+Le filtre de courriers indésirable devra\n\
+alors être entraîné à nouveau après ça !
+; Do you also want to reset the spam filter's\n\
+; training data?\n\
+; \n\
+; The spam filter must be trained again afterwards!
+;
+;
