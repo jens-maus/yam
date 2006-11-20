@@ -195,7 +195,18 @@ enclosed between parenthesis.
 
 ############################################################################
 
-7. switch/case
+7. No goto statements
+---------------------
+
+Because general goto usage tend to obfuscate source code and end up in
+"spaghetti code" goto statements/use YAM should generally be avoided. Even
+if that ends up in more deep if() arrangements, we believe it is a better
+practise to restructure your source code instead of being lazy and entering
+a goto statments together with a label.
+
+############################################################################
+
+8. switch/case
 --------------
 
 A switch case looks like this:
@@ -255,7 +266,7 @@ switch/case sequence. Example:
 
 ############################################################################
 
-8. Variables
+9. Variables
 ------------
 
 Variables should generally have as meaningful names as possible. Avoid
@@ -321,8 +332,8 @@ Some examples:
 
 ############################################################################
 
-9. Custom Class naming
-----------------------
+10. Custom Class naming
+-----------------------
 
 Since we manage our own MUI custom classes in the 'src/classes' directory
 of YAM, we try to make things clear as much as possible. One thing is the
@@ -343,8 +354,8 @@ Example: "ReadMailGroup" instead of "ReadMailClass"
 
 ############################################################################
 
-10. Types
---------
+11. Types
+---------
 
 We mostly use standard C-types wherever possible. This is 'char *' for
 STRPTR, 'char' for TEXT, 'void' for VOID and 'void *' for APTR. However,
@@ -379,7 +390,7 @@ as opposed to:
 
 ############################################################################
 
-11. Taglists
+12. Taglists
 ------------
 
 When providing taglists, one can either put all tags on the same line
@@ -403,7 +414,7 @@ example:
 
 ############################################################################
 
-12. ANSI-C vs. AmigaOS
+13. ANSI-C vs. AmigaOS
 ----------------------
 
 As a general rule: Use the ANSI-C functions like memcpy, malloc etc.
@@ -416,7 +427,7 @@ this styleguide.
 
 ############################################################################
 
-13. Comments
+14. Comments
 ------------
 
 A general rule for commenting is: Comment as much as possible while you
@@ -430,7 +441,7 @@ wherever possible.
 
 ############################################################################
 
-14. Debugging statements
+15. Debugging statements
 ------------------------
 
 As we recently implemented a very flexible runtime debugging functions in
@@ -487,7 +498,7 @@ meant to be usefull during debugging.
 
 ############################################################################
 
-15. Obsolete string functions
+16. Obsolete string functions
 -----------------------------
 
 A simple rules is: In any event, try to avoid to use one of the following
