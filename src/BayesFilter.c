@@ -37,6 +37,7 @@
 #include "YAM_read.h"
 #include "YAM_addressbook.h"
 #include "YAM_utilities.h"
+#include "extrasrc.h"
 
 #include "Debug.h"
 
@@ -829,11 +830,16 @@ static BOOL readTokens(FILE *stream, struct Tokenizer *t)
 //
 static void tokenAnalyzerWriteTrainingData(struct TokenAnalyzer *ta)
 {
+  char fname[SIZE_PATHFILE];
   FILE *stream;
 
   ENTER();
 
-  if((stream = fopen(SPAMDATAFILE, "wb")) != NULL)
+  // prepare the filename for saving
+  strmfp(fname, G->MA_MailDir, SPAMDATAFILE);
+
+  // open the .spamdata file for binary write
+  if((stream = fopen(fname, "wb")) != NULL)
   {
     if(fwrite(magicCookie, sizeof(magicCookie), 1, stream) == 1 &&
        writeUInt32(stream, ta->goodCount) == 1 &&
@@ -849,7 +855,7 @@ static void tokenAnalyzerWriteTrainingData(struct TokenAnalyzer *ta)
       // anything went wrong, so delete the training data file
       fclose(stream);
 
-      DeleteFile(SPAMDATAFILE);
+      DeleteFile(fname);
     }
   }
 
@@ -861,11 +867,16 @@ static void tokenAnalyzerWriteTrainingData(struct TokenAnalyzer *ta)
 //
 static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
 {
+  char fname[SIZE_PATHFILE];
   FILE *stream;
 
   ENTER();
 
-  if((stream = fopen(SPAMDATAFILE, "rb")) != NULL)
+  // prepare the filename for loading
+  strmfp(fname, G->MA_MailDir, SPAMDATAFILE);
+
+  // open the .spamdata file for binary read
+  if((stream = fopen(fname, "rb")) != NULL)
   {
     TEXT cookie[4];
 
@@ -894,6 +905,8 @@ static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
 //
 static void tokenAnalyzerResetTrainingData(struct TokenAnalyzer *ta)
 {
+  char fname[SIZE_PATHFILE];
+
   ENTER();
 
   if(ta->goodCount != 0 || ta->goodTokens.tokenTable.entryCount != 0)
@@ -908,8 +921,11 @@ static void tokenAnalyzerResetTrainingData(struct TokenAnalyzer *ta)
     ta->badCount = 0;
   }
 
-  if(FileExists(SPAMDATAFILE))
-    DeleteFile(SPAMDATAFILE);
+  // prepare the filename for analysis
+  strmfp(fname, G->MA_MailDir, SPAMDATAFILE);
+
+  if(FileExists(fname))
+    DeleteFile(fname);
 
   LEAVE();
 }
@@ -1435,10 +1451,16 @@ void BayesFilterCleanup(void)
     // write the spam training data to disk
     tokenAnalyzerWriteTrainingData(&spamFilter);
   }
-  else if(FileExists(SPAMDATAFILE))
+  else
   {
+    char fname[SIZE_PATHFILE];
+
+    // prepare the filename for saving
+    strmfp(fname, G->MA_MailDir, SPAMDATAFILE);
+
     // the spam filter is not enabled, so delete the training data, if they exist
-    DeleteFile(SPAMDATAFILE);
+    if(FileExists(fname))
+      DeleteFile(fname);
   }
 
   tokenAnalyzerCleanup(&spamFilter);

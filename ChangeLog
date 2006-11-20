@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-20  Jens Langner <Jens.Langner@light-speed.de>
+
+  * BayesFilter.c: The ".spamdata" file will now respect the user's own maildir
+    setting instead of being stored in PROGDIR:
+
 2006-11-20  Thore Böckelmann <tboeckel@gmx.de>
 
   * VMakefile: applied changes supplied by Jools Smith.
