@@ -120,7 +120,6 @@ static BOOL tokenizerInit(struct Tokenizer *t)
   return result;
 }
 ///
-
 /// tokenizerCleanup()
 // cleanup a token table
 static void tokenizerCleanup(struct Tokenizer *t)
@@ -132,7 +131,6 @@ static void tokenizerCleanup(struct Tokenizer *t)
   LEAVE();
 }
 ///
-
 /// tokenizerClearTokens()
 // reinitialize a token table
 static BOOL tokenizerClearTokens(struct Tokenizer *t)
@@ -151,7 +149,6 @@ static BOOL tokenizerClearTokens(struct Tokenizer *t)
   return ok;
 }
 ///
-
 /// tokenizerGet()
 // look up a word in the token table
 static struct Token *tokenizerGet(struct Tokenizer *t,
@@ -169,7 +166,6 @@ static struct Token *tokenizerGet(struct Tokenizer *t,
   return (struct Token *)entry;
 }
 ///
-
 /// tokenizerAdd()
 // add a word to the token table with an arbitrary prefix (maybe NULL) and count
 static struct Token *tokenizerAdd(struct Tokenizer *t,
@@ -221,7 +217,6 @@ static struct Token *tokenizerAdd(struct Tokenizer *t,
   return token;
 }
 ///
-
 /// tokenizerRemove()
 // remove <count> occurences of word from the token table
 static void tokenizerRemove(struct Tokenizer *t,
@@ -245,7 +240,6 @@ static void tokenizerRemove(struct Tokenizer *t,
   LEAVE();
 }
 ///
-
 /// isDecimalNumber()
 // check if <word> is a decimal number
 static BOOL isDecimalNumber(CONST_STRPTR word)
@@ -271,7 +265,6 @@ static BOOL isDecimalNumber(CONST_STRPTR word)
   return TRUE;
 }
 ///
-
 /// isASCII()
 // check if <word> is an ASCII word
 static BOOL isASCII(CONST_STRPTR word)
@@ -294,7 +287,6 @@ static BOOL isASCII(CONST_STRPTR word)
   return TRUE;
 }
 ///
-
 /// tokenizerAddTokenForHeader()
 // add a token for a mail header line, prefix may be NULL
 // the concatenated string can be chosen to be tokenized or be treated as one word
@@ -334,7 +326,6 @@ static void tokenizerAddTokenForHeader(struct Tokenizer *t,
   LEAVE();
 }
 ///
-
 /// tokenizerTokenizeAttachment
 // tokenize a mail attachment
 static void tokenizerTokenizeAttachment(struct Tokenizer *t,
@@ -366,7 +357,6 @@ static void tokenizerTokenizeAttachment(struct Tokenizer *t,
   LEAVE();
 }
 ///
-
 /// tokenizerTokenizeHeader()
 // tokenize all headers of a mail
 static void tokenizerTokenizeHeaders(struct Tokenizer *t,
@@ -467,7 +457,6 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
   LEAVE();
 }
 ///
-
 /// countChars()
 // count occurences of <c> in string <str>
 static ULONG countChars(STRPTR str, TEXT c)
@@ -487,7 +476,6 @@ static ULONG countChars(STRPTR str, TEXT c)
   return count;
 }
 ///
-
 /// tokenizerTokenizeASCIIWord()
 // tokenize an ASCII word
 static void tokenizerTokenizeASCIIWord(struct Tokenizer *t,
@@ -543,7 +531,6 @@ static void tokenizerTokenizeASCIIWord(struct Tokenizer *t,
   LEAVE();
 }
 ///
-
 /// tokenizeTokenize()
 // tokenize an arbitrary text
 static void tokenizerTokenize(struct Tokenizer *t,
@@ -574,7 +561,6 @@ static void tokenizerTokenize(struct Tokenizer *t,
   LEAVE();
 }
 ///
-
 /// tokenEnumerationInit()
 // initialize a token enumeration
 static void tokenEnumerationInit(struct TokenEnumeration *te,
@@ -591,7 +577,6 @@ static void tokenEnumerationInit(struct TokenEnumeration *te,
   LEAVE();
 }
 ///
-
 /// tokenEnumerationNext()
 // advance one step in the enumeration
 static struct Token *tokenEnumerationNext(struct TokenEnumeration *te)
@@ -626,7 +611,6 @@ static struct Token *tokenEnumerationNext(struct TokenEnumeration *te)
   return token;
 }
 ///
-
 /// tokenizerCopyTokens()
 // build a copy of the token table
 static struct Token *tokenizerCopyTokens(struct Tokenizer *t)
@@ -653,7 +637,6 @@ static struct Token *tokenizerCopyTokens(struct Tokenizer *t)
   return tokens;
 }
 ///
-
 /// tokenizerForgetTokens()
 // remove all words of the enumeration from the token table
 static void tokenizerForgetTokens(struct Tokenizer *t,
@@ -672,7 +655,6 @@ static void tokenizerForgetTokens(struct Tokenizer *t,
   LEAVE();
 }
 ///
-
 /// tokenizerRememberTokens()
 // put all words of the enumeration back into the token table
 static void tokenizerRememberTokens(struct Tokenizer *t,
@@ -708,7 +690,6 @@ static BOOL tokenAnalyzerInit(struct TokenAnalyzer *ta)
   return result;
 }
 ///
-
 /// tokenAnalyzerCleanup()
 // clean up the analyzer
 static void tokenAnalyzerCleanup(struct TokenAnalyzer *ta)
@@ -721,7 +702,6 @@ static void tokenAnalyzerCleanup(struct TokenAnalyzer *ta)
   LEAVE();
 }
 ///
-
 /// writeTokens()
 // write the tokens of a token table to a stream
 static BOOL writeTokens(FILE *stream,
@@ -763,7 +743,6 @@ static BOOL writeTokens(FILE *stream,
   return TRUE;
 }
 ///
-
 /// readTokens()
 // read tokens from a stream into the token table
 static BOOL readTokens(FILE *stream,
@@ -829,7 +808,6 @@ static BOOL readTokens(FILE *stream,
   return TRUE;
 }
 ///
-
 /// tokenAnalyzerWriteTraningData()
 // write the accumulated training data to disk
 static void tokenAnalyzerWriteTrainingData(struct TokenAnalyzer *ta)
@@ -867,7 +845,6 @@ static void tokenAnalyzerWriteTrainingData(struct TokenAnalyzer *ta)
   LEAVE();
 }
 ///
-
 /// tokenAnalyzerReadTrainingData()
 // read the training data from disk
 static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
@@ -905,7 +882,6 @@ static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
   LEAVE();
 }
 ///
-
 /// tokenAnalyzerResetTrainingData()
 // reset the training data. The makes the spam filter stupid again
 static void tokenAnalyzerResetTrainingData(struct TokenAnalyzer *ta)
@@ -935,7 +911,6 @@ static void tokenAnalyzerResetTrainingData(struct TokenAnalyzer *ta)
   LEAVE();
 }
 ///
-
 /// tokenAnalyzerSetClassification()
 // set a new classification for a token table, substract the data from the old class
 // and add them to the new class, if possible
@@ -1012,7 +987,6 @@ static void tokenAnalyzerSetClassification(struct TokenAnalyzer *ta,
   LEAVE();
 }
 ///
-
 /// compareTokens()
 // compare to tokens to sort them
 static int compareTokens(const void *p1,
@@ -1126,7 +1100,6 @@ static double nsLnGamma (double z_in, int *gsign)
   return result;
 }
 ///
-
 /// lnPQfactoer()
 // log( e^(-x)*x^a/Gamma(a) )
 INLINE double lnPQfactor (double a, double x)
@@ -1159,7 +1132,6 @@ static double Pseries (double a, double x, int *error)
   return sum;
 }
 ///
-
 /// Qcontfrac()
 //
 static double Qcontfrac (double a, double x, int *error)
@@ -1200,7 +1172,6 @@ static double Qcontfrac (double a, double x, int *error)
   return result;
 }
 ///
-
 /// incompleteGammaP()
 //
 double incompleteGammaP( double a, double x, int *error )
@@ -1249,7 +1220,6 @@ double incompleteGammaP( double a, double x, int *error )
   return result;
 }
 ///
-
 /// chi2P()
 //
 INLINE double chi2P(double chi2, double nu, int *error)
@@ -1263,7 +1233,6 @@ INLINE double chi2P(double chi2, double nu, int *error)
   return incompleteGammaP(nu / 2.0, chi2 / 2.0, error);
 }
 ///
-
 /// tokenAnalyzerClassifyMessage()
 // classify a mail based upon the information gathered so far
 static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
@@ -1419,7 +1388,6 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
   return isSpam;
 }
 ///
-
 /// BayesFilterInit()
 // initialize the spam filter structures and read the training data from disk
 BOOL BayesFilterInit(void)
@@ -1440,7 +1408,6 @@ BOOL BayesFilterInit(void)
   return result;
 }
 ///
-
 /// BayesFilterCleanup()
 // write the training data to disk and cleanup all structures
 void BayesFilterCleanup(void)
@@ -1469,7 +1436,6 @@ void BayesFilterCleanup(void)
   LEAVE();
 }
 ///
-
 /// tokenizeMail()
 // tokenize a complete mail, including all headers
 static void tokenizeMail(struct Tokenizer *t,
@@ -1512,7 +1478,6 @@ static void tokenizeMail(struct Tokenizer *t,
   LEAVE();
 }
 ///
-
 /// BayesFilterClassifyMessage()
 // classify a given message based upon the information gathered so far
 BOOL BayesFilterClassifyMessage(struct Mail *mail)
@@ -1535,7 +1500,6 @@ BOOL BayesFilterClassifyMessage(struct Mail *mail)
   return isSpam;
 }
 ///
-
 /// BayesFilterSetClassification()
 // change the classification of a message
 void BayesFilterSetClassification(struct Mail *mail,
@@ -1567,7 +1531,6 @@ void BayesFilterSetClassification(struct Mail *mail,
   LEAVE();
 }
 ///
-
 /// BayesFilterNumerOfSpamClassifiedMails()
 // return the number of spam classified mail
 ULONG BayesFilterNumberOfSpamClassifiedMails(void)
@@ -1582,7 +1545,6 @@ ULONG BayesFilterNumberOfSpamClassifiedMails(void)
   return num;
 }
 ///
-
 /// BayesFilterNumberOfHamClassifiedMails()
 // return the number of ham classified mail
 ULONG BayesFilterNumberOfHamClassifiedMails(void)
@@ -1597,7 +1559,6 @@ ULONG BayesFilterNumberOfHamClassifiedMails(void)
   return num;
 }
 ///
-
 /// BayesFilterFlushTrainingData()
 // flush training data to disk
 void BayesFilterFlushTrainingData(void)
@@ -1613,7 +1574,6 @@ void BayesFilterFlushTrainingData(void)
   LEAVE();
 }
 ///
-
 /// BayesFilterResetTrainingData()
 // reset the training data
 void BayesFilterResetTrainingData(void)
