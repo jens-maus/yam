@@ -1343,8 +1343,25 @@ void CO_Validate(struct Config *co, BOOL update)
 
       if(G->CO->Visited[cp_Spam] || G->CO->UpdateAll)
       {
-        // if we enabled or disable the spam filter then we need to update the toolbar
+        // if we enabled or disable the spam filter then we need to update the toolbar in the main window
         MA_ChangeSelected(TRUE);
+
+        // update the read windows' toolbar, too
+        if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+        {
+          // search through our ReadDataList
+          struct MinNode *curNode;
+
+          for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          {
+            struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+            // just obey open read windows with a valid mail pointer
+            if(rmData->readWindow != NULL && rmData->mail != NULL)
+              // use PushMethod for the case the read window modifies we list we are currently walking through
+              DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ReadMail, rmData->mail);
+          }
+        }
       }
 
       if(G->CO->Visited[cp_Read] || G->CO->UpdateAll)

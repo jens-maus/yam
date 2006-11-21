@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-21  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: when the spam filter in enabled or disabled the toolbars of
+    opened read windows are now updated, too.
+
 2006-11-20  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: updated according to the latest changes and some
