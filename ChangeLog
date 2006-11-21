@@ -12,19 +12,16 @@ $Id$
     Pressing the "Reset training data" button leaves the mail flag as they are,
     it just resets the training data. Therefore the confirmation question has
     also been adapted accordingly.
+  * MainMaillist.c: the "set to spam/not spam" item in the context menus were
+    not disabled if the spam filter was deactivated.
+  * YAM_CO.c: when the spam filter in enabled or disabled the toolbars of
+    opened read windows are now updated, too.
 
 2006-11-21  Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile.?: put the 'date' and 'expr' usage for calculating the
     various date expressions in separate makefile variables for more easily
     specifying own date/expr commands instead.
-
-2006-11-21  Thore Böckelmann <tboeckel@gmx.de>
-
-  * MainMaillist.c: the "set to spam/not spam" item in the context menus were
-    not disabled if the spam filter was deactivated.
-  * YAM_CO.c: when the spam filter in enabled or disabled the toolbars of
-    opened read windows are now updated, too.
 
 2006-11-20  Alexandre Balaban <abalaban@free.fr>
 
