@@ -30,6 +30,7 @@
 
 #include "MainMailList_cl.h"
 
+#include "YAM_config.h"
 #include "BayesFilter.h"
 
 #include "Debug.h"
@@ -605,8 +606,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToRead),     MUIA_Menuitem_Enabled, mail && !isSentMail,MUIA_UserData, MMEN_TOREAD,     End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToHold),     MUIA_Menuitem_Enabled, mail && isOutBox,   MUIA_UserData, MMEN_TOHOLD,     End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToQueued),   MUIA_Menuitem_Enabled, mail && isOutBox,   MUIA_UserData, MMEN_TOQUEUED,   End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_TOSPAM),     MUIA_Menuitem_Enabled, mail && !hasStatusSpam(mail),MUIA_UserData, MMEN_TOSPAM,     End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_TONOTSPAM),  MUIA_Menuitem_Enabled, mail && !hasStatusHam(mail), MUIA_UserData, MMEN_TOHAM,      End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_TOSPAM),     MUIA_Menuitem_Enabled, mail && !hasStatusSpam(mail) && C->SpamFilterEnabled, MUIA_UserData, MMEN_TOSPAM, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_TONOTSPAM),  MUIA_Menuitem_Enabled, mail && !hasStatusHam(mail)  && C->SpamFilterEnabled, MUIA_UserData, MMEN_TOHAM,  End,
         Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ALLTOREAD),  MUIA_Menuitem_Enabled, mail && !isSentMail,  MUIA_UserData, MMEN_ALLTOREAD,  End,
       End,

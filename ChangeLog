@@ -6,6 +6,8 @@ $Id$
 
 2006-11-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * MainMaillist.c: the "set to spam/not spam" item in the context menus were
+    not disabled if the spam filter was deactivated.
   * YAM_CO.c: when the spam filter in enabled or disabled the toolbars of
     opened read windows are now updated, too.
 
