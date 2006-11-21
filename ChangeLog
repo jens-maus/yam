@@ -4,8 +4,22 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-21  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile.?: put the 'date' and 'expr' usage for calculating the
+    various date expressions in separate makefile variables for more easily
+    specifying own date/expr commands instead.
+
 2006-11-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: hopefully fixed the problem that when calling RemoveMailFromList()
+    and closing open read windows the temporary files in T: never got deleted.
+    This happend because the window was only visibly closed, but the cleanup
+    function was never called. Now YAM correctly closes the window and does a
+    full cleanup.
+  * YAM_RE.c: moved the clearing of rmData->mail after a possible closing of an
+    open read window. This should enable the read window to do the necessary
+    cleanup itself without leaving any temporary files.
   * YAM_COg.c, locale/YAM.cd, locale/deutsch.ct: when the spam filter is
     disabled the spam/not spam flags of *all* mails are also cleared, so that
     one can really start re-training the filter from the very beginning.
@@ -16,12 +30,6 @@ $Id$
     not disabled if the spam filter was deactivated.
   * YAM_CO.c: when the spam filter in enabled or disabled the toolbars of
     opened read windows are now updated, too.
-
-2006-11-21  Jens Langner <Jens.Langner@light-speed.de>
-
-  * Makefile.?: put the 'date' and 'expr' usage for calculating the
-    various date expressions in separate makefile variables for more easily
-    specifying own date/expr commands instead.
 
 2006-11-20  Alexandre Balaban <abalaban@free.fr>
 

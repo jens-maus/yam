@@ -3637,12 +3637,21 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 
       if(rmData->mail == mail)
       {
-        // clear the pointer to this mail
-        rmData->mail = NULL;
-
-        // and ask the window to close itself
         if(closeWindows && rmData->readWindow != NULL)
-          set(rmData->readWindow, MUIA_Window_Open, FALSE);
+          // Just ask the window to close itself, this will effectively clear the pointer.
+          // We cannot set the attribute directly, because a DoMethod() call is synchronous
+          // and then the read window would modify the list we are currently walking through
+          // by calling CleanupReadMailData(). Hence we just let the application do the dirty
+          // work as soon as it has the possibility to do that, but not before this loop is
+          // finished. This works, because the ReadWindow class catches any modification to
+          // MUIA_Window_CloseRequest itself. A simple set(win, MUIA_Window_Open, FALSE) would
+          // visibly close the window, but it would not invoke the associated hook which gets
+          // invoked when you close the window by clicking on the close gadget.
+          DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 3, MUIM_Set, MUIA_Window_CloseRequest, TRUE);
+        else
+          // Just clear pointer to this mail if we don't want to close the window or if
+          // there is no window to close at all.
+          rmData->mail = NULL;
       }
     }
   }
