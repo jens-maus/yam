@@ -5998,7 +5998,7 @@ The spam filter must be trained again afterwards!
 ;
 MSG_CO_SPAM_DISABLEFILTERASK (1777//)
 Do you also want to reset the spam filter's\n\
-training data?\n\
+training data and all mail flags?\n\
 \n\
 The spam filter must be trained again afterwards!
 ;

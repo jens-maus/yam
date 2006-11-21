@@ -4,6 +4,15 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-21  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c, locale/YAM.cd, locale/deutsch.ct: when the spam filter is
+    disabled the spam/not spam flags of *all* mails are also cleared, so that
+    one can really start re-training the filter from the very beginning.
+    Pressing the "Reset training data" button leaves the mail flag as they are,
+    it just resets the training data. Therefore the confirmation question has
+    also been adapted accordingly.
+
 2006-11-21  Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile.?: put the 'date' and 'expr' usage for calculating the

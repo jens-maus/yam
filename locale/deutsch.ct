@@ -7467,8 +7467,8 @@ Spamfilters zurücksetzen?\n\
 Der Spamfilter muss danach erneut trainiert werden!
 ;
 MSG_CO_SPAM_DISABLEFILTERASK
-Wollen Sie zusätzlich auch die Trainingsdaten\n\
-des Spamfilters zurücksetzen?\n\
+Wollen Sie zusätzlich auch die Trainingsdaten des Spamfilters\n\
+und den Spamstatus aller Nachrichten zurücksetzen?\n\
 \n\
 Der Spamfilter muss danach erneut trainiert werden!
 ;
