@@ -39,6 +39,8 @@ CHMOD   = chmod
 FLEX    = flex
 FC      = flexcat
 SED     = sed
+DATE    = date
+EXPR    = expr
 
 # Directories
 PREFIX  = .

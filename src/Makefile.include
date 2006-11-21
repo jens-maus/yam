@@ -39,9 +39,9 @@
 GENCLASSES= $(TOOLS)/genclasses
 
 # Special flags
-DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
-YAMVERID = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" \
-           -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`" \
+DEVFLAGS = -DDEVWARNING -DEXPDATE="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922 + 31`"
+YAMVERID = -D__YAM_VERDATE=\"`$(DATE) +%d.%m.%Y`\" \
+           -D__YAM_VERDAYS="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922`" \
            -D__YAM_BUILDID="$(BUILDID)"
 
 .PHONY: all clean cleanall distclean classinfo dump depend
@@ -106,9 +106,9 @@ OBJS = \
 	$(OBJDIR)/YAM_WR.o \
 	$(OBJDIR)/ImageCache.o \
 	$(OBJDIR)/UpdateCheck.o \
-	$(OBJDIR)/HTML2Mail.o \
-    $(OBJDIR)/HashTable.o \
-    $(OBJDIR)/BayesFilter.o \
+   $(OBJDIR)/HTML2Mail.o \
+	$(OBJDIR)/HashTable.o \
+	$(OBJDIR)/BayesFilter.o \
 	$(CLASSES) \
 	$(OBJDIR)/extrasrc.o \
 	$(OBJDIR)/Debug.o
