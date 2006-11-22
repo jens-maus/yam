@@ -1020,7 +1020,7 @@ static const double C_11 = 77683.0 / 5796.0;
 
 /// lngamma_asymp()
 // truncated asymptotic series in 1/z
-static double lngamma_asymp(double z)
+INLINE double lngamma_asymp(double z)
 {
   double w, w2, sum;
 
@@ -1102,7 +1102,7 @@ static double nsLnGamma (double z_in, int *gsign)
 ///
 /// lnPQfactoer()
 // log( e^(-x)*x^a/Gamma(a) )
-static double lnPQfactor (double a, double x)
+INLINE double lnPQfactor (double a, double x)
 {
   int gsign;                // ignored because a > 0
   return a * log (x) - x - nsLnGamma (a, &gsign);

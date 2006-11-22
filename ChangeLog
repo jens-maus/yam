@@ -10,6 +10,9 @@ $Id$
 
 2006-11-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * BayesFilter.c: reverted the changes done this morning and defined both
+    functions again as INLINE. Instead SDI_compiler.h needs to changed for
+    vbcc.
   * BayesFilter.c: changed lngamma_asymp() and lnPQfactor() to be just static
     than inlined. vbcc chokes about this, because the definition of INLINE is
     different for vbcc and gcc. Somebody with a little bit more compiler
