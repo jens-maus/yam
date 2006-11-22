@@ -3638,6 +3638,7 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
       if(rmData->mail == mail)
       {
         if(closeWindows && rmData->readWindow != NULL)
+        {
           // Just ask the window to close itself, this will effectively clear the pointer.
           // We cannot set the attribute directly, because a DoMethod() call is synchronous
           // and then the read window would modify the list we are currently walking through
@@ -3648,10 +3649,13 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
           // visibly close the window, but it would not invoke the associated hook which gets
           // invoked when you close the window by clicking on the close gadget.
           DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 3, MUIM_Set, MUIA_Window_CloseRequest, TRUE);
+        }
         else
+        {
           // Just clear pointer to this mail if we don't want to close the window or if
           // there is no window to close at all.
           rmData->mail = NULL;
+        }
       }
     }
   }

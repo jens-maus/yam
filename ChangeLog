@@ -4,11 +4,21 @@ YAM Open Source - ChangeLog
 
 $Id$
 
-2006-11-22  Pär Boberg <pbobbenb@spray.se>
+2006-11-22  Jens Langner <Jens.Langner@light-speed.de>
 
-  * locale/svenska.ct: updated according to the latest changes.
+  * misc: addressed bug #1597189 by having totally rewritten the whole UIDL
+    management from scratch. Now the new POP3-UIDL management for the
+    "Avoid duplicates" funcationality will use the new HashTable functions
+    for maintaining/checking the UIDLs of mails kept on the POP3 server.
+    Previously YAM was very dumb in that manner by just adding the UIDL
+    of each downloaded mail to the ".uidl" file and checking it via simple
+    but slow string operations. Now a hash table is used for that purpose
+    which should make UIDL lookups quite faster. In addition, the UIDL list
+    will now be automatically cleaned up when saving it. All orphaned UIDLs
+    which doesn't correspond to any mail found on a POP3 server will be
+    removed. That also fixes the issue with an endless growing ".uidl" file.
 
-2006-11-21  Thore Böckelmann <tboeckel@gmx.de>
+2006-11-22  Thore Böckelmann <tboeckel@gmx.de>
 
   * HashTable.c,h: added new function HashTableEnumerate to walk through a hash
     table using a callback function for every single entry. See HashTable.h how
@@ -22,6 +32,10 @@ $Id$
     than inlined. vbcc chokes about this, because the definition of INLINE is
     different for vbcc and gcc. Somebody with a little bit more compiler
     knowledge (vbcc in particular) should take a look at this.
+
+2006-11-22  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: updated according to the latest changes.
 
 2006-11-21  Jens Langner <Jens.Langner@light-speed.de>
 

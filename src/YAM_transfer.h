@@ -31,6 +31,7 @@
 #include <stdio.h>
 
 #include "YAM_mainFolder.h"
+#include "HashTable.h"
 
 enum TransferType   { TR_IMPORT, TR_EXPORT, TR_GET, TR_SEND };
 enum SMTPSecMethod  { SMTPSEC_NONE, SMTPSEC_TLS, SMTPSEC_SSL };
@@ -90,7 +91,7 @@ struct TR_ClassData
    struct MinList        transferList; // list for managing the downloads
    struct MinNode       *GMD_Mail;
    struct Folder *       ImportFolder;
-   char *                UIDLloc;
+   struct HashTable *    UIDLhashTable; // for maintaining all UIDLs
 
    long                  Abort;
    long                  Pause;
@@ -102,7 +103,7 @@ struct TR_ClassData
    int                   POP_Nr;
    BOOL                  SinglePOP;
    BOOL                  Checking;
-   BOOL                  supportUIDL;
+   BOOL                  DuplicatesChecking;
    struct DownloadResult Stats;
 
    char                  WTitle[SIZE_DEFAULT];

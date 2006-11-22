@@ -232,6 +232,7 @@ static void tokenizerRemove(struct Tokenizer *t,
     if(token->count >= count)
     {
       token->count -= count;
+
       if(token->count == 0)
         HashTableRawRemove(&t->tokenTable, (struct HashEntryHeader *)token);
     }

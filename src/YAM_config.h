@@ -311,15 +311,16 @@ struct CO_ClassData  /* configuration window */
 
 struct POP3
 {
-   char  Account[SIZE_USERID+SIZE_HOST];
-   char  Server[SIZE_HOST];
-   int   Port;
-   char  User[SIZE_USERID];
-   char  Password[SIZE_USERID];
-   BOOL  Enabled;
-   int   SSLMode;
-   BOOL  UseAPOP;
-   BOOL  DeleteOnServer;
+  char Account[SIZE_USERID+SIZE_HOST];  // user definable account name
+  char Server[SIZE_HOST];               // servername/IP
+  int  Port;                            // the port
+  char User[SIZE_USERID];               // the account ID/name
+  char Password[SIZE_USERID];           // the password for this POP3 account
+  BOOL Enabled;                         // user enabled this POP3 config
+  int  SSLMode;                         // the user selected SSL mode
+  BOOL UseAPOP;                         // use APOP authentication
+  BOOL DeleteOnServer;                  // message are deleted after transfer
+  BOOL UIDLchecked;                     // TRUE if the UIDLs were checked during the last transfer
 };
 
 /*** RxHook structure ***/

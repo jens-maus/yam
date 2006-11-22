@@ -113,6 +113,7 @@ void SetupDebug(void)
       { "update",   DBF_UPDATE  },
       { "html",     DBF_HTML    },
       { "spam",     DBF_SPAM    },
+      { "uidl",     DBF_UIDL    },
       { "all",      DBF_ALL     },
       { NULL,       0           }
     };
@@ -209,36 +210,36 @@ void SetupDebug(void)
 
 // define variables for using ANSI colors in our debugging scheme
 #define ANSI_ESC_CLR        "\033[0m"
-#define ANSI_ESC_BOLD        "\033[1m"
+#define ANSI_ESC_BOLD       "\033[1m"
 #define ANSI_ESC_UNDERLINE  "\033[4m"
 #define ANSI_ESC_BLINK      "\033[5m"
 #define ANSI_ESC_REVERSE    "\033[7m"
 #define ANSI_ESC_INVISIBLE  "\033[8m"
-#define ANSI_ESC_FG_BLACK    "\033[0;30m"
-#define ANSI_ESC_FG_RED      "\033[0;31m"
-#define ANSI_ESC_FG_GREEN    "\033[0;32m"
-#define ANSI_ESC_FG_BROWN    "\033[0;33m"
+#define ANSI_ESC_FG_BLACK   "\033[0;30m"
+#define ANSI_ESC_FG_RED     "\033[0;31m"
+#define ANSI_ESC_FG_GREEN   "\033[0;32m"
+#define ANSI_ESC_FG_BROWN   "\033[0;33m"
 #define ANSI_ESC_FG_BLUE    "\033[0;34m"
 #define ANSI_ESC_FG_PURPLE  "\033[0;35m"
 #define ANSI_ESC_FG_CYAN    "\033[0;36m"
-#define ANSI_ESC_FG_LGRAY    "\033[0;37m"
-#define ANSI_ESC_FG_DGRAY    "\033[1;30m"
+#define ANSI_ESC_FG_LGRAY   "\033[0;37m"
+#define ANSI_ESC_FG_DGRAY   "\033[1;30m"
 #define ANSI_ESC_FG_LRED    "\033[1;31m"
 #define ANSI_ESC_FG_LGREEN  "\033[1;32m"
 #define ANSI_ESC_FG_YELLOW  "\033[1;33m"
-#define ANSI_ESC_FG_LBLUE    "\033[1;34m"
-#define ANSI_ESC_FG_LPURPLE  "\033[1;35m"
-#define ANSI_ESC_FG_LCYAN    "\033[1;36m"
-#define ANSI_ESC_FG_WHITE    "\033[1;37m"
-#define ANSI_ESC_BG          "\033[0;4"    // background esc-squ start with 4x
-#define ANSI_ESC_BG_BLACK    "\033[0;40m"
-#define ANSI_ESC_BG_RED      "\033[0;41m"
-#define ANSI_ESC_BG_GREEN    "\033[0;42m"
-#define ANSI_ESC_BG_BROWN    "\033[0;43m"
+#define ANSI_ESC_FG_LBLUE   "\033[1;34m"
+#define ANSI_ESC_FG_LPURPLE "\033[1;35m"
+#define ANSI_ESC_FG_LCYAN   "\033[1;36m"
+#define ANSI_ESC_FG_WHITE   "\033[1;37m"
+#define ANSI_ESC_BG         "\033[0;4"    // background esc-squ start with 4x
+#define ANSI_ESC_BG_BLACK   "\033[0;40m"
+#define ANSI_ESC_BG_RED     "\033[0;41m"
+#define ANSI_ESC_BG_GREEN   "\033[0;42m"
+#define ANSI_ESC_BG_BROWN   "\033[0;43m"
 #define ANSI_ESC_BG_BLUE    "\033[0;44m"
 #define ANSI_ESC_BG_PURPLE  "\033[0;45m"
 #define ANSI_ESC_BG_CYAN    "\033[0;46m"
-#define ANSI_ESC_BG_LGRAY    "\033[0;47m"
+#define ANSI_ESC_BG_LGRAY   "\033[0;47m"
 
 /****************************************************************************/
 

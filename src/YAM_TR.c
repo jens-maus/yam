@@ -67,8 +67,10 @@
 #include "YAM_md5.h"
 #include "YAM_mime.h"
 #include "YAM_utilities.h"
-#include "classes/Classes.h"
 #include "BayesFilter.h"
+#include "HashTable.h"
+
+#include "classes/Classes.h"
 
 #include "Debug.h"
 
@@ -198,6 +200,7 @@ struct MailTransferNode
 {
   struct MinNode node;      // required for placing it into "struct TR_ClassData"
   struct Mail   *mail;      // pointer to the corresponding mail
+  char          *UIDL;      // an unique identifier (UIDL) in case AvoidDuplicates is used
   unsigned char tflags;     // transfer flags
   int           position;   // current position of the mail in the GUI NList
   int           index;      // the index value of the mail as told by a POP3 server
@@ -215,8 +218,8 @@ struct MailTransferNode
 // static function prototypes
 static void TR_NewMailAlert(void);
 static void TR_CompleteMsgList(void);
-static char *TR_SendPOP3Cmd(enum POPCommand command, char *parmtext, const void *errorMsg);
-static char *TR_SendSMTPCmd(enum SMTPCommand command, char *parmtext, const void *errorMsg);
+static char *TR_SendPOP3Cmd(enum POPCommand command, const char *parmtext, const void *errorMsg);
+static char *TR_SendSMTPCmd(enum SMTPCommand command, const char *parmtext, const void *errorMsg);
 static int  TR_Recv(char *vptr, int maxlen);
 static int  TR_RecvToFile(FILE *fh, char *filename, struct TransStat *ts);
 static int  TR_ReadLine(LONG socket, char *vptr, int maxlen);
@@ -229,6 +232,13 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr);
 #define TR_WriteFlush()         (TR_Send(NULL,  0, TCPF_FLUSHONLY))
 #define TR_FreeTransBuffers()   { TR_ReadBuffered(0, NULL, 0, TCPF_FREEBUFFER);  \
                                   TR_WriteBuffered(0, NULL, 0, TCPF_FREEBUFFER); }
+
+// static UIDL function prototypes
+static BOOL InitUIDLhash(void);
+static void CleanupUIDLhash(void);
+static BOOL FilterDuplicates(void);
+static void AddUIDLtoHash(const char *uidl, BOOL checked);
+static void RemoveUIDLfromHash(const char *uidl);
 
 /**************************************************************************/
 // TLS/SSL related variables
@@ -1886,7 +1896,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
 /*** POP3 routines ***/
 /// TR_SendPOP3Cmd
 //  Sends a command to the POP3 server
-static char *TR_SendPOP3Cmd(enum POPCommand command, char *parmtext, const void *errorMsg)
+static char *TR_SendPOP3Cmd(enum POPCommand command, const char *parmtext, const void *errorMsg)
 {
   static char *buf = NULL;
   char *result = NULL;
@@ -1907,7 +1917,7 @@ static char *TR_SendPOP3Cmd(enum POPCommand command, char *parmtext, const void 
     if(buf != NULL)
     {
       // if we specified a parameter for the pop command lets add it now
-      if(!parmtext || !*parmtext)
+      if(parmtext == NULL || parmtext[0] == '\0')
         snprintf(buf, SIZE_LINE, "%s\r\n", POPcmd[command]);
       else
         snprintf(buf, SIZE_LINE, "%s %s\r\n", POPcmd[command], parmtext);
@@ -2208,108 +2218,6 @@ static BOOL TR_GetMessageList_GET(void)
      return FALSE;
 }
 ///
-/// TR_AppendUIDL
-//  Appends a UIDL to the .uidl file
-static void TR_AppendUIDL(char *uidl)
-{
-   FILE *fh;
-   if ((fh = fopen(CreateFilename(".uidl"), "a")))
-   {
-      fprintf(fh, "%s\n", uidl);
-      fclose(fh);
-   }
-}
-///
-/// TR_FindUIDL
-//  Searches UIDL list for a given UIDL
-static BOOL TR_FindUIDL(char *uidl)
-{
-   int l = strlen(uidl);
-   char *p = G->TR->UIDLloc;
-   if (p) while (*p)
-   {
-      if (!strncmp(p, uidl, l)) return TRUE;
-      while (*p) if (*p++ == '\n') break;
-   }
-   return FALSE;
-}
-///
-/// TR_GetUIDLonDisk
-//  Loads local UIDL list from disk
-static char *TR_GetUIDLonDisk(void)
-{
-   FILE *fh;
-   char *text = NULL, *file = CreateFilename(".uidl");
-   int size;
-
-   if ((size = FileSize(file)) > 0)
-      if ((text = calloc(size+1,1)))
-         if ((fh = fopen(file, "r")))
-         {
-            fread(text, 1, size, fh);
-            fclose(fh);
-         }
-   return text;
-}
-///
-/// TR_GetUIDLonServer
-//  Gets remote UIDL list from the POP3 server
-static BOOL TR_GetUIDLonServer(void)
-{
-   // issue the UDIL pop command to get a unique-id list
-   // of all mail avaiable at a server
-   //
-   // This command is optional within the RFC 1939 specification
-   // and therefore we don`t throw any error and just return
-   // with FALSE to signal that this server doesn`t support UIDL
-   if(TR_SendPOP3Cmd(POPCMD_UIDL, NULL, NULL))
-   {
-      char buf[SIZE_LINE];
-
-      // get the first line the pop server returns after the UIDL command
-      if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) <= 0) return FALSE;
-
-      // we get the "unique-id list" as long as we haven`t received a a
-      // finishing octet
-      while(!G->Error && strncmp(buf, ".\r\n", 3) != 0)
-      {
-         int num;
-         char uidl[SIZE_DEFAULT+SIZE_HOST];
-
-         // now parse the line and get the message number and UIDL
-         sscanf(buf, "%d %s", &num, uidl);
-
-         // lets add our own ident to the uidl so that we can compare
-         // it against our saved list
-         strlcat(uidl, "@", sizeof(uidl));
-         strlcat(uidl, C->P3[G->TR->POP_Nr]->Server, sizeof(uidl));
-
-         // iterate to the mail the UIDL is for and save it in the variable
-         if(IsMinListEmpty(&G->TR->transferList) == FALSE)
-         {
-            // search through our transferList
-            struct MinNode *curNode;
-            for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-            {
-              struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-
-              if(mtn->index == num)
-              {
-                mtn->mail->UIDL = AllocCopy(uidl, strlen(uidl)+1);
-                break;
-              }
-            }
-         }
-
-         // now read the next Line
-         if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) <= 0) return FALSE;
-      }
-
-      return TRUE;
-   }
-   else return FALSE;
-}
-///
 /// TR_ApplyRemoteFilters
 //  Applies remote filters to a message
 static void TR_ApplyRemoteFilters(struct MailTransferNode *mtn)
@@ -2412,7 +2320,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
                {
                   char uidl[SIZE_DEFAULT+SIZE_HOST];
                   snprintf(uidl, sizeof(uidl), "%s@%s", Trim(email->MsgID), C->P3[G->TR->POP_Nr]->Server);
-                  mail->UIDL = AllocCopy(uidl, strlen(uidl)+1);
+                  mtn->UIDL = strdup(uidl);
                }
                else if(lline == -2)
                   TR_ApplyRemoteFilters(mtn);
@@ -2427,37 +2335,6 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
    }
 
    if (lline >= 0) DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Redraw, lline);
-}
-///
-/// TR_GetUIDL
-//  Filters out duplicate messages
-static void TR_GetUIDL(void)
-{
-  G->TR->supportUIDL = TR_GetUIDLonServer();
-  G->TR->UIDLloc = TR_GetUIDLonDisk();
-
-  if(IsMinListEmpty(&G->TR->transferList) == FALSE)
-  {
-    // search through our transferList
-    struct MinNode *curNode;
-    for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-    {
-      struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-      struct Mail *mail = mtn->mail;
-
-      // if the server doesn`t support the UIDL command we
-      // use the TOP command and generate our own UIDL within
-      // the GetMessageDetails function
-      if(!G->TR->supportUIDL)
-         TR_GetMessageDetails(mtn, -1);
-
-      if(TR_FindUIDL(mail->UIDL))
-      {
-        G->TR->Stats.DupSkipped++;
-        MASK_FLAG(mtn->tflags, TRF_DELETE);
-      }
-    }
-  }
 }
 ///
 /// TR_DisconnectPOP
@@ -2497,6 +2374,47 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       if (singlepop >= 0) G->TR->SinglePOP = TRUE;
       else G->TR->POP_Nr = -1;
       laststats = 0;
+
+      // now we find out if we need to check for duplicates
+      // during POP3 processing or if we can skip that.
+      G->TR->DuplicatesChecking = FALSE;
+
+      if(C->AvoidDuplicates)
+      {
+        if(G->TR->SinglePOP)
+        {
+          if(C->P3[pop] && C->P3[pop]->DeleteOnServer == FALSE)
+          {
+            G->TR->DuplicatesChecking = TRUE;
+          }
+        }
+        else
+        {
+          int i;
+
+          for(i=0; i < MAXP3; i++)
+          {
+            if(C->P3[i] && C->P3[i]->Enabled && C->P3[i]->DeleteOnServer == FALSE)
+            {
+              G->TR->DuplicatesChecking = TRUE;
+              break;
+            }
+          }
+        }
+
+        if(G->TR->DuplicatesChecking)
+        {
+          int i;
+
+          InitUIDLhash();
+
+          for(i=0; i < MAXP3; i++)
+          {
+            if(C->P3[i])
+              C->P3[i]->UIDLchecked = FALSE;
+          }
+        }
+      }
    }
    else /* Finish previous connection */
    {
@@ -2508,13 +2426,29 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       if (G->TR->SinglePOP) pop = MAXP3;
       laststats = G->TR->Stats.Downloaded;
    }
-   if (!G->TR->SinglePOP) for (pop = ++G->TR->POP_Nr; pop < MAXP3; pop++)
-                             if (C->P3[pop]) if (C->P3[pop]->Enabled) break;
+
+   // what is the next POP3 server we should check
+   if(!G->TR->SinglePOP)
+   {
+     for(pop = ++G->TR->POP_Nr; pop < MAXP3; pop++)
+     {
+       if(C->P3[pop] && C->P3[pop]->Enabled)
+         break;
+     }
+   }
 
    if (pop >= MAXP3) /* Finish last connection */
    {
+      // close the TCP/IP connection
       TR_CloseTCPIP();
+
+      // make sure the transfer window is closed
       set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
+
+      // free/cleanup the UIDL hash tables
+      if(G->TR->DuplicatesChecking)
+        CleanupUIDLhash();
+
       FreeFilterSearch();
       G->TR->SearchCount = 0;
       MA_StartMacro(MACRO_POSTGET, itoa((int)G->TR->Stats.Downloaded));
@@ -2590,11 +2524,14 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
    {
       if (msgs)                                          // there are messages on the server
       {
-         if (TR_GetMessageList_GET())                    /* message list read OK */
+         if (TR_GetMessageList_GET())                    // message list read OK
          {
             BOOL preselect = FALSE;
+
             G->TR->Stats.OnServer += msgs;
-            if(G->TR->SearchCount > 0)                   // filter messages on server?
+
+            // do we have to do some remote filter actions?
+            if(G->TR->SearchCount > 0)
             {
                struct MinNode *curNode;
 
@@ -2602,12 +2539,21 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
                for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
                   TR_GetMessageDetails((struct MailTransferNode *)curNode, -2);
             }
-            if (C->AvoidDuplicates) TR_GetUIDL();        // read UIDL file to compare against already received messages
-            if (G->TR->GUIlevel == POP_USER)             // manually initiated transfer
+
+            // if the user wants to avoid to receive the
+            // same message from the POP3 server again
+            // we have to analyze the UIDL of it
+            if(G->TR->DuplicatesChecking && C->P3[G->TR->POP_Nr]->DeleteOnServer == FALSE)
+            {
+              if(FilterDuplicates())
+                C->P3[G->TR->POP_Nr]->UIDLchecked = TRUE;
+            }
+
+            if (G->TR->GUIlevel == POP_USER)              // manually initiated transfer
             {
                if(C->PreSelection >= 2)
-                  preselect = TRUE;           // preselect messages if preference is "always [sizes only]"
-               else if(C->WarnSize && C->PreSelection) // ...or any sort of preselection and there is a maximum size
+                  preselect = TRUE;                       // preselect messages if preference is "always [sizes only]"
+               else if(C->WarnSize && C->PreSelection)    // ...or any sort of preselection and there is a maximum size
                {
                   struct MinNode *curNode;
                   for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
@@ -2623,6 +2569,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
                   }
                }
             }
+
             if (preselect)                               // anything to preselect?
             {
                // avoid MUIA_Window_Open's side effect of activating the window if it was already open
@@ -2689,7 +2636,7 @@ BOOL TR_SendPOP3KeepAlive(void)
 /// TR_SendSMTPCmd
 //  Sends a command to the SMTP server and returns the response message
 //  described in (RFC 821)
-static char *TR_SendSMTPCmd(enum SMTPCommand command, char *parmtext, const void *errorMsg)
+static char *TR_SendSMTPCmd(enum SMTPCommand command, const char *parmtext, const void *errorMsg)
 {
    int len, rc;
    static char *buf = NULL;
@@ -2706,7 +2653,7 @@ static char *TR_SendSMTPCmd(enum SMTPCommand command, char *parmtext, const void
    }
 
    // now we prepare the SMTP command
-   if(!parmtext || !*parmtext)
+   if(parmtext == NULL || parmtext[0] == '\0')
     snprintf(buf, SIZE_LINE, "%s\r\n", SMTPcmd[command]);
    else
     snprintf(buf, SIZE_LINE, "%s %s\r\n", SMTPcmd[command], parmtext);
@@ -3181,22 +3128,17 @@ void TR_Cleanup(void)
       // Remove node from list
       Remove((struct Node *)mtn);
 
-      // Free everything of the node
-      if(mail->UIDL)
-        free(mail->UIDL);
-
       // free the mail pointer
       free(mail);
+
+      // Free everything of the node
+      if(mtn->UIDL)
+        free(mtn->UIDL);
 
       // free the node itself
       free(mtn);
     }
   }
-
-  if(G->TR->UIDLloc)
-    free(G->TR->UIDLloc);
-
-  G->TR->UIDLloc = NULL;
 
   NewList((struct List *)&G->TR->transferList);
 }
@@ -3235,6 +3177,332 @@ static BOOL TR_ApplySentFilters(struct Mail *mail)
   }
 
   return TRUE;
+}
+///
+
+/*** UIDL (Avoid duplicates) management ***/
+struct UIDLtoken
+{
+  struct HashEntryHeader hash;
+  const char *uidl;
+  BOOL checked;
+};
+
+/// InitUIDLhash()
+// Initialize the UIDL list and load it from the .uidl file
+static BOOL InitUIDLhash(void)
+{
+  BOOL result = FALSE;
+
+  // The default UIDLhashTable operators
+  static const struct HashTableOps UIDLhashTableOps =
+  {
+    DefaultHashAllocTable,
+    DefaultHashFreeTable,
+    DefaultHashGetKey,
+    StringHashHashKey,
+    StringHashMatchEntry,
+    DefaultHashMoveEntry,
+    StringHashClearEntry,
+    DefaultHashFinalize,
+    NULL,
+  };
+
+  ENTER();
+
+  // make sure no other UIDLhashTable is active
+  if(G->TR->UIDLhashTable)
+    CleanupUIDLhash();
+
+  // allocate a new hashtable for managing the UIDL data
+  if((G->TR->UIDLhashTable = HashTableNew((struct HashTableOps *)&UIDLhashTableOps, NULL, sizeof(struct UIDLtoken), 512)))
+  {
+    FILE *fh;
+
+    // open the .uidl file and read in the UIDL/MsgIDs
+    // line-by-line
+    if((fh = fopen(CreateFilename(".uidl"), "r")))
+    {
+      char uidl[SIZE_DEFAULT+SIZE_HOST];
+
+      while(GetLine(fh, uidl, sizeof(uidl)))
+        AddUIDLtoHash(uidl, FALSE);
+
+      fclose(fh);
+    }
+    else
+      W(DBF_UIDL, "no .uidl file found");
+
+    result = TRUE;
+  }
+  else
+    E(DBF_UIDL, "couldn't create new Hashtable for UIDL management");
+
+  RETURN(result);
+  return result;
+}
+///
+/// SaveUIDLtoken()
+// HashTable callback function to save an UIDLtoken
+static enum HashTableOperator SaveUIDLtoken(UNUSED struct HashTable *table,
+                                            struct HashEntryHeader *entry,
+                                            UNUSED ULONG number,
+                                            void *arg)
+{
+  struct UIDLtoken *token = (struct UIDLtoken *)entry;
+  FILE *fh = (FILE *)arg;
+  BOOL saveUIDL = FALSE;
+
+  ENTER();
+
+  // before we write out this uidl we have to check wheter this uidl
+  // isn't outdated
+  if(token->checked == FALSE)
+  {
+    char *p;
+
+    // now we have to see if this uidl belongs to a POP3 server that
+    // wasn't UIDL checked and if so we don't touch it and write it
+    // out as well. Otherwise we skip the write operation
+    if((p = strrchr(token->uidl, '@')) && *(++p) != '\0')
+    {
+      int i;
+
+      for(i=0; i < MAXP3; i++)
+      {
+        if(C->P3[i] && C->P3[i]->UIDLchecked == FALSE &&
+           strcmp(p, C->P3[i]->Server) == 0)
+        {
+          // if we reach here than this uidl is part of
+          // a server we didn't check, so we can ignore it
+          break;
+        }
+      }
+
+      // if we reached MAXP3 then
+      // we found an orphaned uidl which we can ignore
+      if(i < MAXP3)
+        saveUIDL = TRUE;
+      else
+        D(DBF_UIDL, "orphaned uidl found&deleted '%s'", token->uidl);
+    }
+  }
+  else
+    saveUIDL = TRUE;
+
+  if(saveUIDL)
+  {
+    fprintf(fh, "%s\n", token->uidl);
+    D(DBF_UIDL, "saved UIDL '%s' to .uidl file", token->uidl);
+  }
+
+  RETURN(htoNext);
+  return htoNext;
+}
+///
+/// CleanupUIDLhash()
+// Cleanup the whole UIDL hash
+static void CleanupUIDLhash(void)
+{
+  ENTER();
+
+  if(G->TR->UIDLhashTable)
+  {
+    FILE *fh;
+
+    // before we go and destroy the UIDL hash we have to
+    // write it to the .uidl file back again.
+    if((fh = fopen(CreateFilename(".uidl"), "w")))
+    {
+      // call HashTableEnumerate with the SaveUIDLtoken callback function
+      HashTableEnumerate(G->TR->UIDLhashTable, SaveUIDLtoken, fh);
+
+      fclose(fh);
+    }
+    else
+      E(DBF_UIDL, "couldn't open .uidl file for writing");
+
+    // now we can destroy the uidl hash
+    HashTableDestroy(G->TR->UIDLhashTable);
+    G->TR->UIDLhashTable = NULL;
+
+    D(DBF_UIDL, "successfully cleaned up UIDLhash");
+  }
+
+  LEAVE();
+}
+///
+/// FilterDuplicates()
+//
+static BOOL FilterDuplicates(void)
+{
+  BOOL result = FALSE;
+
+  ENTER();
+
+  // we first make sure the UIDL list is loaded from disk
+  if(G->TR->UIDLhashTable != NULL)
+  {
+    // check if there is anything to transfer at all
+    if(IsMinListEmpty(&G->TR->transferList) == FALSE)
+    {
+      // inform the user of the operation
+      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_CHECKUIDL));
+
+      // before we go and request each UIDL of a message we check wheter the server
+      // supports the UIDL command at all
+      if(TR_SendPOP3Cmd(POPCMD_UIDL, NULL, NULL))
+      {
+        char buf[SIZE_LINE];
+
+        // get the first line the pop server returns after the UIDL command
+        if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) > 0)
+        {
+          // we get the "unique-id list" as long as we haven`t received a a
+          // finishing octet
+          while(!G->TR->Abort && !G->Error && strncmp(buf, ".\r\n", 3) != 0)
+          {
+            int num;
+            char uidl[SIZE_DEFAULT+SIZE_HOST];
+            struct MinNode *curNode;
+
+            // now parse the line and get the message number and UIDL
+            sscanf(buf, "%d %s", &num, uidl);
+
+            // lets add our own ident to the uidl so that we can compare
+            // it against our saved list
+            strlcat(uidl, "@", sizeof(uidl));
+            strlcat(uidl, C->P3[G->TR->POP_Nr]->Server, sizeof(uidl));
+
+            // search through our transferList
+            for(curNode = G->TR->transferList.mlh_Head; !G->TR->Abort && !G->Error && curNode->mln_Succ; curNode = curNode->mln_Succ)
+            {
+              struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+
+              if(mtn->index == num)
+              {
+                mtn->UIDL = strdup(uidl);
+
+                if(mtn->UIDL)
+                {
+                  struct HashEntryHeader *entry = HashTableOperate(G->TR->UIDLhashTable, mtn->UIDL, htoLookup);
+
+                  // see if that hash lookup worked out fine or not.
+                  if(HASH_ENTRY_IS_LIVE(entry))
+                  {
+                    struct UIDLtoken *token = (struct UIDLtoken *)entry;
+
+                    // make sure the mail is flagged as being ignoreable
+                    G->TR->Stats.DupSkipped++;
+                    MASK_FLAG(mtn->tflags, TRF_DELETE);
+
+                    // mark the UIDLtoken as being checked
+                    token->checked = TRUE;
+
+                    D(DBF_UIDL, "mail %d: UIDL '%s' was FOUND!", mtn->index, mtn->UIDL);
+                  }
+                }
+
+                break;
+              }
+            }
+
+            // now read the next Line
+            if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) <= 0)
+            {
+              E(DBF_UIDL, "unexpected end of data stream during UIDL.");
+              break;
+            }
+          }
+        }
+        else
+          E(DBF_UIDL, "error on first readline!");
+      }
+      else
+      {
+        struct MinNode *curNode;
+
+        W(DBF_UIDL, "POP3 server '%s' doesn't support UIDL command!", C->P3[G->TR->POP_Nr]->Server);
+
+        // search through our transferList
+        for(curNode = G->TR->transferList.mlh_Head; !G->TR->Abort && !G->Error && curNode->mln_Succ; curNode = curNode->mln_Succ)
+        {
+          struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+
+          // if the server doesn`t support the UIDL command we
+          // use the TOP command and generate our own UIDL within
+          // the GetMessageDetails function
+          TR_GetMessageDetails(mtn, -1);
+
+          // now that we should successfully obtained the UIDL of the
+          // mailtransfernode we go and check if that UIDL is already in our UIDLhash
+          // and if so we go and flag the mail as a mail that should not be downloaded
+          // automatically
+          if(mtn->UIDL)
+          {
+            struct HashEntryHeader *entry = HashTableOperate(G->TR->UIDLhashTable, mtn->UIDL, htoLookup);
+
+            // see if that hash lookup worked out fine or not.
+            if(HASH_ENTRY_IS_LIVE(entry))
+            {
+              G->TR->Stats.DupSkipped++;
+              MASK_FLAG(mtn->tflags, TRF_DELETE);
+
+              D(DBF_UIDL, "mail %d: UIDL '%s' was FOUND!", mtn->index, mtn->UIDL);
+            }
+          }
+        }
+      }
+
+      result = !G->TR->Abort && !G->Error;
+    }
+  }
+  else
+    E(DBF_UIDL, "UIDLhashTable isn't initialized yet!");
+
+  RETURN(result);
+  return result;
+}
+///
+/// AddUIDLtoHash()
+// adds the UIDL of a mail transfer node to the hash
+static void AddUIDLtoHash(const char *uidl, BOOL checked)
+{
+  struct UIDLtoken *token;
+
+  ENTER();
+
+  if((token = (struct UIDLtoken *)HashTableOperate(G->TR->UIDLhashTable, uidl, htoAdd)) != NULL)
+  {
+    if(token->uidl == NULL)
+    {
+      token->uidl = strdup(uidl);
+      token->checked = checked;
+
+      D(DBF_UIDL, "added '%s' (%lx) to UIDLhash", uidl, token);
+    }
+    else
+      W(DBF_UIDL, "already existing hash entry for '%s' found, skipping.", uidl);
+  }
+  else
+    E(DBF_UIDL, "couldn't add uidl '%s' to hash", uidl);
+
+  LEAVE();
+}
+///
+/// RemoveUIDLtoHash()
+// removes the UIDL of a mail transfer node from the hash
+static void RemoveUIDLfromHash(const char *uidl)
+{
+  ENTER();
+
+  // signal our hash to remove the entry with the uidl key
+  if(HashTableOperate(G->TR->UIDLhashTable, uidl, htoRemove))
+    D(DBF_UIDL, "removed UIDL '%s' from hash", uidl);
+  else
+    W(DBF_UIDL, "couldn't remove UIDL '%s' from hash", uidl);
+
+  LEAVE();
 }
 ///
 
@@ -4816,13 +5084,26 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
 ///
 /// TR_DeleteMessage
 //  Deletes a message on the POP3 server
-static void TR_DeleteMessage(int number)
+static BOOL TR_DeleteMessage(int number)
 {
-   char msgnum[SIZE_SMALL];
+  BOOL result = FALSE;
+  char msgnum[SIZE_SMALL];
 
-   snprintf(msgnum, sizeof(msgnum), "%d", number);
-   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_DeletingServerMail));
-   if(TR_SendPOP3Cmd(POPCMD_DELE, msgnum, MSG_ER_BadResponse)) G->TR->Stats.Deleted++;
+  ENTER();
+
+  snprintf(msgnum, sizeof(msgnum), "%d", number);
+
+  // inform others of the delete operation
+  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_DeletingServerMail));
+
+  if(TR_SendPOP3Cmd(POPCMD_DELE, msgnum, MSG_ER_BadResponse))
+  {
+    G->TR->Stats.Deleted++;
+    result = TRUE;
+  }
+
+  RETURN(result);
+  return result;
 }
 ///
 /// TR_NewMailAlert
@@ -4895,24 +5176,33 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
       struct Mail *mail = mtn->mail;
 
-      TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, GetStr(MSG_TR_Downloading));
       if(hasTR_LOAD(mtn))
       {
+        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, GetStr(MSG_TR_Downloading));
+
         if(TR_LoadMessage(&ts, mtn->index))
         {
           // put the transferStat to 100%
           TR_TransStat_Update(&ts, TS_SETMAX);
 
           G->TR->Stats.Downloaded++;
-          if(C->AvoidDuplicates)
-            TR_AppendUIDL(mail->UIDL);
 
           if(hasTR_DELETE(mtn))
-            TR_DeleteMessage(mtn->index);
+          {
+            if(TR_DeleteMessage(mtn->index) && G->TR->DuplicatesChecking)
+              RemoveUIDLfromHash(mtn->UIDL);
+          }
+          else if(G->TR->DuplicatesChecking && C->P3[G->TR->POP_Nr]->DeleteOnServer == FALSE)
+            AddUIDLtoHash(mtn->UIDL, TRUE);
         }
       }
       else if(hasTR_DELETE(mtn))
-        TR_DeleteMessage(mtn->index);
+      {
+        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, GetStr(MSG_TR_Downloading));
+
+        if(TR_DeleteMessage(mtn->index) && G->TR->DuplicatesChecking)
+          RemoveUIDLfromHash(mtn->UIDL);
+      }
     }
 
     DisplayStatistics((struct Folder *)-1, TRUE);

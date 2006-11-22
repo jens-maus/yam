@@ -36,7 +36,6 @@ struct Mail
    struct Mail *    Next;       // pointer to the next mail or NULL
    struct Mail *    Reference;  // pointer to the mail referencing to us
    struct Folder *  Folder;     // pointer to the folder this mail belongs to
-   char *           UIDL;       // the UIDL string of this message
    long             cMsgID;     // compressed message ID
    long             cIRTMsgID;  // compressed in-return-to message ID
    long             Size;       // the message size in bytes

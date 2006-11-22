@@ -579,7 +579,6 @@ void RE_DisplayMIME(char *fname, const char *ctype)
         mail->Next      = NULL;
         mail->Reference = NULL;
         mail->Folder    = NULL;
-        mail->UIDL      = NULL;
         mail->sflags    = SFLAG_READ; // this sets the mail as OLD
         SET_FLAG(mail->mflags, MFLAG_NOFOLDER);
 
