@@ -32,6 +32,7 @@
 
 #include "HashTable.h"
 
+#include "YAM_utilities.h"
 #include "Debug.h"
 
 /*** Macro definitions ***/
@@ -671,6 +672,69 @@ const struct HashTableOps *HashTableGetDefaultOps(void)
   ENTER();
   RETURN(&defaultOps);
   return &defaultOps;
+}
+///
+/// HashTableEnumerate()
+//
+ULONG HashTableEnumerate(struct HashTable *table,
+                         enum HashTableOperator (* etor)(struct HashTable *, struct HashEntryHeader *, ULONG, void *),
+                         void *arg)
+{
+  STRPTR entryAddr, entryLimit;
+  ULONG i, capacity, entrySize, ceiling;
+  BOOL didRemove;
+  struct HashEntryHeader *entry;
+  enum HashTableOperator op;
+
+  ENTER();
+
+  entryAddr = table->entryStore;
+  entrySize = table->entrySize;
+  capacity = HASH_TABLE_SIZE(table);
+  entryLimit = entryAddr + capacity * entrySize;
+  i = 0;
+  didRemove = FALSE;
+
+  while(entryAddr < entryLimit)
+  {
+    entry = (struct HashEntryHeader *)entryAddr;
+    if(HASH_ENTRY_IS_LIVE(entry))
+    {
+      op = etor(table, entry, i++, arg);
+      if(hasFlag(op, htoRemove))
+      {
+        HashTableRawRemove(table, entry);
+        didRemove = TRUE;
+      }
+      if(hasFlag(op, htoStop))
+        break;
+    }
+
+    entryAddr += entrySize;
+  }
+
+  // Shrink or compress if a quarter or more of all entries are removed, or
+  // if the table is underloaded according to the configured minimum alpha,
+  // and is not minimal-size already.  Do this only if we removed above, so
+  // non-removing enumerations can count on stable table->entryStore until
+  // the next non-lookup-Operate or removing-Enumerate.
+  if(didRemove &&
+     (table->removedCount >= capacity >> 2 ||
+      (capacity > HASH_MIN_SIZE && table->entryCount <= MIN_LOAD(table, capacity))))
+  {
+    capacity = table->entryCount;
+    capacity += capacity >> 1;
+    if(capacity < HASH_MIN_SIZE)
+      capacity = HASH_MIN_SIZE;
+
+    CEILING_LOG2(ceiling, capacity);
+    ceiling -= HASH_BITS - table->shift;
+
+    ChangeTable(table, ceiling);
+  }
+
+  RETURN(i);
+  return i;
 }
 ///
 

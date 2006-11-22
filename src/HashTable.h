@@ -36,6 +36,31 @@
 // before we really can define it.
 struct HashTable;
 
+// Table entry header structure.
+//
+// In order to allow in-line allocation of key and value, we do not declare
+// either here.  Instead, the API uses const void *key as a formal parameter,
+// and asks each entry for its key when necessary via a getKey callback, used
+// when growing or shrinking the table.  Other callback types are defined
+// below and grouped into the HashTableOps structure, for single static
+// initialization per hash table sub-type.
+//
+// Each hash table sub-type should nest the HashEntryHeader structure at the
+// front of its particular entry type.  The keyHash member contains the result
+// of multiplying the hash code returned from the hashKey callback (see below)
+// by HASH_GOLDEN_RATIO, then constraining the result to avoid the magic 0
+// and 1 values.  The stored keyHash value is table size invariant, and it is
+// maintained automatically by HashTableOperate -- users should never set
+// it, and its only uses should be via the entry macros below.
+//
+// The HASH_ENTRY_IS_LIVE macro tests whether entry is neither free nor
+// removed. An entry may be either busy or free; if busy, it may be live or
+// removed. Consumers of this API should not access members of entries that
+// are not live.
+//
+// However, use HASH_ENTRY_IS_BUSY for faster liveness testing of entries
+// returned by HashTableOperate, as HashTableOperate never returns a non-live,
+// busy (i.e., removed) entry pointer to its caller.
 struct HashEntryHeader
 {
   ULONG keyHash;
@@ -79,11 +104,11 @@ struct HashTable
 
 enum HashTableOperator
 {
-  htoLookup = 0,
-  htoAdd,
-  htoRemove,
-  htoNext,
-  htoStop,
+  htoLookup = (1<<0),               // lookup entry
+  htoAdd    = (1<<1),               // add entry
+  htoRemove = (1<<2),               // remove entry, or enumerator says remove
+  htoNext   = (1<<3),               // enumerator says continue
+  htoStop   = (1<<4),               // enumerator says stop
 };
 
 #define HASH_BITS                   32
@@ -144,7 +169,48 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table, const void *ke
 // to find the entry given its key) is not tolerable.  This function does not
 // shrink the table if it is underloaded.
 void HashTableRawRemove(struct HashTable *table, struct HashEntryHeader *entry);
+
+// get the default hash table operators for your own use
 const struct HashTableOps *HashTableGetDefaultOps(void);
+
+// Enumerate entries in table using etor:
+//
+//   count = HashTableEnumerate(table, etor, arg);
+//
+// HashTableEnumerate calls etor like so:
+//
+//   op = etor(table, entry, number, arg);
+//
+// where number is a zero-based ordinal assigned to live entries according to
+// their order in table->entryStore.
+//
+// The return value, op, is treated as a set of flags. If op is htoNext, then
+// continue enumerating.  If op contains htoRemove, then clear (via
+// table->ops->clearEntry) and free entry.  Then we check whether op contains
+// htoStop; if so, stop enumerating and return the number of live entries
+// that were enumerated so far.  Return the total number of live entries when
+// enumeration completes normally.
+//
+// If etor calls HashTableOperate on table with op != htoLookup, it must
+// return htoStop; otherwise undefined behavior results.
+//
+// If any enumerator returns htoRemove, table->entryStore may be shrunk or
+// compressed after enumeration, but before HashTableEnumerate returns. Such
+// an enumerator therefore can't safely set aside entry pointers, but an
+// enumerator that never returns htoRemove can set pointers to entries aside,
+// e.g., to avoid copying live entries into an array of the entry type.
+// Copying entry pointers is cheaper, and safe so long as the caller of such a
+// "stable" Enumerate doesn't use the set-aside pointers after any call either
+// to HashTableOperate, or to an "unstable" form of Enumerate, which might
+// grow or shrink entryStore.
+//
+// If your enumerator wants to remove certain entries, but set aside pointers
+// to other entries that it retains, it can use HashTableRawRemove on the
+// entries to be removed, returning htoNext to skip them. Likewise, if you
+// want to remove entries, but for some reason you do not want entryStore
+// to be shrunk or compressed, you can call HashTableRawRemove safely on the
+// entry being enumerated, rather than returning htoRemove.
+ULONG HashTableEnumerate(struct HashTable *table, enum HashTableOperator (* etor)(struct HashTable *table, struct HashEntryHeader *entry, ULONG number, void *arg), void *arg);
 
 /*** Public default operator functions ***/
 // Table space at entryStore is allocated and freed using these callbacks.

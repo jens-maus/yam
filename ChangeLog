@@ -10,6 +10,9 @@ $Id$
 
 2006-11-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * HashTable.c,h: added new function HashTableEnumerate to walk through a hash
+    table using a callback function for every single entry. See HashTable.h how
+    to use this stuff.
   * SDI_compiler.h: removed the different defines for INLINE and left only the
     one which defines INLINE as "static".
   * BayesFilter.c: reverted the changes done this morning and defined both
