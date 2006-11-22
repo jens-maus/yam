@@ -4,6 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-21  Thore Böckelmann <tboeckel@gmx.de>
+
+  * BayesFilter.c: changed lngamma_asymp() and lnPQfactor() to be just static
+    than inlined. vbcc chokes about this, because the definition of INLINE is
+    different for vbcc and gcc. Somebody with a little bit more compiler
+    knowledge (vbcc in particular) should take a look at this.
+
 2006-11-21  Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile.?: put the 'date' and 'expr' usage for calculating the
