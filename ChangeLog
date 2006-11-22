@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-22  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: updated according to the latest changes.
+
 2006-11-21  Thore Böckelmann <tboeckel@gmx.de>
 
   * BayesFilter.c: changed lngamma_asymp() and lnPQfactor() to be just static

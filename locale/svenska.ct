@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.1 (07.10.06)
+## version $VER: YAM.ct 6.2 (22.11.06)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -2042,8 +2042,8 @@ Efter ett brev har skrivits
 ;#DEF After writing a message
 ;#SET (539//)
 MSG_CO_ScriptClickURL
-Dubbelklickning av webbadress
-;#DEF When double-clicking an URL
+Vid dubbelklickning av URL-address
+;#DEF When double-clicking a URL
 ;#SET (540//)
 MSG_CO_Script
 Sk_ript
@@ -6613,3 +6613,139 @@ MSG_MESSAGE_EDITASNEW
 E\000Redigera som nytt...
 ;#DEF E\000Edit As New...
 ;#SET (1743//)
+MSG_MA_SPAM
+Skräppost
+;#DEF Spam
+;#SET (1744//)
+MSG_LOADINGSPAMTRAININGDATA
+Laddar träningsdata för skräppost...
+;#DEF Loading spam training data...
+;#SET (1745//)
+MSG_MA_TBSPAM
+Skräp.
+;#DEF Spam
+;#SET (1746//)
+MSG_MA_TBNOTSPAM
+Ej skräp.
+;#DEF Not Spam
+;#SET (1747//)
+MSG_HELP_MA_BT_SPAM
+Markera brev som skräppost
+;#DEF Mark mail as spam
+;#SET (1748//)
+MSG_HELP_MA_BT_NOTSPAM
+Markera brev som ej skräppost
+;#DEF Mark mail as not spam
+;#SET (1749//)
+MSG_RE_TBSPAM
+Skräp.
+;#DEF Spam
+;#SET (1750//)
+MSG_RE_TBNOTSPAM
+Ej skräp.
+;#DEF Not Spam
+;#SET (1751//)
+MSG_HELP_RE_BT_SPAM
+Markera brev som skräppost
+;#DEF Mark mail as spam
+;#SET (1752//)
+MSG_HELP_RE_BT_NOTSPAM
+Markera brev som ej skräppost
+;#DEF Mark mail as not spam
+;#SET (1753//)
+MSG_LOG_MAILISSPAM
+Meddelande från '%s' om '%s' är behandlat som skräppost
+;#DEF Message from '%s' about '%s' is treated as spam
+;#SET (1754//)
+MSG_LOG_MAILISNOTSPAM
+Meddelande från '%s' om '%s' är inte längre behandlat som skräppost
+;#DEF Message from '%s' about '%s' is no longer treated as spam
+;#SET (1755//)
+MSG_FI_STATSPAM
+Skräppost
+;#DEF Spam
+;#SET (1756//)
+MSG_MA_TOSPAM
+Skräppost
+;#DEF Spam
+;#SET (1757//)
+MSG_MA_TONOTSPAM
+Ej skräppost
+;#DEF Not Spam
+;#SET (1758//)
+MSG_RE_SETSPAM
+Sätt status till skräppost
+;#DEF Set status to spam
+;#SET (1759//)
+MSG_RE_SETNOTSPAM
+Sätt status till ej skräppost
+;#DEF Set status to not spam
+;#SET (1760//)
+MSG_CO_CRDSPAMFILTER
+Skräppost
+;#DEF Spam
+;#SET (1761//)
+MSG_CO_SPAMFILTER
+Skräppost filter
+;#DEF Spam filter
+;#SET (1762//)
+MSG_CO_SPAMFILTER_TITLE
+Skräppost filter
+;#DEF Spam filter
+;#SET (1763//)
+MSG_CO_SPAMFILTER_SUMMARY
+Konfigurera skräppost filter
+;#DEF Configure spam filter...
+;#SET (1764//)
+MSG_CO_SPAM_FILTERFORNEWMAIL
+Kontrollera nya brev för skräppost innehåll
+;#DEF Check new mails for spam content
+;#SET (1765//)
+MSG_CO_SPAM_RESETTRAININGDATA
+_Nollställ träningsdata
+;#DEF _Reset training data
+;#SET (1766//)
+MSG_CO_SPAM_GOODCOUNT
+Antal brev klassifierade som "ej skräppost"
+;#DEF Number of "not spam" classified mails
+;#SET (1767//)
+MSG_CO_SPAM_BADCOUNT
+Antal brev klassifierade som "skräppost"
+;#DEF Number of "spam" classified mails
+;#SET (1768//)
+MSG_CO_SPAM_PROBABILITYTHRESHOLD
+Behandla brev som skräppost, om skräppost sannolikheten är större än eller lika med
+;#DEF Treat mails as spam if spam probability is greater or equal
+;#SET (1769//)
+MSG_CO_NB_SPAMPROBTHRESHOLDFMT
+%ld%%
+;#DEF %ld%%
+;#SET (1770//)
+MSG_BUSYFLUSHINGSPAMTRAININGDATA
+Tömmer träningsdata för skräppost...
+;#DEF Flushing spam training data...
+;#SET (1771//)
+MSG_CO_SPAM_MARKONMOVE
+Markera brev som skräppost vid flyttning till skräppost mappen
+;#DEF Mark mails as spam when moved to the spam folder
+;#SET (1772//)
+MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
+Adressboken är vitlistad
+;#DEF Address book is white list
+;#SET (1773//)
+MSG_CO_SPAM_RECOGNITION
+Skräppost igenkännande
+;#DEF Spam recognition
+;#SET (1774//)
+MSG_CO_SPAM_FILTERENABLED
+Aktivera skräppost filter
+;#DEF Spam filter enabled
+;#SET (1775//)
+MSG_CO_SPAM_RESETTRAININGDATAASK
+Vill du verkligen nollställa skräppost filtrets\nträningsdata?\n\nSkräppost filtret måste tränas igen efteråt!
+;#DEF Do you really want to reset the spam filter's\ntraining data?\n\nThe spam filter must be trained again afterwards!
+;#SET (1776//)
+MSG_CO_SPAM_DISABLEFILTERASK
+Vill du också nollställa skräppost filtrets\nträningsdata och alla brev flaggor?\n\nSkräppost filtret måste tränas igen efteråt!
+;#DEF Do you also want to reset the spam filter's\ntraining data and all mail flags?\n\nThe spam filter must be trained again afterwards!
+;#SET (1777//)
