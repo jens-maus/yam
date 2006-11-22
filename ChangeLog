@@ -10,6 +10,8 @@ $Id$
 
 2006-11-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * SDI_compiler.h: removed the different defines for INLINE and left only the
+    one which defines INLINE as "static".
   * BayesFilter.c: reverted the changes done this morning and defined both
     functions again as INLINE. Instead SDI_compiler.h needs to changed for
     vbcc.

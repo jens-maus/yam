@@ -92,11 +92,7 @@
   #define STDARGS
   #define STACKEXT
   #define REGARGS
-  #if (__STDC__ == 1L) && (__STDC_VERSION__ >= 199901L)
-    #define INLINE inline
-  #else
-    #define INLINE static
-  #endif
+  #define INLINE static
   #define OFFSET(p,m) __offsetof(struct p,m)
 
   #if defined(__PPC__)
