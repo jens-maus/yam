@@ -6002,3 +6002,6 @@ training data and all mail flags?\n\
 \n\
 The spam filter must be trained again afterwards!
 ;
+MSG_TR_CHECKUIDL (1778//)
+Checking UIDLs to avoid duplicates...
+;
