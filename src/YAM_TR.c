@@ -240,6 +240,13 @@ static BOOL FilterDuplicates(void);
 static void AddUIDLtoHash(const char *uidl, BOOL checked);
 static void RemoveUIDLfromHash(const char *uidl);
 
+struct UIDLtoken
+{
+  struct HashEntryHeader hash;
+  const char *uidl;
+  BOOL checked;
+};
+
 /**************************************************************************/
 // TLS/SSL related variables
 
@@ -2383,10 +2390,8 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       {
         if(G->TR->SinglePOP)
         {
-          if(C->P3[pop] && C->P3[pop]->DeleteOnServer == FALSE)
-          {
+          if(C->P3[pop])
             G->TR->DuplicatesChecking = TRUE;
-          }
         }
         else
         {
@@ -2394,7 +2399,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 
           for(i=0; i < MAXP3; i++)
           {
-            if(C->P3[i] && C->P3[i]->Enabled && C->P3[i]->DeleteOnServer == FALSE)
+            if(C->P3[i] && C->P3[i]->Enabled)
             {
               G->TR->DuplicatesChecking = TRUE;
               break;
@@ -2543,7 +2548,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
             // if the user wants to avoid to receive the
             // same message from the POP3 server again
             // we have to analyze the UIDL of it
-            if(G->TR->DuplicatesChecking && C->P3[G->TR->POP_Nr]->DeleteOnServer == FALSE)
+            if(G->TR->DuplicatesChecking)
             {
               if(FilterDuplicates())
                 C->P3[G->TR->POP_Nr]->UIDLchecked = TRUE;
@@ -3181,13 +3186,6 @@ static BOOL TR_ApplySentFilters(struct Mail *mail)
 ///
 
 /*** UIDL (Avoid duplicates) management ***/
-struct UIDLtoken
-{
-  struct HashEntryHeader hash;
-  const char *uidl;
-  BOOL checked;
-};
-
 /// InitUIDLhash()
 // Initialize the UIDL list and load it from the .uidl file
 static BOOL InitUIDLhash(void)
@@ -5192,7 +5190,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
             if(TR_DeleteMessage(mtn->index) && G->TR->DuplicatesChecking)
               RemoveUIDLfromHash(mtn->UIDL);
           }
-          else if(G->TR->DuplicatesChecking && C->P3[G->TR->POP_Nr]->DeleteOnServer == FALSE)
+          else if(G->TR->DuplicatesChecking)
             AddUIDLtoHash(mtn->UIDL, TRUE);
         }
       }

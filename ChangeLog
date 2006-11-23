@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: the new UIDL managment did only try to avoid duplicates if a POP3
+    server was set to keep mails on the server. However, it also makes sense
+    to check UIDLs on server where we delete all mails immediatley because it
+    might have happend that the system crashed during the transfer or if the
+    user aborted it unexpectly.
+
 2006-11-23  Thore Böckelmann <tboeckel@gmx.de>
 
   * BayesFilter.c: the spam recognition was slightly broken when the filter was
