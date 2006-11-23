@@ -2525,11 +2525,11 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
                                    TAG_DONE);
    }
 
-   if ((msgs = TR_ConnectPOP(G->TR->GUIlevel)) != -1)    // connection succeeded
+   if((msgs = TR_ConnectPOP(G->TR->GUIlevel)) != -1)     // connection succeeded
    {
-      if (msgs)                                          // there are messages on the server
+      if(msgs > 0)                                       // there are messages on the server
       {
-         if (TR_GetMessageList_GET())                    // message list read OK
+         if(TR_GetMessageList_GET())                     // message list read OK
          {
             BOOL preselect = FALSE;
 
@@ -2609,9 +2609,20 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
             BusyEnd();
             return;
          }
+         else
+           E(DBF_NET, "couldn't retrieve MessageList");
+      }
+      else
+      {
+        W(DBF_NET, "no messages found on server '%s'", C->P3[G->TR->POP_Nr]->Server);
+
+        // per default we flag that POP3 server as being UIDLchecked
+        if(G->TR->DuplicatesChecking)
+          C->P3[G->TR->POP_Nr]->UIDLchecked = TRUE;
       }
    }
-   else G->TR->Stats.Error = TRUE;
+   else
+     G->TR->Stats.Error = TRUE;
 
    BusyEnd();
 
@@ -3216,10 +3227,11 @@ static BOOL InitUIDLhash(void)
   if((G->TR->UIDLhashTable = HashTableNew((struct HashTableOps *)&UIDLhashTableOps, NULL, sizeof(struct UIDLtoken), 512)))
   {
     FILE *fh;
+    char *filename = CreateFilename(".uidl");
 
     // open the .uidl file and read in the UIDL/MsgIDs
     // line-by-line
-    if((fh = fopen(CreateFilename(".uidl"), "r")))
+    if(FileSize(filename) > 0 && (fh = fopen(filename, "r")))
     {
       char uidl[SIZE_DEFAULT+SIZE_HOST];
 
@@ -3229,7 +3241,9 @@ static BOOL InitUIDLhash(void)
       fclose(fh);
     }
     else
-      W(DBF_UIDL, "no .uidl file found");
+      W(DBF_UIDL, "no or empty .uidl file found");
+
+    SHOWVALUE(DBF_UIDL, G->TR->UIDLhashTable->entryCount);
 
     result = TRUE;
   }
@@ -3342,7 +3356,8 @@ static BOOL FilterDuplicates(void)
   if(G->TR->UIDLhashTable != NULL)
   {
     // check if there is anything to transfer at all
-    if(IsMinListEmpty(&G->TR->transferList) == FALSE)
+    if(G->TR->UIDLhashTable->entryCount > 0 &&
+       IsMinListEmpty(&G->TR->transferList) == FALSE)
     {
       // inform the user of the operation
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_CHECKUIDL));
@@ -3454,6 +3469,8 @@ static BOOL FilterDuplicates(void)
 
       result = !G->TR->Abort && !G->Error;
     }
+    else
+      result = TRUE;
   }
   else
     E(DBF_UIDL, "UIDLhashTable isn't initialized yet!");
