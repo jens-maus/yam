@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-23  Thore Böckelmann <tboeckel@gmx.de>
+
+  * BayesFilter.c: the spam recognition was slightly broken when the filter was
+    completely untrained due to some changes to make the source conform the the
+    STYLEGUIDE. Without any good tokens a mail should always be treated as spam.
+
 2006-11-22  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: addressed bug #1597189 by having totally rewritten the whole UIDL

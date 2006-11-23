@@ -1377,12 +1377,16 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
           D(DBF_SPAM, "mail with subject \"%s\" has spam probability %.2f, ham score: %.2f, spam score: %.2f", mail->Subject, prob, H, S);
           isSpam = (prob * 100 >= C->SpamProbabilityThreshold);
         }
+        else
+          isSpam = FALSE; // no bad tokens so far, assume ham
       }
       else
-        isSpam = TRUE; // assume SPAM
+        isSpam = TRUE; // no good tokens so far, assume spam
 
       free(tokens);
     }
+    else
+      isSpam = TRUE; // cannot copy tokens, assume spam
   }
 
   RETURN(isSpam);
@@ -1493,7 +1497,7 @@ BOOL BayesFilterClassifyMessage(struct Mail *mail)
     tokenizeMail(&t, mail);
 
     isSpam = tokenAnalyzerClassifyMessage(&spamFilter, &t, mail);
-        
+
     tokenizerCleanup(&t);
   }
 
@@ -1586,4 +1590,5 @@ void BayesFilterResetTrainingData(void)
   LEAVE();
 }
 ///
+
 
