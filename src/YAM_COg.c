@@ -3199,9 +3199,8 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
   return grp;
 }
 ///
-
-///
 /// CO_PageSpam
+//
 Object *CO_PageSpam(struct CO_ClassData *data)
 {
    Object *grp;
@@ -3289,5 +3288,4 @@ Object *CO_PageSpam(struct CO_ClassData *data)
    }
    return grp;
 }
-
-
+///
