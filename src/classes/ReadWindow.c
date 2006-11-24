@@ -66,7 +66,7 @@ struct Data
   Object *readMailGroup;
   struct MUIP_Toolbar_Description toolbarDesc[MUIV_ReadWindow_ToolbarItems];
 
-  char  title[SIZE_DEFAULT+1];
+  char  title[SIZE_SUBJECT+1];
   int   lastDirection;
   int   windowNumber;
 };
@@ -480,16 +480,18 @@ DECLARE(ReadMail) // struct Mail *mail
   GETDATA;
   struct Mail *mail = msg->mail;
   struct Folder *folder = mail->Folder;
-  BOOL isRealMail = !isVirtualMail(mail);
-  BOOL isSentMail = isRealMail ? isSentMailFolder(folder) : FALSE;
-  BOOL isSpamMail = !C->SpamFilterEnabled || hasStatusSpam(mail);
-  BOOL isHamMail = !C->SpamFilterEnabled || hasStatusHam(mail);
-  BOOL inSpamFolder = isSpamFolder(folder);
+  BOOL isRealMail   = !isVirtualMail(mail);
+  BOOL isSentMail   = isRealMail && isSentMailFolder(folder);
+  BOOL isSpamMail   = !isRealMail || !C->SpamFilterEnabled || hasStatusSpam(mail);
+  BOOL isHamMail    = !isRealMail || !C->SpamFilterEnabled || hasStatusHam(mail);
+  BOOL inSpamFolder = isRealMail && isSpamFolder(folder);
   BOOL result = FALSE;
   BOOL initialCall = data->title[0] == '\0'; // TRUE if this is the first call
   BOOL prevMailAvailable = FALSE;
   BOOL nextMailAvailable = FALSE;
   int titleLen;
+
+  ENTER();
 
   D(DBF_GUI, "setting up readWindow for reading a mail");
 
@@ -573,15 +575,15 @@ DECLARE(ReadMail) // struct Mail *mail
                                                             isSentMail ? AddrName(mail->To) : AddrName(mail->From));
     }
 
-    if(strlen(mail->Subject)+titleLen > SIZE_DEFAULT)
+    if(strlen(mail->Subject)+titleLen > sizeof(data->title)-1)
     {
-      if(titleLen < SIZE_DEFAULT-3)
+      if(titleLen < sizeof(data->title)-4)
       {
-        strlcat(data->title, mail->Subject, SIZE_DEFAULT-titleLen-3);
+        strlcat(data->title, mail->Subject, sizeof(data->title)-titleLen-4);
         strlcat(data->title, "...", sizeof(data->title)); // signals that the string was cut.
       }
       else
-        strlcat(&data->title[SIZE_DEFAULT-4], "...", 4);
+        strlcat(&data->title[sizeof(data->title)-5], "...", 4);
     }
     else
       strlcat(data->title, mail->Subject, sizeof(data->title));
@@ -599,6 +601,7 @@ DECLARE(ReadMail) // struct Mail *mail
     result = TRUE;
   }
 
+  RETURN(result);
   return result;
 }
 

@@ -6,6 +6,10 @@ $Id$
 
 2006-11-23  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ReadWindow.c: increased the window title limit to SIZE_SUBJECT which
+    should be around 200 chars and way enough now for every need.
+  * ReadWindow.c: fixed a NULL pointer access when trying to open a virtual
+    mail due to flags checking for the SPAM folder.
   * YAM_TR.c: fixed incorrect usage of Hash entryCount check to skip certain
     operations in the FilterDuplicates() function.
   * HashTable.c: added a NULL pointer check to StringHashHashKey() to catch
