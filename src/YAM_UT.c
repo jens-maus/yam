@@ -4783,7 +4783,32 @@ BOOL isChildOfGroup(Object *group, Object *child)
 
   return FALSE;
 }
+///
+/// isChildOfFamily()
+// return TRUE if the supplied child object is part of the supplied family/menu object
+BOOL isChildOfFamily(Object *family, Object *child)
+{
+  struct MinList *child_list;
+  Object *curchild;
+  Object *cstate;
 
+  // get the child list of the group object
+  child_list = (struct MinList *)xget(family, MUIA_Family_List);
+  if(child_list == NULL)
+    return FALSE;
+
+  // here we check whether the child is part of the supplied group
+  cstate = (Object *)child_list->mlh_Head;
+  while((curchild = NextObject(&cstate)))
+  {
+    if(curchild == child)
+    {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
 ///
 
 /*** GFX related ***/
