@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.2 (22.11.06)
+## version $VER: YAM.ct 6.3 (24.11.06)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -6749,3 +6749,7 @@ MSG_CO_SPAM_DISABLEFILTERASK
 Vill du också nollställa skräppost filtrets\nträningsdata och alla brev flaggor?\n\nSkräppost filtret måste tränas igen efteråt!
 ;#DEF Do you also want to reset the spam filter's\ntraining data and all mail flags?\n\nThe spam filter must be trained again afterwards!
 ;#SET (1777//)
+MSG_TR_CHECKUIDL
+Kontrollerar UIDL'er för att undvika dubbletter...
+;#DEF Checking UIDLs to avoid duplicates...
+;#SET (1778//)

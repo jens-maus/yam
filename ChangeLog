@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-24  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: small update.
+
 2006-11-24  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c, YAM_MA.c, MainMailList.c, ReadWindow.c: the spam menu items are
