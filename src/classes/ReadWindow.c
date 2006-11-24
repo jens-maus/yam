@@ -543,7 +543,6 @@ DECLARE(ReadMail) // struct Mail *mail
   BOOL initialCall = data->title[0] == '\0'; // TRUE if this is the first call
   BOOL prevMailAvailable = FALSE;
   BOOL nextMailAvailable = FALSE;
-  int titleLen;
 
   ENTER();
 
@@ -611,6 +610,7 @@ DECLARE(ReadMail) // struct Mail *mail
   if(DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail,
                                    initialCall == FALSE ? MUIF_ReadMailGroup_ReadMail_StatusChangeDelay : MUIF_NONE))
   {
+    size_t titleLen;
     struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 
     // if the title of the window is empty, we can assume that no previous mail was
