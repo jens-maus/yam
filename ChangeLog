@@ -6,6 +6,8 @@ $Id$
 
 2006-11-23  Jens Langner <Jens.Langner@light-speed.de>
 
+  * HashTable.c: added a NULL pointer check to StringHashHashKey() to catch
+    certain misuses.
   * YAM_TR.c: fixed another issue with the new UIDL management  where not all
     orphaned entries in the table were really properly removed.
   * YAM_TR.c: the new UIDL managment did only try to avoid duplicates if a POP3

@@ -76,6 +76,7 @@
 #define DBF_HTML     (1<<16)    // for the html convert engine (HTML2Mail.c)
 #define DBF_SPAM     (1<<17)    // for the spam dectection engine (BayesFilter.c)
 #define DBF_UIDL     (1<<18)    // for the UIDL managment (YAM_TR.c)
+#define DBF_HASH     (1<<19)    // for the HashTable management (HashTable.c)
 #define DBF_ALL      0xffffffff
 
 void SetupDebug(void);

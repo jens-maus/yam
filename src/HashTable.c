@@ -351,14 +351,18 @@ void DefaultHashFinalize(UNUSED struct HashTable *table)
 ULONG StringHashHashKey(UNUSED struct HashTable *table,
                         const void *key)
 {
-  ULONG h;
+  ULONG h=0;
   CONST_STRPTR s = (CONST_STRPTR)key;
 
   ENTER();
 
-  h = 0;
-  for(s = key; *s != '\0'; s++)
-    h = (h >> (HASH_BITS - 4)) ^ (h << 4) ^ *s;
+  if(s != NULL)
+  {
+    for(s = key; *s != '\0'; s++)
+      h = (h >> (HASH_BITS - 4)) ^ (h << 4) ^ *s;
+  }
+  else
+    E(DBF_HASH, "StringHashHashKey called with <NULL> pointer");
 
   RETURN(h);
   return h;
