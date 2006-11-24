@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c, YAM_FI.c, YAM_ER.c, BayesFilter.c, ReadMailGroup.c: if the SPAM
+    filter was turned on YAM may have thrown warnings on certain broken mail
+    content which e.g. stopped the batched mail download. Now a new PM_QUIET
+    flag is set on those actions where the mail transfer shouldn't be
+    interrupted at any time.
+
 2006-11-24  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: small update.

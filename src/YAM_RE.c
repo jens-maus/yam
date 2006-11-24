@@ -297,7 +297,8 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
                 // refresh the folder statistics
                 DisplayStatistics(outfolder, TRUE);
               }
-              else ER_NewError(GetStr(MSG_ER_CreateMailError));
+              else
+                ER_NewError(GetStr(MSG_ER_CreateMailError));
 
               FreeStrBuf(comp.MailTo);
               CloseTempFile(tf3);
@@ -1217,9 +1218,15 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
   if(!MA_ReadHeader(in, rp->headerList))
   {
     if(mode == 0)
-      ER_NewError(GetStr(MSG_ER_MIMEError));
+    {
+      if(hasFlag(rp->rmData->parseFlags, PM_QUIET) == FALSE)
+        ER_NewError(GetStr(MSG_ER_MIMEError));
+    }
     else if(mode == 1)
-      ER_NewError(GetStr(MSG_ER_MultipartEOF));
+    {
+      if(hasFlag(rp->rmData->parseFlags, PM_QUIET) == FALSE)
+        ER_NewError(GetStr(MSG_ER_MultipartEOF));
+    }
 
     rp->HasHeaders = FALSE;
 
@@ -1461,6 +1468,8 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 {
   int decodeResult = 0;
   struct codeset *sourceCodeset = NULL;
+  struct ReadMailData *rmData = rp->rmData;
+  BOOL quietParsing = hasFlag(rmData->parseFlags, PM_QUIET);
 
   ENTER();
 
@@ -1506,17 +1515,21 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
         // the user abour the problem and still set the decodeResult to 1
         if(rp->Printable)
         {
-          ER_NewError(GetStr(MSG_ER_B64DECTRUNCTXT), rp->Nr, rp->rmData->readFile);
+          // as this is just a "warning" we can skip the error message
+          // in case we parse the message with q PM_QUIET flag
+          if(quietParsing == FALSE)
+            ER_NewError(GetStr(MSG_ER_B64DECTRUNCTXT), rp->Nr, rmData->readFile);
 
           decodeResult = 1;
         }
         else
         {
           // if that part was not a printable/viewable one we
-          // have to make sure decode Result is set to 0 to signal
+          // have to make sure decodeResult is set to 0 to signal
           // the caller that it should not expect that the decoded part
           // is valid
-          ER_NewError(GetStr(MSG_ER_B64DECTRUNC), rp->Nr, rp->rmData->readFile);
+          if(quietParsing == FALSE)
+            ER_NewError(GetStr(MSG_ER_B64DECTRUNC), rp->Nr, rmData->readFile);
         }
       }
     }
@@ -1536,19 +1549,24 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
         {
           case -1:
           {
-            ER_NewError(GetStr(MSG_ER_QPDEC_FILEIO), rp->Filename);
+            if(quietParsing == FALSE)
+              ER_NewError(GetStr(MSG_ER_QPDEC_FILEIO), rp->Filename);
           }
           break;
 
           case -2:
           {
-            ER_NewError(GetStr(MSG_ER_QPDEC_UNEXP), rp->Filename);
+            if(quietParsing == FALSE)
+              ER_NewError(GetStr(MSG_ER_QPDEC_UNEXP), rp->Filename);
           }
           break;
 
           case -3:
           {
-            ER_NewError(GetStr(MSG_ER_QPDEC_WARN), rp->Filename);
+            W(DBF_MAIL, "found an undecodeable qp char sequence. Warning the user.");
+
+            if(quietParsing == FALSE)
+              ER_NewError(GetStr(MSG_ER_QPDEC_WARN), rp->Filename);
 
             decodeResult = 1; // allow to save the resulting file
           }
@@ -1556,14 +1574,21 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 
           case -4:
           {
-            ER_NewError(GetStr(MSG_ER_QPDEC_CHAR), rp->Filename);
+            W(DBF_MAIL, "found an invalid character during decoding. Warning the user.");
+
+            if(quietParsing == FALSE)
+              ER_NewError(GetStr(MSG_ER_QPDEC_CHAR), rp->Filename);
 
             decodeResult = 1; // allow to save the resulting file
           }
           break;
 
           default:
-            ER_NewError(GetStr(MSG_ER_QPDEC_UNEXP), rp->Filename);
+          {
+            if(quietParsing == FALSE)
+              ER_NewError(GetStr(MSG_ER_QPDEC_UNEXP), rp->Filename);
+          }
+          break;
         }
       }
     }
@@ -1586,25 +1611,29 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
         {
           case -1:
           {
-            ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
+            if(quietParsing == FALSE)
+              ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
           }
           break;
 
           case -2:
           {
-            ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), rp->Filename, "begin");
+            if(quietParsing == FALSE)
+              ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), rp->Filename, "begin");
           }
           break;
 
           case -3:
           {
-            ER_NewError(GetStr(MSG_ER_InvalidLength), 0);
+            if(quietParsing == FALSE)
+              ER_NewError(GetStr(MSG_ER_InvalidLength), 0);
           }
           break;
 
           case -4:
           {
-            ER_NewError(GetStr(MSG_ER_UUDEC_CHECKSUM), rp->Filename);
+            if(quietParsing == FALSE)
+              ER_NewError(GetStr(MSG_ER_UUDEC_CHECKSUM), rp->Filename);
 
             decodeResult = 1; // allow to save the resulting file
           }
@@ -1612,20 +1641,25 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 
           case -5:
           {
-            ER_NewError(GetStr(MSG_ER_UUDEC_CORRUPT), rp->Filename);
+            if(quietParsing == FALSE)
+              ER_NewError(GetStr(MSG_ER_UUDEC_CORRUPT), rp->Filename);
           }
           break;
 
           case -6:
           {
-            ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), rp->Filename, "end");
+            if(quietParsing == FALSE)
+              ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), rp->Filename, "end");
 
             decodeResult = 1; // allow to save the resulting file
           }
           break;
 
           default:
-            ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
+          {
+            if(quietParsing == FALSE)
+              ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
+          }
         }
       }
     }
@@ -1888,15 +1922,18 @@ static int RE_RequiresSpecialHandling(struct Part *hrp)
 //  Decides if the part should be kept in memory
 static BOOL RE_SaveThisPart(struct Part *rp)
 {
-  switch(rp->rmData->parseMode)
-  {
-    case PM_ALL:   return TRUE;
-    case PM_NONE:  return FALSE;
-    case PM_TEXTS: return (BOOL)(strnicmp(rp->ContentType, "text", 4) == 0);
-  }
+  BOOL result = FALSE;
+  short parseFlags = rp->rmData->parseFlags;
 
-  E(DBF_MAIL, "ERROR on RE_SaveThisPart()");
-  return FALSE;
+  ENTER();
+
+  if(hasFlag(parseFlags, PM_ALL))
+    result = TRUE;
+  else if(hasFlag(parseFlags, PM_TEXTS) && strnicmp(rp->ContentType, "text", 4) == 0)
+    result = TRUE;
+
+  RETURN(result);
+  return result;
 }
 ///
 /// RE_SetPartInfo
@@ -2536,7 +2573,7 @@ static void RE_LoadMessagePart(struct ReadMailData *rmData, struct Part *part)
 /// RE_LoadMessage
 // Function that preparses a mail for either direct display in a read mail group
 // or for background parsing (for Arexx and stuff)
-BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
+BOOL RE_LoadMessage(struct ReadMailData *rmData)
 {
   struct Mail *mail = rmData->mail;
   struct Folder *folder = mail->Folder;
@@ -2564,7 +2601,6 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
     strlcpy(rmData->readFile, tmpFile, sizeof(rmData->readFile));
   }
 
-  rmData->parseMode = pMode;
   if((part = rmData->firstPart = RE_ParseMessage(rmData, NULL, rmData->readFile, NULL)))
   {
     int i;
@@ -2945,25 +2981,29 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                       {
                         case -1:
                         {
-                          ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
+                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                            ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
                         }
                         break;
 
                         case -2:
                         {
-                          ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), uup->Filename, "begin");
+                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                            ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), uup->Filename, "begin");
                         }
                         break;
 
                         case -3:
                         {
-                          ER_NewError(GetStr(MSG_ER_InvalidLength), 0);
+                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                            ER_NewError(GetStr(MSG_ER_InvalidLength), 0);
                         }
                         break;
 
                         case -4:
                         {
-                          ER_NewError(GetStr(MSG_ER_UUDEC_CHECKSUM), uup->Filename);
+                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                            ER_NewError(GetStr(MSG_ER_UUDEC_CHECKSUM), uup->Filename);
 
                           uup->Decoded = TRUE; // allow to save the resulting file
                         }
@@ -2971,20 +3011,26 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
                         case -5:
                         {
-                          ER_NewError(GetStr(MSG_ER_UUDEC_CORRUPT), uup->Filename);
+                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                            ER_NewError(GetStr(MSG_ER_UUDEC_CORRUPT), uup->Filename);
                         }
                         break;
 
                         case -6:
                         {
-                          ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), uup->Filename, "end");
+                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                            ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), uup->Filename, "end");
 
                           uup->Decoded = TRUE; // allow to save the resulting file
                         }
                         break;
 
                         default:
-                          ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
+                        {
+                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                            ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
+                        }
+                        break;
                       }
                     }
                   }
@@ -3026,12 +3072,17 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                         int expsize = atoi(&endptr[5]);
 
                         if(uup->Size != expsize)
-                          ER_NewError(GetStr(MSG_ER_UUSize), uup->Size, expsize);
+                        {
+                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                            ER_NewError(GetStr(MSG_ER_UUSize), uup->Size, expsize);
+                        }
                       }
                     }
                     else
                     {
-                      ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), uup->Filename, "end");
+                      if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                        ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), uup->Filename, "end");
+
                       endptr = rptr;
                     }
                   }
@@ -3043,7 +3094,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   // terminate the end
                   *eolptr = '\0';
                 }
-                else ER_NewError(GetStr(MSG_ER_CantCreateTempfile));
+                else
+                  ER_NewError(GetStr(MSG_ER_CantCreateTempfile));
               }
 /* PGP msg */ else if(!strncmp(rptr, "-----BEGIN PGP MESSAGE", 21))
               {
@@ -3476,7 +3528,7 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
 /*** ReadMailData ***/
 /// AllocPrivateRMData()
 //  Allocates resources for background message parsing
-struct ReadMailData *AllocPrivateRMData(struct Mail *mail, enum ParseMode pMode)
+struct ReadMailData *AllocPrivateRMData(struct Mail *mail, short parseFlags)
 {
   struct ReadMailData *rmData = calloc(1, sizeof(struct ReadMailData));
 
@@ -3485,8 +3537,9 @@ struct ReadMailData *AllocPrivateRMData(struct Mail *mail, enum ParseMode pMode)
   if(rmData)
   {
     rmData->mail = mail;
+    rmData->parseFlags = parseFlags;
 
-    if(RE_LoadMessage(rmData, pMode) == FALSE)
+    if(RE_LoadMessage(rmData) == FALSE)
     {
       free(rmData);
       rmData = NULL;

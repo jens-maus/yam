@@ -115,6 +115,8 @@ void ER_NewError(const char *error, ...)
 
     // allocate an own buffer for our error string.
     G->ER_Message[G->ER_NumErr-1] = strdup(buf);
+
+    E(DBF_STARTUP, buf);
   }
 
   snprintf(label, sizeof(label), "\033c%s %%ld/%d", GetStr(MSG_ErrorReq), G->ER_NumErr);

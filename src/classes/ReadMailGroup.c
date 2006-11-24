@@ -622,9 +622,10 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
   // set the passed mail as the current mail read by our ReadMailData
   // structure
   rmData->mail = mail;
+  rmData->parseFlags = PM_ALL;
 
   // load the message now
-  if(RE_LoadMessage(rmData, PM_ALL))
+  if(RE_LoadMessage(rmData))
   {
     char *cmsg;
 

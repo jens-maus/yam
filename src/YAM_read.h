@@ -65,10 +65,16 @@
 #define hasPGPSCheckedFlag(v)  (isFlagSet((v)->signedFlags, PGPS_CHECKED))
 
 enum MDNType    { MDN_IGNORE=0, MDN_DENY, MDN_READ, MDN_DISP, MDN_PROC, MDN_DELE };
-enum ParseMode  { PM_ALL, PM_TEXTS, PM_NONE };
 enum ReadInMode { RIM_QUIET, RIM_READ, RIM_EDIT, RIM_QUOTE, RIM_PRINT };
 enum HeaderMode { HM_NOHEADER, HM_SHORTHEADER, HM_FULLHEADER };
 enum SInfoMode  { SIM_OFF, SIM_DATA, SIM_ALL, SIM_IMAGE };
+
+// for parsing a message we have different flags we can specify
+// (a),(b),(c) are mutual exclusive
+#define PM_ALL    (1<<0)  // (a) parse and keep all parts of the message
+#define PM_TEXTS  (1<<1)  // (b) parse and keep only "text/#?" parts of the message
+#define PM_NONE   (1<<2)  // (c) parse the msg but keep no additional parts
+#define PM_QUIET  (1<<3)  // parse the message without issuing any warning (during filtering)
 
 // for our temporary filename generation we need a get a unique pointer on
 // each readmaildata usage
@@ -89,9 +95,9 @@ struct ReadMailData
   struct Mail     *mail;          // ptr to the mail we are reading
   struct Part     *firstPart;     // pointer to the first MIME part of the mail
   struct TempFile *tempFile;      // in case of a virtual mail we use a tempfile
-  enum ParseMode  parseMode;      // mode in which we parse the mail
   enum HeaderMode headerMode;     // mode on displaying the mail header
   enum SInfoMode  senderInfoMode; // sender info display mode
+  short           parseFlags;     // flags for the parsing (e.g. be quiet, parse all, etc.)
   short           signedFlags;    // flags for mail signing (i.e. PGP)
   short           encryptionFlags;// flags for encryption modes (i.e. PGP)
   short           letterPartNum;  // the number which was considered the letter part (0=no yet defined)
@@ -148,11 +154,11 @@ void  RE_DisplayMIME(char *fname, const char *ctype);
 BOOL  RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi);
 
 struct ReadMailData *CreateReadWindow(BOOL forceNewWindow);
-struct ReadMailData *AllocPrivateRMData(struct Mail *mail, enum ParseMode pMode);
+struct ReadMailData *AllocPrivateRMData(struct Mail *mail, short parseFlags);
 void FreePrivateRMData(struct ReadMailData *rmData);
 BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup);
 void FreeHeaderList(struct MinList *headerList);
-BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode);
+BOOL RE_LoadMessage(struct ReadMailData *rmData);
 char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode rMode);
 void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab);
 void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new);

@@ -1450,7 +1450,7 @@ static void tokenizeMail(struct Tokenizer *t,
 
   ENTER();
 
-  if((rmData = AllocPrivateRMData(mail, PM_ALL)))
+  if((rmData = AllocPrivateRMData(mail, PM_ALL|PM_QUIET)))
   {
     STRPTR rptr;
 

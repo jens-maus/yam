@@ -307,7 +307,7 @@ static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
   BOOL found = FALSE;
   struct ReadMailData *rmData;
 
-  if((rmData = AllocPrivateRMData(mail, PM_TEXTS)))
+  if((rmData = AllocPrivateRMData(mail, PM_TEXTS|PM_QUIET)))
   {
     char *rptr, *ptr, *cmsg;
 
@@ -1282,6 +1282,8 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
   enum ApplyFilterMode mode = arg[0];
   APTR lv = G->MA->GUI.PG_MAILLIST;
   char buf[SIZE_LARGE];
+
+  D(DBF_FILTER, "About to apply filters...");
 
   folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : FO_GetCurrentFolder();
   if(!folder)
