@@ -261,8 +261,11 @@ void MA_ChangeSelected(BOOL forceUpdate)
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled, gui->MI_FILTER, gui->MI_UPDINDEX, gui->MI_IMPORT, gui->MI_EXPORT, gui->MI_SELECT, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, isOutgoingFolder(fo) && (active || numSelected > 0), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isSentMailFolder(fo) && (active || numSelected > 0), gui->MI_TOREAD, gui->MI_TOUNREAD, gui->MI_ALLTOREAD, gui->MI_BOUNCE, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && C->SpamFilterEnabled && mail && !hasStatusSpam(mail), gui->MI_TOSPAM, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && C->SpamFilterEnabled && mail && !hasStatusHam(mail), gui->MI_TOHAM, NULL);
+
+  if(gui->MI_TOSPAM)
+    set(gui->MI_TOSPAM, MUIA_Menuitem_Enabled, folderEnabled && mail && !hasStatusSpam(mail));
+  if(gui->MI_TOHAM)
+    set(gui->MI_TOHAM,  MUIA_Menuitem_Enabled, folderEnabled && mail && !hasStatusHam(mail));
 
   LEAVE();
 }
@@ -828,7 +831,6 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
 
   MA_ChangeSelected(FALSE);
 }
-
 ///
 /// MA_UpdateStatus
 //  Changes status of all new messages to unread
@@ -900,7 +902,6 @@ char *MA_ToStatusHeader(struct Mail *mail)
 
   return flags;
 }
-
 ///
 /// MA_ToXStatusHeader()
 // Function that converts the current flags of a message
@@ -939,7 +940,6 @@ char *MA_ToXStatusHeader(struct Mail *mail)
 
   return flags;
 }
-
 ///
 /// MA_FromStatusHeader()
 // Function that converts chars from the Status: headerline to a proper
@@ -966,7 +966,6 @@ unsigned int MA_FromStatusHeader(char *statusflags)
 
   return sflags;
 }
-
 ///
 /// MA_FromXStatusHeader()
 // Function that converts chars from the X-Status: headerline to a
@@ -1024,7 +1023,6 @@ unsigned int MA_FromXStatusHeader(char *xstatusflags)
 
   return sflags;
 }
-
 ///
 /// ExpandText
 //  Replaces variables with values
@@ -1208,6 +1206,52 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
 
   RETURN(dst);
   return dst;
+}
+///
+/// MA_AddRemoveSpamMenu
+//  Dynamically add/remove the spam menu entries to the main menu according to the configuration
+void MA_AddRemoveSpamMenu(struct MA_GUIData *gui)
+{
+  ENTER();
+
+  if(gui == NULL)
+    gui = &G->MA->GUI;
+
+  if(C->SpamFilterEnabled)
+  {
+    // for each entry check if it exists and if it is part of the menu
+    // if not, create a new entry and add it to the current layout
+    if(gui->MI_TOHAM == NULL || isChildOfFamily(gui->MI_STATUS, gui->MI_TOHAM) == FALSE)
+    {
+      if ((gui->MI_TOHAM =  MakeMenuitem(GetStr(MSG_MA_TONOTSPAM), MMEN_TOHAM)) != NULL)
+        DoMethod(gui->MI_STATUS, MUIM_Family_Insert, gui->MI_TOHAM,  gui->MI_TOQUEUED);
+    }
+
+    if(gui->MI_TOSPAM == NULL || isChildOfFamily(gui->MI_STATUS, gui->MI_TOSPAM) == FALSE)
+    {
+      if ((gui->MI_TOSPAM = MakeMenuitem(GetStr(MSG_MA_TOSPAM),    MMEN_TOSPAM)) != NULL)
+        DoMethod(gui->MI_STATUS, MUIM_Family_Insert, gui->MI_TOSPAM, gui->MI_TOQUEUED);
+    }
+  }
+  else
+  {
+    // for each entry check if it exists and if it is part of the menu
+    // if yes, then remove the entry and dispose it
+    if(gui->MI_TOSPAM != NULL && isChildOfFamily(gui->MI_STATUS, gui->MI_TOSPAM))
+    {
+      DoMethod(gui->MI_STATUS, MUIM_Family_Remove, gui->MI_TOSPAM);
+      MUI_DisposeObject(gui->MI_TOSPAM);
+      gui->MI_TOSPAM = NULL;
+    }
+    if(gui->MI_TOHAM != NULL && isChildOfFamily(gui->MI_STATUS, gui->MI_TOHAM))
+    {
+      DoMethod(gui->MI_STATUS, MUIM_Family_Remove, gui->MI_TOHAM);
+      MUI_DisposeObject(gui->MI_TOHAM);
+      gui->MI_TOHAM = NULL;
+    }
+  }
+
+  LEAVE();
 }
 ///
 
@@ -4341,8 +4385,6 @@ struct MA_ClassData *MA_New(void)
                MUIA_Family_Child, data->GUI.MI_TOREAD = MakeMenuitem(GetStr(MSG_MA_ToRead), MMEN_TOREAD),
                MUIA_Family_Child, data->GUI.MI_TOHOLD = MakeMenuitem(GetStr(MSG_MA_ToHold), MMEN_TOHOLD),
                MUIA_Family_Child, data->GUI.MI_TOQUEUED = MakeMenuitem(GetStr(MSG_MA_ToQueued), MMEN_TOQUEUED),
-               MUIA_Family_Child, data->GUI.MI_TOSPAM = MakeMenuitem(GetStr(MSG_MA_TOSPAM), MMEN_TOSPAM),
-               MUIA_Family_Child, data->GUI.MI_TOHAM = MakeMenuitem(GetStr(MSG_MA_TONOTSPAM), MMEN_TOHAM),
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
                MUIA_Family_Child, data->GUI.MI_ALLTOREAD = MakeMenuitem(GetStr(MSG_MA_ALLTOREAD), MMEN_ALLTOREAD),
             End,
@@ -4357,6 +4399,8 @@ struct MA_ClassData *MA_New(void)
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_SETTINGS_MUI), MMEN_MUI),
          End,
       End;
+
+      MA_AddRemoveSpamMenu(&data->GUI);
 
       data->GUI.WI = MainWindowObject,
          MUIA_Window_Title, data->WinTitle,

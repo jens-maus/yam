@@ -6,6 +6,9 @@ $Id$
 
 2006-11-24  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c, YAM_MA.c, MainMailList.c, ReadWindow.c: the spam menu items are
+    now completely hidden if the spam filter is not activated. If the filter is
+    enabled they will be created dynamically.
   * YAM_UT.c, YAM_utilities.h: added new function isChildOfFamily to check if
     a menu item is member of a menu strip.
 

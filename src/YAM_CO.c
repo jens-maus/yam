@@ -1345,6 +1345,7 @@ void CO_Validate(struct Config *co, BOOL update)
       {
         // if we enabled or disable the spam filter then we need to update the toolbar in the main window
         MA_ChangeSelected(TRUE);
+        MA_AddRemoveSpamMenu(NULL);
 
         // update the read windows' toolbar, too
         if(IsMinListEmpty(&G->readMailDataList) == FALSE)
@@ -1358,8 +1359,11 @@ void CO_Validate(struct Config *co, BOOL update)
 
             // just obey open read windows with a valid mail pointer
             if(rmData->readWindow != NULL && rmData->mail != NULL)
+            {
               // use PushMethod for the case the read window modifies we list we are currently walking through
               DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ReadMail, rmData->mail);
+              DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 1, MUIM_ReadWindow_AddRemoveSpamMenu);
+            }
           }
         }
       }

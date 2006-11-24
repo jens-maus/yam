@@ -42,13 +42,15 @@
 /* CLASSDATA
 struct Data
 {
+  Object *MI_MESSAGE;
   Object *MI_EDIT;
   Object *MI_MOVE;
   Object *MI_DELETE;
   Object *MI_DETACH;
   Object *MI_CROP;
-  Object *MI_SPAM;
-  Object *MI_HAM;
+  Object *MI_SETMARKED;
+  Object *MI_TOSPAM;
+  Object *MI_TOHAM;
   Object *MI_CHSUBJ;
   Object *MI_NAVIG;
   Object *MI_WRAPH;
@@ -93,6 +95,58 @@ INLINE LONG SelectMessage(struct Mail *mail)
 
   // return the position to the caller
   return pos;
+}
+///
+/// AddRemoveSpamMenu
+//  Dynamically add/remove the spam menu entries to the menu according to the configuration
+static void AddRemoveSpamMenu(struct Data *data, struct Mail *mail)
+{
+  ENTER();
+
+  if(C->SpamFilterEnabled)
+  {
+    BOOL isSpamMail = mail && !isVirtualMail(mail) && hasStatusSpam(mail);
+    BOOL isHamMail  = mail && !isVirtualMail(mail) && hasStatusHam(mail);
+
+    // for each entry check if it exists and if it is part of the menu
+    // if not, create a new entry and add it to the current layout
+    if(data->MI_TOHAM == NULL || isChildOfFamily(data->MI_MESSAGE, data->MI_TOHAM) == FALSE)
+    {
+      if((data->MI_TOHAM =  MakeMenuitem(GetStr(MSG_RE_SETNOTSPAM), MMEN_TOHAM)) != NULL)
+      {
+        set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isHamMail);
+        DoMethod(data->MI_MESSAGE, MUIM_Family_Insert, data->MI_TOHAM, data->MI_SETMARKED);
+      }
+    }
+
+    if(data->MI_TOSPAM == NULL || isChildOfFamily(data->MI_MESSAGE, data->MI_TOSPAM) == FALSE)
+    {
+      if((data->MI_TOSPAM = MakeMenuitem(GetStr(MSG_RE_SETSPAM), MMEN_TOSPAM)) != NULL)
+      {
+        set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isSpamMail);
+        DoMethod(data->MI_MESSAGE, MUIM_Family_Insert, data->MI_TOSPAM, data->MI_SETMARKED);
+      }
+    }
+  }
+  else
+  {
+    // for each entry check if it exists and if it is part of the menu
+    // if yes, then remove the entry and dispose it
+    if(data->MI_TOSPAM != NULL && isChildOfFamily(data->MI_MESSAGE, data->MI_TOSPAM))
+    {
+      DoMethod(data->MI_MESSAGE, MUIM_Family_Remove, data->MI_TOSPAM);
+      MUI_DisposeObject(data->MI_TOSPAM);
+      data->MI_TOSPAM = NULL;
+    }
+    if(data->MI_TOHAM != NULL && isChildOfFamily(data->MI_MESSAGE, data->MI_TOHAM))
+    {
+      DoMethod(data->MI_MESSAGE, MUIM_Family_Remove, data->MI_TOHAM);
+      MUI_DisposeObject(data->MI_TOHAM);
+      data->MI_TOHAM = NULL;
+    }
+  }
+
+  LEAVE();
 }
 ///
 
@@ -221,7 +275,7 @@ OVERLOAD(OM_NEW)
     MUIA_HelpNode,       "RE_W",
     MUIA_Window_ID,     MAKE_ID('R','D','W',data->windowNumber),
     MUIA_Window_Menustrip, MenustripObject,
-      MenuChild, MenuObject, MUIA_Menu_Title, GetStr(MSG_Message),
+      MenuChild, data->MI_MESSAGE = MenuObject, MUIA_Menu_Title, GetStr(MSG_Message),
         MenuChild, data->MI_EDIT = Menuitem(GetStr(MSG_MA_MEdit), "E", TRUE, FALSE, RMEN_EDIT),
         MenuChild, data->MI_MOVE = Menuitem(GetStr(MSG_MA_MMove), "M", TRUE, FALSE, RMEN_MOVE),
         MenuChild, Menuitem(GetStr(MSG_MA_MCopy), "Y", TRUE, FALSE, RMEN_COPY),
@@ -242,9 +296,7 @@ OVERLOAD(OM_NEW)
         MenuChild, MenuBarLabel,
         MenuChild, Menuitem(GetStr(MSG_MA_MGetAddress), "J", TRUE, FALSE, RMEN_SAVEADDR),
         MenuChild, Menuitem(GetStr(MSG_RE_SetUnread),   "U", TRUE, FALSE, RMEN_SETUNREAD),
-        MenuChild, Menuitem(GetStr(MSG_RE_SETMARKED),    ",", TRUE, FALSE, RMEN_SETMARKED),
-        MenuChild, data->MI_SPAM = Menuitem(GetStr(MSG_RE_SETSPAM),      NULL, TRUE, FALSE, RMEN_SETSPAM),
-        MenuChild, data->MI_HAM = Menuitem(GetStr(MSG_RE_SETNOTSPAM),    NULL, TRUE, FALSE, RMEN_SETHAM),
+        MenuChild, data->MI_SETMARKED = Menuitem(GetStr(MSG_RE_SETMARKED),    ",", TRUE, FALSE, RMEN_SETMARKED),
         MenuChild, data->MI_CHSUBJ = Menuitem(GetStr(MSG_MA_ChangeSubj), NULL, TRUE, FALSE, RMEN_CHSUBJ),
       End,
       MenuChild, data->MI_NAVIG = MenuObject, MUIA_Menu_Title, GetStr(MSG_RE_Navigation),
@@ -394,6 +446,8 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock shift left",   obj, 3, MUIM_ReadWindow_SwitchMail, -1, IEQUALIFIER_LSHIFT);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock shift right",  obj, 3, MUIM_ReadWindow_SwitchMail, +1, IEQUALIFIER_LSHIFT);
 
+    AddRemoveSpamMenu(data, NULL);
+
     // before we continue we make sure we connect a notify to the new window
     // so that we get informed if the window is closed and therefore can be
     // disposed
@@ -515,14 +569,20 @@ DECLARE(ReadMail) // struct Mail *mail
   set(data->MI_MOVE,      MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_DELETE,    MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_CROP,      MUIA_Menuitem_Enabled, isRealMail);
-  set(data->MI_SPAM,      MUIA_Menuitem_Enabled, isRealMail && !isSpamMail);
-  set(data->MI_HAM,       MUIA_Menuitem_Enabled, isRealMail && !isHamMail);
   set(data->MI_CHSUBJ,    MUIA_Menuitem_Enabled, isRealMail && !inSpamFolder);
   set(data->MI_NAVIG,     MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_REPLY,     MUIA_Menuitem_Enabled, !isSentMail && !inSpamFolder);
   set(data->MI_BOUNCE,    MUIA_Menuitem_Enabled, !isSentMail);
   set(data->MI_NEXTTHREAD,MUIA_Menuitem_Enabled, nextMailAvailable);
   set(data->MI_PREVTHREAD,MUIA_Menuitem_Enabled, prevMailAvailable);
+
+  if(C->SpamFilterEnabled)
+  {
+    if(data->MI_TOSPAM != NULL)
+      set(data->MI_TOSPAM, MUIA_Menuitem_Enabled, isRealMail && !isSpamMail);
+    if(data->MI_TOHAM != NULL)
+      set(data->MI_TOHAM,  MUIA_Menuitem_Enabled, isRealMail && !isHamMail);
+  }
 
   if(data->windowToolbar)
   {
@@ -1254,7 +1314,6 @@ DECLARE(StyleOptionsChanged)
   RETURN(0);
   return 0;
 }
-
 ///
 /// DECLARE(StatusIconRefresh)
 DECLARE(StatusIconRefresh)
@@ -1265,6 +1324,17 @@ DECLARE(StatusIconRefresh)
   // Update the statusIconGroup
   if(rmData->mail)
     DoMethod(data->statusIconGroup, MUIM_StatusIconGroup_Update, rmData->mail);
+
+  return 0;
+}
+///
+/// DECLARE(AddRemoveSpamMenu)
+DECLARE(AddRemoveSpamMenu)
+{
+  GETDATA;
+  struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
+
+  AddRemoveSpamMenu(data, rmData->mail);
 
   return 0;
 }

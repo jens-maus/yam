@@ -354,6 +354,6 @@ void  MA_SetupEmbeddedReadPane(void);
 void  MA_SetupQuickSearchBar(void);
 char *MA_GetRealSubject(char *sub);
 void  MA_ChangeSelected(BOOL forceUpdate);
-
+void  MA_AddRemoveSpamMenu(struct MA_GUIData *gui);
 
 #endif /* YAM_MAIN_H */
