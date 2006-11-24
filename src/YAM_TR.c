@@ -3356,8 +3356,7 @@ static BOOL FilterDuplicates(void)
   if(G->TR->UIDLhashTable != NULL)
   {
     // check if there is anything to transfer at all
-    if(G->TR->UIDLhashTable->entryCount > 0 &&
-       IsMinListEmpty(&G->TR->transferList) == FALSE)
+    if(IsMinListEmpty(&G->TR->transferList) == FALSE)
     {
       // inform the user of the operation
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_CHECKUIDL));
@@ -3396,7 +3395,7 @@ static BOOL FilterDuplicates(void)
               {
                 mtn->UIDL = strdup(uidl);
 
-                if(mtn->UIDL)
+                if(G->TR->UIDLhashTable->entryCount > 0 && mtn->UIDL)
                 {
                   struct HashEntryHeader *entry = HashTableOperate(G->TR->UIDLhashTable, mtn->UIDL, htoLookup);
 
@@ -3451,7 +3450,7 @@ static BOOL FilterDuplicates(void)
           // mailtransfernode we go and check if that UIDL is already in our UIDLhash
           // and if so we go and flag the mail as a mail that should not be downloaded
           // automatically
-          if(mtn->UIDL)
+          if(G->TR->UIDLhashTable->entryCount > 0 && mtn->UIDL)
           {
             struct HashEntryHeader *entry = HashTableOperate(G->TR->UIDLhashTable, mtn->UIDL, htoLookup);
 
