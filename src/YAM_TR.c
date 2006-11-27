@@ -2467,11 +2467,15 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       {
         struct Folder *folder;
 
+        if(C->SpamFilterEnabled && C->SpamFilterForNewMail)
+          DoMethod(G->App, MUIM_CallHook, &ApplySpamFilterHook);
+
         DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, APPLY_AUTO, 0);
 
         // Now we jump to the first new mail we received if the number of messages has changed
         // after the mail transfer
-        if(C->JumpToIncoming) MA_JumpToNewMsg();
+        if(C->JumpToIncoming)
+          MA_JumpToNewMsg();
 
         // only call the DisplayStatistics() function if the actual folder wasn`t already the INCOMING
         // one or we would hav refreshed it twice
@@ -5073,7 +5077,7 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
             GetSysTimeUTC(&new->transDate);
 
             new->sflags = SFLAG_NEW;
-            if (C->SpamFilterEnabled && C->SpamFilterForNewMail && BayesFilterClassifyMessage(new))
+            if(C->SpamFilterEnabled && C->SpamFilterForNewMail && BayesFilterClassifyMessage(new))
               SET_FLAG(new->sflags, SFLAG_AUTOSPAM);
 
             MA_UpdateMailFile(new);

@@ -1267,7 +1267,6 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
 
   return TRUE;
 }
-
 ///
 /// ApplyFiltersFunc()
 //  Apply filters
@@ -1324,7 +1323,6 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
       for(m = 0; m < (int)*mlist; m++)
       {
         struct MinNode *curNode;
-        BOOL tryNext;
 
         mail = mlist[m+2];
 
@@ -1333,71 +1331,19 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 
         G->RRs.Checked++;
 
-		// first check for spam by status
-        tryNext = TRUE;
-		if (C->SpamFilterEnabled && C->SpamFilterForNewMail)
+        // now we process the search
+        for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
         {
-          struct Folder *spamFolder;
-          struct Search spamStatusSearch;
-          struct RuleNode spamStatusRule;
-          struct FilterNode spamStatusFilter;
+          struct FilterNode *filter = (struct FilterNode *)curNode;
 
-          spamFolder = FO_GetFolderByType(FT_SPAM, NULL);
-
-          memset(&spamStatusSearch, 0, sizeof(spamStatusSearch));
-          spamStatusSearch.Mode = SM_STATUS;
-          spamStatusSearch.Status = 'X';
-
-          memset(&spamStatusRule, 0, sizeof(spamStatusRule));
-          spamStatusRule.search = &spamStatusSearch;
-          spamStatusRule.combine = CB_NONE;
-          spamStatusRule.searchMode = SM_STATUS;
-          spamStatusRule.subSearchMode = SSM_ADDRESS;
-          spamStatusRule.comparison = CP_INPUT;
-          spamStatusRule.caseSensitive = FALSE;
-          spamStatusRule.subString = FALSE;
-          strlcpy(spamStatusRule.matchPattern, "#?", sizeof(spamStatusRule.matchPattern));
-          spamStatusRule.customField[0] = '\0';
-
-          memset(&spamStatusFilter, 0, sizeof(spamStatusFilter));
-          spamStatusFilter.actions = FA_MOVE;
-          spamStatusFilter.remote = FALSE;
-          spamStatusFilter.applyToNew = TRUE;
-          spamStatusFilter.applyOnReq = FALSE;
-          spamStatusFilter.applyToSent = FALSE;
-          strlcpy(spamStatusFilter.moveTo, spamFolder->Name, sizeof(spamStatusFilter.moveTo));
-          NewList((struct List *)&spamStatusFilter.ruleList);
-          AddTail((struct List *)&spamStatusFilter.ruleList, (struct Node *)&spamStatusRule);
-
-          if (DoFilterSearch(&spamStatusFilter, mail))
+          if(DoFilterSearch(filter, mail))
           {
-  		    matches++;
+            matches++;
 
-            // if ExecuteFilterAction return FALSE then the filter search should be aborted
+            // if ExecuteFilterAction returns FALSE then the filter search should be aborted
             // completley
-	  	    if(ExecuteFilterAction(&spamStatusFilter, mail) == FALSE)
-	  	    {
-	  	      tryNext = FALSE;
-	  	    }
-          }
-		}
-
-        if(tryNext)
-        {
-          // now we process the search
-          for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-          {
-            struct FilterNode *filter = (struct FilterNode *)curNode;
-
-            if(DoFilterSearch(filter, mail))
-            {
-              matches++;
-
-              // if ExecuteFilterAction return FALSE then the filter search should be aborted
-              // completley
-              if(ExecuteFilterAction(filter, mail) == FALSE)
-                break;
-            }
+            if(ExecuteFilterAction(filter, mail) == FALSE)
+              break;
           }
         }
 
@@ -1427,7 +1373,52 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
   }
 }
 MakeHook(ApplyFiltersHook, ApplyFiltersFunc);
+///
+/// ApplySpamFilterFunc()
+//  Automatically move newly received mails to the spam folder
+HOOKPROTONHNONP(ApplySpamFilterFunc, void)
+{
+  struct Folder *infolder, *spamfolder;
+  struct Mail **mlist;
+  APTR lv = G->MA->GUI.PG_MAILLIST;
 
+  D(DBF_FILTER, "About to apply spam filter...");
+
+  infolder = FO_GetFolderByType(FT_INCOMING, NULL);
+  spamfolder = FO_GetFolderByType(FT_SPAM, NULL);
+  if(!infolder || !spamfolder)
+    return;
+
+  set(lv, MUIA_NList_Quiet, TRUE);
+  G->AppIconQuiet = TRUE;
+
+  if((mlist = MA_CreateFullList(infolder, TRUE)) != NULL)
+  {
+    int m;
+
+    BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
+
+    for(m = 0; m < (int)*mlist; m++)
+    {
+      struct Mail *mail;
+
+      mail = mlist[m+2];
+
+      if(hasStatusNew(mail) && hasStatusAutoSpam(mail))
+        MA_MoveCopy(mail, infolder, spamfolder, FALSE, FALSE);
+
+      BusySet(m+1);
+    }
+
+    free(mlist);
+
+    BusyEnd();
+  }
+
+  set(lv, MUIA_NList_Quiet, FALSE);
+  G->AppIconQuiet = FALSE;
+}
+MakeHook(ApplySpamFilterHook, ApplySpamFilterFunc);
 ///
 /// CopyFilterData()
 // copy all data of a filter node (deep copy)
@@ -1467,7 +1458,6 @@ void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
 
   LEAVE();
 }
-
 ///
 /// CopySearchData()
 // copy all data of a search structure (deep copy)
