@@ -1406,7 +1406,7 @@ HOOKPROTONHNONP(ApplySpamFilterFunc, void)
 
         mail = mlist[m+2];
 
-        if(hasStatusNew(mail) && hasStatusAutoSpam(mail))
+        if(hasStatusAutoSpam(mail))
           MA_MoveCopy(mail, infolder, spamfolder, FALSE, FALSE);
 
         BusySet(m+1);

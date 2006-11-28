@@ -6,6 +6,8 @@ $Id$
 
 2006-11-27  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_FI.c: hasStatusNew() is not required as MA_CreateFullList() already
+    assures that only new mail is selected.
   * YAM_FI.c: slightly reworked new ApplySpamFilterHook() by adapting it
     to the STYLEGUIDE. Please no plain Cut&Paste on new functions, go the
     clean way please :)
