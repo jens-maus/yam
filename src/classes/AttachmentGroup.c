@@ -664,8 +664,8 @@ DECLARE(Refresh) // struct Part *firstPart
   // generate an own attachment image for each attachment
   for(rp = msg->firstPart; rp; rp = rp->Next)
   {
-    if(rp->Nr > PART_RAW && rp->Nr != rp->rmData->letterPartNum &&
-       (rp->isAltPart == FALSE || rp->Parent == NULL || rp->Parent->MainAltPart == rp))
+    if(rp->Nr > PART_RAW && rp->Nr != rp->rmData->letterPartNum && (C->DisplayAllAltPart ||
+       (rp->isAltPart == FALSE || rp->Parent == NULL || rp->Parent->MainAltPart == rp)))
     {
       Object *newImage = AttachmentImageObject,
                            MUIA_CycleChain,                 TRUE,
@@ -681,6 +681,7 @@ DECLARE(Refresh) // struct Part *firstPart
                obj, 3, MUIM_AttachmentGroup_ImageDropped, newImage, MUIV_TriggerValue);
 
       DoMethod(obj, OM_ADDMEMBER, newImage);
+
       D(DBF_GUI, "added image obj %08lx for attachment: %ld:%s mp: %08lx %08lx %08lx %08lx", newImage, rp->Nr, rp->Name, rp, rp->ContentType, rp->headerList, rp->rmData);
 
       addedParts++;

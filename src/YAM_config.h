@@ -454,7 +454,6 @@ struct Config
    BOOL  WarnSubject;
    BOOL  FolderCntMenu;
    BOOL  MessageCntMenu;
-   BOOL  AutomaticTranslationIn;
    BOOL  AutoColumnResize;
    BOOL  EmbeddedReadPane;
    BOOL  StatusChangeDelayOn;
@@ -472,6 +471,7 @@ struct Config
    BOOL  SpamFilterForNewMail;
    BOOL  SpamMarkOnMove;
    BOOL  SpamAddressBookIsWhiteList;
+   BOOL  DisplayAllAltPart;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color1stLevel;

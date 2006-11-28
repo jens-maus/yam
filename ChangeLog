@@ -6,6 +6,11 @@ $Id$
 
 2006-11-28  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_CO.c, YAM_COs.c, misc: added a new "DisplayAllAltPart" config option
+    to the [Advanced] section. With this option an advanced users might configure
+    YAM to also display the normally hided alternative parts of a
+    "multipart/alternative" mail. However, for an ordinary user this option
+    shouldn't be changed.
   * BayesFilter.c: removed the check for an alternative part when tokenizing
     attachments as for a SPAM filter the differentiation between an alternative
     part and a normal part shouldn't be made.

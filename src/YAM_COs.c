@@ -558,6 +558,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "StyleFolderNew   = %s\n", MUIStyle2String(co->StyleFolderNew));
       fprintf(fh, "StyleMailUnread  = %s\n", MUIStyle2String(co->StyleMailUnread));
       fprintf(fh, "StyleMailRead    = %s\n", MUIStyle2String(co->StyleMailRead));
+      fprintf(fh, "DisplayAllAltPart= %s\n", Bool2Txt(co->DisplayAllAltPart));
 
       fclose(fh);
       AppendLogVerbose(60, GetStr(MSG_LOG_SavingConfig), fname);
@@ -1178,6 +1179,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "StyleFolderNew")) String2MUIStyle(value, co->StyleFolderNew);
                else if (!stricmp(buffer, "StyleMailUnread")) String2MUIStyle(value, co->StyleMailUnread);
                else if (!stricmp(buffer, "StyleMailRead")) String2MUIStyle(value, co->StyleMailRead);
+               else if (!stricmp(buffer, "DisplayAllAltPart")) co->DisplayAllAltPart = Txt2Bool(value);
                else
                  W(DBF_CONFIG, "unknown config option: '%s' = '%s'", buffer, value);
             }

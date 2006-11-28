@@ -1,4 +1,4 @@
-/***************************************************************************
+/***********-****************************************************************
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
@@ -2754,10 +2754,10 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
       // and if so we check that we only display the plain text one
       if(dodisp)
       {
-        if(part->isAltPart == TRUE && part->Parent != NULL &&
-           part->Parent->MainAltPart != part)
+        if(C->DisplayAllAltPart == FALSE &&
+           (part->isAltPart == TRUE && part->Parent != NULL && part->Parent->MainAltPart != part))
         {
-          D(DBF_MAIL, "flagging part #%d as not displayable!", part->Nr);
+          D(DBF_MAIL, "flagging part #%d as hided.", part->Nr);
 
           dodisp = FALSE;
         }
