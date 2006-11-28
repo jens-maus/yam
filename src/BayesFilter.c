@@ -338,22 +338,20 @@ static void tokenizerTokenizeAttachment(struct Tokenizer *t,
 
   ENTER();
 
-  tmpContentType = strdup(contentType);
-  tmpFileName = strdup(fileName);
-
-  if(tmpContentType != NULL && tmpFileName != NULL)
+  if((tmpContentType = strdup(contentType)))
   {
-    ToLowerCase(tmpContentType);
-    ToLowerCase(tmpFileName);
-    tokenizerAddTokenForHeader(t, "attachment/filename", tmpFileName, FALSE);
-    tokenizerAddTokenForHeader(t, "attachment/content-type", tmpContentType, FALSE);
-  }
+    if((tmpFileName = strdup(fileName)))
+    {
+      ToLowerCase(tmpContentType);
+      ToLowerCase(tmpFileName);
+      tokenizerAddTokenForHeader(t, "attachment/filename", tmpFileName, FALSE);
+      tokenizerAddTokenForHeader(t, "attachment/content-type", tmpContentType, FALSE);
 
-  if(tmpContentType)
+      free(tmpFileName);
+    }
+
     free(tmpContentType);
-
-  if(tmpFileName)
-    free(tmpFileName);
+  }
 
   LEAVE();
 }
@@ -1469,7 +1467,7 @@ static void tokenizeMail(struct Tokenizer *t,
           if(part->headerList != NULL)
             tokenizerTokenizeHeaders(t, part);
 
-          if(part->Nr > PART_RAW && part->Nr != rmData->letterPartNum && (part->isAltPart == FALSE || part->Parent == NULL || part->Parent->MainAltPart == part))
+          if(part->Nr > PART_RAW && part->Nr != rmData->letterPartNum)
             tokenizerTokenizeAttachment(t, part->ContentType, part->Filename);
         }
       }
