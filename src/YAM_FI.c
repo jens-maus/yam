@@ -1275,155 +1275,131 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
   struct Mail *mail;
   struct Mail **mlist = NULL;
   struct Folder *folder;
-  int scnt;
+  struct Folder *spamfolder;
   int matches = 0;
   int minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
   enum ApplyFilterMode mode = arg[0];
   APTR lv = G->MA->GUI.PG_MAILLIST;
   char buf[SIZE_LARGE];
 
-  D(DBF_FILTER, "About to apply filters...");
+  D(DBF_FILTER, "About to apply SPAM filter and user defined filters...");
 
-  folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : FO_GetCurrentFolder();
-  if(!folder)
-    return;
-
-  // if this function was called manually by the user we ask him
-  // if he really wants to apply the filters or not.
-  if(mode == APPLY_USER)
+  if((folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : FO_GetCurrentFolder()) != NULL &&
+     (spamfolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
   {
-    snprintf(buf, sizeof(buf), GetStr(MSG_MA_ConfirmFilter), folder->Name);
-    if(!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), buf))
-      return;
-  }
+    BOOL applyFilters = TRUE;
 
-  memset(&G->RRs, 0, sizeof(struct RuleResult));
-  set(lv, MUIA_NList_Quiet, TRUE);
-  G->AppIconQuiet = TRUE;
-
-  if((scnt = AllocFilterSearch(mode)))
-  {
-    if(mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL)
+    // if this function was called manually by the user we ask him
+    // if he really wants to apply the filters or not.
+    if(mode == APPLY_USER)
     {
-      if((mlist = MA_CreateMarkedList(lv, mode == APPLY_RX)) && (int)mlist[0] < minselected)
-      {
-        free(mlist);
-        mlist = NULL;
-      }
+      snprintf(buf, sizeof(buf), GetStr(MSG_MA_ConfirmFilter), folder->Name);
+      if(!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), buf))
+        applyFilters = FALSE;
     }
 
-    if(!mlist)
-      mlist = MA_CreateFullList(folder, (mode == APPLY_AUTO || mode == APPLY_RX));
-
-    if(mlist)
+    // the user has not cancelled the filter process
+    if(applyFilters)
     {
-      int m;
+      memset(&G->RRs, 0, sizeof(struct RuleResult));
+      set(lv, MUIA_NList_Quiet, TRUE);
+      G->AppIconQuiet = TRUE;
 
-      BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
-      for(m = 0; m < (int)*mlist; m++)
+      if(mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL)
       {
-        struct MinNode *curNode;
-
-        mail = mlist[m+2];
-
-        if((mode == APPLY_AUTO || mode == APPLY_RX) && !hasStatusNew(mail))
-          continue;
-
-        G->RRs.Checked++;
-
-        // now we process the search
-        for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+        if((mlist = MA_CreateMarkedList(lv, mode == APPLY_RX)) && (int)mlist[0] < minselected)
         {
-          struct FilterNode *filter = (struct FilterNode *)curNode;
+          free(mlist);
+          mlist = NULL;
+        }
+      }
 
-          if(DoFilterSearch(filter, mail))
+      if(!mlist)
+        mlist = MA_CreateFullList(folder, (mode == APPLY_AUTO || mode == APPLY_RX));
+
+      if(mlist)
+      {
+        int m;
+        int scnt;
+
+        scnt = AllocFilterSearch(mode);
+
+        BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
+        for(m = 0; m < (int)*mlist; m++)
+        {
+          BOOL isSpam = FALSE;
+          struct MinNode *curNode;
+
+          mail = mlist[m+2];
+
+          if(mode == APPLY_AUTO && C->SpamFilterEnabled)
           {
-            matches++;
+            // check if we just filter new mail or a user triggered spam recognition
+            if(C->SpamFilterForNewMail && hasStatusAutoSpam(mail))
+              isSpam = TRUE;
+            else if(mode == APPLY_SPAM && !hasStatusSpam(mail) && BayesFilterClassifyMessage(mail))
+            {
+              setStatusToAutoSpam(mail);
+              isSpam = TRUE;
+            }
+          }
 
-            // if ExecuteFilterAction returns FALSE then the filter search should be aborted
-            // completley
-            if(ExecuteFilterAction(filter, mail) == FALSE)
-              break;
+          if(isSpam)
+          {
+            // move newly recognized spam to the spam folder
+            MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
+          }
+          else if(scnt > 0)
+          {
+            // apply all other user defined filters (if they exist) for non-spam mails
+            // or if the spam filter is disabled
+            G->RRs.Checked++;
+
+            // now we process the search
+            for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+            {
+              struct FilterNode *filter = (struct FilterNode *)curNode;
+
+              if(DoFilterSearch(filter, mail))
+              {
+                matches++;
+
+                // if ExecuteFilterAction returns FALSE then the filter search should be aborted
+                // completley
+                if(ExecuteFilterAction(filter, mail) == FALSE)
+                  break;
+              }
+            }
+
+            BusySet(m+1);
           }
         }
 
-        BusySet(m+1);
+        FreeFilterSearch();
+
+        if(G->RRs.Checked)
+          AppendLog(26, GetStr(MSG_LOG_Filtering), G->RRs.Checked, folder->Name, matches);
+
+        BusyEnd();
+
+        free(mlist);
       }
-      free(mlist);
 
-      if(G->RRs.Checked)
-        AppendLog(26, GetStr(MSG_LOG_Filtering), G->RRs.Checked, folder->Name, matches);
+      set(lv, MUIA_NList_Quiet, FALSE);
+      G->AppIconQuiet = FALSE;
 
-      BusyEnd();
+      if(mode != APPLY_AUTO)
+        DisplayStatistics(NULL, TRUE);
+
+      if(G->RRs.Checked && mode == APPLY_USER)
+      {
+        snprintf(buf, sizeof(buf), GetStr(MSG_MA_FilterStats), G->RRs.Checked, G->RRs.Forwarded, G->RRs.Moved, G->RRs.Deleted);
+        MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), buf);
+      }
     }
-
-    FreeFilterSearch();
-  }
-
-  set(lv, MUIA_NList_Quiet, FALSE);
-  G->AppIconQuiet = FALSE;
-
-  if(mode != APPLY_AUTO)
-    DisplayStatistics(NULL, TRUE);
-
-  if(G->RRs.Checked && mode == APPLY_USER)
-  {
-    snprintf(buf, sizeof(buf), GetStr(MSG_MA_FilterStats), G->RRs.Checked, G->RRs.Forwarded, G->RRs.Moved, G->RRs.Deleted);
-    MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), buf);
   }
 }
 MakeHook(ApplyFiltersHook, ApplyFiltersFunc);
-///
-/// ApplySpamFilterFunc()
-//  Automatically move newly received mails to the spam folder
-HOOKPROTONHNONP(ApplySpamFilterFunc, void)
-{
-  struct Folder *infolder;
-  struct Folder *spamfolder;
-
-  ENTER();
-
-  D(DBF_FILTER, "About to apply SPAM filter and move mail...");
-
-  if((infolder = FO_GetFolderByType(FT_INCOMING, NULL)) &&
-     (spamfolder = FO_GetFolderByType(FT_SPAM, NULL)))
-  {
-    struct Mail **mlist;
-    Object *lv = G->MA->GUI.PG_MAILLIST;
-
-    set(lv, MUIA_NList_Quiet, TRUE);
-    G->AppIconQuiet = TRUE;
-
-    if((mlist = MA_CreateFullList(infolder, TRUE)) != NULL)
-    {
-      int m;
-
-      BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
-
-      for(m = 0; m < (int)*mlist; m++)
-      {
-        struct Mail *mail;
-
-        mail = mlist[m+2];
-
-        if(hasStatusAutoSpam(mail))
-          MA_MoveCopy(mail, infolder, spamfolder, FALSE, FALSE);
-
-        BusySet(m+1);
-      }
-
-      free(mlist);
-
-      BusyEnd();
-    }
-
-    set(lv, MUIA_NList_Quiet, FALSE);
-    G->AppIconQuiet = FALSE;
-  }
-
-  LEAVE();
-}
-MakeHook(ApplySpamFilterHook, ApplySpamFilterFunc);
 ///
 /// CopyFilterData()
 // copy all data of a filter node (deep copy)

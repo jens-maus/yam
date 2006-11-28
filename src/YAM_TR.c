@@ -67,7 +67,6 @@
 #include "YAM_md5.h"
 #include "YAM_mime.h"
 #include "YAM_utilities.h"
-#include "BayesFilter.h"
 #include "HashTable.h"
 
 #include "classes/Classes.h"
@@ -2466,9 +2465,6 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       if(G->TR->Stats.Downloaded > 0)
       {
         struct Folder *folder;
-
-        if(C->SpamFilterEnabled && C->SpamFilterForNewMail)
-          DoMethod(G->App, MUIM_CallHook, &ApplySpamFilterHook);
 
         DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, APPLY_AUTO, 0);
 
@@ -5077,9 +5073,6 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
             GetSysTimeUTC(&new->transDate);
 
             new->sflags = SFLAG_NEW;
-            if(C->SpamFilterEnabled && C->SpamFilterForNewMail && BayesFilterClassifyMessage(new))
-              SET_FLAG(new->sflags, SFLAG_AUTOSPAM);
-
             MA_UpdateMailFile(new);
 
             if(FO_GetCurrentFolder() == infolder)

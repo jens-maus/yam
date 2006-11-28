@@ -4,6 +4,18 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-28  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c, YAM_TR.c: ApplyFiltersFunc() now does all the work. That means
+    that we are back to the old state (only one filter function). This single
+    function is able to detect spam mails and (if desired) move them to the spam
+    folder. By moving the spam recognition into YAM_FI.c there is no more delay
+    upon downloading mails and checking each of them for spam contents right
+    after downloading a single mail. Slow machines should benefit from this,
+    especially when a mail contains quite large attachments. Future extensions
+    should accept a list of mails to be checked for spam instead of iterating
+    through all mails in the inbound folder.
+
 2006-11-28  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_CO.c, YAM_COs.c, misc: added a new "DisplayAllAltPart" config option
