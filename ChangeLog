@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-27  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_FI.c: slightly reworked new ApplySpamFilterHook() by adapting it
+    to the STYLEGUIDE. Please no plain Cut&Paste on new functions, go the
+    clean way please :)
+
 2006-11-27  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c, YAM_TR.c: moving automatic recognized new spam mails to the spam

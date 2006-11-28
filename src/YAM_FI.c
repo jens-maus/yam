@@ -1378,45 +1378,50 @@ MakeHook(ApplyFiltersHook, ApplyFiltersFunc);
 //  Automatically move newly received mails to the spam folder
 HOOKPROTONHNONP(ApplySpamFilterFunc, void)
 {
-  struct Folder *infolder, *spamfolder;
-  struct Mail **mlist;
-  APTR lv = G->MA->GUI.PG_MAILLIST;
+  struct Folder *infolder;
+  struct Folder *spamfolder;
 
-  D(DBF_FILTER, "About to apply spam filter...");
+  ENTER();
 
-  infolder = FO_GetFolderByType(FT_INCOMING, NULL);
-  spamfolder = FO_GetFolderByType(FT_SPAM, NULL);
-  if(!infolder || !spamfolder)
-    return;
+  D(DBF_FILTER, "About to apply SPAM filter and move mail...");
 
-  set(lv, MUIA_NList_Quiet, TRUE);
-  G->AppIconQuiet = TRUE;
-
-  if((mlist = MA_CreateFullList(infolder, TRUE)) != NULL)
+  if((infolder = FO_GetFolderByType(FT_INCOMING, NULL)) &&
+     (spamfolder = FO_GetFolderByType(FT_SPAM, NULL)))
   {
-    int m;
+    struct Mail **mlist;
+    Object *lv = G->MA->GUI.PG_MAILLIST;
 
-    BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
+    set(lv, MUIA_NList_Quiet, TRUE);
+    G->AppIconQuiet = TRUE;
 
-    for(m = 0; m < (int)*mlist; m++)
+    if((mlist = MA_CreateFullList(infolder, TRUE)) != NULL)
     {
-      struct Mail *mail;
+      int m;
 
-      mail = mlist[m+2];
+      BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
 
-      if(hasStatusNew(mail) && hasStatusAutoSpam(mail))
-        MA_MoveCopy(mail, infolder, spamfolder, FALSE, FALSE);
+      for(m = 0; m < (int)*mlist; m++)
+      {
+        struct Mail *mail;
 
-      BusySet(m+1);
+        mail = mlist[m+2];
+
+        if(hasStatusNew(mail) && hasStatusAutoSpam(mail))
+          MA_MoveCopy(mail, infolder, spamfolder, FALSE, FALSE);
+
+        BusySet(m+1);
+      }
+
+      free(mlist);
+
+      BusyEnd();
     }
 
-    free(mlist);
-
-    BusyEnd();
+    set(lv, MUIA_NList_Quiet, FALSE);
+    G->AppIconQuiet = FALSE;
   }
 
-  set(lv, MUIA_NList_Quiet, FALSE);
-  G->AppIconQuiet = FALSE;
+  LEAVE();
 }
 MakeHook(ApplySpamFilterHook, ApplySpamFilterFunc);
 ///
