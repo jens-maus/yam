@@ -58,7 +58,7 @@ struct FI_ClassData
   BOOL              DisposeOnEnd;
 };
 
-enum ApplyFilterMode  { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE, APPLY_RX_ALL, APPLY_RX };
+enum ApplyFilterMode  { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE, APPLY_RX_ALL, APPLY_RX, APPLY_SPAM };
 enum FastSearch       { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
 enum SearchMode       { SM_FROM=0, SM_TO, SM_CC, SM_REPLYTO, SM_SUBJECT, SM_DATE, SM_HEADLINE,
                         SM_SIZE, SM_HEADER, SM_BODY, SM_WHOLE, SM_STATUS, SM_SPAM };
