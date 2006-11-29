@@ -4,7 +4,7 @@
 ;
 ## chunk AUTH Alexandre Balaban
 ; $Id$
-; based on YAM.cd 2437 2006-11-19 13:00:47Z
+; based on YAAM.cd 2495 2006-11-29 20:47:53Z
 ;
 ; General
 ;
@@ -4750,19 +4750,19 @@ Identifiant POP3
 ; POP3 login
 ;
 MSG_TR_SendAPOPLogin
-Envoie les informations APOP...
+Envoi des informations APOP...
 ; Sending APOP login information...
 ;
 MSG_TR_SendUserID
-Envoie l'ID utilisateur...
+Envoi de l'ID utilisateur...
 ; Sending user ID...
 ;
 MSG_TR_SendPassword
-Envoie le mot de passe...
+Envoi du mot de passe...
 ; Sending password...
 ;
 MSG_TR_GetStats
-Récupère les statistiques...
+Récupèration des statistiques...
 ; Getting statistics...
 ;
 MSG_TR_Disconnecting
@@ -4770,19 +4770,19 @@ Déconnexion...
 ; Disconnecting...
 ;
 MSG_TR_ApplyFilters
-Applique le filtrage à distance...
+Application du filtrage à distance...
 ; Applying remote filters...
 ;
 MSG_TR_SendHello
-Envoie « Hello »...
+Envoi « Hello »...
 ; Sending 'Hello'...
 ;
 MSG_TR_Exporting
-Exporte les messages...
+Export les messages...
 ; Exporting message...
 ;
 MSG_TR_Sending
-Envoie le courrier...
+Envoi du courrier...
 ; Sending message...
 ;
 MSG_TR_Importing
@@ -5902,7 +5902,7 @@ Vide le dossier « Effacés »...
 ; Emptying trash folder...
 ;
 MSG_BusyGettingVerInfo
-Récupération des informations de mise à jour...
+Recherche des informations de mise à jour...
 ; Getting update information...
 ;
 MSG_BusyLoadingIndex
@@ -8210,176 +8210,159 @@ MSG_MA_SPAM
 Courrier indésirable
 ; Spam
 ;
-;
 MSG_LOADINGSPAMTRAININGDATA
 Chargement de l'apprentissage sur les courriers indésirables...
 ; Loading spam training data...
-;
 ;
 MSG_MA_TBSPAM
 Indésirable
 ; Spam
 ;
-;
 MSG_MA_TBNOTSPAM
 Acceptable
 ; Not Spam
-;
 ;
 MSG_HELP_MA_BT_SPAM
 Marque ce message comme indésirable
 ; Mark mail as spam
 ;
-;
 MSG_HELP_MA_BT_NOTSPAM
 Marque ce message comme acceptable
 ; Mark mail as not spam
-;
 ;
 MSG_RE_TBSPAM
 Indésirable
 ; Spam
 ;
-;
 MSG_RE_TBNOTSPAM
 Acceptable
 ; Not Spam
-;
 ;
 MSG_HELP_RE_BT_SPAM
 Marque ce message comme indésirable
 ; Mark mail as spam
 ;
-;
 MSG_HELP_RE_BT_NOTSPAM
 Marque ce message comme acceptable
 ; Mark mail as not spam
 ;
-;
 MSG_LOG_MAILISSPAM
 Le message de '%s' à propos de '%s' est considéré comme indésirable
 ; Message from '%s' about '%s' is treated as spam
-;
 ; SENDER, SUBJECT
 ;
 MSG_LOG_MAILISNOTSPAM
 Le message de '%s' à propos de '%s' n'est plus considéré comme indésirable
 ; Message from '%s' about '%s' is no longer treated as spam
-;
 ; SENDER, SUBJECT
 ;
 MSG_FI_STATSPAM
 Courrier indésirable
 ; Spam
 ;
-;
 MSG_MA_TOSPAM
 Courrier indésirable
 ; Spam
-;
 ;
 MSG_MA_TONOTSPAM
 Courrier acceptable
 ; Not Spam
 ;
-;
 MSG_RE_SETSPAM
 Positionner le statut à indésirable
 ; Set status to spam
-;
 ;
 MSG_RE_SETNOTSPAM
 Positionner le statut à acceptable
 ; Set status to not spam
 ;
-;
 MSG_CO_CRDSPAMFILTER
 Courrier indésirable
 ; Spam
-;
 ;
 MSG_CO_SPAMFILTER
 Filtre de courrier indésirable
 ; Spam filter
 ;
-;
 MSG_CO_SPAMFILTER_TITLE
 Filtre des courriers indésirables
 ; Spam filter
-;
 ;
 MSG_CO_SPAMFILTER_SUMMARY
 Pour configurer le filtre des courriers indésirables...
 ; Configure spam filter...
 ;
-;
 MSG_CO_SPAM_FILTERFORNEWMAIL
 Vérifier les messages pour le contenu indésirable
 ; Check new mails for spam content
-;
 ;
 MSG_CO_SPAM_RESETTRAININGDATA
 _Réinitialiser l'apprentissage
 ; _Reset training data
 ;
-;
 MSG_CO_SPAM_GOODCOUNT
 Nombre de courriers classés comme "acceptables"
 ; Number of "not spam" classified mails
-;
 ;
 MSG_CO_SPAM_BADCOUNT
 Nombre de courriers classés comme "indésirables"
 ; Number of "spam" classified mails
 ;
-;
 MSG_CO_SPAM_PROBABILITYTHRESHOLD
 Considérer comme indésirable lorsque la probabilité est supérieure ou égale à
 ; Treat mails as spam if spam probability is greater or equal
-;
 ;
 MSG_CO_NB_SPAMPROBTHRESHOLDFMT
 %ld%%
 ; %ld%%
 ;
-;
 MSG_BUSYFLUSHINGSPAMTRAININGDATA
 Nettoyage de l'apprentissage des indésirables...
 ; Flushing spam training data...
-;
 ;
 MSG_CO_SPAM_MARKONMOVE
 Marquer comme indésirables les courriers déplacés vers le dossier 'Indésirable'
 ; Mark mails as spam when moved to the spam folder
 ;
-;
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
 Le carnet d'adresse est une liste blanche
 ; Address book is white list
-;
 ;
 MSG_CO_SPAM_RECOGNITION
 Reconnaissance des courriers indésirables
 ; Spam recognition
 ;
-;
 MSG_CO_SPAM_FILTERENABLED
 Activer le filtrage des courriers indésirables
 ; Spam filter enabled
-;
 ;
 MSG_CO_SPAM_RESETTRAININGDATAASK
 Voulez-vous réellement réinitialiser les\n\
 données d'apprentissage de détection des\n\
 courriers indésirables ?\n\
 \n\
-Le filtre de courriers indésirable devra\n\
+Le filtre des courriers indésirables devra\n\
 alors être entraîné à nouveau après ça !
 ; Do you really want to reset the spam filter's\n\
 ; training data?\n\
 ; \n\
 ; The spam filter must be trained again afterwards!
 ;
+MSG_CO_SPAM_DISABLEFILTERASK_OLD
+Voulez-vous également réinitialiser les\n\
+données d'apprentissage et les indicateurs\n\
+des messages ?\n\
+\n\
+Le filtre des courriers indésirables devra\n\
+alors être entraîné à nouveau après ça !
+; Do you also want to reset the spam filter's\n\
+; training data and all mail flags?\n\
+; \n\
+; The spam filter must be trained again afterwards!
+;
+MSG_TR_CHECKUIDL
+Vérification des UIDL pour éviter les doublons...
+; Checking UIDLs to avoid duplicates...
 ;
 MSG_CO_SPAM_DISABLEFILTERASK
 Voulez-vous également réinitialiser les\n\
@@ -8388,9 +8371,18 @@ courriers indésirables ?\n\
 \n\
 Le filtre de courriers indésirable devra\n\
 alors être entraîné à nouveau après ça !
-; Do you also want to reset the spam filter's\n\
-; training data?\n\
+; The spam filter has just been disabled!\n\
+; Do you also want to reset/delete these items?\n\
 ; \n\
 ; The spam filter must be trained again afterwards!
+;
+MSG_CO_SPAM_RESETMAILFLAGS
+_Réinitialiser l'état indésirable de tous les messages
+; Reset _spam state of all mails
+;
+;
+MSG_CO_SPAM_DELETESPAMFOLDER
+Vider le dossier Courrier indésirable
+; _Delete spam folder
 ;
 ;

@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-29  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/francais.ct: minor update and typo fixing.
+
 2006-11-29  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c, YAM_COs.c, locale/YAM.cd, locale/deutsch.ct: when disabling the
