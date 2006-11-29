@@ -1241,67 +1241,6 @@ MakeHookWithData(ScriptsReqStopHook,       FileRequestStopFunc, VPM_SCRIPTS);
 MakeHookWithData(MimeDefViewerReqStopHook, FileRequestStopFunc, VPM_MIME_DEFVIEWER);
 MakeHookWithData(MimeCommandReqStopHook,   FileRequestStopFunc, VPM_MIME_COMMAND);
 ///
-
-///
-/// DisableSpamFilterFunc
-//  asks the user if spam trainging data should be reset when filter is disabled
-HOOKPROTONHNONP(DisableSpamFilterFunc, void)
-{
-  ENTER();
-
-  if (MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_SPAM_DISABLEFILTERASK)))
-  {
-    struct Folder **flist;
-
-    // let the application sleep
-    set(G->App, MUIA_Application_Sleep, TRUE);
-
-    if((flist = FO_CreateList()) != NULL)
-    {
-      int j;
-
-      // iterate over all available folders
-      for(j = 1; j <= (int)*flist; j++)
-      {
-        struct Folder *folder = flist[j];
-
-        if(!isGroupFolder(folder))
-        {
-          struct Mail **mlist;
-
-          if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
-          {
-            int i;
-
-            // clear all possible spam/ham flags from each mail
-            for(i = 0; i < (int)*mlist; i++)
-            {
-              MA_ChangeMailStatus(mlist[i+2], SFLAG_NONE, SFLAG_USERSPAM|SFLAG_AUTOSPAM|SFLAG_HAM);
-            }
-
-            free(mlist);
-          }
-        }
-      }
-
-      free(flist);
-    }
-
-    BayesFilterResetTrainingData();
-
-    // good/bad count can only be zero after a reset
-    set(G->CO->GUI.TX_SPAMGOODCOUNT, MUIA_Text_Contents, "0");
-    set(G->CO->GUI.TX_SPAMBADCOUNT, MUIA_Text_Contents, "0");
-
-    // wake up the application again
-    set(G->App, MUIA_Application_Sleep, FALSE);
-  }
-
-  LEAVE();
-}
-MakeStaticHook(DisableSpamFilterHook, DisableSpamFilterFunc);
-
-///
 /// ResetSpamTrainingData()
 //  resets the spam training data
 HOOKPROTONHNONP(ResetSpamTrainingDataFunc, void)
@@ -3283,7 +3222,6 @@ Object *CO_PageSpam(struct CO_ClassData *data)
          Child, HVSpace,
       End))
    {
-      DoMethod(data->GUI.CH_SPAMFILTERENABLED,     MUIM_Notify, MUIA_Selected, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &DisableSpamFilterHook);
       DoMethod(data->GUI.BT_SPAMRESETTRAININGDATA, MUIM_Notify, MUIA_Pressed,  FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &ResetSpamTrainingDataHook);
    }
    return grp;

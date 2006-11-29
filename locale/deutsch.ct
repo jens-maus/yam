@@ -7466,9 +7466,24 @@ Spamfilters zurücksetzen?\n\
 \n\
 Der Spamfilter muss danach erneut trainiert werden!
 ;
-MSG_CO_SPAM_DISABLEFILTERASK
+MSG_CO_SPAM_DISABLEFILTERASK_OLD
 Wollen Sie zusätzlich auch die Trainingsdaten des Spamfilters\n\
 und den Spamstatus aller Nachrichten zurücksetzen?\n\
 \n\
 Der Spamfilter muss danach erneut trainiert werden!
+;
+MSG_TR_CHECKUIDL
+Prüfe UIDLs um Duplikate zu vermeiden
+;
+MSG_CO_SPAM_DISABLEFILTERASK
+Der Spamfilter wurde deaktiviert!\n\
+Wollen Sie auch diese Daten löschen?\n\
+\n\
+Der Spamfilter muss danach erneut trainiert werden!
+;
+MSG_CO_SPAM_RESETMAILFLAGS
+_Spam-Status aller Mails zurücksetzen
+;
+MSG_CO_SPAM_DELETESPAMFOLDER
+Spam-Ordner _löschen
 ;

@@ -1279,6 +1279,60 @@ void CO_GetConfig(void)
          CE->SpamMarkOnMove = GetMUICheck(gui->CH_SPAMMARKONMOVE);
          CE->SpamAddressBookIsWhiteList = GetMUICheck(gui->CH_SPAMABOOKISWHITELIST);
          CE->SpamProbabilityThreshold = GetMUINumer(gui->NB_SPAMPROBTHRESHOLD);
+
+         if(C->SpamFilterEnabled ==TRUE && CE->SpamFilterEnabled == FALSE)
+         {
+           ULONG mask;
+
+           mask = CheckboxRequest(G->CO->GUI.WI, 0, NULL, 3, GetStr(MSG_CO_SPAM_DISABLEFILTERASK), GetStr(MSG_CO_SPAM_RESETTRAININGDATA), GetStr(MSG_CO_SPAM_RESETMAILFLAGS), GetStr(MSG_CO_SPAM_DELETESPAMFOLDER));
+
+           // reset training data
+           if(mask & (1 << 0))
+             BayesFilterResetTrainingData();
+
+           // reset spam state of all mails
+           if(mask & (1 << 1))
+           {
+             struct Folder **flist;
+
+             if((flist = FO_CreateList()) != NULL)
+             {
+               int j;
+
+               // iterate over all available folders
+               for(j = 1; j <= (int)*flist; j++)
+               {
+                 struct Folder *folder = flist[j];
+
+                 if(!isGroupFolder(folder))
+                 {
+                   struct Mail **mlist;
+
+                   if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
+                   {
+                     int i;
+
+                     // clear all possible spam/ham flags from each mail
+                     for(i = 0; i < (int)*mlist; i++)
+                     {
+                       MA_ChangeMailStatus(mlist[i+2], SFLAG_NONE, SFLAG_USERSPAM|SFLAG_AUTOSPAM|SFLAG_HAM);
+                     }
+
+                     free(mlist);
+                   }
+                 }
+               }
+
+               free(flist);
+             }
+           }
+
+           // delete spam folder
+           if(mask & (1 << 2))
+           {
+             // not yet implemented
+           }
+         }
          break;
 
       case cp_Read:

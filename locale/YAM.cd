@@ -5996,7 +5996,7 @@ training data?\n\
 \n\
 The spam filter must be trained again afterwards!
 ;
-MSG_CO_SPAM_DISABLEFILTERASK (1777//)
+MSG_CO_SPAM_DISABLEFILTERASK_OLD (1777//)
 Do you also want to reset the spam filter's\n\
 training data and all mail flags?\n\
 \n\
@@ -6004,4 +6004,16 @@ The spam filter must be trained again afterwards!
 ;
 MSG_TR_CHECKUIDL (1778//)
 Checking UIDLs to avoid duplicates...
+;
+MSG_CO_SPAM_DISABLEFILTERASK (1779//)
+The spam filter has just been disabled!\n\
+Do you also want to reset/delete these items?\n\
+\n\
+The spam filter must be trained again afterwards!
+;
+MSG_CO_SPAM_RESETMAILFLAGS (1780//)
+Reset _spam state of all mails
+;
+MSG_CO_SPAM_DELETESPAMFOLDER (1781//)
+_Delete spam folder
 ;

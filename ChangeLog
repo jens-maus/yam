@@ -6,6 +6,12 @@ $Id$
 
 2006-11-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c, YAM_COs.c, locale/YAM.cd, locale/deutsch.ct: when disabling the
+    spam filter the requester to ask for further actions now pops up when either
+    the "Save" or "Use" button is clicked and no longer immediately.
+    Additionally one can now choose exactly which data should be reset. The new
+    CheckboxRequest() function is used for this purpose. Also adapted the
+    catalog accordingly.
   * YAM_UT.c, YAM_utilities.h: added new function CheckboxRequest() which puts
     up a requester with customizable checkboxes and labels.
   * BayesFilter.c: the training data are now always written to disk upon exit if
