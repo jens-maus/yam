@@ -729,7 +729,6 @@ static int PassphraseRequest(char *string, int size, Object *parent)
   return ret_code;
 }
 ///
-
 /// FolderRequest
 //  Allows user to choose a folder from a list
 struct Folder *FolderRequest(const char *title, const char *body, const char *yestext, const char *notext,
@@ -1018,6 +1017,165 @@ void InfoWindow(const char *title, const char *body, const char *oktext, APTR pa
       set(wi_iw, MUIA_Window_DefaultObject, bt_okay);
       set(wi_iw, MUIA_Window_Open, TRUE);
    }
+}
+///
+/// CheckboxRequestFunc
+// Displays a requester with a list of checkboxes
+struct MUIP_CheckboxRequesterMsg
+{
+    ULONG active;
+    ULONG *valuePtr;
+    ULONG bitMask;
+};
+
+HOOKPROTONHNO(CheckboxRequesterFunc, void, struct MUIP_CheckboxRequesterMsg *msg)
+{
+  ENTER();
+
+  if(msg->active)
+    *msg->valuePtr |= msg->bitMask;
+  else
+    *msg->valuePtr &= ~msg->bitMask;
+
+  LEAVE();
+}
+MakeStaticHook(CheckboxRequesterHook, CheckboxRequesterFunc);
+///
+/// CheckboxRequest
+// Displays a requester with a list of checkboxes
+ULONG CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG numBoxes, const char *text, ...)
+{
+  char *title = NULL;
+  Object *cb_group;
+  Object *wi_cb;
+  Object *bt_okay;
+  ULONG result = 0;
+
+  ENTER();
+
+  // as the title and gadgets are const, we provide
+  // local copies of those string to not risk and .rodata
+  // access.
+  if(tit)
+    title = strdup(tit);
+
+  wi_cb = WindowObject,
+    MUIA_Window_Title,      title ? title : "YAM",
+    MUIA_Window_ID,         MAKE_ID('C','R','E','Q'),
+    MUIA_Window_RefWindow,  win,
+    MUIA_Window_LeftEdge,   MUIV_Window_LeftEdge_Centered,
+    MUIA_Window_TopEdge,    MUIV_Window_TopEdge_Centered,
+    MUIA_Window_Width,      MUIV_Window_Width_MinMax(20),
+    MUIA_Window_Height,     MUIV_Window_Height_MinMax(20),
+
+    WindowContents, VGroup,
+       MUIA_Background, MUII_RequesterBack,
+       Child, VGroup,
+          GroupFrame,
+          MUIA_Background, MUII_GroupBack,
+          Child, TextObject,
+             MUIA_Text_Contents, text,
+             MUIA_Text_SetMax,   TRUE,
+          End,
+          Child, VSpace(4),
+          Child, cb_group = ColGroup(2),
+             MUIA_Background, MUII_GroupBack,
+          End,
+       End,
+       Child, ColGroup(3),
+          Child, HSpace(0),
+          Child, bt_okay = MakeButton(GetStr(MSG_Okay)),
+          Child, HSpace(0),
+       End,
+    End,
+  End;
+
+  if(wi_cb)
+  {
+    va_list args;
+    ULONG i;
+
+    set(G->App, MUIA_Application_Sleep, TRUE);
+    DoMethod(G->App, OM_ADDMEMBER, wi_cb);
+
+    // prepare the group for the change.
+    DoMethod(cb_group, MUIM_Group_InitChange);
+
+    va_start(args, text);
+
+    // now we create the checkboxes for the requester
+    for(i = 0; i < numBoxes; i++)
+    {
+      char *label;
+
+      Object *cb_temp;
+      Object *lb_temp;
+
+      label = va_arg(args, char *);
+
+      // create the checkbox object now.
+      cb_temp = MakeCheck(label);
+      lb_temp = LLabel(label);
+
+      if(cb_temp != NULL && lb_temp != NULL)
+      {
+        set(cb_temp, MUIA_Selected, TRUE);
+        DoMethod(cb_temp, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, G->App, 5, MUIM_CallHook, &CheckboxRequesterHook, MUIV_TriggerValue, &result, (1 << i));
+        DoMethod(cb_group, OM_ADDMEMBER, cb_temp);
+        DoMethod(cb_group, OM_ADDMEMBER, lb_temp);
+
+        // the checkbox is active be default, so we set the corresponding bit in the result value
+        result |= (1 << i);
+      }
+    }
+
+    va_end(args);
+
+    DoMethod(cb_group, MUIM_Group_ExitChange);
+
+    DoMethod(bt_okay, MUIM_Notify, MUIA_Pressed,             FALSE, G->App, 2, MUIM_Application_ReturnID, 1);
+    DoMethod(wi_cb,   MUIM_Notify, MUIA_Window_CloseRequest, TRUE,  G->App, 2, MUIM_Application_ReturnID, 2);
+
+    // lets collect the waiting returnIDs now
+    COLLECT_RETURNIDS;
+
+    if(!SafeOpenWindow(wi_cb))
+      result = 0;
+    else
+    {
+      BOOL done = FALSE;
+
+      while(done == FALSE)
+      {
+        static ULONG signals=0;
+
+        switch(DoMethod(G->App, MUIM_Application_NewInput, &signals))
+        {
+          case 1: done = TRUE; break;
+          case 2: result = 0; done = TRUE; break;
+        }
+
+        if(done == FALSE && signals)
+          signals = Wait(signals);
+      }
+    }
+
+    // now lets reissue the collected returnIDs again
+    REISSUE_RETURNIDS;
+
+    // remove & dispose the requester object
+    DoMethod(G->App, OM_REMMEMBER, wi_cb);
+    MUI_DisposeObject(wi_cb);
+
+    // wake up the application
+    set(G->App, MUIA_Application_Sleep, FALSE);
+  }
+
+  if(title)
+    free(title);
+
+  RETURN(result);
+  return result;
 }
 ///
 
@@ -6067,7 +6225,6 @@ abort:
 
   return success ? &(Z[lz]) : NULL;
 }
-
 ///
 /// CRC32()
 //  Function that calculates a 32bit crc checksum for a provided buffer.
@@ -6141,7 +6298,6 @@ ULONG CRC32(void *buffer, unsigned int count, ULONG crc)
 
   return crc;
 }
-
 ///
 
 /*** REXX interface support ***/
@@ -6163,7 +6319,6 @@ void InsertAddresses(APTR obj, char **addr, BOOL add)
    }
 }
 ///
-
 /// AllocReqText
 //  Prepare multi-line text for requesters, converts \n to line breaks
 char *AllocReqText(char *s)
@@ -6176,7 +6331,6 @@ char *AllocReqText(char *s)
    return reqtext;
 }
 ///
-
 /// ToLowerCase
 //  Change a complete string to lower case
 void ToLowerCase(char *str)
@@ -6190,7 +6344,6 @@ void ToLowerCase(char *str)
 
     LEAVE();
 }
-
 ///
 /// WriteUInt32()
 //  write a 32bit variable to a stream, big endian style
@@ -6208,7 +6361,6 @@ int WriteUInt32(FILE *stream, ULONG value)
   RETURN(n);
   return n;
 }
-
 ///
 /// ReadUInt32()
 //  read a 32bit variable from a stream, big endian style
@@ -6227,6 +6379,5 @@ int ReadUInt32(FILE *stream, ULONG *value)
   RETURN(n);
   return n;
 }
-
 ///
 

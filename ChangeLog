@@ -6,6 +6,8 @@ $Id$
 
 2006-11-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c, YAM_utilities.h: added new function CheckboxRequest() which puts
+    up a requester with customizable checkboxes and labels.
   * BayesFilter.c: the training data are now always written to disk upon exit if
     there are any tokens and if something has changed since the last flush.
 

@@ -271,6 +271,7 @@ struct Part *AttachRequest(const char *title, const char *body, const char *yest
 char *   BuildAddrName(char *address, char *name);
 void     Busy(const char *text, const char *parameter, int cur, int max);
 BOOL     CheckPrinter(void);
+ULONG    CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG numBoxes, const char *text, ...);
 void     ClearMailList(struct Folder *folder, BOOL resetstats);
 void     CloseTempFile(struct TempFile *tf);
 ULONG    CRC32(void *buffer, unsigned int count, ULONG crc);
