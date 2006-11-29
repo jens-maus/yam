@@ -1401,8 +1401,7 @@ BOOL BayesFilterInit(void)
 
   if(tokenAnalyzerInit(&spamFilter))
   {
-    if(C->SpamFilterEnabled)
-      tokenAnalyzerReadTrainingData(&spamFilter);
+    tokenAnalyzerReadTrainingData(&spamFilter);
 
     result = TRUE;
   }
@@ -1417,21 +1416,10 @@ void BayesFilterCleanup(void)
 {
   ENTER();
 
-  if(C->SpamFilterEnabled)
+  // only write the spam training data to disk if there are any tokens and if something has changed since the last flush
+  if(spamFilter.numDirtyingMessages > 0 && (spamFilter.goodCount > 0 || spamFilter.badCount > 0))
   {
-    // write the spam training data to disk
     tokenAnalyzerWriteTrainingData(&spamFilter);
-  }
-  else
-  {
-    char fname[SIZE_PATHFILE];
-
-    // prepare the filename for saving
-    strmfp(fname, G->MA_MailDir, SPAMDATAFILE);
-
-    // the spam filter is not enabled, so delete the training data, if they exist
-    if(FileExists(fname))
-      DeleteFile(fname);
   }
 
   tokenAnalyzerCleanup(&spamFilter);
@@ -1588,5 +1576,4 @@ void BayesFilterResetTrainingData(void)
   LEAVE();
 }
 ///
-
 

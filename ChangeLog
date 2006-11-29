@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-29  Thore Böckelmann <tboeckel@gmx.de>
+
+  * BayesFilter.c: the training data are now always written to disk upon exit if
+    there are any tokens and if something has changed since the last flush.
+
 2006-11-28  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c, YAM_TR.c: ApplyFiltersFunc() now does all the work. That means
