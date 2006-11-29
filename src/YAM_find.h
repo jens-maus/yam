@@ -149,7 +149,6 @@ struct FilterNode
 // external hooks
 extern struct Hook FI_OpenHook;
 extern struct Hook ApplyFiltersHook;
-extern struct Hook ApplySpamFilterHook;
 
 extern const int Mode2Group[12];
 extern const char mailStatusCycleMap[11];
