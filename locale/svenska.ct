@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.3 (24.11.06)
+## version $VER: YAM.ct 6.4 (30.11.06)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -2114,7 +2114,7 @@ Den tidszon där\ndu befinner dej.
 ;#DEF Select the timezone of\nyour current location
 ;#SET (558//)
 MSG_HELP_CO_CH_DLSAVING
-Justera automatisk för sommartid.
+Justera automatiskt för sommartid.
 ;#DEF Adjust the timezone during daylight\nsaving time (summer time)
 ;#SET (559//)
 MSG_HELP_CO_ST_SMTPHOST
@@ -6278,7 +6278,7 @@ MSG_CO_TIMEZONEWARN_BT
 ;#DEF *_Change|Ignore _always|_Ignore
 ;#SET (1658//)
 MSG_CO_AUTODSTWARN_TITLE
-Automatisk sommartid varning
+Automatisk sommartids varning
 ;#DEF AutoDST warning
 ;#SET (1659//)
 MSG_CO_AUTODSTWARN
@@ -6390,7 +6390,7 @@ Komponent
 ;#DEF Component
 ;#SET (1686//)
 MSG_UPD_NOTIFICATION_RECENT
-Senast
+Senaste
 ;#DEF Recent
 ;#SET (1687//)
 MSG_UPD_NOTIFICATION_INSTALLED
@@ -6686,15 +6686,15 @@ Skräppost
 ;#DEF Spam
 ;#SET (1761//)
 MSG_CO_SPAMFILTER
-Skräppost filter
+Skräppostfilter
 ;#DEF Spam filter
 ;#SET (1762//)
 MSG_CO_SPAMFILTER_TITLE
-Skräppost filter
+Skräppostfilter
 ;#DEF Spam filter
 ;#SET (1763//)
 MSG_CO_SPAMFILTER_SUMMARY
-Konfigurera skräppost filter
+Konfigurera skräppostfilter
 ;#DEF Configure spam filter...
 ;#SET (1764//)
 MSG_CO_SPAM_FILTERFORNEWMAIL
@@ -6726,7 +6726,7 @@ Tömmer träningsdata för skräppost...
 ;#DEF Flushing spam training data...
 ;#SET (1771//)
 MSG_CO_SPAM_MARKONMOVE
-Markera brev som skräppost vid flyttning till skräppost mappen
+Markera brev som skräppost vid flyttning till skräppostmappen
 ;#DEF Mark mails as spam when moved to the spam folder
 ;#SET (1772//)
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
@@ -6734,22 +6734,34 @@ Adressboken är vitlistad
 ;#DEF Address book is white list
 ;#SET (1773//)
 MSG_CO_SPAM_RECOGNITION
-Skräppost igenkännande
+Skräppostigenkännande
 ;#DEF Spam recognition
 ;#SET (1774//)
 MSG_CO_SPAM_FILTERENABLED
-Aktivera skräppost filter
+Aktivera skräppostfilter
 ;#DEF Spam filter enabled
 ;#SET (1775//)
 MSG_CO_SPAM_RESETTRAININGDATAASK
-Vill du verkligen nollställa skräppost filtrets\nträningsdata?\n\nSkräppost filtret måste tränas igen efteråt!
+Vill du verkligen nollställa skräppostfiltrets\nträningsdata?\n\nSkräppostfiltret måste tränas igen efteråt!
 ;#DEF Do you really want to reset the spam filter's\ntraining data?\n\nThe spam filter must be trained again afterwards!
 ;#SET (1776//)
-MSG_CO_SPAM_DISABLEFILTERASK
-Vill du också nollställa skräppost filtrets\nträningsdata och alla brev flaggor?\n\nSkräppost filtret måste tränas igen efteråt!
+MSG_CO_SPAM_DISABLEFILTERASK_OLD
+Vill du också nollställa skräppostfiltrets\nträningsdata och alla brev flaggor?\n\nSkräppostfiltret måste tränas igen efteråt!
 ;#DEF Do you also want to reset the spam filter's\ntraining data and all mail flags?\n\nThe spam filter must be trained again afterwards!
 ;#SET (1777//)
 MSG_TR_CHECKUIDL
 Kontrollerar UIDL'er för att undvika dubbletter...
 ;#DEF Checking UIDLs to avoid duplicates...
 ;#SET (1778//)
+MSG_CO_SPAM_DISABLEFILTERASK
+Skräppostfiltret har avaktiverats!\nVill du också återställa/radera dessa objekt?\n\nSkräppostfiltret måste tränas igen efteråt!
+;#DEF The spam filter has just been disabled!\nDo you also want to reset/delete these items?\n\nThe spam filter must be trained again afterwards!
+;#SET (1779//)
+MSG_CO_SPAM_RESETMAILFLAGS
+Återställ _skräppoststatusen för alla mail
+;#DEF Reset _spam state of all mails
+;#SET (1780//)
+MSG_CO_SPAM_DELETESPAMFOLDER
+Ra_dera skräppostmappen
+;#DEF _Delete spam folder
+;#SET (1781//)
