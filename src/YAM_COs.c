@@ -498,13 +498,13 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "LastUpdateStatus = %d\n", co->LastUpdateStatus);
 
       fprintf(fh, "\n[Spam filter]\n");
-      fprintf(fh, "SpamFilterEnabled = %s\n", Bool2Txt(co->SpamFilterEnabled));
-      fprintf(fh, "SpamFilterForNewMail = %s\n", Bool2Txt(co->SpamFilterForNewMail));
-      fprintf(fh, "SpamMarkOnMove = %s\n", Bool2Txt(co->SpamMarkOnMove));
-      fprintf(fh, "SpamAddressBookIsWhiteList = %s\n", Bool2Txt(co->SpamAddressBookIsWhiteList));
-      fprintf(fh, "SpamProbabilityThreshold = %d\n", co->SpamProbabilityThreshold);
-      fprintf(fh, "SpamFlushTrainingDataInterval = %d\n", co->SpamFlushTrainingDataInterval);
-      fprintf(fh, "SpamFlushTrainingDataThreshold = %d\n", co->SpamFlushTrainingDataThreshold);
+      fprintf(fh, "SpamFilterEnabled= %s\n", Bool2Txt(co->SpamFilterEnabled));
+      fprintf(fh, "SpamFilterForNew = %s\n", Bool2Txt(co->SpamFilterForNewMail));
+      fprintf(fh, "SpamMarkOnMove   = %s\n", Bool2Txt(co->SpamMarkOnMove));
+      fprintf(fh, "SpamABookIsWhite = %s\n", Bool2Txt(co->SpamAddressBookIsWhiteList));
+      fprintf(fh, "SpamProbThreshold= %d\n", co->SpamProbabilityThreshold);
+      fprintf(fh, "SpamFlushInterval= %d\n", co->SpamFlushTrainingDataInterval);
+      fprintf(fh, "SpamFlushThres   = %d\n", co->SpamFlushTrainingDataThreshold);
 
       fprintf(fh, "\n[Advanced]\n");
       fprintf(fh, "LetterPart       = %d\n", co->LetterPart);
@@ -1082,12 +1082,12 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "LastUpdateCheck"))String2TimeVal(&co->LastUpdateCheck, value, DSS_USDATETIME, TZC_NONE);
                else if (!stricmp(buffer, "LastUpdateStatus")) co->LastUpdateStatus = atoi(value);
 /*Spam*/       else if (!stricmp(buffer, "SpamFilterEnabled")) co->SpamFilterEnabled = Txt2Bool(value);
-               else if (!stricmp(buffer, "SpamFilterForNewMail")) co->SpamFilterForNewMail = Txt2Bool(value);
+               else if (!stricmp(buffer, "SpamFilterForNew")) co->SpamFilterForNewMail = Txt2Bool(value);
                else if (!stricmp(buffer, "SpamMarkOnMove")) co->SpamMarkOnMove = Txt2Bool(value);
-               else if (!stricmp(buffer, "SpamAddressBookIsWhiteList")) co->SpamAddressBookIsWhiteList = Txt2Bool(value);
-               else if (!stricmp(buffer, "SpamProbabilityThreshold")) co->SpamProbabilityThreshold = atoi(value);
-               else if (!stricmp(buffer, "SpamFlushTrainingDataInterval")) co->SpamFlushTrainingDataInterval = atoi(value);
-               else if (!stricmp(buffer, "SpamFlushTrainingDataThreshold")) co->SpamFlushTrainingDataThreshold = atoi(value);
+               else if (!stricmp(buffer, "SpamABookIsWhite")) co->SpamAddressBookIsWhiteList = Txt2Bool(value);
+               else if (!stricmp(buffer, "SpamProbThreshold")) co->SpamProbabilityThreshold = atoi(value);
+               else if (!stricmp(buffer, "SpamFlushInterval")) co->SpamFlushTrainingDataInterval = atoi(value);
+               else if (!stricmp(buffer, "SpamFlushThres")) co->SpamFlushTrainingDataThreshold = atoi(value);
 /*Advanced*/   else if (!stricmp(buffer, "LetterPart"))     { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
                else if (!stricmp(buffer, "WriteIndexes"))   co->WriteIndexes = atoi(value);
                else if (!stricmp(buffer, "SupportSite"))    strlcpy(co->SupportSite, value, sizeof(co->SupportSite));
@@ -1274,66 +1274,82 @@ void CO_GetConfig(void)
       break;
 
       case cp_Spam:
-         CE->SpamFilterEnabled = GetMUICheck(gui->CH_SPAMFILTERENABLED);
-         CE->SpamFilterForNewMail = GetMUICheck(gui->CH_SPAMFILTERFORNEWMAIL);
-         CE->SpamMarkOnMove = GetMUICheck(gui->CH_SPAMMARKONMOVE);
-         CE->SpamAddressBookIsWhiteList = GetMUICheck(gui->CH_SPAMABOOKISWHITELIST);
-         CE->SpamProbabilityThreshold = GetMUINumer(gui->NB_SPAMPROBTHRESHOLD);
+      {
+        CE->SpamFilterEnabled = GetMUICheck(gui->CH_SPAMFILTERENABLED);
+        CE->SpamFilterForNewMail = GetMUICheck(gui->CH_SPAMFILTERFORNEWMAIL);
+        CE->SpamMarkOnMove = GetMUICheck(gui->CH_SPAMMARKONMOVE);
+        CE->SpamAddressBookIsWhiteList = GetMUICheck(gui->CH_SPAMABOOKISWHITELIST);
+        CE->SpamProbabilityThreshold = GetMUINumer(gui->NB_SPAMPROBTHRESHOLD);
 
-         if(C->SpamFilterEnabled ==TRUE && CE->SpamFilterEnabled == FALSE)
-         {
-           ULONG mask;
+        if(C->SpamFilterEnabled ==TRUE && CE->SpamFilterEnabled == FALSE)
+        {
+          LONG mask;
 
-           mask = CheckboxRequest(G->CO->GUI.WI, 0, NULL, 3, GetStr(MSG_CO_SPAM_DISABLEFILTERASK), GetStr(MSG_CO_SPAM_RESETTRAININGDATA), GetStr(MSG_CO_SPAM_RESETMAILFLAGS), GetStr(MSG_CO_SPAM_DELETESPAMFOLDER));
+          // raise a CheckboxRequest and ask the user which
+          // operations he want to performed while disabling the
+          // SPAM filter.
+          mask = CheckboxRequest(G->CO->GUI.WI, 0, NULL, 3, GetStr(MSG_CO_SPAM_DISABLEFILTERASK),
+                                                            GetStr(MSG_CO_SPAM_RESETTDATA),
+                                                            GetStr(MSG_CO_SPAM_RESETMAILFLAGS),
+                                                            GetStr(MSG_CO_SPAM_DELETESPAMFOLDER));
 
-           // reset training data
-           if(mask & (1 << 0))
-             BayesFilterResetTrainingData();
+          // check if the user canceled the requester
+          if(mask >= 0)
+          {
+            // reset training data
+            if(mask & (1 << 0))
+              BayesFilterResetTrainingData();
 
-           // reset spam state of all mails
-           if(mask & (1 << 1))
-           {
-             struct Folder **flist;
+            // reset spam state of all mails
+            if(mask & (1 << 1))
+            {
+              struct Folder **flist;
 
-             if((flist = FO_CreateList()) != NULL)
-             {
-               int j;
+              if((flist = FO_CreateList()) != NULL)
+              {
+                int j;
 
-               // iterate over all available folders
-               for(j = 1; j <= (int)*flist; j++)
-               {
-                 struct Folder *folder = flist[j];
+                // iterate over all available folders
+                for(j = 1; j <= (int)*flist; j++)
+                {
+                  struct Folder *folder = flist[j];
 
-                 if(!isGroupFolder(folder))
-                 {
-                   struct Mail **mlist;
+                  if(!isGroupFolder(folder))
+                  {
+                    struct Mail **mlist;
 
-                   if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
-                   {
-                     int i;
+                    if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
+                    {
+                      int i;
 
-                     // clear all possible spam/ham flags from each mail
-                     for(i = 0; i < (int)*mlist; i++)
-                     {
-                       MA_ChangeMailStatus(mlist[i+2], SFLAG_NONE, SFLAG_USERSPAM|SFLAG_AUTOSPAM|SFLAG_HAM);
-                     }
+                      // clear all possible spam/ham flags from each mail
+                      for(i = 0; i < (int)*mlist; i++)
+                        MA_ChangeMailStatus(mlist[i+2], SFLAG_NONE, SFLAG_USERSPAM|SFLAG_AUTOSPAM|SFLAG_HAM);
 
-                     free(mlist);
-                   }
-                 }
-               }
+                      free(mlist);
+                    }
+                  }
+                }
 
-               free(flist);
-             }
-           }
+                free(flist);
+              }
+            }
 
-           // delete spam folder
-           if(mask & (1 << 2))
-           {
-             // not yet implemented
-           }
-         }
-         break;
+            // delete spam folder
+            if(mask & (1 << 2))
+            {
+              #warning "not yet implemented"
+            }
+          }
+          else
+          {
+            // the user canceled the requester so lets set the Spam filter
+            // back online
+            CE->SpamFilterEnabled = TRUE;
+          }
+        }
+      }
+      break;
 
       case cp_Read:
          CE->ShowHeader        = GetMUICycle  (gui->CY_HEADER);
