@@ -6006,14 +6006,16 @@ MSG_TR_CHECKUIDL (1778//)
 Checking UIDLs to avoid duplicates...
 ;
 MSG_CO_SPAM_DISABLEFILTERASK (1779//)
-The spam filter has just been disabled!\n\
-Do you also want to reset/delete these items?\n\
-\n\
-The spam filter must be trained again afterwards!
+The spam filter was found to be active and has\n\
+now been disabled. Which of the following\n\
+operations do you want to apply?
 ;
-MSG_CO_SPAM_RESETMAILFLAGS (1780//)
+MSG_CO_SPAM_RESETTDATA (1780//)
+_Reset training data
+;
+MSG_CO_SPAM_RESETMAILFLAGS (1781//)
 Reset _spam state of all mails
 ;
-MSG_CO_SPAM_DELETESPAMFOLDER (1781//)
+MSG_CO_SPAM_DELETESPAMFOLDER (1782//)
 _Delete spam folder
 ;

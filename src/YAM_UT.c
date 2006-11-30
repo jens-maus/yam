@@ -1023,9 +1023,9 @@ void InfoWindow(const char *title, const char *body, const char *oktext, APTR pa
 // Displays a requester with a list of checkboxes
 struct MUIP_CheckboxRequesterMsg
 {
-    ULONG active;
-    ULONG *valuePtr;
-    ULONG bitMask;
+  ULONG active;
+  ULONG *valuePtr;
+  ULONG bitMask;
 };
 
 HOOKPROTONHNO(CheckboxRequesterFunc, void, struct MUIP_CheckboxRequesterMsg *msg)
@@ -1043,13 +1043,14 @@ MakeStaticHook(CheckboxRequesterHook, CheckboxRequesterFunc);
 ///
 /// CheckboxRequest
 // Displays a requester with a list of checkboxes
-ULONG CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG numBoxes, const char *text, ...)
+LONG CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG numBoxes, const char *text, ...)
 {
   char *title = NULL;
   Object *cb_group;
   Object *wi_cb;
-  Object *bt_okay;
-  ULONG result = 0;
+  Object *bt_use;
+  Object *bt_cancel;
+  LONG result = -1;
 
   ENTER();
 
@@ -1061,7 +1062,7 @@ ULONG CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG num
 
   wi_cb = WindowObject,
     MUIA_Window_Title,      title ? title : "YAM",
-    MUIA_Window_ID,         MAKE_ID('C','R','E','Q'),
+//    MUIA_Window_ID,         MAKE_ID('C','R','E','Q'),
     MUIA_Window_RefWindow,  win,
     MUIA_Window_LeftEdge,   MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,    MUIV_Window_TopEdge_Centered,
@@ -1069,24 +1070,24 @@ ULONG CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG num
     MUIA_Window_Height,     MUIV_Window_Height_MinMax(20),
 
     WindowContents, VGroup,
-       MUIA_Background, MUII_RequesterBack,
-       Child, VGroup,
-          GroupFrame,
+      MUIA_Background, MUII_RequesterBack,
+      Child, VGroup,
+        GroupFrame,
+        MUIA_Background, MUII_GroupBack,
+        Child, TextObject,
+          MUIA_Text_Contents, text,
+          MUIA_Text_SetMax,   TRUE,
+        End,
+        Child, VSpace(4),
+        Child, cb_group = ColGroup(3),
           MUIA_Background, MUII_GroupBack,
-          Child, TextObject,
-             MUIA_Text_Contents, text,
-             MUIA_Text_SetMax,   TRUE,
-          End,
-          Child, VSpace(4),
-          Child, cb_group = ColGroup(2),
-             MUIA_Background, MUII_GroupBack,
-          End,
-       End,
-       Child, ColGroup(3),
-          Child, HSpace(0),
-          Child, bt_okay = MakeButton(GetStr(MSG_Okay)),
-          Child, HSpace(0),
-       End,
+        End,
+      End,
+      Child, ColGroup(3),
+        Child, bt_use = MakeButton(GetStr(MSG_Use)),
+        Child, HSpace(0),
+        Child, bt_cancel = MakeButton(GetStr(MSG_Cancel)),
+      End,
     End,
   End;
 
@@ -1104,18 +1105,20 @@ ULONG CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG num
     va_start(args, text);
 
     // now we create the checkboxes for the requester
-    for(i = 0; i < numBoxes; i++)
+    for(i=0; i < numBoxes; i++)
     {
       char *label;
 
       Object *cb_temp;
       Object *lb_temp;
+      Object *space;
 
       label = va_arg(args, char *);
 
       // create the checkbox object now.
       cb_temp = MakeCheck(label);
       lb_temp = LLabel(label);
+      space   = HSpace(0);
 
       if(cb_temp != NULL && lb_temp != NULL)
       {
@@ -1123,8 +1126,9 @@ ULONG CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG num
         DoMethod(cb_temp, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, G->App, 5, MUIM_CallHook, &CheckboxRequesterHook, MUIV_TriggerValue, &result, (1 << i));
         DoMethod(cb_group, OM_ADDMEMBER, cb_temp);
         DoMethod(cb_group, OM_ADDMEMBER, lb_temp);
+        DoMethod(cb_group, OM_ADDMEMBER, space);
 
-        // the checkbox is active be default, so we set the corresponding bit in the result value
+        // the checkbox is active per default, so we set the corresponding bit in the result value
         result |= (1 << i);
       }
     }
@@ -1133,14 +1137,15 @@ ULONG CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG num
 
     DoMethod(cb_group, MUIM_Group_ExitChange);
 
-    DoMethod(bt_okay, MUIM_Notify, MUIA_Pressed,             FALSE, G->App, 2, MUIM_Application_ReturnID, 1);
-    DoMethod(wi_cb,   MUIM_Notify, MUIA_Window_CloseRequest, TRUE,  G->App, 2, MUIM_Application_ReturnID, 2);
+    DoMethod(bt_use,    MUIM_Notify, MUIA_Pressed,             FALSE, G->App, 2, MUIM_Application_ReturnID, 1);
+    DoMethod(wi_cb,     MUIM_Notify, MUIA_Window_CloseRequest, TRUE,  G->App, 2, MUIM_Application_ReturnID, 2);
+    DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed,             FALSE, G->App, 2, MUIM_Application_ReturnID, 3);
 
     // lets collect the waiting returnIDs now
     COLLECT_RETURNIDS;
 
     if(!SafeOpenWindow(wi_cb))
-      result = 0;
+      result = -1;
     else
     {
       BOOL done = FALSE;
@@ -1151,8 +1156,21 @@ ULONG CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG num
 
         switch(DoMethod(G->App, MUIM_Application_NewInput, &signals))
         {
-          case 1: done = TRUE; break;
-          case 2: result = 0; done = TRUE; break;
+          // user accepted the window
+          // lets exit straight away
+          case 1:
+            done = TRUE;
+          break;
+
+          // user canceled the window signal it to the
+          // caller
+          case 2:
+          case 3:
+          {
+             result = -1;
+             done = TRUE;
+          }
+          break;
         }
 
         if(done == FALSE && signals)

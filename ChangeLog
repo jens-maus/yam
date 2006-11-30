@@ -6,6 +6,14 @@ $Id$
 
 2006-11-30  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: the new CheckboxRequest() function now uses a proper alignment
+    and returns -1 in case the requester was canceled. In addition, it now
+    contains a cancel button and also use the phrase "Use" instead which should
+    be more intuitive than just a plain "Okay" button.
+  * YAM.cd: the new requester for disabling the Spam filter will now use a
+    more intuitive message string and also uses an own string for the
+    "Reset training data". Please try to avoid reusing strings and generate new
+    ones instead.
   * YAM_COs.c: Change all configuration string IDs to use shortcuts so that
     the indention of the configuration paramaters in the .config file are
     not mixed up. Please try to avoid mixing up the indention of the
