@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-11-30  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/francais.ct: update to the latests changes
+
 2006-11-30  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: the new CheckboxRequest() function now uses a proper alignment

@@ -3,8 +3,23 @@
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
+; YAM.cd - YAM 2.5 catalog description file
 ; $Id$
-; based on YAAM.cd 2495 2006-11-29 20:47:53Z
+;
+; Please note that all catalog strings have to carry a proper
+; identifier number in the (X//) string part of the MSG_ identifier
+; field and that those numbers have to be unique and continous over
+; all different YAM versions. This allows to remove some obsolete
+; strings later on without having to worry about identifier clashes.
+; This however means that if an entry is being deleted here its
+; identifier should NEVER be reused later on. So, if you are going to
+; add new strings here do that always at the bottom of the file
+; and increase the last listed identifier number by one for your
+; new entries. And if you delete an entry NEVER reorder or resort
+; the ID numbers accordingly.
+; 
+;#version 6
+;#language english
 ;
 ; General
 ;
@@ -8365,24 +8380,23 @@ Vérification des UIDL pour éviter les doublons...
 ; Checking UIDLs to avoid duplicates...
 ;
 MSG_CO_SPAM_DISABLEFILTERASK
-Voulez-vous également réinitialiser les\n\
-données d'apprentissage de détection des\n\
-courriers indésirables ?\n\
-\n\
-Le filtre de courriers indésirable devra\n\
-alors être entraîné à nouveau après ça !
-; The spam filter has just been disabled!\n\
-; Do you also want to reset/delete these items?\n\
-; \n\
-; The spam filter must be trained again afterwards!
+Le filtre des courriers indésriables était\n\
+actif et vient d'être désactivé. Laquelle des\n\
+actions suivantes voulez-vous réaliser ?
+; The spam filter was found to be active and has\n\
+; now been disabled. Which of the following\n\
+; operations do you want to apply?
+;
+MSG_CO_SPAM_RESETTDATA
+_Réinitialiser l'apprentissage
+; _Reset training data
+;
 ;
 MSG_CO_SPAM_RESETMAILFLAGS
-_Réinitialiser l'état indésirable de tous les messages
+Réinitialiser l'_indicateur des messages
 ; Reset _spam state of all mails
 ;
-;
 MSG_CO_SPAM_DELETESPAMFOLDER
-Vider le dossier Courrier indésirable
+_Vider le dossier Courrier indésirable
 ; _Delete spam folder
-;
 ;
