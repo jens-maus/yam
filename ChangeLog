@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-12-01  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c: reworked the menu item enable/disable routine a bit to make it
+    more clear under which conditions a menu item should be disabled/enabled.
+    Also added the new MI_DELDEL which was missing and reworked the Spam
+    menu item and toolbar item disable/enable routines to just disable it
+    if there is no multiselection active.
+
 2006-12-01  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: the attachment menu is now also disabled for empty folders

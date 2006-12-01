@@ -236,8 +236,8 @@ void MA_ChangeSelected(BOOL forceUpdate)
   {
     DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !folderEnabled || (!active && numSelected == 0), 0,1,2,3,4,7,8,16, -1);
     DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !folderEnabled || isSpamFolder(fo), 1,6,7,8, -1);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !folderEnabled || !C->SpamFilterEnabled || !mail || hasStatusSpam(mail), 10, -1);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !folderEnabled || !C->SpamFilterEnabled || !mail || hasStatusHam(mail), 11, -1);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !folderEnabled || !C->SpamFilterEnabled || (!active && numSelected == 0) || (active && numSelected <= 1 && hasStatusSpam(mail)), 10, -1);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !folderEnabled || !C->SpamFilterEnabled || (!active && numSelected == 0) || (active && numSelected <= 1 && hasStatusHam(mail)), 11, -1);
   }
 
   // enable/disable menu items
@@ -254,18 +254,94 @@ void MA_ChangeSelected(BOOL forceUpdate)
       set(gui->MI_EDIT, MUIA_Menuitem_Title, p);
   }
 
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, (active || numSelected > 0) && folderEnabled,
-                   gui->MI_READ, gui->MI_MOVE, gui->MI_DELETE, gui->MI_GETADDRESS, gui->MI_STATUS, gui->MI_EXPMSG, gui->MI_COPY, gui->MI_PRINT, gui->MI_SAVE, gui->MI_ATTACH, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, (active || numSelected > 0) && folderEnabled && !isSpamFolder(fo),
-                   gui->MI_FORWARD, gui->MI_CHSUBJ, gui->MI_NEW, gui->MI_REPLY, gui->MI_EDIT, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled, gui->MI_FILTER, gui->MI_UPDINDEX, gui->MI_IMPORT, gui->MI_EXPORT, gui->MI_SELECT, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, isOutgoingFolder(fo) && (active || numSelected > 0), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isSentMailFolder(fo) && (active || numSelected > 0), gui->MI_TOREAD, gui->MI_TOUNREAD, gui->MI_ALLTOREAD, gui->MI_BOUNCE, NULL);
+  /////////////////////////////////////////////////////////////////////////
+  // in the following section we define which menu item should be
+  // enabled or disabled. Please note that a menu item can only be part of
+  // ONE of the following groups for enabling/disabling items based on
+  // certain dependencies. So if there is a menu item which is part of
+  // more than one group, something is definitly wrong!
 
+  // Enable if:
+  //  * > 0 mails selected
+  //  * the folder is enabled
+  //  * NOT in the "SPAM" folder
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, (active || numSelected > 0) && folderEnabled && !isSpamFolder(fo),
+                                                         gui->MI_FORWARD,
+                                                         gui->MI_CHSUBJ,
+                                                         gui->MI_NEW,
+                                                         gui->MI_REPLY,
+                                                         gui->MI_EDIT,
+                                                         TAG_DONE);
+
+  // Enable if:
+  //  * > 0 mails selected
+  //  * the folder is enabled
+  //  * NOT in the "Sent" folder
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isSentMailFolder(fo) && (active || numSelected > 0) && folderEnabled,
+                                                         gui->MI_TOREAD,
+                                                         gui->MI_TOUNREAD,
+                                                         gui->MI_ALLTOREAD,
+                                                         gui->MI_BOUNCE,
+                                                         TAG_DONE);
+
+  // Enable if:
+  //  * > 0 mails selected
+  //  * the folder is enabled
+  //  * NOT in the "Deleted" folder
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isDeletedFolder(fo) && (active || numSelected > 0) && folderEnabled,
+                                                         gui->MI_DELDEL,
+                                                         TAG_DONE);
+
+  // Enable if:
+  //  * > 0 mails selected
+  //  * the folder is enabled
+  //  * is in the "Outgoing" Folder
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, isOutgoingFolder(fo) && (active || numSelected > 0) && folderEnabled,
+                                                         gui->MI_SEND,
+                                                         gui->MI_TOHOLD,
+                                                         gui->MI_TOQUEUED,
+                                                         TAG_DONE);
+
+  // Enable if:
+  //  * > 0 mails selected
+  //  * the folder is enabled
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, (active || numSelected > 0) && folderEnabled,
+                                                         gui->MI_READ,
+                                                         gui->MI_MOVE,
+                                                         gui->MI_DELETE,
+                                                         gui->MI_GETADDRESS,
+                                                         gui->MI_STATUS,
+                                                         gui->MI_EXPMSG,
+                                                         gui->MI_COPY,
+                                                         gui->MI_PRINT,
+                                                         gui->MI_SAVE,
+                                                         gui->MI_ATTACH,
+                                                         TAG_DONE);
+
+  // Enable if:
+  //  * the folder is enabled
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled,
+                                                         gui->MI_FILTER,
+                                                         gui->MI_UPDINDEX,
+                                                         gui->MI_IMPORT,
+                                                         gui->MI_EXPORT,
+                                                         gui->MI_SELECT,
+                                                         TAG_DONE);
+
+
+  // Enable if:
+  //  * TOSPAM menu item exists
+  //  * > 0 mails selected or the active one isn't marked as SPAM
+  //  * the folder is enabled
   if(gui->MI_TOSPAM)
-    set(gui->MI_TOSPAM, MUIA_Menuitem_Enabled, folderEnabled && mail && !hasStatusSpam(mail));
+    set(gui->MI_TOSPAM, MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && !hasStatusSpam(mail))));
+
+  // Enable if:
+  //  * TOHAM menu item exists
+  //  * > 0 mails selected
+  //  * the folder is enabled
   if(gui->MI_TOHAM)
-    set(gui->MI_TOHAM,  MUIA_Menuitem_Enabled, folderEnabled && mail && !hasStatusHam(mail));
+    set(gui->MI_TOHAM,  MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && !hasStatusHam(mail))));
 
   LEAVE();
 }
@@ -4341,7 +4417,7 @@ struct MA_ClassData *MA_New(void)
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_MSearch), MMEN_SEARCH),
             MUIA_Family_Child, data->GUI.MI_FILTER = MakeMenuitem(GetStr(MSG_MA_MFilter), MMEN_FILTER),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_RemoveDeleted), MMEN_DELDEL),
+            MUIA_Family_Child, data->GUI.MI_DELDEL = MakeMenuitem(GetStr(MSG_MA_RemoveDeleted), MMEN_DELDEL),
             MUIA_Family_Child, data->GUI.MI_UPDINDEX = MakeMenuitem(GetStr(MSG_MA_UpdateIndex), MMEN_INDEX),
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_FlushIndices), MMEN_FLUSH),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,

@@ -270,6 +270,7 @@ struct MA_GUIData
    Object *MI_CHSUBJ;
    Object *MI_SEND;
    Object *MI_FILTER;
+   Object *MI_DELDEL;
    Object *MI_UPDINDEX;
    Object *MI_SELECT;
    Object *LV_FOLDERS;
