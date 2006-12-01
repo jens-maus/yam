@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.4 (30.11.06)
+## version $VER: YAM.ct 6.5 (01.12.06)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -6754,14 +6754,18 @@ Kontrollerar UIDL'er för att undvika dubbletter...
 ;#DEF Checking UIDLs to avoid duplicates...
 ;#SET (1778//)
 MSG_CO_SPAM_DISABLEFILTERASK
-Skräppostfiltret har avaktiverats!\nVill du också återställa/radera dessa objekt?\n\nSkräppostfiltret måste tränas igen efteråt!
-;#DEF The spam filter has just been disabled!\nDo you also want to reset/delete these items?\n\nThe spam filter must be trained again afterwards!
+Skräppostfiltret var aktiverat men är nu avaktiverat.\nVilken av följande operationer vill du applicera?
+;#DEF The spam filter was found to be active and has\nnow been disabled. Which of the following\noperations do you want to apply?
 ;#SET (1779//)
+MSG_CO_SPAM_RESETTDATA
+Nollställ t_räningsdata
+;#DEF _Reset training data
+;#SET (1780//)
 MSG_CO_SPAM_RESETMAILFLAGS
 Återställ _skräppoststatusen för alla mail
 ;#DEF Reset _spam state of all mails
-;#SET (1780//)
+;#SET (1781//)
 MSG_CO_SPAM_DELETESPAMFOLDER
 Ra_dera skräppostmappen
 ;#DEF _Delete spam folder
-;#SET (1781//)
+;#SET (1782//)
