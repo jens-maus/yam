@@ -255,7 +255,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
   }
 
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, (active || numSelected > 0) && folderEnabled,
-                   gui->MI_READ, gui->MI_MOVE, gui->MI_DELETE, gui->MI_GETADDRESS, gui->MI_STATUS, gui->MI_EXPMSG, gui->MI_COPY, gui->MI_PRINT, gui->MI_SAVE, NULL);
+                   gui->MI_READ, gui->MI_MOVE, gui->MI_DELETE, gui->MI_GETADDRESS, gui->MI_STATUS, gui->MI_EXPMSG, gui->MI_COPY, gui->MI_PRINT, gui->MI_SAVE, gui->MI_ATTACH, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, (active || numSelected > 0) && folderEnabled && !isSpamFolder(fo),
                    gui->MI_FORWARD, gui->MI_CHSUBJ, gui->MI_NEW, gui->MI_REPLY, gui->MI_EDIT, NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled, gui->MI_FILTER, gui->MI_UPDINDEX, gui->MI_IMPORT, gui->MI_EXPORT, gui->MI_SELECT, NULL);
