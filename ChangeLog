@@ -19,6 +19,9 @@ $Id$
 2006-12-01  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: the attachment menu is now also disabled for empty folders
+  * YAM_FI.c: the recent changes complete broke the spam filtering. Now new
+    mails are checked for spam content (if enabled) and are moved to the spam
+    folder.
 
 2006-11-30  Alexandre Balaban <abalaban@free.fr>
 

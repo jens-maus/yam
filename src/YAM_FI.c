@@ -1327,7 +1327,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
         BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
         for(m = 0; m < (int)*mlist; m++)
         {
-          BOOL isSpam = FALSE;
+          BOOL wasSpam = FALSE;
           struct MinNode *curNode;
 
           mail = mlist[m+2];
@@ -1335,21 +1335,16 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
           if(mode == APPLY_AUTO && C->SpamFilterEnabled)
           {
             // check if we just filter new mail or a user triggered spam recognition
-            if(C->SpamFilterForNewMail && hasStatusAutoSpam(mail))
-              isSpam = TRUE;
-            else if(mode == APPLY_SPAM && !hasStatusSpam(mail) && BayesFilterClassifyMessage(mail))
+            if(C->SpamFilterForNewMail && BayesFilterClassifyMessage(mail))
             {
               setStatusToAutoSpam(mail);
-              isSpam = TRUE;
+              // move newly recognized spam to the spam folder
+              MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
+              wasSpam = TRUE;
             }
           }
 
-          if(isSpam)
-          {
-            // move newly recognized spam to the spam folder
-            MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
-          }
-          else if(scnt > 0)
+          if(scnt > 0 && wasSpam == FALSE)
           {
             // apply all other user defined filters (if they exist) for non-spam mails
             // or if the spam filter is disabled
