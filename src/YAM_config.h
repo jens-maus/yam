@@ -62,6 +62,7 @@ struct CO_GUIData
    Object *CH_USESMTPAUTH;
    Object *ST_SMTPAUTHUSER;
    Object *ST_SMTPAUTHPASS;
+   Object *CY_SMTPAUTHMETHOD;
    Object *LV_POP3;
    Object *GR_POP3;
    Object *BT_PADD;
@@ -406,6 +407,7 @@ struct Config
    enum  SMTPSecMethod      SMTP_SecureMethod;
    enum  UpdateCheckStatus  LastUpdateStatus;
    enum  LFMode             LogfileMode;
+   enum  SMTPAuthMethod     SMTP_AUTH_Method;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;

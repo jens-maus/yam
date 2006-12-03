@@ -251,6 +251,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "Use-SMTP-AUTH    = %s\n", Bool2Txt(co->Use_SMTP_AUTH));
       fprintf(fh, "SMTP-AUTH-User   = %s\n", co->SMTP_AUTH_User);
       fprintf(fh, "SMTP-AUTH-Pass   = %s\n", Encrypt(co->SMTP_AUTH_Pass));
+      fprintf(fh, "SMTP-AUTH-Method = %d\n", co->SMTP_AUTH_Method);
       for (i = 0; i < MAXP3; i++) if (co->P3[i])
       {
          struct POP3 *p3 = co->P3[i];
@@ -711,10 +712,11 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "SMTP-Domain"))    strlcpy(co->SMTP_Domain, value, sizeof(co->SMTP_Domain));
                else if (!stricmp(buffer, "SMTP-SecMethod")) co->SMTP_SecureMethod = atoi(value);
                else if (!stricmp(buffer, "Allow8bit"))      co->Allow8bit = Txt2Bool(value);
-               else if (!stricmp(buffer, "Use-SMTP-TLS"))   co->SMTP_SecureMethod = (int)Txt2Bool(value);
+               else if (!stricmp(buffer, "Use-SMTP-TLS"))   co->SMTP_SecureMethod = atoi(value); // obsolete
                else if (!stricmp(buffer, "Use-SMTP-AUTH"))  co->Use_SMTP_AUTH = Txt2Bool(value);
                else if (!stricmp(buffer, "SMTP-AUTH-User")) strlcpy(co->SMTP_AUTH_User, value, sizeof(co->SMTP_AUTH_User));
                else if (!stricmp(buffer, "SMTP-AUTH-Pass")) strlcpy(co->SMTP_AUTH_Pass, Decrypt(value), sizeof(co->SMTP_AUTH_Pass));
+               else if (!stricmp(buffer, "SMTP-AUTH-Method")) co->SMTP_AUTH_Method = atoi(value);
                else if (!strnicmp(buffer, "POP", 3) && buffer[5] == '.')
                {
                   int j = atoi(&buffer[3]);
@@ -1230,6 +1232,7 @@ void CO_GetConfig(void)
          CE->Use_SMTP_AUTH     = GetMUICheck  (gui->CH_USESMTPAUTH);
          GetMUIString(CE->SMTP_AUTH_User, gui->ST_SMTPAUTHUSER, sizeof(CE->SMTP_AUTH_User));
          GetMUIString(CE->SMTP_AUTH_Pass, gui->ST_SMTPAUTHPASS, sizeof(CE->SMTP_AUTH_Pass));
+         CE->SMTP_AUTH_Method = GetMUICycle(gui->CY_SMTPAUTHMETHOD);
          break;
 
       case cp_NewMail:
@@ -1613,6 +1616,7 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_USESMTPAUTH,CE->Use_SMTP_AUTH);
          setstring   (gui->ST_SMTPAUTHUSER,CE->SMTP_AUTH_User);
          setstring   (gui->ST_SMTPAUTHPASS,CE->SMTP_AUTH_Pass);
+         setcycle(gui->CY_SMTPAUTHMETHOD, CE->SMTP_AUTH_Method);
 
          // clear the list first
          DoMethod(gui->LV_POP3, MUIM_List_Clear);
@@ -1912,4 +1916,3 @@ void CO_SetConfig(void)
    LEAVE();
 }
 ///
-

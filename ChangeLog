@@ -4,6 +4,15 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-12-03  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c, YAM_COg.c, YAM_COs.c, YAM_CO.c: added the possibility to explicitly
+    select the SMTP-AUTH method in the configuration of YAM. Some SMTP servers
+    out there seem to report authentication methods on connect which they however
+    do not support so that an automatic selection of the AUTH methods isn't always
+    successfull. Now a user can override the automatic selection by explicitly
+    selecting one of the supported SMTP-AUTH methods.
+
 2006-12-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/deutsch.ct: corrected some strings

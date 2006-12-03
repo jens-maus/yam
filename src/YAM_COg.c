@@ -1259,6 +1259,7 @@ HOOKPROTONHNONP(ResetSpamTrainingDataFunc, void)
   LEAVE();
 }
 MakeStaticHook(ResetSpamTrainingDataHook, ResetSpamTrainingDataFunc);
+///
 
 /*** Pages ***/
 /// CO_PageFirstSteps
@@ -1374,11 +1375,19 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
 {
    Object *grp;
    static const char *secureMethods[4];
+   static const char *authMethods[6];
 
    secureMethods[0] = GetStr(MSG_CO_SMTPSECURE_NO);
    secureMethods[1] = GetStr(MSG_CO_SMTPSECURE_TLS);
    secureMethods[2] = GetStr(MSG_CO_SMTPSECURE_SSL);
    secureMethods[3] = NULL;
+
+   authMethods[0] = GetStr(MSG_CO_SMTPAUTH_AUTO);
+   authMethods[1] = GetStr(MSG_CO_SMTPAUTH_DIGEST);
+   authMethods[2] = GetStr(MSG_CO_SMTPAUTH_CRAM);
+   authMethods[3] = GetStr(MSG_CO_SMTPAUTH_LOGIN);
+   authMethods[4] = GetStr(MSG_CO_SMTPAUTH_PLAIN);
+   authMethods[5] = NULL;
 
    if ((grp = VGroup,
          MUIA_HelpNode, "CO01",
@@ -1418,13 +1427,27 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                           Child, data->GUI.ST_SMTPPORT = MakeInteger(5, GetStr(MSG_CO_ST_SMTPPORT)),
                           Child, Label2(GetStr(MSG_CO_Domain)),
                           Child, data->GUI.ST_DOMAIN = MakeString(SIZE_HOST,GetStr(MSG_CO_Domain)),
+                          Child, HSpace(1),
+                          Child, HGroup,
+                            Child, LLabel(GetStr(MSG_CO_SMTPSECURE)),
+                            Child, HSpace(0),
+                          End,
+                          Child, HSpace(1),
+                          Child, HGroup,
+                            Child, HSpace(5),
+                            Child, data->GUI.RA_SMTPSECURE = RadioObject,
+                              MUIA_Radio_Entries, secureMethods,
+                              MUIA_CycleChain,    TRUE,
+                            End,
+                            Child, HSpace(0),
+                          End,
                        End,
-                       Child, VSpace(3),
-                       Child, MakeCheckGroup((Object **)&data->GUI.CH_SMTP8BIT, GetStr(MSG_CO_Allow8bit)),
                        Child, VSpace(0),
                     End,
                     Child, VGroup,
                        Child, ColGroup(2),
+                         Child, data->GUI.CH_SMTP8BIT = MakeCheck(GetStr(MSG_CO_Allow8bit)),
+                         Child, LLabel1(GetStr(MSG_CO_Allow8bit)),
                          Child, data->GUI.CH_USESMTPAUTH = MakeCheck(GetStr(MSG_CO_UseSMTPAUTH)),
                          Child, LLabel1(GetStr(MSG_CO_UseSMTPAUTH)),
                          Child, HSpace(0),
@@ -1433,16 +1456,9 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                             Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,GetStr(MSG_CO_SMTPUser)),
                             Child, Label2(GetStr(MSG_CO_SMTPPass)),
                             Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(GetStr(MSG_CO_SMTPPass)),
+                            Child, Label2(GetStr(MSG_CO_SMTPAUTH_METHOD)),
+                            Child, data->GUI.CY_SMTPAUTHMETHOD = MakeCycle(authMethods, GetStr(MSG_CO_SMTPAUTH_METHOD)),
                          End,
-                       End,
-                       Child, LLabel(GetStr(MSG_CO_SMTPSECURE)),
-                       Child, HGroup,
-                         Child, HSpace(5),
-                         Child, data->GUI.RA_SMTPSECURE = RadioObject,
-                           MUIA_Radio_Entries, secureMethods,
-                           MUIA_CycleChain,    TRUE,
-                         End,
-                         Child, HSpace(0),
                        End,
                        Child, VSpace(0),
                     End,
@@ -1494,6 +1510,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_USESMTPAUTH ,MSG_HELP_CO_CH_USESMTPAUTH  );
       SetHelp(data->GUI.ST_SMTPAUTHUSER,MSG_HELP_CO_ST_SMTPAUTHUSER );
       SetHelp(data->GUI.ST_SMTPAUTHPASS,MSG_HELP_CO_ST_SMTPAUTHPASS );
+      SetHelp(data->GUI.CY_SMTPAUTHMETHOD, MSG_HELP_CO_CY_SMTPAUTHMETHOD);
       SetHelp(data->GUI.LV_POP3        ,MSG_HELP_CO_LV_POP3         );
       SetHelp(data->GUI.BT_PADD        ,MSG_HELP_CO_BT_PADD         );
       SetHelp(data->GUI.BT_PDEL        ,MSG_HELP_CO_BT_PDEL         );
@@ -1520,13 +1537,14 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
       DoMethod(data->GUI.CH_DELETE     ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
       DoMethod(data->GUI.BT_PADD       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_AddPOP3Hook,0);
       DoMethod(data->GUI.BT_PDEL       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_DelPOP3Hook,0);
-      DoMethod(data->GUI.CH_USESMTPAUTH,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,MUIV_Notify_Application,5,MUIM_MultiSet,MUIA_Disabled,MUIV_NotTriggerValue,data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS);
+      DoMethod(data->GUI.CH_USESMTPAUTH,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,MUIV_Notify_Application,6,MUIM_MultiSet,MUIA_Disabled,MUIV_NotTriggerValue,data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS, data->GUI.CY_SMTPAUTHMETHOD);
       DoMethod(data->GUI.CH_POP3SSL    ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_USESTLS,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
       DoMethod(data->GUI.RA_SMTPSECURE ,MUIM_Notify,MUIA_Radio_Active, 0,data->GUI.RA_SMTPSECURE,3,MUIM_Set,MUIA_Disabled, !G->TR_UseableTLS);
 
       // disable some gadgets per default
-      set(data->GUI.ST_SMTPAUTHUSER, MUIA_Disabled, TRUE);
-      set(data->GUI.ST_SMTPAUTHPASS, MUIA_Disabled, TRUE);
+      set(data->GUI.ST_SMTPAUTHUSER,   MUIA_Disabled, TRUE);
+      set(data->GUI.ST_SMTPAUTHPASS,   MUIA_Disabled, TRUE);
+      set(data->GUI.CY_SMTPAUTHMETHOD, MUIA_Disabled, TRUE);
    }
 
    return grp;

@@ -743,8 +743,6 @@ void CO_FreeConfig(struct Config *co)
 //  Sets configuration (or a part of it) to the factory settings
 void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 {
-   int i;
-
    ENTER();
    SHOWVALUE(DBF_CONFIG, co);
    SHOWVALUE(DBF_CONFIG, page);
@@ -763,14 +761,28 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
    if(page == cp_TCPIP || page == cp_AllPages)
    {
-      for (i = 0; i < MAXP3; i++) { if (co->P3[i]) free(co->P3[i]); co->P3[i] = NULL; }
-      *co->SMTP_Server = *co->SMTP_Domain = 0;
+      int i;
+
+      for(i = 0; i < MAXP3; i++)
+      {
+        if(co->P3[i])
+        {
+          free(co->P3[i]);
+          co->P3[i] = NULL;
+        }
+      }
+
+      *co->SMTP_Server = '\0';
+      *co->SMTP_Domain = '\0';
       co->SMTP_Port = 25;
       co->Allow8bit = FALSE;
       co->SMTP_SecureMethod = SMTPSEC_NONE;
       co->Use_SMTP_AUTH = FALSE;
-      *co->SMTP_AUTH_User = *co->SMTP_AUTH_Pass = 0;
-      co->P3[0] = CO_NewPOP3(co, TRUE); co->P3[0]->DeleteOnServer = TRUE;
+      *co->SMTP_AUTH_User = '\0';
+      *co->SMTP_AUTH_Pass = '\0';
+      co->SMTP_AUTH_Method = SMTPAUTH_AUTO;
+      co->P3[0] = CO_NewPOP3(co, TRUE);
+      co->P3[0]->DeleteOnServer = TRUE;
    }
 
    if(page == cp_NewMail || page == cp_AllPages)
@@ -950,7 +962,9 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
    if(page == cp_Scripts || page == cp_AllPages)
    {
-      for (i = 0; i < MAXRX; i++)
+      int i;
+
+      for(i = 0; i < MAXRX; i++)
       {
          *co->RX[i].Name = *co->RX[i].Script = 0;
          co->RX[i].IsAmigaDOS = co->RX[i].UseConsole = FALSE;

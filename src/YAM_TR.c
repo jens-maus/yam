@@ -454,27 +454,90 @@ static BOOL TR_InitSTARTTLS(int ServerFlags)
 // function to authenticate to a ESMTP Server
 static BOOL TR_InitSMTPAUTH(int ServerFlags)
 {
-   int rc = SMTP_SERVICE_NOT_AVAILABLE;
-   char *resp;
-   char buffer[SIZE_LINE];
-   char challenge[SIZE_LINE];
+  int rc = SMTP_SERVICE_NOT_AVAILABLE;
+  char *resp;
+  char buffer[SIZE_LINE];
+  char challenge[SIZE_LINE];
+  enum SMTPAuthMethod selectedMethod = SMTPAUTH_AUTO;
 
-   ENTER();
+  ENTER();
 
-   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SENDAUTH));
+  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SENDAUTH));
 
-   // first we check if the user has supplied the User&Password
-   // and if not we return with an error
-   if(!C->SMTP_AUTH_User[0] || !C->SMTP_AUTH_Pass[0])
-   {
-      ER_NewError(GetStr(MSG_ER_NOAUTHUSERPASS));
+  // first we check if the user has supplied the User&Password
+  // and if not we return with an error
+  if(!C->SMTP_AUTH_User[0] || !C->SMTP_AUTH_Pass[0])
+  {
+    ER_NewError(GetStr(MSG_ER_NOAUTHUSERPASS));
 
-      RETURN(FALSE);
-      return FALSE;
-   }
+    RETURN(FALSE);
+    return FALSE;
+  }
 
-   if(hasDIGEST_MD5_Auth(ServerFlags)) // SMTP AUTH DIGEST-MD5 (RFC 2831)
-   {
+  // now we find out which of the SMTP-AUTH methods we process and which to skip
+  // the user explicitly set an auth method. However, we have to
+  // check wheter the SMTP server told us that it really
+  // supports that method or not
+  switch(C->SMTP_AUTH_Method)
+  {
+    case SMTPAUTH_AUTO:
+    {
+      // we select the most secure one the server supports
+      if(hasDIGEST_MD5_Auth(ServerFlags))
+        selectedMethod = SMTPAUTH_DIGEST;
+      else if(hasCRAM_MD5_Auth(ServerFlags))
+        selectedMethod = SMTPAUTH_CRAM;
+      else if(hasLOGIN_Auth(ServerFlags))
+        selectedMethod = SMTPAUTH_LOGIN;
+      else if(hasPLAIN_Auth(ServerFlags))
+        selectedMethod = SMTPAUTH_PLAIN;
+    }
+    break;
+
+    case SMTPAUTH_DIGEST:
+    {
+      if(hasDIGEST_MD5_Auth(ServerFlags))
+        selectedMethod = SMTPAUTH_DIGEST;
+      else
+        W(DBF_NET, "User selected SMTP-Auth 'DIGEST-MD5' but server doesn't support it!");
+    }
+    break;
+
+    case SMTPAUTH_CRAM:
+    {
+      if(hasCRAM_MD5_Auth(ServerFlags))
+        selectedMethod = SMTPAUTH_CRAM;
+      else
+        W(DBF_NET, "User selected SMTP-Auth 'CRAM-MD5' but server doesn't support it!");
+    }
+    break;
+
+    case SMTPAUTH_LOGIN:
+    {
+      if(hasLOGIN_Auth(ServerFlags))
+        selectedMethod = SMTPAUTH_LOGIN;
+      else
+        W(DBF_NET, "User selected SMTP-Auth 'LOGIN' but server doesn't support it!");
+    }
+    break;
+
+    case SMTPAUTH_PLAIN:
+    {
+      if(hasCRAM_MD5_Auth(ServerFlags))
+        selectedMethod = SMTPAUTH_CRAM;
+      else
+        W(DBF_NET, "User selected SMTP-Auth 'DIGEST-MD5' but server doesn't support it!");
+    }
+    break;
+  }
+
+  // now we process the SMTP Authentication by choosing the method the user
+  // or the automatic did specify
+  switch(selectedMethod)
+  {
+    // SMTP AUTH DIGEST-MD5 (RFC 2831)
+    case SMTPAUTH_DIGEST:
+    {
       D(DBF_NET, "processing AUTH DIGEST-MD5:");
 
       // send the AUTH command and get the response back
@@ -541,6 +604,8 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           }
           else
           {
+            W(DBF_NET, "'realm' not found in challange. using '%s' instead", C->SMTP_Domain);
+
             // if the challenge doesn`t have a "realm" we assume our
             // choosen SMTP domain to be the realm
             realm = strdup(C->SMTP_Domain);
@@ -769,9 +834,12 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         free(realm);
         free(nonce);
       }
-   }
-   else if(hasCRAM_MD5_Auth(ServerFlags)) // SMTP AUTH CRAM-MD5 (RFC 2195)
-   {
+    }
+    break;
+
+    // SMTP AUTH CRAM-MD5 (RFC 2195)
+    case SMTPAUTH_CRAM:
+    {
       D(DBF_NET, "processing AUTH CRAM-MD5:");
 
       // send the AUTH command and get the response back
@@ -824,52 +892,58 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
             rc = SMTP_ACTION_OK;
         }
       }
-   }
-   else if(hasLOGIN_Auth(ServerFlags))  // SMTP AUTH LOGIN
-   {
+    }
+    break;
+
+    // SMTP AUTH LOGIN
+    case SMTPAUTH_LOGIN:
+    {
       D(DBF_NET, "processing AUTH LOGIN:");
 
       // send the AUTH command
       if((resp = TR_SendSMTPCmd(ESMTP_AUTH_LOGIN, NULL, MSG_ER_BadResponse)))
       {
-         // prepare the username challenge
-         D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_User);
-         base64encode(buffer, (unsigned char *)C->SMTP_AUTH_User, strlen(C->SMTP_AUTH_User));
-         D(DBF_NET, "encoded  AUTH LOGIN challenge: `%s`", buffer);
-         strlcat(buffer, "\r\n", sizeof(buffer));
+        // prepare the username challenge
+        D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_User);
+        base64encode(buffer, (unsigned char *)C->SMTP_AUTH_User, strlen(C->SMTP_AUTH_User));
+        D(DBF_NET, "encoded  AUTH LOGIN challenge: `%s`", buffer);
+        strlcat(buffer, "\r\n", sizeof(buffer));
 
-         // now we send the SMTP AUTH response (UserName)
-         if(TR_WriteLine(buffer) > 0)
-         {
-           // get the server response and see if it was valid
-           if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0
-              && (rc = getResponseCode(buffer)) == 334)
-           {
-              // prepare the password challenge
-              D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_Pass);
-              base64encode(buffer, (unsigned char *)C->SMTP_AUTH_Pass, strlen(C->SMTP_AUTH_Pass));
-              D(DBF_NET, "encoded  AUTH LOGIN challenge: `%s`", buffer);
-              strlcat(buffer, "\r\n", sizeof(buffer));
+        // now we send the SMTP AUTH response (UserName)
+        if(TR_WriteLine(buffer) > 0)
+        {
+          // get the server response and see if it was valid
+          if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0
+             && (rc = getResponseCode(buffer)) == 334)
+          {
+            // prepare the password challenge
+            D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_Pass);
+            base64encode(buffer, (unsigned char *)C->SMTP_AUTH_Pass, strlen(C->SMTP_AUTH_Pass));
+            D(DBF_NET, "encoded  AUTH LOGIN challenge: `%s`", buffer);
+            strlcat(buffer, "\r\n", sizeof(buffer));
 
-              // now lets send the Password
-              if(TR_WriteLine(buffer) > 0)
+            // now lets send the Password
+            if(TR_WriteLine(buffer) > 0)
+            {
+              // get the server response and see if it was valid
+              if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0
+                 && (rc = getResponseCode(buffer)) == 235)
               {
-                // get the server response and see if it was valid
-                if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0
-                   && (rc = getResponseCode(buffer)) == 235)
-                {
-                   rc = SMTP_ACTION_OK;
-                }
+                rc = SMTP_ACTION_OK;
               }
-           }
+            }
+          }
 
-           if(rc != SMTP_ACTION_OK)
-             ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_LOGIN], buffer);
-         }
+          if(rc != SMTP_ACTION_OK)
+            ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_LOGIN], buffer);
+        }
       }
-   }
-   else if(hasPLAIN_Auth(ServerFlags))  // SMTP AUTH PLAIN (RFC 2595)
-   {
+    }
+    break;
+
+    // SMTP AUTH PLAIN (RFC 2595)
+    case SMTPAUTH_PLAIN:
+    {
       int len=0;
       D(DBF_NET, "processing AUTH PLAIN:");
 
@@ -900,18 +974,24 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         else
           rc = SMTP_ACTION_OK;
       }
-   }
-   else
-   {
+    }
+    break;
+
+    default:
+    {
+      W(DBF_NET, "The SMTP server seems not to support any of the selected or automatic specified SMTP-AUTH methods");
+
       // if we don`t have any of the Authentication Flags turned on we have to
       // exit with an error
-      ER_NewError(GetStr(MSG_ER_NO_SMTP_AUTH), C->SMTP_Server);
-   }
+      ER_NewError(GetStr(MSG_CO_ER_SMTPAUTH), C->SMTP_Server);
+    }
+    break;
+  }
 
-   D(DBF_NET, "Server responded with %ld", rc);
+  D(DBF_NET, "Server responded with %ld", rc);
 
-   RETURN((BOOL)(rc == SMTP_ACTION_OK));
-   return (BOOL)(rc == SMTP_ACTION_OK);
+  RETURN((BOOL)(rc == SMTP_ACTION_OK));
+  return (BOOL)(rc == SMTP_ACTION_OK);
 }
 ///
 
