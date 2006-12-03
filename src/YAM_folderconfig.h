@@ -198,6 +198,7 @@ struct Folder * FO_GetFolderByName(char *name, int *pos);
 struct Folder * FO_GetFolderByType(enum FolderType type, int *pos);
 struct Folder * FO_GetFolderRexx(char *arg, int *pos);
 int             FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups);
+struct MUI_NListtree_TreeNode *FO_GetFolderTreeNode(struct Folder *findfo);
 BOOL            FO_LoadConfig(struct Folder *fo);
 BOOL            FO_LoadTree(char *fname);
 BOOL            FO_LoadFolderImages(struct Folder *fo);

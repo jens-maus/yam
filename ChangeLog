@@ -6,6 +6,10 @@ $Id$
 
 2006-12-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c, YAM_folderconfig.h: added new function FO_GetFolderTreeNode() to
+    obtain the treenode which belongs to a folder structure. This will needed be
+    needed to delete arbitrary folders without selecting them (e.g. the spam
+    folder)
   * YAM_FO.c: when the creation of a new folder fails YAM tried to remove the
     newly created treenode from the folder tree, but passed the wrong pointer
     which made NListtree.mcc go crazy. Now it correctly passes a treenode
