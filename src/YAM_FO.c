@@ -141,7 +141,6 @@ BOOL FO_SetCurrentFolder(struct Folder *fo)
 
    return(TRUE);
 }
-
 ///
 /// FO_GetFolderRexx
 //  Finds a folder by its name, type or position
@@ -206,7 +205,6 @@ struct Folder *FO_GetFolderRexx(char *arg, int *pos)
    }
    return fo;
 }
-
 ///
 /// FO_GetFolderByAttribute
 //  Generalized find-folder function
@@ -230,7 +228,6 @@ static struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(struct Folder*,void*)
    if (pos) *pos = i;
    return fo;
 }
-
 ///
 /// FO_GetFolderByType
 //  Finds a folder by its type
@@ -243,7 +240,6 @@ static BOOL FO_GetFolderByType_cmp(struct Folder *f, enum FolderType *type)
 {
    return (BOOL)(f->Type == *type);
 }
-
 ///
 /// FO_GetFolderByName
 //  Finds a folder by its name
@@ -256,7 +252,6 @@ static BOOL FO_GetFolderByName_cmp(struct Folder *f, char *name)
 {
   return (BOOL)(!strcmp(f->Name, name) && (!isGroupFolder(f)));
 }
-
 ///
 /// FO_GetFolderPosition
 //  Gets the position of a folder in the list
@@ -276,7 +271,6 @@ int FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups)
       if (fo == findfo) return(j);
    }
 }
-
 ///
 /// FO_LoadConfig
 //  Loads folder configuration from .fconfig file
@@ -463,7 +457,9 @@ BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *
 
    if (folder)
    {
-      if(DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE))
+      struct MUI_NListtree_TreeNode *tn;
+
+      if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) != NULL)
       {
         if(FO_SaveConfig(folder))
         {
@@ -472,9 +468,10 @@ BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *
           return TRUE;
         }
 
-        // if we reach here the SaveConfig() returned FALSE and we need to remove the folder again
-        // from the listtree
-        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, folder);
+        // If we reach here the SaveConfig() returned FALSE and we need to remove the folder again
+        // from the listtree. But we MUST pass the treenode and NOT the folder, because the folder
+        // pointer is no valid treenode but just the user data!!
+        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
       }
 
       free(folder);
@@ -1145,7 +1142,13 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
   struct Folder *folder = FO_GetCurrentFolder();
   BOOL delete_folder = FALSE;
 
-  if(!folder) return;
+  ENTER();
+
+  if(!folder)
+  {
+    LEAVE();
+    return;
+  }
 
   switch (folder->Type)
   {
@@ -1220,6 +1223,8 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
      // Save the Tree to the folder config now
      FO_SaveTree(CreateFilename(".folders"));
   }
+
+  LEAVE();
 }
 MakeHook(FO_DeleteFolderHook, FO_DeleteFolderFunc);
 
