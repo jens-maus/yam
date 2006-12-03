@@ -7476,14 +7476,15 @@ MSG_TR_CHECKUIDL
 Prüfe UIDLs um Duplikate zu vermeiden
 ;
 MSG_CO_SPAM_DISABLEFILTERASK
-Der Spamfilter wurde deaktiviert!\n\
-Wollen Sie auch diese Daten löschen?\n\
-\n\
-Der Spamfilter muss danach erneut trainiert werden!
+Der Spamfilter wurde gerade deaktiviert!\n\
+Welche der folgenden Aktionen möchten Sie durchführen?
 ;
 MSG_CO_SPAM_RESETMAILFLAGS
 _Spam-Status aller Mails zurücksetzen
 ;
 MSG_CO_SPAM_DELETESPAMFOLDER
 Spam-Ordner _löschen
+;
+MSG_CO_SPAM_RESETTDATA
+_Trainingsdaten zurücksetzen
 ;
