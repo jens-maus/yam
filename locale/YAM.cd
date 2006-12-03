@@ -1098,7 +1098,7 @@ MSG_CO_Domain (352//)
 Do_main
 ;
 MSG_CO_Allow8bit (353//)
-SMTP server allows _8bit
+SMTP server allows _8bit characters
 ;
 MSG_CO_ReceiveMail (354//)
 Receive mail (POP3)
@@ -4431,9 +4431,6 @@ Error creating multipart PGP message. Encrypting/signing disabled!
 MSG_RE_FixedFont (1335//)
 Fixed font
 ;
-MSG_ER_NO_SMTP_AUTH (1336//)
-ESMTP server %s doesn't support SMTP AUTH!
-;
 MSG_CO_UseSMTPAUTH (1337//)
 Use SMTP AU_TH
 ;
@@ -6018,4 +6015,36 @@ Reset _spam state of all mails
 ;
 MSG_CO_SPAM_DELETESPAMFOLDER (1782//)
 _Delete spam folder
+;
+MSG_CO_SMTPAUTH_METHOD (1783//)
+_Method
+;
+MSG_HELP_CO_CY_SMTPAUTHMETHOD (1784//)
+Allows to specify the SMTP-AUTH method to be\n\
+used for the configured server. 'Auto' selects\n\
+the method automatically depending on the server\n\
+capabilities. The others are for explicitly\n\
+selecting the method whereas the most secure one\n\
+is listed at the top.
+;
+MSG_CO_SMTPAUTH_AUTO (1785//)
+Auto
+;
+MSG_CO_SMTPAUTH_DIGEST (1786//)
+DIGEST-MD5
+;
+MSG_CO_SMTPAUTH_CRAM (1787//)
+CRAM-MD5
+;
+MSG_CO_SMTPAUTH_LOGIN (1788//)
+LOGIN
+;
+MSG_CO_SMTPAUTH_PLAIN (1789//)
+PLAIN
+;
+MSG_CO_ER_SMTPAUTH (1790//)
+The SMTP server '%s' doesn't seem to support the \
+selected SMTP-AUTH method. Please verify with your \
+provider which authentication methods are available \
+and how to configure them in your mail client.
 ;

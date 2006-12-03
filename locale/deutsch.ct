@@ -1426,8 +1426,8 @@ _Domäne
 ; Do_main
 ;
 MSG_CO_Allow8bit
-SMTP-Server erlaubt _8bit
-; SMTP server allows _8bit
+SMTP-Server erlaubt _8bit Zeichen
+; SMTP server allows _8bit characters
 ;
 MSG_CO_ReceiveMail
 Post empfangen (POP3)
