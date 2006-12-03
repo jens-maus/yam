@@ -1076,12 +1076,15 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
     struct FilterNode *filter = (struct FilterNode *)curNode;
     struct MinNode *curRuleNode;
 
-    // lets check if we can skip some filters because of the ApplyMode
+    // let's check if we can skip some filters because of the ApplyMode
     // and filter relation.
+    // For spam recognition we just clear all filters and don't allocate
+    // anything.
     if((mode == APPLY_AUTO && (!filter->applyToNew || filter->remote)) ||
        (mode == APPLY_USER && (!filter->applyOnReq || filter->remote)) ||
        (mode == APPLY_SENT && (!filter->applyToSent || filter->remote)) ||
-       (mode == APPLY_REMOTE && !filter->remote))
+       (mode == APPLY_REMOTE && !filter->remote) ||
+       (mode == APPLY_SPAM))
     {
       // make sure the current search structures of the rules of the filter
       // are freed
@@ -1305,7 +1308,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
       set(lv, MUIA_NList_Quiet, TRUE);
       G->AppIconQuiet = TRUE;
 
-      if(mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL)
+      if(mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL || mode == APPLY_SPAM)
       {
         if((mlist = MA_CreateMarkedList(lv, mode == APPLY_RX)) && (int)mlist[0] < minselected)
         {
@@ -1322,6 +1325,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
         int m;
         int scnt;
 
+        // for simple spam classification this will result in zero
         scnt = AllocFilterSearch(mode);
 
         BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
@@ -1332,15 +1336,33 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 
           mail = mlist[m+2];
 
-          if(mode == APPLY_AUTO && C->SpamFilterEnabled)
+          if(C->SpamFilterEnabled && (mode == APPLY_AUTO || mode == APPLY_SPAM))
           {
-            // check if we just filter new mail or a user triggered spam recognition
-            if(C->SpamFilterForNewMail && BayesFilterClassifyMessage(mail))
+            BOOL doClassification;
+
+            D(DBF_FILTER, "About to apply SPAM filter to message with subject \"%s\"", mail->Subject);
+            if(mode == APPLY_AUTO && C->SpamFilterForNewMail)
+              // classify this mail if we are allowed to check new mails automatically
+              doClassification = TRUE;
+            else if(mode == APPLY_SPAM && hasStatusSpam(mail) == FALSE && hasStatusHam(mail) == FALSE)
+              // classify mails if the user triggered this and the mail is not yet classified
+              doClassification = TRUE;
+            else
+              // don't try to classify this mail
+              doClassification = FALSE;
+
+            if(doClassification)
             {
-              setStatusToAutoSpam(mail);
-              // move newly recognized spam to the spam folder
-              MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
-              wasSpam = TRUE;
+              D(DBF_FILTER, "Classifying message with subject \"%s\"", mail->Subject);
+
+              if(BayesFilterClassifyMessage(mail))
+              {
+                D(DBF_FILTER, "Message was classified as spam");
+                setStatusToAutoSpam(mail);
+                // move newly recognized spam to the spam folder
+                MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
+                wasSpam = TRUE;
+              }
             }
           }
 

@@ -15,6 +15,8 @@ $Id$
 
 2006-12-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c: reworked the spam filtering a bit again. Now it should always work
+    as expected.
   * locale/deutsch.ct: corrected some strings
   * YAM_COs.c: added the missing code to completely delete the spam folder if
     the spam filter has been deactivated.
