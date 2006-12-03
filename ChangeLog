@@ -6,6 +6,8 @@ $Id$
 
 2006-12-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COs.c: added the missing code to completely delete the spam folder if
+    the spam filter has been deactivated.
   * YAM_UT.c: CheckboxRequest() always returned a negative value, even if the
     user selected all checkboxes and hit "Use" in the end.
   * YAM_FO.c, YAM_folderconfig.h: added new function FO_GetFolderTreeNode() to

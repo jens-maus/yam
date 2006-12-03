@@ -31,6 +31,7 @@
 
 #include <clib/alib_protos.h>
 #include <mui/NList_mcc.h>
+#include <mui/NListtree_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
@@ -49,9 +50,9 @@
 #include "YAM_main.h"
 #include "YAM_mime.h"
 #include "YAM_utilities.h"
+#include "classes/Classes.h"
 
 #include "BayesFilter.h"
-
 #include "Debug.h"
 
 /***************************************************************************
@@ -336,6 +337,15 @@ void CO_SaveConfig(struct Config *co, char *fname)
         fprintf(fh, "FI%02d.MoveTo      = %s\n", i, filter->moveTo);
       }
 
+      fprintf(fh, "\n[Spam filter]\n");
+      fprintf(fh, "SpamFilterEnabled= %s\n", Bool2Txt(co->SpamFilterEnabled));
+      fprintf(fh, "SpamFilterForNew = %s\n", Bool2Txt(co->SpamFilterForNewMail));
+      fprintf(fh, "SpamMarkOnMove   = %s\n", Bool2Txt(co->SpamMarkOnMove));
+      fprintf(fh, "SpamABookIsWhite = %s\n", Bool2Txt(co->SpamAddressBookIsWhiteList));
+      fprintf(fh, "SpamProbThreshold= %d\n", co->SpamProbabilityThreshold);
+      fprintf(fh, "SpamFlushInterval= %d\n", co->SpamFlushTrainingDataInterval);
+      fprintf(fh, "SpamFlushThres   = %d\n", co->SpamFlushTrainingDataThreshold);
+
       fprintf(fh, "\n[Read]\n");
       fprintf(fh, "ShowHeader       = %d\n", co->ShowHeader);
       fprintf(fh, "ShortHeaders     = %s\n", co->ShortHeaders);
@@ -496,15 +506,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
       TimeVal2String(buf, sizeof(buf), &co->LastUpdateCheck, DSS_USDATETIME, TZC_NONE);
       fprintf(fh, "LastUpdateCheck  = %s\n", buf);
       fprintf(fh, "LastUpdateStatus = %d\n", co->LastUpdateStatus);
-
-      fprintf(fh, "\n[Spam filter]\n");
-      fprintf(fh, "SpamFilterEnabled= %s\n", Bool2Txt(co->SpamFilterEnabled));
-      fprintf(fh, "SpamFilterForNew = %s\n", Bool2Txt(co->SpamFilterForNewMail));
-      fprintf(fh, "SpamMarkOnMove   = %s\n", Bool2Txt(co->SpamMarkOnMove));
-      fprintf(fh, "SpamABookIsWhite = %s\n", Bool2Txt(co->SpamAddressBookIsWhiteList));
-      fprintf(fh, "SpamProbThreshold= %d\n", co->SpamProbabilityThreshold);
-      fprintf(fh, "SpamFlushInterval= %d\n", co->SpamFlushTrainingDataInterval);
-      fprintf(fh, "SpamFlushThres   = %d\n", co->SpamFlushTrainingDataThreshold);
 
       fprintf(fh, "\n[Advanced]\n");
       fprintf(fh, "LetterPart       = %d\n", co->LetterPart);
@@ -877,6 +878,13 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                    }
                  }
                }
+/*Spam*/       else if (!stricmp(buffer, "SpamFilterEnabled")) co->SpamFilterEnabled = Txt2Bool(value);
+               else if (!stricmp(buffer, "SpamFilterForNew")) co->SpamFilterForNewMail = Txt2Bool(value);
+               else if (!stricmp(buffer, "SpamMarkOnMove")) co->SpamMarkOnMove = Txt2Bool(value);
+               else if (!stricmp(buffer, "SpamABookIsWhite")) co->SpamAddressBookIsWhiteList = Txt2Bool(value);
+               else if (!stricmp(buffer, "SpamProbThreshold")) co->SpamProbabilityThreshold = atoi(value);
+               else if (!stricmp(buffer, "SpamFlushInterval")) co->SpamFlushTrainingDataInterval = atoi(value);
+               else if (!stricmp(buffer, "SpamFlushThres")) co->SpamFlushTrainingDataThreshold = atoi(value);
 /*4*/          else if (!stricmp(buffer, "ShowHeader"))     co->ShowHeader = atoi(value);
                else if (!stricmp(buffer, "ShortHeaders"))   strlcpy(co->ShortHeaders, value, sizeof(co->ShortHeaders));
                else if (!stricmp(buffer, "ShowSenderInfo")) co->ShowSenderInfo = atoi(value);
@@ -1081,13 +1089,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "UpdateServer"))   strlcpy(co->UpdateServer, value, sizeof(co->UpdateServer));
                else if (!stricmp(buffer, "LastUpdateCheck"))String2TimeVal(&co->LastUpdateCheck, value, DSS_USDATETIME, TZC_NONE);
                else if (!stricmp(buffer, "LastUpdateStatus")) co->LastUpdateStatus = atoi(value);
-/*Spam*/       else if (!stricmp(buffer, "SpamFilterEnabled")) co->SpamFilterEnabled = Txt2Bool(value);
-               else if (!stricmp(buffer, "SpamFilterForNew")) co->SpamFilterForNewMail = Txt2Bool(value);
-               else if (!stricmp(buffer, "SpamMarkOnMove")) co->SpamMarkOnMove = Txt2Bool(value);
-               else if (!stricmp(buffer, "SpamABookIsWhite")) co->SpamAddressBookIsWhiteList = Txt2Bool(value);
-               else if (!stricmp(buffer, "SpamProbThreshold")) co->SpamProbabilityThreshold = atoi(value);
-               else if (!stricmp(buffer, "SpamFlushInterval")) co->SpamFlushTrainingDataInterval = atoi(value);
-               else if (!stricmp(buffer, "SpamFlushThres")) co->SpamFlushTrainingDataThreshold = atoi(value);
 /*Advanced*/   else if (!stricmp(buffer, "LetterPart"))     { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
                else if (!stricmp(buffer, "WriteIndexes"))   co->WriteIndexes = atoi(value);
                else if (!stricmp(buffer, "SupportSite"))    strlcpy(co->SupportSite, value, sizeof(co->SupportSite));
@@ -1293,6 +1294,7 @@ void CO_GetConfig(void)
                                                             GetStr(MSG_CO_SPAM_RESETMAILFLAGS),
                                                             GetStr(MSG_CO_SPAM_DELETESPAMFOLDER));
 
+          SHOWVALUE(DBF_CONFIG, mask);
           // check if the user canceled the requester
           if(mask >= 0)
           {
@@ -1338,7 +1340,34 @@ void CO_GetConfig(void)
             // delete spam folder
             if(mask & (1 << 2))
             {
-              #warning "not yet implemented"
+              struct Folder *spamFolder;
+
+              // first locate the spam folder
+              if((spamFolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
+              {
+                struct MUI_NListtree_TreeNode *tn;
+
+                // now we need the corresponding treenode to remove it from the list of folders
+                if((tn = FO_GetFolderTreeNode(spamFolder)) != NULL)
+                {
+                  // delete the folder on disk
+                  DeleteMailDir(GetFolderDir(spamFolder), FALSE);
+                  // remove all mails from our internal list
+                  ClearMailList(spamFolder, TRUE);
+                  if(spamFolder->imageObject != NULL)
+                  {
+                    // we make sure that the NList also doesn`t use the image in future anymore
+                    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
+                    spamFolder->imageObject = NULL;
+                    // we don't need to dispose the image, because it is one of the standard images and not
+                    // a custom image of the user.
+                  }
+                  // remove the folder from the folder list
+                  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
+                  // and finally save the modified tree to the folder config now
+                  FO_SaveTree(CreateFilename(".folders"));
+                }
+              }
             }
           }
           else
@@ -1347,6 +1376,13 @@ void CO_GetConfig(void)
             // back online
             CE->SpamFilterEnabled = TRUE;
           }
+        }
+        else if(C->SpamFilterEnabled == FALSE && CE->SpamFilterEnabled == TRUE)
+        {
+          // the spam filter has been enabled, now try to create the mandatory spam folder
+          if(FO_GetFolderByType(FT_SPAM, NULL) == NULL)
+            if(FO_CreateFolder(FT_SPAM, FolderNames[4], GetStr(MSG_MA_SPAM)))
+              FO_SaveTree(CreateFilename(".folders"));
         }
       }
       break;
@@ -1876,3 +1912,4 @@ void CO_SetConfig(void)
    LEAVE();
 }
 ///
+
