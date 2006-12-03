@@ -2496,6 +2496,7 @@ BOOL DeleteMailDir(char *dir, BOOL isroot)
             }
             else if(!isdir && (isValidMailFile(filename) ||
                     stricmp(filename, ".fconfig") == 0   ||
+                    stricmp(filename, ".fimage") == 0   ||
                     stricmp(filename, ".index") == 0)
                    )
             {
