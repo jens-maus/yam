@@ -1104,6 +1104,9 @@ LONG CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG numB
 
     va_start(args, text);
 
+    // start with a zero value, because we add certain bits during the creation of the boxes
+    result = 0;
+
     // now we create the checkboxes for the requester
     for(i=0; i < numBoxes; i++)
     {
