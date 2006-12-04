@@ -7347,7 +7347,7 @@ MSG_ER_CANTOPENASL
 Es trat ein Fehler beim Versuch auf, ein \
 ASL Fenster zu öffnen.\n\
 \n\
-Bitte stellen Sie sicher, das ihre ASL \
+Bitte stellen Sie sicher, dass ihre ASL \
 Einstellung korrekt sind und ASL korrekt \
 funktioniert.
 ;
@@ -7523,4 +7523,11 @@ Spam-Ordner verwendet wird!
 ;
 MSG_ER_SPAMDIR_EXISTS_ANSWERS
 Als Spam-Ordner verwenden|Spamfilter deaktivieren
+;
+MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER
+Es trat ein Fehler beim Anlegen des Spam-Ordners auf!\n\
+Der Spamfilter wurde wieder deaktiviert.\n\
+\n\
+Bitte stellen Sie sicher, dass genügend Platz auf dem Laufwerk \
+vorhanden ist und dass das Laufwerk nicht schreibgeschützt ist.
 ;

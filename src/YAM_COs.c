@@ -1383,9 +1383,43 @@ void CO_GetConfig(void)
         else if(C->SpamFilterEnabled == FALSE && CE->SpamFilterEnabled == TRUE)
         {
           // the spam filter has been enabled, now try to create the mandatory spam folder
-          if(FO_GetFolderByType(FT_SPAM, NULL) == NULL)
-            if(FO_CreateFolder(FT_SPAM, FolderNames[4], GetStr(MSG_MA_SPAM)))
-              FO_SaveTree(CreateFilename(".folders"));
+          BOOL createSpamFolder;
+
+          if(FileType((char *)FolderNames[4]) == FIT_NONEXIST)
+          {
+            // no directory named "spam" exists, so let's create it
+            createSpamFolder = TRUE;
+          }
+          else
+          {
+            // the directory "spam" already exists, but it is not the standard spam folder
+            // let the user decide what to do
+            if(MUI_Request(G->App, NULL, 0, NULL,
+                                            GetStr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
+                                            GetStr(MSG_ER_SPAMDIR_EXISTS)))
+            {
+              // delete everything in the folder, the directory itself can be kept
+              DeleteMailDir((char *)FolderNames[4], FALSE);
+              createSpamFolder = TRUE;
+            }
+            else
+            {
+              // the user has chosen to disable the spam filter, so we do it
+              CE->SpamFilterEnabled = FALSE;
+              createSpamFolder = FALSE;
+            }
+          }
+
+          if(createSpamFolder)
+          {
+            // try to create the folder and save the new folder tree
+            if(!FO_CreateFolder(FT_SPAM, FolderNames[4], GetStr(MSG_MA_SPAM)) || !FO_SaveTree(CreateFilename(".folders")))
+            {
+              // something failed, so we disable the spam filter again
+              ER_NewError(GetStr(MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER));
+              CE->SpamFilterEnabled = FALSE;
+            }
+          }
         }
       }
       break;

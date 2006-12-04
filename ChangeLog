@@ -10,6 +10,11 @@ $Id$
 
 2006-12-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/deutsch.ct: fixed some typos
+  * YAM_COs.c: added the same checks when creating the spam folder after the
+    spam filter has been activated in the configuration window as upon startup.
+    If something goes wrong the user is prompted with an error window and the
+    spam filter is disabled again.
   * YAM_UT.c: added some more checks if the spam filter is active when the
     folder type and the folder images for a possibly spam folder are set up. An
     inactive spam filter will result in a standard custom folder in all cases
