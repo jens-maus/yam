@@ -5556,7 +5556,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
     else if(isOutgoingFolder(fo)) fo->ImageIndex = (fo->Total > 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
     else if(isDeletedFolder(fo))  fo->ImageIndex = (fo->Total > 0) ? FICON_ID_DELETED_NEW : FICON_ID_DELETED;
     else if(isSentFolder(fo))     fo->ImageIndex = FICON_ID_SENT;
-    else if(isSpamFolder(fo))     fo->ImageIndex = (fo->Total > 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
+    else if(C->SpamFilterEnabled && isSpamFolder(fo)) fo->ImageIndex = (fo->Total > 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
     else fo->ImageIndex = -1;
   }
 
