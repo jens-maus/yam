@@ -6,6 +6,7 @@ $Id$
 
 2006-12-03  Jens Langner <Jens.Langner@light-speed.de>
 
+  * locale/YAM.cd, deutsch.ct: small modifications to recently changes passages.
   * YAM_TR.c, YAM_COg.c, YAM_COs.c, YAM_CO.c: added the possibility to explicitly
     select the SMTP-AUTH method in the configuration of YAM. Some SMTP servers
     out there seem to report authentication methods on connect which they however

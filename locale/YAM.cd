@@ -5993,12 +5993,6 @@ training data?\n\
 \n\
 The spam filter must be trained again afterwards!
 ;
-MSG_CO_SPAM_DISABLEFILTERASK_OLD (1777//)
-Do you also want to reset the spam filter's\n\
-training data and all mail flags?\n\
-\n\
-The spam filter must be trained again afterwards!
-;
 MSG_TR_CHECKUIDL (1778//)
 Checking UIDLs to avoid duplicates...
 ;
@@ -6044,7 +6038,9 @@ PLAIN
 ;
 MSG_CO_ER_SMTPAUTH (1790//)
 The SMTP server '%s' doesn't seem to support the \
-selected SMTP-AUTH method. Please verify with your \
-provider which authentication methods are available \
-and how to configure them in your mail client.
+selected SMTP-AUTH method.\n\
+\n\
+Please verify with your provider which authentication \
+methods are available and how to configure them in your \
+mail client.
 ;

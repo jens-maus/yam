@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (27.09.2006)
+## version $VER: YAM.catalog 6.0 (04.12.2006)
 ## language deutsch
 ## codeset 0
 ;
@@ -5692,10 +5692,6 @@ MSG_RE_FixedFont
 Feste Schrift
 ; Fixed font
 ;
-MSG_ER_NO_SMTP_AUTH
-ESMTP-Server %s unterstützt SMTP AUTH nicht!
-; ESMTP server %s doesn't support SMTP AUTH!
-;
 MSG_CO_UseSMTPAUTH
 SMTP AU_TH benutzen
 ; Use SMTP AU_TH
@@ -7466,12 +7462,6 @@ Spamfilters zurücksetzen?\n\
 \n\
 Der Spamfilter muss danach erneut trainiert werden!
 ;
-MSG_CO_SPAM_DISABLEFILTERASK_OLD
-Wollen Sie zusätzlich auch die Trainingsdaten des Spamfilters\n\
-und den Spamstatus aller Nachrichten zurücksetzen?\n\
-\n\
-Der Spamfilter muss danach erneut trainiert werden!
-;
 MSG_TR_CHECKUIDL
 Prüfe UIDLs um Duplikate zu vermeiden
 ;
@@ -7487,4 +7477,38 @@ Spam-Ordner _löschen
 ;
 MSG_CO_SPAM_RESETTDATA
 _Trainingsdaten zurücksetzen
+;
+MSG_CO_SMTPAUTH_METHOD
+_Methode
+;
+MSG_HELP_CO_CY_SMTPAUTHMETHOD
+Erlaubt die Methode die zur Authentifizierung\n\
+mittels SMTP-AUTH verwendet wird zu spezifizieren.\n\
+'Auto' wählt die jeweils sicherste Methode anhand\n\
+derere vom Server Verfügbaren aus. Die anderen\n\
+Aufgelisteten können explizit ausgewählt werden,\n\
+wobei sich die jeweils Sicherere weiter oben befindet.
+;
+MSG_CO_SMTPAUTH_AUTO
+Auto
+;
+MSG_CO_SMTPAUTH_DIGEST
+DIGEST-MD5
+;
+MSG_CO_SMTPAUTH_CRAM
+CRAM-MD5
+;
+MSG_CO_SMTPAUTH_LOGIN
+LOGIN
+;
+MSG_CO_SMTPAUTH_PLAIN
+PLAIN
+;
+MSG_CO_ER_SMTPAUTH
+Der SMTP-Server '%s' scheint die ausgewählte SMTP-AUTH \
+Methode nicht zu unterstützen.\n\
+\n\
+Bitte stellen Sie sicher das der von Ihnen ausgewählte \
+Server auch wirklich eines der verfügbaren AUTH Methoden \
+unterstützt.
 ;

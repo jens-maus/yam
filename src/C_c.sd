@@ -101,6 +101,8 @@ BOOL Open%bCatalog(void)
       {
         struct EasyStruct ErrReq;
 
+        W(DBF_STARTUP, "Catalog version != required version. Warning user!");
+
         ErrReq.es_StructSize = sizeof(struct EasyStruct);
         ErrReq.es_Flags      = 0;
 
@@ -123,7 +125,11 @@ BOOL Open%bCatalog(void)
         G->Catalog = NULL;
       }
     }
+    else
+      W(DBF_STARTUP, "couldn't open '%b.catalog'");
   }
+  else
+    W(DBF_STARTUP, "locale.library wasn't open, skipping catalog opening.");
 
   RETURN(success);
   return success;
