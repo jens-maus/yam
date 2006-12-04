@@ -7512,3 +7512,15 @@ Bitte stellen Sie sicher, dass der von Ihnen ausgewählte \
 Server auch wirklich eine der verfügbaren AUTH-Methoden \
 unterstützt.
 ;
+MSG_ER_SPAMDIR_EXISTS
+Das Verzeichnis "spam" existiert bereits!\n\
+\n\
+Wollen Sie das Verzeichnis als Standard-Spam-Ordner verwenden\n\
+oder soll der Spamfilter deaktiviert werden?\n\
+\n\
+Existierende Mails werden gelöscht, falls das Verzeichnis als\n\
+Spam-Ordner verwendet wird!
+;
+MSG_ER_SPAMDIR_EXISTS_ANSWERS
+Als Spam-Ordner verwenden|Spamfilter deaktivieren
+;

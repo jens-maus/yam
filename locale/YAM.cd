@@ -6044,3 +6044,14 @@ Please verify with your provider which authentication \
 methods are available and how to configure them in your \
 mail client.
 ;
+MSG_ER_SPAMDIR_EXISTS (1791//)
+The directory \"spam\" already exists!\n\
+\n\
+Do you want to use this directory as the standard spam folder\n\
+or do you want to disable the spam filter?\n\
+\n\
+Existing mails will be deleted if you use it as spam folder!
+;
+MSG_ER_SPAMDIR_EXISTS_ANSWERS (1792//)
+Use as spam folder|Disable spam filter
+;
