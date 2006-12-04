@@ -7482,12 +7482,12 @@ MSG_CO_SMTPAUTH_METHOD
 _Methode
 ;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
-Erlaubt die Methode die zur Authentifizierung\n\
-mittels SMTP-AUTH verwendet wird zu spezifizieren.\n\
+Erlaubt die Methode, die zur Authentifizierung\n\
+mittels SMTP-AUTH verwendet wird, zu spezifizieren.\n\
 'Auto' wählt die jeweils sicherste Methode anhand\n\
-derere vom Server Verfügbaren aus. Die anderen\n\
-Aufgelisteten können explizit ausgewählt werden,\n\
-wobei sich die jeweils Sicherere weiter oben befindet.
+der vom Server verfügbaren aus. Die anderen\n\
+aufgelisteten können explizit ausgewählt werden,\n\
+wobei sich die jeweils sicherere weiter oben befindet.
 ;
 MSG_CO_SMTPAUTH_AUTO
 Auto
@@ -7508,7 +7508,7 @@ MSG_CO_ER_SMTPAUTH
 Der SMTP-Server '%s' scheint die ausgewählte SMTP-AUTH \
 Methode nicht zu unterstützen.\n\
 \n\
-Bitte stellen Sie sicher das der von Ihnen ausgewählte \
-Server auch wirklich eines der verfügbaren AUTH Methoden \
+Bitte stellen Sie sicher, dass der von Ihnen ausgewählte \
+Server auch wirklich eine der verfügbaren AUTH-Methoden \
 unterstützt.
 ;

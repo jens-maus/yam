@@ -6,6 +6,7 @@ $Id$
 
 2006-12-04  Pär Boberg <pbobbenb@spray.se>
 
+  * locale/deutsch.ct: fixed some bad german phrases.
   * YAM_FI.c: the user defined filters were not working anymore if the spam
     filter was not active, because YAM always wanted to obtain the spam folder,
     which does not exist without the spam filter being active.
