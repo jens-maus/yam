@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.5 (01.12.06)
+## version $VER: YAM.ct 6.6 (04.12.06)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -1306,8 +1306,8 @@ Do_män
 ;#DEF Do_main
 ;#SET (352//)
 MSG_CO_Allow8bit
-SMTP-server tillåter _8 bitar
-;#DEF SMTP server allows _8bit
+SMTP-server tillåter _8 bitars tecken
+;#DEF SMTP server allows _8bit characters
 ;#SET (353//)
 MSG_CO_ReceiveMail
 Hämta post (POP3)
@@ -5045,10 +5045,6 @@ MSG_RE_FixedFont
 Fast typsnitt
 ;#DEF Fixed font
 ;#SET (1335//)
-MSG_ER_NO_SMTP_AUTH
-ESMTP servern %s stödjer inte SMTP AUTH!
-;#DEF ESMTP server %s doesn't support SMTP AUTH!
-;#SET (1336//)
 MSG_CO_UseSMTPAUTH
 Använd SMTP AU_TH
 ;#DEF Use SMTP AU_TH
@@ -6745,10 +6741,6 @@ MSG_CO_SPAM_RESETTRAININGDATAASK
 Vill du verkligen nollställa skräppostfiltrets\nträningsdata?\n\nSkräppostfiltret måste tränas igen efteråt!
 ;#DEF Do you really want to reset the spam filter's\ntraining data?\n\nThe spam filter must be trained again afterwards!
 ;#SET (1776//)
-MSG_CO_SPAM_DISABLEFILTERASK_OLD
-Vill du också nollställa skräppostfiltrets\nträningsdata och alla brev flaggor?\n\nSkräppostfiltret måste tränas igen efteråt!
-;#DEF Do you also want to reset the spam filter's\ntraining data and all mail flags?\n\nThe spam filter must be trained again afterwards!
-;#SET (1777//)
 MSG_TR_CHECKUIDL
 Kontrollerar UIDL'er för att undvika dubbletter...
 ;#DEF Checking UIDLs to avoid duplicates...
@@ -6769,3 +6761,35 @@ MSG_CO_SPAM_DELETESPAMFOLDER
 Ra_dera skräppostmappen
 ;#DEF _Delete spam folder
 ;#SET (1782//)
+MSG_CO_SMTPAUTH_METHOD
+_Metod
+;#DEF _Method
+;#SET (1783//)
+MSG_HELP_CO_CY_SMTPAUTHMETHOD
+Tillåter specifiering av SMTP-AUTH metoden som\nskall användas för den konfigurerade servern.\n'Auto' väljer metod automatiskt beroende\npå serverns förmåga. De andra är för att\nspecifikt välja metod, där de säkraste\när listade överst.
+;#DEF Allows to specify the SMTP-AUTH method to be\nused for the configured server. 'Auto' selects\nthe method automatically depending on the server\ncapabilities. The others are for explicitly\nselecting the method whereas the most secure one\nis listed at the top.
+;#SET (1784//)
+MSG_CO_SMTPAUTH_AUTO
+Auto
+;#DEF Auto
+;#SET (1785//)
+MSG_CO_SMTPAUTH_DIGEST
+DIGEST-MD5
+;#DEF DIGEST-MD5
+;#SET (1786//)
+MSG_CO_SMTPAUTH_CRAM
+CRAM-MD5
+;#DEF CRAM-MD5
+;#SET (1787//)
+MSG_CO_SMTPAUTH_LOGIN
+LOGIN
+;#DEF LOGIN
+;#SET (1788//)
+MSG_CO_SMTPAUTH_PLAIN
+PLAIN
+;#DEF PLAIN
+;#SET (1789//)
+MSG_CO_ER_SMTPAUTH
+SMTP-servern '%s' verkar inte stödja den valda SMTP-AUTH metoden.\n\nVar god verifiera med din leverantör vilka autentisieringsmetoder som är tillgängliga och hur man konfigurerar dem i din epost klient.
+;#DEF The SMTP server '%s' doesn't seem to support the selected SMTP-AUTH method.\n\nPlease verify with your provider which authentication methods are available and how to configure them in your mail client.
+;#SET (1790//)
