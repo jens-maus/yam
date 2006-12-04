@@ -1278,7 +1278,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
   struct Mail *mail;
   struct Mail **mlist = NULL;
   struct Folder *folder;
-  struct Folder *spamfolder;
+  struct Folder *spamfolder = NULL;
   int matches = 0;
   int minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
   enum ApplyFilterMode mode = arg[0];
@@ -1288,7 +1288,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
   D(DBF_FILTER, "About to apply SPAM filter and user defined filters...");
 
   if((folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : FO_GetCurrentFolder()) != NULL &&
-     (spamfolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
+     (C->SpamFilterEnabled == FALSE || (spamfolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL))
   {
     BOOL applyFilters = TRUE;
 
