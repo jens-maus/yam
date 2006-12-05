@@ -6055,10 +6055,13 @@ Existing mails will be deleted if you use it as spam folder!
 MSG_ER_SPAMDIR_EXISTS_ANSWERS (1792//)
 Use as spam folder|Disable spam filter
 ;
-MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER (1773//)
+MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER (1793//)
 Could not create standard spam folder!\n\
 \n\
 The spam filter has been deactivated again.\n\
 Please make sure that there is enough space left on the drive \
 and that the drive is not write protected.
+;
+MSG_MA_CHECKSPAM (1794//)
+Check for spam content
 ;
