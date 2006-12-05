@@ -6055,7 +6055,7 @@ Existing mails will be deleted if you use it as spam folder!
 MSG_ER_SPAMDIR_EXISTS_ANSWERS (1792//)
 Use as spam folder|Disable spam filter
 ;
-MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER (1973//)
+MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER (1773//)
 Could not create standard spam folder!\n\
 \n\
 The spam filter has been deactivated again.\n\
