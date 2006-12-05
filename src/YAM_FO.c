@@ -556,7 +556,7 @@ BOOL FO_LoadTree(char *fname)
                      else if(stricmp(folderpath, FolderNames[1]) == 0) fo.Type = FT_OUTGOING;
                      else if(stricmp(folderpath, FolderNames[2]) == 0) fo.Type = FT_SENT;
                      else if(stricmp(folderpath, FolderNames[3]) == 0) fo.Type = FT_DELETED;
-                     else if(stricmp(folderpath, FolderNames[4]) == 0) fo.Type = FT_SPAM;
+                     else if(C->SpamFilterEnabled && stricmp(folderpath, FolderNames[4]) == 0) fo.Type = FT_SPAM;
 
                      // Save the config now because it could be changed in the meantime
                      if(!FO_SaveConfig(&fo))
@@ -582,7 +582,7 @@ BOOL FO_LoadTree(char *fname)
                     else if(isOutgoingFolder(&fo)) fo.ImageIndex = FICON_ID_OUTGOING;
                     else if(isDeletedFolder(&fo))  fo.ImageIndex = FICON_ID_DELETED;
                     else if(isSentFolder(&fo))     fo.ImageIndex = FICON_ID_SENT;
-                    else if(isSpamFolder(&fo))     fo.ImageIndex = FICON_ID_SPAM;
+                    else if(C->SpamFilterEnabled && isSpamFolder(&fo)) fo.ImageIndex = FICON_ID_SPAM;
                     else fo.ImageIndex = -1; // or with -1 for a non std folder.
                   }
 

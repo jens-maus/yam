@@ -6,6 +6,8 @@ $Id$
 
 2006-12-05  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: added also some checks if the spam filter is active when the
+    folder type and the folder images for a possibly spam folder are set up.
   * YAM.cd: fixed wrong id
   * UpdateCheck.c: fixed bug #1604415. If the update check results in either no
     available updates or an available update the last update time in the config
