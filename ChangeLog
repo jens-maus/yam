@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-12-06  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: before a sound object from a previous call of PlaySound() is
+    disposed, its playback is stopped now. Maybe this fixes the freezes with
+    MOS.
+
 2006-12-05  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: added also some checks if the spam filter is active when the

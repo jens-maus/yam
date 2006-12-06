@@ -5671,7 +5671,22 @@ void PlaySound(char *filename)
     // if we previously created a sound object
     // lets dispose it first.
     if(G->NewMailSound_Obj)
+    {
+      // create a datatype trigger
+      struct dtTrigger dtt;
+
+      // Fill the trigger
+      dtt.MethodID     = DTM_TRIGGER;
+      dtt.dtt_GInfo    = NULL;
+      dtt.dtt_Function = STM_STOP;
+      dtt.dtt_Data     = NULL;
+
+      // stop the sound by calling DoDTMethodA()
+      DoDTMethodA(G->NewMailSound_Obj, NULL, NULL, (APTR)&dtt);
+
+      // finally dispose the old object
       DisposeDTObject(G->NewMailSound_Obj);
+    }
 
     // create the new datatype object
     G->NewMailSound_Obj = NewDTObject(filename, DTA_GroupID, GID_SOUND, TAG_DONE);
