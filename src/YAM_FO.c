@@ -1254,6 +1254,9 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 
      // Save the Tree to the folder config now
      FO_SaveTree(CreateFilename(".folders"));
+
+     // update the statistics in case the just deleted folder contained new or unread mail
+     DisplayStatistics(NULL, TRUE);
   }
 
   LEAVE();

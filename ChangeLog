@@ -6,6 +6,8 @@ $Id$
 
 2006-12-06  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: added a missing DisplayStatistics() call after deleting a folder.
+    This fixes bug #1609972.
   * locale/deutsch.ct: fixed some wrong german words (bug #1610004).
   * YAM_UT.c: before a sound object from a previous call of PlaySound() is
     disposed, its playback is stopped now. Maybe this fixes the freezes with
