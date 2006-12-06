@@ -1582,7 +1582,7 @@ static void Initialise2(void)
          }
          else
          {
-           // the user chose to disable the spam filter, so we do it
+           // the user has chosen to disable the spam filter, so we do it
            C->SpamFilterEnabled = FALSE;
            createSpamFolder = FALSE;
          }
@@ -1591,11 +1591,6 @@ static void Initialise2(void)
        if(createSpamFolder)
          // finally, create the spam folder
          newfolders |= FO_CreateFolder(FT_SPAM  , FolderNames[4], GetStr(MSG_MA_SPAM));
-     }
-     else
-     {
-        struct Folder *f;
-        f=FO_GetFolderByType(FT_SPAM, NULL);
      }
    }
 
