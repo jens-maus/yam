@@ -6464,11 +6464,11 @@ aufweisst und die Zugriffsrechte darauf stimmen.
 ; FILENAME, FOLDER
 ;
 MSG_ER_XPKUSAGE
-Ein Fehler ist bei dem Versuch aufgetreten die Datei '%s' mittels XPX\n\
+Ein Fehler ist bei dem Versuch aufgetreten die Datei '%s' mittels XPK\n\
 zu bearbeiten.\n\
 \n\
 Bitte kontrollieren Sie ihre XPK Installation und die dazugehörigen \
-Kompremierungseinstellung in der Konfiguration von YAM.
+Komprimierungseinstellungen in der Konfiguration von YAM.
 ; FILENAME
 ;
 MSG_MA_CREQ_OLDFILE_TITLE
@@ -7530,4 +7530,10 @@ Der Spamfilter wurde wieder deaktiviert.\n\
 \n\
 Bitte stellen Sie sicher, dass genügend Platz auf dem Laufwerk \
 vorhanden ist und dass das Laufwerk nicht schreibgeschützt ist.
+;
+MSG_MA_CHECKSPAM
+auf Spamgehalt prüfen
+;
+MSG_RE_CHECKSPAM
+auf Spamgehalt prüfen
 ;
