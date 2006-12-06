@@ -1367,8 +1367,12 @@ void CO_GetConfig(void)
                   }
                   // remove the folder from the folder list
                   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
+                  // free the memory allocated for this folder
+                  free(spamFolder);
                   // and finally save the modified tree to the folder config now
                   FO_SaveTree(CreateFilename(".folders"));
+                  // an update the statistics in case the spam folder contained new or unread mails
+                  DisplayStatistics(NULL, TRUE);
                 }
               }
             }
