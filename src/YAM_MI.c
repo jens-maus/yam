@@ -740,7 +740,7 @@ long base64decode_file(FILE *in, FILE *out,
       for(r=0; r < outLength; r++, rc++)
       {
         // check if this is a CRLF
-        if(convCRLF && *rc == '\r' &&
+        if(*rc == '\r' &&
            outLength-r > 1 && rc[1] == '\n')
         {
           // if so, skip the \r

@@ -6,6 +6,7 @@ $Id$
 
 2006-12-06  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MI.c: removed unnecessary check during CRLF conversion.
   * YAM.c: removed a redundand statement for debugging purposes
   * YAM_COs.c: after deleting the spam folder when the spam filter was deacti-
     vated the folder structure is free()ed now and the statistics are updated,
