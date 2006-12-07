@@ -126,7 +126,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 
       // then we add the 2. level if icons with the additional mail information
       // like importance, signed/crypted, report and attachment information
-      if(hasStatusSpam(entry))                   strlcat(dispsta, SICON_SPAM, sizeof(dispsta));
+      if(C->SpamFilterEnabled && hasStatusSpam(entry)) strlcat(dispsta, SICON_SPAM, sizeof(dispsta));
       if(getImportanceLevel(entry) == IMP_HIGH)  strlcat(dispsta, SICON_URGENT, sizeof(dispsta));
       if(isMP_CryptedMail(entry))                strlcat(dispsta, SICON_CRYPT, sizeof(dispsta));
       else if(isMP_SignedMail(entry))            strlcat(dispsta, SICON_SIGNED, sizeof(dispsta));
@@ -635,11 +635,11 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 
   if(data->context_menu != NULL && mail != NULL && C->SpamFilterEnabled)
   {
-    Object *hamItem;
     Object *spamItem;
+    Object *hamItem;
 
-    spamItem = MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_TOSPAM),    MUIA_Menuitem_Enabled, !hasStatusSpam(mail), MUIA_UserData, MMEN_TOSPAM, End;
-    hamItem =  MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_TONOTSPAM), MUIA_Menuitem_Enabled, !hasStatusHam(mail),  MUIA_UserData, MMEN_TOHAM,  End;
+    spamItem = MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_TOSPAM),    MUIA_Menuitem_Enabled, !hasStatusSpam(mail),                         MUIA_UserData, MMEN_TOSPAM,   End;
+    hamItem =  MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_TONOTSPAM), MUIA_Menuitem_Enabled, !hasStatusHam(mail),                          MUIA_UserData, MMEN_TOHAM,    End;
 
     DoMethod(data->context_menu, MUIM_Family_Insert, hamItem, afterThis);
     DoMethod(data->context_menu, MUIM_Family_Insert, spamItem, afterThis);
