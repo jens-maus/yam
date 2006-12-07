@@ -42,7 +42,7 @@
 	, MUIMASTER_BASE_NAME)
 
 #define MUI_CreateCustomClass(base, supername, supermcc, datasize, dispatcher) \
-	LP5(0x6c, struct MUI_CustomClass *, MUI_CreateCustomClass, struct Library *, base, a0, const char *, supername, a1, struct MUI_CustomClass *, supermcc, a2, int, datasize, d0, APTR, dispatcher, a3, \
+	LP5(0x6c, struct MUI_CustomClass *, MUI_CreateCustomClass, struct Library *, base, a0, CONST_STRPTR , supername, a1, struct MUI_CustomClass *, supermcc, a2, int, datasize, d0, APTR, dispatcher, a3, \
 	, MUIMASTER_BASE_NAME)
 
 #define MUI_DeleteCustomClass(mcc) \
@@ -70,7 +70,7 @@
 	, MUIMASTER_BASE_NAME)
 
 #define MUI_GetClass(name) \
-	LP1(0x4e, struct IClass *, MUI_GetClass, const char *, name, a0, \
+	LP1(0x4e, struct IClass *, MUI_GetClass, CONST_STRPTR , name, a0, \
 	, MUIMASTER_BASE_NAME)
 
 #define MUI_Layout(obj, l, t, w, h, flags) \
@@ -87,7 +87,7 @@
 #endif /* !NO_INLINE_STDARG */
 
 #define MUI_NewObjectA(class, tags) \
-	LP2(0x1e, Object *, MUI_NewObjectA, const char *, class, a0, struct TagItem *, tags, a1, \
+	LP2(0x1e, Object *, MUI_NewObjectA, CONST_STRPTR , class, a0, struct TagItem *, tags, a1, \
 	, MUIMASTER_BASE_NAME)
 
 #ifndef NO_INLINE_STDARG
@@ -120,7 +120,7 @@
 	, MUIMASTER_BASE_NAME)
 
 #define MUI_RequestA(app, win, flags, title, gadgets, format, params) \
-	LP7(0x2a, LONG, MUI_RequestA, APTR, app, d0, APTR, win, d1, LONGBITS, flags, d2, const char *, title, a0, const char *, gadgets, a1, const char *, format, a2, APTR, params, a3, \
+	LP7(0x2a, LONG, MUI_RequestA, APTR, app, d0, APTR, win, d1, LONGBITS, flags, d2, CONST_STRPTR , title, a0, CONST_STRPTR , gadgets, a1, CONST_STRPTR , format, a2, APTR, params, a3, \
 	, MUIMASTER_BASE_NAME)
 
 #ifndef NO_INLINE_STDARG

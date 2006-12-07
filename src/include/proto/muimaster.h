@@ -2,12 +2,12 @@
 #define PROTO_MUIMASTER_H
 
 /*
-**	$Id: muimaster.h 2024 2006-03-05 10:27:25Z damato $
+**	$Id$
 **	Includes Release 50.1
 **
 **	Prototype/inline/pragma header file combo
 **
-**	(C) Copyright 2003-2004 Amiga, Inc.
+**	(C) Copyright 2003-2005 Amiga, Inc.
 **	    All Rights Reserved
 */
 
@@ -27,7 +27,11 @@
 /****************************************************************************/
 
 #ifndef __NOLIBBASE__
-extern struct Library * MUIMasterBase;
+ #ifndef __USE_BASETYPE__
+  extern struct Library * MUIMasterBase;
+ #else
+  extern struct Library * MUIMasterBase;
+ #endif /* __USE_BASETYPE__ */
 #endif /* __NOLIBBASE__ */
 
 /****************************************************************************/
