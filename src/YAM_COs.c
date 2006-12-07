@@ -1396,21 +1396,30 @@ void CO_GetConfig(void)
           }
           else
           {
+            ULONG result;
+
             // the directory "spam" already exists, but it is not the standard spam folder
             // let the user decide what to do
-            if(MUI_Request(G->App, NULL, 0, NULL,
-                                            GetStr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
-                                            GetStr(MSG_ER_SPAMDIR_EXISTS)))
+            result = MUI_Request(G->App, NULL, 0, NULL,
+                                                  GetStr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
+                                                  GetStr(MSG_ER_SPAMDIR_EXISTS));
+            switch(result)
             {
-              // delete everything in the folder, the directory itself can be kept
-              DeleteMailDir((char *)FolderNames[4], FALSE);
-              createSpamFolder = TRUE;
-            }
-            else
-            {
-              // the user has chosen to disable the spam filter, so we do it
-              CE->SpamFilterEnabled = FALSE;
-              createSpamFolder = FALSE;
+              case 1:
+                // delete everything in the folder, the directory itself can be kept
+                DeleteMailDir((char *)FolderNames[4], FALSE);
+                createSpamFolder = TRUE;
+                break;
+
+              case 2:
+                // keep the folder contents
+                createSpamFolder = TRUE;
+                break;
+
+              default:
+                // the user has chosen to disable the spam filter, so we do it
+                CE->SpamFilterEnabled = FALSE;
+                createSpamFolder = FALSE;
             }
           }
 
