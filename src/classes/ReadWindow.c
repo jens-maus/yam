@@ -74,6 +74,16 @@ struct Data
 };
 */
 
+// menu item IDs
+enum
+{
+  RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,RMEN_DETACH,
+  RMEN_CROP,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_SETUNREAD,RMEN_SETMARKED,
+  RMEN_SETSPAM,RMEN_SETHAM,RMEN_CHSUBJ,RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,
+  RMEN_NEXTTH,RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,
+  RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT,RMEN_SIMAGE
+};
+
 /* Private Functions */
 /// SelectMessage()
 //  Activates a message in the main window's message listview
@@ -112,7 +122,7 @@ static void AddRemoveSpamMenu(struct Data *data, struct Mail *mail)
     // if not, create a new entry and add it to the current layout
     if(data->MI_TOHAM == NULL || isChildOfFamily(data->MI_MESSAGE, data->MI_TOHAM) == FALSE)
     {
-      if((data->MI_TOHAM =  MakeMenuitem(GetStr(MSG_RE_SETNOTSPAM), MMEN_TOHAM)) != NULL)
+      if((data->MI_TOHAM =  MakeMenuitem(GetStr(MSG_RE_SETNOTSPAM), RMEN_SETHAM)) != NULL)
       {
         set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isHamMail);
         DoMethod(data->MI_MESSAGE, MUIM_Family_Insert, data->MI_TOHAM, data->MI_SETMARKED);
@@ -121,7 +131,7 @@ static void AddRemoveSpamMenu(struct Data *data, struct Mail *mail)
 
     if(data->MI_TOSPAM == NULL || isChildOfFamily(data->MI_MESSAGE, data->MI_TOSPAM) == FALSE)
     {
-      if((data->MI_TOSPAM = MakeMenuitem(GetStr(MSG_RE_SETSPAM), MMEN_TOSPAM)) != NULL)
+      if((data->MI_TOSPAM = MakeMenuitem(GetStr(MSG_RE_SETSPAM), RMEN_SETSPAM)) != NULL)
       {
         set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isSpamMail);
         DoMethod(data->MI_MESSAGE, MUIM_Family_Insert, data->MI_TOSPAM, data->MI_SETMARKED);
@@ -186,17 +196,6 @@ OVERLOAD(OM_NEW)
   ULONG i;
   struct Data *data;
   struct Data *tmpData;
-
-  // menu item IDs
-  enum
-  {
-    RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,RMEN_DETACH,
-    RMEN_CROP,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_SETUNREAD,RMEN_SETMARKED,
-    RMEN_SETSPAM,RMEN_SETHAM,RMEN_CHSUBJ,RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,RMEN_NEXTTH,
-    RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,
-    RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT,
-    RMEN_SIMAGE
-  };
 
   // Our static Toolbar description field
   static const struct NewToolbarEntry tb_butt[MUIV_ReadWindow_ToolbarItems] =
@@ -408,7 +407,7 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PREV,      obj, 3, MUIM_ReadWindow_SwitchMail, -1, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEXT,      obj, 3, MUIM_ReadWindow_SwitchMail, +1, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_URPREV,    obj, 3, MUIM_ReadWindow_SwitchMail, -1, IEQUALIFIER_LSHIFT);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_URNEXT,    obj, 3,  MUIM_ReadWindow_SwitchMail, +1, IEQUALIFIER_LSHIFT);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_URNEXT,    obj, 3, MUIM_ReadWindow_SwitchMail, +1, IEQUALIFIER_LSHIFT);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PREVTH,    obj, 2, MUIM_ReadWindow_FollowThread, -1);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEXTTH,    obj, 2, MUIM_ReadWindow_FollowThread, +1);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EXTKEY,    data->readMailGroup, 1, MUIM_ReadMailGroup_ExtractPGPKey);
@@ -578,9 +577,9 @@ DECLARE(ReadMail) // struct Mail *mail
   if(C->SpamFilterEnabled)
   {
     if(data->MI_TOSPAM != NULL)
-      set(data->MI_TOSPAM, MUIA_Menuitem_Enabled, isRealMail && !isSpamMail);
+      set(data->MI_TOSPAM,    MUIA_Menuitem_Enabled, isRealMail && !isSpamMail);
     if(data->MI_TOHAM != NULL)
-      set(data->MI_TOHAM,  MUIA_Menuitem_Enabled, isRealMail && !isHamMail);
+      set(data->MI_TOHAM,     MUIA_Menuitem_Enabled, isRealMail && !isHamMail);
   }
 
   if(data->windowToolbar)
@@ -903,7 +902,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
   enum BayesClassification class = msg->class;
   BOOL closeAfter = FALSE;
 
-  if(MailExists(mail, folder))
+  if(MailExists(mail, folder) && spamfolder != NULL)
   {
     if(!hasStatusSpam(mail) && class == BC_SPAM)
     {
@@ -920,7 +919,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
           closeAfter = TRUE;
       }
 
-      // mark the mail as spam
+      // mark the mail as user spam
       AppendLogVerbose(90, GetStr(MSG_LOG_MAILISSPAM), AddrName(mail->From), mail->Subject);
       BayesFilterSetClassification(mail, BC_SPAM);
       setStatusToUserSpam(mail);
@@ -928,7 +927,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       // move the mail
       MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
 
-      if (folder == spamfolder)
+      if(folder == spamfolder)
       {
         // update the toolbar
         DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 14, MUIV_Toolbar_Set_Ghosted, TRUE);
@@ -951,13 +950,8 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       }
       else
         closeAfter = TRUE;
-
-      // make sure the read window is closed in case there is no further
-      // mail for deletion in this direction
-      if(closeAfter)
-        DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
     }
-    else if (!hasStatusHam(mail) && class == BC_HAM)
+    else if(!hasStatusHam(mail) && class == BC_HAM)
     {
       // mark the mail as ham
       AppendLogVerbose(90, GetStr(MSG_LOG_MAILISNOTSPAM), AddrName(mail->From), mail->Subject);
@@ -969,6 +963,11 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 15, MUIV_Toolbar_Set_Ghosted, TRUE);
     }
   }
+
+  // make sure the read window is closed in case there is no further
+  // mail for deletion in this direction
+  if(closeAfter)
+    DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
 
   return 0;
 }
