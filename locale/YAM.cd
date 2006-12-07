@@ -6048,12 +6048,10 @@ MSG_ER_SPAMDIR_EXISTS (1791//)
 The directory \"spam\" already exists!\n\
 \n\
 Do you want to use this directory as the standard spam folder\n\
-or do you want to disable the spam filter?\n\
-\n\
-Existing mails will be deleted if you use it as spam folder!
+or do you want to disable the spam filter?
 ;
 MSG_ER_SPAMDIR_EXISTS_ANSWERS (1792//)
-Use as spam folder|Disable spam filter
+Clear and use as spam folder|Use as spam folder|Disable spam filter
 ;
 MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER (1793//)
 Could not create standard spam folder!\n\
@@ -6063,5 +6061,5 @@ Please make sure that there is enough space left on the drive \
 and that the drive is not write protected.
 ;
 MSG_MA_CHECKSPAM (1794//)
-Check for spam content
+Check mails for spam content
 ;

@@ -6,6 +6,10 @@ $Id$
 
 2006-12-07  Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/YAM.cd, locale/deutsch.ct: modified the messages to query a decision
+    upon en/disabling the spam filter a little bit and added some new strings.
+    Also fixed bug #1610004 again, as one string got into the repository by
+    accident.
   * ReadWindow.c: added some extra checks if the spam filter is really
     enabled and made sure the window is closed after the last mail in a
     folder has been deleted.

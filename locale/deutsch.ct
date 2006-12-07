@@ -6804,17 +6804,17 @@ Part %ld der Nachricht '%s' mittels base64 zu dekodieren. \
 Der Vorgang wurde daraufhin abgebrochen.\n\
 \n\
 Dies könnte durch eine falsche Kodierung der Nachricht \
-durch den Sender hervorgerufen worden sein oder daß der \
+durch den Sender hervorgerufen worden sein oder dadurch, dass der \
 base64 kodierte Teil der Nachricht während der Übertragung \
 verstümmelt wurde.
 ; PARTNR, MSGFILE
 MSG_ER_B64DECTRUNCTXT
 Manch lesbarer Text des MIME Part %ld der Nachricht '%s' \
 konnte nicht base64 dekodiert werden und könnte inkorrekt \
-oder garnicht dargestellt werden.\n\
+oder gar nicht dargestellt werden.\n\
 \n\
 Dies könnte durch eine falsche Kodierung der Nachricht \
-durch den Sender hervorgerufen worden sein oder daß der \
+durch den Sender hervorgerufen worden sein oder dadurch, dass der \
 base64 kodierte Teil der Nachricht während der Übertragung \
 verstümmelt wurde.
 ; PARTNR, MSGFILE
@@ -7516,13 +7516,10 @@ MSG_ER_SPAMDIR_EXISTS
 Das Verzeichnis "spam" existiert bereits!\n\
 \n\
 Wollen Sie das Verzeichnis als Standard-Spam-Ordner verwenden\n\
-oder soll der Spamfilter deaktiviert werden?\n\
-\n\
-Existierende Mails werden gelöscht, falls das Verzeichnis als\n\
-Spam-Ordner verwendet wird!
+oder soll der Spamfilter deaktiviert werden?
 ;
 MSG_ER_SPAMDIR_EXISTS_ANSWERS
-Als Spam-Ordner verwenden|Spamfilter deaktivieren
+Leeren und als Spam-Ordner verwenden|Als Spam-Ordner verwenden|Spamfilter deaktivieren
 ;
 MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER
 Es trat ein Fehler beim Anlegen des Spam-Ordners auf!\n\
@@ -7532,8 +7529,5 @@ Bitte stellen Sie sicher, dass genügend Platz auf dem Laufwerk \
 vorhanden ist und dass das Laufwerk nicht schreibgeschützt ist.
 ;
 MSG_MA_CHECKSPAM
-auf Spamgehalt prüfen
-;
-MSG_RE_CHECKSPAM
-auf Spamgehalt prüfen
+Mails auf Spamgehalt prüfen
 ;
