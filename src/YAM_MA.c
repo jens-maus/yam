@@ -1284,52 +1284,6 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
   return dst;
 }
 ///
-/// MA_AddRemoveSpamMenu
-//  Dynamically add/remove the spam menu entries to the main menu according to the configuration
-void MA_AddRemoveSpamMenu(struct MA_GUIData *gui)
-{
-  ENTER();
-
-  if(gui == NULL)
-    gui = &G->MA->GUI;
-
-  if(C->SpamFilterEnabled)
-  {
-    // for each entry check if it exists and if it is part of the menu
-    // if not, create a new entry and add it to the current layout
-    if(gui->MI_TOHAM == NULL || isChildOfFamily(gui->MI_STATUS, gui->MI_TOHAM) == FALSE)
-    {
-      if ((gui->MI_TOHAM =  MakeMenuitem(GetStr(MSG_MA_TONOTSPAM), MMEN_TOHAM)) != NULL)
-        DoMethod(gui->MI_STATUS, MUIM_Family_Insert, gui->MI_TOHAM,  gui->MI_TOQUEUED);
-    }
-
-    if(gui->MI_TOSPAM == NULL || isChildOfFamily(gui->MI_STATUS, gui->MI_TOSPAM) == FALSE)
-    {
-      if ((gui->MI_TOSPAM = MakeMenuitem(GetStr(MSG_MA_TOSPAM),    MMEN_TOSPAM)) != NULL)
-        DoMethod(gui->MI_STATUS, MUIM_Family_Insert, gui->MI_TOSPAM, gui->MI_TOQUEUED);
-    }
-  }
-  else
-  {
-    // for each entry check if it exists and if it is part of the menu
-    // if yes, then remove the entry and dispose it
-    if(gui->MI_TOSPAM != NULL && isChildOfFamily(gui->MI_STATUS, gui->MI_TOSPAM))
-    {
-      DoMethod(gui->MI_STATUS, MUIM_Family_Remove, gui->MI_TOSPAM);
-      MUI_DisposeObject(gui->MI_TOSPAM);
-      gui->MI_TOSPAM = NULL;
-    }
-    if(gui->MI_TOHAM != NULL && isChildOfFamily(gui->MI_STATUS, gui->MI_TOHAM))
-    {
-      DoMethod(gui->MI_STATUS, MUIM_Family_Remove, gui->MI_TOHAM);
-      MUI_DisposeObject(gui->MI_TOHAM);
-      gui->MI_TOHAM = NULL;
-    }
-  }
-
-  LEAVE();
-}
-///
 
 /*** Main button functions ***/
 /// MA_ReadMessage
@@ -4203,6 +4157,53 @@ void MA_SetupDynamicMenus(void)
     DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_AddTail, G->MA->GUI.MI_CSINGLE);
   }
 
+  // handle the spam filter menu items
+  if(C->SpamFilterEnabled)
+  {
+    // for each entry check if it exists and if it is part of the menu
+    // if not, create a new entry and add it to the current layout
+    if(G->MA->GUI.MI_CHECKSPAM == NULL || isChildOfFamily(G->MA->GUI.MN_FOLDER, G->MA->GUI.MI_CHECKSPAM) == FALSE)
+    {
+      if ((G->MA->GUI.MI_CHECKSPAM =  MakeMenuitem(GetStr(MSG_MA_CHECKSPAM), MMEN_CLASSIFY)) != NULL)
+        DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Insert, G->MA->GUI.MI_CHECKSPAM,  G->MA->GUI.MI_FILTER);
+    }
+
+    if(G->MA->GUI.MI_TOHAM == NULL || isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOHAM) == FALSE)
+    {
+      if ((G->MA->GUI.MI_TOHAM =  MakeMenuitem(GetStr(MSG_MA_TONOTSPAM), MMEN_TOHAM)) != NULL)
+        DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Insert, G->MA->GUI.MI_TOHAM,  G->MA->GUI.MI_TOQUEUED);
+    }
+
+    if(G->MA->GUI.MI_TOSPAM == NULL || isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOSPAM) == FALSE)
+    {
+      if ((G->MA->GUI.MI_TOSPAM = MakeMenuitem(GetStr(MSG_MA_TOSPAM),    MMEN_TOSPAM)) != NULL)
+        DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Insert, G->MA->GUI.MI_TOSPAM, G->MA->GUI.MI_TOQUEUED);
+    }
+  }
+  else
+  {
+    // for each entry check if it exists and if it is part of the menu
+    // if yes, then remove the entry and dispose it
+    if(G->MA->GUI.MI_TOSPAM != NULL && isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOSPAM))
+    {
+      DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Remove, G->MA->GUI.MI_TOSPAM);
+      MUI_DisposeObject(G->MA->GUI.MI_TOSPAM);
+      G->MA->GUI.MI_TOSPAM = NULL;
+    }
+    if(G->MA->GUI.MI_TOHAM != NULL && isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOHAM))
+    {
+      DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Remove, G->MA->GUI.MI_TOHAM);
+      MUI_DisposeObject(G->MA->GUI.MI_TOHAM);
+      G->MA->GUI.MI_TOHAM = NULL;
+    }
+    if(G->MA->GUI.MI_CHECKSPAM != NULL && isChildOfFamily(G->MA->GUI.MN_FOLDER, G->MA->GUI.MI_CHECKSPAM))
+    {
+      DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Remove, G->MA->GUI.MI_CHECKSPAM);
+      MUI_DisposeObject(G->MA->GUI.MI_CHECKSPAM);
+      G->MA->GUI.MI_CHECKSPAM = NULL;
+    }
+  }
+
   LEAVE();
 }
 
@@ -4476,8 +4477,6 @@ struct MA_ClassData *MA_New(void)
          End,
       End;
 
-      MA_AddRemoveSpamMenu(&data->GUI);
-
       data->GUI.WI = MainWindowObject,
          MUIA_Window_Title, data->WinTitle,
          MUIA_HelpNode, "MA_W",
@@ -4581,6 +4580,7 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_SELTOGG   ,data->GUI.PG_MAILLIST,4,MUIM_NList_Select,MUIV_NList_Select_All,MUIV_NList_Select_Toggle,NULL);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_SEARCH    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&FI_OpenHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_FILTER    ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&ApplyFiltersHook,APPLY_USER,0);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_CLASSIFY  ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&ApplyFiltersHook,APPLY_SPAM,0);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_DELDEL    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_DeleteDeletedHook, FALSE);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_INDEX     ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_RescanIndexHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_FLUSH     ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_FlushIndexHook);

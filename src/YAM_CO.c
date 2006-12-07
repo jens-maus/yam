@@ -1359,7 +1359,6 @@ void CO_Validate(struct Config *co, BOOL update)
       {
         // if we enabled or disable the spam filter then we need to update the toolbar in the main window
         MA_ChangeSelected(TRUE);
-        MA_AddRemoveSpamMenu(NULL);
 
         // update the read windows' toolbar, too
         if(IsMinListEmpty(&G->readMailDataList) == FALSE)
