@@ -4,6 +4,11 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-12-07  Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/YAM.cd, deutsch.ct: changed new MSG_MA_SPAMCHECK phrase to be
+    somewhat shorter as it is clear that it will be applied on mails. :)
+
 2006-12-07  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COs: added the possibility to use an already existing spam folder as
