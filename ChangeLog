@@ -4,6 +4,20 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-12-08  Jens Langner <Jens.Langner@light-speed.de>
+
+  * InfoBar.c, YAM_MA.c, YAM_UT.c, YAM_FI.c, YAM_MAf.c: a shown busy gauge
+    in the infobar can now contain a small "X" button which will allow the
+    BusySet() function to notify the calling function that the user wants to
+    abort a certain operation. This allows now to not only abort the filtering
+    action, it also allows to abort a manual index rescanning operation as well
+    as other move/delete mail operations which are manually executed by the
+    user. In fact, that new functionality should hopefully address a long
+    existing nuisance in YAM.
+  * YAM_UT.c, Splashwindow.c: moved the Update minimazation code to the
+    corresponding Splashwindow class instead of doing the analysis with help
+    of a static variable directly in the Busy() function.
+
 2006-12-08  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, YAM_main.h, locale/YAM.cd, locale/deutsch.ct: added menu item to
@@ -18,12 +32,6 @@ $Id$
 2006-12-08  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: updated according to the latest changes.
-
-2006-12-08  Jens Langner <Jens.Langner@light-speed.de>
-
-  * YAM_UT.c, Splashwindow.c: moved the Update minimazation code to the
-    corresponding Splashwindow class instead of doing the analysis with help
-    of a static variable directly in the Busy() function.
 
 2006-12-07  Jens Langner <Jens.Langner@light-speed.de>
 

@@ -883,15 +883,22 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
     // get the list of the currently marked mails
     selected = (int)*mlist;
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
-    BusyGauge(GetStr(MSG_BusyMoving), itoa(selected), selected);
-    for(i = 0; i < selected; i++)
+    BusyGaugeInt(GetStr(MSG_BusyMoving), itoa(selected), selected);
+    for(i=0; i < selected; i++)
     {
       mail = mlist[i+2];
       MA_MoveCopySingle(mail, frombox, tobox, copyit, closeWindows);
-      BusySet(i+1);
+
+      // if BusySet() returns FALSE, then the user aborted
+      if(BusySet(i+1) == FALSE)
+      {
+        selected = i+1;
+        break;
+      }
     }
     BusyEnd();
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
+
     free(mlist);
   }
 
@@ -902,7 +909,9 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
     AppendLogNormal(22, GetStr(MSG_LOG_Moving), selected, FolderName(frombox), FolderName(tobox));
 
   // refresh the folder statistics if necessary
-  if(!copyit) DisplayStatistics(frombox, FALSE);
+  if(!copyit)
+    DisplayStatistics(frombox, FALSE);
+
   DisplayStatistics(tobox, TRUE);
 
   MA_ChangeSelected(FALSE);
@@ -2550,13 +2559,19 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
    if ((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
    {
       int selected = (int)*mlist;
-      BusyGauge(GetStr(MSG_BusyRemovingAtt), "", selected);
-      for (i = 0; i < selected; i++)
+
+      BusyGaugeInt(GetStr(MSG_BusyRemovingAtt), "", selected);
+      for(i=0; i < selected; i++)
       {
          MA_RemoveAttach(mlist[i+2], FALSE);
-         BusySet(i+1);
+
+        // if BusySet() returns FALSE, then the user aborted
+        if(BusySet(i+1) == FALSE)
+          break;
       }
+
       DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
+
       MA_ChangeSelected(TRUE);
       DisplayStatistics(NULL, TRUE);
       BusyEnd();
@@ -2787,8 +2802,8 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    }
    set(lv, MUIA_NList_Quiet, TRUE);
 
-   BusyGauge(GetStr(MSG_BusyDeleting), itoa(selected), selected);
-   for (i = 0; i < selected; i++)
+   BusyGaugeInt(GetStr(MSG_BusyDeleting), itoa(selected), selected);
+   for(i=0; i < selected; i++)
    {
       mail = mlist[i+2];
       if(isSendMDNMail(mail) && !ignoreall &&
@@ -2800,21 +2815,25 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
       // call our subroutine with quiet option
       MA_DeleteSingle(mail, delatonce, TRUE, TRUE);
 
-      BusySet(i+1);
+      // if BusySet() returns FALSE, then the user aborted
+      if(BusySet(i+1) == FALSE)
+      {
+        selected = i+1;
+        break;
+      }
    }
    BusyEnd();
    set(lv, MUIA_NList_Quiet, FALSE);
    free(mlist);
 
-   if (delatonce || C->RemoveAtOnce || folder == delfolder || isSpamFolder(folder))
-   {
+   if(delatonce || C->RemoveAtOnce || folder == delfolder || isSpamFolder(folder))
       AppendLogNormal(20, GetStr(MSG_LOG_Deleting), selected, folder->Name);
-   }
    else
    {
       AppendLogNormal(22, GetStr(MSG_LOG_Moving), selected, folder->Name, delfolder->Name);
       DisplayStatistics(delfolder, FALSE);
    }
+
    DisplayStatistics(NULL, TRUE);
    MA_ChangeSelected(FALSE);
 }
@@ -2831,52 +2850,68 @@ MakeHook(MA_DeleteMessageHook, MA_DeleteMessageFunc);
 ///
 /// MA_ClassifyMessage
 //  Classifies a message and moves it to spam folder if spam
-void MA_ClassifyMessage(enum BayesClassification class)
+void MA_ClassifyMessage(enum BayesClassification bclass)
 {
-   struct Mail **mlist, *mail;
-   int i, selected;
-   APTR lv = G->MA->GUI.PG_MAILLIST;
-   struct Folder *spamfolder = FO_GetFolderByType(FT_SPAM, NULL), *folder = FO_GetCurrentFolder();
+  struct Folder *spamfolder = FO_GetFolderByType(FT_SPAM, NULL);
+  struct Folder *folder = FO_GetCurrentFolder();
 
-   if(!folder || !spamfolder) return;
+  ENTER();
 
-   if (!(mlist = MA_CreateMarkedList(lv, FALSE))) return;
-   selected = (int)*mlist;
-   set(lv, MUIA_NList_Quiet, TRUE);
+  if(folder && spamfolder)
+  {
+    Object *lv = G->MA->GUI.PG_MAILLIST;
+    struct Mail **mlist;
 
-   BusyGauge(GetStr(MSG_BusyMoving), itoa(selected), selected);
-   for (i = 0; i < selected; i++)
-   {
-      mail = mlist[i+2];
+    if((mlist = MA_CreateMarkedList(lv, FALSE)))
+    {
+      int i;
+      int selected = (int)*mlist;
 
-      if(!hasStatusSpam(mail) && class == BC_SPAM)
+      set(lv, MUIA_NList_Quiet, TRUE);
+      BusyGaugeInt(GetStr(MSG_BusyMoving), itoa(selected), selected);
+
+      for(i=0; i < selected; i++)
       {
+        struct Mail *mail = mlist[i+2];
+
+        if(!hasStatusSpam(mail) && bclass == BC_SPAM)
+        {
           // mark the mail as spam
           AppendLogVerbose(90, GetStr(MSG_LOG_MAILISSPAM), AddrName(mail->From), mail->Subject);
           BayesFilterSetClassification(mail, BC_SPAM);
           setStatusToUserSpam(mail);
+
           // move the mail
           MA_MoveCopySingle(mail, folder, spamfolder, FALSE, TRUE);
-      }
-      else if(!hasStatusHam(mail) && class == BC_HAM)
-      {
+        }
+        else if(!hasStatusHam(mail) && bclass == BC_HAM)
+        {
           // mark the mail as ham
           AppendLogVerbose(90, GetStr(MSG_LOG_MAILISNOTSPAM), AddrName(mail->From), mail->Subject);
           BayesFilterSetClassification(mail, BC_HAM);
           setStatusToHam(mail);
+        }
+
+        // if BusySet() returns FALSE, then the user aborted
+        if(BusySet(i+1) == FALSE)
+        {
+          selected = i+1;
+          break;
+        }
       }
+      BusyEnd();
+      set(lv, MUIA_NList_Quiet, FALSE);
+      free(mlist);
 
-      BusySet(i+1);
-   }
-   BusyEnd();
-   set(lv, MUIA_NList_Quiet, FALSE);
-   free(mlist);
+      AppendLogNormal(22, GetStr(MSG_LOG_Moving), selected, folder->Name, spamfolder->Name);
+      DisplayStatistics(spamfolder, FALSE);
 
-   AppendLogNormal(22, GetStr(MSG_LOG_Moving), selected, folder->Name, spamfolder->Name);
-   DisplayStatistics(spamfolder, FALSE);
+      DisplayStatistics(NULL, TRUE);
+      MA_ChangeSelected(FALSE);
+    }
+  }
 
-   DisplayStatistics(NULL, TRUE);
-   MA_ChangeSelected(FALSE);
+  LEAVE();
 }
 
 ///
@@ -3218,7 +3253,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
   {
     int f;
 
-    BusyGauge(GetStr(MSG_BusyDeletingOld), "", (int)*flist);
+    BusyGaugeInt(GetStr(MSG_BusyDeletingOld), "", (int)*flist);
 
     for(f=1; f <= (int)*flist; f++)
     {
@@ -3254,12 +3289,19 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
               }
             }
           }
+
+          // if BusySet() returns FALSE, then the user aborted
+          if(BusySet(f) == FALSE)
+          {
+            // make sure to abort both loop
+            f = (int)*flist;
+
+            break;
+          }
         }
 
         DisplayStatistics(folder, FALSE);
       }
-
-      BusySet(f);
     }
 
     free(flist);
@@ -3283,9 +3325,11 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
   struct Mail *mail;
   struct Folder *folder = FO_GetFolderByType(FT_DELETED, NULL);
 
+  ENTER();
+
   if(folder != NULL)
   {
-    BusyGauge(GetStr(MSG_BusyEmptyingTrash), "", folder->Total);
+    BusyGaugeInt(GetStr(MSG_BusyEmptyingTrash), "", folder->Total);
 
     for(mail = folder->Messages; mail; mail = mail->Next)
     {
@@ -3312,6 +3356,8 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
 
     BusyEnd();
   }
+
+  LEAVE();
 }
 MakeHook(MA_DeleteDeletedHook, MA_DeleteDeletedFunc);
 ///
@@ -3322,29 +3368,31 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
   BOOL quiet = *arg != 0;
   struct Folder *folder = FO_GetFolderByType(FT_SPAM, NULL);
 
+  ENTER();
+
   if(folder != NULL)
   {
     struct Mail **mlist = NULL;
 
-    BusyGauge(GetStr(MSG_MA_BUSYEMPTYINGSPAM), "", folder->Total);
+    BusyGaugeInt(GetStr(MSG_MA_BUSYEMPTYINGSPAM), "", folder->Total);
 
     // get the complete mail list of the spam folder
     if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
     {
-      int i, numSpam;
+      int i;
       struct Mail *mail;
 
-      for(i = 0, numSpam = 0; i < (int)*mlist && (mail = mlist[i + 2]) != NULL; i++)
+      for(i=0; i < (int)*mlist && (mail = mlist[i + 2]) != NULL; i++)
       {
-        BusySet(i + 1);
+        // if BusySet() returns FALSE, then the user aborted
+        if(BusySet(i+1) == FALSE)
+          break;
 
         // not every mail in the spam folder *must* be spam, so better check this
         if(hasStatusSpam(mail))
         {
           // remove the spam mail
           MA_DeleteSingle(mail, TRUE, quiet, TRUE);
-          // and count the number of deleted mails
-          numSpam++;
         }
       }
 
@@ -3354,6 +3402,8 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
 
     BusyEnd();
   }
+
+  LEAVE();
 }
 MakeStaticHook(MA_DeleteSpamHook, MA_DeleteSpamFunc);
 ///

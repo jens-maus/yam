@@ -1880,7 +1880,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
   // runs
   alreadyScanning = TRUE;
 
-  BusyGauge(GetStr(MSG_BusyScanning), folder->Name, filecount-1);
+  BusyGaugeInt(GetStr(MSG_BusyScanning), folder->Name, filecount-1);
   ClearMailList(folder, TRUE);
 
   D(DBF_FOLDER, "Rescanning index for folder: '%s'...", folder->Name);
@@ -1926,8 +1926,13 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
           do
           {
-            // set the gauge
-            BusySet(++processedFiles);
+            // set the gauge and check the stopButton status as well.
+            if(BusySet(++processedFiles) == FALSE)
+            {
+              more = 0; // to break the outer loop as well.
+              result = FALSE;
+              break;
+            }
 
             // give the GUI the chance to refresh
             DoMethod(G->App,MUIM_Application_InputBuffered);

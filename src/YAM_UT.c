@@ -5295,7 +5295,8 @@ BOOL Busy(const char *text, const char *parameter, int cur, int max)
 
       if(max > 0)
       {
-        // initialize the InfoBar gauge
+        // initialize the InfoBar gauge and also make sure it
+        // shows a stop gadget in case cur < 0
         if(G->MA)
           DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, infotext[BusyLevel], cur, max);
 
@@ -5344,7 +5345,7 @@ BOOL Busy(const char *text, const char *parameter, int cur, int max)
     if(BusyLevel > 0)
     {
       if(G->MA)
-        DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, NULL, cur, max);
+        result = DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, NULL, cur, max);
 
       if(G->InStartupPhase)
         DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, NULL, cur, -1);

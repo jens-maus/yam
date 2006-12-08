@@ -1337,11 +1337,12 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
         scnt = AllocFilterSearch(mode);
 
         // we use another Busy Gauge information if this is
-        // a spam classification session.
+        // a spam classification session. And we build an interruptable
+        // Gauge which will report back if the user pressed the stop button
         if(mode != APPLY_SPAM)
-          BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
+          BusyGaugeInt(GetStr(MSG_BusyFiltering), "", (int)*mlist);
         else
-          BusyGauge(GetStr(MSG_FI_BUSYCHECKSPAM), "", (int)*mlist);
+          BusyGaugeInt(GetStr(MSG_FI_BUSYCHECKSPAM), "", (int)*mlist);
 
         for(m = 0; m < (int)*mlist && (mail = mlist[m+2]); m++)
         {
@@ -1410,7 +1411,10 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
             }
           }
 
-          BusySet(m+1);
+          // we update the busy gauge and
+          // see if we have to exit/abort in case it returns FALSE
+          if(BusySet(m+1) == FALSE)
+            break;
         }
 
         FreeFilterSearch();

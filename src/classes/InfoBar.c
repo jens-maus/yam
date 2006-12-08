@@ -41,7 +41,9 @@ struct Data
   Object *GA_GROUP;
   Object *GA_INFO;
   Object *GA_LABEL;
+  Object *BT_STOP;
   Object *actualImage;
+  BOOL stopButtonPressed;
   struct Folder *actualFolder;
   struct TimeVal last_gaugemove;
 };
@@ -50,7 +52,7 @@ struct Data
 /* Private Functions */
 /// GetFolderInfo()
 // this function creates a folder string and returns it
-char *GetFolderInfo(struct Folder *folder)
+static char *GetFolderInfo(struct Folder *folder)
 {
   char *src, dst[10];
   static char bartxt[SIZE_DEFAULT/2];
@@ -95,8 +97,11 @@ OVERLOAD(OM_NEW)
   Object *gauge;
   Object *gaugeLabel;
   Object *infoText;
+  Object *stopButton;
 
-  if (!(obj = DoSuperNew(cl, obj,
+  ENTER();
+
+  if((obj = DoSuperNew(cl, obj,
 
     TextFrame,
     MUIA_Background,    MUII_TextBack,
@@ -123,10 +128,23 @@ OVERLOAD(OM_NEW)
 
     Child, statusGroup = PageGroup,
       Child, HSpace(0),
-      Child, gauge = GaugeObject,
-        GaugeFrame,
-        MUIA_Gauge_Horiz,    TRUE,
-        MUIA_Gauge_InfoText, "",
+      Child, HGroup,
+        InnerSpacing(0,0),
+        GroupSpacing(1),
+        Child, gauge = GaugeObject,
+          GaugeFrame,
+          MUIA_Gauge_Horiz,    TRUE,
+          MUIA_Gauge_InfoText, "",
+        End,
+        Child, stopButton = TextObject,
+          ButtonFrame,
+          MUIA_CycleChain,     TRUE,
+          MUIA_Font,           MUIV_Font_Tiny,
+          MUIA_Text_Contents,  "\033bX",
+          MUIA_InputMode,      MUIV_InputMode_RelVerify,
+          MUIA_Background,     MUII_ButtonBack,
+          MUIA_Text_SetMax,    TRUE,
+        End,
       End,
       Child, infoText = TextObject,
         MUIA_Text_SetMax,   FALSE,
@@ -135,18 +153,27 @@ OVERLOAD(OM_NEW)
     End,
 
     TAG_MORE, inittags(msg))))
+  {
+    data = (struct Data *)INST_DATA(cl,obj);
 
-    return 0;
+    // per default we set the stop button as hidden
+    set(stopButton, MUIA_ShowMe, FALSE);
 
-  data = (struct Data *)INST_DATA(cl,obj);
+    data->TX_FOLDER = folderString;
+    data->TX_FINFO  = folderInfoStr;
+    data->GA_GROUP  = statusGroup;
+    data->GA_LABEL  = gaugeLabel;
+    data->GA_INFO   = gauge;
+    data->TX_INFO   = infoText;
+    data->BT_STOP   = stopButton;
+    data->stopButtonPressed = FALSE;
 
-  data->TX_FOLDER = folderString;
-  data->TX_FINFO  = folderInfoStr;
-  data->GA_GROUP  = statusGroup;
-  data->GA_LABEL  = gaugeLabel;
-  data->GA_INFO   = gauge;
-  data->TX_INFO   = infoText;
+    // on a button press on the stop button, lets set the
+    // correct variable to TRUE as well.
+    DoMethod(data->BT_STOP, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_WriteLong, MUIV_NotTriggerValue, &(data->stopButtonPressed));
+  }
 
+  RETURN((ULONG)obj);
   return (ULONG)obj;
 }
 ///
@@ -228,10 +255,15 @@ DECLARE(SetFolder) // struct Folder *newFolder
 }
 ///
 /// DECLARE(ShowGauge)
-/* activates the gauge in the InfoBar with the passed text and percentage */
+// activates the gauge in the InfoBar with the passed text and percentage
+// and also returns the current stop 'X' button status so that the calling
+// function may aborts its operation.
 DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
 {
   GETDATA;
+  BOOL result = TRUE;
+
+  ENTER();
 
   if(msg->gaugeText != NULL)
   {
@@ -243,9 +275,14 @@ DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
 
     SetAttrs(data->GA_INFO,
       MUIA_Gauge_InfoText,  infoText,
-      MUIA_Gauge_Current,   msg->perc,
+      MUIA_Gauge_Current,   msg->perc > 0 ? msg->perc : 0,
       MUIA_Gauge_Max,       msg->max,
     TAG_DONE);
+
+    // make sure the stop button is shown or hiden, dependent
+    // on msg->perc
+    set(data->BT_STOP, MUIA_ShowMe, msg->perc == -1);
+    data->stopButtonPressed = FALSE;
 
     set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
   }
@@ -268,14 +305,22 @@ DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
       if(delta.Seconds > 0 || delta.Microseconds > 250000)
       {
         set(data->GA_INFO, MUIA_Gauge_Current, msg->perc);
+
         memcpy(&data->last_gaugemove, &now, sizeof(struct TimeVal));
       }
     }
-    
+
+    // give the application the chance to clear its event loop
+    DoMethod(G->App, MUIM_Application_InputBuffered);
+
+    // in case the stopButton was pressed we return FALSE
+    result = (data->stopButtonPressed == FALSE);
+
     set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
   }
 
-  return TRUE;
+  RETURN(result);
+  return result;
 }
 ///
 /// DECLARE(ShowInfoText)
@@ -310,3 +355,10 @@ DECLARE(HideBars)
   return TRUE;
 }
 ///
+
+DECLARE(test)
+{
+  E(DBF_STARTUP, "TEST!!");
+
+  return 0;
+}

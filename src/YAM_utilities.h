@@ -162,6 +162,7 @@ struct TimeRequest
 #define BusySet(c)            Busy(NULL, NULL, c, 0)
 #define BusyText(t, p)        Busy(t, p, 0, 0)
 #define BusyGauge(t, p, max)  Busy(t, p, 0, max)
+#define BusyGaugeInt(t, p, m) Busy(t, p, -1, m)
 
 // attachment requester flags & macros
 #define ATTREQ_DISP       (1<<0)
