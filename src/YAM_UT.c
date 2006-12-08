@@ -5273,106 +5273,85 @@ void AppendToLogfile(enum LFMode mode, int id, const char *text, ...)
   LEAVE();
 }
 ///
-/// Busy
+/// Busy()
 //  Displays busy message
-void Busy(const char *text, const char *parameter, int cur, int max)
+//  returns FALSE if the user pressed the stop button on an eventually active
+//  BusyGauge. The calling method is therefore suggested to take actions to
+//  stop its processing.
+BOOL Busy(const char *text, const char *parameter, int cur, int max)
 {
-   // we can have different busy levels (defined BUSYLEVEL)
-   static char infotext[BUSYLEVEL][SIZE_DEFAULT];
-   static struct TimeVal last_move;
+  // we can have different busy levels (defined BUSYLEVEL)
+  static char infotext[BUSYLEVEL][SIZE_DEFAULT];
+  BOOL result = TRUE;
 
-   if(text)
-   {
-      if(*text)
+  ENTER();
+
+  if(text)
+  {
+    if(*text)
+    {
+      snprintf(infotext[BusyLevel], SIZE_DEFAULT, text, parameter);
+
+      if(max > 0)
       {
-        snprintf(infotext[BusyLevel], SIZE_DEFAULT, text, parameter);
+        // initialize the InfoBar gauge
+        if(G->MA)
+          DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, infotext[BusyLevel], cur, max);
 
-        if(max > 0)
+        // check if we are in startup phase so that we also
+        // update the gauge elements of the About window
+        if(G->InStartupPhase)
         {
-          // initialize the InfoBar gauge
-          if(G->MA)
-            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, infotext[BusyLevel], cur, max);
+          static char progressText[SIZE_DEFAULT];
 
-          // check if we are in startup phase so that we also
-          // update the gauge elements of the About window
-          if(G->InStartupPhase)
-          {
-            static char progressText[SIZE_DEFAULT];
+          snprintf(progressText, sizeof(progressText), "%%ld/%d", max);
 
-            snprintf(progressText, sizeof(progressText), "%%ld/%d", max);
-
-            DoMethod(G->SplashWinObject, MUIM_Splashwindow_StatusChange, infotext[BusyLevel], -1);
-            DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, progressText, cur, max);
-
-            GetSysTime(TIMEVAL(&last_move));
-          }
-        }
-        else
-        {
-          // initialize the InfoBar infotext
-          if(G->MA)
-            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel]);
-        }
-
-        if(BusyLevel < BUSYLEVEL-1)
-          BusyLevel++;
-        else
-        {
-          E(DBF_UTIL, "Error: reached highest BusyLevel!!!");
+          DoMethod(G->SplashWinObject, MUIM_Splashwindow_StatusChange, infotext[BusyLevel], -1);
+          DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, progressText, cur, max);
         }
       }
       else
       {
-         if(BusyLevel)
-           BusyLevel--;
-
-         if(G->MA)
-         {
-            if(BusyLevel <= 0)
-            {
-              DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_HideBars);
-            }
-            else
-            {
-              DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel-1]);
-            }
-         }
-      }
-   }
-   else
-   {
-      // If the text is NULL we just have to set the Gauge of the infoBar to the current
-      // level
-      if(BusyLevel > 0)
-      {
+        // initialize the InfoBar infotext
         if(G->MA)
-          DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, NULL, cur, max);
-
-        if(G->InStartupPhase)
-        {
-          struct TimeVal now;
-
-          // then we update the gauge, but we take also care of not refreshing
-          // it too often or otherwise it slows down the whole search process.
-          GetSysTime(TIMEVAL(&now));
-          if(-CmpTime(TIMEVAL(&now), TIMEVAL(&last_move)) > 0)
-          {
-            struct TimeVal delta;
-
-            // how much time has passed exactly?
-            memcpy(&delta, &now, sizeof(struct TimeVal));
-            SubTime(TIMEVAL(&delta), TIMEVAL(&last_move));
-
-            // update the display at least twice a second
-            if(delta.Seconds > 0 || delta.Microseconds > 250000)
-            {
-              DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, NULL, cur, -1);
-              memcpy(&last_move, &now, sizeof(struct TimeVal));
-            }
-          }
-        }
+          DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel]);
       }
-   }
+
+      if(BusyLevel < BUSYLEVEL-1)
+        BusyLevel++;
+      else
+        E(DBF_UTIL, "Error: reached highest BusyLevel!!!");
+    }
+    else
+    {
+      if(BusyLevel)
+        BusyLevel--;
+
+      if(G->MA)
+      {
+        if(BusyLevel <= 0)
+          DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_HideBars);
+        else
+          DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel-1]);
+      }
+    }
+  }
+  else
+  {
+    // If the text is NULL we just have to set the Gauge of the infoBar to the current
+    // level
+    if(BusyLevel > 0)
+    {
+      if(G->MA)
+        DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, NULL, cur, max);
+
+      if(G->InStartupPhase)
+        DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, NULL, cur, -1);
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///

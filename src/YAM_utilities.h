@@ -269,7 +269,7 @@ char *   AllocStrBuf(size_t initlen);
 void     AppendToLogfile(enum LFMode, int id, const char *text, ...);
 struct Part *AttachRequest(const char *title, const char *body, const char *yestext, const char *notext, int mode, struct ReadMailData *rmData);
 char *   BuildAddrName(char *address, char *name);
-void     Busy(const char *text, const char *parameter, int cur, int max);
+BOOL     Busy(const char *text, const char *parameter, int cur, int max);
 BOOL     CheckPrinter(void);
 LONG     CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG numBoxes, const char *text, ...);
 void     ClearMailList(struct Folder *folder, BOOL resetstats);

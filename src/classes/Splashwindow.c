@@ -30,6 +30,8 @@
 
 #include "Splashwindow_cl.h"
 
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
@@ -39,6 +41,8 @@ struct Data
   Object *statusGauge;
   Object *progressGroup;
   Object *progressGauge;
+  BOOL progressGaugeActive;
+  struct TimeVal last_gaugemove;
 };
 */
 
@@ -145,6 +149,7 @@ OVERLOAD(OM_NEW)
   data->statusGauge   = statusGauge;
   data->progressGroup = progressGroup;
   data->progressGauge = progressGauge;
+  data->progressGaugeActive = FALSE;
 
   DoMethod(G->App, OM_ADDMEMBER, obj);
 
@@ -193,10 +198,11 @@ DECLARE(StatusChange) // char *txt, LONG percent
   set(data->progressGroup, MUIA_Group_ActivePage, 0);
 
   // lets remove the progress Gauge from our splashwindow
-  if(isChildOfGroup(data->progressGroup, data->progressGauge) &&
+  if(data->progressGaugeActive == TRUE &&
      DoMethod(data->progressGroup, MUIM_Group_InitChange))
   {
     DoMethod(data->progressGroup, OM_REMMEMBER, data->progressGauge);
+    data->progressGaugeActive = FALSE;
 
     DoMethod(data->progressGroup, MUIM_Group_ExitChange);
   }
@@ -211,29 +217,70 @@ DECLARE(StatusChange) // char *txt, LONG percent
 DECLARE(ProgressChange) // char *txt, LONG percent, LONG max
 {
   GETDATA;
+  BOOL updateStatus = FALSE;
+
+  ENTER();
 
   if(msg->txt)
+  {
     set(data->progressGauge, MUIA_Gauge_InfoText, msg->txt);
 
+    // clear the last gaugemove timeval structure.
+    memset(&data->last_gaugemove, 0, sizeof(struct TimeVal));
+
+    updateStatus = TRUE;
+  }
+
   if(msg->percent >= 0)
-    set(data->progressGauge, MUIA_Gauge_Current, msg->percent);
+  {
+    struct TimeVal now;
+
+    // then we update the gauge, but we take also care of not refreshing
+    // it too often or otherwise it slows down the whole search process.
+    GetSysTime(TIMEVAL(&now));
+    if(-CmpTime(TIMEVAL(&now), TIMEVAL(&data->last_gaugemove)) > 0)
+    {
+      struct TimeVal delta;
+
+      // how much time has passed exactly?
+      memcpy(&delta, &now, sizeof(struct TimeVal));
+      SubTime(TIMEVAL(&delta), TIMEVAL(&data->last_gaugemove));
+
+      // update the display at least twice a second
+      if(delta.Seconds > 0 || delta.Microseconds > 250000)
+      {
+        set(data->progressGauge, MUIA_Gauge_Current, msg->percent);
+
+        memcpy(&data->last_gaugemove, &now, sizeof(struct TimeVal));
+
+        updateStatus = TRUE;
+      }
+    }
+  }
 
   if(msg->max >= 0)
+  {
     set(data->progressGauge, MUIA_Gauge_Max, msg->max);
+    updateStatus = TRUE;
+  }
 
   // lets add the progress Gauge to our splashwindow now
-  if(isChildOfGroup(data->progressGroup, data->progressGauge) == FALSE &&
+  if(data->progressGaugeActive == FALSE &&
      DoMethod(data->progressGroup, MUIM_Group_InitChange))
   {
     DoMethod(data->progressGroup, OM_ADDMEMBER, data->progressGauge);
+    data->progressGaugeActive = TRUE;
 
     DoMethod(data->progressGroup, MUIM_Group_ExitChange);
 
     set(data->progressGroup, MUIA_Group_ActivePage, 1);
+
+    DoMethod(G->App, MUIM_Application_InputBuffered);
   }
+  else if(updateStatus)
+    DoMethod(G->App, MUIM_Application_InputBuffered);
 
-  DoMethod(G->App, MUIM_Application_InputBuffered);
-
+  RETURN(0);
   return 0;
 }
 
