@@ -1070,6 +1070,8 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
   int active=0;
   struct MinNode *curNode;
 
+  ENTER();
+
   // iterate through our filter List
   for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
   {
@@ -1144,6 +1146,7 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
     }
   }
 
+  RETURN(active);
   return active;
 }
 
@@ -1275,17 +1278,13 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
 //  Apply filters
 HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 {
-  struct Mail *mail;
-  struct Mail **mlist = NULL;
   struct Folder *folder;
   struct Folder *spamfolder = NULL;
-  int matches = 0;
-  int minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
   enum ApplyFilterMode mode = arg[0];
-  APTR lv = G->MA->GUI.PG_MAILLIST;
-  char buf[SIZE_LARGE];
 
-  D(DBF_FILTER, "About to apply SPAM filter and user defined filters...");
+  ENTER();
+
+  D(DBF_FILTER, "About to apply SPAM and user defined filters...");
 
   if((folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : FO_GetCurrentFolder()) != NULL &&
      (C->SpamFilterEnabled == FALSE || (spamfolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL))
@@ -1296,6 +1295,8 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
     // if he really wants to apply the filters or not.
     if(mode == APPLY_USER)
     {
+      char buf[SIZE_LARGE];
+
       snprintf(buf, sizeof(buf), GetStr(MSG_MA_ConfirmFilter), folder->Name);
       if(!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), buf))
         applyFilters = FALSE;
@@ -1304,12 +1305,17 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
     // the user has not cancelled the filter process
     if(applyFilters)
     {
+      Object *lv = G->MA->GUI.PG_MAILLIST;
+      struct Mail **mlist = NULL;
+
       memset(&G->RRs, 0, sizeof(struct RuleResult));
       set(lv, MUIA_NList_Quiet, TRUE);
       G->AppIconQuiet = TRUE;
 
       if(mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL || mode == APPLY_SPAM)
       {
+        int minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
+
         if((mlist = MA_CreateMarkedList(lv, mode == APPLY_RX)) && (int)mlist[0] < minselected)
         {
           free(mlist);
@@ -1324,17 +1330,23 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
       {
         int m;
         int scnt;
+        int matches = 0;
+        struct Mail *mail;
 
         // for simple spam classification this will result in zero
         scnt = AllocFilterSearch(mode);
 
-        BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
-        for(m = 0; m < (int)*mlist; m++)
+        // we use another Busy Gauge information if this is
+        // a spam classification session.
+        if(mode != APPLY_SPAM)
+          BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
+        else
+          BusyGauge(GetStr(MSG_FI_BUSYCHECKSPAM), "", (int)*mlist);
+
+        for(m = 0; m < (int)*mlist && (mail = mlist[m+2]); m++)
         {
           BOOL wasSpam = FALSE;
           struct MinNode *curNode;
-
-          mail = mlist[m+2];
 
           if(C->SpamFilterEnabled && (mode == APPLY_AUTO || mode == APPLY_SPAM))
           {
@@ -1342,14 +1354,20 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 
             D(DBF_FILTER, "About to apply SPAM filter to message with subject \"%s\"", mail->Subject);
             if(mode == APPLY_AUTO && C->SpamFilterForNewMail)
+            {
               // classify this mail if we are allowed to check new mails automatically
               doClassification = TRUE;
+            }
             else if(mode == APPLY_SPAM && hasStatusSpam(mail) == FALSE && hasStatusHam(mail) == FALSE)
+            {
               // classify mails if the user triggered this and the mail is not yet classified
               doClassification = TRUE;
+            }
             else
+            {
               // don't try to classify this mail
               doClassification = FALSE;
+            }
 
             if(doClassification)
             {
@@ -1358,8 +1376,10 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
               if(BayesFilterClassifyMessage(mail))
               {
                 D(DBF_FILTER, "Message was classified as spam");
+
                 // set the SPAM flags, but don't change any of the NEW or READ flags
                 setStatusToAutoSpam(mail);
+
                 // move newly recognized spam to the spam folder
                 MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
                 wasSpam = TRUE;
@@ -1388,9 +1408,9 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
                   break;
               }
             }
-
-            BusySet(m+1);
           }
+
+          BusySet(m+1);
         }
 
         FreeFilterSearch();
@@ -1411,11 +1431,15 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 
       if(G->RRs.Checked && mode == APPLY_USER)
       {
+        char buf[SIZE_LARGE];
+
         snprintf(buf, sizeof(buf), GetStr(MSG_MA_FilterStats), G->RRs.Checked, G->RRs.Forwarded, G->RRs.Moved, G->RRs.Deleted);
         MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), buf);
       }
     }
   }
+
+  LEAVE();
 }
 MakeHook(ApplyFiltersHook, ApplyFiltersFunc);
 ///

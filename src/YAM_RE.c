@@ -2580,7 +2580,8 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
   struct Part *part;
   BOOL result = FALSE;
 
-  BusyText(GetStr(MSG_BusyReading), "");
+  if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+    BusyText(GetStr(MSG_BusyReading), "");
 
   // here we read in the mail in our read mail group
   GetMailFile(rmData->readFile, folder, mail);
@@ -2594,7 +2595,9 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
 
     if(!StartUnpack(rmData->readFile, tmpFile, folder))
     {
-      BusyEnd();
+      if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+        BusyEnd();
+
       return FALSE;
     }
 
@@ -2666,7 +2669,9 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
     }
   }
 
-  BusyEnd();
+  if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+    BusyEnd();
+
   return result;
 }
 

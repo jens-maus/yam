@@ -6,6 +6,10 @@ $Id$
 
 2006-12-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_FI.c, YAM_RE.c: The new "Check for spam" operation didn't show any Busy
+    gauge while processing mails. Now it will correctly show and update a busy
+    bar like the normal filter operation. In addition it will show a more specific
+    message than just "Applying filters...".
   * locale/YAM.cd, deutsch.ct: changed new MSG_MA_SPAMCHECK phrase to be
     somewhat shorter as it is clear that it will be applied on mails. :)
   * include: updated MUI includes to very latest incarnations.

@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (04.12.2006)
+## version $VER: YAM.catalog 6.0 (07.12.2006)
 ## language deutsch
 ## codeset 0
 ;
@@ -7530,4 +7530,7 @@ vorhanden ist und dass das Laufwerk nicht schreibgeschützt ist.
 ;
 MSG_MA_CHECKSPAM
 Auf Spamgehalt prüfen
+;
+MSG_FI_BUSYCHECKSPAM
+Prüfe auf Spamgehalt...
 ;
