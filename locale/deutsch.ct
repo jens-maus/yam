@@ -7534,3 +7534,9 @@ Auf Spamgehalt prüfen
 MSG_FI_BUSYCHECKSPAM
 Prüfe auf Spamgehalt...
 ;
+MSG_MA_REMOVESPAM
+Spam entfernen
+;
+MSG_MA_BUSYEMPTYINGSPAM
+Entferne Spam...
+;

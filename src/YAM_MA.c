@@ -3273,7 +3273,6 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
   LEAVE();
 }
 MakeHook(MA_DeleteOldHook, MA_DeleteOldFunc);
-
 ///
 /// MA_DeleteDeletedFunc
 //  Removes messages from 'deleted' folder
@@ -3284,35 +3283,79 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
   struct Mail *mail;
   struct Folder *folder = FO_GetFolderByType(FT_DELETED, NULL);
 
-  if(!folder) return;
-
-  BusyGauge(GetStr(MSG_BusyEmptyingTrash), "", folder->Total);
-
-  for (mail = folder->Messages; mail; mail = mail->Next)
+  if(folder != NULL)
   {
-    BusySet(++i);
-    AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
-    DeleteFile(GetMailFile(NULL, NULL, mail));
+    BusyGauge(GetStr(MSG_BusyEmptyingTrash), "", folder->Total);
+
+    for(mail = folder->Messages; mail; mail = mail->Next)
+    {
+      BusySet(++i);
+      AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
+      DeleteFile(GetMailFile(NULL, NULL, mail));
+    }
+
+    // We only clear the folder if it wasn`t empty anyway..
+    if(i > 0)
+    {
+      ClearMailList(folder, TRUE);
+
+      MA_ExpireIndex(folder);
+
+      if(FO_GetCurrentFolder() == folder)
+        DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
+
+      AppendLogNormal(20, GetStr(MSG_LOG_Deleting), i, folder->Name);
+
+      if(quiet == FALSE)
+        DisplayStatistics(folder, TRUE);
+    }
+
+    BusyEnd();
   }
-
-  // We only clear the folder if it wasn`t empty anyway..
-  if(i > 0)
-  {
-    ClearMailList(folder, TRUE);
-
-    MA_ExpireIndex(folder);
-
-    if(FO_GetCurrentFolder() == folder) DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
-
-    AppendLogNormal(20, GetStr(MSG_LOG_Deleting), i, folder->Name);
-
-    if(quiet == FALSE) DisplayStatistics(folder, TRUE);
-  }
-
-  BusyEnd();
 }
 MakeHook(MA_DeleteDeletedHook, MA_DeleteDeletedFunc);
+///
+/// MA_DeleteSpamFunc
+//  Removes spam messages from 'spam' folder
+HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
+{
+  BOOL quiet = *arg != 0;
+  struct Folder *folder = FO_GetFolderByType(FT_SPAM, NULL);
 
+  if(folder != NULL)
+  {
+    struct Mail **mlist = NULL;
+
+    BusyGauge(GetStr(MSG_MA_BUSYEMPTYINGSPAM), "", folder->Total);
+
+    // get the complete mail list of the spam folder
+    if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
+    {
+      int i, numSpam;
+      struct Mail *mail;
+
+      for(i = 0, numSpam = 0; i < (int)*mlist && (mail = mlist[i + 2]) != NULL; i++)
+      {
+        BusySet(i + 1);
+
+        // not every mail in the spam folder *must* be spam, so better check this
+        if(hasStatusSpam(mail))
+        {
+          // remove the spam mail
+          MA_DeleteSingle(mail, TRUE, quiet, TRUE);
+          // and count the number of deleted mails
+          numSpam++;
+        }
+      }
+
+      // finally free the mail list
+      free(mlist);
+    }
+
+    BusyEnd();
+  }
+}
+MakeStaticHook(MA_DeleteSpamHook, MA_DeleteSpamFunc);
 ///
 /// MA_RescanIndexFunc
 //  Updates index of current folder
@@ -4164,19 +4207,25 @@ void MA_SetupDynamicMenus(void)
     // if not, create a new entry and add it to the current layout
     if(G->MA->GUI.MI_CHECKSPAM == NULL || isChildOfFamily(G->MA->GUI.MN_FOLDER, G->MA->GUI.MI_CHECKSPAM) == FALSE)
     {
-      if ((G->MA->GUI.MI_CHECKSPAM =  MakeMenuitem(GetStr(MSG_MA_CHECKSPAM), MMEN_CLASSIFY)) != NULL)
-        DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Insert, G->MA->GUI.MI_CHECKSPAM,  G->MA->GUI.MI_FILTER);
+      if ((G->MA->GUI.MI_CHECKSPAM = MakeMenuitem(GetStr(MSG_MA_CHECKSPAM), MMEN_CLASSIFY)) != NULL)
+        DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Insert, G->MA->GUI.MI_CHECKSPAM, G->MA->GUI.MI_FILTER);
+    }
+
+    if(G->MA->GUI.MI_DELSPAM == NULL || isChildOfFamily(G->MA->GUI.MN_FOLDER, G->MA->GUI.MI_DELSPAM) == FALSE)
+    {
+      if ((G->MA->GUI.MI_DELSPAM = MakeMenuitem(GetStr(MSG_MA_REMOVESPAM), MMEN_DELSPAM)) != NULL)
+        DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Insert, G->MA->GUI.MI_DELSPAM, G->MA->GUI.MI_DELDEL);
     }
 
     if(G->MA->GUI.MI_TOHAM == NULL || isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOHAM) == FALSE)
     {
-      if ((G->MA->GUI.MI_TOHAM =  MakeMenuitem(GetStr(MSG_MA_TONOTSPAM), MMEN_TOHAM)) != NULL)
-        DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Insert, G->MA->GUI.MI_TOHAM,  G->MA->GUI.MI_TOQUEUED);
+      if ((G->MA->GUI.MI_TOHAM = MakeMenuitem(GetStr(MSG_MA_TONOTSPAM), MMEN_TOHAM)) != NULL)
+        DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Insert, G->MA->GUI.MI_TOHAM, G->MA->GUI.MI_TOQUEUED);
     }
 
     if(G->MA->GUI.MI_TOSPAM == NULL || isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOSPAM) == FALSE)
     {
-      if ((G->MA->GUI.MI_TOSPAM = MakeMenuitem(GetStr(MSG_MA_TOSPAM),    MMEN_TOSPAM)) != NULL)
+      if ((G->MA->GUI.MI_TOSPAM = MakeMenuitem(GetStr(MSG_MA_TOSPAM), MMEN_TOSPAM)) != NULL)
         DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Insert, G->MA->GUI.MI_TOSPAM, G->MA->GUI.MI_TOQUEUED);
     }
   }
@@ -4195,6 +4244,12 @@ void MA_SetupDynamicMenus(void)
       DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Remove, G->MA->GUI.MI_TOHAM);
       MUI_DisposeObject(G->MA->GUI.MI_TOHAM);
       G->MA->GUI.MI_TOHAM = NULL;
+    }
+    if(G->MA->GUI.MI_DELSPAM != NULL && isChildOfFamily(G->MA->GUI.MN_FOLDER, G->MA->GUI.MI_DELSPAM))
+    {
+      DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Remove, G->MA->GUI.MI_DELSPAM);
+      MUI_DisposeObject(G->MA->GUI.MI_DELSPAM);
+      G->MA->GUI.MI_DELSPAM = NULL;
     }
     if(G->MA->GUI.MI_CHECKSPAM != NULL && isChildOfFamily(G->MA->GUI.MN_FOLDER, G->MA->GUI.MI_CHECKSPAM))
     {
@@ -4582,6 +4637,7 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_FILTER    ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&ApplyFiltersHook,APPLY_USER,0);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_CLASSIFY  ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&ApplyFiltersHook,APPLY_SPAM,0);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_DELDEL    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_DeleteDeletedHook, FALSE);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_DELSPAM   ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_DeleteSpamHook, FALSE);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_INDEX     ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_RescanIndexHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_FLUSH     ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_FlushIndexHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ABOOK     ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&AB_OpenHook,ABM_EDIT);

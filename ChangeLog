@@ -6,6 +6,9 @@ $Id$
 
 2006-12-08  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c, YAM_main.h, locale/YAM.cd, locale/deutsch.ct: added menu item to
+    delete all spam mails from the spam folder. This function will respect non
+    spam mail that may still reside in the spam folder will keep them.
   * YAM_UT.c: upon deleting a users private directory the .folders file is now
     deleted, too.
   * YAM.c, YAM_COs.c: when the user was asked if the spam folder should be
