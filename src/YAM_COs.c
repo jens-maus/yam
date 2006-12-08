@@ -1405,6 +1405,14 @@ void CO_GetConfig(void)
                                                   GetStr(MSG_ER_SPAMDIR_EXISTS));
             switch(result)
             {
+              default:
+              case 0:
+                // the user has chosen to disable the spam filter, so we do it
+                // or the requester was cancelled
+                CE->SpamFilterEnabled = FALSE;
+                createSpamFolder = FALSE;
+                break;
+
               case 1:
                 // delete everything in the folder, the directory itself can be kept
                 DeleteMailDir((char *)FolderNames[4], FALSE);
@@ -1415,18 +1423,13 @@ void CO_GetConfig(void)
                 // keep the folder contents
                 createSpamFolder = TRUE;
                 break;
-
-              default:
-                // the user has chosen to disable the spam filter, so we do it
-                CE->SpamFilterEnabled = FALSE;
-                createSpamFolder = FALSE;
             }
           }
 
           if(createSpamFolder)
           {
             // try to create the folder and save the new folder tree
-            if(!FO_CreateFolder(FT_SPAM, FolderNames[4], GetStr(MSG_MA_SPAM)) || !FO_SaveTree(CreateFilename(".folders")))
+            if(!FO_CreateFolder(FT_SPAM, CreateFilename(FolderNames[4]), GetStr(MSG_MA_SPAM)) || !FO_SaveTree(CreateFilename(".folders")))
             {
               // something failed, so we disable the spam filter again
               ER_NewError(GetStr(MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER));
