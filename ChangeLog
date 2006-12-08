@@ -6,6 +6,8 @@ $Id$
 
 2006-12-08  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: upon deleting a users private directory the .folders file is now
+    deleted, too.
   * YAM.c, YAM_COs.c: when the user was asked if the spam folder should be
     created in an already existing directory the case that the requester was
     cancelled was not really handled.

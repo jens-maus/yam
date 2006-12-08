@@ -2491,7 +2491,8 @@ BOOL DeleteMailDir(char *dir, BOOL isroot)
                 if(stricmp(filename, ".config")      == 0 ||
                    stricmp(filename, ".glossary")    == 0 ||
                    stricmp(filename, ".addressbook") == 0 ||
-                   stricmp(filename, ".emailcache")  == 0)
+                   stricmp(filename, ".emailcache")  == 0 ||
+                   stricmp(filename, ".folders")  == 0)
                 {
                   result = DeleteFile(fname);
                 }
