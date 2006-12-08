@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.6 (04.12.06)
+## version $VER: YAM.ct 6.7 (08.12.06)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -6793,3 +6793,23 @@ MSG_CO_ER_SMTPAUTH
 SMTP-servern '%s' verkar inte stödja den valda SMTP-AUTH metoden.\n\nVar god verifiera med din leverantör vilka autentisieringsmetoder som är tillgängliga och hur man konfigurerar dem i din epost klient.
 ;#DEF The SMTP server '%s' doesn't seem to support the selected SMTP-AUTH method.\n\nPlease verify with your provider which authentication methods are available and how to configure them in your mail client.
 ;#SET (1790//)
+MSG_ER_SPAMDIR_EXISTS
+Katalogen \"spam\" existerar redan!\n\nVill du använda denna katalog som standard för skräppost\neller vill du avaktivera skräppostfiltret?
+;#DEF The directory \"spam\" already exists!\n\nDo you want to use this directory as the standard spam folder\nor do you want to disable the spam filter?
+;#SET (1791//)
+MSG_ER_SPAMDIR_EXISTS_ANSWERS
+Rensa och anv. som skräpp.mapp|Anv. som skräpp.mapp|Avaktiv. skräpp.filter
+;#DEF Clear and use as spam folder|Use as spam folder|Disable spam filter
+;#SET (1792//)
+MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER
+Kunde inte skapa standard mappen för skräppost!\n\nSkräppostfiltret har avaktiverats igen.\nVar god kontrollera att det finns tillräckligt\nmed utrymme och att enheten inte är skrivskyddad.
+;#DEF Could not create standard spam folder!\n\nThe spam filter has been deactivated again.\nPlease make sure that there is enough space left on the drive and that the drive is not write protected.
+;#SET (1793//)
+MSG_MA_CHECKSPAM
+Kontrollera efter skräppost innehåll
+;#DEF Check for spam content
+;#SET (1794//)
+MSG_FI_BUSYCHECKSPAM
+Kollar efter skräppost...
+;#DEF Checking for spam...
+;#SET (1795//)
