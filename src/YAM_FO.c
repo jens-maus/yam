@@ -438,7 +438,16 @@ struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *
      folder->Sort[0] = 1;
      folder->Sort[1] = 3;
      folder->Type = type;
-     folder->ImageIndex = -1;
+     // set the standard icon images, or none for a custom folder
+     switch(type)
+     {
+       case FT_INCOMING: folder->ImageIndex = FICON_ID_INCOMING; break;
+       case FT_OUTGOING: folder->ImageIndex = FICON_ID_OUTGOING; break;
+       case FT_TRASH:    folder->ImageIndex = FICON_ID_TRASH;    break;
+       case FT_SENT:     folder->ImageIndex = FICON_ID_SENT;     break;
+       case FT_SPAM:     folder->ImageIndex = FICON_ID_SPAM;     break;
+       default:          folder->ImageIndex = -1;                break;
+     }
      strlcpy(folder->Path, path, sizeof(folder->Path));
      strlcpy(folder->Name, name, sizeof(folder->Name));
      if (!CreateDirectory(GetFolderDir(folder)))
@@ -920,7 +929,7 @@ static void FO_GetFolder(struct Folder *folder)
 {
    struct FO_GUIData *gui = &G->FO->GUI;
    BOOL isdefault = isDefaultFolder(folder);
-   static const int type2cycle[9] = { FT_CUSTOM, FT_CUSTOM, FT_INCOMING, FT_INCOMING, FT_OUTGOING, -1, FT_INCOMING, FT_OUTGOING, -1 };
+   static const int type2cycle[9] = { FT_CUSTOM, FT_CUSTOM, FT_INCOMING, FT_INCOMING, FT_OUTGOING, -1, FT_INCOMING, FT_OUTGOING, FT_CUSTOM };
    int i;
 
    set(gui->ST_FNAME,  MUIA_String_Contents, folder->Name);
