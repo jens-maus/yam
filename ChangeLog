@@ -6,6 +6,10 @@ $Id$
 
 2006-12-08  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c, MainFolderListtree.c, locale/YAM.cd: the newly added menu item
+    for deleting all mails in the spam folder will now only be active if the
+    SPAM folder is the current folder. In addition, the context menu of the
+    spam folder now also caries a menu item for deleting all SPAM in it.
   * InfoBar.c, YAM_MA.c, YAM_UT.c, YAM_FI.c, YAM_MAf.c: a shown busy gauge
     in the infobar can now contain a small "X" button which will allow the
     BusySet() function to notify the calling function that the user wants to

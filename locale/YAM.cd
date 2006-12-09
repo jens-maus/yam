@@ -6067,7 +6067,7 @@ MSG_FI_BUSYCHECKSPAM (1795//)
 Checking for spam...
 ;
 MSG_MA_REMOVESPAM (1796//)
-Empty spam
+Empty spam folder
 ;
 MSG_MA_BUSYEMPTYINGSPAM (1797//)
 Emptying spam folder...

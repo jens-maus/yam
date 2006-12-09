@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (07.12.2006)
+## version $VER: YAM.catalog 6.0 (08.12.2006)
 ## language deutsch
 ## codeset 0
 ;
@@ -875,7 +875,7 @@ I\000Filtern...
 ; I\000Filter
 ;
 MSG_MA_RemoveDeleted
-Z\000Gelöschte entfernen
+Z\000Papierkorb leeren
 ; Z\000Empty trash
 ;
 MSG_MA_UpdateIndex
@@ -2762,7 +2762,7 @@ Löscht Nachrichten, welche ihr\nmaximales Alter überschreiten\n(siehe Postfach-K
 ; age (see folder configuration)
 ;
 MSG_HELP_CO_CH_REMOVEDEL
-Leert das Postfach 'Gelöschte'
+Leert den Papierkorb (Postfach 'Gelöschte')
 ; Empty trash folder
 ;
 MSG_HELP_CO_ST_GALLDIR
@@ -2826,7 +2826,8 @@ Bestätigungsfenster erst ab dieser\nAnzahl von Nachrichten öffnen
 ; display the confirmation requester
 ;
 MSG_HELP_CO_CH_REMOVE
-Löscht Nachrichten sofort, ohne den\nUmweg über das Postfach 'Gelöschte'
+Löscht Nachrichten sofort, ohne sie\n\
+zuerst in den Papierkorb zu verschieben.
 ; Immediately delete the messages rather\n\
 ; than moving them to the trash folder
 ;
@@ -5491,7 +5492,7 @@ Lösche alte Nachrichten...
 ; Deleting old mail...
 ;
 MSG_BusyEmptyingTrash
-Entferne gelöschte Nachrichten...
+Leere Papierkorb...
 ; Emptying trash folder...
 ;
 MSG_BusyGettingVerInfo
@@ -7535,8 +7536,8 @@ MSG_FI_BUSYCHECKSPAM
 Prüfe auf Spamgehalt...
 ;
 MSG_MA_REMOVESPAM
-Spam entfernen
+Spamordner leeren
 ;
 MSG_MA_BUSYEMPTYINGSPAM
-Entferne Spam...
+Leere Spamordner...
 ;

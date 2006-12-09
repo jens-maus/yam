@@ -254,7 +254,6 @@ void MA_ChangeSelected(BOOL forceUpdate)
       set(gui->MI_EDIT, MUIA_Menuitem_Title, p);
   }
 
-  /////////////////////////////////////////////////////////////////////////
   // in the following section we define which menu item should be
   // enabled or disabled. Please note that a menu item can only be part of
   // ONE of the following groups for enabling/disabling items based on
@@ -287,8 +286,8 @@ void MA_ChangeSelected(BOOL forceUpdate)
   // Enable if:
   //  * > 0 mails selected
   //  * the folder is enabled
-  //  * NOT in the "Deleted" folder
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isDeletedFolder(fo) && (active || numSelected > 0) && folderEnabled,
+  //  * is in the "Deleted" folder
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, isDeletedFolder(fo) && (active || numSelected > 0) && folderEnabled,
                                                          gui->MI_DELDEL,
                                                          TAG_DONE);
 
@@ -342,6 +341,20 @@ void MA_ChangeSelected(BOOL forceUpdate)
   //  * the folder is enabled
   if(gui->MI_TOHAM)
     set(gui->MI_TOHAM,  MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && !hasStatusHam(mail))));
+
+  // Enable if:
+  //  * DELSPAM menu item exists
+  //  * > 0 mails selected
+  //  * the folder is enabled
+  //  * is in the "SPAM" folder
+  if(gui->MI_DELSPAM)
+    set(gui->MI_DELSPAM, MUIA_Menuitem_Enabled, isSpamFolder(fo) && (active || numSelected > 0) && folderEnabled);
+
+  // Enable if:
+  //  * CHECKSPAM menu item exists
+  //  * the folder is enabled
+  if(gui->MI_CHECKSPAM)
+    set(gui->MI_CHECKSPAM, MUIA_Menuitem_Enabled, folderEnabled);
 
   LEAVE();
 }
@@ -3396,6 +3409,9 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
         }
       }
 
+      if(quiet == FALSE)
+        DisplayStatistics(folder, TRUE);
+
       // finally free the mail list
       free(mlist);
     }
@@ -3405,7 +3421,7 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
 
   LEAVE();
 }
-MakeStaticHook(MA_DeleteSpamHook, MA_DeleteSpamFunc);
+MakeHook(MA_DeleteSpamHook, MA_DeleteSpamFunc);
 ///
 /// MA_RescanIndexFunc
 //  Updates index of current folder
