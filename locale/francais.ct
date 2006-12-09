@@ -3,23 +3,8 @@
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
-; YAM.cd - YAM 2.5 catalog description file
 ; $Id$
-;
-; Please note that all catalog strings have to carry a proper
-; identifier number in the (X//) string part of the MSG_ identifier
-; field and that those numbers have to be unique and continous over
-; all different YAM versions. This allows to remove some obsolete
-; strings later on without having to worry about identifier clashes.
-; This however means that if an entry is being deleted here its
-; identifier should NEVER be reused later on. So, if you are going to
-; add new strings here do that always at the bottom of the file
-; and increase the last listed identifier number by one for your
-; new entries. And if you delete an entry NEVER reorder or resort
-; the ID numbers accordingly.
-; 
-;#version 6
-;#language english
+; based on YAM.cd 2552 2006-12-09 13:19:17Z
 ;
 ; General
 ;
@@ -763,12 +748,8 @@ MSG_MA_Sent
 Envoyés
 ; Sent
 ;
-MSG_MA_Deleted
-Effacés
-; Deleted
-;
 MSG_MA_TBRead
-_Lire
+Lire
 ; Rea_d
 ;
 MSG_MA_TBEdit
@@ -780,7 +761,7 @@ _Déplacer
 ; _Move
 ;
 MSG_MA_TBDelete
-E_ffacer
+Effacer
 ; De_lete
 ;
 MSG_MA_TBGetAddr
@@ -788,7 +769,7 @@ MSG_MA_TBGetAddr
 ; Ge_tAdd
 ;
 MSG_MA_TBWrite
-É_crire
+_Nouveau
 ; _New
 ;
 MSG_MA_TBReply
@@ -796,15 +777,15 @@ _Répondre
 ; _Reply
 ;
 MSG_MA_TBForward
-Re_trans.
+Retrans.
 ; For_ward
 ;
 MSG_MA_TBGetMail
-Rece_voir
+Recevoir
 ; _Get
 ;
 MSG_MA_TBSendAll
-Envo_yer
+Envoyer
 ; _Send
 ;
 MSG_MA_TBFilter
@@ -812,7 +793,7 @@ F_iltrer
 ; F_ilter
 ;
 MSG_MA_TBFind
-C_hercher
+Chercher
 ; _Find
 ;
 MSG_MA_TBAddrBook
@@ -820,7 +801,7 @@ C_arnet
 ; _Addr
 ;
 MSG_MA_TBConfig
-Confi_g.
+_Config
 ; _Config
 ;
 ;
@@ -1466,8 +1447,8 @@ Do_maine
 ; Do_main
 ;
 MSG_CO_Allow8bit
-Serveur SMTP autorisant _8bit
-; SMTP server allows _8bit
+Serveur SMTP autorisant les caractères _8 bits
+; SMTP server allows _8bit characters
 ;
 MSG_CO_ReceiveMail
 Réception (POP3)
@@ -5587,7 +5568,7 @@ Répertoire des dossiers
 ; Mail directory
 ;
 MSG_US_WaitLogin
-Attend la réponse d'un utilisateur...
+Attente de la réponse d'un utilisateur...
 ; Waiting for user login...
 ;
 MSG_US_RemoveReq
@@ -5838,19 +5819,19 @@ de passe et/ou compressé en utilisant XPK
 ; and/or compressed using XPK
 ;
 MSG_HELP_FO_CY_SORT0
-Méthode de trie à utiliser pour\n\
+Méthode de tri à utiliser pour\n\
 classer les messages de ce dossier
 ; Primary sorting order of the\n\
 ; messages in this folder
 ;
 MSG_HELP_FO_CY_SORT1
-Trie de deuxième ordre sur\n\
+Tri de deuxième ordre sur\n\
 les messages de ce dossier
 ; Secondary sorting order of the\n\
 ; messages in this folder
 ;
 MSG_HELP_FO_CH_REVERSE
-Inverse le trie
+Inverse le tri
 ; Reversed sorting
 ;
 MSG_HELP_FO_ST_MLPATTERN
@@ -6119,10 +6100,6 @@ Désactivation des fonctions de chiffrage et de signature !
 MSG_RE_FixedFont
 Police fixe
 ; Fixed font
-;
-MSG_ER_NO_SMTP_AUTH
-Le serveur ESMTP %s ne gère pas le SMTP AUTH !
-; ESMTP server %s doesn't support SMTP AUTH!
 ;
 MSG_CO_UseSMTPAUTH
 Utiliser SMTP AUT_H
@@ -8226,7 +8203,7 @@ Courrier indésirable
 ; Spam
 ;
 MSG_LOADINGSPAMTRAININGDATA
-Chargement de l'apprentissage sur les courriers indésirables...
+Chargement de la détection des courriers indésirables...
 ; Loading spam training data...
 ;
 MSG_MA_TBSPAM
@@ -8296,15 +8273,15 @@ Courrier indésirable
 ; Spam
 ;
 MSG_CO_SPAMFILTER
-Filtre de courrier indésirable
-; Spam filter
-;
-MSG_CO_SPAMFILTER_TITLE
 Filtre des courriers indésirables
 ; Spam filter
 ;
+MSG_CO_SPAMFILTER_TITLE
+Filtragre des courriers indésirables
+; Spam filter
+;
 MSG_CO_SPAMFILTER_SUMMARY
-Pour configurer le filtre des courriers indésirables...
+Pour configurer le filtrage des courriers indésirables...
 ; Configure spam filter...
 ;
 MSG_CO_SPAM_FILTERFORNEWMAIL
@@ -8363,24 +8340,12 @@ alors être entraîné à nouveau après ça !
 ; \n\
 ; The spam filter must be trained again afterwards!
 ;
-MSG_CO_SPAM_DISABLEFILTERASK_OLD
-Voulez-vous également réinitialiser les\n\
-données d'apprentissage et les indicateurs\n\
-des messages ?\n\
-\n\
-Le filtre des courriers indésirables devra\n\
-alors être entraîné à nouveau après ça !
-; Do you also want to reset the spam filter's\n\
-; training data and all mail flags?\n\
-; \n\
-; The spam filter must be trained again afterwards!
-;
 MSG_TR_CHECKUIDL
 Vérification des UIDL pour éviter les doublons...
 ; Checking UIDLs to avoid duplicates...
 ;
 MSG_CO_SPAM_DISABLEFILTERASK
-Le filtre des courriers indésriables était\n\
+Le filtre des courriers indésirables était\n\
 actif et vient d'être désactivé. Laquelle des\n\
 actions suivantes voulez-vous réaliser ?
 ; The spam filter was found to be active and has\n\
@@ -8391,7 +8356,6 @@ MSG_CO_SPAM_RESETTDATA
 _Réinitialiser l'apprentissage
 ; _Reset training data
 ;
-;
 MSG_CO_SPAM_RESETMAILFLAGS
 Réinitialiser l'_indicateur des messages
 ; Reset _spam state of all mails
@@ -8399,4 +8363,105 @@ Réinitialiser l'_indicateur des messages
 MSG_CO_SPAM_DELETESPAMFOLDER
 _Vider le dossier Courrier indésirable
 ; _Delete spam folder
+;
+MSG_CO_SMTPAUTH_METHOD
+M_éthode
+; _Method
+;
+MSG_HELP_CO_CY_SMTPAUTHMETHOD
+Permet de spécifier la méthode d'authentification\n\
+SMTP utilisée avec le serveur configuré. 'Auto'\n\
+sélectionne la méthode automatiquement en fonction\n\
+des capacités du serveur. Les autres permettent de\n\
+sélectionner explicitement la méthode, sachant que\n\
+la plus sûre est classée en haut.
+; Allows to specify the SMTP-AUTH method to be\n\
+; used for the configured server. 'Auto' selects\n\
+; the method automatically depending on the server\n\
+; capabilities. The others are for explicitly\n\
+; selecting the method whereas the most secure one\n\
+; is listed at the top.
+;
+MSG_CO_SMTPAUTH_AUTO
+Auto
+; Auto
+;
+MSG_CO_SMTPAUTH_DIGEST
+DIGEST-MD5
+; DIGEST-MD5
+;
+MSG_CO_SMTPAUTH_CRAM
+CRAM-MD5
+; CRAM-MD5
+;
+MSG_CO_SMTPAUTH_LOGIN
+LOGIN
+; LOGIN
+;
+MSG_CO_SMTPAUTH_PLAIN
+PLAIN
+; PLAIN
+;
+MSG_CO_ER_SMTPAUTH
+Le serveur SMTP '%s' ne semble pas supporter la\n\
+méthode d'authentification sélectionnée.\n\
+\n\
+Veuillez vérifier avec votre fournisseur quelles\n\
+méthodes d'authentification sont disponibles et\n\
+comment les configurer dans vitre client mail.
+; The SMTP server '%s' doesn't seem to support the \
+; selected SMTP-AUTH method.\n\
+; \n\
+; Please verify with your provider which authentication \
+; methods are available and how to configure them in your \
+; mail client.
+;
+MSG_ER_SPAMDIR_EXISTS
+Le répertoire \"spam\" existe déjà !\n\
+\n\
+Voulez-vous utiliser ce répertoire comme dossier\n\
+standard pour les courriers indésirables ou alors\n\
+désactiver le filtrage des courriers indésirables ?
+; The directory \"spam\" already exists!\n\
+; \n\
+; Do you want to use this directory as the standard spam folder\n\
+; or do you want to disable the spam filter?
+;
+MSG_ER_SPAMDIR_EXISTS_ANSWERS
+Vider et utiliser|Utiliser|Désactiver le filtrage
+; Clear and use as spam folder|Use as spam folder|Disable spam filter
+;
+MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER
+Impossible de créer le dossier standard pour\n\
+les courriers indésirables !\n\
+\n\
+Le filtrage des indésirables a de nouveau été\n\
+désactivé. Veuillez vous assurer qu'il reste\n\
+suffisament de place sur le disque et qu'il\n\
+n'est protégé en écriture.
+; Could not create standard spam folder!\n\
+; \n\
+; The spam filter has been deactivated again.\n\
+; Please make sure that there is enough space left on the drive \
+; and that the drive is not write protected.
+;
+MSG_MA_CHECKSPAM
+Appliquer le filtre des indésirables
+; Apply spam filter
+;
+MSG_FI_BUSYCHECKSPAM
+Filtrage des indésirables du dossier...
+; Applying spam filter on folder...
+;
+MSG_MA_REMOVESPAM
+Supprimer les indésirables du dossier
+; Delete spam from folder
+;
+MSG_MA_BUSYEMPTYINGSPAM
+Suppression des indésirables du dossier...
+; Deleting spam from folder...
+;
+MSG_MA_TRASH
+Corbeille
+; Trash
 ;
