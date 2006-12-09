@@ -6,6 +6,10 @@ $Id$
 
 2006-12-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_folderconfig.h, misc: the "isSpamFolder()" macro now generally also
+    checks the "C->SpamFilerEnabled" variable which seems to be more
+    appropriate. So if the Spam functionality is generally disabled, that
+    macro will always return FALSE.
   * YAM_MA.c, YAM_FO.c, YAM_MAf.c, misc: renamed the default "Deleted" folder
     to the more common name "Trash" and adapted all involved functions to
     deal with a "trash" folder instead. Also adapted the "FolderName"

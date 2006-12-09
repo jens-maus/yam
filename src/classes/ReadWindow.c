@@ -881,7 +881,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
     if(closeAfter)
       DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
 
-    if(delatonce || (C->SpamFilterEnabled && isSpamFolder(folder)))
+    if(delatonce || isSpamFolder(folder))
       AppendLogNormal(20, GetStr(MSG_LOG_Deleting), 1, folder->Name);
     else
       AppendLogNormal(22, GetStr(MSG_LOG_Moving), 1, folder->Name, delfolder->Name);

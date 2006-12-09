@@ -1665,7 +1665,7 @@ static void Initialise2(void)
         else if(isOutgoingFolder(folder)) folder->ImageIndex = (folder->Total > 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
         else if(isTrashFolder(folder))    folder->ImageIndex = (folder->Total > 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
         else if(isSentFolder(folder))     folder->ImageIndex = FICON_ID_SENT;
-        else if(C->SpamFilterEnabled && isSpamFolder(folder)) folder->ImageIndex = (folder->Total > 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
+        else if(isSpamFolder(folder))     folder->ImageIndex = (folder->Total > 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
         else folder->ImageIndex = -1;
       }
 

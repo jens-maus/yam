@@ -81,7 +81,7 @@ enum FolderType { FT_CUSTOM=0,   // custom folder with received mail
 #define isGroupFolder(folder)       ((folder)->Type == FT_GROUP)
 #define isCustomSentFolder(folder)  ((folder)->Type == FT_CUSTOMSENT)
 #define isCustomMixedFolder(folder) ((folder)->Type == FT_CUSTOMMIXED)
-#define isSpamFolder(folder)        ((folder)->Type == FT_SPAM)
+#define isSpamFolder(folder)        (C->SpamFilterEnabled && (folder)->Type == FT_SPAM)
 
 #define isDefaultFolder(folder)     (isIncomingFolder(folder) || \
                                      isOutgoingFolder(folder) || \

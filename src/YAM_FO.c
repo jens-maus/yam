@@ -590,7 +590,7 @@ BOOL FO_LoadTree(char *fname)
                     else if(isOutgoingFolder(&fo)) fo.ImageIndex = FICON_ID_OUTGOING;
                     else if(isTrashFolder(&fo))    fo.ImageIndex = FICON_ID_TRASH;
                     else if(isSentFolder(&fo))     fo.ImageIndex = FICON_ID_SENT;
-                    else if(C->SpamFilterEnabled && isSpamFolder(&fo)) fo.ImageIndex = FICON_ID_SPAM;
+                    else if(isSpamFolder(&fo))     fo.ImageIndex = FICON_ID_SPAM;
                     else fo.ImageIndex = -1; // or with -1 for a non std folder.
                   }
 
