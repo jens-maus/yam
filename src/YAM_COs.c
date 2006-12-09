@@ -1389,7 +1389,7 @@ void CO_GetConfig(void)
           // the spam filter has been enabled, now try to create the mandatory spam folder
           BOOL createSpamFolder;
 
-          if(FileType((char *)FolderNames[4]) == FIT_NONEXIST)
+          if(FileType(FolderName[FT_SPAM]) == FIT_NONEXIST)
           {
             // no directory named "spam" exists, so let's create it
             createSpamFolder = TRUE;
@@ -1407,29 +1407,35 @@ void CO_GetConfig(void)
             {
               default:
               case 0:
+              {
                 // the user has chosen to disable the spam filter, so we do it
                 // or the requester was cancelled
                 CE->SpamFilterEnabled = FALSE;
                 createSpamFolder = FALSE;
-                break;
+              }
+              break;
 
               case 1:
+              {
                 // delete everything in the folder, the directory itself can be kept
-                DeleteMailDir((char *)FolderNames[4], FALSE);
+                DeleteMailDir(FolderName[FT_SPAM], FALSE);
                 createSpamFolder = TRUE;
-                break;
+              }
+              break;
 
               case 2:
+              {
                 // keep the folder contents
                 createSpamFolder = TRUE;
-                break;
+              }
+              break;
             }
           }
 
           if(createSpamFolder)
           {
             // try to create the folder and save the new folder tree
-            if(!FO_CreateFolder(FT_SPAM, CreateFilename(FolderNames[4]), GetStr(MSG_MA_SPAM)) || !FO_SaveTree(CreateFilename(".folders")))
+            if(!FO_CreateFolder(FT_SPAM, CreateFilename(FolderName[FT_SPAM]), GetStr(MSG_MA_SPAM)) || !FO_SaveTree(CreateFilename(".folders")))
             {
               // something failed, so we disable the spam filter again
               ER_NewError(GetStr(MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER));

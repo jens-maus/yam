@@ -1408,7 +1408,7 @@ DECLARE(DeleteMail)
 
   if(MailExists(mail, folder))
  {
-    struct Folder *delfolder = FO_GetFolderByType(FT_DELETED, NULL);
+    struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
 
     // delete the mail
     MA_DeleteSingle(mail, FALSE, FALSE, FALSE);

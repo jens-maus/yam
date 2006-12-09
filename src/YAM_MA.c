@@ -686,7 +686,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
 
   ENTER();
 
-  if(C->RemoveAtOnce || isDeletedFolder(mailFolder) || isSpamFolder(mailFolder) || forceatonce)
+  if(C->RemoveAtOnce || isTrashFolder(mailFolder) || isSpamFolder(mailFolder) || forceatonce)
   {
     int i;
 
@@ -731,7 +731,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
   }
   else
   {
-    struct Folder *delfolder = FO_GetFolderByType(FT_DELETED, NULL);
+    struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
 
     MA_MoveCopySingle(mail, mailFolder, delfolder, FALSE, closeWindows);
 
@@ -2784,7 +2784,8 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    int i, selected;
    APTR lv = G->MA->GUI.PG_MAILLIST;
    char buffer[SIZE_DEFAULT];
-   struct Folder *delfolder = FO_GetFolderByType(FT_DELETED, NULL), *folder = FO_GetCurrentFolder();
+   struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
+   struct Folder *folder = FO_GetCurrentFolder();
    BOOL ignoreall = FALSE;
 
    if(!folder || !delfolder) return;
@@ -3273,7 +3274,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
 
           if(CompareDates(&today, &(mail->Date)) < 0)
           {
-            if(isDeletedFolder(folder) ||
+            if(isTrashFolder(folder) ||
                (!hasStatusNew(mail) && hasStatusRead(mail)))
             {
               next = mail->Next;
@@ -3281,7 +3282,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
 
               if (CompareDates(&today, &(mail->Date)) < 0)
               {
-                if(isDeletedFolder(flist[f]) ||
+                if(isTrashFolder(flist[f]) ||
                    isSpamFolder(flist[f]) ||
                    (!hasStatusNew(mail) && hasStatusRead(mail)))
                 {
@@ -3324,7 +3325,7 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
   BOOL quiet = *arg != 0;
   int i = 0;
   struct Mail *mail;
-  struct Folder *folder = FO_GetFolderByType(FT_DELETED, NULL);
+  struct Folder *folder = FO_GetFolderByType(FT_TRASH, NULL);
 
   ENTER();
 
@@ -3374,7 +3375,6 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
   if(folder != NULL && folder->Type != FT_GROUP)
   {
     struct Mail **mlist = NULL;
-    BOOL removeImmediate = (folder->Type == FT_SPAM);
 
     // show an interruptable Busy gauge
     BusyGaugeInt(GetStr(MSG_MA_BUSYEMPTYINGSPAM), "", folder->Total);
@@ -3397,8 +3397,9 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
         {
           // remove the spam mail from the folder and take care to
           // remove it immediately in case this is the SPAM folder, otherwise
-          // the mail will be moved to the trash first.
-          MA_DeleteSingle(mail, removeImmediate, quiet, TRUE);
+          // the mail will be moved to the trash first. In fact, DeleteSingle()
+          // takes care of that itself.
+          MA_DeleteSingle(mail, FALSE, quiet, TRUE);
         }
       }
 

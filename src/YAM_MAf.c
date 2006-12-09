@@ -521,7 +521,7 @@ void MA_UpdateIndexes(BOOL initial)
               // the .index - but only if this folder is one of the folders
               // that should update it indexes during startup
               if((isIncomingFolder(folder) || isOutgoingFolder(folder) ||
-                  isDeletedFolder(folder) || C->LoadAllFolders) &&
+                  isTrashFolder(folder) || C->LoadAllFolders) &&
                  !isProtectedFolder(folder))
               {
                 if(MA_GetIndex(folder) == TRUE)

@@ -575,9 +575,6 @@ Outgoing
 MSG_MA_Sent (181//)
 Sent
 ;
-MSG_MA_Deleted (182//)
-Deleted
-;
 MSG_MA_TBRead (184//)
 Rea_d
 ;
@@ -6071,4 +6068,7 @@ Delete spam from folder
 ;
 MSG_MA_BUSYEMPTYINGSPAM (1797//)
 Deleting spam from folder...
+;
+MSG_MA_TRASH (1798//)
+Trash
 ;

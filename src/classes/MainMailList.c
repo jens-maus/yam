@@ -147,7 +147,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
         static char dispfro[SIZE_DEFAULT];
         BOOL toPrefix = FALSE;
 
-        if(((isCustomMixedFolder(entry->Folder) || isDeletedFolder(entry->Folder) || isSpamFolder(entry->Folder)) &&
+        if(((isCustomMixedFolder(entry->Folder) || isTrashFolder(entry->Folder) || isSpamFolder(entry->Folder)) &&
             (hasStatusSent(entry) || hasStatusQueued(entry) || hasStatusHold(entry) ||
              hasStatusError(entry))) || (searchWinHook && isSentMailFolder(entry->Folder)))
         {
@@ -252,7 +252,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
       array[1] = (STRPTR)GetStr(MSG_To);
       array[7] = (STRPTR)GetStr(MSG_DATE_SENT);
     }
-    else if(searchWinHook || isCustomMixedFolder(folder) || isDeletedFolder(folder) || isSpamFolder(folder))
+    else if(searchWinHook || isCustomMixedFolder(folder) || isTrashFolder(folder) || isSpamFolder(folder))
     {
       array[1] = (STRPTR)GetStr(MSG_FROMTO);
       array[7] = (STRPTR)GetStr(MSG_DATE_SNTRCVD);

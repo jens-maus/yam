@@ -184,11 +184,11 @@ struct Folder *FO_GetFolderRexx(char *arg, int *pos)
         for(i=1; i <= (int)*flist; i++)
         {
           if((!Stricmp(arg, flist[i]->Name) && !isGroupFolder(flist[i]))    ||
-             (!stricmp(arg, "incoming")     && isIncomingFolder(flist[i]))  ||
-             (!stricmp(arg, "outgoing")     && isOutgoingFolder(flist[i]))  ||
-             (!stricmp(arg, "sent")         && isSentFolder(flist[i]))      ||
-             (!stricmp(arg, "deleted")      && isDeletedFolder(flist[i]))   ||
-             (!stricmp(arg, "spam")         && isSpamFolder(flist[i])))
+             (!stricmp(arg, FolderName[FT_INCOMING]) && isIncomingFolder(flist[i]))  ||
+             (!stricmp(arg, FolderName[FT_OUTGOING]) && isOutgoingFolder(flist[i]))  ||
+             (!stricmp(arg, FolderName[FT_SENT]) && isSentFolder(flist[i]))      ||
+             (!stricmp(arg, FolderName[FT_TRASH]) && isTrashFolder(flist[i]))   ||
+             (!stricmp(arg, FolderName[FT_SPAM]) && isSpamFolder(flist[i])))
           {
             nr = i;
             break;
@@ -547,16 +547,24 @@ BOOL FO_LoadTree(char *fname)
 
                if (CreateDirectory(GetFolderDir(&fo)))
                {
-                  if (!FO_LoadConfig(&fo))
+                  // if there doesn't exist any .fconfig configuration in the folder
+                  // we do have to generate it and we do that by analyzing its name,
+                  // comparing it to the default folder names we know.
+                  if(!FO_LoadConfig(&fo))
                   {
                      char *folderpath = (char *)FilePart(fo.Path);
 
                      // check if this is a so-called "standard" folder (INCOMING/OUTGOING etc.)
-                     if(stricmp(folderpath, FolderNames[0]) == 0)      fo.Type = FT_INCOMING;
-                     else if(stricmp(folderpath, FolderNames[1]) == 0) fo.Type = FT_OUTGOING;
-                     else if(stricmp(folderpath, FolderNames[2]) == 0) fo.Type = FT_SENT;
-                     else if(stricmp(folderpath, FolderNames[3]) == 0) fo.Type = FT_DELETED;
-                     else if(C->SpamFilterEnabled && stricmp(folderpath, FolderNames[4]) == 0) fo.Type = FT_SPAM;
+                     if(stricmp(folderpath, FolderName[FT_INCOMING]) == 0)
+                       fo.Type = FT_INCOMING;
+                     else if(stricmp(folderpath, FolderName[FT_OUTGOING]) == 0)
+                       fo.Type = FT_OUTGOING;
+                     else if(stricmp(folderpath, FolderName[FT_SENT]) == 0)
+                       fo.Type = FT_SENT;
+                     else if(stricmp(folderpath, FolderName[FT_TRASH]) == 0)
+                       fo.Type = FT_TRASH;
+                     else if(C->SpamFilterEnabled && stricmp(folderpath, FolderName[FT_SPAM]) == 0)
+                       fo.Type = FT_SPAM;
 
                      // Save the config now because it could be changed in the meantime
                      if(!FO_SaveConfig(&fo))
@@ -580,7 +588,7 @@ BOOL FO_LoadTree(char *fname)
                     // so we initialize the folder with the std ImageIndex.
                     if(isIncomingFolder(&fo))      fo.ImageIndex = FICON_ID_INCOMING;
                     else if(isOutgoingFolder(&fo)) fo.ImageIndex = FICON_ID_OUTGOING;
-                    else if(isDeletedFolder(&fo))  fo.ImageIndex = FICON_ID_DELETED;
+                    else if(isTrashFolder(&fo))    fo.ImageIndex = FICON_ID_TRASH;
                     else if(isSentFolder(&fo))     fo.ImageIndex = FICON_ID_SENT;
                     else if(C->SpamFilterEnabled && isSpamFolder(&fo)) fo.ImageIndex = FICON_ID_SPAM;
                     else fo.ImageIndex = -1; // or with -1 for a non std folder.
@@ -1077,9 +1085,15 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
          // the current one to our new one.
          memcpy(&folder, currfolder, sizeof(struct Folder));
 
-         if(isGroupFolder(&folder)) { FO_NewFolderGroupFunc(); return; }
-         else if(isIncomingFolder(&folder) || isDeletedFolder(&folder)) folder.Type = FT_CUSTOM;
-         else if(isOutgoingFolder(&folder) || isSentFolder(&folder))    folder.Type = FT_CUSTOMSENT;
+         if(isGroupFolder(&folder))
+         {
+           FO_NewFolderGroupFunc();
+           return;
+         }
+         else if(isIncomingFolder(&folder) || isTrashFolder(&folder))
+           folder.Type = FT_CUSTOM;
+         else if(isOutgoingFolder(&folder) || isSentFolder(&folder))
+           folder.Type = FT_CUSTOMSENT;
 
          // now that we have the correct folder type, we set some default values for the new
          // folder

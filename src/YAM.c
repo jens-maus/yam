@@ -1545,16 +1545,16 @@ static void Initialise2(void)
    }
 
    if(FO_GetFolderByType(FT_INCOMING, NULL) == NULL)
-     newfolders |= FO_CreateFolder(FT_INCOMING, FolderNames[0], GetStr(MSG_MA_Incoming));
+     newfolders |= FO_CreateFolder(FT_INCOMING, FolderName[FT_INCOMING], GetStr(MSG_MA_Incoming));
 
    if(FO_GetFolderByType(FT_OUTGOING, NULL) == NULL)
-     newfolders |= FO_CreateFolder(FT_OUTGOING, FolderNames[1], GetStr(MSG_MA_Outgoing));
+     newfolders |= FO_CreateFolder(FT_OUTGOING, FolderName[FT_OUTGOING], GetStr(MSG_MA_Outgoing));
 
-   if(FO_GetFolderByType(FT_SENT,     NULL) == NULL)
-     newfolders |= FO_CreateFolder(FT_SENT    , FolderNames[2], GetStr(MSG_MA_Sent));
+   if(FO_GetFolderByType(FT_SENT, NULL) == NULL)
+     newfolders |= FO_CreateFolder(FT_SENT, FolderName[FT_SENT], GetStr(MSG_MA_Sent));
 
-   if(FO_GetFolderByType(FT_DELETED,  NULL) == NULL)
-     newfolders |= FO_CreateFolder(FT_DELETED , FolderNames[3], GetStr(MSG_MA_Deleted));
+   if(FO_GetFolderByType(FT_TRASH, NULL) == NULL)
+     newfolders |= FO_CreateFolder(FT_TRASH, FolderName[FT_TRASH], GetStr(MSG_MA_TRASH));
 
    if(C->SpamFilterEnabled)
    {
@@ -1563,7 +1563,7 @@ static void Initialise2(void)
      {
        BOOL createSpamFolder;
 
-       if(FileType((char *)FolderNames[4]) == FIT_NONEXIST)
+       if(FileType(FolderName[FT_SPAM]) == FIT_NONEXIST)
        {
          // no directory named "spam" exists, so let's create it
          createSpamFolder = TRUE;
@@ -1589,7 +1589,7 @@ static void Initialise2(void)
 
            case 1:
              // delete everything in the folder, the directory itself can be kept
-             DeleteMailDir((char *)FolderNames[4], FALSE);
+             DeleteMailDir(FolderName[FT_SPAM], FALSE);
              createSpamFolder = TRUE;
              break;
 
@@ -1601,8 +1601,10 @@ static void Initialise2(void)
        }
 
        if(createSpamFolder)
+       {
          // finally, create the spam folder
-         newfolders |= FO_CreateFolder(FT_SPAM  , FolderNames[4], GetStr(MSG_MA_SPAM));
+         newfolders |= FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], GetStr(MSG_MA_SPAM));
+       }
      }
    }
 
@@ -1634,7 +1636,7 @@ static void Initialise2(void)
       if(isGroupFolder(folder))
         continue;
 
-      if((isIncomingFolder(folder) || isOutgoingFolder(folder) || isDeletedFolder(folder) ||
+      if((isIncomingFolder(folder) || isOutgoingFolder(folder) || isTrashFolder(folder) ||
           C->LoadAllFolders) && !isProtectedFolder(folder))
       {
         // call the getIndex function which on one hand loads the full .index file
@@ -1661,7 +1663,7 @@ static void Initialise2(void)
       {
         if(isIncomingFolder(folder))      folder->ImageIndex = (folder->New+folder->Unread) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
         else if(isOutgoingFolder(folder)) folder->ImageIndex = (folder->Total > 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
-        else if(isDeletedFolder(folder))  folder->ImageIndex = (folder->Total > 0) ? FICON_ID_DELETED_NEW : FICON_ID_DELETED;
+        else if(isTrashFolder(folder))    folder->ImageIndex = (folder->Total > 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
         else if(isSentFolder(folder))     folder->ImageIndex = FICON_ID_SENT;
         else if(C->SpamFilterEnabled && isSpamFolder(folder)) folder->ImageIndex = (folder->Total > 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
         else folder->ImageIndex = -1;

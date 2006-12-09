@@ -65,17 +65,19 @@ enum FolderType { FT_CUSTOM=0,   // custom folder with received mail
                   FT_INCOMING,   // the mandatory INCOMING folder
                   FT_OUTGOING,   // the mandatory OUTGOING folder
                   FT_SENT,       // the mandatory SENT folder
-                  FT_DELETED,    // the mandatory DELETED folder
+                  FT_TRASH,      // the mandatory TRASH folder
                   FT_GROUP,      // folder is a group and not a real folder
                   FT_CUSTOMSENT, // custom folder with sent mail
                   FT_CUSTOMMIXED,// custom folder with sent&received mail
-                  FT_SPAM        // the mandatory SPAM folder
+                  FT_SPAM,       // the mandatory SPAM folder
+                  FT_NUM         // MUST be the last one in the enum!
                 };
+
 #define isCustomFolder(folder)      ((folder)->Type == FT_CUSTOM)
 #define isIncomingFolder(folder)    ((folder)->Type == FT_INCOMING)
 #define isOutgoingFolder(folder)    ((folder)->Type == FT_OUTGOING)
 #define isSentFolder(folder)        ((folder)->Type == FT_SENT)
-#define isDeletedFolder(folder)     ((folder)->Type == FT_DELETED)
+#define isTrashFolder(folder)       ((folder)->Type == FT_TRASH)
 #define isGroupFolder(folder)       ((folder)->Type == FT_GROUP)
 #define isCustomSentFolder(folder)  ((folder)->Type == FT_CUSTOMSENT)
 #define isCustomMixedFolder(folder) ((folder)->Type == FT_CUSTOMMIXED)
@@ -84,7 +86,7 @@ enum FolderType { FT_CUSTOM=0,   // custom folder with received mail
 #define isDefaultFolder(folder)     (isIncomingFolder(folder) || \
                                      isOutgoingFolder(folder) || \
                                      isSentFolder(folder)     || \
-                                     isDeletedFolder(folder)  || \
+                                     isTrashFolder(folder)    || \
                                      isSpamFolder(folder))
 
 #define isSentMailFolder(folder) (isOutgoingFolder(folder)   || \
@@ -125,8 +127,8 @@ enum FolderMode { FM_NORMAL=0,  // normal folder
 #define FICON_ID_INCOMING_NEW   3  // folder_incoming_new
 #define FICON_ID_OUTGOING       4  // folder_outgoing
 #define FICON_ID_OUTGOING_NEW   5  // folder_outgoing_new
-#define FICON_ID_DELETED        6  // folder_deleted
-#define FICON_ID_DELETED_NEW    7  // folder_deleted_new
+#define FICON_ID_TRASH          6  // folder_deleted
+#define FICON_ID_TRASH_NEW      7  // folder_deleted_new
 #define FICON_ID_SENT           8  // folder_sent
 #define FICON_ID_PROTECTED      9  // status_crypt
 #define FICON_ID_SPAM           10 // folder_spam
@@ -138,8 +140,8 @@ enum FolderMode { FM_NORMAL=0,  // normal folder
 #define FICON_INCOMING_NEW  "\033o[" STR(FICON_ID_INCOMING_NEW) "]"
 #define FICON_OUTGOING      "\033o[" STR(FICON_ID_OUTGOING)     "]"
 #define FICON_OUTGOING_NEW  "\033o[" STR(FICON_ID_OUTGOING_NEW) "]"
-#define FICON_DELETED       "\033o[" STR(FICON_ID_DELETED)      "]"
-#define FICON_DELETED_NEW   "\033o[" STR(FICON_ID_DELETED_NEW)  "]"
+#define FICON_TRASH         "\033o[" STR(FICON_ID_TRASH)        "]"
+#define FICON_TRASH_NEW     "\033o[" STR(FICON_ID_TRASH_NEW)    "]"
 #define FICON_SENT          "\033o[" STR(FICON_ID_SENT)         "]"
 #define FICON_PROTECTED     "\033o[" STR(FICON_ID_PROTECTED)    "]"
 #define FICON_SPAM          "\033o[" STR(FICON_ID_SPAM)         "]"

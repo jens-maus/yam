@@ -1607,7 +1607,7 @@ long FileProtection(const char *filename)
 ///
 /// FileType
 //  Returns file type (file/directory)
-enum FType FileType(char *filename)
+enum FType FileType(const char *filename)
 {
   BPTR lock;
   enum FType type = FIT_NONEXIST;
@@ -2392,9 +2392,9 @@ static BOOL IsFolderDir(char *dir)
   char *filename = (char *)FilePart(dir);
   int i;
 
-  for(i = 0; i < 4; i++)
+  for(i=0; i < FT_NUM; i++)
   {
-    if(!stricmp(filename, FolderNames[i]))
+    if(FolderName[i] != NULL && stricmp(filename, FolderName[i]) == 0)
       return TRUE;
   }
 
@@ -2436,9 +2436,9 @@ BOOL PFExists(char *path, const char *file)
    return FileExists(fname);
 }
 ///
-/// DeleteMailDir
+/// DeleteMailDir (rec)
 //  Recursively deletes a mail directory
-BOOL DeleteMailDir(char *dir, BOOL isroot)
+BOOL DeleteMailDir(const char *dir, BOOL isroot)
 {
   BPTR dirLock;
   BOOL result = TRUE;
@@ -5535,7 +5535,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
   {
     if(isIncomingFolder(fo))      fo->ImageIndex = (fo->New+fo->Unread) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
     else if(isOutgoingFolder(fo)) fo->ImageIndex = (fo->Total > 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
-    else if(isDeletedFolder(fo))  fo->ImageIndex = (fo->Total > 0) ? FICON_ID_DELETED_NEW : FICON_ID_DELETED;
+    else if(isTrashFolder(fo))    fo->ImageIndex = (fo->Total > 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
     else if(isSentFolder(fo))     fo->ImageIndex = FICON_ID_SENT;
     else if(C->SpamFilterEnabled && isSpamFolder(fo)) fo->ImageIndex = (fo->Total > 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
     else fo->ImageIndex = -1;

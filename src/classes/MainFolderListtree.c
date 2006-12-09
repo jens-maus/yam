@@ -75,8 +75,8 @@ OVERLOAD(OM_NEW)
   data->folderImage[FICON_ID_INCOMING_NEW]= MakeImageObject("folder_incoming_new");
   data->folderImage[FICON_ID_OUTGOING]    = MakeImageObject("folder_outgoing");
   data->folderImage[FICON_ID_OUTGOING_NEW]= MakeImageObject("folder_outgoing_new");
-  data->folderImage[FICON_ID_DELETED]     = MakeImageObject("folder_deleted");
-  data->folderImage[FICON_ID_DELETED_NEW] = MakeImageObject("folder_deleted_new");
+  data->folderImage[FICON_ID_TRASH]       = MakeImageObject("folder_deleted");
+  data->folderImage[FICON_ID_TRASH_NEW]   = MakeImageObject("folder_deleted_new");
   data->folderImage[FICON_ID_SENT]        = MakeImageObject("folder_sent");
   data->folderImage[FICON_ID_PROTECTED]   = MakeImageObject("status_crypt");
   data->folderImage[FICON_ID_SPAM]        = MakeImageObject("folder_spam");
@@ -308,7 +308,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 
   // depending on the folder we have to append some additional
   // menu items or not.
-  if(isDeletedFolder(folder) || isSpamFolder(folder))
+  if(isTrashFolder(folder) || isSpamFolder(folder))
   {
     Object *newItem;
 
@@ -320,7 +320,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     }
 
     // check if this is the trash folder
-    if(isDeletedFolder(folder) &&
+    if(isTrashFolder(folder) &&
        (newItem = MakeMenuitem(GetStripStr(MSG_MA_RemoveDeleted), CMN_EMPTYTRASH)) != NULL)
     {
       DoMethod(data->context_menu, MUIM_Family_Insert, newItem, lastItem);

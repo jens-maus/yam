@@ -738,10 +738,6 @@ MSG_MA_Sent
 Gesendete
 ; Sent
 ;
-MSG_MA_Deleted
-Gelöschte
-; Deleted
-;
 ;
 ; Module MA - Toolbar
 ;
@@ -2762,7 +2758,7 @@ Löscht Nachrichten, welche ihr\nmaximales Alter überschreiten\n(siehe Postfach-K
 ; age (see folder configuration)
 ;
 MSG_HELP_CO_CH_REMOVEDEL
-Leert den Papierkorb (Postfach 'Gelöschte')
+Leert den Papierkorb
 ; Empty trash folder
 ;
 MSG_HELP_CO_ST_GALLDIR
@@ -7540,4 +7536,7 @@ Spam aus Ordner löschen
 ;
 MSG_MA_BUSYEMPTYINGSPAM
 Entferne Spam aus Ordner...
+;
+MSG_MA_TRASH
+Papierkorb
 ;

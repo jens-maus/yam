@@ -837,7 +837,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
   struct Mail *mail = rmData->mail;
   struct Folder *folder = mail->Folder;
-  struct Folder *delfolder = FO_GetFolderByType(FT_DELETED, NULL);
+  struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
   BOOL delatonce = hasFlag(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
   BOOL closeAfter = FALSE;
 

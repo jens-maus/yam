@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include <exec/types.h>
+#include <proto/intuition.h>
 
 #include "SDI_compiler.h"
 
@@ -179,7 +180,20 @@ struct UtilityIFace*      IUtility      = NULL;
 struct WBStartup *WBmsg;
 
 const char* const SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };
-const char* const FolderNames[5] = { "incoming", "outgoing", "sent", "deleted", "spam" };
 const char* const wdays[7] = { "Sun","Mon","Tue","Wed","Thu","Fri","Sat" };
 const char* const months[12] = { "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
 const char* const SecCodes[5] = { "none","sign","encrypt","sign+encrypt","anonymous" };
+
+// According to the folder types we define the corresponding
+// default folder names. Please note that order and length IS important here.
+// check the "enum FolderType"
+const char* const FolderName[FT_NUM] = { NULL,       // FT_CUSTOM
+                                         "incoming", // FT_INCOMING
+                                         "outgoing", // FT_OUTGOING
+                                         "sent",     // FT_SENT
+                                         "trash",    // FT_TRASH
+                                         NULL,       // FT_GROUP
+                                         NULL,       // FT_CUSTOMSENT
+                                         NULL,       // FT_CUSTOMMIXED
+                                         "spam",     // FT_SPAM
+                                       };

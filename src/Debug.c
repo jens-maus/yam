@@ -33,6 +33,7 @@
 
 #include <proto/exec.h>
 #include <proto/dos.h>
+#include <proto/intuition.h>
 
 #include "YAM_global.h"
 #include "YAM_utilities.h" // CLEAR_FLAG,SET_FLAG 
