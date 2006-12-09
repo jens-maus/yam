@@ -6061,14 +6061,14 @@ Please make sure that there is enough space left on the drive \
 and that the drive is not write protected.
 ;
 MSG_MA_CHECKSPAM (1794//)
-Check for spam content
+Apply spam filter
 ;
 MSG_FI_BUSYCHECKSPAM (1795//)
-Checking for spam...
+Applying spam filter on folder...
 ;
 MSG_MA_REMOVESPAM (1796//)
-Empty spam folder
+Delete spam from folder
 ;
 MSG_MA_BUSYEMPTYINGSPAM (1797//)
-Emptying spam folder...
+Deleting spam from folder...
 ;

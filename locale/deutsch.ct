@@ -7364,7 +7364,7 @@ MSG_MA_SPAM
 Spam
 ;
 MSG_LOADINGSPAMTRAININGDATA
-Lade Trainingsdaten des Spamfilters...
+Lade Trainingsdaten des Spam-Filters...
 ;
 MSG_MA_TBSPAM
 Spam
@@ -7416,25 +7416,25 @@ MSG_CO_CRDSPAMFILTER
 Spam
 ;
 MSG_CO_SPAMFILTER
-Spamfilter
+Spam-Filter
 ;
 MSG_CO_SPAMFILTER_TITLE
-Spamfilter
+Spam-Filter
 ;
 MSG_CO_SPAMFILTER_SUMMARY
-Konfigurieren Sie den Spamfilter...
+Konfigurieren Sie den Spam-Filter...
 ;
 MSG_CO_SPAM_FILTERFORNEWMAIL
-Neue Nachrichten auf Spamgehalt prüfen
+Neue Nachrichten auf Spam prüfen
 ;
 MSG_CO_SPAM_RESETTRAININGDATA
 _Trainingsdaten zurücksetzen
 ;
 MSG_CO_SPAM_GOODCOUNT
-Anzahl "Nicht-Spam"-klassifizierte Mails
+Anzahl "Nicht-Spam"-klassifizierter Nachrichten
 ;
 MSG_CO_SPAM_BADCOUNT
-Anzahl "Spam"-klassifizierte Mails
+Anzahl "Spam"-klassifizierter Nachrichten
 ;
 MSG_CO_SPAM_PROBABILITYTHRESHOLD
 Nachrichten als Spam markieren, falls Spam-Wahrscheinlichkeit größer oder gleich
@@ -7443,7 +7443,7 @@ MSG_CO_NB_SPAMPROBTHRESHOLDFMT
 %ld%%
 ;
 MSG_BUSYFLUSHINGSPAMTRAININGDATA
-Speichere Trainingsdata des Spamfilters...
+Speichere Trainingsdata des Spam-Filters...
 ;
 MSG_CO_SPAM_MARKONMOVE
 Mails beim Verschieben in den Spam-Ordner als Spam markieren
@@ -7452,22 +7452,22 @@ MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
 Mails mit Absenderadresse im Adressbuch sind kein Spam
 ;
 MSG_CO_SPAM_RECOGNITION
-Spamerkennung
+Spam-Erkennung
 ;
 MSG_CO_SPAM_FILTERENABLED
-Spamfilter aktiv
+Spam-Filter aktiv
 ;
 MSG_CO_SPAM_RESETTRAININGDATAASK
 Wollen Sie wirklich die Trainingsdaten des\n\
-Spamfilters zurücksetzen?\n\
+Spam-Filters zurücksetzen?\n\
 \n\
-Der Spamfilter muss danach erneut trainiert werden!
+Der Spam-Filter muss danach erneut trainiert werden!
 ;
 MSG_TR_CHECKUIDL
 Prüfe UIDLs um Duplikate zu vermeiden
 ;
 MSG_CO_SPAM_DISABLEFILTERASK
-Der Spamfilter wurde gerade deaktiviert!\n\
+Der Spam-Filter wurde gerade deaktiviert!\n\
 Welche der folgenden Aktionen möchten Sie durchführen?
 ;
 MSG_CO_SPAM_RESETMAILFLAGS
@@ -7514,30 +7514,30 @@ Server auch wirklich eine der verfügbaren AUTH-Methoden \
 unterstützt.
 ;
 MSG_ER_SPAMDIR_EXISTS
-Das Verzeichnis "spam" existiert bereits!\n\
+Das Verzeichnis "Spam" existiert bereits!\n\
 \n\
 Wollen Sie das Verzeichnis als Standard-Spam-Ordner verwenden\n\
-oder soll der Spamfilter deaktiviert werden?
+oder soll der Spam-Filter deaktiviert werden?
 ;
 MSG_ER_SPAMDIR_EXISTS_ANSWERS
-Leeren und als Spam-Ordner verwenden|Als Spam-Ordner verwenden|Spamfilter deaktivieren
+Leeren und als Spam-Ordner verwenden|Als Spam-Ordner verwenden|Spam-Filter deaktivieren
 ;
 MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER
 Es trat ein Fehler beim Anlegen des Spam-Ordners auf!\n\
-Der Spamfilter wurde wieder deaktiviert.\n\
+Der Spam-Filter wurde wieder deaktiviert.\n\
 \n\
 Bitte stellen Sie sicher, dass genügend Platz auf dem Laufwerk \
 vorhanden ist und dass das Laufwerk nicht schreibgeschützt ist.
 ;
 MSG_MA_CHECKSPAM
-Auf Spamgehalt prüfen
+Spam-Filter anwenden
 ;
 MSG_FI_BUSYCHECKSPAM
-Prüfe auf Spamgehalt...
+Wende Spam-Filter auf Ordner an...
 ;
 MSG_MA_REMOVESPAM
-Spamordner leeren
+Spam aus Ordner löschen
 ;
 MSG_MA_BUSYEMPTYINGSPAM
-Leere Spamordner...
+Entferne Spam aus Ordner...
 ;

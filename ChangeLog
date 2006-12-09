@@ -4,6 +4,17 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-12-09  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c: slightly reworked the new DeleteSpamHook() function once again
+    to enable it to delete spam mails not only from the spam folder as this
+    is like it is done in Thunderbird. In addition, the "Empty trash" command
+    is now always available and not ghosted on other folder than the trash
+    folder. Just the context menu of those folders have to be different.
+  * locale/YAM.cd, locale/deutsch.ct: rephrased certain sentences and words
+    to be more compatible with their new functions. Also rephrased some
+    german passages to match the way Thunderbird uses the same phrases.
+
 2006-12-09  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: the checks to enable/disable some menu items were a little bit
