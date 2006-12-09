@@ -284,10 +284,8 @@ void MA_ChangeSelected(BOOL forceUpdate)
                                                          TAG_DONE);
 
   // Enable if:
-  //  * > 0 mails selected
-  //  * the folder is enabled
   //  * is in the "Deleted" folder
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, isDeletedFolder(fo) && (active || numSelected > 0) && folderEnabled,
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, isDeletedFolder(fo),
                                                          gui->MI_DELDEL,
                                                          TAG_DONE);
 
@@ -344,11 +342,9 @@ void MA_ChangeSelected(BOOL forceUpdate)
 
   // Enable if:
   //  * DELSPAM menu item exists
-  //  * > 0 mails selected
-  //  * the folder is enabled
   //  * is in the "SPAM" folder
   if(gui->MI_DELSPAM)
-    set(gui->MI_DELSPAM, MUIA_Menuitem_Enabled, isSpamFolder(fo) && (active || numSelected > 0) && folderEnabled);
+    set(gui->MI_DELSPAM, MUIA_Menuitem_Enabled, isSpamFolder(fo));
 
   // Enable if:
   //  * CHECKSPAM menu item exists

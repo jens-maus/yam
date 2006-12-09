@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-12-09  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: the checks to enable/disable some menu items were a little bit
+    too picky. For example checking a folder for being the deleted folder is
+    enough as this cannot be a group folder then. And menu items performing an
+    action on the whole folder don't need to check for a certain number of mails
+    to be selected.
+
 2006-12-08  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c, MainFolderListtree.c, locale/YAM.cd: the newly added menu item
