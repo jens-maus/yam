@@ -25,6 +25,10 @@ $Id$
 
 2006-12-09  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COs.c: the free()ing of the spam folder upon deleting it was completely
+    wrong and caused unpredictable system misbehaviour. The folder structure is
+    already deleted by the folder treeview's destructor. This should also fix
+    bug #1611908.
   * YAM_FO.c: the type of the spam folder was displayed as "sent" instead of
     "received". Even if this type cannot be changed it should be shown
     correctly. Also made sure that a newly created folder always gets its
