@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 5.9 (18.06.2006)
+## version $VER: YAM.catalog 6.1 (09.12.2006)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone
@@ -452,17 +452,6 @@ _I seguenti allegati sono stati rimossi manualmente:_\n\
 MSG_MA_ConfirmReq
 Prego confermare...
 ;
-MSG_MA_ConfirmDel
-Prego conferma la cancellazione.
-;
-MSG_MA_1Selected
-Un messaggio selezionato.\n\
- 
-;
-MSG_MA_xSelected
-%lD messaggi selezionati.\n\
- 
-;
 MSG_MA_ConfirmFilter
 Vuoi filtrare tutti i messaggi\n\
 nella cartella '%s'?
@@ -513,22 +502,6 @@ Esegui script...
 ;
 MSG_MA_CheckSingle
 Verifica un singolo acconto
-;
-MSG_MA_FolderInfo
-\ebCartella corrente\en\n\
-Nome: %s\n\
-Percorso: %s\n\
-Dimensione: %lD byte\n\
-Messaggi: %lD (%lD nuovo/i %lD non letto/i)
-;
-MSG_MA_MessageInfo
-\ebMessaggio corrente\en\n\
-Da: %s <%s>\n\
-A: %s <%s>\n\
-Oggetto: %s\n\
-Data: %s\n\
-Nome file: %s\n\
-Dimensione: %lD byte
 ;
 MSG_MA_WinTitle
 Amiga YAM %s  -  Utente: %s
@@ -926,9 +899,6 @@ Leggi
 MSG_CO_CrdWrite
 Scrivi
 ;
-MSG_CO_CrdReply
-Rispondi
-;
 MSG_CO_CrdSignature
 Firma
 ;
@@ -943,12 +913,6 @@ Sicurezza
 ;
 MSG_CO_CrdMixed
 Varie
-;
-MSG_CO_CrdScripts
-Arexx
-;
-MSG_CO_CrdStartQuit
-Avvio/Uscita
 ;
 MSG_CO_CrdABook
 Rubrica
@@ -3168,15 +3132,6 @@ Sottolinea
 MSG_WR_Colored
 Colore alt.
 ;
-MSG_WR_Separators
-Separatori
-;
-MSG_WR_Thin
-Sottile
-;
-MSG_WR_Thick
-Solido
-;
 MSG_WR_Emoticons
 Faccine
 ;
@@ -3394,13 +3349,6 @@ Applico i filtri remoti...
 MSG_TR_SendHello
 Mando la richiesta di connessione...
 ;
-MSG_TR_SizeGauge
-%%ld di %ld byte
-;
-MSG_TR_TransferStats
-%lD di %lD kb trasmessi a %lD cps\n\
-Tempo restante: %lD min %ld sec
-;
 MSG_TR_Exporting
 Esporto messaggio...
 ;
@@ -3486,16 +3434,6 @@ Stato:
 ;
 MSG_TR_Abort
 _Annulla
-;
-MSG_TR_TransferStats0
-  0 di   0 kb trasmessi a    0 cps\n\
-Tempo restante:  0 min  0 sec
-;
-MSG_TR_BytesGauge0
-   0 di    0 byte
-;
-MSG_TR_MessageGauge0
-Messaggio  0 di  0
 ;
 MSG_HELP_TR_TX_STATUS
 Situazione attuale\n\
@@ -3727,9 +3665,6 @@ MSG_HELP_DI_BT_PASTE
 Inserisce la voce selezionata nella posizione\n\
 corrente nell'editor testi.
 ;
-MSG_FI_GaugeText
-%%ld di %lD messaggi
-;
 MSG_FI_AddFilter
 Aggiungi filtro
 ;
@@ -3818,7 +3753,7 @@ MSG_FI_UseFilter
 _Usa impostazioni filtri
 ;
 MSG_FI_AddAsFilter
-Agg. come _nuovo filtro
+Agg. come nuovo _filtro
 ;
 MSG_FI_Results
 Risultati
@@ -4159,11 +4094,6 @@ Decodifico/salvo...
 MSG_BusyDecDisplaying
 Decodifico/visualizzo...
 ;
-MSG_RE_FollowThreadReq
-Per seguire l'oggetto, YAM deve caricare tutti gli indici.\n\
-Questo potrebbe richiedere molto tempo.\n\
-Vuoi continuare?
-;
 MSG_CTapplicationadosscript
 Script AmigaDOS
 ;
@@ -4271,9 +4201,6 @@ Errore nella creazione del messaggio multiparti PGP.  La codifica/firma è stata 
 ;
 MSG_RE_FixedFont
 Font fissi
-;
-MSG_ER_NO_SMTP_AUTH
-Il server ESMTP %s non supporta l'SMTP AUTH!
 ;
 MSG_CO_UseSMTPAUTH
 Usa SMTP AUT_H
@@ -4888,16 +4815,6 @@ Allegato
 MSG_MA_ATTACHMENTS
 Allegati:
 ;
-MSG_MA_ATTACHMENTINFO
-\ebAllegato - Parte-MIME #%lD\en\n\
-Nome: %s\n\
-Descrizione: %s\n\
-Tipo-di-contenuto: %s <%s>\n\
-Dimensione: ~%lD byte
-;
-MSG_MA_ATTACHMENT_PART
-Allegato/Parte-MIME #%lD
-;
 MSG_MA_ATTACHMENT_DISPLAY
 Mostra
 ;
@@ -5073,7 +4990,7 @@ Se abilitata, aggiunge una barra di ricerca incorporata nella\n\
 finestra principale per cercare velocemente le email.
 ;
 MSG_FI_SELECTACTIVE
-Seleziona corrispondenze _attive
+Seleziona co_rrispondenze attive
 ;
 MSG_HELP_FI_BT_SELECTACTIVE
 Seleziona i messaggi correntemente attivi nella\n\
@@ -5131,7 +5048,7 @@ MSG_QUICKSEARCH_SHOWNMSGS
 mostrati %ld su %ld
 ;
 MSG_FI_NOFOLDERS
-_nessuna parte
+_Nessuna parte
 ;
 MSG_HELP_QUICKSEARCH_VIEWOPTIONS
 Se usato, solo i messaggi che combaciano\n\
@@ -5332,7 +5249,7 @@ MSG_CO_UPDATE_SUMMARY
 Controlla nuovi aggiornamenti di YAM...
 ;
 MSG_CO_CrdUpdate
-Aggiorna
+Aggiornamenti
 ;
 MSG_CO_AMISSLWARN_TITLE
 Avviso disponibilità di AmiSSL
@@ -5384,7 +5301,7 @@ MSG_CO_SOFTWAREUPDATE
 Aggiornamento software
 ;
 MSG_CO_UPDATE_DAILY
-Quotidiano
+Quotidiana
 ;
 MSG_CO_UPDATE_WEEKLY
 Settimanale
@@ -5393,7 +5310,7 @@ MSG_CO_UPDATE_MONTHLY
 Mensile
 ;
 MSG_CO_SEARCHFORUPDATES
-Cerca a_ggiornamenti:
+Ricerca a_ggiornamenti:
 ;
 MSG_CO_SEARCHFORUPDATESINFO
 Verrai avvertito appena sarà disponibile un aggiornamento.
@@ -5434,7 +5351,7 @@ MSG_WR_UUCODE
 Testo UUencoded
 ;
 MSG_UPD_NOTIFICATION_WTITLE
-Aggiorna Notifica
+Notifica degli aggiornamenti
 ;
 MSG_UPD_NOTIFICATION_TITLE
 Aggiornamenti disponibili
@@ -5458,7 +5375,7 @@ MSG_UPD_NOTIFICATION_COMP
 Componente
 ;
 MSG_UPD_NOTIFICATION_RECENT
-Precedenti
+Ultimo
 ;
 MSG_UPD_NOTIFICATION_INSTALLED
 Installati
@@ -5535,6 +5452,316 @@ Visualizzazione header (intestazione)
 MSG_RE_MAILDETAILS
 Dettagli messaggio
 ;
+MSG_ER_ADDFILEERROR
+Il file selezionato '%s' non poteva essere aggiunto come allegato al messaggio corrente.\n\
+\n\
+Prego, assicurati che il file sia accessibile e di avere gli appropriati permessi di lettura.
+;
+MSG_ER_PACKERROR
+Un errore si è verificato provando a creare un archivio con i file selezionati.\n\
+\n\
+Prego assicurati che tutti i file siano accessibili e di avere gli appropriati permessi.
+;
+MSG_CO_ABOOKLOOKUP
+Esegui controllo sulla rubrica nella lista messaggi
+;
+MSG_HELP_CO_CH_ABOOKLOOKUP
+Esegui un controllo sulla rubrica per ogni destinatario\n\
+principale del messaggio nella lista email e mostra\n\
+invece il vero nome dalla rubrica.\n\
+\n\
+Notare prego: questo è un compito piuttosto dispendioso\n\
+e può abbassare la performance del pannello messaggi\n\
+- specialmente con configurazioni che hanno\n\
+grosse rubriche.
+;
 MSG_TR_MESSAGEGAUGE
 Messaggio %%ld di %ld
+;
+MSG_CO_CONVERTHTML
+Converti messaggi HTML con parti visualizzabili in testo piano
+;
+MSG_HELP_CO_CONVERTHTML
+Se un messaggio contiene parti HTML visualizzabili come\n\
+parti principali del messaggio, YAM le convertirà in testo\n\
+piano quando viene selezionata questa opzione.
+;
+MSG_RE_FOLLOWTHREAD
+Per cercare più messaggi con lo stesso argomento,\n\
+YAM deve caricare gli altri indici delle cartelle. Ciò può\n\
+comportare un gran consumo di memoria e tempo.\n\
+\n\
+Vuoi continuare?
+;
+MSG_TR_TRANSFERSTATUS
+%s di %s @ %s/s\n\
+%02ld'%02ld'' passati - %02ld'%02ld'' rimasti
+;
+MSG_TR_TRANSFERSIZE
+%s di %s
+;
+MSG_FI_GAUGETEXT
+%%ld of %ld messages
+;
+MSG_MA_MESSAGEINFO
+\ebMessaggio corrente\en\n\
+Da: %s <%s>\n\
+A: %s <%s>\n\
+Oggetto: %s\n\
+Data: %s\n\
+Nome file: %s\n\
+Dim.: %s
+;
+MSG_MA_FOLDERINFO
+\ebCartella corrente\en\n\
+Nome: %s\n\
+Percorso: %s\n\
+Dim.: %s\n\
+Messaggi: %ld (%ld nuovi, %ld non letti)
+;
+MSG_MA_MIMEPART_INFO
+\ebAllegato - Parte-MIME #%ld\en\n\
+Nome: %s\n\
+Descrizione: %s\n\
+Tipo di contenuto: %s <%s>\n\
+Dim.: ~%s
+;
+MSG_MA_MIMEPART_MENU
+Allegato/Parte-MIME #%ld
+;
+MSG_CO_PGPPASSINTERVAL1
+Ricorda frase per passare per
+;
+MSG_CO_PGPPASSINTERVAL2
+minuto(i)
+;
+MSG_HELP_CO_PGPPASSINTERVAL
+Se selezionata, una frase PGP immessa sarà\n\
+ricordata per tutto il tempo specificato così che\n\
+le seguenti operazioni PGP non la richiederanno\n\
+di nuovo.
+;
+MSG_UT_PGPPASSREQ_TITLE
+Richiesta frase PGP
+;
+MSG_CO_GR_REPLYFORWARD
+Rispondi/Inoltra
+;
+MSG_CO_GR_SCRIPTS
+Script
+;
+MSG_CO_GR_STARTUPQUIT
+Inizio/Fine
+;
+MSG_CO_SCRIPTS_PREGET
+%p  Tipo di azione di download
+;
+MSG_CO_SCRIPTS_POSTGET
+%p  Numero di messaggi ricevuti
+;
+MSG_CO_SCRIPTS_NEWMSG
+%p  Nome del nuovo file messaggio
+;
+MSG_CO_SCRIPTS_READ
+%p  Numero di finestre di lettura
+;
+MSG_CO_SCRIPTS_WRITE
+%p  Numero di finestre di scrittura
+;
+MSG_CO_SCRIPTS_URL
+%p  Percorso URL completo
+;
+MSG_CO_MIMECMD_PARAMETER
+%s  Percorso completo file
+;
+MSG_ER_CANTOPENASL
+Si è verificato un errore provando a mostrare un pannello ASL.\n\
+\n\
+Prego assicurati che la tua impostazione per ASL sia valida e di avere risorse sufficienti.
+;
+MSG_MA_CONFIRMDELETION
+%ld messaggi(o) selezionati(o).\n\
+\n\
+Vuoi davvero cancellare questi\n\
+messaggi?
+;
+MSG_MESSAGE_EDITASNEW
+E\0Edit As New...
+;
+MSG_MA_SPAM
+Spam
+;
+MSG_LOADINGSPAMTRAININGDATA
+Caricamento dati individuazione dello spam...
+;
+MSG_MA_TBSPAM
+Spam
+;
+MSG_MA_TBNOTSPAM
+Non Spam
+;
+MSG_HELP_MA_BT_SPAM
+Marca messaggio come spam
+;
+MSG_HELP_MA_BT_NOTSPAM
+Marca messaggio come non spam
+;
+MSG_RE_TBSPAM
+Spam
+;
+MSG_RE_TBNOTSPAM
+Non Spam
+;
+MSG_HELP_RE_BT_SPAM
+Marca messaggio come spam
+;
+MSG_HELP_RE_BT_NOTSPAM
+Marca messaggio come non spam
+;
+MSG_LOG_MAILISSPAM
+Il messaggio da '%s' riguardo a '%s' è trattato come spam
+;
+MSG_LOG_MAILISNOTSPAM
+Il messaggio da '%s' riguardo a '%s' non è più trattato come spam
+;
+MSG_FI_STATSPAM
+Spam
+;
+MSG_MA_TOSPAM
+Spam
+;
+MSG_MA_TONOTSPAM
+Non Spam
+;
+MSG_RE_SETSPAM
+Imposta stato come spam
+;
+MSG_RE_SETNOTSPAM
+Imposta stato come non spam
+;
+MSG_CO_CRDSPAMFILTER
+Spam
+;
+MSG_CO_SPAMFILTER
+Filtro Spam
+;
+MSG_CO_SPAMFILTER_TITLE
+Filtro Spam
+;
+MSG_CO_SPAMFILTER_SUMMARY
+Configura il filtro per lo spam...
+;
+MSG_CO_SPAM_FILTERFORNEWMAIL
+Controlla la nuova posta contro lo spam
+;
+MSG_CO_SPAM_RESETTRAININGDATA
+_Riazzera i dati di riconoscimento
+;
+MSG_CO_SPAM_GOODCOUNT
+Numero di messaggi classificati come "non spam"
+;
+MSG_CO_SPAM_BADCOUNT
+Numero di messaggi classificati come "spam"
+;
+MSG_CO_SPAM_PROBABILITYTHRESHOLD
+Tratta i messaggi come spam se la probabilità di spam è maggiore o uguale a
+;
+MSG_CO_NB_SPAMPROBTHRESHOLDFMT
+%ld%%
+;
+MSG_BUSYFLUSHINGSPAMTRAININGDATA
+Svuoto dati di riconoscimento dello spam...
+;
+MSG_CO_SPAM_MARKONMOVE
+Marca messaggi come spam se mossi nella cartella di spam
+;
+MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
+La rubrica è lista bianca
+;
+MSG_CO_SPAM_RECOGNITION
+Riconoscimento Spam
+;
+MSG_CO_SPAM_FILTERENABLED
+Filtro spam abilitato
+;
+MSG_CO_SPAM_RESETTRAININGDATAASK
+Vuoi davvero riazzerare i dati di riconoscimento\n\
+per il filtro anti spam?\n\
+\n\
+Il filtro di spam dovrà essere allenato di nuovo dopo!
+;
+MSG_TR_CHECKUIDL
+Controllo UIDLs per evitare duplicati...
+;
+MSG_CO_SPAM_DISABLEFILTERASK
+Vuoi anche riazzerare i dati di riconoscimento\n\
+per il filtro anti spam?\n\
+\n\
+Il filtro di spam dovrà essere allenato di nuovo dopo!
+;
+MSG_CO_SPAM_RESETTDATA
+_Resetta dati di riconoscimento
+;
+MSG_CO_SPAM_RESETMAILFLAGS
+Resetta lo stato di _spam di tutti i messaggi
+;
+MSG_CO_SPAM_DELETESPAMFOLDER
+_Cancella la cartella spam
+;
+MSG_CO_SMTPAUTH_METHOD
+_Metodo
+;
+MSG_HELP_CO_CY_SMTPAUTHMETHOD
+Permette di specificare il metodo SMTP-AUTH\n\
+da usare per il server configurato. 'Auto' seleziona\n\
+automaticamente il metodo in base alle capacità\n\
+del server. Le altre servono per selezionare direttamente\n\
+il metodo dove il più sicuro è mostrato in cima alla lista.
+;
+MSG_CO_SMTPAUTH_AUTO
+Auto
+;
+MSG_CO_SMTPAUTH_DIGEST
+DIGEST-MD5
+;
+MSG_CO_SMTPAUTH_CRAM
+CRAM-MD5
+;
+MSG_CO_SMTPAUTH_LOGIN
+LOGIN
+;
+MSG_CO_SMTPAUTH_PLAIN
+PLAIN
+;
+MSG_CO_ER_SMTPAUTH
+Il server SMTP '%s' non sembra supportare il metodo SMTP-AUTH selezionato.\n\
+\n\
+Prego, verifica con il tuo provider quali metodi di autenticazione sono disponibili e come configurarli nel tuo client di posta.
+;
+MSG_ER_SPAMDIR_EXISTS
+La directory \"spam\" esiste già!\n\
+\n\
+Vuoi usare questa come cartella di spam\n\
+o vuoi disabilitare il filtro per lo spam?
+;
+MSG_ER_SPAMDIR_EXISTS_ANSWERS
+Ripulisci e usala come cartella di spam|Usala come cartella di spam|Disabilita il filtro spam
+;
+MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER
+Impossibile creare la cartella di spam!\n\
+\n\
+Il filtro di spam è stato di nuovo disabilitato.\n\
+Prego, assicurati che ci sia spazio sufficiente sul disco e che il drive non sia protetto in scrittura.
+;
+MSG_MA_CHECKSPAM
+Applica filtro spam
+;
+MSG_FI_BUSYCHECKSPAM
+Applico filtro spam sulla cartella...
+;
+MSG_MA_REMOVESPAM
+Cancella spam dalla cartella
+;
+MSG_MA_BUSYEMPTYINGSPAM
+Cancello lo spam dalla cartella...
 ;
