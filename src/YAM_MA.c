@@ -284,14 +284,6 @@ void MA_ChangeSelected(BOOL forceUpdate)
                                                          TAG_DONE);
 
   // Enable if:
-  //  * is in the "Deleted" folder
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, isDeletedFolder(fo),
-                                                         gui->MI_DELDEL,
-                                                         TAG_DONE);
-
-  // Enable if:
-  //  * > 0 mails selected
-  //  * the folder is enabled
   //  * is in the "Outgoing" Folder
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, isOutgoingFolder(fo) && (active || numSelected > 0) && folderEnabled,
                                                          gui->MI_SEND,
@@ -344,7 +336,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
   //  * DELSPAM menu item exists
   //  * is in the "SPAM" folder
   if(gui->MI_DELSPAM)
-    set(gui->MI_DELSPAM, MUIA_Menuitem_Enabled, isSpamFolder(fo));
+    set(gui->MI_DELSPAM, MUIA_Menuitem_Enabled, folderEnabled);
 
   // Enable if:
   //  * CHECKSPAM menu item exists
@@ -3371,18 +3363,20 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
 MakeHook(MA_DeleteDeletedHook, MA_DeleteDeletedFunc);
 ///
 /// MA_DeleteSpamFunc
-//  Removes spam messages from 'spam' folder
+//  Removes spam messages from any folder
 HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
 {
-  BOOL quiet = *arg != 0;
-  struct Folder *folder = FO_GetFolderByType(FT_SPAM, NULL);
+  BOOL quiet = (*arg != 0);
+  struct Folder *folder = FO_GetCurrentFolder();
 
   ENTER();
 
-  if(folder != NULL)
+  if(folder != NULL && folder->Type != FT_GROUP)
   {
     struct Mail **mlist = NULL;
+    BOOL removeImmediate = (folder->Type == FT_SPAM);
 
+    // show an interruptable Busy gauge
     BusyGaugeInt(GetStr(MSG_MA_BUSYEMPTYINGSPAM), "", folder->Total);
 
     // get the complete mail list of the spam folder
@@ -3397,11 +3391,14 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
         if(BusySet(i+1) == FALSE)
           break;
 
-        // not every mail in the spam folder *must* be spam, so better check this
+        // not every mail in the a folder *must* be spam
+        // so better check this
         if(hasStatusSpam(mail))
         {
-          // remove the spam mail
-          MA_DeleteSingle(mail, TRUE, quiet, TRUE);
+          // remove the spam mail from the folder and take care to
+          // remove it immediately in case this is the SPAM folder, otherwise
+          // the mail will be moved to the trash first.
+          MA_DeleteSingle(mail, removeImmediate, quiet, TRUE);
         }
       }
 
