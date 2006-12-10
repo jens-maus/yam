@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.7 (08.12.06)
+## version $VER: YAM.ct 6.8 (09.12.06)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -657,10 +657,6 @@ MSG_MA_Sent
 Skickat
 ;#DEF Sent
 ;#SET (181//)
-MSG_MA_Deleted
-Raderat
-;#DEF Deleted
-;#SET (182//)
 MSG_MA_TBRead
 _Läs
 ;#DEF Rea_d
@@ -786,7 +782,7 @@ I\000Filtrera
 ;#DEF I\000Filter
 ;#SET (216//)
 MSG_MA_RemoveDeleted
-Z\000Töm skräpmappen
+Z\000Töm mappen Borttaget
 ;#DEF Z\000Empty trash
 ;#SET (217//)
 MSG_MA_UpdateIndex
@@ -1858,7 +1854,7 @@ Radera gammal post
 ;#DEF Delete old mail
 ;#SET (493//)
 MSG_CO_RemoveDel
-Töm skräpmapp
+Töm mappen Borttaget
 ;#DEF Remove deleted mail
 ;#SET (494//)
 MSG_CO_ATABnever
@@ -2542,7 +2538,7 @@ Radera brev som nått sin maxålder\n(se mappkonfigurationen).
 ;#DEF Delete messages that exceed the maximum\nage (see folder configuration)
 ;#SET (669//)
 MSG_HELP_CO_CH_REMOVEDEL
-Töm skräpmappen.
+Töm mappen Borttaget.
 ;#DEF Empty trash folder
 ;#SET (670//)
 MSG_HELP_CO_ST_GALLDIR
@@ -2594,7 +2590,7 @@ Minsta antal brev som\nkräver bekräftelse.
 ;#DEF Minimum number of messages to\ndisplay the confirmation requester
 ;#SET (682//)
 MSG_HELP_CO_CH_REMOVE
-Radera brev med en gång; flytta dem\ninte till skräpmappen.
+Radera brev med en gång; flytta dem\ninte till mappen Borttaget.
 ;#DEF Immediately delete the messages rather\nthan moving them to the trash folder
 ;#SET (683//)
 MSG_HELP_CO_CH_SAVESENT
@@ -3434,7 +3430,7 @@ Sv_ara
 ;#DEF _Reply
 ;#SET (901//)
 MSG_RE_TBForward
-Vidare_bef.
+Vi_dare.
 ;#DEF For_ward
 ;#SET (902//)
 MSG_HELP_RE_BT_PREVIOUS
@@ -4846,7 +4842,7 @@ Raderar %s brev...
 ;#DEF Deleting %s message(s)...
 ;#SET (1279//)
 MSG_BusyFiltering
-Filtrerar...
+Applicerar filter...
 ;#DEF Applying filters...
 ;#SET (1280//)
 MSG_BusyDeletingOld
@@ -4854,7 +4850,7 @@ Raderar gammal post...
 ;#DEF Deleting old mail...
 ;#SET (1281//)
 MSG_BusyEmptyingTrash
-Tömmer skräpmappen...
+Tömmer mappen Borttaget...
 ;#DEF Emptying trash folder...
 ;#SET (1282//)
 MSG_BusyGettingVerInfo
@@ -5930,7 +5926,7 @@ MSG_MA_ALLTOREAD
 ;#DEF #\000All to Read
 ;#SET (1572//)
 MSG_ER_MOVEFOLDERDIR
-Ett fel inträffade vid försök att flytta innehållet i mappen\n'%s' till katalog '%s'. Detta kan bero på otillräckligt med utrymme\neller för att destinationen inte är giltig eller skrivbar.
+Ett fel inträffade vid försök att flytta innehållet i mappen\n'%s' till katalogen '%s'. Detta kan bero på otillräckligt med utrymme\neller för att destinationen inte är giltig eller skrivbar.
 ;#DEF An error occurred while trying to move the content of folder\n'%s' to directory '%s'. This may either be due to insufficient\nspace or because the destination path is not valid or writable.
 ;#SET (1573//)
 MSG_CO_QUICKSEARCHBAR
@@ -6690,11 +6686,11 @@ Skräppostfilter
 ;#DEF Spam filter
 ;#SET (1763//)
 MSG_CO_SPAMFILTER_SUMMARY
-Konfigurera skräppostfilter
+Konfigurera skräppostfilter...
 ;#DEF Configure spam filter...
 ;#SET (1764//)
 MSG_CO_SPAM_FILTERFORNEWMAIL
-Kontrollera nya brev för skräppost innehåll
+Kontrollera nya brev om de innehåller skräppost
 ;#DEF Check new mails for spam content
 ;#SET (1765//)
 MSG_CO_SPAM_RESETTRAININGDATA
@@ -6806,10 +6802,22 @@ Kunde inte skapa standard mappen för skräppost!\n\nSkräppostfiltret har avaktive
 ;#DEF Could not create standard spam folder!\n\nThe spam filter has been deactivated again.\nPlease make sure that there is enough space left on the drive and that the drive is not write protected.
 ;#SET (1793//)
 MSG_MA_CHECKSPAM
-Kontrollera efter skräppost innehåll
-;#DEF Check for spam content
+Applicera skräppostfilter
+;#DEF Apply spam filter
 ;#SET (1794//)
 MSG_FI_BUSYCHECKSPAM
-Kollar efter skräppost...
-;#DEF Checking for spam...
+Applicerar skräppostfilter på mapp...
+;#DEF Applying spam filter on folder...
 ;#SET (1795//)
+MSG_MA_REMOVESPAM
+Töm mappen Skräppost
+;#DEF Delete spam from folder
+;#SET (1796//)
+MSG_MA_BUSYEMPTYINGSPAM
+Tömmer mappen Skräppost...
+;#DEF Deleting spam from folder...
+;#SET (1797//)
+MSG_MA_TRASH
+Borttaget
+;#DEF Trash
+;#SET (1798//)
