@@ -4,7 +4,13 @@ YAM Open Source - ChangeLog
 
 $Id$
 
-2006-11-30  Alexandre Balaban <abalaban@free.fr>
+2006-12-10  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_FO.c, YAM_gloabal.c, YAM_folderconfig.h, YAM_global.h: moved the 
+    FolderName array to YAM_FO.c to avoid Library base definition problems
+    accross platforms.
+
+2006-12-10  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: update to the latests changes and some corrections
 

@@ -28,6 +28,8 @@
 
 ***************************************************************************/
 
+#include <proto/intuition.h>
+
 #include "YAM_stringsizes.h"
 
 struct FO_GUIData
@@ -72,6 +74,8 @@ enum FolderType { FT_CUSTOM=0,   // custom folder with received mail
                   FT_SPAM,       // the mandatory SPAM folder
                   FT_NUM         // MUST be the last one in the enum!
                 };
+
+extern const char* const FolderName[FT_NUM];
 
 #define isCustomFolder(folder)      ((folder)->Type == FT_CUSTOM)
 #define isIncomingFolder(folder)    ((folder)->Type == FT_INCOMING)

@@ -69,6 +69,20 @@ static BOOL FO_GetFolderByName_cmp(struct Folder *fo, char *name);
 static struct Folder *FO_GetFolderByAttribute(BOOL(*)(struct Folder *fo, void *), void *, int *);
 static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *tn);
 
+// According to the folder types we define the corresponding
+// default folder names. Please note that order and length IS important here.
+// check the "enum FolderType"
+const char* const FolderName[FT_NUM] = { NULL,       // FT_CUSTOM
+                                         "incoming", // FT_INCOMING
+                                         "outgoing", // FT_OUTGOING
+                                         "sent",     // FT_SENT
+                                         "trash",    // FT_TRASH
+                                         NULL,       // FT_GROUP
+                                         NULL,       // FT_CUSTOMSENT
+                                         NULL,       // FT_CUSTOMMIXED
+                                         "spam",     // FT_SPAM
+                                       };
+
 /***************************************************************************
  Module: Folder Configuration
 ***************************************************************************/

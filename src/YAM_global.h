@@ -28,9 +28,6 @@
 
 ***************************************************************************/
 
-#include "YAM_folderconfig.h"
-
-extern const char* const FolderName[FT_NUM];
 extern const char* const months[12];
 extern const char* const SecCodes[5];
 extern const char* const SigNames[3];
