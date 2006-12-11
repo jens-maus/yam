@@ -33,7 +33,6 @@
 
 #include <dos/dos.h>
 #include <intuition/classusr.h>
-#include <mui/Toolbar_mcc.h>
 
 #include "SDI_compiler.h"
 
@@ -371,7 +370,6 @@ BOOL     RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd
 struct FileReqCache *ReqFile(enum ReqFileType num, Object *win, const char *title, int mode, const char *drawer, const char *file);
 BOOL     SafeOpenWindow(Object *obj);
 void     SaveLayout(BOOL permanent);
-void     SetupToolbar(struct MUIP_Toolbar_Description *tb, const char *label, const char *help, ULONG flags);
 char     ShortCut(const char *label);
 void     SimpleWordWrap(char *filename, int wrapsize);
 char *   StartUnpack(char *file, char *newfile, struct Folder *folder);

@@ -33,6 +33,7 @@
 #include <mui/BetterString_mcc.h>
 #include <mui/NFloattext_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#include <mui/TheBar_mcc.h>
 
 #include <proto/exec.h>
 #include <proto/muimaster.h>
@@ -207,11 +208,11 @@ BOOL CheckForUpdates(void)
           snprintf(request, REQUEST_SIZE, "%s&mui=%d%%2E%d", request, MUIMasterBase->lib_Version,
                                                                       MUIMasterBase->lib_Revision);
 
-          // add Toolbar.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_Toolbar, TAG_DONE)))
+          // add TheBar.mcc version information
+          if((mccObj = MUI_NewObject(MUIC_TheBar, TAG_DONE)))
           {
-            snprintf(request, REQUEST_SIZE, "%s&mcc%d=toolbar-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                           xget(mccObj, MUIA_Revision));
+            snprintf(request, REQUEST_SIZE, "%s&mcc%d=thebar-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
+                                                                                          xget(mccObj, MUIA_Revision));
             MUI_DisposeObject(mccObj);
           }
 

@@ -7363,10 +7363,10 @@ MSG_LOADINGSPAMTRAININGDATA
 Lade Trainingsdaten des Spam-Filters...
 ;
 MSG_MA_TBSPAM
-Spam
+S_pam
 ;
 MSG_MA_TBNOTSPAM
-k. Spam
+k. Spa_m
 ;
 MSG_HELP_MA_BT_SPAM
 Nachricht als Spam markieren
@@ -7457,14 +7457,14 @@ MSG_CO_SPAM_RESETTRAININGDATAASK
 Wollen Sie wirklich die Trainingsdaten des\n\
 Spam-Filters zurücksetzen?\n\
 \n\
-Der Spam-Filter muss danach erneut trainiert werden!
+Der Spam-Filter muss danach erneut trainiert werden.
 ;
 MSG_TR_CHECKUIDL
 Prüfe UIDLs um Duplikate zu vermeiden
 ;
 MSG_CO_SPAM_DISABLEFILTERASK
-Der Spam-Filter wurde gerade deaktiviert!\n\
-Welche der folgenden Aktionen möchten Sie durchführen?
+Der Spam-Filter wurde soeben deaktiviert. Welche\n\
+der folgenden Aktionen möchten Sie durchführen?
 ;
 MSG_CO_SPAM_RESETMAILFLAGS
 _Spam-Status aller Mails zurücksetzen
@@ -7510,20 +7510,21 @@ Server auch wirklich eine der verfügbaren AUTH-Methoden \
 unterstützt.
 ;
 MSG_ER_SPAMDIR_EXISTS
-Das Verzeichnis "Spam" existiert bereits!\n\
+Während des Versuches den Standard-Spam-Ordner anzugelegen,\n\
+wurde ein bereits ein als 'Spam' benannter Ordner gefunden.\n\
 \n\
-Wollen Sie das Verzeichnis als Standard-Spam-Ordner verwenden\n\
-oder soll der Spam-Filter deaktiviert werden?
+Wie wollen Sie das gefundene Verzeichnis als generellen \n\
+Spam-Ordner verwenden?
 ;
 MSG_ER_SPAMDIR_EXISTS_ANSWERS
-Leeren und als Spam-Ordner verwenden|Als Spam-Ordner verwenden|Spam-Filter deaktivieren
+_Leeren+Verwenden|_Verwenden|*_Abbrechen
 ;
 MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER
-Es trat ein Fehler beim Anlegen des Spam-Ordners auf!\n\
-Der Spam-Filter wurde wieder deaktiviert.\n\
+Es trat ein Fehler beim Anlegen des Spam-Ordners auf. Der\n\
+Spam-Filter wurde daraufhin wieder deaktiviert.\n\
 \n\
 Bitte stellen Sie sicher, dass genügend Platz auf dem Laufwerk \
-vorhanden ist und dass das Laufwerk nicht schreibgeschützt ist.
+vorhanden ist und dass das dieses nicht schreibgeschützt ist.
 ;
 MSG_MA_CHECKSPAM
 Spam-Filter anwenden

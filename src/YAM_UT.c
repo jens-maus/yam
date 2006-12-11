@@ -4646,18 +4646,6 @@ Object *MakeMenuitem(const char *str, ULONG ud)
          End;
 }
 ///
-/// SetupToolbar
-//  Initializes a single button in a MUI toolbar object
-void SetupToolbar(struct MUIP_Toolbar_Description *tb, const char *label, const char *help, ULONG flags)
-{
-   tb->Type = label ? (*label ? TDT_BUTTON : TDT_SPACE) : TDT_END;
-   tb->Flags = flags;
-   tb->ToolText = (char *)(tb->Type == TDT_BUTTON ? label : NULL);
-   tb->HelpString = (char *)help;
-   tb->MutualExclude = 0;
-   tb->Key = 0;
-}
-///
 /// SetupMenu
 //  Initializes a MUI menu item
 void SetupMenu(int type, struct NewMenu *menu, char *label, char *shortcut, int id)

@@ -612,7 +612,7 @@ MSG_MA_TBFind (195//)
 _Find
 ;
 MSG_MA_TBAddrBook (196//)
-_Addr
+_Abook
 ;
 MSG_MA_TBConfig (197//)
 _Config
@@ -5893,10 +5893,10 @@ MSG_LOADINGSPAMTRAININGDATA (1745//)
 Loading spam training data...
 ;
 MSG_MA_TBSPAM (1746//)
-Spam
+S_pam
 ;
 MSG_MA_TBNOTSPAM (1747//)
-Not Spam
+N_otSpam
 ;
 MSG_HELP_MA_BT_SPAM (1748//)
 Mark mail as spam
@@ -5988,7 +5988,7 @@ MSG_CO_SPAM_RESETTRAININGDATAASK (1776//)
 Do you really want to reset the spam filter's\n\
 training data?\n\
 \n\
-The spam filter must be trained again afterwards!
+The spam filter must be trained again afterwards.
 ;
 MSG_TR_CHECKUIDL (1778//)
 Checking UIDLs to avoid duplicates...
@@ -6042,13 +6042,14 @@ methods are available and how to configure them in your \
 mail client.
 ;
 MSG_ER_SPAMDIR_EXISTS (1791//)
-The directory \"spam\" already exists!\n\
+While trying to create a new spam folder, YAM found that\n\
+there seems to already exists a folder name 'spam'.\n\
 \n\
-Do you want to use this directory as the standard spam folder\n\
-or do you want to disable the spam filter?
+How do you want to use this directory as the standard\n\
+spam folder?
 ;
 MSG_ER_SPAMDIR_EXISTS_ANSWERS (1792//)
-Clear and use as spam folder|Use as spam folder|Disable spam filter
+_Cleanup&Use|_Use|*_Cancel
 ;
 MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER (1793//)
 Could not create standard spam folder!\n\
@@ -6071,4 +6072,7 @@ Deleting spam from folder...
 ;
 MSG_MA_TRASH (1798//)
 Trash
+;
+MSG_WR_SEARCH (1799//)
+Search
 ;

@@ -35,10 +35,6 @@
 
 #include "Debug.h"
 
-/* EXPORT
-#define MUIV_ReadWindow_ToolbarItems 17
-*/
-
 /* CLASSDATA
 struct Data
 {
@@ -66,7 +62,6 @@ struct Data
   Object *windowToolbar;
   Object *statusIconGroup;
   Object *readMailGroup;
-  struct MUIP_Toolbar_Description toolbarDesc[MUIV_ReadWindow_ToolbarItems];
 
   char  title[SIZE_SUBJECT+1];
   int   lastDirection;
@@ -107,58 +102,6 @@ INLINE LONG SelectMessage(struct Mail *mail)
   return pos;
 }
 ///
-/// AddRemoveSpamMenu
-//  Dynamically add/remove the spam menu entries to the menu according to the configuration
-static void AddRemoveSpamMenu(struct Data *data, struct Mail *mail)
-{
-  ENTER();
-
-  if(C->SpamFilterEnabled)
-  {
-    BOOL isSpamMail = mail && !isVirtualMail(mail) && hasStatusSpam(mail);
-    BOOL isHamMail  = mail && !isVirtualMail(mail) && hasStatusHam(mail);
-
-    // for each entry check if it exists and if it is part of the menu
-    // if not, create a new entry and add it to the current layout
-    if(data->MI_TOHAM == NULL || isChildOfFamily(data->MI_MESSAGE, data->MI_TOHAM) == FALSE)
-    {
-      if((data->MI_TOHAM =  MakeMenuitem(GetStr(MSG_RE_SETNOTSPAM), RMEN_SETHAM)) != NULL)
-      {
-        set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isHamMail);
-        DoMethod(data->MI_MESSAGE, MUIM_Family_Insert, data->MI_TOHAM, data->MI_SETMARKED);
-      }
-    }
-
-    if(data->MI_TOSPAM == NULL || isChildOfFamily(data->MI_MESSAGE, data->MI_TOSPAM) == FALSE)
-    {
-      if((data->MI_TOSPAM = MakeMenuitem(GetStr(MSG_RE_SETSPAM), RMEN_SETSPAM)) != NULL)
-      {
-        set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isSpamMail);
-        DoMethod(data->MI_MESSAGE, MUIM_Family_Insert, data->MI_TOSPAM, data->MI_SETMARKED);
-      }
-    }
-  }
-  else
-  {
-    // for each entry check if it exists and if it is part of the menu
-    // if yes, then remove the entry and dispose it
-    if(data->MI_TOSPAM != NULL && isChildOfFamily(data->MI_MESSAGE, data->MI_TOSPAM))
-    {
-      DoMethod(data->MI_MESSAGE, MUIM_Family_Remove, data->MI_TOSPAM);
-      MUI_DisposeObject(data->MI_TOSPAM);
-      data->MI_TOSPAM = NULL;
-    }
-    if(data->MI_TOHAM != NULL && isChildOfFamily(data->MI_MESSAGE, data->MI_TOHAM))
-    {
-      DoMethod(data->MI_MESSAGE, MUIM_Family_Remove, data->MI_TOHAM);
-      MUI_DisposeObject(data->MI_TOHAM);
-      data->MI_TOHAM = NULL;
-    }
-  }
-
-  LEAVE();
-}
-///
 
 /* Hooks */
 /// CloseReadWindowHook()
@@ -193,51 +136,18 @@ MakeStaticHook(CloseReadWindowHook, CloseReadWindowFunc);
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  ULONG i;
+  ULONG i=0;
   struct Data *data;
   struct Data *tmpData;
-
-  // Our static Toolbar description field
-  static const struct NewToolbarEntry tb_butt[MUIV_ReadWindow_ToolbarItems] =
-  {
-    { MSG_RE_TBPrev,    MSG_HELP_RE_BT_PREVIOUS },
-    { MSG_RE_TBNext,    MSG_HELP_RE_BT_NEXT     },
-    { MSG_RE_TBPrevTh,  MSG_HELP_RE_BT_QUESTION },
-    { MSG_RE_TBNextTh,  MSG_HELP_RE_BT_ANSWER   },
-    { MSG_Space,        NULL                    },
-    { MSG_RE_TBDisplay, MSG_HELP_RE_BT_DISPLAY  },
-    { MSG_RE_TBSave,    MSG_HELP_RE_BT_EXPORT   },
-    { MSG_RE_TBPrint,   MSG_HELP_RE_BT_PRINT    },
-    { MSG_Space,        NULL                    },
-    { MSG_RE_TBDelete,  MSG_HELP_RE_BT_DELETE   },
-    { MSG_RE_TBMove,    MSG_HELP_RE_BT_MOVE     },
-    { MSG_RE_TBReply,   MSG_HELP_RE_BT_REPLY    },
-    { MSG_RE_TBForward, MSG_HELP_RE_BT_FORWARD  },
-    { MSG_Space,        NULL                    },
-    { MSG_RE_TBSPAM,    MSG_HELP_RE_BT_SPAM     },
-    { MSG_RE_TBNOTSPAM, MSG_HELP_RE_BT_NOTSPAM  },
-    { NULL,             NULL                    }
-  };
 
   // generate a temporarly struct Data to which we store our data and
   // copy it later on
   if(!(data = tmpData = calloc(1, sizeof(struct Data))))
     return 0;
 
-  for(i=0; i < MUIV_ReadWindow_ToolbarItems; i++)
-  {
-    SetupToolbar(&(data->toolbarDesc[i]),
-                 tb_butt[i].label ?
-                    (tb_butt[i].label == MSG_Space ? "" : GetStr(tb_butt[i].label))
-                    : NULL,
-                 tb_butt[i].help ? GetStr(tb_butt[i].help) : NULL,
-                 0);
-  }
-
   // before we create all objects of this new read window we have to
   // check which number we can set for this window. Therefore we search in our
   // current ReadMailData list and check which number we can give this window
-  i=0;
   do
   {
     struct MinNode *curNode = G->readMailDataList.mlh_Head;
@@ -330,20 +240,8 @@ OVERLOAD(OM_NEW)
       Child, hasHideToolBarFlag(C->HideGUIElements) ?
         (RectangleObject, MUIA_ShowMe, FALSE, End) :
         (HGroup, GroupSpacing(2),
-          Child, HGroupV,
-            Child, data->windowToolbar = ToolbarObject,
-              MUIA_HelpNode, "RE_B",
-              MUIA_Toolbar_ImageType,        MUIV_Toolbar_ImageType_File,
-              MUIA_Toolbar_ImageNormal,      "PROGDIR:Icons/Read.toolbar",
-              MUIA_Toolbar_ImageGhost,       "PROGDIR:Icons/Read_G.toolbar",
-              MUIA_Toolbar_ImageSelect,      "PROGDIR:Icons/Read_S.toolbar",
-              MUIA_Toolbar_Description,      &data->toolbarDesc[0],
-              MUIA_Toolbar_Reusable,        TRUE,
-              MUIA_Toolbar_ParseUnderscore,  TRUE,
-              MUIA_Font,                     MUIV_Font_Tiny,
-              MUIA_ShortHelp,               TRUE,
-            End,
-            Child, HSpace(0),
+          Child, data->windowToolbar = ReadWindowToolbarObject,
+            MUIA_HelpNode, "RE_B",
           End,
           Child, RectangleObject,
             MUIA_Rectangle_VBar, TRUE,
@@ -382,6 +280,10 @@ OVERLOAD(OM_NEW)
 
     // Add the window to the application object
     DoMethod(G->App, OM_ADDMEMBER, obj);
+
+    // setup the toolbar notifies
+    if(data->windowToolbar)
+      DoMethod(data->windowToolbar, MUIM_ReadWindowToolbar_InitNotify, obj, data->readMailGroup);
 
     // set some Notifies and stuff
     set(obj, MUIA_Window_DefaultObject, data->readMailGroup);
@@ -423,19 +325,6 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_WRAPH,     obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TSTYLE,    obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FFONT,     obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 0, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 3, MUIM_ReadWindow_SwitchMail, -1, MUIV_Toolbar_Qualifier);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 1, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 3, MUIM_ReadWindow_SwitchMail, +1, MUIV_Toolbar_Qualifier);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 2, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 2, MUIM_ReadWindow_FollowThread, -1);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 3, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 2, MUIM_ReadWindow_FollowThread, +1);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 5, MUIV_Toolbar_Notify_Pressed, FALSE, data->readMailGroup, 1, MUIM_ReadMailGroup_DisplayMailRequest);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 6, MUIV_Toolbar_Notify_Pressed, FALSE, data->readMailGroup, 1, MUIM_ReadMailGroup_SaveMailRequest);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 7, MUIV_Toolbar_Notify_Pressed, FALSE, data->readMailGroup, 1, MUIM_ReadMailGroup_PrintMailRequest);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify, 9, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 2, MUIM_ReadWindow_DeleteMailRequest, MUIV_Toolbar_Qualifier);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify,10, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 1, MUIM_ReadWindow_MoveMailRequest);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 3, MUIM_ReadWindow_NewMail, NEW_REPLY, MUIV_Toolbar_Qualifier);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify,12, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 3, MUIM_ReadWindow_NewMail, NEW_FORWARD, MUIV_Toolbar_Qualifier);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify,14, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 2, MUIM_ReadWindow_ClassifyMessage, BC_SPAM);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Notify,15, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 2, MUIM_ReadWindow_ClassifyMessage, BC_HAM);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-capslock del",                 obj, 2, MUIM_ReadWindow_DeleteMailRequest, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-capslock shift del",            obj, 2, MUIM_ReadWindow_DeleteMailRequest, IEQUALIFIER_LSHIFT);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock space",       data->readMailGroup, 2, MUIM_TextEditor_ARexxCmd, "Next Page");
@@ -445,7 +334,8 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock shift left",   obj, 3, MUIM_ReadWindow_SwitchMail, -1, IEQUALIFIER_LSHIFT);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock shift right",  obj, 3, MUIM_ReadWindow_SwitchMail, +1, IEQUALIFIER_LSHIFT);
 
-    AddRemoveSpamMenu(data, NULL);
+    // make sure the right menus/toolbar spam button items are available
+    DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
 
     // before we continue we make sure we connect a notify to the new window
     // so that we get informed if the window is closed and therefore can be
@@ -474,7 +364,7 @@ OVERLOAD(OM_GET)
   switch(((struct opGet *)msg)->opg_AttrID)
   {
     ATTR(ReadMailData) : *store = (ULONG)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData); return TRUE;
-    ATTR(Num)           : *store = data->windowNumber; return TRUE;
+    ATTR(Num)          : *store = data->windowNumber; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -590,16 +480,16 @@ DECLARE(ReadMail) // struct Mail *mail
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetPos, mail, &pos);
 
     // now set some items of the toolbar ghosted/enabled
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Set,  0, MUIV_Toolbar_Set_Ghosted, isRealMail ? pos == 0 : TRUE);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Set,  1, MUIV_Toolbar_Set_Ghosted, isRealMail ? pos == (folder->Total-1) : TRUE);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Set,  2, MUIV_Toolbar_Set_Ghosted, !prevMailAvailable);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Set,  3, MUIV_Toolbar_Set_Ghosted, !nextMailAvailable);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Set,  9, MUIV_Toolbar_Set_Ghosted, !isRealMail);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 10, MUIV_Toolbar_Set_Ghosted, !isRealMail);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 11, MUIV_Toolbar_Set_Ghosted, isSentMail || inSpamFolder);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 12, MUIV_Toolbar_Set_Ghosted, inSpamFolder);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 14, MUIV_Toolbar_Set_Ghosted, isSpamMail);
-    DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 15, MUIV_Toolbar_Set_Ghosted, isHamMail);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_PREV, MUIV_TheBar_Attr_Disabled, isRealMail ? pos == 0 : TRUE);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_NEXT, MUIV_TheBar_Attr_Disabled, isRealMail ? pos == (folder->Total-1) : TRUE);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_PREVTHREAD, MUIV_TheBar_Attr_Disabled, !prevMailAvailable);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_NEXTTHREAD, MUIV_TheBar_Attr_Disabled, !nextMailAvailable);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_DELETE, MUIV_TheBar_Attr_Disabled, !isRealMail);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_MOVE, MUIV_TheBar_Attr_Disabled, !isRealMail);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_REPLY, MUIV_TheBar_Attr_Disabled, isSentMail || inSpamFolder);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_FORWARD, MUIV_TheBar_Attr_Disabled, inSpamFolder);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIV_TheBar_Attr_Disabled, isSpamMail);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_HAM, MUIV_TheBar_Attr_Disabled, isHamMail);
   }
 
   // Update the status groups
@@ -930,8 +820,8 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       if(folder == spamfolder)
       {
         // update the toolbar
-        DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 14, MUIV_Toolbar_Set_Ghosted, TRUE);
-        DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 15, MUIV_Toolbar_Set_Ghosted, FALSE);
+        DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIV_TheBar_Attr_Disabled, TRUE);
+        DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_HAM, MUIV_TheBar_Attr_Disabled, FALSE);
       }
 
       // erase the old pointer as this has been free()ed by MA_MoveCopy()
@@ -959,8 +849,8 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       setStatusToHam(mail);
 
       // update the toolbar
-      DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 14, MUIV_Toolbar_Set_Ghosted, FALSE);
-      DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 15, MUIV_Toolbar_Set_Ghosted, TRUE);
+      DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIV_TheBar_Attr_Disabled, FALSE);
+      DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_HAM, MUIV_TheBar_Attr_Disabled, TRUE);
     }
   }
 
@@ -1210,12 +1100,12 @@ DECLARE(FollowThread) // LONG direction
     // set the correct toolbar image and menuitem ghosted
     if(msg->direction <= 0)
     {
-      DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 2, MUIV_Toolbar_Set_Ghosted, TRUE);
+      DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_PREVTHREAD, MUIV_TheBar_Attr_Disabled, TRUE);
       set(data->MI_PREVTHREAD, MUIA_Menuitem_Enabled, FALSE);
     }
     else
     {
-      DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 3, MUIV_Toolbar_Set_Ghosted, TRUE);
+      DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_NEXTTHREAD, MUIV_TheBar_Attr_Disabled, TRUE);
       set(data->MI_NEXTTHREAD, MUIA_Menuitem_Enabled, FALSE);
     }
 
@@ -1327,14 +1217,64 @@ DECLARE(StatusIconRefresh)
   return 0;
 }
 ///
-/// DECLARE(AddRemoveSpamMenu)
-DECLARE(AddRemoveSpamMenu)
+/// DECLARE(UpdateSpamControls)
+DECLARE(UpdateSpamControls)
 {
   GETDATA;
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 
-  AddRemoveSpamMenu(data, rmData->mail);
+  ENTER();
 
+  if(C->SpamFilterEnabled)
+  {
+    struct Mail *mail = rmData->mail;
+    BOOL isSpamMail = mail && !isVirtualMail(mail) && hasStatusSpam(mail);
+    BOOL isHamMail  = mail && !isVirtualMail(mail) && hasStatusHam(mail);
+
+    // for each entry check if it exists and if it is part of the menu
+    // if not, create a new entry and add it to the current layout
+    if(data->MI_TOHAM == NULL || isChildOfFamily(data->MI_MESSAGE, data->MI_TOHAM) == FALSE)
+    {
+      if((data->MI_TOHAM =  MakeMenuitem(GetStr(MSG_RE_SETNOTSPAM), RMEN_SETHAM)) != NULL)
+      {
+        set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isHamMail);
+        DoMethod(data->MI_MESSAGE, MUIM_Family_Insert, data->MI_TOHAM, data->MI_SETMARKED);
+      }
+    }
+
+    if(data->MI_TOSPAM == NULL || isChildOfFamily(data->MI_MESSAGE, data->MI_TOSPAM) == FALSE)
+    {
+      if((data->MI_TOSPAM = MakeMenuitem(GetStr(MSG_RE_SETSPAM), RMEN_SETSPAM)) != NULL)
+      {
+        set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isSpamMail);
+        DoMethod(data->MI_MESSAGE, MUIM_Family_Insert, data->MI_TOSPAM, data->MI_SETMARKED);
+      }
+    }
+  }
+  else
+  {
+    // for each entry check if it exists and if it is part of the menu
+    // if yes, then remove the entry and dispose it
+    if(data->MI_TOSPAM != NULL && isChildOfFamily(data->MI_MESSAGE, data->MI_TOSPAM))
+    {
+      DoMethod(data->MI_MESSAGE, MUIM_Family_Remove, data->MI_TOSPAM);
+      MUI_DisposeObject(data->MI_TOSPAM);
+      data->MI_TOSPAM = NULL;
+    }
+    if(data->MI_TOHAM != NULL && isChildOfFamily(data->MI_MESSAGE, data->MI_TOHAM))
+    {
+      DoMethod(data->MI_MESSAGE, MUIM_Family_Remove, data->MI_TOHAM);
+      MUI_DisposeObject(data->MI_TOHAM);
+      data->MI_TOHAM = NULL;
+    }
+  }
+
+  // update the toolbar as well, so lets delegate
+  // the method call to it.
+  if(data->windowToolbar)
+    DoMethod(data->windowToolbar, MUIM_ReadWindowToolbar_UpdateSpamControls);
+
+  RETURN(0);
   return 0;
 }
 ///

@@ -43,6 +43,7 @@
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#include <mui/TheBar_mcc.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/muimaster.h>

@@ -28,8 +28,6 @@
 
 ***************************************************************************/
 
-#include <mui/Toolbar_mcc.h>
-
 #include "YAM_mainFolder.h"
 #include "YAM_stringsizes.h"
 
@@ -288,7 +286,6 @@ struct MA_GUIData
    Object *MN_EMBEDDEDREADPANE;
    Object *GR_QUICKSEARCHBAR;
    Object *PG_MAILLIST;
-   struct MUIP_Toolbar_Description TB_TOOLBAR[21];
 };
 
 struct MA_ClassData  /* main window */
@@ -322,6 +319,7 @@ extern struct Hook MA_SetFolderInfoHook;
 extern struct Hook MA_SetMessageInfoHook;
 extern struct Hook PO_WindowHook;
 extern struct Hook MA_FolderKeyHook;
+extern struct Hook MA_PopNowHook;
 
 void  MA_ChangeSubject(struct Mail *mail, char *subj);
 void  MA_ChangeTransfer(BOOL on);

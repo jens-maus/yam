@@ -40,6 +40,7 @@
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#include <mui/TheBar_mcc.h>
 #include <rexx/storage.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
@@ -144,9 +145,19 @@ void MA_SetSortFlag(void)
 //  Disables menus and toolbar buttons during transfer operations
 void MA_ChangeTransfer(BOOL on)
 {
-   struct MA_GUIData *gui = &G->MA->GUI;
-   if (gui->TO_TOOLBAR) DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !on, 13,14, -1);
-   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, on, gui->MI_IMPORT, gui->MI_EXPORT, gui->MI_SENDALL, gui->MI_EXCHANGE, gui->MI_GETMAIL, gui->MI_CSINGLE, NULL);
+  struct MA_GUIData *gui = &G->MA->GUI;
+
+  ENTER();
+
+  if(gui->TO_TOOLBAR)
+  {
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETMAIL, MUIV_TheBar_Attr_Disabled, !on);
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_SENDALL, MUIV_TheBar_Attr_Disabled, !on);
+  }
+
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, on, gui->MI_IMPORT, gui->MI_EXPORT, gui->MI_SENDALL, gui->MI_EXCHANGE, gui->MI_GETMAIL, gui->MI_CSINGLE, NULL);
+
+  LEAVE();
 }
 
 ///
@@ -231,13 +242,20 @@ void MA_ChangeSelected(BOOL forceUpdate)
   // enabled and disabled according to the folder/mail status
   folderEnabled = !isGroupFolder(fo);
 
-  // deal with the toolbar
+  // deal with the toolbar and disable/enable certain buttons
   if(gui->TO_TOOLBAR)
   {
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !folderEnabled || (!active && numSelected == 0), 0,1,2,3,4,7,8,16, -1);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !folderEnabled || isSpamFolder(fo), 1,6,7,8, -1);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !folderEnabled || !C->SpamFilterEnabled || (!active && numSelected == 0) || (active && numSelected <= 1 && hasStatusSpam(mail)), 10, -1);
-    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !folderEnabled || !C->SpamFilterEnabled || (!active && numSelected == 0) || (active && numSelected <= 1 && hasStatusHam(mail)), 11, -1);
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_READ,   MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_EDIT,   MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_MOVE,   MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_DELETE, MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETADDR,MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_NEWMAIL,MUIV_TheBar_Attr_Disabled, !folderEnabled || isSpamFolder(fo));
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_REPLY,  MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FORWARD,MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FILTER, MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_SPAM,   MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || !C->SpamFilterEnabled || (active && numSelected <= 1 && hasStatusSpam(mail)));
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_HAM,    MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || !C->SpamFilterEnabled || (active && numSelected <= 1 && hasStatusHam(mail)));
   }
 
   // enable/disable menu items
@@ -3135,7 +3153,7 @@ HOOKPROTONHNO(MA_PopNowFunc, void, int *arg)
    if(hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) G->TR_Exchange = TRUE;
    MA_PopNow(arg[0],arg[1]);
 }
-MakeStaticHook(MA_PopNowHook, MA_PopNowFunc);
+MakeHook(MA_PopNowHook, MA_PopNowFunc);
 ///
 
 /*** Sub-button functions ***/
@@ -4472,37 +4490,9 @@ struct MA_ClassData *MA_New(void)
 
    if(data)
    {
-      static const struct NewToolbarEntry tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
-        { MSG_MA_TBRead,     MSG_HELP_MA_BT_READ       },
-        { MSG_MA_TBEdit,     MSG_HELP_MA_BT_EDIT       },
-        { MSG_MA_TBMove,     MSG_HELP_MA_BT_MOVE       },
-        { MSG_MA_TBDelete,   MSG_HELP_MA_BT_DELETE     },
-        { MSG_MA_TBGetAddr,  MSG_HELP_MA_BT_GETADDRESS },
-        { MSG_Space,         NULL                      },
-        { MSG_MA_TBWrite,    MSG_HELP_MA_BT_WRITE      },
-        { MSG_MA_TBReply,    MSG_HELP_MA_BT_REPLY      },
-        { MSG_MA_TBForward,  MSG_HELP_MA_BT_FORWARD    },
-        { MSG_Space,         NULL                      },
-        { MSG_MA_TBSPAM,     MSG_HELP_MA_BT_SPAM       },
-        { MSG_MA_TBNOTSPAM,  MSG_HELP_MA_BT_NOTSPAM    },
-        { MSG_Space,         NULL                      },
-        { MSG_MA_TBGetMail,  MSG_HELP_MA_BT_POPNOW     },
-        { MSG_MA_TBSendAll,  MSG_HELP_MA_BT_SENDALL    },
-        { MSG_Space,         NULL                      },
-        { MSG_MA_TBFilter,   MSG_HELP_MA_BT_FILTER     },
-        { MSG_MA_TBFind,     MSG_HELP_MA_BT_SEARCH     },
-        { MSG_MA_TBAddrBook, MSG_HELP_MA_BT_ABOOK      },
-        { MSG_MA_TBConfig,   MSG_HELP_MA_BT_CONFIG     },
-        { NULL,              NULL                      }
-      };
       char *username;
       struct User *user;
       ULONG i;
-
-      for(i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
-      {
-        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i].label?(tb_butt[i].label==MSG_Space?"":GetStr(tb_butt[i].label)):NULL, tb_butt[i].help?GetStr(tb_butt[i].help):NULL, 0);
-      }
 
       if (username = C->RealName,(user = US_GetCurrentUser()))
         username = user->Name;
@@ -4600,19 +4590,8 @@ struct MA_ClassData *MA_New(void)
          WindowContents, data->GUI.GR_MAIN = VGroup,
             Child, data->GUI.GR_TOP = hasHideToolBarFlag(C->HideGUIElements) ?
                VSpace(1) :
-               (HGroupV,
-                  MUIA_HelpNode, "MA02",
-                  Child, data->GUI.TO_TOOLBAR = ToolbarObject,
-                     MUIA_Toolbar_ImageType,      MUIV_Toolbar_ImageType_File,
-                     MUIA_Toolbar_ImageNormal,    "PROGDIR:Icons/Main.toolbar",
-                     MUIA_Toolbar_ImageGhost,     "PROGDIR:Icons/Main_G.toolbar",
-                     MUIA_Toolbar_ImageSelect,    "PROGDIR:Icons/Main_S.toolbar",
-                     MUIA_Toolbar_Description,    data->GUI.TB_TOOLBAR,
-                     MUIA_Toolbar_ParseUnderscore,TRUE,
-                     MUIA_Font,                   MUIV_Font_Tiny,
-                     MUIA_ShortHelp, TRUE,
-                  End,
-                  Child, HSpace(0),
+               (data->GUI.TO_TOOLBAR = MainWindowToolbarObject,
+                 MUIA_HelpNode, "MA02",
                End),
             Child, data->GUI.GR_HIDDEN = HGroup,
                MUIA_ShowMe, FALSE,
@@ -4743,26 +4722,6 @@ struct MA_ClassData *MA_New(void)
 
          for(i = 0; i < MAXP3; i++)
           DoMethod(data->GUI.WI,MUIM_Notify,MUIA_Window_MenuAction,MMEN_POPHOST+i,MUIV_Notify_Application,5,MUIM_CallHook, &MA_PopNowHook, POP_USER, i, 0);
-
-         if (data->GUI.TO_TOOLBAR)
-         {
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify, 0, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&MA_ReadMessageHook);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify, 1, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,4,MUIM_CallHook,&MA_NewMessageHook,NEW_EDIT,MUIV_Toolbar_Qualifier);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify, 2, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&MA_MoveMessageHook);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify, 3, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,3,MUIM_CallHook,&MA_DeleteMessageHook,MUIV_Toolbar_Qualifier);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify, 4, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&MA_GetAddressHook);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify, 6, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,4,MUIM_CallHook,&MA_NewMessageHook,NEW_NEW,MUIV_Toolbar_Qualifier);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify, 7, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,4,MUIM_CallHook,&MA_NewMessageHook,NEW_REPLY,MUIV_Toolbar_Qualifier);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify, 8, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,4,MUIM_CallHook,&MA_NewMessageHook,NEW_FORWARD,MUIV_Toolbar_Qualifier);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,10, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,3,MUIM_CallHook,&MA_ClassifyMessageHook,BC_SPAM);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,3,MUIM_CallHook,&MA_ClassifyMessageHook,BC_HAM);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,13, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,9,MUIM_Application_PushMethod,G->App,5,MUIM_CallHook,&MA_PopNowHook,POP_USER,-1,MUIV_Toolbar_Qualifier);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,14, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,7,MUIM_Application_PushMethod,G->App,3,MUIM_CallHook,&MA_SendHook,SEND_ALL);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,16, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,4,MUIM_CallHook,&ApplyFiltersHook,APPLY_USER,MUIV_Toolbar_Qualifier);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,17, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&FI_OpenHook);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,18, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,3,MUIM_CallHook,&AB_OpenHook,ABM_EDIT);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,19, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&CO_OpenHook);
-         }
 
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_DoubleClick   ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_FolderClickHook);
 //         DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_TitleClick    ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_NList_Sort2         ,MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);

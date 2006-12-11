@@ -105,10 +105,6 @@ static struct WR_ClassData *WR_NewBounce(int);
 static struct WR_ClassData *WR_New(int winnum);
 
 /**************************************************************************/
-/* Soft-style modes for text */
-enum SoftStyleMode { SSM_NORMAL, SSM_BOLD, SSM_ITALIC, SSM_UNDERLINE, SSM_COLOR };
-
-/**************************************************************************/
 
 /*** Attachments list ***/
 /// WR_GetFileEntry
@@ -2434,7 +2430,7 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
 
   LEAVE();
 }
-MakeStaticHook(WR_EditorCmdHook, WR_EditorCmd);
+MakeHook(WR_EditorCmdHook, WR_EditorCmd);
 
 ///
 /// WR_SearchFunc
@@ -2446,7 +2442,7 @@ HOOKPROTONHNO(WR_SearchFunc, void, Object **texteditor)
 
    DoMethod(G->WI_SEARCH, MUIM_Searchwindow_Open, *texteditor);
 }
-MakeStaticHook(WR_SearchHook, WR_SearchFunc);
+MakeHook(WR_SearchHook, WR_SearchFunc);
 
 ///
 /// WR_AddClipboardFunc
@@ -2882,7 +2878,7 @@ HOOKPROTONHNO(WR_SetSoftStyleFunc, void, ULONG *arg)
 
   LEAVE();
 }
-MakeStaticHook(WR_SetSoftStyleHook, WR_SetSoftStyleFunc);
+MakeHook(WR_SetSoftStyleHook, WR_SetSoftStyleFunc);
 
 ///
 
@@ -2915,7 +2911,7 @@ static struct WR_ClassData *WR_New(int winnum)
       enum {
         WMEN_NEW=1,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,WMEN_INSALTQUOT,
         WMEN_INSROT13,WMEN_EDIT,WMEN_CUT,WMEN_COPY,WMEN_PASTE,
-        WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_DICT,WMEN_STYLE_BOLD,WMEN_STYLE_ITALIC,WMEN_STYLE_UNDERLINE,
+        WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_SEARCH,WMEN_DICT,WMEN_STYLE_BOLD,WMEN_STYLE_ITALIC,WMEN_STYLE_UNDERLINE,
         WMEN_STYLE_COLORED,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
         WMEN_AUTOSP,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
         WMEN_DELSEND,WMEN_RECEIPT,WMEN_DISPNOTI,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
@@ -2934,33 +2930,11 @@ static struct WR_ClassData *WR_New(int winnum)
         ":-)", ":-|", ":-(", ";-)"
       };
 
-      static const struct NewToolbarEntry tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
-        { MSG_WR_TBEditor,     MSG_HELP_WR_BT_EDITOR },
-        { MSG_WR_TBInsert,     MSG_HELP_WR_BT_LOAD   },
-        { MSG_Space,           NULL                  },
-        { MSG_WR_TBCut,        MSG_HELP_WR_BT_CUT    },
-        { MSG_WR_TBCopy,       MSG_HELP_WR_BT_COPY   },
-        { MSG_WR_TBPaste,      MSG_HELP_WR_BT_PASTE  },
-        { MSG_WR_TBUndo,       MSG_HELP_WR_BT_UNDO   },
-        { MSG_Space,           NULL                  },
-        { MSG_WR_TBBold,       MSG_HELP_WR_BT_BOLD   },
-        { MSG_WR_TBItalic,     MSG_HELP_WR_BT_ITALIC },
-        { MSG_WR_TBUnderlined, MSG_HELP_WR_BT_UNDERL },
-        { MSG_WR_TBColored,    MSG_HELP_WR_BT_COLOR  },
-        { MSG_Space,           NULL                  },
-        { MSG_WR_TBSearch,     MSG_HELP_WR_BT_SEARCH },
-        { NULL,                NULL                  }
-      };
-      APTR sec_menus[SEC_MAXDUMMY];
-      APTR mi_copy, mi_cut, mi_redo, mi_undo, mi_bold, mi_italic, mi_underl, mi_color;
+      Object *sec_menus[SEC_MAXDUMMY];
+      APTR mi_copy, mi_cut, mi_redo, mi_undo;
       APTR strip, mi_autospell, mi_delsend, mi_receipt, mi_dispnoti, mi_addinfo;
-      APTR slider = ScrollbarObject, End;
+      Object *slider = ScrollbarObject, End;
       ULONG i;
-
-      for(i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
-      {
-        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i].label?(tb_butt[i].label==MSG_Space?"":GetStr(tb_butt[i].label)):NULL, tb_butt[i].help?GetStr(tb_butt[i].help):NULL, 0);
-      }
 
       if(rtitles[0] == '\0')   // only initialize static data on first call
       {
@@ -2993,6 +2967,10 @@ static struct WR_ClassData *WR_New(int winnum)
          signat[4] = NULL;
       }
 
+      // set the winnum variable of the classdata
+      data->winnum = winnum;
+
+      // now go and create the window object
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, GetStr(MSG_WR_WriteWT),
          MUIA_HelpNode, "WR_W",
@@ -3026,12 +3004,14 @@ static struct WR_ClassData *WR_New(int winnum)
                MUIA_Family_Child, mi_undo = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MUndo), MUIA_Menuitem_Shortcut,"ramiga Z", MUIA_Menuitem_CommandString, TRUE, MUIA_UserData, WMEN_UNDO, End,
                MUIA_Family_Child, mi_redo = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Redo), MUIA_UserData, WMEN_REDO, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_SEARCH), MUIA_Menuitem_Shortcut,"F", MUIA_UserData,WMEN_SEARCH, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Dictionary), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,WMEN_DICT, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Textstyle),
-                  MUIA_Family_Child, mi_bold = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Bold), MUIA_Menuitem_Shortcut,"B", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_BOLD, End,
-                  MUIA_Family_Child, mi_italic = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Italic), MUIA_Menuitem_Shortcut,"I", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_ITALIC, End,
-                  MUIA_Family_Child, mi_underl = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Underlined), MUIA_Menuitem_Shortcut,"U", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_UNDERLINE, End,
-                  MUIA_Family_Child, mi_color = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Colored), MUIA_Menuitem_Shortcut,"A", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_COLORED, End,
+                  MUIA_Family_Child, data->GUI.MI_BOLD = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Bold), MUIA_Menuitem_Shortcut,"B", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_BOLD, End,
+                  MUIA_Family_Child, data->GUI.MI_ITALIC = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Italic), MUIA_Menuitem_Shortcut,"I", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_ITALIC, End,
+                  MUIA_Family_Child, data->GUI.MI_UNDERLINE = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Underlined), MUIA_Menuitem_Shortcut,"U", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_UNDERLINE, End,
+                  MUIA_Family_Child, data->GUI.MI_COLORED = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Colored), MUIA_Menuitem_Shortcut,"H", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_COLORED, End,
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Emoticons),
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Happy), MUIA_UserData,WMEN_EMOT0, End,
@@ -3043,7 +3023,7 @@ static struct WR_ClassData *WR_New(int winnum)
                MUIA_Family_Child, mi_autospell = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_WR_SpellCheck), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_AUTOSP, End,
             End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_Attachments),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MAddFile), MUIA_Menuitem_Shortcut,"F", MUIA_UserData,WMEN_ADDFILE, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MAddFile), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,WMEN_ADDFILE, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_AddCB), MUIA_UserData,WMEN_ADDCLIP, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_AddKey), MUIA_UserData,WMEN_ADDPGP, End,
             End,
@@ -3088,28 +3068,30 @@ static struct WR_ClassData *WR_New(int winnum)
                   Child, hasHideToolBarFlag(C->HideGUIElements) ?
                      (RectangleObject, MUIA_ShowMe, FALSE, End) :
                      (HGroup, GroupSpacing(0),
-                        Child, HGroupV,
-                           Child, data->GUI.TO_TOOLBAR = ToolbarObject,
-                              MUIA_Toolbar_ImageType,      MUIV_Toolbar_ImageType_File,
-                              MUIA_Toolbar_ImageNormal,    "PROGDIR:Icons/Write.toolbar",
-                              MUIA_Toolbar_ImageGhost,     "PROGDIR:Icons/Write_G.toolbar",
-                              MUIA_Toolbar_ImageSelect,    "PROGDIR:Icons/Write_S.toolbar",
-                              MUIA_Toolbar_Description,    data->GUI.TB_TOOLBAR,
-                              MUIA_Font,                   MUIV_Font_Tiny,
-                              MUIA_ShortHelp, TRUE,
-                           End,
-                           Child, HSpace(0),
+                        Child, data->GUI.TO_TOOLBAR = WriteWindowToolbarObject,
                         End,
                         Child, hasHideXYFlag(C->HideGUIElements) ?
-                           HSpace(1) :
-                           (VCenter((data->GUI.TX_POSI = TextObject,
-                              TextFrame,
-                              MUIA_Weight,        0,
-                              MUIA_Text_Contents, "000 \n000 ",
-                              MUIA_Background,    MUII_TextBack,
-                              MUIA_Frame,         MUIV_Frame_Text,
-                              MUIA_Font,          MUIV_Font_Tiny,
-                           End))),
+                           (HSpace(1)) :
+                           (HGroup,
+                             GroupSpacing(0),
+                             Child, RectangleObject,
+                               MUIA_Rectangle_VBar, TRUE,
+                               MUIA_FixWidth,        3,
+                             End,
+                             Child, VGroup,
+                               GroupSpacing(0),
+                               Child, VSpace(0),
+                               Child, data->GUI.TX_POSI = TextObject,
+                                 TextFrame,
+                                 MUIA_Weight,        0,
+                                 MUIA_Text_Contents, "000 \n000 ",
+                                 MUIA_Background,    MUII_TextBack,
+                                 MUIA_Frame,         MUIV_Frame_None,
+                                 MUIA_Font,          MUIV_Font_Tiny,
+                               End,
+                               Child, VSpace(0),
+                             End,
+                           End),
                      End),
                   Child, HGroup,
                      MUIA_HelpNode, "EDIT",
@@ -3265,6 +3247,7 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASQUOT   ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_PASQUOT,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASALTQUOT,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_PASALTQUOT,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASROT13  ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_PASROT13,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SEARCH    ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_SearchHook, data->GUI.TE_EDIT);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_DICT      ,MUIV_Notify_Application,3,MUIM_CallHook   ,&DI_OpenHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_UNDO      ,data->GUI.TE_EDIT      ,2,MUIM_TextEditor_ARexxCmd,"UNDO");
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_REDO      ,data->GUI.TE_EDIT      ,2,MUIM_TextEditor_ARexxCmd,"REDO");
@@ -3274,31 +3257,12 @@ static struct WR_ClassData *WR_New(int winnum)
          for (i = 0; i < 4; i++) DoMethod(data->GUI.WI,MUIM_Notify,MUIA_Window_MenuAction,WMEN_EMOT0+i,data->GUI.TE_EDIT,2,MUIM_TextEditor_InsertText,emoticons[i]);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_AppMessage          ,MUIV_EveryTime ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_AppHook,MUIV_TriggerValue,winnum);
          DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify,MUIA_TextEditor_AreaMarked,MUIV_EveryTime,MUIV_Notify_Application,6,MUIM_MultiSet   ,MUIA_Menuitem_Enabled,MUIV_TriggerValue,mi_copy,mi_cut,NULL);
-         if (data->GUI.TO_TOOLBAR)
-         {
-            DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify,MUIA_TextEditor_AreaMarked,MUIV_EveryTime,data->GUI.TO_TOOLBAR  ,6,MUIM_Toolbar_MultiSet,MUIV_Toolbar_Set_Ghosted, MUIV_NotTriggerValue,3,4,-1);
-            DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify,MUIA_TextEditor_UndoAvailable,MUIV_EveryTime,data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set,6,MUIV_Toolbar_Set_Ghosted,MUIV_NotTriggerValue);
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 0, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,3,MUIM_CallHook,&WR_EditHook,winnum);
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 1, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,4,MUIM_CallHook,&WR_EditorCmdHook,ED_INSERT,winnum);
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 3, MUIV_Toolbar_Notify_Pressed,FALSE, data->GUI.TE_EDIT,2,MUIM_TextEditor_ARexxCmd, "CUT");
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 4, MUIV_Toolbar_Notify_Pressed,FALSE, data->GUI.TE_EDIT,2,MUIM_TextEditor_ARexxCmd, "COPY");
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 5, MUIV_Toolbar_Notify_Pressed,FALSE, data->GUI.TE_EDIT,2,MUIM_TextEditor_ARexxCmd, "PASTE");
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 6, MUIV_Toolbar_Notify_Pressed,FALSE, data->GUI.TE_EDIT,2,MUIM_TextEditor_ARexxCmd, "UNDO");
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 8, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_BOLD, winnum);
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 9, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_ITALIC, winnum);
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,10, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_UNDERLINE, winnum);
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_COLOR, winnum);
-            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,13, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,3,MUIM_CallHook,&WR_SearchHook,data->GUI.TE_EDIT);
-            DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set, 8,MUIV_Toolbar_Set_Selected,MUIV_TriggerValue);
-            DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set, 9,MUIV_Toolbar_Set_Selected,MUIV_TriggerValue);
-            DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set,10,MUIV_Toolbar_Set_Selected,MUIV_TriggerValue);
-            DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_Pen,            7,              data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set,11,MUIV_Toolbar_Set_Selected,TRUE);
-            DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_Pen,            0,              data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set,11,MUIV_Toolbar_Set_Selected,FALSE);
-            DoMethod(mi_bold              ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set, 8,MUIV_Toolbar_Set_Selected,MUIV_TriggerValue);
-            DoMethod(mi_italic            ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set, 9,MUIV_Toolbar_Set_Selected,MUIV_TriggerValue);
-            DoMethod(mi_underl            ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set,10,MUIV_Toolbar_Set_Selected,MUIV_TriggerValue);
-            DoMethod(mi_color             ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set,11,MUIV_Toolbar_Set_Selected,MUIV_TriggerValue);
-         }
+
+         // set some notifications on the toolbar
+         // in case it was generated
+         if(data->GUI.TO_TOOLBAR)
+           DoMethod(data->GUI.TO_TOOLBAR, MUIM_WriteWindowToolbar_InitNotify, data);
+
          DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify,MUIA_TextEditor_UndoAvailable,MUIV_EveryTime,mi_undo            ,3,MUIM_Set,MUIA_Menuitem_Enabled,MUIV_TriggerValue);
          DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify,MUIA_TextEditor_RedoAvailable,MUIV_EveryTime,mi_redo            ,3,MUIM_Set,MUIA_Menuitem_Enabled,MUIV_TriggerValue);
          if (data->GUI.TX_POSI)
@@ -3306,15 +3270,15 @@ static struct WR_ClassData *WR_New(int winnum)
             DoMethod(data->GUI.TE_EDIT ,MUIM_Notify,MUIA_TextEditor_CursorX,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&WR_UpdateWTitleHook,winnum);
             DoMethod(data->GUI.TE_EDIT ,MUIM_Notify,MUIA_TextEditor_CursorY,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&WR_UpdateWTitleHook,winnum);
          }
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, mi_bold        ,3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, mi_italic      ,3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, mi_underl      ,3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_Pen,            7,              mi_color       ,3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, TRUE);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_Pen,            0,              mi_color       ,3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
-         DoMethod(mi_bold              ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_BOLD, winnum);
-         DoMethod(mi_italic            ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_ITALIC, winnum);
-         DoMethod(mi_underl            ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_UNDERLINE, winnum);
-         DoMethod(mi_color             ,MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_COLOR, winnum);
+         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, data->GUI.MI_BOLD, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
+         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, data->GUI.MI_ITALIC, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
+         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, data->GUI.MI_UNDERLINE, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
+         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_Pen,            7,              data->GUI.MI_COLORED, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, TRUE);
+         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_Pen,            0,              data->GUI.MI_COLORED, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+         DoMethod(data->GUI.MI_BOLD,    MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_BOLD, winnum);
+         DoMethod(data->GUI.MI_ITALIC,  MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_ITALIC, winnum);
+         DoMethod(data->GUI.MI_UNDERLINE, MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_UNDERLINE, winnum);
+         DoMethod(data->GUI.MI_COLORED, MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_COLOR, winnum);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,0             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,FALSE);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,1             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,TRUE);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,2             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,TRUE);

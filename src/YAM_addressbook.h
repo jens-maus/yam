@@ -29,7 +29,6 @@
 ***************************************************************************/
 
 #include <mui/NListtree_mcc.h>
-#include <mui/Toolbar_mcc.h>
 
 #include "SDI_compiler.h"
 #include "YAM_addressbookEntry.h"
@@ -59,13 +58,11 @@ enum AddressbookFind { ABF_USER=0, ABF_RX, ABF_RX_NAME, ABF_RX_EMAIL, ABF_RX_NAM
 
 struct AB_GUIData
 {
-   Object *WI;
-   Object *TO_TOOLBAR;
-   Object *LV_ADDRESSES;
-   Object *BT_TO;
-   Object *BT_CC;
-   Object *BT_BCC;
-   struct MUIP_Toolbar_Description TB_TOOLBAR[13];
+  Object *WI;
+  Object *LV_ADDRESSES;
+  Object *BT_TO;
+  Object *BT_CC;
+  Object *BT_BCC;
 };
  
 struct AB_ClassData  /* address book window */
@@ -83,6 +80,11 @@ extern struct Hook AB_DeleteHook;
 extern struct Hook AB_LV_DspFuncHook;
 extern struct Hook AB_OpenHook;
 extern struct Hook AB_SaveABookHook;
+extern struct Hook AB_FindHook;
+extern struct Hook AB_AddEntryHook;
+extern struct Hook AB_EditHook;
+extern struct Hook AB_PrintHook;
+extern struct Hook AB_FoldUnfoldHook;
 
 STRPTR AB_PrettyPrintAddress (struct ABEntry *e);
 STRPTR AB_PrettyPrintAddress2 (STRPTR realname, STRPTR address);

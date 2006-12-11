@@ -40,6 +40,7 @@
 #include <mui/NListview_mcc.h>
 #include <mui/NFloattext_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#include <mui/TheBar_mcc.h>
 #include <proto/amissl.h>
 #include <proto/amisslmaster.h>
 #include <proto/codesets.h>
@@ -1304,7 +1305,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
         CloseLibrary(base);
 
         // we add some additional check here so that eventual broken .mcc also have
-        // a chance to pass this test (i.e. Toolbar.mcc is broken)
+        // a chance to pass this test (e.g. _very_ old versions of Toolbar.mcc are broken)
         if (ver > minver || (ver == minver && rev >= minrev))
         {
           D(DBF_STARTUP, "%s v%ld.%ld found through OpenLibrary()", name, ver, rev);
@@ -1786,11 +1787,8 @@ static void Initialise(BOOL hidden)
    INITLIB("application.library", 50, 0, &ApplicationBase, "application", &IApplication, FALSE, NULL);
    #endif
 
-   // Lets check for the correct Toolbar.mcc version (minimum 15.12 because earlier versions are too buggy)
-   CheckMCC(MUIC_Toolbar, 15, 12, TRUE, "http://www.sf.net/projects/toolbar-mcc/");
-
-   // Lets check for the correct TextEditor.mcc version
-   CheckMCC(MUIC_TextEditor, 15, 19, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
+   // Lets check for the correct TheBar.mcc version
+   CheckMCC(MUIC_TheBar, 20, 5, TRUE, "http://www.sf.net/projects/thebar/");
 
    // Lets check for the correct BetterString.mcc version
    CheckMCC(MUIC_BetterString, 11, 8, TRUE, "http://www.sf.net/projects/bstring-mcc/");
@@ -1807,6 +1805,9 @@ static void Initialise(BOOL hidden)
    // we make v18.23 the minimum requirement for YAM because earlier versions are
    // buggy
    CheckMCC(MUIC_NListtree, 18, 23, TRUE, "http://www.sf.net/projects/nlist-classes/");
+
+   // Lets check for the correct TextEditor.mcc version
+   CheckMCC(MUIC_TextEditor, 15, 19, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
 
    // now we search through PROGDIR:Charsets and load all user defined
    // codesets via codesets.library

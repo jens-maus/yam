@@ -4,16 +4,29 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-12-10  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: finalized the first working version which uses TheBar.mcc instead
+    of the old and obsolete Toolbar.mcc. Now YAM fully uses TheBar.mcc for
+    every window toolbar. However, please note that the Key Qualifiers are
+    currently not working with TheBar.mcc as a qualifier check is not yet
+    implemented in TheBar.mcc. So this is work in progress. In addition,
+    the new Toolbar classes currently still use the PROGDIR:Icons directory
+    whereas that will soonish change. So you have been warned!
+  * locale/YAM.cd: rephrased some text passages and added hotkey shortcuts
+    to the recently added requester buttons.
+  * YAM_WR.c: added the missing "Search" menu item and changed the shortcut
+    for it to match the same for starting a search in the main window. Please
+    note that for attaching a file the shortcut had to be changed and is
+    now RAmiga+A instead of RAmiga+F.
+  * YAM_FO.c, YAM_gloabal.c, YAM_folderconfig.h, YAM_global.h: moved the 
+    FolderName array to YAM_FO.c to avoid Library base definition problems
+    accross platforms.
+
 2006-12-10  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: updated according to the latest changes.
     And some minor word and phrase changes.
-
-2006-12-10  Jens Langner <Jens.Langner@light-speed.de>
-
-  * YAM_FO.c, YAM_gloabal.c, YAM_folderconfig.h, YAM_global.h: moved the 
-    FolderName array to YAM_FO.c to avoid Library base definition problems
-    accross platforms.
 
 2006-12-10  Alexandre Balaban <abalaban@free.fr>
 
@@ -21,6 +34,8 @@ $Id$
 
 2006-12-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * locale/italiano.ct: updated italian catalog translation kindly provided
+    by Luca Longone.
   * YAM_folderconfig.h, misc: the "isSpamFolder()" macro now generally also
     checks the "C->SpamFilerEnabled" variable which seems to be more
     appropriate. So if the Spam functionality is generally disabled, that

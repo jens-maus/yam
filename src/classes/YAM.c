@@ -380,7 +380,7 @@ OVERLOAD(OM_NEW)
   // names of the used classes within. This array is only usefull if MUI v20
   // is used and the user wants to alter the MUI settings of the application
   static const char *Classes[] = { "TextEditor.mcc",
-                                   "Toolbar.mcc",
+                                   "TheBar.mcc",
                                    "BetterString.mcc",
                                    "NListtree.mcc",
                                    "NList.mcc",

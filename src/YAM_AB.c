@@ -534,7 +534,7 @@ HOOKPROTONHNONP(AB_EditFunc, void)
       if (winnum >= 0) EA_Setup(winnum, ab);
    }
 }
-MakeStaticHook(AB_EditHook, AB_EditFunc);
+MakeHook(AB_EditHook, AB_EditFunc);
 
 ///
 /// AB_DoubleClick
@@ -813,7 +813,7 @@ HOOKPROTONHNONP(AB_PrintFunc, void)
       }
    }
 }
-MakeStaticHook(AB_PrintHook, AB_PrintFunc);
+MakeHook(AB_PrintHook, AB_PrintFunc);
 
 ///
 /// AB_AddEntryFunc
@@ -822,7 +822,7 @@ HOOKPROTONHNO(AB_AddEntryFunc, void, int *arg)
 {
    EA_Init(*arg, NULL);
 }
-MakeStaticHook(AB_AddEntryHook, AB_AddEntryFunc);
+MakeHook(AB_AddEntryHook, AB_AddEntryFunc);
 
 ///
 /// AB_DeleteFunc
@@ -989,7 +989,25 @@ HOOKPROTONHNONP(AB_FindFunc, void)
 
   LEAVE();
 }
-MakeStaticHook(AB_FindHook, AB_FindFunc);
+MakeHook(AB_FindHook, AB_FindFunc);
+
+///
+/// AB_FoldUnfoldFunc
+HOOKPROTONHNO(AB_FoldUnfoldFunc, void, int *arg)
+{
+  ENTER();
+
+  if(G->AB->GUI.LV_ADDRESSES)
+  {
+    if(*arg <= 0)
+      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Root, MUIV_NListtree_Open_TreeNode_All, MUIF_NONE);
+    else
+      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Close, MUIV_NListtree_Close_ListNode_Root, MUIV_NListtree_Close_TreeNode_All, MUIF_NONE);
+  }
+
+  LEAVE();
+}
+MakeHook(AB_FoldUnfoldHook, AB_FoldUnfoldFunc);
 
 ///
 /// AB_OpenFunc
@@ -1248,6 +1266,8 @@ struct AB_ClassData *AB_New(void)
    struct AB_ClassData *data = calloc(1, sizeof(struct AB_ClassData));
    if (data)
    {
+      Object *list;
+
       enum {
         AMEN_NEW,AMEN_OPEN,AMEN_APPEND,AMEN_SAVE,AMEN_SAVEAS,AMEN_PRINTA,
         AMEN_FIND,AMEN_NEWUSER,AMEN_NEWLIST,AMEN_NEWGROUP,AMEN_EDIT,
@@ -1255,31 +1275,6 @@ struct AB_ClassData *AB_New(void)
         AMEN_SORTLNAME,AMEN_SORTFNAME,AMEN_SORTDESC,AMEN_SORTADDR,
         AMEN_FOLD,AMEN_UNFOLD
       };
-
-      static const struct NewToolbarEntry tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
-        { MSG_AB_TBSave,      MSG_HELP_AB_BT_SAVE     },
-        { MSG_AB_TBFind,      MSG_HELP_AB_BT_SEARCH   },
-        { MSG_Space,          NULL                    },
-        { MSG_AB_TBNewUser,   MSG_HELP_AB_BT_ADDUSER  },
-        { MSG_AB_TBNewList,   MSG_HELP_AB_BT_ADDMLIST },
-        { MSG_AB_TBNewGroup,  MSG_HELP_AB_BT_ADDGROUP },
-        { MSG_AB_TBEdit,      MSG_HELP_AB_BT_EDIT     },
-        { MSG_AB_TBDelete,    MSG_HELP_AB_BT_DELETE,  },
-        { MSG_AB_TBPrint,     MSG_HELP_AB_BT_PRINT,   },
-        { MSG_Space,          NULL                    },
-        { MSG_AB_TBOpenTree,  MSG_HELP_AB_BT_OPEN     },
-        { MSG_AB_TBCloseTree, MSG_HELP_AB_BT_CLOSE    },
-        { NULL              , NULL                    }
-      };
-      APTR list;
-      ULONG i;
-
-      for(i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
-      {
-        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]),
-                     tb_butt[i].label ? (tb_butt[i].label==MSG_Space ? "" : GetStr(tb_butt[i].label)) : NULL,
-                     tb_butt[i].help ? GetStr(tb_butt[i].help) : NULL, 0);
-      }
 
       data->GUI.WI = WindowObject,
          MUIA_HelpNode,"AB_W",
@@ -1338,18 +1333,7 @@ struct AB_ClassData *AB_New(void)
                      Child, HVSpace,
                   End,
                   Child, MUI_MakeObject(MUIO_VBar, 12),
-                  Child, HGroupV,
-                     Child, data->GUI.TO_TOOLBAR = ToolbarObject,
-                        MUIA_Toolbar_ImageType,      MUIV_Toolbar_ImageType_File,
-                        MUIA_Toolbar_ImageNormal,    "PROGDIR:Icons/Address.toolbar",
-                        MUIA_Toolbar_ImageGhost,     "PROGDIR:Icons/Address_G.toolbar",
-                        MUIA_Toolbar_ImageSelect,    "PROGDIR:Icons/Address_S.toolbar",
-                        MUIA_Toolbar_Description,    data->GUI.TB_TOOLBAR,
-                        MUIA_Toolbar_ParseUnderscore,TRUE,
-                        MUIA_Font,                   MUIV_Font_Tiny,
-                        MUIA_ShortHelp, TRUE,
-                     End,
-                     Child, HSpace(0),
+                  Child, AddrBookToolbarObject,
                   End,
                End),
 
@@ -1381,45 +1365,31 @@ struct AB_ClassData *AB_New(void)
         SetHelp(data->GUI.BT_CC ,MSG_HELP_AB_BT_CC );
         SetHelp(data->GUI.BT_BCC,MSG_HELP_AB_BT_BCC);
 
-        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_NEW      ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_NewABookHook,0);
-        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_OPEN     ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_OpenABookHook,0);
-        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_APPEND   ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_AppendABookHook,0);
-        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_SAVE     ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_SaveABookHook,0);
-        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_SAVEAS   ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_SaveABookAsHook,0);
-        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_PRINTA   ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_PrintABookHook,0);
+        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_NEW      ,MUIV_Notify_Application,2,MUIM_CallHook,&AB_NewABookHook);
+        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_OPEN     ,MUIV_Notify_Application,2,MUIM_CallHook,&AB_OpenABookHook);
+        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_APPEND   ,MUIV_Notify_Application,2,MUIM_CallHook,&AB_AppendABookHook);
+        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_SAVE     ,MUIV_Notify_Application,2,MUIM_CallHook,&AB_SaveABookHook);
+        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_SAVEAS   ,MUIV_Notify_Application,2,MUIM_CallHook,&AB_SaveABookAsHook);
+        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_PRINTA   ,MUIV_Notify_Application,2,MUIM_CallHook,&AB_PrintABookHook);
         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_NEWUSER  ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_AddEntryHook,AET_USER);
         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_NEWLIST  ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_AddEntryHook,AET_LIST);
         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_NEWGROUP ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_AddEntryHook,AET_GROUP);
-        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_EDIT     ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_EditHook,0);
-        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_DUPLICATE,MUIV_Notify_Application,3,MUIM_CallHook,&AB_DuplicateHook,0);
-        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_DELETE   ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_DeleteHook,0);
-        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_PRINTE   ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_PrintHook,0);
-        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_FIND     ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_FindHook,0);
+        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_EDIT     ,MUIV_Notify_Application,2,MUIM_CallHook,&AB_EditHook);
+        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_DUPLICATE,MUIV_Notify_Application,2,MUIM_CallHook,&AB_DuplicateHook);
+        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_DELETE   ,MUIV_Notify_Application,2,MUIM_CallHook,&AB_DeleteHook);
+        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_PRINTE   ,MUIV_Notify_Application,2,MUIM_CallHook,&AB_PrintHook);
+        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_FIND     ,MUIV_Notify_Application,2,MUIM_CallHook,&AB_FindHook);
         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_SORTALIAS,MUIV_Notify_Application,3,MUIM_CallHook,&AB_SortHook,0);
         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_SORTLNAME,MUIV_Notify_Application,3,MUIM_CallHook,&AB_SortHook,1);
         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_SORTFNAME,MUIV_Notify_Application,3,MUIM_CallHook,&AB_SortHook,2);
         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_SORTDESC ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_SortHook,3);
         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_SORTADDR ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_SortHook,4);
-        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_FOLD     ,data->GUI.LV_ADDRESSES,4,MUIM_NListtree_Close ,NULL,MUIV_NListtree_Close_TreeNode_All, MUIF_NONE);
-        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_UNFOLD   ,data->GUI.LV_ADDRESSES,4,MUIM_NListtree_Open  ,NULL,MUIV_NListtree_Open_TreeNode_All, MUIF_NONE);
+        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_FOLD     ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_FoldUnfoldHook, TRUE);
+        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_UNFOLD   ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_FoldUnfoldHook, FALSE);
         DoMethod(data->GUI.LV_ADDRESSES,MUIM_Notify,MUIA_NListtree_DoubleClick,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&AB_DoubleClickHook);
         DoMethod(data->GUI.BT_TO      ,MUIM_Notify,MUIA_Pressed    ,FALSE,MUIV_Notify_Application           ,3,MUIM_CallHook       ,&AB_FromAddrBookHook,ABM_TO);
         DoMethod(data->GUI.BT_CC      ,MUIM_Notify,MUIA_Pressed    ,FALSE,MUIV_Notify_Application           ,3,MUIM_CallHook       ,&AB_FromAddrBookHook,ABM_CC);
         DoMethod(data->GUI.BT_BCC     ,MUIM_Notify,MUIA_Pressed    ,FALSE,MUIV_Notify_Application           ,3,MUIM_CallHook       ,&AB_FromAddrBookHook,ABM_BCC);
-
-        if (data->GUI.TO_TOOLBAR)
-        {
-          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 0, MUIV_Toolbar_Notify_Pressed,FALSE,G->App,3,MUIM_CallHook,&AB_SaveABookHook,0);
-          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 1, MUIV_Toolbar_Notify_Pressed,FALSE,G->App,3,MUIM_CallHook,&AB_FindHook,0);
-          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 3, MUIV_Toolbar_Notify_Pressed,FALSE,G->App,3,MUIM_CallHook,&AB_AddEntryHook,AET_USER);
-          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 4, MUIV_Toolbar_Notify_Pressed,FALSE,G->App,3,MUIM_CallHook,&AB_AddEntryHook,AET_LIST);
-          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 5, MUIV_Toolbar_Notify_Pressed,FALSE,G->App,3,MUIM_CallHook,&AB_AddEntryHook,AET_GROUP);
-          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 6, MUIV_Toolbar_Notify_Pressed,FALSE,G->App,3,MUIM_CallHook,&AB_EditHook,0);
-          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 7, MUIV_Toolbar_Notify_Pressed,FALSE,G->App,3,MUIM_CallHook,&AB_DeleteHook,0);
-          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 8, MUIV_Toolbar_Notify_Pressed,FALSE,G->App,3,MUIM_CallHook,&AB_PrintHook,0);
-          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,10, MUIV_Toolbar_Notify_Pressed,FALSE,data->GUI.LV_ADDRESSES,4,MUIM_NListtree_Open  ,NULL,MUIV_NListtree_Open_TreeNode_All, MUIF_NONE);
-          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed,FALSE,data->GUI.LV_ADDRESSES,4,MUIM_NListtree_Close ,NULL,MUIV_NListtree_Close_TreeNode_All, MUIF_NONE);
-        }
 
         DoMethod(data->GUI.WI,MUIM_Notify,MUIA_Window_InputEvent   ,"-capslock del" ,MUIV_Notify_Application  ,2,MUIM_CallHook       ,&AB_DeleteHook);
         DoMethod(data->GUI.WI,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE ,MUIV_Notify_Application           ,2,MUIM_CallHook       ,&AB_CloseHook);

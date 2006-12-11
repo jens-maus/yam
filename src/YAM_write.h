@@ -28,8 +28,6 @@
 
 ***************************************************************************/
 
-#include <mui/Toolbar_mcc.h>
-
 #include "YAM_main.h"
 #include "YAM_stringsizes.h"
 
@@ -72,7 +70,10 @@ struct WR_GUIData
    Object *BT_QUEUE;
    Object *BT_SEND;
    Object *BT_CANCEL;
-   struct MUIP_Toolbar_Description TB_TOOLBAR[15];
+   Object *MI_BOLD;
+   Object *MI_ITALIC;
+   Object *MI_UNDERLINE;
+   Object *MI_COLORED;
 };
 
 struct WR_ClassData  /* write window */
@@ -84,10 +85,11 @@ struct WR_ClassData  /* write window */
 
   enum NewMode      Mode;
   int               OldSecurity;
+  int               winnum;       // the window number this class data belongs to
 
   char              MsgID[SIZE_MSGID];
   char              QuoteText[SIZE_DEFAULT];
-  char              AltQuoteText[SIZE_SMALL]; /* no variable substitution -> SIZE_SMALL! */
+  char              AltQuoteText[SIZE_SMALL]; // no variable substitution -> SIZE_SMALL!
   char              WTitle[SIZE_DEFAULT];
 };
 
@@ -156,6 +158,9 @@ struct Compose
    enum Security      OldSecurity;
 };
 
+// Soft-style modes for text
+enum SoftStyleMode { SSM_NORMAL, SSM_BOLD, SSM_ITALIC, SSM_UNDERLINE, SSM_COLOR };
+
 // flags & macros for the Receipt management
 #define RCPT_RETURN 1
 #define RCPT_MDN    2
@@ -164,6 +169,9 @@ struct Compose
 
 extern struct Hook WR_EditHook;
 extern struct Hook WR_NewMailHook;
+extern struct Hook WR_SetSoftStyleHook;
+extern struct Hook WR_SearchHook;
+extern struct Hook WR_EditorCmdHook;
 
 void  EmitHeader(FILE *fh, const char *hdr, const char *body);
 void  FreePartsList(struct WritePart *p);

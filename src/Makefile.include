@@ -54,6 +54,7 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/SearchControlGroup.o \
 	$(OBJDIR)/$(CLASSDIR)/AddrBookEntryList.o \
 	$(OBJDIR)/$(CLASSDIR)/AddrBookListtree.o \
+	$(OBJDIR)/$(CLASSDIR)/AddrBookToolbar.o \
 	$(OBJDIR)/$(CLASSDIR)/Addrmatchlist.o \
 	$(OBJDIR)/$(CLASSDIR)/Aboutwindow.o \
 	$(OBJDIR)/$(CLASSDIR)/AttachmentGroup.o \
@@ -61,6 +62,7 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/ConfigPageList.o \
 	$(OBJDIR)/$(CLASSDIR)/ReadMailGroup.o \
 	$(OBJDIR)/$(CLASSDIR)/ReadWindow.o \
+	$(OBJDIR)/$(CLASSDIR)/ReadWindowToolbar.o \
 	$(OBJDIR)/$(CLASSDIR)/Splashwindow.o \
 	$(OBJDIR)/$(CLASSDIR)/StatusIconGroup.o \
 	$(OBJDIR)/$(CLASSDIR)/UserImage.o \
@@ -69,8 +71,10 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/MainMailList.o \
 	$(OBJDIR)/$(CLASSDIR)/MainMailListGroup.o \
 	$(OBJDIR)/$(CLASSDIR)/MainWindow.o \
+	$(OBJDIR)/$(CLASSDIR)/MainWindowToolbar.o \
 	$(OBJDIR)/$(CLASSDIR)/InfoBar.o \
 	$(OBJDIR)/$(CLASSDIR)/WriteAttachmentList.o \
+	$(OBJDIR)/$(CLASSDIR)/WriteWindowToolbar.o \
 	$(OBJDIR)/$(CLASSDIR)/QuickSearchBar.o \
 	$(OBJDIR)/$(CLASSDIR)/ImageArea.o \
 	$(OBJDIR)/$(CLASSDIR)/TransferMailList.o \
