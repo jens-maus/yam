@@ -1369,9 +1369,35 @@ void CO_GetConfig(void)
                   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
                   // and finally save the modified tree to the folder config now
                   FO_SaveTree(CreateFilename(".folders"));
-                  // an update the statistics in case the spam folder contained new or unread mails
+                  // update the statistics in case the spam folder contained new or unread mails
                   DisplayStatistics(NULL, TRUE);
                 }
+              }
+            }
+            else
+            // the spam folder should be kept, but it must be "degraded" to a normal folder
+            // to make it deleteable later
+            {
+              struct Folder *spamFolder;
+
+              // first locate the spam folder
+              if((spamFolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
+              {
+                if(spamFolder->imageObject != NULL)
+                {
+                  // we make sure that the NList also doesn`t use the image in future anymore
+                  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
+                  spamFolder->imageObject = NULL;
+                  // we don't need to dispose the image, because it is one of the standard images and not
+                  // a custom image of the user.
+                }
+                // degrade it to a custom folder without folder image
+                spamFolder->Type = FT_CUSTOM;
+                spamFolder->ImageIndex = -1;
+                // finally save the modified configuration
+                FO_SaveConfig(spamFolder);
+                // update the statistics in case the spam folder contained new or unread mails
+                DisplayStatistics(NULL, TRUE);
               }
             }
           }
