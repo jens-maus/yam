@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.8 (09.12.06)
+## version $VER: YAM.ct 6.9 (11.12.06)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -706,8 +706,8 @@ S_ök
 ;#DEF _Find
 ;#SET (195//)
 MSG_MA_TBAddrBook
-_Adr.
-;#DEF _Addr
+_Abok
+;#DEF _Abook
 ;#SET (196//)
 MSG_MA_TBConfig
 Ins_t.
@@ -6614,12 +6614,12 @@ Laddar träningsdata för skräppost...
 ;#DEF Loading spam training data...
 ;#SET (1745//)
 MSG_MA_TBSPAM
-Skräp.
-;#DEF Spam
+Skräp
+;#DEF S_pam
 ;#SET (1746//)
 MSG_MA_TBNOTSPAM
-Ej skräp.
-;#DEF Not Spam
+Ej skräp
+;#DEF N_otSpam
 ;#SET (1747//)
 MSG_HELP_MA_BT_SPAM
 Markera brev som skräppost
@@ -6630,11 +6630,11 @@ Markera brev som ej skräppost
 ;#DEF Mark mail as not spam
 ;#SET (1749//)
 MSG_RE_TBSPAM
-Skräp.
+Skräp
 ;#DEF Spam
 ;#SET (1750//)
 MSG_RE_TBNOTSPAM
-Ej skräp.
+Ej skräp
 ;#DEF Not Spam
 ;#SET (1751//)
 MSG_HELP_RE_BT_SPAM
@@ -6734,8 +6734,8 @@ Aktivera skräppostfilter
 ;#DEF Spam filter enabled
 ;#SET (1775//)
 MSG_CO_SPAM_RESETTRAININGDATAASK
-Vill du verkligen nollställa skräppostfiltrets\nträningsdata?\n\nSkräppostfiltret måste tränas igen efteråt!
-;#DEF Do you really want to reset the spam filter's\ntraining data?\n\nThe spam filter must be trained again afterwards!
+Vill du verkligen nollställa skräppostfiltrets\nträningsdata?\n\nSkräppostfiltret måste tränas igen efteråt.
+;#DEF Do you really want to reset the spam filter's\ntraining data?\n\nThe spam filter must be trained again afterwards.
 ;#SET (1776//)
 MSG_TR_CHECKUIDL
 Kontrollerar UIDL'er för att undvika dubbletter...
@@ -6790,12 +6790,12 @@ SMTP-servern '%s' verkar inte stödja den valda SMTP-AUTH metoden.\n\nVar god ver
 ;#DEF The SMTP server '%s' doesn't seem to support the selected SMTP-AUTH method.\n\nPlease verify with your provider which authentication methods are available and how to configure them in your mail client.
 ;#SET (1790//)
 MSG_ER_SPAMDIR_EXISTS
-Katalogen \"spam\" existerar redan!\n\nVill du använda denna katalog som standard för skräppost\neller vill du avaktivera skräppostfiltret?
-;#DEF The directory \"spam\" already exists!\n\nDo you want to use this directory as the standard spam folder\nor do you want to disable the spam filter?
+Vid försök att skapa en ny skräppostmapp, så har YAM\nhittat en redan existerande skräppostmapp.\n\nHur vill du använda denna mapp som standardmapp\nför skräppost?
+;#DEF While trying to create a new spam folder, YAM found that\nthere seems to already exists a folder name 'spam'.\n\nHow do you want to use this directory as the standard\nspam folder?
 ;#SET (1791//)
 MSG_ER_SPAMDIR_EXISTS_ANSWERS
-Rensa och anv. som skräpp.mapp|Anv. som skräpp.mapp|Avaktiv. skräpp.filter
-;#DEF Clear and use as spam folder|Use as spam folder|Disable spam filter
+_Rensa&använd|_Använd|*A_vbryt
+;#DEF _Cleanup&Use|_Use|*_Cancel
 ;#SET (1792//)
 MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER
 Kunde inte skapa standard mappen för skräppost!\n\nSkräppostfiltret har avaktiverats igen.\nVar god kontrollera att det finns tillräckligt\nmed utrymme och att enheten inte är skrivskyddad.
@@ -6821,3 +6821,7 @@ MSG_MA_TRASH
 Borttaget
 ;#DEF Trash
 ;#SET (1798//)
+MSG_WR_SEARCH
+Sök
+;#DEF Search
+;#SET (1799//)

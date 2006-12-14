@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-12-14  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: Small update.
+
 2006-12-11  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COs.c: if the spam filter has been disabled but the user chose to keep
