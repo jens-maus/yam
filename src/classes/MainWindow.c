@@ -80,6 +80,8 @@ DECLARE(DisposeSubWindow) // Object *win
 {
   ENTER();
 
+  D(DBF_GUI, "Dispose subwindow: %08lx", msg->win);
+
   set(msg->win, MUIA_Window_Open, FALSE);
   DoMethod(G->App, OM_REMMEMBER, msg->win);
   MUI_DisposeObject(msg->win);

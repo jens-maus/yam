@@ -3693,7 +3693,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
     // clean up the read window now
     if(rmData->readWindow != NULL)
     {
-      D(DBF_MAIL, "cleaning up readwindow");
+      D(DBF_GUI, "cleaning up readwindow");
       DoMethod(G->App, OM_REMMEMBER, rmData->readWindow);
       MUI_DisposeObject(rmData->readWindow);
       rmData->readWindow = NULL;

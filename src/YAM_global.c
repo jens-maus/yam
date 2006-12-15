@@ -72,7 +72,8 @@ static const char USED_VAR yam_stack_size[] = "$STACK:65536\n";  // Shell v45 an
 #elif defined(_M68000) || defined(__M68000) || defined(__mc68000)
   #define CPU " [68k]"
 #else
-  #error "Unsupported CPU model - check compiler defines"
+  #warning "Unsupported CPU model - check compiler defines"
+  #define CPU " [???]"
 #endif
 
 // for defining the actual version of YAM and mapping it

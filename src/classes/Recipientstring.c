@@ -138,7 +138,7 @@ OVERLOAD(OM_DISPOSE)
 
   if(data->Matchwindow)
   {
-    D(DBF_GUI, "Dispose addrlistpopup: %lx", data->Matchwindow);
+    D(DBF_GUI, "Dispose addrlistpopup: %08lx", data->Matchwindow);
 
     // we know that _app(obj) is documented as only valid in
     // MUIM_Cleanup/Setup, but these two methods are also called

@@ -4722,20 +4722,34 @@ BOOL SafeOpenWindow(Object *obj)
 // Free resources of a MUI window
 void DisposeModule(void *modptr)
 {
-   struct UniversalClassData **module = (struct UniversalClassData **)modptr;
-   if (*module)
-   {
-      APTR window = (*module)->GUI.WI;
-      set(window, MUIA_Window_Open, FALSE);
-      DoMethod(G->App, OM_REMMEMBER, window);
-      MUI_DisposeObject(window);
-      free(*module);
-      *module = NULL;
-   }
+  struct UniversalClassData **module = (struct UniversalClassData **)modptr;
+
+  ENTER();
+
+  if(*module)
+  {
+    Object *window = (*module)->GUI.WI;
+
+    D(DBF_GUI, "removing window from app: %08lx", window);
+
+    // close the window
+    set(window, MUIA_Window_Open, FALSE);
+
+    // remove the window from our app
+    DoMethod(G->App, OM_REMMEMBER, window);
+
+    // dispose the window object
+    MUI_DisposeObject(window);
+
+    free(*module);
+    *module = NULL;
+  }
+
+  LEAVE();
 }
 HOOKPROTONHNO(DisposeModuleFunc, void, void **arg)
 {
-   DisposeModule(arg[0]);
+  DisposeModule(arg[0]);
 }
 MakeHook(DisposeModuleHook,DisposeModuleFunc);
 ///
