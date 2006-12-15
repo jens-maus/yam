@@ -6,6 +6,10 @@ $Id$
 
 2006-12-15  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c, YAM_MAf.c: fixed an issue with the busy gauge cancelation
+    while index rescanning. Previously the gauge had to be canceled twice
+    due to an immediate folder refresh after the aborted index rescan. Now
+    the whole GUI items will be disabled and cleared instead.
   * Makefile.aros: added a first simple makefile for trying to get YAM
     natively compiled for AROS one day. :) However, it doesn't compile at
     all yet and more work has to be put into getting YAM ported to AROS.

@@ -438,12 +438,12 @@ BOOL MA_GetIndex(struct Folder *folder)
         if(folder->LoadedMode == LM_VALID)
         {
           MA_ValidateStatus(folder);
-
-          if(G->MA)
-            DisplayStatistics(folder, FALSE);
         }
         else
           W(DBF_MAIL, "status of loaded folder != LM_VALID (%ld)", folder->LoadedMode);
+
+        if(G->MA)
+          DisplayStatistics(folder, FALSE);
       }
       else
         W(DBF_MAIL, "password of protected folder couldn't be verified!");
@@ -1876,9 +1876,34 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
     return FALSE;
   }
 
-  // make sure others notice that a index scanning already
+  // make sure others notice that an index scanning already
   // runs
   alreadyScanning = TRUE;
+
+  // now we make sure some GUI components will be disabled
+  // or cleared if the rescanning folder is the current one
+  if(FO_GetCurrentFolder() == folder)
+  {
+    struct MA_GUIData *gui = &G->MA->GUI;
+
+    // before we go and rebuild the index of the folder we make
+    // sure all major GUI components of it are disabled for the
+    // time being...
+    set(gui->PG_MAILLIST, MUIA_Disabled, TRUE);
+    DoMethod(gui->PG_MAILLIST, MUIM_NList_Clear);
+
+    // and now we also make sure an eventually enabled preview pane
+    // is disabled as well.
+    if(C->QuickSearchBar)
+      set(gui->GR_QUICKSEARCHBAR, MUIA_Disabled, TRUE);
+
+    // also set an embedded read pane as disabled.
+    if(C->EmbeddedReadPane)
+    {
+      DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, FALSE);
+      set(gui->MN_EMBEDDEDREADPANE, MUIA_Disabled, TRUE);
+    }
+  }
 
   BusyGaugeInt(GetStr(MSG_BusyScanning), folder->Name, filecount-1);
   ClearMailList(folder, TRUE);

@@ -3439,31 +3439,28 @@ MakeHook(MA_DeleteSpamHook, MA_DeleteSpamFunc);
 //  Updates index of current folder
 HOOKPROTONHNONP(MA_RescanIndexFunc, void)
 {
-   struct Folder *folder = FO_GetCurrentFolder();
+  struct Folder *folder = FO_GetCurrentFolder();
 
-   // on groups we don't allow any index rescanning operation
-   if(!folder || isGroupFolder(folder))
-     return;
+  ENTER();
 
-   // we make sure that the Listview is disabled before the
-   // rescan takes place. This makes sure that the user can`t play around
-   // with some strange data.. ;)
-   set(G->MA->GUI.PG_MAILLIST, MUIA_Disabled, TRUE);
+  // on groups we don't allow any index rescanning operation
+  if(folder && !isGroupFolder(folder))
+  {
+    // we start a rescan by expiring the current index and issueing
+    // a new MA_GetIndex(). That will also cause the GUI to refresh!
+    folder->LoadedMode = LM_UNLOAD;
 
-   // make sure we clear the NList previous to our index rescanning
-   // or we risk that it still refers to some free data.
-   DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Clear);
+    MA_ExpireIndex(folder);
+    if(MA_GetIndex(folder))
+    {
+      // if we are still in the folder we wanted to rescan,
+      // we can refresh the list.
+      if(folder == FO_GetCurrentFolder())
+        MA_ChangeFolder(NULL, FALSE);
+    }
+  }
 
-   // we start a rescan by expiring the current index and issueing
-   // a new MA_GetIndex(). That will also cause the GUI to refresh!
-   folder->LoadedMode = LM_UNLOAD;
-   MA_ExpireIndex(folder);
-   MA_GetIndex(folder);
-
-   // if we are still in the folder we wanted to rescan,
-   // we can refresh the list.
-   if(folder == FO_GetCurrentFolder())
-     MA_ChangeFolder(NULL, FALSE);
+  LEAVE();
 }
 MakeHook(MA_RescanIndexHook, MA_RescanIndexFunc);
 
