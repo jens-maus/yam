@@ -250,7 +250,7 @@ int base64encode(char *to, const unsigned char *from, unsigned int len)
 ///
 /// base64decode()
 // optimized base64 decoding function returning the length of the
-// decoded string or 0 on an occurred error or a minus integer as
+// decoded string or 0 on an occurred error or a minus length integer as
 // an indicator of a short count in the encoded string. The source
 // string doesn`t have to be NUL-terminated and only 'len' characters
 // are going to be decoded. The decoding also stops as soon as the
@@ -266,9 +266,7 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
     len--;
     x = *fromp++;
     if(x > 127 || (x = index_64[x]) == 255)
-    {
       return 0;
-    }
 
     if((y = *fromp++) == '\0' ||
        y > 127 || (y = index_64[y]) == 255)
@@ -285,9 +283,7 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
       if((x = *fromp++) == '=')
       {
         if((len > 0 && *fromp++ != '='))
-        {
           return 0;
-        }
 
         len--;
 
@@ -298,9 +294,7 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
       else
       {
         if(x > 127 || (x = index_64[x]) == 255)
-        {
           return 0;
-        }
 
         *top++ = (y << 4) | (x >> 2);
         if(len > 0)
@@ -315,9 +309,7 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
           else
           {
             if (y > 127 || (y = index_64[y]) == 255)
-            {
               return 0;
-            }
 
             *top++ = (x << 6) | y;
           }
@@ -326,14 +318,17 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
     }
   }
 
-  *top = 0;
-  if(len > 0)
-  {
-    // return -len to signal a short count
-    return -(int)len;
-  }
+  // make sure the string is
+  // NUL-terminated
+  *top = '\0';
 
-  return top - to;
+  // if len is still > 0 it is a sign that the
+  // base64 decoding aborted. So we return a minus
+  // value to signal that short item count.
+  if(len > 0)
+    return -(top-to);
+  else
+    return top-to;
 }
 
 ///
@@ -663,7 +658,7 @@ long base64decode_file(FILE *in, FILE *out,
         // at least display the text to the user we redefine the outLength and
         // let the write function output that string (even if not correctly
         // decoded)
-        outLength = read+outLength;
+        outLength = -outLength;
 
         problemDuringDecode = TRUE;
       }
@@ -675,10 +670,11 @@ long base64decode_file(FILE *in, FILE *out,
         return -1;
       }
     }
+
     #if defined(DEBUG)
-    else if(outLength > B64DEC_BUF/4*3)
+    if(outLength > B64DEC_BUF/4*3)
     {
-      E(DBF_MIME, "Error: outbuffer has been overwritten by base64decode()!!!");
+      E(DBF_MIME, "Error: outLength exceeds outbuffer boundaries!");
 
       RETURN(-1);
       return -1;
@@ -748,7 +744,7 @@ long base64decode_file(FILE *in, FILE *out,
         }
         else
         {
-          // if no translation table is given lets copy
+          // if no CRLF is found, lets copy
           // the plain character
           *wc = *rc;
 
@@ -2435,6 +2431,7 @@ static int rfc2047_decode_int(const char *text,
         case 'b':
         {
           int res = base64decode(enctext, (unsigned char *)enctext, strlen(enctext));
+
           if(res > 0)
             enctext[res] = '\0';
           else

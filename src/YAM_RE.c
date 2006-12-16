@@ -1503,7 +1503,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
     // process a base64 decoding.
     case ENC_B64:
     {
-      long decoded = base64decode_file(in, out, sourceCodeset, rp->Printable);
+      int decoded = base64decode_file(in, out, sourceCodeset, rp->Printable);
       D(DBF_MAIL, "base64 decoded %ld bytes of part %ld.", decoded, rp->Nr);
 
       if(decoded > 0)

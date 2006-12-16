@@ -6,6 +6,9 @@ $Id$
 
 2006-12-16  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MI.c: fixed bug #1610171 where it happend that on broken base64
+    encoded mails YAM did end up in a buffer overrun which might have
+    ended up in a crash.
   * MainFolderListtree.c: fixed bug #1615279 where upon a right click in
     an empty folder listtree area an illegal memory access caused a crash.
 
