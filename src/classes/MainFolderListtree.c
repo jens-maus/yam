@@ -308,7 +308,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 
   // depending on the folder we have to append some additional
   // menu items or not.
-  if(isTrashFolder(folder) || isSpamFolder(folder))
+  if(folder && (isTrashFolder(folder) || isSpamFolder(folder)))
   {
     Object *newItem;
 
