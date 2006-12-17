@@ -54,7 +54,9 @@ enum DateStampType { DSS_DATE, DSS_TIME, DSS_WEEKDAY, DSS_DATETIME,
 enum TZConvert { TZC_NONE, TZC_UTC, TZC_LOCAL };
 
 enum ReqFileType { ASL_ABOOK=0, ASL_CONFIG, ASL_DETACH, ASL_ATTACH,
-  ASL_REXX, ASL_PHOTO, ASL_IMPORT, ASL_EXPORT, ASL_FOLDER };
+  ASL_REXX, ASL_PHOTO, ASL_IMPORT, ASL_EXPORT, ASL_FOLDER,
+  ASL_ABOOK_LDIF, ASL_ABOOK_CSV, ASL_ABOOK_TAB,
+  ASL_MAX };
 
 enum OutputDefType { OUT_DOS=0, OUT_NIL };
 
@@ -69,7 +71,7 @@ enum SizeFormat { SF_DEFAULT=0, // format sizes in old-style   1,234,567 (bytes)
                 };
 
 struct Person
-{       
+{
    char Address[SIZE_ADDRESS];
    char RealName[SIZE_REALNAME];
 };
