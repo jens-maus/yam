@@ -1539,7 +1539,7 @@ char *GetLine(FILE *fh, char *buffer, int bufsize)
 
   // now return the buffer.
   return buffer;
-}       
+}
 
 ///
 /// FileExists
@@ -2165,7 +2165,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
                              const char *drawer, const char *file)
 {
   // the following arrays depend on the ReqFileType enumeration
-  static const char *acceptPattern[MAXASL] =
+  static const char *acceptPattern[ASL_MAX] =
   {
     "#?.addressbook#?",               // ASL_ABOOK
     "#?.config#?",                    // ASL_CONFIG
@@ -2175,9 +2175,11 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
     "#?.(gif|jpg|jpeg|png|iff|ilbm)", // ASL_PHOTO
     "#?.((mbx|eml|dbx|msg)|#?,#?)",   // ASL_IMPORT
     "#?.mbx",                         // ASL_EXPORT
-    NULL                              // ASL_FOLDER
+    NULL,                             // ASL_FOLDER
+    "#?.(ldif|ldi)",                  // ASL_ABOOK_LIF
+    "#?.csv",                         // ASL_ABOOK_CSV
+    "#?.(tab|txt)",                   // ASL_ABOOK_TAB
   };
-
 
   struct FileRequester *fileReq;
   struct FileReqCache *result = NULL;

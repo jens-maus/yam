@@ -61,7 +61,6 @@
 #define MAX_IMAGES      (MAX_STATUSIMG+MAX_FOLDERIMG+MAX_CFGIMG)
 
 #define MAXICONS         4
-#define MAXASL           9
 #define MAXERR          50
 #define MAXUSERS        16
 #define MAXCTYPE        25

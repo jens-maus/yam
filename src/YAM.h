@@ -73,7 +73,7 @@ struct Global
    struct MsgPort *         AppPort;
    struct RexxHost *        RexxHost;
    struct DiskObject *      DiskObj[MAXICONS];
-   struct FileReqCache *    FileReqCache[MAXASL];
+   struct FileReqCache *    FileReqCache[ASL_MAX];
    struct Locale *          Locale;
    struct Catalog *         Catalog;
    struct MA_ClassData *    MA;

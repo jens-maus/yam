@@ -1076,7 +1076,7 @@ static void Terminate(void)
     DisposeModule(&G->MA);
 
   D(DBF_STARTUP, "freeing FileReqCache structures...");
-  for(i=0; i < MAXASL; i++)
+  for(i = 0; i < ASL_MAX; i++)
   {
     struct FileReqCache *frc;
 
@@ -1095,7 +1095,7 @@ static void Terminate(void)
       {
         int j;
 
-        for(j=0; j < frc->numArgs; j++)
+        for(j = 0; j < frc->numArgs; j++)
           free(frc->argList[j]);
 
         free(frc->argList);
@@ -1920,7 +1920,7 @@ static void Initialise(BOOL hidden)
      Abort(MSG_ErrorTimer);
 
    // initialize our ASL FileRequester cache stuff
-   for(i=0; i < MAXASL; i++)
+   for(i = 0; i < ASL_MAX; i++)
    {
      if((G->FileReqCache[i] = calloc(sizeof(struct FileReqCache), 1)) == NULL)
        Abort(NULL);
