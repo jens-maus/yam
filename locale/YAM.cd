@@ -6076,3 +6076,24 @@ Trash
 MSG_WR_SEARCH (1799//)
 Search
 ;
+MSG_AB_IMPORT (1800//)
+Import
+;
+MSG_AB_EXPORT (1801//)
+Export
+;
+MSG_AB_LDIF (1802//)
+LDIF address book (*.ldif)
+;
+MSG_AB_CSV (1803//)
+Comma separated values (*.csv)
+;
+MSG_AB_TAB (1804//)
+TAB separated values (*.tab)
+;
+MSG_ER_ADDRBOOKIMPORT (1805//)
+Could not import address book \"%s\".
+;
+MSG_ER_ADDRBOOKEXPORT (1806//)
+Could not export address book \"%s\".
+;
