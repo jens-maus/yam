@@ -137,7 +137,7 @@ static Object *LoadDTImage(char *filename, const struct Screen *scr)
     {
       if(DoMethod(o, DTM_PROCLAYOUT, NULL, 1))
       {
-        D(DBF_STARTUP, "successfully loaded/processed image file '%s' (0x%08lx)", filename, o);
+        D(DBF_STARTUP, "loaded/processed image file '%s' (0x%08lx)", filename, o);
 
         RETURN(o);
         return o;
@@ -146,7 +146,7 @@ static Object *LoadDTImage(char *filename, const struct Screen *scr)
     DisposeDTObject(o);
   }
 
-  E(DBF_IMAGE, "Wasn't able to load/process specified image file '%s'", filename);
+  E(DBF_IMAGE, "wasn't able to load/process specified image file '%s'", filename);
 
   RETURN(NULL);
   return NULL;
@@ -230,6 +230,11 @@ void ImageCacheCleanup(void)
   {
     D(DBF_STARTUP, "disposing image cache node (0x%08lx) '%s'", node, node->filename ? node->filename : "<NULL>");
 
+    #if defined(DEBUG)
+    if(node->openCount > 0)
+      W(DBF_STARTUP, "  openCount of image cache node still %d!!!", node->openCount);
+    #endif
+
     if(node->dt_obj)
     {
       D(DBF_STARTUP, "  disposing dtobject 0x%08lx of node 0x%08lx", node->dt_obj, node);
@@ -281,8 +286,20 @@ struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr)
 
       if(file && stricmp(filename, file) == 0)
       {
+        // now we check if there exists already a valid datatype
+        // object and if it is also already remapped for the screen
+        // we are requesting it.
+        if(node->dt_obj != NULL && node->screen != scr)
+        {
+          W(DBF_IMAGE, "current screen doesn't match dtobject (0x%08lx). reloading...", node->dt_obj);
+
+          // dispose the dt_obj and let us reload it afterwards
+          DisposeDTObject(node->dt_obj);
+          node->dt_obj = NULL;
+        }
+
         // if the image object wasn't loaded yet, we do it now
-        if(node->openCount == 0 && node->dt_obj == NULL)
+        if(node->dt_obj == NULL)
         {
           // load the datatypes image now
           if((node->dt_obj = LoadDTImage(node->filename, scr)))
@@ -303,13 +320,15 @@ struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr)
              W(DBF_IMAGE, "couldn't found BitMap header of file '%s'", filename);
 
             node->screen = (struct Screen *)scr;
-            node->openCount++;
 
             D(DBF_IMAGE, "loaded image data of '%s' for the first time and put it in cache.", filename);
           }
         }
         else
-          D(DBF_IMAGE, "found image '%s' already cached with dt_obj: %lx.", filename, node->dt_obj);
+          D(DBF_IMAGE, "found image '%s' already cached with dt_obj: 0x%08lx.", filename, node->dt_obj);
+
+        // increase the open count.
+        node->openCount++;
 
         RETURN(node);
         return node;
@@ -368,10 +387,10 @@ void DisposeImage(struct imageCacheNode *node)
   if(node && node->openCount > 0)
   {
     node->openCount--;
-    D(DBF_IMAGE, "reduced open count of image '%s' : %d", node->filename != NULL ? node->filename : "<NULL>", node->openCount);
+    D(DBF_IMAGE, "reduced open count of image '%s' to %d", node->filename != NULL ? node->filename : "<NULL>", node->openCount);
   }
   else
-    W(DBF_IMAGE, "couldn't reduce opencount of imageCacheNode 0x%08lx (%s)/openCount=%d", node, (node && node->filename) ? node->filename : "<NULL>", node ? (int)node->openCount : -1);
+    E(DBF_IMAGE, "couldn't reduce open count (%d) of 0x%08lx (%s)", node ? node->openCount : -1, node, (node && node->filename) ? node->filename : "<NULL>");
 
   LEAVE();
 }

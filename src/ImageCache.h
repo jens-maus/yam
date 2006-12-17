@@ -37,7 +37,7 @@ struct imageCacheNode
   char *filename;         // pointer to the filename
   Object *dt_obj;         // the datatypes object
   struct Screen *screen;  // pointer to the screen the image is mapped to
-  unsigned int openCount; // counter how often the image is now opened/used
+  int openCount;          // counter how often the image is now opened/used
 
   ULONG width;
   ULONG height;
