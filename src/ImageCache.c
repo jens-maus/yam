@@ -137,7 +137,7 @@ static Object *LoadDTImage(char *filename, const struct Screen *scr)
     {
       if(DoMethod(o, DTM_PROCLAYOUT, NULL, 1))
       {
-        D(DBF_IMAGE, "successfully loaded/processed image file '%s'", filename);
+        D(DBF_STARTUP, "successfully loaded/processed image file '%s' (0x%08lx)", filename, o);
 
         RETURN(o);
         return o;
@@ -228,8 +228,13 @@ void ImageCacheCleanup(void)
 
   while((node = (struct imageCacheNode*)RemTail((struct List *)&G->imageCacheList)))
   {
+    D(DBF_STARTUP, "disposing image cache node (0x%08lx) '%s'", node, node->filename ? node->filename : "<NULL>");
+
     if(node->dt_obj)
+    {
+      D(DBF_STARTUP, "  disposing dtobject 0x%08lx of node 0x%08lx", node->dt_obj, node);
       DisposeDTObject(node->dt_obj);
+    }
 
     if(node->filename)
       free(node->filename);
@@ -247,8 +252,17 @@ void ImageCacheCleanup(void)
 struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr)
 {
   struct MinNode *curNode;
+  BOOL absoluteFilePath = FALSE;
+
 
   ENTER();
+
+  D(DBF_IMAGE, "trying to obtain image '%s' from cache", filename);
+
+  // we try to find out first if we try to find an image
+  // according to its absolute file path or just by the filename
+  if(strpbrk(filename, ":/"))
+    absoluteFilePath = TRUE;
 
   // walk through our global imageCacheList and try to find the specified
   // image file.
@@ -256,40 +270,50 @@ struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr)
   {
     struct imageCacheNode *node = (struct imageCacheNode *)curNode;
 
-    if(node->filename != NULL && stricmp(filename, FilePart(node->filename)) == 0)
+    if(node->filename != NULL)
     {
-      // if the image object wasn't loaded yet, we do it now
-      if(node->openCount == 0 && node->dt_obj == NULL)
-      {
-        // load the datatypes image now
-        if((node->dt_obj = LoadDTImage(node->filename, scr)))
-        {
-          struct BitMapHeader *bmhd;
+      char *file;
 
-          // now we retrieve the bitmap header to
-          // get the width/height of the loaded object
-          GetDTAttrs(node->dt_obj, PDTA_BitMapHeader, &bmhd,
-                                   TAG_DONE);
-
-          if(bmhd)
-          {
-            node->width = bmhd->bmh_Width;
-            node->height = bmhd->bmh_Height;
-          }
-          else
-            W(DBF_IMAGE, "couldn't found BitMap header of file '%s'", filename);
-
-          node->scr = (struct Screen *)scr;
-          node->openCount++;
-
-          D(DBF_IMAGE, "loaded image data of '%s' for the first time and put it in cache.", filename);
-        }
-      }
+      if(absoluteFilePath)
+        file = node->filename;
       else
-        D(DBF_IMAGE, "found image '%s' already cached with dt_obj: %lx.", filename, node->dt_obj);
+        file = FilePart(node->filename);
 
-      RETURN(node);
-      return node;
+      if(file && stricmp(filename, file) == 0)
+      {
+        // if the image object wasn't loaded yet, we do it now
+        if(node->openCount == 0 && node->dt_obj == NULL)
+        {
+          // load the datatypes image now
+          if((node->dt_obj = LoadDTImage(node->filename, scr)))
+          {
+            struct BitMapHeader *bmhd;
+
+            // now we retrieve the bitmap header to
+            // get the width/height of the loaded object
+            GetDTAttrs(node->dt_obj, PDTA_BitMapHeader, &bmhd,
+                                     TAG_DONE);
+
+            if(bmhd)
+            {
+              node->width = bmhd->bmh_Width;
+              node->height = bmhd->bmh_Height;
+            }
+            else
+             W(DBF_IMAGE, "couldn't found BitMap header of file '%s'", filename);
+
+            node->screen = (struct Screen *)scr;
+            node->openCount++;
+
+            D(DBF_IMAGE, "loaded image data of '%s' for the first time and put it in cache.", filename);
+          }
+        }
+        else
+          D(DBF_IMAGE, "found image '%s' already cached with dt_obj: %lx.", filename, node->dt_obj);
+
+        RETURN(node);
+        return node;
+      }
     }
   }
 
@@ -317,7 +341,7 @@ struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr)
           W(DBF_IMAGE, "couldn't find BitMap header of file '%s'", filename);
 
         node->filename = strdup(filename);
-        node->scr = (struct Screen *)scr;
+        node->screen = (struct Screen *)scr;
         node->openCount++;
 
         AddTail((struct List *)&G->imageCacheList, (struct Node *)&node->node);
@@ -375,6 +399,8 @@ BOOL IsImageInCache(const char *filename)
       break;
     }
   }
+
+  D(DBF_IMAGE, "image file '%s' was %s in image cache at node %08lx", filename, (result ? "FOUND" : "NOT FOUND"), curNode);
 
   RETURN(result);
   return result;

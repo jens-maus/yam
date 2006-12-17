@@ -66,9 +66,7 @@ static void Image_Load(struct Data *data, Object *obj)
   ENTER();
 
   if(data->name)
-  {
     data->imageNode = ObtainImage(data->name, _screen(obj));
-  }
 
   LEAVE();
 }

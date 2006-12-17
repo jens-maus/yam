@@ -36,7 +36,7 @@ struct imageCacheNode
   struct MinNode node;    // the node for adding it in a MinList
   char *filename;         // pointer to the filename
   Object *dt_obj;         // the datatypes object
-  struct Screen *scr;
+  struct Screen *screen;  // pointer to the screen the image is mapped to
   unsigned int openCount; // counter how often the image is now opened/used
 
   ULONG width;
