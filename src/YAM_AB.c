@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include <ctype.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -846,6 +847,87 @@ BOOL AB_ImportTreeLDIF(char *fname, BOOL append, BOOL sorted)
 }
 
 ///
+/// WriteLDIFLine
+// writes a line to an LDIF address book file according to RFC 2849
+static void WriteLDIFLine(FILE *fh, const char *key, const char *valueFmt, ...)
+{
+  ENTER();
+
+  if(key[0] != '\0')
+  {
+    char buffer[SIZE_LARGE];
+    va_list args;
+    char *p;
+    char c;
+    BOOL initChar;
+    BOOL mustBeEncoded;
+
+    // put the arguments into the value string
+    va_start(args, valueFmt);
+    vsnprintf(buffer, sizeof(buffer), valueFmt, args);
+    va_end(args);
+
+    // now check if the value string must be UTF8/base64 encoded
+    p = buffer;
+    initChar = TRUE;
+    mustBeEncoded = FALSE;
+    while((c = *p++) != '\0' && mustBeEncoded == FALSE)
+    {
+      BOOL safeChar;
+
+      // these characters are safe, everything else must be encoded
+      // see RFC 2849
+      if(initChar)
+      {
+        // safe init character
+        safeChar = ((c >= 0x01 && c <= 0x09) ||
+                    (c >= 0x0b && c <= 0x0c) ||
+                    (c >= 0x0e && c <= 0x1f) ||
+                    (c >= 0x21 && c <= 0x39) ||
+                    (c == 0x3b)              ||
+                    (c >= 0x3d && c <= 0x7f));
+        initChar = FALSE;
+      }
+      else
+        // safe characters
+        safeChar = ((c >= 0x01 && c <= 0x09) ||
+                    (c >= 0x0b && c <= 0x0c) ||
+                    (c >= 0x0e && c <= 0x7f));
+
+      if(safeChar == FALSE)
+        // yes, we have to encode this string
+        mustBeEncoded = TRUE;
+    }
+
+    if(mustBeEncoded)
+    {
+      UTF8 *utf8;
+
+      // convert the value string to UTF8
+      if((utf8 = CodesetsUTF8Create(CSA_Source, buffer, TAG_DONE)) != NULL)
+      {
+        // we can reuse the former buffer here again, because we have a copy of the string
+        // in utf8
+        if(base64encode(buffer, utf8, strlen((char *)utf8)) > 0)
+          // write the key and encoded value strings
+          // these are separated by a double colon
+          fprintf(fh, "%s:: %s\n", key, buffer);
+        CodesetsFree(utf8, TAG_DONE);
+      }
+    }
+    else
+      // write the unencoded key and value strings
+      // these are separated by a single colon
+      fprintf(fh, "%s: %s\n", key, buffer);
+  }
+  else
+    // just write the end marker (a blank line)
+    fprintf(fh, "\n");
+
+  LEAVE();
+}
+
+///
 /// AB_ExportTreeNodeLDIF
 //  Exports an address book as LDIF file
 static STACKEXT void AB_ExportTreeNodeLDIF(FILE *fh, struct MUI_NListtree_TreeNode *list)
@@ -866,27 +948,27 @@ static STACKEXT void AB_ExportTreeNodeLDIF(FILE *fh, struct MUI_NListtree_TreeNo
       switch (ab->Type)
       {
         case AET_USER:
-          fprintf(fh, "dn: cn=%s,mail=%s\n", ab->RealName, ab->Address);
-          fprintf(fh, "objectclass: top\n");
-          fprintf(fh, "objectclass: person\n");
-          fprintf(fh, "objectclass: organizationalPerson\n");
-          fprintf(fh, "objectclass: inetOrgPerson\n");
-          fprintf(fh, "objectclass: mozillaAbPersonAlpha\n");
-          fprintf(fh, "cn: %s\n", ab->RealName);
-          fprintf(fh, "mail: %s\n", ab->Address);
+          WriteLDIFLine(fh, "dn", "cn=%s,mail=%s", ab->RealName, ab->Address);
+          WriteLDIFLine(fh, "objectClass", "top");
+          WriteLDIFLine(fh, "objectClass", "person");
+          WriteLDIFLine(fh, "objectClass", "organizationalPerson");
+          WriteLDIFLine(fh, "objectClass", "inetOrdPerson");
+          WriteLDIFLine(fh, "objectClass", "mozillaAbPersonAlpha");
+          WriteLDIFLine(fh, "cn", "%s", ab->RealName);
+          WriteLDIFLine(fh, "mail", "%s", ab->Address);
           if(ab->Alias[0] != '\0')
-            fprintf(fh, "mozillaNickname: %s\n", ab->Alias);
+            WriteLDIFLine(fh, "mozillaNickname", "%s", ab->Alias);
           if(ab->Phone[0] != '\0')
-            fprintf(fh, "telephoneNumber: %s\n", ab->Phone);
+            WriteLDIFLine(fh, "telephoneNumber", "%s", ab->Phone);
           if(ab->Street[0] != '\0')
-            fprintf(fh, "street: %s\n", ab->Street);
+            WriteLDIFLine(fh, "street", "%s", ab->Street);
           if(ab->City[0] != '\0')
-            fprintf(fh, "l: %s\n", ab->City);
+            WriteLDIFLine(fh, "l", "%s", ab->City);
           if(ab->Country[0] != '\0')
-            fprintf(fh, "c: %s\n", ab->Country);
+            WriteLDIFLine(fh, "c", "%s", ab->Country);
           if(ab->Homepage[0] != '\0')
-            fprintf(fh, "mozillaHomeUrl: %s\n", ab->Homepage);
-            fprintf(fh, "\n");
+            WriteLDIFLine(fh, "mozillaHomeUrl", "%s", ab->Homepage);
+          WriteLDIFLine(fh, "", "");
           break;
 
         case AET_GROUP:
