@@ -40,6 +40,7 @@
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/utility.h>
+#include <proto/codesets.h>
 
 #include "extrasrc.h"
 
@@ -53,6 +54,7 @@
 #include "YAM_global.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
+#include "YAM_mime.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"
 #include "classes/Classes.h"
@@ -657,118 +659,179 @@ BOOL AB_ImportTreeLDIF(char *fname, BOOL append, BOOL sorted)
       // an empty line separates two user entries
       if(buffer[0] == '\0')
       {
-        // we need at least an EMail address and a name
-        if(addr.Address[0] != '\0' && addr.RealName[0] != '\0')
-           DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, MUIV_NListtree_Insert_ListNode_Root, sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+        // we need at least an EMail address
+        if(addr.Address[0] != '\0')
+        {
+          // set up an alias only if none is given
+          if(addr.Alias[0] == '\0')
+            EA_SetDefaultAlias(&addr);
+
+          // put it into the tree
+          DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, MUIV_NListtree_Insert_ListNode_Root, sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+          result = TRUE;
+        }
       }
       else
       {
-        if(strncmp(buffer, "dn:", 3) == 0)
+        char *key, *value;
+
+        // every line has the pattern "key: value"
+        // now separate these two
+        key = buffer;
+        if((value = strpbrk(key, ":")) != NULL)
         {
-          // this is the very first line a new entry,
-          // so clear the structure for further actions now
-          memset(&addr, 0, sizeof(struct ABEntry));
-          addr.Type = AET_USER;
-        }
-        else if(strncmp(buffer, "cn:", 3) == 0)
-          strlcpy(addr.RealName, Trim(&buffer[3]), sizeof(addr.RealName));
-        else if(strncmp(buffer, "mail:", 5) == 0)
-          strlcpy(addr.Address, Trim(&buffer[5]), sizeof(addr.Address));
-        else if(strncmp(buffer, "mozillaNickname:", 16) == 0)
-          strlcpy(addr.Alias, Trim(&buffer[16]), sizeof(addr.Alias));
-        else if(strncmp(buffer, "telephoneNumber:", 16) == 0)
-        {
-          if(addr.Phone[0] != '\0')
-            strlcat(addr.Phone, ", ", sizeof(addr.Phone));
-          strlcat(addr.Phone, Trim(&buffer[16]), sizeof(addr.Phone));
-        }
-        else if(strncmp(buffer, "homePhone:", 10) == 0)
-        {
-          if(addr.Phone[0] != '\0')
-            strlcat(addr.Phone, ", ", sizeof(addr.Phone));
-          strlcat(addr.Phone, Trim(&buffer[10]), sizeof(addr.Phone));
-        }
-        else if(strncmp(buffer, "fax:", 4) == 0)
-        {
-          if(addr.Phone[0] != '\0')
-            strlcat(addr.Phone, ", ", sizeof(addr.Phone));
-          strlcat(addr.Phone, Trim(&buffer[4]), sizeof(addr.Phone));
-        }
-        else if(strncmp(buffer, "pager:", 6) == 0)
-        {
-          if(addr.Phone[0] != '\0')
-            strlcat(addr.Phone, ", ", sizeof(addr.Phone));
-          strlcat(addr.Phone, Trim(&buffer[6]), sizeof(addr.Phone));
-        }
-        else if(strncmp(buffer, "mobile:", 7) == 0)
-        {
-          if(addr.Phone[0] != '\0')
-            strlcat(addr.Phone, ", ", sizeof(addr.Phone));
-          strlcat(addr.Phone, Trim(&buffer[7]), sizeof(addr.Phone));
-        }
-        else if(strncmp(buffer, "homeStreet:", 11) == 0)
-        {
-          if(addr.Street[0] != '\0')
-            strlcat(addr.Street, ", ", sizeof(addr.Street));
-          strlcat(addr.Street, Trim(&buffer[11]), sizeof(addr.Street));
-        }
-        else if(strncmp(buffer, "mozillaHomeStreet2:", 19) == 0)
-        {
-          if(addr.Street[0] != '\0')
-            strlcat(addr.Street, ", ", sizeof(addr.Street));
-          strlcat(addr.Street, Trim(&buffer[19]), sizeof(addr.Street));
-        }
-        else if(strncmp(buffer, "l:", 2) == 0)
-        {
-          if(addr.City[0] != '\0')
-            strlcat(addr.City, ", ", sizeof(addr.City));
-          strlcat(addr.City, Trim(&buffer[2]), sizeof(addr.City));
-        }
-        else if(strncmp(buffer, "mozillaHomeLocalityName:", 24) == 0)
-        {
-          if(addr.City[0] != '\0')
-            strlcat(addr.City, ", ", sizeof(addr.City));
-          strlcat(addr.City, Trim(&buffer[24]), sizeof(addr.City));
-        }
-        else if(strncmp(buffer, "postalCode:", 11) == 0)
-        {
-          if(addr.City[0] != '\0')
-            strlcat(addr.City, ", ", sizeof(addr.City));
-          strlcat(addr.City, Trim(&buffer[11]), sizeof(addr.City));
-        }
-        else if(strncmp(buffer, "mozillaHomePostalCode:", 22) == 0)
-        {
-          if(addr.City[0] != '\0')
-            strlcat(addr.City, ", ", sizeof(addr.City));
-          strlcat(addr.City, Trim(&buffer[22]), sizeof(addr.City));
-        }
-        else if(strncmp(buffer, "c:", 2) == 0)
-        {
-          if(addr.Country != '\0')
-            strlcat(addr.Country, ", ", sizeof(addr.Country));
-          strlcat(addr.Country, Trim(&buffer[2]), sizeof(addr.Country));
-        }
-        else if(strncmp(buffer, "mozillaHomeCountryName:", 23) == 0)
-        {
-          if(addr.Country != '\0')
-            strlcat(addr.Country, ", ", sizeof(addr.Country));
-          strlcat(addr.Country, Trim(&buffer[23]), sizeof(addr.Country));
-        }
-        else if(strncmp(buffer, "mozillaWorkUrl:", 15) == 0)
-        {
-          if(addr.Homepage[0] != '\0')
-            strlcat(addr.Homepage, ", ", sizeof(addr.Homepage));
-          strlcat(addr.Homepage, Trim(&buffer[15]), sizeof(addr.Homepage));
-        }
-        else if(strncmp(buffer, "mozillaHomeUrl:", 15) == 0)
-        {
-          if(addr.Homepage[0] != '\0')
-            strlcat(addr.Homepage, ", ", sizeof(addr.Homepage));
-          strlcat(addr.Homepage, Trim(&buffer[15]), sizeof(addr.Homepage));
+          char b64buffer[SIZE_LARGE];
+          BOOL utf8;
+
+          *value++ = '\0';
+
+          // a leading colon in the value marks a base64 encoded string
+          if(value[0] == ':')
+          {
+            // first decode it
+            base64decode(b64buffer, (const unsigned char *)&value[2], strlen(value) - 2);
+            // now convert this prossible UTF8 string to a normal string
+            value = CodesetsUTF8ToStr(CSA_Source, Trim(b64buffer),
+                                      TAG_DONE);
+            utf8 = TRUE;
+          }
+          else
+          {
+            // take the value as it is
+            value = Trim(value);
+            utf8 = FALSE;
+          }
+
+          if(value != NULL)
+          {
+            // this is the very first line a new entry,
+            // so clear the structure for further actions now
+            if(strcmp(key, "dn") == 0)
+            {
+              memset(&addr, 0, sizeof(struct ABEntry));
+              addr.Type = AET_USER;
+            }
+            // complete name
+            else if(strcmp(key, "cn") == 0)
+              strlcpy(addr.RealName, value, sizeof(addr.RealName));
+            // mail address
+            else if(strcmp(key, "mail") == 0) 
+              strlcpy(addr.Address, value, sizeof(addr.Address));
+            // alias
+            else if(strcmp(key, "mozillaNickname") == 0) 
+              strlcpy(addr.Alias, value, sizeof(addr.Alias));
+            // phone number
+            else if(strcmp(key, "telephoneNumber") == 0) 
+            {
+              if(addr.Phone[0] != '\0')
+                strlcat(addr.Phone, ", ", sizeof(addr.Phone));
+              strlcat(addr.Phone, value, sizeof(addr.Phone));
+            }
+            // phone number
+            else if(strcmp(key, "homePhone") == 0)
+            {
+              if(addr.Phone[0] != '\0')
+                strlcat(addr.Phone, ", ", sizeof(addr.Phone));
+              strlcat(addr.Phone, value, sizeof(addr.Phone));
+            }
+            // fax number
+            else if(strcmp(key, "fax") == 0)
+            {
+              if(addr.Phone[0] != '\0')
+              strlcat(addr.Phone, ", ", sizeof(addr.Phone));
+              strlcat(addr.Phone, value, sizeof(addr.Phone));
+            }
+            // pager number
+            else if(strcmp(key, "pager") == 0)
+            {
+              if(addr.Phone[0] != '\0')
+                strlcat(addr.Phone, ", ", sizeof(addr.Phone));
+              strlcat(addr.Phone, value, sizeof(addr.Phone));
+            }
+            // mobile number
+            else if(strcmp(key, "mobile") == 0)
+            {
+              if(addr.Phone[0] != '\0')
+                strlcat(addr.Phone, ", ", sizeof(addr.Phone));
+              strlcat(addr.Phone, value, sizeof(addr.Phone));
+            }
+            // office street
+            else if(strcmp(key, "homeStreet") == 0)
+            {
+              if(addr.Street[0] != '\0')
+                strlcat(addr.Street, ", ", sizeof(addr.Street));
+              strlcat(addr.Street, value, sizeof(addr.Street));
+            }
+            // home street
+            else if(strcmp(key, "mozillaHomeStreet2") == 0)
+            {
+              if(addr.Street[0] != '\0')
+                strlcat(addr.Street, ", ", sizeof(addr.Street));
+              strlcat(addr.Street, value, sizeof(addr.Street));
+            }
+            // office locality
+            else if(strcmp(key, "l") == 0)
+            {
+              if(addr.City[0] != '\0')
+                strlcat(addr.City, ", ", sizeof(addr.City));
+              strlcat(addr.City, value, sizeof(addr.City));
+            }
+            // home locality
+            else if(strcmp(key, "mozillaHomeLocalityName") == 0)
+            {
+              if(addr.City[0] != '\0')
+                strlcat(addr.City, ", ", sizeof(addr.City));
+              strlcat(addr.City, value, sizeof(addr.City));
+            }
+            // office postal code
+            else if(strcmp(key, "postalCode") == 0)
+            {
+              if(addr.City[0] != '\0')
+                strlcat(addr.City, ", ", sizeof(addr.City));
+              strlcat(addr.City, value, sizeof(addr.City));
+            }
+            // home postal code
+            else if(strcmp(key, "mozillaHomePostalCode") == 0)
+            {
+              if(addr.City[0] != '\0')
+                strlcat(addr.City, ", ", sizeof(addr.City));
+              strlcat(addr.City, value, sizeof(addr.City));
+            }
+            // office country
+            else if(strcmp(key, "c") == 0)
+            {
+              if(addr.Country[0] != '\0')
+                strlcat(addr.Country, ", ", sizeof(addr.Country));
+              strlcat(addr.Country, value, sizeof(addr.Country));
+            }
+            // home country
+            else if(strcmp(key, "mozillaHomeCountryName") == 0)
+            {
+              if(addr.Country[0] != '\0')
+                strlcat(addr.Country, ", ", sizeof(addr.Country));
+              strlcat(addr.Country, value, sizeof(addr.Country));
+            }
+            // working home page
+            else if(strcmp(key, "mozillaWorkUrl") == 0)
+            {
+              if(addr.Homepage[0] != '\0')
+                strlcat(addr.Homepage, ", ", sizeof(addr.Homepage));
+              strlcat(addr.Homepage, value, sizeof(addr.Homepage));
+            }
+            // private homepage
+            else if(strcmp(key, "mozillaHomeUrl") == 0)
+            {
+              if(addr.Homepage[0] != '\0')
+                strlcat(addr.Homepage, ", ", sizeof(addr.Homepage));
+              strlcat(addr.Homepage, value, sizeof(addr.Homepage));
+            }
+          }
+
+          // if the value string has been converted from UTF8 before we need to free it now
+          if(utf8)
+            CodesetsFree(value, TAG_DONE);
         }
       }
-
-      result = TRUE;
     }
 
     set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, FALSE);
@@ -987,9 +1050,15 @@ BOOL AB_ImportTreeTabCSV(char *fname, BOOL append, BOOL sorted, char delim)
       }
       while(item != NULL);
 
-      // we need at least an EMail address and a name
-      if(addr.Address[0] != '\0' && addr.RealName[0] != '\0')
+      // we need at least an EMail address
+      if(addr.Address[0] != '\0')
+      {
+        // set up an alias only if none is given
+        if(addr.Alias[0] == '\0')
+          EA_SetDefaultAlias(&addr);
+
         DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, MUIV_NListtree_Insert_ListNode_Root, sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+      }
 
       result = TRUE;
     }
