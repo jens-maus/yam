@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-12-19  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c: reworked CSV/TAB import again a little bit to handle quoted items
+    correctly. Did the same for the export to add quotes whenever the current
+    item contains the separating character.
+
 2006-12-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_AB.c: change the LDIF import routines to work case insensitive in

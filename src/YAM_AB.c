@@ -586,7 +586,7 @@ static STACKEXT void AB_SaveTreeNode(FILE *fh, struct MUI_NListtree_TreeNode *li
     if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)) != NULL)
     {
       ab = tn->tn_User;
-      switch (ab->Type)
+      switch(ab->Type)
       {
         case AET_USER:
           fprintf(fh, "@USER %s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%08ld\n%s\n%s\n%d\n@ENDUSER\n", ab->Alias, ab->Address, ab->RealName, ab->Comment,
@@ -939,7 +939,7 @@ static STACKEXT void AB_ExportTreeNodeLDIF(FILE *fh, struct MUI_NListtree_TreeNo
       struct ABEntry *ab;
 
       ab = tn->tn_User;
-      switch (ab->Type)
+      switch(ab->Type)
       {
         case AET_USER:
         {
@@ -1045,11 +1045,39 @@ BOOL AB_ImportTreeTabCSV(char *fname, BOOL append, BOOL sorted, char delim)
       {
         char *next;
 
-        itemNumber++;
-        if((next = strpbrk(item, delimStr)) != NULL)
-          *next++ = '\0';
+        // first check if the current item begins with a quote
+        if(item[0] == '"')
+        {
+          // now we have to search for the next quote and treat all
+          // characters inbetween as one item
+          if((next = strpbrk(&item[1], "\"")) != NULL)
+          {
+            // skip the leading quote
+            item++;
+            // erase the trailing quote
+            *next++ = '\0';
+            // and look for the next delimiter starting right after the just erased quote
+            if((next = strpbrk(next, delimStr)) != NULL)
+              *next++ = '\0';
+          }
+          else
+          {
+            // no closing quote found, abort this line
+            item[0] = '\0';
+            // to make sure this item doesn't make it into YAM's address book clear all values again
+            memset(&addr, 0, sizeof(struct ABEntry));
+          }
+        }
+        else
+        {
+          // do a normal search for the separating character
+          if((next = strpbrk(item, delimStr)) != NULL)
+            *next++ = '\0';
+        }
 
-        // remove any nonsense like trailing spaces
+        itemNumber++;
+
+        // remove any nonsense like leading or trailing spaces
         item = Trim(item);
 
         if(item[0] != '\0')
@@ -1189,6 +1217,42 @@ BOOL AB_ImportTreeTabCSV(char *fname, BOOL append, BOOL sorted, char delim)
 }
 
 ///
+/// WriteTabCSVItem
+// writes TAB or comma separated item to an address book file
+static void WriteTabCSVItem(FILE *fh, char *value, char delim)
+{
+  ENTER();
+
+  if(value != NULL)
+  {
+    char c;
+    char *p;
+    BOOL addQuotes;
+
+    p = value;
+    addQuotes = FALSE;
+    // check if we need to add quotes to the item because it contains the separating character
+    while((c = *p++) != '\0' && addQuotes == FALSE)
+    {
+      if(c == ',' || c == delim)
+        addQuotes = TRUE;
+    }
+
+    if(addQuotes)
+      // surround the value by quotes and add the delimiter
+      fprintf(fh, "\"%s\"%c", value, delim);
+    else
+      // just write the value and the delimiter
+      fprintf(fh, "%s%c", value, delim);
+  }
+  else
+    // no value given, that means this was the final item in the line
+    fprintf(fh, "\n");
+
+  LEAVE();
+}
+
+///
 /// AB_ExportTreeNodeTabCSV
 //  Exports an address book with comma or tab separated entries
 static STACKEXT void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_TreeNode *list, char delim)
@@ -1206,46 +1270,46 @@ static STACKEXT void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_Tree
       struct ABEntry *ab;
 
       ab = tn->tn_User;
-      switch (ab->Type)
+      switch(ab->Type)
       {
         case AET_USER:
         {
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%s%c", ab->RealName, delim);
-          fprintf(fh, "%s%c", ab->Alias, delim);
-          fprintf(fh, "%s%c", ab->Address, delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%s%c", ab->Phone, delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%s%c", ab->Street, delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%s%c", ab->City, delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim); // ZIP code
-          fprintf(fh, "%s%c", ab->Country, delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%s%c", ab->Homepage, delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "%c", delim);
-          fprintf(fh, "\n");
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, ab->RealName, delim);
+          WriteTabCSVItem(fh, ab->Alias, delim);
+          WriteTabCSVItem(fh, ab->Address, delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, ab->Phone, delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, ab->Street, delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, ab->City, delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim); // postal code
+          WriteTabCSVItem(fh, ab->Country, delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, ab->Homepage, delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, NULL, delim);
         }
         break;
 
@@ -1614,7 +1678,7 @@ static void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
   ENTER();
 
   fputs("------------------------------------------------------------------------\n", prt);
-  switch (ab->Type)
+  switch(ab->Type)
   {
     case AET_USER:
       AB_PrintField(prt, GetStr(MSG_AB_PersonAlias), ab->Alias);
@@ -2116,7 +2180,7 @@ HOOKPROTONHNO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
         msg->Array[9] = entry->PGPId;
         msg->Array[10]= entry->Homepage;
 
-        switch (entry->Type)
+        switch(entry->Type)
         {
            case AET_LIST:
            {
@@ -2250,161 +2314,166 @@ void AB_MakeABFormat(APTR lv)
 //  Creates address book window
 struct AB_ClassData *AB_New(void)
 {
-   struct AB_ClassData *data = calloc(1, sizeof(struct AB_ClassData));
-   if (data)
-   {
-      Object *list;
+  struct AB_ClassData *data;
 
-      enum {
-        AMEN_NEW,AMEN_OPEN,AMEN_APPEND,AMEN_SAVE,AMEN_SAVEAS,
-        AMEN_IMPORT_LDIF, AMEN_IMPORT_CSV, AMEN_IMPORT_TAB,
-        AMEN_EXPORT_LDIF, AMEN_EXPORT_CSV, AMEN_EXPORT_TAB,
-        AMEN_PRINTA,
-        AMEN_FIND,AMEN_NEWUSER,AMEN_NEWLIST,AMEN_NEWGROUP,AMEN_EDIT,
-        AMEN_DUPLICATE,AMEN_DELETE,AMEN_PRINTE,AMEN_SORTALIAS,
-        AMEN_SORTLNAME,AMEN_SORTFNAME,AMEN_SORTDESC,AMEN_SORTADDR,
-        AMEN_FOLD,AMEN_UNFOLD
-      };
+  ENTER();
 
-      data->GUI.WI = WindowObject,
-         MUIA_HelpNode,"AB_W",
-         MUIA_Window_Menustrip, MenustripObject,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_CO_CrdABook),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_New), MUIA_Menuitem_Shortcut,"N", MUIA_UserData,AMEN_NEW, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Open), MUIA_Menuitem_Shortcut,"O", MUIA_UserData,AMEN_OPEN, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Append), MUIA_Menuitem_Shortcut,"I", MUIA_UserData,AMEN_APPEND, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_IMPORT),
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_LDIF), MUIA_UserData, AMEN_IMPORT_LDIF, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_CSV), MUIA_UserData, AMEN_IMPORT_CSV, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_TAB), MUIA_UserData, AMEN_IMPORT_TAB, End,
-               End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_EXPORT),
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_LDIF), MUIA_UserData, AMEN_EXPORT_LDIF, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_CSV), MUIA_UserData, AMEN_EXPORT_CSV, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_TAB), MUIA_UserData, AMEN_EXPORT_TAB, End,
-               End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Save), MUIA_Menuitem_Shortcut,"S", MUIA_UserData,AMEN_SAVE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_SaveAs), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,AMEN_SAVEAS, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_MIFind), MUIA_Menuitem_Shortcut,"F", MUIA_UserData,AMEN_FIND, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Print), MUIA_UserData,AMEN_PRINTA, End,
-            End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_AB_Entry),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_AddUser), MUIA_Menuitem_Shortcut,"P", MUIA_UserData,AMEN_NEWUSER, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_AddList), MUIA_Menuitem_Shortcut,"L", MUIA_UserData,AMEN_NEWLIST, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_AddGroup), MUIA_Menuitem_Shortcut,"G", MUIA_UserData,AMEN_NEWGROUP, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Edit), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,AMEN_EDIT, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_Duplicate), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,AMEN_DUPLICATE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_MIDelete), MUIA_Menuitem_Shortcut,"Del", MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,AMEN_DELETE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_MIPrint), MUIA_UserData,AMEN_PRINTE, End,
-            End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_AB_Sort),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByAlias), MUIA_Menuitem_Shortcut,"1", MUIA_UserData,AMEN_SORTALIAS, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByName), MUIA_Menuitem_Shortcut,"2", MUIA_UserData,AMEN_SORTLNAME, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByFirstname), MUIA_Menuitem_Shortcut,"3", MUIA_UserData,AMEN_SORTFNAME, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByDesc), MUIA_Menuitem_Shortcut,"4", MUIA_UserData,AMEN_SORTDESC, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByAddress), MUIA_Menuitem_Shortcut,"5", MUIA_UserData,AMEN_SORTADDR, End,
-            End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_AB_View),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_Unfold), MUIA_Menuitem_Shortcut,"<", MUIA_UserData,AMEN_UNFOLD, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_Fold), MUIA_Menuitem_Shortcut,">", MUIA_UserData,AMEN_FOLD, End,
-            End,
-         End,
-         MUIA_Window_ID,MAKE_ID('B','O','O','K'),
-         WindowContents, VGroup,
-            Child, hasHideToolBarFlag(C->HideGUIElements) ?
-               (HGroup,
-                  MUIA_HelpNode, "AB_B",
-                  Child, data->GUI.BT_TO  = MakeButton("_To:"),
-                  Child, data->GUI.BT_CC  = MakeButton("_CC:"),
-                  Child, data->GUI.BT_BCC = MakeButton("_BCC:"),
-               End) :
-               (HGroup, GroupSpacing(0),
-                  MUIA_HelpNode, "AB_B",
-                  Child, VGroup,
-                     MUIA_Weight, 10,
-                     MUIA_Group_VertSpacing, 0,
-                     Child, data->GUI.BT_TO  = MakeButton("_To:"),
-                     Child, data->GUI.BT_CC  = MakeButton("_CC:"),
-                     Child, data->GUI.BT_BCC = MakeButton("_BCC:"),
-                     Child, HVSpace,
-                  End,
-                  Child, MUI_MakeObject(MUIO_VBar, 12),
-                  Child, AddrBookToolbarObject,
-                  End,
-               End),
+  if ((data = calloc(1, sizeof(struct AB_ClassData))) != NULL)
+  {
+    Object *list;
 
-            Child, list = NListviewObject,
-               MUIA_CycleChain,         TRUE,
-               MUIA_Listview_DragType,  MUIV_Listview_DragType_Immediate,
-               MUIA_NListview_NList,    data->GUI.LV_ADDRESSES = AddrBookListtreeObject,
-                  InputListFrame,
-                  MUIA_NListtree_CompareHook,     &AB_LV_CmpFuncHook,
-                  MUIA_NListtree_DragDropSort,    TRUE,
-                  MUIA_NListtree_Title,           TRUE,
-                  MUIA_NListtree_ConstructHook,   &AB_LV_ConFuncHook,
-                  MUIA_NListtree_DestructHook,    &AB_LV_DesFuncHook,
-                  MUIA_NListtree_DisplayHook,     &AB_LV_DspFuncHook,
-                  MUIA_NListtree_EmptyNodes,      TRUE,
-                  MUIA_Font,                      C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
-               End,
-            End,
-         End,
-      End;
+    enum {
+      AMEN_NEW,AMEN_OPEN,AMEN_APPEND,AMEN_SAVE,AMEN_SAVEAS,
+      AMEN_IMPORT_LDIF, AMEN_IMPORT_CSV, AMEN_IMPORT_TAB,
+      AMEN_EXPORT_LDIF, AMEN_EXPORT_CSV, AMEN_EXPORT_TAB,
+      AMEN_PRINTA,
+      AMEN_FIND,AMEN_NEWUSER,AMEN_NEWLIST,AMEN_NEWGROUP,AMEN_EDIT,
+      AMEN_DUPLICATE,AMEN_DELETE,AMEN_PRINTE,AMEN_SORTALIAS,
+      AMEN_SORTLNAME,AMEN_SORTFNAME,AMEN_SORTDESC,AMEN_SORTADDR,
+      AMEN_FOLD,AMEN_UNFOLD
+    };
 
-      // If we successfully created the WindowObject
-      if (data->GUI.WI)
-      {
-        AB_MakeABFormat(data->GUI.LV_ADDRESSES);
-        DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-        set(data->GUI.WI, MUIA_Window_DefaultObject, list);
-        SetHelp(data->GUI.BT_TO ,MSG_HELP_AB_BT_TO );
-        SetHelp(data->GUI.BT_CC ,MSG_HELP_AB_BT_CC );
-        SetHelp(data->GUI.BT_BCC,MSG_HELP_AB_BT_BCC);
+    data->GUI.WI = WindowObject,
+       MUIA_HelpNode,"AB_W",
+       MUIA_Window_Menustrip, MenustripObject,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_CO_CrdABook),
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_New), MUIA_Menuitem_Shortcut,"N", MUIA_UserData,AMEN_NEW, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Open), MUIA_Menuitem_Shortcut,"O", MUIA_UserData,AMEN_OPEN, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Append), MUIA_Menuitem_Shortcut,"I", MUIA_UserData,AMEN_APPEND, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_IMPORT),
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_LDIF), MUIA_UserData, AMEN_IMPORT_LDIF, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_CSV), MUIA_UserData, AMEN_IMPORT_CSV, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_TAB), MUIA_UserData, AMEN_IMPORT_TAB, End,
+             End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_EXPORT),
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_LDIF), MUIA_UserData, AMEN_EXPORT_LDIF, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_CSV), MUIA_UserData, AMEN_EXPORT_CSV, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_TAB), MUIA_UserData, AMEN_EXPORT_TAB, End,
+             End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Save), MUIA_Menuitem_Shortcut,"S", MUIA_UserData,AMEN_SAVE, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_SaveAs), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,AMEN_SAVEAS, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_MIFind), MUIA_Menuitem_Shortcut,"F", MUIA_UserData,AMEN_FIND, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Print), MUIA_UserData,AMEN_PRINTA, End,
+          End,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_AB_Entry),
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_AddUser), MUIA_Menuitem_Shortcut,"P", MUIA_UserData,AMEN_NEWUSER, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_AddList), MUIA_Menuitem_Shortcut,"L", MUIA_UserData,AMEN_NEWLIST, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_AddGroup), MUIA_Menuitem_Shortcut,"G", MUIA_UserData,AMEN_NEWGROUP, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Edit), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,AMEN_EDIT, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_Duplicate), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,AMEN_DUPLICATE, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_MIDelete), MUIA_Menuitem_Shortcut,"Del", MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,AMEN_DELETE, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_MIPrint), MUIA_UserData,AMEN_PRINTE, End,
+          End,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_AB_Sort),
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByAlias), MUIA_Menuitem_Shortcut,"1", MUIA_UserData,AMEN_SORTALIAS, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByName), MUIA_Menuitem_Shortcut,"2", MUIA_UserData,AMEN_SORTLNAME, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByFirstname), MUIA_Menuitem_Shortcut,"3", MUIA_UserData,AMEN_SORTFNAME, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByDesc), MUIA_Menuitem_Shortcut,"4", MUIA_UserData,AMEN_SORTDESC, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByAddress), MUIA_Menuitem_Shortcut,"5", MUIA_UserData,AMEN_SORTADDR, End,
+          End,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_AB_View),
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_Unfold), MUIA_Menuitem_Shortcut,"<", MUIA_UserData,AMEN_UNFOLD, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_Fold), MUIA_Menuitem_Shortcut,">", MUIA_UserData,AMEN_FOLD, End,
+          End,
+       End,
+       MUIA_Window_ID,MAKE_ID('B','O','O','K'),
+       WindowContents, VGroup,
+          Child, hasHideToolBarFlag(C->HideGUIElements) ?
+             (HGroup,
+                MUIA_HelpNode, "AB_B",
+                Child, data->GUI.BT_TO  = MakeButton("_To:"),
+                Child, data->GUI.BT_CC  = MakeButton("_CC:"),
+                Child, data->GUI.BT_BCC = MakeButton("_BCC:"),
+             End) :
+             (HGroup, GroupSpacing(0),
+                MUIA_HelpNode, "AB_B",
+                Child, VGroup,
+                   MUIA_Weight, 10,
+                   MUIA_Group_VertSpacing, 0,
+                   Child, data->GUI.BT_TO  = MakeButton("_To:"),
+                   Child, data->GUI.BT_CC  = MakeButton("_CC:"),
+                   Child, data->GUI.BT_BCC = MakeButton("_BCC:"),
+                   Child, HVSpace,
+                End,
+                Child, MUI_MakeObject(MUIO_VBar, 12),
+                Child, AddrBookToolbarObject,
+                End,
+             End),
+          Child, list = NListviewObject,
+             MUIA_CycleChain,         TRUE,
+             MUIA_Listview_DragType,  MUIV_Listview_DragType_Immediate,
+             MUIA_NListview_NList,    data->GUI.LV_ADDRESSES = AddrBookListtreeObject,
+                InputListFrame,
+                MUIA_NListtree_CompareHook,     &AB_LV_CmpFuncHook,
+                MUIA_NListtree_DragDropSort,    TRUE,
+                MUIA_NListtree_Title,           TRUE,
+                MUIA_NListtree_ConstructHook,   &AB_LV_ConFuncHook,
+                MUIA_NListtree_DestructHook,    &AB_LV_DesFuncHook,
+                MUIA_NListtree_DisplayHook,     &AB_LV_DspFuncHook,
+                MUIA_NListtree_EmptyNodes,      TRUE,
+                MUIA_Font,                      C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
+             End,
+          End,
+       End,
+    End;
 
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_NEW        , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_NewABookHook);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_OPEN       , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_OpenABookHook);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_APPEND     , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_AppendABookHook);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_IMPORT_LDIF, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_ImportLDIFABookHook);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_IMPORT_TAB , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_ImportTabCSVABookHook, '\t');
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_IMPORT_CSV , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_ImportTabCSVABookHook, ',');
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_EXPORT_LDIF, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_ExportLDIFABookHook);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_EXPORT_TAB , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_ExportTabCSVABookHook, '\t');
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_EXPORT_CSV , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_ExportTabCSVABookHook, ',');
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SAVE       , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_SaveABookHook);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SAVEAS     , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_SaveABookAsHook);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_PRINTA     , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_PrintABookHook);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_NEWUSER    , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_USER);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_NEWLIST    , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_LIST);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_NEWGROUP   , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_GROUP);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_EDIT       , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_EditHook);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_DUPLICATE  , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_DuplicateHook);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_DELETE     , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_DeleteHook);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_PRINTE     , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_PrintHook);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_FIND       , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_FindHook);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTALIAS  , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 0);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTLNAME  , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 1);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTFNAME  , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 2);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTDESC   , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 3);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTADDR   , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 4);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_FOLD       , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FoldUnfoldHook, TRUE);
-        DoMethod(data->GUI.WI          , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_UNFOLD     , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FoldUnfoldHook, FALSE);
-        DoMethod(data->GUI.LV_ADDRESSES, MUIM_Notify, MUIA_NListtree_DoubleClick, MUIV_EveryTime  , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_DoubleClickHook);
-        DoMethod(data->GUI.BT_TO       , MUIM_Notify, MUIA_Pressed              , FALSE           , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FromAddrBookHook, ABM_TO);
-        DoMethod(data->GUI.BT_CC       , MUIM_Notify, MUIA_Pressed              , FALSE           , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FromAddrBookHook, ABM_CC);
-        DoMethod(data->GUI.BT_BCC      , MUIM_Notify, MUIA_Pressed              , FALSE           , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FromAddrBookHook, ABM_BCC);
+    // If we successfully created the WindowObject
+    if(data->GUI.WI != NULL)
+    {
+      AB_MakeABFormat(data->GUI.LV_ADDRESSES);
+      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+      set(data->GUI.WI, MUIA_Window_DefaultObject, list);
+      SetHelp(data->GUI.BT_TO ,MSG_HELP_AB_BT_TO );
+      SetHelp(data->GUI.BT_CC ,MSG_HELP_AB_BT_CC );
+      SetHelp(data->GUI.BT_BCC,MSG_HELP_AB_BT_BCC);
 
-        DoMethod(data->GUI.WI,MUIM_Notify,MUIA_Window_InputEvent   ,"-capslock del" ,MUIV_Notify_Application  ,2,MUIM_CallHook       ,&AB_DeleteHook);
-        DoMethod(data->GUI.WI,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE ,MUIV_Notify_Application           ,2,MUIM_CallHook       ,&AB_CloseHook);
-
-        return data;
-      }
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_NEW        , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_NewABookHook);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_OPEN       , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_OpenABookHook);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_APPEND     , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_AppendABookHook);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_IMPORT_LDIF, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_ImportLDIFABookHook);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_IMPORT_TAB , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_ImportTabCSVABookHook, '\t');
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_IMPORT_CSV , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_ImportTabCSVABookHook, ',');
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_EXPORT_LDIF, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_ExportLDIFABookHook);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_EXPORT_TAB , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_ExportTabCSVABookHook, '\t');
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_EXPORT_CSV , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_ExportTabCSVABookHook, ',');
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SAVE       , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_SaveABookHook);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SAVEAS     , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_SaveABookAsHook);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_PRINTA     , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_PrintABookHook);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_NEWUSER    , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_USER);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_NEWLIST    , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_LIST);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_NEWGROUP   , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_GROUP);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_EDIT       , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_EditHook);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_DUPLICATE  , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_DuplicateHook);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_DELETE     , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_DeleteHook);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_PRINTE     , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_PrintHook);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_FIND       , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_FindHook);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTALIAS  , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 0);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTLNAME  , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 1);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTFNAME  , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 2);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTDESC   , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 3);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTADDR   , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 4);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_FOLD       , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FoldUnfoldHook, TRUE);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_UNFOLD     , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FoldUnfoldHook, FALSE);
+      DoMethod(data->GUI.LV_ADDRESSES  , MUIM_Notify, MUIA_NListtree_DoubleClick, MUIV_EveryTime  , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_DoubleClickHook);
+      DoMethod(data->GUI.BT_TO         , MUIM_Notify, MUIA_Pressed              , FALSE           , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FromAddrBookHook, ABM_TO);
+      DoMethod(data->GUI.BT_CC         , MUIM_Notify, MUIA_Pressed              , FALSE           , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FromAddrBookHook, ABM_CC);
+      DoMethod(data->GUI.BT_BCC        , MUIM_Notify, MUIA_Pressed              , FALSE           , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FromAddrBookHook, ABM_BCC);
+      DoMethod(data->GUI.WI,MUIM_Notify, MUIA_Window_InputEvent   ,"-capslock del" ,MUIV_Notify_Application  ,2,MUIM_CallHook       ,&AB_DeleteHook);
+      DoMethod(data->GUI.WI,MUIM_Notify, MUIA_Window_CloseRequest ,TRUE         , MUIV_Notify_Application           ,2,MUIM_CallHook       ,&AB_CloseHook);
+    }
+    else
+    {
       free(data);
-   }
-   return NULL;
+      data = NULL;
+    }
+  }
+
+  RETURN(data);
+  return data;
 }
 ///
