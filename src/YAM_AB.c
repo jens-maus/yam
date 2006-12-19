@@ -691,6 +691,7 @@ BOOL AB_ImportTreeLDIF(char *fname, BOOL append, BOOL sorted)
           {
             // first decode it
             base64decode(b64buffer, (const unsigned char *)&value[2], strlen(value) - 2);
+
             // now convert this prossible UTF8 string to a normal string
             value = CodesetsUTF8ToStr(CSA_Source, Trim(b64buffer),
                                       TAG_DONE);
@@ -707,120 +708,102 @@ BOOL AB_ImportTreeLDIF(char *fname, BOOL append, BOOL sorted)
           {
             // this is the very first line a new entry,
             // so clear the structure for further actions now
-            if(strcmp(key, "dn") == 0)
+            if(stricmp(key, "dn") == 0)
             {
               memset(&addr, 0, sizeof(struct ABEntry));
               addr.Type = AET_USER;
             }
-            // complete name
-            else if(strcmp(key, "cn") == 0)
+            else if(stricmp(key, "cn") == 0)                         // complete name
               strlcpy(addr.RealName, value, sizeof(addr.RealName));
-            // mail address
-            else if(strcmp(key, "mail") == 0) 
-              strlcpy(addr.Address, value, sizeof(addr.Address));
-            // alias
-            else if(strcmp(key, "mozillaNickname") == 0) 
-              strlcpy(addr.Alias, value, sizeof(addr.Alias));
-            // phone number
-            else if(strcmp(key, "telephoneNumber") == 0) 
+            else if(stricmp(key, "mail") == 0)                       // mail address
+              strlcpy(addr.Address, value, sizeof(addr.Address));   
+            else if(stricmp(key, "mozillaNickname") == 0)            // alias
+              strlcpy(addr.Alias, value, sizeof(addr.Alias));       
+            else if(stricmp(key, "telephoneNumber") == 0)            // phone number
             {
               if(addr.Phone[0] != '\0')
                 strlcat(addr.Phone, ", ", sizeof(addr.Phone));
               strlcat(addr.Phone, value, sizeof(addr.Phone));
             }
-            // phone number
-            else if(strcmp(key, "homePhone") == 0)
+            else if(stricmp(key, "homePhone") == 0)                  // phone number
             {
               if(addr.Phone[0] != '\0')
                 strlcat(addr.Phone, ", ", sizeof(addr.Phone));
               strlcat(addr.Phone, value, sizeof(addr.Phone));
             }
-            // fax number
-            else if(strcmp(key, "fax") == 0)
+            else if(stricmp(key, "fax") == 0)                        // fax number
             {
               if(addr.Phone[0] != '\0')
               strlcat(addr.Phone, ", ", sizeof(addr.Phone));
               strlcat(addr.Phone, value, sizeof(addr.Phone));
             }
-            // pager number
-            else if(strcmp(key, "pager") == 0)
+            else if(stricmp(key, "pager") == 0)                      // pager number
             {
               if(addr.Phone[0] != '\0')
                 strlcat(addr.Phone, ", ", sizeof(addr.Phone));
               strlcat(addr.Phone, value, sizeof(addr.Phone));
             }
-            // mobile number
-            else if(strcmp(key, "mobile") == 0)
+            else if(stricmp(key, "mobile") == 0)                     // mobile number
             {
               if(addr.Phone[0] != '\0')
                 strlcat(addr.Phone, ", ", sizeof(addr.Phone));
               strlcat(addr.Phone, value, sizeof(addr.Phone));
             }
-            // office street
-            else if(strcmp(key, "homeStreet") == 0)
+            else if(stricmp(key, "homeStreet") == 0)                 // office street
             {
               if(addr.Street[0] != '\0')
                 strlcat(addr.Street, ", ", sizeof(addr.Street));
               strlcat(addr.Street, value, sizeof(addr.Street));
             }
-            // home street
-            else if(strcmp(key, "mozillaHomeStreet2") == 0)
+            else if(stricmp(key, "mozillaHomeStreet2") == 0)         // home street
             {
               if(addr.Street[0] != '\0')
                 strlcat(addr.Street, ", ", sizeof(addr.Street));
               strlcat(addr.Street, value, sizeof(addr.Street));
             }
-            // office locality
-            else if(strcmp(key, "l") == 0)
+            else if(stricmp(key, "l") == 0)                          // office locality
             {
               if(addr.City[0] != '\0')
                 strlcat(addr.City, ", ", sizeof(addr.City));
               strlcat(addr.City, value, sizeof(addr.City));
             }
-            // home locality
-            else if(strcmp(key, "mozillaHomeLocalityName") == 0)
+            else if(stricmp(key, "mozillaHomeLocalityName") == 0)    // home locality
             {
               if(addr.City[0] != '\0')
                 strlcat(addr.City, ", ", sizeof(addr.City));
               strlcat(addr.City, value, sizeof(addr.City));
             }
-            // office postal code
-            else if(strcmp(key, "postalCode") == 0)
+            else if(stricmp(key, "postalCode") == 0)                 // office postal code
             {
               if(addr.City[0] != '\0')
                 strlcat(addr.City, ", ", sizeof(addr.City));
               strlcat(addr.City, value, sizeof(addr.City));
             }
-            // home postal code
-            else if(strcmp(key, "mozillaHomePostalCode") == 0)
+            else if(stricmp(key, "mozillaHomePostalCode") == 0)      // home postal code
             {
               if(addr.City[0] != '\0')
                 strlcat(addr.City, ", ", sizeof(addr.City));
               strlcat(addr.City, value, sizeof(addr.City));
             }
-            // office country
-            else if(strcmp(key, "c") == 0)
+            else if(stricmp(key, "c") == 0)                          // office country
             {
               if(addr.Country[0] != '\0')
                 strlcat(addr.Country, ", ", sizeof(addr.Country));
               strlcat(addr.Country, value, sizeof(addr.Country));
             }
-            // home country
-            else if(strcmp(key, "mozillaHomeCountryName") == 0)
+            else if(stricmp(key, "mozillaHomeCountryName") == 0)     // home country
             {
               if(addr.Country[0] != '\0')
                 strlcat(addr.Country, ", ", sizeof(addr.Country));
               strlcat(addr.Country, value, sizeof(addr.Country));
             }
-            // working home page
-            else if(strcmp(key, "mozillaWorkUrl") == 0)
+            else if(stricmp(key, "mozillaWorkUrl") == 0)             // working home page
             {
               if(addr.Homepage[0] != '\0')
                 strlcat(addr.Homepage, ", ", sizeof(addr.Homepage));
               strlcat(addr.Homepage, value, sizeof(addr.Homepage));
             }
-            // private homepage
-            else if(strcmp(key, "mozillaHomeUrl") == 0)
+            else if(stricmp(key, "mozillaHomeUrl") == 0)             // private homepage
             {
               if(addr.Homepage[0] != '\0')
                 strlcat(addr.Homepage, ", ", sizeof(addr.Homepage));
@@ -830,7 +813,7 @@ BOOL AB_ImportTreeLDIF(char *fname, BOOL append, BOOL sorted)
 
           // if the value string has been converted from UTF8 before we need to free it now
           if(utf8)
-            CodesetsFree(value, TAG_DONE);
+            CodesetsFreeA(value, NULL);
         }
       }
     }
@@ -858,7 +841,7 @@ static void WriteLDIFLine(FILE *fh, const char *key, const char *valueFmt, ...)
     char buffer[SIZE_LARGE];
     va_list args;
     char *p;
-    char c;
+    unsigned char c;
     BOOL initChar;
     BOOL mustBeEncoded;
 
@@ -871,6 +854,7 @@ static void WriteLDIFLine(FILE *fh, const char *key, const char *valueFmt, ...)
     p = buffer;
     initChar = TRUE;
     mustBeEncoded = FALSE;
+
     while((c = *p++) != '\0' && mustBeEncoded == FALSE)
     {
       BOOL safeChar;
@@ -886,16 +870,19 @@ static void WriteLDIFLine(FILE *fh, const char *key, const char *valueFmt, ...)
                     (c >= 0x21 && c <= 0x39) ||
                     (c == 0x3b)              ||
                     (c >= 0x3d && c <= 0x7f));
+
         initChar = FALSE;
       }
       else
+      {
         // safe characters
         safeChar = ((c >= 0x01 && c <= 0x09) ||
                     (c >= 0x0b && c <= 0x0c) ||
                     (c >= 0x0e && c <= 0x7f));
+      }
 
+      // yes, we have to encode this string
       if(safeChar == FALSE)
-        // yes, we have to encode this string
         mustBeEncoded = TRUE;
     }
 
@@ -909,20 +896,27 @@ static void WriteLDIFLine(FILE *fh, const char *key, const char *valueFmt, ...)
         // we can reuse the former buffer here again, because we have a copy of the string
         // in utf8
         if(base64encode(buffer, utf8, strlen((char *)utf8)) > 0)
+        {
           // write the key and encoded value strings
           // these are separated by a double colon
           fprintf(fh, "%s:: %s\n", key, buffer);
-        CodesetsFree(utf8, TAG_DONE);
+        }
+
+        CodesetsFreeA(utf8, NULL);
       }
     }
     else
+    {
       // write the unencoded key and value strings
       // these are separated by a single colon
       fprintf(fh, "%s: %s\n", key, buffer);
+    }
   }
   else
+  {
     // just write the end marker (a blank line)
     fprintf(fh, "\n");
+  }
 
   LEAVE();
 }
@@ -948,6 +942,7 @@ static STACKEXT void AB_ExportTreeNodeLDIF(FILE *fh, struct MUI_NListtree_TreeNo
       switch (ab->Type)
       {
         case AET_USER:
+        {
           WriteLDIFLine(fh, "dn", "cn=%s,mail=%s", ab->RealName, ab->Address);
           WriteLDIFLine(fh, "objectClass", "top");
           WriteLDIFLine(fh, "objectClass", "person");
@@ -969,11 +964,14 @@ static STACKEXT void AB_ExportTreeNodeLDIF(FILE *fh, struct MUI_NListtree_TreeNo
           if(ab->Homepage[0] != '\0')
             WriteLDIFLine(fh, "mozillaHomeUrl", "%s", ab->Homepage);
           WriteLDIFLine(fh, "", "");
-          break;
+        }
+        break;
 
         case AET_GROUP:
+        {
           AB_ExportTreeNodeLDIF(fh, tn);
-          break;
+        }
+        break;
 
         default:
           // lists cannot be exported
@@ -1059,69 +1057,103 @@ BOOL AB_ImportTreeTabCSV(char *fname, BOOL append, BOOL sorted, char delim)
           // Thunderbird 1.5 exports 36 items, let's look which
           switch(itemNumber)
           {
-            case 1: // first name
+            // first name
+            case 1:
+            {
               strlcat(addr.RealName, item, sizeof(addr.RealName));
-              break;
+            }
+            break;
 
-            case 2: // last name
+            // last name
+            case 2:
+            {
               if(addr.RealName[0] != '\0')
                 strlcat(addr.RealName, " ", sizeof(addr.RealName));
               strlcat(addr.RealName, item, sizeof(addr.RealName));
-              break;
+            }
+            break;
 
-            case 3: // complete name, preferred, if available
+            // complete name, preferred, if available
+            case 3:
+            {
               strlcpy(addr.RealName, item, sizeof(addr.RealName));
-              break;
+            }
+            break;
 
-            case 4: // nickname
+            // nickname
+            case 4:
+            {
               strlcpy(addr.Alias, item, sizeof(addr.Alias));
-              break;
+            }
+            break;
 
-            case 5: // EMail address
+            // EMail address
+            case 5:
+            {
               strlcpy(addr.Address, item, sizeof(addr.Address));
-              break;
+            }
+            break;
 
-            case 6: // second EMail address, ignored
-              break;
+            // second EMail address, ignored
+            case 6:
+              // nothing
+            break;
 
-            case 7: // office phone number
-            case 8: // private phone number
-            case 9: // fax number
-            case 10: // pager number
-            case 11: // mobile phone
+            case 7:   // office phone number
+            case 8:   // private phone number
+            case 9:   // fax number
+            case 10:  // pager number
+            case 11:  // mobile phone
+            {
               if(addr.Phone[0] != '\0')
                 strlcat(addr.Phone, ", ", sizeof(addr.Phone));
               strlcat(addr.Phone, item, sizeof(addr.Phone));
-              break;
+            }
+            break;
 
             case 12: // address, part 1
             case 13: // address, part 2
+            {
               if(addr.Street[0] != '\0')
                 strlcat(addr.Street, " ", sizeof(addr.Street));
               strlcat(addr.Street, item, sizeof(addr.Street));
-              break;
+            }
+            break;
 
-            case 14: // city
+            // city
+            case 14:
+            {
               strlcpy(addr.City, item, sizeof(addr.City));
-              break;
+            }
+            break;
 
-            case 15: // province, ignored
-              break;
+            // province, ignored
+            case 15:
+              // nothing
+            break;
 
-            case 16: // ZIP code, append it to the city name
+            // ZIP code, append it to the city name
+            case 16:
+            {
               if(addr.City[0] != '\0')
                 strlcat(addr.City, ", ", sizeof(addr.City));
               strlcat(addr.City, item, sizeof(addr.City));
-              break;
+            }
+            break;
 
-            case 17: // country
+            // country
+            case 17:
+            {
               strlcpy(addr.Country, item, sizeof(addr.Country));
-              break;
+            }
+            break;
 
             case 27: // office web address
             case 28: // private web address
+            {
               strlcpy(addr.Homepage, item, sizeof(addr.Homepage));
-              break;
+            }
+            break;
 
             default: // everything else is ignored
               break;
@@ -1177,6 +1209,7 @@ static STACKEXT void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_Tree
       switch (ab->Type)
       {
         case AET_USER:
+        {
           fprintf(fh, "%c", delim);
           fprintf(fh, "%c", delim);
           fprintf(fh, "%s%c", ab->RealName, delim);
@@ -1213,11 +1246,14 @@ static STACKEXT void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_Tree
           fprintf(fh, "%c", delim);
           fprintf(fh, "%c", delim);
           fprintf(fh, "\n");
-          break;
+        }
+        break;
 
         case AET_GROUP:
+        {
           AB_ExportTreeNodeTabCSV(fh, tn, delim);
-          break;
+        }
+        break;
 
         default:
           // lists cannot be exported

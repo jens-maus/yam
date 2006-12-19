@@ -4,6 +4,17 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-12-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_AB.c: change the LDIF import routines to work case insensitive in
+    finding its token. This should be more error proof in case the user
+    uses LDIF files from other systems not taking care of the case that a
+    token depends on its case.
+  * YAM_AB.c: adapted latest added sources to comply more to our STYLEGUIDE.
+  * YAM_AB.c: fixed some compiler warnings due to limited range of datatypes.
+  * YAM_AB.c, extrasrc/vastubs.c: added the missing vastubs which broke the
+    compilation for OS3/m68k recently.
+
 2006-12-19  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: Update to the latest changes and minor corrections.

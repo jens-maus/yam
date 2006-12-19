@@ -77,6 +77,10 @@ STRPTR CodesetsConvertStr(Tag tag1, ...)
 { return CodesetsConvertStrA((struct TagItem *)&tag1); }
 BOOL CodesetsListDelete(Tag tag1, ...)
 { return CodesetsListDeleteA((struct TagItem *)&tag1); }
+STRPTR CodesetsUTF8ToStr(Tag tag1, ...)
+{ return CodesetsUTF8ToStrA((struct TagItem *)&tag1); }
+UTF8 *CodesetsUTF8Create(Tag tag1, ...)
+{ return CodesetsUTF8CreateA((struct TagItem*)&tag1); }
 
 #else
   #error "VARGS stubs are only save on m68k systems!"
