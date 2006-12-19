@@ -4,7 +4,7 @@
 ;
 ## chunk AUTH Alexandre Balaban
 ; $Id$
-; based on YAM.cd 2560 2006-12-11 00:34:53Z
+; based on YAM.cd 2572 2006-12-17 21:53:06Z
 ;
 ; General
 ;
@@ -3817,9 +3817,9 @@ MSG_RE_MDNdeleted
 Le message\n\
 %s\n\
 a été effacé%s.\n\
-Le destinataire peut ne pas avoir affiché le message.\n\
-Il peut toutefois éventuellement le récupérer si il\n\
-utilise la fonction appropriée.\n
+Le destinataire peut ou non avoir affiché le message.\n\
+Il peut toutefois éventuellement le récupérer et le lire\n\
+plus tard en utilisant la fonction de récupération.\n
 ; The message\n\
 ; %s\n\
 ; has been deleted%s.\n\
@@ -5851,7 +5851,7 @@ Utilise cette adresse pour répondre\n\
 ; BUSY messages
 ;
 MSG_BusySavingAB
-Sauve le carnet d'adresses « %s »...
+Sauvegarde du carnet d'adresses « %s »...
 ; Saving address book '%s'...
 ; FILENAME
 ;
@@ -5872,7 +5872,7 @@ MSG_BusyUncompressingFO
 ; (De)compressing folders...
 ;
 MSG_BusyMoving
-%s messages déplacés/copiés...
+Déplacement/recopie de %s messages...
 ; Moving/copying %s messages...
 ; COUNT
 ;
@@ -5881,7 +5881,7 @@ Suppression des pièces jointes...
 ; Removing attachments...
 ;
 MSG_BusyDeleting
-Effacement des %s messages...
+Effacement de %s messages...
 ; Deleting %s message(s)...
 ; COUNT
 ;
@@ -5913,7 +5913,7 @@ Sauvegarde de l'index du dossier « %s »...
 ;
 MSG_BusyScanning
 Analyse du dossier « %s »...
-; Scanning directory of folder '%s'...
+; Scanning folder '%s'...
 ; FOLDER
 ;
 MSG_BusyReading
@@ -5933,7 +5933,7 @@ Opération PGP...
 ; PGP operation...
 ;
 MSG_BusyComposing
-Compose le message...
+Composition du message...
 ; Composing message...
 ;
 MSG_BusyDecPrinting
@@ -6834,57 +6834,57 @@ ou bien est incorrectement spécifié dans votre configuration.
 ; OPTIONNAME
 ;
 MSG_ER_B64FILEENCODE
-Une erreur inattendue est survenue lors de l'encodage du fichier '%s' avec les routines d'encodage \"base64\".
+Une erreur inattendue est survenue lors de l'encodage du fichier '%s' avec les routines d'encodage « base64 ».
 ; An unexpected error occurred while trying to encode the file \
 ; '%s' with the base64 file encoding routines.
 ; FILENAME
 ;
 MSG_ER_QPFILEENCODE
-Une erreur inattendue est survenue lors de l'encodage du fichier '%s' avec les routines d'encodage \"quoted-printable\".
+Une erreur inattendue est survenue lors de l'encodage du fichier '%s' avec les routines d'encodage « quoted-printable ».
 ; An unexpected error occurred while trying to encode the file \
 ; '%s' with the quoted-printable file encoding routines.
 ; FILENAME
 ;
 MSG_ER_UUFILEENCODE
-Une erreur inattendue est survenue lors de l'encodage du fichier '%s' avec les routines d'encodage \"UUcode\".
+Une erreur inattendue est survenue lors de l'encodage du fichier '%s' avec les routines d'encodage « UUcode ».
 ; An unexpected error occurred while trying to encode the file \
 ; '%s' with the UUcode file encoding routines.
 ; FILENAME
 ;
 MSG_ER_QPDEC_FILEIO
-Une erreur d'entrée/sortie est survenue lors du décodage \"quoted printable\" du fichier '%s'.
+Une erreur d'entrée/sortie est survenue lors du décodage « quoted printable » du fichier '%s'.
 ; A file input/output error occurred during decoding of the quoted \
 ; printable encoded file '%s'.
 ;
 MSG_ER_QPDEC_UNEXP
-Une erreur inattendue est survenue lors du décodage du fichier '%s' avec les routines de décodage \"quoted-printable\".
+Une erreur inattendue est survenue lors du décodage du fichier '%s' avec les routines de décodage « quoted-printable ».
 ; An unexpected error occurred while trying to decode the file \
 ; '%s' with the quoted-printable file decoding routines.
 ; FILENAME
 ;
 MSG_ER_QPDEC_WARN
-Lors du décodage \"quoted-printable\" du fichier '%s', des séquences de control incorrectes ont été détectées et sont restées non décodées dans le résultat.
+Lors du décodage « quoted-printable » du fichier '%s', des séquences de control incorrectes ont été détectées et sont restées non décodées dans le résultat.
 ; During the quoted-printable decoding of file '%s', some broken \
 ; control sequences where found and kept undecoded in the resulting \
 ; data stream.
 ; FILENAME
 ;
 MSG_ER_QPDEC_CHAR
-Des caractères interdits ont été détectés lors du décodage \"quoted-printable\" du fichier '%s' et on donc été supprimés lors du décodage.
+Des caractères interdits ont été détectés lors du décodage « quoted-printable » du fichier '%s' et on donc été supprimés lors du décodage.
 ; Some disallowed characters were spotted during the quoted-printable \
 ; decoding of file '%s' and were therefore removed during the decoding.
 ; FILENAME
 ;
 MSG_ER_UUDEC_TAGMISS
-Lors du décodage \"UUdecode\" du fichier '%s', YAM n'a pas pu trouver le tag obligatoire '%s' comme indiqué dans le standard \"UUcode\".
+Lors du décodage « UUdecode » du fichier '%s', YAM n'a pas pu trouver le tag obligatoire '%s' comme indiqué dans le standard « UUcode ».
 ; While trying to UUdecode file '%s', YAM wasn't able to find the required \
 ; '%s' tag as proposed by the UUcode standard.
 ; FILENAME, TAG
 ;
 MSG_ER_UUDEC_CHECKSUM
-Lors du décodage \"UUdecode\" du fichier '%s', YAM s'est aperçu que des sommes de contrôle internes étaient invalides et suggère par conséquent de vérifier que le fichier résultant n'est pas corrompu.\n\
+Lors du décodage « UUdecode » du fichier '%s', YAM s'est aperçu que des sommes de contrôle internes étaient invalides et suggère par conséquent de vérifier que le fichier résultant n'est pas corrompu.\n\
 \n\
-Un encodeur \"UUencode\" défectueux a été utilisé ou le message est tronqué.
+Un encodeur « UUencode » défectueux a été utilisé ou le message est tronqué.
 ; While trying to UUdecode file '%s', YAM has found that some embedded \
 ; checksums were invalid and therefore suggests to check that the resulting \
 ; file isn't corrupted.\n\
@@ -6893,9 +6893,9 @@ Un encodeur \"UUencode\" défectueux a été utilisé ou le message est tronqué.
 ; FILENAME
 ;
 MSG_ER_UUDEC_CORRUPT
-Lors du décodage \"UUdecode\" du fichier '%s', YAM s'est aperçu que la partie \"UUencodée\" semblait être corrompue. \n\
+Lors du décodage « UUdecode » du fichier '%s', YAM s'est aperçu que la partie « UUencodée » semblait être corrompue. \n\
 \n\
-Un encodeur \"UUencode\" défectueux a été utilisé ou le message est tronqué.
+Un encodeur « UUencode » défectueux a été utilisé ou le message est tronqué.
 ; While trying to UUdecode file '%s', YAM has found that the UUencoded part \
 ; seems to be corrupt. \n\
 ; \n\
@@ -6995,7 +6995,7 @@ directement dans la fenêtre principale.
 ; in the main window.
 ;
 MSG_CO_SETSTATUSDELAYED1
-Marquer le message affiché comme \"lu\" après
+Marquer le message affiché comme « lu » après
 ; Delay marking of displayed mail as read for
 ;
 MSG_CO_SETSTATUSDELAYED2
@@ -8294,11 +8294,11 @@ _Réinitialiser l'apprentissage
 ; _Reset training data
 ;
 MSG_CO_SPAM_GOODCOUNT
-Nombre de courriers classés comme "acceptables"
+Nombre de courriers classés comme « acceptables »
 ; Number of "not spam" classified mails
 ;
 MSG_CO_SPAM_BADCOUNT
-Nombre de courriers classés comme "indésirables"
+Nombre de courriers classés comme « indésirables »
 ; Number of "spam" classified mails
 ;
 MSG_CO_SPAM_PROBABILITYTHRESHOLD
@@ -8420,7 +8420,7 @@ comment les configurer dans vitre client mail.
 MSG_ER_SPAMDIR_EXISTS
 En tentant de créer un nouveau dossier pour les\n\
 indésirables, YAM a trouvé qu'il existait déjà\n\
-un dossier "spam".\n\
+un dossier « spam ».\n\
 \n\
 Comment voulez-vous utiliser ce dossier comme\n\
 dossier standard pour les indésirables ?
@@ -8471,4 +8471,32 @@ Corbeille
 MSG_WR_SEARCH
 Chercher
 ; Search
+;
+MSG_AB_IMPORT
+Importer
+; Import
+;
+MSG_AB_EXPORT
+Exporter
+; Export
+;
+MSG_AB_LDIF
+Carnet d'adresse LDIF (*.ldif)
+; LDIF address book (*.ldif)
+;
+MSG_AB_CSV
+Valeurs séparées par des virgules (*.csv)
+; Comma separated values (*.csv)
+;
+MSG_AB_TAB
+Valeurs séparées par des TAB (*.tab)
+; TAB separated values (*.tab)
+;
+MSG_ER_ADDRBOOKIMPORT
+Impossible d'importer le carnet d'adresses « %s »
+; Could not import address book \"%s\".
+;
+MSG_ER_ADDRBOOKEXPORT
+Impossible d'exporter le carnet d'adresses « %s »
+; Could not export address book \"%s\".
 ;

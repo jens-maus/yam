@@ -4,6 +4,10 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-12-19  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/francais.ct: Update to the latest changes and minor corrections.
+
 2006-12-18  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c: extended the LDIF export to handle special characters according
