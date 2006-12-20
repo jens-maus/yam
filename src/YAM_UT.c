@@ -3921,32 +3921,66 @@ static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff)
 //  Shrinks a message file
 static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff)
 {
-   D(DBF_UTIL, "CompressMailFile: %08lx - [%s] -> [%s] - [%s] - [%s] - %ld", XpkBase, src, dst, passwd, method, eff);
+  long error = -1;
+  ENTER();
 
-   if(!XpkBase)
-     return FALSE;
+  D(DBF_XPK, "CompressMailFile: %08lx - [%s] -> [%s] - [%s] - [%s] - %ld", XpkBase, src, dst, passwd, method, eff);
 
-   return (BOOL)!XpkPackTags(XPK_InName,      src,
-                             XPK_OutName,     dst,
-                             XPK_Password,    passwd,
-                             XPK_PackMethod,  method,
-                             XPK_PackMode,    eff,
-                             TAG_DONE);
+  if(XpkBase)
+  {
+    error = XpkPackTags(XPK_InName,      src,
+                        XPK_OutName,     dst,
+                        XPK_Password,    passwd,
+                        XPK_PackMethod,  method,
+                        XPK_PackMode,    eff,
+                        TAG_DONE);
+
+    #if defined(DEBUG)
+    if(error != 0)
+    {
+      char buf[1024];
+
+      XpkFault(error, NULL, buf, sizeof(buf));
+
+      E(DBF_XPK, "XpkPackTags() returned an error %d: '%s'", error, buf);
+    }
+    #endif
+  }
+
+  RETURN(error == 0);
+  return error == 0;
 }
 ///
 /// UncompressMailFile
 //  Expands a compressed message file
 static BOOL UncompressMailFile(char *src, char *dst, const char *passwd)
 {
-   D(DBF_UTIL, "UncompressMailFile: %08lx - [%s] -> [%s] - [%s]", XpkBase, src, dst, passwd);
+  long error = -1;
+  ENTER();
 
-   if(!XpkBase)
-      return FALSE;
+  D(DBF_XPK, "UncompressMailFile: %08lx - [%s] -> [%s] - [%s]", XpkBase, src, dst, passwd);
 
-   return (BOOL)!XpkUnpackTags(XPK_InName,    src,
-                               XPK_OutName,   dst,
-                               XPK_Password,  passwd,
-                               TAG_DONE);
+  if(XpkBase)
+  {
+    error = XpkUnpackTags(XPK_InName,    src,
+                          XPK_OutName,   dst,
+                          XPK_Password,  passwd,
+                          TAG_DONE);
+
+    #if defined(DEBUG)
+    if(error != 0)
+    {
+      char buf[1024];
+
+      XpkFault(error, NULL, buf, sizeof(buf));
+
+      E(DBF_XPK, "XpkUnPackTags() returned an error %d: '%s'", error, buf);
+    }
+    #endif
+  }
+
+  RETURN(error == 0);
+  return error == 0;
 }
 ///
 /// TransferMailFile

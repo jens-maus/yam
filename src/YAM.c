@@ -750,13 +750,15 @@ static int GetDST(BOOL update)
 static BOOL InitXPKPackerList(void)
 {
   BOOL result = FALSE;
+  LONG error = 0;
+
   ENTER();
 
   if(XpkBase)
   {
     struct XpkPackerList xpl;
 
-    if(XpkQueryTags(XPK_PackersQuery, &xpl, TAG_DONE) == 0)
+    if((error = XpkQueryTags(XPK_PackersQuery, &xpl, TAG_DONE)) == 0)
     {
       struct XpkPackerInfo xpi;
       unsigned int i;
@@ -765,7 +767,7 @@ static BOOL InitXPKPackerList(void)
 
       for(i=0; i < xpl.xpl_NumPackers; i++)
       {
-        if(XpkQueryTags(XPK_PackMethod, xpl.xpl_Packer[i], XPK_PackerQuery, &xpi, TAG_DONE) == 0)
+        if((error = XpkQueryTags(XPK_PackMethod, xpl.xpl_Packer[i], XPK_PackerQuery, &xpi, TAG_DONE)) == 0)
         {
           struct xpkPackerNode* newPacker = malloc(sizeof(struct xpkPackerNode));
 
@@ -787,15 +789,34 @@ static BOOL InitXPKPackerList(void)
         }
         else
         {
+          // something failed, so lets query the error!
+          #if defined(DEBUG)
+          char buf[1024];
+
+          XpkFault(error, NULL, buf, sizeof(buf));
+
+          E(DBF_XPK, "Error on XpkQuery() of packer '%s': '%s'", xpl.xpl_Packer[i], buf);
+          #endif
+
           result = FALSE;
-          break;
         }
       }
     }
+    else
+    {
+      // something failed, so lets query the error!
+      #if defined(DEBUG)
+      char buf[1024];
+
+      XpkFault(error, NULL, buf, sizeof(buf));
+
+      E(DBF_XPK, "Error on general XpkQuery(): '%s'", buf);
+      #endif
+    }
   }
 
-  RETURN(result);
-  return result;
+  RETURN(result && error == 0);
+  return result && error == 0;
 }
 
 ///
