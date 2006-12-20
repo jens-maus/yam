@@ -153,13 +153,10 @@ OVERLOAD(OM_NEW)
     { TB_MAIN_GETMAIL,  TB_MAIN_GETMAIL,  GetStr(MSG_MA_TBGetMail), GetStr(MSG_HELP_MA_BT_POPNOW),      0, 0, NULL, NULL },
     { TB_MAIN_SENDALL,  TB_MAIN_SENDALL,  GetStr(MSG_MA_TBSendAll), GetStr(MSG_HELP_MA_BT_SENDALL),     0, 0, NULL, NULL },
 
-    { MUIV_TheBar_BarSpacer, TB_MAIN_NUM+1,  NULL, NULL, 0, 0, NULL, NULL },
+    { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
     { TB_MAIN_SPAM,     TB_MAIN_SPAM,     GetStr(MSG_MA_TBSPAM),    GetStr(MSG_HELP_MA_BT_SPAM),        0, 0, NULL, NULL },
     { TB_MAIN_HAM,      TB_MAIN_HAM,      GetStr(MSG_MA_TBNOTSPAM), GetStr(MSG_HELP_MA_BT_NOTSPAM),     0, 0, NULL, NULL },
-
-    { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
-
     { TB_MAIN_FILTER,   TB_MAIN_FILTER,   GetStr(MSG_MA_TBFilter),  GetStr(MSG_HELP_MA_BT_FILTER),      0, 0, NULL, NULL },
     { TB_MAIN_FIND,     TB_MAIN_FIND,     GetStr(MSG_MA_TBFind),    GetStr(MSG_HELP_MA_BT_SEARCH),      0, 0, NULL, NULL },
     { TB_MAIN_ADDRBOOK, TB_MAIN_ADDRBOOK, GetStr(MSG_MA_TBAddrBook),GetStr(MSG_HELP_MA_BT_ABOOK),       0, 0, NULL, NULL },
@@ -257,7 +254,6 @@ DECLARE(UpdateSpamControls)
 
   ENTER();
 
-  DoMethod(obj, MUIM_TheBar_SetAttr, TB_MAIN_NUM+1, MUIV_TheBar_Attr_Hide, hide);
   DoMethod(obj, MUIM_TheBar_SetAttr, TB_MAIN_SPAM,  MUIV_TheBar_Attr_Hide, hide);
   DoMethod(obj, MUIM_TheBar_SetAttr, TB_MAIN_HAM,   MUIV_TheBar_Attr_Hide, hide);
 
