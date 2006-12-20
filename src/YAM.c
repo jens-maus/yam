@@ -1816,16 +1816,16 @@ static void Initialise(BOOL hidden)
 
    // we have to have at least v20.116 of NList.mcc to get YAM working without risking
    // to have it buggy - so we make it a requirement. And also 111 is the fastest one ATM.
-   CheckMCC(MUIC_NList, 20, 116, TRUE, "http://www.sf.net/projects/nlist-classes/");
+   CheckMCC(MUIC_NList, 20, 117, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
    // we also make sure the user uses the latest brand of all other NList classes, such as
    // NListview, NFloattext etc.
-   CheckMCC(MUIC_NListview, 19, 71, TRUE, "http://www.sf.net/projects/nlist-classes/");
-   CheckMCC(MUIC_NFloattext, 19, 52, TRUE, "http://www.sf.net/projects/nlist-classes/");
+   CheckMCC(MUIC_NListview, 19, 72, TRUE, "http://www.sf.net/projects/nlist-classes/");
+   CheckMCC(MUIC_NFloattext, 19, 53, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
    // we make v18.23 the minimum requirement for YAM because earlier versions are
    // buggy
-   CheckMCC(MUIC_NListtree, 18, 23, TRUE, "http://www.sf.net/projects/nlist-classes/");
+   CheckMCC(MUIC_NListtree, 18, 24, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
    // Lets check for the correct TextEditor.mcc version
    CheckMCC(MUIC_TextEditor, 15, 19, TRUE, "http://www.sf.net/projects/texteditor-mcc/");

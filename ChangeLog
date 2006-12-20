@@ -19,6 +19,8 @@ $Id$
 
 2006-12-20  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: bumped the minimum required version of all NList mcc classes to
+    make sure the most recent version is used.
   * YAM.c, YAM_UT.c: added somewhat more detailed debugging output to our
     XPK routines to find out why XPK may have failed during init or
     packing/unpacking.
