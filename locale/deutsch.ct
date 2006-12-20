@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (08.12.2006)
+## version $VER: YAM.catalog 6.0 (20.12.2006)
 ## language deutsch
 ## codeset 0
 ;
@@ -4645,14 +4645,18 @@ _Fenster schließen
 ; Module ER - Error Messages
 ;
 MSG_ER_CantCreateFile
-Kann Datei '%s' nicht erstellen.\n\nVersichern Sie sich, dass der Pfad existiert und das Laufwerk nicht schreibgeschützt ist.
+Kann Datei '%s' nicht erstellen.\n\
+\n\
+Versichern Sie sich, dass der Pfad existiert und das Laufwerk nicht schreibgeschützt ist.
 ; Couldn't write to file '%s'.\n\
 ; \n\
 ; Make sure that the path exists and that the volume isn't write-protected.
 ; FILENAME
 ;
 MSG_ER_CantCreateDir
-Kann Verzeichnis '%s' nicht erstellen.\n\nVersichern Sie sich, dass das Laufwerk nicht schreibgeschützt ist.
+Kann Verzeichnis '%s' nicht erstellen.\n\
+\n\
+Versichern Sie sich, dass das Laufwerk nicht schreibgeschützt ist.
 ; Couldn't create directory '%s'.\n\
 ; \n\
 ; Make sure that the volume isn't write-protected.
@@ -4672,7 +4676,8 @@ Das Geburtsdatum ist im falschen Format. Das korrekte Format ist TT-MMM-JJJJ (en
 ; DD-MMM-YYYY (month names in English).
 ;
 MSG_ER_ErrorDateFormat
-Ungültiges Datums/Zeit-Format.\n\nDas Datum muss in AmigaDOS-Format sein.\nBeispiel: %s
+Ungültiges Datums/Zeit-Format.\n\nDas Datum muss in AmigaDOS-Format sein.\n\
+Beispiel: %s
 ; Invalid date/time format.\n\
 ; \n\
 ; The date has to be in AmigaDOS format.\n\
@@ -4680,14 +4685,18 @@ Ungültiges Datums/Zeit-Format.\n\nDas Datum muss in AmigaDOS-Format sein.\nBeisp
 ; DATE
 ;
 MSG_ER_CantOpenTempfile
-Kann temporäre Datei '%s' nicht öffnen.\n\nÜberprüfen Sie die Pfadeinstellung in der Konfiguration.
+Kann temporäre Datei '%s' nicht öffnen.\n\
+\n\
+Überprüfen Sie die Pfadeinstellung in der Konfiguration.
 ; Couldn't open temporary file '%s'.\n\
 ; \n\
 ; Check the path settings in the configuration.
 ; FILENAME
 ;
 MSG_ER_CantCreateTempfile
-Kann temporäre Datei nicht erstellen.\n\nGrund: zu wenig Speicher oder Angabe eines ungültigen Pfads in der Konfiguration.
+Kann temporäre Datei nicht erstellen.\n\
+\n\
+Grund: zu wenig Speicher oder Angabe eines ungültigen Pfads in der Konfiguration.
 ; Couldn't create temporary file.\n\
 ; \n\
 ; Reason: out of memory or invalid path specified in the configuration.
@@ -4707,20 +4716,26 @@ Unerwartetes Dateiende beim Dekodieren einer UU-kodierten Datei. Die Nachricht s
 ; The message seems to be truncated.
 ;
 MSG_ER_InvalidLength
-Ungültige Zeilenlänge in UU-kodierter Datei: %lD.\n\nGrund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
+Ungültige Zeilenlänge in UU-kodierter Datei: %lD.\n\
+\n\
+Grund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
 ; Invalid line length in UUencoded file: %lD.\n\
 ; \n\
 ; A defective UUencoder was used or the message is truncated.
 ; SIZE
 ;
 MSG_ER_CreateMailError
-Kann Maildatei nicht erstellen.\n\nGrund: ungültiges Postfachverzeichnis oder Festplattenspeicher erschöpft.
+Kann Maildatei nicht erstellen.\n\
+\n\
+Grund: ungültiges Postfachverzeichnis oder Festplattenspeicher erschöpft.
 ; Couldn't create mail file.\n\
 ; \n\
 ; Reason: invalid folder directory or unsufficient disk space.
 ;
 MSG_ER_UnknownEnc
-Unbekannte MIME-Kodierung: %s.\n\nYAM konnte einen Teil der Nachricht nicht dekodieren. Speichern Sie die Nachricht ab und versuchen Sie es mit einem anderen Dekodierer.
+Unbekannte MIME-Kodierung: %s.\n\
+\n\
+YAM konnte einen Teil der Nachricht nicht dekodieren. Speichern Sie die Nachricht ab und versuchen Sie es mit einem anderen Dekodierer.
 ; Unknown MIME encoding: %s.\n\
 ; \n\
 ; YAM failed to decode a part of the message. Save the message \
@@ -4728,39 +4743,51 @@ Unbekannte MIME-Kodierung: %s.\n\nYAM konnte einen Teil der Nachricht nicht deko
 ; ENCODING_TYPE
 ;
 MSG_ER_UnknownHeaderEnc
-Unbekannte Kopfzeilenkodierung: %s.\n\nYAM kann eine bestimmte Kopfzeile nicht korrekt anzeigen.
+Unbekannte Kopfzeilenkodierung: %s.\n\
+\n\
+YAM kann eine bestimmte Kopfzeile nicht korrekt anzeigen.
 ; Unknown header encoding: %s.\n\
 ; \n\
 ; YAM cannot display a particular message header correctly.
 ; ENCODING_TYPE
 ;
 MSG_ER_MultipartEOF
-Fehler in Multipart-Nachricht.\n\nunerwartetes Dateiende. Die Nachricht scheint unvollständig zu sein.
+Fehler in Multipart-Nachricht.\n\
+\n\
+unerwartetes Dateiende. Die Nachricht scheint unvollständig zu sein.
 ; Unexpected EOF while decoding multipart message. \
 ; The message seems to be truncated.
 ;
 MSG_ER_MIMEError
-Kann MIME-Nachricht nicht extrahieren.\n\nDie Nachricht enthält falsche MIME-Kodierungen oder sie ist leer oder unvollständig.
+Kann MIME-Nachricht nicht extrahieren.\n\
+\n\
+Die Nachricht enthält falsche MIME-Kodierungen oder sie ist leer oder unvollständig.
 ; Couldn't extract MIME message.\n\
 ; \n\
 ; The message contains badly formed MIME parts or it's empty or truncated.
 ;
 MSG_ER_CantOpenFile
-Kann Datei '%s' nicht öffnen.\n\nDie Datei scheint nicht zu existieren.
+Kann Datei '%s' nicht öffnen.\n\
+\n\
+Die Datei scheint nicht zu existieren.
 ; Couldn't read from file '%s'.\n\
 ; \n\
 ; The file doesn't seem to exist.
 ; FILENAME
 ;
 MSG_ER_UUSize
-Dekodierte Größe [%lD] stimmt nicht mit der ursprünglichen Größe [%lD] überein.\n\nGrund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
+Dekodierte Größe [%lD] stimmt nicht mit der ursprünglichen Größe [%lD] überein.\n\
+\n\
+Grund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
 ; Decoded size [%lD] does not match original size [%lD].\n\
 ; \n\
 ; A defective UUencoder was used or the message is truncated.
 ; SIZE, SIZE
 ;
 MSG_ER_DocNotFound
-Kann HTML-Dokument '%s' nicht finden.\n\nDie Datei existiert nicht auf dem WWW-Server.
+Kann HTML-Dokument '%s' nicht finden.\n\
+\n\
+Die Datei existiert nicht auf dem WWW-Server.
 ; HTML document '%s' not found.\n\
 ; \n\
 ; The file doesn't exist on the WWW server.
@@ -4771,7 +4798,9 @@ Kann HTTP-Anfrage nicht senden. Ein Dokument konnte nicht vom WWW-Server angefor
 ; Couldn't send HTTP request. Requesting a document from the WWW server failed.
 ;
 MSG_ER_ConnectHTTP
-Keine Verbindung mit WWW-Server '%s'. Mögliche Gründe: TCP/IP offline, ungültige Adresse, Server läuft momentan nicht oder unterstützt kein HTTP.
+Keine Verbindung mit WWW-Server '%s'.\n\
+\n\
+Mögliche Gründe: TCP/IP offline, ungültige Adresse, Server läuft momentan nicht oder unterstützt kein HTTP.
 ; Couldn't connect to WWW server '%s'.\n\
 ; \n\
 ; Possible reasons: TCP/IP offline, invalid address, \
@@ -4779,7 +4808,10 @@ Keine Verbindung mit WWW-Server '%s'. Mögliche Gründe: TCP/IP offline, ungültige
 ; HOST
 ;
 MSG_ER_BadResponse
-Falsche Antwort auf Befehl %s:\n%s\n\nDer Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
+Falsche Antwort auf Befehl %s:\n\
+%s\n\
+\n\
+Der Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
 ; Bad %s command response:\n\
 ; %s\n\
 ; \n\
@@ -4788,51 +4820,65 @@ Falsche Antwort auf Befehl %s:\n%s\n\nDer Postserver konnte den Befehl nicht aus
 ; COMMAND, TEXT
 ;
 MSG_ER_UnknownPOP
-Unbekannter POP3-Server: '%s'.\n\nTCP/IP ist offline oder die Serveradresse ist ungültig.
+Unbekannter POP3-Server: '%s'.\n\
+\n\
+TCP/IP ist offline oder die Serveradresse ist ungültig.
 ; Unknown POP3 server: '%s'.\n\
 ; \n\
 ; TCP/IP is offline or the server address is invalid.
 ; HOST
 ;
 MSG_ER_UnknownSMTP
-Unbekannter SMTP-Server: '%s'.\n\nTCP/IP ist offline oder die Serveradresse ist ungültig.
+Unbekannter SMTP-Server: '%s'.\n\
+\n\
+TCP/IP ist offline oder die Serveradresse ist ungültig.
 ; Unknown SMTP server: '%s'.\n\
 ; \n\
 ; TCP/IP is offline or the server address is invalid.
 ; HOST
 ;
 MSG_ER_CantConnect
-Keine Verbindung mit '%s'.\n\nDer Postserver ist zur Zeit nicht verfügbar oder er unterstützt das POP3/SMTP-Protokoll nicht.
+Keine Verbindung mit '%s'.\n\
+\n\
+Der Postserver ist zur Zeit nicht verfügbar oder er unterstützt das POP3/SMTP-Protokoll nicht.
 ; Couldn't connect to '%s'.\n\
 ; \n\
 ; The mail server is currently down or doesn't support the POP3/SMTP protocols.
 ; HOST
 ;
 MSG_ER_NoAPOP
-Ihr POP3-Server unterstützt kein APOP. Schalten Sie die APOP-Option in der YAM-Konfiguration aus.
+Ihr POP3-Server unterstützt kein APOP. \
+Schalten Sie die APOP-Option in der YAM-Konfiguration aus.
 ; Your POP3 server doesn't support APOP. \
 ; Disable the APOP option in your YAM configuration.
 ;
 MSG_ER_ErrorWriteMailfile
-Fehler beim Schreiben der Nachrichtdatei: %s.\n\nYAM kann die Nachricht nicht auf der Festplatte speichern, vielleicht ist diese voll.
+Fehler beim Schreiben der Nachrichtdatei: %s.\n\
+\n\
+YAM kann die Nachricht nicht auf der Festplatte speichern, vielleicht ist diese voll.
 ; Write error on mail file: %s.\n\
 ; \n\
 ; YAM can't save the message to disk, maybe you're out of disk space.
 ; FILENAME
 ;
 MSG_ER_ConnectionBroken
-TCP/IP-Verbindung wurde unterbrochen, vermutlich hat das Modem aufgelegt.
+TCP/IP-Verbindung wurde unterbrochen.\n\
+\n\
+Vermutlich hat der Verbindungspartner aufgelegt.
 ; TCP/IP connection broken, probably due to a carrier drop.
 ;
 MSG_ER_ErrorReadMailfile
-Fehler beim Lesen der Nachrichtendatei: %s.\n\nDie Datei existiert zwar, aber beim Lesen trat ein Fehler auf.
+Fehler beim Lesen der Nachrichtendatei: %s.\n\
+\n\
+Die Datei existiert zwar, aber beim Lesen trat ein Fehler auf.
 ; Read error on mail file: %s.\n\
 ; \n\
 ; The file exists, but there was an error while reading it.
 ; FILENAME
 ;
 MSG_ER_UserRemoved
-Verzeichnis '%s' existiert nicht! Der Benutzer %s wurde entfernt.
+Verzeichnis '%s' existiert nicht!\n\
+Der Benutzer %s wurde entfernt.
 ; Directory '%s' not found!\n\
 ; User %s has been removed.
 ; PATH
@@ -4846,14 +4892,20 @@ Sie müssen einen Namen für den neuen Benutzer angeben!
 ; You must specify a name for the new user!
 ;
 MSG_ER_NoPublicKeys
-Keine öffentlichen PGP-Schlüssel gefunden.\n\nVersichern Sie sich, dass PGP installiert ist und nehmen Sie die erforderlichen Einstellungen in YAM vor.
+Keine öffentlichen PGP-Schlüssel gefunden.\n\
+\n\
+Versichern Sie sich, dass PGP installiert ist und nehmen Sie die erforderlichen Einstellungen in YAM vor.
 ; No public PGP keys found.\n\
 ; \n\
 ; Make sure that PGP is installed and the required settings \
 ; are made in the configuration of YAM.
 ;
 MSG_ER_PGPreturnsError
-Der folgende PGP-Befehl verursachte einen Fehler:\n\n'%s'\n\nEine Diagnose finden Sie in der Datei %s.
+Der folgende PGP-Befehl verursachte einen Fehler:\n\
+\n\
+'%s'\n\
+\n\
+Eine Diagnose finden Sie in der Datei %s.
 ; The following PGP command returned with an error:\n\
 ; \n\
 ; '%s'\n\
@@ -4862,14 +4914,18 @@ Der folgende PGP-Befehl verursachte einen Fehler:\n\n'%s'\n\nEine Diagnose finde
 ; COMMAND, FILENAME
 ;
 MSG_ER_PGPnotfound
-Konnte PGP-Befehl nicht ausführen.\n\nÜberprüfen Sie, ob %s existiert.
+Konnte PGP-Befehl nicht ausführen.\n\
+\n\
+Überprüfen Sie, ob %s existiert.
 ; Couldn't execute PGP command.\n\
 ; \n\
 ; Check if %s exists.
 ; FILENAME
 ;
 MSG_ER_AliasNotFound
-Unbekannter Alias oder Name: %s.\n\nYAM konnte die E-Mail-Adresse dieses Benutzers im Adressbuch nicht finden. Überprüfen Sie die Schreibweise.
+Unbekannter Alias oder Name: %s.\n\
+\n\
+YAM konnte die E-Mail-Adresse dieses Benutzers im Adressbuch nicht finden. Überprüfen Sie die Schreibweise.
 ; Unknown alias or name: %s.\n\
 ; \n\
 ; YAM couldn't find the email address of this recipient \
@@ -4882,7 +4938,9 @@ Konnte das PGP-Kürzel von '%s' im Adressbuch nicht finden, versuche es nun mit '
 ; RECIPIENT, ADDRESS
 ;
 MSG_ER_ErrorAppendKey
-Kann öffentlichen PGP-Schlüssel %s nicht anhängen.\n\nBeim Extrahieren des Schlüssels vom PGP-Schlüsselring trat ein Problem auf.
+Kann öffentlichen PGP-Schlüssel %s nicht anhängen.\n\
+\n\
+Beim Extrahieren des Schlüssels vom PGP-Schlüsselring trat ein Problem auf.
 ; Couldn't append public PGP key %s.\n\
 ; \n\
 ; There was a problem extracting it from the PGP keyring.
@@ -5973,7 +6031,9 @@ Bitte einen Namen für die neue Gruppe eingeben:
 ; Please enter a name for the new folder group:
 ;
 MSG_ER_CANTMOVEMAIL
-Die Nachricht '%s' kann nicht in Postfach '%s' verschoben werden\n\nEin Postfach mit diesem Namen existiert nicht. Bitte die Filtereinstellungen überprüfen.
+Die Nachricht '%s' kann nicht in Postfach '%s' verschoben werden\n\
+\n\
+Ein Postfach mit diesem Namen existiert nicht. Bitte die Filtereinstellungen überprüfen.
 ; Couldn't move mail '%s' to folder '%s'.\n\
 ; \n\
 ; No folder with this name could be found. \
@@ -6097,7 +6157,9 @@ Initialisiere TLSv1/SSLv3 Session...
 ; Initializing TLSv1/SSLv3 session...
 ;
 MSG_ER_INITAMISSL
-Fehler beim Initialisieren der amissl.library - TLSv1/SSLv3 Unterstützung deaktiviert.\n\nBitte die AmiSSL Installation überprüfen und YAM erneut starten.
+Fehler beim Initialisieren der amissl.library - TLSv1/SSLv3 Unterstützung deaktiviert.\n\
+\n\
+Bitte die AmiSSL Installation überprüfen und YAM erneut starten.
 ; Couldn't init amissl.library - TLSv1/SSLv3 support disabled.\n\
 ; \n\
 ; Please check your AmiSSL installation and restart YAM.
@@ -6115,7 +6177,8 @@ Import MIME Anzeiger & Typen
 ; Import MIME viewers & types
 ;
 MSG_ER_TRANSFERMAIL
-Konnte Nachricht '%s' nicht zu Ordner '%s' transferieren.\n\n\
+Konnte Nachricht '%s' nicht zu Ordner '%s' transferieren.\n\
+\n\
 Die Datei existiert eventuell nicht oder konnte nicht \
 kopiert werden.
 ; Couldn't transfer mail '%s' to folder '%s'.\n\
@@ -6124,8 +6187,9 @@ kopiert werden.
 ; MAILFILE, FOLDERNAME
 ;
 MSG_ER_ADDRBOOKLOAD
-Konnte Addressbuch von Datei '%s' nicht laden.\n\n\
-Die Datei scheint nicht zu existieren oder ein\n\
+Konnte Addressbuch von Datei '%s' nicht laden.\n\
+\n\
+Die Datei scheint nicht zu existieren oder ein \
 Zugriff ist nicht möglich.
 ; Couldn't load address book from file '%s'.\n\
 ; \n\
@@ -6184,7 +6248,9 @@ wiederholen Sie den Verbindungsaufbau.
 ;
 MSG_ER_POPWELCOME
 Der POP Server hat mit einer Fehlermeldung beim Verbindungsaufbau reagiert \
-und die Verbindung wurde daraufhin beendet:\n\n%s\n
+und die Verbindung wurde daraufhin beendet:\n\
+\n\
+%s\n
 ; The POP server replied with an error message during the welcome \
 ; procedure and the connection was terminated:\n\
 ; \n\
@@ -6461,7 +6527,7 @@ aufweisst und die Zugriffsrechte darauf stimmen.
 ; FILENAME, FOLDER
 ;
 MSG_ER_XPKUSAGE
-Ein Fehler ist bei dem Versuch aufgetreten die Datei '%s' mittels XPK\n\
+Ein Fehler ist bei dem Versuch aufgetreten die Datei '%s' mittels XPK \
 zu bearbeiten.\n\
 \n\
 Bitte kontrollieren Sie ihre XPK Installation und die dazugehörigen \
@@ -6687,10 +6753,11 @@ MSG_MA_ALLTOREAD
 #\000Alle auf Gelesen
 ;
 MSG_ER_MOVEFOLDERDIR
-Ein Fehler trat beim Versuch auf den Inhalt des Postfaches\n\
-'%s' in das Verzeichnis '%s' zu verschieben. Dies könnte\n\
-an zu wenig Speicherplatz, einem falschen Verzeichnis oder\n\
-aber daran liegen das ein Schreiben in das Verzeichnis nicht\n\
+Ein Fehler trat beim Versuch auf den Inhalt des Postfaches \
+'%s' in das Verzeichnis '%s' zu verschieben.\n\
+\n\
+Dies könnte an zu wenig Speicherplatz, einem falschen Verzeichnis \
+oder aber daran liegen das ein Schreiben in das Verzeichnis nicht \
 möglich ist.
 ;
 MSG_CO_QUICKSEARCHBAR

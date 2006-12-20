@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-12-20  Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/YAM.cd, locale/deutsch.ct: adapted all catalog string which are
+    used with the automatically wordwrapping ER_NewError() function to not
+	 use carriage returns on all kind of places. So please every translator
+	 should note that if a string is used with ER_NewError(), then it should
+	 not excessivly use \n characters, but only on specific places.
+
 2006-12-19  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c: reworked CSV/TAB import again a little bit to handle quoted items

@@ -5242,9 +5242,11 @@ MSG_MA_ALLTOREAD (1572//)
 #\000All to Read
 ;
 MSG_ER_MOVEFOLDERDIR (1573//)
-An error occurred while trying to move the content of folder\n\
-'%s' to directory '%s'. This may either be due to insufficient\n\
-space or because the destination path is not valid or writable.
+An error occurred while trying to move the content of folder \
+'%s' to directory '%s'.\n\
+\n\
+This may either be due to insufficient space or because the \
+destination path is not valid or writable.
 ;
 MSG_CO_QUICKSEARCHBAR (1574//)
 Show QuickSearchBar in main window
