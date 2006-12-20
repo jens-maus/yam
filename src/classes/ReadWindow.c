@@ -467,14 +467,17 @@ DECLARE(ReadMail) // struct Mail *mail
   if(C->SpamFilterEnabled)
   {
     if(data->MI_TOSPAM != NULL)
-      set(data->MI_TOSPAM,    MUIA_Menuitem_Enabled, isRealMail && !isSpamMail);
+      // enable, if the mail is not yet classified (not spam, not ham)
+      set(data->MI_TOSPAM,    MUIA_Menuitem_Enabled, isRealMail && !isSpamMail && !isHamMail);
     if(data->MI_TOHAM != NULL)
-      set(data->MI_TOHAM,     MUIA_Menuitem_Enabled, isRealMail && !isHamMail);
+      // enable, if the mail is not sppam
+      set(data->MI_TOHAM,     MUIA_Menuitem_Enabled, isRealMail && isSpamMail);
   }
 
   if(data->windowToolbar)
   {
     LONG pos = MUIV_NList_GetPos_Start;
+    BOOL spamHidden, hamHidden;
 
     // query the position of the mail in the current listview
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetPos, mail, &pos);
@@ -488,8 +491,33 @@ DECLARE(ReadMail) // struct Mail *mail
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_MOVE, MUIV_TheBar_Attr_Disabled, !isRealMail);
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_REPLY, MUIV_TheBar_Attr_Disabled, isSentMail || inSpamFolder);
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_FORWARD, MUIV_TheBar_Attr_Disabled, inSpamFolder);
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIV_TheBar_Attr_Disabled, isSpamMail);
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_HAM, MUIV_TheBar_Attr_Disabled, isHamMail);
+
+    if(C->SpamFilterEnabled)
+    {
+      // the spam filter is enabled, show/hide the buttons depending on the mail state
+      if(isSpamMail)
+      {
+        // this is a spam mail, let's hide the "Spam" button
+        spamHidden = TRUE;
+        hamHidden = FALSE;
+      }
+      else
+      {
+        // this is either a ham mail or a not yet classified mail, let's hide the "no Spam" button
+        spamHidden = FALSE;
+        hamHidden = TRUE;
+      }
+    }
+    else
+    {
+      // the spam filter is not enabled, hide both buttons
+      spamHidden = TRUE;
+      hamHidden = TRUE;
+    }
+    // now set the attributes
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIV_TheBar_Attr_Hide, spamHidden);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIV_TheBar_Attr_Disabled, !isRealMail);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_HAM,  MUIV_TheBar_Attr_Hide, hamHidden);
   }
 
   // Update the status groups
@@ -1222,14 +1250,14 @@ DECLARE(UpdateSpamControls)
 {
   GETDATA;
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
+  struct Mail *mail = rmData->mail;
 
   ENTER();
 
   if(C->SpamFilterEnabled)
   {
-    struct Mail *mail = rmData->mail;
-    BOOL isSpamMail = mail && !isVirtualMail(mail) && hasStatusSpam(mail);
-    BOOL isHamMail  = mail && !isVirtualMail(mail) && hasStatusHam(mail);
+    BOOL isSpamMail = (mail != NULL) && !isVirtualMail(mail) && hasStatusSpam(mail);
+    BOOL isHamMail  = (mail != NULL) && !isVirtualMail(mail) && hasStatusHam(mail);
 
     // for each entry check if it exists and if it is part of the menu
     // if not, create a new entry and add it to the current layout
@@ -1237,7 +1265,7 @@ DECLARE(UpdateSpamControls)
     {
       if((data->MI_TOHAM =  MakeMenuitem(GetStr(MSG_RE_SETNOTSPAM), RMEN_SETHAM)) != NULL)
       {
-        set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isHamMail);
+        set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isSpamMail);
         DoMethod(data->MI_MESSAGE, MUIM_Family_Insert, data->MI_TOHAM, data->MI_SETMARKED);
       }
     }
@@ -1246,7 +1274,7 @@ DECLARE(UpdateSpamControls)
     {
       if((data->MI_TOSPAM = MakeMenuitem(GetStr(MSG_RE_SETSPAM), RMEN_SETSPAM)) != NULL)
       {
-        set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isSpamMail);
+        set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isSpamMail && !isHamMail);
         DoMethod(data->MI_MESSAGE, MUIM_Family_Insert, data->MI_TOSPAM, data->MI_SETMARKED);
       }
     }
@@ -1272,7 +1300,7 @@ DECLARE(UpdateSpamControls)
   // update the toolbar as well, so lets delegate
   // the method call to it.
   if(data->windowToolbar)
-    DoMethod(data->windowToolbar, MUIM_ReadWindowToolbar_UpdateSpamControls);
+    DoMethod(data->windowToolbar, MUIM_ReadWindowToolbar_UpdateSpamControls, mail);
 
   RETURN(0);
   return 0;

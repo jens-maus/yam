@@ -173,8 +173,8 @@ OVERLOAD(OM_NEW)
   // instruct MUI to generate the object
   if((obj = DoSuperNew(cl, obj,
                        MUIA_Group_Horiz,             TRUE,
-                			 MUIA_TheBar_EnableKeys,       TRUE,
-                  		 MUIA_TheBar_IgnoreAppareance, FALSE,
+                       MUIA_TheBar_EnableKeys,       TRUE,
+                       MUIA_TheBar_IgnoreAppareance, FALSE,
                        MUIA_TheBar_Buttons,          buttons,
                        MUIA_TheBar_PicsDrawer,       "PROGDIR:Icons",
                        MUIA_TheBar_Pics,             normalImages,

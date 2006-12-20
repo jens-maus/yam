@@ -154,8 +154,8 @@ OVERLOAD(OM_NEW)
   // instruct MUI to generate the object
   if((obj = DoSuperNew(cl, obj,
                        MUIA_Group_Horiz,             TRUE,
-                			 MUIA_TheBar_EnableKeys,       TRUE,
-                  		 MUIA_TheBar_IgnoreAppareance, FALSE,
+               	       MUIA_TheBar_EnableKeys,       TRUE,
+                       MUIA_TheBar_IgnoreAppareance, FALSE,
                        MUIA_TheBar_Buttons,          buttons,
                        MUIA_TheBar_PicsDrawer,       "PROGDIR:Icons",
                        MUIA_TheBar_Pics,             normalImages,
@@ -166,7 +166,7 @@ OVERLOAD(OM_NEW)
     // everything worked out fine.
 
     // update the SPAM controls
-    DoMethod(obj, MUIM_ReadWindowToolbar_UpdateSpamControls);
+    DoMethod(obj, MUIM_ReadWindowToolbar_UpdateSpamControls, NULL);
   }
   else
     E(DBF_STARTUP, "couldn't create ReadWindowToolbar!");
@@ -237,15 +237,53 @@ DECLARE(InitNotify) // Object *readWindow, Object *readMailGroup
 }
 ///
 /// DECLARE(UpdateSpamControls)
-DECLARE(UpdateSpamControls)
+// update the "Spam" and "no Spam" buttons
+DECLARE(UpdateSpamControls) // struct Mail *mail
 {
-  BOOL hide = !C->SpamFilterEnabled;
+  BOOL hideSpam;
+  BOOL hideHam;
+  BOOL disableSpam;
 
   ENTER();
 
-  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_NUM+1, MUIV_TheBar_Attr_Hide, hide);
-  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_SPAM,  MUIV_TheBar_Attr_Hide, hide);
-  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_HAM,   MUIV_TheBar_Attr_Hide, hide);
+  if(C->SpamFilterEnabled)
+  {
+    // the spam filter is enabled, now check the mail state
+    if(msg->mail == NULL || isVirtualMail(msg->mail))
+    {
+      // this is no real mail, so just show an disabled "Spam" button
+      hideSpam = FALSE;
+      hideHam = FALSE;
+      disableSpam = TRUE;
+    }
+    else if(hasStatusSpam(msg->mail))
+    {
+      // the mail is spam, so just show the "no Spam" button
+      hideSpam = TRUE;
+      hideHam = FALSE;
+      disableSpam = FALSE;
+    }
+    else
+    {
+      // the mail is either no spam or yet classified, so just show the "Spam" button
+      hideSpam = FALSE;
+      hideHam = TRUE;
+      disableSpam = FALSE;
+    }
+  }
+  else
+  {
+    // the spam filter is disabled, so hide both buttons and the separator
+    hideSpam = TRUE;
+    hideHam = TRUE;
+    disableSpam = TRUE;
+  }
+
+  // now set the attributes
+  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_NUM+1, MUIV_TheBar_Attr_Hide,     !C->SpamFilterEnabled);
+  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_SPAM,  MUIV_TheBar_Attr_Hide,     hideSpam);
+  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_SPAM,  MUIV_TheBar_Attr_Disabled, disableSpam);
+  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_HAM,   MUIV_TheBar_Attr_Hide,     hideHam);
 
   RETURN(0);
   return 0;

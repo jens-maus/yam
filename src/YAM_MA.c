@@ -245,6 +245,9 @@ void MA_ChangeSelected(BOOL forceUpdate)
   // deal with the toolbar and disable/enable certain buttons
   if(gui->TO_TOOLBAR)
   {
+    BOOL spamHidden, hamHidden;
+    BOOL spamDisabled, hamDisabled;
+
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_READ,   MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_EDIT,   MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_MOVE,   MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
@@ -254,8 +257,64 @@ void MA_ChangeSelected(BOOL forceUpdate)
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_REPLY,  MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FORWARD,MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FILTER, MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_SPAM,   MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || !C->SpamFilterEnabled || (active && numSelected <= 1 && hasStatusSpam(mail)));
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_HAM,    MUIV_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || !C->SpamFilterEnabled || (active && numSelected <= 1 && hasStatusHam(mail)));
+
+    // with an enabled spam filter we display just one button, either "Spam" or "no Spam"
+    if(C->SpamFilterEnabled)
+    {
+      if(!folderEnabled || (!active && numSelected == 0))
+      {
+        // either this is a group folder or no message is selected
+        // then just show the disabled "Spam" button
+        spamHidden = FALSE;
+        hamHidden = TRUE;
+        spamDisabled = TRUE;
+        hamDisabled = TRUE;
+      }
+      else if(active && numSelected >= 1)
+      {
+        // at least one mail is selected in a regular folder
+        // then show/enable the buttons depending on the mail state
+        if(hasStatusSpam(mail))
+        {
+          // definitve spam mail, just show the "no Spam" button
+          spamHidden = TRUE;
+          hamHidden = FALSE;
+          spamDisabled = TRUE;
+          hamDisabled = FALSE;
+        }
+        else
+        {
+          // this mail is either definitively no spam, or it hasn't been classified yet
+          // so just show the "Spam" button
+          spamHidden = FALSE;
+          hamHidden = TRUE;
+          spamDisabled = FALSE;
+          hamDisabled = TRUE;
+        }
+      }
+      else
+      {
+        // any other case, just show the disabled "Spam" button
+        // can this really happen??
+        spamHidden = FALSE;
+        hamHidden = TRUE;
+        spamDisabled = TRUE;
+        hamDisabled = TRUE;
+      }
+    }
+    else
+    {
+      // the spam filter is not enabled, hide both buttons and the separator
+      spamHidden = TRUE;
+      hamHidden = TRUE;
+      spamDisabled = TRUE;
+      hamDisabled = TRUE;
+    }
+
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_SPAM, MUIV_TheBar_Attr_Hide, spamHidden);
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_HAM,  MUIV_TheBar_Attr_Hide, hamHidden);
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_SPAM, MUIV_TheBar_Attr_Disabled, spamDisabled);
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_HAM,  MUIV_TheBar_Attr_Disabled, hamDisabled);
   }
 
   // enable/disable menu items
@@ -340,15 +399,17 @@ void MA_ChangeSelected(BOOL forceUpdate)
   //  * TOSPAM menu item exists
   //  * > 0 mails selected or the active one isn't marked as SPAM
   //  * the folder is enabled
+  //  * the mail is neither spam nor ham (= unclassified)
   if(gui->MI_TOSPAM)
-    set(gui->MI_TOSPAM, MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && !hasStatusSpam(mail))));
+    set(gui->MI_TOSPAM, MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && !hasStatusSpam(mail) && !hasStatusHam(mail))));
 
   // Enable if:
   //  * TOHAM menu item exists
   //  * > 0 mails selected
   //  * the folder is enabled
+  //  * the mail is classified as spam
   if(gui->MI_TOHAM)
-    set(gui->MI_TOHAM,  MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && !hasStatusHam(mail))));
+    set(gui->MI_TOHAM,  MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && hasStatusSpam(mail))));
 
   // Enable if:
   //  * DELSPAM menu item exists

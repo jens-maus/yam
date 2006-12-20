@@ -1380,7 +1380,7 @@ void CO_Validate(struct Config *co, BOOL update)
             {
               // use PushMethod for the case the read window modifies we list we are currently walking through
               DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ReadMail, rmData->mail);
-              DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 1, MUIM_ReadWindow_UpdateSpamControls);
+              DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 1, MUIM_ReadWindow_UpdateSpamControls, rmData->mail);
             }
           }
         }
