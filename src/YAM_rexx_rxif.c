@@ -2258,14 +2258,21 @@ void rx_getselected( UNUSED struct RexxHost *host, struct rxd_getselected **rxd,
       {
          Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
 
-         if((mlist = MA_CreateMarkedList(lv, FALSE)))
+         if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
          {
-            if((rd->res.num = calloc(1+(int)mlist[0], sizeof(long))))
+            if((rd->res.num = calloc(1 + (int)mlist[0], sizeof(long))))
             {
               int i;
 
               for(i = 0; i < (int)mlist[0]; i++)
-                rd->res.num[i] = (long *)&(mlist[i+2]->position);
+              {
+                struct Mail *mail = mlist[i + 2];
+
+                if(mail != NULL)
+                  rd->res.num[i] = (long *)&(mail->position);
+                else
+                  rd->res.num[i] = 0;
+              }
             }
 
             free(mlist);
@@ -2526,18 +2533,24 @@ void rx_mailchangesubject( UNUSED struct RexxHost *host, struct rxd_mailchangesu
       {
          Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
 
-         if((mlist = MA_CreateMarkedList(lv, FALSE)))
+         if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
          {
             int i, selected = (int)*mlist;
 
             for(i = 0; i < selected; i++)
-              MA_ChangeSubject(mlist[i+2], rd->arg.subject);
+            {
+              struct Mail *mail = mlist[i + 2];
+
+              if(mail != NULL)
+                MA_ChangeSubject(mail, rd->arg.subject);
+            }
 
             free(mlist);
 
             DoMethod(lv, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
          }
-         else rd->rc = RETURN_ERROR;
+         else
+            rd->rc = RETURN_ERROR;
       }
       break;
       

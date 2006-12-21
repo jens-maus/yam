@@ -675,28 +675,33 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
 //  Builds a list containing all messages in a folder
 struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
 {
-   int selected;
-   struct Mail *mail, **mlist = NULL;
+  int selected;
+  struct Mail *mail, **mlist = NULL;
 
-   if(!fo) return(NULL);
-   selected = onlyNew ? fo->New : fo->Total;
+  ENTER();
 
-   if(selected && (mlist = calloc(selected+2, sizeof(struct Mail *))))
-   {
+  if(fo != NULL)
+  {
+    selected = onlyNew ? fo->New : fo->Total;
+
+    if(selected > 0 && (mlist = calloc(selected+2, sizeof(struct Mail *))) != NULL)
+    {
       mlist[0] = (struct Mail *)selected;
       mlist[1] = (struct Mail *)2;
       for (selected = 2, mail = fo->Messages; mail; mail = mail->Next)
       {
-         // only if we want ALL or this is just a îew mail we add it to our list
-         if(!onlyNew || hasStatusNew(mail))
-         {
-            mlist[selected] = mail;
-            selected++;
-         }
+        // only if we want ALL or this is just a îew mail we add it to our list
+        if(!onlyNew || hasStatusNew(mail))
+        {
+           mlist[selected] = mail;
+           selected++;
+        }
       }
-   }
+    }
+  }
 
-   return mlist;
+  RETURN(mlist);
+  return mlist;
 }
 
 ///
@@ -704,56 +709,63 @@ struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
 //  Builds a linked list containing the selected messages
 struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
 {
-   int id, selected;
-   struct Mail *mail, **mlist = NULL;
-   struct Folder *folder;
+  struct Mail *mail, **mlist = NULL;
+  struct Folder *folder;
 
-   // we first have to check whether this is a valid folder or not
-   folder = FO_GetCurrentFolder();
-   if(!folder || isGroupFolder(folder))
-     return NULL;
+  ENTER();
 
-   DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
-   if (selected)
-   {
-      if ((mlist = calloc(selected+2, sizeof(struct Mail *))))
+  // we first have to check whether this is a valid folder or not
+  folder = FO_GetCurrentFolder();
+  if(folder != NULL && isGroupFolder(folder) == FALSE)
+  {
+    int selected;
+
+    DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
+    if(selected > 0)
+    {
+      if((mlist = calloc(selected+2, sizeof(struct Mail *))) != NULL)
       {
-         mlist[0] = (struct Mail *)selected;
-         mlist[1] = (struct Mail *)1;
-         selected = 2;
-         id = MUIV_NList_NextSelected_Start;
+        int id;
 
-         while(1)
-         {
-            DoMethod(lv, MUIM_NList_NextSelected, &id);
-            if (id == MUIV_NList_NextSelected_End) break;
-            DoMethod(lv, MUIM_NList_GetEntry, id, &mail);
-            mail->position = id;
+        mlist[0] = (struct Mail *)selected;
+        mlist[1] = (struct Mail *)1;
+        selected = 2;
+        id = MUIV_NList_NextSelected_Start;
 
-            if(!onlyNew || hasStatusNew(mail))
-            {
-              mlist[selected] = mail;
-              selected++;
-            }
-         }
-      }
-   }
-   else
-   {
-      DoMethod(lv, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-      if(mail && (!onlyNew || hasStatusNew(mail)))
-      {
-        if ((mlist = calloc(3, sizeof(struct Mail *))))
+        while(1)
         {
-          id = xget(lv, MUIA_NList_Active);
+          DoMethod(lv, MUIM_NList_NextSelected, &id);
+          if(id == MUIV_NList_NextSelected_End)
+            break;
+
+          DoMethod(lv, MUIM_NList_GetEntry, id, &mail);
           mail->position = id;
+
+          if(!onlyNew || hasStatusNew(mail))
+          {
+            mlist[selected] = mail;
+            selected++;
+          }
+        }
+      }
+    }
+    else
+    {
+      DoMethod(lv, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+      if(mail != NULL && (!onlyNew || hasStatusNew(mail)))
+      {
+        if((mlist = calloc(3, sizeof(struct Mail *))) != NULL)
+        {
+          mail->position = xget(lv, MUIA_NList_Active);
           mlist[0] = (struct Mail *)1;
           mlist[2] = mail;
         }
       }
-   }
+    }
+  }
 
-   return mlist;
+  RETURN(mlist);
+  return mlist;
 }
 
 ///
@@ -944,11 +956,19 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
   struct Mail **mlist;
   int selected = 0;
 
+  ENTER();
+
   if(frombox == tobox && !copyit)
+  {
+    LEAVE();
     return;
+  }
 
   if(!(frombox == FO_GetCurrentFolder()) && !mail)
+  {
+    LEAVE();
     return;
+  }
 
   // if a specific mail should be moved we do it now.
   if(mail)
@@ -956,7 +976,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
     selected = 1;
     MA_MoveCopySingle(mail, frombox, tobox, copyit, closeWindows);
   }
-  else if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
+  else if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
     int i;
 
@@ -964,10 +984,10 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
     selected = (int)*mlist;
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
     BusyGaugeInt(GetStr(MSG_BusyMoving), itoa(selected), selected);
-    for(i=0; i < selected; i++)
+    for(i = 0; i < selected; i++)
     {
-      mail = mlist[i+2];
-      MA_MoveCopySingle(mail, frombox, tobox, copyit, closeWindows);
+      if((mail = mlist[i+2]) != NULL)
+        MA_MoveCopySingle(mail, frombox, tobox, copyit, closeWindows);
 
       // if BusySet() returns FALSE, then the user aborted
       if(BusySet(i+1) == FALSE)
@@ -995,40 +1015,45 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
   DisplayStatistics(tobox, TRUE);
 
   MA_ChangeSelected(FALSE);
+
+  LEAVE();
 }
 ///
 /// MA_UpdateStatus
 //  Changes status of all new messages to unread
 static void MA_UpdateStatus(void)
 {
-   int i;
-   struct Mail *mail;
-   struct Folder **flist;
+  int i;
+  struct Mail *mail;
+  struct Folder **flist;
 
-   if((flist = FO_CreateList()))
-   {
-      for(i = 1; i <= (int)*flist; i++)
+  ENTER();
+
+  if((flist = FO_CreateList()) != NULL)
+  {
+    for(i = 1; i <= (int)*flist; i++)
+    {
+      if(!isSentMailFolder(flist[i]) && flist[i]->LoadedMode == LM_VALID)
       {
-        if(!isSentMailFolder(flist[i]) && flist[i]->LoadedMode == LM_VALID)
+        BOOL updated = FALSE;
+
+        for(mail = flist[i]->Messages; mail; mail = mail->Next)
         {
-          BOOL updated = FALSE;
-
-          for (mail = flist[i]->Messages; mail; mail = mail->Next)
+          if(hasStatusNew(mail))
           {
-            if(hasStatusNew(mail))
-            {
-              updated = TRUE;
-
-              setStatusToUnread(mail);
-            }
+            updated = TRUE;
+            setStatusToUnread(mail);
           }
-
-          if(updated)
-            DisplayStatistics(flist[i], TRUE);
         }
+
+        if(updated)
+          DisplayStatistics(flist[i], TRUE);
       }
-      free(flist);
-   }
+    }
+    free(flist);
+  }
+
+  LEAVE();
 }
 ///
 /// MA_ToStatusHeader()
@@ -2628,22 +2653,24 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
 //  Removes attachments from selected messages
 HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
 {
-   struct Mail **mlist;
-   int i;
+  int i;
 
-   // we need to warn the user of this operation we put up a requester
-   // before we go on
-   if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq2), GetStr(MSG_MA_CROPREQUEST)) == 0)
-      return;
+  ENTER();
 
-   if ((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
-   {
+  // we need to warn the user of this operation we put up a requester
+  // before we go on
+  if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq2), GetStr(MSG_MA_CROPREQUEST)) > 0)
+  {
+    struct Mail **mlist;
+
+    if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
+    {
       int selected = (int)*mlist;
 
       BusyGaugeInt(GetStr(MSG_BusyRemovingAtt), "", selected);
-      for(i=0; i < selected; i++)
+      for(i = 0; i < selected; i++)
       {
-         MA_RemoveAttach(mlist[i+2], FALSE);
+        MA_RemoveAttach(mlist[i + 2], FALSE);
 
         // if BusySet() returns FALSE, then the user aborted
         if(BusySet(i+1) == FALSE)
@@ -2655,7 +2682,10 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
       MA_ChangeSelected(TRUE);
       DisplayStatistics(NULL, TRUE);
       BusyEnd();
-   }
+    }
+  }
+
+  LEAVE();
 }
 MakeHook(MA_RemoveAttachHook, MA_RemoveAttachFunc);
 
@@ -2668,11 +2698,11 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
 
   ENTER();
 
-  if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
+  if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
     struct FileReqCache *frc;
 
-    if((frc = ReqFile(ASL_DETACH, G->MA->GUI.WI, GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, "")))
+    if((frc = ReqFile(ASL_DETACH, G->MA->GUI.WI, GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, "")) != NULL)
     {
       int i;
 
@@ -2682,7 +2712,7 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
       {
         struct ReadMailData *rmData;
 
-        if((rmData = AllocPrivateRMData(mlist[i+2], PM_ALL)))
+        if((rmData = AllocPrivateRMData(mlist[i + 2], PM_ALL)))
         {
           char *cmsg;
 
@@ -2800,7 +2830,7 @@ int MA_NewMessage(enum NewMode mode, int flags)
     {
       struct Mail **mlist;
 
-      if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
+      if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
       {
         winnr = MA_NewForward(mlist, flags);
 
@@ -2813,7 +2843,7 @@ int MA_NewMessage(enum NewMode mode, int flags)
     {
       struct Mail **mlist;
 
-      if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
+      if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
       {
         winnr = MA_NewReply(mlist, flags);
 
@@ -2943,7 +2973,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
     Object *lv = G->MA->GUI.PG_MAILLIST;
     struct Mail **mlist;
 
-    if((mlist = MA_CreateMarkedList(lv, FALSE)))
+    if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
     {
       int i;
       int selected = (int)*mlist;
@@ -2951,32 +2981,35 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
       set(lv, MUIA_NList_Quiet, TRUE);
       BusyGaugeInt(GetStr(MSG_BusyMoving), itoa(selected), selected);
 
-      for(i=0; i < selected; i++)
+      for(i = 0; i < selected; i++)
       {
-        struct Mail *mail = mlist[i+2];
+        struct Mail *mail = mlist[i + 2];
 
-        if(!hasStatusSpam(mail) && bclass == BC_SPAM)
+        if(mail != NULL)
         {
-          // mark the mail as spam
-          AppendLogVerbose(90, GetStr(MSG_LOG_MAILISSPAM), AddrName(mail->From), mail->Subject);
-          BayesFilterSetClassification(mail, BC_SPAM);
-          setStatusToUserSpam(mail);
+          if(!hasStatusSpam(mail) && bclass == BC_SPAM)
+          {
+            // mark the mail as spam
+            AppendLogVerbose(90, GetStr(MSG_LOG_MAILISSPAM), AddrName(mail->From), mail->Subject);
+            BayesFilterSetClassification(mail, BC_SPAM);
+            setStatusToUserSpam(mail);
 
-          // move the mail
-          MA_MoveCopySingle(mail, folder, spamfolder, FALSE, TRUE);
-        }
-        else if(!hasStatusHam(mail) && bclass == BC_HAM)
-        {
-          // mark the mail as ham
-          AppendLogVerbose(90, GetStr(MSG_LOG_MAILISNOTSPAM), AddrName(mail->From), mail->Subject);
-          BayesFilterSetClassification(mail, BC_HAM);
-          setStatusToHam(mail);
+            // move the mail
+            MA_MoveCopySingle(mail, folder, spamfolder, FALSE, TRUE);
+          }
+          else if(!hasStatusHam(mail) && bclass == BC_HAM)
+          {
+            // mark the mail as ham
+            AppendLogVerbose(90, GetStr(MSG_LOG_MAILISNOTSPAM), AddrName(mail->From), mail->Subject);
+            BayesFilterSetClassification(mail, BC_HAM);
+            setStatusToHam(mail);
+          }
         }
 
         // if BusySet() returns FALSE, then the user aborted
-        if(BusySet(i+1) == FALSE)
+        if(BusySet(i + 1) == FALSE)
         {
-          selected = i+1;
+          selected = i + 1;
           break;
         }
       }
@@ -3176,12 +3209,17 @@ void MA_GetAddress(struct Mail **mlist)
 //  Stores addresses from selected messages to the address book
 HOOKPROTONHNONP(MA_GetAddressFunc, void)
 {
-   struct Mail **mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE);
-   if (mlist)
-   {
-      MA_GetAddress(mlist);
-      free(mlist);
-   }
+  struct Mail **mlist;
+
+  ENTER();
+
+  if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
+  {
+    MA_GetAddress(mlist);
+    free(mlist);
+  }
+
+  LEAVE();
 }
 MakeHook(MA_GetAddressHook, MA_GetAddressFunc);
 
@@ -3275,6 +3313,8 @@ void MA_SetStatusTo(int addflags, int clearflags, BOOL all)
   Object *lv = G->MA->GUI.PG_MAILLIST;
   struct Mail **mlist;
 
+  ENTER();
+
   // generate a mail list of either all or just the selected
   // (marked) mails.
   if(all)
@@ -3282,20 +3322,25 @@ void MA_SetStatusTo(int addflags, int clearflags, BOOL all)
   else
     mlist = MA_CreateMarkedList(lv, FALSE);
 
-  if(mlist)
+  if(mlist != NULL)
   {
     int i;
 
     set(lv, MUIA_NList_Quiet, TRUE);
     for(i = 0; i < (int)*mlist; i++)
     {
-      MA_ChangeMailStatus(mlist[i+2], addflags, clearflags);
+      struct Mail *mail = mlist[i + 2];
+
+      if(mail != NULL)
+        MA_ChangeMailStatus(mail, addflags, clearflags);
     }
     set(lv, MUIA_NList_Quiet, FALSE);
 
     free(mlist);
     DisplayStatistics(NULL, TRUE);
   }
+
+  LEAVE();
 }
 
 ///
@@ -3462,23 +3507,27 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
     if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
     {
       int i;
-      struct Mail *mail;
 
-      for(i=0; i < (int)*mlist && (mail = mlist[i + 2]) != NULL; i++)
+      for(i = 0; i < (int)*mlist; i++)
       {
+        struct Mail *mail = mlist[i + 2];
+
         // if BusySet() returns FALSE, then the user aborted
         if(BusySet(i+1) == FALSE)
           break;
 
-        // not every mail in the a folder *must* be spam
-        // so better check this
-        if(hasStatusSpam(mail))
+        if(mail != NULL)
         {
-          // remove the spam mail from the folder and take care to
-          // remove it immediately in case this is the SPAM folder, otherwise
-          // the mail will be moved to the trash first. In fact, DeleteSingle()
-          // takes care of that itself.
-          MA_DeleteSingle(mail, FALSE, quiet, TRUE);
+          // not every mail in the a folder *must* be spam
+          // so better check this
+          if(hasStatusSpam(mail))
+          {
+            // remove the spam mail from the folder and take care to
+            // remove it immediately in case this is the SPAM folder, otherwise
+            // the mail will be moved to the trash first. In fact, DeleteSingle()
+            // takes care of that itself.
+            MA_DeleteSingle(mail, FALSE, quiet, TRUE);
+          }
         }
       }
 
@@ -3549,7 +3598,7 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
   else
     mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE);
 
-  if(mlist)
+  if(mlist != NULL)
   {
     struct FileReqCache *frc;
 
@@ -3568,7 +3617,7 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
       }
     }
 
-    if(filename && (G->TR = TR_New(TR_EXPORT)))
+    if(filename != NULL && (G->TR = TR_New(TR_EXPORT)))
     {
       if(SafeOpenWindow(G->TR->GUI.WI))
         success = TR_ProcessEXPORT(filename, mlist, append);
@@ -3844,32 +3893,64 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
 //  Changes subject of selected messages
 HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
 {
-   struct Mail **mlist, *mail;
-   int i, selected;
-   BOOL ask = TRUE;
-   char subj[SIZE_SUBJECT];
+  struct Mail **mlist;
 
-   if (!(mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE))) return;
-   selected = (int)*mlist;
+  ENTER();
 
-   for (i = 0; i < selected; i++)
-   {
-      mail = mlist[i+2];
-      if (ask)
+  if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
+  {
+    int i, selected;
+    BOOL ask = TRUE;
+    BOOL goOn = TRUE;
+    char subj[SIZE_SUBJECT];
+
+    selected = (int)*mlist;
+
+    for (i = 0; i < selected; i++)
+    {
+      struct Mail *mail = mlist[i + 2];
+
+      if(mail != NULL)
       {
-         strlcpy(subj, mail->Subject, sizeof(subj));
+        if(ask)
+        {
+          strlcpy(subj, mail->Subject, sizeof(subj));
 
-         switch (StringRequest(subj, SIZE_SUBJECT, GetStr(MSG_MA_ChangeSubj), GetStr(MSG_MA_ChangeSubjReq), GetStr(MSG_Okay), (i || selected == 1) ? NULL : GetStr(MSG_MA_All), GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
-         {
-            case 0: free(mlist); return;
-            case 2: ask = FALSE;
-         }
+          switch (StringRequest(subj, SIZE_SUBJECT, GetStr(MSG_MA_ChangeSubj), GetStr(MSG_MA_ChangeSubjReq), GetStr(MSG_Okay), (i || selected == 1) ? NULL : GetStr(MSG_MA_All), GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
+          {
+            case 0:
+            {
+              goOn = FALSE;
+            }
+            break;
+
+            case 2:
+            {
+              ask = FALSE;
+            }
+            break;
+
+            default:
+              // nothing
+            break;
+          }
+        }
+
+        if(goOn)
+          MA_ChangeSubject(mail, subj);
+        else
+          // the user cancelled the whole thing, bail out
+          break;
       }
-      MA_ChangeSubject(mail, subj);
-   }
-   free(mlist);
-   DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
-   DisplayStatistics(NULL, TRUE);
+    }
+
+    free(mlist);
+
+    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
+    DisplayStatistics(NULL, TRUE);
+  }
+
+  LEAVE();
 }
 MakeHook(MA_ChangeSubjectHook, MA_ChangeSubjectFunc);
 

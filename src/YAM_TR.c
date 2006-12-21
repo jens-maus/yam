@@ -3613,27 +3613,32 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
 
    // temporarly copy all data out of our mlist to the
    // processing list and mark all mails to get "loaded"
-   for(i=0; i < (int)*mlist; i++)
+   for(i = 0; i < (int)*mlist; i++)
    {
-      struct MailTransferNode *mtn;
+     struct Mail *mail = mlist[i + 2];
 
-      if((mtn = calloc(1, sizeof(struct MailTransferNode))))
-      {
-        if((mtn->mail = malloc(sizeof(struct Mail))))
-        {
-           memcpy(mtn->mail, mlist[i+2], sizeof(struct Mail));
-           mtn->index  = i+1;
+     if(mail != NULL)
+     {
+       struct MailTransferNode *mtn;
+
+       if((mtn = calloc(1, sizeof(struct MailTransferNode))) != NULL)
+       {
+         if((mtn->mail = malloc(sizeof(struct Mail))) != NULL)
+         {
+           memcpy(mtn->mail, mail, sizeof(struct Mail));
+           mtn->index = i + 1;
 
            // set to LOAD
            mtn->tflags = TRF_LOAD;
 
            AddTail((struct List *)&(G->TR->transferList), (struct Node *)mtn);
-        }
-        else
-          return FALSE;
-      }
-      else
-        return FALSE;
+         }
+         else
+           return FALSE;
+       }
+       else
+         return FALSE;
+     }
    }
 
    // if we have now something in our processing list,
@@ -3958,31 +3963,36 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
 
         // now we build the list of mails which should
         // be transfered.
-        for(c=i=0; i < (int)*mlist; i++)
+        for(c = i = 0; i < (int)*mlist; i++)
         {
-          struct Mail *mail = mlist[i+2];
+          struct Mail *mail = mlist[i + 2];
 
-          if(hasStatusQueued(mail) || hasStatusError(mail))
+          if(mail != NULL)
           {
-            struct MailTransferNode *mtn;
-            if((mtn = calloc(1, sizeof(struct MailTransferNode))))
+            if(hasStatusQueued(mail) || hasStatusError(mail))
             {
-              struct Mail *newMail;
-              if((newMail = malloc(sizeof(struct Mail))))
+              struct MailTransferNode *mtn;
+
+              if((mtn = calloc(1, sizeof(struct MailTransferNode))) != NULL)
               {
-                memcpy(newMail, mail, sizeof(struct Mail));
-                newMail->Reference = mail;
-                newMail->Next = NULL;
+                struct Mail *newMail;
 
-                // set index and transfer flags to LOAD
-                mtn->index = ++c;
-                mtn->tflags = TRF_LOAD;
-                mtn->mail = newMail;
+                if((newMail = malloc(sizeof(struct Mail))) != NULL)
+                {
+                  memcpy(newMail, mail, sizeof(struct Mail));
+                  newMail->Reference = mail;
+                  newMail->Next = NULL;
 
-                AddTail((struct List *)&G->TR->transferList, (struct Node *)mtn);
+                  // set index and transfer flags to LOAD
+                  mtn->index = ++c;
+                  mtn->tflags = TRF_LOAD;
+                  mtn->mail = newMail;
+
+                  AddTail((struct List *)&G->TR->transferList, (struct Node *)mtn);
+                }
+                else
+                  free(mtn);
               }
-              else
-                free(mtn);
             }
           }
         }

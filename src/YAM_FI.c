@@ -1332,17 +1332,17 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
       {
         int minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
 
-        if((mlist = MA_CreateMarkedList(lv, mode == APPLY_RX)) && (int)mlist[0] < minselected)
+        if((mlist = MA_CreateMarkedList(lv, mode == APPLY_RX)) != NULL && (int)mlist[0] < minselected)
         {
           free(mlist);
           mlist = NULL;
         }
       }
 
-      if(!mlist)
+      if(mlist == NULL)
         mlist = MA_CreateFullList(folder, (mode == APPLY_AUTO || mode == APPLY_RX));
 
-      if(mlist)
+      if(mlist != NULL)
       {
         int m;
         int scnt;
@@ -1360,77 +1360,80 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
         else
           BusyGaugeInt(GetStr(MSG_FI_BUSYCHECKSPAM), "", (int)*mlist);
 
-        for(m = 0; m < (int)*mlist && (mail = mlist[m+2]); m++)
+        for(m = 0; m < (int)*mlist; m++)
         {
           BOOL wasSpam = FALSE;
           struct MinNode *curNode;
 
-          if(C->SpamFilterEnabled && (mode == APPLY_AUTO || mode == APPLY_SPAM))
+          if((mail = mlist[m + 2]) != NULL)
           {
-            BOOL doClassification;
+            if(C->SpamFilterEnabled && (mode == APPLY_AUTO || mode == APPLY_SPAM))
+            {
+              BOOL doClassification;
 
-            D(DBF_FILTER, "About to apply SPAM filter to message with subject \"%s\"", mail->Subject);
-            if(mode == APPLY_AUTO && C->SpamFilterForNewMail)
-            {
-              // classify this mail if we are allowed to check new mails automatically
-              doClassification = TRUE;
-            }
-            else if(mode == APPLY_SPAM && hasStatusSpam(mail) == FALSE && hasStatusHam(mail) == FALSE)
-            {
-              // classify mails if the user triggered this and the mail is not yet classified
-              doClassification = TRUE;
-            }
-            else
-            {
-              // don't try to classify this mail
-              doClassification = FALSE;
-            }
-
-            if(doClassification)
-            {
-              D(DBF_FILTER, "Classifying message with subject \"%s\"", mail->Subject);
-
-              if(BayesFilterClassifyMessage(mail))
+              D(DBF_FILTER, "About to apply SPAM filter to message with subject \"%s\"", mail->Subject);
+              if(mode == APPLY_AUTO && C->SpamFilterForNewMail)
               {
-                D(DBF_FILTER, "Message was classified as spam");
+                // classify this mail if we are allowed to check new mails automatically
+                doClassification = TRUE;
+              }
+              else if(mode == APPLY_SPAM && hasStatusSpam(mail) == FALSE && hasStatusHam(mail) == FALSE)
+              {
+                // classify mails if the user triggered this and the mail is not yet classified
+                doClassification = TRUE;
+              }
+              else
+              {
+                // don't try to classify this mail
+                doClassification = FALSE;
+              }
 
-                // set the SPAM flags, but don't change any of the NEW or READ flags
-                setStatusToAutoSpam(mail);
+              if(doClassification)
+              {
+                D(DBF_FILTER, "Classifying message with subject \"%s\"", mail->Subject);
 
-                // move newly recognized spam to the spam folder
-                MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
-                wasSpam = TRUE;
+                if(BayesFilterClassifyMessage(mail))
+                {
+                  D(DBF_FILTER, "Message was classified as spam");
+
+                  // set the SPAM flags, but don't change any of the NEW or READ flags
+                  setStatusToAutoSpam(mail);
+
+                  // move newly recognized spam to the spam folder
+                  MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
+                  wasSpam = TRUE;
+                }
               }
             }
-          }
 
-          if(scnt > 0 && wasSpam == FALSE)
-          {
-            // apply all other user defined filters (if they exist) for non-spam mails
-            // or if the spam filter is disabled
-            G->RRs.Checked++;
-
-            // now we process the search
-            for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+            if(scnt > 0 && wasSpam == FALSE)
             {
-              struct FilterNode *filter = (struct FilterNode *)curNode;
+              // apply all other user defined filters (if they exist) for non-spam mails
+              // or if the spam filter is disabled
+              G->RRs.Checked++;
 
-              if(DoFilterSearch(filter, mail))
+              // now we process the search
+              for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
               {
-                matches++;
+                struct FilterNode *filter = (struct FilterNode *)curNode;
 
-                // if ExecuteFilterAction returns FALSE then the filter search should be aborted
-                // completley
-                if(ExecuteFilterAction(filter, mail) == FALSE)
-                  break;
+                if(DoFilterSearch(filter, mail))
+                {
+                  matches++;
+
+                  // if ExecuteFilterAction returns FALSE then the filter search should be aborted
+                  // completley
+                  if(ExecuteFilterAction(filter, mail) == FALSE)
+                    break;
+                }
               }
             }
-          }
 
-          // we update the busy gauge and
-          // see if we have to exit/abort in case it returns FALSE
-          if(BusySet(m+1) == FALSE)
-            break;
+            // we update the busy gauge and
+            // see if we have to exit/abort in case it returns FALSE
+            if(BusySet(m+1) == FALSE)
+              break;
+          }
         }
 
         FreeFilterSearch();

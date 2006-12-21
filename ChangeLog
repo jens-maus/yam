@@ -6,6 +6,10 @@ $Id$
 
 2006-12-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c, YAM_FI.c, YAM_TR.c, YAM_rexx_rxif.c: added even more NULL pointer
+    checks while traversing a list of mails created by MA_CreateFullList() or
+    MA_CreateMarkedList(). Also did some more cleanup according to the
+    STYLEGUIDE.
   * YAM_COs.c: forgot to check for possible NULL pointers in the list of mails
     returned by MA_CreateFullList().
   * YAM_FI.c, YAM_MAf.c: a password protected folder with a yet unloaded index
