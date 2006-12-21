@@ -6,6 +6,7 @@ $Id$
 
 2006-12-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: adapted some functions to the STYLEGUIDE.
   * YAM_TR.c: the NEWMSG macro now also handles the case that the user's mail
     directory is a "virtual" assign like "PROGDIR:" and will now resolve the
     complete real path.

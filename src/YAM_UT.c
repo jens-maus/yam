@@ -1726,75 +1726,86 @@ long FileTime(const char *filename)
 //  Renames a file and restores the protection bits
 BOOL RenameFile(const char *oldname, const char *newname)
 {
-   struct FileInfoBlock *fib;
-   BPTR lock;
-   BOOL result = FALSE;
+  BOOL result = FALSE;
 
-   if(!Rename(oldname, newname))
-     return FALSE;
+  ENTER();
 
-   if((fib = AllocDosObject(DOS_FIB,NULL)))
-   {
+  if(Rename(oldname, newname))
+  {
+    struct FileInfoBlock *fib;
+    // the rename succeeded, now change the file permissions
+
+    if((fib = AllocDosObject(DOS_FIB,NULL)) != NULL)
+    {
+      BPTR lock;
+
       if((lock = Lock(newname, ACCESS_READ)))
       {
-         if(Examine(lock, fib))
-         {
-            UnLock(lock);
-            if(SetProtection(newname, fib->fib_Protection & (~FIBF_ARCHIVE)))
-            {
-              result = TRUE;
-            }
-         }
-         else UnLock(lock);
+        if(Examine(lock, fib))
+        {
+          UnLock(lock);
+          if(SetProtection(newname, fib->fib_Protection & (~FIBF_ARCHIVE)))
+            result = TRUE;
+        }
+        else
+          UnLock(lock);
       }
-      FreeDosObject(DOS_FIB,fib);
-   }
-   return result;
+      FreeDosObject(DOS_FIB, fib);
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 ///
 /// CopyFile
 //  Copies a file
 BOOL CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh)
 {
-   BOOL success = FALSE;
+  BOOL success = FALSE;
 
-   if(sour)
-     sourfh = fopen(sour, "r");
+  if(sour != NULL)
+    sourfh = fopen(sour, "r");
 
-   if(sourfh && dest)
-     destfh = fopen(dest, "w");
+  if(sourfh != NULL && dest != NULL)
+    destfh = fopen(dest, "w");
 
-   if(sourfh && destfh)
-   {
-      char buf[SIZE_LARGE];
-      int len;
+  if(sourfh !=NULL && destfh != NULL)
+  {
+    char buf[SIZE_LARGE];
+    int len;
 
-      while((len = fread(buf, 1, SIZE_LARGE, sourfh)))
-      {
-         if(fwrite(buf, 1, len, destfh) != (size_t)len)
-           break;
-      }
+    while((len = fread(buf, 1, SIZE_LARGE, sourfh)) > 0)
+    {
+      if(fwrite(buf, 1, len, destfh) != (size_t)len)
+        break;
+    }
 
-      // if we arrived here because this was the eof of the sourcefile
-      // and non of the two filehandles are in error state we can set
-      // success to TRUE.
-      if(feof(sourfh) && !ferror(sourfh) && !ferror(destfh))
-        success = TRUE;
-   }
+    // if we arrived here because this was the eof of the sourcefile
+    // and non of the two filehandles are in error state we can set
+    // success to TRUE.
+    if(feof(sourfh) && !ferror(sourfh) && !ferror(destfh))
+      success = TRUE;
+  }
 
-   if(dest && destfh)
-     fclose(destfh);
+  if(dest !=NULL && destfh != NULL)
+    fclose(destfh);
 
-   if(sour && sourfh)
-     fclose(sourfh);
+  if(sour !=NULL && sourfh != NULL)
+    fclose(sourfh);
 
-   return success;
+  RETURN(success);
+  return success;
 }
 ///
 /// MoveFile
 //  Moves a file (also from one partition to another)
 BOOL MoveFile(const char *oldfile, const char *newfile)
 {
+  BOOL success = TRUE;
+
+  ENTER();
+
   // we first try to rename the file with a standard Rename()
   // and if it doesn't work we do a raw copy
   if(!RenameFile(oldfile, newfile))
@@ -1804,11 +1815,12 @@ BOOL MoveFile(const char *oldfile, const char *newfile)
        !DeleteFile(oldfile))
     {
       // also a copy didn't work, so lets return an error
-      return FALSE;
+      success = FALSE;
     }
   }
 
-  return TRUE;
+  RETURN(success);
+  return success;
 }
 ///
 /// ConvertCRLF
@@ -3987,134 +3999,133 @@ static BOOL UncompressMailFile(char *src, char *dst, const char *passwd)
 //  Copies or moves a message file, handles compression
 int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 {
-   char *pmeth;
-   char srcbuf[SIZE_PATHFILE];
-   char dstbuf[SIZE_PATHFILE];
-   char dstFileName[SIZE_MFILE];
-   struct Folder *srcfolder = mail->Folder;
-   int peff = 0;
-   enum FolderMode srcMode = srcfolder->Mode;
-   enum FolderMode dstMode = dstfolder->Mode;
-   char *srcpw = srcfolder->Password;
-   char *dstpw = dstfolder->Password;
-   int success = 0;
+  char *pmeth;
+  char srcbuf[SIZE_PATHFILE];
+  char dstbuf[SIZE_PATHFILE];
+  char dstFileName[SIZE_MFILE];
+  struct Folder *srcfolder = mail->Folder;
+  int peff = 0;
+  enum FolderMode srcMode = srcfolder->Mode;
+  enum FolderMode dstMode = dstfolder->Mode;
+  char *srcpw = srcfolder->Password;
+  char *dstpw = dstfolder->Password;
+  int success = 0;
 
-   D(DBF_UTIL, "TransferMailFile: %d->%d [%s]->[%s]", srcMode, dstMode, mail->MailFile, GetFolderDir(dstfolder));
+  ENTER();
 
-   if(!MA_GetIndex(srcfolder))
-     return 0;
+  D(DBF_UTIL, "TransferMailFile: %d->%d [%s]->[%s]", srcMode, dstMode, mail->MailFile, GetFolderDir(dstfolder));
 
-   if(!MA_GetIndex(dstfolder))
-     return 0;
+  if(MA_GetIndex(srcfolder) && MA_GetIndex(dstfolder))
+  {
+    BOOL counterExceeded = FALSE;
 
-   // get some information we require
-   GetPackMethod(dstMode, &pmeth, &peff);
-   GetMailFile(srcbuf, srcfolder, mail);
+    // get some information we require
+    GetPackMethod(dstMode, &pmeth, &peff);
+    GetMailFile(srcbuf, srcfolder, mail);
 
-   // check if we can just take the exactly same filename in the destination
-   // folder or if we require to increase the mailfile counter to make it
-   // unique
-   strlcpy(dstFileName, mail->MailFile, sizeof(dstFileName));
-   strlcpy(dstbuf, GetFolderDir(dstfolder), sizeof(dstbuf));
-   AddPart(dstbuf, dstFileName, SIZE_PATHFILE);
+    // check if we can just take the exactly same filename in the destination
+    // folder or if we require to increase the mailfile counter to make it
+    // unique
+    strlcpy(dstFileName, mail->MailFile, sizeof(dstFileName));
+    strlcpy(dstbuf, GetFolderDir(dstfolder), sizeof(dstbuf));
+    AddPart(dstbuf, dstFileName, SIZE_PATHFILE);
 
-   if(FileExists(dstbuf))
-   {
-     int mCounter = atoi(&dstFileName[13]);
+    if(FileExists(dstbuf))
+    {
+      int mCounter = atoi(&dstFileName[13]);
 
-     do
-     {
-       if(mCounter < 1 || mCounter >= 999)
-         return 0;
-
-       mCounter++;
-
-       snprintf(&dstFileName[13], sizeof(dstFileName)-13, "%03d", mCounter);
-       dstFileName[16] = ','; // restore it
-
-       strlcpy(dstbuf, GetFolderDir(dstfolder), sizeof(dstbuf));
-       AddPart(dstbuf, dstFileName, SIZE_PATHFILE);
-     }
-     while(FileExists(dstbuf));
-
-     // if we end up here we finally found a new mailfilename which we can use, so
-     // lets copy it to our MailFile variable
-     strlcpy(mail->MailFile, dstFileName, sizeof(mail->MailFile));
-   }
-
-   // now that we have the source and destination filename
-   // we can go and do the file operation depending on some data we
-   // acquired earlier
-   if((srcMode == dstMode && srcfolder->Mode <= FM_SIMPLE) ||
-      (srcfolder->Mode <= FM_SIMPLE && dstfolder->Mode <= FM_SIMPLE))
-   {
-      if(copyit)
-         success = CopyFile(dstbuf, 0, srcbuf, 0) ? 1 : -1;
-      else
-         success = MoveFile(srcbuf, dstbuf) ? 1 : -1;
-   }
-   else if(isXPKFolder(srcfolder))
-   {
-      if(!isXPKFolder(dstfolder))
+      do
       {
-         // if we end up here the source folder is a compressed folder but the
-         // destination one not. so lets uncompress it
-         if((success = UncompressMailFile(srcbuf, dstbuf, srcpw) ? 1 : -2) > 0)
-         {
-            if(!copyit)
-            {
-               success = DeleteFile(srcbuf) ? 1 : -1;
-            }
-         }
+        if(mCounter < 1 || mCounter >= 999)
+          // no more numbers left
+          // now we have to leave this function
+          counterExceeded = TRUE;
+        else
+        {
+          mCounter++;
+
+          snprintf(&dstFileName[13], sizeof(dstFileName)-13, "%03d", mCounter);
+          dstFileName[16] = ','; // restore it
+
+          strlcpy(dstbuf, GetFolderDir(dstfolder), sizeof(dstbuf));
+          AddPart(dstbuf, dstFileName, SIZE_PATHFILE);
+        }
       }
-      else
-      {
-         // here the source folder is a compressed+crypted folder and the
-         // destination one also, so we have to uncompress the file to a
-         // temporarly file and compress it immediatly with the destination
-         // password again.
-         struct TempFile *tf = OpenTempFile(NULL);
+      while(counterExceeded == FALSE && FileExists(dstbuf));
 
-         if(tf)
-         {
-            if((success = UncompressMailFile(srcbuf, tf->Filename, srcpw) ? 1 : -2) > 0)
+      if(counterExceeded == FALSE)
+      {
+        // if we end up here we finally found a new mailfilename which we can use, so
+        // lets copy it to our MailFile variable
+        strlcpy(mail->MailFile, dstFileName, sizeof(mail->MailFile));
+      }
+    }
+
+    if(counterExceeded == FALSE)
+    {
+      // now that we have the source and destination filename
+      // we can go and do the file operation depending on some data we
+      // acquired earlier
+      if((srcMode == dstMode && srcMode <= FM_SIMPLE) ||
+         (srcMode <= FM_SIMPLE && dstMode <= FM_SIMPLE))
+      {
+        if(copyit)
+          success = CopyFile(dstbuf, 0, srcbuf, 0) ? 1 : -1;
+        else
+          success = MoveFile(srcbuf, dstbuf) ? 1 : -1;
+      }
+      else if(isXPKFolder(srcfolder))
+      {
+        if(isXPKFolder(dstfolder) == FALSE)
+        {
+          // if we end up here the source folder is a compressed folder but the
+          // destination one not. so lets uncompress it
+          success = UncompressMailFile(srcbuf, dstbuf, srcpw) ? 1 : -2;
+          if(success > 0 && !copyit)
+            success = DeleteFile(srcbuf) ? 1 : -1;
+        }
+        else
+        {
+          // here the source folder is a compressed+crypted folder and the
+          // destination one also, so we have to uncompress the file to a
+          // temporarly file and compress it immediatly with the destination
+          // password again.
+          struct TempFile *tf;
+
+          if((tf = OpenTempFile(NULL)) != NULL)
+          {
+            success = UncompressMailFile(srcbuf, tf->Filename, srcpw) ? 1 : -2;
+            if(success > 0)
             {
-               // compress it immediatly again
-               if((success = CompressMailFile(tf->Filename, dstbuf, dstpw, pmeth, peff) ? 1 : -2) > 0)
-               {
-                  if(!copyit)
-                  {
-                     success = DeleteFile(srcbuf) ? 1 : -1;
-                  }
-               }
+              // compress it immediatly again
+              success = CompressMailFile(tf->Filename, dstbuf, dstpw, pmeth, peff) ? 1 : -2;
+              if(success > 0 && !copyit)
+                success = DeleteFile(srcbuf) ? 1 : -1;
             }
 
             CloseTempFile(tf);
-         }
-      }
-   }
-   else
-   {
-      if(isXPKFolder(dstfolder))
-      {
-         // here the source folder is not compressed, but the destination one
-         // so we compress the file in the destionation folder now
-         if((success = CompressMailFile(srcbuf, dstbuf, dstpw, pmeth, peff) ? 1 : -2) > 0)
-         {
-            if(!copyit)
-            {
-               success = DeleteFile(srcbuf) ? 1 : -1;
-            }
-         }
+          }
+        }
       }
       else
       {
-        // if we end up here then there is something seriously wrong
-        success = -3;
+        if(isXPKFolder(dstfolder))
+        {
+          // here the source folder is not compressed, but the destination one
+          // so we compress the file in the destionation folder now
+          success = CompressMailFile(srcbuf, dstbuf, dstpw, pmeth, peff) ? 1 : -2;
+          if(success > 0 && !copyit)
+            success = DeleteFile(srcbuf) ? 1 : -1;
+        }
+        else
+          // if we end up here then there is something seriously wrong
+          success = -3;
       }
-   }
+    }
+  }
 
-   return success;
+  RETURN(success);
+  return success;
 }
 ///
 /// RepackMailFile
