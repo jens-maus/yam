@@ -6,6 +6,8 @@ $Id$
 
 2006-12-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COs.c: forgot to check for possible NULL pointers in the list of mails
+    returned by MA_CreateFullList().
   * YAM_FI.c, YAM_MAf.c: a password protected folder with a yet unloaded index
     was fully visible without entering a password after a mail has been moved
     to it (e.g. by a filter), because MA_MoveCopy() updated the index. Now the

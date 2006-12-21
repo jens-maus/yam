@@ -1329,7 +1329,12 @@ void CO_GetConfig(void)
 
                       // clear all possible spam/ham flags from each mail
                       for(i = 0; i < (int)*mlist; i++)
-                        MA_ChangeMailStatus(mlist[i+2], SFLAG_NONE, SFLAG_USERSPAM|SFLAG_AUTOSPAM|SFLAG_HAM);
+                      {
+                        struct Mail *mail = mlist[i + 2];
+
+                        if(mail != NULL)
+                          MA_ChangeMailStatus(mail, SFLAG_NONE, SFLAG_USERSPAM|SFLAG_AUTOSPAM|SFLAG_HAM);
+                      }
 
                       free(mlist);
                     }
