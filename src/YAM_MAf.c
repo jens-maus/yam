@@ -136,26 +136,51 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder);
 //  Asks user for folder password
 BOOL MA_PromptFolderPassword(struct Folder *fo, APTR win)
 {
-  char passwd[SIZE_PASSWORD], prompt[SIZE_LARGE];
-  struct User *user = US_GetCurrentUser();
+  BOOL success = FALSE;
+
+  ENTER();
 
   if(isFreeAccess(fo))
-    return TRUE;
-
-  if(!Stricmp(fo->Password, user->Password))
-    return TRUE;
-
-  snprintf(prompt, sizeof(prompt), GetStr(MSG_MA_GetFolderPass), fo->Name);
-
-  do
   {
-    *passwd = '\0';
-    if(!StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_Folder), prompt, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, win))
-      return FALSE;
+    D(DBF_FOLDER, "folder '%s' has no access restrictions", fo->Name);
+    success = TRUE;
   }
-  while(Stricmp(passwd, fo->Password));
+  else
+  {
+    struct User *user;
 
-  return TRUE;
+    user = US_GetCurrentUser();
+
+    if(Stricmp(fo->Password, user->Password) == 0)
+    {
+      D(DBF_FOLDER, "folder '%s' and user '%s' share the same password", fo->Name, user->Name);
+      success = TRUE;
+    }
+    else
+    {
+      BOOL retry = TRUE;
+      char prompt[SIZE_LARGE];
+
+      snprintf(prompt, sizeof(prompt), GetStr(MSG_MA_GetFolderPass), fo->Name);
+
+      do
+      {
+        char passwd[SIZE_PASSWORD];
+
+        passwd[0] = '\0';
+        if(StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_Folder), prompt, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, win) > 0)
+          // try again if the password doesn't match
+          success = (Stricmp(passwd, fo->Password) == 0);
+        else
+          // the user cancelled the requester, no more tries
+          retry = FALSE;
+      }
+      while(success == FALSE && retry);
+    }
+  }
+
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -413,22 +438,28 @@ BOOL MA_SaveIndex(struct Folder *folder)
 BOOL MA_GetIndex(struct Folder *folder)
 {
   BOOL result = FALSE;
+
   ENTER();
 
-  if(folder && !isGroupFolder(folder))
+  if(folder != NULL && isGroupFolder(folder) == FALSE)
   {
-    D(DBF_FOLDER, "folder: '%s' path: '%s' type: %ld", folder->Name, folder->Path, folder->Type);
+    D(DBF_FOLDER, "folder: '%s' path: '%s' type: %ld mode: %ld pw '%s'", folder->Name, folder->Path, folder->Type, folder->LoadedMode, folder->Password);
 
     // check that the folder is in a valid state for
     // getting the index
     if(folder->LoadedMode != LM_VALID &&
        folder->LoadedMode != LM_REBUILD)
     {
+      BOOL canLoadIndex;
+
       // check the protected status of the folder and prompt
       // the user for the password in case it is required.
-      if(isProtectedFolder(folder) == FALSE ||
-         folder->Password[0] == '\0' ||
-         MA_PromptFolderPassword(folder, G->MA->GUI.WI))
+      if(isProtectedFolder(folder) == FALSE || folder->Password[0] == '\0')
+        canLoadIndex = TRUE;
+      else
+        canLoadIndex = MA_PromptFolderPassword(folder, G->MA->GUI.WI);
+
+      if(canLoadIndex)
       {
         // load the index file (and eventually rebuild it)
         folder->LoadedMode = MA_LoadIndex(folder, TRUE);

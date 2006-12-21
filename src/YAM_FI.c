@@ -1241,12 +1241,28 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
     {
       if(mail->Folder != fo)
       {
+        BOOL accessFreed = FALSE;
+        enum LoadedMode oldLoadedMode = fo->LoadedMode;
+
         G->RRs.Moved++;
 
-        if(fo->LoadedMode != LM_VALID && isProtectedFolder(fo))
+        // temporarily grant free access to the folder, but only if it has no free access yet
+        if(fo->LoadedMode != LM_VALID && isProtectedFolder(fo) && isFreeAccess(fo) == FALSE)
+        {
           SET_FLAG(fo->Flags, FOFL_FREEXS);
+          accessFreed = TRUE;
+        }
 
         MA_MoveCopy(mail, mail->Folder, fo, FALSE, TRUE);
+
+        // restore the old access mode if it was changed before
+        if(accessFreed)
+        {
+          // restore old index settings
+          // if it was not yet loaded before, the MA_MoveCopy() call changed this to "loaded"
+          fo->LoadedMode = oldLoadedMode;
+          CLEAR_FLAG(fo->Flags, FOFL_FREEXS);
+        }
 
         return FALSE;
       }
