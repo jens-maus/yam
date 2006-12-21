@@ -5159,7 +5159,7 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
               DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
 
             AppendLogVerbose(32, GetStr(MSG_LOG_RetrievingVerbose), AddrName(new->From), new->Subject, new->Size);
-            MA_StartMacro(MACRO_NEWMSG, mfile);
+            MA_StartMacro(MACRO_NEWMSG, GetMailFile(NULL, infolder, new));
             MA_FreeEMailStruct(mail);
          }
          return TRUE;

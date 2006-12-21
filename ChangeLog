@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-12-21  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: the NEWMSG macro is now called with the full path of the new mail
+    file instead of just the file name. Thus a script can always access the file
+    even if it is located anywhere on the hard disk. This fixes bug #702564,
+    although this bug was partly fixed already with the introduction of the %p
+    placeholder.
+
 2006-12-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * MainWindowToolbar.c: removed the BarSpacer now that only one Spam toolbar
