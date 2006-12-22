@@ -6,6 +6,10 @@ $Id$
 
 2006-12-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * MainWindowToolbar.c, ReadWindowToolbar.c: the "not Spam" button is now
+    hidden by default and the "Spam" button is disabled by default, because the
+    usual toolbar update process will show/hide and enable/disable the correct
+    buttons.
   * YAM_UT.c: a call to TransferMailFile() could accidently be handled as
     success even if an error happened. Hence YAM now starts with an error
     condition here which is later turned into a real success/failure code.

@@ -155,8 +155,10 @@ OVERLOAD(OM_NEW)
 
     { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
-    { TB_MAIN_SPAM,     TB_MAIN_SPAM,     GetStr(MSG_MA_TBSPAM),    GetStr(MSG_HELP_MA_BT_SPAM),        0, 0, NULL, NULL },
-    { TB_MAIN_HAM,      TB_MAIN_HAM,      GetStr(MSG_MA_TBNOTSPAM), GetStr(MSG_HELP_MA_BT_NOTSPAM),     0, 0, NULL, NULL },
+    // the "Spam" button is disabled by default
+    // the "not Spam" button is hidden by default
+    { TB_MAIN_SPAM,     TB_MAIN_SPAM,     GetStr(MSG_MA_TBSPAM),    GetStr(MSG_HELP_MA_BT_SPAM),        MUIV_TheBar_ButtonFlag_Disabled, 0, NULL, NULL },
+    { TB_MAIN_HAM,      TB_MAIN_HAM,      GetStr(MSG_MA_TBNOTSPAM), GetStr(MSG_HELP_MA_BT_NOTSPAM),     MUIV_TheBar_ButtonFlag_Hide, 0, NULL, NULL },
     { TB_MAIN_FILTER,   TB_MAIN_FILTER,   GetStr(MSG_MA_TBFilter),  GetStr(MSG_HELP_MA_BT_FILTER),      0, 0, NULL, NULL },
     { TB_MAIN_FIND,     TB_MAIN_FIND,     GetStr(MSG_MA_TBFind),    GetStr(MSG_HELP_MA_BT_SEARCH),      0, 0, NULL, NULL },
     { TB_MAIN_ADDRBOOK, TB_MAIN_ADDRBOOK, GetStr(MSG_MA_TBAddrBook),GetStr(MSG_HELP_MA_BT_ABOOK),       0, 0, NULL, NULL },
@@ -181,8 +183,9 @@ OVERLOAD(OM_NEW)
   {
     Object *buttonObj;
 
-    // update the SPAM control buttons
-    DoMethod(obj, MUIM_MainWindowToolbar_UpdateSpamControls);
+    // update the SPAM control buttons only if the spam filter is not enabled
+    if(!C->SpamFilterEnabled)
+      DoMethod(obj, MUIM_MainWindowToolbar_UpdateSpamControls);
 
     // everything worked out fine.
     #warning "Toolbar_Qualifier missing!";

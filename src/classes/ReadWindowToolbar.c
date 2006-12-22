@@ -144,8 +144,10 @@ OVERLOAD(OM_NEW)
 
     { MUIV_TheBar_BarSpacer, TB_READ_NUM+1,  NULL, NULL, 0, 0, NULL, NULL },
 
-    { TB_READ_SPAM,       TB_READ_SPAM,       GetStr(MSG_RE_TBSPAM),    GetStr(MSG_HELP_RE_BT_SPAM),        0, 0, NULL, NULL },
-    { TB_READ_HAM,        TB_READ_HAM,        GetStr(MSG_RE_TBNOTSPAM), GetStr(MSG_HELP_RE_BT_NOTSPAM),     0, 0, NULL, NULL },
+    // the "Spam" button is disabled by default
+    // the "not Spam" button is hidden by default
+    { TB_READ_SPAM,       TB_READ_SPAM,       GetStr(MSG_RE_TBSPAM),    GetStr(MSG_HELP_RE_BT_SPAM),        MUIV_TheBar_ButtonFlag_Disabled, 0, NULL, NULL },
+    { TB_READ_HAM,        TB_READ_HAM,        GetStr(MSG_RE_TBNOTSPAM), GetStr(MSG_HELP_RE_BT_NOTSPAM),     MUIV_TheBar_ButtonFlag_Hide, 0, NULL, NULL },
     { MUIV_TheBar_End,       -1,  NULL, NULL, 0, 0, NULL, NULL },
   };
 
@@ -237,7 +239,7 @@ DECLARE(InitNotify) // Object *readWindow, Object *readMailGroup
 }
 ///
 /// DECLARE(UpdateSpamControls)
-// update the "Spam" and "no Spam" buttons
+// update the "Spam" and "not Spam" buttons
 DECLARE(UpdateSpamControls) // struct Mail *mail
 {
   BOOL hideSpam;
@@ -258,7 +260,7 @@ DECLARE(UpdateSpamControls) // struct Mail *mail
     }
     else if(hasStatusSpam(msg->mail))
     {
-      // the mail is spam, so just show the "no Spam" button
+      // the mail is spam, so just show the "not Spam" button
       hideSpam = TRUE;
       hideHam = FALSE;
       disableSpam = FALSE;
