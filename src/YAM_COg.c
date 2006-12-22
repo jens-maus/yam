@@ -39,6 +39,7 @@
 #include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
+#include <proto/xpkmaster.h>
 
 #if !defined(__amigaos4__)
 #include <clib/alib_protos.h> // DoMethod
@@ -244,7 +245,7 @@ MakeStaticHook(PO_XPKCloseHook, PO_XPKCloseFunc);
 //  Creates a popup list of available XPK sublibraries
 static Object *MakeXPKPop(Object **text, BOOL pack, BOOL encrypt)
 {
-  Object *lv, *po;
+  Object *lv, *po, *but;
 
   if((po = PopobjectObject,
     MUIA_Popstring_String, *text = TextObject,
@@ -252,7 +253,7 @@ static Object *MakeXPKPop(Object **text, BOOL pack, BOOL encrypt)
       MUIA_Background, MUII_TextBack,
       MUIA_FixWidthTxt, "MMMM",
     End,
-    MUIA_Popstring_Button, PopButton(MUII_PopUp),
+    MUIA_Popstring_Button, but = PopButton(MUII_PopUp),
     MUIA_Popobject_StrObjHook, &PO_XPKOpenHook,
     MUIA_Popobject_ObjStrHook, &PO_XPKCloseHook,
     MUIA_Popobject_WindowHook, &PO_WindowHook,
@@ -283,6 +284,13 @@ static Object *MakeXPKPop(Object **text, BOOL pack, BOOL encrypt)
     }
 
     DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+
+    // disable the XPK popups if xpkmaster.library is not available
+    if(XpkBase == NULL)
+    {
+      set(po, MUIA_Disabled, TRUE);
+      set(but, MUIA_Disabled, TRUE);
+    }
   }
 
   return po;
@@ -3066,7 +3074,15 @@ Object *CO_PageMixed(struct CO_ClassData *data)
       if(G->applicationID == 0)
       #endif
         set(data->GUI.CH_DOCKYICON, MUIA_Disabled, TRUE);
+
+      // disable the XPK popups if xpkmaster.library is not available
+      if(XpkBase == NULL)
+      {
+        set(data->GUI.NB_PACKER, MUIA_Disabled, TRUE);
+        set(data->GUI.NB_ENCPACK, MUIA_Disabled, TRUE);
+      }
    }
+   
    return grp;
 }
 ///
