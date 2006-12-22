@@ -6,6 +6,8 @@ $Id$
 
 2006-12-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_WR.c: modified the tagline functions to use the read/write functions for
+    integer values that have been introduced for the spam filter.
   * MainWindowToolbar.c, ReadWindowToolbar.c: the "not Spam" button is now
     hidden by default and the "Spam" button is disabled by default, because the
     usual toolbar update process will show/hide and enable/disable the correct

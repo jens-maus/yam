@@ -697,26 +697,39 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
 //  Creates an index table for a database file
 static BOOL WR_CreateHashTable(char *source, char *hashfile, char *sep)
 {
-   int result = FALSE;
-   char buffer[SIZE_LARGE];
-   long fpos, l = strlen(sep);
-   FILE *in, *out;
+  BOOL result = FALSE;
+  FILE *in;
 
-   if ((in = fopen(source, "r")))
-   {
-      if ((out = fopen(hashfile, "w")))
+  ENTER();
+
+  if((in = fopen(source, "r")) != NULL)
+  {
+    FILE *out;
+
+    if((out = fopen(hashfile, "w")) != NULL)
+    {
+      char buffer[SIZE_LARGE];
+      const size_t l = strlen(sep);
+
+      // the first offset is always zero
+      WriteUInt32(out, 0);
+      while(fgets(buffer, sizeof(buffer), in))
       {
-         fpos = 0; fwrite(&fpos, sizeof(long), 1, out);
-         while (fgets(buffer, SIZE_LARGE, in))
-            if (!strncmp(buffer, sep, (size_t)l)) { fpos = ftell(in); fwrite(&fpos, sizeof(long), 1, out); }
-
-         result = TRUE;
-         fclose(out);
+        // if we found a separator write out the current offset
+        if(strncmp(buffer, sep, l) == 0)
+          WriteUInt32(out, ftell(in));
       }
-      fclose(in);
-   }
 
-   return (BOOL)result;
+      result = TRUE;
+
+      fclose(out);
+    }
+
+    fclose(in);
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -724,38 +737,68 @@ static BOOL WR_CreateHashTable(char *source, char *hashfile, char *sep)
 //  Randomly selects a tagline and writes it to the message file
 static void WR_AddTagline(FILE *fh_mail)
 {
-   FILE *fh_tag, *fh_hash;
-   char buf[SIZE_LARGE], hashfile[SIZE_PATHFILE];
-   long fpos, hsize;
 
-   if (*C->TagsFile)
-   {
-      snprintf(hashfile, sizeof(hashfile), "%s.hsh", C->TagsFile);
+  ENTER();
 
-      if(FileTime(C->TagsFile) > FileTime(hashfile))
-        WR_CreateHashTable(C->TagsFile, hashfile, C->TagsSeparator);
+  if(C->TagsFile[0] != '\0')
+  {
+    char hashfile[SIZE_PATHFILE];
+    FILE *fh_tag;
 
-      if((fh_tag = fopen(C->TagsFile, "r")))
+    snprintf(hashfile, sizeof(hashfile), "%s.hsh", C->TagsFile);
+
+    if(FileTime(C->TagsFile) > FileTime(hashfile))
+      WR_CreateHashTable(C->TagsFile, hashfile, C->TagsSeparator);
+
+    if((fh_tag = fopen(C->TagsFile, "r")) != NULL)
+    {
+      FILE *fh_hash;
+
+      if((fh_hash = fopen(hashfile, "r")) != NULL)
       {
-         if ((fh_hash = fopen(hashfile, "r")))
-         {
-            fseek(fh_hash, 0, SEEK_END); hsize = ftell(fh_hash);
-            if ((hsize = hsize/sizeof(long)) > 1)
+        long hsize;
+
+        fseek(fh_hash, 0, SEEK_END);
+        hsize = ftell(fh_hash);
+        if((hsize = hsize / sizeof(long)) > 1)
+        {
+          long fpos;
+
+          // calculate a random offset
+          fpos = (((long)rand()) % hsize) * sizeof(long);
+          fseek(fh_hash, fpos, SEEK_SET);
+          // read the offset to the tagline from the hash file
+          if(ReadUInt32(fh_hash, (ULONG *)&fpos) == 1)
+          {
+            char buf[SIZE_LARGE];
+
+            fseek(fh_tag, fpos, SEEK_SET);
+
+            if(GetLine(fh_tag, buf, sizeof(buf)) != NULL)
             {
-               fpos = (((long)rand())%hsize)*sizeof(long);
-               fseek(fh_hash, fpos, SEEK_SET); fread(&fpos, sizeof(long), 1, fh_hash);
-               fseek(fh_tag, fpos, SEEK_SET);
-               if (GetLine(fh_tag, buf, SIZE_LARGE)) fputs(buf, fh_mail);
-               while (GetLine(fh_tag, buf, SIZE_LARGE))
-                  if (!strncmp(buf, C->TagsSeparator, strlen(C->TagsSeparator))) break;
-                  else fprintf(fh_mail, "\n%s", buf);
+              fputs(buf, fh_mail);
+
+              while(GetLine(fh_tag, buf, sizeof(buf)) != NULL)
+              {
+                if(strncmp(buf, C->TagsSeparator, strlen(C->TagsSeparator)) == 0)
+                  break;
+                else
+                  fprintf(fh_mail, "\n%s", buf);
+              }
             }
-            fclose(fh_tag);
-         }
-         else ER_NewError(GetStr(MSG_ER_CantOpenFile), hashfile);
+          }
+        }
+
+        fclose(fh_tag);
       }
-      else ER_NewError(GetStr(MSG_ER_CantOpenFile), C->TagsFile);
-   }
+      else
+        ER_NewError(GetStr(MSG_ER_CantOpenFile), hashfile);
+    }
+    else
+      ER_NewError(GetStr(MSG_ER_CantOpenFile), C->TagsFile);
+  }
+
+  LEAVE();
 }
 
 ///
