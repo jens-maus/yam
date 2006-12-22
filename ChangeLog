@@ -6,6 +6,7 @@ $Id$
 
 2006-12-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: replaced some XPK error numbers by proper constants.
   * YAM_FO.c: if xpkmaster.library is not available it now no longer possible
     to select compression or encryption for a folder.
   * YAM_COg.c: the XPK popups are disabled now if xpkmaster.library is not

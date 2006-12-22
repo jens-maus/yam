@@ -3908,6 +3908,8 @@ static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff)
 {
    BOOL result = TRUE;
 
+   ENTER();
+
    switch(fMode)
    {
       case FM_XPKCOMP:
@@ -3924,8 +3926,10 @@ static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff)
         *method = NULL;
         *eff = 0;
         result = FALSE;
+      break;
    }
 
+   RETURN(result);
    return result;
 }
 ///
@@ -3934,11 +3938,12 @@ static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff)
 static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff)
 {
   long error = -1;
+
   ENTER();
 
   D(DBF_XPK, "CompressMailFile: %08lx - [%s] -> [%s] - [%s] - [%s] - %ld", XpkBase, src, dst, passwd, method, eff);
 
-  if(XpkBase)
+  if(XpkBase != NULL)
   {
     error = XpkPackTags(XPK_InName,      src,
                         XPK_OutName,     dst,
@@ -3948,7 +3953,7 @@ static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, i
                         TAG_DONE);
 
     #if defined(DEBUG)
-    if(error != 0)
+    if(error != XPKERR_OK)
     {
       char buf[1024];
 
@@ -3959,8 +3964,8 @@ static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, i
     #endif
   }
 
-  RETURN(error == 0);
-  return error == 0;
+  RETURN(error == XPKERR_OK);
+  return error == XPKERR_OK;
 }
 ///
 /// UncompressMailFile
@@ -3968,11 +3973,12 @@ static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, i
 static BOOL UncompressMailFile(char *src, char *dst, const char *passwd)
 {
   long error = -1;
+
   ENTER();
 
   D(DBF_XPK, "UncompressMailFile: %08lx - [%s] -> [%s] - [%s]", XpkBase, src, dst, passwd);
 
-  if(XpkBase)
+  if(XpkBase != NULL)
   {
     error = XpkUnpackTags(XPK_InName,    src,
                           XPK_OutName,   dst,
@@ -3980,7 +3986,7 @@ static BOOL UncompressMailFile(char *src, char *dst, const char *passwd)
                           TAG_DONE);
 
     #if defined(DEBUG)
-    if(error != 0)
+    if(error != XPKERR_OK)
     {
       char buf[1024];
 
@@ -3991,8 +3997,8 @@ static BOOL UncompressMailFile(char *src, char *dst, const char *passwd)
     #endif
   }
 
-  RETURN(error == 0);
-  return error == 0;
+  RETURN(error == XPKERR_OK);
+  return error == XPKERR_OK;
 }
 ///
 /// TransferMailFile
