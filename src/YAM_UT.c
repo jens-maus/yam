@@ -4015,7 +4015,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
   enum FolderMode dstMode = dstfolder->Mode;
   char *srcpw = srcfolder->Password;
   char *dstpw = dstfolder->Password;
-  int success = 0;
+  int success = -1;
 
   ENTER();
 

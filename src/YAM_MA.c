@@ -941,6 +941,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 
       default:
         ER_NewError(GetStr(MSG_ER_TRANSFERMAIL), mail->MailFile, to->Name);
+      break;
     }
   }
 
