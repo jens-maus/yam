@@ -1686,8 +1686,9 @@ static struct FO_ClassData *FO_New(void)
 
       fmodes[0]  = GetStr(MSG_FO_FMNormal);
       fmodes[1]  = GetStr(MSG_FO_FMSimple);
-      fmodes[2]  = GetStr(MSG_FO_FMPack);
-      fmodes[3]  = GetStr(MSG_FO_FMEncPack);
+      // compression and encryption are only available if XPK is available
+      fmodes[2]  = (XpkBase != NULL) ? GetStr(MSG_FO_FMPack) : NULL;
+      fmodes[3]  = (XpkBase != NULL) ? GetStr(MSG_FO_FMEncPack) : NULL;
       fmodes[4]  = NULL;
 
       sortopt[0] = GetStr(MSG_FO_MessageDate);
