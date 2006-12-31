@@ -2692,16 +2692,22 @@ char *GetFolderDir(struct Folder *fo)
 char *GetMailFile(char *string, struct Folder *folder, struct Mail *mail)
 {
   static char buffer[SIZE_PATHFILE];
+  char *result;
 
-  if(!folder && mail)
+  ENTER();
+
+  if(folder == NULL && mail != NULL)
     folder = mail->Folder;
 
-  if(!string)
+  if(string == NULL)
     string = buffer;
 
   strmfp(string, (folder == NULL || folder == (struct Folder *)-1) ? C->TempDir : GetFolderDir(folder), mail->MailFile);
 
-  return string;
+  result = GetRealPath(string);
+
+  RETURN(result);
+  return result;
 }
 ///
 /// BuildAddrName
