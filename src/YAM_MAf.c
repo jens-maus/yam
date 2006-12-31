@@ -1052,10 +1052,15 @@ char *MA_NewMailFile(struct Folder *folder, char *mailfile)
   static char fullpath[SIZE_PATHFILE+1];
   char dateFilePart[12+1];
   char newFileName[SIZE_MFILE];
-  char *folderDir = GetFolderDir(folder);
+  char *folderDir;
   char *ptr;
   struct TimeVal curDate;
   int mCounter = 0;
+  char *result = NULL;
+
+  ENTER();
+
+  folderDir = GetFolderDir(folder);
 
   // take the current time and use it as the datePart of the
   // new mailfile name
@@ -1073,20 +1078,25 @@ char *MA_NewMailFile(struct Folder *folder, char *mailfile)
   do
   {
     snprintf(newFileName, sizeof(newFileName), "%s.%03d,N", dateFilePart, ++mCounter);
-
-    if(mCounter > 999)
-      return NULL;
-
     strlcpy(fullpath, folderDir, sizeof(fullpath));
     AddPart(fullpath, newFileName, SIZE_PATHFILE);
   }
-  while(FileExists(fullpath));
+  while(mCounter < 999 && FileExists(fullpath));
 
-  // copy the newFileName to our mailfile buffer
-  if(mailfile)
-    strcpy(mailfile, newFileName);
+  if(mCounter < 999)
+  {
+    // copy the newFileName to our mailfile buffer
+    if(mailfile)
+      strcpy(mailfile, newFileName);
+    // get the real path to the file
+    result = GetRealPath(fullpath);
+  }
+  else
+    // we ran out of free numbers
+    result = NULL;
 
-  return fullpath;
+  RETURN(result);
+  return result;
 }
 
 ///

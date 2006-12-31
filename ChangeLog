@@ -8,6 +8,8 @@ $Id$
 
   * YAM_UT.c: modified GetMailFile() to always return the completely resolved
     path of a file.
+  * YAM_MAf.c modified MA_NewMailFile() to always return the completely resolved
+    path of a file.
 
 2006-12-22  Thore Böckelmann <tboeckel@gmx.de>
 
