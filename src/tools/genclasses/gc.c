@@ -676,7 +676,7 @@ void gen_gpl( FILE *fp )
   "\n"
   " YAM - Yet Another Mailer\n"
   " Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>\n"
-  " Copyright (C) 2000-2006 by YAM Open Source Team\n"
+  " Copyright (C) 2000-2007 by YAM Open Source Team\n"
   "\n"
   " This program is free software; you can redistribute it and/or modify\n"
   " it under the terms of the GNU General Public License as published by\n"

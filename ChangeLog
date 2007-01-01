@@ -3,12 +3,24 @@ YAM Open Source - ChangeLog
 ---------------------------
 
 $Id$
+$URL$
+
+2007-01-01  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: bumped all copyright notices to point to the new year (2007). So
+    happy new year everyone and thanks for the tremdenous support either
+    by donating some money to our project, but also thanks to those who
+    spent valueable time in submitting bug reports. YAM is now already in
+    the 7th year of its open source development and since the release of
+    the source code by Marcel Beck in 2000, we have not only added great new
+    features but also approximately rewritten about 70-75% of the whole sources.
+    I think this is one more reason to give everyone a big "cheers!"....
 
 2006-12-31  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: modified GetMailFile() to always return the completely resolved
     path of a file.
-  * YAM_MAf.c modified MA_NewMailFile() to always return the completely resolved
+  * YAM_MAf.c: modified MA_NewMailFile() to always return the completely resolved
     path of a file.
 
 2006-12-22  Thore Böckelmann <tboeckel@gmx.de>
