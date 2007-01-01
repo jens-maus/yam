@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.9 (11.12.06)
+## version $VER: YAM.ct 6.10 (01.01.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -4866,8 +4866,8 @@ Sparar index för mappen '%s'...
 ;#DEF Saving index of folder '%s'...
 ;#SET (1285//)
 MSG_BusyScanning
-Söker i katalog för mappen '%s'...
-;#DEF Scanning directory of folder '%s'...
+Skannar mapp '%s'...
+;#DEF Scanning folder '%s'...
 ;#SET (1286//)
 MSG_BusyReading
 Läser brev...
@@ -5926,8 +5926,8 @@ MSG_MA_ALLTOREAD
 ;#DEF #\000All to Read
 ;#SET (1572//)
 MSG_ER_MOVEFOLDERDIR
-Ett fel inträffade vid försök att flytta innehållet i mappen\n'%s' till katalogen '%s'. Detta kan bero på otillräckligt med utrymme\neller för att destinationen inte är giltig eller skrivbar.
-;#DEF An error occurred while trying to move the content of folder\n'%s' to directory '%s'. This may either be due to insufficient\nspace or because the destination path is not valid or writable.
+Ett fel inträffade vid försök att flytta innehållet i mappen '%s' till katalogen '%s'.\n\nDetta kan bero på otillräckligt med utrymme eller för att destinationen inte är giltig eller skrivbar.
+;#DEF An error occurred while trying to move the content of folder '%s' to directory '%s'.\n\nThis may either be due to insufficient space or because the destination path is not valid or writable.
 ;#SET (1573//)
 MSG_CO_QUICKSEARCHBAR
 Visa snabbsök i huvudfönster
@@ -6054,7 +6054,7 @@ Ett fel inträffade vid försök att base64 avkoda MIME del %ld av brev '%s'. Avkod
 ;#DEF An error occurred while trying to base64 decode MIME part %ld of mail '%s'. The decoding has been aborted.\n\nThis may be caused by an incorrect encoding done by the sending mail client or because the base64 part has been malformed during transmission.
 ;#SET (1604//)
 MSG_ER_B64DECTRUNCTXT
-Viss läsbar text från MIME del %ld av brev '%s' kunde inte base64 avkodas och kan visas felaktigt eller inte alls.\n\nDetta kan bero på en felaktig kodning av den skickande mail klieten eller för att base64 delen har blivit skadad under sändning.
+Viss läsbar text från MIME del %ld av brev '%s' kunde inte base64 avkodas och kan visas felaktigt eller inte alls.\n\nDetta kan bero på en felaktig kodning av den skickande mail klienten eller för att base64 delen har blivit skadad under sändning.
 ;#DEF Some readable text from MIME part %ld of mail '%s' couldn't be base64 decoded and may show up incorrect or is even missing.\n\nThis may be caused by an incorrect encoding done by the sending mail client or because the base64 part has been malformed during transmission.
 ;#SET (1605//)
 MSG_MA_MessageImport
@@ -6825,3 +6825,31 @@ MSG_WR_SEARCH
 Sök
 ;#DEF Search
 ;#SET (1799//)
+MSG_AB_IMPORT
+Importera
+;#DEF Import
+;#SET (1800//)
+MSG_AB_EXPORT
+Exportera
+;#DEF Export
+;#SET (1801//)
+MSG_AB_LDIF
+LDIF adressbok (*.ldif)
+;#DEF LDIF address book (*.ldif)
+;#SET (1802//)
+MSG_AB_CSV
+Kommaseparerade värden (*.csv)
+;#DEF Comma separated values (*.csv)
+;#SET (1803//)
+MSG_AB_TAB
+TAB separerade värden (*.tab)
+;#DEF TAB separated values (*.tab)
+;#SET (1804//)
+MSG_ER_ADDRBOOKIMPORT
+Kunde inte importera adressbok \"%s\".
+;#DEF Could not import address book \"%s\".
+;#SET (1805//)
+MSG_ER_ADDRBOOKEXPORT
+Kunde inte exportera adressbok \"%s\".
+;#DEF Could not export address book \"%s\".
+;#SET (1806//)

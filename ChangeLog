@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-01  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: Updated according to changes and some minor fixes.
+
 2007-01-01  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: bumped all copyright notices to point to the new year (2007). So
