@@ -5512,7 +5512,10 @@ void DisplayAppIconStatistics(void)
     // 2.) Using "zero" as lock parameter avoids a header compatibility
     //     issue (old: "struct FileLock *"; new: "BPTR")
     if(C->WBAppIcon)
+    {
       G->AppIcon = AddAppIcon(0, 0, apptit, G->AppPort, 0, dobj, TAG_DONE);
+      SHOWVALUE(DBF_GUI, G->AppIcon);
+    }
 
     #if defined(__amigaos4__)
     // check if application.library is used and then
@@ -5523,18 +5526,27 @@ void DisplayAppIconStatistics(void)
 
       if(C->DockyIcon)
       {
+        SHOWVALUE(DBF_GUI, lastIconID);
+        SHOWVALUE(DBF_GUI, mode);
+
         if(lastIconID != mode)
         {
           struct ApplicationIconInfo aii;
+          BOOL success;
 
           aii.iconType = APPICONT_CustomIcon;
           aii.info.customIcon = dobj;
 
-          SetApplicationAttrs(G->applicationID,
-                              APPATTR_IconType, (uint32)&aii,
-                              TAG_DONE);
-
-          lastIconID = mode;
+          success = SetApplicationAttrs(G->applicationID,
+                                        APPATTR_IconType, (uint32)&aii,
+                                        TAG_DONE);
+          SHOWVALUE(DBF_GUI, success);
+          if(success)
+            // remember the current icon state on success only
+            lastIconID = mode;
+          else
+            // and return to "nothing/unknown" on failure
+            lastIconID = -1;
         }
       }
       else

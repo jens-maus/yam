@@ -7,6 +7,7 @@ $URL$
 
 2007-01-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: added some debug output upon changing the dock icon.
   * YAM_MA.c: deletion of old messages checked the age twice, but didn't take
     the spam folder in account on the first check. This could result in not
     deleting too old spam mails. This should fix bug #1621132.
