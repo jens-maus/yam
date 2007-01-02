@@ -3392,28 +3392,20 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
         struct Mail *mail;
         struct Mail *next;
 
-        for(mail=folder->Messages; mail; mail = next)
+        for(mail = folder->Messages; mail; mail = next)
         {
           next = mail->Next;
           today.ds_Days = today_days - folder->MaxAge;
 
           if(CompareDates(&today, &(mail->Date)) < 0)
           {
+            // delete any message from trash and spam folder automatically
+            // or if the message is read already (keep unread messages)
             if(isTrashFolder(folder) ||
+               isSpamFolder(folder) ||
                (!hasStatusNew(mail) && hasStatusRead(mail)))
             {
-              next = mail->Next;
-              today.ds_Days = today_days - flist[f]->MaxAge;
-
-              if (CompareDates(&today, &(mail->Date)) < 0)
-              {
-                if(isTrashFolder(flist[f]) ||
-                   isSpamFolder(flist[f]) ||
-                   (!hasStatusNew(mail) && hasStatusRead(mail)))
-                {
-                  MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE, FALSE);
-                }
-              }
+               MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE, FALSE);
             }
           }
 
