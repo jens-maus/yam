@@ -1004,7 +1004,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
    if(page == cp_Update || page == cp_AllPages)
    {
       co->UpdateInterval = 604800; // check weekly for updates per default
-      co->LastUpdateStatus = UST_NOCHECK;
+      SetDefaultUpdateState();
    }
 
    // everything else
@@ -2028,3 +2028,5 @@ static struct CO_ClassData *CO_New(void)
    return NULL;
 }
 ////
+
+

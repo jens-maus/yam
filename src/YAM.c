@@ -1639,6 +1639,9 @@ static void Initialise2(void)
    SplashProgress(GetStr(MSG_RebuildIndices), 60);
    MA_UpdateIndexes(TRUE);
 
+   SplashProgress(GetStr(MSG_LOADINGUPDATESTATE), 65);
+   LoadUpdateState();
+
    SplashProgress(GetStr(MSG_LOADINGSPAMTRAININGDATA), 70);
    BayesFilterInit();
 
@@ -2800,3 +2803,5 @@ int main(int argc, char **argv)
    return RETURN_OK;
 }
 ///
+
+

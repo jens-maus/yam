@@ -405,7 +405,6 @@ struct Config
 
    enum  PrintMethod        PrintMethod;
    enum  SMTPSecMethod      SMTP_SecureMethod;
-   enum  UpdateCheckStatus  LastUpdateStatus;
    enum  LFMode             LogfileMode;
    enum  SMTPAuthMethod     SMTP_AUTH_Method;
 
@@ -483,7 +482,6 @@ struct Config
    struct MUI_PenSpec ColorURL;
    struct RxHook      RX[MAXRX];
    struct TRSocketOpt SocketOptions;
-   struct TimeVal     LastUpdateCheck;
 
    char RealName[SIZE_REALNAME];
    char EmailAddress[SIZE_ADDRESS];
@@ -580,3 +578,5 @@ void              CO_Validate(struct Config *co, BOOL update);
 void              GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
 
 #endif /* YAM_CONFIG_H */
+
+

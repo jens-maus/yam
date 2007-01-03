@@ -49,8 +49,20 @@ struct UpdateComponent
   struct TempFile *changeLogFile; // the file with the text about the changes.
 };
 
+struct UpdateState
+{
+  struct TimeVal LastUpdateCheck;
+  enum UpdateCheckStatus LastUpdateStatus;
+};
+
 // externally accessible functions
 void InitUpdateCheck(BOOL initial);
 BOOL CheckForUpdates(void);
+void LoadUpdateState(void);
+void SaveUpdateState(void);
+void GetLastUpdateState(struct UpdateState *state);
+void SetDefaultUpdateState(void);
 
 #endif // UPDATECHECK_H
+
+

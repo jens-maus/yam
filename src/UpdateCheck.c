@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include <libraries/locale.h>
 #include <mui/BetterString_mcc.h>
@@ -67,6 +68,7 @@ extern struct Library *SocketBase;
 extern struct Library *XpkBase;
 
 /*** Static variables/functions ***/
+static struct UpdateState LastUpdateState;
 
 /*** Update-Check mechanisms ***/
 /// InitUpdateCheck
@@ -85,8 +87,8 @@ void InitUpdateCheck(BOOL initial)
 
     // as this might be the very first call to this function we have to
     // make sure we issue an update check timer.
-    nextCheck.Seconds       = C->LastUpdateCheck.Seconds + C->UpdateInterval;
-    nextCheck.Microseconds  = C->LastUpdateCheck.Microseconds;
+    nextCheck.Seconds       = LastUpdateState.LastUpdateCheck.Seconds + C->UpdateInterval;
+    nextCheck.Microseconds  = LastUpdateState.LastUpdateCheck.Microseconds;
 
     // get the current time
     GetSysTime(TIMEVAL(&now));
@@ -106,8 +108,8 @@ void InitUpdateCheck(BOOL initial)
     {
       // we now (re)issue the next update check with the same update
       // interval as our previous one.
-      D(DBF_UPDATE, "update-check is due to be processed in %d seconds.", nextCheck.Seconds-now.Seconds);
-      TC_Restart(TIO_UPDATECHECK, nextCheck.Seconds-now.Seconds, 0);
+      D(DBF_UPDATE, "update-check is due to be processed in %d seconds.", nextCheck.Seconds - now.Seconds);
+      TC_Restart(TIO_UPDATECHECK, nextCheck.Seconds - now.Seconds, 0);
     }
   }
   else
@@ -118,7 +120,6 @@ void InitUpdateCheck(BOOL initial)
 
   LEAVE();
 }
-
 ///
 /// CheckForUpdates
 // contacts the 'update.yam.ch' HTTP server and asks for
@@ -130,7 +131,7 @@ BOOL CheckForUpdates(void)
   ENTER();
 
   // flag the last update to be failed per default first
-  C->LastUpdateStatus = UST_NOQUERY;
+  LastUpdateState.LastUpdateStatus = UST_NOQUERY;
 
   // first we check if we can start a connection or if the
   // tcp/ip stuff is busy right now so that we do not interrupt something
@@ -140,6 +141,7 @@ BOOL CheckForUpdates(void)
     if(TR_OpenTCPIP())
     {
       struct TempFile *tf = OpenTempFile(NULL);
+
       if(tf != NULL)
       {
         char *request;
@@ -271,7 +273,7 @@ BOOL CheckForUpdates(void)
           if(TR_DownloadURL(C->UpdateServer, request, NULL, tf->Filename))
           {
             // now we parse the result.
-            if((tf->FP = fopen(tf->Filename, "r")))
+            if((tf->FP = fopen(tf->Filename, "r")) != NULL)
             {
               BOOL validUpdateCheck = FALSE;
               BOOL updatesAvailable = FALSE;
@@ -397,10 +399,10 @@ BOOL CheckForUpdates(void)
               if(updatesAvailable)
               {
                 set(G->UpdateNotifyWinObject, MUIA_Window_Open, TRUE);
-                C->LastUpdateStatus = UST_UPDATESUCCESS;
+                LastUpdateState.LastUpdateStatus = UST_UPDATESUCCESS;
               }
               else
-                C->LastUpdateStatus = UST_NOUPDATE; // we didn't find any new updates.
+                LastUpdateState.LastUpdateStatus = UST_NOUPDATE; // we didn't find any new updates.
 
               // the updatecheck was successfull
               result = TRUE;
@@ -429,22 +431,16 @@ BOOL CheckForUpdates(void)
   // as the last operation we get the current time as the
   // last checked time for the update check and save our
   // configuration back to disk.
-  GetSysTime(TIMEVAL(&C->LastUpdateCheck));
+  GetSysTime(TIMEVAL(&LastUpdateState.LastUpdateCheck));
 
-  // we save the configuration file which we currently
-  // have in memory and copy the changed elements to our
-  // temporar (CE) structure as well which is quite helpfull
-  // in case a config window is open.
-  CO_SaveConfig(C, G->CO_PrefsFile);
+  // now save the update state
+  SaveUpdateState();
   if(CE)
   {
-    memcpy(&CE->LastUpdateCheck, &C->LastUpdateCheck, sizeof(struct TimeVal));
-    CE->LastUpdateStatus = C->LastUpdateStatus;
-
     // in case the updatecheck resulted in no further update or a successful update check
     // we have to check if we have to update the config page of an eventually opened YAM
     // configuration window.
-    if((C->LastUpdateStatus == UST_NOUPDATE || C->LastUpdateStatus == UST_UPDATESUCCESS) &&
+    if((LastUpdateState.LastUpdateStatus == UST_NOUPDATE || LastUpdateState.LastUpdateStatus == UST_UPDATESUCCESS) &&
        G->CO != NULL && G->CO->VisiblePage == cp_Update)
     {
       CO_SetConfig();
@@ -458,5 +454,104 @@ BOOL CheckForUpdates(void)
   RETURN(result);
   return result;
 }
-
 ///
+/// LoadUpdateState
+// Load update state file from disk
+void LoadUpdateState(void)
+{
+  FILE *fh;
+
+  // we start with "no update yet" ...
+  LastUpdateState.LastUpdateStatus = UST_NOQUERY;
+  // ... and a zero time which will result in a possible immediate update check
+  memset(&LastUpdateState.LastUpdateCheck, 0, sizeof(LastUpdateState.LastUpdateCheck));
+
+  // the YAM executable is the same for all users, hence we need no per user state file
+  if((fh = fopen(".updatestate", "r")) != NULL)
+  {
+    char buf[SIZE_LARGE];
+
+    fgets(buf, sizeof(buf), fh);
+    if(strnicmp(buf, "YUP", 3) == 0)
+    {
+      int version;
+
+      // we derive the version here although it is not yet needed
+      version = buf[3] - '0';
+
+      // read in all the lines
+      while(fgets(buf, sizeof(buf), fh))
+      {
+        char *p;
+        char *value;
+
+        if((value = strchr(buf, '=')) != NULL)
+        {
+          const char *value2 = "";
+
+          for(value2 = (++value) + 1; isspace(*value); value++);
+        }
+
+        if((p = strpbrk(buf, "\r\n")) != NULL)
+          *p = '\0';
+
+        for(p = buf; *p != '\0' && *p != '=' && !isspace(*p); p++);
+        *p = '\0';
+
+        if(*buf != '\0' && value != NULL)
+        {
+          if(version >= 1)
+          {
+            if(stricmp(buf, "LastUpdateCheck") == 0)
+              String2TimeVal(&LastUpdateState.LastUpdateCheck, value, DSS_USDATETIME, TZC_NONE);
+            else if(stricmp(buf, "LastUpdateStatus") == 0)
+              LastUpdateState.LastUpdateStatus = atoi(value);
+            else
+              W(DBF_UPDATE, "unknown update option: '%s' = '%s'", buf, value);
+          }
+        }
+      }
+    }
+
+    fclose(fh);
+  }
+}
+///
+/// SaveUpdateState
+// Save update state file to disk
+void SaveUpdateState(void)
+{
+  FILE *fh;
+
+  // the YAM executable is the same for all users, hence we need no per user state file
+  if((fh = fopen(".updatestate", "w")) != NULL)
+  {
+    char buf[SIZE_LARGE];
+
+    fprintf(fh, "YUP1 - YAM Update state\n");
+    TimeVal2String(buf, sizeof(buf), &LastUpdateState.LastUpdateCheck, DSS_USDATETIME, TZC_NONE);
+    fprintf(fh, "LastUpdateCheck  = %s\n", buf);
+    fprintf(fh, "LastUpdateStatus = %d\n", LastUpdateState.LastUpdateStatus);
+
+    fclose(fh);
+  }
+}
+///
+/// GetLastUpdateState
+// Get a copy of the last update state
+void GetLastUpdateState(struct UpdateState *state)
+{
+  if(state != NULL)
+    // copy the last state
+  	memcpy(state, &LastUpdateState, sizeof(*state));
+}
+///
+/// SetDefaultUpdateState
+// Set a default update state
+void SetDefaultUpdateState(void)
+{
+  // flag the last update to be failed per default
+  LastUpdateState.LastUpdateStatus = UST_NOQUERY;
+}
+///
+

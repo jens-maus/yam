@@ -1088,11 +1088,11 @@ Hallo,\\n
 ;
 MSG_CO_AltRepIntroDef
 Am %c schrieben Sie:
-; 
+;
 ;
 MSG_CO_AltRepPatternDef
 #?.(de|ch|at)
-; 
+;
 ;
 MSG_CO_ForwardIntroDef
 *** Start der weitergeleiteten Nachricht ***\\n\\nDatum: %c\\nVon: %n <%e>\\nBetreff: %s\\n\\n--- Weitergeleitete Nachricht folgt ---\\n\\n
@@ -1115,15 +1115,15 @@ Mit freundlichen Grüssen
 ;
 MSG_CO_AltRepHelloDef
 Hallo %f,\\n
-; 
+;
 ;
 MSG_CO_AltRepByeDef
 Mit freundlichem Gruss,
-; 
+;
 ;
 MSG_CO_MLRepHelloDef
 
-; 
+;
 ;
 MSG_CO_MLRepIntroDef
 Am %c schrieb %n:\\n
@@ -7628,4 +7628,7 @@ Konnte Adressbuch \"%s\" nicht lesen.
 ;
 MSG_ER_ADDRBOOKEXPORT
 Konnte Adressbuch \"%s\" nicht schreiben.
+;
+MSG_LOADINGUPDATESTATE
+Lade Update-Statusdaten...
 ;

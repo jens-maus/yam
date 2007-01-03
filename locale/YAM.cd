@@ -12,7 +12,7 @@
 ; and increase the last listed identifier number by one for your
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
-; 
+;
 #version 6
 #language english
 ;
@@ -6098,4 +6098,7 @@ Could not import address book \"%s\".
 ;
 MSG_ER_ADDRBOOKEXPORT (1806//)
 Could not export address book \"%s\".
+;
+MSG_LOADINGUPDATESTATE (1807//)
+Loading update state data...
 ;

@@ -397,13 +397,11 @@ DECLARE(Close)
   {
     // now we make sure the C and CE config structure is in sync again
     CE->UpdateInterval = C->UpdateInterval;
-    CE->LastUpdateStatus = C->LastUpdateStatus;
-    memcpy(&CE->LastUpdateCheck, &C->LastUpdateCheck, sizeof(struct TimeVal));
   }
 
   // make sure the update check config page is correctly refreshed
   // if it is currently the active one.
-  if(G->CO && G->CO->VisiblePage == 15)
+  if(G->CO && G->CO->VisiblePage == cp_Update)
     CO_SetConfig();
 
   // now close the window for real.
@@ -414,4 +412,5 @@ DECLARE(Close)
 }
 
 ///
+
 

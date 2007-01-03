@@ -7,6 +7,11 @@ $URL$
 
 2007-01-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: modified the update check in such a way, that the information about
+    the last update check are no longer saved to the user's .config file, but to
+    a global .updatestate file instead. This makes it possible to modify the
+    configuration while doing an update check without making the (temporary)
+    modifications permanent by accident. This fixes bug #1568672.
   * YAM_MA.c, YAM_MAf.c: the toolbar and the message menuitems were not updated
     if one jumped to a folder without messages. Even the "New message" item was
     always ghosted then. When jumping between two folders without messages the

@@ -504,9 +504,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "\n[Update]\n");
       fprintf(fh, "UpdateInterval   = %d\n", co->UpdateInterval);
       fprintf(fh, "UpdateServer     = %s\n", co->UpdateServer);
-      TimeVal2String(buf, sizeof(buf), &co->LastUpdateCheck, DSS_USDATETIME, TZC_NONE);
-      fprintf(fh, "LastUpdateCheck  = %s\n", buf);
-      fprintf(fh, "LastUpdateStatus = %d\n", co->LastUpdateStatus);
 
       fprintf(fh, "\n[Advanced]\n");
       fprintf(fh, "LetterPart       = %d\n", co->LetterPart);
@@ -1089,8 +1086,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "PackerCommand"))  strlcpy(co->PackerCommand, value, sizeof(co->PackerCommand));
 /*Update*/     else if (!stricmp(buffer, "UpdateInterval")) co->UpdateInterval = atoi(value);
                else if (!stricmp(buffer, "UpdateServer"))   strlcpy(co->UpdateServer, value, sizeof(co->UpdateServer));
-               else if (!stricmp(buffer, "LastUpdateCheck"))String2TimeVal(&co->LastUpdateCheck, value, DSS_USDATETIME, TZC_NONE);
-               else if (!stricmp(buffer, "LastUpdateStatus")) co->LastUpdateStatus = atoi(value);
 /*Advanced*/   else if (!stricmp(buffer, "LetterPart"))     { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
                else if (!stricmp(buffer, "WriteIndexes"))   co->WriteIndexes = atoi(value);
                else if (!stricmp(buffer, "SupportSite"))    strlcpy(co->SupportSite, value, sizeof(co->SupportSite));
@@ -1944,6 +1939,11 @@ void CO_SetConfig(void)
 
       case cp_Update:
       {
+        struct UpdateState state;
+
+        // copy the last update state information
+        GetLastUpdateState(&state);
+
         setcheckmark(gui->CH_UPDATECHECK, CE->UpdateInterval > 0);
 
         if(CE->UpdateInterval > 0)
@@ -1959,7 +1959,7 @@ void CO_SetConfig(void)
           setcycle(gui->CY_UPDATEINTERVAL, 1);
 
         // now we set the information on the last update check
-        switch(CE->LastUpdateStatus)
+        switch(state.LastUpdateStatus)
         {
           case UST_NOCHECK:
             set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOCHECK));
@@ -1979,11 +1979,11 @@ void CO_SetConfig(void)
         }
 
         // set the lastUpdateCheckDate
-        if(CE->LastUpdateStatus != UST_NOCHECK && CE->LastUpdateCheck.Seconds > 0)
+        if(state.LastUpdateStatus != UST_NOCHECK && state.LastUpdateCheck.Seconds > 0)
         {
           char buf[SIZE_DEFAULT];
 
-          TimeVal2String(buf, sizeof(buf), &CE->LastUpdateCheck, DSS_DATETIME, TZC_NONE);
+          TimeVal2String(buf, sizeof(buf), &state.LastUpdateCheck, DSS_DATETIME, TZC_NONE);
           set(gui->TX_UPDATEDATE, MUIA_Text_Contents, buf);
         }
         else
@@ -1995,9 +1995,12 @@ void CO_SetConfig(void)
       break;
 
       case cp_Max:
-        break;
+      	// nothing
+      break;
    }
 
    LEAVE();
 }
 ///
+
+

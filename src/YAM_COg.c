@@ -950,8 +950,6 @@ HOOKPROTONHNONP(UpdateCheckFunc, void)
 
   // now we make sure the C and CE config structure is in sync again
   C->UpdateInterval = CE->UpdateInterval;
-  C->LastUpdateStatus = CE->LastUpdateStatus;
-  memcpy(&C->LastUpdateCheck, &CE->LastUpdateCheck, sizeof(struct TimeVal));
 
   // perform the update check and update our open GUI
   // elements accordingly.
@@ -3082,7 +3080,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
         set(data->GUI.NB_ENCPACK, MUIA_Disabled, TRUE);
       }
    }
-   
+
    return grp;
 }
 ///
@@ -3261,3 +3259,5 @@ Object *CO_PageSpam(struct CO_ClassData *data)
    return grp;
 }
 ///
+
+
