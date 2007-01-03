@@ -733,6 +733,10 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
     // if there is still no entry active in the NList we make the first one active
     if(xget(gui->PG_MAILLIST, MUIA_NList_Active) == (ULONG)MUIV_NList_Active_Off)
       set(gui->PG_MAILLIST, MUIA_NList_Active, MUIV_NList_Active_Top);
+
+    // if there are no messages in the folder the GUI needs to be updated nevertheless
+    if(folder->Total == 0)
+      MA_ChangeSelected(TRUE);
   }
 }
 

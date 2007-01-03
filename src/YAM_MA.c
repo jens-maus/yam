@@ -338,40 +338,48 @@ void MA_ChangeSelected(BOOL forceUpdate)
   // more than one group, something is definitly wrong!
 
   // Enable if:
-  //  * > 0 mails selected
   //  * the folder is enabled
   //  * NOT in the "SPAM" folder
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, (active || numSelected > 0) && folderEnabled && !isSpamFolder(fo),
-                                                         gui->MI_FORWARD,
-                                                         gui->MI_CHSUBJ,
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSpamFolder(fo),
                                                          gui->MI_NEW,
-                                                         gui->MI_REPLY,
-                                                         gui->MI_EDIT,
-                                                         TAG_DONE);
+                                                         NULL);
 
   // Enable if:
+  //  * the folder is enabled
+  //  * NOT in the "SPAM" folder
   //  * > 0 mails selected
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSpamFolder(fo) && (active || numSelected > 0),
+                                                         gui->MI_FORWARD,
+                                                         gui->MI_CHSUBJ,
+                                                         gui->MI_REPLY,
+                                                         gui->MI_EDIT,
+                                                         NULL);
+
+  // Enable if:
   //  * the folder is enabled
   //  * NOT in the "Sent" folder
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isSentMailFolder(fo) && (active || numSelected > 0) && folderEnabled,
+  //  * > 0 mails selected
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSentMailFolder(fo) && (active || numSelected > 0),
                                                          gui->MI_TOREAD,
                                                          gui->MI_TOUNREAD,
                                                          gui->MI_ALLTOREAD,
                                                          gui->MI_BOUNCE,
-                                                         TAG_DONE);
+                                                         NULL);
 
   // Enable if:
+  //  * the folder is enabled
   //  * is in the "Outgoing" Folder
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, isOutgoingFolder(fo) && (active || numSelected > 0) && folderEnabled,
+  //  * > 0 mails selected
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && isOutgoingFolder(fo) && (active || numSelected > 0),
                                                          gui->MI_SEND,
                                                          gui->MI_TOHOLD,
                                                          gui->MI_TOQUEUED,
-                                                         TAG_DONE);
+                                                         NULL);
 
   // Enable if:
-  //  * > 0 mails selected
   //  * the folder is enabled
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, (active || numSelected > 0) && folderEnabled,
+  //  * > 0 mails selected
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && (active || numSelected > 0),
                                                          gui->MI_READ,
                                                          gui->MI_MOVE,
                                                          gui->MI_DELETE,
@@ -382,7 +390,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
                                                          gui->MI_PRINT,
                                                          gui->MI_SAVE,
                                                          gui->MI_ATTACH,
-                                                         TAG_DONE);
+                                                         NULL);
 
   // Enable if:
   //  * the folder is enabled
@@ -392,7 +400,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
                                                          gui->MI_IMPORT,
                                                          gui->MI_EXPORT,
                                                          gui->MI_SELECT,
-                                                         TAG_DONE);
+                                                         NULL);
 
 
   // Enable if:

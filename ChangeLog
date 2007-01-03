@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c, YAM_MAf.c: the toolbar and the message menuitems were not updated
+    if one jumped to a folder without messages. Even the "New message" item was
+    always ghosted then. When jumping between two folders without messages the
+    GUI update was never done, because the update through MUI's notifications
+    was never triggered since nothing ever changed in the listview. This fixes
+    bug #1626700.
+
 2007-01-02  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: added some debug output upon changing the dock icon.
