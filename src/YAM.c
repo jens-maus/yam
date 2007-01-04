@@ -2348,6 +2348,7 @@ int main(int argc, char **argv)
       args.hide = -args.hide;
       args.nocheck = -args.nocheck;
       G->TR_Debug = -args.debug;
+      G->TR_Socket = SMTP_NO_SOCKET;
       G->TR_Allow = TRUE;
       G->CO_DST = GetDST(FALSE);
       G->NoImageWarning = args.noImgWarning;

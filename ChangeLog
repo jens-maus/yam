@@ -7,6 +7,13 @@ $URL$
 
 2007-01-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_TR.c: reworked the TR_Connect() function to check if the global
+    socket is already in use. This rework also resulted in a clean up, thus now
+    TR_Connect() will return a proper error value if something goes wrong. This
+    should fix bug #681373, where a second call to TR_Connect() broke a previous
+    connection. Also added a missing call of TR_Disconnect() in TR_ProcessSEND()
+    in case a secure transmission is not possible and an initialized socket
+    might have been left behind.
   * YAM_rexx.c: fixed a possible buffer overflow during parsing of the command
     string.
   * UpdateCheck.c: slightly reworked the update state loading function. Also

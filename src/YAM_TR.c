@@ -1183,67 +1183,37 @@ BOOL TR_OpenTCPIP(void)
 //  Terminates a connection
 static void TR_Disconnect(void)
 {
-   if (G->TR_Socket != SMTP_NO_SOCKET)
-   {
-      if(G->TR_UseTLS)
-      {
-        TR_EndTLS();
-        G->TR_UseTLS = FALSE;
-      }
+  ENTER();
 
-      shutdown(G->TR_Socket, 2);
-      CloseSocket(G->TR_Socket);
-      G->TR_Socket = SMTP_NO_SOCKET;
+  if(G->TR_Socket != SMTP_NO_SOCKET)
+  {
+    if(G->TR_UseTLS)
+    {
+      TR_EndTLS();
+      G->TR_UseTLS = FALSE;
+    }
 
-      // free the transfer buffers now
-      TR_FreeTransBuffers();
-   }
+    shutdown(G->TR_Socket, 2);
+    CloseSocket(G->TR_Socket);
+    G->TR_Socket = SMTP_NO_SOCKET;
+
+    // free the transfer buffers now
+    TR_FreeTransBuffers();
+  }
+
+  LEAVE();
 }
 ///
-/// TR_Connect
-//  Connects to a internet service
-static int TR_Connect(char *host, int port)
+/// TR_SetSocketOpts
+//  Sets the user specified options for the active socket
+static void TR_SetSocketOpts(void)
 {
-  int i;
-  LONG optval;
-  struct hostent *hostaddr;
+  ENTER();
 
-  // get the hostent out of the supplied hostname
-  if(!(hostaddr = gethostbyname((STRPTR)host)))
+  if(C->SocketOptions.KeepAlive)
   {
-    return -1;
-  }
+    int optval = C->SocketOptions.KeepAlive;
 
-  #ifdef DEBUG
-  D(DBF_NET, "Host '%s':", host);
-  D(DBF_NET, "  Officially:\t%s", hostaddr->h_name);
-
-  for(i=0; hostaddr->h_aliases[i]; ++i)
-  {
-    D(DBF_NET, "  Alias:\t%s", hostaddr->h_aliases[i]);
-  }
-
-  D(DBF_NET, "  Type:\t\t%s", hostaddr->h_addrtype == AF_INET ? "AF_INET" : "AF_INET6");
-  if(hostaddr->h_addrtype == AF_INET)
-  {
-    for(i=0; hostaddr->h_addr_list[i]; ++i)
-    {
-      D(DBF_NET, "  Address:\t%s", Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr));
-    }
-  }
-  #endif
-
-  // lets create a standard AF_INET socket now
-  G->TR_Socket = socket(AF_INET, SOCK_STREAM, 0);
-  if (G->TR_Socket == -1)
-  {
-    return -2;
-  }
-
-  // lets set the socket options the user has defined
-  // in the configuration
-  if((optval = C->SocketOptions.KeepAlive))
-  {
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_KEEPALIVE) error");
@@ -1251,8 +1221,10 @@ static int TR_Connect(char *host, int port)
     }
   }
 
-  if((optval = C->SocketOptions.NoDelay))
+  if(C->SocketOptions.NoDelay)
   {
+    int optval = C->SocketOptions.NoDelay;
+
     if(setsockopt(G->TR_Socket, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(TCP_NODELAY) error");
@@ -1262,7 +1234,8 @@ static int TR_Connect(char *host, int port)
 
   if(C->SocketOptions.LowDelay)
   {
-    optval = IPTOS_LOWDELAY;
+    int optval = IPTOS_LOWDELAY;
+
     if(setsockopt(G->TR_Socket, IPPROTO_IP, IP_TOS, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(IPTOS_LOWDELAY) error");
@@ -1270,8 +1243,10 @@ static int TR_Connect(char *host, int port)
     }
   }
 
-  if((optval = C->SocketOptions.SendBuffer) > -1)
+  if(C->SocketOptions.SendBuffer > -1)
   {
+    int optval = C->SocketOptions.SendBuffer;
+
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDBUF, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_SNDBUF) error");
@@ -1279,8 +1254,10 @@ static int TR_Connect(char *host, int port)
     }
   }
 
-  if((optval = C->SocketOptions.RecvBuffer) > -1)
+  if(C->SocketOptions.RecvBuffer > -1)
   {
+    int optval = C->SocketOptions.RecvBuffer;
+
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVBUF, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_RCVBUF) error");
@@ -1288,8 +1265,10 @@ static int TR_Connect(char *host, int port)
     }
   }
 
-  if((optval = C->SocketOptions.SendLowAt) > -1)
+  if(C->SocketOptions.SendLowAt > -1)
   {
+    int optval = C->SocketOptions.SendLowAt;
+
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDLOWAT, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_SNDLOWAT) error");
@@ -1297,8 +1276,10 @@ static int TR_Connect(char *host, int port)
     }
   }
 
-  if((optval = C->SocketOptions.RecvLowAt) > -1)
+  if(C->SocketOptions.RecvLowAt > -1)
   {
+    int optval = C->SocketOptions.RecvLowAt;
+
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVLOWAT, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_RCVLOWAT) error");
@@ -1337,9 +1318,10 @@ static int TR_Connect(char *host, int port)
   // lets print out the current socket options
   #ifdef DEBUG
   {
+    int optval;
     LONG optlen = sizeof(optval);
     struct TimeVal tv;
-    LONG tvlen = sizeof(struct TimeVal);
+    LONG tvlen = sizeof(tv);
 
     D(DBF_NET, "Opened socket: %lx", G->TR_Socket);
 
@@ -1372,31 +1354,109 @@ static int TR_Connect(char *host, int port)
   }
   #endif
 
-  // copy the hostaddr data in a local copy for further reference
-  memset(&G->TR_INetSocketAddr, 0, sizeof(G->TR_INetSocketAddr));
-  G->TR_INetSocketAddr.sin_len    = sizeof(G->TR_INetSocketAddr);
-  G->TR_INetSocketAddr.sin_family = AF_INET;
-  G->TR_INetSocketAddr.sin_port   = htons(port);
+  LEAVE();
+}
+///
+/// TR_Connect
+//  Connects to a internet service
+#define CONNECTERR_SUCCESS                          0
+#define CONNECTERR_UNKNOWN_ERROR                    -1
+#define CONNECTERR_SOCKET_IN_USE                    -2
+#define CONNECTERR_UNKNOWN_HOST                     -3
+#define CONNECTERR_NO_SOCKET                        -4
 
-  // now we try a connection for every address we have for this host
-  // because a hostname can have more than one IP in h_addr_list[]
-  for(i=0; hostaddr->h_addr_list[i]; i++)
+static int TR_Connect(char *host, int port)
+{
+  int result = CONNECTERR_UNKNOWN_ERROR;
+
+  ENTER();
+
+  SHOWVALUE(DBF_NET, G->TR_Socket);
+
+  if(G->TR_Socket == SMTP_NO_SOCKET)
   {
-    memcpy(&G->TR_INetSocketAddr.sin_addr, hostaddr->h_addr_list[i], (size_t)hostaddr->h_length);
+    struct hostent *hostaddr;
 
-    if(connect(G->TR_Socket, (struct sockaddr *)&G->TR_INetSocketAddr, sizeof(G->TR_INetSocketAddr)) != -1)
+    // get the hostent out of the supplied hostname
+    if((hostaddr = gethostbyname((STRPTR)host)) != NULL)
     {
-      // if all works and we finally established a connection we can return with zero.
-      return 0;
+      int i;
+
+      #ifdef DEBUG
+      D(DBF_NET, "Host '%s':", host);
+      D(DBF_NET, "  Officially:\t%s", hostaddr->h_name);
+
+      for(i = 0; hostaddr->h_aliases[i]; ++i)
+        D(DBF_NET, "  Alias:\t%s", hostaddr->h_aliases[i]);
+
+      D(DBF_NET, "  Type:\t\t%s", hostaddr->h_addrtype == AF_INET ? "AF_INET" : "AF_INET6");
+      if(hostaddr->h_addrtype == AF_INET)
+      {
+        for(i = 0; hostaddr->h_addr_list[i]; ++i)
+          D(DBF_NET, "  Address:\t%s", Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr));
+      }
+      #endif
+
+      // lets create a standard AF_INET socket now
+      if((G->TR_Socket = socket(AF_INET, SOCK_STREAM, 0)) != SMTP_NO_SOCKET)
+      {
+        BOOL connected;
+
+        // lets set the socket options the user has defined
+        // in the configuration
+        TR_SetSocketOpts();
+
+        // copy the hostaddr data in a local copy for further reference
+        memset(&G->TR_INetSocketAddr, 0, sizeof(G->TR_INetSocketAddr));
+        G->TR_INetSocketAddr.sin_len    = sizeof(G->TR_INetSocketAddr);
+        G->TR_INetSocketAddr.sin_family = AF_INET;
+        G->TR_INetSocketAddr.sin_port   = htons(port);
+
+        // now we try a connection for every address we have for this host
+        // because a hostname can have more than one IP in h_addr_list[]
+        connected = FALSE;
+        for(i = 0; hostaddr->h_addr_list[i]; i++)
+        {
+          memcpy(&G->TR_INetSocketAddr.sin_addr, hostaddr->h_addr_list[i], (size_t)hostaddr->h_length);
+
+          if(connect(G->TR_Socket, (struct sockaddr *)&G->TR_INetSocketAddr, sizeof(G->TR_INetSocketAddr)) != -1)
+          {
+            // if all works and we finally established a connection we can return with zero.
+            connected = TRUE;
+            result = CONNECTERR_SUCCESS;
+            break;
+          }
+
+          // Preparation for non-blocking I/O
+          if(Errno() == EINPROGRESS)
+          {
+            connected = TRUE;
+            result = CONNECTERR_SUCCESS;
+            break;
+          }
+        }
+
+        if(connected == FALSE)
+        {
+          // if we end up here something went really wrong
+          TR_Disconnect();
+          result = CONNECTERR_UNKNOWN_ERROR;
+        }
+      }
+      else
+        // socket() failed
+        result = CONNECTERR_NO_SOCKET;
     }
-
-    // Preparation for non-blocking I/O
-    if(Errno() == EINPROGRESS) return 0;
+    else
+      // gethostbyname() failed
+      result = CONNECTERR_UNKNOWN_HOST;
   }
+  else
+    // socket is already in use
+    result = CONNECTERR_SOCKET_IN_USE;
 
-  // if we end up here something went really wrong
-  TR_Disconnect();
-  return -3;
+  RETURN(result);
+  return result;
 }
 ///
 /// TR_Recv()
@@ -1918,7 +1978,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
    strlcpy(host, noproxy ? url : C->ProxyServer, sizeof(host));
    if ((bufptr = strchr(host, ':'))) { *bufptr++ = 0; hport = atoi(bufptr); }
    else hport = noproxy ? 80 : 8080;
-   if (!TR_Connect(host, hport))
+   if (TR_Connect(host, hport) == CONNECTERR_SUCCESS)
    {
 /*
       if (noproxy) snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\nHost: http://%s\r\n", path, host);
@@ -2097,14 +2157,23 @@ static int TR_ConnectPOP(int guilevel)
    BusyText(GetStr(MSG_TR_MailTransferFrom), host);
    TR_SetWinTitle(TRUE, C->P3[pop]->Account);
 
-   if ((err = TR_Connect(host, port)))
+   if((err = TR_Connect(host, port)) != CONNECTERR_SUCCESS)
    {
-      if (guilevel == POP_USER) switch (err)
-      {
-         case -1: ER_NewError(GetStr(MSG_ER_UnknownPOP), C->P3[pop]->Server); break;
-         default: ER_NewError(GetStr(MSG_ER_CantConnect), C->P3[pop]->Server);
-      }
-      return -1;
+     if(guilevel == POP_USER)
+     {
+       switch(err)
+       {
+         case CONNECTERR_UNKNOWN_HOST:
+           ER_NewError(GetStr(MSG_ER_UnknownPOP), C->P3[pop]->Server);
+         break;
+
+         default:
+           ER_NewError(GetStr(MSG_ER_CantConnect), C->P3[pop]->Server);
+         break;
+       }
+     }
+
+     return -1;
    }
 
    // If this connection should be a STLS like connection we have to get the welcome
@@ -4038,7 +4107,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
 
           TR_SetWinTitle(FALSE, host);
 
-          if(!(err = TR_Connect(host, port)))
+          if((err = TR_Connect(host, port)) == CONNECTERR_SUCCESS)
           {
             BOOL connected = TRUE;
 
@@ -4052,6 +4121,9 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
               else
               {
                 ER_NewError(GetStr(MSG_ER_INITTLS), host);
+
+                // better disconnect before we leave
+                TR_Disconnect();
 
                 RETURN(FALSE);
                 return FALSE;
