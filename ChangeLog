@@ -7,6 +7,8 @@ $URL$
 
 2007-01-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_rexx.c: fixed a possible buffer overflow during parsing of the command
+    string.
   * UpdateCheck.c: slightly reworked the update state loading function. Also
     added the missing trace macros.
 

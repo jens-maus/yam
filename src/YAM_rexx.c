@@ -422,12 +422,15 @@ static struct rxs_command *ParseRXCommand( char **arg )
    s = *arg;
    t = com;
    
-   while( *s && *s != ' ' && *s != '\n' )
+   while(*s != '\0' && *s != ' ' && *s != '\n' && (unsigned int)(t - com + 1) < sizeof(com))
       *t++ = *s++;
    
    *t = '\0';
    while( *s == ' ' ) ++s;
    *arg = s;
+
+   SHOWSTRING(DBF_REXX, com);
+   SHOWSTRING(DBF_REXX, *arg);
 
    return( FindRXCommand( com ) );
 }
