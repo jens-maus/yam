@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-04  Thore Böckelmann <tboeckel@gmx.de>
+
+  * UpdateCheck.c: slightly reworked the update state loading function. Also
+    added the missing trace macros.
+
 2007-01-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: modified the update check in such a way, that the information about

@@ -461,6 +461,8 @@ void LoadUpdateState(void)
 {
   FILE *fh;
 
+  ENTER();
+
   // we start with "no update yet" ...
   LastUpdateState.LastUpdateStatus = UST_NOQUERY;
   // ... and a zero time which will result in a possible immediate update check
@@ -471,43 +473,42 @@ void LoadUpdateState(void)
   {
     char buf[SIZE_LARGE];
 
-    fgets(buf, sizeof(buf), fh);
-    if(strnicmp(buf, "YUP", 3) == 0)
+    if(GetLine(fh, buf, sizeof(buf)))
     {
-      int version;
-
-      // we derive the version here although it is not yet needed
-      version = buf[3] - '0';
-
-      // read in all the lines
-      while(fgets(buf, sizeof(buf), fh))
+      if(strnicmp(buf, "YUP", 3) == 0)
       {
-        char *p;
-        char *value;
+        int version;
 
-        if((value = strchr(buf, '=')) != NULL)
+        // we derive the version here although it is not yet needed
+        version = buf[3] - '0';
+
+        // read in all the lines
+        while(GetLine(fh, buf, sizeof(buf)))
         {
-          const char *value2 = "";
+          char *p;
+          char *value;
 
-          for(value2 = (++value) + 1; isspace(*value); value++);
-        }
+          if((value = strchr(buf, '=')) != NULL)
+          {
+            const char *value2 = "";
 
-        if((p = strpbrk(buf, "\r\n")) != NULL)
+            for(value2 = (++value) + 1; isspace(*value); value++);
+          }
+
+          for(p = buf; *p != '\0' && *p != '=' && !isspace(*p); p++);
           *p = '\0';
 
-        for(p = buf; *p != '\0' && *p != '=' && !isspace(*p); p++);
-        *p = '\0';
-
-        if(*buf != '\0' && value != NULL)
-        {
-          if(version >= 1)
+          if(*buf != '\0' && value != NULL)
           {
-            if(stricmp(buf, "LastUpdateCheck") == 0)
-              String2TimeVal(&LastUpdateState.LastUpdateCheck, value, DSS_USDATETIME, TZC_NONE);
-            else if(stricmp(buf, "LastUpdateStatus") == 0)
-              LastUpdateState.LastUpdateStatus = atoi(value);
-            else
-              W(DBF_UPDATE, "unknown update option: '%s' = '%s'", buf, value);
+            if(version >= 1)
+            {
+              if(stricmp(buf, "LastUpdateCheck") == 0)
+                String2TimeVal(&LastUpdateState.LastUpdateCheck, value, DSS_USDATETIME, TZC_NONE);
+              else if(stricmp(buf, "LastUpdateStatus") == 0)
+                LastUpdateState.LastUpdateStatus = atoi(value);
+              else
+                W(DBF_UPDATE, "unknown update option: '%s' = '%s'", buf, value);
+            }
           }
         }
       }
@@ -515,6 +516,8 @@ void LoadUpdateState(void)
 
     fclose(fh);
   }
+
+  LEAVE();
 }
 ///
 /// SaveUpdateState
@@ -522,6 +525,8 @@ void LoadUpdateState(void)
 void SaveUpdateState(void)
 {
   FILE *fh;
+
+  ENTER();
 
   // the YAM executable is the same for all users, hence we need no per user state file
   if((fh = fopen(".updatestate", "w")) != NULL)
@@ -535,23 +540,33 @@ void SaveUpdateState(void)
 
     fclose(fh);
   }
+
+  LEAVE();
 }
 ///
 /// GetLastUpdateState
 // Get a copy of the last update state
 void GetLastUpdateState(struct UpdateState *state)
 {
+  ENTER();
+
   if(state != NULL)
     // copy the last state
   	memcpy(state, &LastUpdateState, sizeof(*state));
+
+  LEAVE();
 }
 ///
 /// SetDefaultUpdateState
 // Set a default update state
 void SetDefaultUpdateState(void)
 {
+  ENTER();
+
   // flag the last update to be failed per default
   LastUpdateState.LastUpdateStatus = UST_NOQUERY;
+
+  LEAVE();
 }
 ///
 
