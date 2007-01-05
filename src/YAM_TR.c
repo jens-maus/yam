@@ -1452,6 +1452,11 @@ static int TR_Connect(char *host, int port)
   else
     result = CONNECTERR_SOCKET_IN_USE; // socket is already in use
 
+  #if defined(DEBUG)
+  if(result != CONNECTERR_SUCCESS)
+    E(DBF_NET, "TR_Connect() connection error: %d", result);
+  #endif
+
   RETURN(result);
   return result;
 }
