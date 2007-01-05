@@ -1359,11 +1359,11 @@ static void TR_SetSocketOpts(void)
 ///
 /// TR_Connect
 //  Connects to a internet service
-#define CONNECTERR_SUCCESS                          0
-#define CONNECTERR_UNKNOWN_ERROR                    -1
-#define CONNECTERR_SOCKET_IN_USE                    -2
-#define CONNECTERR_UNKNOWN_HOST                     -3
-#define CONNECTERR_NO_SOCKET                        -4
+#define CONNECTERR_SUCCESS         0
+#define CONNECTERR_UNKNOWN_ERROR  -1
+#define CONNECTERR_SOCKET_IN_USE  -2
+#define CONNECTERR_UNKNOWN_HOST   -3
+#define CONNECTERR_NO_SOCKET      -4
 
 static int TR_Connect(char *host, int port)
 {
@@ -1444,16 +1444,13 @@ static int TR_Connect(char *host, int port)
         }
       }
       else
-        // socket() failed
-        result = CONNECTERR_NO_SOCKET;
+        result = CONNECTERR_NO_SOCKET; // socket() failed
     }
     else
-      // gethostbyname() failed
-      result = CONNECTERR_UNKNOWN_HOST;
+      result = CONNECTERR_UNKNOWN_HOST; // gethostbyname() failed
   }
   else
-    // socket is already in use
-    result = CONNECTERR_SOCKET_IN_USE;
+    result = CONNECTERR_SOCKET_IN_USE; // socket is already in use
 
   RETURN(result);
   return result;

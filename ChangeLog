@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-05  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c, YAM_COs.c: updated latest changes to match our STYLEGUIDE.
+  * YAM_configFile.h: fixed the missing CO_GetConfig() prototype update to get
+    YAM compiled again.
+
 2007-01-05  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c, YAM_COg.c, YAM_COs.c, locale/YAM.cd, locale/deutsch.cd: whenever

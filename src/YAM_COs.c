@@ -1355,29 +1355,35 @@ void CO_GetConfig(BOOL saveConfig)
                 {
                   // delete the folder on disk
                   DeleteMailDir(GetFolderDir(spamFolder), FALSE);
+
                   // remove all mails from our internal list
                   ClearMailList(spamFolder, TRUE);
+
                   if(spamFolder->imageObject != NULL)
                   {
                     // we make sure that the NList also doesn`t use the image in future anymore
                     DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
                     spamFolder->imageObject = NULL;
+
                     // we don't need to dispose the image, because it is one of the standard images and not
                     // a custom image of the user.
                   }
+
                   // remove the folder from the folder list
                   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
+
                   // and finally save the modified tree to the folder config now
                   FO_SaveTree(CreateFilename(".folders"));
+
                   // update the statistics in case the spam folder contained new or unread mails
                   DisplayStatistics(NULL, TRUE);
                 }
               }
             }
             else
-            // the spam folder should be kept, but it must be "degraded" to a normal folder
-            // to make it deleteable later
             {
+              // the spam folder should be kept, but it must be "degraded" to a normal folder
+              // to make it deleteable later
               struct Folder *spamFolder;
 
               // first locate the spam folder
@@ -1391,11 +1397,14 @@ void CO_GetConfig(BOOL saveConfig)
                   // we don't need to dispose the image, because it is one of the standard images and not
                   // a custom image of the user.
                 }
+
                 // degrade it to a custom folder without folder image
                 spamFolder->Type = FT_CUSTOM;
                 spamFolder->ImageIndex = -1;
+
                 // finally save the modified configuration
                 FO_SaveConfig(spamFolder);
+
                 // update the statistics in case the spam folder contained new or unread mails
                 DisplayStatistics(NULL, TRUE);
               }
@@ -1529,16 +1538,23 @@ void CO_GetConfig(BOOL saveConfig)
          break;
 
       case cp_Signature:
+      {
          CE->UseSignature      = GetMUICheck  (gui->CH_USESIG);
          GetMUIString(CE->TagsFile, gui->ST_TAGFILE, sizeof(CE->TagsFile));
          GetMUIString(CE->TagsSeparator, gui->ST_TAGSEP, sizeof(CE->TagsSeparator));
+
          if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) && saveConfig == FALSE)
+         {
            // if the signature was modified but the config should not be saved but just be "used"
            // then ask the user if the changes to the signature should be made permanent
            if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
+           {
              // save the modified signature only if the user told us to do so
              EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig]));
-         break;
+           }
+         }
+      }
+      break;
 
       case cp_Lists:
          CE->FolderCols = 1; for (i = 1; i < FOCOLNUM; i++) if (GetMUICheck(gui->CH_FCOLS[i])) CE->FolderCols += (1<<i);
@@ -1630,6 +1646,7 @@ void CO_GetConfig(BOOL saveConfig)
       break;
 
       case cp_Update:
+      {
         if(GetMUICheck(gui->CH_UPDATECHECK) == TRUE)
         {
           int interval = GetMUICycle(gui->CY_UPDATEINTERVAL);
@@ -1654,6 +1671,7 @@ void CO_GetConfig(BOOL saveConfig)
         }
         else
           CE->UpdateInterval = 0; // disabled
+      }
       break;
 
       case cp_Max:
@@ -1746,9 +1764,7 @@ void CO_SetConfig(void)
          // iterate through our filter list and add it to our
          // MUI List
          for(curNode = CE->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-         {
            DoMethod(gui->LV_RULES, MUIM_NList_InsertSingle, curNode, MUIV_NList_Insert_Bottom);
-         }
 
          // make sure the first entry is selected per default
          set(gui->LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Top);
@@ -2006,5 +2022,4 @@ void CO_SetConfig(void)
    LEAVE();
 }
 ///
-
 
