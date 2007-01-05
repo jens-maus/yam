@@ -4,7 +4,7 @@
 ;
 ## chunk AUTH Alexandre Balaban
 ; $Id$
-; based on YAM.cd 2572 2006-12-17 21:53:06Z
+; based on YAM.cd 2609 2007-01-05 07:24:48Z
 ;
 ; General
 ;
@@ -4945,7 +4945,7 @@ _Fermer la fenêtre
 MSG_ER_CantCreateFile
 Impossible d'écrire le fichier « %s ».\n\
 \n\
-Vérifiez que le chemin soit correct et que le support\n\
+Vérifiez que le chemin soit correct et que le support\
 ne soit pas protégé en écriture.
 ; Couldn't write to file '%s'.\n\
 ; \n\
@@ -4998,7 +4998,7 @@ Vérifiez le chemin d'accès dans la configuration.
 MSG_ER_CantCreateTempfile
 Impossible de créer le fichier temporaire.\n\
 \n\
-Raison : l'espace disque insuffisant ou le chemin d'accès\n\
+Raison : l'espace disque insuffisant ou le chemin d'accès\
 spécifié dans la configuration est invalide.
 ; Couldn't create temporary file.\n\
 ; \n\
@@ -5081,7 +5081,7 @@ Ce fichier ne semble pas exister.
 ; FILENAME
 ;
 MSG_ER_UUSize
-La taille décodée [%ld] ne correspond pas\n\
+La taille décodée [%ld] ne correspond pas\
 à la taille d'origine [%ld].\n\
 \n\
 Un mauvais encodeur UU a été utilisé ou le message est tronqué.
@@ -7269,13 +7269,16 @@ MSG_MA_ALLTOREAD
 ; #\000All to Read
 ;
 MSG_ER_MOVEFOLDERDIR
-Une erreur est survenue lors du déplacement du contenu du\n\
-dossier '%s' vers le répertoire '%s'. Cela peut soit être causé\n\
-par un espace disque insuffisant, soit un chemin de destination\n\
-invalide ou protégé en écriture.
-; An error occurred while trying to move the content of folder\n\
-; '%s' to directory '%s'. This may either be due to insufficient\n\
-; space or because the destination path is not valid or writable.
+Une erreur est survenue lors du déplacement du contenu du\
+dossier '%s' vers le répertoire '%s'.\n\
+\n\
+Cela peut être causé soit par un espace disque insuffisant,\
+soit un chemin de destination invalide ou protégé en écriture.
+; An error occurred while trying to move the content of folder \
+; '%s' to directory '%s'.\n\
+; \n\
+; This may either be due to insufficient space or because the \
+; destination path is not valid or writable.
 ;
 MSG_CO_QUICKSEARCHBAR
 Afficher la barre de recherche rapide dans la fenêtre principale
@@ -8422,8 +8425,8 @@ En tentant de créer un nouveau dossier pour les\n\
 indésirables, YAM a trouvé qu'il existait déjà\n\
 un dossier « spam ».\n\
 \n\
-Comment voulez-vous utiliser ce dossier comme\n\
-dossier standard pour les indésirables ?
+De quelle manière voulez-vous utiliser ce dossier\n\
+en tant que dossier standard pour les indésirables ?
 ; While trying to create a new spam folder, YAM found that\n\
 ; there seems to already exists a folder name 'spam'.\n\
 ; \n\
@@ -8499,4 +8502,20 @@ Impossible d'importer le carnet d'adresses « %s »
 MSG_ER_ADDRBOOKEXPORT
 Impossible d'exporter le carnet d'adresses « %s »
 ; Could not export address book \"%s\".
+;
+MSG_LOADINGUPDATESTATE
+Chargement de l'état des mises à jour...
+; Loading update state data...
+;
+MSG_CO_ASK_SAVE_SIGNATURE
+Les changements de signature doivent être sauvés\n\
+indépendamment de la configuration globale, sinon\n\
+ils seront perdus !\n\
+\n\
+Voulez-vous sauver les changements maintenant ?
+; Changes to the signature files must be saved\n\
+; separately from the global configuration!\n\
+; Otherwise they will be lost!\n\
+; \n\
+; Do you want to save the changes now?
 ;

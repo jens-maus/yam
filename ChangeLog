@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-05  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/francais.ct: Update to the latest changes and minor corrections.
+
 2007-01-05  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_TR.c: added more detailed debug output in case a connection couldn't
