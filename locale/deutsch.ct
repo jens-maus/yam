@@ -7632,3 +7632,9 @@ Konnte Adressbuch \"%s\" nicht schreiben.
 MSG_LOADINGUPDATESTATE
 Lade Update-Statusdaten...
 ;
+MSG_CO_ASK_SAVE_SIGNATURE
+Änderungen an der Signatur werden müssen getrennt\n\
+von der Konfiguration gespeichert werden!\n\
+Ansonsten sind die Änderungen verloren!\n\
+\n\
+Wollen Sie die Änderungen jetzt speichern?\n\

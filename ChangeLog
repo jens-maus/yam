@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-05  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c, YAM_COg.c, YAM_COs.c, locale/YAM.cd, locale/deutsch.cd: whenever
+    a signature has been modified in YAM internal editor and the user switches
+    over to another page or just "uses" the current configuration a requester
+    now asks the user if the changed signature should either be save immediately
+    or if the changes should be discarded. Thus a change to one of the
+    signatures doesn't get saved permanently unnoticed or unwanted anymore. This
+    fixes bug #1212788.
+
 2007-01-04  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, YAM_TR.c: reworked the TR_Connect() function to check if the global

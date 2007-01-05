@@ -1197,7 +1197,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 ///
 /// CO_GetConfig
 //  Fills form data of current section with data from configuration structure
-void CO_GetConfig(void)
+void CO_GetConfig(BOOL saveConfig)
 {
    int i;
    struct CO_GUIData *gui = &G->CO->GUI;
@@ -1532,8 +1532,12 @@ void CO_GetConfig(void)
          CE->UseSignature      = GetMUICheck  (gui->CH_USESIG);
          GetMUIString(CE->TagsFile, gui->ST_TAGFILE, sizeof(CE->TagsFile));
          GetMUIString(CE->TagsSeparator, gui->ST_TAGSEP, sizeof(CE->TagsSeparator));
-         if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged))
-            EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig]));
+         if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) && saveConfig == FALSE)
+           // if the signature was modified but the config should not be saved but just be "used"
+           // then ask the user if the changes to the signature should be made permanent
+           if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
+             // save the modified signature only if the user told us to do so
+             EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig]));
          break;
 
       case cp_Lists:

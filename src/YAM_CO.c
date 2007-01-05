@@ -1686,32 +1686,51 @@ MakeStaticHook(CO_ImportCTypesHook, CO_ImportCTypesFunc);
 //  Edits the signature file
 HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
 {
-   int sig = GetMUICycle(G->CO->GUI.CY_SIGNAT);
-   int modified;
-   char buffer[SIZE_COMMAND+SIZE_PATHFILE];
-   APTR ed = G->CO->GUI.TE_SIGEDIT;
+  int sig = GetMUICycle(G->CO->GUI.CY_SIGNAT);
+  BOOL editSig = (BOOL)*arg;
+  BOOL refresh;
+  char buffer[SIZE_COMMAND+SIZE_PATHFILE];
+  Object *ed = G->CO->GUI.TE_SIGEDIT;
 
-   modified = xget(ed, MUIA_TextEditor_HasChanged);
-   if(modified)
-   {
+  ENTER();
+
+  if(xget(ed, MUIA_TextEditor_HasChanged))
+  {
+    if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
+      // save the modified signature only if the user told us to do so
       EditorToFile(ed, CreateFilename(SigNames[G->CO->LastSig]));
-   }
+  }
 
-   if(*arg)
-   {
-      if(*(CE->Editor))
-      {
-        snprintf(buffer, sizeof(buffer), "%s \"%s\"", CE->Editor, GetRealPath(CreateFilename(SigNames[sig])));
-        ExecuteCommand(buffer, FALSE, OUT_NIL);
-      }
-      else return;
-   }
+  if(editSig)
+  {
+    // if the signature should be modified with an external editor then
+    // we need to check if there is an editor defined
+    if(CE->Editor[0] != '\0')
+    {
+      snprintf(buffer, sizeof(buffer), "%s \"%s\"", CE->Editor, GetRealPath(CreateFilename(SigNames[sig])));
+      ExecuteCommand(buffer, FALSE, OUT_NIL);
+      refresh = TRUE;
+    }
+    else
+      // no external editor defined, so we don't need to refresh the
+      // signature in the internal editor
+      refresh = FALSE;
+  }
+  else
+    // just display the new signature in the internal editor
+    refresh = TRUE;
 
-   if(!FileToEditor(CreateFilename(SigNames[sig]), ed))
-     DoMethod(ed, MUIM_TextEditor_ClearText);
+  if(refresh)
+  {
+    // refresh the signature in the internal editor
+    if(FileToEditor(CreateFilename(SigNames[sig]), ed) == FALSE)
+      DoMethod(ed, MUIM_TextEditor_ClearText);
 
-   set(ed, MUIA_TextEditor_HasChanged, FALSE);
-   G->CO->LastSig = sig;
+    set(ed, MUIA_TextEditor_HasChanged, FALSE);
+    G->CO->LastSig = sig;
+  }
+
+  LEAVE();
 }
 MakeHook(CO_EditSignatHook,CO_EditSignatFunc);
 
@@ -1771,7 +1790,8 @@ HOOKPROTONHNONP(CO_SaveConfigAs, void)
 
     strmfp(cname, frc->drawer, frc->file);
 
-    CO_GetConfig();
+    // the config is really saved
+    CO_GetConfig(TRUE);
     CO_Validate(CE, TRUE);
     CO_NewPrefsFile(cname);
     CO_SaveConfig(CE, cname);
@@ -1824,7 +1844,8 @@ HOOKPROTONHNO(CO_ChangePageFunc, void, int *arg)
   if(page < cp_FirstSteps || page >= cp_Max)
     return;
 
-  CO_GetConfig();
+  // the config is not saved yet, but some parts (like the signature) need to be saved nevertheless
+  CO_GetConfig(FALSE);
 
   G->CO->VisiblePage = page;
   G->CO->Visited[page] = TRUE;
@@ -1844,7 +1865,8 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
   // to the real one or if we should just free/drop it
   if(*arg >= 1)
   {
-    CO_GetConfig();
+    // this config is either "used" or saved
+    CO_GetConfig(*arg == 2);
     CO_FreeConfig(C);
     CopyConfigData(C, CE);
     CO_Validate(C, TRUE);

@@ -946,7 +946,7 @@ HOOKPROTONHNONP(UpdateCheckFunc, void)
 
   // get the configuration settings
   if(G->CO->VisiblePage == cp_Update)
-    CO_GetConfig();
+    CO_GetConfig(FALSE);
 
   // now we make sure the C and CE config structure is in sync again
   C->UpdateInterval = CE->UpdateInterval;

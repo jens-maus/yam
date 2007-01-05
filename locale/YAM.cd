@@ -6102,3 +6102,9 @@ Could not export address book \"%s\".
 MSG_LOADINGUPDATESTATE (1807//)
 Loading update state data...
 ;
+MSG_CO_ASK_SAVE_SIGNATURE (1808//)
+Changes to the signature files must be saved\n\
+separately from the global configuration!\n\
+Otherwise they will be lost!\n\
+\n\
+Do you want to save the changes now?
