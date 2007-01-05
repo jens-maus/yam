@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-void CO_GetConfig(void);
+void CO_GetConfig(BOOL saveConfig);
 BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders);
 void CO_SaveConfig(struct Config *co, char *fname);
 void CO_SetConfig(void);
