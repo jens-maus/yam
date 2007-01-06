@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-06  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c, ImageCache.h: reworked the reload check to also check the
+    screen's depth. Images will now only be reloaded if the screen depth
+    change from truecolor to LUT8 or vice versa or if the screen stays a LUT8
+    screen. This vastly speeds up deiconification if YAM always runs on a
+    truecolor screen.
+
 2007-01-05  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: Update to the latest changes and minor corrections.

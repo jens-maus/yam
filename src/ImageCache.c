@@ -36,6 +36,7 @@
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
+#include <proto/graphics.h>
 
 #include "extrasrc.h"
 
@@ -286,16 +287,40 @@ struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr)
 
       if(file && stricmp(filename, file) == 0)
       {
+        ULONG screenDepth;
+
+        // get the screen's depth
+        screenDepth = GetBitMapAttr(scr->RastPort.BitMap, BMA_DEPTH);
+
         // now we check if there exists already a valid datatype
         // object and if it is also already remapped for the screen
         // we are requesting it.
         if(node->dt_obj != NULL && node->screen != scr)
         {
-          W(DBF_IMAGE, "current screen doesn't match dtobject (0x%08lx). reloading...", node->dt_obj);
+          SHOWVALUE(DBF_IMAGE, screenDepth);
+          SHOWVALUE(DBF_IMAGE, node->screenDepth);
 
-          // dispose the dt_obj and let us reload it afterwards
-          DisposeDTObject(node->dt_obj);
-          node->dt_obj = NULL;
+          // the image must be reloaded and remapped, if:
+          // - the screen depth stays <= 8 bit, or
+          // - the screen depth changes from <=8 bit to >8 bit, or
+          // - the screen depth changes from >8 bit to <=8 bit
+          // picture.datatype is supposed to return an RGB bitmap for RGB screens.
+          // This bitmap can be used on any RGB screen without remapping, since there is
+          // no palette for these screens. Only CLUT screens have a palette which must
+          // be respected and which can be changed at any time by other applications.
+          // Also the screen's depth must be remembered separately, because if the screen
+          // has changed the old screen pointer may no longer be valid and hence must not
+          // be accessed anymore.
+          if((node->screenDepth <= 8 && screenDepth <= 8) ||
+             (node->screenDepth <= 8 && screenDepth >  8) ||
+             (node->screenDepth >  8 && screenDepth <= 8))
+          {
+            W(DBF_IMAGE, "current screen doesn't match dtobject (0x%08lx). reloading...", node->dt_obj);
+
+            // dispose the dt_obj and let us reload it afterwards
+            DisposeDTObject(node->dt_obj);
+            node->dt_obj = NULL;
+          }
         }
 
         // if the image object wasn't loaded yet, we do it now
@@ -320,6 +345,8 @@ struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr)
              W(DBF_IMAGE, "couldn't found BitMap header of file '%s'", filename);
 
             node->screen = (struct Screen *)scr;
+            // remember the screen's depth, not the image's depth!
+            node->screenDepth = screenDepth;
 
             D(DBF_IMAGE, "loaded image data of '%s' for the first time and put it in cache.", filename);
           }
@@ -361,6 +388,8 @@ struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr)
 
         node->filename = strdup(filename);
         node->screen = (struct Screen *)scr;
+        // remember the screen's depth, not the image's depth!
+        node->screenDepth = GetBitMapAttr(scr->RastPort.BitMap, BMA_DEPTH);
         node->openCount++;
 
         AddTail((struct List *)&G->imageCacheList, (struct Node *)&node->node);
