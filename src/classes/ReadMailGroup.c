@@ -704,7 +704,19 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
       if(!isVirtualMail(mail) &&
          (hasStatusNew(mail) || !hasStatusRead(mail)))
       {
-        // depending on the local delayedStatusChange and the global
+        // first, depending on the PGP status we either check an existing
+        // PGP signature or not.
+        // This has to be done before we eventually set the mail state to "read"
+        // which will in turn rename the mail file, which will make PGP fail,
+        // because it cannot read the desired file anymore because of the delayed
+        // status change.
+        if((hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData))
+           && !hasPGPSCheckedFlag(rmData))
+        {
+          DoMethod(obj, MUIM_ReadMailGroup_CheckPGPSignature, FALSE);
+        }
+
+        // second, depending on the local delayedStatusChange and the global
         // configuration settings for the mail status change interval we either
         // start the timer that will change the mail status to read after a
         // specified time has passed or we change it immediatley here
@@ -722,14 +734,6 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
           DisplayStatistics(folder, TRUE);
         }
 
-        // and depending on the PGP status we either check an existing
-        // PGP signature or not.
-        if((hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData))
-           && !hasPGPSCheckedFlag(rmData))
-        {
-          DoMethod(obj, MUIM_ReadMailGroup_CheckPGPSignature, FALSE);
-        }
-         
         // check for any MDN and allow to reply to it.
         RE_DoMDN(MDN_READ, mail, FALSE);
       }
@@ -986,50 +990,57 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
 DECLARE(CheckPGPSignature) // BOOL forceRequester
 {
   GETDATA;
+  BOOL result = FALSE;
   struct ReadMailData *rmData = data->readMailData;
 
+  ENTER();
+
   // Don't try to use PGP if it's not installed
-  if(G->PGPVersion == 0)
-    return FALSE;
-
-  if((hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData)) &&
-     !hasPGPSCheckedFlag(rmData))
+  if(G->PGPVersion >= 0)
   {
-    int error;
-    char fullfile[SIZE_PATHFILE];
-    char options[SIZE_LARGE];
-    
-    if(!StartUnpack(GetMailFile(NULL, NULL, rmData->mail), fullfile, rmData->mail->Folder))
-      return FALSE;
-    
-    snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s -o %s +bat +f +lang=en", fullfile, "T:PGP.tmp");
-    error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, KEEPLOG);
-    FinishUnpack(fullfile);
-    DeleteFile("T:PGP.tmp");
-    if(error > 0)
-      SET_FLAG(rmData->signedFlags, PGPS_BADSIG);
-    
-    if(error >= 0)
-      RE_GetSigFromLog(rmData, NULL);
-    else
-      return FALSE;
-  }
-
-  if(hasPGPSBadSigFlag(rmData) || msg->forceRequester)
-  {
-    char buffer[SIZE_LARGE];
-    
-    strlcpy(buffer, hasPGPSBadSigFlag(rmData) ? GetStr(MSG_RE_BadSig) : GetStr(MSG_RE_GoodSig), sizeof(buffer));
-    if(hasPGPSAddressFlag(rmData))
+    if((hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData)) &&
+       !hasPGPSCheckedFlag(rmData))
     {
-      strlcat(buffer, GetStr(MSG_RE_SigFrom), sizeof(buffer));
-      strlcat(buffer, rmData->sigAuthor, sizeof(buffer));
+      char fullfile[SIZE_PATHFILE];
+
+      if(StartUnpack(GetMailFile(NULL, NULL, rmData->mail), fullfile, rmData->mail->Folder))
+      {
+        char options[SIZE_LARGE];
+        int error;
+
+        snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s -o %s +bat +f +lang=en", fullfile, "T:PGP.tmp");
+        error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, KEEPLOG);
+        FinishUnpack(fullfile);
+        DeleteFile("T:PGP.tmp");
+        if(error > 0)
+          SET_FLAG(rmData->signedFlags, PGPS_BADSIG);
+
+        if(error >= 0)
+        {
+          // running PGP was successful, but that still doesn't mean that the check itself succeeded!
+          RE_GetSigFromLog(rmData, NULL);
+          result = TRUE;
+        }
+      }
+
+      if(result == TRUE && (hasPGPSBadSigFlag(rmData) || msg->forceRequester))
+      {
+        char buffer[SIZE_LARGE];
+
+        strlcpy(buffer, hasPGPSBadSigFlag(rmData) ? GetStr(MSG_RE_BadSig) : GetStr(MSG_RE_GoodSig), sizeof(buffer));
+        if(hasPGPSAddressFlag(rmData))
+        {
+          strlcat(buffer, GetStr(MSG_RE_SigFrom), sizeof(buffer));
+          strlcat(buffer, rmData->sigAuthor, sizeof(buffer));
+        }
+
+        MUI_Request(G->App, _win(obj), MUIF_NONE, GetStr(MSG_RE_SigCheck), GetStr(MSG_Okay), buffer);
+      }
     }
-    
-    MUI_Request(G->App, _win(obj), MUIF_NONE, GetStr(MSG_RE_SigCheck), GetStr(MSG_Okay), buffer);
   }
 
-  return TRUE;
+  RETURN(result);
+  return result;
 }
 
 ///

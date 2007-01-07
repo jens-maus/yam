@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-07  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ReadMailGroup.c: PGP signed mails are now checked first for a valid
+    signature and after that the mail state "read" is set. Before these steps
+    were swapped and PGP always complained about nonexisting files, because
+    the mail file had been renamed in the background if no embedded readpanel
+    was enabled and the update was configured to be delayed. This fixes bug
+    #1363009.
+
 2007-01-06  Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c, ImageCache.h: reworked the reload check to also check the
