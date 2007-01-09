@@ -2131,11 +2131,14 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
 //  Decodes a single message part
 BOOL RE_DecodePart(struct Part *rp)
 {
+  ENTER();
+
   // it only makes sense to go on here if
   // the data wasn`t decoded before.
   if(!rp->Decoded)
   {
-    FILE *in, *out;
+    FILE *in;
+    FILE *out;
     char file[SIZE_FILE];
     char buf[SIZE_LINE];
     char ext[SIZE_FILE] = "\0";
@@ -2160,7 +2163,10 @@ BOOL RE_DecodePart(struct Part *rp)
         if(ferror(in) || feof(in))
         {
           E(DBF_MAIL, "ferror() or feof() while parsing through PartHeader.");
+
           fclose(in);
+
+          RETURN(FALSE);
           return FALSE;
         }
       }
@@ -2169,7 +2175,8 @@ BOOL RE_DecodePart(struct Part *rp)
       // in fact first try to get out of the user's MIME configuration.
       if(rp->Nr != PART_RAW)
       {
-        // only if we have a contentType we search through our MIME list
+        // we first try to identify the file extension via the user
+        // definable MIME type list configuration.
         if(rp->ContentType && rp->ContentType[0] != '\0')
         {
           struct MinNode *curNode;
@@ -2186,9 +2193,9 @@ BOOL RE_DecodePart(struct Part *rp)
               if((e = strpbrk(s, " |;,")) == NULL)
                 e = s+strlen(s);
 
-              D(DBF_MIME, "identified file extension: '%s' %d", s, e-s);
+              strlcpy(ext, s, MIN(sizeof(ext), (size_t)(e-s+1)));
 
-              strlcpy(ext, s, MIN(sizeof(ext), (unsigned int)(e-s+1)));
+              D(DBF_MIME, "identified file extension '%s' via user MIME list", ext);
 
               break;
             }
@@ -2201,8 +2208,47 @@ BOOL RE_DecodePart(struct Part *rp)
         {
           // get the file extension name
           stcgfe(ext, rp->Name);
+
+          // if the file extension is longer than 5 chars lets use "tmp"
           if(strlen(ext) > 5)
-            ext[0] = '\0'; // if the file extension is longer than 5 chars lets use "tmp"
+            ext[0] = '\0';
+          else
+            D(DBF_MIME, "identified file extension '%s' via part name", ext);
+        }
+
+        // and last, but not least we try to identify the proper file extension
+        // via our internal fallback mime type list
+        if(ext[0] == '\0' &&
+           rp->ContentType && rp->ContentType[0] != '\0')
+        {
+          int i;
+
+          for(i=0; IntMimeTypeArray[i].ContentType != NULL; i++)
+          {
+            if(stricmp(rp->ContentType, IntMimeTypeArray[i].ContentType) == 0)
+            {
+              char *extension = (char *)IntMimeTypeArray[i].Extension;
+
+              if(extension != NULL)
+              {
+                char *e;
+
+                // search for a space
+                if((e = strchr(extension, ' ')))
+                {
+                  strlcpy(ext, extension, (size_t)(e-extension+1));
+                }
+                else
+                  strlcpy(ext, extension, sizeof(ext));
+
+                D(DBF_MIME, "identified file extension '%s' via internal MIME list", ext);
+              }
+              else
+                ext[0] = '\0';
+
+              break;
+            }
+          }
         }
       }
 
@@ -2266,6 +2312,7 @@ BOOL RE_DecodePart(struct Part *rp)
     }
   }
 
+  RETURN(rp->Decoded);
   return rp->Decoded;
 }
 ///

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-09  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c: in case no user defined MIME type incl. a file extension matches,
+    the internal MIME type list will now be scanned as well to find a matching
+    file extension for a certain MIME part of a mail. This should also partly
+    fix some issues reported in bug #1629670.
+
 2007-01-07  Thore Böckelmann <tboeckel@gmx.de>
 
   * ReadMailGroup.c: PGP signed mails are now checked first for a valid
