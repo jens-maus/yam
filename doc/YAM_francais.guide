@@ -1,5 +1,5 @@
 @database YAM.guide
-@$VER: YAM.guide 2.4 (21.04.2003)
+@$VER: YAM.guide 2.5 (09.01.2007)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -33,17 +33,16 @@
 @REMARK  - Hervé Dupont <herve.dpt@free.fr>
 @REMARK  - Jean-Marc Mossu <jeanmarc.mossu@free.fr>
 @REMARK  - Pascal Rullier <rullier@bugss.org>
+@REMARK  Mise à jour v2.5 Alexandre Balaban <alexandre@balaban.fr>
 
 @NODE "Main" "YAM - Documentation en Français (ATO-Fr)"
 
               @{B}=============================================
-
                Y A M    (Yet Another Mailer)   VERSION 2.4
-
               =============================================@{UB}
 
                           © 2000 par Marcel Beck
-                © 2000-2003 par l'équipe de YAM Open Source
+                © 2000-2007 par l'équipe de YAM Open Source
 
 
  @{" Informations légales     " link "COPY"}  - Copyright, informations légales.
@@ -71,7 +70,7 @@
 
 YAM - Yet Another Mailer
 Copyright © 1995-2000 Marcel Beck
-Copyright © 2000-2003 par l'équipe « YAM Open Source »
+Copyright © 2000-2007 par l'équipe « YAM Open Source »
 
 Ce programme a été mis sous licence « GNU » (General Public License de la
 fondation du logiciel libre) en tant que logiciel gratuit et librement
@@ -230,7 +229,7 @@ November 2000
                  SMTP/POP.
    * optionnel : Archiveur pour la compression des fichiers, par exemple : LhA.
    * optionnel : Programme de correction, par exemple : AlphaSpell.
-   * optionnel : L'outil de gestion DST, ex. SetDST et SummerTimeGuard.
+   * optionnel :  @{" Outil de gestion d'heure d'été automatique " link "TIP5"}, ex. SetDST, FACTS et SummerTimeGuard.
 @endnode
 
 @NODE "INST" "Installation"
@@ -1127,14 +1126,9 @@ l'heure d'été dans les pays concernés. L'activer, ajoute 1 heure à la valeur
 de temps du fuseau horaire.
 
 
-   YAM effectuera la correction automatiquement si l'outil
-@{b}SummertimeGuard@{ub} est installé.
-   De plus, dans la version 2.4 les variables d'environnement TZONE et
-
-IXGMTOFFSET générées respectivement par @{b}SetDST@{ub} et les outils
-@{b}ixtimezone@{ub} (GeekGadgets) sont également supportés. Si plusieurs
-d'entre-eux sont détectés, YAM s'occupera du DST par lui-même et l'option
-sera grisée.
+   YAM effectuera la correction automatiquement si un outil de gestion 
+@{" d'heure d'été " link "TIP5"} tel @{b}SetDST@{ub}, @{b}FACTS@{ub} ou @{b}SummertimeGuard@{ub}
+est installé. Cela est indiqué par le grisage de cette option.
 
 @endnode
 
@@ -1675,12 +1669,13 @@ option si plusieurs personnes partagent un même compte POP3.
 
 @{u}En-tête@{uu}
 
-   Si « Détaillé » est sélectionné, l'en-tête complet sera affiché. Si vous
-mettez « Sélectionné », vous pouvez spécifier vous même quels champs devront
-être affichés dans la fenêtre de lecture. Pour spécifier les champs, vous
-pouvez utiliser tous types de joker @{" AmigaDos " link "DOSW"}. Les champs
-De, à, Date et Sujet sont utilisés par défaut. L'arrangement de l'en-tête
-peut être modifié temporairement dans la fenêtre de lecture elle-même.
+   Si « Détaillé » est sélectionné, l'en-tête complet sera affiché, alors
+qu'avec « Aucun » l'en-tête ne sera pas affiché du tout. Si vous mettez
+« Sélectionné », vous pouvez spécifier quels champs devront être affichés
+dans la fenêtre de lecture. Pour spécifier les champs, vous pouvez utiliser
+n'importe quel @{" joker AmigaDos " link "DOSW"}. Les champs De, à, Date et
+Sujet sont utilisés par défaut. L'arrangement de l'en-tête peut être modifié
+temporairement dans la fenêtre de lecture elle-même.
 
 @{i}Exemple :@{ui} (From|Subject|Date|X-Mailer)
 
@@ -1692,9 +1687,9 @@ peut afficher des informations complémentaires dans l'en-tête de la fenêtre
 de lecture. Si l'option « Seulement les données » est sélectionnée, YAM
 affichera en plus des données habituelles, une liste d'informations comme le
 nom, la date, l'adresse postale, une description, etc. Informations contenue
-dans le carnet d'adresses (Bien sur, si elles si trouvent ;-)). Sélectionnez
+dans le carnet d'adresses (bien sur, si elles s'y trouvent ;-)). Sélectionnez
 « Données et image » pour que la photo de l'expéditeur soit également
-affichée (si elle existe), en plus des autres données.
+affichée (si elle a été spécifiée dans le carnet), en plus des autres données.
 
 
 [ ] @{u}Mise à la ligne@{uu}
@@ -1723,14 +1718,14 @@ pouvez ici définir la couleur à employer.
 
 @{u}Anciennes citations@{uu}
 
-   Sélectionnez ici, la couleur à utiliser pour marquer le texte cité.
+   Sélectionnez ici, la couleur à utiliser pour chaque niveau de citation.
 
 
 [ ] @{u}Police fixe@{uu}
 
    Il est plus pratique d'utiliser une police non-proportionnelle pour lire
 les messages car les mises en page alignées ou en tableaux seraient
-totalement déformées à l'utilisation d'une police proportionnelle. N'oubliez
+totalement déformées par l'utilisation d'une police proportionnelle. N'oubliez
 pas de préciser la police de votre choix dans le module « TextEditor »,
 rubrique « Police fixe », des préférences MUI de YAM.
 
@@ -1753,36 +1748,22 @@ du texte.
 
 @{u}Convertisseur de caractères@{uu}
 
-   Quand vous liez un message, c'est cette table de correspondance des
+   Quand vous lisez un message, c'est cette table de correspondance des
 caractères qui est utilisée. Dans quelques pays, toutes les lettres ne
 peuvent pas être écrits en utilisant la norme standard ISO-Latin-1 de
 l'Amiga. En Pologne, par exemple, la table des caractères AmigaPL est très
 utilisée car elle contient les caractères spécifiques qui manquent dans les
 autres tables. YAM gère ces caractères à la lecture et à l'écriture des
-messages. Vous trouverez quelques exemples dans le répertoire des tables de
-caractères. Une table de conversion a cet aspect :
-
-1ère ligne :       YCT1 - YAM Charset Translation
-2ème ligne :       Description du convertisseur
-3ème ligne :       Resulting charset, @{i}ex :@{ui} iso-5589-1
-Autres lignes :    (optional) FROM source charset (e.g. iso-5589-1)
-                   (optional) TO target charset
-                   (optional) HEADER
-                   Old character=New character
-
-   Les caractères sont définis par leur code hexadécimal avec un $ devant
-ou bien par le caractère lui même. Une définition de caractère peut
-ressembler à ceci : $E5=$61 ou à ceci : å=a.
-
-   Avec le mot clé HEADER, la conversion s'effectuera également sur
-l'en-tête des messages.
+messages. Reportez-vous au chapitre @{" Référence " link "RFCH"} pour plus
+d'informations au sujet du format des tables de conversion utilisées par
+YAM.
 
 
 [ ] Auto-détection/Traduction du code
 
    Dans certains pays, comme la Russie, il n'y a pas un seul jeu de
 caractères utilisé, mais plusieurs, comme : KOI8R, Windows1251, Alt866,
-etc... La traduction des caractères ne pourra pas être des plus efficace
+etc. La traduction des caractères ne pourra pas être des plus efficace
 dans ce cas précis.
 
    Cette option permet à YAM d'utiliser une approche différente, il utilise
@@ -2023,7 +2004,7 @@ initiales de l'expéditeur.
  @{i}Exemple :@{ui} %i>
 
 
-[ ] @{u}Citation externes avec@{ui}
+[ ] @{u}Citation externes avec@{uu}
 
    Le(s) caractère(s) à placer devant chaque ligne insérée en tant que
 citation externe. Un espace sera placé entre la citation et le(s)
@@ -2955,21 +2936,22 @@ La fenêtre principale de YAM est construite de cette façon :
 
     Menu :
     @{" Projet " link "MAM1"} @{" Dossiers " link "MAM2"} @{" Messages " link "MAM3"} @{" Préférences " link "MAM4"} @{" Scripts " link "MAM5"}
-    ________________________________________________________
+
+   .--------------------------------------------------------.
    |                                                        |
-   |                     @{" Les boutons " link "MA02 "}                      |
+   |                   @{" Barre d'outils " link "MA02"}                    |
    |________________________________________________________|
-   |                 |                                      |
-   |                 |         @{"Liste des messages" link "MA01"}           |
-   |                                                        |
-   |@{"Liste des dossiers" link "MA00"}                                      |
-   |                                                        |
-   |                 |       Ici s'affiche le contenu       |
-   |                 |       du dossier sélectionné         |
-   |                 |                                      |
-   |_________________|______________________________________|
-   |________________________________________________________|
-                         ^ Ligne de statut
+   |                     Barre de statut                    |
+   |--------------------------------------------------------|
+   |                  |                                     |
+   |                  |        @{"Liste des messages" link "MA01"}          |
+   |                  |                                     |
+   |@{"Liste des dossiers" link "MA00"}|                                    |
+   |                  |                                     |
+   |                  |      Ici s'affiche le contenu       |
+   |                  |      du dossier sélectionné         |
+   |                  |                                     |
+   `------------------^-------------------------------------'
 
 @endnode
 
@@ -3184,10 +3166,10 @@ le style classique MagicWB :
 
 @endnode
 
-@NODE "MA02" "Fenêtre Principale - Barre des boutons"
+@node "MA02" "Fenêtre Principale - Barre des boutons"
 @next "MAM1"
 @prev "MA0S"
-@TOC MA_W
+@toc MA_W
 
 @{U}@{B}Fenêtre Principale - BARRE DES BOUTONS@{UU}@{UB}
 
@@ -5710,10 +5692,30 @@ sous-chapitres en utilisant le format suivant :
 
           'WRITESUBJECT "Hello World"'
 
+
+     Veuillez noter qu'à cause de l'utilisation en interne de la fonction
+     ReadArgs(), l'hôte ARexx nécessite l'échappement de certains caractères
+     spéciaux comme un retour à la ligne (0x0a) ou le caractère d'échappement
+     (0x1b) si vous voulez qu'il soit inclus dans votre chaine finale, dans le
+     cas contraire, il sera éliminé par la fonction ReadArgs().
+
+     Cela signifie que vous devez utiliser les séquences d'échappement
+     suivantes dans vos chaines de caractères :
+
+     *N remplace 0x0a
+     *E remplace 0x1b
+     ** remplace *
+     *" remplace "
+
+     Par exemple la commande suivante écrit un chaine de caractère contenant
+     un retour à la ligne dans l'éditeur :
+
+     'WRITEEDITOR "TEXT Bonjour Joe,*N je voudrais vous rencontrer."'
+
 @{b}RESULTAT@{ub}
-Retourne un résultat attendu.
-Les commandes peuvent retourner un résultat de trois manières différentes.
-Jetez un oeil aux @{i}exemples@{ui} qui utilisent la commande FOLDERINFO :
+     Retourne un résultat attendu.
+     Les commandes peuvent retourner un résultat de trois manières différentes.
+     Jetez un oeil aux @{i}exemples@{ui} qui utilisent la commande FOLDERINFO :
 
           FOLDERINFO
             -> RESULT = "0 Reçus incoming 10 2 4 23030 1"
@@ -5738,7 +5740,7 @@ Jetez un oeil aux @{i}exemples@{ui} qui utilisent la commande FOLDERINFO :
                found.alias.0 = "Mars"
                found.alias.1 = "mbe"
 
-@{b}ATTNTION@{ub}
+@{b}ATTENTION@{ub}
      Toutes sortes d'informations auxquelles il faut prêter attention en
      utilisant cette commande.
 
@@ -9277,8 +9279,27 @@ WRITEEDITOR
       TOUPPER
       TOLOWER
 
-     Please refer to the Amiga User Interface Style Guide for more info
-     about these commands.
+     Veuillez vous reporter à l' « Amiga User Interface Style Guide » pour de
+     plus amples informations sur ces commandes.
+
+     Veuillez noter qu'à cause de l'utilisation en interne de la fonction
+     ReadArgs(), l'hôte ARexx nécessite l'échappement de certains caractères
+     spéciaux comme un retour à la ligne (0x0a) ou le caractère d'échappement
+     (0x1b) si vous voulez qu'il soit inclus dans votre chaine finale, dans le
+     cas contraire, il sera éliminé par la fonction ReadArgs().
+
+     Cela signifie que vous devez utiliser les séquences d'échappement
+     suivantes dans vos chaines de caractères :
+
+     *N remplace 0x0a
+     *E remplace 0x1b
+     ** remplace *
+     *" remplace "
+
+     Par exemple la commande suivante écrit un chaine de caractère contenant
+     un retour à la ligne dans l'éditeur :
+
+     'WRITEEDITOR "TEXT Bonjour Joe,*N je voudrais vous rencontrer."'
 
 @{b}ENTREES@{ub}
      VAR/K       - alternative variable to put the results into instead of
@@ -9319,6 +9340,10 @@ WRITEEDITOR
          /* Write some text into the editor */
 
          'WRITEEDITOR "TEXT Sorry, but I am sick today!"'
+
+        /* Ecrit du texte contenant un retour à la ligne */
+
+        'WRITEEDITOR "TEXT Bonjour Joe,*N je voudrais vous rencontrer."'
 
 @{b}BUGS@{ub}
 
@@ -9786,8 +9811,8 @@ Référence - Stockage d'un message
 
    Chaque message est sauvé sous la forme d'un fichier unique, le nom du
 fichier est construit à partir du nombre de jour écoulés depuis le
-01.01.1978 (plus un point) et d'un numéro d'ordre pour ce jour. Le statut du
-courrier est sauvé dans le commentaire du fichier.
+01.01.1978 suivi d'un point et d'un numéro d'ordre pour ce jour. Le statut
+du courrier est sauvé dans le commentaire du fichier.
 Dans chaque répertoire il y a un fichier d'index appelé .index qui contient
 les en-têtes de chaque message présent dans ce répertoire. Il y a également
 un fichier de configuration appelé .fconfig qui conserve les
@@ -9804,8 +9829,8 @@ Référence - Gestion des icônes
 ==============================
 
 
-   YAM utilisera des icônes et des images dans son interface graphique.
-   Il existe plusieurs types d'icônes :
+   YAM utilise les icônes et images contenues dans /Icons pour son interface
+graphique. Il existe plusieurs types d'icônes :
 
 @{b}check.info
 empty.info
@@ -9872,7 +9897,7 @@ Référence - Divers formats de fichiers
  @{" Le fichier .glossary    " link "RFGL"}  - Format du fichier « .glossary ».
  @{" Le fichier .uidl        " link "RFUI"}  - Format du fichier « .uidl ».
  @{" Le fichier .users       " link "RFUS"}  - Format du fichier « .users ».
- @{" Les fichier de caractères " link "RFCH"}  - Format du fichier des tables de conversion.
+ @{" Les fichiers de caractères " link "RFCH"}  - Format du fichier des tables de conversion.
  @{" Le fichier d'évènements   " link "RFLO"}  - Format du fichier des évènements.
 
 @endnode
@@ -9944,10 +9969,10 @@ ajoutées.
 Le fichier .emailcache
 ----------------------
 
-   Ce fichier en texte brut contient une liste des n destinataires utilisés
-qui ne se trouvent pas dans le carnet d'adresses, dans le format
-« Nom <adresse électronique> » (ou juste <adresse électronique> si le nom
-n'est pas disponible), avec une entrée par ligne.
+   Ce fichier texte contient une liste des n derniers destinataires utilisés
+ne se trouvant pas dans le carnet d'adresses avec une entrée au format
+« Nom <adresse électronique> » (ou juste « <adresse électronique> » si le nom
+n'est pas disponible) par ligne.
 
    Les nouvelles sont ajoutées en début de liste. Lorsque la limite
 imposée dans la configuration est atteinte, la plus ancienne entrée (celle
@@ -9957,7 +9982,7 @@ en fin de liste) est supprimée.
 l'adresse est déplacée en tête de liste ; de ce fait, la prochaine fois,
 l'adresse du destinataire utilisé le plus récemment sera suggérée en 1er.
 Les entrées du carnet d'adresses auront toujours une priorité plus élevée
-que celles mémorisées.
+que celles mémorisées par ce biais.
 
 @endnode
 
@@ -9994,7 +10019,7 @@ où
      liste des dossiers.
 
    - @{b}MaxAge@{ub} est le nombre de jours où les messages dans le
-     dossier seront gardés avant leurs effacements automatique, où 0
+     dossier seront gardés avant leurs effacement automatique, où 0
      désactive cette caractéristique. (voir @{" Configuration/Début/Fin " link "CO10"})
 
    - @{b}Password@{ub} est la contre-partie codée du mot de passe
@@ -10083,7 +10108,7 @@ Le fichier .folders
 
 
    où <état> peut être soit 0 ou 1, 1 signifiant que le groupe est dévoilé
-   (déplié), c-a-d, ses contenus sont affichés. Les dossiers peuvent être à
+   (déplié), c-à-d, ses contenus sont affichés. Les dossiers peuvent être à
    l'intérieur ou à l'extérieur des groupes, et les groupes peuvent être
    des sous-groupes.
 
@@ -10125,7 +10150,7 @@ Le fichier .uidl
    Si « Éliminer les doublons » est actif dans @{" Configuration/Nouveau courrier " link "CO02"},
 YAM utilisera la commande UIDL lors de la connexion à votre serveur POP3
 pour demander un @{b}U@{ub}nique @{b}ID@{ub}entifiant de @{b}L@{ub}iste des messages dans
-votre compte courrier. Le serveur POP3 est responsable pour donner un ID
+votre compte courrier. Le serveur POP3 est responsable de l'attribution d'un ID
 unique à chaque message et le met dans l'en-tête « X-UIDL: ».
 
    Si le serveur ne supporte pas la commande POP3 UIDL, YAM retournera à la
@@ -10148,7 +10173,7 @@ format <ID>\@<Serveur POP3>, ex. :
     9692\@mail.saug.org
 
 
-   Toutes les fois qu'un ID est déjà trouvé dans le fichier
+   Toutes les fois qu'un ID est déjà présent dans le fichier
 « PROGDIR:.uidl », le message aproprié sera considéré comme un doublon, et
 ainsi il ne sera pas téléchargé. Les nouveaux ID non présents dans le
 fichier « PROGDIR:.uidl » seront ajoutés à celui-ci comme les messages
@@ -10211,11 +10236,10 @@ configuration. Une table de conversion d'un jeu de caractères ressemble
 
        1ere ligne :   YCT1 - YAM Charset Translation
        2nde ligne :   Description du convertisseur
-       3ème ligne :   Resultat du jeu de caractères, ex. iso-5589-1
-    autres lignes :   (optionnel) FROM source du charset (e.g. iso-5589-1)
+    autres lignes :   (optionnel) FROM jeu de caractères source (e.g. iso-5589-1)
                       (optionnel) TO jeu de caractères de destination
-                      (optionnel) HEADER (en-tête)
-                      Ancien caractère = Nouveua caractère
+                      (optionnel) HEADER (NDT: en-tête)
+                      Ancien caractère = Nouveau caractère
 
 
    Les caractères peuvent être défini soit en code hexadécimal avec un « $ »
@@ -10224,6 +10248,12 @@ valides : « $E5=$61 » et « å=a ».
 
    Avec le mot clé HEADER, la conversion du jeu de caractères est également
 applicable à l'en-tête du message.
+
+   Les jeux de caractères spécifiés par FROM et TO peuvent être spécifiés avec
+des motifs AmigaDOS. Cela signifie qu'il est possible de spécifier un motif de
+jeu de caractères de la façon suivante 'iso-8859-[1|2]' (se reporter aux
+ @{" Jokers Amiga-DOS " link "DOSW"}). De cette manière il est possible de
+traiter plusieurs jeux de caractères différents avec une table de conversion.
 
 @endnode
 
@@ -10246,7 +10276,7 @@ l'évènement » est manifestement la description de l'évènement, localisé
 si possible. Ainsi tout ordinateur peut analyser ce fichier de données et
 se référer au code de l'évènement.
 
-   Les évènements en dehors de la fourchette 30<->49 ne sont affichés que
+   Les évènements en dehors de la fourchette 30<->49 ne sont générés que
 si l'option « Archiver tous les évènements » est activée dans la
 configuration @{" Securité " link "CO09"}.
 
@@ -10306,11 +10336,12 @@ Trucs et astuces
  @{" Déplacer YAM sur une autre partition ou dans un autre répertoire. " link "TIP2"}
  @{" Éviter les excès de plantage du disque au démarrage.              " link "TIP3"}
  @{" Utiliser correctement la gestion des listes de discussions.       " link "TIP4"}
+ @{" Positionner correctement l'ajustement d'heure d'été (AutoDST)     " link "TIP5"}
 @endnode
 
 @node "TIP0" "Comment puis-je fixer la position et la taille des fenêtres ?"
 @next "TIP1"
-@prev "TIP4"
+@prev "TIP5"
 @toc "TIPS"
 
 Comment puis-je fixer la position et la taille des fenêtres ?
@@ -10423,7 +10454,7 @@ certain temps.
 @endnode
 
 @node "TIP4" "Utiliser correctement la gestion des listes de discussions"
-@next "TIP0"
+@next "TIP5"
 @prev "TIP3"
 @toc "TIPS"
 
@@ -10500,6 +10531,55 @@ réglages possibles.
    origine ne sont apparemment pas du domaine du serveur utilisé.
 
 @endnode
+
+@node "TIP5" "Positionner correctement l'ajustement d'heure d'été (AutoDST)" 
+@next "TIP0" 
+@prev "TIP4" 
+@toc "TIPS" 
+
+Positionner correctement l'ajustement d'heure d'été (AutoDST)
+-------------------------------------------------------------
+
+   Il manque aux systèmes Amiga une fonctionnalité importante concernant la
+gestion des fuseaux horaires : il n'y a aucune façon dans Locale d'indiquer
+qu'un système fonctionne actuellement en mode heure d'été. Du même coup, il
+manque également la possibilité de détecter automatiquement l'entrée ou la
+sortie de cet ajustement horaire. Cela peut mener à des problèmes si vous
+envoyez des messages alors que vos réglages de fuseau horaire sont incorrects
+seulement parce que vous avez oublié de configurer correctement cette option.
+
+   Comme cela est un problème courant sur les systèmes AmigaOS, il existe des
+solutions tierces plus ou moins bonnes pour configurer/basculer automatiquement
+en/depuis l'ajustement d'été. YAm supporte actuellement quatre méthodes pour
+indiquer si votre système fonctionne en heure ajustée ou non. Au lancement,
+YAM tente de trouver plusieurs variables d'environnement qui sont normalement
+générées/modifées par ces outils :
+
+   1) SetDST (ENV:TZONE) 
+      [http://www.sfxsoft.de/de/setdst.html] 
+
+   2) FACTS (ENV:FACTS/DST) 
+      [http://www.unsatisfactory.freeserve.co.uk/facts/] 
+
+   3) SummerTimeGuard (ENV:SUMMERTIME) 
+      [http://us.aminet.net/pub/aminet/utils/time/sguard.lha] 
+
+   4) ENV:IXGMTOFFSET 
+      ixemul specific gmtoffset variable that is used/modified by the 
+      ixtimezone tools of the geekgadgets package. 
+
+   Si YAM trouve l'une de ces quatre variables d'environnement, il ajustera
+automatiquement l'option Heure d'été de la configuration et  désactivera la
+possibilité de la changer manuellement. Veuillez noter que si un tel outil
+est détecté, YAM surveillera la variable associée pour tout changement, de
+telle sorte que dés que l'outil modifie la configuration DST, l'option de
+YAM soit mise à jour conformément.
+
+   Donc si vous voulez vous affranchir de ce basculement bi-annuel, il vous
+suffit d'installer l'un de ces outils (ou similaire) et vous n'aurez plus
+jamais à vous soucier de tracas de fuseau horaire.
+
+@endnode 
 
 @node "PROB" "Problèmes connus"
 @next "INFO"
@@ -11120,7 +11200,7 @@ elles ont une apparence très professionnelle maintenant.
    @{" ATTACH, Type d'outils " link "RF00"}
    @{" Auteurs " link "CRED"}
    @{" Autres informations au sujet de YAM " link INFO}
-
+   @{" AutoDST " link "TIP5"}
 
    B...
 
@@ -11271,6 +11351,7 @@ elles ont une apparence très professionnelle maintenant.
 
    @{" Format. Taille " link "CO08"}
    @{" HELP, commande ARexx " link "RX_HELP"}
+   @{" Heure d'été " link "TIP5"}
    @{" HIDE, commande ARexx " link "RX_HIDE"}
    @{" HIDE, Type d'outils " link "RF00"}
    @{" HTTP serveur proxy. Configuration " link "CO12"}
@@ -11438,7 +11519,6 @@ elles ont une apparence très professionnelle maintenant.
 
    T...
 
-   @{" Technique " link TECH}
    @{" TLSv1/SSLv3 POP3 (réglages) " link "CO01"}
    @{" Trace des messages " link "CO14"}
    @{" Transcription automatique du jeu de caractères " link "CO04"}
