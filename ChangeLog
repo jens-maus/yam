@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-10  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c: according to RFC2015 (section 5), a pgp siged message should add
+    "micalg=pgp-md5" instead of "micalc" which we previously did.
+
 2007-01-09  Alexandre Balaban <abalaban@free.fr>
 
   * doc/YAM_francais.guide: Some minor updates to the french guide.

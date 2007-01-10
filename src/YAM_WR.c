@@ -1251,7 +1251,7 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
       switch (sec)
       {
          case SEC_SIGN :
-            fprintf(fh, "Content-type: multipart/signed; boundary=\"%s\"; micalc=pgp-md5; protocol=\"application/pgp-signature\"\n\n%s\n--%s\n", boundary, MIMEwarn, boundary);
+            fprintf(fh, "Content-type: multipart/signed; boundary=\"%s\"; micalg=pgp-md5; protocol=\"application/pgp-signature\"\n\n%s\n--%s\n", boundary, MIMEwarn, boundary);
             WriteContentTypeAndEncoding(fh, firstpart);
             fputc('\n', fh);
             EncodePart(fh, firstpart);
