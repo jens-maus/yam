@@ -7,6 +7,8 @@ $URL$
 
 2007-01-12  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c: fixed a possible crash situation where upon viewing a virtual
+    PGP-signed message due to trying to access the folder structure of it.
   * ReadMailGroup.c, AttachmentGroup.c: fixed bug #1633776 where a crash could
     have been triggered when selecting the context-menu's "Save All" entry
     of the Attachment submenu. Now the context-menu entries will be disabled
@@ -14,7 +16,7 @@ $URL$
 
 2007-01-10  Jens Langner <Jens.Langner@light-speed.de>
 
-  * YAM_WR.c: according to RFC2015 (section 5), a pgp siged message should add
+  * YAM_WR.c: according to RFC2015 (section 5), a pgp signed message should add
     "micalg=pgp-md5" instead of "micalc" which we previously did.
 
 2007-01-09  Alexandre Balaban <abalaban@free.fr>

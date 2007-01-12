@@ -3182,7 +3182,10 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                     if(!isMP_SignedMail(rmData->mail))
                     {
                       SET_FLAG(rmData->mail->mflags, MFLAG_MP_SIGNED);
-                      SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+
+                      // flag folder as modified
+                      if(rmData->mail->Folder)
+                        SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);
                     }
                   }
 
@@ -3208,7 +3211,10 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 if(!isMP_CryptedMail(rmData->mail))
                 {
                   SET_FLAG(rmData->mail->mflags, MFLAG_MP_CRYPT);
-                  SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+
+                  // flag folder as modified
+                  if(rmData->mail->Folder)
+                    SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);
                 }
 
                 D(DBF_MAIL, "done with decryption");
@@ -3257,7 +3263,10 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 if(!isMP_SignedMail(rmData->mail))
                 {
                   SET_FLAG(rmData->mail->mflags, MFLAG_MP_SIGNED);
-                  SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+
+                  // flag folder as modified
+                  if(rmData->mail->Folder)
+                    SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);
                 }
               }
 /* other */   else
