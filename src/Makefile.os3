@@ -52,7 +52,7 @@ LIB     = $(PREFIX)/lib/os3
 OBJDIR  = .obj_os3
 
 # Compiler/Linker flags
-CPU	    = -m68020-60 -msoft-float
+CPU	  = -m68020-60 -msoft-float
 WARN	  = -W -Wall -Wwrite-strings
 OPTFLAGS= -O3 -fomit-frame-pointer -funroll-loops
 DEBUG	  = -DDEBUG -O0
