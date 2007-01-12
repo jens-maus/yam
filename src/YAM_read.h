@@ -169,6 +169,6 @@ void RE_ClickedOnMessage(char *address);
 void RE_PrintFile(char *filename);
 struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAllFolder, Object *readWindow);
 BOOL RE_Export(struct ReadMailData *rmData, const char *source, const char *dest, const char *name, int nr, BOOL force, BOOL overwrite, const char *ctype);
-void RE_SaveAll(struct ReadMailData *rmData, char *path);
+void RE_SaveAll(struct ReadMailData *rmData, const char *path);
 
 #endif /* YAM_READ_H */

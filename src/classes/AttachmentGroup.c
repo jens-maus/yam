@@ -757,20 +757,17 @@ DECLARE(Save) // struct Part *part
 DECLARE(SaveAll)
 {
   GETDATA;
-  struct Part *part = data->firstPart->Next;
 
   ENTER();
 
-  SHOWPOINTER(DBF_MAIL, part);
-
-  if(part)
+  if(data->firstPart && data->firstPart->Next)
   {
     struct FileReqCache *frc;
 
     if((frc = ReqFile(ASL_DETACH, _win(obj), GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, "")))
     {
       BusyText(GetStr(MSG_BusyDecSaving), "");
-      RE_SaveAll(part->rmData, frc->drawer);
+      RE_SaveAll(data->firstPart->rmData, frc->drawer);
       BusyEnd();
     }
   }
@@ -835,26 +832,33 @@ DECLARE(Print) // struct Part *part
 DECLARE(CropAll)
 {
   GETDATA;
-  struct ReadMailData *rmData = data->firstPart->rmData;
-  struct Mail *mail = rmData->mail;
 
-  // remove the attchments now
-  MA_RemoveAttach(mail, TRUE);
+  ENTER();
 
-  // make sure the listview is properly redrawn
-  if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail))
+  if(data->firstPart)
   {
-    MA_ChangeSelected(TRUE);
-    DisplayStatistics(mail->Folder, TRUE);
+    struct ReadMailData *rmData = data->firstPart->rmData;
+    struct Mail *mail = rmData->mail;
+
+    // remove the attchments now
+    MA_RemoveAttach(mail, TRUE);
+
+    // make sure the listview is properly redrawn
+    if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail))
+    {
+      MA_ChangeSelected(TRUE);
+      DisplayStatistics(mail->Folder, TRUE);
+    }
+
+    // make sure to refresh the mail of this window as we do not
+    // have any attachments anymore
+    if(rmData->readWindow)
+      DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, mail);
+    else
+      DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail, MUIF_ReadMailGroup_ReadMail_UpdateTextOnly);
   }
 
-  // make sure to refresh the mail of this window as we do not
-  // have any attachments anymore
-  if(rmData->readWindow)
-    DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, mail);
-  else
-    DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail, MUIF_ReadMailGroup_ReadMail_UpdateTextOnly);
-
+  RETURN(0);
   return 0;
 }
 ///

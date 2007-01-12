@@ -733,7 +733,7 @@ void RE_DisplayMIME(char *fname, const char *ctype)
 ///
 /// RE_SaveAll
 //  Saves all attachments to disk
-void RE_SaveAll(struct ReadMailData *rmData, char *path)
+void RE_SaveAll(struct ReadMailData *rmData, const char *path)
 {
   char *dest;
 

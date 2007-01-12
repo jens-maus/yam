@@ -417,9 +417,6 @@ OVERLOAD(MUIM_ContextMenuBuild)
   GETDATA;
   struct MUIP_ContextMenuBuild *mb = (struct MUIP_ContextMenuBuild *)msg;
   struct ReadMailData *rmData = data->readMailData;
-  struct Mail *mail = rmData->mail;
-  BOOL isRealMail = !isVirtualMail(mail);
-  BOOL isSentMail = isRealMail ? isSentMailFolder(mail->Folder) : FALSE;
   BOOL hasContent = data->hasContent;
 
   ENTER();
@@ -450,9 +447,17 @@ OVERLOAD(MUIM_ContextMenuBuild)
       End,
     End;
   }
-  else
+  else if(rmData->mail)
   {
-    if(rmData && rmData->mail && hasContent)
+    struct Mail *mail = rmData->mail;
+    BOOL isRealMail = !isVirtualMail(mail);
+    BOOL isSentMail = isRealMail ? isSentMailFolder(mail->Folder) : FALSE;
+    BOOL hasAttach = xget(data->attachmentGroup, MUIA_ShowMe);
+    BOOL hasPGPKey = rmData->hasPGPKey;
+    BOOL hasPGPSig = (hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData));
+    BOOL isPGPEnc = isRealMail && (hasPGPEMimeFlag(rmData) || hasPGPEOldFlag(rmData));
+
+    if(hasContent)
     {
       snprintf(data->menuTitle, sizeof(data->menuTitle), "%s: ", GetStr(MSG_Subject));
       strlcat(data->menuTitle, rmData->mail->Subject, 30-strlen(data->menuTitle) > 0 ? 30-strlen(data->menuTitle) : 0);
@@ -475,17 +480,17 @@ OVERLOAD(MUIM_ContextMenuBuild)
         Child, MenuBarLabel,
         Child, MenuitemObject,
           MUIA_Menuitem_Title, GetStr(MSG_Attachments),
-          MUIA_Menuitem_Enabled, hasContent,
-          Child, Menuitem(GetStr(MSG_RE_SaveAll), NULL, hasContent, FALSE, RMEN_DETACH),
-          Child, Menuitem(GetStr(MSG_MA_Crop),    NULL, hasContent && isRealMail, FALSE, RMEN_CROP),
+          MUIA_Menuitem_Enabled, hasContent && hasAttach,
+          Child, Menuitem(GetStr(MSG_RE_SaveAll), NULL, hasContent && hasAttach, FALSE, RMEN_DETACH),
+          Child, Menuitem(GetStr(MSG_MA_Crop),    NULL, hasContent && isRealMail && hasAttach, FALSE, RMEN_CROP),
         End,
         Child, MenuBarLabel,
         Child, MenuitemObject,
           MUIA_Menuitem_Title, "PGP",
-          MUIA_Menuitem_Enabled, hasContent,
-          Child, Menuitem(GetStr(MSG_RE_ExtractKey),    NULL, rmData->hasPGPKey, FALSE, RMEN_EXTKEY),
-          Child, Menuitem(GetStr(MSG_RE_SigCheck),      NULL, (hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData)), FALSE, RMEN_CHKSIG),
-          Child, Menuitem(GetStr(MSG_RE_SaveDecrypted), NULL, isRealMail && (hasPGPEMimeFlag(rmData) || hasPGPEOldFlag(rmData)), FALSE, RMEN_SAVEDEC),
+          MUIA_Menuitem_Enabled, hasContent && (hasPGPKey || hasPGPSig || isPGPEnc),
+          Child, Menuitem(GetStr(MSG_RE_ExtractKey),    NULL, hasPGPKey, FALSE, RMEN_EXTKEY),
+          Child, Menuitem(GetStr(MSG_RE_SigCheck),      NULL, hasPGPSig, FALSE, RMEN_CHKSIG),
+          Child, Menuitem(GetStr(MSG_RE_SaveDecrypted), NULL, isPGPEnc, FALSE, RMEN_SAVEDEC),
         End,
         Child, MenuBarLabel,
         Child, MenuitemCheck(GetStr(MSG_RE_Textstyles), NULL, hasContent, rmData->useTextstyles, TRUE, 0, RMEN_TSTYLE),

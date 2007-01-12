@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-12  Jens Langner <Jens.Langner@light-speed.de>
+
+  * ReadMailGroup.c, AttachmentGroup.c: fixed bug #1633776 where a crash could
+    have been triggered when selecting the context-menu's "Save All" entry
+    of the Attachment submenu. Now the context-menu entries will be disabled
+    properly and the corresponding functions can not do anything harmful anymore.
+
 2007-01-10  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: according to RFC2015 (section 5), a pgp siged message should add
