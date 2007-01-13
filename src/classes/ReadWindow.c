@@ -52,6 +52,7 @@ struct Data
   Object *MI_WRAPH;
   Object *MI_TSTYLE;
   Object *MI_FFONT;
+  Object *MI_PGP;
   Object *MI_EXTKEY;
   Object *MI_CHKSIG;
   Object *MI_SAVEDEC;
@@ -210,13 +211,13 @@ OVERLOAD(OM_NEW)
       End,
       MenuChild, data->MI_NAVIG = MenuObject, MUIA_Menu_Title, GetStr(MSG_RE_Navigation),
         MenuChild, Menuitem(GetStr(MSG_RE_MNext),    "right", TRUE, TRUE, RMEN_NEXT),
-        MenuChild, Menuitem(GetStr(MSG_RE_MPrev),     "left",  TRUE, TRUE, RMEN_PREV),
+        MenuChild, Menuitem(GetStr(MSG_RE_MPrev),    "left",  TRUE, TRUE, RMEN_PREV),
         MenuChild, Menuitem(GetStr(MSG_RE_MURNext),  "shift right", TRUE, TRUE, RMEN_URNEXT),
         MenuChild, Menuitem(GetStr(MSG_RE_MURPrev),  "shift left",  TRUE, TRUE, RMEN_URPREV),
         MenuChild, data->MI_NEXTTHREAD = Menuitem(GetStr(MSG_RE_MNextTh), ">", TRUE, FALSE, RMEN_NEXTTH),
         MenuChild, data->MI_PREVTHREAD = Menuitem(GetStr(MSG_RE_MPrevTh), "<", TRUE, FALSE, RMEN_PREVTH),
       End,
-      MenuChild, MenuObject, MUIA_Menu_Title, "PGP",
+      MenuChild, data->MI_PGP = MenuObject, MUIA_Menu_Title, "PGP",
         MenuChild, data->MI_EXTKEY = Menuitem(GetStr(MSG_RE_ExtractKey), "X", TRUE, FALSE, RMEN_EXTKEY),
         MenuChild, data->MI_CHKSIG = Menuitem(GetStr(MSG_RE_SigCheck), "K", TRUE, FALSE, RMEN_CHKSIG),
         MenuChild, data->MI_SAVEDEC = Menuitem(GetStr(MSG_RE_SaveDecrypted), "V", TRUE, FALSE, RMEN_SAVEDEC),
@@ -427,6 +428,7 @@ DECLARE(ReadMail) // struct Mail *mail
   BOOL isSentMail   = isRealMail && isSentMailFolder(folder);
   BOOL isSpamMail   = !isRealMail || !C->SpamFilterEnabled || hasStatusSpam(mail);
   BOOL isHamMail    = !isRealMail || !C->SpamFilterEnabled || hasStatusHam(mail);
+  BOOL hasAttach    = isMP_MixedMail(mail);
   BOOL inSpamFolder = isRealMail && isSpamFolder(folder);
   BOOL result = FALSE;
   BOOL initialCall = data->title[0] == '\0'; // TRUE if this is the first call
@@ -456,9 +458,10 @@ DECLARE(ReadMail) // struct Mail *mail
   set(data->MI_EDIT,      MUIA_Menuitem_Enabled, isSentMail && !inSpamFolder);
   set(data->MI_MOVE,      MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_DELETE,    MUIA_Menuitem_Enabled, isRealMail);
-  set(data->MI_CROP,      MUIA_Menuitem_Enabled, isRealMail);
+  set(data->MI_DETACH,    MUIA_Menuitem_Enabled, hasAttach);
+  set(data->MI_CROP,      MUIA_Menuitem_Enabled, isRealMail && hasAttach);
   set(data->MI_CHSUBJ,    MUIA_Menuitem_Enabled, isRealMail && !inSpamFolder);
-  set(data->MI_NAVIG,     MUIA_Menuitem_Enabled, isRealMail);
+  set(data->MI_NAVIG,     MUIA_Menu_Enabled,     isRealMail);
   set(data->MI_REPLY,     MUIA_Menuitem_Enabled, !isSentMail && !inSpamFolder);
   set(data->MI_BOUNCE,    MUIA_Menuitem_Enabled, !isSentMail);
   set(data->MI_NEXTTHREAD,MUIA_Menuitem_Enabled, nextMailAvailable);
@@ -529,6 +532,9 @@ DECLARE(ReadMail) // struct Mail *mail
   {
     size_t titleLen;
     struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
+    BOOL hasPGPKey = rmData->hasPGPKey;
+    BOOL hasPGPSig = (hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData));
+    BOOL isPGPEnc = isRealMail && (hasPGPEMimeFlag(rmData) || hasPGPEOldFlag(rmData));
 
     // if the title of the window is empty, we can assume that no previous mail was
     // displayed in this readwindow, so we can set the mailTextObject of the readmailgroup
@@ -568,11 +574,10 @@ DECLARE(ReadMail) // struct Mail *mail
     set(obj, MUIA_Window_Title, data->title);
 
     // enable some Menuitems depending on the read mail
-    set(data->MI_EXTKEY, MUIA_Menuitem_Enabled, rmData->hasPGPKey);
-    set(data->MI_CHKSIG, MUIA_Menuitem_Enabled, hasPGPSOldFlag(rmData) ||
-                                                hasPGPSMimeFlag(rmData));
-    set(data->MI_SAVEDEC, MUIA_Menuitem_Enabled, isRealMail &&
-                                                 (hasPGPEMimeFlag(rmData) || hasPGPEOldFlag(rmData)));
+    set(data->MI_PGP,     MUIA_Menu_Enabled, hasPGPKey || hasPGPSig || isPGPEnc);
+    set(data->MI_EXTKEY,  MUIA_Menuitem_Enabled, hasPGPKey);
+    set(data->MI_CHKSIG,  MUIA_Menuitem_Enabled, hasPGPSig);
+    set(data->MI_SAVEDEC, MUIA_Menuitem_Enabled, isPGPEnc);
 
     // everything worked fine
     result = TRUE;

@@ -7,6 +7,8 @@ $URL$
 
 2007-01-12  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ReadWindow.c: slightly modified the Readwindow's Menu to correctly enable
+    and disable certain menu items depending on the mail type.
   * YAM_RE.c: fixed a possible crash situation where upon viewing a virtual
     PGP-signed message due to trying to access the folder structure of it.
   * ReadMailGroup.c, AttachmentGroup.c: fixed bug #1633776 where a crash could
