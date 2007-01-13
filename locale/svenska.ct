@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.10 (01.01.07)
+## version $VER: YAM.ct 6.11 (13.01.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -6531,11 +6531,11 @@ MSG_MA_FOLDERINFO
 ;#SET (1723//)
 MSG_MA_MIMEPART_INFO
 \ebBilaga - MIME-del #%ld\en\nNamn: %s\nBeskrivning: %s\nInnehållstyp: %s <%s>\nStorlek: ~%s
-;#DEF \ebAttachment - MIME-Part #%ld\en\nName: %s\nDescription: %s\nContent-Type: %s <%s>\nSize: ~%s
+;#DEF \ebAttachment - MIME part #%ld\en\nName: %s\nDescription: %s\nContent-Type: %s <%s>\nSize: ~%s
 ;#SET (1725//)
 MSG_MA_MIMEPART_MENU
 Bilaga/MIME-del #%ld
-;#DEF Attachment/MIME-Part #%ld
+;#DEF Attachment/MIME part #%ld
 ;#SET (1726//)
 MSG_CO_PGPPASSINTERVAL1
 Kom ihåg lösenord i
@@ -6853,3 +6853,11 @@ MSG_ER_ADDRBOOKEXPORT
 Kunde inte exportera adressbok \"%s\".
 ;#DEF Could not export address book \"%s\".
 ;#SET (1806//)
+MSG_LOADINGUPDATESTATE
+Laddar tillstånd för uppdateringsdata...
+;#DEF Loading update state data...
+;#SET (1807//)
+MSG_CO_ASK_SAVE_SIGNATURE
+Ändringar i signaturfilen måste sparas\nseparat från den globala konfigurationen!\nAnnars går de förlorade!\n\nVill du spara ändringarna nu?
+;#DEF Changes to the signature files must be saved\nseparately from the global configuration!\nOtherwise they will be lost!\n\nDo you want to save the changes now?
+;#SET (1808//)
