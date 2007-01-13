@@ -530,13 +530,13 @@ OVERLOAD(MUIM_ContextMenuBuild)
 
   data->context_menu = MenustripObject,
     Child, MenuObjectT(data->menuTitle),
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ATTACHMENT_DISPLAY),  MUIA_Menuitem_Enabled, mailPart != NULL, MUIA_UserData, AMEN_DISPLAY,  End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ATTACHMENT_SAVEAS),   MUIA_Menuitem_Enabled, mailPart != NULL, MUIA_UserData, AMEN_SAVEAS,    End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ATTACHMENT_PRINT),   MUIA_Menuitem_Enabled, mailPart != NULL && mailPart->Printable, MUIA_UserData, AMEN_PRINT,     End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_ATTACHMENT_DISPLAY),  MUIA_Menuitem_Enabled, mailPart != NULL, MUIA_UserData, AMEN_DISPLAY,  End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_ATTACHMENT_SAVEAS),   MUIA_Menuitem_Enabled, mailPart != NULL, MUIA_UserData, AMEN_SAVEAS,    End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_ATTACHMENT_PRINT),   MUIA_Menuitem_Enabled, mailPart != NULL && mailPart->Printable, MUIA_UserData, AMEN_PRINT,     End,
       Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ATTACHMENT_SAVEALL), MUIA_UserData, AMEN_SAVEALL,   End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ATTACHMENT_SAVESEL), MUIA_UserData, AMEN_SAVESEL,   End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ATTACHMENT_CROPALL), MUIA_UserData, AMEN_CROPALL, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_ATTACHMENT_SAVEALL), MUIA_UserData, AMEN_SAVEALL,   End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_ATTACHMENT_SAVESEL), MUIA_UserData, AMEN_SAVESEL,   End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_ATTACHMENT_CROPALL), MUIA_UserData, AMEN_CROPALL, End,
     End,
   End;
 

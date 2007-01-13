@@ -174,7 +174,6 @@ void MA_ChangeSelected(BOOL forceUpdate)
   BOOL folderEnabled;
   ULONG numSelected = 0;
   struct Mail *mail;
-  const char *p;
 
   ENTER();
 
@@ -320,17 +319,9 @@ void MA_ChangeSelected(BOOL forceUpdate)
   // change the menu item title of the
   // Edit item so that we either display "Edit" or "Edit as New"
   if(isOutgoingFolder(fo))
-    p = GetStr(MSG_MESSAGE_EDIT);
+    set(gui->MI_EDIT, MUIA_Menuitem_Title, GetStr(MSG_MA_MEDIT));
   else
-    p = GetStr(MSG_MESSAGE_EDITASNEW);
-
-  if(p)
-  {
-    if(p[1] == '\0')
-      set(gui->MI_EDIT, MUIA_Menuitem_Title, p+2);
-    else
-      set(gui->MI_EDIT, MUIA_Menuitem_Title, p);
-  }
+    set(gui->MI_EDIT, MUIA_Menuitem_Title, GetStr(MSG_MA_MEDITASNEW));
 
   // in the following section we define which menu item should be
   // enabled or disabled. Please note that a menu item can only be part of
@@ -4426,25 +4417,33 @@ void MA_SetupDynamicMenus(void)
     // if not, create a new entry and add it to the current layout
     if(G->MA->GUI.MI_CHECKSPAM == NULL || isChildOfFamily(G->MA->GUI.MN_FOLDER, G->MA->GUI.MI_CHECKSPAM) == FALSE)
     {
-      if ((G->MA->GUI.MI_CHECKSPAM = MakeMenuitem(GetStr(MSG_MA_CHECKSPAM), MMEN_CLASSIFY)) != NULL)
+      G->MA->GUI.MI_CHECKSPAM = Menuitem(GetStr(MSG_MA_CHECKSPAM), NULL, TRUE, FALSE, MMEN_CLASSIFY);
+
+      if(G->MA->GUI.MI_CHECKSPAM != NULL)
         DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Insert, G->MA->GUI.MI_CHECKSPAM, G->MA->GUI.MI_FILTER);
     }
 
     if(G->MA->GUI.MI_DELSPAM == NULL || isChildOfFamily(G->MA->GUI.MN_FOLDER, G->MA->GUI.MI_DELSPAM) == FALSE)
     {
-      if ((G->MA->GUI.MI_DELSPAM = MakeMenuitem(GetStr(MSG_MA_REMOVESPAM), MMEN_DELSPAM)) != NULL)
+      G->MA->GUI.MI_DELSPAM = Menuitem(GetStr(MSG_MA_REMOVESPAM), NULL, TRUE, FALSE, MMEN_DELSPAM);
+
+      if(G->MA->GUI.MI_DELSPAM != NULL)
         DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Insert, G->MA->GUI.MI_DELSPAM, G->MA->GUI.MI_DELDEL);
     }
 
     if(G->MA->GUI.MI_TOHAM == NULL || isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOHAM) == FALSE)
     {
-      if ((G->MA->GUI.MI_TOHAM = MakeMenuitem(GetStr(MSG_MA_TONOTSPAM), MMEN_TOHAM)) != NULL)
+      G->MA->GUI.MI_TOHAM = Menuitem(GetStr(MSG_MA_TONOTSPAM), NULL, TRUE, FALSE, MMEN_TOHAM);
+
+      if(G->MA->GUI.MI_TOHAM != NULL)
         DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Insert, G->MA->GUI.MI_TOHAM, G->MA->GUI.MI_TOQUEUED);
     }
 
     if(G->MA->GUI.MI_TOSPAM == NULL || isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOSPAM) == FALSE)
     {
-      if ((G->MA->GUI.MI_TOSPAM = MakeMenuitem(GetStr(MSG_MA_TOSPAM), MMEN_TOSPAM)) != NULL)
+      G->MA->GUI.MI_TOSPAM = Menuitem(GetStr(MSG_MA_TOSPAM), NULL, TRUE, FALSE, MMEN_TOSPAM);
+
+      if(G->MA->GUI.MI_TOSPAM != NULL)
         DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Insert, G->MA->GUI.MI_TOSPAM, G->MA->GUI.MI_TOQUEUED);
     }
   }
@@ -4642,84 +4641,84 @@ struct MA_ClassData *MA_New(void)
 
       data->GUI.MS_MAIN = MenustripObject,
          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Project),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_PROJECT_ABOUT), MMEN_ABOUT),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_AboutMUI), MMEN_ABOUTMUI),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_UPDATECHECK), MMEN_VERSION),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_PROJECT_MABOUT), "?", TRUE, FALSE, MMEN_ABOUT),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_AboutMUI), NULL, TRUE, FALSE, MMEN_ABOUTMUI),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_UPDATECHECK), NULL, TRUE, FALSE, MMEN_VERSION),
             MUIA_Family_Child, data->GUI.MI_ERRORS = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_LastErrors), MUIA_Menuitem_Enabled, G->ER_NumErr > 0, MUIA_UserData, MMEN_ERRORS, End,
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_Restart), MMEN_LOGIN),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_Hide), MMEN_HIDE),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_Quit), MMEN_QUIT),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_Restart), NULL, TRUE, FALSE, MMEN_LOGIN),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_HIDE), "H", TRUE, FALSE, MMEN_HIDE),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_QUIT), "Q", TRUE, FALSE, MMEN_QUIT),
          End,
          MUIA_Family_Child, data->GUI.MN_FOLDER = MenuObject, MUIA_Menu_Title, GetStr(MSG_Folder),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_FOLDER_NEWFOLDER), MMEN_NEWF),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_FOLDER_NEWFOLDERGROUP), MMEN_NEWFG),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_FOLDER_EDIT), MMEN_EDITF),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_FOLDER_DELETE), MMEN_DELETEF),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_FOLDER_NEWFOLDER), NULL, TRUE, FALSE, MMEN_NEWF),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_FOLDER_NEWFOLDERGROUP), NULL, TRUE, FALSE, MMEN_NEWFG),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_FOLDER_EDIT), NULL, TRUE, FALSE, MMEN_EDITF),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_FOLDER_DELETE), NULL, TRUE, FALSE, MMEN_DELETEF),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_SortOrder),
-               MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_OSave), MMEN_OSAVE),
-               MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_Reset), MMEN_ORESET),
+               MUIA_Family_Child, Menuitem(GetStr(MSG_MA_OSave), NULL, TRUE, FALSE, MMEN_OSAVE),
+               MUIA_Family_Child, Menuitem(GetStr(MSG_MA_Reset), NULL, TRUE, FALSE, MMEN_ORESET),
             End,
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_MSearch), MMEN_SEARCH),
-            MUIA_Family_Child, data->GUI.MI_FILTER = MakeMenuitem(GetStr(MSG_MA_MFilter), MMEN_FILTER),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_MSEARCH), "F", TRUE, FALSE, MMEN_SEARCH),
+            MUIA_Family_Child, data->GUI.MI_FILTER = Menuitem(GetStr(MSG_MA_MFILTER), "I", TRUE, FALSE, MMEN_FILTER),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, data->GUI.MI_DELDEL = MakeMenuitem(GetStr(MSG_MA_RemoveDeleted), MMEN_DELDEL),
-            MUIA_Family_Child, data->GUI.MI_UPDINDEX = MakeMenuitem(GetStr(MSG_MA_UpdateIndex), MMEN_INDEX),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_FlushIndices), MMEN_FLUSH),
+            MUIA_Family_Child, data->GUI.MI_DELDEL = Menuitem(GetStr(MSG_MA_REMOVEDELETED), "Z", TRUE, FALSE, MMEN_DELDEL),
+            MUIA_Family_Child, data->GUI.MI_UPDINDEX = Menuitem(GetStr(MSG_MA_UPDATEINDEX), "U", TRUE, FALSE, MMEN_INDEX),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_FlushIndices), NULL, TRUE, FALSE, MMEN_FLUSH),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, data->GUI.MI_IMPORT = MakeMenuitem(GetStr(MSG_FOLDER_IMPORT), MMEN_IMPORT),
-            MUIA_Family_Child, data->GUI.MI_EXPORT = MakeMenuitem(GetStr(MSG_FOLDER_EXPORT), MMEN_EXPORT),
+            MUIA_Family_Child, data->GUI.MI_IMPORT = Menuitem(GetStr(MSG_FOLDER_IMPORT), NULL, TRUE, FALSE, MMEN_IMPORT),
+            MUIA_Family_Child, data->GUI.MI_EXPORT = Menuitem(GetStr(MSG_FOLDER_EXPORT), NULL, TRUE, FALSE, MMEN_EXPORT),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, data->GUI.MI_SENDALL = MakeMenuitem(GetStr(MSG_MA_MSendAll), MMEN_SENDMAIL),
-            MUIA_Family_Child, data->GUI.MI_EXCHANGE = MakeMenuitem(GetStr(MSG_MA_Exchange), MMEN_EXMAIL),
-            MUIA_Family_Child, data->GUI.MI_GETMAIL = MakeMenuitem(GetStr(MSG_MA_MGetMail), MMEN_GETMAIL),
+            MUIA_Family_Child, data->GUI.MI_SENDALL = Menuitem(GetStr(MSG_MA_MSENDALL), "S", TRUE, FALSE, MMEN_SENDMAIL),
+            MUIA_Family_Child, data->GUI.MI_EXCHANGE = Menuitem(GetStr(MSG_MA_MEXCHANGE), "X", TRUE, FALSE, MMEN_EXMAIL),
+            MUIA_Family_Child, data->GUI.MI_GETMAIL = Menuitem(GetStr(MSG_MA_MGETMAIL), "G", TRUE, FALSE, MMEN_GETMAIL),
         End,
          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_Message),
-            MUIA_Family_Child, data->GUI.MI_READ = MakeMenuitem(GetStr(MSG_MA_MRead), MMEN_READ),
-            MUIA_Family_Child, data->GUI.MI_EDIT = MakeMenuitem(GetStr(MSG_MESSAGE_EDITASNEW), MMEN_EDIT),
-            MUIA_Family_Child, data->GUI.MI_MOVE = MakeMenuitem(GetStr(MSG_MESSAGE_MOVE), MMEN_MOVE),
-            MUIA_Family_Child, data->GUI.MI_COPY = MakeMenuitem(GetStr(MSG_MESSAGE_COPY), MMEN_COPY),
-            MUIA_Family_Child, data->GUI.MI_DELETE = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_MDelete), MUIA_Menuitem_Shortcut, "Del", MUIA_Menuitem_CommandString,TRUE, MUIA_UserData, MMEN_DELETE, End,
+            MUIA_Family_Child, data->GUI.MI_READ = Menuitem(GetStr(MSG_MA_MREAD), "D", TRUE, FALSE, MMEN_READ),
+            MUIA_Family_Child, data->GUI.MI_EDIT = Menuitem(GetStr(MSG_MA_MEDITASNEW), "E", TRUE, FALSE, MMEN_EDIT),
+            MUIA_Family_Child, data->GUI.MI_MOVE = Menuitem(GetStr(MSG_MA_MMOVE), "M", TRUE, FALSE, MMEN_MOVE),
+            MUIA_Family_Child, data->GUI.MI_COPY = Menuitem(GetStr(MSG_MA_MCOPY), "Y", TRUE, FALSE, MMEN_COPY),
+            MUIA_Family_Child, data->GUI.MI_DELETE = Menuitem(GetStr(MSG_MA_MDelete), "Del", TRUE, TRUE, MMEN_DELETE),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, data->GUI.MI_PRINT = MakeMenuitem(GetStr(MSG_MESSAGE_PRINT), MMEN_PRINT),
-            MUIA_Family_Child, data->GUI.MI_SAVE = MakeMenuitem(GetStr(MSG_MESSAGE_SAVE), MMEN_SAVE),
+            MUIA_Family_Child, data->GUI.MI_PRINT = Menuitem(GetStr(MSG_MA_MPRINT), "P", TRUE, FALSE, MMEN_PRINT),
+            MUIA_Family_Child, data->GUI.MI_SAVE = Menuitem(GetStr(MSG_MA_MSAVE), "V", TRUE, FALSE, MMEN_SAVE),
             MUIA_Family_Child, data->GUI.MI_ATTACH = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Attachments),
-               MUIA_Family_Child, data->GUI.MI_SAVEATT = MakeMenuitem(GetStr(MSG_MESSAGE_SAVEATT), MMEN_DETACH),
-               MUIA_Family_Child, data->GUI.MI_REMATT = MakeMenuitem(GetStr(MSG_MESSAGE_CROP), MMEN_CROP),
+               MUIA_Family_Child, data->GUI.MI_SAVEATT = Menuitem(GetStr(MSG_MA_MSAVEATT), "T", TRUE, FALSE, MMEN_DETACH),
+               MUIA_Family_Child, data->GUI.MI_REMATT = Menuitem(GetStr(MSG_MA_MCROP), "O", TRUE, FALSE, MMEN_CROP),
             End,
-            MUIA_Family_Child, data->GUI.MI_EXPMSG = MakeMenuitem(GetStr(MSG_MESSAGE_EXPORT), MMEN_EXPMSG),
+            MUIA_Family_Child, data->GUI.MI_EXPMSG = Menuitem(GetStr(MSG_MESSAGE_EXPORT), NULL, TRUE, FALSE, MMEN_EXPMSG),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, data->GUI.MI_NEW = MakeMenuitem(GetStr(MSG_MESSAGE_NEW), MMEN_NEW),
-            MUIA_Family_Child, data->GUI.MI_REPLY = MakeMenuitem(GetStr(MSG_MESSAGE_REPLY), MMEN_REPLY),
-            MUIA_Family_Child, data->GUI.MI_FORWARD = MakeMenuitem(GetStr(MSG_MESSAGE_FORWARD), MMEN_FORWARD),
-            MUIA_Family_Child, data->GUI.MI_BOUNCE = MakeMenuitem(GetStr(MSG_MESSAGE_BOUNCE), MMEN_BOUNCE),
+            MUIA_Family_Child, data->GUI.MI_NEW = Menuitem(GetStr(MSG_MA_MNEW), "N", TRUE, FALSE, MMEN_NEW),
+            MUIA_Family_Child, data->GUI.MI_REPLY = Menuitem(GetStr(MSG_MA_MREPLY), "R", TRUE, FALSE, MMEN_REPLY),
+            MUIA_Family_Child, data->GUI.MI_FORWARD = Menuitem(GetStr(MSG_MA_MFORWARD), "W", TRUE, FALSE, MMEN_FORWARD),
+            MUIA_Family_Child, data->GUI.MI_BOUNCE = Menuitem(GetStr(MSG_MA_MBOUNCE), "B", TRUE, FALSE, MMEN_BOUNCE),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, data->GUI.MI_GETADDRESS = MakeMenuitem(GetStr(MSG_MESSAGE_GETADDRESS), MMEN_SAVEADDR),
+            MUIA_Family_Child, data->GUI.MI_GETADDRESS = Menuitem(GetStr(MSG_MA_MSAVEADDRESS), "J", TRUE, FALSE, MMEN_SAVEADDR),
             MUIA_Family_Child, data->GUI.MI_SELECT = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_Select),
-               MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_SelectAll), MMEN_SELALL),
-               MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_SelectNone), MMEN_SELNONE),
-               MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_SelectToggle), MMEN_SELTOGG),
+               MUIA_Family_Child, Menuitem(GetStr(MSG_MA_SELECTALL), "L", TRUE, FALSE, MMEN_SELALL),
+               MUIA_Family_Child, Menuitem(GetStr(MSG_MA_SELECTNONE), "-", TRUE, FALSE, MMEN_SELNONE),
+               MUIA_Family_Child, Menuitem(GetStr(MSG_MA_SELECTTOGGLE), "=", TRUE, FALSE, MMEN_SELTOGG),
             End,
             MUIA_Family_Child, data->GUI.MI_STATUS = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_SetStatus),
-               MUIA_Family_Child, data->GUI.MI_TOMARKED = MakeMenuitem(GetStr(MSG_MA_TOMARKED), MMEN_TOMARKED),
-               MUIA_Family_Child, data->GUI.MI_TOUNMARKED = MakeMenuitem(GetStr(MSG_MA_TOUNMARKED), MMEN_TOUNMARKED),
-               MUIA_Family_Child, data->GUI.MI_TOUNREAD = MakeMenuitem(GetStr(MSG_MA_ToUnread), MMEN_TOUNREAD),
-               MUIA_Family_Child, data->GUI.MI_TOREAD = MakeMenuitem(GetStr(MSG_MA_ToRead), MMEN_TOREAD),
-               MUIA_Family_Child, data->GUI.MI_TOHOLD = MakeMenuitem(GetStr(MSG_MA_ToHold), MMEN_TOHOLD),
-               MUIA_Family_Child, data->GUI.MI_TOQUEUED = MakeMenuitem(GetStr(MSG_MA_ToQueued), MMEN_TOQUEUED),
+               MUIA_Family_Child, data->GUI.MI_TOMARKED = Menuitem(GetStr(MSG_MA_TOMARKED), ",", TRUE, FALSE, MMEN_TOMARKED),
+               MUIA_Family_Child, data->GUI.MI_TOUNMARKED = Menuitem(GetStr(MSG_MA_TOUNMARKED), ".", TRUE, FALSE, MMEN_TOUNMARKED),
+               MUIA_Family_Child, data->GUI.MI_TOUNREAD = Menuitem(GetStr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, MMEN_TOUNREAD),
+               MUIA_Family_Child, data->GUI.MI_TOREAD = Menuitem(GetStr(MSG_MA_TOREAD), "]", TRUE, FALSE, MMEN_TOREAD),
+               MUIA_Family_Child, data->GUI.MI_TOHOLD = Menuitem(GetStr(MSG_MA_TOHOLD), "{", TRUE, FALSE, MMEN_TOHOLD),
+               MUIA_Family_Child, data->GUI.MI_TOQUEUED = Menuitem(GetStr(MSG_MA_TOQUEUED), "}", TRUE, FALSE, MMEN_TOQUEUED),
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-               MUIA_Family_Child, data->GUI.MI_ALLTOREAD = MakeMenuitem(GetStr(MSG_MA_ALLTOREAD), MMEN_ALLTOREAD),
+               MUIA_Family_Child, data->GUI.MI_ALLTOREAD = Menuitem(GetStr(MSG_MA_ALLTOREAD), "#", TRUE, FALSE, MMEN_ALLTOREAD),
             End,
-            MUIA_Family_Child, data->GUI.MI_CHSUBJ = MakeMenuitem(GetStr(MSG_MA_ChangeSubj), MMEN_CHSUBJ),
+            MUIA_Family_Child, data->GUI.MI_CHSUBJ = Menuitem(GetStr(MSG_MA_ChangeSubj), NULL, TRUE, FALSE, MMEN_CHSUBJ),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, data->GUI.MI_SEND = MakeMenuitem(GetStr(MSG_MA_MSend), MMEN_SEND),
+            MUIA_Family_Child, data->GUI.MI_SEND = Menuitem(GetStr(MSG_MA_MSend), NULL, TRUE, FALSE, MMEN_SEND),
          End,
          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Settings),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_SETTINGS_ADDRESSBOOK), MMEN_ABOOK),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_SETTINGS_CONFIG), MMEN_CONFIG),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_SETTINGS_USERS), MMEN_USER),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_SETTINGS_MUI), MMEN_MUI),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_MADDRESSBOOK), "A", TRUE, FALSE, MMEN_ABOOK),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_MCONFIG), "K", TRUE, FALSE, MMEN_CONFIG),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_SETTINGS_USERS), NULL, TRUE, FALSE, MMEN_USER),
+            MUIA_Family_Child, Menuitem(GetStr(MSG_SETTINGS_MUI), NULL, TRUE, FALSE, MMEN_MUI),
          End,
       End;
 

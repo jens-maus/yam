@@ -294,15 +294,15 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   // We create the ContextMenu now
   data->context_menu = MenustripObject,
     Child, MenuObjectT(folder ? FolderName(folder) : GetStr(MSG_FOLDER_NONSEL)),
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_EDIT),           MUIA_Menuitem_Enabled, !disable_edit,   MUIA_UserData, CMN_EDITF,   End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_DELETE),         MUIA_Menuitem_Enabled, !disable_delete, MUIA_UserData, CMN_DELETEF, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_UpdateIndex),        MUIA_Menuitem_Enabled, !disable_update, MUIA_UserData, CMN_INDEX,   End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_FOLDER_EDIT),           MUIA_Menuitem_Enabled, !disable_edit,   MUIA_UserData, CMN_EDITF,   End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_FOLDER_DELETE),         MUIA_Menuitem_Enabled, !disable_delete, MUIA_UserData, CMN_DELETEF, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_UPDATEINDEX),        MUIA_Menuitem_Enabled, !disable_update, MUIA_UserData, CMN_INDEX,   End,
       Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_NEWFOLDER),      MUIA_UserData, CMN_NEWF,   End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_NEWFOLDERGROUP), MUIA_UserData, CMN_NEWFG,  End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_FOLDER_NEWFOLDER),      MUIA_UserData, CMN_NEWF,   End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_FOLDER_NEWFOLDERGROUP), MUIA_UserData, CMN_NEWFG,  End,
       Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_SNAPSHOT),       MUIA_UserData, CMN_SNAPS,  End,
-      Child, lastItem = MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_RELOAD),         MUIA_UserData, CMN_RELOAD, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_FOLDER_SNAPSHOT),       MUIA_UserData, CMN_SNAPS,  End,
+      Child, lastItem = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_FOLDER_RELOAD),         MUIA_UserData, CMN_RELOAD, End,
     End,
   End;
 
@@ -313,7 +313,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     Object *newItem;
 
     // insert a BARLABEL first
-    if((newItem = MakeMenuitem(NULL, 0)) != NULL)
+    if((newItem = MenuBarLabel) != NULL)
     {
       DoMethod(data->context_menu, MUIM_Family_Insert, newItem, lastItem);
       lastItem = newItem;
@@ -321,7 +321,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 
     // check if this is the trash folder
     if(isTrashFolder(folder) &&
-       (newItem = MakeMenuitem(GetStripStr(MSG_MA_RemoveDeleted), CMN_EMPTYTRASH)) != NULL)
+       (newItem = Menuitem(GetStr(MSG_MA_REMOVEDELETED), NULL, TRUE, FALSE, CMN_EMPTYTRASH)) != NULL)
     {
       DoMethod(data->context_menu, MUIM_Family_Insert, newItem, lastItem);
       lastItem = newItem;
@@ -329,7 +329,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 
     // check if this is the SPAM folder
     if(isSpamFolder(folder) &&
-       (newItem = MakeMenuitem(GetStripStr(MSG_MA_REMOVESPAM), CMN_EMPTYSPAM)) != NULL)
+       (newItem = Menuitem(GetStr(MSG_MA_REMOVESPAM), NULL, TRUE, FALSE, CMN_EMPTYSPAM)) != NULL)
     {
       DoMethod(data->context_menu, MUIM_Family_Insert, newItem, lastItem);
       lastItem = newItem;

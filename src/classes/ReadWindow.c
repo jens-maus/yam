@@ -213,12 +213,12 @@ OVERLOAD(OM_NEW)
         MenuChild, MenuBarLabel,
         MenuChild, Menuitem(GetStr(MSG_MA_MGetAddress), "J", TRUE, FALSE, RMEN_SAVEADDR),
         MenuChild, data->MI_STATUS = MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_SetStatus),
-          MenuChild, data->MI_TOMARKED = MakeMenuitem(GetStr(MSG_MA_TOMARKED), RMEN_TOMARKED),
-          MenuChild, data->MI_TOUNMARKED = MakeMenuitem(GetStr(MSG_MA_TOUNMARKED), RMEN_TOUNMARKED),
-          MenuChild, data->MI_TOUNREAD = MakeMenuitem(GetStr(MSG_MA_ToUnread), RMEN_TOUNREAD),
-          MenuChild, data->MI_TOREAD = MakeMenuitem(GetStr(MSG_MA_ToRead), RMEN_TOREAD),
-          MenuChild, data->MI_TOHOLD = MakeMenuitem(GetStr(MSG_MA_ToHold), RMEN_TOHOLD),
-          MenuChild, data->MI_TOQUEUED = MakeMenuitem(GetStr(MSG_MA_ToQueued), RMEN_TOQUEUED),
+          MenuChild, data->MI_TOMARKED = Menuitem(GetStr(MSG_MA_TOMARKED), ",", TRUE, FALSE, RMEN_TOMARKED),
+          MenuChild, data->MI_TOUNMARKED = Menuitem(GetStr(MSG_MA_TOUNMARKED), ".", TRUE, FALSE, RMEN_TOUNMARKED),
+          MenuChild, data->MI_TOUNREAD = Menuitem(GetStr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, RMEN_TOUNREAD),
+          MenuChild, data->MI_TOREAD = Menuitem(GetStr(MSG_MA_TOREAD), "]", TRUE, FALSE, RMEN_TOREAD),
+          MenuChild, data->MI_TOHOLD = Menuitem(GetStr(MSG_MA_TOHOLD), "{", TRUE, FALSE, RMEN_TOHOLD),
+          MenuChild, data->MI_TOQUEUED = Menuitem(GetStr(MSG_MA_TOQUEUED), "}", TRUE, FALSE, RMEN_TOQUEUED),
         End,
         MenuChild, data->MI_CHSUBJ = Menuitem(GetStr(MSG_MA_ChangeSubj), NULL, TRUE, FALSE, RMEN_CHSUBJ),
       End,
@@ -444,7 +444,6 @@ DECLARE(ReadMail) // struct Mail *mail
   GETDATA;
   struct Mail *mail = msg->mail;
   struct Folder *folder = mail->Folder;
-  const char *p;
   BOOL isRealMail   = !isVirtualMail(mail);
   BOOL isSentMail   = isRealMail && isSentMailFolder(folder);
   BOOL isSpamMail   = !isRealMail || !C->SpamFilterEnabled || hasStatusSpam(mail);
@@ -478,17 +477,9 @@ DECLARE(ReadMail) // struct Mail *mail
   // change the menu item title of the
   // Edit item so that we either display "Edit" or "Edit as New"
   if(isOutgoingFolder(folder))
-    p = GetStr(MSG_MESSAGE_EDIT);
+    set(data->MI_EDIT, MUIA_Menuitem_Title, GetStr(MSG_MA_MEDIT));
   else
-    p = GetStr(MSG_MESSAGE_EDITASNEW);
-
-  if(p)
-  {
-    if(p[1] == '\0')
-      set(data->MI_EDIT, MUIA_Menuitem_Title, p+2);
-    else
-      set(data->MI_EDIT, MUIA_Menuitem_Title, p);
-  }
+    set(data->MI_EDIT, MUIA_Menuitem_Title, GetStr(MSG_MA_MEDITASNEW));
 
   // enable/disable some menuitems in advance
   set(data->MI_EDIT,      MUIA_Menuitem_Enabled, !inSpamFolder);
@@ -1306,7 +1297,7 @@ DECLARE(UpdateSpamControls)
     // if not, create a new entry and add it to the current layout
     if(data->MI_TOHAM == NULL || isChildOfFamily(data->MI_STATUS, data->MI_TOHAM) == FALSE)
     {
-      if((data->MI_TOHAM = MakeMenuitem(GetStr(MSG_MA_TONOTSPAM), RMEN_TOHAM)) != NULL)
+      if((data->MI_TOHAM = Menuitem(GetStr(MSG_MA_TONOTSPAM), NULL, TRUE, FALSE, RMEN_TOHAM)) != NULL)
       {
         set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isSpamMail);
         DoMethod(data->MI_STATUS, MUIM_Family_Insert, data->MI_TOHAM, data->MI_TOQUEUED);
@@ -1315,7 +1306,7 @@ DECLARE(UpdateSpamControls)
 
     if(data->MI_TOSPAM == NULL || isChildOfFamily(data->MI_STATUS, data->MI_TOSPAM) == FALSE)
     {
-      if((data->MI_TOSPAM = MakeMenuitem(GetStr(MSG_MA_TOSPAM), RMEN_TOSPAM)) != NULL)
+      if((data->MI_TOSPAM = Menuitem(GetStr(MSG_MA_TOSPAM), NULL, TRUE, FALSE, RMEN_TOSPAM)) != NULL)
       {
         set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isSpamMail && !isHamMail);
         DoMethod(data->MI_STATUS, MUIM_Family_Insert, data->MI_TOSPAM, data->MI_TOQUEUED);

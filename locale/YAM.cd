@@ -636,12 +636,6 @@ Show last message
 MSG_MA_Restart (203//)
 Restart
 ;
-MSG_MA_Hide (204//)
-H\000Hide
-;
-MSG_MA_Quit (205//)
-Q\000Quit
-;
 MSG_MA_NewFolder (206//)
 New folder
 ;This is the title of the new folder window, not the menu item.
@@ -658,41 +652,8 @@ Reset
 MSG_MA_Select (211//)
 Select
 ;
-MSG_MA_SelectAll (212//)
-L\000All
-;
-MSG_MA_SelectNone (213//)
--\000None
-;
-MSG_MA_SelectToggle (214//)
-=\000Toggle
-;
-MSG_MA_MSearch (215//)
-F\000Search...
-;
-MSG_MA_MFilter (216//)
-I\000Filter
-;
-MSG_MA_RemoveDeleted (217//)
-Z\000Empty trash
-;
-MSG_MA_UpdateIndex (218//)
-U\000Update index
-;
 MSG_MA_FlushIndices (219//)
 Flush indices
-;
-MSG_MA_MSendAll (222//)
-S\000Send queued mail
-;
-MSG_MA_Exchange (223//)
-X\000Exchange mail
-;
-MSG_MA_MGetMail (224//)
-G\000Get new mail
-;
-MSG_MA_MRead (225//)
-D\000Read
 ;
 MSG_MA_MEdit (226//)
 Edit...
@@ -726,18 +687,6 @@ Save address...
 ;
 MSG_MA_SetStatus (236//)
 Set status to
-;
-MSG_MA_ToUnread (237//)
-[\000Unread
-;
-MSG_MA_ToRead (238//)
-]\000Read
-;
-MSG_MA_ToHold (239//)
-{\000Hold
-;
-MSG_MA_ToQueued (240//)
-}\000Queued
 ;
 MSG_MA_ChangeSubj (241//)
 Change subject...
@@ -4326,9 +4275,6 @@ Rexx script
 ;
 ; ADDED AFTER 04-DEC-2000
 ;
-MSG_PROJECT_ABOUT (1298//)
-?\000About...
-;
 MSG_FOLDER_NEWFOLDER (1300//)
 New folder...
 ;
@@ -4344,50 +4290,8 @@ Import...
 MSG_FOLDER_EXPORT (1305//)
 Export...
 ;
-MSG_MESSAGE_EDIT (1306//)
-E\000Edit...
-;
-MSG_MESSAGE_MOVE (1307//)
-M\000Move...
-;
-MSG_MESSAGE_COPY (1308//)
-Y\000Copy...
-;
-MSG_MESSAGE_PRINT (1309//)
-P\000Print
-;
-MSG_MESSAGE_SAVE (1310//)
-V\000Save...
-;
-MSG_MESSAGE_SAVEATT (1311//)
-T\000Save...
-;
-MSG_MESSAGE_CROP (1312//)
-O\000Crop
-;
 MSG_MESSAGE_EXPORT (1313//)
 Export...
-;
-MSG_MESSAGE_NEW (1314//)
-N\000New
-;
-MSG_MESSAGE_REPLY (1315//)
-R\000Reply...
-;
-MSG_MESSAGE_FORWARD (1316//)
-W\000Forward...
-;
-MSG_MESSAGE_BOUNCE (1317//)
-B\000Bounce...
-;
-MSG_MESSAGE_GETADDRESS (1318//)
-J\000Save address...
-;
-MSG_SETTINGS_ADDRESSBOOK (1320//)
-A\000Address Book...
-;
-MSG_SETTINGS_CONFIG (1321//)
-K\000Configuration...
 ;
 MSG_SETTINGS_USERS (1322//)
 Users...
@@ -4849,12 +4753,6 @@ Please enter a valid folder name before you proceed.
 MSG_FO_FOLDERPATHINVALID (1472//)
 You haven't specified a valid path for the new folder.
 ;
-MSG_MA_TOMARKED (1473//)
-,\000Marked
-;
-MSG_MA_TOUNMARKED (1474//)
-.\000Unmarked
-;
 MSG_MA_CTX_DEFWIDTH_THIS (1476//)
 Default Width: this
 ;
@@ -5231,9 +5129,6 @@ correctly.
 ;
 MSG_ER_CONTINUEEXIT (1571//)
 *_Continue|Exit
-;
-MSG_MA_ALLTOREAD (1572//)
-#\000All to Read
 ;
 MSG_ER_MOVEFOLDERDIR (1573//)
 An error occurred while trying to move the content of folder \
@@ -5879,9 +5774,6 @@ MSG_MA_CONFIRMDELETION (1742//)
 Do you really want to delete these\n\
 messages?
 ; AMOUNT
-MSG_MESSAGE_EDITASNEW (1743//)
-E\000Edit As New...
-;
 MSG_MA_SPAM (1744//)
 Spam
 ;
@@ -6096,3 +5988,112 @@ separately from the global configuration!\n\
 Otherwise they will be lost!\n\
 \n\
 Do you want to save the changes now?
+;
+MSG_MA_HIDE (1809//)
+Hide
+;
+MSG_MA_QUIT (1810//)
+Quit
+;
+MSG_MA_SELECTALL (1811//)
+All
+;
+MSG_MA_SELECTNONE (1812//)
+None
+;
+MSG_MA_SELECTTOGGLE (1813//)
+Toggle
+;
+MSG_MA_MSEARCH (1814//)
+Search...
+;
+MSG_MA_MFILTER (1815//)
+Filter
+;
+MSG_MA_REMOVEDELETED (1816//)
+Empty trash
+;
+MSG_MA_UPDATEINDEX (1817//)
+Update index
+;
+MSG_MA_MSENDALL (1818//)
+Send queued mail
+;
+MSG_MA_MEXCHANGE (1819//)
+Exchange mail
+;
+MSG_MA_MGETMAIL (1820//)
+Get new mail
+;
+MSG_MA_MREAD (1821//)
+Read
+;
+MSG_MA_TOUNREAD (1822//)
+Unread
+;
+MSG_MA_TOREAD (1823//)
+Read
+;
+MSG_MA_TOHOLD (1824//)
+Hold
+;
+MSG_MA_TOQUEUED (1825//)
+Queued
+;
+MSG_PROJECT_MABOUT (1826//)
+About...
+;
+MSG_MA_MEDIT (1827//)
+Edit...
+;
+MSG_MA_MMOVE (1828//)
+Move...
+;
+MSG_MA_MCOPY (1829//)
+Copy...
+;
+MSG_MA_MPRINT (1830//)
+Print
+;
+MSG_MA_MSAVE (1831//)
+Save...
+;
+MSG_MA_MSAVEATT (1832//)
+Save...
+;
+MSG_MA_MCROP (1833//)
+Crop
+;
+MSG_MA_MNEW (1834//)
+New
+;
+MSG_MA_MREPLY (1835//)
+Reply...
+;
+MSG_MA_MFORWARD (1836//)
+Forward...
+;
+MSG_MA_MBOUNCE (1837//)
+Bounce...
+;
+MSG_MA_MSAVEADDRESS (1838//)
+Save address...
+;
+MSG_MA_MADDRESSBOOK (1839//)
+Address Book...
+;
+MSG_MA_MCONFIG (1840//)
+Configuration...
+;
+MSG_MA_TOMARKED (1841//)
+Marked
+;
+MSG_MA_TOUNMARKED (1842//)
+Unmarked
+;
+MSG_MA_ALLTOREAD (1843//)
+All to Read
+;
+MSG_MA_MEDITASNEW (1844//)
+Edit As New...
+;

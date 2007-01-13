@@ -37,7 +37,6 @@
 
 // catalog translation functions
 extern const char *GetStr(const void *);
-extern const char *GetStripStr(const void *);
 extern BOOL Open%bCatalog(void);
 extern void Close%bCatalog(void);
 

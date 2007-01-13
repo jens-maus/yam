@@ -55,15 +55,6 @@ const char *GetStr(const void *fcstr)
   return defaultstr;
 }
 ///
-/// GetStripStr()
-// function that will strip out the special menusigns
-const char *GetStripStr(const void *fcstr)
-{
-  const char *loc_str = GetStr(fcstr);
-
-  return (loc_str[1] == 0 ? &loc_str[2] : loc_str);
-}
-///
 /// Close%bCatalog()
 void Close%bCatalog(void)
 {

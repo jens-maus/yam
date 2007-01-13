@@ -821,14 +821,6 @@ MSG_MA_Restart
 Neu starten
 ; Restart
 ;
-MSG_MA_Hide
-H\000Verbergen
-; H\000Hide
-;
-MSG_MA_Quit
-Q\000Beenden
-; Q\000Quit
-;
 MSG_MA_NewFolder
 Neues Postfach
 ; New folder
@@ -850,53 +842,9 @@ MSG_MA_Select
 Auswählen
 ; Select
 ;
-MSG_MA_SelectAll
-L\000Alle
-; L\000All
-;
-MSG_MA_SelectNone
--\000Keine
-; -\000None
-;
-MSG_MA_SelectToggle
-=\000Invertieren
-; =\000Toggle
-;
-MSG_MA_MSearch
-F\000Suchen...
-; F\000Search...
-;
-MSG_MA_MFilter
-I\000Filtern...
-; I\000Filter
-;
-MSG_MA_RemoveDeleted
-Z\000Papierkorb leeren
-; Z\000Empty trash
-;
-MSG_MA_UpdateIndex
-U\000Index erneuern
-; U\000Update index
-;
 MSG_MA_FlushIndices
 Indizes freigeben
 ; Flush indices
-;
-MSG_MA_MSendAll
-S\000Post in Warteschlange senden
-; S\000Send queued mail
-;
-MSG_MA_Exchange
-X\000Post austauschen
-; X\000Exchange mail
-;
-MSG_MA_MGetMail
-G\000Neue Post holen
-; G\000Get new mail
-;
-MSG_MA_MRead
-D\000Lesen
-; D\000Read
 ;
 MSG_MA_MEdit
 Ändern...
@@ -941,22 +889,6 @@ Adresse speichern...
 MSG_MA_SetStatus
 Status setzen
 ; Set status to
-;
-MSG_MA_ToUnread
-[\000Ungelesen
-; [\000Unread
-;
-MSG_MA_ToRead
-]\000Gelesen
-; ]\000Read
-;
-MSG_MA_ToHold
-{\000Gehalten
-; {\000Hold
-;
-MSG_MA_ToQueued
-}\000In Warteschlange
-; }\000Queued
 ;
 MSG_MA_ChangeSubj
 Betreff ändern...
@@ -5611,10 +5543,6 @@ Rexx-Skript
 ;
 ; ADDED AFTER 04-DEC-2000
 ;
-MSG_PROJECT_ABOUT
-?\000Über...
-; ?\000About...
-;
 MSG_FOLDER_NEWFOLDER
 Neues Postfach...
 ; New folder...
@@ -5635,65 +5563,9 @@ MSG_FOLDER_EXPORT
 Exportieren...
 ; Export...
 ;
-MSG_MESSAGE_EDIT
-E\000Ändern...
-; E\000Edit...
-;
-MSG_MESSAGE_MOVE
-M\000Verschieben...
-; M\000Move...
-;
-MSG_MESSAGE_COPY
-Y\000Kopieren...
-; Y\000Copy...
-;
-MSG_MESSAGE_PRINT
-P\000Drucken
-; P\000Print
-;
-MSG_MESSAGE_SAVE
-V\000Speichern...
-; V\000Save...
-;
-MSG_MESSAGE_SAVEATT
-T\000Speichern...
-; T\000Save...
-;
-MSG_MESSAGE_CROP
-O\000Abschneiden
-; O\000Crop
-;
 MSG_MESSAGE_EXPORT
 Exportieren...
 ; Export...
-;
-MSG_MESSAGE_NEW
-N\000Neu
-; N\000New
-;
-MSG_MESSAGE_REPLY
-R\000Antworten...
-; R\000Reply...
-;
-MSG_MESSAGE_FORWARD
-W\000Weiterleiten...
-; W\000Forward...
-;
-MSG_MESSAGE_BOUNCE
-B\000Umleiten...
-; B\000Bounce...
-;
-MSG_MESSAGE_GETADDRESS
-J\000Adresse speichern...
-; J\000Save address...
-;
-MSG_SETTINGS_ADDRESSBOOK
-A\000Adressbuch...
-; A\000Address Book...
-;
-MSG_SETTINGS_CONFIG
-K\000Konfiguration...
-; K\000Configuration...
 ;
 MSG_SETTINGS_USERS
 Benutzer...
@@ -6321,14 +6193,6 @@ Sie haben kein Verzeichnis für das neue Postfach angegeben.\n\
 Bitte geben Sie einen Pfad an bevor Sie fortfahren.
 ; You haven't specified a valid path for the new folder.
 ;
-MSG_MA_TOMARKED
-,\000Markiert
-; ,\000Marked
-;
-MSG_MA_TOUNMARKED
-.\000Nicht Markiert
-; .\000Unmarked
-;
 MSG_MA_CTX_DEFWIDTH_THIS
 Standardbreite: diese
 ; Default Width: this
@@ -6740,9 +6604,6 @@ automatischen Login Ihres Nutzers vornehmen.
 ;
 MSG_ER_CONTINUEEXIT
 *_Fortfahren|Beenden
-;
-MSG_MA_ALLTOREAD
-#\000Alle auf Gelesen
 ;
 MSG_ER_MOVEFOLDERDIR
 Ein Fehler trat beim Versuch auf den Inhalt des Postfaches \
@@ -7412,9 +7273,6 @@ MSG_MA_CONFIRMDELETION
 \n\
 Möchten Sie diese wirklich löschen?
 ; AMOUNT
-MSG_MESSAGE_EDITASNEW
-E\000Als neu editieren...
-;
 MSG_MA_SPAM
 Spam
 ;
@@ -7627,3 +7485,112 @@ von der Konfiguration gespeichert werden!\n\
 Ansonsten sind die Änderungen verloren!\n\
 \n\
 Wollen Sie die Änderungen jetzt speichern?\n\
+;
+MSG_MA_HIDE
+Verbergen
+;
+MSG_MA_QUIT
+Beenden
+;
+MSG_MA_SELECTALL
+Alle
+;
+MSG_MA_SELECTNONE
+Keine
+;
+MSG_MA_SELECTTOGGLE
+Invertieren
+;
+MSG_MA_MSEARCH
+Suchen...
+;
+MSG_MA_MFILTER
+Filtern...
+;
+MSG_MA_REMOVEDELETED
+Papierkorb leeren
+;
+MSG_MA_UPDATEINDEX
+Index erneuern
+;
+MSG_MA_MSENDALL
+Wartende Post senden
+;
+MSG_MA_MEXCHANGE
+Post austauschen
+;
+MSG_MA_MGETMAIL
+Neue Post holen
+;
+MSG_MA_MREAD
+Lesen
+;
+MSG_MA_TOUNREAD
+Ungelesen
+;
+MSG_MA_TOREAD
+Gelesen
+;
+MSG_MA_TOHOLD
+Gehalten
+;
+MSG_MA_TOQUEUED
+In Warteschlange
+;
+MSG_PROJECT_MABOUT
+Über...
+;
+MSG_MA_MEDIT
+Ändern...
+;
+MSG_MA_MMOVE
+Verschieben...
+;
+MSG_MA_MCOPY
+Kopieren...
+;
+MSG_MA_MPRINT
+Drucken
+;
+MSG_MA_MSAVE
+Speichern...
+;
+MSG_MA_MSAVEATT
+Speichern...
+;
+MSG_MA_MCROP
+Abschneiden
+;
+MSG_MA_MNEW
+Neu
+;
+MSG_MA_MREPLY
+Antworten...
+;
+MSG_MA_MFORWARD
+Weiterleiten...
+;
+MSG_MA_MBOUNCE
+Umleiten...
+;
+MSG_MA_MSAVEADDRESS
+Adresse speichern...
+;
+MSG_MA_MADDRESSBOOK
+Adressbuch...
+;
+MSG_MA_MCONFIG
+Konfiguration...
+;
+MSG_MA_TOMARKED
+Markiert
+;
+MSG_MA_TOUNMARKED
+Nicht Markiert
+;
+MSG_MA_ALLTOREAD
+Alle auf Gelesen
+;
+MSG_MA_MEDITASNEW
+Als neu editieren...
+;

@@ -4683,28 +4683,6 @@ Object *MakeNumeric(int min, int max, BOOL percent)
    End;
 }
 ///
-/// MakeMenuitem
-//  Creates a menu item from a catalog string
-Object *MakeMenuitem(const char *str, ULONG ud)
-{
-  if(str == NULL)
-    return MenuitemObject,
-             MUIA_Menuitem_Title, NM_BARLABEL,
-           End;
-
-  if(str[1] == '\0')
-    return MenuitemObject,
-             MUIA_Menuitem_Title,    str+2,
-             MUIA_Menuitem_Shortcut, str,
-             MUIA_UserData,          ud,
-           End;
-
-  return MenuitemObject,
-           MUIA_Menuitem_Title, str,
-           MUIA_UserData,       ud,
-         End;
-}
-///
 /// SetupMenu
 //  Initializes a MUI menu item
 void SetupMenu(int type, struct NewMenu *menu, char *label, char *shortcut, int id)

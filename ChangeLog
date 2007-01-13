@@ -7,6 +7,13 @@ $URL$
 
 2007-01-13  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.cd, misc: got rid of all catalog string using the more or less hackish
+    "\000" NUL-termination sequence to make it possible to override certain
+    menu hotkeys directly in the catalog translation. First of all that method
+    might cause problems on incorrectly translated catalogs, second YAM should
+    come with the very same hotkeys on all languages and last but not least
+    by removing that "hack" we make it possible to eventually make those
+    hotkeys user configurable in a future version.
   * YAM_MA.c, ReadWindow.c: synced the read window's menu items with what the
     main YAM window provides in sense of modifying the mail status. Now the
     read window menu should in fact be somewhat the same like the main window
