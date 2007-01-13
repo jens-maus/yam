@@ -6873,7 +6873,7 @@ base64 kodierte Teil der Nachricht während der Übertragung \
 verstümmelt wurde.
 ; PARTNR, MSGFILE
 MSG_ER_B64DECTRUNCTXT
-Manch lesbarer Text des MIME Part %ld der Nachricht '%s' \
+Manch lesbarer Text des MIME-Part %ld der Nachricht '%s' \
 konnte nicht base64 dekodiert werden und könnte inkorrekt \
 oder gar nicht dargestellt werden.\n\
 \n\

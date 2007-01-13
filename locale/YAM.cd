@@ -5817,7 +5817,7 @@ Messages: %ld (%ld new, %ld unread)
 ; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MA_MIMEPART_INFO (1725//)
-\ebAttachment - MIME-Part #%ld\en\n\
+\ebAttachment - MIME part #%ld\en\n\
 Name: %s\n\
 Description: %s\n\
 Content-Type: %s <%s>\n\
@@ -5825,7 +5825,7 @@ Size: ~%s
 ; PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
 ;
 MSG_MA_MIMEPART_MENU (1726//)
-Attachment/MIME-Part #%ld
+Attachment/MIME part #%ld
 ;
 MSG_CO_PGPPASSINTERVAL1 (1727//)
 Remember passphrase for
