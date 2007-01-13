@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (20.12.2006)
+## version $VER: YAM.catalog 6.0 (13.01.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -5763,10 +5763,6 @@ MSG_CO_Del
 Löschen
 ; Delete
 ;
-MSG_RE_SetUnread
-Status auf ungelesen setzen
-; Set status to unread
-;
 MSG_WR_AltQuoted
 Alternatives Zitat
 ; Alternate quoted
@@ -6332,10 +6328,6 @@ MSG_MA_TOMARKED
 MSG_MA_TOUNMARKED
 .\000Nicht Markiert
 ; .\000Unmarked
-;
-MSG_RE_SETMARKED
-Status auf markiert setzen
-; Set status to marked
 ;
 MSG_MA_CTX_DEFWIDTH_THIS
 Standardbreite: diese
@@ -7469,12 +7461,6 @@ Spam
 MSG_MA_TONOTSPAM
 kein Spam
 ;
-MSG_RE_SETSPAM
-Status auf Spam setzen
-;
-MSG_RE_SETNOTSPAM
-Status auf kein Spam setzen
-;
 MSG_CO_CRDSPAMFILTER
 Spam
 ;
@@ -7607,6 +7593,9 @@ Entferne Spam aus Ordner...
 ;
 MSG_MA_TRASH
 Papierkorb
+;
+MSG_WR_SEARCH
+Suchen
 ;
 MSG_AB_IMPORT
 Importieren

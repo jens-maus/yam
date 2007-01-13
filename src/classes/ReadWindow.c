@@ -38,15 +38,11 @@
 /* CLASSDATA
 struct Data
 {
-  Object *MI_MESSAGE;
   Object *MI_EDIT;
   Object *MI_MOVE;
   Object *MI_DELETE;
   Object *MI_DETACH;
   Object *MI_CROP;
-  Object *MI_SETMARKED;
-  Object *MI_TOSPAM;
-  Object *MI_TOHAM;
   Object *MI_CHSUBJ;
   Object *MI_NAVIG;
   Object *MI_WRAPH;
@@ -57,9 +53,19 @@ struct Data
   Object *MI_CHKSIG;
   Object *MI_SAVEDEC;
   Object *MI_REPLY;
+  Object *MI_FORWARD;
   Object *MI_BOUNCE;
   Object *MI_NEXTTHREAD;
   Object *MI_PREVTHREAD;
+  Object *MI_STATUS;
+  Object *MI_TOMARKED;
+  Object *MI_TOUNMARKED;
+  Object *MI_TOUNREAD;
+  Object *MI_TOREAD;
+  Object *MI_TOHOLD;
+  Object *MI_TOQUEUED;
+  Object *MI_TOSPAM;
+  Object *MI_TOHAM;
   Object *windowToolbar;
   Object *statusIconGroup;
   Object *readMailGroup;
@@ -74,10 +80,11 @@ struct Data
 enum
 {
   RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,RMEN_DETACH,
-  RMEN_CROP,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_SETUNREAD,RMEN_SETMARKED,
-  RMEN_SETSPAM,RMEN_SETHAM,RMEN_CHSUBJ,RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,
-  RMEN_NEXTTH,RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,
-  RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT,RMEN_SIMAGE
+  RMEN_CROP,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_CHSUBJ,RMEN_PREV,
+  RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,RMEN_NEXTTH,RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,
+  RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,
+  RMEN_FFONT,RMEN_SIMAGE,RMEN_TOMARKED,RMEN_TOUNMARKED,RMEN_TOUNREAD,RMEN_TOREAD,RMEN_TOHOLD,
+  RMEN_TOQUEUED,RMEN_TOSPAM,RMEN_TOHAM
 };
 
 /* Private Functions */
@@ -185,13 +192,13 @@ OVERLOAD(OM_NEW)
     MUIA_HelpNode,       "RE_W",
     MUIA_Window_ID,     MAKE_ID('R','D','W',data->windowNumber),
     MUIA_Window_Menustrip, MenustripObject,
-      MenuChild, data->MI_MESSAGE = MenuObject, MUIA_Menu_Title, GetStr(MSG_Message),
+      MenuChild, MenuObject, MUIA_Menu_Title, GetStr(MSG_Message),
         MenuChild, data->MI_EDIT = Menuitem(GetStr(MSG_MA_MEdit), "E", TRUE, FALSE, RMEN_EDIT),
         MenuChild, data->MI_MOVE = Menuitem(GetStr(MSG_MA_MMove), "M", TRUE, FALSE, RMEN_MOVE),
         MenuChild, Menuitem(GetStr(MSG_MA_MCopy), "Y", TRUE, FALSE, RMEN_COPY),
         MenuChild, data->MI_DELETE = Menuitem(GetStr(MSG_MA_MDelete),  "Del", TRUE, TRUE,  RMEN_DELETE),
         MenuChild, MenuBarLabel,
-        MenuChild, Menuitem(GetStr(MSG_Print),       "P",     TRUE, FALSE, RMEN_PRINT),
+        MenuChild, Menuitem(GetStr(MSG_Print),      "P",     TRUE, FALSE, RMEN_PRINT),
         MenuChild, Menuitem(GetStr(MSG_MA_Save),    "S",     TRUE, FALSE, RMEN_SAVE),
         MenuChild, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Attachments),
           MenuChild, Menuitem(GetStr(MSG_RE_MDisplay),"D",  TRUE,  FALSE, RMEN_DISPLAY),
@@ -201,12 +208,18 @@ OVERLOAD(OM_NEW)
         MenuChild, MenuBarLabel,
         MenuChild, Menuitem(GetStr(MSG_New),         "N", TRUE, FALSE, RMEN_NEW),
         MenuChild, data->MI_REPLY = Menuitem(GetStr(MSG_MA_MReply),   "R", TRUE, FALSE, RMEN_REPLY),
-        MenuChild, Menuitem(GetStr(MSG_MA_MForward), "W", TRUE, FALSE, RMEN_FORWARD),
+        MenuChild, data->MI_FORWARD = Menuitem(GetStr(MSG_MA_MForward), "W", TRUE, FALSE, RMEN_FORWARD),
         MenuChild, data->MI_BOUNCE = Menuitem(GetStr(MSG_MA_MBounce),   "B", TRUE, FALSE, RMEN_BOUNCE),
         MenuChild, MenuBarLabel,
         MenuChild, Menuitem(GetStr(MSG_MA_MGetAddress), "J", TRUE, FALSE, RMEN_SAVEADDR),
-        MenuChild, Menuitem(GetStr(MSG_RE_SetUnread),   "U", TRUE, FALSE, RMEN_SETUNREAD),
-        MenuChild, data->MI_SETMARKED = Menuitem(GetStr(MSG_RE_SETMARKED),    ",", TRUE, FALSE, RMEN_SETMARKED),
+        MenuChild, data->MI_STATUS = MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_SetStatus),
+          MenuChild, data->MI_TOMARKED = MakeMenuitem(GetStr(MSG_MA_TOMARKED), RMEN_TOMARKED),
+          MenuChild, data->MI_TOUNMARKED = MakeMenuitem(GetStr(MSG_MA_TOUNMARKED), RMEN_TOUNMARKED),
+          MenuChild, data->MI_TOUNREAD = MakeMenuitem(GetStr(MSG_MA_ToUnread), RMEN_TOUNREAD),
+          MenuChild, data->MI_TOREAD = MakeMenuitem(GetStr(MSG_MA_ToRead), RMEN_TOREAD),
+          MenuChild, data->MI_TOHOLD = MakeMenuitem(GetStr(MSG_MA_ToHold), RMEN_TOHOLD),
+          MenuChild, data->MI_TOQUEUED = MakeMenuitem(GetStr(MSG_MA_ToQueued), RMEN_TOQUEUED),
+        End,
         MenuChild, data->MI_CHSUBJ = Menuitem(GetStr(MSG_MA_ChangeSubj), NULL, TRUE, FALSE, RMEN_CHSUBJ),
       End,
       MenuChild, data->MI_NAVIG = MenuObject, MUIA_Menu_Title, GetStr(MSG_RE_Navigation),
@@ -302,10 +315,17 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FORWARD,   obj, 3, MUIM_ReadWindow_NewMail, NEW_FORWARD, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_BOUNCE,    obj, 3, MUIM_ReadWindow_NewMail, NEW_BOUNCE, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVEADDR,  obj, 1, MUIM_ReadWindow_GrabSenderAddress);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SETUNREAD, obj, 1, MUIM_ReadWindow_SetMailToUnread);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SETMARKED, obj, 1, MUIM_ReadWindow_SetMailToMarked);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SETSPAM,   obj, 2, MUIM_ReadWindow_ClassifyMessage, BC_SPAM);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SETHAM,    obj, 2, MUIM_ReadWindow_ClassifyMessage, BC_HAM);
+
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOUNREAD,  obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_NONE, SFLAG_NEW|SFLAG_READ);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOREAD,    obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_READ, SFLAG_NEW);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOHOLD,    obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_HOLD|SFLAG_READ, SFLAG_QUEUED|SFLAG_ERROR);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOQUEUED,  obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOMARKED,  obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_MARKED, SFLAG_NONE);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOUNMARKED,obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_NONE, SFLAG_MARKED);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOSPAM,    obj, 2, MUIM_ReadWindow_ClassifyMessage, BC_SPAM);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOHAM,     obj, 2, MUIM_ReadWindow_ClassifyMessage, BC_HAM);
+
+
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_CHSUBJ,    obj, 1, MUIM_ReadWindow_ChangeSubjectRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PREV,      obj, 3, MUIM_ReadWindow_SwitchMail, -1, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEXT,      obj, 3, MUIM_ReadWindow_SwitchMail, +1, 0);
@@ -424,6 +444,7 @@ DECLARE(ReadMail) // struct Mail *mail
   GETDATA;
   struct Mail *mail = msg->mail;
   struct Folder *folder = mail->Folder;
+  const char *p;
   BOOL isRealMail   = !isVirtualMail(mail);
   BOOL isSentMail   = isRealMail && isSentMailFolder(folder);
   BOOL isSpamMail   = !isRealMail || !C->SpamFilterEnabled || hasStatusSpam(mail);
@@ -454,8 +475,23 @@ DECLARE(ReadMail) // struct Mail *mail
     }
   }
 
+  // change the menu item title of the
+  // Edit item so that we either display "Edit" or "Edit as New"
+  if(isOutgoingFolder(folder))
+    p = GetStr(MSG_MESSAGE_EDIT);
+  else
+    p = GetStr(MSG_MESSAGE_EDITASNEW);
+
+  if(p)
+  {
+    if(p[1] == '\0')
+      set(data->MI_EDIT, MUIA_Menuitem_Title, p+2);
+    else
+      set(data->MI_EDIT, MUIA_Menuitem_Title, p);
+  }
+
   // enable/disable some menuitems in advance
-  set(data->MI_EDIT,      MUIA_Menuitem_Enabled, isSentMail && !inSpamFolder);
+  set(data->MI_EDIT,      MUIA_Menuitem_Enabled, !inSpamFolder);
   set(data->MI_MOVE,      MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_DELETE,    MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_DETACH,    MUIA_Menuitem_Enabled, hasAttach);
@@ -463,6 +499,7 @@ DECLARE(ReadMail) // struct Mail *mail
   set(data->MI_CHSUBJ,    MUIA_Menuitem_Enabled, isRealMail && !inSpamFolder);
   set(data->MI_NAVIG,     MUIA_Menu_Enabled,     isRealMail);
   set(data->MI_REPLY,     MUIA_Menuitem_Enabled, !isSentMail && !inSpamFolder);
+  set(data->MI_FORWARD,   MUIA_Menuitem_Enabled, !inSpamFolder);
   set(data->MI_BOUNCE,    MUIA_Menuitem_Enabled, !isSentMail);
   set(data->MI_NEXTTHREAD,MUIA_Menuitem_Enabled, nextMailAvailable);
   set(data->MI_PREVTHREAD,MUIA_Menuitem_Enabled, prevMailAvailable);
@@ -476,6 +513,21 @@ DECLARE(ReadMail) // struct Mail *mail
       // enable, if the mail is not sppam
       set(data->MI_TOHAM,     MUIA_Menuitem_Enabled, isRealMail && isSpamMail);
   }
+
+  // Enable if:
+  //  * the folder is enabled
+  //  * NOT in the "Sent" folder
+  DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isSentMail, data->MI_TOREAD,
+                                                                   data->MI_TOUNREAD,
+                                                                   TAG_DONE);
+
+  // Enable if:
+  //  * the folder is enabled
+  //  * is in the "Outgoing" Folder
+  DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, isOutgoingFolder(folder), data->MI_TOHOLD,
+                                                                                data->MI_TOQUEUED,
+                                                                                TAG_DONE);
+
 
   if(data->windowToolbar)
   {
@@ -517,6 +569,7 @@ DECLARE(ReadMail) // struct Mail *mail
       spamHidden = TRUE;
       hamHidden = TRUE;
     }
+
     // now set the attributes
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIV_TheBar_Attr_Hide, spamHidden);
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIV_TheBar_Attr_Disabled, !isRealMail);
@@ -917,39 +970,24 @@ DECLARE(GrabSenderAddress)
 }
 
 ///
-/// DECLARE(SetMailToUnread)
-//  Sets the status of the current mail to unread
-DECLARE(SetMailToUnread)
+/// DECLARE(SetStatusTo)
+//  Sets the status of the current mail to the define value
+DECLARE(SetStatusTo) // int addflags, int clearflags
 {
   GETDATA;
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
   struct Mail *mail = rmData->mail;
 
-  setStatusToUnread(mail);
+  ENTER();
+
+  MA_ChangeMailStatus(mail, msg->addflags, msg->clearflags);
 
   DoMethod(data->statusIconGroup, MUIM_StatusIconGroup_Update, mail);
   DisplayStatistics(NULL, TRUE);
 
+  RETURN(0);
   return 0;
 }
-
-///
-/// DECLARE(SetMailToMarked)
-//  Sets the flags of the current mail to marked
-DECLARE(SetMailToMarked)
-{
-  GETDATA;
-  struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
-  struct Mail *mail = rmData->mail;
-
-  setStatusToMarked(mail);
-
-  DoMethod(data->statusIconGroup, MUIM_StatusIconGroup_Update, mail);
-  DisplayStatistics(NULL, TRUE);
-
-  return 0;
-}
-
 ///
 /// DECLARE(ChangeSubjectRequest)
 //  Changes the subject of the current message
@@ -1266,21 +1304,21 @@ DECLARE(UpdateSpamControls)
 
     // for each entry check if it exists and if it is part of the menu
     // if not, create a new entry and add it to the current layout
-    if(data->MI_TOHAM == NULL || isChildOfFamily(data->MI_MESSAGE, data->MI_TOHAM) == FALSE)
+    if(data->MI_TOHAM == NULL || isChildOfFamily(data->MI_STATUS, data->MI_TOHAM) == FALSE)
     {
-      if((data->MI_TOHAM =  MakeMenuitem(GetStr(MSG_RE_SETNOTSPAM), RMEN_SETHAM)) != NULL)
+      if((data->MI_TOHAM = MakeMenuitem(GetStr(MSG_MA_TONOTSPAM), RMEN_TOHAM)) != NULL)
       {
         set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isSpamMail);
-        DoMethod(data->MI_MESSAGE, MUIM_Family_Insert, data->MI_TOHAM, data->MI_SETMARKED);
+        DoMethod(data->MI_STATUS, MUIM_Family_Insert, data->MI_TOHAM, data->MI_TOQUEUED);
       }
     }
 
-    if(data->MI_TOSPAM == NULL || isChildOfFamily(data->MI_MESSAGE, data->MI_TOSPAM) == FALSE)
+    if(data->MI_TOSPAM == NULL || isChildOfFamily(data->MI_STATUS, data->MI_TOSPAM) == FALSE)
     {
-      if((data->MI_TOSPAM = MakeMenuitem(GetStr(MSG_RE_SETSPAM), RMEN_SETSPAM)) != NULL)
+      if((data->MI_TOSPAM = MakeMenuitem(GetStr(MSG_MA_TOSPAM), RMEN_TOSPAM)) != NULL)
       {
         set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isSpamMail && !isHamMail);
-        DoMethod(data->MI_MESSAGE, MUIM_Family_Insert, data->MI_TOSPAM, data->MI_SETMARKED);
+        DoMethod(data->MI_STATUS, MUIM_Family_Insert, data->MI_TOSPAM, data->MI_TOQUEUED);
       }
     }
   }
@@ -1288,15 +1326,15 @@ DECLARE(UpdateSpamControls)
   {
     // for each entry check if it exists and if it is part of the menu
     // if yes, then remove the entry and dispose it
-    if(data->MI_TOSPAM != NULL && isChildOfFamily(data->MI_MESSAGE, data->MI_TOSPAM))
+    if(data->MI_TOSPAM != NULL && isChildOfFamily(data->MI_STATUS, data->MI_TOSPAM))
     {
-      DoMethod(data->MI_MESSAGE, MUIM_Family_Remove, data->MI_TOSPAM);
+      DoMethod(data->MI_STATUS, MUIM_Family_Remove, data->MI_TOSPAM);
       MUI_DisposeObject(data->MI_TOSPAM);
       data->MI_TOSPAM = NULL;
     }
-    if(data->MI_TOHAM != NULL && isChildOfFamily(data->MI_MESSAGE, data->MI_TOHAM))
+    if(data->MI_TOHAM != NULL && isChildOfFamily(data->MI_STATUS, data->MI_TOHAM))
     {
-      DoMethod(data->MI_MESSAGE, MUIM_Family_Remove, data->MI_TOHAM);
+      DoMethod(data->MI_STATUS, MUIM_Family_Remove, data->MI_TOHAM);
       MUI_DisposeObject(data->MI_TOHAM);
       data->MI_TOHAM = NULL;
     }

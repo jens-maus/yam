@@ -4440,9 +4440,6 @@ Passwo_rd
 MSG_CO_Del (1340//)
 Delete
 ;
-MSG_RE_SetUnread (1341//)
-Set status to unread
-;
 MSG_WR_AltQuoted (1342//)
 Alternate quoted
 ;
@@ -4857,9 +4854,6 @@ MSG_MA_TOMARKED (1473//)
 ;
 MSG_MA_TOUNMARKED (1474//)
 .\000Unmarked
-;
-MSG_RE_SETMARKED (1475//)
-Set status to marked
 ;
 MSG_MA_CTX_DEFWIDTH_THIS (1476//)
 Default Width: this
@@ -5934,12 +5928,6 @@ Spam
 ;
 MSG_MA_TONOTSPAM (1758//)
 Not Spam
-;
-MSG_RE_SETSPAM (1759//)
-Set status to spam
-;
-MSG_RE_SETNOTSPAM (1760//)
-Set status to not spam
 ;
 MSG_CO_CRDSPAMFILTER (1761//)
 Spam

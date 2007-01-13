@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-13  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c, ReadWindow.c: synced the read window's menu items with what the
+    main YAM window provides in sense of modifying the mail status. Now the
+    read window menu should in fact be somewhat the same like the main window
+    menu in terms of message options including the keyboard hotkeys.
+
 2007-01-13  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: Updated according to changes.

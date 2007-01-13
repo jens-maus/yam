@@ -317,7 +317,8 @@ void MA_ChangeSelected(BOOL forceUpdate)
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_HAM,  MUIV_TheBar_Attr_Disabled, hamDisabled);
   }
 
-  // enable/disable menu items
+  // change the menu item title of the
+  // Edit item so that we either display "Edit" or "Edit as New"
   if(isOutgoingFolder(fo))
     p = GetStr(MSG_MESSAGE_EDIT);
   else
