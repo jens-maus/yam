@@ -235,7 +235,7 @@ struct TimeRequest
 
 // function macros
 #define BuildAddrName2(p)     BuildAddrName((p)->Address, (p)->RealName)
-#define SetHelp(o,str)        set(o, MUIA_ShortHelp, GetStr(str))
+#define SetHelp(o,str)        set(o, MUIA_ShortHelp, tr(str))
 #define DisposeModulePush(m)  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, m)
 #define FreeStrBuf(str)       ((str) ? free(((char *)(str))-sizeof(size_t)) : (void)0)
 #define isSpace(c)            ((BOOL)(G->Locale ? (IsSpace(G->Locale, (ULONG)(c)) != 0) : (isspace((c)) != 0)))

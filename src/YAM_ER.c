@@ -119,7 +119,7 @@ void ER_NewError(const char *error, ...)
     E(DBF_STARTUP, buf);
   }
 
-  snprintf(label, sizeof(label), "\033c%s %%ld/%d", GetStr(MSG_ErrorReq), G->ER_NumErr);
+  snprintf(label, sizeof(label), "\033c%s %%ld/%d", tr(MSG_ErrorReq), G->ER_NumErr);
   SetAttrs(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, label,
                                 MUIA_Numeric_Min,    1,
                                 MUIA_Numeric_Max,    G->ER_NumErr,
@@ -170,18 +170,18 @@ static struct ER_ClassData *ER_New(void)
    {
       APTR bt_close, bt_clear;
       data->GUI.WI = WindowObject,
-         MUIA_Window_Title, GetStr(MSG_ER_ErrorMessages),
+         MUIA_Window_Title, tr(MSG_ER_ErrorMessages),
          MUIA_Window_ID, MAKE_ID('E','R','R','O'),
          WindowContents, VGroup,
             Child, HGroup,
-               Child, data->GUI.BT_PREV = MakeButton(GetStr(MSG_ER_PrevError)),
+               Child, data->GUI.BT_PREV = MakeButton(tr(MSG_ER_PrevError)),
                Child, data->GUI.NB_ERROR = NumericbuttonObject,
                   MUIA_Numeric_Min,   0,
                   MUIA_Numeric_Value, 0,
                   MUIA_Numeric_Format, "Error %%ld/%ld",
                   MUIA_CycleChain, TRUE,
                End,
-               Child, data->GUI.BT_NEXT = MakeButton(GetStr(MSG_ER_NextError)),
+               Child, data->GUI.BT_NEXT = MakeButton(tr(MSG_ER_NextError)),
             End,
             Child, NListviewObject,
                MUIA_Listview_Input,   FALSE,
@@ -191,8 +191,8 @@ static struct ER_ClassData *ER_New(void)
                End,
             End,
             Child, ColGroup(2),
-               Child, bt_clear = MakeButton(GetStr(MSG_ER_Clear)),
-               Child, bt_close = MakeButton(GetStr(MSG_ER_Close)),
+               Child, bt_clear = MakeButton(tr(MSG_ER_Clear)),
+               Child, bt_close = MakeButton(tr(MSG_ER_Close)),
             End,
          End,
       End;

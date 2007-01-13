@@ -74,10 +74,10 @@ HOOKPROTONHNO(DisplayFunc, LONG, struct NList_DisplayMessage *msg)
   else
   {
     // setup the listview titles
-    array[0] = (STRPTR)GetStr(MSG_UPD_NOTIFICATION_COMP);
-    array[1] = (STRPTR)GetStr(MSG_UPD_NOTIFICATION_RECENT);
-    array[2] = (STRPTR)GetStr(MSG_UPD_NOTIFICATION_INSTALLED);
-    array[3] = (STRPTR)GetStr(MSG_UPD_NOTIFICATION_URL);
+    array[0] = (STRPTR)tr(MSG_UPD_NOTIFICATION_COMP);
+    array[1] = (STRPTR)tr(MSG_UPD_NOTIFICATION_RECENT);
+    array[2] = (STRPTR)tr(MSG_UPD_NOTIFICATION_INSTALLED);
+    array[3] = (STRPTR)tr(MSG_UPD_NOTIFICATION_URL);
   }
 
   return 0;
@@ -117,7 +117,7 @@ OVERLOAD(OM_NEW)
   if((obj = DoSuperNew(cl, obj,
 
     MUIA_Window_ID,         MAKE_ID('U','P','D','1'),
-    MUIA_Window_Title,      GetStr(MSG_UPD_NOTIFICATION_WTITLE),
+    MUIA_Window_Title,      tr(MSG_UPD_NOTIFICATION_WTITLE),
     MUIA_Window_Height,     MUIV_Window_Height_MinMax(30),
     MUIA_Window_Width,      MUIV_Window_Width_MinMax(30),
     MUIA_Window_RefWindow,  G->MA->GUI.WI,
@@ -128,11 +128,11 @@ OVERLOAD(OM_NEW)
         Child, VGroup,
           Child, TextObject,
             MUIA_Text_PreParse, "\033b",
-            MUIA_Text_Contents, GetStr(MSG_UPD_NOTIFICATION_TITLE),
+            MUIA_Text_Contents, tr(MSG_UPD_NOTIFICATION_TITLE),
             MUIA_Weight,        100,
           End,
           Child, TextObject,
-            MUIA_Text_Contents, GetStr(MSG_UPD_NOTIFICATION_SUMMARY),
+            MUIA_Text_Contents, tr(MSG_UPD_NOTIFICATION_SUMMARY),
             MUIA_Font,          MUIV_Font_Tiny,
             MUIA_Weight,        100,
           End,
@@ -169,7 +169,7 @@ OVERLOAD(OM_NEW)
       Child, BalanceObject, End,
 
       Child, TextObject,
-        MUIA_Text_Contents, GetStr(MSG_UPD_NOTIFICATION_CHANGES),
+        MUIA_Text_Contents, tr(MSG_UPD_NOTIFICATION_CHANGES),
         MUIA_Font,          MUIV_Font_Tiny,
       End,
       Child, NListviewObject,
@@ -183,8 +183,8 @@ OVERLOAD(OM_NEW)
       End,
 
       Child, HGroup,
-        Child, ch_skipinfuture = MakeCheck(GetStr(MSG_UPD_NOTIFICATION_NOUPDATE)),
-        Child, LLabel1(GetStr(MSG_UPD_NOTIFICATION_NOUPDATE)),
+        Child, ch_skipinfuture = MakeCheck(tr(MSG_UPD_NOTIFICATION_NOUPDATE)),
+        Child, LLabel1(tr(MSG_UPD_NOTIFICATION_NOUPDATE)),
         Child, HVSpace,
       End,
 
@@ -196,8 +196,8 @@ OVERLOAD(OM_NEW)
       Child, HGroup,
         Child, HVSpace,
         Child, HVSpace,
-        Child, bt_close = MakeButton(GetStr(MSG_UPD_NOTIFICATION_CLOSE)),
-        Child, bt_visit = MakeButton(GetStr(MSG_UPD_NOTIFICATION_VISITURL)),
+        Child, bt_close = MakeButton(tr(MSG_UPD_NOTIFICATION_CLOSE)),
+        Child, bt_visit = MakeButton(tr(MSG_UPD_NOTIFICATION_VISITURL)),
       End,
 
     End,
@@ -258,7 +258,7 @@ OVERLOAD(OM_SET)
 
           // we now specify the window title as we add the date/time to it
           DateStamp2String(buf, sizeof(buf), NULL, DSS_DATETIME, TZC_NONE);
-          snprintf(data->WindowTitle, sizeof(data->WindowTitle), "%s - %s", GetStr(MSG_UPD_NOTIFICATION_WTITLE), buf);
+          snprintf(data->WindowTitle, sizeof(data->WindowTitle), "%s - %s", tr(MSG_UPD_NOTIFICATION_WTITLE), buf);
 
           SetAttrs(obj, MUIA_Window_Title,         data->WindowTitle,
                         MUIA_Window_DefaultObject, data->ComponentList,

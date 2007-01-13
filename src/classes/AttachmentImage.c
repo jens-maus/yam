@@ -157,7 +157,7 @@ OVERLOAD(OM_NEW)
 
       FormatSize(mp->Size, sizestr, sizeof(sizestr), SF_AUTO);
 
-      snprintf(data->shortHelp, sizeof(data->shortHelp), GetStr(MSG_MA_MIMEPART_INFO), mp->Nr,
+      snprintf(data->shortHelp, sizeof(data->shortHelp), tr(MSG_MA_MIMEPART_INFO), mp->Nr,
                                                                                        mp->Name,
                                                                                        mp->Description,
                                                                                        DescribeCT(mp->ContentType),

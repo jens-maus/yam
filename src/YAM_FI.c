@@ -493,7 +493,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
         {
           char datstr[64];
           DateStamp2String(datstr, sizeof(datstr), NULL, DSS_DATE, TZC_NONE);
-          ER_NewError(GetStr(MSG_ER_ErrorDateFormat), datstr);
+          ER_NewError(tr(MSG_ER_ErrorDateFormat), datstr);
 
           return FALSE;
         }
@@ -769,7 +769,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
    DoMethod(gui->GR_SEARCH, MUIM_SearchControlGroup_PrepareSearch, &search);
 
    // set the gauge
-   snprintf(gauge, sizeof(gauge), GetStr(MSG_FI_GAUGETEXT), totmsg);
+   snprintf(gauge, sizeof(gauge), tr(MSG_FI_GAUGETEXT), totmsg);
    SetAttrs(ga, MUIA_Gauge_InfoText, gauge,
                 MUIA_Gauge_Max,      totmsg,
                 MUIA_Gauge_Current,  0,
@@ -850,11 +850,11 @@ HOOKPROTONHNONP(CreateFilterFromSearch, void)
 
   // request a name for that new filter from the user
   if((ch = StringRequest(name, SIZE_NAME,
-                               GetStr(MSG_FI_AddFilter),
-                               GetStr(MSG_FI_AddFilterReq),
-                               GetStr(MSG_Save),
-                               GetStr(MSG_Use),
-                               GetStr(MSG_Cancel), FALSE,
+                               tr(MSG_FI_AddFilter),
+                               tr(MSG_FI_AddFilterReq),
+                               tr(MSG_Save),
+                               tr(MSG_Use),
+                               tr(MSG_Cancel), FALSE,
                                G->FI->GUI.WI)))
   {
     struct FilterNode *filter;
@@ -1268,7 +1268,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
       }
     }
     else
-      ER_NewError(GetStr(MSG_ER_CANTMOVEMAIL), mail->MailFile, filter->moveTo);
+      ER_NewError(tr(MSG_ER_CANTMOVEMAIL), mail->MailFile, filter->moveTo);
   }
 
   // Delete Action
@@ -1313,8 +1313,8 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
     {
       char buf[SIZE_LARGE];
 
-      snprintf(buf, sizeof(buf), GetStr(MSG_MA_ConfirmFilter), folder->Name);
-      if(!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), buf))
+      snprintf(buf, sizeof(buf), tr(MSG_MA_ConfirmFilter), folder->Name);
+      if(!MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buf))
         applyFilters = FALSE;
     }
 
@@ -1356,9 +1356,9 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
         // a spam classification session. And we build an interruptable
         // Gauge which will report back if the user pressed the stop button
         if(mode != APPLY_SPAM)
-          BusyGaugeInt(GetStr(MSG_BusyFiltering), "", (int)*mlist);
+          BusyGaugeInt(tr(MSG_BusyFiltering), "", (int)*mlist);
         else
-          BusyGaugeInt(GetStr(MSG_FI_BUSYCHECKSPAM), "", (int)*mlist);
+          BusyGaugeInt(tr(MSG_FI_BUSYCHECKSPAM), "", (int)*mlist);
 
         for(m = 0; m < (int)*mlist; m++)
         {
@@ -1439,7 +1439,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
         FreeFilterSearch();
 
         if(G->RRs.Checked)
-          AppendLog(26, GetStr(MSG_LOG_Filtering), G->RRs.Checked, folder->Name, matches);
+          AppendLog(26, tr(MSG_LOG_Filtering), G->RRs.Checked, folder->Name, matches);
 
         BusyEnd();
 
@@ -1456,8 +1456,8 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
       {
         char buf[SIZE_LARGE];
 
-        snprintf(buf, sizeof(buf), GetStr(MSG_MA_FilterStats), G->RRs.Checked, G->RRs.Forwarded, G->RRs.Moved, G->RRs.Deleted);
-        MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), buf);
+        snprintf(buf, sizeof(buf), tr(MSG_MA_FilterStats), G->RRs.Checked, G->RRs.Forwarded, G->RRs.Moved, G->RRs.Deleted);
+        MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OkayReq), buf);
       }
     }
   }
@@ -1578,7 +1578,7 @@ struct FilterNode *CreateNewFilter(void)
 
   if(filter)
   {
-    strlcpy(filter->name, GetStr(MSG_NewEntry), sizeof(filter->name));
+    strlcpy(filter->name, tr(MSG_NewEntry), sizeof(filter->name));
     filter->applyToNew = TRUE;
     filter->applyOnReq = TRUE;
 
@@ -1701,12 +1701,12 @@ static struct FI_ClassData *FI_New(void)
       Object *bt_none;
 
       data->GUI.WI = WindowObject,
-         MUIA_Window_Title, GetStr(MSG_FI_FindMessages),
+         MUIA_Window_Title, tr(MSG_FI_FindMessages),
          MUIA_HelpNode, "FI_W",
          MUIA_Window_ID, MAKE_ID('F','I','N','D'),
          WindowContents, VGroup,
             Child, HGroup,
-               Child, VGroup, GroupFrameT(GetStr(MSG_FI_FindIn)),
+               Child, VGroup, GroupFrameT(tr(MSG_FI_FindIn)),
                   Child, ListviewObject,
                      MUIA_Listview_Input, TRUE,
                      MUIA_Listview_MultiSelect, TRUE,
@@ -1717,17 +1717,17 @@ static struct FI_ClassData *FI_New(void)
                      End,
                   End,
                   Child, HGroup,
-                    Child, bt_all = MakeButton(GetStr(MSG_FI_AllFolders)),
-                    Child, bt_none = MakeButton(GetStr(MSG_FI_NOFOLDERS)),
+                    Child, bt_all = MakeButton(tr(MSG_FI_AllFolders)),
+                    Child, bt_none = MakeButton(tr(MSG_FI_NOFOLDERS)),
                   End,
                End,
-               Child, VGroup, GroupFrameT(GetStr(MSG_FI_FindWhat)),
+               Child, VGroup, GroupFrameT(tr(MSG_FI_FindWhat)),
                   Child, data->GUI.GR_SEARCH = SearchControlGroupObject,
                     MUIA_SearchControlGroup_RemoteFilterMode, FALSE,
                   End,
                   Child, ColGroup(2),
                      Child, po_fromrule = PopobjectObject,
-                        MUIA_Popstring_Button, MakeButton(GetStr(MSG_FI_UseFilter)),
+                        MUIA_Popstring_Button, MakeButton(tr(MSG_FI_UseFilter)),
                         MUIA_Popobject_ObjStrHook, &SearchOptFromFilterPopupHook,
                         MUIA_Popobject_StrObjHook, &InitFilterPopupListHook,
                         MUIA_Popobject_WindowHook, &PO_WindowHook,
@@ -1738,11 +1738,11 @@ static struct FI_ClassData *FI_New(void)
                            End,
                         End,
                      End,
-                     Child, bt_torule = MakeButton(GetStr(MSG_FI_AddAsFilter)),
+                     Child, bt_torule = MakeButton(tr(MSG_FI_AddAsFilter)),
                   End,
                End,
             End,
-            Child, VGroup, GroupFrameT(GetStr(MSG_FI_Results)),
+            Child, VGroup, GroupFrameT(tr(MSG_FI_Results)),
                Child, NListviewObject,
                   MUIA_CycleChain,  TRUE,
                   MUIA_NListview_NList, data->GUI.LV_MAILS = MainMailListObject,
@@ -1753,10 +1753,10 @@ static struct FI_ClassData *FI_New(void)
             End,
             Child, data->GUI.GR_PAGE = PageGroup,
                Child, HGroup,
-                  Child, bt_search = MakeButton(GetStr(MSG_FI_StartSearch)),
-                  Child, data->GUI.BT_SELECTACTIVE = MakeButton(GetStr(MSG_FI_SELECTACTIVE)),
-                  Child, data->GUI.BT_SELECT = MakeButton(GetStr(MSG_FI_SelectMatched)),
-                  Child, data->GUI.BT_READ = MakeButton(GetStr(MSG_FI_ReadMessage)),
+                  Child, bt_search = MakeButton(tr(MSG_FI_StartSearch)),
+                  Child, data->GUI.BT_SELECTACTIVE = MakeButton(tr(MSG_FI_SELECTACTIVE)),
+                  Child, data->GUI.BT_SELECT = MakeButton(tr(MSG_FI_SelectMatched)),
+                  Child, data->GUI.BT_READ = MakeButton(tr(MSG_FI_ReadMessage)),
                End,
                Child, HGroup,
                   Child, data->GUI.GA_PROGRESS = GaugeObject,
@@ -1764,7 +1764,7 @@ static struct FI_ClassData *FI_New(void)
                      GaugeFrame,
                      MUIA_Gauge_Horiz   ,TRUE,
                   End,
-                  Child, bt_abort = MakeButton(GetStr(MSG_FI_Abort)),
+                  Child, bt_abort = MakeButton(tr(MSG_FI_Abort)),
                End,
             End,
          End,

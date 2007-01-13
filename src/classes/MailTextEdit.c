@@ -218,12 +218,12 @@ OVERLOAD(MUIM_TextEditor_HandleError)
     break;
 
     case Error_NotEnoughUndoMem:
-      errortxt = GetStr(MSG_WR_ErrorNotEnoughUndoMem);
+      errortxt = tr(MSG_WR_ErrorNotEnoughUndoMem);
     break;
   }
   
   if(errortxt)
-    MUI_Request(_app(obj), _win(obj), 0L, NULL, GetStr(MSG_OkayReq), errortxt);
+    MUI_Request(_app(obj), _win(obj), 0L, NULL, tr(MSG_OkayReq), errortxt);
   else
     DisplayBeep(NULL);
 

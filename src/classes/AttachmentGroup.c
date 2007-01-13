@@ -128,7 +128,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
       InitRastPort(&rp);
       SetFont(&rp, _font(obj));
       SetSoftStyle(&rp, FSF_BOLD, AskSoftStyle(&rp));
-      mainLabelWidth = TextLength(&rp, GetStr(MSG_MA_ATTACHMENTS), strlen(GetStr(MSG_MA_ATTACHMENTS))) + SPACING;
+      mainLabelWidth = TextLength(&rp, tr(MSG_MA_ATTACHMENTS), strlen(tr(MSG_MA_ATTACHMENTS))) + SPACING;
       left += mainLabelWidth;
 
       // Layout function. Here, we have to call MUI_Layout() for each
@@ -392,7 +392,7 @@ OVERLOAD(MUIM_Draw)
   // draw different text objects into our group
   if(((struct MUIP_Draw *)msg)->flags & MADF_DRAWOBJECT)
   {
-    const char *attachmentLabel = GetStr(MSG_MA_ATTACHMENTS);
+    const char *attachmentLabel = tr(MSG_MA_ATTACHMENTS);
     struct List *childList = (struct List *)xget(obj, MUIA_Group_ChildList);
     struct TextExtent te;
     int cnt;
@@ -519,24 +519,24 @@ OVERLOAD(MUIM_ContextMenuBuild)
   // generate a context menu title now
   if(mailPart)
   {
-    snprintf(data->menuTitle, sizeof(data->menuTitle), GetStr(MSG_MA_MIMEPART_MENU), mailPart->Nr);
+    snprintf(data->menuTitle, sizeof(data->menuTitle), tr(MSG_MA_MIMEPART_MENU), mailPart->Nr);
     data->selectedPart = mailPart;
   }
   else
   {
-    strlcpy(data->menuTitle, GetStr(MSG_Attachments), sizeof(data->menuTitle));
+    strlcpy(data->menuTitle, tr(MSG_Attachments), sizeof(data->menuTitle));
     data->selectedPart = NULL;
   }
 
   data->context_menu = MenustripObject,
     Child, MenuObjectT(data->menuTitle),
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_ATTACHMENT_DISPLAY),  MUIA_Menuitem_Enabled, mailPart != NULL, MUIA_UserData, AMEN_DISPLAY,  End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_ATTACHMENT_SAVEAS),   MUIA_Menuitem_Enabled, mailPart != NULL, MUIA_UserData, AMEN_SAVEAS,    End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_ATTACHMENT_PRINT),   MUIA_Menuitem_Enabled, mailPart != NULL && mailPart->Printable, MUIA_UserData, AMEN_PRINT,     End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DISPLAY),  MUIA_Menuitem_Enabled, mailPart != NULL, MUIA_UserData, AMEN_DISPLAY,  End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEAS),   MUIA_Menuitem_Enabled, mailPart != NULL, MUIA_UserData, AMEN_SAVEAS,    End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_PRINT),   MUIA_Menuitem_Enabled, mailPart != NULL && mailPart->Printable, MUIA_UserData, AMEN_PRINT,     End,
       Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_ATTACHMENT_SAVEALL), MUIA_UserData, AMEN_SAVEALL,   End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_ATTACHMENT_SAVESEL), MUIA_UserData, AMEN_SAVESEL,   End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_ATTACHMENT_CROPALL), MUIA_UserData, AMEN_CROPALL, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL), MUIA_UserData, AMEN_SAVEALL,   End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVESEL), MUIA_UserData, AMEN_SAVESEL,   End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_CROPALL), MUIA_UserData, AMEN_CROPALL, End,
     End,
   End;
 
@@ -720,7 +720,7 @@ DECLARE(Display) // struct Part *part
 {
   if(msg->part)
   {
-    BusyText(GetStr(MSG_BusyDecDisplaying), "");
+    BusyText(tr(MSG_BusyDecDisplaying), "");
 
     RE_DecodePart(msg->part);
     RE_DisplayMIME(msg->part->Filename, msg->part->ContentType);
@@ -736,7 +736,7 @@ DECLARE(Save) // struct Part *part
 {
   if(msg->part)
   {
-    BusyText(GetStr(MSG_BusyDecSaving), "");
+    BusyText(tr(MSG_BusyDecSaving), "");
 
     RE_DecodePart(msg->part);
     RE_Export(msg->part->rmData,
@@ -764,9 +764,9 @@ DECLARE(SaveAll)
   {
     struct FileReqCache *frc;
 
-    if((frc = ReqFile(ASL_DETACH, _win(obj), GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, "")))
+    if((frc = ReqFile(ASL_DETACH, _win(obj), tr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, "")))
     {
-      BusyText(GetStr(MSG_BusyDecSaving), "");
+      BusyText(tr(MSG_BusyDecSaving), "");
       RE_SaveAll(data->firstPart->rmData, frc->drawer);
       BusyEnd();
     }
@@ -781,7 +781,7 @@ DECLARE(SaveSelected)
 {
   struct List *childList = (struct List *)xget(obj, MUIA_Group_ChildList);
 
-  BusyText(GetStr(MSG_BusyDecSaving), "");
+  BusyText(tr(MSG_BusyDecSaving), "");
 
   // iterate through our child list and remove all attachmentimages
   if(childList)
@@ -820,7 +820,7 @@ DECLARE(Print) // struct Part *part
 {
   if(msg->part)
   {
-    BusyText(GetStr(MSG_BusyDecPrinting), "");
+    BusyText(tr(MSG_BusyDecPrinting), "");
     RE_PrintFile(msg->part->Filename);
     BusyEnd();
   }
@@ -875,7 +875,7 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
     
     D(DBF_GUI, "Image of Part %d was dropped at [%s]", mailPart->Nr, msg->dropPath);
 
-    BusyText(GetStr(MSG_BusyDecSaving), "");
+    BusyText(tr(MSG_BusyDecSaving), "");
 
     // make sure the drawer is opened upon the drag operation
     if(WorkbenchBase->lib_Version >= 44)

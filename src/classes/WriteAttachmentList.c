@@ -111,7 +111,7 @@ OVERLOAD(MUIM_DragDrop)
     struct Attach attach;
     struct Part *mailPart = (struct Part *)xget(d->obj, MUIA_AttachmentImage_MailPart);
 
-    BusyText(GetStr(MSG_BusyDecSaving), "");
+    BusyText(tr(MSG_BusyDecSaving), "");
 
     // make sure the mail part is properly decoded before we add it
     RE_DecodePart(mailPart);

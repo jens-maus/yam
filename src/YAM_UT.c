@@ -272,9 +272,9 @@ HOOKPROTONHNO(AttachDspFunc, LONG, struct NList_DisplayMessage *msg)
   }
   else
   {
-    array[0] = (STRPTR)GetStr(MSG_ATTACH_NO);
-    array[1] = (STRPTR)GetStr(MSG_ATTACH_PART);
-    array[2] = (STRPTR)GetStr(MSG_Size);
+    array[0] = (STRPTR)tr(MSG_ATTACH_NO);
+    array[1] = (STRPTR)tr(MSG_ATTACH_PART);
+    array[2] = (STRPTR)tr(MSG_Size);
   }
 
   RETURN(0);
@@ -632,12 +632,12 @@ static int PassphraseRequest(char *string, int size, Object *parent)
 
   ENTER();
 
-  snprintf(pgprem, sizeof(pgprem), "%s %d %s", GetStr(MSG_CO_PGPPASSINTERVAL1),
+  snprintf(pgprem, sizeof(pgprem), "%s %d %s", tr(MSG_CO_PGPPASSINTERVAL1),
                                                abs(C->PGPPassInterval),
-                                               GetStr(MSG_CO_PGPPASSINTERVAL2));
+                                               tr(MSG_CO_PGPPASSINTERVAL2));
 
   wi_sr = WindowObject,
-    MUIA_Window_Title,      GetStr(MSG_UT_PGPPASSREQ_TITLE),
+    MUIA_Window_Title,      tr(MSG_UT_PGPPASSREQ_TITLE),
     MUIA_Window_ID,         MAKE_ID('P','R','E','Q'),
     MUIA_Window_RefWindow,  parent,
     MUIA_Window_LeftEdge,   MUIV_Window_LeftEdge_Centered,
@@ -649,18 +649,18 @@ static int PassphraseRequest(char *string, int size, Object *parent)
       Child, VGroup,
         GroupFrame,
         MUIA_Background, MUII_GroupBack,
-        Child, LLabel(GetStr(MSG_UT_PGPPassReq)),
+        Child, LLabel(tr(MSG_UT_PGPPassReq)),
         Child, st_in = MakePassString(""),
         Child, HGroup,
-          Child, ch_rem = MakeCheck(GetStr(MSG_CO_PGPPASSINTERVAL1)),
+          Child, ch_rem = MakeCheck(tr(MSG_CO_PGPPASSINTERVAL1)),
           Child, Label2(pgprem),
           Child, HSpace(0),
         End,
       End,
       Child, ColGroup(3),
-        Child, bt_okay = MakeButton(GetStr(MSG_Okay)),
+        Child, bt_okay = MakeButton(tr(MSG_Okay)),
         Child, HSpace(0),
-        Child, bt_cancel = MakeButton(GetStr(MSG_Cancel)),
+        Child, bt_cancel = MakeButton(tr(MSG_Cancel)),
       End,
     End,
   End;
@@ -893,7 +893,7 @@ struct Part *AttachRequest(const char *title, const char *body, const char *yest
 
     // lets create the static parts of the Attachrequest entries in the NList
     spart[0].Nr = PART_ORIGINAL;
-    strlcpy(spart[0].Name, GetStr(MSG_RE_Original), sizeof(spart[0].Name));
+    strlcpy(spart[0].Name, tr(MSG_RE_Original), sizeof(spart[0].Name));
     spart[0].Size = rmData->mail->Size;
     spart[0].Decoded = TRUE;
     DoMethod(lv_attach, MUIM_NList_InsertSingle, &spart[0], MUIV_NList_Insert_Top);
@@ -903,7 +903,7 @@ struct Part *AttachRequest(const char *title, const char *body, const char *yest
     if(!isDisplayReq(mode))
     {
       spart[1].Nr = PART_ALLTEXT;
-      strlcpy(spart[1].Name, GetStr(MSG_RE_AllTexts), sizeof(spart[1].Name));
+      strlcpy(spart[1].Name, tr(MSG_RE_AllTexts), sizeof(spart[1].Name));
       spart[1].Size = 0;
 
       DoMethod(lv_attach, MUIM_NList_InsertSingle, &spart[1], MUIV_NList_Insert_Bottom);
@@ -1084,9 +1084,9 @@ LONG CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG numB
         End,
       End,
       Child, ColGroup(3),
-        Child, bt_use = MakeButton(GetStr(MSG_Use)),
+        Child, bt_use = MakeButton(tr(MSG_Use)),
         Child, HSpace(0),
-        Child, bt_cancel = MakeButton(GetStr(MSG_Cancel)),
+        Child, bt_cancel = MakeButton(tr(MSG_Cancel)),
       End,
     End,
   End;
@@ -2211,7 +2211,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
     reqResult = MUI_AslRequestTags(fileReq,
                                    ASLFR_Window,         xget(win, MUIA_Window_Window),
                                    ASLFR_TitleText,      title,
-                                   ASLFR_PositiveText,   hasSaveModeFlag(mode) ? GetStr(MSG_UT_Save) : GetStr(MSG_UT_Load),
+                                   ASLFR_PositiveText,   hasSaveModeFlag(mode) ? tr(MSG_UT_Save) : tr(MSG_UT_Load),
                                    ASLFR_DoSaveMode,     hasSaveModeFlag(mode),
                                    ASLFR_DoMultiSelect,  hasMultiSelectFlag(mode),
                                    ASLFR_DrawersOnly,    hasDrawersOnlyFlag(mode),
@@ -2285,7 +2285,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
       // and IoErr() != 0 signals that something
       // serious happend and that we have to inform the
       // user
-      ER_NewError(GetStr(MSG_ER_CANTOPENASL));
+      ER_NewError(tr(MSG_ER_CANTOPENASL));
 
       // beep the display as well
       DisplayBeep(NULL);
@@ -2296,7 +2296,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
     MUI_FreeAslRequest(fileReq);
   }
   else
-    ER_NewError(GetStr(MSG_ErrorAslStruct));
+    ER_NewError(tr(MSG_ErrorAslStruct));
 
   RETURN(result);
   return result;
@@ -2672,7 +2672,7 @@ BOOL CreateDirectory(char *dir)
   }
 
   if(G->MA)
-    ER_NewError(GetStr(MSG_ER_CantCreateDir), dir);
+    ER_NewError(tr(MSG_ER_CantCreateDir), dir);
 
   return FALSE;
 }
@@ -2892,7 +2892,7 @@ const char *DescribeCT(const char *ct)
   ENTER();
 
   if(ct == NULL)
-    ret = GetStr(MSG_CTunknown);
+    ret = tr(MSG_CTunknown);
   else
   {
     struct MinNode *curNode;
@@ -2920,7 +2920,7 @@ const char *DescribeCT(const char *ct)
       {
         if(stricmp(ct, IntMimeTypeArray[i].ContentType) == 0)
         {
-          ret = GetStr(IntMimeTypeArray[i].Description);
+          ret = tr(IntMimeTypeArray[i].Description);
           break;
         }
       }
@@ -3739,7 +3739,7 @@ void DisplayMailList(struct Folder *fo, APTR lv)
    {
       int i = 0;
 
-      BusyText(GetStr(MSG_BusyDisplayingList), "");
+      BusyText(tr(MSG_BusyDisplayingList), "");
       for (work = fo->Messages; work; work = work->Next)
       {
          array[i++] = work;
@@ -4479,7 +4479,7 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
       fclose(fp);
       DeleteFile(PGPLOGFILE);
    }
-   if (!keys) ER_NewError(GetStr(MSG_ER_NoPublicKeys), "", "");
+   if (!keys) ER_NewError(tr(MSG_ER_NoPublicKeys), "", "");
    return keys > 0;
 }
 MakeHook(PO_ListPublicKeysHook, PO_ListPublicKeys);
@@ -5210,7 +5210,7 @@ int PGPCommand(const char *progname, const char *options, int flags)
 
     if((fho = Open("NIL:", MODE_NEWFILE)))
     {
-      BusyText(GetStr(MSG_BusyPGPrunning), "");
+      BusyText(tr(MSG_BusyPGPrunning), "");
       strmfp(command, C->PGPCmdPath, progname);
       strlcat(command, " >" PGPLOGFILE " ", sizeof(command));
       strlcat(command, options, sizeof(command));
@@ -5237,10 +5237,10 @@ int PGPCommand(const char *progname, const char *options, int flags)
   }
 
   if(error > 0 && !hasNoErrorsFlag(flags))
-    ER_NewError(GetStr(MSG_ER_PGPreturnsError), command, PGPLOGFILE);
+    ER_NewError(tr(MSG_ER_PGPreturnsError), command, PGPLOGFILE);
 
   if(error < 0)
-    ER_NewError(GetStr(MSG_ER_PGPnotfound), C->PGPCmdPath);
+    ER_NewError(tr(MSG_ER_PGPnotfound), C->PGPCmdPath);
 
   if(!error && !hasKeepLogFlag(flags))
     DeleteFile(PGPLOGFILE);
@@ -5681,8 +5681,8 @@ BOOL CheckPrinter(void)
             if(PrintIO->io_Actual == 1)      // parallel port printer?
             {
                if (((Result>>8) & 3) == 0) error = NULL;                   // no error
-               else if ((Result>>8) & 01) error = GetStr(MSG_UT_NoPaper);  // /POUT asserted
-               else error = GetStr(MSG_UT_NoPrinter);                      // /BUSY (hopefully no RingIndicator interference)
+               else if ((Result>>8) & 01) error = tr(MSG_UT_NoPaper);  // /POUT asserted
+               else error = tr(MSG_UT_NoPrinter);                      // /BUSY (hopefully no RingIndicator interference)
             } else error = NULL;               // can't determine status of serial printers
             CloseDevice((struct IORequest *)PrintIO);
          }
@@ -5690,7 +5690,7 @@ BOOL CheckPrinter(void)
       }
       DeleteMsgPort(PrintPort);
    }
-   if (error && !MUI_Request(G->App, NULL, 0, GetStr(MSG_ErrorReq), GetStr(MSG_OkayCancelReq), error)) return FALSE;
+   if (error && !MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayCancelReq), error)) return FALSE;
    return TRUE;
 }
 ///

@@ -136,33 +136,33 @@ OVERLOAD(OM_NEW)
   // toolbar looks like.
   struct MUIS_TheBar_Button buttons[TB_MAIN_NUM+5] =
   {
-    { TB_MAIN_READ,     TB_MAIN_READ,     GetStr(MSG_MA_TBRead),    GetStr(MSG_HELP_MA_BT_READ),        0, 0, NULL, NULL },
-    { TB_MAIN_EDIT,     TB_MAIN_EDIT,     GetStr(MSG_MA_TBEdit),    GetStr(MSG_HELP_MA_BT_EDIT),        0, 0, NULL, NULL },
-    { TB_MAIN_MOVE,     TB_MAIN_MOVE,     GetStr(MSG_MA_TBMove),    GetStr(MSG_HELP_MA_BT_MOVE),        0, 0, NULL, NULL },
-    { TB_MAIN_DELETE,   TB_MAIN_DELETE,   GetStr(MSG_MA_TBDelete),  GetStr(MSG_HELP_MA_BT_DELETE),      0, 0, NULL, NULL },
-    { TB_MAIN_GETADDR,  TB_MAIN_GETADDR,  GetStr(MSG_MA_TBGetAddr), GetStr(MSG_HELP_MA_BT_GETADDRESS),  0, 0, NULL, NULL },
+    { TB_MAIN_READ,     TB_MAIN_READ,     tr(MSG_MA_TBRead),    tr(MSG_HELP_MA_BT_READ),        0, 0, NULL, NULL },
+    { TB_MAIN_EDIT,     TB_MAIN_EDIT,     tr(MSG_MA_TBEdit),    tr(MSG_HELP_MA_BT_EDIT),        0, 0, NULL, NULL },
+    { TB_MAIN_MOVE,     TB_MAIN_MOVE,     tr(MSG_MA_TBMove),    tr(MSG_HELP_MA_BT_MOVE),        0, 0, NULL, NULL },
+    { TB_MAIN_DELETE,   TB_MAIN_DELETE,   tr(MSG_MA_TBDelete),  tr(MSG_HELP_MA_BT_DELETE),      0, 0, NULL, NULL },
+    { TB_MAIN_GETADDR,  TB_MAIN_GETADDR,  tr(MSG_MA_TBGetAddr), tr(MSG_HELP_MA_BT_GETADDRESS),  0, 0, NULL, NULL },
 
     { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
-    { TB_MAIN_NEWMAIL,  TB_MAIN_NEWMAIL,  GetStr(MSG_MA_TBWrite),   GetStr(MSG_HELP_MA_BT_WRITE),       0, 0, NULL, NULL },
-    { TB_MAIN_REPLY,    TB_MAIN_REPLY,    GetStr(MSG_MA_TBReply),   GetStr(MSG_HELP_MA_BT_REPLY),       0, 0, NULL, NULL },
-    { TB_MAIN_FORWARD,  TB_MAIN_FORWARD,  GetStr(MSG_MA_TBForward), GetStr(MSG_HELP_MA_BT_FORWARD),     0, 0, NULL, NULL },
+    { TB_MAIN_NEWMAIL,  TB_MAIN_NEWMAIL,  tr(MSG_MA_TBWrite),   tr(MSG_HELP_MA_BT_WRITE),       0, 0, NULL, NULL },
+    { TB_MAIN_REPLY,    TB_MAIN_REPLY,    tr(MSG_MA_TBReply),   tr(MSG_HELP_MA_BT_REPLY),       0, 0, NULL, NULL },
+    { TB_MAIN_FORWARD,  TB_MAIN_FORWARD,  tr(MSG_MA_TBForward), tr(MSG_HELP_MA_BT_FORWARD),     0, 0, NULL, NULL },
 
     { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
-    { TB_MAIN_GETMAIL,  TB_MAIN_GETMAIL,  GetStr(MSG_MA_TBGetMail), GetStr(MSG_HELP_MA_BT_POPNOW),      0, 0, NULL, NULL },
-    { TB_MAIN_SENDALL,  TB_MAIN_SENDALL,  GetStr(MSG_MA_TBSendAll), GetStr(MSG_HELP_MA_BT_SENDALL),     0, 0, NULL, NULL },
+    { TB_MAIN_GETMAIL,  TB_MAIN_GETMAIL,  tr(MSG_MA_TBGetMail), tr(MSG_HELP_MA_BT_POPNOW),      0, 0, NULL, NULL },
+    { TB_MAIN_SENDALL,  TB_MAIN_SENDALL,  tr(MSG_MA_TBSendAll), tr(MSG_HELP_MA_BT_SENDALL),     0, 0, NULL, NULL },
 
     { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
     // the "Spam" button is disabled by default
     // the "not Spam" button is hidden by default
-    { TB_MAIN_SPAM,     TB_MAIN_SPAM,     GetStr(MSG_MA_TBSPAM),    GetStr(MSG_HELP_MA_BT_SPAM),        MUIV_TheBar_ButtonFlag_Disabled, 0, NULL, NULL },
-    { TB_MAIN_HAM,      TB_MAIN_HAM,      GetStr(MSG_MA_TBNOTSPAM), GetStr(MSG_HELP_MA_BT_NOTSPAM),     MUIV_TheBar_ButtonFlag_Hide, 0, NULL, NULL },
-    { TB_MAIN_FILTER,   TB_MAIN_FILTER,   GetStr(MSG_MA_TBFilter),  GetStr(MSG_HELP_MA_BT_FILTER),      0, 0, NULL, NULL },
-    { TB_MAIN_FIND,     TB_MAIN_FIND,     GetStr(MSG_MA_TBFind),    GetStr(MSG_HELP_MA_BT_SEARCH),      0, 0, NULL, NULL },
-    { TB_MAIN_ADDRBOOK, TB_MAIN_ADDRBOOK, GetStr(MSG_MA_TBAddrBook),GetStr(MSG_HELP_MA_BT_ABOOK),       0, 0, NULL, NULL },
-    { TB_MAIN_CONFIG,   TB_MAIN_CONFIG,   GetStr(MSG_MA_TBConfig),  GetStr(MSG_HELP_MA_BT_CONFIG),      0, 0, NULL, NULL },
+    { TB_MAIN_SPAM,     TB_MAIN_SPAM,     tr(MSG_MA_TBSPAM),    tr(MSG_HELP_MA_BT_SPAM),        MUIV_TheBar_ButtonFlag_Disabled, 0, NULL, NULL },
+    { TB_MAIN_HAM,      TB_MAIN_HAM,      tr(MSG_MA_TBNOTSPAM), tr(MSG_HELP_MA_BT_NOTSPAM),     MUIV_TheBar_ButtonFlag_Hide, 0, NULL, NULL },
+    { TB_MAIN_FILTER,   TB_MAIN_FILTER,   tr(MSG_MA_TBFilter),  tr(MSG_HELP_MA_BT_FILTER),      0, 0, NULL, NULL },
+    { TB_MAIN_FIND,     TB_MAIN_FIND,     tr(MSG_MA_TBFind),    tr(MSG_HELP_MA_BT_SEARCH),      0, 0, NULL, NULL },
+    { TB_MAIN_ADDRBOOK, TB_MAIN_ADDRBOOK, tr(MSG_MA_TBAddrBook),tr(MSG_HELP_MA_BT_ABOOK),       0, 0, NULL, NULL },
+    { TB_MAIN_CONFIG,   TB_MAIN_CONFIG,   tr(MSG_MA_TBConfig),  tr(MSG_HELP_MA_BT_CONFIG),      0, 0, NULL, NULL },
 
     { MUIV_TheBar_End,       -1,  NULL, NULL, 0, 0, NULL, NULL },
   };

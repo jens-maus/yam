@@ -87,22 +87,22 @@ OVERLOAD(OM_NEW)
   struct Data *tmpData;
   struct TagItem *tags = inittags(msg), *tag;
 
-  amode[0] = GetStr(MSG_Address);
-  amode[1] = GetStr(MSG_Name);
+  amode[0] = tr(MSG_Address);
+  amode[1] = tr(MSG_Name);
   amode[2] = NULL;
 
   // make sure the following array has the same
   // order than the mailStatusMap in YAM_global.c
-  statopt[0] = GetStr(MSG_FI_StatNew);
-  statopt[1] = GetStr(MSG_FI_StatRead);
-  statopt[2] = GetStr(MSG_FI_StatForwarded);
-  statopt[3] = GetStr(MSG_FI_StatReplied);
-  statopt[4] = GetStr(MSG_FI_StatQueued);
-  statopt[5] = GetStr(MSG_FI_StatFailed);
-  statopt[6] = GetStr(MSG_FI_StatHold);
-  statopt[7] = GetStr(MSG_FI_StatSent);
-  statopt[8] = GetStr(MSG_FI_StatMarked);
-  statopt[9] = GetStr(MSG_FI_STATSPAM);
+  statopt[0] = tr(MSG_FI_StatNew);
+  statopt[1] = tr(MSG_FI_StatRead);
+  statopt[2] = tr(MSG_FI_StatForwarded);
+  statopt[3] = tr(MSG_FI_StatReplied);
+  statopt[4] = tr(MSG_FI_StatQueued);
+  statopt[5] = tr(MSG_FI_StatFailed);
+  statopt[6] = tr(MSG_FI_StatHold);
+  statopt[7] = tr(MSG_FI_StatSent);
+  statopt[8] = tr(MSG_FI_StatMarked);
+  statopt[9] = tr(MSG_FI_STATSPAM);
   statopt[10] = NULL;
 
   compopt[0] = compopt[5] = compopt[ 8] = " = ";
@@ -112,23 +112,23 @@ OVERLOAD(OM_NEW)
                             compopt[12] = " IN ";
   compopt[4] = compopt[7] = compopt[13] = NULL;
 
-  fldopt[0][0] = fldopt[1][0] = GetStr(MSG_FI_FromField);
-  fldopt[0][1] = fldopt[1][1] = GetStr(MSG_FI_ToField);
-  fldopt[0][2] = fldopt[1][2] = GetStr(MSG_FI_CCField);
-  fldopt[0][3] = fldopt[1][3] = GetStr(MSG_FI_ReplyToField);
-  fldopt[0][4] = fldopt[1][4] = GetStr(MSG_FI_SubjectField);
-  fldopt[0][5] = fldopt[1][5] = GetStr(MSG_FI_DateField);
-  fldopt[0][6] = fldopt[1][6] = GetStr(MSG_FI_OtherField);
-  fldopt[0][7] = fldopt[1][7] = GetStr(MSG_FI_MessageSize);
-  fldopt[0][8] = fldopt[1][8] = GetStr(MSG_FI_MessageHeader);
-  fldopt[0][9] =                 GetStr(MSG_FI_MessageBody);
-  fldopt[0][10]=                 GetStr(MSG_FI_WholeMessage);
-  fldopt[0][11]=                 GetStr(MSG_Status);
+  fldopt[0][0] = fldopt[1][0] = tr(MSG_FI_FromField);
+  fldopt[0][1] = fldopt[1][1] = tr(MSG_FI_ToField);
+  fldopt[0][2] = fldopt[1][2] = tr(MSG_FI_CCField);
+  fldopt[0][3] = fldopt[1][3] = tr(MSG_FI_ReplyToField);
+  fldopt[0][4] = fldopt[1][4] = tr(MSG_FI_SubjectField);
+  fldopt[0][5] = fldopt[1][5] = tr(MSG_FI_DateField);
+  fldopt[0][6] = fldopt[1][6] = tr(MSG_FI_OtherField);
+  fldopt[0][7] = fldopt[1][7] = tr(MSG_FI_MessageSize);
+  fldopt[0][8] = fldopt[1][8] = tr(MSG_FI_MessageHeader);
+  fldopt[0][9] =                 tr(MSG_FI_MessageBody);
+  fldopt[0][10]=                 tr(MSG_FI_WholeMessage);
+  fldopt[0][11]=                 tr(MSG_Status);
   fldopt[0][12]= fldopt[1][9] = fldopt[1][10] = fldopt[1][11] = fldopt[1][12] = NULL;
 
-  bcrit[0] = GetStr(MSG_CO_CTOr);
-  bcrit[1] = GetStr(MSG_CO_CTAnd);
-  bcrit[2] = GetStr(MSG_CO_CTXor);
+  bcrit[0] = tr(MSG_CO_CTOr);
+  bcrit[1] = tr(MSG_CO_CTAnd);
+  bcrit[2] = tr(MSG_CO_CTXor);
   bcrit[3] = NULL;
 
   // generate a temporary struct Data to which we store our data and
@@ -152,11 +152,11 @@ OVERLOAD(OM_NEW)
     MUIA_HelpNode,     "FI_K",
       Child, data->CY_COMBINE = MakeCycle(bcrit, ""),
       Child, HGroup,
-        Child, Label1(GetStr(MSG_FI_SearchIn)),
+        Child, Label1(tr(MSG_FI_SearchIn)),
         Child, data->PG_MODE = PageGroup,
           MUIA_Group_ActivePage, data->remoteFilterMode,
-          Child, data->CY_MODE[0] = MakeCycle(fldopt[0], GetStr(MSG_FI_SearchIn)),
-          Child, data->CY_MODE[1] = MakeCycle(fldopt[1], GetStr(MSG_FI_SearchIn)),
+          Child, data->CY_MODE[0] = MakeCycle(fldopt[0], tr(MSG_FI_SearchIn)),
+          Child, data->CY_MODE[1] = MakeCycle(fldopt[1], tr(MSG_FI_SearchIn)),
         End,
         Child, data->ST_FIELD = BetterStringObject,
           StringFrame,
@@ -181,8 +181,8 @@ OVERLOAD(OM_NEW)
           End,
           Child, HGroup,
             Child, VGroup,
-              Child, MakeCheckGroup((Object **)&data->CH_CASESENS[0], GetStr(MSG_FI_CaseSensitive)),
-              Child, MakeCheckGroup((Object **)&data->CH_SUBSTR[0], GetStr(MSG_FI_SubString)),
+              Child, MakeCheckGroup((Object **)&data->CH_CASESENS[0], tr(MSG_FI_CaseSensitive)),
+              Child, MakeCheckGroup((Object **)&data->CH_SUBSTR[0], tr(MSG_FI_SubString)),
             End,
             Child, data->RA_ADRMODE = Radio(NULL, amode),
           End,
@@ -200,8 +200,8 @@ OVERLOAD(OM_NEW)
             Child, data->BT_EDIT[1] = PopButton(MUII_PopUp),
           End,
           Child, VGroup,
-            Child, MakeCheckGroup((Object **)&data->CH_CASESENS[1], GetStr(MSG_FI_CaseSensitive)),
-            Child, MakeCheckGroup((Object **)&data->CH_SUBSTR[1], GetStr(MSG_FI_SubString)),
+            Child, MakeCheckGroup((Object **)&data->CH_CASESENS[1], tr(MSG_FI_CaseSensitive)),
+            Child, MakeCheckGroup((Object **)&data->CH_SUBSTR[1], tr(MSG_FI_SubString)),
           End,
         End,
         Child, VGroup, // 2  date, size
@@ -224,7 +224,7 @@ OVERLOAD(OM_NEW)
             Child, data->CY_COMP[4] = MakeCycle(&compopt[5],""),
             Child, data->ST_MATCH[4] = MakeString(SIZE_PATTERN,""),
           End,
-          Child, MakeCheckGroup((Object **)&data->CH_CASESENS[4], GetStr(MSG_FI_CaseSensitive)),
+          Child, MakeCheckGroup((Object **)&data->CH_CASESENS[4], tr(MSG_FI_CaseSensitive)),
           Child, HVSpace,
         End,
       End,

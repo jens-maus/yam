@@ -104,10 +104,10 @@ static void US_SaveUsers(void)
         fprintf(fh, "@USER %s\n%s\n%d\n%s\n@ENDUSER\n", u->Name, u->MailDir, u->Limited*4+u->UseAddr*2+u->UseDict, Encrypt(u->Password));
     }
     fclose(fh);
-    AppendLogVerbose(62, GetStr(MSG_LOG_SavingUsers));
+    AppendLogVerbose(62, tr(MSG_LOG_SavingUsers));
   }
   else
-    ER_NewError(GetStr(MSG_ER_CantCreateFile), fname);
+    ER_NewError(tr(MSG_ER_CantCreateFile), fname);
 
   LEAVE();
 }
@@ -144,7 +144,7 @@ static void US_LoadUsers(void)
 
                if(FileType(u->MailDir) != FIT_DRAWER)
                {
-                  ER_NewError(GetStr(MSG_ER_UserRemoved), u->MailDir, u->Name);
+                  ER_NewError(tr(MSG_ER_UserRemoved), u->MailDir, u->Name);
                   u->Name[0] = 0;
                   save = TRUE;
                }
@@ -262,7 +262,7 @@ HOOKPROTONHNONP(US_DelFunc, void)
 
    if(*user->MailDir)
    {
-      if(!(m = MUI_Request(G->App, G->US->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_US_RemoveReqGads), GetStr(MSG_US_RemoveReq))))
+      if(!(m = MUI_Request(G->App, G->US->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_US_RemoveReqGads), tr(MSG_US_RemoveReq))))
         return;
 
       if(m == 1)
@@ -311,17 +311,17 @@ static BOOL US_SaveUserList(void)
          {
             if(FileType(u->MailDir) != FIT_DRAWER)
             {
-               if (MUI_Request(G->App, G->US->GUI.WI, 0, GetStr(MSG_MA_MUsers), GetStr(MSG_YesNoReq), GetStr(MSG_US_ErrorNoDirectory)))
+               if (MUI_Request(G->App, G->US->GUI.WI, 0, tr(MSG_MA_MUsers), tr(MSG_YesNoReq), tr(MSG_US_ErrorNoDirectory)))
                {
                   if (CreateDirectory(u->MailDir)) valid = TRUE;
-                  else ER_NewError(GetStr(MSG_ER_CantCreateDir), u->MailDir);
+                  else ER_NewError(tr(MSG_ER_CantCreateDir), u->MailDir);
                }
             }
             else valid = TRUE;
          }
-         else ER_NewError(GetStr(MSG_ER_MissingDirectory));
+         else ER_NewError(tr(MSG_ER_MissingDirectory));
       }
-      else ER_NewError(GetStr(MSG_ER_MissingName));
+      else ER_NewError(tr(MSG_ER_MissingName));
       if (!valid)
       {
          set(G->US->GUI.LV_USERS, MUIA_NList_Active, i);
@@ -458,8 +458,8 @@ HOOKPROTONH(US_LV_DspFunc, long, char **array, struct User *entry)
   }
   else
   {
-    array[0] = (STRPTR)GetStr(MSG_US_TitleUserName);
-    array[1] = (STRPTR)GetStr(MSG_US_TitleMailDir);
+    array[0] = (STRPTR)tr(MSG_US_TitleUserName);
+    array[1] = (STRPTR)tr(MSG_US_TitleMailDir);
   }
 
   return 0;
@@ -476,7 +476,7 @@ static struct US_ClassData *US_New(BOOL supervisor)
    {
       data->Supervisor = supervisor;
       data->GUI.WI = WindowObject,
-         MUIA_Window_Title, GetStr(MSG_MA_MUsers),
+         MUIA_Window_Title, tr(MSG_MA_MUsers),
          MUIA_HelpNode, "US_W",
          MUIA_Window_ID, MAKE_ID('U','S','E','R'),
          WindowContents, VGroup,
@@ -493,34 +493,34 @@ static struct US_ClassData *US_New(BOOL supervisor)
                   MUIA_NList_Format, "BAR,",
                End,
             End,
-            Child, VGroup, GroupFrameT(GetStr(MSG_MA_Settings)),
+            Child, VGroup, GroupFrameT(tr(MSG_MA_Settings)),
                Child, ColGroup(2),
-                  Child, Label2(GetStr(MSG_US_UserName)),
-                  Child, data->GUI.ST_USER = MakeString(SIZE_NAME, GetStr(MSG_US_UserName)),
-                  Child, Label2(GetStr(MSG_US_Password)),
-                  Child, data->GUI.ST_PASSWD = MakePassString(GetStr(MSG_US_Password)),
-                  Child, Label2(GetStr(MSG_US_MailDirectory)),
+                  Child, Label2(tr(MSG_US_UserName)),
+                  Child, data->GUI.ST_USER = MakeString(SIZE_NAME, tr(MSG_US_UserName)),
+                  Child, Label2(tr(MSG_US_Password)),
+                  Child, data->GUI.ST_PASSWD = MakePassString(tr(MSG_US_Password)),
+                  Child, Label2(tr(MSG_US_MailDirectory)),
                   Child, data->GUI.PO_MAILDIR = PopaslObject,
                      MUIA_Popasl_Type,ASL_FileRequest,
-                     MUIA_Popstring_String,data->GUI.ST_MAILDIR = MakeString(SIZE_PATH,GetStr(MSG_US_MailDirectory)),
+                     MUIA_Popstring_String,data->GUI.ST_MAILDIR = MakeString(SIZE_PATH,tr(MSG_US_MailDirectory)),
                      MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
                      ASLFR_DrawersOnly, TRUE,
                   End,
                End,
                Child, VGroup,
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_USEADDR, GetStr(MSG_US_GlobalAddrBook)),
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_USEDICT, GetStr(MSG_US_GlobalDict)),
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_ROOT,GetStr(MSG_US_SuperVisor)),
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_USEADDR, tr(MSG_US_GlobalAddrBook)),
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_USEDICT, tr(MSG_US_GlobalDict)),
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_ROOT,tr(MSG_US_SuperVisor)),
                End,
                Child, VGroup,
                   MUIA_ShowMe, supervisor,
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_CLONE, GetStr(MSG_US_CopyConfig)),
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_CLONE, tr(MSG_US_CopyConfig)),
                End,
             End,
             Child, ColGroup(3),
                MUIA_ShowMe, supervisor,
-               Child, data->GUI.BT_ADD = MakeButton(GetStr(MSG_US_AddUser)),
-               Child, data->GUI.BT_DEL = MakeButton(GetStr(MSG_US_DelUser)),
+               Child, data->GUI.BT_ADD = MakeButton(tr(MSG_US_AddUser)),
+               Child, data->GUI.BT_DEL = MakeButton(tr(MSG_US_DelUser)),
             End,
          End,
       End;

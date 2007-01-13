@@ -2200,7 +2200,7 @@ void rx_requeststring( UNUSED struct RexxHost *host, struct rxd_requeststring **
          reqtext = AllocReqText(rd->rd.arg.body);
          if(rd->rd.arg.string)
            strlcpy(rd->string, rd->rd.arg.string, sizeof(rd->string));
-         rd->rd.rc = !StringRequest(rd->string, SIZE_DEFAULT, NULL, reqtext, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), (BOOL)rd->rd.arg.secret, G->MA->GUI.WI);
+         rd->rd.rc = !StringRequest(rd->string, SIZE_DEFAULT, NULL, reqtext, tr(MSG_Okay), NULL, tr(MSG_Cancel), (BOOL)rd->rd.arg.secret, G->MA->GUI.WI);
          rd->rd.res.string = rd->string;
          free(reqtext);
          break;
@@ -2229,7 +2229,7 @@ void rx_requestfolder( UNUSED struct RexxHost *host, struct rxd_requestfolder **
       case RXIF_ACTION:
          reqtext = AllocReqText(rd->arg.body);
          exfolder = rd->arg.excludeactive ? FO_GetCurrentFolder() : NULL;
-         if ((folder = FolderRequest(NULL, reqtext, GetStr(MSG_Okay), GetStr(MSG_Cancel), exfolder, G->MA->GUI.WI))) rd->res.folder = folder->Name;
+         if ((folder = FolderRequest(NULL, reqtext, tr(MSG_Okay), tr(MSG_Cancel), exfolder, G->MA->GUI.WI))) rd->res.folder = folder->Name;
          else rd->rc = 1;
          free(reqtext);
          break;
@@ -2506,7 +2506,7 @@ void rx_addrnew( UNUSED struct RexxHost *host, struct rxd_addrnew **rxd, long ac
             rd->res.alias = addr.Alias;
             EA_InsertBelowActive(&addr, addr.Type == AET_GROUP ? TNF_LIST : 0);
             G->AB->Modified = TRUE;
-            AppendLogVerbose(71, GetStr(MSG_LOG_NewAddress), addr.Alias);
+            AppendLogVerbose(71, tr(MSG_LOG_NewAddress), addr.Alias);
          }
          break;
       
@@ -2575,7 +2575,7 @@ void rx_geturl( UNUSED struct RexxHost *host, struct rxd_geturl **rxd, long acti
       case RXIF_ACTION:
          if (TR_OpenTCPIP())
          {
-            BusyText(GetStr(MSG_TR_Downloading), "");
+            BusyText(tr(MSG_TR_Downloading), "");
             if (!TR_DownloadURL(rd->arg.url, NULL, NULL, rd->arg.filename)) rd->rc = RETURN_ERROR;
             TR_CloseTCPIP();
             BusyEnd();

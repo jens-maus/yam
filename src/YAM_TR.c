@@ -422,13 +422,13 @@ static BOOL TR_InitSTARTTLS(int ServerFlags)
   // If this server doesn`t support TLS at all we return with an error
   if(!hasSTARTTLS(ServerFlags))
   {
-    ER_NewError(GetStr(MSG_ER_NOSTARTTLS));
+    ER_NewError(tr(MSG_ER_NOSTARTTLS));
     return FALSE;
   }
 
   // If we end up here the server supports STARTTLS and we can start
   // initializing the connection
-  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_INITTLS));
+  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_INITTLS));
 
   // Now we initiate the STARTTLS command (RFC 2487)
   if(!TR_SendSMTPCmd(ESMTP_STARTTLS, NULL, MSG_ER_BadResponse))
@@ -440,7 +440,7 @@ static BOOL TR_InitSTARTTLS(int ServerFlags)
   }
   else
   {
-    ER_NewError(GetStr(MSG_ER_INITTLS), C->SMTP_Server);
+    ER_NewError(tr(MSG_ER_INITTLS), C->SMTP_Server);
     return FALSE;
   }
 
@@ -462,13 +462,13 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
   ENTER();
 
-  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SENDAUTH));
+  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SENDAUTH));
 
   // first we check if the user has supplied the User&Password
   // and if not we return with an error
   if(!C->SMTP_AUTH_User[0] || !C->SMTP_AUTH_Pass[0])
   {
-    ER_NewError(GetStr(MSG_ER_NOAUTHUSERPASS));
+    ER_NewError(tr(MSG_ER_NOAUTHUSERPASS));
 
     RETURN(FALSE);
     return FALSE;
@@ -811,7 +811,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         {
           // get the server response and see if it was valid
           if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 334)
-            ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
+            ER_NewError(tr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
           else
           {
             // now that we have received the 334 code we just send a plain line
@@ -819,7 +819,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
             if(TR_WriteLine("\r\n") > 0)
             {
               if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-                ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
+                ER_NewError(tr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
               else
                 rc = SMTP_ACTION_OK;
             }
@@ -887,7 +887,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         {
           // get the server response and see if it was valid
           if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-            ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_CRAM_MD5], buffer);
+            ER_NewError(tr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_CRAM_MD5], buffer);
           else
             rc = SMTP_ACTION_OK;
         }
@@ -935,7 +935,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           }
 
           if(rc != SMTP_ACTION_OK)
-            ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_LOGIN], buffer);
+            ER_NewError(tr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_LOGIN], buffer);
         }
       }
     }
@@ -970,7 +970,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
       {
         // get the server response and see if it was valid
         if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-          ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
+          ER_NewError(tr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
         else
           rc = SMTP_ACTION_OK;
       }
@@ -983,7 +983,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
       // if we don`t have any of the Authentication Flags turned on we have to
       // exit with an error
-      ER_NewError(GetStr(MSG_CO_ER_SMTPAUTH), C->SMTP_Server);
+      ER_NewError(tr(MSG_CO_ER_SMTPAUTH), C->SMTP_Server);
     }
     break;
   }
@@ -1168,7 +1168,7 @@ BOOL TR_OpenTCPIP(void)
                   TAG_DONE) != 0)
     #endif
     {
-      ER_NewError(GetStr(MSG_ER_INITAMISSL));
+      ER_NewError(tr(MSG_ER_INITAMISSL));
       G->TR_UseableTLS = G->TR_UseTLS = FALSE;
     }
   }
@@ -1217,7 +1217,7 @@ static void TR_SetSocketOpts(void)
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_KEEPALIVE) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_KEEPALIVE");
+      ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_KEEPALIVE");
     }
   }
 
@@ -1228,7 +1228,7 @@ static void TR_SetSocketOpts(void)
     if(setsockopt(G->TR_Socket, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(TCP_NODELAY) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "TCP_NODELAY");
+      ER_NewError(tr(MSG_ER_SOCKETOPTION), "TCP_NODELAY");
     }
   }
 
@@ -1239,7 +1239,7 @@ static void TR_SetSocketOpts(void)
     if(setsockopt(G->TR_Socket, IPPROTO_IP, IP_TOS, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(IPTOS_LOWDELAY) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "IPTOS_LOWDELAY");
+      ER_NewError(tr(MSG_ER_SOCKETOPTION), "IPTOS_LOWDELAY");
     }
   }
 
@@ -1250,7 +1250,7 @@ static void TR_SetSocketOpts(void)
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDBUF, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_SNDBUF) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDBUF");
+      ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_SNDBUF");
     }
   }
 
@@ -1261,7 +1261,7 @@ static void TR_SetSocketOpts(void)
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVBUF, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_RCVBUF) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVBUF");
+      ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_RCVBUF");
     }
   }
 
@@ -1272,7 +1272,7 @@ static void TR_SetSocketOpts(void)
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDLOWAT, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_SNDLOWAT) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDLOWAT");
+      ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_SNDLOWAT");
     }
   }
 
@@ -1283,7 +1283,7 @@ static void TR_SetSocketOpts(void)
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVLOWAT, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_RCVLOWAT) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVLOWAT");
+      ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_RCVLOWAT");
     }
   }
 
@@ -1297,7 +1297,7 @@ static void TR_SetSocketOpts(void)
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(struct TimeVal)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_SNDTIMEO) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDTIMEO");
+      ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_SNDTIMEO");
     }
   }
 
@@ -1311,7 +1311,7 @@ static void TR_SetSocketOpts(void)
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct TimeVal)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_RCVTIMEO) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVTIMEO");
+      ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_RCVTIMEO");
     }
   }
 
@@ -1518,7 +1518,7 @@ static int TR_RecvToFile(FILE *fh, char *filename, struct TransStat *ts)
         // write the line to the file now
         if(fwrite(line, 1, l, fh) != (size_t)l)
         {
-          ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), filename);
+          ER_NewError(tr(MSG_ER_ErrorWriteMailfile), filename);
           break;
         }
 
@@ -1675,7 +1675,7 @@ static int TR_Send(const char *ptr, int len, int flags)
 void TR_SetWinTitle(BOOL from, char *host)
 {
   // compose the window title
-  snprintf(G->TR->WTitle, sizeof(G->TR->WTitle), GetStr(from ? MSG_TR_MailTransferFrom : MSG_TR_MailTransferTo), host);
+  snprintf(G->TR->WTitle, sizeof(G->TR->WTitle), tr(from ? MSG_TR_MailTransferFrom : MSG_TR_MailTransferTo), host);
 
   // set the window title
   set(G->TR->GUI.WI, MUIA_Window_Title, G->TR->WTitle);
@@ -2029,14 +2029,14 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
                fclose(out);
                success = TRUE;
             }
-            else ER_NewError(GetStr(MSG_ER_CantCreateFile), filename);
+            else ER_NewError(tr(MSG_ER_CantCreateFile), filename);
          }
-         else ER_NewError(GetStr(MSG_ER_DocNotFound), path);
+         else ER_NewError(tr(MSG_ER_DocNotFound), path);
       }
-      else ER_NewError(GetStr(MSG_ER_SendHTTP));
+      else ER_NewError(tr(MSG_ER_SendHTTP));
       TR_Disconnect();
    }
-   else ER_NewError(GetStr(MSG_ER_ConnectHTTP), host);
+   else ER_NewError(tr(MSG_ER_ConnectHTTP), host);
    return success;
 }
 ///
@@ -2105,7 +2105,7 @@ static char *TR_SendPOP3Cmd(enum POPCommand command, const char *parmtext, const
               }
             }
 
-            ER_NewError(GetStr(errorMsg), (char *)POPcmd[command], buf);
+            ER_NewError(tr(errorMsg), (char *)POPcmd[command], buf);
           }
         }
       }
@@ -2141,7 +2141,7 @@ static int TR_ConnectPOP(int guilevel)
    // but perhaps TLS is not working.
    if(C->P3[pop]->SSLMode != P3SSL_OFF && !G->TR_UseableTLS)
    {
-      ER_NewError(GetStr(MSG_ER_UNUSABLEAMISSL));
+      ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
       return -1;
    }
 
@@ -2150,13 +2150,13 @@ static int TR_ConnectPOP(int guilevel)
       // avoid MUIA_Window_Open's side effect of activating the window if it was already open
       if(!xget(G->TR->GUI.WI, MUIA_Window_Open)) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
    }
-   set(G->TR->GUI.TX_STATUS  , MUIA_Text_Contents,GetStr(MSG_TR_Connecting));
+   set(G->TR->GUI.TX_STATUS  , MUIA_Text_Contents,tr(MSG_TR_Connecting));
 
    // If the hostname has a explicit :xxxxx port statement at the end we
    // take this one, even if its not needed anymore.
    if ((p = strchr(host, ':'))) { *p = 0; port = atoi(++p); }
 
-   BusyText(GetStr(MSG_TR_MailTransferFrom), host);
+   BusyText(tr(MSG_TR_MailTransferFrom), host);
    TR_SetWinTitle(TRUE, C->P3[pop]->Account);
 
    if((err = TR_Connect(host, port)) != CONNECTERR_SUCCESS)
@@ -2166,11 +2166,11 @@ static int TR_ConnectPOP(int guilevel)
        switch(err)
        {
          case CONNECTERR_UNKNOWN_HOST:
-           ER_NewError(GetStr(MSG_ER_UnknownPOP), C->P3[pop]->Server);
+           ER_NewError(tr(MSG_ER_UnknownPOP), C->P3[pop]->Server);
          break;
 
          default:
-           ER_NewError(GetStr(MSG_ER_CantConnect), C->P3[pop]->Server);
+           ER_NewError(tr(MSG_ER_CantConnect), C->P3[pop]->Server);
          break;
        }
      }
@@ -2182,7 +2182,7 @@ static int TR_ConnectPOP(int guilevel)
    // message now and then send the STLS command to start TLS negotiation
    if(C->P3[pop]->SSLMode == P3SSL_STLS)
    {
-      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
+      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
 
       // Initiate a connect and see if we succeed
       if(!(resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, MSG_ER_POPWELCOME))) return -1;
@@ -2196,7 +2196,7 @@ static int TR_ConnectPOP(int guilevel)
    // Here start the TLS/SSL Connection stuff
    if(C->P3[pop]->SSLMode != P3SSL_OFF)
    {
-     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_INITTLS));
+     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_INITTLS));
 
      // Now we have to Initialize and Start the TLS stuff if requested
      if(TR_InitTLS() && TR_StartTLS())
@@ -2205,7 +2205,7 @@ static int TR_ConnectPOP(int guilevel)
      }
      else
      {
-        ER_NewError(GetStr(MSG_ER_INITTLS), host);
+        ER_NewError(tr(MSG_ER_INITTLS), host);
         return -1;
      }
    }
@@ -2221,8 +2221,8 @@ static int TR_ConnectPOP(int guilevel)
 
    if (!*passwd)
    {
-      snprintf(buf, sizeof(buf), GetStr(MSG_TR_PopLoginReq), C->P3[pop]->User, host);
-      if (!StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_TR_PopLogin), buf, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->TR->GUI.WI))
+      snprintf(buf, sizeof(buf), tr(MSG_TR_PopLoginReq), C->P3[pop]->User, host);
+      if (!StringRequest(passwd, SIZE_PASSWORD, tr(MSG_TR_PopLogin), buf, tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->TR->GUI.WI))
       {
         return -1;
       }
@@ -2252,29 +2252,29 @@ static int TR_ConnectPOP(int guilevel)
          for(j=strlen(buf), i=0; i<16; j+=2, i++)
            snprintf(&buf[j], sizeof(buf)-j, "%02x", digest[i]);
          buf[j] = 0;
-         set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendAPOPLogin));
+         set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendAPOPLogin));
          if (!TR_SendPOP3Cmd(POPCMD_APOP, buf, MSG_ER_BadResponse)) return -1;
       }
       else
       {
-         ER_NewError(GetStr(MSG_ER_NoAPOP));
+         ER_NewError(tr(MSG_ER_NoAPOP));
          return -1;
       }
    }
    else
    {
-      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendUserID));
+      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendUserID));
       if (!TR_SendPOP3Cmd(POPCMD_USER, C->P3[pop]->User, MSG_ER_BadResponse)) return -1;
-      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendPassword));
+      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendPassword));
       if (!TR_SendPOP3Cmd(POPCMD_PASS, passwd, MSG_ER_BadResponse)) return -1;
    }
 
    FreeStrBuf(welcomemsg);
 
-   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_GetStats));
+   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_GetStats));
    if (!(resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, MSG_ER_BadResponse))) return -1;
    sscanf(&resp[4], "%d", &msgs);
-   if (msgs) AppendLogVerbose(31, GetStr(MSG_LOG_ConnectPOP), C->P3[pop]->User, host, msgs);
+   if (msgs) AppendLogVerbose(31, tr(MSG_LOG_ConnectPOP), C->P3[pop]->User, host, msgs);
 
    return msgs;
 }
@@ -2487,7 +2487,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 
             DeleteFile(fname);
          }
-         else ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), fname);
+         else ER_NewError(tr(MSG_ER_ErrorWriteMailfile), fname);
       }
    }
 
@@ -2498,7 +2498,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 //  Terminates a POP3 session
 static void TR_DisconnectPOP(void)
 {
-   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_Disconnecting));
+   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
    if(!G->Error) TR_SendPOP3Cmd(POPCMD_QUIT, NULL, MSG_ER_BadResponse);
    TR_Disconnect();
 }
@@ -2517,7 +2517,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       if(!TR_OpenTCPIP())
       {
         if(guilevel == POP_USER)
-          ER_NewError(GetStr(MSG_ER_OPENTCPIP));
+          ER_NewError(tr(MSG_ER_OPENTCPIP));
 
         return;
       }
@@ -2577,7 +2577,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 
       TR_DisconnectPOP();
       TR_Cleanup();
-      AppendLog(30, GetStr(MSG_LOG_Retrieving), G->TR->Stats.Downloaded-laststats, p->User, p->Server);
+      AppendLog(30, tr(MSG_LOG_Retrieving), G->TR->Stats.Downloaded-laststats, p->User, p->Server);
       if (G->TR->SinglePOP) pop = MAXP3;
       laststats = G->TR->Stats.Downloaded;
    }
@@ -2660,14 +2660,14 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
    if(isfirst == FALSE && xget(G->TR->GUI.WI, MUIA_Window_Open))
    {
      // reset the statistics display
-     snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), GetStr(MSG_TR_MESSAGEGAUGE), 0);
+     snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), 0);
      SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_Current,  0,
                                    MUIA_Gauge_InfoText, G->TR->CountLabel,
                                    MUIA_Gauge_Max,      0,
                                    TAG_DONE);
 
      // and last, but not least update the gauge.
-     snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), GetStr(MSG_TR_TRANSFERSIZE),
+     snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                             "0 KB", "0 KB");
 
      SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current,  0,
@@ -2691,7 +2691,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
             {
                struct MinNode *curNode;
 
-               set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_ApplyFilters));
+               set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_ApplyFilters));
                for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
                   TR_GetMessageDetails((struct MailTransferNode *)curNode, -2);
             }
@@ -2894,7 +2894,7 @@ static char *TR_SendSMTPCmd(enum SMTPCommand command, const char *parmtext, cons
 clean_exit:
 
    // the rest of the responses throws an error
-   if(errorMsg) ER_NewError(GetStr(errorMsg), (char *)SMTPcmd[command], buf);
+   if(errorMsg) ER_NewError(tr(errorMsg), (char *)SMTPcmd[command], buf);
 
    // if we end up with an error we can free our buffer now
    FreeStrBuf(buf);
@@ -2912,11 +2912,11 @@ static BOOL TR_ConnectSMTP(void)
   // one we have wait for the welcome
   if(!G->TR_UseTLS || C->SMTP_SecureMethod == SMTPSEC_SSL)
   {
-    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
+    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
     if(!TR_SendSMTPCmd(SMTP_CONNECT, NULL, MSG_ER_BadResponse)) return FALSE;
   }
 
-  set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, GetStr(MSG_TR_SendHello));
+  set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, tr(MSG_TR_SendHello));
   if(!TR_SendSMTPCmd(SMTP_HELO, C->SMTP_Domain, MSG_ER_BadResponse)) return FALSE;
 
   return TRUE;
@@ -2935,7 +2935,7 @@ static int TR_ConnectESMTP(void)
    // one we have wait for the welcome
    if(!G->TR_UseTLS || C->SMTP_SecureMethod == SMTPSEC_SSL)
    {
-      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
+      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
       if(!TR_SendSMTPCmd(SMTP_CONNECT, NULL, MSG_ER_BadResponse)) return 0;
    }
 
@@ -2943,7 +2943,7 @@ static int TR_ConnectESMTP(void)
    if (G->TR_Socket == SMTP_NO_SOCKET) return 0;
 
    // Now send the EHLO ESMTP command to log in
-   set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, GetStr(MSG_TR_SendHello));
+   set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, tr(MSG_TR_SendHello));
    if(!(resp = TR_SendSMTPCmd(ESMTP_EHLO, C->SMTP_Domain, MSG_ER_BadResponse))) return 0;
 
    // Now lets see what features this ESMTP Server really has
@@ -3027,7 +3027,7 @@ static int TR_ConnectESMTP(void)
 //  Terminates a SMTP session
 static void TR_DisconnectSMTP(void)
 {
-   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_Disconnecting));
+   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
    if (!G->Error) TR_SendSMTPCmd(SMTP_QUIT, NULL, MSG_ER_BadResponse);
    TR_Disconnect();
 }
@@ -3099,7 +3099,7 @@ static void TR_TransStat_Start(struct TransStat *ts)
   GetSysTime(TIMEVAL(&ts->Clock_Last));
   ts->Clock_Start = ts->Clock_Last.Seconds;
 
-  snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), GetStr(MSG_TR_MESSAGEGAUGE), ts->Msgs_Tot);
+  snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), ts->Msgs_Tot);
   SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
                                 MUIA_Gauge_Max,      ts->Msgs_Tot,
                                 TAG_DONE);
@@ -3131,7 +3131,7 @@ static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, L
 
      // and last, but not least update the gauge.
      FormatSize(size, ts->str_size_curr_max, sizeof(ts->str_size_curr_max), SF_AUTO);
-     snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), GetStr(MSG_TR_TRANSFERSIZE),
+     snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                             "0 B", ts->str_size_curr_max);
 
      SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current,  0,
@@ -3193,7 +3193,7 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
           FormatSize(speed, ts->str_speed, sizeof(ts->str_speed), SF_MIXED);
 
           // now format the StatsLabel and update it
-          snprintf(G->TR->StatsLabel, sizeof(G->TR->StatsLabel), GetStr(MSG_TR_TRANSFERSTATUS),
+          snprintf(G->TR->StatsLabel, sizeof(G->TR->StatsLabel), tr(MSG_TR_TRANSFERSTATUS),
                                       ts->str_size_done, ts->str_size_tot, ts->str_speed,
                                       deltatime/60, deltatime%60,
                                       remclock/60, remclock%60);
@@ -3202,7 +3202,7 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
 
           // update the gauge
           FormatSize(ts->Size_Curr, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
-          snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), GetStr(MSG_TR_TRANSFERSIZE),
+          snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                                  ts->str_size_curr, ts->str_size_curr_max);
           SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current,  deltatime,
                                         MUIA_Gauge_InfoText, G->TR->BytesLabel,
@@ -3252,7 +3252,7 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
       FormatSize(speed, speed_str, sizeof(speed_str), SF_MIXED);
 
       // now format the StatsLabel and update it
-      snprintf(G->TR->StatsLabel, sizeof(G->TR->StatsLabel), GetStr(MSG_TR_TRANSFERSTATUS),
+      snprintf(G->TR->StatsLabel, sizeof(G->TR->StatsLabel), tr(MSG_TR_TRANSFERSTATUS),
                                   size_done, size_total, speed_str,
                                   deltatime/60, deltatime%60,
                                   remclock/60, remclock%60);
@@ -3510,7 +3510,7 @@ static BOOL FilterDuplicates(void)
     if(IsMinListEmpty(&G->TR->transferList) == FALSE)
     {
       // inform the user of the operation
-      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_CHECKUIDL));
+      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_CHECKUIDL));
 
       // before we go and request each UIDL of a message we check wheter the server
       // supports the UIDL command at all
@@ -3739,7 +3739,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
 
             // update the transfer status
             ts.Msgs_Done++;
-            TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, GetStr(MSG_TR_Exporting));
+            TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, tr(MSG_TR_Exporting));
 
             if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder))
             {
@@ -3840,7 +3840,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
          fclose(fh);
 
          // write the status to our logfile
-         AppendLog(51, GetStr(MSG_LOG_Exporting), ts.Msgs_Done, mlist[2]->Folder->Name, fname);
+         AppendLog(51, tr(MSG_LOG_Exporting), ts.Msgs_Done, mlist[2]->Folder->Name, fname);
       }
    }
 
@@ -3961,7 +3961,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 
                     // now lets send the data buffered to the socket.
                     // we will flush it later then.
-                    if(TR_Send(sendbuf, sendsize, TCPF_NONE) <= 0) ER_NewError(GetStr(MSG_ER_ConnectionBroken));
+                    if(TR_Send(sendbuf, sendsize, TCPF_NONE) <= 0) ER_NewError(tr(MSG_ER_ConnectionBroken));
                   }
 
                   TR_TransStat_Update(ts, cpos);
@@ -3969,7 +3969,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 
                 // if buf == NULL when we arrive here, then the fgets()
                 // at the top exited with an error
-                if(buf == NULL) { ER_NewError(GetStr(MSG_ER_ErrorReadMailfile), mf); result = -1; }
+                if(buf == NULL) { ER_NewError(tr(MSG_ER_ErrorReadMailfile), mf); result = -1; }
                 else if(!G->TR->Abort && !G->Error)
                 {
                   // we have to flush the write buffer if this wasn`t a error or
@@ -3988,7 +3988,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                     GetSysTimeUTC(&mail->Reference->transDate);
 
                     result = email->DelSend ? 2 : 1;
-                    AppendLogVerbose(42, GetStr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, mail->Size);
+                    AppendLogVerbose(42, tr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, mail->Size);
                   }
                 }
 
@@ -3997,11 +3997,11 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
             }
             MA_FreeEMailStruct(email);
           }
-          else ER_NewError(GetStr(MSG_ER_CantOpenFile), mf);
+          else ER_NewError(tr(MSG_ER_CantOpenFile), mf);
       }
       fclose(f);
    }
-   else ER_NewError(GetStr(MSG_ER_CantOpenFile), mf);
+   else ER_NewError(tr(MSG_ER_CantOpenFile), mf);
 
    return result;
 }
@@ -4082,7 +4082,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
           if(C->SMTP_SecureMethod != SMTPSEC_NONE &&
              !G->TR_UseableTLS)
           {
-            ER_NewError(GetStr(MSG_ER_UNUSABLEAMISSL));
+            ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
 
             RETURN(FALSE);
             return FALSE;
@@ -4103,9 +4103,9 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
           else
             port = C->SMTP_Port;
 
-          set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_Connecting));
+          set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Connecting));
 
-          BusyText(GetStr(MSG_TR_MailTransferTo), host);
+          BusyText(tr(MSG_TR_MailTransferTo), host);
 
           TR_SetWinTitle(FALSE, host);
 
@@ -4122,7 +4122,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                 G->TR_UseTLS = TRUE;
               else
               {
-                ER_NewError(GetStr(MSG_ER_INITTLS), host);
+                ER_NewError(tr(MSG_ER_INITTLS), host);
 
                 // better disconnect before we leave
                 TR_Disconnect();
@@ -4177,7 +4177,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
               // set the success to TRUE as everything worked out fine
               // until here.
               success = TRUE;
-              AppendLogVerbose(41, GetStr(MSG_LOG_ConnectSMTP), host);
+              AppendLogVerbose(41, tr(MSG_LOG_ConnectSMTP), host);
 
               for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
               {
@@ -4188,7 +4188,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                   break;
 
                 ts.Msgs_Done++;
-                TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, GetStr(MSG_TR_Sending));
+                TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, tr(MSG_TR_Sending));
 
                 switch(TR_SendMessage(&ts, mail))
                 {
@@ -4230,7 +4230,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                   break;
                 }
               }
-              AppendLogNormal(40, GetStr(MSG_LOG_Sending), c, host);
+              AppendLogNormal(40, tr(MSG_LOG_Sending), c, host);
             }
             else
               err = 1;
@@ -4246,11 +4246,11 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
             break;
 
             case -1:
-              ER_NewError(GetStr(MSG_ER_UnknownSMTP), C->SMTP_Server);
+              ER_NewError(tr(MSG_ER_UnknownSMTP), C->SMTP_Server);
             break;
 
             default:
-              ER_NewError(GetStr(MSG_ER_CantConnect), C->SMTP_Server);
+              ER_NewError(tr(MSG_ER_CantConnect), C->SMTP_Server);
           }
 
           FreeFilterSearch();
@@ -4271,7 +4271,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
     TR_CloseTCPIP();
   }
   else
-    ER_NewError(GetStr(MSG_ER_OPENTCPIP));
+    ER_NewError(tr(MSG_ER_OPENTCPIP));
 
   // start the POSTSEND macro so that others
   // notice that the send process finished.
@@ -4971,7 +4971,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
             if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
               break;
 
-            TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, GetStr(MSG_TR_Importing));
+            TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
 
             if((ofh = fopen(MA_NewMailFile(folder, mfile), "w")) == NULL)
               break;
@@ -5111,7 +5111,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
             if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
               break;
 
-            TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, GetStr(MSG_TR_Importing));
+            TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
 
             if((ofh = fopen(MA_NewMailFile(folder, mfile), "wb")) == NULL)
               break;
@@ -5172,7 +5172,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
     }
 
     DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
-    AppendLog(50, GetStr(MSG_LOG_Importing), ts.Msgs_Done, G->TR->ImportFile, folder->Name);
+    AppendLog(50, tr(MSG_LOG_Importing), ts.Msgs_Done, G->TR->ImportFile, folder->Name);
     DisplayStatistics(folder, TRUE);
   }
 
@@ -5242,7 +5242,7 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
             if(FO_GetCurrentFolder() == infolder)
               DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
 
-            AppendLogVerbose(32, GetStr(MSG_LOG_RetrievingVerbose), AddrName(new->From), new->Subject, new->Size);
+            AppendLogVerbose(32, tr(MSG_LOG_RetrievingVerbose), AddrName(new->From), new->Subject, new->Size);
             MA_StartMacro(MACRO_NEWMSG, GetRealPath(GetMailFile(NULL, infolder, new)));
             MA_FreeEMailStruct(mail);
          }
@@ -5252,7 +5252,7 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
       DeleteFile(msgfile);
       SET_FLAG(infolder->Flags, FOFL_MODIFY); // we need to set the folder flags to modified so that the .index will be saved later.
    }
-   else ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), mfile);
+   else ER_NewError(tr(MSG_ER_ErrorWriteMailfile), mfile);
 
    return FALSE;
 }
@@ -5269,7 +5269,7 @@ static BOOL TR_DeleteMessage(int number)
   snprintf(msgnum, sizeof(msgnum), "%d", number);
 
   // inform others of the delete operation
-  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_DeletingServerMail));
+  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_DeletingServerMail));
 
   if(TR_SendPOP3Cmd(POPCMD_DELE, msgnum, MSG_ER_BadResponse))
   {
@@ -5304,8 +5304,8 @@ static void TR_NewMailAlert(void)
     if(xget(G->App, MUIA_Application_Iconified) == TRUE)
       PopUp();
 
-    snprintf(buffer, sizeof(buffer), GetStr(MSG_TR_NewMailReq), stats->Downloaded, stats->OnServer-stats->Deleted, stats->DupSkipped);
-    snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), GetStr(MSG_TR_FilterStats), rr->Checked,
+    snprintf(buffer, sizeof(buffer), tr(MSG_TR_NewMailReq), stats->Downloaded, stats->OnServer-stats->Deleted, stats->DupSkipped);
+    snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), tr(MSG_TR_FilterStats), rr->Checked,
                                                                      rr->Bounced,
                                                                      rr->Forwarded,
                                                                      rr->Replied,
@@ -5314,7 +5314,7 @@ static void TR_NewMailAlert(void)
                                                                      rr->Deleted);
 
     // show the info window.
-    InfoWindow(GetStr(MSG_TR_NewMail), buffer, GetStr(MSG_Okay), G->MA->GUI.WI);
+    InfoWindow(tr(MSG_TR_NewMail), buffer, tr(MSG_Okay), G->MA->GUI.WI);
   }
 
   if(hasCommandNotify(C->NotifyType))
@@ -5353,7 +5353,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
 
       if(hasTR_LOAD(mtn))
       {
-        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, GetStr(MSG_TR_Downloading));
+        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Downloading));
 
         if(TR_LoadMessage(&ts, mtn->index))
         {
@@ -5373,7 +5373,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       }
       else if(hasTR_DELETE(mtn))
       {
-        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, GetStr(MSG_TR_Downloading));
+        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Downloading));
 
         if(TR_DeleteMessage(mtn->index) && G->TR->DuplicatesChecking)
           RemoveUIDLfromHash(mtn->UIDL);
@@ -5528,11 +5528,11 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
   }
   else
   {
-    array[0] = (STRPTR)GetStr(MSG_MA_TitleStatus);
-    array[1] = (STRPTR)GetStr(MSG_Size);
-    array[2] = (STRPTR)GetStr(MSG_From);
-    array[3] = (STRPTR)GetStr(MSG_Subject);
-    array[4] = (STRPTR)GetStr(MSG_Date);
+    array[0] = (STRPTR)tr(MSG_MA_TitleStatus);
+    array[1] = (STRPTR)tr(MSG_Size);
+    array[2] = (STRPTR)tr(MSG_From);
+    array[3] = (STRPTR)tr(MSG_Subject);
+    array[4] = (STRPTR)tr(MSG_Date);
   }
 
   return 0;
@@ -5556,14 +5556,14 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
       NewList((struct List *)&data->transferList);
 
       // prepare the initial text object content
-      snprintf(status_label, sizeof(status_label), GetStr(MSG_TR_TRANSFERSTATUS),
+      snprintf(status_label, sizeof(status_label), tr(MSG_TR_TRANSFERSTATUS),
                                                    "0 MB", "0 MB", "0 KB", 0, 0, 0, 0);
 
-      snprintf(msg_gauge_label, sizeof(msg_gauge_label), GetStr(MSG_TR_MESSAGEGAUGE), 0);
-      snprintf(size_gauge_label, sizeof(size_gauge_label), GetStr(MSG_TR_TRANSFERSIZE),
+      snprintf(msg_gauge_label, sizeof(msg_gauge_label), tr(MSG_TR_MESSAGEGAUGE), 0);
+      snprintf(size_gauge_label, sizeof(size_gauge_label), tr(MSG_TR_TRANSFERSIZE),
                                                            "0 B", "0 B");
 
-      gr_proc = ColGroup(2), GroupFrameT(GetStr(MSG_TR_Status)),
+      gr_proc = ColGroup(2), GroupFrameT(tr(MSG_TR_Status)),
          Child, data->GUI.TX_STATS = TextObject,
             MUIA_Text_Contents, status_label,
             MUIA_Background,    MUII_TextBack,
@@ -5586,11 +5586,11 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
             MUIA_Background,MUII_TextBack,
             MUIA_Frame     ,MUIV_Frame_Text,
          End,
-         Child, data->GUI.BT_ABORT = MakeButton(GetStr(MSG_TR_Abort)),
+         Child, data->GUI.BT_ABORT = MakeButton(tr(MSG_TR_Abort)),
       End;
       if (fullwin)
       {
-         data->GUI.GR_LIST = VGroup, GroupFrameT(TRmode==TR_IMPORT ? GetStr(MSG_TR_MsgInFile) : GetStr(MSG_TR_MsgOnServer)),
+         data->GUI.GR_LIST = VGroup, GroupFrameT(TRmode==TR_IMPORT ? tr(MSG_TR_MsgInFile) : tr(MSG_TR_MsgOnServer)),
             MUIA_ShowMe, TRmode==TR_IMPORT || C->PreSelection>=2,
             Child, NListviewObject,
                MUIA_CycleChain,1,
@@ -5611,22 +5611,22 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
                End,
             End,
          End;
-         gr_sel = VGroup, GroupFrameT(GetStr(MSG_TR_Control)),
+         gr_sel = VGroup, GroupFrameT(tr(MSG_TR_Control)),
             Child, ColGroup(5),
-               Child, bt_all = MakeButton(GetStr(MSG_TR_All)),
-               Child, bt_loaddel = MakeButton(GetStr(MSG_TR_DownloadDelete)),
-               Child, bt_leave = MakeButton(GetStr(MSG_TR_Leave)),
+               Child, bt_all = MakeButton(tr(MSG_TR_All)),
+               Child, bt_loaddel = MakeButton(tr(MSG_TR_DownloadDelete)),
+               Child, bt_leave = MakeButton(tr(MSG_TR_Leave)),
                Child, HSpace(0),
-               Child, data->GUI.BT_PAUSE = MakeButton(GetStr(MSG_TR_Pause)),
-               Child, bt_none = MakeButton(GetStr(MSG_TR_Clear)),
-               Child, bt_loadonly = MakeButton(GetStr(MSG_TR_DownloadOnly)),
-               Child, bt_delonly = MakeButton(GetStr(MSG_TR_DeleteOnly)),
+               Child, data->GUI.BT_PAUSE = MakeButton(tr(MSG_TR_Pause)),
+               Child, bt_none = MakeButton(tr(MSG_TR_Clear)),
+               Child, bt_loadonly = MakeButton(tr(MSG_TR_DownloadOnly)),
+               Child, bt_delonly = MakeButton(tr(MSG_TR_DeleteOnly)),
                Child, HSpace(0),
-               Child, data->GUI.BT_RESUME = MakeButton(GetStr(MSG_TR_Resume)),
+               Child, data->GUI.BT_RESUME = MakeButton(tr(MSG_TR_Resume)),
             End,
             Child, ColGroup(2),
-               Child, data->GUI.BT_START = MakeButton(GetStr(MSG_TR_Start)),
-               Child, data->GUI.BT_QUIT = MakeButton(GetStr(MSG_TR_Abort)),
+               Child, data->GUI.BT_START = MakeButton(tr(MSG_TR_Start)),
+               Child, data->GUI.BT_QUIT = MakeButton(tr(MSG_TR_Abort)),
             End,
          End;
          gr_win = VGroup,

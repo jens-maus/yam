@@ -161,14 +161,14 @@ BOOL MA_PromptFolderPassword(struct Folder *fo, APTR win)
       BOOL retry = TRUE;
       char prompt[SIZE_LARGE];
 
-      snprintf(prompt, sizeof(prompt), GetStr(MSG_MA_GetFolderPass), fo->Name);
+      snprintf(prompt, sizeof(prompt), tr(MSG_MA_GetFolderPass), fo->Name);
 
       do
       {
         char passwd[SIZE_PASSWORD];
 
         passwd[0] = '\0';
-        if(StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_Folder), prompt, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, win) > 0)
+        if(StringRequest(passwd, SIZE_PASSWORD, tr(MSG_Folder), prompt, tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, win) > 0)
           // try again if the password doesn't match
           success = (Stricmp(passwd, fo->Password) == 0);
         else
@@ -247,7 +247,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
    {
       struct FIndex fi;
 
-      BusyText(GetStr(MSG_BusyLoadingIndex), folder->Name);
+      BusyText(tr(MSG_BusyLoadingIndex), folder->Name);
       if(fread(&fi, sizeof(struct FIndex), 1, fh) != 1)
       {
         E(DBF_FOLDER, "error while loading struct FIndex from .index file");
@@ -392,7 +392,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
      return FALSE;
    }
 
-   BusyText(GetStr(MSG_BusySavingIndex), folder->Name);
+   BusyText(tr(MSG_BusySavingIndex), folder->Name);
 
    // lets prepare the Folder Index struct and write it out
    // we clear it first, so that the reserved field is also 0
@@ -1203,7 +1203,7 @@ BOOL MA_ReadHeader(FILE *fh, struct MinList *headerList)
             W(DBF_FOLDER, "WARNING: unknown header encoding found");
 
             // signal an error but continue.
-            ER_NewError(GetStr(MSG_ER_UnknownHeaderEnc), hdrContents);
+            ER_NewError(tr(MSG_ER_UnknownHeaderEnc), hdrContents);
           }
           else if(len == -3)
           {
@@ -1950,7 +1950,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
     }
   }
 
-  BusyGaugeInt(GetStr(MSG_BusyScanning), folder->Name, filecount-1);
+  BusyGaugeInt(tr(MSG_BusyScanning), folder->Name, filecount-1);
   ClearMailList(folder, TRUE);
 
   D(DBF_FOLDER, "Rescanning index for folder: '%s'...", folder->Name);
@@ -2056,9 +2056,9 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                   if(!convertAllOld && !skipAllOld)
                   {
                     res = MUI_Request(G->App, NULL, 0,
-                                      GetStr(MSG_MA_CREQ_OLDFILE_TITLE),
-                                      GetStr(MSG_MA_YESNOTOALL),
-                                      GetStr(MSG_MA_CREQUEST_OLDFILE),
+                                      tr(MSG_MA_CREQ_OLDFILE_TITLE),
+                                      tr(MSG_MA_YESNOTOALL),
+                                      tr(MSG_MA_CREQUEST_OLDFILE),
                                       fname, folder->Name);
 
                     // if the user has clicked on Yes or YesToAll then
@@ -2077,7 +2077,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                     if((fname = MA_ConvertOldMailFile(fname, folder)) == NULL)
                     {
                       // if there occurred any error we skip to the next file.
-                      ER_NewError(GetStr(MSG_ER_CONVERTMFILE), fname, folder->Name);
+                      ER_NewError(tr(MSG_ER_CONVERTMFILE), fname, folder->Name);
                       continue;
                     }
                   }
@@ -2098,9 +2098,9 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                   if(!convertAllUnknown && !skipAllUnknown)
                   {
                     res = MUI_Request(G->App, NULL, 0,
-                                      GetStr(MSG_MA_CREQ_UNKNOWN_TITLE),
-                                      GetStr(MSG_MA_YESNOTOALL),
-                                      GetStr(MSG_MA_CREQUEST_UNKNOWN),
+                                      tr(MSG_MA_CREQ_UNKNOWN_TITLE),
+                                      tr(MSG_MA_YESNOTOALL),
+                                      tr(MSG_MA_CREQUEST_UNKNOWN),
                                       fname, folder->Name);
 
                     // if the user has clicked on Yes or YesToAll then
@@ -2131,14 +2131,14 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                       else
                       {
                         // if there occurred any error we skip to the next file.
-                        ER_NewError(GetStr(MSG_ER_CONVERTMFILE), fname, folder->Name);
+                        ER_NewError(tr(MSG_ER_CONVERTMFILE), fname, folder->Name);
                         continue;
                       }
                     }
                     else
                     {
                       // if there occurred any error we skip to the next file.
-                      ER_NewError(GetStr(MSG_ER_CONVERTMFILE), fname, folder->Name);
+                      ER_NewError(tr(MSG_ER_CONVERTMFILE), fname, folder->Name);
                       continue;
                     }
                   }
@@ -2474,11 +2474,11 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
    }
    else
    {
-      msg->Array[0] = (STRPTR)GetStr(MSG_Folder);
-      msg->Array[1] = (STRPTR)GetStr(MSG_Total);
-      msg->Array[2] = (STRPTR)GetStr(MSG_Unread);
-      msg->Array[3] = (STRPTR)GetStr(MSG_New);
-      msg->Array[4] = (STRPTR)GetStr(MSG_Size);
+      msg->Array[0] = (STRPTR)tr(MSG_Folder);
+      msg->Array[1] = (STRPTR)tr(MSG_Total);
+      msg->Array[2] = (STRPTR)tr(MSG_Unread);
+      msg->Array[3] = (STRPTR)tr(MSG_New);
+      msg->Array[4] = (STRPTR)tr(MSG_Size);
    }
 
    return 0;

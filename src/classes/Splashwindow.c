@@ -93,7 +93,7 @@ OVERLOAD(OM_NEW)
         Child, HSpace(0),
       End,
       Child, textGroup = HCenter((VGroup,
-        Child, CLabel(GetStr(MSG_YAMINFO)),
+        Child, CLabel(tr(MSG_YAMINFO)),
         Child, CLabel(yamfullcopyright),
         Child, ColGroup(2),
           Child, bt_gopage = TextObject,
@@ -108,9 +108,9 @@ OVERLOAD(OM_NEW)
         Child, ColGroup(2),
            MUIA_Group_HorizSpacing, 8,
            MUIA_Group_VertSpacing, 2,
-           Child, Label(GetStr(MSG_Version)),
+           Child, Label(tr(MSG_Version)),
            Child, LLabel(yamversionver),
-           Child, Label(GetStr(MSG_CompilationDate)),
+           Child, Label(tr(MSG_CompilationDate)),
            Child, LLabel(compileInfo),
         End,
       End)),
@@ -302,7 +302,7 @@ DECLARE(SelectUser)
     End,
     Child, userGroup = VGroup,
       Child, TextObject,
-        MUIA_Text_Contents, GetStr(MSG_UserLogin),
+        MUIA_Text_Contents, tr(MSG_UserLogin),
         MUIA_Text_PreParse, MUIX_C,
       End,
     End,
@@ -344,7 +344,7 @@ DECLARE(SelectUser)
       DoMethod(userGroup, OM_ADDMEMBER, group);
       DoMethod(userGroup, MUIM_Group_ExitChange);
       
-      set(data->statusGauge, MUIA_Gauge_InfoText, GetStr(MSG_US_WaitLogin));
+      set(data->statusGauge, MUIA_Gauge_InfoText, tr(MSG_US_WaitLogin));
     
       // make sure the window is open and not iconified
       wasOpen = xget(obj, MUIA_Window_Open);
@@ -444,7 +444,7 @@ DECLARE(PasswordRequest) // struct User *user
        MUIA_Rectangle_HBar, TRUE,
        MUIA_FixHeight, 8,
     End,
-    Child, CLabel(GetStr(MSG_US_EnterPassword)),
+    Child, CLabel(tr(MSG_US_EnterPassword)),
     Child, pwString = BetterStringObject,
       StringFrame,
       MUIA_BetterString_StayActive, TRUE,
@@ -453,8 +453,8 @@ DECLARE(PasswordRequest) // struct User *user
       MUIA_CycleChain,              TRUE,
     End,
     Child, ColGroup(2),
-      Child, bt_okay = MakeButton(GetStr(MSG_Okay)),
-      Child, bt_cancel = MakeButton(GetStr(MSG_Cancel)),
+      Child, bt_okay = MakeButton(tr(MSG_Okay)),
+      Child, bt_cancel = MakeButton(tr(MSG_Cancel)),
     End,
     Child, HVSpace,
   End;
@@ -473,7 +473,7 @@ DECLARE(PasswordRequest) // struct User *user
       DoMethod(data->windowGroup, MUIM_Group_ExitChange);
     }
 
-    set(data->statusGauge, MUIA_Gauge_InfoText, GetStr(MSG_US_WaitLogin));
+    set(data->statusGauge, MUIA_Gauge_InfoText, tr(MSG_US_WaitLogin));
 
     // place the returnID notifies
     DoMethod(bt_okay,   MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_LOGIN+1);

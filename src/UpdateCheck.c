@@ -146,7 +146,7 @@ BOOL CheckForUpdates(void)
       {
         char *request;
 
-        BusyText(GetStr(MSG_BusyGettingVerInfo), "");
+        BusyText(tr(MSG_BusyGettingVerInfo), "");
 
         // now we prepare our request string which we send to our update server
         // and will inform it about our configuration/YAM version and so on.
@@ -411,7 +411,7 @@ BOOL CheckForUpdates(void)
               tf->FP = NULL;
             }
             else
-              ER_NewError(GetStr(MSG_ER_CantOpenTempfile), tf->Filename);
+              ER_NewError(tr(MSG_ER_CantOpenTempfile), tf->Filename);
           }
 
           free(request);
@@ -425,7 +425,7 @@ BOOL CheckForUpdates(void)
       TR_CloseTCPIP();
     }
     else
-      ER_NewError(GetStr(MSG_ER_OPENTCPIP));
+      ER_NewError(tr(MSG_ER_OPENTCPIP));
   }
 
   // as the last operation we get the current time as the

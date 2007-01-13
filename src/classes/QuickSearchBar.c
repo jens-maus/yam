@@ -332,23 +332,23 @@ OVERLOAD(OM_NEW)
   static const char *searchOptions[7];
   static const char *viewOptions[10];
   
-  searchOptions[0] = GetStr(MSG_QUICKSEARCH_SO_SUBJECT);
-  searchOptions[1] = GetStr(MSG_QUICKSEARCH_SO_SENDER);
-  searchOptions[2] = GetStr(MSG_QUICKSEARCH_SO_SUBJORSENDER);
-  searchOptions[3] = GetStr(MSG_QUICKSEARCH_SO_TOORCC);
-  searchOptions[4] = GetStr(MSG_QUICKSEARCH_SO_INMSG);
-  searchOptions[5] = GetStr(MSG_QUICKSEARCH_SO_ENTIREMSG);
+  searchOptions[0] = tr(MSG_QUICKSEARCH_SO_SUBJECT);
+  searchOptions[1] = tr(MSG_QUICKSEARCH_SO_SENDER);
+  searchOptions[2] = tr(MSG_QUICKSEARCH_SO_SUBJORSENDER);
+  searchOptions[3] = tr(MSG_QUICKSEARCH_SO_TOORCC);
+  searchOptions[4] = tr(MSG_QUICKSEARCH_SO_INMSG);
+  searchOptions[5] = tr(MSG_QUICKSEARCH_SO_ENTIREMSG);
   searchOptions[6] = NULL;
 
-  viewOptions[0] = GetStr(MSG_QUICKSEARCH_VO_ALL);
-  viewOptions[1] = GetStr(MSG_QUICKSEARCH_VO_UNREAD);
-  viewOptions[2] = GetStr(MSG_QUICKSEARCH_VO_NEW);
-  viewOptions[3] = GetStr(MSG_QUICKSEARCH_VO_MARKED);
-  viewOptions[4] = GetStr(MSG_QUICKSEARCH_VO_IMPORTANT);
-  viewOptions[5] = GetStr(MSG_QUICKSEARCH_VO_LAST5DAYS);
-  viewOptions[6] = GetStr(MSG_QUICKSEARCH_VO_KNOWNPEOPLE);
-  viewOptions[7] = GetStr(MSG_QUICKSEARCH_VO_HASATTACHMENTS);
-  viewOptions[8] = GetStr(MSG_QUICKSEARCH_VO_MINSIZE);
+  viewOptions[0] = tr(MSG_QUICKSEARCH_VO_ALL);
+  viewOptions[1] = tr(MSG_QUICKSEARCH_VO_UNREAD);
+  viewOptions[2] = tr(MSG_QUICKSEARCH_VO_NEW);
+  viewOptions[3] = tr(MSG_QUICKSEARCH_VO_MARKED);
+  viewOptions[4] = tr(MSG_QUICKSEARCH_VO_IMPORTANT);
+  viewOptions[5] = tr(MSG_QUICKSEARCH_VO_LAST5DAYS);
+  viewOptions[6] = tr(MSG_QUICKSEARCH_VO_KNOWNPEOPLE);
+  viewOptions[7] = tr(MSG_QUICKSEARCH_VO_HASATTACHMENTS);
+  viewOptions[8] = tr(MSG_QUICKSEARCH_VO_MINSIZE);
   viewOptions[9] = NULL;
 
   if(!(obj = DoSuperNew(cl, obj,
@@ -360,7 +360,7 @@ OVERLOAD(OM_NEW)
       Child, TextObject,
         MUIA_Font,          MUIV_Font_Tiny,
         MUIA_Text_PreParse, "\033r",
-        MUIA_Text_Contents,  GetStr(MSG_QUICKSEARCH_VIEW),
+        MUIA_Text_Contents,  tr(MSG_QUICKSEARCH_VIEW),
         MUIA_Text_SetMax,    TRUE,
       End,
       Child, viewOptionCycle = CycleObject,
@@ -640,7 +640,7 @@ DECLARE(ProcessSearch)
 
     // now we can process the search/sorting by searching the mail list of the
     // current folder querying different criterias of a mail
-    BusyText(GetStr(MSG_BUSY_SEARCHINGFOLDER), curFolder->Name);
+    BusyText(tr(MSG_BUSY_SEARCHINGFOLDER), curFolder->Name);
     for(curMail = curFolder->Messages; curMail; curMail = curMail->Next)
     {
       // check if that mail matches the search/view criteria
@@ -769,7 +769,7 @@ DECLARE(UpdateStats) // ULONG force
     ULONG numEntries = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries);
     struct Folder* curFolder = FO_GetCurrentFolder();
 
-    snprintf(statusText, sizeof(statusText), GetStr(MSG_QUICKSEARCH_SHOWNMSGS), numEntries, curFolder->Total);
+    snprintf(statusText, sizeof(statusText), tr(MSG_QUICKSEARCH_SHOWNMSGS), numEntries, curFolder->Total);
 
     set(data->TX_STATUSTEXT, MUIA_Text_Contents, statusText);
   }

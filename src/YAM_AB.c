@@ -187,14 +187,14 @@ static STACKEXT BOOL AB_FindTodaysBirthdates(struct MUI_NListtree_TreeNode *list
         char question[SIZE_LARGE];
         char *name = *ab->RealName ? ab->RealName : ab->Alias;
 
-        snprintf(question, sizeof(question), GetStr(MSG_AB_BirthdayReq), name, today%10000-ab->BirthDay%10000);
+        snprintf(question, sizeof(question), tr(MSG_AB_BirthdayReq), name, today%10000-ab->BirthDay%10000);
 
-        if(MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_AB_BirthdayReminder), GetStr(MSG_YesNoReq), question))
+        if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_AB_BirthdayReminder), tr(MSG_YesNoReq), question))
         {
           if((wrwin = MA_NewNew(NULL, 0)) >= 0)
           {
             setstring(G->WR[wrwin]->GUI.ST_TO, ab->Alias);
-            setstring(G->WR[wrwin]->GUI.ST_SUBJECT, GetStr(MSG_AB_HappyBirthday));
+            setstring(G->WR[wrwin]->GUI.ST_SUBJECT, tr(MSG_AB_HappyBirthday));
           }
         }
       }
@@ -522,7 +522,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
     {
       // ask the user if he really wants to read out a non YAM
       // Addressbook file.
-      if(MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, NULL, GetStr(MSG_AB_NOYAMADDRBOOK_GADS), GetStr(MSG_AB_NOYAMADDRBOOK), fname))
+      if(MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, NULL, tr(MSG_AB_NOYAMADDRBOOK_GADS), tr(MSG_AB_NOYAMADDRBOOK), fname))
       {
         G->AB->Modified = append;
         if(append == FALSE)
@@ -561,7 +561,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
   }
   else
   {
-    ER_NewError(GetStr(MSG_ER_ADDRBOOKLOAD), fname);
+    ER_NewError(tr(MSG_ER_ADDRBOOKLOAD), fname);
     if(fh != NULL)
        fclose(fh);
   }
@@ -624,11 +624,11 @@ BOOL AB_SaveTree(char *fname)
     fputs("YAB4 - YAM Addressbook\n", fh);
     AB_SaveTreeNode(fh, MUIV_NListtree_GetEntry_ListNode_Root);
     fclose(fh);
-    AppendLogVerbose(70, GetStr(MSG_LOG_SavingABook), fname);
+    AppendLogVerbose(70, tr(MSG_LOG_SavingABook), fname);
     result = TRUE;
   }
   else
-    ER_NewError(GetStr(MSG_ER_CantCreateFile), fname);
+    ER_NewError(tr(MSG_ER_CantCreateFile), fname);
 
   RETURN(result);
   return result;
@@ -823,7 +823,7 @@ BOOL AB_ImportTreeLDIF(char *fname, BOOL append, BOOL sorted)
     fclose(fh);
   }
   else
-     ER_NewError(GetStr(MSG_ER_ADDRBOOKIMPORT), fname);
+     ER_NewError(tr(MSG_ER_ADDRBOOKIMPORT), fname);
 
   RETURN(result);
   return result;
@@ -1002,7 +1002,7 @@ BOOL AB_ExportTreeLDIF(char *fname)
     result = TRUE;
   }
   else
-    ER_NewError(GetStr(MSG_ER_ADDRBOOKEXPORT), fname);
+    ER_NewError(tr(MSG_ER_ADDRBOOKEXPORT), fname);
 
   RETURN(result);
   return result;
@@ -1210,7 +1210,7 @@ BOOL AB_ImportTreeTabCSV(char *fname, BOOL append, BOOL sorted, char delim)
     fclose(fh);
   }
   else
-    ER_NewError(GetStr(MSG_ER_ADDRBOOKIMPORT), fname);
+    ER_NewError(tr(MSG_ER_ADDRBOOKIMPORT), fname);
 
   RETURN(result);
   return result;
@@ -1348,7 +1348,7 @@ BOOL AB_ExportTreeTabCSV(char *fname, char delim)
     result = TRUE;
   }
   else
-    ER_NewError(GetStr(MSG_ER_ADDRBOOKEXPORT), fname);
+    ER_NewError(tr(MSG_ER_ADDRBOOKEXPORT), fname);
 
   RETURN(result);
   return result;
@@ -1473,7 +1473,7 @@ HOOKPROTONHNONP(AB_OpenABookFunc, void)
 
   ENTER();
 
-  if((frc = ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_Open), REQF_NONE, G->MA_MailDir, "")))
+  if((frc = ReqFile(ASL_ABOOK,G->AB->GUI.WI, tr(MSG_Open), REQF_NONE, G->MA_MailDir, "")))
   {
     strmfp(G->AB_Filename, frc->drawer, frc->file);
     AB_LoadTree(G->AB_Filename, FALSE, FALSE);
@@ -1492,7 +1492,7 @@ HOOKPROTONHNONP(AB_AppendABookFunc, void)
 
   ENTER();
 
-  if((frc = ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_Append), REQF_NONE, G->MA_MailDir, "")))
+  if((frc = ReqFile(ASL_ABOOK,G->AB->GUI.WI, tr(MSG_Append), REQF_NONE, G->MA_MailDir, "")))
   {
     char aname[SIZE_PATHFILE];
 
@@ -1513,7 +1513,7 @@ HOOKPROTONHNONP(AB_ImportLDIFABookFunc, void)
 
   ENTER();
 
-  if((frc = ReqFile(ASL_ABOOK_LDIF, G->AB->GUI.WI, GetStr(MSG_AB_IMPORT), REQF_NONE, G->MA_MailDir, "")) != NULL)
+  if((frc = ReqFile(ASL_ABOOK_LDIF, G->AB->GUI.WI, tr(MSG_AB_IMPORT), REQF_NONE, G->MA_MailDir, "")) != NULL)
   {
     char ldifname[SIZE_PATHFILE];
 
@@ -1534,7 +1534,7 @@ HOOKPROTONHNONP(AB_ExportLDIFABookFunc, void)
 
   ENTER();
 
-  if((frc = ReqFile(ASL_ABOOK_LDIF, G->AB->GUI.WI, GetStr(MSG_AB_EXPORT), REQF_SAVEMODE, G->MA_MailDir, "")) != NULL)
+  if((frc = ReqFile(ASL_ABOOK_LDIF, G->AB->GUI.WI, tr(MSG_AB_EXPORT), REQF_SAVEMODE, G->MA_MailDir, "")) != NULL)
   {
     char ldifname[SIZE_PATHFILE];
 
@@ -1564,7 +1564,7 @@ HOOKPROTONHNO(AB_ImportTabCSVABookFunc, void, int *arg)
     default:   type = ASL_ABOOK;     break;
   }
 
-  if((frc = ReqFile(type, G->AB->GUI.WI, GetStr(MSG_AB_IMPORT), REQF_NONE, G->MA_MailDir, "")) != NULL)
+  if((frc = ReqFile(type, G->AB->GUI.WI, tr(MSG_AB_IMPORT), REQF_NONE, G->MA_MailDir, "")) != NULL)
   {
     char aname[SIZE_PATHFILE];
 
@@ -1594,7 +1594,7 @@ HOOKPROTONHNO(AB_ExportTabCSVABookFunc, void, int *arg)
     default:   type = ASL_ABOOK;     break;
   }
 
-  if((frc = ReqFile(type, G->AB->GUI.WI, GetStr(MSG_AB_EXPORT), REQF_SAVEMODE, G->MA_MailDir, "")) != NULL)
+  if((frc = ReqFile(type, G->AB->GUI.WI, tr(MSG_AB_EXPORT), REQF_SAVEMODE, G->MA_MailDir, "")) != NULL)
   {
     char aname[SIZE_PATHFILE];
 
@@ -1614,7 +1614,7 @@ HOOKPROTONHNONP(AB_SaveABookFunc, void)
 {
   ENTER();
 
-  Busy(GetStr(MSG_BusySavingAB), G->AB_Filename, 0, 0);
+  Busy(tr(MSG_BusySavingAB), G->AB_Filename, 0, 0);
   AB_SaveTree(G->AB_Filename);
   G->AB->Modified = FALSE;
   BusyEnd();
@@ -1632,7 +1632,7 @@ HOOKPROTONHNONP(AB_SaveABookAsFunc, void)
 
   ENTER();
 
-  if((frc = ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_SaveAs), REQF_SAVEMODE, G->MA_MailDir, "")))
+  if((frc = ReqFile(ASL_ABOOK,G->AB->GUI.WI, tr(MSG_SaveAs), REQF_SAVEMODE, G->MA_MailDir, "")))
   {
     strmfp(G->AB_Filename, frc->drawer, frc->file);
     AB_SaveABookFunc();
@@ -1681,21 +1681,21 @@ static void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
   switch(ab->Type)
   {
     case AET_USER:
-      AB_PrintField(prt, GetStr(MSG_AB_PersonAlias), ab->Alias);
-      AB_PrintField(prt, GetStr(MSG_EA_RealName), ab->RealName);
-      AB_PrintField(prt, GetStr(MSG_EA_EmailAddress), ab->Address);
-      AB_PrintField(prt, GetStr(MSG_EA_PGPId), ab->PGPId);
-      AB_PrintField(prt, GetStr(MSG_EA_Homepage), ab->Homepage);
-      AB_PrintField(prt, GetStr(MSG_EA_Street), ab->Street);
-      AB_PrintField(prt, GetStr(MSG_EA_City), ab->City);
-      AB_PrintField(prt, GetStr(MSG_EA_Country), ab->Country);
-      AB_PrintField(prt, GetStr(MSG_EA_Phone), ab->Phone);
-      AB_PrintField(prt, GetStr(MSG_EA_DOB), AB_ExpandBD(ab->BirthDay));
+      AB_PrintField(prt, tr(MSG_AB_PersonAlias), ab->Alias);
+      AB_PrintField(prt, tr(MSG_EA_RealName), ab->RealName);
+      AB_PrintField(prt, tr(MSG_EA_EmailAddress), ab->Address);
+      AB_PrintField(prt, tr(MSG_EA_PGPId), ab->PGPId);
+      AB_PrintField(prt, tr(MSG_EA_Homepage), ab->Homepage);
+      AB_PrintField(prt, tr(MSG_EA_Street), ab->Street);
+      AB_PrintField(prt, tr(MSG_EA_City), ab->City);
+      AB_PrintField(prt, tr(MSG_EA_Country), ab->Country);
+      AB_PrintField(prt, tr(MSG_EA_Phone), ab->Phone);
+      AB_PrintField(prt, tr(MSG_EA_DOB), AB_ExpandBD(ab->BirthDay));
       break;
     case AET_LIST:
-      AB_PrintField(prt, GetStr(MSG_AB_ListAlias), ab->Alias);
-      AB_PrintField(prt, GetStr(MSG_EA_MLName), ab->RealName);
-      AB_PrintField(prt, GetStr(MSG_EA_ReturnAddress), ab->Address);
+      AB_PrintField(prt, tr(MSG_AB_ListAlias), ab->Alias);
+      AB_PrintField(prt, tr(MSG_EA_MLName), ab->RealName);
+      AB_PrintField(prt, tr(MSG_EA_ReturnAddress), ab->Address);
       if(ab->Members != NULL)
       {
         BOOL header = FALSE;
@@ -1711,7 +1711,7 @@ static void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
             break;
           if(!header)
           {
-            AB_PrintField(prt, GetStr(MSG_EA_Members), ptr);
+            AB_PrintField(prt, tr(MSG_EA_Members), ptr);
             header = TRUE;
           }
           else
@@ -1722,9 +1722,9 @@ static void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
       }
       break;
     case AET_GROUP:
-      AB_PrintField(prt, GetStr(MSG_AB_GroupAlias), ab->Alias);
+      AB_PrintField(prt, tr(MSG_AB_GroupAlias), ab->Alias);
   }
-  AB_PrintField(prt, GetStr(MSG_EA_Description), ab->Comment);
+  AB_PrintField(prt, tr(MSG_EA_Description), ab->Comment);
 
   LEAVE();
 }
@@ -1766,7 +1766,7 @@ HOOKPROTONHNONP(AB_PrintABookFunc, void)
 
   ENTER();
 
-  mode = MUI_Request(G->App, G->AB->GUI.WI, 0, GetStr(MSG_Print), GetStr(MSG_AB_PrintReqGads), GetStr(MSG_AB_PrintReq));
+  mode = MUI_Request(G->App, G->AB->GUI.WI, 0, tr(MSG_Print), tr(MSG_AB_PrintReqGads), tr(MSG_AB_PrintReq));
   if(mode != 0)
   {
     if(C->PrinterCheck && CheckPrinter())
@@ -1775,11 +1775,11 @@ HOOKPROTONHNONP(AB_PrintABookFunc, void)
 
       if((prt = fopen("PRT:", "w")) != NULL)
       {
-        Busy(GetStr(MSG_BusyPrintingAB), "", 0, 0);
+        Busy(tr(MSG_BusyPrintingAB), "", 0, 0);
         fprintf(prt, "%s\n", G->AB_Filename);
         if(mode == 2)
         {
-          fprintf(prt, "\n  %-12.12s %-20.20s %s/%s\n", GetStr(MSG_AB_AliasFld), GetStr(MSG_EA_RealName), GetStr(MSG_EA_EmailAddress), GetStr(MSG_EA_Description));
+          fprintf(prt, "\n  %-12.12s %-20.20s %s/%s\n", tr(MSG_AB_AliasFld), tr(MSG_EA_RealName), tr(MSG_EA_EmailAddress), tr(MSG_EA_Description));
           fputs("------------------------------------------------------------------------\n", prt);
         }
         AB_PrintLevel(MUIV_NListtree_GetEntry_ListNode_Root, prt, mode);
@@ -1959,9 +1959,9 @@ int AB_FindEntry(char *pattern, enum AddressbookFind mode, char **result)
             DoMethod(lv, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
             set(lv, MUIA_NListtree_Active, tn);
 
-            snprintf(buf, sizeof(buf), GetStr(MSG_AB_FoundEntry), ab->Alias, ab->RealName);
+            snprintf(buf, sizeof(buf), tr(MSG_AB_FoundEntry), ab->Alias, ab->RealName);
 
-            switch(MUI_Request(G->App, G->AB->GUI.WI, 0, GetStr(MSG_AB_FindEntry), GetStr(MSG_AB_FoundEntryGads), buf))
+            switch(MUI_Request(G->App, G->AB->GUI.WI, 0, tr(MSG_AB_FindEntry), tr(MSG_AB_FoundEntryGads), buf))
             {
               case 1:
                 // nothing
@@ -2003,14 +2003,14 @@ HOOKPROTONHNONP(AB_FindFunc, void)
 
   ENTER();
 
-  if(StringRequest(pattern, SIZE_PATTERN, GetStr(MSG_AB_FindEntry), GetStr(MSG_AB_FindEntryReq), GetStr(MSG_AB_StartSearch), NULL, GetStr(MSG_Cancel), FALSE, G->AB->GUI.WI))
+  if(StringRequest(pattern, SIZE_PATTERN, tr(MSG_AB_FindEntry), tr(MSG_AB_FindEntryReq), tr(MSG_AB_StartSearch), NULL, tr(MSG_Cancel), FALSE, G->AB->GUI.WI))
   {
     char searchPattern[SIZE_PATTERN+5];
 
     snprintf(searchPattern, sizeof(searchPattern), "#?%s#?", pattern);
 
     if(AB_FindEntry(searchPattern, ABF_USER, NULL) == 0)
-      MUI_Request(G->App, G->AB->GUI.WI, 0, GetStr(MSG_AB_FindEntry), GetStr(MSG_OkayReq), GetStr(MSG_AB_NoneFound));
+      MUI_Request(G->App, G->AB->GUI.WI, 0, tr(MSG_AB_FindEntry), tr(MSG_OkayReq), tr(MSG_AB_NoneFound));
   }
 
   LEAVE();
@@ -2066,7 +2066,7 @@ HOOKPROTONHNO(AB_OpenFunc, void, LONG *arg)
   set(ab->GUI.BT_CC, MUIA_Disabled, ab->Mode == ABM_CONFIG);
   set(ab->GUI.BT_BCC,MUIA_Disabled, ab->Mode == ABM_CONFIG);
 
-  snprintf(ab->WTitle, sizeof(ab->WTitle), "%s %s", GetStr(MSG_MA_MAddrBook), md);
+  snprintf(ab->WTitle, sizeof(ab->WTitle), "%s %s", tr(MSG_MA_MAddrBook), md);
   set(ab->GUI.WI, MUIA_Window_Title, ab->WTitle);
   set(ab->GUI.LV_ADDRESSES, MUIA_NListtree_Active, MUIV_NListtree_Active_Off);
 
@@ -2087,7 +2087,7 @@ HOOKPROTONHNONP(AB_Close, void)
 
   if(G->AB->Modified)
   {
-    switch(MUI_Request(G->App, G->AB->GUI.WI, 0, NULL, GetStr(MSG_AB_ModifiedGads), GetStr(MSG_AB_Modified)))
+    switch(MUI_Request(G->App, G->AB->GUI.WI, 0, NULL, tr(MSG_AB_ModifiedGads), tr(MSG_AB_Modified)))
     {
       case 0: closeWin = FALSE; break;
       case 1: AB_SaveABookFunc(); break;
@@ -2204,17 +2204,17 @@ HOOKPROTONHNO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
     }
     else
     {
-      msg->Array[0] = (STRPTR)GetStr(MSG_AB_TitleAlias);
-      msg->Array[1] = (STRPTR)GetStr(MSG_AB_TitleName);
-      msg->Array[2] = (STRPTR)GetStr(MSG_AB_TitleDescription);
-      msg->Array[3] = (STRPTR)GetStr(MSG_AB_TitleAddress);
-      msg->Array[4] = (STRPTR)GetStr(MSG_AB_TitleStreet);
-      msg->Array[5] = (STRPTR)GetStr(MSG_AB_TitleCity);
-      msg->Array[6] = (STRPTR)GetStr(MSG_AB_TitleCountry);
-      msg->Array[7] = (STRPTR)GetStr(MSG_AB_TitlePhone);
-      msg->Array[8] = (STRPTR)GetStr(MSG_AB_TitleBirthDate);
-      msg->Array[9] = (STRPTR)GetStr(MSG_AB_TitlePGPId);
-      msg->Array[10]= (STRPTR)GetStr(MSG_AB_TitleHomepage);
+      msg->Array[0] = (STRPTR)tr(MSG_AB_TitleAlias);
+      msg->Array[1] = (STRPTR)tr(MSG_AB_TitleName);
+      msg->Array[2] = (STRPTR)tr(MSG_AB_TitleDescription);
+      msg->Array[3] = (STRPTR)tr(MSG_AB_TitleAddress);
+      msg->Array[4] = (STRPTR)tr(MSG_AB_TitleStreet);
+      msg->Array[5] = (STRPTR)tr(MSG_AB_TitleCity);
+      msg->Array[6] = (STRPTR)tr(MSG_AB_TitleCountry);
+      msg->Array[7] = (STRPTR)tr(MSG_AB_TitlePhone);
+      msg->Array[8] = (STRPTR)tr(MSG_AB_TitleBirthDate);
+      msg->Array[9] = (STRPTR)tr(MSG_AB_TitlePGPId);
+      msg->Array[10]= (STRPTR)tr(MSG_AB_TitleHomepage);
     }
   }
 
@@ -2336,49 +2336,49 @@ struct AB_ClassData *AB_New(void)
     data->GUI.WI = WindowObject,
        MUIA_HelpNode,"AB_W",
        MUIA_Window_Menustrip, MenustripObject,
-          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_CO_CrdABook),
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_New), MUIA_Menuitem_Shortcut,"N", MUIA_UserData,AMEN_NEW, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Open), MUIA_Menuitem_Shortcut,"O", MUIA_UserData,AMEN_OPEN, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Append), MUIA_Menuitem_Shortcut,"I", MUIA_UserData,AMEN_APPEND, End,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_CO_CrdABook),
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_New), MUIA_Menuitem_Shortcut,"N", MUIA_UserData,AMEN_NEW, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Open), MUIA_Menuitem_Shortcut,"O", MUIA_UserData,AMEN_OPEN, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Append), MUIA_Menuitem_Shortcut,"I", MUIA_UserData,AMEN_APPEND, End,
              MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_IMPORT),
-                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_LDIF), MUIA_UserData, AMEN_IMPORT_LDIF, End,
-                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_CSV), MUIA_UserData, AMEN_IMPORT_CSV, End,
-                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_TAB), MUIA_UserData, AMEN_IMPORT_TAB, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_IMPORT),
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_LDIF), MUIA_UserData, AMEN_IMPORT_LDIF, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_CSV), MUIA_UserData, AMEN_IMPORT_CSV, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_TAB), MUIA_UserData, AMEN_IMPORT_TAB, End,
              End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_EXPORT),
-                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_LDIF), MUIA_UserData, AMEN_EXPORT_LDIF, End,
-                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_CSV), MUIA_UserData, AMEN_EXPORT_CSV, End,
-                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_TAB), MUIA_UserData, AMEN_EXPORT_TAB, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_EXPORT),
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_LDIF), MUIA_UserData, AMEN_EXPORT_LDIF, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_CSV), MUIA_UserData, AMEN_EXPORT_CSV, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_TAB), MUIA_UserData, AMEN_EXPORT_TAB, End,
              End,
              MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Save), MUIA_Menuitem_Shortcut,"S", MUIA_UserData,AMEN_SAVE, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_SaveAs), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,AMEN_SAVEAS, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Save), MUIA_Menuitem_Shortcut,"S", MUIA_UserData,AMEN_SAVE, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_SaveAs), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,AMEN_SAVEAS, End,
              MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_MIFind), MUIA_Menuitem_Shortcut,"F", MUIA_UserData,AMEN_FIND, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Print), MUIA_UserData,AMEN_PRINTA, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_MIFind), MUIA_Menuitem_Shortcut,"F", MUIA_UserData,AMEN_FIND, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Print), MUIA_UserData,AMEN_PRINTA, End,
           End,
-          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_AB_Entry),
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_AddUser), MUIA_Menuitem_Shortcut,"P", MUIA_UserData,AMEN_NEWUSER, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_AddList), MUIA_Menuitem_Shortcut,"L", MUIA_UserData,AMEN_NEWLIST, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_AddGroup), MUIA_Menuitem_Shortcut,"G", MUIA_UserData,AMEN_NEWGROUP, End,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_AB_Entry),
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_AddUser), MUIA_Menuitem_Shortcut,"P", MUIA_UserData,AMEN_NEWUSER, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_AddList), MUIA_Menuitem_Shortcut,"L", MUIA_UserData,AMEN_NEWLIST, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_AddGroup), MUIA_Menuitem_Shortcut,"G", MUIA_UserData,AMEN_NEWGROUP, End,
              MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Edit), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,AMEN_EDIT, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_Duplicate), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,AMEN_DUPLICATE, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_MIDelete), MUIA_Menuitem_Shortcut,"Del", MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,AMEN_DELETE, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Edit), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,AMEN_EDIT, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_Duplicate), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,AMEN_DUPLICATE, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_MIDelete), MUIA_Menuitem_Shortcut,"Del", MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,AMEN_DELETE, End,
              MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_MIPrint), MUIA_UserData,AMEN_PRINTE, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_MIPrint), MUIA_UserData,AMEN_PRINTE, End,
           End,
-          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_AB_Sort),
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByAlias), MUIA_Menuitem_Shortcut,"1", MUIA_UserData,AMEN_SORTALIAS, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByName), MUIA_Menuitem_Shortcut,"2", MUIA_UserData,AMEN_SORTLNAME, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByFirstname), MUIA_Menuitem_Shortcut,"3", MUIA_UserData,AMEN_SORTFNAME, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByDesc), MUIA_Menuitem_Shortcut,"4", MUIA_UserData,AMEN_SORTDESC, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_SortByAddress), MUIA_Menuitem_Shortcut,"5", MUIA_UserData,AMEN_SORTADDR, End,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_AB_Sort),
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_SortByAlias), MUIA_Menuitem_Shortcut,"1", MUIA_UserData,AMEN_SORTALIAS, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_SortByName), MUIA_Menuitem_Shortcut,"2", MUIA_UserData,AMEN_SORTLNAME, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_SortByFirstname), MUIA_Menuitem_Shortcut,"3", MUIA_UserData,AMEN_SORTFNAME, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_SortByDesc), MUIA_Menuitem_Shortcut,"4", MUIA_UserData,AMEN_SORTDESC, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_SortByAddress), MUIA_Menuitem_Shortcut,"5", MUIA_UserData,AMEN_SORTADDR, End,
           End,
-          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_AB_View),
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_Unfold), MUIA_Menuitem_Shortcut,"<", MUIA_UserData,AMEN_UNFOLD, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_AB_Fold), MUIA_Menuitem_Shortcut,">", MUIA_UserData,AMEN_FOLD, End,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_AB_View),
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_Unfold), MUIA_Menuitem_Shortcut,"<", MUIA_UserData,AMEN_UNFOLD, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_Fold), MUIA_Menuitem_Shortcut,">", MUIA_UserData,AMEN_FOLD, End,
           End,
        End,
        MUIA_Window_ID,MAKE_ID('B','O','O','K'),

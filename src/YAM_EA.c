@@ -78,9 +78,9 @@ int EA_Init(enum ABEntry_Type type, struct ABEntry *ab)
 
    switch (type)
    {
-      case AET_USER:  title = ab ? GetStr(MSG_EA_EditUser) : GetStr(MSG_AB_AddUser); break;
-      case AET_LIST:  title = ab ? GetStr(MSG_EA_EditList) : GetStr(MSG_AB_AddList); break;
-      case AET_GROUP: title = ab ? GetStr(MSG_EA_EditGroup): GetStr(MSG_AB_AddGroup);
+      case AET_USER:  title = ab ? tr(MSG_EA_EditUser) : tr(MSG_AB_AddUser); break;
+      case AET_LIST:  title = ab ? tr(MSG_EA_EditList) : tr(MSG_AB_AddList); break;
+      case AET_GROUP: title = ab ? tr(MSG_EA_EditGroup): tr(MSG_AB_AddGroup);
    }
    set(ea->GUI.WI, MUIA_Window_Title, title);
    if (!SafeOpenWindow(ea->GUI.WI)) { DisposeModulePush(&G->EA[winnum]); return -1; }
@@ -300,7 +300,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
       str = (char *)xget(gui->ST_ALIAS, MUIA_String_Contents);
       if(!*str)
       {
-        ER_NewError(GetStr(MSG_ER_ErrorNoAlias));
+        ER_NewError(tr(MSG_ER_ErrorNoAlias));
         return;
       }
    }
@@ -309,14 +309,14 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
       str = (char *)xget(gui->ST_ADDRESS, MUIA_String_Contents);
       if(!*str)
       {
-        ER_NewError(GetStr(MSG_ER_ErrorNoAddress));
+        ER_NewError(tr(MSG_ER_ErrorNoAddress));
         return;
       }
 
       str = (char *)xget(gui->ST_BIRTHDAY, MUIA_String_Contents);
       if(*str && !(bdate = AB_CompressBD(str)))
       {
-        ER_NewError(GetStr(MSG_ER_ErrorDOBformat));
+        ER_NewError(tr(MSG_ER_ErrorDOBformat));
         return;
       }
    }
@@ -375,7 +375,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
                       if (!old) EA_InsertBelowActive(addr, TNF_LIST);
    }
    if (old) DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_List_Redraw, MUIV_List_Redraw_All);
-   else AppendLogVerbose(71, GetStr(MSG_LOG_NewAddress), addr->Alias);
+   else AppendLogVerbose(71, tr(MSG_LOG_NewAddress), addr->Alias);
    DisposeModulePush(&G->EA[winnum]);
 }
 MakeStaticHook(EA_OkayHook, EA_Okay);
@@ -425,7 +425,7 @@ HOOKPROTONHNO(EA_SelectPhotoFunc, void, int *arg)
 
   ENTER();
 
-  if((frc = ReqFile(ASL_PHOTO,G->EA[winnum]->GUI.WI, GetStr(MSG_EA_SelectPhoto_Title), REQF_NONE, C->GalleryDir, "")))
+  if((frc = ReqFile(ASL_PHOTO,G->EA[winnum]->GUI.WI, tr(MSG_EA_SelectPhoto_Title), REQF_NONE, C->GalleryDir, "")))
   {
     strmfp(G->EA[winnum]->PhotoName, frc->drawer, frc->file);
     EA_SetPhoto(winnum, NULL);
@@ -489,57 +489,57 @@ static struct EA_ClassData *EA_New(int winnum, int type)
          {
           static const char *SecurityCycleEntries[6];
 
-          SecurityCycleEntries[0] = GetStr(MSG_WR_SecNone);
-          SecurityCycleEntries[1] = GetStr(MSG_WR_SecSign);
-          SecurityCycleEntries[2] = GetStr(MSG_WR_SecEncrypt);
-          SecurityCycleEntries[3] = GetStr(MSG_WR_SecBoth);
-          SecurityCycleEntries[4] = GetStr(MSG_WR_SecAnon);
+          SecurityCycleEntries[0] = tr(MSG_WR_SecNone);
+          SecurityCycleEntries[1] = tr(MSG_WR_SecSign);
+          SecurityCycleEntries[2] = tr(MSG_WR_SecEncrypt);
+          SecurityCycleEntries[3] = tr(MSG_WR_SecBoth);
+          SecurityCycleEntries[4] = tr(MSG_WR_SecAnon);
           SecurityCycleEntries[5] = NULL;
 
           /* build MUI object tree */
           group = HGroup,
                MUIA_Group_SameWidth, TRUE,
                Child, VGroup,
-                  Child, ColGroup(2), GroupFrameT(GetStr(MSG_EA_ElectronicMail)),
-                     Child, Label2(GetStr(MSG_EA_Alias)),
-                     Child, data->GUI.ST_ALIAS = MakeString(SIZE_NAME,GetStr(MSG_EA_Alias)),
-                     Child, Label2(GetStr(MSG_EA_RealName)),
-                     Child, data->GUI.ST_REALNAME = MakeString(SIZE_REALNAME,GetStr(MSG_EA_RealName)),
-                     Child, Label2(GetStr(MSG_EA_EmailAddress)),
-                     Child, data->GUI.ST_ADDRESS  = MakeString(SIZE_ADDRESS,GetStr(MSG_EA_EmailAddress)),
-                     Child, Label2(GetStr(MSG_EA_PGPId)),
-                     Child, MakePGPKeyList(&(data->GUI.ST_PGPKEY), FALSE, GetStr(MSG_EA_PGPId)),
-                     Child, Label2(GetStr(MSG_EA_Homepage)),
+                  Child, ColGroup(2), GroupFrameT(tr(MSG_EA_ElectronicMail)),
+                     Child, Label2(tr(MSG_EA_Alias)),
+                     Child, data->GUI.ST_ALIAS = MakeString(SIZE_NAME,tr(MSG_EA_Alias)),
+                     Child, Label2(tr(MSG_EA_RealName)),
+                     Child, data->GUI.ST_REALNAME = MakeString(SIZE_REALNAME,tr(MSG_EA_RealName)),
+                     Child, Label2(tr(MSG_EA_EmailAddress)),
+                     Child, data->GUI.ST_ADDRESS  = MakeString(SIZE_ADDRESS,tr(MSG_EA_EmailAddress)),
+                     Child, Label2(tr(MSG_EA_PGPId)),
+                     Child, MakePGPKeyList(&(data->GUI.ST_PGPKEY), FALSE, tr(MSG_EA_PGPId)),
+                     Child, Label2(tr(MSG_EA_Homepage)),
                      Child, HGroup,
                         MUIA_Group_HorizSpacing, 1,
-                        Child, data->GUI.ST_HOMEPAGE = MakeString(SIZE_URL,GetStr(MSG_EA_Homepage)),
+                        Child, data->GUI.ST_HOMEPAGE = MakeString(SIZE_URL,tr(MSG_EA_Homepage)),
                         Child, bt_homepage = PopButton(MUII_TapeRecord),
                      End,
-              Child, Label2(GetStr(MSG_EA_DefSecurity)),
+              Child, Label2(tr(MSG_EA_DefSecurity)),
               Child, data->GUI.CY_DEFSECURITY = CycleObject,
                 MUIA_Cycle_Entries, SecurityCycleEntries,
-                MUIA_ControlChar, ShortCut(GetStr(MSG_EA_DefSecurity)),
+                MUIA_ControlChar, ShortCut(tr(MSG_EA_DefSecurity)),
               End,
                   End,
-                  Child, ColGroup(2), GroupFrameT(GetStr(MSG_EA_SnailMail)),
-                     Child, Label2(GetStr(MSG_EA_Street)),
-                     Child, data->GUI.ST_STREET = MakeString(SIZE_DEFAULT,GetStr(MSG_EA_Street)),
-                     Child, Label2(GetStr(MSG_EA_City)),
-                     Child, data->GUI.ST_CITY = MakeString(SIZE_DEFAULT,GetStr(MSG_EA_City)),
-                     Child, Label2(GetStr(MSG_EA_Country)),
-                     Child, data->GUI.ST_COUNTRY = MakeString(SIZE_DEFAULT,GetStr(MSG_EA_Country)),
-                     Child, Label2(GetStr(MSG_EA_Phone)),
-                     Child, data->GUI.ST_PHONE = MakeString(SIZE_DEFAULT,GetStr(MSG_EA_Phone)),
+                  Child, ColGroup(2), GroupFrameT(tr(MSG_EA_SnailMail)),
+                     Child, Label2(tr(MSG_EA_Street)),
+                     Child, data->GUI.ST_STREET = MakeString(SIZE_DEFAULT,tr(MSG_EA_Street)),
+                     Child, Label2(tr(MSG_EA_City)),
+                     Child, data->GUI.ST_CITY = MakeString(SIZE_DEFAULT,tr(MSG_EA_City)),
+                     Child, Label2(tr(MSG_EA_Country)),
+                     Child, data->GUI.ST_COUNTRY = MakeString(SIZE_DEFAULT,tr(MSG_EA_Country)),
+                     Child, Label2(tr(MSG_EA_Phone)),
+                     Child, data->GUI.ST_PHONE = MakeString(SIZE_DEFAULT,tr(MSG_EA_Phone)),
                   End,
                End,
                Child, VGroup,
-                  Child, ColGroup(2), GroupFrameT(GetStr(MSG_EA_Miscellaneous)),
-                     Child, Label2(GetStr(MSG_EA_Description)),
-                     Child, data->GUI.ST_COMMENT = MakeString(SIZE_DEFAULT,GetStr(MSG_EA_Description)),
-                     Child, Label2(GetStr(MSG_EA_DOB)),
-                     Child, data->GUI.ST_BIRTHDAY = MakeString(SIZE_SMALL,GetStr(MSG_EA_DOB)),
+                  Child, ColGroup(2), GroupFrameT(tr(MSG_EA_Miscellaneous)),
+                     Child, Label2(tr(MSG_EA_Description)),
+                     Child, data->GUI.ST_COMMENT = MakeString(SIZE_DEFAULT,tr(MSG_EA_Description)),
+                     Child, Label2(tr(MSG_EA_DOB)),
+                     Child, data->GUI.ST_BIRTHDAY = MakeString(SIZE_SMALL,tr(MSG_EA_DOB)),
                   End,
-                  Child, VGroupV, GroupFrameT(GetStr(MSG_EA_Portrait)),
+                  Child, VGroupV, GroupFrameT(tr(MSG_EA_Portrait)),
                      Child, HGroup,
                         Child, HSpace(0),
                         Child, data->GUI.GR_PHOTO = HGroup,
@@ -552,7 +552,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                         Child, HSpace(0),
                      End,
                      Child, VSpace(0),
-                     Child, data->GUI.BT_SELECTPHOTO = MakeButton(GetStr(MSG_EA_SelectPhoto)),
+                     Child, data->GUI.BT_SELECTPHOTO = MakeButton(tr(MSG_EA_SelectPhoto)),
                   End,
                End,
             End;
@@ -584,30 +584,30 @@ static struct EA_ClassData *EA_New(int winnum, int type)
 
          case AET_GROUP: group = ColGroup(2), GroupFrame,
                MUIA_Background, MUII_GroupBack,
-               Child, Label2(GetStr(MSG_EA_Alias)),
-               Child, data->GUI.ST_ALIAS = MakeString(SIZE_NAME,GetStr(MSG_EA_Alias)),
-               Child, Label2(GetStr(MSG_EA_Description)),
-               Child, data->GUI.ST_COMMENT = MakeString(SIZE_DEFAULT,GetStr(MSG_EA_Description)),
+               Child, Label2(tr(MSG_EA_Alias)),
+               Child, data->GUI.ST_ALIAS = MakeString(SIZE_NAME,tr(MSG_EA_Alias)),
+               Child, Label2(tr(MSG_EA_Description)),
+               Child, data->GUI.ST_COMMENT = MakeString(SIZE_DEFAULT,tr(MSG_EA_Description)),
             End;
             set(data->GUI.ST_ALIAS, MUIA_String_Reject, ",");
             break;
          case AET_LIST: group = HGroup,
                MUIA_Group_SameWidth, TRUE,
                Child, VGroup,
-                  Child, ColGroup(2), GroupFrameT(GetStr(MSG_EA_ElectronicMail)),
+                  Child, ColGroup(2), GroupFrameT(tr(MSG_EA_ElectronicMail)),
                      MUIA_Background, MUII_GroupBack,
-                     Child, Label2(GetStr(MSG_EA_Alias)),
-                     Child, data->GUI.ST_ALIAS = MakeString(SIZE_NAME,GetStr(MSG_EA_Alias)),
-                     Child, Label2(GetStr(MSG_EA_ReturnAddress)),
-                     Child, MakeAddressField(&data->GUI.ST_ADDRESS, GetStr(MSG_EA_ReturnAddress), MSG_HELP_EA_ST_ADDRESS_L, ABM_TO, -1, FALSE),
-                     Child, Label2(GetStr(MSG_EA_MLName)),
-                     Child, data->GUI.ST_REALNAME = MakeString(SIZE_REALNAME,GetStr(MSG_EA_MLName)),
-                     Child, Label2(GetStr(MSG_EA_Description)),
-                     Child, data->GUI.ST_COMMENT = MakeString(SIZE_DEFAULT,GetStr(MSG_EA_Description)),
+                     Child, Label2(tr(MSG_EA_Alias)),
+                     Child, data->GUI.ST_ALIAS = MakeString(SIZE_NAME,tr(MSG_EA_Alias)),
+                     Child, Label2(tr(MSG_EA_ReturnAddress)),
+                     Child, MakeAddressField(&data->GUI.ST_ADDRESS, tr(MSG_EA_ReturnAddress), MSG_HELP_EA_ST_ADDRESS_L, ABM_TO, -1, FALSE),
+                     Child, Label2(tr(MSG_EA_MLName)),
+                     Child, data->GUI.ST_REALNAME = MakeString(SIZE_REALNAME,tr(MSG_EA_MLName)),
+                     Child, Label2(tr(MSG_EA_Description)),
+                     Child, data->GUI.ST_COMMENT = MakeString(SIZE_DEFAULT,tr(MSG_EA_Description)),
                   End,
                   Child, VSpace(0),
                End,
-               Child, VGroup, GroupFrameT(GetStr(MSG_EA_Members)),
+               Child, VGroup, GroupFrameT(tr(MSG_EA_Members)),
                   Child, NListviewObject,
                      MUIA_CycleChain, 1,
                      MUIA_Listview_DragType, MUIV_Listview_DragType_Immediate,
@@ -624,9 +624,9 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                      MUIA_String_MaxLen, SIZE_ADDRESS,
                      End,
                   Child, ColGroup(3), GroupSpacing(0),
-                     Child, data->GUI.BT_ADD = MakeButton(GetStr(MSG_Add)),
-                     Child, data->GUI.BT_DEL = MakeButton(GetStr(MSG_Del)),
-                     Child, bt_sort          = MakeButton(GetStr(MSG_EA_Sort)),
+                     Child, data->GUI.BT_ADD = MakeButton(tr(MSG_Add)),
+                     Child, data->GUI.BT_DEL = MakeButton(tr(MSG_Del)),
+                     Child, bt_sort          = MakeButton(tr(MSG_EA_Sort)),
                   End,
                End,
             End;
@@ -657,9 +657,9 @@ static struct EA_ClassData *EA_New(int winnum, int type)
          WindowContents, VGroup,
             Child, group,
             Child, ColGroup(3),
-               Child, data->GUI.BT_OKAY   = MakeButton(GetStr(MSG_Okay)),
+               Child, data->GUI.BT_OKAY   = MakeButton(tr(MSG_Okay)),
                Child, HSpace(0),
-               Child, data->GUI.BT_CANCEL = MakeButton(GetStr(MSG_Cancel)),
+               Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_Cancel)),
             End,
          End,
       End;

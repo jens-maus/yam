@@ -431,19 +431,19 @@ OVERLOAD(MUIM_ContextMenuBuild)
   // generate a context menu title now
   if(_isinobject(data->headerGroup, mb->mx, mb->my))
   {
-    strlcpy(data->menuTitle, GetStr(MSG_RE_HEADERDISPLAY), sizeof(data->menuTitle));
+    strlcpy(data->menuTitle, tr(MSG_RE_HEADERDISPLAY), sizeof(data->menuTitle));
 
     data->contextMenu = MenustripObject,
       Child, MenuObjectT(data->menuTitle),
-        Child, MenuitemCheck(GetStr(MSG_RE_ShortHeaders), NULL, hasContent, rmData->headerMode==HM_SHORTHEADER, FALSE, 0x05, RMEN_HSHORT),
-        Child, MenuitemCheck(GetStr(MSG_RE_FullHeaders),  NULL, hasContent, rmData->headerMode==HM_FULLHEADER,  FALSE, 0x03, RMEN_HFULL),
+        Child, MenuitemCheck(tr(MSG_RE_ShortHeaders), NULL, hasContent, rmData->headerMode==HM_SHORTHEADER, FALSE, 0x05, RMEN_HSHORT),
+        Child, MenuitemCheck(tr(MSG_RE_FullHeaders),  NULL, hasContent, rmData->headerMode==HM_FULLHEADER,  FALSE, 0x03, RMEN_HFULL),
         Child, MenuBarLabel,
-        Child, MenuitemCheck(GetStr(MSG_RE_NoSInfo),      NULL, hasContent, rmData->senderInfoMode==SIM_OFF,    FALSE, 0xE0, RMEN_SNONE),
-        Child, MenuitemCheck(GetStr(MSG_RE_SInfo),        NULL, hasContent, rmData->senderInfoMode==SIM_DATA,   FALSE, 0xD0, RMEN_SDATA),
-        Child, MenuitemCheck(GetStr(MSG_RE_SInfoImage),   NULL, hasContent, rmData->senderInfoMode==SIM_ALL,    FALSE, 0x90, RMEN_SFULL),
-        Child, MenuitemCheck(GetStr(MSG_RE_SImageOnly),   NULL, hasContent, rmData->senderInfoMode==SIM_IMAGE,  FALSE, 0x70, RMEN_SIMAGE),
+        Child, MenuitemCheck(tr(MSG_RE_NoSInfo),      NULL, hasContent, rmData->senderInfoMode==SIM_OFF,    FALSE, 0xE0, RMEN_SNONE),
+        Child, MenuitemCheck(tr(MSG_RE_SInfo),        NULL, hasContent, rmData->senderInfoMode==SIM_DATA,   FALSE, 0xD0, RMEN_SDATA),
+        Child, MenuitemCheck(tr(MSG_RE_SInfoImage),   NULL, hasContent, rmData->senderInfoMode==SIM_ALL,    FALSE, 0x90, RMEN_SFULL),
+        Child, MenuitemCheck(tr(MSG_RE_SImageOnly),   NULL, hasContent, rmData->senderInfoMode==SIM_IMAGE,  FALSE, 0x70, RMEN_SIMAGE),
         Child, MenuBarLabel,
-        Child, MenuitemCheck(GetStr(MSG_RE_WrapHeader),   NULL, hasContent, rmData->wrapHeaders, TRUE, 0, RMEN_WRAPH),
+        Child, MenuitemCheck(tr(MSG_RE_WrapHeader),   NULL, hasContent, rmData->wrapHeaders, TRUE, 0, RMEN_WRAPH),
       End,
     End;
   }
@@ -459,42 +459,42 @@ OVERLOAD(MUIM_ContextMenuBuild)
 
     if(hasContent)
     {
-      snprintf(data->menuTitle, sizeof(data->menuTitle), "%s: ", GetStr(MSG_Subject));
+      snprintf(data->menuTitle, sizeof(data->menuTitle), "%s: ", tr(MSG_Subject));
       strlcat(data->menuTitle, rmData->mail->Subject, 30-strlen(data->menuTitle) > 0 ? 30-strlen(data->menuTitle) : 0);
       strlcat(data->menuTitle, "...", sizeof(data->menuTitle));
     }
     else
-      strlcpy(data->menuTitle, GetStr(MSG_RE_MAILDETAILS), sizeof(data->menuTitle));
+      strlcpy(data->menuTitle, tr(MSG_RE_MAILDETAILS), sizeof(data->menuTitle));
 
     data->contextMenu = MenustripObject,
       Child, MenuObjectT(data->menuTitle),
-        Child, Menuitem(GetStr(MSG_MA_MReply),   NULL, hasContent && !isSentMail, FALSE, RMEN_REPLY),
-        Child, Menuitem(GetStr(MSG_MA_MForward), NULL, hasContent, FALSE, RMEN_FORWARD),
-        Child, Menuitem(GetStr(MSG_MA_MMove),    NULL, hasContent && isRealMail, FALSE, RMEN_MOVE),
-        Child, Menuitem(GetStr(MSG_MA_MCopy),    NULL, hasContent, FALSE, RMEN_COPY),
+        Child, Menuitem(tr(MSG_MA_MReply),   NULL, hasContent && !isSentMail, FALSE, RMEN_REPLY),
+        Child, Menuitem(tr(MSG_MA_MForward), NULL, hasContent, FALSE, RMEN_FORWARD),
+        Child, Menuitem(tr(MSG_MA_MMove),    NULL, hasContent && isRealMail, FALSE, RMEN_MOVE),
+        Child, Menuitem(tr(MSG_MA_MCopy),    NULL, hasContent, FALSE, RMEN_COPY),
         Child, MenuBarLabel,
-        Child, Menuitem(GetStr(MSG_RE_MDisplay), NULL, hasContent, FALSE, RMEN_DISPLAY),
-        Child, Menuitem(GetStr(MSG_MA_Save),     NULL, hasContent, FALSE, RMEN_SAVE),
-        Child, Menuitem(GetStr(MSG_Print),       NULL, hasContent, FALSE, RMEN_PRINT),
-        Child, Menuitem(GetStr(MSG_MA_MDelete),  NULL, hasContent && isRealMail, TRUE,  RMEN_DELETE),
+        Child, Menuitem(tr(MSG_RE_MDisplay), NULL, hasContent, FALSE, RMEN_DISPLAY),
+        Child, Menuitem(tr(MSG_MA_Save),     NULL, hasContent, FALSE, RMEN_SAVE),
+        Child, Menuitem(tr(MSG_Print),       NULL, hasContent, FALSE, RMEN_PRINT),
+        Child, Menuitem(tr(MSG_MA_MDelete),  NULL, hasContent && isRealMail, TRUE,  RMEN_DELETE),
         Child, MenuBarLabel,
         Child, MenuitemObject,
-          MUIA_Menuitem_Title, GetStr(MSG_Attachments),
+          MUIA_Menuitem_Title, tr(MSG_Attachments),
           MUIA_Menuitem_Enabled, hasContent && hasAttach,
-          Child, Menuitem(GetStr(MSG_RE_SaveAll), NULL, hasContent && hasAttach, FALSE, RMEN_DETACH),
-          Child, Menuitem(GetStr(MSG_MA_Crop),    NULL, hasContent && isRealMail && hasAttach, FALSE, RMEN_CROP),
+          Child, Menuitem(tr(MSG_RE_SaveAll), NULL, hasContent && hasAttach, FALSE, RMEN_DETACH),
+          Child, Menuitem(tr(MSG_MA_Crop),    NULL, hasContent && isRealMail && hasAttach, FALSE, RMEN_CROP),
         End,
         Child, MenuBarLabel,
         Child, MenuitemObject,
           MUIA_Menuitem_Title, "PGP",
           MUIA_Menuitem_Enabled, hasContent && (hasPGPKey || hasPGPSig || isPGPEnc),
-          Child, Menuitem(GetStr(MSG_RE_ExtractKey),    NULL, hasPGPKey, FALSE, RMEN_EXTKEY),
-          Child, Menuitem(GetStr(MSG_RE_SigCheck),      NULL, hasPGPSig, FALSE, RMEN_CHKSIG),
-          Child, Menuitem(GetStr(MSG_RE_SaveDecrypted), NULL, isPGPEnc, FALSE, RMEN_SAVEDEC),
+          Child, Menuitem(tr(MSG_RE_ExtractKey),    NULL, hasPGPKey, FALSE, RMEN_EXTKEY),
+          Child, Menuitem(tr(MSG_RE_SigCheck),      NULL, hasPGPSig, FALSE, RMEN_CHKSIG),
+          Child, Menuitem(tr(MSG_RE_SaveDecrypted), NULL, isPGPEnc, FALSE, RMEN_SAVEDEC),
         End,
         Child, MenuBarLabel,
-        Child, MenuitemCheck(GetStr(MSG_RE_Textstyles), NULL, hasContent, rmData->useTextstyles, TRUE, 0, RMEN_TSTYLE),
-        Child, MenuitemCheck(GetStr(MSG_RE_FixedFont),  NULL, hasContent, rmData->useFixedFont, TRUE, 0, RMEN_FFONT),
+        Child, MenuitemCheck(tr(MSG_RE_Textstyles), NULL, hasContent, rmData->useTextstyles, TRUE, 0, RMEN_TSTYLE),
+        Child, MenuitemCheck(tr(MSG_RE_FixedFont),  NULL, hasContent, rmData->useFixedFont, TRUE, 0, RMEN_FFONT),
       End,
     End;
   }
@@ -634,7 +634,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
   {
     char *cmsg;
 
-    BusyText(GetStr(MSG_BusyDisplaying), "");
+    BusyText(tr(MSG_BusyDisplaying), "");
 
     // now read in the Mail in a temporary buffer
     if((cmsg = RE_ReadInMessage(rmData, RIM_READ)))
@@ -747,7 +747,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
       result = TRUE;
     }
     else
-      ER_NewError(GetStr(MSG_ER_ErrorReadMailfile), GetMailFile(NULL, folder, mail));
+      ER_NewError(tr(MSG_ER_ErrorReadMailfile), GetMailFile(NULL, folder, mail));
 
     BusyEnd();
   }
@@ -756,7 +756,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
     // check first if the mail file exists and if not we have to exit with an error
     if(!FileExists(mail->MailFile))
     {
-      ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
+      ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
     }
   }
 
@@ -874,7 +874,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
         if(*ab->RealName && (newNode = malloc(sizeof(struct HeaderNode))))
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_RealName)));
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_RealName)));
           newNode->content = StrBufCpy(NULL, ab->RealName);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
@@ -883,7 +883,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
         if(*ab->Street && (newNode = malloc(sizeof(struct HeaderNode))))
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Street)));
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Street)));
           newNode->content = StrBufCpy(NULL, ab->Street);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
@@ -892,7 +892,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
         if(*ab->City && (newNode = malloc(sizeof(struct HeaderNode))))
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_City)));
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_City)));
           newNode->content = StrBufCpy(NULL, ab->City);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
@@ -901,7 +901,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
         if(*ab->Country && (newNode = malloc(sizeof(struct HeaderNode))))
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Country)));
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Country)));
           newNode->content = StrBufCpy(NULL, ab->Country);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
@@ -910,7 +910,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
         if(*ab->Phone && (newNode = malloc(sizeof(struct HeaderNode))))
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Phone)));
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Phone)));
           newNode->content = StrBufCpy(NULL, ab->Phone);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
@@ -919,7 +919,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
         if(*AB_ExpandBD(ab->BirthDay) && (newNode = malloc(sizeof(struct HeaderNode))))
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_DOB)));
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_DOB)));
           newNode->content = StrBufCpy(NULL, AB_ExpandBD(ab->BirthDay));
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
@@ -928,7 +928,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
         if(*ab->Comment && (newNode = malloc(sizeof(struct HeaderNode))))
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Description)));
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Description)));
           newNode->content = StrBufCpy(NULL, ab->Comment);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
@@ -937,7 +937,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
         if(*ab->Homepage && (newNode = malloc(sizeof(struct HeaderNode))))
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Homepage)));
+          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Homepage)));
           newNode->content = StrBufCpy(NULL, ab->Homepage);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
@@ -1032,14 +1032,14 @@ DECLARE(CheckPGPSignature) // BOOL forceRequester
       {
         char buffer[SIZE_LARGE];
 
-        strlcpy(buffer, hasPGPSBadSigFlag(rmData) ? GetStr(MSG_RE_BadSig) : GetStr(MSG_RE_GoodSig), sizeof(buffer));
+        strlcpy(buffer, hasPGPSBadSigFlag(rmData) ? tr(MSG_RE_BadSig) : tr(MSG_RE_GoodSig), sizeof(buffer));
         if(hasPGPSAddressFlag(rmData))
         {
-          strlcat(buffer, GetStr(MSG_RE_SigFrom), sizeof(buffer));
+          strlcat(buffer, tr(MSG_RE_SigFrom), sizeof(buffer));
           strlcat(buffer, rmData->sigAuthor, sizeof(buffer));
         }
 
-        MUI_Request(G->App, _win(obj), MUIF_NONE, GetStr(MSG_RE_SigCheck), GetStr(MSG_Okay), buffer);
+        MUI_Request(G->App, _win(obj), MUIF_NONE, tr(MSG_RE_SigCheck), tr(MSG_Okay), buffer);
       }
     }
   }
@@ -1180,9 +1180,9 @@ DECLARE(SaveDecryptedMail)
   if(!folder)
     return 0;
 
-  if((choice = MUI_Request(G->App, rmData->readWindow, 0, GetStr(MSG_RE_SaveDecrypted),
-                                                          GetStr(MSG_RE_SaveDecGads),
-                                                          GetStr(MSG_RE_SaveDecReq))))
+  if((choice = MUI_Request(G->App, rmData->readWindow, 0, tr(MSG_RE_SaveDecrypted),
+                                                          tr(MSG_RE_SaveDecGads),
+                                                          tr(MSG_RE_SaveDecReq))))
   {
     struct Compose comp;
     memset(&comp, 0, sizeof(struct Compose));
@@ -1229,7 +1229,7 @@ DECLARE(SaveDecryptedMail)
         }
       }
       else
-        ER_NewError(GetStr(MSG_ER_CreateMailError));
+        ER_NewError(tr(MSG_ER_CreateMailError));
     }
   }
 
@@ -1269,12 +1269,12 @@ DECLARE(SaveMailRequest)
 
   ENTER();
 
-  if((part = AttachRequest(GetStr(MSG_RE_SaveMessage),
-                           GetStr(MSG_RE_SelectSavePart),
-                           GetStr(MSG_RE_SaveGad),
-                           GetStr(MSG_Cancel), ATTREQ_SAVE|ATTREQ_MULTI, rmData)))
+  if((part = AttachRequest(tr(MSG_RE_SaveMessage),
+                           tr(MSG_RE_SelectSavePart),
+                           tr(MSG_RE_SaveGad),
+                           tr(MSG_Cancel), ATTREQ_SAVE|ATTREQ_MULTI, rmData)))
   {
-    BusyText(GetStr(MSG_BusyDecSaving), "");
+    BusyText(tr(MSG_BusyDecSaving), "");
 
     for(; part; part = part->NextSelected)
     {
@@ -1329,12 +1329,12 @@ DECLARE(PrintMailRequest)
 
   ENTER();
 
-  if((part = AttachRequest(GetStr(MSG_RE_PrintMsg),
-                           GetStr(MSG_RE_SelectPrintPart),
-                           GetStr(MSG_RE_PrintGad),
-                           GetStr(MSG_Cancel), ATTREQ_PRINT|ATTREQ_MULTI, rmData)))
+  if((part = AttachRequest(tr(MSG_RE_PrintMsg),
+                           tr(MSG_RE_SelectPrintPart),
+                           tr(MSG_RE_PrintGad),
+                           tr(MSG_Cancel), ATTREQ_PRINT|ATTREQ_MULTI, rmData)))
   {
-    BusyText(GetStr(MSG_BusyDecPrinting), "");
+    BusyText(tr(MSG_BusyDecPrinting), "");
 
     for(; part; part = part->NextSelected)
     {
@@ -1380,12 +1380,12 @@ DECLARE(DisplayMailRequest)
 
   ENTER();
 
-  if((part = AttachRequest(GetStr(MSG_RE_DisplayMsg),
-                           GetStr(MSG_RE_SelectDisplayPart),
-                           GetStr(MSG_RE_DisplayGad),
-                           GetStr(MSG_Cancel), ATTREQ_DISP|ATTREQ_MULTI, rmData)))
+  if((part = AttachRequest(tr(MSG_RE_DisplayMsg),
+                           tr(MSG_RE_SelectDisplayPart),
+                           tr(MSG_RE_DisplayGad),
+                           tr(MSG_Cancel), ATTREQ_DISP|ATTREQ_MULTI, rmData)))
   {
-    BusyText(GetStr(MSG_BusyDecDisplaying), "");
+    BusyText(tr(MSG_BusyDecDisplaying), "");
 
     for(; part; part = part->NextSelected)
     {
@@ -1428,7 +1428,7 @@ DECLARE(DeleteMail)
 
     // delete the mail
     MA_DeleteSingle(mail, FALSE, FALSE, FALSE);
-    AppendLogNormal(22, GetStr(MSG_LOG_Moving), 1, folder->Name, delfolder->Name);
+    AppendLogNormal(22, tr(MSG_LOG_Moving), 1, folder->Name, delfolder->Name);
 
     // erase the old pointer as this has been free()ed by MA_MoveCopy()
     rmData->mail = NULL;

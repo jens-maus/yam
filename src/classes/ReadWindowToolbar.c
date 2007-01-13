@@ -124,30 +124,30 @@ OVERLOAD(OM_NEW)
   // toolbar looks like.
   struct MUIS_TheBar_Button buttons[TB_READ_NUM+4] =
   {
-    { TB_READ_PREV,       TB_READ_PREV,       GetStr(MSG_RE_TBPrev),    GetStr(MSG_HELP_RE_BT_PREVIOUS),    0, 0, NULL, NULL },
-    { TB_READ_NEXT,       TB_READ_NEXT,       GetStr(MSG_RE_TBNext),    GetStr(MSG_HELP_RE_BT_NEXT),        0, 0, NULL, NULL },
-    { TB_READ_PREVTHREAD, TB_READ_PREVTHREAD, GetStr(MSG_RE_TBPrevTh),  GetStr(MSG_HELP_RE_BT_QUESTION),    0, 0, NULL, NULL },
-    { TB_READ_NEXTTHREAD, TB_READ_NEXTTHREAD, GetStr(MSG_RE_TBNextTh),  GetStr(MSG_HELP_RE_BT_ANSWER),      0, 0, NULL, NULL },
+    { TB_READ_PREV,       TB_READ_PREV,       tr(MSG_RE_TBPrev),    tr(MSG_HELP_RE_BT_PREVIOUS),    0, 0, NULL, NULL },
+    { TB_READ_NEXT,       TB_READ_NEXT,       tr(MSG_RE_TBNext),    tr(MSG_HELP_RE_BT_NEXT),        0, 0, NULL, NULL },
+    { TB_READ_PREVTHREAD, TB_READ_PREVTHREAD, tr(MSG_RE_TBPrevTh),  tr(MSG_HELP_RE_BT_QUESTION),    0, 0, NULL, NULL },
+    { TB_READ_NEXTTHREAD, TB_READ_NEXTTHREAD, tr(MSG_RE_TBNextTh),  tr(MSG_HELP_RE_BT_ANSWER),      0, 0, NULL, NULL },
 
     { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
-    { TB_READ_DISPLAY,    TB_READ_DISPLAY,    GetStr(MSG_RE_TBDisplay), GetStr(MSG_HELP_RE_BT_DISPLAY),     0, 0, NULL, NULL },
-    { TB_READ_SAVE,       TB_READ_SAVE,       GetStr(MSG_RE_TBSave),    GetStr(MSG_HELP_RE_BT_EXPORT),      0, 0, NULL, NULL },
-    { TB_READ_PRINT,      TB_READ_PRINT,      GetStr(MSG_RE_TBPrint),   GetStr(MSG_HELP_RE_BT_PRINT),       0, 0, NULL, NULL },
+    { TB_READ_DISPLAY,    TB_READ_DISPLAY,    tr(MSG_RE_TBDisplay), tr(MSG_HELP_RE_BT_DISPLAY),     0, 0, NULL, NULL },
+    { TB_READ_SAVE,       TB_READ_SAVE,       tr(MSG_RE_TBSave),    tr(MSG_HELP_RE_BT_EXPORT),      0, 0, NULL, NULL },
+    { TB_READ_PRINT,      TB_READ_PRINT,      tr(MSG_RE_TBPrint),   tr(MSG_HELP_RE_BT_PRINT),       0, 0, NULL, NULL },
 
     { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
-    { TB_READ_DELETE,     TB_READ_DELETE,     GetStr(MSG_RE_TBDelete),  GetStr(MSG_HELP_RE_BT_DELETE),      0, 0, NULL, NULL },
-    { TB_READ_MOVE,       TB_READ_MOVE,       GetStr(MSG_RE_TBMove),    GetStr(MSG_HELP_RE_BT_MOVE),        0, 0, NULL, NULL },
-    { TB_READ_REPLY,      TB_READ_REPLY,      GetStr(MSG_RE_TBReply),   GetStr(MSG_HELP_RE_BT_REPLY),       0, 0, NULL, NULL },
-    { TB_READ_FORWARD,    TB_READ_FORWARD,    GetStr(MSG_RE_TBForward), GetStr(MSG_HELP_RE_BT_FORWARD),     0, 0, NULL, NULL },
+    { TB_READ_DELETE,     TB_READ_DELETE,     tr(MSG_RE_TBDelete),  tr(MSG_HELP_RE_BT_DELETE),      0, 0, NULL, NULL },
+    { TB_READ_MOVE,       TB_READ_MOVE,       tr(MSG_RE_TBMove),    tr(MSG_HELP_RE_BT_MOVE),        0, 0, NULL, NULL },
+    { TB_READ_REPLY,      TB_READ_REPLY,      tr(MSG_RE_TBReply),   tr(MSG_HELP_RE_BT_REPLY),       0, 0, NULL, NULL },
+    { TB_READ_FORWARD,    TB_READ_FORWARD,    tr(MSG_RE_TBForward), tr(MSG_HELP_RE_BT_FORWARD),     0, 0, NULL, NULL },
 
     { MUIV_TheBar_BarSpacer, TB_READ_NUM+1,  NULL, NULL, 0, 0, NULL, NULL },
 
     // the "Spam" button is disabled by default
     // the "not Spam" button is hidden by default
-    { TB_READ_SPAM,       TB_READ_SPAM,       GetStr(MSG_RE_TBSPAM),    GetStr(MSG_HELP_RE_BT_SPAM),        MUIV_TheBar_ButtonFlag_Disabled, 0, NULL, NULL },
-    { TB_READ_HAM,        TB_READ_HAM,        GetStr(MSG_RE_TBNOTSPAM), GetStr(MSG_HELP_RE_BT_NOTSPAM),     MUIV_TheBar_ButtonFlag_Hide, 0, NULL, NULL },
+    { TB_READ_SPAM,       TB_READ_SPAM,       tr(MSG_RE_TBSPAM),    tr(MSG_HELP_RE_BT_SPAM),        MUIV_TheBar_ButtonFlag_Disabled, 0, NULL, NULL },
+    { TB_READ_HAM,        TB_READ_HAM,        tr(MSG_RE_TBNOTSPAM), tr(MSG_HELP_RE_BT_NOTSPAM),     MUIV_TheBar_ButtonFlag_Hide, 0, NULL, NULL },
     { MUIV_TheBar_End,       -1,  NULL, NULL, 0, 0, NULL, NULL },
   };
 

@@ -7,6 +7,8 @@ $URL$
 
 2007-01-13  Jens Langner <Jens.Langner@light-speed.de>
 
+  * C_c.sd, C_h.sd, misc: renamed our locale translation function from "GetStr()"
+    to "tr()" which is not only much shorter, but also somewhat more intuitive.
   * YAM.cd, misc: got rid of all catalog string using the more or less hackish
     "\000" NUL-termination sequence to make it possible to override certain
     menu hotkeys directly in the catalog translation. First of all that method

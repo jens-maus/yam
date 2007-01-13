@@ -65,8 +65,8 @@ OVERLOAD(OM_NEW)
 
   // now we create the about text
   aboutText = AllocStrBuf(SIZE_LARGE);
-  aboutText = StrBufCat(aboutText, GetStr(MSG_Copyright2));
-  aboutText = StrBufCat(aboutText, GetStr(MSG_UsedSoftware));
+  aboutText = StrBufCat(aboutText, tr(MSG_Copyright2));
+  aboutText = StrBufCat(aboutText, tr(MSG_UsedSoftware));
   aboutText = StrBufCat(aboutText, "\n"
                                    "\033bMagic User Interface\0332\n"
                                    "\033iStefan Stuntz\0332\n"
@@ -106,11 +106,11 @@ OVERLOAD(OM_NEW)
                                    "http://flex.sourceforge.net/\n\n"
                                    "\033bPretty Good Privacy (PGP)\0332\n"
                                    "\033iPhil Zimmermann\0332\n\n");
-  aboutText = StrBufCat(aboutText, GetStr(MSG_WebSite));
+  aboutText = StrBufCat(aboutText, tr(MSG_WebSite));
 
   if(!(obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title, GetStr(MSG_MA_About),
+    MUIA_Window_Title, tr(MSG_MA_About),
     MUIA_Window_ID, MAKE_ID('A','B','T','0'),
     MUIA_HelpNode, "ABOUT",
     WindowContents, VGroup,
@@ -122,7 +122,7 @@ OVERLOAD(OM_NEW)
         Child, HSpace(0),
       End,
       Child, HCenter((VGroup,
-        Child, CLabel(GetStr(MSG_YAMINFO)),
+        Child, CLabel(tr(MSG_YAMINFO)),
         Child, CLabel(yamfullcopyright),
         Child, ColGroup(2),
           Child, bt_gopage = TextObject,
@@ -137,9 +137,9 @@ OVERLOAD(OM_NEW)
         Child, ColGroup(2),
            MUIA_Group_HorizSpacing, 8,
            MUIA_Group_VertSpacing, 2,
-           Child, Label(GetStr(MSG_Version)),
+           Child, Label(tr(MSG_Version)),
            Child, LLabel(yamversionver),
-           Child, Label(GetStr(MSG_CompilationDate)),
+           Child, Label(tr(MSG_CompilationDate)),
            Child, LLabel(compileInfo),
         End,
       End)),
@@ -153,7 +153,7 @@ OVERLOAD(OM_NEW)
       End,
       Child, HGroup,
         Child, RectangleObject, End,
-        Child, bt_okay = MakeButton(GetStr(MSG_ABOUT_OKAY_GAD)),
+        Child, bt_okay = MakeButton(tr(MSG_ABOUT_OKAY_GAD)),
         Child, RectangleObject, End,
       End,
     End,

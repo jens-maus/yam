@@ -408,7 +408,7 @@ OVERLOAD(OM_NEW)
     MUIA_Application_Title,          "YAM",
     MUIA_Application_Version,        yamversionstring,
     MUIA_Application_Copyright,      yamcopyright,
-    MUIA_Application_Description,    GetStr(MSG_APP_DESCRIPTION),
+    MUIA_Application_Description,    tr(MSG_APP_DESCRIPTION),
     MUIA_Application_UseRexx,        FALSE,
     MUIA_Application_SingleTask,     singleTaskOnly,
     MUIA_Application_UsedClasses,    Classes,

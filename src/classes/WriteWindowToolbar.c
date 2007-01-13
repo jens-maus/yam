@@ -116,26 +116,26 @@ OVERLOAD(OM_NEW)
   // toolbar looks like.
   struct MUIS_TheBar_Button buttons[TB_WRITE_NUM+4] =
   {
-    { TB_WRITE_EDITOR,    TB_WRITE_EDITOR,    GetStr(MSG_WR_TBEditor),    GetStr(MSG_HELP_WR_BT_EDITOR),    0, 0, NULL, NULL },
-    { TB_WRITE_INSERT,    TB_WRITE_INSERT,    GetStr(MSG_WR_TBInsert),    GetStr(MSG_HELP_WR_BT_LOAD),      0, 0, NULL, NULL },
+    { TB_WRITE_EDITOR,    TB_WRITE_EDITOR,    tr(MSG_WR_TBEditor),    tr(MSG_HELP_WR_BT_EDITOR),    0, 0, NULL, NULL },
+    { TB_WRITE_INSERT,    TB_WRITE_INSERT,    tr(MSG_WR_TBInsert),    tr(MSG_HELP_WR_BT_LOAD),      0, 0, NULL, NULL },
 
     { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
-    { TB_WRITE_CUT,       TB_WRITE_CUT,       GetStr(MSG_WR_TBCut),       GetStr(MSG_HELP_WR_BT_CUT),       0, 0, NULL, NULL },
-    { TB_WRITE_COPY,      TB_WRITE_COPY,      GetStr(MSG_WR_TBCopy),      GetStr(MSG_HELP_WR_BT_COPY),      0, 0, NULL, NULL },
-    { TB_WRITE_PASTE,     TB_WRITE_PASTE,     GetStr(MSG_WR_TBPaste),     GetStr(MSG_HELP_WR_BT_PASTE),     0, 0, NULL, NULL },
-    { TB_WRITE_UNDO,      TB_WRITE_UNDO,      GetStr(MSG_WR_TBUndo),      GetStr(MSG_HELP_WR_BT_UNDO),      0, 0, NULL, NULL },
+    { TB_WRITE_CUT,       TB_WRITE_CUT,       tr(MSG_WR_TBCut),       tr(MSG_HELP_WR_BT_CUT),       0, 0, NULL, NULL },
+    { TB_WRITE_COPY,      TB_WRITE_COPY,      tr(MSG_WR_TBCopy),      tr(MSG_HELP_WR_BT_COPY),      0, 0, NULL, NULL },
+    { TB_WRITE_PASTE,     TB_WRITE_PASTE,     tr(MSG_WR_TBPaste),     tr(MSG_HELP_WR_BT_PASTE),     0, 0, NULL, NULL },
+    { TB_WRITE_UNDO,      TB_WRITE_UNDO,      tr(MSG_WR_TBUndo),      tr(MSG_HELP_WR_BT_UNDO),      0, 0, NULL, NULL },
 
     { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
-    { TB_WRITE_BOLD,      TB_WRITE_BOLD,      GetStr(MSG_WR_TBBold),      GetStr(MSG_HELP_WR_BT_BOLD),      0, 0, NULL, NULL },
-    { TB_WRITE_ITALIC,    TB_WRITE_ITALIC,    GetStr(MSG_WR_TBItalic),    GetStr(MSG_HELP_WR_BT_ITALIC),    0, 0, NULL, NULL },
-    { TB_WRITE_UNDERLINE, TB_WRITE_UNDERLINE, GetStr(MSG_WR_TBUnderlined),GetStr(MSG_HELP_WR_BT_UNDERL),    0, 0, NULL, NULL },
-    { TB_WRITE_COLORED,   TB_WRITE_COLORED,   GetStr(MSG_WR_TBColored),   GetStr(MSG_HELP_WR_BT_COLOR),     0, 0, NULL, NULL },
+    { TB_WRITE_BOLD,      TB_WRITE_BOLD,      tr(MSG_WR_TBBold),      tr(MSG_HELP_WR_BT_BOLD),      0, 0, NULL, NULL },
+    { TB_WRITE_ITALIC,    TB_WRITE_ITALIC,    tr(MSG_WR_TBItalic),    tr(MSG_HELP_WR_BT_ITALIC),    0, 0, NULL, NULL },
+    { TB_WRITE_UNDERLINE, TB_WRITE_UNDERLINE, tr(MSG_WR_TBUnderlined),tr(MSG_HELP_WR_BT_UNDERL),    0, 0, NULL, NULL },
+    { TB_WRITE_COLORED,   TB_WRITE_COLORED,   tr(MSG_WR_TBColored),   tr(MSG_HELP_WR_BT_COLOR),     0, 0, NULL, NULL },
 
     { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
-    { TB_WRITE_SEARCH,    TB_WRITE_SEARCH,    GetStr(MSG_WR_TBSearch),    GetStr(MSG_HELP_WR_BT_SEARCH),    0, 0, NULL, NULL },
+    { TB_WRITE_SEARCH,    TB_WRITE_SEARCH,    tr(MSG_WR_TBSearch),    tr(MSG_HELP_WR_BT_SEARCH),    0, 0, NULL, NULL },
 
     { MUIV_TheBar_End,       -1,  NULL, NULL, 0, 0, NULL, NULL },
   };

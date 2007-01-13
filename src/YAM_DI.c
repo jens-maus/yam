@@ -73,7 +73,7 @@ static void DI_FinishEdit(void)
 
       GetMUIString(new.Alias, gui->ST_ALIAS, sizeof(new.Alias));
       if(*new.Alias == '\0')
-        strlcpy(new.Alias, GetStr(MSG_NewEntry), sizeof(new.Alias));
+        strlcpy(new.Alias, tr(MSG_NewEntry), sizeof(new.Alias));
 
       *(G->DI->OldEntry) = new;
 
@@ -96,7 +96,7 @@ static void DI_Save(void)
 
    if ((fh = fopen(G->DI_Filename, "w")))
    {
-      BusyGauge(GetStr(MSG_BusySavingDI), "", (int)xget(G->DI->GUI.LV_ENTRIES, MUIA_List_Entries));
+      BusyGauge(tr(MSG_BusySavingDI), "", (int)xget(G->DI->GUI.LV_ENTRIES, MUIA_List_Entries));
       fputs("YDI1 - YAM Dictionary\n", fh);
       for (i = 0; ;i++)
       {
@@ -110,7 +110,7 @@ static void DI_Save(void)
       G->DI->Modified = FALSE;
       BusyEnd();
    }
-   else ER_NewError(GetStr(MSG_ER_CantCreateFile), G->DI_Filename);
+   else ER_NewError(tr(MSG_ER_CantCreateFile), G->DI_Filename);
 }
 
 ///
@@ -125,7 +125,7 @@ static int DI_Load(void)
 
    if ((fh = fopen(G->DI_Filename, "r")))
    {
-      BusyText(GetStr(MSG_BusyLoadingDI), "");
+      BusyText(tr(MSG_BusyLoadingDI), "");
       GetLine(fh, buffer, SIZE_LARGE);
       if (!strncmp(buffer,"YDI",3))
       {
@@ -215,7 +215,7 @@ HOOKPROTONHNO(DI_ModifyFunc, void, int *arg)
    struct Dict new;
 
    DI_FinishEdit();
-   strlcpy(new.Alias, GetStr(MSG_NewEntry), sizeof(new.Alias));
+   strlcpy(new.Alias, tr(MSG_NewEntry), sizeof(new.Alias));
    new.Text = AllocStrBuf(80);
    DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_InsertSingle, &new, MUIV_List_Insert_Bottom);
    nnset(G->DI->GUI.LV_ENTRIES, MUIA_List_Active, MUIV_List_Active_Bottom);
@@ -280,7 +280,7 @@ static struct DI_ClassData *DI_New(void)
    {
       data->GUI.SL_EDIT = ScrollbarObject, End;
       data->GUI.WI = WindowObject,
-         MUIA_Window_Title, GetStr(MSG_WR_Dictionary),
+         MUIA_Window_Title, tr(MSG_WR_Dictionary),
          MUIA_HelpNode, "DI_W",
          MUIA_Window_ID, MAKE_ID('D','I','C','T'),
          WindowContents, VGroup,
@@ -302,8 +302,8 @@ static struct DI_ClassData *DI_New(void)
                Child, data->GUI.GR_TEXT = VGroup,
                   MUIA_HorizWeight, G->Weights[5],
                   Child, HGroup,
-                     Child, Label2(GetStr(MSG_DI_Alias)),
-                     Child, data->GUI.ST_ALIAS = MakeString(SIZE_NAME, GetStr(MSG_DI_Alias)),
+                     Child, Label2(tr(MSG_DI_Alias)),
+                     Child, data->GUI.ST_ALIAS = MakeString(SIZE_NAME, tr(MSG_DI_Alias)),
                   End,
                   Child, HGroup,
                      MUIA_Group_Spacing, 0,
@@ -317,10 +317,10 @@ static struct DI_ClassData *DI_New(void)
                End,
             End,
             Child, ColGroup(4),
-               Child, data->GUI.BT_NEW       = MakeButton(GetStr(MSG_DI_New)),
-               Child, data->GUI.BT_ADDSELECT = MakeButton(GetStr(MSG_DI_AddSelect)),
-               Child, data->GUI.BT_DELETE    = MakeButton(GetStr(MSG_DI_Delete)),
-               Child, data->GUI.BT_PASTE     = MakeButton(GetStr(MSG_DI_Paste)),
+               Child, data->GUI.BT_NEW       = MakeButton(tr(MSG_DI_New)),
+               Child, data->GUI.BT_ADDSELECT = MakeButton(tr(MSG_DI_AddSelect)),
+               Child, data->GUI.BT_DELETE    = MakeButton(tr(MSG_DI_Delete)),
+               Child, data->GUI.BT_PASTE     = MakeButton(tr(MSG_DI_Paste)),
             End,
          End,
       End;

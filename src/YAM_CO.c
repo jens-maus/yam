@@ -95,7 +95,7 @@ static void CO_NewPrefsFile(char *fname)
   static char wtitle[SIZE_SMALL+SIZE_PATHFILE];
 
   strlcpy(G->CO_PrefsFile, fname, sizeof(G->CO_PrefsFile));
-  snprintf(wtitle, sizeof(wtitle), "%s (%s)", GetStr(MSG_MA_MConfig), fname);
+  snprintf(wtitle, sizeof(wtitle), "%s (%s)", tr(MSG_MA_MConfig), fname);
 
   set(G->CO->GUI.WI, MUIA_Window_Title, wtitle);
 }
@@ -670,7 +670,7 @@ BOOL CO_IsValid(void)
    if (G->CO_Valid) return TRUE;
    if (G->CO) set(G->CO->GUI.WI,MUIA_Window_Open,TRUE);
    else DoMethod(G->App, MUIM_CallHook, &CO_OpenHook);
-   MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), GetStr(MSG_CO_InvalidConf));
+   MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_CO_InvalidConf));
    return FALSE;
 }
 
@@ -852,8 +852,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
    if(page == cp_Write || page == cp_AllPages)
    {
       *co->ReplyTo = *co->Organization = *co->ExtraHeaders = '\0';
-      strlcpy(co->NewIntro, GetStr(MSG_CO_NewIntroDef), sizeof(co->NewIntro));
-      strlcpy(co->Greetings, GetStr(MSG_CO_GreetingsDef), sizeof(co->Greetings));
+      strlcpy(co->NewIntro, tr(MSG_CO_NewIntroDef), sizeof(co->NewIntro));
+      strlcpy(co->Greetings, tr(MSG_CO_GreetingsDef), sizeof(co->Greetings));
       co->WarnSubject = TRUE;
       co->EdWrapCol = 76;
       co->EdWrapMode = 2;
@@ -868,15 +868,15 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       strlcpy(co->ReplyHello, "Hello %f\\n", sizeof(co->ReplyHello));
       strlcpy(co->ReplyIntro, "On %d, you wrote:\\n", sizeof(co->ReplyIntro));
       strlcpy(co->ReplyBye, "Regards", sizeof(co->ReplyBye));
-      strlcpy(co->AltReplyHello, GetStr(MSG_CO_AltRepHelloDef), sizeof(co->AltReplyHello));
-      strlcpy(co->AltReplyIntro, GetStr(MSG_CO_AltRepIntroDef), sizeof(co->AltReplyIntro));
-      strlcpy(co->AltReplyBye, GetStr(MSG_CO_AltRepByeDef), sizeof(co->AltReplyBye));
-      strlcpy(co->AltReplyPattern, GetStr(MSG_CO_AltRepPatternDef), sizeof(co->AltReplyPattern));
-      strlcpy(co->MLReplyHello, GetStr(MSG_CO_MLRepHelloDef), sizeof(co->MLReplyHello));
-      strlcpy(co->MLReplyIntro, GetStr(MSG_CO_MLRepIntroDef), sizeof(co->MLReplyIntro));
-      strlcpy(co->MLReplyBye, GetStr(MSG_CO_MLRepByeDef), sizeof(co->MLReplyBye));
-      strlcpy(co->ForwardIntro, GetStr(MSG_CO_ForwardIntroDef), sizeof(co->ForwardIntro));
-      strlcpy(co->ForwardFinish, GetStr(MSG_CO_ForwardFinishDef), sizeof(co->ForwardFinish));
+      strlcpy(co->AltReplyHello, tr(MSG_CO_AltRepHelloDef), sizeof(co->AltReplyHello));
+      strlcpy(co->AltReplyIntro, tr(MSG_CO_AltRepIntroDef), sizeof(co->AltReplyIntro));
+      strlcpy(co->AltReplyBye, tr(MSG_CO_AltRepByeDef), sizeof(co->AltReplyBye));
+      strlcpy(co->AltReplyPattern, tr(MSG_CO_AltRepPatternDef), sizeof(co->AltReplyPattern));
+      strlcpy(co->MLReplyHello, tr(MSG_CO_MLRepHelloDef), sizeof(co->MLReplyHello));
+      strlcpy(co->MLReplyIntro, tr(MSG_CO_MLRepIntroDef), sizeof(co->MLReplyIntro));
+      strlcpy(co->MLReplyBye, tr(MSG_CO_MLRepByeDef), sizeof(co->MLReplyBye));
+      strlcpy(co->ForwardIntro, tr(MSG_CO_ForwardIntroDef), sizeof(co->ForwardIntro));
+      strlcpy(co->ForwardFinish, tr(MSG_CO_ForwardFinishDef), sizeof(co->ForwardFinish));
       strlcpy(co->QuoteText, ">", sizeof(co->QuoteText));
       strlcpy(co->AltQuoteText, "|", sizeof(co->AltQuoteText));
       co->QuoteMessage = co->QuoteEmptyLines = co->CompareAddress = co->StripSignature = TRUE;
@@ -899,7 +899,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       co->FolderCntMenu = TRUE;
       co->MessageCntMenu = TRUE;
       co->InfoBar = IB_POS_CENTER;
-      strlcpy(co->InfoBarText, GetStr(MSG_CO_InfoBarDef), sizeof(co->InfoBarText));
+      strlcpy(co->InfoBarText, tr(MSG_CO_InfoBarDef), sizeof(co->InfoBarText));
    }
 
    if(page == cp_Security || page == cp_AllPages)
@@ -977,7 +977,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       strlcpy(co->TempDir, "T:", sizeof(co->TempDir));
       strlcpy(co->PackerCommand, "LhA -a -m -i%l a \"%a\"", sizeof(co->PackerCommand));
       co->IconPositionX = co->IconPositionY = 0;
-      strlcpy(co->AppIconText, GetStr(MSG_CO_APPICON_LABEL), sizeof(co->AppIconText));
+      strlcpy(co->AppIconText, tr(MSG_CO_APPICON_LABEL), sizeof(co->AppIconText));
       co->IconifyOnQuit = co->RemoveAtOnce = FALSE;
       co->Confirm = co->SaveSent = co->SendMDNAtOnce = TRUE;
       co->ConfirmDelete = 2;
@@ -1138,9 +1138,9 @@ void CO_Validate(struct Config *co, BOOL update)
      if(G->Locale && co->TimeZone != -(G->Locale->loc_GMTOffset))
      {
         int res = MUI_Request(G->App, NULL, 0,
-                              GetStr(MSG_CO_TIMEZONEWARN_TITLE),
-                              GetStr(MSG_CO_TIMEZONEWARN_BT),
-                              GetStr(MSG_CO_TIMEZONEWARN));
+                              tr(MSG_CO_TIMEZONEWARN_TITLE),
+                              tr(MSG_CO_TIMEZONEWARN_BT),
+                              tr(MSG_CO_TIMEZONEWARN));
 
         // if the user has clicked on Change, we do
         // change the timezone and save it immediatly
@@ -1171,9 +1171,9 @@ void CO_Validate(struct Config *co, BOOL update)
      if(G->CO_DST > 0 && co->DaylightSaving != (G->CO_DST == 2))
      {
         int res = MUI_Request(G->App, NULL, 0,
-                              GetStr(MSG_CO_AUTODSTWARN_TITLE),
-                              GetStr(MSG_CO_AUTODSTWARN_BT),
-                              GetStr(MSG_CO_AUTODSTWARN));
+                              tr(MSG_CO_AUTODSTWARN_TITLE),
+                              tr(MSG_CO_AUTODSTWARN_BT),
+                              tr(MSG_CO_AUTODSTWARN));
 
         // if the user has clicked on Change, we do
         // change the DST setting and save it immediatly
@@ -1229,9 +1229,9 @@ void CO_Validate(struct Config *co, BOOL update)
           if(stricmp(co->LocalCharset, sysCodeset->name) != 0)
           {
             int res = MUI_Request(G->App, NULL, 0,
-                                  GetStr(MSG_CO_CHARSETWARN_TITLE),
-                                  GetStr(MSG_CO_CHARSETWARN_BT),
-                                  GetStr(MSG_CO_CHARSETWARN),
+                                  tr(MSG_CO_CHARSETWARN_TITLE),
+                                  tr(MSG_CO_CHARSETWARN_BT),
+                                  tr(MSG_CO_CHARSETWARN),
                                   co->LocalCharset, sysCodeset->name);
 
             // if the user has clicked on Change, we do
@@ -1276,9 +1276,9 @@ void CO_Validate(struct Config *co, BOOL update)
                                       TAG_DONE)) == NULL)
    {
      int res = MUI_Request(G->App, NULL, 0,
-                           GetStr(MSG_CO_CHARSETWARN_TITLE),
-                           GetStr(MSG_CO_CHARSETUNKNOWNWARN_BT),
-                           GetStr(MSG_CO_CHARSETUNKNOWNWARN),
+                           tr(MSG_CO_CHARSETWARN_TITLE),
+                           tr(MSG_CO_CHARSETUNKNOWNWARN_BT),
+                           tr(MSG_CO_CHARSETUNKNOWNWARN),
                            co->LocalCharset);
      if(res == 1)
      {
@@ -1297,9 +1297,9 @@ void CO_Validate(struct Config *co, BOOL update)
         G->TR_UseableTLS == FALSE)
      {
         int res = MUI_Request(G->App, NULL, 0,
-                              GetStr(MSG_CO_AMISSLWARN_TITLE),
-                              GetStr(MSG_CO_AMISSLWARN_BT),
-                              GetStr(MSG_CO_AMISSLWARN),
+                              tr(MSG_CO_AMISSLWARN_TITLE),
+                              tr(MSG_CO_AMISSLWARN_BT),
+                              tr(MSG_CO_AMISSLWARN),
                               AMISSLMASTER_MIN_VERSION, 5);
 
         // if the user has clicked on "Ignore always", we do
@@ -1520,11 +1520,11 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
 
   ENTER();
 
-  if((mode = MUI_Request(G->App, G->CO->GUI.WI, 0, GetStr(MSG_CO_ImportMIME), GetStr(MSG_CO_ImportMIMEGads), GetStr(MSG_CO_ImportMIMEReq))))
+  if((mode = MUI_Request(G->App, G->CO->GUI.WI, 0, tr(MSG_CO_ImportMIME), tr(MSG_CO_ImportMIMEGads), tr(MSG_CO_ImportMIMEReq))))
   {
     struct FileReqCache *frc;
 
-    if((frc = ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_IMPORTMIMETITLE), REQF_NONE, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types")))))
+    if((frc = ReqFile(ASL_CONFIG,G->CO->GUI.WI, tr(MSG_CO_IMPORTMIMETITLE), REQF_NONE, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types")))))
     {
       char fname[SIZE_PATHFILE];
       FILE *fh;
@@ -1673,7 +1673,7 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
         DoMethod(lv, MUIM_List_Redraw, MUIV_List_Redraw_All);
       }
       else
-        ER_NewError(GetStr(MSG_ER_CantOpenFile), fname);
+        ER_NewError(tr(MSG_ER_CantOpenFile), fname);
     }
   }
 
@@ -1696,7 +1696,7 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
 
   if(xget(ed, MUIA_TextEditor_HasChanged))
   {
-    if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
+    if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
       // save the modified signature only if the user told us to do so
       EditorToFile(ed, CreateFilename(SigNames[G->CO->LastSig]));
   }
@@ -1758,7 +1758,7 @@ HOOKPROTONHNONP(CO_OpenConfig, void)
 
   ENTER();
 
-  if((frc = ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_Open), REQF_NONE, G->MA_MailDir, "")))
+  if((frc = ReqFile(ASL_CONFIG,G->CO->GUI.WI, tr(MSG_CO_Open), REQF_NONE, G->MA_MailDir, "")))
   {
     char cname[SIZE_PATHFILE];
 
@@ -1784,7 +1784,7 @@ HOOKPROTONHNONP(CO_SaveConfigAs, void)
 
   ENTER();
 
-  if((frc = ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_SaveAs), REQF_SAVEMODE, G->MA_MailDir, "")))
+  if((frc = ReqFile(ASL_CONFIG,G->CO->GUI.WI, tr(MSG_CO_SaveAs), REQF_SAVEMODE, G->MA_MailDir, "")))
   {
     char cname[SIZE_PATHFILE];
 
@@ -1890,7 +1890,7 @@ MakeStaticHook(CO_CloseHook,CO_CloseFunc);
 //  Opens configuration window
 HOOKPROTONHNONP(CO_OpenFunc, void)
 {
-  BusyText(GetStr(MSG_BUSY_OPENINGCONFIG), "");
+  BusyText(tr(MSG_BUSY_OPENINGCONFIG), "");
 
   // check if there isn't already a configuration
   // open
@@ -1956,21 +1956,21 @@ static struct CO_ClassData *CO_New(void)
       page[cp_Update      ].PageLabel = MSG_CO_CrdUpdate;
 
       data->GUI.WI = WindowObject,
-         MUIA_Window_Title, GetStr(MSG_MA_MConfig),
+         MUIA_Window_Title, tr(MSG_MA_MConfig),
          MUIA_HelpNode,"CO_W",
          MUIA_Window_Menustrip, MenustripObject,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Project),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_CO_Open), MUIA_Menuitem_Shortcut,"O", MUIA_UserData,CMEN_OPEN, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_CO_SaveAs), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,CMEN_SAVEAS, End,
+            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_MA_Project),
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_Open), MUIA_Menuitem_Shortcut,"O", MUIA_UserData,CMEN_OPEN, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_SaveAs), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,CMEN_SAVEAS, End,
             End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_CO_Edit),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_CO_ResetDefaults), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,CMEN_DEF, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_CO_ResetAll), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,CMEN_DEFALL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_CO_LastSaved), MUIA_Menuitem_Shortcut,"L", MUIA_UserData,CMEN_LAST, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_CO_Restore), MUIA_Menuitem_Shortcut,"R", MUIA_UserData,CMEN_REST, End,
+            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_CO_Edit),
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_ResetDefaults), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,CMEN_DEF, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_ResetAll), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,CMEN_DEFALL, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_LastSaved), MUIA_Menuitem_Shortcut,"L", MUIA_UserData,CMEN_LAST, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_Restore), MUIA_Menuitem_Shortcut,"R", MUIA_UserData,CMEN_REST, End,
             End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_CO_Extras),
-               MUIA_Family_Child, data->GUI.MI_IMPMIME = MenuitemObject, MUIA_Menuitem_Enabled,FALSE, MUIA_Menuitem_Title,GetStr(MSG_CO_ImportMIME), MUIA_UserData,CMEN_MIME, End,
+            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_CO_Extras),
+               MUIA_Family_Child, data->GUI.MI_IMPMIME = MenuitemObject, MUIA_Menuitem_Enabled,FALSE, MUIA_Menuitem_Title,tr(MSG_CO_ImportMIME), MUIA_UserData,CMEN_MIME, End,
             End,
          End,
          MUIA_Window_ID, MAKE_ID('C','O','N','F'),
@@ -2018,9 +2018,9 @@ static struct CO_ClassData *CO_New(void)
 
             Child, HGroup,
                MUIA_Group_SameWidth, TRUE,
-               Child, data->GUI.BT_SAVE   = MakeButton(GetStr(MSG_CO_Save)),
-               Child, data->GUI.BT_USE    = MakeButton(GetStr(MSG_CO_Use)),
-               Child, data->GUI.BT_CANCEL = MakeButton(GetStr(MSG_CO_Cancel)),
+               Child, data->GUI.BT_SAVE   = MakeButton(tr(MSG_CO_Save)),
+               Child, data->GUI.BT_USE    = MakeButton(tr(MSG_CO_Use)),
+               Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_CO_Cancel)),
             End,
          End,
       End;

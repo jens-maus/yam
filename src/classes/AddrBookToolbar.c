@@ -112,22 +112,22 @@ OVERLOAD(OM_NEW)
   // toolbar looks like.
   struct MUIS_TheBar_Button buttons[TB_ABOOK_NUM+3] =
   {
-    { TB_ABOOK_SAVE,      TB_ABOOK_SAVE,      GetStr(MSG_AB_TBSave),      GetStr(MSG_HELP_AB_BT_SAVE),      0, 0, NULL, NULL },
-    { TB_ABOOK_FIND,      TB_ABOOK_FIND,      GetStr(MSG_AB_TBFind),      GetStr(MSG_HELP_AB_BT_SEARCH),    0, 0, NULL, NULL },
+    { TB_ABOOK_SAVE,      TB_ABOOK_SAVE,      tr(MSG_AB_TBSave),      tr(MSG_HELP_AB_BT_SAVE),      0, 0, NULL, NULL },
+    { TB_ABOOK_FIND,      TB_ABOOK_FIND,      tr(MSG_AB_TBFind),      tr(MSG_HELP_AB_BT_SEARCH),    0, 0, NULL, NULL },
 
     { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
-    { TB_ABOOK_NEWUSER,   TB_ABOOK_NEWUSER,   GetStr(MSG_AB_TBNewUser),   GetStr(MSG_HELP_AB_BT_ADDUSER),   0, 0, NULL, NULL },
-    { TB_ABOOK_NEWLIST,   TB_ABOOK_NEWLIST,   GetStr(MSG_AB_TBNewList),   GetStr(MSG_HELP_AB_BT_ADDMLIST),  0, 0, NULL, NULL },
-    { TB_ABOOK_NEWGROUP,  TB_ABOOK_NEWGROUP,  GetStr(MSG_AB_TBNewGroup),  GetStr(MSG_HELP_AB_BT_ADDGROUP),  0, 0, NULL, NULL },
-    { TB_ABOOK_EDIT,      TB_ABOOK_EDIT,      GetStr(MSG_AB_TBEdit),      GetStr(MSG_HELP_AB_BT_EDIT),      0, 0, NULL, NULL },
-    { TB_ABOOK_DELETE,    TB_ABOOK_DELETE,    GetStr(MSG_AB_TBDelete),    GetStr(MSG_HELP_AB_BT_DELETE),    0, 0, NULL, NULL },
-    { TB_ABOOK_PRINT,     TB_ABOOK_PRINT,     GetStr(MSG_AB_TBPrint),     GetStr(MSG_HELP_AB_BT_PRINT),     0, 0, NULL, NULL },
+    { TB_ABOOK_NEWUSER,   TB_ABOOK_NEWUSER,   tr(MSG_AB_TBNewUser),   tr(MSG_HELP_AB_BT_ADDUSER),   0, 0, NULL, NULL },
+    { TB_ABOOK_NEWLIST,   TB_ABOOK_NEWLIST,   tr(MSG_AB_TBNewList),   tr(MSG_HELP_AB_BT_ADDMLIST),  0, 0, NULL, NULL },
+    { TB_ABOOK_NEWGROUP,  TB_ABOOK_NEWGROUP,  tr(MSG_AB_TBNewGroup),  tr(MSG_HELP_AB_BT_ADDGROUP),  0, 0, NULL, NULL },
+    { TB_ABOOK_EDIT,      TB_ABOOK_EDIT,      tr(MSG_AB_TBEdit),      tr(MSG_HELP_AB_BT_EDIT),      0, 0, NULL, NULL },
+    { TB_ABOOK_DELETE,    TB_ABOOK_DELETE,    tr(MSG_AB_TBDelete),    tr(MSG_HELP_AB_BT_DELETE),    0, 0, NULL, NULL },
+    { TB_ABOOK_PRINT,     TB_ABOOK_PRINT,     tr(MSG_AB_TBPrint),     tr(MSG_HELP_AB_BT_PRINT),     0, 0, NULL, NULL },
 
     { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
-    { TB_ABOOK_OPENTREE,  TB_ABOOK_OPENTREE,  GetStr(MSG_AB_TBOpenTree),  GetStr(MSG_HELP_AB_BT_OPEN),      0, 0, NULL, NULL },
-    { TB_ABOOK_CLOSETREE, TB_ABOOK_CLOSETREE, GetStr(MSG_AB_TBCloseTree), GetStr(MSG_HELP_AB_BT_CLOSE),     0, 0, NULL, NULL },
+    { TB_ABOOK_OPENTREE,  TB_ABOOK_OPENTREE,  tr(MSG_AB_TBOpenTree),  tr(MSG_HELP_AB_BT_OPEN),      0, 0, NULL, NULL },
+    { TB_ABOOK_CLOSETREE, TB_ABOOK_CLOSETREE, tr(MSG_AB_TBCloseTree), tr(MSG_HELP_AB_BT_CLOSE),     0, 0, NULL, NULL },
 
     { MUIV_TheBar_End, -1,        NULL, NULL, 0, 0, NULL, NULL },
   };

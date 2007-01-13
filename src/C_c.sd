@@ -44,8 +44,8 @@ struct FC_Type { const long ID; const char * const Str; };
 const struct FC_Type _%i = { %d, %s };
 
 /*** Catalog functions ***/
-/// GetStr()
-const char *GetStr(const void *fcstr)
+/// tr()
+const char *tr(const void *fcstr)
 {
   const char *defaultstr = ((struct FC_Type *)fcstr)->Str;
 

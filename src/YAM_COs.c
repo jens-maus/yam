@@ -560,9 +560,9 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "DisplayAllAltPart= %s\n", Bool2Txt(co->DisplayAllAltPart));
 
       fclose(fh);
-      AppendLogVerbose(60, GetStr(MSG_LOG_SavingConfig), fname);
+      AppendLogVerbose(60, tr(MSG_LOG_SavingConfig), fname);
    }
-   else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname);
+   else ER_NewError(tr(MSG_ER_CantCreateFile), fname);
 }
 
 ///
@@ -1287,10 +1287,10 @@ void CO_GetConfig(BOOL saveConfig)
           // raise a CheckboxRequest and ask the user which
           // operations he want to performed while disabling the
           // SPAM filter.
-          mask = CheckboxRequest(G->CO->GUI.WI, 0, NULL, 3, GetStr(MSG_CO_SPAM_DISABLEFILTERASK),
-                                                            GetStr(MSG_CO_SPAM_RESETTDATA),
-                                                            GetStr(MSG_CO_SPAM_RESETMAILFLAGS),
-                                                            GetStr(MSG_CO_SPAM_DELETESPAMFOLDER));
+          mask = CheckboxRequest(G->CO->GUI.WI, 0, NULL, 3, tr(MSG_CO_SPAM_DISABLEFILTERASK),
+                                                            tr(MSG_CO_SPAM_RESETTDATA),
+                                                            tr(MSG_CO_SPAM_RESETMAILFLAGS),
+                                                            tr(MSG_CO_SPAM_DELETESPAMFOLDER));
 
           SHOWVALUE(DBF_CONFIG, mask);
           // check if the user canceled the requester
@@ -1434,8 +1434,8 @@ void CO_GetConfig(BOOL saveConfig)
             // the directory "spam" already exists, but it is not the standard spam folder
             // let the user decide what to do
             result = MUI_Request(G->App, NULL, 0, NULL,
-                                                  GetStr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
-                                                  GetStr(MSG_ER_SPAMDIR_EXISTS));
+                                                  tr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
+                                                  tr(MSG_ER_SPAMDIR_EXISTS));
             switch(result)
             {
               default:
@@ -1468,10 +1468,10 @@ void CO_GetConfig(BOOL saveConfig)
           if(createSpamFolder)
           {
             // try to create the folder and save the new folder tree
-            if(!FO_CreateFolder(FT_SPAM, CreateFilename(FolderName[FT_SPAM]), GetStr(MSG_MA_SPAM)) || !FO_SaveTree(CreateFilename(".folders")))
+            if(!FO_CreateFolder(FT_SPAM, CreateFilename(FolderName[FT_SPAM]), tr(MSG_MA_SPAM)) || !FO_SaveTree(CreateFilename(".folders")))
             {
               // something failed, so we disable the spam filter again
-              ER_NewError(GetStr(MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER));
+              ER_NewError(tr(MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER));
               CE->SpamFilterEnabled = FALSE;
             }
           }
@@ -1547,7 +1547,7 @@ void CO_GetConfig(BOOL saveConfig)
          {
            // if the signature was modified but the config should not be saved but just be "used"
            // then ask the user if the changes to the signature should be made permanent
-           if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
+           if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
            {
              // save the modified signature only if the user told us to do so
              EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig]));
@@ -1982,19 +1982,19 @@ void CO_SetConfig(void)
         switch(state.LastUpdateStatus)
         {
           case UST_NOCHECK:
-            set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOCHECK));
+            set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, tr(MSG_CO_LASTSTATUS_NOCHECK));
           break;
 
           case UST_NOUPDATE:
-            set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOUPDATE));
+            set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, tr(MSG_CO_LASTSTATUS_NOUPDATE));
           break;
 
           case UST_NOQUERY:
-            set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_NOQUERY));
+            set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, tr(MSG_CO_LASTSTATUS_NOQUERY));
           break;
 
           case UST_UPDATESUCCESS:
-            set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, GetStr(MSG_CO_LASTSTATUS_UPDATESUCCESS));
+            set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, tr(MSG_CO_LASTSTATUS_UPDATESUCCESS));
           break;
         }
 

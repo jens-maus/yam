@@ -319,9 +319,9 @@ void MA_ChangeSelected(BOOL forceUpdate)
   // change the menu item title of the
   // Edit item so that we either display "Edit" or "Edit as New"
   if(isOutgoingFolder(fo))
-    set(gui->MI_EDIT, MUIA_Menuitem_Title, GetStr(MSG_MA_MEDIT));
+    set(gui->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDIT));
   else
-    set(gui->MI_EDIT, MUIA_Menuitem_Title, GetStr(MSG_MA_MEDITASNEW));
+    set(gui->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDITASNEW));
 
   // in the following section we define which menu item should be
   // enabled or disabled. Please note that a menu item can only be part of
@@ -457,7 +457,7 @@ HOOKPROTONHNONP(MA_SetMessageInfoFunc, void)
     // use FormatSize() to prettify the size display of the mail info
     FormatSize(mail->Size, sizestr, sizeof(sizestr), SF_AUTO);
 
-    snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_MESSAGEINFO), mail->From.RealName,
+    snprintf(buffer, sizeof(buffer), tr(MSG_MA_MESSAGEINFO), mail->From.RealName,
                                                                  mail->From.Address,
                                                                  mail->To.RealName,
                                                                  mail->To.Address,
@@ -491,7 +491,7 @@ HOOKPROTONHNONP(MA_SetFolderInfoFunc, void)
 
     FormatSize(fo->Size, sizestr, sizeof(sizestr), SF_AUTO);
 
-    snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_FOLDERINFO), fo->Name,
+    snprintf(buffer, sizeof(buffer), tr(MSG_MA_FOLDERINFO), fo->Name,
                                                                 fo->Path,
                                                                 sizestr,
                                                                 fo->Total,
@@ -807,7 +807,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
       }
     }
 
-    AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name);
+    AppendLogVerbose(21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name);
 
     // make sure we delete the mailfile
     DeleteFile(GetMailFile(NULL, mailFolder, mail));
@@ -859,7 +859,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 
     if(copyit)
     {
-      AppendLogVerbose(25, GetStr(MSG_LOG_CopyingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
+      AppendLogVerbose(25, tr(MSG_LOG_CopyingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
       strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
 
@@ -870,7 +870,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
     {
       int i;
 
-      AppendLogVerbose(23, GetStr(MSG_LOG_MovingVerbose),  AddrName(mail->From), mail->Subject, from->Name, to->Name);
+      AppendLogVerbose(23, tr(MSG_LOG_MovingVerbose),  AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
       // add the new mail
       newMail = AddMailToList(&cmail, to);
@@ -936,11 +936,11 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
     switch(result)
     {
       case -2:
-        ER_NewError(GetStr(MSG_ER_XPKUSAGE), mail->MailFile);
+        ER_NewError(tr(MSG_ER_XPKUSAGE), mail->MailFile);
       break;
 
       default:
-        ER_NewError(GetStr(MSG_ER_TRANSFERMAIL), mail->MailFile, to->Name);
+        ER_NewError(tr(MSG_ER_TRANSFERMAIL), mail->MailFile, to->Name);
       break;
     }
   }
@@ -984,7 +984,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
     // get the list of the currently marked mails
     selected = (int)*mlist;
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
-    BusyGaugeInt(GetStr(MSG_BusyMoving), itoa(selected), selected);
+    BusyGaugeInt(tr(MSG_BusyMoving), itoa(selected), selected);
     for(i = 0; i < selected; i++)
     {
       if((mail = mlist[i+2]) != NULL)
@@ -1005,9 +1005,9 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
 
   // write some log out
   if(copyit)
-    AppendLogNormal(24, GetStr(MSG_LOG_Copying), selected, FolderName(frombox), FolderName(tobox));
+    AppendLogNormal(24, tr(MSG_LOG_Copying), selected, FolderName(frombox), FolderName(tobox));
   else
-    AppendLogNormal(22, GetStr(MSG_LOG_Moving), selected, FolderName(frombox), FolderName(tobox));
+    AppendLogNormal(22, tr(MSG_LOG_Moving), selected, FolderName(frombox), FolderName(tobox));
 
   // refresh the folder statistics if necessary
   if(!copyit)
@@ -1777,7 +1777,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
 
       if(!(email = MA_ExamineMail(folder, mail->MailFile, TRUE)))
       {
-        ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
+        ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
         fclose(out);
         DisposeModulePush(&G->WR[winnum]);
 
@@ -1981,7 +1981,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
 
         if(!(email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
         {
-          ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, mail->Folder, mail));
+          ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, mail->Folder, mail));
           fclose(out);
           FreeStrBuf(rsub);
           DisposeModulePush(&G->WR[winnum]);
@@ -2123,7 +2123,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
         if(!(email = MA_ExamineMail(folder, mail->MailFile, TRUE)))
         {
-          ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
+          ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
           fclose(out);
           DisposeModulePush(&G->WR[winnum]);
           FreeStrBuf(rto);
@@ -2256,7 +2256,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
         {
           // ask the user and in case he want to abort, quit this
           // function immediately.
-          if(!(repmode = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ReplyReqOpt), GetStr(MSG_MA_ReplyReq))))
+          if(!(repmode = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_ReplyReqOpt), tr(MSG_MA_ReplyReq))))
           {
             MA_FreeEMailStruct(email);
             fclose(out);
@@ -2345,8 +2345,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
             // ask the user which address he wants to reply to.
             if(askUser)
             {
-              snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
-              switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_Compare3ReqOpt), buffer))
+              snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
+              switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_Compare3ReqOpt), buffer))
               {
                 // Both (From:/ReplyTo:) address
                 case 3:
@@ -2566,7 +2566,7 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
    // if we need to warn the user of this operation we put up a requester
    // before we go on
    if(warning &&
-      MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq2), GetStr(MSG_MA_CROPREQUEST)) == 0)
+      MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_CROPREQUEST)) == 0)
    {
      return;
    }
@@ -2611,13 +2611,13 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
              fputs("Content-Transfer-Encoding: 8bit\nContent-Type: text/plain; charset=iso-8859-1\n\n", out);
              fputs(cmsg, out);
              MA_ExpireIndex(fo);
-             fputs(GetStr(MSG_MA_AttachRemoved), out);
+             fputs(tr(MSG_MA_AttachRemoved), out);
 
              for(part = part->Next; part; part = part->Next)
              {
-               fprintf(out, "%s (%ld %s, %s)\n", part->Name ? part->Name : GetStr(MSG_Unnamed),
+               fprintf(out, "%s (%ld %s, %s)\n", part->Name ? part->Name : tr(MSG_Unnamed),
                                                  part->Size,
-                                                 GetStr(MSG_Bytes),
+                                                 tr(MSG_Bytes),
                                                  part->ContentType);
              }
 
@@ -2638,7 +2638,7 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
              else
                RenameFile(tfname, fname);
 
-             AppendLog(81, GetStr(MSG_LOG_CroppingAtt), mail->MailFile, fo->Name);
+             AppendLog(81, tr(MSG_LOG_CroppingAtt), mail->MailFile, fo->Name);
           }
        }
 
@@ -2660,7 +2660,7 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
 
   // we need to warn the user of this operation we put up a requester
   // before we go on
-  if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq2), GetStr(MSG_MA_CROPREQUEST)) > 0)
+  if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_CROPREQUEST)) > 0)
   {
     struct Mail **mlist;
 
@@ -2668,7 +2668,7 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
     {
       int selected = (int)*mlist;
 
-      BusyGaugeInt(GetStr(MSG_BusyRemovingAtt), "", selected);
+      BusyGaugeInt(tr(MSG_BusyRemovingAtt), "", selected);
       for(i = 0; i < selected; i++)
       {
         MA_RemoveAttach(mlist[i + 2], FALSE);
@@ -2703,11 +2703,11 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
   {
     struct FileReqCache *frc;
 
-    if((frc = ReqFile(ASL_DETACH, G->MA->GUI.WI, GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, "")) != NULL)
+    if((frc = ReqFile(ASL_DETACH, G->MA->GUI.WI, tr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, "")) != NULL)
     {
       int i;
 
-      BusyText(GetStr(MSG_BusyDecSaving), "");
+      BusyText(tr(MSG_BusyDecSaving), "");
 
       for(i=0; i < (int)*mlist; i++)
       {
@@ -2904,9 +2904,9 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    selected = (int)*mlist;
    if (C->Confirm && selected >= C->ConfirmDelete && !force)
    {
-      snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_CONFIRMDELETION), selected);
+      snprintf(buffer, sizeof(buffer), tr(MSG_MA_CONFIRMDELETION), selected);
 
-      if(!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), buffer))
+      if(!MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buffer))
       {
          free(mlist);
          return;
@@ -2914,7 +2914,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    }
    set(lv, MUIA_NList_Quiet, TRUE);
 
-   BusyGaugeInt(GetStr(MSG_BusyDeleting), itoa(selected), selected);
+   BusyGaugeInt(tr(MSG_BusyDeleting), itoa(selected), selected);
    for(i=0; i < selected; i++)
    {
       mail = mlist[i+2];
@@ -2939,10 +2939,10 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    free(mlist);
 
    if(delatonce || C->RemoveAtOnce || folder == delfolder || isSpamFolder(folder))
-      AppendLogNormal(20, GetStr(MSG_LOG_Deleting), selected, folder->Name);
+      AppendLogNormal(20, tr(MSG_LOG_Deleting), selected, folder->Name);
    else
    {
-      AppendLogNormal(22, GetStr(MSG_LOG_Moving), selected, folder->Name, delfolder->Name);
+      AppendLogNormal(22, tr(MSG_LOG_Moving), selected, folder->Name, delfolder->Name);
       DisplayStatistics(delfolder, FALSE);
    }
 
@@ -2980,7 +2980,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
       int selected = (int)*mlist;
 
       set(lv, MUIA_NList_Quiet, TRUE);
-      BusyGaugeInt(GetStr(MSG_BusyMoving), itoa(selected), selected);
+      BusyGaugeInt(tr(MSG_BusyMoving), itoa(selected), selected);
 
       for(i = 0; i < selected; i++)
       {
@@ -2991,7 +2991,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
           if(!hasStatusSpam(mail) && bclass == BC_SPAM)
           {
             // mark the mail as spam
-            AppendLogVerbose(90, GetStr(MSG_LOG_MAILISSPAM), AddrName(mail->From), mail->Subject);
+            AppendLogVerbose(90, tr(MSG_LOG_MAILISSPAM), AddrName(mail->From), mail->Subject);
             BayesFilterSetClassification(mail, BC_SPAM);
             setStatusToUserSpam(mail);
 
@@ -3001,7 +3001,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
           else if(!hasStatusHam(mail) && bclass == BC_HAM)
           {
             // mark the mail as ham
-            AppendLogVerbose(90, GetStr(MSG_LOG_MAILISNOTSPAM), AddrName(mail->From), mail->Subject);
+            AppendLogVerbose(90, tr(MSG_LOG_MAILISNOTSPAM), AddrName(mail->From), mail->Subject);
             BayesFilterSetClassification(mail, BC_HAM);
             setStatusToHam(mail);
           }
@@ -3018,7 +3018,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
       set(lv, MUIA_NList_Quiet, FALSE);
       free(mlist);
 
-      AppendLogNormal(22, GetStr(MSG_LOG_Moving), selected, folder->Name, spamfolder->Name);
+      AppendLogNormal(22, tr(MSG_LOG_Moving), selected, folder->Name, spamfolder->Name);
       DisplayStatistics(spamfolder, FALSE);
 
       DisplayStatistics(NULL, TRUE);
@@ -3089,9 +3089,9 @@ void MA_GetAddress(struct Mail **mlist)
          stricmp(mail->From.Address, mail->ReplyTo.Address) != 0)
       {
         char buffer[SIZE_LARGE];
-        snprintf(buffer, sizeof(buffer), GetStr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
+        snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
 
-        switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_Compare2ReqOpt), buffer))
+        switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_Compare2ReqOpt), buffer))
         {
           case 2: pe = &mail->ReplyTo; break;
           case 1: pe = &mail->From; break;
@@ -3380,7 +3380,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
   {
     int f;
 
-    BusyGaugeInt(GetStr(MSG_BusyDeletingOld), "", (int)*flist);
+    BusyGaugeInt(tr(MSG_BusyDeletingOld), "", (int)*flist);
 
     for(f=1; f <= (int)*flist; f++)
     {
@@ -3448,12 +3448,12 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
 
   if(folder != NULL)
   {
-    BusyGaugeInt(GetStr(MSG_BusyEmptyingTrash), "", folder->Total);
+    BusyGaugeInt(tr(MSG_BusyEmptyingTrash), "", folder->Total);
 
     for(mail = folder->Messages; mail; mail = mail->Next)
     {
       BusySet(++i);
-      AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
+      AppendLogVerbose(21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
       DeleteFile(GetMailFile(NULL, NULL, mail));
     }
 
@@ -3467,7 +3467,7 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
       if(FO_GetCurrentFolder() == folder)
         DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
 
-      AppendLogNormal(20, GetStr(MSG_LOG_Deleting), i, folder->Name);
+      AppendLogNormal(20, tr(MSG_LOG_Deleting), i, folder->Name);
 
       if(quiet == FALSE)
         DisplayStatistics(folder, TRUE);
@@ -3494,7 +3494,7 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
     struct Mail **mlist = NULL;
 
     // show an interruptable Busy gauge
-    BusyGaugeInt(GetStr(MSG_MA_BUSYEMPTYINGSPAM), "", folder->Total);
+    BusyGaugeInt(tr(MSG_MA_BUSYEMPTYINGSPAM), "", folder->Total);
 
     // get the complete mail list of the spam folder
     if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
@@ -3595,13 +3595,13 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
   {
     struct FileReqCache *frc;
 
-    if(!filename && (frc = ReqFile(ASL_EXPORT, G->MA->GUI.WI, GetStr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, "")))
+    if(!filename && (frc = ReqFile(ASL_EXPORT, G->MA->GUI.WI, tr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, "")))
     {
       strmfp(filename = outname, frc->drawer, frc->file);
 
       if(FileExists(filename))
       {
-        switch(MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_MESSAGEEXPORT), GetStr(MSG_MA_ExportAppendOpts), GetStr(MSG_MA_ExportAppendReq)))
+        switch(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_MESSAGEEXPORT), tr(MSG_MA_ExportAppendOpts), tr(MSG_MA_ExportAppendReq)))
         {
           case 1: append = FALSE; break;
           case 2: append = TRUE; break;
@@ -3787,7 +3787,7 @@ HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
   }
 
   // put up an Requester to query the user for the input file.
-  if((frc = ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_MessageImport), REQF_NONE, C->DetachDir, "")))
+  if((frc = ReqFile(ASL_IMPORT, G->MA->GUI.WI, tr(MSG_MA_MessageImport), REQF_NONE, C->DetachDir, "")))
   {
     char inname[SIZE_PATHFILE];
 
@@ -3795,7 +3795,7 @@ HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
 
     // now start the actual importing of the messages
     if(!MA_ImportMessages(inname))
-      ER_NewError(GetStr(MSG_ER_MESSAGEIMPORT), inname);
+      ER_NewError(tr(MSG_ER_MESSAGEIMPORT), inname);
   }
 
   LEAVE();
@@ -3811,7 +3811,7 @@ HOOKPROTONHNONP(MA_MoveMessageFunc, void)
 
    if(!src) return;
 
-   if ((dst = FolderRequest(GetStr(MSG_MA_MoveMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_MoveGad), GetStr(MSG_Cancel), src, G->MA->GUI.WI)))
+   if ((dst = FolderRequest(tr(MSG_MA_MoveMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_MoveGad), tr(MSG_Cancel), src, G->MA->GUI.WI)))
       MA_MoveCopy(NULL, src, dst, FALSE, TRUE);
 }
 MakeHook(MA_MoveMessageHook, MA_MoveMessageFunc);
@@ -3825,7 +3825,7 @@ HOOKPROTONHNONP(MA_CopyMessageFunc, void)
 
    if(!src) return;
 
-   if ((dst = FolderRequest(GetStr(MSG_MA_CopyMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_CopyGad), GetStr(MSG_Cancel), NULL, G->MA->GUI.WI)))
+   if ((dst = FolderRequest(tr(MSG_MA_CopyMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_CopyGad), tr(MSG_Cancel), NULL, G->MA->GUI.WI)))
       MA_MoveCopy(NULL, src, dst, TRUE, FALSE);
 }
 MakeHook(MA_CopyMessageHook, MA_CopyMessageFunc);
@@ -3869,7 +3869,7 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
       }
       fclose(newfh);
       f = FileSize(newfile); fo->Size += f - mail->Size; mail->Size = f;
-      AppendLog(82, GetStr(MSG_LOG_ChangingSubject), mail->Subject, mail->MailFile, fo->Name, subj);
+      AppendLog(82, tr(MSG_LOG_ChangingSubject), mail->Subject, mail->MailFile, fo->Name, subj);
       strlcpy(mail->Subject, subj, sizeof(mail->Subject));
       MA_ExpireIndex(fo);
 
@@ -3909,7 +3909,7 @@ HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
         {
           strlcpy(subj, mail->Subject, sizeof(subj));
 
-          switch (StringRequest(subj, SIZE_SUBJECT, GetStr(MSG_MA_ChangeSubj), GetStr(MSG_MA_ChangeSubjReq), GetStr(MSG_Okay), (i || selected == 1) ? NULL : GetStr(MSG_MA_All), GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
+          switch (StringRequest(subj, SIZE_SUBJECT, tr(MSG_MA_ChangeSubj), tr(MSG_MA_ChangeSubjReq), tr(MSG_Okay), (i || selected == 1) ? NULL : tr(MSG_MA_All), tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
           {
             case 0:
             {
@@ -4045,7 +4045,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
     if(C->RX[num].IsAmigaDOS)
     {
       // now execute the command
-      BusyText(GetStr(MSG_MA_EXECUTINGCMD), "");
+      BusyText(tr(MSG_MA_EXECUTINGCMD), "");
       ExecuteCommand(command, !C->RX[num].WaitTerm, C->RX[num].UseConsole ? OUT_DOS : OUT_NIL);
       BusyEnd();
 
@@ -4076,7 +4076,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
             struct RexxMsg *rm;
             BOOL waiting = TRUE;
 
-            BusyText(GetStr(MSG_MA_EXECUTINGCMD), "");
+            BusyText(tr(MSG_MA_EXECUTINGCMD), "");
             do
             {
               WaitPort(G->RexxHost->port);
@@ -4118,11 +4118,11 @@ BOOL MA_StartMacro(enum Macro num, char *param)
         else
         {
           Close(fh);
-          ER_NewError(GetStr(MSG_ER_ErrorARexxScript), command);
+          ER_NewError(tr(MSG_ER_ErrorARexxScript), command);
         }
       }
       else
-        ER_NewError(GetStr(MSG_ER_ErrorConsole));
+        ER_NewError(tr(MSG_ER_ErrorConsole));
     }
   }
 
@@ -4148,7 +4148,7 @@ HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
 
     strmfp(scname, G->ProgDir, "rexx");
 
-    if((frc = ReqFile(ASL_REXX, G->MA->GUI.WI, GetStr(MSG_MA_ExecuteScript), REQF_NONE, scname, "")))
+    if((frc = ReqFile(ASL_REXX, G->MA->GUI.WI, tr(MSG_MA_ExecuteScript), REQF_NONE, scname, "")))
     {
       strmfp(scname, frc->drawer, frc->file);
 
@@ -4332,9 +4332,9 @@ void MA_SetupDynamicMenus(void)
 
   // now we generate a new one.
   G->MA->GUI.MN_REXX = MenuObject,
-    MUIA_Menu_Title, GetStr(MSG_MA_Scripts),
+    MUIA_Menu_Title, tr(MSG_MA_Scripts),
     MUIA_Family_Child, MenuitemObject,
-      MUIA_Menuitem_Title,    GetStr(MSG_MA_ExecuteScript),
+      MUIA_Menuitem_Title,    tr(MSG_MA_ExecuteScript),
       MUIA_Menuitem_Shortcut, "_",
       MUIA_UserData,          MMEN_SCRIPT,
     End,
@@ -4380,7 +4380,7 @@ void MA_SetupDynamicMenus(void)
   }
 
   G->MA->GUI.MI_CSINGLE = MenuitemObject,
-    MUIA_Menuitem_Title, GetStr(MSG_MA_CheckSingle),
+    MUIA_Menuitem_Title, tr(MSG_MA_CheckSingle),
   End;
 
   if(G->MA->GUI.MI_CSINGLE)
@@ -4417,7 +4417,7 @@ void MA_SetupDynamicMenus(void)
     // if not, create a new entry and add it to the current layout
     if(G->MA->GUI.MI_CHECKSPAM == NULL || isChildOfFamily(G->MA->GUI.MN_FOLDER, G->MA->GUI.MI_CHECKSPAM) == FALSE)
     {
-      G->MA->GUI.MI_CHECKSPAM = Menuitem(GetStr(MSG_MA_CHECKSPAM), NULL, TRUE, FALSE, MMEN_CLASSIFY);
+      G->MA->GUI.MI_CHECKSPAM = Menuitem(tr(MSG_MA_CHECKSPAM), NULL, TRUE, FALSE, MMEN_CLASSIFY);
 
       if(G->MA->GUI.MI_CHECKSPAM != NULL)
         DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Insert, G->MA->GUI.MI_CHECKSPAM, G->MA->GUI.MI_FILTER);
@@ -4425,7 +4425,7 @@ void MA_SetupDynamicMenus(void)
 
     if(G->MA->GUI.MI_DELSPAM == NULL || isChildOfFamily(G->MA->GUI.MN_FOLDER, G->MA->GUI.MI_DELSPAM) == FALSE)
     {
-      G->MA->GUI.MI_DELSPAM = Menuitem(GetStr(MSG_MA_REMOVESPAM), NULL, TRUE, FALSE, MMEN_DELSPAM);
+      G->MA->GUI.MI_DELSPAM = Menuitem(tr(MSG_MA_REMOVESPAM), NULL, TRUE, FALSE, MMEN_DELSPAM);
 
       if(G->MA->GUI.MI_DELSPAM != NULL)
         DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Insert, G->MA->GUI.MI_DELSPAM, G->MA->GUI.MI_DELDEL);
@@ -4433,7 +4433,7 @@ void MA_SetupDynamicMenus(void)
 
     if(G->MA->GUI.MI_TOHAM == NULL || isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOHAM) == FALSE)
     {
-      G->MA->GUI.MI_TOHAM = Menuitem(GetStr(MSG_MA_TONOTSPAM), NULL, TRUE, FALSE, MMEN_TOHAM);
+      G->MA->GUI.MI_TOHAM = Menuitem(tr(MSG_MA_TONOTSPAM), NULL, TRUE, FALSE, MMEN_TOHAM);
 
       if(G->MA->GUI.MI_TOHAM != NULL)
         DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Insert, G->MA->GUI.MI_TOHAM, G->MA->GUI.MI_TOQUEUED);
@@ -4441,7 +4441,7 @@ void MA_SetupDynamicMenus(void)
 
     if(G->MA->GUI.MI_TOSPAM == NULL || isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOSPAM) == FALSE)
     {
-      G->MA->GUI.MI_TOSPAM = Menuitem(GetStr(MSG_MA_TOSPAM), NULL, TRUE, FALSE, MMEN_TOSPAM);
+      G->MA->GUI.MI_TOSPAM = Menuitem(tr(MSG_MA_TOSPAM), NULL, TRUE, FALSE, MMEN_TOSPAM);
 
       if(G->MA->GUI.MI_TOSPAM != NULL)
         DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Insert, G->MA->GUI.MI_TOSPAM, G->MA->GUI.MI_TOQUEUED);
@@ -4637,88 +4637,88 @@ struct MA_ClassData *MA_New(void)
       if (username = C->RealName,(user = US_GetCurrentUser()))
         username = user->Name;
 
-      snprintf(data->WinTitle, sizeof(data->WinTitle), GetStr(MSG_MA_WinTitle), yamversionver, username);
+      snprintf(data->WinTitle, sizeof(data->WinTitle), tr(MSG_MA_WinTitle), yamversionver, username);
 
       data->GUI.MS_MAIN = MenustripObject,
-         MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Project),
-            MUIA_Family_Child, Menuitem(GetStr(MSG_PROJECT_MABOUT), "?", TRUE, FALSE, MMEN_ABOUT),
-            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_AboutMUI), NULL, TRUE, FALSE, MMEN_ABOUTMUI),
-            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_UPDATECHECK), NULL, TRUE, FALSE, MMEN_VERSION),
-            MUIA_Family_Child, data->GUI.MI_ERRORS = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_LastErrors), MUIA_Menuitem_Enabled, G->ER_NumErr > 0, MUIA_UserData, MMEN_ERRORS, End,
+         MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_MA_Project),
+            MUIA_Family_Child, Menuitem(tr(MSG_PROJECT_MABOUT), "?", TRUE, FALSE, MMEN_ABOUT),
+            MUIA_Family_Child, Menuitem(tr(MSG_MA_AboutMUI), NULL, TRUE, FALSE, MMEN_ABOUTMUI),
+            MUIA_Family_Child, Menuitem(tr(MSG_MA_UPDATECHECK), NULL, TRUE, FALSE, MMEN_VERSION),
+            MUIA_Family_Child, data->GUI.MI_ERRORS = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_LastErrors), MUIA_Menuitem_Enabled, G->ER_NumErr > 0, MUIA_UserData, MMEN_ERRORS, End,
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_Restart), NULL, TRUE, FALSE, MMEN_LOGIN),
-            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_HIDE), "H", TRUE, FALSE, MMEN_HIDE),
-            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_QUIT), "Q", TRUE, FALSE, MMEN_QUIT),
+            MUIA_Family_Child, Menuitem(tr(MSG_MA_Restart), NULL, TRUE, FALSE, MMEN_LOGIN),
+            MUIA_Family_Child, Menuitem(tr(MSG_MA_HIDE), "H", TRUE, FALSE, MMEN_HIDE),
+            MUIA_Family_Child, Menuitem(tr(MSG_MA_QUIT), "Q", TRUE, FALSE, MMEN_QUIT),
          End,
-         MUIA_Family_Child, data->GUI.MN_FOLDER = MenuObject, MUIA_Menu_Title, GetStr(MSG_Folder),
-            MUIA_Family_Child, Menuitem(GetStr(MSG_FOLDER_NEWFOLDER), NULL, TRUE, FALSE, MMEN_NEWF),
-            MUIA_Family_Child, Menuitem(GetStr(MSG_FOLDER_NEWFOLDERGROUP), NULL, TRUE, FALSE, MMEN_NEWFG),
-            MUIA_Family_Child, Menuitem(GetStr(MSG_FOLDER_EDIT), NULL, TRUE, FALSE, MMEN_EDITF),
-            MUIA_Family_Child, Menuitem(GetStr(MSG_FOLDER_DELETE), NULL, TRUE, FALSE, MMEN_DELETEF),
-            MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_SortOrder),
-               MUIA_Family_Child, Menuitem(GetStr(MSG_MA_OSave), NULL, TRUE, FALSE, MMEN_OSAVE),
-               MUIA_Family_Child, Menuitem(GetStr(MSG_MA_Reset), NULL, TRUE, FALSE, MMEN_ORESET),
+         MUIA_Family_Child, data->GUI.MN_FOLDER = MenuObject, MUIA_Menu_Title, tr(MSG_Folder),
+            MUIA_Family_Child, Menuitem(tr(MSG_FOLDER_NEWFOLDER), NULL, TRUE, FALSE, MMEN_NEWF),
+            MUIA_Family_Child, Menuitem(tr(MSG_FOLDER_NEWFOLDERGROUP), NULL, TRUE, FALSE, MMEN_NEWFG),
+            MUIA_Family_Child, Menuitem(tr(MSG_FOLDER_EDIT), NULL, TRUE, FALSE, MMEN_EDITF),
+            MUIA_Family_Child, Menuitem(tr(MSG_FOLDER_DELETE), NULL, TRUE, FALSE, MMEN_DELETEF),
+            MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SortOrder),
+               MUIA_Family_Child, Menuitem(tr(MSG_MA_OSave), NULL, TRUE, FALSE, MMEN_OSAVE),
+               MUIA_Family_Child, Menuitem(tr(MSG_MA_Reset), NULL, TRUE, FALSE, MMEN_ORESET),
             End,
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_MSEARCH), "F", TRUE, FALSE, MMEN_SEARCH),
-            MUIA_Family_Child, data->GUI.MI_FILTER = Menuitem(GetStr(MSG_MA_MFILTER), "I", TRUE, FALSE, MMEN_FILTER),
+            MUIA_Family_Child, Menuitem(tr(MSG_MA_MSEARCH), "F", TRUE, FALSE, MMEN_SEARCH),
+            MUIA_Family_Child, data->GUI.MI_FILTER = Menuitem(tr(MSG_MA_MFILTER), "I", TRUE, FALSE, MMEN_FILTER),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, data->GUI.MI_DELDEL = Menuitem(GetStr(MSG_MA_REMOVEDELETED), "Z", TRUE, FALSE, MMEN_DELDEL),
-            MUIA_Family_Child, data->GUI.MI_UPDINDEX = Menuitem(GetStr(MSG_MA_UPDATEINDEX), "U", TRUE, FALSE, MMEN_INDEX),
-            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_FlushIndices), NULL, TRUE, FALSE, MMEN_FLUSH),
+            MUIA_Family_Child, data->GUI.MI_DELDEL = Menuitem(tr(MSG_MA_REMOVEDELETED), "Z", TRUE, FALSE, MMEN_DELDEL),
+            MUIA_Family_Child, data->GUI.MI_UPDINDEX = Menuitem(tr(MSG_MA_UPDATEINDEX), "U", TRUE, FALSE, MMEN_INDEX),
+            MUIA_Family_Child, Menuitem(tr(MSG_MA_FlushIndices), NULL, TRUE, FALSE, MMEN_FLUSH),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, data->GUI.MI_IMPORT = Menuitem(GetStr(MSG_FOLDER_IMPORT), NULL, TRUE, FALSE, MMEN_IMPORT),
-            MUIA_Family_Child, data->GUI.MI_EXPORT = Menuitem(GetStr(MSG_FOLDER_EXPORT), NULL, TRUE, FALSE, MMEN_EXPORT),
+            MUIA_Family_Child, data->GUI.MI_IMPORT = Menuitem(tr(MSG_FOLDER_IMPORT), NULL, TRUE, FALSE, MMEN_IMPORT),
+            MUIA_Family_Child, data->GUI.MI_EXPORT = Menuitem(tr(MSG_FOLDER_EXPORT), NULL, TRUE, FALSE, MMEN_EXPORT),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, data->GUI.MI_SENDALL = Menuitem(GetStr(MSG_MA_MSENDALL), "S", TRUE, FALSE, MMEN_SENDMAIL),
-            MUIA_Family_Child, data->GUI.MI_EXCHANGE = Menuitem(GetStr(MSG_MA_MEXCHANGE), "X", TRUE, FALSE, MMEN_EXMAIL),
-            MUIA_Family_Child, data->GUI.MI_GETMAIL = Menuitem(GetStr(MSG_MA_MGETMAIL), "G", TRUE, FALSE, MMEN_GETMAIL),
+            MUIA_Family_Child, data->GUI.MI_SENDALL = Menuitem(tr(MSG_MA_MSENDALL), "S", TRUE, FALSE, MMEN_SENDMAIL),
+            MUIA_Family_Child, data->GUI.MI_EXCHANGE = Menuitem(tr(MSG_MA_MEXCHANGE), "X", TRUE, FALSE, MMEN_EXMAIL),
+            MUIA_Family_Child, data->GUI.MI_GETMAIL = Menuitem(tr(MSG_MA_MGETMAIL), "G", TRUE, FALSE, MMEN_GETMAIL),
         End,
-         MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_Message),
-            MUIA_Family_Child, data->GUI.MI_READ = Menuitem(GetStr(MSG_MA_MREAD), "D", TRUE, FALSE, MMEN_READ),
-            MUIA_Family_Child, data->GUI.MI_EDIT = Menuitem(GetStr(MSG_MA_MEDITASNEW), "E", TRUE, FALSE, MMEN_EDIT),
-            MUIA_Family_Child, data->GUI.MI_MOVE = Menuitem(GetStr(MSG_MA_MMOVE), "M", TRUE, FALSE, MMEN_MOVE),
-            MUIA_Family_Child, data->GUI.MI_COPY = Menuitem(GetStr(MSG_MA_MCOPY), "Y", TRUE, FALSE, MMEN_COPY),
-            MUIA_Family_Child, data->GUI.MI_DELETE = Menuitem(GetStr(MSG_MA_MDelete), "Del", TRUE, TRUE, MMEN_DELETE),
+         MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Message),
+            MUIA_Family_Child, data->GUI.MI_READ = Menuitem(tr(MSG_MA_MREAD), "D", TRUE, FALSE, MMEN_READ),
+            MUIA_Family_Child, data->GUI.MI_EDIT = Menuitem(tr(MSG_MA_MEDITASNEW), "E", TRUE, FALSE, MMEN_EDIT),
+            MUIA_Family_Child, data->GUI.MI_MOVE = Menuitem(tr(MSG_MA_MMOVE), "M", TRUE, FALSE, MMEN_MOVE),
+            MUIA_Family_Child, data->GUI.MI_COPY = Menuitem(tr(MSG_MA_MCOPY), "Y", TRUE, FALSE, MMEN_COPY),
+            MUIA_Family_Child, data->GUI.MI_DELETE = Menuitem(tr(MSG_MA_MDelete), "Del", TRUE, TRUE, MMEN_DELETE),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, data->GUI.MI_PRINT = Menuitem(GetStr(MSG_MA_MPRINT), "P", TRUE, FALSE, MMEN_PRINT),
-            MUIA_Family_Child, data->GUI.MI_SAVE = Menuitem(GetStr(MSG_MA_MSAVE), "V", TRUE, FALSE, MMEN_SAVE),
-            MUIA_Family_Child, data->GUI.MI_ATTACH = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Attachments),
-               MUIA_Family_Child, data->GUI.MI_SAVEATT = Menuitem(GetStr(MSG_MA_MSAVEATT), "T", TRUE, FALSE, MMEN_DETACH),
-               MUIA_Family_Child, data->GUI.MI_REMATT = Menuitem(GetStr(MSG_MA_MCROP), "O", TRUE, FALSE, MMEN_CROP),
+            MUIA_Family_Child, data->GUI.MI_PRINT = Menuitem(tr(MSG_MA_MPRINT), "P", TRUE, FALSE, MMEN_PRINT),
+            MUIA_Family_Child, data->GUI.MI_SAVE = Menuitem(tr(MSG_MA_MSAVE), "V", TRUE, FALSE, MMEN_SAVE),
+            MUIA_Family_Child, data->GUI.MI_ATTACH = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Attachments),
+               MUIA_Family_Child, data->GUI.MI_SAVEATT = Menuitem(tr(MSG_MA_MSAVEATT), "T", TRUE, FALSE, MMEN_DETACH),
+               MUIA_Family_Child, data->GUI.MI_REMATT = Menuitem(tr(MSG_MA_MCROP), "O", TRUE, FALSE, MMEN_CROP),
             End,
-            MUIA_Family_Child, data->GUI.MI_EXPMSG = Menuitem(GetStr(MSG_MESSAGE_EXPORT), NULL, TRUE, FALSE, MMEN_EXPMSG),
+            MUIA_Family_Child, data->GUI.MI_EXPMSG = Menuitem(tr(MSG_MESSAGE_EXPORT), NULL, TRUE, FALSE, MMEN_EXPMSG),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, data->GUI.MI_NEW = Menuitem(GetStr(MSG_MA_MNEW), "N", TRUE, FALSE, MMEN_NEW),
-            MUIA_Family_Child, data->GUI.MI_REPLY = Menuitem(GetStr(MSG_MA_MREPLY), "R", TRUE, FALSE, MMEN_REPLY),
-            MUIA_Family_Child, data->GUI.MI_FORWARD = Menuitem(GetStr(MSG_MA_MFORWARD), "W", TRUE, FALSE, MMEN_FORWARD),
-            MUIA_Family_Child, data->GUI.MI_BOUNCE = Menuitem(GetStr(MSG_MA_MBOUNCE), "B", TRUE, FALSE, MMEN_BOUNCE),
+            MUIA_Family_Child, data->GUI.MI_NEW = Menuitem(tr(MSG_MA_MNEW), "N", TRUE, FALSE, MMEN_NEW),
+            MUIA_Family_Child, data->GUI.MI_REPLY = Menuitem(tr(MSG_MA_MREPLY), "R", TRUE, FALSE, MMEN_REPLY),
+            MUIA_Family_Child, data->GUI.MI_FORWARD = Menuitem(tr(MSG_MA_MFORWARD), "W", TRUE, FALSE, MMEN_FORWARD),
+            MUIA_Family_Child, data->GUI.MI_BOUNCE = Menuitem(tr(MSG_MA_MBOUNCE), "B", TRUE, FALSE, MMEN_BOUNCE),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, data->GUI.MI_GETADDRESS = Menuitem(GetStr(MSG_MA_MSAVEADDRESS), "J", TRUE, FALSE, MMEN_SAVEADDR),
-            MUIA_Family_Child, data->GUI.MI_SELECT = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_Select),
-               MUIA_Family_Child, Menuitem(GetStr(MSG_MA_SELECTALL), "L", TRUE, FALSE, MMEN_SELALL),
-               MUIA_Family_Child, Menuitem(GetStr(MSG_MA_SELECTNONE), "-", TRUE, FALSE, MMEN_SELNONE),
-               MUIA_Family_Child, Menuitem(GetStr(MSG_MA_SELECTTOGGLE), "=", TRUE, FALSE, MMEN_SELTOGG),
+            MUIA_Family_Child, data->GUI.MI_GETADDRESS = Menuitem(tr(MSG_MA_MSAVEADDRESS), "J", TRUE, FALSE, MMEN_SAVEADDR),
+            MUIA_Family_Child, data->GUI.MI_SELECT = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_Select),
+               MUIA_Family_Child, Menuitem(tr(MSG_MA_SELECTALL), "L", TRUE, FALSE, MMEN_SELALL),
+               MUIA_Family_Child, Menuitem(tr(MSG_MA_SELECTNONE), "-", TRUE, FALSE, MMEN_SELNONE),
+               MUIA_Family_Child, Menuitem(tr(MSG_MA_SELECTTOGGLE), "=", TRUE, FALSE, MMEN_SELTOGG),
             End,
-            MUIA_Family_Child, data->GUI.MI_STATUS = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_SetStatus),
-               MUIA_Family_Child, data->GUI.MI_TOMARKED = Menuitem(GetStr(MSG_MA_TOMARKED), ",", TRUE, FALSE, MMEN_TOMARKED),
-               MUIA_Family_Child, data->GUI.MI_TOUNMARKED = Menuitem(GetStr(MSG_MA_TOUNMARKED), ".", TRUE, FALSE, MMEN_TOUNMARKED),
-               MUIA_Family_Child, data->GUI.MI_TOUNREAD = Menuitem(GetStr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, MMEN_TOUNREAD),
-               MUIA_Family_Child, data->GUI.MI_TOREAD = Menuitem(GetStr(MSG_MA_TOREAD), "]", TRUE, FALSE, MMEN_TOREAD),
-               MUIA_Family_Child, data->GUI.MI_TOHOLD = Menuitem(GetStr(MSG_MA_TOHOLD), "{", TRUE, FALSE, MMEN_TOHOLD),
-               MUIA_Family_Child, data->GUI.MI_TOQUEUED = Menuitem(GetStr(MSG_MA_TOQUEUED), "}", TRUE, FALSE, MMEN_TOQUEUED),
+            MUIA_Family_Child, data->GUI.MI_STATUS = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SetStatus),
+               MUIA_Family_Child, data->GUI.MI_TOMARKED = Menuitem(tr(MSG_MA_TOMARKED), ",", TRUE, FALSE, MMEN_TOMARKED),
+               MUIA_Family_Child, data->GUI.MI_TOUNMARKED = Menuitem(tr(MSG_MA_TOUNMARKED), ".", TRUE, FALSE, MMEN_TOUNMARKED),
+               MUIA_Family_Child, data->GUI.MI_TOUNREAD = Menuitem(tr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, MMEN_TOUNREAD),
+               MUIA_Family_Child, data->GUI.MI_TOREAD = Menuitem(tr(MSG_MA_TOREAD), "]", TRUE, FALSE, MMEN_TOREAD),
+               MUIA_Family_Child, data->GUI.MI_TOHOLD = Menuitem(tr(MSG_MA_TOHOLD), "{", TRUE, FALSE, MMEN_TOHOLD),
+               MUIA_Family_Child, data->GUI.MI_TOQUEUED = Menuitem(tr(MSG_MA_TOQUEUED), "}", TRUE, FALSE, MMEN_TOQUEUED),
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-               MUIA_Family_Child, data->GUI.MI_ALLTOREAD = Menuitem(GetStr(MSG_MA_ALLTOREAD), "#", TRUE, FALSE, MMEN_ALLTOREAD),
+               MUIA_Family_Child, data->GUI.MI_ALLTOREAD = Menuitem(tr(MSG_MA_ALLTOREAD), "#", TRUE, FALSE, MMEN_ALLTOREAD),
             End,
-            MUIA_Family_Child, data->GUI.MI_CHSUBJ = Menuitem(GetStr(MSG_MA_ChangeSubj), NULL, TRUE, FALSE, MMEN_CHSUBJ),
+            MUIA_Family_Child, data->GUI.MI_CHSUBJ = Menuitem(tr(MSG_MA_ChangeSubj), NULL, TRUE, FALSE, MMEN_CHSUBJ),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-            MUIA_Family_Child, data->GUI.MI_SEND = Menuitem(GetStr(MSG_MA_MSend), NULL, TRUE, FALSE, MMEN_SEND),
+            MUIA_Family_Child, data->GUI.MI_SEND = Menuitem(tr(MSG_MA_MSend), NULL, TRUE, FALSE, MMEN_SEND),
          End,
-         MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Settings),
-            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_MADDRESSBOOK), "A", TRUE, FALSE, MMEN_ABOOK),
-            MUIA_Family_Child, Menuitem(GetStr(MSG_MA_MCONFIG), "K", TRUE, FALSE, MMEN_CONFIG),
-            MUIA_Family_Child, Menuitem(GetStr(MSG_SETTINGS_USERS), NULL, TRUE, FALSE, MMEN_USER),
-            MUIA_Family_Child, Menuitem(GetStr(MSG_SETTINGS_MUI), NULL, TRUE, FALSE, MMEN_MUI),
+         MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_MA_Settings),
+            MUIA_Family_Child, Menuitem(tr(MSG_MA_MADDRESSBOOK), "A", TRUE, FALSE, MMEN_ABOOK),
+            MUIA_Family_Child, Menuitem(tr(MSG_MA_MCONFIG), "K", TRUE, FALSE, MMEN_CONFIG),
+            MUIA_Family_Child, Menuitem(tr(MSG_SETTINGS_USERS), NULL, TRUE, FALSE, MMEN_USER),
+            MUIA_Family_Child, Menuitem(tr(MSG_SETTINGS_MUI), NULL, TRUE, FALSE, MMEN_MUI),
          End,
       End;
 

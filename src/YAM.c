@@ -568,7 +568,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     {
       D(DBF_TIMERIO, "timer[%ld]: TIO_SPAMFLUSHTRAININGDATA received: %s", tio, dateString);
 
-      BusyText(GetStr(MSG_BUSYFLUSHINGSPAMTRAININGDATA), "");
+      BusyText(tr(MSG_BUSYFLUSHINGSPAMTRAININGDATA), "");
       BayesFilterFlushTrainingData();
       BusyEnd();
 
@@ -929,7 +929,7 @@ static BOOL StayInProg(void)
 
    if(G->AB->Modified)
    {
-     if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ABookModifiedGad), GetStr(MSG_AB_Modified)))
+     if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_ABookModifiedGad), tr(MSG_AB_Modified)))
        CallHookPkt(&AB_SaveABookHook, 0, 0);
    }
 
@@ -938,7 +938,7 @@ static BOOL StayInProg(void)
 
    if(req || G->CO || C->ConfirmOnQuit)
    {
-     if(!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_QuitYAMReq)))
+     if(!MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_QuitYAMReq)))
        return TRUE;
    }
 
@@ -1255,11 +1255,11 @@ static void Abort(const void *formatnum, ...)
 
    if(formatnum)
    {
-      vsnprintf(error, sizeof(error), GetStr(formatnum), a);
+      vsnprintf(error, sizeof(error), tr(formatnum), a);
 
       if(MUIMasterBase && G && G->App)
       {
-         MUI_Request(G->App, NULL, MUIF_NONE, GetStr(MSG_ErrorStartup), GetStr(MSG_Quit), error);
+         MUI_Request(G->App, NULL, MUIF_NONE, tr(MSG_ErrorStartup), tr(MSG_Quit), error);
       }
       else if(IntuitionBase)
       {
@@ -1267,9 +1267,9 @@ static void Abort(const void *formatnum, ...)
 
          ErrReq.es_StructSize   = sizeof(struct EasyStruct);
          ErrReq.es_Flags        = 0;
-         ErrReq.es_Title        = (STRPTR)GetStr(MSG_ErrorStartup);
+         ErrReq.es_Title        = (STRPTR)tr(MSG_ErrorStartup);
          ErrReq.es_TextFormat   = error;
-         ErrReq.es_GadgetFormat = (STRPTR)GetStr(MSG_Quit);
+         ErrReq.es_GadgetFormat = (STRPTR)tr(MSG_Quit);
 
          EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
       }
@@ -1337,7 +1337,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
         if (OpenCnt > 1)
         {
-          if (req && MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url))
+          if (req && MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url))
             flush = TRUE;
           else
             break;
@@ -1360,7 +1360,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
           // We're out of luck - open count is 0, we've tried to flush
           // and still haven't got the version we want
-          if (req && MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url))
+          if (req && MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url))
             flush = TRUE;
           else
             break;
@@ -1371,7 +1371,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
     {
       // No MCC at all - no need to attempt flush
       flush = FALSE;
-      if (!MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_ER_NO_MCC), name, minver, minrev, url))
+      if (!MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url))
         break;
     }
 
@@ -1494,11 +1494,11 @@ static void Initialise2(void)
 
    ENTER();
 
-   SplashProgress(GetStr(MSG_LoadingConfig), 30);
+   SplashProgress(tr(MSG_LoadingConfig), 30);
    CO_SetDefaults(C, -1);
    CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders);
    CO_Validate(C, FALSE);
-   SplashProgress(GetStr(MSG_CreatingGUI), 40);
+   SplashProgress(tr(MSG_CreatingGUI), 40);
 
    // before we go and create the first MUI windows
    // we register the application to application.library
@@ -1547,7 +1547,7 @@ static void Initialise2(void)
    // load the main window GUI layout from the ENV: variable
    LoadLayout();
 
-   SplashProgress(GetStr(MSG_LoadingFolders), 50);
+   SplashProgress(tr(MSG_LoadingFolders), 50);
    if(!FO_LoadTree(CreateFilename(".folders")) && oldfolders)
    {
       for(i = 0; i < 100; i++)
@@ -1567,16 +1567,16 @@ static void Initialise2(void)
    }
 
    if(FO_GetFolderByType(FT_INCOMING, NULL) == NULL)
-     newfolders |= FO_CreateFolder(FT_INCOMING, FolderName[FT_INCOMING], GetStr(MSG_MA_Incoming));
+     newfolders |= FO_CreateFolder(FT_INCOMING, FolderName[FT_INCOMING], tr(MSG_MA_Incoming));
 
    if(FO_GetFolderByType(FT_OUTGOING, NULL) == NULL)
-     newfolders |= FO_CreateFolder(FT_OUTGOING, FolderName[FT_OUTGOING], GetStr(MSG_MA_Outgoing));
+     newfolders |= FO_CreateFolder(FT_OUTGOING, FolderName[FT_OUTGOING], tr(MSG_MA_Outgoing));
 
    if(FO_GetFolderByType(FT_SENT, NULL) == NULL)
-     newfolders |= FO_CreateFolder(FT_SENT, FolderName[FT_SENT], GetStr(MSG_MA_Sent));
+     newfolders |= FO_CreateFolder(FT_SENT, FolderName[FT_SENT], tr(MSG_MA_Sent));
 
    if(FO_GetFolderByType(FT_TRASH, NULL) == NULL)
-     newfolders |= FO_CreateFolder(FT_TRASH, FolderName[FT_TRASH], GetStr(MSG_MA_TRASH));
+     newfolders |= FO_CreateFolder(FT_TRASH, FolderName[FT_TRASH], tr(MSG_MA_TRASH));
 
    if(C->SpamFilterEnabled)
    {
@@ -1597,8 +1597,8 @@ static void Initialise2(void)
          ULONG result;
 
          result = MUI_Request(G->App, NULL, 0, NULL,
-                                               GetStr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
-                                               GetStr(MSG_ER_SPAMDIR_EXISTS));
+                                               tr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
+                                               tr(MSG_ER_SPAMDIR_EXISTS));
          switch(result)
          {
            default:
@@ -1625,7 +1625,7 @@ static void Initialise2(void)
        if(createSpamFolder)
        {
          // finally, create the spam folder
-         newfolders |= FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], GetStr(MSG_MA_SPAM));
+         newfolders |= FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM));
        }
      }
    }
@@ -1636,16 +1636,16 @@ static void Initialise2(void)
       FO_SaveTree(CreateFilename(".folders"));
    }
 
-   SplashProgress(GetStr(MSG_RebuildIndices), 60);
+   SplashProgress(tr(MSG_RebuildIndices), 60);
    MA_UpdateIndexes(TRUE);
 
-   SplashProgress(GetStr(MSG_LOADINGUPDATESTATE), 65);
+   SplashProgress(tr(MSG_LOADINGUPDATESTATE), 65);
    LoadUpdateState();
 
-   SplashProgress(GetStr(MSG_LOADINGSPAMTRAININGDATA), 70);
+   SplashProgress(tr(MSG_LOADINGSPAMTRAININGDATA), 70);
    BayesFilterInit();
 
-   SplashProgress(GetStr(MSG_LoadingFolders), 75);
+   SplashProgress(tr(MSG_LoadingFolders), 75);
    for(i = 0; ;i++)
    {
       struct MUI_NListtree_TreeNode *tn;
@@ -1723,12 +1723,12 @@ static void Initialise2(void)
    // or we risk to get a unsynced message listview.
    MA_ChangeFolder(NULL, TRUE);
 
-   SplashProgress(GetStr(MSG_LoadingABook), 90);
+   SplashProgress(tr(MSG_LoadingABook), 90);
    AB_LoadTree(G->AB_Filename, FALSE, FALSE);
    if(!(G->RexxHost = SetupARexxHost("YAM", NULL)))
       Abort(MSG_ErrorARexx);
 
-   SplashProgress(GetStr(MSG_OPENGUI), 100);
+   SplashProgress(tr(MSG_OPENGUI), 100);
    G->InStartupPhase = FALSE;
 
    // close the splash window right before we open our main YAM window
@@ -1846,7 +1846,7 @@ static void Initialise(BOOL hidden)
       Abort(FindPort("YAM") ? NULL : MSG_ErrorMuiApp);
 
    // signal the splash window to show a 10% gauge
-   SplashProgress(GetStr(MSG_LoadingGFX), 10);
+   SplashProgress(tr(MSG_LoadingGFX), 10);
 
    // before we load our images in YAM:icons we check the image layout
    // by loading the ".imglayout" file, checking if it matches the version
@@ -1871,26 +1871,26 @@ static void Initialise(BOOL hidden)
          if(strnicmp(verBuf, "YIM", 3) == 0)
          {
            if(atoi(&verBuf[3]) != IMGLAYOUT_VERSION)
-             errorMsg = GetStr(MSG_ER_WRONGIMGLAYOUTVER);
+             errorMsg = tr(MSG_ER_WRONGIMGLAYOUTVER);
          }
          else
-           errorMsg = GetStr(MSG_ER_LOADIMGLAYOUTFAILED);
+           errorMsg = tr(MSG_ER_LOADIMGLAYOUTFAILED);
        }
        else
-         errorMsg = GetStr(MSG_ER_LOADIMGLAYOUTFAILED);
+         errorMsg = tr(MSG_ER_LOADIMGLAYOUTFAILED);
 
        fclose(fp);
      }
      else
-       errorMsg = GetStr(MSG_ER_LOADIMGLAYOUTFAILED);
+       errorMsg = tr(MSG_ER_LOADIMGLAYOUTFAILED);
    }
    else
-     errorMsg = GetStr(MSG_ER_MISSINGIMGVERFILE);
+     errorMsg = tr(MSG_ER_MISSINGIMGVERFILE);
 
    if(errorMsg)
    {
-     if(MUI_Request(G->App, NULL, 0, GetStr(MSG_ER_IMGLAYOUTFAILURE),
-                                     GetStr(MSG_ER_EXITIGNORE),
+     if(MUI_Request(G->App, NULL, 0, tr(MSG_ER_IMGLAYOUTFAILURE),
+                                     tr(MSG_ER_EXITIGNORE),
                                      errorMsg, pathbuf))
      {
        // exit the application now
@@ -1914,9 +1914,9 @@ static void Initialise(BOOL hidden)
       {
         int reqResult;
 
-        if((reqResult = MUI_Request(G->App, NULL, 0, GetStr(MSG_ER_ICONOBJECT_TITLE),
-                                                     GetStr(MSG_ER_EXITIGNOREALL),
-                                                     GetStr(MSG_ER_ICONOBJECT),
+        if((reqResult = MUI_Request(G->App, NULL, 0, tr(MSG_ER_ICONOBJECT_TITLE),
+                                                     tr(MSG_ER_EXITIGNOREALL),
+                                                     tr(MSG_ER_ICONOBJECT),
                                                      icnames[i], pathbuf)))
         {
           if(reqResult == 2)
@@ -1933,7 +1933,7 @@ static void Initialise(BOOL hidden)
      Abort(NULL); // exit the application
 
    // lets advance the progress bar to 20%
-   SplashProgress(GetStr(MSG_InitLibs), 20);
+   SplashProgress(tr(MSG_InitLibs), 20);
 
    // load & initialize some optional libraries which are not required, however highly recommended
    INITLIB(XPKNAME, 0, 0, &XpkBase, "main", &IXpk, FALSE, NULL);
@@ -2000,7 +2000,7 @@ static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
       MA_ChangeFolder(fo, TRUE);
 
       // now ask the user for permission to send the mail.
-      sentableMail = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_SendStartReq));
+      sentableMail = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_SendStartReq));
     }
   }
 
@@ -2113,9 +2113,9 @@ static void Login(const char *user, const char *password,
 
       D(DBF_STARTUP, "US_Login returned: %ld %ld", terminate, loggedin);
 
-      if(!loggedin && !MUI_Request(G->App, NULL, 0, GetStr(MSG_ER_GENESISUSER_TITLE),
-                                                    GetStr(MSG_ER_CONTINUEEXIT),
-                                                    GetStr(MSG_ER_GENESISUSER),
+      if(!loggedin && !MUI_Request(G->App, NULL, 0, tr(MSG_ER_GENESISUSER_TITLE),
+                                                    tr(MSG_ER_CONTINUEEXIT),
+                                                    tr(MSG_ER_GENESISUSER),
                                                     guser->us_name))
       {
         terminate = TRUE;
@@ -2379,7 +2379,7 @@ int main(int argc, char **argv)
       }
 
       DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
-      AppendLog(0, GetStr(MSG_LOG_Started));
+      AppendLog(0, tr(MSG_LOG_Started));
       MA_StartMacro(MACRO_STARTUP, NULL);
 
       // before we go on we check whether there is any .autosaveX.txt file in the
@@ -2392,9 +2392,9 @@ int main(int argc, char **argv)
         {
           int reqres;
 
-          reqres = MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_AUTOSAVEFOUND_TITLE),
-                                                         GetStr(MSG_MA_AUTOSAVEFOUND_BT),
-                                                         GetStr(MSG_MA_AUTOSAVEFOUND),
+          reqres = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_AUTOSAVEFOUND_TITLE),
+                                                         tr(MSG_MA_AUTOSAVEFOUND_BT),
+                                                         tr(MSG_MA_AUTOSAVEFOUND),
                                                          fileName);
           if(reqres == 1)
           {
@@ -2440,8 +2440,8 @@ int main(int argc, char **argv)
       else DisplayAppIconStatistics();
 
       user = US_GetCurrentUser();
-      AppendLogNormal(1, GetStr(MSG_LOG_LoggedIn), user->Name);
-      AppendLogVerbose(2, GetStr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir);
+      AppendLogNormal(1, tr(MSG_LOG_LoggedIn), user->Name);
+      AppendLogVerbose(2, tr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir);
 
       // Now start the NotifyRequest for the AutoDST file
       if(ADSTnotify_start())
@@ -2783,7 +2783,7 @@ int main(int argc, char **argv)
       if(C->RemoveOnQuit)
         DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, TRUE);
 
-      AppendLog(99, GetStr(MSG_LOG_Terminated));
+      AppendLog(99, tr(MSG_LOG_Terminated));
       MA_StartMacro(MACRO_QUIT, NULL);
 
       // if the user really wants to exit, do it now as Terminate() is broken !

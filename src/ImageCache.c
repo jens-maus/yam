@@ -179,9 +179,9 @@ BOOL ImageCacheInit(const char *imagePath)
       {
         int reqResult;
 
-        if((reqResult = MUI_Request(G->App, NULL, 0, GetStr(MSG_ER_IMAGEOBJECT_TITLE),
-                                                     GetStr(MSG_ER_EXITIGNOREALL),
-                                                     GetStr(MSG_ER_IMAGEOBJECT),
+        if((reqResult = MUI_Request(G->App, NULL, 0, tr(MSG_ER_IMAGEOBJECT_TITLE),
+                                                     tr(MSG_ER_EXITIGNOREALL),
+                                                     tr(MSG_ER_IMAGEOBJECT),
                                                      imageFileArray[i], imagePath)))
         {
           if(reqResult == 2)

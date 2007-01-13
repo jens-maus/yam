@@ -436,7 +436,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
 
       return TRUE;
    }
-   else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname);
+   else ER_NewError(tr(MSG_ER_CantCreateFile), fname);
 
    return FALSE;
 }
@@ -835,7 +835,7 @@ BOOL FO_SaveTree(char *fname)
 
       fclose(fh);
    }
-   else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname);
+   else ER_NewError(tr(MSG_ER_CantCreateFile), fname);
 
    return success;
 }
@@ -850,7 +850,7 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
    BOOL success = TRUE;
    int i;
 
-   BusyGauge(GetStr(MSG_BusyMoving), itoa(fo->Total), fo->Total);
+   BusyGauge(tr(MSG_BusyMoving), itoa(fo->Total), fo->Total);
    strlcpy(srcbuf, GetFolderDir(oldfo), sizeof(srcbuf));
    strlcpy(dstbuf, GetFolderDir(fo), sizeof(dstbuf));
 
@@ -916,10 +916,10 @@ static BOOL FO_EnterPassword(struct Folder *fo)
    {
       *passwd = *passwd2 = 0;
 
-      if(!StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_Folder), GetStr(MSG_CO_ChangeFolderPass), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->FO->GUI.WI))
+      if(!StringRequest(passwd, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_ChangeFolderPass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->FO->GUI.WI))
         return FALSE;
 
-      if(*passwd && !StringRequest(passwd2, SIZE_PASSWORD, GetStr(MSG_Folder), GetStr(MSG_CO_RetypePass), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->FO->GUI.WI))
+      if(*passwd && !StringRequest(passwd2, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_RetypePass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->FO->GUI.WI))
         return FALSE;
 
       if(!Stricmp(passwd, passwd2))
@@ -1063,7 +1063,7 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
    memset(&folder, 0, sizeof(struct Folder));
    folder.Type = FT_GROUP;
 
-   if(StringRequest(folder.Name, SIZE_NAME, GetStr(MSG_FO_NEWFGROUP), GetStr(MSG_FO_NEWFGROUPREQ), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
+   if(StringRequest(folder.Name, SIZE_NAME, tr(MSG_FO_NEWFGROUP), tr(MSG_FO_NEWFGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
    {
       long tnflags = (TNF_LIST | TNF_OPEN);
 
@@ -1086,7 +1086,7 @@ MakeHook(FO_NewFolderGroupHook, FO_NewFolderGroupFunc);
 //  Creates a new folder
 HOOKPROTONHNONP(FO_NewFolderFunc, void)
 {
-   int mode = MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_NewFolder), GetStr(MSG_FO_NewFolderGads), GetStr(MSG_FO_NewFolderReq));
+   int mode = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_NewFolder), tr(MSG_FO_NewFolderGads), tr(MSG_FO_NewFolderReq));
    static struct Folder folder;
 
    // reset the folder struct and set some default values.
@@ -1132,7 +1132,7 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
       {
         struct FileReqCache *frc;
 
-        if((frc = ReqFile(ASL_FOLDER, G->MA->GUI.WI, GetStr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->MA_MailDir, "")))
+        if((frc = ReqFile(ASL_FOLDER, G->MA->GUI.WI, tr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->MA_MailDir, "")))
         {
           strlcpy(folder.Path, frc->drawer, sizeof(folder.Path));
 
@@ -1172,7 +1172,7 @@ HOOKPROTONHNONP(FO_EditFolderFunc, void)
   {
     if(isGroupFolder(folder))
     {
-      if(StringRequest(folder->Name, SIZE_NAME, GetStr(MSG_FO_EDIT_FGROUP), GetStr(MSG_FO_EDIT_FGROUPREQ), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
+      if(StringRequest(folder->Name, SIZE_NAME, tr(MSG_FO_EDIT_FGROUP), tr(MSG_FO_EDIT_FGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
         DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
     }
     else
@@ -1225,7 +1225,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
     case FT_CUSTOMSENT:
     case FT_CUSTOMMIXED:
     {
-      if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_ConfirmDelete))))
+      if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ConfirmDelete))))
       {
          DeleteMailDir(GetFolderDir(folder), FALSE);
          ClearMailList(folder, TRUE);
@@ -1256,7 +1256,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
       if((tn_sub = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_group, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE)))
       {
          // Now we popup a requester and if this requester is confirmed we move the subentries to the parent node.
-         if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_FO_GROUP_CONFDEL))))
+         if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_GROUP_CONFDEL))))
          {
             struct MUI_NListtree_TreeNode *tn_sub_next = tn_sub;
 
@@ -1336,7 +1336,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       // if the foldername is empty or it was changed and the new name already exists it`s invalid
       if(*folder.Name == '\0' || (stricmp(oldfolder->Name, folder.Name) != 0 && FO_GetFolderByName(folder.Name, NULL)))
       {
-        MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), GetStr(MSG_FO_FOLDERNAMEINVALID));
+        MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
         return;
       }
 
@@ -1360,11 +1360,11 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
            // check if the new folder already exists or not.
            if(FileExists(folder.Path))
            {
-              result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_FO_FOLDEREXISTS));
+              result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDEREXISTS));
            }
            else
            {
-              result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_FO_FOLDERMOVE));
+              result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDERMOVE));
            }
 
            // If the user really want to proceed
@@ -1374,7 +1374,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
               {
                 if(!(CreateDirectory(GetFolderDir(&folder)) && FO_MoveFolderDir(&folder, oldfolder)))
                 {
-                  ER_NewError(GetStr(MSG_ER_MOVEFOLDERDIR), folder.Name, folder.Path);
+                  ER_NewError(tr(MSG_ER_MOVEFOLDERDIR), folder.Name, folder.Path);
 
                   return;
                 }
@@ -1431,7 +1431,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
               struct Mail *mail;
               int i;
 
-              BusyGauge(GetStr(MSG_BusyUncompressingFO), "", folder.Total);
+              BusyGauge(tr(MSG_BusyUncompressingFO), "", folder.Total);
               for(i = 0, mail = folder.Messages; mail; mail = mail->Next, i++)
               {
                 BusySet(i+1);
@@ -1461,19 +1461,19 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       // if the foldername is empty or the new name already exists it`s invalid
       if(*folder.Name == '\0' || FO_GetFolderByName(folder.Name, NULL))
       {
-        MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), GetStr(MSG_FO_FOLDERNAMEINVALID));
+        MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
         return;
       }
 
       // lets check if entered folder path is valid or not
       if(*folder.Path == '\0')
       {
-        MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), GetStr(MSG_FO_FOLDERPATHINVALID));
+        MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERPATHINVALID));
         return;
       }
       else if(FileExists(folder.Path)) // check if something with folder.Path already exists
       {
-        result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_FO_FOLDEREXISTS));
+        result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDEREXISTS));
       }
       else result = TRUE;
 
@@ -1654,7 +1654,7 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
   D(DBF_FOLDER, "ML-Pattern: [%s]", toPattern);
 
   // Now we set the new pattern & address values to the string gadgets
-  notRecog = GetStr(MSG_FO_NOTRECOGNIZED);
+  notRecog = tr(MSG_FO_NOTRECOGNIZED);
   setstring(G->FO->GUI.ST_MLPATTERN, takePattern && toPattern[0] ? toPattern : notRecog);
   setstring(G->FO->GUI.ST_MLADDRESS, takeAddress ? toAddress : notRecog);
 
@@ -1679,108 +1679,108 @@ static struct FO_ClassData *FO_New(void)
       static const char *sortopt[8];
       static const char *fsignat[5];
 
-      ftypes[0]  = GetStr(MSG_FO_FTRcvdMail);
-      ftypes[1]  = GetStr(MSG_FO_FTSentMail);
-      ftypes[2]  = GetStr(MSG_FO_FTBothMail);
+      ftypes[0]  = tr(MSG_FO_FTRcvdMail);
+      ftypes[1]  = tr(MSG_FO_FTSentMail);
+      ftypes[2]  = tr(MSG_FO_FTBothMail);
       ftypes[3]  = NULL;
 
-      fmodes[0]  = GetStr(MSG_FO_FMNormal);
-      fmodes[1]  = GetStr(MSG_FO_FMSimple);
+      fmodes[0]  = tr(MSG_FO_FMNormal);
+      fmodes[1]  = tr(MSG_FO_FMSimple);
       // compression and encryption are only available if XPK is available
-      fmodes[2]  = (XpkBase != NULL) ? GetStr(MSG_FO_FMPack) : NULL;
-      fmodes[3]  = (XpkBase != NULL) ? GetStr(MSG_FO_FMEncPack) : NULL;
+      fmodes[2]  = (XpkBase != NULL) ? tr(MSG_FO_FMPack) : NULL;
+      fmodes[3]  = (XpkBase != NULL) ? tr(MSG_FO_FMEncPack) : NULL;
       fmodes[4]  = NULL;
 
-      sortopt[0] = GetStr(MSG_FO_MessageDate);
-      sortopt[1] = GetStr(MSG_FO_DateRecvd);
-      sortopt[2] = GetStr(MSG_Sender);
-      sortopt[3] = GetStr(MSG_Recipient);
-      sortopt[4] = GetStr(MSG_Subject);
-      sortopt[5] = GetStr(MSG_Size);
-      sortopt[6] = GetStr(MSG_Status);
+      sortopt[0] = tr(MSG_FO_MessageDate);
+      sortopt[1] = tr(MSG_FO_DateRecvd);
+      sortopt[2] = tr(MSG_Sender);
+      sortopt[3] = tr(MSG_Recipient);
+      sortopt[4] = tr(MSG_Subject);
+      sortopt[5] = tr(MSG_Size);
+      sortopt[6] = tr(MSG_Status);
       sortopt[7] = NULL;
 
-      fsignat[0] = GetStr(MSG_WR_NoSig);
-      fsignat[1] = GetStr(MSG_WR_DefSig);
-      fsignat[2] = GetStr(MSG_WR_AltSig1);
-      fsignat[3] = GetStr(MSG_WR_AltSig2);
+      fsignat[0] = tr(MSG_WR_NoSig);
+      fsignat[1] = tr(MSG_WR_DefSig);
+      fsignat[2] = tr(MSG_WR_AltSig1);
+      fsignat[3] = tr(MSG_WR_AltSig2);
       fsignat[4] = NULL;
 
       data->GUI.WI = WindowObject,
-         MUIA_Window_Title, GetStr(MSG_FO_EditFolder),
+         MUIA_Window_Title, tr(MSG_FO_EditFolder),
          MUIA_HelpNode,  "FO_W",
          MUIA_Window_ID, MAKE_ID('F','O','L','D'),
          MUIA_Window_LeftEdge, MUIV_Window_LeftEdge_Centered,
          MUIA_Window_TopEdge,  MUIV_Window_TopEdge_Centered,
          WindowContents, VGroup,
-            Child, ColGroup(2), GroupFrameT(GetStr(MSG_FO_Properties)),
-               Child, Label2(GetStr(MSG_CO_Name)),
-               Child, data->GUI.ST_FNAME = MakeString(SIZE_NAME,GetStr(MSG_CO_Name)),
-               Child, Label2(GetStr(MSG_Path)),
+            Child, ColGroup(2), GroupFrameT(tr(MSG_FO_Properties)),
+               Child, Label2(tr(MSG_CO_Name)),
+               Child, data->GUI.ST_FNAME = MakeString(SIZE_NAME,tr(MSG_CO_Name)),
+               Child, Label2(tr(MSG_Path)),
                Child, PopaslObject,
                   MUIA_Popasl_Type, ASL_FileRequest,
                   MUIA_Popstring_String, data->GUI.ST_FPATH = MakeString(SIZE_PATH, ""),
                   MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
                   ASLFR_DrawersOnly, TRUE,
                End,
-               Child, Label2(GetStr(MSG_FO_MaxAge)),
+               Child, Label2(tr(MSG_FO_MaxAge)),
                Child, HGroup,
                   Child, data->GUI.NM_MAXAGE = NumericbuttonObject,
                     MUIA_CycleChain,      1,
                     MUIA_Numeric_Min,     0,
                     MUIA_Numeric_Max,     730,
-                    MUIA_Numeric_Format,  GetStr(MSG_FO_MAXAGEFMT),
+                    MUIA_Numeric_Format,  tr(MSG_FO_MAXAGEFMT),
                   End,
                   Child, HSpace(0),
                End,
-               Child, Label1(GetStr(MSG_FO_FolderType)),
-               Child, data->GUI.CY_FTYPE = MakeCycle(ftypes,GetStr(MSG_FO_FolderType)),
-               Child, Label1(GetStr(MSG_FO_FolderMode)),
-               Child, data->GUI.CY_FMODE = MakeCycle(fmodes,GetStr(MSG_FO_FolderMode)),
-               Child, Label1(GetStr(MSG_FO_SortBy)),
+               Child, Label1(tr(MSG_FO_FolderType)),
+               Child, data->GUI.CY_FTYPE = MakeCycle(ftypes,tr(MSG_FO_FolderType)),
+               Child, Label1(tr(MSG_FO_FolderMode)),
+               Child, data->GUI.CY_FMODE = MakeCycle(fmodes,tr(MSG_FO_FolderMode)),
+               Child, Label1(tr(MSG_FO_SortBy)),
                Child, HGroup,
-                  Child, data->GUI.CY_SORT[0] = MakeCycle(sortopt,GetStr(MSG_FO_SortBy)),
-                  Child, data->GUI.CH_REVERSE[0] = MakeCheck(GetStr(MSG_FO_Reverse)),
-                  Child, LLabel1(GetStr(MSG_FO_Reverse)),
+                  Child, data->GUI.CY_SORT[0] = MakeCycle(sortopt,tr(MSG_FO_SortBy)),
+                  Child, data->GUI.CH_REVERSE[0] = MakeCheck(tr(MSG_FO_Reverse)),
+                  Child, LLabel1(tr(MSG_FO_Reverse)),
                End,
-               Child, Label1(GetStr(MSG_FO_ThenBy)),
+               Child, Label1(tr(MSG_FO_ThenBy)),
                Child, HGroup,
-                  Child, data->GUI.CY_SORT[1] = MakeCycle(sortopt,GetStr(MSG_FO_ThenBy)),
-                  Child, data->GUI.CH_REVERSE[1] = MakeCheck(GetStr(MSG_FO_Reverse)),
-                  Child, LLabel1(GetStr(MSG_FO_Reverse)),
+                  Child, data->GUI.CY_SORT[1] = MakeCycle(sortopt,tr(MSG_FO_ThenBy)),
+                  Child, data->GUI.CH_REVERSE[1] = MakeCheck(tr(MSG_FO_Reverse)),
+                  Child, LLabel1(tr(MSG_FO_Reverse)),
                End,
-               Child, Label2(GetStr(MSG_FO_Welcome)),
-               Child, data->GUI.ST_HELLOTEXT = MakeString(SIZE_INTRO,GetStr(MSG_FO_Welcome)),
-               Child, Label2(GetStr(MSG_FO_Greetings)),
-               Child, data->GUI.ST_BYETEXT = MakeString(SIZE_INTRO,GetStr(MSG_FO_Greetings)),
-               Child, Label1(GetStr(MSG_FO_DSTATS)),
+               Child, Label2(tr(MSG_FO_Welcome)),
+               Child, data->GUI.ST_HELLOTEXT = MakeString(SIZE_INTRO,tr(MSG_FO_Welcome)),
+               Child, Label2(tr(MSG_FO_Greetings)),
+               Child, data->GUI.ST_BYETEXT = MakeString(SIZE_INTRO,tr(MSG_FO_Greetings)),
+               Child, Label1(tr(MSG_FO_DSTATS)),
                Child, HGroup,
-                Child, data->GUI.CH_STATS = MakeCheck(GetStr(MSG_FO_DSTATS)),
+                Child, data->GUI.CH_STATS = MakeCheck(tr(MSG_FO_DSTATS)),
                 Child, HSpace(0),
                End,
             End,
-            Child, ColGroup(2), GroupFrameT(GetStr(MSG_FO_MLSupport)),
-               Child, Label2(GetStr(MSG_FO_MLSUPPORT)),
+            Child, ColGroup(2), GroupFrameT(tr(MSG_FO_MLSupport)),
+               Child, Label2(tr(MSG_FO_MLSUPPORT)),
                Child, HGroup,
-                Child, data->GUI.CH_MLSUPPORT = MakeCheck(GetStr(MSG_FO_MLSUPPORT)),
+                Child, data->GUI.CH_MLSUPPORT = MakeCheck(tr(MSG_FO_MLSUPPORT)),
                 Child, HVSpace,
-                Child, data->GUI.BT_AUTODETECT = MakeButton(GetStr(MSG_FO_AUTODETECT)),
+                Child, data->GUI.BT_AUTODETECT = MakeButton(tr(MSG_FO_AUTODETECT)),
                End,
-               Child, Label2(GetStr(MSG_FO_ToPattern)),
-               Child, data->GUI.ST_MLPATTERN = MakeString(SIZE_PATTERN,GetStr(MSG_FO_ToPattern)),
-               Child, Label2(GetStr(MSG_FO_ToAddress)),
-               Child, MakeAddressField(&data->GUI.ST_MLADDRESS, GetStr(MSG_FO_ToAddress), MSG_HELP_FO_ST_MLADDRESS, ABM_TO, -1, TRUE),
-               Child, Label2(GetStr(MSG_FO_FromAddress)),
-               Child, MakeAddressField(&data->GUI.ST_MLFROMADDRESS, GetStr(MSG_FO_FromAddress), MSG_HELP_FO_ST_MLFROMADDRESS, ABM_TO, -1, TRUE),
-               Child, Label2(GetStr(MSG_FO_ReplyToAddress)),
-               Child, MakeAddressField(&data->GUI.ST_MLREPLYTOADDRESS, GetStr(MSG_FO_ReplyToAddress), MSG_HELP_FO_ST_MLREPLYTOADDRESS, ABM_TO, -1, TRUE),
-               Child, Label1(GetStr(MSG_WR_Signature)),
-               Child, data->GUI.CY_MLSIGNATURE = MakeCycle(fsignat, GetStr(MSG_WR_Signature)),
+               Child, Label2(tr(MSG_FO_ToPattern)),
+               Child, data->GUI.ST_MLPATTERN = MakeString(SIZE_PATTERN,tr(MSG_FO_ToPattern)),
+               Child, Label2(tr(MSG_FO_ToAddress)),
+               Child, MakeAddressField(&data->GUI.ST_MLADDRESS, tr(MSG_FO_ToAddress), MSG_HELP_FO_ST_MLADDRESS, ABM_TO, -1, TRUE),
+               Child, Label2(tr(MSG_FO_FromAddress)),
+               Child, MakeAddressField(&data->GUI.ST_MLFROMADDRESS, tr(MSG_FO_FromAddress), MSG_HELP_FO_ST_MLFROMADDRESS, ABM_TO, -1, TRUE),
+               Child, Label2(tr(MSG_FO_ReplyToAddress)),
+               Child, MakeAddressField(&data->GUI.ST_MLREPLYTOADDRESS, tr(MSG_FO_ReplyToAddress), MSG_HELP_FO_ST_MLREPLYTOADDRESS, ABM_TO, -1, TRUE),
+               Child, Label1(tr(MSG_WR_Signature)),
+               Child, data->GUI.CY_MLSIGNATURE = MakeCycle(fsignat, tr(MSG_WR_Signature)),
             End,
             Child, ColGroup(3),
-               Child, data->GUI.BT_OKAY = MakeButton(GetStr(MSG_Okay)),
+               Child, data->GUI.BT_OKAY = MakeButton(tr(MSG_Okay)),
                Child, HSpace(0),
-               Child, data->GUI.BT_CANCEL = MakeButton(GetStr(MSG_Cancel)),
+               Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_Cancel)),
             End,
          End,
       End;

@@ -216,7 +216,7 @@ BOOL WR_AddFileToList(int winnum, const char *filename, const char *name, BOOL i
     }
     else
     {
-      ER_NewError(GetStr(MSG_ER_ADDFILEERROR), filename);
+      ER_NewError(tr(MSG_ER_ADDFILEERROR), filename);
 
       result = FALSE;
     }
@@ -651,7 +651,7 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
             // then start base64 encoding the whole file.
             if(base64encode_file(ifh, ofh, convLF) <= 0)
             {
-              ER_NewError(GetStr(MSG_ER_B64FILEENCODE), part->Filename);
+              ER_NewError(tr(MSG_ER_B64FILEENCODE), part->Filename);
             }
          }
          break;
@@ -660,7 +660,7 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
          {
             if(qpencode_file(ifh, ofh) < 0)
             {
-              ER_NewError(GetStr(MSG_ER_QPFILEENCODE), part->Filename);
+              ER_NewError(tr(MSG_ER_QPFILEENCODE), part->Filename);
             }
          }
          break;
@@ -673,7 +673,7 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
 
             if(uuencode_file(ifh, ofh) < 0)
             {
-              ER_NewError(GetStr(MSG_ER_UUFILEENCODE), part->Filename);
+              ER_NewError(tr(MSG_ER_UUFILEENCODE), part->Filename);
             }
 
             fprintf(ofh, "``\nend\nsize %d\n", size);
@@ -792,10 +792,10 @@ static void WR_AddTagline(FILE *fh_mail)
         fclose(fh_tag);
       }
       else
-        ER_NewError(GetStr(MSG_ER_CantOpenFile), hashfile);
+        ER_NewError(tr(MSG_ER_CantOpenFile), hashfile);
     }
     else
-      ER_NewError(GetStr(MSG_ER_CantOpenFile), C->TagsFile);
+      ER_NewError(tr(MSG_ER_CantOpenFile), C->TagsFile);
   }
 
   LEAVE();
@@ -913,7 +913,7 @@ static char *WR_GetPGPIds(char *source, char *ids)
       if (!(pid = WR_GetPGPId(&pe)))
       {
          pid = pe.RealName[0] ? pe.RealName : pe.Address;
-         ER_NewError(GetStr(MSG_ER_ErrorNoPGPId), source, pid);
+         ER_NewError(tr(MSG_ER_ErrorNoPGPId), source, pid);
       }
       ids = StrBufCat(ids, (G->PGPVersion == 5) ? "-r \"" : "\"");
       ids = StrBufCat(ids, pid);
@@ -1166,8 +1166,8 @@ static BOOL SetDefaultSecurity(struct Compose *comp)
           else
           {
             // conflict: two addresses have different defaults
-            int res = MUI_RequestA(G->App, NULL, 0, NULL, GetStr(MSG_WR_SECURITYREQ_GADS),
-                                                          GetStr(MSG_WR_SECURITYREQ), NULL);
+            int res = MUI_RequestA(G->App, NULL, 0, NULL, tr(MSG_WR_SECURITYREQ_GADS),
+                                                          tr(MSG_WR_SECURITYREQ), NULL);
 
             switch(res)
             {
@@ -1414,7 +1414,7 @@ BOOL WriteOutMessage(struct Compose *comp)
          }
          else
          {
-            ER_NewError(GetStr(MSG_ER_PGPMultipart));
+            ER_NewError(tr(MSG_ER_PGPMultipart));
             comp->Security = 0;
          }
 
@@ -1422,7 +1422,7 @@ BOOL WriteOutMessage(struct Compose *comp)
       }
       else
       {
-         ER_NewError(GetStr(MSG_ER_PGPMultipart));
+         ER_NewError(tr(MSG_ER_PGPMultipart));
          comp->Security = 0;
       }
    }
@@ -1531,7 +1531,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
   addr = (char *)DoMethod(gui->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
   if(!addr)
   {
-    ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_TO, MUIA_String_Contents));
+    ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_TO, MUIA_String_Contents));
 
     if(winOpen)
       set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
@@ -1549,7 +1549,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
     set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
 
-    if(MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), GetStr(MSG_WR_ErrorNoRcpt)))
+    if(MUI_Request(G->App, gui->WI, 0, NULL, tr(MSG_WR_NoRcptReqGad), tr(MSG_WR_ErrorNoRcpt)))
       mode = WRITE_HOLD;
     else
     {
@@ -1570,7 +1570,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
     set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
 
-    if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_OKAYCANCELREQ), GetStr(MSG_WR_NOSUBJECTREQ)))
+    if(!MUI_Request(G->App, gui->WI, 0, NULL, tr(MSG_WR_OKAYCANCELREQ), tr(MSG_WR_NOSUBJECTREQ)))
     {
       LEAVE();
       return;
@@ -1587,7 +1587,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
     addr = (char *)DoMethod(gui->ST_FROM, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
     if(!addr)
     {
-      ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_FROM, MUIA_String_Contents));
+      ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_FROM, MUIA_String_Contents));
 
       if(winOpen)
         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
@@ -1605,7 +1605,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
       set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
 
-      if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NOSENDERREQGAD), GetStr(MSG_WR_ERRORNOSENDER)))
+      if(!MUI_Request(G->App, gui->WI, 0, NULL, tr(MSG_WR_NOSENDERREQGAD), tr(MSG_WR_ERRORNOSENDER)))
       {
         LEAVE();
         return;
@@ -1618,7 +1618,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
     addr = (char *)DoMethod(gui->ST_CC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
     if(!addr)
     {
-      ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_CC, MUIA_String_Contents));
+      ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_CC, MUIA_String_Contents));
 
       if(winOpen)
         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
@@ -1635,7 +1635,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
     addr = (char *)DoMethod(gui->ST_BCC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
     if(!addr)
     {
-      ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_BCC, MUIA_String_Contents));
+      ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_BCC, MUIA_String_Contents));
 
       if(winOpen)
         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
@@ -1652,7 +1652,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
     addr = (char *)DoMethod(gui->ST_REPLYTO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
     if(!addr)
     {
-      ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_REPLYTO, MUIA_String_Contents));
+      ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_REPLYTO, MUIA_String_Contents));
 
       if(winOpen)
         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
@@ -1879,39 +1879,39 @@ void WR_NewMail(enum WriteMode mode, int winnum)
     {
       case NEW_NEW:
       case NEW_EDITASNEW:
-        AppendLog(10, GetStr(MSG_LOG_Creating), AddrName(newMail->To), newMail->Subject, numAttachments);
+        AppendLog(10, tr(MSG_LOG_Creating), AddrName(newMail->To), newMail->Subject, numAttachments);
       break;
 
       case NEW_REPLY:
       {
         if(wr->refMailList && wr->refMailList[2])
-          AppendLog(11, GetStr(MSG_LOG_Replying), AddrName(wr->refMailList[2]->From), wr->refMailList[2]->Subject);
+          AppendLog(11, tr(MSG_LOG_Replying), AddrName(wr->refMailList[2]->From), wr->refMailList[2]->Subject);
         else
-          AppendLog(11, GetStr(MSG_LOG_Replying), "<unknown>", "<unknown>");
+          AppendLog(11, tr(MSG_LOG_Replying), "<unknown>", "<unknown>");
       }
       break;
 
       case NEW_FORWARD:
       {
         if(wr->refMailList && wr->refMailList[2])
-          AppendLog(12, GetStr(MSG_LOG_Forwarding), AddrName(wr->refMailList[2]->From), wr->refMailList[2]->Subject, AddrName(newMail->To));
+          AppendLog(12, tr(MSG_LOG_Forwarding), AddrName(wr->refMailList[2]->From), wr->refMailList[2]->Subject, AddrName(newMail->To));
         else
-          AppendLog(12, GetStr(MSG_LOG_Forwarding), "<unknown>", "<unknown>", AddrName(newMail->To));
+          AppendLog(12, tr(MSG_LOG_Forwarding), "<unknown>", "<unknown>", AddrName(newMail->To));
       }
       break;
 
       case NEW_BOUNCE:
       {
         if(wr->refMail)
-          AppendLog(13, GetStr(MSG_LOG_Bouncing), AddrName(wr->refMail->From), wr->refMail->Subject, AddrName(newMail->To));
+          AppendLog(13, tr(MSG_LOG_Bouncing), AddrName(wr->refMail->From), wr->refMail->Subject, AddrName(newMail->To));
         else
-          AppendLog(13, GetStr(MSG_LOG_Bouncing), "<unknown>", "<unknown>", AddrName(newMail->To));
+          AppendLog(13, tr(MSG_LOG_Bouncing), "<unknown>", "<unknown>", AddrName(newMail->To));
       }
       break;
 
       case NEW_EDIT:
       {
-        AppendLog(14, GetStr(MSG_LOG_Editing), AddrName(newMail->From), AddrName(newMail->To), newMail->Subject);
+        AppendLog(14, tr(MSG_LOG_Editing), AddrName(newMail->From), AddrName(newMail->To), newMail->Subject);
       }
       break;
 
@@ -1921,7 +1921,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
     }
   }
   else
-     ER_NewError(GetStr(MSG_ER_CreateMailError));
+     ER_NewError(tr(MSG_ER_CreateMailError));
 
   FreePartsList(comp.FirstPart);
 
@@ -1953,7 +1953,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
 HOOKPROTONHNO(WR_NewMailFunc, void, int *arg)
 {
-  BusyText(GetStr(MSG_BusyComposing), "");
+  BusyText(tr(MSG_BusyComposing), "");
   WR_NewMail(arg[0], arg[1]);
   BusyEnd();
 }
@@ -2002,7 +2002,7 @@ HOOKPROTONHNO(WR_CancelFunc, void, int *arg)
          int haschanged = xget(G->WR[winnum]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged);
          if (haschanged)
          {
-            switch (MUI_Request(G->App, G->WR[winnum]->GUI.WI, 0, NULL, GetStr(MSG_WR_DiscardChangesGad), GetStr(MSG_WR_DiscardChanges)))
+            switch (MUI_Request(G->App, G->WR[winnum]->GUI.WI, 0, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
             {
                case 0: return;
                case 1: WR_NewMail(WRITE_QUEUE, winnum);
@@ -2030,7 +2030,7 @@ HOOKPROTONHNO(WR_SaveAsFunc, void, int *arg)
   if(xget(G->WR[winnum]->GUI.WI, MUIA_Window_Open))
     set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
 
-  if((frc = ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_SaveTextAs), REQF_SAVEMODE, C->AttachDir, "")))
+  if((frc = ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, tr(MSG_WR_SaveTextAs), REQF_SAVEMODE, C->AttachDir, "")))
   {
     char filename[SIZE_PATHFILE];
 
@@ -2039,7 +2039,7 @@ HOOKPROTONHNO(WR_SaveAsFunc, void, int *arg)
     EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum]);
 
     if(!CopyFile(filename, NULL, G->WR_Filename[winnum], NULL))
-      ER_NewError(GetStr(MSG_ER_CantCreateFile), filename);
+      ER_NewError(tr(MSG_ER_CantCreateFile), filename);
   }
 
   LEAVE();
@@ -2077,7 +2077,7 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
 
   ENTER();
 
-  if((frc = ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, "")))
+  if((frc = ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, tr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, "")))
   {
     char filename[SIZE_PATHFILE];
 
@@ -2118,7 +2118,7 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
   ENTER();
 
   // request files from the user via asl.library
-  if((frc = ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, "")) &&
+  if((frc = ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, tr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, "")) &&
       frc->numArgs > 0)
   {
     char *p;
@@ -2131,7 +2131,7 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
       *p = '\0';
 
     // now ask the user for the choosen archive name
-    if(StringRequest(arcname, SIZE_FILE, GetStr(MSG_WR_CreateArc), GetStr(MSG_WR_CreateArcReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->WR[winnum]->GUI.WI))
+    if(StringRequest(arcname, SIZE_FILE, tr(MSG_WR_CreateArc), tr(MSG_WR_CreateArcReq), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->WR[winnum]->GUI.WI))
     {
       char *command;
       char filename[SIZE_PATHFILE];
@@ -2233,7 +2233,7 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
           WR_AddFileToList(winnum, filename, NULL, TRUE);
         }
         else
-          ER_NewError(GetStr(MSG_ER_PACKERROR));
+          ER_NewError(tr(MSG_ER_PACKERROR));
       }
     }
   }
@@ -2388,7 +2388,7 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
     {
       struct FileReqCache *frc;
 
-      if((frc = ReqFile(ASL_ATTACH, wr->GUI.WI, GetStr(MSG_WR_InsertFile), REQF_NONE, C->AttachDir, "")))
+      if((frc = ReqFile(ASL_ATTACH, wr->GUI.WI, tr(MSG_WR_InsertFile), REQF_NONE, C->AttachDir, "")))
       {
         strmfp(filename, frc->drawer, frc->file);
         text = WR_TransformText(filename, cmd, quotetext);
@@ -2409,7 +2409,7 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
 
       // first we request the filename of the file we want to its
       // uuencoded interpretation to be inserted into the editor
-      if((frc = ReqFile(ASL_ATTACH, wr->GUI.WI, GetStr(MSG_WR_InsertFile), REQF_NONE, C->AttachDir, "")))
+      if((frc = ReqFile(ASL_ATTACH, wr->GUI.WI, tr(MSG_WR_InsertFile), REQF_NONE, C->AttachDir, "")))
       {
         strmfp(filename, frc->drawer, frc->file);
 
@@ -2525,7 +2525,7 @@ HOOKPROTONHNO(WR_AddPGPKeyFunc, void, int *arg)
       setstring(G->WR[winnum]->GUI.ST_CTYPE, "application/pgp-keys");
     }
     else
-      ER_NewError(GetStr(MSG_ER_ErrorAppendKey), myid);
+      ER_NewError(tr(MSG_ER_ErrorAppendKey), myid);
   }
 }
 MakeStaticHook(WR_AddPGPKeyHook, WR_AddPGPKeyFunc);
@@ -2580,7 +2580,7 @@ void WR_SetupOldMail(int winnum, struct ReadMailData *rmData)
     if(part->Nr != rmData->letterPartNum &&
        stricmp(part->ContentType, "application/pgp-signature"))
     {
-      BusyText(GetStr(MSG_BusyDecSaving), "");
+      BusyText(tr(MSG_BusyDecSaving), "");
 
       RE_DecodePart(part);
       memset(&attach, 0, sizeof(struct Attach));
@@ -2724,11 +2724,11 @@ HOOKPROTONH(WR_LV_DspFunc, long, char **array, struct Attach *entry)
    }
    else
    {
-      array[0] = (STRPTR)GetStr(MSG_WR_TitleFile);
-      array[1] = (STRPTR)GetStr(MSG_WR_TitleSize);
-      array[2] = (STRPTR)GetStr(MSG_WR_TitleContents);
-      array[3] = (STRPTR)GetStr(MSG_WR_TitleEncoding);
-      array[4] = (STRPTR)GetStr(MSG_WR_TitleDescription);
+      array[0] = (STRPTR)tr(MSG_WR_TitleFile);
+      array[1] = (STRPTR)tr(MSG_WR_TitleSize);
+      array[2] = (STRPTR)tr(MSG_WR_TitleContents);
+      array[3] = (STRPTR)tr(MSG_WR_TitleEncoding);
+      array[4] = (STRPTR)tr(MSG_WR_TitleDescription);
    }
    return 0;
 }
@@ -2981,32 +2981,32 @@ static struct WR_ClassData *WR_New(int winnum)
 
       if(rtitles[0] == '\0')   // only initialize static data on first call
       {
-         rtitles[0] = GetStr(MSG_Message);
-         rtitles[1] = GetStr(MSG_Attachments);
-         rtitles[2] = GetStr(MSG_Options);
+         rtitles[0] = tr(MSG_Message);
+         rtitles[1] = tr(MSG_Attachments);
+         rtitles[2] = tr(MSG_Options);
          rtitles[3] = NULL;
 
          encoding[0] = "Base64/QP";
          encoding[1] = "UUencode";
          encoding[2] = NULL;
 
-         security[SEC_NONE]    = GetStr(MSG_WR_SecNone);
-         security[SEC_SIGN]    = GetStr(MSG_WR_SecSign);
-         security[SEC_ENCRYPT] = GetStr(MSG_WR_SecEncrypt);
-         security[SEC_BOTH]    = GetStr(MSG_WR_SecBoth);
-         security[SEC_SENDANON]= GetStr(MSG_WR_SecAnon);
-         security[SEC_DEFAULTS]= GetStr(MSG_WR_SecDefaults);
+         security[SEC_NONE]    = tr(MSG_WR_SecNone);
+         security[SEC_SIGN]    = tr(MSG_WR_SecSign);
+         security[SEC_ENCRYPT] = tr(MSG_WR_SecEncrypt);
+         security[SEC_BOTH]    = tr(MSG_WR_SecBoth);
+         security[SEC_SENDANON]= tr(MSG_WR_SecAnon);
+         security[SEC_DEFAULTS]= tr(MSG_WR_SecDefaults);
          security[SEC_MAXDUMMY]= NULL;
 
-         priority[0] = GetStr(MSG_WR_ImpHigh);
-         priority[1] = GetStr(MSG_WR_ImpNormal);
-         priority[2] = GetStr(MSG_WR_ImpLow);
+         priority[0] = tr(MSG_WR_ImpHigh);
+         priority[1] = tr(MSG_WR_ImpNormal);
+         priority[2] = tr(MSG_WR_ImpLow);
          priority[3] = NULL;
 
-         signat[0] = GetStr(MSG_WR_NoSig);
-         signat[1] = GetStr(MSG_WR_DefSig);
-         signat[2] = GetStr(MSG_WR_AltSig1);
-         signat[3] = GetStr(MSG_WR_AltSig2);
+         signat[0] = tr(MSG_WR_NoSig);
+         signat[1] = tr(MSG_WR_DefSig);
+         signat[2] = tr(MSG_WR_AltSig1);
+         signat[3] = tr(MSG_WR_AltSig2);
          signat[4] = NULL;
       }
 
@@ -3015,78 +3015,78 @@ static struct WR_ClassData *WR_New(int winnum)
 
       // now go and create the window object
       data->GUI.WI = WindowObject,
-         MUIA_Window_Title, GetStr(MSG_WR_WriteWT),
+         MUIA_Window_Title, tr(MSG_WR_WriteWT),
          MUIA_HelpNode, "WR_W",
          MUIA_Window_ID, MAKE_ID('W','R','I','T'),
          MUIA_Window_Menustrip, strip = MenustripObject,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_WR_Text),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_New), MUIA_Menuitem_Shortcut,"N", MUIA_UserData,WMEN_NEW, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_Open), MUIA_Menuitem_Shortcut,"O", MUIA_UserData,WMEN_OPEN, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_InsertAs),
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Plain), MUIA_Menuitem_Shortcut,"P", MUIA_UserData,WMEN_INSFILE, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Quoted), MUIA_UserData,WMEN_INSQUOT, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_AltQuoted), MUIA_UserData,WMEN_INSALTQUOT, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_ROT13), MUIA_UserData,WMEN_INSROT13, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_UUCODE), MUIA_UserData,WMEN_INSUUCODE, End,
+            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Text),
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_New), MUIA_Menuitem_Shortcut,"N", MUIA_UserData,WMEN_NEW, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_Open), MUIA_Menuitem_Shortcut,"O", MUIA_UserData,WMEN_OPEN, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_InsertAs),
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Plain), MUIA_Menuitem_Shortcut,"P", MUIA_UserData,WMEN_INSFILE, End,
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Quoted), MUIA_UserData,WMEN_INSQUOT, End,
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AltQuoted), MUIA_UserData,WMEN_INSALTQUOT, End,
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_ROT13), MUIA_UserData,WMEN_INSROT13, End,
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_UUCODE), MUIA_UserData,WMEN_INSUUCODE, End,
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_SaveAs), MUIA_UserData,WMEN_SAVEAS, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_SaveAs), MUIA_UserData,WMEN_SAVEAS, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_LaunchEd), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,WMEN_EDIT, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_LaunchEd), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,WMEN_EDIT, End,
             End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_WR_Edit),
-               MUIA_Family_Child, mi_cut = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MCut), MUIA_Menuitem_Shortcut,"ramiga X", MUIA_Menuitem_CommandString, TRUE, MUIA_UserData, WMEN_CUT, End,
-               MUIA_Family_Child, mi_copy = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MCopy), MUIA_Menuitem_Shortcut,"ramiga C", MUIA_Menuitem_CommandString, TRUE, MUIA_UserData, WMEN_COPY, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MPaste), MUIA_Menuitem_Shortcut, "ramiga V", MUIA_Menuitem_CommandString, TRUE, MUIA_UserData, WMEN_PASTE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_PasteAs),
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Quoted), MUIA_Menuitem_Shortcut,"Q", MUIA_UserData,WMEN_PASQUOT, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_AltQuoted), MUIA_UserData,WMEN_PASALTQUOT, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_ROT13), MUIA_UserData,WMEN_PASROT13, End,
+            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Edit),
+               MUIA_Family_Child, mi_cut = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MCut), MUIA_Menuitem_Shortcut,"ramiga X", MUIA_Menuitem_CommandString, TRUE, MUIA_UserData, WMEN_CUT, End,
+               MUIA_Family_Child, mi_copy = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MCopy), MUIA_Menuitem_Shortcut,"ramiga C", MUIA_Menuitem_CommandString, TRUE, MUIA_UserData, WMEN_COPY, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MPaste), MUIA_Menuitem_Shortcut, "ramiga V", MUIA_Menuitem_CommandString, TRUE, MUIA_UserData, WMEN_PASTE, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_PasteAs),
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Quoted), MUIA_Menuitem_Shortcut,"Q", MUIA_UserData,WMEN_PASQUOT, End,
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AltQuoted), MUIA_UserData,WMEN_PASALTQUOT, End,
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_ROT13), MUIA_UserData,WMEN_PASROT13, End,
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, mi_undo = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MUndo), MUIA_Menuitem_Shortcut,"ramiga Z", MUIA_Menuitem_CommandString, TRUE, MUIA_UserData, WMEN_UNDO, End,
-               MUIA_Family_Child, mi_redo = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Redo), MUIA_UserData, WMEN_REDO, End,
+               MUIA_Family_Child, mi_undo = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MUndo), MUIA_Menuitem_Shortcut,"ramiga Z", MUIA_Menuitem_CommandString, TRUE, MUIA_UserData, WMEN_UNDO, End,
+               MUIA_Family_Child, mi_redo = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Redo), MUIA_UserData, WMEN_REDO, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_SEARCH), MUIA_Menuitem_Shortcut,"F", MUIA_UserData,WMEN_SEARCH, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_SEARCH), MUIA_Menuitem_Shortcut,"F", MUIA_UserData,WMEN_SEARCH, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Dictionary), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,WMEN_DICT, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Textstyle),
-                  MUIA_Family_Child, data->GUI.MI_BOLD = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Bold), MUIA_Menuitem_Shortcut,"B", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_BOLD, End,
-                  MUIA_Family_Child, data->GUI.MI_ITALIC = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Italic), MUIA_Menuitem_Shortcut,"I", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_ITALIC, End,
-                  MUIA_Family_Child, data->GUI.MI_UNDERLINE = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Underlined), MUIA_Menuitem_Shortcut,"U", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_UNDERLINE, End,
-                  MUIA_Family_Child, data->GUI.MI_COLORED = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Colored), MUIA_Menuitem_Shortcut,"H", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_COLORED, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Dictionary), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,WMEN_DICT, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Textstyle),
+                  MUIA_Family_Child, data->GUI.MI_BOLD = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Bold), MUIA_Menuitem_Shortcut,"B", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_BOLD, End,
+                  MUIA_Family_Child, data->GUI.MI_ITALIC = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Italic), MUIA_Menuitem_Shortcut,"I", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_ITALIC, End,
+                  MUIA_Family_Child, data->GUI.MI_UNDERLINE = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Underlined), MUIA_Menuitem_Shortcut,"U", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_UNDERLINE, End,
+                  MUIA_Family_Child, data->GUI.MI_COLORED = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Colored), MUIA_Menuitem_Shortcut,"H", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_COLORED, End,
                End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Emoticons),
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Happy), MUIA_UserData,WMEN_EMOT0, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Indifferent), MUIA_UserData,WMEN_EMOT1, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Sad), MUIA_UserData,WMEN_EMOT2, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Ironic), MUIA_UserData,WMEN_EMOT3, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Emoticons),
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Happy), MUIA_UserData,WMEN_EMOT0, End,
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Indifferent), MUIA_UserData,WMEN_EMOT1, End,
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Sad), MUIA_UserData,WMEN_EMOT2, End,
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Ironic), MUIA_UserData,WMEN_EMOT3, End,
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, mi_autospell = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_WR_SpellCheck), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_AUTOSP, End,
+               MUIA_Family_Child, mi_autospell = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_SpellCheck), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_AUTOSP, End,
             End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_Attachments),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MAddFile), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,WMEN_ADDFILE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_AddCB), MUIA_UserData,WMEN_ADDCLIP, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_AddKey), MUIA_UserData,WMEN_ADDPGP, End,
+            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Attachments),
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MAddFile), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,WMEN_ADDFILE, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddCB), MUIA_UserData,WMEN_ADDCLIP, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddKey), MUIA_UserData,WMEN_ADDPGP, End,
             End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_Options),
-               MUIA_Family_Child, mi_delsend = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MDelSend), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_DELSEND, End,
-               MUIA_Family_Child, mi_receipt = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MReceipt), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_RECEIPT, End,
-               MUIA_Family_Child, mi_dispnoti= MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MGetMDN),  MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_DISPNOTI, End,
-               MUIA_Family_Child, mi_addinfo = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MAddInfo), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_ADDINFO, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MImportance),
+            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Options),
+               MUIA_Family_Child, mi_delsend = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MDelSend), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_DELSEND, End,
+               MUIA_Family_Child, mi_receipt = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MReceipt), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_RECEIPT, End,
+               MUIA_Family_Child, mi_dispnoti= MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MGetMDN),  MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_DISPNOTI, End,
+               MUIA_Family_Child, mi_addinfo = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MAddInfo), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_ADDINFO, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MImportance),
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,priority[0], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x06, MUIA_UserData,WMEN_IMPORT0, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,priority[1], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x05, MUIA_Menuitem_Checked,TRUE, MUIA_UserData,WMEN_IMPORT1, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,priority[2], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x03, MUIA_UserData,WMEN_IMPORT2, End,
                End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_CO_CrdSignature),
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_CrdSignature),
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,signat[0], MUIA_Menuitem_Shortcut,"0", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x0E, MUIA_Menuitem_Checked,!C->UseSignature, MUIA_UserData,WMEN_SIGN0, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,signat[1], MUIA_Menuitem_Shortcut,"7", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x0D, MUIA_Menuitem_Checked,C->UseSignature, MUIA_UserData,WMEN_SIGN1, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,signat[2], MUIA_Menuitem_Shortcut,"8", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x0B, MUIA_UserData,WMEN_SIGN2, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,signat[3], MUIA_Menuitem_Shortcut,"9", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x07, MUIA_UserData,WMEN_SIGN3, End,
                End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_CO_CrdSecurity),
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_CrdSecurity),
                   MUIA_Family_Child, sec_menus[SEC_NONE]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_NONE]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x3E, MUIA_UserData,WMEN_SECUR0, End,
                   MUIA_Family_Child, sec_menus[SEC_SIGN]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_SIGN]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x3D, MUIA_UserData,WMEN_SECUR1, End,
                   MUIA_Family_Child, sec_menus[SEC_ENCRYPT]  = MenuitemObject, MUIA_Menuitem_Title,security[SEC_ENCRYPT] , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x3B, MUIA_UserData,WMEN_SECUR2, End,
@@ -3103,10 +3103,10 @@ static struct WR_ClassData *WR_New(int winnum)
                Child, VGroup, /* Message */
                   MUIA_HelpNode, "WR00",
                   Child, ColGroup(2),
-                     Child, Label(GetStr(MSG_WR_To)),
-                     Child, MakeAddressField(&data->GUI.ST_TO, GetStr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, winnum, TRUE),
-                     Child, Label(GetStr(MSG_WR_Subject)),
-                     Child, data->GUI.ST_SUBJECT = MakeString(SIZE_SUBJECT,GetStr(MSG_WR_Subject)),
+                     Child, Label(tr(MSG_WR_To)),
+                     Child, MakeAddressField(&data->GUI.ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, winnum, TRUE),
+                     Child, Label(tr(MSG_WR_Subject)),
+                     Child, data->GUI.ST_SUBJECT = MakeString(SIZE_SUBJECT,tr(MSG_WR_Subject)),
                   End,
                   Child, hasHideToolBarFlag(C->HideGUIElements) ?
                      (RectangleObject, MUIA_ShowMe, FALSE, End) :
@@ -3171,22 +3171,22 @@ static struct WR_ClassData *WR_New(int winnum)
                      End,
                   End,
                   Child, ColGroup(4),
-                     Child, data->GUI.BT_ADD     = MakeButton(GetStr(MSG_WR_Add)),
-                     Child, data->GUI.BT_ADDPACK = MakeButton(GetStr(MSG_WR_AddPack)),
-                     Child, data->GUI.BT_DEL     = MakeButton(GetStr(MSG_Del)),
-                     Child, data->GUI.BT_DISPLAY = MakeButton(GetStr(MSG_WR_Display)),
+                     Child, data->GUI.BT_ADD     = MakeButton(tr(MSG_WR_Add)),
+                     Child, data->GUI.BT_ADDPACK = MakeButton(tr(MSG_WR_AddPack)),
+                     Child, data->GUI.BT_DEL     = MakeButton(tr(MSG_Del)),
+                     Child, data->GUI.BT_DISPLAY = MakeButton(tr(MSG_WR_Display)),
                   End,
                   Child, HGroup,
                      Child, data->GUI.RA_ENCODING = RadioObject,
-                        GroupFrameT(GetStr(MSG_WR_Encoding)),
+                        GroupFrameT(tr(MSG_WR_Encoding)),
                         MUIA_Radio_Entries, encoding,
                         MUIA_CycleChain, 1,
                      End,
                      Child, ColGroup(2),
-                        Child, Label2(GetStr(MSG_WR_ContentType)),
-                        Child, MakeMimeTypePop(&data->GUI.ST_CTYPE, GetStr(MSG_WR_ContentType)),
-                        Child, Label2(GetStr(MSG_WR_Description)),
-                        Child, data->GUI.ST_DESC = MakeString(SIZE_DEFAULT,GetStr(MSG_WR_Description)),
+                        Child, Label2(tr(MSG_WR_ContentType)),
+                        Child, MakeMimeTypePop(&data->GUI.ST_CTYPE, tr(MSG_WR_ContentType)),
+                        Child, Label2(tr(MSG_WR_Description)),
+                        Child, data->GUI.ST_DESC = MakeString(SIZE_DEFAULT,tr(MSG_WR_Description)),
                         Child, HSpace(0),
                      End,
                   End,
@@ -3194,36 +3194,36 @@ static struct WR_ClassData *WR_New(int winnum)
                Child, VGroup, /* Options */
                   MUIA_HelpNode, "WR02",
                   Child, ColGroup(2),
-                     Child, Label(GetStr(MSG_WR_CopyTo)),
-                     Child, MakeAddressField(&data->GUI.ST_CC, GetStr(MSG_WR_CopyTo), MSG_HELP_WR_ST_CC, ABM_CC, winnum, TRUE),
-                     Child, Label(GetStr(MSG_WR_BlindCopyTo)),
-                     Child, MakeAddressField(&data->GUI.ST_BCC, GetStr(MSG_WR_BlindCopyTo), MSG_HELP_WR_ST_BCC, ABM_BCC, winnum, TRUE),
-                     Child, Label(GetStr(MSG_WR_From)),
-                     Child, MakeAddressField(&data->GUI.ST_FROM, GetStr(MSG_WR_From), MSG_HELP_WR_ST_FROM, ABM_FROM, winnum, TRUE),
-                     Child, Label(GetStr(MSG_WR_ReplyTo)),
-                     Child, MakeAddressField(&data->GUI.ST_REPLYTO, GetStr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, winnum, TRUE),
-                     Child, Label(GetStr(MSG_WR_ExtraHeaders)),
-                     Child, data->GUI.ST_EXTHEADER = MakeString(SIZE_LARGE,GetStr(MSG_WR_ExtraHeaders)),
+                     Child, Label(tr(MSG_WR_CopyTo)),
+                     Child, MakeAddressField(&data->GUI.ST_CC, tr(MSG_WR_CopyTo), MSG_HELP_WR_ST_CC, ABM_CC, winnum, TRUE),
+                     Child, Label(tr(MSG_WR_BlindCopyTo)),
+                     Child, MakeAddressField(&data->GUI.ST_BCC, tr(MSG_WR_BlindCopyTo), MSG_HELP_WR_ST_BCC, ABM_BCC, winnum, TRUE),
+                     Child, Label(tr(MSG_WR_From)),
+                     Child, MakeAddressField(&data->GUI.ST_FROM, tr(MSG_WR_From), MSG_HELP_WR_ST_FROM, ABM_FROM, winnum, TRUE),
+                     Child, Label(tr(MSG_WR_ReplyTo)),
+                     Child, MakeAddressField(&data->GUI.ST_REPLYTO, tr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, winnum, TRUE),
+                     Child, Label(tr(MSG_WR_ExtraHeaders)),
+                     Child, data->GUI.ST_EXTHEADER = MakeString(SIZE_LARGE,tr(MSG_WR_ExtraHeaders)),
                   End,
                   Child, HGroup,
-                     Child, VGroup, GroupFrameT(GetStr(MSG_WR_SendOpt)),
-                        Child, MakeCheckGroup((Object **)&data->GUI.CH_DELSEND, GetStr(MSG_WR_DelSend)),
-                        Child, MakeCheckGroup((Object **)&data->GUI.CH_RECEIPT, GetStr(MSG_WR_Receipt)),
-                        Child, MakeCheckGroup((Object **)&data->GUI.CH_DISPNOTI, GetStr(MSG_WR_GetMDN)),
-                        Child, MakeCheckGroup((Object **)&data->GUI.CH_ADDINFO, GetStr(MSG_WR_AddInfo)),
+                     Child, VGroup, GroupFrameT(tr(MSG_WR_SendOpt)),
+                        Child, MakeCheckGroup((Object **)&data->GUI.CH_DELSEND, tr(MSG_WR_DelSend)),
+                        Child, MakeCheckGroup((Object **)&data->GUI.CH_RECEIPT, tr(MSG_WR_Receipt)),
+                        Child, MakeCheckGroup((Object **)&data->GUI.CH_DISPNOTI, tr(MSG_WR_GetMDN)),
+                        Child, MakeCheckGroup((Object **)&data->GUI.CH_ADDINFO, tr(MSG_WR_AddInfo)),
                         Child, HGroup,
-                           Child, Label(GetStr(MSG_WR_Importance)),
-                           Child, data->GUI.CY_IMPORTANCE = MakeCycle(priority, GetStr(MSG_WR_Importance)),
+                           Child, Label(tr(MSG_WR_Importance)),
+                           Child, data->GUI.CY_IMPORTANCE = MakeCycle(priority, tr(MSG_WR_Importance)),
                         End,
                      End,
                      Child, HSpace(0),
-                     Child, data->GUI.RA_SIGNATURE = RadioObject, GroupFrameT(GetStr(MSG_WR_Signature)),
+                     Child, data->GUI.RA_SIGNATURE = RadioObject, GroupFrameT(tr(MSG_WR_Signature)),
                         MUIA_Radio_Entries, signat,
                         MUIA_Radio_Active, C->UseSignature ? 1 : 0,
                         MUIA_CycleChain, 1,
                      End,
                      Child, HSpace(0),
-                     Child, data->GUI.RA_SECURITY = RadioObject, GroupFrameT(GetStr(MSG_WR_Security)),
+                     Child, data->GUI.RA_SECURITY = RadioObject, GroupFrameT(tr(MSG_WR_Security)),
                         MUIA_Radio_Entries, security,
                         MUIA_Radio_Active, SEC_DEFAULTS,
                         MUIA_CycleChain, 1,
@@ -3232,10 +3232,10 @@ static struct WR_ClassData *WR_New(int winnum)
                End,
             End,
             Child, ColGroup(4),
-               Child, data->GUI.BT_SEND   = MakeButton(GetStr(MSG_WR_Send)),
-               Child, data->GUI.BT_QUEUE  = MakeButton(GetStr(MSG_WR_ToQueue)),
-               Child, data->GUI.BT_HOLD   = MakeButton(GetStr(MSG_WR_Hold)),
-               Child, data->GUI.BT_CANCEL = MakeButton(GetStr(MSG_Cancel)),
+               Child, data->GUI.BT_SEND   = MakeButton(tr(MSG_WR_Send)),
+               Child, data->GUI.BT_QUEUE  = MakeButton(tr(MSG_WR_ToQueue)),
+               Child, data->GUI.BT_HOLD   = MakeButton(tr(MSG_WR_Hold)),
+               Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_Cancel)),
             End,
          End,
       End;
@@ -3380,19 +3380,19 @@ static struct WR_ClassData *WR_NewBounce(int winnum)
    if (data)
    {
       data->GUI.WI = WindowObject,
-         MUIA_Window_Title, GetStr(MSG_WR_BounceWT),
+         MUIA_Window_Title, tr(MSG_WR_BounceWT),
          MUIA_HelpNode, "WR_W",
          MUIA_Window_ID, MAKE_ID('W','R','I','B'),
          WindowContents, VGroup,
             Child, ColGroup(2),
-               Child, Label2(GetStr(MSG_WR_BounceTo)),
-               Child, MakeAddressField(&data->GUI.ST_TO, GetStr(MSG_WR_BounceTo), MSG_HELP_WR_ST_TO, ABM_TO, winnum, TRUE),
+               Child, Label2(tr(MSG_WR_BounceTo)),
+               Child, MakeAddressField(&data->GUI.ST_TO, tr(MSG_WR_BounceTo), MSG_HELP_WR_ST_TO, ABM_TO, winnum, TRUE),
             End,
             Child, ColGroup(4),
-               Child, data->GUI.BT_SEND   = MakeButton(GetStr(MSG_WR_Send)),
-               Child, data->GUI.BT_QUEUE  = MakeButton(GetStr(MSG_WR_ToQueue)),
-               Child, data->GUI.BT_HOLD   = MakeButton(GetStr(MSG_WR_Hold)),
-               Child, data->GUI.BT_CANCEL = MakeButton(GetStr(MSG_Cancel)),
+               Child, data->GUI.BT_SEND   = MakeButton(tr(MSG_WR_Send)),
+               Child, data->GUI.BT_QUEUE  = MakeButton(tr(MSG_WR_ToQueue)),
+               Child, data->GUI.BT_HOLD   = MakeButton(tr(MSG_WR_Hold)),
+               Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_Cancel)),
             End,
          End,
       End;

@@ -49,7 +49,7 @@ OVERLOAD(OM_NEW)
 
   if (!(obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title, GetStr(MSG_SEARCHWINDOW_TITLE),
+    MUIA_Window_Title, tr(MSG_SEARCHWINDOW_TITLE),
     WindowContents, VGroup,
 
       Child, string = BetterStringObject,
@@ -59,14 +59,14 @@ OVERLOAD(OM_NEW)
 
       Child, HGroup,
         Child, RectangleObject, End,
-        Child, MakeCheckGroup(&case_sensitive, GetStr(MSG_SEARCHWINDOW_TOGGLE_CASESENSITVE)),
+        Child, MakeCheckGroup(&case_sensitive, tr(MSG_SEARCHWINDOW_TOGGLE_CASESENSITVE)),
         Child, RectangleObject, End,
       End,
 
       Child, HGroup,
-        Child, search = MakeButton(GetStr(MSG_SEARCHWINDOW_BT_SEARCH)),
-        Child, top    = MakeButton(GetStr(MSG_SEARCHWINDOW_BT_FROMTOP)),
-        Child, cancel = MakeButton(GetStr(MSG_SEARCHWINDOW_BT_CANCEL)),
+        Child, search = MakeButton(tr(MSG_SEARCHWINDOW_BT_SEARCH)),
+        Child, top    = MakeButton(tr(MSG_SEARCHWINDOW_BT_FROMTOP)),
+        Child, cancel = MakeButton(tr(MSG_SEARCHWINDOW_BT_CANCEL)),
       End,
 
     End,
@@ -151,7 +151,7 @@ DECLARE(Search) // ULONG top
     if(msg->top)             SET_FLAG(flags, MUIF_TextEditor_Search_FromTop);
     if(data->CaseSensitive)  SET_FLAG(flags, MUIF_TextEditor_Search_CaseSensitive);
     if(!DoMethod(data->Texteditor, MUIM_TextEditor_Search, string, flags))
-      MUI_Request(_app(obj), parent, 0L, GetStr(MSG_SEARCHNOTFOUND_TITLE), GetStr(MSG_SEARCHNOTFOUND_BUTTON), GetStr(MSG_SEARCHNOTFOUND_MSG), string);
+      MUI_Request(_app(obj), parent, 0L, tr(MSG_SEARCHNOTFOUND_TITLE), tr(MSG_SEARCHNOTFOUND_BUTTON), tr(MSG_SEARCHNOTFOUND_MSG), string);
   }
 
   return 0;
