@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: bumped minimum required version of TheBar.mcc to v21.1 as that is
+    what YAM requires now.
+  * misc: adapted all TheBar relevant code passages to make use of the new v21
+    version of TheBar, including their new KeyQualifier functionality. Now
+    the key qualifier management code should be active and working again.
+  * ReadWindow.c: fixed a possible crash bug where we forgot to check if
+    the mail in question is a real mail or a virtual one.
+
 2007-01-13  Jens Langner <Jens.Langner@light-speed.de>
 
   * C_c.sd, C_h.sd, misc: renamed our locale translation function from "GetStr()"

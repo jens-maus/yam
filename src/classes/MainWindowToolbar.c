@@ -172,8 +172,6 @@ OVERLOAD(OM_NEW)
   // instruct MUI to generate the object
   if((obj = DoSuperNew(cl, obj,
                        MUIA_Group_Horiz,             TRUE,
-                       MUIA_TheBar_EnableKeys,       TRUE,
-                       MUIA_TheBar_IgnoreAppareance, FALSE,
                        MUIA_TheBar_Buttons,          buttons,
                        MUIA_TheBar_PicsDrawer,       "PROGDIR:Icons",
                        MUIA_TheBar_Pics,             normalImages,
@@ -181,63 +179,27 @@ OVERLOAD(OM_NEW)
                        MUIA_TheBar_DisPics,          ghostedImages,
                        TAG_MORE, inittags(msg))))
   {
-    Object *buttonObj;
-
     // update the SPAM control buttons only if the spam filter is not enabled
     if(!C->SpamFilterEnabled)
       DoMethod(obj, MUIM_MainWindowToolbar_UpdateSpamControls);
 
-    // everything worked out fine.
-    #warning "Toolbar_Qualifier missing!";
-
     // connect the buttons presses
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_READ)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ReadMessageHook);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_EDIT)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_NewMessageHook, NEW_EDIT, 0); //MUIV_Toolbar_Qualifier);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_MOVE)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &MA_MoveMessageHook);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_DELETE)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DeleteMessageHook, 0); //MUIV_Toolbar_Qualifier);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_GETADDR)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &MA_GetAddressHook);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_NEWMAIL)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_NewMessageHook, NEW_NEW, 0); //MUIV_Toolbar_Qualifier);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_REPLY)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_NewMessageHook, NEW_REPLY, 0); //MUIV_Toolbar_Qualifier);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_FORWARD)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_NewMessageHook, NEW_FORWARD, 0); //MUIV_Toolbar_Qualifier);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_GETMAIL)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 8, MUIM_Application_PushMethod, G->App, 5, MUIM_CallHook, &MA_PopNowHook, POP_USER, -1, 0); //MUIV_Toolbar_Qualifier);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_SENDALL)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 6, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, SEND_ALL);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_SPAM)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_ClassifyMessageHook, BC_SPAM);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_HAM)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_ClassifyMessageHook, BC_HAM);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_FILTER)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &ApplyFiltersHook, APPLY_USER, 0); //MUIV_Toolbar_Qualifier);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_FIND)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &FI_OpenHook);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_ADDRBOOK)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_MAIN_CONFIG)))
-      DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_OpenHook);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_READ,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ReadMessageHook);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_EDIT,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_NewMessageHook, NEW_EDIT, MUIV_TheBar_Qualifier);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_MOVE,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &MA_MoveMessageHook);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_DELETE,  MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DeleteMessageHook, MUIV_TheBar_Qualifier);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_GETADDR, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &MA_GetAddressHook);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_NEWMAIL, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_NewMessageHook, NEW_NEW, MUIV_TheBar_Qualifier);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_REPLY,   MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_NewMessageHook, NEW_REPLY, MUIV_TheBar_Qualifier);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_FORWARD, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_NewMessageHook, NEW_FORWARD, MUIV_TheBar_Qualifier);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_GETMAIL, MUIA_Pressed, FALSE, MUIV_Notify_Application, 8, MUIM_Application_PushMethod, G->App, 5, MUIM_CallHook, &MA_PopNowHook, POP_USER, -1, MUIV_TheBar_Qualifier);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_SENDALL, MUIA_Pressed, FALSE, MUIV_Notify_Application, 6, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, SEND_ALL);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_SPAM,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_ClassifyMessageHook, BC_SPAM);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_HAM,     MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_ClassifyMessageHook, BC_HAM);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_FILTER,  MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &ApplyFiltersHook, APPLY_USER, MUIV_TheBar_Qualifier);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_FIND,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &FI_OpenHook);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_ADDRBOOK,MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_CONFIG,  MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_OpenHook);
   }
   else
     E(DBF_STARTUP, "couldn't create MainWindowToolbar!");
@@ -257,8 +219,8 @@ DECLARE(UpdateSpamControls)
 
   ENTER();
 
-  DoMethod(obj, MUIM_TheBar_SetAttr, TB_MAIN_SPAM,  MUIV_TheBar_Attr_Hide, hide);
-  DoMethod(obj, MUIM_TheBar_SetAttr, TB_MAIN_HAM,   MUIV_TheBar_Attr_Hide, hide);
+  DoMethod(obj, MUIM_TheBar_SetAttr, TB_MAIN_SPAM, MUIA_TheBar_Attr_Hide, hide);
+  DoMethod(obj, MUIM_TheBar_SetAttr, TB_MAIN_HAM,  MUIA_TheBar_Attr_Hide, hide);
 
   RETURN(0);
   return 0;

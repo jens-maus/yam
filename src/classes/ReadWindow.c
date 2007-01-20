@@ -310,7 +310,7 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DISPLAY,   data->readMailGroup, 1, MUIM_ReadMailGroup_DisplayMailRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DETACH,    data->readMailGroup, 1, MUIM_ReadMailGroup_SaveAllAttachments);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_CROP,      data->readMailGroup, 1, MUIM_ReadMailGroup_CropAttachmentsRequest);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEW,       obj, 3,  MUIM_ReadWindow_NewMail, NEW_NEW, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEW,       obj, 3, MUIM_ReadWindow_NewMail, NEW_NEW, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_REPLY,     obj, 3, MUIM_ReadWindow_NewMail, NEW_REPLY, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FORWARD,   obj, 3, MUIM_ReadWindow_NewMail, NEW_FORWARD, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_BOUNCE,    obj, 3, MUIM_ReadWindow_NewMail, NEW_BOUNCE, 0);
@@ -347,13 +347,13 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TSTYLE,    obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FFONT,     obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-capslock del",                 obj, 2, MUIM_ReadWindow_DeleteMailRequest, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-capslock shift del",            obj, 2, MUIM_ReadWindow_DeleteMailRequest, IEQUALIFIER_LSHIFT);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-capslock shift del",           obj, 2, MUIM_ReadWindow_DeleteMailRequest, IEQUALIFIER_LSHIFT);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock space",       data->readMailGroup, 2, MUIM_TextEditor_ARexxCmd, "Next Page");
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock backspace",   data->readMailGroup, 2, MUIM_TextEditor_ARexxCmd, "Previous Page");
-    DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock left",         obj, 3, MUIM_ReadWindow_SwitchMail, -1, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock left",        obj, 3, MUIM_ReadWindow_SwitchMail, -1, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock right",       obj, 3, MUIM_ReadWindow_SwitchMail, +1, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock shift left",   obj, 3, MUIM_ReadWindow_SwitchMail, -1, IEQUALIFIER_LSHIFT);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock shift right",  obj, 3, MUIM_ReadWindow_SwitchMail, +1, IEQUALIFIER_LSHIFT);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock shift left",  obj, 3, MUIM_ReadWindow_SwitchMail, -1, IEQUALIFIER_LSHIFT);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock shift right", obj, 3, MUIM_ReadWindow_SwitchMail, +1, IEQUALIFIER_LSHIFT);
 
     // make sure the right menus/toolbar spam button items are available
     DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
@@ -476,13 +476,13 @@ DECLARE(ReadMail) // struct Mail *mail
 
   // change the menu item title of the
   // Edit item so that we either display "Edit" or "Edit as New"
-  if(isOutgoingFolder(folder))
+  if(isRealMail && isOutgoingFolder(folder))
     set(data->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDIT));
   else
     set(data->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDITASNEW));
 
   // enable/disable some menuitems in advance
-  set(data->MI_EDIT,      MUIA_Menuitem_Enabled, !inSpamFolder);
+  set(data->MI_EDIT,      MUIA_Menuitem_Enabled, isRealMail && !inSpamFolder);
   set(data->MI_MOVE,      MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_DELETE,    MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_DETACH,    MUIA_Menuitem_Enabled, hasAttach);
@@ -498,26 +498,35 @@ DECLARE(ReadMail) // struct Mail *mail
   if(C->SpamFilterEnabled)
   {
     if(data->MI_TOSPAM != NULL)
+    {
       // enable, if the mail is not yet classified (not spam, not ham)
-      set(data->MI_TOSPAM,    MUIA_Menuitem_Enabled, isRealMail && !isSpamMail && !isHamMail);
+      set(data->MI_TOSPAM, MUIA_Menuitem_Enabled, isRealMail && !isSpamMail && !isHamMail);
+    }
     if(data->MI_TOHAM != NULL)
+    {
       // enable, if the mail is not sppam
-      set(data->MI_TOHAM,     MUIA_Menuitem_Enabled, isRealMail && isSpamMail);
+      set(data->MI_TOHAM, MUIA_Menuitem_Enabled, isRealMail && isSpamMail);
+    }
   }
 
   // Enable if:
-  //  * the folder is enabled
-  //  * NOT in the "Sent" folder
-  DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isSentMail, data->MI_TOREAD,
-                                                                   data->MI_TOUNREAD,
-                                                                   TAG_DONE);
+  //  * the mail is a real (non-virtual) mail
+  DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, isRealMail, data->MI_TOMARKED,
+                                                                  data->MI_TOUNMARKED,
+                                                                  TAG_DONE);
 
   // Enable if:
-  //  * the folder is enabled
+  //  * the mail is a real (non-virtual) mail
+  //  * NOT in the "Sent" folder
+  DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, isRealMail && !isSentMail, data->MI_TOREAD,
+                                                                                 data->MI_TOUNREAD,
+                                                                                 TAG_DONE);
+  // Enable if:
+  //  * the mail is a real (non-virtual) mail
   //  * is in the "Outgoing" Folder
-  DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, isOutgoingFolder(folder), data->MI_TOHOLD,
-                                                                                data->MI_TOQUEUED,
-                                                                                TAG_DONE);
+  DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, isRealMail && isOutgoingFolder(folder), data->MI_TOHOLD,
+                                                                                              data->MI_TOQUEUED,
+                                                                                              TAG_DONE);
 
 
   if(data->windowToolbar)
@@ -529,16 +538,16 @@ DECLARE(ReadMail) // struct Mail *mail
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetPos, mail, &pos);
 
     // now set some items of the toolbar ghosted/enabled
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_PREV, MUIV_TheBar_Attr_Disabled, isRealMail ? pos == 0 : TRUE);
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_NEXT, MUIV_TheBar_Attr_Disabled, isRealMail ? pos == (folder->Total-1) : TRUE);
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_PREVTHREAD, MUIV_TheBar_Attr_Disabled, !prevMailAvailable);
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_NEXTTHREAD, MUIV_TheBar_Attr_Disabled, !nextMailAvailable);
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_DELETE, MUIV_TheBar_Attr_Disabled, !isRealMail);
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_MOVE, MUIV_TheBar_Attr_Disabled, !isRealMail);
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_REPLY, MUIV_TheBar_Attr_Disabled, isSentMail || inSpamFolder);
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_FORWARD, MUIV_TheBar_Attr_Disabled, inSpamFolder);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_PREV,        MUIA_TheBar_Attr_Disabled, isRealMail ? pos == 0 : TRUE);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_NEXT,        MUIA_TheBar_Attr_Disabled, isRealMail ? pos == (folder->Total-1) : TRUE);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_PREVTHREAD,  MUIA_TheBar_Attr_Disabled, !prevMailAvailable);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_NEXTTHREAD,  MUIA_TheBar_Attr_Disabled, !nextMailAvailable);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_DELETE,      MUIA_TheBar_Attr_Disabled, !isRealMail);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_MOVE,        MUIA_TheBar_Attr_Disabled, !isRealMail);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_REPLY,       MUIA_TheBar_Attr_Disabled, isSentMail || inSpamFolder);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_FORWARD,     MUIA_TheBar_Attr_Disabled, inSpamFolder);
 
-    if(C->SpamFilterEnabled)
+    if(isRealMail && C->SpamFilterEnabled)
     {
       // the spam filter is enabled, show/hide the buttons depending on the mail state
       if(isSpamMail)
@@ -562,9 +571,9 @@ DECLARE(ReadMail) // struct Mail *mail
     }
 
     // now set the attributes
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIV_TheBar_Attr_Hide, spamHidden);
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIV_TheBar_Attr_Disabled, !isRealMail);
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_HAM,  MUIV_TheBar_Attr_Hide, hamHidden);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIA_TheBar_Attr_Hide, spamHidden);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIA_TheBar_Attr_Disabled, !isRealMail);
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_HAM,  MUIA_TheBar_Attr_Hide, hamHidden);
   }
 
   // Update the status groups
@@ -897,8 +906,8 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       if(folder == spamfolder)
       {
         // update the toolbar
-        DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIV_TheBar_Attr_Disabled, TRUE);
-        DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_HAM, MUIV_TheBar_Attr_Disabled, FALSE);
+        DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIA_TheBar_Attr_Disabled, TRUE);
+        DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_HAM,  MUIA_TheBar_Attr_Disabled, FALSE);
       }
 
       // erase the old pointer as this has been free()ed by MA_MoveCopy()
@@ -926,8 +935,8 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       setStatusToHam(mail);
 
       // update the toolbar
-      DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIV_TheBar_Attr_Disabled, FALSE);
-      DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_HAM, MUIV_TheBar_Attr_Disabled, TRUE);
+      DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIA_TheBar_Attr_Disabled, FALSE);
+      DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_HAM,  MUIA_TheBar_Attr_Disabled, TRUE);
     }
   }
 
@@ -1162,12 +1171,12 @@ DECLARE(FollowThread) // LONG direction
     // set the correct toolbar image and menuitem ghosted
     if(msg->direction <= 0)
     {
-      DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_PREVTHREAD, MUIV_TheBar_Attr_Disabled, TRUE);
+      DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_PREVTHREAD, MUIA_TheBar_Attr_Disabled, TRUE);
       set(data->MI_PREVTHREAD, MUIA_Menuitem_Enabled, FALSE);
     }
     else
     {
-      DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_NEXTTHREAD, MUIV_TheBar_Attr_Disabled, TRUE);
+      DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_NEXTTHREAD, MUIA_TheBar_Attr_Disabled, TRUE);
       set(data->MI_NEXTTHREAD, MUIA_Menuitem_Enabled, FALSE);
     }
 

@@ -145,8 +145,6 @@ OVERLOAD(OM_NEW)
   // instruct MUI to generate the object
   if((obj = DoSuperNew(cl, obj,
                        MUIA_Group_Horiz,             TRUE,
-                			 MUIA_TheBar_EnableKeys,       TRUE,
-                  		 MUIA_TheBar_IgnoreAppareance, FALSE,
                        MUIA_TheBar_Buttons,          buttons,
                        MUIA_TheBar_PicsDrawer,       "PROGDIR:Icons",
                        MUIA_TheBar_Pics,             normalImages,
@@ -172,60 +170,38 @@ OVERLOAD(OM_NEW)
 // toolbar
 DECLARE(InitNotify) // struct WR_ClassData *wrData
 {
-  Object *buttonObj;
   struct WR_ClassData *wrData = msg->wrData;
 
   ENTER();
 
   // connect the buttons presses
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_WRITE_EDITOR)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &WR_EditHook, wrData->winnum);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_WRITE_INSERT)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSERT, wrData->winnum);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_WRITE_CUT)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, wrData->GUI.TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "CUT");
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_WRITE_COPY)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, wrData->GUI.TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "COPY");
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_WRITE_PASTE)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, wrData->GUI.TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "PASTE");
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_WRITE_UNDO)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, wrData->GUI.TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "UNDO");
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_WRITE_BOLD)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_BOLD, wrData->winnum);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_WRITE_ITALIC)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_ITALIC, wrData->winnum);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_WRITE_UNDERLINE)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_UNDERLINE, wrData->winnum);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_WRITE_COLORED)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_COLOR, wrData->winnum);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_WRITE_SEARCH)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &WR_SearchHook, wrData->GUI.TE_EDIT);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_EDITOR,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &WR_EditHook, wrData->winnum);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_INSERT,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSERT, wrData->winnum);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_CUT,       MUIA_Pressed, FALSE, wrData->GUI.TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "CUT");
+  DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_COPY,      MUIA_Pressed, FALSE, wrData->GUI.TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "COPY");
+  DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_PASTE,     MUIA_Pressed, FALSE, wrData->GUI.TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "PASTE");
+  DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_UNDO,      MUIA_Pressed, FALSE, wrData->GUI.TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "UNDO");
+  DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_BOLD,      MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_BOLD, wrData->winnum);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_ITALIC,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_ITALIC, wrData->winnum);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_UNDERLINE, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_UNDERLINE, wrData->winnum);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_COLORED,   MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_COLOR, wrData->winnum);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_SEARCH,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &WR_SearchHook, wrData->GUI.TE_EDIT);
 
   // connect attributes to button disables
-  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_AreaMarked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_CUT, MUIV_TheBar_Attr_Disabled, MUIV_NotTriggerValue);
-  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_AreaMarked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_COPY, MUIV_TheBar_Attr_Disabled, MUIV_NotTriggerValue);
-  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_UndoAvailable, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDO, MUIV_TheBar_Attr_Disabled, MUIV_NotTriggerValue);
+  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_AreaMarked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_CUT, MUIA_TheBar_Attr_Disabled, MUIV_NotTriggerValue);
+  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_AreaMarked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_COPY, MUIA_TheBar_Attr_Disabled, MUIV_NotTriggerValue);
+  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_UndoAvailable, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDO, MUIA_TheBar_Attr_Disabled, MUIV_NotTriggerValue);
 
   // connect attributes to button selections
-  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleBold, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_BOLD, MUIV_TheBar_Attr_Selected, MUIV_TriggerValue);
-  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleItalic, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_ITALIC, MUIV_TheBar_Attr_Selected, MUIV_TriggerValue);
-  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDERLINE, MUIV_TheBar_Attr_Selected, MUIV_TriggerValue);
-  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen, 7, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED, MUIV_TheBar_Attr_Selected, TRUE);
-  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen, 0, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED, MUIV_TheBar_Attr_Selected, FALSE);
-  DoMethod(wrData->GUI.MI_BOLD, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_BOLD, MUIV_TheBar_Attr_Selected, MUIV_TriggerValue);
-  DoMethod(wrData->GUI.MI_ITALIC, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_ITALIC, MUIV_TheBar_Attr_Selected, MUIV_TriggerValue);
-  DoMethod(wrData->GUI.MI_UNDERLINE, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDERLINE, MUIV_TheBar_Attr_Selected, MUIV_TriggerValue);
-  DoMethod(wrData->GUI.MI_COLORED, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED, MUIV_TheBar_Attr_Selected, MUIV_TriggerValue);
+  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleBold, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_BOLD, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleItalic, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_ITALIC, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDERLINE, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen, 7, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED, MUIA_TheBar_Attr_Selected, TRUE);
+  DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen, 0, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED, MUIA_TheBar_Attr_Selected, FALSE);
+  DoMethod(wrData->GUI.MI_BOLD, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_BOLD, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+  DoMethod(wrData->GUI.MI_ITALIC, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_ITALIC, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+  DoMethod(wrData->GUI.MI_UNDERLINE, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDERLINE, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+  DoMethod(wrData->GUI.MI_COLORED, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
 
   RETURN(0);
   return 0;

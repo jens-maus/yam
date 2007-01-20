@@ -137,8 +137,6 @@ OVERLOAD(OM_NEW)
   // instruct MUI to generate the object
   if((obj = DoSuperNew(cl, obj,
                        MUIA_Group_Horiz,             TRUE,
-                			 MUIA_TheBar_EnableKeys,       TRUE,
-                  		 MUIA_TheBar_IgnoreAppareance, FALSE,
                        MUIA_TheBar_Buttons,          buttons,
                        MUIA_TheBar_PicsDrawer,       "PROGDIR:Icons",
                        MUIA_TheBar_Pics,             normalImages,
@@ -146,38 +144,17 @@ OVERLOAD(OM_NEW)
                        MUIA_TheBar_DisPics,          ghostedImages,
                        TAG_MORE, inittags(msg))))
   {
-    Object *buttonObj;
-
     // now we connect the toolbar buttons with their operations
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_ABOOK_SAVE)))
-  		DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_SaveABookHook);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_ABOOK_FIND)))
-  		DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_FindHook);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_ABOOK_NEWUSER)))
-  		DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_USER);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_ABOOK_NEWLIST)))
-  		DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_LIST);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_ABOOK_NEWGROUP)))
-  		DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_GROUP);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_ABOOK_EDIT)))
-  		DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_EditHook);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_ABOOK_DELETE)))
-  		DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_DeleteHook);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_ABOOK_PRINT)))
-  		DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_PrintHook);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_ABOOK_OPENTREE)))
-  		DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FoldUnfoldHook, FALSE);
-
-    if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_ABOOK_CLOSETREE)))
-  		DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FoldUnfoldHook, TRUE);
+		DoMethod(obj, MUIM_TheBar_Notify, TB_ABOOK_SAVE,      MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_SaveABookHook);
+		DoMethod(obj, MUIM_TheBar_Notify, TB_ABOOK_FIND,      MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_FindHook);
+		DoMethod(obj, MUIM_TheBar_Notify, TB_ABOOK_NEWUSER,   MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_USER);
+		DoMethod(obj, MUIM_TheBar_Notify, TB_ABOOK_NEWLIST,   MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_LIST);
+		DoMethod(obj, MUIM_TheBar_Notify, TB_ABOOK_NEWGROUP,  MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_GROUP);
+		DoMethod(obj, MUIM_TheBar_Notify, TB_ABOOK_EDIT,      MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_EditHook);
+		DoMethod(obj, MUIM_TheBar_Notify, TB_ABOOK_DELETE,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_DeleteHook);
+  	DoMethod(obj, MUIM_TheBar_Notify, TB_ABOOK_PRINT,     MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_PrintHook);
+		DoMethod(obj, MUIM_TheBar_Notify, TB_ABOOK_OPENTREE,  MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FoldUnfoldHook, FALSE);
+		DoMethod(obj, MUIM_TheBar_Notify, TB_ABOOK_CLOSETREE, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FoldUnfoldHook, TRUE);
   }
 
 

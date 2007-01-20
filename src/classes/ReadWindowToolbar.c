@@ -156,8 +156,6 @@ OVERLOAD(OM_NEW)
   // instruct MUI to generate the object
   if((obj = DoSuperNew(cl, obj,
                        MUIA_Group_Horiz,             TRUE,
-               	       MUIA_TheBar_EnableKeys,       TRUE,
-                       MUIA_TheBar_IgnoreAppareance, FALSE,
                        MUIA_TheBar_Buttons,          buttons,
                        MUIA_TheBar_PicsDrawer,       "PROGDIR:Icons",
                        MUIA_TheBar_Pics,             normalImages,
@@ -186,53 +184,25 @@ OVERLOAD(OM_NEW)
 // toolbar
 DECLARE(InitNotify) // Object *readWindow, Object *readMailGroup
 {
-  Object *buttonObj;
   Object *readWindow = msg->readWindow;
   Object *readMailGroup = msg->readMailGroup;
 
   ENTER();
 
-  #warning "Toolbar_Qualifier missing!";
-
   // connect the buttons presses
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_READ_PREV)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, readWindow, 3, MUIM_ReadWindow_SwitchMail, -1, 0); //MUIV_Toolbar_Qualifier);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_READ_NEXT)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, readWindow, 3, MUIM_ReadWindow_SwitchMail, +1, 0); //MUIV_Toolbar_Qualifier);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_READ_PREVTHREAD)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_FollowThread, -1);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_READ_NEXTTHREAD)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_FollowThread, +1);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_READ_DISPLAY)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, readMailGroup, 1, MUIM_ReadMailGroup_DisplayMailRequest);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_READ_SAVE)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, readMailGroup, 1, MUIM_ReadMailGroup_SaveMailRequest);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_READ_PRINT)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, readMailGroup, 1, MUIM_ReadMailGroup_PrintMailRequest);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_READ_DELETE)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_DeleteMailRequest, 0); //MUIV_Toolbar_Qualifier);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_READ_MOVE)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, readWindow, 1, MUIM_ReadWindow_MoveMailRequest);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_READ_REPLY)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, readWindow, 3, MUIM_ReadWindow_NewMail, NEW_REPLY, 0); //MUIV_Toolbar_Qualifier);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_READ_FORWARD)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, readWindow, 3, MUIM_ReadWindow_NewMail, NEW_FORWARD, 0); //MUIV_Toolbar_Qualifier);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_READ_SPAM)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_ClassifyMessage, BC_SPAM);
-
-  if((buttonObj = (Object *)DoMethod(obj, MUIM_TheBar_GetObject, TB_READ_HAM)))
-    DoMethod(buttonObj, MUIM_Notify, MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_ClassifyMessage, BC_HAM);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_PREV,       MUIA_Pressed, FALSE, readWindow, 3, MUIM_ReadWindow_SwitchMail, -1, MUIV_TheBar_Qualifier);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_NEXT,       MUIA_Pressed, FALSE, readWindow, 3, MUIM_ReadWindow_SwitchMail, +1, MUIV_TheBar_Qualifier);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_PREVTHREAD, MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_FollowThread, -1);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_NEXTTHREAD, MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_FollowThread, +1);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_DISPLAY,    MUIA_Pressed, FALSE, readMailGroup, 1, MUIM_ReadMailGroup_DisplayMailRequest);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_SAVE,       MUIA_Pressed, FALSE, readMailGroup, 1, MUIM_ReadMailGroup_SaveMailRequest);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_PRINT,      MUIA_Pressed, FALSE, readMailGroup, 1, MUIM_ReadMailGroup_PrintMailRequest);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_DELETE,     MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_DeleteMailRequest, MUIV_TheBar_Qualifier);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_MOVE,       MUIA_Pressed, FALSE, readWindow, 1, MUIM_ReadWindow_MoveMailRequest);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_REPLY,      MUIA_Pressed, FALSE, readWindow, 3, MUIM_ReadWindow_NewMail, NEW_REPLY, MUIV_TheBar_Qualifier);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_FORWARD,    MUIA_Pressed, FALSE, readWindow, 3, MUIM_ReadWindow_NewMail, NEW_FORWARD, MUIV_TheBar_Qualifier);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_SPAM,       MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_ClassifyMessage, BC_SPAM);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_HAM,        MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_ClassifyMessage, BC_HAM);
 
   RETURN(0);
   return 0;
@@ -282,10 +252,10 @@ DECLARE(UpdateSpamControls) // struct Mail *mail
   }
 
   // now set the attributes
-  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_NUM+1, MUIV_TheBar_Attr_Hide,     !C->SpamFilterEnabled);
-  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_SPAM,  MUIV_TheBar_Attr_Hide,     hideSpam);
-  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_SPAM,  MUIV_TheBar_Attr_Disabled, disableSpam);
-  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_HAM,   MUIV_TheBar_Attr_Hide,     hideHam);
+  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_NUM+1, MUIA_TheBar_Attr_Hide,     !C->SpamFilterEnabled);
+  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_SPAM,  MUIA_TheBar_Attr_Hide,     hideSpam);
+  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_SPAM,  MUIA_TheBar_Attr_Disabled, disableSpam);
+  DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_HAM,   MUIA_TheBar_Attr_Hide,     hideHam);
 
   RETURN(0);
   return 0;
