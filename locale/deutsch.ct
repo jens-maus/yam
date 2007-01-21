@@ -2142,7 +2142,7 @@ Extras
 ; Extras
 ;
 MSG_CO_ImportMIME
-MIME Einstellungen importieren
+MIME Einstellungen importieren...
 ; Import MIME viewers & types...
 ;
 ;
@@ -7371,7 +7371,7 @@ Spam-Filters zurücksetzen?\n\
 Der Spam-Filter muss danach erneut trainiert werden.
 ;
 MSG_TR_CHECKUIDL
-Prüfe UIDLs um Duplikate zu vermeiden
+Prüfe UIDLs um Duplikate zu vermeiden...
 ;
 MSG_CO_SPAM_DISABLEFILTERASK
 Der Spam-Filter wurde soeben deaktiviert. Welche\n\
@@ -7505,7 +7505,7 @@ MSG_MA_MSEARCH
 Suchen...
 ;
 MSG_MA_MFILTER
-Filtern...
+Filtern
 ;
 MSG_MA_REMOVEDELETED
 Papierkorb leeren
