@@ -1577,6 +1577,8 @@ void rx_readprint( UNUSED struct RexxHost *host, struct rxd_readprint **rxd, lon
             }
             else if((prt = fopen("PRT:", "w")))
             {
+               setvbuf(prt, NULL, _IOFBF, SIZE_FILEBUF);
+
                DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_SaveDisplay, prt);
 
                fclose(prt);

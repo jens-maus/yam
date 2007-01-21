@@ -346,6 +346,8 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
     {
       struct MinList *headerList = calloc(1, sizeof(struct MinList));
 
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
       if(MA_ReadHeader(fh, headerList))
       {
         struct MinNode *curNode = headerList->mlh_Head;
@@ -424,6 +426,8 @@ static void FI_GenerateListPatterns(struct Search *search)
 
    if((fh = fopen(search->Match, "r")))
    {
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
       // make sure the pattern list is successfully freed
       FreeSearchPatternList(search);
 

@@ -264,7 +264,16 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
               {
                 if ((fh = fopen(fullfile, "r")))
                 {
-                  while (fgets(buf, SIZE_LINE, fh)) if (*buf == '\n') break; else fputs(buf, tf3->FP);
+                  setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+                  while(fgets(buf, SIZE_LINE, fh))
+                  {
+                    if(*buf == '\n')
+                      break;
+                    else
+                      fputs(buf, tf3->FP);
+                  }
+
                   fclose(fh);
                 }
                 FinishUnpack(fullfile);
@@ -280,7 +289,11 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
               if((comp.FH = fopen(MA_NewMailFile(outfolder, mfile), "w")))
               {
                 struct Mail *mlist[3];
-                mlist[0] = (struct Mail *)1; mlist[2] = NULL;
+                mlist[0] = (struct Mail *)1;
+                mlist[2] = NULL;
+
+                setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
+
                 WriteOutMessage(&comp);
                 fclose(comp.FH);
 
@@ -794,6 +807,8 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
 
   if((fh = fopen(PGPLOGFILE, "r")))
   {
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
     while (GetLine(fh, buffer, SIZE_LARGE))
     {
       if(!decrFail && decrFor && G->PGPVersion == 5)
@@ -1748,6 +1763,8 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
 
     if((fp = fopen(newPart->Filename, "w")))
     {
+      setvbuf(fp, NULL, _IOFBF, SIZE_FILEBUF);
+
       RETURN(fp);
       return fp;
     }
@@ -1999,7 +2016,10 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
   D(DBF_MAIL, "ParseMessage(): %08lx, %08lx, %08lx, %08lx", rmData, in, fname, hrp);
 
   if(in == NULL && fname)
-    in = fopen(fname, "r");
+  {
+    if((in = fopen(fname, "r")))
+      setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+  }
 
   if(in)
   {
@@ -2145,6 +2165,8 @@ BOOL RE_DecodePart(struct Part *rp)
 
     if((in = fopen(rp->Filename, "r")))
     {
+      setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
       // if this part has some headers, let`s skip them so that
       // we just decode the raw data.
       if(rp->HasHeaders)
@@ -2261,7 +2283,12 @@ BOOL RE_DecodePart(struct Part *rp)
       // now open the stream and decode it afterwards.
       if((out = fopen(buf, "w")))
       {
-        int decodeResult = RE_DecodeStream(rp, in, out);
+        int decodeResult;
+
+        setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+
+        // decode the stream
+        decodeResult = RE_DecodeStream(rp, in, out);
 
         // close the streams
         fclose(out);
@@ -2341,6 +2368,8 @@ static void RE_HandleMDNReport(struct Part *frp)
       {
         struct MinList *headerList = calloc(1, sizeof(struct MinList));
 
+        setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
         if(headerList)
         {
           // read in the header into the headerList
@@ -2407,6 +2436,7 @@ static void RE_HandleMDNReport(struct Part *frp)
       else if(!stricmp(type, "deleted"))    fprintf(out, tr(MSG_RE_MDNdeleted), msgdesc, mode);
       else if(!stricmp(type, "denied"))     fprintf(out, tr(MSG_RE_MDNdenied), msgdesc);
       else fprintf(out, tr(MSG_RE_MDNunknown), msgdesc, type, mode);
+
       fclose(out);
 
       DeleteFile(rp[0]->Filename);
@@ -2534,6 +2564,8 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
          // convert & copy our decrypted file over the encrypted part
          if(ConvertCRLF(tf->Filename, warnPart->Filename, FALSE) && (in = fopen(warnPart->Filename, "r")))
          {
+            setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
             if(warnPart->ContentType)
               free(warnPart->ContentType);
 
@@ -2785,6 +2817,9 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
       {
         int buflen = first->MaxHeaderLen+4;
         char *linebuf = malloc(buflen);
+
+        setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
         while(fgets(linebuf, buflen, fh))
         {
           cmsg = AppendToBuffer(cmsg, &wptr, &len, linebuf);
@@ -2863,6 +2898,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
         if((fh = fopen(part->Filename, "r")))
         {
           char *msg;
+
+          setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
           if((msg = calloc((size_t)(part->Size+3), sizeof(char))))
           {
@@ -3192,6 +3229,9 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   if ((tf->FP = fopen(tf->Filename, "r")))
                   {
                     char buf2[SIZE_LARGE];
+
+                    setvbuf(tf->FP, NULL, _IOFBF, SIZE_FILEBUF);
+
                     D(DBF_MAIL, "decrypted message follows:");
 
                     while(fgets(buf2, SIZE_LARGE, tf->FP))

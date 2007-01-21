@@ -277,7 +277,11 @@ static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
 {
    int c, linesize=0, total=0, unsafechars=0, binarychars=0, longlines=0;
    FILE *fh = fopen(fname, "r");
-   if (!fh) return ENC_B64;
+
+   if(!fh)
+     return ENC_B64;
+
+   setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
    // scan until end of file
    while((c = fgetc(fh)) != EOF)
@@ -631,9 +635,11 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
 
    ENTER();
 
-   if ((ifh = fopen(part->Filename, "r")))
+   if((ifh = fopen(part->Filename, "r")))
    {
-      switch (part->EncType)
+      setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
+
+      switch(part->EncType)
       {
          case ENC_B64:
          {
@@ -706,10 +712,14 @@ static BOOL WR_CreateHashTable(char *source, char *hashfile, char *sep)
   {
     FILE *out;
 
+    setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
     if((out = fopen(hashfile, "w")) != NULL)
     {
       char buffer[SIZE_LARGE];
       const size_t l = strlen(sep);
+
+      setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
       // the first offset is always zero
       WriteUInt32(out, 0);
@@ -737,7 +747,6 @@ static BOOL WR_CreateHashTable(char *source, char *hashfile, char *sep)
 //  Randomly selects a tagline and writes it to the message file
 static void WR_AddTagline(FILE *fh_mail)
 {
-
   ENTER();
 
   if(C->TagsFile[0] != '\0')
@@ -754,9 +763,13 @@ static void WR_AddTagline(FILE *fh_mail)
     {
       FILE *fh_hash;
 
+      setvbuf(fh_tag, NULL, _IOFBF, SIZE_FILEBUF);
+
       if((fh_hash = fopen(hashfile, "r")) != NULL)
       {
         long hsize;
+
+        setvbuf(fh_hash, NULL, _IOFBF, SIZE_FILEBUF);
 
         fseek(fh_hash, 0, SEEK_END);
         hsize = ftell(fh_hash);
@@ -806,24 +819,45 @@ static void WR_AddTagline(FILE *fh_mail)
 //  Writes signature to the message file
 static void WR_WriteSignature(FILE *out, int signat)
 {
-   FILE *in;
-   int ch;
-   if ((in = fopen(CreateFilename(SigNames[signat]), "r")))
-   {
-      fputs("-- \n", out);
-      while ((ch = fgetc(in)) != EOF)
+  FILE *in;
+
+  ENTER();
+
+  if((in = fopen(CreateFilename(SigNames[signat]), "r")))
+  {
+    int ch;
+
+    setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
+    fputs("-- \n", out);
+    while((ch = fgetc(in)) != EOF)
+    {
+      if(ch == '%')
       {
-         if (ch == '%')
-         {
-            ch = fgetc(in);
-            if (ch == 't') { WR_AddTagline(out); continue; }
-            if (ch == 'e') { CopyFile(NULL, out, "ENV:SIGNATURE", NULL); continue; }
-            ungetc(ch, in); ch = '%';
-         }
-         fputc(ch, out);
+        ch = fgetc(in);
+
+        if(ch == 't')
+        {
+          WR_AddTagline(out);
+          continue;
+        }
+
+        if(ch == 'e')
+        {
+          CopyFile(NULL, out, "ENV:SIGNATURE", NULL);
+          continue;
+        }
+
+        ungetc(ch, in);
+        ch = '%';
       }
-      fclose(in);
-   }
+      fputc(ch, out);
+    }
+
+    fclose(in);
+  }
+
+  LEAVE();
 }
 
 ///
@@ -847,8 +881,11 @@ void WR_AddSignature(int winnum, int signat)
          addline = fgetc(fh_mail) != '\n';
          fclose(fh_mail);
       }
-      if ((fh_mail = fopen(mailfile, "a")))
+
+      if((fh_mail = fopen(mailfile, "a")))
       {
+         setvbuf(fh_mail, NULL, _IOFBF, SIZE_FILEBUF);
+
          if (addline)
             fputc('\n', fh_mail);
 
@@ -936,6 +973,8 @@ static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
     BOOL infield = FALSE;
     BOOL inbody = FALSE;
 
+    setvbuf(oldfh, NULL, _IOFBF, SIZE_FILEBUF);
+
     while(fgets(buf, SIZE_LINE, oldfh))
     {
       if(*buf == '\n' && !inbody)
@@ -999,6 +1038,8 @@ static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
     {
       BOOL infield = FALSE;
       char buf[SIZE_LINE];
+
+      setvbuf(oldfh, NULL, _IOFBF, SIZE_FILEBUF);
 
       while(fgets(buf, SIZE_LINE, oldfh))
       {
@@ -1379,8 +1420,10 @@ BOOL WriteOutMessage(struct Compose *comp)
       struct Compose tcomp;
       FILE *tfh;
 
-      if((tf = OpenTempFile(NULL)) && (tfh = fopen(tf->Filename,"w")))
+      if((tf = OpenTempFile(NULL)) && (tfh = fopen(tf->Filename, "w")))
       {
+         setvbuf(tfh, NULL, _IOFBF, SIZE_FILEBUF);
+
          memcpy(&tcomp,comp,sizeof(tcomp));   // clone struct Compose
          tcomp.FH = tfh;                      // set new filehandle
          tcomp.Security = SEC_NONE;           // temp msg gets attachments and no security
@@ -1732,6 +1775,8 @@ void WR_NewMail(enum WriteMode mode, int winnum)
   {
     struct ExtendedMail *email;
     int stat = mode == WRITE_HOLD ? SFLAG_HOLD : SFLAG_QUEUED;
+
+    setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
 
     // write out the message to our file and
     // check that everything worked out fine.
@@ -2288,13 +2333,26 @@ HOOKPROTONHNO(WR_ChangeSignatureFunc, void, int *arg)
       EditorToFile(G->WR[winnum]->GUI.TE_EDIT, tf->Filename);
       if ((in = fopen(tf->Filename, "r")))
       {
+         setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
          if ((out = fopen(G->WR_Filename[winnum], "w")))
          {
-            while (fgets(buffer, SIZE_LINE, in))
-               if (strcmp(buffer, "-- \n")) fputs(buffer, out); else break;
-            if (signat) WR_WriteSignature(out, signat-1);
+            setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+
+            while(fgets(buffer, SIZE_LINE, in))
+            {
+              if(strcmp(buffer, "-- \n"))
+                fputs(buffer, out);
+              else
+                break;
+            }
+
+            if(signat)
+              WR_WriteSignature(out, signat-1);
+
             fclose(out);
          }
+
          fclose(in);
       }
       CloseTempFile(tf);;
@@ -2325,6 +2383,8 @@ static char *WR_TransformText(char *source, enum TransformMode mode, const char 
       {
          if((fp = fopen(source, "r")))
          {
+            setvbuf(fp, NULL, _IOFBF, SIZE_FILEBUF);
+
             // in case the source is UUencoded text we have to add the
             // "begin 644 XXX" stuff in advance.
             if(mode == ED_INSUUCODE)
@@ -2420,6 +2480,8 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
           FILE *in = fopen(filename, "r");
           if(in)
           {
+            setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
             // lets uuencode the file now.
             if(uuencode_file(in, tf->FP) > 0)
             {

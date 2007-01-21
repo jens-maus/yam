@@ -332,8 +332,9 @@ BOOL FO_LoadConfig(struct Folder *fo)
 
    if((fh = fopen(fname, "r")))
    {
-      fgets(buffer, SIZE_LARGE, fh);
-      if (!strnicmp(buffer, "YFC", 3))
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+      if(fgets(buffer, SIZE_LARGE, fh) && strnicmp(buffer, "YFC", 3) == 0)
       {
          BOOL statsproc = FALSE;
 
@@ -406,9 +407,11 @@ BOOL FO_SaveConfig(struct Folder *fo)
    strlcpy(fname, GetFolderDir(fo), sizeof(fname));
    AddPart(fname, ".fconfig", sizeof(fname));
 
-   if ((fh = fopen(fname, "w")))
+   if((fh = fopen(fname, "w")))
    {
       struct DateStamp ds;
+
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
       fprintf(fh, "YFC2 - YAM Folder Configuration\n");
       fprintf(fh, "Name        = %s\n",  fo->Name);
@@ -552,6 +555,8 @@ BOOL FO_LoadTree(char *fname)
 
    if((fh = fopen(fname, "r")))
    {
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
       GetLine(fh, buffer, sizeof(buffer));
       if (!strncmp(buffer, "YFO", 3))
       {
@@ -824,20 +829,27 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
 //  Saves folder list to a file
 BOOL FO_SaveTree(char *fname)
 {
-   BOOL success = TRUE;
-   FILE *fh;
+  BOOL success = TRUE;
+  FILE *fh;
 
-   if ((fh = fopen(fname, "w")))
-   {
-      fputs("YFO1 - YAM Folders\n", fh);
+  ENTER();
 
-      if(!FO_SaveSubTree(fh, MUIV_NListtree_GetEntry_ListNode_Root)) success = FALSE;
+  if((fh = fopen(fname, "w")))
+  {
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      fclose(fh);
-   }
-   else ER_NewError(tr(MSG_ER_CantCreateFile), fname);
+    fputs("YFO1 - YAM Folders\n", fh);
 
-   return success;
+    if(!FO_SaveSubTree(fh, MUIV_NListtree_GetEntry_ListNode_Root))
+      success = FALSE;
+
+    fclose(fh);
+  }
+  else
+    ER_NewError(tr(MSG_ER_CantCreateFile), fname);
+
+  RETURN(success);
+  return success;
 }
 
 ///

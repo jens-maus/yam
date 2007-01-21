@@ -1191,6 +1191,8 @@ DECLARE(SaveDecryptedMail)
     {
       struct ExtendedMail *email;
 
+      setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
+
       comp.Mode = NEW_SAVEDEC;
       comp.refMail = mail;
       comp.FirstPart = p1 = NewPart(2);

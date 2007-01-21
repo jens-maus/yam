@@ -94,8 +94,10 @@ static void DI_Save(void)
    struct Dict *entry;
    int i;
 
-   if ((fh = fopen(G->DI_Filename, "w")))
+   if((fh = fopen(G->DI_Filename, "w")))
    {
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
       BusyGauge(tr(MSG_BusySavingDI), "", (int)xget(G->DI->GUI.LV_ENTRIES, MUIA_List_Entries));
       fputs("YDI1 - YAM Dictionary\n", fh);
       for (i = 0; ;i++)
@@ -123,8 +125,10 @@ static int DI_Load(void)
    char buffer[SIZE_LARGE], *p;
    struct Dict entry;
 
-   if ((fh = fopen(G->DI_Filename, "r")))
+   if((fh = fopen(G->DI_Filename, "r")))
    {
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
       BusyText(tr(MSG_BusyLoadingDI), "");
       GetLine(fh, buffer, SIZE_LARGE);
       if (!strncmp(buffer,"YDI",3))

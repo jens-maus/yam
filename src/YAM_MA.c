@@ -1616,6 +1616,8 @@ int MA_NewNew(struct Mail *mail, int flags)
     {
       struct WR_ClassData *wr = G->WR[winnum];
 
+      setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+
       wr->Mode = NEW_NEW;
       wr->refMail = mail;
 
@@ -1766,6 +1768,8 @@ int MA_NewEdit(struct Mail *mail, int flags)
       struct ReadMailData *rmData;
       struct ExtendedMail *email;
       struct WR_ClassData *wr = G->WR[winnum];
+
+      setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
       // flag the exact creation mode
       if(isOutgoingFolder(folder))
@@ -1958,6 +1962,8 @@ int MA_NewForward(struct Mail **mlist, int flags)
       struct WR_ClassData *wr = G->WR[winnum];
       char *rsub = AllocStrBuf(SIZE_SUBJECT);
 
+      setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+
       wr->Mode = NEW_FORWARD;
       if((wr->refMailList = malloc(mlen)))
         memcpy(wr->refMailList, mlist, mlen);
@@ -2100,6 +2106,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
       struct WR_ClassData *wr = G->WR[winnum];
       struct ExpandTextData etd;
       BOOL mlIntro = FALSE;
+
+      setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
       // make sure the write window know of the
       // operation and knows which mails to process
@@ -2593,9 +2601,13 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
              struct Folder *fo = mail->Folder;
              int f;
 
+             setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+
              if((in = fopen(rmData->firstPart->Filename, "r")))
              {
                 BOOL infield = FALSE, inbody = FALSE;
+
+                setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
 
                 while(fgets(buf, SIZE_LINE, in))
                 {
@@ -3662,6 +3674,8 @@ BOOL MA_ImportMessages(char *fname)
   {
     char buffer[SIZE_LINE];
 
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
     // what we do first is to try to find out which
     // file the user tries to import and if it is a valid
     // and supported one.
@@ -3843,12 +3857,20 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
    if (!strcmp(subj, mail->Subject)) return;
    if (!StartUnpack(oldfile = GetMailFile(NULL, NULL, mail), fullfile, fo)) return;
    strmfp(newfile, GetFolderDir(fo), "00000.tmp");
-   if ((newfh = fopen(newfile, "w")))
+
+   if((newfh = fopen(newfile, "w")))
    {
-      if ((oldfh = fopen(fullfile, "r")))
+      setvbuf(newfh, NULL, _IOFBF, SIZE_FILEBUF);
+
+      if((oldfh = fopen(fullfile, "r")))
       {
-         BOOL infield = FALSE, inbody = FALSE, hasorigsubj = FALSE;
-         while (fgets(buf, SIZE_LINE, oldfh))
+         BOOL infield = FALSE;
+         BOOL inbody = FALSE;
+         BOOL hasorigsubj = FALSE;
+
+         setvbuf(oldfh, NULL, _IOFBF, SIZE_FILEBUF);
+
+         while(fgets(buf, SIZE_LINE, oldfh))
          {
             if (*buf == '\n' && !inbody)
             {

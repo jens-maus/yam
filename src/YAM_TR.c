@@ -2021,8 +2021,11 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
                if ((len = TR_Recv(buf, SIZE_LINE)) <= 0) break;
                bufptr = buf;
             }
-            if ((out = fopen(filename, "w")))
+
+            if((out = fopen(filename, "w")))
             {
+               setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+
                ++bufptr;
                fwrite(bufptr, (size_t)(len-(bufptr-buf)), 1, out);
                while ((len = TR_Recv(buf, SIZE_LINE)) > 0) fwrite(buf, len, 1, out);
@@ -2444,6 +2447,8 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
          {
             struct ExtendedMail *email;
             BOOL done = FALSE;
+
+            setvbuf(f, NULL, _IOFBF, SIZE_FILEBUF);
 
             // now we call a subfunction to receive data from the POP3 server
             // and write it in the filehandle as long as there is no termination \r\n.\r\n
@@ -3386,6 +3391,8 @@ static BOOL InitUIDLhash(void)
     {
       char uidl[SIZE_DEFAULT+SIZE_HOST];
 
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
       while(GetLine(fh, uidl, sizeof(uidl)))
         AddUIDLtoHash(uidl, FALSE);
 
@@ -3477,6 +3484,8 @@ static void CleanupUIDLhash(void)
     // write it to the .uidl file back again.
     if((fh = fopen(CreateFilename(".uidl"), "w")))
     {
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
       // call HashTableEnumerate with the SaveUIDLtoken callback function
       HashTableEnumerate(G->TR->UIDLhashTable, SaveUIDLtoken, fh);
 
@@ -3729,6 +3738,8 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
       {
          struct MinNode *curNode;
 
+         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
          success = TRUE;
 
          for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort && success; curNode = curNode->mln_Succ)
@@ -3862,6 +3873,8 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
    if ((f = fopen(mf = GetMailFile(NULL, outfolder, mail), "r")))
    {
       char buf[SIZE_LINE];
+
+      setvbuf(f, NULL, _IOFBF, SIZE_FILEBUF);
 
       snprintf(buf, sizeof(buf), "FROM:<%s>", C->EmailAddress);
       if (TR_SendSMTPCmd(SMTP_MAIL, buf, MSG_ER_BadResponse))
@@ -4748,6 +4761,8 @@ BOOL TR_GetMessageList_IMPORT(void)
         int size = 0;
         long addr = 0;
 
+        setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
+
         while(GetLine(ifh, buffer, SIZE_LINE))
         {
           // now we parse through the input file until we
@@ -4774,6 +4789,8 @@ BOOL TR_GetMessageList_IMPORT(void)
             // open a new file handler
             if((ofh = fopen(fname, "w")) == NULL)
               break;
+
+            setvbuf(ofh, NULL, _IOFBF, SIZE_FILEBUF);
 
             size = 0;
             foundBody = FALSE;
@@ -4860,6 +4877,8 @@ BOOL TR_GetMessageList_IMPORT(void)
       if((ifh = fopen(G->TR->ImportFile, "rb")))
       {
         unsigned char *file_header;
+
+        setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
 
         // read the 9404 bytes long file header for properly identifying
         // an Outlook Express database file.
@@ -4949,6 +4968,8 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
         {
           struct MinNode *curNode;
 
+          setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
+
           // iterate through our transferList and seek to
           // each position/address of a mail
           for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort; curNode = curNode->mln_Succ)
@@ -4975,6 +4996,8 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
             if((ofh = fopen(MA_NewMailFile(folder, mfile), "w")) == NULL)
               break;
+
+            setvbuf(ofh, NULL, _IOFBF, SIZE_FILEBUF);
 
             // now that we seeked to the mail address we go
             // and read in line by line
@@ -5093,6 +5116,8 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
         {
           struct MinNode *curNode;
 
+          setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
+
           // iterate through our transferList and seek to
           // each position/address of a mail
           for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort; curNode = curNode->mln_Succ)
@@ -5115,6 +5140,8 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
             if((ofh = fopen(MA_NewMailFile(folder, mfile), "wb")) == NULL)
               break;
+
+            setvbuf(ofh, NULL, _IOFBF, SIZE_FILEBUF);
 
             if(ReadDBXMessage(ifh, ofh, mtn->importAddr) == FALSE)
               E(DBF_IMPORT, "Couldn't import dbx message from addr %x", mtn->importAddr);
@@ -5215,6 +5242,8 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
    if ((f = fopen(msgfile, "w")))
    {
       BOOL done = FALSE;
+
+      setvbuf(f, NULL, _IOFBF, SIZE_FILEBUF);
 
       snprintf(msgnum, sizeof(msgnum), "%d", number);
       if(TR_SendPOP3Cmd(POPCMD_RETR, msgnum, MSG_ER_BadResponse))

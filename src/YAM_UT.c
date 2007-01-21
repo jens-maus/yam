@@ -1764,11 +1764,11 @@ BOOL CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh)
 {
   BOOL success = FALSE;
 
-  if(sour != NULL)
-    sourfh = fopen(sour, "r");
+  if(sour != NULL && (sourfh = fopen(sour, "r")))
+    setvbuf(sourfh, NULL, _IOFBF, SIZE_FILEBUF);
 
-  if(sourfh != NULL && dest != NULL)
-    destfh = fopen(dest, "w");
+  if(sourfh != NULL && dest != NULL && (destfh = fopen(dest, "w")))
+    setvbuf(destfh, NULL, _IOFBF, SIZE_FILEBUF);
 
   if(sourfh !=NULL && destfh != NULL)
   {
@@ -1827,21 +1827,35 @@ BOOL MoveFile(const char *oldfile, const char *newfile)
 //  Converts line breaks from LF to CRLF or vice versa
 BOOL ConvertCRLF(char *in, char *out, BOOL to)
 {
-   BOOL success = FALSE;
-   char buf[SIZE_LINE];
-   FILE *infh, *outfh;
+  BOOL success = FALSE;
+  FILE *infh;
 
-   if ((infh = fopen(in, "r")))
-   {
-      if ((outfh = fopen(out, "w")))
-      {
-         while (GetLine(infh, buf, SIZE_LINE)) fprintf(outfh, "%s%s\n", buf, to?"\r":"");
-         success = TRUE;
-         fclose(outfh);
-      }
-      fclose(infh);
-   }
-   return success;
+  ENTER();
+
+  if((infh = fopen(in, "r")))
+  {
+    FILE *outfh;
+
+    setvbuf(infh, NULL, _IOFBF, SIZE_FILEBUF);
+
+    if((outfh = fopen(out, "w")))
+    {
+      char buf[SIZE_LINE];
+
+      setvbuf(outfh, NULL, _IOFBF, SIZE_FILEBUF);
+
+      while(GetLine(infh, buf, SIZE_LINE))
+        fprintf(outfh, "%s%s\n", buf, to?"\r":"");
+
+      success = TRUE;
+      fclose(outfh);
+    }
+
+    fclose(infh);
+  }
+
+  RETURN(success);
+  return success;
 }
 ///
 /// Word_Length
@@ -2326,13 +2340,20 @@ struct TempFile *OpenTempFile(const char *mode)
     // now add the temporary path to the filename
     strmfp(tf->Filename, C->TempDir, buf);
 
-    if(mode != NULL && (tf->FP = fopen(tf->Filename, mode)) == NULL)
+    if(mode != NULL)
     {
-      E(DBF_UTIL, "couldn't create temporary file: '%s'", tf->Filename);
+      if((tf->FP = fopen(tf->Filename, mode)) == NULL)
+      {
+        E(DBF_UTIL, "couldn't create temporary file: '%s'", tf->Filename);
 
-      // on error we free everything
-      free(tf);
-      count--;
+        // on error we free everything
+        free(tf);
+        tf = NULL;
+
+        count--;
+      }
+      else
+        setvbuf(tf->FP, NULL, _IOFBF, SIZE_FILEBUF);
     }
   }
 
@@ -4266,6 +4287,7 @@ char *StartUnpack(char *file, char *newfile, struct Folder *folder)
       xpk = TRUE;
 
     fclose(fh);
+    fh = NULL;
 
     // now we compose a temporary filename and start
     // uncompressing the source file into it.
@@ -4440,6 +4462,8 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
    {
       str = (char *)xget(string, MUIA_String_Contents);
       DoMethod(pop, MUIM_List_Clear);
+
+      setvbuf(fp, NULL, _IOFBF, SIZE_FILEBUF);
 
       while (GetLine(fp, buf, sizeof(buf)))
       {
@@ -5868,6 +5892,7 @@ const char *IdentifyFile(const char *fname)
 
       // close the file immediately.
       fclose(fh);
+      fh = NULL;
 
       if(!strnicmp(buffer, "@database", 9))                                      ctype = IntMimeTypeArray[MT_TX_GUIDE].ContentType;
       else if(!strncmp(buffer, "%PDF-", 5))                                      ctype = IntMimeTypeArray[MT_AP_PDF].ContentType;

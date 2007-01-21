@@ -420,8 +420,12 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
 
   parent[nested] = MUIV_NListtree_Insert_ListNode_Root;
 
-  if((fh = fopen(fname, "r")) != NULL && GetLine(fh, buffer, sizeof(buffer)))
+  if((fh = fopen(fname, "r")) != NULL)
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+  if(fh != NULL && GetLine(fh, buffer, sizeof(buffer)))
   {
+
     if(strncmp(buffer,"YAB",3) == 0)
     {
       int version = buffer[3] - '0';
@@ -621,10 +625,13 @@ BOOL AB_SaveTree(char *fname)
 
   if((fh = fopen(fname, "w")) != NULL)
   {
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
     fputs("YAB4 - YAM Addressbook\n", fh);
     AB_SaveTreeNode(fh, MUIV_NListtree_GetEntry_ListNode_Root);
     fclose(fh);
     AppendLogVerbose(70, tr(MSG_LOG_SavingABook), fname);
+
     result = TRUE;
   }
   else
@@ -648,6 +655,8 @@ BOOL AB_ImportTreeLDIF(char *fname, BOOL append, BOOL sorted)
   {
     char buffer[SIZE_LARGE];
     struct ABEntry addr;
+
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     G->AB->Modified = append;
     if(append == FALSE)
@@ -997,7 +1006,10 @@ BOOL AB_ExportTreeLDIF(char *fname)
 
   if((fh = fopen(fname, "w")) != NULL)
   {
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
     AB_ExportTreeNodeLDIF(fh, MUIV_NListtree_GetEntry_ListNode_Root);
+
     fclose(fh);
     result = TRUE;
   }
@@ -1022,6 +1034,8 @@ BOOL AB_ImportTreeTabCSV(char *fname, BOOL append, BOOL sorted, char delim)
   {
     char buffer[SIZE_LARGE];
     char delimStr[2];
+
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     G->AB->Modified = append;
     if(append == FALSE)
@@ -1343,7 +1357,10 @@ BOOL AB_ExportTreeTabCSV(char *fname, char delim)
 
   if((fh = fopen(fname, "w")) != NULL)
   {
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
     AB_ExportTreeNodeTabCSV(fh, MUIV_NListtree_GetEntry_ListNode_Root, delim);
+
     fclose(fh);
     result = TRUE;
   }
@@ -1775,8 +1792,11 @@ HOOKPROTONHNONP(AB_PrintABookFunc, void)
 
       if((prt = fopen("PRT:", "w")) != NULL)
       {
+        setvbuf(prt, NULL, _IOFBF, SIZE_FILEBUF);
+
         Busy(tr(MSG_BusyPrintingAB), "", 0, 0);
         fprintf(prt, "%s\n", G->AB_Filename);
+
         if(mode == 2)
         {
           fprintf(prt, "\n  %-12.12s %-20.20s %s/%s\n", tr(MSG_AB_AliasFld), tr(MSG_EA_RealName), tr(MSG_EA_EmailAddress), tr(MSG_EA_Description));
@@ -1811,6 +1831,8 @@ HOOKPROTONHNONP(AB_PrintFunc, void)
       if((prt = fopen("PRT:", "w")) != NULL)
       {
          struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
+
+         setvbuf(prt, NULL, _IOFBF, SIZE_FILEBUF);
 
          set(G->App, MUIA_Application_Sleep, TRUE);
          AB_PrintLongEntry(prt, ab);

@@ -822,6 +822,8 @@ static void tokenAnalyzerWriteTrainingData(struct TokenAnalyzer *ta)
   // open the .spamdata file for binary write
   if((stream = fopen(fname, "wb")) != NULL)
   {
+    setvbuf(stream, NULL, _IOFBF, SIZE_FILEBUF);
+
     if(fwrite(magicCookie, sizeof(magicCookie), 1, stream) == 1 &&
        WriteUInt32(stream, ta->goodCount) == 1 &&
        WriteUInt32(stream, ta->badCount) == 1 &&
@@ -860,6 +862,8 @@ static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
   if((stream = fopen(fname, "rb")) != NULL)
   {
     TEXT cookie[4];
+
+    setvbuf(stream, NULL, _IOFBF, SIZE_FILEBUF);
 
     fread(cookie, sizeof(cookie), 1, stream);
 

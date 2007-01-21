@@ -5,8 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-01-19  Jens Langner <Jens.Langner@light-speed.de>
+2007-01-20  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_stringsizes.h, misc: added a new source-wide SIZE_FILEBUF define which
+    will be used by the newly introduced setvbuf() calls to dynamically increase
+    the used buffer for all our fopen()/fread()/fwrite() operations. It now
+    defaults to 65k and should hopefully speed up some operations. Please note
+    that any new fopen() use should be from now on evaluated if a buffer
+    increase via setvbuf() would be of any use.
   * YAM.c: bumped minimum required version of TheBar.mcc to v21.1 as that is
     what YAM requires now.
   * misc: adapted all TheBar relevant code passages to make use of the new v21

@@ -247,6 +247,8 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
    {
       struct FIndex fi;
 
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
       BusyText(tr(MSG_BusyLoadingIndex), folder->Name);
       if(fread(&fi, sizeof(struct FIndex), 1, fh) != 1)
       {
@@ -391,6 +393,8 @@ BOOL MA_SaveIndex(struct Folder *folder)
      RETURN(FALSE);
      return FALSE;
    }
+
+   setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
    BusyText(tr(MSG_BusySavingIndex), folder->Name);
 
@@ -1434,6 +1438,8 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
    email->DelSend = !C->SaveSent;
    if((fh = fopen(GetMailFile(fullfile, folder, mail), "r")))
    {
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
       // if the first three bytes are 'X' 'P' 'K', then this is an XPK packed
       // file and we have to unpack it first.
       if(fgetc(fh) == 'X' && fgetc(fh) == 'P' && fgetc(fh) == 'K')
@@ -1451,9 +1457,11 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
          }
 
          // reopen it again.
-         fh = fopen(fullfile, "r");
+         if((fh = fopen(fullfile, "r")))
+           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
       }
-      else rewind(fh); // rewind the file handle to the start
+      else
+        rewind(fh); // rewind the file handle to the start
    }
 
    // check if the file handle is valid and the immediatly read in the

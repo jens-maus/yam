@@ -279,6 +279,8 @@ BOOL CheckForUpdates(void)
               BOOL updatesAvailable = FALSE;
               struct UpdateComponent *comp = NULL;
 
+              setvbuf(tf->FP, NULL, _IOFBF, SIZE_FILEBUF);
+
               // make sure we clear an eventually existing update window
               if(G->UpdateNotifyWinObject)
                 DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_Clear);
@@ -465,13 +467,16 @@ void LoadUpdateState(void)
 
   // we start with "no update yet" ...
   LastUpdateState.LastUpdateStatus = UST_NOQUERY;
+
   // ... and a zero time which will result in a possible immediate update check
   memset(&LastUpdateState.LastUpdateCheck, 0, sizeof(LastUpdateState.LastUpdateCheck));
 
   // the YAM executable is the same for all users, hence we need no per user state file
-  if((fh = fopen(".updatestate", "r")) != NULL)
+  if((fh = fopen("PROGDIR:.updatestate", "r")) != NULL)
   {
     char buf[SIZE_LARGE];
+
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     if(GetLine(fh, buf, sizeof(buf)))
     {
@@ -529,9 +534,11 @@ void SaveUpdateState(void)
   ENTER();
 
   // the YAM executable is the same for all users, hence we need no per user state file
-  if((fh = fopen(".updatestate", "w")) != NULL)
+  if((fh = fopen("PROGDIR:.updatestate", "w")) != NULL)
   {
     char buf[SIZE_LARGE];
+
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     fprintf(fh, "YUP1 - YAM Update state\n");
     TimeVal2String(buf, sizeof(buf), &LastUpdateState.LastUpdateCheck, DSS_USDATETIME, TZC_NONE);

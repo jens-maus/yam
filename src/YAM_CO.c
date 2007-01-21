@@ -1536,6 +1536,8 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
         Object *lv = G->CO->GUI.LV_MIME;
         char buffer[SIZE_LARGE];
 
+        setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
         set(lv, MUIA_List_Quiet, TRUE);
 
         while(fgets(buffer, SIZE_LARGE, fh))

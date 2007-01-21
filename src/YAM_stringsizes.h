@@ -51,6 +51,7 @@
 #define SIZE_PATHFILE  (SIZE_PATH+SIZE_FILE)
 #define SIZE_URL       (SIZE_HOST+SIZE_PATHFILE)
 #define SIZE_EXALLBUF 32768
+#define SIZE_FILEBUF  65535 // the buffer size for our fopen() file buffers
 
 #define MAXP3           16
 #define MAXRX           21
