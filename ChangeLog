@@ -5,7 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-01-27  David Rey <tactica@users.sourceforge.net>
+2007-01-21  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: added an .mcc check for TheButton.mcc as well.
+  * Makefile.os4: reverted the date->gdate change from David as it breaks the
+    automatic compilation on our nightly build server. So please keep your
+    hands off if you are unsure what you are doing. And if you want to have
+    'gdate' executed instead of 'date' simply call the makefile like this:
+    "make -f Makefile.os4 DATE=gdate". That's how it is supposed to be
+    until we have a better build environment with automatic recognition
+    of the host system.
+
+2007-01-21  David Rey <tactica@users.sourceforge.net>
 
   * Makefile.os4: now uses the "gdate" command instead of "date" to work with
     the current coreutils release and stop getting confused with the original
