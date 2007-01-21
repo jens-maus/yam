@@ -1813,6 +1813,7 @@ static void Initialise(BOOL hidden)
 
    // Lets check for the correct TheBar.mcc version
    CheckMCC(MUIC_TheBar, 21, 1, TRUE, "http://www.sf.net/projects/thebar/");
+   CheckMCC(MUIC_TheButton, 21, 1, TRUE, "http://www.sf.net/projects/thebar/");
 
    // Lets check for the correct BetterString.mcc version
    CheckMCC(MUIC_BetterString, 11, 8, TRUE, "http://www.sf.net/projects/bstring-mcc/");
