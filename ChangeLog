@@ -7,6 +7,10 @@ $URL$
 
 2007-01-21  Jens Langner <Jens.Langner@light-speed.de>
 
+  * C_c.sd: added some more detailed debug output on loading up the catalog
+    file.
+  * locale/deutsch.ct: fixed all '...' postfixes according to warning messages
+    from FlexCat 2.7
   * YAM.c: added an .mcc check for TheButton.mcc as well.
   * Makefile.os4: reverted the date->gdate change from David as it breaks the
     automatic compilation on our nightly build server. So please keep your

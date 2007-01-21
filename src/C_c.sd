@@ -115,9 +115,17 @@ BOOL Open%bCatalog(void)
         CloseCatalog(G->Catalog);
         G->Catalog = NULL;
       }
+      else
+        D(DBF_STARTUP, "successfully opened %b.catalog version %%%d", G->Catalog->cat_Version);
     }
     else
-      W(DBF_STARTUP, "couldn't open '%b.catalog'");
+    {
+      // now we check the error state
+      if(IoErr() != 0)
+        W(DBF_STARTUP, "couldn't open '%b.catalog': IoErr: %%%d", IoErr());
+      else
+        W(DBF_STARTUP, "coudln't open '%b.catalog': builtin strings can be used");
+    }
   }
   else
     W(DBF_STARTUP, "locale.library wasn't open, skipping catalog opening.");
