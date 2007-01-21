@@ -65,6 +65,7 @@
 
 #if defined(__amigaos4__)
 #include <proto/application.h>
+#include <proto/timezone.h>
 #endif
 
 #include "extrasrc.h"
@@ -134,18 +135,393 @@ static struct TC_Data
   struct MsgPort    *port;
   struct TC_Request timer[TIO_NUM];
 } TCData;
+/**************************************************************************/
+
+static void Abort(const void *formatnum, ...);
 
 /**************************************************************************/
 
 // AutoDST related variables
-enum ADSTmethod { ADST_NONE=0, ADST_SETDST, ADST_FACTS, ADST_SGUARD, ADST_IXGMT };
-static const char *ADSTfile[] = { "", "ENV:TZONE", "ENV:FACTS/DST", "ENV:SUMMERTIME", "ENV:IXGMTOFFSET" };
+enum ADSTmethod { ADST_NONE=0, ADST_TZLIB, ADST_SETDST, ADST_FACTS, ADST_SGUARD, ADST_IXGMT };
+static const char *ADSTfile[] = { "", "ENV:TZONE", "ENV:TZONE", "ENV:FACTS/DST", "ENV:SUMMERTIME", "ENV:IXGMTOFFSET" };
 static struct ADST_Data
 {
   struct NotifyRequest nRequest;
   enum ADSTmethod method;
 
 } ADSTdata;
+
+/*** Library/MCC check routines ***/
+/// InitLib
+//  Opens a library & on OS4 also the interface
+#if defined(__amigaos4__)
+static BOOL InitLib(const char *libname,
+                    ULONG version,
+                    ULONG revision,
+                    struct Library **libbase,
+                    const char *iname,
+                    struct Interface **iface,
+                    BOOL required,
+                    const char *homepage)
+#else
+static BOOL InitLib(const char *libname,
+                    ULONG version,
+                    ULONG revision,
+                    struct Library **libbase,
+                    BOOL required,
+                    const char *homepage)
+#endif
+{
+  struct Library *base;
+
+  #if defined(__amigaos4__)
+  if(!libbase || !iface)
+    return FALSE;
+  #else
+  if(!libbase)
+    return FALSE;
+  #endif
+
+  // open the library base
+  base = OpenLibrary(libname, version);
+
+  if(base && revision)
+  {
+    if(base->lib_Version == version && base->lib_Revision < revision)
+    {
+      CloseLibrary(base);
+      base = NULL;
+    }
+  }
+
+  // store base
+  *libbase = base;
+
+  // if we end up here, we can open the OS4 base library interface
+  if(base)
+  {
+    #if defined(__amigaos4__)
+    struct Interface* i;
+
+    // if we weren`t able to obtain the interface, lets close the library also
+    if(GETINTERFACE(iname, i, base) == NULL)
+    {
+      D(DBF_STARTUP, "InitLib: can`t get '%s' interface of library %s", iname, libname);
+
+      CloseLibrary(base);
+      *libbase = NULL;
+      base = NULL;
+    }
+    else
+      D(DBF_STARTUP, "InitLib: library %s v%ld.%ld with iface '%s' successfully opened.", libname, base->lib_Version, base->lib_Revision, iname);
+
+    // store interface pointer
+    *iface = i;
+    #else
+    D(DBF_STARTUP, "InitLib: library %s v%ld.%ld successfully opened.", libname, base->lib_Version, base->lib_Revision);
+    #endif
+  }
+  else
+    D(DBF_STARTUP, "InitLib: can`t open library %s with minimum version v%ld.%d", libname, version, revision);
+
+  if(!base && required)
+  {
+    if(homepage != NULL)
+      Abort(MSG_ER_LIB_URL, libname, version, revision, homepage);
+    else
+      Abort(MSG_ER_LIB, libname, version, revision);
+  }
+
+  return base != NULL;
+}
+///
+/// CheckMCC
+//  Checks if a certain version of a MCC is available
+static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, const char *url)
+{
+  BOOL flush = TRUE;
+
+  ENTER();
+
+  for(;;)
+  {
+    // First we attempt to acquire the version and revision through MUI
+    Object *obj = MUI_NewObject(name, TAG_DONE);
+    if (obj)
+    {
+      ULONG ver = xget(obj, MUIA_Version);
+      ULONG rev = xget(obj, MUIA_Revision);
+
+      struct Library *base;
+      char libname[256];
+
+      MUI_DisposeObject(obj);
+
+      if(ver > minver || (ver == minver && rev >= minrev))
+      {
+        D(DBF_STARTUP, "%s v%ld.%ld found through MUIA_Version/Revision", name, ver, rev);
+
+        RETURN(TRUE);
+        return TRUE;
+      }
+
+      // If we did't get the version we wanted, let's try to open the
+      // libraries ourselves and see what happens...
+      snprintf(libname, sizeof(libname), "PROGDIR:mui/%s", name);
+
+      if ((base = OpenLibrary(&libname[8], 0)) || (base = OpenLibrary(&libname[0], 0)))
+      {
+        UWORD OpenCnt = base->lib_OpenCnt;
+
+        ver = base->lib_Version;
+        rev = base->lib_Revision;
+
+        CloseLibrary(base);
+
+        // we add some additional check here so that eventual broken .mcc also have
+        // a chance to pass this test (e.g. _very_ old versions of Toolbar.mcc are broken)
+        if (ver > minver || (ver == minver && rev >= minrev))
+        {
+          D(DBF_STARTUP, "%s v%ld.%ld found through OpenLibrary()", name, ver, rev);
+
+          RETURN(TRUE);
+          return TRUE;
+        }
+
+        if (OpenCnt > 1)
+        {
+          if (req && MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url))
+            flush = TRUE;
+          else
+            break;
+        }
+
+        // Attempt to flush the library if open count is 0 or because the
+        // user wants to retry (meaning there's a chance that it's 0 now)
+        if(flush)
+        {
+          struct Library *result;
+          Forbid();
+          if ((result = (struct Library *)FindName(&((struct ExecBase *)SysBase)->LibList, name)))
+            RemLibrary(result);
+          Permit();
+          flush = FALSE;
+        }
+        else
+        {
+          E(DBF_STARTUP, "%s: couldn`t find minimum required version.", name);
+
+          // We're out of luck - open count is 0, we've tried to flush
+          // and still haven't got the version we want
+          if (req && MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url))
+            flush = TRUE;
+          else
+            break;
+        }
+      }
+    }
+    else
+    {
+      // No MCC at all - no need to attempt flush
+      flush = FALSE;
+      if (!MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url))
+        break;
+    }
+
+  }
+
+  if(req)
+    exit(RETURN_ERROR); // Ugly
+
+  RETURN(FALSE);
+  return FALSE;
+}
+///
+
+/*** Auto-DST management routines ***/
+/// ADSTnotify_start
+//  AutoDST Notify start function
+static BOOL ADSTnotify_start(void)
+{
+  if(ADSTdata.method != ADST_NONE)
+  {
+    // prepare the NotifyRequest structure
+    BYTE signalAlloc;
+
+    if((signalAlloc = AllocSignal(-1)) >= 0)
+    {
+      struct NotifyRequest *nr = &ADSTdata.nRequest;
+
+      nr->nr_Name  = (STRPTR)ADSTfile[ADSTdata.method];
+      nr->nr_Flags = NRF_SEND_SIGNAL;
+
+      // prepare the nr_Signal now
+      nr->nr_stuff.nr_Signal.nr_Task      = FindTask(NULL);
+      nr->nr_stuff.nr_Signal.nr_SignalNum = signalAlloc;
+
+      return StartNotify(nr);
+    }
+    else
+    {
+      memset(&ADSTdata, 0, sizeof(struct ADST_Data));
+    }
+  }
+
+  return FALSE;
+}
+
+///
+/// ADSTnotify_stop
+//  AutoDST Notify stop function
+static void ADSTnotify_stop(void)
+{
+  if(ADSTdata.method != ADST_NONE)
+  {
+    // stop the NotifyRequest
+    struct NotifyRequest *nr = &ADSTdata.nRequest;
+
+    if(nr->nr_Name)
+    {
+      EndNotify(nr);
+      FreeSignal((LONG)nr->nr_stuff.nr_Signal.nr_SignalNum);
+    }
+  }
+}
+
+///
+/// GetDST
+//  Checks if daylight saving time is active
+//  return 0 if no DST system was found
+//         1 if no DST is set
+//         2 if DST is set (summertime)
+static int GetDST(BOOL update)
+{
+  char buffer[50];
+  char *tmp;
+  int result = 0;
+
+  ENTER();
+
+  // prepare the NotifyRequest structure
+  if(update == FALSE)
+    memset(&ADSTdata, 0, sizeof(struct ADST_Data));
+
+  // lets check the DaylightSaving stuff now
+  // we check in the following order:
+  //
+  // 1. timezone.library (AmigaOS4 only)
+  // 2. SetDST (ENV:TZONE)
+  // 3. FACTS (ENV:FACTS/DST)
+  // 4. SummertimeGuard (ENV:SUMMERTIME)
+  // 5. ixemul (ENV:IXGMTOFFSET)
+
+  #if defined(__amigaos4__)
+  // check via timezone.library in case we are compiled for AmigaOS4
+  if((!update || ADSTdata.method == ADST_TZLIB))
+  {
+    if(INITLIB("timezone.library", 52, 1, &TimezoneBase, "main", &ITimezone, TRUE, NULL))
+    {
+      LONG dstSetting = 0;
+
+      // retrieve the current DST setting
+      if(GetTimezoneAttrs(NULL, TZA_TimeFlag, &dstSetting) && dstSetting != TFLG_UNKNOWN)
+      {
+        if(dstSetting == TFLG_ISDST)
+          result = 2;
+        else
+          result = 1;
+
+        D(DBF_STARTUP, "Found timezone.library with DST flag: %d", result);
+
+        ADSTdata.method = ADST_TZLIB;
+      }
+
+      CLOSELIB(TimezoneBase, ITimezone);
+    }
+  }
+  #endif
+
+  // SetDST saves the DST settings in the TZONE env-variable which
+  // is a bit more complex than the others, so we need to do some advance parsing
+  if((!update || ADSTdata.method == ADST_SETDST) && result == 0
+     && GetVar((STRPTR)&ADSTfile[ADST_SETDST][4], buffer, 50, 0) >= 3)
+  {
+    int i;
+
+    for(i=0; buffer[i]; i++)
+    {
+      if(result == 0)
+      {
+        // if we found the time difference in the TZONE variable we at least found a correct TZONE file
+        if(buffer[i] >= '0' && buffer[i] <= '9')
+          result = 1;
+      }
+      else if(isalpha(buffer[i]))
+        result = 2; // if it is followed by a alphabetic sign we are in DST mode
+    }
+
+    D(DBF_STARTUP, "Found '%s' (SetDST) with DST flag: %d", ADSTfile[ADST_SETDST], result);
+
+    ADSTdata.method = ADST_SETDST;
+  }
+
+  // FACTS saves the DST information in a ENV:FACTS/DST env variable which will be
+  // Hex 00 or 01 to indicate the DST value.
+  if((!update || ADSTdata.method == ADST_FACTS) && result == 0
+    && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], buffer, 50, GVF_BINARY_VAR) > 0)
+  {
+    ADSTdata.method = ADST_FACTS;
+
+    if(buffer[0] == 0x01)
+      result = 2;
+    else if(buffer[0] == 0x00)
+      result = 1;
+
+    D(DBF_STARTUP, "Found '%s' (FACTS) with DST flag: %d", ADSTfile[ADST_FACTS], result);
+  }
+
+  // SummerTimeGuard sets the last string to "YES" if DST is actually active
+  if((!update || ADSTdata.method == ADST_SGUARD) && result == 0
+     && GetVar((STRPTR)&ADSTfile[ADST_SGUARD][4], buffer, 50, 0) > 3 && (tmp = strrchr(buffer, ':')))
+  {
+    ADSTdata.method = ADST_SGUARD;
+
+    if(tmp[1] == 'Y')
+      result = 2;
+    else if(tmp[1] == 'N')
+      result = 1;
+
+    D(DBF_STARTUP, "Found '%s' (SGUARD) with DST flag: %d", ADSTfile[ADST_SGUARD], result);
+  }
+
+  // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
+  // DST is actually active.
+  if((!update || ADSTdata.method == ADST_IXGMT) && result == 0
+    && GetVar((STRPTR)&ADSTfile[ADST_IXGMT][4], buffer, 50, GVF_BINARY_VAR) >= 4)
+  {
+    ADSTdata.method = ADST_IXGMT;
+
+    if(buffer[4] == 0x01)
+      result = 2;
+    else if(buffer[4] == 0x00)
+      result = 1;
+
+    D(DBF_STARTUP, "Found '%s' (IXGMT) with DST flag: %d", ADSTfile[ADST_IXGMT], result);
+  }
+
+  if(!update && result == 0)
+  {
+    ADSTdata.method = ADST_NONE;
+
+    W(DBF_STARTUP, "Didn't find any AutoDST facility active!");
+  }
+
+  // No correctly installed AutoDST tool was found
+  // so lets return zero.
+  RETURN(result);
+  return result;
+}
+///
 
 /*** TimerIO management routines ***/
 /// TC_Prepare
@@ -587,163 +963,6 @@ static void TC_Dispatcher(enum TimerIO tio)
 
 ///
 
-/*** Auto-DST management routines ***/
-/// ADSTnotify_start
-//  AutoDST Notify start function
-static BOOL ADSTnotify_start(void)
-{
-  if(ADSTdata.method != ADST_NONE)
-  {
-    // prepare the NotifyRequest structure
-    BYTE signalAlloc;
-
-    if((signalAlloc = AllocSignal(-1)) >= 0)
-    {
-      struct NotifyRequest *nr = &ADSTdata.nRequest;
-
-      nr->nr_Name  = (STRPTR)ADSTfile[ADSTdata.method];
-      nr->nr_Flags = NRF_SEND_SIGNAL;
-
-      // prepare the nr_Signal now
-      nr->nr_stuff.nr_Signal.nr_Task      = FindTask(NULL);
-      nr->nr_stuff.nr_Signal.nr_SignalNum = signalAlloc;
-
-      return StartNotify(nr);
-    }
-    else
-    {
-      memset(&ADSTdata, 0, sizeof(struct ADST_Data));
-    }
-  }
-
-  return FALSE;
-}
-
-///
-/// ADSTnotify_stop
-//  AutoDST Notify stop function
-static void ADSTnotify_stop(void)
-{
-  if(ADSTdata.method != ADST_NONE)
-  {
-    // stop the NotifyRequest
-    struct NotifyRequest *nr = &ADSTdata.nRequest;
-
-    if(nr->nr_Name)
-    {
-      EndNotify(nr);
-      FreeSignal((LONG)nr->nr_stuff.nr_Signal.nr_SignalNum);
-    }
-  }
-}
-
-///
-/// GetDST
-//  Checks if daylight saving time is active
-//  return 0 if no DST system was found
-//         1 if no DST is set
-//         2 if DST is set (summertime)
-static int GetDST(BOOL update)
-{
-  char buffer[50];
-  char *tmp;
-  int result = 0;
-
-  ENTER();
-
-  // prepare the NotifyRequest structure
-  if(update == FALSE)
-    memset(&ADSTdata, 0, sizeof(struct ADST_Data));
-
-  // lets check the DaylightSaving stuff now
-  // we check in the following order:
-  // 1. SetDST (ENV:TZONE)
-  // 2. FACTS (ENV:FACTS/DST)
-  // 3. SummertimeGuard (ENV:SUMMERTIME)
-  // 4. ixemul (ENV:IXGMTOFFSET)
-
-  // SetDST saves the DST settings in the TZONE env-variable which
-  // is a bit more complex than the others, so we need to do some advance parsing
-  if((!update || ADSTdata.method == ADST_SETDST)
-     && GetVar((STRPTR)&ADSTfile[ADST_SETDST][4], buffer, 50, 0) >= 3)
-  {
-    int i;
-
-    for(i=0; buffer[i]; i++)
-    {
-      if(result == 0)
-      {
-        // if we found the time difference in the TZONE variable we at least found a correct TZONE file
-        if(buffer[i] >= '0' && buffer[i] <= '9')
-          result = 1;
-      }
-      else if(isalpha(buffer[i]))
-        result = 2; // if it is followed by a alphabetic sign we are in DST mode
-    }
-
-    D(DBF_STARTUP, "Found '%s' (SetDST) with DST flag: %d", ADSTfile[ADST_SETDST], result);
-
-    ADSTdata.method = ADST_SETDST;
-  }
-
-  // FACTS saves the DST information in a ENV:FACTS/DST env variable which will be
-  // Hex 00 or 01 to indicate the DST value.
-  if((!update || ADSTdata.method == ADST_FACTS) && result == 0
-    && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], buffer, 50, GVF_BINARY_VAR) > 0)
-  {
-    ADSTdata.method = ADST_FACTS;
-
-    if(buffer[0] == 0x01)
-      result = 2;
-    else if(buffer[0] == 0x00)
-      result = 1;
-
-    D(DBF_STARTUP, "Found '%s' (FACTS) with DST flag: %d", ADSTfile[ADST_FACTS], result);
-  }
-
-  // SummerTimeGuard sets the last string to "YES" if DST is actually active
-  if((!update || ADSTdata.method == ADST_SGUARD) && result == 0
-     && GetVar((STRPTR)&ADSTfile[ADST_SGUARD][4], buffer, 50, 0) > 3 && (tmp = strrchr(buffer, ':')))
-  {
-    ADSTdata.method = ADST_SGUARD;
-
-    if(tmp[1] == 'Y')
-      result = 2;
-    else if(tmp[1] == 'N')
-      result = 1;
-
-    D(DBF_STARTUP, "Found '%s' (SGUARD) with DST flag: %d", ADSTfile[ADST_SGUARD], result);
-  }
-
-  // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
-  // DST is actually active.
-  if((!update || ADSTdata.method == ADST_IXGMT) && result == 0
-    && GetVar((STRPTR)&ADSTfile[ADST_IXGMT][4], buffer, 50, GVF_BINARY_VAR) >= 4)
-  {
-    ADSTdata.method = ADST_IXGMT;
-
-    if(buffer[4] == 0x01)
-      result = 2;
-    else if(buffer[4] == 0x00)
-      result = 1;
-
-    D(DBF_STARTUP, "Found '%s' (IXGMT) with DST flag: %d", ADSTfile[ADST_IXGMT], result);
-  }
-
-  if(!update && result == 0)
-  {
-    ADSTdata.method = ADST_NONE;
-
-    W(DBF_STARTUP, "Didn't find any AutoDST facility active!");
-  }
-
-  // No correctly installed AutoDST tool was found
-  // so lets return zero.
-  RETURN(result);
-  return result;
-}
-///
-
 /*** XPK Packer initialization routines ***/
 /// InitXPKPackerList()
 // initializes the internal XPK PackerList
@@ -853,170 +1072,7 @@ static void FreeXPKPackerList(void)
 
 ///
 
-/// SplashProgress
-//  Shows progress of program initialization in the splash window
-static void SplashProgress(const char *txt, int percent)
-{
-  DoMethod(G->SplashWinObject, MUIM_Splashwindow_StatusChange, txt, percent);
-}
-///
-/// PopUp
-//  Un-iconify YAM
-void PopUp(void)
-{
-  int i;
-  Object *window = G->MA->GUI.WI;
-
-  ENTER();
-
-  nnset(G->App, MUIA_Application_Iconified, FALSE);
-
-  // avoid MUIA_Window_Open's side effect of activating the window if it was already open
-  if(!xget(G->MA->GUI.WI, MUIA_Window_Open))
-    set(G->MA->GUI.WI, MUIA_Window_Open, TRUE);
-
-  DoMethod(G->MA->GUI.WI, MUIM_Window_ScreenToFront);
-  DoMethod(G->MA->GUI.WI, MUIM_Window_ToFront);
-
-  // Now we check if there is any read and write window open and bring it also
-  // to the front
-  if(IsMinListEmpty(&G->readMailDataList) == FALSE)
-  {
-    // search through our ReadDataList
-    struct MinNode *curNode;
-    for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-    {
-      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-      if(rmData->readWindow)
-      {
-        DoMethod(rmData->readWindow, MUIM_Window_ToFront);
-        window = rmData->readWindow;
-      }
-    }
-  }
-
-  // Bring the write window to the front
-  for(i = 0; i < MAXWR; i++)
-  {
-    if(G->WR[i])
-    {
-      DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
-      window = G->WR[i]->GUI.WI;
-    }
-  }
-
-  // now we activate the window that is on the top
-  set(window, MUIA_Window_Activate, TRUE);
-
-  LEAVE();
-}
-///
-/// DoublestartHook
-//  A second copy of YAM was started
-HOOKPROTONHNONP(DoublestartFunc, void)
-{
-  if(G->App && G->MA && G->MA->GUI.WI)
-    PopUp();
-}
-MakeStaticHook(DoublestartHook, DoublestartFunc);
-///
-/// StayInProg
-//  Makes sure that the user really wants to quit the program
-static BOOL StayInProg(void)
-{
-   int i;
-   BOOL req = FALSE;
-
-   if(G->AB->Modified)
-   {
-     if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_ABookModifiedGad), tr(MSG_AB_Modified)))
-       CallHookPkt(&AB_SaveABookHook, 0, 0);
-   }
-
-   for(i=0; i < MAXEA && !req; i++) if(G->EA[i]) req = TRUE;
-   for(i=0; i < MAXWR && !req; i++) if(G->WR[i]) req = TRUE;
-
-   if(req || G->CO || C->ConfirmOnQuit)
-   {
-     if(!MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_QuitYAMReq)))
-       return TRUE;
-   }
-
-   return FALSE;
-}
-///
-/// Root_GlobalDispatcher
-//  Processes return value of MUI_Application_NewInput
-static int Root_GlobalDispatcher(ULONG app_input)
-{
-   int ret = 0;
-
-   switch (app_input)
-   {
-      case MUIV_Application_ReturnID_Quit:
-      {
-        if(!xget(G->App, MUIA_Application_ForceQuit))
-        {
-          ret = (int)!StayInProg();
-        }
-        else
-          ret = 1;
-      }
-      break;
-
-      case ID_CLOSEALL:
-      {
-        if(!C->IconifyOnQuit)
-          ret = (int)!StayInProg();
-
-        set(G->App, MUIA_Application_Iconified, TRUE);
-      }
-      break;
-
-      case ID_RESTART:
-      {
-        ret = 2;
-      }
-      break;
-
-      case ID_ICONIFY:
-      {
-        MA_UpdateIndexes(FALSE);
-      }
-      break;
-   }
-
-   return ret;
-}
-///
-/// Root_New
-//  Creates MUI application
-static BOOL Root_New(BOOL hidden)
-{
-   if((G->App = YAMObject, End))
-   {
-      if(hidden)
-        set(G->App, MUIA_Application_Iconified, TRUE);
-
-      DoMethod(G->App, MUIM_Notify, MUIA_Application_DoubleStart, TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &DoublestartHook);
-      DoMethod(G->App, MUIM_Notify, MUIA_Application_Iconified, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_ICONIFY);
-
-      // create the splash window object and return true if
-      // everything worked out fine.
-      if((G->SplashWinObject = SplashwindowObject, End))
-      {
-        G->InStartupPhase = TRUE;
-
-        set(G->SplashWinObject, MUIA_Window_Open, !hidden);
-
-        return TRUE;
-      }
-   }
-
-   return FALSE;
-}
-///
-
+/*** Application Abort/Termination routines ***/
 /// Terminate
 //  Deallocates used memory and MUI modules and terminates
 static void Terminate(void)
@@ -1282,191 +1338,196 @@ static void Abort(const void *formatnum, ...)
    exit(RETURN_ERROR);
 }
 ///
-/// CheckMCC
-//  Checks if a certain version of a MCC is available
-static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, const char *url)
+/// yam_exitfunc()
+/* This makes it possible to leave YAM without explicitely calling cleanup procedure */
+static void yam_exitfunc(void)
 {
-  BOOL flush = TRUE;
+  ENTER();
+
+  if(olddirlock != -1)
+  {
+    Terminate();
+    CurrentDir(olddirlock);
+  }
+
+  if(nrda.Template)
+    NewFreeArgs(&nrda);
+
+  // close some libraries now
+  CLOSELIB(DiskfontBase,   IDiskfont);
+  CLOSELIB(UtilityBase,    IUtility);
+  CLOSELIB(IconBase,       IIcon);
+  CLOSELIB(IntuitionBase,  IIntuition);
+
+  LEAVE();
+}
+
+///
+
+/// SplashProgress
+//  Shows progress of program initialization in the splash window
+static void SplashProgress(const char *txt, int percent)
+{
+  DoMethod(G->SplashWinObject, MUIM_Splashwindow_StatusChange, txt, percent);
+}
+///
+/// PopUp
+//  Un-iconify YAM
+void PopUp(void)
+{
+  int i;
+  Object *window = G->MA->GUI.WI;
 
   ENTER();
 
-  for(;;)
+  nnset(G->App, MUIA_Application_Iconified, FALSE);
+
+  // avoid MUIA_Window_Open's side effect of activating the window if it was already open
+  if(!xget(G->MA->GUI.WI, MUIA_Window_Open))
+    set(G->MA->GUI.WI, MUIA_Window_Open, TRUE);
+
+  DoMethod(G->MA->GUI.WI, MUIM_Window_ScreenToFront);
+  DoMethod(G->MA->GUI.WI, MUIM_Window_ToFront);
+
+  // Now we check if there is any read and write window open and bring it also
+  // to the front
+  if(IsMinListEmpty(&G->readMailDataList) == FALSE)
   {
-    // First we attempt to acquire the version and revision through MUI
-    Object *obj = MUI_NewObject(name, TAG_DONE);
-    if (obj)
+    // search through our ReadDataList
+    struct MinNode *curNode;
+    for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
-      ULONG ver = xget(obj, MUIA_Version);
-      ULONG rev = xget(obj, MUIA_Revision);
-
-      struct Library *base;
-      char libname[256];
-
-      MUI_DisposeObject(obj);
-
-      if(ver > minver || (ver == minver && rev >= minrev))
+      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+      if(rmData->readWindow)
       {
-        D(DBF_STARTUP, "%s v%ld.%ld found through MUIA_Version/Revision", name, ver, rev);
-
-        RETURN(TRUE);
-        return TRUE;
+        DoMethod(rmData->readWindow, MUIM_Window_ToFront);
+        window = rmData->readWindow;
       }
+    }
+  }
 
-      // If we did't get the version we wanted, let's try to open the
-      // libraries ourselves and see what happens...
-      snprintf(libname, sizeof(libname), "PROGDIR:mui/%s", name);
+  // Bring the write window to the front
+  for(i = 0; i < MAXWR; i++)
+  {
+    if(G->WR[i])
+    {
+      DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
+      window = G->WR[i]->GUI.WI;
+    }
+  }
 
-      if ((base = OpenLibrary(&libname[8], 0)) || (base = OpenLibrary(&libname[0], 0)))
+  // now we activate the window that is on the top
+  set(window, MUIA_Window_Activate, TRUE);
+
+  LEAVE();
+}
+///
+/// DoublestartHook
+//  A second copy of YAM was started
+HOOKPROTONHNONP(DoublestartFunc, void)
+{
+  if(G->App && G->MA && G->MA->GUI.WI)
+    PopUp();
+}
+MakeStaticHook(DoublestartHook, DoublestartFunc);
+///
+/// StayInProg
+//  Makes sure that the user really wants to quit the program
+static BOOL StayInProg(void)
+{
+   int i;
+   BOOL req = FALSE;
+
+   if(G->AB->Modified)
+   {
+     if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_ABookModifiedGad), tr(MSG_AB_Modified)))
+       CallHookPkt(&AB_SaveABookHook, 0, 0);
+   }
+
+   for(i=0; i < MAXEA && !req; i++) if(G->EA[i]) req = TRUE;
+   for(i=0; i < MAXWR && !req; i++) if(G->WR[i]) req = TRUE;
+
+   if(req || G->CO || C->ConfirmOnQuit)
+   {
+     if(!MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_QuitYAMReq)))
+       return TRUE;
+   }
+
+   return FALSE;
+}
+///
+/// Root_GlobalDispatcher
+//  Processes return value of MUI_Application_NewInput
+static int Root_GlobalDispatcher(ULONG app_input)
+{
+   int ret = 0;
+
+   switch (app_input)
+   {
+      case MUIV_Application_ReturnID_Quit:
       {
-        UWORD OpenCnt = base->lib_OpenCnt;
-
-        ver = base->lib_Version;
-        rev = base->lib_Revision;
-
-        CloseLibrary(base);
-
-        // we add some additional check here so that eventual broken .mcc also have
-        // a chance to pass this test (e.g. _very_ old versions of Toolbar.mcc are broken)
-        if (ver > minver || (ver == minver && rev >= minrev))
+        if(!xget(G->App, MUIA_Application_ForceQuit))
         {
-          D(DBF_STARTUP, "%s v%ld.%ld found through OpenLibrary()", name, ver, rev);
-
-          RETURN(TRUE);
-          return TRUE;
-        }
-
-        if (OpenCnt > 1)
-        {
-          if (req && MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url))
-            flush = TRUE;
-          else
-            break;
-        }
-
-        // Attempt to flush the library if open count is 0 or because the
-        // user wants to retry (meaning there's a chance that it's 0 now)
-        if(flush)
-        {
-          struct Library *result;
-          Forbid();
-          if ((result = (struct Library *)FindName(&((struct ExecBase *)SysBase)->LibList, name)))
-            RemLibrary(result);
-          Permit();
-          flush = FALSE;
+          ret = (int)!StayInProg();
         }
         else
-        {
-          E(DBF_STARTUP, "%s: couldn`t find minimum required version.", name);
-
-          // We're out of luck - open count is 0, we've tried to flush
-          // and still haven't got the version we want
-          if (req && MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url))
-            flush = TRUE;
-          else
-            break;
-        }
+          ret = 1;
       }
-    }
-    else
-    {
-      // No MCC at all - no need to attempt flush
-      flush = FALSE;
-      if (!MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url))
-        break;
-    }
+      break;
 
-  }
+      case ID_CLOSEALL:
+      {
+        if(!C->IconifyOnQuit)
+          ret = (int)!StayInProg();
 
-  if(req)
-    exit(RETURN_ERROR); // Ugly
+        set(G->App, MUIA_Application_Iconified, TRUE);
+      }
+      break;
 
-  RETURN(FALSE);
-  return FALSE;
+      case ID_RESTART:
+      {
+        ret = 2;
+      }
+      break;
+
+      case ID_ICONIFY:
+      {
+        MA_UpdateIndexes(FALSE);
+      }
+      break;
+   }
+
+   return ret;
 }
 ///
-/// InitLib
-//  Opens a library & on OS4 also the interface
-#if defined(__amigaos4__)
-static BOOL InitLib(const char *libname,
-                    ULONG version,
-                    ULONG revision,
-                    struct Library **libbase,
-                    const char *iname,
-                    struct Interface **iface,
-                    BOOL required,
-                    const char *homepage)
-#else
-static BOOL InitLib(const char *libname,
-                    ULONG version,
-                    ULONG revision,
-                    struct Library **libbase,
-                    BOOL required,
-                    const char *homepage)
-#endif
+/// Root_New
+//  Creates MUI application
+static BOOL Root_New(BOOL hidden)
 {
-  struct Library *base;
+   if((G->App = YAMObject, End))
+   {
+      if(hidden)
+        set(G->App, MUIA_Application_Iconified, TRUE);
 
-  #if defined(__amigaos4__)
-  if(!libbase || !iface)
-    return FALSE;
-  #else
-  if(!libbase)
-    return FALSE;
-  #endif
+      DoMethod(G->App, MUIM_Notify, MUIA_Application_DoubleStart, TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &DoublestartHook);
+      DoMethod(G->App, MUIM_Notify, MUIA_Application_Iconified, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_ICONIFY);
 
-  // open the library base
-  base = OpenLibrary(libname, version);
+      // create the splash window object and return true if
+      // everything worked out fine.
+      if((G->SplashWinObject = SplashwindowObject, End))
+      {
+        G->InStartupPhase = TRUE;
 
-  if(base && revision)
-  {
-    if(base->lib_Version == version && base->lib_Revision < revision)
-    {
-      CloseLibrary(base);
-      base = NULL;
-    }
-  }
+        set(G->SplashWinObject, MUIA_Window_Open, !hidden);
 
-  // store base
-  *libbase = base;
+        return TRUE;
+      }
+   }
 
-  // if we end up here, we can open the OS4 base library interface
-  if(base)
-  {
-    #if defined(__amigaos4__)
-    struct Interface* i;
-
-    // if we weren`t able to obtain the interface, lets close the library also
-    if(GETINTERFACE(iname, i, base) == NULL)
-    {
-      D(DBF_STARTUP, "InitLib: can`t get '%s' interface of library %s", iname, libname);
-
-      CloseLibrary(base);
-      *libbase = NULL;
-      base = NULL;
-    }
-    else
-      D(DBF_STARTUP, "InitLib: library %s v%ld.%ld with iface '%s' successfully opened.", libname, base->lib_Version, base->lib_Revision, iname);
-
-    // store interface pointer
-    *iface = i;
-    #else
-    D(DBF_STARTUP, "InitLib: library %s v%ld.%ld successfully opened.", libname, base->lib_Version, base->lib_Revision);
-    #endif
-  }
-  else
-    D(DBF_STARTUP, "InitLib: can`t open library %s with minimum version v%ld.%d", libname, version, revision);
-
-  if(!base && required)
-  {
-    if(homepage != NULL)
-      Abort(MSG_ER_LIB_URL, libname, version, revision, homepage);
-    else
-      Abort(MSG_ER_LIB, libname, version, revision);
-  }
-
-  return base != NULL;
+   return FALSE;
 }
 ///
+
 /// SetupAppIcons
 //  Sets location of mailbox status icon on workbench screen
 void SetupAppIcons(void)
@@ -2143,32 +2204,8 @@ static void Login(const char *user, const char *password,
 }
 ///
 
-/// yam_exitfunc()
-/* This makes it possible to leave YAM without explicitely calling cleanup procedure */
-static void yam_exitfunc(void)
-{
-  ENTER();
-
-  if(olddirlock != -1)
-  {
-    Terminate();
-    CurrentDir(olddirlock);
-  }
-
-  if(nrda.Template)
-    NewFreeArgs(&nrda);
-
-  // close some libraries now
-  CLOSELIB(DiskfontBase,   IDiskfont);
-  CLOSELIB(UtilityBase,    IUtility);
-  CLOSELIB(IconBase,       IIcon);
-  CLOSELIB(IntuitionBase,  IIntuition);
-
-  LEAVE();
-}
-
-///
-/// Main
+/*** main entry function ***/
+/// main()
 //  Program entry point, main loop
 int main(int argc, char **argv)
 {
@@ -2805,5 +2842,4 @@ int main(int argc, char **argv)
    return RETURN_OK;
 }
 ///
-
 

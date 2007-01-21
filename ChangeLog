@@ -7,6 +7,12 @@ $URL$
 
 2007-01-21  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: added support for daylight saving querying via the AmigaOS4
+    timezone.library. Now the DST setting is queried via timezone.library
+    instead of obtaining it via various environment variables. However, for
+    an automatic notification of a DST change while YAM is running, the
+    ENV:TZONE variable will still be evaluated until timezone.library
+    allows to register notifications.
   * C_c.sd: added some more detailed debug output on loading up the catalog
     file.
   * locale/deutsch.ct: fixed all '...' postfixes according to warning messages

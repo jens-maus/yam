@@ -146,6 +146,7 @@ struct Library* UtilityBase       = NULL;
 #endif
 #if defined(__amigaos4__)
 struct Library* ApplicationBase = NULL; // application.library
+struct Library* TimezoneBase    = NULL; // timezone.library
 #endif
 
 /* AmigaOS4 style interfaces */
@@ -172,6 +173,7 @@ struct LayersIFace*       ILayers       = NULL;
 struct DiskfontIFace*     IDiskfont     = NULL;
 struct CodesetsIFace*     ICodesets     = NULL;
 struct ApplicationIFace*  IApplication  = NULL;
+struct TimezoneIFace*     ITimezone     = NULL;
 #if !defined(__NEWLIB__)
 struct UtilityIFace*      IUtility      = NULL;
 #endif
