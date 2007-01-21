@@ -3,8 +3,23 @@
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
+; YAM.cd - YAM 2.5 catalog description file
 ; $Id$
-; based on YAM.cd 2609 2007-01-05 07:24:48Z
+;
+; Please note that all catalog strings have to carry a proper
+; identifier number in the (X//) string part of the MSG_ identifier
+; field and that those numbers have to be unique and continous over
+; all different YAM versions. This allows to remove some obsolete
+; strings later on without having to worry about identifier clashes.
+; This however means that if an entry is being deleted here its
+; identifier should NEVER be reused later on. So, if you are going to
+; add new strings here do that always at the bottom of the file
+; and increase the last listed identifier number by one for your
+; new entries. And if you delete an entry NEVER reorder or resort
+; the ID numbers accordingly.
+;
+;#version 6
+;#language english
 ;
 ; General
 ;
@@ -828,14 +843,6 @@ MSG_MA_Restart
 Redémarrer
 ; Restart
 ;
-MSG_MA_Hide
-H\000Icônifier
-; H\000Hide
-;
-MSG_MA_Quit
-Q\000Quitter
-; Q\000Quit
-;
 MSG_MA_NewFolder
 Nouveau dossier
 ; New folder
@@ -857,53 +864,9 @@ MSG_MA_Select
 Sélectionner
 ; Select
 ;
-MSG_MA_SelectAll
-L\000Tous
-; L\000All
-;
-MSG_MA_SelectNone
--\000Aucun
-; -\000None
-;
-MSG_MA_SelectToggle
-=\000Inverser
-; =\000Toggle
-;
-MSG_MA_MSearch
-F\000Chercher...
-; F\000Search...
-;
-MSG_MA_MFilter
-I\000Filtrer
-; I\000Filter
-;
-MSG_MA_RemoveDeleted
-Z\000Vider dossier « Effacés » !
-; Z\000Empty trash
-;
-MSG_MA_UpdateIndex
-U\000Réindexer
-; U\000Update index
-;
 MSG_MA_FlushIndices
 Libérer les indices
 ; Flush indices
-;
-MSG_MA_MSendAll
-S\000Envoyer les courriers en attente
-; S\000Send queued mail
-;
-MSG_MA_Exchange
-X\000Recevoir et envoyer les courriers
-; X\000Exchange mail
-;
-MSG_MA_MGetMail
-G\000Charger les nouveaux messages
-; G\000Get new mail
-;
-MSG_MA_MRead
-D\000Lire
-; D\000Read
 ;
 MSG_MA_MEdit
 Éditer...
@@ -948,22 +911,6 @@ Sauver l'adresse...
 MSG_MA_SetStatus
 Changer le statut
 ; Set status to
-;
-MSG_MA_ToUnread
-[\000Non lu
-; [\000Unread
-;
-MSG_MA_ToRead
-]\000Lu
-; ]\000Read
-;
-MSG_MA_ToHold
-{\000Bloqué
-; {\000Hold
-;
-MSG_MA_ToQueued
-}\000Attente
-; }\000Queued
 ;
 MSG_MA_ChangeSubj
 Changer de sujet...
@@ -5962,10 +5909,6 @@ Script ARexx
 ;
 ; ADDED AFTER 04-DEC-2000
 ;
-MSG_PROJECT_ABOUT
-?\000À propos...
-; ?\000About...
-;
 MSG_FOLDER_NEWFOLDER
 Nouveau dossier...
 ; New folder...
@@ -5986,65 +5929,9 @@ MSG_FOLDER_EXPORT
 Exporter...
 ; Export...
 ;
-MSG_MESSAGE_EDIT
-E\000Éditer...
-; E\000Edit...
-;
-MSG_MESSAGE_MOVE
-M\000Déplacer...
-; M\000Move...
-;
-MSG_MESSAGE_COPY
-Y\000Copier...
-; Y\000Copy...
-;
-MSG_MESSAGE_PRINT
-P\000Imprimer
-; P\000Print
-;
-MSG_MESSAGE_SAVE
-V\000Sauver...
-; V\000Save...
-;
-MSG_MESSAGE_SAVEATT
-T\000Sauver...
-; T\000Save...
-;
-MSG_MESSAGE_CROP
-O\000Supprimer
-; O\000Crop
-;
 MSG_MESSAGE_EXPORT
 Exporter...
 ; Export...
-;
-MSG_MESSAGE_NEW
-N\000Nouveau
-; N\000New
-;
-MSG_MESSAGE_REPLY
-R\000Répondre...
-; R\000Reply...
-;
-MSG_MESSAGE_FORWARD
-W\000Retransmettre...
-; W\000Forward...
-;
-MSG_MESSAGE_BOUNCE
-B\000Détourner...
-; B\000Bounce...
-;
-MSG_MESSAGE_GETADDRESS
-J\000Sauver adresse...
-; J\000Save address...
-;
-MSG_SETTINGS_ADDRESSBOOK
-A\000Carnet d'adresses...
-; A\000Address Book...
-;
-MSG_SETTINGS_CONFIG
-K\000Configuration...
-; K\000Configuration...
 ;
 MSG_SETTINGS_USERS
 Utilisateurs...
@@ -6116,10 +6003,6 @@ M_ot de passe
 MSG_CO_Del
 Supprimé
 ; Delete
-;
-MSG_RE_SetUnread
-Mettre statut à non-lu
-; Set status to unread
 ;
 MSG_WR_AltQuoted
 Citation externe
@@ -6706,18 +6589,6 @@ MSG_FO_FOLDERPATHINVALID
 Vous n'avez pas indiqué de chemin d'accès pour le nouveau dossier.
 ; You haven't specified a valid path for the new folder.
 ;
-MSG_MA_TOMARKED
-:\000Marqué
-; ,\000Marked
-;
-MSG_MA_TOUNMARKED
-/\000Non marqué
-; .\000Unmarked
-;
-MSG_RE_SETMARKED
-Marquer le message
-; Set status to marked
-;
 MSG_MA_CTX_DEFWIDTH_THIS
 Largeur par défaut : celle-ci
 ; Default Width: this
@@ -7264,10 +7135,6 @@ MSG_ER_CONTINUEEXIT
 *_Continuer|Sortir
 ; *_Continue|Exit
 ;
-MSG_MA_ALLTOREAD
-#\0Tous à Lu
-; #\000All to Read
-;
 MSG_ER_MOVEFOLDERDIR
 Une erreur est survenue lors du déplacement du contenu du\
 dossier '%s' vers le répertoire '%s'.\n\
@@ -7733,9 +7600,9 @@ Avertissement AutoDST
 ; AutoDST warning
 ;
 MSG_CO_AUTODSTWARN
-YAM a détecté un utilitaire AutoDST actif et\n\
-celui indique un réglage d'heure d'été/hiver\n\
-différent de celui de la configuration de YAM.\n\
+YAM a détecté un utilitaire AutoDST actif qui\n\
+indique un réglage d'heure d'été/hiver différent\n\
+de celui configuré dans YAM.\n\
 \n\
 Que désirez-vous faire ?
 ; YAM has found an AutoDST tool active and\n\
@@ -8103,7 +7970,7 @@ Nom: %s\n\
 Description: %s\n\
 Content-Type: %s <%s>\n\
 Taille: %s
-; \ebAttachment - MIME-Part #%ld\en\n\
+; \ebAttachment - MIME part #%ld\en\n\
 ; Name: %s\n\
 ; Description: %s\n\
 ; Content-Type: %s <%s>\n\
@@ -8112,7 +7979,7 @@ Taille: %s
 ;
 MSG_MA_MIMEPART_MENU
 Pièce jointe #%ld
-; Attachment/MIME-Part #%ld
+; Attachment/MIME part #%ld
 ;
 MSG_CO_PGPPASSINTERVAL1
 Mémorise la phrase secrète pendant
@@ -8198,10 +8065,6 @@ messages ?
 ; Do you really want to delete these\n\
 ; messages?
 ; AMOUNT
-MSG_MESSAGE_EDITASNEW
-E\000Editer comme nouveau...
-; E\000Edit As New...
-;
 MSG_MA_SPAM
 Courrier indésirable
 ; Spam
@@ -8263,14 +8126,6 @@ Courrier indésirable
 MSG_MA_TONOTSPAM
 Courrier acceptable
 ; Not Spam
-;
-MSG_RE_SETSPAM
-Positionner le statut à indésirable
-; Set status to spam
-;
-MSG_RE_SETNOTSPAM
-Positionner le statut à acceptable
-; Set status to not spam
 ;
 MSG_CO_CRDSPAMFILTER
 Courrier indésirable
@@ -8518,4 +8373,161 @@ Voulez-vous sauver les changements maintenant ?
 ; Otherwise they will be lost!\n\
 ; \n\
 ; Do you want to save the changes now?
+;
+MSG_MA_HIDE
+Icônifier
+; Hide
+;
+MSG_MA_QUIT
+Quitter
+; Quit
+;
+MSG_MA_SELECTALL
+Tous
+; All
+;
+MSG_MA_SELECTNONE
+Aucun
+; None
+;
+MSG_MA_SELECTTOGGLE
+Inverser
+; Toggle
+;
+MSG_MA_MSEARCH
+Chercher...
+; Search...
+;
+MSG_MA_MFILTER
+Filtrer
+; Filter
+;
+MSG_MA_REMOVEDELETED
+Vider dossier « Effacés » !
+; Empty trash
+;
+MSG_MA_UPDATEINDEX
+Réindexer
+; Update index
+;
+MSG_MA_MSENDALL
+Envoyer les courriers en attente
+; Send queued mail
+;
+MSG_MA_MEXCHANGE
+Envoyer et recevoir les courriers
+; Exchange mail
+;
+MSG_MA_MGETMAIL
+Recevoir les nouveaux messages
+; Get new mail
+;
+MSG_MA_MREAD
+Lire
+; Read
+;
+MSG_MA_TOUNREAD
+Non lu
+; Unread
+;
+MSG_MA_TOREAD
+Lu
+; Read
+;
+MSG_MA_TOHOLD
+Bloqué
+; Hold
+;
+MSG_MA_TOQUEUED
+En Attente
+; Queued
+;
+MSG_PROJECT_MABOUT
+À propos...
+; About...
+;
+MSG_MA_MEDIT
+Editer...
+; Edit...
+;
+MSG_MA_MMOVE
+Déplacer...
+; Move...
+;
+MSG_MA_MCOPY
+Copier...
+; Copy...
+;
+;
+MSG_MA_MPRINT
+Imprimer
+; Print
+;
+;
+MSG_MA_MSAVE
+Sauver...
+; Save...
+;
+;
+MSG_MA_MSAVEATT
+Sauver...
+; Save...
+;
+;
+MSG_MA_MCROP
+Supprimer
+; Crop
+;
+;
+MSG_MA_MNEW
+Nouveau
+; New
+;
+;
+MSG_MA_MREPLY
+Répondre...
+; Reply...
+;
+;
+MSG_MA_MFORWARD
+Retransmettre...
+; Forward...
+;
+;
+MSG_MA_MBOUNCE
+Détourner...
+; Bounce...
+;
+;
+MSG_MA_MSAVEADDRESS
+Sauver l'adresse...
+; Save address...
+;
+;
+MSG_MA_MADDRESSBOOK
+Carnet d'adresse...
+; Address Book...
+;
+;
+MSG_MA_MCONFIG
+Configuration...
+; Configuration...
+;
+;
+MSG_MA_TOMARKED
+Marqué
+; Marked
+;
+MSG_MA_TOUNMARKED
+Non marqué
+; Unmarked
+;
+MSG_MA_ALLTOREAD
+Tous à Lu
+; All to Read
+;
+MSG_MA_MEDITASNEW
+Editer comme nouveau...
+; Edit As New...
+;
 ;
