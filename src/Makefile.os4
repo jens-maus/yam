@@ -39,7 +39,7 @@ CHMOD     = chmod
 FLEX      = flex
 FC        = flexcat
 SED       = sed
-DATE      = gdate
+DATE      = date
 EXPR      = expr
 
 # Directories
