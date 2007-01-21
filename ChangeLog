@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-27  David Rey <tactica@users.sourceforge.net>
+
+  * Makefile.os4: now uses the "gdate" command instead of "date" to work with
+    the current coreutils release and stop getting confused with the original
+    C:Date command.
+
 2007-01-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_stringsizes.h, misc: added a new source-wide SIZE_FILEBUF define which
