@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-22  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: all GetVar() calls now use sizeof(buffer) as size parameter instead
+    of a fixed number. This will automatically prevent any buffer overflow if
+    the size of buffer[] should be changed any day.
+
 2007-01-21  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: Update to the latest changes

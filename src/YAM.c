@@ -421,7 +421,7 @@ static int GetDST(BOOL update)
   {
     if(INITLIB("timezone.library", 52, 1, &TimezoneBase, "main", &ITimezone, TRUE, NULL))
     {
-      LONG dstSetting = 0;
+      LONG dstSetting = TFLG_UNKNOWN;
 
       // retrieve the current DST setting
       if(GetTimezoneAttrs(NULL, TZA_TimeFlag, &dstSetting) && dstSetting != TFLG_UNKNOWN)
@@ -444,7 +444,7 @@ static int GetDST(BOOL update)
   // SetDST saves the DST settings in the TZONE env-variable which
   // is a bit more complex than the others, so we need to do some advance parsing
   if((!update || ADSTdata.method == ADST_SETDST) && result == 0
-     && GetVar((STRPTR)&ADSTfile[ADST_SETDST][4], buffer, 50, 0) >= 3)
+     && GetVar((STRPTR)&ADSTfile[ADST_SETDST][4], buffer, sizeof(buffer), 0) >= 3)
   {
     int i;
 
@@ -468,7 +468,7 @@ static int GetDST(BOOL update)
   // FACTS saves the DST information in a ENV:FACTS/DST env variable which will be
   // Hex 00 or 01 to indicate the DST value.
   if((!update || ADSTdata.method == ADST_FACTS) && result == 0
-    && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], buffer, 50, GVF_BINARY_VAR) > 0)
+    && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], buffer, sizeof(buffer), GVF_BINARY_VAR) > 0)
   {
     ADSTdata.method = ADST_FACTS;
 
@@ -482,7 +482,7 @@ static int GetDST(BOOL update)
 
   // SummerTimeGuard sets the last string to "YES" if DST is actually active
   if((!update || ADSTdata.method == ADST_SGUARD) && result == 0
-     && GetVar((STRPTR)&ADSTfile[ADST_SGUARD][4], buffer, 50, 0) > 3 && (tmp = strrchr(buffer, ':')))
+     && GetVar((STRPTR)&ADSTfile[ADST_SGUARD][4], buffer, sizeof(buffer), 0) > 3 && (tmp = strrchr(buffer, ':')))
   {
     ADSTdata.method = ADST_SGUARD;
 
@@ -497,7 +497,7 @@ static int GetDST(BOOL update)
   // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
   // DST is actually active.
   if((!update || ADSTdata.method == ADST_IXGMT) && result == 0
-    && GetVar((STRPTR)&ADSTfile[ADST_IXGMT][4], buffer, 50, GVF_BINARY_VAR) >= 4)
+    && GetVar((STRPTR)&ADSTfile[ADST_IXGMT][4], buffer, sizeof(buffer), GVF_BINARY_VAR) >= 4)
   {
     ADSTdata.method = ADST_IXGMT;
 
