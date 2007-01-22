@@ -5,6 +5,19 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-22  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile.#?: removed all explicit target specific makefiles and replaced them
+    with a single, more intelligent 'Makefile' which can be executed with a
+    simple GNU 'make' call. The new top Makefile contains various HOST and TARGET
+    operating system idenification routines done via the 'uname' tool.
+    According to the output of uname, the makefile automatically sets the correct
+    build environment based on the host operating system where YAM is being
+    compiled on and for. However, for explicitly compiling for a specific OS,
+    the new makefile still allows to override not only all options like 'DEBUG',
+    but also the target OS via 'make OS=os3'. So we can still very easily compile
+    for all supported operating systems with a simple 'make' call.
+
 2007-01-22  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: also fixed a GetVar() call and did some code cleanup.

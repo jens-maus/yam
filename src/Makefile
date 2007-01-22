@@ -25,15 +25,203 @@
 #
 #***************************************************************************/
 
+###########################################################################
+# This makefile is a very generic one. It tries to identify both, the host
+# and the target operating system for which YAM should be compiled.
+# However, this auto-detection can be easily overridden by directly
+# specifying an option on the commandline while calling 'make'.
 #
-# This makefile is just an include which serves the Makefile.os3, Makefile.os4
-# and Makefile.mos with all common targets
+# Example:
 #
-# WARNING:
-# -------
-# Please note that this include should not carry any platform specific stuff
-# as it may be included be more than one target Makefile!
+# # to explicitly compile for AmigaOS3
+# > make OS=os3
 #
+# # to compile for AmigaOS4 but with debugging
+# > make OS=os4 DEBUG=
+#
+
+#############################################
+# find out the HOST operating system
+# on which this makefile is run
+ifndef (HOST)
+  HOST = $(shell uname)
+  ifeq ($(HOST), AmigaOS)
+    ifeq ($(shell uname -m), powerpc)
+      HOST = AmigaOS4
+    endif
+  endif
+endif
+
+#############################################
+# now we find out the target OS for
+# which we are going to compile YAM in case
+# the caller didn't yet define OS himself
+ifndef (OS)
+  ifeq ($(HOST), AmigaOS4)
+    OS = os4
+  else
+  ifeq ($(HOST), AmigaOS)
+    OS = os3
+  else
+  ifeq ($(HOST), MorphOS)
+    OS = mos
+  else
+  ifeq ($(HOST), Aros)
+    OS = aros
+  else
+    OS = os4
+  endif
+  endif
+  endif
+  endif
+endif
+
+#############################################
+# define common commands we use in this
+# makefile. Please note that each of them
+# might be overridden on the commandline.
+
+# common commands
+FLEX  = flex
+FC    = flexcat
+EXPR  = expr
+CHMOD = chmod
+SED   = sed
+DATE  = date
+RM    = rm -f
+RMDIR = rm -rf
+MKDIR = mkdir
+
+# override commands for native builds
+ifeq ($(HOST), AmigaOS4)
+  # AmigaOS4 host
+  RM    = delete force
+  RMDIR = delete force all
+  MKDIR = makedir
+  DATE  = gdate
+else
+ifeq ($(HOST), AmigaOS)
+  # AmigaOS3 host
+  RM    = delete force
+  RMDIR = delete force all
+  MKDIR = makedir
+else
+ifeq ($(HOST), MorphOS)
+  # MorphOS host
+  RM    = delete force
+  RMDIR = delete force all
+  MKDIR = makedir
+endif
+endif
+endif
+
+###########################################################################
+# CPU and DEBUG can be defined outside, defaults to above
+# using e.g. "make DEBUG= CPU=-mcpu=603e" produces optimized non-debug
+# PPC-603e version
+#
+# OPTFLAGS are disabled by DEBUG normally!
+#
+# ignored warnings are:
+# none - because we want to compile with -Wall all the time
+
+# target definition
+TARGET  = YAM.$(OS)
+BUILDID	= 0
+
+# Common Directories
+PREFIX    = .
+CLASSDIR  = $(PREFIX)/classes
+LOCALE    = $(PREFIX)/../locale
+EXTRASRC  = $(PREFIX)/extrasrc
+TOOLS     = $(PREFIX)/tools
+LIB       = $(PREFIX)/lib/$(OS)
+OBJDIR    = .obj_$(OS)
+
+# Common compiler/linker flags
+WARN     = -W -Wall -Wwrite-strings
+OPTFLAGS = -O3 -fomit-frame-pointer -funroll-loops
+DEBUG    = -DDEBUG #-O0
+CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) \
+           $(DEBUG) -g -c
+LDFLAGS  = $(CPU)
+LDLIBS   = -L$(LIB) -lm
+
+# different options per target OS
+ifeq ($(OS), os4)
+
+  ##############################
+  # AmigaOS4
+
+  # Compiler/link/strip commands
+  CC      = ppc-amigaos-gcc
+  STRIP   = ppc-amigaos-strip
+  OBJDUMP = ppc-amigaos-objdump
+
+  # Compiler/Linker flags
+  CRT      = newlib
+  CPU      = -mcpu=604e -mmultiple -Wa,-mregnames
+  REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod \
+             -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
+  CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ $(REDEFINE)
+  LDFLAGS  += -mcrt=$(CRT)
+
+else
+ifeq ($(OS), os3)
+
+  ##############################
+  # AmigaOS3
+
+  # Compiler/link/strip commands
+  CC      = m68k-amigaos-gcc
+  STRIP   = m68k-amigaos-strip
+  OBJDUMP = m68k-amigaos-objdump
+
+  # Compiler/Linker flags
+  CPU	    = -m68020-60 -msoft-float
+  CFLAGS  += -I./include/netinclude -DNO_INLINE_STDARG
+  LDFLAGS += -noixemul -mstackextend
+  LDLIBS  += -ldebug -lmui
+
+else
+ifeq ($(OS), mos)
+
+  ##############################
+  # MorphOS
+
+  # Compiler/link/strip commands
+  CC      = ppc-morphos-gcc
+  STRIP   = ppc-morphos-strip
+  OBJDUMP = ppc-morphos-objdump
+
+  # Compiler/Linker flags
+  CPU     = -mcpu=750 -mmultiple
+  CFLAGS  += -noixemul -pipe -I./include/netinclude
+  LDFLAGS += -noixemul
+  LDLIBS  += -ldebug -lxpk -lamissl -lcodesets
+
+else
+ifeq ($(OS), aros)
+
+  ##############################
+  # AROS
+
+  # Compiler/link/strip commands
+  CC      = i686-aros-gcc
+  STRIP   = i686-aros-strip
+  OBJDUMP = i686-aros-objdump
+
+  # Compiler/Linker flags
+  CPU     =
+
+endif
+endif
+endif
+endif
+
+###########################################################################
+# Here starts all stuff that is common for all target platforms and
+# hosts.
 
 # General vars
 GENCLASSES= $(TOOLS)/genclasses
@@ -110,7 +298,7 @@ OBJS = \
 	$(OBJDIR)/YAM_WR.o \
 	$(OBJDIR)/ImageCache.o \
 	$(OBJDIR)/UpdateCheck.o \
-   $(OBJDIR)/HTML2Mail.o \
+	$(OBJDIR)/HTML2Mail.o \
 	$(OBJDIR)/HashTable.o \
 	$(OBJDIR)/BayesFilter.o \
 	$(CLASSES) \
