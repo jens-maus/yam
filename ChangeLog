@@ -7,6 +7,8 @@ $URL$
 
 2007-01-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_MA.c, YAM_CO.c: changed some more calls to GetVar() to use
+    sizeof() instead of numeric constants as size argument.
   * YAM_MA.c: increased the size of the status part of a mail file to be able
     to keep all possible mail flags. Normally this should never happen, because
     one mail can never be read and new at the same time, but just to be on the

@@ -696,9 +696,17 @@ BOOL CO_IsValid(void)
 //  Checks if PGP 2 or 5 is available
 static int CO_DetectPGP(struct Config *co)
 {
-   if (PFExists(co->PGPCmdPath, "pgpe")) return 5;
-   else if (PFExists(co->PGPCmdPath, "pgp")) return 2;
-   return 0;
+  int version = 0;
+
+  ENTER();
+
+  if(PFExists(co->PGPCmdPath, "pgpe"))
+    version = 5;
+  else if (PFExists(co->PGPCmdPath, "pgp"))
+    version = 2;
+
+  RETURN(version);
+  return version;
 }
 
 ///
@@ -928,10 +936,10 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
    if(page == cp_Security || page == cp_AllPages)
    {
       G->PGPVersion = 0;
-      if(GetVar("PGPPATH", co->PGPCmdPath, SIZE_PATH, 0) >= 0)
+      if(GetVar("PGPPATH", co->PGPCmdPath, sizeof(co->PGPCmdPath), 0) >= 0)
         G->PGPVersion = CO_DetectPGP(co);
 
-      if(!G->PGPVersion)
+      if(G->PGPVersion == 0)
       {
          strlcpy(co->PGPCmdPath, "C:", sizeof(co->PGPCmdPath));
          G->PGPVersion = CO_DetectPGP(co);

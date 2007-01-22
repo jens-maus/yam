@@ -2282,7 +2282,7 @@ int main(int argc, char **argv)
            goon = FALSE;
          }
 
-         if(goon && GetVar("I_KNOW_YAM_IS_UNDER_DEVELOPMENT", &var, sizeof(char), 0) == -1)
+         if(goon && GetVar("I_KNOW_YAM_IS_UNDER_DEVELOPMENT", &var, sizeof(var), 0) == -1)
          {
            ErrReq.es_Title        = (STRPTR)"YAM Developer Version Warning!";
            ErrReq.es_TextFormat   = (STRPTR)"This is an *internal* developer version and\n"
