@@ -568,8 +568,8 @@ void MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags)
 // into account
 BOOL MA_UpdateMailFile(struct Mail *mail)
 {
-  char dateFilePart[12+1];
-  char statusFilePart[11+1];
+  char dateFilePart[12 + 1];
+  char statusFilePart[14 + 1];
   char newFileName[SIZE_MFILE];
   char newFilePath[SIZE_PATHFILE];
   char oldFilePath[SIZE_PATHFILE];
