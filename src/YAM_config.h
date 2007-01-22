@@ -67,6 +67,7 @@ struct CO_GUIData
    Object *GR_POP3;
    Object *BT_PADD;
    Object *BT_PDEL;
+   Object *ST_POPACCOUNT;
    Object *ST_POPHOST;
    Object *ST_POPPORT;
    Object *ST_POPUSERID;

@@ -257,6 +257,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       for (i = 0; i < MAXP3; i++) if (co->P3[i])
       {
          struct POP3 *p3 = co->P3[i];
+         fprintf(fh, "POP%02d.Account    = %s\n", i, p3->Account);
          fprintf(fh, "POP%02d.Server     = %s\n", i, p3->Server);
          fprintf(fh, "POP%02d.Port       = %d\n", i, p3->Port);
          fprintf(fh, "POP%02d.User       = %s\n", i, p3->User);
@@ -725,7 +726,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                   if(!p3)
                     p3 = co->P3[j] = CO_NewPOP3(co, FALSE);
 
-                  if(!stricmp(p, "Server"))          strlcpy(p3->Server, value, sizeof(p3->Server));
+                  if(!stricmp(p, "Account"))         strlcpy(p3->Account, value, sizeof(p3->Account));
+                  else if (!stricmp(p, "Server"))    strlcpy(p3->Server, value, sizeof(p3->Server));
                   else if (!stricmp(p, "Port"))      p3->Port = atoi(value);
                   else if (!stricmp(p, "Password"))  strlcpy(p3->Password, Decrypt(value), sizeof(p3->Password));
                   else if (!stricmp(p, "User"))      strlcpy(p3->User, value, sizeof(p3->User));
@@ -1728,11 +1730,12 @@ void CO_SetConfig(void)
 
          for(i=0; i < MAXP3; i++)
          {
-           struct POP3 *pop3;
+           struct POP3 *pop3 = CE->P3[i];
 
-           if((pop3 = CE->P3[i]))
+           if(pop3 != NULL)
            {
-             snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
+             if(pop3->Account[0] == '\0')
+               snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
              DoMethod(gui->LV_POP3, MUIM_List_InsertSingle, pop3, MUIV_List_Insert_Bottom);
            }
          }

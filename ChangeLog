@@ -7,6 +7,12 @@ $URL$
 
 2007-01-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM_TR.c, locale/YAM.cd: made the
+    name of each mail account user definable. This account name will be used for
+    the account menu entries and the transfer window title. Before it was fixed
+    to user@host, which was quite unsatisfying with GMX where this resulted in
+    something like "123456@pop.gmx.de" instead of "user@gmx.de". Now this is
+    more consistent to Thunderbird's behaviour.
   * YAM.c: all GetVar() calls now use sizeof(buffer) as size parameter instead
     of a fixed number. This will automatically prevent any buffer overflow if
     the size of buffer[] should be changed any day.

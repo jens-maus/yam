@@ -4411,16 +4411,20 @@ void MA_SetupDynamicMenus(void)
 
     for(i=0; i < MAXP3; i++)
     {
-      if(C->P3[i])
+      struct POP3 *pop3 = C->P3[i];
+
+      if(pop3 != NULL)
       {
         Object *newObj;
 
-        snprintf(C->P3[i]->Account, sizeof(C->P3[i]->Account), "%s@%s", C->P3[i]->User, C->P3[i]->Server);
+        // create a new default account name only if none is yet given
+        if(pop3->Account[0] == '\0')
+          snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
 
         newObj = MenuitemObject,
-                   MUIA_Menuitem_Title, C->P3[i]->Account,
+                   MUIA_Menuitem_Title, pop3->Account,
                    MUIA_UserData,       MMEN_POPHOST+i,
-                 End;                   
+                 End;
 
         if(newObj)
           DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);

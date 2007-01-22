@@ -2134,24 +2134,25 @@ static int TR_ConnectPOP(int guilevel)
    char passwd[SIZE_PASSWORD], host[SIZE_HOST], buf[SIZE_LINE], *p;
    char *welcomemsg = NULL;
    int err, pop = G->TR->POP_Nr, msgs;
-   int port = C->P3[pop]->Port;
+   struct POP3 *pop3 = C->P3[pop];
+   int port = pop3->Port;
    char *resp;
 
-   strlcpy(passwd, C->P3[pop]->Password, sizeof(passwd));
-   strlcpy(host, C->P3[pop]->Server, sizeof(host));
+   strlcpy(passwd, pop3->Password, sizeof(passwd));
+   strlcpy(host, pop3->Server, sizeof(host));
 
    // now we have to check whether SSL/TLS is selected for that POP account,
    // but perhaps TLS is not working.
-   if(C->P3[pop]->SSLMode != P3SSL_OFF && !G->TR_UseableTLS)
+   if(pop3->SSLMode != P3SSL_OFF && !G->TR_UseableTLS)
    {
       ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
       return -1;
    }
 
-   if (C->TransferWindow == 2 || (C->TransferWindow == 1 && (guilevel == POP_START || guilevel == POP_USER)))
+   if(C->TransferWindow == 2 || (C->TransferWindow == 1 && (guilevel == POP_START || guilevel == POP_USER)))
    {
-      // avoid MUIA_Window_Open's side effect of activating the window if it was already open
-      if(!xget(G->TR->GUI.WI, MUIA_Window_Open)) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
+     // avoid MUIA_Window_Open's side effect of activating the window if it was already open
+     if(!xget(G->TR->GUI.WI, MUIA_Window_Open)) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
    }
    set(G->TR->GUI.TX_STATUS  , MUIA_Text_Contents,tr(MSG_TR_Connecting));
 
@@ -2159,8 +2160,8 @@ static int TR_ConnectPOP(int guilevel)
    // take this one, even if its not needed anymore.
    if ((p = strchr(host, ':'))) { *p = 0; port = atoi(++p); }
 
-   BusyText(tr(MSG_TR_MailTransferFrom), host);
-   TR_SetWinTitle(TRUE, C->P3[pop]->Account);
+   BusyText(tr(MSG_TR_MailTransferFrom), pop3->Account);
+   TR_SetWinTitle(TRUE, pop3->Account);
 
    if((err = TR_Connect(host, port)) != CONNECTERR_SUCCESS)
    {
@@ -2169,11 +2170,11 @@ static int TR_ConnectPOP(int guilevel)
        switch(err)
        {
          case CONNECTERR_UNKNOWN_HOST:
-           ER_NewError(tr(MSG_ER_UnknownPOP), C->P3[pop]->Server);
+           ER_NewError(tr(MSG_ER_UnknownPOP), pop3->Server);
          break;
 
          default:
-           ER_NewError(tr(MSG_ER_CantConnect), C->P3[pop]->Server);
+           ER_NewError(tr(MSG_ER_CantConnect), pop3->Server);
          break;
        }
      }
@@ -2183,7 +2184,7 @@ static int TR_ConnectPOP(int guilevel)
 
    // If this connection should be a STLS like connection we have to get the welcome
    // message now and then send the STLS command to start TLS negotiation
-   if(C->P3[pop]->SSLMode == P3SSL_STLS)
+   if(pop3->SSLMode == P3SSL_STLS)
    {
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
 
@@ -2197,7 +2198,7 @@ static int TR_ConnectPOP(int guilevel)
    }
 
    // Here start the TLS/SSL Connection stuff
-   if(C->P3[pop]->SSLMode != P3SSL_OFF)
+   if(pop3->SSLMode != P3SSL_OFF)
    {
      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_INITTLS));
 
@@ -2215,7 +2216,7 @@ static int TR_ConnectPOP(int guilevel)
 
    // If this was a connection on a stunnel on port 995 or a non-ssl connection
    // we have to get the welcome message now
-   if(C->P3[pop]->SSLMode != P3SSL_STLS)
+   if(pop3->SSLMode != P3SSL_STLS)
    {
       // Initiate a connect and see if we succeed
       if(!(resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, MSG_ER_POPWELCOME))) return -1;
@@ -2233,7 +2234,7 @@ static int TR_ConnectPOP(int guilevel)
 
    // if the user has selected APOP for that POP3 host
    // we have to process it now
-   if (C->P3[pop]->UseAPOP)
+   if (pop3->UseAPOP)
    {
       struct MD5Context context;
       UBYTE digest[16];
@@ -2251,7 +2252,7 @@ static int TR_ConnectPOP(int guilevel)
          MD5Init(&context);
          MD5Update(&context, (unsigned char *)buf, strlen(buf));
          MD5Final(digest, &context);
-         snprintf(buf, sizeof(buf), "%s ", C->P3[pop]->User);
+         snprintf(buf, sizeof(buf), "%s ", pop3->User);
          for(j=strlen(buf), i=0; i<16; j+=2, i++)
            snprintf(&buf[j], sizeof(buf)-j, "%02x", digest[i]);
          buf[j] = 0;
@@ -2267,7 +2268,7 @@ static int TR_ConnectPOP(int guilevel)
    else
    {
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendUserID));
-      if (!TR_SendPOP3Cmd(POPCMD_USER, C->P3[pop]->User, MSG_ER_BadResponse)) return -1;
+      if (!TR_SendPOP3Cmd(POPCMD_USER, pop3->User, MSG_ER_BadResponse)) return -1;
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendPassword));
       if (!TR_SendPOP3Cmd(POPCMD_PASS, passwd, MSG_ER_BadResponse)) return -1;
    }
@@ -2277,7 +2278,7 @@ static int TR_ConnectPOP(int guilevel)
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_GetStats));
    if (!(resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, MSG_ER_BadResponse))) return -1;
    sscanf(&resp[4], "%d", &msgs);
-   if (msgs) AppendLogVerbose(31, tr(MSG_LOG_ConnectPOP), C->P3[pop]->User, host, msgs);
+   if (msgs) AppendLogVerbose(31, tr(MSG_LOG_ConnectPOP), pop3->User, host, msgs);
 
    return msgs;
 }

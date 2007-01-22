@@ -6097,3 +6097,10 @@ All to Read
 MSG_MA_MEDITASNEW (1844//)
 Edit As New...
 ;
+MSG_CO_POPACCOUNT (1845//)
+Account name
+;
+MSG_HELP_CO_ST_POPACCOUNT (1846//)
+An arbitrary name for this account which will be\n\
+used instead of user@host.
+;

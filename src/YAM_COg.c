@@ -1481,6 +1481,8 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                  Child, VGroup,
                     Child, data->GUI.GR_POP3 = VGroup,
                        Child, ColGroup(2),
+                          Child, Label2(tr(MSG_CO_POPACCOUNT)),
+                          Child, data->GUI.ST_POPACCOUNT = MakeString(SIZE_HOST,tr(MSG_CO_POPACCOUNT)),
                           Child, Label2(tr(MSG_CO_POPServer)),
                           Child, data->GUI.ST_POPHOST = MakeString(SIZE_HOST,tr(MSG_CO_POPServer)),
                           Child, Label2(tr(MSG_CO_ST_POPPORT)),
@@ -1520,6 +1522,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
       SetHelp(data->GUI.LV_POP3        ,MSG_HELP_CO_LV_POP3         );
       SetHelp(data->GUI.BT_PADD        ,MSG_HELP_CO_BT_PADD         );
       SetHelp(data->GUI.BT_PDEL        ,MSG_HELP_CO_BT_PDEL         );
+      SetHelp(data->GUI.ST_POPACCOUNT  ,MSG_HELP_CO_ST_POPACCOUNT   );
       SetHelp(data->GUI.ST_POPHOST     ,MSG_HELP_CO_ST_POPHOST      );
       SetHelp(data->GUI.ST_POPPORT     ,MSG_HELP_CO_ST_POPPORT      );
       SetHelp(data->GUI.ST_POPUSERID   ,MSG_HELP_CO_ST_POPUSERID    );
@@ -1532,6 +1535,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_USESTLS     ,MSG_HELP_CO_CH_USESTLS      );
 
       DoMethod(data->GUI.LV_POP3       ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_GetP3EntryHook,0);
+      DoMethod(data->GUI.ST_POPACCOUNT ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
       DoMethod(data->GUI.ST_POPHOST    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
       DoMethod(data->GUI.ST_POPPORT    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
       DoMethod(data->GUI.ST_POPUSERID  ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);

@@ -1326,7 +1326,7 @@ _E-Mail Adresse
 ; _Email address
 ;
 MSG_CO_POPServer
-POP_3 Server
+POP_3-Server
 ; POP_3 server
 ;
 MSG_CO_Password
@@ -7593,4 +7593,11 @@ Alle auf Gelesen
 ;
 MSG_MA_MEDITASNEW
 Als neu editieren...
+;
+MSG_CO_POPACCOUNT
+K_ontoname
+;
+MSG_HELP_CO_ST_POPACCOUNT
+Ein beliebiger Name für diese Konto, welcher\n\
+anstatt von user@host verwendet wird.
 ;

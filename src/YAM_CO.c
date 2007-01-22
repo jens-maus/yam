@@ -499,14 +499,17 @@ MakeHook(CO_RemoteToggleHook,CO_RemoteToggleFunc);
 //  Initializes a new POP3 account
 struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
 {
-   struct POP3 *pop3 = calloc(1, sizeof(struct POP3));
-   if (pop3)
+   struct POP3 *pop3;
+
+   ENTER();
+
+   if((pop3 = (struct POP3 *)calloc(1, sizeof(struct POP3))) != NULL)
    {
-      if (first)
+      if(first)
       {
          char *p = strchr(co->EmailAddress, '@');
 
-         strlcpy(pop3->User, co->EmailAddress, p ? (unsigned int)(p-(co->EmailAddress)) : sizeof(pop3->User));
+         strlcpy(pop3->User, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress) : sizeof(pop3->User));
          strlcpy(pop3->Server, co->SMTP_Server, sizeof(pop3->Server));
       }
 
@@ -514,6 +517,8 @@ struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
       pop3->Enabled = TRUE;
       pop3->DeleteOnServer = TRUE;
    }
+
+   RETURN(pop3);
    return pop3;
 }
 
@@ -573,17 +578,18 @@ HOOKPROTONHNONP(CO_GetP3Entry, void)
    if(xget(gui->GR_POP3, MUIA_Disabled) != !pop3) set(gui->GR_POP3, MUIA_Disabled, !pop3); // This is needed due to a bug in MUI
    set(gui->BT_PDEL, MUIA_Disabled, !pop3 || xget(gui->LV_POP3, MUIA_List_Entries) < 2);
 
-   if (pop3)
+   if(pop3 != NULL)
    {
-      nnset(gui->ST_POPHOST,   MUIA_String_Contents, pop3->Server);
-      nnset(gui->ST_POPPORT,   MUIA_String_Integer,  pop3->Port);
-      nnset(gui->ST_POPUSERID, MUIA_String_Contents, pop3->User);
-      nnset(gui->ST_PASSWD,    MUIA_String_Contents, pop3->Password);
-      nnset(gui->CH_POPENABLED,MUIA_Selected, pop3->Enabled);
-      nnset(gui->CH_POP3SSL,   MUIA_Selected, (pop3->SSLMode != P3SSL_OFF));
-      nnset(gui->CH_USESTLS,   MUIA_Selected, (pop3->SSLMode == P3SSL_STLS));
-      nnset(gui->CH_USEAPOP,   MUIA_Selected, pop3->UseAPOP);
-      nnset(gui->CH_DELETE,    MUIA_Selected, pop3->DeleteOnServer);
+      nnset(gui->ST_POPACCOUNT, MUIA_String_Contents, pop3->Account);
+      nnset(gui->ST_POPHOST,    MUIA_String_Contents, pop3->Server);
+      nnset(gui->ST_POPPORT,    MUIA_String_Integer,  pop3->Port);
+      nnset(gui->ST_POPUSERID,  MUIA_String_Contents, pop3->User);
+      nnset(gui->ST_PASSWD,     MUIA_String_Contents, pop3->Password);
+      nnset(gui->CH_POPENABLED, MUIA_Selected, pop3->Enabled);
+      nnset(gui->CH_POP3SSL,    MUIA_Selected, (pop3->SSLMode != P3SSL_OFF));
+      nnset(gui->CH_USESTLS,    MUIA_Selected, (pop3->SSLMode == P3SSL_STLS));
+      nnset(gui->CH_USEAPOP,    MUIA_Selected, pop3->UseAPOP);
+      nnset(gui->CH_DELETE,     MUIA_Selected, pop3->DeleteOnServer);
 
       // we have to enabled/disable the SSL support accordingly
       set(gui->CH_USESTLS, MUIA_Disabled, !G->TR_UseableTLS || pop3->SSLMode == P3SSL_OFF);
@@ -606,23 +612,27 @@ HOOKPROTONHNONP(CO_PutP3Entry, void)
    if (p != MUIV_List_Active_Off)
    {
       DoMethod(gui->LV_POP3, MUIM_List_GetEntry, p, &pop3);
+      GetMUIString(pop3->Account, gui->ST_POPACCOUNT, sizeof(pop3->Account));
       GetMUIString(pop3->Server, gui->ST_POPHOST, sizeof(pop3->Server));
       GetMUIString(pop3->User, gui->ST_POPUSERID, sizeof(pop3->User));
       GetMUIString(pop3->Password, gui->ST_PASSWD, sizeof(pop3->Password));
       pop3->Enabled        = GetMUICheck(gui->CH_POPENABLED);
       pop3->UseAPOP        = GetMUICheck(gui->CH_USEAPOP);
       pop3->DeleteOnServer = GetMUICheck(gui->CH_DELETE);
-      snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
+      if(pop3->Account[0] == '\0')
+        snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
 
       if(GetMUICheck(gui->CH_POP3SSL))
       {
          new_ssl_mode = P3SSL_SSL;
-         if(GetMUICheck(gui->CH_USESTLS)) new_ssl_mode = P3SSL_STLS;
+         if(GetMUICheck(gui->CH_USESTLS))
+           new_ssl_mode = P3SSL_STLS;
       }
       else
       {
          new_ssl_mode = P3SSL_OFF;
-         if(!G->TR_UseableTLS) set(gui->CH_POP3SSL, MUIA_Disabled, TRUE);
+         if(G->TR_UseableTLS == FALSE)
+           set(gui->CH_POP3SSL, MUIA_Disabled, TRUE);
       }
 
       if(pop3->SSLMode != new_ssl_mode)
@@ -651,13 +661,20 @@ MakeHook(CO_PutP3EntryHook,CO_PutP3Entry);
 //  Sets values of first POP3 account
 HOOKPROTONHNONP(CO_GetDefaultPOPFunc, void)
 {
-   struct POP3 *pop3 = CE->P3[0];
+  struct POP3 *pop3 = CE->P3[0];
 
-   if (!pop3) return;
-   GetMUIString(pop3->Server, G->CO->GUI.ST_POPHOST0, sizeof(pop3->Server));
-   pop3->Port = 110;
-   GetMUIString(pop3->Password, G->CO->GUI.ST_PASSWD0, sizeof(pop3->Password));
-   snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
+  ENTER();
+
+  if(pop3 != NULL)
+  {
+    GetMUIString(pop3->Server, G->CO->GUI.ST_POPHOST0, sizeof(pop3->Server));
+    pop3->Port = 110;
+    GetMUIString(pop3->Password, G->CO->GUI.ST_PASSWD0, sizeof(pop3->Password));
+    if(pop3->Account[0] == '\0')
+      snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
+  }
+
+  LEAVE();
 }
 MakeHook(CO_GetDefaultPOPHook,CO_GetDefaultPOPFunc);
 ///
@@ -693,10 +710,15 @@ void CO_FreeConfig(struct Config *co)
   int i;
 
   ENTER();
+
   SHOWVALUE(DBF_CONFIG, co);
 
   // free all config elements
-  for(i = 0; i < MAXP3; i++) { if(co->P3[i]) free(co->P3[i]); }
+  for(i = 0; i < MAXP3; i++)
+  {
+    if(co->P3[i] != NULL)
+      free(co->P3[i]);
+  }
 
 
   // we have to free the mimeTypeList
@@ -765,7 +787,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
       for(i = 0; i < MAXP3; i++)
       {
-        if(co->P3[i])
+        if(co->P3[i] != NULL)
         {
           free(co->P3[i]);
           co->P3[i] = NULL;
@@ -782,7 +804,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       *co->SMTP_AUTH_Pass = '\0';
       co->SMTP_AUTH_Method = SMTPAUTH_AUTO;
       co->P3[0] = CO_NewPOP3(co, TRUE);
-      co->P3[0]->DeleteOnServer = TRUE;
+      if(co->P3[0] != NULL)
+        co->P3[0]->DeleteOnServer = TRUE;
    }
 
    if(page == cp_NewMail || page == cp_AllPages)
@@ -1113,22 +1136,31 @@ void CO_Validate(struct Config *co, BOOL update)
 
    ENTER();
 
-   if(!*co->SMTP_Server) strlcpy(co->SMTP_Server, co->P3[0]->Server, sizeof(co->SMTP_Server));
-   if (co->SMTP_Port == 0) co->SMTP_Port = 25;
-   if(!*co->SMTP_Domain)
-     strlcpy(co->SMTP_Domain, p ? p+1 : "", sizeof(co->SMTP_Domain));
+   if(co->SMTP_Server[0] == '\0')
+     strlcpy(co->SMTP_Server, co->P3[0]->Server, sizeof(co->SMTP_Server));
+   if(co->SMTP_Port == 0)
+     co->SMTP_Port = 25;
+   if(co->SMTP_Domain[0] == '\0')
+     strlcpy(co->SMTP_Domain, p ? p + 1 : "", sizeof(co->SMTP_Domain));
 
-   for (i = 0; i < MAXP3; i++) if (co->P3[i])
+   for(i = 0; i < MAXP3; i++)
    {
-      if(!*co->P3[i]->Server)
-        strlcpy(co->P3[i]->Server, co->SMTP_Server, sizeof(co->P3[i]->Server));
+     struct POP3 *pop3 = co->P3[i];
 
-      if (co->P3[i]->Port == 0) co->P3[i]->Port = 110;
+   	 if(pop3 != NULL)
+     {
+       if(pop3->Server[0] == '\0')
+         strlcpy(pop3->Server, co->SMTP_Server, sizeof(pop3->Server));
 
-      if(!*co->P3[i]->User)
-        strlcpy(co->P3[i]->User, co->EmailAddress, p ? (unsigned int)(p-(co->EmailAddress)) : sizeof(co->P3[i]->User));
+       if(pop3->Port == 0)
+         pop3->Port = 110;
 
-      snprintf(co->P3[i]->Account, sizeof(co->P3[i]->Account), "%s@%s", co->P3[i]->User, co->P3[i]->Server);
+       if(pop3->User[0] == '\0')
+         strlcpy(pop3->User, co->EmailAddress, p ? (unsigned int)(p - (co->EmailAddress)) : sizeof(pop3->User));
+
+       if(pop3->Account[0] == '\0')
+         snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
+     }
    }
 
    // now we check whether our timezone setting is coherent to an
@@ -2052,5 +2084,4 @@ static struct CO_ClassData *CO_New(void)
    return NULL;
 }
 ////
-
 
