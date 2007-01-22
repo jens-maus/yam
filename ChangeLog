@@ -7,6 +7,7 @@ $URL$
 
 2007-01-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: also fixed a GetVar() call and did some code cleanup.
   * YAM.c, YAM_MA.c, YAM_CO.c: changed some more calls to GetVar() to use
     sizeof() instead of numeric constants as size argument.
   * YAM_MA.c: increased the size of the status part of a mail file to be able

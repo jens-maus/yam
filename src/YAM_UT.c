@@ -4359,7 +4359,9 @@ BOOL EditorToFile(Object *editor, char *file)
   FILE *fh;
   BOOL result = FALSE;
 
-  if((fh = fopen(file, "w")))
+  ENTER();
+
+  if((fh = fopen(file, "w")) != NULL)
   {
     char *text = (char *)DoMethod((Object *)editor, MUIM_TextEditor_ExportText);
 
@@ -4371,6 +4373,7 @@ BOOL EditorToFile(Object *editor, char *file)
     fclose(fh);
   }
 
+  RETURN(result);
   return result;
 }
 ///
@@ -4378,10 +4381,12 @@ BOOL EditorToFile(Object *editor, char *file)
 //  Loads a file into a texteditor object
 BOOL FileToEditor(char *file, Object *editor)
 {
-  char *text = FileToBuffer(file);
+  char *text;
   BOOL res = FALSE;
 
-  if(text)
+  ENTER();
+
+  if((text = FileToBuffer(file)) != NULL)
   {
     char *parsedText;
 
@@ -4397,6 +4402,7 @@ BOOL FileToEditor(char *file, Object *editor)
     free(text);
   }
 
+  RETURN(res);
   return res;
 }
 ///
@@ -4407,6 +4413,7 @@ BOOL FileToEditor(char *file, Object *editor)
 HOOKPROTONHNO(GeneralDesFunc, long, void *entry)
 {
    free(entry);
+
    return 0;
 }
 MakeHook(GeneralDesHook, GeneralDesFunc);
@@ -4417,16 +4424,20 @@ HOOKPROTONH(PO_SetPublicKey, void, Object *pop, Object *string)
 {
   char *var = NULL;
 
+  ENTER();
+
   DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &var);
-  if(var)
+  if(var != NULL)
   {
-    char buf[8+2+1]; // 8 chars + 2 extra chars required.
+    char buf[8 + 2 + 1]; // 8 chars + 2 extra chars required.
 
     strlcpy(buf, "0x", sizeof(buf));
     strlcat(buf, var, sizeof(buf));
 
     setstring(string, buf);
   }
+
+  LEAVE();
 }
 MakeHook(PO_SetPublicKeyHook, PO_SetPublicKey);
 ///
@@ -4434,77 +4445,84 @@ MakeHook(PO_SetPublicKeyHook, PO_SetPublicKey);
 //  Lists keys of public PGP keyring in a popup window
 HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
 {
-   APTR secret;
-   char buf[SIZE_LARGE], *str, p;
-   int retc, keys = 0;
-   FILE *fp;
+  APTR secret;
+  char buf[SIZE_LARGE], *str, p;
+  int retc, keys = 0;
+  FILE *fp;
 
-   secret = str = (char *)xget(pop, MUIA_UserData);
-   if (G->PGPVersion == 5)
-   {
-      retc = PGPCommand("pgpk", "-l +language=us", KEEPLOG);
-   }
-   else
-   {
-      strlcpy(buf, "-kv  ", sizeof(buf));
-      if (secret)
+  ENTER();
+
+  secret = str = (char *)xget(pop, MUIA_UserData);
+  if(G->PGPVersion == 5)
+  {
+    retc = PGPCommand("pgpk", "-l +language=us", KEEPLOG);
+  }
+  else
+  {
+    strlcpy(buf, "-kv  ", sizeof(buf));
+    if(secret != NULL)
+    {
+      GetVar("PGPPATH", &buf[4], sizeof(buf) - 4, 0);
+      if((p = buf[strlen(buf) - 1]) != ':' && p != '/')
+        strlcat(buf, "/", sizeof(buf));
+
+      strlcat(buf, "secring.pgp", sizeof(buf));
+    }
+    retc = PGPCommand("pgp", buf, KEEPLOG);
+  }
+
+  if(retc == 0 && (fp = fopen(PGPLOGFILE, "r")) != NULL)
+  {
+    str = (char *)xget(string, MUIA_String_Contents);
+    DoMethod(pop, MUIM_List_Clear);
+
+    setvbuf(fp, NULL, _IOFBF, SIZE_FILEBUF);
+
+    while(GetLine(fp, buf, sizeof(buf)) != NULL)
+    {
+      char entry[SIZE_DEFAULT];
+
+      memset(entry, 0, SIZE_DEFAULT);
+      if(G->PGPVersion == 5)
       {
-         GetVar("PGPPATH", &buf[4], SIZE_DEFAULT, 0);
-         if((p = buf[strlen(buf)-1]) != ':' && p != '/')
-           strlcat(buf, "/", sizeof(buf));
+        if(!strncmp(buf, "sec", 3) || (!strncmp(&buf[1], "ub", 2) && secret == NULL))
+        {
+          memcpy(entry, &buf[12], 8);
 
-         strlcat(buf, "secring.pgp", sizeof(buf));
+          while(GetLine(fp, buf, sizeof(buf)) != NULL)
+          {
+            if(!strncmp(buf, "uid", 3))
+            {
+              strlcat(entry, &buf[4], sizeof(entry) - 9);
+              break;
+            }
+          }
+        }
       }
-      retc = PGPCommand("pgp", buf, KEEPLOG);
-   }
-
-   if(!retc && (fp = fopen(PGPLOGFILE, "r")))
-   {
-      str = (char *)xget(string, MUIA_String_Contents);
-      DoMethod(pop, MUIM_List_Clear);
-
-      setvbuf(fp, NULL, _IOFBF, SIZE_FILEBUF);
-
-      while (GetLine(fp, buf, sizeof(buf)))
+      else
       {
-         char entry[SIZE_DEFAULT];
-         memset(entry, 0, SIZE_DEFAULT);
-         if (G->PGPVersion == 5)
-         {
-            if (!strncmp(buf, "sec", 3) || (!strncmp(&buf[1], "ub", 2) && !secret))
-            {
-               memcpy(entry, &buf[12], 8);
-
-               while (GetLine(fp, buf, sizeof(buf)))
-               {
-                 if(!strncmp(buf, "uid", 3))
-                 {
-                   strlcat(entry, &buf[4], sizeof(entry)-9);
-                   break;
-                 }
-               }
-            }
-         }
-         else
-         {
-            if (buf[9] == '/' && buf[23] == '/')
-            {
-               memcpy(entry, &buf[10], 8);
-               strlcat(entry, &buf[29], sizeof(entry)-8);
-            }
-         }
-         if (*entry)
-         {
-            DoMethod(pop, MUIM_List_InsertSingle, entry, MUIV_List_Insert_Bottom);
-            if (!strncmp(entry, str, 8)) set(pop, MUIA_List_Active, keys);
-            keys++;
-         }
+        if(buf[9] == '/' && buf[23] == '/')
+        {
+          memcpy(entry, &buf[10], 8);
+          strlcat(entry, &buf[29], sizeof(entry) - 8);
+        }
       }
-      fclose(fp);
-      DeleteFile(PGPLOGFILE);
-   }
-   if (!keys) ER_NewError(tr(MSG_ER_NoPublicKeys), "", "");
-   return keys > 0;
+      if(entry[0] != '\0')
+      {
+        DoMethod(pop, MUIM_List_InsertSingle, entry, MUIV_List_Insert_Bottom);
+        if(!strncmp(entry, str, 8))
+          set(pop, MUIA_List_Active, keys);
+        keys++;
+      }
+    }
+    fclose(fp);
+    DeleteFile(PGPLOGFILE);
+  }
+  if(keys == 0)
+    ER_NewError(tr(MSG_ER_NoPublicKeys), "", "");
+
+  RETURN(keys > 0);
+  return keys > 0;
 }
 MakeHook(PO_ListPublicKeysHook, PO_ListPublicKeys);
 ///
