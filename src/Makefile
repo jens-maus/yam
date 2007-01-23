@@ -49,6 +49,9 @@ ifndef (HOST)
     ifeq ($(shell uname -m), powerpc)
       HOST = AmigaOS4
     endif
+    ifeq ($(shell uname -m), ppc)
+      HOST = AmigaOS4
+    endif
   endif
 endif
 
@@ -163,7 +166,7 @@ ifeq ($(OS), os4)
   CPU      = -mcpu=604e -mmultiple -Wa,-mregnames
   REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod \
              -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
-  CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ $(REDEFINE)
+  CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ $(REDEFINE)
   LDFLAGS  += -mcrt=$(CRT)
 
 else

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-23  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Makefile: added an additional check for uname reporting "ppc" instead of
+    "powerpc" as machine name for OS4 (uname (coreutils) 5.2.1-9).
+
 2007-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile.#?: removed all explicit target specific makefiles and replaced them
