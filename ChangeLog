@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-24  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: added missing TAG_DONE to GetTimezoneAttrs() call.
+
 2007-01-23  Thore Böckelmann <tboeckel@gmx.de>
 
   * Makefile: added an additional check for uname reporting "ppc" instead of
