@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-25  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: Updated according to changes.
+
 2007-01-24  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: added missing TAG_DONE to GetTimezoneAttrs() call.

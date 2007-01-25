@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.11 (13.01.07)
+## version $VER: YAM.ct 6.12 (23.01.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -578,7 +578,7 @@ Var god bekräfta...
 ;#DEF Please confirm...
 ;#SET (155//)
 MSG_MA_ConfirmFilter
-Är det OK att filtrera alla brev\ni mappen '%s'?
+Är det OK att filtrera alla\nbrev i mappen '%s'?
 ;#DEF Is it okay to filter messages\nin folder '%s'?
 ;#SET (159//)
 MSG_MA_FilterStats
@@ -733,14 +733,6 @@ MSG_MA_Restart
 Starta om
 ;#DEF Restart
 ;#SET (203//)
-MSG_MA_Hide
-H\000Göm
-;#DEF H\000Hide
-;#SET (204//)
-MSG_MA_Quit
-Q\000Avsluta
-;#DEF Q\000Quit
-;#SET (205//)
 MSG_MA_NewFolder
 Ny mapp
 ;#DEF New folder
@@ -761,54 +753,10 @@ MSG_MA_Select
 Välj
 ;#DEF Select
 ;#SET (211//)
-MSG_MA_SelectAll
-L\000Alla
-;#DEF L\000All
-;#SET (212//)
-MSG_MA_SelectNone
--\000Inga
-;#DEF -\000None
-;#SET (213//)
-MSG_MA_SelectToggle
-=\000Växla
-;#DEF =\000Toggle
-;#SET (214//)
-MSG_MA_MSearch
-F\000Sök...
-;#DEF F\000Search...
-;#SET (215//)
-MSG_MA_MFilter
-I\000Filtrera
-;#DEF I\000Filter
-;#SET (216//)
-MSG_MA_RemoveDeleted
-Z\000Töm mappen Borttaget
-;#DEF Z\000Empty trash
-;#SET (217//)
-MSG_MA_UpdateIndex
-U\000Uppdatera index
-;#DEF U\000Update index
-;#SET (218//)
 MSG_MA_FlushIndices
 Rensa index
 ;#DEF Flush indices
 ;#SET (219//)
-MSG_MA_MSendAll
-S\000Skicka köad post
-;#DEF S\000Send queued mail
-;#SET (222//)
-MSG_MA_Exchange
-X\000Skicka/hämta post
-;#DEF X\000Exchange mail
-;#SET (223//)
-MSG_MA_MGetMail
-G\000Hämta ny post
-;#DEF G\000Get new mail
-;#SET (224//)
-MSG_MA_MRead
-D\000Läs
-;#DEF D\000Read
-;#SET (225//)
 MSG_MA_MEdit
 Redigera...
 ;#DEF Edit...
@@ -853,22 +801,6 @@ MSG_MA_SetStatus
 Sätt status
 ;#DEF Set status to
 ;#SET (236//)
-MSG_MA_ToUnread
-[\000Oläst
-;#DEF [\000Unread
-;#SET (237//)
-MSG_MA_ToRead
-]\000Läst
-;#DEF ]\000Read
-;#SET (238//)
-MSG_MA_ToHold
-{\000Håll kvar
-;#DEF {\000Hold
-;#SET (239//)
-MSG_MA_ToQueued
-}\000I kö
-;#DEF }\000Queued
-;#SET (240//)
 MSG_MA_ChangeSubj
 Ändra ärende...
 ;#DEF Change subject...
@@ -894,39 +826,39 @@ Användare
 ;#DEF Users
 ;#SET (246//)
 MSG_HELP_MA_BT_READ
-Visa innehållet i valt brev.
+Visa innehållet i valt brev
 ;#DEF Display contents of\nselected message
 ;#SET (247//)
 MSG_HELP_MA_BT_EDIT
-Redigera\nvalt brev.
+Redigera\nvalt brev
 ;#DEF Modify the\nselected message
 ;#SET (248//)
 MSG_HELP_MA_BT_MOVE
-Flytta val(t/da) brev till\nen annan mapp.
+Flytta val(t/da) brev till\nen annan mapp
 ;#DEF Move selected message(s)\nto another folder
 ;#SET (249//)
 MSG_HELP_MA_BT_DELETE
-Radera val(t/da) brev.
+Radera val(t/da) brev
 ;#DEF Delete selected message(s)
 ;#SET (250//)
 MSG_HELP_MA_BT_GETADDRESS
-Spara avsändarens\nadress i din adressbok.
+Spara avsändarens\nadress i din adressbok
 ;#DEF Save sender's address\nin your address book
 ;#SET (251//)
 MSG_HELP_MA_BT_WRITE
-Skriv ett nytt brev.
+Skriv ett nytt brev
 ;#DEF Compose a new message
 ;#SET (252//)
 MSG_HELP_MA_BT_REPLY
-Svara på valt brev.
+Svara på valt brev
 ;#DEF Reply to selected message
 ;#SET (253//)
 MSG_HELP_MA_BT_FORWARD
-Vidarebefordra valt brev\ntill en annan mottagare.
+Vidarebefordra valt brev\ntill en annan mottagare
 ;#DEF Forward selected message\nto another recipient
 ;#SET (254//)
 MSG_HELP_MA_BT_POPNOW
-Anslut till e-postservern\noch hämta nya brev.
+Anslut till e-postservern\noch hämta nya brev
 ;#DEF Connect to the mail server\nand download new messages
 ;#SET (255//)
 MSG_HELP_MA_BT_SENDALL
@@ -934,19 +866,19 @@ Skicka köade brev i utmappen.
 ;#DEF Send queued messages\nin the outgoing folder
 ;#SET (256//)
 MSG_HELP_MA_BT_FILTER
-Applicera filter på alla\nbrev i denna mapp.
+Applicera filter på alla\nbrev i denna mapp
 ;#DEF Apply filters to all\nmessages in this folder
 ;#SET (257//)
 MSG_HELP_MA_BT_SEARCH
-Sök igenom dina mappar.
+Sök igenom dina mappar
 ;#DEF Search your mail folders
 ;#SET (258//)
 MSG_HELP_MA_BT_ABOOK
-Öppna adressboken.
+Öppna adressboken
 ;#DEF Open the address book
 ;#SET (259//)
 MSG_HELP_MA_BT_CONFIG
-Ändra YAMs inställningar.
+Ändra YAMs inställningar
 ;#DEF Modify YAM's preferences
 ;#SET (260//)
 MSG_CO_ChangeFolderPass
@@ -2090,7 +2022,7 @@ Importera MIME-visare & typer...
 ;#DEF Import MIME viewers & types...
 ;#SET (553//)
 MSG_HELP_CO_ST_REALNAME
-Fullständigt namn (förnamn efternamn).
+Fullständigt namn\n(förnamn efternamn)
 ;#DEF Your full name\n(first name last name)
 ;#SET (554//)
 MSG_HELP_CO_ST_EMAIL
@@ -2102,15 +2034,15 @@ Adress till POP3-server för att hämta\npost. Om du lämnar detta fält tomt\nanvän
 ;#DEF The address of the POP3 server to receive mail from.\nIf you leave this field empty, then the address\nof the SMTP server is used.
 ;#SET (556//)
 MSG_HELP_CO_ST_PASSWD
-Lösenord för att hämta\npost på e-postservern.
+Lösenord för att hämta\npost på e-postservern
 ;#DEF Password to access\nthe mail server
 ;#SET (557//)
 MSG_HELP_CO_CY_TZONE
-Den tidszon där\ndu befinner dej.
+Den tidszon där\ndu befinner dig
 ;#DEF Select the timezone of\nyour current location
 ;#SET (558//)
 MSG_HELP_CO_CH_DLSAVING
-Justera automatiskt för sommartid.
+Justera automatiskt för sommartid
 ;#DEF Adjust the timezone during daylight\nsaving time (summer time)
 ;#SET (559//)
 MSG_HELP_CO_ST_SMTPHOST
@@ -2126,15 +2058,15 @@ Konvertera inte till 7 bitar innan överföring.\nAnvänd detta val bara om din SMT
 ;#DEF Don't convert messages to 7bit when transfering.\nOnly use this option if your server supports 8bit\ntransfers, otherwise your messages may get corrupted.
 ;#SET (562//)
 MSG_HELP_CO_LV_POP3
-Lista över POP3-servrar.
+Lista över POP3-servrar
 ;#DEF List of POP3 accounts
 ;#SET (563//)
 MSG_HELP_CO_BT_PADD
-Lägg till en ny POP3-server.
+Lägg till en ny POP3-server
 ;#DEF Add a new POP3 account to the list
 ;#SET (564//)
 MSG_HELP_CO_BT_PDEL
-Ta bort vald POP3-server från listan.
+Ta bort vald POP3-server från listan
 ;#DEF Remove selected POP3 account from the list
 ;#SET (565//)
 MSG_HELP_CO_ST_POPUSERID
@@ -2142,15 +2074,15 @@ Användarnamn för att logga in på POP3-server.\nOm du lämnar detta fält tomt komm
 ;#DEF User name to log in on the POP3 server.\nIf you leave this field empty, then the user-ID\nwill be taken from your email address.
 ;#SET (566//)
 MSG_HELP_CO_CH_DELETE
-Radera brev på e-postservern\nefter att du hämtat dem.
+Radera brev på e-postservern\nefter att du hämtat dem
 ;#DEF Delete messages from\nmail server after\ndownloading
 ;#SET (567//)
 MSG_HELP_CO_CH_USEAPOP
-Logga in med APOP.
+Logga in med APOP
 ;#DEF Login using APOP authentication
 ;#SET (568//)
 MSG_HELP_CO_CH_POPENABLED
-Anslut till denna server\nnär du hämtar ny post.
+Anslut till denna server\nnär du hämtar ny post
 ;#DEF Connect to this server\nwhen checking for new mail
 ;#SET (569//)
 MSG_HELP_CO_CH_AVOIDDUP
@@ -2158,95 +2090,95 @@ Om du inte raderar gammal post på servern,\nanvänd detta val för att undvika dub
 ;#DEF If you don't delete old mail\non the server, use this option\nto avoid duplicate messages.
 ;#SET (570//)
 MSG_HELP_CO_CH_TRANSWIN
-Visa statusfönster under överföringen.
+Visa statusfönster under överföringen
 ;#DEF Show progress window during mail transfers
 ;#SET (571//)
 MSG_HELP_CO_CY_MSGSELECT
-Visa innehållet i en POP3 postlåda\noch välj vilka brev som ska hämtas.
+Visa innehållet i en POP3 postlåda\noch välj vilka brev som ska hämtas
 ;#DEF Enable this option to show the contents of the POP3 mailbox\nand allow selection of the messages before downloading
 ;#SET (572//)
 MSG_HELP_CO_CH_UPDSTAT
-Markera nya brev som olästa i inkorgen\ninnan hämtning av ny post.
+Markera nya brev som olästa i inkorgen\ninnan hämtning av ny post
 ;#DEF Mark new messages in the incoming folder\nas unread before downloading new mail
 ;#SET (573//)
 MSG_HELP_CO_ST_WARNSIZE
-Brev större än denna gräns\nbetraktas som stora.
+Brev större än denna gräns\nbetraktas som stora
 ;#DEF Incoming messages which are bigger than this\nsize will be considered as large.
 ;#SET (574//)
 MSG_HELP_CO_ST_INTERVAL
-Hur ofta du vill kolla efter ny post?\n(använd 0 för att stänga av denna funktion.)
+Hur ofta du vill kolla efter ny post?\n(använd 0 för att stänga av denna funktion)
 ;#DEF How frequently do you want to check for new mail?\n(use 0 to disable this feature)
 ;#SET (575//)
 MSG_HELP_CO_CH_DLLARGE
-Vid kontroll av ny post, hämta\nstora brev även om de är större\nän den angivna storleken ovan.
+Vid kontroll av ny post, hämta\nstora brev även om de är större\nän den angivna storleken ovan
 ;#DEF When automatically checking for new mail,\ndownload large messages even if they are\nlarger than the size specified above
 ;#SET (576//)
 MSG_HELP_CO_CH_NOTIREQ
-Visa ett dialogfönster när\ndu fått ny post.
+Visa ett dialogfönster när\ndu fått ny post
 ;#DEF Show a requester when\nyou get new mail
 ;#SET (577//)
 MSG_HELP_CO_ST_NOTICMD
-Kommando att utföra när du fått ny post.
+Kommando att utföra när du fått ny post
 ;#DEF The program you want to execute\nwhen you get new mail
 ;#SET (578//)
 MSG_HELP_CO_ST_NOTISOUND
-Ljudfil att spela när du fått ny post.
+Ljudfil att spela när du fått ny post
 ;#DEF The sound file you want to play\nwhen you get new mail
 ;#SET (579//)
 MSG_HELP_CO_LV_RULES
-Filterlista.
+Filterlista
 ;#DEF List of filters
 ;#SET (580//)
 MSG_HELP_CO_ST_RNAME
-Filternamn.
+Filternamn
 ;#DEF Filter name
 ;#SET (581//)
 MSG_HELP_CO_CH_REMOTE
-Applicera detta filter\ninnan ett brev hämtas.
+Applicera detta filter\ninnan ett brev hämtas
 ;#DEF Apply this filter before\ndownloading a message
 ;#SET (582//)
 MSG_HELP_CO_CH_APPLYNEW
-Applicera detta filter på nya brev.
+Applicera detta filter på nya brev
 ;#DEF Apply this filter to new messages
 ;#SET (583//)
 MSG_HELP_CO_CH_APPLYSENT
-Applicera detta filter på ivägskickade brev.
+Applicera detta filter på ivägskickade brev
 ;#DEF Apply this filter to sent messages
 ;#SET (584//)
 MSG_HELP_CO_CH_APPLYREQ
-Applicera detta filter vid manuell filtrering.
+Applicera detta filter vid manuell filtrering
 ;#DEF Apply this filter when you activate\nthe filter function manually
 ;#SET (585//)
 MSG_HELP_CO_CY_COMBINE
-Hur de två söknycklarna skall\nkombineras med varandra.
+Hur de två söknycklarna skall\nkombineras med varandra
 ;#DEF How to combine the two\nsearch keys for this filter
 ;#SET (586//)
 MSG_HELP_CO_CH_ABOUNCE
-Studsa matchande brev till\nen annan adress.
+Studsa matchande brev till\nen annan adress
 ;#DEF Bounce matching messages\nto another person
 ;#SET (587//)
 MSG_HELP_CO_ST_ABOUNCE
-E-postadress att studsa brev till.
+E-postadress att studsa brev till
 ;#DEF Email address of the person who\ngets the bounced messages
 ;#SET (588//)
 MSG_HELP_CO_CH_AFORWARD
-Vidarebefordra matchande brev\ntill en annan adress.
+Vidarebefordra matchande brev\ntill en annan adress
 ;#DEF Forward matching messages\nto another person
 ;#SET (589//)
 MSG_HELP_CO_ST_AFORWARD
-E-postadress att skicka de vidare-\nbefordrade breven till.
+E-postadress att skicka de vidare-\nbefordrade breven till
 ;#DEF Email address of the person who\ngets the forwarded messages
 ;#SET (590//)
 MSG_HELP_CO_CH_ARESPONSE
-Skicka ett automatiskt svar för\nvarje matchande brev.
+Skicka ett automatiskt svar för\nvarje matchande brev
 ;#DEF Send an automatic reply\nfor each matching message
 ;#SET (591//)
 MSG_HELP_CO_ST_ARESPONSE
-Textfil med det automatiska svaret.
+Textfil med det automatiska svaret
 ;#DEF Text file that contains the response
 ;#SET (592//)
 MSG_HELP_CO_CH_AEXECUTE
-Utför ett kommando för\nvarje matchande brev.
+Utför ett kommando för\nvarje matchande brev
 ;#DEF Execute a command for\neach matching message
 ;#SET (593//)
 MSG_HELP_CO_ST_AEXECUTE
@@ -2254,47 +2186,47 @@ Kommando att utföra. Sökvägen till det\nmatchande brevet skickas som ett argumen
 ;#DEF Command to execute. The path of the matching\nmessage is passed as an argument.
 ;#SET (594//)
 MSG_HELP_CO_CH_APLAY
-Spela en ljudfil för\nvarje matchande brev.
+Spela en ljudfil för\nvarje matchande brev
 ;#DEF Play a sound file for\neach matching message
 ;#SET (595//)
 MSG_HELP_CO_ST_APLAY
-Ljudfil att spela.
+Ljudfil att spela
 ;#DEF Sound file to play
 ;#SET (596//)
 MSG_HELP_CO_CH_AMOVE
-Flytta matchande brev till\nen annan mapp.
+Flytta matchande brev till\nen annan mapp
 ;#DEF Move matching messages\nto a different folder
 ;#SET (597//)
 MSG_HELP_CO_PO_MOVETO
-Mapp att flytta till.
+Mapp att flytta till
 ;#DEF Destination folder
 ;#SET (598//)
 MSG_HELP_CO_CH_ADELETE
-Radera matchande brev.
+Radera matchande brev
 ;#DEF Delete matching messages
 ;#SET (599//)
 MSG_HELP_CO_CH_ASKIP
-Hämta inte matchande brev.
+Hämta inte matchande brev
 ;#DEF Don't download matching messages
 ;#SET (600//)
 MSG_HELP_CO_BT_RADD
-Lägg till ett nytt filter.
+Lägg till ett nytt filter
 ;#DEF Add a new filter
 ;#SET (601//)
 MSG_HELP_CO_BT_RDEL
-Ta bort valda filter.
+Ta bort valda filter
 ;#DEF Remove selected filter
 ;#SET (602//)
 MSG_HELP_CO_CA_COL2QUOT
-Ändra färgen för gamla citat.
+Ändra färgen för gamla citat
 ;#DEF Color used for displaying\n2nd level quotes
 ;#SET (603//)
 MSG_HELP_CO_CH_WRAPHEAD
-Visa långa brevhuvuden på flera rader.
+Visa långa brevhuvuden på flera rader
 ;#DEF Display long headers on multiple lines
 ;#SET (604//)
 MSG_HELP_CO_CH_TEXTSTYLES
-Använd / * _ och # för att\nange olika textstilar.
+Tolka / * _ och # som\nkontrollkoder för textstilar
 ;#DEF Interpret / * _ and # as\ncontrol codes for text styles
 ;#SET (605//)
 MSG_HELP_CO_CY_HEADER
@@ -2302,35 +2234,35 @@ Hur vill du visa brevhuvuden\nnär du läser brev?
 ;#DEF How do you want to display\nthe message headers in the\nRead window?
 ;#SET (606//)
 MSG_HELP_CO_ST_HEADERS
-Ange ett AmigaDOS-mönster för att välja de\nbrevhuvudsrader som ska visas. Förvalt är\n(From|To|Date|Subject) (från|till|datum|ärende).
+Ange ett AmigaDOS-mönster för att välja de\nbrevhuvudsrader som ska visas. Förvalt är\n(From|To|Date|Subject) (från|till|datum|ärende)
 ;#DEF Specify an AmigaDOS pattern to\nchoose the headers in SELECTED format.\nDefault is (From|To|Date|Subject)
 ;#SET (607//)
 MSG_HELP_CO_CY_SENDERINFO
-Visa information om avsändaren när\ndu läser brev (om det finns någon).
+Visa information om avsändaren när\ndu läser brev (om det finns någon)
 ;#DEF Information about the sender to display\nin the Read window (if available)
 ;#SET (608//)
 MSG_HELP_CO_CY_SIGSEPLINE
-Typ av avskiljare för att\nskilja signatur från brev.
+Typ av avskiljare för att\nskilja signatur från brev
 ;#DEF Type of the signature\nseparation line
 ;#SET (609//)
 MSG_HELP_CO_CH_ALLTEXTS
-Visa alla textdelar i ett\nbrev med flera delar.
+Visa alla textdelar i ett\nbrev med flera delar
 ;#DEF Display all textual parts\nof a multipart message
 ;#SET (611//)
 MSG_HELP_CO_CH_MULTIWIN
-Öppna ett nytt fönster för\nvarje brev du läser.
+Öppna ett nytt fönster för\nvarje brev du läser
 ;#DEF Open a new Read window\nfor each selected message
 ;#SET (612//)
 MSG_HELP_CO_CA_COLTEXT
-Ändra färgerna på färgtext i\nredigeraren och när du läser brev.
+Ändra färgerna på färgtext i\nredigeraren och när du läser brev
 ;#DEF Color of 'colored' text used in\nthe Read window and the editor
 ;#SET (613//)
 MSG_HELP_CO_CH_FIXFEDIT
-Visa breven med typsnitt där\nalla tecken är lika breda.
+Visa breven med typsnitt där\nalla tecken är lika breda
 ;#DEF Display messages using\na fixed width font
 ;#SET (614//)
 MSG_HELP_CO_ST_CTYPE
-MIME-visaren aktiveras av denna slags bilaga.
+MIME-visaren aktiveras\nav denna slags bilaga
 ;#DEF MIME viewer is activated\nby this attachment type
 ;#SET (615//)
 MSG_HELP_CO_ST_COMMAND
@@ -2338,19 +2270,19 @@ Sökväg och argument för visaren.\nAnvänd %s för att ange filnamnet.
 ;#DEF Path and optional arguments of\nthe viewer command. Use %s to\ninsert the data file.
 ;#SET (616//)
 MSG_HELP_CO_BT_MADD
-Lägg till en ny MIME-visare.
+Lägg till en ny MIME-visare
 ;#DEF Add a new MIME viewer
 ;#SET (617//)
 MSG_HELP_CO_BT_MDEL
-Ta bort vald MIME-visare.
+Ta bort vald MIME-visare
 ;#DEF Remove selected MIME viewer
 ;#SET (618//)
 MSG_HELP_CO_ST_EXTENS
-Filändelser som används\nför denna filtyp.
+Filändelser som används\nför denna filtyp
 ;#DEF File extensions used\nby this file type
 ;#SET (619//)
 MSG_HELP_CO_ST_DEFVIEWER
-Program för att visa bilagor av okänd typ.
+Program för att visa\nbilagor av okänd typ
 ;#DEF Program used to display\nattachments of unknown type
 ;#SET (620//)
 MSG_HELP_CO_ST_REPLYTO
@@ -2358,35 +2290,35 @@ Ange svarsadress om den skiljer\nsig från din e-postadress.
 ;#DEF Enter the default return address, if\nit differs from your email address.
 ;#SET (622//)
 MSG_HELP_CO_ST_ORGAN
-Namnet på ditt företag\neller organisation.
+Namnet på ditt företag\neller organisation
 ;#DEF The name of your\ncompany or institute
 ;#SET (623//)
 MSG_HELP_CO_ST_EXTHEADER
-Extra brevhuvudsrad(er) att inkludera\ni alla utgående brev.
+Extra brevhuvudsrad(er) att inkludera\ni alla utgående brev
 ;#DEF Additional message header(s) that will\nbe added to every outgoing message
 ;#SET (624//)
 MSG_HELP_CO_ST_HELLOTEXT
-Text att infoga i början av ett nytt brev.
+Text att infoga i början av ett nytt brev
 ;#DEF Text to insert at the\ntop of a new message
 ;#SET (625//)
 MSG_HELP_CO_ST_BYETEXT
-Text att infoga i slutet av ett nytt brev.
+Text att infoga i slutet av ett nytt brev
 ;#DEF Text to insert at the\nbottom of a new message
 ;#SET (626//)
 MSG_HELP_CO_ST_EDWRAP
-Kolumn där radbrytning\nautomatiskt sätts in.
+Kolumn där radbrytning\nautomatiskt sätts in
 ;#DEF Word-wrap message text\nat this column
 ;#SET (628//)
 MSG_HELP_CO_CY_EDWRAP
-Anger när eller om automatisk\nradbrytning skall användas.
+Anger när eller om automatisk\nradbrytning skall användas
 ;#DEF Select 'as you type' to insert linebreak\ncodes while you're typing the message
 ;#SET (630//)
 MSG_HELP_CO_CH_LAUNCH
-Starta den externa redigeraren när\ndu börjar på ett nytt brev.
+Starta den externa redigeraren när\ndu börjar på ett nytt brev
 ;#DEF Automatically launch the external editor\nwhen starting a new message
 ;#SET (631//)
 MSG_HELP_CO_ST_EDITOR
-Kommando för att starta\ndin textredigerare.
+Kommando för att starta\ndin textredigerare
 ;#DEF Filename of your\nfavorite text editor
 ;#SET (632//)
 MSG_HELP_CO_ST_FWDSTART
@@ -2406,7 +2338,7 @@ Använd alternativ svarstext om mottagar-\nadressen matchar mönstret nedan.
 ;#DEF Use these texts in replies to messages if the\npattern below matches the recipient address.
 ;#SET (636//)
 MSG_HELP_CO_ST_AREPLYPAT
-AmigaDOS-mönster som anger för vilka domäner\nsom alternativ svarstext skall användas.
+AmigaDOS-mönster som anger för vilka domäner\nsom alternativ svarstext skall användas
 ;#DEF AmigaDOS pattern that triggers\nthe alternative reply headers
 ;#SET (637//)
 MSG_HELP_CO_ST_MREPLYTEXT
@@ -2422,131 +2354,131 @@ Tecken i början på varje rad med citerad\ntext. Använd knappen till höger för\na
 ;#DEF String that should precede each line of\nthe quoted message. Use the button at\nthe right side to insert a variable.
 ;#SET (640//)
 MSG_HELP_CO_CH_QUOTEEMPTY
-Använd citattecken på tomma rader?
+Använd citattecken på\ntomma rader?
 ;#DEF Insert quote character(s)\nfor empty lines?
 ;#SET (641//)
 MSG_HELP_CO_CH_COMPADDR
-Låt användaren välja mottagaradress om\n'From:'-fältet (från) och 'Reply-To:'-fältet (svar till) är olika.
+Låt användaren välja mottagaradress om\n'From:'-fältet (från) och 'Reply-To:'-fältet (svar till) är olika
 ;#DEF Let the user select the desired recipient address if\nthe 'From:' and 'Reply-To:' addresses are different
 ;#SET (642//)
 MSG_HELP_CO_CH_STRIPSIG
-Citera inte signaturen i orginalbrevet.
+Citera inte signaturen\ni orginalbrevet
 ;#DEF Don't quote signature\nof original message
 ;#SET (643//)
 MSG_HELP_CO_CY_SIGNAT
-Välj signatur att redigera.
+Välj signatur att redigera
 ;#DEF Select signature to edit
 ;#SET (644//)
 MSG_HELP_CO_BT_EDITSIG
-Ändra din signatur\nmed redigeraren.
+Ändra din signatur\nmed redigeraren
 ;#DEF Modify your signature\nusing the editor
 ;#SET (645//)
 MSG_HELP_CO_BT_INSTAG
-Infoga kontrollkod för en slumpmässig klotterrad.
+Infoga kontrollkod för en slumpmässig klotterrad
 ;#DEF Insert control code for random taglines
 ;#SET (646//)
 MSG_HELP_CO_BT_INSENV
-Infoga kod för att inkludera env:SIGNATURE.
+Infoga kontrollkod för att inkludera env:SIGNATURE
 ;#DEF Insert control code for the\nSIGNATURE environment variable
 ;#SET (647//)
 MSG_HELP_CO_ST_TAGFILE
-Fil med klotterrader (\"cookies\").
+Fil med klotterrader (\"cookies\")
 ;#DEF Database containing taglines (\"cookies\")
 ;#SET (648//)
 MSG_HELP_CO_ST_TAGSEP
-Tecken för att separera klotterrader i filen.
+Tecken eller sträng för att separera\nklotterraderna i databasen
 ;#DEF Character or string used to separate\nthe taglines in the database
 ;#SET (649//)
 MSG_HELP_CO_CG_FO
-Kolumner som visas\ni mapplistan.
+Kolumner som visas\ni mapplistan
 ;#DEF Columns displayed\nin the folder list
 ;#SET (650//)
 MSG_HELP_CO_CG_MA
-Kolumner att visa\ni brevlistan.
+Kolumner att visa\ni brevlistan
 ;#DEF Columns displayed\nin the message list
 ;#SET (651//)
 MSG_HELP_CO_CG_AB
-Kolumner att visa\ni adressboken.
+Kolumner att visa\ni adressboken
 ;#DEF Columns displayed\nin the address book
 ;#SET (652//)
 MSG_HELP_CO_CH_FIXFLIST
-Visa listan med ett typsnitt där\nalla tecken har samma bredd.
+Visa listan med ett typsnitt där\nalla tecken har samma bredd
 ;#DEF Display list entries\nusing a fixed width font
 ;#SET (653//)
 MSG_HELP_CO_CH_BEAT
-Visa tid i Swatch Beats.
+Visa tid i Swatch Beats, den\nrevolutionerade nya tidsenheten
 ;#DEF Display time in Swatch Beats, the\nrevolutionary new unit of time
 ;#SET (654//)
 MSG_HELP_CO_ST_PGPCMD
-Sökväg till PGPs binärfil.
+Sökväg till PGPs binärfil
 ;#DEF Directory where the PGP\nexecutable can be found
 ;#SET (655//)
 MSG_HELP_CO_ST_MYPGPID
-ID på den PGP-nyckel som ska användas\nför att signera brev.
+ID på den PGP-nyckel som ska\nanvändas för att signera brev
 ;#DEF The ID of your PGP key that's\nused to sign messages
 ;#SET (656//)
 MSG_HELP_CO_CH_ENCSELF
-Kryptera nya brev även med din publika nyckel,\nså du fortfarande kan läsa eller redigera\nivägskickade brev.
+Kryptera nya brev även med din publika nyckel,\nså du fortfarande kan läsa eller redigera\nivägskickade brev
 ;#DEF Encrypt new messages with your public key,\nso you can still read or edit sent messages
 ;#SET (657//)
 MSG_HELP_CO_ST_REMAILER
-E-postadress för återsändartjänsten,\nsom används för att skicka anonyma brev.
+E-postadress för återsändartjänsten,\nsom används för att skicka anonyma brev
 ;#DEF Email address of the remailer service\nused to send anonymous mail
 ;#SET (658//)
 MSG_HELP_CO_ST_FIRSTLINE
-Infoga denna rad i början på de brev\nsom skickas via återsändartjänsten.
+Infoga denna rad i början på de brev\nsom skickas via återsändartjänsten
 ;#DEF Insert this line at the top of your\nmessage if it is sent via remailer
 ;#SET (659//)
 MSG_HELP_CO_ST_LOGFILE
-Sökväg till katalog där loggfilerna sparas.
+Sökväg till katalog där loggfilerna sparas
 ;#DEF Path where the log files will be saved
 ;#SET (660//)
 MSG_HELP_CO_CH_SPLITLOG
-Börja på en ny loggfil varje månad.
+Börja på en ny loggfil varje månad
 ;#DEF Start a new log file every month
 ;#SET (661//)
 MSG_HELP_CO_CY_LOGMODE
-Välj loggningstyp.
+Välj loggningstyp
 ;#DEF Select type of logging
 ;#SET (662//)
 MSG_HELP_CO_CH_LOGALL
-Välj bort detta för att bara logga postöverföring.
+Välj bort detta för att bara logga postöverföring
 ;#DEF Disable this option to\nlog mail transfers only
 ;#SET (663//)
 MSG_HELP_CO_CH_LOADALL
-Ladda indexfiler för alla mappar.
+Ladda indexfiler för alla mappar
 ;#DEF Load index files of all folders
 ;#SET (664//)
 MSG_HELP_CO_CH_MARKNEW
-Ändra status för nya brev till olästa.
+Ändra status för nya brev till olästa
 ;#DEF Change status of new messages to unread
 ;#SET (665//)
 MSG_HELP_CO_CH_SEND
-Skicka köade brev.
+Skicka köade brev
 ;#DEF Send queued messages
 ;#SET (666//)
 MSG_HELP_CO_CH_POPSTART
-Leta efter ny post.
+Leta efter ny post
 ;#DEF Check for mail
 ;#SET (667//)
 MSG_HELP_CO_CH_CHECKBD
-Kontrollera adressboken och\npåminn om någon fyller år.
+Kontrollera adressboken och\npåminn om någon fyller år
 ;#DEF Check the address book and open a\nreminder if it's a person's birthday
 ;#SET (668//)
 MSG_HELP_CO_CH_DELETEOLD
-Radera brev som nått sin maxålder\n(se mappkonfigurationen).
+Radera brev som nått sin maxålder\n(se mappkonfigurationen)
 ;#DEF Delete messages that exceed the maximum\nage (see folder configuration)
 ;#SET (669//)
 MSG_HELP_CO_CH_REMOVEDEL
-Töm mappen Borttaget.
+Töm mappen Borttaget
 ;#DEF Empty trash folder
 ;#SET (670//)
 MSG_HELP_CO_ST_GALLDIR
-Katalog för att spara bilder\nav de du kommunicerar med.
+Katalog för att spara bilder\nav de du kommunicerar med
 ;#DEF Directory to save the pictures\nof your correspondents
 ;#SET (671//)
 MSG_HELP_CO_ST_PHOTOURL
-WWW-adress till bilden på dig.
+WWW-adress till bilden på dig
 ;#DEF WWW address of your portrait image
 ;#SET (672//)
 MSG_HELP_CO_CY_ATAB
@@ -2558,23 +2490,23 @@ Adress och eventuell port för din HTTP-\nproxyserver (förinställd port är 80)\nD
 ;#DEF Address and optional port number of your\nHTTP proxy server (default port is 80).\nYou may leave this field empty.
 ;#SET (674//)
 MSG_HELP_CO_ST_NEWGROUP
-Grupp för nya poster i adressboken\n(den kommer skapas om den inte finns).
+Grupp för nya poster i adressboken\n(den kommer skapas om den inte finns)
 ;#DEF Add new address book entries to this group\n(it will be created if it doesn't exist yet)
 ;#SET (675//)
 MSG_HELP_CO_ST_TEMPDIR
-Katalog för temporära filer.
+Katalog för temporära filer
 ;#DEF Directory to store\ntemporary files
 ;#SET (676//)
 MSG_HELP_CO_ST_DETACHDIR
-Katalog att spara bilagor i.
+Katalog att spara bilagor i
 ;#DEF Directory to save\nattached files to
 ;#SET (677//)
 MSG_HELP_CO_ST_ATTACHDIR
-Förvald katalog för bilagor.
+Förvald katalog för bilagor
 ;#DEF Default source directory\nfor attachments
 ;#SET (678//)
 MSG_HELP_CO_ST_APP
-Position för postlåde-\nikonen i bildpunkter.
+Position för postlåde-\nikonen i bildpunkter
 ;#DEF Position of the mailbox\nAppIcon in pixels
 ;#SET (679//)
 MSG_HELP_CO_CH_CLGADGET
@@ -2586,83 +2518,83 @@ Vill du bekräfta raderingar av brev?
 ;#DEF Do you want to confirm\ndeletion of messages?
 ;#SET (681//)
 MSG_HELP_CO_NB_CONFIRMDEL
-Minsta antal brev som\nkräver bekräftelse.
+Minsta antal brev som\nkräver bekräftelse
 ;#DEF Minimum number of messages to\ndisplay the confirmation requester
 ;#SET (682//)
 MSG_HELP_CO_CH_REMOVE
-Radera brev med en gång; flytta dem\ninte till mappen Borttaget.
+Radera brev med en gång; flytta dem\ninte till mappen Borttaget
 ;#DEF Immediately delete the messages rather\nthan moving them to the trash folder
 ;#SET (683//)
 MSG_HELP_CO_CH_SAVESENT
-Spara skickade brev i skickatmappen.
+Spara skickade brev i skickatmappen
 ;#DEF Save sent messages in the 'Sent' folder
 ;#SET (684//)
 MSG_HELP_CO_RA_MDN_DISP
-När du läser ett brev, skicka ett\nmeddelande om detta till avsändaren\n(om brevet innehåller MDN-rad).
+När du läser ett brev, skicka ett\nmeddelande om detta till avsändaren\n(om brevet innehåller MDN-rad)
 ;#DEF When reading a message, send a\ndisposition notification to the\nsender if requested
 ;#SET (685//)
 MSG_HELP_CO_RA_MDN_PROC
-När du vidarebefordrar ett brev, skicka\nett meddelande om detta till avsändaren\n(om brevet innehåller MDN-rad).
+När du vidarebefordrar ett brev, skicka\nett meddelande om detta till avsändaren\n(om brevet innehåller MDN-rad)
 ;#DEF When forwarding a message, send a\ndisposition notification to the\nsender if requested
 ;#SET (686//)
 MSG_HELP_CO_RA_MDN_DELE
-När du raderar ett brev, skicka ett\nmeddelande om detta till avsändaren\n(om brevet innehåller MDN-rad).
+När du raderar ett brev, skicka ett\nmeddelande om detta till avsändaren\n(om brevet innehåller MDN-rad)
 ;#DEF When deleting a message, send a\ndisposition notification to the\nsender if requested
 ;#SET (687//)
 MSG_HELP_CO_RA_MDN_RULE
-När du raderar eller vidarebefordrar ett\nbrev via filter, skicka ett meddelande\nom detta till avsändaren (om brevet\ninnehåller MDN-rad).
+När du raderar eller vidarebefordrar ett\nbrev via filter, skicka ett meddelande\nom detta till avsändaren (om brevet\ninnehåller MDN-rad)
 ;#DEF When deleting or forwarding a message using\nfilters, send a disposition notification to the sender\nif requested
 ;#SET (688//)
 MSG_HELP_CO_CH_SEND_MDN
-Skicka MDN-svaret så snart det har skapats.
+Skicka MDN-svaret så snart det har skapats
 ;#DEF Try to send the disposition notification\nas soon as it is generated
 ;#SET (689//)
 MSG_HELP_CO_TX_ENCPACK
-XPK-bibliotek som skall användas för\natt skydda och komprimera mappar.
+XPK-bibliotek som skall användas för\natt skydda och komprimera mappar
 ;#DEF XPK library used to protect\nand compress folders
 ;#SET (690//)
 MSG_HELP_CO_TX_PACKER
-XPK-bibliotek som skall användas\nför att komprimera mappar.
+XPK-bibliotek som skall användas\nför att komprimera mappar
 ;#DEF XPK library used to\ncompress folders
 ;#SET (691//)
 MSG_HELP_CO_NB_ENCPACK
-Denna packare är effektivast vid 100%,\nmen är då också långsammast.
+Denna packare är effektivast vid 100%,\nmen är då också långsammast
 ;#DEF Efficiency of this packer.\n100% is best, but slowest
 ;#SET (692//)
 MSG_HELP_CO_ST_ARCHIVER
-Kommando och argument för packare, används\nför att komprimera bilagor.
+Kommando och argument för packare,\nanvänds för att komprimera bilagor
 ;#DEF Archiver command and options used\nto create compressed attachments
 ;#SET (693//)
 MSG_HELP_CO_ST_RXNAME
-Beskrivning av skriptet i skriptmenyn.
+Beskrivning av skriptet i skriptmenyn
 ;#DEF Description of the script\nin the 'Scripts' menu
 ;#SET (694//)
 MSG_HELP_CO_ST_SCRIPT
-Skriptets filnamn.
+Skriptets filnamn
 ;#DEF Filename of the script
 ;#SET (695//)
 MSG_HELP_CO_CY_ISADOS
-Skripttyp (ARexx eller AmigaDOS).
+Skripttyp (ARexx eller AmigaDOS)
 ;#DEF Type of the script\n(ARexx or AmigaDOS)
 ;#SET (696//)
 MSG_HELP_CO_CH_CONSOLE
-Öppna konsollfönster för in-\noch utmatning från skriptet.
+Öppna konsollfönster för in-\noch utmatning från skriptet
 ;#DEF Open a console window to allow input\nand output from the script
 ;#SET (697//)
 MSG_HELP_CO_CH_WAITTERM
-Kör inte skriptet asynkront.
+Kör inte skriptet asynkront
 ;#DEF Don't run the script asynchronously
 ;#SET (698//)
 MSG_HELP_CO_BT_SAVE
-Spara nuvarande inställningar.
+Spara nuvarande inställningar
 ;#DEF Save current settings
 ;#SET (699//)
 MSG_HELP_CO_BT_USE
-Använd nuvarande inställningar.
+Använd nuvarande inställningar
 ;#DEF Use current settings
 ;#SET (700//)
 MSG_HELP_CO_BT_CANCEL
-Stäng konfigurationsfönstret och\nanvänd de gamla inställningarna.
+Stäng konfigurationsfönstret och\nanvänd de gamla inställningarna
 ;#DEF Close configuration\nwindow and use old\nsettings
 ;#SET (701//)
 MSG_AB_BirthdayReq
@@ -2886,55 +2818,55 @@ Döl_j
 ;#DEF F_old
 ;#SET (756//)
 MSG_HELP_AB_BT_SAVE
-Spara nuvarande inställningar.
+Spara nuvarande ändringar
 ;#DEF Save current changes
 ;#SET (757//)
 MSG_HELP_AB_BT_SEARCH
-Leta upp en post\ni adressboken.
+Leta upp en post\ni adressboken
 ;#DEF Find an entry in\nthe address book
 ;#SET (758//)
 MSG_HELP_AB_BT_ADDUSER
-Lägg till en ny person\ni adressboken.
+Lägg till en ny person\ni adressboken
 ;#DEF Add a new person to\nyour address book
 ;#SET (759//)
 MSG_HELP_AB_BT_ADDGROUP
-Lägg till en ny grupp\ni adressboken.
+Lägg till en ny grupp\ni adressboken
 ;#DEF Add a new group (directory)\nto your address book
 ;#SET (760//)
 MSG_HELP_AB_BT_ADDMLIST
-Lägg till en ny sändlista\ni adressboken.
+Lägg till en ny sändlista\ni adressboken
 ;#DEF Add a new distribution list\nto your address book
 ;#SET (761//)
 MSG_HELP_AB_BT_EDIT
-Ändra valda poster.
+Ändra valda poster
 ;#DEF Modify selected\nentry
 ;#SET (762//)
 MSG_HELP_AB_BT_DELETE
-Radera valda poster\nfrån adressboken.
+Radera valda poster\nfrån adressboken
 ;#DEF Delete selected entry\nfrom your address book
 ;#SET (763//)
 MSG_HELP_AB_BT_PRINT
-Skriv ut valda poster.
+Skriv ut valda poster
 ;#DEF Print selected entry
 ;#SET (764//)
 MSG_HELP_AB_BT_OPEN
-Visa alla poster i adressboken.
+Visa alla poster i adressboken
 ;#DEF Display all entries in\nthe address book
 ;#SET (765//)
 MSG_HELP_AB_BT_CLOSE
-Visa endast rotnivån i adressboken.
+Visa endast rotnivån i adressboken
 ;#DEF Only display root entries\nin the address book
 ;#SET (766//)
 MSG_HELP_AB_BT_TO
-Sätt primär(a) mottagare\nav det nya brevet.
+Sätt primär(a) mottagare\nav det nya brevet
 ;#DEF Set primary recipient(s)\nfor new message
 ;#SET (767//)
 MSG_HELP_AB_BT_CC
-Sätt sekundär(a) mottagare\nav det nya brevet.
+Sätt sekundär(a) mottagare\nav det nya brevet
 ;#DEF Set secondary recipient(s)\nfor new message
 ;#SET (768//)
 MSG_HELP_AB_BT_BCC
-Sätt dold kopiemottagare av det nya brevet.\n(Mottagaren kommer inte att synas i brevet.)
+Sätt dold kopiemottagare för det nya brevet
 ;#DEF Set blind copy recipient(s)\nfor new message
 ;#SET (769//)
 MSG_EA_EditUser
@@ -3030,23 +2962,23 @@ _Sortera
 ;#DEF _Sort
 ;#SET (799//)
 MSG_HELP_EA_ST_ALIAS
-Identitet (t.ex. smeknamn\neller förkortning).
+Identitet (t.ex. smeknamn\neller förkortning)
 ;#DEF Identity (e.g. nickname or\nabbreviation) of this entry
 ;#SET (800//)
 MSG_HELP_EA_ST_DESCRIPTION
-Kommentar.
+Kommentar
 ;#DEF Comment for this entry
 ;#SET (801//)
 MSG_HELP_EA_ST_REALNAME
-Riktigt namn (förnamn efternamn).
+Riktigt namn\n(förnamn efternamn)
 ;#DEF Full name of this entry\n(first name last name)
 ;#SET (802//)
 MSG_HELP_EA_ST_ADDRESS
-Webbadress.
+Webbadress
 ;#DEF Internet address\nof this entry
 ;#SET (803//)
 MSG_HELP_EA_ST_PGPKEY
-Hexadecimalt ID för\npersonens PGP-nyckel.
+Hexadecimalt ID för den här\npersonens PGP-nyckel
 ;#DEF Hexadecimal ID of this\nperson's public PGP key
 ;#SET (804//)
 MSG_HELP_EA_ST_HOMEPAGE
@@ -3054,67 +2986,67 @@ Webbadress till denna persons hemsida.\nKlicka på knappen till höger\nför att la
 ;#DEF URL of the homepage of this person.\nClick the button at the right side\nto load the page into your browser.
 ;#SET (805//)
 MSG_HELP_EA_ST_STREET
-Postadress:\nGata och nummer.
+Postadress:\nGata och nummer
 ;#DEF Postal address:\nStreet name and number
 ;#SET (806//)
 MSG_HELP_EA_ST_CITY
-Postadress:\nPostnummer och stad.
+Postadress:\nPostnummer och stad
 ;#DEF Postal address:\nCity and postal code
 ;#SET (807//)
 MSG_HELP_EA_ST_COUNTRY
-Postadress:\nLand.
+Postadress:\nLän och/eller land
 ;#DEF Postal address:\nState and/or country
 ;#SET (808//)
 MSG_HELP_EA_ST_PHONE
-Telefon och/eller fax.
+Telefon och/eller fax
 ;#DEF Phone and/or FAX number(s)
 ;#SET (809//)
 MSG_HELP_EA_ST_BIRTHDAY
-Födelsedatum.\nAnvänd AmigaDOS-format,\nt.ex. 10-Jan-1950.
+Födelsedatum.\nAnvänd AmigaDOS-format,\nt.ex. 10-Jan-1950
 ;#DEF Date of birth.\nUse AmigaDOS format,\ne.g. 10-Jan-1950
 ;#SET (810//)
 MSG_HELP_EA_BC_PHOTO
-Bild på personen.
+Bild på den här personen
 ;#DEF Portrait picture of this person
 ;#SET (811//)
 MSG_HELP_EA_BT_SELECTPHOTO
-Välj en bild att visa (bilddatatyper stöds).
+Välj en bildfil från disk\n(bilddatatyper stöds)
 ;#DEF Select a picture file from disk\n(image datatypes supported)
 ;#SET (812//)
 MSG_HELP_EA_ST_REALNAME_L
-Fullt namn på denna sändlista\n(kommer att användas i Till:).
+Fullt namn på denna sändlista\n(kommer att användas i Till: fältet)
 ;#DEF Full name of this distribution list\n(will be used in the To: field)
 ;#SET (814//)
 MSG_HELP_EA_ST_ADDRESS_L
-Svarsadress att använda när\ndu skickar till denna lista.
+Svarsadress att använda när\ndu skickar till denna lista
 ;#DEF Return address to use when\nsending a message to this list
 ;#SET (815//)
 MSG_HELP_EA_LV_MEMBERS
-Medlemmar på denna sändlista.
+Medlemmar på denna sändlista
 ;#DEF Members of this distribution list
 ;#SET (816//)
 MSG_HELP_EA_ST_MEMBER
-Adress (och namn) eller\nalias för en medlem.
+Adress (och namn) eller\nalias för en medlem
 ;#DEF Address (and name) or\nalias of a member
 ;#SET (817//)
 MSG_HELP_EA_BT_ADD
-Lägg till en ny medlem till listan.
+Lägg till en ny medlem till listan
 ;#DEF Add a new member\nto the list
 ;#SET (818//)
 MSG_HELP_EA_BT_DEL
-Ta bort vald medlem från listan.
+Ta bort vald medlem från listan
 ;#DEF Remove selected member\nfrom the list
 ;#SET (819//)
 MSG_HELP_EA_BT_SORT
-Sortera medlemmarna alfabetiskt.
+Sortera medlemslistan alfabetiskt
 ;#DEF Sort member list alphabetically
 ;#SET (820//)
 MSG_HELP_EA_BT_OKAY
-Acceptera denna post.
+Acceptera denna post
 ;#DEF Accept this entry
 ;#SET (821//)
 MSG_HELP_EA_BT_CANCEL
-Kasta ändringar.
+Kasta ändringar
 ;#DEF Discard changes
 ;#SET (822//)
 MSG_RE_MDNGads1
@@ -3150,7 +3082,7 @@ Välj del att skriva ut:
 ;#DEF Select part to print:
 ;#SET (830//)
 MSG_RE_PrintGad
-_Utskrift
+_Skriv ut
 ;#DEF _Print
 ;#SET (831//)
 MSG_RE_SelectSavePart
@@ -3390,7 +3322,7 @@ Textstilar
 ;#DEF Text styles
 ;#SET (891//)
 MSG_RE_TBPrev
-_Föreg
+_Föreg.
 ;#DEF _Prev
 ;#SET (892//)
 MSG_RE_TBNext
@@ -3414,7 +3346,7 @@ _Spara
 ;#DEF _Save
 ;#SET (897//)
 MSG_RE_TBPrint
-Skr_iv
+Skr_iv.
 ;#DEF Pr_int
 ;#SET (898//)
 MSG_RE_TBDelete
@@ -3434,47 +3366,47 @@ Vi_dare.
 ;#DEF For_ward
 ;#SET (902//)
 MSG_HELP_RE_BT_PREVIOUS
-Visa föregående brev.
+Visa föregående brev
 ;#DEF Display contents of\nthe previous message
 ;#SET (903//)
 MSG_HELP_RE_BT_NEXT
-Visa nästa brev.
+Visa nästa brev
 ;#DEF Display contents of\nthe next message
 ;#SET (904//)
 MSG_HELP_RE_BT_QUESTION
-Visa brevet som besvaras\nhär (gå ett steg tillbaks\ni kommentarskedjan).
+Visa brevet som besvaras\nhär (gå ett steg tillbaks\ni kommentarskedjan)
 ;#DEF Show the message that\nis being answered here\n(go back in thread)
 ;#SET (905//)
 MSG_HELP_RE_BT_ANSWER
-Visa svar på detta brev\n(följ kommentarskedjan).
+Visa svar på detta brev\n(följ kommentarskedjan)
 ;#DEF Show the reply\nto this message\n(follow thread)
 ;#SET (906//)
 MSG_HELP_RE_BT_DISPLAY
-Använd en MIME-visare för att\nvisa en del i detta brev.
+Använd en MIME-visare för att\nvisa en del i detta brev
 ;#DEF Use a configured MIME\nviewer to display a\npart of this message
 ;#SET (907//)
 MSG_HELP_RE_BT_EXPORT
-Spara visat brev eller en\ndel av det till disk.
+Spara visat brev eller en\ndel av det till disk
 ;#DEF Save displayed message or\na part of it to disk
 ;#SET (908//)
 MSG_HELP_RE_BT_PRINT
-Skriv ut detta brev.
+Skriv ut detta brev
 ;#DEF Send this message\nto the printer
 ;#SET (909//)
 MSG_HELP_RE_BT_MOVE
-Flytta detta brev till en\nannan mapp och visa nästa.
+Flytta detta brev till en\nannan mapp och visa nästa
 ;#DEF Move this message to another folder\nand display the next one
 ;#SET (910//)
 MSG_HELP_RE_BT_DELETE
-Radera detta brev och visa nästa.
+Radera detta brev och visa nästa
 ;#DEF Delete this message and\ndisplay the next one
 ;#SET (911//)
 MSG_HELP_RE_BT_REPLY
-Svara på\ndetta brev.
+Svara på\ndetta brev
 ;#DEF Reply to this\nmessage
 ;#SET (912//)
 MSG_HELP_RE_BT_FORWARD
-Vidarebefordra\ndetta brev.
+Vidarebefordra\ndetta brev
 ;#DEF Forward this\nmessage
 ;#SET (913//)
 MSG_WR_ErrorNoRcpt
@@ -3862,71 +3794,71 @@ Vikt
 ;#DEF Importance
 ;#SET (1013//)
 MSG_HELP_WR_ST_TO
-Adress (och namn) eller alias\nför primär mottagare.
+Adress (och namn) eller alias\nför primär mottagare
 ;#DEF Address (and name) or alias\nof the primary recipient(s)
 ;#SET (1014//)
 MSG_HELP_WR_BT_ADR
-Välj mottagare från adressboken.
+Välj mottagare från adressboken
 ;#DEF Select recipient from\nthe address book
 ;#SET (1016//)
 MSG_HELP_WR_ST_SUBJECT
-Ärendet för ditt brev.
+Ärendet för ditt brev
 ;#DEF Subject of your message
 ;#SET (1017//)
 MSG_HELP_WR_BT_EDITOR
-Använd en extern redigerare\nför att ändra i brevet.
+Använd en extern redigerare\nför att ändra i brevet
 ;#DEF Use external editor to\nmodify the message text
 ;#SET (1018//)
 MSG_HELP_WR_BT_LOAD
-Infoga textfil där markören befinner sig.
+Infoga textfil där markören befinner sig
 ;#DEF Insert text file at cursor position
 ;#SET (1019//)
 MSG_HELP_WR_BT_CUT
-Klipp ut markerad text till urklipp.
+Klipp ut markerad text till urklipp
 ;#DEF Cut marked text to the clipboard
 ;#SET (1020//)
 MSG_HELP_WR_BT_COPY
-Kopiera markerad text till urklipp.
+Kopiera markerad text till urklipp
 ;#DEF Copy marked text to the clipboard
 ;#SET (1021//)
 MSG_HELP_WR_BT_PASTE
-Infoga urklipp där markören\nbefinner sig.
+Infoga urklipp där markören\nbefinner sig
 ;#DEF Insert clipboard contents\nat cursor position
 ;#SET (1022//)
 MSG_HELP_WR_BT_UNDO
-Ångra senaste ändringar.
+Ångra senaste ändringar
 ;#DEF Undo recent changes to the text
 ;#SET (1023//)
 MSG_HELP_WR_BT_BOLD
-Använd fet stil för markerad text.
+Använd fet stil för markerad text
 ;#DEF Use bold typeface for marked text
 ;#SET (1024//)
 MSG_HELP_WR_BT_ITALIC
-Använd kursiv stil för markerad text.
+Använd kursiv stil för markerad text
 ;#DEF Use italic typeface for marked text
 ;#SET (1025//)
 MSG_HELP_WR_BT_UNDERL
-Stryk under markerad text.
+Stryk under markerad text
 ;#DEF Underline marked text
 ;#SET (1026//)
 MSG_HELP_WR_BT_COLOR
-Färga markerad text.
+Färga markerad text
 ;#DEF Color marked text
 ;#SET (1027//)
 MSG_HELP_WR_BT_ADD
-Lägg till en bilaga till listan.
+Lägg till en bilaga till listan
 ;#DEF Add an attachment\nto the list
 ;#SET (1028//)
 MSG_HELP_WR_BT_ADDPACK
-Skapa ett arkiv med flera filer och\nlägg till det som en bilaga.
+Skapa ett arkiv med flera filer och\nlägg till det som en bilaga
 ;#DEF Create an archive from\nseveral files and add it to\nthe list as an attachment
 ;#SET (1029//)
 MSG_HELP_WR_BT_DEL
-Ta bort valda bilagor från listan.
+Ta bort valda bilagor från listan
 ;#DEF Remove the selected\nattachment from the list
 ;#SET (1030//)
 MSG_HELP_WR_BT_DISPLAY
-Använd en konfigurerad MIME-visare\nför att visa bilagan.
+Använd en konfigurerad MIME-visare\nför att visa bilagan
 ;#DEF Use a configured MIME viewer\nto display this attachment
 ;#SET (1031//)
 MSG_HELP_WR_RA_ENCODING
@@ -3938,31 +3870,31 @@ MIME-typ för valda bilagor.\nAnvänd om möjligt en från listan.
 ;#DEF MIME type for the selected attachment.\nWhenever possible, use one from the popup list.
 ;#SET (1033//)
 MSG_HELP_WR_ST_DESC
-Beskrivning av markerad bilaga.
+Beskrivning av markerad bilaga
 ;#DEF Optional description for\nthe selected attachment
 ;#SET (1034//)
 MSG_HELP_WR_ST_CC
-Adress (och namn) eller alias\nför kopiemottagare.
+Adress (och namn) eller alias\nför kopiemottagare
 ;#DEF Address (and name) or alias\nof the secondary recipient(s)
 ;#SET (1035//)
 MSG_HELP_WR_ST_BCC
-Skicka en dold kopia av brevet till denna\nmottagare. (Mottagaren kommer inte att\nsynas i brevet.)
+Skicka en dold kopia av brevet\ntill denna mottagare
 ;#DEF Send a blind carbon copy of\nthe message to this recipient
 ;#SET (1036//)
 MSG_HELP_WR_ST_EXTHEADER
-Extra brevhuvudsrad(er) som ska\nläggas till i brevet.
+Extra brevhuvudsrad(er) som ska\nläggas till i brevet
 ;#DEF Additional message header(s) that\nwill be added to the message
 ;#SET (1037//)
 MSG_HELP_WR_ST_FROM
-Innehållet i 'From:'-fältet (från) i brevhuvudet\n(adress och namn på personen\nsom skrev detta brev).
+Innehållet i 'From:'-fältet (från) i brevhuvudet\n(adress och namn på personen\nsom skrev detta brev)
 ;#DEF Contents of the 'From:' header\n(name and address of the person\nwho is writing this letter)
 ;#SET (1038//)
 MSG_HELP_WR_ST_REPLYTO
-Svarsadress för\ndetta brev.
+Svarsadress för\ndetta brev
 ;#DEF Return address\nfor this letter
 ;#SET (1039//)
 MSG_HELP_WR_CH_DELSEND
-Spara inte detta brev\n i 'Skickat' mappen.
+Spara inte detta brev\n i 'Skickat' mappen
 ;#DEF Don't store this message\nin the 'Sent' folder
 ;#SET (1040//)
 MSG_HELP_WR_CH_RECEIPT
@@ -3970,15 +3902,15 @@ Få ett kvitto vid\nlyckad leverans
 ;#DEF Get a notification on\nsuccessful delivery
 ;#SET (1041//)
 MSG_HELP_WR_CH_DISPNOTI
-Få en indikation om mottagaren läser\neller gör något annat med brevet.
+Få en indikation om mottagaren läser\neller gör något annat med brevet
 ;#DEF Get a notification if the recipient\nreads or processes the message
 ;#SET (1042//)
 MSG_HELP_WR_CH_ADDINFO
-Lägg till brevhuvudsrader med data\nom dig själv (från adressboken).
+Lägg till brevhuvudsrader med data\nom dig själv från adressboken
 ;#DEF Create header fields containing data\nfrom your personal address book entry
 ;#SET (1043//)
 MSG_HELP_WR_CY_IMPORTANCE
-Sätt vikten på\ndetta brev.
+Sätt vikten på\ndetta brev
 ;#DEF Set the priority\nof this message
 ;#SET (1044//)
 MSG_HELP_WR_RA_SIGNATURE
@@ -3986,23 +3918,23 @@ Vilken signatur vill du\ninfoga till detta brev?
 ;#DEF Which signature do you want\nto append to this letter?
 ;#SET (1045//)
 MSG_HELP_WR_RA_SECURITY
-Välj ett av dessa säkerhetsval för att skicka\nbrevet PGP-signerat, krypterat eller anonymt.
+Välj ett av dessa säkerhetsval för att skicka\nbrevet PGP-signerat, krypterat eller anonymt
 ;#DEF Select one of these security options to send\nyour message PGP signed, encrypted\nor anonymously
 ;#SET (1046//)
 MSG_HELP_WR_BT_HOLD
-Kopiera det skrivna brevet till utkorgen och\nsätt dess status till 'Håll kvar'.
+Kopiera det skrivna brevet till utkorgen och\nsätt dess status till 'Håll kvar'
 ;#DEF Copy the created message to\nthe outgoing mail folder and\nset its status to HOLD
 ;#SET (1047//)
 MSG_HELP_WR_BT_QUEUE
-Kopiera det skrivna brevet till utkorgen.
+Kopiera det skrivna brevet till utkorgen
 ;#DEF Copy the created message to\nthe outgoing mail folder
 ;#SET (1048//)
 MSG_HELP_WR_BT_SEND
-Kopiera det skrivna brevet till utkorgen\noch skicka iväg det omedelbart.
+Kopiera det skrivna brevet till utkorgen\noch skicka iväg det omedelbart
 ;#DEF Copy the created message to\nthe outgoing mail folder\nand send it immediately
 ;#SET (1049//)
 MSG_HELP_WR_BT_CANCEL
-Kasta det skrivna brevet.
+Kasta det skrivna brevet
 ;#DEF Discard the\ncreated message
 ;#SET (1050//)
 MSG_TR_Connecting
@@ -4350,27 +4282,27 @@ _Klistra in
 ;#DEF _Paste
 ;#SET (1152//)
 MSG_HELP_DI_LV_ENTRIES
-Lista över tillgängliga förkortningar.
+Lista över tillgängliga förkortningar
 ;#DEF List of available abbreviations
 ;#SET (1153//)
 MSG_HELP_DI_ST_ALIAS
-Förkortning av markerad post.
+Förkortning av markerad post
 ;#DEF Abbreviation of selected entry
 ;#SET (1154//)
 MSG_HELP_DI_BT_NEW
-Lägg till en ny förkortning\ntill ordlistan.
+Lägg till en ny förkortning\ntill ordlistan
 ;#DEF Add a new abbreviation\nto the glossary
 ;#SET (1155//)
 MSG_HELP_DI_BT_ADDSELECT
-Skapa en ny post med den markerade\ntexten i redigeraren.
+Skapa en ny post med den markerade\ntexten i redigeraren
 ;#DEF Create a new entry based on\nthe marked text in the editor
 ;#SET (1156//)
 MSG_HELP_DI_BT_DELETE
-Ta bort vald post.
+Ta bort vald post
 ;#DEF Remove selected entry
 ;#SET (1157//)
 MSG_HELP_DI_BT_PASTE
-Infoga vald post på nuvarande\nposition i textredigeraren.
+Infoga vald post på nuvarande\nposition i textredigeraren
 ;#DEF Insert selected entry at the current\nposition in the text editor
 ;#SET (1158//)
 MSG_FI_AddFilter
@@ -4514,55 +4446,55 @@ _Avbryt
 ;#DEF _Abort
 ;#SET (1194//)
 MSG_HELP_FI_LV_FOLDERS
-Välj en eller fler\nmappar att söka i.
+Välj en eller fler\nmappar att söka i
 ;#DEF Select one or more\nfolders to search in
 ;#SET (1195//)
 MSG_HELP_FI_BT_ALL
-Sök igenom alla mappar.
+Sök igenom alla mappar
 ;#DEF Include all folders in your search
 ;#SET (1196//)
 MSG_HELP_FI_PO_FROMRULE
-Hämta sökkriterier\nfrån ett filter.
+Hämta sökkriterier\nfrån ett filter
 ;#DEF Get search criterion\nfrom a filter
 ;#SET (1197//)
 MSG_HELP_FI_BT_TORULE
-Skapa ett nytt filter från\ndessa sökkriterier.
+Skapa ett nytt filter från\ndessa sökkriterier
 ;#DEF Create a new filter from\nthis search criterion
 ;#SET (1198//)
 MSG_HELP_FI_BT_SEARCH
-Börja sökning och visa\nresultatet i listan ovan.
+Börja sökning och visa\nresultatet i listan ovan
 ;#DEF Start the search and display\nthe results in the list above
 ;#SET (1199//)
 MSG_HELP_FI_BT_SELECT
-Välj matchande brev\ni huvudfönstret.
+Välj matchande brev\ni huvudfönstret
 ;#DEF Select matching messages\nin the main window
 ;#SET (1200//)
 MSG_HELP_FI_BT_READ
-Visa valt brev från listan ovan.
+Visa valt brev från listan ovan
 ;#DEF Display selected message\nfrom the list above
 ;#SET (1201//)
 MSG_HELP_FI_BT_ABORT
-Avsluta sökning.
+Avsluta sökning
 ;#DEF Stop searching
 ;#SET (1202//)
 MSG_HELP_FI_CY_MODE
-Fält eller del av brev som\nska matcha mönstret.
+Fält eller del av brev som\nska matcha mönstret
 ;#DEF Field or message part that\nshould match the pattern
 ;#SET (1203//)
 MSG_HELP_FI_ST_FIELD
-Namn på brevhuvudsfält att söka i.
+Namn på brevhuvudsfält att söka i
 ;#DEF Name of header field to search in
 ;#SET (1204//)
 MSG_HELP_FI_RA_ADRMODE
-Välj om du vill söka i fältets adressdel\neller i det riktiga namnet.
+Välj om du vill söka i fältets adressdel\neller i det riktiga namnet
 ;#DEF Choose whether you want to search in the\naddress or real name part of the field
 ;#SET (1205//)
 MSG_HELP_FI_CY_STATUS
-Brevstatus att matcha.
+Brevstatus att matcha
 ;#DEF Message status to match
 ;#SET (1206//)
 MSG_HELP_FI_ST_MATCH
-Sökmönster (AmigaDOS\njokertecken stöds).
+Sökmönster (AmigaDOS\njokertecken stöds)
 ;#DEF Search pattern (AmigaDOS\nwildchars are supported)
 ;#SET (1207//)
 MSG_HELP_FI_CH_CASESENS
@@ -4570,11 +4502,11 @@ Skilj på stora\noch små bokstäver?
 ;#DEF Should the search\nbe case sensitive?
 ;#SET (1208//)
 MSG_HELP_FI_CH_SUBSTR
-Använd deltextsökning (hela\ntexten behöver inte matcha).
+Använd deltextsökning (hela\ntexten behöver inte matcha)
 ;#DEF Enable partial string search
 ;#SET (1209//)
 MSG_HELP_FI_CY_COMP
-Typ av jämförelse. <> ger alla brev som\ninte matchar sökmönstret. IN används för\natt ange en fil med flera sökmönster.
+Typ av jämförelse. <> ger alla brev som\ninte matchar sökmönstret. IN används för\natt ange en fil med flera sökmönster
 ;#DEF Type of comparison. Select <> to get all messages that\ndon't match the pattern, IN to use a file of patterns
 ;#SET (1210//)
 MSG_US_EnterPassword
@@ -4642,39 +4574,39 @@ _Radera användare
 ;#DEF _Delete user
 ;#SET (1226//)
 MSG_HELP_US_ST_USER
-Namnet på den nya YAM-användaren.
+Namnet på den nya YAM-användaren
 ;#DEF Name of the new YAM user
 ;#SET (1227//)
 MSG_HELP_US_ST_MAILDIR
-Katalog för att spara\nden nya användarens\nmappar och konfiguration.
+Katalog för att spara\nden nya användarens\nmappar och konfiguration
 ;#DEF Directory to store the\nfolders and config files\nof the new user account
 ;#SET (1228//)
 MSG_HELP_US_CH_USEADDR
-Dela adressboken\nmed övriga användare.
+Dela adressboken\nmed övriga användare
 ;#DEF Share address book\nwith other users
 ;#SET (1229//)
 MSG_HELP_US_CH_USEDICT
-Dela ordlista\nmed övriga användare.
+Dela ordlista\nmed övriga användare
 ;#DEF Share glossary\nwith other users
 ;#SET (1230//)
 MSG_HELP_US_ST_PASSWD
-Lösenord krävs för att denna\nanvändare skall kunna logga in.
+Lösenord krävs för att denna\nanvändare skall kunna logga in
 ;#DEF Password required for\nthis user to login
 ;#SET (1231//)
 MSG_HELP_US_CH_ROOT
-Välj detta om användaren ska få\nlägga till eller ta bort användare.
+Välj detta om användaren ska få\nlägga till eller ta bort användare
 ;#DEF Enable this option if the user should be\nallowed to add or remove other users
 ;#SET (1232//)
 MSG_HELP_US_CH_CLONE
-Använd nuvarande konfiguration\nsom förval för det nya kontot.
+Använd nuvarande konfiguration\nsom förval för det nya kontot
 ;#DEF Use current configuration as\ndefault for the new account
 ;#SET (1233//)
 MSG_HELP_US_BT_ADD
-Skapa ett nytt konto.
+Skapa ett nytt konto
 ;#DEF Create a new account
 ;#SET (1234//)
 MSG_HELP_US_BT_DEL
-Ta bort valt konto.
+Ta bort valt konto
 ;#DEF Remove selected account
 ;#SET (1235//)
 MSG_FO_NewFolderReq
@@ -4770,35 +4702,35 @@ _Till:-adress
 ;#DEF _To: address
 ;#SET (1260//)
 MSG_HELP_FO_ST_FNAME
-Mappnamn.
+Mappnamn
 ;#DEF Folder name
 ;#SET (1261//)
 MSG_HELP_FO_TX_FPATH
-Katalog där breven i nuvarande\nmapp sparas.
+Katalog där breven i\nnuvarande mapp sparas
 ;#DEF Directory where the messages of\nthe selected folder are stored
 ;#SET (1262//)
 MSG_HELP_FO_ST_MAXAGE
-Gamla brev kommer automatiskt att raderas efter\ndenna tid (i dagar). Använd 0 eller inget värde\nalls för att inte radera brev automatiskt.
+Gamla brev kommer automatiskt\natt raderas efter denna tid (i dagar).\nAnvänd 0 för att inte använda denna\nfunktion.
 ;#DEF Old messages will automatically\nbe deleted after this time (in days).\nUse 0 to disable this feature.
 ;#SET (1263//)
 MSG_HELP_FO_CY_FTYPE
-Typ av mapp\n(in/ut/båda).
+Typ av mapp\n(in/ut/båda)
 ;#DEF Type of folder\n(in/out/both)
 ;#SET (1264//)
 MSG_HELP_FO_CY_FMODE
-Mappar kan skyddas med lösenord\noch/eller komprimeras med XPK.
+Mappar kan skyddas med lösenord\noch/eller komprimeras med XPK
 ;#DEF Folders can be password protected\nand/or compressed using XPK
 ;#SET (1265//)
 MSG_HELP_FO_CY_SORT0
-Primär sorteringsordning för mappen.
+Primär sorteringsordning för mappen
 ;#DEF Primary sorting order of the\nmessages in this folder
 ;#SET (1266//)
 MSG_HELP_FO_CY_SORT1
-Sekundär sorteringsordning för mappen.
+Sekundär sorteringsordning för mappen
 ;#DEF Secondary sorting order of the\nmessages in this folder
 ;#SET (1267//)
 MSG_HELP_FO_CH_REVERSE
-Omvänd sortering.
+Omvänd sortering
 ;#DEF Reversed sorting
 ;#SET (1268//)
 MSG_HELP_FO_ST_MLPATTERN
@@ -4806,7 +4738,7 @@ Ett brev kommer från en sändlista om\nfältet 'Till:' matchar detta mönster.
 ;#DEF A message belongs to a mailing list\nif the contents of the 'To:' field are\nmatched by this pattern.
 ;#SET (1269//)
 MSG_HELP_FO_ST_MLADDRESS
-Använd denna mottagaradress\nför svar på sändlistebrev.
+Använd denna mottagaradress\nför svar på sändlistebrev
 ;#DEF Use this recipient address for a\nreply to a mailing list message
 ;#SET (1270//)
 MSG_BusySavingAB
@@ -4909,10 +4841,6 @@ MSG_CTapplicationrexx
 Rexx skript
 ;#DEF Rexx script
 ;#SET (1297//)
-MSG_PROJECT_ABOUT
-?\000Om...
-;#DEF ?\000About...
-;#SET (1298//)
 MSG_FOLDER_NEWFOLDER
 Ny mapp...
 ;#DEF New folder...
@@ -4933,66 +4861,10 @@ MSG_FOLDER_EXPORT
 Exportera...
 ;#DEF Export...
 ;#SET (1305//)
-MSG_MESSAGE_EDIT
-E\000Redigera...
-;#DEF E\000Edit...
-;#SET (1306//)
-MSG_MESSAGE_MOVE
-M\000Flytta...
-;#DEF M\000Move...
-;#SET (1307//)
-MSG_MESSAGE_COPY
-Y\000Kopiera...
-;#DEF Y\000Copy...
-;#SET (1308//)
-MSG_MESSAGE_PRINT
-P\000Skriv ut
-;#DEF P\000Print
-;#SET (1309//)
-MSG_MESSAGE_SAVE
-V\000Spara...
-;#DEF V\000Save...
-;#SET (1310//)
-MSG_MESSAGE_SAVEATT
-T\000Spara...
-;#DEF T\000Save...
-;#SET (1311//)
-MSG_MESSAGE_CROP
-O\000Ta bort
-;#DEF O\000Crop
-;#SET (1312//)
 MSG_MESSAGE_EXPORT
 Exportera...
 ;#DEF Export...
 ;#SET (1313//)
-MSG_MESSAGE_NEW
-N\000Nytt
-;#DEF N\000New
-;#SET (1314//)
-MSG_MESSAGE_REPLY
-R\000Svara...
-;#DEF R\000Reply...
-;#SET (1315//)
-MSG_MESSAGE_FORWARD
-W\000Vidarebefordra...
-;#DEF W\000Forward...
-;#SET (1316//)
-MSG_MESSAGE_BOUNCE
-B\000Studsa...
-;#DEF B\000Bounce...
-;#SET (1317//)
-MSG_MESSAGE_GETADDRESS
-J\000Spara adress...
-;#DEF J\000Save address...
-;#SET (1318//)
-MSG_SETTINGS_ADDRESSBOOK
-A\000Adressbok...
-;#DEF A\000Address Book...
-;#SET (1320//)
-MSG_SETTINGS_CONFIG
-K\000Konfiguration...
-;#DEF K\000Configuration...
-;#SET (1321//)
 MSG_SETTINGS_USERS
 Användare...
 ;#DEF Users...
@@ -5057,10 +4929,6 @@ MSG_CO_Del
 Radera
 ;#DEF Delete
 ;#SET (1340//)
-MSG_RE_SetUnread
-Sätt status till oläst
-;#DEF Set status to unread
-;#SET (1341//)
 MSG_WR_AltQuoted
 Alternativt citat
 ;#DEF Alternate quoted
@@ -5533,18 +5401,6 @@ MSG_FO_FOLDERPATHINVALID
 Du har inte specifierat en giltig sökväg för den nya mappen.
 ;#DEF You haven't specified a valid path for the new folder.
 ;#SET (1472//)
-MSG_MA_TOMARKED
-,\000Markerad
-;#DEF ,\000Marked
-;#SET (1473//)
-MSG_MA_TOUNMARKED
-.\000Omarkerad
-;#DEF .\000Unmarked
-;#SET (1474//)
-MSG_RE_SETMARKED
-Sätt status till markerad
-;#DEF Set status to marked
-;#SET (1475//)
 MSG_MA_CTX_DEFWIDTH_THIS
 Förinställd bredd: denna
 ;#DEF Default Width: this
@@ -5906,7 +5762,7 @@ MSG_CO_NB_AUTOSAVEFMT
 ;#DEF %ld minute(s)
 ;#SET (1567//)
 MSG_HELP_CO_NB_AUTOSAVE
-Antalet minuter som YAM automatiskt bör\nspara en kopia av brevet som du förnärvarande skriver.\nVälj 0 för att stänga av denna funktion.
+Antalet minuter som YAM automatiskt bör spara en\nkopia av brevet som du för närvarande skriver.\nVälj 0 för att stänga av denna funktion.
 ;#DEF Number of minutes YAM should automatically\ngenerate a save copy of the mail you are\ncurrently composing.\nSelect 0 to disable this feature.
 ;#SET (1568//)
 MSG_ER_GENESISUSER_TITLE
@@ -5921,10 +5777,6 @@ MSG_ER_CONTINUEEXIT
 *_Fortsätt|Avsluta
 ;#DEF *_Continue|Exit
 ;#SET (1571//)
-MSG_MA_ALLTOREAD
-#\000Alla som lästa
-;#DEF #\000All to Read
-;#SET (1572//)
 MSG_ER_MOVEFOLDERDIR
 Ett fel inträffade vid försök att flytta innehållet i mappen '%s' till katalogen '%s'.\n\nDetta kan bero på otillräckligt med utrymme eller för att destinationen inte är giltig eller skrivbar.
 ;#DEF An error occurred while trying to move the content of folder '%s' to directory '%s'.\n\nThis may either be due to insufficient space or because the destination path is not valid or writable.
@@ -5934,7 +5786,7 @@ Visa snabbsök i huvudfönster
 ;#DEF Show QuickSearchBar in main window
 ;#SET (1574//)
 MSG_HELP_CO_CH_QUICKSEARCHBAR
-Tillhandahåller ett sökfält i huvudfönstret, för att\nsnabbt söka efter brev.
+Tillhandahåller ett sökfält i huvudfönstret,\nför att snabbt söka efter brev.
 ;#DEF If enabled, provides an embedded search bar in the\nmain window for quickly searching for mails.
 ;#SET (1575//)
 MSG_FI_SELECTACTIVE
@@ -6462,7 +6314,7 @@ Autodetektera cyrillisk teckenuppsättning
 ;#DEF Auto-detect cyrillic charsets
 ;#SET (1706//)
 MSG_HELP_CO_DETECT_CYRILLIC
-Försöker använda autodetektera\nfunktionen i codesets.library för att\nautomatiskt identifiera korrekt cyrillisk\nteckenuppsättning. (endast relevant för cyrilliska användare)
+Försöker använda autodetektera\nfunktionen i codesets.library för att\nautomatiskt identifiera korrekt cyrillisk\nteckenuppsättning.\n(endast relevant för cyrilliska användare)
 ;#DEF Tries to use the auto-detect feature\nof codesets.library to automatically\nidentify the correct cyrillic codeset.\n(only relevant for cyrillic users)
 ;#SET (1707//)
 MSG_WR_ErrorNotEnoughUndoMem
@@ -6601,10 +6453,6 @@ MSG_MA_CONFIRMDELETION
 %ld meddelande(n) är valda.\n\nVill du verkligen radera dessa\nmeddelanden?
 ;#DEF %ld message(s) are selected.\n\nDo you really want to delete these\nmessages?
 ;#SET (1742//)
-MSG_MESSAGE_EDITASNEW
-E\000Redigera som nytt...
-;#DEF E\000Edit As New...
-;#SET (1743//)
 MSG_MA_SPAM
 Skräppost
 ;#DEF Spam
@@ -6665,14 +6513,6 @@ MSG_MA_TONOTSPAM
 Ej skräppost
 ;#DEF Not Spam
 ;#SET (1758//)
-MSG_RE_SETSPAM
-Sätt status till skräppost
-;#DEF Set status to spam
-;#SET (1759//)
-MSG_RE_SETNOTSPAM
-Sätt status till ej skräppost
-;#DEF Set status to not spam
-;#SET (1760//)
 MSG_CO_CRDSPAMFILTER
 Skräppost
 ;#DEF Spam
@@ -6861,3 +6701,155 @@ MSG_CO_ASK_SAVE_SIGNATURE
 Ändringar i signaturfilen måste sparas\nseparat från den globala konfigurationen!\nAnnars går de förlorade!\n\nVill du spara ändringarna nu?
 ;#DEF Changes to the signature files must be saved\nseparately from the global configuration!\nOtherwise they will be lost!\n\nDo you want to save the changes now?
 ;#SET (1808//)
+MSG_MA_HIDE
+Göm
+;#DEF Hide
+;#SET (1809//)
+MSG_MA_QUIT
+Avsluta
+;#DEF Quit
+;#SET (1810//)
+MSG_MA_SELECTALL
+Alla
+;#DEF All
+;#SET (1811//)
+MSG_MA_SELECTNONE
+Inga
+;#DEF None
+;#SET (1812//)
+MSG_MA_SELECTTOGGLE
+Växla
+;#DEF Toggle
+;#SET (1813//)
+MSG_MA_MSEARCH
+Sök...
+;#DEF Search...
+;#SET (1814//)
+MSG_MA_MFILTER
+Filtrera
+;#DEF Filter
+;#SET (1815//)
+MSG_MA_REMOVEDELETED
+Töm mappen Borttaget
+;#DEF Empty trash
+;#SET (1816//)
+MSG_MA_UPDATEINDEX
+Uppdatera index
+;#DEF Update index
+;#SET (1817//)
+MSG_MA_MSENDALL
+Skicka köad post
+;#DEF Send queued mail
+;#SET (1818//)
+MSG_MA_MEXCHANGE
+Skicka/hämta post
+;#DEF Exchange mail
+;#SET (1819//)
+MSG_MA_MGETMAIL
+Hämta ny post
+;#DEF Get new mail
+;#SET (1820//)
+MSG_MA_MREAD
+Läs
+;#DEF Read
+;#SET (1821//)
+MSG_MA_TOUNREAD
+Oläst
+;#DEF Unread
+;#SET (1822//)
+MSG_MA_TOREAD
+Läst
+;#DEF Read
+;#SET (1823//)
+MSG_MA_TOHOLD
+Håll kvar
+;#DEF Hold
+;#SET (1824//)
+MSG_MA_TOQUEUED
+I kö
+;#DEF Queued
+;#SET (1825//)
+MSG_PROJECT_MABOUT
+Om...
+;#DEF About...
+;#SET (1826//)
+MSG_MA_MEDIT
+Redigera...
+;#DEF Edit...
+;#SET (1827//)
+MSG_MA_MMOVE
+Flytta...
+;#DEF Move...
+;#SET (1828//)
+MSG_MA_MCOPY
+Kopiera...
+;#DEF Copy...
+;#SET (1829//)
+MSG_MA_MPRINT
+Skriv ut
+;#DEF Print
+;#SET (1830//)
+MSG_MA_MSAVE
+Spara...
+;#DEF Save...
+;#SET (1831//)
+MSG_MA_MSAVEATT
+Spara...
+;#DEF Save...
+;#SET (1832//)
+MSG_MA_MCROP
+Ta bort
+;#DEF Crop
+;#SET (1833//)
+MSG_MA_MNEW
+Nytt
+;#DEF New
+;#SET (1834//)
+MSG_MA_MREPLY
+Svara...
+;#DEF Reply...
+;#SET (1835//)
+MSG_MA_MFORWARD
+Vidarebefodra...
+;#DEF Forward...
+;#SET (1836//)
+MSG_MA_MBOUNCE
+Studsa...
+;#DEF Bounce...
+;#SET (1837//)
+MSG_MA_MSAVEADDRESS
+Spara adress...
+;#DEF Save address...
+;#SET (1838//)
+MSG_MA_MADDRESSBOOK
+Adressbok...
+;#DEF Address Book...
+;#SET (1839//)
+MSG_MA_MCONFIG
+Inställningar...
+;#DEF Configuration...
+;#SET (1840//)
+MSG_MA_TOMARKED
+Markerad
+;#DEF Marked
+;#SET (1841//)
+MSG_MA_TOUNMARKED
+Omarkerad
+;#DEF Unmarked
+;#SET (1842//)
+MSG_MA_ALLTOREAD
+Alla som lästa
+;#DEF All to Read
+;#SET (1843//)
+MSG_MA_MEDITASNEW
+Redigera som nytt...
+;#DEF Edit As New...
+;#SET (1844//)
+MSG_CO_POPACCOUNT
+Kontonamn
+;#DEF Account name
+;#SET (1845//)
+MSG_HELP_CO_ST_POPACCOUNT
+Ett godtryckligt namn för detta konto, att användas\ninstället för användare@värd.
+;#DEF An arbitrary name for this account which will be\nused instead of user@host.
+;#SET (1846//)
