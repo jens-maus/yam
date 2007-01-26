@@ -3,23 +3,7 @@
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
-; YAM.cd - YAM 2.5 catalog description file
-; $Id$
-;
-; Please note that all catalog strings have to carry a proper
-; identifier number in the (X//) string part of the MSG_ identifier
-; field and that those numbers have to be unique and continous over
-; all different YAM versions. This allows to remove some obsolete
-; strings later on without having to worry about identifier clashes.
-; This however means that if an entry is being deleted here its
-; identifier should NEVER be reused later on. So, if you are going to
-; add new strings here do that always at the bottom of the file
-; and increase the last listed identifier number by one for your
-; new entries. And if you delete an entry NEVER reorder or resort
-; the ID numbers accordingly.
-;
-;#version 6
-;#language english
+; based on YAM.cd 2639 2007-01-22 20:12:48Z
 ;
 ; General
 ;
@@ -8458,61 +8442,49 @@ MSG_MA_MCOPY
 Copier...
 ; Copy...
 ;
-;
 MSG_MA_MPRINT
 Imprimer
 ; Print
-;
 ;
 MSG_MA_MSAVE
 Sauver...
 ; Save...
 ;
-;
 MSG_MA_MSAVEATT
 Sauver...
 ; Save...
-;
 ;
 MSG_MA_MCROP
 Supprimer
 ; Crop
 ;
-;
 MSG_MA_MNEW
 Nouveau
 ; New
-;
 ;
 MSG_MA_MREPLY
 Répondre...
 ; Reply...
 ;
-;
 MSG_MA_MFORWARD
 Retransmettre...
 ; Forward...
-;
 ;
 MSG_MA_MBOUNCE
 Détourner...
 ; Bounce...
 ;
-;
 MSG_MA_MSAVEADDRESS
 Sauver l'adresse...
 ; Save address...
-;
 ;
 MSG_MA_MADDRESSBOOK
 Carnet d'adresse...
 ; Address Book...
 ;
-;
 MSG_MA_MCONFIG
 Configuration...
 ; Configuration...
-;
 ;
 MSG_MA_TOMARKED
 Marqué
@@ -8530,4 +8502,13 @@ MSG_MA_MEDITASNEW
 Editer comme nouveau...
 ; Edit As New...
 ;
+MSG_CO_POPACCOUNT
+Nom du compte
+; Account name
+;
+MSG_HELP_CO_ST_POPACCOUNT
+Un nom arbitraire qui sera utilisé pour compte à\n\
+la place de utilisateur@hôte
+; An arbitrary name for this account which will be\n\
+; used instead of user@host.
 ;
