@@ -5,8 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-01-24  Thore Böckelmann <tboeckel@gmx.de>
+2007-01-28  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: added a SHOWSTRING() call to CheckMCC() to display the name of the
+    MCC being checked in the log. This might help tracking down bugs in certain
+    classes if creating an object of this class may fail.
   * YAM_CO.c: when no user name was entered after creating a new account the
     automatically created user name from the default EMail address was one char
     too short (example: default EMail: "user@host", user name: "use").

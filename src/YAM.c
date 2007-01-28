@@ -243,11 +243,14 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
   ENTER();
 
+  SHOWSTRING(DBF_STARTUP, name);
+
   for(;;)
   {
     // First we attempt to acquire the version and revision through MUI
-    Object *obj = MUI_NewObject(name, TAG_DONE);
-    if (obj)
+    Object *obj;
+
+    if((obj = MUI_NewObject(name, TAG_DONE)) != NULL)
     {
       ULONG ver = xget(obj, MUIA_Version);
       ULONG rev = xget(obj, MUIA_Revision);
