@@ -3038,7 +3038,7 @@ static struct WR_ClassData *WR_New(int winnum)
         WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_SEARCH,WMEN_SEARCHAGAIN,WMEN_DICT,
         WMEN_STYLE_BOLD,WMEN_STYLE_ITALIC,WMEN_STYLE_UNDERLINE,
         WMEN_STYLE_COLORED,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
-        WMEN_AUTOSP,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
+        WMEN_AUTOSP,WMEN_AUTOWRAP,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
         WMEN_DELSEND,WMEN_RECEIPT,WMEN_DISPNOTI,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
         WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
         WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5, WMEN_INSUUCODE
@@ -3056,8 +3056,17 @@ static struct WR_ClassData *WR_New(int winnum)
       };
 
       Object *sec_menus[SEC_MAXDUMMY];
-      APTR mi_copy, mi_cut, mi_redo, mi_undo;
-      APTR strip, mi_autospell, mi_delsend, mi_receipt, mi_dispnoti, mi_addinfo;
+      Object *mi_copy;
+      Object *mi_cut;
+      Object *mi_redo;
+      Object *mi_undo;
+      Object *strip;
+      Object *mi_autospell;
+      Object *mi_autowrap;
+      Object *mi_delsend;
+      Object *mi_receipt;
+      Object *mi_dispnoti;
+      Object *mi_addinfo;
       Object *slider = ScrollbarObject, End;
       ULONG i;
 
@@ -3147,6 +3156,7 @@ static struct WR_ClassData *WR_New(int winnum)
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, mi_autospell = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_SpellCheck), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_AUTOSP, End,
+               MUIA_Family_Child, mi_autowrap = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_AUTOWRAP), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_AUTOWRAP, End,
             End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Attachments),
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MAddFile), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,WMEN_ADDFILE, End,
@@ -3325,9 +3335,8 @@ static struct WR_ClassData *WR_New(int winnum)
 
       if (data->GUI.WI)
       {
-         int spell;
-
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+
          SetAttrs(data->GUI.ST_TO,
                  MUIA_BetterString_KeyDownFocus, data->GUI.ST_SUBJECT,
                  MUIA_Recipientstring_FromString, data->GUI.ST_FROM,
@@ -3338,8 +3347,9 @@ static struct WR_ClassData *WR_New(int winnum)
                  MUIA_BetterString_KeyDownFocus, data->GUI.TE_EDIT,
                  TAG_DONE);
 
-         spell = xget(data->GUI.TE_EDIT, MUIA_TextEditor_TypeAndSpell);
-         set(mi_autospell, MUIA_Menuitem_Checked, spell);
+         set(mi_autospell, MUIA_Menuitem_Checked, xget(data->GUI.TE_EDIT, MUIA_TextEditor_TypeAndSpell));
+         set(mi_autowrap,  MUIA_Menuitem_Checked, xget(data->GUI.TE_EDIT, MUIA_TextEditor_WrapBorder) > 0);
+
          set(data->GUI.CY_IMPORTANCE, MUIA_Cycle_Active, 1);
          DoMethod(G->App, MUIM_MultiSet,  MUIA_Disabled, TRUE, data->GUI.RA_ENCODING, data->GUI.ST_CTYPE, data->GUI.ST_DESC, data->GUI.BT_DEL, data->GUI.BT_DISPLAY, NULL);
          SetHelp(data->GUI.ST_SUBJECT    ,MSG_HELP_WR_ST_SUBJECT   );
@@ -3424,6 +3434,8 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.CH_DISPNOTI,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_dispnoti             ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
          DoMethod(data->GUI.CH_ADDINFO ,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_addinfo              ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
          DoMethod(mi_autospell         ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.TE_EDIT       ,3,MUIM_Set        ,MUIA_TextEditor_TypeAndSpell,MUIV_TriggerValue);
+         DoMethod(mi_autowrap          ,MUIM_Notify,MUIA_Menuitem_Checked    ,TRUE,          data->GUI.TE_EDIT       ,3,MUIM_Set        ,MUIA_TextEditor_WrapBorder, C->EdWrapCol);
+         DoMethod(mi_autowrap          ,MUIM_Notify,MUIA_Menuitem_Checked    ,FALSE,         data->GUI.TE_EDIT       ,3,MUIM_Set        ,MUIA_TextEditor_WrapBorder, 0);
          DoMethod(mi_delsend           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_DELSEND    ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
          DoMethod(mi_receipt           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_RECEIPT    ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
          DoMethod(mi_dispnoti          ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_DISPNOTI   ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);

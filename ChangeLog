@@ -7,6 +7,8 @@ $URL$
 
 2007-01-28  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c: it is now possible to enable/disable the automatic word wrapping
+    functionality from the menu of the correspoding write window.
   * Searchwindow.c, ReadWindow.c: it is now possible to search in the displayed
     text of a read window by using newly added "Search" and "Search again"
     menu items. In addition the context menu of a readmailgroup also allows to

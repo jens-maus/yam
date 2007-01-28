@@ -6107,3 +6107,6 @@ Search again
 MSG_WR_SEARCH_AGAIN (1849//)
 Search again
 ;
+MSG_WR_AUTOWRAP (1850//)
+Word wrap
+;
