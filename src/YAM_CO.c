@@ -534,7 +534,7 @@ HOOKPROTONHNONP(CO_AddPOP3, void)
          CE->P3[i] = CO_NewPOP3(CE, i == 0);
          DoMethod(G->CO->GUI.LV_POP3, MUIM_List_InsertSingle, CE->P3[i], MUIV_List_Insert_Bottom, TAG_DONE);
          set(G->CO->GUI.LV_POP3, MUIA_List_Active, i);
-         set(G->CO->GUI.WI, MUIA_Window_ActiveObject, G->CO->GUI.ST_POPHOST);
+         set(G->CO->GUI.WI, MUIA_Window_ActiveObject, G->CO->GUI.ST_POPACCOUNT);
          break;
       }
 }
@@ -1164,7 +1164,7 @@ void CO_Validate(struct Config *co, BOOL update)
          pop3->Port = 110;
 
        if(pop3->User[0] == '\0')
-         strlcpy(pop3->User, co->EmailAddress, p ? (unsigned int)(p - (co->EmailAddress)) : sizeof(pop3->User));
+         strlcpy(pop3->User, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress + 1) : sizeof(pop3->User));
 
        if(pop3->Account[0] == '\0')
          snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);

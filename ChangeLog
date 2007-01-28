@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-24  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: when no user name was entered after creating a new account the
+    automatically created user name from the default EMail address was one char
+    too short (example: default EMail: "user@host", user name: "use").
+
 2007-01-28  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: it is now possible to enable/disable the automatic word wrapping
