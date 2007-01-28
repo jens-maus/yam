@@ -2222,8 +2222,8 @@ static int TR_ConnectPOP(int guilevel)
    // take this one, even if its not needed anymore.
    if ((p = strchr(host, ':'))) { *p = 0; port = atoi(++p); }
 
-   BusyText(tr(MSG_TR_MailTransferFrom), pop3->Account);
-   TR_SetWinTitle(TRUE, pop3->Account);
+   BusyText(tr(MSG_TR_MailTransferFrom), host);
+   TR_SetWinTitle(TRUE, host);
 
    if((err = TR_Connect(host, port)) != CONNECTERR_SUCCESS)
    {

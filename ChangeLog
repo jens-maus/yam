@@ -7,6 +7,8 @@ $URL$
 
 2007-01-28  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: changed the transfer window title and the busy bar back to display
+    the current host name instead of the account name.
   * YAM.c: added a SHOWSTRING() call to CheckMCC() to display the name of the
     MCC being checked in the log. This might help tracking down bugs in certain
     classes if creating an object of this class may fail.
