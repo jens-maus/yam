@@ -16,6 +16,13 @@ $URL$
 
 2007-01-28  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c: the TR_Connect() function wasn't correctly advancing to an eventually
+    alternate IP-address and always failed for an alias IP. Now there will always
+    be a new socket() call for each IP alias. In addition the loop can now be
+    somewhat aborted between two connection tries.
+  * YAM_TR.c: reworked all TLS/SSL routines to be somewhat more nice to
+    eventually error states of the SSL functions. Now the SSL context should
+    be more properly cleaned up than before.
   * YAM_WR.c: it is now possible to enable/disable the automatic word wrapping
     functionality from the menu of the correspoding write window.
   * Searchwindow.c, ReadWindow.c: it is now possible to search in the displayed

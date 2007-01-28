@@ -32,6 +32,7 @@
 
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
+#include <sys/socket.h>
 
 #include <clib/alib_protos.h>
 #include <clib/macros.h>
@@ -249,13 +250,16 @@ struct UIDLtoken
 /**************************************************************************/
 // TLS/SSL related variables
 
-static SSL_METHOD *method;
-static SSL_CTX *ctx;
-static SSL *ssl;
+static SSL_CTX *ctx = NULL;
+static SSL *ssl = NULL;
 
 /**************************************************************************/
 // local macros & defines
 #define GetLong(p,o)  ((((unsigned char*)(p))[o]) | (((unsigned char*)(p))[o+1]<<8) | (((unsigned char*)(p))[o+2]<<16) | (((unsigned char*)(p))[o+3]<<24))
+
+#ifndef SHUT_RDWR
+#define SHUT_RDWR 2
+#endif
 
 /***************************************************************************
  Module: Transfer
@@ -264,142 +268,98 @@ static SSL *ssl;
 /*** TLS/SSL routines ***/
 /// TR_InitTLS()
 // Initialize the SSL/TLS session accordingly
-BOOL TR_InitTLS(VOID)
+static BOOL TR_InitTLS(VOID)
 {
-  char tmp[256];
-  char *CAfile = NULL;
-  char *CApath = NULL;
+  BOOL result = FALSE;
+  char tmp[24+1];
+  SSL_METHOD *method = NULL;
+
+  ENTER();
 
   // lets initialize the library first and load the error strings
+  // these function don't return any serious error
   SSL_library_init();
   SSL_load_error_strings();
 
   // We have to feed the random number generator first
   D(DBF_NET, "Seeding random number generator...");
-  snprintf(tmp, sizeof(tmp), "%lx%lx", (unsigned long)time((time_t *)0), (unsigned long)FindTask(NULL));
+  snprintf(tmp, sizeof(tmp), "%08lx%08lx%08lx", (unsigned long)time((time_t *)0), (unsigned long)FindTask(NULL), (unsigned long)rand());
   RAND_seed(tmp, strlen(tmp));
 
-  if (!(method = SSLv23_client_method()))
+  // prepare the SSL client methods here
+  if((method = SSLv23_client_method()))
   {
-    E(DBF_NET, "SSLv23_client_method() error !");
-    return FALSE;
-  }
-
-  if (!(ctx = SSL_CTX_new(method)))
-  {
-    E(DBF_NET, "Can't create SSL_CTX object !");
-    return FALSE;
-  }
-
-  // In future we can give the user the ability to specify his own CA locations
-  // in the application instead of using the default ones.
-  if (CAfile || CApath)
-  {
-    D(DBF_NET, "CAfile = %s, CApath = %s", CAfile ? CAfile : "none", CApath ? CApath : "none");
-    if ((!SSL_CTX_load_verify_locations(ctx, CAfile, CApath)))
+    // get the SSL context
+    if((ctx = SSL_CTX_new(method)))
     {
-      E(DBF_NET, "Error setting default verify locations !");
-      return FALSE;
+      #if 0
+      char *CAfile = NULL;
+      char *CApath = NULL;
+
+      // In future we can give the user the ability to specify his own CA locations
+      // in the application instead of using the default ones.
+      if(CAfile || CApath)
+      {
+        D(DBF_NET, "CAfile = %s, CApath = %s", CAfile ? CAfile : "none", CApath ? CApath : "none");
+        if((!SSL_CTX_load_verify_locations(ctx, CAfile, CApath)))
+        {
+          E(DBF_NET, "Error setting default verify locations !");
+          return FALSE;
+        }
+      }
+      #endif
+
+      // set the default SSL context verify pathes
+      if(SSL_CTX_set_default_verify_paths(ctx))
+      {
+        // set the supported cipher list
+        if((SSL_CTX_set_cipher_list(ctx, "DEFAULT")))
+        {
+          // for now we set the SSL certificate to 'NONE' as
+          // YAM can currently not manage SSL server certificates itself
+          // and therefore must be set to not verify them... unsafe?
+          // well, I would call it "convienent" for the moment :)
+          SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, 0);
+
+          result = TRUE;
+        }
+        else
+          E(DBF_NET, "SSL_CTX_set_cipher_list() error !");
+      }
+      else
+        E(DBF_NET, "Error setting default verify locations !");
     }
+    else
+      E(DBF_NET, "Can't create SSL_CTX object !");
   }
   else
+    E(DBF_NET, "SSLv23_client_method() error !");
+
+  // if we weren't ale to
+  // init the TLS/SSL stuff we have to clear it
+  // before leaving
+  if(result == FALSE)
   {
-    if((!SSL_CTX_set_default_verify_paths(ctx)))
+    if(ctx)
     {
-      E(DBF_NET, "Error setting default verify locations !");
-      return FALSE;
-    }
-  }
-
-  if (!(SSL_CTX_set_cipher_list(ctx, "DEFAULT")))
-  {
-    E(DBF_NET, "SSL_CTX_set_cipher_list() error !");
-    return FALSE;
-  }
-
-  SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, 0);
-
-  return TRUE;
-}
-
-///
-/// TR_StartTLS()
-// function that starts & initializes the TLS/SSL session
-BOOL TR_StartTLS(VOID)
-{
-  D(DBF_NET, "Initializing TLS/SSL session...");
-
-  if (!(ssl = SSL_new(ctx)))
-  {
-    E(DBF_NET, "Can't create a new SSL structure for a connection !");
-    return FALSE;
-  }
-
-  if (!(SSL_set_fd(ssl, (int)G->TR_Socket)))
-  {
-    E(DBF_NET, "SSL_set_fd() error !");
-    return FALSE;
-  }
-
-  if ((SSL_connect(ssl)) <= 0)
-  {
-    E(DBF_NET, "TLS/SSL handshake error !");
-    return FALSE;
-  }
-
-  // Certificate info
-  // only for debug reasons
-#ifdef DEBUG
-  {
-    char *x509buf;
-    SSL_CIPHER *cipher;
-    X509 *server_cert;
-    cipher = SSL_get_current_cipher(ssl);
-
-    if (cipher)
-    {
-      D(DBF_NET, "%s connection using %s", SSL_CIPHER_get_version(cipher), SSL_get_cipher(ssl));
+      SSL_CTX_free(ctx);
+      ctx = NULL;
     }
 
-    if (!(server_cert = SSL_get_peer_certificate(ssl)))
-    {
-      E(DBF_NET, "SSL_get_peer_certificate() error !");
-    }
-
-    D(DBF_NET, "Server public key is %ld bits", EVP_PKEY_bits(X509_get_pubkey(server_cert)));
-
-    #define X509BUFSIZE 4096
-
-    x509buf = (char *)malloc(X509BUFSIZE);
-    memset(x509buf, 0, X509BUFSIZE);
-
-    D(DBF_NET, "Server certificate:");
-
-    if(!(X509_NAME_oneline(X509_get_subject_name(server_cert), x509buf, X509BUFSIZE)))
-    {
-      E(DBF_NET, "X509_NAME_oneline...[subject] error !");
-    }
-    D(DBF_NET, "subject: %s", x509buf);
-
-    if(!(X509_NAME_oneline(X509_get_issuer_name(server_cert), x509buf, X509BUFSIZE)))
-    {
-      E(DBF_NET, "X509_NAME_oneline...[issuer] error !");
-    }
-    D(DBF_NET, "issuer:  %s", x509buf);
-
-    if(x509buf)     free(x509buf);
-    if(server_cert) X509_free(server_cert);
+    ssl = NULL;
   }
-#endif
 
-  return TRUE;
+  RETURN(result);
+  return result;
 }
 
 ///
 /// TR_EndTLS()
 // function that stops all TLS context
-VOID TR_EndTLS(VOID)
+static VOID TR_EndTLS(VOID)
 {
+  ENTER();
+
   if(ssl)
   {
     SSL_shutdown(ssl);
@@ -412,6 +372,92 @@ VOID TR_EndTLS(VOID)
     SSL_CTX_free(ctx);
     ctx = NULL;
   }
+
+  LEAVE();
+}
+
+///
+/// TR_StartTLS()
+// function that starts & initializes the TLS/SSL session
+static BOOL TR_StartTLS(VOID)
+{
+  BOOL result = FALSE;
+
+  ENTER();
+
+  D(DBF_NET, "Initializing TLS/SSL session...");
+
+  // check if we are ready for creating the ssl connection
+  if(ctx != NULL && (ssl = SSL_new(ctx)))
+  {
+    // set the socket descriptor to the ssl context
+    if(G->TR_Socket != SMTP_NO_SOCKET &&
+       SSL_set_fd(ssl, (int)G->TR_Socket))
+    {
+      int res;
+
+      // establish the ssl connection
+      if((res = SSL_connect(ssl)) > 0)
+      {
+        // everything was successfully so lets set the result
+        // value of that function to true
+        result = TRUE;
+
+        // Certificate info
+        // only for debug reasons
+        #ifdef DEBUG
+        {
+          char *x509buf;
+          SSL_CIPHER *cipher;
+          X509 *server_cert;
+          cipher = SSL_get_current_cipher(ssl);
+
+          if(cipher)
+            D(DBF_NET, "%s connection using %s", SSL_CIPHER_get_version(cipher), SSL_get_cipher(ssl));
+
+          if(!(server_cert = SSL_get_peer_certificate(ssl)))
+            E(DBF_NET, "SSL_get_peer_certificate() error !");
+
+          D(DBF_NET, "Server public key is %ld bits", EVP_PKEY_bits(X509_get_pubkey(server_cert)));
+
+          #define X509BUFSIZE 4096
+
+          x509buf = (char *)malloc(X509BUFSIZE);
+          memset(x509buf, 0, X509BUFSIZE);
+
+          D(DBF_NET, "Server certificate:");
+
+          if(!(X509_NAME_oneline(X509_get_subject_name(server_cert), x509buf, X509BUFSIZE)))
+            E(DBF_NET, "X509_NAME_oneline...[subject] error !");
+
+          D(DBF_NET, "subject: %s", x509buf);
+
+          if(!(X509_NAME_oneline(X509_get_issuer_name(server_cert), x509buf, X509BUFSIZE)))
+            E(DBF_NET, "X509_NAME_oneline...[issuer] error !");
+
+          D(DBF_NET, "issuer:  %s", x509buf);
+
+          if(x509buf)     free(x509buf);
+          if(server_cert) X509_free(server_cert);
+        }
+        #endif
+      }
+      else
+        E(DBF_NET, "TLS/SSL handshake error: %d, SSL error: %d", res, SSL_get_error(ssl, res));
+    }
+    else
+      E(DBF_NET, "SSL_set_fd() error. TR_Socket: %d", G->TR_Socket);
+  }
+  else
+    E(DBF_NET, "Can't create a new SSL structure for a connection.");
+
+  // if we didn't succeed with our SSL
+  // startup we have to cleanup everything
+  if(result == FALSE)
+    TR_EndTLS();
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -419,32 +465,35 @@ VOID TR_EndTLS(VOID)
 // function to initiate a TLS connection to the ESMTP server via STARTTLS
 static BOOL TR_InitSTARTTLS(int ServerFlags)
 {
+  BOOL result = FALSE;
+
+  ENTER();
+
   // If this server doesn`t support TLS at all we return with an error
-  if(!hasSTARTTLS(ServerFlags))
+  if(hasSTARTTLS(ServerFlags))
   {
-    ER_NewError(tr(MSG_ER_NOSTARTTLS));
-    return FALSE;
-  }
+    // If we end up here the server supports STARTTLS and we can start
+    // initializing the connection
+    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_INITTLS));
 
-  // If we end up here the server supports STARTTLS and we can start
-  // initializing the connection
-  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_INITTLS));
-
-  // Now we initiate the STARTTLS command (RFC 2487)
-  if(!TR_SendSMTPCmd(ESMTP_STARTTLS, NULL, MSG_ER_BadResponse))
-    return FALSE;
-
-  if(TR_InitTLS() && TR_StartTLS())
-  {
-    G->TR_UseTLS = TRUE;
+    // Now we initiate the STARTTLS command (RFC 2487)
+    if(TR_SendSMTPCmd(ESMTP_STARTTLS, NULL, MSG_ER_BadResponse))
+    {
+      // setup the TLS/SSL session
+      if(TR_InitTLS() && TR_StartTLS())
+      {
+        G->TR_UseTLS = TRUE;
+        result = TRUE;
+      }
+      else
+        ER_NewError(tr(MSG_ER_INITTLS), C->SMTP_Server);
+    }
   }
   else
-  {
-    ER_NewError(tr(MSG_ER_INITTLS), C->SMTP_Server);
-    return FALSE;
-  }
+    ER_NewError(tr(MSG_ER_NOSTARTTLS));
 
-  return TRUE;
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -1185,6 +1234,8 @@ static void TR_Disconnect(void)
 {
   ENTER();
 
+  D(DBF_NET, "disconnecting TCP/IP session...");
+
   if(G->TR_Socket != SMTP_NO_SOCKET)
   {
     if(G->TR_UseTLS)
@@ -1193,7 +1244,7 @@ static void TR_Disconnect(void)
       G->TR_UseTLS = FALSE;
     }
 
-    shutdown(G->TR_Socket, 2);
+    shutdown(G->TR_Socket, SHUT_RDWR);
     CloseSocket(G->TR_Socket);
     G->TR_Socket = SMTP_NO_SOCKET;
 
@@ -1371,8 +1422,6 @@ static int TR_Connect(char *host, int port)
 
   ENTER();
 
-  SHOWVALUE(DBF_NET, G->TR_Socket);
-
   if(G->TR_Socket == SMTP_NO_SOCKET)
   {
     struct hostent *hostaddr;
@@ -1397,35 +1446,41 @@ static int TR_Connect(char *host, int port)
       }
       #endif
 
-      // lets create a standard AF_INET socket now
-      if((G->TR_Socket = socket(AF_INET, SOCK_STREAM, 0)) != SMTP_NO_SOCKET)
+      // now we try a connection for every address we have for this host
+      // because a hostname can have more than one IP in h_addr_list[]
+      for(i = 0; hostaddr->h_addr_list[i] && !G->TR->Abort; i++)
       {
-        BOOL connected;
-
-        // lets set the socket options the user has defined
-        // in the configuration
-        TR_SetSocketOpts();
-
-        // copy the hostaddr data in a local copy for further reference
-        memset(&G->TR_INetSocketAddr, 0, sizeof(G->TR_INetSocketAddr));
-        G->TR_INetSocketAddr.sin_len    = sizeof(G->TR_INetSocketAddr);
-        G->TR_INetSocketAddr.sin_family = AF_INET;
-        G->TR_INetSocketAddr.sin_port   = htons(port);
-
-        // now we try a connection for every address we have for this host
-        // because a hostname can have more than one IP in h_addr_list[]
-        connected = FALSE;
-        for(i = 0; hostaddr->h_addr_list[i]; i++)
+        // lets create a standard AF_INET socket now
+        if((G->TR_Socket = socket(AF_INET, SOCK_STREAM, 0)) != SMTP_NO_SOCKET)
         {
+          BOOL connected = FALSE;
+
+          // lets set the socket options the user has defined
+          // in the configuration
+          TR_SetSocketOpts();
+
+          // copy the hostaddr data in a local copy for further reference
+          memset(&G->TR_INetSocketAddr, 0, sizeof(G->TR_INetSocketAddr));
+          G->TR_INetSocketAddr.sin_len    = sizeof(G->TR_INetSocketAddr);
+          G->TR_INetSocketAddr.sin_family = AF_INET;
+          G->TR_INetSocketAddr.sin_port   = htons(port);
+
           memcpy(&G->TR_INetSocketAddr.sin_addr, hostaddr->h_addr_list[i], (size_t)hostaddr->h_length);
 
-          if(connect(G->TR_Socket, (struct sockaddr *)&G->TR_INetSocketAddr, sizeof(G->TR_INetSocketAddr)) != -1)
+          D(DBF_NET, "trying TCP/IP connection to '%s' on port %d", Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr), port);
+
+          if(connect(G->TR_Socket, (struct sockaddr *)&G->TR_INetSocketAddr, sizeof(G->TR_INetSocketAddr)) == 0)
           {
             // if all works and we finally established a connection we can return with zero.
             connected = TRUE;
             result = CONNECTERR_SUCCESS;
             break;
           }
+          else
+            E(DBF_NET, "connect() returned an error %d", Errno());
+
+          // give the application the chance to refresh
+          DoMethod(G->App, MUIM_Application_InputBuffered);
 
           // Preparation for non-blocking I/O
           if(Errno() == EINPROGRESS)
@@ -1434,17 +1489,23 @@ static int TR_Connect(char *host, int port)
             result = CONNECTERR_SUCCESS;
             break;
           }
+
+          if(connected == FALSE)
+          {
+            // if we end up here something went really wrong
+            TR_Disconnect();
+            result = CONNECTERR_UNKNOWN_ERROR;
+          }
+        }
+        else
+        {
+          result = CONNECTERR_NO_SOCKET; // socket() failed
+          break;
         }
 
-        if(connected == FALSE)
-        {
-          // if we end up here something went really wrong
-          TR_Disconnect();
-          result = CONNECTERR_UNKNOWN_ERROR;
-        }
+        // give the application the chance to refresh
+        DoMethod(G->App, MUIM_Application_InputBuffered);
       }
-      else
-        result = CONNECTERR_NO_SOCKET; // socket() failed
     }
     else
       result = CONNECTERR_UNKNOWN_HOST; // gethostbyname() failed
@@ -2037,6 +2098,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
          else ER_NewError(tr(MSG_ER_DocNotFound), path);
       }
       else ER_NewError(tr(MSG_ER_SendHTTP));
+
       TR_Disconnect();
    }
    else ER_NewError(tr(MSG_ER_ConnectHTTP), host);
@@ -2504,9 +2566,12 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 //  Terminates a POP3 session
 static void TR_DisconnectPOP(void)
 {
-   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
-   if(!G->Error) TR_SendPOP3Cmd(POPCMD_QUIT, NULL, MSG_ER_BadResponse);
-   TR_Disconnect();
+  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
+
+  if(!G->Error)
+    TR_SendPOP3Cmd(POPCMD_QUIT, NULL, MSG_ER_BadResponse);
+
+  TR_Disconnect();
 }
 
 ///
@@ -3033,9 +3098,12 @@ static int TR_ConnectESMTP(void)
 //  Terminates a SMTP session
 static void TR_DisconnectSMTP(void)
 {
-   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
-   if (!G->Error) TR_SendSMTPCmd(SMTP_QUIT, NULL, MSG_ER_BadResponse);
-   TR_Disconnect();
+  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
+
+  if(!G->Error)
+    TR_SendSMTPCmd(SMTP_QUIT, NULL, MSG_ER_BadResponse);
+
+  TR_Disconnect();
 }
 ///
 /// TR_ChangeTransFlagsFunc
