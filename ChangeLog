@@ -7,6 +7,10 @@ $URL$
 
 2007-01-28  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Searchwindow.c, ReadWindow.c: it is now possible to search in the displayed
+    text of a read window by using newly added "Search" and "Search again"
+    menu items. In addition the context menu of a readmailgroup also allows to
+    search in a read pane as well now.
   * YAM.c: bumped required codesets.library version to 6.3
 
 2007-01-26  Alexandre Balaban <abalaban@free.fr>

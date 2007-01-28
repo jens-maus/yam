@@ -185,7 +185,7 @@ DECLARE(InitNotify) // struct WR_ClassData *wrData
   DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_ITALIC,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_ITALIC, wrData->winnum);
   DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_UNDERLINE, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_UNDERLINE, wrData->winnum);
   DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_COLORED,   MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_COLOR, wrData->winnum);
-  DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_SEARCH,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &WR_SearchHook, wrData->GUI.TE_EDIT);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_WRITE_SEARCH,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SearchHook, wrData->GUI.TE_EDIT, MUIF_NONE);
 
   // connect attributes to button disables
   DoMethod(wrData->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_AreaMarked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_CUT, MUIA_TheBar_Attr_Disabled, MUIV_NotTriggerValue);

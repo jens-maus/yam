@@ -66,6 +66,8 @@ struct Data
   Object *MI_TOQUEUED;
   Object *MI_TOSPAM;
   Object *MI_TOHAM;
+  Object *MI_SEARCH;
+  Object *MI_SEARCHAGAIN;
   Object *windowToolbar;
   Object *statusIconGroup;
   Object *readMailGroup;
@@ -84,7 +86,7 @@ enum
   RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,RMEN_NEXTTH,RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,
   RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,
   RMEN_FFONT,RMEN_SIMAGE,RMEN_TOMARKED,RMEN_TOUNMARKED,RMEN_TOUNREAD,RMEN_TOREAD,RMEN_TOHOLD,
-  RMEN_TOQUEUED,RMEN_TOSPAM,RMEN_TOHAM
+  RMEN_TOQUEUED,RMEN_TOSPAM,RMEN_TOHAM,RMEN_SEARCH,RMEN_SEARCHAGAIN
 };
 
 /* Private Functions */
@@ -203,13 +205,16 @@ OVERLOAD(OM_NEW)
         MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Attachments),
           MenuChild, Menuitem(tr(MSG_RE_MDisplay),"D",  TRUE,  FALSE, RMEN_DISPLAY),
           MenuChild, data->MI_DETACH = Menuitem(tr(MSG_RE_SaveAll),  "A",  TRUE, FALSE, RMEN_DETACH),
-          MenuChild, data->MI_CROP =    Menuitem(tr(MSG_MA_Crop),    "O",  TRUE, FALSE, RMEN_CROP),
+          MenuChild, data->MI_CROP = Menuitem(tr(MSG_MA_Crop),    "O",  TRUE, FALSE, RMEN_CROP),
         End,
         MenuChild, MenuBarLabel,
         MenuChild, Menuitem(tr(MSG_New),         "N", TRUE, FALSE, RMEN_NEW),
         MenuChild, data->MI_REPLY = Menuitem(tr(MSG_MA_MReply),   "R", TRUE, FALSE, RMEN_REPLY),
         MenuChild, data->MI_FORWARD = Menuitem(tr(MSG_MA_MForward), "W", TRUE, FALSE, RMEN_FORWARD),
         MenuChild, data->MI_BOUNCE = Menuitem(tr(MSG_MA_MBounce),   "B", TRUE, FALSE, RMEN_BOUNCE),
+        MenuChild, MenuBarLabel,
+        MenuChild, data->MI_SEARCH = Menuitem(tr(MSG_RE_SEARCH), "F", TRUE, FALSE, RMEN_SEARCH),
+        MenuChild, data->MI_SEARCHAGAIN = Menuitem(tr(MSG_RE_SEARCH_AGAIN), "G", TRUE, FALSE, RMEN_SEARCHAGAIN),
         MenuChild, MenuBarLabel,
         MenuChild, Menuitem(tr(MSG_MA_MGetAddress), "J", TRUE, FALSE, RMEN_SAVEADDR),
         MenuChild, data->MI_STATUS = MenuObject, MUIA_Menu_Title, tr(MSG_MA_SetStatus),
@@ -247,7 +252,7 @@ OVERLOAD(OM_NEW)
         MenuChild, MenuBarLabel,
         MenuChild, data->MI_WRAPH  = MenuitemCheck(tr(MSG_RE_WrapHeader), "H", TRUE, C->WrapHeader,    TRUE, 0, RMEN_WRAPH),
         MenuChild, data->MI_TSTYLE = MenuitemCheck(tr(MSG_RE_Textstyles), "T", TRUE, C->UseTextstyles, TRUE, 0, RMEN_TSTYLE),
-        MenuChild, data->MI_FFONT  = MenuitemCheck(tr(MSG_RE_FixedFont),  "F", TRUE, C->FixedFontEdit, TRUE, 0, RMEN_FFONT),
+        MenuChild, data->MI_FFONT  = MenuitemCheck(tr(MSG_RE_FixedFont),  "I", TRUE, C->FixedFontEdit, TRUE, 0, RMEN_FFONT),
       End,
     End,
     WindowContents, VGroup,
@@ -315,6 +320,8 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FORWARD,   obj, 3, MUIM_ReadWindow_NewMail, NEW_FORWARD, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_BOUNCE,    obj, 3, MUIM_ReadWindow_NewMail, NEW_BOUNCE, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVEADDR,  obj, 1, MUIM_ReadWindow_GrabSenderAddress);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SEARCH,    data->readMailGroup, 2, MUIM_ReadMailGroup_Search, MUIF_NONE);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SEARCHAGAIN, data->readMailGroup, 2, MUIM_ReadMailGroup_Search, MUIF_ReadMailGroup_Search_Again);
 
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOUNREAD,  obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_NONE, SFLAG_NEW|SFLAG_READ);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOREAD,    obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_READ, SFLAG_NEW);
@@ -324,7 +331,6 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOUNMARKED,obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_NONE, SFLAG_MARKED);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOSPAM,    obj, 2, MUIM_ReadWindow_ClassifyMessage, BC_SPAM);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOHAM,     obj, 2, MUIM_ReadWindow_ClassifyMessage, BC_HAM);
-
 
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_CHSUBJ,    obj, 1, MUIM_ReadWindow_ChangeSubjectRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PREV,      obj, 3, MUIM_ReadWindow_SwitchMail, -1, 0);

@@ -54,6 +54,7 @@ struct Data
   Object *textEditScrollbar;
   Object *attachmentGroup;
   Object *contextMenu;
+  Object *searchWindow;
 
   char menuTitle[SIZE_DEFAULT];
 
@@ -72,12 +73,18 @@ struct Data
 #define hasUpdateOnlyFlag(v)         (isFlagSet((v), MUIF_ReadMailGroup_ReadMail_UpdateOnly))
 #define hasStatusChangeDelayFlag(v)  (isFlagSet((v), MUIF_ReadMailGroup_ReadMail_StatusChangeDelay))
 #define hasUpdateTextOnlyFlag(v)     (isFlagSet((v), MUIF_ReadMailGroup_ReadMail_UpdateTextOnly))
+
+#define MUIF_ReadMailGroup_Search_Again                (1<<0) // perform the same search again
+
+#define hasSearchAgainFlag(v)        (isFlagSet((v), MUIF_ReadMailGroup_Search_Again))
 */
 
 /// Menu enumerations
 enum { RMEN_HSHORT=100, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIMAGE, RMEN_WRAPH,
        RMEN_TSTYLE, RMEN_FFONT, RMEN_EXTKEY, RMEN_CHKSIG, RMEN_SAVEDEC, RMEN_DISPLAY, RMEN_DETACH, RMEN_CROP,
-       RMEN_PRINT, RMEN_SAVE, RMEN_REPLY, RMEN_FORWARD, RMEN_MOVE, RMEN_COPY, RMEN_DELETE };
+       RMEN_PRINT, RMEN_SAVE, RMEN_REPLY, RMEN_FORWARD, RMEN_MOVE, RMEN_COPY, RMEN_DELETE, RMEN_SEARCH,
+       RMEN_SEARCHAGAIN
+     };
 ///
 
 /* Hooks */
@@ -478,6 +485,9 @@ OVERLOAD(MUIM_ContextMenuBuild)
         Child, Menuitem(tr(MSG_Print),       NULL, hasContent, FALSE, RMEN_PRINT),
         Child, Menuitem(tr(MSG_MA_MDelete),  NULL, hasContent && isRealMail, TRUE,  RMEN_DELETE),
         Child, MenuBarLabel,
+        Child, Menuitem(tr(MSG_RE_SEARCH),   NULL, hasContent, FALSE,  RMEN_SEARCH),
+        Child, Menuitem(tr(MSG_RE_SEARCH_AGAIN), NULL, hasContent, FALSE,  RMEN_SEARCHAGAIN),
+        Child, MenuBarLabel,
         Child, MenuitemObject,
           MUIA_Menuitem_Title, tr(MSG_Attachments),
           MUIA_Menuitem_Enabled, hasContent && hasAttach,
@@ -529,6 +539,8 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case RMEN_EXTKEY:   DoMethod(obj, MUIM_ReadMailGroup_ExtractPGPKey); break;
     case RMEN_CHKSIG:   DoMethod(obj, MUIM_ReadMailGroup_CheckPGPSignature, TRUE); break;
     case RMEN_SAVEDEC:  DoMethod(obj, MUIM_ReadMailGroup_SaveDecryptedMail); break;
+    case RMEN_SEARCH:   DoMethod(obj, MUIM_ReadMailGroup_Search, MUIF_NONE); break;
+    case RMEN_SEARCHAGAIN: DoMethod(obj, MUIM_ReadMailGroup_Search, MUIF_ReadMailGroup_Search_Again); break;
 
     // now we check the checkmarks of the
     // context-menu
@@ -1490,5 +1502,33 @@ DECLARE(HeaderListDoubleClicked)
   return 0;
 }
 
+///
+/// DECLARE(Search)
+DECLARE(Search) // int flags
+{
+  GETDATA;
+  ENTER();
+
+  if(data->searchWindow == NULL)
+  {
+    if((data->searchWindow = SearchwindowObject, End))
+    {
+      DoMethod(G->App, OM_ADDMEMBER, data->searchWindow);
+
+      // perform the search operation
+      DoMethod(data->searchWindow, MUIM_Searchwindow_Open, data->mailTextObject);
+    }
+  }
+  else
+  {
+    if(hasSearchAgainFlag(msg->flags))
+      DoMethod(data->searchWindow, MUIM_Searchwindow_Next);
+    else
+      DoMethod(data->searchWindow, MUIM_Searchwindow_Open, data->mailTextObject);
+  }
+
+  RETURN(0);
+  return 0;
+}
 ///
 

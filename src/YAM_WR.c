@@ -2540,12 +2540,31 @@ MakeHook(WR_EditorCmdHook, WR_EditorCmd);
 ///
 /// WR_SearchFunc
 /*** WR_SearchFunc - Opens a search window ***/
-HOOKPROTONHNO(WR_SearchFunc, void, Object **texteditor)
+HOOKPROTONHNO(WR_SearchFunc, void, int *arg)
 {
-   if(!G->WI_SEARCH && (G->WI_SEARCH = SearchwindowObject, End))
+  Object *texteditor = (Object *)arg[0];
+
+  ENTER();
+
+  if(G->WI_SEARCH == NULL)
+  {
+    if((G->WI_SEARCH = SearchwindowObject, End))
+    {
       DoMethod(G->App, OM_ADDMEMBER, G->WI_SEARCH);
 
-   DoMethod(G->WI_SEARCH, MUIM_Searchwindow_Open, *texteditor);
+      // perform the search operation
+      DoMethod(G->WI_SEARCH, MUIM_Searchwindow_Open, texteditor);
+    }
+  }
+  else
+  {
+    if(hasSearchAgainFlag(arg[1]))
+      DoMethod(G->WI_SEARCH, MUIM_Searchwindow_Next);
+    else
+      DoMethod(G->WI_SEARCH, MUIM_Searchwindow_Open, texteditor);
+  }
+
+  LEAVE();
 }
 MakeHook(WR_SearchHook, WR_SearchFunc);
 
@@ -3014,9 +3033,10 @@ static struct WR_ClassData *WR_New(int winnum)
    if(data)
    {
       enum {
-        WMEN_NEW=1,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,WMEN_INSALTQUOT,
+        WMEN_NEW=501,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,WMEN_INSALTQUOT,
         WMEN_INSROT13,WMEN_EDIT,WMEN_CUT,WMEN_COPY,WMEN_PASTE,
-        WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_SEARCH,WMEN_DICT,WMEN_STYLE_BOLD,WMEN_STYLE_ITALIC,WMEN_STYLE_UNDERLINE,
+        WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_SEARCH,WMEN_SEARCHAGAIN,WMEN_DICT,
+        WMEN_STYLE_BOLD,WMEN_STYLE_ITALIC,WMEN_STYLE_UNDERLINE,
         WMEN_STYLE_COLORED,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
         WMEN_AUTOSP,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
         WMEN_DELSEND,WMEN_RECEIPT,WMEN_DISPNOTI,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
@@ -3110,6 +3130,7 @@ static struct WR_ClassData *WR_New(int winnum)
                MUIA_Family_Child, mi_redo = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Redo), MUIA_UserData, WMEN_REDO, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_SEARCH), MUIA_Menuitem_Shortcut,"F", MUIA_UserData,WMEN_SEARCH, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_SEARCH_AGAIN), MUIA_Menuitem_Shortcut,"G", MUIA_UserData,WMEN_SEARCHAGAIN, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Dictionary), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,WMEN_DICT, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Textstyle),
@@ -3352,7 +3373,8 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASQUOT   ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_PASQUOT,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASALTQUOT,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_PASALTQUOT,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASROT13  ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_PASROT13,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SEARCH    ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_SearchHook, data->GUI.TE_EDIT);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SEARCH    ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_SearchHook, data->GUI.TE_EDIT, MUIF_NONE);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SEARCHAGAIN,MUIV_Notify_Application,4,MUIM_CallHook  ,&WR_SearchHook, data->GUI.TE_EDIT, MUIF_ReadMailGroup_Search_Again);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_DICT      ,MUIV_Notify_Application,3,MUIM_CallHook   ,&DI_OpenHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_UNDO      ,data->GUI.TE_EDIT      ,2,MUIM_TextEditor_ARexxCmd,"UNDO");
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_REDO      ,data->GUI.TE_EDIT      ,2,MUIM_TextEditor_ARexxCmd,"REDO");

@@ -30,6 +30,8 @@
 
 #include "Searchwindow_cl.h"
 
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
@@ -45,9 +47,14 @@ struct Data
 OVERLOAD(OM_NEW)
 {
   struct Data *data;
-  Object *string, *case_sensitive, *search, *top, *cancel;
+  Object *string;
+  Object *case_sensitive;
+  Object *search;
+  Object *cancel;
 
-  if (!(obj = DoSuperNew(cl, obj,
+  ENTER();
+
+  if((obj = DoSuperNew(cl, obj,
 
     MUIA_Window_Title, tr(MSG_SEARCHWINDOW_TITLE),
     WindowContents, VGroup,
@@ -65,25 +72,25 @@ OVERLOAD(OM_NEW)
 
       Child, HGroup,
         Child, search = MakeButton(tr(MSG_SEARCHWINDOW_BT_SEARCH)),
-        Child, top    = MakeButton(tr(MSG_SEARCHWINDOW_BT_FROMTOP)),
+        Child, VSpace(0),
         Child, cancel = MakeButton(tr(MSG_SEARCHWINDOW_BT_CANCEL)),
       End,
 
     End,
 
     TAG_MORE, (ULONG)inittags(msg))))
-    return 0;
+  {
+    data = (struct Data *)INST_DATA(cl,obj);
+    data->Searchstring = string;
 
-  data = (struct Data *)INST_DATA(cl,obj);
-  data->Searchstring = string;
+    DoMethod(string,         MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, TRUE);
+    DoMethod(case_sensitive, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_WriteLong, MUIV_TriggerValue, &data->CaseSensitive);
+    DoMethod(search,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, TRUE);
+    DoMethod(cancel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 1, MUIM_Searchwindow_Close);
+    DoMethod(obj,            MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 1, MUIM_Searchwindow_Close);
+  }
 
-  DoMethod(string,         MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, FALSE);
-  DoMethod(case_sensitive, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_WriteLong, MUIV_TriggerValue, &data->CaseSensitive);
-  DoMethod(search,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, FALSE);
-  DoMethod(top,            MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, TRUE);
-  DoMethod(cancel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 1, MUIM_Searchwindow_Close);
-  DoMethod(obj,            MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 1, MUIM_Searchwindow_Close);
-
+  RETURN((ULONG)obj);
   return (ULONG)obj;
 }
 
@@ -148,10 +155,29 @@ DECLARE(Search) // ULONG top
   if((string = (STRPTR)xget(data->Searchstring, MUIA_String_Contents), string) && string[0] != '\0' && data->Texteditor)
   {
     ULONG flags = 0;
-    if(msg->top)             SET_FLAG(flags, MUIF_TextEditor_Search_FromTop);
-    if(data->CaseSensitive)  SET_FLAG(flags, MUIF_TextEditor_Search_CaseSensitive);
+
+    if(msg->top)
+      SET_FLAG(flags, MUIF_TextEditor_Search_FromTop);
+
+    if(data->CaseSensitive)
+      SET_FLAG(flags, MUIF_TextEditor_Search_CaseSensitive);
+
+    // perform the text search and return an error as well as a displaybeep
+    // if the search string wasn't found.
     if(!DoMethod(data->Texteditor, MUIM_TextEditor_Search, string, flags))
-      MUI_Request(_app(obj), parent, 0L, tr(MSG_SEARCHNOTFOUND_TITLE), tr(MSG_SEARCHNOTFOUND_BUTTON), tr(MSG_SEARCHNOTFOUND_MSG), string);
+    {
+      // beep the display
+      DisplayBeep(_screen(obj));
+
+      // put up a requester if we are searching from
+      // top
+      if(msg->top)
+      {
+        MUI_Request(_app(obj), parent, 0L, tr(MSG_SEARCHNOTFOUND_TITLE),
+                                           tr(MSG_OkayReq),
+                                           tr(MSG_SEARCHNOTFOUND_MSG), string);
+      }
+    }
   }
 
   return 0;

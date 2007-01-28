@@ -4505,9 +4505,6 @@ C_ase sensitive
 MSG_SEARCHWINDOW_BT_SEARCH (1394//)
 _Search
 ;
-MSG_SEARCHWINDOW_BT_FROMTOP (1395//)
-From _top
-;
 MSG_SEARCHWINDOW_BT_CANCEL (1396//)
 _Cancel
 ;
@@ -4516,9 +4513,6 @@ Search
 ;
 MSG_SEARCHNOTFOUND_MSG (1398//)
 '%s' not found.
-;
-MSG_SEARCHNOTFOUND_BUTTON (1399//)
-Okay
 ;
 MSG_WR_ERRORNOSENDER (1400//)
 Mail is incomplete: no sender!
@@ -5956,7 +5950,7 @@ MSG_MA_TRASH (1798//)
 Trash
 ;
 MSG_WR_SEARCH (1799//)
-Search
+Search...
 ;
 MSG_AB_IMPORT (1800//)
 Import
@@ -6103,4 +6097,13 @@ Account name
 MSG_HELP_CO_ST_POPACCOUNT (1846//)
 An arbitrary name for this account which will be\n\
 used instead of user@host.
+;
+MSG_RE_SEARCH (1847//)
+Search...
+;
+MSG_RE_SEARCH_AGAIN (1848//)
+Search again
+;
+MSG_WR_SEARCH_AGAIN (1849//)
+Search again
 ;
