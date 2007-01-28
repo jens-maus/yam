@@ -1448,7 +1448,7 @@ static int TR_Connect(char *host, int port)
 
       // now we try a connection for every address we have for this host
       // because a hostname can have more than one IP in h_addr_list[]
-      for(i = 0; hostaddr->h_addr_list[i] && !G->TR->Abort; i++)
+      for(i = 0; hostaddr->h_addr_list[i]; i++)
       {
         // lets create a standard AF_INET socket now
         if((G->TR_Socket = socket(AF_INET, SOCK_STREAM, 0)) != SMTP_NO_SOCKET)
@@ -1505,6 +1505,11 @@ static int TR_Connect(char *host, int port)
 
         // give the application the chance to refresh
         DoMethod(G->App, MUIM_Application_InputBuffered);
+
+        // if the user pressed the abort button in the transfer
+        // window we have to exit the loop
+        if(G->TR && G->TR->Abort)
+          break;
       }
     }
     else
