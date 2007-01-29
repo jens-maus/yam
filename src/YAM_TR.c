@@ -600,7 +600,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
         // get the challenge code from the response line of the
         // AUTH command.
-        strlcpy(challenge, &resp[4], 511);
+        strlcpy(challenge, &resp[4], sizeof(challenge));
 
         // now that we have the challange phrase we need to base64decode
         // it, but have to take care to remove the ending "\r\n" cookie.
@@ -902,7 +902,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
         // get the challenge code from the response line of the
         // AUTH command.
-        strlcpy(challenge, &resp[4], 511);
+        strlcpy(challenge, &resp[4], sizeof(challenge));
 
         // now that we have the challange phrase we need to base64decode
         // it, but have to take care to remove the ending "\r\n" cookie.

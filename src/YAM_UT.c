@@ -3286,7 +3286,7 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
           // extract the timestring
           if((p = strchr(p, ' ')))
           {
-            strlcpy(timestr, p+1, 8);
+            strlcpy(timestr, p+1, MIN(8, sizeof(timestr)));
 
             // extract the year
             if((p = strchr(p, ' ')))
@@ -3315,8 +3315,8 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
       // copy the datestring
       if((p = strchr(string, ' ')))
       {
-        strlcpy(datestr, string, p-string+1);
-        strlcpy(timestr, p+1, sizeof(timestr));
+        strlcpy(datestr, string, MIN(sizeof(datestr), (unsigned int)(p - string + 1)));
+        strlcpy(timestr, p + 1, sizeof(timestr));
 
         result = TRUE;
       }
@@ -4061,7 +4061,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
     // unique
     strlcpy(dstFileName, mail->MailFile, sizeof(dstFileName));
     strlcpy(dstbuf, GetFolderDir(dstfolder), sizeof(dstbuf));
-    AddPart(dstbuf, dstFileName, SIZE_PATHFILE);
+    AddPart(dstbuf, dstFileName, sizeof(dstbuf));
 
     if(FileExists(dstbuf))
     {
@@ -4081,7 +4081,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
           dstFileName[16] = ','; // restore it
 
           strlcpy(dstbuf, GetFolderDir(dstfolder), sizeof(dstbuf));
-          AddPart(dstbuf, dstFileName, SIZE_PATHFILE);
+          AddPart(dstbuf, dstFileName, sizeof(dstbuf));
         }
       }
       while(counterExceeded == FALSE && FileExists(dstbuf));
@@ -6015,7 +6015,7 @@ char *GetRealPath(char *path)
   {
     // so, if it seems to exists, we get the "real" name out of
     // the lock again.
-    if(NameFromLock(lock, buf, SIZE_PATHFILE) != DOSFALSE)
+    if(NameFromLock(lock, buf, sizeof(buf)) != DOSFALSE)
     {
       success = TRUE;
     }

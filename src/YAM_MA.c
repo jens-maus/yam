@@ -613,7 +613,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
 
   // construct the full old file path
   strlcpy(oldFilePath, folderDir, sizeof(oldFilePath));
-  AddPart(oldFilePath, mail->MailFile, SIZE_PATHFILE);
+  AddPart(oldFilePath, mail->MailFile, sizeof(oldFilePath));
 
   while(success == FALSE)
   {
@@ -629,7 +629,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
 
     // construct new full file path
     strlcpy(newFilePath, folderDir, sizeof(newFilePath));
-    AddPart(newFilePath, newFileName, SIZE_PATHFILE);
+    AddPart(newFilePath, newFileName, sizeof(newFilePath));
 
     // then rename it
     if(Rename(oldFilePath, newFilePath) != 0)

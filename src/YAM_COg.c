@@ -652,12 +652,12 @@ HOOKPROTONH(PO_HandleVarFunc, void, Object *pop, Object *string)
       // append the addstr to the right position
 
       if(pos > 0)
-        strlcpy(buf, str, pos+1);
+        strlcpy(buf, str, MIN(len, pos + 1));
 
       strlcat(buf, addstr, len);
 
       if(pos >= 0)
-        strlcat(buf, str+pos, len);
+        strlcat(buf, str + pos, len);
 
       set(string, MUIA_String_Contents, buf);
 
@@ -1169,7 +1169,7 @@ HOOKPROTONO(FileRequestStartFunc, BOOL, struct TagItem *tags)
     {
       static char drawer[SIZE_PATHFILE];
 
-      strlcpy(drawer, buf, MIN(p-buf+1, SIZE_PATHFILE));
+      strlcpy(drawer, buf, MIN(p - buf + 1, sizeof(drawer)));
 
       tags[i].ti_Tag = ASLFR_InitialDrawer;
       tags[i].ti_Data= (ULONG)drawer;
@@ -1225,7 +1225,7 @@ HOOKPROTONO(FileRequestStopFunc, void, struct FileRequester *fileReq)
     char buf[SIZE_PATHFILE];
 
     strlcpy(buf, fileReq->fr_Drawer, sizeof(buf));
-    AddPart(buf, fileReq->fr_File, SIZE_PATHFILE);
+    AddPart(buf, fileReq->fr_File, sizeof(buf));
 
     // check if there is any space in our path
     if(strchr(buf, ' ') != NULL)
@@ -3263,5 +3263,4 @@ Object *CO_PageSpam(struct CO_ClassData *data)
    return grp;
 }
 ///
-
 

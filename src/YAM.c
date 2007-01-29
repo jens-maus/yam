@@ -2678,8 +2678,8 @@ int main(int argc, char **argv)
                             char buf[SIZE_PATHFILE];
                             struct WBArg *ap = &apmsg->am_ArgList[i];
 
-                            NameFromLock(ap->wa_Lock, buf, SIZE_PATHFILE);
-                            AddPart(buf, (char *)ap->wa_Name, SIZE_PATHFILE);
+                            NameFromLock(ap->wa_Lock, buf, sizeof(buf));
+                            AddPart(buf, (char *)ap->wa_Name, sizeof(buf));
 
                             // call WR_App to let it put in the text of the file
                             // to the write window

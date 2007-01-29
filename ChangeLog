@@ -7,6 +7,8 @@ $URL$
 
 2007-01-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: fixed several strlcpy(), AddPart() and NameFromLock() calls to use
+    sizeof() instead of a constant.
   * YAM_CO.c: fixed another strlcpy() to copy one more character.
 
 2007-01-28  Thore Böckelmann <tboeckel@gmx.de>
