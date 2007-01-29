@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-29  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: fixed another strlcpy() to copy one more character.
+
 2007-01-28  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: changed the transfer window title and the busy bar back to display

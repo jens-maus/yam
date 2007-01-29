@@ -509,7 +509,7 @@ struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
       {
          char *p = strchr(co->EmailAddress, '@');
 
-         strlcpy(pop3->User, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress) : sizeof(pop3->User));
+         strlcpy(pop3->User, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress + 1) : sizeof(pop3->User));
          strlcpy(pop3->Server, co->SMTP_Server, sizeof(pop3->Server));
       }
 
