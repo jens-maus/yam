@@ -1169,7 +1169,7 @@ HOOKPROTONO(FileRequestStartFunc, BOOL, struct TagItem *tags)
     {
       static char drawer[SIZE_PATHFILE];
 
-      strlcpy(drawer, buf, MIN(p - buf + 1, sizeof(drawer)));
+      strlcpy(drawer, buf, MIN(sizeof(drawer), (unsigned int)(p - buf + 1)));
 
       tags[i].ti_Tag = ASLFR_InitialDrawer;
       tags[i].ti_Data= (ULONG)drawer;

@@ -7,6 +7,7 @@ $URL$
 
 2007-01-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: fixed a signedness warning
   * misc: fixed several strlcpy(), AddPart() and NameFromLock() calls to use
     sizeof() instead of a constant.
   * YAM_CO.c: fixed another strlcpy() to copy one more character.
