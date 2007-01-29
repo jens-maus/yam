@@ -3099,18 +3099,6 @@ static int TR_ConnectESMTP(void)
 }
 
 ///
-/// TR_DisconnectSMTP
-//  Terminates a SMTP session
-static void TR_DisconnectSMTP(void)
-{
-  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
-
-  if(!G->Error)
-    TR_SendSMTPCmd(SMTP_QUIT, NULL, MSG_ER_BadResponse);
-
-  TR_Disconnect();
-}
-///
 /// TR_ChangeTransFlagsFunc
 //  Changes transfer flags of all selected messages
 HOOKPROTONHNO(TR_ChangeTransFlagsFunc, void, int *arg)
@@ -4158,203 +4146,216 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
         // just go on if we really have something
         if(c > 0)
         {
-          int err;
-          int port;
-          char *p;
-          char host[SIZE_HOST];
-          struct TransStat ts;
-
           // now we have to check whether SSL/TLS is selected for SMTP account,
-          // but perhaps TLS is not working.
-          if(C->SMTP_SecureMethod != SMTPSEC_NONE &&
-             !G->TR_UseableTLS)
+          // and if it is usable. Or if no secure connection is requested
+          // we can go on right away.
+          if(C->SMTP_SecureMethod == SMTPSEC_NONE ||
+             G->TR_UseableTLS == TRUE)
           {
-            ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
+            int err;
+            int port;
+            char *p;
+            char host[SIZE_HOST];
+            struct TransStat ts;
 
-            RETURN(FALSE);
-            return FALSE;
-          }
+            G->TR->SearchCount = AllocFilterSearch(APPLY_SENT);
+            TR_TransStat_Init(&ts);
+            TR_TransStat_Start(&ts);
+            strlcpy(host, C->SMTP_Server, sizeof(host));
 
-          G->TR->SearchCount = AllocFilterSearch(APPLY_SENT);
-          TR_TransStat_Init(&ts);
-          TR_TransStat_Start(&ts);
-          strlcpy(host, C->SMTP_Server, sizeof(host));
+            // If the hostname has a explicit :xxxxx port statement at the end we
+            // take this one, even if its not needed anymore.
+            if((p = strchr(host, ':')))
+            {
+              *p = '\0';
+              port = atoi(++p);
+            }
+            else
+              port = C->SMTP_Port;
 
-          // If the hostname has a explicit :xxxxx port statement at the end we
-          // take this one, even if its not needed anymore.
-          if((p = strchr(host, ':')))
-          {
-            *p = '\0';
-            port = atoi(++p);
+            set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Connecting));
+
+            BusyText(tr(MSG_TR_MailTransferTo), host);
+
+            TR_SetWinTitle(FALSE, host);
+
+            if((err = TR_Connect(host, port)) == CONNECTERR_SUCCESS)
+            {
+              BOOL connected = FALSE;
+
+              // first we check whether the user wants to connect to a plain SSLv3 server
+              // so that we initiate the SSL connection now
+              if(C->SMTP_SecureMethod == SMTPSEC_SSL)
+              {
+                // lets try to establish the SSL connection via AmiSSL
+                if(TR_InitTLS() && TR_StartTLS())
+                  G->TR_UseTLS = TRUE;
+                else
+                  err = 2; // special SSL connection error
+              }
+
+              // first we have to check whether the user requested some
+              // feature that requires a ESMTP Server, and if so we connect via ESMTP
+              if(err == CONNECTERR_SUCCESS &&
+                 (C->Use_SMTP_AUTH || C->SMTP_SecureMethod == SMTPSEC_TLS))
+              {
+                int ServerFlags = TR_ConnectESMTP();
+
+                // Now we have to check whether the user has selected SSL/TLS
+                // and then we have to initiate the STARTTLS command followed by the TLS negotiation
+                if(C->SMTP_SecureMethod == SMTPSEC_TLS)
+                {
+                  connected = TR_InitSTARTTLS(ServerFlags);
+
+                  // then we have to refresh the ServerFlags and check
+                  // again what features we have after the STARTTLS
+                  if(connected)
+                  {
+                    // first we flag this connection as a sucessfull
+                    // TLS session
+                    G->TR_UseTLS = TRUE;
+
+                    ServerFlags = TR_ConnectESMTP();
+                  }
+                }
+                else
+                  connected = TRUE;
+
+                // If the user selected SMTP_AUTH we have to initiate
+                // a AUTH connection
+                if(connected && C->Use_SMTP_AUTH)
+                  connected = TR_InitSMTPAUTH(ServerFlags);
+              }
+              else if(err == CONNECTERR_SUCCESS)
+              {
+                // Init a normal non-ESMTP connection by sending a HELO
+                connected = TR_ConnectSMTP();
+              }
+
+              // If we are still "connected" we can proceed with transfering the data
+              if(connected)
+              {
+                struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
+                struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
+                struct MinNode *curNode;
+
+                // set the success to TRUE as everything worked out fine
+                // until here.
+                success = TRUE;
+                AppendLogVerbose(41, tr(MSG_LOG_ConnectSMTP), host);
+
+                for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+                {
+                  struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+                  struct Mail *mail = mtn->mail;
+
+                  if(G->TR->Abort || G->Error)
+                    break;
+
+                  ts.Msgs_Done++;
+                  TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, tr(MSG_TR_Sending));
+
+                  switch(TR_SendMessage(&ts, mail))
+                  {
+                    // -1 means that SendMessage was aborted within the
+                    // DATA part and so we cannot issue a RSET command and have to abort
+                    // immediatly by leaving the mailserver alone.
+                    case -1:
+                    {
+                      setStatusToError(mail->Reference);
+                      G->Error = TRUE;
+                    }
+                    break;
+
+                    // 0 means that a error occured before the DATA part and
+                    // so we can abort the transaction cleanly by a RSET and QUIT
+                    case 0:
+                    {
+                      setStatusToError(mail->Reference);
+                      TR_SendSMTPCmd(SMTP_RSET, NULL, MSG_ER_BadResponse);
+                    }
+                    break;
+
+                    // 1 means we filter the mails and then copy/move the mail to the send folder
+                    case 1:
+                    {
+                      setStatusToSent(mail->Reference);
+                      if(TR_ApplySentFilters(mail->Reference))
+                        MA_MoveCopy(mail->Reference, outfolder, sentfolder, FALSE, TRUE);
+                    }
+                    break;
+
+                    // 2 means we filter and delete afterwards
+                    case 2:
+                    {
+                      setStatusToSent(mail->Reference);
+                      if (TR_ApplySentFilters(mail->Reference))
+                        MA_DeleteSingle(mail->Reference, FALSE, FALSE, FALSE);
+                    }
+                    break;
+                  }
+                }
+
+                AppendLogNormal(40, tr(MSG_LOG_Sending), c, host);
+
+                // now we can disconnect from the SMTP
+                // server again
+                set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
+
+                // send a 'QUIT' command, but only if
+                // we didn't receive any error during the transfer
+                if(!G->Error)
+                  TR_SendSMTPCmd(SMTP_QUIT, NULL, MSG_ER_BadResponse);
+              }
+              else if(err == CONNECTERR_SUCCESS)
+                err = 1;
+
+              // make sure to shutdown the socket
+              // and all possible SSL connection stuff
+              TR_Disconnect();
+            }
+
+            // if we got an error here, let`s throw it
+            switch(err)
+            {
+              case CONNECTERR_SUCCESS:
+                // nothing
+              break;
+
+              case CONNECTERR_UNKNOWN_ERROR:
+                ER_NewError(tr(MSG_ER_UnknownSMTP), host);
+              break;
+
+              // special error on trying to connect
+              // via the ESMTP command
+              case 1:
+                ER_NewError(tr(MSG_ER_CantConnect), host);
+              break;
+
+              // error during initialization of an SSL connection
+              case 2:
+                ER_NewError(tr(MSG_ER_INITTLS), host);
+              break;
+            }
+
+            FreeFilterSearch();
+            G->TR->SearchCount = 0;
+
+            BusyEnd();
           }
           else
-            port = C->SMTP_Port;
-
-          set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Connecting));
-
-          BusyText(tr(MSG_TR_MailTransferTo), host);
-
-          TR_SetWinTitle(FALSE, host);
-
-          if((err = TR_Connect(host, port)) == CONNECTERR_SUCCESS)
-          {
-            BOOL connected = TRUE;
-
-            // first we check whether the user wants to connect to a plain SSLv3 server
-            // so that we initiate the SSL connection now
-            if(C->SMTP_SecureMethod == SMTPSEC_SSL)
-            {
-              // lets try to establish the SSL connection via AmiSSL
-              if(TR_InitTLS() && TR_StartTLS())
-                G->TR_UseTLS = TRUE;
-              else
-              {
-                ER_NewError(tr(MSG_ER_INITTLS), host);
-
-                // better disconnect before we leave
-                TR_Disconnect();
-
-                RETURN(FALSE);
-                return FALSE;
-              }
-            }
-
-            // first we have to check whether the user requested some
-            // feature that requires a ESMTP Server, and if so we connect via ESMTP
-            if(C->Use_SMTP_AUTH || C->SMTP_SecureMethod == SMTPSEC_TLS)
-            {
-              int ServerFlags = TR_ConnectESMTP();
-
-              // Now we have to check whether the user has selected SSL/TLS
-              // and then we have to initiate the STARTTLS command followed by the TLS negotiation
-              if(C->SMTP_SecureMethod == SMTPSEC_TLS)
-              {
-                connected = TR_InitSTARTTLS(ServerFlags);
-
-                // then we have to refresh the ServerFlags and check
-                // again what features we have after the STARTTLS
-                if(connected)
-                {
-                  // first we flag this connection as a sucessfull
-                  // TLS session
-                  G->TR_UseTLS = TRUE;
-
-                  ServerFlags = TR_ConnectESMTP();
-                }
-              }
-
-              // If the user selected SMTP_AUTH we have to initiate
-              // a AUTH connection
-              if(connected && C->Use_SMTP_AUTH)
-                connected = TR_InitSMTPAUTH(ServerFlags);
-            }
-            else
-            {
-              // Init a normal non-ESMTP connection by sending a HELO
-              connected = TR_ConnectSMTP();
-            }
-
-            // If we are still "connected" we can proceed with transfering the data
-            if(connected)
-            {
-              struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-              struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
-              struct MinNode *curNode;
-
-              // set the success to TRUE as everything worked out fine
-              // until here.
-              success = TRUE;
-              AppendLogVerbose(41, tr(MSG_LOG_ConnectSMTP), host);
-
-              for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-              {
-                struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-                struct Mail *mail = mtn->mail;
-
-                if(G->TR->Abort || G->Error)
-                  break;
-
-                ts.Msgs_Done++;
-                TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, tr(MSG_TR_Sending));
-
-                switch(TR_SendMessage(&ts, mail))
-                {
-                  // -1 means that SendMessage was aborted within the
-                  // DATA part and so we cannot issue a RSET command and have to abort
-                  // immediatly by leaving the mailserver alone.
-                  case -1:
-                  {
-                    setStatusToError(mail->Reference);
-                    G->Error = TRUE;
-                  }
-                  break;
-
-                  // 0 means that a error occured before the DATA part and
-                  // so we can abort the transaction cleanly by a RSET and QUIT
-                  case 0:
-                  {
-                    setStatusToError(mail->Reference);
-                    TR_SendSMTPCmd(SMTP_RSET, NULL, MSG_ER_BadResponse);
-                  }
-                  break;
-
-                  // 1 means we filter the mails and then copy/move the mail to the send folder
-                  case 1:
-                  {
-                    setStatusToSent(mail->Reference);
-                    if(TR_ApplySentFilters(mail->Reference))
-                      MA_MoveCopy(mail->Reference, outfolder, sentfolder, FALSE, TRUE);
-                  }
-                  break;
-
-                  // 2 means we filter and delete afterwards
-                  case 2:
-                  {
-                    setStatusToSent(mail->Reference);
-                    if (TR_ApplySentFilters(mail->Reference))
-                      MA_DeleteSingle(mail->Reference, FALSE, FALSE, FALSE);
-                  }
-                  break;
-                }
-              }
-              AppendLogNormal(40, tr(MSG_LOG_Sending), c, host);
-            }
-            else
-              err = 1;
-
-            TR_DisconnectSMTP();
-          }
-
-          // if we got an error here, let`s throw it
-          switch(err)
-          {
-            case 0:
-              // nothing
-            break;
-
-            case -1:
-              ER_NewError(tr(MSG_ER_UnknownSMTP), C->SMTP_Server);
-            break;
-
-            default:
-              ER_NewError(tr(MSG_ER_CantConnect), C->SMTP_Server);
-          }
-
-          FreeFilterSearch();
-          G->TR->SearchCount = 0;
-
-          BusyEnd();
+            ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
         }
-
-        TR_AbortnClose();
       }
 
-      if(success == FALSE)
-      {
-        MA_ChangeTransfer(TRUE);
-        DisposeModulePush(&G->TR);
-      }
+      // make sure the transfer window is
+      // closed, the transfer list cleanup
+      // and everything disposed
+      TR_AbortnClose();
     }
+
+    // make sure to close the TCP/IP
+    // connection completly
     TR_CloseTCPIP();
   }
   else

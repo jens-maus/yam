@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-29  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: fixed bug #1646457 where upon an SSL connection failure the
+    necessary cleanups wasn't done in TR_ProcessSEND(). This also caused
+    the mail transfer window to be kept open and undisposed.
+
 2007-01-29  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c: fixed a signedness warning
