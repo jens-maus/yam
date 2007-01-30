@@ -627,7 +627,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MNEW),         MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_NEW,      End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_Select),
           Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SELECTALL),     MUIA_UserData, MMEN_SELALL,  End,
-          Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SELECTALL),     MUIA_UserData, MMEN_SELNONE, End,
+          Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SELECTNONE),    MUIA_UserData, MMEN_SELNONE, End,
           Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SELECTTOGGLE),  MUIA_UserData, MMEN_SELTOGG, End,
         End,
       End,

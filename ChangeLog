@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-30  Jens Langner <Jens.Langner@light-speed.de>
+
+  * MainMailList.c: fixed bug #1647788 where we did use the wrong description
+    for one of the Select submenu items.
+
 2007-01-29  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_TR.c: fixed bug #1646457 where upon an SSL connection failure the
