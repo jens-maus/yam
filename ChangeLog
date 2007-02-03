@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-02-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/deutsch.ct: added missing translations and removed obsolete strings.
+
 2007-01-30  Jens Langner <Jens.Langner@light-speed.de>
 
   * MainMailList.c: fixed bug #1647788 where we did use the wrong description

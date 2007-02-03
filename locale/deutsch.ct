@@ -5844,10 +5844,6 @@ MSG_SEARCHWINDOW_BT_SEARCH
 _Suchen
 ; _Search
 ;
-MSG_SEARCHWINDOW_BT_FROMTOP
-Von _oben
-; From _top
-;
 MSG_SEARCHWINDOW_BT_CANCEL
 _Abbruch
 ; _Cancel
@@ -5859,10 +5855,6 @@ Suchen
 MSG_SEARCHNOTFOUND_MSG
 '%s' nicht gefunden.
 ; '%s' not found.
-;
-MSG_SEARCHNOTFOUND_BUTTON
-Fortsetzen
-; Okay
 ;
 MSG_WR_ERRORNOSENDER
 Die Nachricht ist nicht vollständig: Kein Absender!
@@ -7600,4 +7592,16 @@ K_ontoname
 MSG_HELP_CO_ST_POPACCOUNT
 Ein beliebiger Name für diese Konto, welcher\n\
 anstatt von user@host verwendet wird.
+;
+MSG_RE_SEARCH
+Suchen...
+;
+MSG_RE_SEARCH_AGAIN
+Weiter suchen
+;
+MSG_WR_SEARCH_AGAIN
+Weiter suchen
+;
+MSG_WR_AUTOWRAP
+Zeilenumbruch
 ;
