@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-02-05  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c, YAM_EA.c: the address book window must be opened in ABM_CONFIG
+    mode when the "To:", "From:" or "ReplyTo:" addresses of a folder are about
+    to be modified. Otherwise a double click on an entry would modify this
+    entry instead of adding it the the recipent list, because there is no
+    opened write window around at this time.
+
 2007-02-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/deutsch.ct: added missing translations and removed obsolete strings.
