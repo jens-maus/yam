@@ -4014,12 +4014,12 @@ Hämtar brev...
 ;#DEF Downloading message...
 ;#SET (1072//)
 MSG_TR_MailTransferFrom
-Hämtar post från %s
-;#DEF Mail transfer from %s
+Hämtar post från '%s'
+;#DEF Mail transfer from '%s'
 ;#SET (1073//)
 MSG_TR_MailTransferTo
-Skickar post till %s
-;#DEF Mail transfer to %s
+Skickar post till '%s'
+;#DEF Mail transfer to '%s'
 ;#SET (1074//)
 MSG_TR_MsgInFile
 Brev i fil

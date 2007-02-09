@@ -4792,13 +4792,13 @@ Primam poruku...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Primam postu sa %s
-; Transfer mail from %s
+Primam postu sa '%s'
+; Transfer mail from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-Saljem postu na %s
-; Transfer mail to %s
+Saljem postu na '%s'
+; Transfer mail to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile

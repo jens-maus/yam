@@ -5097,14 +5097,14 @@ MSG_TR_Downloading
 ;Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Пересылка почты от %s
-;Transfer mail from %s
+Пересылка почты от '%s'
+;Transfer mail from '%s'
 ;
 ;HOST
 ;
 MSG_TR_MailTransferTo
-Пересылка почты на %s
-;Transfer mail to %s
+Пересылка почты на '%s'
+;Transfer mail to '%s'
 ;
 ;HOST
 ;

@@ -1738,10 +1738,10 @@ static int TR_Send(const char *ptr, int len, int flags)
 ///
 /// TR_SetWinTitle
 //  Sets the title of the transfer window
-void TR_SetWinTitle(BOOL from, char *host)
+void TR_SetWinTitle(BOOL from, const char *text)
 {
   // compose the window title
-  snprintf(G->TR->WTitle, sizeof(G->TR->WTitle), tr(from ? MSG_TR_MailTransferFrom : MSG_TR_MailTransferTo), host);
+  snprintf(G->TR->WTitle, sizeof(G->TR->WTitle), tr(from ? MSG_TR_MailTransferFrom : MSG_TR_MailTransferTo), text);
 
   // set the window title
   set(G->TR->GUI.WI, MUIA_Window_Title, G->TR->WTitle);
@@ -2219,17 +2219,38 @@ static int TR_ConnectPOP(int guilevel)
    if(C->TransferWindow == 2 || (C->TransferWindow == 1 && (guilevel == POP_START || guilevel == POP_USER)))
    {
      // avoid MUIA_Window_Open's side effect of activating the window if it was already open
-     if(!xget(G->TR->GUI.WI, MUIA_Window_Open)) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
+     if(!xget(G->TR->GUI.WI, MUIA_Window_Open))
+       set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
    }
-   set(G->TR->GUI.TX_STATUS  , MUIA_Text_Contents,tr(MSG_TR_Connecting));
+   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Connecting));
 
    // If the hostname has a explicit :xxxxx port statement at the end we
    // take this one, even if its not needed anymore.
-   if ((p = strchr(host, ':'))) { *p = 0; port = atoi(++p); }
+   if((p = strchr(host, ':')))
+   {
+     *p = '\0';
+     port = atoi(++p);
+   }
 
-   BusyText(tr(MSG_TR_MailTransferFrom), host);
-   TR_SetWinTitle(TRUE, host);
+   // set the busy text and window title to some
+   // descriptive to the job. Here we use the "account"
+   // name of the POP3 server as there might be more than
+   // one configured accounts for the very same host
+   // and as such the hostname might just be not enough
+   if(pop3->Account[0] != '\0')
+   {
+     BusyText(tr(MSG_TR_MailTransferFrom), pop3->Account);
+     TR_SetWinTitle(TRUE, pop3->Account);
+   }
+   else
+   {
+     // if the user hasn't specified any account name
+     // we take the hostname instead
+     BusyText(tr(MSG_TR_MailTransferFrom), host);
+     TR_SetWinTitle(TRUE, host);
+   }
 
+   // now we start our connection to the POP3 server
    if((err = TR_Connect(host, port)) != CONNECTERR_SUCCESS)
    {
      if(guilevel == POP_USER)

@@ -5025,13 +5025,13 @@ Stahování zpráv...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Pêenos poîty z %s
-; Mail transfer from %s
+Pêenos poîty z '%s'
+; Mail transfer from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-Pêenos poîty na %s
-; Mail transfer to %s
+Pêenos poîty na '%s'
+; Mail transfer to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile

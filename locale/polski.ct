@@ -5075,13 +5075,13 @@ Odbieram wiadomoôê...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Odbieram pocztë z %s
-; Mail transfer from %s
+Odbieram pocztë z '%s'
+; Mail transfer from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-Wysyîam pocztë na %s
-; Mail transfer to %s
+Wysyîam pocztë na '%s'
+; Mail transfer to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile

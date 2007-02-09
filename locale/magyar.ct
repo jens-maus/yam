@@ -4903,13 +4903,13 @@ MSG_TR_Downloading
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Levél fogadás - %s
-; Mail transfer from %s
+Levél fogadás - '%s'
+; Mail transfer from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-Levél küldés - %s
-; Mail transfer to %s
+Levél küldés - '%s'
+; Mail transfer to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile

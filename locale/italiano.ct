@@ -3388,10 +3388,10 @@ MSG_TR_Downloading
 Prelevo messaggio...
 ;
 MSG_TR_MailTransferFrom
-Trasferisco posta da %s
+Trasferisco posta da '%s'
 ;
 MSG_TR_MailTransferTo
-Trasferisco posta a %s
+Trasferisco posta a '%s'
 ;
 MSG_TR_MsgInFile
 Messaggi in file

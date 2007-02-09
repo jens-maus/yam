@@ -4472,13 +4472,13 @@ Lade Nachricht...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Posttransfer von %s
-; Mail transfer from %s
+Posttransfer von '%s'
+; Mail transfer from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-Posttransfer nach %s
-; Mail transfer to %s
+Posttransfer nach '%s'
+; Mail transfer to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile

@@ -5099,13 +5099,13 @@ Recibiendo mensaje...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Transferencia de correo desde %s
-; Mail transfer from %s
+Transferencia de correo desde '%s'
+; Mail transfer from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-Transferencia de correo a %s
-; Mail transfer to %s
+Transferencia de correo a '%s'
+; Mail transfer to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile

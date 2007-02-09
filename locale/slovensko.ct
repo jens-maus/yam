@@ -4884,13 +4884,13 @@ Prevzemam sporoèilo...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Prenos po¹te s stre¾nika %s
-; Mail transfer from %s
+Prenos po¹te s stre¾nika '%s'
+; Mail transfer from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-Prenos po¹te na stre¾nik %s
-; Mail transfer to %s
+Prenos po¹te na stre¾nik '%s'
+; Mail transfer to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile

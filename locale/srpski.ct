@@ -4822,13 +4822,13 @@ Primam poruke...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Prenosim poruku od %s
-; Transfer mail from %s
+Prenosim poruku od '%s'
+; Transfer mail from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-Prenosim poruku za %s
-; Transfer mail to %s
+Prenosim poruku za '%s'
+; Transfer mail to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile

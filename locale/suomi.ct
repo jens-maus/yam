@@ -4476,13 +4476,13 @@ Lataan viestiä...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Postin siirto osoitteesta %s
-; Transfer mail from %s
+Postin siirto osoitteesta '%s'
+; Transfer mail from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-Postin siirto osoitteeseen %s
-; Transfer mail to %s
+Postin siirto osoitteeseen '%s'
+; Transfer mail to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile

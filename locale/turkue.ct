@@ -5077,13 +5077,13 @@ Mesaj indiriliyor...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-%s `den posta transferi
-; Transfer mail from %s
+'%s' `den posta transferi
+; Transfer mail from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-%s`ye posta transferi
-; Transfer mail to %s
+'%s'`ye posta transferi
+; Transfer mail to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile

@@ -198,7 +198,8 @@ MSG_UsedSoftware (63//)
 \nThis application uses the following third party software:\n
 ;
 MSG_WebSite (64//)
-The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
+The latest news about YAM can be found at the YAM Support \
+Site at \e5http://www.yam.ch/\en
 ;
 MSG_UserLogin (65//)
 Click your name to login
@@ -3467,11 +3468,11 @@ Downloading message...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom (1073//)
-Mail transfer from %s
+Mail transfer from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo (1074//)
-Mail transfer to %s
+Mail transfer to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile (1075//)

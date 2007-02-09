@@ -4768,13 +4768,13 @@ Charge le courrier...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Rapatrie le courrier de %s
-; Mail transfer from %s
+Rapatrie le courrier de '%s'
+; Mail transfer from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-Transfère le courrier vers %s
-; Mail transfer to %s
+Transfère le courrier vers '%s'
+; Mail transfer to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile

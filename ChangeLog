@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-02-09  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c, misc: reverted the recent transfer window title change from
+    Thore as it might be possible that a user has configured more than one
+    POP3 account which queries the very same host for new mail. Now the
+    account name will be shown instead which is fully user configurable since
+    a while.
+
 2007-02-05  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c, YAM_EA.c: the address book window must be opened in ABM_CONFIG

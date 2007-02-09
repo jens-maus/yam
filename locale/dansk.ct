@@ -5138,13 +5138,13 @@ Henter besked...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Overfører post fra %s
-; Mail transfer from %s
+Overfører post fra '%s'
+; Mail transfer from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-Overfører post til %s
-; Mail transfer to %s
+Overfører post til '%s'
+; Mail transfer to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile

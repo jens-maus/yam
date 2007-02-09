@@ -3601,10 +3601,10 @@ MSG_TR_Downloading
 A puxar a mensagem...
 ;
 MSG_TR_MailTransferFrom
-A transferir o correio de %s
+A transferir o correio de '%s'
 ;
 MSG_TR_MailTransferTo
-A transferir o correio para %s
+A transferir o correio para '%s'
 ;
 MSG_TR_MsgInFile
 Mensagens no Ficheiro
