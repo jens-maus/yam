@@ -7,6 +7,8 @@ $URL$
 
 2007-02-12  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: the Splash window object will now be immediately disposed when it
+    will be closed. This should save some bytes of memory.
   * YAM.c: bumped the minimum required AmigaOS4 kernel version to 52.2 to make
     sure users are using the very latest stable version of the OS4 kernel.
     In addition there are reports that it doesn't run on non v52 kernels anyway.

@@ -1507,27 +1507,32 @@ static int Root_GlobalDispatcher(ULONG app_input)
 //  Creates MUI application
 static BOOL Root_New(BOOL hidden)
 {
-   if((G->App = YAMObject, End))
-   {
-      if(hidden)
-        set(G->App, MUIA_Application_Iconified, TRUE);
+  BOOL result = FALSE;
 
-      DoMethod(G->App, MUIM_Notify, MUIA_Application_DoubleStart, TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &DoublestartHook);
-      DoMethod(G->App, MUIM_Notify, MUIA_Application_Iconified, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_ICONIFY);
+  ENTER();
 
-      // create the splash window object and return true if
-      // everything worked out fine.
-      if((G->SplashWinObject = SplashwindowObject, End))
-      {
-        G->InStartupPhase = TRUE;
+  if((G->App = YAMObject, End))
+  {
+    if(hidden)
+      set(G->App, MUIA_Application_Iconified, TRUE);
 
-        set(G->SplashWinObject, MUIA_Window_Open, !hidden);
+    DoMethod(G->App, MUIM_Notify, MUIA_Application_DoubleStart, TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &DoublestartHook);
+    DoMethod(G->App, MUIM_Notify, MUIA_Application_Iconified, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_ICONIFY);
 
-        return TRUE;
-      }
-   }
+    // create the splash window object and return true if
+    // everything worked out fine.
+    if((G->SplashWinObject = SplashwindowObject, End))
+    {
+      G->InStartupPhase = TRUE;
 
-   return FALSE;
+      set(G->SplashWinObject, MUIA_Window_Open, !hidden);
+
+      result = TRUE;
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 ///
 
@@ -1799,6 +1804,11 @@ static void Initialise2(void)
    // but ask it before closing if it was activated or not.
    splashWasActive = xget(G->SplashWinObject, MUIA_Window_Activate);
    set(G->SplashWinObject, MUIA_Window_Open, FALSE);
+
+   // cleanup the splash window object immediately
+   DoMethod(G->App, OM_REMMEMBER, G->SplashWinObject);
+   MUI_DisposeObject(G->SplashWinObject);
+   G->SplashWinObject = NULL;
 
    // only activate the main window if the about window is activ
    // and open it immediatly
