@@ -2221,10 +2221,11 @@ int main(int argc, char **argv)
    #ifdef __amigaos4__
    IExec = (struct ExecIFace *)((struct ExecBase *)SysBase)->MainInterface;
 
-   // check the exec version first and force be at least an 51.4 version because
-   // this is the version with the fixed crosscall hooks.
-   if(SysBase->lib_Version < 51 ||
-      (SysBase->lib_Version == 51 && SysBase->lib_Revision < 4))
+   // check the exec version first and force be at least an 52.2 version
+   // from AmigaOS4 final. This should assure we are are using the very
+   // latest stable version.
+   if(SysBase->lib_Version < 52 ||
+      (SysBase->lib_Version == 52 && SysBase->lib_Revision < 2))
    {
       if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) &&
          GETINTERFACE("main", IIntuition, IntuitionBase))
@@ -2236,7 +2237,7 @@ int main(int argc, char **argv)
 
         ErrReq.es_Title        = (STRPTR)"YAM Startup Error";
         ErrReq.es_TextFormat   = (STRPTR)"This version of YAM requires at least\n"
-                                         "an AmigaOS4 kernel version 51.4";
+                                         "an AmigaOS4 kernel version 52.2";
         ErrReq.es_GadgetFormat = (STRPTR)"Exit";
 
         EasyRequestArgs(NULL, &ErrReq, NULL, NULL);

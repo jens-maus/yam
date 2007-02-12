@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-02-12  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: bumped the minimum required AmigaOS4 kernel version to 52.2 to make
+    sure users are using the very latest stable version of the OS4 kernel.
+    In addition there are reports that it doesn't run on non v52 kernels anyway.
+
 2007-02-09  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_TR.c, misc: reverted the recent transfer window title change from
