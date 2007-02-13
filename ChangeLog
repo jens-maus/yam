@@ -7,6 +7,7 @@ $URL$
 
 2007-02-13  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Addrmatchlist.c: added the usual ENTER()/RETURN() macros.
   * YAM_COg.c, YAM_COs.c: removed the spam threshold slider as it seems to
     confuse most people and has no real application once the spam filter is
     trained well enough. The option itself will remain, but has to be changed

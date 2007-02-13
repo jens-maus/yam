@@ -55,8 +55,13 @@ struct CustomABEntry
 HOOKPROTONHNO(ConstructFunc, struct CustomABEntry *, struct CustomABEntry *e)
 {
   struct CustomABEntry *res;
+
+  ENTER();
+
   if((res = malloc(sizeof(struct CustomABEntry))))
     *res = *e;
+
+  RETURN(res);
   return res;
 }
 MakeStaticHook(ConstructHook, ConstructFunc);
@@ -67,6 +72,8 @@ HOOKPROTONH(DisplayFunc, LONG, CONST_STRPTR *array, struct CustomABEntry *e)
 {
   static char buf[SIZE_ADDRESS + 4];
 
+  ENTER();
+
   array[0] = e->MatchEntry->Alias[0]    ? e->MatchEntry->Alias    : "-";
   array[1] = e->MatchEntry->RealName[0] ? e->MatchEntry->RealName : "-";
   array[2] = e->MatchEntry->Address[0]  ? e->MatchEntry->Address  : "-";
@@ -74,6 +81,7 @@ HOOKPROTONH(DisplayFunc, LONG, CONST_STRPTR *array, struct CustomABEntry *e)
   snprintf(buf, sizeof(buf), "\033b%." STR(SIZE_ADDRESS) "s", e->MatchString);
   array[e->MatchField] = buf;
 
+  RETURN(0);
   return 0;
 }
 MakeStaticHook(DisplayHook, DisplayFunc);
@@ -82,10 +90,17 @@ MakeStaticHook(DisplayHook, DisplayFunc);
 /// CompareHook
 HOOKPROTONH(CompareFunc, LONG, struct CustomABEntry *e2, struct CustomABEntry *e1)
 {
+  LONG result;
+
+  ENTER();
+
   if(e1->MatchField == e2->MatchField)
-    return Stricmp(e1->MatchString, e2->MatchString);
+    result = Stricmp(e1->MatchString, e2->MatchString);
   else
-    return e1->MatchField < e2->MatchField ? -1 : +1;
+    result = e1->MatchField < e2->MatchField ? -1 : +1;
+
+  RETURN(result);
+  return result;
 }
 MakeStaticHook(CompareHook, CompareFunc);
 
@@ -96,6 +111,8 @@ MakeStaticHook(CompareHook, CompareFunc);
 OVERLOAD(OM_NEW)
 {
   Object *listview, *list;
+
+  ENTER();
 
   if((obj = DoSuperNew(cl, obj,
     MUIA_Window_Activate,         FALSE,
@@ -160,6 +177,7 @@ OVERLOAD(OM_NEW)
     }
   }
 
+  RETURN(obj);
   return (ULONG)obj;
 }
 
@@ -168,8 +186,12 @@ OVERLOAD(OM_NEW)
 OVERLOAD(OM_SET)
 {
   GETDATA;
+  struct TagItem *tags, *tag;
+  ULONG result;
 
-  struct TagItem *tags = inittags(msg), *tag;
+  ENTER();
+
+  tags = inittags(msg);
   while((tag = NextTagItem(&tags)))
   {
     switch(tag->ti_Tag)
@@ -182,7 +204,11 @@ OVERLOAD(OM_SET)
       break;
     }
   }
-  return DoSuperMethodA(cl, obj, msg);
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -194,14 +220,21 @@ OVERLOAD(OM_SET)
 DECLARE(ChangeWindow)
 {
   GETDATA;
-  struct Window *match_win = (struct Window *)xget(obj, MUIA_Window_Window);
-  struct Window *write_win = (struct Window *)xget(_win(data->String), MUIA_Window_Window);
-  ULONG left = write_win->LeftEdge + _left(data->String);
-  ULONG top = write_win->TopEdge + _bottom(data->String) + 1;
+  struct Window *match_win;
+  struct Window *write_win;
+  ULONG left;
+  ULONG top;
+
+  ENTER();
+
+  match_win = (struct Window *)xget(obj, MUIA_Window_Window);
+  write_win = (struct Window *)xget(_win(data->String), MUIA_Window_Window);
+  left = write_win->LeftEdge + _left(data->String);
+  top = write_win->TopEdge + _bottom(data->String) + 1;
 
   // only when the window is close a set() is valid to change
   // the position of a MUI window. Otherwise we have to use ChangeWindowBox()
-  if(match_win && xget(obj, MUIA_Window_Open))
+  if(match_win != NULL && xget(obj, MUIA_Window_Open))
   {
     // change the window position/sizes
     ChangeWindowBox(match_win, left, top, _width(data->String), match_win->Height);
@@ -220,6 +253,7 @@ DECLARE(ChangeWindow)
       TAG_DONE);
   }
 
+  RETURN(0);
   return 0;
 }
 
@@ -228,6 +262,9 @@ DECLARE(ChangeWindow)
 DECLARE(Event) // struct IntuiMessage *imsg
 {
   GETDATA;
+  ULONG result = FALSE;
+
+  ENTER();
 
   if(xget(obj, MUIA_Window_Open))
   {
@@ -247,10 +284,11 @@ DECLARE(Event) // struct IntuiMessage *imsg
 
     set(data->Matchlist, MUIA_List_Active, direction);
 
-    return TRUE;
+    result = TRUE;
   }
 
-  return FALSE;
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -261,6 +299,8 @@ DECLARE(Open) // STRPTR str
   STRPTR res = NULL;
   LONG entries;
   struct CustomABEntry *entry;
+
+  ENTER();
 
   D(DBF_GUI, "Match this: '%s'", msg->str);
 
@@ -291,6 +331,7 @@ DECLARE(Open) // STRPTR str
 
   set(data->Matchlist, MUIA_List_Quiet, FALSE);
 
+  RETURN(res);
   return (ULONG)res;
 }
 
@@ -302,42 +343,48 @@ DECLARE(ActiveChange) // LONG active
   struct CustomABEntry *entry;
   STRPTR res;
 
-  if(msg->active < 0) return 0;
+  ENTER();
 
-  // get the active entry
-  DoMethod(data->Matchlist, MUIM_List_GetEntry, msg->active, &entry);
-
-  res = entry->MatchString;
-
-  // Now we check if the match is because of the real name and the same name exists twice in
-  // this list we have to return the email as matchstring
-  if(entry->MatchField == 1)  // RealName
+  if(msg->active >= 0)
   {
-    int i;
-    LONG elen = (LONG)strlen(entry->MatchString);
+    // get the active entry
+    DoMethod(data->Matchlist, MUIM_List_GetEntry, msg->active, &entry);
 
-    for(i=0;;i++)
+    res = entry->MatchString;
+
+    // Now we check if the match is because of the real name and the same name exists twice in
+    // this list we have to return the email as matchstring
+    if(entry->MatchField == 1)  // RealName
     {
-      struct CustomABEntry *compareEntry;
+      int i;
+      LONG elen = (LONG)strlen(entry->MatchString);
 
-      DoMethod(data->Matchlist, MUIM_List_GetEntry, i, &compareEntry);
-      if(!compareEntry) break;
-
-      if(compareEntry != entry)
+      for(i = 0;; i++)
       {
-        if(Strnicmp(compareEntry->MatchEntry->RealName, entry->MatchString, elen) == 0)
-        {
-          res = entry->MatchEntry->Address;
+        struct CustomABEntry *compareEntry;
+
+        DoMethod(data->Matchlist, MUIM_List_GetEntry, i, &compareEntry);
+        if(compareEntry == NULL)
           break;
+
+        if(compareEntry != entry)
+        {
+          if(Strnicmp(compareEntry->MatchEntry->RealName, entry->MatchString, elen) == 0)
+          {
+            res = entry->MatchEntry->Address;
+            break;
+          }
         }
       }
     }
+
+    // signal the string that we need to replace the selected part with
+    // some new entry
+    if(res != NULL)
+      DoMethod(data->String, MUIM_Recipientstring_ReplaceSelected, res);
   }
 
-  // signal the string that we need to replace the selected part with
-  // some new entry
-  if(res) DoMethod(data->String, MUIM_Recipientstring_ReplaceSelected, res);
-
+  RETURN(0);
   return 0;
 }
 
