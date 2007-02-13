@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (13.01.2007)
+## version $VER: YAM.catalog 6.0 (13.02.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -237,20 +237,6 @@ Version:
 MSG_CompilationDate
 Kompiliert am:
 ; Compilation date:
-;
-MSG_Copyright2
-Dieses Programm ist freie Software; Sie können es unter den Bedingungen der GNU General Public License weitergeben und/oder modifizieren. Mehr Informationen dazu in der beiliegenden Dokumentation.\n
-; This program is free software; you're welcome to distribute \
-; and/or modify it under the terms of the GNU Public License. \
-; See the enclosed documents for more details.\n
-;
-MSG_UsedSoftware
-\nDieses Programm verwendet folgende Fremdsoftware:\n
-; \nThis application uses the following third party software:\n
-;
-MSG_WebSite
-Aktuelle Informationen über YAM finden Sie auf der YAM Support Site unter \e5http://www.yam.ch/
-; The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
 ;
 MSG_UserLogin
 Klicken Sie auf Ihren Namen um sich anzumelden
