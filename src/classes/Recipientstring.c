@@ -50,7 +50,7 @@ struct Data
 #define MUIF_Recipientstring_Resolve_NoValid     (1 << 1) // do not resolve already valid string like "misterx@mister.com"
 #define MUIF_Recipientstring_Resolve_NoCache     (1 << 2) // do not resolve addresses out of the eMailCache
 
-#define hasNoFullNameFlag(v)  (isFlagSet((v), MUIF_Recipientstring_Resolve_NoFullName))
+#define hasNoFullNameFlag(v)   (isFlagSet((v), MUIF_Recipientstring_Resolve_NoFullName))
 #define hasNoValidFlag(v)      (isFlagSet((v), MUIF_Recipientstring_Resolve_NoValid))
 #define hasNoCacheFlag(v)      (isFlagSet((v), MUIF_Recipientstring_Resolve_NoCache))
 */
@@ -60,6 +60,7 @@ struct Data
 HOOKPROTONHNO(FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *msg)
 {
   struct ABEntry *entry = (struct ABEntry *)msg->UserData;
+
   return ((entry->Type == AET_USER) || (entry->Type == AET_LIST)) &&
           ((!Stricmp(msg->User, entry->Alias) ||
             !Stricmp(msg->User, entry->RealName) ||
@@ -76,13 +77,18 @@ static char *rcptok(char *s, BOOL *quote)
 {
   static char *p;
 
+  ENTER();
+
   if (s)
     p = s;
   else
     s = p;
 
   if (!p || !*p)
+  {
+    RETURN(NULL);
     return NULL;
+  }
 
   while (*p)
   {
@@ -96,6 +102,7 @@ static char *rcptok(char *s, BOOL *quote)
     p++;
   }
 
+  RETURN(s);
   return s;
 }
 ///
@@ -238,6 +245,9 @@ OVERLOAD(OM_SET)
 OVERLOAD(MUIM_Setup)
 {
   GETDATA;
+  ULONG result = FALSE;
+
+  ENTER();
 
   if(!data->Matchwindow && (data->Matchwindow = AddrmatchlistObject, MUIA_Addrmatchlist_String, obj, End))
   {
@@ -252,26 +262,41 @@ OVERLOAD(MUIM_Setup)
     data->ehnode.ehn_Object    = obj;
     data->ehnode.ehn_Class    = cl;
     data->ehnode.ehn_Events    = IDCMP_RAWKEY | IDCMP_CHANGEWINDOW;
-    return TRUE;
+    result = TRUE;
   }
 
-  return FALSE;
+  RETURN(result);
+  return result;
 }
 ///
 /// OVERLOAD(MUIM_Show)
 OVERLOAD(MUIM_Show)
 {
   GETDATA;
+  ULONG result;
+
+  ENTER();
+
   DoMethod(data->Matchwindow, MUIM_Addrmatchlist_ChangeWindow);
-  return DoSuperMethodA(cl, obj, msg);
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 ///
 /// OVERLOAD(MUIM_GoActive)
 OVERLOAD(MUIM_GoActive)
 {
   GETDATA;
+  ULONG result;
+
+  ENTER();
+
   DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
-  return DoSuperMethodA(cl, obj, msg);
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 ///
 /// OVERLOAD(MUIM_GoInactive)
@@ -279,6 +304,9 @@ OVERLOAD(MUIM_GoInactive)
 {
   GETDATA;
   DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+  ULONG result;
+
+  ENTER();
 
   // only if the matchwindow is not active we can close it on a inactive state of
   // this object
@@ -287,7 +315,10 @@ OVERLOAD(MUIM_GoInactive)
     set(data->Matchwindow, MUIA_Window_Open, FALSE);
   }
 
-  return DoSuperMethodA(cl, obj, msg);
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 ///
 /// OVERLOAD(MUIM_DragQuery)
@@ -295,6 +326,8 @@ OVERLOAD(MUIM_DragQuery)
 {
   struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
   ULONG result = MUIV_DragQuery_Refuse;
+
+  ENTER();
 
   if(d->obj == G->AB->GUI.LV_ADDRESSES)
   {
@@ -310,6 +343,7 @@ OVERLOAD(MUIM_DragQuery)
     result = MUIV_DragQuery_Accept;
   }
 
+  RETURN(result);
   return result;
 }
 ///
@@ -317,6 +351,8 @@ OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragDrop)
 {
   struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
+
+  ENTER();
 
   if(d->obj == G->AB->GUI.LV_ADDRESSES)
   {
@@ -336,6 +372,7 @@ OVERLOAD(MUIM_DragDrop)
       AB_InsertAddress(obj, "", mail->From.RealName, mail->From.Address);
   }
 
+  RETURN(0);
   return 0;
 }
 ///
@@ -343,7 +380,11 @@ OVERLOAD(MUIM_DragDrop)
 /* this method is invoked when the MUI popup key is pressed, we let it trigger a notify, so that the address book will open -- in the future this should be removed and we should just use a Popupstring object */
 OVERLOAD(MUIM_Popstring_Open)
 {
+  ENTER();
+
   set(obj, MUIA_Recipientstring_Popup, TRUE);
+
+  RETURN(0);
   return 0;
 }
 ///
@@ -353,8 +394,14 @@ OVERLOAD(MUIM_HandleEvent)
   GETDATA;
   ULONG result = 0;
   struct IntuiMessage *imsg;
+
+  ENTER();
+
   if(!(imsg = ((struct MUIP_HandleEvent *)msg)->imsg))
+  {
+    RETURN(0);
     return 0;
+  }
 
   if(imsg->Class == IDCMP_RAWKEY)
   {
@@ -494,6 +541,7 @@ OVERLOAD(MUIM_HandleEvent)
       DoMethod(data->Matchwindow, MUIM_Addrmatchlist_ChangeWindow);
   }
 
+  RETURN(result);
   return result;
 }
 ///
@@ -509,7 +557,12 @@ DECLARE(Resolve) // ULONG flags
   STRPTR s, contents, tmp;
   BOOL res = TRUE;
   BOOL withrealname = TRUE, checkvalids = TRUE, withcache = TRUE;
-  BOOL quiet = muiRenderInfo(obj) == NULL ? TRUE : FALSE; // if this object doesn`t have a renderinfo we are quiet
+  BOOL quiet;
+  ULONG result;
+
+  ENTER();
+
+  quiet = muiRenderInfo(obj) == NULL ? TRUE : FALSE; // if this object doesn`t have a renderinfo we are quiet
 
   // Lets check the flags first
   if(hasNoFullNameFlag(msg->flags)) withrealname= FALSE;
@@ -557,6 +610,8 @@ DECLARE(Resolve) // ULONG flags
       {
         struct MUI_NListtree_TreeNode *nexttn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
         struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
+
+
         D(DBF_GUI, "Found match: %s", s);
 
         // Now we have to check if there exists another entry in the AB with this string
@@ -601,7 +656,8 @@ DECLARE(Resolve) // ULONG flags
           {
             D(DBF_GUI, "Found matching entry in address book with unknown type: %ld", entry->Type);
             DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-            if(!quiet) set(_win(obj), MUIA_Window_ActiveObject, obj);
+            if(!quiet)
+              set(_win(obj), MUIA_Window_ActiveObject, obj);
             res = FALSE;
           }
         }
@@ -609,7 +665,8 @@ DECLARE(Resolve) // ULONG flags
         {
           D(DBF_GUI, "Found more than one matching entry in address book!");
           DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-          if(!quiet) set(_win(obj), MUIA_Window_ActiveObject, obj);
+          if(!quiet)
+            set(_win(obj), MUIA_Window_ActiveObject, obj);
           res = FALSE;
         }
       }
@@ -646,7 +703,10 @@ DECLARE(Resolve) // ULONG flags
 
   } while(list_expansion && max_list_nesting-- > 0);
 
-  return (res ? xget(obj, MUIA_String_Contents) : 0);
+  result = (res ? xget(obj, MUIA_String_Contents) : 0);
+
+  RETURN(result);
+  return result;
 }
 ///
 /// DECLARE(AddRecipient)
@@ -655,6 +715,10 @@ DECLARE(AddRecipient) // STRPTR address
 {
   GETDATA;
   STRPTR contents;
+
+  ENTER();
+
+  D(DBF_GUI, "add recipient \"%s\"", msg->address);
 
   if(!data->MultipleRecipients)
     nnset(obj, MUIA_String_Contents, NULL);
@@ -665,6 +729,7 @@ DECLARE(AddRecipient) // STRPTR address
   DoMethod(obj, MUIM_BetterString_Insert, msg->address, MUIV_BetterString_Insert_EndOfString);
   set(obj, MUIA_String_BufferPos, -1);
 
+  RETURN(0);
   return 0;
 }
 ///
@@ -675,6 +740,8 @@ DECLARE(RecipientStart)
   STRPTR buf;
   ULONG pos, i;
   BOOL quote = FALSE;
+
+  ENTER();
 
   buf = (STRPTR)xget(obj, MUIA_String_Contents);
   pos = xget(obj, MUIA_String_BufferPos);
@@ -694,6 +761,7 @@ DECLARE(RecipientStart)
   while(isspace(buf[i]))
     i++;
 
+  RETURN(i);
   return i;
 }
 ///
@@ -704,6 +772,8 @@ DECLARE(CurrentRecipient)
   GETDATA;
   STRPTR buf, end;
   LONG pos;
+
+  ENTER();
 
   if(data->CurrentRecipient)
   {
@@ -721,6 +791,7 @@ DECLARE(CurrentRecipient)
     end[0] = '\0';
   }
 
+  RETURN(data->CurrentRecipient);
   return (ULONG)data->CurrentRecipient;
 }
 ///
@@ -733,6 +804,8 @@ DECLARE(ReplaceSelected) // char *address
   long start;
   long pos;
   long len;
+
+  ENTER();
 
   // we first have to clear the selected area
   DoMethod(obj, MUIM_BetterString_ClearSelected);
@@ -765,6 +838,7 @@ DECLARE(ReplaceSelected) // char *address
                 MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start),
                 TAG_DONE);
 
+  RETURN(0);
   return 0;
 }
 ///
