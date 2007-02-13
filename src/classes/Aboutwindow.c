@@ -154,7 +154,9 @@ OVERLOAD(OM_NEW)
 
   infoObject = CrawlingObject,
 
-    MUIA_FixHeightTxt, "\n\n\n\n\n\n\n\n",
+    MUIA_Font,          MUIV_Font_Tiny,
+    MUIA_FixHeightTxt,  "\n\n\n\n\n\n\n\n",
+    MUIA_FixWidthTxt,   aboutText,
 
     Child, TextObject,
       MUIA_Font,          MUIV_Font_Tiny,
@@ -174,7 +176,7 @@ OVERLOAD(OM_NEW)
       MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_Off,
       MUIA_NListview_NList, NFloattextObject,
         MUIA_Font,            MUIV_Font_Tiny,
-        MUIA_NList_Format,    "P=\33c",
+        MUIA_NList_Format,    "P=\033c",
         MUIA_NList_Input,     FALSE,
         MUIA_NFloattext_Text, aboutText,
       End,

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-02-13  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Aboutwindow.c: slight adaptions to how the crawling.mcc object is
+    set up so that it always correctly fits into the window.
+
 2007-02-12  Jens Langner <Jens.Langner@light-speed.de>
 
   * Aboutwindow.c: slightly modernised the about window to use an existing
