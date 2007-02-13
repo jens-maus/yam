@@ -1283,7 +1283,6 @@ void CO_GetConfig(BOOL saveConfig)
         CE->SpamFilterForNewMail = GetMUICheck(gui->CH_SPAMFILTERFORNEWMAIL);
         CE->SpamMarkOnMove = GetMUICheck(gui->CH_SPAMMARKONMOVE);
         CE->SpamAddressBookIsWhiteList = GetMUICheck(gui->CH_SPAMABOOKISWHITELIST);
-        CE->SpamProbabilityThreshold = GetMUINumer(gui->NB_SPAMPROBTHRESHOLD);
 
         if(C->SpamFilterEnabled ==TRUE && CE->SpamFilterEnabled == FALSE)
         {
@@ -1785,7 +1784,6 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_SPAMFILTERFORNEWMAIL, CE->SpamFilterForNewMail);
          setcheckmark(gui->CH_SPAMMARKONMOVE, CE->SpamMarkOnMove);
          setcheckmark(gui->CH_SPAMABOOKISWHITELIST, CE->SpamAddressBookIsWhiteList);
-         set(gui->NB_SPAMPROBTHRESHOLD, MUIA_Numeric_Value, CE->SpamProbabilityThreshold);
          snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfHamClassifiedMails());
          set(gui->TX_SPAMGOODCOUNT, MUIA_Text_Contents, buf);
          snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfSpamClassifiedMails());
