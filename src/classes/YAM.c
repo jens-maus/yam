@@ -60,11 +60,13 @@ VOID LoadEMailCache(STRPTR name, struct List *list)
 {
   BPTR fh;
   
+  ENTER();
+
   NewList(list);
 
   if((fh = Open(name, MODE_OLDFILE)))
   {
-    int i=0;
+    int i = 0;
     char line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
 
     while(FGets(fh, line, sizeof(line)) && i++ < 100) // we limit the reading to a maximum of 100 so that this code can`t read endlessly
@@ -78,7 +80,17 @@ VOID LoadEMailCache(STRPTR name, struct List *list)
         if(addr != line)
         {
           addr[-1] = '\0';
-          strlcpy(node->ecn_Person.RealName, line, sizeof(node->ecn_Person.RealName));
+          // now check if the cached entry contains a comma in the real name and does not start with a quote
+          if(strchr(line, ',') != NULL && line[0] != '"')
+          {
+            // add the quotes around the name
+            snprintf(node->ecn_Person.RealName, sizeof(node->ecn_Person.RealName), "\"%s\"", line);
+          }
+          else
+          {
+            // just copy the real name
+            strlcpy(node->ecn_Person.RealName, line, sizeof(node->ecn_Person.RealName));
+          }
         }
         end[0] = '\0';
         strlcpy(node->ecn_Person.Address, addr+1, sizeof(node->ecn_Person.Address));
@@ -96,6 +108,8 @@ VOID LoadEMailCache(STRPTR name, struct List *list)
   {
     E(DBF_STARTUP, "Error opening file '%s' for reading", name);
   }
+
+  LEAVE();
 }
 
 ///
@@ -104,19 +118,31 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
 {
   BPTR fh;
 
+  ENTER();
+
   if((fh = Open(name, MODE_NEWFILE)))
   {
     int i;
     struct EMailCacheNode *node = (struct EMailCacheNode *)(list->lh_Head);
     char line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
 
-    for(i=0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node=(struct EMailCacheNode *)node->ecn_Node.ln_Succ)
+    for(i = 0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node = (struct EMailCacheNode *)node->ecn_Node.ln_Succ)
     {
       struct ABEntry *entry = &node->ecn_Person;
 
       if(entry->RealName[0])
       {
-        snprintf(line, sizeof(line), "%s <%s>\n", entry->RealName, entry->Address);
+        // check wether the real name contains a comma and does not yet start with quote
+        if(strchr(entry->RealName, ',') != NULL && entry->RealName[0] != '"')
+        {
+          // add the necessary quotes
+          snprintf(line, sizeof(line), "\"%s\" <%s>\n", entry->RealName, entry->Address);
+        }
+        else
+        {
+          // no quotes needed
+          snprintf(line, sizeof(line), "%s <%s>\n", entry->RealName, entry->Address);
+        }
       }
       else
       {
@@ -132,6 +158,8 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
   {
     E(DBF_STARTUP, "Error opening file '%s' for writing", name);
   }
+
+  LEAVE();
 }
 
 ///
@@ -139,8 +167,12 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
 // tries to find all matching addressbook entries and add them to the list
 VOID FindAllABMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode *root)
 {
-  LONG tl = strlen(text);
+  LONG tl;
   struct MUI_NListtree_TreeNode *tn;
+
+  ENTER();
+
+  tl = strlen(text);
 
   // Now we try to find matches in the Addressbook Listtree
   tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, root, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE);
@@ -181,6 +213,8 @@ VOID FindAllABMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode 
 
     tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
   }
+
+  LEAVE();
 }
 
 ///
@@ -189,6 +223,9 @@ VOID FindAllABMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode 
 BOOL FindABPerson(struct Person *person, struct MUI_NListtree_TreeNode *root)
 {
   struct MUI_NListtree_TreeNode *tn;
+  BOOL result = FALSE;
+
+  ENTER();
 
   // Now we try to find matches in the Addressbook Listtree
   tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, root, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE);
@@ -197,7 +234,11 @@ BOOL FindABPerson(struct Person *person, struct MUI_NListtree_TreeNode *root)
   {
     if(isFlagSet(tn->tn_Flags, TNF_LIST)) /* it's a sublist */
     {
-      if(FindABPerson(person, tn)) return TRUE;
+      if(FindABPerson(person, tn))
+      {
+        result = TRUE;
+        break;
+      }
     }
     else
     {
@@ -206,14 +247,16 @@ BOOL FindABPerson(struct Person *person, struct MUI_NListtree_TreeNode *root)
       // If the email matches a entry in the AB we already can return here with TRUE
       if(Stricmp(entry->Address, person->Address) == 0)
       {
-        return TRUE;
+        result = TRUE;
+        break;
       }
     }
 
     tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
   }
 
-  return FALSE;
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -223,6 +266,8 @@ BOOL FindABPerson(struct Person *person, struct MUI_NListtree_TreeNode *root)
 DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
 {
   GETDATA;
+
+  ENTER();
 
   if(msg->matchText && msg->matchText[0] != '\0')
   {
@@ -238,7 +283,7 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
       LONG tl = strlen(msg->matchText);
       struct EMailCacheNode *node = (struct EMailCacheNode *)(data->EMailCache.lh_Head);
 
-      for(i=0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node=(struct EMailCacheNode *)node->ecn_Node.ln_Succ)
+      for(i = 0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node = (struct EMailCacheNode *)node->ecn_Node.ln_Succ)
       {
         struct ABEntry *entry = &node->ecn_Person;
         struct CustomABEntry e = { -1, NULL, NULL };
@@ -254,8 +299,9 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
           e.MatchString = entry->Address;
         }
 
-        if(e.MatchField != -1) /* one of the fields matches, so let's insert it in the MUI list */
+        if(e.MatchField != -1)
         {
+          // at least one of the fields matches, so let's insert it in the MUI list
           e.MatchEntry = entry;
           DoMethod(msg->list, MUIM_List_InsertSingle, &e, MUIV_List_Insert_Bottom);
         }
@@ -263,6 +309,7 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
     }
   }
 
+  RETURN(0);
   return 0;
 }
 
@@ -272,20 +319,22 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
 DECLARE(FindEmailCacheMatch) // STRPTR matchText
 {
   GETDATA;
+  struct ABEntry *foundentry = NULL;
+
+  ENTER();
 
   if(C->EmailCache && !IsListEmpty(&data->EMailCache) && msg->matchText && msg->matchText[0] != '\0')
   {
     int i, matches = 0;
     LONG tl = strlen(msg->matchText);
     struct EMailCacheNode *node = (struct EMailCacheNode *)(data->EMailCache.lh_Head);
-    struct ABEntry *foundentry = NULL;
 
-    for(i=0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node = (struct EMailCacheNode *)node->ecn_Node.ln_Succ)
+    for(i = 0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node = (struct EMailCacheNode *)node->ecn_Node.ln_Succ)
     {
       struct ABEntry *entry = &node->ecn_Person;
 
       if(!Strnicmp(entry->RealName, msg->matchText, tl) ||
-         !Strnicmp(entry->Address,   msg->matchText, tl))
+         !Strnicmp(entry->Address,  msg->matchText, tl))
       {
         if(++matches > 1)
         {
@@ -295,11 +344,10 @@ DECLARE(FindEmailCacheMatch) // STRPTR matchText
         foundentry = entry;
       }
     }
-
-    return (ULONG)foundentry;
   }
 
-  return 0;
+  RETURN(foundentry);
+  return (ULONG)foundentry;
 }
 
 ///
@@ -309,9 +357,15 @@ DECLARE(AddToEmailCache) // struct Person *person
 {
   GETDATA;
 
+  ENTER();
+
   // if the emailcache feature is turned off or
   // the supplied person doesn`t have a address, lets exit immediatly
-  if(C->EmailCache == 0 || !msg->person->Address[0]) return -1;
+  if(C->EmailCache == 0 || !msg->person->Address[0])
+  {
+    RETURN(-1);
+    return -1;
+  }
 
   // We first check the Addressbook if this Person already exists in the AB and if
   // so we cancel this whole operation.
@@ -351,7 +405,17 @@ DECLARE(AddToEmailCache) // struct Person *person
         struct ABEntry *entry = &newnode->ecn_Person;
 
         // Lets copy the data in the new Person struct
-        strlcpy(entry->RealName, msg->person->RealName, sizeof(entry->RealName));
+        // for the real name we have to check for possible commas without quotes yet
+        if(strchr(msg->person->RealName, ',') != NULL && msg->person->RealName[0] != '"')
+        {
+          // add the necessary quotes around the real name
+          snprintf(entry->RealName, sizeof(entry->RealName), "\"%s\"", msg->person->RealName);
+        }
+        else
+        {
+          // simply copy the real name
+          strlcpy(entry->RealName, msg->person->RealName, sizeof(entry->RealName));
+        }
         strlcpy(entry->Address, msg->person->Address, sizeof(entry->Address));
 
         // we always add new items to the top because this is a FILO
@@ -363,6 +427,7 @@ DECLARE(AddToEmailCache) // struct Person *person
     SaveEMailCache(data->EMailCacheName, &data->EMailCache);
   }
 
+  RETURN(0);
   return 0;
 }
 

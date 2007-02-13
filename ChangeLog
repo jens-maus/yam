@@ -7,6 +7,10 @@ $URL$
 
 2007-02-13  Thore Böckelmann <tboeckel@gmx.de>
 
+  * classes/YAM.c: the EMail cache accepted real names containing commas without
+    quotes. Entering a special combination of aliases and realnames could end up
+    in always resolving the wrong entries and constantly expanding the recipient
+    string. This fixes bug #1652957.
   * Recipientstring.c: added the usual ENTER()/RETURN() macros.
   * Addrmatchlist.c: added the usual ENTER()/RETURN() macros.
   * YAM_COg.c, YAM_COs.c: removed the spam threshold slider as it seems to
