@@ -66,6 +66,7 @@ struct Global
    Object *                 NewMailSound_Obj;
    Object *                 SplashWinObject;
    Object *                 AboutWinObject;
+   Object *                 AboutMUIObject;
    Object *                 UpdateNotifyWinObject;
    char *                   ER_Message[MAXERR];
    struct DiskObject *      HideIcon;

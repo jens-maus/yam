@@ -189,18 +189,6 @@ Version:
 MSG_CompilationDate (61//)
 Compilation date:
 ;
-MSG_Copyright2 (62//)
-This program is free software; you're welcome to distribute \
-and/or modify it under the terms of the GNU Public License. \
-See the enclosed documents for more details.\n
-;
-MSG_UsedSoftware (63//)
-\nThis application uses the following third party software:\n
-;
-MSG_WebSite (64//)
-The latest news about YAM can be found at the YAM Support \
-Site at \e5http://www.yam.ch/\en
-;
 MSG_UserLogin (65//)
 Click your name to login
 ;

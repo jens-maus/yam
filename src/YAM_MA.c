@@ -3974,37 +3974,70 @@ MakeHook(MA_ChangeSubjectHook, MA_ChangeSubjectFunc);
 //  Displays 'About MUI' window
 HOOKPROTONHNONP(MA_AboutMUIFunc, void)
 {
-  static Object *muiwin = NULL;
+  ENTER();
 
-  if(!muiwin)
+  if(G->AboutMUIObject == NULL)
   {
-    muiwin = AboutmuiObject,
+    // create the about MUI object and open it
+    G->AboutMUIObject = AboutmuiObject,
       MUIA_Window_RefWindow,     G->MA->GUI.WI,
       MUIA_Aboutmui_Application, G->App,
     End;
   }
 
-  if(muiwin)
-    SafeOpenWindow(muiwin);
+  if(G->AboutMUIObject)
+    SafeOpenWindow(G->AboutMUIObject);
   else
     DisplayBeep(NULL);
+
+  LEAVE();
 }
 MakeStaticHook(MA_AboutMUIHook, MA_AboutMUIFunc);
+
+///
+/// MA_DisposeAboutWindowFunc
+//  Displays 'About' window
+HOOKPROTONHNONP(MA_DisposeAboutWindowFunc, void)
+{
+  ENTER();
+
+  // cleanup the about window object
+  if(G->AboutWinObject)
+  {
+    DoMethod(G->App, OM_REMMEMBER, G->AboutWinObject);
+    MUI_DisposeObject(G->AboutWinObject);
+    G->AboutWinObject = NULL;
+  }
+
+  LEAVE();
+}
+MakeStaticHook(MA_DisposeAboutWindowHook, MA_DisposeAboutWindowFunc);
 
 ///
 /// MA_ShowAboutWindowFunc
 //  Displays 'About' window
 HOOKPROTONHNONP(MA_ShowAboutWindowFunc, void)
 {
-  if(!G->AboutWinObject)
+  ENTER();
+
+  // create the about window object and open it
+  if(G->AboutWinObject == NULL)
   {
     G->AboutWinObject = AboutwindowObject, End;
+
+    if(G->AboutWinObject)
+    {
+      DoMethod(G->AboutWinObject, MUIM_Notify, MUIA_Window_Open, FALSE, MUIV_Notify_Application, 5,
+                                  MUIM_Application_PushMethod, G->App, 2, MUIM_CallHook, &MA_DisposeAboutWindowHook);
+    }
   }
 
   if(G->AboutWinObject)
     SafeOpenWindow(G->AboutWinObject);
   else
     DisplayBeep(NULL);
+
+  LEAVE();
 }
 MakeStaticHook(MA_ShowAboutWindowHook, MA_ShowAboutWindowFunc);
 

@@ -7,6 +7,12 @@ $URL$
 
 2007-02-12  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Aboutwindow.c: slightly modernised the about window to use an existing
+    Crawling.mcc class for showing/scrolling the about text automatically
+    instead of putting it into an NFloattext object for manualy scrolling.
+    In addition the list of current developers, contributors and localizers
+    will from now on by shown in the about window to motivate people to
+    contribute to YAM and see their name popping up in the about window :)
   * YAM.c: the Splash window object will now be immediately disposed when it
     will be closed. This should save some bytes of memory.
   * YAM.c: bumped the minimum required AmigaOS4 kernel version to 52.2 to make
