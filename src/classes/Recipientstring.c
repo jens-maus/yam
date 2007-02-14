@@ -303,17 +303,16 @@ OVERLOAD(MUIM_GoActive)
 OVERLOAD(MUIM_GoInactive)
 {
   GETDATA;
-  DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
   ULONG result;
 
   ENTER();
 
+  DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+
   // only if the matchwindow is not active we can close it on a inactive state of
   // this object
   if(!xget(data->Matchwindow, MUIA_Window_Activate))
-  {
     set(data->Matchwindow, MUIA_Window_Open, FALSE);
-  }
 
   result = DoSuperMethodA(cl, obj, msg);
 

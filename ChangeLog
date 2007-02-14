@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-02-14  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Recipientstring.c: fixed a compile-time error with < GCC4 compilers, due to
+  	 an incorrect placement of a ENTER() statement.
+
 2007-02-13  Thore Böckelmann <tboeckel@gmx.de>
 
   * classes/YAM.c: the EMail cache accepted real names containing commas without
