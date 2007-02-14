@@ -130,7 +130,7 @@ endif
 
 # target definition
 TARGET  = YAM.$(OS)
-BUILDID	= 0
+BUILDID = 0
 
 # Common Directories
 PREFIX    = .
@@ -164,6 +164,7 @@ ifeq ($(OS), os4)
   # Compiler/Linker flags
   CRT      = newlib
   CPU      = -mcpu=604e -mmultiple -Wa,-mregnames
+  WARN     += -Wdeclaration-after-statement -Wdisabled-optimization
   REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod \
              -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
   CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ $(REDEFINE)
