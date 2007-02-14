@@ -4725,18 +4725,6 @@ Object *MakeNumeric(int min, int max, BOOL percent)
    End;
 }
 ///
-/// SetupMenu
-//  Initializes a MUI menu item
-void SetupMenu(int type, struct NewMenu *menu, char *label, char *shortcut, int id)
-{
-   menu->nm_Type = type;
-   menu->nm_Label = (STRPTR)label;
-   menu->nm_CommKey = (STRPTR)shortcut;
-   menu->nm_Flags = 0;
-   menu->nm_MutualExclude = 0;
-   menu->nm_UserData = (APTR)id;
-}
-///
 /// GetMUIInteger
 //  Returns the numeric value of a MUI string object
 int GetMUIInteger(Object *obj)
