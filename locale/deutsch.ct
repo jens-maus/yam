@@ -7321,9 +7321,6 @@ Anzahl "Nicht-Spam"-klassifizierter Nachrichten
 MSG_CO_SPAM_BADCOUNT
 Anzahl "Spam"-klassifizierter Nachrichten
 ;
-MSG_CO_SPAM_PROBABILITYTHRESHOLD
-Nachrichten als Spam markieren, falls Spam-Wahrscheinlichkeit größer oder gleich
-;
 MSG_CO_NB_SPAMPROBTHRESHOLDFMT
 %ld%%
 ;
@@ -7590,4 +7587,7 @@ Weiter suchen
 ;
 MSG_WR_AUTOWRAP
 Zeilenumbruch
+;
+MSG_CO_SPAM_MARK_AS_READ
+Spam-Mails als gelesen markieren
 ;

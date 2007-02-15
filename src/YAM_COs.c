@@ -345,6 +345,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "SpamFilterEnabled= %s\n", Bool2Txt(co->SpamFilterEnabled));
       fprintf(fh, "SpamFilterForNew = %s\n", Bool2Txt(co->SpamFilterForNewMail));
       fprintf(fh, "SpamMarkOnMove   = %s\n", Bool2Txt(co->SpamMarkOnMove));
+      fprintf(fh, "SpamMarkAsRead   = %s\n", Bool2Txt(co->SpamMarkAsRead));
       fprintf(fh, "SpamABookIsWhite = %s\n", Bool2Txt(co->SpamAddressBookIsWhiteList));
       fprintf(fh, "SpamProbThreshold= %d\n", co->SpamProbabilityThreshold);
       fprintf(fh, "SpamFlushInterval= %d\n", co->SpamFlushTrainingDataInterval);
@@ -885,6 +886,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 /*Spam*/       else if (!stricmp(buffer, "SpamFilterEnabled")) co->SpamFilterEnabled = Txt2Bool(value);
                else if (!stricmp(buffer, "SpamFilterForNew")) co->SpamFilterForNewMail = Txt2Bool(value);
                else if (!stricmp(buffer, "SpamMarkOnMove")) co->SpamMarkOnMove = Txt2Bool(value);
+               else if (!stricmp(buffer, "SpamMarkAsRead")) co->SpamMarkAsRead = Txt2Bool(value);
                else if (!stricmp(buffer, "SpamABookIsWhite")) co->SpamAddressBookIsWhiteList = Txt2Bool(value);
                else if (!stricmp(buffer, "SpamProbThreshold")) co->SpamProbabilityThreshold = atoi(value);
                else if (!stricmp(buffer, "SpamFlushInterval")) co->SpamFlushTrainingDataInterval = atoi(value);
@@ -1282,6 +1284,7 @@ void CO_GetConfig(BOOL saveConfig)
         CE->SpamFilterEnabled = GetMUICheck(gui->CH_SPAMFILTERENABLED);
         CE->SpamFilterForNewMail = GetMUICheck(gui->CH_SPAMFILTERFORNEWMAIL);
         CE->SpamMarkOnMove = GetMUICheck(gui->CH_SPAMMARKONMOVE);
+        CE->SpamMarkAsRead = GetMUICheck(gui->CH_SPAMMARKASREAD);
         CE->SpamAddressBookIsWhiteList = GetMUICheck(gui->CH_SPAMABOOKISWHITELIST);
 
         if(C->SpamFilterEnabled ==TRUE && CE->SpamFilterEnabled == FALSE)
@@ -1783,6 +1786,7 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_SPAMFILTERENABLED, CE->SpamFilterEnabled);
          setcheckmark(gui->CH_SPAMFILTERFORNEWMAIL, CE->SpamFilterForNewMail);
          setcheckmark(gui->CH_SPAMMARKONMOVE, CE->SpamMarkOnMove);
+         setcheckmark(gui->CH_SPAMMARKASREAD, CE->SpamMarkAsRead);
          setcheckmark(gui->CH_SPAMABOOKISWHITELIST, CE->SpamAddressBookIsWhiteList);
          snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfHamClassifiedMails());
          set(gui->TX_SPAMGOODCOUNT, MUIA_Text_Contents, buf);

@@ -1400,8 +1400,11 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
                 {
                   D(DBF_FILTER, "Message was classified as spam");
 
-                  // set the SPAM flags, but don't change any of the NEW or READ flags
-                  setStatusToAutoSpam(mail);
+                  // set the SPAM flags, but clear the NEW and READ flags only if desired
+                  if(C->SpamMarkAsRead)
+                    setStatusToReadAutoSpam(mail);
+                  else
+                    setStatusToAutoSpam(mail);
 
                   // move newly recognized spam to the spam folder
                   MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);

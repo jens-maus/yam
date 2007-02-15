@@ -5828,9 +5828,6 @@ Number of "not spam" classified mails
 MSG_CO_SPAM_BADCOUNT (1768//)
 Number of "spam" classified mails
 ;
-MSG_CO_SPAM_PROBABILITYTHRESHOLD (1769//)
-Treat mails as spam if spam probability is greater or equal
-;
 MSG_CO_NB_SPAMPROBTHRESHOLDFMT (1770//)
 %ld%%
 ;
@@ -6098,4 +6095,7 @@ Search again
 ;
 MSG_WR_AUTOWRAP (1850//)
 Word wrap
+;
+MSG_CO_SPAM_MARK_AS_READ (1851//)
+Mark spam mails as read
 ;
