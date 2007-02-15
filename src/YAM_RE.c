@@ -1395,7 +1395,8 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
       {
         // in case the user wants us to detect the correct cyrillic codeset
         // we do it now
-        if(C->DetectCyrillic && allowAutoDetect)
+        if(C->DetectCyrillic && allowAutoDetect &&
+           (srcCodeset == NULL || stricmp(srcCodeset->name, "utf-8") != 0))
         {
           struct codeset *cs = CodesetsFindBest(CSA_Source,         buf,
                                                 CSA_SourceLen,      buflen,

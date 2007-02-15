@@ -682,8 +682,9 @@ long base64decode_file(FILE *in, FILE *out,
     #endif
 
     // in case the user wants us to detect the correct cyrillic codeset
-    // we do it now
-    if(convCRLF && C->DetectCyrillic)
+    // we do it now, but just if the source codeset isn't UTF-8
+    if(convCRLF && C->DetectCyrillic &&
+       (srcCodeset == NULL || stricmp(srcCodeset->name, "utf-8") != 0))
     {
       struct codeset *cs = CodesetsFindBest(CSA_Source,         outbuffer,
                                             CSA_SourceLen,      outLength,
@@ -1115,7 +1116,8 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
         // in case the user wants us to detect the correct cyrillic codeset
         // we do it now
-        if(C->DetectCyrillic)
+        if(C->DetectCyrillic &&
+           (srcCodeset == NULL || stricmp(srcCodeset->name, "utf-8") != 0))
         {
           struct codeset *cs = CodesetsFindBest(CSA_Source,         dptr,
                                                 CSA_SourceLen,      todo,
@@ -1186,7 +1188,8 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
     // in case the user wants us to detect the correct cyrillic codeset
     // we do it now
-    if(C->DetectCyrillic)
+    if(C->DetectCyrillic &&
+       (srcCodeset == NULL || stricmp(srcCodeset->name, "utf-8") != 0))
     {
       struct codeset *cs = CodesetsFindBest(CSA_Source,         dptr,
                                             CSA_SourceLen,      todo,
@@ -1637,7 +1640,8 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
           // in case the user wants us to detect the correct cyrillic codeset
           // we do it now
-          if(C->DetectCyrillic)
+          if(C->DetectCyrillic &&
+             (srcCodeset == NULL || stricmp(srcCodeset->name, "utf-8") != 0))
           {
             struct codeset *cs = CodesetsFindBest(CSA_Source,         dptr,
                                                   CSA_SourceLen,      todo,
@@ -1766,7 +1770,8 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
     // in case the user wants us to detect the correct cyrillic codeset
     // we do it now
-    if(C->DetectCyrillic)
+    if(C->DetectCyrillic &&
+       (srcCodeset == NULL || stricmp(srcCodeset->name, "utf-8") != 0))
     {
       struct codeset *cs = CodesetsFindBest(CSA_Source,         dptr,
                                             CSA_SourceLen,      todo,
@@ -2187,7 +2192,8 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
 
   // in case the user wants us to detect the correct cyrillic codeset
   // we do it now
-  if(C->DetectCyrillic)
+  if(C->DetectCyrillic &&
+     (chset == NULL || stricmp(chset, "utf-8") != 0))
   {
     struct codeset *cs = CodesetsFindBest(CSA_Source,         txt,
                                           CSA_SourceLen,      len,

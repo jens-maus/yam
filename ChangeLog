@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-02-15  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MI.c, YAM_RE.c: fixed bug #1659916 where we tried to autodetect a
+    cyrillic codeset even on UTF-8 mails. This caused codeset.library to
+    return the wrong source codeset and therefore such russian UTF-8 mails
+    where incorrectly decoded.
+
 2007-02-14  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: removed obsolete/unused SetupMenu() function.
