@@ -850,6 +850,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       co->SpamFilterEnabled = FALSE;
       co->SpamFilterForNewMail = FALSE;
       co->SpamMarkOnMove = FALSE;
+      co->SpamMarkAsRead = FALSE;
       co->SpamAddressBookIsWhiteList = FALSE;
       co->SpamProbabilityThreshold = DEFAULT_SPAM_PROBABILITY_THRESHOLD;
       co->SpamFlushTrainingDataInterval = DEFAULT_FLUSH_TRAINING_DATA_INTERVAL;

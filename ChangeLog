@@ -7,6 +7,8 @@ $URL$
 
 2007-02-15  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c: added missing default setting for the new "mark spam as read"
+    feature. This now defaults to FALSE.
   * YAM_FI.c, YAM_COg.c, YAM_COs.c: added new option to let newly recognized
     spam mails to be marked as read automatically.
 
