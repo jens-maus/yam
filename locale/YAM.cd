@@ -6099,3 +6099,46 @@ Word-wrap
 MSG_CO_SPAM_MARK_AS_READ (1851//)
 Mark spam mails as read
 ;
+MSG_HELP_CH_SPAMFILTERENABLED (1852//)
+Enables the Spam filter engine in YAM which\n\
+allows to filter out abusive advertising emails.
+;
+MSG_HELP_TX_SPAMBADCOUNT (1853//)
+Shows the amount of manually classified "Spam"\n\
+emails.
+;
+MSG_HELP_TX_SPAMGOODCOUNT (1854//)
+Shows the amount of manually classified "Not-Spam"\n\
+emails - also known as "Ham".
+;
+MSG_HELP_BT_SPAMRESETTRAININGDATA (1855//)
+Allows to manually reset the whole spam filter\n\
+training data. Please note that this might only\n\
+be necessary in very rare cases.
+;
+MSG_HELP_CH_SPAMFILTERFORNEWMAIL (1856//)
+If checked, incoming new mails will be automatically\n\
+checked for their "Spam" classification.
+;
+MSG_HELP_CH_SPAMABOOKISWHITELIST (1857//)
+If checked, mails with a sender address that can be\n\
+found in the addressbook will not considered to be\n\
+spam mails.
+;
+MSG_HELP_CH_SPAMMARKONMOVE (1858//)
+If checked, mails will be automatically marked as\n\
+spam mails if they are manually dropped into the\n\
+spam folder.
+;
+MSG_HELP_CH_SPAMMARKASREAD (1859//)
+If checked, spam mail will be automatically flagged\n\
+as read and therefore not raise attention to the\n\
+user.
+;
+MSG_HELP_CH_UPDATECHECK (1860//)
+Allows to enable the automatic update check\n\
+mechanismin YAM. According to a specified interval\n\
+it will try to get latest version information via\n\
+the internet and remind you of available software\n\
+updates.
+;

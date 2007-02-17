@@ -1914,6 +1914,122 @@ Object *CO_PageFilters(struct CO_ClassData *data)
 }
 
 ///
+/// CO_PageSpam
+//
+Object *CO_PageSpam(struct CO_ClassData *data)
+{
+  Object *obj;
+
+  ENTER();
+
+  obj = VGroup,
+          MUIA_HelpNode, "CO16",
+
+          Child, HGroup,
+            Child, MakeImageObject("config_spam_big"),
+            Child, VGroup,
+              Child, TextObject,
+                MUIA_Text_PreParse, "\033b",
+                MUIA_Text_Contents, tr(MSG_CO_SPAMFILTER_TITLE),
+                MUIA_Weight,        100,
+              End,
+              Child, TextObject,
+                MUIA_Text_Contents, tr(MSG_CO_SPAMFILTER_SUMMARY),
+                MUIA_Font,          MUIV_Font_Tiny,
+                MUIA_Weight,        100,
+              End,
+            End,
+          End,
+
+          Child, RectangleObject,
+            MUIA_Rectangle_HBar, TRUE,
+            MUIA_FixHeight,      4,
+          End,
+
+          Child, VGroup, GroupFrameT(tr(MSG_CO_SPAMFILTER)),
+            Child, ColGroup(4),
+              Child, data->GUI.CH_SPAMFILTERENABLED = MakeCheck(tr(MSG_CO_SPAM_FILTERENABLED)),
+              Child, LLabel(tr(MSG_CO_SPAM_FILTERENABLED)),
+              Child, HSpace(0),
+              Child, HSpace(0),
+              Child, HSpace(0),
+              Child, Label2(tr(MSG_CO_SPAM_BADCOUNT)),
+              Child, data->GUI.TX_SPAMBADCOUNT = TextObject,
+                TextFrame,
+                MUIA_Background,    MUII_TextBack,
+                MUIA_Text_SetMin,   TRUE,
+                MUIA_Text_PreParse, "\033r",
+              End,
+              Child, HSpace(0),
+              Child, HSpace(0),
+              Child, Label2(tr(MSG_CO_SPAM_GOODCOUNT)),
+              Child, data->GUI.TX_SPAMGOODCOUNT = TextObject,
+                TextFrame,
+                MUIA_Background,    MUII_TextBack,
+                MUIA_Text_SetMin,   TRUE,
+                MUIA_Text_PreParse, "\033r",
+              End,
+              Child, HSpace(0),
+              Child, HSpace(0),
+              Child, data->GUI.BT_SPAMRESETTRAININGDATA = MakeButton(tr(MSG_CO_SPAM_RESETTRAININGDATA)),
+              Child, HSpace(0),
+              Child, HSpace(0),
+            End,
+          End,
+
+          Child, VGroup, GroupFrameT(tr(MSG_CO_SPAM_RECOGNITION)),
+            Child, ColGroup(3),
+              Child, data->GUI.CH_SPAMFILTERFORNEWMAIL = MakeCheck(tr(MSG_CO_SPAM_FILTERFORNEWMAIL)),
+              Child, LLabel(tr(MSG_CO_SPAM_FILTERFORNEWMAIL)),
+              Child, HSpace(0),
+              Child, data->GUI.CH_SPAMABOOKISWHITELIST = MakeCheck(tr(MSG_CO_SPAM_ADDRESSBOOKISWHITELIST)),
+              Child, LLabel(tr(MSG_CO_SPAM_ADDRESSBOOKISWHITELIST)),
+              Child, HSpace(0),
+              Child, data->GUI.CH_SPAMMARKONMOVE = MakeCheck(tr(MSG_CO_SPAM_MARKONMOVE)),
+              Child, LLabel(tr(MSG_CO_SPAM_MARKONMOVE)),
+              Child, HSpace(0),
+              Child, data->GUI.CH_SPAMMARKASREAD = MakeCheck(tr(MSG_CO_SPAM_MARK_AS_READ)),
+              Child, LLabel(tr(MSG_CO_SPAM_MARK_AS_READ)),
+              Child, HSpace(0),
+            End,
+          End,
+
+          Child, HVSpace,
+        End;
+
+  if(obj != NULL)
+  {
+    nnset(data->GUI.BT_SPAMRESETTRAININGDATA, MUIA_Disabled, TRUE);
+    nnset(data->GUI.CH_SPAMFILTERFORNEWMAIL,  MUIA_Disabled, TRUE);
+    nnset(data->GUI.CH_SPAMABOOKISWHITELIST,  MUIA_Disabled, TRUE);
+    nnset(data->GUI.CH_SPAMMARKONMOVE,        MUIA_Disabled, TRUE);
+    nnset(data->GUI.CH_SPAMMARKASREAD,        MUIA_Disabled, TRUE);
+
+    SetHelp(data->GUI.CH_SPAMFILTERENABLED,     MSG_HELP_CH_SPAMFILTERENABLED);
+    SetHelp(data->GUI.TX_SPAMBADCOUNT,          MSG_HELP_TX_SPAMBADCOUNT);
+    SetHelp(data->GUI.TX_SPAMGOODCOUNT,         MSG_HELP_TX_SPAMGOODCOUNT);
+    SetHelp(data->GUI.BT_SPAMRESETTRAININGDATA, MSG_HELP_BT_SPAMRESETTRAININGDATA);
+    SetHelp(data->GUI.CH_SPAMFILTERFORNEWMAIL,  MSG_HELP_CH_SPAMFILTERFORNEWMAIL);
+    SetHelp(data->GUI.CH_SPAMABOOKISWHITELIST,  MSG_HELP_CH_SPAMABOOKISWHITELIST);
+    SetHelp(data->GUI.CH_SPAMMARKONMOVE,        MSG_HELP_CH_SPAMMARKONMOVE);
+    SetHelp(data->GUI.CH_SPAMMARKASREAD,        MSG_HELP_CH_SPAMMARKASREAD);
+
+    DoMethod(data->GUI.CH_SPAMFILTERENABLED, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
+                                             MUIV_Notify_Application, 8, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue,
+                                               data->GUI.BT_SPAMRESETTRAININGDATA,
+                                               data->GUI.CH_SPAMFILTERFORNEWMAIL,
+                                               data->GUI.CH_SPAMABOOKISWHITELIST,
+                                               data->GUI.CH_SPAMMARKONMOVE,
+                                               data->GUI.CH_SPAMMARKASREAD);
+
+    DoMethod(data->GUI.BT_SPAMRESETTRAININGDATA, MUIM_Notify, MUIA_Pressed,  FALSE,
+                                                 MUIV_Notify_Application, 2, MUIM_CallHook, &ResetSpamTrainingDataHook);
+  }
+
+  RETURN(obj);
+  return obj;
+}
+///
 /// CO_PageRead
 Object *CO_PageRead(struct CO_ClassData *data)
 {
@@ -3091,169 +3207,95 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 /// CO_PageUpdate
 Object *CO_PageUpdate(struct CO_ClassData *data)
 {
-  Object *grp;
+  Object *obj;
   static const char *updateInterval[4];
+
+  ENTER();
 
   updateInterval[0] = tr(MSG_CO_UPDATE_DAILY);
   updateInterval[1] = tr(MSG_CO_UPDATE_WEEKLY);
   updateInterval[2] = tr(MSG_CO_UPDATE_MONTHLY);
   updateInterval[3] = NULL;
 
-  if((grp = VGroup,
-      MUIA_HelpNode, "CO15",
+  obj = VGroup,
+          MUIA_HelpNode, "CO15",
 
-      Child, HGroup,
-        Child, MakeImageObject("config_update_big"),
-        Child, VGroup,
-          Child, TextObject,
-            MUIA_Text_PreParse, "\033b",
-            MUIA_Text_Contents, tr(MSG_CO_UPDATE_TITLE),
-            MUIA_Weight,        100,
-          End,
-          Child, TextObject,
-            MUIA_Text_Contents, tr(MSG_CO_UPDATE_SUMMARY),
-            MUIA_Font,          MUIV_Font_Tiny,
-            MUIA_Weight,        100,
-          End,
-        End,
-      End,
-
-      Child, RectangleObject,
-        MUIA_Rectangle_HBar, TRUE,
-        MUIA_FixHeight,      4,
-      End,
-
-      Child, VGroup,
-        Child, VGroup, GroupFrameT(tr(MSG_CO_SOFTWAREUPDATE)),
-          Child, ColGroup(2),
-            Child, data->GUI.CH_UPDATECHECK = MakeCheck(tr(MSG_CO_SEARCHFORUPDATES)),
-            Child, HGroup,
-              Child, LLabel1(tr(MSG_CO_SEARCHFORUPDATES)),
-              Child, data->GUI.CY_UPDATEINTERVAL = MakeCycle(updateInterval, ""),
-              Child, HVSpace,
-            End,
-            Child, HVSpace,
-            Child, TextObject,
-              MUIA_Text_Contents, tr(MSG_CO_SEARCHFORUPDATESINFO),
-              MUIA_Font,          MUIV_Font_Tiny,
-            End,
-            Child, VSpace(10),
-            Child, VSpace(10),
-            Child, HVSpace,
-            Child, HGroup,
-              Child, data->GUI.BT_UPDATENOW = MakeButton(tr(MSG_CO_SEARCHNOW)),
-              Child, HVSpace,
-              Child, HVSpace,
+          Child, HGroup,
+            Child, MakeImageObject("config_update_big"),
+            Child, VGroup,
+              Child, TextObject,
+                MUIA_Text_PreParse, "\033b",
+                MUIA_Text_Contents, tr(MSG_CO_UPDATE_TITLE),
+                MUIA_Weight,        100,
+              End,
+              Child, TextObject,
+                MUIA_Text_Contents, tr(MSG_CO_UPDATE_SUMMARY),
+                MUIA_Font,          MUIV_Font_Tiny,
+                MUIA_Weight,        100,
+              End,
             End,
           End,
+
           Child, RectangleObject,
             MUIA_Rectangle_HBar, TRUE,
             MUIA_FixHeight,      4,
           End,
-          Child, ColGroup(2),
-            Child, LLabel1(tr(MSG_CO_LASTSEARCH)),
-            Child, data->GUI.TX_UPDATESTATUS = TextObject,
-              MUIA_Text_Contents, tr(MSG_CO_LASTSTATUS_NOCHECK),
+
+          Child, VGroup,
+            Child, VGroup, GroupFrameT(tr(MSG_CO_SOFTWAREUPDATE)),
+              Child, ColGroup(2),
+                Child, data->GUI.CH_UPDATECHECK = MakeCheck(tr(MSG_CO_SEARCHFORUPDATES)),
+                Child, HGroup,
+                  Child, LLabel1(tr(MSG_CO_SEARCHFORUPDATES)),
+                  Child, data->GUI.CY_UPDATEINTERVAL = MakeCycle(updateInterval, ""),
+                  Child, HVSpace,
+                End,
+                Child, HVSpace,
+                Child, TextObject,
+                  MUIA_Text_Contents, tr(MSG_CO_SEARCHFORUPDATESINFO),
+                  MUIA_Font,          MUIV_Font_Tiny,
+                End,
+                Child, VSpace(10),
+                Child, VSpace(10),
+                Child, HVSpace,
+                Child, HGroup,
+                  Child, data->GUI.BT_UPDATENOW = MakeButton(tr(MSG_CO_SEARCHNOW)),
+                  Child, HVSpace,
+                  Child, HVSpace,
+                End,
+              End,
+              Child, RectangleObject,
+                MUIA_Rectangle_HBar, TRUE,
+                MUIA_FixHeight,      4,
+              End,
+              Child, ColGroup(2),
+                Child, LLabel1(tr(MSG_CO_LASTSEARCH)),
+                Child, data->GUI.TX_UPDATESTATUS = TextObject,
+                  MUIA_Text_Contents, tr(MSG_CO_LASTSTATUS_NOCHECK),
+                End,
+                Child, HSpace(1),
+                Child, data->GUI.TX_UPDATEDATE = TextObject,
+                  MUIA_Text_Contents, "",
+                End,
+              End,
             End,
-            Child, HSpace(1),
-            Child, data->GUI.TX_UPDATEDATE = TextObject,
-              MUIA_Text_Contents, "",
-            End,
+            Child, HVSpace,
           End,
-        End,
-        Child, HVSpace,
-      End,
-    End))
+        End;
+
+  if(obj != NULL)
   {
     nnset(data->GUI.CY_UPDATEINTERVAL, MUIA_Disabled, TRUE);
+
+    SetHelp(data->GUI.CH_UPDATECHECK,    MSG_HELP_CH_UPDATECHECK);
+    SetHelp(data->GUI.CY_UPDATEINTERVAL, MSG_HELP_CH_UPDATECHECK);
 
     DoMethod(data->GUI.CH_UPDATECHECK, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.CY_UPDATEINTERVAL, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
     DoMethod(data->GUI.BT_UPDATENOW,   MUIM_Notify, MUIA_Pressed,  FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &UpdateCheckHook);
   }
 
-  return grp;
-}
-///
-/// CO_PageSpam
-//
-Object *CO_PageSpam(struct CO_ClassData *data)
-{
-   Object *grp;
-   if ((grp = VGroup,
-         Child, HGroup,
-            Child, MakeImageObject("config_spam_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_SPAMFILTER_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_SPAMFILTER_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-           End,
-         End,
-
-         Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-         End,
-
-         Child, VGroup, GroupFrameT(tr(MSG_CO_SPAMFILTER)),
-           Child, ColGroup(3),
-             Child, data->GUI.CH_SPAMFILTERENABLED = MakeCheck(tr(MSG_CO_SPAM_FILTERENABLED)),
-             Child, LLabel(tr(MSG_CO_SPAM_FILTERENABLED)),
-             Child, HSpace(0),
-             Child, data->GUI.CH_SPAMFILTERFORNEWMAIL = MakeCheck(tr(MSG_CO_SPAM_FILTERFORNEWMAIL)),
-             Child, LLabel(tr(MSG_CO_SPAM_FILTERFORNEWMAIL)),
-             Child, HSpace(0),
-             Child, data->GUI.CH_SPAMMARKONMOVE = MakeCheck(tr(MSG_CO_SPAM_MARKONMOVE)),
-             Child, LLabel(tr(MSG_CO_SPAM_MARKONMOVE)),
-             Child, HSpace(0),
-             Child, data->GUI.CH_SPAMMARKASREAD = MakeCheck(tr(MSG_CO_SPAM_MARK_AS_READ)),
-             Child, LLabel(tr(MSG_CO_SPAM_MARK_AS_READ)),
-             Child, HSpace(0),
-           End,
-           Child, ColGroup(3),
-             Child, Label2(tr(MSG_CO_SPAM_GOODCOUNT)),
-             Child, data->GUI.TX_SPAMGOODCOUNT = TextObject,
-               TextFrame,
-               MUIA_Background,    MUII_TextBack,
-               MUIA_Text_SetMin,   TRUE,
-               MUIA_Text_PreParse, "\033r",
-             End,
-             Child, HSpace(0),
-             Child, Label2(tr(MSG_CO_SPAM_BADCOUNT)),
-             Child, data->GUI.TX_SPAMBADCOUNT = TextObject,
-               TextFrame,
-               MUIA_Background,    MUII_TextBack,
-               MUIA_Text_SetMin,   TRUE,
-               MUIA_Text_PreParse, "\033r",
-             End,
-             Child, HSpace(0),
-           End,
-           Child, HGroup,
-             Child, data->GUI.BT_SPAMRESETTRAININGDATA = MakeButton(tr(MSG_CO_SPAM_RESETTRAININGDATA)),
-             Child, HSpace(0),
-           End,
-         End,
-
-         Child, VGroup, GroupFrameT(tr(MSG_CO_SPAM_RECOGNITION)),
-           Child, HGroup,
-             Child, data->GUI.CH_SPAMABOOKISWHITELIST = MakeCheck(tr(MSG_CO_SPAM_ADDRESSBOOKISWHITELIST)),
-             Child, LLabel(tr(MSG_CO_SPAM_ADDRESSBOOKISWHITELIST)),
-             Child, HSpace(0),
-           End,
-         End,
-
-         Child, HVSpace,
-      End))
-   {
-      DoMethod(data->GUI.BT_SPAMRESETTRAININGDATA, MUIM_Notify, MUIA_Pressed,  FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &ResetSpamTrainingDataHook);
-   }
-   return grp;
+  RETURN(obj);
+  return obj;
 }
 ///
 

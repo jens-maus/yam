@@ -7,6 +7,9 @@ $URL$
 
 2007-02-17  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c, YAM.cd: relayouted the Spam configuration page and added all
+    missing help texts. In addition, all checkboxes and buttons will now be
+    automatically disabled in case the spam filter is disabled as well.
   * YAM.cd, deutsch.ct: corrected the "word-wrap" spelling both in the english
     and english catalog.
 

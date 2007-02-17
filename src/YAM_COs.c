@@ -1781,7 +1781,7 @@ void CO_SetConfig(void)
 
       case cp_Spam:
       {
-         char buf[SIZE_DEFAULT];
+         char buf[SIZE_SMALL];
 
          setcheckmark(gui->CH_SPAMFILTERENABLED, CE->SpamFilterEnabled);
          setcheckmark(gui->CH_SPAMFILTERFORNEWMAIL, CE->SpamFilterForNewMail);
