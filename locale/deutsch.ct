@@ -1668,8 +1668,8 @@ Editor
 ; Editor
 ;
 MSG_CO_WordWrap
-Wort_umbruch
-; _Word wrap
+Zeilen_umbruch
+; _Word-wrap
 ;
 MSG_CO_EWOff
 ausgeschaltet

@@ -1279,7 +1279,7 @@ MSG_CO_Editor (437//)
 Editor
 ;
 MSG_CO_WordWrap (438//)
-_Word wrap
+_Word-wrap
 ;
 MSG_CO_EWOff (439//)
 off
@@ -6094,7 +6094,7 @@ MSG_WR_SEARCH_AGAIN (1849//)
 Search again
 ;
 MSG_WR_AUTOWRAP (1850//)
-Word wrap
+Word-wrap
 ;
 MSG_CO_SPAM_MARK_AS_READ (1851//)
 Mark spam mails as read

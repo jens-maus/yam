@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-02-17  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.cd, deutsch.ct: corrected the "word-wrap" spelling both in the english
+    and english catalog.
+
 2007-02-15  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: added missing default setting for the new "mark spam as read"
