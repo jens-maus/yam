@@ -5905,7 +5905,7 @@ mail client.
 ;
 MSG_ER_SPAMDIR_EXISTS (1791//)
 While trying to create a new spam folder, YAM found that\n\
-there seems to already exists a folder name 'spam'.\n\
+there seems to already exists a folder named 'spam'.\n\
 \n\
 How do you want to use this directory as the standard\n\
 spam folder?
