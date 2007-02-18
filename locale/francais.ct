@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 6.0 (20.11.2006)
+## version $VER: YAM.catalog 6.0 (18.02.2007)
 ## language français
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 2639 2007-01-22 20:12:48Z
+; based on YAM.cd 2683 2007-01-22 20:12:48Z
 ;
 ; General
 ;
@@ -234,22 +234,6 @@ Version:
 MSG_CompilationDate
 Compilé le:
 ; Compilation date:
-;
-MSG_Copyright2
-Ce programme est un un logiciel libre. Vous pouvez le distribuer \
-et/ou le modifier en accord avec les termes de la licence publique GNU. \
-Lire la documentation pour obtenir plus d'informations.\n
-; This program is free software; you're welcome to distribute \
-; and/or modify it under the terms of the GNU Public License. \
-; See the enclosed documents for more details.\n
-;
-MSG_UsedSoftware
-\nCe programme utilise les logiciels suivants :\n
-; \nThis application uses the following third party software:\n
-;
-MSG_WebSite
-Les dernières nouvelles au sujet de YAM peuvent être trouvées sur le site : \e5http://www.yam.ch
-; The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
 ;
 MSG_UserLogin
 Sélectionnez un utilisateur
@@ -1031,7 +1015,7 @@ MSG_CO_ImportMIMEGads
 ; *_MIME.prefs|m_ailcap|m_ime.types|_Cancel
 ;
 MSG_CO_NewIntroDef
-Salut,\\n
+Salut,\\\\n
 ; Hello,\\\\n
 ;
 MSG_CO_AltRepIntroDef
@@ -1043,14 +1027,14 @@ MSG_CO_AltRepPatternDef
 ; 
 ;
 MSG_CO_ForwardIntroDef
-*** Message suivi ***\\n\
-\\n\
-Date : %c\\n\
-De : %n <%e>\\n\
-Sujet : %s\\n\
-\\n\
---- Début du message retransmis ---\\n\
-\\n
+*** Message suivi ***\\\\n\
+\\\\n\
+Date : %c\\\\n\
+De : %n <%e>\\\\n\
+Sujet : %s\\\\n\
+\\\\n\
+--- Début du message retransmis ---\\\\n\
+\\\\n
 ; *** Begin of forwarded message ***\\\\n\
 ; \\\\n\
 ; Date: %c\\\\n\
@@ -1061,7 +1045,7 @@ Sujet : %s\\n\
 ; \\\\n
 ;
 MSG_CO_ForwardFinishDef
-*** Fin du message retransmis ***\\n
+*** Fin du message retransmis ***\\\\n
 ; *** End of forwarded message ***\\\\n
 ;
 MSG_CO_GreetingsDef
@@ -1081,7 +1065,7 @@ MSG_CO_MLRepHelloDef
 ; 
 ;
 MSG_CO_MLRepIntroDef
-Le %c, %n a écrit :\\n\\n
+Le %c, %n a écrit :\\\\n
 ; On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
@@ -1089,7 +1073,7 @@ Salutations
 ; Regards
 ;
 MSG_CO_LineBreak
-\\n\
+\\\\n\
   Saut de ligne
 ; \\\\n\
 ;   Line break
@@ -1614,7 +1598,7 @@ Autres options
 ; Other options
 ;
 MSG_CO_WrapHeader
-Mise à la _ligne
+Retour à la _ligne
 ; _Wrap headers
 ;
 MSG_CO_OldQuotes
@@ -1706,8 +1690,8 @@ MSG_CO_Editor
 ; Editor
 ;
 MSG_CO_WordWrap
-_Césure
-; _Word wrap
+_Retour à la ligne
+; _Word-wrap
 ;
 MSG_CO_EWOff
 désactivée
@@ -2585,19 +2569,19 @@ de chaque nouveau message
 ; bottom of a new message
 ;
 MSG_HELP_CO_ST_EDWRAP
-N° de colonne à laquelle\n\
-le texte doit être interrompu
+Effectuer un retour à la ligne\n\
+automatique à cette colonne
 ; Word-wrap message text\n\
 ; at this column
 ;
 MSG_HELP_CO_CY_EDWRAP
-Sélectionnez « en frappant », pour activer\n\
-la césure pendant la création du message
+Sélectionnez « pendant la frappe », pour activer\n\
+le retour à la ligne pendant l'écriture du message
 ; Select 'as you type' to insert linebreak\n\
 ; codes while you're typing the message
 ;
 MSG_HELP_CO_CH_LAUNCH
-Ouvre automatiquement l'éditeur externe\n\
+Lance automatiquement l'éditeur externe\n\
 lors de la création d'un nouveau message
 ; Automatically launch the external editor\n\
 ; when starting a new message
@@ -3912,7 +3896,7 @@ Données et image
 ; Data and image
 ;
 MSG_RE_WrapHeader
-Césure sur les en-têtes
+Retour à la ligne des en-têtes
 ; Wrap headers
 ;
 MSG_RE_Textstyles
@@ -4768,7 +4752,7 @@ Charge le courrier...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Rapatrie le courrier de '%s'
+Rapatrie le courrier depuis '%s'
 ; Mail transfer from '%s'
 ; HOST
 ;
@@ -6213,10 +6197,6 @@ MSG_SEARCHWINDOW_BT_SEARCH
 _Rechercher
 ; _Search
 ;
-MSG_SEARCHWINDOW_BT_FROMTOP
-Du _début
-; From _top
-;
 MSG_SEARCHWINDOW_BT_CANCEL
 _Annuler
 ; _Cancel
@@ -6228,10 +6208,6 @@ Rechercher
 MSG_SEARCHNOTFOUND_MSG
 « %s » non trouvé
 ; '%s' not found.
-;
-MSG_SEARCHNOTFOUND_BUTTON
-Ok
-; Okay
 ;
 MSG_WR_ERRORNOSENDER
 Le message est incomplet : il n'y a pas d'expéditeur !
@@ -8128,7 +8104,7 @@ Pour configurer le filtrage des courriers indésirables...
 ; Configure spam filter...
 ;
 MSG_CO_SPAM_FILTERFORNEWMAIL
-Vérifier les messages pour le contenu indésirable
+Filtrer les contenus indésirables des nouveaux courriers
 ; Check new mails for spam content
 ;
 MSG_CO_SPAM_RESETTRAININGDATA
@@ -8142,10 +8118,6 @@ Nombre de courriers classés comme « acceptables »
 MSG_CO_SPAM_BADCOUNT
 Nombre de courriers classés comme « indésirables »
 ; Number of "spam" classified mails
-;
-MSG_CO_SPAM_PROBABILITYTHRESHOLD
-Considérer comme indésirable lorsque la probabilité est supérieure ou égale à
-; Treat mails as spam if spam probability is greater or equal
 ;
 MSG_CO_NB_SPAMPROBTHRESHOLDFMT
 %ld%%
@@ -8267,7 +8239,7 @@ un dossier « spam ».\n\
 De quelle manière voulez-vous utiliser ce dossier\n\
 en tant que dossier standard pour les indésirables ?
 ; While trying to create a new spam folder, YAM found that\n\
-; there seems to already exists a folder name 'spam'.\n\
+; there seems to already exists a folder named 'spam'.\n\
 ; \n\
 ; How do you want to use this directory as the standard\n\
 ; spam folder?
@@ -8311,8 +8283,8 @@ Corbeille
 ; Trash
 ;
 MSG_WR_SEARCH
-Chercher
-; Search
+Chercher...
+; Search...
 ;
 MSG_AB_IMPORT
 Importer
@@ -8511,4 +8483,103 @@ Un nom arbitraire qui sera utilisé pour compte à\n\
 la place de utilisateur@hôte
 ; An arbitrary name for this account which will be\n\
 ; used instead of user@host.
+;
+MSG_RE_SEARCH
+Chercher...
+; Search...
+;
+MSG_RE_SEARCH_AGAIN
+Chercher encore
+; Search again
+;
+MSG_WR_SEARCH_AGAIN
+Chercher encore
+; Search again
+;
+MSG_WR_AUTOWRAP
+Retour automatique à la ligne
+; Word-wrap
+;
+MSG_CO_SPAM_MARK_AS_READ
+Marquer les courriers indésirables comme lus
+; Mark spam mails as read
+;
+;
+MSG_HELP_CH_SPAMFILTERENABLED
+Active le moteur de filtre des indésirables de YAM qui\n\
+permet d'écarter les courriers publicitaires abusifs.
+; Enables the Spam filter engine in YAM which\n\
+; allows to filter out abusive advertising emails.
+;
+;
+MSG_HELP_TX_SPAMBADCOUNT
+Indique le nombre de courriers manuellement\n\
+identifiés comme étant indésirables.
+; Shows the amount of manually classified "Spam"\n\
+; emails.
+;
+;
+MSG_HELP_TX_SPAMGOODCOUNT
+Indique le nombre de courriers manuellement\n\
+identifiés comme étant acceptables.
+; Shows the amount of manually classified "Not-Spam"\n\
+; emails - also known as "Ham".
+;
+;
+MSG_HELP_BT_SPAMRESETTRAININGDATA
+Permet de manuellement réinitialiser la totalité de\n\
+l'apprentissage du filtre de détection des indésirables.\n\
+Veuillez noter que cela ne devrait être nécessaire que\n\
+dans de très rares cas.
+; Allows to manually reset the whole spam filter\n\
+; training data. Please note that this might only\n\
+; be necessary in very rare cases.
+;
+;
+MSG_HELP_CH_SPAMFILTERFORNEWMAIL
+Avec cette option, les nouveaux courriers entrants sont\n\
+automatiquement analysés pour filtrer les indésirables.
+; If checked, incoming new mails will be automatically\n\
+; checked for their "Spam" classification.
+;
+;
+MSG_HELP_CH_SPAMABOOKISWHITELIST
+Avec cette option, les courriers provenant d'expéditeurs\n\
+présents dans le carnet d'adresses ne seront jamais\n\
+considérés comme des courriers indésirables.
+; If checked, mails with a sender address that can be\n\
+; found in the addressbook will not considered to be\n\
+; spam mails.
+;
+;
+MSG_HELP_CH_SPAMMARKONMOVE
+Avec cette option, les courriers manuellement déplacés\n\
+dans le dossier « Indésirables » seront automatiquement\n\
+marqués comme étant indésirables.
+; If checked, mails will be automatically marked as\n\
+; spam mails if they are manually dropped into the\n\
+; spam folder.
+;
+;
+MSG_HELP_CH_SPAMMARKASREAD
+Avec cette option, les courriers indésirables seront\n\
+autmatiquement marqués comme lus et ne seront donc pas\n\
+portés à l'attention de l'utilisateur.
+; If checked, spam mail will be automatically flagged\n\
+; as read and therefore not raise attention to the\n\
+; user.
+;
+;
+MSG_HELP_CH_UPDATECHECK
+Cette option active le mécanisme de vérification\n\
+automatique de mise à jour dans YAM. En respectant\n\
+un intervalle défini, YAM tentera de récupérer les\n\
+informations sur la dernière version par Internet,\n\
+et avertira l'utilisateur des mises à jour logicielles.
+; Allows to enable the automatic update check\n\
+; mechanismin YAM. According to a specified interval\n\
+; it will try to get latest version information via\n\
+; the internet and remind you of available software\n\
+; updates.
+;
 ;

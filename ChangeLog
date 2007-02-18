@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-01-26  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/francais.ct: Update according to the latest changes, and some
+    minor corrections.
+
 2007-02-17  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c, YAM.cd: relayouted the Spam configuration page and added all
