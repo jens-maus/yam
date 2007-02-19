@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-02-19  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: Updated according to changes.
+
 2007-01-26  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: Update according to the latest changes, and some

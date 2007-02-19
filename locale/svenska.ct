@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.12 (23.01.07)
+## version $VER: YAM.ct 6.13 (19.02.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -229,18 +229,6 @@ MSG_CompilationDate
 Kompileringsdatum:
 ;#DEF Compilation date:
 ;#SET (61//)
-MSG_Copyright2
-Detta program är gratis; du får gärna distribuera och/eller modifiera det under GNU GPL villkoren. Se de medföljande dokumenten för mer information.\n
-;#DEF This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n
-;#SET (62//)
-MSG_UsedSoftware
-\nDetta program använder följande mjukvara av tredjepart:\n
-;#DEF \nThis application uses the following third party software:\n
-;#SET (63//)
-MSG_WebSite
-De senaste nyheterna om YAM, kan hittas på YAM's hemsida: \e5http://www.yam.ch/
-;#DEF The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
-;#SET (64//)
 MSG_UserLogin
 Välj användare för att logga in
 ;#DEF Click your name to login
@@ -1563,7 +1551,7 @@ Redigerare
 ;#SET (437//)
 MSG_CO_WordWrap
 _Radbrytning
-;#DEF _Word wrap
+;#DEF _Word-wrap
 ;#SET (438//)
 MSG_CO_EWOff
 avstängd
@@ -5121,10 +5109,6 @@ MSG_SEARCHWINDOW_BT_SEARCH
 _Sök
 ;#DEF _Search
 ;#SET (1394//)
-MSG_SEARCHWINDOW_BT_FROMTOP
-Från _topp
-;#DEF From _top
-;#SET (1395//)
 MSG_SEARCHWINDOW_BT_CANCEL
 A_vbryt
 ;#DEF _Cancel
@@ -5137,10 +5121,6 @@ MSG_SEARCHNOTFOUND_MSG
 '%s' ej hittad.
 ;#DEF '%s' not found.
 ;#SET (1398//)
-MSG_SEARCHNOTFOUND_BUTTON
-Okej
-;#DEF Okay
-;#SET (1399//)
 MSG_WR_ERRORNOSENDER
 Brevet är ofullständigt: ingen avsändare!
 ;#DEF Mail is incomplete: no sender!
@@ -6545,10 +6525,6 @@ MSG_CO_SPAM_BADCOUNT
 Antal brev klassifierade som "skräppost"
 ;#DEF Number of "spam" classified mails
 ;#SET (1768//)
-MSG_CO_SPAM_PROBABILITYTHRESHOLD
-Behandla brev som skräppost, om skräppost sannolikheten är större än eller lika med
-;#DEF Treat mails as spam if spam probability is greater or equal
-;#SET (1769//)
 MSG_CO_NB_SPAMPROBTHRESHOLDFMT
 %ld%%
 ;#DEF %ld%%
@@ -6630,8 +6606,8 @@ SMTP-servern '%s' verkar inte stödja den valda SMTP-AUTH metoden.\n\nVar god ver
 ;#DEF The SMTP server '%s' doesn't seem to support the selected SMTP-AUTH method.\n\nPlease verify with your provider which authentication methods are available and how to configure them in your mail client.
 ;#SET (1790//)
 MSG_ER_SPAMDIR_EXISTS
-Vid försök att skapa en ny skräppostmapp, så har YAM\nhittat en redan existerande skräppostmapp.\n\nHur vill du använda denna mapp som standardmapp\nför skräppost?
-;#DEF While trying to create a new spam folder, YAM found that\nthere seems to already exists a folder name 'spam'.\n\nHow do you want to use this directory as the standard\nspam folder?
+Vid försök att skapa en ny skräppostmapp, så har YAM\nhittat en redan existerande skräppostmapp, vid namn 'spam'.\n\nHur vill du använda denna mapp som standardmapp\nför skräppost?
+;#DEF While trying to create a new spam folder, YAM found that\nthere seems to already exists a folder named 'spam'.\n\nHow do you want to use this directory as the standard\nspam folder?
 ;#SET (1791//)
 MSG_ER_SPAMDIR_EXISTS_ANSWERS
 _Rensa&använd|_Använd|*A_vbryt
@@ -6662,8 +6638,8 @@ Borttaget
 ;#DEF Trash
 ;#SET (1798//)
 MSG_WR_SEARCH
-Sök
-;#DEF Search
+Sök...
+;#DEF Search...
 ;#SET (1799//)
 MSG_AB_IMPORT
 Importera
@@ -6853,3 +6829,59 @@ MSG_HELP_CO_ST_POPACCOUNT
 Ett godtryckligt namn för detta konto, att användas\ninstället för användare@värd.
 ;#DEF An arbitrary name for this account which will be\nused instead of user@host.
 ;#SET (1846//)
+MSG_RE_SEARCH
+Sök...
+;#DEF Search...
+;#SET (1847//)
+MSG_RE_SEARCH_AGAIN
+Sök igen
+;#DEF Search again
+;#SET (1848//)
+MSG_WR_SEARCH_AGAIN
+Sök igen
+;#DEF Search again
+;#SET (1849//)
+MSG_WR_AUTOWRAP
+Radbrytning
+;#DEF Word-wrap
+;#SET (1850//)
+MSG_CO_SPAM_MARK_AS_READ
+Markera skräppost som läst
+;#DEF Mark spam mails as read
+;#SET (1851//)
+MSG_HELP_CH_SPAMFILTERENABLED
+Aktiverar skräppostfiltret i YAM, som möjliggör\nfiltrering av reklam och annan elak e-post.
+;#DEF Enables the Spam filter engine in YAM which\nallows to filter out abusive advertising emails.
+;#SET (1852//)
+MSG_HELP_TX_SPAMBADCOUNT
+Visar antalet brev manuellt klassade som "Skräppost".
+;#DEF Shows the amount of manually classified "Spam"\nemails.
+;#SET (1853//)
+MSG_HELP_TX_SPAMGOODCOUNT
+Visar antalet brev manuellt klassade som "Ej skräppost".
+;#DEF Shows the amount of manually classified "Not-Spam"\nemails - also known as "Ham".
+;#SET (1854//)
+MSG_HELP_BT_SPAMRESETTRAININGDATA
+Möjliggör manuell nollställning av hela\nskräppostfiltrets träningsdata.\nVar god notera att detta bara är\nnödvändigt i enstaka fall.
+;#DEF Allows to manually reset the whole spam filter\ntraining data. Please note that this might only\nbe necessary in very rare cases.
+;#SET (1855//)
+MSG_HELP_CH_SPAMFILTERFORNEWMAIL
+Om vald, kommer nya inkommande brev att\nautomatiskt kontrolleras för deras "Skräppost"\nklassifiering.
+;#DEF If checked, incoming new mails will be automatically\nchecked for their "Spam" classification.
+;#SET (1856//)
+MSG_HELP_CH_SPAMABOOKISWHITELIST
+Om vald, kommer brev med en avsändar adress som finns i\nadressboken inte att betraktas som skräppost.
+;#DEF If checked, mails with a sender address that can be\nfound in the addressbook will not considered to be\nspam mails.
+;#SET (1857//)
+MSG_HELP_CH_SPAMMARKONMOVE
+Om vald, kommer brev att automatiskt bli markerad\nsom skräppost om de manuellt släpps i skräppostmappen.
+;#DEF If checked, mails will be automatically marked as\nspam mails if they are manually dropped into the\nspam folder.
+;#SET (1858//)
+MSG_HELP_CH_SPAMMARKASREAD
+Om vald, kommer skräppost att automatiskt bli markerad\nsom läst och på så sätt inte väcka användarens uppmärksamhet.
+;#DEF If checked, spam mail will be automatically flagged\nas read and therefore not raise attention to the\nuser.
+;#SET (1859//)
+MSG_HELP_CH_UPDATECHECK
+Aktiverar den automatiska uppdateringskontroll\nmekanismen i YAM. Enligt angiven specifierad\nintervall, kommer den att försöka hämta den\nsenaste versionsinformationen via internet och\npåminna dig om tillgängliga uppdateringar.
+;#DEF Allows to enable the automatic update check\nmechanismin YAM. According to a specified interval\nit will try to get latest version information via\nthe internet and remind you of available software\nupdates.
+;#SET (1860//)
