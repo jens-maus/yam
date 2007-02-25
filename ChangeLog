@@ -5,6 +5,21 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-02-25  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, YAM.cd: integrated new MUIM_TextEditor_QueryKeyAction usage
+    where we now can dynamically set the shotcuts of the
+    Copy/Cut/Paste/Undo/SelectAll menu items according to what was set up
+    in the TextEditor.mcc configuration. So we finally got rid of the
+    "ramiga" abbreviations in the write window menus and show the correct
+    shortcuts now.
+  * YAM_WR.c, YAM.c: added new "Select All" menu item which allows to select
+    the whole text in the texteditor with one single shortcut. This requires
+    the latest version of TextEditor.mcc and we therefore bumped the minimum
+    required version of it to 15.20.
+  * TextEditor_mcc.h: updated the TextEditor.mcc header
+    files to the very latest 15.20 version.
+
 2007-02-19  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: Updated according to changes.

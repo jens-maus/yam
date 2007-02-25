@@ -5,7 +5,7 @@
 
  TextEditor.mcc - Textediting MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by TextEditor.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
 
  TextEditor class Support Site:  http://www.sf.net/projects/texteditor-mcc
 
- $Id: TextEditor_mcc.h 263 2006-10-08 14:50:06Z damato $
+ $Id: TextEditor_mcc.h 298 2007-02-25 15:46:21Z damato $
 
 ***************************************************************************/
 
@@ -95,9 +95,10 @@ extern "C" {
 #define MUIM_TextEditor_MacroBegin        (TextEditor_Dummy + 0x27)
 #define MUIM_TextEditor_MacroEnd          (TextEditor_Dummy + 0x28)
 #define MUIM_TextEditor_MacroExecute      (TextEditor_Dummy + 0x29)
-#define MUIM_TextEditor_MarkText          (TextEditor_Dummy + 0x2c)
 #define MUIM_TextEditor_Replace           (TextEditor_Dummy + 0x2a)
 #define MUIM_TextEditor_Search            (TextEditor_Dummy + 0x2b)
+#define MUIM_TextEditor_MarkText          (TextEditor_Dummy + 0x2c)
+#define MUIM_TextEditor_QueryKeyAction    (TextEditor_Dummy + 0x2d)
 
 struct MUIP_TextEditor_ARexxCmd          { ULONG MethodID; STRPTR command; };
 struct MUIP_TextEditor_BlockInfo         { ULONG MethodID; ULONG *startx; ULONG *starty; ULONG *stopx; ULONG *stopy; };
@@ -106,9 +107,10 @@ struct MUIP_TextEditor_ExportBlock       { ULONG MethodID; ULONG flags; };
 struct MUIP_TextEditor_ExportText        { ULONG MethodID; };
 struct MUIP_TextEditor_HandleError       { ULONG MethodID; ULONG errorcode; }; /* See below for error codes */
 struct MUIP_TextEditor_InsertText        { ULONG MethodID; STRPTR text; LONG pos; }; /* See below for positions */
-struct MUIP_TextEditor_MarkText          { ULONG MethodID; ULONG start_crsr_x; ULONG start_crsr_y; ULONG stop_crsr_x; ULONG stop_crsr_y; };
-struct MUIP_TextEditor_Search            { ULONG MethodID; STRPTR SearchString; ULONG Flags; };
 struct MUIP_TextEditor_Replace           { ULONG MethodID; STRPTR NewString; ULONG Flags; };
+struct MUIP_TextEditor_Search            { ULONG MethodID; STRPTR SearchString; ULONG Flags; };
+struct MUIP_TextEditor_MarkText          { ULONG MethodID; ULONG start_crsr_x; ULONG start_crsr_y; ULONG stop_crsr_x; ULONG stop_crsr_y; };
+struct MUIP_TextEditor_QueryKeyAction    { ULONG MethodID; ULONG keyAction; };
 
 #define MUIV_TextEditor_ExportHook_Plain       0x00000000
 #define MUIV_TextEditor_ExportHook_EMail       0x00000001
@@ -127,6 +129,10 @@ struct MUIP_TextEditor_Replace           { ULONG MethodID; STRPTR NewString; ULO
 #define MUIV_TextEditor_InsertText_Cursor      0x00000000
 #define MUIV_TextEditor_InsertText_Top         0x00000001
 #define MUIV_TextEditor_InsertText_Bottom      0x00000002
+
+/* Values for MUIM_TextEditor_MarkText */
+#define MUIV_TextEditor_MarkText_All           -1
+#define MUIV_TextEditor_MarkText_None          -1
 
 /* Flags for MUIM_TextEditor_Search */
 #define MUIF_TextEditor_Search_FromTop         (1 << 0)
@@ -159,7 +165,6 @@ struct ClickMessage
 };
 
 /* Definitions for Separator type */
-
 #define LNSB_Top             0 /* Mutual exclude: */
 #define LNSB_Middle          1 /* Placement of    */
 #define LNSB_Bottom          2 /*  the separator  */
@@ -171,6 +176,56 @@ struct ClickMessage
 #define LNSF_Bottom          (1<<LNSB_Bottom)
 #define LNSF_StrikeThru      (1<<LNSB_StrikeThru)
 #define LNSF_Thick           (1<<LNSB_Thick)
+
+/* Keyaction definitions */
+#define MUIV_TextEditor_KeyAction_Up              0x00
+#define MUIV_TextEditor_KeyAction_Down            0x01
+#define MUIV_TextEditor_KeyAction_Left            0x02
+#define MUIV_TextEditor_KeyAction_Right           0x03
+#define MUIV_TextEditor_KeyAction_PageUp          0x04
+#define MUIV_TextEditor_KeyAction_PageDown        0x05
+#define MUIV_TextEditor_KeyAction_StartOfLine     0x06
+#define MUIV_TextEditor_KeyAction_EndOfLine       0x07
+#define MUIV_TextEditor_KeyAction_Top             0x08
+#define MUIV_TextEditor_KeyAction_Bottom          0x09
+#define MUIV_TextEditor_KeyAction_PrevWord        0x0a
+#define MUIV_TextEditor_KeyAction_NextWord        0x0b
+#define MUIV_TextEditor_KeyAction_PrevLine        0x0c
+#define MUIV_TextEditor_KeyAction_NextLine        0x0d
+#define MUIV_TextEditor_KeyAction_PrevSentence    0x0e
+#define MUIV_TextEditor_KeyAction_NextSentence    0x0f
+#define MUIV_TextEditor_KeyAction_SuggestWord     0x10
+#define MUIV_TextEditor_KeyAction_Backspace       0x11
+#define MUIV_TextEditor_KeyAction_Delete          0x12
+#define MUIV_TextEditor_KeyAction_Return          0x13
+#define MUIV_TextEditor_KeyAction_Tab             0x14
+#define MUIV_TextEditor_KeyAction_Cut             0x15
+#define MUIV_TextEditor_KeyAction_Copy            0x16
+#define MUIV_TextEditor_KeyAction_Paste           0x17
+#define MUIV_TextEditor_KeyAction_Undo            0x18
+#define MUIV_TextEditor_KeyAction_Redo            0x19
+#define MUIV_TextEditor_KeyAction_DelBOL          0x1a
+#define MUIV_TextEditor_KeyAction_DelEOL          0x1b
+#define MUIV_TextEditor_KeyAction_DelBOW          0x1c
+#define MUIV_TextEditor_KeyAction_DelEOW          0x1d
+#define MUIV_TextEditor_KeyAction_NextGadget      0x1e
+#define MUIV_TextEditor_KeyAction_GotoBookmark1   0x1f
+#define MUIV_TextEditor_KeyAction_GotoBookmark2   0x20
+#define MUIV_TextEditor_KeyAction_GotoBookmark3   0x21
+#define MUIV_TextEditor_KeyAction_SetBookmark1    0x22
+#define MUIV_TextEditor_KeyAction_SetBookmark2    0x23
+#define MUIV_TextEditor_KeyAction_SetBookmark3    0x24
+#define MUIV_TextEditor_KeyAction_DelLine         0x25
+#define MUIV_TextEditor_KeyAction_SelectAll       0x26
+#define MUIV_TextEditor_KeyAction_SelectNone      0x27
+
+/* result structure for MUIM_TextEditor_QueryKeyAction */
+struct MUIP_TextEditor_Keybinding
+{
+  const UWORD code;       // the RAWKEY code      read only
+  const ULONG qualifier;  // the Qualifier flags  read only
+  const UWORD action;     // the keyaction        read only
+};
 
 #ifdef __GNUC__
   #ifdef __PPC__

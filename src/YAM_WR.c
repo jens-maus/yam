@@ -3034,14 +3034,14 @@ static struct WR_ClassData *WR_New(int winnum)
    {
       enum {
         WMEN_NEW=501,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,WMEN_INSALTQUOT,
-        WMEN_INSROT13,WMEN_EDIT,WMEN_CUT,WMEN_COPY,WMEN_PASTE,
+        WMEN_INSROT13,WMEN_EDIT,WMEN_CUT,WMEN_COPY,WMEN_PASTE,WMEN_SELECTALL,
         WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_SEARCH,WMEN_SEARCHAGAIN,WMEN_DICT,
         WMEN_STYLE_BOLD,WMEN_STYLE_ITALIC,WMEN_STYLE_UNDERLINE,
         WMEN_STYLE_COLORED,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
         WMEN_AUTOSP,WMEN_AUTOWRAP,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
         WMEN_DELSEND,WMEN_RECEIPT,WMEN_DISPNOTI,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
         WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
-        WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5, WMEN_INSUUCODE
+        WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5, WMEN_INSUUCODE,
       };
 
       static const char *rtitles[4] = { NULL };
@@ -3058,8 +3058,10 @@ static struct WR_ClassData *WR_New(int winnum)
       Object *sec_menus[SEC_MAXDUMMY];
       Object *mi_copy;
       Object *mi_cut;
+      Object *mi_paste;
       Object *mi_redo;
       Object *mi_undo;
+      Object *mi_selectall;
       Object *strip;
       Object *mi_autospell;
       Object *mi_autowrap;
@@ -3126,17 +3128,19 @@ static struct WR_ClassData *WR_New(int winnum)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_LaunchEd), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,WMEN_EDIT, End,
             End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Edit),
-               MUIA_Family_Child, mi_cut = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MCut), MUIA_Menuitem_Shortcut,"ramiga X", MUIA_Menuitem_CommandString, TRUE, MUIA_UserData, WMEN_CUT, End,
-               MUIA_Family_Child, mi_copy = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MCopy), MUIA_Menuitem_Shortcut,"ramiga C", MUIA_Menuitem_CommandString, TRUE, MUIA_UserData, WMEN_COPY, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MPaste), MUIA_Menuitem_Shortcut, "ramiga V", MUIA_Menuitem_CommandString, TRUE, MUIA_UserData, WMEN_PASTE, End,
+               MUIA_Family_Child, mi_cut = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MCut), MUIA_UserData, WMEN_CUT, End,
+               MUIA_Family_Child, mi_copy = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MCopy), MUIA_UserData, WMEN_COPY, End,
+               MUIA_Family_Child, mi_paste = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MPaste), MUIA_UserData, WMEN_PASTE, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_PasteAs),
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Quoted), MUIA_Menuitem_Shortcut,"Q", MUIA_UserData,WMEN_PASQUOT, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AltQuoted), MUIA_UserData,WMEN_PASALTQUOT, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_ROT13), MUIA_UserData,WMEN_PASROT13, End,
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, mi_undo = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MUndo), MUIA_Menuitem_Shortcut,"ramiga Z", MUIA_Menuitem_CommandString, TRUE, MUIA_UserData, WMEN_UNDO, End,
+               MUIA_Family_Child, mi_undo = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MUndo), MUIA_UserData, WMEN_UNDO, End,
                MUIA_Family_Child, mi_redo = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Redo), MUIA_UserData, WMEN_REDO, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
+               MUIA_Family_Child, mi_selectall = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_SELECTALL), MUIA_UserData, WMEN_SELECTALL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_SEARCH), MUIA_Menuitem_Shortcut,"F", MUIA_UserData,WMEN_SEARCH, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_SEARCH_AGAIN), MUIA_Menuitem_Shortcut,"G", MUIA_UserData,WMEN_SEARCHAGAIN, End,
@@ -3159,7 +3163,7 @@ static struct WR_ClassData *WR_New(int winnum)
                MUIA_Family_Child, mi_autowrap = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_AUTOWRAP), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_AUTOWRAP, End,
             End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Attachments),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MAddFile), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,WMEN_ADDFILE, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MAddFile), MUIA_Menuitem_Shortcut,"L", MUIA_UserData,WMEN_ADDFILE, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddCB), MUIA_UserData,WMEN_ADDCLIP, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddKey), MUIA_UserData,WMEN_ADDPGP, End,
             End,
@@ -3333,7 +3337,7 @@ static struct WR_ClassData *WR_New(int winnum)
          End,
       End;
 
-      if (data->GUI.WI)
+      if(data->GUI.WI && slider)
       {
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
@@ -3391,9 +3395,88 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_ADDFILE   ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddFileHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_ADDCLIP   ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddClipboardHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_ADDPGP    ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddPGPKeyHook,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SELECTALL, data->GUI.TE_EDIT,      2, MUIM_TextEditor_ARexxCmd, "SELECTALL");
          for (i = 0; i < 4; i++) DoMethod(data->GUI.WI,MUIM_Notify,MUIA_Window_MenuAction,WMEN_EMOT0+i,data->GUI.TE_EDIT,2,MUIM_TextEditor_InsertText,emoticons[i]);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_AppMessage          ,MUIV_EveryTime ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_AppHook,MUIV_TriggerValue,winnum);
          DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify,MUIA_TextEditor_AreaMarked,MUIV_EveryTime,MUIV_Notify_Application,6,MUIM_MultiSet   ,MUIA_Menuitem_Enabled,MUIV_TriggerValue,mi_copy,mi_cut,NULL);
+
+         if(data->GUI.TE_EDIT)
+         {
+           struct MUIP_TextEditor_Keybinding *key;
+
+           // now we find out the current key bindings of the TextEditor
+           // object for the copy/paste/cut and so on actions
+
+           // COPY action
+           if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Copy)) &&
+              key->code > 500 && key->qualifier == IEQUALIFIER_RCOMMAND)
+           {
+             static char copyChar[2];
+
+             copyChar[0] = toupper(key->code-500);
+             copyChar[1] = '\0';
+
+             SetAttrs(mi_copy, MUIA_Menuitem_CommandString, FALSE,
+                               MUIA_Menuitem_Shortcut,      copyChar,
+                               TAG_DONE);
+           }
+
+           // CUT action
+           if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Cut)) &&
+              key->code > 500 && key->qualifier == IEQUALIFIER_RCOMMAND)
+           {
+             static char cutChar[2];
+
+             cutChar[0] = toupper(key->code-500);
+             cutChar[1] = '\0';
+
+             SetAttrs(mi_cut, MUIA_Menuitem_CommandString, FALSE,
+                              MUIA_Menuitem_Shortcut,      cutChar,
+                              TAG_DONE);
+           }
+
+           // PASTE action
+           if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Paste)) &&
+              key->code > 500 && key->qualifier == IEQUALIFIER_RCOMMAND)
+           {
+             static char pasteChar[2];
+
+             pasteChar[0] = toupper(key->code-500);
+             pasteChar[1] = '\0';
+
+             SetAttrs(mi_paste, MUIA_Menuitem_CommandString, FALSE,
+                                MUIA_Menuitem_Shortcut,      pasteChar,
+                                TAG_DONE);
+           }
+
+           // UNDO action
+           if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Undo)) &&
+              key->code > 500 && key->qualifier == IEQUALIFIER_RCOMMAND)
+           {
+             static char undoChar[2];
+
+             undoChar[0] = toupper(key->code-500);
+             undoChar[1] = '\0';
+
+             SetAttrs(mi_undo, MUIA_Menuitem_CommandString, FALSE,
+                               MUIA_Menuitem_Shortcut,      undoChar,
+                               TAG_DONE);
+           }
+
+           // SELECTALL action
+           if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_SelectAll)) &&
+              key->code > 500 && key->qualifier == IEQUALIFIER_RCOMMAND)
+           {
+             static char selectAllChar[2];
+
+             selectAllChar[0] = toupper(key->code-500);
+             selectAllChar[1] = '\0';
+
+             SetAttrs(mi_selectall, MUIA_Menuitem_CommandString, FALSE,
+                                    MUIA_Menuitem_Shortcut,      selectAllChar,
+                                    TAG_DONE);
+           }
+         }
 
          // set some notifications on the toolbar
          // in case it was generated

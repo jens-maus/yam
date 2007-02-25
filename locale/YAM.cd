@@ -6142,3 +6142,6 @@ it will try to get latest version information via\n\
 the internet and remind you of available software\n\
 updates.
 ;
+MSG_WR_SELECTALL (1861//)
+Select All
+;
