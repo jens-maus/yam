@@ -28,6 +28,8 @@
 
 ***************************************************************************/
 
+#include <mui/TheBar_mcc.h>
+
 // definition of an imageCacheNode which contains
 // all information of a loaded image file, including the
 // loaded image datatype object
@@ -50,6 +52,16 @@ void ImageCacheCleanup(void);
 struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr);
 void DisposeImage(struct imageCacheNode *node);
 BOOL IsImageInCache(const char *filename);
+
+// the prototypes/enums for our specialized Toolbarimage
+// cache
+enum TBType  { TBT_ReadWindow, TBT_WriteWindow, TBT_AbookWindow };
+enum TBImage { TBI_Normal, TBI_Ghosted, TBI_Selected };
+
+BOOL ToolbarCacheInit(const char *imagePath);
+void ToolbarCacheCleanup(void);
+struct MUIS_TheBar_Brush **ObtainToolbarImages(const enum TBType toolbar, const enum TBImage image);
+BOOL IsToolbarInCache(const enum TBType toolbar);
 
 // the imagelayout define which defines the current "version" of
 // the image layout we are currently using

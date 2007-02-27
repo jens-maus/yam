@@ -7,6 +7,12 @@ $URL$
 
 2007-02-27  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ImageCache.c, misc: addressed bug #1617052 by introducing a new toolbar
+    caching mechanism. Now all reusable toolbars (Read/Write and Addressbook)
+    will be kept cached internally in YAM and the images reused upon
+    creation of a TheBar toolbar. This should especially speed up the
+    opening of the read and write window. However, it requires the bugfixed
+    TheBar.mcc v21.2 version.
   * YAM_WR.c: partly reverted the 'ramiga' change as we can't use real
     menu shortcuts for the copy&paste operations in the write window.
     Otherwise the hotkeys of the string and the texteditor gadget interfere

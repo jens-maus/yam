@@ -68,6 +68,9 @@ struct Global
    Object *                 AboutWinObject;
    Object *                 AboutMUIObject;
    Object *                 UpdateNotifyWinObject;
+   Object *                 ReadToolbarCacheObject;
+   Object *                 WriteToolbarCacheObject;
+   Object *                 AbookToolbarCacheObject;
    char *                   ER_Message[MAXERR];
    struct DiskObject *      HideIcon;
    struct AppIcon *         AppIcon;

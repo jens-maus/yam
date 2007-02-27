@@ -1231,6 +1231,9 @@ static void Terminate(void)
       FreeDiskObject(G->DiskObj[i]);
   }
 
+  D(DBF_STARTUP, "freeing toolbar cache...");
+  ToolbarCacheCleanup();
+
   D(DBF_STARTUP, "freeing image cache...");
   ImageCacheCleanup();
 
@@ -1886,8 +1889,9 @@ static void Initialise(BOOL hidden)
    #endif
 
    // Lets check for the correct TheBar.mcc version
-   CheckMCC(MUIC_TheBar, 21, 1, TRUE, "http://www.sf.net/projects/thebar/");
-   CheckMCC(MUIC_TheButton, 21, 1, TRUE, "http://www.sf.net/projects/thebar/");
+   CheckMCC(MUIC_TheBar,     21, 2, TRUE, "http://www.sf.net/projects/thebar/");
+   CheckMCC(MUIC_TheBarVirt, 21, 2, TRUE, "http://www.sf.net/projects/thebar/");
+   CheckMCC(MUIC_TheButton,  21, 2, TRUE, "http://www.sf.net/projects/thebar/");
 
    // Lets check for the correct BetterString.mcc version
    CheckMCC(MUIC_BetterString, 11, 8, TRUE, "http://www.sf.net/projects/bstring-mcc/");
@@ -2005,6 +2009,11 @@ static void Initialise(BOOL hidden)
    // make sure we initialize the image Cache which in turn will
    // cause YAM to load all static images from the YAM:Icons directory
    if(ImageCacheInit(pathbuf) == FALSE)
+     Abort(NULL); // exit the application
+
+   // make sure we initialize the toolbar Cache which in turn will
+   // cause YAM to cache all often used toolbars and their images
+   if(ToolbarCacheInit(pathbuf) == FALSE)
      Abort(NULL); // exit the application
 
    // lets advance the progress bar to 20%

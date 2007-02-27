@@ -30,6 +30,8 @@
 
 #include "ReadWindowToolbar_cl.h"
 
+#include "ImageCache.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -65,103 +67,122 @@ enum { TB_READ_PREV=0,
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  // define the image arrays
-  static const char *normalImages[TB_READ_NUM+1] =
-  {
-    "Read_Prev",          // Prev
-    "Read_Next",          // Next
-    "Read_PrevThread",    // PrevThread
-    "Read_NextThread",    // NextThread
-    "Read_Display",       // Display
-    "Read_Save",          // Save
-    "Read_Print",         // Print
-    "Read_Delete",        // Delete
-    "Read_Move",          // Move
-    "Read_Reply",         // Reply
-    "Read_Forward",       // Forward
-    "Read_Spam",          // Spam
-    "Read_Ham",           // Ham
-    NULL
-  };
-
-  static const char *selectedImages[TB_READ_NUM+1] =
-  {
-    "Read_Prev_S",        // Prev
-    "Read_Next_S",        // Next
-    "Read_PrevThread_S",  // PrevThread
-    "Read_NextThread_S",  // NextThread
-    "Read_Display_S",     // Display
-    "Read_Save_S",        // Save
-    "Read_Print_S",       // Print
-    "Read_Delete_S",      // Delete
-    "Read_Move_S",        // Move
-    "Read_Reply_S",       // Reply
-    "Read_Forward_S",     // Forward
-    "Read_Spam_S",        // Spam
-    "Read_Ham_S",         // Ham
-    NULL
-  };
-
-  static const char *ghostedImages[TB_READ_NUM+1] =
-  {
-    "Read_Prev_G",        // Prev
-    "Read_Next_G",        // Next
-    "Read_PrevThread_G",  // PrevThread
-    "Read_NextThread_G",  // NextThread
-    "Read_Display_G",     // Display
-    "Read_Save_G",        // Save
-    "Read_Print_G",       // Print
-    "Read_Delete_G",      // Delete
-    "Read_Move_G",        // Move
-    "Read_Reply_G",       // Reply
-    "Read_Forward_G",     // Forward
-    "Read_Spam_G",        // Spam
-    "Read_Ham_G",         // Ham
-    NULL
-  };
-
-  // prepare the buttons array which defines how our
-  // toolbar looks like.
-  struct MUIS_TheBar_Button buttons[TB_READ_NUM+4] =
-  {
-    { TB_READ_PREV,       TB_READ_PREV,       tr(MSG_RE_TBPrev),    tr(MSG_HELP_RE_BT_PREVIOUS),    0, 0, NULL, NULL },
-    { TB_READ_NEXT,       TB_READ_NEXT,       tr(MSG_RE_TBNext),    tr(MSG_HELP_RE_BT_NEXT),        0, 0, NULL, NULL },
-    { TB_READ_PREVTHREAD, TB_READ_PREVTHREAD, tr(MSG_RE_TBPrevTh),  tr(MSG_HELP_RE_BT_QUESTION),    0, 0, NULL, NULL },
-    { TB_READ_NEXTTHREAD, TB_READ_NEXTTHREAD, tr(MSG_RE_TBNextTh),  tr(MSG_HELP_RE_BT_ANSWER),      0, 0, NULL, NULL },
-
-    { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
-
-    { TB_READ_DISPLAY,    TB_READ_DISPLAY,    tr(MSG_RE_TBDisplay), tr(MSG_HELP_RE_BT_DISPLAY),     0, 0, NULL, NULL },
-    { TB_READ_SAVE,       TB_READ_SAVE,       tr(MSG_RE_TBSave),    tr(MSG_HELP_RE_BT_EXPORT),      0, 0, NULL, NULL },
-    { TB_READ_PRINT,      TB_READ_PRINT,      tr(MSG_RE_TBPrint),   tr(MSG_HELP_RE_BT_PRINT),       0, 0, NULL, NULL },
-
-    { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
-
-    { TB_READ_DELETE,     TB_READ_DELETE,     tr(MSG_RE_TBDelete),  tr(MSG_HELP_RE_BT_DELETE),      0, 0, NULL, NULL },
-    { TB_READ_MOVE,       TB_READ_MOVE,       tr(MSG_RE_TBMove),    tr(MSG_HELP_RE_BT_MOVE),        0, 0, NULL, NULL },
-    { TB_READ_REPLY,      TB_READ_REPLY,      tr(MSG_RE_TBReply),   tr(MSG_HELP_RE_BT_REPLY),       0, 0, NULL, NULL },
-    { TB_READ_FORWARD,    TB_READ_FORWARD,    tr(MSG_RE_TBForward), tr(MSG_HELP_RE_BT_FORWARD),     0, 0, NULL, NULL },
-
-    { MUIV_TheBar_BarSpacer, TB_READ_NUM+1,  NULL, NULL, 0, 0, NULL, NULL },
-
-    // the "Spam" button is disabled by default
-    // the "not Spam" button is hidden by default
-    { TB_READ_SPAM,       TB_READ_SPAM,       tr(MSG_RE_TBSPAM),    tr(MSG_HELP_RE_BT_SPAM),        MUIV_TheBar_ButtonFlag_Disabled, 0, NULL, NULL },
-    { TB_READ_HAM,        TB_READ_HAM,        tr(MSG_RE_TBNOTSPAM), tr(MSG_HELP_RE_BT_NOTSPAM),     MUIV_TheBar_ButtonFlag_Hide, 0, NULL, NULL },
-    { MUIV_TheBar_End,       -1,  NULL, NULL, 0, 0, NULL, NULL },
-  };
-
   ENTER();
 
-  // instruct MUI to generate the object
-  if((obj = DoSuperNew(cl, obj,
-                       MUIA_Group_Horiz,             TRUE,
-                       MUIA_TheBar_Buttons,          buttons,
-                       MUIA_TheBar_PicsDrawer,       "PROGDIR:Icons",
-                       MUIA_TheBar_Pics,             normalImages,
-                       MUIA_TheBar_SelPics,          selectedImages,
-                       MUIA_TheBar_DisPics,          ghostedImages,
-                       TAG_MORE, inittags(msg))))
+  // depending on whether the read window toolbar
+  // exists cached already we go and obtain the images
+  // from the cached object instead.
+  if(IsToolbarInCache(TBT_ReadWindow))
+  {
+    // prepare the buttons array which defines how our
+    // toolbar looks like.
+    struct MUIS_TheBar_Button buttons[TB_READ_NUM+4] =
+    {
+      { TB_READ_PREV,       TB_READ_PREV,       tr(MSG_RE_TBPrev),    tr(MSG_HELP_RE_BT_PREVIOUS),    0, 0, NULL, NULL },
+      { TB_READ_NEXT,       TB_READ_NEXT,       tr(MSG_RE_TBNext),    tr(MSG_HELP_RE_BT_NEXT),        0, 0, NULL, NULL },
+      { TB_READ_PREVTHREAD, TB_READ_PREVTHREAD, tr(MSG_RE_TBPrevTh),  tr(MSG_HELP_RE_BT_QUESTION),    0, 0, NULL, NULL },
+      { TB_READ_NEXTTHREAD, TB_READ_NEXTTHREAD, tr(MSG_RE_TBNextTh),  tr(MSG_HELP_RE_BT_ANSWER),      0, 0, NULL, NULL },
+
+      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+
+      { TB_READ_DISPLAY,    TB_READ_DISPLAY,    tr(MSG_RE_TBDisplay), tr(MSG_HELP_RE_BT_DISPLAY),     0, 0, NULL, NULL },
+      { TB_READ_SAVE,       TB_READ_SAVE,       tr(MSG_RE_TBSave),    tr(MSG_HELP_RE_BT_EXPORT),      0, 0, NULL, NULL },
+      { TB_READ_PRINT,      TB_READ_PRINT,      tr(MSG_RE_TBPrint),   tr(MSG_HELP_RE_BT_PRINT),       0, 0, NULL, NULL },
+
+      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+
+      { TB_READ_DELETE,     TB_READ_DELETE,     tr(MSG_RE_TBDelete),  tr(MSG_HELP_RE_BT_DELETE),      0, 0, NULL, NULL },
+      { TB_READ_MOVE,       TB_READ_MOVE,       tr(MSG_RE_TBMove),    tr(MSG_HELP_RE_BT_MOVE),        0, 0, NULL, NULL },
+      { TB_READ_REPLY,      TB_READ_REPLY,      tr(MSG_RE_TBReply),   tr(MSG_HELP_RE_BT_REPLY),       0, 0, NULL, NULL },
+      { TB_READ_FORWARD,    TB_READ_FORWARD,    tr(MSG_RE_TBForward), tr(MSG_HELP_RE_BT_FORWARD),     0, 0, NULL, NULL },
+
+      { MUIV_TheBar_BarSpacer, TB_READ_NUM+1,  NULL, NULL, 0, 0, NULL, NULL },
+
+      // the "Spam" button is disabled by default
+      // the "not Spam" button is hidden by default
+      { TB_READ_SPAM,       TB_READ_SPAM,       tr(MSG_RE_TBSPAM),    tr(MSG_HELP_RE_BT_SPAM),        MUIV_TheBar_ButtonFlag_Disabled, 0, NULL, NULL },
+      { TB_READ_HAM,        TB_READ_HAM,        tr(MSG_RE_TBNOTSPAM), tr(MSG_HELP_RE_BT_NOTSPAM),     MUIV_TheBar_ButtonFlag_Hide, 0, NULL, NULL },
+      { MUIV_TheBar_End,       -1,  NULL, NULL, 0, 0, NULL, NULL },
+    };
+
+    // create TheBar object with the cached
+    // toolbar images
+    obj = DoSuperNew(cl, obj,
+                     MUIA_Group_Horiz,      TRUE,
+                     MUIA_TheBar_Buttons,   buttons,
+                     MUIA_TheBar_Images,    ObtainToolbarImages(TBT_ReadWindow, TBI_Normal),
+                     MUIA_TheBar_DisImages, ObtainToolbarImages(TBT_ReadWindow, TBI_Ghosted),
+                     MUIA_TheBar_SelImages, ObtainToolbarImages(TBT_ReadWindow, TBI_Selected),
+                     TAG_MORE, inittags(msg));
+  }
+  else
+  {
+    // define the image arrays
+    static const char *normalImages[TB_READ_NUM+1] =
+    {
+      "Read_Prev",          // Prev
+      "Read_Next",          // Next
+      "Read_PrevThread",    // PrevThread
+      "Read_NextThread",    // NextThread
+      "Read_Display",       // Display
+      "Read_Save",          // Save
+      "Read_Print",         // Print
+      "Read_Delete",        // Delete
+      "Read_Move",          // Move
+      "Read_Reply",         // Reply
+      "Read_Forward",       // Forward
+      "Read_Spam",          // Spam
+      "Read_Ham",           // Ham
+      NULL
+    };
+
+    static const char *selectedImages[TB_READ_NUM+1] =
+    {
+      "Read_Prev_S",        // Prev
+      "Read_Next_S",        // Next
+      "Read_PrevThread_S",  // PrevThread
+      "Read_NextThread_S",  // NextThread
+      "Read_Display_S",     // Display
+      "Read_Save_S",        // Save
+      "Read_Print_S",       // Print
+      "Read_Delete_S",      // Delete
+      "Read_Move_S",        // Move
+      "Read_Reply_S",       // Reply
+      "Read_Forward_S",     // Forward
+      "Read_Spam_S",        // Spam
+      "Read_Ham_S",         // Ham
+      NULL
+    };
+
+    static const char *ghostedImages[TB_READ_NUM+1] =
+    {
+      "Read_Prev_G",        // Prev
+      "Read_Next_G",        // Next
+      "Read_PrevThread_G",  // PrevThread
+      "Read_NextThread_G",  // NextThread
+      "Read_Display_G",     // Display
+      "Read_Save_G",        // Save
+      "Read_Print_G",       // Print
+      "Read_Delete_G",      // Delete
+      "Read_Move_G",        // Move
+      "Read_Reply_G",       // Reply
+      "Read_Forward_G",     // Forward
+      "Read_Spam_G",        // Spam
+      "Read_Ham_G",         // Ham
+      NULL
+    };
+
+    // create the TheBar object, but via loading the images from
+    // the corresponding image files.
+    obj = DoSuperNew(cl, obj,
+                     MUIA_TheBar_Pics,      normalImages,
+                     MUIA_TheBar_DisPics,   ghostedImages,
+                     MUIA_TheBar_SelPics,   selectedImages,
+                     TAG_MORE, inittags(msg));
+  }
+
+  // check if the object was created correctly.
+  if(obj != NULL)
   {
     // everything worked out fine.
 

@@ -37,6 +37,7 @@
 #include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/graphics.h>
+#include <proto/muimaster.h>
 
 #include "extrasrc.h"
 
@@ -44,6 +45,8 @@
 #include "YAM_locale.h"
 #include "YAM_stringsizes.h"
 #include "YAM_utilities.h"
+
+#include "classes/Classes.h"
 
 #include "ImageCache.h"
 
@@ -449,6 +452,149 @@ BOOL IsImageInCache(const char *filename)
   }
 
   D(DBF_IMAGE, "image file '%s' was %s in image cache at node %08lx", filename, (result ? "FOUND" : "NOT FOUND"), curNode);
+
+  RETURN(result);
+  return result;
+}
+
+///
+
+/*** TheBar toolbar image cache mechanisms ***/
+/// ToolbarCacheInit()
+// for initializing the toolbar caching
+BOOL ToolbarCacheInit(const char *imagePath)
+{
+  BOOL result = FALSE;
+  ENTER();
+
+  G->ReadToolbarCacheObject = ReadWindowToolbarObject,
+                                MUIA_TheBar_PicsDrawer, imagePath,
+                              End;
+
+  D(DBF_STARTUP, "init readwindow toolbar: %08lx", G->ReadToolbarCacheObject);
+
+  G->WriteToolbarCacheObject = WriteWindowToolbarObject,
+                                 MUIA_TheBar_PicsDrawer, imagePath,
+                               End;
+
+  D(DBF_STARTUP, "init writewindow toolbar: %08lx", G->WriteToolbarCacheObject);
+
+  G->AbookToolbarCacheObject = AddrBookToolbarObject,
+                                 MUIA_TheBar_PicsDrawer, imagePath,
+                               End;
+
+  D(DBF_STARTUP, "init abookwindow toolbar: %08lx", G->AbookToolbarCacheObject);
+
+
+  if(G->ReadToolbarCacheObject  &&
+     G->WriteToolbarCacheObject &&
+     G->AbookToolbarCacheObject)
+  {
+    result = TRUE;
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// ToolbarCacheCleanup()
+// for cleaning up the toolbar caches
+void ToolbarCacheCleanup(void)
+{
+  ENTER();
+
+  if(G->AbookToolbarCacheObject)
+  {
+    MUI_DisposeObject(G->AbookToolbarCacheObject);
+    G->AbookToolbarCacheObject = NULL;
+  }
+
+  if(G->WriteToolbarCacheObject)
+  {
+    MUI_DisposeObject(G->WriteToolbarCacheObject);
+    G->WriteToolbarCacheObject = NULL;
+  }
+
+  if(G->ReadToolbarCacheObject)
+  {
+    MUI_DisposeObject(G->ReadToolbarCacheObject);
+    G->ReadToolbarCacheObject = NULL;
+  }
+
+  LEAVE();
+}
+
+///
+/// ObtainToolbarImages()
+// for receiveing the various images (normal/ghosted/selected) of a
+// cached toolbar object
+struct MUIS_TheBar_Brush **ObtainToolbarImages(const enum TBType toolbar, const enum TBImage image)
+{
+  struct MUIS_TheBar_Brush **images = NULL;
+  Object *toolbarCacheObject = NULL;
+  ENTER();
+
+  switch(toolbar)
+  {
+    case TBT_ReadWindow:
+      toolbarCacheObject = G->ReadToolbarCacheObject;
+    break;
+
+    case TBT_WriteWindow:
+      toolbarCacheObject = G->WriteToolbarCacheObject;
+    break;
+
+    case TBT_AbookWindow:
+      toolbarCacheObject = G->AbookToolbarCacheObject;
+    break;
+  }
+
+  if(toolbarCacheObject != NULL)
+  {
+    switch(image)
+    {
+      case TBI_Normal:
+        images = (struct MUIS_TheBar_Brush **)xget(toolbarCacheObject, MUIA_TheBar_Images);
+      break;
+
+      case TBI_Ghosted:
+        images = (struct MUIS_TheBar_Brush **)xget(toolbarCacheObject, MUIA_TheBar_DisImages);
+      break;
+
+      case TBI_Selected:
+        images = (struct MUIS_TheBar_Brush **)xget(toolbarCacheObject, MUIA_TheBar_SelImages);
+      break;
+    }
+  }
+
+  RETURN(images);
+  return images;
+}
+
+///
+/// IsToolbarInCache()
+// returns TRUE if the specified toolbar is found to
+// be in the cache
+BOOL IsToolbarInCache(const enum TBType toolbar)
+{
+  BOOL result = FALSE;
+  ENTER();
+
+  switch(toolbar)
+  {
+    case TBT_ReadWindow:
+      result = (G->ReadToolbarCacheObject != NULL);
+    break;
+
+    case TBT_WriteWindow:
+      result = (G->WriteToolbarCacheObject != NULL);
+    break;
+
+    case TBT_AbookWindow:
+      result = (G->AbookToolbarCacheObject != NULL);
+    break;
+  }
 
   RETURN(result);
   return result;

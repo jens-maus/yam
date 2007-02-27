@@ -92,7 +92,7 @@ BOOL Open%bCatalog(void)
       {
         struct EasyStruct ErrReq;
 
-        W(DBF_STARTUP, "Catalog version != required version. Warning user!");
+        W(DBF_STARTUP, "Catalog version (%%%d) != required version (%v). Warning user!", G->Catalog->cat_Version);
 
         ErrReq.es_StructSize = sizeof(struct EasyStruct);
         ErrReq.es_Flags      = 0;
