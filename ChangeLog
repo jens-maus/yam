@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-02-27  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c: partly reverted the 'ramiga' change as we can't use real
+    menu shortcuts for the copy&paste operations in the write window.
+    Otherwise the hotkeys of the string and the texteditor gadget interfere
+    each other. So we are now partly back to the 'ramiga' usage so that
+    the gadget themself are responsible for catching the key events. This
+    should fix bug #1669896.
+
 2007-02-25  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, YAM.cd: integrated new MUIM_TextEditor_QueryKeyAction usage

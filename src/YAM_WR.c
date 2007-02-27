@@ -3409,71 +3409,97 @@ static struct WR_ClassData *WR_New(int winnum)
 
            // COPY action
            if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Copy)) &&
-              key->code > 500 && key->qualifier == IEQUALIFIER_RCOMMAND)
+              key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
            {
-             static char copyChar[2];
+             static char shortcut[] = "ramiga X";
 
-             copyChar[0] = toupper(key->code-500);
-             copyChar[1] = '\0';
+             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT))
+               shortcut[7] = toupper(key->code-500);
+             else
+               shortcut[7] = key->code-500;
 
-             SetAttrs(mi_copy, MUIA_Menuitem_CommandString, FALSE,
-                               MUIA_Menuitem_Shortcut,      copyChar,
+             SetAttrs(mi_copy, MUIA_Menuitem_CommandString, TRUE,
+                               MUIA_Menuitem_Shortcut,      shortcut,
                                TAG_DONE);
            }
 
            // CUT action
            if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Cut)) &&
-              key->code > 500 && key->qualifier == IEQUALIFIER_RCOMMAND)
+              key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
            {
-             static char cutChar[2];
+             static char shortcut[] = "ramiga X";
 
-             cutChar[0] = toupper(key->code-500);
-             cutChar[1] = '\0';
+             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT))
+               shortcut[7] = toupper(key->code-500);
+             else
+               shortcut[7] = key->code-500;
 
-             SetAttrs(mi_cut, MUIA_Menuitem_CommandString, FALSE,
-                              MUIA_Menuitem_Shortcut,      cutChar,
+             SetAttrs(mi_cut, MUIA_Menuitem_CommandString, TRUE,
+                              MUIA_Menuitem_Shortcut,      shortcut,
                               TAG_DONE);
            }
 
            // PASTE action
            if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Paste)) &&
-              key->code > 500 && key->qualifier == IEQUALIFIER_RCOMMAND)
+              key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
            {
-             static char pasteChar[2];
+             static char shortcut[] = "ramiga X";
 
-             pasteChar[0] = toupper(key->code-500);
-             pasteChar[1] = '\0';
+             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT))
+               shortcut[7] = toupper(key->code-500);
+             else
+               shortcut[7] = key->code-500;
 
-             SetAttrs(mi_paste, MUIA_Menuitem_CommandString, FALSE,
-                                MUIA_Menuitem_Shortcut,      pasteChar,
+             SetAttrs(mi_paste, MUIA_Menuitem_CommandString, TRUE,
+                                MUIA_Menuitem_Shortcut,      shortcut,
                                 TAG_DONE);
            }
 
            // UNDO action
            if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Undo)) &&
-              key->code > 500 && key->qualifier == IEQUALIFIER_RCOMMAND)
+              key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
            {
-             static char undoChar[2];
+             static char shortcut[] = "ramiga X";
 
-             undoChar[0] = toupper(key->code-500);
-             undoChar[1] = '\0';
+             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT))
+               shortcut[7] = toupper(key->code-500);
+             else
+               shortcut[7] = key->code-500;
 
-             SetAttrs(mi_undo, MUIA_Menuitem_CommandString, FALSE,
-                               MUIA_Menuitem_Shortcut,      undoChar,
+             SetAttrs(mi_undo, MUIA_Menuitem_CommandString, TRUE,
+                               MUIA_Menuitem_Shortcut,      shortcut,
+                               TAG_DONE);
+           }
+
+           // REDO action
+           if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Redo)) &&
+              key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
+           {
+             static char shortcut[] = "ramiga X";
+
+             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT))
+               shortcut[7] = toupper(key->code-500);
+             else
+               shortcut[7] = key->code-500;
+
+             SetAttrs(mi_redo, MUIA_Menuitem_CommandString, TRUE,
+                               MUIA_Menuitem_Shortcut,      shortcut,
                                TAG_DONE);
            }
 
            // SELECTALL action
            if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_SelectAll)) &&
-              key->code > 500 && key->qualifier == IEQUALIFIER_RCOMMAND)
+              key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
            {
-             static char selectAllChar[2];
+             static char shortcut[] = "ramiga X";
 
-             selectAllChar[0] = toupper(key->code-500);
-             selectAllChar[1] = '\0';
+             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT))
+               shortcut[7] = toupper(key->code-500);
+             else
+               shortcut[7] = key->code-500;
 
-             SetAttrs(mi_selectall, MUIA_Menuitem_CommandString, FALSE,
-                                    MUIA_Menuitem_Shortcut,      selectAllChar,
+             SetAttrs(mi_selectall, MUIA_Menuitem_CommandString, TRUE,
+                                    MUIA_Menuitem_Shortcut,      shortcut,
                                     TAG_DONE);
            }
          }
