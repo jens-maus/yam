@@ -2670,7 +2670,12 @@ static void MyRemove(struct Mail **list, struct Mail *rem)
 char *CreateFilename(const char * const file)
 {
    static char buffer[SIZE_PATHFILE];
+
+   ENTER();
+
    strmfp(buffer, G->MA_MailDir, file);
+
+   RETURN(buffer);
    return buffer;
 }
 ///
@@ -2703,9 +2708,20 @@ BOOL CreateDirectory(char *dir)
 char *GetFolderDir(struct Folder *fo)
 {
    static char buffer[SIZE_PATH];
-   if (strchr(fo->Path, ':')) return fo->Path;
-   strmfp(buffer, G->MA_MailDir, fo->Path);
-   return buffer;
+   char *dir;
+
+   ENTER();
+
+   if(strchr(fo->Path, ':') != NULL)
+     dir = fo->Path;
+   else
+   {
+     strmfp(buffer, G->MA_MailDir, fo->Path);
+     dir = buffer;
+   }
+
+   RETURN(dir);
+   return dir;
 }
 ///
 /// GetMailFile

@@ -401,47 +401,53 @@ BOOL FO_LoadConfig(struct Folder *fo)
 //  Saves folder configuration to .fconfig file
 BOOL FO_SaveConfig(struct Folder *fo)
 {
-   char fname[SIZE_PATHFILE];
-   FILE *fh;
+  char fname[SIZE_PATHFILE];
+  FILE *fh;
+  BOOL result = FALSE;
 
-   strlcpy(fname, GetFolderDir(fo), sizeof(fname));
-   AddPart(fname, ".fconfig", sizeof(fname));
+  ENTER();
 
-   if((fh = fopen(fname, "w")))
-   {
-      struct DateStamp ds;
+  strlcpy(fname, GetFolderDir(fo), sizeof(fname));
+  AddPart(fname, ".fconfig", sizeof(fname));
 
-      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+  if((fh = fopen(fname, "w")) != NULL)
+  {
+    struct DateStamp ds;
 
-      fprintf(fh, "YFC2 - YAM Folder Configuration\n");
-      fprintf(fh, "Name        = %s\n",  fo->Name);
-      fprintf(fh, "MaxAge      = %d\n",  fo->MaxAge);
-      fprintf(fh, "Password    = %s\n",  Encrypt(fo->Password));
-      fprintf(fh, "Type        = %d\n",  fo->Type);
-      fprintf(fh, "Mode        = %d\n",  fo->Mode);
-      fprintf(fh, "Sort1       = %d\n",  fo->Sort[0]);
-      fprintf(fh, "Sort2       = %d\n",  fo->Sort[1]);
-      fprintf(fh, "Stats       = %s\n",  Bool2Txt(fo->Stats));
-      fprintf(fh, "MLSupport   = %s\n",  Bool2Txt(fo->MLSupport));
-      fprintf(fh, "MLFromAddr  = %s\n",  fo->MLFromAddress);
-      fprintf(fh, "MLRepToAddr = %s\n",  fo->MLReplyToAddress);
-      fprintf(fh, "MLPattern   = %s\n",  fo->MLPattern);
-      fprintf(fh, "MLAddress   = %s\n",  fo->MLAddress);
-      fprintf(fh, "MLSignature = %d\n",  fo->MLSignature);
-      fprintf(fh, "WriteIntro  = %s\n",  fo->WriteIntro);
-      fprintf(fh, "WriteGreetings = %s\n",  fo->WriteGreetings);
-      fclose(fh);
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      strlcpy(fname, GetFolderDir(fo), sizeof(fname));
-      AddPart(fname, ".index", sizeof(fname));
+    fprintf(fh, "YFC2 - YAM Folder Configuration\n");
+    fprintf(fh, "Name        = %s\n",  fo->Name);
+    fprintf(fh, "MaxAge      = %d\n",  fo->MaxAge);
+    fprintf(fh, "Password    = %s\n",  Encrypt(fo->Password));
+    fprintf(fh, "Type        = %d\n",  fo->Type);
+    fprintf(fh, "Mode        = %d\n",  fo->Mode);
+    fprintf(fh, "Sort1       = %d\n",  fo->Sort[0]);
+    fprintf(fh, "Sort2       = %d\n",  fo->Sort[1]);
+    fprintf(fh, "Stats       = %s\n",  Bool2Txt(fo->Stats));
+    fprintf(fh, "MLSupport   = %s\n",  Bool2Txt(fo->MLSupport));
+    fprintf(fh, "MLFromAddr  = %s\n",  fo->MLFromAddress);
+    fprintf(fh, "MLRepToAddr = %s\n",  fo->MLReplyToAddress);
+    fprintf(fh, "MLPattern   = %s\n",  fo->MLPattern);
+    fprintf(fh, "MLAddress   = %s\n",  fo->MLAddress);
+    fprintf(fh, "MLSignature = %d\n",  fo->MLSignature);
+    fprintf(fh, "WriteIntro  = %s\n",  fo->WriteIntro);
+    fprintf(fh, "WriteGreetings = %s\n",  fo->WriteGreetings);
+    fclose(fh);
 
-      if(!isModified(fo)) SetFileDate(fname, DateStamp(&ds));
+    strlcpy(fname, GetFolderDir(fo), sizeof(fname));
+    AddPart(fname, ".index", sizeof(fname));
 
-      return TRUE;
-   }
-   else ER_NewError(tr(MSG_ER_CantCreateFile), fname);
+    if(!isModified(fo))
+      SetFileDate(fname, DateStamp(&ds));
 
-   return FALSE;
+    result = TRUE;
+  }
+  else
+    ER_NewError(tr(MSG_ER_CantCreateFile), fname);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -449,30 +455,36 @@ BOOL FO_SaveConfig(struct Folder *fo)
 //  Initializes a new folder and creates its directory
 struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *name)
 {
-   struct Folder *folder = calloc(1, sizeof(struct Folder));
-   if (folder)
-   {
-     folder->Sort[0] = 1;
-     folder->Sort[1] = 3;
-     folder->Type = type;
-     // set the standard icon images, or none for a custom folder
-     switch(type)
-     {
-       case FT_INCOMING: folder->ImageIndex = FICON_ID_INCOMING; break;
-       case FT_OUTGOING: folder->ImageIndex = FICON_ID_OUTGOING; break;
-       case FT_TRASH:    folder->ImageIndex = FICON_ID_TRASH;    break;
-       case FT_SENT:     folder->ImageIndex = FICON_ID_SENT;     break;
-       case FT_SPAM:     folder->ImageIndex = FICON_ID_SPAM;     break;
-       default:          folder->ImageIndex = -1;                break;
-     }
-     strlcpy(folder->Path, path, sizeof(folder->Path));
-     strlcpy(folder->Name, name, sizeof(folder->Name));
-     if (!CreateDirectory(GetFolderDir(folder)))
-     {
-       free(folder); return NULL;
-     }
-   }
-   return folder;
+  struct Folder *folder;
+
+  ENTER();
+
+  if((folder = calloc(1, sizeof(struct Folder))) != NULL)
+  {
+    folder->Sort[0] = 1;
+    folder->Sort[1] = 3;
+    folder->Type = type;
+    // set the standard icon images, or none for a custom folder
+    switch(type)
+    {
+      case FT_INCOMING: folder->ImageIndex = FICON_ID_INCOMING; break;
+      case FT_OUTGOING: folder->ImageIndex = FICON_ID_OUTGOING; break;
+      case FT_TRASH:    folder->ImageIndex = FICON_ID_TRASH;    break;
+      case FT_SENT:     folder->ImageIndex = FICON_ID_SENT;     break;
+      case FT_SPAM:     folder->ImageIndex = FICON_ID_SPAM;     break;
+      default:          folder->ImageIndex = -1;                break;
+    }
+    strlcpy(folder->Path, path, sizeof(folder->Path));
+    strlcpy(folder->Name, name, sizeof(folder->Name));
+    if(!CreateDirectory(GetFolderDir(folder)))
+    {
+      free(folder);
+      folder = NULL;
+    }
+  }
+
+  RETURN(folder);
+  return folder;
 }
 
 ///
@@ -511,31 +523,36 @@ BOOL FO_FreeFolder(struct Folder *folder)
 //  Adds a new entry to the folder list
 BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *name)
 {
-   struct Folder *folder = FO_NewFolder(type, path, name);
+  struct Folder *folder;
+  BOOL result = FALSE;
 
-   if (folder)
-   {
-      struct MUI_NListtree_TreeNode *tn;
+  ENTER();
 
-      if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) != NULL)
+  if((folder = FO_NewFolder(type, path, name)) != NULL)
+  {
+    struct MUI_NListtree_TreeNode *tn;
+
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) != NULL)
+    {
+      if(FO_SaveConfig(folder))
       {
-        if(FO_SaveConfig(folder))
-        {
-          // only if we reach here everything was fine and we can return TRUE
-          free(folder);
-          return TRUE;
-        }
-
+        // only if we reach here everything was fine and we can return TRUE
+        result = TRUE;
+      }
+      else
+      {
         // If we reach here the SaveConfig() returned FALSE and we need to remove the folder again
         // from the listtree. But we MUST pass the treenode and NOT the folder, because the folder
         // pointer is no valid treenode but just the user data!!
         DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
       }
+    }
 
-      free(folder);
-   }
+    free(folder);
+  }
 
-   return FALSE;
+  RETURN(result);
+  return result;
 }
 
 ///

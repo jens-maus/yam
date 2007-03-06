@@ -12,6 +12,8 @@ $URL$
 
 2007-03-06  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c, YAM_RE.c, YAM_WR.c, YAM_UT.c: cleaned up several functions to
+    conform to the style guide.
   * YAM_COs.c: when creating the spam folder for the first time the user's mail
     directory path was added once too much if it was a relative path instead of
     an absolute path. This fixes bug #1672378.

@@ -185,145 +185,163 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
 //  Creates a message disposition notification
 static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *recipient, BOOL sendnow)
 {
-   static const char *MDNMessage[5] =
-   {
-      "The message written on %s (UTC) to %s with subject \"%s\" has been displayed. This is no guarantee that the content has been read or understood.\n",
-      "The message written on %s (UTC) to %s with subject \"%s\" has been sent somewhere %s, without being displayed to the user. The user may or may not see the message later.\n",
-      "The message written on %s (UTC) to %s with subject \"%s\" has been processed %s, without being displayed to the user. The user may or may not see the message later.\n",
-      "The message written on %s (UTC) to %s with subject \"%s\" has been deleted %s. The recipient may or may not have seen the message. The recipient may \"undelete\" the message at a later time and read the message.\n",
-      "%s doesn't wish to inform you about the disposition of your message written on %s with subject \"%s\".\n"
-   };
-   struct WritePart *p1 = NewPart(2), *p2, *p3;
-   struct TempFile *tf1, *tf2, *tf3;
-   char buf[SIZE_LINE], disp[SIZE_DEFAULT];
-   struct Compose comp;
+  static const char *MDNMessage[5] =
+  {
+     "The message written on %s (UTC) to %s with subject \"%s\" has been displayed. This is no guarantee that the content has been read or understood.\n",
+     "The message written on %s (UTC) to %s with subject \"%s\" has been sent somewhere %s, without being displayed to the user. The user may or may not see the message later.\n",
+     "The message written on %s (UTC) to %s with subject \"%s\" has been processed %s, without being displayed to the user. The user may or may not see the message later.\n",
+     "The message written on %s (UTC) to %s with subject \"%s\" has been deleted %s. The recipient may or may not have seen the message. The recipient may \"undelete\" the message at a later time and read the message.\n",
+     "%s doesn't wish to inform you about the disposition of your message written on %s with subject \"%s\".\n"
+  };
+  struct WritePart *p1;
+  struct TempFile *tf1;
+  char buf[SIZE_LINE], disp[SIZE_DEFAULT];
 
-   ENTER();
-   SHOWVALUE(DBF_MAIL, sendnow);
+  ENTER();
 
-   if ((tf1 = OpenTempFile("w")))
-   {
-      char date[64];
-      char *rcpt = BuildAddrName2(&mail->To);
-      char *subj = mail->Subject;
-      const char *mode;
+  SHOWVALUE(DBF_MAIL, sendnow);
 
-      DateStamp2String(date, sizeof(date), &mail->Date, DSS_DATETIME, TZC_NONE);
+  p1 = NewPart(2);
 
-      p1->Filename = tf1->Filename;
-      mode = isAutoActMDN(type) ? "automatically" : "in response to a user command";
+  if((tf1 = OpenTempFile("w")) != NULL)
+  {
+    char date[64];
+    char *rcpt = BuildAddrName2(&mail->To);
+    char *subj = mail->Subject;
+    const char *mode;
+    struct WritePart *p2;
+    struct TempFile *tf2;
 
-      snprintf(disp, sizeof(disp), "%s%s", isAutoActMDN(type) ? "automatic-action/" : "manual-action/",
-                                           isAutoSendMDN(type) ? "MDN-sent-automatically; " : "MDN-sent-manually; ");
+    DateStamp2String(date, sizeof(date), &mail->Date, DSS_DATETIME, TZC_NONE);
 
-      switch(type & MDN_TYPEMASK)
+    p1->Filename = tf1->Filename;
+    mode = isAutoActMDN(type) ? "automatically" : "in response to a user command";
+
+    snprintf(disp, sizeof(disp), "%s%s", isAutoActMDN(type) ? "automatic-action/" : "manual-action/",
+                                         isAutoSendMDN(type) ? "MDN-sent-automatically; " : "MDN-sent-manually; ");
+
+    switch(type & MDN_TYPEMASK)
+    {
+      case MDN_READ: strlcat(disp, "displayed", sizeof(disp));  fprintf(tf1->FP, MDNMessage[0], date, rcpt, subj); break;
+      case MDN_DISP: strlcat(disp, "dispatched", sizeof(disp)); fprintf(tf1->FP, MDNMessage[1], date, rcpt, subj, mode); break;
+      case MDN_PROC: strlcat(disp, "processed", sizeof(disp));  fprintf(tf1->FP, MDNMessage[2], date, rcpt, subj, mode); break;
+      case MDN_DELE: strlcat(disp, "deleted", sizeof(disp));    fprintf(tf1->FP, MDNMessage[3], date, rcpt, subj, mode); break;
+      case MDN_DENY: strlcat(disp, "denied", sizeof(disp));     fprintf(tf1->FP, MDNMessage[4], rcpt, date, subj); break;
+    }
+
+    fclose(tf1->FP);
+    tf1->FP = NULL;
+    SimpleWordWrap(tf1->Filename, 72);
+    p2 = p1->Next = NewPart(2);
+
+    if((tf2 = OpenTempFile("w")) != NULL)
+    {
+      struct ExtendedMail *email;
+
+      if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
       {
-         case MDN_READ: strlcat(disp, "displayed", sizeof(disp));  fprintf(tf1->FP, MDNMessage[0], date, rcpt, subj); break;
-         case MDN_DISP: strlcat(disp, "dispatched", sizeof(disp)); fprintf(tf1->FP, MDNMessage[1], date, rcpt, subj, mode); break;
-         case MDN_PROC: strlcat(disp, "processed", sizeof(disp));  fprintf(tf1->FP, MDNMessage[2], date, rcpt, subj, mode); break;
-         case MDN_DELE: strlcat(disp, "deleted", sizeof(disp));    fprintf(tf1->FP, MDNMessage[3], date, rcpt, subj, mode); break;
-         case MDN_DENY: strlcat(disp, "denied", sizeof(disp));     fprintf(tf1->FP, MDNMessage[4], rcpt, date, subj); break;
-      }
-      fclose(tf1->FP); tf1->FP = NULL;
-      SimpleWordWrap(tf1->Filename, 72);
-      p2 = p1->Next = NewPart(2);
+        struct WritePart *p3;
+        struct TempFile *tf3;
 
-      if((tf2 = OpenTempFile("w")))
-      {
-         char mfile[SIZE_MFILE];
-         struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-         struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE);
+        p2->ContentType = "message/disposition-notification";
+        p2->Filename = tf2->Filename;
+        snprintf(buf, sizeof(buf), "%s (%s)", C->SMTP_Domain, yamversion);
+        EmitHeader(tf2->FP, "Reporting-UA", buf);
+        if(email->OriginalRcpt.Address[0] != '\0')
+        {
+          snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddrName2(&email->OriginalRcpt));
+          EmitHeader(tf2->FP, "Original-Recipient", buf);
+        }
+        snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddrName(C->EmailAddress, C->RealName));
+        EmitHeader(tf2->FP, "Final-Recipient", buf);
+        EmitHeader(tf2->FP, "Original-Message-ID", email->MsgID);
+        EmitHeader(tf2->FP, "Disposition", disp);
+        fclose(tf2->FP);
+        tf2->FP = NULL;
+        p3 = p2->Next = NewPart(2);
 
-         if(email)
-         {
-            p2->ContentType = "message/disposition-notification";
-            p2->Filename = tf2->Filename;
-            snprintf(buf, sizeof(buf), "%s (%s)", C->SMTP_Domain, yamversion);
-            EmitHeader(tf2->FP, "Reporting-UA", buf);
-            if (*email->OriginalRcpt.Address)
+        MA_FreeEMailStruct(email);
+
+        if((tf3 = OpenTempFile("w")) != NULL)
+        {
+          char fullfile[SIZE_PATHFILE];
+          char mfile[SIZE_MFILE];
+          struct Compose comp;
+          struct Folder *outfolder;
+
+          p3->ContentType = "text/rfc822-headers";
+          p3->Filename = tf3->Filename;
+          if(StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
+          {
+            FILE *fh;
+
+            if((fh = fopen(fullfile, "r")) != NULL)
             {
-              snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddrName2(&email->OriginalRcpt));
-              EmitHeader(tf2->FP, "Original-Recipient", buf);
+              setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+              while(fgets(buf, SIZE_LINE, fh))
+              {
+                if(*buf == '\n')
+                  break;
+                else
+                  fputs(buf, tf3->FP);
+              }
+
+              fclose(fh);
             }
-            snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddrName(C->EmailAddress, C->RealName));
-            EmitHeader(tf2->FP, "Final-Recipient", buf);
-            EmitHeader(tf2->FP, "Original-Message-ID", email->MsgID);
-            EmitHeader(tf2->FP, "Disposition", disp);
-            fclose(tf2->FP);  tf2->FP = NULL;
-            p3 = p2->Next = NewPart(2);
+            FinishUnpack(fullfile);
+          }
+          fclose(tf3->FP);
+          tf3->FP = NULL;
 
-            MA_FreeEMailStruct(email);
+          memset(&comp, 0, sizeof(struct Compose));
+          comp.MailTo = StrBufCpy(comp.MailTo, BuildAddrName2(recipient));
+          comp.Subject = "Disposition Notification";
+          comp.ReportType = 1;
+          comp.FirstPart = p1;
 
-            if ((tf3 = OpenTempFile("w")))
+          outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
+
+          if((comp.FH = fopen(MA_NewMailFile(outfolder, mfile), "w")) != NULL)
+          {
+            struct Mail *mlist[3];
+
+            mlist[0] = (struct Mail *)1;
+            mlist[2] = NULL;
+
+            setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
+
+            WriteOutMessage(&comp);
+            fclose(comp.FH);
+
+            if((email = MA_ExamineMail(outfolder, mfile, TRUE)) != NULL)
             {
-              char fullfile[SIZE_PATHFILE];
-              FILE *fh;
-              p3->ContentType = "text/rfc822-headers";
-              p3->Filename = tf3->Filename;
-              if (StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
-              {
-                if ((fh = fopen(fullfile, "r")))
-                {
-                  setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
-                  while(fgets(buf, SIZE_LINE, fh))
-                  {
-                    if(*buf == '\n')
-                      break;
-                    else
-                      fputs(buf, tf3->FP);
-                  }
-
-                  fclose(fh);
-                }
-                FinishUnpack(fullfile);
-              }
-              fclose(tf3->FP);
-              tf3->FP = NULL;
-              memset(&comp, 0, sizeof(struct Compose));
-              comp.MailTo = StrBufCpy(comp.MailTo, BuildAddrName2(recipient));
-              comp.Subject = "Disposition Notification";
-              comp.ReportType = 1;
-              comp.FirstPart = p1;
-
-              if((comp.FH = fopen(MA_NewMailFile(outfolder, mfile), "w")))
-              {
-                struct Mail *mlist[3];
-                mlist[0] = (struct Mail *)1;
-                mlist[2] = NULL;
-
-                setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
-
-                WriteOutMessage(&comp);
-                fclose(comp.FH);
-
-                if((email = MA_ExamineMail(outfolder, mfile, TRUE)))
-                {
-                  mlist[2] = AddMailToList(&email->Mail, outfolder);
-                  setStatusToQueued(mlist[2]);
-                  MA_FreeEMailStruct(email);
-                }
-
-                if(sendnow && mlist[2] && !G->TR)
-                  TR_ProcessSEND(mlist);
-
-                // refresh the folder statistics
-                DisplayStatistics(outfolder, TRUE);
-              }
-              else
-                ER_NewError(tr(MSG_ER_CreateMailError));
-
-              FreeStrBuf(comp.MailTo);
-              CloseTempFile(tf3);
+              mlist[2] = AddMailToList(&email->Mail, outfolder);
+              setStatusToQueued(mlist[2]);
+              MA_FreeEMailStruct(email);
             }
-         }
-         CloseTempFile(tf2);
-      }
-      CloseTempFile(tf1);
-   }
-   FreePartsList(p1);
 
-   LEAVE();
+            if(sendnow && mlist[2] && !G->TR)
+              TR_ProcessSEND(mlist);
+
+            // refresh the folder statistics
+            DisplayStatistics(outfolder, TRUE);
+          }
+          else
+            ER_NewError(tr(MSG_ER_CreateMailError));
+
+          FreeStrBuf(comp.MailTo);
+          CloseTempFile(tf3);
+        }
+      }
+      CloseTempFile(tf2);
+    }
+    CloseTempFile(tf1);
+  }
+
+  FreePartsList(p1);
+
+  LEAVE();
 }
 ///
 /// RE_DoMDN

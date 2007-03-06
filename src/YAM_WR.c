@@ -350,14 +350,19 @@ static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
 //  Initializes a new message part
 struct WritePart *NewPart(int winnum)
 {
-   struct WritePart *p = calloc(1, sizeof(struct WritePart));
-   if (p)
-   {
-     p->ContentType = "text/plain";
-     p->EncType = ENC_NONE;
-     p->Filename = G->WR_Filename[winnum];
-   }
-   return p;
+  struct WritePart *p;
+
+  ENTER();
+
+  if((p = calloc(1, sizeof(struct WritePart))) != NULL)
+  {
+    p->ContentType = "text/plain";
+    p->EncType = ENC_NONE;
+    p->Filename = G->WR_Filename[winnum];
+  }
+
+  RETURN(p);
+  return p;
 }
 
 ///
@@ -365,27 +370,36 @@ struct WritePart *NewPart(int winnum)
 //  Builds message parts from attachment list
 static struct WritePart *BuildPartsList(int winnum)
 {
-   int i;
-   struct Attach *att;
-   struct WritePart *first, *p, *np;
+  int i;
+  struct Attach *att;
+  struct WritePart *first, *p, *np;
 
-   first = p = NewPart(winnum); p->IsTemp = TRUE;
-   p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
+  ENTER();
 
-   for (i = 0; ; i++)
-   {
-      DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_GetEntry, i, &att);
-      if (!att) break;
-      p->Next = np = NewPart(winnum); p = np;
-      p->ContentType = att->ContentType;
-      p->Filename    = att->FilePath;
-      p->Description = att->Description;
-      p->Name        = att->Name;
-      p->IsTemp      = att->IsTemp;
-      if (att->IsMIME) p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
-      else p->EncType = ENC_UUE;
-   }
-   return first;
+  first = p = NewPart(winnum);
+  p->IsTemp = TRUE;
+  p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
+
+  for(i = 0; ; i++)
+  {
+    DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_GetEntry, i, &att);
+    if(att == NULL)
+      break;
+
+    p->Next = np = NewPart(winnum); p = np;
+    p->ContentType = att->ContentType;
+    p->Filename    = att->FilePath;
+    p->Description = att->Description;
+    p->Name        = att->Name;
+    p->IsTemp      = att->IsTemp;
+    if(att->IsMIME)
+      p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
+    else
+      p->EncType = ENC_UUE;
+  }
+
+  RETURN(first);
+  return first;
 }
 
 ///
@@ -393,13 +407,20 @@ static struct WritePart *BuildPartsList(int winnum)
 //  Clears message parts and deletes temporary files
 void FreePartsList(struct WritePart *p)
 {
-   struct WritePart *np;
-   for (; p; p = np)
-   {
-      np = p->Next;
-      if (p->IsTemp) DeleteFile(p->Filename);
-      free(p);
-   }
+  struct WritePart *np;
+
+  ENTER();
+
+  for(; p; p = np)
+  {
+    np = p->Next;
+    if(p->IsTemp)
+      DeleteFile(p->Filename);
+
+    free(p);
+  }
+
+  LEAVE();
 }
 
 ///
