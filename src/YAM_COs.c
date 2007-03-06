@@ -1475,7 +1475,7 @@ void CO_GetConfig(BOOL saveConfig)
           if(createSpamFolder)
           {
             // try to create the folder and save the new folder tree
-            if(!FO_CreateFolder(FT_SPAM, CreateFilename(FolderName[FT_SPAM]), tr(MSG_MA_SPAM)) || !FO_SaveTree(CreateFilename(".folders")))
+            if(!FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM)) || !FO_SaveTree(CreateFilename(".folders")))
             {
               // something failed, so we disable the spam filter again
               ER_NewError(tr(MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER));
