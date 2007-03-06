@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-06  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: added an additional check for "[]" characters when replying to
+    multiple mails which all consist of the same subject. Before YAM always
+    appended the subject over and over again without stripping the common
+    part. This fixes bug #1672140.
+
 2007-02-27  Jens Langner <Jens.Langner@light-speed.de>
 
   * ImageCache.c, misc: addressed bug #1617052 by introducing a new toolbar

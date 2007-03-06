@@ -2152,10 +2152,27 @@ int MA_NewReply(struct Mail **mlist, int flags)
         if(mail->Subject[0] != '\0')
         {
           if(j > 0)
-            strlcpy(buffer, mail->Subject, sizeof(buffer));
+          {
+            // if the subject contains brackets then these need to be removed first,
+            // else the strstr() call below will not find the "reduced" subject
+            if(mail->Subject[0] == '[' && strchr(mail->Subject, ']') != NULL)
+            {
+              // copy the stripped subject
+              strlcpy(buffer, MA_GetRealSubject(mail->Subject), sizeof(buffer));
+            }
+            else
+            {
+              // copy the subject as-is
+              strlcpy(buffer, mail->Subject, sizeof(buffer));
+            }
+          }
           else
+          {
+            // copy the first subject stripped, but prepend the usual "Re:"
             snprintf(buffer, sizeof(buffer), "Re: %s", MA_GetRealSubject(mail->Subject));
+          }
 
+          // try to find following subjects in the yet created reply subject
           if(!strstr(rsub, buffer))
           {
             if(rsub[0] != '\0')
@@ -4269,27 +4286,40 @@ MakeStaticHook(MA_LV_FDesHook, MA_LV_FDesFunc);
 //  Strips reply prefix / mailing list name from subject
 char *MA_GetRealSubject(char *sub)
 {
-   char *p;
-   int sublen = strlen(sub);
+  char *p;
+  int sublen;
+  char *result = sub;
 
-   if (sublen < 3) return sub;
-   if (sub[2] == ':' && !sub[3]) return (char *)"";
+  ENTER();
 
-   // check if the subject contains some strings embedded in brackets like [test]
-   // and return only the real subject after the last bracket.
-   if(sub[0] == '[' && (p = strchr(sub, ']')) && p < (&sub[sublen])-3 && p < &sub[20])
-   {
-      // if the following char isn`t a whitespace we return the real
-      // subject directly after the last bracket
-      if(isspace(p[1]))
-        return MA_GetRealSubject(p+2);
-      else
-        return MA_GetRealSubject(p+1);
-   }
+  sublen = strlen(sub);
 
-   if (strchr(":[({", sub[2])) if ((p = strchr(sub, ':'))) return MA_GetRealSubject(TrimStart(++p));
+  if(sublen >= 3)
+  {
+    if(sub[2] == ':' && !sub[3])
+    {
+      result = (char *)"";
+    }
+    // check if the subject contains some strings embedded in brackets like [test]
+    // and return only the real subject after the last bracket.
+    else if(sub[0] == '[' && (p = strchr(sub, ']')) && p < (&sub[sublen])-3 && p < &sub[20])
+    {
+     // if the following char isn`t a whitespace we return the real
+     // subject directly after the last bracket
+     if(isspace(p[1]))
+       result = MA_GetRealSubject(p+2);
+     else
+       result = MA_GetRealSubject(p+1);
+    }
+    else if(strchr(":[({", sub[2]))
+    {
+      if((p = strchr(sub, ':')))
+        result = MA_GetRealSubject(TrimStart(++p));
+    }
+  }
 
-   return sub;
+  RETURN(result);
+  return result;
 }
 
 ///
