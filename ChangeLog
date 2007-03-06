@@ -12,6 +12,9 @@ $URL$
 
 2007-03-06  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_main.h: the setStatusToQueued() macro now clears the "new" flag of a
+    message. That way automatically generated disposition notifications no
+    longer show up as "new and unread", but as "old and read".
   * YAM_MA.c: added an additional check for "[]" characters when replying to
     multiple mails which all consist of the same subject. Before YAM always
     appended the subject over and over again without stripping the common

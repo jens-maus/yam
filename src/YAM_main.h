@@ -119,7 +119,7 @@
 #define setStatusToReplied(mail)      MA_ChangeMailStatus(mail, SFLAG_REPLIED|SFLAG_READ, SFLAG_NEW)
 #define setStatusToForwarded(mail)    MA_ChangeMailStatus(mail, SFLAG_FORWARDED, SFLAG_NEW)
 #define setStatusToNew(mail)          MA_ChangeMailStatus(mail, SFLAG_NEW, SFLAG_NONE)
-#define setStatusToQueued(mail)       MA_ChangeMailStatus(mail, SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD)
+#define setStatusToQueued(mail)       MA_ChangeMailStatus(mail, SFLAG_QUEUED|SFLAG_READ, SFLAG_NEW|SFLAG_SENT|SFLAG_HOLD)
 #define setStatusToHold(mail)         MA_ChangeMailStatus(mail, SFLAG_HOLD|SFLAG_READ, SFLAG_QUEUED)
 #define setStatusToSent(mail)         MA_ChangeMailStatus(mail, SFLAG_SENT|SFLAG_READ, SFLAG_QUEUED|SFLAG_HOLD|SFLAG_ERROR)
 #define setStatusToDeleted(mail)      MA_ChangeMailStatus(mail, SFLAG_DELETED, SFLAG_NONE)
