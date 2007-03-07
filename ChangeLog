@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-07  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ReadWindow.c: outgoing, trash und spam folders are now ignored when looking
+    for yet unread mail. Although, jumping from one unread mail to another
+    within these folders still works. That way a user is not bothered with
+    unread mails he/she doesn't want to read anyway.
+
 2007-03-06  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: bumped minimum required version for TheBar.mcc and BetterString.mcc

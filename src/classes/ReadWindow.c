@@ -1037,13 +1037,21 @@ DECLARE(ChangeSubjectRequest)
 DECLARE(SwitchMail) // LONG direction, ULONG qualifier
 {
   GETDATA;
-  struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
-  struct Mail *mail = rmData->mail;
-  struct Folder *folder = mail->Folder;
-  LONG direction = msg->direction;
+  struct ReadMailData *rmData;
+  struct Mail *mail;
+  struct Folder *folder;
+  LONG direction;
   LONG act = MUIV_NList_GetPos_Start;
-  BOOL onlynew = hasFlag(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
+  BOOL onlynew;
   BOOL found = FALSE;
+
+  ENTER();
+
+  rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
+  mail = rmData->mail;
+  folder = mail->Folder;
+  direction = msg->direction;
+  onlynew = hasFlag(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
 
   // save the direction we are going to process now
   data->lastDirection = direction;
@@ -1062,7 +1070,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
     for(act += direction; act >= 0; act += direction)
     {
       DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, act, &mail);
-      if(!mail)
+      if(mail == NULL)
         break;
 
       if(!onlynew ||
@@ -1101,18 +1109,25 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
         // and if found read that mail
         for(i += direction; i <= (int)*flist && i >= 1; i += direction)
         {
-          if(!isGroupFolder(flist[i]) && flist[i]->Unread > 0)
+          struct Folder *fo = flist[i];
+
+          // skip group folders, outgoing, trash and spam folder when looking for still unread mail
+          if(!isGroupFolder(fo) &&
+             !isOutgoingFolder(fo) &&
+             !isTrashFolder(fo) &&
+             !isSpamFolder(fo) &&
+             fo->Unread > 0)
           {
-            if(!MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq),
-                                            tr(MSG_YesNoReq),
-                                            tr(MSG_RE_MoveNextFolderReq), flist[i]->Name))
+            if(MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq),
+                                           tr(MSG_YesNoReq),
+                                           tr(MSG_RE_MoveNextFolderReq), fo->Name) == 0)
             {
               break;
             }
 
-            MA_ChangeFolder(flist[i], TRUE);
+            MA_ChangeFolder(folder, TRUE);
             DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-            if(!mail)
+            if(mail == NULL)
               break;
             
             DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
@@ -1140,6 +1155,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
   if(found == FALSE)
     DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
 
+  LEAVE();
   return 0;
 }
 
