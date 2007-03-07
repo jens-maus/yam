@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-07  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: bumped minimum required version for TextEditor.mcc to 15.21 as this
+    is the latest stable version available right now.
+
 2007-03-07  Thore Böckelmann <tboeckel@gmx.de>
 
   * ReadWindow.c: outgoing, trash und spam folders are now ignored when looking
