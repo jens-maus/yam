@@ -1125,7 +1125,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
               break;
             }
 
-            MA_ChangeFolder(folder, TRUE);
+            MA_ChangeFolder(fo, TRUE);
             DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
             if(mail == NULL)
               break;
