@@ -201,6 +201,7 @@ BOOL            FO_FreeFolder(struct Folder *folder);
 struct Folder * FO_GetCurrentFolder(void);
 BOOL            FO_SetCurrentFolder(struct Folder *fo);
 struct Folder * FO_GetFolderByName(char *name, int *pos);
+struct Folder * FO_GetFolderByPath(char *path, int *pos);
 struct Folder * FO_GetFolderByType(enum FolderType type, int *pos);
 struct Folder * FO_GetFolderRexx(char *arg, int *pos);
 int             FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups);

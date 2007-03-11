@@ -66,6 +66,7 @@ static BOOL FO_EnterPassword(struct Folder *fo);
 static struct FO_ClassData *FO_New(void);
 static BOOL FO_GetFolderByType_cmp(struct Folder *fo, enum FolderType *type);
 static BOOL FO_GetFolderByName_cmp(struct Folder *fo, char *name);
+static BOOL FO_GetFolderByPath_cmp(struct Folder *fo, char *path);
 static struct Folder *FO_GetFolderByAttribute(BOOL(*)(struct Folder *fo, void *), void *, int *);
 static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *tn);
 
@@ -267,6 +268,18 @@ static BOOL FO_GetFolderByName_cmp(struct Folder *f, char *name)
   return (BOOL)(!strcmp(f->Name, name) && (!isGroupFolder(f)));
 }
 ///
+/// FO_GetFolderByPath
+//  Finds a folder by its path
+struct Folder *FO_GetFolderByPath(char *path, int *pos)
+{
+   return FO_GetFolderByAttribute((BOOL (*)(struct Folder*,void*))&FO_GetFolderByPath_cmp,path,pos);
+}
+// comparison function for FO_GetFolderByPath
+static BOOL FO_GetFolderByPath_cmp(struct Folder *f, char *path)
+{
+  return (BOOL)(!stricmp(f->Path, path));
+}
+///
 /// FO_GetFolderPosition
 //  Gets the position of a folder in the list
 int FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups)
@@ -322,78 +335,78 @@ struct MUI_NListtree_TreeNode *FO_GetFolderTreeNode(struct Folder *findfo)
 //  Loads folder configuration from .fconfig file
 BOOL FO_LoadConfig(struct Folder *fo)
 {
-   BOOL success = FALSE;
-   FILE *fh;
-   char buffer[SIZE_LARGE];
-   char fname[SIZE_PATHFILE];
+  BOOL success = FALSE;
+  FILE *fh;
+  char fname[SIZE_PATHFILE];
 
-   strlcpy(fname, GetFolderDir(fo), sizeof(fname));
-   AddPart(fname, ".fconfig", sizeof(fname));
+  ENTER();
 
-   if((fh = fopen(fname, "r")))
-   {
-      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+  strlcpy(fname, GetFolderDir(fo), sizeof(fname));
+  AddPart(fname, ".fconfig", sizeof(fname));
 
-      if(fgets(buffer, SIZE_LARGE, fh) && strnicmp(buffer, "YFC", 3) == 0)
+  if((fh = fopen(fname, "r")) != NULL)
+  {
+    char buffer[SIZE_LARGE];
+
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+    if(fgets(buffer, SIZE_LARGE, fh) && strnicmp(buffer, "YFC", 3) == 0)
+    {
+      BOOL statsproc = FALSE;
+
+      // pick a default value for ML support parameters
+      fo->MLSignature  = 1;
+      fo->MLSupport    = TRUE;
+
+      while (fgets(buffer, SIZE_LARGE, fh))
       {
-         BOOL statsproc = FALSE;
-
-         // pick a default value for ML support parameters
-         fo->MLSignature  = 1;
-         fo->MLSupport    = TRUE;
-
-         while (fgets(buffer, SIZE_LARGE, fh))
-         {
-            char *p, *value;
-            if ((value = strchr(buffer, '='))) for (++value; isspace(*value); value++);
-            if ((p = strpbrk(buffer,"\r\n"))) *p = 0;
-            for (p = buffer; *p && !isspace(*p); p++); *p = 0;
-            if (*buffer && value)
-            {
-               if(!stricmp(buffer, "Name"))              strlcpy(fo->Name, value, sizeof(fo->Name));
-               else if(!stricmp(buffer, "MaxAge"))       fo->MaxAge = atoi(value);
-               else if(!stricmp(buffer, "Password"))     strlcpy(fo->Password, Decrypt(value), sizeof(fo->Password));
-               else if(!stricmp(buffer, "Type"))         fo->Type = atoi(value);
-               else if(!stricmp(buffer, "XPKType"))      fo->Mode = atoi(value); // valid < v2.4
-               else if(!stricmp(buffer, "Mode"))         fo->Mode = atoi(value);
-               else if(!stricmp(buffer, "Sort1"))        fo->Sort[0] = atoi(value);
-               else if(!stricmp(buffer, "Sort2"))        fo->Sort[1] = atoi(value);
-               else if(!stricmp(buffer, "Stats"))        { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
-               else if(!stricmp(buffer, "MLSupport"))    fo->MLSupport = Txt2Bool(value);
-               else if(!stricmp(buffer, "MLFromAddr"))   strlcpy(fo->MLFromAddress, value, sizeof(fo->MLFromAddress));
-               else if(!stricmp(buffer, "MLRepToAddr"))  strlcpy(fo->MLReplyToAddress, value, sizeof(fo->MLReplyToAddress));
-               else if(!stricmp(buffer, "MLAddress"))    strlcpy(fo->MLAddress, value, sizeof(fo->MLAddress));
-               else if(!stricmp(buffer, "MLPattern"))    strlcpy(fo->MLPattern, value, sizeof(fo->MLPattern));
-               else if(!stricmp(buffer, "MLSignature"))  fo->MLSignature = atoi(value);
-               else if(!stricmp(buffer, "WriteIntro"))     strlcpy(fo->WriteIntro, value, sizeof(fo->WriteIntro));
-               else if(!stricmp(buffer, "WriteGreetings")) strlcpy(fo->WriteGreetings, value, sizeof(fo->WriteGreetings));
-            }
-         }
-         success = TRUE;
-
-         if(!statsproc)
-         {
-            if(isIncomingFolder(fo))
-            {
-              fo->Stats = FALSE;
-            }
-            else
-            {
-              fo->Stats = TRUE;
-            }
-         }
-
-         // check for non custom folder
-         // and set some values which shouldn`t be changed
-         if(isDefaultFolder(fo))
-         {
-           fo->MLSignature  = -1;
-           fo->MLSupport    = FALSE;
-         }
+        char *p, *value;
+        if ((value = strchr(buffer, '='))) for (++value; isspace(*value); value++);
+        if ((p = strpbrk(buffer,"\r\n"))) *p = 0;
+        for (p = buffer; *p && !isspace(*p); p++); *p = 0;
+        if (*buffer && value)
+        {
+          if(!stricmp(buffer, "Name"))              strlcpy(fo->Name, value, sizeof(fo->Name));
+          else if(!stricmp(buffer, "MaxAge"))       fo->MaxAge = atoi(value);
+          else if(!stricmp(buffer, "Password"))     strlcpy(fo->Password, Decrypt(value), sizeof(fo->Password));
+          else if(!stricmp(buffer, "Type"))         fo->Type = atoi(value);
+          else if(!stricmp(buffer, "XPKType"))      fo->Mode = atoi(value); // valid < v2.4
+          else if(!stricmp(buffer, "Mode"))         fo->Mode = atoi(value);
+          else if(!stricmp(buffer, "Sort1"))        fo->Sort[0] = atoi(value);
+          else if(!stricmp(buffer, "Sort2"))        fo->Sort[1] = atoi(value);
+          else if(!stricmp(buffer, "Stats"))        { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
+          else if(!stricmp(buffer, "MLSupport"))    fo->MLSupport = Txt2Bool(value);
+          else if(!stricmp(buffer, "MLFromAddr"))   strlcpy(fo->MLFromAddress, value, sizeof(fo->MLFromAddress));
+          else if(!stricmp(buffer, "MLRepToAddr"))  strlcpy(fo->MLReplyToAddress, value, sizeof(fo->MLReplyToAddress));
+          else if(!stricmp(buffer, "MLAddress"))    strlcpy(fo->MLAddress, value, sizeof(fo->MLAddress));
+          else if(!stricmp(buffer, "MLPattern"))    strlcpy(fo->MLPattern, value, sizeof(fo->MLPattern));
+          else if(!stricmp(buffer, "MLSignature"))  fo->MLSignature = atoi(value);
+          else if(!stricmp(buffer, "WriteIntro"))     strlcpy(fo->WriteIntro, value, sizeof(fo->WriteIntro));
+          else if(!stricmp(buffer, "WriteGreetings")) strlcpy(fo->WriteGreetings, value, sizeof(fo->WriteGreetings));
+        }
       }
-      fclose(fh);
-   }
-   return success;
+      success = TRUE;
+
+      if(!statsproc)
+        fo->Stats = !isIncomingFolder(fo);
+
+      // check for non custom folder
+      // and set some values which shouldn`t be changed
+      if(isDefaultFolder(fo))
+      {
+        fo->MLSignature  = -1;
+        fo->MLSupport    = FALSE;
+      }
+
+      // mark an old spam folder as custom folder, so it can be deleted
+      if(fo->Type == FT_SPAM && !C->SpamFilterEnabled)
+        fo->Type = FT_CUSTOM;
+    }
+    fclose(fh);
+  }
+
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -492,30 +505,37 @@ struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *
 //  frees all resources previously allocated on creation time of the folder
 BOOL FO_FreeFolder(struct Folder *folder)
 {
-  if(!folder) return(FALSE);
+  BOOL result = FALSE;
 
-  // remove the image of this folder from the objectlist at the application
-  if(folder->imageObject)
+  ENTER();
+
+  if(folder != NULL)
   {
-    // Here we cannot remove the BC_FImage from the BC_GROUP because the
-    // destructor of the Folder Listtree will call this function and then
-    // this BC_GROUP doesn`t exists anymore. -> Enforcer hit !
-    // so if the user is going to remove this folder by hand we will remove
-    // the BC_FImage of it in the FO_DeleteFolderFunc() before the destructor
-    // is going to call this function.
+    // remove the image of this folder from the objectlist at the application
+    if(folder->imageObject != NULL)
+    {
+      // Here we cannot remove the BC_FImage from the BC_GROUP because the
+      // destructor of the Folder Listtree will call this function and then
+      // this BC_GROUP doesn`t exists anymore. -> Enforcer hit !
+      // so if the user is going to remove this folder by hand we will remove
+      // the BC_FImage of it in the FO_DeleteFolderFunc() before the destructor
+      // is going to call this function.
 
-    // remove the bodychunk object from the nlist
-    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
+      // remove the bodychunk object from the nlist
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
 
-    // the image object itself will be freed by
-    // the folder object itself as it is part of the hierarchy since we
-    // added it with OM_ADDMEMBER.
+      // the image object itself will be freed by
+      // the folder object itself as it is part of the hierarchy since we
+      // added it with OM_ADDMEMBER.
+    }
+
+    // now it`s time to deallocate the folder itself
+    free(folder);
+    result = TRUE;
   }
 
-  // now it`s time to deallocate the folder itself
-  free(folder);
-
-  return(TRUE);
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -1236,93 +1256,96 @@ MakeHook(FO_EditFolderHook, FO_EditFolderFunc);
 //  Removes the active folder
 HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 {
-  APTR lv = G->MA->GUI.NL_FOLDERS;
-  struct Folder *folder = FO_GetCurrentFolder();
-  BOOL delete_folder = FALSE;
+  struct Folder *folder;
 
   ENTER();
 
-  if(!folder)
+  if((folder = FO_GetCurrentFolder()) != NULL)
   {
-    LEAVE();
-    return;
-  }
+    BOOL delete_folder = FALSE;
+    APTR lv = G->MA->GUI.NL_FOLDERS;
 
-  switch (folder->Type)
-  {
-    case FT_CUSTOM:
-    case FT_CUSTOMSENT:
-    case FT_CUSTOMMIXED:
+    switch (folder->Type)
     {
-      if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ConfirmDelete))))
+      case FT_CUSTOM:
+      case FT_CUSTOMSENT:
+      case FT_CUSTOMMIXED:
       {
-         DeleteMailDir(GetFolderDir(folder), FALSE);
-         ClearMailList(folder, TRUE);
+        if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ConfirmDelete))))
+        {
+          DeleteMailDir(GetFolderDir(folder), FALSE);
+          ClearMailList(folder, TRUE);
 
-         // Here we dispose the folderimage Object because the destructor
-         // of the Folder Listtree can`t do this without throwing enforcer hits
-         if(folder->imageObject)
-         {
+          // Here we dispose the folderimage Object because the destructor
+          // of the Folder Listtree can`t do this without throwing enforcer hits
+          if(folder->imageObject)
+          {
             // we make sure that the NList also doesn`t use the image in future anymore
             DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
 
             // and last, but not least we free the BC object here, so that this Object is also gone
             MUI_DisposeObject(folder->imageObject);
             folder->imageObject = NULL; // let`s set it to NULL so that the destructor doesn`t do the work again.
-         }
+          }
+        }
       }
-    }
-    break;
+      break;
 
-    case FT_GROUP:
-    {
-      struct MUI_NListtree_TreeNode *tn_sub;
-      struct MUI_NListtree_TreeNode *tn_group = (struct MUI_NListtree_TreeNode *)xget(lv, MUIA_NListtree_Active);
-
-      // check if the active treenode is a list and if it is empty
-      // we have to do this like the following because there is no other way to
-      // get known if the active entry has subentries.
-      if((tn_sub = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_group, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE)))
+      case FT_GROUP:
       {
-         // Now we popup a requester and if this requester is confirmed we move the subentries to the parent node.
-         if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_GROUP_CONFDEL))))
-         {
+        struct MUI_NListtree_TreeNode *tn_sub;
+        struct MUI_NListtree_TreeNode *tn_group = (struct MUI_NListtree_TreeNode *)xget(lv, MUIA_NListtree_Active);
+
+        // check if the active treenode is a list and if it is empty
+        // we have to do this like the following because there is no other way to
+        // get known if the active entry has subentries.
+        if((tn_sub = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_group, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE)) != NULL)
+        {
+          // Now we popup a requester and if this requester is confirmed we move the subentries to the parent node.
+          if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_GROUP_CONFDEL))))
+          {
             struct MUI_NListtree_TreeNode *tn_sub_next = tn_sub;
 
             set(lv, MUIA_NListtree_Quiet, TRUE);
 
             while(tn_sub_next)
             {
-               tn_sub_next = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_sub, MUIV_NListtree_GetEntry_Position_Next, MUIV_NListtree_GetEntry_Flag_SameLevel);
+              tn_sub_next = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_sub, MUIV_NListtree_GetEntry_Position_Next, MUIV_NListtree_GetEntry_Flag_SameLevel);
 
-               // move entry to the parent of the group
-               DoMethod(lv, MUIM_NListtree_Move, tn_group, tn_sub, MUIV_NListtree_Move_NewListNode_Active, MUIV_NListtree_Move_NewTreeNode_Tail, MUIF_NONE);
+              // move entry to the parent of the group
+              DoMethod(lv, MUIM_NListtree_Move, tn_group, tn_sub, MUIV_NListtree_Move_NewListNode_Active, MUIV_NListtree_Move_NewTreeNode_Tail, MUIF_NONE);
 
-               tn_sub = tn_sub_next;
+              tn_sub = tn_sub_next;
             }
 
             set(lv, MUIA_NListtree_Quiet, FALSE);
-         }
+          }
+        }
+        else
+          delete_folder = TRUE;
       }
-      else delete_folder = TRUE;
+      break;
+
+      default:
+        // nothing
+      break;
     }
-    break;
 
-    default:
-      // nothing
-    break;
-  }
+    if(delete_folder)
+    {
+      D(DBF_FOLDER, "deleting folder \"%s\"", folder->Name);
 
-  if(delete_folder)
-  {
-     // remove the entry from the listtree now
-     DoMethod(lv, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Active, MUIF_NONE);
+      // remove the entry from the listtree now
+      DoMethod(lv, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Active, MUIF_NONE);
 
-     // Save the Tree to the folder config now
-     FO_SaveTree(CreateFilename(".folders"));
+      // Save the Tree to the folder config now
+      FO_SaveTree(CreateFilename(".folders"));
 
-     // update the statistics in case the just deleted folder contained new or unread mail
-     DisplayStatistics(NULL, TRUE);
+      // update the statistics in case the just deleted folder contained new or unread mail
+      DisplayStatistics(NULL, TRUE);
+    }
+    else
+      D(DBF_FOLDER, "keeping folder \"%s\"", folder->Name);
   }
 
   LEAVE();
