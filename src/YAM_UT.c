@@ -1546,11 +1546,19 @@ char *GetLine(FILE *fh, char *buffer, int bufsize)
 //  return true/false if file exists
 BOOL FileExists(const char *filename)
 {
-  BPTR lock = Lock(filename, ACCESS_READ);
-  if(!lock)
-    return FALSE;
-  UnLock(lock);
-  return TRUE;
+  BOOL exists = FALSE;
+  BPTR lock;
+
+  ENTER();
+
+  if((lock = Lock(filename, ACCESS_READ)))
+  {
+    exists = TRUE;
+    UnLock(lock);
+  }
+
+  RETURN(exists);
+  return exists;
 }
 ///
 /// FileSize
@@ -1618,7 +1626,7 @@ enum FType FileType(const char *filename)
   {
     struct FileInfoBlock *fib;
 
-    if((fib = AllocDosObject(DOS_FIB, NULL)))
+    if((fib = AllocDosObject(DOS_FIB, NULL)) != NULL)
     {
       if(Examine(lock, fib))
       {
@@ -2478,6 +2486,8 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
   BPTR dirLock;
   BOOL result = TRUE;
 
+  ENTER();
+
   if((dirLock = Lock(dir, ACCESS_READ)))
   {
     struct ExAllControl *eac;
@@ -2559,8 +2569,10 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
     if(result)
       result = DeleteFile(dir);
   }
-  else result = FALSE;
+  else
+    result = FALSE;
 
+  RETURN(result);
   return result;
 }
 ///

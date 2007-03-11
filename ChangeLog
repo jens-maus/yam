@@ -7,6 +7,7 @@ $URL$
 
 2007-03-11  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: cleaned up some functions.
   * YAM_COs.c: deleting an old spam folder when the spam filter is disabled is
     now possible. The check for an existing folder named "spam" when enabling
     the spam filter has been enhanced. An old folder of type SPAM without having
