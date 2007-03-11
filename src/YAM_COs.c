@@ -1429,7 +1429,7 @@ void CO_GetConfig(BOOL saveConfig)
           // the spam filter has been enabled, now try to create the mandatory spam folder
           BOOL createSpamFolder;
 
-          if(FileType(FolderName[FT_SPAM]) == FIT_NONEXIST)
+          if(FileType(CreateFilename(FolderName[FT_SPAM])) == FIT_NONEXIST)
           {
             // no directory named "spam" exists, so let's create it
             createSpamFolder = TRUE;
@@ -1458,7 +1458,7 @@ void CO_GetConfig(BOOL saveConfig)
               case 1:
               {
                 // delete everything in the folder, the directory itself can be kept
-                DeleteMailDir(FolderName[FT_SPAM], FALSE);
+                DeleteMailDir(CreateFilename(FolderName[FT_SPAM]), FALSE);
                 createSpamFolder = TRUE;
               }
               break;
@@ -1474,6 +1474,29 @@ void CO_GetConfig(BOOL saveConfig)
 
           if(createSpamFolder)
           {
+            struct Folder *spamFolder;
+
+            // if a folder named "spam" already exists, but a new spam folder should be
+            // created, we need to remove the old folder from the tree view first
+            if((spamFolder = FO_GetFolderByPath((STRPTR)FolderName[FT_SPAM], NULL)) != NULL)
+            {
+              struct MUI_NListtree_TreeNode *tn;
+
+              // now we need the corresponding treenode to remove it from the list of folders
+              if((tn = FO_GetFolderTreeNode(spamFolder)) != NULL)
+              {
+                if(spamFolder->imageObject != NULL)
+                {
+                  // we make sure that the NList also doesn`t use the image in future anymore
+                  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
+                  spamFolder->imageObject = NULL;
+                }
+
+                // remove the folder from the folder list
+                DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
+              }
+            }
+
             // try to create the folder and save the new folder tree
             if(!FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM)) || !FO_SaveTree(CreateFilename(".folders")))
             {

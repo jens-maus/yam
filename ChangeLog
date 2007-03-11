@@ -7,6 +7,11 @@ $URL$
 
 2007-03-11  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COs.c: deleting an old spam folder when the spam filter is disabled is
+    now possible. The check for an existing folder named "spam" when enabling
+    the spam filter has been enhanced. An old folder of type SPAM without having
+    the spam filter active is now converted to a "normal" folder on the fly. All
+    in all this fixes bug #1675718.
   * YAM_FO.c: added new function FO_GetFolderByPath() to search for a folder
     by path name.
 
