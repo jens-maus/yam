@@ -133,13 +133,17 @@ void SetupDebug(void)
       // just a flag definition
       if(s[0] == '@')
       {
+        // skip the '@'
+        s++;
         // check if this call is a negation or not
-        if(s[1] == '!')
+        if(s[0] == '!')
         {
+          // skip the '!'
+          s++;
           // search for the token and clear the flag
           for(i=0; dbclasses[i].token; i++)
           {
-            if(strnicmp(&s[2], dbclasses[i].token, strlen(dbclasses[i].token)) == 0)
+            if(strnicmp(s, dbclasses[i].token, strlen(dbclasses[i].token)) == 0)
             {
               kprintf("clear '%s' debug class flag.\n", dbclasses[i].token);
               CLEAR_FLAG(debug_classes, dbclasses[i].flag);
@@ -151,7 +155,7 @@ void SetupDebug(void)
           // search for the token and set the flag
           for(i=0; dbclasses[i].token; i++)
           {
-            if(strnicmp(&s[1], dbclasses[i].token, strlen(dbclasses[i].token)) == 0)
+            if(strnicmp(s, dbclasses[i].token, strlen(dbclasses[i].token)) == 0)
             {
               kprintf("set '%s' debug class flag\n", dbclasses[i].token);
               SET_FLAG(debug_classes, dbclasses[i].flag);
@@ -162,11 +166,13 @@ void SetupDebug(void)
       else
       {
         // check if this call is a negation or not
-        if(s[1] == '!')
+        if(s[0] == '!')
         {
+          // skip the '!'
+          s++;
           for(i=0; dbflags[i].token; i++)
           {
-            if(strnicmp(&s[1], dbflags[i].token, strlen(dbflags[i].token)) == 0)
+            if(strnicmp(s, dbflags[i].token, strlen(dbflags[i].token)) == 0)
             {
               kprintf("clear '%s' debug flag\n", dbflags[i].token);
               CLEAR_FLAG(debug_flags, dbflags[i].flag);
