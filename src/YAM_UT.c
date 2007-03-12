@@ -2689,36 +2689,52 @@ char *CreateFilename(const char * const file)
 ///
 /// CreateDirectory
 //  Makes a directory
-BOOL CreateDirectory(char *dir)
+BOOL CreateDirectory(const char *dir)
 {
   BOOL success = FALSE;
-  enum FType t;
 
   ENTER();
 
-  t = FileType(dir);
-
-  if(t == FIT_DRAWER)
-    success = TRUE;
-  else if(t == FIT_NONEXIST)
+  // check if dir isn't empty
+  if(dir[0] != '\0')
   {
-    int len;
-    BPTR fl;
+    enum FType ft = FileType(dir);
 
-    len = strlen(dir) - 1;
-    // remove a trailing slash
-    if(dir[len] == '/')
-      dir[len] = '\0';
-
-    if((fl = CreateDir((STRPTR)dir)))
-    {
-      UnLock(fl);
+    if(ft == FIT_DRAWER)
       success = TRUE;
-    }
-  }
+    else if(ft == FIT_NONEXIST)
+    {
+      char buf[SIZE_PATHFILE];
+      BPTR fl;
+      size_t len = strlen(dir)-1;
 
-  if(G->MA && !success)
-    ER_NewError(tr(MSG_ER_CantCreateDir), dir);
+      // check for trailing slashes
+      if(dir[len] == '/')
+      {
+        // we make a copy of dir first because
+        // we are not allowed to modify it
+        strlcpy(buf, dir, sizeof(buf));
+
+        // remove all trailing slashes
+        while(len > 0 && buf[len] == '/')
+          buf[len--] = '\0';
+
+        // set dir to our buffer
+        dir = buf;
+      }
+
+      // use utility/CreateDir() to create the
+      // directory
+      if((fl = CreateDir(dir)))
+      {
+        UnLock(fl);
+        success = TRUE;
+      }
+    }
+
+    if(G->MA && !success)
+      ER_NewError(tr(MSG_ER_CantCreateDir), dir);
+  }
 
   RETURN(success);
   return success;

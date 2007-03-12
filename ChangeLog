@@ -7,6 +7,9 @@ $URL$
 
 2007-03-12  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: change argument of CreateDirectory() to be a const* so that we
+    can make sure that it isn't altered in any way. Also changed the function
+    to remove all trailing slashes instead of just the last one.
   * YAM_UT.c: changed the OpenTempFile() to use utility/GetUniqueID() instead
     of trying to generate an own Applictaion-wide unique ID.
 

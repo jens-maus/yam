@@ -286,7 +286,7 @@ void     MyBltMaskBitMapRastPort(struct BitMap *srcBitMap, LONG xSrc, LONG ySrc,
 BOOL     CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh);
 BOOL     MoveFile(const char *oldname, const char *newname);
 char *   CreateFilename(const char * const file);
-BOOL     CreateDirectory(char *dir);
+BOOL     CreateDirectory(const char *dir);
 int      TZtoMinutes(char *tzone);
 void     DateStampUTC(struct DateStamp *ds);
 void     GetSysTimeUTC(struct TimeVal *tv);
