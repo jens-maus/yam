@@ -12,6 +12,12 @@ $URL$
 
 2007-03-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE.c, YAM.cd: removed the "deny and send now/later" answers from the
+    requester asking for a disposition notification. There is absolutely no
+    sense in denying such a mail, because the notification is in no way an
+    indication that the receiver really read or understood the mail, regardless
+    of the answer. Even programs like ThunderBird let a user choose between
+    "Accept" and "Cancel" only. This fixes bug #1579194.
   * YAM_WR.c: the text editor's cursor coordinates where displayed in a
     TextObject with text background. But the object has no real frame the text
     background may have another color that the usual group background. Hence the

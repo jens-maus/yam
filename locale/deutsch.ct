@@ -3348,24 +3348,10 @@ MSG_HELP_EA_BT_CANCEL
 ;
 ; Module RE - Procedures
 ;
-MSG_RE_MDNGads1
-Akzeptieren und\nspäter senden|Ablehnen und\nspäter senden
-; Accept and\n\
-; send later|Deny and\n\
-; send later
-;
-MSG_RE_MDNGads2
-|Akzeptieren und\njetzt senden|Ablehnen und\njetzt senden
-; |Accept and\n\
-; send now|Deny and\n\
-; send now
-;
-MSG_RE_MDNGads3
-|Ignorieren
-; |Ignore
-;
 MSG_RE_MDNReq
-Der Absender möchte über den Status\ndieser Nachricht informiert werden (MDN).\nWie wollen Sie reagieren?
+Der Absender möchte über den Status\n\
+dieser Nachricht informiert werden (MDN).\n\
+Wie wollen Sie reagieren?
 ; The sender of this message requests a disposition notification (MDN).\n\
 ; What do you want to do?
 ;
@@ -3374,7 +3360,8 @@ Nachricht speichern...
 ; Save message...
 ;
 MSG_RE_Overwrite
-Die Datei '%s' existiert bereits.\nSoll sie überschrieben werden?
+Die Datei '%s' existiert bereits.\n\
+Soll sie überschrieben werden?
 ; File '%s' already exists.\n\
 ; Do you want to overwrite it?
 ; FILENAME
@@ -5579,10 +5566,6 @@ Diese 'Reply-To:' Adresse bei neuen Nachrichten\nfür diese Liste verwenden
 ; Use this 'Reply-To:' address when\n\
 ; posting new mails to the list
 ;
-MSG_RE_MDNGads4
-|Alles ignorieren
-; |Ignore all
-;
 MSG_EA_DefSecurity
 S_icherheit
 ; Sec_urity
@@ -7590,4 +7573,18 @@ Zeilenumbruch
 ;
 MSG_CO_SPAM_MARK_AS_READ
 Spam-Mails als gelesen markieren
+;
+MSG_RE_MDN_ACCEPT_LATER
+Akzeptieren und\n\
+später senden
+;
+MSG_RE_MDN_ACCEPT_NOW
+|Akzeptieren und\n\
+jetzt senden
+;
+MSG_RE_MDN_IGNORE
+|Ignorieren
+;
+MSG_RE_MDN_IGNORE_ALL
+|Alles ignorieren
 ;

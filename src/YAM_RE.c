@@ -372,6 +372,7 @@ BOOL RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi)
           char buttons[SIZE_DEFAULT*2];
           BOOL isonline = TR_IsOnline();
           BOOL sendnow = C->SendMDNAtOnce && isonline;
+          int answer;
 
           switch(MDNmode)
           {
@@ -380,21 +381,31 @@ BOOL RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi)
             break;
 
             case 2:
-              sendnow = FALSE;
+              // set up the possible answers
+              strlcpy(buttons, tr(MSG_RE_MDN_ACCEPT_LATER), sizeof(buttons));
+              if(isonline)
+                strlcat(buttons, tr(MSG_RE_MDN_ACCEPT_NOW), sizeof(buttons));
+              strlcat(buttons, tr(MSG_RE_MDN_IGNORE), sizeof(buttons));
+              if(multi)
+                strlcat(buttons, tr(MSG_RE_MDN_IGNORE_ALL), sizeof(buttons));
 
-              snprintf(buttons, sizeof(buttons), "%s%s%s%s", tr(MSG_RE_MDNGads1),
-                                                             isonline ? tr(MSG_RE_MDNGads2) : "",
-                                                             tr(MSG_RE_MDNGads3),
-                                                             multi ? tr(MSG_RE_MDNGads4) : "");
-
-              switch (MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), buttons, tr(MSG_RE_MDNReq)))
+              // now ask the user
+              answer = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), buttons, tr(MSG_RE_MDNReq));
+              if(answer == 0 || (answer == 2 && !isonline) || (answer == 3 && isonline))
               {
-                case 0: ignoreall = TRUE;
-                case 5: type = MDN_IGNORE; break;
-                case 3: sendnow = TRUE;
-                case 1: break;
-                case 4: sendnow = TRUE;
-                case 2: type = MDN_DENY; break;
+                // ignore or ignore all
+                type = MDN_IGNORE;
+                ignoreall = multi;
+              }
+              else if(answer == 2 && isonline)
+              {
+                // accept and send now
+                sendnow = TRUE;
+              }
+              else
+              {
+                // accept and send later
+                sendnow = FALSE;
               }
             break;
 

@@ -6145,3 +6145,17 @@ updates.
 MSG_WR_SELECTALL (1861//)
 Select All
 ;
+MSG_RE_MDN_ACCEPT_LATER (1862//)
+Accept and\n\
+send later
+;
+MSG_RE_MDN_ACCEPT_NOW (1863//)
+|Accept and\n\
+send now
+;
+MSG_RE_MDN_IGNORE (1864//)
+|Ignore
+;
+MSG_RE_MDN_IGNORE_ALL (1865//)
+|Ignore all
+;
