@@ -256,7 +256,6 @@ OVERLOAD(OM_NEW)
   data->readMailData = rmData;
 
   // set some default values for a new readMailGroup
-  rmData->uniqueID = GetUniqueID();
   rmData->headerMode = C->ShowHeader;
   rmData->senderInfoMode = C->ShowSenderInfo;
   rmData->wrapHeaders = C->WrapHeader;

@@ -7,6 +7,14 @@ $URL$
 
 2007-03-12  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c, ReadMailGroup.c: the bugfix for bug #1659581 wasn't complete
+    because we have to set a new unique ID on each new message loading or
+    otherwise the very same ReadMailGroup object may carry on the same
+    ID even on switching mails. Now we assign the uniqueID in the
+    RE_LoadMessage() function instead which should be much more safe.
+  * YAM_UT.c, YAM_TR.c: adapted certain function to use GetUniqueID() and/or
+    OpenTempFile() instead of maintaining own temporary filename generation
+    code.
   * YAM_WR.c: to be somwhat more correct we use MUII_RegisterBack as the
     MUIA_Frame value of the cursor coordinate background definition of the
     write window.

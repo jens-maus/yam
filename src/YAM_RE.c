@@ -2689,6 +2689,11 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
   if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
     BusyText(tr(MSG_BusyReading), "");
 
+  // with each new LoadMessage() we set a new uniqueID
+  // to our ReadMailData structure (this is required for
+  // the tempfilename generation)
+  rmData->uniqueID = GetUniqueID();
+
   // here we read in the mail in our read mail group
   GetMailFile(rmData->readFile, folder, mail);
 
@@ -3618,8 +3623,6 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
 
       if(rmData->readWindow != NULL)
       {
-        rmData->uniqueID = GetUniqueID();
-
         RETURN(rmData);
         return rmData;
       }
@@ -3668,7 +3671,6 @@ struct ReadMailData *AllocPrivateRMData(struct Mail *mail, short parseFlags)
   {
     rmData->mail = mail;
     rmData->parseFlags = parseFlags;
-    rmData->uniqueID = GetUniqueID();
 
     if(RE_LoadMessage(rmData) == FALSE)
     {
