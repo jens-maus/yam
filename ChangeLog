@@ -12,6 +12,8 @@ $URL$
 
 2007-03-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM.cd: removed the "deny" option from the
+    range of possible disposition notifications.
   * YAM_RE.c, YAM.cd: removed the "deny and send now/later" answers from the
     requester asking for a disposition notification. There is absolutely no
     sense in denying such a mail, because the notification is in no way an

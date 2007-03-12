@@ -185,13 +185,12 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
 //  Creates a message disposition notification
 static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *recipient, BOOL sendnow)
 {
-  static const char *MDNMessage[5] =
+  static const char *MDNMessage[4] =
   {
      "The message written on %s (UTC) to %s with subject \"%s\" has been displayed. This is no guarantee that the content has been read or understood.\n",
      "The message written on %s (UTC) to %s with subject \"%s\" has been sent somewhere %s, without being displayed to the user. The user may or may not see the message later.\n",
      "The message written on %s (UTC) to %s with subject \"%s\" has been processed %s, without being displayed to the user. The user may or may not see the message later.\n",
      "The message written on %s (UTC) to %s with subject \"%s\" has been deleted %s. The recipient may or may not have seen the message. The recipient may \"undelete\" the message at a later time and read the message.\n",
-     "%s doesn't wish to inform you about the disposition of your message written on %s with subject \"%s\".\n"
   };
   struct WritePart *p1;
   struct TempFile *tf1;
@@ -226,7 +225,6 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
       case MDN_DISP: strlcat(disp, "dispatched", sizeof(disp)); fprintf(tf1->FP, MDNMessage[1], date, rcpt, subj, mode); break;
       case MDN_PROC: strlcat(disp, "processed", sizeof(disp));  fprintf(tf1->FP, MDNMessage[2], date, rcpt, subj, mode); break;
       case MDN_DELE: strlcat(disp, "deleted", sizeof(disp));    fprintf(tf1->FP, MDNMessage[3], date, rcpt, subj, mode); break;
-      case MDN_DENY: strlcat(disp, "denied", sizeof(disp));     fprintf(tf1->FP, MDNMessage[4], rcpt, date, subj); break;
     }
 
     fclose(tf1->FP);
@@ -377,7 +375,7 @@ BOOL RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi)
           switch(MDNmode)
           {
             case 1:
-              type = MDN_DENY|MDN_AUTOSEND|MDN_AUTOACT;
+              type = MDN_AUTOSEND|MDN_AUTOACT;
             break;
 
             case 2:
@@ -2464,7 +2462,6 @@ static void RE_HandleMDNReport(struct Part *frp)
       else if(!stricmp(type, "processed"))  fprintf(out, tr(MSG_RE_MDNprocessed), msgdesc, mode);
       else if(!stricmp(type, "dispatched")) fprintf(out, tr(MSG_RE_MDNdispatched), msgdesc, mode);
       else if(!stricmp(type, "deleted"))    fprintf(out, tr(MSG_RE_MDNdeleted), msgdesc, mode);
-      else if(!stricmp(type, "denied"))     fprintf(out, tr(MSG_RE_MDNdenied), msgdesc);
       else fprintf(out, tr(MSG_RE_MDNunknown), msgdesc, type, mode);
 
       fclose(out);

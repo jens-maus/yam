@@ -1995,10 +1995,6 @@ MSG_CO_DispIgnore
 Ignorieren
 ; Ignore
 ;
-MSG_CO_DispDeny
-Ablehnen
-; Autodeny
-;
 MSG_CO_DispAsk
 Nachfragen
 ; Ask user
@@ -3504,12 +3500,6 @@ Die Nachricht\n%s\nwurde%s gelöscht,\nohne dass sie dem Benutzer angezeigt wurde
 ; has been deleted%s.\n\
 ; The recipient may or may not have seen the message. The recipient\n\
 ; may \"undelete\" the message at a later time and read the message.\n
-;
-MSG_RE_MDNdenied
-Der Empfänger der Nachricht\n%s\nmöchte Sie nicht über deren Status informieren.\n
-; The recipient of the message\n\
-; %s\n\
-; doesn't wish to inform you about the disposition of that message.\n
 ;
 MSG_RE_MDNunknown
 Die Nachricht\n%s\n wurde %s%s.\n

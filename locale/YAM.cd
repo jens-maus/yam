@@ -1524,9 +1524,6 @@ Sa_ve sent messages
 MSG_CO_DispIgnore (519//)
 Ignore
 ;
-MSG_CO_DispDeny (520//)
-Autodeny
-;
 MSG_CO_DispAsk (521//)
 Ask user
 ;
@@ -2587,19 +2584,6 @@ Discard changes
 ;
 ; Module RE - Procedures
 ;
-MSG_RE_MDNGads1 (823//)
-Accept and\n\
-send later|Deny and\n\
-send later
-;
-MSG_RE_MDNGads2 (824//)
-|Accept and\n\
-send now|Deny and\n\
-send now
-;
-MSG_RE_MDNGads3 (825//)
-|Ignore
-;
 MSG_RE_MDNReq (826//)
 The sender of this message requests a disposition notification (MDN).\n\
 What do you want to do?
@@ -2721,11 +2705,6 @@ The message\n\
 has been deleted%s.\n\
 The recipient may or may not have seen the message. The recipient\n\
 may \"undelete\" the message at a later time and read the message.\n
-;
-MSG_RE_MDNdenied (858//)
-The recipient of the message\n\
-%s\n\
-doesn't wish to inform you about the disposition of that message.\n
 ;
 MSG_RE_MDNunknown (859//)
 The message\n\
@@ -4301,9 +4280,6 @@ _Reply-To: address
 MSG_HELP_FO_ST_MLREPLYTOADDRESS (1327//)
 Use this 'Reply-To:' address when\n\
 posting new mails to the list
-;
-MSG_RE_MDNGads4 (1328//)
-|Ignore all
 ;
 MSG_EA_DefSecurity (1329//)
 Sec_urity
