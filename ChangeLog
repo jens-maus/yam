@@ -7,6 +7,9 @@ $URL$
 
 2007-03-12  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c: to be somwhat more correct we use MUII_RegisterBack as the
+    MUIA_Frame value of the cursor coordinate background definition of the
+    write window.
   * YAM_UT.c: change argument of CreateDirectory() to be a const* so that we
     can make sure that it isn't altered in any way. Also changed the function
     to remove all trailing slashes instead of just the last one.
