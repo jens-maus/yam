@@ -1425,6 +1425,16 @@ void CO_Validate(struct Config *co, BOOL update)
             }
           }
         }
+
+        // erase possible MDN_DENY values
+        if(C->MDN_Display == MDN_DENY)
+          C->MDN_Display = MDN_READ;
+        if(C->MDN_Process == MDN_DENY)
+          C->MDN_Process = MDN_READ;
+        if(C->MDN_Delete == MDN_DENY)
+          C->MDN_Delete = MDN_DELE;
+        if(C->MDN_Filter == MDN_DENY)
+          C->MDN_Filter = MDN_READ;
       }
 
       if(G->CO->Visited[cp_Read] || G->CO->UpdateAll)

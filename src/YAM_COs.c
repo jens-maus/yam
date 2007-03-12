@@ -1510,95 +1510,103 @@ void CO_GetConfig(BOOL saveConfig)
       break;
 
       case cp_Read:
-         CE->ShowHeader        = GetMUICycle  (gui->CY_HEADER);
-         GetMUIString(CE->ShortHeaders, gui->ST_HEADERS, sizeof(CE->ShortHeaders));
-         CE->ShowSenderInfo    = GetMUICycle  (gui->CY_SENDERINFO);
-         CE->SigSepLine        = GetMUICycle  (gui->CY_SIGSEPLINE);
-         CE->ColoredText       = *(struct MUI_PenSpec *)xget(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec);
-         CE->Color1stLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec);
-         CE->Color2ndLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec);
-         CE->Color3rdLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec);
-         CE->Color4thLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec);
-         CE->ColorURL          = *(struct MUI_PenSpec *)xget(gui->CA_COLURL,   MUIA_Pendisplay_Spec);
-         CE->DisplayAllTexts   = GetMUICheck  (gui->CH_ALLTEXTS);
-         CE->FixedFontEdit     = GetMUICheck  (gui->CH_FIXFEDIT);
-         CE->WrapHeader        = GetMUICheck  (gui->CH_WRAPHEAD);
-         CE->UseTextstyles     = GetMUICheck  (gui->CH_TEXTSTYLES);
-         CE->MultipleWindows   = GetMUICheck  (gui->CH_MULTIWIN);
-         CE->EmbeddedReadPane  = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
-         CE->StatusChangeDelayOn  = GetMUICheck  (gui->CH_DELAYEDSTATUS);
-         CE->StatusChangeDelay    = GetMUINumer  (gui->NB_DELAYEDSTATUS)*1000;
-         CE->ConvertHTML       = GetMUICheck(gui->CH_CONVERTHTML);
-         break;
+      {
+        CE->ShowHeader        = GetMUICycle  (gui->CY_HEADER);
+        GetMUIString(CE->ShortHeaders, gui->ST_HEADERS, sizeof(CE->ShortHeaders));
+        CE->ShowSenderInfo    = GetMUICycle  (gui->CY_SENDERINFO);
+        CE->SigSepLine        = GetMUICycle  (gui->CY_SIGSEPLINE);
+        CE->ColoredText       = *(struct MUI_PenSpec *)xget(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec);
+        CE->Color1stLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec);
+        CE->Color2ndLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec);
+        CE->Color3rdLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec);
+        CE->Color4thLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec);
+        CE->ColorURL          = *(struct MUI_PenSpec *)xget(gui->CA_COLURL,   MUIA_Pendisplay_Spec);
+        CE->DisplayAllTexts   = GetMUICheck  (gui->CH_ALLTEXTS);
+        CE->FixedFontEdit     = GetMUICheck  (gui->CH_FIXFEDIT);
+        CE->WrapHeader        = GetMUICheck  (gui->CH_WRAPHEAD);
+        CE->UseTextstyles     = GetMUICheck  (gui->CH_TEXTSTYLES);
+        CE->MultipleWindows   = GetMUICheck  (gui->CH_MULTIWIN);
+        CE->EmbeddedReadPane  = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
+        CE->StatusChangeDelayOn  = GetMUICheck  (gui->CH_DELAYEDSTATUS);
+        CE->StatusChangeDelay    = GetMUINumer  (gui->NB_DELAYEDSTATUS)*1000;
+        CE->ConvertHTML       = GetMUICheck(gui->CH_CONVERTHTML);
+      }
+      break;
 
       case cp_Write:
-         GetMUIString(CE->ReplyTo, gui->ST_REPLYTO, sizeof(CE->ReplyTo));
-         GetMUIString(CE->Organization, gui->ST_ORGAN, sizeof(CE->Organization));
-         GetMUIString(CE->ExtraHeaders, gui->ST_EXTHEADER, sizeof(CE->ExtraHeaders));
-         GetMUIString(CE->NewIntro, gui->ST_HELLOTEXT, sizeof(CE->NewIntro));
-         GetMUIString(CE->Greetings, gui->ST_BYETEXT, sizeof(CE->Greetings));
-         CE->WarnSubject       = GetMUICheck  (gui->CH_WARNSUBJECT);
-         CE->EdWrapCol         = GetMUIInteger(gui->ST_EDWRAP);
-         CE->EdWrapMode        = GetMUICycle  (gui->CY_EDWRAP);
-         GetMUIString(CE->Editor, gui->ST_EDITOR, sizeof(CE->Editor));
-         CE->LaunchAlways      = GetMUICheck  (gui->CH_LAUNCH);
-         CE->EmailCache        = GetMUINumer  (gui->NB_EMAILCACHE);
-         CE->AutoSave          = GetMUINumer  (gui->NB_AUTOSAVE)*60; // in seconds
-         break;
+      {
+        GetMUIString(CE->ReplyTo, gui->ST_REPLYTO, sizeof(CE->ReplyTo));
+        GetMUIString(CE->Organization, gui->ST_ORGAN, sizeof(CE->Organization));
+        GetMUIString(CE->ExtraHeaders, gui->ST_EXTHEADER, sizeof(CE->ExtraHeaders));
+        GetMUIString(CE->NewIntro, gui->ST_HELLOTEXT, sizeof(CE->NewIntro));
+        GetMUIString(CE->Greetings, gui->ST_BYETEXT, sizeof(CE->Greetings));
+        CE->WarnSubject       = GetMUICheck  (gui->CH_WARNSUBJECT);
+        CE->EdWrapCol         = GetMUIInteger(gui->ST_EDWRAP);
+        CE->EdWrapMode        = GetMUICycle  (gui->CY_EDWRAP);
+        GetMUIString(CE->Editor, gui->ST_EDITOR, sizeof(CE->Editor));
+        CE->LaunchAlways      = GetMUICheck  (gui->CH_LAUNCH);
+        CE->EmailCache        = GetMUINumer  (gui->NB_EMAILCACHE);
+        CE->AutoSave          = GetMUINumer  (gui->NB_AUTOSAVE)*60; // in seconds
+      }
+      break;
 
       case cp_ReplyForward:
-         GetMUIString(CE->ReplyHello, gui->ST_REPLYHI, sizeof(CE->ReplyHello));
-         GetMUIString(CE->ReplyIntro, gui->ST_REPLYTEXT, sizeof(CE->ReplyIntro));
-         GetMUIString(CE->ReplyBye, gui->ST_REPLYBYE, sizeof(CE->ReplyBye));
-         GetMUIString(CE->AltReplyHello, gui->ST_AREPLYHI, sizeof(CE->AltReplyHello));
-         GetMUIString(CE->AltReplyIntro, gui->ST_AREPLYTEXT, sizeof(CE->AltReplyIntro));
-         GetMUIString(CE->AltReplyBye, gui->ST_AREPLYBYE, sizeof(CE->AltReplyBye));
-         GetMUIString(CE->AltReplyPattern, gui->ST_AREPLYPAT, sizeof(CE->AltReplyPattern));
-         GetMUIString(CE->MLReplyHello, gui->ST_MREPLYHI, sizeof(CE->MLReplyHello));
-         GetMUIString(CE->MLReplyIntro, gui->ST_MREPLYTEXT, sizeof(CE->MLReplyIntro));
-         GetMUIString(CE->MLReplyBye, gui->ST_MREPLYBYE, sizeof(CE->MLReplyBye));
-         GetMUIString(CE->ForwardIntro, gui->ST_FWDSTART, sizeof(CE->ForwardIntro));
-         GetMUIString(CE->ForwardFinish, gui->ST_FWDEND, sizeof(CE->ForwardFinish));
-         CE->QuoteMessage      = GetMUICheck  (gui->CH_QUOTE);
-         GetMUIString(CE->QuoteText, gui->ST_REPLYCHAR, sizeof(CE->QuoteText));
-         GetMUIString(CE->AltQuoteText, gui->ST_ALTQUOTECHAR, sizeof(CE->AltQuoteText));
-         CE->QuoteEmptyLines   = GetMUICheck  (gui->CH_QUOTEEMPTY);
-         CE->CompareAddress    = GetMUICheck  (gui->CH_COMPADDR);
-         CE->StripSignature    = GetMUICheck  (gui->CH_STRIPSIG);
-         break;
+      {
+        GetMUIString(CE->ReplyHello, gui->ST_REPLYHI, sizeof(CE->ReplyHello));
+        GetMUIString(CE->ReplyIntro, gui->ST_REPLYTEXT, sizeof(CE->ReplyIntro));
+        GetMUIString(CE->ReplyBye, gui->ST_REPLYBYE, sizeof(CE->ReplyBye));
+        GetMUIString(CE->AltReplyHello, gui->ST_AREPLYHI, sizeof(CE->AltReplyHello));
+        GetMUIString(CE->AltReplyIntro, gui->ST_AREPLYTEXT, sizeof(CE->AltReplyIntro));
+        GetMUIString(CE->AltReplyBye, gui->ST_AREPLYBYE, sizeof(CE->AltReplyBye));
+        GetMUIString(CE->AltReplyPattern, gui->ST_AREPLYPAT, sizeof(CE->AltReplyPattern));
+        GetMUIString(CE->MLReplyHello, gui->ST_MREPLYHI, sizeof(CE->MLReplyHello));
+        GetMUIString(CE->MLReplyIntro, gui->ST_MREPLYTEXT, sizeof(CE->MLReplyIntro));
+        GetMUIString(CE->MLReplyBye, gui->ST_MREPLYBYE, sizeof(CE->MLReplyBye));
+        GetMUIString(CE->ForwardIntro, gui->ST_FWDSTART, sizeof(CE->ForwardIntro));
+        GetMUIString(CE->ForwardFinish, gui->ST_FWDEND, sizeof(CE->ForwardFinish));
+        CE->QuoteMessage      = GetMUICheck  (gui->CH_QUOTE);
+        GetMUIString(CE->QuoteText, gui->ST_REPLYCHAR, sizeof(CE->QuoteText));
+        GetMUIString(CE->AltQuoteText, gui->ST_ALTQUOTECHAR, sizeof(CE->AltQuoteText));
+        CE->QuoteEmptyLines   = GetMUICheck  (gui->CH_QUOTEEMPTY);
+        CE->CompareAddress    = GetMUICheck  (gui->CH_COMPADDR);
+        CE->StripSignature    = GetMUICheck  (gui->CH_STRIPSIG);
+      }
+      break;
 
       case cp_Signature:
       {
-         CE->UseSignature      = GetMUICheck  (gui->CH_USESIG);
-         GetMUIString(CE->TagsFile, gui->ST_TAGFILE, sizeof(CE->TagsFile));
-         GetMUIString(CE->TagsSeparator, gui->ST_TAGSEP, sizeof(CE->TagsSeparator));
+        CE->UseSignature      = GetMUICheck  (gui->CH_USESIG);
+        GetMUIString(CE->TagsFile, gui->ST_TAGFILE, sizeof(CE->TagsFile));
+        GetMUIString(CE->TagsSeparator, gui->ST_TAGSEP, sizeof(CE->TagsSeparator));
 
-         if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) && saveConfig == FALSE)
-         {
-           // if the signature was modified but the config should not be saved but just be "used"
-           // then ask the user if the changes to the signature should be made permanent
-           if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
-           {
-             // save the modified signature only if the user told us to do so
-             EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig]));
-           }
-         }
+        if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) && saveConfig == FALSE)
+        {
+          // if the signature was modified but the config should not be saved but just be "used"
+          // then ask the user if the changes to the signature should be made permanent
+          if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
+          {
+            // save the modified signature only if the user told us to do so
+            EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig]));
+          }
+        }
       }
       break;
 
       case cp_Lists:
-         CE->FolderCols = 1; for (i = 1; i < FOCOLNUM; i++) if (GetMUICheck(gui->CH_FCOLS[i])) CE->FolderCols += (1<<i);
-         CE->MessageCols = 1; for (i = 1; i < MACOLNUM; i++) if (GetMUICheck(gui->CH_MCOLS[i])) CE->MessageCols += (1<<i);
-         CE->FixedFontList = GetMUICheck(gui->CH_FIXFLIST);
-         CE->SwatchBeat    = GetMUICheck(gui->CH_BEAT);
-         CE->ABookLookup   = GetMUICheck(gui->CH_ABOOKLOOKUP);
-         CE->SizeFormat    = GetMUICycle(gui->CY_SIZE);
-         CE->FolderCntMenu = GetMUICheck(gui->CH_FCNTMENU);
-         CE->MessageCntMenu= GetMUICheck(gui->CH_MCNTMENU);
-         CE->InfoBar       = GetMUICycle(gui->CY_INFOBAR);
-         GetMUIString(CE->InfoBarText, gui->ST_INFOBARTXT, sizeof(CE->InfoBarText));
-         CE->QuickSearchBar= GetMUICheck(gui->CH_QUICKSEARCHBAR);
-         break;
+      {
+        CE->FolderCols = 1; for (i = 1; i < FOCOLNUM; i++) if (GetMUICheck(gui->CH_FCOLS[i])) CE->FolderCols += (1<<i);
+        CE->MessageCols = 1; for (i = 1; i < MACOLNUM; i++) if (GetMUICheck(gui->CH_MCOLS[i])) CE->MessageCols += (1<<i);
+        CE->FixedFontList = GetMUICheck(gui->CH_FIXFLIST);
+        CE->SwatchBeat    = GetMUICheck(gui->CH_BEAT);
+        CE->ABookLookup   = GetMUICheck(gui->CH_ABOOKLOOKUP);
+        CE->SizeFormat    = GetMUICycle(gui->CY_SIZE);
+        CE->FolderCntMenu = GetMUICheck(gui->CH_FCNTMENU);
+        CE->MessageCntMenu= GetMUICheck(gui->CH_MCNTMENU);
+        CE->InfoBar       = GetMUICycle(gui->CY_INFOBAR);
+        GetMUIString(CE->InfoBarText, gui->ST_INFOBARTXT, sizeof(CE->InfoBarText));
+        CE->QuickSearchBar= GetMUICheck(gui->CH_QUICKSEARCHBAR);
+      }
+      break;
 
       case cp_Security:
       {
@@ -1620,59 +1628,76 @@ void CO_GetConfig(BOOL saveConfig)
       break;
 
       case cp_StartupQuit:
-         CE->GetOnStartup      = GetMUICheck  (gui->CH_POPSTART);
-         CE->SendOnStartup     = GetMUICheck  (gui->CH_SENDSTART);
-         CE->CleanupOnStartup  = GetMUICheck  (gui->CH_DELETESTART);
-         CE->RemoveOnStartup   = GetMUICheck  (gui->CH_REMOVESTART);
-         CE->LoadAllFolders    = GetMUICheck  (gui->CH_LOADALL);
-         CE->UpdateNewMail     = GetMUICheck  (gui->CH_MARKNEW);
-         CE->CheckBirthdates   = GetMUICheck  (gui->CH_CHECKBD);
-         CE->SendOnQuit        = GetMUICheck  (gui->CH_SENDQUIT);
-         CE->CleanupOnQuit     = GetMUICheck  (gui->CH_DELETEQUIT);
-         CE->RemoveOnQuit      = GetMUICheck  (gui->CH_REMOVEQUIT);
-         break;
+      {
+        CE->GetOnStartup      = GetMUICheck  (gui->CH_POPSTART);
+        CE->SendOnStartup     = GetMUICheck  (gui->CH_SENDSTART);
+        CE->CleanupOnStartup  = GetMUICheck  (gui->CH_DELETESTART);
+        CE->RemoveOnStartup   = GetMUICheck  (gui->CH_REMOVESTART);
+        CE->LoadAllFolders    = GetMUICheck  (gui->CH_LOADALL);
+        CE->UpdateNewMail     = GetMUICheck  (gui->CH_MARKNEW);
+        CE->CheckBirthdates   = GetMUICheck  (gui->CH_CHECKBD);
+        CE->SendOnQuit        = GetMUICheck  (gui->CH_SENDQUIT);
+        CE->CleanupOnQuit     = GetMUICheck  (gui->CH_DELETEQUIT);
+        CE->RemoveOnQuit      = GetMUICheck  (gui->CH_REMOVEQUIT);
+      }
+      break;
 
       case cp_MIME:
-         GetMUIString(CE->DefaultMimeViewer, gui->ST_DEFVIEWER, sizeof(CE->DefaultMimeViewer));
-         GetMUIString(CE->DetachDir, gui->ST_DETACHDIR, sizeof(CE->DetachDir));
-         GetMUIString(CE->AttachDir, gui->ST_ATTACHDIR, sizeof(CE->AttachDir));
-         break;
+      {
+        GetMUIString(CE->DefaultMimeViewer, gui->ST_DEFVIEWER, sizeof(CE->DefaultMimeViewer));
+        GetMUIString(CE->DetachDir, gui->ST_DETACHDIR, sizeof(CE->DetachDir));
+        GetMUIString(CE->AttachDir, gui->ST_ATTACHDIR, sizeof(CE->AttachDir));
+      }
+      break;
 
       case cp_AddressBook:
-         GetMUIString(CE->GalleryDir, gui->ST_GALLDIR, sizeof(CE->GalleryDir));
-         GetMUIString(CE->MyPictureURL, gui->ST_PHOTOURL, sizeof(CE->MyPictureURL));
-         GetMUIString(CE->NewAddrGroup, gui->ST_NEWGROUP, sizeof(CE->NewAddrGroup));
-         GetMUIString(CE->ProxyServer, gui->ST_PROXY, sizeof(CE->ProxyServer));
-         CE->AddToAddrbook     = GetMUICycle  (gui->CY_ATAB);
-         CE->AddMyInfo         = GetMUICheck  (gui->CH_ADDINFO);
-         CE->AddrbookCols = 1; for (i = 1; i < ABCOLNUM; i++) if (GetMUICheck(gui->CH_ACOLS[i])) CE->AddrbookCols += (1<<i);
-         break;
+      {
+        GetMUIString(CE->GalleryDir, gui->ST_GALLDIR, sizeof(CE->GalleryDir));
+        GetMUIString(CE->MyPictureURL, gui->ST_PHOTOURL, sizeof(CE->MyPictureURL));
+        GetMUIString(CE->NewAddrGroup, gui->ST_NEWGROUP, sizeof(CE->NewAddrGroup));
+        GetMUIString(CE->ProxyServer, gui->ST_PROXY, sizeof(CE->ProxyServer));
+        CE->AddToAddrbook     = GetMUICycle  (gui->CY_ATAB);
+        CE->AddMyInfo         = GetMUICheck  (gui->CH_ADDINFO);
+        CE->AddrbookCols = 1; for (i = 1; i < ABCOLNUM; i++) if (GetMUICheck(gui->CH_ACOLS[i])) CE->AddrbookCols += (1<<i);
+      }
+      break;
 
       case cp_Scripts:
-         break;
+      {
+        // nothing
+      }
+      break;
 
       case cp_Mixed:
-         GetMUIString(CE->TempDir, gui->ST_TEMPDIR, sizeof(CE->TempDir));
-         CE->WBAppIcon         = GetMUICheck  (gui->CH_WBAPPICON);
-         CE->IconPositionX     = GetMUIInteger(gui->ST_APPX);
-         CE->IconPositionY     = GetMUIInteger(gui->ST_APPY);
-         GetMUIString(CE->AppIconText, gui->ST_APPICON, sizeof(CE->AppIconText));
-         CE->DockyIcon         = GetMUICheck  (gui->CH_DOCKYICON);
-         CE->IconifyOnQuit     = GetMUICheck  (gui->CH_CLGADGET);
-         CE->Confirm           = GetMUICheck  (gui->CH_CONFIRM);
-         CE->ConfirmDelete     = GetMUINumer  (gui->NB_CONFIRMDEL);
-         CE->RemoveAtOnce      = GetMUICheck  (gui->CH_REMOVE);
-         CE->SaveSent          = GetMUICheck  (gui->CH_SAVESENT);
-         CE->MDN_Display       = GetMUIRadio  (gui->RA_MDN_DISP);
-         CE->MDN_Process       = GetMUIRadio  (gui->RA_MDN_PROC);
-         CE->MDN_Delete        = GetMUIRadio  (gui->RA_MDN_DELE);
-         CE->MDN_Filter        = GetMUIRadio  (gui->RA_MDN_RULE);
-         CE->SendMDNAtOnce     = GetMUICheck  (gui->CH_SEND_MDN);
-         GetMUIText(CE->XPKPack, gui->TX_PACKER, sizeof(CE->XPKPack));
-         GetMUIText(CE->XPKPackEncrypt, gui->TX_ENCPACK, sizeof(CE->XPKPackEncrypt));
-         CE->XPKPackEff        = GetMUINumer  (gui->NB_PACKER);
-         CE->XPKPackEncryptEff = GetMUINumer  (gui->NB_ENCPACK);
-         GetMUIString(CE->PackerCommand, gui->ST_ARCHIVER, sizeof(CE->PackerCommand));
+      {
+        enum MDNType mdn;
+
+        GetMUIString(CE->TempDir, gui->ST_TEMPDIR, sizeof(CE->TempDir));
+        CE->WBAppIcon         = GetMUICheck  (gui->CH_WBAPPICON);
+        CE->IconPositionX     = GetMUIInteger(gui->ST_APPX);
+        CE->IconPositionY     = GetMUIInteger(gui->ST_APPY);
+        GetMUIString(CE->AppIconText, gui->ST_APPICON, sizeof(CE->AppIconText));
+        CE->DockyIcon         = GetMUICheck  (gui->CH_DOCKYICON);
+        CE->IconifyOnQuit     = GetMUICheck  (gui->CH_CLGADGET);
+        CE->Confirm           = GetMUICheck  (gui->CH_CONFIRM);
+        CE->ConfirmDelete     = GetMUINumer  (gui->NB_CONFIRMDEL);
+        CE->RemoveAtOnce      = GetMUICheck  (gui->CH_REMOVE);
+        CE->SaveSent          = GetMUICheck  (gui->CH_SAVESENT);
+        mdn = GetMUIRadio(gui->RA_MDN_DISP);
+        CE->MDN_Display       = (mdn == MDN_IGNORE) ? mdn : mdn + 1;
+        mdn = GetMUIRadio(gui->RA_MDN_PROC);
+        CE->MDN_Process       = (mdn == MDN_IGNORE) ? mdn : mdn + 1;
+        mdn = GetMUIRadio(gui->RA_MDN_DELE);
+        CE->MDN_Delete        = (mdn == MDN_IGNORE) ? mdn : mdn + 1;
+        mdn = GetMUIRadio(gui->RA_MDN_RULE);
+        CE->MDN_Filter        = (mdn == MDN_IGNORE) ? mdn : mdn + 1;
+        CE->SendMDNAtOnce     = GetMUICheck  (gui->CH_SEND_MDN);
+        GetMUIText(CE->XPKPack, gui->TX_PACKER, sizeof(CE->XPKPack));
+        GetMUIText(CE->XPKPackEncrypt, gui->TX_ENCPACK, sizeof(CE->XPKPackEncrypt));
+        CE->XPKPackEff        = GetMUINumer  (gui->NB_PACKER);
+        CE->XPKPackEncryptEff = GetMUINumer  (gui->NB_ENCPACK);
+        GetMUIString(CE->PackerCommand, gui->ST_ARCHIVER, sizeof(CE->PackerCommand));
+      }
       break;
 
       case cp_Update:
@@ -1705,7 +1730,10 @@ void CO_GetConfig(BOOL saveConfig)
       break;
 
       case cp_Max:
-        break;
+      {
+        // nothing
+      }
+      break;
    }
 
    LEAVE();
@@ -1724,180 +1752,197 @@ void CO_SetConfig(void)
    switch (G->CO->VisiblePage)
    {
       case cp_AllPages:
-         break;
+      {
+        // nothing
+      }
+      break;
 
       case cp_FirstSteps:
-         setstring(gui->ST_REALNAME  ,CE->RealName);
-         setstring(gui->ST_EMAIL     ,CE->EmailAddress);
-         setcycle(gui->CY_TZONE, MapTZ(CE->TimeZone, FALSE));
-         setcheckmark(gui->CH_DLSAVING  ,CE->DaylightSaving);
-         nnset(gui->ST_POPHOST0, MUIA_String_Contents, CE->P3[0]->Server);
-         nnset(gui->ST_PASSWD0,  MUIA_String_Contents, CE->P3[0]->Password);
-         nnset(gui->ST_DEFAULTCHARSET,  MUIA_String_Contents, CE->LocalCharset);
-         setcheckmark(gui->CH_DETECTCYRILLIC, CE->DetectCyrillic);
-         break;
+      {
+        setstring(gui->ST_REALNAME  ,CE->RealName);
+        setstring(gui->ST_EMAIL     ,CE->EmailAddress);
+        setcycle(gui->CY_TZONE, MapTZ(CE->TimeZone, FALSE));
+        setcheckmark(gui->CH_DLSAVING  ,CE->DaylightSaving);
+        nnset(gui->ST_POPHOST0, MUIA_String_Contents, CE->P3[0]->Server);
+        nnset(gui->ST_PASSWD0,  MUIA_String_Contents, CE->P3[0]->Password);
+        nnset(gui->ST_DEFAULTCHARSET,  MUIA_String_Contents, CE->LocalCharset);
+        setcheckmark(gui->CH_DETECTCYRILLIC, CE->DetectCyrillic);
+      }
+      break;
 
       case cp_TCPIP:
       {
-         setstring(gui->ST_SMTPHOST, CE->SMTP_Server);
-         set(gui->ST_SMTPPORT, MUIA_String_Integer, CE->SMTP_Port);
-         setstring(gui->ST_DOMAIN, CE->SMTP_Domain);
-         setmutex(gui->RA_SMTPSECURE, CE->SMTP_SecureMethod);
-         nnset(gui->RA_SMTPSECURE, MUIA_Disabled, !G->TR_UseableTLS && CE->SMTP_SecureMethod == SMTPSEC_NONE);
-         setcheckmark(gui->CH_SMTP8BIT  ,CE->Allow8bit);
-         setcheckmark(gui->CH_USESMTPAUTH,CE->Use_SMTP_AUTH);
-         setstring   (gui->ST_SMTPAUTHUSER,CE->SMTP_AUTH_User);
-         setstring   (gui->ST_SMTPAUTHPASS,CE->SMTP_AUTH_Pass);
-         setcycle(gui->CY_SMTPAUTHMETHOD, CE->SMTP_AUTH_Method);
+        setstring(gui->ST_SMTPHOST, CE->SMTP_Server);
+        set(gui->ST_SMTPPORT, MUIA_String_Integer, CE->SMTP_Port);
+        setstring(gui->ST_DOMAIN, CE->SMTP_Domain);
+        setmutex(gui->RA_SMTPSECURE, CE->SMTP_SecureMethod);
+        nnset(gui->RA_SMTPSECURE, MUIA_Disabled, !G->TR_UseableTLS && CE->SMTP_SecureMethod == SMTPSEC_NONE);
+        setcheckmark(gui->CH_SMTP8BIT  ,CE->Allow8bit);
+        setcheckmark(gui->CH_USESMTPAUTH,CE->Use_SMTP_AUTH);
+        setstring   (gui->ST_SMTPAUTHUSER,CE->SMTP_AUTH_User);
+        setstring   (gui->ST_SMTPAUTHPASS,CE->SMTP_AUTH_Pass);
+        setcycle(gui->CY_SMTPAUTHMETHOD, CE->SMTP_AUTH_Method);
 
-         // clear the list first
-         DoMethod(gui->LV_POP3, MUIM_List_Clear);
+        // clear the list first
+        DoMethod(gui->LV_POP3, MUIM_List_Clear);
 
-         for(i=0; i < MAXP3; i++)
-         {
-           struct POP3 *pop3 = CE->P3[i];
+        for(i=0; i < MAXP3; i++)
+        {
+          struct POP3 *pop3 = CE->P3[i];
 
-           if(pop3 != NULL)
-           {
-             if(pop3->Account[0] == '\0')
-               snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
-             DoMethod(gui->LV_POP3, MUIM_List_InsertSingle, pop3, MUIV_List_Insert_Bottom);
-           }
-         }
+          if(pop3 != NULL)
+          {
+            if(pop3->Account[0] == '\0')
+              snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
+            DoMethod(gui->LV_POP3, MUIM_List_InsertSingle, pop3, MUIV_List_Insert_Bottom);
+          }
+        }
 
-         // make sure the first entry is selected per default
-         set(gui->LV_POP3, MUIA_List_Active, MUIV_List_Active_Top);
+        // make sure the first entry is selected per default
+        set(gui->LV_POP3, MUIA_List_Active, MUIV_List_Active_Top);
       }
       break;
 
       case cp_NewMail:
-         setcheckmark(gui->CH_AVOIDDUP  ,CE->AvoidDuplicates);
-         setcycle    (gui->CY_MSGSELECT ,CE->PreSelection);
-         setcycle    (gui->CY_TRANSWIN  ,CE->TransferWindow);
-         setcheckmark(gui->CH_UPDSTAT   ,CE->UpdateStatus);
-         set(gui->ST_WARNSIZE, MUIA_String_Integer, CE->WarnSize);
-         set(gui->NM_INTERVAL, MUIA_Numeric_Value,  CE->CheckMailDelay);
-         setcheckmark(gui->CH_DLLARGE   ,CE->DownloadLarge);
-         setcheckmark(gui->CH_NOTIREQ   , hasRequesterNotify(CE->NotifyType));
-         setcheckmark(gui->CH_NOTISOUND , hasSoundNotify(CE->NotifyType));
-         setcheckmark(gui->CH_NOTICMD   , hasCommandNotify(CE->NotifyType));
-         setstring   (gui->ST_NOTISOUND ,CE->NotifySound);
-         setstring   (gui->ST_NOTICMD   ,CE->NotifyCommand);
-         break;
+      {
+        setcheckmark(gui->CH_AVOIDDUP  ,CE->AvoidDuplicates);
+        setcycle    (gui->CY_MSGSELECT ,CE->PreSelection);
+        setcycle    (gui->CY_TRANSWIN  ,CE->TransferWindow);
+        setcheckmark(gui->CH_UPDSTAT   ,CE->UpdateStatus);
+        set(gui->ST_WARNSIZE, MUIA_String_Integer, CE->WarnSize);
+        set(gui->NM_INTERVAL, MUIA_Numeric_Value,  CE->CheckMailDelay);
+        setcheckmark(gui->CH_DLLARGE   ,CE->DownloadLarge);
+        setcheckmark(gui->CH_NOTIREQ   , hasRequesterNotify(CE->NotifyType));
+        setcheckmark(gui->CH_NOTISOUND , hasSoundNotify(CE->NotifyType));
+        setcheckmark(gui->CH_NOTICMD   , hasCommandNotify(CE->NotifyType));
+        setstring   (gui->ST_NOTISOUND ,CE->NotifySound);
+        setstring   (gui->ST_NOTICMD   ,CE->NotifyCommand);
+      }
+      break;
 
       case cp_Filters:
       {
-         struct MinNode *curNode;
+        struct MinNode *curNode;
 
-         // clear the filter list first
-         DoMethod(gui->LV_RULES, MUIM_NList_Clear);
+        // clear the filter list first
+        DoMethod(gui->LV_RULES, MUIM_NList_Clear);
 
-         // iterate through our filter list and add it to our
-         // MUI List
-         for(curNode = CE->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-           DoMethod(gui->LV_RULES, MUIM_NList_InsertSingle, curNode, MUIV_NList_Insert_Bottom);
+        // iterate through our filter list and add it to our
+        // MUI List
+        for(curNode = CE->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          DoMethod(gui->LV_RULES, MUIM_NList_InsertSingle, curNode, MUIV_NList_Insert_Bottom);
 
-         // make sure the first entry is selected per default
-         set(gui->LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Top);
+        // make sure the first entry is selected per default
+        set(gui->LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Top);
       }
       break;
 
       case cp_Spam:
       {
-         char buf[SIZE_SMALL];
+        char buf[SIZE_SMALL];
 
-         setcheckmark(gui->CH_SPAMFILTERENABLED, CE->SpamFilterEnabled);
-         setcheckmark(gui->CH_SPAMFILTERFORNEWMAIL, CE->SpamFilterForNewMail);
-         setcheckmark(gui->CH_SPAMMARKONMOVE, CE->SpamMarkOnMove);
-         setcheckmark(gui->CH_SPAMMARKASREAD, CE->SpamMarkAsRead);
-         setcheckmark(gui->CH_SPAMABOOKISWHITELIST, CE->SpamAddressBookIsWhiteList);
-         snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfHamClassifiedMails());
-         set(gui->TX_SPAMGOODCOUNT, MUIA_Text_Contents, buf);
-         snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfSpamClassifiedMails());
-         set(gui->TX_SPAMBADCOUNT, MUIA_Text_Contents, buf);
+        setcheckmark(gui->CH_SPAMFILTERENABLED, CE->SpamFilterEnabled);
+        setcheckmark(gui->CH_SPAMFILTERFORNEWMAIL, CE->SpamFilterForNewMail);
+        setcheckmark(gui->CH_SPAMMARKONMOVE, CE->SpamMarkOnMove);
+        setcheckmark(gui->CH_SPAMMARKASREAD, CE->SpamMarkAsRead);
+        setcheckmark(gui->CH_SPAMABOOKISWHITELIST, CE->SpamAddressBookIsWhiteList);
+        snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfHamClassifiedMails());
+        set(gui->TX_SPAMGOODCOUNT, MUIA_Text_Contents, buf);
+        snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfSpamClassifiedMails());
+        set(gui->TX_SPAMBADCOUNT, MUIA_Text_Contents, buf);
       }
       break;
 
       case cp_Read:
-         setcycle    (gui->CY_HEADER    ,CE->ShowHeader);
-         setstring   (gui->ST_HEADERS   ,CE->ShortHeaders);
-         setcycle    (gui->CY_SENDERINFO,CE->ShowSenderInfo);
-         setcycle    (gui->CY_SIGSEPLINE,CE->SigSepLine);
-         set(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec, &CE->ColoredText);
-         set(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec, &CE->Color1stLevel);
-         set(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec, &CE->Color2ndLevel);
-         set(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec, &CE->Color3rdLevel);
-         set(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec, &CE->Color4thLevel);
-         set(gui->CA_COLURL,   MUIA_Pendisplay_Spec, &CE->ColorURL);
-         setcheckmark(gui->CH_ALLTEXTS  ,CE->DisplayAllTexts);
-         setcheckmark(gui->CH_FIXFEDIT  ,CE->FixedFontEdit);
-         setcheckmark(gui->CH_WRAPHEAD  ,CE->WrapHeader);
-         setcheckmark(gui->CH_TEXTSTYLES,CE->UseTextstyles);
-         setcheckmark(gui->CH_MULTIWIN  ,CE->MultipleWindows);
-         setcheckmark(gui->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
-         setcheckmark(gui->CH_DELAYEDSTATUS, CE->StatusChangeDelayOn);
-         set(gui->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay/1000);
-         setcheckmark(gui->CH_CONVERTHTML, CE->ConvertHTML);
-         break;
+      {
+        setcycle    (gui->CY_HEADER    ,CE->ShowHeader);
+        setstring   (gui->ST_HEADERS   ,CE->ShortHeaders);
+        setcycle    (gui->CY_SENDERINFO,CE->ShowSenderInfo);
+        setcycle    (gui->CY_SIGSEPLINE,CE->SigSepLine);
+        set(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec, &CE->ColoredText);
+        set(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec, &CE->Color1stLevel);
+        set(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec, &CE->Color2ndLevel);
+        set(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec, &CE->Color3rdLevel);
+        set(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec, &CE->Color4thLevel);
+        set(gui->CA_COLURL,   MUIA_Pendisplay_Spec, &CE->ColorURL);
+        setcheckmark(gui->CH_ALLTEXTS  ,CE->DisplayAllTexts);
+        setcheckmark(gui->CH_FIXFEDIT  ,CE->FixedFontEdit);
+        setcheckmark(gui->CH_WRAPHEAD  ,CE->WrapHeader);
+        setcheckmark(gui->CH_TEXTSTYLES,CE->UseTextstyles);
+        setcheckmark(gui->CH_MULTIWIN  ,CE->MultipleWindows);
+        setcheckmark(gui->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
+        setcheckmark(gui->CH_DELAYEDSTATUS, CE->StatusChangeDelayOn);
+        set(gui->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay/1000);
+        setcheckmark(gui->CH_CONVERTHTML, CE->ConvertHTML);
+      }
+      break;
 
       case cp_Write:
-         setstring   (gui->ST_REPLYTO   ,CE->ReplyTo);
-         setstring   (gui->ST_ORGAN     ,CE->Organization);
-         setstring   (gui->ST_EXTHEADER ,CE->ExtraHeaders);
-         setstring   (gui->ST_HELLOTEXT ,CE->NewIntro);
-         setstring   (gui->ST_BYETEXT   ,CE->Greetings);
-         setcheckmark(gui->CH_WARNSUBJECT,CE->WarnSubject);
-         set(gui->ST_EDWRAP, MUIA_String_Integer, CE->EdWrapCol);
-         setcycle    (gui->CY_EDWRAP    ,CE->EdWrapMode);
-         setstring   (gui->ST_EDITOR    ,CE->Editor);
-         setcheckmark(gui->CH_LAUNCH    ,CE->LaunchAlways);
-         setslider   (gui->NB_EMAILCACHE,CE->EmailCache);
-         setslider   (gui->NB_AUTOSAVE,  CE->AutoSave/60);
-         break;
+      {
+        setstring   (gui->ST_REPLYTO   ,CE->ReplyTo);
+        setstring   (gui->ST_ORGAN     ,CE->Organization);
+        setstring   (gui->ST_EXTHEADER ,CE->ExtraHeaders);
+        setstring   (gui->ST_HELLOTEXT ,CE->NewIntro);
+        setstring   (gui->ST_BYETEXT   ,CE->Greetings);
+        setcheckmark(gui->CH_WARNSUBJECT,CE->WarnSubject);
+        set(gui->ST_EDWRAP, MUIA_String_Integer, CE->EdWrapCol);
+        setcycle    (gui->CY_EDWRAP    ,CE->EdWrapMode);
+        setstring   (gui->ST_EDITOR    ,CE->Editor);
+        setcheckmark(gui->CH_LAUNCH    ,CE->LaunchAlways);
+        setslider   (gui->NB_EMAILCACHE,CE->EmailCache);
+        setslider   (gui->NB_AUTOSAVE,  CE->AutoSave/60);
+      }
+      break;
 
       case cp_ReplyForward:
-         setstring   (gui->ST_REPLYHI     ,CE->ReplyHello);
-         setstring   (gui->ST_REPLYTEXT   ,CE->ReplyIntro);
-         setstring   (gui->ST_REPLYBYE    ,CE->ReplyBye);
-         setstring   (gui->ST_AREPLYHI    ,CE->AltReplyHello);
-         setstring   (gui->ST_AREPLYTEXT  ,CE->AltReplyIntro);
-         setstring   (gui->ST_AREPLYBYE   ,CE->AltReplyBye);
-         setstring   (gui->ST_AREPLYPAT   ,CE->AltReplyPattern);
-         setstring   (gui->ST_MREPLYHI    ,CE->MLReplyHello);
-         setstring   (gui->ST_MREPLYTEXT  ,CE->MLReplyIntro);
-         setstring   (gui->ST_MREPLYBYE   ,CE->MLReplyBye);
-         setstring   (gui->ST_FWDSTART    ,CE->ForwardIntro);
-         setstring   (gui->ST_FWDEND      ,CE->ForwardFinish);
-         setcheckmark(gui->CH_QUOTE       ,CE->QuoteMessage);
-         setstring   (gui->ST_REPLYCHAR   ,CE->QuoteText);
-         setstring   (gui->ST_ALTQUOTECHAR,CE->AltQuoteText);
-         setcheckmark(gui->CH_QUOTEEMPTY  ,CE->QuoteEmptyLines);
-         setcheckmark(gui->CH_COMPADDR    ,CE->CompareAddress);
-         setcheckmark(gui->CH_STRIPSIG    ,CE->StripSignature);
-         break;
+      {
+        setstring   (gui->ST_REPLYHI     ,CE->ReplyHello);
+        setstring   (gui->ST_REPLYTEXT   ,CE->ReplyIntro);
+        setstring   (gui->ST_REPLYBYE    ,CE->ReplyBye);
+        setstring   (gui->ST_AREPLYHI    ,CE->AltReplyHello);
+        setstring   (gui->ST_AREPLYTEXT  ,CE->AltReplyIntro);
+        setstring   (gui->ST_AREPLYBYE   ,CE->AltReplyBye);
+        setstring   (gui->ST_AREPLYPAT   ,CE->AltReplyPattern);
+        setstring   (gui->ST_MREPLYHI    ,CE->MLReplyHello);
+        setstring   (gui->ST_MREPLYTEXT  ,CE->MLReplyIntro);
+        setstring   (gui->ST_MREPLYBYE   ,CE->MLReplyBye);
+        setstring   (gui->ST_FWDSTART    ,CE->ForwardIntro);
+        setstring   (gui->ST_FWDEND      ,CE->ForwardFinish);
+        setcheckmark(gui->CH_QUOTE       ,CE->QuoteMessage);
+        setstring   (gui->ST_REPLYCHAR   ,CE->QuoteText);
+        setstring   (gui->ST_ALTQUOTECHAR,CE->AltQuoteText);
+        setcheckmark(gui->CH_QUOTEEMPTY  ,CE->QuoteEmptyLines);
+        setcheckmark(gui->CH_COMPADDR    ,CE->CompareAddress);
+        setcheckmark(gui->CH_STRIPSIG    ,CE->StripSignature);
+      }
+      break;
 
       case cp_Signature:
-         setcheckmark(gui->CH_USESIG      ,CE->UseSignature);
-         setstring   (gui->ST_TAGFILE     ,CE->TagsFile);
-         setstring   (gui->ST_TAGSEP      ,CE->TagsSeparator);
-         setcycle    (gui->CY_SIGNAT      ,G->CO->LastSig);
-         FileToEditor(CreateFilename(SigNames[G->CO->LastSig]), gui->TE_SIGEDIT);
-         DoMethod(G->App, MUIM_CallHook, &CO_SwitchSignatHook, !CE->UseSignature);
-         break;
+      {
+        setcheckmark(gui->CH_USESIG      ,CE->UseSignature);
+        setstring   (gui->ST_TAGFILE     ,CE->TagsFile);
+        setstring   (gui->ST_TAGSEP      ,CE->TagsSeparator);
+        setcycle    (gui->CY_SIGNAT      ,G->CO->LastSig);
+        FileToEditor(CreateFilename(SigNames[G->CO->LastSig]), gui->TE_SIGEDIT);
+        DoMethod(G->App, MUIM_CallHook, &CO_SwitchSignatHook, !CE->UseSignature);
+      }
+      break;
 
       case cp_Lists:
-         for (i = 0; i < FOCOLNUM; i++) setcheckmark(gui->CH_FCOLS[i], (CE->FolderCols & (1<<i)) != 0);
-         for (i = 0; i < MACOLNUM; i++) setcheckmark(gui->CH_MCOLS[i], (CE->MessageCols & (1<<i)) != 0);
-         setcheckmark(gui->CH_FIXFLIST  ,CE->FixedFontList);
-         setcheckmark(gui->CH_BEAT      ,CE->SwatchBeat);
-         setcheckmark(gui->CH_ABOOKLOOKUP, CE->ABookLookup);
-         setcycle(gui->CY_SIZE, CE->SizeFormat);
-         setcheckmark(gui->CH_FCNTMENU  ,CE->FolderCntMenu);
-         setcheckmark(gui->CH_MCNTMENU  ,CE->MessageCntMenu);
-         setcycle(gui->CY_INFOBAR,       CE->InfoBar);
-         setstring(gui->ST_INFOBARTXT   ,CE->InfoBarText);
-         setcheckmark(gui->CH_QUICKSEARCHBAR, CE->QuickSearchBar);
-         break;
+      {
+        for(i = 0; i < FOCOLNUM; i++) setcheckmark(gui->CH_FCOLS[i], (CE->FolderCols & (1<<i)) != 0);
+        for(i = 0; i < MACOLNUM; i++) setcheckmark(gui->CH_MCOLS[i], (CE->MessageCols & (1<<i)) != 0);
+        setcheckmark(gui->CH_FIXFLIST  ,CE->FixedFontList);
+        setcheckmark(gui->CH_BEAT      ,CE->SwatchBeat);
+        setcheckmark(gui->CH_ABOOKLOOKUP, CE->ABookLookup);
+        setcycle(gui->CY_SIZE, CE->SizeFormat);
+        setcheckmark(gui->CH_FCNTMENU  ,CE->FolderCntMenu);
+        setcheckmark(gui->CH_MCNTMENU  ,CE->MessageCntMenu);
+        setcycle(gui->CY_INFOBAR,       CE->InfoBar);
+        setstring(gui->ST_INFOBARTXT   ,CE->InfoBarText);
+        setcheckmark(gui->CH_QUICKSEARCHBAR, CE->QuickSearchBar);
+      }
+      break;
 
       case cp_Security:
       {
@@ -1916,77 +1961,91 @@ void CO_SetConfig(void)
       break;
 
       case cp_StartupQuit:
-         setcheckmark(gui->CH_POPSTART   ,CE->GetOnStartup);
-         setcheckmark(gui->CH_SENDSTART  ,CE->SendOnStartup);
-         setcheckmark(gui->CH_DELETESTART,CE->CleanupOnStartup);
-         setcheckmark(gui->CH_REMOVESTART,CE->RemoveOnStartup);
-         setcheckmark(gui->CH_LOADALL    ,CE->LoadAllFolders);
-         setcheckmark(gui->CH_MARKNEW    ,CE->UpdateNewMail);
-         setcheckmark(gui->CH_CHECKBD    ,CE->CheckBirthdates);
-         setcheckmark(gui->CH_SENDQUIT   ,CE->SendOnQuit);
-         setcheckmark(gui->CH_DELETEQUIT ,CE->CleanupOnQuit);
-         setcheckmark(gui->CH_REMOVEQUIT ,CE->RemoveOnQuit);
-         break;
+      {
+        setcheckmark(gui->CH_POPSTART   ,CE->GetOnStartup);
+        setcheckmark(gui->CH_SENDSTART  ,CE->SendOnStartup);
+        setcheckmark(gui->CH_DELETESTART,CE->CleanupOnStartup);
+        setcheckmark(gui->CH_REMOVESTART,CE->RemoveOnStartup);
+        setcheckmark(gui->CH_LOADALL    ,CE->LoadAllFolders);
+        setcheckmark(gui->CH_MARKNEW    ,CE->UpdateNewMail);
+        setcheckmark(gui->CH_CHECKBD    ,CE->CheckBirthdates);
+        setcheckmark(gui->CH_SENDQUIT   ,CE->SendOnQuit);
+        setcheckmark(gui->CH_DELETEQUIT ,CE->CleanupOnQuit);
+        setcheckmark(gui->CH_REMOVEQUIT ,CE->RemoveOnQuit);
+      }
+      break;
 
       case cp_MIME:
       {
-         struct MinNode *curNode;
+        struct MinNode *curNode;
 
-         // clear the filter list first
-         DoMethod(gui->LV_MIME, MUIM_List_Clear);
+        // clear the filter list first
+        DoMethod(gui->LV_MIME, MUIM_List_Clear);
 
-         // iterate through our filter list and add it to our
-         // MUI List
-         for(curNode = CE->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-           DoMethod(gui->LV_MIME, MUIM_List_InsertSingle, curNode, MUIV_List_Insert_Bottom);
+        // iterate through our filter list and add it to our
+        // MUI List
+        for(curNode = CE->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          DoMethod(gui->LV_MIME, MUIM_List_InsertSingle, curNode, MUIV_List_Insert_Bottom);
 
-         // make sure the first entry is selected per default
-         set(gui->LV_MIME, MUIA_List_Active, MUIV_List_Active_Top);
+        // make sure the first entry is selected per default
+        set(gui->LV_MIME, MUIA_List_Active, MUIV_List_Active_Top);
 
-         setstring   (gui->ST_DEFVIEWER ,CE->DefaultMimeViewer);
-         setstring   (gui->ST_DETACHDIR ,CE->DetachDir);
-         setstring   (gui->ST_ATTACHDIR ,CE->AttachDir);
+        setstring   (gui->ST_DEFVIEWER ,CE->DefaultMimeViewer);
+        setstring   (gui->ST_DETACHDIR ,CE->DetachDir);
+        setstring   (gui->ST_ATTACHDIR ,CE->AttachDir);
       }
       break;
 
       case cp_AddressBook:
-         setstring   (gui->ST_GALLDIR   ,CE->GalleryDir);
-         setstring   (gui->ST_PHOTOURL  ,CE->MyPictureURL);
-         setstring   (gui->ST_NEWGROUP  ,CE->NewAddrGroup);
-         set(gui->ST_NEWGROUP, MUIA_Disabled, CE->AddToAddrbook == 0);
-         setstring   (gui->ST_PROXY     ,CE->ProxyServer);
-         setcycle    (gui->CY_ATAB      ,CE->AddToAddrbook);
-         setcheckmark(gui->CH_ADDINFO   ,CE->AddMyInfo);
-         for (i = 0; i < ABCOLNUM; i++) setcheckmark(gui->CH_ACOLS[i], (CE->AddrbookCols & (1<<i)) != 0);
-         break;
+      {
+        setstring   (gui->ST_GALLDIR   ,CE->GalleryDir);
+        setstring   (gui->ST_PHOTOURL  ,CE->MyPictureURL);
+        setstring   (gui->ST_NEWGROUP  ,CE->NewAddrGroup);
+        set(gui->ST_NEWGROUP, MUIA_Disabled, CE->AddToAddrbook == 0);
+        setstring   (gui->ST_PROXY     ,CE->ProxyServer);
+        setcycle    (gui->CY_ATAB      ,CE->AddToAddrbook);
+        setcheckmark(gui->CH_ADDINFO   ,CE->AddMyInfo);
+        for(i = 0; i < ABCOLNUM; i++) setcheckmark(gui->CH_ACOLS[i], (CE->AddrbookCols & (1<<i)) != 0);
+      }
+      break;
 
       case cp_Scripts:
-         set(G->CO->GUI.LV_REXX, MUIA_List_Active, 0);
-         break;
+      {
+        set(G->CO->GUI.LV_REXX, MUIA_List_Active, 0);
+      }
+      break;
 
       case cp_Mixed:
-         setstring   (gui->ST_TEMPDIR   ,CE->TempDir);
-         setcheckmark(gui->CH_WBAPPICON ,CE->WBAppIcon);
-         set(gui->ST_APPX, MUIA_String_Integer, CE->IconPositionX);
-         set(gui->ST_APPY, MUIA_String_Integer, CE->IconPositionY);
-         setstring   (gui->ST_APPICON   ,CE->AppIconText);
-         setcheckmark(gui->CH_DOCKYICON ,CE->DockyIcon);
-         setcheckmark(gui->CH_CLGADGET  ,CE->IconifyOnQuit);
-         setcheckmark(gui->CH_CONFIRM   ,CE->Confirm);
-         setslider   (gui->NB_CONFIRMDEL,CE->ConfirmDelete);
-         setcheckmark(gui->CH_REMOVE    ,CE->RemoveAtOnce);
-         setcheckmark(gui->CH_SAVESENT  ,CE->SaveSent);
-         setmutex    (gui->RA_MDN_DISP  ,CE->MDN_Display);
-         setmutex    (gui->RA_MDN_PROC  ,CE->MDN_Process);
-         setmutex    (gui->RA_MDN_DELE  ,CE->MDN_Delete);
-         setmutex    (gui->RA_MDN_RULE  ,CE->MDN_Filter);
-         setcheckmark(gui->CH_SEND_MDN  ,CE->SendMDNAtOnce);
-         set(gui->TX_PACKER , MUIA_Text_Contents, CE->XPKPack);
-         set(gui->TX_ENCPACK, MUIA_Text_Contents, CE->XPKPackEncrypt);
-         setslider   (gui->NB_PACKER    ,CE->XPKPackEff);
-         setslider   (gui->NB_ENCPACK   ,CE->XPKPackEncryptEff);
-         setstring   (gui->ST_ARCHIVER  ,CE->PackerCommand);
-         break;
+      {
+        enum MDNType mdn;
+
+        setstring   (gui->ST_TEMPDIR   ,CE->TempDir);
+        setcheckmark(gui->CH_WBAPPICON ,CE->WBAppIcon);
+        set(gui->ST_APPX, MUIA_String_Integer, CE->IconPositionX);
+        set(gui->ST_APPY, MUIA_String_Integer, CE->IconPositionY);
+        setstring   (gui->ST_APPICON   ,CE->AppIconText);
+        setcheckmark(gui->CH_DOCKYICON ,CE->DockyIcon);
+        setcheckmark(gui->CH_CLGADGET  ,CE->IconifyOnQuit);
+        setcheckmark(gui->CH_CONFIRM   ,CE->Confirm);
+        setslider   (gui->NB_CONFIRMDEL,CE->ConfirmDelete);
+        setcheckmark(gui->CH_REMOVE    ,CE->RemoveAtOnce);
+        setcheckmark(gui->CH_SAVESENT  ,CE->SaveSent);
+        mdn = CE->MDN_Display;
+        setmutex    (gui->RA_MDN_DISP  ,(mdn == MDN_IGNORE) ? mdn : mdn - 1);
+        mdn = CE->MDN_Process;
+        setmutex    (gui->RA_MDN_PROC  ,(mdn == MDN_IGNORE) ? mdn : mdn - 1);
+        mdn = CE->MDN_Delete;
+        setmutex    (gui->RA_MDN_DELE  ,(mdn == MDN_IGNORE) ? mdn : mdn - 1);
+        mdn = CE->MDN_Filter;
+        setmutex    (gui->RA_MDN_RULE  ,(mdn == MDN_IGNORE) ? mdn : mdn - 1);
+        setcheckmark(gui->CH_SEND_MDN  ,CE->SendMDNAtOnce);
+        set(gui->TX_PACKER , MUIA_Text_Contents, CE->XPKPack);
+        set(gui->TX_ENCPACK, MUIA_Text_Contents, CE->XPKPackEncrypt);
+        setslider   (gui->NB_PACKER    ,CE->XPKPackEff);
+        setslider   (gui->NB_ENCPACK   ,CE->XPKPackEncryptEff);
+        setstring   (gui->ST_ARCHIVER  ,CE->PackerCommand);
+      }
+      break;
 
       case cp_Update:
       {
@@ -2046,7 +2105,9 @@ void CO_SetConfig(void)
       break;
 
       case cp_Max:
+      {
       	// nothing
+      }
       break;
    }
 

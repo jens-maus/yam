@@ -3048,9 +3048,9 @@ Object *CO_PageScripts(struct CO_ClassData *data)
 Object *CO_PageMixed(struct CO_ClassData *data)
 {
    Object *grp;
-   static const char *empty[5];
+   static const char *empty[4];
 
-   empty[0] = empty[1] = empty[2] = empty[3] = "";
+   empty[0] = empty[1] = empty[2] = "";
    empty[4] = NULL;
 
    if((grp = VGroup,
@@ -3133,7 +3133,6 @@ Object *CO_PageMixed(struct CO_ClassData *data)
                   Child, data->GUI.RA_MDN_RULE = RadioObject, MUIA_Radio_Entries, empty, MUIA_CycleChain, TRUE, End,
                   Child, VGroup,
                     Child, LLabel(tr(MSG_CO_DispIgnore)),
-                    Child, LLabel(tr(MSG_CO_DispDeny)),
                     Child, LLabel(tr(MSG_CO_DispAsk)),
                     Child, LLabel(tr(MSG_CO_DispAccept)),
                   End,
