@@ -249,19 +249,22 @@ OVERLOAD(MUIM_Setup)
 
   ENTER();
 
-  if(!data->Matchwindow && (data->Matchwindow = AddrmatchlistObject, MUIA_Addrmatchlist_String, obj, End))
+  if(data->Matchwindow == NULL)
   {
-    D(DBF_GUI, "Create addrlistpopup: %lx", data->Matchwindow);
-    DoMethod(_app(obj), OM_ADDMEMBER, data->Matchwindow);
+    if((data->Matchwindow = AddrmatchlistObject, MUIA_Addrmatchlist_String, obj, End) != NULL)
+    {
+      D(DBF_GUI, "Create addrlistpopup: %lx", data->Matchwindow);
+      DoMethod(_app(obj), OM_ADDMEMBER, data->Matchwindow);
+    }
   }
 
-  if(data->Matchwindow && DoSuperMethodA(cl, obj, msg))
+  if(data->Matchwindow != NULL && DoSuperMethodA(cl, obj, msg))
   {
     data->ehnode.ehn_Priority = 1;
     data->ehnode.ehn_Flags    = 0;
-    data->ehnode.ehn_Object    = obj;
+    data->ehnode.ehn_Object   = obj;
     data->ehnode.ehn_Class    = cl;
-    data->ehnode.ehn_Events    = IDCMP_RAWKEY | IDCMP_CHANGEWINDOW;
+    data->ehnode.ehn_Events   = IDCMP_RAWKEY | IDCMP_CHANGEWINDOW;
     result = TRUE;
   }
 
@@ -610,11 +613,10 @@ DECLARE(Resolve) // ULONG flags
         struct MUI_NListtree_TreeNode *nexttn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
         struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
 
-
         D(DBF_GUI, "Found match: %s", s);
 
         // Now we have to check if there exists another entry in the AB with this string
-        if(!nexttn || !DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, nexttn, s, MUIV_NListtree_FindUserData_Flag_StartNode))
+        if(nexttn == NULL || DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, nexttn, s, MUIV_NListtree_FindUserData_Flag_StartNode) == (ULONG)NULL)
         {
           if(entry->Type == AET_USER) /* it's a normal person */
           {

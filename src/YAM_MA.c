@@ -1590,10 +1590,23 @@ static void MA_SetupQuoteString(struct WR_ClassData *wr, struct ExpandTextData *
 //  Opens a write window
 static int MA_CheckWriteWindow(int winnum)
 {
-   if (SafeOpenWindow(G->WR[winnum]->GUI.WI)) return winnum;
-   WR_Cleanup(winnum);
-   DisposeModulePush(&G->WR[winnum]);
-   return -1;
+  int num;
+
+  ENTER();
+
+  if(SafeOpenWindow(G->WR[winnum]->GUI.WI))
+  {
+    num = winnum;
+  }
+  else
+  {
+    WR_Cleanup(winnum);
+    DisposeModulePush(&G->WR[winnum]);
+    num = -1;
+  }
+
+  RETURN(num);
+  return num;
 }
 
 ///
@@ -2993,12 +3006,15 @@ MakeHook(MA_DeleteMessageHook, MA_DeleteMessageFunc);
 //  Classifies a message and moves it to spam folder if spam
 void MA_ClassifyMessage(enum BayesClassification bclass)
 {
-  struct Folder *spamfolder = FO_GetFolderByType(FT_SPAM, NULL);
-  struct Folder *folder = FO_GetCurrentFolder();
+  struct Folder *folder;
+  struct Folder *spamfolder;
 
   ENTER();
 
-  if(folder && spamfolder)
+  folder = FO_GetCurrentFolder();
+  spamfolder = FO_GetFolderByType(FT_SPAM, NULL);
+
+  if(folder != NULL && spamfolder != NULL)
   {
     Object *lv = G->MA->GUI.PG_MAILLIST;
     struct Mail **mlist;

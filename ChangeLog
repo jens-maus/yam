@@ -7,6 +7,7 @@ $URL$
 
 2007-03-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c, Recipientstring.c: cleaned up some functions.
   * YAM_FO.c: upon closing the folder window the To, From and ReplyTo addresses
     are resolved before the folder configuration is saved to make sure YAM gets
     a valid address and not just an alias. This fixes bug #642735.
