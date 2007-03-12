@@ -2695,24 +2695,37 @@ char *CreateFilename(const char * const file)
 //  Makes a directory
 BOOL CreateDirectory(char *dir)
 {
-  enum FType t = FileType(dir);
+  BOOL success = FALSE;
+  enum FType t;
+
+  ENTER();
+
+  t = FileType(dir);
 
   if(t == FIT_DRAWER)
-    return TRUE;
+    success = TRUE;
   else if(t == FIT_NONEXIST)
   {
-    BPTR fl = CreateDir((STRPTR)dir);
-    if(fl)
+    int len;
+    BPTR fl;
+
+    len = strlen(dir) - 1;
+    // remove a trailing slash
+    if(dir[len] == '/')
+      dir[len] = '\0';
+
+    if((fl = CreateDir((STRPTR)dir)))
     {
       UnLock(fl);
-      return TRUE;
+      success = TRUE;
     }
   }
 
-  if(G->MA)
+  if(G->MA && !success)
     ER_NewError(tr(MSG_ER_CantCreateDir), dir);
 
-  return FALSE;
+  RETURN(success);
+  return success;
 }
 ///
 /// GetFolderDir

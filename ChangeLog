@@ -7,6 +7,12 @@ $URL$
 
 2007-03-11  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: creating directories with a trailing slash is documented to fail.
+    Now YAM will remove such a slash from paths before trying to create a
+    directory. This fixes bug #1678672.
+
+2007-03-11  Thore Böckelmann <tboeckel@gmx.de>
+
   * Debug.c: clearing one of the debug flags was never possible, because YAM
     checked for the "!" at the wrong index (1 instead of 0).
   * YAM_UT.c: cleaned up some functions.
