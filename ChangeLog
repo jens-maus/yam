@@ -7,6 +7,9 @@ $URL$
 
 2007-03-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: upon closing the folder window the To, From and ReplyTo addresses
+    are resolved before the folder configuration is saved to make sure YAM gets
+    a valid address and not just an alias. This fixes bug #642735.
   * ReadWindow.c: switching to the next/previous unread mail now does a second
     loop over all folders. That means if you switch from a mail in the last
     folder to the next unread mail, which is located in the first folder, this
