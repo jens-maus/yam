@@ -1094,9 +1094,11 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
     {
       struct Folder **flist;
 
-      if((flist = FO_CreateList()))
+      if((flist = FO_CreateList()) != NULL)
       {
         int i;
+        BOOL abort;
+        BOOL turnOver;
 
         // look for the current folder in the array
         for(i = 1; i <= (int)*flist; i++)
@@ -1105,42 +1107,67 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
             break;
         }
 
-        // look for first folder with at least one unread mail
-        // and if found read that mail
-        for(i += direction; i <= (int)*flist && i >= 1; i += direction)
+        abort = FALSE;
+        turnOver = FALSE;
+        while(!found && !abort)
         {
-          struct Folder *fo = flist[i];
-
-          // skip group folders, outgoing, trash and spam folder when looking for still unread mail
-          if(!isGroupFolder(fo) &&
-             !isOutgoingFolder(fo) &&
-             !isTrashFolder(fo) &&
-             !isSpamFolder(fo) &&
-             fo->Unread > 0)
+          // look for first folder with at least one unread mail
+          // and if found read that mail
+          for(i += direction; i <= (int)*flist && i >= 1; i += direction)
           {
-            if(MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq),
-                                           tr(MSG_YesNoReq),
-                                           tr(MSG_RE_MoveNextFolderReq), fo->Name) == 0)
+            struct Folder *fo = flist[i];
+
+            // skip group folders, outgoing, trash and spam folder when looking for still unread mail
+            if(!isGroupFolder(fo) &&
+               !isOutgoingFolder(fo) &&
+               !isTrashFolder(fo) &&
+               !isSpamFolder(fo) &&
+               fo->Unread > 0)
             {
+              if(fo != folder)
+              {
+                if(MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq),
+                                               tr(MSG_YesNoReq),
+                                               tr(MSG_RE_MoveNextFolderReq), fo->Name) == 0)
+                {
+                  abort = TRUE;
+                  break;
+                }
+
+                MA_ChangeFolder(fo, TRUE);
+              }
+
+              DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+              if(mail == NULL)
+                break;
+              
+              DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
+
+              // this is a valid break and not break because of an error
+              found = TRUE;
               break;
             }
+          }
 
-            MA_ChangeFolder(fo, TRUE);
-            DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-            if(mail == NULL)
+          // beep if no folder with unread mails was found
+          if(!found && (i > (int)*flist || i < 1))
+          {
+            if(turnOver)
+            {
+              // we already run through the complete list and found nothing
+              DisplayBeep(_screen(obj));
+              // get out of this loop
               break;
-            
-            DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
-
-            // this is a valid break and not break because of an error
-            found = TRUE;
-            break;
+            }
+            else
+            {
+              // we just reached the end of the folder list for the first time,
+              // so let's try it again from the opposite side
+              turnOver = TRUE;
+              i = (i < 1) ? (int)*flist + 1 : 0;
+            }
           }
         }
-
-        // beep if no folder with unread mails was found
-        if(i > (int)*flist || i < 1)
-          DisplayBeep(_screen(obj));
 
         free(flist);
       }
@@ -1165,13 +1192,18 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
 DECLARE(FollowThread) // LONG direction
 {
   GETDATA;
-  struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
-  struct Mail *mail = rmData->mail;
+  struct ReadMailData *rmData;
+  struct Mail *mail;
+  struct Mail *fmail;
+
+  ENTER();
+
+  rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
+  mail = rmData->mail;
 
   // depending on the direction we get the Question or Answer to the current Message
-  struct Mail *fmail = RE_GetThread(mail, msg->direction <= 0 ? FALSE : TRUE, TRUE, obj);
 
-  if(fmail)
+  if((fmail = RE_GetThread(mail, msg->direction <= 0 ? FALSE : TRUE, TRUE, obj)) != NULL)
   {
     LONG pos = MUIV_NList_GetPos_Start;
 
@@ -1205,6 +1237,7 @@ DECLARE(FollowThread) // LONG direction
     DisplayBeep(_screen(obj));
   }
 
+  LEAVE();
   return 0;
 }
 

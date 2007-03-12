@@ -5,8 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-03-11  Thore Böckelmann <tboeckel@gmx.de>
+2007-03-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ReadWindow.c: switching to the next/previous unread mail now does a second
+    loop over all folders. That means if you switch from a mail in the last
+    folder to the next unread mail, which is located in the first folder, this
+    will work now. Before the search was limited to exactly one direction, which
+    could be quite annoying if you knew that there was still unread above but
+    you didn't know for sure if there was still unread mail below.
   * YAM_UT.c: creating directories with a trailing slash is documented to fail.
     Now YAM will remove such a slash from paths before trying to create a
     directory. This fixes bug #1678672.
