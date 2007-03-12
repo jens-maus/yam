@@ -1769,7 +1769,7 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
     newPart->CParBndr = strdup(first ? first->CParBndr : (prev ? prev->CParBndr : ""));
 
     newPart->rmData = rmData;
-    snprintf(file, sizeof(file), "YAMr%08lx-p%d.txt", readMailDataID(rmData), newPart->Nr);
+    snprintf(file, sizeof(file), "YAMr%08lx-p%d.txt", rmData->uniqueID, newPart->Nr);
     strmfp(newPart->Filename, C->TempDir, file);
 
     D(DBF_MAIL, "New Part #%d [%lx]", newPart->Nr, newPart);
@@ -2294,7 +2294,7 @@ BOOL RE_DecodePart(struct Part *rp)
       }
 
       // lets generate the destination file name for the decoded part
-      snprintf(file, sizeof(file), "YAMm%08lx-p%d.%s", readMailDataID(rp->rmData), rp->Nr, ext[0] != '\0' ? ext : "tmp");
+      snprintf(file, sizeof(file), "YAMm%08lx-p%d.%s", rp->rmData->uniqueID, rp->Nr, ext[0] != '\0' ? ext : "tmp");
       strmfp(buf, C->TempDir, file);
 
       D(DBF_MAIL, "decoding '%s' to '%s'", rp->Filename, buf);
@@ -2442,7 +2442,7 @@ static void RE_HandleMDNReport(struct Part *frp)
     else
       type = MDNtype;
 
-    snprintf(file, sizeof(file), "YAMm%08lx-p%d.txt", readMailDataID(rp[0]->rmData), rp[0]->Nr);
+    snprintf(file, sizeof(file), "YAMm%08lx-p%d.txt", rp[0]->rmData->uniqueID, rp[0]->Nr);
     strmfp(buf, C->TempDir, file);
 
     D(DBF_MAIL, "creating MDN report in '%s'", buf);
@@ -2716,7 +2716,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
         char file[SIZE_FILE];
 
         part->Nr = i;
-        snprintf(file, sizeof(file), "YAMm%08lx-p%d%s", readMailDataID(rmData), i, strchr(part->Filename, '.'));
+        snprintf(file, sizeof(file), "YAMm%08lx-p%d%s", rmData->uniqueID, i, strchr(part->Filename, '.'));
         strmfp(tmpFile, C->TempDir, file);
 
         D(DBF_MAIL, "renaming '%s' to '%s'", part->Filename, tmpFile);
@@ -3608,8 +3608,10 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
     {
       struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-      if(rmData->readWindow)
+      if(rmData->readWindow != NULL)
       {
+        rmData->uniqueID = GetUniqueID();
+
         RETURN(rmData);
         return rmData;
       }
@@ -3650,14 +3652,15 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
 //  Allocates resources for background message parsing
 struct ReadMailData *AllocPrivateRMData(struct Mail *mail, short parseFlags)
 {
-  struct ReadMailData *rmData = calloc(1, sizeof(struct ReadMailData));
+  struct ReadMailData *rmData;
 
   ENTER();
 
-  if(rmData)
+  if((rmData = calloc(1, sizeof(struct ReadMailData))) != NULL)
   {
     rmData->mail = mail;
     rmData->parseFlags = parseFlags;
+    rmData->uniqueID = GetUniqueID();
 
     if(RE_LoadMessage(rmData) == FALSE)
     {

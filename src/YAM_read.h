@@ -76,10 +76,6 @@ enum SInfoMode  { SIM_OFF, SIM_DATA, SIM_ALL, SIM_IMAGE };
 #define PM_NONE   (1<<2)  // (c) parse the msg but keep no additional parts
 #define PM_QUIET  (1<<3)  // parse the message without issuing any warning (during filtering)
 
-// for our temporary filename generation we need a get a unique pointer on
-// each readmaildata usage
-#define readMailDataID(rmData) ((rmData)->readMailGroup ? (ULONG)(rmData)->readMailGroup : ((rmData)->readWindow ? (ULONG)(rmData)->readWindow : (ULONG)(rmData)->mail))
-
 // ReadMailData structure which carries all necessary information
 // during the read mail process. It is used while opening a read
 // window, view a mail in the preview section or even scanning
@@ -95,6 +91,7 @@ struct ReadMailData
   struct Mail     *mail;          // ptr to the mail we are reading
   struct Part     *firstPart;     // pointer to the first MIME part of the mail
   struct TempFile *tempFile;      // in case of a virtual mail we use a tempfile
+  ULONG           uniqueID;       // a unique identifier for this structure
   enum HeaderMode headerMode;     // mode on displaying the mail header
   enum SInfoMode  senderInfoMode; // sender info display mode
   short           parseFlags;     // flags for the parsing (e.g. be quiet, parse all, etc.)

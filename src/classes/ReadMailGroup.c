@@ -225,6 +225,7 @@ MakeStaticHook(TextEditDoubleClickHook, TextEditDoubleClickFunc);
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
+  struct TagItem *tags = inittags(msg), *tag;
   struct Data *data;
   struct Data *tmpData;
   struct ReadMailData *rmData;
@@ -232,8 +233,7 @@ OVERLOAD(OM_NEW)
   LONG tgVertWeight = 100;
 
   // get eventually set attributes first
-  struct TagItem *tags = inittags(msg), *tag;
-  while((tag = NextTagItem(&tags)))
+  while((tag = NextTagItem(&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {
@@ -244,14 +244,19 @@ OVERLOAD(OM_NEW)
 
   // generate a temporar struct Data to which we store our data and
   // copy it later on
-  if(!(data = tmpData = calloc(1, sizeof(struct Data))))
+  if((tmpData = calloc(1, sizeof(struct Data))) == NULL)
     return 0;
+
+  data = tmpData;
 
   // allocate the readMailData structure
-  if(!(data->readMailData = rmData = calloc(1, sizeof(struct ReadMailData))))
+  if((rmData = calloc(1, sizeof(struct ReadMailData))) == NULL)
     return 0;
 
+  data->readMailData = rmData;
+
   // set some default values for a new readMailGroup
+  rmData->uniqueID = GetUniqueID();
   rmData->headerMode = C->ShowHeader;
   rmData->senderInfoMode = C->ShowSenderInfo;
   rmData->wrapHeaders = C->WrapHeader;

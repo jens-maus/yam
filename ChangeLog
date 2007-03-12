@@ -7,6 +7,13 @@ $URL$
 
 2007-03-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE.c, ReadMailGroup.c: added new element "uniqueID" to the ReadMailData
+    structure to be able to generate really unique names for temporary files.
+    Before the structure pointer was used as a number which resulted in problems
+    when a structure was being reused instead of being allocated from scratch.
+    This partly fixes bug #1659581. Left over zombie files may still occur if
+    a temporary file is still locked by other programs when the read window is
+    closed.
   * YAM_MA.c, Recipientstring.c: cleaned up some functions.
   * YAM_FO.c: upon closing the folder window the To, From and ReplyTo addresses
     are resolved before the folder configuration is saved to make sure YAM gets
