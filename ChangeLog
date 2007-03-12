@@ -7,6 +7,10 @@ $URL$
 
 2007-03-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_WR.c: the text editor's cursor coordinates where displayed in a
+    TextObject with text background. But the object has no real frame the text
+    background may have another color that the usual group background. Hence the
+    coordinates are displayed with a group background.
   * YAM_RE.c, ReadMailGroup.c: added new element "uniqueID" to the ReadMailData
     structure to be able to generate really unique names for temporary files.
     Before the structure pointer was used as a number which resulted in problems

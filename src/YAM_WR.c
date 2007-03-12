@@ -3246,7 +3246,7 @@ static struct WR_ClassData *WR_New(int winnum)
                                  TextFrame,
                                  MUIA_Weight,        0,
                                  MUIA_Text_Contents, "000 \n000 ",
-                                 MUIA_Background,    MUII_TextBack,
+                                 MUIA_Background,    MUII_GroupBack,
                                  MUIA_Frame,         MUIV_Frame_None,
                                  MUIA_Font,          MUIV_Font_Tiny,
                                End,
