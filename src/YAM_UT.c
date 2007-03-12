@@ -2334,8 +2334,6 @@ struct TempFile *OpenTempFile(const char *mode)
 
   if((tf = calloc(1, sizeof(struct TempFile))))
   {
-    static int count = 0;
-
     // the tempfile MUST be SIZE_MFILE long because we
     // also use this tempfile routine for showing temporary mails which
     // conform to SIZE_MFILE
@@ -2343,7 +2341,7 @@ struct TempFile *OpenTempFile(const char *mode)
 
     // now format our temporary filename according to our Application data
     // this format tries to make the temporary filename kinda unique.
-    snprintf(buf, sizeof(buf), "YAMt%08lx-%02d.tmp", (ULONG)G->RexxHost, ++count);
+    snprintf(buf, sizeof(buf), "YAMt%08lx.tmp", GetUniqueID());
 
     // now add the temporary path to the filename
     strmfp(tf->Filename, C->TempDir, buf);
@@ -2357,8 +2355,6 @@ struct TempFile *OpenTempFile(const char *mode)
         // on error we free everything
         free(tf);
         tf = NULL;
-
-        count--;
       }
       else
         setvbuf(tf->FP, NULL, _IOFBF, SIZE_FILEBUF);
