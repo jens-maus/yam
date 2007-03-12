@@ -3327,7 +3327,7 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
           // extract the timestring
           if((p = strchr(p, ' ')))
           {
-            strlcpy(timestr, p+1, MIN(8, sizeof(timestr)));
+            strlcpy(timestr, p+1, MIN((ULONG)8, sizeof(timestr)));
 
             // extract the year
             if((p = strchr(p, ' ')))
