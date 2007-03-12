@@ -4332,7 +4332,6 @@ char *StartUnpack(char *file, char *newfile, struct Folder *folder)
 
   if((fh = fopen(file, "r")))
   {
-    static int count = 0;
     BOOL xpk = FALSE;
 
     // check if the source file is really XPK compressed or not.
@@ -4348,7 +4347,7 @@ char *StartUnpack(char *file, char *newfile, struct Folder *folder)
     {
       char nfile[SIZE_FILE];
 
-      snprintf(nfile, sizeof(nfile), "YAMu%08lx-%02d.unp", (ULONG)G->RexxHost, ++count);
+      snprintf(nfile, sizeof(nfile), "YAMu%08lx.unp", GetUniqueID());
       strmfp(newfile, C->TempDir, nfile);
 
       // check that the destination filename

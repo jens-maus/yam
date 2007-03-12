@@ -2509,83 +2509,80 @@ static void TR_ApplyRemoteFilters(struct MailTransferNode *mtn)
 //  Gets header from a message stored on the POP3 server
 static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 {
-   struct Mail *mail = mtn->mail;
+  struct Mail *mail = mtn->mail;
 
-   if(!*mail->From.Address && !G->TR->Abort && !G->Error)
-   {
-      char cmdbuf[SIZE_SMALL];
+  ENTER();
 
-      // we issue a TOP command with a one line message body.
-      //
-      // This command is optional within the RFC 1939 specification
-      // and therefore we don`t throw any error
-      snprintf(cmdbuf, sizeof(cmdbuf), "%d 1", mtn->index);
-      if(TR_SendPOP3Cmd(POPCMD_TOP, cmdbuf, NULL))
+  if(!*mail->From.Address && !G->TR->Abort && !G->Error)
+  {
+    char cmdbuf[SIZE_SMALL];
+
+    // we issue a TOP command with a one line message body.
+    //
+    // This command is optional within the RFC 1939 specification
+    // and therefore we don`t throw any error
+    snprintf(cmdbuf, sizeof(cmdbuf), "%d 1", mtn->index);
+    if(TR_SendPOP3Cmd(POPCMD_TOP, cmdbuf, NULL))
+    {
+      struct TempFile *tf;
+
+      // we generate a temporary file to buffer the TOP list
+      // into it.
+      if((tf = OpenTempFile("w")))
       {
-         char tfname[SIZE_MFILE];
-         char fname[SIZE_PATHFILE];
-         FILE *f;
+        struct ExtendedMail *email;
+        BOOL done = FALSE;
 
-         // we generate a temporary file to buffer the TOP list
-         // into it.
-         snprintf(tfname, sizeof(tfname), "YAMt%02d.tmp", G->RexxHost->portnumber);
-         strmfp(fname, C->TempDir, tfname);
+        // now we call a subfunction to receive data from the POP3 server
+        // and write it in the filehandle as long as there is no termination \r\n.\r\n
+        if(TR_RecvToFile(tf->FP, tf->Filename, NULL) > 0)
+          done = TRUE;
 
-         // open the
-         if((f = fopen(fname, "w")))
-         {
-            struct ExtendedMail *email;
-            BOOL done = FALSE;
+        // close the filehandle now.
+        fclose(tf->FP);
+        tf->FP = NULL;
 
-            setvbuf(f, NULL, _IOFBF, SIZE_FILEBUF);
+        // If we end up here because of an error, abort or the upper loop wasn`t finished
+        // we exit immediatly with deleting the temp file also.
+        if(G->Error || G->TR->Abort || done == FALSE)
+          lline = -1;
+        else if((email = MA_ExamineMail(NULL, tf->Filename, TRUE)))
+        {
+          mail->From    = email->Mail.From;
+          mail->To      = email->Mail.To;
+          mail->ReplyTo = email->Mail.ReplyTo;
+          strlcpy(mail->Subject, email->Mail.Subject, sizeof(mail->Subject));
+          strlcpy(mail->MailFile, email->Mail.MailFile, sizeof(mail->MailFile));
+          mail->Date = email->Mail.Date;
 
-            // now we call a subfunction to receive data from the POP3 server
-            // and write it in the filehandle as long as there is no termination \r\n.\r\n
-            if(TR_RecvToFile(f, fname, NULL) > 0) done = TRUE;
+          // if thie function was called with -1, then the POP3 server
+          // doesn`t have the UIDL command and we have to generate our
+          // own one by using the MsgID and the Serverstring for the POP3
+          // server.
+          if(lline == -1)
+          {
+            char uidl[SIZE_DEFAULT+SIZE_HOST];
 
-            // close the filehandle now.
-            fclose(f);
+            snprintf(uidl, sizeof(uidl), "%s@%s", Trim(email->MsgID), C->P3[G->TR->POP_Nr]->Server);
+            mtn->UIDL = strdup(uidl);
+          }
+          else if(lline == -2)
+            TR_ApplyRemoteFilters(mtn);
 
-            // If we end up here because of an error, abort or the upper loop wasn`t finished
-            // we exit immediatly with deleting the temp file also.
-            if(G->Error || G->TR->Abort || done == FALSE)
-            {
-               DeleteFile(fname);
-               return;
-            }
+          MA_FreeEMailStruct(email);
+        }
 
-            if((email = MA_ExamineMail(NULL, tfname, TRUE)))
-            {
-               mail->From    = email->Mail.From;
-               mail->To      = email->Mail.To;
-               mail->ReplyTo = email->Mail.ReplyTo;
-               strlcpy(mail->Subject, email->Mail.Subject, sizeof(mail->Subject));
-               strlcpy(mail->MailFile, email->Mail.MailFile, sizeof(mail->MailFile));
-               mail->Date = email->Mail.Date;
-
-               // if thie function was called with -1, then the POP3 server
-               // doesn`t have the UIDL command and we have to generate our
-               // own one by using the MsgID and the Serverstring for the POP3
-               // server.
-               if(lline == -1)
-               {
-                  char uidl[SIZE_DEFAULT+SIZE_HOST];
-                  snprintf(uidl, sizeof(uidl), "%s@%s", Trim(email->MsgID), C->P3[G->TR->POP_Nr]->Server);
-                  mtn->UIDL = strdup(uidl);
-               }
-               else if(lline == -2)
-                  TR_ApplyRemoteFilters(mtn);
-
-               MA_FreeEMailStruct(email);
-            }
-
-            DeleteFile(fname);
-         }
-         else ER_NewError(tr(MSG_ER_ErrorWriteMailfile), fname);
+        CloseTempFile(tf);
       }
-   }
+      else
+        ER_NewError(tr(MSG_ER_CantCreateTempfile));
+    }
+  }
 
-   if (lline >= 0) DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Redraw, lline);
+  if(lline >= 0)
+    DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Redraw, lline);
+
+  LEAVE();
 }
 ///
 /// TR_DisconnectPOP
@@ -4834,7 +4831,7 @@ BOOL TR_GetMessageList_IMPORT(void)
   NewList((struct List *)&G->TR->transferList);
 
   // prepare the temporary filename buffers
-  snprintf(tfname, sizeof(tfname), "YAMi%02d.tmp", G->RexxHost->portnumber);
+  snprintf(tfname, sizeof(tfname), "YAMi%08lx.tmp", GetUniqueID());
   strmfp(fname, C->TempDir, tfname);
 
   // before this function is called the MA_ImportMessages() function
