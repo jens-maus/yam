@@ -92,28 +92,43 @@ const char* const FolderName[FT_NUM] = { NULL,       // FT_CUSTOM
 //  Creates a linked list of all folders
 struct Folder **FO_CreateList(void)
 {
-   int max, i;
-   struct Folder **flist;
-   APTR lv = G->MA->GUI.NL_FOLDERS;
+  int max;
+  struct Folder **flist;
+  APTR lv;
 
-   max = DoMethod(lv, MUIM_NListtree_GetNr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_GetNr_Flag_CountAll);
+  ENTER();
 
-   if ((flist = calloc(max+1, sizeof(struct Folder *))))
-   {
-      flist[0] = (struct Folder *)max;
-      for (i = 0; i < max; i++)
+  lv = G->MA->GUI.NL_FOLDERS;
+  max = DoMethod(lv, MUIM_NListtree_GetNr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_GetNr_Flag_CountAll);
+
+  if((flist = calloc(max + 1, sizeof(struct Folder *))) != NULL)
+  {
+    int i;
+    struct Folder **fPtr;
+
+    flist[0] = (struct Folder *)max;
+    fPtr = &flist[1];
+
+    for(i = 0; i < max; i++)
+    {
+      struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
+
+      if(tn == NULL)
       {
-        struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-        if(!tn)
-        {
-          free(flist);
-          return NULL;
-        }
-
-        flist[i+1] = tn->tn_User;
+        free(flist);
+        flist = NULL;
+        break;
       }
-   }
-   return flist;
+      else
+      {
+        // put the folder in the list
+        *fPtr++ = tn->tn_User;
+      }
+    }
+  }
+
+  RETURN(flist);
+  return flist;
 }
 
 ///
