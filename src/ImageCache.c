@@ -69,7 +69,7 @@ static const char *imageFileArray[MAX_IMAGES] =
 
   // Default images for the folder list
   "folder_fold",     "folder_unfold",       "folder_incoming", "folder_incoming_new",
-  "folder_outgoing", "folder_outgoing_new", "folder_deleted",  "folder_deleted_new",
+  "folder_outgoing", "folder_outgoing_new", "folder_trash",    "folder_trash_new",
   "folder_sent",     "folder_spam",         "folder_spam_new",
 
   // Images for the YAM configuration window

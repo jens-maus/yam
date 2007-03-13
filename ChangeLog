@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-13  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c, MainFolderListtree.c: the trash folder icons had still the old
+    names ("folder_deleted#?" instead of "folder_trash#?")
+
 2007-03-12  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c, ReadMailGroup.c: the bugfix for bug #1659581 wasn't complete
