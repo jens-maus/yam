@@ -99,7 +99,6 @@ static ULONG MA_GetSortType(int);
 static struct Mail *MA_MoveCopySingle(struct Mail*, struct Folder*, struct Folder*, BOOL, BOOL);
 static void MA_UpdateStatus(void);
 static char *MA_AppendRcpt(char*, struct Person*, BOOL);
-static int MA_CmpDate(struct Mail**, struct Mail**);
 static void MA_InsertIntroText(FILE*, char*, struct ExpandTextData*);
 static void MA_EditorNotification(int);
 static void MA_SetupQuoteString(struct WR_ClassData*, struct ExpandTextData*, struct Mail*);
@@ -675,26 +674,33 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
 //  Builds a list containing all messages in a folder
 struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
 {
-  int selected;
-  struct Mail *mail, **mlist = NULL;
+  struct Mail **mlist = NULL;
 
   ENTER();
 
   if(fo != NULL)
   {
+    int selected;
+
     selected = onlyNew ? fo->New : fo->Total;
 
-    if(selected > 0 && (mlist = calloc(selected+2, sizeof(struct Mail *))) != NULL)
+    if(selected > 0)
     {
-      mlist[0] = (struct Mail *)selected;
-      mlist[1] = (struct Mail *)2;
-      for (selected = 2, mail = fo->Messages; mail; mail = mail->Next)
+      if((mlist = calloc(selected + 2, sizeof(struct Mail *))) != NULL)
       {
-        // only if we want ALL or this is just a îew mail we add it to our list
-        if(!onlyNew || hasStatusNew(mail))
+        struct Mail *mail, **mPtr;
+
+        mlist[0] = (struct Mail *)selected;
+        mlist[1] = (struct Mail *)2;
+        mPtr = &mlist[2];
+
+        for(mail = fo->Messages; mail; mail = mail->Next)
         {
-           mlist[selected] = mail;
-           selected++;
+          // only if we want ALL or this is just a îew mail we add it to our list
+          if(!onlyNew || hasStatusNew(mail))
+          {
+            *mPtr++ = mail;
+          }
         }
       }
     }
@@ -709,7 +715,7 @@ struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
 //  Builds a linked list containing the selected messages
 struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
 {
-  struct Mail *mail, **mlist = NULL;
+  struct Mail **mlist = NULL;
   struct Folder *folder;
 
   ENTER();
@@ -723,16 +729,18 @@ struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
     DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
     if(selected > 0)
     {
-      if((mlist = calloc(selected+2, sizeof(struct Mail *))) != NULL)
+      if((mlist = calloc(selected + 2, sizeof(struct Mail *))) != NULL)
       {
+        struct Mail *mail, **mPtr;
         int id;
 
         mlist[0] = (struct Mail *)selected;
         mlist[1] = (struct Mail *)1;
-        selected = 2;
+        mPtr = &mlist[2];
+
         id = MUIV_NList_NextSelected_Start;
 
-        while(1)
+        while(TRUE)
         {
           DoMethod(lv, MUIM_NList_NextSelected, &id);
           if(id == MUIV_NList_NextSelected_End)
@@ -743,14 +751,15 @@ struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
 
           if(!onlyNew || hasStatusNew(mail))
           {
-            mlist[selected] = mail;
-            selected++;
+            *mPtr++ = mail;
           }
         }
       }
     }
     else
     {
+      struct Mail *mail;
+
       DoMethod(lv, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
       if(mail != NULL && (!onlyNew || hasStatusNew(mail)))
       {
@@ -1501,8 +1510,11 @@ static char *MA_AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
 ///
 /// MA_CmpDate
 //  Compares two messages by date
-static int MA_CmpDate(struct Mail **pentry1, struct Mail **pentry2)
+int MA_CompareByDate(const void *p1, const void *p2)
 {
+  struct Mail **pentry1 = (struct Mail **)p1;
+  struct Mail **pentry2 = (struct Mail **)p2;
+
   return CompareDates(&(pentry2[0]->Date), &(pentry1[0]->Date));
 }
 
@@ -1981,7 +1993,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
       if((wr->refMailList = malloc(mlen)))
         memcpy(wr->refMailList, mlist, mlen);
 
-      qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), (int (*)(const void *, const void *))MA_CmpDate);
+      qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), MA_CompareByDate);
 
       MA_InsertIntroText(out, C->NewIntro, NULL);
 
@@ -2130,7 +2142,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
       // make sure we sort the mlist according to
       // the mail date
-      qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), (int (*)(const void *, const void *))MA_CmpDate);
+      qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), MA_CompareByDate);
 
       // Now we iterate through all selected mails
       for(j=0; j < (int)mlist[0]; j++)

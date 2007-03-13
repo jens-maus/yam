@@ -515,6 +515,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "SupportSite      = %s\n", co->SupportSite);
       fprintf(fh, "JumpToNewMsg     = %s\n", Bool2Txt(co->JumpToNewMsg));
       fprintf(fh, "JumpToIncoming   = %s\n", Bool2Txt(co->JumpToIncoming));
+      fprintf(fh, "JumpToRecentMsg  = %s\n", Bool2Txt(co->JumpToRecentMsg));
       fprintf(fh, "AskJumpUnread    = %s\n", Bool2Txt(co->AskJumpUnread));
       fprintf(fh, "PrinterCheck     = %s\n", Bool2Txt(co->PrinterCheck));
       fprintf(fh, "IsOnlineCheck    = %s\n", Bool2Txt(co->IsOnlineCheck));
@@ -1073,43 +1074,44 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                      else if (!stricmp(p, "WaitTerm"))   co->RX[j].WaitTerm = Txt2Bool(value);
                   }
                }
-/*14*/         else if (!stricmp(buffer, "TempDir"))        strlcpy(co->TempDir, value, sizeof(co->TempDir));
-               else if (!stricmp(buffer, "WBAppIcon"))      co->WBAppIcon = Txt2Bool(value);
-               else if (!stricmp(buffer, "IconPosition"))   sscanf(value, "%d;%d", &(co->IconPositionX), &(co->IconPositionY));
-               else if (!stricmp(buffer, "AppIconText"))    strlcpy(co->AppIconText, value, sizeof(co->AppIconText));
-               else if (!stricmp(buffer, "DockyIcon"))      co->DockyIcon = Txt2Bool(value);
-               else if (!stricmp(buffer, "IconifyOnQuit"))  co->IconifyOnQuit = Txt2Bool(value);
-               else if (!stricmp(buffer, "Confirm"))        co->Confirm = Txt2Bool(value);
-               else if (!stricmp(buffer, "ConfirmDelete"))  co->ConfirmDelete = atoi(value);
-               else if (!stricmp(buffer, "RemoveAtOnce"))   co->RemoveAtOnce = Txt2Bool(value);
-               else if (!stricmp(buffer, "SaveSent"))       co->SaveSent = Txt2Bool(value);
-               else if (!stricmp(buffer, "MDN_Display"))    co->MDN_Display = atoi(value);
-               else if (!stricmp(buffer, "MDN_Process"))    co->MDN_Process = atoi(value);
-               else if (!stricmp(buffer, "MDN_Delete"))     co->MDN_Delete = atoi(value);
-               else if (!stricmp(buffer, "MDN_Filter"))     co->MDN_Filter = atoi(value);
-               else if (!stricmp(buffer, "SendMDNAtOnce"))  co->SendMDNAtOnce = Txt2Bool(value);
-               else if (!stricmp(buffer, "XPKPack"))        { strlcpy(co->XPKPack, value, sizeof(co->XPKPack)); co->XPKPackEff = atoi(&value[5]); }
-               else if (!stricmp(buffer, "XPKPackEncrypt")) { strlcpy(co->XPKPackEncrypt, value, sizeof(co->XPKPackEncrypt)); co->XPKPackEncryptEff = atoi(&value[5]); }
-               else if (!stricmp(buffer, "PackerCommand"))  strlcpy(co->PackerCommand, value, sizeof(co->PackerCommand));
-/*Update*/     else if (!stricmp(buffer, "UpdateInterval")) co->UpdateInterval = atoi(value);
-               else if (!stricmp(buffer, "UpdateServer"))   strlcpy(co->UpdateServer, value, sizeof(co->UpdateServer));
-/*Advanced*/   else if (!stricmp(buffer, "LetterPart"))     { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
-               else if (!stricmp(buffer, "WriteIndexes"))   co->WriteIndexes = atoi(value);
-               else if (!stricmp(buffer, "SupportSite"))    strlcpy(co->SupportSite, value, sizeof(co->SupportSite));
-               else if (!stricmp(buffer, "JumpToNewMsg"))   co->JumpToNewMsg = Txt2Bool(value);
-               else if (!stricmp(buffer, "JumpToIncoming")) co->JumpToIncoming = Txt2Bool(value);
-               else if (!stricmp(buffer, "AskJumpUnread"))  co->AskJumpUnread = Txt2Bool(value);
-               else if (!stricmp(buffer, "PrinterCheck"))   co->PrinterCheck = Txt2Bool(value);
-               else if (!stricmp(buffer, "IsOnlineCheck"))  co->IsOnlineCheck = Txt2Bool(value);
-               else if (!stricmp(buffer, "IOCInterface"))   strlcpy(co->IOCInterface, value, sizeof(co->IOCInterface));
-               else if (!stricmp(buffer, "ConfirmOnQuit"))  co->ConfirmOnQuit = Txt2Bool(value);
-               else if (!stricmp(buffer, "HideGUIElements")) co->HideGUIElements = atoi(value);
-               else if (!stricmp(buffer, "SysCharsetCheck"))co->SysCharsetCheck = Txt2Bool(value);
-               else if (!stricmp(buffer, "AmiSSLCheck"))    co->AmiSSLCheck = Txt2Bool(value);
-               else if (!stricmp(buffer, "TimeZoneCheck"))  co->TimeZoneCheck = Txt2Bool(value);
-               else if (!stricmp(buffer, "AutoDSTCheck"))   co->AutoDSTCheck = Txt2Bool(value);
-               else if (!stricmp(buffer, "StackSize"))      co->StackSize = atoi(value);
-               else if (!stricmp(buffer, "PrintMethod"))    co->PrintMethod = atoi(value);
+/*14*/         else if (!stricmp(buffer, "TempDir"))          strlcpy(co->TempDir, value, sizeof(co->TempDir));
+               else if (!stricmp(buffer, "WBAppIcon"))        co->WBAppIcon = Txt2Bool(value);
+               else if (!stricmp(buffer, "IconPosition"))     sscanf(value, "%d;%d", &(co->IconPositionX), &(co->IconPositionY));
+               else if (!stricmp(buffer, "AppIconText"))      strlcpy(co->AppIconText, value, sizeof(co->AppIconText));
+               else if (!stricmp(buffer, "DockyIcon"))        co->DockyIcon = Txt2Bool(value);
+               else if (!stricmp(buffer, "IconifyOnQuit"))    co->IconifyOnQuit = Txt2Bool(value);
+               else if (!stricmp(buffer, "Confirm"))          co->Confirm = Txt2Bool(value);
+               else if (!stricmp(buffer, "ConfirmDelete"))    co->ConfirmDelete = atoi(value);
+               else if (!stricmp(buffer, "RemoveAtOnce"))     co->RemoveAtOnce = Txt2Bool(value);
+               else if (!stricmp(buffer, "SaveSent"))         co->SaveSent = Txt2Bool(value);
+               else if (!stricmp(buffer, "MDN_Display"))      co->MDN_Display = atoi(value);
+               else if (!stricmp(buffer, "MDN_Process"))      co->MDN_Process = atoi(value);
+               else if (!stricmp(buffer, "MDN_Delete"))       co->MDN_Delete = atoi(value);
+               else if (!stricmp(buffer, "MDN_Filter"))       co->MDN_Filter = atoi(value);
+               else if (!stricmp(buffer, "SendMDNAtOnce"))    co->SendMDNAtOnce = Txt2Bool(value);
+               else if (!stricmp(buffer, "XPKPack"))          { strlcpy(co->XPKPack, value, sizeof(co->XPKPack)); co->XPKPackEff = atoi(&value[5]); }
+               else if (!stricmp(buffer, "XPKPackEncrypt"))   { strlcpy(co->XPKPackEncrypt, value, sizeof(co->XPKPackEncrypt)); co->XPKPackEncryptEff = atoi(&value[5]); }
+               else if (!stricmp(buffer, "PackerCommand"))    strlcpy(co->PackerCommand, value, sizeof(co->PackerCommand));
+/*Update*/     else if (!stricmp(buffer, "UpdateInterval"))   co->UpdateInterval = atoi(value);
+               else if (!stricmp(buffer, "UpdateServer"))     strlcpy(co->UpdateServer, value, sizeof(co->UpdateServer));
+/*Advanced*/   else if (!stricmp(buffer, "LetterPart"))       { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
+               else if (!stricmp(buffer, "WriteIndexes"))     co->WriteIndexes = atoi(value);
+               else if (!stricmp(buffer, "SupportSite"))      strlcpy(co->SupportSite, value, sizeof(co->SupportSite));
+               else if (!stricmp(buffer, "JumpToNewMsg"))     co->JumpToNewMsg = Txt2Bool(value);
+               else if (!stricmp(buffer, "JumpToIncoming"))   co->JumpToIncoming = Txt2Bool(value);
+               else if (!stricmp(buffer, "JumpToRecentMsg"))  co->JumpToRecentMsg = Txt2Bool(value);
+               else if (!stricmp(buffer, "AskJumpUnread"))    co->AskJumpUnread = Txt2Bool(value);
+               else if (!stricmp(buffer, "PrinterCheck"))     co->PrinterCheck = Txt2Bool(value);
+               else if (!stricmp(buffer, "IsOnlineCheck"))    co->IsOnlineCheck = Txt2Bool(value);
+               else if (!stricmp(buffer, "IOCInterface"))     strlcpy(co->IOCInterface, value, sizeof(co->IOCInterface));
+               else if (!stricmp(buffer, "ConfirmOnQuit"))    co->ConfirmOnQuit = Txt2Bool(value);
+               else if (!stricmp(buffer, "HideGUIElements"))  co->HideGUIElements = atoi(value);
+               else if (!stricmp(buffer, "SysCharsetCheck"))  co->SysCharsetCheck = Txt2Bool(value);
+               else if (!stricmp(buffer, "AmiSSLCheck"))      co->AmiSSLCheck = Txt2Bool(value);
+               else if (!stricmp(buffer, "TimeZoneCheck"))    co->TimeZoneCheck = Txt2Bool(value);
+               else if (!stricmp(buffer, "AutoDSTCheck"))     co->AutoDSTCheck = Txt2Bool(value);
+               else if (!stricmp(buffer, "StackSize"))        co->StackSize = atoi(value);
+               else if (!stricmp(buffer, "PrintMethod"))      co->PrintMethod = atoi(value);
                else if (!stricmp(buffer, "AutoColumnResize")) co->AutoColumnResize = Txt2Bool(value);
                else if (!stricmp(buffer, "SocketOptions"))
                {

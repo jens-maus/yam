@@ -1046,8 +1046,12 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       co->WriteIndexes = 120;
       strlcpy(co->SupportSite, "http://www.yam.ch/", sizeof(co->SupportSite));
       strlcpy(co->UpdateServer, "http://update.yam.ch/", sizeof(co->UpdateServer));
-      co->JumpToNewMsg = co->AskJumpUnread = co->PrinterCheck = co->IsOnlineCheck = TRUE;
+      co->JumpToNewMsg = TRUE;
       co->JumpToIncoming = FALSE;
+      co->JumpToRecentMsg = FALSE;
+      co->AskJumpUnread = TRUE;
+      co->PrinterCheck = TRUE;
+      co->IsOnlineCheck = TRUE;
       co->ConfirmOnQuit = FALSE;
       co->HideGUIElements = 0;
       strlcpy(co->LocalCharset, "ISO-8859-1", sizeof(co->LocalCharset));

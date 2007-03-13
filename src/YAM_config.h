@@ -449,6 +449,7 @@ struct Config
    BOOL  SendMDNAtOnce;
    BOOL  JumpToNewMsg;
    BOOL  JumpToIncoming;
+   BOOL  JumpToRecentMsg;
    BOOL  PrinterCheck;
    BOOL  IsOnlineCheck;
    BOOL  ConfirmOnQuit;

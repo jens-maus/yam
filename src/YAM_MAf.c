@@ -664,84 +664,98 @@ MakeHook(MA_FlushIndexHook, MA_FlushIndexFunc);
 //  Changes to another folder
 void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 {
-  struct Folder *actfo = FO_GetCurrentFolder();
-  struct MA_GUIData *gui = &G->MA->GUI;
+  struct Folder *actfo;
 
-  if(!actfo)
-    return;
+  ENTER();
 
-  if(!folder)
-    folder = actfo;
-  else if(actfo == folder)
-    return;
-  else if(set_active)
-    FO_SetCurrentFolder(folder);
+  actfo = FO_GetCurrentFolder();
 
-  // in case the main window has an embedded read pane, we have to
-  // clear it before changing the actual folder
-  if(C->EmbeddedReadPane)
-    DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, FALSE);
-
-  // if this folder should be disabled, lets do it now
-  if(isGroupFolder(folder) || MA_GetIndex(folder) == FALSE)
+  if(actfo != NULL)
   {
-    SetAttrs(gui->PG_MAILLIST, MUIA_Disabled,     TRUE,
-                               MUIA_ShortHelp,    NULL,
-                               MUIA_NList_Active, MUIV_NList_Active_Off,
-                               TAG_DONE);
+    BOOL folderChanged = TRUE;
 
-    // set the quickbar as disabled as well
-    if(C->QuickSearchBar)
-      set(gui->GR_QUICKSEARCHBAR, MUIA_Disabled, TRUE);
+    if(folder == NULL)
+      folder = actfo;
+    else if(actfo == folder)
+      folderChanged = FALSE;
+    else if(set_active)
+      FO_SetCurrentFolder(folder);
 
-    // also set an embedded read pane as disabled.
-    if(C->EmbeddedReadPane)
-      set(gui->MN_EMBEDDEDREADPANE, MUIA_Disabled, TRUE);
+    if(folderChanged)
+    {
+      struct MA_GUIData *gui = &G->MA->GUI;
 
-    DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
+      // in case the main window has an embedded read pane, we have to
+      // clear it before changing the actual folder
+      if(C->EmbeddedReadPane)
+        DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, FALSE);
 
-    // make sure the main mail list noticies that
-    // the selection has changed so that if a user reactivates a valid
-    // folder the main mail list will get updated accordingly.
-    MA_ChangeSelected(TRUE);
+      // if this folder should be disabled, lets do it now
+      if(isGroupFolder(folder) || MA_GetIndex(folder) == FALSE)
+      {
+        SetAttrs(gui->PG_MAILLIST, MUIA_Disabled,     TRUE,
+                                   MUIA_ShortHelp,    NULL,
+                                   MUIA_NList_Active, MUIV_NList_Active_Off,
+                                   TAG_DONE);
+
+        // set the quickbar as disabled as well
+        if(C->QuickSearchBar)
+          set(gui->GR_QUICKSEARCHBAR, MUIA_Disabled, TRUE);
+
+        // also set an embedded read pane as disabled.
+        if(C->EmbeddedReadPane)
+          set(gui->MN_EMBEDDEDREADPANE, MUIA_Disabled, TRUE);
+
+        DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
+
+        // make sure the main mail list noticies that
+        // the selection has changed so that if a user reactivates a valid
+        // folder the main mail list will get updated accordingly.
+        MA_ChangeSelected(TRUE);
+      }
+      else if(FO_GetCurrentFolder() == folder) // check again for the current folder
+      {
+        // set the SortFlag in the NList accordingly
+        MA_SetSortFlag();
+
+        // Now we update the InfoBar accordingly
+        DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
+
+        // enable an embedded read pane again
+        if(C->EmbeddedReadPane)
+          set(gui->MN_EMBEDDEDREADPANE, MUIA_Disabled, FALSE);
+
+        // in case the main window has an quicksearchbar, we have to
+        // clear it as well before changing the folder
+        if(C->QuickSearchBar)
+          DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_Clear);
+
+        // Create the Mail List and display it
+        DisplayMailList(folder, gui->PG_MAILLIST);
+
+        // now we have to assure that the folder is enabled
+        set(gui->PG_MAILLIST, MUIA_Disabled, FALSE);
+
+        // Now we jump to messages that are NEW
+        if(C->JumpToNewMsg)
+          MA_JumpToNewMsg();
+        else if(C->JumpToRecentMsg)
+          MA_JumpToRecentMsg();
+        else if(folder->LastActive >= 0)
+          set(gui->PG_MAILLIST, MUIA_NList_Active, folder->LastActive);
+
+        // if there is still no entry active in the NList we make the first one active
+        if(xget(gui->PG_MAILLIST, MUIA_NList_Active) == (ULONG)MUIV_NList_Active_Off)
+          set(gui->PG_MAILLIST, MUIA_NList_Active, MUIV_NList_Active_Top);
+
+        // if there are no messages in the folder the GUI needs to be updated nevertheless
+        if(folder->Total == 0)
+          MA_ChangeSelected(TRUE);
+      }
+    }
   }
-  else if(FO_GetCurrentFolder() == folder) // check again for the current folder
-  {
-    // set the SortFlag in the NList accordingly
-    MA_SetSortFlag();
 
-    // Now we update the InfoBar accordingly
-    DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
-
-    // enable an embedded read pane again
-    if(C->EmbeddedReadPane)
-      set(gui->MN_EMBEDDEDREADPANE, MUIA_Disabled, FALSE);
-
-    // in case the main window has an quicksearchbar, we have to
-    // clear it as well before changing the folder
-    if(C->QuickSearchBar)
-      DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_Clear);
-
-    // Create the Mail List and display it
-    DisplayMailList(folder, gui->PG_MAILLIST);
-
-    // now we have to assure that the folder is enabled
-    set(gui->PG_MAILLIST, MUIA_Disabled, FALSE);
-
-    // Now we jump to messages that are NEW
-    if(C->JumpToNewMsg)
-      MA_JumpToNewMsg();
-    else if(folder->LastActive >= 0)
-      set(gui->PG_MAILLIST, MUIA_NList_Active, folder->LastActive);
-
-    // if there is still no entry active in the NList we make the first one active
-    if(xget(gui->PG_MAILLIST, MUIA_NList_Active) == (ULONG)MUIV_NList_Active_Off)
-      set(gui->PG_MAILLIST, MUIA_NList_Active, MUIV_NList_Active_Top);
-
-    // if there are no messages in the folder the GUI needs to be updated nevertheless
-    if(folder->Total == 0)
-      MA_ChangeSelected(TRUE);
-  }
+  LEAVE();
 }
 
 HOOKPROTONHNONP(MA_ChangeFolderFunc, void)
@@ -753,15 +767,20 @@ MakeHook(MA_ChangeFolderHook, MA_ChangeFolderFunc);
 /// MA_JumpToNewMsg
 // Function that jumps to the first or last unread mail in a folder,
 // depending on sort order of the folder
-BOOL MA_JumpToNewMsg(VOID)
+void MA_JumpToNewMsg(VOID)
 {
-  struct Folder *folder = FO_GetCurrentFolder();
+  struct Folder *folder;
+  Object *lv;
   int i, incr, pos = -1;
+
+  ENTER();
+
+  folder = FO_GetCurrentFolder();
+  lv = G->MA->GUI.PG_MAILLIST;
 
   if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
   {
-    i = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries);
-    i--;
+    i = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries) - 1;
     incr = -1;
   }
   else
@@ -770,11 +789,13 @@ BOOL MA_JumpToNewMsg(VOID)
     incr = 1;
   }
 
-  while(1)
+  while(TRUE)
   {
     struct Mail *mail;
-    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, i, &mail);
-    if(!mail) break;
+
+    DoMethod(lv, MUIM_NList_GetEntry, i, &mail);
+    if(mail == NULL)
+      break;
 
     if(hasStatusNew(mail) || !hasStatusRead(mail))
     {
@@ -785,9 +806,47 @@ BOOL MA_JumpToNewMsg(VOID)
     i += incr;
   }
 
-  set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
+  set(lv, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
 
-  return TRUE;
+  LEAVE();
+}
+///
+/// MA_JumpToRecentMsg
+// Function that jumps to the most recent mail in a folder
+void MA_JumpToRecentMsg(VOID)
+{
+  struct Folder *folder;
+  Object *lv;
+  struct Mail *recent = NULL;
+  int recentIdx = -1, i;
+
+  ENTER();
+
+  folder = FO_GetCurrentFolder();
+  lv = G->MA->GUI.PG_MAILLIST;
+
+  i = 0;
+  while(TRUE)
+  {
+    struct Mail *mail;
+
+    DoMethod(lv, MUIM_NList_GetEntry, i, &mail);
+    if(mail == NULL)
+      break;
+
+    if(recent == NULL || MA_CompareByDate(&mail, &recent) > 0)
+    {
+      // this mail is more recent than the yet most recent known
+      recentIdx = i;
+      recent = mail;
+    }
+
+    i++;
+  }
+
+  set(lv, MUIA_NList_Active, recentIdx >= 0 ? recentIdx : folder->LastActive);
+
+  LEAVE();
 }
 ///
 /// MA_ConvertOldMailFile()
