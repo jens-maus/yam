@@ -7,6 +7,8 @@ $URL$
 
 2007-03-13  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: cleaned up several functions and added the usual ENTER()/LEAVE()
+    macro calls.
   * YAM_FO.c: cleaned up folder list generation a bit.
   * ImageCache.c, MainFolderListtree.c: the trash folder icons had still the old
     names ("folder_deleted#?" instead of "folder_trash#?")

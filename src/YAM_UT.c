@@ -2744,21 +2744,21 @@ BOOL CreateDirectory(const char *dir)
 //  Returns path of a folder directory
 char *GetFolderDir(struct Folder *fo)
 {
-   static char buffer[SIZE_PATH];
-   char *dir;
+  static char buffer[SIZE_PATH];
+  char *dir;
 
-   ENTER();
+  ENTER();
 
-   if(strchr(fo->Path, ':') != NULL)
-     dir = fo->Path;
-   else
-   {
-     strmfp(buffer, G->MA_MailDir, fo->Path);
-     dir = buffer;
-   }
+  if(strchr(fo->Path, ':') != NULL)
+    dir = fo->Path;
+  else
+  {
+    strmfp(buffer, G->MA_MailDir, fo->Path);
+    dir = buffer;
+  }
 
-   RETURN(dir);
-   return dir;
+  RETURN(dir);
+  return dir;
 }
 ///
 /// GetMailFile
@@ -2791,7 +2791,9 @@ char *BuildAddrName(char *address, char *name)
   static char buffer[SIZE_ADDRESS+SIZE_REALNAME+4];
   const char *delim;
 
-  if(*name)
+  ENTER();
+
+  if(name[0] != '\0')
   {
     if(strpbrk(name, ",.()"))
       delim = "\"";
@@ -2803,6 +2805,7 @@ char *BuildAddrName(char *address, char *name)
   else
     snprintf(buffer, sizeof(buffer), "%s", address);
 
+  RETURN(buffer);
   return buffer;
 }
 ///
@@ -2819,7 +2822,7 @@ void ExtractAddress(const char *line, struct Person *pe)
 
   // create a temp copy of our source
   // string so that we don't have to alter it.
-  if((save = strdup(line)))
+  if((save = strdup(line)) != NULL)
   {
     char *p = save;
     char *start;
@@ -3795,75 +3798,109 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
 //  Checks if a message still exists
 BOOL MailExists(struct Mail *mailptr, struct Folder *folder)
 {
-   struct Mail *work;
-   if (isVirtualMail(mailptr)) return TRUE;
-   if (!folder) folder = mailptr->Folder;
-   for (work = folder->Messages; work; work = work->Next) if (work == mailptr) return TRUE;
-   return FALSE;
+  BOOL exists = FALSE;
+
+  ENTER();
+
+  if(isVirtualMail(mailptr))
+  {
+    exists = TRUE;
+  }
+  else
+  {
+    struct Mail *work;
+
+    if(folder == NULL)
+      folder = mailptr->Folder;
+
+    for(work = folder->Messages; work; work = work->Next)
+    {
+      if(work == mailptr)
+      {
+        exists = TRUE;
+        break;
+      }
+    }
+  }
+
+  RETURN(exists);
+  return exists;
 }
 ///
 /// DisplayMailList
 //  Lists folder contents in the message listview
 void DisplayMailList(struct Folder *fo, APTR lv)
 {
-   struct Mail *work, **array;
-   int lastActive = fo->LastActive;
+  struct Mail **array;
+  int lastActive;
 
-   if ((array = (struct Mail **)calloc(fo->Total+1,sizeof(struct Mail *))))
-   {
-      int i = 0;
+  ENTER();
 
-      BusyText(tr(MSG_BusyDisplayingList), "");
-      for (work = fo->Messages; work; work = work->Next)
-      {
-         array[i++] = work;
-      }
+  lastActive = fo->LastActive;
 
-      // We do not encapsulate this Clear&Insert with a NList_Quiet because
-      // this will speed up the Insert with about 3-4 seconds for ~6000 items
-      DoMethod(lv, MUIM_NList_Clear);
-      DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted,
-                   C->AutoColumnResize ? MUIF_NONE : MUIV_NList_Insert_Flag_Raw);
+  if((array = (struct Mail **)calloc(fo->Total + 1, sizeof(struct Mail *))) != NULL)
+  {
+    struct Mail *work;
+    struct Mail **arrPtr = array;
 
-      free(array);
-      BusyEnd();
-   }
+    BusyText(tr(MSG_BusyDisplayingList), "");
+    for(work = fo->Messages; work; work = work->Next)
+    {
+      *arrPtr++ = work;
+    }
 
-   // Now we have to recove the LastActive or otherwise it will be -1 later
-   fo->LastActive = lastActive;
+    // We do not encapsulate this Clear&Insert with a NList_Quiet because
+    // this will speed up the Insert with about 3-4 seconds for ~6000 items
+    DoMethod(lv, MUIM_NList_Clear);
+    DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted,
+                 C->AutoColumnResize ? MUIF_NONE : MUIV_NList_Insert_Flag_Raw);
+
+    free(array);
+    BusyEnd();
+  }
+
+  // Now we have to recover the LastActive or otherwise it will be -1 later
+  fo->LastActive = lastActive;
+
+  LEAVE();
 }
 ///
 /// AddMailToList
 //  Adds a message to a folder
 struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
 {
-   struct Mail *new = malloc(sizeof(struct Mail));
-   if (new)
-   {
-      memcpy(new, mail, sizeof(struct Mail));
-      new->Folder = folder;
+  struct Mail *new;
 
-      // lets add the new Message to our message list
-      new->Next = folder->Messages;
-      folder->Messages = new;
+  ENTER();
 
-      // lets summarize the stats
-      folder->Total++;
-      folder->Size += mail->Size;
+  if((new = malloc(sizeof(struct Mail))) != NULL)
+  {
+    memcpy(new, mail, sizeof(struct Mail));
+    new->Folder = folder;
 
-      if(hasStatusNew(mail))
-      {
-        folder->New++;
-        folder->Unread++;
-      }
-      else if(!hasStatusRead(mail))
-      {
-        folder->Unread++;
-      }
+    // lets add the new Message to our message list
+    new->Next = folder->Messages;
+    folder->Messages = new;
 
-      MA_ExpireIndex(folder);
-   }
-   return new;
+    // lets summarize the stats
+    folder->Total++;
+    folder->Size += mail->Size;
+
+    if(hasStatusNew(mail))
+    {
+      folder->New++;
+      folder->Unread++;
+    }
+    else if(!hasStatusRead(mail))
+    {
+      folder->Unread++;
+    }
+
+    MA_ExpireIndex(folder);
+  }
+
+  RETURN(new);
+  return new;
 }
 ///
 /// RemoveMailFromList
@@ -3950,7 +3987,7 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
 
   ENTER();
 
-  for(mail=folder->Messages; mail != NULL; mail=next)
+  for(mail = folder->Messages; mail != NULL; mail = next)
   {
     next = mail->Next;
 
@@ -3975,7 +4012,12 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
   }
 
   if(resetstats)
-    folder->Total = folder->New = folder->Unread = folder->Size = 0;
+  {
+    folder->Total = 0;
+    folder->New = 0;
+    folder->Unread = 0;
+    folder->Size = 0;
+  }
 
   folder->Messages = NULL;
 
@@ -3986,31 +4028,37 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
 //  Returns packer type and efficiency
 static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff)
 {
-   BOOL result = TRUE;
+  BOOL result = TRUE;
 
-   ENTER();
+  ENTER();
 
-   switch(fMode)
-   {
-      case FM_XPKCOMP:
-        *method = C->XPKPack;
-        *eff = C->XPKPackEff;
-      break;
+  switch(fMode)
+  {
+    case FM_XPKCOMP:
+    {
+      *method = C->XPKPack;
+      *eff = C->XPKPackEff;
+    }
+    break;
 
-      case FM_XPKCRYPT:
-        *method = C->XPKPackEncrypt;
-        *eff = C->XPKPackEncryptEff;
-      break;
+    case FM_XPKCRYPT:
+    {
+      *method = C->XPKPackEncrypt;
+      *eff = C->XPKPackEncryptEff;
+    }
+    break;
 
-      default:
-        *method = NULL;
-        *eff = 0;
-        result = FALSE;
-      break;
-   }
+    default:
+    {
+      *method = NULL;
+      *eff = 0;
+      result = FALSE;
+    }
+    break;
+  }
 
-   RETURN(result);
-   return result;
+  RETURN(result);
+  return result;
 }
 ///
 /// CompressMailFile
@@ -4306,19 +4354,25 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
 //  Compresses a file
 BOOL DoPack(char *file, char *newfile, struct Folder *folder)
 {
-   char *pmeth = NULL;
-   int peff = 0;
+  char *pmeth = NULL;
+  int peff = 0;
+  BOOL result = FALSE;
 
-   if(GetPackMethod(folder->Mode, &pmeth, &peff))
-   {
-     if(CompressMailFile(file, newfile, folder->Password, pmeth, peff) &&
-        DeleteFile(file))
-     {
-        return TRUE;
-     }
-   }
+  ENTER();
 
-   return FALSE;
+  if(GetPackMethod(folder->Mode, &pmeth, &peff))
+  {
+    if(CompressMailFile(file, newfile, folder->Password, pmeth, peff))
+    {
+      if(DeleteFile(file))
+      {
+        result = TRUE;
+      }
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 ///
 /// StartUnpack
