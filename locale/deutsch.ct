@@ -4647,7 +4647,7 @@ YAM kann eine bestimmte Kopfzeile nicht korrekt anzeigen.
 ; ENCODING_TYPE
 ;
 MSG_ER_MultipartEOF
-Fehler in Multipart-Nachricht.\n\
+Fehler in mehrteiliger Nachricht.\n\
 \n\
 unerwartetes Dateiende. Die Nachricht scheint unvollständig zu sein.
 ; Unexpected EOF while decoding multipart message. \
@@ -5571,7 +5571,7 @@ Standard
 ;
 ; Obsolete
 MSG_ER_PGPMultipart
-Fehler beim Erzeugen der Multipart PGP-Nachricht. Verschlüsseln/Signieren deaktiviert!
+Fehler beim Erzeugen der mehrteiligen PGP-Nachricht. Verschlüsseln/Signieren deaktiviert!
 ; Error creating multipart PGP message. Encrypting/signing disabled!
 ;
 MSG_RE_FixedFont
@@ -6668,7 +6668,7 @@ momentanen Status von YAM an.\n\
 ;
 MSG_ER_B64DECTRUNC
 Ein Fehler trat während des Versuches auf den MIME \
-Part %ld der Nachricht '%s' mittels base64 zu dekodieren. \
+Teil %ld der Nachricht '%s' mittels base64 zu dekodieren. \
 Der Vorgang wurde daraufhin abgebrochen.\n\
 \n\
 Dies könnte durch eine falsche Kodierung der Nachricht \
@@ -6677,7 +6677,7 @@ base64 kodierte Teil der Nachricht während der Übertragung \
 verstümmelt wurde.
 ; PARTNR, MSGFILE
 MSG_ER_B64DECTRUNCTXT
-Manch lesbarer Text des MIME-Part %ld der Nachricht '%s' \
+Manch lesbarer Text des MIME-Teils %ld der Nachricht '%s' \
 konnte nicht base64 dekodiert werden und könnte inkorrekt \
 oder gar nicht dargestellt werden.\n\
 \n\
@@ -7155,7 +7155,7 @@ Nachrichten: %ld (%ld Neu, %ld Ungelesen)
 ; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MA_MIMEPART_INFO
-\ebAnhang - MIME-Part #%ld\en\n\
+\ebAnhang - MIME-Teil #%ld\en\n\
 Name: %s\n\
 Beschreibung: %s\n\
 Content-Type: %s <%s>\n\
@@ -7163,7 +7163,7 @@ Grösse: ~%s
 ; PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
 ;
 MSG_MA_MIMEPART_MENU
-Anhang/MIME-Part #%ld
+Anhang/MIME-Teil #%ld
 ;
 MSG_CO_PGPPASSINTERVAL1
 Passphrase erst nach

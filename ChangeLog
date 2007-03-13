@@ -7,6 +7,7 @@ $URL$
 
 2007-03-13  Thore Böckelmann <tboeckel@gmx.de>
 
+  * deutsch.ct: fixed some "denglish" translations.
   * YAM_MA.c, YAM_MAf.c, YAM_CO.c, YAM_COs.c: added "jump to recent message" as
     a hidden option in the "Advanced" section of the configuration file. If this
     option is enabled YAM will prefer to jump to the most recent mail over
