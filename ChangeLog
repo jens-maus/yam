@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-13  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: fixed a bug in the timezone.library usage where we didn't use the
+    right datatype for the DST querying variable.
+
 2007-03-13  Thore Böckelmann <tboeckel@gmx.de>
 
   * deutsch.ct: fixed some "denglish" translations.

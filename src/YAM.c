@@ -424,7 +424,7 @@ static int GetDST(BOOL update)
   {
     if(INITLIB("timezone.library", 52, 1, &TimezoneBase, "main", &ITimezone, TRUE, NULL))
     {
-      LONG dstSetting = TFLG_UNKNOWN;
+      BYTE dstSetting = TFLG_UNKNOWN;
 
       // retrieve the current DST setting
       if(GetTimezoneAttrs(NULL, TZA_TimeFlag, &dstSetting, TAG_DONE) && dstSetting != TFLG_UNKNOWN)
