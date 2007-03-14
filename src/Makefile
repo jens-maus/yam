@@ -163,7 +163,7 @@ ifeq ($(OS), os4)
 
   # Compiler/Linker flags
   CRT      = newlib
-  CPU      = -mcpu=604e -mmultiple -Wa,-mregnames
+  CPU      = -mcpu=powerpc -Wa,-mregnames
   WARN     += -Wdeclaration-after-statement -Wdisabled-optimization
   REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod \
              -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
@@ -199,7 +199,7 @@ ifeq ($(OS), mos)
   OBJDUMP = ppc-morphos-objdump
 
   # Compiler/Linker flags
-  CPU     = -mcpu=750 -mmultiple
+  CPU     = -mcpu=powerpc
   CFLAGS  += -noixemul -pipe -I./include/netinclude
   LDFLAGS += -noixemul
   LDLIBS  += -ldebug -lxpk -lamissl -lcodesets

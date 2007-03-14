@@ -7,6 +7,9 @@ $URL$
 
 2007-03-13  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Makefile: we use -mcpu=powerpc instead of directly specifying the minimal
+    PPC model. This should make the binary safely run on all PowerPC models
+    instead of forcing it to a specific model.
   * YAM.c: fixed a bug in the timezone.library usage where we didn't use the
     right datatype for the DST querying variable.
 
