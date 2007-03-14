@@ -2546,7 +2546,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
         // we exit immediatly with deleting the temp file also.
         if(G->Error || G->TR->Abort || done == FALSE)
           lline = -1;
-        else if((email = MA_ExamineMail(NULL, tf->Filename, TRUE)))
+        else if((email = MA_ExamineMail(NULL, FilePart(tf->Filename), TRUE)))
         {
           mail->From    = email->Mail.From;
           mail->To      = email->Mail.To;
@@ -2571,6 +2571,8 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 
           MA_FreeEMailStruct(email);
         }
+        else
+          E(DBF_NET, "couldn't examine mail file '%s'", tf->Filename);
 
         CloseTempFile(tf);
       }

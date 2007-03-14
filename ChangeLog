@@ -5,8 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-03-13  Jens Langner <Jens.Langner@light-speed.de>
+2007-03-14  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c: fixed bug #1679741 where the TR_GetMessageDetails() function
+    didn't pass just the filename to the examining mail function and therefore
+    caused the transfer preselection window to not display the sender and
+    subject information.
   * Makefile: we use -mcpu=powerpc instead of directly specifying the minimal
     PPC model. This should make the binary safely run on all PowerPC models
     instead of forcing it to a specific model.

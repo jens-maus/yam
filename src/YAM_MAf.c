@@ -1511,6 +1511,8 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
          {
            free(email);
 
+           E(DBF_MAIL, "couldn't unpack mailfile");
+
            RETURN(NULL);
            return NULL;
          }
@@ -1522,6 +1524,8 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
       else
         rewind(fh); // rewind the file handle to the start
    }
+   else
+     E(DBF_MAIL, "couldn't open mail file for reading main header");
 
    // check if the file handle is valid and the immediatly read in the
    // header lines
@@ -1946,6 +1950,8 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
       RETURN(email);
       return email;
    }
+   else
+     E(DBF_MAIL, "couldn't read/parse mail header!");
 
    FinishUnpack(fullfile);
 
