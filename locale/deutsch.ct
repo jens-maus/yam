@@ -6713,7 +6713,7 @@ MSG_CO_SYSTEMSETTINGS
 Systemeinstellungen
 ;
 MSG_CO_DEFAULTCHARSET
-Standard-Zeichenkodierung
+Zeichenkodierung
 ;
 MSG_CO_CHARSETUNKNOWNWARN
 Die eingestellte Zeichenkodierung ist '%s' und wird\n\

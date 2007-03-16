@@ -5236,7 +5236,7 @@ MSG_CO_SYSTEMSETTINGS (1610//)
 System Settings
 ;
 MSG_CO_DEFAULTCHARSET (1611//)
-Default Charset
+Charset
 ;
 MSG_CO_CHARSETUNKNOWNWARN (1612//)
 The charset configured for YAM is '%s' but isn't\n\
