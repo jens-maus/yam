@@ -1249,7 +1249,7 @@ MSG_CO_MimeCmd (426//)
 _Viewer
 ;
 MSG_CO_Extension (427//)
-File e_xtension
+File e_xtensions
 ;
 MSG_CO_DefaultViewer (428//)
 De_fault viewer

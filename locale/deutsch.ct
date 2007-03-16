@@ -1628,8 +1628,8 @@ _Programm
 ; _Viewer
 ;
 MSG_CO_Extension
-Datei_endung
-; E_xtension
+Datei_endungen
+; File e_xtensions
 ;
 MSG_CO_DefaultViewer
 S_tandardanzeigeprogramm

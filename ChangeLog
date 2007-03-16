@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-16  Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/YAM.cd, locale/deutsch.ct: minor corrections
+
 2007-03-14  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_TR.c: fixed bug #1679741 where the TR_GetMessageDetails() function
