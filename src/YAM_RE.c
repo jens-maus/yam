@@ -346,82 +346,92 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
 //  Handles message disposition requests
 BOOL RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi)
 {
-   BOOL ignoreall = FALSE;
-   int MDNmode;
+  BOOL ignoreall = FALSE;
+  int MDNmode;
 
-   switch(type)
-   {
-      case MDN_READ: MDNmode = C->MDN_Display; break;
-      case MDN_PROC:
-      case MDN_DISP: MDNmode = C->MDN_Process; break;
-      case MDN_DELE: MDNmode = C->MDN_Delete; break;
+  ENTER();
 
-      default:       MDNmode = C->MDN_Filter; break;
-   }
+  switch(type)
+  {
+    case MDN_READ: MDNmode = C->MDN_Display; break;
+    case MDN_PROC:
+    case MDN_DISP: MDNmode = C->MDN_Process; break;
+    case MDN_DELE: MDNmode = C->MDN_Delete; break;
 
-   if(MDNmode)
-   {
-      struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE);
+    default:       MDNmode = C->MDN_Filter; break;
+  }
 
-      if(email)
+  if(MDNmode)
+  {
+    struct ExtendedMail *email;
+
+    if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE))
+    {
+      if(*email->ReceiptTo.Address)
       {
-        if(*email->ReceiptTo.Address)
+        char buttons[SIZE_DEFAULT*2];
+        BOOL isonline = TR_IsOnline();
+        BOOL sendnow = C->SendMDNAtOnce && isonline;
+        int answer;
+
+        switch(MDNmode)
         {
-          char buttons[SIZE_DEFAULT*2];
-          BOOL isonline = TR_IsOnline();
-          BOOL sendnow = C->SendMDNAtOnce && isonline;
-          int answer;
+          case 1:
+            type = MDN_AUTOSEND|MDN_AUTOACT;
+          break;
 
-          switch(MDNmode)
+          case 2:
           {
-            case 1:
-              type = MDN_AUTOSEND|MDN_AUTOACT;
-            break;
+            // set up the possible answers
+            strlcpy(buttons, tr(MSG_RE_MDN_ACCEPT_LATER), sizeof(buttons));
 
-            case 2:
-              // set up the possible answers
-              strlcpy(buttons, tr(MSG_RE_MDN_ACCEPT_LATER), sizeof(buttons));
-              if(isonline)
-                strlcat(buttons, tr(MSG_RE_MDN_ACCEPT_NOW), sizeof(buttons));
-              strlcat(buttons, tr(MSG_RE_MDN_IGNORE), sizeof(buttons));
-              if(multi)
-                strlcat(buttons, tr(MSG_RE_MDN_IGNORE_ALL), sizeof(buttons));
+            if(isonline)
+              strlcat(buttons, tr(MSG_RE_MDN_ACCEPT_NOW), sizeof(buttons));
 
-              // now ask the user
-              answer = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), buttons, tr(MSG_RE_MDNReq));
-              if(answer == 0 || (answer == 2 && !isonline) || (answer == 3 && isonline))
-              {
-                // ignore or ignore all
-                type = MDN_IGNORE;
-                ignoreall = multi;
-              }
-              else if(answer == 2 && isonline)
-              {
-                // accept and send now
-                sendnow = TRUE;
-              }
-              else
-              {
-                // accept and send later
-                sendnow = FALSE;
-              }
-            break;
+            strlcat(buttons, tr(MSG_RE_MDN_IGNORE), sizeof(buttons));
 
-            case 3:
-              if(type != MDN_IGNORE)
-                SET_FLAG(type, MDN_AUTOSEND);
-            break;
+            if(multi)
+              strlcat(buttons, tr(MSG_RE_MDN_IGNORE_ALL), sizeof(buttons));
+
+            // now ask the user
+            answer = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), buttons, tr(MSG_RE_MDNReq));
+            if(answer == 0 || (answer == 2 && !isonline) || (answer == 3 && isonline))
+            {
+              // ignore or ignore all
+              type = MDN_IGNORE;
+              ignoreall = multi;
+            }
+            else if(answer == 2 && isonline)
+            {
+              // accept and send now
+              sendnow = TRUE;
+            }
+            else
+            {
+              // accept and send later
+              sendnow = FALSE;
+            }
           }
+          break;
 
-          if(type != MDN_IGNORE)
-            RE_SendMDN(type, mail, &email->ReceiptTo, sendnow);
+          case 3:
+          {
+            if(type != MDN_IGNORE)
+              SET_FLAG(type, MDN_AUTOSEND);
+          }
+          break;
         }
 
-        MA_FreeEMailStruct(email);
+        if(type != MDN_IGNORE)
+          RE_SendMDN(type, mail, &email->ReceiptTo, sendnow);
       }
-   }
 
-   return ignoreall;
+      MA_FreeEMailStruct(email);
+    }
+  }
+
+  RETURN(ignoreall);
+  return ignoreall;
 }
 ///
 /// RE_SuggestName
