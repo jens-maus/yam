@@ -7,6 +7,11 @@ $URL$
 
 2007-03-16  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c, locale/YAM.cd: removed the "|" control characters for the new
+    MDN requester buttons. They are better not placed into the catalog or
+    translators may forget them by accident and cause YAM to have a totally
+    mixed up requester display. In addition, the requester management code
+    should also be a bit more robust now.
   * locale/YAM.cd, locale/deutsch.ct: minor corrections
 
 2007-03-14  Jens Langner <Jens.Langner@light-speed.de>

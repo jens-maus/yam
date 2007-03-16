@@ -185,16 +185,15 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
 //  Creates a message disposition notification
 static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *recipient, BOOL sendnow)
 {
-  static const char *MDNMessage[4] =
+  static const char *MDNMessage[2] =
   {
-     "The message written on %s (UTC) to %s with subject \"%s\" has been displayed. This is no guarantee that the content has been read or understood.\n",
-     "The message written on %s (UTC) to %s with subject \"%s\" has been sent somewhere %s, without being displayed to the user. The user may or may not see the message later.\n",
-     "The message written on %s (UTC) to %s with subject \"%s\" has been processed %s, without being displayed to the user. The user may or may not see the message later.\n",
-     "The message written on %s (UTC) to %s with subject \"%s\" has been deleted %s. The recipient may or may not have seen the message. The recipient may \"undelete\" the message at a later time and read the message.\n",
+     "The message sent on %s to %s with subject \"%s\" has been displayed. This is no guarantee that the content has been read or understood.\n",
+     "The message sent on %s to %s with subject \"%s\" has been deleted %s. The recipient may or may not have seen the message. The recipient may \"undelete\" the message at a later time and read the message.\n",
   };
   struct WritePart *p1;
   struct TempFile *tf1;
-  char buf[SIZE_LINE], disp[SIZE_DEFAULT];
+  char buf[SIZE_LINE];
+  char disp[SIZE_DEFAULT];
 
   ENTER();
 
@@ -211,7 +210,7 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
     struct WritePart *p2;
     struct TempFile *tf2;
 
-    DateStamp2String(date, sizeof(date), &mail->Date, DSS_DATETIME, TZC_NONE);
+    DateStamp2RFCString(date, sizeof(date), &mail->Date, mail->tzone, TRUE);
 
     p1->Filename = tf1->Filename;
     mode = isAutoActMDN(type) ? "automatically" : "in response to a user command";
@@ -221,10 +220,19 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
 
     switch(type & MDN_TYPEMASK)
     {
-      case MDN_READ: strlcat(disp, "displayed", sizeof(disp));  fprintf(tf1->FP, MDNMessage[0], date, rcpt, subj); break;
-      case MDN_DISP: strlcat(disp, "dispatched", sizeof(disp)); fprintf(tf1->FP, MDNMessage[1], date, rcpt, subj, mode); break;
-      case MDN_PROC: strlcat(disp, "processed", sizeof(disp));  fprintf(tf1->FP, MDNMessage[2], date, rcpt, subj, mode); break;
-      case MDN_DELE: strlcat(disp, "deleted", sizeof(disp));    fprintf(tf1->FP, MDNMessage[3], date, rcpt, subj, mode); break;
+      case MDN_READ:
+      {
+        strlcat(disp, "displayed", sizeof(disp));
+        fprintf(tf1->FP, MDNMessage[0], date, rcpt, subj);
+      }
+      break;
+
+      case MDN_DELE:
+      {
+        strlcat(disp, "deleted", sizeof(disp));
+        fprintf(tf1->FP, MDNMessage[1], date, rcpt, subj, mode);
+      }
+      break;
     }
 
     fclose(tf1->FP);
@@ -243,7 +251,7 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
 
         p2->ContentType = "message/disposition-notification";
         p2->Filename = tf2->Filename;
-        snprintf(buf, sizeof(buf), "%s (%s)", C->SMTP_Domain, yamversion);
+        snprintf(buf, sizeof(buf), "%s; %s", C->SMTP_Domain, yamversion);
         EmitHeader(tf2->FP, "Reporting-UA", buf);
         if(email->OriginalRcpt.Address[0] != '\0')
         {
@@ -365,14 +373,12 @@ BOOL RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi)
   {
     struct ExtendedMail *email;
 
-    if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE))
+    if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
     {
       if(*email->ReceiptTo.Address)
       {
-        char buttons[SIZE_DEFAULT*2];
         BOOL isonline = TR_IsOnline();
         BOOL sendnow = C->SendMDNAtOnce && isonline;
-        int answer;
 
         switch(MDNmode)
         {
@@ -382,34 +388,52 @@ BOOL RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi)
 
           case 2:
           {
-            // set up the possible answers
+            char buttons[SIZE_DEFAULT*2];
+            int answer;
+
+            // set up the possible answers for the MDN requester
             strlcpy(buttons, tr(MSG_RE_MDN_ACCEPT_LATER), sizeof(buttons));
 
+            // in case the user is only we can ask him to send the MDN
+            // immediately if wanted.
             if(isonline)
-              strlcat(buttons, tr(MSG_RE_MDN_ACCEPT_NOW), sizeof(buttons));
+              snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_ACCEPT_NOW));
 
-            strlcat(buttons, tr(MSG_RE_MDN_IGNORE), sizeof(buttons));
+            // he can also ignore the MDN, if required
+            snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_IGNORE));
 
+            // in case we have multiple MDNs waiting we go and provide
+            // an 'ignore all' answer as well
             if(multi)
-              strlcat(buttons, tr(MSG_RE_MDN_IGNORE_ALL), sizeof(buttons));
+              snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_IGNORE_ALL));
 
             // now ask the user
             answer = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), buttons, tr(MSG_RE_MDNReq));
-            if(answer == 0 || (answer == 2 && !isonline) || (answer == 3 && isonline))
-            {
-              // ignore or ignore all
-              type = MDN_IGNORE;
-              ignoreall = multi;
-            }
-            else if(answer == 2 && isonline)
-            {
-              // accept and send now
-              sendnow = TRUE;
-            }
-            else
+            switch(answer)
             {
               // accept and send later
-              sendnow = FALSE;
+              case 1:
+                sendnow = FALSE;
+              break;
+
+              // accept and send now or ignore
+              case 2:
+              {
+                if(isonline)
+                  sendnow = TRUE;
+                else
+                  type = MDN_IGNORE;
+              }
+              break;
+
+              case 0: // ESC and last button (ignore or ignoreall)
+              case 3: // ignore or ignoreall
+              case 4: // ignoreall
+              {
+                type = MDN_IGNORE;
+                ignoreall = (multi == TRUE);
+              }
+              break;
             }
           }
           break;

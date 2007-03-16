@@ -3345,8 +3345,9 @@ MSG_HELP_EA_BT_CANCEL
 ; Module RE - Procedures
 ;
 MSG_RE_MDNReq
-Der Absender möchte über den Status\n\
-dieser Nachricht informiert werden (MDN).\n\
+Der Absender dieser Nachricht möchte\n\
+über deren Empfang informiert werden (MDN).\n\
+\n\
 Wie wollen Sie reagieren?
 ; The sender of this message requests a disposition notification (MDN).\n\
 ; What do you want to do?
@@ -7569,12 +7570,12 @@ Akzeptieren und\n\
 später senden
 ;
 MSG_RE_MDN_ACCEPT_NOW
-|Akzeptieren und\n\
+Akzeptieren und\n\
 jetzt senden
 ;
 MSG_RE_MDN_IGNORE
-|Ignorieren
+Ignorieren
 ;
 MSG_RE_MDN_IGNORE_ALL
-|Alles ignorieren
+Alle ignorieren
 ;

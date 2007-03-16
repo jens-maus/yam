@@ -2585,7 +2585,9 @@ Discard changes
 ; Module RE - Procedures
 ;
 MSG_RE_MDNReq (826//)
-The sender of this message requests a disposition notification (MDN).\n\
+The sender of this message requests\n\
+a disposition notification (MDN).\n\
+\n\
 What do you want to do?
 ;
 MSG_RE_SaveMessage (827//)
@@ -6126,12 +6128,12 @@ Accept and\n\
 send later
 ;
 MSG_RE_MDN_ACCEPT_NOW (1863//)
-|Accept and\n\
+Accept and\n\
 send now
 ;
 MSG_RE_MDN_IGNORE (1864//)
-|Ignore
+Ignore
 ;
 MSG_RE_MDN_IGNORE_ALL (1865//)
-|Ignore all
+Ignore all
 ;
