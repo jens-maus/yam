@@ -33,7 +33,7 @@ MSGTAGS=`awk '/^MSG_/ { print $1 }' $CDFILE | xargs`
 # calls
 ORPHANEDTAGS=""
 for tag in $MSGTAGS; do
-  grep "$tag" $SOURCES | grep -v "_$tag" >/dev/null
+  grep -E "$tag[^_[:alnum:]]" $SOURCES | grep -v "_$tag" >/dev/null
   if [ $? == 1 ]; then
     echo "$tag not found in source code"
     ORPHANEDTAGS="$ORPHANEDTAGS $tag "
