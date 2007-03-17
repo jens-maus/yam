@@ -7,6 +7,10 @@ $URL$
 
 2007-03-17  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c: reworked the HandleMDNReport() function for displaying MDN
+    reports localized. In addition "message/#?" content-type parts will now
+    be treated as printable parts and therefore shown inline if the
+    DisplayAllTexts option is enabled.
   * YAM_RE.c, misc: reworked the message disposition notification handling
     according to RFC 3798 and how Thunderbird deal with those kind of
     return receipts. In addition, the generation and recognition of the

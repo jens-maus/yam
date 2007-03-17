@@ -2531,7 +2531,7 @@ Discard changes
 ;
 MSG_RE_MDNReq (826//)
 The sender of this message requests\n\
-a disposition notification.\n\
+a return receipt.\n\
 \n\
 What do you want to do?
 ;

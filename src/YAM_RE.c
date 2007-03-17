@@ -69,7 +69,13 @@
 
 #include "Debug.h"
 
-static void RE_HandleMDNReport(struct Part *frp);
+/**************************************************************************/
+
+/* local defines */
+enum SMsgType { SMT_NORMAL=0, SMT_MDN, SMT_SIGNED, SMT_ENCRYPTED };
+
+/* local protos */
+static BOOL RE_HandleMDNReport(const struct Part *frp);
 
 /***************************************************************************
  Module: Read
@@ -1694,27 +1700,28 @@ static void RE_UndoPart(struct Part *rp)
 ///
 /// RE_RequiresSpecialHandling
 //  Checks if part is PGP signed/encrypted or a MDN
-static int RE_RequiresSpecialHandling(struct Part *hrp)
+static enum SMsgType RE_RequiresSpecialHandling(const struct Part *hrp)
 {
-  int res = 0;
+  enum SMsgType res = SMT_NORMAL;
+
   ENTER();
 
   if(hrp->CParRType && !stricmp(hrp->ContentType, "multipart/report") &&
                        !stricmp(hrp->CParRType, "disposition-notification"))
   {
-    res = 1;
+    res = SMT_MDN;
   }
   else if(hrp->CParProt)
   {
     if(!stricmp(hrp->ContentType, "multipart/signed") &&
        !stricmp(hrp->CParProt, "application/pgp-signature"))
     {
-      res = 2;
+      res = SMT_SIGNED;
     }
     else if(!stricmp(hrp->ContentType, "multipart/encrypted") &&
             !stricmp(hrp->CParProt, "application/pgp-encrypted"))
     {
-      res = 3;
+      res = SMT_ENCRYPTED;
     }
   }
 
@@ -1764,7 +1771,14 @@ static void RE_SetPartInfo(struct Part *rp)
       strlcpy(rp->Name, rp->CParName ? rp->CParName : rp->CParFileName, sizeof(rp->Name));
 
    // let`s set if this is a printable (readable part)
-   rp->Printable = !strnicmp(rp->ContentType, "text", 4) || rp->Nr == PART_RAW;
+   if(rp->Nr == PART_RAW ||
+      strnicmp(rp->ContentType, "text", 4) == 0 ||
+      strnicmp(rp->ContentType, "message", 7) == 0)
+   {
+     rp->Printable = TRUE;
+   }
+   else
+     rp->Printable = FALSE;
 
    // Now that we have defined that this part is printable we have
    // to check whether our readMailData structure already contains a reference
@@ -1865,7 +1879,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
                 ;
             }
           }
-          else if (RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
+          else if (RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == SMT_ENCRYPTED)
           {
             fputc('\n', out);
             done = RE_ConsumeRestOfPart(in, out, NULL, rp, FALSE);
@@ -1883,7 +1897,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
       }
       else if((out = RE_OpenNewPart(rmData, &rp, hrp, hrp)))
       {
-        if(RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
+        if(RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == SMT_ENCRYPTED)
         {
           RE_ConsumeRestOfPart(in, out, NULL, NULL, FALSE);
           fclose(out);
@@ -2283,47 +2297,44 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
 //  Decodes a single message part
 static void RE_LoadMessagePart(struct ReadMailData *rmData, struct Part *part)
 {
-   int rsh = RE_RequiresSpecialHandling(part);
+  ENTER();
 
-   switch (rsh)
-   {
-      case 1:
+  switch(RE_RequiresSpecialHandling(part))
+  {
+
+    case SMT_SIGNED:
+      RE_HandleSignedMessage(part);
+    break;
+
+    case SMT_ENCRYPTED:
+      RE_HandleEncryptedMessage(part);
+    break;
+
+    case SMT_MDN:
+    {
+      if(RE_HandleMDNReport(part))
+        break;
+    }
+    // continue
+
+    case SMT_NORMAL:
+    {
+      struct Part *rp;
+
+      for(rp = part->Next; rp; rp = rp->Next)
       {
-        RE_HandleMDNReport(part);
-      }
-      break;
-
-      case 2:
-      {
-        RE_HandleSignedMessage(part);
-      }
-      break;
-
-      case 3:
-      {
-        RE_HandleEncryptedMessage(part);
-      }
-      break;
-
-      default:
-      {
-        struct Part *rp;
-
-        for(rp = part->Next; rp; rp = rp->Next)
+        if(stricmp(rp->ContentType, "application/pgp-keys") == 0)
+          rmData->hasPGPKey = TRUE;
+        else if(rp->Nr == PART_RAW || rp->Nr == rmData->letterPartNum ||
+                (rp->Printable && C->DisplayAllTexts))
         {
-          if(stricmp(rp->ContentType, "application/pgp-keys") == 0)
-          {
-            rmData->hasPGPKey = TRUE;
-          }
-          else if(rp->Nr == PART_RAW || rp->Nr == rmData->letterPartNum ||
-                  (rp->Printable && C->DisplayAllTexts)
-                 )
-          {
-            RE_DecodePart(rp);
-          }
+          RE_DecodePart(rp);
         }
       }
-   }
+    }
+  }
+
+  LEAVE();
 }
 ///
 /// RE_LoadMessage
@@ -3383,9 +3394,21 @@ static void RE_SendMDN(const enum MDNMode mode,
           // finally, we compose the MDN mail
           memset(&comp, 0, sizeof(struct Compose));
           comp.MailTo = StrBufCpy(comp.MailTo, BuildAddrName2(recipient));
-          comp.Subject = "Disposition Notification";
+          comp.Subject = buf;
           comp.GenerateMDN = TRUE;
           comp.FirstPart = p1;
+
+          // create the subject
+          switch(mode)
+          {
+            case MDN_MODE_DISPLAY:
+              snprintf(buf, sizeof(buf), "Return Receipt (displayed) - %s", mail->Subject);
+            break;
+
+            case MDN_MODE_DELETE:
+              snprintf(buf, sizeof(buf), "Return Receipt (deleted) - %s", mail->Subject);
+            break;
+          }
 
           outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
           if(outfolder && (comp.FH = fopen(MA_NewMailFile(outfolder, mfile), "w")) != NULL)
@@ -3732,35 +3755,49 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
   return ignoreall;
 }
 ///
-/// RE_HandleMDNReport
+/// RE_HandleMDNReport()
 //  Translates a message disposition notification to readable text
-static void RE_HandleMDNReport(struct Part *frp)
+static BOOL RE_HandleMDNReport(const struct Part *frp)
 {
+  BOOL result = FALSE;
   struct Part *rp[3];
-  char file[SIZE_FILE], buf[SIZE_PATHFILE], MDNtype[SIZE_DEFAULT];
-  char *msgdesc, *type;
-  const char *mode = "";
-  int j;
-  FILE *out, *fh;
 
+  ENTER();
+
+  // check if the message has at least 2 parts
   if((rp[0] = frp->Next) && (rp[1] = rp[0]->Next))
   {
+    FILE *fh;
+    const char *mode;
+    char *type;
+    char *msgdesc = AllocStrBuf(80);
+    char disposition[SIZE_DEFAULT];
+    char file[SIZE_FILE];
+    char buf[SIZE_PATHFILE];
+    int i;
+
+    // pointer two third part
     rp[2] = rp[1]->Next;
-    msgdesc = AllocStrBuf(80);
-    MDNtype[0] = '\0';
 
-    for(j = 1; j < (rp[2] ? 3 : 2); j++)
+    // clear the disposition
+    disposition[0] = '\0';
+
+    // we either iterate through 2 or 3 message
+    // parts to collect all necessary information
+    for(i=1; i < (rp[2] ? 3 : 2); i++)
     {
-      RE_DecodePart(rp[j]);
+      // decode the part
+      RE_DecodePart(rp[i]);
 
-      if((fh = fopen(rp[j]->Filename, "r")))
+      // open the decoded part output
+      if((fh = fopen(rp[i]->Filename, "r")))
       {
         struct MinList *headerList = calloc(1, sizeof(struct MinList));
 
-        setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
         if(headerList)
         {
+          setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
           // read in the header into the headerList
           MA_ReadHeader(fh, headerList);
           fclose(fh);
@@ -3771,74 +3808,95 @@ static void RE_HandleMDNReport(struct Part *frp)
 
             for(curNode = headerList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
             {
+              char buf[SIZE_LINE];
               struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
               char *field = hdrNode->name;
               char *value = hdrNode->content;
+              const char *msg = NULL;
 
               if(!stricmp(field, "from"))
-                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNFrom)), value);
+                msg = tr(MSG_RE_MDNFrom);
               else if(!stricmp(field, "to"))
-                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNTo)), value);
+                msg = tr(MSG_RE_MDNTo);
               else if(!stricmp(field, "subject"))
-                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNSubject)), value);
+                msg = tr(MSG_RE_MDNSubject);
               else if(!stricmp(field, "original-message-id"))
-                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNMessageID)), value);
+                msg = tr(MSG_RE_MDNMessageID);
               else if(!stricmp(field, "date"))
-                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNDate)), value);
+                msg = tr(MSG_RE_MDNDate);
               else if(!stricmp(field, "original-recipient"))
-                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNOrigRecpt)), value);
+                msg = tr(MSG_RE_MDNOrigRecpt);
               else if(!stricmp(field, "final-recipient"))
-                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNFinalRecpt)), value);
+                msg = tr(MSG_RE_MDNFinalRecpt);
               else if(!stricmp(field, "disposition"))
-                strlcpy(MDNtype, Trim(value), sizeof(MDNtype));
-             }
+                strlcpy(disposition, Trim(value), sizeof(disposition));
+
+              if(msg)
+              {
+                snprintf(buf, sizeof(buf), "%s %s", msg, value);
+                msgdesc = StrBufCat(msgdesc, buf);
+              }
+            }
           }
 
           FreeHeaderList(headerList);
           free(headerList);
         }
+        else
+          fclose(fh);
       }
     }
 
+    // add a newline
     msgdesc = StrBufCat(msgdesc, "\n");
 
-    if(!strnicmp(MDNtype, "manual-action", 13))
+    // find out if the disposition was automatically
+    // generated or via manual interaction
+    if(!strnicmp(disposition, "manual-action", 13))
       mode = tr(MSG_RE_MDNmanual);
-    else if(!strnicmp(MDNtype, "automatic-action", 16))
+    else if(!strnicmp(disposition, "automatic-action", 16))
       mode = tr(MSG_RE_MDNauto);
+    else
+      mode = "";
 
-    if((type = strchr(MDNtype, ';')))
+    // get the pointer to MDN type
+    if((type = strchr(disposition, ';')))
       type = Trim(++type);
     else
-      type = MDNtype;
+      type = disposition;
 
+    // now we generate the translated MDN report
     snprintf(file, sizeof(file), "YAMm%08lx-p%d.txt", rp[0]->rmData->uniqueID, rp[0]->Nr);
     strmfp(buf, C->TempDir, file);
 
     D(DBF_MAIL, "creating MDN report in '%s'", buf);
 
-    if((out = fopen(buf, "w")))
+    if((fh = fopen(buf, "w")))
     {
-      if     (!stricmp(type, "displayed"))  fprintf(out, tr(MSG_RE_MDNdisplay), msgdesc);
-      else if(!stricmp(type, "processed"))  fprintf(out, tr(MSG_RE_MDNprocessed), msgdesc, mode);
-      else if(!stricmp(type, "dispatched")) fprintf(out, tr(MSG_RE_MDNdispatched), msgdesc, mode);
-      else if(!stricmp(type, "deleted"))    fprintf(out, tr(MSG_RE_MDNdeleted), msgdesc, mode);
-      else fprintf(out, tr(MSG_RE_MDNunknown), msgdesc, type, mode);
+      if(stristr(type, "displayed"))
+        fprintf(fh, tr(MSG_RE_MDNdisplay), msgdesc);
+      else if(stristr(type, "deleted"))
+        fprintf(fh, tr(MSG_RE_MDNdeleted), msgdesc, mode);
+      else
+        fprintf(fh, tr(MSG_RE_MDNunknown), msgdesc, type, mode);
 
-      fclose(out);
+      fclose(fh);
 
+      // replace the original decoded part
+      // message
       DeleteFile(rp[0]->Filename);
       strlcpy(rp[0]->Filename, buf, sizeof(rp[0]->Filename));
       rp[0]->Decoded = TRUE;
       RE_SetPartInfo(rp[0]);
-      if(rp[2])
-        RE_UndoPart(rp[2]);
 
-      RE_UndoPart(rp[1]);
+      result = TRUE;
     }
 
     FreeStrBuf(msgdesc);
   }
+
+  RETURN(result);
+  return result;
 }
 ///
 
