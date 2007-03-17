@@ -69,6 +69,8 @@
 
 #include "Debug.h"
 
+static void RE_HandleMDNReport(struct Part *frp);
+
 /***************************************************************************
  Module: Read
 ***************************************************************************/
@@ -180,283 +182,6 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
    return mail;
 }
 
-///
-/// RE_SendMDN
-//  Creates a message disposition notification
-static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *recipient, BOOL sendnow)
-{
-  static const char *MDNMessage[2] =
-  {
-     "The message sent on %s to %s with subject \"%s\" has been displayed. This is no guarantee that the content has been read or understood.\n",
-     "The message sent on %s to %s with subject \"%s\" has been deleted %s. The recipient may or may not have seen the message. The recipient may \"undelete\" the message at a later time and read the message.\n",
-  };
-  struct WritePart *p1;
-  struct TempFile *tf1;
-  char buf[SIZE_LINE];
-  char disp[SIZE_DEFAULT];
-
-  ENTER();
-
-  SHOWVALUE(DBF_MAIL, sendnow);
-
-  p1 = NewPart(2);
-
-  if((tf1 = OpenTempFile("w")) != NULL)
-  {
-    char date[64];
-    char *rcpt = BuildAddrName2(&mail->To);
-    char *subj = mail->Subject;
-    const char *mode;
-    struct WritePart *p2;
-    struct TempFile *tf2;
-
-    DateStamp2RFCString(date, sizeof(date), &mail->Date, mail->tzone, TRUE);
-
-    p1->Filename = tf1->Filename;
-    mode = isAutoActMDN(type) ? "automatically" : "in response to a user command";
-
-    snprintf(disp, sizeof(disp), "%s%s", isAutoActMDN(type) ? "automatic-action/" : "manual-action/",
-                                         isAutoSendMDN(type) ? "MDN-sent-automatically; " : "MDN-sent-manually; ");
-
-    switch(type & MDN_TYPEMASK)
-    {
-      case MDN_READ:
-      {
-        strlcat(disp, "displayed", sizeof(disp));
-        fprintf(tf1->FP, MDNMessage[0], date, rcpt, subj);
-      }
-      break;
-
-      case MDN_DELE:
-      {
-        strlcat(disp, "deleted", sizeof(disp));
-        fprintf(tf1->FP, MDNMessage[1], date, rcpt, subj, mode);
-      }
-      break;
-    }
-
-    fclose(tf1->FP);
-    tf1->FP = NULL;
-    SimpleWordWrap(tf1->Filename, 72);
-    p2 = p1->Next = NewPart(2);
-
-    if((tf2 = OpenTempFile("w")) != NULL)
-    {
-      struct ExtendedMail *email;
-
-      if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
-      {
-        struct WritePart *p3;
-        struct TempFile *tf3;
-
-        p2->ContentType = "message/disposition-notification";
-        p2->Filename = tf2->Filename;
-        snprintf(buf, sizeof(buf), "%s; %s", C->SMTP_Domain, yamversion);
-        EmitHeader(tf2->FP, "Reporting-UA", buf);
-        if(email->OriginalRcpt.Address[0] != '\0')
-        {
-          snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddrName2(&email->OriginalRcpt));
-          EmitHeader(tf2->FP, "Original-Recipient", buf);
-        }
-        snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddrName(C->EmailAddress, C->RealName));
-        EmitHeader(tf2->FP, "Final-Recipient", buf);
-        EmitHeader(tf2->FP, "Original-Message-ID", email->MsgID);
-        EmitHeader(tf2->FP, "Disposition", disp);
-        fclose(tf2->FP);
-        tf2->FP = NULL;
-        p3 = p2->Next = NewPart(2);
-
-        MA_FreeEMailStruct(email);
-
-        if((tf3 = OpenTempFile("w")) != NULL)
-        {
-          char fullfile[SIZE_PATHFILE];
-          char mfile[SIZE_MFILE];
-          struct Compose comp;
-          struct Folder *outfolder;
-
-          p3->ContentType = "text/rfc822-headers";
-          p3->Filename = tf3->Filename;
-          if(StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
-          {
-            FILE *fh;
-
-            if((fh = fopen(fullfile, "r")) != NULL)
-            {
-              setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
-              while(fgets(buf, SIZE_LINE, fh))
-              {
-                if(*buf == '\n')
-                  break;
-                else
-                  fputs(buf, tf3->FP);
-              }
-
-              fclose(fh);
-            }
-            FinishUnpack(fullfile);
-          }
-          fclose(tf3->FP);
-          tf3->FP = NULL;
-
-          memset(&comp, 0, sizeof(struct Compose));
-          comp.MailTo = StrBufCpy(comp.MailTo, BuildAddrName2(recipient));
-          comp.Subject = "Disposition Notification";
-          comp.ReportType = 1;
-          comp.FirstPart = p1;
-
-          outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-
-          if((comp.FH = fopen(MA_NewMailFile(outfolder, mfile), "w")) != NULL)
-          {
-            struct Mail *mlist[3];
-
-            mlist[0] = (struct Mail *)1;
-            mlist[2] = NULL;
-
-            setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
-
-            WriteOutMessage(&comp);
-            fclose(comp.FH);
-
-            if((email = MA_ExamineMail(outfolder, mfile, TRUE)) != NULL)
-            {
-              mlist[2] = AddMailToList(&email->Mail, outfolder);
-              setStatusToQueued(mlist[2]);
-              MA_FreeEMailStruct(email);
-            }
-
-            if(sendnow && mlist[2] && !G->TR)
-              TR_ProcessSEND(mlist);
-
-            // refresh the folder statistics
-            DisplayStatistics(outfolder, TRUE);
-          }
-          else
-            ER_NewError(tr(MSG_ER_CreateMailError));
-
-          FreeStrBuf(comp.MailTo);
-          CloseTempFile(tf3);
-        }
-      }
-      CloseTempFile(tf2);
-    }
-    CloseTempFile(tf1);
-  }
-
-  FreePartsList(p1);
-
-  LEAVE();
-}
-///
-/// RE_DoMDN
-//  Handles message disposition requests
-BOOL RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi)
-{
-  BOOL ignoreall = FALSE;
-  int MDNmode;
-
-  ENTER();
-
-  switch(type)
-  {
-    case MDN_READ: MDNmode = C->MDN_Display; break;
-    case MDN_PROC:
-    case MDN_DISP: MDNmode = C->MDN_Process; break;
-    case MDN_DELE: MDNmode = C->MDN_Delete; break;
-
-    default:       MDNmode = C->MDN_Filter; break;
-  }
-
-  if(MDNmode)
-  {
-    struct ExtendedMail *email;
-
-    if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
-    {
-      if(*email->ReceiptTo.Address)
-      {
-        BOOL isonline = TR_IsOnline();
-        BOOL sendnow = C->SendMDNAtOnce && isonline;
-
-        switch(MDNmode)
-        {
-          case 1:
-            type = MDN_AUTOSEND|MDN_AUTOACT;
-          break;
-
-          case 2:
-          {
-            char buttons[SIZE_DEFAULT*2];
-            int answer;
-
-            // set up the possible answers for the MDN requester
-            strlcpy(buttons, tr(MSG_RE_MDN_ACCEPT_LATER), sizeof(buttons));
-
-            // in case the user is only we can ask him to send the MDN
-            // immediately if wanted.
-            if(isonline)
-              snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_ACCEPT_NOW));
-
-            // he can also ignore the MDN, if required
-            snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_IGNORE));
-
-            // in case we have multiple MDNs waiting we go and provide
-            // an 'ignore all' answer as well
-            if(multi)
-              snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_IGNORE_ALL));
-
-            // now ask the user
-            answer = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), buttons, tr(MSG_RE_MDNReq));
-            switch(answer)
-            {
-              // accept and send later
-              case 1:
-                sendnow = FALSE;
-              break;
-
-              // accept and send now or ignore
-              case 2:
-              {
-                if(isonline)
-                  sendnow = TRUE;
-                else
-                  type = MDN_IGNORE;
-              }
-              break;
-
-              case 0: // ESC and last button (ignore or ignoreall)
-              case 3: // ignore or ignoreall
-              case 4: // ignoreall
-              {
-                type = MDN_IGNORE;
-                ignoreall = (multi == TRUE);
-              }
-              break;
-            }
-          }
-          break;
-
-          case 3:
-          {
-            if(type != MDN_IGNORE)
-              SET_FLAG(type, MDN_AUTOSEND);
-          }
-          break;
-        }
-
-        if(type != MDN_IGNORE)
-          RE_SendMDN(type, mail, &email->ReceiptTo, sendnow);
-      }
-
-      MA_FreeEMailStruct(email);
-    }
-  }
-
-  RETURN(ignoreall);
-  return ignoreall;
-}
 ///
 /// RE_SuggestName
 //  Suggests a file name based on the message subject
@@ -2405,115 +2130,6 @@ BOOL RE_DecodePart(struct Part *rp)
   return rp->Decoded;
 }
 ///
-/// RE_HandleMDNReport
-//  Translates a message disposition notification to readable text
-static void RE_HandleMDNReport(struct Part *frp)
-{
-  struct Part *rp[3];
-  char file[SIZE_FILE], buf[SIZE_PATHFILE], MDNtype[SIZE_DEFAULT];
-  char *msgdesc, *type;
-  const char *mode = "";
-  int j;
-  FILE *out, *fh;
-
-  if((rp[0] = frp->Next) && (rp[1] = rp[0]->Next))
-  {
-    rp[2] = rp[1]->Next;
-    msgdesc = AllocStrBuf(80);
-    MDNtype[0] = '\0';
-
-    for(j = 1; j < (rp[2] ? 3 : 2); j++)
-    {
-      RE_DecodePart(rp[j]);
-
-      if((fh = fopen(rp[j]->Filename, "r")))
-      {
-        struct MinList *headerList = calloc(1, sizeof(struct MinList));
-
-        setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
-        if(headerList)
-        {
-          // read in the header into the headerList
-          MA_ReadHeader(fh, headerList);
-          fclose(fh);
-
-          if(IsMinListEmpty(headerList) == FALSE)
-          {
-            struct MinNode *curNode;
-
-            for(curNode = headerList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-            {
-              struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
-              char *field = hdrNode->name;
-              char *value = hdrNode->content;
-
-              if(!stricmp(field, "from"))
-                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNFrom)), value);
-              else if(!stricmp(field, "to"))
-                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNTo)), value);
-              else if(!stricmp(field, "subject"))
-                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNSubject)), value);
-              else if(!stricmp(field, "original-message-id"))
-                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNMessageID)), value);
-              else if(!stricmp(field, "date"))
-                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNDate)), value);
-              else if(!stricmp(field, "original-recipient"))
-                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNOrigRecpt)), value);
-              else if(!stricmp(field, "final-recipient"))
-                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNFinalRecpt)), value);
-              else if(!stricmp(field, "disposition"))
-                strlcpy(MDNtype, Trim(value), sizeof(MDNtype));
-             }
-          }
-
-          FreeHeaderList(headerList);
-          free(headerList);
-        }
-      }
-    }
-
-    msgdesc = StrBufCat(msgdesc, "\n");
-
-    if(!strnicmp(MDNtype, "manual-action", 13))
-      mode = tr(MSG_RE_MDNmanual);
-    else if(!strnicmp(MDNtype, "automatic-action", 16))
-      mode = tr(MSG_RE_MDNauto);
-
-    if((type = strchr(MDNtype, ';')))
-      type = Trim(++type);
-    else
-      type = MDNtype;
-
-    snprintf(file, sizeof(file), "YAMm%08lx-p%d.txt", rp[0]->rmData->uniqueID, rp[0]->Nr);
-    strmfp(buf, C->TempDir, file);
-
-    D(DBF_MAIL, "creating MDN report in '%s'", buf);
-
-    if((out = fopen(buf, "w")))
-    {
-      if     (!stricmp(type, "displayed"))  fprintf(out, tr(MSG_RE_MDNdisplay), msgdesc);
-      else if(!stricmp(type, "processed"))  fprintf(out, tr(MSG_RE_MDNprocessed), msgdesc, mode);
-      else if(!stricmp(type, "dispatched")) fprintf(out, tr(MSG_RE_MDNdispatched), msgdesc, mode);
-      else if(!stricmp(type, "deleted"))    fprintf(out, tr(MSG_RE_MDNdeleted), msgdesc, mode);
-      else fprintf(out, tr(MSG_RE_MDNunknown), msgdesc, type, mode);
-
-      fclose(out);
-
-      DeleteFile(rp[0]->Filename);
-      strlcpy(rp[0]->Filename, buf, sizeof(rp[0]->Filename));
-      rp[0]->Decoded = TRUE;
-      RE_SetPartInfo(rp[0]);
-      if(rp[2])
-        RE_UndoPart(rp[2]);
-
-      RE_UndoPart(rp[1]);
-    }
-
-    FreeStrBuf(msgdesc);
-  }
-}
-///
 /// RE_HandleSignedMessage
 //  Handles a PGP signed message, checks validity of signature
 static void RE_HandleSignedMessage(struct Part *frp)
@@ -3626,6 +3242,603 @@ void RE_ClickedOnMessage(char *address)
    }
 
    LEAVE();
+}
+///
+
+/*** MDN management (RFC 3798) ***/
+/// RE_SendMDN()
+//  Creates and sends the message disposition notification
+static void RE_SendMDN(const enum MDNMode mode,
+                       const struct Mail *mail,
+                       const struct Person *recipient,
+                       const BOOL sendnow,
+                       const BOOL autoAction,
+                       const BOOL autoSend)
+{
+  static const char *MDNMessage[2] =
+  {
+     "The message sent on %s to %s with subject \"%s\" has been displayed. This is no guarantee that the content has been read or understood.\n",
+     "The message sent on %s to %s with subject \"%s\" has been deleted %s. The recipient may or may not have seen the message. The recipient may \"undelete\" the message at a later time and read the message.\n",
+  };
+  struct WritePart *p1;
+  struct TempFile *tf1;
+
+  ENTER();
+
+  SHOWVALUE(DBF_MAIL, sendnow);
+
+  p1 = NewPart(2);
+
+  if(p1 && (tf1 = OpenTempFile("w")) != NULL)
+  {
+    char buf[SIZE_LINE];
+    char disp[SIZE_DEFAULT];
+    char date[64];
+    char *rcpt = BuildAddrName2(&mail->To);
+    struct WritePart *p2;
+    struct TempFile *tf2;
+
+    // link the filename of our temp file to
+    // the first part
+    p1->Filename = tf1->Filename;
+
+    // generate the first lines of our MDN
+    DateStamp2RFCString(date, sizeof(date), &mail->Date, mail->tzone, TRUE);
+    snprintf(disp, sizeof(disp), "%s%s", autoAction ? "automatic-action/" : "manual-action/",
+                                         autoSend ? "MDN-sent-automatically; " : "MDN-sent-manually; ");
+
+    switch(mode)
+    {
+      case MDN_MODE_DISPLAY:
+      {
+        strlcat(disp, "displayed", sizeof(disp));
+        fprintf(tf1->FP, MDNMessage[0], date, rcpt, mail->Subject);
+      }
+      break;
+
+      case MDN_MODE_DELETE:
+      {
+        strlcat(disp, "deleted", sizeof(disp));
+        fprintf(tf1->FP, MDNMessage[1], date, rcpt, mail->Subject, autoAction ? "automatically" : "in response to a user command");
+      }
+      break;
+    }
+
+    // close the filehandle
+    fclose(tf1->FP);
+    tf1->FP = NULL;
+
+    // make sure to word wrap at 72 chars
+    SimpleWordWrap(tf1->Filename, 72);
+
+    // open a new part and another temporary file
+    p2 = p1->Next = NewPart(2);
+    if(p2 && (tf2 = OpenTempFile("w")) != NULL)
+    {
+      struct ExtendedMail *email;
+
+      if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
+      {
+        struct WritePart *p3;
+        struct TempFile *tf3;
+
+        p2->ContentType = "message/disposition-notification";
+        p2->Filename = tf2->Filename;
+        snprintf(buf, sizeof(buf), "%s; %s", C->SMTP_Domain, yamversion);
+        EmitHeader(tf2->FP, "Reporting-UA", buf);
+        if(email->OriginalRcpt.Address[0] != '\0')
+        {
+          snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddrName2(&email->OriginalRcpt));
+          EmitHeader(tf2->FP, "Original-Recipient", buf);
+        }
+        snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddrName(C->EmailAddress, C->RealName));
+        EmitHeader(tf2->FP, "Final-Recipient", buf);
+        EmitHeader(tf2->FP, "Original-Message-ID", email->MsgID);
+        EmitHeader(tf2->FP, "Disposition", disp);
+
+        // close the file handle
+        fclose(tf2->FP);
+        tf2->FP = NULL;
+
+        // create another MIME part
+        p3 = p2->Next = NewPart(2);
+        MA_FreeEMailStruct(email);
+
+        if(p3 && (tf3 = OpenTempFile("w")) != NULL)
+        {
+          char fullfile[SIZE_PATHFILE];
+          char mfile[SIZE_MFILE];
+          struct Compose comp;
+          struct Folder *outfolder;
+
+          p3->ContentType = "text/rfc822-headers";
+          p3->Filename = tf3->Filename;
+          if(StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
+          {
+            FILE *fh;
+
+            // put all headers from the original mail into
+            // our third MIME part
+            if((fh = fopen(fullfile, "r")) != NULL)
+            {
+              setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+              while(fgets(buf, SIZE_LINE, fh))
+              {
+                if(*buf == '\n')
+                  break;
+                else
+                  fputs(buf, tf3->FP);
+              }
+
+              fclose(fh);
+            }
+            FinishUnpack(fullfile);
+          }
+
+          // close the file handle
+          fclose(tf3->FP);
+          tf3->FP = NULL;
+
+          // finally, we compose the MDN mail
+          memset(&comp, 0, sizeof(struct Compose));
+          comp.MailTo = StrBufCpy(comp.MailTo, BuildAddrName2(recipient));
+          comp.Subject = "Disposition Notification";
+          comp.GenerateMDN = TRUE;
+          comp.FirstPart = p1;
+
+          outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
+          if(outfolder && (comp.FH = fopen(MA_NewMailFile(outfolder, mfile), "w")) != NULL)
+          {
+            struct Mail *mlist[3];
+
+            mlist[0] = (struct Mail *)1;
+            mlist[2] = NULL;
+
+            setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
+
+            WriteOutMessage(&comp);
+            fclose(comp.FH);
+
+            if((email = MA_ExamineMail(outfolder, mfile, TRUE)) != NULL)
+            {
+              mlist[2] = AddMailToList(&email->Mail, outfolder);
+              setStatusToQueued(mlist[2]);
+              MA_FreeEMailStruct(email);
+            }
+
+            // in case the user wants to send the message
+            // immediately we go and send it out
+            if(sendnow && mlist[2] && !G->TR)
+              TR_ProcessSEND(mlist);
+
+            // refresh the folder statistics
+            DisplayStatistics(outfolder, TRUE);
+          }
+          else
+            ER_NewError(tr(MSG_ER_CreateMailError));
+
+          FreeStrBuf(comp.MailTo);
+          CloseTempFile(tf3);
+        }
+      }
+
+      CloseTempFile(tf2);
+    }
+
+    CloseTempFile(tf1);
+  }
+
+  if(p1)
+    FreePartsList(p1);
+
+  LEAVE();
+}
+///
+/// RE_ProcessMDN()
+//  Handles/Processes message disposition requests
+//  returns TRUE if all further MDN requests should be ignored, else FALSE
+BOOL RE_ProcessMDN(const enum MDNMode mode,
+                   struct Mail *mail,
+                   const BOOL multi,
+                   const BOOL autoAction)
+{
+  BOOL ignoreall = FALSE;
+
+  ENTER();
+
+  // check if MDN replies are enabled at all and if
+  // the mail isn't in the outgoing folder
+  if(C->MDNEnabled == TRUE &&
+     isOutgoingFolder(mail->Folder) == FALSE)
+  {
+    struct ExtendedMail *email;
+
+    // now we examine the original mail and see
+    // if we should process the MDN or not according to the user
+    // preferences
+    if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+    {
+      // see if we found a Disposition-Notification-To address
+      if(email->ReceiptTo.Address[0] != '\0')
+      {
+        BOOL retPathWarning = FALSE;
+        enum MDNAction action = MDN_ACTION_ASK; // per default we ask
+
+        // according to RFC 3798 section 2.1 an MDN should only be
+        // automatically send in case the "Return-Path" address
+        // matches the "Disposition-Notification-To" address. Also
+        // a mail MUST contain a "Return-Path" specification or the
+        // user must be asked.
+        if(email->ReturnPath.Address[0] != '\0')
+        {
+          char *p;
+          BOOL cont = TRUE;
+
+          // before we check all MDN cases we go and see if they
+          // aren't just all set to the same value
+          if(C->MDN_NoRecipient == C->MDN_NoDomain &&
+             C->MDN_NoRecipient == C->MDN_OnDelete &&
+             C->MDN_NoRecipient == C->MDN_Other)
+          {
+            action = C->MDN_NoRecipient;
+            cont = FALSE;
+
+            D(DBF_MAIL, "All MDN actions have the same value, skip analysis");
+          }
+
+          // check that our address is either in the To:
+          // or Cc of the MDN requesting mail
+          if(cont)
+          {
+            BOOL found;
+
+            // find out if our address is in the To
+            found = (stricmp(mail->To.Address, C->EmailAddress) == 0);
+            if(found == FALSE)
+            {
+              int i;
+
+              for(i=0; i < email->NoSTo; i++)
+              {
+                struct Person *pe = &email->STo[i];
+
+                if(stricmp(pe->Address, C->EmailAddress) == 0)
+                {
+                  found = TRUE;
+                  break;
+                }
+              }
+            }
+
+            // find out if our address is in Cc
+            if(found == FALSE)
+            {
+              int i;
+
+              for(i=0; i < email->NoCC; i++)
+              {
+                struct Person *pe = &email->CC[i];
+
+                if(stricmp(pe->Address, C->EmailAddress) == 0)
+                {
+                  found = TRUE;
+                  break;
+                }
+              }
+            }
+
+            // in case we found that our address is NOT in the
+            // To: or Cc: of the mail, we go and execute the user
+            // defined action for the MDN processing
+            if(found == FALSE)
+            {
+              action = C->MDN_NoRecipient;
+
+              cont = FALSE;
+
+              D(DBF_MAIL, "triggered MDN action %d due to missing address in To/Cc", action);
+            }
+          }
+
+          // try to find out if the sender is outside of the
+          // domain of the current user
+          if(cont && (p = strchr(C->EmailAddress, '@')))
+          {
+            BOOL outsideDomain = FALSE;
+            int domainLen = strlen(p);
+            int peLen = strlen(mail->From.Address);
+
+            if(domainLen > peLen ||
+               stricmp(&mail->From.Address[peLen-domainLen], p) != 0)
+            {
+              outsideDomain = TRUE;
+            }
+            else
+            {
+              int i;
+
+              for(i=0; i < email->NoSFrom; i++)
+              {
+                struct Person *pe = &email->SFrom[i];
+                int peLen = strlen(pe->Address);
+
+                if(domainLen > peLen ||
+                   stricmp(&pe->Address[peLen-domainLen], p) != 0)
+                {
+                  outsideDomain = TRUE;
+                  break;
+                }
+              }
+            }
+
+            // in case we found that there is a sender in
+            // the 'From:' which is outside our domain, we
+            // process the action accordingly
+            if(outsideDomain)
+            {
+              action = C->MDN_NoDomain;
+
+              cont = FALSE;
+
+              D(DBF_MAIL, "triggered MDN action %d due to outsideDomain", action);
+            }
+          }
+
+          // in case this is a delete operation we go and
+          // use the defined action immediately
+          if(cont && mode == MDN_MODE_DELETE)
+          {
+            action = C->MDN_OnDelete;
+
+            cont = FALSE;
+
+            D(DBF_MAIL, "triggered MDN action %d for MODE_DELETE", action);
+          }
+
+          // if this no action was found we use the one the user
+          // configured for "Other"
+          if(cont)
+          {
+            action = C->MDN_Other;
+
+            D(DBF_MAIL, "no other MDN action fired, firing default: %d", action);
+          }
+
+          // now we check if the Return-Path matches the Disposition-Notification-To
+          // address. According to RFC 3798 section 2.1 we have to do this comparison
+          // partly case sensitive for the local part of the address
+          p = strchr(email->ReturnPath.Address, '@');
+
+          // compare the local part first
+          if(p != NULL)
+          {
+            int plen = (p - email->ReturnPath.Address);
+
+            // compare case sensitive
+            retPathWarning = (strncmp(email->ReturnPath.Address, email->ReceiptTo.Address, plen) != 0);
+
+            // compare the domain part case insensitive
+            if(retPathWarning == FALSE)
+              retPathWarning = (stricmp(++p, &email->ReceiptTo.Address[plen+1]) != 0);
+          }
+          else
+          {
+            // we only have a local part? compare case sensitive only
+            retPathWarning = (strcmp(email->ReturnPath.Address, email->ReceiptTo.Address) != 0);
+          }
+
+          // make sure we ask the user in case the Return-Path
+          // doesn't match the ReceiptTo address
+          if(retPathWarning)
+          {
+            action = MDN_ACTION_ASK;
+
+            W(DBF_MAIL, "ReturnPath (%s) doesn't match ReceiptTo (%s) address", email->ReturnPath.Address, email->ReceiptTo.Address);
+          }
+        }
+        else
+        {
+          retPathWarning = TRUE;
+
+          W(DBF_MAIL, "no 'Return-Path' found, asking user for MDN permission");
+        }
+
+        // now we process the MDN action and react accordingl
+        switch(action)
+        {
+          case MDN_ACTION_IGNORE:
+            D(DBF_MAIL, "no MDN wanted, skipping");
+          break;
+
+          case MDN_ACTION_SEND:
+            RE_SendMDN(mode, mail, &email->ReceiptTo, TR_IsOnline(), autoAction, TRUE);
+          break;
+
+          case MDN_ACTION_QUEUED:
+            RE_SendMDN(mode, mail, &email->ReceiptTo, FALSE, autoAction, TRUE);
+          break;
+
+          case MDN_ACTION_ASK:
+          {
+            char buttons[SIZE_DEFAULT*2];
+            int answer;
+            BOOL isonline = TR_IsOnline();
+
+            D(DBF_MAIL, "asking user for MDN confirmation");
+
+            // set up the possible answers for the MDN requester
+            strlcpy(buttons, tr(MSG_RE_MDN_ACCEPT_LATER), sizeof(buttons));
+
+            // in case the user is only we can ask him to send the MDN
+            // immediately if wanted.
+            if(isonline)
+              snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_ACCEPT_NOW));
+
+            // he can also ignore the MDN, if required
+            snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_IGNORE));
+
+            // in case we have multiple MDNs waiting we go and provide
+            // an 'ignore all' answer as well
+            if(multi)
+              snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_IGNORE_ALL));
+
+            // now ask the user
+            answer = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), buttons, tr(MSG_RE_MDNReq));
+            switch(answer)
+            {
+              // accept and send later
+              case 1:
+                RE_SendMDN(mode, mail, &email->ReceiptTo, FALSE, autoAction, FALSE);
+              break;
+
+              // accept and send now or ignore
+              case 2:
+              {
+                if(isonline)
+                  RE_SendMDN(mode, mail, &email->ReceiptTo, TRUE, autoAction, FALSE);
+                else
+                  D(DBF_MAIL, "user wants to ignore the MDN request");
+              }
+              break;
+
+              case 0: // ESC and last button (ignore or ignoreall)
+              case 3: // ignore or ignoreall
+              case 4: // ignoreall
+              {
+                D(DBF_MAIL, "user wants to ignore the MDN request");
+                ignoreall = (multi == TRUE);
+              }
+              break;
+            }
+          }
+          break;
+        }
+
+        // we processed this mail so we can go and clear the
+        // SENDMDN flag
+        CLEAR_FLAG(mail->mflags, MFLAG_SENDMDN);
+      }
+      else
+        W(DBF_MAIL, "no 'Disposition-Notification-To' found!");
+
+      MA_FreeEMailStruct(email);
+    }
+  }
+  else
+    D(DBF_MAIL, "MDN answeres disabled");
+
+  RETURN(ignoreall);
+  return ignoreall;
+}
+///
+/// RE_HandleMDNReport
+//  Translates a message disposition notification to readable text
+static void RE_HandleMDNReport(struct Part *frp)
+{
+  struct Part *rp[3];
+  char file[SIZE_FILE], buf[SIZE_PATHFILE], MDNtype[SIZE_DEFAULT];
+  char *msgdesc, *type;
+  const char *mode = "";
+  int j;
+  FILE *out, *fh;
+
+  if((rp[0] = frp->Next) && (rp[1] = rp[0]->Next))
+  {
+    rp[2] = rp[1]->Next;
+    msgdesc = AllocStrBuf(80);
+    MDNtype[0] = '\0';
+
+    for(j = 1; j < (rp[2] ? 3 : 2); j++)
+    {
+      RE_DecodePart(rp[j]);
+
+      if((fh = fopen(rp[j]->Filename, "r")))
+      {
+        struct MinList *headerList = calloc(1, sizeof(struct MinList));
+
+        setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+        if(headerList)
+        {
+          // read in the header into the headerList
+          MA_ReadHeader(fh, headerList);
+          fclose(fh);
+
+          if(IsMinListEmpty(headerList) == FALSE)
+          {
+            struct MinNode *curNode;
+
+            for(curNode = headerList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+            {
+              struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
+              char *field = hdrNode->name;
+              char *value = hdrNode->content;
+
+              if(!stricmp(field, "from"))
+                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNFrom)), value);
+              else if(!stricmp(field, "to"))
+                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNTo)), value);
+              else if(!stricmp(field, "subject"))
+                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNSubject)), value);
+              else if(!stricmp(field, "original-message-id"))
+                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNMessageID)), value);
+              else if(!stricmp(field, "date"))
+                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNDate)), value);
+              else if(!stricmp(field, "original-recipient"))
+                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNOrigRecpt)), value);
+              else if(!stricmp(field, "final-recipient"))
+                msgdesc = StrBufCat(StrBufCat(msgdesc, tr(MSG_RE_MDNFinalRecpt)), value);
+              else if(!stricmp(field, "disposition"))
+                strlcpy(MDNtype, Trim(value), sizeof(MDNtype));
+             }
+          }
+
+          FreeHeaderList(headerList);
+          free(headerList);
+        }
+      }
+    }
+
+    msgdesc = StrBufCat(msgdesc, "\n");
+
+    if(!strnicmp(MDNtype, "manual-action", 13))
+      mode = tr(MSG_RE_MDNmanual);
+    else if(!strnicmp(MDNtype, "automatic-action", 16))
+      mode = tr(MSG_RE_MDNauto);
+
+    if((type = strchr(MDNtype, ';')))
+      type = Trim(++type);
+    else
+      type = MDNtype;
+
+    snprintf(file, sizeof(file), "YAMm%08lx-p%d.txt", rp[0]->rmData->uniqueID, rp[0]->Nr);
+    strmfp(buf, C->TempDir, file);
+
+    D(DBF_MAIL, "creating MDN report in '%s'", buf);
+
+    if((out = fopen(buf, "w")))
+    {
+      if     (!stricmp(type, "displayed"))  fprintf(out, tr(MSG_RE_MDNdisplay), msgdesc);
+      else if(!stricmp(type, "processed"))  fprintf(out, tr(MSG_RE_MDNprocessed), msgdesc, mode);
+      else if(!stricmp(type, "dispatched")) fprintf(out, tr(MSG_RE_MDNdispatched), msgdesc, mode);
+      else if(!stricmp(type, "deleted"))    fprintf(out, tr(MSG_RE_MDNdeleted), msgdesc, mode);
+      else fprintf(out, tr(MSG_RE_MDNunknown), msgdesc, type, mode);
+
+      fclose(out);
+
+      DeleteFile(rp[0]->Filename);
+      strlcpy(rp[0]->Filename, buf, sizeof(rp[0]->Filename));
+      rp[0]->Decoded = TRUE;
+      RE_SetPartInfo(rp[0]);
+      if(rp[2])
+        RE_UndoPart(rp[2]);
+
+      RE_UndoPart(rp[1]);
+    }
+
+    FreeStrBuf(msgdesc);
+  }
 }
 ///
 

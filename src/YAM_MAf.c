@@ -525,7 +525,7 @@ void MA_UpdateIndexes(BOOL initial)
       {
         if(initial)
         {
-          char *folderDir = GetFolderDir(folder);
+          const char *folderDir = GetFolderDir(folder);
           char *indexFile = MA_IndexFileName(folder);
 
           // get date of the folder directory and the .index file
@@ -1119,7 +1119,7 @@ char *MA_NewMailFile(struct Folder *folder, char *mailfile)
   static char fullpath[SIZE_PATHFILE+1];
   char dateFilePart[12+1];
   char newFileName[SIZE_MFILE];
-  char *folderDir;
+  const char *folderDir;
   char *ptr;
   struct TimeVal curDate;
   int mCounter = 0;
@@ -1471,7 +1471,7 @@ static int MA_GetRecipients(char *h, struct Person **per)
 ///
 /// MA_ExamineMail
 //  Parses the header lines of a message and fills email structure
-struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep)
+struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *file, const BOOL deep)
 {
    struct ExtendedMail *email;
    static struct Person pe;
@@ -1607,22 +1607,16 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
            ExtractAddress(value, &pe);
            email->OriginalRcpt = pe;
          }
+         else if(!stricmp(field, "return-path"))
+         {
+           ExtractAddress(value, &pe);
+           email->ReturnPath = pe;
+         }
          else if(!stricmp(field, "disposition-notification-to"))
          {
            ExtractAddress(value, &pe);
            email->ReceiptTo = pe;
-           email->ReceiptType = RCPT_TYPE_ALL;
            SET_FLAG(mail->mflags, MFLAG_SENDMDN);
-         }
-         else if(!stricmp(field, "return-view-to"))
-         {
-           ExtractAddress(value, &pe);
-           email->ReceiptTo = pe;
-           email->ReceiptType = RCPT_TYPE_READ;
-         }
-         else if(!stricmp(field, "return-receipt-to"))
-         {
-           email->RetRcpt = TRUE;
          }
          else if(!stricmp(field, "to"))
          {

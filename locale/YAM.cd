@@ -57,15 +57,6 @@ Print...
 MSG_Edit (12//)
 Edit...
 ;
-MSG_Display (13//)
-Display
-;
-MSG_Filter (14//)
-Filter
-;
-MSG_Process (15//)
-Process
-;
 MSG_Okay (16//)
 _Okay
 ;
@@ -74,9 +65,6 @@ _Use
 ;
 MSG_Cancel (18//)
 _Cancel
-;
-MSG_Yes (19//)
-_Yes
 ;
 MSG_OkayReq (21//)
 *_Okay
@@ -611,10 +599,6 @@ _Config
 ;
 MSG_MA_Project (198//)
 Project
-;
-MSG_MA_About (199//)
-About YAM
-;This is the title of the about window, not the menu item.
 ;
 MSG_MA_AboutMUI (200//)
 About MUI...
@@ -1521,21 +1505,6 @@ _Remove messages immediately
 MSG_CO_SaveSent (518//)
 Sa_ve sent messages
 ;
-MSG_CO_DispIgnore (519//)
-Ignore
-;
-MSG_CO_DispAsk (521//)
-Ask user
-;
-MSG_CO_DispAccept (522//)
-Accept
-;
-MSG_CO_MDN (523//)
-Message tracking
-;
-MSG_CO_SendAtOnce (524//)
-Send at _once
-;
 MSG_CO_XPK (525//)
 XPK/LhA settings
 ;
@@ -2114,30 +2083,6 @@ than moving them to the trash folder
 MSG_HELP_CO_CH_SAVESENT (684//)
 Save sent messages in the 'Sent' folder
 ;
-MSG_HELP_CO_RA_MDN_DISP (685//)
-When reading a message, send a\n\
-disposition notification to the\n\
-sender if requested
-;
-MSG_HELP_CO_RA_MDN_PROC (686//)
-When forwarding a message, send a\n\
-disposition notification to the\n\
-sender if requested
-;
-MSG_HELP_CO_RA_MDN_DELE (687//)
-When deleting a message, send a\n\
-disposition notification to the\n\
-sender if requested
-;
-MSG_HELP_CO_RA_MDN_RULE (688//)
-When deleting or forwarding a message using\n\
-filters, send a disposition notification to the sender\n\
-if requested
-;
-MSG_HELP_CO_CH_SEND_MDN (689//)
-Try to send the disposition notification\n\
-as soon as it is generated
-;
 MSG_HELP_CO_TX_ENCPACK (690//)
 XPK library used to protect\n\
 and compress folders
@@ -2586,7 +2531,7 @@ Discard changes
 ;
 MSG_RE_MDNReq (826//)
 The sender of this message requests\n\
-a disposition notification (MDN).\n\
+a disposition notification.\n\
 \n\
 What do you want to do?
 ;
@@ -3047,9 +2992,6 @@ _Delete after sending
 MSG_WR_Receipt (957//)
 _Return receipt
 ;
-MSG_WR_GetMDN (958//)
-Track _message (MDN)
-;
 MSG_WR_AddInfo (959//)
 Add _personal info
 ;
@@ -3203,9 +3145,6 @@ Delete after sending
 MSG_WR_MReceipt (1010//)
 Return receipt
 ;
-MSG_WR_MGetMDN (1011//)
-Track message (MDN)
-;
 MSG_WR_MAddInfo (1012//)
 Add personal information
 ;
@@ -3316,10 +3255,6 @@ in the 'Sent' folder
 MSG_HELP_WR_CH_RECEIPT (1041//)
 Get a notification on\n\
 successful delivery
-;
-MSG_HELP_WR_CH_DISPNOTI (1042//)
-Get a notification if the recipient\n\
-reads or processes the message
 ;
 MSG_HELP_WR_CH_ADDINFO (1043//)
 Create header fields containing data\n\
@@ -4308,9 +4243,6 @@ Us_er ID
 MSG_CO_SMTPPass (1339//)
 Passwo_rd
 ;
-MSG_CO_Del (1340//)
-Delete
-;
 MSG_WR_AltQuoted (1342//)
 Alternate quoted
 ;
@@ -4916,7 +4848,7 @@ Activates an embeeded mail read pane directly\n\
 in the main window.
 ;
 MSG_CO_SETSTATUSDELAYED1 (1525//)
-Delay marking of displayed mail as read for
+Delay mar_king of displayed mail as read for
 ;
 MSG_CO_SETSTATUSDELAYED2 (1526//)
 second(s)
@@ -5621,7 +5553,7 @@ Message %%ld of %ld
 ; COUNT, COUNT
 ;
 MSG_CO_CONVERTHTML (1716//)
-Convert viewable HTML message parts to plain text
+Con_vert viewable HTML message parts to plain text
 ;
 MSG_HELP_CO_CONVERTHTML (1717//)
 If a mail contains viewable HTML parts as its main\n\
@@ -5678,7 +5610,7 @@ MSG_MA_MIMEPART_MENU (1726//)
 Attachment/MIME part #%ld
 ;
 MSG_CO_PGPPASSINTERVAL1 (1727//)
-Remember passphrase for
+Remem_ber passphrase for
 ;
 MSG_CO_PGPPASSINTERVAL2 (1728//)
 idle minute(s)
@@ -5805,9 +5737,6 @@ Number of "not spam" classified mails
 ;
 MSG_CO_SPAM_BADCOUNT (1768//)
 Number of "spam" classified mails
-;
-MSG_CO_NB_SPAMPROBTHRESHOLDFMT (1770//)
-%ld%%
 ;
 MSG_BUSYFLUSHINGSPAMTRAININGDATA (1771//)
 Flushing spam training data...
@@ -6136,4 +6065,77 @@ Ignore
 ;
 MSG_RE_MDN_IGNORE_ALL (1865//)
 Ignore all
+;
+MSG_CO_MDN_ACTION_IGNORE (1866//)
+Never send
+;
+MSG_CO_MDN_ACTION_SEND (1867//)
+Always send
+;
+MSG_CO_MDN_ACTION_QUEUE (1868//)
+Always queue
+;
+MSG_CO_MDN_ACTION_ASK (1869//)
+Ask me
+;
+MSG_CO_MDN_TITLE (1870//)
+Return Receipts
+;
+MSG_CO_MDN_DESCRIPTION (1871//)
+When I receive a request for a return receipt:
+;
+MSG_CO_MDN_DISABLED (1872//)
+_Never send a return receipt
+;
+MSG_CO_MDN_ENABLED (1873//)
+A_llow return receipts for some messages
+;
+MSG_CO_MDN_NORECIPIENT (1874//)
+If I'm not in the _To or Cc of the message:
+;
+MSG_CO_MDN_NODOMAIN (1875//)
+If the sender is _outside my domain:
+;
+MSG_CO_MDN_DELETE (1876//)
+If I'm going to just _delete the message:
+;
+MSG_CO_MDN_OTHER (1877//)
+In all other _cases:
+;
+MSG_CO_REQUESTMDN (1878//)
+When sending _messages, always request a return receipt
+;
+MSG_HELP_CO_CH_REQUESTMDN (1879//)
+If selected, the return receipt option\n\
+in the write window will be enabled per\n\
+default.
+;
+MSG_HELP_CO_CH_MDN_NEVER (1880//)
+If selected, no return receipt will be\n\
+send out, even if explicitly requested.
+;
+MSG_HELP_CO_CH_MDN_ALLOW (1881//)
+If selected, return receipts will be\n\
+processed according to the rules defined\n\
+here.
+;
+MSG_HELP_CO_CY_MDN_NORECIPIENT (1882//)
+In case a return receipt is requested,\n\
+but your mail address doesn't exist in\n\
+the To: or Cc: header, the defined action\n\
+will be performed.
+;
+MSG_HELP_CO_CY_MDN_NODOMAIN (1883//)
+In case a return receipt is requested,\n\
+but the domain of your mail address and\n\
+the one of the sender doesn't match,\n\
+the defined action will be performed.
+;
+MSG_HELP_CO_CY_MDN_DELETE (1884//)
+If you delete a message without viewing,\n\
+the defined action will be performed.
+;
+MSG_HELP_CO_CY_MDN_OTHER (1885//)
+In case none of the above rules match,\n\
+this action will be performed instead.
 ;

@@ -53,7 +53,7 @@ for otag in $ORPHANEDTAGS; do
            }                        \
          }                          \
                                     \
-         if(\$1 ~ /^$otag/)         \
+         if(\$1 ~ /^$otag$/)        \
          {                          \
            tagfound=1;              \
          }                          \

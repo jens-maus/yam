@@ -3346,11 +3346,9 @@ MSG_HELP_EA_BT_CANCEL
 ;
 MSG_RE_MDNReq
 Der Absender dieser Nachricht möchte\n\
-über deren Empfang informiert werden (MDN).\n\
+eine Empfangsbestätigung erhalten.\n\
 \n\
 Wie wollen Sie reagieren?
-; The sender of this message requests a disposition notification (MDN).\n\
-; What do you want to do?
 ;
 MSG_RE_SaveMessage
 Nachricht speichern...

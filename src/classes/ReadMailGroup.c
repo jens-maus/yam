@@ -756,7 +756,8 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
         }
 
         // check for any MDN and allow to reply to it.
-        RE_DoMDN(MDN_READ, mail, FALSE);
+        if(isSendMDNMail(mail))
+          RE_ProcessMDN(MDN_MODE_DISPLAY, mail, FALSE, FALSE);
       }
 
       // everything worked out fine so lets return it

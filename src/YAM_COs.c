@@ -366,6 +366,11 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "DisplayAllTexts  = %s\n", Bool2Txt(co->DisplayAllTexts));
       fprintf(fh, "FixedFontEdit    = %s\n", Bool2Txt(co->FixedFontEdit));
       fprintf(fh, "UseTextstyles    = %s\n", Bool2Txt(co->UseTextstyles));
+      fprintf(fh, "MDNEnabled       = %s\n", Bool2Txt(co->MDNEnabled));
+      fprintf(fh, "MDN_NoRecipient  = %d\n", co->MDN_NoRecipient);
+      fprintf(fh, "MDN_NoDomain     = %d\n", co->MDN_NoDomain);
+      fprintf(fh, "MDN_OnDelete     = %d\n", co->MDN_OnDelete);
+      fprintf(fh, "MDN_Other        = %d\n", co->MDN_Other);
       fprintf(fh, "MultipleWindows  = %s\n", Bool2Txt(co->MultipleWindows));
       fprintf(fh, "EmbeddedReadPane = %s\n", Bool2Txt(co->EmbeddedReadPane));
       fprintf(fh, "StatusChangeDelay= %d\n", co->StatusChangeDelayOn ? co->StatusChangeDelay : -co->StatusChangeDelay);
@@ -384,6 +389,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "LaunchAlways     = %s\n", Bool2Txt(co->LaunchAlways));
       fprintf(fh, "EmailCache       = %d\n", co->EmailCache);
       fprintf(fh, "AutoSave         = %d\n", co->AutoSave);
+      fprintf(fh, "RequestMDN       = %s\n", Bool2Txt(co->RequestMDN));
 
       fprintf(fh, "\n[Reply/Forward]\n");
       fprintf(fh, "ReplyHello       = %s\n", co->ReplyHello);
@@ -496,11 +502,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "ConfirmDelete    = %d\n", co->ConfirmDelete);
       fprintf(fh, "RemoveAtOnce     = %s\n", Bool2Txt(co->RemoveAtOnce));
       fprintf(fh, "SaveSent         = %s\n", Bool2Txt(co->SaveSent));
-      fprintf(fh, "MDN_Display      = %d\n", co->MDN_Display);
-      fprintf(fh, "MDN_Process      = %d\n", co->MDN_Process);
-      fprintf(fh, "MDN_Delete       = %d\n", co->MDN_Delete);
-      fprintf(fh, "MDN_Filter       = %d\n", co->MDN_Filter);
-      fprintf(fh, "SendMDNAtOnce    = %s\n", Bool2Txt(co->SendMDNAtOnce));
       fprintf(fh, "XPKPack          = %s;%d\n", co->XPKPack, co->XPKPackEff);
       fprintf(fh, "XPKPackEncrypt   = %s;%d\n", co->XPKPackEncrypt, co->XPKPackEncryptEff);
       fprintf(fh, "PackerCommand    = %s\n", co->PackerCommand);
@@ -906,8 +907,13 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "DisplayAllTexts"))co->DisplayAllTexts = Txt2Bool(value);
                else if (!stricmp(buffer, "FixedFontEdit"))  co->FixedFontEdit = Txt2Bool(value);
                else if (!stricmp(buffer, "UseTextstyles"))  co->UseTextstyles = Txt2Bool(value);
-               else if (!stricmp(buffer, "MultipleWindows"))co->MultipleWindows = Txt2Bool(value);
-               else if (!stricmp(buffer, "EmbeddedReadPane"))    co->EmbeddedReadPane = Txt2Bool(value);
+               else if (!stricmp(buffer, "MDNEnabled"))       co->MDNEnabled = Txt2Bool(value);
+               else if (!stricmp(buffer, "MDN_NoRecipient"))  co->MDN_NoRecipient = atoi(value);
+               else if (!stricmp(buffer, "MDN_NoDomain"))     co->MDN_NoDomain = atoi(value);
+               else if (!stricmp(buffer, "MDN_OnDelete"))     co->MDN_OnDelete = atoi(value);
+               else if (!stricmp(buffer, "MDN_Other"))        co->MDN_Other = atoi(value);
+               else if (!stricmp(buffer, "MultipleWindows"))  co->MultipleWindows = Txt2Bool(value);
+               else if (!stricmp(buffer, "EmbeddedReadPane")) co->EmbeddedReadPane = Txt2Bool(value);
                else if (!stricmp(buffer, "StatusChangeDelay"))
                {
                  int delay = atoi(value);
@@ -936,6 +942,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "LaunchAlways"))   co->LaunchAlways = Txt2Bool(value);
                else if (!stricmp(buffer, "EmailCache"))     co->EmailCache = atoi(value);
                else if (!stricmp(buffer, "AutoSave"))       co->AutoSave = atoi(value);
+               else if (!stricmp(buffer, "RequestMDN"))     co->RequestMDN = Txt2Bool(value);
 /*6*/          else if (!stricmp(buffer, "ReplyHello"))     strlcpy(co->ReplyHello, value2, sizeof(co->ReplyHello));
                else if (!stricmp(buffer, "ReplyIntro"))     strlcpy(co->ReplyIntro, value2, sizeof(co->ReplyIntro));
                else if (!stricmp(buffer, "ReplyBye"))       strlcpy(co->ReplyBye, value2, sizeof(co->ReplyBye));
@@ -1084,11 +1091,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "ConfirmDelete"))    co->ConfirmDelete = atoi(value);
                else if (!stricmp(buffer, "RemoveAtOnce"))     co->RemoveAtOnce = Txt2Bool(value);
                else if (!stricmp(buffer, "SaveSent"))         co->SaveSent = Txt2Bool(value);
-               else if (!stricmp(buffer, "MDN_Display"))      co->MDN_Display = atoi(value);
-               else if (!stricmp(buffer, "MDN_Process"))      co->MDN_Process = atoi(value);
-               else if (!stricmp(buffer, "MDN_Delete"))       co->MDN_Delete = atoi(value);
-               else if (!stricmp(buffer, "MDN_Filter"))       co->MDN_Filter = atoi(value);
-               else if (!stricmp(buffer, "SendMDNAtOnce"))    co->SendMDNAtOnce = Txt2Bool(value);
                else if (!stricmp(buffer, "XPKPack"))          { strlcpy(co->XPKPack, value, sizeof(co->XPKPack)); co->XPKPackEff = atoi(&value[5]); }
                else if (!stricmp(buffer, "XPKPackEncrypt"))   { strlcpy(co->XPKPackEncrypt, value, sizeof(co->XPKPackEncrypt)); co->XPKPackEncryptEff = atoi(&value[5]); }
                else if (!stricmp(buffer, "PackerCommand"))    strlcpy(co->PackerCommand, value, sizeof(co->PackerCommand));
@@ -1527,6 +1529,14 @@ void CO_GetConfig(BOOL saveConfig)
         CE->FixedFontEdit     = GetMUICheck  (gui->CH_FIXFEDIT);
         CE->WrapHeader        = GetMUICheck  (gui->CH_WRAPHEAD);
         CE->UseTextstyles     = GetMUICheck  (gui->CH_TEXTSTYLES);
+
+        // get MDN options from GUI
+        CE->MDNEnabled      = GetMUICheck(gui->CH_MDN_ALLOW) && !GetMUICheck(gui->CH_MDN_NEVER);
+        CE->MDN_NoRecipient = GetMUICycle(gui->CY_MDN_NORECIPIENT);
+        CE->MDN_NoDomain    = GetMUICycle(gui->CY_MDN_NODOMAIN);
+        CE->MDN_OnDelete    = GetMUICycle(gui->CY_MDN_DELETE);
+        CE->MDN_Other       = GetMUICycle(gui->CY_MDN_OTHER);
+
         CE->MultipleWindows   = GetMUICheck  (gui->CH_MULTIWIN);
         CE->EmbeddedReadPane  = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
         CE->StatusChangeDelayOn  = GetMUICheck  (gui->CH_DELAYEDSTATUS);
@@ -1549,6 +1559,7 @@ void CO_GetConfig(BOOL saveConfig)
         CE->LaunchAlways      = GetMUICheck  (gui->CH_LAUNCH);
         CE->EmailCache        = GetMUINumer  (gui->NB_EMAILCACHE);
         CE->AutoSave          = GetMUINumer  (gui->NB_AUTOSAVE)*60; // in seconds
+        CE->RequestMDN = GetMUICheck(gui->CH_REQUESTMDN);
       }
       break;
 
@@ -1672,8 +1683,6 @@ void CO_GetConfig(BOOL saveConfig)
 
       case cp_Mixed:
       {
-        enum MDNType mdn;
-
         GetMUIString(CE->TempDir, gui->ST_TEMPDIR, sizeof(CE->TempDir));
         CE->WBAppIcon         = GetMUICheck  (gui->CH_WBAPPICON);
         CE->IconPositionX     = GetMUIInteger(gui->ST_APPX);
@@ -1685,15 +1694,6 @@ void CO_GetConfig(BOOL saveConfig)
         CE->ConfirmDelete     = GetMUINumer  (gui->NB_CONFIRMDEL);
         CE->RemoveAtOnce      = GetMUICheck  (gui->CH_REMOVE);
         CE->SaveSent          = GetMUICheck  (gui->CH_SAVESENT);
-        mdn = GetMUIRadio(gui->RA_MDN_DISP);
-        CE->MDN_Display       = (mdn == MDN_IGNORE) ? mdn : mdn + 1;
-        mdn = GetMUIRadio(gui->RA_MDN_PROC);
-        CE->MDN_Process       = (mdn == MDN_IGNORE) ? mdn : mdn + 1;
-        mdn = GetMUIRadio(gui->RA_MDN_DELE);
-        CE->MDN_Delete        = (mdn == MDN_IGNORE) ? mdn : mdn + 1;
-        mdn = GetMUIRadio(gui->RA_MDN_RULE);
-        CE->MDN_Filter        = (mdn == MDN_IGNORE) ? mdn : mdn + 1;
-        CE->SendMDNAtOnce     = GetMUICheck  (gui->CH_SEND_MDN);
         GetMUIText(CE->XPKPack, gui->TX_PACKER, sizeof(CE->XPKPack));
         GetMUIText(CE->XPKPackEncrypt, gui->TX_ENCPACK, sizeof(CE->XPKPackEncrypt));
         CE->XPKPackEff        = GetMUINumer  (gui->NB_PACKER);
@@ -1871,6 +1871,15 @@ void CO_SetConfig(void)
         setcheckmark(gui->CH_FIXFEDIT  ,CE->FixedFontEdit);
         setcheckmark(gui->CH_WRAPHEAD  ,CE->WrapHeader);
         setcheckmark(gui->CH_TEXTSTYLES,CE->UseTextstyles);
+
+        // set the MDN stuff according to other config
+        setcheckmark(gui->CH_MDN_NEVER, CE->MDNEnabled == FALSE);
+        setcheckmark(gui->CH_MDN_ALLOW, CE->MDNEnabled == TRUE);
+        setcycle(gui->CY_MDN_NORECIPIENT, CE->MDN_NoRecipient);
+        setcycle(gui->CY_MDN_NODOMAIN, CE->MDN_NoDomain);
+        setcycle(gui->CY_MDN_DELETE, CE->MDN_OnDelete);
+        setcycle(gui->CY_MDN_OTHER, CE->MDN_Other);
+
         setcheckmark(gui->CH_MULTIWIN  ,CE->MultipleWindows);
         setcheckmark(gui->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
         setcheckmark(gui->CH_DELAYEDSTATUS, CE->StatusChangeDelayOn);
@@ -1893,6 +1902,7 @@ void CO_SetConfig(void)
         setcheckmark(gui->CH_LAUNCH    ,CE->LaunchAlways);
         setslider   (gui->NB_EMAILCACHE,CE->EmailCache);
         setslider   (gui->NB_AUTOSAVE,  CE->AutoSave/60);
+        setcheckmark(gui->CH_REQUESTMDN,CE->RequestMDN);
       }
       break;
 
@@ -2019,8 +2029,6 @@ void CO_SetConfig(void)
 
       case cp_Mixed:
       {
-        enum MDNType mdn;
-
         setstring   (gui->ST_TEMPDIR   ,CE->TempDir);
         setcheckmark(gui->CH_WBAPPICON ,CE->WBAppIcon);
         set(gui->ST_APPX, MUIA_String_Integer, CE->IconPositionX);
@@ -2032,15 +2040,6 @@ void CO_SetConfig(void)
         setslider   (gui->NB_CONFIRMDEL,CE->ConfirmDelete);
         setcheckmark(gui->CH_REMOVE    ,CE->RemoveAtOnce);
         setcheckmark(gui->CH_SAVESENT  ,CE->SaveSent);
-        mdn = CE->MDN_Display;
-        setmutex    (gui->RA_MDN_DISP  ,(mdn == MDN_IGNORE) ? mdn : mdn - 1);
-        mdn = CE->MDN_Process;
-        setmutex    (gui->RA_MDN_PROC  ,(mdn == MDN_IGNORE) ? mdn : mdn - 1);
-        mdn = CE->MDN_Delete;
-        setmutex    (gui->RA_MDN_DELE  ,(mdn == MDN_IGNORE) ? mdn : mdn - 1);
-        mdn = CE->MDN_Filter;
-        setmutex    (gui->RA_MDN_RULE  ,(mdn == MDN_IGNORE) ? mdn : mdn - 1);
-        setcheckmark(gui->CH_SEND_MDN  ,CE->SendMDNAtOnce);
         set(gui->TX_PACKER , MUIA_Text_Contents, CE->XPKPack);
         set(gui->TX_ENCPACK, MUIA_Text_Contents, CE->XPKPackEncrypt);
         setslider   (gui->NB_PACKER    ,CE->XPKPackEff);

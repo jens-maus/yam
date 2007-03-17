@@ -53,8 +53,6 @@ struct Mail
    char             MailFile[SIZE_MFILE];
 };
 
-enum ReceiptType { RCPT_TYPE_ALL=1, RCPT_TYPE_READ };
-
 struct ExtendedMail
 {
    struct Mail      Mail;
@@ -72,11 +70,10 @@ struct ExtendedMail
    int              NoBCC;        // number of recipients in BCC
    int              Signature;
    int              Security;
-   enum ReceiptType ReceiptType;
    BOOL             DelSend;
-   BOOL             RetRcpt;
-   struct Person    ReceiptTo;
-   struct Person    OriginalRcpt;
+   struct Person    ReturnPath;   // the "Return-Path" address of the mail, if present
+   struct Person    ReceiptTo;    // the recipient in for a requested MDN
+   struct Person    OriginalRcpt; // the original recipient for a requested MDN
 
    char             MsgID[SIZE_MSGID];
    char             IRTMsgID[SIZE_MSGID];
@@ -88,7 +85,7 @@ extern struct Hook MA_LV_FDspFuncHook;
 
 void  MA_ChangeFolder(struct Folder *folder, BOOL set_active);
 void  MA_ExpireIndex(struct Folder *folder);
-struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep);
+struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *file, const BOOL deep);
 void  MA_FlushIndexes(BOOL all);
 void  MA_JumpToNewMsg(VOID);
 void  MA_JumpToRecentMsg(VOID);

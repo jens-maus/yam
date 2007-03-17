@@ -1283,7 +1283,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
     if(isSendMDNMail(mail) &&
        (hasStatusNew(mail) || !hasStatusRead(mail)))
     {
-      RE_DoMDN(MDN_DELE|MDN_AUTOACT, mail, FALSE);
+      RE_ProcessMDN(MDN_MODE_DELETE, mail, FALSE, TRUE);
     }
 
     MA_DeleteSingle(mail, FALSE, FALSE, TRUE);

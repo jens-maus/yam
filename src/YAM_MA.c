@@ -572,7 +572,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   char newFileName[SIZE_MFILE];
   char newFilePath[SIZE_PATHFILE];
   char oldFilePath[SIZE_PATHFILE];
-  char *folderDir = GetFolderDir(mail->Folder);
+  const char *folderDir = GetFolderDir(mail->Folder);
   char *ptr;
   BOOL success = FALSE;
   int mcounter;
@@ -1883,8 +1883,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
               setstring(wr->GUI.ST_EXTHEADER, email->extraHeaders);
 
             setcheckmark(wr->GUI.CH_DELSEND, email->DelSend);
-            setcheckmark(wr->GUI.CH_RECEIPT, email->RetRcpt);
-            setcheckmark(wr->GUI.CH_DISPNOTI, email->ReceiptType == RCPT_TYPE_ALL);
+            setcheckmark(wr->GUI.CH_MDN, isSendMDNMail(mail));
             setcheckmark(wr->GUI.CH_ADDINFO, isSenderInfoMail(mail));
             setcycle(wr->GUI.CY_IMPORTANCE, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1);
             setmutex(wr->GUI.RA_SIGNATURE, email->Signature);
@@ -2975,7 +2974,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
       if(isSendMDNMail(mail) && !ignoreall &&
          (hasStatusNew(mail) || !hasStatusRead(mail)))
       {
-        ignoreall = RE_DoMDN(MDN_DELE, mail, TRUE);
+        ignoreall = RE_ProcessMDN(MDN_MODE_DELETE, mail, TRUE, FALSE);
       }
 
       // call our subroutine with quiet option

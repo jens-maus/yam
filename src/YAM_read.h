@@ -34,13 +34,6 @@
 #include "YAM_mainFolder.h"
 #include "YAM_write.h"
 
-// flags & macros for MDN (message disposition notification)
-#define MDN_TYPEMASK  0x0F
-#define MDN_AUTOACT   0x10
-#define MDN_AUTOSEND  0x20
-#define isAutoActMDN(v)   (isFlagSet((v), MDN_AUTOACT))
-#define isAutoSendMDN(v)  (isFlagSet((v), MDN_AUTOSEND))
-
 // special defines for Part Types
 #define PART_ORIGINAL -2
 #define PART_ALLTEXT  -1
@@ -64,10 +57,13 @@
 #define hasPGPSAddressFlag(v)  (isFlagSet((v)->signedFlags, PGPS_ADDRESS))
 #define hasPGPSCheckedFlag(v)  (isFlagSet((v)->signedFlags, PGPS_CHECKED))
 
-enum MDNType    { MDN_IGNORE=0, MDN_DENY, MDN_READ, MDN_DISP, MDN_PROC, MDN_DELE };
 enum ReadInMode { RIM_QUIET, RIM_READ, RIM_EDIT, RIM_QUOTE, RIM_PRINT };
 enum HeaderMode { HM_NOHEADER, HM_SHORTHEADER, HM_FULLHEADER };
 enum SInfoMode  { SIM_OFF, SIM_DATA, SIM_ALL, SIM_IMAGE };
+
+// flags & macros for MDN (message disposition notification)
+enum MDNMode    { MDN_MODE_DISPLAY, MDN_MODE_DELETE };
+enum MDNAction  { MDN_ACTION_IGNORE, MDN_ACTION_SEND, MDN_ACTION_QUEUED, MDN_ACTION_ASK };
 
 // for parsing a message we have different flags we can specify
 // (a),(b),(c) are mutual exclusive
@@ -146,9 +142,9 @@ struct HeaderNode
   char *content;       // the content of the header
 };
 
-BOOL  RE_DecodePart(struct Part *rp);
-void  RE_DisplayMIME(char *fname, const char *ctype);
-BOOL  RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi);
+BOOL RE_DecodePart(struct Part *rp);
+void RE_DisplayMIME(char *fname, const char *ctype);
+BOOL RE_ProcessMDN(const enum MDNMode mode, struct Mail *mail, const BOOL multi, const BOOL autoAction);
 
 struct ReadMailData *CreateReadWindow(BOOL forceNewWindow);
 struct ReadMailData *AllocPrivateRMData(struct Mail *mail, short parseFlags);

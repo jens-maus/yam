@@ -358,8 +358,7 @@ void rx_writeoptions( UNUSED struct RexxHost *host, struct rxd_writeoptions **rx
          if (G->WR[G->ActiveWriteWin])
          {
             setcheckmark(G->WR[G->ActiveWriteWin]->GUI.CH_DELSEND, rd->arg.delete);
-            setcheckmark(G->WR[G->ActiveWriteWin]->GUI.CH_RECEIPT, rd->arg.receipt);
-            setcheckmark(G->WR[G->ActiveWriteWin]->GUI.CH_DISPNOTI, rd->arg.notif);
+            setcheckmark(G->WR[G->ActiveWriteWin]->GUI.CH_MDN, rd->arg.receipt);
             setcheckmark(G->WR[G->ActiveWriteWin]->GUI.CH_ADDINFO, rd->arg.addinfo);
             if (rd->arg.importance) setcycle(G->WR[G->ActiveWriteWin]->GUI.CY_IMPORTANCE, *rd->arg.importance);
             if (rd->arg.sig)        setmutex(G->WR[G->ActiveWriteWin]->GUI.RA_SIGNATURE, *rd->arg.sig);

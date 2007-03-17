@@ -879,6 +879,11 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       co->StatusChangeDelayOn = TRUE;
       co->StatusChangeDelay   = 1000; // 1s=1000ms delay by default
       co->ConvertHTML = TRUE;
+      co->MDNEnabled = TRUE;
+      co->MDN_NoRecipient = MDN_ACTION_ASK;
+      co->MDN_NoDomain = MDN_ACTION_ASK;
+      co->MDN_OnDelete = MDN_ACTION_ASK;
+      co->MDN_Other = MDN_ACTION_ASK;
    }
 
    if(page == cp_Write || page == cp_AllPages)
@@ -893,6 +898,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       co->LaunchAlways = FALSE;
       co->EmailCache = 10;
       co->AutoSave = 120;
+      co->RequestMDN = FALSE;
    }
 
    if(page == cp_ReplyForward || page == cp_AllPages)
@@ -1011,10 +1017,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       co->IconPositionX = co->IconPositionY = 0;
       strlcpy(co->AppIconText, tr(MSG_CO_APPICON_LABEL), sizeof(co->AppIconText));
       co->IconifyOnQuit = co->RemoveAtOnce = FALSE;
-      co->Confirm = co->SaveSent = co->SendMDNAtOnce = TRUE;
+      co->Confirm = co->SaveSent = TRUE;
       co->ConfirmDelete = 2;
-      co->MDN_Display = co->MDN_Process = co->MDN_Delete = 2;
-      co->MDN_Filter = 3;
       strlcpy(co->XPKPack, "HUFF", sizeof(co->XPKPack));
       strlcpy(co->XPKPackEncrypt, "HUFF", sizeof(co->XPKPackEncrypt));
       co->XPKPackEff = 50;
@@ -1429,16 +1433,6 @@ void CO_Validate(struct Config *co, BOOL update)
             }
           }
         }
-
-        // erase possible MDN_DENY values
-        if(C->MDN_Display == MDN_DENY)
-          C->MDN_Display = MDN_READ;
-        if(C->MDN_Process == MDN_DENY)
-          C->MDN_Process = MDN_READ;
-        if(C->MDN_Delete == MDN_DENY)
-          C->MDN_Delete = MDN_DELE;
-        if(C->MDN_Filter == MDN_DENY)
-          C->MDN_Filter = MDN_READ;
       }
 
       if(G->CO->Visited[cp_Read] || G->CO->UpdateAll)

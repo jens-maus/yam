@@ -1450,9 +1450,13 @@ BOOL WriteOutMessage(struct Compose *comp)
          tcomp.Security = SEC_NONE;           // temp msg gets attachments and no security
 
          /* clear a few other fields to avoid redundancies */
-         tcomp.MailCC = tcomp.MailBCC = tcomp.ExtHeader = NULL;
-         tcomp.Receipt = tcomp.Importance = 0;
-         tcomp.DelSend = tcomp.UserInfo = FALSE;
+         tcomp.MailCC = NULL;
+         tcomp.MailBCC = NULL;
+         tcomp.ExtHeader = NULL;
+         tcomp.Importance = 0;
+         tcomp.DelSend = FALSE;
+         tcomp.RequestMDN = FALSE;
+         tcomp.UserInfo = FALSE;
 
          if(WriteOutMessage(&tcomp))    /* recurse! */
          {
@@ -1504,8 +1508,7 @@ BOOL WriteOutMessage(struct Compose *comp)
    fprintf(fh, "Message-ID: <%s>\n", NewID(TRUE));
    if (comp->IRTMsgID) EmitHeader(fh, "In-Reply-To", comp->IRTMsgID);
    rcptto = comp->ReplyTo ? comp->ReplyTo : (comp->From ? comp->From : C->EmailAddress);
-   if (hasReturnRcptFlag(comp)) EmitRcptHeader(fh, "Return-Receipt-To", rcptto);
-   if (hasMDNRcptFlag(comp)) EmitRcptHeader(fh, "Disposition-Notification-To", rcptto);
+   if(comp->RequestMDN) EmitRcptHeader(fh, "Disposition-Notification-To", rcptto);
    if (comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
    fprintf(fh, "X-Mailer: %s\n", yamverxmailer);
    if (comp->UserInfo) WR_WriteUserInfo(fh, comp->From);
@@ -1518,18 +1521,22 @@ mimebody:
    fputs("MIME-Version: 1.0\n", fh); // RFC 1521 requires that
 
    strlcpy(boundary, NewID(FALSE), sizeof(boundary));
-   if (comp->ReportType > 0)
+
+   if(comp->GenerateMDN)
    {
       WR_ComposeReport(fh, comp, boundary);
       success = TRUE;
-   } else if (comp->Security > SEC_NONE && comp->Security <= SEC_BOTH)
+   }
+   else if(comp->Security > SEC_NONE && comp->Security <= SEC_BOTH)
    {
       success = WR_ComposePGP(fh, comp, boundary);
-   } else if (firstpart->Next)
+   }
+   else if(firstpart->Next)
    {
       WR_ComposeMulti(fh, comp, boundary);
       success = TRUE;
-   } else
+   }
+   else
    {
       WriteContentTypeAndEncoding(fh, firstpart);
       if (comp->Security == SEC_SENDANON && comp->OldSecurity != SEC_SENDANON)
@@ -1538,6 +1545,7 @@ mimebody:
       EncodePart(fh, firstpart);
       success = TRUE;
    }
+
    CloseTempFile(tf);
 
    RETURN(success);
@@ -1735,13 +1743,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       comp.IRTMsgID = wr->MsgID;
 
     comp.Importance = 1-GetMUICycle(gui->CY_IMPORTANCE);
-
-    if(GetMUICheck(gui->CH_RECEIPT))
-      SET_FLAG(comp.Receipt, RCPT_RETURN);
-
-    if(GetMUICheck(gui->CH_DISPNOTI))
-      SET_FLAG(comp.Receipt, RCPT_MDN);
-
+    comp.RequestMDN = GetMUICheck(gui->CH_MDN);
     comp.Signature = GetMUIRadio(gui->RA_SIGNATURE);
 
     if((comp.Security = GetMUIRadio(gui->RA_SECURITY)) == SEC_DEFAULTS &&
@@ -1903,15 +1905,9 @@ void WR_NewMail(enum WriteMode mode, int winnum)
           if(m != NULL && !isVirtualMail(m) && m->Folder != NULL &&
              !isOutgoingFolder(m->Folder) && !isSentFolder(m->Folder))
           {
+            // process MDN notifications
             if(hasStatusNew(m) || !hasStatusRead(m))
-            {
-              int mdntype = wr->Mode == NEW_REPLY ? MDN_DISP : MDN_PROC;
-
-              if(winnum == 2)
-                SET_FLAG(mdntype, MDN_AUTOACT);
-
-              RE_DoMDN(mdntype, m, FALSE);
-            }
+              RE_ProcessMDN(MDN_MODE_DISPLAY, m, FALSE, winnum==2);
 
             switch(wr->Mode)
             {
@@ -2635,35 +2631,59 @@ MakeStaticHook(WR_AddPGPKeyHook, WR_AddPGPKeyFunc);
 
 /*** Open ***/
 /// WR_Open
-//  Initializes a write window
+//  Initializes a write window, returns -1 on error
 int WR_Open(int winnum, BOOL bounce)
 {
-   /* winnum:
-      -1 - a new window should be opened
-       2 - window should be opened in "quiet mode"
+  int result = -1;
 
-      G->WR[0]: 1st possible window.
-      G->WR[1]: 2nd possible window.
-      G->WR[2]: Quiet window (last).
-   */
+  // winnum:
+  // -1 - a new window should be opened
+  //  2 - window should be opened in "quiet mode"
+  //
+  // G->WR[0]: 1st possible window.
+  // G->WR[1]: 2nd possible window.
+  // G->WR[2]: Quiet window (last).
 
-   /* Find first un-used window and set winnum accordingly (or return -1
-      if they are all taken). */
-   if (winnum == -1) if (G->WR[winnum = 0]) if (G->WR[winnum = 1]) return -1;
+  ENTER();
 
-   G->WR[winnum] = bounce ? WR_NewBounce(winnum) : WR_New(winnum);
-   if (!G->WR[winnum]) return -1;
-   if (!bounce)
-   {
-      struct WR_GUIData *gui = &G->WR[winnum]->GUI;
-      setstring(gui->ST_FROM, BuildAddrName(C->EmailAddress, C->RealName));
-      setstring(gui->ST_REPLYTO, C->ReplyTo);
-      setstring(gui->ST_EXTHEADER, C->ExtraHeaders);
-      setcheckmark(gui->CH_DELSEND, !C->SaveSent);
-      setcheckmark(gui->CH_ADDINFO, C->AddMyInfo);
-   }
-   MA_StartMacro(MACRO_PREWRITE, itoa(winnum));
-   return winnum;
+  // Find first un-used window and set winnum accordingly (or return -1
+  // if they are all taken).
+  if(winnum != -1 ||
+     G->WR[winnum = 0] == NULL ||
+     G->WR[winnum = 1] == NULL)
+  {
+    if(G->WR[winnum] == NULL)
+    {
+      // open a new window
+      G->WR[winnum] = bounce ? WR_NewBounce(winnum) : WR_New(winnum);
+      if(G->WR[winnum] != NULL)
+      {
+        if(!bounce)
+        {
+          struct WR_GUIData *gui = &G->WR[winnum]->GUI;
+
+          setstring(gui->ST_FROM, BuildAddrName(C->EmailAddress, C->RealName));
+          setstring(gui->ST_REPLYTO, C->ReplyTo);
+          setstring(gui->ST_EXTHEADER, C->ExtraHeaders);
+          setcheckmark(gui->CH_DELSEND, !C->SaveSent);
+          setcheckmark(gui->CH_ADDINFO, C->AddMyInfo);
+          setcheckmark(gui->CH_MDN, C->RequestMDN);
+        }
+
+        MA_StartMacro(MACRO_PREWRITE, itoa(winnum));
+
+        result = winnum;
+      }
+    }
+    else
+      E(DBF_MAIL, "new write window generated in slot %d, but old one still allocated?", winnum);
+  }
+
+  if(result == -1)
+    DisplayBeep(NULL);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -3060,7 +3080,7 @@ static struct WR_ClassData *WR_New(int winnum)
         WMEN_STYLE_BOLD,WMEN_STYLE_ITALIC,WMEN_STYLE_UNDERLINE,
         WMEN_STYLE_COLORED,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
         WMEN_AUTOSP,WMEN_AUTOWRAP,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
-        WMEN_DELSEND,WMEN_RECEIPT,WMEN_DISPNOTI,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
+        WMEN_DELSEND,WMEN_MDN,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
         WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
         WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5, WMEN_INSUUCODE,
       };
@@ -3087,8 +3107,7 @@ static struct WR_ClassData *WR_New(int winnum)
       Object *mi_autospell;
       Object *mi_autowrap;
       Object *mi_delsend;
-      Object *mi_receipt;
-      Object *mi_dispnoti;
+      Object *mi_mdn;
       Object *mi_addinfo;
       Object *slider = ScrollbarObject, End;
       ULONG i;
@@ -3189,10 +3208,9 @@ static struct WR_ClassData *WR_New(int winnum)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddKey), MUIA_UserData,WMEN_ADDPGP, End,
             End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Options),
-               MUIA_Family_Child, mi_delsend = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MDelSend), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_DELSEND, End,
-               MUIA_Family_Child, mi_receipt = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MReceipt), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_RECEIPT, End,
-               MUIA_Family_Child, mi_dispnoti= MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MGetMDN),  MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_DISPNOTI, End,
-               MUIA_Family_Child, mi_addinfo = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MAddInfo), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_ADDINFO, End,
+               MUIA_Family_Child, mi_delsend = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MDelSend), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, MUIA_UserData, WMEN_DELSEND, End,
+               MUIA_Family_Child, mi_mdn =     MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MReceipt), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, MUIA_UserData, WMEN_MDN,     End,
+               MUIA_Family_Child, mi_addinfo = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MAddInfo), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, MUIA_UserData, WMEN_ADDINFO, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MImportance),
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,priority[0], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x06, MUIA_UserData,WMEN_IMPORT0, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,priority[1], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x05, MUIA_Menuitem_Checked,TRUE, MUIA_UserData,WMEN_IMPORT1, End,
@@ -3325,8 +3343,7 @@ static struct WR_ClassData *WR_New(int winnum)
                   Child, HGroup,
                      Child, VGroup, GroupFrameT(tr(MSG_WR_SendOpt)),
                         Child, MakeCheckGroup((Object **)&data->GUI.CH_DELSEND, tr(MSG_WR_DelSend)),
-                        Child, MakeCheckGroup((Object **)&data->GUI.CH_RECEIPT, tr(MSG_WR_Receipt)),
-                        Child, MakeCheckGroup((Object **)&data->GUI.CH_DISPNOTI, tr(MSG_WR_GetMDN)),
+                        Child, MakeCheckGroup((Object **)&data->GUI.CH_MDN,     tr(MSG_WR_Receipt)),
                         Child, MakeCheckGroup((Object **)&data->GUI.CH_ADDINFO, tr(MSG_WR_AddInfo)),
                         Child, HGroup,
                            Child, Label(tr(MSG_WR_Importance)),
@@ -3386,8 +3403,7 @@ static struct WR_ClassData *WR_New(int winnum)
          SetHelp(data->GUI.ST_DESC       ,MSG_HELP_WR_ST_DESC      );
          SetHelp(data->GUI.ST_EXTHEADER  ,MSG_HELP_WR_ST_EXTHEADER );
          SetHelp(data->GUI.CH_DELSEND    ,MSG_HELP_WR_CH_DELSEND   );
-         SetHelp(data->GUI.CH_RECEIPT    ,MSG_HELP_WR_CH_RECEIPT   );
-         SetHelp(data->GUI.CH_DISPNOTI   ,MSG_HELP_WR_CH_DISPNOTI  );
+         SetHelp(data->GUI.CH_MDN,        MSG_HELP_WR_CH_RECEIPT   );
          SetHelp(data->GUI.CH_ADDINFO    ,MSG_HELP_WR_CH_ADDINFO   );
          SetHelp(data->GUI.CY_IMPORTANCE ,MSG_HELP_WR_CY_IMPORTANCE);
          SetHelp(data->GUI.RA_SIGNATURE  ,MSG_HELP_WR_RA_SIGNATURE );
@@ -3559,15 +3575,13 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.ST_DESC    ,MUIM_Notify,MUIA_String_Contents     ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_PutFileEntryHook,winnum);
          DoMethod(data->GUI.RA_SIGNATURE,MUIM_Notify,MUIA_Radio_Active        ,MUIV_EveryTime,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_ChangeSignatureHook,MUIV_TriggerValue,winnum);
          DoMethod(data->GUI.CH_DELSEND ,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_delsend              ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
-         DoMethod(data->GUI.CH_RECEIPT ,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_receipt              ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
-         DoMethod(data->GUI.CH_DISPNOTI,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_dispnoti             ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
+         DoMethod(data->GUI.CH_MDN,     MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_mdn                  ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
          DoMethod(data->GUI.CH_ADDINFO ,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_addinfo              ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
          DoMethod(mi_autospell         ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.TE_EDIT       ,3,MUIM_Set        ,MUIA_TextEditor_TypeAndSpell,MUIV_TriggerValue);
          DoMethod(mi_autowrap          ,MUIM_Notify,MUIA_Menuitem_Checked    ,TRUE,          data->GUI.TE_EDIT       ,3,MUIM_Set        ,MUIA_TextEditor_WrapBorder, C->EdWrapCol);
          DoMethod(mi_autowrap          ,MUIM_Notify,MUIA_Menuitem_Checked    ,FALSE,         data->GUI.TE_EDIT       ,3,MUIM_Set        ,MUIA_TextEditor_WrapBorder, 0);
          DoMethod(mi_delsend           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_DELSEND    ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
-         DoMethod(mi_receipt           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_RECEIPT    ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
-         DoMethod(mi_dispnoti          ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_DISPNOTI   ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
+         DoMethod(mi_mdn,               MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->GUI.CH_MDN, 3, MUIM_Set, MUIA_Selected,MUIV_TriggerValue);
          DoMethod(mi_addinfo           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_ADDINFO    ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
          DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active        ,4             ,data->GUI.RA_SIGNATURE  ,3,MUIM_Set        ,MUIA_Radio_Active,0);
          DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active        ,4             ,data->GUI.CH_ADDINFO    ,3,MUIM_Set        ,MUIA_Selected,FALSE);

@@ -111,7 +111,7 @@ static int  Word_Length(const char *buf);
 static int  Quoting_Chars(char *buf, int len, char *text, int *post_spaces);
 static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff);
 static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff);
-static BOOL UncompressMailFile(char *src, char *dst, const char *passwd);
+static BOOL UncompressMailFile(const char *src, const char *dst, const char *passwd);
 
 #if !defined(__amigaos4__) || (INCLUDE_VERSION < 50)
 struct PathNode
@@ -2607,7 +2607,7 @@ char *FileToBuffer(const char *file)
 /// FileCount()
 // returns the total number of files that are in a directory
 // or -1 if an error occurred
-long FileCount(char *directory)
+long FileCount(const char *directory)
 {
   BPTR dirLock;
   long result = 0;
@@ -2742,10 +2742,10 @@ BOOL CreateDirectory(const char *dir)
 ///
 /// GetFolderDir
 //  Returns path of a folder directory
-char *GetFolderDir(struct Folder *fo)
+const char *GetFolderDir(const struct Folder *fo)
 {
   static char buffer[SIZE_PATH];
-  char *dir;
+  const char *dir;
 
   ENTER();
 
@@ -2763,7 +2763,7 @@ char *GetFolderDir(struct Folder *fo)
 ///
 /// GetMailFile
 //  Returns path of a message file
-char *GetMailFile(char *string, struct Folder *folder, struct Mail *mail)
+char *GetMailFile(char *string, const struct Folder *folder, const struct Mail *mail)
 {
   static char buffer[SIZE_PATHFILE];
   char *result;
@@ -2786,7 +2786,7 @@ char *GetMailFile(char *string, struct Folder *folder, struct Mail *mail)
 ///
 /// BuildAddrName
 //  Creates "Real Name" <E-mail> string
-char *BuildAddrName(char *address, char *name)
+char *BuildAddrName(const char *address, const char *name)
 {
   static char buffer[SIZE_ADDRESS+SIZE_REALNAME+4];
   const char *delim;
@@ -3208,9 +3208,9 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
 }
 ///
 /// DateStamp2RFCString()
-BOOL DateStamp2RFCString(char *dst, int dstlen, struct DateStamp *date, int timeZone, BOOL convert)
+BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *date, const int timeZone, const BOOL convert)
 {
-  struct DateStamp curDateStamp;
+  struct DateStamp datestamp;
   struct ClockData cd;
   time_t seconds;
   int convertedTimeZone = (timeZone/60)*100 + (timeZone%60);
@@ -3219,27 +3219,24 @@ BOOL DateStamp2RFCString(char *dst, int dstlen, struct DateStamp *date, int time
 
   // if date == NULL we get the current time/date
   if(date == NULL)
-    DateStamp(&curDateStamp);
+    DateStamp(&datestamp);
   else
-    memcpy(&curDateStamp, date, sizeof(struct DateStamp));
-
-  // point at curDateStamp
-  date = &curDateStamp;
+    memcpy(&datestamp, date, sizeof(struct DateStamp));
 
   // if the user wants to convert the datestamp we have to make sure we
   // substract/add the timeZone
   if(convert && timeZone != 0)
   {
-    date->ds_Minute += timeZone;
+    datestamp.ds_Minute += timeZone;
 
     // we need to check the datestamp variable that it is still in it`s borders
     // after adjustment
-    while(date->ds_Minute < 0)     { date->ds_Minute += 1440; date->ds_Days--; }
-    while(date->ds_Minute >= 1440) { date->ds_Minute -= 1440; date->ds_Days++; }
+    while(datestamp.ds_Minute < 0)     { datestamp.ds_Minute += 1440; datestamp.ds_Days--; }
+    while(datestamp.ds_Minute >= 1440) { datestamp.ds_Minute -= 1440; datestamp.ds_Days++; }
   }
 
   // lets form the seconds now for the Amiga2Date function
-  seconds = (date->ds_Days*24*60*60 + date->ds_Minute*60 + date->ds_Tick/TICKS_PER_SECOND);
+  seconds = (datestamp.ds_Days*24*60*60 + datestamp.ds_Minute*60 + datestamp.ds_Tick/TICKS_PER_SECOND);
 
   // use utility's Amiga2Date for calculating the correct date/time
   Amiga2Date(seconds, &cd);
@@ -4098,7 +4095,7 @@ static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, i
 ///
 /// UncompressMailFile
 //  Expands a compressed message file
-static BOOL UncompressMailFile(char *src, char *dst, const char *passwd)
+static BOOL UncompressMailFile(const char *src, const char *dst, const char *passwd)
 {
   long error = -1;
 
@@ -4377,7 +4374,7 @@ BOOL DoPack(char *file, char *newfile, struct Folder *folder)
 ///
 /// StartUnpack
 //  Unpacks a file to a temporary file
-char *StartUnpack(char *file, char *newfile, struct Folder *folder)
+char *StartUnpack(const char *file, char *newfile, const struct Folder *folder)
 {
   FILE *fh;
   char *result = NULL;

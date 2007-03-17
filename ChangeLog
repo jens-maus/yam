@@ -5,6 +5,21 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-17  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c, misc: reworked the message disposition notification handling
+    according to RFC 3798 and how Thunderbird deal with those kind of
+    return receipts. In addition, the generation and recognition of the
+    "Return-Receipt-To" header line was completely dropped as it doesn't
+    corresponds to any known RFC and is therefore properitary. It is known
+    that there doesn't exist any modern MTA which will react on that header
+    line and that only methods of RFC 3798 for requesting a receipt is valid.
+    Therefore, the write window now also just contains a generalized
+    "Request Receipt" option which in fact will generate the proper MDN
+    header files. In addition, new configuration options/setups were added
+    to deal with the new functionality added. All in all, the MDN handling
+    should now conform to the RFC, which in fact fixed bug #1078160.
+
 2007-03-16  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c, locale/YAM.cd: removed the "|" control characters for the new

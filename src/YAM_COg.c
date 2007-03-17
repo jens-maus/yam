@@ -1952,6 +1952,7 @@ Object *CO_PageSpam(struct CO_ClassData *data)
               Child, LLabel(tr(MSG_CO_SPAM_FILTERENABLED)),
               Child, HSpace(0),
               Child, HSpace(0),
+
               Child, HSpace(0),
               Child, Label2(tr(MSG_CO_SPAM_BADCOUNT)),
               Child, data->GUI.TX_SPAMBADCOUNT = TextObject,
@@ -1961,6 +1962,7 @@ Object *CO_PageSpam(struct CO_ClassData *data)
                 MUIA_Text_PreParse, "\033r",
               End,
               Child, HSpace(0),
+
               Child, HSpace(0),
               Child, Label2(tr(MSG_CO_SPAM_GOODCOUNT)),
               Child, data->GUI.TX_SPAMGOODCOUNT = TextObject,
@@ -1970,6 +1972,7 @@ Object *CO_PageSpam(struct CO_ClassData *data)
                 MUIA_Text_PreParse, "\033r",
               End,
               Child, HSpace(0),
+
               Child, HSpace(0),
               Child, data->GUI.BT_SPAMRESETTRAININGDATA = MakeButton(tr(MSG_CO_SPAM_RESETTRAININGDATA)),
               Child, HSpace(0),
@@ -2033,32 +2036,41 @@ Object *CO_PageSpam(struct CO_ClassData *data)
 /// CO_PageRead
 Object *CO_PageRead(struct CO_ClassData *data)
 {
-   Object *grp;
-   static const char *headopt[4];
-   static const char *siopt[5];
-   static const char *slopt[5];
+  Object *obj;
+  static const char *headopt[4];
+  static const char *siopt[5];
+  static const char *slopt[5];
+  static const char *rropt[5];
 
-   headopt[0] = tr(MSG_CO_HeadNone);
-   headopt[1] = tr(MSG_CO_HeadShort);
-   headopt[2] = tr(MSG_CO_HeadFull);
-   headopt[3] = NULL;
+  headopt[0] = tr(MSG_CO_HeadNone);
+  headopt[1] = tr(MSG_CO_HeadShort);
+  headopt[2] = tr(MSG_CO_HeadFull);
+  headopt[3] = NULL;
 
-   siopt[0] = tr(MSG_CO_SINone);
-   siopt[1] = tr(MSG_CO_SIFields);
-   siopt[2] = tr(MSG_CO_SIAll);
-   siopt[3] = tr(MSG_CO_SImageOnly);
-   siopt[4] = NULL;
+  siopt[0] = tr(MSG_CO_SINone);
+  siopt[1] = tr(MSG_CO_SIFields);
+  siopt[2] = tr(MSG_CO_SIAll);
+  siopt[3] = tr(MSG_CO_SImageOnly);
+  siopt[4] = NULL;
 
-   slopt[0] = tr(MSG_CO_SLBlank);
-   slopt[1] = tr(MSG_CO_SLDash);
-   slopt[2] = tr(MSG_CO_SLBar);
-   slopt[3] = tr(MSG_CO_SLSkip);
-   slopt[4] = NULL;
+  slopt[0] = tr(MSG_CO_SLBlank);
+  slopt[1] = tr(MSG_CO_SLDash);
+  slopt[2] = tr(MSG_CO_SLBar);
+  slopt[3] = tr(MSG_CO_SLSkip);
+  slopt[4] = NULL;
 
-   if ((grp = VGroup,
-         MUIA_HelpNode, "CO04",
+  rropt[0] = tr(MSG_CO_MDN_ACTION_IGNORE);
+  rropt[1] = tr(MSG_CO_MDN_ACTION_SEND);
+  rropt[2] = tr(MSG_CO_MDN_ACTION_QUEUE);
+  rropt[3] = tr(MSG_CO_MDN_ACTION_ASK);
+  rropt[4] = NULL;
 
-         Child, HGroup,
+  ENTER();
+
+  obj = VGroup,
+          MUIA_HelpNode, "CO04",
+
+          Child, HGroup,
             Child, MakeImageObject("config_read_big"),
             Child, VGroup,
               Child, TextObject,
@@ -2071,106 +2083,176 @@ Object *CO_PageRead(struct CO_ClassData *data)
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
               End,
-           End,
-         End,
+            End,
+          End,
 
-         Child, RectangleObject,
+          Child, RectangleObject,
             MUIA_Rectangle_HBar, TRUE,
             MUIA_FixHeight,      4,
-         End,
+          End,
 
-         Child, ColGroup(3), GroupFrameT(tr(MSG_CO_HeaderLayout)),
-            Child, Label2(tr(MSG_CO_Header)),
-            Child, data->GUI.CY_HEADER = MakeCycle(headopt,tr(MSG_CO_Header)),
-            Child, data->GUI.ST_HEADERS = MakeString(SIZE_PATTERN, ""),
-            Child, Label1(tr(MSG_CO_SenderInfo)),
-            Child, data->GUI.CY_SENDERINFO = MakeCycle(siopt,tr(MSG_CO_SenderInfo)),
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_WRAPHEAD, tr(MSG_CO_WrapHeader)),
-         End,
-         Child, ColGroup(3), GroupFrameT(tr(MSG_CO_BodyLayout)),
-            Child, Label1(tr(MSG_CO_SignatureSep)),
-            Child, data->GUI.CY_SIGSEPLINE = MakeCycle(slopt,tr(MSG_CO_SignatureSep)),
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFEDIT, tr(MSG_CO_FixedFontEdit)),
-            Child, Label1(tr(MSG_CO_ColoredText)),
-            Child, data->GUI.CA_COLTEXT = PoppenObject, MUIA_CycleChain, 1, End,
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_ALLTEXTS, tr(MSG_CO_DisplayAll)),
-            Child, Label1(tr(MSG_CO_OldQuotes)),
-            Child, HGroup,
-              Child, data->GUI.CA_COL1QUOT = PoppenObject, MUIA_CycleChain, 1, End,
-              Child, data->GUI.CA_COL2QUOT = PoppenObject, MUIA_CycleChain, 1, End,
-              Child, data->GUI.CA_COL3QUOT = PoppenObject, MUIA_CycleChain, 1, End,
-              Child, data->GUI.CA_COL4QUOT = PoppenObject, MUIA_CycleChain, 1, End,
+          Child, ScrollgroupObject,
+            MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_Contents, VGroupV,
+
+            Child, ColGroup(3), GroupFrameT(tr(MSG_CO_HeaderLayout)),
+              Child, Label2(tr(MSG_CO_Header)),
+              Child, data->GUI.CY_HEADER = MakeCycle(headopt,tr(MSG_CO_Header)),
+              Child, data->GUI.ST_HEADERS = MakeString(SIZE_PATTERN, ""),
+              Child, Label1(tr(MSG_CO_SenderInfo)),
+              Child, data->GUI.CY_SENDERINFO = MakeCycle(siopt,tr(MSG_CO_SenderInfo)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_WRAPHEAD, tr(MSG_CO_WrapHeader)),
             End,
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTSTYLES, tr(MSG_CO_UseTextstyles)),
-            Child, Label1(tr(MSG_CO_URLCOLOR)),
-            Child, data->GUI.CA_COLURL = PoppenObject, MUIA_CycleChain, 1, End,
-            Child, HSpace(0),
-         End,
-         Child, VGroup, GroupFrameT(tr(MSG_CO_OtherOptions)),
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_MULTIWIN, tr(MSG_CO_MultiReadWin)),
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_EMBEDDEDREADPANE, tr(MSG_CO_SHOWEMBEDDEDREADPANE)),
-            Child, HGroup,
-               Child, data->GUI.CH_DELAYEDSTATUS = MakeCheck(tr(MSG_CO_ConfirmDelPart1)),
-               Child, Label2(tr(MSG_CO_SETSTATUSDELAYED1)),
-               Child, data->GUI.NB_DELAYEDSTATUS = NumericbuttonObject,
-                 MUIA_CycleChain,  TRUE,
-                 MUIA_Numeric_Min, 1,
-                 MUIA_Numeric_Max, 10,
-               End,
-               Child, Label2(tr(MSG_CO_SETSTATUSDELAYED2)),
-               Child, HSpace(0),
+
+            Child, ColGroup(3), GroupFrameT(tr(MSG_CO_BodyLayout)),
+              Child, Label1(tr(MSG_CO_SignatureSep)),
+              Child, data->GUI.CY_SIGSEPLINE = MakeCycle(slopt,tr(MSG_CO_SignatureSep)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFEDIT, tr(MSG_CO_FixedFontEdit)),
+              Child, Label1(tr(MSG_CO_ColoredText)),
+              Child, data->GUI.CA_COLTEXT = PoppenObject, MUIA_CycleChain, 1, End,
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_ALLTEXTS, tr(MSG_CO_DisplayAll)),
+              Child, Label1(tr(MSG_CO_OldQuotes)),
+              Child, HGroup,
+                Child, data->GUI.CA_COL1QUOT = PoppenObject, MUIA_CycleChain, 1, End,
+                Child, data->GUI.CA_COL2QUOT = PoppenObject, MUIA_CycleChain, 1, End,
+                Child, data->GUI.CA_COL3QUOT = PoppenObject, MUIA_CycleChain, 1, End,
+                Child, data->GUI.CA_COL4QUOT = PoppenObject, MUIA_CycleChain, 1, End,
+              End,
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTSTYLES, tr(MSG_CO_UseTextstyles)),
+              Child, Label1(tr(MSG_CO_URLCOLOR)),
+              Child, data->GUI.CA_COLURL = PoppenObject, MUIA_CycleChain, 1, End,
+              Child, HSpace(0),
             End,
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_CONVERTHTML, tr(MSG_CO_CONVERTHTML)),
-         End,
-         Child, HVSpace,
-      End))
-   {
-      set(data->GUI.ST_HEADERS, MUIA_Disabled, TRUE);
 
-      SetHelp(data->GUI.CY_HEADER,          MSG_HELP_CO_CY_HEADER);
-      SetHelp(data->GUI.ST_HEADERS,         MSG_HELP_CO_ST_HEADERS);
-      SetHelp(data->GUI.CY_SENDERINFO,      MSG_HELP_CO_CY_SENDERINFO);
-      SetHelp(data->GUI.CA_COLTEXT,         MSG_HELP_CO_CA_COLTEXT);
-      SetHelp(data->GUI.CA_COL1QUOT,        MSG_HELP_CO_CA_COL1QUOT);
-      SetHelp(data->GUI.CA_COL2QUOT,        MSG_HELP_CO_CA_COL2QUOT);
-      SetHelp(data->GUI.CA_COL3QUOT,        MSG_HELP_CO_CA_COL3QUOT);
-      SetHelp(data->GUI.CA_COL4QUOT,        MSG_HELP_CO_CA_COL4QUOT);
-      SetHelp(data->GUI.CA_COLURL,          MSG_HELP_CO_CA_COLURL);
-      SetHelp(data->GUI.CH_ALLTEXTS,        MSG_HELP_CO_CH_ALLTEXTS);
-      SetHelp(data->GUI.CH_MULTIWIN,        MSG_HELP_CO_CH_MULTIWIN);
-      SetHelp(data->GUI.CH_EMBEDDEDREADPANE,MSG_HELP_CO_CH_EMBEDDEDREADPANE);
-      SetHelp(data->GUI.CY_SIGSEPLINE,      MSG_HELP_CO_CY_SIGSEPLINE);
-      SetHelp(data->GUI.CH_FIXFEDIT,        MSG_HELP_CO_CH_FIXFEDIT);
-      SetHelp(data->GUI.CH_WRAPHEAD,        MSG_HELP_CO_CH_WRAPHEAD);
-      SetHelp(data->GUI.CH_TEXTSTYLES,      MSG_HELP_CO_CH_TEXTSTYLES);
-      SetHelp(data->GUI.CH_DELAYEDSTATUS,   MSG_HELP_CO_SETSTATUSDELAYED);
-      SetHelp(data->GUI.NB_DELAYEDSTATUS,   MSG_HELP_CO_SETSTATUSDELAYED);
-      SetHelp(data->GUI.CH_CONVERTHTML,     MSG_HELP_CO_CONVERTHTML);
+            Child, VGroup, GroupFrameT(tr(MSG_CO_MDN_TITLE)),
+              Child, ColGroup(2),
+                Child, LLabel(tr(MSG_CO_MDN_DESCRIPTION)),
+                Child, HSpace(0),
 
-      DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,0             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,TRUE);
-      DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,1             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,FALSE);
-      DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,2             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,TRUE);
-   }
+                Child, ColGroup(4),
+                  Child, HSpace(1),
+                  Child, data->GUI.CH_MDN_NEVER = MakeCheck(tr(MSG_CO_MDN_DISABLED)),
+                  Child, LLabel(tr(MSG_CO_MDN_DISABLED)),
+                  Child, HSpace(0),
 
-   return grp;
+                  Child, HSpace(1),
+                  Child, data->GUI.CH_MDN_ALLOW = MakeCheck(tr(MSG_CO_MDN_ENABLED)),
+                  Child, LLabel(tr(MSG_CO_MDN_ENABLED)),
+                  Child, HSpace(0),
+
+                  Child, HSpace(1),
+                  Child, HSpace(0),
+                  Child, LLabel(tr(MSG_CO_MDN_NORECIPIENT)),
+                  Child, data->GUI.CY_MDN_NORECIPIENT = MakeCycle(rropt, tr(MSG_CO_MDN_NORECIPIENT)),
+
+                  Child, HSpace(1),
+                  Child, HSpace(0),
+                  Child, LLabel(tr(MSG_CO_MDN_NODOMAIN)),
+                  Child, data->GUI.CY_MDN_NODOMAIN = MakeCycle(rropt, tr(MSG_CO_MDN_NODOMAIN)),
+
+                  Child, HSpace(1),
+                  Child, HSpace(0),
+                  Child, LLabel(tr(MSG_CO_MDN_DELETE)),
+                  Child, data->GUI.CY_MDN_DELETE = MakeCycle(rropt, tr(MSG_CO_MDN_DELETE)),
+
+                  Child, HSpace(1),
+                  Child, HSpace(0),
+                  Child, LLabel(tr(MSG_CO_MDN_OTHER)),
+                  Child, data->GUI.CY_MDN_OTHER = MakeCycle(rropt, tr(MSG_CO_MDN_OTHER)),
+
+                End,
+                Child, HSpace(0),
+
+              End,
+            End,
+
+            Child, VGroup, GroupFrameT(tr(MSG_CO_OtherOptions)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_MULTIWIN, tr(MSG_CO_MultiReadWin)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_EMBEDDEDREADPANE, tr(MSG_CO_SHOWEMBEDDEDREADPANE)),
+              Child, HGroup,
+                Child, data->GUI.CH_DELAYEDSTATUS = MakeCheck(tr(MSG_CO_SETSTATUSDELAYED1)),
+                Child, Label2(tr(MSG_CO_SETSTATUSDELAYED1)),
+                Child, data->GUI.NB_DELAYEDSTATUS = NumericbuttonObject,
+                  MUIA_CycleChain,  TRUE,
+                  MUIA_Numeric_Min, 1,
+                  MUIA_Numeric_Max, 10,
+                End,
+                Child, Label2(tr(MSG_CO_SETSTATUSDELAYED2)),
+                Child, HSpace(0),
+              End,
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_CONVERTHTML, tr(MSG_CO_CONVERTHTML)),
+            End,
+
+            Child, HVSpace,
+
+            End,
+          End,
+        End;
+
+  if(obj != NULL)
+  {
+    set(data->GUI.ST_HEADERS, MUIA_Disabled, TRUE);
+
+    SetHelp(data->GUI.CY_HEADER,          MSG_HELP_CO_CY_HEADER);
+    SetHelp(data->GUI.ST_HEADERS,         MSG_HELP_CO_ST_HEADERS);
+    SetHelp(data->GUI.CY_SENDERINFO,      MSG_HELP_CO_CY_SENDERINFO);
+    SetHelp(data->GUI.CA_COLTEXT,         MSG_HELP_CO_CA_COLTEXT);
+    SetHelp(data->GUI.CA_COL1QUOT,        MSG_HELP_CO_CA_COL1QUOT);
+    SetHelp(data->GUI.CA_COL2QUOT,        MSG_HELP_CO_CA_COL2QUOT);
+    SetHelp(data->GUI.CA_COL3QUOT,        MSG_HELP_CO_CA_COL3QUOT);
+    SetHelp(data->GUI.CA_COL4QUOT,        MSG_HELP_CO_CA_COL4QUOT);
+    SetHelp(data->GUI.CA_COLURL,          MSG_HELP_CO_CA_COLURL);
+    SetHelp(data->GUI.CH_ALLTEXTS,        MSG_HELP_CO_CH_ALLTEXTS);
+    SetHelp(data->GUI.CH_MULTIWIN,        MSG_HELP_CO_CH_MULTIWIN);
+    SetHelp(data->GUI.CH_EMBEDDEDREADPANE,MSG_HELP_CO_CH_EMBEDDEDREADPANE);
+    SetHelp(data->GUI.CY_SIGSEPLINE,      MSG_HELP_CO_CY_SIGSEPLINE);
+    SetHelp(data->GUI.CH_FIXFEDIT,        MSG_HELP_CO_CH_FIXFEDIT);
+    SetHelp(data->GUI.CH_WRAPHEAD,        MSG_HELP_CO_CH_WRAPHEAD);
+    SetHelp(data->GUI.CH_TEXTSTYLES,      MSG_HELP_CO_CH_TEXTSTYLES);
+    SetHelp(data->GUI.CH_DELAYEDSTATUS,   MSG_HELP_CO_SETSTATUSDELAYED);
+    SetHelp(data->GUI.NB_DELAYEDSTATUS,   MSG_HELP_CO_SETSTATUSDELAYED);
+    SetHelp(data->GUI.CH_CONVERTHTML,     MSG_HELP_CO_CONVERTHTML);
+    SetHelp(data->GUI.CH_MDN_NEVER,       MSG_HELP_CO_CH_MDN_NEVER);
+    SetHelp(data->GUI.CH_MDN_ALLOW,       MSG_HELP_CO_CH_MDN_ALLOW);
+    SetHelp(data->GUI.CY_MDN_NORECIPIENT, MSG_HELP_CO_CY_MDN_NORECIPIENT);
+    SetHelp(data->GUI.CY_MDN_NODOMAIN,    MSG_HELP_CO_CY_MDN_NODOMAIN);
+    SetHelp(data->GUI.CY_MDN_DELETE,      MSG_HELP_CO_CY_MDN_DELETE);
+    SetHelp(data->GUI.CY_MDN_OTHER,       MSG_HELP_CO_CY_MDN_OTHER);
+
+    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 0, data->GUI.ST_HEADERS, 3, MUIM_Set, MUIA_Disabled, TRUE);
+    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 1, data->GUI.ST_HEADERS, 3, MUIM_Set, MUIA_Disabled, FALSE);
+    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 2, data->GUI.ST_HEADERS, 3, MUIM_Set, MUIA_Disabled, TRUE);
+
+    // setup the MDN stuff
+    DoMethod(data->GUI.CH_MDN_NEVER, MUIM_Notify, MUIA_Selected, TRUE,  data->GUI.CH_MDN_ALLOW, 3, MUIM_NoNotifySet, MUIA_Selected, FALSE);
+    DoMethod(data->GUI.CH_MDN_NEVER, MUIM_Notify, MUIA_Selected, FALSE, data->GUI.CH_MDN_NEVER, 3, MUIM_NoNotifySet, MUIA_Selected, TRUE);
+    DoMethod(data->GUI.CH_MDN_ALLOW, MUIM_Notify, MUIA_Selected, TRUE,  data->GUI.CH_MDN_NEVER, 3, MUIM_NoNotifySet, MUIA_Selected, FALSE);
+    DoMethod(data->GUI.CH_MDN_ALLOW, MUIM_Notify, MUIA_Selected, FALSE, data->GUI.CH_MDN_ALLOW, 3, MUIM_NoNotifySet, MUIA_Selected, TRUE);
+
+  }
+
+  RETURN(obj);
+  return obj;
 }
 
 ///
 /// CO_PageWrite
 Object *CO_PageWrite(struct CO_ClassData *data)
 {
-   Object *grp;
-   static const char *wrapmode[4];
+  Object *obj;
+  static const char *wrapmode[4];
 
-   wrapmode[0] = tr(MSG_CO_EWOff);
-   wrapmode[1] = tr(MSG_CO_EWAsYouType);
-   wrapmode[2] = tr(MSG_CO_EWBeforeSend);
-   wrapmode[3] = NULL;
+  wrapmode[0] = tr(MSG_CO_EWOff);
+  wrapmode[1] = tr(MSG_CO_EWAsYouType);
+  wrapmode[2] = tr(MSG_CO_EWBeforeSend);
+  wrapmode[3] = NULL;
 
-   if ((grp = VGroup,
-         MUIA_HelpNode, "CO05",
+  ENTER();
 
-         Child, HGroup,
+  obj = VGroup,
+          MUIA_HelpNode, "CO05",
+
+          Child, HGroup,
             Child, MakeImageObject("config_write_big"),
             Child, VGroup,
               Child, TextObject,
@@ -2183,45 +2265,46 @@ Object *CO_PageWrite(struct CO_ClassData *data)
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_Weight,        100,
               End,
-           End,
-         End,
+            End,
+          End,
 
-         Child, RectangleObject,
+          Child, RectangleObject,
             MUIA_Rectangle_HBar, TRUE,
             MUIA_FixHeight,      4,
-         End,
+          End,
 
-         Child, ColGroup(2), GroupFrameT(tr(MSG_CO_MessageHeader)),
+          Child, ColGroup(2), GroupFrameT(tr(MSG_CO_MessageHeader)),
             Child, Label2(tr(MSG_CO_ReplyTo)),
             Child, MakeAddressField(&data->GUI.ST_REPLYTO, tr(MSG_CO_ReplyTo), MSG_HELP_CO_ST_REPLYTO, ABM_CONFIG, -1, TRUE),
             Child, Label2(tr(MSG_CO_Organization)),
             Child, data->GUI.ST_ORGAN = MakeString(SIZE_DEFAULT,tr(MSG_CO_Organization)),
             Child, Label2(tr(MSG_CO_ExtraHeaders)),
             Child, data->GUI.ST_EXTHEADER = MakeString(SIZE_LARGE,tr(MSG_CO_ExtraHeaders)),
-         End,
-         Child, VGroup, GroupFrameT(tr(MSG_CO_MessageBody)),
+          End,
+
+          Child, VGroup, GroupFrameT(tr(MSG_CO_MessageBody)),
             Child, ColGroup(2),
-               Child, Label2(tr(MSG_CO_Welcome)),
-               Child, data->GUI.ST_HELLOTEXT = MakeString(SIZE_INTRO,tr(MSG_CO_Welcome)),
-               Child, Label2(tr(MSG_CO_Greetings)),
-               Child, data->GUI.ST_BYETEXT = MakeString(SIZE_INTRO,tr(MSG_CO_Greetings)),
+              Child, Label2(tr(MSG_CO_Welcome)),
+              Child, data->GUI.ST_HELLOTEXT = MakeString(SIZE_INTRO,tr(MSG_CO_Welcome)),
+              Child, Label2(tr(MSG_CO_Greetings)),
+              Child, data->GUI.ST_BYETEXT = MakeString(SIZE_INTRO,tr(MSG_CO_Greetings)),
             End,
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_WARNSUBJECT, tr(MSG_CO_WARNSUBJECT)),
-         End,
-         Child, VGroup, GroupFrameT(tr(MSG_CO_Editor)),
+          End,
+
+          Child, VGroup, GroupFrameT(tr(MSG_CO_Editor)),
             Child, ColGroup(3),
-               Child, Label2(tr(MSG_CO_WordWrap)),
-               Child, data->GUI.ST_EDWRAP = MakeInteger(3, tr(MSG_CO_WordWrap)),
-               Child, data->GUI.CY_EDWRAP = MakeCycle(wrapmode, ""),
-               Child, Label2(tr(MSG_CO_ExternalEditor)),
-               Child, PopaslObject,
-                  MUIA_Popasl_Type     ,ASL_FileRequest,
-                  MUIA_Popstring_String,data->GUI.ST_EDITOR = MakeString(SIZE_PATHFILE,tr(MSG_CO_ExternalEditor)),
-                  MUIA_Popstring_Button,PopButton(MUII_PopFile),
-               End,
-               Child, MakeCheckGroup((Object **)&data->GUI.CH_LAUNCH, tr(MSG_CO_Launch)),
-               Child, Label2(tr(MSG_CO_NB_EMAILCACHE)),
-               Child, HGroup,
+              Child, Label2(tr(MSG_CO_WordWrap)),
+              Child, data->GUI.ST_EDWRAP = MakeInteger(3, tr(MSG_CO_WordWrap)),
+              Child, data->GUI.CY_EDWRAP = MakeCycle(wrapmode, ""),
+              Child, Label2(tr(MSG_CO_ExternalEditor)),
+              Child, PopaslObject,
+                MUIA_Popasl_Type     ,ASL_FileRequest,
+                MUIA_Popstring_String,data->GUI.ST_EDITOR = MakeString(SIZE_PATHFILE,tr(MSG_CO_ExternalEditor)),
+                MUIA_Popstring_Button,PopButton(MUII_PopFile),
+              End,
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_LAUNCH, tr(MSG_CO_Launch)),
+              Child, Label2(tr(MSG_CO_NB_EMAILCACHE)),
+              Child, HGroup,
                 Child, data->GUI.NB_EMAILCACHE = NumericbuttonObject,
                   MUIA_CycleChain,      TRUE,
                   MUIA_Numeric_Min,     0,
@@ -2229,10 +2312,10 @@ Object *CO_PageWrite(struct CO_ClassData *data)
                   MUIA_Numeric_Format,  tr(MSG_CO_NB_EMAILCACHEFMT),
                 End,
                 Child, HSpace(0),
-               End,
-               Child, HSpace(0),
-               Child, Label2(tr(MSG_CO_NB_AUTOSAVE)),
-               Child, HGroup,
+              End,
+              Child, HSpace(0),
+              Child, Label2(tr(MSG_CO_NB_AUTOSAVE)),
+              Child, HGroup,
                 Child, data->GUI.NB_AUTOSAVE = NumericbuttonObject,
                   MUIA_CycleChain,      TRUE,
                   MUIA_Numeric_Min,     0,
@@ -2240,28 +2323,39 @@ Object *CO_PageWrite(struct CO_ClassData *data)
                   MUIA_Numeric_Format,  tr(MSG_CO_NB_AUTOSAVEFMT),
                 End,
                 Child, HSpace(0),
-               End,
-               Child, HSpace(0),
+              End,
+              Child, HSpace(0),
             End,
-         End,
-         Child, HVSpace,
-      End))
-   {
-      SetHelp(data->GUI.ST_REPLYTO      ,MSG_HELP_CO_ST_REPLYTO     );
-      SetHelp(data->GUI.ST_ORGAN        ,MSG_HELP_CO_ST_ORGAN       );
-      SetHelp(data->GUI.ST_EXTHEADER    ,MSG_HELP_CO_ST_EXTHEADER   );
-      SetHelp(data->GUI.ST_HELLOTEXT    ,MSG_HELP_CO_ST_HELLOTEXT   );
-      SetHelp(data->GUI.ST_BYETEXT      ,MSG_HELP_CO_ST_BYETEXT     );
-      SetHelp(data->GUI.CH_WARNSUBJECT  ,MSG_HELP_CO_CH_WARNSUBJECT );
-      SetHelp(data->GUI.ST_EDWRAP       ,MSG_HELP_CO_ST_EDWRAP      );
-      SetHelp(data->GUI.CY_EDWRAP       ,MSG_HELP_CO_CY_EDWRAP      );
-      SetHelp(data->GUI.ST_EDITOR       ,MSG_HELP_CO_ST_EDITOR      );
-      SetHelp(data->GUI.CH_LAUNCH       ,MSG_HELP_CO_CH_LAUNCH      );
-      SetHelp(data->GUI.NB_EMAILCACHE   ,MSG_HELP_CO_NB_EMAILCACHE  );
-      SetHelp(data->GUI.NB_AUTOSAVE     ,MSG_HELP_CO_NB_AUTOSAVE    );
-   }
+          End,
 
-   return grp;
+          Child, VGroup, GroupFrameT(tr(MSG_CO_OtherOptions)),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_WARNSUBJECT, tr(MSG_CO_WARNSUBJECT)),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_REQUESTMDN, tr(MSG_CO_REQUESTMDN)),
+          End,
+
+          Child, HVSpace,
+
+        End;
+
+  if(obj != NULL)
+  {
+    SetHelp(data->GUI.ST_REPLYTO,     MSG_HELP_CO_ST_REPLYTO);
+    SetHelp(data->GUI.ST_ORGAN,       MSG_HELP_CO_ST_ORGAN);
+    SetHelp(data->GUI.ST_EXTHEADER,   MSG_HELP_CO_ST_EXTHEADER);
+    SetHelp(data->GUI.ST_HELLOTEXT,   MSG_HELP_CO_ST_HELLOTEXT);
+    SetHelp(data->GUI.ST_BYETEXT,     MSG_HELP_CO_ST_BYETEXT);
+    SetHelp(data->GUI.CH_WARNSUBJECT, MSG_HELP_CO_CH_WARNSUBJECT);
+    SetHelp(data->GUI.ST_EDWRAP,      MSG_HELP_CO_ST_EDWRAP);
+    SetHelp(data->GUI.CY_EDWRAP,      MSG_HELP_CO_CY_EDWRAP);
+    SetHelp(data->GUI.ST_EDITOR,      MSG_HELP_CO_ST_EDITOR);
+    SetHelp(data->GUI.CH_LAUNCH,      MSG_HELP_CO_CH_LAUNCH);
+    SetHelp(data->GUI.NB_EMAILCACHE,  MSG_HELP_CO_NB_EMAILCACHE);
+    SetHelp(data->GUI.NB_AUTOSAVE,    MSG_HELP_CO_NB_AUTOSAVE);
+    SetHelp(data->GUI.CH_REQUESTMDN,  MSG_HELP_CO_CH_REQUESTMDN);
+  }
+
+  RETURN(obj);
+  return obj;
 }
 
 ///
@@ -3119,27 +3213,6 @@ Object *CO_PageMixed(struct CO_ClassData *data)
                Child, MakeCheckGroup((Object **)&data->GUI.CH_REMOVE, tr(MSG_CO_Remove)),
                Child, MakeCheckGroup((Object **)&data->GUI.CH_SAVESENT, tr(MSG_CO_SaveSent)),
             End,
-           Child, VGroup, GroupFrameT(tr(MSG_CO_MDN)),
-               Child, ColGroup(6),
-                  Child, LLabel(tr(MSG_Display)),
-                  Child, LLabel(tr(MSG_Process)),
-                  Child, LLabel(tr(MSG_CO_Del)),
-                  Child, LLabel(tr(MSG_Filter)),
-                  Child, HSpace(0),
-                  Child, HSpace(0),
-                  Child, data->GUI.RA_MDN_DISP = RadioObject, MUIA_Radio_Entries, empty, MUIA_CycleChain, TRUE, End,
-                  Child, data->GUI.RA_MDN_PROC = RadioObject, MUIA_Radio_Entries, empty, MUIA_CycleChain, TRUE, End,
-                  Child, data->GUI.RA_MDN_DELE = RadioObject, MUIA_Radio_Entries, empty, MUIA_CycleChain, TRUE, End,
-                  Child, data->GUI.RA_MDN_RULE = RadioObject, MUIA_Radio_Entries, empty, MUIA_CycleChain, TRUE, End,
-                  Child, VGroup,
-                    Child, LLabel(tr(MSG_CO_DispIgnore)),
-                    Child, LLabel(tr(MSG_CO_DispAsk)),
-                    Child, LLabel(tr(MSG_CO_DispAccept)),
-                  End,
-                  Child, HSpace(0),
-               End,
-               Child, MakeCheckGroup((Object **)&data->GUI.CH_SEND_MDN, tr(MSG_CO_SendAtOnce)),
-            End,
             Child, HGroup, GroupFrameT(tr(MSG_CO_XPK)),
                Child, ColGroup(5),
                   Child, Label1(tr(MSG_CO_XPKPack)),
@@ -3172,11 +3245,6 @@ Object *CO_PageMixed(struct CO_ClassData *data)
       SetHelp(data->GUI.NB_CONFIRMDEL,MSG_HELP_CO_NB_CONFIRMDEL);
       SetHelp(data->GUI.CH_REMOVE    ,MSG_HELP_CO_CH_REMOVE    );
       SetHelp(data->GUI.CH_SAVESENT  ,MSG_HELP_CO_CH_SAVESENT  );
-      SetHelp(data->GUI.RA_MDN_DISP  ,MSG_HELP_CO_RA_MDN_DISP  );
-      SetHelp(data->GUI.RA_MDN_PROC  ,MSG_HELP_CO_RA_MDN_PROC  );
-      SetHelp(data->GUI.RA_MDN_DELE  ,MSG_HELP_CO_RA_MDN_DELE  );
-      SetHelp(data->GUI.RA_MDN_RULE  ,MSG_HELP_CO_RA_MDN_RULE  );
-      SetHelp(data->GUI.CH_SEND_MDN  ,MSG_HELP_CO_CH_SEND_MDN  );
       SetHelp(data->GUI.TX_ENCPACK   ,MSG_HELP_CO_TX_ENCPACK   );
       SetHelp(data->GUI.TX_PACKER    ,MSG_HELP_CO_TX_PACKER    );
       SetHelp(data->GUI.NB_ENCPACK   ,MSG_HELP_CO_NB_ENCPACK   );

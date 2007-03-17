@@ -37,43 +37,42 @@ struct AppMessage;
 
 struct WR_GUIData
 {
-   Object *WI;
-   Object *RG_PAGE;
-   Object *ST_TO;
-   Object *ST_SUBJECT;
-   Object *TX_POSI;
-   Object *TE_EDIT;
-   Object *TO_TOOLBAR;
-   Object *LV_ATTACH;
-   Object *BT_ADD;
-   Object *BT_ADDPACK;
-   Object *BT_DEL;
-   Object *BT_DISPLAY;
-   Object *RA_ENCODING;
-   Object *CY_CTYPE;
-   Object *ST_CTYPE;
-   Object *ST_DESC;
-   Object *ST_CC;
-   Object *ST_BCC;
-   Object *ST_FROM;
-   Object *ST_REPLYTO;
-   Object *ST_EXTHEADER;
-   Object *CH_DELSEND;
-   Object *CH_RECEIPT;
-   Object *CH_DISPNOTI;
-   Object *CH_ADDINFO;
-   Object *CY_IMPORTANCE;
-   Object *RA_SECURITY;
-   Object *CH_DEFSECURITY;
-   Object *RA_SIGNATURE;
-   Object *BT_HOLD;
-   Object *BT_QUEUE;
-   Object *BT_SEND;
-   Object *BT_CANCEL;
-   Object *MI_BOLD;
-   Object *MI_ITALIC;
-   Object *MI_UNDERLINE;
-   Object *MI_COLORED;
+  Object *WI;
+  Object *RG_PAGE;
+  Object *ST_TO;
+  Object *ST_SUBJECT;
+  Object *TX_POSI;
+  Object *TE_EDIT;
+  Object *TO_TOOLBAR;
+  Object *LV_ATTACH;
+  Object *BT_ADD;
+  Object *BT_ADDPACK;
+  Object *BT_DEL;
+  Object *BT_DISPLAY;
+  Object *RA_ENCODING;
+  Object *CY_CTYPE;
+  Object *ST_CTYPE;
+  Object *ST_DESC;
+  Object *ST_CC;
+  Object *ST_BCC;
+  Object *ST_FROM;
+  Object *ST_REPLYTO;
+  Object *ST_EXTHEADER;
+  Object *CH_DELSEND;
+  Object *CH_MDN;
+  Object *CH_ADDINFO;
+  Object *CY_IMPORTANCE;
+  Object *RA_SECURITY;
+  Object *CH_DEFSECURITY;
+  Object *RA_SIGNATURE;
+  Object *BT_HOLD;
+  Object *BT_QUEUE;
+  Object *BT_SEND;
+  Object *BT_CANCEL;
+  Object *MI_BOLD;
+  Object *MI_ITALIC;
+  Object *MI_UNDERLINE;
+  Object *MI_COLORED;
 };
 
 struct WR_ClassData  /* write window */
@@ -149,9 +148,9 @@ struct Compose
    struct Mail *      refMail;    // ptr to the original mail we composing a new one from.
    int                Mode;
    int                Importance;
-   int                Receipt;
-   int                ReportType;
    int                Signature;
+   BOOL               RequestMDN;  // should an MDN be requested
+   BOOL               GenerateMDN; // should and MDN report be generated?
    BOOL               DelSend;
    BOOL               UserInfo;
    enum Security      Security;
@@ -160,12 +159,6 @@ struct Compose
 
 // Soft-style modes for text
 enum SoftStyleMode { SSM_NORMAL, SSM_BOLD, SSM_ITALIC, SSM_UNDERLINE, SSM_COLOR };
-
-// flags & macros for the Receipt management
-#define RCPT_RETURN 1
-#define RCPT_MDN    2
-#define hasReturnRcptFlag(v)   (isFlagSet((v)->Receipt, RCPT_RETURN))
-#define hasMDNRcptFlag(v)      (isFlagSet((v)->Receipt, RCPT_MDN))
 
 extern struct Hook WR_EditHook;
 extern struct Hook WR_NewMailHook;
