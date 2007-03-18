@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (13.02.2007)
+## version $VER: YAM.catalog 6.0 (18.03.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -59,18 +59,6 @@ MSG_Edit
 Ändern...
 ; Edit...
 ;
-MSG_Display
-Anzeigen
-; Display
-;
-MSG_Filter
-Filtern
-; Filter
-;
-MSG_Process
-Verarbeiten
-; Process
-;
 MSG_Okay
 _Okay
 ; _Okay
@@ -82,10 +70,6 @@ _Benutzen
 MSG_Cancel
 _Abbrechen
 ; _Cancel
-;
-MSG_Yes
-_Ja
-; _Yes
 ;
 MSG_OkayReq
 *_Okay
@@ -790,11 +774,6 @@ MSG_MA_Project
 Projekt
 ; Project
 ;
-MSG_MA_About
-Über YAM
-; About YAM
-;This is the title of the about window, not the menu item.
-;
 MSG_MA_AboutMUI
 Über MUI...
 ; About MUI...
@@ -1320,7 +1299,7 @@ _Passwort
 ; _Password
 ;
 MSG_CO_TimeZone
-Zeitzone
+_Zeitzone
 ; Time zone
 ;
 MSG_CO_DaylightSaving
@@ -1990,26 +1969,6 @@ Nachrichten sofort _entfernen
 MSG_CO_SaveSent
 _Versandte Nachrichten speichern
 ; Sa_ve sent messages
-;
-MSG_CO_DispIgnore
-Ignorieren
-; Ignore
-;
-MSG_CO_DispAsk
-Nachfragen
-; Ask user
-;
-MSG_CO_DispAccept
-Akzeptieren
-; Accept
-;
-MSG_CO_MDN
-Nachrichtenverfolgung (MDN)
-; Message tracking
-;
-MSG_CO_SendAtOnce
-S_ofort senden
-; Send at _once
 ;
 MSG_CO_XPK
 XPK/LhA Einstellungen
@@ -2745,35 +2704,6 @@ MSG_HELP_CO_CH_SAVESENT
 Versandte Nachrichten im\nPostfach 'Gesendete' speichern
 ; Save sent messages in the 'Sent' folder
 ;
-MSG_HELP_CO_RA_MDN_DISP
-Versendet beim Lesen einer Nachricht\neinen Zustandsbericht an den Absender,\nfalls dieser es verlangt
-; When reading a message, send a\n\
-; disposition notification to the\n\
-; sender if requested
-;
-MSG_HELP_CO_RA_MDN_PROC
-Versendet beim Weiterleiten einer ungelesenen\nNachricht einen Zustandsbericht an den Absender,\nfalls dieser es verlangt
-; When forwarding a message, send a\n\
-; disposition notification to the\n\
-; sender if requested
-;
-MSG_HELP_CO_RA_MDN_DELE
-Versendet beim Löschen einer ungelesenen\nNachricht einen Zustandsbericht an den Absender,\nfalls dieser es verlangt
-; When deleting a message, send a\n\
-; disposition notification to the\n\
-; sender if requested
-;
-MSG_HELP_CO_RA_MDN_RULE
-Versendet beim Löschen oder Weiterleiten einer\nungelesenen Nachricht mittels Filter einen\nZustandsbericht an den Absender, falls verlangt
-; When deleting or forwarding a message using\n\
-; filters, send a disposition notification to the sender\n\
-; if requested
-;
-MSG_HELP_CO_CH_SEND_MDN
-Versucht den Zustandsbericht sofort\nnach dessen Generierung zu versenden
-; Try to send the disposition notification\n\
-; as soon as it is generated
-;
 MSG_HELP_CO_TX_ENCPACK
 XPK-Bibliothek für die Komprimierung\nund den Passwortschutz von Postfächern
 ; XPK library used to protect\n\
@@ -3476,22 +3406,6 @@ Die Nachricht\n%s\nwurde angezeigt.\nDies ist keine Garantie dafür, dass der Inh
 ; has been displayed.\n\
 ; This is no guarantee that the content has been read or understood.\n
 ;
-MSG_RE_MDNprocessed
-Die Nachricht\n%s\nwurde%s verarbeitet,\nohne dass sie dem Benutzer angezeigt wurde. Der Benutzer kann die\nNachricht unter Umständen zu einem späteren Zeitpunkt lesen.\n
-; The message\n\
-; %s\n\
-; has been processed%s,\n\
-; without being displayed to the user. The user may or may not see\n\
-; the message later.\n
-;
-MSG_RE_MDNdispatched
-Die Nachricht\n%s\nwurde%s weitergesendet,\nohne dass sie dem Benutzer angezeigt wurde. Der Benutzer kann die\nNachricht unter Umständen zu einem späteren Zeitpunkt lesen.\n
-; The message\n\
-; %s\n\
-; has been sent somewhere%s,\n\
-; without being displayed to the user. The user may or may not see\n\
-; the message later.\n
-;
 MSG_RE_MDNdeleted
 Die Nachricht\n%s\nwurde%s gelöscht,\nohne dass sie dem Benutzer angezeigt wurde. Der Benutzer kann die\nNachricht unter Umständen zu einem späteren Zeitpunkt \"entlöschen\"\nund lesen.\n
 ; The message\n\
@@ -3936,10 +3850,6 @@ MSG_WR_Receipt
 _Empfangsbestätigung
 ; _Return receipt
 ;
-MSG_WR_GetMDN
-Nachricht ver_folgen (MDN)
-; Track _message (MDN)
-;
 MSG_WR_AddInfo
 _Pers. Daten hinzufügen
 ; Add _personal info
@@ -4142,10 +4052,6 @@ MSG_WR_MReceipt
 Empfangsbestätigung
 ; Return receipt
 ;
-MSG_WR_MGetMDN
-Nachricht verfolgen (MDN)
-; Track message (MDN)
-;
 MSG_WR_MAddInfo
 Persönliche Daten hinzufügen
 ; Add personal information
@@ -4285,11 +4191,6 @@ MSG_HELP_WR_CH_RECEIPT
 Benachrichtigung bei\nerfolgreicher Auslieferung
 ; Get a notification on\n\
 ; successful delivery
-;
-MSG_HELP_WR_CH_DISPNOTI
-Benachrichtigung, wenn der Empfänger\ndie Nachricht liest oder verarbeitet
-; Get a notification if the recipient\n\
-; reads or processes the message
 ;
 MSG_HELP_WR_CH_ADDINFO
 Erzeuge Kopfzeilen, welche die Angaben aus\nIhrem eigenen Adressbucheintrag enthalten
@@ -5589,10 +5490,6 @@ MSG_CO_SMTPPass
 Passwo_rt
 ; Passwo_rd
 ;
-MSG_CO_Del
-Löschen
-; Delete
-;
 MSG_WR_AltQuoted
 Alternatives Zitat
 ; Alternate quoted
@@ -6373,7 +6270,7 @@ Aktiviert ein in das Hauptfenster eingebettetes Objekt\n\
 um dort Nachrichten direkt zu betrachten.
 ;
 MSG_CO_SETSTATUSDELAYED1
-Markiere angezeigte Nachricht als gelesen erst nach
+Markie_re angezeigte Nachricht als gelesen erst nach
 ;
 MSG_CO_SETSTATUSDELAYED2
 Sekunde(n)
@@ -6414,7 +6311,7 @@ MSG_RE_SImageOnly
 Nur Bild
 ;
 MSG_CO_CHARSETWARN_TITLE
-Zeichenkodierungswarnung
+Zeichenk_odierungswarnung
 ;
 MSG_CO_CHARSETWARN
 Die Zeichenkodierung von YAM ist momentan auf '%s'\n\
@@ -7054,7 +6951,7 @@ MSG_CTapplicationbz2
 BZIP2 Archiv
 ;
 MSG_CO_DETECT_CYRILLIC
-Autoerkennung kyrillischer Zeichensätze
+Autoerkennung k_yrillischer Zeichensätze
 ;
 MSG_HELP_CO_DETECT_CYRILLIC
 Versucht mittels einer automatischen\n\
@@ -7109,7 +7006,7 @@ Nachricht %%ld von %ld
 ; COUNT, COUNT
 ;
 MSG_CO_CONVERTHTML
-Konvertiere anzuzeigende HTML Teile in Kartext
+Kon_vertiere anzuzeigende HTML-Teile in Kartext
 ;
 MSG_HELP_CO_CONVERTHTML
 Konvertiert anzuzeigende HTML Teile einer Nachricht\n\
@@ -7282,7 +7179,7 @@ MSG_CO_SPAMFILTER_SUMMARY
 Konfigurieren Sie den Spam-Filter...
 ;
 MSG_CO_SPAM_FILTERFORNEWMAIL
-Neue Nachrichten auf Spam prüfen
+_Neue Nachrichten auf Spam prüfen
 ;
 MSG_CO_SPAM_RESETTRAININGDATA
 _Trainingsdaten zurücksetzen
@@ -7293,23 +7190,20 @@ Anzahl "Nicht-Spam"-klassifizierter Nachrichten
 MSG_CO_SPAM_BADCOUNT
 Anzahl "Spam"-klassifizierter Nachrichten
 ;
-MSG_CO_NB_SPAMPROBTHRESHOLDFMT
-%ld%%
-;
 MSG_BUSYFLUSHINGSPAMTRAININGDATA
 Speichere Trainingsdata des Spam-Filters...
 ;
 MSG_CO_SPAM_MARKONMOVE
-Mails beim Verschieben in den Spam-Ordner als Spam markieren
+Mails beim _Verschieben in den Spam-Ordner als Spam markieren
 ;
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
-Mails mit Absenderadresse im Adressbuch sind kein Spam
+Mails mit Absenderadresse i_m Adressbuch sind kein Spam
 ;
 MSG_CO_SPAM_RECOGNITION
 Spam-Erkennung
 ;
 MSG_CO_SPAM_FILTERENABLED
-Spam-Filter aktiv
+S_pam-Filter aktiv
 ;
 MSG_CO_SPAM_RESETTRAININGDATAASK
 Wollen Sie wirklich die Trainingsdaten des\n\
@@ -7561,7 +7455,52 @@ MSG_WR_AUTOWRAP
 Zeilenumbruch
 ;
 MSG_CO_SPAM_MARK_AS_READ
-Spam-Mails als gelesen markieren
+Spam-Mails als _gelesen markieren
+;
+MSG_HELP_CH_SPAMFILTERENABLED
+Aktiviert den Spam-Filter innerhalb von YAM.\n\
+Dieser erkennt automatisch Werbeemails und\n\
+reagiert hieraus entsprechend.
+;
+MSG_HELP_TX_SPAMBADCOUNT
+Zeigt die Menge manuell klassifizierter "Spam"\n\
+Nachrichten an.
+;
+MSG_HELP_TX_SPAMGOODCOUNT
+Zeigt die Menge manuell klassifizierter\n\
+"Nicht-Spam" Nachrichten (sog. "Ham") an.
+;
+MSG_HELP_BT_SPAMRESETTRAININGDATA
+Erlaubt es die Spam-Filter Trainingsdaten manuell\n\
+zurückzusetzen. Dies ist jedoch nur in seltenen\n\
+Fällen notwendig bzw. von nutzen.
+;
+MSG_HELP_CH_SPAMFILTERFORNEWMAIL
+Wenn aktiviert, werden eingehende Nachrichten\n\
+automatisch auf ihren Spamgehalt hin überprüft.
+;
+MSG_HELP_CH_SPAMABOOKISWHITELIST
+Wenn aktiviert, werden Nachrichten die von einer\n\
+Person kommen die sich in Ihrem Addressbuch befindet,\n\
+automatisch als unbedenklich erkannt.
+;
+MSG_HELP_CH_SPAMMARKONMOVE
+Wenn aktiviert, werden Nachrichten die manuell\n\
+in den Spam-Ordner verschoben werden auch als\n\
+Spam klassifiziert.
+;
+MSG_HELP_CH_SPAMMARKASREAD
+Wenn aktiviert, werden Spam Nachrichten automatisch\n\
+als gelesen markiert.
+;
+MSG_HELP_CH_UPDATECHECK
+Erlaubt es den automatischen Software-Update\n\
+Mechanismus in YAM zu aktivieren. Anhand des\n\
+spezifizierten Intervalles wird dann periodisch\n\
+nach Updates über das Internet gesucht.
+;
+MSG_WR_SELECTALL
+Alles auswählen
 ;
 MSG_RE_MDN_ACCEPT_LATER
 Akzeptieren und\n\
@@ -7576,4 +7515,74 @@ Ignorieren
 ;
 MSG_RE_MDN_IGNORE_ALL
 Alle ignorieren
+;
+MSG_CO_MDN_ACTION_IGNORE
+Nie senden
+;
+MSG_CO_MDN_ACTION_SEND
+Sofort senden
+;
+MSG_CO_MDN_ACTION_QUEUE
+Später senden
+;
+MSG_CO_MDN_ACTION_ASK
+Fragen
+;
+MSG_CO_MDN_TITLE
+Empfangsbestätigungen
+;
+MSG_CO_MDN_DESCRIPTION
+Wenn aufgefordert wird, eine Empfangsbestätigung zu senden:
+;
+MSG_CO_MDN_DISABLED
+_Nie eine Empfangsbestätigung senden
+;
+MSG_CO_MDN_ENABLED
+Bei manc_hen Nachrichten Empfangsbestätigungen erlauben
+;
+MSG_CO_MDN_NORECIPIENT
+Wenn ich nicht in der An- oder _CC-Zeile der Nachricht stehe:
+;
+MSG_CO_MDN_NODOMAIN
+Wenn der Absender außerhalb meiner _Domain ist:
+;
+MSG_CO_MDN_DELETE
+Wenn ich die Nachricht nur l_ösche:
+;
+MSG_CO_MDN_OTHER
+In allen anderen _Fällen:
+;
+MSG_CO_REQUESTMDN
+Bei_m Senden von Nachrichten immer eine Empfangsbestätigung anfordern
+;
+MSG_HELP_CO_CH_REQUESTMDN
+Wenn aktiviert, wird die Empfangsbestätigungs-\n\
+Option im Schreibfenster standardmäßig benutzt.
+;
+MSG_HELP_CO_CH_MDN_NEVER
+Wenn aktiviert, wird keinerlei Empfangsbestätigung\n\
+versendet. Auch wenn explizit angefordert.
+;
+MSG_HELP_CO_CH_MDN_ALLOW
+Wenn aktiviert, wird eine Empfangsbestätigung\n\
+anhand der selektierten Optionen versandt.
+;
+MSG_HELP_CO_CY_MDN_NORECIPIENT
+Wenn die eigene Mailadresse nicht in der An- oder\n\
+CC-Zeile der Nachricht wiederfindet wird wie\n\
+konfiguriert verfahren.
+;
+MSG_HELP_CO_CY_MDN_NODOMAIN
+Wenn die Domain des Absenders nicht mit\n\
+der eigenen übereinstimmt wird wie\n\
+konfiguriert verfahren.
+;
+MSG_HELP_CO_CY_MDN_DELETE
+Wenn die Nachricht ohne gelesen zu werden\n\
+gelöscht wird, wird wie konfiguriert verfahren.
+;
+MSG_HELP_CO_CY_MDN_OTHER
+Wenn keiner der anderen Fälle zutrifft\n\
+wird mit Anforderungen für eine Empfangs-\n\
+bestätigung wie hier konfiguriert verfahren.
 ;

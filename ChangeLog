@@ -7,6 +7,9 @@ $URL$
 
 2007-03-17  Jens Langner <Jens.Langner@light-speed.de>
 
+  * locale/deutsch.ct: updated to latest changes in YAM.cd and cleaned
+    up certain key shortcuts.
+  * locale/YAM.cd: general cleanups
   * YAM_RE.c: reworked the HandleMDNReport() function for displaying MDN
     reports localized. In addition "message/#?" content-type parts will now
     be treated as printable parts and therefore shown inline if the
