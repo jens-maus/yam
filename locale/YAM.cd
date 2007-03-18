@@ -1002,7 +1002,7 @@ MSG_CO_Password (347//)
 _Password
 ;
 MSG_CO_TimeZone (348//)
-Time zone
+Time _zone
 ;
 MSG_CO_DaylightSaving (349//)
 _Add adjustment for daylight saving time
@@ -2631,20 +2631,6 @@ The message\n\
 %s\n\
 has been displayed.\n\
 This is no guarantee that the content has been read or understood.\n
-;
-MSG_RE_MDNprocessed (855//)
-The message\n\
-%s\n\
-has been processed%s,\n\
-without being displayed to the user. The user may or may not see\n\
-the message later.\n
-;
-MSG_RE_MDNdispatched (856//)
-The message\n\
-%s\n\
-has been sent somewhere%s,\n\
-without being displayed to the user. The user may or may not see\n\
-the message later.\n
 ;
 MSG_RE_MDNdeleted (857//)
 The message\n\
@@ -5168,7 +5154,7 @@ MSG_CO_SYSTEMSETTINGS (1610//)
 System Settings
 ;
 MSG_CO_DEFAULTCHARSET (1611//)
-Charset
+C_harset
 ;
 MSG_CO_CHARSETUNKNOWNWARN (1612//)
 The charset configured for YAM is '%s' but isn't\n\
@@ -5501,7 +5487,7 @@ MSG_CTapplicationbz2 (1705//)
 BZIP2 archive
 ;
 MSG_CO_DETECT_CYRILLIC (1706//)
-Auto-detect cyrillic charsets
+Auto-detect c_yrillic charsets
 ;
 MSG_HELP_CO_DETECT_CYRILLIC (1707//)
 Tries to use the auto-detect feature\n\
@@ -5727,7 +5713,7 @@ MSG_CO_SPAMFILTER_SUMMARY (1764//)
 Configure spam filter...
 ;
 MSG_CO_SPAM_FILTERFORNEWMAIL (1765//)
-Check new mails for spam content
+Check _new mails for spam content
 ;
 MSG_CO_SPAM_RESETTRAININGDATA (1766//)
 _Reset training data
@@ -5742,16 +5728,16 @@ MSG_BUSYFLUSHINGSPAMTRAININGDATA (1771//)
 Flushing spam training data...
 ;
 MSG_CO_SPAM_MARKONMOVE (1772//)
-Mark mails as spam when moved to the spam folder
+Mark mails as spam when _moved to the spam folder
 ;
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST (1773//)
-Address book is white list
+Address book is _white list
 ;
 MSG_CO_SPAM_RECOGNITION (1774//)
 Spam recognition
 ;
 MSG_CO_SPAM_FILTERENABLED (1775//)
-Spam filter enabled
+S_pam filter enabled
 ;
 MSG_CO_SPAM_RESETTRAININGDATAASK (1776//)
 Do you really want to reset the spam filter's\n\
@@ -6004,7 +5990,7 @@ MSG_WR_AUTOWRAP (1850//)
 Word-wrap
 ;
 MSG_CO_SPAM_MARK_AS_READ (1851//)
-Mark spam mails as read
+Mark spam mai_ls as read
 ;
 MSG_HELP_CH_SPAMFILTERENABLED (1852//)
 Enables the Spam filter engine in YAM which\n\

@@ -80,7 +80,7 @@ for ctfile in $CTFILES; do
   echo "Scanning $ctfile for orphaned catalogs IDs:"
   CTTAGS=`awk '/^MSG_/ { print $1 }' $ctfile | xargs` 
   for cttag in $CTTAGS; do
-    echo "$MSGTAGS" | grep "$cttag" >/dev/null
+    echo "$MSGTAGS " | grep -E "$cttag " >/dev/null
     if [ $? == 1 ]; then
       echo "'$cttag' is orphaned"
     fi
@@ -94,7 +94,7 @@ for ctfile in $CTFILES; do
   echo ""
   echo "Scanning $ctfile for missing catalogs IDs:"
   for tag in $MSGTAGS; do
-    grep "$tag" $ctfile >/dev/null
+    grep -E "$tag" $ctfile >/dev/null
     if [ $? == 1 ]; then
       echo "'$tag' is missing"
     fi
