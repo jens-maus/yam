@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 6.0 (18.02.2007)
+## version $VER: YAM.catalog 6.0 (18.03.2007)
 ## language français
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 2683 2007-01-22 20:12:48Z
+; based on YAM.cd 2731 2007-03-18 00:18:07Z
 ;
 ; General
 ;
@@ -59,18 +59,6 @@ MSG_Edit
 Éditer...
 ; Edit...
 ;
-MSG_Display
-Affiché
-; Display
-;
-MSG_Filter
-Filtré
-; Filter
-;
-MSG_Process
-Modifié
-; Process
-;
 MSG_Okay
 _Ok
 ; _Okay
@@ -82,10 +70,6 @@ _Utiliser
 MSG_Cancel
 _Annuler
 ; _Cancel
-;
-MSG_Yes
-_Oui
-; _Yes
 ;
 MSG_OkayReq
 *_Ok
@@ -794,11 +778,6 @@ MSG_MA_Project
 Projet
 ; Project
 ;
-MSG_MA_About
-À propos de YAM
-; About YAM
-;This is the title of the about window, not the menu item.
-;
 MSG_MA_AboutMUI
 À propos de MUI...
 ; About MUI...
@@ -1342,8 +1321,8 @@ Mo_t de passe
 ; _Password
 ;
 MSG_CO_TimeZone
-Fuseau horaire
-; Time zone
+Fuseau _horaire
+; Time _zone
 ;
 MSG_CO_DaylightSaving
 _Correction de l'heure d'été
@@ -1622,7 +1601,7 @@ Sig_nature séparée
 ; Separate si_g.
 ;
 MSG_CO_ColoredText
-Texte en couleur
+Texte en c_ouleur
 ; Colored text
 ;
 MSG_CO_MultiReadWin
@@ -1650,8 +1629,8 @@ P_rogramme
 ; _Viewer
 ;
 MSG_CO_Extension
-E_xtension
-; File e_xtension
+E_xtensions
+; File e_xtensions
 ;
 MSG_CO_DefaultViewer
 Prog par _défaut
@@ -2012,30 +1991,6 @@ Effacer les _messages immédiatement
 MSG_CO_SaveSent
 Sau_ver les messages envoyés
 ; Sa_ve sent messages
-;
-MSG_CO_DispIgnore
-Ignorer
-; Ignore
-;
-MSG_CO_DispDeny
-Refuser automatiquement
-; Autodeny
-;
-MSG_CO_DispAsk
-Demander utilisateur
-; Ask user
-;
-MSG_CO_DispAccept
-Accepter
-; Accept
-;
-MSG_CO_MDN
-Trace du message
-; Message tracking
-;
-MSG_CO_SendAtOnce
-Envoyer _immédiatement
-; Send at _once
 ;
 MSG_CO_XPK
 Réglages XPK/LHA
@@ -2891,44 +2846,6 @@ Archive les messages envoyés\n\
 situés dans le dossier « Envoyés »
 ; Save sent messages in the 'Sent' folder
 ;
-MSG_HELP_CO_RA_MDN_DISP
-Envoie un accusé de réception\n\
-à la lecture d'un nouveau message,\n\
-si l'expéditeur l'a demandé.
-; When reading a message, send a\n\
-; disposition notification to the\n\
-; sender if requested
-;
-MSG_HELP_CO_RA_MDN_PROC
-Envoie une notification à l'expéditeur d'origine\n\
-en cas de message retransmis directement,\n\
-si l'expéditeur l'a demandé.
-; When forwarding a message, send a\n\
-; disposition notification to the\n\
-; sender if requested
-;
-MSG_HELP_CO_RA_MDN_DELE
-Envoie une notification à l'expéditeur\n\
-en cas de suppression d'un message,\n\
-si celui-ci l'a demandé.
-; When deleting a message, send a\n\
-; disposition notification to the\n\
-; sender if requested
-;
-MSG_HELP_CO_RA_MDN_RULE
-Envoie une notification à l'expéditeur\n\
-en cas de message retransmis ou effacé\n\
-par l'usage d'un filtre, si celui-ci l'a demandé.
-; When deleting or forwarding a message using\n\
-; filters, send a disposition notification to the sender\n\
-; if requested
-;
-MSG_HELP_CO_CH_SEND_MDN
-Essaie d'envoyer l'accusé de réception\n\
-ou la notification dès sa création.
-; Try to send the disposition notification\n\
-; as soon as it is generated
-;
 MSG_HELP_CO_TX_ENCPACK
 Bibliothèque XPK utilisée pour\n\
 protéger et compresser les dossiers
@@ -3542,30 +3459,12 @@ Annule les changements
 ;
 ; Module RE - Procedures
 ;
-MSG_RE_MDNGads1
-Accepter et\n\
-envoyer plus tard|Refuser et\n\
-envoyer plus tard
-; Accept and\n\
-; send later|Deny and\n\
-; send later
-;
-MSG_RE_MDNGads2
-|Accepter et\n\
-envoyer maintenant|Refuser et\n\
-envoyer maintenant
-; |Accept and\n\
-; send now|Deny and\n\
-; send now
-;
-MSG_RE_MDNGads3
-|Ignorer
-; |Ignore
-;
 MSG_RE_MDNReq
 L'expéditeur de ce message demande un accusé de réception (MDN).\n\
 Que voulez-vous faire ?
-; The sender of this message requests a disposition notification (MDN).\n\
+; The sender of this message requests\n\
+; a return receipt.\n\
+; \n\
 ; What do you want to do?
 ;
 MSG_RE_SaveMessage
@@ -3705,29 +3604,6 @@ Ceci ne garanti pas que le contenu ai été lu ou compris.\n
 ; has been displayed.\n\
 ; This is no guarantee that the content has been read or understood.\n
 ;
-MSG_RE_MDNprocessed
-Le message\n\
-%s\n\
-a subit une action (%s)\n\
-sans avoir été affiché. L'utilisateur\n\
-lira peut-être le message plus tard.
-; The message\n\
-; %s\n\
-; has been processed%s,\n\
-; without being displayed to the user. The user may or may not see\n\
-; the message later.\n
-;
-MSG_RE_MDNdispatched
-Le message\n\
-%s\n\
-a été envoyé à quelqu'un (%s) sans avoir été lu.\n\
-L'utilisateur lira peut-être le message plus tard.
-; The message\n\
-; %s\n\
-; has been sent somewhere%s,\n\
-; without being displayed to the user. The user may or may not see\n\
-; the message later.\n
-;
 MSG_RE_MDNdeleted
 Le message\n\
 %s\n\
@@ -3740,14 +3616,6 @@ plus tard en utilisant la fonction de récupération.\n
 ; has been deleted%s.\n\
 ; The recipient may or may not have seen the message. The recipient\n\
 ; may \"undelete\" the message at a later time and read the message.\n
-;
-MSG_RE_MDNdenied
-Le destinataire du message :\n\
-%s\n\
-ne souhaite pas vous informer sur le suivi de ce message.\n
-; The recipient of the message\n\
-; %s\n\
-; doesn't wish to inform you about the disposition of that message.\n
 ;
 MSG_RE_MDNunknown
 Le message\n\
@@ -4207,10 +4075,6 @@ MSG_WR_Receipt
 Accusé de _réception
 ; _Return receipt
 ;
-MSG_WR_GetMDN
-Suivre le _message (MDN)
-; Track _message (MDN)
-;
 MSG_WR_AddInfo
 Insérer données _perso.
 ; Add _personal info
@@ -4413,10 +4277,6 @@ MSG_WR_MReceipt
 Accusé de réception
 ; Return receipt
 ;
-MSG_WR_MGetMDN
-Suivre le message
-; Track message (MDN)
-;
 MSG_WR_MAddInfo
 Insérer données personnelles
 ; Add personal information
@@ -4577,12 +4437,6 @@ Retourne une notification en\n\
 cas de bonne réception
 ; Get a notification on\n\
 ; successful delivery
-;
-MSG_HELP_WR_CH_DISPNOTI
-Retourne un accusé de réception si le\n\
-destinataire lit ou utilise le message
-; Get a notification if the recipient\n\
-; reads or processes the message
 ;
 MSG_HELP_WR_CH_ADDINFO
 Crée un champ dans l'en-tête, contenant vos données\n\
@@ -5929,10 +5783,6 @@ un nouveau courrier sur une liste de discussions.
 ; Use this 'Reply-To:' address when\n\
 ; posting new mails to the list
 ;
-MSG_RE_MDNGads4
-|Ignorer tout
-; |Ignore all
-;
 MSG_EA_DefSecurity
 Sé_curité
 ; Sec_urity
@@ -5967,10 +5817,6 @@ I_D utilisateur
 MSG_CO_SMTPPass
 M_ot de passe
 ; Passwo_rd
-;
-MSG_CO_Del
-Supprimé
-; Delete
 ;
 MSG_WR_AltQuoted
 Citation externe
@@ -6520,7 +6366,7 @@ des citations de 4ème rang.
 ; Color used for displaying 4th level quotes
 ;
 MSG_CO_URLCOLOR
-Couleur des URL
+_Couleur des URL
 ; URL color
 ;
 MSG_HELP_CO_CA_COLURL
@@ -6816,7 +6662,7 @@ support AmiSSL n'est pas disponible actuellement.
 ; currently not available.
 ;
 MSG_CO_SHOWEMBEDDEDREADPANE
-Volet de visualisation dans fenêtre _princiaple
+_Volet de visualisation dans fenêtre princiaple
 ; Embedded mail read _pane in main window
 ;
 MSG_HELP_CO_CH_EMBEDDEDREADPANE
@@ -6826,8 +6672,8 @@ directement dans la fenêtre principale.
 ; in the main window.
 ;
 MSG_CO_SETSTATUSDELAYED1
-Marquer le message affiché comme « lu » après
-; Delay marking of displayed mail as read for
+_Marquer le message affiché comme « lu » après
+; Delay mar_king of displayed mail as read for
 ;
 MSG_CO_SETSTATUSDELAYED2
 seconde(s)
@@ -7293,8 +7139,8 @@ Configuration système
 ; System Settings
 ;
 MSG_CO_DEFAULTCHARSET
-Jeu de caractères par défaut
-; Default Charset
+Jeu de caractères
+; C_harset
 ;
 MSG_CO_CHARSETUNKNOWNWARN
 Le jeu de caractères configuré dans YAM est '%s' qui n'est\n\
@@ -7768,8 +7614,8 @@ Archive BZIP2
 ; BZIP2 archive
 ;
 MSG_CO_DETECT_CYRILLIC
-Auto-détection des caractères cyrilliques
-; Auto-detect cyrillic charsets
+Auto-détection des caractères c_yrilliques
+; Auto-detect c_yrillic charsets
 ;
 MSG_HELP_CO_DETECT_CYRILLIC
 Tente d'utiliser la fonctionnalité\n\
@@ -7854,8 +7700,8 @@ Message %%ld sur %ld
 ; COUNT, COUNT
 ;
 MSG_CO_CONVERTHTML
-Convertir les parties HTML affichables du message en texte brut
-; Convert viewable HTML message parts to plain text
+Convertir en texte brut les parties _HTML affichables du message
+; Con_vert viewable HTML message parts to plain text
 ;
 MSG_HELP_CO_CONVERTHTML
 Si un mail contient des parties HTML affichables comme\n\
@@ -7942,8 +7788,8 @@ Pièce jointe #%ld
 ; Attachment/MIME part #%ld
 ;
 MSG_CO_PGPPASSINTERVAL1
-Mémorise la phrase secrète pendant
-; Remember passphrase for
+Mémorise la phrase s_ecrète pendant
+; Remem_ber passphrase for
 ;
 MSG_CO_PGPPASSINTERVAL2
 minute(s) d'inactivités
@@ -7963,7 +7809,7 @@ Demande de phrase secrête PGP
 ; PGP passphrase request
 ;
 MSG_CO_GR_REPLYFORWARD
-Répondre/Transférer
+Réponse/Transfert
 ; Reply/Forward
 ;
 MSG_CO_GR_SCRIPTS
@@ -8104,8 +7950,8 @@ Pour configurer le filtrage des courriers indésirables...
 ; Configure spam filter...
 ;
 MSG_CO_SPAM_FILTERFORNEWMAIL
-Filtrer les contenus indésirables des nouveaux courriers
-; Check new mails for spam content
+_Filtrer les contenus indésirables des nouveaux courriers
+; Check _new mails for spam content
 ;
 MSG_CO_SPAM_RESETTRAININGDATA
 _Réinitialiser l'apprentissage
@@ -8119,29 +7965,25 @@ MSG_CO_SPAM_BADCOUNT
 Nombre de courriers classés comme « indésirables »
 ; Number of "spam" classified mails
 ;
-MSG_CO_NB_SPAMPROBTHRESHOLDFMT
-%ld%%
-; %ld%%
-;
 MSG_BUSYFLUSHINGSPAMTRAININGDATA
 Nettoyage de l'apprentissage des indésirables...
 ; Flushing spam training data...
 ;
 MSG_CO_SPAM_MARKONMOVE
-Marquer comme indésirables les courriers déplacés vers le dossier 'Indésirable'
-; Mark mails as spam when moved to the spam folder
+_Marquer comme indésirables les courriers déplacés vers le dossier 'Indésirable'
+; Mark mails as spam when _moved to the spam folder
 ;
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
-Le carnet d'adresse est une liste blanche
-; Address book is white list
+Le carnet d'adresse est une liste _blanche
+; Address book is _white list
 ;
 MSG_CO_SPAM_RECOGNITION
 Reconnaissance des courriers indésirables
 ; Spam recognition
 ;
 MSG_CO_SPAM_FILTERENABLED
-Activer le filtrage des courriers indésirables
-; Spam filter enabled
+A_ctiver le filtrage des courriers indésirables
+; S_pam filter enabled
 ;
 MSG_CO_SPAM_RESETTRAININGDATAASK
 Voulez-vous réellement réinitialiser les\n\
@@ -8501,9 +8343,8 @@ Retour automatique à la ligne
 ; Word-wrap
 ;
 MSG_CO_SPAM_MARK_AS_READ
-Marquer les courriers indésirables comme lus
-; Mark spam mails as read
-;
+Marquer les courriers indésirables comme _lus
+; Mark spam mai_ls as read
 ;
 MSG_HELP_CH_SPAMFILTERENABLED
 Active le moteur de filtre des indésirables de YAM qui\n\
@@ -8511,20 +8352,17 @@ permet d'écarter les courriers publicitaires abusifs.
 ; Enables the Spam filter engine in YAM which\n\
 ; allows to filter out abusive advertising emails.
 ;
-;
 MSG_HELP_TX_SPAMBADCOUNT
 Indique le nombre de courriers manuellement\n\
 identifiés comme étant indésirables.
 ; Shows the amount of manually classified "Spam"\n\
 ; emails.
 ;
-;
 MSG_HELP_TX_SPAMGOODCOUNT
 Indique le nombre de courriers manuellement\n\
 identifiés comme étant acceptables.
 ; Shows the amount of manually classified "Not-Spam"\n\
 ; emails - also known as "Ham".
-;
 ;
 MSG_HELP_BT_SPAMRESETTRAININGDATA
 Permet de manuellement réinitialiser la totalité de\n\
@@ -8535,13 +8373,11 @@ dans de très rares cas.
 ; training data. Please note that this might only\n\
 ; be necessary in very rare cases.
 ;
-;
 MSG_HELP_CH_SPAMFILTERFORNEWMAIL
 Avec cette option, les nouveaux courriers entrants sont\n\
 automatiquement analysés pour filtrer les indésirables.
 ; If checked, incoming new mails will be automatically\n\
 ; checked for their "Spam" classification.
-;
 ;
 MSG_HELP_CH_SPAMABOOKISWHITELIST
 Avec cette option, les courriers provenant d'expéditeurs\n\
@@ -8551,7 +8387,6 @@ considérés comme des courriers indésirables.
 ; found in the addressbook will not considered to be\n\
 ; spam mails.
 ;
-;
 MSG_HELP_CH_SPAMMARKONMOVE
 Avec cette option, les courriers manuellement déplacés\n\
 dans le dossier « Indésirables » seront automatiquement\n\
@@ -8560,7 +8395,6 @@ marqués comme étant indésirables.
 ; spam mails if they are manually dropped into the\n\
 ; spam folder.
 ;
-;
 MSG_HELP_CH_SPAMMARKASREAD
 Avec cette option, les courriers indésirables seront\n\
 autmatiquement marqués comme lus et ne seront donc pas\n\
@@ -8568,7 +8402,6 @@ portés à l'attention de l'utilisateur.
 ; If checked, spam mail will be automatically flagged\n\
 ; as read and therefore not raise attention to the\n\
 ; user.
-;
 ;
 MSG_HELP_CH_UPDATECHECK
 Cette option active le mécanisme de vérification\n\
@@ -8582,4 +8415,130 @@ et avertira l'utilisateur des mises à jour logicielles.
 ; the internet and remind you of available software\n\
 ; updates.
 ;
+MSG_WR_SELECTALL
+Tout sélectionner
+; Select All
+;
+MSG_RE_MDN_ACCEPT_LATER
+Accepter et\n\envoyer plus tard
+; Accept and\n\
+; send later
+;
+MSG_RE_MDN_ACCEPT_NOW
+Accepter et\n\envoyer maintenant
+; Accept and\n\
+; send now
+;
+MSG_RE_MDN_IGNORE
+Ignorer
+; Ignore
+;
+MSG_RE_MDN_IGNORE_ALL
+Ignorer tout
+; Ignore all
+;
+MSG_CO_MDN_ACTION_IGNORE
+Ne jamais envoyer
+; Never send
+;
+MSG_CO_MDN_ACTION_SEND
+Toujours envoyer
+; Always send
+;
+MSG_CO_MDN_ACTION_QUEUE
+Toujours empiler
+; Always queue
+;
+MSG_CO_MDN_ACTION_ASK
+Me demander
+; Ask me
+;
+MSG_CO_MDN_TITLE
+Accusés réception
+; Return Receipts
+;
+MSG_CO_MDN_DESCRIPTION
+Lorsque je reçois un demande d'accusé de réception :
+; When I receive a request for a return receipt:
+;
+MSG_CO_MDN_DISABLED
+_Ne jamais renvoyer d'accusé de réception
+; _Never send a return receipt
+;
+MSG_CO_MDN_ENABLED
+Toujours renvoyer _les accusés de réception
+; A_llow return receipts for some messages
+;
+MSG_CO_MDN_NORECIPIENT
+Si je n'apparais pas _dans le champ « A » et « Cc »
+; If I'm not in the _To or Cc of the message:
+;
+MSG_CO_MDN_NODOMAIN
+Lorsque l'émetteur est en deh_ors de mon domaine :
+; If the sender is _outside my domain:
+;
+MSG_CO_MDN_DELETE
+Lorsque je suis sur le point _d'effacer le message sans l'avoir lu :
+; If I'm going to just _delete the message:
+;
+MSG_CO_MDN_OTHER
+Dans tous les autres _cas :
+; In all other _cases:
+;
+MSG_CO_REQUESTMDN
+Lors de l'envoi de _messages, toujours demander un accusé
+; When sending _messages, always request a return receipt
+;
+MSG_HELP_CO_CH_REQUESTMDN
+Avec cette option, l'option de renvoi des\n\
+accusés de réception de la fenêtre de rédaction\n\
+sera activée par défaut.
+; If selected, the return receipt option\n\
+; in the write window will be enabled per\n\
+; default.
+;
+MSG_HELP_CO_CH_MDN_NEVER
+Avec cette option, aucun accusé de réception\n\
+n'est envoyé, même si demandé explicitement.
+; If selected, no return receipt will be\n\
+; send out, even if explicitly requested.
+;
+MSG_HELP_CO_CH_MDN_ALLOW
+Avec cette option, les accusés de réception\n\
+sont traités selon les règles définies ici.
+; If selected, return receipts will be\n\
+; processed according to the rules defined\n\
+; here.
+;
+MSG_HELP_CO_CY_MDN_NORECIPIENT
+Si un accusé de réception est requis, mais\n\
+que votre adresse électronique n'est pas\n\
+présente dans le champ « A: » ou « CC: »,\n\
+l'action spécifiée sera exécutée.
+; In case a return receipt is requested,\n\
+; but your mail address doesn't exist in\n\
+; the To: or Cc: header, the defined action\n\
+; will be performed.
+;
+MSG_HELP_CO_CY_MDN_NODOMAIN
+Si un accusé de réception est requis, mais\n\
+que le domaine de votre adesse email et\n\
+celui de l'émetteur ne correspondent pas,\n\
+l'action définie est exécutée.
+; In case a return receipt is requested,\n\
+; but the domain of your mail address and\n\
+; the one of the sender doesn't match,\n\
+; the defined action will be performed.
+;
+MSG_HELP_CO_CY_MDN_DELETE
+Si vous supprimez un message sans l'afficher,\n\
+l'action définie ici ext exécutée.
+; If you delete a message without viewing,\n\
+; the defined action will be performed.
+;
+MSG_HELP_CO_CY_MDN_OTHER
+Lorsqu'aucun des cas précédents ne s'applique,\n\
+cette action est exécutée à la place.
+; In case none of the above rules match,\n\
+; this action will be performed instead.
 ;

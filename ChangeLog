@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-19  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/francais.ct: Update according to the latest changes, and some
+    minor corrections.
+
 2007-03-19  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: deleting a non-spam mail from the spam folder no longer deletes
