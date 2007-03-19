@@ -786,7 +786,10 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
 
   ENTER();
 
-  if(C->RemoveAtOnce || isTrashFolder(mailFolder) || isSpamFolder(mailFolder) || forceatonce)
+  if(C->RemoveAtOnce ||
+     isTrashFolder(mailFolder) ||
+     (isSpamFolder(mailFolder) && hasStatusSpam(mail)) ||
+     forceatonce)
   {
     int i;
 

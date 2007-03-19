@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-19  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: deleting a non-spam mail from the spam folder no longer deletes
+    the mail immediately, but moves it to the trash folder instead.
+
 2007-03-17  Jens Langner <Jens.Langner@light-speed.de>
 
   * locale/deutsch.ct: updated to latest changes in YAM.cd and cleaned
