@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-20  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c: minor twirks to the latest changes of Thore - we just update the
+    stats of the trash folder in case the mail wasn't immediately deleted.
+
 2007-03-20  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: when deleting a mail from the spam folder the statistics of the

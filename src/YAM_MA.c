@@ -2956,7 +2956,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
   if(folder != NULL && delfolder != NULL)
   {
-    APTR lv = G->MA->GUI.PG_MAILLIST;
+    Object *lv = G->MA->GUI.PG_MAILLIST;
     struct Mail **mlist;
 
     if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
@@ -2965,16 +2965,14 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
       BOOL okToDelete = TRUE;
 
       selected = (int)*mlist;
-      if (C->Confirm && selected >= C->ConfirmDelete && !force)
+      if(C->Confirm && selected >= C->ConfirmDelete && !force)
       {
         char buffer[SIZE_DEFAULT];
 
         snprintf(buffer, sizeof(buffer), tr(MSG_MA_CONFIRMDELETION), selected);
 
         if(!MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buffer))
-        {
           okToDelete = FALSE;
-        }
       }
 
       if(okToDelete)
@@ -2985,7 +2983,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         set(lv, MUIA_NList_Quiet, TRUE);
 
         BusyGaugeInt(tr(MSG_BusyDeleting), itoa(selected), selected);
-        for(i = 0; i < selected; i++)
+        for(i=0; i < selected; i++)
         {
           struct Mail *mail = mlist[i + 2];
 
@@ -3013,8 +3011,15 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         else
           AppendLogNormal(22, tr(MSG_LOG_Moving), selected, folder->Name, delfolder->Name);
 
-        // update the stats, for both affected folders
-        DisplayStatistics(delfolder, FALSE);
+        // update the stats for the deleted folder,
+        // but only if it isn't the current one and only
+        // if the mail was not instantly deleted without moving
+        // it to the delfolder
+        if(delatonce == FALSE && delfolder != folder)
+          DisplayStatistics(delfolder, FALSE);
+
+        // then update the statistics for the folder we moved the
+        // mail from as well.
         DisplayStatistics(folder, TRUE);
         MA_ChangeSelected(FALSE);
       }
