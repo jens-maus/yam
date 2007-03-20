@@ -2946,64 +2946,85 @@ MakeHook(MA_NewMessageHook, MA_NewMessageFunc);
 //  Deletes selected messages
 void MA_DeleteMessage(BOOL delatonce, BOOL force)
 {
-   struct Mail **mlist, *mail;
-   int i, selected;
-   APTR lv = G->MA->GUI.PG_MAILLIST;
-   char buffer[SIZE_DEFAULT];
-   struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
-   struct Folder *folder = FO_GetCurrentFolder();
-   BOOL ignoreall = FALSE;
+  struct Folder *delfolder;
+  struct Folder *folder;
 
-   if(!folder || !delfolder) return;
+  ENTER();
 
-   if (!(mlist = MA_CreateMarkedList(lv, FALSE))) return;
-   selected = (int)*mlist;
-   if (C->Confirm && selected >= C->ConfirmDelete && !force)
-   {
-      snprintf(buffer, sizeof(buffer), tr(MSG_MA_CONFIRMDELETION), selected);
+  delfolder = FO_GetFolderByType(FT_TRASH, NULL);
+  folder = FO_GetCurrentFolder();
 
-      if(!MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buffer))
+  if(folder != NULL && delfolder != NULL)
+  {
+    APTR lv = G->MA->GUI.PG_MAILLIST;
+    struct Mail **mlist;
+
+    if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
+    {
+      int selected;
+      BOOL okToDelete = TRUE;
+
+      selected = (int)*mlist;
+      if (C->Confirm && selected >= C->ConfirmDelete && !force)
       {
-         free(mlist);
-         return;
-      }
-   }
-   set(lv, MUIA_NList_Quiet, TRUE);
+        char buffer[SIZE_DEFAULT];
 
-   BusyGaugeInt(tr(MSG_BusyDeleting), itoa(selected), selected);
-   for(i=0; i < selected; i++)
-   {
-      mail = mlist[i+2];
-      if(isSendMDNMail(mail) && !ignoreall &&
-         (hasStatusNew(mail) || !hasStatusRead(mail)))
-      {
-        ignoreall = RE_ProcessMDN(MDN_MODE_DELETE, mail, TRUE, FALSE);
+        snprintf(buffer, sizeof(buffer), tr(MSG_MA_CONFIRMDELETION), selected);
+
+        if(!MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buffer))
+        {
+          okToDelete = FALSE;
+        }
       }
 
-      // call our subroutine with quiet option
-      MA_DeleteSingle(mail, delatonce, TRUE, TRUE);
-
-      // if BusySet() returns FALSE, then the user aborted
-      if(BusySet(i+1) == FALSE)
+      if(okToDelete)
       {
-        selected = i+1;
-        break;
+        int i;
+        BOOL ignoreall = FALSE;
+
+        set(lv, MUIA_NList_Quiet, TRUE);
+
+        BusyGaugeInt(tr(MSG_BusyDeleting), itoa(selected), selected);
+        for(i = 0; i < selected; i++)
+        {
+          struct Mail *mail = mlist[i + 2];
+
+          if(isSendMDNMail(mail) && !ignoreall &&
+             (hasStatusNew(mail) || !hasStatusRead(mail)))
+          {
+            ignoreall = RE_ProcessMDN(MDN_MODE_DELETE, mail, TRUE, FALSE);
+          }
+
+          // call our subroutine with quiet option
+          MA_DeleteSingle(mail, delatonce, TRUE, TRUE);
+
+          // if BusySet() returns FALSE, then the user aborted
+          if(BusySet(i + 1) == FALSE)
+          {
+            selected = i + 1;
+            break;
+          }
+        }
+        BusyEnd();
+        set(lv, MUIA_NList_Quiet, FALSE);
+
+        if(delatonce || C->RemoveAtOnce || folder == delfolder || isSpamFolder(folder))
+          AppendLogNormal(20, tr(MSG_LOG_Deleting), selected, folder->Name);
+        else
+          AppendLogNormal(22, tr(MSG_LOG_Moving), selected, folder->Name, delfolder->Name);
+
+        // update the stats, for both affected folders
+        DisplayStatistics(delfolder, FALSE);
+        DisplayStatistics(folder, TRUE);
+        MA_ChangeSelected(FALSE);
       }
-   }
-   BusyEnd();
-   set(lv, MUIA_NList_Quiet, FALSE);
-   free(mlist);
 
-   if(delatonce || C->RemoveAtOnce || folder == delfolder || isSpamFolder(folder))
-      AppendLogNormal(20, tr(MSG_LOG_Deleting), selected, folder->Name);
-   else
-   {
-      AppendLogNormal(22, tr(MSG_LOG_Moving), selected, folder->Name, delfolder->Name);
-      DisplayStatistics(delfolder, FALSE);
-   }
+      // free the mail list again
+      free(mlist);
+    }
+  }
 
-   DisplayStatistics(NULL, TRUE);
-   MA_ChangeSelected(FALSE);
+  LEAVE();
 }
 
 ///
@@ -3011,6 +3032,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 HOOKPROTONHNO(MA_DeleteMessageFunc, void, int *arg)
 {
    BOOL delatonce = hasFlag(arg[0], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
+
    MA_DeleteMessage(delatonce, FALSE);
 }
 MakeHook(MA_DeleteMessageHook, MA_DeleteMessageFunc);
