@@ -249,11 +249,6 @@ void MA_ChangeSelected(BOOL forceUpdate)
   // deal with the toolbar and disable/enable certain buttons
   if(gui->TO_TOOLBAR)
   {
-    BOOL spamHidden;
-    BOOL hamHidden;
-    BOOL spamDisabled;
-    BOOL hamDisabled;
-
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_READ,   MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_EDIT,   MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_MOVE,   MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
@@ -263,64 +258,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_REPLY,  MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FORWARD,MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FILTER, MUIA_TheBar_Attr_Disabled, !folderEnabled || numEntries == 0);
-
-    // with an enabled spam filter we display just one button, either "Spam" or "no Spam"
-    if(C->SpamFilterEnabled)
-    {
-      if(!folderEnabled || (!active && numSelected == 0))
-      {
-        // either this is a group folder or no message is selected
-        // then just show the disabled "Spam" button
-        spamHidden = FALSE;
-        hamHidden = TRUE;
-        spamDisabled = TRUE;
-        hamDisabled = TRUE;
-      }
-      else if(active && numSelected >= 1)
-      {
-        // at least one mail is selected in a regular folder
-        // then show/enable the buttons depending on the mail state
-        if(hasStatusSpam(mail))
-        {
-          // definitve spam mail, just show the "no Spam" button
-          spamHidden = TRUE;
-          hamHidden = FALSE;
-          spamDisabled = TRUE;
-          hamDisabled = FALSE;
-        }
-        else
-        {
-          // this mail is either definitively no spam, or it hasn't been classified yet
-          // so just show the "Spam" button
-          spamHidden = FALSE;
-          hamHidden = TRUE;
-          spamDisabled = FALSE;
-          hamDisabled = TRUE;
-        }
-      }
-      else
-      {
-        // any other case, just show the disabled "Spam" button
-        // can this really happen??
-        spamHidden = FALSE;
-        hamHidden = TRUE;
-        spamDisabled = TRUE;
-        hamDisabled = TRUE;
-      }
-    }
-    else
-    {
-      // the spam filter is not enabled, hide both buttons and the separator
-      spamHidden = TRUE;
-      hamHidden = TRUE;
-      spamDisabled = TRUE;
-      hamDisabled = TRUE;
-    }
-
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_SPAM, MUIA_TheBar_Attr_Hide, spamHidden);
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_HAM,  MUIA_TheBar_Attr_Hide, hamHidden);
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_SPAM, MUIA_TheBar_Attr_Disabled, spamDisabled);
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_HAM,  MUIA_TheBar_Attr_Disabled, hamDisabled);
+    DoMethod(gui->TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
   }
 
   // change the menu item title of the
