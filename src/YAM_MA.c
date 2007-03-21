@@ -393,20 +393,19 @@ void MA_ChangeSelected(BOOL forceUpdate)
 
   // Enable if:
   //  * the folder is enabled
-  //  * the folder contains mail
+  //  * > 0 mails in folder
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0,
                                                          gui->MI_FILTER,
+                                                         gui->MI_SELECT,
                                                          NULL);
 
 
   // Enable if:
   //  * the folder is enabled
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled,
-                                                         gui->MI_FILTER,
                                                          gui->MI_UPDINDEX,
                                                          gui->MI_IMPORT,
                                                          gui->MI_EXPORT,
-                                                         gui->MI_SELECT,
                                                          NULL);
 
 
@@ -430,13 +429,13 @@ void MA_ChangeSelected(BOOL forceUpdate)
   //  * DELSPAM menu item exists
   //  * is in the "SPAM" folder
   if(gui->MI_DELSPAM)
-    set(gui->MI_DELSPAM, MUIA_Menuitem_Enabled, folderEnabled);
+    set(gui->MI_DELSPAM, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0);
 
   // Enable if:
   //  * CHECKSPAM menu item exists
   //  * the folder is enabled
   if(gui->MI_CHECKSPAM)
-    set(gui->MI_CHECKSPAM, MUIA_Menuitem_Enabled, folderEnabled);
+    set(gui->MI_CHECKSPAM, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0);
 
   LEAVE();
 }
