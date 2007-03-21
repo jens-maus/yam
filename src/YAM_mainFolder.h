@@ -93,7 +93,7 @@ void  MA_FreeEMailStruct(struct ExtendedMail *email);
 BOOL  MA_GetIndex(struct Folder *folder);
 enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full);
 void  MA_MakeFOFormat(Object *lv);
-char *MA_NewMailFile(struct Folder *folder, char *mailfile);
+char *MA_NewMailFile(const struct Folder *folder, char *mailfile);
 BOOL  MA_PromptFolderPassword(struct Folder *fo, APTR win);
 BOOL  MA_ReadHeader(FILE *fh, struct MinList *headerList);
 BOOL  MA_SaveIndex(struct Folder *folder);

@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-21  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c, YAM_TR.c: in case the incoming folder was empty previously to
+    a new mail download, the filter button of the main toolbar was never be
+    activated even if mail was downloaded. Now we also update the main toolbar
+    after a mail download and activate the filter button if any mail in the
+    corresponding mail folder was found. This fixes bug #1684304.
+
 2007-03-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c: minor twirks to the latest changes of Thore - we just update the

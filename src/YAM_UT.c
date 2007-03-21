@@ -5681,6 +5681,8 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
 
   ENTER();
 
+  D(DBF_GUI, "updating statistics for folder: %08lx", fo);
+
   // If the parsed argument is NULL we want to show the statistics from the actual folder
   if(!fo)
     fo = actfo;

@@ -1114,7 +1114,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
 //  Function that creates a new plain mail filename or by taking provided
 //  data into account. It returns the full path to the new mail file in the
 //  folder and also writes it into the mailfile parameter
-char *MA_NewMailFile(struct Folder *folder, char *mailfile)
+char *MA_NewMailFile(const struct Folder *folder, char *mailfile)
 {
   static char fullpath[SIZE_PATHFILE+1];
   char dateFilePart[12+1];

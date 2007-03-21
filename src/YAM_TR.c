@@ -5325,60 +5325,78 @@ MakeStaticHook(TR_AbortGETHook, TR_AbortGETFunc);
 ///
 /// TR_LoadMessage
 //  Retrieves a message from the POP3 server
-static BOOL TR_LoadMessage(struct TransStat *ts, int number)
+static BOOL TR_LoadMessage(struct Folder *infolder, struct TransStat *ts, const int number)
 {
-   static char mfile[SIZE_MFILE];
-   struct Folder *infolder = FO_GetFolderByType(FT_INCOMING, NULL);
-   char msgnum[SIZE_SMALL], msgfile[SIZE_PATHFILE];
-   FILE *f;
+  static char mfile[SIZE_MFILE];
+  char msgnum[SIZE_SMALL];
+  char msgfile[SIZE_PATHFILE];
+  BOOL result = FALSE;
+  FILE *fh;
 
-   strlcpy(msgfile, MA_NewMailFile(infolder, mfile), sizeof(msgfile));
+  ENTER();
 
-   if ((f = fopen(msgfile, "w")))
-   {
-      BOOL done = FALSE;
+  strlcpy(msgfile, MA_NewMailFile(infolder, mfile), sizeof(msgfile));
 
-      setvbuf(f, NULL, _IOFBF, SIZE_FILEBUF);
+  // open the new mailfile for writing out the retrieved
+  // data
+  if((fh = fopen(msgfile, "w")))
+  {
+    BOOL done = FALSE;
 
-      snprintf(msgnum, sizeof(msgnum), "%d", number);
-      if(TR_SendPOP3Cmd(POPCMD_RETR, msgnum, MSG_ER_BadResponse))
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+    snprintf(msgnum, sizeof(msgnum), "%d", number);
+    if(TR_SendPOP3Cmd(POPCMD_RETR, msgnum, MSG_ER_BadResponse))
+    {
+      // now we call a subfunction to receive data from the POP3 server
+      // and write it in the filehandle as long as there is no termination \r\n.\r\n
+      if(TR_RecvToFile(fh, msgfile, ts) > 0)
+        done = TRUE;
+    }
+    fclose(fh);
+
+    if(!G->TR->Abort && !G->Error && done)
+    {
+      struct ExtendedMail *mail;
+
+      if((mail = MA_ExamineMail(infolder, mfile, FALSE)))
       {
-         // now we call a subfunction to receive data from the POP3 server
-         // and write it in the filehandle as long as there is no termination \r\n.\r\n
-         if(TR_RecvToFile(f, msgfile, ts) > 0) done = TRUE;
+        struct Mail *new = AddMailToList((struct Mail *)mail, infolder);
+
+        // we have to get the actual Time and place it in the transDate, so that we know at
+        // which time this mail arrived
+        GetSysTimeUTC(&new->transDate);
+
+        new->sflags = SFLAG_NEW;
+        MA_UpdateMailFile(new);
+
+        // if the current folder is the inbox we
+        // can go and add the mail instantly to the maillist
+        if(FO_GetCurrentFolder() == infolder)
+          DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
+
+        AppendLogVerbose(32, tr(MSG_LOG_RetrievingVerbose), AddrName(new->From), new->Subject, new->Size);
+
+        MA_StartMacro(MACRO_NEWMSG, GetRealPath(GetMailFile(NULL, infolder, new)));
+        MA_FreeEMailStruct(mail);
+
+        result = TRUE;
       }
-      fclose(f);
+    }
 
-      if(!G->TR->Abort && !G->Error && done)
-      {
-         struct ExtendedMail *mail;
-         if((mail = MA_ExamineMail(infolder, mfile, FALSE)))
-         {
-            struct Mail *new = AddMailToList((struct Mail *)mail, infolder);
-
-            // we have to get the actual Time and place it in the transDate, so that we know at
-            // which time this mail arrived
-            GetSysTimeUTC(&new->transDate);
-
-            new->sflags = SFLAG_NEW;
-            MA_UpdateMailFile(new);
-
-            if(FO_GetCurrentFolder() == infolder)
-              DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
-
-            AppendLogVerbose(32, tr(MSG_LOG_RetrievingVerbose), AddrName(new->From), new->Subject, new->Size);
-            MA_StartMacro(MACRO_NEWMSG, GetRealPath(GetMailFile(NULL, infolder, new)));
-            MA_FreeEMailStruct(mail);
-         }
-         return TRUE;
-      }
-
+    if(result == FALSE)
+    {
       DeleteFile(msgfile);
-      SET_FLAG(infolder->Flags, FOFL_MODIFY); // we need to set the folder flags to modified so that the .index will be saved later.
-   }
-   else ER_NewError(tr(MSG_ER_ErrorWriteMailfile), mfile);
 
-   return FALSE;
+      // we need to set the folder flags to modified so that the .index will be saved later.
+      SET_FLAG(infolder->Flags, FOFL_MODIFY);
+    }
+  }
+  else
+    ER_NewError(tr(MSG_ER_ErrorWriteMailfile), mfile);
+
+  RETURN(result);
+  return result;
 }
 ///
 /// TR_DeleteMessage
@@ -5456,13 +5474,18 @@ static void TR_NewMailAlert(void)
 HOOKPROTONHNONP(TR_ProcessGETFunc, void)
 {
   struct TransStat ts;
+
+  ENTER();
+
+  // initialize the transfer statistics
   TR_TransStat_Init(&ts);
 
   // make sure the NOOP timer is definitly stopped
   TC_Stop(TIO_POP3_KEEPALIVE);
 
-  if(ts.Msgs_Tot)
+  if(ts.Msgs_Tot > 0)
   {
+    struct Folder *infolder = FO_GetFolderByType(FT_INCOMING, NULL);
     struct MinNode *curNode;
 
     if(C->TransferWindow == 2 && !xget(G->TR->GUI.WI, MUIA_Window_Open))
@@ -5479,7 +5502,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       {
         TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Downloading));
 
-        if(TR_LoadMessage(&ts, mtn->index))
+        if(TR_LoadMessage(infolder, &ts, mtn->index))
         {
           // put the transferStat to 100%
           TR_TransStat_Update(&ts, TS_SETMAX);
@@ -5504,10 +5527,18 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       }
     }
 
-    DisplayStatistics((struct Folder *)-1, TRUE);
+    DisplayStatistics(infolder, TRUE);
+
+    // in case the current folder after the download
+    // is the incoming folder we have to update
+    // the main toolbar and menu items
+    if(FO_GetCurrentFolder() == infolder)
+      MA_ChangeSelected(TRUE);
   }
 
   TR_GetMailFromNextPOP(FALSE, 0, 0);
+
+  LEAVE();
 }
 MakeHook(TR_ProcessGETHook, TR_ProcessGETFunc);
 

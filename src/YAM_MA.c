@@ -172,7 +172,8 @@ void MA_ChangeSelected(BOOL forceUpdate)
   BOOL hasattach = FALSE;
   BOOL folderEnabled;
   ULONG numSelected = 0;
-  struct Mail *mail;
+  ULONG numEntries = 0;
+  struct Mail *mail = NULL;
 
   ENTER();
 
@@ -200,8 +201,13 @@ void MA_ChangeSelected(BOOL forceUpdate)
   if(C->StatusChangeDelayOn)
     TC_Stop(TIO_READSTATUSUPDATE);
 
-  // ask the mail list how many entries as currently selected
-  DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
+  // ask the mail list how many entries are currently available and selected
+  if((numEntries = xget(gui->PG_MAILLIST, MUIA_NList_Entries)) > 0)
+    DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
+  else
+    numSelected = 0;
+
+  SHOWVALUE(DBF_MAIL, numEntries);
   SHOWVALUE(DBF_MAIL, numSelected);
 
   // make sure the mail is displayed in our readMailGroup of the main window
@@ -243,8 +249,10 @@ void MA_ChangeSelected(BOOL forceUpdate)
   // deal with the toolbar and disable/enable certain buttons
   if(gui->TO_TOOLBAR)
   {
-    BOOL spamHidden, hamHidden;
-    BOOL spamDisabled, hamDisabled;
+    BOOL spamHidden;
+    BOOL hamHidden;
+    BOOL spamDisabled;
+    BOOL hamDisabled;
 
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_READ,   MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_EDIT,   MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
@@ -254,7 +262,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_NEWMAIL,MUIA_TheBar_Attr_Disabled, !folderEnabled || isSpamFolder(fo));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_REPLY,  MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FORWARD,MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FILTER, MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FILTER, MUIA_TheBar_Attr_Disabled, !folderEnabled || numEntries == 0);
 
     // with an enabled spam filter we display just one button, either "Spam" or "no Spam"
     if(C->SpamFilterEnabled)
@@ -382,6 +390,14 @@ void MA_ChangeSelected(BOOL forceUpdate)
                                                          gui->MI_SAVE,
                                                          gui->MI_ATTACH,
                                                          NULL);
+
+  // Enable if:
+  //  * the folder is enabled
+  //  * the folder contains mail
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0,
+                                                         gui->MI_FILTER,
+                                                         NULL);
+
 
   // Enable if:
   //  * the folder is enabled
