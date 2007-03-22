@@ -3061,7 +3061,8 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
       DisplayStatistics(spamfolder, FALSE);
 
       DisplayStatistics(NULL, TRUE);
-      MA_ChangeSelected(FALSE);
+      // force an update of the toolbar
+      MA_ChangeSelected(TRUE);
     }
   }
 

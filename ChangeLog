@@ -11,6 +11,9 @@ $URL$
     visible.
   * YAM_COs.c: enabling/disabling the spam filter now correctly updates the
     toolbar.
+  * YAM_MA.c: after classifying a mail as either spam or no spam the main
+    window toolbar is now updated correctly to reflect the new state of the
+    mail.
 
 2007-03-21  Thore Böckelmann <tboeckel@gmx.de>
 
