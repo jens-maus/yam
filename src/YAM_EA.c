@@ -474,7 +474,7 @@ static int EA_Open(int type)
 
   for(winnum = 0; winnum < 4; winnum++)
   {
-    if(G->EA[winnum] != 0)
+    if(G->EA[winnum] == NULL)
       break;
   }
 
