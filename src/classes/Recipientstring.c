@@ -59,12 +59,33 @@ struct Data
 /// FindAddressHook
 HOOKPROTONHNO(FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *msg)
 {
-  struct ABEntry *entry = (struct ABEntry *)msg->UserData;
+  struct ABEntry *entry;
+  ULONG result = ~0;
 
-  return ((entry->Type == AET_USER) || (entry->Type == AET_LIST)) &&
-          ((!Stricmp(msg->User, entry->Alias) ||
-            !Stricmp(msg->User, entry->RealName) ||
-            !Stricmp(msg->User, entry->Address))) ? 0 : ~0;
+  ENTER();
+
+  entry = (struct ABEntry *)msg->UserData;
+
+  if(entry->Type == AET_USER || entry->Type == AET_LIST) {
+    if(Stricmp(msg->User, entry->Alias) == 0)
+    {
+      D(DBF_GUI, "\"%s\" matches alias \"%s\"", msg->User, entry->Alias);
+      result = 0;
+    }
+    else if(Stricmp(msg->User, entry->RealName) == 0)
+    {
+      D(DBF_GUI, "\"%s\" matches realname \"%s\"", msg->User, entry->RealName);
+      result = 0;
+    }
+    else if(Stricmp(msg->User, entry->Address) == 0)
+    {
+      D(DBF_GUI, "\"%s\" matches address \"%s\"", msg->User, entry->Address);
+      result = 0;
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 MakeStaticHook(FindAddressHook, FindAddressFunc);
 ///

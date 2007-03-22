@@ -68,24 +68,39 @@ static struct EA_ClassData *EA_New(int, int);
 //  Creates and opens an address book entry window
 int EA_Init(enum ABEntry_Type type, struct ABEntry *ab)
 {
-   struct EA_ClassData *ea;
-   int winnum;
-   const char *title = "";
+  int winnum = -1;
+  const char *title = "";
 
-   if ((winnum = EA_Open(type)) < 0) return -1;
-   ea = G->EA[winnum];
-   ea->ABEntry = ab;
+  ENTER();
 
-   switch (type)
-   {
+  if((winnum = EA_Open(type)) >= 0)
+  {
+    struct EA_ClassData *ea;
+
+    ea = G->EA[winnum];
+    ea->ABEntry = ab;
+
+    switch (type)
+    {
       case AET_USER:  title = ab ? tr(MSG_EA_EditUser) : tr(MSG_AB_AddUser); break;
       case AET_LIST:  title = ab ? tr(MSG_EA_EditList) : tr(MSG_AB_AddList); break;
-      case AET_GROUP: title = ab ? tr(MSG_EA_EditGroup): tr(MSG_AB_AddGroup);
-   }
-   set(ea->GUI.WI, MUIA_Window_Title, title);
-   if (!SafeOpenWindow(ea->GUI.WI)) { DisposeModulePush(&G->EA[winnum]); return -1; }
-   set(ea->GUI.WI, MUIA_Window_ActiveObject, ea->GUI.ST_ALIAS);
-   return winnum;
+      case AET_GROUP: title = ab ? tr(MSG_EA_EditGroup): tr(MSG_AB_AddGroup); break;
+    }
+
+    set(ea->GUI.WI, MUIA_Window_Title, title);
+    if(SafeOpenWindow(ea->GUI.WI))
+    {
+      set(ea->GUI.WI, MUIA_Window_ActiveObject, ea->GUI.ST_ALIAS);
+    }
+    else
+    {
+      DisposeModulePush(&G->EA[winnum]);
+      winnum = -1;
+    }
+  }
+
+  RETURN(winnum);
+  return winnum;
 }
 
 ///
@@ -453,11 +468,26 @@ MakeStaticHook(EA_HomepageHook, EA_HomepageFunc);
 //  Assigns a number for a new window
 static int EA_Open(int type)
 {
-   int winnum;
-   for (winnum = 0; winnum < 4; winnum++) if (!G->EA[winnum]) break;
-   if (winnum == 4) return -1;
-   if (!(G->EA[winnum] = EA_New(winnum, type))) return -1;
-   return winnum;
+  int winnum;
+
+  ENTER();
+
+  for(winnum = 0; winnum < 4; winnum++)
+  {
+    if(G->EA[winnum] != 0)
+      break;
+  }
+
+  if(winnum == 4)
+    winnum = -1;
+  else
+  {
+    if((G->EA[winnum] = EA_New(winnum, type)) == NULL)
+      winnum = -1;
+  }
+
+  RETURN(winnum);
+  return winnum;
 }
 ///
 /// EA_CloseFunc
@@ -465,6 +495,7 @@ static int EA_Open(int type)
 HOOKPROTONHNO(EA_CloseFunc, void, int *arg)
 {
    int winnum = *arg;
+
    DisposeModulePush(&G->EA[winnum]);
 }
 MakeStaticHook(EA_CloseHook, EA_CloseFunc);
@@ -476,6 +507,7 @@ MakeStaticHook(EA_CloseHook, EA_CloseFunc);
 static struct EA_ClassData *EA_New(int winnum, int type)
 {
    struct EA_ClassData *data = calloc(1, sizeof(struct EA_ClassData));
+
    if (data)
    {
       Object *group = NULL;

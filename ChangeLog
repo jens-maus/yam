@@ -7,6 +7,7 @@ $URL$
 
 2007-03-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Recipientstring.c, AddrBookToolbar.c, YAM_EA.c: some code cleanups
   * YAM_MA.c: Added a check to the RE_ProcessMDN() to distinguish between one
     single selected mail and multiple mails correctly. This fixes bug #1683936.
   * MainWindowToolbar.c: a disabled spam filter had the "Spam" button always
