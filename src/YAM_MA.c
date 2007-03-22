@@ -2936,14 +2936,14 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         set(lv, MUIA_NList_Quiet, TRUE);
 
         BusyGaugeInt(tr(MSG_BusyDeleting), itoa(selected), selected);
-        for(i=0; i < selected; i++)
+        for(i = 0; i < selected; i++)
         {
           struct Mail *mail = mlist[i + 2];
 
           if(isSendMDNMail(mail) && !ignoreall &&
              (hasStatusNew(mail) || !hasStatusRead(mail)))
           {
-            ignoreall = RE_ProcessMDN(MDN_MODE_DELETE, mail, TRUE, FALSE);
+            ignoreall = RE_ProcessMDN(MDN_MODE_DELETE, mail, (selected >= 2), FALSE);
           }
 
           // call our subroutine with quiet option
