@@ -136,12 +136,16 @@ struct Folder **FO_CreateList(void)
 //  Returns pointer to active folder
 struct Folder *FO_GetCurrentFolder(void)
 {
-   struct MUI_NListtree_TreeNode *tn;
+  struct Folder *folder = NULL;
+  struct MUI_NListtree_TreeNode *tn;
 
-   tn = (struct MUI_NListtree_TreeNode *)xget(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active);
-   if(!tn) return NULL;
+  ENTER();
 
-   return((struct Folder *)tn->tn_User);
+  if((tn = (struct MUI_NListtree_TreeNode *)xget(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active)) != NULL)
+    folder = (struct Folder *)tn->tn_User;
+
+  RETURN(folder);
+  return folder;
 }
 
 ///
@@ -149,27 +153,33 @@ struct Folder *FO_GetCurrentFolder(void)
 //  Set the passed folder as the active one
 BOOL FO_SetCurrentFolder(struct Folder *fo)
 {
-   int i;
-   struct MUI_NListtree_TreeNode *tn;
+  BOOL result = FALSE;
 
-   if(!fo) return(FALSE);
+  ENTER();
 
-   for (i = 0;;i++)
-   {
+  if(fo != NULL)
+  {
+    int i;
+
+    for(i = 0;; i++)
+    {
+      struct MUI_NListtree_TreeNode *tn;
+
       tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-      if (!tn || !tn->tn_User) return(FALSE);
-
-      if(tn->tn_User == fo)
+      if(tn != NULL && tn->tn_User == fo)
       {
-         // make sure the tree is opened to display it
-         DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
+        // make sure the tree is opened to display it
+        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
 
-         nnset(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, tn);
-         break;
+        nnset(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, tn);
+        result = TRUE;
+        break;
       }
-   }
+    }
+  }
 
-   return(TRUE);
+  RETURN(result);
+  return result;
 }
 ///
 /// FO_GetFolderRexx
