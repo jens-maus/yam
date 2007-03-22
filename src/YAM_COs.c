@@ -1420,6 +1420,10 @@ void CO_GetConfig(BOOL saveConfig)
                 DisplayStatistics(NULL, TRUE);
               }
             }
+
+            // update the toolbar to the new settings
+            if(G->MA->GUI.TO_TOOLBAR != NULL)
+              DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
           }
           else
           {
@@ -1427,6 +1431,7 @@ void CO_GetConfig(BOOL saveConfig)
             // back online
             CE->SpamFilterEnabled = TRUE;
           }
+
         }
         else if(C->SpamFilterEnabled == FALSE && CE->SpamFilterEnabled == TRUE)
         {
@@ -1507,6 +1512,12 @@ void CO_GetConfig(BOOL saveConfig)
               // something failed, so we disable the spam filter again
               ER_NewError(tr(MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER));
               CE->SpamFilterEnabled = FALSE;
+            }
+            else
+            {
+              // update the toolbar to the new settings
+              if(G->MA->GUI.TO_TOOLBAR != NULL)
+                DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
             }
           }
         }

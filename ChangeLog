@@ -9,6 +9,8 @@ $URL$
 
   * MainWindowToolbar.c: a disabled spam filter had the "Spam" button always
     visible.
+  * YAM_COs.c: enabling/disabling the spam filter now correctly updates the
+    toolbar.
 
 2007-03-21  Thore Böckelmann <tboeckel@gmx.de>
 
