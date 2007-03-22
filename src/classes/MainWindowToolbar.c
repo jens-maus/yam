@@ -280,8 +280,8 @@ DECLARE(UpdateSpamControls)
     }
     else
     {
-      // the spam filter is not enabled, hide both buttons and the separator
-      spamHidden = TRUE;
+      // no current folder, just show a disabled "Spam" button
+      spamHidden = FALSE;
       hamHidden = TRUE;
       spamDisabled = TRUE;
       hamDisabled = TRUE;
@@ -289,8 +289,8 @@ DECLARE(UpdateSpamControls)
   }
   else
   {
-    // no current folder, just show a disabled "Spam" button
-    spamHidden = FALSE;
+    // the spam filter is not enabled, hide both buttons and the separator
+    spamHidden = TRUE;
     hamHidden = TRUE;
     spamDisabled = TRUE;
     hamDisabled = TRUE;

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-22  Thore Böckelmann <tboeckel@gmx.de>
+
+  * MainWindowToolbar.c: a disabled spam filter had the "Spam" button always
+    visible.
+
 2007-03-21  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, MainWindowToolbar.c: the handling of the "Spam" and "no Spam"
