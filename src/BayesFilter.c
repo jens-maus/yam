@@ -997,11 +997,12 @@ static int compareTokens(const void *p1,
 {
   struct Token *t1 = (struct Token *)p1;
   struct Token *t2 = (struct Token *)p2;
-  double delta = t1->distance - t2->distance;
+  double delta;
   int cmp;
 
   ENTER();
 
+  delta = t1->distance - t2->distance;
   cmp = ((delta == 0.0) ? 0 : ((delta > 0.0) ? 1 : -1));
 
   RETURN(cmp);
@@ -1103,7 +1104,7 @@ static double nsLnGamma (double z_in, int *gsign)
   return result;
 }
 ///
-/// lnPQfactoer()
+/// lnPQfactor()
 // log( e^(-x)*x^a/Gamma(a) )
 INLINE double lnPQfactor (double a, double x)
 {
@@ -1274,9 +1275,8 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
           double prob;
           double H;
           double S;
-          int e;
 
-          for(i=0; i < count; i++)
+          for(i = 0; i < count; i++)
           {
             struct Token *token = &tokens[i];
             CONST_STRPTR word = (CONST_STRPTR)token->word;
@@ -1294,6 +1294,7 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
             spamCount = (t != NULL) ? t->count : 0;
 
             denom = hamCount * nBad + spamCount * nGood;
+            // avoid division by zero error
             if(denom == 0.0)
               denom = nBad + nGood;
 
@@ -1304,6 +1305,7 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
 
             if(distance >= 0.1)
             {
+              D(DBF_SPAM, "probability for token \"%s\" is %.2f", word, prob);
               goodClues++;
               token->distance = distance;
               token->probability = prob;
@@ -1324,13 +1326,16 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
           S = 1.0;
           Hexp = 0;
           Sexp = 0;
-          e = 0;
+
+          // reset this counter, so we can check later the real number of *really* good clues
+          goodClues = 0;
 
           for(i = first; i < last; ++i)
           {
             if(tokens[i].distance != -1)
             {
               double value;
+              int e;
 
               goodClues++;
               value = tokens[i].probability;

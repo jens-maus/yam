@@ -9,6 +9,8 @@ $URL$
 
   * Debug.c: fixed wrong final output of debug classes and flags.
   * HashTable.c: corrected debug output to use the correct debug class.
+  * BayesFilter.c: fixed a bad bug which could prevent YAM from recognizing
+    spam mails correctly.
 
 2007-03-22  Thore Böckelmann <tboeckel@gmx.de>
 
