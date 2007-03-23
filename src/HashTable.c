@@ -88,7 +88,7 @@ static struct HashEntryHeader *SearchTable(struct HashTable *table,
   // miss: return space for a new entry
   if(HASH_ENTRY_IS_FREE(entry))
   {
-    //D(DBF_SPAM, "search miss, creating new entry");
+    //D(DBF_HASH, "search miss, creating new entry");
     RETURN(entry);
     return entry;
   }
@@ -97,13 +97,13 @@ static struct HashEntryHeader *SearchTable(struct HashTable *table,
   matchEntry = table->ops->matchEntry;
   if(MATCH_ENTRY_KEYHASH(entry, keyHash) && matchEntry(table, entry, key))
   {
-    //D(DBF_SPAM, "search hit, returning old entry");
+    //D(DBF_HASH, "search hit, returning old entry");
     RETURN(entry);
     return entry;
   }
 
   // collision: hash again
-  //D(DBF_SPAM, "search collision, hashing again");
+  //D(DBF_HASH, "search collision, hashing again");
   sizeLog2 = HASH_BITS - table->shift;
   hash2 = HASH2(keyHash, sizeLog2, hashShift);
   sizeMask = (1L << sizeLog2) - 1;
@@ -127,7 +127,7 @@ static struct HashEntryHeader *SearchTable(struct HashTable *table,
     entry = ADDRESS_ENTRY(table, hash1);
     if(HASH_ENTRY_IS_FREE(entry))
     {
-      //D(DBF_SPAM, "search miss, creating new entry");
+      //D(DBF_HASH, "search miss, creating new entry");
       result = (firstRemoved != NULL && op == htoAdd) ? firstRemoved : entry;
       RETURN(result);
       return result;
@@ -135,7 +135,7 @@ static struct HashEntryHeader *SearchTable(struct HashTable *table,
 
     if(MATCH_ENTRY_KEYHASH(entry, keyHash) && matchEntry(table, entry, key))
     {
-      //D(DBF_SPAM, "search hit, returning old entry");
+      //D(DBF_HASH, "search hit, returning old entry");
       result = entry;
       RETURN(result);
       return result;
@@ -169,15 +169,15 @@ static BOOL ChangeTable(struct HashTable *table,
 
   ENTER();
 
-  SHOWVALUE(DBF_SPAM, deltaLog2);
+  SHOWVALUE(DBF_HASH, deltaLog2);
 
   oldLog2 = HASH_BITS - table->shift;
   newLog2 = oldLog2 + deltaLog2;
   oldCapacity = 1L << oldLog2;
   newCapacity = 1L << newLog2;
 
-  SHOWVALUE(DBF_SPAM, oldCapacity);
-  SHOWVALUE(DBF_SPAM, newCapacity);
+  SHOWVALUE(DBF_HASH, oldCapacity);
+  SHOWVALUE(DBF_HASH, newCapacity);
 
   if(newCapacity < HASH_SIZE_LIMIT)
   {

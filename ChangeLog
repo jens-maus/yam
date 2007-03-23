@@ -8,6 +8,7 @@ $URL$
 2007-03-23  Thore Böckelmann <tboeckel@gmx.de>
 
   * Debug.c: fixed wrong final output of debug classes and flags.
+  * HashTable.c: corrected debug output to use the correct debug class.
 
 2007-03-22  Thore Böckelmann <tboeckel@gmx.de>
 
