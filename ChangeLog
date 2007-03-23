@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: we make sure that if an xpkmaster.library is found that its
+    version isn't lower than v5.0 or we skip the initialization of the
+    xpk packer list. This should prevent issues for people using very old
+    builds of XPK which may cause serve problems.
+
 2007-03-23  Thore Böckelmann <tboeckel@gmx.de>
 
   * Debug.c: fixed wrong final output of debug classes and flags.

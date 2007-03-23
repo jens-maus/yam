@@ -2019,8 +2019,10 @@ static void Initialise(BOOL hidden)
    // lets advance the progress bar to 20%
    SplashProgress(tr(MSG_InitLibs), 20);
 
-   // load & initialize some optional libraries which are not required, however highly recommended
-   INITLIB(XPKNAME, 0, 0, &XpkBase, "main", &IXpk, FALSE, NULL);
+   // try to open xpkmaster.library v5.0+ as this is somewhat the most
+   // stable version available. Previous version might have some issues
+   // as documented in our FAQ.
+   INITLIB(XPKNAME, 5, 0, &XpkBase, "main", &IXpk, FALSE, NULL);
    InitXPKPackerList();
 
    // initialize our timers
