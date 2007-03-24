@@ -7,6 +7,10 @@ $URL$
 
 2007-03-24  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Makefile: moved the custom classes to the top to let them be compiled at
+    first. Changing something in these classes usually causes all YAM#?.c to be
+    recompiled, but if the class source still contains some typos this now
+    shows up immediately.
   * BayesFilter.c: lowered the default spam probability threshold from 99% to
     95% to catch a little bit more spam, which currently just slips through.
     Also extended the debug output while classifying the mail a bit.

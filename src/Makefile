@@ -276,6 +276,7 @@ CLASSES	= \
 
 # and the other object files
 OBJS = \
+	$(CLASSES) \
 	$(OBJDIR)/YAM_global.o \
 	$(OBJDIR)/YAM.o \
 	$(OBJDIR)/YAM_AB.o \
@@ -306,7 +307,6 @@ OBJS = \
 	$(OBJDIR)/HTML2Mail.o \
 	$(OBJDIR)/HashTable.o \
 	$(OBJDIR)/BayesFilter.o \
-	$(CLASSES) \
 	$(OBJDIR)/extrasrc.o \
 	$(OBJDIR)/Debug.o
 
