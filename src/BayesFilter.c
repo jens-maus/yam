@@ -1247,6 +1247,9 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
 
   ENTER();
 
+  SHOWSTRING(DBF_SPAM, mail->From.Address);
+  SHOWSTRING(DBF_SPAM, mail->Subject);
+
   // if the sender address is in the address book then we assume it's not spam
   if(C->SpamAddressBookIsWhiteList == FALSE || AB_FindEntry(mail->From.Address, ABF_RX_EMAIL, NULL) == 0)
   {
@@ -1312,10 +1315,12 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
             }
             else
             {
-              // ignore clue
+              // ignore this clue
               token->distance = -1;
             }
           }
+
+          D(DBF_SPAM, "found %d good clues in the first scan", goodClues);
 
           // sort array of token distances
           qsort(tokens, count, sizeof(*tokens), compareTokens);
@@ -1330,7 +1335,7 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
           // reset this counter, so we can check later the real number of *really* good clues
           goodClues = 0;
 
-          for(i = first; i < last; ++i)
+          for(i = first; i < last; i++)
           {
             if(tokens[i].distance != -1)
             {
@@ -1359,7 +1364,8 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
           S = log(S) + Sexp * M_LN2;
           H = log(H) + Hexp * M_LN2;
 
-          SHOWVALUE(DBF_SPAM, goodClues);
+          D(DBF_SPAM, "found %d good clues in the second scan", goodClues);
+
           if(goodClues > 0)
           {
             int chiError;
@@ -1372,7 +1378,7 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
             // if any error, then toss the complete calculation
             if(chiError)
             {
-              D(DBF_SPAM, "chi2P error");
+              E(DBF_SPAM, "chi2P error");
               prob = 0.5;
             }
             else
@@ -1381,19 +1387,36 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
           else
             prob = 0.5;
 
-          D(DBF_SPAM, "mail with subject \"%s\" has spam probability %.2f, ham score: %.2f, spam score: %.2f", mail->Subject, prob, H, S);
+          D(DBF_SPAM, "spam probability is %.2f, ham score: %.2f, spam score: %.2f", prob, H, S);
           isSpam = (prob * 100 >= C->SpamProbabilityThreshold);
         }
         else
-          isSpam = FALSE; // no bad tokens so far, assume ham
+        {
+          // no bad tokens so far, assume ham
+          E(DBF_SPAM, "no bad tokens so far, assuming non-spam");
+          isSpam = FALSE;
+        }
       }
       else
-        isSpam = TRUE; // no good tokens so far, assume spam
+      {
+        // no good tokens so far, assume spam
+        E(DBF_SPAM, "no good tokens so far, assuming spam");
+        isSpam = TRUE; 
+      }
 
       free(tokens);
     }
     else
-      isSpam = TRUE; // cannot copy tokens, assume spam
+    {
+      // cannot copy tokens, assume spam
+      E(DBF_SPAM, "cannot copy tokens, assuming spam");
+      isSpam = TRUE; 
+    }
+  }
+  else
+  {
+    // sender found in address book, assume ham
+    D(DBF_SPAM, "found sender \"%s\" in address book, assuming non-spam", mail->From.Address);
   }
 
   RETURN(isSpam);

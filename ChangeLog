@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-24  Thore Böckelmann <tboeckel@gmx.de>
+
+  * BayesFilter.c: lowered the default spam probability threshold from 99% to
+    95% to catch a little bit more spam, which currently just slips through.
+    Also extended the debug output while classifying the mail a bit.
+
 2007-03-24  Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile: added $(DEBUGSYM) variable for overriding the debug symbol
