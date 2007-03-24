@@ -58,7 +58,7 @@
 
 #define MAX_STATUSIMG   19
 #define MAX_FOLDERIMG   11
-#define MAX_CFGIMG      34
+#define MAX_CFGIMG      36
 #define MAX_IMAGES      (MAX_STATUSIMG+MAX_FOLDERIMG+MAX_CFGIMG)
 
 #define MAXICONS         4

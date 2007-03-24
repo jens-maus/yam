@@ -84,6 +84,30 @@ static Object *MakeVarPop(Object **, enum VarPopMode, int, const char *);
 static Object *MakePhraseGroup(Object **, Object **, Object **, const char*, const char*);
 static Object *MakeStaticCheck(void);
 
+/* local defines */
+/// ConfigPageHeaderObject()
+#define ConfigPageHeaderObject(image, title, summary) \
+          Child, HGroup,                              \
+            Child, MakeImageObject(image),            \
+            Child, VGroup,                            \
+              Child, TextObject,                      \
+                MUIA_Text_PreParse, "\033b",          \
+                MUIA_Text_Contents, (title),          \
+                MUIA_Weight,        100,              \
+              End,                                    \
+              Child, TextObject,                      \
+                MUIA_Text_Contents, (summary),        \
+                MUIA_Font,          MUIV_Font_Tiny,   \
+                MUIA_Weight,        100,              \
+              End,                                    \
+            End,                                      \
+          End,                                        \
+          Child, RectangleObject,                     \
+            MUIA_Rectangle_HBar, TRUE,                \
+            MUIA_FixHeight,      4,                   \
+          End
+///
+
 /***************************************************************************
  Module: Configuration - GUI for sections
 ***************************************************************************/
@@ -1271,425 +1295,462 @@ MakeStaticHook(ResetSpamTrainingDataHook, ResetSpamTrainingDataFunc);
 /// CO_PageFirstSteps
 Object *CO_PageFirstSteps(struct CO_ClassData *data)
 {
-   Object *grp;
-   static const char *tzone[34];
+  Object *obj;
+  static const char *tzone[34];
 
-   ENTER();
+  ENTER();
 
-   tzone[ 0] = tr(MSG_CO_TZoneM12);
-   tzone[ 1] = tr(MSG_CO_TZoneM11);
-   tzone[ 2] = tr(MSG_CO_TZoneM10);
-   tzone[ 3] = tr(MSG_CO_TZoneM9);
-   tzone[ 4] = tr(MSG_CO_TZoneM8);
-   tzone[ 5] = tr(MSG_CO_TZoneM7);
-   tzone[ 6] = tr(MSG_CO_TZoneM6);
-   tzone[ 7] = tr(MSG_CO_TZoneM5);
-   tzone[ 8] = tr(MSG_CO_TZoneM4);
-   tzone[ 9] = tr(MSG_CO_TZoneM330);
-   tzone[10] = tr(MSG_CO_TZoneM3);
-   tzone[11] = tr(MSG_CO_TZoneM2);
-   tzone[12] = tr(MSG_CO_TZoneM1);
-   tzone[13] = tr(MSG_CO_TZone0);
-   tzone[14] = tr(MSG_CO_TZone1);
-   tzone[15] = tr(MSG_CO_TZone2);
-   tzone[16] = tr(MSG_CO_TZone3);
-   tzone[17] = tr(MSG_CO_TZone330);
-   tzone[18] = tr(MSG_CO_TZone4);
-   tzone[19] = tr(MSG_CO_TZone430);
-   tzone[20] = tr(MSG_CO_TZone5);
-   tzone[21] = tr(MSG_CO_TZone530);
-   tzone[22] = tr(MSG_CO_TZone545);
-   tzone[23] = tr(MSG_CO_TZone6);
-   tzone[24] = tr(MSG_CO_TZone630);
-   tzone[25] = tr(MSG_CO_TZone7);
-   tzone[26] = tr(MSG_CO_TZone8);
-   tzone[27] = tr(MSG_CO_TZone9);
-   tzone[28] = tr(MSG_CO_TZone930);
-   tzone[29] = tr(MSG_CO_TZone10);
-   tzone[30] = tr(MSG_CO_TZone11);
-   tzone[31] = tr(MSG_CO_TZone12);
-   tzone[32] = tr(MSG_CO_TZone13);
-   tzone[33] = NULL;
+  tzone[ 0] = tr(MSG_CO_TZoneM12);
+  tzone[ 1] = tr(MSG_CO_TZoneM11);
+  tzone[ 2] = tr(MSG_CO_TZoneM10);
+  tzone[ 3] = tr(MSG_CO_TZoneM9);
+  tzone[ 4] = tr(MSG_CO_TZoneM8);
+  tzone[ 5] = tr(MSG_CO_TZoneM7);
+  tzone[ 6] = tr(MSG_CO_TZoneM6);
+  tzone[ 7] = tr(MSG_CO_TZoneM5);
+  tzone[ 8] = tr(MSG_CO_TZoneM4);
+  tzone[ 9] = tr(MSG_CO_TZoneM330);
+  tzone[10] = tr(MSG_CO_TZoneM3);
+  tzone[11] = tr(MSG_CO_TZoneM2);
+  tzone[12] = tr(MSG_CO_TZoneM1);
+  tzone[13] = tr(MSG_CO_TZone0);
+  tzone[14] = tr(MSG_CO_TZone1);
+  tzone[15] = tr(MSG_CO_TZone2);
+  tzone[16] = tr(MSG_CO_TZone3);
+  tzone[17] = tr(MSG_CO_TZone330);
+  tzone[18] = tr(MSG_CO_TZone4);
+  tzone[19] = tr(MSG_CO_TZone430);
+  tzone[20] = tr(MSG_CO_TZone5);
+  tzone[21] = tr(MSG_CO_TZone530);
+  tzone[22] = tr(MSG_CO_TZone545);
+  tzone[23] = tr(MSG_CO_TZone6);
+  tzone[24] = tr(MSG_CO_TZone630);
+  tzone[25] = tr(MSG_CO_TZone7);
+  tzone[26] = tr(MSG_CO_TZone8);
+  tzone[27] = tr(MSG_CO_TZone9);
+  tzone[28] = tr(MSG_CO_TZone930);
+  tzone[29] = tr(MSG_CO_TZone10);
+  tzone[30] = tr(MSG_CO_TZone11);
+  tzone[31] = tr(MSG_CO_TZone12);
+  tzone[32] = tr(MSG_CO_TZone13);
+  tzone[33] = NULL;
 
-   if ((grp = VGroup,
-         MUIA_HelpNode, "CO00",
+  obj = VGroup,
+          MUIA_HelpNode, "CO00",
 
-         Child, HGroup,
-            Child, MakeImageObject("config_firststep_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_FIRSTSTEPS_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_FIRSTSTEPS_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-           End,
-         End,
+          ConfigPageHeaderObject("config_firststep_big", tr(MSG_CO_FIRSTSTEPS_TITLE), tr(MSG_CO_FIRSTSTEPS_SUMMARY)),
 
-         Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-         End,
-
-         Child, ColGroup(2), GroupFrameT(tr(MSG_CO_MinConfig)),
+          Child, ColGroup(2), GroupFrameT(tr(MSG_CO_MinConfig)),
             Child, Label2(tr(MSG_CO_RealName)),
             Child, data->GUI.ST_REALNAME = MakeString(SIZE_REALNAME,tr(MSG_CO_RealName)),
+
             Child, Label2(tr(MSG_CO_EmailAddress)),
             Child, data->GUI.ST_EMAIL    = MakeString(SIZE_ADDRESS,tr(MSG_CO_EmailAddress)),
+
             Child, Label2(tr(MSG_CO_POPServer)),
             Child, data->GUI.ST_POPHOST0  = MakeString(SIZE_HOST,tr(MSG_CO_POPServer)),
+
             Child, Label2(tr(MSG_CO_Password)),
             Child, data->GUI.ST_PASSWD0   = MakePassString(tr(MSG_CO_Password)),
-         End,
+          End,
 
-         Child, ColGroup(2), GroupFrameT(tr(MSG_CO_SYSTEMSETTINGS)),
+          Child, ColGroup(2), GroupFrameT(tr(MSG_CO_SYSTEMSETTINGS)),
             Child, Label2(tr(MSG_CO_TimeZone)),
             Child, data->GUI.CY_TZONE = MakeCycle(tzone,tr(MSG_CO_TimeZone)),
+
             Child, HSpace(1),
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_DLSAVING, tr(MSG_CO_DaylightSaving)),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_DSTACTIVE, tr(MSG_CO_DSTACTIVE)),
+
             Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
             Child, MakeCharsetPop((Object **)&data->GUI.ST_DEFAULTCHARSET),
+
             Child, HSpace(1),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_DETECTCYRILLIC, tr(MSG_CO_DETECT_CYRILLIC)),
          End,
+
          Child, HVSpace,
-      End))
-   {
-      SetHelp(data->GUI.ST_REALNAME,       MSG_HELP_CO_ST_REALNAME);
-      SetHelp(data->GUI.ST_EMAIL,          MSG_HELP_CO_ST_EMAIL);
-      SetHelp(data->GUI.ST_POPHOST0,       MSG_HELP_CO_ST_POPHOST);
-      SetHelp(data->GUI.ST_PASSWD0,        MSG_HELP_CO_ST_PASSWD);
-      SetHelp(data->GUI.CY_TZONE,          MSG_HELP_CO_CY_TZONE);
-      SetHelp(data->GUI.CH_DLSAVING,       MSG_HELP_CO_CH_DLSAVING);
-      SetHelp(data->GUI.CH_DETECTCYRILLIC, MSG_HELP_CO_DETECT_CYRILLIC);
 
-      DoMethod(data->GUI.ST_POPHOST0 ,MUIM_Notify,MUIA_String_Contents, MUIV_EveryTime,MUIV_Notify_Application ,3,MUIM_CallHook,&CO_GetDefaultPOPHook,0);
-      DoMethod(data->GUI.ST_PASSWD0  ,MUIM_Notify,MUIA_String_Contents, MUIV_EveryTime,MUIV_Notify_Application ,3,MUIM_CallHook,&CO_GetDefaultPOPHook,0);
-   }
+        End;
 
-   RETURN(grp);
-   return grp;
+  if(obj != NULL)
+  {
+    SetHelp(data->GUI.ST_REALNAME,       MSG_HELP_CO_ST_REALNAME);
+    SetHelp(data->GUI.ST_EMAIL,          MSG_HELP_CO_ST_EMAIL);
+    SetHelp(data->GUI.ST_POPHOST0,       MSG_HELP_CO_ST_POPHOST);
+    SetHelp(data->GUI.ST_PASSWD0,        MSG_HELP_CO_ST_PASSWD);
+    SetHelp(data->GUI.CY_TZONE,          MSG_HELP_CO_CY_TZONE);
+    SetHelp(data->GUI.CH_DSTACTIVE,      MSG_HELP_CO_CH_DSTACTIVE);
+    SetHelp(data->GUI.CH_DETECTCYRILLIC, MSG_HELP_CO_DETECT_CYRILLIC);
+
+    DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetDefaultPOPHook, 0);
+    DoMethod(data->GUI.ST_PASSWD0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetDefaultPOPHook, 0);
+  }
+
+  RETURN(obj);
+  return obj;
 }
 
 ///
 /// CO_PageTCPIP
 Object *CO_PageTCPIP(struct CO_ClassData *data)
 {
-   Object *grp;
-   static const char *secureMethods[4];
-   static const char *authMethods[6];
+  Object *obj;
+  static const char *secureSMTPMethods[4];
+  static const char *securePOP3Methods[4];
+  static const char *authMethods[6];
 
-   secureMethods[0] = tr(MSG_CO_SMTPSECURE_NO);
-   secureMethods[1] = tr(MSG_CO_SMTPSECURE_TLS);
-   secureMethods[2] = tr(MSG_CO_SMTPSECURE_SSL);
-   secureMethods[3] = NULL;
+  ENTER();
 
-   authMethods[0] = tr(MSG_CO_SMTPAUTH_AUTO);
-   authMethods[1] = tr(MSG_CO_SMTPAUTH_DIGEST);
-   authMethods[2] = tr(MSG_CO_SMTPAUTH_CRAM);
-   authMethods[3] = tr(MSG_CO_SMTPAUTH_LOGIN);
-   authMethods[4] = tr(MSG_CO_SMTPAUTH_PLAIN);
-   authMethods[5] = NULL;
+  secureSMTPMethods[0] = tr(MSG_CO_SMTPSECURE_NO);
+  secureSMTPMethods[1] = tr(MSG_CO_SMTPSECURE_TLS);
+  secureSMTPMethods[2] = tr(MSG_CO_SMTPSECURE_SSL);
+  secureSMTPMethods[3] = NULL;
 
-   if ((grp = VGroup,
-         MUIA_HelpNode, "CO01",
+  securePOP3Methods[0] = tr(MSG_CO_POP3SECURE_NO);
+  securePOP3Methods[1] = tr(MSG_CO_POP3SECURE_TLS);
+  securePOP3Methods[2] = tr(MSG_CO_POP3SECURE_SSL);
+  securePOP3Methods[3] = NULL;
 
-         Child, HGroup,
-            Child, MakeImageObject("config_network_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_TCPIP_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_TCPIP_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-           End,
-         End,
+  authMethods[0] = tr(MSG_CO_SMTPAUTH_AUTO);
+  authMethods[1] = tr(MSG_CO_SMTPAUTH_DIGEST);
+  authMethods[2] = tr(MSG_CO_SMTPAUTH_CRAM);
+  authMethods[3] = tr(MSG_CO_SMTPAUTH_LOGIN);
+  authMethods[4] = tr(MSG_CO_SMTPAUTH_PLAIN);
+  authMethods[5] = NULL;
 
-         Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-         End,
+  obj = VGroup,
+          MUIA_HelpNode, "CO01",
 
-         Child, ScrollgroupObject,
-           MUIA_Scrollgroup_FreeHoriz, FALSE,
-           MUIA_Scrollgroup_Contents, VGroupV,
+          ConfigPageHeaderObject("config_network_big", tr(MSG_CO_TCPIP_TITLE), tr(MSG_CO_TCPIP_SUMMARY)),
+
+          Child, ScrollgroupObject,
+            MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_Contents, VGroupV,
+
               Child, VGroup, GroupFrameT(tr(MSG_CO_SendMail)),
-                 MUIA_Weight, 0,
-                 Child, HGroup,
-                    Child, VGroup,
-                       Child, ColGroup(2),
-                          Child, Label2(tr(MSG_CO_Server)),
-                          Child, data->GUI.ST_SMTPHOST = MakeString(SIZE_HOST,tr(MSG_CO_Server)),
-                          Child, Label2(tr(MSG_CO_ST_SMTPPORT)),
-                          Child, data->GUI.ST_SMTPPORT = MakeInteger(5, tr(MSG_CO_ST_SMTPPORT)),
-                          Child, Label2(tr(MSG_CO_Domain)),
-                          Child, data->GUI.ST_DOMAIN = MakeString(SIZE_HOST,tr(MSG_CO_Domain)),
-                          Child, HSpace(1),
-                          Child, HGroup,
-                            Child, LLabel(tr(MSG_CO_SMTPSECURE)),
-                            Child, HSpace(0),
-                          End,
-                          Child, HSpace(1),
-                          Child, HGroup,
-                            Child, HSpace(5),
-                            Child, data->GUI.RA_SMTPSECURE = RadioObject,
-                              MUIA_Radio_Entries, secureMethods,
-                              MUIA_CycleChain,    TRUE,
-                            End,
-                            Child, HSpace(0),
-                          End,
-                       End,
-                       Child, VSpace(0),
+                MUIA_Weight, 0,
+                Child, HGroup,
+                  Child, VGroup,
+                    Child, ColGroup(2),
+                      Child, Label2(tr(MSG_CO_SMTPSERVERPORT)),
+                      Child, HGroup,
+                        MUIA_Group_Spacing, 1,
+                        Child, data->GUI.ST_SMTPHOST = MakeString(SIZE_HOST, tr(MSG_CO_SMTPSERVERPORT)),
+                        Child, data->GUI.ST_SMTPPORT = BetterStringObject,
+                          StringFrame,
+                          MUIA_CycleChain,          TRUE,
+                          MUIA_FixWidthTxt,         "00000",
+                          MUIA_String_MaxLen,       5+1,
+                          MUIA_String_AdvanceOnCR,  TRUE,
+                          MUIA_String_Integer,      0,
+                          MUIA_String_Accept,       "0123456789",
+                        End,
+                      End,
+
+                      Child, Label2(tr(MSG_CO_Domain)),
+                      Child, data->GUI.ST_DOMAIN = MakeString(SIZE_HOST,tr(MSG_CO_Domain)),
+
+                      Child, HSpace(1),
+                      Child, LLabel(tr(MSG_CO_SMTPSECURE)),
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, HSpace(5),
+                        Child, data->GUI.RA_SMTPSECURE = RadioObject,
+                          MUIA_Radio_Entries, secureSMTPMethods,
+                          MUIA_CycleChain,    TRUE,
+                        End,
+                        Child, HSpace(0),
+                      End,
                     End,
-                    Child, VGroup,
-                       Child, ColGroup(2),
-                         Child, data->GUI.CH_SMTP8BIT = MakeCheck(tr(MSG_CO_Allow8bit)),
-                         Child, LLabel1(tr(MSG_CO_Allow8bit)),
-                         Child, data->GUI.CH_USESMTPAUTH = MakeCheck(tr(MSG_CO_UseSMTPAUTH)),
-                         Child, LLabel1(tr(MSG_CO_UseSMTPAUTH)),
-                         Child, HSpace(0),
-                         Child, ColGroup(2),
-                            Child, Label2(tr(MSG_CO_SMTPUser)),
-                            Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,tr(MSG_CO_SMTPUser)),
-                            Child, Label2(tr(MSG_CO_SMTPPass)),
-                            Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(tr(MSG_CO_SMTPPass)),
-                            Child, Label2(tr(MSG_CO_SMTPAUTH_METHOD)),
-                            Child, data->GUI.CY_SMTPAUTHMETHOD = MakeCycle(authMethods, tr(MSG_CO_SMTPAUTH_METHOD)),
-                         End,
-                       End,
-                       Child, VSpace(0),
+                  End,
+
+                  Child, VSpace(0),
+
+                  Child, VGroup,
+                    Child, ColGroup(2),
+                      Child, data->GUI.CH_SMTP8BIT = MakeCheck(tr(MSG_CO_Allow8bit)),
+                      Child, LLabel1(tr(MSG_CO_Allow8bit)),
+
+                      Child, data->GUI.CH_USESMTPAUTH = MakeCheck(tr(MSG_CO_UseSMTPAUTH)),
+                      Child, LLabel1(tr(MSG_CO_UseSMTPAUTH)),
+
+                      Child, HSpace(0),
+                      Child, ColGroup(2),
+                        Child, Label2(tr(MSG_CO_SMTPUser)),
+                        Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,tr(MSG_CO_SMTPUser)),
+
+                        Child, Label2(tr(MSG_CO_SMTPPass)),
+                        Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(tr(MSG_CO_SMTPPass)),
+
+                        Child, Label2(tr(MSG_CO_SMTPAUTH_METHOD)),
+                        Child, data->GUI.CY_SMTPAUTHMETHOD = MakeCycle(authMethods, tr(MSG_CO_SMTPAUTH_METHOD)),
+                      End,
                     End,
-                 End,
+
+                    Child, VSpace(0),
+                  End,
+                End,
               End,
+
               Child, HGroup, GroupFrameT(tr(MSG_CO_ReceiveMail)),
-                 Child, ListviewObject,
+
+                Child, VGroup,
+                  MUIA_HorizWeight, 30,
+                  Child, ListviewObject,
                     MUIA_CycleChain, TRUE,
                     MUIA_Weight,     60,
                     MUIA_Listview_List, data->GUI.LV_POP3 = ListObject,
-                       InputListFrame,
+                      InputListFrame,
                     End,
-                 End,
-                 Child, VGroup,
-                    Child, data->GUI.GR_POP3 = VGroup,
-                       Child, ColGroup(2),
-                          Child, Label2(tr(MSG_CO_POPACCOUNT)),
-                          Child, data->GUI.ST_POPACCOUNT = MakeString(SIZE_HOST,tr(MSG_CO_POPACCOUNT)),
-                          Child, Label2(tr(MSG_CO_POPServer)),
-                          Child, data->GUI.ST_POPHOST = MakeString(SIZE_HOST,tr(MSG_CO_POPServer)),
-                          Child, Label2(tr(MSG_CO_ST_POPPORT)),
-                          Child, data->GUI.ST_POPPORT = MakeInteger(5, tr(MSG_CO_ST_POPPORT)),
-                          Child, Label2(tr(MSG_CO_POPUserID)),
-                          Child, data->GUI.ST_POPUSERID = MakeString(SIZE_USERID,tr(MSG_CO_POPUserID)),
-                          Child, Label2(tr(MSG_CO_Password)),
-                          Child, data->GUI.ST_PASSWD = MakePassString(tr(MSG_CO_Password)),
-                       End,
-                       Child, MakeCheckGroup((Object **)&data->GUI.CH_POPENABLED, tr(MSG_CO_POPActive)),
-                       Child, HGroup,
-                         Child, MakeCheckGroup((Object **)&data->GUI.CH_POP3SSL, tr(MSG_CO_POP3SSL)),
-                         Child, MakeCheckGroup((Object **)&data->GUI.CH_USESTLS, tr(MSG_CO_USESTLS)),
-                       End,
-                       Child, MakeCheckGroup((Object **)&data->GUI.CH_USEAPOP, tr(MSG_CO_UseAPOP)),
-                       Child, MakeCheckGroup((Object **)&data->GUI.CH_DELETE, tr(MSG_CO_DeleteServerMail)),
-                    End,
-                    Child, HVSpace,
+                  End,
+
+                  Child, ColGroup(2),
+                    Child, data->GUI.BT_PADD = MakeButton(tr(MSG_Add)),
+                    Child, data->GUI.BT_PDEL = MakeButton(tr(MSG_Del)),
+                  End,
+                End,
+
+                Child, BalanceObject, End,
+
+                Child, VGroup,
+                  MUIA_HorizWeight, 70,
+                  Child, data->GUI.GR_POP3 = VGroup,
                     Child, ColGroup(2),
-                       Child, data->GUI.BT_PADD = MakeButton(tr(MSG_Add)),
-                       Child, data->GUI.BT_PDEL = MakeButton(tr(MSG_Del)),
+                      Child, Label2(tr(MSG_CO_POPACCOUNT)),
+                      Child, data->GUI.ST_POPACCOUNT = MakeString(SIZE_HOST,tr(MSG_CO_POPACCOUNT)),
+
+                      Child, Label2(tr(MSG_CO_POP3SERVERPORT)),
+                      Child, HGroup,
+                        MUIA_Group_Spacing, 1,
+                        Child, data->GUI.ST_POPHOST = MakeString(SIZE_HOST, tr(MSG_CO_POP3SERVERPORT)),
+                        Child, data->GUI.ST_POPPORT = BetterStringObject,
+                          StringFrame,
+                          MUIA_CycleChain,          TRUE,
+                          MUIA_FixWidthTxt,         "00000",
+                          MUIA_String_MaxLen,       5+1,
+                          MUIA_String_AdvanceOnCR,  TRUE,
+                          MUIA_String_Integer,      0,
+                          MUIA_String_Accept,       "0123456789",
+                        End,
+                      End,
+
+                      Child, Label2(tr(MSG_CO_POPUserID)),
+                      Child, data->GUI.ST_POPUSERID = MakeString(SIZE_USERID,tr(MSG_CO_POPUserID)),
+
+                      Child, Label2(tr(MSG_CO_Password)),
+                      Child, data->GUI.ST_PASSWD = MakePassString(tr(MSG_CO_Password)),
+
+                      Child, HSpace(1),
+                      Child, MakeCheckGroup((Object **)&data->GUI.CH_POPENABLED, tr(MSG_CO_POPActive)),
+
+                      Child, HSpace(1),
+                      Child, MakeCheckGroup((Object **)&data->GUI.CH_USEAPOP, tr(MSG_CO_UseAPOP)),
+
+                      Child, HSpace(1),
+                      Child, MakeCheckGroup((Object **)&data->GUI.CH_DELETE, tr(MSG_CO_DeleteServerMail)),
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, LLabel(tr(MSG_CO_POP3SECURE)),
+                        Child, HSpace(0),
+                      End,
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, HSpace(5),
+                        Child, data->GUI.RA_POP3SECURE = RadioObject,
+                          MUIA_Radio_Entries, securePOP3Methods,
+                          MUIA_CycleChain,    TRUE,
+                        End,
+                        Child, HSpace(0),
+                      End,
+
                     End,
-                 End,
+                  End,
+
+                  Child, HVSpace,
+                End,
               End,
             End,
-         End,
-      End))
-   {
-      SetHelp(data->GUI.ST_SMTPHOST    ,MSG_HELP_CO_ST_SMTPHOST     );
-      SetHelp(data->GUI.ST_SMTPPORT    ,MSG_HELP_CO_ST_SMTPPORT     );
-      SetHelp(data->GUI.ST_DOMAIN      ,MSG_HELP_CO_ST_DOMAIN       );
-      SetHelp(data->GUI.CH_SMTP8BIT    ,MSG_HELP_CO_CH_SMTP8BIT     );
-      SetHelp(data->GUI.CH_USESMTPAUTH ,MSG_HELP_CO_CH_USESMTPAUTH  );
-      SetHelp(data->GUI.ST_SMTPAUTHUSER,MSG_HELP_CO_ST_SMTPAUTHUSER );
-      SetHelp(data->GUI.ST_SMTPAUTHPASS,MSG_HELP_CO_ST_SMTPAUTHPASS );
-      SetHelp(data->GUI.CY_SMTPAUTHMETHOD, MSG_HELP_CO_CY_SMTPAUTHMETHOD);
-      SetHelp(data->GUI.LV_POP3        ,MSG_HELP_CO_LV_POP3         );
-      SetHelp(data->GUI.BT_PADD        ,MSG_HELP_CO_BT_PADD         );
-      SetHelp(data->GUI.BT_PDEL        ,MSG_HELP_CO_BT_PDEL         );
-      SetHelp(data->GUI.ST_POPACCOUNT  ,MSG_HELP_CO_ST_POPACCOUNT   );
-      SetHelp(data->GUI.ST_POPHOST     ,MSG_HELP_CO_ST_POPHOST      );
-      SetHelp(data->GUI.ST_POPPORT     ,MSG_HELP_CO_ST_POPPORT      );
-      SetHelp(data->GUI.ST_POPUSERID   ,MSG_HELP_CO_ST_POPUSERID    );
-      SetHelp(data->GUI.ST_PASSWD      ,MSG_HELP_CO_ST_PASSWD       );
-      SetHelp(data->GUI.CH_DELETE      ,MSG_HELP_CO_CH_DELETE       );
-      SetHelp(data->GUI.CH_USEAPOP     ,MSG_HELP_CO_CH_USEAPOP      );
-      SetHelp(data->GUI.CH_POPENABLED  ,MSG_HELP_CO_CH_POPENABLED   );
-      SetHelp(data->GUI.RA_SMTPSECURE  ,MSG_HELP_CO_RA_SMTPSECURE   );
-      SetHelp(data->GUI.CH_POP3SSL     ,MSG_HELP_CO_CH_POP3SSL      );
-      SetHelp(data->GUI.CH_USESTLS     ,MSG_HELP_CO_CH_USESTLS      );
+          End,
+        End;
 
-      DoMethod(data->GUI.LV_POP3       ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_GetP3EntryHook,0);
-      DoMethod(data->GUI.ST_POPACCOUNT ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-      DoMethod(data->GUI.ST_POPHOST    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-      DoMethod(data->GUI.ST_POPPORT    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-      DoMethod(data->GUI.ST_POPUSERID  ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-      DoMethod(data->GUI.ST_PASSWD     ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-      DoMethod(data->GUI.CH_POPENABLED ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-      DoMethod(data->GUI.CH_USEAPOP    ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-      DoMethod(data->GUI.CH_POP3SSL    ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-      DoMethod(data->GUI.CH_USESTLS    ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-      DoMethod(data->GUI.CH_DELETE     ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-      DoMethod(data->GUI.BT_PADD       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_AddPOP3Hook,0);
-      DoMethod(data->GUI.BT_PDEL       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_DelPOP3Hook,0);
-      DoMethod(data->GUI.CH_USESMTPAUTH,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,MUIV_Notify_Application,6,MUIM_MultiSet,MUIA_Disabled,MUIV_NotTriggerValue,data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS, data->GUI.CY_SMTPAUTHMETHOD);
-      DoMethod(data->GUI.CH_POP3SSL    ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_USESTLS,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
-      DoMethod(data->GUI.RA_SMTPSECURE ,MUIM_Notify,MUIA_Radio_Active, 0,data->GUI.RA_SMTPSECURE,3,MUIM_Set,MUIA_Disabled, !G->TR_UseableTLS);
+  if(obj != NULL)
+  {
+    SetHelp(data->GUI.ST_SMTPHOST    ,MSG_HELP_CO_ST_SMTPHOST     );
+    SetHelp(data->GUI.ST_SMTPPORT    ,MSG_HELP_CO_ST_SMTPPORT     );
+    SetHelp(data->GUI.ST_DOMAIN      ,MSG_HELP_CO_ST_DOMAIN       );
+    SetHelp(data->GUI.CH_SMTP8BIT    ,MSG_HELP_CO_CH_SMTP8BIT     );
+    SetHelp(data->GUI.CH_USESMTPAUTH ,MSG_HELP_CO_CH_USESMTPAUTH  );
+    SetHelp(data->GUI.ST_SMTPAUTHUSER,MSG_HELP_CO_ST_SMTPAUTHUSER );
+    SetHelp(data->GUI.ST_SMTPAUTHPASS,MSG_HELP_CO_ST_SMTPAUTHPASS );
+    SetHelp(data->GUI.CY_SMTPAUTHMETHOD, MSG_HELP_CO_CY_SMTPAUTHMETHOD);
+    SetHelp(data->GUI.LV_POP3        ,MSG_HELP_CO_LV_POP3         );
+    SetHelp(data->GUI.BT_PADD        ,MSG_HELP_CO_BT_PADD         );
+    SetHelp(data->GUI.BT_PDEL        ,MSG_HELP_CO_BT_PDEL         );
+    SetHelp(data->GUI.ST_POPACCOUNT  ,MSG_HELP_CO_ST_POPACCOUNT   );
+    SetHelp(data->GUI.ST_POPHOST     ,MSG_HELP_CO_ST_POPHOST      );
+    SetHelp(data->GUI.ST_POPPORT     ,MSG_HELP_CO_ST_POPPORT      );
+    SetHelp(data->GUI.ST_POPUSERID   ,MSG_HELP_CO_ST_POPUSERID    );
+    SetHelp(data->GUI.ST_PASSWD      ,MSG_HELP_CO_ST_PASSWD       );
+    SetHelp(data->GUI.CH_DELETE      ,MSG_HELP_CO_CH_DELETE       );
+    SetHelp(data->GUI.CH_USEAPOP     ,MSG_HELP_CO_CH_USEAPOP      );
+    SetHelp(data->GUI.CH_POPENABLED  ,MSG_HELP_CO_CH_POPENABLED   );
+    SetHelp(data->GUI.RA_SMTPSECURE  ,MSG_HELP_CO_RA_SMTPSECURE   );
+    SetHelp(data->GUI.RA_POP3SECURE,  MSG_HELP_CO_RA_POP3SECURE);
 
-      // disable some gadgets per default
-      set(data->GUI.ST_SMTPAUTHUSER,   MUIA_Disabled, TRUE);
-      set(data->GUI.ST_SMTPAUTHPASS,   MUIA_Disabled, TRUE);
-      set(data->GUI.CY_SMTPAUTHMETHOD, MUIA_Disabled, TRUE);
-   }
+    DoMethod(data->GUI.LV_POP3       ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_GetP3EntryHook,0);
+    DoMethod(data->GUI.ST_POPACCOUNT ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.ST_POPHOST    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.ST_POPPORT    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.ST_POPUSERID  ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.ST_PASSWD     ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.CH_POPENABLED ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.CH_USEAPOP    ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.CH_DELETE     ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.BT_PADD       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_AddPOP3Hook,0);
+    DoMethod(data->GUI.BT_PDEL       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_DelPOP3Hook,0);
+    DoMethod(data->GUI.CH_USESMTPAUTH,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,MUIV_Notify_Application,6,MUIM_MultiSet,MUIA_Disabled,MUIV_NotTriggerValue,data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS, data->GUI.CY_SMTPAUTHMETHOD);
 
-   return grp;
+    // modify the POP3 port according to the security level selected.
+    DoMethod(data->GUI.RA_POP3SECURE, MUIM_Notify, MUIA_Radio_Active, 0, data->GUI.RA_POP3SECURE, 3, MUIM_Set, MUIA_Disabled, !G->TR_UseableTLS);
+    DoMethod(data->GUI.RA_POP3SECURE, MUIM_Notify, MUIA_Radio_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutP3EntryHook, 0);
+
+    // modify the SMTP port according to the security level selected.
+    DoMethod(data->GUI.RA_SMTPSECURE, MUIM_Notify, MUIA_Radio_Active, 0, data->GUI.RA_SMTPSECURE, 3, MUIM_Set, MUIA_Disabled, !G->TR_UseableTLS);
+    DoMethod(data->GUI.RA_SMTPSECURE, MUIM_Notify, MUIA_Radio_Active, 0, data->GUI.ST_SMTPPORT,   3, MUIM_Set, MUIA_String_Integer, 25);
+    DoMethod(data->GUI.RA_SMTPSECURE, MUIM_Notify, MUIA_Radio_Active, 1, data->GUI.ST_SMTPPORT,   3, MUIM_Set, MUIA_String_Integer, 25);
+    DoMethod(data->GUI.RA_SMTPSECURE, MUIM_Notify, MUIA_Radio_Active, 2, data->GUI.ST_SMTPPORT,   3, MUIM_Set, MUIA_String_Integer, 465);
+
+    // disable some gadgets per default
+    set(data->GUI.ST_SMTPAUTHUSER,   MUIA_Disabled, TRUE);
+    set(data->GUI.ST_SMTPAUTHPASS,   MUIA_Disabled, TRUE);
+    set(data->GUI.CY_SMTPAUTHMETHOD, MUIA_Disabled, TRUE);
+  }
+
+  RETURN(obj);
+  return obj;
 }
 
 ///
 /// CO_PageNewMail
 Object *CO_PageNewMail(struct CO_ClassData *data)
 {
-   static const char *mpsopt[5];
-   static const char *trwopt[4];
-   Object *grp;
-   Object *pa_notisound;
-   Object *bt_notisound;
-   Object *pa_noticmd;
+  static const char *mpsopt[5];
+  static const char *trwopt[4];
+  Object *pa_notisound;
+  Object *bt_notisound;
+  Object *pa_noticmd;
+  Object *obj;
 
-   mpsopt[0] = tr(MSG_CO_PSNever);
-   mpsopt[1] = tr(MSG_CO_PSLarge);
-   mpsopt[2] = tr(MSG_CO_PSAlways);
-   mpsopt[3] = tr(MSG_CO_PSAlwaysFast);
-   mpsopt[4] = NULL;
+  ENTER();
 
-   trwopt[0] = tr(MSG_CO_TWNever);
-   trwopt[1] = tr(MSG_CO_TWAuto);
-   trwopt[2] = tr(MSG_CO_TWAlways);
-   trwopt[3] = NULL;
+  mpsopt[0] = tr(MSG_CO_PSNever);
+  mpsopt[1] = tr(MSG_CO_PSLarge);
+  mpsopt[2] = tr(MSG_CO_PSAlways);
+  mpsopt[3] = tr(MSG_CO_PSAlwaysFast);
+  mpsopt[4] = NULL;
 
-   if ((grp = VGroup,
-         MUIA_HelpNode, "CO02",
+  trwopt[0] = tr(MSG_CO_TWNever);
+  trwopt[1] = tr(MSG_CO_TWAuto);
+  trwopt[2] = tr(MSG_CO_TWAlways);
+  trwopt[3] = NULL;
 
-         Child, HGroup,
-            Child, MakeImageObject("config_newmail_big"),
+  obj = VGroup,
+          MUIA_HelpNode, "CO02",
+
+          ConfigPageHeaderObject("config_newmail_big", tr(MSG_CO_NEWMAIL_TITLE), tr(MSG_CO_NEWMAIL_SUMMARY)),
+
+          Child, HGroup, GroupFrameT(tr(MSG_CO_Download)),
+            Child, ColGroup(2),
+              Child, Label(tr(MSG_CO_PreSelect)),
+              Child, data->GUI.CY_MSGSELECT = MakeCycle(mpsopt, tr(MSG_CO_PreSelect)),
+
+              Child, Label(tr(MSG_CO_TransferWin)),
+              Child, data->GUI.CY_TRANSWIN = MakeCycle(trwopt, tr(MSG_CO_TransferWin)),
+
+              Child, Label(tr(MSG_CO_WarnSize1)),
+              Child, HGroup,
+                Child, data->GUI.ST_WARNSIZE = MakeInteger(5, tr(MSG_CO_WarnSize1)),
+                Child, LLabel(tr(MSG_CO_WarnSize2)),
+              End,
+            End,
+
+            Child, VSpace(0),
+
             Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_NEWMAIL_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_NEWMAIL_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-           End,
-         End,
-
-         Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-         End,
-
-         Child, HGroup, GroupFrameT(tr(MSG_CO_Download)),
-            Child, ColGroup(2),
-
-               Child, Label(tr(MSG_CO_PreSelect)),
-               Child, data->GUI.CY_MSGSELECT = MakeCycle(mpsopt, tr(MSG_CO_PreSelect)),
-
-               Child, Label(tr(MSG_CO_TransferWin)),
-               Child, data->GUI.CY_TRANSWIN = MakeCycle(trwopt, tr(MSG_CO_TransferWin)),
-
-               Child, Label(tr(MSG_CO_WarnSize1)),
-               Child, HGroup,
-                  Child, data->GUI.ST_WARNSIZE = MakeInteger(5, tr(MSG_CO_WarnSize1)),
-                  Child, LLabel(tr(MSG_CO_WarnSize2)),
-               End,
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_AVOIDDUP, tr(MSG_CO_AvoidDuplicates)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_UPDSTAT, tr(MSG_CO_UpdateStatus)),
+              Child, HVSpace,
             End,
+          End,
 
-            Child, HSpace(0),
-
-            Child, ColGroup(2),
-               Child, Label2(tr(MSG_CO_AvoidDuplicates)),
-               Child, data->GUI.CH_AVOIDDUP = MakeCheck(tr(MSG_CO_AvoidDuplicates)),
-               Child, Label2(tr(MSG_CO_UpdateStatus)),
-               Child, data->GUI.CH_UPDSTAT = MakeCheck(tr(MSG_CO_UpdateStatus)),
-            End,
-
-         End,
-         Child, VGroup, GroupFrameT(tr(MSG_CO_AutoOperation)),
+          Child, VGroup, GroupFrameT(tr(MSG_CO_AutoOperation)),
             Child, HGroup,
-               Child, Label(tr(MSG_CO_CheckMail)),
-               Child, data->GUI.NM_INTERVAL = NumericbuttonObject,
-                 MUIA_CycleChain,      TRUE,
-                 MUIA_Numeric_Min,     0,
-                 MUIA_Numeric_Max,     240,
-                 MUIA_Numeric_Default, 5,
-               End,
-               Child, Label(tr(MSG_CO_Minutes)),
-               Child, HSpace(0),
+              Child, Label(tr(MSG_CO_CheckMail)),
+              Child, data->GUI.NM_INTERVAL = NumericbuttonObject,
+                MUIA_CycleChain,      TRUE,
+                MUIA_Numeric_Min,     0,
+                MUIA_Numeric_Max,     240,
+                MUIA_Numeric_Default, 5,
+              End,
+              Child, Label(tr(MSG_CO_Minutes)),
+              Child, HSpace(0),
             End,
             Child, MakeCheckGroup((Object **)&data->GUI.CH_DLLARGE, tr(MSG_CO_DownloadLarge)),
-         End,
-         Child, ColGroup(3), GroupFrameT(tr(MSG_CO_Notification)),
+          End,
+          Child, ColGroup(3), GroupFrameT(tr(MSG_CO_Notification)),
             Child, data->GUI.CH_NOTIREQ = MakeCheck(tr(MSG_CO_NotiReq)),
             Child, LLabel(tr(MSG_CO_NotiReq)),
             Child, HSpace(0),
+
             Child, data->GUI.CH_NOTISOUND = MakeCheck(tr(MSG_CO_NotiSound)),
             Child, LLabel(tr(MSG_CO_NotiSound)),
             Child, HGroup,
-               MUIA_Group_HorizSpacing, 0,
-               Child, pa_notisound = PopaslObject,
-                  MUIA_Popasl_Type     ,0,
-                  MUIA_Popstring_String,data->GUI.ST_NOTISOUND = MakeString(SIZE_PATHFILE,""),
-                  MUIA_Popstring_Button,PopButton(MUII_PopFile),
-               End,
-               Child, bt_notisound = PopButton(MUII_TapePlay),
+              MUIA_Group_HorizSpacing, 0,
+              Child, pa_notisound = PopaslObject,
+                MUIA_Popasl_Type     ,0,
+                MUIA_Popstring_String,data->GUI.ST_NOTISOUND = MakeString(SIZE_PATHFILE,""),
+                MUIA_Popstring_Button,PopButton(MUII_PopFile),
+              End,
+              Child, bt_notisound = PopButton(MUII_TapePlay),
             End,
+
             Child, data->GUI.CH_NOTICMD = MakeCheck(tr(MSG_CO_NotiCommand)),
             Child, LLabel(tr(MSG_CO_NotiCommand)),
             Child, pa_noticmd = PopaslObject,
-               MUIA_Popasl_Type     ,0,
-               MUIA_Popstring_String,data->GUI.ST_NOTICMD = MakeString(SIZE_COMMAND,""),
-               MUIA_Popstring_Button,PopButton(MUII_PopFile),
+              MUIA_Popasl_Type     ,0,
+              MUIA_Popstring_String,data->GUI.ST_NOTICMD = MakeString(SIZE_COMMAND,""),
+              MUIA_Popstring_Button,PopButton(MUII_PopFile),
             End,
-         End,
-         Child, HVSpace,
-      End))
-   {
-      SetHelp(data->GUI.CH_AVOIDDUP  ,MSG_HELP_CO_CH_AVOIDDUP  );
-      SetHelp(data->GUI.CY_TRANSWIN  ,MSG_HELP_CO_CH_TRANSWIN  );
-      SetHelp(data->GUI.CY_MSGSELECT ,MSG_HELP_CO_CY_MSGSELECT );
-      SetHelp(data->GUI.CH_UPDSTAT   ,MSG_HELP_CO_CH_UPDSTAT   );
-      SetHelp(data->GUI.ST_WARNSIZE  ,MSG_HELP_CO_ST_WARNSIZE  );
-      SetHelp(data->GUI.NM_INTERVAL  ,MSG_HELP_CO_ST_INTERVAL  );
-      SetHelp(data->GUI.CH_DLLARGE   ,MSG_HELP_CO_CH_DLLARGE   );
-      SetHelp(data->GUI.CH_NOTIREQ   ,MSG_HELP_CO_CH_NOTIREQ   );
-      SetHelp(data->GUI.ST_NOTICMD   ,MSG_HELP_CO_ST_NOTICMD   );
-      SetHelp(data->GUI.ST_NOTISOUND ,MSG_HELP_CO_ST_NOTISOUND );
-      DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, pa_notisound, bt_notisound, pa_noticmd, NULL);
-      set(bt_notisound,MUIA_CycleChain,1);
-      DoMethod(bt_notisound          ,MUIM_Notify,MUIA_Pressed ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_PlaySoundHook,data->GUI.ST_NOTISOUND);
-      DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
-      DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,bt_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
-      DoMethod(data->GUI.CH_NOTICMD  ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_noticmd             ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
-   }
-   return grp;
+          End,
+
+          Child, HVSpace,
+        End;
+
+  if(obj != NULL)
+  {
+    SetHelp(data->GUI.CH_AVOIDDUP  ,MSG_HELP_CO_CH_AVOIDDUP  );
+    SetHelp(data->GUI.CY_TRANSWIN  ,MSG_HELP_CO_CH_TRANSWIN  );
+    SetHelp(data->GUI.CY_MSGSELECT ,MSG_HELP_CO_CY_MSGSELECT );
+    SetHelp(data->GUI.CH_UPDSTAT   ,MSG_HELP_CO_CH_UPDSTAT   );
+    SetHelp(data->GUI.ST_WARNSIZE  ,MSG_HELP_CO_ST_WARNSIZE  );
+    SetHelp(data->GUI.NM_INTERVAL  ,MSG_HELP_CO_ST_INTERVAL  );
+    SetHelp(data->GUI.CH_DLLARGE   ,MSG_HELP_CO_CH_DLLARGE   );
+    SetHelp(data->GUI.CH_NOTIREQ   ,MSG_HELP_CO_CH_NOTIREQ   );
+    SetHelp(data->GUI.ST_NOTICMD   ,MSG_HELP_CO_ST_NOTICMD   );
+    SetHelp(data->GUI.ST_NOTISOUND ,MSG_HELP_CO_ST_NOTISOUND );
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, pa_notisound, bt_notisound, pa_noticmd, NULL);
+    set(bt_notisound,MUIA_CycleChain,1);
+    DoMethod(bt_notisound          ,MUIM_Notify,MUIA_Pressed ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_PlaySoundHook,data->GUI.ST_NOTISOUND);
+    DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+    DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,bt_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+    DoMethod(data->GUI.CH_NOTICMD  ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_noticmd             ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+  }
+
+  RETURN(obj);
+  return obj;
 }
 
 ///
@@ -1708,26 +1769,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
    if((grp = VGroup,
          MUIA_HelpNode, "CO03",
 
-         Child, HGroup,
-            Child, MakeImageObject("config_filters_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_FILTER_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_FILTER_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-           End,
-         End,
-
-         Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-         End,
+         ConfigPageHeaderObject("config_filters_big", tr(MSG_CO_FILTER_TITLE), tr(MSG_CO_FILTER_SUMMARY)),
 
          Child, HGroup,
               Child, VGroup,
@@ -1755,15 +1797,23 @@ Object *CO_PageFilters(struct CO_ClassData *data)
               Child, BalanceObject, End,
               Child, RegisterGroup(rtitles),
                  MUIA_CycleChain, TRUE,
-                 Child, VGroup,
-                    Child, HGroup,
-                       Child, Label2(tr(MSG_CO_Name)),
-                       Child, data->GUI.ST_RNAME = MakeString(SIZE_NAME,tr(MSG_CO_Name)),
-                    End,
+                 Child, ColGroup(2),
+                    Child, Label2(tr(MSG_CO_Name)),
+                    Child, data->GUI.ST_RNAME = MakeString(SIZE_NAME,tr(MSG_CO_Name)),
+
+                    Child, HSpace(1),
                     Child, MakeCheckGroup((Object **)&data->GUI.CH_REMOTE, tr(MSG_CO_Remote)),
+
+                    Child, HSpace(1),
                     Child, MakeCheckGroup((Object **)&data->GUI.CH_APPLYNEW, tr(MSG_CO_ApplyToNew)),
+
+                    Child, HSpace(1),
                     Child, MakeCheckGroup((Object **)&data->GUI.CH_APPLYSENT, tr(MSG_CO_ApplyToSent)),
+
+                    Child, HSpace(1),
                     Child, MakeCheckGroup((Object **)&data->GUI.CH_APPLYREQ, tr(MSG_CO_ApplyOnReq)),
+
+                    Child, HVSpace,
                     Child, HVSpace,
                  End,
                  Child, data->GUI.GR_RGROUP = VGroup,
@@ -1781,8 +1831,8 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                        MUIA_Weight, 1,
                     End,
                      Child, RectangleObject,
-                         MUIA_Rectangle_HBar, TRUE,
-                        MUIA_FixHeight,      4,
+                       MUIA_Rectangle_HBar, TRUE,
+                       MUIA_FixHeight,      4,
                      End,
                     Child, HGroup,
                        Child, data->GUI.BT_MORE = MakeButton(tr(MSG_CO_More)),
@@ -1923,28 +1973,9 @@ Object *CO_PageSpam(struct CO_ClassData *data)
   ENTER();
 
   obj = VGroup,
-          MUIA_HelpNode, "CO16",
+          MUIA_HelpNode, "CO17",
 
-          Child, HGroup,
-            Child, MakeImageObject("config_spam_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_SPAMFILTER_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_SPAMFILTER_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-            End,
-          End,
-
-          Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-          End,
+          ConfigPageHeaderObject("config_spam_big", tr(MSG_CO_SPAMFILTER_TITLE), tr(MSG_CO_SPAMFILTER_SUMMARY)),
 
           Child, VGroup, GroupFrameT(tr(MSG_CO_SPAMFILTER)),
             Child, ColGroup(4),
@@ -1981,20 +2012,10 @@ Object *CO_PageSpam(struct CO_ClassData *data)
           End,
 
           Child, VGroup, GroupFrameT(tr(MSG_CO_SPAM_RECOGNITION)),
-            Child, ColGroup(3),
-              Child, data->GUI.CH_SPAMFILTERFORNEWMAIL = MakeCheck(tr(MSG_CO_SPAM_FILTERFORNEWMAIL)),
-              Child, LLabel(tr(MSG_CO_SPAM_FILTERFORNEWMAIL)),
-              Child, HSpace(0),
-              Child, data->GUI.CH_SPAMABOOKISWHITELIST = MakeCheck(tr(MSG_CO_SPAM_ADDRESSBOOKISWHITELIST)),
-              Child, LLabel(tr(MSG_CO_SPAM_ADDRESSBOOKISWHITELIST)),
-              Child, HSpace(0),
-              Child, data->GUI.CH_SPAMMARKONMOVE = MakeCheck(tr(MSG_CO_SPAM_MARKONMOVE)),
-              Child, LLabel(tr(MSG_CO_SPAM_MARKONMOVE)),
-              Child, HSpace(0),
-              Child, data->GUI.CH_SPAMMARKASREAD = MakeCheck(tr(MSG_CO_SPAM_MARK_AS_READ)),
-              Child, LLabel(tr(MSG_CO_SPAM_MARK_AS_READ)),
-              Child, HSpace(0),
-            End,
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_SPAMFILTERFORNEWMAIL, tr(MSG_CO_SPAM_FILTERFORNEWMAIL)),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_SPAMABOOKISWHITELIST, tr(MSG_CO_SPAM_ADDRESSBOOKISWHITELIST)),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_SPAMMARKONMOVE, tr(MSG_CO_SPAM_MARKONMOVE)),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_SPAMMARKASREAD, tr(MSG_CO_SPAM_MARK_AS_READ)),
           End,
 
           Child, HVSpace,
@@ -2070,26 +2091,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO04",
 
-          Child, HGroup,
-            Child, MakeImageObject("config_read_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_READ_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_READ_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-            End,
-          End,
-
-          Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-          End,
+          ConfigPageHeaderObject("config_read_big", tr(MSG_CO_READ_TITLE), tr(MSG_CO_READ_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -2168,7 +2170,6 @@ Object *CO_PageRead(struct CO_ClassData *data)
 
             Child, VGroup, GroupFrameT(tr(MSG_CO_OtherOptions)),
               Child, MakeCheckGroup((Object **)&data->GUI.CH_MULTIWIN, tr(MSG_CO_MultiReadWin)),
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_EMBEDDEDREADPANE, tr(MSG_CO_SHOWEMBEDDEDREADPANE)),
               Child, HGroup,
                 Child, data->GUI.CH_DELAYEDSTATUS = MakeCheck(tr(MSG_CO_SETSTATUSDELAYED1)),
                 Child, Label2(tr(MSG_CO_SETSTATUSDELAYED1)),
@@ -2204,7 +2205,6 @@ Object *CO_PageRead(struct CO_ClassData *data)
     SetHelp(data->GUI.CA_COLURL,          MSG_HELP_CO_CA_COLURL);
     SetHelp(data->GUI.CH_ALLTEXTS,        MSG_HELP_CO_CH_ALLTEXTS);
     SetHelp(data->GUI.CH_MULTIWIN,        MSG_HELP_CO_CH_MULTIWIN);
-    SetHelp(data->GUI.CH_EMBEDDEDREADPANE,MSG_HELP_CO_CH_EMBEDDEDREADPANE);
     SetHelp(data->GUI.CY_SIGSEPLINE,      MSG_HELP_CO_CY_SIGSEPLINE);
     SetHelp(data->GUI.CH_FIXFEDIT,        MSG_HELP_CO_CH_FIXFEDIT);
     SetHelp(data->GUI.CH_WRAPHEAD,        MSG_HELP_CO_CH_WRAPHEAD);
@@ -2252,26 +2252,7 @@ Object *CO_PageWrite(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO05",
 
-          Child, HGroup,
-            Child, MakeImageObject("config_write_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_WRITE_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_WRITE_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-            End,
-          End,
-
-          Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-          End,
+          ConfigPageHeaderObject("config_write_big", tr(MSG_CO_WRITE_TITLE), tr(MSG_CO_WRITE_SUMMARY)),
 
           Child, ColGroup(2), GroupFrameT(tr(MSG_CO_MessageHeader)),
             Child, Label2(tr(MSG_CO_ReplyTo)),
@@ -2331,6 +2312,7 @@ Object *CO_PageWrite(struct CO_ClassData *data)
           Child, VGroup, GroupFrameT(tr(MSG_CO_OtherOptions)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_WARNSUBJECT, tr(MSG_CO_WARNSUBJECT)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_REQUESTMDN, tr(MSG_CO_REQUESTMDN)),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_SAVESENT, tr(MSG_CO_SaveSent)),
           End,
 
           Child, HVSpace,
@@ -2352,6 +2334,7 @@ Object *CO_PageWrite(struct CO_ClassData *data)
     SetHelp(data->GUI.NB_EMAILCACHE,  MSG_HELP_CO_NB_EMAILCACHE);
     SetHelp(data->GUI.NB_AUTOSAVE,    MSG_HELP_CO_NB_AUTOSAVE);
     SetHelp(data->GUI.CH_REQUESTMDN,  MSG_HELP_CO_CH_REQUESTMDN);
+    SetHelp(data->GUI.CH_SAVESENT,    MSG_HELP_CO_CH_SAVESENT);
   }
 
   RETURN(obj);
@@ -2362,76 +2345,80 @@ Object *CO_PageWrite(struct CO_ClassData *data)
 /// CO_PageReplyForward
 Object *CO_PageReplyForward(struct CO_ClassData *data)
 {
-   Object *grp;
-   if ((grp = VGroup,
-         MUIA_HelpNode, "CO06",
+  Object *obj;
 
-         Child, HGroup,
-            Child, MakeImageObject("config_answer_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_REPLY_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_REPLY_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-           End,
-         End,
+  obj = VGroup,
+          MUIA_HelpNode, "CO06",
 
-         Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-         End,
+          ConfigPageHeaderObject("config_answer_big", tr(MSG_CO_REPLY_TITLE), tr(MSG_CO_REPLY_SUMMARY)),
 
-         Child, ColGroup(2), GroupFrameT(tr(MSG_CO_Forwarding)),
+          Child, ColGroup(2), GroupFrameT(tr(MSG_CO_Forwarding)),
             Child, Label2(tr(MSG_CO_FwdInit)),
             Child, MakeVarPop(&data->GUI.ST_FWDSTART, VPM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdInit)),
+
             Child, Label2(tr(MSG_CO_FwdFinish)),
             Child, MakeVarPop(&data->GUI.ST_FWDEND, VPM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdFinish)),
-         End,
-         Child, VGroup, GroupFrameT(tr(MSG_CO_Replying)),
+          End,
+
+          Child, VGroup, GroupFrameT(tr(MSG_CO_Replying)),
             Child, ColGroup(2),
-               Child, Label2(tr(MSG_CO_RepInit)),
-               Child, MakePhraseGroup(&data->GUI.ST_REPLYHI, &data->GUI.ST_REPLYTEXT, &data->GUI.ST_REPLYBYE, tr(MSG_CO_RepInit), tr(MSG_HELP_CO_ST_REPLYTEXT)),
-               Child, Label2(tr(MSG_CO_AltRepInit)),
-               Child, MakePhraseGroup(&data->GUI.ST_AREPLYHI, &data->GUI.ST_AREPLYTEXT, &data->GUI.ST_AREPLYBYE, tr(MSG_CO_AltRepInit), tr(MSG_HELP_CO_ST_AREPLYTEXT)),
-               Child, Label2(tr(MSG_CO_AltRepPat)),
-               Child, data->GUI.ST_AREPLYPAT = MakeString(SIZE_PATTERN, tr(MSG_CO_AltRepPat)),
-               Child, Label2(tr(MSG_CO_MLRepInit)),
-               Child, MakePhraseGroup(&data->GUI.ST_MREPLYHI, &data->GUI.ST_MREPLYTEXT, &data->GUI.ST_MREPLYBYE, tr(MSG_CO_MLRepInit), tr(MSG_HELP_CO_ST_MREPLYTEXT)),
-               Child, Label2(tr(MSG_CO_QuoteMail)),
-               Child, MakeVarPop(&data->GUI.ST_REPLYCHAR, VPM_QUOTE, SIZE_SMALL, tr(MSG_CO_QuoteMail)),
-               Child, Label2(tr(MSG_CO_AltQuote)),
-               Child, data->GUI.ST_ALTQUOTECHAR = MakeString(SIZE_SMALL, tr(MSG_CO_AltQuote)),
+              Child, Label2(tr(MSG_CO_RepInit)),
+              Child, MakePhraseGroup(&data->GUI.ST_REPLYHI, &data->GUI.ST_REPLYTEXT, &data->GUI.ST_REPLYBYE, tr(MSG_CO_RepInit), tr(MSG_HELP_CO_ST_REPLYTEXT)),
+
+              Child, Label2(tr(MSG_CO_AltRepInit)),
+              Child, MakePhraseGroup(&data->GUI.ST_AREPLYHI, &data->GUI.ST_AREPLYTEXT, &data->GUI.ST_AREPLYBYE, tr(MSG_CO_AltRepInit), tr(MSG_HELP_CO_ST_AREPLYTEXT)),
+
+              Child, Label2(tr(MSG_CO_AltRepPat)),
+              Child, data->GUI.ST_AREPLYPAT = MakeString(SIZE_PATTERN, tr(MSG_CO_AltRepPat)),
+
+              Child, Label2(tr(MSG_CO_MLRepInit)),
+              Child, MakePhraseGroup(&data->GUI.ST_MREPLYHI, &data->GUI.ST_MREPLYTEXT, &data->GUI.ST_MREPLYBYE, tr(MSG_CO_MLRepInit), tr(MSG_HELP_CO_ST_MREPLYTEXT)),
+
+              Child, Label2(tr(MSG_CO_QuoteMail)),
+              Child, MakeVarPop(&data->GUI.ST_REPLYCHAR, VPM_QUOTE, SIZE_SMALL, tr(MSG_CO_QuoteMail)),
+
+              Child, Label2(tr(MSG_CO_AltQuote)),
+              Child, data->GUI.ST_ALTQUOTECHAR = MakeString(SIZE_SMALL, tr(MSG_CO_AltQuote)),
+
+              Child, HSpace(1),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_COMPADDR, tr(MSG_CO_VerifyAddress)),
+
+              Child, HSpace(1),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_QUOTE, tr(MSG_CO_DoQuote)),
+
+              Child, HSpace(1),
+              Child, ColGroup(2),
+                Child, HSpace(5),
+                Child, MakeCheckGroup((Object **)&data->GUI.CH_QUOTEEMPTY, tr(MSG_CO_QuoteEmpty)),
+
+                Child, HSpace(5),
+                Child, MakeCheckGroup((Object **)&data->GUI.CH_STRIPSIG, tr(MSG_CO_StripSignature)),
+              End,
+
             End,
-            Child, ColGroup(2),
-               Child, MakeCheckGroup((Object **)&data->GUI.CH_QUOTE, tr(MSG_CO_DoQuote)),
-               Child, MakeCheckGroup((Object **)&data->GUI.CH_QUOTEEMPTY, tr(MSG_CO_QuoteEmpty)),
-               Child, MakeCheckGroup((Object **)&data->GUI.CH_COMPADDR, tr(MSG_CO_VerifyAddress)),
-               Child, MakeCheckGroup((Object **)&data->GUI.CH_STRIPSIG, tr(MSG_CO_StripSignature)),
-            End,
-         End,
-         Child, HVSpace,
-      End))
-   {
-      SetHelp(data->GUI.ST_FWDSTART    ,MSG_HELP_CO_ST_FWDSTART  );
-      SetHelp(data->GUI.ST_FWDEND      ,MSG_HELP_CO_ST_FWDEND    );
-      SetHelp(data->GUI.ST_AREPLYPAT   ,MSG_HELP_CO_ST_AREPLYPAT );
-      SetHelp(data->GUI.CH_QUOTE       ,MSG_HELP_CO_CH_QUOTE     );
-      SetHelp(data->GUI.ST_REPLYCHAR   ,MSG_HELP_CO_ST_REPLYCHAR );
-      SetHelp(data->GUI.ST_ALTQUOTECHAR,MSG_HELP_CO_ST_ALTQUOTECHAR);
-      SetHelp(data->GUI.CH_QUOTEEMPTY  ,MSG_HELP_CO_CH_QUOTEEMPTY);
-      SetHelp(data->GUI.CH_COMPADDR    ,MSG_HELP_CO_CH_COMPADDR  );
-      SetHelp(data->GUI.CH_STRIPSIG    ,MSG_HELP_CO_CH_STRIPSIG  );
-      DoMethod(data->GUI.CH_QUOTE      ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.ST_REPLYCHAR,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
-      DoMethod(data->GUI.CH_QUOTE      ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_QUOTEEMPTY,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
-      DoMethod(data->GUI.CH_QUOTE      ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_STRIPSIG,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
-   }
-   return grp;
+          End,
+
+          Child, HVSpace,
+        End;
+
+  if(obj != NULL)
+  {
+    SetHelp(data->GUI.ST_FWDSTART    ,MSG_HELP_CO_ST_FWDSTART  );
+    SetHelp(data->GUI.ST_FWDEND      ,MSG_HELP_CO_ST_FWDEND    );
+    SetHelp(data->GUI.ST_AREPLYPAT   ,MSG_HELP_CO_ST_AREPLYPAT );
+    SetHelp(data->GUI.CH_QUOTE       ,MSG_HELP_CO_CH_QUOTE     );
+    SetHelp(data->GUI.ST_REPLYCHAR   ,MSG_HELP_CO_ST_REPLYCHAR );
+    SetHelp(data->GUI.ST_ALTQUOTECHAR,MSG_HELP_CO_ST_ALTQUOTECHAR);
+    SetHelp(data->GUI.CH_QUOTEEMPTY  ,MSG_HELP_CO_CH_QUOTEEMPTY);
+    SetHelp(data->GUI.CH_COMPADDR    ,MSG_HELP_CO_CH_COMPADDR  );
+    SetHelp(data->GUI.CH_STRIPSIG    ,MSG_HELP_CO_CH_STRIPSIG  );
+    DoMethod(data->GUI.CH_QUOTE      ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.ST_REPLYCHAR,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+    DoMethod(data->GUI.CH_QUOTE      ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_QUOTEEMPTY,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+    DoMethod(data->GUI.CH_QUOTE      ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_STRIPSIG,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+  }
+
+  RETURN(obj);
+  return obj;
 }
 
 ///
@@ -2450,26 +2437,7 @@ Object *CO_PageSignature(struct CO_ClassData *data)
    if ((grp = VGroup,
          MUIA_HelpNode, "CO07",
 
-         Child, HGroup,
-            Child, MakeImageObject("config_signature_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_SIGNATURE_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_SIGNATURE_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-           End,
-         End,
-
-         Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-         End,
+         ConfigPageHeaderObject("config_signature_big", tr(MSG_CO_SIGNATURE_TITLE), tr(MSG_CO_SIGNATURE_SUMMARY)),
 
          Child, VGroup, GroupFrameT(tr(MSG_CO_Signature)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_USESIG, tr(MSG_CO_UseSig)),
@@ -2528,179 +2496,137 @@ Object *CO_PageSignature(struct CO_ClassData *data)
 /// CO_PageLists
 Object *CO_PageLists(struct CO_ClassData *data)
 {
-   Object *grp;
-   static const char *sizef[6];
-   static const char *infob[5];
+  Object *obj;
 
-   sizef[0] = tr(MSG_CO_SIZEFORMAT01);
-   sizef[1] = tr(MSG_CO_SIZEFORMAT02);
-   sizef[2] = tr(MSG_CO_SIZEFORMAT03);
-   sizef[3] = tr(MSG_CO_SIZEFORMAT04);
-   sizef[4] = tr(MSG_CO_SIZEFORMAT05);
-   sizef[5] = NULL;
+  ENTER();
 
-   infob[0] = tr(MSG_CO_INFOBARPOS01);
-   infob[1] = tr(MSG_CO_INFOBARPOS02);
-   infob[2] = tr(MSG_CO_INFOBARPOS03);
-   infob[3] = tr(MSG_CO_INFOBARPOS04);
-   infob[4] = NULL;
+  obj = VGroup,
+          MUIA_HelpNode, "CO08",
 
-   if ((grp =  VGroup,
-         MUIA_HelpNode, "CO08",
+          ConfigPageHeaderObject("config_lists_big", tr(MSG_CO_LISTS_TITLE), tr(MSG_CO_LISTS_SUMMARY)),
 
-         Child, HGroup,
-            Child, MakeImageObject("config_lists_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_LISTS_TITLE),
-                MUIA_Weight,        100,
+          Child, ScrollgroupObject,
+            MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_Contents, VGroupV,
+
+            Child, HGroup, GroupFrameT(tr(MSG_CO_FIELDLISTCFG)),
+
+              Child, VGroup,
+                Child, ColGroup(2), GroupFrameT(tr(MSG_FolderList)),
+                  MUIA_ShortHelp, tr(MSG_HELP_CO_CG_FO),
+                  Child, MakeStaticCheck(),
+                  Child, LLabel(tr(MSG_Folder)),
+
+                  Child, data->GUI.CH_FCOLS[1] = MakeCheck(""),
+                  Child, LLabel(tr(MSG_Total)),
+
+                  Child, data->GUI.CH_FCOLS[2] = MakeCheck(""),
+                  Child, LLabel(tr(MSG_Unread)),
+
+                  Child, data->GUI.CH_FCOLS[3] = MakeCheck(""),
+                  Child, LLabel(tr(MSG_New)),
+
+                  Child, data->GUI.CH_FCOLS[4] = MakeCheck(""),
+                  Child, LLabel(tr(MSG_Size)),
+
+                  Child, data->GUI.CH_FCNTMENU = MakeCheck(""),
+                  Child, LLabel(tr(MSG_CO_CONTEXTMENU)),
+                End,
+                Child, HVSpace,
               End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_LISTS_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
+
+              Child, HSpace(0),
+
+              Child, ColGroup(2), GroupFrameT(tr(MSG_MessageList)),
+                MUIA_ShortHelp, tr(MSG_HELP_CO_CG_MA),
+                Child, MakeStaticCheck(),
+                Child, LLabel(tr(MSG_Status)),
+
+                Child, data->GUI.CH_MCOLS[1] = MakeCheck(""),
+                Child, LLabel(tr(MSG_SenderRecpt)),
+
+                Child, data->GUI.CH_MCOLS[2] = MakeCheck(""),
+                Child, LLabel(tr(MSG_ReturnAddress)),
+
+                Child, data->GUI.CH_MCOLS[3] = MakeCheck(""),
+                Child, LLabel(tr(MSG_Subject)),
+
+                Child, data->GUI.CH_MCOLS[4] = MakeCheck(""),
+                Child, LLabel(tr(MSG_MessageDate)),
+
+                Child, data->GUI.CH_MCOLS[5] = MakeCheck(""),
+                Child, LLabel(tr(MSG_Size)),
+
+                Child, data->GUI.CH_MCOLS[6] = MakeCheck(""),
+                Child, LLabel(tr(MSG_Filename)),
+
+                Child, data->GUI.CH_MCOLS[7] = MakeCheck(""),
+                Child, LLabel(tr(MSG_CO_DATE_SNTRCVD)),
+
+                Child, data->GUI.CH_MCNTMENU = MakeCheck(""),
+                Child, LLabel(tr(MSG_CO_CONTEXTMENU)),
               End,
-           End,
-         End,
+            End,
 
-         Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-         End,
+            Child, VGroup, GroupFrameT(tr(MSG_CO_GENLISTCFG)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFLIST, tr(MSG_CO_FixedFontList)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_BEAT, tr(MSG_CO_SwatchBeat)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_ABOOKLOOKUP, tr(MSG_CO_ABOOKLOOKUP)),
+            End,
 
-         Child, ScrollgroupObject,
-           MUIA_Scrollgroup_FreeHoriz, FALSE,
-           MUIA_Scrollgroup_Contents, VGroupV,
+            Child, HVSpace,
+            End,
+          End,
+        End;
 
-           Child, HGroup, GroupFrameT(tr(MSG_CO_FIELDLISTCFG)),
-             Child, ColGroup(2), GroupFrame,
-               MUIA_FrameTitle, tr(MSG_FolderList),
-               MUIA_ShortHelp, tr(MSG_HELP_CO_CG_FO),
-               Child, MakeStaticCheck(),
-               Child, LLabel(tr(MSG_Folder)),
-               Child, data->GUI.CH_FCOLS[1] = MakeCheck(""),
-               Child, LLabel(tr(MSG_Total)),
-               Child, data->GUI.CH_FCOLS[2] = MakeCheck(""),
-               Child, LLabel(tr(MSG_Unread)),
-               Child, data->GUI.CH_FCOLS[3] = MakeCheck(""),
-               Child, LLabel(tr(MSG_New)),
-               Child, data->GUI.CH_FCOLS[4] = MakeCheck(""),
-               Child, LLabel(tr(MSG_Size)),
-               Child, data->GUI.CH_FCNTMENU = MakeCheck(""),
-               Child, LLabel(tr(MSG_CO_CONTEXTMENU)),
-             End,
-             Child, HSpace(0),
-             Child, ColGroup(2), GroupFrame,
-               MUIA_FrameTitle, tr(MSG_MessageList),
-               MUIA_ShortHelp, tr(MSG_HELP_CO_CG_MA),
-               Child, MakeStaticCheck(),
-               Child, LLabel(tr(MSG_Status)),
-               Child, data->GUI.CH_MCOLS[1] = MakeCheck(""),
-               Child, LLabel(tr(MSG_SenderRecpt)),
-               Child, data->GUI.CH_MCOLS[2] = MakeCheck(""),
-               Child, LLabel(tr(MSG_ReturnAddress)),
-               Child, data->GUI.CH_MCOLS[3] = MakeCheck(""),
-               Child, LLabel(tr(MSG_Subject)),
-               Child, data->GUI.CH_MCOLS[4] = MakeCheck(""),
-               Child, LLabel(tr(MSG_MessageDate)),
-               Child, data->GUI.CH_MCOLS[5] = MakeCheck(""),
-               Child, LLabel(tr(MSG_Size)),
-               Child, data->GUI.CH_MCOLS[6] = MakeCheck(""),
-               Child, LLabel(tr(MSG_Filename)),
-               Child, data->GUI.CH_MCOLS[7] = MakeCheck(""),
-               Child, LLabel(tr(MSG_CO_DATE_SNTRCVD)),
-               Child, data->GUI.CH_MCNTMENU = MakeCheck(""),
-               Child, LLabel(tr(MSG_CO_CONTEXTMENU)),
-             End,
-           End,
-           Child, VGroup, GroupFrameT(tr(MSG_CO_GENLISTCFG)),
-             Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFLIST, tr(MSG_CO_FixedFontList)),
-             Child, MakeCheckGroup((Object **)&data->GUI.CH_BEAT, tr(MSG_CO_SwatchBeat)),
-             Child, MakeCheckGroup((Object **)&data->GUI.CH_ABOOKLOOKUP, tr(MSG_CO_ABOOKLOOKUP)),
-             Child, MakeCheckGroup((Object **)&data->GUI.CH_QUICKSEARCHBAR, tr(MSG_CO_QUICKSEARCHBAR)),
-             Child, HGroup,
-               Child, Label1(tr(MSG_CO_SIZEFORMAT)),
-               Child, data->GUI.CY_SIZE = MakeCycle(sizef, tr(MSG_CO_SIZEFORMAT)),
-             End,
-           End,
-           Child, VGroup,
-             GroupFrameT(tr(MSG_CO_INFOBAR)),
-             MUIA_Group_Columns,  2,
-             Child, Label1(tr(MSG_CO_INFOBARPOS)),
-             Child, data->GUI.CY_INFOBAR = MakeCycle(infob, tr(MSG_CO_INFOBARPOS)),
-             Child, Label2(tr(MSG_CO_FOLDERLABEL)),
-             Child, MakeVarPop(&data->GUI.ST_INFOBARTXT, VPM_MAILSTATS, SIZE_DEFAULT, tr(MSG_CO_FOLDERLABEL)),
-           End,
-           Child, HVSpace,
-           End,
-         End,
-      End))
-   {
-      SetHelp(data->GUI.CH_FIXFLIST,      MSG_HELP_CO_CH_FIXFLIST);
-      SetHelp(data->GUI.CH_BEAT,          MSG_HELP_CO_CH_BEAT);
-      SetHelp(data->GUI.CH_ABOOKLOOKUP,   MSG_HELP_CO_CH_ABOOKLOOKUP);
-      SetHelp(data->GUI.CH_QUICKSEARCHBAR,MSG_HELP_CO_CH_QUICKSEARCHBAR);
-      SetHelp(data->GUI.CY_INFOBAR,       MSG_HELP_CO_CH_INFOBAR);
-      SetHelp(data->GUI.ST_INFOBARTXT,    MSG_HELP_CO_ST_INFOBARTXT);
-      SetHelp(data->GUI.CY_SIZE,          MSG_HELP_CO_CY_SIZE);
-      SetHelp(data->GUI.CH_FCNTMENU,      MSG_HELP_CO_CONTEXTMENU);
-      SetHelp(data->GUI.CH_MCNTMENU,      MSG_HELP_CO_CONTEXTMENU);
-   }
-   return grp;
+  if(obj != NULL)
+  {
+    SetHelp(data->GUI.CH_FIXFLIST,      MSG_HELP_CO_CH_FIXFLIST);
+    SetHelp(data->GUI.CH_BEAT,          MSG_HELP_CO_CH_BEAT);
+    SetHelp(data->GUI.CH_ABOOKLOOKUP,   MSG_HELP_CO_CH_ABOOKLOOKUP);
+    SetHelp(data->GUI.CH_FCNTMENU,      MSG_HELP_CO_CONTEXTMENU);
+    SetHelp(data->GUI.CH_MCNTMENU,      MSG_HELP_CO_CONTEXTMENU);
+  }
+
+  RETURN(obj);
+  return obj;
 }
 
 ///
 /// CO_PageSecurity
 Object *CO_PageSecurity(struct CO_ClassData *data)
 {
-   Object *grp;
-   static const char *logfmode[4];
+  static const char *logfmode[4];
+  Object *obj;
 
-   logfmode[0] = tr(MSG_CO_LogNone);
-   logfmode[1] = tr(MSG_CO_LogNormal);
-   logfmode[2] = tr(MSG_CO_LogVerbose);
-   logfmode[3] = NULL;
+  ENTER();
 
-   if ((grp = VGroup,
-         MUIA_HelpNode, "CO09",
+  logfmode[0] = tr(MSG_CO_LogNone);
+  logfmode[1] = tr(MSG_CO_LogNormal);
+  logfmode[2] = tr(MSG_CO_LogVerbose);
+  logfmode[3] = NULL;
 
-         Child, HGroup,
-            Child, MakeImageObject("config_security_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_SECURITY_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_SECURITY_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-           End,
-         End,
+  obj = VGroup,
+          MUIA_HelpNode, "CO09",
 
-         Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-         End,
+          ConfigPageHeaderObject("config_security_big", tr(MSG_CO_SECURITY_TITLE), tr(MSG_CO_SECURITY_SUMMARY)),
 
-         Child, VGroup, GroupFrameT("PGP"),
+          Child, VGroup, GroupFrameT("PGP"),
             Child, ColGroup(2),
               Child, Label2(tr(MSG_CO_PGPExe)),
               Child, PopaslObject,
-                 MUIA_Popasl_Type     ,ASL_FileRequest,
-                 MUIA_Popstring_String,data->GUI.ST_PGPCMD= MakeString(SIZE_PATHFILE,tr(MSG_CO_PGPExe)),
-                 MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
-                 ASLFR_DrawersOnly, TRUE,
+                MUIA_Popasl_Type     ,ASL_FileRequest,
+                MUIA_Popstring_String,data->GUI.ST_PGPCMD= MakeString(SIZE_PATHFILE,tr(MSG_CO_PGPExe)),
+                MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
+                ASLFR_DrawersOnly, TRUE,
               End,
+
               Child, Label2(tr(MSG_CO_PGPKey)),
               Child, HGroup,
-                 Child, MakePGPKeyList(&(data->GUI.ST_MYPGPID), TRUE, tr(MSG_CO_PGPKey)),
-                 Child, HSpace(8),
-                 Child, data->GUI.CH_ENCSELF = MakeCheck(tr(MSG_CO_EncryptToSelf)),
-                 Child, Label1(tr(MSG_CO_EncryptToSelf)),
+                Child, MakePGPKeyList(&(data->GUI.ST_MYPGPID), TRUE, tr(MSG_CO_PGPKey)),
+                Child, HSpace(8),
+                Child, data->GUI.CH_ENCSELF = MakeCheck(tr(MSG_CO_EncryptToSelf)),
+                Child, Label1(tr(MSG_CO_EncryptToSelf)),
               End,
             End,
             Child, HGroup,
@@ -2710,54 +2636,57 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
               Child, Label2(tr(MSG_CO_PGPPASSINTERVAL2)),
               Child, HSpace(0),
             End,
-         End,
-         Child, ColGroup(2), GroupFrameT(tr(MSG_CO_AnonMail)),
+          End,
+
+          Child, ColGroup(2), GroupFrameT(tr(MSG_CO_AnonMail)),
             Child, Label2(tr(MSG_CO_ReMailer)),
             Child, data->GUI.ST_REMAILER = MakeString(SIZE_ADDRESS,tr(MSG_CO_ReMailer)),
+
             Child, Label2(tr(MSG_CO_ReMailerLine)),
             Child, data->GUI.ST_FIRSTLINE = MakeString(SIZE_INTRO,tr(MSG_CO_ReMailerLine)),
-         End,
-         Child, VGroup, GroupFrameT(tr(MSG_CO_Logfiles)),
-            Child, HGroup,
-               Child, Label2(tr(MSG_CO_LogPath)),
-               Child, PopaslObject,
-                  MUIA_Popasl_Type     ,ASL_FileRequest,
-                  MUIA_Popstring_String,data->GUI.ST_LOGFILE = MakeString(SIZE_PATH,tr(MSG_CO_LogPath)),
-                  MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
-                  ASLFR_DrawersOnly, TRUE,
-               End,
-            End,
-            Child, ColGroup(5),
-               Child, data->GUI.CH_SPLITLOG = MakeCheck(tr(MSG_CO_LogSplit)),
-               Child, LLabel1(tr(MSG_CO_LogSplit)),
-               Child, HSpace(0),
-               Child, Label1(tr(MSG_CO_LogMode)),
-               Child, data->GUI.CY_LOGMODE = MakeCycle(logfmode,tr(MSG_CO_LogMode)),
-               Child, data->GUI.CH_LOGALL = MakeCheck(tr(MSG_CO_LogAllEvents)),
-               Child, LLabel1(tr(MSG_CO_LogAllEvents)),
-               Child, HSpace(0),
-               Child, HSpace(0),
-               Child, HSpace(0),
-            End,
-         End,
-         Child, HVSpace,
-      End))
-   {
-      SetHelp(data->GUI.ST_PGPCMD    ,MSG_HELP_CO_ST_PGPCMD   );
-      SetHelp(data->GUI.ST_MYPGPID   ,MSG_HELP_CO_ST_MYPGPID  );
-      SetHelp(data->GUI.CH_ENCSELF   ,MSG_HELP_CO_CH_ENCSELF  );
-      SetHelp(data->GUI.CH_PGPPASSINTERVAL, MSG_HELP_CO_PGPPASSINTERVAL);
-      SetHelp(data->GUI.NB_PGPPASSINTERVAL, MSG_HELP_CO_PGPPASSINTERVAL);
-      SetHelp(data->GUI.CH_ENCSELF   ,MSG_HELP_CO_CH_ENCSELF  );
-      SetHelp(data->GUI.ST_REMAILER  ,MSG_HELP_CO_ST_REMAILER );
-      SetHelp(data->GUI.ST_FIRSTLINE ,MSG_HELP_CO_ST_FIRSTLINE);
-      SetHelp(data->GUI.ST_LOGFILE   ,MSG_HELP_CO_ST_LOGFILE  );
-      SetHelp(data->GUI.CH_SPLITLOG  ,MSG_HELP_CO_CH_SPLITLOG );
-      SetHelp(data->GUI.CY_LOGMODE   ,MSG_HELP_CO_CY_LOGMODE  );
-      SetHelp(data->GUI.CH_LOGALL    ,MSG_HELP_CO_CH_LOGALL   );
-   }
+          End,
 
-   return grp;
+          Child, ColGroup(2), GroupFrameT(tr(MSG_CO_Logfiles)),
+            Child, Label1(tr(MSG_CO_LogMode)),
+            Child, data->GUI.CY_LOGMODE = MakeCycle(logfmode, tr(MSG_CO_LogMode)),
+
+            Child, Label2(tr(MSG_CO_LogPath)),
+            Child, PopaslObject,
+              MUIA_Popasl_Type     ,ASL_FileRequest,
+              MUIA_Popstring_String,data->GUI.ST_LOGFILE = MakeString(SIZE_PATH,tr(MSG_CO_LogPath)),
+              MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
+              ASLFR_DrawersOnly, TRUE,
+            End,
+
+            Child, HSpace(1),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_SPLITLOG, tr(MSG_CO_LogSplit)),
+
+            Child, HSpace(1),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_LOGALL, tr(MSG_CO_LogAllEvents)),
+
+          End,
+
+          Child, HVSpace,
+        End;
+
+  if(obj != NULL)
+  {
+    SetHelp(data->GUI.ST_PGPCMD    ,MSG_HELP_CO_ST_PGPCMD   );
+    SetHelp(data->GUI.ST_MYPGPID   ,MSG_HELP_CO_ST_MYPGPID  );
+    SetHelp(data->GUI.CH_ENCSELF   ,MSG_HELP_CO_CH_ENCSELF  );
+    SetHelp(data->GUI.CH_PGPPASSINTERVAL, MSG_HELP_CO_PGPPASSINTERVAL);
+    SetHelp(data->GUI.NB_PGPPASSINTERVAL, MSG_HELP_CO_PGPPASSINTERVAL);
+    SetHelp(data->GUI.CH_ENCSELF   ,MSG_HELP_CO_CH_ENCSELF  );
+    SetHelp(data->GUI.ST_REMAILER  ,MSG_HELP_CO_ST_REMAILER );
+    SetHelp(data->GUI.ST_FIRSTLINE ,MSG_HELP_CO_ST_FIRSTLINE);
+    SetHelp(data->GUI.ST_LOGFILE   ,MSG_HELP_CO_ST_LOGFILE  );
+    SetHelp(data->GUI.CH_SPLITLOG  ,MSG_HELP_CO_CH_SPLITLOG );
+    SetHelp(data->GUI.CY_LOGMODE   ,MSG_HELP_CO_CY_LOGMODE  );
+    SetHelp(data->GUI.CH_LOGALL    ,MSG_HELP_CO_CH_LOGALL   );
+  }
+
+  RETURN(obj);
+  return obj;
 }
 
 ///
@@ -2768,26 +2697,7 @@ Object *CO_PageStartupQuit(struct CO_ClassData *data)
    if ((grp = VGroup,
          MUIA_HelpNode, "CO10",
 
-         Child, HGroup,
-            Child, MakeImageObject("config_start_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_STARTUP_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_STARTUP_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-           End,
-         End,
-
-         Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-         End,
+         ConfigPageHeaderObject("config_start_big", tr(MSG_CO_STARTUP_TITLE), tr(MSG_CO_STARTUP_SUMMARY)),
 
          Child, VGroup, GroupFrameT(tr(MSG_CO_OnStartup)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_LOADALL, tr(MSG_CO_LoadAll)),
@@ -2824,126 +2734,107 @@ Object *CO_PageStartupQuit(struct CO_ClassData *data)
 /// CO_PageMIME
 Object *CO_PageMIME(struct CO_ClassData *data)
 {
-   Object *grp;
+  Object *obj;
 
-   if ((grp = VGroup,
-         MUIA_HelpNode, "CO11",
+  ENTER();
 
-         Child, HGroup,
-            Child, MakeImageObject("config_mime_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_MIME_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_MIME_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-           End,
-         End,
+  obj = VGroup,
+          MUIA_HelpNode, "CO11",
 
-         Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-         End,
+          ConfigPageHeaderObject("config_mime_big", tr(MSG_CO_MIME_TITLE), tr(MSG_CO_MIME_SUMMARY)),
 
-         Child, VGroup, GroupFrameT(tr(MSG_CO_MimeViewers)),
+          Child, VGroup,
             Child, HGroup,
-               Child, ListviewObject,
-                  MUIA_Weight, 60,
-                  MUIA_CycleChain, 1,
+              Child, VGroup,
+                MUIA_Weight, 30,
+                Child, ListviewObject,
+                  MUIA_CycleChain, TRUE,
                   MUIA_Listview_List, data->GUI.LV_MIME = ListObject,
                     InputListFrame,
                     MUIA_List_DisplayHook, &MimeTypeDisplayHook,
                   End,
-               End,
-               Child, VGroup,
-                  Child, data->GUI.GR_MIME = ColGroup(2),
-                     Child, Label2(tr(MSG_CO_MimeType)),
-                     Child, MakeMimeTypePop(&data->GUI.ST_CTYPE, tr(MSG_CO_MimeType)),
-                     Child, Label2(tr(MSG_CO_Extension)),
-                     Child, data->GUI.ST_EXTENS = BetterStringObject,
-                        StringFrame,
-                        MUIA_String_Accept,      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ",
-                        MUIA_String_MaxLen,      SIZE_NAME,
-                        MUIA_ControlChar,        ShortCut(tr(MSG_CO_Extension)),
-                        MUIA_String_AdvanceOnCR, TRUE,
-                        MUIA_CycleChain,         TRUE,
-                     End,
-                     Child, Label2(tr(MSG_CO_MIME_DESCRIPTION)),
-                     Child, data->GUI.ST_DESCRIPTION = MakeString(SIZE_DEFAULT, tr(MSG_CO_MIME_DESCRIPTION)),
-                     Child, Label2(tr(MSG_CO_MimeCmd)),
-                     Child, HGroup,
-                       MUIA_Group_HorizSpacing, 0,
-                       Child, MakeVarPop(&data->GUI.ST_COMMAND, VPM_MIME_COMMAND, SIZE_COMMAND, tr(MSG_CO_MimeCmd)),
-                       Child, PopaslObject,
-                         MUIA_Popasl_StartHook, &MimeCommandReqStartHook,
-                         MUIA_Popasl_StopHook,  &MimeCommandReqStopHook,
-                         MUIA_Popstring_Button, PopButton(MUII_PopFile),
-                       End,
-                     End,
-                  End,
-                  Child, VSpace(0),
-                  Child, ColGroup(2),
-                     Child, data->GUI.BT_MADD = MakeButton(tr(MSG_Add)),
-                     Child, data->GUI.BT_MDEL = MakeButton(tr(MSG_Del)),
-                  End,
-               End,
-            End,
-            Child, HGroup,
-               Child, Label2(tr(MSG_CO_DefaultViewer)),
-               Child, HGroup,
-                 MUIA_Group_HorizSpacing, 0,
-                 Child, MakeVarPop(&data->GUI.ST_DEFVIEWER, VPM_MIME_DEFVIEWER, SIZE_COMMAND, tr(MSG_CO_DefaultViewer)),
-                 Child, PopaslObject,
-                   MUIA_Popasl_StartHook, &MimeDefViewerReqStartHook,
-                   MUIA_Popasl_StopHook,  &MimeDefViewerReqStopHook,
-                   MUIA_Popstring_Button, PopButton(MUII_PopFile),
-                 End,
-               End,
-            End,
-         End,
-         Child, ColGroup(2), GroupFrameT(tr(MSG_CO_Paths)),
-            Child, Label2(tr(MSG_CO_Detach)),
-            Child, PopaslObject,
-               MUIA_Popasl_Type     ,ASL_FileRequest,
-               MUIA_Popstring_String,data->GUI.ST_DETACHDIR = MakeString(SIZE_PATH,tr(MSG_CO_Detach)),
-               MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
-               ASLFR_DrawersOnly, TRUE,
-            End,
-            Child, Label2(tr(MSG_CO_Attach)),
-            Child, PopaslObject,
-               MUIA_Popasl_Type     ,ASL_FileRequest,
-               MUIA_Popstring_String,data->GUI.ST_ATTACHDIR = MakeString(SIZE_PATH,tr(MSG_CO_Attach)),
-               MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
-               ASLFR_DrawersOnly, TRUE,
-            End,
-         End,
-      End))
-   {
-      SetHelp(data->GUI.ST_CTYPE     ,MSG_HELP_CO_ST_CTYPE     );
-      SetHelp(data->GUI.ST_EXTENS    ,MSG_HELP_CO_ST_EXTENS    );
-      SetHelp(data->GUI.ST_COMMAND   ,MSG_HELP_CO_ST_COMMAND   );
-      SetHelp(data->GUI.BT_MADD      ,MSG_HELP_CO_BT_MADD      );
-      SetHelp(data->GUI.BT_MDEL      ,MSG_HELP_CO_BT_MDEL      );
-      SetHelp(data->GUI.ST_DEFVIEWER ,MSG_HELP_CO_ST_DEFVIEWER );
-      SetHelp(data->GUI.ST_DETACHDIR ,MSG_HELP_CO_ST_DETACHDIR );
-      SetHelp(data->GUI.ST_ATTACHDIR ,MSG_HELP_CO_ST_ATTACHDIR );
+                End,
 
-      DoMethod(grp,MUIM_MultiSet,MUIA_Disabled,TRUE,data->GUI.GR_MIME,data->GUI.BT_MDEL,NULL);
-      DoMethod(data->GUI.LV_MIME     ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &GetMimeTypeEntryHook);
-      DoMethod(data->GUI.ST_CTYPE    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
-      DoMethod(data->GUI.ST_EXTENS   ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
-      DoMethod(data->GUI.ST_COMMAND  ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
-      DoMethod(data->GUI.ST_DESCRIPTION,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
-      DoMethod(data->GUI.ST_DEFVIEWER,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
-      DoMethod(data->GUI.BT_MADD     ,MUIM_Notify,MUIA_Pressed        ,FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &AddMimeTypeHook);
-      DoMethod(data->GUI.BT_MDEL     ,MUIM_Notify,MUIA_Pressed        ,FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &DelMimeTypeHook);
-   }
-   return grp;
+                Child, HGroup,
+                  Child, data->GUI.BT_MADD = MakeButton(tr(MSG_Add)),
+                  Child, data->GUI.BT_MDEL = MakeButton(tr(MSG_Del)),
+                End,
+              End,
+
+              Child, BalanceObject, End,
+
+              Child, VGroup,
+                MUIA_Weight, 70,
+                Child, data->GUI.GR_MIME = ColGroup(2),
+                  Child, Label2(tr(MSG_CO_MimeType)),
+                  Child, MakeMimeTypePop(&data->GUI.ST_CTYPE, tr(MSG_CO_MimeType)),
+
+                  Child, Label2(tr(MSG_CO_Extension)),
+                  Child, data->GUI.ST_EXTENS = BetterStringObject,
+                    StringFrame,
+                    MUIA_String_Accept,      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ",
+                    MUIA_String_MaxLen,      SIZE_NAME,
+                    MUIA_ControlChar,        ShortCut(tr(MSG_CO_Extension)),
+                    MUIA_String_AdvanceOnCR, TRUE,
+                    MUIA_CycleChain,         TRUE,
+                  End,
+
+                  Child, Label2(tr(MSG_CO_MIME_DESCRIPTION)),
+                  Child, data->GUI.ST_DESCRIPTION = MakeString(SIZE_DEFAULT, tr(MSG_CO_MIME_DESCRIPTION)),
+
+                  Child, Label2(tr(MSG_CO_MimeCmd)),
+                  Child, HGroup,
+                    MUIA_Group_HorizSpacing, 0,
+                    Child, MakeVarPop(&data->GUI.ST_COMMAND, VPM_MIME_COMMAND, SIZE_COMMAND, tr(MSG_CO_MimeCmd)),
+                    Child, PopaslObject,
+                      MUIA_Popasl_StartHook, &MimeCommandReqStartHook,
+                      MUIA_Popasl_StopHook,  &MimeCommandReqStopHook,
+                      MUIA_Popstring_Button, PopButton(MUII_PopFile),
+                    End,
+                  End,
+                End,
+
+                Child, VSpace(0),
+              End,
+            End,
+
+            Child, HGroup,
+              Child, Label2(tr(MSG_CO_DefaultViewer)),
+              Child, HGroup,
+                MUIA_Group_HorizSpacing, 0,
+                Child, MakeVarPop(&data->GUI.ST_DEFVIEWER, VPM_MIME_DEFVIEWER, SIZE_COMMAND, tr(MSG_CO_DefaultViewer)),
+                Child, PopaslObject,
+                  MUIA_Popasl_StartHook, &MimeDefViewerReqStartHook,
+                  MUIA_Popasl_StopHook,  &MimeDefViewerReqStopHook,
+                  MUIA_Popstring_Button, PopButton(MUII_PopFile),
+                End,
+              End,
+            End,
+          End,
+        End;
+
+  if(obj != NULL)
+  {
+    SetHelp(data->GUI.ST_CTYPE     ,MSG_HELP_CO_ST_CTYPE     );
+    SetHelp(data->GUI.ST_EXTENS    ,MSG_HELP_CO_ST_EXTENS    );
+    SetHelp(data->GUI.ST_COMMAND   ,MSG_HELP_CO_ST_COMMAND   );
+    SetHelp(data->GUI.BT_MADD      ,MSG_HELP_CO_BT_MADD      );
+    SetHelp(data->GUI.BT_MDEL      ,MSG_HELP_CO_BT_MDEL      );
+    SetHelp(data->GUI.ST_DEFVIEWER ,MSG_HELP_CO_ST_DEFVIEWER );
+
+    DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.GR_MIME, data->GUI.BT_MDEL, NULL);
+    DoMethod(data->GUI.LV_MIME     ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &GetMimeTypeEntryHook);
+    DoMethod(data->GUI.ST_CTYPE    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
+    DoMethod(data->GUI.ST_EXTENS   ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
+    DoMethod(data->GUI.ST_COMMAND  ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
+    DoMethod(data->GUI.ST_DESCRIPTION,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
+    DoMethod(data->GUI.ST_DEFVIEWER,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
+    DoMethod(data->GUI.BT_MADD     ,MUIM_Notify,MUIA_Pressed        ,FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &AddMimeTypeHook);
+    DoMethod(data->GUI.BT_MDEL     ,MUIM_Notify,MUIA_Pressed        ,FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &DelMimeTypeHook);
+  }
+
+  RETURN(obj);
+  return obj;
 }
 
 ///
@@ -2963,26 +2854,7 @@ Object *CO_PageAddressBook(struct CO_ClassData *data)
    if ((grp = VGroup,
          MUIA_HelpNode, "CO12",
 
-         Child, HGroup,
-            Child, MakeImageObject("config_abook_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_ABOOK_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_ABOOK_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-           End,
-         End,
-
-         Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-         End,
+         ConfigPageHeaderObject("config_abook_big", tr(MSG_CO_ABOOK_TITLE), tr(MSG_CO_ABOOK_SUMMARY)),
 
          Child, HGroup, GroupFrameT(tr(MSG_Columns)),
             Child, HVSpace,
@@ -3057,26 +2929,7 @@ Object *CO_PageScripts(struct CO_ClassData *data)
    if ((grp = VGroup,
          MUIA_HelpNode, "CO13",
 
-         Child, HGroup,
-            Child, MakeImageObject("config_scripts_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_SCRIPTS_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_SCRIPTS_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-           End,
-         End,
-
-         Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-         End,
+         ConfigPageHeaderObject("config_scripts_big", tr(MSG_CO_SCRIPTS_TITLE), tr(MSG_CO_SCRIPTS_SUMMARY)),
 
          Child, VGroup,
             Child, data->GUI.LV_REXX = ListviewObject,
@@ -3141,52 +2994,54 @@ Object *CO_PageScripts(struct CO_ClassData *data)
 /// CO_PageMixed
 Object *CO_PageMixed(struct CO_ClassData *data)
 {
-   Object *grp;
-   static const char *empty[4];
+  Object *obj;
+  static const char *empty[4];
 
-   empty[0] = empty[1] = empty[2] = "";
-   empty[4] = NULL;
+  ENTER();
 
-   if((grp = VGroup,
-       MUIA_HelpNode, "CO14",
+  empty[0] = empty[1] = empty[2] = "";
+  empty[4] = NULL;
 
-       Child, HGroup,
-          Child, MakeImageObject("config_misc_big"),
-          Child, VGroup,
-            Child, TextObject,
-              MUIA_Text_PreParse, "\033b",
-              MUIA_Text_Contents, tr(MSG_CO_MIXED_TITLE),
-              MUIA_Weight,        100,
-            End,
-            Child, TextObject,
-              MUIA_Text_Contents, tr(MSG_CO_MIXED_SUMMARY),
-              MUIA_Font,          MUIV_Font_Tiny,
-              MUIA_Weight,        100,
-            End,
-         End,
-       End,
+  obj = VGroup,
+          MUIA_HelpNode, "CO14",
 
-       Child, RectangleObject,
-          MUIA_Rectangle_HBar, TRUE,
-          MUIA_FixHeight,      4,
-       End,
+          ConfigPageHeaderObject("config_misc_big", tr(MSG_CO_MIXED_TITLE), tr(MSG_CO_MIXED_SUMMARY)),
 
-       Child, ScrollgroupObject,
-         MUIA_Scrollgroup_FreeHoriz, FALSE,
-         MUIA_Scrollgroup_Contents, VGroupV,
-            Child, ColGroup(2), GroupFrameT(tr(MSG_CO_Paths)),
-               Child, Label2(tr(MSG_CO_TempDir)),
-               Child, PopaslObject,
+          Child, ScrollgroupObject,
+            MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_Contents, VGroupV,
+
+              Child, ColGroup(2), GroupFrameT(tr(MSG_CO_Paths)),
+                Child, Label2(tr(MSG_CO_TempDir)),
+                Child, PopaslObject,
                   MUIA_Popasl_Type     ,ASL_FileRequest,
-                  MUIA_Popstring_String,data->GUI.ST_TEMPDIR = MakeString(SIZE_PATH,tr(MSG_CO_TempDir)),
+                  MUIA_Popstring_String,data->GUI.ST_TEMPDIR = MakeString(SIZE_PATH, tr(MSG_CO_TempDir)),
                   MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
                   ASLFR_DrawersOnly, TRUE,
-               End,
-            End,
-            Child, VGroup, GroupFrameT(tr(MSG_CO_AppIcon)),
-               Child, ColGroup(2),
+                End,
+
+                Child, Label2(tr(MSG_CO_Detach)),
+                Child, PopaslObject,
+                  MUIA_Popasl_Type     ,ASL_FileRequest,
+                  MUIA_Popstring_String,data->GUI.ST_DETACHDIR = MakeString(SIZE_PATH, tr(MSG_CO_Detach)),
+                  MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
+                  ASLFR_DrawersOnly, TRUE,
+                End,
+
+                Child, Label2(tr(MSG_CO_Attach)),
+                Child, PopaslObject,
+                  MUIA_Popasl_Type     ,ASL_FileRequest,
+                  MUIA_Popstring_String,data->GUI.ST_ATTACHDIR = MakeString(SIZE_PATH, tr(MSG_CO_Attach)),
+                  MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
+                  ASLFR_DrawersOnly, TRUE,
+                End,
+              End,
+
+              Child, VGroup, GroupFrameT(tr(MSG_CO_AppIcon)),
+                Child, ColGroup(2),
                   Child, data->GUI.CH_WBAPPICON = MakeCheck(tr(MSG_CO_WBAPPICON)),
                   Child, LLabel1(tr(MSG_CO_WBAPPICON)),
+
                   Child, HSpace(0),
                   Child, ColGroup(2),
                     Child, Label2(tr(MSG_CO_PositionX)),
@@ -3198,77 +3053,205 @@ Object *CO_PageMixed(struct CO_ClassData *data)
                     Child, Label2(tr(MSG_CO_APPICONTEXT)),
                     Child, MakeVarPop(&data->GUI.ST_APPICON, VPM_MAILSTATS, SIZE_DEFAULT/2, tr(MSG_CO_APPICONTEXT)),
                   End,
-               End,
-               Child, MakeCheckGroup((Object **)&data->GUI.CH_DOCKYICON, tr(MSG_CO_DOCKYICON)),
-               Child, MakeCheckGroup((Object **)&data->GUI.CH_CLGADGET, tr(MSG_CO_CloseGadget)),
-            End,
-            Child, VGroup, GroupFrameT(tr(MSG_CO_SaveDelete)),
-               Child, HGroup,
+                End,
+                Child, MakeCheckGroup((Object **)&data->GUI.CH_DOCKYICON, tr(MSG_CO_DOCKYICON)),
+                Child, MakeCheckGroup((Object **)&data->GUI.CH_CLGADGET, tr(MSG_CO_CloseGadget)),
+              End,
+
+              Child, VGroup, GroupFrameT(tr(MSG_CO_SaveDelete)),
+                Child, HGroup,
                   Child, data->GUI.CH_CONFIRM = MakeCheck(tr(MSG_CO_ConfirmDelPart1)),
                   Child, Label2(tr(MSG_CO_ConfirmDelPart1)),
                   Child, data->GUI.NB_CONFIRMDEL = MakeNumeric(1,50,FALSE),
                   Child, Label2(tr(MSG_CO_ConfirmDelPart2)),
                   Child, HSpace(0),
-               End,
-               Child, MakeCheckGroup((Object **)&data->GUI.CH_REMOVE, tr(MSG_CO_Remove)),
-               Child, MakeCheckGroup((Object **)&data->GUI.CH_SAVESENT, tr(MSG_CO_SaveSent)),
-            End,
-            Child, HGroup, GroupFrameT(tr(MSG_CO_XPK)),
-               Child, ColGroup(5),
+                End,
+                Child, MakeCheckGroup((Object **)&data->GUI.CH_REMOVE, tr(MSG_CO_Remove)),
+              End,
+              Child, HGroup, GroupFrameT(tr(MSG_CO_XPK)),
+                Child, ColGroup(5),
                   Child, Label1(tr(MSG_CO_XPKPack)),
                   Child, MakeXPKPop(&data->GUI.TX_PACKER, TRUE, FALSE),
                   Child, data->GUI.NB_PACKER = MakeNumeric(0,100,TRUE),
                   Child, HSpace(8),
                   Child, HGroup,
-                     Child, LLabel(tr(MSG_CO_Archiver)),
-                     Child, HSpace(0),
+                    Child, LLabel(tr(MSG_CO_Archiver)),
+                    Child, HSpace(0),
                   End,
+
                   Child, Label1(tr(MSG_CO_XPKPackEnc)),
                   Child, MakeXPKPop(&data->GUI.TX_ENCPACK, TRUE, TRUE),
                   Child, data->GUI.NB_ENCPACK = MakeNumeric(0,100,TRUE),
                   Child, HSpace(8),
                   Child, MakeVarPop(&data->GUI.ST_ARCHIVER, VPM_ARCHIVE, SIZE_COMMAND, tr(MSG_CO_Archiver)),
-               End,
+                End,
+              End,
+
+              Child, HVSpace,
             End,
-            Child, HVSpace,
+          End,
+        End;
+
+  if(obj != NULL)
+  {
+    SetHelp(data->GUI.ST_TEMPDIR   ,MSG_HELP_CO_ST_TEMPDIR   );
+    SetHelp(data->GUI.ST_DETACHDIR ,MSG_HELP_CO_ST_DETACHDIR );
+    SetHelp(data->GUI.ST_ATTACHDIR ,MSG_HELP_CO_ST_ATTACHDIR );
+    SetHelp(data->GUI.CH_WBAPPICON ,MSG_HELP_CO_CH_WBAPPICON );
+    SetHelp(data->GUI.ST_APPX      ,MSG_HELP_CO_ST_APP       );
+    SetHelp(data->GUI.ST_APPY      ,MSG_HELP_CO_ST_APP       );
+    SetHelp(data->GUI.CH_DOCKYICON ,MSG_HELP_CO_CH_DOCKYICON );
+    SetHelp(data->GUI.CH_CLGADGET  ,MSG_HELP_CO_CH_CLGADGET  );
+    SetHelp(data->GUI.CH_CONFIRM   ,MSG_HELP_CO_CH_CONFIRM   );
+    SetHelp(data->GUI.NB_CONFIRMDEL,MSG_HELP_CO_NB_CONFIRMDEL);
+    SetHelp(data->GUI.CH_REMOVE    ,MSG_HELP_CO_CH_REMOVE    );
+    SetHelp(data->GUI.TX_ENCPACK   ,MSG_HELP_CO_TX_ENCPACK   );
+    SetHelp(data->GUI.TX_PACKER    ,MSG_HELP_CO_TX_PACKER    );
+    SetHelp(data->GUI.NB_ENCPACK   ,MSG_HELP_CO_NB_ENCPACK   );
+    SetHelp(data->GUI.NB_PACKER    ,MSG_HELP_CO_NB_ENCPACK   );
+    SetHelp(data->GUI.ST_ARCHIVER  ,MSG_HELP_CO_ST_ARCHIVER  );
+    SetHelp(data->GUI.ST_APPICON   ,MSG_HELP_CO_ST_APPICON   );
+
+    DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, NULL);
+    DoMethod(data->GUI.CH_WBAPPICON, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Application, 7, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, NULL);
+
+    #if defined(__amigaos4__)
+    if(G->applicationID == 0)
+    #endif
+      set(data->GUI.CH_DOCKYICON, MUIA_Disabled, TRUE);
+
+    // disable the XPK popups if xpkmaster.library is not available
+    if(XpkBase == NULL)
+    {
+      set(data->GUI.NB_PACKER, MUIA_Disabled, TRUE);
+      set(data->GUI.NB_ENCPACK, MUIA_Disabled, TRUE);
+    }
+  }
+
+  RETURN(obj);
+  return obj;
+}
+///
+/// CO_PageLookFeel
+Object *CO_PageLookFeel(struct CO_ClassData *data)
+{
+  Object *obj;
+  static const char *sizef[6];
+  static const char *infob[5];
+
+  ENTER();
+
+  sizef[0] = tr(MSG_CO_SIZEFORMAT01);
+  sizef[1] = tr(MSG_CO_SIZEFORMAT02);
+  sizef[2] = tr(MSG_CO_SIZEFORMAT03);
+  sizef[3] = tr(MSG_CO_SIZEFORMAT04);
+  sizef[4] = tr(MSG_CO_SIZEFORMAT05);
+  sizef[5] = NULL;
+
+  infob[0] = tr(MSG_CO_INFOBARPOS01);
+  infob[1] = tr(MSG_CO_INFOBARPOS02);
+  infob[2] = tr(MSG_CO_INFOBARPOS03);
+  infob[3] = tr(MSG_CO_INFOBARPOS04);
+  infob[4] = NULL;
+
+  obj = VGroup,
+          MUIA_HelpNode, "CO15",
+
+          ConfigPageHeaderObject("config_lookfeel_big", tr(MSG_CO_LOOKFEEL_TITLE), tr(MSG_CO_LOOKFEEL_SUMMARY)),
+
+          Child, HGroup, GroupFrameT(tr(MSG_CO_LOOKFEEL_THEME)),
+            MUIA_VertWeight, 70,
+
+            Child, VGroup,
+              MUIA_HorizWeight, 30,
+              Child, NListviewObject,
+                MUIA_CycleChain, TRUE,
+                MUIA_NListview_NList, NListObject,
+                  InputListFrame,
+                  MUIA_NList_DragType,     MUIV_NList_DragType_None,
+//                  MUIA_NList_Format,       "BAR",
+//                  MUIA_NList_Title,        TRUE,
+//                  MUIA_NList_DisplayHook2, &FilterDisplayHook,
+                End,
+              End,
+
+              Child, MakeButton(tr(MSG_CO_THEME_ACTIVATE)),
             End,
-         End,
-      End))
-   {
-      SetHelp(data->GUI.ST_TEMPDIR   ,MSG_HELP_CO_ST_TEMPDIR   );
-      SetHelp(data->GUI.CH_WBAPPICON ,MSG_HELP_CO_CH_WBAPPICON );
-      SetHelp(data->GUI.ST_APPX      ,MSG_HELP_CO_ST_APP       );
-      SetHelp(data->GUI.ST_APPY      ,MSG_HELP_CO_ST_APP       );
-      SetHelp(data->GUI.CH_DOCKYICON ,MSG_HELP_CO_CH_DOCKYICON );
-      SetHelp(data->GUI.CH_CLGADGET  ,MSG_HELP_CO_CH_CLGADGET  );
-      SetHelp(data->GUI.CH_CONFIRM   ,MSG_HELP_CO_CH_CONFIRM   );
-      SetHelp(data->GUI.NB_CONFIRMDEL,MSG_HELP_CO_NB_CONFIRMDEL);
-      SetHelp(data->GUI.CH_REMOVE    ,MSG_HELP_CO_CH_REMOVE    );
-      SetHelp(data->GUI.CH_SAVESENT  ,MSG_HELP_CO_CH_SAVESENT  );
-      SetHelp(data->GUI.TX_ENCPACK   ,MSG_HELP_CO_TX_ENCPACK   );
-      SetHelp(data->GUI.TX_PACKER    ,MSG_HELP_CO_TX_PACKER    );
-      SetHelp(data->GUI.NB_ENCPACK   ,MSG_HELP_CO_NB_ENCPACK   );
-      SetHelp(data->GUI.NB_PACKER    ,MSG_HELP_CO_NB_ENCPACK   );
-      SetHelp(data->GUI.ST_ARCHIVER  ,MSG_HELP_CO_ST_ARCHIVER  );
-      SetHelp(data->GUI.ST_APPICON   ,MSG_HELP_CO_ST_APPICON   );
 
-      DoMethod(grp, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, NULL);
-      DoMethod(data->GUI.CH_WBAPPICON, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Application, 7, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, NULL);
+            Child, BalanceObject, End,
 
-      #if defined(__amigaos4__)
-      if(G->applicationID == 0)
-      #endif
-        set(data->GUI.CH_DOCKYICON, MUIA_Disabled, TRUE);
+            Child, VGroup,
+              MUIA_HorizWeight, 70,
+              Child, HGroup,
+                Child, HSpace(0),
+                Child, TextObject,
+                  MUIA_Text_Contents, tr(MSG_CO_THEME_PREVIEW),
+                  MUIA_Font,          MUIV_Font_Tiny,
+                  MUIA_HorizWeight,   0,
+                End,
+                Child, HSpace(0),
+              End,
 
-      // disable the XPK popups if xpkmaster.library is not available
-      if(XpkBase == NULL)
-      {
-        set(data->GUI.NB_PACKER, MUIA_Disabled, TRUE);
-        set(data->GUI.NB_ENCPACK, MUIA_Disabled, TRUE);
-      }
-   }
+              Child, RectangleObject,
+                MUIA_Rectangle_HBar, TRUE,
+                MUIA_FixHeight,      4,
+              End,
 
-   return grp;
+              Child, HVSpace,
+
+              Child, RectangleObject,
+                MUIA_Rectangle_HBar, TRUE,
+                MUIA_FixHeight,      4,
+              End,
+
+              Child, ColGroup(2),
+                Child, Label2(tr(MSG_CO_THEME_AUTHOR)),
+                Child, TextObject,
+                  TextFrame,
+                  MUIA_Background,  MUII_TextBack,
+                  MUIA_Text_SetMin, TRUE,
+                End,
+
+                Child, Label2(tr(MSG_CO_THEME_URL)),
+                Child, TextObject,
+                  TextFrame,
+                  MUIA_Background,  MUII_TextBack,
+                  MUIA_Text_SetMin, TRUE,
+                End,
+              End,
+            End,
+
+          End,
+
+          Child, ColGroup(2), GroupFrameT(tr(MSG_CO_INFOBAR)),
+            Child, Label1(tr(MSG_CO_INFOBARPOS)),
+            Child, data->GUI.CY_INFOBAR = MakeCycle(infob, tr(MSG_CO_INFOBARPOS)),
+            Child, Label2(tr(MSG_CO_FOLDERLABEL)),
+            Child, MakeVarPop(&data->GUI.ST_INFOBARTXT, VPM_MAILSTATS, SIZE_DEFAULT, tr(MSG_CO_FOLDERLABEL)),
+          End,
+
+          Child, VGroup, GroupFrameT(tr(MSG_CO_GENLISTCFG)),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_EMBEDDEDREADPANE, tr(MSG_CO_SHOWEMBEDDEDREADPANE)),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_QUICKSEARCHBAR, tr(MSG_CO_QUICKSEARCHBAR)),
+            Child, HGroup,
+              Child, Label1(tr(MSG_CO_SIZEFORMAT)),
+              Child, data->GUI.CY_SIZE = MakeCycle(sizef, tr(MSG_CO_SIZEFORMAT)),
+            End,
+          End,
+
+        End;
+
+  if(obj != NULL)
+  {
+    SetHelp(data->GUI.CH_QUICKSEARCHBAR,  MSG_HELP_CO_CH_QUICKSEARCHBAR);
+    SetHelp(data->GUI.CY_INFOBAR,         MSG_HELP_CO_CH_INFOBAR);
+    SetHelp(data->GUI.ST_INFOBARTXT,      MSG_HELP_CO_ST_INFOBARTXT);
+    SetHelp(data->GUI.CH_EMBEDDEDREADPANE,MSG_HELP_CO_CH_EMBEDDEDREADPANE);
+    SetHelp(data->GUI.CY_SIZE,            MSG_HELP_CO_CY_SIZE);
+  }
+
+  RETURN(obj);
+  return obj;
 }
 ///
 /// CO_PageUpdate
@@ -3285,28 +3268,9 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
   updateInterval[3] = NULL;
 
   obj = VGroup,
-          MUIA_HelpNode, "CO15",
+          MUIA_HelpNode, "CO16",
 
-          Child, HGroup,
-            Child, MakeImageObject("config_update_big"),
-            Child, VGroup,
-              Child, TextObject,
-                MUIA_Text_PreParse, "\033b",
-                MUIA_Text_Contents, tr(MSG_CO_UPDATE_TITLE),
-                MUIA_Weight,        100,
-              End,
-              Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_UPDATE_SUMMARY),
-                MUIA_Font,          MUIV_Font_Tiny,
-                MUIA_Weight,        100,
-              End,
-            End,
-          End,
-
-          Child, RectangleObject,
-            MUIA_Rectangle_HBar, TRUE,
-            MUIA_FixHeight,      4,
-          End,
+          ConfigPageHeaderObject("config_update_big", tr(MSG_CO_UPDATE_TITLE), tr(MSG_CO_UPDATE_SUMMARY)),
 
           Child, VGroup,
             Child, VGroup, GroupFrameT(tr(MSG_CO_SOFTWAREUPDATE)),

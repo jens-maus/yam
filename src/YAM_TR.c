@@ -2272,7 +2272,7 @@ static int TR_ConnectPOP(int guilevel)
 
    // If this connection should be a STLS like connection we have to get the welcome
    // message now and then send the STLS command to start TLS negotiation
-   if(pop3->SSLMode == P3SSL_STLS)
+   if(pop3->SSLMode == P3SSL_TLS)
    {
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
 
@@ -2304,7 +2304,7 @@ static int TR_ConnectPOP(int guilevel)
 
    // If this was a connection on a stunnel on port 995 or a non-ssl connection
    // we have to get the welcome message now
-   if(pop3->SSLMode != P3SSL_STLS)
+   if(pop3->SSLMode != P3SSL_TLS)
    {
       // Initiate a connect and see if we succeed
       if(!(resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, MSG_ER_POPWELCOME))) return -1;

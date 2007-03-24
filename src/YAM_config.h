@@ -55,7 +55,7 @@ struct CO_GUIData
   Object *ST_POPHOST0;
   Object *ST_PASSWD0;
   Object *CY_TZONE;
-  Object *CH_DLSAVING;
+  Object *CH_DSTACTIVE;
   Object *ST_SMTPHOST;
   Object *ST_SMTPPORT;
   Object *ST_DOMAIN;
@@ -75,8 +75,7 @@ struct CO_GUIData
   Object *ST_PASSWD;
   Object *CH_DELETE;
   Object *CH_USEAPOP;
-  Object *CH_POP3SSL;
-  Object *CH_USESTLS;
+  Object *RA_POP3SECURE;
   Object *CH_POPENABLED;
   Object *CH_AVOIDDUP;
   Object *CY_MSGSELECT;
@@ -298,6 +297,7 @@ enum ConfigPage
   cp_AddressBook,
   cp_Scripts,
   cp_Mixed,
+  cp_LookFeel,
   cp_Update,
   cp_Max,
 };
@@ -311,9 +311,9 @@ struct CO_ClassData  /* configuration window */
    BOOL UpdateAll;
 };
 
-#define P3SSL_OFF    0
-#define P3SSL_SSL    1
-#define P3SSL_STLS   2
+#define P3SSL_OFF 0
+#define P3SSL_SSL 1
+#define P3SSL_TLS 2
 
 struct POP3
 {

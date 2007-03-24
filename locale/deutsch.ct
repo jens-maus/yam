@@ -5852,7 +5852,8 @@ Port
 ; Port
 ;
 MSG_HELP_CO_ST_SMTPPORT
-Port des SMTP-Server (Vorgabe: 25)
+Port des SMTP-Server\n\
+(Vorgabe: 25)
 ; Port used by the SMTP server (default: 25)
 ;
 MSG_CO_ST_POPPORT

@@ -372,7 +372,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "MDN_OnDelete     = %d\n", co->MDN_OnDelete);
       fprintf(fh, "MDN_Other        = %d\n", co->MDN_Other);
       fprintf(fh, "MultipleWindows  = %s\n", Bool2Txt(co->MultipleWindows));
-      fprintf(fh, "EmbeddedReadPane = %s\n", Bool2Txt(co->EmbeddedReadPane));
       fprintf(fh, "StatusChangeDelay= %d\n", co->StatusChangeDelayOn ? co->StatusChangeDelay : -co->StatusChangeDelay);
       fprintf(fh, "ConvertHTML      = %s\n", Bool2Txt(co->ConvertHTML));
 
@@ -390,6 +389,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "EmailCache       = %d\n", co->EmailCache);
       fprintf(fh, "AutoSave         = %d\n", co->AutoSave);
       fprintf(fh, "RequestMDN       = %s\n", Bool2Txt(co->RequestMDN));
+      fprintf(fh, "SaveSent         = %s\n", Bool2Txt(co->SaveSent));
 
       fprintf(fh, "\n[Reply/Forward]\n");
       fprintf(fh, "ReplyHello       = %s\n", co->ReplyHello);
@@ -422,12 +422,8 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "FixedFontList    = %s\n", Bool2Txt(co->FixedFontList));
       fprintf(fh, "SwatchBeat       = %s\n", Bool2Txt(co->SwatchBeat));
       fprintf(fh, "ABookLookup      = %s\n", Bool2Txt(co->ABookLookup));
-      fprintf(fh, "SizeFormat       = %d\n", co->SizeFormat);
       fprintf(fh, "FolderCntMenu    = %s\n", Bool2Txt(co->FolderCntMenu));
       fprintf(fh, "MessageCntMenu   = %s\n", Bool2Txt(co->MessageCntMenu));
-      fprintf(fh, "InfoBar          = %d\n", co->InfoBar);
-      fprintf(fh, "InfoBarText      = %s\n", co->InfoBarText);
-      fprintf(fh, "QuickSearchBar   = %s\n", Bool2Txt(co->QuickSearchBar));
 
       fprintf(fh, "\n[Security]\n");
       fprintf(fh, "PGPCmdPath       = %s\n", co->PGPCmdPath);
@@ -466,8 +462,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
         fprintf(fh, "MV%02d.Command     = %s\n", i, mtNode->Command);
         fprintf(fh, "MV%02d.Description = %s\n", i, mtNode->Description);
       }
-      fprintf(fh, "DetachDir        = %s\n", co->DetachDir);
-      fprintf(fh, "AttachDir        = %s\n", co->AttachDir);
 
       fprintf(fh, "\n[Address book]\n");
       fprintf(fh, "GalleryDir       = %s\n", co->GalleryDir);
@@ -493,6 +487,8 @@ void CO_SaveConfig(struct Config *co, char *fname)
 
       fprintf(fh, "\n[Mixed]\n");
       fprintf(fh, "TempDir          = %s\n", co->TempDir);
+      fprintf(fh, "DetachDir        = %s\n", co->DetachDir);
+      fprintf(fh, "AttachDir        = %s\n", co->AttachDir);
       fprintf(fh, "WBAppIcon        = %s\n", Bool2Txt(co->WBAppIcon));
       fprintf(fh, "IconPosition     = %d;%d\n", co->IconPositionX, co->IconPositionY);
       fprintf(fh, "AppIconText      = %s\n", co->AppIconText);
@@ -501,10 +497,17 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "Confirm          = %s\n", Bool2Txt(co->Confirm));
       fprintf(fh, "ConfirmDelete    = %d\n", co->ConfirmDelete);
       fprintf(fh, "RemoveAtOnce     = %s\n", Bool2Txt(co->RemoveAtOnce));
-      fprintf(fh, "SaveSent         = %s\n", Bool2Txt(co->SaveSent));
       fprintf(fh, "XPKPack          = %s;%d\n", co->XPKPack, co->XPKPackEff);
       fprintf(fh, "XPKPackEncrypt   = %s;%d\n", co->XPKPackEncrypt, co->XPKPackEncryptEff);
       fprintf(fh, "PackerCommand    = %s\n", co->PackerCommand);
+
+
+      fprintf(fh, "\n[Look&Feel]\n");
+      fprintf(fh, "InfoBar          = %d\n", co->InfoBar);
+      fprintf(fh, "InfoBarText      = %s\n", co->InfoBarText);
+      fprintf(fh, "QuickSearchBar   = %s\n", Bool2Txt(co->QuickSearchBar));
+      fprintf(fh, "EmbeddedReadPane = %s\n", Bool2Txt(co->EmbeddedReadPane));
+      fprintf(fh, "SizeFormat       = %d\n", co->SizeFormat);
 
       fprintf(fh, "\n[Update]\n");
       fprintf(fh, "UpdateInterval   = %d\n", co->UpdateInterval);
@@ -913,7 +916,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "MDN_OnDelete"))     co->MDN_OnDelete = atoi(value);
                else if (!stricmp(buffer, "MDN_Other"))        co->MDN_Other = atoi(value);
                else if (!stricmp(buffer, "MultipleWindows"))  co->MultipleWindows = Txt2Bool(value);
-               else if (!stricmp(buffer, "EmbeddedReadPane")) co->EmbeddedReadPane = Txt2Bool(value);
                else if (!stricmp(buffer, "StatusChangeDelay"))
                {
                  int delay = atoi(value);
@@ -943,6 +945,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "EmailCache"))     co->EmailCache = atoi(value);
                else if (!stricmp(buffer, "AutoSave"))       co->AutoSave = atoi(value);
                else if (!stricmp(buffer, "RequestMDN"))     co->RequestMDN = Txt2Bool(value);
+               else if (!stricmp(buffer, "SaveSent"))       co->SaveSent = Txt2Bool(value);
 /*6*/          else if (!stricmp(buffer, "ReplyHello"))     strlcpy(co->ReplyHello, value2, sizeof(co->ReplyHello));
                else if (!stricmp(buffer, "ReplyIntro"))     strlcpy(co->ReplyIntro, value2, sizeof(co->ReplyIntro));
                else if (!stricmp(buffer, "ReplyBye"))       strlcpy(co->ReplyBye, value2, sizeof(co->ReplyBye));
@@ -969,12 +972,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "FixedFontList"))  co->FixedFontList = Txt2Bool(value);
                else if (!stricmp(buffer, "SwatchBeat"))     co->SwatchBeat = Txt2Bool(value);
                else if (!stricmp(buffer, "ABookLookup"))    co->ABookLookup = Txt2Bool(value);
-               else if (!stricmp(buffer, "SizeFormat"))     co->SizeFormat = atoi(value);
                else if (!stricmp(buffer, "FolderCntMenu"))  co->FolderCntMenu = Txt2Bool(value);
                else if (!stricmp(buffer, "MessageCntMenu")) co->MessageCntMenu = Txt2Bool(value);
-               else if (!stricmp(buffer, "InfoBar"))        co->InfoBar = atoi(value);
-               else if (!stricmp(buffer, "InfoBarText"))    strlcpy(co->InfoBarText, value, sizeof(co->InfoBarText));
-               else if (!stricmp(buffer, "QuickSearchBar")) co->QuickSearchBar = Txt2Bool(value);
 /*9*/          else if (!stricmp(buffer, "PGPCmdPath"))     strlcpy(co->PGPCmdPath, value, sizeof(co->PGPCmdPath));
                else if (!stricmp(buffer, "MyPGPID"))        strlcpy(co->MyPGPID, value, sizeof(co->MyPGPID));
                else if (!stricmp(buffer, "EncryptToSelf"))  co->EncryptToSelf = Txt2Bool(value);
@@ -1059,8 +1058,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                      strlcpy(C->DefaultMimeViewer, value, sizeof(C->DefaultMimeViewer));
                  }
                }
-               else if (!stricmp(buffer, "DetachDir"))      strlcpy(co->DetachDir, value, sizeof(co->DetachDir));
-               else if (!stricmp(buffer, "AttachDir"))      strlcpy(co->AttachDir, value, sizeof(co->AttachDir));
 /*12*/         else if (!stricmp(buffer, "GalleryDir"))     strlcpy(co->GalleryDir, value, sizeof(co->GalleryDir));
                else if (!stricmp(buffer, "MyPictureURL"))   strlcpy(co->MyPictureURL, value, sizeof(co->MyPictureURL));
                else if (!stricmp(buffer, "ProxyServer"))    strlcpy(co->ProxyServer, value, sizeof(co->ProxyServer));
@@ -1082,6 +1079,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                   }
                }
 /*14*/         else if (!stricmp(buffer, "TempDir"))          strlcpy(co->TempDir, value, sizeof(co->TempDir));
+               else if (!stricmp(buffer, "DetachDir"))        strlcpy(co->DetachDir, value, sizeof(co->DetachDir));
+               else if (!stricmp(buffer, "AttachDir"))        strlcpy(co->AttachDir, value, sizeof(co->AttachDir));
                else if (!stricmp(buffer, "WBAppIcon"))        co->WBAppIcon = Txt2Bool(value);
                else if (!stricmp(buffer, "IconPosition"))     sscanf(value, "%d;%d", &(co->IconPositionX), &(co->IconPositionY));
                else if (!stricmp(buffer, "AppIconText"))      strlcpy(co->AppIconText, value, sizeof(co->AppIconText));
@@ -1090,10 +1089,14 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "Confirm"))          co->Confirm = Txt2Bool(value);
                else if (!stricmp(buffer, "ConfirmDelete"))    co->ConfirmDelete = atoi(value);
                else if (!stricmp(buffer, "RemoveAtOnce"))     co->RemoveAtOnce = Txt2Bool(value);
-               else if (!stricmp(buffer, "SaveSent"))         co->SaveSent = Txt2Bool(value);
                else if (!stricmp(buffer, "XPKPack"))          { strlcpy(co->XPKPack, value, sizeof(co->XPKPack)); co->XPKPackEff = atoi(&value[5]); }
                else if (!stricmp(buffer, "XPKPackEncrypt"))   { strlcpy(co->XPKPackEncrypt, value, sizeof(co->XPKPackEncrypt)); co->XPKPackEncryptEff = atoi(&value[5]); }
                else if (!stricmp(buffer, "PackerCommand"))    strlcpy(co->PackerCommand, value, sizeof(co->PackerCommand));
+/*Look&Feel*/  else if (!stricmp(buffer, "InfoBar"))          co->InfoBar = atoi(value);
+               else if (!stricmp(buffer, "InfoBarText"))      strlcpy(co->InfoBarText, value, sizeof(co->InfoBarText));
+               else if (!stricmp(buffer, "QuickSearchBar"))   co->QuickSearchBar = Txt2Bool(value);
+               else if (!stricmp(buffer, "EmbeddedReadPane")) co->EmbeddedReadPane = Txt2Bool(value);
+               else if (!stricmp(buffer, "SizeFormat"))       co->SizeFormat = atoi(value);
 /*Update*/     else if (!stricmp(buffer, "UpdateInterval"))   co->UpdateInterval = atoi(value);
                else if (!stricmp(buffer, "UpdateServer"))     strlcpy(co->UpdateServer, value, sizeof(co->UpdateServer));
 /*Advanced*/   else if (!stricmp(buffer, "LetterPart"))       { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
@@ -1223,8 +1226,8 @@ void CO_GetConfig(BOOL saveConfig)
       case cp_FirstSteps:
          GetMUIString(CE->RealName, gui->ST_REALNAME, sizeof(CE->RealName));
          GetMUIString(CE->EmailAddress, gui->ST_EMAIL, sizeof(CE->EmailAddress));
-         CE->TimeZone          = MapTZ(GetMUICycle(gui->CY_TZONE), TRUE);
-         CE->DaylightSaving    = GetMUICheck  (gui->CH_DLSAVING);
+         CE->TimeZone = MapTZ(GetMUICycle(gui->CY_TZONE), TRUE);
+         CE->DaylightSaving = GetMUICheck(gui->CH_DSTACTIVE);
          GetMUIString(CE->LocalCharset, gui->ST_DEFAULTCHARSET, sizeof(CE->LocalCharset));
          CE->DetectCyrillic= GetMUICheck(gui->CH_DETECTCYRILLIC);
          break;
@@ -1558,7 +1561,6 @@ void CO_GetConfig(BOOL saveConfig)
         CE->MDN_Other       = GetMUICycle(gui->CY_MDN_OTHER);
 
         CE->MultipleWindows   = GetMUICheck  (gui->CH_MULTIWIN);
-        CE->EmbeddedReadPane  = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
         CE->StatusChangeDelayOn  = GetMUICheck  (gui->CH_DELAYEDSTATUS);
         CE->StatusChangeDelay    = GetMUINumer  (gui->NB_DELAYEDSTATUS)*1000;
         CE->ConvertHTML       = GetMUICheck(gui->CH_CONVERTHTML);
@@ -1580,6 +1582,7 @@ void CO_GetConfig(BOOL saveConfig)
         CE->EmailCache        = GetMUINumer  (gui->NB_EMAILCACHE);
         CE->AutoSave          = GetMUINumer  (gui->NB_AUTOSAVE)*60; // in seconds
         CE->RequestMDN = GetMUICheck(gui->CH_REQUESTMDN);
+        CE->SaveSent = GetMUICheck(gui->CH_SAVESENT);
       }
       break;
 
@@ -1632,12 +1635,8 @@ void CO_GetConfig(BOOL saveConfig)
         CE->FixedFontList = GetMUICheck(gui->CH_FIXFLIST);
         CE->SwatchBeat    = GetMUICheck(gui->CH_BEAT);
         CE->ABookLookup   = GetMUICheck(gui->CH_ABOOKLOOKUP);
-        CE->SizeFormat    = GetMUICycle(gui->CY_SIZE);
         CE->FolderCntMenu = GetMUICheck(gui->CH_FCNTMENU);
         CE->MessageCntMenu= GetMUICheck(gui->CH_MCNTMENU);
-        CE->InfoBar       = GetMUICycle(gui->CY_INFOBAR);
-        GetMUIString(CE->InfoBarText, gui->ST_INFOBARTXT, sizeof(CE->InfoBarText));
-        CE->QuickSearchBar= GetMUICheck(gui->CH_QUICKSEARCHBAR);
       }
       break;
 
@@ -1678,8 +1677,6 @@ void CO_GetConfig(BOOL saveConfig)
       case cp_MIME:
       {
         GetMUIString(CE->DefaultMimeViewer, gui->ST_DEFVIEWER, sizeof(CE->DefaultMimeViewer));
-        GetMUIString(CE->DetachDir, gui->ST_DETACHDIR, sizeof(CE->DetachDir));
-        GetMUIString(CE->AttachDir, gui->ST_ATTACHDIR, sizeof(CE->AttachDir));
       }
       break;
 
@@ -1704,6 +1701,8 @@ void CO_GetConfig(BOOL saveConfig)
       case cp_Mixed:
       {
         GetMUIString(CE->TempDir, gui->ST_TEMPDIR, sizeof(CE->TempDir));
+        GetMUIString(CE->DetachDir, gui->ST_DETACHDIR, sizeof(CE->DetachDir));
+        GetMUIString(CE->AttachDir, gui->ST_ATTACHDIR, sizeof(CE->AttachDir));
         CE->WBAppIcon         = GetMUICheck  (gui->CH_WBAPPICON);
         CE->IconPositionX     = GetMUIInteger(gui->ST_APPX);
         CE->IconPositionY     = GetMUIInteger(gui->ST_APPY);
@@ -1713,13 +1712,22 @@ void CO_GetConfig(BOOL saveConfig)
         CE->Confirm           = GetMUICheck  (gui->CH_CONFIRM);
         CE->ConfirmDelete     = GetMUINumer  (gui->NB_CONFIRMDEL);
         CE->RemoveAtOnce      = GetMUICheck  (gui->CH_REMOVE);
-        CE->SaveSent          = GetMUICheck  (gui->CH_SAVESENT);
         GetMUIText(CE->XPKPack, gui->TX_PACKER, sizeof(CE->XPKPack));
         GetMUIText(CE->XPKPackEncrypt, gui->TX_ENCPACK, sizeof(CE->XPKPackEncrypt));
         CE->XPKPackEff        = GetMUINumer  (gui->NB_PACKER);
         CE->XPKPackEncryptEff = GetMUINumer  (gui->NB_ENCPACK);
         GetMUIString(CE->PackerCommand, gui->ST_ARCHIVER, sizeof(CE->PackerCommand));
       }
+      break;
+
+      case cp_LookFeel:
+      {
+        CE->InfoBar = GetMUICycle(gui->CY_INFOBAR);
+        GetMUIString(CE->InfoBarText, gui->ST_INFOBARTXT, sizeof(CE->InfoBarText));
+        CE->QuickSearchBar = GetMUICheck(gui->CH_QUICKSEARCHBAR);
+        CE->EmbeddedReadPane = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
+        CE->SizeFormat = GetMUICycle(gui->CY_SIZE);
+      };
       break;
 
       case cp_Update:
@@ -1784,7 +1792,7 @@ void CO_SetConfig(void)
         setstring(gui->ST_REALNAME  ,CE->RealName);
         setstring(gui->ST_EMAIL     ,CE->EmailAddress);
         setcycle(gui->CY_TZONE, MapTZ(CE->TimeZone, FALSE));
-        setcheckmark(gui->CH_DLSAVING  ,CE->DaylightSaving);
+        setcheckmark(gui->CH_DSTACTIVE, CE->DaylightSaving);
         nnset(gui->ST_POPHOST0, MUIA_String_Contents, CE->P3[0]->Server);
         nnset(gui->ST_PASSWD0,  MUIA_String_Contents, CE->P3[0]->Password);
         nnset(gui->ST_DEFAULTCHARSET,  MUIA_String_Contents, CE->LocalCharset);
@@ -1901,7 +1909,6 @@ void CO_SetConfig(void)
         setcycle(gui->CY_MDN_OTHER, CE->MDN_Other);
 
         setcheckmark(gui->CH_MULTIWIN  ,CE->MultipleWindows);
-        setcheckmark(gui->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
         setcheckmark(gui->CH_DELAYEDSTATUS, CE->StatusChangeDelayOn);
         set(gui->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay/1000);
         setcheckmark(gui->CH_CONVERTHTML, CE->ConvertHTML);
@@ -1923,6 +1930,7 @@ void CO_SetConfig(void)
         setslider   (gui->NB_EMAILCACHE,CE->EmailCache);
         setslider   (gui->NB_AUTOSAVE,  CE->AutoSave/60);
         setcheckmark(gui->CH_REQUESTMDN,CE->RequestMDN);
+        setcheckmark(gui->CH_SAVESENT, CE->SaveSent);
       }
       break;
 
@@ -1967,12 +1975,8 @@ void CO_SetConfig(void)
         setcheckmark(gui->CH_FIXFLIST  ,CE->FixedFontList);
         setcheckmark(gui->CH_BEAT      ,CE->SwatchBeat);
         setcheckmark(gui->CH_ABOOKLOOKUP, CE->ABookLookup);
-        setcycle(gui->CY_SIZE, CE->SizeFormat);
         setcheckmark(gui->CH_FCNTMENU  ,CE->FolderCntMenu);
         setcheckmark(gui->CH_MCNTMENU  ,CE->MessageCntMenu);
-        setcycle(gui->CY_INFOBAR,       CE->InfoBar);
-        setstring(gui->ST_INFOBARTXT   ,CE->InfoBarText);
-        setcheckmark(gui->CH_QUICKSEARCHBAR, CE->QuickSearchBar);
       }
       break;
 
@@ -2023,8 +2027,6 @@ void CO_SetConfig(void)
         set(gui->LV_MIME, MUIA_List_Active, MUIV_List_Active_Top);
 
         setstring   (gui->ST_DEFVIEWER ,CE->DefaultMimeViewer);
-        setstring   (gui->ST_DETACHDIR ,CE->DetachDir);
-        setstring   (gui->ST_ATTACHDIR ,CE->AttachDir);
       }
       break;
 
@@ -2049,7 +2051,9 @@ void CO_SetConfig(void)
 
       case cp_Mixed:
       {
-        setstring   (gui->ST_TEMPDIR   ,CE->TempDir);
+        setstring(gui->ST_TEMPDIR, CE->TempDir);
+        setstring(gui->ST_DETACHDIR, CE->DetachDir);
+        setstring(gui->ST_ATTACHDIR, CE->AttachDir);
         setcheckmark(gui->CH_WBAPPICON ,CE->WBAppIcon);
         set(gui->ST_APPX, MUIA_String_Integer, CE->IconPositionX);
         set(gui->ST_APPY, MUIA_String_Integer, CE->IconPositionY);
@@ -2059,12 +2063,21 @@ void CO_SetConfig(void)
         setcheckmark(gui->CH_CONFIRM   ,CE->Confirm);
         setslider   (gui->NB_CONFIRMDEL,CE->ConfirmDelete);
         setcheckmark(gui->CH_REMOVE    ,CE->RemoveAtOnce);
-        setcheckmark(gui->CH_SAVESENT  ,CE->SaveSent);
         set(gui->TX_PACKER , MUIA_Text_Contents, CE->XPKPack);
         set(gui->TX_ENCPACK, MUIA_Text_Contents, CE->XPKPackEncrypt);
         setslider   (gui->NB_PACKER    ,CE->XPKPackEff);
         setslider   (gui->NB_ENCPACK   ,CE->XPKPackEncryptEff);
         setstring   (gui->ST_ARCHIVER  ,CE->PackerCommand);
+      }
+      break;
+
+      case cp_LookFeel:
+      {
+        setcycle(gui->CY_INFOBAR, CE->InfoBar);
+        setstring(gui->ST_INFOBARTXT, CE->InfoBarText);
+        setcheckmark(gui->CH_QUICKSEARCHBAR, CE->QuickSearchBar);
+        setcheckmark(gui->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
+        setcycle(gui->CY_SIZE, CE->SizeFormat);
       }
       break;
 

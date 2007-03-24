@@ -89,6 +89,7 @@ static const char *imageFileArray[MAX_IMAGES] =
   "config_abook",     "config_abook_big",
   "config_scripts",   "config_scripts_big",
   "config_misc",      "config_misc_big",
+  "config_lookfeel",  "config_lookfeel_big",
   "config_update",    "config_update_big",
 };
 

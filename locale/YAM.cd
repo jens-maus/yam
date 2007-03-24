@@ -1004,9 +1004,6 @@ _Password
 MSG_CO_TimeZone (348//)
 Time _zone
 ;
-MSG_CO_DaylightSaving (349//)
-_Add adjustment for daylight saving time
-;
 MSG_CO_SendMail (350//)
 Send mail (SMTP)
 ;
@@ -1615,10 +1612,6 @@ the mail server
 MSG_HELP_CO_CY_TZONE (558//)
 Select the timezone of\n\
 your current location
-;
-MSG_HELP_CO_CH_DLSAVING (559//)
-Adjust the timezone during daylight\n\
-saving time (summer time)
 ;
 MSG_HELP_CO_ST_SMTPHOST (560//)
 The address of the SMTP server to send mail to.\n\
@@ -4506,7 +4499,8 @@ MSG_CO_ST_SMTPPORT (1431//)
 Port
 ;
 MSG_HELP_CO_ST_SMTPPORT (1432//)
-Port used by the SMTP server (default: 25)
+Port used by the SMTP server\n\
+(default: 25)
 ;
 MSG_CO_ST_POPPORT (1433//)
 Port
@@ -6124,4 +6118,60 @@ the defined action will be performed.
 MSG_HELP_CO_CY_MDN_OTHER (1885//)
 In case none of the above rules match,\n\
 this action will be performed instead.
+;
+MSG_CO_LOOKFEEL_TITLE (1886//)
+Look&Feel
+;
+MSG_CO_LOOKFEEL_SUMMARY (1887//)
+Configure the general look&feel of YAM...
+;
+MSG_CO_CRDLOOKFEEL (1888//)
+Look&Feel
+;
+MSG_CO_DSTACTIVE (1889//)
+D_aylight Saving Time (DST) is active
+;
+MSG_HELP_CO_CH_DSTACTIVE (1890//)
+Activate if the daylight saving time is\n\
+currently active in your timezone\n\
+(summer time)
+;
+MSG_CO_SMTPSERVERPORT (1891//)
+Ser_ver/Port
+;
+MSG_CO_POP3SERVERPORT (1892//)
+Serve_r/Port
+;
+MSG_CO_POP3SECURE (1893//)
+Use secure connection:
+;
+MSG_CO_POP3SECURE_NO (1894//)
+No
+;
+MSG_CO_POP3SECURE_TLS (1895//)
+with TLSv1
+;
+MSG_CO_POP3SECURE_SSL (1896//)
+with SSLv3
+;
+MSG_HELP_CO_RA_POP3SECURE (1897//)
+A TLSv1 or SSLv3 secure connection will be established between\n\
+the POP3 server and YAM to receive email through an encrypted\n\
+connection. If these radio buttons are ghosted, it means AmiSSL\n\
+support is currently not available.
+;
+MSG_CO_LOOKFEEL_THEME (1898//)
+Theme
+;
+MSG_CO_THEME_ACTIVATE (1899//)
+Activate
+;
+MSG_CO_THEME_PREVIEW (1900//)
+Preview
+;
+MSG_CO_THEME_AUTHOR (1901//)
+Author
+;
+MSG_CO_THEME_URL (1902//)
+URL
 ;

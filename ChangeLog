@@ -5,6 +5,26 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_COg.c, misc: added a new "Look&Feel" configuration page which will
+    host our new upcoming "Theme" functionality as well as should carry all
+    Look&Feel relevant configuration setups which were previously placed in
+    certain other areas of the configuration GUI. Please note, that this
+    new config page currently has no own config icon, but will get an own
+    one as soon as he have a complete new default theme for YAM.
+  * YAM_COg.c, YAM_CO.c, YAM_COs.c, misc: did some general GUI layout cleanup
+    of the YAM configuration window. The structure of certain items in the
+    configuration window should now be somewhat more clean and according to
+    styleguides, especially in the TCP/IP configuration.
+  * Makefile: moved YAM_global.o and YAM.o back to the top of the compile/link
+    priority list because otherwise tools like C:Version might take quite long
+    for search for version information in the YAM binary.
+  * Makefile: added $(DEBUGSYM) variable for overriding the debug symbol
+    option during execution of make. In addition, the linker will now also
+    use "-g" so that m68k debug builds contain all necessary debugging
+    symbols for GccFindHit to work properly.
+
 2007-03-24  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COs.c: after disabling the spam filter all other spam filter related
@@ -17,16 +37,6 @@ $URL$
   * BayesFilter.c: lowered the default spam probability threshold from 99% to
     95% to catch a little bit more spam, which currently just slips through.
     Also extended the debug output while classifying the mail a bit.
-
-2007-03-24  Jens Langner <Jens.Langner@light-speed.de>
-
-  * Makefile: moved YAM_global.o and YAM.o back to the top of the compile/link
-    priority list because otherwise tools like C:Version might take quite long
-    for search for version information in the YAM binary.
-  * Makefile: added $(DEBUGSYM) variable for overriding the debug symbol
-    option during execution of make. In addition, the linker will now also
-    use "-g" so that m68k debug builds contain all necessary debugging
-    symbols for GccFindHit to work properly.
 
 2007-03-23  Jens Langner <Jens.Langner@light-speed.de>
 

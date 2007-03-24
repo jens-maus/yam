@@ -570,31 +570,50 @@ MakeHook(CO_DelPOP3Hook,CO_DelPOP3);
 //  Fills form with data from selected list entry
 HOOKPROTONHNONP(CO_GetP3Entry, void)
 {
-   struct POP3 *pop3 = NULL;
-   struct CO_GUIData *gui = &G->CO->GUI;
+  struct POP3 *pop3 = NULL;
+  struct CO_GUIData *gui = &G->CO->GUI;
 
-   DoMethod(gui->LV_POP3, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &pop3);
+  ENTER();
 
-   if(xget(gui->GR_POP3, MUIA_Disabled) != !pop3) set(gui->GR_POP3, MUIA_Disabled, !pop3); // This is needed due to a bug in MUI
-   set(gui->BT_PDEL, MUIA_Disabled, !pop3 || xget(gui->LV_POP3, MUIA_List_Entries) < 2);
+  DoMethod(gui->LV_POP3, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &pop3);
 
-   if(pop3 != NULL)
-   {
-      nnset(gui->ST_POPACCOUNT, MUIA_String_Contents, pop3->Account);
-      nnset(gui->ST_POPHOST,    MUIA_String_Contents, pop3->Server);
-      nnset(gui->ST_POPPORT,    MUIA_String_Integer,  pop3->Port);
-      nnset(gui->ST_POPUSERID,  MUIA_String_Contents, pop3->User);
-      nnset(gui->ST_PASSWD,     MUIA_String_Contents, pop3->Password);
-      nnset(gui->CH_POPENABLED, MUIA_Selected, pop3->Enabled);
-      nnset(gui->CH_POP3SSL,    MUIA_Selected, (pop3->SSLMode != P3SSL_OFF));
-      nnset(gui->CH_USESTLS,    MUIA_Selected, (pop3->SSLMode == P3SSL_STLS));
-      nnset(gui->CH_USEAPOP,    MUIA_Selected, pop3->UseAPOP);
-      nnset(gui->CH_DELETE,     MUIA_Selected, pop3->DeleteOnServer);
+  // This is needed due to a bug in MUI
+  if(xget(gui->GR_POP3, MUIA_Disabled) != !pop3)
+    set(gui->GR_POP3, MUIA_Disabled, !pop3);
 
-      // we have to enabled/disable the SSL support accordingly
-      set(gui->CH_USESTLS, MUIA_Disabled, !G->TR_UseableTLS || pop3->SSLMode == P3SSL_OFF);
-      set(gui->CH_POP3SSL, MUIA_Disabled, !G->TR_UseableTLS && pop3->SSLMode == P3SSL_OFF);
-   }
+  set(gui->BT_PDEL, MUIA_Disabled, !pop3 || xget(gui->LV_POP3, MUIA_List_Entries) < 2);
+
+  if(pop3 != NULL)
+  {
+    nnset(gui->ST_POPACCOUNT, MUIA_String_Contents, pop3->Account);
+    nnset(gui->ST_POPHOST,    MUIA_String_Contents, pop3->Server);
+    nnset(gui->ST_POPPORT,    MUIA_String_Integer,  pop3->Port);
+    nnset(gui->ST_POPUSERID,  MUIA_String_Contents, pop3->User);
+    nnset(gui->ST_PASSWD,     MUIA_String_Contents, pop3->Password);
+    nnset(gui->CH_POPENABLED, MUIA_Selected, pop3->Enabled);
+    nnset(gui->CH_USEAPOP,    MUIA_Selected, pop3->UseAPOP);
+    nnset(gui->CH_DELETE,     MUIA_Selected, pop3->DeleteOnServer);
+
+    switch(pop3->SSLMode)
+    {
+      case P3SSL_TLS:
+        nnset(gui->RA_POP3SECURE, MUIA_Radio_Active, 1);
+      break;
+
+      case P3SSL_SSL:
+        nnset(gui->RA_POP3SECURE, MUIA_Radio_Active, 2);
+      break;
+
+      default:
+        nnset(gui->RA_POP3SECURE, MUIA_Radio_Active, 0);
+      break;
+    }
+
+    // we have to enabled/disable the SSL support accordingly
+    set(gui->RA_POP3SECURE, MUIA_Disabled, !G->TR_UseableTLS && pop3->SSLMode == P3SSL_OFF);
+  }
+
+  LEAVE();
 }
 MakeHook(CO_GetP3EntryHook,CO_GetP3Entry);
 
@@ -603,48 +622,56 @@ MakeHook(CO_GetP3EntryHook,CO_GetP3Entry);
 //  Fills form data into selected list entry
 HOOKPROTONHNONP(CO_PutP3Entry, void)
 {
-   struct POP3 *pop3 = NULL;
-   struct CO_GUIData *gui = &G->CO->GUI;
-   int p;
-   int new_ssl_mode;
+  struct CO_GUIData *gui = &G->CO->GUI;
+  int p;
 
-   p = xget(gui->LV_POP3, MUIA_List_Active);
-   if (p != MUIV_List_Active_Off)
-   {
-      DoMethod(gui->LV_POP3, MUIM_List_GetEntry, p, &pop3);
+  ENTER();
+
+  p = xget(gui->LV_POP3, MUIA_List_Active);
+  if(p != MUIV_List_Active_Off)
+  {
+    struct POP3 *pop3 = NULL;
+    int new_ssl_mode = P3SSL_OFF;
+
+    DoMethod(gui->LV_POP3, MUIM_List_GetEntry, p, &pop3);
+    if(pop3 != NULL)
+    {
       GetMUIString(pop3->Account, gui->ST_POPACCOUNT, sizeof(pop3->Account));
       GetMUIString(pop3->Server, gui->ST_POPHOST, sizeof(pop3->Server));
       GetMUIString(pop3->User, gui->ST_POPUSERID, sizeof(pop3->User));
       GetMUIString(pop3->Password, gui->ST_PASSWD, sizeof(pop3->Password));
-      pop3->Enabled        = GetMUICheck(gui->CH_POPENABLED);
-      pop3->UseAPOP        = GetMUICheck(gui->CH_USEAPOP);
+      pop3->Enabled = GetMUICheck(gui->CH_POPENABLED);
+      pop3->UseAPOP = GetMUICheck(gui->CH_USEAPOP);
       pop3->DeleteOnServer = GetMUICheck(gui->CH_DELETE);
+
       if(pop3->Account[0] == '\0')
         snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
 
-      if(GetMUICheck(gui->CH_POP3SSL))
+      switch(GetMUIRadio(gui->RA_POP3SECURE))
       {
-         new_ssl_mode = P3SSL_SSL;
-         if(GetMUICheck(gui->CH_USESTLS))
-           new_ssl_mode = P3SSL_STLS;
-      }
-      else
-      {
-         new_ssl_mode = P3SSL_OFF;
-         if(G->TR_UseableTLS == FALSE)
-           set(gui->CH_POP3SSL, MUIA_Disabled, TRUE);
+        // TLSv1 secure connection
+        case 1:
+          new_ssl_mode = P3SSL_TLS;
+        break;
+
+        // SSLv3 secure connection
+        case 2:
+          new_ssl_mode = P3SSL_SSL;
+        break;
+
+        // no secure connection
+        default:
+          new_ssl_mode = P3SSL_OFF;
+        break;
       }
 
+      // check if the user changed something at all
       if(pop3->SSLMode != new_ssl_mode)
       {
         if(new_ssl_mode == P3SSL_SSL)
-        {
           set(gui->ST_POPPORT, MUIA_String_Integer, 995);
-        }
         else
-        {
           set(gui->ST_POPPORT, MUIA_String_Integer, 110);
-        }
 
         pop3->SSLMode = new_ssl_mode;
       }
@@ -652,7 +679,10 @@ HOOKPROTONHNONP(CO_PutP3Entry, void)
       pop3->Port = GetMUIInteger(gui->ST_POPPORT);
 
       DoMethod(gui->LV_POP3, MUIM_List_Redraw, p);
-   }
+    }
+  }
+
+  LEAVE();
 }
 MakeHook(CO_PutP3EntryHook,CO_PutP3Entry);
 
@@ -871,8 +901,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       co->DisplayAllTexts = TRUE;
       co->FixedFontEdit = TRUE;
       co->UseTextstyles = TRUE;
-      co->EmbeddedReadPane = TRUE;
-      co->QuickSearchBar = TRUE;
       co->WrapHeader = FALSE;
       co->MultipleWindows = FALSE;
       co->SigSepLine = 2;
@@ -899,6 +927,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       co->EmailCache = 10;
       co->AutoSave = 120;
       co->RequestMDN = FALSE;
+      co->SaveSent = TRUE;
    }
 
    if(page == cp_ReplyForward || page == cp_AllPages)
@@ -936,8 +965,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       co->ABookLookup = FALSE;
       co->FolderCntMenu = TRUE;
       co->MessageCntMenu = TRUE;
-      co->InfoBar = IB_POS_CENTER;
-      strlcpy(co->InfoBarText, tr(MSG_CO_InfoBarDef), sizeof(co->InfoBarText));
    }
 
    if(page == cp_Security || page == cp_AllPages)
@@ -985,8 +1012,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       NewList((struct List *)&co->mimeTypeList);
 
       strlcpy(co->DefaultMimeViewer, "SYS:Utilities/Multiview \"%s\"", sizeof(co->DefaultMimeViewer));
-      strlcpy(co->DetachDir, "RAM:", sizeof(co->DetachDir));
-      strlcpy(co->AttachDir, "RAM:", sizeof(co->AttachDir));
    }
 
    if(page == cp_AddressBook || page == cp_AllPages)
@@ -1013,11 +1038,13 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
    if(page == cp_Mixed || page == cp_AllPages)
    {
       strlcpy(co->TempDir, "T:", sizeof(co->TempDir));
+      strlcpy(co->DetachDir, "RAM:", sizeof(co->DetachDir));
+      strlcpy(co->AttachDir, "RAM:", sizeof(co->AttachDir));
       strlcpy(co->PackerCommand, "LhA -a -m -i%l a \"%a\"", sizeof(co->PackerCommand));
       co->IconPositionX = co->IconPositionY = 0;
       strlcpy(co->AppIconText, tr(MSG_CO_APPICON_LABEL), sizeof(co->AppIconText));
       co->IconifyOnQuit = co->RemoveAtOnce = FALSE;
-      co->Confirm = co->SaveSent = TRUE;
+      co->Confirm = TRUE;
       co->ConfirmDelete = 2;
       strlcpy(co->XPKPack, "HUFF", sizeof(co->XPKPack));
       strlcpy(co->XPKPackEncrypt, "HUFF", sizeof(co->XPKPackEncrypt));
@@ -1035,6 +1062,15 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       else
       #endif
         co->WBAppIcon = TRUE;
+   }
+
+   if(page == cp_LookFeel || page == cp_AllPages)
+   {
+      co->InfoBar = IB_POS_CENTER;
+      strlcpy(co->InfoBarText, tr(MSG_CO_InfoBarDef), sizeof(co->InfoBarText));
+      co->EmbeddedReadPane = TRUE;
+      co->QuickSearchBar = TRUE;
+      co->SizeFormat = SF_MIXED;
    }
 
    if(page == cp_Update || page == cp_AllPages)
@@ -2004,6 +2040,7 @@ static struct CO_ClassData *CO_New(void)
       page[cp_AddressBook ].PageLabel = MSG_CO_CrdABook;
       page[cp_Scripts     ].PageLabel = MSG_CO_GR_SCRIPTS;
       page[cp_Mixed       ].PageLabel = MSG_CO_CrdMixed;
+      page[cp_LookFeel    ].PageLabel = MSG_CO_CRDLOOKFEEL;
       page[cp_Update      ].PageLabel = MSG_CO_CrdUpdate;
 
       data->GUI.WI = WindowObject,
@@ -2058,6 +2095,7 @@ static struct CO_ClassData *CO_New(void)
                   Child, CO_PageAddressBook(data),
                   Child, CO_PageScripts(data),
                   Child, CO_PageMixed(data),
+                  Child, CO_PageLookFeel(data),
                   Child, CO_PageUpdate(data),
                End,
             End,

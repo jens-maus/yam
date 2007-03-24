@@ -34,6 +34,7 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data);
 Object *CO_PageTCPIP(struct CO_ClassData *data);
 Object *CO_PageNewMail(struct CO_ClassData *data);
 Object *CO_PageFilters(struct CO_ClassData *data);
+Object *CO_PageSpam(struct CO_ClassData *data);
 Object *CO_PageRead(struct CO_ClassData *data);
 Object *CO_PageWrite(struct CO_ClassData *data);
 Object *CO_PageReplyForward(struct CO_ClassData *data);
@@ -45,8 +46,8 @@ Object *CO_PageMIME(struct CO_ClassData *data);
 Object *CO_PageAddressBook(struct CO_ClassData *data);
 Object *CO_PageScripts(struct CO_ClassData *data);
 Object *CO_PageMixed(struct CO_ClassData *data);
+Object *CO_PageLookFeel(struct CO_ClassData *data);
 Object *CO_PageUpdate(struct CO_ClassData *data);
-Object *CO_PageSpam(struct CO_ClassData *data);
 
 Object *MakeMimeTypePop(Object **string, const char *desc);
 
