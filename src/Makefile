@@ -145,9 +145,10 @@ OBJDIR    = .obj_$(OS)
 WARN     = -W -Wall -Wwrite-strings
 OPTFLAGS = -O3 -fomit-frame-pointer -funroll-loops
 DEBUG    = -DDEBUG #-O0
+DEBUGSYM = -g
 CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) \
-           $(DEBUG) -g -c
-LDFLAGS  = $(CPU)
+           $(DEBUG) $(DEBUGSYM) -c
+LDFLAGS  = $(CPU) $(DEBUGSYM)
 LDLIBS   = -L$(LIB) -lm
 
 # different options per target OS
@@ -347,9 +348,10 @@ $(OBJDIR)/%.o: %.c
 #
 
 $(TARGET): $(OBJS)
-	@printf '\033[32mLinking \033[1m$@\033[0m\n'
+	@printf '\033[32mLinking \033[1m$@.debug\033[0m\n'
 	@$(CC) $(LDFLAGS) -o $@.debug $(OBJS) $(LDLIBS)
-	@$(STRIP) -R ".comment" -S -o $@ $@.debug
+	@printf '\033[32mGenerating \033[1m$@\033[0m\n'
+	@$(STRIP) --preserve-dates --remove-section=".comment" --strip-debug -o $@ $@.debug
 	@$(CHMOD) a+x $@
 
 dump:

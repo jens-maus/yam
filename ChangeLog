@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile: added $(DEBUGSYM) variable for overriding the debug symbol
+    option during execution of make. In addition, the linker will now also
+    use "-g" so that m68k debug builds contain all necessary debugging
+    symbols for GccFindHit to work properly.
+
 2007-03-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: we make sure that if an xpkmaster.library is found that its
