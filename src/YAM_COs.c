@@ -1421,6 +1421,15 @@ void CO_GetConfig(BOOL saveConfig)
               }
             }
 
+            // set the spam filter specific config items back to their default values
+            CE->SpamProbabilityThreshold = DEFAULT_SPAM_PROBABILITY_THRESHOLD;
+            CE->SpamFlushTrainingDataInterval = DEFAULT_FLUSH_TRAINING_DATA_INTERVAL;
+            CE->SpamFlushTrainingDataThreshold = DEFAULT_FLUSH_TRAINING_DATA_THRESHOLD;
+            CE->SpamFilterForNewMail = FALSE;
+            CE->SpamMarkOnMove = FALSE;
+            CE->SpamMarkAsRead = FALSE;
+            CE->SpamAddressBookIsWhiteList = FALSE;
+
             // update the toolbar to the new settings
             if(G->MA->GUI.TO_TOOLBAR != NULL)
               DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);

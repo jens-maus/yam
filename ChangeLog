@@ -7,6 +7,9 @@ $URL$
 
 2007-03-24  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COs.c: after disabling the spam filter all other spam filter related
+    config items are set to their default value to ensure the default behaviour
+    if the filter is reactivated again.
   * Makefile: moved the custom classes to the top to let them be compiled at
     first. Changing something in these classes usually causes all YAM#?.c to be
     recompiled, but if the class source still contains some typos this now
