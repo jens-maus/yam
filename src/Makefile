@@ -276,9 +276,9 @@ CLASSES	= \
 
 # and the other object files
 OBJS = \
-	$(CLASSES) \
 	$(OBJDIR)/YAM_global.o \
 	$(OBJDIR)/YAM.o \
+	$(CLASSES) \
 	$(OBJDIR)/YAM_AB.o \
 	$(OBJDIR)/YAM_CO.o \
 	$(OBJDIR)/YAM_COg.o \

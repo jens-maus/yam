@@ -17,6 +17,9 @@ $URL$
 
 2007-03-24  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Makefile: moved YAM_global.o and YAM.o back to the top of the compile/link
+    priority list because otherwise tools like C:Version might take quite long
+    for search for version information in the YAM binary.
   * Makefile: added $(DEBUGSYM) variable for overriding the debug symbol
     option during execution of make. In addition, the linker will now also
     use "-g" so that m68k debug builds contain all necessary debugging
