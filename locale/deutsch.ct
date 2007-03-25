@@ -5462,7 +5462,7 @@ Feste Schrift
 ; Fixed font
 ;
 MSG_CO_UseSMTPAUTH
-SMTP AU_TH benutzen
+SMTP-AU_TH benutzen
 ; Use SMTP AU_TH
 ;
 MSG_CO_SMTPUser
@@ -7566,7 +7566,7 @@ MSG_CO_POP3SERVERPORT
 Serve_r/Port
 ;
 MSG_CO_POP3SECURE
-Sichere Verbindung benutzen:
+Sichere Verbindung verwenden:
 ;
 MSG_CO_POP3SECURE_NO
 Nie
