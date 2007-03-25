@@ -1431,6 +1431,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                 MUIA_Weight, 0,
                 Child, HGroup,
                   Child, VGroup,
+                    MUIA_HorizWeight, 80,
                     Child, ColGroup(2),
                       Child, Label2(tr(MSG_CO_SMTPSERVERPORT)),
                       Child, HGroup,
@@ -1463,11 +1464,14 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                         Child, HSpace(0),
                       End,
                     End,
+
+                    Child, HVSpace,
                   End,
 
                   Child, VSpace(0),
 
                   Child, VGroup,
+                    MUIA_HorizWeight, 20,
                     Child, ColGroup(2),
                       Child, data->GUI.CH_SMTP8BIT = MakeCheck(tr(MSG_CO_Allow8bit)),
                       Child, LLabel1(tr(MSG_CO_Allow8bit)),
