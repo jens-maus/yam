@@ -1396,7 +1396,7 @@ Grössen_limit
 ;
 MSG_CO_WarnSize2
 KB
-; kB
+; KB
 ;
 MSG_CO_AutoOperation
 Automatischer Betrieb
@@ -5557,7 +5557,7 @@ Feldeinstellungen
 ; Field settings
 ;
 MSG_CO_SIZEFORMAT
-_Größenformat
+_Größenangaben
 ; Si_ze format
 ;
 MSG_HELP_CO_CY_SIZE
@@ -5570,19 +5570,19 @@ Altes Format - (1,234,567 Bytes)
 ; Old format - (1.234.567 bytes)
 ;
 MSG_CO_SIZEFORMAT02
-Gemischte Angaben (0,001 GB, 0,01 MB, 0,1 kB)
+Gemischte Angaben (0,001 GB, 0,01 MB, 0,1 KB)
 ; Mixed precision (0.001 GB, 0.01 MB, 0.1 KB)
 ;
 MSG_CO_SIZEFORMAT03
-10^-1 Angaben (0,1 GB/MB/kB)
+10^-1 Angaben (0,1 GB/MB/KB)
 ; 10^-1 precision (0.1 GB/MB/KB)
 ;
 MSG_CO_SIZEFORMAT04
-10^-2 Angaben (0,01 GB/MB/kB)
+10^-2 Angaben (0,01 GB/MB/KB)
 ; 10^-2 precision (0.01 GB/MB/KB)
 ;
 MSG_CO_SIZEFORMAT05
-10^-3 Angaben (0,001 GB/MB/kB)
+10^-3 Angaben (0,001 GB/MB/KB)
 ; 10^-3 precision (0.001 GB/MB/KB)
 ;
 MSG_HELP_CO_CH_USESMTPAUTH
