@@ -818,7 +818,7 @@ static void TC_Dispatcher(enum TimerIO tio)
 
       // only if there is currently no write window open we
       // check for new mail.
-      for(i=0; i < MAXWR && !G->WR[i]; i++) ;
+      for(i = 0; i < MAXWR && !G->WR[i]; i++) ;
 
       // also the configuration window needs to be closed
       // or we skip the pop operation
@@ -841,7 +841,7 @@ static void TC_Dispatcher(enum TimerIO tio)
 
       D(DBF_TIMERIO, "timer[%ld]: TIO_AUTOSAVE received at: %s", tio, dateString);
 
-      for(i=0; i < MAXWR; i++)
+      for(i = 0; i < MAXWR; i++)
       {
         if(G->WR[i] && G->WR[i]->Mode != NEW_BOUNCE)
           EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i));
@@ -868,7 +868,7 @@ static void TC_Dispatcher(enum TimerIO tio)
         DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
 
         // update the readMailGroup of the main window.
-        if(mail)
+        if(mail != NULL)
           DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_ReadMail, mail,
                                              MUIF_ReadMailGroup_ReadMail_StatusChangeDelay);
       }
@@ -889,7 +889,7 @@ static void TC_Dispatcher(enum TimerIO tio)
       DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
 
       // update the status of the mail to READ now
-      if(hasStatusNew(mail) || !hasStatusRead(mail))
+      if(mail != NULL && (hasStatusNew(mail) || !hasStatusRead(mail)))
       {
         setStatusToRead(mail); // set to OLD
         DisplayStatistics(mail->Folder, TRUE);
