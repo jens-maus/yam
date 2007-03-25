@@ -5483,7 +5483,7 @@ SMTP AU_TH benutzen
 ; Use SMTP AU_TH
 ;
 MSG_CO_SMTPUser
-Ben_utzer ID
+Ben_utzer-ID
 ; Us_er ID
 ;
 MSG_CO_SMTPPass
@@ -5593,11 +5593,11 @@ Auswählen, wenn man sich bei einem\nfremden SMTP-Server anmelden möchte\n(üblich
 ; If in doubt, don't enable this option.
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER
-Benutzername des\nSMTP AUTH Nutzers.
+Benutzername des\nSMTP-AUTH Nutzers.
 ; User name of the SMTP AUTH user
 ;
 MSG_HELP_CO_ST_SMTPAUTHPASS
-Passwort des\nSMTP AUTH Nutzers.
+Passwort des\nSMTP-AUTH Nutzers.
 ; Password of the SMTP AUTH user
 ;
 MSG_HELP_CO_ST_APPICON
@@ -5885,7 +5885,7 @@ Fehler beim Initialisieren der TLSv1/SSLv3 Session für %s
 ; Couldn't initialize TLSv1/SSLv3 session for %s
 ;
 MSG_TR_SENDAUTH
-Sende SMTP AUTH Anfrage...
+Sende SMTP-AUTH Anfrage...
 ; Sending SMTP AUTH request...
 ;
 MSG_CO_IMPORTMIMETITLE
