@@ -7,6 +7,9 @@ $URL$
 
 2007-03-25  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ReadWindowToolbar.c: for virtual mails both "Spam" and "no Spam" buttons
+    were shown, although only "Spam" really makes sense, and that one must be
+    disabled.
   * locale/deutsch.ct: updated to latest changes in YAM.cd.
   * misc classes: some code clean up.
   * ImageCache.c: reworked the image handling in such a way that changing the

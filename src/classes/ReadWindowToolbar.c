@@ -246,7 +246,7 @@ DECLARE(UpdateSpamControls) // struct Mail *mail
     {
       // this is no real mail, so just show an disabled "Spam" button
       hideSpam = FALSE;
-      hideHam = FALSE;
+      hideHam = TRUE;
       disableSpam = TRUE;
     }
     else if(hasStatusSpam(msg->mail))
@@ -282,3 +282,4 @@ DECLARE(UpdateSpamControls) // struct Mail *mail
   return 0;
 }
 ///
+
