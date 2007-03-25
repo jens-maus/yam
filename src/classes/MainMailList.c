@@ -427,14 +427,12 @@ static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
 OVERLOAD(OM_NEW)
 {
   struct Data *data;
-  int i;
+  ULONG i;
 
   ENTER();
 
   if(!(obj = DoSuperNew(cl, obj,
-
     MUIA_Font,                       C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
-
     MUIA_NList_MinColSortable,       0,
     MUIA_NList_TitleClick,           TRUE,
     MUIA_NList_TitleClick2,          TRUE,
@@ -474,7 +472,7 @@ OVERLOAD(OM_NEW)
   data->statusImage[SICON_ID_SIGNED]   = MakeImageObject("status_signed");
   data->statusImage[SICON_ID_MARK]     = MakeImageObject("status_mark");
   data->statusImage[SICON_ID_SPAM]     = MakeImageObject("status_spam");
-  for(i=0; i < MAX_STATUSIMG; i++)
+  for(i = 0; i < ARRAY_SIZE(data->statusImage); i++)
     DoMethod(obj, MUIM_NList_UseImage, data->statusImage[i], i, MUIF_NONE);
 
   // connect some notifies to the mainMailList group

@@ -65,14 +65,14 @@ static void Image_Load(struct Data *data, Object *obj)
 {
   ENTER();
 
-  if(data->name)
+  if(data->name != NULL && data->imageNode == NULL)
     data->imageNode = ObtainImage(data->name, _screen(obj));
 
   LEAVE();
 }
 
 ///
-/// Image_UnLoad()
+/// Image_Unload()
 // unloads a certain image from our datatypes cache methods
 static void Image_Unload(struct Data *data)
 {
@@ -245,7 +245,6 @@ OVERLOAD(MUIM_Setup)
   }
 
   Image_Load(data, obj);
-
   data->setup = TRUE;
 
   RETURN(TRUE);
@@ -261,7 +260,6 @@ OVERLOAD(MUIM_Cleanup)
   ENTER();
 
   Image_Unload(data);
-
   data->setup = FALSE;
 
   result = DoSuperMethodA(cl, obj, msg);
@@ -443,3 +441,4 @@ OVERLOAD(MUIM_Draw)
 ///
 
 /* Public Methods */
+

@@ -148,11 +148,11 @@ OVERLOAD(OM_NEW)
   ASSERT(ARRAY_SIZE(icon) == MAX_STATUSIMG);
 
   // prepare the status icons for adding it later on to our statusGroup object
-  for(i=0; i < ARRAY_SIZE(icon); i++)
+  for(i = 0; i < ARRAY_SIZE(icon); i++)
     statusIcon[icon[i].status] = MakeImageObject(icon[i].name);
 
   // should be a compile-time nop!
-  for(i=ARRAY_SIZE(icon); i < MAX_STATUSIMG; i++)
+  for(i = ARRAY_SIZE(icon); i < MAX_STATUSIMG; i++)
     statusIcon[i] = NULL;
 
   obj = DoSuperNew(cl, obj,

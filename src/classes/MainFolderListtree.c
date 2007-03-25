@@ -55,7 +55,7 @@ enum { CMN_EDITF=10,
 OVERLOAD(OM_NEW)
 {
   struct Data *data;
-  int i;
+  ULONG i;
 
   ENTER();
 
@@ -81,7 +81,7 @@ OVERLOAD(OM_NEW)
   data->folderImage[FICON_ID_PROTECTED]   = MakeImageObject("status_crypt");
   data->folderImage[FICON_ID_SPAM]        = MakeImageObject("folder_spam");
   data->folderImage[FICON_ID_SPAM_NEW]    = MakeImageObject("folder_spam_new");
-  for(i=0; i < MAX_FOLDERIMG+1; i++)
+  for(i = 0; i < ARRAY_SIZE(data->folderImage); i++)
     DoMethod(obj, MUIM_NList_UseImage, data->folderImage[i], i, MUIF_NONE);
 
   RETURN((ULONG)obj);

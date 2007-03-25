@@ -356,9 +356,3 @@ DECLARE(HideBars)
 }
 ///
 
-DECLARE(test)
-{
-  E(DBF_STARTUP, "TEST!!");
-
-  return 0;
-}
