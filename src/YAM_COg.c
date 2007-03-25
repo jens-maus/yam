@@ -3165,7 +3165,7 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
 
           ConfigPageHeaderObject("config_lookfeel_big", tr(MSG_CO_LOOKFEEL_TITLE), tr(MSG_CO_LOOKFEEL_SUMMARY)),
 
-          Child, HGroup, GroupFrameT(tr(MSG_CO_LOOKFEEL_THEME)),
+          Child, HGroup, GroupFrameT(tr(MSG_CO_LOOKFEEL_THEMES)),
             MUIA_VertWeight, 70,
 
             Child, VGroup,

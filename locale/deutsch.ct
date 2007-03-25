@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (18.03.2007)
+## version $VER: YAM.catalog 6.0 (25.03.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -7569,13 +7569,13 @@ MSG_CO_POP3SECURE
 Sichere Verbindung benutzen:
 ;
 MSG_CO_POP3SECURE_NO
-Nein
+Nie
 ;
 MSG_CO_POP3SECURE_TLS
-mit TLSv1
+mittels TLSv1
 ;
 MSG_CO_POP3SECURE_SSL
-mit SSLv3
+mittels SSLv3
 ;
 MSG_HELP_CO_RA_POP3SECURE
 Eine TLSv1- oder SSLv3-Verbindung wird mit dem POP3-Server hergestellt\n\
@@ -7583,8 +7583,8 @@ und YAM empfängt die Mail über eine verschlüsselte Verbindung. Falls\n\
 die AmiSSL-Unterstützung nicht aktiv ist, sind diese Bedienelemente nicht\n\
 benutzbar.
 ;
-MSG_CO_LOOKFEEL_THEME
-Thema
+MSG_CO_LOOKFEEL_THEMES
+Themes
 ;
 MSG_CO_THEME_ACTIVATE
 Aktivieren

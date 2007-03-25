@@ -18,6 +18,7 @@ $URL$
 
 2007-03-25  Jens Langner <Jens.Langner@light-speed.de>
 
+  * locale/deutsch.ct, locale/YAM.cd, YAM_COg.c: minor catalog adaptions
   * YAM_COg.c, YAM.cd: minor GUI element restructuring and cleanup of orphaned
     catalog messages.
   * YAM_COg.c, YAM_COs.c, MainMailList.c, misc: added a new config option

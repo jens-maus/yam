@@ -6133,8 +6133,8 @@ the POP3 server and YAM to receive email through an encrypted\n\
 connection. If these radio buttons are ghosted, it means AmiSSL\n\
 support is currently not available.
 ;
-MSG_CO_LOOKFEEL_THEME (1898//)
-Theme
+MSG_CO_LOOKFEEL_THEMES (1898//)
+Themes
 ;
 MSG_CO_THEME_ACTIVATE (1899//)
 Activate
