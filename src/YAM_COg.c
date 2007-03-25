@@ -3233,12 +3233,12 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
           End,
 
           Child, VGroup, GroupFrameT(tr(MSG_CO_GENLISTCFG)),
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_EMBEDDEDREADPANE, tr(MSG_CO_SHOWEMBEDDEDREADPANE)),
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_QUICKSEARCHBAR, tr(MSG_CO_QUICKSEARCHBAR)),
             Child, HGroup,
               Child, Label1(tr(MSG_CO_SIZEFORMAT)),
               Child, data->GUI.CY_SIZE = MakeCycle(sizef, tr(MSG_CO_SIZEFORMAT)),
             End,
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_EMBEDDEDREADPANE, tr(MSG_CO_SHOWEMBEDDEDREADPANE)),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_QUICKSEARCHBAR, tr(MSG_CO_QUICKSEARCHBAR)),
           End,
 
         End;

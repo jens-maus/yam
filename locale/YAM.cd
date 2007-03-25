@@ -1007,9 +1007,6 @@ Time _zone
 MSG_CO_SendMail (350//)
 Send mail (SMTP)
 ;
-MSG_CO_Server (351//)
-Ser_ver
-;
 MSG_CO_Domain (352//)
 Do_main
 ;
@@ -1071,7 +1068,7 @@ MSG_CO_WarnSize1 (371//)
 Size _limit
 ;
 MSG_CO_WarnSize2 (372//)
-kB
+KB
 ;
 MSG_CO_AutoOperation (373//)
 Automatic operation
@@ -1219,9 +1216,6 @@ Display _all texts
 ;
 MSG_CO_FixedFontEdit (423//)
 Use _fixed font
-;
-MSG_CO_MimeViewers (424//)
-MIME viewers
 ;
 MSG_CO_MimeType (425//)
 Attachment _type
@@ -4480,30 +4474,9 @@ Cache size for the most recently used\n\
 recipients not yet in the address book.\n\
 Select 0 to disable this feature.
 ;
-MSG_CO_POP3SSL (1427//)
-Use POP3 TLSv1/SSLv3
-;
-MSG_HELP_CO_CH_POP3SSL (1428//)
-YAM will connect via TLSv1/SSLv3 to the POP3 server on the\n\
-POP3 SSL port 995 port and transfer email from there. If this\n\
-checkbox is ghosted, it means AmiSSL support is not available.
-;
-MSG_CO_USESTLS (1429//)
-_with STLS
-;
-MSG_HELP_CO_CH_USESTLS (1430//)
-If checked, the POP3 server is assumed to support STLS\n\
-and use the standard POP3 110 port like any non SSL server.
-;
-MSG_CO_ST_SMTPPORT (1431//)
-Port
-;
 MSG_HELP_CO_ST_SMTPPORT (1432//)
 Port used by the SMTP server\n\
 (default: 25)
-;
-MSG_CO_ST_POPPORT (1433//)
-Port
 ;
 MSG_HELP_CO_ST_POPPORT (1434//)
 Port used by the POP3 server (default: 110)

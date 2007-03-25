@@ -7,6 +7,8 @@ $URL$
 
 2007-03-25  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c, YAM.cd: minor GUI element restructuring and cleanup of orphaned
+    catalog messages.
   * YAM_COg.c, YAM_COs.c, MainMailList.c, misc: added a new config option
     to show relative date outputs in the main mail list and activated it
     per default. Now the date of mails will be shown relative to the
