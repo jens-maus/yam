@@ -1567,7 +1567,7 @@ static void Initialise2(void)
    ENTER();
 
    SplashProgress(tr(MSG_LoadingConfig), 30);
-   CO_SetDefaults(C, -1);
+   CO_SetDefaults(C, cp_AllPages);
    CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders);
    CO_Validate(C, FALSE);
    SplashProgress(tr(MSG_CreatingGUI), 40);
@@ -2386,6 +2386,9 @@ int main(int argc, char **argv)
 
       G = calloc(1, sizeof(struct Global));
       C = calloc(1, sizeof(struct Config));
+
+      if(G == NULL || C == NULL)
+        break;
 
       // get the PROGDIR: and program name and put it into own variables
       NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));

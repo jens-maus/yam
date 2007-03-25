@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-25  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_COg.c, YAM_COs.c, MainMailList.c, misc: added a new config option
+    to show relative date outputs in the main mail list and activated it
+    per default. Now the date of mails will be shown relative to the
+    current day. E.g. the date will be substituted with "Today", "Yesterday"
+    and so on, instead of showing always the absolute datetime. Please note
+    that this functionality fully relies on the DateToStr() function in
+    dos.library and that this weekday substitution is 'just' done via setting
+    the DTF_SUBST flag.
+
 2007-03-24  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c, misc: added a new "Look&Feel" configuration page which will

@@ -276,6 +276,7 @@ struct CO_GUIData
   Object *CY_MDN_DELETE;
   Object *CY_MDN_OTHER;
   Object *CH_REQUESTMDN;
+  Object *CH_RELDATETIME;
 };
 
 enum ConfigPage
@@ -412,6 +413,7 @@ struct Config
    enum  MDNAction      MDN_NoDomain;
    enum  MDNAction      MDN_OnDelete;
    enum  MDNAction      MDN_Other;
+   enum  DateStampType  DSListFormat;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;
@@ -431,7 +433,6 @@ struct Config
    BOOL  StripSignature;
    BOOL  UseSignature;
    BOOL  FixedFontList;
-   BOOL  SwatchBeat;
    BOOL  EncryptToSelf;
    BOOL  SplitLogfile;
    BOOL  LogAllEvents;

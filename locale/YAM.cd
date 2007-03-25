@@ -6175,3 +6175,12 @@ Author
 MSG_CO_THEME_URL (1902//)
 URL
 ;
+MSG_CO_RELDATETIME (1903//)
+Relative date output (Today, Yesterday, ...)
+;
+MSG_HELP_CO_CH_RELDATETIME (1904//)
+If selected, columns with date information\n\
+will use a relative output instead. E.g.\n\
+such colums will show strings like 'Today'\n\
+or 'Yesterday' instead of the full date.
+;

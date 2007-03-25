@@ -48,8 +48,23 @@ struct Folder;
 struct ReadMailData;
 #endif
 
-enum DateStampType { DSS_DATE, DSS_TIME, DSS_WEEKDAY, DSS_DATETIME,
-  DSS_USDATETIME, DSS_UNIXDATE, DSS_BEAT, DSS_DATEBEAT };
+// Types of string outputs the DateStamp2String()
+// function can handle. Please note that in case the
+// order of these enums are changes, the user configuration
+// may get invalid!
+enum DateStampType
+{
+  DSS_DATE=0,       // just the date
+  DSS_TIME,         // just the time
+  DSS_WEEKDAY,      // just the weekday
+  DSS_DATETIME,     // Localized date&time output (via locale.library)
+  DSS_RELDATETIME,  // Localized date&time with weekday substitution
+  DSS_USDATETIME,   // American date&time format (mm-dd-yy hh:mm:ss)
+  DSS_UNIXDATE,     // standard UNIX format
+  DSS_BEAT,         // just time (in swatch beats)
+  DSS_DATEBEAT,     // swatch beat datetime format
+  DSS_RELDATEBEAT   // swatch beat datetime format with weekday subst.
+};
 
 enum TZConvert { TZC_NONE, TZC_UTC, TZC_LOCAL };
 

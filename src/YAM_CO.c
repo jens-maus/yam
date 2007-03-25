@@ -961,7 +961,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       co->FolderCols = 1+2+16;
       co->MessageCols = 1+2+8+16;
       co->FixedFontList = FALSE;
-      co->SwatchBeat = FALSE;
+      co->DSListFormat = DSS_RELDATETIME;
       co->ABookLookup = FALSE;
       co->FolderCntMenu = TRUE;
       co->MessageCntMenu = TRUE;

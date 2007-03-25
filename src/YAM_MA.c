@@ -404,7 +404,7 @@ HOOKPROTONHNONP(MA_SetMessageInfoFunc, void)
 
     // convert the datestamp of the mail to
     // well defined string
-    DateStamp2String(datstr, sizeof(datstr), &mail->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+    DateStamp2String(datstr, sizeof(datstr), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
 
     // use FormatSize() to prettify the size display of the mail info
     FormatSize(mail->Size, sizestr, sizeof(sizestr), SF_AUTO);

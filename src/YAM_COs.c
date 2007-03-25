@@ -420,7 +420,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "FolderCols       = %d\n", co->FolderCols);
       fprintf(fh, "MessageCols      = %d\n", co->MessageCols);
       fprintf(fh, "FixedFontList    = %s\n", Bool2Txt(co->FixedFontList));
-      fprintf(fh, "SwatchBeat       = %s\n", Bool2Txt(co->SwatchBeat));
+      fprintf(fh, "DateTimeFormat   = %d\n", co->DSListFormat);
       fprintf(fh, "ABookLookup      = %s\n", Bool2Txt(co->ABookLookup));
       fprintf(fh, "FolderCntMenu    = %s\n", Bool2Txt(co->FolderCntMenu));
       fprintf(fh, "MessageCntMenu   = %s\n", Bool2Txt(co->MessageCntMenu));
@@ -970,7 +970,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 /*8*/          else if (!stricmp(buffer, "FolderCols"))     co->FolderCols = atoi(value);
                else if (!stricmp(buffer, "MessageCols"))    co->MessageCols = atoi(value);
                else if (!stricmp(buffer, "FixedFontList"))  co->FixedFontList = Txt2Bool(value);
-               else if (!stricmp(buffer, "SwatchBeat"))     co->SwatchBeat = Txt2Bool(value);
+               else if (!stricmp(buffer, "DateTimeFormat")) co->DSListFormat = atoi(value);
                else if (!stricmp(buffer, "ABookLookup"))    co->ABookLookup = Txt2Bool(value);
                else if (!stricmp(buffer, "FolderCntMenu"))  co->FolderCntMenu = Txt2Bool(value);
                else if (!stricmp(buffer, "MessageCntMenu")) co->MessageCntMenu = Txt2Bool(value);
@@ -1633,10 +1633,24 @@ void CO_GetConfig(BOOL saveConfig)
         CE->FolderCols = 1; for (i = 1; i < FOCOLNUM; i++) if (GetMUICheck(gui->CH_FCOLS[i])) CE->FolderCols += (1<<i);
         CE->MessageCols = 1; for (i = 1; i < MACOLNUM; i++) if (GetMUICheck(gui->CH_MCOLS[i])) CE->MessageCols += (1<<i);
         CE->FixedFontList = GetMUICheck(gui->CH_FIXFLIST);
-        CE->SwatchBeat    = GetMUICheck(gui->CH_BEAT);
         CE->ABookLookup   = GetMUICheck(gui->CH_ABOOKLOOKUP);
         CE->FolderCntMenu = GetMUICheck(gui->CH_FCNTMENU);
         CE->MessageCntMenu= GetMUICheck(gui->CH_MCNTMENU);
+
+        if(GetMUICheck(gui->CH_BEAT) == TRUE)
+        {
+          if(GetMUICheck(gui->CH_RELDATETIME))
+            CE->DSListFormat = DSS_RELDATEBEAT;
+          else
+            CE->DSListFormat = DSS_DATEBEAT;
+        }
+        else
+        {
+          if(GetMUICheck(gui->CH_RELDATETIME))
+            CE->DSListFormat = DSS_RELDATETIME;
+          else
+            CE->DSListFormat = DSS_DATETIME;
+        }
       }
       break;
 
@@ -1973,10 +1987,11 @@ void CO_SetConfig(void)
         for(i = 0; i < FOCOLNUM; i++) setcheckmark(gui->CH_FCOLS[i], (CE->FolderCols & (1<<i)) != 0);
         for(i = 0; i < MACOLNUM; i++) setcheckmark(gui->CH_MCOLS[i], (CE->MessageCols & (1<<i)) != 0);
         setcheckmark(gui->CH_FIXFLIST  ,CE->FixedFontList);
-        setcheckmark(gui->CH_BEAT      ,CE->SwatchBeat);
         setcheckmark(gui->CH_ABOOKLOOKUP, CE->ABookLookup);
         setcheckmark(gui->CH_FCNTMENU  ,CE->FolderCntMenu);
         setcheckmark(gui->CH_MCNTMENU  ,CE->MessageCntMenu);
+        setcheckmark(gui->CH_BEAT, (CE->DSListFormat == DSS_DATEBEAT || CE->DSListFormat == DSS_RELDATEBEAT));
+        setcheckmark(gui->CH_RELDATETIME, (CE->DSListFormat == DSS_RELDATETIME || CE->DSListFormat == DSS_RELDATEBEAT));
       }
       break;
 

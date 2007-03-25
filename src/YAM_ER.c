@@ -104,7 +104,7 @@ void ER_NewError(const char *error, ...)
     }
 
     // get actual date as a string
-    DateStamp2String(datstr, sizeof(datstr), NULL, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE);
+    DateStamp2String(datstr, sizeof(datstr), NULL, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE);
 
     va_start(args, error);
     vsnprintf(buf, sizeof(buf), error, args);

@@ -2571,6 +2571,7 @@ Object *CO_PageLists(struct CO_ClassData *data)
             Child, VGroup, GroupFrameT(tr(MSG_CO_GENLISTCFG)),
               Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFLIST, tr(MSG_CO_FixedFontList)),
               Child, MakeCheckGroup((Object **)&data->GUI.CH_BEAT, tr(MSG_CO_SwatchBeat)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_RELDATETIME, tr(MSG_CO_RELDATETIME)),
               Child, MakeCheckGroup((Object **)&data->GUI.CH_ABOOKLOOKUP, tr(MSG_CO_ABOOKLOOKUP)),
             End,
 
@@ -2583,6 +2584,7 @@ Object *CO_PageLists(struct CO_ClassData *data)
   {
     SetHelp(data->GUI.CH_FIXFLIST,      MSG_HELP_CO_CH_FIXFLIST);
     SetHelp(data->GUI.CH_BEAT,          MSG_HELP_CO_CH_BEAT);
+    SetHelp(data->GUI.CH_RELDATETIME,   MSG_HELP_CO_CH_RELDATETIME);
     SetHelp(data->GUI.CH_ABOOKLOOKUP,   MSG_HELP_CO_CH_ABOOKLOOKUP);
     SetHelp(data->GUI.CH_FCNTMENU,      MSG_HELP_CO_CONTEXTMENU);
     SetHelp(data->GUI.CH_MCNTMENU,      MSG_HELP_CO_CONTEXTMENU);

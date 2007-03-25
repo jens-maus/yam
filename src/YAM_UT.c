@@ -3125,7 +3125,7 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
   // now we fill the DateTime structure with the data for our request.
   dt.dat_Stamp   = *date;
   dt.dat_Format  = (mode == DSS_USDATETIME || mode == DSS_UNIXDATE) ? FORMAT_USA : FORMAT_DEF;
-  dt.dat_Flags   = 0; // perhaps later we can add Weekday substitution
+  dt.dat_Flags   = (mode == DSS_RELDATETIME || mode == DSS_RELDATEBEAT) ? DTF_SUBST : 0;
   dt.dat_StrDate = datestr;
   dt.dat_StrTime = timestr;
   dt.dat_StrDay  = daystr;
@@ -3166,6 +3166,7 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
 
     case DSS_DATETIME:
     case DSS_USDATETIME:
+    case DSS_RELDATETIME:
     {
       snprintf(dst, dstlen, "%s %s", datestr, timestr);
     }
@@ -3191,11 +3192,12 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
 
     case DSS_BEAT:
     case DSS_DATEBEAT:
+    case DSS_RELDATEBEAT:
     {
       // calculate the beat time
       LONG beat = (((date->ds_Minute-C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
 
-      if(mode == DSS_DATEBEAT)
+      if(mode == DSS_DATEBEAT || mode == DSS_RELDATEBEAT)
         snprintf(dst, dstlen, "%s @%03ld", datestr, beat);
       else
         snprintf(dst, dstlen, "@%03ld", beat);
@@ -3362,6 +3364,7 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
 
     case DSS_DATETIME:
     case DSS_USDATETIME:
+    case DSS_RELDATETIME:
     {
       char *p;
 
@@ -3395,6 +3398,7 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
 
     case DSS_BEAT:
     case DSS_DATEBEAT:
+    case DSS_RELDATEBEAT:
       // not supported yet.
     break;
   }
