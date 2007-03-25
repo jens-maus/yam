@@ -1302,17 +1302,9 @@ MSG_CO_TimeZone
 _Zeitzone
 ; Time zone
 ;
-MSG_CO_DaylightSaving
-_Korrektur für Sommerzeit hinzufügen
-; _Add adjustment for daylight saving time
-;
 MSG_CO_SendMail
 Post versenden (SMTP)
 ; Send mail (SMTP)
-;
-MSG_CO_Server
-Ser_ver
-; Ser_ver
 ;
 MSG_CO_Domain
 _Domäne
@@ -1593,10 +1585,6 @@ Alle _Texte
 MSG_CO_FixedFontEdit
 S_chrift fester Breite
 ; Use _fixed font
-;
-MSG_CO_MimeViewers
-MIME-Anzeigeprogramme
-; MIME viewers
 ;
 MSG_CO_MimeType
 Anhangt_yp
@@ -2113,11 +2101,6 @@ MSG_HELP_CO_CY_TZONE
 Wählen Sie die Zeitzone\nIhres momentanen Standortes
 ; Select the timezone of\n\
 ; your current location
-;
-MSG_HELP_CO_CH_DLSAVING
-Zeitzone während der\nSommerzeit korrigieren
-; Adjust the timezone during daylight\n\
-; saving time (summer time)
 ;
 MSG_HELP_CO_ST_SMTPHOST
 Die Adresse des SMTP-Servers für den Postversand.\nWenn Sie dieses Feld leer lassen, wird die\nAdresse des POP3-Servers übernommen.
@@ -5828,37 +5811,10 @@ Puffergröße für die zuletzt verwendeten Empfänger,\nwelche sich nicht im Adressb
 ; recipients not yet in the address book.\n\
 ; Select 0 mails to disable this feature.
 ;
-MSG_CO_POP3SSL
-POP3 TLSv1/SSLv3 benut_zen
-; Use POP3 TLSv1/SSLv3
-;
-MSG_HELP_CO_CH_POP3SSL
-YAM verbindet sich über TLSv1/SSLv3 mit dem POP3-Server am POP3 SSL Port\n995 Port und überträgt die Nachrichten von dort. Falls dieser Schalter nicht\nanwählbar ist, steht keine AmiSSL-Unterstützung zur Verfügung.
-; YAM will connect via TLSv1/SSLv3 to the POP3 server on the\n\
-; POP3 SSL port 995 port and transfer email from there. If this\n\
-; checkbox is ghosted, it means AmiSSL support is not available.
-;
-MSG_CO_USESTLS
-_mit STLS
-; _with STLS
-;
-MSG_HELP_CO_CH_USESTLS
-Wenn aktiviert, wird angenommen, der POP3-Server unterstützt STLS\nund benutzt den Standard POP3 110 Port, wie jeder Nicht-SSL-Server.
-; If checked, the POP3 server is assumed to support STLS\n\
-; and use the standard POP3 110 port like any non SSL server.
-;
-MSG_CO_ST_SMTPPORT
-Port
-; Port
-;
 MSG_HELP_CO_ST_SMTPPORT
 Port des SMTP-Server\n\
 (Vorgabe: 25)
 ; Port used by the SMTP server (default: 25)
-;
-MSG_CO_ST_POPPORT
-Port
-; Port
 ;
 MSG_HELP_CO_ST_POPPORT
 Port des POP3-Server (Vorgabe: 110)
@@ -7586,4 +7542,67 @@ MSG_HELP_CO_CY_MDN_OTHER
 Wenn keiner der anderen Fälle zutrifft\n\
 wird mit Anforderungen für eine Empfangs-\n\
 bestätigung wie hier konfiguriert verfahren.
+;
+MSG_CO_LOOKFEEL_TITLE
+Look & Feel
+;
+MSG_CO_LOOKFEEL_SUMMARY
+Konfigurieren Sie das Look & Feel von YAM...
+;
+MSG_CO_CRDLOOKFEEL
+Look & Feel
+;
+MSG_CO_DSTACTIVE
+_Sommerzeit (DST) ist aktiv
+;
+MSG_HELP_CO_CH_DSTACTIVE
+Aktivieren Sie diese Einstellung, falls momentan\n\
+die Sommerzeit (DST) in Ihrer Zeitzone gilt.
+;
+MSG_CO_SMTPSERVERPORT
+Ser_ver/Port
+;
+MSG_CO_POP3SERVERPORT
+Serve_r/Port
+;
+MSG_CO_POP3SECURE
+Sichere Verbindung benutzen:
+;
+MSG_CO_POP3SECURE_NO
+Nein
+;
+MSG_CO_POP3SECURE_TLS
+mit TLSv1
+;
+MSG_CO_POP3SECURE_SSL
+mit SSLv3
+;
+MSG_HELP_CO_RA_POP3SECURE
+Eine TLSv1- oder SSLv3-Verbindung wird mit dem POP3-Server hergestellt\n\
+und YAM empfängt die Mail über eine verschlüsselte Verbindung. Falls\n\
+die AmiSSL-Unterstützung nicht aktiv ist, sind diese Bedienelemente nicht\n\
+benutzbar.
+;
+MSG_CO_LOOKFEEL_THEME
+Thema
+;
+MSG_CO_THEME_ACTIVATE
+Aktivieren
+;
+MSG_CO_THEME_PREVIEW
+Vorschau
+;
+MSG_CO_THEME_AUTHOR
+Autor
+;
+MSG_CO_THEME_URL
+URL
+;
+MSG_CO_RELDATETIME
+Relative Datumsangaben (Heute, Gestern, ...)
+;
+MSG_HELP_CO_CH_RELDATETIME
+Falls aktiv, werden alle Spalten mit Datumsangaben\n\
+relativ dargestellt. Zum Beispiel wird das aktuelle\n\
+Datum als 'Heute' angezeigt.
 ;
