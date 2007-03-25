@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-25  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c: reworked the image handling in such a way that changing the
+    screen depth no longer causes crashes because of access to a longer opened
+    screen.
+
 2007-03-25  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c, YAM.cd: minor GUI element restructuring and cleanup of orphaned

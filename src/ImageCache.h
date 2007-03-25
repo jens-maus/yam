@@ -43,7 +43,6 @@ struct imageCacheNode
 
   ULONG width;
   ULONG height;
-  ULONG screenDepth;
 };
 
 // the prototypes for our public available functions
