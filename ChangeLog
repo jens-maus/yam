@@ -15,6 +15,8 @@ $URL$
     exclusively handled by the toolbar itself.
   * YAM_UT.c: upon deleting a users private directory the .spamdata and .uidl
     files are now deleted, too.
+  * YAM_CO.c: validating the configuration now restricts the spam probability
+    threshold to sensible values (75% to 99%).
 
 2007-03-25  Thore Böckelmann <tboeckel@gmx.de>
 
@@ -862,7 +864,7 @@ $URL$
     for it to match the same for starting a search in the main window. Please
     note that for attaching a file the shortcut had to be changed and is
     now RAmiga+A instead of RAmiga+F.
-  * YAM_FO.c, YAM_gloabal.c, YAM_folderconfig.h, YAM_global.h: moved the 
+  * YAM_FO.c, YAM_gloabal.c, YAM_folderconfig.h, YAM_global.h: moved the
     FolderName array to YAM_FO.c to avoid Library base definition problems
     accross platforms.
 
@@ -1545,7 +1547,7 @@ $URL$
     collected with a "gcc -MM" call over all files. This should hopefully
     improve the whole dependency handling with the YAM sources and prove
     usefull for further development.
- 
+
 2006-09-27  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: updated according to the latest changes.
@@ -2698,7 +2700,7 @@ $URL$
     second instance crashes caused by an uninitialized xpkPackerList.
   * icons/std/status_group: slightly improved the transparency looking of
     the "group" status image.
-        
+
 2006-03-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * icons: converted all default config_#?, status_#? and folder_#? images
@@ -2737,7 +2739,7 @@ $URL$
     forbit rule from our coding styleguide.
   * STYLEGUIDE: added a new developer document explaining the various
     coding styles used in the source code of YAM. Every YAM developer
-    should definitly read at least once through the document and 
+    should definitly read at least once through the document and
     adapt his coding style to the one described in the document.
     Especially the rule on using TABs (0x09) characters should be
     mentioned here as we had too much trouble in the pasted with them
@@ -2983,7 +2985,7 @@ $URL$
   * housekeeping: bumped the copyright year to 2006 now that a new year has
     begun. Lets see how fast we can proceed this year so that we will see
     a new full release hopefully in Q1 of 2006.
-   
+
 2005-12-17  Jens Langner <Jens.Langner@light-speed.de>
 
   * classes/MainMailListGroup.c: now the column widths of the normal mail list
@@ -4091,7 +4093,7 @@ $URL$
   * ReadWindow.c: removed another bunch of "-repeat" key definition
     to prevent a continious deletion of mails by holding down the
     delete key.
-   
+
 2005-02-01  Jens Langner <Jens.Langner@light-speed.de>
 
   * UserImage.c: another minor change to the UserImage custom class
@@ -4201,7 +4203,7 @@ $URL$
       serving only for up to a maximum of 3 possible read windows. So if you
       stumble over a problem with the new readmail facility, please don't
       hestitate to bring it to our attention so that we can fix it immediatly.
-   
+
 2005-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_stringsizes.h: increased the SIZE_FILE buffer length define
@@ -4347,7 +4349,7 @@ $URL$
   * YAM_CO.c: fixed bug in the socket options configuration parsing
     routines where YAM didn't recognize an existing "SO_RCVTIMEO"
     option correctly.
-    
+
 2004-09-25  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_CL.c, YAM_classes.h: removed source files as all the old custom
@@ -4368,7 +4370,7 @@ $URL$
     "AddrBookListtree" class.
   * MainWindow.c: moved CL_MainWindow custom class implementation to
     the new classes system as the "MainWindow" class.
-    
+
 2004-09-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * MailTextEdit.c: moved CL_TextEditor custom class implementation
@@ -4551,7 +4553,7 @@ $URL$
 2004-07-25  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MI.c: slightly modified the rfc2047 quoted-printable
-    decoding routines to use the global lookup table instead of 
+    decoding routines to use the global lookup table instead of
     extensive string functions. This should perhaps speed up the
     routines once more.
   * YAM_MI.c, YAM_RE.c: also rewrote the quoted-printable decoding
@@ -4570,7 +4572,7 @@ $URL$
   * YAM_MI.c: fixed another minor bug in the RFC2047 decoding
     routines which caused encoded-words not to be decoded if they
     were embeeded in RFC822 style comments delimited by ( and ).
-  * YAM_FI.c, InfoBar.c: modified all major gauge displays to only 
+  * YAM_FI.c, InfoBar.c: modified all major gauge displays to only
     refresh themself in respect to a maximum given refresh time
     - twice a second. This has for example the result that on fast
     machines the message find mechanism is dramatically faster now,
@@ -4644,7 +4646,7 @@ $URL$
 
 2004-03-25  Alexey Ivanov <amis@amiga.org.ru>
 
-  * YAM_AB.c: fixed "Address Book double click" bug, introduction 
+  * YAM_AB.c: fixed "Address Book double click" bug, introduction
     since 14.02.2004.
 
 2004-03-16  Jens Langner <Jens.Langner@light-speed.de>
@@ -4784,7 +4786,7 @@ $URL$
     base from the pointer that is provided as an argument. Previously
     only the local pointer was set and returned, which was not
     exactly my intention in first place ;)
-      
+
 2004-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
   * OS4: finally YAM compiles and links with the AmigaOS4
@@ -7537,7 +7539,7 @@ $URL$
 
 2001-07-17  Gunther Nikl <gni@gecko.de>
 
-  * Makefile: renamed revision 1.12 to Makefile.MorphOS 
+  * Makefile: renamed revision 1.12 to Makefile.MorphOS
   * Makefile.m68k-AmigaOS: renamed revison 1.14 to Makefile
   * Makefile.m68k-AmigaOS-ixemul: deleted
 

@@ -1369,7 +1369,10 @@ void CO_Validate(struct Config *co, BOOL update)
      {
        // fallback to the system's default codeset
        if((G->localCharset = CodesetsFindA(NULL, NULL)))
+       {
          strlcpy(co->LocalCharset, G->localCharset->name, sizeof(co->LocalCharset));
+         saveAtEnd = TRUE;
+       }
      }
    }
 
@@ -1409,6 +1412,21 @@ void CO_Validate(struct Config *co, BOOL update)
         G->TR_UseableTLS == TRUE)
      {
        co->AmiSSLCheck = TRUE;
+       saveAtEnd = TRUE;
+     }
+   }
+
+   if(co->SpamFilterEnabled)
+   {
+     // limit the spam probability threshold to sensible values
+     if(co->SpamProbabilityThreshold < 75)
+     {
+       co->SpamProbabilityThreshold = 75;
+       saveAtEnd = TRUE;
+     }
+     else if(co->SpamProbabilityThreshold > 99)
+     {
+       co->SpamProbabilityThreshold = 99;
        saveAtEnd = TRUE;
      }
    }
