@@ -2533,7 +2533,9 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
                    stricmp(filename, ".glossary")    == 0 ||
                    stricmp(filename, ".addressbook") == 0 ||
                    stricmp(filename, ".emailcache")  == 0 ||
-                   stricmp(filename, ".folders")  == 0)
+                   stricmp(filename, ".folders")     == 0 ||
+                   stricmp(filename, ".spamdata")    == 0 ||
+                   stricmp(filename, ".uidl")        == 0)
                 {
                   result = DeleteFile(fname);
                 }

@@ -13,6 +13,8 @@ $URL$
     faster than before.
   * ReadWindow.c: the update of the toolbar's "Spam/No Spam" buttons is now
     exclusively handled by the toolbar itself.
+  * YAM_UT.c: upon deleting a users private directory the .spamdata and .uidl
+    files are now deleted, too.
 
 2007-03-25  Thore Böckelmann <tboeckel@gmx.de>
 
