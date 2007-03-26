@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-26  Thore Böckelmann <tboeckel@gmx.de>
+
+  * BayesFilter.h: lowered the default spam probability threshold from 95% to
+    90% as this is the default value of Thunderbird. Especially with an not yet
+    well enough trained spam filter this will lead to good results a little bit
+    faster than before.
+
 2007-03-25  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: added NULL pointer check before updating the mail state to "read".
