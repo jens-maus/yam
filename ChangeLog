@@ -7,6 +7,12 @@ $URL$
 
 2007-03-26  Thore Böckelmann <tboeckel@gmx.de>
 
+  * InfoBar.c: finally found the bug which caused crashes when the active folder
+    was changed during the rescan of another folder. Basically this is a bug in
+    MUI which gets only triggered if the available space in a group/window is
+    too narrow. As a workaround some labels are allowed to disappear temporarily
+    now. At least a rescan of a folder while changing folders now works again on
+    a 640x480 screen without any crashes. All in all this fixes bug #1232127.
   * BayesFilter.h: lowered the default spam probability threshold from 95% to
     90% as this is the default value of Thunderbird. Especially with an not yet
     well enough trained spam filter this will lead to good results a little bit

@@ -44,7 +44,6 @@ struct Data
   Object *BT_STOP;
   Object *actualImage;
   BOOL stopButtonPressed;
-  struct Folder *actualFolder;
   struct TimeVal last_gaugemove;
 };
 */
@@ -54,18 +53,22 @@ struct Data
 // this function creates a folder string and returns it
 static char *GetFolderInfo(struct Folder *folder)
 {
-  char *src, dst[10];
-  static char bartxt[SIZE_DEFAULT/2];
+  static char barText[SIZE_DEFAULT / 2];
+  char *src;
+
+  ENTER();
 
   // clear the bar text first
-  bartxt[0] = '\0';
+  barText[0] = '\0';
 
   // Lets create the label of the AppIcon now
-  for (src = C->InfoBarText; *src; src++)
+  for(src = C->InfoBarText; *src; src++)
   {
-    if (*src == '%')
+    char dst[10];
+
+    if(*src == '%')
     {
-      switch (*++src)
+      switch(*++src)
       {
         case '%': strlcpy(dst, "%", sizeof(dst)); break;
         case 'n': snprintf(dst, sizeof(dst), "%d", folder->New);     break;
@@ -78,10 +81,11 @@ static char *GetFolderInfo(struct Folder *folder)
     else
       snprintf(dst, sizeof(dst), "%c", *src);
 
-    strlcat(bartxt, dst, sizeof(bartxt));
+    strlcat(barText, dst, sizeof(barText);
   }
 
-  return bartxt;
+  RETURN(barText);
+  return barText;
 }
 
 ///
@@ -103,25 +107,30 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
+    // Some objects are allowed to disappear if the available space in the window is too narrow.
+    // This is a workaround for a bug in MUI.
     TextFrame,
     MUIA_Background,    MUII_TextBack,
     MUIA_Group_Horiz,   TRUE,
     Child, HGroup,
       InnerSpacing(0,0),
       Child, folderString = TextObject,
-        MUIA_HorizWeight,   0,
-        MUIA_Font,          MUIV_Font_Big,
-        MUIA_Text_SetMax,   FALSE,
-        MUIA_Text_PreParse, "\033b",
+        MUIA_HorizWeight,    0,
+        MUIA_HorizDisappear, 3,
+        MUIA_Font,           MUIV_Font_Big,
+        MUIA_Text_SetMax,    FALSE,
+        MUIA_Text_PreParse,  "\033b",
       End,
       Child, folderInfoStr = TextObject,
-        MUIA_Font,          MUIV_Font_Tiny,
-        MUIA_Text_SetMax,   FALSE,
-        MUIA_Text_PreParse, "\033l",
+        MUIA_HorizDisappear, 1,
+        MUIA_Font,           MUIV_Font_Tiny,
+        MUIA_Text_SetMax,    FALSE,
+        MUIA_Text_PreParse,  "\033l",
       End,
     End,
       
     Child, gaugeLabel = TextObject,
+      MUIA_HorizDisappear, 2,
       MUIA_Text_SetMax,   FALSE,
       MUIA_Text_PreParse, "\033r",
     End,
@@ -180,24 +189,16 @@ OVERLOAD(OM_NEW)
 
 /* Public Methods */
 /// DECLARE(SetFolder)
-/* set a new folder and update its name and image in the infobar */
+// set a new folder and update its name and image in the infobar
 DECLARE(SetFolder) // struct Folder *newFolder
 {
   GETDATA;
   struct Folder *folder = msg->newFolder;
+  LONG result = -1;
 
   ENTER();
 
-  data->actualFolder = folder;
-
-  if(folder == NULL)
-  {
-    RETURN(-1);
-    return -1;
-  }
-
-  // prepare the object for a change
-  if(DoMethod(obj, MUIM_Group_InitChange))
+  if(folder != NULL)
   {
     // set the name of the folder as the info text
     nnset(data->TX_FOLDER, MUIA_Text_Contents, folder->Name);
@@ -205,53 +206,57 @@ DECLARE(SetFolder) // struct Folder *newFolder
     // now we are going to set some status field at the right side of the folder name
     nnset(data->TX_FINFO, MUIA_Text_Contents, GetFolderInfo(folder));
 
-    // only if the image should be changed we proceed or otherwise
-    // MUI will refresh too often
-    if(data->actualImage != NULL && (folder->imageObject == NULL ||
-       stricmp((char *)xget(data->actualImage, MUIA_ImageArea_Filename),
-               (char *)xget(folder->imageObject, MUIA_ImageArea_Filename)) != 0))
+    // prepare the object for a change
+    if(DoMethod(obj, MUIM_Group_InitChange))
     {
-      D(DBF_GUI, "disposing imagearea: '%s'", xget(data->actualImage, MUIA_ImageArea_Filename));
-
-      DoMethod(obj, OM_REMMEMBER, data->actualImage);
-      MUI_DisposeObject(data->actualImage);
-      data->actualImage = NULL;
-    }
-
-    // and if we have a new one we generate the object an add it
-    // to the grouplist of this infobar
-    if(data->actualImage == NULL)
-    {
-      if(folder->imageObject)
+      // only if the image should be changed we proceed or otherwise
+      // MUI will refresh too often
+      if(data->actualImage != NULL && (folder->imageObject == NULL ||
+         stricmp((char *)xget(data->actualImage, MUIA_ImageArea_Filename),
+                 (char *)xget(folder->imageObject, MUIA_ImageArea_Filename)) != 0))
       {
-        data->actualImage = MakeImageObject(xget(folder->imageObject, MUIA_ImageArea_Filename));
+        DoMethod(obj, OM_REMMEMBER, data->actualImage);
 
-        D(DBF_GUI, "init imagearea: '%s'", xget(folder->imageObject, MUIA_ImageArea_Filename));
-      }
-      else if(folder->ImageIndex >= 0 && folder->ImageIndex < MAX_FOLDERIMG)
-      {
-        Object **imageArray = (Object **)xget(G->MA->GUI.NL_FOLDERS, MUIA_MainFolderListtree_ImageArray);
-
-        D(DBF_GUI, "init imagearea: num %ld %lx", folder->ImageIndex, imageArray);
-
-        if(imageArray && imageArray[folder->ImageIndex])
-          data->actualImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
+        D(DBF_GUI, "disposing imagearea: '%s'", xget(data->actualImage, MUIA_ImageArea_Filename));
+        MUI_DisposeObject(data->actualImage);
+        data->actualImage = NULL;
       }
 
-      D(DBF_GUI, "init finished..: %lx %ld", data->actualImage, folder->ImageIndex);
+      // and if we have a new one we generate the object an add it
+      // to the grouplist of this infobar
+      if(data->actualImage == NULL)
+      {
+        if(folder->imageObject)
+        {
+          data->actualImage = MakeImageObject(xget(folder->imageObject, MUIA_ImageArea_Filename));
 
-      if(data->actualImage)
-        DoMethod(obj, OM_ADDMEMBER, data->actualImage);
+          D(DBF_GUI, "init imagearea: '%s'", xget(folder->imageObject, MUIA_ImageArea_Filename));
+        }
+        else if(folder->ImageIndex >= 0 && folder->ImageIndex < MAX_FOLDERIMG)
+        {
+          Object **imageArray = (Object **)xget(G->MA->GUI.NL_FOLDERS, MUIA_MainFolderListtree_ImageArray);
+
+          D(DBF_GUI, "init imagearea: 0x%08lx[%ld]", imageArray, folder->ImageIndex);
+
+          if(imageArray && imageArray[folder->ImageIndex])
+            data->actualImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
+        }
+
+        D(DBF_GUI, "init finished..: 0x%08lx %ld", data->actualImage, folder->ImageIndex);
+
+        if(data->actualImage != NULL)
+          DoMethod(obj, OM_ADDMEMBER, data->actualImage);
+      }
+
+      // now that we are finished we can call ExitChange to refresh the infobar
+      DoMethod(obj, MUIM_Group_ExitChange);
     }
 
-    D(DBF_GUI, "before ExitChange");
-
-    // now that we are finished we can call ExitChange to refresh the infobar
-    DoMethod(obj, MUIM_Group_ExitChange);
+    result = 0;
   }
 
-  RETURN(0);
-  return 0;
+  RETURN(result);
+  return result;
 }
 ///
 /// DECLARE(ShowGauge)
@@ -324,13 +329,18 @@ DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
 }
 ///
 /// DECLARE(ShowInfoText)
-/* activates the gauge in the InfoBar with the passed text and percentage */
+// activates the gauge in the InfoBar with the passed text and percentage
 DECLARE(ShowInfoText) // STRPTR infoText
 {
   GETDATA;
 
-  nnset(data->GA_GROUP, MUIA_Group_ActivePage, 2);
+  ENTER();
 
+  nnset(data->GA_GROUP, MUIA_Group_ActivePage, 2);
+  // setting a NULL text is ok, according to the AutoDocs
+  nnset(data->TX_INFO, MUIA_Text_Contents, msg->infoText);
+
+/*
   if(msg->infoText != NULL)
   {
     nnset(data->TX_INFO, MUIA_Text_Contents, msg->infoText);
@@ -339,19 +349,24 @@ DECLARE(ShowInfoText) // STRPTR infoText
   {
     nnset(data->TX_INFO, MUIA_Text_Contents, "");
   }
+*/
 
+  RETURN(TRUE);
   return TRUE;
 }
 ///
 /// DECLARE(HideBars)
-/* activates the gauge in the InfoBar with the passed text and percentage */
+// activates the gauge in the InfoBar with the passed text and percentage
 DECLARE(HideBars)
 {
   GETDATA;
 
+  ENTER();
+
   set(data->GA_GROUP, MUIA_Group_ActivePage, 0);
   set(data->GA_LABEL, MUIA_Text_Contents, " ");
 
+  RETURN(TRUE);
   return TRUE;
 }
 ///
