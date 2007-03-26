@@ -538,7 +538,6 @@ DECLARE(ReadMail) // struct Mail *mail
   if(data->windowToolbar)
   {
     LONG pos = MUIV_NList_GetPos_Start;
-    BOOL spamHidden, hamHidden;
 
     // query the position of the mail in the current listview
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetPos, mail, &pos);
@@ -552,34 +551,7 @@ DECLARE(ReadMail) // struct Mail *mail
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_MOVE,        MUIA_TheBar_Attr_Disabled, !isRealMail);
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_REPLY,       MUIA_TheBar_Attr_Disabled, isSentMail || inSpamFolder);
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_FORWARD,     MUIA_TheBar_Attr_Disabled, inSpamFolder);
-
-    if(isRealMail && C->SpamFilterEnabled)
-    {
-      // the spam filter is enabled, show/hide the buttons depending on the mail state
-      if(isSpamMail)
-      {
-        // this is a spam mail, let's hide the "Spam" button
-        spamHidden = TRUE;
-        hamHidden = FALSE;
-      }
-      else
-      {
-        // this is either a ham mail or a not yet classified mail, let's hide the "no Spam" button
-        spamHidden = FALSE;
-        hamHidden = TRUE;
-      }
-    }
-    else
-    {
-      // the spam filter is not enabled, hide both buttons
-      spamHidden = TRUE;
-      hamHidden = TRUE;
-    }
-
-    // now set the attributes
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIA_TheBar_Attr_Hide, spamHidden);
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIA_TheBar_Attr_Disabled, !isRealMail);
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_HAM,  MUIA_TheBar_Attr_Hide, hamHidden);
+    DoMethod(data->windowToolbar, MUIM_ReadWindowToolbar_UpdateSpamControls, mail);
   }
 
   // Update the status groups

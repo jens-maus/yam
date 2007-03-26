@@ -11,6 +11,8 @@ $URL$
     90% as this is the default value of Thunderbird. Especially with an not yet
     well enough trained spam filter this will lead to good results a little bit
     faster than before.
+  * ReadWindow.c: the update of the toolbar's "Spam/No Spam" buttons is now
+    exclusively handled by the toolbar itself.
 
 2007-03-25  Thore Böckelmann <tboeckel@gmx.de>
 
