@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-26  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c: minor optimization to the MakeCycle() wrapper function which
+    generates a cycle gadget with a specified control char handling.
+
 2007-03-26  Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: changed the debug messages to be a little bit more consistent.

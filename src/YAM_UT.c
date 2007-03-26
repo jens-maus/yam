@@ -4664,9 +4664,12 @@ static char *RemoveCut(char *label)
 //  Creates a MUI cycle object
 Object *MakeCycle(const char **labels, const char *label)
 {
-   Object *obj = KeyCycle(labels, ShortCut(label));
-   if (obj) set(obj, MUIA_CycleChain, 1);
-   return obj;
+  return CycleObject,
+           MUIA_CycleChain,    TRUE,
+           MUIA_Font,          MUIV_Font_Button,
+           MUIA_Cycle_Entries, labels,
+           MUIA_ControlChar,   ShortCut(label),
+         End;
 }
 ///
 /// MakeButton
