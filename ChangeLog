@@ -7,6 +7,7 @@ $URL$
 
 2007-03-26  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: changed the debug messages to be a little bit more consistent.
   * InfoBar.c: finally found the bug which caused crashes when the active folder
     was changed during the rescan of another folder. Basically this is a bug in
     MUI which gets only triggered if the available space in a group/window is

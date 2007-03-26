@@ -112,6 +112,8 @@ static Object *LoadDTImage(char *filename)
     oldwindowptr = myproc->pr_WindowPtr;
     myproc->pr_WindowPtr = (APTR)-1;
 
+    D(DBF_IMAGE, "loading image '%s'", filename);
+
     // The source bitmap of the image must *NOT* be freed automatically by datatypes.library,
     // because we need the bitmap to be able to remap the image to another screen, if required.
     // This is very important if the depth of the screen ever changes, especially from hi/true
@@ -140,20 +142,20 @@ static Object *LoadDTImage(char *filename)
 
       if(fri.fri_Dimensions.Depth > 0)
       {
-        D(DBF_STARTUP, "loaded image file '%s' (0x%08lx)", filename, o);
+        D(DBF_IMAGE, "loaded image '%s' (0x%08lx)", filename, o);
       }
       else
       {
-        E(DBF_IMAGE, "wasn't able to get frame box of image file '%s'", filename);
+        E(DBF_IMAGE, "wasn't able to get frame box of image '%s'", filename);
         DisposeDTObject(o);
         o = NULL;
       }
     }
     else
-      E(DBF_IMAGE, "wasn't able to load specified image file '%s'", filename);
+      E(DBF_IMAGE, "wasn't able to load specified image '%s'", filename);
   }
   else
-    W(DBF_IMAGE, "specified image file '%s' doesn't exist.", filename);
+    W(DBF_IMAGE, "specified image '%s' doesn't exist.", filename);
 
   RETURN(o);
   return o;
