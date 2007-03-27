@@ -96,7 +96,7 @@ static const char *imageFileArray[MAX_IMAGES] =
 ///
 /// LoadDTImage()
 // loads a specific file via datatypes.library
-static Object *LoadDTImage(char *filename)
+static Object *LoadDTImage(const char *filename)
 {
   Object *o = NULL;
 
@@ -185,7 +185,7 @@ static BOOL RemapDTImage(Object *o, const struct Screen *scr)
 ///
 /// CreateImageCacheNode()
 // create a new cache node
-static struct imageCacheNode *CreateImageCacheNode(char *filename)
+static struct imageCacheNode *CreateImageCacheNode(const char *filename)
 {
   struct imageCacheNode *node;
 
@@ -203,6 +203,10 @@ static struct imageCacheNode *CreateImageCacheNode(char *filename)
     }
     else
     {
+      MUI_Request(G->App, NULL, 0, tr(MSG_ER_LOADDT_TITLE),
+                                   tr(MSG_ER_LOADDT_BUTTON),
+                                   tr(MSG_ER_LOADDT_ERROR), filename);
+
       // failure
       free(node);
       node = NULL;

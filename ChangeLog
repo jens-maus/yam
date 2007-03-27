@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-27  Jens Langner <Jens.Langner@light-speed.de>
+
+  * ImageCache.c, YAM.cd: added a new error requester that will popup in case
+    an image can't be loaded via datatypes.library. This should catch the case
+    where YAM simply exited without any notice if the wrong datatype tried to
+    load and image and failed. Now a user will be adviced to check that the
+    image properly displays in multiview first.
+
 2007-03-27  Thore Böckelmann <tboeckel@gmx.de>
 
   * MainMailList.c, ReadWindow.c: reworked the creation of the "Spam" and "Not

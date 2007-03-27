@@ -6157,3 +6157,17 @@ will use a relative output instead. E.g.\n\
 such colums will show strings like 'Today'\n\
 or 'Yesterday' instead of the full date.
 ;
+MSG_ER_LOADDT_TITLE (1905//)
+Image data processing error
+;
+MSG_ER_LOADDT_ERROR (1906//)
+An error occurred while trying to load the image data\n\
+of '%s' via datatypes.library.\n\
+\n\
+Please make sure that you have your datatypes system\n\
+correctly setup (e.g. that the image properly displays\n\
+in Multiview).
+;
+MSG_ER_LOADDT_BUTTON (1907//)
+_Okay
+;
