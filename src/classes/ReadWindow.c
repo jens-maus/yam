@@ -452,8 +452,6 @@ DECLARE(ReadMail) // struct Mail *mail
   struct Folder *folder = mail->Folder;
   BOOL isRealMail   = !isVirtualMail(mail);
   BOOL isSentMail   = isRealMail && isSentMailFolder(folder);
-  BOOL isSpamMail   = !isRealMail || !C->SpamFilterEnabled || hasStatusSpam(mail);
-  BOOL isHamMail    = !isRealMail || !C->SpamFilterEnabled || hasStatusHam(mail);
   BOOL hasAttach    = isMP_MixedMail(mail);
   BOOL inSpamFolder = isRealMail && isSpamFolder(folder);
   BOOL result = FALSE;
@@ -501,20 +499,6 @@ DECLARE(ReadMail) // struct Mail *mail
   set(data->MI_NEXTTHREAD,MUIA_Menuitem_Enabled, nextMailAvailable);
   set(data->MI_PREVTHREAD,MUIA_Menuitem_Enabled, prevMailAvailable);
 
-  if(C->SpamFilterEnabled)
-  {
-    if(data->MI_TOSPAM != NULL)
-    {
-      // enable, if the mail is not yet classified (not spam, not ham)
-      set(data->MI_TOSPAM, MUIA_Menuitem_Enabled, isRealMail && !isSpamMail && !isHamMail);
-    }
-    if(data->MI_TOHAM != NULL)
-    {
-      // enable, if the mail is not sppam
-      set(data->MI_TOHAM, MUIA_Menuitem_Enabled, isRealMail && isSpamMail);
-    }
-  }
-
   // Enable if:
   //  * the mail is a real (non-virtual) mail
   DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, isRealMail, data->MI_TOMARKED,
@@ -551,10 +535,9 @@ DECLARE(ReadMail) // struct Mail *mail
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_MOVE,        MUIA_TheBar_Attr_Disabled, !isRealMail);
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_REPLY,       MUIA_TheBar_Attr_Disabled, isSentMail || inSpamFolder);
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_FORWARD,     MUIA_TheBar_Attr_Disabled, inSpamFolder);
-    DoMethod(data->windowToolbar, MUIM_ReadWindowToolbar_UpdateSpamControls, mail);
   }
 
-  // Update the status groups
+  // update the status groups
   DoMethod(data->statusIconGroup, MUIM_StatusIconGroup_Update, mail);
 
   // now we read in the mail in our read mail group
@@ -613,6 +596,9 @@ DECLARE(ReadMail) // struct Mail *mail
     // everything worked fine
     result = TRUE;
   }
+
+  // update the spam/no spam menu items as well as the toolbar
+  DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
 
   RETURN(result);
   return result;
@@ -881,12 +867,10 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       // move the mail
       MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
 
+      // only update the menu/toolbar if we are already in the spam folder
+      // otherwise a new mail will be read later or the window is closed
       if(folder == spamfolder)
-      {
-        // update the toolbar
-        DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIA_TheBar_Attr_Disabled, TRUE);
-        DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_HAM,  MUIA_TheBar_Attr_Disabled, FALSE);
-      }
+        DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
 
       // erase the old pointer as this has been free()ed by MA_MoveCopy()
       rmData->mail = NULL;
@@ -912,9 +896,8 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       BayesFilterSetClassification(mail, BC_HAM);
       setStatusToHam(mail);
 
-      // update the toolbar
-      DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_SPAM, MUIA_TheBar_Attr_Disabled, FALSE);
-      DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_HAM,  MUIA_TheBar_Attr_Disabled, TRUE);
+      // update the menu/toolbar
+      DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
     }
   }
 
@@ -1327,27 +1310,24 @@ DECLARE(UpdateSpamControls)
   if(C->SpamFilterEnabled)
   {
     BOOL isSpamMail = (mail != NULL) && !isVirtualMail(mail) && hasStatusSpam(mail);
-    BOOL isHamMail  = (mail != NULL) && !isVirtualMail(mail) && hasStatusHam(mail);
 
     // for each entry check if it exists and if it is part of the menu
     // if not, create a new entry and add it to the current layout
     if(data->MI_TOHAM == NULL || isChildOfFamily(data->MI_STATUS, data->MI_TOHAM) == FALSE)
     {
       if((data->MI_TOHAM = Menuitem(tr(MSG_MA_TONOTSPAM), NULL, TRUE, FALSE, RMEN_TOHAM)) != NULL)
-      {
-        set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isSpamMail);
         DoMethod(data->MI_STATUS, MUIM_Family_Insert, data->MI_TOHAM, data->MI_TOQUEUED);
-      }
     }
+    if(data->MI_TOHAM != NULL)
+      set(data->MI_TOHAM, MUIA_Menuitem_Enabled, isSpamMail);
 
     if(data->MI_TOSPAM == NULL || isChildOfFamily(data->MI_STATUS, data->MI_TOSPAM) == FALSE)
     {
       if((data->MI_TOSPAM = Menuitem(tr(MSG_MA_TOSPAM), NULL, TRUE, FALSE, RMEN_TOSPAM)) != NULL)
-      {
-        set(data->MI_TOHAM, MUIA_Menuitem_Enabled, !isSpamMail && !isHamMail);
         DoMethod(data->MI_STATUS, MUIM_Family_Insert, data->MI_TOSPAM, data->MI_TOQUEUED);
-      }
     }
+    if(data->MI_TOSPAM != NULL)
+      set(data->MI_TOSPAM, MUIA_Menuitem_Enabled, !isSpamMail);
   }
   else
   {
@@ -1369,7 +1349,7 @@ DECLARE(UpdateSpamControls)
 
   // update the toolbar as well, so lets delegate
   // the method call to it.
-  if(data->windowToolbar)
+  if(data->windowToolbar != NULL)
     DoMethod(data->windowToolbar, MUIM_ReadWindowToolbar_UpdateSpamControls, mail);
 
   RETURN(0);

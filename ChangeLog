@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-27  Thore Böckelmann <tboeckel@gmx.de>
+
+  * MainMailList.c, ReadWindow.c: reworked the creation of the "Spam" and "Not
+    Spam" buttons in the toolbar as well as all menu items concering the spam
+    classification. Now all toolbar buttons and menu items always show the
+    correct state and are updated when ever the spam state of a mail changes.
+    This fixes bug #1687917.
+
 2007-03-26  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: minor optimization to the MakeCycle() wrapper function which

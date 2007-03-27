@@ -636,8 +636,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     Object *spamItem;
     Object *hamItem;
 
-    spamItem = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOSPAM),    MUIA_Menuitem_Enabled, !hasStatusSpam(mail) && !hasStatusHam(mail),  MUIA_UserData, MMEN_TOSPAM,   End;
-    hamItem =  MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TONOTSPAM), MUIA_Menuitem_Enabled, hasStatusSpam(mail),                          MUIA_UserData, MMEN_TOHAM,    End;
+    spamItem = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOSPAM),    MUIA_Menuitem_Enabled, !hasStatusSpam(mail),  MUIA_UserData, MMEN_TOSPAM,   End;
+    hamItem =  MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TONOTSPAM), MUIA_Menuitem_Enabled, hasStatusSpam(mail),   MUIA_UserData, MMEN_TOHAM,    End;
 
     DoMethod(data->context_menu, MUIM_Family_Insert, hamItem, afterThis);
     DoMethod(data->context_menu, MUIM_Family_Insert, spamItem, afterThis);
