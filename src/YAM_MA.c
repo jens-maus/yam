@@ -3035,7 +3035,8 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
             setStatusToUserSpam(mail);
 
             // move the mail
-            MA_MoveCopySingle(mail, folder, spamfolder, FALSE, TRUE);
+            if(folder != spamfolder)
+              MA_MoveCopySingle(mail, folder, spamfolder, FALSE, TRUE);
           }
           else if(!hasStatusHam(mail) && bclass == BC_HAM)
           {
