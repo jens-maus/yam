@@ -7,6 +7,8 @@ $URL$
 
 2007-03-28  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: modified some functions to pass only the node pointer around
+    instead of the DT object.
   * ReadMailGroup.c, ReadWindow.c: changing the spam state of a mail now also
     correctly updates the status icons.
   * StatusIconGroup.c: renamed the method StatusIconRefresh to UpdateStatusIcons

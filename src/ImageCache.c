@@ -94,10 +94,11 @@ static const char *imageFileArray[MAX_IMAGES] =
 };
 
 ///
-/// LoadDTImage()
+/// LoadImage()
 // loads a specific file via datatypes.library
-static Object *LoadDTImage(const char *filename)
+static BOOL LoadImage(struct imageCacheNode *node, const char *filename)
 {
+  BOOL result = FALSE;
   Object *o = NULL;
 
   ENTER();
@@ -120,13 +121,12 @@ static Object *LoadDTImage(const char *filename)
     // color to a color mapped screen (16/24/32 bit -> 8 bit). Keeping the source bitmap may
     // take a little bit more memory, but this is unavoidable if we don't want to reload the
     // images from disk again and again all the time.
-    o = NewDTObject(filename,
-                    DTA_GroupID,            GID_PICTURE,
-                    OBP_Precision,          PRECISION_EXACT,
-                    PDTA_DestMode,          PMODE_V43,
-                    PDTA_UseFriendBitMap,   TRUE,
-                    PDTA_Remap,             TRUE,
-                    TAG_DONE);
+    o = NewDTObject((char *)filename, DTA_GroupID,          GID_PICTURE,
+                                      OBP_Precision,        PRECISION_EXACT,
+                                      PDTA_DestMode,        PMODE_V43,
+                                      PDTA_UseFriendBitMap, TRUE,
+                                      PDTA_Remap,           TRUE,
+                                      TAG_DONE);
 
     myproc->pr_WindowPtr = oldwindowptr; // restore window pointer.
 
@@ -143,12 +143,13 @@ static Object *LoadDTImage(const char *filename)
       if(fri.fri_Dimensions.Depth > 0)
       {
         D(DBF_IMAGE, "loaded image '%s' (0x%08lx)", filename, o);
+        node->dt_obj = o;
+        result = TRUE;
       }
       else
       {
         E(DBF_IMAGE, "wasn't able to get frame box of image '%s'", filename);
         DisposeDTObject(o);
-        o = NULL;
       }
     }
     else
@@ -157,26 +158,29 @@ static Object *LoadDTImage(const char *filename)
   else
     W(DBF_IMAGE, "specified image '%s' doesn't exist.", filename);
 
-  RETURN(o);
-  return o;
+  RETURN(result);
+  return result;
 }
 
 ///
-/// RemapDTImage()
+/// RemapImage()
 // remaps an image loaded via datatypes.library to a specific screen
-static BOOL RemapDTImage(Object *o, const struct Screen *scr)
+static BOOL RemapImage(struct imageCacheNode *node, const struct Screen *scr)
 {
   BOOL success = FALSE;
 
   ENTER();
 
   // first set the new screen
-  SetDTAttrs(o, NULL, NULL, PDTA_Screen, scr,
-                            TAG_DONE);
+  SetDTAttrs(node->dt_obj, NULL, NULL, PDTA_Screen, scr,
+                                       TAG_DONE);
 
   // either the remap must succeed or we reset just reset the screen
-  if(DoMethod(o, DTM_PROCLAYOUT, NULL, 1) != 0 || scr == NULL)
+  if(DoMethod(node->dt_obj, DTM_PROCLAYOUT, NULL, 1) != 0 || scr == NULL)
     success = TRUE;
+
+  // remember the new screen pointer
+  node->screen = (struct Screen *)scr;
 
   RETURN(success);
   return success;
@@ -194,7 +198,7 @@ static struct imageCacheNode *CreateImageCacheNode(const char *filename)
   if((node = (struct imageCacheNode*)calloc(sizeof(struct imageCacheNode), 1)) != NULL)
   {
     // load the datatypes image now
-    if((node->dt_obj = LoadDTImage(filename)) != NULL)
+    if((LoadImage(node, filename)))
     {
       // success
       node->filename = strdup(filename);
@@ -203,11 +207,11 @@ static struct imageCacheNode *CreateImageCacheNode(const char *filename)
     }
     else
     {
+      // failure
       MUI_Request(G->App, NULL, 0, tr(MSG_ER_LOADDT_TITLE),
                                    tr(MSG_ER_LOADDT_BUTTON),
                                    tr(MSG_ER_LOADDT_ERROR), filename);
 
-      // failure
       free(node);
       node = NULL;
     }
@@ -301,8 +305,7 @@ void ImageCacheCleanup(void)
     if(node->dt_obj != NULL)
     {
       D(DBF_STARTUP, "  disposing dtobject 0x%08lx of node 0x%08lx", node->dt_obj, node);
-      if(node->screen != NULL)
-        RemapDTImage(node->dt_obj, NULL);
+      RemapImage(node, NULL);
       DisposeDTObject(node->dt_obj);
     }
 
@@ -374,7 +377,7 @@ struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr)
     {
       // remap the image
       // this cannot fail for NULL screens
-      if(RemapDTImage(result->dt_obj, scr))
+      if(RemapImage(result, scr))
       {
         // check if the image is to be displayed on a new screen
         if(scr != NULL)
@@ -394,9 +397,6 @@ struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr)
           else
             W(DBF_IMAGE, "couldn't find BitMap header of file '%s'", filename);
         }
-
-        // remember the current screen pointer
-        result->screen = (struct Screen *)scr;
       }
       else
       {
@@ -435,9 +435,8 @@ void DisposeImage(struct imageCacheNode *node)
         {
           // clear the the DT object's screen pointer
           // this always succeeds, hence no need to check the result
-          RemapDTImage(node->dt_obj, NULL);
+          RemapImage(node, NULL);
         }
-        node->screen = NULL;
       }
     }
     else
