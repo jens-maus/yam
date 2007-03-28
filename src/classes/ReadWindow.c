@@ -840,12 +840,14 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
   struct Folder *folder = mail->Folder;
   struct Folder *spamfolder = FO_GetFolderByType(FT_SPAM, NULL);
   enum BayesClassification class = msg->class;
-  BOOL closeAfter = FALSE;
+
+  ENTER();
 
   if(MailExists(mail, folder) && spamfolder != NULL)
   {
     if(!hasStatusSpam(mail) && class == BC_SPAM)
     {
+      BOOL closeAfter = FALSE;
       int pos = SelectMessage(mail); // select the message in the folder and return position
       int entries;
 
@@ -867,11 +869,6 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       // move the mail
       MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
 
-      // only update the menu/toolbar if we are already in the spam folder
-      // otherwise a new mail will be read later or the window is closed
-      if(folder == spamfolder)
-        DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
-
       // erase the old pointer as this has been free()ed by MA_MoveCopy()
       rmData->mail = NULL;
 
@@ -881,13 +878,28 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
          (entries = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries)) >= pos+1)
       {
         DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, pos, &mail);
-        if(mail)
+        if(mail != NULL)
           DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
         else
           closeAfter = TRUE;
       }
       else
         closeAfter = TRUE;
+
+      // make sure the read window is closed in case there is no further
+      // mail for deletion in this direction
+      if(closeAfter)
+        DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
+      else
+      {
+        // only update the menu/toolbar if we are already in the spam folder
+        // otherwise a new mail will be read later or the window is closed
+        if(folder == spamfolder)
+          DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
+
+        // update the status icons
+        DoMethod(obj, MUIM_ReadWindow_UpdateStatusIcons);
+      }
     }
     else if(!hasStatusHam(mail) && class == BC_HAM)
     {
@@ -898,14 +910,13 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
 
       // update the menu/toolbar
       DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
+
+      // update the status icons
+      DoMethod(obj, MUIM_ReadWindow_UpdateStatusIcons);
     }
   }
 
-  // make sure the read window is closed in case there is no further
-  // mail for deletion in this direction
-  if(closeAfter)
-    DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
-
+  RETURN(0);
   return 0;
 }
 
@@ -1285,14 +1296,14 @@ DECLARE(StyleOptionsChanged)
   return 0;
 }
 ///
-/// DECLARE(StatusIconRefresh)
-DECLARE(StatusIconRefresh)
+/// DECLARE(UpdateStatusIcons)
+DECLARE(UpdateStatusIcons)
 {
   GETDATA;
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 
   // Update the statusIconGroup
-  if(rmData->mail)
+  if(rmData->mail != NULL)
     DoMethod(data->statusIconGroup, MUIM_StatusIconGroup_Update, rmData->mail);
 
   return 0;

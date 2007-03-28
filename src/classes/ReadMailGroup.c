@@ -678,7 +678,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 
             // update the statusIconGroup of an eventually existing read window.
             if(rmData->readWindow)
-              DoMethod(rmData->readWindow, MUIM_ReadWindow_StatusIconRefresh);
+              DoMethod(rmData->readWindow, MUIM_ReadWindow_UpdateStatusIcons);
 
             // if the mail is no virtual mail we can also
             // refresh the maillist depending information
