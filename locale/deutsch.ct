@@ -5523,14 +5523,6 @@ Neue Postfachgruppe...
 ; New folder group...
 ;This is the pulldown menu item, not the one in the pop-up menu
 ;
-MSG_FOLDER_SNAPSHOT
-Baum fixieren
-; Snapshot tree
-;
-MSG_FOLDER_RELOAD
-Baum aktualisieren
-; Reload tree
-;
 MSG_CO_GENLISTCFG
 Allgemeine Einstellungen
 ; General settings
@@ -7620,4 +7612,10 @@ korrekt mit MultiView anzeigen lassen).
 ;
 MSG_ER_LOADDT_BUTTON
 _Okay
+;
+MSG_FOLDER_SNAPSHOT_TREE
+Anordnung fixieren
+;
+MSG_FOLDER_RELOAD_TREE
+Anordnung aktualisieren
 ;

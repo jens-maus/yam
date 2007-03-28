@@ -301,8 +301,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_NEWFOLDER),      MUIA_UserData, CMN_NEWF,   End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_NEWFOLDERGROUP), MUIA_UserData, CMN_NEWFG,  End,
       Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_SNAPSHOT),       MUIA_UserData, CMN_SNAPS,  End,
-      Child, lastItem = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_RELOAD),         MUIA_UserData, CMN_RELOAD, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_SNAPSHOT_TREE),  MUIA_UserData, CMN_SNAPS,  End,
+      Child, lastItem = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_RELOAD_TREE), MUIA_UserData, CMN_RELOAD, End,
     End,
   End;
 

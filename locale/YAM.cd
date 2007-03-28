@@ -4255,12 +4255,6 @@ MSG_FOLDER_NEWFOLDERGROUP (1355//)
 New folder group...
 ;This is the pulldown menu item, not the one in the pop-up menu
 ;
-MSG_FOLDER_SNAPSHOT (1356//)
-Snapshot tree
-;
-MSG_FOLDER_RELOAD (1357//)
-Reload tree
-;
 MSG_CO_GENLISTCFG (1358//)
 General settings
 ;
@@ -6170,4 +6164,10 @@ in Multiview).
 ;
 MSG_ER_LOADDT_BUTTON (1907//)
 _Okay
+;
+MSG_FOLDER_SNAPSHOT_TREE (1908//)
+Snapshot arrangement
+;
+MSG_FOLDER_RELOAD_TREE (1909//)
+Reload arrangement
 ;
