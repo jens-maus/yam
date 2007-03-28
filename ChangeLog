@@ -12,6 +12,10 @@ $URL$
 
 2007-03-28  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_US.c, locale/YAM.cd, locale/deutsch.ct: cleaned up the whole source
+    according to the STYLEGUIDE. Now, if a user name is specified at startup but
+    not configured in YAM, an error requester will be shown, instead of exiting
+    silently.
   * icons/misc: replaced some icons which mpega.library wrongly recognized as
     valid MPEG streams by resaved images. This is just a workround for a bug in
     mpega.library, because any other image file might produce the same

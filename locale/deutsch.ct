@@ -7619,3 +7619,12 @@ Anordnung fixieren
 MSG_FOLDER_RELOAD_TREE
 Anordnung aktualisieren
 ;
+MSG_ER_USER_UNKNOWN_TITLE
+Unbekannter Benutzer
+;
+MSG_ER_USER_UNKNOWN_BUTTON
+_Okay
+;
+MSG_ER_USER_UNKNOWN_ERROR
+Der Benutzer '%s' ist nicht bekannt!
+;

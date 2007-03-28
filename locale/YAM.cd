@@ -6171,3 +6171,12 @@ Snapshot arrangement
 MSG_FOLDER_RELOAD_TREE (1909//)
 Reload arrangement
 ;
+MSG_ER_USER_UNKNOWN_TITLE (1910//)
+Unknown user
+;
+MSG_ER_USER_UNKNOWN_BUTTON (1911//)
+_Okay
+;
+MSG_ER_USER_UNKNOWN_ERROR (1912//)
+The user '%s' is not known!
+;
