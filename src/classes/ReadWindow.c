@@ -503,21 +503,21 @@ DECLARE(ReadMail) // struct Mail *mail
   //  * the mail is a real (non-virtual) mail
   DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, isRealMail, data->MI_TOMARKED,
                                                                   data->MI_TOUNMARKED,
-                                                                  TAG_DONE);
+                                                                  NULL);
 
   // Enable if:
   //  * the mail is a real (non-virtual) mail
   //  * NOT in the "Sent" folder
   DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, isRealMail && !isSentMail, data->MI_TOREAD,
                                                                                  data->MI_TOUNREAD,
-                                                                                 TAG_DONE);
+                                                                                 NULL);
+
   // Enable if:
   //  * the mail is a real (non-virtual) mail
   //  * is in the "Outgoing" Folder
   DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, isRealMail && isOutgoingFolder(folder), data->MI_TOHOLD,
                                                                                               data->MI_TOQUEUED,
-                                                                                              TAG_DONE);
-
+                                                                                              NULL);
 
   if(data->windowToolbar)
   {
