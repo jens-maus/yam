@@ -891,8 +891,18 @@ static void TC_Dispatcher(enum TimerIO tio)
       // update the status of the mail to READ now
       if(mail != NULL && (hasStatusNew(mail) || !hasStatusRead(mail)))
       {
+        struct ReadMailData *rmData;
+
         setStatusToRead(mail); // set to OLD
         DisplayStatistics(mail->Folder, TRUE);
+
+        // try to get the ReadMailData
+        if((rmData = GetReadMailData(mail)) != NULL)
+        {
+          // this mail belongs to an open read window, so we can update the status icons
+          if(rmData->readWindow != NULL)
+            DoMethod(rmData->readWindow, MUIM_ReadWindow_UpdateStatusIcons);
+        }
       }
     }
     break;

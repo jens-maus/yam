@@ -12,6 +12,8 @@ $URL$
 
 2007-03-28  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: the delayed status change of a mail from unread to read now also
+    updates the status icons in the opened read window.
   * YAM_UT.c: added the new function GetReadMailData() to obtain the struct
     ReadMailData of a given mail.
   * MainMailList.c: the context menu creation now respects the current mail
