@@ -225,89 +225,91 @@ DECLARE(Update) // struct Mail *mail
 {
   GETDATA;
   struct Mail *mail = msg->mail;
-  struct List *childList = (struct List *)xget(obj, MUIA_Group_ChildList);
 
   // update the statusgroup by removing/adding items accordingly
-  DoMethod(obj, MUIM_Group_InitChange);
-
-  // we first remove all childs from our statusGroup
-  if(childList)
+  if(DoMethod(obj, MUIM_Group_InitChange))
   {
-    Object *cstate = (Object *)childList->lh_Head;
-    Object *child;
+     struct List *childList;
 
-    while((child = NextObject(&cstate)))
+    // we first remove all childs from our statusGroup
+    if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
     {
-      int i;
+      Object *cstate = (Object *)childList->lh_Head;
+      Object *child;
 
-      for(i=0; i < MAX_STATUSIMG; i++)
+      while((child = NextObject(&cstate)) != NULL)
       {
-        if(data->statusIcon[i] == child)
-        {
-          DoMethod(obj, OM_REMMEMBER, child);
+        ULONG i;
 
-          continue;
+        for(i = 0; i < ARRAY_SIZE(data->statusIcon); i++)
+        {
+          if(data->statusIcon[i] == child)
+          {
+            DoMethod(obj, OM_REMMEMBER, child);
+
+            continue;
+          }
         }
+
       }
 
+      // now we can add the status icons depending on the set status flags of
+      // the mail
+      if((hasStatusError(mail) || isPartialMail(mail)) && data->statusIcon[SICON_ID_ERROR])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_ERROR]);
+      else if(hasStatusQueued(mail) && data->statusIcon[SICON_ID_WAITSEND])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_WAITSEND]);
+      else if(hasStatusSent(mail) && data->statusIcon[SICON_ID_SENT])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_SENT]);
+      else if(hasStatusRead(mail) && data->statusIcon[SICON_ID_OLD])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_OLD]);
+      else if(data->statusIcon[SICON_ID_UNREAD])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_UNREAD]);
+
+      // StatusGroup 1 (importance level)
+      if(getImportanceLevel(mail) == IMP_HIGH && data->statusIcon[SICON_ID_URGENT])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_URGENT]);
+
+      // StatusGroup 2 (signed/crypted status)
+      if(isMP_CryptedMail(mail) && data->statusIcon[SICON_ID_CRYPT])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_CRYPT]);
+      else if(isMP_SignedMail(mail) && data->statusIcon[SICON_ID_SIGNED])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_SIGNED]);
+
+      // StatusGroup 3 (report mail info)
+      if(isMP_ReportMail(mail) && data->statusIcon[SICON_ID_REPORT])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_REPORT]);
+
+      // StatusGroup 4 (multipart info)
+      if(isMP_MixedMail(mail) && data->statusIcon[SICON_ID_ATTACH])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_ATTACH]);
+
+      // StatusGroup 5 (New/Hold info)
+      if(hasStatusNew(mail) && data->statusIcon[SICON_ID_NEW])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_NEW]);
+      else if(hasStatusHold(mail) && data->statusIcon[SICON_ID_HOLD])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_HOLD]);
+
+      // StatusGroup 6 (marked flag)
+      if(hasStatusMarked(mail) && data->statusIcon[SICON_ID_MARK])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_MARK]);
+
+      // StatusGroup 7 (Replied status)
+      if(hasStatusReplied(mail) && data->statusIcon[SICON_ID_REPLY])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_REPLY]);
+
+      // StatusGroup 8 (Forwarded status)
+      if(hasStatusForwarded(mail) && data->statusIcon[SICON_ID_FORWARD])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_FORWARD]);
+
+      // StatusGroup 9(Spam status)
+      if(hasStatusSpam(mail) && data->statusIcon[SICON_ID_SPAM])
+        DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_SPAM]);
     }
 
-    // now we can add the status icons depending on the set status flags of
-    // the mail
-    if((hasStatusError(mail) || isPartialMail(mail)) && data->statusIcon[SICON_ID_ERROR])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_ERROR]);
-    else if(hasStatusQueued(mail) && data->statusIcon[SICON_ID_WAITSEND])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_WAITSEND]);
-    else if(hasStatusSent(mail) && data->statusIcon[SICON_ID_SENT])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_SENT]);
-    else if(hasStatusRead(mail) && data->statusIcon[SICON_ID_OLD])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_OLD]);
-    else if(data->statusIcon[SICON_ID_UNREAD])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_UNREAD]);
-
-    // StatusGroup 1 (importance level)
-    if(getImportanceLevel(mail) == IMP_HIGH && data->statusIcon[SICON_ID_URGENT])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_URGENT]);
-
-    // StatusGroup 2 (signed/crypted status)
-    if(isMP_CryptedMail(mail) && data->statusIcon[SICON_ID_CRYPT])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_CRYPT]);
-    else if(isMP_SignedMail(mail) && data->statusIcon[SICON_ID_SIGNED])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_SIGNED]);
-
-    // StatusGroup 3 (report mail info)
-    if(isMP_ReportMail(mail) && data->statusIcon[SICON_ID_REPORT])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_REPORT]);
-
-    // StatusGroup 4 (multipart info)
-    if(isMP_MixedMail(mail) && data->statusIcon[SICON_ID_ATTACH])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_ATTACH]);
-
-    // StatusGroup 5 (New/Hold info)
-    if(hasStatusNew(mail) && data->statusIcon[SICON_ID_NEW])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_NEW]);
-    else if(hasStatusHold(mail) && data->statusIcon[SICON_ID_HOLD])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_HOLD]);
-
-    // StatusGroup 6 (marked flag)
-    if(hasStatusMarked(mail) && data->statusIcon[SICON_ID_MARK])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_MARK]);
-
-    // StatusGroup 7 (Replied status)
-    if(hasStatusReplied(mail) && data->statusIcon[SICON_ID_REPLY])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_REPLY]);
-
-    // StatusGroup 8 (Forwarded status)
-    if(hasStatusForwarded(mail) && data->statusIcon[SICON_ID_FORWARD])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_FORWARD]);
-
-    // StatusGroup 9(Spam status)
-    if(hasStatusSpam(mail) && data->statusIcon[SICON_ID_SPAM])
-      DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_SPAM]);
+    // signal that we have added/modified the status Group successfully
+    DoMethod(obj, MUIM_Group_ExitChange);
   }
-
-  // signal that we have added/modified the status Group successfully
-  DoMethod(obj, MUIM_Group_ExitChange);
 
   return 0;
 }

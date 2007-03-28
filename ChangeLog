@@ -7,6 +7,8 @@ $URL$
 
 2007-03-28  Thore Böckelmann <tboeckel@gmx.de>
 
+  * StatusIconGroup.c: renamed the method StatusIconRefresh to UpdateStatusIcons
+    to be consistent with other classes.
   * locale/deutsch.ct: updated to latest changes in YAM.cd.
 
 2007-03-27  Jens Langner <Jens.Langner@light-speed.de>
