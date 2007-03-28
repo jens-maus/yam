@@ -12,6 +12,8 @@ $URL$
 
 2007-03-28  Thore Böckelmann <tboeckel@gmx.de>
 
+  * MainMailList.c: the context menu creation now respects the current mail
+    state and disables some items accordingly.
   * ReadWindow.c: the list of items in a MUIM_MultiSet invocation must be
     terminated with NULL instead of TAG_DONE.
   * YAM_US.c, locale/YAM.cd, locale/deutsch.ct: cleaned up the whole source
