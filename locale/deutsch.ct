@@ -7606,3 +7606,18 @@ Falls aktiv, werden alle Spalten mit Datumsangaben\n\
 relativ dargestellt. Zum Beispiel wird das aktuelle\n\
 Datum als 'Heute' angezeigt.
 ;
+MSG_ER_LOADDT_TITLE
+Bildverarbeitungsfehler
+;
+MSG_ER_LOADDT_ERROR
+Während des Laden des Bildes\n\
+'%s'\n\
+durch die datatypes.library ist ein Fehler aufgetreten.\n\
+\n\
+Bitte überprüfen Sie, dass Ihr DataTypes-System\n\
+richtig funktioniert (z.B. müssen sich alle Bilder\n\
+korrekt mit MultiView anzeigen lassen).
+;
+MSG_ER_LOADDT_BUTTON
+_Okay
+;

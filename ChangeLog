@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-28  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/deutsch.ct: updated to latest changes in YAM.cd.
+
 2007-03-27  Jens Langner <Jens.Langner@light-speed.de>
 
   * ImageCache.c, YAM.cd: added a new error requester that will popup in case
