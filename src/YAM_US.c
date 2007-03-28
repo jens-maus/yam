@@ -517,7 +517,7 @@ static struct US_ClassData *US_New(BOOL supervisor)
                   Child, MakeCheckGroup((Object **)&data->GUI.CH_CLONE, tr(MSG_US_CopyConfig)),
                End,
             End,
-            Child, ColGroup(3),
+            Child, ColGroup(2),
                MUIA_ShowMe, supervisor,
                Child, data->GUI.BT_ADD = MakeButton(tr(MSG_US_AddUser)),
                Child, data->GUI.BT_DEL = MakeButton(tr(MSG_US_DelUser)),

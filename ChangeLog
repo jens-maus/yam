@@ -12,6 +12,8 @@ $URL$
 
 2007-03-28  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_US.c: the bottom group in the user setup window was a column group for
+    3 items, but only 2 buttons are available (add and delete).
   * YAM_MA.c: marking a non-spam mail in the spam folder as spam again now does
     not try to move the mail to the spam folder any more and hence does not try
     to close an open read window.
