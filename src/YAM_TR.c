@@ -2079,6 +2079,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
     }
 
     snprintf(&buf[strlen(buf)], sizeof(buf) - strlen(buf), "From: %s\r\nUser-Agent: %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), yamversion);
+    SHOWSTRING(DBF_NET, buf);
 
     if(TR_WriteLine(buf) > 0)
     {
@@ -2087,7 +2088,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
       len = TR_Recv(buf, SIZE_LINE);
       if(atoi(&buf[9]) == 200)
       {
-      	int l = 0;
+      	ULONG l = 0;
       	char line[SIZE_DEFAULT];
         FILE *out;
 
