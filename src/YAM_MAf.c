@@ -270,6 +270,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
             {
                struct Mail mail;
                struct ComprMail cmail;
+
                memset(&mail, 0, sizeof(struct Mail));
                if(fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1)
                {
@@ -357,12 +358,11 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
      // rescan the index accordingly
      if(full)
      {
-        // rebuild the index (rescanning the mailbox directory)
-        if(MA_ScanMailBox(folder) &&
-           MA_SaveIndex(folder))
-        {
-          indexloaded = LM_VALID;
-        }
+       // rebuild the index (rescanning the mailbox directory)
+       if(MA_ScanMailBox(folder) && MA_SaveIndex(folder))
+       {
+         indexloaded = LM_VALID;
+       }
      }
    }
    else if(full)
@@ -767,7 +767,7 @@ MakeHook(MA_ChangeFolderHook, MA_ChangeFolderFunc);
 /// MA_JumpToNewMsg
 // Function that jumps to the first or last unread mail in a folder,
 // depending on sort order of the folder
-void MA_JumpToNewMsg(VOID)
+void MA_JumpToNewMsg(void)
 {
   struct Folder *folder;
   Object *lv;

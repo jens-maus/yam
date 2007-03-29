@@ -7,8 +7,11 @@ $URL$
 
 2007-03-29  Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_MA.c, ReadMailWindow.c: enabled the NEW and FORWARD buttons/menus again
-    even if the current folder is the spam folder or the mail is spam.
+  * ReadWindow.c: switching to the next/previous mail didn't work if the only
+    unread mails were in the same folder, but in the opposite direction of the
+    switch.
+  * YAM_MA.c, ReadWindow.c: enabled the NEW and FORWARD buttons/menus again even
+    if the current folder is the spam folder or the mail is spam.
   * YAM_TR.c: cleaned up TR_DownloadURL() function to be a *lot* more readable.
 
 2007-03-29  Jens Langner <Jens.Langner@light-speed.de>

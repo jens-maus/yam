@@ -1088,6 +1088,8 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
                !isSpamFolder(fo) &&
                fo->Unread > 0)
             {
+              SHOWSTRING(DBF_GUI, fo->Name);
+              SHOWSTRING(DBF_GUI, folder->Name);
               if(fo != folder)
               {
                 if(MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq),
@@ -1099,6 +1101,10 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
                 }
 
                 MA_ChangeFolder(fo, TRUE);
+              }
+              else
+              {
+                MA_JumpToNewMsg();
               }
 
               DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
@@ -1129,7 +1135,6 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
               // so let's try it again from the opposite side
               turnOver = TRUE;
               i = (i < 1) ? (int)*flist + 1 : 0;
-              folder = NULL;
             }
           }
         }
