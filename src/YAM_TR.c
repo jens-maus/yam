@@ -2017,97 +2017,142 @@ static int TR_WriteBuffered(UNUSED LONG socket, const char *ptr, int maxlen, int
 //  Downloads a file from the web using HTTP
 BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
 {
-   BOOL success = FALSE, done = FALSE, noproxy = !*C->ProxyServer;
-   int l = 0, len, hport;
-   char buf[SIZE_LINE], url[SIZE_URL], host[SIZE_HOST], *port, *path, line[SIZE_DEFAULT], *bufptr;
-   FILE *out;
+  BOOL success = FALSE, done = FALSE, noproxy = !*C->ProxyServer;
+  int hport;
+  char url[SIZE_URL], host[SIZE_HOST], *port, *path, *bufptr;
 
-   G->Error = FALSE;
-   if(!strnicmp(url0,"http://",7))
-     strlcpy(url, &url0[7], sizeof(url));
-   else
-     strlcpy(url, url0, sizeof(url));
+  ENTER();
 
-   if (url1)
-   {
-      if(url[strlen(url)-1] != '/')
-        strlcat(url, "/", sizeof(url));
+  G->Error = FALSE;
+  if(strnicmp(url0, "http://", 7) == 0)
+    strlcpy(url, &url0[7], sizeof(url) - 7);
+  else
+    strlcpy(url, url0, sizeof(url));
 
-      strlcat(url, url1, sizeof(url));
-   }
-   if (url2)
-   {
-      if (url[strlen(url)-1] != '/')
-        strlcat(url, "/", sizeof(url));
+  if(url1 != NULL)
+  {
+    if(url[strlen(url) - 1] != '/')
+      strlcat(url, "/", sizeof(url));
 
-      strlcat(url, url2, sizeof(url));
-   }
-   if ((path = strchr(url,'/'))) *path++ = 0; else path = (char *)"";
-   strlcpy(host, noproxy ? url : C->ProxyServer, sizeof(host));
-   if ((bufptr = strchr(host, ':'))) { *bufptr++ = 0; hport = atoi(bufptr); }
-   else hport = noproxy ? 80 : 8080;
-   if (TR_Connect(host, hport) == CONNECTERR_SUCCESS)
-   {
-/*
-      if (noproxy) snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\nHost: http://%s\r\n", path, host);
-      else if (port = strchr(url, ':'))
+    strlcat(url, url1, sizeof(url));
+  }
+  if(url2 != NULL)
+  {
+    if(url[strlen(url) - 1] != '/')
+     strlcat(url, "/", sizeof(url));
+
+    strlcat(url, url2, sizeof(url));
+  }
+
+  if((path = strchr(url,'/')) != NULL)
+  	*path++ = '\0';
+  else
+  	path = (char *)"";
+
+  strlcpy(host, noproxy ? url : C->ProxyServer, sizeof(host));
+  if((bufptr = strchr(host, ':')) != NULL)
+  {
+  	*bufptr++ = '\0';
+  	hport = atoi(bufptr);
+  }
+  else
+  {
+  	hport = noproxy ? 80 : 8080;
+  }
+
+  if(TR_Connect(host, hport) == CONNECTERR_SUCCESS)
+  {
+  	char buf[SIZE_LINE];
+
+    if(noproxy)
+    {
+      snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\nHost: %s\r\n", path, host);
+    }
+    else if((port = strchr(url, ':')) != NULL)
+    {
+      *port++ = '\0';
+      snprintf(buf, sizeof(buf), "GET http://%s:%s/%s HTTP/1.0\r\nHost: %s\r\n", url, port, path, url);
+    }
+    else
+    {
+      snprintf(buf, sizeof(buf), "GET http://%s/%s HTTP/1.0\r\nHost: %s\r\n", url, path, url);
+    }
+
+    snprintf(&buf[strlen(buf)], sizeof(buf) - strlen(buf), "From: %s\r\nUser-Agent: %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), yamversion);
+
+    if(TR_WriteLine(buf) > 0)
+    {
+      int len;
+
+      len = TR_Recv(buf, SIZE_LINE);
+      if(atoi(&buf[9]) == 200)
       {
-         *port++ = 0;
-         snprintf(buf, sizeof(buf), "GET http://%s:%s/%s HTTP/1.0\r\nHost: http://%s\r\n", url, port, path, url);
-      }
-      else snprintf(buf, sizeof(buf), "GET http://%s/%s HTTP/1.0\r\nHost: http://%s\r\n", url, path, url);
-      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), "From: %s\r\nUser-Agent: %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), yamversion);
-*/
-      if (noproxy) snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\nHost: %s\r\n", path, host);
-      else if ((port = strchr(url, ':')))
-      {
-         *port++ = 0;
-         snprintf(buf, sizeof(buf), "GET http://%s:%s/%s HTTP/1.0\r\nHost: %s\r\n", url, port, path, url);
-      }
-      else snprintf(buf, sizeof(buf), "GET http://%s/%s HTTP/1.0\r\nHost: %s\r\n", url, path, url);
+      	int l = 0;
+      	char line[SIZE_DEFAULT];
+        FILE *out;
 
-      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), "From: %s\r\nUser-Agent: %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), yamversion);
+        if((bufptr = strstr(buf, "\r\n")) != NULL)
+          bufptr += 2;
 
-      if(TR_WriteLine(buf) > 0)
-      {
-         len = TR_Recv(buf, SIZE_LINE);
-         if (atoi(&buf[9]) == 200)
-         {
-            if ((bufptr = strstr(buf, "\r\n"))) bufptr += 2;
-            while (!G->Error)
+        while(!G->Error)
+        {
+          char c;
+
+          while((c = *bufptr++) != '\0')
+          {
+            if(c != '\r')
+              if(l < sizeof(line) - 1)
+                line[l++] = c;
+
+            if(c == '\n')
             {
-               for (; *bufptr; bufptr++)
-               {
-                  if (*bufptr != '\r') if (l < SIZE_DEFAULT-1) line[l++] = *bufptr;
-                  if (*bufptr != '\n') continue;
-                  line[l] = 0; l = 0;
-                  if (line[0] == '\n') { done = TRUE; break; }
-               }
-               if (done) break;
-               if ((len = TR_Recv(buf, SIZE_LINE)) <= 0) break;
-               bufptr = buf;
-            }
+              // end of line
+              line[l] = '\0';
+              l = 0;
 
-            if((out = fopen(filename, "w")))
-            {
-               setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
-
-               ++bufptr;
-               fwrite(bufptr, (size_t)(len-(bufptr-buf)), 1, out);
-               while ((len = TR_Recv(buf, SIZE_LINE)) > 0) fwrite(buf, len, 1, out);
-               fclose(out);
-               success = TRUE;
+              if(line[0] == '\n')
+              {
+                // we just received an empty line, bail out
+                done = TRUE;
+                break;
+              }
             }
-            else ER_NewError(tr(MSG_ER_CantCreateFile), filename);
-         }
-         else ER_NewError(tr(MSG_ER_DocNotFound), path);
+          }
+
+          if(done)
+          	break;
+          if((len = TR_Recv(buf, SIZE_LINE)) <= 0)
+          	break;
+
+          bufptr = buf;
+        }
+
+        if((out = fopen(filename, "w")) != NULL)
+        {
+          setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+           ++bufptr;
+          fwrite(bufptr, (size_t)(len - (bufptr - buf)), 1, out);
+          while((len = TR_Recv(buf, SIZE_LINE)) > 0)
+            fwrite(buf, len, 1, out);
+          fclose(out);
+          success = TRUE;
+        }
+        else
+          ER_NewError(tr(MSG_ER_CantCreateFile), filename);
       }
-      else ER_NewError(tr(MSG_ER_SendHTTP));
+      else
+        ER_NewError(tr(MSG_ER_DocNotFound), path);
+    }
+    else
+      ER_NewError(tr(MSG_ER_SendHTTP));
 
-      TR_Disconnect();
-   }
-   else ER_NewError(tr(MSG_ER_ConnectHTTP), host);
-   return success;
+    TR_Disconnect();
+  }
+  else
+    ER_NewError(tr(MSG_ER_ConnectHTTP), host);
+
+  RETURN(success);
+  return success;
 }
 ///
 
@@ -4639,7 +4684,7 @@ static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, u
     {
       entries[idx] = data + addr;
     }
-    
+
     body += 4;
   }
 
@@ -4694,7 +4739,7 @@ out:
     fclose(mailout);
 
   free(buf);
-  
+
   if(rc)
   {
     if(preview == TRUE)
