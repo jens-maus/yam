@@ -294,6 +294,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSpamFolder(fo) && (active || numSelected > 0),
                                                          gui->MI_CHSUBJ,
                                                          gui->MI_EDIT,
+                                                         gui->MI_REPLY,
                                                          NULL);
 
   // Enable if:
@@ -302,7 +303,6 @@ void MA_ChangeSelected(BOOL forceUpdate)
   //  * > 0 mails selected
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && (active || numSelected > 0),
                                                          gui->MI_FORWARD,
-                                                         gui->MI_REPLY,
                                                          NULL);
 
   // Enable if:
