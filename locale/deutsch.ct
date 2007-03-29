@@ -7602,7 +7602,7 @@ MSG_ER_LOADDT_TITLE
 Bildverarbeitungsfehler
 ;
 MSG_ER_LOADDT_ERROR
-Während des Laden des Bildes\n\
+Während des Ladens des Bildes\n\
 '%s'\n\
 durch die datatypes.library ist ein Fehler aufgetreten.\n\
 \n\

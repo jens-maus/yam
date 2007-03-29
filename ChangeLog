@@ -7,6 +7,7 @@ $URL$
 
 2007-03-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/deutsch.ct: fixed a typo
   * ReadWindow.c: switching to the next/previous mail didn't work if the only
     unread mails were in the same folder, but in the opposite direction of the
     switch.
