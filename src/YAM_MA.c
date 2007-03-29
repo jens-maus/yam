@@ -154,13 +154,19 @@ void MA_ChangeTransfer(BOOL on)
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_SENDALL, MUIA_TheBar_Attr_Disabled, !on);
   }
 
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, on, gui->MI_IMPORT, gui->MI_EXPORT, gui->MI_SENDALL, gui->MI_EXCHANGE, gui->MI_GETMAIL, gui->MI_CSINGLE, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, on, gui->MI_IMPORT,
+                                                             gui->MI_EXPORT,
+                                                             gui->MI_SENDALL,
+                                                             gui->MI_EXCHANGE,
+                                                             gui->MI_GETMAIL,
+                                                             gui->MI_CSINGLE,
+                                                             NULL);
 
   LEAVE();
 }
 
 ///
-/// MA_ChangeSelected()
+/// MA_ChangeSelected
 // function which updates some mail information on the main
 // window and triggers an update of the embeeded read pane if required.
 void MA_ChangeSelected(BOOL forceUpdate)
@@ -254,9 +260,9 @@ void MA_ChangeSelected(BOOL forceUpdate)
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_MOVE,   MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_DELETE, MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETADDR,MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_NEWMAIL,MUIA_TheBar_Attr_Disabled, !folderEnabled || isSpamFolder(fo));
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_NEWMAIL,MUIA_TheBar_Attr_Disabled, !folderEnabled);
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_REPLY,  MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FORWARD,MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FORWARD,MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FILTER, MUIA_TheBar_Attr_Disabled, !folderEnabled || numEntries == 0);
     DoMethod(gui->TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
   }
@@ -277,7 +283,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
   // Enable if:
   //  * the folder is enabled
   //  * NOT in the "SPAM" folder
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSpamFolder(fo),
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled,
                                                          gui->MI_NEW,
                                                          NULL);
 
@@ -286,10 +292,17 @@ void MA_ChangeSelected(BOOL forceUpdate)
   //  * NOT in the "SPAM" folder
   //  * > 0 mails selected
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSpamFolder(fo) && (active || numSelected > 0),
-                                                         gui->MI_FORWARD,
                                                          gui->MI_CHSUBJ,
-                                                         gui->MI_REPLY,
                                                          gui->MI_EDIT,
+                                                         NULL);
+
+  // Enable if:
+  //  * the folder is enabled
+  //  * NOT in the "SPAM" folder
+  //  * > 0 mails selected
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && (active || numSelected > 0),
+                                                         gui->MI_FORWARD,
+                                                         gui->MI_REPLY,
                                                          NULL);
 
   // Enable if:
@@ -351,9 +364,9 @@ void MA_ChangeSelected(BOOL forceUpdate)
   //  * TOSPAM menu item exists
   //  * > 0 mails selected or the active one isn't marked as SPAM
   //  * the folder is enabled
-  //  * the mail is neither spam nor ham (= unclassified)
+  //  * the mail is not spam
   if(gui->MI_TOSPAM)
-    set(gui->MI_TOSPAM, MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && !hasStatusSpam(mail) && !hasStatusHam(mail))));
+    set(gui->MI_TOSPAM, MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && !hasStatusSpam(mail))));
 
   // Enable if:
   //  * TOHAM menu item exists
@@ -488,7 +501,7 @@ struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folder
 }
 
 ///
-/// MA_ChangeMailStatus()
+/// MA_ChangeMailStatus
 //  Sets the status of a message
 void MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags)
 {
@@ -515,7 +528,7 @@ void MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags)
 }
 
 ///
-/// MA_UpdateMailFile()
+/// MA_UpdateMailFile
 // Updates the mail filename by taking the supplied mail structure
 // into account
 BOOL MA_UpdateMailFile(struct Mail *mail)
@@ -1022,7 +1035,7 @@ static void MA_UpdateStatus(void)
   LEAVE();
 }
 ///
-/// MA_ToStatusHeader()
+/// MA_ToStatusHeader
 // Function that converts the current flags of a message
 // to "Status:" headerline flags
 char *MA_ToStatusHeader(struct Mail *mail)
@@ -1059,7 +1072,7 @@ char *MA_ToStatusHeader(struct Mail *mail)
   return flags;
 }
 ///
-/// MA_ToXStatusHeader()
+/// MA_ToXStatusHeader
 // Function that converts the current flags of a message
 // to "X-Status:" headerline flags
 char *MA_ToXStatusHeader(struct Mail *mail)
@@ -1097,7 +1110,7 @@ char *MA_ToXStatusHeader(struct Mail *mail)
   return flags;
 }
 ///
-/// MA_FromStatusHeader()
+/// MA_FromStatusHeader
 // Function that converts chars from the Status: headerline to a proper
 // mail status flag value
 unsigned int MA_FromStatusHeader(char *statusflags)
@@ -1123,7 +1136,7 @@ unsigned int MA_FromStatusHeader(char *statusflags)
   return sflags;
 }
 ///
-/// MA_FromXStatusHeader()
+/// MA_FromXStatusHeader
 // Function that converts chars from the X-Status: headerline to a
 // proper mail status flag value
 unsigned int MA_FromXStatusHeader(char *xstatusflags)
@@ -4582,7 +4595,7 @@ void MA_SetupDynamicMenus(void)
 }
 
 ///
-/// MA_SetupEmbeddedReadPane()
+/// MA_SetupEmbeddedReadPane
 //  Updates/Setup the embedded read pane part in the main window
 void MA_SetupEmbeddedReadPane(void)
 {
@@ -4652,7 +4665,7 @@ void MA_SetupEmbeddedReadPane(void)
   }
 }
 ///
-/// MA_SetupQuickSearchBar()
+/// MA_SetupQuickSearchBar
 //  Updates/Setup the quicksearchbar part in the main window
 void MA_SetupQuickSearchBar(void)
 {
@@ -4991,3 +5004,4 @@ struct MA_ClassData *MA_New(void)
    return NULL;
 }
 ///
+
