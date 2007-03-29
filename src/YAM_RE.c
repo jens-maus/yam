@@ -4169,3 +4169,33 @@ void FreeHeaderList(struct MinList *headerList)
 }
 
 ///
+/// GetReadMailData()
+//  returns the ReadMailData of a mail if it exists
+struct ReadMailData *GetReadMailData(struct Mail *mail)
+{
+  struct ReadMailData *result = NULL;
+
+  ENTER();
+
+  if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+  {
+    // search through our ReadDataList
+    struct MinNode *curNode;
+
+    for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+      if(rmData->mail == mail)
+      {
+        result = rmData;
+        break;
+      }
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+///
+

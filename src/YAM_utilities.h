@@ -326,7 +326,6 @@ BOOL     DoPack(char *file, char *newfile, struct Folder *folder);
 BOOL     DumpClipboard(FILE *out);
 BOOL     EditorToFile(Object *editor, char *file);
 char *   Encrypt(char *source);
-struct ReadMailData *GetReadMailData(struct Mail *mail);
 char *   GetRealPath(char *path);
 BOOL     ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef);
 void     ExtractAddress(const char *line, struct Person *pe);

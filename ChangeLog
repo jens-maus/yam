@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-29  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c, YAM_RE.c: moved the new GetReadMailData() function to YAM_RE.c
+    as that's where all the ReadMailData stuff belongs.
+
 2007-03-28  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.cd, deutsch.ct, MainMailListTree.c: changed the "Reload tree" to a
