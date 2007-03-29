@@ -1088,8 +1088,6 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
                !isSpamFolder(fo) &&
                fo->Unread > 0)
             {
-              SHOWSTRING(DBF_GUI, fo->Name);
-              SHOWSTRING(DBF_GUI, folder->Name);
               if(fo != folder)
               {
                 if(MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq),
