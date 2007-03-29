@@ -2025,7 +2025,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
 
   G->Error = FALSE;
   if(strnicmp(url0, "http://", 7) == 0)
-    strlcpy(url, &url0[7], sizeof(url) - 7);
+    strlcpy(url, &url0[7], sizeof(url));
   else
     strlcpy(url, url0, sizeof(url));
 
