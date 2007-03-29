@@ -270,7 +270,7 @@ BOOL CheckForUpdates(void)
 
           // now we send a specific request via TR_DownloadURL() to
           // our update server
-          if(TR_DownloadURL(C->UpdateServer, request, NULL, tf->Filename))
+          if(TR_DownloadURL(C->UpdateServer, request, tf->Filename))
           {
             // now we parse the result.
             if((tf->FP = fopen(tf->Filename, "r")) != NULL)

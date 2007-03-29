@@ -2013,133 +2013,156 @@ static int TR_WriteBuffered(UNUSED LONG socket, const char *ptr, int maxlen, int
 ///
 
 /*** HTTP routines ***/
-/// TR_DownloadURL
-//  Downloads a file from the web using HTTP
-BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
+/// TR_DownloadURL()
+//  Downloads a file from the web using HTTP/1.1 (RFC 2616)
+BOOL TR_DownloadURL(const char *server, const char *request, const char *filename)
 {
-  BOOL success = FALSE, done = FALSE, noproxy = !*C->ProxyServer;
+  BOOL result = FALSE;
+  BOOL noproxy = (C->ProxyServer[0] == '\0');
   int hport;
-  char url[SIZE_URL], host[SIZE_HOST], *port, *path, *bufptr;
+  char url[SIZE_URL];
+  char host[SIZE_HOST];
+  char *path;
+  char *bufptr;
 
   ENTER();
 
+  // make sure the error state is cleared
   G->Error = FALSE;
-  if(strnicmp(url0, "http://", 7) == 0)
-    strlcpy(url, &url0[7], sizeof(url));
-  else
-    strlcpy(url, url0, sizeof(url));
 
-  if(url1 != NULL)
+  // extract the server address and strip the http:// part
+  // of the URI
+  if(strnicmp(server, "http://", 7) == 0)
+    strlcpy(url, &server[7], sizeof(url));
+  else
+    strlcpy(url, server, sizeof(url));
+
+  // in case an explicit request was given we
+  // add it here
+  if(request != NULL)
   {
-    if(url[strlen(url) - 1] != '/')
+    if(url[strlen(url)-1] != '/')
       strlcat(url, "/", sizeof(url));
 
-    strlcat(url, url1, sizeof(url));
-  }
-  if(url2 != NULL)
-  {
-    if(url[strlen(url) - 1] != '/')
-     strlcat(url, "/", sizeof(url));
-
-    strlcat(url, url2, sizeof(url));
+    strlcat(url, request, sizeof(url));
   }
 
-  if((path = strchr(url,'/')) != NULL)
+  // find the first occurance of the '/' separator in out
+  // url and insert a terminating NUL character
+  if((path = strchr(url, '/')) != NULL)
   	*path++ = '\0';
   else
   	path = (char *)"";
 
+  // extract the hostname from the URL or use the proxy server
+  // address if specified.
   strlcpy(host, noproxy ? url : C->ProxyServer, sizeof(host));
+
+  // extract the port on which we connect if the
+  // hostname contain an ':' separator
   if((bufptr = strchr(host, ':')) != NULL)
   {
   	*bufptr++ = '\0';
   	hport = atoi(bufptr);
   }
   else
-  {
   	hport = noproxy ? 80 : 8080;
-  }
 
+  // open the TCP/IP connection to 'host' under the port 'hport'
   if(TR_Connect(host, hport) == CONNECTERR_SUCCESS)
   {
-  	char buf[SIZE_LINE];
+    char *serverHost;
+  	char serverPath[SIZE_LINE];
+  	char httpRequest[SIZE_LINE];
+    char *port;
 
+    // now we build the HTTP request we send out to the HTTP
+    // server
     if(noproxy)
     {
-      snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\nHost: %s\r\n", path, host);
+      snprintf(serverPath, sizeof(serverPath), "/%s", path);
+      serverHost = host;
     }
     else if((port = strchr(url, ':')) != NULL)
     {
       *port++ = '\0';
-      snprintf(buf, sizeof(buf), "GET http://%s:%s/%s HTTP/1.0\r\nHost: %s\r\n", url, port, path, url);
+
+      snprintf(serverPath, sizeof(serverPath), "http://%s:%s/%s", url, port, path);
+      serverHost = url;
     }
     else
     {
-      snprintf(buf, sizeof(buf), "GET http://%s/%s HTTP/1.0\r\nHost: %s\r\n", url, path, url);
+      snprintf(serverPath, sizeof(serverPath), "http://%s/%s", url, path);
+      serverHost = url;
     }
 
-    snprintf(&buf[strlen(buf)], sizeof(buf) - strlen(buf), "From: %s\r\nUser-Agent: %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), yamversion);
-    SHOWSTRING(DBF_NET, buf);
+    // construct the HTTP request
+    snprintf(httpRequest, sizeof(httpRequest), "GET %s HTTP/1.1\r\n"
+                                               "Host: %s\r\n"
+                                               "User-Agent: %s\r\n"
+                                               "Accept: */*\r\n"
+                                               "\r\n", serverPath, serverHost, yamverxmailer);
 
-    if(TR_WriteLine(buf) > 0)
+    SHOWSTRING(DBF_NET, httpRequest);
+
+    // send out the httpRequest
+    if(TR_WriteLine(httpRequest) > 0)
     {
+      char *p;
+      char serverResponse[SIZE_LINE];
       int len;
 
-      len = TR_Recv(buf, SIZE_LINE);
-      if(atoi(&buf[9]) == 200)
+      // clear the serverResponse string
+      serverResponse[0] = '\0';
+
+      // now we read out the very first line to see if the
+      // response code matches and is fine
+      len = TR_ReadLine(G->TR_Socket, serverResponse, SIZE_LINE);
+
+      SHOWSTRING(DBF_NET, serverResponse);
+
+      // check the server response
+      if(len > 0 && strnicmp(serverResponse, "HTTP/", 5) == 0 &&
+         (p = strchr(serverResponse, ' ')) != NULL && atoi(TrimStart(p)) == 200)
       {
-      	ULONG l = 0;
-      	char line[SIZE_DEFAULT];
-        FILE *out;
-
-        if((bufptr = strstr(buf, "\r\n")) != NULL)
-          bufptr += 2;
-
-        while(!G->Error)
+        // we can request all further lines from our socket
+        // until we reach the entity body
+        while(G->Error == FALSE &&
+              (len = TR_ReadLine(G->TR_Socket, serverResponse, SIZE_LINE)) > 0)
         {
-          char c;
-
-          while((c = *bufptr++) != '\0')
+          // if we are still scanning for the end of the
+          // response header we go on searching for the empty '\r\n' line
+          if(strcmp(serverResponse, "\r\n") == 0)
           {
-            if(c != '\r')
-              if(l < sizeof(line) - 1)
-                line[l++] = c;
+            FILE *out;
 
-            if(c == '\n')
+            // prepare the output file.
+            if((out = fopen(filename, "w")) != NULL)
             {
-              // end of line
-              line[l] = '\0';
-              l = 0;
+              setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
-              if(line[0] == '\n')
+              // we seem to have reached the entity body, so
+              // we can write the rest out immediately.
+              while(G->Error == FALSE &&
+                    (len = TR_Recv(serverResponse, SIZE_LINE)) > 0)
               {
-                // we just received an empty line, bail out
-                done = TRUE;
-                break;
+                if(fwrite(serverResponse, len, 1, out) == 1)
+                  result = TRUE;
+                else
+                {
+                  result = FALSE;
+                  break;
+                }
               }
+
+              fclose(out);
             }
+            else
+              ER_NewError(tr(MSG_ER_CantCreateFile), filename);
+
+            break;
           }
-
-          if(done)
-          	break;
-          if((len = TR_Recv(buf, SIZE_LINE)) <= 0)
-          	break;
-
-          bufptr = buf;
         }
-
-        if((out = fopen(filename, "w")) != NULL)
-        {
-          setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
-           ++bufptr;
-          fwrite(bufptr, (size_t)(len - (bufptr - buf)), 1, out);
-          while((len = TR_Recv(buf, SIZE_LINE)) > 0)
-            fwrite(buf, len, 1, out);
-          fclose(out);
-          success = TRUE;
-        }
-        else
-          ER_NewError(tr(MSG_ER_CantCreateFile), filename);
       }
       else
         ER_NewError(tr(MSG_ER_DocNotFound), path);
@@ -2152,8 +2175,8 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
   else
     ER_NewError(tr(MSG_ER_ConnectHTTP), host);
 
-  RETURN(success);
-  return success;
+  RETURN(result && G->Error == FALSE);
+  return result && G->Error == FALSE;
 }
 ///
 

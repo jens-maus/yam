@@ -119,7 +119,7 @@ extern struct Hook TR_ProcessIMPORTHook;
 
 void  TR_Cleanup(void);
 void  TR_CloseTCPIP(void);
-BOOL  TR_DownloadURL(char *url0, char *url1, char *url2, char *filename);
+BOOL  TR_DownloadURL(const char *server, const char *request, const char *filename);
 void  TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel);
 BOOL  TR_GetMessageList_IMPORT(void);
 BOOL  TR_IsOnline(void);

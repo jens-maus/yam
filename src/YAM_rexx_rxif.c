@@ -2577,7 +2577,7 @@ void rx_geturl( UNUSED struct RexxHost *host, struct rxd_geturl **rxd, long acti
          if (TR_OpenTCPIP())
          {
             BusyText(tr(MSG_TR_Downloading), "");
-            if (!TR_DownloadURL(rd->arg.url, NULL, NULL, rd->arg.filename)) rd->rc = RETURN_ERROR;
+            if (!TR_DownloadURL(rd->arg.url, NULL, rd->arg.filename)) rd->rc = RETURN_ERROR;
             TR_CloseTCPIP();
             BusyEnd();
          }

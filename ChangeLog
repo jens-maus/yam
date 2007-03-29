@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-29  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: reworked the TR_DownloadURL() function to be somewhat more
+    compatible to the official HTTP/1.1 RFC 2616. In addition, due to
+    security reasons the HTTP request doesn't contain any "From:" header
+    line information anymore. This should fix bug #1688194.
+  * YAM_UT.c, YAM_RE.c: moved the new GetReadMailData() function to YAM_RE.c
+    as that's where all the ReadMailData stuff belongs.
+
 2007-03-29  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/deutsch.ct: fixed a typo
@@ -14,11 +23,6 @@ $URL$
   * YAM_MA.c, ReadWindow.c: enabled the NEW and FORWARD buttons/menus again even
     if the current folder is the spam folder or the mail is spam.
   * YAM_TR.c: cleaned up TR_DownloadURL() function to be a *lot* more readable.
-
-2007-03-29  Jens Langner <Jens.Langner@light-speed.de>
-
-  * YAM_UT.c, YAM_RE.c: moved the new GetReadMailData() function to YAM_RE.c
-    as that's where all the ReadMailData stuff belongs.
 
 2007-03-28  Jens Langner <Jens.Langner@light-speed.de>
 
