@@ -2596,7 +2596,9 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
           if((msg = calloc((size_t)(part->Size+3), sizeof(char))))
           {
-            char *ptr, *rptr, *eolptr, *sigptr = 0;
+            char *ptr;
+            char *rptr;
+            char *eolptr;
             int nread;
 
             *msg = '\n';
@@ -2653,29 +2655,6 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             }
             else
               rptr = msg+1; // nothing serious happened so lets continue...
-
-            // find signature first if it should be stripped
-            if(mode == RIM_QUOTE && C->StripSignature)
-            {
-              sigptr = msg + nread;
-              while(sigptr > msg)
-              {
-                sigptr--;
-                while((sigptr > msg) && (*sigptr != '\n')) sigptr--;  // step back to previous line
-
-                if((sigptr <= msg+1))
-                {
-                  sigptr = NULL;
-                  break;
-                }
-
-                if(strncmp(sigptr+1, "-- \n", 4) == 0)                // check for sig separator
-                {                                                     // per definition it is a "-- " on a single line
-                  sigptr++;
-                  break;
-                }
-              }
-            }
 
             // parse the message string
             while(*rptr)
@@ -2966,10 +2945,12 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   if(newlineAtEnd)
                     cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
                 }
-                else if(mode == RIM_QUOTE)
+                else if(mode == RIM_QUOTE && C->StripSignature)
                 {
-                  if(C->StripSignature && (rptr == sigptr))
-                    break;
+                  // if the user wants to strip the signature
+                  // of a mail we go and strip all further text from
+                  // here by breaking out of our current loop
+                  break;
                 }
                 else
                 {

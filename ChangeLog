@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-30  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c: on mails with more than one occurrance of the common signature
+    seperator "-- \n", only the last one was choosen as the point where the
+    text will be stripped. This was not only time consuming, but also not in
+    line what other mailers out there do. In fact, the *first* occurance of
+    the seperator should be used to strip all further text. YAM should now
+    also react like that and correctly stip at the first position where such
+    a seperator is found.
+
 2007-03-30  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: enabling or disabling the embedded read pane didn't show/hide it
