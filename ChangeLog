@@ -7,6 +7,9 @@ $URL$
 
 2007-03-30  Jens Langner <Jens.Langner@light-speed.de>
 
+  * MailTextEdit.c, ReadMailGroup.c, YAM.h: moved the texteditor colormap
+    definition into the instance data of the MailTextEdit class. This should
+    be somewhat more correct.
   * YAM_RE.c: on mails with more than one occurrance of the common signature
     seperator "-- \n", only the last one was choosen as the point where the
     text will be stripped. This was not only time consuming, but also not in

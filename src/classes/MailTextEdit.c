@@ -36,6 +36,8 @@
 struct Data
 {
   Object *slider;
+  LONG    colorMap[16];
+
   struct MUI_EventHandlerNode ehnode;
 };
 */
@@ -44,11 +46,16 @@ struct Data
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
+  ENTER();
+
   if((obj = (Object *)DoSuperMethodA(cl, obj, msg)))
   {
     GETDATA;
-
     struct TagItem *tags = inittags(msg), *tag;
+
+    // set the colormap
+    set(obj, MUIA_TextEditor_ColorMap, data->colorMap);
+
     while((tag = NextTagItem(&tags)))
     {
       switch(tag->ti_Tag)
@@ -59,6 +66,7 @@ OVERLOAD(OM_NEW)
     }
   }
 
+  RETURN((ULONG)obj);
   return (ULONG)obj;
 }
 
@@ -99,12 +107,14 @@ OVERLOAD(MUIM_DragDrop)
 /// OVERLOAD(MUIM_Show)
 OVERLOAD(MUIM_Show)
 {
-  G->EdColMap[6] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColoredText, 0);
-  G->EdColMap[7] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color1stLevel, 0);
-  G->EdColMap[8] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color2ndLevel, 0);
-  G->EdColMap[9] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color3rdLevel, 0);
-  G->EdColMap[10] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color4thLevel, 0);
-  G->EdColMap[11] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorURL, 0);
+  GETDATA;
+
+  data->colorMap[6] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColoredText, 0);
+  data->colorMap[7] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color1stLevel, 0);
+  data->colorMap[8] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color2ndLevel, 0);
+  data->colorMap[9] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color3rdLevel, 0);
+  data->colorMap[10] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color4thLevel, 0);
+  data->colorMap[11] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorURL, 0);
 
   return DoSuperMethodA(cl, obj, msg);
 }
@@ -113,12 +123,17 @@ OVERLOAD(MUIM_Show)
 /// OVERLOAD(MUIM_Hide)
 OVERLOAD(MUIM_Hide)
 {
-  if(G->EdColMap[6] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[6]);
-  if(G->EdColMap[7] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[7]);
-  if(G->EdColMap[8] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[8]);
-  if(G->EdColMap[9] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[9]);
-  if(G->EdColMap[10] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[10]);
-  if(G->EdColMap[11] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[11]);
+  GETDATA;
+  int i;
+
+  for(i=0; i < 16; i++)
+  {
+    if(data->colorMap[i] >= 0)
+    {
+      MUI_ReleasePen(muiRenderInfo(obj), data->colorMap[i]);
+      data->colorMap[i] = 0;
+    }
+  }
 
   return DoSuperMethodA(cl, obj, msg);
 }

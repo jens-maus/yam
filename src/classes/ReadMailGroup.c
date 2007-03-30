@@ -312,7 +312,6 @@ OVERLOAD(OM_NEW)
           MUIA_TextEditor_ImportHook,      MUIV_TextEditor_ImportHook_Plain,
           MUIA_TextEditor_ExportHook,      MUIV_TextEditor_ExportHook_Plain,
           MUIA_TextEditor_ReadOnly,        TRUE,
-          MUIA_TextEditor_ColorMap,        G->EdColMap,
           MUIA_CycleChain,                  TRUE,
         End,
         Child, data->textEditScrollbar,

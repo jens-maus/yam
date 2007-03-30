@@ -99,7 +99,6 @@ struct Global
    struct MsgPort *         AppLibPort;
    #endif
 
-   LONG                     EdColMap[16];
    LONG                     Weights[12];
    LONG                     TR_Socket;
 
