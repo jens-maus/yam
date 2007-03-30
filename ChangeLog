@@ -7,6 +7,10 @@ $URL$
 
 2007-03-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * InfoBar.c: minor optimizations to the MUIA_HorizDisppear levels to
+    let some GUI elements automatically disappear if the width of the window
+    will be too small. Now more space should be used and more equally divided
+    to all existing text/gadget elements.
   * YAM_TR.c: reworked the TR_DownloadURL() function to be somewhat more
     compatible to the official HTTP/1.1 RFC 2616. In addition, due to
     security reasons the HTTP request doesn't contain any "From:" header
