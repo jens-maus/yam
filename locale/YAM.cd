@@ -827,12 +827,6 @@ MSG_CO_SenderDOW (286//)
 MSG_CO_SenderMsgID (287//)
 %m  Original message: Message ID
 ;
-MSG_CO_SenderInitials (288//)
-%i  Original sender: Initials
-;
-MSG_CO_Sender2Initials (289//)
-%j  Original sender: Two initials
-;
 MSG_CO_RecptName (290//)
 %r  Recipient: Name
 ;
@@ -1303,9 +1297,6 @@ Use with these _domains
 ;
 MSG_CO_MLRepInit (454//)
 _Mailing list reply phrase
-;
-MSG_CO_QuoteMail (455//)
-_Quote message using
 ;
 MSG_CO_QuoteEmpty (456//)
 Quote _empty lines
@@ -1900,11 +1891,6 @@ messages from a mailing list.
 MSG_HELP_CO_CH_QUOTE (639//)
 Quote original\n\
 message in reply?
-;
-MSG_HELP_CO_ST_REPLYCHAR (640//)
-String that should precede each line of\n\
-the quoted message. Use the button at\n\
-the right side to insert a variable.
 ;
 MSG_HELP_CO_CH_QUOTEEMPTY (641//)
 Insert quote character(s)\n\
@@ -4219,15 +4205,8 @@ Passwo_rd
 MSG_WR_AltQuoted (1342//)
 Alternate quoted
 ;
-MSG_CO_AltQuote (1343//)
-Quote e_xternal using
-;
 MSG_CO_DoQuote (1344//)
 Qu_ote message
-;
-MSG_HELP_CO_ST_ALTQUOTECHAR (1345//)
-String that should precede each line of a\n\
-quote inserted from non-email sources
 ;
 MSG_EA_SelectPhoto_Title (1346//)
 Select portrait

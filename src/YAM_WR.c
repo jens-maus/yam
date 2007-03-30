@@ -99,7 +99,7 @@ static void WR_EmitExtHeader(FILE*, struct Compose*);
 static void WR_ComposeReport(FILE*, struct Compose*, char*);
 static BOOL SetDefaultSecurity(struct Compose*);
 static BOOL WR_ComposePGP(FILE*, struct Compose*, char*);
-static char *WR_TransformText(char*, enum TransformMode, const char*);
+static char *WR_TransformText(const char*, const enum TransformMode, const char*);
 static void WR_SharedSetup(struct WR_ClassData*, int);
 static struct WR_ClassData *WR_NewBounce(int);
 static struct WR_ClassData *WR_New(int winnum);
@@ -2380,62 +2380,94 @@ MakeStaticHook(WR_ChangeSignatureHook, WR_ChangeSignatureFunc);
 
 /*** Menus ***/
 /// WR_TransformText
-//  Inserts or pastes text as plain, ROT13 or quoted
-static char *WR_TransformText(char *source, enum TransformMode mode, const char *qtext)
+//  Inserts or pastes text as plain, ROT13, uuencoded or quoted text
+static char *WR_TransformText(const char *source, const enum TransformMode mode, const char *qtext)
 {
-   FILE *fp;
-   char *dest = NULL;
-   int ch, i, size = FileSize(source), pos = 0, p = 0, qtextlen = strlen(qtext);
-   BOOL quote = (mode == ED_INSQUOT || mode == ED_PASQUOT ||
-                 mode == ED_INSALTQUOT || mode == ED_PASALTQUOT);
-   if(size > 0)
-   {
-      size += SIZE_DEFAULT;
-      if(quote)
-        size += size/20*qtextlen;
-      if(mode == ED_INSUUCODE)
-        size += strlen(FilePart(qtext))+12+7; // for the "begin 644 XXX" and "end passage
+  char *dest = NULL;
+  int size = FileSize(source);
 
-      if((dest = calloc(size, 1)))
+  ENTER();
+
+  if(size > 0)
+  {
+    int qtextlen = strlen(qtext);
+    BOOL quote = (mode == ED_INSQUOT || mode == ED_PASQUOT ||
+                  mode == ED_INSALTQUOT || mode == ED_PASALTQUOT);
+
+    size += SIZE_DEFAULT;
+
+    if(quote)
+      size += size/20*qtextlen;
+
+    if(mode == ED_INSUUCODE)
+      size += strlen(FilePart(qtext))+12+7; // for the "begin 644 XXX" and "end passage
+
+    if((dest = calloc(size, 1)))
+    {
+      FILE *fp;
+
+      if((fp = fopen(source, "r")))
       {
-         if((fp = fopen(source, "r")))
-         {
-            setvbuf(fp, NULL, _IOFBF, SIZE_FILEBUF);
+        int ch;
+        int p=0;
+        int pos=0;
 
-            // in case the source is UUencoded text we have to add the
-            // "begin 644 XXX" stuff in advance.
-            if(mode == ED_INSUUCODE)
-              p = snprintf(dest, size, "\nbegin 644 %s\n", FilePart(qtext));
+        setvbuf(fp, NULL, _IOFBF, SIZE_FILEBUF);
 
-            while ((ch = fgetc(fp)) != EOF)
-            {
-               if (!pos && quote)
-               {
-                  if (p+qtextlen > size-2) dest = realloc(dest,(size += SIZE_LARGE));
-                  for (i = 0; i < qtextlen; i++) dest[p++] = qtext[i];
-                  dest[p++] = ' ';
-               }
-               if (ch == '\n') pos = 0; else ++pos;
-               if (mode == ED_INSROT13 || mode == ED_PASROT13)
-               {
-                  if (ch >= 'a' && ch <= 'z') if ((ch += 13) > 'z') ch -= 26;
-                  if (ch >= 'A' && ch <= 'Z') if ((ch += 13) > 'Z') ch -= 26;
-               }
-               if (p > size-3) dest = realloc(dest,(size += SIZE_LARGE));
-               dest[p++] = ch;
-            }
-            dest[p] = 0;
+        // in case the source is UUencoded text we have to add the
+        // "begin 644 XXX" stuff in advance.
+        if(mode == ED_INSUUCODE)
+          p = snprintf(dest, size, "\nbegin 644 %s\n", FilePart(qtext));
 
-            // in case the source is UUencoded text we have to add the
-            // "end" stuff at the end of the text as well
-            if(mode == ED_INSUUCODE)
-              strlcat(dest, "``\nend\n", size);
+        while((ch = fgetc(fp)) != EOF)
+        {
+          if(!pos && quote)
+          {
+            int i;
 
-            fclose(fp);
-         }
+            if(p+qtextlen > size-2)
+              dest = realloc(dest,(size += SIZE_LARGE));
+
+            for(i=0; i < qtextlen; i++)
+              dest[p++] = qtext[i];
+
+            dest[p++] = ' ';
+          }
+
+          if(ch == '\n')
+            pos = 0;
+          else
+            ++pos;
+
+          if(mode == ED_INSROT13 || mode == ED_PASROT13)
+          {
+            if(ch >= 'a' && ch <= 'z' && ((ch += 13) > 'z'))
+              ch -= 26;
+
+            if(ch >= 'A' && ch <= 'Z' && ((ch += 13) > 'Z'))
+              ch -= 26;
+          }
+
+          if(p > size-3)
+            dest = realloc(dest,(size += SIZE_LARGE));
+
+          dest[p++] = ch;
+        }
+
+        dest[p] = '\0';
+
+        // in case the source is UUencoded text we have to add the
+        // "end" stuff at the end of the text as well
+        if(mode == ED_INSUUCODE)
+          strlcat(dest, "``\nend\n", size);
+
+        fclose(fp);
       }
-   }
-   return dest;
+    }
+  }
+
+  RETURN(dest);
+  return dest;
 }
 
 ///
@@ -2446,15 +2478,15 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
   enum TransformMode cmd = arg[0];
   int winnum = arg[1];
   char *text = NULL;
-  char *quotetext;
+  char *quoteChar;
   char filename[SIZE_PATHFILE];
   struct TempFile *tf;
   struct WR_ClassData *wr = G->WR[winnum];
 
   ENTER();
 
-  quotetext = (cmd == ED_INSALTQUOT || cmd == ED_PASALTQUOT) ?
-                wr->AltQuoteText : wr->QuoteText;
+  quoteChar = (cmd == ED_INSALTQUOT || cmd == ED_PASALTQUOT) ? C->AltQuoteChar : C->QuoteChar;
+
   switch(cmd)
   {
     case ED_INSERT:
@@ -2468,7 +2500,7 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
       if((frc = ReqFile(ASL_ATTACH, wr->GUI.WI, tr(MSG_WR_InsertFile), REQF_NONE, C->AttachDir, "")))
       {
         strmfp(filename, frc->drawer, frc->file);
-        text = WR_TransformText(filename, cmd, quotetext);
+        text = WR_TransformText(filename, cmd, quoteChar);
       }
       else
       {
@@ -2527,7 +2559,7 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
         DumpClipboard(tf->FP);
         fclose(tf->FP);
         tf->FP = NULL;
-        text = WR_TransformText(tf->Filename, cmd, quotetext);
+        text = WR_TransformText(tf->Filename, cmd, quoteChar);
         CloseTempFile(tf);
       }
       else

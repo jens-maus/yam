@@ -379,7 +379,7 @@ void     PGPClearPassPhrase(BOOL force);
 int      PGPCommand(const char *progname, const char *options, int flags);
 void     PGPGetPassPhrase(void);
 void     PlaySound(char *filename);
-void     Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix);
+void     QuoteText(FILE *out, const char *src, const int len, const int line_max);
 void     RemoveMailFromList(struct Mail *mail, BOOL closeWindows);
 BOOL     RenameFile(const char *oldname, const char *newname);
 BOOL     RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd);

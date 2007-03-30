@@ -405,8 +405,8 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "ForwardIntro     = %s\n", co->ForwardIntro);
       fprintf(fh, "ForwardFinish    = %s\n", co->ForwardFinish);
       fprintf(fh, "QuoteMessage     = %s\n", Bool2Txt(co->QuoteMessage));
-      fprintf(fh, "QuoteText        = %s\n", co->QuoteText);
-      fprintf(fh, "AltQuoteText     = %s\n", co->AltQuoteText);
+      fprintf(fh, "QuoteChar        = %s\n", co->QuoteChar);
+      fprintf(fh, "AltQuoteChar     = %s\n", co->AltQuoteChar);
       fprintf(fh, "QuoteEmptyLines  = %s\n", Bool2Txt(co->QuoteEmptyLines));
       fprintf(fh, "CompareAddress   = %s\n", Bool2Txt(co->CompareAddress));
       fprintf(fh, "StripSignature   = %s\n", Bool2Txt(co->StripSignature));
@@ -959,8 +959,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "ForwardIntro"))   strlcpy(co->ForwardIntro, value2, sizeof(co->ForwardIntro));
                else if (!stricmp(buffer, "ForwardFinish"))  strlcpy(co->ForwardFinish, value2, sizeof(co->ForwardFinish));
                else if (!stricmp(buffer, "QuoteMessage"))   co->QuoteMessage = Txt2Bool(value);
-               else if (!stricmp(buffer, "QuoteText"))      strlcpy(co->QuoteText, value2, sizeof(co->QuoteText));
-               else if (!stricmp(buffer, "AltQuoteText"))   strlcpy(co->AltQuoteText, value2, sizeof(co->AltQuoteText));
+               else if (!stricmp(buffer, "QuoteChar"))      strlcpy(co->QuoteChar, value2, sizeof(co->QuoteChar));
+               else if (!stricmp(buffer, "AltQuoteChar"))   strlcpy(co->AltQuoteChar, value2, sizeof(co->AltQuoteChar));
                else if (!stricmp(buffer, "QuoteEmptyLines"))co->QuoteEmptyLines = Txt2Bool(value);
                else if (!stricmp(buffer, "CompareAddress")) co->CompareAddress = Txt2Bool(value);
                else if (!stricmp(buffer, "StripSignature")) co->StripSignature = Txt2Bool(value);
@@ -1601,8 +1601,6 @@ void CO_GetConfig(BOOL saveConfig)
         GetMUIString(CE->ForwardIntro, gui->ST_FWDSTART, sizeof(CE->ForwardIntro));
         GetMUIString(CE->ForwardFinish, gui->ST_FWDEND, sizeof(CE->ForwardFinish));
         CE->QuoteMessage      = GetMUICheck  (gui->CH_QUOTE);
-        GetMUIString(CE->QuoteText, gui->ST_REPLYCHAR, sizeof(CE->QuoteText));
-        GetMUIString(CE->AltQuoteText, gui->ST_ALTQUOTECHAR, sizeof(CE->AltQuoteText));
         CE->QuoteEmptyLines   = GetMUICheck  (gui->CH_QUOTEEMPTY);
         CE->CompareAddress    = GetMUICheck  (gui->CH_COMPADDR);
         CE->StripSignature    = GetMUICheck  (gui->CH_STRIPSIG);
@@ -1963,8 +1961,6 @@ void CO_SetConfig(void)
         setstring   (gui->ST_FWDSTART    ,CE->ForwardIntro);
         setstring   (gui->ST_FWDEND      ,CE->ForwardFinish);
         setcheckmark(gui->CH_QUOTE       ,CE->QuoteMessage);
-        setstring   (gui->ST_REPLYCHAR   ,CE->QuoteText);
-        setstring   (gui->ST_ALTQUOTECHAR,CE->AltQuoteText);
         setcheckmark(gui->CH_QUOTEEMPTY  ,CE->QuoteEmptyLines);
         setcheckmark(gui->CH_COMPADDR    ,CE->CompareAddress);
         setcheckmark(gui->CH_STRIPSIG    ,CE->StripSignature);

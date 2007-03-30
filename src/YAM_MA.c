@@ -101,7 +101,7 @@ static void MA_UpdateStatus(void);
 static char *MA_AppendRcpt(char*, struct Person*, BOOL);
 static void MA_InsertIntroText(FILE*, char*, struct ExpandTextData*);
 static void MA_EditorNotification(int);
-static void MA_SetupQuoteString(struct WR_ClassData*, struct ExpandTextData*, struct Mail*);
+static void MA_SetupExpandTextData(struct ExpandTextData*, struct Mail*);
 static int MA_CheckWriteWindow(int);
 
 /***************************************************************************
@@ -1515,17 +1515,11 @@ static void MA_EditorNotification(int winnum)
 }
 
 ///
-/// MA_SetupQuoteString
+/// MA_SetupExpandTextData
 //  Creates quote string by replacing variables with values
-static void MA_SetupQuoteString(struct WR_ClassData *wr, struct ExpandTextData *etd, struct Mail *mail)
+static void MA_SetupExpandTextData(struct ExpandTextData *etd, struct Mail *mail)
 {
-  struct ExpandTextData l_etd;
-  char *sbuf;
-
   ENTER();
-
-  if(!etd)
-    etd = &l_etd;
 
   etd->OS_Name     = mail ? (*(mail->From.RealName) ? mail->From.RealName : mail->From.Address) : "";
   etd->OS_Address  = mail ? mail->From.Address : "";
@@ -1557,11 +1551,6 @@ static void MA_SetupQuoteString(struct WR_ClassData *wr, struct ExpandTextData *
   }
   else
     memcpy(&etd->OM_Date, &G->StartDate, sizeof(struct DateStamp));
-
-  sbuf = ExpandText(C->QuoteText, etd);
-  strlcpy(wr->QuoteText, TrimEnd(sbuf), sizeof(wr->QuoteText));
-  FreeStrBuf(sbuf);
-  strlcpy(wr->AltQuoteText, C->AltQuoteText, sizeof(wr->AltQuoteText));
 
   LEAVE();
 }
@@ -1677,8 +1666,6 @@ int MA_NewNew(struct Mail *mail, int flags)
           setstring(wr->GUI.ST_REPLYTO, folder->MLReplyToAddress);
       }
 
-      MA_SetupQuoteString(wr, NULL, NULL);
-
       if(folder->WriteIntro[0])
         MA_InsertIntroText(out, folder->WriteIntro, NULL);
       else
@@ -1782,8 +1769,6 @@ int MA_NewEdit(struct Mail *mail, int flags)
         RETURN(winnum);
         return winnum;
       }
-
-      MA_SetupQuoteString(wr, NULL, mail);
 
       if((rmData = AllocPrivateRMData(mail, PM_ALL)))
       {
@@ -1989,7 +1974,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
           return winnum;
         }
 
-        MA_SetupQuoteString(wr, &etd, &email->Mail);
+        MA_SetupExpandTextData(&etd, &email->Mail);
         etd.OM_MessageID = email->MsgID;
         etd.R_Name = mail->To.RealName[0] != '\0' ? mail->To.RealName : mail->To.Address;
         etd.R_Address = mail->To.Address;
@@ -2137,7 +2122,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
         // make sure we setup the quote string
         // correctly.
-        MA_SetupQuoteString(wr, &etd, &email->Mail);
+        MA_SetupExpandTextData(&etd, &email->Mail);
         etd.OM_MessageID = email->MsgID;
 
         // If the mail which we are going to reply to already has a subject,
@@ -2513,7 +2498,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
             if((cmsg = RE_ReadInMessage(rmData, RIM_QUOTE)))
             {
               // make sure we quote the text in question.
-              Quote_Text(out, cmsg, strlen(cmsg), C->EdWrapMode ? C->EdWrapCol-strlen(wr->QuoteText)-1 : 1024, wr->QuoteText);
+              QuoteText(out, cmsg, strlen(cmsg), C->EdWrapMode ? C->EdWrapCol-2 : 1024);
 
               free(cmsg);
             }

@@ -154,8 +154,6 @@ struct CO_GUIData
   Object *ST_MREPLYTEXT;
   Object *ST_MREPLYBYE;
   Object *CH_QUOTE;
-  Object *ST_REPLYCHAR;
-  Object *ST_ALTQUOTECHAR;
   Object *CH_QUOTEEMPTY;
   Object *CH_COMPADDR;
   Object *CH_STRIPSIG;
@@ -519,8 +517,6 @@ struct Config
    char MLReplyBye[SIZE_INTRO];
    char ForwardIntro[SIZE_INTRO];
    char ForwardFinish[SIZE_INTRO];
-   char QuoteText[SIZE_SMALL];
-   char AltQuoteText[SIZE_SMALL];
    char TagsFile[SIZE_PATHFILE];
    char TagsSeparator[SIZE_SMALL];
    char PGPCmdPath[SIZE_PATH];
@@ -552,6 +548,9 @@ struct Config
    char StyleFolderNew[SIZE_SMALL];
    char StyleMailUnread[SIZE_SMALL];
    char StyleMailRead[SIZE_SMALL];
+   char QuoteChar[2];
+   char AltQuoteChar[2];
+
 };
 
 enum InfoBarPos { IB_POS_TOP=0, IB_POS_CENTER, IB_POS_BOTTOM, IB_POS_OFF };

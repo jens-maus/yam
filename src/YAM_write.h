@@ -87,8 +87,6 @@ struct WR_ClassData  /* write window */
   int               winnum;       // the window number this class data belongs to
 
   char              MsgID[SIZE_MSGID];
-  char              QuoteText[SIZE_DEFAULT];
-  char              AltQuoteText[SIZE_SMALL]; // no variable substitution -> SIZE_SMALL!
   char              WTitle[SIZE_DEFAULT];
 };
 

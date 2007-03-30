@@ -944,8 +944,9 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       strlcpy(co->MLReplyBye, tr(MSG_CO_MLRepByeDef), sizeof(co->MLReplyBye));
       strlcpy(co->ForwardIntro, tr(MSG_CO_ForwardIntroDef), sizeof(co->ForwardIntro));
       strlcpy(co->ForwardFinish, tr(MSG_CO_ForwardFinishDef), sizeof(co->ForwardFinish));
-      strlcpy(co->QuoteText, ">", sizeof(co->QuoteText));
-      strlcpy(co->AltQuoteText, "|", sizeof(co->AltQuoteText));
+      strlcpy(co->QuoteChar, ">", sizeof(co->QuoteChar));
+      strlcpy(co->AltQuoteChar, "|", sizeof(co->AltQuoteChar));
+
       co->QuoteMessage = co->QuoteEmptyLines = co->CompareAddress = co->StripSignature = TRUE;
    }
 

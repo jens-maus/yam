@@ -7,6 +7,15 @@ $URL$
 
 2007-03-30  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c, YAM_UT.c, YAM_MA.c, YAM_COg.c, misc: removed the general
+    possibility to specify an own quoting character string that contains the
+    initials of the user. In addition, all corresponding GUI elements in the
+    YAM configuration are also removed. Please note, that this might seem to
+    be a large step backward for some users on a first look. However, we do
+    feel that conforming to RFCs and netiquettes is much more important for
+    the exchangeability of emails. Therefore, please have a look at the
+    following FAQ item which should explain the reasonings behind dropping
+    that functionality (http://faq.yam.ch/2_33_en.html).
   * MailTextEdit.c, ReadMailGroup.c, YAM.h: moved the texteditor colormap
     definition into the instance data of the MailTextEdit class. This should
     be somewhat more correct.

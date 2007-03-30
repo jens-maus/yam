@@ -71,7 +71,6 @@ enum VarPopMode { VPM_FORWARD=0,
                   VPM_REPLYHELLO,
                   VPM_REPLYINTRO,
                   VPM_REPLYBYE,
-                  VPM_QUOTE,
                   VPM_ARCHIVE,
                   VPM_MAILSTATS,
                   VPM_SCRIPTS,
@@ -814,13 +813,6 @@ static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, const
         // depending on the mode we have the "CompleteHeader" feature or not.
         if(mode == VPM_FORWARD || mode == VPM_REPLYINTRO)
           DoMethod(lv, MUIM_List_InsertSingle, tr(MSG_CO_CompleteHeader), MUIV_List_Insert_Bottom);
-      }
-      break;
-
-      case VPM_QUOTE:
-      {
-         DoMethod(lv, MUIM_List_InsertSingle, tr(MSG_CO_SenderInitials), MUIV_List_Insert_Bottom);
-         DoMethod(lv, MUIM_List_InsertSingle, tr(MSG_CO_Sender2Initials), MUIV_List_Insert_Bottom);
       }
       break;
 
@@ -2351,6 +2343,8 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
 {
   Object *obj;
 
+  ENTER();
+
   obj = VGroup,
           MUIA_HelpNode, "CO06",
 
@@ -2377,12 +2371,6 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
 
               Child, Label2(tr(MSG_CO_MLRepInit)),
               Child, MakePhraseGroup(&data->GUI.ST_MREPLYHI, &data->GUI.ST_MREPLYTEXT, &data->GUI.ST_MREPLYBYE, tr(MSG_CO_MLRepInit), tr(MSG_HELP_CO_ST_MREPLYTEXT)),
-
-              Child, Label2(tr(MSG_CO_QuoteMail)),
-              Child, MakeVarPop(&data->GUI.ST_REPLYCHAR, VPM_QUOTE, SIZE_SMALL, tr(MSG_CO_QuoteMail)),
-
-              Child, Label2(tr(MSG_CO_AltQuote)),
-              Child, data->GUI.ST_ALTQUOTECHAR = MakeString(SIZE_SMALL, tr(MSG_CO_AltQuote)),
 
               Child, HSpace(1),
               Child, MakeCheckGroup((Object **)&data->GUI.CH_COMPADDR, tr(MSG_CO_VerifyAddress)),
@@ -2411,14 +2399,11 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
     SetHelp(data->GUI.ST_FWDEND      ,MSG_HELP_CO_ST_FWDEND    );
     SetHelp(data->GUI.ST_AREPLYPAT   ,MSG_HELP_CO_ST_AREPLYPAT );
     SetHelp(data->GUI.CH_QUOTE       ,MSG_HELP_CO_CH_QUOTE     );
-    SetHelp(data->GUI.ST_REPLYCHAR   ,MSG_HELP_CO_ST_REPLYCHAR );
-    SetHelp(data->GUI.ST_ALTQUOTECHAR,MSG_HELP_CO_ST_ALTQUOTECHAR);
     SetHelp(data->GUI.CH_QUOTEEMPTY  ,MSG_HELP_CO_CH_QUOTEEMPTY);
     SetHelp(data->GUI.CH_COMPADDR    ,MSG_HELP_CO_CH_COMPADDR  );
     SetHelp(data->GUI.CH_STRIPSIG    ,MSG_HELP_CO_CH_STRIPSIG  );
-    DoMethod(data->GUI.CH_QUOTE      ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.ST_REPLYCHAR,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
-    DoMethod(data->GUI.CH_QUOTE      ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_QUOTEEMPTY,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
-    DoMethod(data->GUI.CH_QUOTE      ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_STRIPSIG,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+
+    DoMethod(data->GUI.CH_QUOTE, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.CH_STRIPSIG, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
   }
 
   RETURN(obj);

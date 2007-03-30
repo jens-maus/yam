@@ -108,7 +108,7 @@ int BusyLevel = 0;
 
 /* local protos */
 static int  Word_Length(const char *buf);
-static int  Quoting_Chars(char *buf, int len, char *text, int *post_spaces);
+static int  Quoting_Chars(char *buf, const int len, const char *text, int *post_spaces);
 static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff);
 static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff);
 static BOOL UncompressMailFile(const char *src, const char *dst, const char *passwd);
@@ -1904,7 +1904,7 @@ static int Word_Length(const char *buf)
 //  Determines and copies all quoting characters ">" to the buffer "buf"
 //  out of the supplied text. It also returns the number of skipable
 //  characters since the start of line like "JL>"
-static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
+static int Quoting_Chars(char *buf, const int len, const char *text, int *post_spaces)
 {
   unsigned char c;
   BOOL quote_found = FALSE;
@@ -1973,13 +1973,13 @@ static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
 }
 
 ///
-/// Quote_Text
+/// QuoteText()
 //  Main mail text quotation function. It takes the source string "src" and
 //  analyzes it concerning existing quoting characters. Depending on this
 //  information it adds new quoting marks "prefix" to the start of each line
 //  taking care of a correct word wrap if the line gets longs than "line_max".
 //  All output is directly written to the already opened filehandle "out".
-void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
+void QuoteText(FILE *out, const char *src, const int len, const int line_max)
 {
   ENTER();
 
@@ -1995,14 +1995,15 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
     int line_len = 0;
     int skip_chars;
     int post_spaces = 0;
+    int srclen = len;
 
     // find out how many quoting chars the next line has
     skip_chars = Quoting_Chars(temp_buf, sizeof(temp_buf), src, &post_spaces);
     temp_len = strlen(temp_buf) - skip_chars;
     src += skip_chars;
-    len -= skip_chars;
+    srclen -= skip_chars;
 
-    while(len > 0)
+    while(srclen > 0)
     {
       char c = *src;
 
@@ -2015,7 +2016,7 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
       if(c == '\r')
       {
         src++;
-        len--;
+        srclen--;
         continue;
       }
 
@@ -2023,12 +2024,12 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
       if(c == '\n')
       {
         src++;
-        len--;
+        srclen--;
 
         // find out how many quoting chars the next line has
         skip_chars = Quoting_Chars(temp_buf, sizeof(temp_buf), src, &post_spaces);
         src += (skip_chars + skip_on_next_newline);
-        len -= (skip_chars + skip_on_next_newline);
+        srclen -= (skip_chars + skip_on_next_newline);
         skip_on_next_newline = 0;
 
         if(temp_len == ((int)strlen(temp_buf)-skip_chars) && wrapped)
@@ -2037,7 +2038,7 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
           // are the same like the previous line, so the following text
           // probably belongs to the same paragraph
 
-          len -= temp_len; // skip the quoting chars
+          srclen -= temp_len; // skip the quoting chars
           src += temp_len;
           wrapped = FALSE;
 
@@ -2064,7 +2065,7 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
         // check whether this line would be zero or not and if so we
         // have to care about if the user wants to also quote empty lines
         if(line_len == 0 && C->QuoteEmptyLines)
-          fputs(prefix, out);
+          fputs(C->QuoteChar, out);
 
         // then put a newline in our file
         fputc('\n', out);
@@ -2080,14 +2081,14 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
       {
         if(c == '>')
         {
-          fputs(prefix, out);
-          line_len+=strlen(prefix);
+          fputs(C->QuoteChar, out);
+          line_len += strlen(C->QuoteChar);
         }
         else
         {
-          fputs(prefix, out);
+          fputs(C->QuoteChar, out);
           fputc(' ', out);
-          line_len+=strlen(prefix)+1;
+          line_len += strlen(C->QuoteChar)+1;
         }
 
         newline = FALSE;
@@ -2101,7 +2102,7 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
         char *indent;
 
         src++;
-        len--;
+        srclen--;
 
         // output a newline to start a new line
         fputc('\n', out);
@@ -2109,8 +2110,8 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
         // reset line_len
         line_len = 0;
 
-        fputs(prefix, out);
-        line_len += strlen(prefix);
+        fputs(C->QuoteChar, out);
+        line_len += strlen(C->QuoteChar);
 
         if(strlen(temp_buf))
         {
@@ -2153,7 +2154,7 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
       line_len++;
 
       src++;
-      len--;
+      srclen--;
     }
 
     // check whether we finished the quoting with
