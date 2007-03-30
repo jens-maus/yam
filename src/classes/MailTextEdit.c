@@ -108,6 +108,9 @@ OVERLOAD(MUIM_DragDrop)
 OVERLOAD(MUIM_Show)
 {
   GETDATA;
+  ULONG result;
+
+  ENTER();
 
   data->colorMap[6] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColoredText, 0);
   data->colorMap[7] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color1stLevel, 0);
@@ -116,7 +119,11 @@ OVERLOAD(MUIM_Show)
   data->colorMap[10] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color4thLevel, 0);
   data->colorMap[11] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorURL, 0);
 
-  return DoSuperMethodA(cl, obj, msg);
+  // call the supermethod
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -124,18 +131,28 @@ OVERLOAD(MUIM_Show)
 OVERLOAD(MUIM_Hide)
 {
   GETDATA;
-  int i;
+  ULONG result;
 
-  for(i=6; i <= 11; i++)
+  ENTER();
+
+  // call the super method first
+  if((result = DoSuperMethodA(cl, obj, msg)) == 0)
   {
-    if(data->colorMap[i] >= 0)
+    int i;
+
+    // release all pens of our own colorMap
+    for(i=6; i <= 11; i++)
     {
-      MUI_ReleasePen(muiRenderInfo(obj), data->colorMap[i]);
-      data->colorMap[i] = -1;
+      if(data->colorMap[i] >= 0)
+      {
+        MUI_ReleasePen(muiRenderInfo(obj), data->colorMap[i]);
+        data->colorMap[i] = -1;
+      }
     }
   }
 
-  return DoSuperMethodA(cl, obj, msg);
+  RETURN(result);
+  return result;
 }
 
 ///
