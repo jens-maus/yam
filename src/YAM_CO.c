@@ -1489,18 +1489,6 @@ void CO_Validate(struct Config *co, BOOL update)
         }
       }
 
-      if(G->CO->Visited[cp_Read] || G->CO->UpdateAll)
-      {
-         // we signal the mainwindow that it may check whether to include the
-         // embedded read pane part or not
-         MA_SetupEmbeddedReadPane();
-
-         // and to not let the embedded read pane be empty when it is newly created
-         // we have to make sure the actual selected mail is loaded
-         if(C->EmbeddedReadPane)
-           MA_ChangeSelected(TRUE);
-      }
-
       if(G->CO->Visited[cp_Write] || G->CO->UpdateAll)
       {
         // requeue the timerequest for the AutoSave interval
@@ -1539,6 +1527,18 @@ void CO_Validate(struct Config *co, BOOL update)
 
       if(G->CO->Visited[cp_AddressBook] || G->CO->UpdateAll)
          AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
+
+      if(G->CO->Visited[cp_LookFeel] || G->CO->UpdateAll)
+      {
+        // we signal the mainwindow that it may check whether to include the
+        // embedded read pane part or not
+        MA_SetupEmbeddedReadPane();
+
+        // and to not let the embedded read pane be empty when it is newly created
+        // we have to make sure the actual selected mail is loaded
+        if(C->EmbeddedReadPane)
+          MA_ChangeSelected(TRUE);
+      }
 
       if(G->CO->Visited[cp_Mixed] || G->CO->UpdateAll)
       {

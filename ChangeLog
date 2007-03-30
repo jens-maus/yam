@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-30  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: enabling or disabling the embedded read pane didn't show/hide it
+    in the main window any more, because the wrong config page was assumed to
+    be visited. Now the Look&Feel page is assumed instead of the Read page. This
+    fixes bug #1690509.
+
 2007-03-29  Jens Langner <Jens.Langner@light-speed.de>
 
   * InfoBar.c: minor optimizations to the MUIA_HorizDisppear levels to
