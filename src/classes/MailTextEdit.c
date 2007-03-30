@@ -126,12 +126,12 @@ OVERLOAD(MUIM_Hide)
   GETDATA;
   int i;
 
-  for(i=0; i < 16; i++)
+  for(i=6; i <= 11; i++)
   {
     if(data->colorMap[i] >= 0)
     {
       MUI_ReleasePen(muiRenderInfo(obj), data->colorMap[i]);
-      data->colorMap[i] = 0;
+      data->colorMap[i] = -1;
     }
   }
 
