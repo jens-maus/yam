@@ -121,13 +121,11 @@ const unsigned long yamversiondays  = __YAM_VERDAYS;
 
 /* no longer external visible, this is done by proto files! */
 struct Library* DataTypesBase     = NULL;
-struct Library* GenesisBase       = NULL;
 struct Library* IconBase          = NULL;
 struct Library* IFFParseBase      = NULL;
 struct Library* IntuitionBase     = NULL;
 struct Library* KeymapBase        = NULL;
 struct Library* LocaleBase        = NULL;
-struct Library* MiamiBase         = NULL;
 struct Library* MUIMasterBase     = NULL;
 struct Library* OpenURLBase       = NULL;
 struct Library* RexxSysBase       = NULL;
@@ -148,17 +146,19 @@ struct Library* UtilityBase       = NULL;
 struct Library* ApplicationBase = NULL; // application.library
 struct Library* TimezoneBase    = NULL; // timezone.library
 #endif
+#if !defined(__amigaos4__)
+struct Library* GenesisBase       = NULL;
+struct Library* MiamiBase         = NULL;
+#endif
 
 /* AmigaOS4 style interfaces */
 #if defined(__amigaos4__)
 struct DataTypesIFace*    IDataTypes    = NULL;
-struct GenesisIFace*      IGenesis      = NULL;
 struct IconIFace*         IIcon         = NULL;
 struct IFFParseIFace*     IIFFParse     = NULL;
 struct IntuitionIFace*    IIntuition    = NULL;
 struct KeyMapIFace*       IKeymap       = NULL;
 struct LocaleIFace*       ILocale       = NULL;
-struct MiamiIFace*        IMiami        = NULL;
 struct MUIMasterIFace*    IMUIMaster    = NULL;
 struct OpenURLIFace*      IOpenURL      = NULL;
 struct RexxSysIFace*      IRexxSys      = NULL;

@@ -34,7 +34,6 @@
 #include <exec/execbase.h>
 #include <libraries/amisslmaster.h>
 #include <libraries/asl.h>
-#include <libraries/genesis.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
@@ -48,7 +47,6 @@
 #include <proto/diskfont.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
-#include <proto/genesis.h>
 #include <proto/graphics.h>
 #include <proto/icon.h>
 #include <proto/iffparse.h>
@@ -66,6 +64,10 @@
 #if defined(__amigaos4__)
 #include <proto/application.h>
 #include <proto/timezone.h>
+#endif
+
+#if !defined(__amigaos4__)
+#include <proto/genesis.h>
 #endif
 
 #include "extrasrc.h"
@@ -2197,7 +2199,11 @@ static void Login(const char *user, const char *password,
 
   ENTER();
 
-  if(INITLIB("genesis.library", 1, 0, &GenesisBase, "main", &IGenesis, FALSE, NULL))
+  // we query genesis.library (from the Genesis TCP/IP stack) for the user
+  // name in case the caller doesn't want to force a specific username
+  #if !defined(__amigaos4__)
+  if(user == NULL &&
+     INITLIB("genesis.library", 1, 0, &GenesisBase, "main", &IGenesis, FALSE, NULL))
   {
     struct genUser *guser;
 
@@ -2224,6 +2230,7 @@ static void Login(const char *user, const char *password,
 
     CLOSELIB(GenesisBase, IGenesis);
   }
+  #endif
 
   if(!loggedin && !terminate)
     terminate = !US_Login(user, password, maildir, prefsfile);

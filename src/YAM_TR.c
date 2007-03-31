@@ -44,12 +44,15 @@
 #include <proto/bsdsocket.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
-#include <proto/genesis.h>
 #include <proto/intuition.h>
-#include <proto/miami.h>
 #include <proto/muimaster.h>
 #include <proto/timer.h>
 #include <proto/utility.h>
+
+#if !defined(__amigaos4__)
+#include <proto/miami.h>
+#include <proto/genesis.h>
+#endif
 
 #include "extrasrc.h"
 
@@ -1104,7 +1107,7 @@ BOOL TR_IsOnline(void)
       SocketBase = NULL;
     }
     else
-    #endif
+    #else
     if((MiamiBase = OpenLibrary("miami.library", 10)))
     {
       if(GETINTERFACE("main", IMiami, MiamiBase))
@@ -1130,6 +1133,7 @@ BOOL TR_IsOnline(void)
       GenesisBase = NULL;
     }
     else
+    #endif
     {
       struct Library *socketbase = OpenLibrary("bsdsocket.library", 2L);
       if(socketbase)

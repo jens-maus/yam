@@ -7,6 +7,11 @@ $URL$
 
 2007-03-31  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c, YAM_TR.c, YAM_global.c: with Genesis (TCP/IP) running, a user wasn't
+    able to override the automatically choosen username via the USER command-
+    line or tooltype. In addition, the whole specific Genesis/Miami parts only
+    made any sense on OS3/MorphOS and will now not be included in AmigaOS4 builds
+    anymore, as there only exists RoadShow as TCP/IP stack.
   * YAM_RE.c, YAM_mail_lex.l, YAM_COg.c, misc: added possibility to specify
     a separate text color for displaying the signature of a mail. This color
     should be considered a kind of a 'ghosted' color which should display
