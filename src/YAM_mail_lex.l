@@ -130,6 +130,7 @@ NOTATEOL    ([^[:punct:][:space:]]|{ESCAPE}|"/"|"=")
 ^"<tsb>"                              {return tTSB; }
 ^([[:blank:]]*[[:alpha:]]{0,3}">")+   {return tCITE;}
 ^"-- \n"                              {return tSIGNATURE;}
+^"\033c\033[s:18]"                    {return tNEXTPART;}
 
 " "  {return tSPACE      ;}
 "  " {return tDOUBLESPACE;}
@@ -436,27 +437,38 @@ char *ParseEmailText(const char *mailTxt, BOOL handleSigDash)
           }
           break;
 
-          default:
+          case tNEXTPART:
           {
             cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
 
-            if(type == tNEWLINE)
-            {
-              if(centerActivated)
-              {
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033l");
-                centerActivated = FALSE;
-              }
+            // we reset the signature state
+            // as we are running into text of a new part
+            signatureFound = FALSE;
+          }
+          break;
 
-              if(signatureFound == FALSE)
-                defaultPen = "\033p[0]";
-              else
-              {
-                defaultPen = "\033p[13]";
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
-              }
+          case tNEWLINE:
+          {
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+
+            if(centerActivated)
+            {
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033l");
+              centerActivated = FALSE;
+            }
+
+            if(signatureFound == FALSE)
+              defaultPen = "\033p[0]";
+            else
+            {
+              defaultPen = "\033p[13]";
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
             }
           }
+          break;
+
+          default:
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
           break;
         }
       }

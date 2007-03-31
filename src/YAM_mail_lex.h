@@ -63,7 +63,8 @@ enum tokenType
   tBOLD,
   tITALIC,
   tUNDERLINE,
-  tCOLORED
+  tCOLORED,
+  tNEXTPART
 };
 
 char *ParseEmailText(const char *mailTxt, BOOL handleSigDash);

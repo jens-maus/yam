@@ -7,6 +7,9 @@ $URL$
 
 2007-03-31  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_mail_lex.l: fixed problem where consecutive mail parts were also shown
+    in the special signature color. Now the signature state will be reset as
+    soon as a new inline part will be identified.
   * YAM.c, YAM_TR.c, YAM_global.c: with Genesis (TCP/IP) running, a user wasn't
     able to override the automatically choosen username via the USER command-
     line or tooltype. In addition, the whole specific Genesis/Miami parts only
