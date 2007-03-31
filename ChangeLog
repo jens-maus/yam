@@ -7,6 +7,8 @@ $URL$
 
 2007-03-31  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/InfoBar.c: more changes to the HorizDisappear levels to get rid of
+    the nasty "crash-on-resize" bug with MUI 3.8.
   * YAM_mail_lex.l: fixed problem where consecutive mail parts were also shown
     in the special signature color. Now the signature state will be reset as
     soon as a new inline part will be identified.
