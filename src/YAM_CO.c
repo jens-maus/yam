@@ -1506,16 +1506,6 @@ void CO_Validate(struct Config *co, BOOL update)
          set(G->MA->GUI.PG_MAILLIST,MUIA_ContextMenu, C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
          set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
 
-         // Now we reorder the Maingroup accordingly to the InfoBar setting
-         MA_SortWindow();
-
-         // Now we update the InfoBar because the text could have been changed
-         DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, FO_GetCurrentFolder());
-
-         // we signal the mainwindow that it may check whether to include the
-         // quicksearchbar or not
-         MA_SetupQuickSearchBar();
-
          SaveLayout(FALSE);
          MA_MakeFOFormat(G->MA->GUI.NL_FOLDERS);
          DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_MakeFormat);
@@ -1531,9 +1521,30 @@ void CO_Validate(struct Config *co, BOOL update)
 
       if(G->CO->Visited[cp_LookFeel] || G->CO->UpdateAll)
       {
+        // First we set the PG_MAILLIST and NL_FOLDER Quiet
+        set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     TRUE);
+        set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
+
+        // Now we reorder the Maingroup accordingly to the InfoBar setting
+        MA_SortWindow();
+
+        // Now we update the InfoBar because the text could have been changed
+        DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, FO_GetCurrentFolder());
+
+        // we signal the mainwindow that it may check whether to include the
+        // quicksearchbar or not
+        MA_SetupQuickSearchBar();
+
         // we signal the mainwindow that it may check whether to include the
         // embedded read pane part or not
         MA_SetupEmbeddedReadPane();
+
+        // Make sure to save the GUI layout before continuing
+        SaveLayout(FALSE);
+
+        // Now we give the control back to the NLists
+        set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     FALSE);
+        set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
 
         // and to not let the embedded read pane be empty when it is newly created
         // we have to make sure the actual selected mail is loaded

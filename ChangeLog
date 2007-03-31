@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-03-31  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_CO.c: fixed bug #1691714 where some elements of the new Look&Feel
+    configuration page were not properly respected.
+
 2007-03-30  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, YAM_UT.c, YAM_MA.c, YAM_COg.c, misc: removed the general
