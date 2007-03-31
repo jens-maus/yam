@@ -4501,7 +4501,7 @@ BOOL FileToEditor(char *file, Object *editor)
     char *parsedText;
 
     // Parse the text and do some highlighting and stuff
-    if((parsedText = ParseEmailText(text)))
+    if((parsedText = ParseEmailText(text, FALSE)))
     {
       set(editor, MUIA_TextEditor_Contents, parsedText);
       free(parsedText);

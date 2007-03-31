@@ -898,12 +898,13 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       strlcpy(co->Color3rdLevel.buf, "m3", sizeof(co->Color3rdLevel.buf));
       strlcpy(co->Color4thLevel.buf, "m1", sizeof(co->Color4thLevel.buf));
       strlcpy(co->ColorURL.buf, "p6", sizeof(co->ColorURL.buf));
+      strlcpy(co->ColorSignature.buf, "m4", sizeof(co->ColorSignature.buf));
       co->DisplayAllTexts = TRUE;
       co->FixedFontEdit = TRUE;
       co->UseTextstyles = TRUE;
       co->WrapHeader = FALSE;
       co->MultipleWindows = FALSE;
-      co->SigSepLine = 2;
+      co->SigSepLine = SST_BAR;
       co->StatusChangeDelayOn = TRUE;
       co->StatusChangeDelay   = 1000; // 1s=1000ms delay by default
       co->ConvertHTML = TRUE;

@@ -7,6 +7,14 @@ $URL$
 
 2007-03-31  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c, YAM_mail_lex.l, YAM_COg.c, misc: added possibility to specify
+    a separate text color for displaying the signature of a mail. This color
+    should be considered a kind of a 'ghosted' color which should display
+    the signature in a lightly 'hided' way. Therefore, we default the color
+    to the Shadow pen of MUI. However, the user might perfectly specify his
+    own color for displaying a signature. In addition, the whole signature
+    highlighting is now done via our flex-based mail parser instead of
+    relying on our old parsing routines in ReadInMessage().
   * YAM_CO.c: fixed bug #1691714 where some elements of the new Look&Feel
     configuration page were not properly respected.
 

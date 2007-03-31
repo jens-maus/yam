@@ -2070,10 +2070,10 @@ Object *CO_PageRead(struct CO_ClassData *data)
   siopt[3] = tr(MSG_CO_SImageOnly);
   siopt[4] = NULL;
 
-  slopt[0] = tr(MSG_CO_SLBlank);
-  slopt[1] = tr(MSG_CO_SLDash);
-  slopt[2] = tr(MSG_CO_SLBar);
-  slopt[3] = tr(MSG_CO_SLSkip);
+  slopt[SST_BLANK]= tr(MSG_CO_SLBlank);
+  slopt[SST_DASH] = tr(MSG_CO_SLDash);
+  slopt[SST_BAR]  = tr(MSG_CO_SLBar);
+  slopt[SST_SKIP] = tr(MSG_CO_SLSkip);
   slopt[4] = NULL;
 
   rropt[0] = tr(MSG_CO_MDN_ACTION_IGNORE);
@@ -2104,21 +2104,38 @@ Object *CO_PageRead(struct CO_ClassData *data)
 
             Child, ColGroup(3), GroupFrameT(tr(MSG_CO_BodyLayout)),
               Child, Label1(tr(MSG_CO_SignatureSep)),
-              Child, data->GUI.CY_SIGSEPLINE = MakeCycle(slopt,tr(MSG_CO_SignatureSep)),
+              Child, HGroup,
+                Child, data->GUI.CY_SIGSEPLINE = MakeCycle(slopt,tr(MSG_CO_SignatureSep)),
+                Child, data->GUI.CA_COLSIG = PoppenObject,
+                  MUIA_CycleChain, TRUE,
+                End,
+              End,
               Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFEDIT, tr(MSG_CO_FixedFontEdit)),
               Child, Label1(tr(MSG_CO_ColoredText)),
-              Child, data->GUI.CA_COLTEXT = PoppenObject, MUIA_CycleChain, 1, End,
+              Child, data->GUI.CA_COLTEXT = PoppenObject,
+                MUIA_CycleChain, TRUE,
+              End,
               Child, MakeCheckGroup((Object **)&data->GUI.CH_ALLTEXTS, tr(MSG_CO_DisplayAll)),
               Child, Label1(tr(MSG_CO_OldQuotes)),
               Child, HGroup,
-                Child, data->GUI.CA_COL1QUOT = PoppenObject, MUIA_CycleChain, 1, End,
-                Child, data->GUI.CA_COL2QUOT = PoppenObject, MUIA_CycleChain, 1, End,
-                Child, data->GUI.CA_COL3QUOT = PoppenObject, MUIA_CycleChain, 1, End,
-                Child, data->GUI.CA_COL4QUOT = PoppenObject, MUIA_CycleChain, 1, End,
+                Child, data->GUI.CA_COL1QUOT = PoppenObject,
+                  MUIA_CycleChain, TRUE,
+                End,
+                Child, data->GUI.CA_COL2QUOT = PoppenObject,
+                  MUIA_CycleChain, TRUE,
+                End,
+                Child, data->GUI.CA_COL3QUOT = PoppenObject,
+                  MUIA_CycleChain, TRUE,
+                End,
+                Child, data->GUI.CA_COL4QUOT = PoppenObject,
+                  MUIA_CycleChain, TRUE,
+                End,
               End,
               Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTSTYLES, tr(MSG_CO_UseTextstyles)),
               Child, Label1(tr(MSG_CO_URLCOLOR)),
-              Child, data->GUI.CA_COLURL = PoppenObject, MUIA_CycleChain, 1, End,
+              Child, data->GUI.CA_COLURL = PoppenObject,
+                MUIA_CycleChain, TRUE,
+              End,
               Child, HSpace(0),
             End,
 
@@ -2193,6 +2210,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
     SetHelp(data->GUI.CY_HEADER,          MSG_HELP_CO_CY_HEADER);
     SetHelp(data->GUI.ST_HEADERS,         MSG_HELP_CO_ST_HEADERS);
     SetHelp(data->GUI.CY_SENDERINFO,      MSG_HELP_CO_CY_SENDERINFO);
+    SetHelp(data->GUI.CA_COLSIG,          MSG_HELP_CO_CA_COLSIG);
     SetHelp(data->GUI.CA_COLTEXT,         MSG_HELP_CO_CA_COLTEXT);
     SetHelp(data->GUI.CA_COL1QUOT,        MSG_HELP_CO_CA_COL1QUOT);
     SetHelp(data->GUI.CA_COL2QUOT,        MSG_HELP_CO_CA_COL2QUOT);

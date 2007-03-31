@@ -44,6 +44,8 @@
 
     #include "YAM_mail_lex.h"
     #include "YAM_utilities.h"
+    #include "YAM_config.h"
+    #include "YAM_read.h"
 
     #include "Debug.h"
 
@@ -127,6 +129,7 @@ NOTATEOL    ([^[:punct:][:space:]]|{ESCAPE}|"/"|"=")
 ^"<sb>"                               {return tSB ; }
 ^"<tsb>"                              {return tTSB; }
 ^([[:blank:]]*[[:alpha:]]{0,3}">")+   {return tCITE;}
+^"-- \n"                              {return tSIGNATURE;}
 
 " "  {return tSPACE      ;}
 "  " {return tDOUBLESPACE;}
@@ -171,7 +174,7 @@ NOTATEOL    ([^[:punct:][:space:]]|{ESCAPE}|"/"|"=")
 /// ParseEmailText()
 //  Function to parse the supplied text and replace text passages that contain
 //  tokens that could be sourrounded by textstyles.
-char *ParseEmailText(char *mailTxt)
+char *ParseEmailText(const char *mailTxt, BOOL handleSigDash)
 {
   char *cmsg = NULL;
   int len, wptr=0;
@@ -192,7 +195,8 @@ char *ParseEmailText(char *mailTxt)
     if((cmsg = calloc(len=(strlen(mailTxt)*3)/2+1, sizeof(char))))
     {
       BOOL centerActivated = FALSE;
-      const char *colorTag = NULL;
+      BOOL signatureFound = FALSE;
+      const char *defaultPen = "\033p[0]";
 
       while((type = yylex()))
       {
@@ -212,21 +216,33 @@ char *ParseEmailText(char *mailTxt)
           {
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[12]");
             cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, colorTag ? colorTag : "\033p[0]");
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
           }
           break;
 
           case tTSB:
           {
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033c\033[s:18]");
-            centerActivated = TRUE;
+            // we only allow that obsolete <tsb> stuff to work within signatures
+            if(signatureFound)
+            {
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033c\033[s:18]");
+              centerActivated = TRUE;
+            }
+            else
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
           }
           break;
 
           case tSB:
           {
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033c\033[s:2]");
-            centerActivated = TRUE;
+            // we only allow that obsolete <sb> stuff to work within signatures
+            if(signatureFound)
+            {
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033c\033[s:2]");
+              centerActivated = TRUE;
+            }
+            else
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
           }
           break;
 
@@ -332,7 +348,7 @@ char *ParseEmailText(char *mailTxt)
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[7]#");
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, "#");
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, colorTag ? colorTag : "\033p[0]");
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, q);
               }
               else
@@ -345,25 +361,78 @@ char *ParseEmailText(char *mailTxt)
 
           case tCITE:
           {
-            char *ptr;
-            int quotelevel = 0;
-
-            while((ptr = strchr(yytext, '>')))
+            // we only allow analyzing quoting chars '>'
+            // in case we are not in the signature part of
+            // the mail
+            if(signatureFound == FALSE)
             {
-              quotelevel++;
+              char *ptr;
+              int quotelevel = 0;
 
-              // prepare the ColorTag
-              if(quotelevel%4 == 1)       colorTag = "\033p[8]";
-              else if(quotelevel%4 == 2)  colorTag = "\033p[9]";
-              else if(quotelevel%4 == 3)  colorTag = "\033p[10]";
-              else if(quotelevel%4 == 0)  colorTag = "\033p[11]";
+              while((ptr = strchr(yytext, '>')))
+              {
+                quotelevel++;
 
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, colorTag);
-              *ptr = '\0'; // temporary set the > to a null byte so that we can append to our buffer
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, ">");
-              yytext = ++ptr;
+                // prepare the ColorTag
+                if(quotelevel%4 == 1)
+                  defaultPen = "\033p[8]";
+                else if(quotelevel%4 == 2)
+                  defaultPen = "\033p[9]";
+                else if(quotelevel%4 == 3)
+                  defaultPen = "\033p[10]";
+                else if(quotelevel%4 == 0)
+                  defaultPen = "\033p[11]";
+
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+                *ptr = '\0'; // temporary set the > to a null byte so that we can append to our buffer
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, ">");
+                yytext = ++ptr;
+              }
             }
+          }
+          break;
+
+          case tSIGNATURE:
+          {
+            enum SigSepType sst = C->SigSepLine;
+
+            // as we are in the signature area of the
+            // mail now, we can set a new defaultPen (the ghosted one)
+            defaultPen = "\033p[13]";
+
+            // in case the user doesn't want to
+            // tinker around with the signature dash we
+            // just add it right away.
+            if(handleSigDash == FALSE || signatureFound == TRUE)
+              sst = SST_DASH;
+
+            switch(sst)
+            {
+              case SST_DASH:
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              break;
+
+              case SST_BAR:
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033[s:2]\n");
+              break;
+
+              case SST_BLANK:
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+              break;
+
+              case SST_SKIP:
+                // nothing
+              break;
+            }
+
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+
+            // mark the signature as 'found' so that we
+            // can show text somewhat in another color and
+            // also skip further signature things
+            signatureFound = TRUE;
           }
           break;
 
@@ -378,7 +447,14 @@ char *ParseEmailText(char *mailTxt)
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033l");
                 centerActivated = FALSE;
               }
-              colorTag = NULL;
+
+              if(signatureFound == FALSE)
+                defaultPen = "\033p[0]";
+              else
+              {
+                defaultPen = "\033p[13]";
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+              }
             }
           }
           break;
@@ -394,51 +470,55 @@ char *ParseEmailText(char *mailTxt)
 
 ///
 /// ExtractURL()
-enum tokenType ExtractURL(char *text, char *resultBuffer)
+enum tokenType ExtractURL(const char *text, char *resultBuffer)
 {
   YY_BUFFER_STATE buffer;
   enum tokenType type;
   enum tokenType result = 0;
 
-  if(!text || !resultBuffer) return 0;
+  ENTER();
 
-  // clear the resultBuffer
-  resultBuffer[0] = '\0';
-
-  // lets prepare the text for the lexer
-  if((buffer = yy_scan_string(text)))
+  if(text && resultBuffer)
   {
-    while(!result && (type = yylex()))
+    // clear the resultBuffer
+    resultBuffer[0] = '\0';
+
+    // lets prepare the text for the lexer
+    if((buffer = yy_scan_string(text)))
     {
-      switch(type)
+      while(!result && (type = yylex()))
       {
-        // all recognizeable tokens can be returned.
-        case tEMAIL:
-        case tHTTP:
-        case tHTTPS:
-        case tFTP:
-        case tFILE:
-        case tGOPHER:
-        case tTELNET:
-        case tMAILTO:
-        case tNEWS:
-        case tURL:
+        switch(type)
         {
-          // copy yytext to the resultBuffer
-          strcpy(resultBuffer, yytext);
-          result = type;
+          // all recognizeable tokens can be returned.
+          case tEMAIL:
+          case tHTTP:
+          case tHTTPS:
+          case tFTP:
+          case tFILE:
+          case tGOPHER:
+          case tTELNET:
+          case tMAILTO:
+          case tNEWS:
+          case tURL:
+          {
+            // copy yytext to the resultBuffer
+            strcpy(resultBuffer, yytext);
+            result = type;
+          }
+          break;
+
+          default:
+            // nothing
+          break;
         }
-        break;
-
-        default:
-          // nothing
-        break;
       }
-    }
 
-    yy_delete_buffer(buffer);
+      yy_delete_buffer(buffer);
+    }
   }
 
+  RETURN(result);
   return result;
 }
 

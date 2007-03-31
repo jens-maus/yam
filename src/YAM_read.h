@@ -60,6 +60,7 @@
 enum ReadInMode { RIM_QUIET, RIM_READ, RIM_EDIT, RIM_QUOTE, RIM_PRINT };
 enum HeaderMode { HM_NOHEADER, HM_SHORTHEADER, HM_FULLHEADER };
 enum SInfoMode  { SIM_OFF, SIM_DATA, SIM_ALL, SIM_IMAGE };
+enum SigSepType { SST_BLANK, SST_DASH, SST_BAR, SST_SKIP };
 
 // flags & macros for MDN (message disposition notification)
 enum MDNMode    { MDN_MODE_DISPLAY, MDN_MODE_DELETE };

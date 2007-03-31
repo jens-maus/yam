@@ -28,6 +28,8 @@
 
 ***************************************************************************/
 
+#include <exec/types.h>
+
 enum tokenType
 {
   tSPACE = 1,
@@ -64,7 +66,7 @@ enum tokenType
   tCOLORED
 };
 
-char *ParseEmailText(char *mailTxt);
-enum tokenType ExtractURL(char *text, char *resultBuffer);
+char *ParseEmailText(const char *mailTxt, BOOL handleSigDash);
+enum tokenType ExtractURL(const char *text, char *resultBuffer);
 
 #endif /* YAM_MAIL_LEX_H */

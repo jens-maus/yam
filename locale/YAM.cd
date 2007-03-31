@@ -6159,3 +6159,7 @@ _Okay
 MSG_ER_USER_UNKNOWN_ERROR (1912//)
 The user '%s' is not known!
 ;
+MSG_HELP_CO_CA_COLSIG (1913//)
+The text color that should be used\n\
+to render the signature of a mail.
+;

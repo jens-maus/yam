@@ -357,6 +357,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "ShowSenderInfo   = %d\n", co->ShowSenderInfo);
       fprintf(fh, "WrapHeader       = %s\n", Bool2Txt(co->WrapHeader));
       fprintf(fh, "SigSepLine       = %d\n", co->SigSepLine);
+      fprintf(fh, "ColorSignature   = %s\n", co->ColorSignature.buf);
       fprintf(fh, "ColoredText      = %s\n", co->ColoredText.buf);
       fprintf(fh, "Color1stLevel    = %s\n", co->Color1stLevel.buf);
       fprintf(fh, "Color2ndLevel    = %s\n", co->Color2ndLevel.buf);
@@ -901,6 +902,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "ShowSenderInfo")) co->ShowSenderInfo = atoi(value);
                else if (!stricmp(buffer, "WrapHeader"))     co->WrapHeader = Txt2Bool(value);
                else if (!stricmp(buffer, "SigSepLine"))     co->SigSepLine = atoi(value);
+               else if (!stricmp(buffer, "ColorSignature")) strlcpy(co->ColorSignature.buf, value, sizeof(co->ColorSignature.buf));
                else if (!stricmp(buffer, "ColoredText"))    strlcpy(co->ColoredText.buf, value, sizeof(co->ColoredText.buf));
                else if (!stricmp(buffer, "Color1stLevel"))  strlcpy(co->Color1stLevel.buf, value, sizeof(co->Color1stLevel.buf));
                else if (!stricmp(buffer, "Color2ndLevel"))  strlcpy(co->Color2ndLevel.buf, value, sizeof(co->Color2ndLevel.buf));
@@ -1542,12 +1544,13 @@ void CO_GetConfig(BOOL saveConfig)
         GetMUIString(CE->ShortHeaders, gui->ST_HEADERS, sizeof(CE->ShortHeaders));
         CE->ShowSenderInfo    = GetMUICycle  (gui->CY_SENDERINFO);
         CE->SigSepLine        = GetMUICycle  (gui->CY_SIGSEPLINE);
-        CE->ColoredText       = *(struct MUI_PenSpec *)xget(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec);
-        CE->Color1stLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec);
-        CE->Color2ndLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec);
-        CE->Color3rdLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec);
-        CE->Color4thLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec);
-        CE->ColorURL          = *(struct MUI_PenSpec *)xget(gui->CA_COLURL,   MUIA_Pendisplay_Spec);
+        memcpy(&CE->ColorSignature, (struct MUI_PenSpec*)xget(gui->CA_COLSIG,   MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
+        memcpy(&CE->ColoredText,    (struct MUI_PenSpec*)xget(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
+        memcpy(&CE->Color1stLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
+        memcpy(&CE->Color2ndLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
+        memcpy(&CE->Color3rdLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
+        memcpy(&CE->Color4thLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
+        memcpy(&CE->ColorURL,       (struct MUI_PenSpec*)xget(gui->CA_COLURL,   MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
         CE->DisplayAllTexts   = GetMUICheck  (gui->CH_ALLTEXTS);
         CE->FixedFontEdit     = GetMUICheck  (gui->CH_FIXFEDIT);
         CE->WrapHeader        = GetMUICheck  (gui->CH_WRAPHEAD);
@@ -1901,6 +1904,7 @@ void CO_SetConfig(void)
         setstring   (gui->ST_HEADERS   ,CE->ShortHeaders);
         setcycle    (gui->CY_SENDERINFO,CE->ShowSenderInfo);
         setcycle    (gui->CY_SIGSEPLINE,CE->SigSepLine);
+        set(gui->CA_COLSIG,   MUIA_Pendisplay_Spec, &CE->ColorSignature);
         set(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec, &CE->ColoredText);
         set(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec, &CE->Color1stLevel);
         set(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec, &CE->Color2ndLevel);

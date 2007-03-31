@@ -118,6 +118,7 @@ OVERLOAD(MUIM_Show)
   data->colorMap[9] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color3rdLevel, 0);
   data->colorMap[10] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color4thLevel, 0);
   data->colorMap[11] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorURL, 0);
+  data->colorMap[12] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorSignature, 0);
 
   // call the supermethod
   result = DoSuperMethodA(cl, obj, msg);
@@ -141,7 +142,7 @@ OVERLOAD(MUIM_Hide)
     int i;
 
     // release all pens of our own colorMap
-    for(i=6; i <= 11; i++)
+    for(i=6; i <= 12; i++)
     {
       if(data->colorMap[i] >= 0)
       {

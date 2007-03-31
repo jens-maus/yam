@@ -2600,6 +2600,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             char *rptr;
             char *eolptr;
             int nread;
+            BOOL signatureFound = FALSE;
 
             *msg = '\n';
             nread = fread(msg+1, 1, (size_t)(part->Size), fh);
@@ -2931,16 +2932,24 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
                 D(DBF_MAIL, "done with decryption");
               }
-/* Signat. */ else if(!strcmp(rptr, "-- "))
+/* Signat. */ else if(signatureFound == FALSE && !strcmp(rptr, "-- "))
               {
-                if (mode == RIM_READ)
+                if(mode == RIM_READ)
                 {
-                  if(C->SigSepLine == 1)
-                    cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
-                  else if(C->SigSepLine == 2)
-                    cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033[s:2]");
-                  else if(C->SigSepLine == 3)
+                  if(C->SigSepLine == SST_BAR) // show seperator bar
+                  {
+                    if(rmData->useTextstyles == FALSE)
+                      cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033[s:2]");
+                    else
+                      cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
+                  }
+                  else if(C->SigSepLine == SST_SKIP) // skip signature
                     break;
+                  else if(C->SigSepLine == SST_DASH || // show "-- "
+                          (C->SigSepLine == SST_BLANK && rmData->useTextstyles))
+                  {
+                    cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
+                  }
 
                   if(newlineAtEnd)
                     cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
@@ -2959,6 +2968,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   else
                     cmsg = AppendToBuffer(cmsg, &wptr, &len, "-- ");
                 }
+
+                signatureFound = TRUE;
               }
 /* PGP sig */ else if (!strncmp(rptr, "-----BEGIN PGP PUBLIC KEY BLOCK", 31))
               {

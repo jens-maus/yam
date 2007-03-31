@@ -275,6 +275,7 @@ struct CO_GUIData
   Object *CY_MDN_OTHER;
   Object *CH_REQUESTMDN;
   Object *CH_RELDATETIME;
+  Object *CA_COLSIG;
 };
 
 enum ConfigPage
@@ -372,7 +373,6 @@ struct Config
    int   NotifyType;
    int   ShowHeader;
    int   ShowSenderInfo;
-   int   SigSepLine;
    int   EdWrapCol;
    int   EdWrapMode;
    int   FolderCols;
@@ -412,6 +412,7 @@ struct Config
    enum  MDNAction      MDN_OnDelete;
    enum  MDNAction      MDN_Other;
    enum  DateStampType  DSListFormat;
+   enum  SigSepType     SigSepLine;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;
@@ -487,6 +488,7 @@ struct Config
    struct MUI_PenSpec Color3rdLevel;
    struct MUI_PenSpec Color4thLevel;
    struct MUI_PenSpec ColorURL;
+   struct MUI_PenSpec ColorSignature;
    struct RxHook      RX[MAXRX];
    struct TRSocketOpt SocketOptions;
 

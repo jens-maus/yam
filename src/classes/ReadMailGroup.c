@@ -700,7 +700,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
       // try to set some styles, as we don`t use the buggy ImportHooks of TextEditor anymore and are anyway
       // more powerful this way.
       if(rmData->useTextstyles)
-        body = ParseEmailText(cmsg);
+        body = ParseEmailText(cmsg, TRUE);
       else
         body = cmsg;
 
