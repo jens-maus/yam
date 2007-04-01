@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 6.0 (18.03.2007)
+## version $VER: YAM.catalog 6.0 (01.04.2007)
 ## language français
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 2731 2007-03-18 00:18:07Z
+; based on YAM.cd 2811 2007-03-31 11:11:19Z
 ;
 ; General
 ;
@@ -1089,14 +1089,6 @@ MSG_CO_SenderMsgID
 %m  Message d'origine : ID du message
 ; %m  Original message: Message ID
 ;
-MSG_CO_SenderInitials
-%i  Expéditeur d'origine : Initiales
-; %i  Original sender: Initials
-;
-MSG_CO_Sender2Initials
-%j  Expéditeur d'origine : Deux initiales
-; %j  Original sender: Two initials
-;
 MSG_CO_RecptName
 %r  Destinataire : Nom
 ; %r  Recipient: Name
@@ -1324,17 +1316,9 @@ MSG_CO_TimeZone
 Fuseau _horaire
 ; Time _zone
 ;
-MSG_CO_DaylightSaving
-_Correction de l'heure d'été
-; _Add adjustment for daylight saving time
-;
 MSG_CO_SendMail
 Envoi (SMTP)
 ; Send mail (SMTP)
-;
-MSG_CO_Server
-Ser_veur
-; Ser_ver
 ;
 MSG_CO_Domain
 Do_maine
@@ -1418,7 +1402,7 @@ Taille _limite
 ;
 MSG_CO_WarnSize2
 Ko
-; kB
+; KB
 ;
 MSG_CO_AutoOperation
 Opération automatique
@@ -1616,10 +1600,6 @@ MSG_CO_FixedFontEdit
 _Police fixe
 ; Use _fixed font
 ;
-MSG_CO_MimeViewers
-Programmes MIME
-; MIME viewers
-;
 MSG_CO_MimeType
 T_ype du fichier
 ; Attachment _type
@@ -1735,10 +1715,6 @@ Sur ces _domaines
 MSG_CO_MLRepInit
 _Listes de discussions
 ; _Mailing list reply phrase
-;
-MSG_CO_QuoteMail
-Citation _interne avec
-; _Quote message using
 ;
 MSG_CO_QuoteEmpty
 Citer les li_gnes vides
@@ -2140,12 +2116,6 @@ Choisissez le fuseau horaire\n\
 correspondant à votre lieu
 ; Select the timezone of\n\
 ; your current location
-;
-MSG_HELP_CO_CH_DLSAVING
-Utilise le décalage horaire\n\
-en heure d'été.
-; Adjust the timezone during daylight\n\
-; saving time (summer time)
 ;
 MSG_HELP_CO_ST_SMTPHOST
 Adresse du serveur SMTP pour l'envoi du courrier.\n\
@@ -2590,14 +2560,6 @@ Citer le message original\n\
 lors de la réponse ?
 ; Quote original\n\
 ; message in reply?
-;
-MSG_HELP_CO_ST_REPLYCHAR
-Chaîne de caractères à insérer au début de chaque\n\
-ligne citée dans un message. Vous pouvez\n\
-y ajouter des variables. Voir gadget de droite.
-; String that should precede each line of\n\
-; the quoted message. Use the button at\n\
-; the right side to insert a variable.
 ;
 MSG_HELP_CO_CH_QUOTEEMPTY
 Marquer aussi les lignes vides ?
@@ -5822,19 +5784,9 @@ MSG_WR_AltQuoted
 Citation externe
 ; Alternate quoted
 ;
-MSG_CO_AltQuote
-Citation e_xterne avec
-; Quote e_xternal using
-;
 MSG_CO_DoQuote
 Citer le _message
 ; Qu_ote message
-;
-MSG_HELP_CO_ST_ALTQUOTECHAR
-Chaîne de caractères devant précéder chaque ligne\n\
-citée, d'une source autre qu'un courrier électronique
-; String that should precede each line of a\n\
-; quote inserted from non-email sources
 ;
 MSG_EA_SelectPhoto_Title
 Choisir un portrait
@@ -5871,14 +5823,6 @@ MSG_FOLDER_NEWFOLDERGROUP
 Nouveau groupe...
 ; New folder group...
 ;This is the pulldown menu item, not the one in the pop-up menu
-;
-MSG_FOLDER_SNAPSHOT
-Sauver arborescence
-; Snapshot tree
-;
-MSG_FOLDER_RELOAD
-Recharger arborescence
-; Reload tree
 ;
 MSG_CO_GENLISTCFG
 Réglages généraux
@@ -6180,41 +6124,10 @@ Mettre 0 pour désactiver cette caractéristique.
 ; recipients not yet in the address book.\n\
 ; Select 0 to disable this feature.
 ;
-MSG_CO_POP3SSL
-Utilise_r POP3 TLSv1/SSLv3
-; Use POP3 TLSv1/SSLv3
-;
-MSG_HELP_CO_CH_POP3SSL
-YAM se connectera via TLSv1/SSLv3 au serveur POP3\n\
-sur le port 995 de POP3 SSL et transférera les courriers\n\
-à partir de là. Si l'option est grisée, c'est que la gestion\n\
-AmiSSL n'est pas disponible.
-; YAM will connect via TLSv1/SSLv3 to the POP3 server on the\n\
-; POP3 SSL port 995 port and transfer email from there. If this\n\
-; checkbox is ghosted, it means AmiSSL support is not available.
-;
-MSG_CO_USESTLS
-avec ST_LS
-; _with STLS
-;
-MSG_HELP_CO_CH_USESTLS
-Si l'option est activée, le serveur POP3 est censé\n\
-gérer STLS et utiliser le standard POP3 sur le port 110\n\
-comme n'importe quel serveur non SSL.
-; If checked, the POP3 server is assumed to support STLS\n\
-; and use the standard POP3 110 port like any non SSL server.
-;
-MSG_CO_ST_SMTPPORT
-Port
-; Port
-;
 MSG_HELP_CO_ST_SMTPPORT
 Port utilisé par le serveur SMTP (défaut : 25)
-; Port used by the SMTP server (default: 25)
-;
-MSG_CO_ST_POPPORT
-Port
-; Port
+; Port used by the SMTP server\n\
+; (default: 25)
 ;
 MSG_HELP_CO_ST_POPPORT
 Port utilisé par le serveur POP3 (défaut : 110)
@@ -8541,4 +8454,144 @@ Lorsqu'aucun des cas précédents ne s'applique,\n\
 cette action est exécutée à la place.
 ; In case none of the above rules match,\n\
 ; this action will be performed instead.
+;
+MSG_CO_LOOKFEEL_TITLE
+Look&Feel
+; Look&Feel
+;
+MSG_CO_LOOKFEEL_SUMMARY
+Configure le look&feel général de YAM...
+; Configure the general look&feel of YAM...
+;
+MSG_CO_CRDLOOKFEEL
+Look&Feel
+; Look&Feel
+;
+MSG_CO_DSTACTIVE
+La _correction d'heure d'été (DST) est active
+; D_aylight Saving Time (DST) is active
+;
+MSG_HELP_CO_CH_DSTACTIVE
+Activer si la correction d'heure est\n\
+actuellement en cours pour votre fuseau\n\
+horaire (i.e. heure d'été).
+; Activate if the daylight saving time is\n\
+; currently active in your timezone\n\
+; (summer time)
+;
+MSG_CO_SMTPSERVERPORT
+Ser_veur/Port
+; Ser_ver/Port
+;
+MSG_CO_POP3SERVERPORT
+Serveu_r/Port
+; Serve_r/Port
+;
+MSG_CO_POP3SECURE
+Utiliser une connexion sécurisée :
+; Use secure connection:
+;
+MSG_CO_POP3SECURE_NO
+Oui
+; No
+;
+MSG_CO_POP3SECURE_TLS
+avec TLSv1
+; with TLSv1
+;
+MSG_CO_POP3SECURE_SSL
+avec SSLv3
+; with SSLv3
+;
+MSG_HELP_CO_RA_POP3SECURE
+Une connexion sécurisée TLSv1 ou SSLv3 sera établie entre le\n\
+serveur POP3 et YAM pour recevoir le courrier via une connexion\n\
+cryptée. Si ces boutons radio sont grisés, cela signifie que le\n\
+support AmiSSL n'est pas disponible.
+; A TLSv1 or SSLv3 secure connection will be established between\n\
+; the POP3 server and YAM to receive email through an encrypted\n\
+; connection. If these radio buttons are ghosted, it means AmiSSL\n\
+; support is currently not available.
+;
+MSG_CO_LOOKFEEL_THEMES
+Thèmes
+; Themes
+;
+MSG_CO_THEME_ACTIVATE
+Activer
+; Activate
+;
+MSG_CO_THEME_PREVIEW
+Aperçu
+; Preview
+;
+MSG_CO_THEME_AUTHOR
+Auteur
+; Author
+;
+MSG_CO_THEME_URL
+URL
+; URL
+;
+MSG_CO_RELDATETIME
+Format des dates relatives (Aujourd'hui, hier...)
+; Relative date output (Today, Yesterday, ...)
+;
+MSG_HELP_CO_CH_RELDATETIME
+Avec cette option, les colonnes contenant des\n\
+dates utiliseront des format relatifs. Par exemple\n\
+de telles colonnes afficheront des textes comme\n\
+« Aujourd'hui » ou « Hier » au lieu de la date.
+; If selected, columns with date information\n\
+; will use a relative output instead. E.g.\n\
+; such colums will show strings like 'Today'\n\
+; or 'Yesterday' instead of the full date.
+;
+MSG_ER_LOADDT_TITLE
+Erreur de traitement des données de l'image
+; Image data processing error
+;
+MSG_ER_LOADDT_ERROR
+Une erreur est survenue au cours du chargement des données\n\
+de l'image « %s » via datatypes.library.\n\
+\n\
+Veuillez vous assurer que votre système de datatypes est\n\
+configurer correctement (p. ex. que l'image s'affiche sous\n\
+Multiview correctement).
+; An error occurred while trying to load the image data\n\
+; of '%s' via datatypes.library.\n\
+; \n\
+; Please make sure that you have your datatypes system\n\
+; correctly setup (e.g. that the image properly displays\n\
+; in Multiview).
+;
+MSG_ER_LOADDT_BUTTON
+_Ok
+; _Okay
+;
+MSG_FOLDER_SNAPSHOT_TREE
+Figer la disposition
+; Snapshot arrangement
+;
+MSG_FOLDER_RELOAD_TREE
+Recharger la disposition
+; Reload arrangement
+;
+MSG_ER_USER_UNKNOWN_TITLE
+Utilisateur inconnu
+; Unknown user
+;
+MSG_ER_USER_UNKNOWN_BUTTON
+_Ok
+; _Okay
+;
+MSG_ER_USER_UNKNOWN_ERROR
+L'utilisateur « %s » est inconnu !
+; The user '%s' is not known!
+;
+MSG_HELP_CO_CA_COLSIG
+La couleur de texte à utiliser pour\n\
+afficher la signature d'un message.
+; The text color that should be used\n\
+; to render the signature of a mail.
 ;

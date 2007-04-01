@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-01  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/francais.ct: french translation update according to latest changes.
+
 2007-04-01  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c: the color requesting poppen objects will now be disabled in case
