@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-01  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_COg.c: the color requesting poppen objects will now be disabled in case
+    the 'Use Textstyles' checkbox is turned off.
+
 2007-03-31  Jens Langner <Jens.Langner@light-speed.de>
 
   * classes/InfoBar.c: more changes to the HorizDisappear levels to get rid of

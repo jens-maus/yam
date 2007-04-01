@@ -2233,6 +2233,16 @@ Object *CO_PageRead(struct CO_ClassData *data)
     SetHelp(data->GUI.CY_MDN_DELETE,      MSG_HELP_CO_CY_MDN_DELETE);
     SetHelp(data->GUI.CY_MDN_OTHER,       MSG_HELP_CO_CY_MDN_OTHER);
 
+    // disable all poppen objects in case the textstyles checkbox is disabled
+    DoMethod(data->GUI.CH_TEXTSTYLES, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
+             MUIV_Notify_Application, 10, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.CA_COLSIG,
+                                                                                              data->GUI.CA_COLTEXT,
+                                                                                              data->GUI.CA_COL1QUOT,
+                                                                                              data->GUI.CA_COL2QUOT,
+                                                                                              data->GUI.CA_COL3QUOT,
+                                                                                              data->GUI.CA_COL4QUOT,
+                                                                                              data->GUI.CA_COLURL);
+
     DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 0, data->GUI.ST_HEADERS, 3, MUIM_Set, MUIA_Disabled, TRUE);
     DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 1, data->GUI.ST_HEADERS, 3, MUIM_Set, MUIA_Disabled, FALSE);
     DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 2, data->GUI.ST_HEADERS, 3, MUIM_Set, MUIA_Disabled, TRUE);
