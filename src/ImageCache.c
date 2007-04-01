@@ -99,12 +99,12 @@ static const char *imageFileArray[MAX_IMAGES] =
 static BOOL LoadImage(struct imageCacheNode *node, const char *filename)
 {
   BOOL result = FALSE;
-  Object *o = NULL;
 
   ENTER();
 
   if(FileExists(filename))
   {
+    Object *o;
     struct Process *myproc;
     APTR oldwindowptr;
 
@@ -153,7 +153,7 @@ static BOOL LoadImage(struct imageCacheNode *node, const char *filename)
       }
     }
     else
-      E(DBF_IMAGE, "wasn't able to load specified image '%s'", filename);
+      E(DBF_IMAGE, "wasn't able to load specified image '%s'. error: %d", filename, IoErr());
   }
   else
     W(DBF_IMAGE, "specified image '%s' doesn't exist.", filename);
