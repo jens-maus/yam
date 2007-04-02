@@ -159,8 +159,11 @@ static struct Token *tokenizerGet(struct Tokenizer *t,
   ENTER();
 
   entry = HashTableOperate(&t->tokenTable, word, htoLookup);
-  if(!HASH_ENTRY_IS_LIVE(entry))
+  if(HASH_ENTRY_IS_FREE(entry))
+  {
+  	// we didn't find the entry we were looking for
     entry = NULL;
+  }
 
   RETURN(entry);
   return (struct Token *)entry;
@@ -185,13 +188,10 @@ static struct Token *tokenizerAdd(struct Tokenizer *t,
 
   if((tmpWord = (STRPTR)malloc(len)) != NULL)
   {
-    tmpWord[0] = '\0';
-    if(prefix != NULL)
-    {
-      strlcat(tmpWord, prefix, len);
-      strlcat(tmpWord, ":", len);
-    }
-    strlcat(tmpWord, word, len);
+  	if(prefix != NULL)
+  	  snprintf(tmpWord, len, "%s:%s", prefix, word);
+  	else
+  	  strlcpy(tmpWord, word, len);
 
     if((token = (struct Token *)HashTableOperate(&t->tokenTable, tmpWord, htoAdd)) != NULL)
     {
@@ -245,6 +245,7 @@ static void tokenizerRemove(struct Tokenizer *t,
 // check if <word> is a decimal number
 static BOOL isDecimalNumber(CONST_STRPTR word)
 {
+  BOOL isDecimal = TRUE;
   CONST_STRPTR p = word;
   TEXT c;
 
@@ -257,19 +258,20 @@ static BOOL isDecimalNumber(CONST_STRPTR word)
   {
     if(!isdigit(c))
     {
-      RETURN(FALSE);
-      return FALSE;
+      isDecimal = FALSE;
+      break;
     }
   }
 
-  RETURN(TRUE);
-  return TRUE;
+  RETURN(isDecimal);
+  return isDecimal;
 }
 ///
 /// isASCII()
 // check if <word> is an ASCII word
 static BOOL isASCII(CONST_STRPTR word)
 {
+  BOOL isAsc = TRUE;
   CONST_STRPTR p = word;
   TEXT c;
 
@@ -279,13 +281,13 @@ static BOOL isASCII(CONST_STRPTR word)
   {
     if(c > 127)
     {
-      RETURN(FALSE);
-      return FALSE;
+      isAsc = FALSE;
+      break;
     }
   }
 
-  RETURN(TRUE);
-  return TRUE;
+  RETURN(isAsc);
+  return isAsc;
 }
 ///
 /// tokenizerAddTokenForHeader()
@@ -309,14 +311,13 @@ static void tokenizerAddTokenForHeader(struct Tokenizer *t,
 
       do
       {
+        // split the line into separate words
         if((next = strpbrk(word, BAYES_TOKEN_DELIMITERS)) != NULL)
           *next++ = '\0';
 
-        if(word[0] != '\0' && !isDecimalNumber(word))
-        {
-          if(isASCII(word))
-            tokenizerAdd(t, word, prefix, 1);
-        }
+        // add all non-empty and non-number words to the tokenizer
+        if(word[0] != '\0' && !isDecimalNumber(word) && isASCII(word))
+          tokenizerAdd(t, word, prefix, 1);
 
         word = next;
       }
@@ -379,27 +380,28 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
   {
     struct HeaderNode *hdr = (struct HeaderNode *)node;
     STRPTR name;
-    STRPTR content;
 
-    name = strdup(hdr->name);
-    content = strdup(hdr->content);
-
-    if(name != NULL && content != NULL)
+    if((name = strdup(hdr->name)) != NULL)
     {
-      ToLowerCase(name);
-      ToLowerCase(content);
+      STRPTR content;
 
-      SHOWSTRING(DBF_SPAM, name);
-      SHOWSTRING(DBF_SPAM, content);
-
-      switch(name[0])
+      if((content = strdup(hdr->content)) != NULL)
       {
-        case 'c':
+        ToLowerCase(name);
+        ToLowerCase(content);
+
+        SHOWSTRING(DBF_SPAM, name);
+        SHOWSTRING(DBF_SPAM, content);
+
+        switch(name[0])
         {
-          if(strcmp(name, "content-type") == 0)
+          case 'c':
           {
-            tokenizerAddTokenForHeader(t, "content-type", contentType, FALSE);
-            tokenizerAddTokenForHeader(t, "charset", charSet, FALSE);
+            if(strcmp(name, "content-type") == 0)
+            {
+              tokenizerAddTokenForHeader(t, "content-type", contentType, FALSE);
+              tokenizerAddTokenForHeader(t, "charset", charSet, FALSE);
+            }
           }
           break;
 
@@ -440,10 +442,9 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
           }
           break;
         }
+        free(content);
       }
-
       free(name);
-      free(content);
     }
   }
 
@@ -1243,7 +1244,7 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
                                          struct Tokenizer *t,
                                          struct Mail *mail)
 {
-  BOOL isSpam = FALSE;
+  BOOL isSpam;
 
   ENTER();
 
@@ -1401,7 +1402,7 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
       {
         // no good tokens so far, assume spam
         E(DBF_SPAM, "no good tokens so far, assuming spam");
-        isSpam = TRUE; 
+        isSpam = TRUE;
       }
 
       free(tokens);
@@ -1410,13 +1411,14 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
     {
       // cannot copy tokens, assume spam
       E(DBF_SPAM, "cannot copy tokens, assuming spam");
-      isSpam = TRUE; 
+      isSpam = TRUE;
     }
   }
   else
   {
     // sender found in address book, assume ham
     D(DBF_SPAM, "found sender \"%s\" in address book, assuming non-spam", mail->From.Address);
+    isSpam = FALSE;
   }
 
   RETURN(isSpam);
@@ -1608,4 +1610,6 @@ void BayesFilterResetTrainingData(void)
   LEAVE();
 }
 ///
+
+
 
