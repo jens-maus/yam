@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-02  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: fixed a possible random pointer access in the SWSSearch()
+    function which could happen in a low memory situation.
+
 2007-04-01  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: french translation update according to latest changes.

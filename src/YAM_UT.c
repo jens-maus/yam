@@ -6277,7 +6277,8 @@ char *SWSSearch(char *str1, char *str2)
   // to signal us to free the destination string
   if(str1 == NULL || str2 == NULL)
   {
-    if(Z) free(Z);
+    if(Z != NULL)
+      free(Z);
     Z = NULL;
     return NULL;
   }
@@ -6294,37 +6295,34 @@ char *SWSSearch(char *str1, char *str2)
   // now we have to alloc our help matrixes
   if(!(L   = calloc(lx,   sizeof(int))))  goto abort;
   if(!(Ind = calloc(lx,   sizeof(int))))  goto abort;
-  for(i=0; i < lx; i++)
+  for(i = 0; i < lx; i++)
   {
     if(!(L[i]   = calloc(ly, sizeof(int)))) goto abort;
     if(!(Ind[i] = calloc(ly, sizeof(int)))) goto abort;
   }
 
   // and allocate the result string separately
-  if(Z) free(Z);
+  if(Z != NULL)
+  	free(Z);
   if(!(Z = calloc(lz, sizeof(char)))) goto abort;
 
   // we copy str1&str2 into X and Y but have to copy a placeholder in front of them
   memcpy(&X[1], str1, lx);
   memcpy(&Y[1], str2, ly);
 
-  for(i=0; i < lx; i++)
-  {
+  for(i = 1; i < lx; i++)
     Ind[i][0] = DELX;
-  }
 
-  for(j=0; j < ly; j++)
-  {
+  for(j = 1; j < ly; j++)
     Ind[0][j] = DELY;
-  }
 
   Ind[0][0] = DONE;
 
   // Now we calculate the L matrix
   // this is the first step of the SW algorithm
-  for(i=1; i < lx; i++)
+  for(i = 1; i < lx; i++)
   {
-    for(j=1; j < ly; j++)
+    for(j = 1; j < ly; j++)
     {
       if(toupper(X[i]) == toupper(Y[j]))  // case insensitive version
       {
@@ -6397,7 +6395,7 @@ char *SWSSearch(char *str1, char *str2)
     {
       if(!gap)
       {
-        if(j>0)
+        if(j > 0)
         {
           Z[--lz] = '?';
           Z[--lz] = '#';
@@ -6410,7 +6408,7 @@ char *SWSSearch(char *str1, char *str2)
     {
       if(!gap)
       {
-        if(i>0)
+        if(i > 0)
         {
           Z[--lz] = '?';
           Z[--lz] = '#';
@@ -6426,17 +6424,30 @@ char *SWSSearch(char *str1, char *str2)
 abort:
 
   // now we free our temporary buffers now
-  if(X)   free(X);
-  if(Y)   free(Y);
+  if(X != NULL)
+  	free(X);
+  if(Y != NULL)
+  	free(Y);
 
   // lets free our help matrixes
-  for(i=0; i < lx; i++)
+  if(L != NULL)
   {
-    if(L[i])    free(L[i]);
-    if(Ind[i])  free(Ind[i]);
+    for(i = 0; i < lx; i++)
+    {
+      if(L[i] != NULL)
+      	free(L[i]);
+    }
+    free(L);
   }
-  if(L)   free(L);
-  if(Ind) free(Ind);
+  if(Ind != NULL)
+  {
+    for(i = 0; i < lx; i++)
+    {
+      if(Ind[i] != NULL)
+      	free(Ind[i]);
+    }
+    free(Ind);
+  }
 
   return success ? &(Z[lz]) : NULL;
 }
