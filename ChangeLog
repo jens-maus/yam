@@ -7,6 +7,8 @@ $URL$
 
 2007-04-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE.c: cleaned up the function RE_GetThread() and fixed a wrong jump out
+    of the function if getting the index of a folder was successful.
   * YAM_COs.c, locale/YAM.cd, locale/deutsch.ct: if the option "mark spam mails
     as read" is enabled but less than 100 mails have been classified yet a
     requester will now ask the user if this is really intended.

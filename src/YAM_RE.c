@@ -85,26 +85,26 @@ static BOOL RE_HandleMDNReport(const struct Part *frp);
 //  Function that find the next/prev message in a thread and returns a pointer to it
 struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAllFolder, Object *readWindow)
 {
-   struct Folder **flist;
-   struct Mail *mail = NULL;
-   BOOL found = FALSE;
+  struct Mail *mail = NULL;
 
-   if(srcMail)
-   {
-      // first we take the folder of the srcMail as a priority in the
-      // search of the next/prev thread so we have to check that we
-      // have a valid index before we are going to go on.
-      if(srcMail->Folder->LoadedMode != LM_VALID && MA_GetIndex(srcMail->Folder))
-      {
-        return NULL;
-      }
+  ENTER();
+
+  if(srcMail != NULL)
+  {
+    // first we take the folder of the srcMail as a priority in the
+    // search of the next/prev thread so we have to check that we
+    // have a valid index before we are going to go on.
+    if(srcMail->Folder->LoadedMode == LM_VALID || MA_GetIndex(srcMail->Folder))
+    {
+      struct Folder **flist;
+      BOOL found = FALSE;
 
       // ok the folder is valid and we can scan it now
-      for(mail = srcMail->Folder->Messages; mail; mail = mail->Next)
+      for(mail = srcMail->Folder->Messages; mail != NULL; mail = mail->Next)
       {
         if(nextThread) // find the answer to the srcMail
         {
-          if(mail->cIRTMsgID && mail->cIRTMsgID == srcMail->cMsgID)
+          if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
           {
             found = TRUE;
             break;
@@ -112,7 +112,7 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
         }
         else // else we have to find the question to the srcMail
         {
-          if(mail->cMsgID && mail->cMsgID == srcMail->cIRTMsgID)
+          if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
           {
             found = TRUE;
             break;
@@ -121,19 +121,20 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
       }
 
       // if we still haven`t found the mail we have to scan the other folder aswell
-      if(!found && (flist = FO_CreateList()))
+      if(!found && (flist = FO_CreateList()) != NULL)
       {
         int i;
         int autoloadindex = -1;
 
-        for(i=1; i <= (int)*flist && !found; i++)
+        for(i = 1; i <= (int)*flist && !found; i++)
         {
+          struct Folder *fo = flist[i];
+
           // check if this folder isn't a group and that we haven't scanned
           // it already.
-          if(!isGroupFolder(flist[i]) &&
-             flist[i] != srcMail->Folder)
+          if(!isGroupFolder(fo) && fo != srcMail->Folder)
           {
-            if(flist[i]->LoadedMode != LM_VALID)
+            if(fo->LoadedMode != LM_VALID)
             {
               if(autoloadindex == -1)
               {
@@ -144,48 +145,51 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
                                  tr(MSG_MA_ConfirmReq),
                                  tr(MSG_YesNoReq),
                                  tr(MSG_RE_FOLLOWTHREAD)))
-                  {
                     autoloadindex = 1;
-                  }
-                  else autoloadindex = 0;
+                  else
+                    autoloadindex = 0;
                 }
-                else autoloadindex = 0;
+                else
+                  autoloadindex = 0;
               }
 
-              // we have to check again and perhaps load the index or continue
+              // load the folder's index, if we are allowed to do that
               if(autoloadindex == 1)
-              {
-                if(!MA_GetIndex(flist[i])) continue;
-              }
-              else continue;
+                MA_GetIndex(fo);
             }
 
-            // if we end up here we have a valid index and can scan the folder
-            for(mail = flist[i]->Messages; mail; mail = mail->Next)
+            // check again for a valid index
+            if(fo->LoadedMode == LM_VALID)
             {
-              if(nextThread) // find the answer to the srcMail
+              // now scan the folder
+              for(mail = fo->Messages; mail != NULL; mail = mail->Next)
               {
-                if(mail->cIRTMsgID && mail->cIRTMsgID == srcMail->cMsgID)
+                if(nextThread) // find the answer to the srcMail
                 {
-                  found = TRUE;
-                  break;
+                  if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
+                  {
+                    found = TRUE;
+                    break;
+                  }
                 }
-              }
-              else // else we have to find the question to the srcMail
-              {
-                if(mail->cMsgID && mail->cMsgID == srcMail->cIRTMsgID)
+                else // else we have to find the question to the srcMail
                 {
-                  found = TRUE;
-                  break;
+                  if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
+                  {
+                    found = TRUE;
+                    break;
+                  }
                 }
               }
             }
           }
         }
       }
-   }
+    }
+  }
 
-   return mail;
+  RETURN(mail);
+  return mail;
 }
 
 ///
