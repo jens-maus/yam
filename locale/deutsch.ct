@@ -1067,14 +1067,6 @@ MSG_CO_SenderMsgID
 %m  Ursprüngliche Nachricht: Nachrichten-ID
 ; %m  Original message: Message ID
 ;
-MSG_CO_SenderInitials
-%i  Ursprünglicher Sender: Initialen
-; %i  Original sender: Initials
-;
-MSG_CO_Sender2Initials
-%j  Ursprünglicher Sender: Zwei Initialen
-; %j  Original sender: Two initials
-;
 MSG_CO_RecptName
 %r  Empfänger: Name
 ; %r  Recipient: Name
@@ -1701,10 +1693,6 @@ Bei diesen _Domänen
 MSG_CO_MLRepInit
 Mailinglisten-Ant_wort
 ; _Mailing list reply phrase
-;
-MSG_CO_QuoteMail
-Nachricht _zitieren mit
-; _Quote message using
 ;
 MSG_CO_QuoteEmpty
 _Leere Zeilen zitieren
@@ -2471,12 +2459,6 @@ MSG_HELP_CO_CH_QUOTE
 Urprüngliche Nachricht\nin der Antwort zitieren?
 ; Quote original\n\
 ; message in reply?
-;
-MSG_HELP_CO_ST_REPLYCHAR
-Zeichenkette, welche jeder Zeile der zitierten\nNachricht vorangestellt wird. Mit dem Knopf\nrechts können diverse Variablen eingefügt werden.
-; String that should precede each line of\n\
-; the quoted message. Use the button at\n\
-; the right side to insert a variable.
 ;
 MSG_HELP_CO_CH_QUOTEEMPTY
 Zitatzeichen auch bei leeren Zeilen verwenden?
@@ -5477,18 +5459,9 @@ MSG_WR_AltQuoted
 Alternatives Zitat
 ; Alternate quoted
 ;
-MSG_CO_AltQuote
-bei e_xternen Zitaten
-; Quote e_xternal using
-;
 MSG_CO_DoQuote
 Nachr_icht zitieren
 ; Qu_ote message
-;
-MSG_HELP_CO_ST_ALTQUOTECHAR
-Zeichenkette, die jeder zitierten Zeile aus einer\nEMail fremden Quelle vorangestellt werden soll
-; String that should precede each line of a\n\
-; quote inserted from non-email sources
 ;
 MSG_EA_SelectPhoto_Title
 Porträt auswählen
@@ -7627,4 +7600,8 @@ _Okay
 ;
 MSG_ER_USER_UNKNOWN_ERROR
 Der Benutzer '%s' ist nicht bekannt!
+;
+MSG_HELP_CO_CA_COLSIG
+Die Farbe, die zum Darstellen der Signatur\n\
+einer Mail verwendet wird.
 ;

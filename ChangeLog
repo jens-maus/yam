@@ -7,6 +7,7 @@ $URL$
 
 2007-04-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/deutsch.ct: updated to latest changes in YAM.cd.
   * HashTable.c: Beautyfied some functions, too.
   * BayesFilter.c: a wrong check in tokenizerGet() may have caused "suboptimal"
     spam recognition. Also beautyfied some functions a little bit.
