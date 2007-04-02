@@ -351,7 +351,7 @@ void DefaultHashFinalize(UNUSED struct HashTable *table)
 ULONG StringHashHashKey(UNUSED struct HashTable *table,
                         const void *key)
 {
-  ULONG h=0;
+  ULONG h = 0;
   CONST_STRPTR s = (CONST_STRPTR)key;
 
   ENTER();
@@ -412,18 +412,13 @@ struct HashTable *HashTableNew(struct HashTableOps *ops,
 
   ENTER();
 
-  if((table = malloc(sizeof(*table))) == NULL)
+  if((table = malloc(sizeof(*table))) != NULL)
   {
-    RETURN(NULL);
-    return NULL;
-  }
-
-  if(!HashTableInit(table, ops, data, entrySize, capacity))
-  {
-    free(table);
-
-    RETURN(NULL);
-    return NULL;
+    if(!HashTableInit(table, ops, data, entrySize, capacity))
+    {
+      free(table);
+      table = NULL;
+    }
   }
 
   RETURN(table);
@@ -551,8 +546,6 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table,
 {
   ULONG keyHash;
   struct HashEntryHeader *entry = NULL;
-  ULONG size;
-  LONG deltaLog2;
 
   ENTER();
 
@@ -566,10 +559,17 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table,
   switch(op)
   {
     case htoLookup:
+    {
       entry = SearchTable(table, key, keyHash, op);
+    }
     break;
 
     case htoAdd:
+    {
+      ULONG size;
+      LONG deltaLog2;
+      BOOL goOn = TRUE;
+
       // if alpha is >= 0.75 grow or compress the table. If key is already in the table,
       // we may grow once more, but only if we are on the edge of being overloaded
       size = HASH_TABLE_SIZE(table);
@@ -582,39 +582,45 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table,
           deltaLog2 = 1; // grow
 
         if(!ChangeTable(table, deltaLog2) && table->entryCount + table->removedCount == size - 1)
-        {
-          RETURN(NULL);
-          return NULL;
-        }
+          goOn = FALSE;
       }
 
-      // look for entry after possibly growing, so we don't have to add it, then skip it
-      // while growing the table and readd it after
-      entry = SearchTable(table, key, keyHash, op);
-      if(!HASH_ENTRY_IS_LIVE(entry))
+      if(goOn)
       {
-        // initialize the entry, indicating it is no longer free
-        if(ENTRY_IS_REMOVED(entry))
+        // look for entry after possibly growing, so we don't have to add it, then skip it
+        // while growing the table and readd it after
+        entry = SearchTable(table, key, keyHash, op);
+        if(!HASH_ENTRY_IS_LIVE(entry))
         {
-          table->removedCount--;
-          keyHash |= COLLISION_FLAG;
+          // initialize the entry, indicating it is no longer free
+          if(ENTRY_IS_REMOVED(entry))
+          {
+            table->removedCount--;
+            keyHash |= COLLISION_FLAG;
+          }
+          if(table->ops->initEntry != NULL && !table->ops->initEntry(table, entry, key))
+          {
+            // we haven't claimed entry yet; fail with NULL return.
+            memset(entry + 1, 0, table->entrySize - sizeof(*entry));
+            entry = NULL;
+          }
+          else
+          {
+            entry->keyHash = keyHash;
+            table->entryCount++;
+          }
         }
-        if(table->ops->initEntry != NULL && !table->ops->initEntry(table, entry, key))
-        {
-          // we haven't claimed entry yet; fail with null return.
-          memset(entry + 1, 0, table->entrySize - sizeof(*entry));
-          RETURN(NULL);
-          return NULL;
-        }
-        entry->keyHash = keyHash;
-        table->entryCount++;
       }
+    }
     break;
 
     case htoRemove:
+    {
       entry = SearchTable(table, key, keyHash, op);
       if(HASH_ENTRY_IS_LIVE(entry))
       {
+        ULONG size;
+
         // clear this entry and mark it as removed
         HashTableRawRemove(table, entry);
 
@@ -625,10 +631,13 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table,
 
         entry = NULL;
       }
+    }
     break;
 
     default:
+    {
       // nothing
+    }
     break;
   }
 
@@ -741,4 +750,5 @@ ULONG HashTableEnumerate(struct HashTable *table,
   return i;
 }
 ///
+
 
