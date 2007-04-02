@@ -122,6 +122,7 @@ static BOOL LoadImage(struct imageCacheNode *node, const char *filename)
     // take a little bit more memory, but this is unavoidable if we don't want to reload the
     // images from disk again and again all the time.
     o = NewDTObject((char *)filename, DTA_GroupID,          GID_PICTURE,
+                                      DTA_SourceType,       DTST_FILE,
                                       OBP_Precision,        PRECISION_EXACT,
                                       PDTA_DestMode,        PMODE_V43,
                                       PDTA_UseFriendBitMap, TRUE,

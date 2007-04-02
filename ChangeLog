@@ -7,6 +7,8 @@ $URL$
 
 2007-04-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: added the DTA_SourceType tag to the NewDTObject() call
+    to work around a bug in datatypes.library 52.2.
   * YAM_UT.c: fixed a possible random pointer access in the SWSSearch()
     function which could happen in a low memory situation.
 
