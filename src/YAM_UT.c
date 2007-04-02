@@ -1568,6 +1568,8 @@ int FileSize(const char *filename)
   BPTR lock;
   int size = -1;
 
+  ENTER();
+
   if((lock = Lock((STRPTR)filename, ACCESS_READ)))
   {
     struct FileInfoBlock *fib;
@@ -1584,6 +1586,7 @@ int FileSize(const char *filename)
     UnLock(lock);
   }
 
+  RETURN(size);
   return size;
 }
 ///
@@ -1593,6 +1596,8 @@ long FileProtection(const char *filename)
 {
   BPTR lock;
   long prots = -1;
+
+  ENTER();
 
   if((lock = Lock((STRPTR)filename, ACCESS_READ)))
   {
@@ -1610,6 +1615,7 @@ long FileProtection(const char *filename)
     UnLock(lock);
   }
 
+  RETURN(prots);
   return prots;
 }
 ///
@@ -1650,6 +1656,8 @@ char *FileComment(char *filename)
   static char fileComment[80];
   char *comment = NULL;
 
+  ENTER();
+
   if((lock = Lock((STRPTR)filename, ACCESS_READ)))
   {
     struct FileInfoBlock *fib;
@@ -1667,6 +1675,7 @@ char *FileComment(char *filename)
     UnLock(lock);
   }
 
+  RETURN(comment);
   return comment;
 }
 ///
@@ -1677,6 +1686,8 @@ struct DateStamp *FileDate(char *filename)
   BPTR lock;
   static struct DateStamp ds;
   struct DateStamp *res = NULL;
+
+  ENTER();
 
   if((lock = Lock(filename, ACCESS_READ)))
   {
@@ -1695,6 +1706,7 @@ struct DateStamp *FileDate(char *filename)
     UnLock(lock);
   }
 
+  RETURN(res);
   return res;
 }
 ///
@@ -1704,6 +1716,8 @@ long FileTime(const char *filename)
 {
   BPTR lock;
   long ret = 0;
+
+  ENTER();
 
   if((lock = Lock((STRPTR)filename, ACCESS_READ)))
   {
@@ -1727,6 +1741,7 @@ long FileTime(const char *filename)
     UnLock(lock);
   }
 
+  RETURN(ret);
   return ret;
 }
 ///
@@ -1771,6 +1786,8 @@ BOOL RenameFile(const char *oldname, const char *newname)
 BOOL CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh)
 {
   BOOL success = FALSE;
+
+  ENTER();
 
   if(sour != NULL && (sourfh = fopen(sour, "r")))
     setvbuf(sourfh, NULL, _IOFBF, SIZE_FILEBUF);
@@ -1973,7 +1990,7 @@ static int Quoting_Chars(char *buf, const int len, const char *text, int *post_s
 }
 
 ///
-/// QuoteText()
+/// QuoteText
 //  Main mail text quotation function. It takes the source string "src" and
 //  analyzes it concerning existing quoting characters. Depending on this
 //  information it adds new quoting marks "prefix" to the start of each line
@@ -2170,27 +2187,40 @@ void QuoteText(FILE *out, const char *src, const int len, const int line_max)
 //  Reformats a file to a new line length
 void SimpleWordWrap(char *filename, int wrapsize)
 {
-   BPTR fh;
-   if ((fh = Open((STRPTR)filename, MODE_OLDFILE)))
-   {
-      char ch;
-      int p = 0, lsp = -1, sol = 0;
+  BPTR fh;
 
-      while (Read(fh, &ch, 1))
+  ENTER();
+
+  if((fh = Open((STRPTR)filename, MODE_OLDFILE)))
+  {
+    char ch;
+    int p = 0;
+    int lsp = -1;
+    int sol = 0;
+
+    while(Read(fh, &ch, 1) == 1)
+    {
+      if(p - sol > wrapsize && lsp >= 0)
       {
-         if (p-sol > wrapsize && lsp >= 0)
-         {
-            ch = '\n';
-            Seek(fh, (LONG)lsp-p-1, OFFSET_CURRENT);
-            p = lsp;
-            Write(fh, &ch, 1);
-         }
-         if (isspace(ch)) lsp = p;
-         if (ch == '\n') { sol = p+1; lsp = -1; }
-         p++;
+        ch = '\n';
+        Seek(fh, (LONG)lsp - p - 1, OFFSET_CURRENT);
+        p = lsp;
+        Write(fh, &ch, 1);
       }
-      Close(fh);
-   }
+
+      if(isspace(ch))
+        lsp = p;
+      if(ch == '\n')
+      {
+        sol = p + 1;
+        lsp = -1;
+      }
+      p++;
+    }
+    Close(fh);
+  }
+
+  LEAVE();
 }
 ///
 /// ReqFile
@@ -2218,7 +2248,6 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
 
   struct FileRequester *fileReq;
   struct FileReqCache *result = NULL;
-
 
   ENTER();
 
@@ -2391,89 +2420,127 @@ void CloseTempFile(struct TempFile *tf)
 #define ID_CHRS   MAKE_ID('C','H','R','S')
 BOOL DumpClipboard(FILE *out)
 {
-   struct IFFHandle *iff;
-   struct ContextNode *cn;
-   long   error, rlen;
-   UBYTE  readbuf[SIZE_DEFAULT];
-   BOOL   success = FALSE;
+  BOOL success = FALSE;
+  struct IFFHandle *iff;
 
-   if ((iff = AllocIFF()))
-   {
-      if ((iff->iff_Stream = (ULONG)OpenClipboard(PRIMARY_CLIP)))
+  ENTER();
+
+  if((iff = AllocIFF()) != NULL)
+  {
+    if((iff->iff_Stream = (ULONG)OpenClipboard(PRIMARY_CLIP)) != 0)
+    {
+      InitIFFasClip(iff);
+      if(OpenIFF(iff, IFFF_READ) == 0)
       {
-         InitIFFasClip(iff);
-         if (!OpenIFF(iff, IFFF_READ))
-         {
-            if (!StopChunk(iff, ID_FTXT, ID_CHRS)) while (TRUE)
+        if(StopChunk(iff, ID_FTXT, ID_CHRS) == 0)
+        {
+          while(TRUE)
+          {
+            struct ContextNode *cn;
+            long error;
+            long rlen;
+            UBYTE readbuf[SIZE_DEFAULT];
+
+            error = ParseIFF(iff, IFFPARSE_SCAN);
+            if(error == IFFERR_EOC)
+              continue;
+            else if(error != 0)
+              break;
+
+            if((cn = CurrentChunk(iff)) != NULL)
             {
-               error = ParseIFF(iff, IFFPARSE_SCAN);
-               if (error == IFFERR_EOC) continue; else if (error) break;
-               cn = CurrentChunk(iff);
-               if (cn) if (cn->cn_Type == ID_FTXT && cn->cn_ID == ID_CHRS)
-               {
-                  success = TRUE;
-                  while ((rlen = ReadChunkBytes(iff, readbuf, SIZE_DEFAULT)) > 0)
-                     fwrite(readbuf, 1, (size_t)rlen, out);
-               }
+              if(cn->cn_Type == ID_FTXT && cn->cn_ID == ID_CHRS)
+              {
+                success = TRUE;
+                while((rlen = ReadChunkBytes(iff, readbuf, SIZE_DEFAULT)) > 0)
+                  fwrite(readbuf, 1, (size_t)rlen, out);
+              }
             }
-            CloseIFF(iff);
-         }
-         CloseClipboard((struct ClipboardHandle *)iff->iff_Stream);
+          }
+        }
+        CloseIFF(iff);
       }
-      FreeIFF(iff);
-   }
-   return success;
+      CloseClipboard((struct ClipboardHandle *)iff->iff_Stream);
+    }
+    FreeIFF(iff);
+  }
+
+  RETURN(success);
+  return success;
 }
 ///
 /// IsFolderDir
 //  Checks if a directory is used as a mail folder
 static BOOL IsFolderDir(char *dir)
 {
-  char *filename = (char *)FilePart(dir);
+  BOOL result = FALSE;
+  char *filename;
   int i;
 
-  for(i=0; i < FT_NUM; i++)
+  ENTER();
+
+  filename = (char *)FilePart(dir);
+
+  for(i = 0; i < FT_NUM; i++)
   {
     if(FolderName[i] != NULL && stricmp(filename, FolderName[i]) == 0)
-      return TRUE;
+    {
+      result = TRUE;
+      break;
+    }
   }
 
-  return (BOOL)(PFExists(dir, ".fconfig") || PFExists(dir, ".index"));
+  if(result == FALSE)
+    result = (PFExists(dir, ".fconfig") || PFExists(dir, ".index"));
+
+  RETURN(result);
+  return result;
 }
 ///
 /// AllFolderLoaded
 //  Checks if all folder index are correctly loaded
 BOOL AllFolderLoaded(void)
 {
-   BOOL allloaded = TRUE;
-   struct Folder **flist;
+  BOOL allLoaded = TRUE;
+  struct Folder **flist;
 
-   if((flist = FO_CreateList()))
-   {
-      int i;
+  ENTER();
 
-      for (i = 1; i <= (int)*flist; i++)
+  if((flist = FO_CreateList()) != NULL)
+  {
+    int i;
+
+    for (i = 1; i <= (int)*flist; i++)
+    {
+      if(flist[i]->LoadedMode != LM_VALID && !isGroupFolder(flist[i]))
       {
-        if(flist[i]->LoadedMode != LM_VALID && !isGroupFolder(flist[i]))
-        {
-          allloaded = FALSE;
-          break;
-        }
+        allLoaded = FALSE;
+        break;
       }
-      free(flist);
-   }
-   else return FALSE;
+    }
+    free(flist);
+  }
+  else
+    allLoaded = FALSE;
 
-   return allloaded;
+  RETURN(allLoaded);
+  return allLoaded;
 }
 ///
 /// PFExists
 //  Checks if a file exists in the specified directory
 BOOL PFExists(char *path, const char *file)
 {
-   char fname[SIZE_PATHFILE];
-   strmfp(fname, path, file);
-   return FileExists(fname);
+  char fname[SIZE_PATHFILE];
+  BOOL exists;
+
+  ENTER();
+
+  strmfp(fname, path, file);
+  exists = FileExists(fname);
+
+  RETURN(exists);
+  return exists;
 }
 ///
 /// DeleteMailDir (rec)
@@ -2579,15 +2646,20 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
 //  Reads a complete file into memory
 char *FileToBuffer(const char *file)
 {
-  FILE *fh;
   char *text = NULL;
-  int size = FileSize(file);
+  int size;
+
+  ENTER();
+
+  size = FileSize(file);
 
   if(size >= 0 && (text = malloc((size+1)*sizeof(char))))
   {
+    FILE *fh;
+
     text[size] = '\0'; // NUL-terminate the string
 
-    if((fh = fopen(file, "r")))
+    if((fh = fopen(file, "r")) != NULL)
     {
       if(fread(text, sizeof(char), size, fh) != (size_t)size)
       {
@@ -2604,6 +2676,7 @@ char *FileToBuffer(const char *file)
     }
   }
 
+  RETURN(text);
   return text;
 }
 ///
@@ -2670,24 +2743,39 @@ long FileCount(const char *directory)
 //  Removes a message from a message list
 static void MyRemove(struct Mail **list, struct Mail *rem)
 {
-   struct Mail *mail;
-   if (*list == rem) { *list = rem->Next; return; }
-   for (mail = *list; mail->Next; mail = mail->Next)
-      if (mail->Next == rem) { mail->Next = rem->Next; return; }
+  struct Mail *mail;
+
+  ENTER();
+
+  if(*list == rem)
+    *list = rem->Next;
+  else
+  {
+    for(mail = *list; mail->Next; mail = mail->Next)
+    {
+      if(mail->Next == rem)
+      {
+        mail->Next = rem->Next;
+        break;
+      }
+    }
+  }
+
+  LEAVE();
 }
 ///
 /// CreateFilename
 //  Prepends mail directory to a file name
 char *CreateFilename(const char * const file)
 {
-   static char buffer[SIZE_PATHFILE];
+  static char buffer[SIZE_PATHFILE];
 
-   ENTER();
+  ENTER();
 
-   strmfp(buffer, G->MA_MailDir, file);
+  strmfp(buffer, G->MA_MailDir, file);
 
-   RETURN(buffer);
-   return buffer;
+  RETURN(buffer);
+  return buffer;
 }
 ///
 /// CreateDirectory
@@ -2957,10 +3045,18 @@ void ExtractAddress(const char *line, struct Person *pe)
 //  for the follow-up algorithms aso.
 ULONG CompressMsgID(char *msgid)
 {
+  ULONG id = 0;
+
+  ENTER();
+
   // if the MsgID is valid we calculate the CRC32 checksum and as it
   // consists only of one cycle through the crc function we call it
   // with -1
-  return msgid && *msgid ? CRC32(msgid, strlen(msgid), -1L) : 0;
+  if(msgid != NULL && msgid[0] != '\0')
+    id = CRC32(msgid, strlen(msgid), -1L);
+
+  RETURN(id);
+  return id;
 }
 ///
 /// DescribeCT
@@ -3015,28 +3111,43 @@ const char *DescribeCT(const char *ct)
 //  Get number of seconds since 1/1-1978
 time_t GetDateStamp(void)
 {
-   struct DateStamp ds;
+  struct DateStamp ds;
+  time_t seconds;
 
-   // get the actual time
-   DateStamp(&ds);
+  ENTER();
 
-   return (ds.ds_Days*24*60*60 + ds.ds_Minute*60 + ds.ds_Tick/TICKS_PER_SECOND);
+  // get the actual time
+  DateStamp(&ds);
+  seconds = ds.ds_Days * 24 * 60 * 60 +
+            ds.ds_Minute * 60 +
+            ds.ds_Tick / TICKS_PER_SECOND;
+
+  RETURN(seconds);
+  return seconds;
 }
 ///
 /// DateStampUTC
 //  gets the current system time in UTC
 void DateStampUTC(struct DateStamp *ds)
 {
+  ENTER();
+
   DateStamp(ds);
   DateStampTZConvert(ds, TZC_UTC);
+
+  LEAVE();
 }
 ///
 /// GetSysTimeUTC
 //  gets the actual system time in UTC
 void GetSysTimeUTC(struct TimeVal *tv)
 {
+  ENTER();
+
   GetSysTime(TIMEVAL(tv));
   TimeValTZConvert(tv, TZC_UTC);
+
+  LEAVE();
 }
 ///
 /// TimeValTZConvert
@@ -3044,10 +3155,14 @@ void GetSysTimeUTC(struct TimeVal *tv)
 //  to/from UTC
 void TimeValTZConvert(struct TimeVal *tv, enum TZConvert tzc)
 {
+  ENTER();
+
   if(tzc == TZC_LOCAL)
-    tv->Seconds += (C->TimeZone+C->DaylightSaving*60)*60;
+    tv->Seconds += (C->TimeZone + C->DaylightSaving * 60) * 60;
   else if(tzc == TZC_UTC)
-    tv->Seconds -= (C->TimeZone+C->DaylightSaving*60)*60;
+    tv->Seconds -= (C->TimeZone + C->DaylightSaving * 60) * 60;
+
+  LEAVE();
 }
 ///
 /// DateStampTZConvert
@@ -3055,59 +3170,86 @@ void TimeValTZConvert(struct TimeVal *tv, enum TZConvert tzc)
 //  to/from UTC
 void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc)
 {
+  ENTER();
+
   // convert the DateStamp from local -> UTC or visa-versa
-  if(tzc == TZC_LOCAL)    ds->ds_Minute += (C->TimeZone+C->DaylightSaving*60);
-  else if(tzc == TZC_UTC) ds->ds_Minute -= (C->TimeZone+C->DaylightSaving*60);
+  if(tzc == TZC_LOCAL)
+    ds->ds_Minute += (C->TimeZone + C->DaylightSaving * 60);
+  else if(tzc == TZC_UTC)
+    ds->ds_Minute -= (C->TimeZone + C->DaylightSaving * 60);
 
   // we need to check the datestamp variable that it is still in it`s borders
   // after the UTC correction
-  while(ds->ds_Minute < 0)     { ds->ds_Minute += 1440; ds->ds_Days--; }
-  while(ds->ds_Minute >= 1440) { ds->ds_Minute -= 1440; ds->ds_Days++; }
+  while(ds->ds_Minute < 0)
+  {
+    ds->ds_Minute += 1440;
+    ds->ds_Days--;
+  }
+  while(ds->ds_Minute >= 1440)
+  {
+    ds->ds_Minute -= 1440;
+    ds->ds_Days++;
+  }
+
+  LEAVE();
 }
 ///
 /// TimeVal2DateStamp
 //  converts a struct TimeVal to a struct DateStamp
 void TimeVal2DateStamp(const struct TimeVal *tv, struct DateStamp *ds, enum TZConvert tzc)
 {
-  LONG seconds = (tv->Seconds+(tv->Microseconds/1000000));
+  LONG seconds;
 
-  ds->ds_Days   = seconds/86400;       // calculate the days since 1.1.1978
-  ds->ds_Minute = (seconds%86400)/60;
-  ds->ds_Tick   = (tv->Seconds%60)*TICKS_PER_SECOND + (tv->Microseconds/20000);
+  ENTER();
+
+  seconds = tv->Seconds + (tv->Microseconds / 1000000);
+
+  ds->ds_Days   = seconds / 86400;       // calculate the days since 1.1.1978
+  ds->ds_Minute = (seconds % 86400) / 60;
+  ds->ds_Tick   = (tv->Seconds % 60) * TICKS_PER_SECOND + (tv->Microseconds / 20000);
 
   // if we want to convert from/to UTC we need to do this now
   if(tzc != TZC_NONE)
     DateStampTZConvert(ds, tzc);
+
+  LEAVE();
 }
 ///
 /// DateStamp2TimeVal
 //  converts a struct DateStamp to a struct TimeVal
 void DateStamp2TimeVal(const struct DateStamp *ds, struct TimeVal *tv, enum TZConvert tzc)
 {
+  ENTER();
   // check if the ptrs are set or not.
-  if(ds == NULL || tv == NULL)
-    return;
+  if(ds != NULL && tv != NULL)
+  {
+    // creates wrong timevals from DateStamps with year >= 2114 ...
+    tv->Seconds = (ds->ds_Days * 24 * 60 + ds->ds_Minute) * 60 + ds->ds_Tick / TICKS_PER_SECOND;
+    tv->Microseconds = (ds->ds_Tick % TICKS_PER_SECOND) * 1000000 / TICKS_PER_SECOND;
 
-  // creates wrong timevals from DateStamps with year >= 2114 ...
-  tv->Seconds = (ds->ds_Days*24*60 + ds->ds_Minute)*60 + ds->ds_Tick/TICKS_PER_SECOND;
-  tv->Microseconds = (ds->ds_Tick % TICKS_PER_SECOND) * 1000000/TICKS_PER_SECOND;
-
-  // if we want to convert from/to UTC we need to do this now
-  if(tzc != TZC_NONE)
-    TimeValTZConvert(tv, tzc);
+    // if we want to convert from/to UTC we need to do this now
+    if(tzc != TZC_NONE)
+      TimeValTZConvert(tv, tzc);
+  }
 }
 ///
 /// TimeVal2String
 //  Converts a timeval structure to a string with using DateStamp2String after a convert
 BOOL TimeVal2String(char *dst, int dstlen, const struct TimeVal *tv, enum DateStampType mode, enum TZConvert tzc)
 {
+  BOOL result;
   struct DateStamp ds;
 
   // convert the timeval into a datestamp
+  ENTER();
+
   TimeVal2DateStamp(tv, &ds, TZC_NONE);
 
   // then call the DateStamp2String() function to get the real string
-  return DateStamp2String(dst, dstlen, &ds, mode, tzc);
+  result = DateStamp2String(dst, dstlen, &ds, mode, tzc);
+
+  RETURN(result);
+  return result;
 }
 ///
 /// DateStamp2String
@@ -3212,7 +3354,7 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
   return TRUE;
 }
 ///
-/// DateStamp2RFCString()
+/// DateStamp2RFCString
 BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *date, const int timeZone, const BOOL convert)
 {
   struct DateStamp datestamp;
@@ -3300,7 +3442,7 @@ long DateStamp2Long(struct DateStamp *date)
   return res;
 }
 ///
-/// String2DateStamp()
+/// String2DateStamp
 //  Tries to converts a string into a datestamp via StrToDate()
 BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mode, enum TZConvert tzc)
 {
@@ -3440,7 +3582,7 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
 }
 
 ///
-/// String2TimeVal()
+/// String2TimeVal
 // converts a string to a struct TimeVal, if possible.
 BOOL String2TimeVal(struct TimeVal *dst, char *string, enum DateStampType mode, enum TZConvert tzc)
 {
@@ -3698,8 +3840,13 @@ int TZtoMinutes(char *tzone)
 //  Displays large numbers using group separators
 void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecision)
 {
-  const char *dp = G->Locale ? (const char *)G->Locale->loc_DecimalPoint : ".";
-  double dsize = (double)size;
+  const char *dp;
+  double dsize;
+
+  ENTER();
+
+  dp = G->Locale ? (const char *)G->Locale->loc_DecimalPoint : ".";
+  dsize = (double)size;
 
   // see if the user wants to force a precision output or if he simply
   // wants to output based on C->SizeFormat (forcedPrecision = SF_AUTO)
@@ -3796,6 +3943,8 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
     }
     break;
   }
+
+  LEAVE();
 }
 ///
 /// MailExists
@@ -3833,7 +3982,7 @@ BOOL MailExists(struct Mail *mailptr, struct Folder *folder)
 ///
 /// DisplayMailList
 //  Lists folder contents in the message listview
-void DisplayMailList(struct Folder *fo, APTR lv)
+void DisplayMailList(struct Folder *fo, Object *lv)
 {
   struct Mail **array;
   int lastActive;
@@ -4522,9 +4671,9 @@ BOOL FileToEditor(char *file, Object *editor)
 //  General purpose destruction hook
 HOOKPROTONHNO(GeneralDesFunc, long, void *entry)
 {
-   free(entry);
+  free(entry);
 
-   return 0;
+  return 0;
 }
 MakeHook(GeneralDesHook, GeneralDesFunc);
 ///
@@ -4642,9 +4791,16 @@ MakeHook(PO_ListPublicKeysHook, PO_ListPublicKeys);
 //  Finds keyboard shortcut in text label
 char ShortCut(const char *label)
 {
-   char *ptr = strchr(label, '_');
-   if (!ptr) return 0;
-   return (char)ToLower((ULONG)(*++ptr));
+  char scut = '\0';
+  char *ptr;
+
+  ENTER();
+
+  if((ptr = strchr(label, '_')) != NULL)
+    scut = (char)ToLower((ULONG)(*++ptr));
+
+  RETURN(scut);
+  return scut;
 }
 ///
 /// RemoveCut
@@ -5121,56 +5277,66 @@ ULONG ConvertKey(struct IntuiMessage *imsg)
   return code;
 }
 ///
-/// isChildOfGroup()
+/// isChildOfGroup
 // return TRUE if the supplied child object is part of the supplied group
 BOOL isChildOfGroup(Object *group, Object *child)
 {
+  BOOL isChild = FALSE;
   struct List *child_list;
-  Object *curchild;
-  Object *cstate;
+
+  ENTER();
 
   // get the child list of the group object
   child_list = (struct List *)xget(group, MUIA_Group_ChildList);
-  if(child_list == NULL)
-    return FALSE;
-
-  // here we check whether the child is part of the supplied group
-  cstate = (Object *)child_list->lh_Head;
-  while((curchild = NextObject(&cstate)))
+  if(child_list != NULL)
   {
-    if(curchild == child)
+    Object *curchild;
+    Object *cstate;
+
+    // here we check whether the child is part of the supplied group
+    cstate = (Object *)child_list->lh_Head;
+    while((curchild = NextObject(&cstate)) != NULL)
     {
-      return TRUE;
+      if(curchild == child)
+      {
+        isChild = TRUE;
+        break;
+      }
     }
   }
 
-  return FALSE;
+  RETURN(isChild);
+  return isChild;
 }
 ///
-/// isChildOfFamily()
+/// isChildOfFamily
 // return TRUE if the supplied child object is part of the supplied family/menu object
 BOOL isChildOfFamily(Object *family, Object *child)
 {
+  BOOL isChild = FALSE;
   struct MinList *child_list;
-  Object *curchild;
-  Object *cstate;
 
   // get the child list of the group object
   child_list = (struct MinList *)xget(family, MUIA_Family_List);
-  if(child_list == NULL)
-    return FALSE;
-
-  // here we check whether the child is part of the supplied group
-  cstate = (Object *)child_list->mlh_Head;
-  while((curchild = NextObject(&cstate)))
+  if(child_list != NULL)
   {
-    if(curchild == child)
+    Object *curchild;
+    Object *cstate;
+
+    // here we check whether the child is part of the supplied group
+    cstate = (Object *)child_list->mlh_Head;
+    while((curchild = NextObject(&cstate)) != NULL)
     {
-      return TRUE;
+      if(curchild == child)
+      {
+        isChild = TRUE;
+        break;
+      }
     }
   }
 
-  return FALSE;
+  RETURN(isChild);
+  return isChild;
 }
 ///
 
@@ -5196,12 +5362,16 @@ struct BltHook
 };
 
 ///
-/// MyBltMaskBitMap()
+/// MyBltMaskBitMap
 static void MyBltMaskBitMap(const struct BitMap *srcBitMap, LONG xSrc, LONG ySrc, struct BitMap *destBitMap, LONG xDest, LONG yDest, LONG xSize, LONG ySize, struct BitMap *maskBitMap)
 {
+  ENTER();
+
   BltBitMap(srcBitMap,xSrc,ySrc,destBitMap, xDest, yDest, xSize, ySize, 0x99,~0,NULL);
   BltBitMap(maskBitMap,xSrc,ySrc,destBitMap, xDest, yDest, xSize, ySize, 0xe2,~0,NULL);
   BltBitMap(srcBitMap,xSrc,ySrc,destBitMap, xDest, yDest, xSize, ySize, 0x99,~0,NULL);
+
+  LEAVE();
 }
 
 ///
@@ -5220,7 +5390,7 @@ HOOKPROTO(BltMaskFunc, void, struct RastPort *rp, struct LayerHookMsg *msg)
 MakeStaticHook(BltMaskHook, BltMaskFunc);
 
 ///
-/// MyBltMaskBitMapRastPort()
+/// MyBltMaskBitMapRastPort
 void MyBltMaskBitMapRastPort(struct BitMap *srcBitMap, LONG xSrc, LONG ySrc, struct RastPort *destRP, LONG xDest, LONG yDest, LONG xSize, LONG ySize, ULONG minterm, APTR bltMask)
 {
   ENTER();
@@ -5456,7 +5626,7 @@ void AppendToLogfile(enum LFMode mode, int id, const char *text, ...)
   LEAVE();
 }
 ///
-/// Busy()
+/// Busy
 //  Displays busy message
 //  returns FALSE if the user pressed the stop button on an eventually active
 //  BusyGauge. The calling method is therefore suggested to take actions to
@@ -5807,47 +5977,79 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
 //  Checks if printer is ready
 BOOL CheckPrinter(void)
 {
-   struct MsgPort *PrintPort;
-   struct IOStdReq *PrintIO;
-   const char *error = NULL;
+  BOOL result = TRUE;
+  struct MsgPort *PrintPort;
+  const char *error = NULL;
 
-   if ((PrintPort = CreateMsgPort()))
-   {
-      //PrintPort->mp_Node.ln_Name = "YAM PrintPort";
-      if ((PrintIO = (struct IOStdReq *)CreateIORequest(PrintPort, sizeof(struct IOStdReq))))
+  if((PrintPort = CreateMsgPort()) != NULL)
+  {
+    struct IOStdReq *PrintIO;
+
+    //PrintPort->mp_Node.ln_Name = "YAM PrintPort";
+    if((PrintIO = (struct IOStdReq *)CreateIORequest(PrintPort, sizeof(struct IOStdReq))) != NULL)
+    {
+      if(OpenDevice("printer.device", 0, (struct IORequest *)PrintIO, 0) == 0)
       {
-         if (!(OpenDevice("printer.device", 0, (struct IORequest *)PrintIO, 0)))
-         {
-            UWORD Result = 0;
-            PrintIO->io_Message.mn_ReplyPort = PrintPort;
-            PrintIO->io_Command = PRD_QUERY;
-            PrintIO->io_Data = &Result;
-            DoIO((struct IORequest *)PrintIO);
-            if(PrintIO->io_Actual == 1)      // parallel port printer?
-            {
-               if (((Result>>8) & 3) == 0) error = NULL;                   // no error
-               else if ((Result>>8) & 01) error = tr(MSG_UT_NoPaper);  // /POUT asserted
-               else error = tr(MSG_UT_NoPrinter);                      // /BUSY (hopefully no RingIndicator interference)
-            } else error = NULL;               // can't determine status of serial printers
-            CloseDevice((struct IORequest *)PrintIO);
-         }
-         DeleteIORequest((struct IORequest *)PrintIO);
+        UWORD Result = 0;
+
+        PrintIO->io_Message.mn_ReplyPort = PrintPort;
+        PrintIO->io_Command = PRD_QUERY;
+        PrintIO->io_Data = &Result;
+        DoIO((struct IORequest *)PrintIO);
+
+        // is this a parallel port printer?
+        if(PrintIO->io_Actual == 1)      
+        {
+          if(((Result>>8) & 3) == 0)
+          {
+            // no error
+            error = NULL;
+          }
+          else if((Result>>8) & 01)
+          {
+            // /POUT asserted
+            error = tr(MSG_UT_NoPaper);
+          }
+          else
+          {
+            // /BUSY (hopefully no RingIndicator interference)
+            error = tr(MSG_UT_NoPrinter);                      
+          }
+        }
+        else
+        {
+          // can't determine status of serial printers
+          error = NULL;               
+        }
+
+        CloseDevice((struct IORequest *)PrintIO);
       }
-      DeleteMsgPort(PrintPort);
-   }
-   if (error && !MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayCancelReq), error)) return FALSE;
-   return TRUE;
+      DeleteIORequest((struct IORequest *)PrintIO);
+    }
+    DeleteMsgPort(PrintPort);
+  }
+
+  if(error != NULL)
+  {
+    if(MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayCancelReq), error) == 0)
+      result = FALSE;
+  }
+
+  RETURN(result);
+  return result;
 }
 ///
 /// PlaySound
 //  Plays a sound file using datatypes
 void PlaySound(char *filename)
 {
-  if(DataTypesBase)
+  ENTER();
+
+  if(DataTypesBase != NULL)
   {
     // if we previously created a sound object
     // lets dispose it first.
-    if(G->NewMailSound_Obj)
+    if(G->NewMailSound_Obj != NULL)
     {
       // create a datatype trigger
       struct dtTrigger dtt;
@@ -5866,8 +6068,9 @@ void PlaySound(char *filename)
     }
 
     // create the new datatype object
-    G->NewMailSound_Obj = NewDTObject(filename, DTA_GroupID, GID_SOUND, TAG_DONE);
-    if(G->NewMailSound_Obj)
+    if((G->NewMailSound_Obj = NewDTObject(filename, DTA_GroupID,    GID_SOUND,
+                                                    DTA_SourceType, DTST_FILE,
+                                                    TAG_DONE)) != NULL)
     {
       // create a datatype trigger
       struct dtTrigger dtt;
@@ -5882,6 +6085,8 @@ void PlaySound(char *filename)
       DoDTMethodA(G->NewMailSound_Obj, NULL, NULL, (APTR)&dtt);
     }
   }
+
+  LEAVE();
 }
 ///
 /// MatchExtension
@@ -6109,9 +6314,12 @@ const char *IdentifyFile(const char *fname)
 //  Function that gets the real path out of a supplied path. It will correctly resolve pathes like PROGDIR: aso.
 char *GetRealPath(char *path)
 {
+  char *realPath;
   BPTR lock;
   BOOL success = FALSE;
   static char buf[SIZE_PATHFILE];
+
+  ENTER();
 
   // lets try to get a Lock on the supplied path
   if((lock = Lock(path, SHARED_LOCK)))
@@ -6119,16 +6327,17 @@ char *GetRealPath(char *path)
     // so, if it seems to exists, we get the "real" name out of
     // the lock again.
     if(NameFromLock(lock, buf, sizeof(buf)) != DOSFALSE)
-    {
       success = TRUE;
-    }
 
     // And then we unlock the file/dir immediatly again.
     UnLock(lock);
   }
 
   // only on success we return the realpath.
-  return success ? buf : path;
+  realPath = success ? buf : path;
+
+  RETURN(realPath);
+  return realPath;
 }
 
 ///
@@ -6224,13 +6433,13 @@ void GotoURL(const char *url)
 {
   ENTER();
 
-  if(C->RX[MACRO_URL].Script[0])
+  if(C->RX[MACRO_URL].Script[0] != '\0')
   {
     char newurl[SIZE_LARGE];
     snprintf(newurl, sizeof(newurl), "%c%s%c", '"', url, '"');
     MA_StartMacro(MACRO_URL, newurl);
   }
-  else if((OpenURLBase=OpenLibrary("openurl.library", 1)))
+  else if((OpenURLBase = OpenLibrary("openurl.library", 1)) != NULL)
   {
     if(GETINTERFACE("main", IOpenURL, OpenURLBase))
     {
@@ -6251,13 +6460,14 @@ void GotoURL(const char *url)
   LEAVE();
 }
 ///
-/// SWSSearch()
+/// SWSSearch
 // Smith&Waterman 1981 extended string similarity search algorithm
 // X, Y are the two strings that will be compared for similarity
 // It will return a pattern which will reflect the similarity of str1 and str2
 // in a Amiga suitable format. This is case-insensitive !
 char *SWSSearch(char *str1, char *str2)
 {
+  char *similar;
   static char *Z = NULL;    // the destination string (result)
   int **L        = NULL;    // L matrix
   int **Ind      = NULL;    // Indicator matrix
@@ -6273,6 +6483,8 @@ char *SWSSearch(char *str1, char *str2)
   // special enum for the Indicator
   enum  IndType { DELX=1, DELY, DONE, TAKEBOTH };
 
+  ENTER();
+
   // by calling this function with (NULL, NULL) someone wants
   // to signal us to free the destination string
   if(str1 == NULL || str2 == NULL)
@@ -6280,6 +6492,8 @@ char *SWSSearch(char *str1, char *str2)
     if(Z != NULL)
       free(Z);
     Z = NULL;
+
+    RETURN(NULL);
     return NULL;
   }
 
@@ -6449,10 +6663,13 @@ abort:
     free(Ind);
   }
 
-  return success ? &(Z[lz]) : NULL;
+  similar = success ? &(Z[lz]) : NULL;
+
+  RETURN(similar);
+  return similar;
 }
 ///
-/// CRC32()
+/// CRC32
 //  Function that calculates a 32bit crc checksum for a provided buffer.
 //  See http://www.4d.com/ACIDOC/CMU/CMU79909.HTM for more information about
 //  the CRC32 algorithm.
@@ -6514,14 +6731,18 @@ ULONG CRC32(void *buffer, unsigned int count, ULONG crc)
   };
   unsigned char *p = (unsigned char *)buffer;
 
+  ENTER();
+
   // we calculate the crc32 now.
   while (count-- != 0)
   {
     ULONG temp1 = (crc >> 8) & 0x00FFFFFFL;
     ULONG temp2 = CRCTable[((int)crc ^ *p++) & 0xFF];
+
     crc = temp1 ^ temp2;
   }
 
+  RETURN(crc);
   return crc;
 }
 ///
@@ -6529,49 +6750,74 @@ ULONG CRC32(void *buffer, unsigned int count, ULONG crc)
 /*** REXX interface support ***/
 /// InsertAddresses
 //  Appends an array of addresses to a string gadget
-void InsertAddresses(APTR obj, char **addr, BOOL add)
+void InsertAddresses(Object *obj, char **addr, BOOL add)
 {
-   char *buf = (char *)xget(obj, MUIA_String_Contents);
+  char *buf;
 
-   if (*buf && add) DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
-   else setstring(obj, "");
+  ENTER();
 
-   DoMethod(obj, MUIM_BetterString_Insert, *addr, MUIV_BetterString_Insert_EndOfString);
+  buf = (char *)xget(obj, MUIA_String_Contents);
 
-   while (*++addr)
-   {
-      DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
-      DoMethod(obj, MUIM_BetterString_Insert, *addr, MUIV_BetterString_Insert_EndOfString);
-   }
+  if(buf[0] != '\0' && add)
+    DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
+  else
+    setstring(obj, "");
+
+  DoMethod(obj, MUIM_BetterString_Insert, *addr, MUIV_BetterString_Insert_EndOfString);
+
+  while(*++addr != NULL)
+  {
+    DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
+    DoMethod(obj, MUIM_BetterString_Insert, *addr, MUIV_BetterString_Insert_EndOfString);
+  }
+
+  LEAVE();
 }
 ///
 /// AllocReqText
 //  Prepare multi-line text for requesters, converts \n to line breaks
 char *AllocReqText(char *s)
 {
-   char *d, *reqtext;
-   d = reqtext = calloc(strlen(s)+1, 1);
-   while (*s)
-      if (*s == '\\' && s[1] == 'n') { *d++ = '\n'; s++; s++; }
-      else *d++ = *s++;
-   return reqtext;
+  char *reqtext;
+
+  ENTER();
+
+  if((reqtext = calloc(strlen(s) + 1, 1)) != NULL)
+  {
+    char *d = reqtext;
+
+    while(*s != '\0')
+    {
+      if(s[0] == '\\' && s[1] == 'n')
+      {
+        *d++ = '\n';
+        s++;
+        s++;
+      }
+      else
+        *d++ = *s++;
+    }
+  }
+
+  RETURN(reqtext);
+  return reqtext;
 }
 ///
 /// ToLowerCase
 //  Change a complete string to lower case
 void ToLowerCase(char *str)
 {
-    char c;
+  char c;
 
-    ENTER();
+  ENTER();
 
-    while ((c = *str) != '\0')
-        *str++ = tolower(c);
+  while ((c = *str) != '\0')
+    *str++ = tolower(c);
 
-    LEAVE();
+  LEAVE();
 }
 ///
-/// WriteUInt32()
+/// WriteUInt32
 //  write a 32bit variable to a stream, big endian style
 int WriteUInt32(FILE *stream, ULONG value)
 {
@@ -6588,7 +6834,7 @@ int WriteUInt32(FILE *stream, ULONG value)
   return n;
 }
 ///
-/// ReadUInt32()
+/// ReadUInt32
 //  read a 32bit variable from a stream, big endian style
 int ReadUInt32(FILE *stream, ULONG *value)
 {

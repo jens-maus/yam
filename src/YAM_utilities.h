@@ -318,7 +318,7 @@ BOOL     String2TimeVal(struct TimeVal *dst, char *string, enum DateStampType mo
 char *   Decrypt(char *source);
 BOOL     DeleteMailDir(const char *dir, BOOL isroot);
 const char *DescribeCT(const char *ct);
-void     DisplayMailList(struct Folder *fo, APTR lv);
+void     DisplayMailList(struct Folder *fo, Object *lv);
 void     DisplayAppIconStatistics(void);
 void     DisplayStatistics(struct Folder *fo, BOOL updateAppIcon);
 void     DisposeModule(void *modptr);
@@ -356,7 +356,7 @@ int      GetSimpleID(void);
 void     GotoURL(const char *url);
 const char *IdentifyFile(const char *fname);
 void     InfoWindow(const char *title, const char *body, const char *oktext, APTR parent);
-void     InsertAddresses(APTR obj, char **addr, BOOL add);
+void     InsertAddresses(Object *obj, char **addr, BOOL add);
 char *   itoa(int val);
 void     LoadLayout(void);
 BOOL     MailExists(struct Mail *mailptr, struct Folder *folder);

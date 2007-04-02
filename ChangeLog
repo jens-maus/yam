@@ -7,6 +7,7 @@ $URL$
 
 2007-04-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: cleaned up many functions according to the STYLEGUIDE.
   * YAM_RE.c: cleaned up the function RE_GetThread() and fixed a wrong jump out
     of the function if getting the index of a folder was successful.
   * YAM_COs.c, locale/YAM.cd, locale/deutsch.ct: if the option "mark spam mails
