@@ -7605,3 +7605,12 @@ MSG_HELP_CO_CA_COLSIG
 Die Farbe, die zum Darstellen der Signatur\n\
 einer Mail verwendet wird.
 ;
+MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS
+Sie wollen Spam-Mail automatisch als gelesen markieren\n\
+lassen, haben aber erst %ld Mails klassifiziert.\n\
+Es ist nicht empfehlenswert diese Option in der frühen\n\
+Lernphase des Spamfilters zu aktivieren.\n\
+\n\
+Wollen Sie das Markieren von Spam-Mails als gelesen\n\
+deaktivieren?
+;

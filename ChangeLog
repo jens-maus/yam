@@ -7,6 +7,9 @@ $URL$
 
 2007-04-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COs.c, locale/YAM.cd, locale/deutsch.ct: if the option "mark spam mails
+    as read" is enabled but less than 100 mails have been classified yet a
+    requester will now ask the user if this is really intended.
   * locale/deutsch.ct: updated to latest changes in YAM.cd.
   * HashTable.c: Beautyfied some functions, too.
   * BayesFilter.c: a wrong check in tokenizerGet() may have caused "suboptimal"

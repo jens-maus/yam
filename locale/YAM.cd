@@ -6163,3 +6163,12 @@ MSG_HELP_CO_CA_COLSIG (1913//)
 The text color that should be used\n\
 to render the signature of a mail.
 ;
+MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS (1914//)
+You chose to automatically mark spam mails as read,\n\
+but have only %ld mails classified so far.\n\
+It is not recommended to activate this option in the\n\
+early state of training the spam filter.\n\
+\n\
+Do you want to deactivate automatic marking of spam\n\
+mails as read?
+;

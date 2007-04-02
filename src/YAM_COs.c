@@ -1296,7 +1296,7 @@ void CO_GetConfig(BOOL saveConfig)
         CE->SpamMarkAsRead = GetMUICheck(gui->CH_SPAMMARKASREAD);
         CE->SpamAddressBookIsWhiteList = GetMUICheck(gui->CH_SPAMABOOKISWHITELIST);
 
-        if(C->SpamFilterEnabled ==TRUE && CE->SpamFilterEnabled == FALSE)
+        if(C->SpamFilterEnabled == TRUE && CE->SpamFilterEnabled == FALSE)
         {
           LONG mask;
 
@@ -1535,6 +1535,25 @@ void CO_GetConfig(BOOL saveConfig)
             }
           }
         }
+
+        if(CE->SpamFilterEnabled == TRUE && CE->SpamMarkAsRead == TRUE)
+        {
+          ULONG numberClassified = BayesFilterNumberOfHamClassifiedMails() + BayesFilterNumberOfSpamClassifiedMails();
+
+          if(numberClassified < 100)
+          {
+            // Less than 100 mails have been classified so far.
+            // Better ask the user if new spam mails really should be mark as "read", because
+            // the filter is most probably not trained well enough an non-spam mails may be
+            // marked as spam and read unnoticed.
+            if(MUI_Request(G->App, NULL, 0, NULL,
+                                            tr(MSG_YesNoReq),
+                                            tr(MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS), numberClassified))
+            {
+              CE->SpamMarkAsRead = FALSE;
+            }
+          }
+        }
       }
       break;
 
@@ -1742,7 +1761,7 @@ void CO_GetConfig(BOOL saveConfig)
         CE->QuickSearchBar = GetMUICheck(gui->CH_QUICKSEARCHBAR);
         CE->EmbeddedReadPane = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
         CE->SizeFormat = GetMUICycle(gui->CY_SIZE);
-      };
+      }
       break;
 
       case cp_Update:
