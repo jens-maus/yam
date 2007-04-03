@@ -7116,10 +7116,10 @@ MSG_BUSYFLUSHINGSPAMTRAININGDATA
 Speichere Trainingsdata des Spam-Filters...
 ;
 MSG_CO_SPAM_MARKONMOVE
-Mails beim _Verschieben in den Spam-Ordner als Spam markieren
+Nachrichten beim _Verschieben in den Spam-Ordner als Spam markieren
 ;
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
-Mails mit Absenderadresse i_m Adressbuch sind kein Spam
+Nachrichten mit Absenderadresse i_m Adressbuch sind kein Spam
 ;
 MSG_CO_SPAM_RECOGNITION
 Spam-Erkennung
@@ -7141,7 +7141,7 @@ Der Spam-Filter wurde soeben deaktiviert. Welche\n\
 der folgenden Aktionen möchten Sie durchführen?
 ;
 MSG_CO_SPAM_RESETMAILFLAGS
-_Spam-Status aller Mails zurücksetzen
+_Spam-Status aller Nachrichten zurücksetzen
 ;
 MSG_CO_SPAM_DELETESPAMFOLDER
 Spam-Ordner _löschen
@@ -7377,11 +7377,11 @@ MSG_WR_AUTOWRAP
 Zeilenumbruch
 ;
 MSG_CO_SPAM_MARK_AS_READ
-Neue Spam-Mails als _gelesen markieren
+Neue Spam-Nachrichten als _gelesen markieren
 ;
 MSG_HELP_CH_SPAMFILTERENABLED
 Aktiviert den Spam-Filter innerhalb von YAM.\n\
-Dieser erkennt automatisch Werbeemails und\n\
+Dieser erkennt automatisch Werbenachrichten und\n\
 reagiert hieraus entsprechend.
 ;
 MSG_HELP_TX_SPAMBADCOUNT
@@ -7607,10 +7607,10 @@ einer Mail verwendet wird.
 ;
 MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS
 Sie wollen Spam-Mail automatisch als gelesen markieren\n\
-lassen, haben aber erst %ld Mails klassifiziert.\n\
+lassen, haben aber erst %ld Nachrichten klassifiziert.\n\
 Es ist nicht empfehlenswert diese Option in der frühen\n\
 Lernphase des Spamfilters zu aktivieren.\n\
 \n\
-Wollen Sie das Markieren von Spam-Mails als gelesen\n\
-deaktivieren?
+Wollen Sie das Markieren von neuen Spam-Nachrichten als\n\
+gelesen deaktivieren?
 ;
