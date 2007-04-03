@@ -5930,7 +5930,7 @@ MSG_WR_AUTOWRAP (1850//)
 Word-wrap
 ;
 MSG_CO_SPAM_MARK_AS_READ (1851//)
-Mark spam mai_ls as read
+Mark new spam mai_ls as read
 ;
 MSG_HELP_CH_SPAMFILTERENABLED (1852//)
 Enables the Spam filter engine in YAM which\n\

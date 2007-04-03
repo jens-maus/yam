@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/YAM.cd, locale/deutsch.ct: changed the name of the option "mark spam
+    mails as read" to "mark new spam mails as read", because this setting only
+    applies to newly received and automatically classified spam mails. This
+    should make things a little bit more clear.
+
 2007-04-02  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: cleaned up many functions according to the STYLEGUIDE.

@@ -7377,7 +7377,7 @@ MSG_WR_AUTOWRAP
 Zeilenumbruch
 ;
 MSG_CO_SPAM_MARK_AS_READ
-Spam-Mails als _gelesen markieren
+Neue Spam-Mails als _gelesen markieren
 ;
 MSG_HELP_CH_SPAMFILTERENABLED
 Aktiviert den Spam-Filter innerhalb von YAM.\n\
