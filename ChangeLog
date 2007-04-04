@@ -5,8 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-04-03  Thore Böckelmann <tboeckel@gmx.de>
+2007-04-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AttachmentGroup.c, ImageArea.c: changed MUIM_Setup and MUIM_Cleanup methods
+    to do their own work in the correct sequence.
   * misc: changed several invocations of the MUIM_Group_InitChange method to
     check the return value before continuing.
   * YAM_MAf.c: changed the "jump to new message" behaviour so that the jump is

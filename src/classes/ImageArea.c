@@ -237,20 +237,18 @@ OVERLOAD(OM_SET)
 OVERLOAD(MUIM_Setup)
 {
   GETDATA;
+  ULONG result;
 
   ENTER();
 
-  if(!DoSuperMethodA(cl, obj, msg))
+  if((result = DoSuperMethodA(cl, obj, msg)))
   {
-    RETURN(0);
-    return 0;
+    Image_Load(data, obj);
+    data->setup = TRUE;
   }
 
-  Image_Load(data, obj);
-  data->setup = TRUE;
-
-  RETURN(TRUE);
-  return TRUE;
+  RETURN(result);
+  return result;
 }
 ///
 /// OVERLOAD(MUIM_Cleanup)

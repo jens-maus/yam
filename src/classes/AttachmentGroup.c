@@ -293,8 +293,8 @@ OVERLOAD(OM_GET)
 OVERLOAD(OM_SET)
 {
   GETDATA;
-
   struct TagItem *tags = inittags(msg), *tag;
+
   while((tag = NextTagItem(&tags)))
   {
     switch(tag->ti_Tag)
@@ -341,13 +341,13 @@ OVERLOAD(OM_SET)
 OVERLOAD(MUIM_Setup)
 {
   GETDATA;
-  BOOL result = FALSE;
+  ULONG result;
 
   ENTER();
 
   // add an event handler for clearing the selection state
   // in case someone clicks in our area
-  if(DoSuperMethodA(cl, obj, msg))
+  if((result = DoSuperMethodA(cl, obj, msg)))
   {
     data->ehnode.ehn_Priority = -2; // attachmentimage has priority -1
     data->ehnode.ehn_Flags    = 0;
@@ -356,8 +356,6 @@ OVERLOAD(MUIM_Setup)
     data->ehnode.ehn_Events   = IDCMP_MOUSEBUTTONS;
 
     DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
-
-    result = TRUE;
   }
 
   RETURN(result);
@@ -369,16 +367,17 @@ OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Cleanup)
 {
   GETDATA;
+  ULONG result;
 
   ENTER();
 
   // remove the eventhandler first
   DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
 
-  DoSuperMethodA(cl, obj, msg);
+  result = DoSuperMethodA(cl, obj, msg);
 
-  RETURN(0);
-  return 0;
+  RETURN(result);
+  return result;
 }
 
 ///
