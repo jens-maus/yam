@@ -180,11 +180,15 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
                                MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
 
       // add it to our searchGroupList
-      DoMethod(gui->GR_RGROUP, MUIM_Group_InitChange); // required for a proper refresh
-      DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange);
-      DoMethod(gui->GR_SGROUP, OM_ADDMEMBER, newSearchGroup);
-      DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
-      DoMethod(gui->GR_RGROUP, MUIM_Group_ExitChange); // required for a proper refresh
+      if(DoMethod(gui->GR_RGROUP, MUIM_Group_InitChange)) // required for a proper refresh
+      {
+        if(DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange))
+        {
+          DoMethod(gui->GR_SGROUP, OM_ADDMEMBER, newSearchGroup);
+          DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
+        }
+        DoMethod(gui->GR_RGROUP, MUIM_Group_ExitChange); // required for a proper refresh
+      }
 
       GhostOutFilter(gui, filter);
     }
@@ -349,47 +353,51 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
 
     // before we actually set our rule options we have to clear out
     // all previous existing group childs
-    DoMethod(gui->GR_RGROUP, MUIM_Group_InitChange); // required for proper refresh
-    DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange);
-    if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
+    if(DoMethod(gui->GR_RGROUP, MUIM_Group_InitChange)) // required for proper refresh
     {
-      int i;
-      struct MinNode *curNode;
-      Object *cstate = (Object *)childList->lh_Head;
-      Object *child;
-
-      while((child = NextObject(&cstate)))
+      if(DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange))
       {
-        // remove that child
-        DoMethod(gui->GR_SGROUP, OM_REMMEMBER, child);
-        MUI_DisposeObject(child);
+        if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
+        {
+          int i;
+          struct MinNode *curNode;
+          Object *cstate = (Object *)childList->lh_Head;
+          Object *child;
+
+          while((child = NextObject(&cstate)))
+          {
+            // remove that child
+            DoMethod(gui->GR_SGROUP, OM_REMMEMBER, child);
+            MUI_DisposeObject(child);
+          }
+
+          // Now we should have a clean SGROUP and can populate with new SearchControlGroup
+          // objects
+          for(i=0, curNode = filter->ruleList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
+          {
+            Object *newSearchGroup = SearchControlGroupObject,
+                                       MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
+                                       MUIA_SearchControlGroup_ShowCombineCycle, i > 0,
+                                     End;
+
+            if(newSearchGroup == NULL)
+              break;
+
+            // fill the new search group with some content
+            DoMethod(newSearchGroup, MUIM_SearchControlGroup_GetFromRule, curNode);
+
+            // set some notifies
+            DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime,
+                                     MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
+
+            // add it to our searchGroupList
+            DoMethod(gui->GR_SGROUP, OM_ADDMEMBER, newSearchGroup);
+          }
+        }
+        DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
       }
-
-      // Now we should have a clean SGROUP and can populate with new SearchControlGroup
-      // objects
-      for(i=0, curNode = filter->ruleList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
-      {
-        Object *newSearchGroup = SearchControlGroupObject,
-                                   MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
-                                   MUIA_SearchControlGroup_ShowCombineCycle, i > 0,
-                                 End;
-
-        if(newSearchGroup == NULL)
-          break;
-
-        // fill the new search group with some content
-        DoMethod(newSearchGroup, MUIM_SearchControlGroup_GetFromRule, curNode);
-
-        // set some notifies
-        DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime,
-                                 MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
-
-        // add it to our searchGroupList
-        DoMethod(gui->GR_SGROUP, OM_ADDMEMBER, newSearchGroup);
-      }
+      DoMethod(gui->GR_RGROUP, MUIM_Group_ExitChange); // required for proper refresh
     }
-    DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
-    DoMethod(gui->GR_RGROUP, MUIM_Group_ExitChange); // required for proper refresh
   }
 
   GhostOutFilter(gui, filter);

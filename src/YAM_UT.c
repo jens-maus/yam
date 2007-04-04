@@ -388,95 +388,96 @@ LONG YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const char *tit,
     }
 
     // prepare the BT_Group for the change.
-    DoMethod(BT_GROUP, MUIM_Group_InitChange);
-
-    // now we create the buttons for the requester
-    for(token=gadgets, i=0; i < num_gads; i++, token=next)
+    if(DoMethod(BT_GROUP, MUIM_Group_InitChange))
     {
-      if((next = strchr(token, '|')))
-        *next++ = '\0';
-
-      if(*token == '*')
+      // now we create the buttons for the requester
+      for(token=gadgets, i=0; i < num_gads; i++, token=next)
       {
-        active=TRUE;
-        token++;
+        if((next = strchr(token, '|')))
+          *next++ = '\0';
+
+        if(*token == '*')
+        {
+          active=TRUE;
+          token++;
+        }
+
+        if((ul = strchr(token, '_')))
+          ie = FALSE;
+
+        // create the button object now.
+        BT_TEMP = TextObject,
+                    ButtonFrame,
+                    MUIA_CycleChain,    1,
+                    MUIA_Text_Contents, token,
+                    MUIA_Text_PreParse, "\33c",
+                    MUIA_InputMode,     MUIV_InputMode_RelVerify,
+                    MUIA_Background,    MUII_ButtonBack,
+                    ul ? MUIA_Text_HiIndex : TAG_IGNORE, '_',
+                    ul ? MUIA_ControlChar  : TAG_IGNORE, ul ? tolower(*(ul+1)) : 0,
+                  End;
+
+        if(BT_TEMP)
+        {
+          if(num_gads == 1)
+          {
+            DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
+            DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
+            DoMethod(BT_GROUP, OM_ADDMEMBER, BT_TEMP);
+            DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
+            DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
+            set(WI_YAMREQ, MUIA_Window_DefaultObject, BT_TEMP);
+          }
+          else if(i < num_gads-1)
+          {
+            DoMethod(BT_GROUP, OM_ADDMEMBER, BT_TEMP);
+            DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(4));
+            DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
+          }
+          else
+          {
+            DoMethod(BT_GROUP, OM_ADDMEMBER, BT_TEMP);
+          }
+
+          if(ie && num_gads == 2)
+          {
+            if(i==0)
+            {
+              DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, "y", app, 2, MUIM_Application_ReturnID, i+1);
+            }
+            else if(i == num_gads-1)
+            {
+              DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, "n", app, 2, MUIM_Application_ReturnID, i+1);
+            }
+          }
+
+          if(i<=8)
+          {
+            // by default we set it to "-capslock f1" so that we can press f1
+            // even if the capslock is on.
+            static char fstring[13];
+
+            snprintf(fstring, sizeof(fstring), "-capslock f%d", i+1);
+            DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, fstring, app, 2, MUIM_Application_ReturnID, i+1);
+          }
+
+          DoMethod(BT_TEMP, MUIM_Notify, MUIA_Pressed, FALSE, app, 2, MUIM_Application_ReturnID, i+1);
+
+          if(active)
+          {
+            set(WI_YAMREQ, MUIA_Window_ActiveObject, BT_TEMP);
+            active = FALSE;
+          }
+        }
+
+        // write back what we took.
+        if(next)
+          *(next-1) = '|';
       }
 
-      if((ul = strchr(token, '_')))
-        ie = FALSE;
-
-      // create the button object now.
-      BT_TEMP = TextObject,
-                  ButtonFrame,
-                  MUIA_CycleChain,    1,
-                  MUIA_Text_Contents, token,
-                  MUIA_Text_PreParse, "\33c",
-                  MUIA_InputMode,     MUIV_InputMode_RelVerify,
-                  MUIA_Background,    MUII_ButtonBack,
-                  ul ? MUIA_Text_HiIndex : TAG_IGNORE, '_',
-                  ul ? MUIA_ControlChar  : TAG_IGNORE, ul ? tolower(*(ul+1)) : 0,
-                End;
-
-      if(BT_TEMP)
-      {
-        if(num_gads == 1)
-        {
-          DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
-          DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
-          DoMethod(BT_GROUP, OM_ADDMEMBER, BT_TEMP);
-          DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
-          DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
-          set(WI_YAMREQ, MUIA_Window_DefaultObject, BT_TEMP);
-        }
-        else if(i < num_gads-1)
-        {
-          DoMethod(BT_GROUP, OM_ADDMEMBER, BT_TEMP);
-          DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(4));
-          DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
-        }
-        else
-        {
-          DoMethod(BT_GROUP, OM_ADDMEMBER, BT_TEMP);
-        }
-
-        if(ie && num_gads == 2)
-        {
-          if(i==0)
-          {
-            DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, "y", app, 2, MUIM_Application_ReturnID, i+1);
-          }
-          else if(i == num_gads-1)
-          {
-            DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, "n", app, 2, MUIM_Application_ReturnID, i+1);
-          }
-        }
-
-        if(i<=8)
-        {
-          // by default we set it to "-capslock f1" so that we can press f1
-          // even if the capslock is on.
-          static char fstring[13];
-
-          snprintf(fstring, sizeof(fstring), "-capslock f%d", i+1);
-          DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, fstring, app, 2, MUIM_Application_ReturnID, i+1);
-        }
-
-        DoMethod(BT_TEMP, MUIM_Notify, MUIA_Pressed, FALSE, app, 2, MUIM_Application_ReturnID, i+1);
-
-        if(active)
-        {
-          set(WI_YAMREQ, MUIA_Window_ActiveObject, BT_TEMP);
-          active = FALSE;
-        }
-      }
-
-      // write back what we took.
-      if(next)
-        *(next-1) = '|';
+      // signal a ExitChange now
+      DoMethod(BT_GROUP, MUIM_Group_ExitChange);
     }
-
-    // signal a ExitChange now
-    DoMethod(BT_GROUP, MUIM_Group_ExitChange);
 
     // we add the esc key to the input event of the requester and if we receive it we close the requester by safely
     // exiting with the last button
@@ -1093,52 +1094,54 @@ LONG CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG numB
 
   if(wi_cb)
   {
-    va_list args;
-    ULONG i;
 
     set(G->App, MUIA_Application_Sleep, TRUE);
     DoMethod(G->App, OM_ADDMEMBER, wi_cb);
 
     // prepare the group for the change.
-    DoMethod(cb_group, MUIM_Group_InitChange);
-
-    va_start(args, text);
-
-    // start with a zero value, because we add certain bits during the creation of the boxes
-    result = 0;
-
-    // now we create the checkboxes for the requester
-    for(i=0; i < numBoxes; i++)
+    if(DoMethod(cb_group, MUIM_Group_InitChange))
     {
-      char *label;
+      va_list args;
+      ULONG i;
 
-      Object *cb_temp;
-      Object *lb_temp;
-      Object *space;
+      va_start(args, text);
 
-      label = va_arg(args, char *);
+      // start with a zero value, because we add certain bits during the creation of the boxes
+      result = 0;
 
-      // create the checkbox object now.
-      cb_temp = MakeCheck(label);
-      lb_temp = LLabel(label);
-      space   = HSpace(0);
-
-      if(cb_temp != NULL && lb_temp != NULL)
+      // now we create the checkboxes for the requester
+      for(i=0; i < numBoxes; i++)
       {
-        set(cb_temp, MUIA_Selected, TRUE);
-        DoMethod(cb_temp, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, G->App, 5, MUIM_CallHook, &CheckboxRequesterHook, MUIV_TriggerValue, &result, (1 << i));
-        DoMethod(cb_group, OM_ADDMEMBER, cb_temp);
-        DoMethod(cb_group, OM_ADDMEMBER, lb_temp);
-        DoMethod(cb_group, OM_ADDMEMBER, space);
+        char *label;
 
-        // the checkbox is active per default, so we set the corresponding bit in the result value
-        result |= (1 << i);
+        Object *cb_temp;
+        Object *lb_temp;
+        Object *space;
+
+        label = va_arg(args, char *);
+
+        // create the checkbox object now.
+        cb_temp = MakeCheck(label);
+        lb_temp = LLabel(label);
+        space   = HSpace(0);
+
+        if(cb_temp != NULL && lb_temp != NULL)
+        {
+          set(cb_temp, MUIA_Selected, TRUE);
+          DoMethod(cb_temp, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, G->App, 5, MUIM_CallHook, &CheckboxRequesterHook, MUIV_TriggerValue, &result, (1 << i));
+          DoMethod(cb_group, OM_ADDMEMBER, cb_temp);
+          DoMethod(cb_group, OM_ADDMEMBER, lb_temp);
+          DoMethod(cb_group, OM_ADDMEMBER, space);
+
+          // the checkbox is active per default, so we set the corresponding bit in the result value
+          result |= (1 << i);
+        }
       }
+
+      va_end(args);
+
+      DoMethod(cb_group, MUIM_Group_ExitChange);
     }
-
-    va_end(args);
-
-    DoMethod(cb_group, MUIM_Group_ExitChange);
 
     DoMethod(bt_use,    MUIM_Notify, MUIA_Pressed,             FALSE, G->App, 2, MUIM_Application_ReturnID, 1);
     DoMethod(wi_cb,     MUIM_Notify, MUIA_Window_CloseRequest, TRUE,  G->App, 2, MUIM_Application_ReturnID, 2);
@@ -5998,7 +6001,7 @@ BOOL CheckPrinter(void)
         DoIO((struct IORequest *)PrintIO);
 
         // is this a parallel port printer?
-        if(PrintIO->io_Actual == 1)      
+        if(PrintIO->io_Actual == 1)
         {
           if(((Result>>8) & 3) == 0)
           {
@@ -6013,13 +6016,13 @@ BOOL CheckPrinter(void)
           else
           {
             // /BUSY (hopefully no RingIndicator interference)
-            error = tr(MSG_UT_NoPrinter);                      
+            error = tr(MSG_UT_NoPrinter);
           }
         }
         else
         {
           // can't determine status of serial printers
-          error = NULL;               
+          error = NULL;
         }
 
         CloseDevice((struct IORequest *)PrintIO);

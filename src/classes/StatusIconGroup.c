@@ -178,33 +178,34 @@ OVERLOAD(OM_NEW)
 OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
-  struct List *childList = (struct List *)xget(obj, MUIA_Group_ChildList);
   int i;
 
   // clear all children of the statusGroup first
-  DoMethod(obj, MUIM_Group_InitChange);
-
-  // we first remove all childs from our statusGroup
-  if(childList)
+  if(DoMethod(obj, MUIM_Group_InitChange))
   {
-    Object *cstate = (Object *)childList->lh_Head;
-    Object *child;
+    struct List *childList;
 
-    while((child = NextObject(&cstate)))
+    // we first remove all childs from our statusGroup
+    if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
     {
-      for(i=0; i < MAX_STATUSIMG; i++)
-      {
-        if(data->statusIcon[i] == child)
-        {
-          DoMethod(obj, OM_REMMEMBER, child);
+      Object *cstate = (Object *)childList->lh_Head;
+      Object *child;
 
-          continue;
+      while((child = NextObject(&cstate)))
+      {
+        for(i=0; i < MAX_STATUSIMG; i++)
+        {
+          if(data->statusIcon[i] == child)
+          {
+            DoMethod(obj, OM_REMMEMBER, child);
+            continue;
+          }
         }
       }
     }
-  }
 
-  DoMethod(obj, MUIM_Group_ExitChange);
+    DoMethod(obj, MUIM_Group_ExitChange);
+  }
 
   // now we can free all status icons
   for(i=0; i < MAX_STATUSIMG; i++)

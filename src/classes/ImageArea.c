@@ -141,7 +141,7 @@ OVERLOAD(OM_DISPOSE)
     free(data->label);
 
   result = DoSuperMethodA(cl, obj, msg);
-  
+
   RETURN(result);
   return result;
 }
@@ -193,9 +193,9 @@ OVERLOAD(OM_SET)
       {
         if(data->name)
           free(data->name);
-        
+
         data->name = strdup((char*)tag->ti_Data);
-        
+
         relayout = TRUE;
 
         if(data->setup)
@@ -219,8 +219,10 @@ OVERLOAD(OM_SET)
     if((parent = (Object*)xget(obj, MUIA_Parent)))
     {
       // New size if needed
-      DoMethod(parent,MUIM_Group_InitChange);
-      DoMethod(parent,MUIM_Group_ExitChange);
+      if(DoMethod(parent,MUIM_Group_InitChange))
+      {
+        DoMethod(parent,MUIM_Group_ExitChange);
+      }
     }
   }
 
@@ -366,7 +368,7 @@ OVERLOAD(MUIM_Draw)
     GetDTAttrs(dt_obj, PDTA_DestBitMap, &bitmap, TAG_DONE);
     if(bitmap == NULL)
       GetDTAttrs(dt_obj, PDTA_BitMap, &bitmap, TAG_DONE);
-    
+
     // blit the bitmap if we retrieved it successfully.
     if(bitmap)
     {

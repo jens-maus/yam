@@ -174,7 +174,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
             LONG requiredHeight = top+lastItemHeight+SPACING+mh;
 
             D(DBF_GUI, "obj [%s] doesn't fit in current row! %ld %ld %ld", mailPart->Name, itemsInRow, requiredHeight, objMinHeight);
-            
+
             // the objects doesn't seem to fit into the current line,
             // so we have to put it in another line.
             // but for that we have to check if our group has currently enough
@@ -208,7 +208,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
               itemsInRow = 0;
             }
           }
-          
+
           D(DBF_GUI, "layout: %ld %ld %ld", mh, _minheight(child), _font(obj)->tf_YSize);
           if(!MUI_Layout(child, left, top+(mh-_minheight(child))/2, mw, _minheight(child), 0))
           {
@@ -554,27 +554,27 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case AMEN_DISPLAY:
       DoMethod(obj, MUIM_AttachmentGroup_Display, data->selectedPart);
     break;
-    
+
     case AMEN_SAVEAS:
       DoMethod(obj, MUIM_AttachmentGroup_Save, data->selectedPart);
     break;
-  
+
     case AMEN_PRINT:
       DoMethod(obj, MUIM_AttachmentGroup_Print, data->selectedPart);
     break;
-    
+
     case AMEN_SAVEALL:
       DoMethod(obj, MUIM_AttachmentGroup_SaveAll);
     break;
-    
+
     case AMEN_SAVESEL:
       DoMethod(obj, MUIM_AttachmentGroup_SaveSelected);
     break;
-    
+
     case AMEN_CROPALL:
       DoMethod(obj, MUIM_AttachmentGroup_CropAll);
     break;
-    
+
     default:
       return DoSuperMethodA(cl, obj, msg);
   }
@@ -623,18 +623,19 @@ DECLARE(Clear)
   // iterate through our child list and remove all attachmentimages
   if(childList)
   {
-    Object *cstate = (Object *)childList->lh_Head;
-    Object *child;
-
-    DoMethod(obj, MUIM_Group_InitChange);
-
-    while((child = NextObject(&cstate)))
+    if(DoMethod(obj, MUIM_Group_InitChange))
     {
-      DoMethod(obj, OM_REMMEMBER, child);
-      MUI_DisposeObject(child);
-    }
+      Object *cstate = (Object *)childList->lh_Head;
+      Object *child;
 
-    DoMethod(obj, MUIM_Group_ExitChange);
+      while((child = NextObject(&cstate)))
+      {
+        DoMethod(obj, OM_REMMEMBER, child);
+        MUI_DisposeObject(child);
+      }
+
+      DoMethod(obj, MUIM_Group_ExitChange);
+    }
   }
 
   data->firstPart = NULL;
@@ -648,7 +649,6 @@ DECLARE(Refresh) // struct Part *firstPart
 {
   GETDATA;
   ULONG addedParts = 0;
-  struct Part *rp;
 
   ENTER();
   D(DBF_GUI, "%lx %ld/%ld", obj, _mwidth(obj), _mheight(obj));
@@ -658,43 +658,46 @@ DECLARE(Refresh) // struct Part *firstPart
   DoMethod(obj, MUIM_AttachmentGroup_Clear);
 
   // prepare the group for any change
-  DoMethod(obj, MUIM_Group_InitChange);
-
-  // now we iterate through our message part list and
-  // generate an own attachment image for each attachment
-  for(rp = msg->firstPart; rp; rp = rp->Next)
+  if(DoMethod(obj, MUIM_Group_InitChange))
   {
-    if(rp->Nr > PART_RAW && rp->Nr != rp->rmData->letterPartNum && (C->DisplayAllAltPart ||
-       (rp->isAltPart == FALSE || rp->Parent == NULL || rp->Parent->MainAltPart == rp)))
+    struct Part *rp;
+
+    // now we iterate through our message part list and
+    // generate an own attachment image for each attachment
+    for(rp = msg->firstPart; rp; rp = rp->Next)
     {
-      Object *newImage = AttachmentImageObject,
-                           MUIA_CycleChain,                 TRUE,
-                           MUIA_AttachmentImage_MailPart,   rp,
-                           MUIA_AttachmentImage_MaxHeight,  _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0,
-                           MUIA_AttachmentImage_MaxWidth,   _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0,
-                         End;
+      if(rp->Nr > PART_RAW && rp->Nr != rp->rmData->letterPartNum && (C->DisplayAllAltPart ||
+         (rp->isAltPart == FALSE || rp->Parent == NULL || rp->Parent->MainAltPart == rp)))
+      {
+        Object *newImage = AttachmentImageObject,
+                             MUIA_CycleChain,                 TRUE,
+                             MUIA_AttachmentImage_MailPart,   rp,
+                             MUIA_AttachmentImage_MaxHeight,  _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0,
+                             MUIA_AttachmentImage_MaxWidth,   _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0,
+                           End;
 
-      // connect some notifies which we might be interested in
-      DoMethod(newImage, MUIM_Notify, MUIA_AttachmentImage_DoubleClick, TRUE,
-               obj, 2, MUIM_AttachmentGroup_Display, rp);
-      DoMethod(newImage, MUIM_Notify, MUIA_AttachmentImage_DropPath, MUIV_EveryTime,
-               obj, 3, MUIM_AttachmentGroup_ImageDropped, newImage, MUIV_TriggerValue);
+        // connect some notifies which we might be interested in
+        DoMethod(newImage, MUIM_Notify, MUIA_AttachmentImage_DoubleClick, TRUE,
+                 obj, 2, MUIM_AttachmentGroup_Display, rp);
+        DoMethod(newImage, MUIM_Notify, MUIA_AttachmentImage_DropPath, MUIV_EveryTime,
+                 obj, 3, MUIM_AttachmentGroup_ImageDropped, newImage, MUIV_TriggerValue);
 
-      DoMethod(obj, OM_ADDMEMBER, newImage);
+        DoMethod(obj, OM_ADDMEMBER, newImage);
 
-      D(DBF_GUI, "added image obj %08lx for attachment: %ld:%s mp: %08lx %08lx %08lx %08lx", newImage, rp->Nr, rp->Name, rp, rp->ContentType, rp->headerList, rp->rmData);
+        D(DBF_GUI, "added image obj %08lx for attachment: %ld:%s mp: %08lx %08lx %08lx %08lx", newImage, rp->Nr, rp->Name, rp, rp->ContentType, rp->headerList, rp->rmData);
 
-      addedParts++;
+       addedParts++;
+       }
     }
+
+    if(addedParts)
+      data->firstPart = msg->firstPart;
+    else
+      data->firstPart = NULL;
+
+    // signal that the group relayouting is finished
+    DoMethod(obj, MUIM_Group_ExitChange);
   }
-
-  if(addedParts)
-    data->firstPart = msg->firstPart;
-  else
-    data->firstPart = NULL;
-
-  // signal that the group relayouting is finished
-  DoMethod(obj, MUIM_Group_ExitChange);
 
   RETURN(addedParts);
   return addedParts;
@@ -706,11 +709,13 @@ DECLARE(Relayout)
   GETDATA;
   Object *parent = (Object *)xget(obj, MUIA_Parent);
 
-  DoMethod(parent, MUIM_Group_InitChange);
-  DoMethod(parent, OM_REMMEMBER, obj);
-  data->resizePushed = FALSE;
-  DoMethod(parent, OM_ADDMEMBER, obj);
-  DoMethod(parent, MUIM_Group_ExitChange);
+  if(DoMethod(parent, MUIM_Group_InitChange))
+  {
+    DoMethod(parent, OM_REMMEMBER, obj);
+    data->resizePushed = FALSE;
+    DoMethod(parent, OM_ADDMEMBER, obj);
+    DoMethod(parent, MUIM_Group_ExitChange);
+  }
 
   return 0;
 }
@@ -794,7 +799,7 @@ DECLARE(SaveSelected)
       if(xget(child, MUIA_Selected))
       {
         struct Part *mailPart = (struct Part *)xget(child, MUIA_AttachmentImage_MailPart);
-        
+
         if(mailPart)
         {
           RE_DecodePart(mailPart);
@@ -872,7 +877,7 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
     BOOL result;
     char *fileName;
     char filePathBuf[SIZE_PATHFILE];
-    
+
     D(DBF_GUI, "Image of Part %d was dropped at [%s]", mailPart->Nr, msg->dropPath);
 
     BusyText(tr(MSG_BusyDecSaving), "");
@@ -936,7 +941,7 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
         }
         #endif
       }
-      
+
       // Now that the workbench knows about the new object we also have to make sure the icon
       // is actually visible in the window
       if(WorkbenchBase->lib_Version >= 44)

@@ -7,6 +7,8 @@ $URL$
 
 2007-04-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: changed several invocations of the MUIM_Group_InitChange method to
+    check the return value before continuing.
   * YAM_MAf.c: changed the "jump to new message" behaviour so that the jump is
     only tried if the folder contains new or unread messages. This makes it
     possible to use the "jump to new message" and "jump to recent message"

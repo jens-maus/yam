@@ -4669,53 +4669,54 @@ void MA_SetupQuickSearchBar(void)
 //  Resorts the main window group accordingly to the InfoBar setting
 BOOL MA_SortWindow(void)
 {
-  BOOL showbar = TRUE;
-
-  DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_InitChange);
-
-  switch(C->InfoBar)
+  if(DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_InitChange))
   {
-    case IB_POS_TOP:
-    {
-      DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.IB_INFOBAR,
-                                                    G->MA->GUI.GR_TOP,
-                                                    G->MA->GUI.GR_HIDDEN,
-                                                    G->MA->GUI.GR_BOTTOM,
-                                                    NULL);
-    }
-    break;
+    BOOL showbar = TRUE;
 
-    case IB_POS_CENTER:
+    switch(C->InfoBar)
     {
-      DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP,
-                                                    G->MA->GUI.GR_HIDDEN,
-                                                    G->MA->GUI.IB_INFOBAR,
-                                                    G->MA->GUI.GR_BOTTOM,
-                                                    NULL);
-    }
-    break;
+      case IB_POS_TOP:
+      {
+        DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.IB_INFOBAR,
+                                                      G->MA->GUI.GR_TOP,
+                                                      G->MA->GUI.GR_HIDDEN,
+                                                      G->MA->GUI.GR_BOTTOM,
+                                                      NULL);
+      }
+      break;
 
-    case IB_POS_BOTTOM:
-    {
-      DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP,
-                                                    G->MA->GUI.GR_HIDDEN,
-                                                    G->MA->GUI.GR_BOTTOM,
-                                                    G->MA->GUI.IB_INFOBAR,
-                                                    NULL);
-    }
-    break;
+      case IB_POS_CENTER:
+      {
+        DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP,
+                                                      G->MA->GUI.GR_HIDDEN,
+                                                      G->MA->GUI.IB_INFOBAR,
+                                                      G->MA->GUI.GR_BOTTOM,
+                                                      NULL);
+      }
+      break;
 
-    default:
-    {
-      showbar = FALSE;
+      case IB_POS_BOTTOM:
+      {
+        DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP,
+                                                      G->MA->GUI.GR_HIDDEN,
+                                                      G->MA->GUI.GR_BOTTOM,
+                                                      G->MA->GUI.IB_INFOBAR,
+                                                      NULL);
+      }
+      break;
+
+      default:
+      {
+        showbar = FALSE;
+      }
     }
+
+    // Here we can do a MUIA_ShowMe, TRUE because ResortWindow is encapsulated
+    // in a InitChange/ExitChange..
+    set(G->MA->GUI.IB_INFOBAR, MUIA_ShowMe, showbar);
+
+    DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_ExitChange);
   }
-
-  // Here we can do a MUIA_ShowMe, TRUE because ResortWindow is encapsulated
-  // in a InitChange/ExitChange..
-  set(G->MA->GUI.IB_INFOBAR, MUIA_ShowMe, showbar);
-
-  DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_ExitChange);
 
   return TRUE;
 }
