@@ -7,6 +7,13 @@ $URL$
 
 2007-04-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MAf.c: changed the "jump to new message" behaviour so that the jump is
+    only tried if the folder contains new or unread messages. This makes it
+    possible to use the "jump to new message" and "jump to recent message"
+    options in parallel.
+
+2007-04-03  Thore Böckelmann <tboeckel@gmx.de>
+
   * locale/deutsch.ct: fixed some non-consistent namings.
   * locale/YAM.cd, locale/deutsch.ct: changed the name of the option "mark spam
     mails as read" to "mark new spam mails as read", because this setting only

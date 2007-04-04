@@ -119,13 +119,8 @@ struct FIndex
 #include "default-align.h"
 
 /* local protos */
-static void MA_ValidateStatus(struct Folder*);
-static char *MA_IndexFileName(struct Folder*);
-static BOOL MA_DetectUUE(FILE*);
-static int  MA_GetRecipients(char*, struct Person**);
 static BOOL MA_ScanDate(struct Mail *mail, const char *date);
 static BOOL MA_ScanMailBox(struct Folder *folder);
-static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder);
 
 /***************************************************************************
  Module: Main - Folder handling
@@ -233,146 +228,146 @@ static char *MA_IndexFileName(struct Folder *folder)
 //  Loads a folder index from disk
 enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 {
-   FILE *fh;
-   enum LoadedMode indexloaded = LM_UNLOAD;
-   char buf[SIZE_LARGE];
-   BOOL corrupt = FALSE;
-   BOOL error = FALSE;
+  FILE *fh;
+  enum LoadedMode indexloaded = LM_UNLOAD;
+  BOOL corrupt = FALSE;
+  BOOL error = FALSE;
 
-   ENTER();
+  ENTER();
 
-   D(DBF_FOLDER, "Loading index for folder '%s'", folder->Name);
+  D(DBF_FOLDER, "Loading index for folder '%s'", folder->Name);
 
-   if((fh = fopen(MA_IndexFileName(folder), "r")))
-   {
-      struct FIndex fi;
+  if((fh = fopen(MA_IndexFileName(folder), "r")) != NULL)
+  {
+    struct FIndex fi;
 
-      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      BusyText(tr(MSG_BusyLoadingIndex), folder->Name);
-      if(fread(&fi, sizeof(struct FIndex), 1, fh) != 1)
+    BusyText(tr(MSG_BusyLoadingIndex), folder->Name);
+    if(fread(&fi, sizeof(struct FIndex), 1, fh) != 1)
+    {
+      E(DBF_FOLDER, "error while loading struct FIndex from .index file");
+      error = TRUE;
+    }
+    else if(fi.ID == FINDEX_VER)
+    {
+      folder->Total  = fi.Total;
+      folder->New    = fi.New;
+      folder->Unread = fi.Unread;
+      folder->Size   = fi.Size;
+      indexloaded = LM_FLUSHED;
+
+      if(full)
       {
-        E(DBF_FOLDER, "error while loading struct FIndex from .index file");
-        error = TRUE;
+        ClearMailList(folder, TRUE);
+        for(;;)
+        {
+          struct Mail mail;
+          struct ComprMail cmail;
+          char buf[SIZE_LARGE];
+
+          memset(&mail, 0, sizeof(struct Mail));
+          if(fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1)
+          {
+             // check if we are here because of an error or EOF
+             if(ferror(fh) != 0 || feof(fh) == 0)
+             {
+               E(DBF_FOLDER, "error while loading ComprMail struct from .index file");
+               error = TRUE;
+             }
+
+             // if we end up here it is just a EOF and no error.
+             break;
+          }
+
+          if(cmail.moreBytes > SIZE_LARGE)
+          {
+             printf("WARNING: Index of folder '%s' CORRUPTED near mailfile '%s' (MoreBytes: 0x%x) - aborting!\n", folder->Name, cmail.mailFile, cmail.moreBytes);
+             printf("File position: %ld\n", ftell(fh));
+
+             corrupt = TRUE;
+             break;
+          }
+
+          if(fread(buf, cmail.moreBytes, 1, fh) != 1)
+          {
+            E(DBF_FOLDER, "fread error while reading index file");
+            error = TRUE;
+            break;
+          }
+
+          strlcpy(mail.Subject, GetNextLine(buf), sizeof(mail.Subject));
+          strlcpy(mail.From.Address, GetNextLine(NULL), sizeof(mail.From.Address));
+          strlcpy(mail.From.RealName, GetNextLine(NULL), sizeof(mail.From.RealName));
+          strlcpy(mail.To.Address, GetNextLine(NULL), sizeof(mail.To.Address));
+          strlcpy(mail.To.RealName, GetNextLine(NULL), sizeof(mail.To.RealName));
+          strlcpy(mail.ReplyTo.Address, GetNextLine(NULL), sizeof(mail.ReplyTo.Address));
+          strlcpy(mail.ReplyTo.RealName, GetNextLine(NULL), sizeof(mail.ReplyTo.RealName));
+          mail.Folder = folder;
+          mail.mflags = cmail.mflags;
+          mail.sflags = cmail.sflags;
+          setVOLValue(&mail, 0);  // we have to make sure that the volatile flag field isn`t loaded
+          strlcpy(mail.MailFile, cmail.mailFile, sizeof(mail.MailFile));
+          mail.Date = cmail.date;
+          mail.transDate = cmail.transDate;
+          mail.cMsgID = cmail.cMsgID;
+          mail.cIRTMsgID = cmail.cIRTMsgID;
+          mail.Size = cmail.size;
+
+          // finally add the new mail structure to our mail list
+          if(AddMailToList(&mail, folder) == NULL)
+          {
+            E(DBF_FOLDER, "AddMailToList returned NULL!");
+            error = TRUE;
+            break;
+          }
+        }
       }
-      else if(fi.ID == FINDEX_VER)
+    }
+
+    if(!error && ferror(fh) == 1)
+      error = TRUE;
+
+    BusyEnd();
+    fclose(fh);
+  }
+
+  if(error)
+  {
+    E(DBF_FOLDER, "an error occurred while trying to load the index file '%s'", MA_IndexFileName(folder));
+    ClearMailList(folder, TRUE);
+
+    RETURN(LM_UNLOAD);
+    return LM_UNLOAD;
+  }
+
+  if(corrupt || indexloaded == LM_UNLOAD)
+  {
+    W(DBF_FOLDER, "  %s .index file detected, %s", corrupt ? "corrupt" : "missing",
+                                                   full ? "rebuilding..." : "skipping...");
+
+    // clear the mail list of the folder
+    ClearMailList(folder, TRUE);
+
+    // if the "full" mode was requested we make sure we
+    // rescan the index accordingly
+    if(full)
+    {
+      // rebuild the index (rescanning the mailbox directory)
+      if(MA_ScanMailBox(folder) && MA_SaveIndex(folder))
       {
-         folder->Total  = fi.Total;
-         folder->New    = fi.New;
-         folder->Unread = fi.Unread;
-         folder->Size   = fi.Size;
-         indexloaded = LM_FLUSHED;
-
-         if (full)
-         {
-            ClearMailList(folder, TRUE);
-            for(;;)
-            {
-               struct Mail mail;
-               struct ComprMail cmail;
-
-               memset(&mail, 0, sizeof(struct Mail));
-               if(fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1)
-               {
-                  // check if we are here because of an error or EOF
-                  if(ferror(fh) != 0 || feof(fh) == 0)
-                  {
-                    E(DBF_FOLDER, "error while loading ComprMail struct from .index file");
-                    error = TRUE;
-                  }
-
-                  // if we end up here it is just a EOF and no error.
-                  break;
-               }
-
-               if(cmail.moreBytes > SIZE_LARGE)
-               {
-                  printf("WARNING: Index of folder '%s' CORRUPTED near mailfile '%s' (MoreBytes: 0x%x) - aborting!\n", folder->Name, cmail.mailFile, cmail.moreBytes);
-                  printf("File position: %ld\n", ftell(fh));
-
-                  corrupt = TRUE;
-                  break;
-               }
-
-               if(fread(buf, cmail.moreBytes, 1, fh) != 1)
-               {
-                 E(DBF_FOLDER, "fread error while reading index file");
-                 error = TRUE;
-                 break;
-               }
-
-               strlcpy(mail.Subject, GetNextLine(buf), sizeof(mail.Subject));
-               strlcpy(mail.From.Address, GetNextLine(NULL), sizeof(mail.From.Address));
-               strlcpy(mail.From.RealName, GetNextLine(NULL), sizeof(mail.From.RealName));
-               strlcpy(mail.To.Address, GetNextLine(NULL), sizeof(mail.To.Address));
-               strlcpy(mail.To.RealName, GetNextLine(NULL), sizeof(mail.To.RealName));
-               strlcpy(mail.ReplyTo.Address, GetNextLine(NULL), sizeof(mail.ReplyTo.Address));
-               strlcpy(mail.ReplyTo.RealName, GetNextLine(NULL), sizeof(mail.ReplyTo.RealName));
-               mail.Folder = folder;
-               mail.mflags = cmail.mflags;
-               mail.sflags = cmail.sflags;
-               setVOLValue(&mail, 0);  // we have to make sure that the volatile flag field isn`t loaded
-               strlcpy(mail.MailFile, cmail.mailFile, sizeof(mail.MailFile));
-               mail.Date = cmail.date;
-               mail.transDate = cmail.transDate;
-               mail.cMsgID = cmail.cMsgID;
-               mail.cIRTMsgID = cmail.cIRTMsgID;
-               mail.Size = cmail.size;
-
-               // finally add the new mail structure to our mail list
-               if(AddMailToList(&mail, folder) == NULL)
-               {
-                 E(DBF_FOLDER, "AddMailToList returned NULL!");
-                 error = TRUE;
-                 break;
-               }
-            }
-         }
+        indexloaded = LM_VALID;
       }
+    }
+  }
+  else if(full)
+  {
+    indexloaded = LM_VALID;
+    CLEAR_FLAG(folder->Flags, FOFL_MODIFY);
+  }
 
-      if(!error && ferror(fh) == 1)
-        error = TRUE;
-
-      BusyEnd();
-      fclose(fh);
-   }
-
-   if(error)
-   {
-     E(DBF_FOLDER, "an error occurred while trying to load the index file '%s'", MA_IndexFileName(folder));
-     ClearMailList(folder, TRUE);
-
-     RETURN(LM_UNLOAD);
-     return LM_UNLOAD;
-   }
-
-   if(corrupt || indexloaded == LM_UNLOAD)
-   {
-     W(DBF_FOLDER, "  %s .index file detected, %s", corrupt ? "corrupt" : "missing",
-                                                    full ? "rebuilding..." : "skipping...");
-
-     // clear the mail list of the folder
-     ClearMailList(folder, TRUE);
-
-     // if the "full" mode was requested we make sure we
-     // rescan the index accordingly
-     if(full)
-     {
-       // rebuild the index (rescanning the mailbox directory)
-       if(MA_ScanMailBox(folder) && MA_SaveIndex(folder))
-       {
-         indexloaded = LM_VALID;
-       }
-     }
-   }
-   else if(full)
-   {
-     indexloaded = LM_VALID;
-     CLEAR_FLAG(folder->Flags, FOFL_MODIFY);
-   }
-
-   RETURN(indexloaded);
-   return indexloaded;
+  RETURN(indexloaded);
+  return indexloaded;
 }
 
 ///
@@ -737,7 +732,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
         set(gui->PG_MAILLIST, MUIA_Disabled, FALSE);
 
         // Now we jump to messages that are NEW
-        if(C->JumpToNewMsg)
+        if(C->JumpToNewMsg && (folder->New != 0 || folder->Unread != 0))
           MA_JumpToNewMsg();
         else if(C->JumpToRecentMsg)
           MA_JumpToRecentMsg();
@@ -813,7 +808,7 @@ void MA_JumpToNewMsg(void)
 ///
 /// MA_JumpToRecentMsg
 // Function that jumps to the most recent mail in a folder
-void MA_JumpToRecentMsg(VOID)
+void MA_JumpToRecentMsg(void)
 {
   struct Folder *folder;
   Object *lv;
@@ -849,7 +844,7 @@ void MA_JumpToRecentMsg(VOID)
   LEAVE();
 }
 ///
-/// MA_ConvertOldMailFile()
+/// MA_ConvertOldMailFile
 // This function takes a fileinfoblock and a folder and converts the
 // oldstyle mailfile referred by fib to a new YAM 2.5+ conform mail file.
 static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
@@ -2587,3 +2582,4 @@ void MA_MakeFOFormat(Object *lv)
    set(lv, MUIA_NListtree_Format, format);
 }
 ///
+
