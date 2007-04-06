@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-06  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ConfigPageList.c: the super class' destructor was not called upon
+    OM_DISPOSE.
+
 2007-04-04  Thore Böckelmann <tboeckel@gmx.de>
 
   * AttachmentGroup.c, ImageArea.c: changed MUIM_Setup and MUIM_Cleanup methods

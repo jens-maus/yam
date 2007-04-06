@@ -104,7 +104,7 @@ OVERLOAD(OM_NEW)
     for(i = cp_FirstSteps; i < cp_Max; i++)
       DoMethod(obj, MUIM_NList_UseImage, data->configIcon[i], i, MUIF_NONE);
   }
-  
+
   RETURN((ULONG)obj);
   return (ULONG)obj;
 }
@@ -114,6 +114,7 @@ OVERLOAD(OM_NEW)
 OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
+  ULONG result;
   enum ConfigPage i;
 
   ENTER();
@@ -126,10 +127,13 @@ OVERLOAD(OM_DISPOSE)
     data->configIcon[i] = NULL;
   }
 
-  RETURN(0);
-  return 0;
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///
 
 /* Public Methods */
+
