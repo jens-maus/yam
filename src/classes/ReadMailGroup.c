@@ -66,6 +66,12 @@ struct Data
 */
 
 /* EXPORT
+#define MUIF_ReadMailGroup_Clear_KeepText              (1<<0) // don't clear the text editor content
+#define MUIF_ReadMailGroup_Clear_KeepAttachmentGroup   (1<<1) // don't clear the attachmentgroup
+
+#define hasKeepTextFlag(v)            (isFlagSet((v), MUIF_ReadMailGroup_Clear_KeepText))
+#define hasKeepAttachmentGroupFlag(v) (isFlagSet((v), MUIF_ReadMailGroup_Clear_KeepAttachmentGroup))
+
 #define MUIF_ReadMailGroup_ReadMail_UpdateOnly         (1<<0) // the call to ReadMail is just because of an update of the same mail
 #define MUIF_ReadMailGroup_ReadMail_StatusChangeDelay  (1<<1) // the mail status should not be change immediatley but with a specified time interval
 #define MUIF_ReadMailGroup_ReadMail_UpdateTextOnly     (1<<2) // update the main mail text only
@@ -576,7 +582,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
 
 /* Public Methods */
 /// DECLARE(Clear)
-DECLARE(Clear) // BOOL noTextEditClear
+DECLARE(Clear) // ULONG flags
 {
   GETDATA;
 
@@ -587,7 +593,7 @@ DECLARE(Clear) // BOOL noTextEditClear
     // clear all relevant GUI elements
     DoMethod(data->headerList, MUIM_NList_Clear);
 
-    if(msg->noTextEditClear == FALSE)
+    if(hasKeepTextFlag(msg->flags) == FALSE)
       set(data->mailTextObject, MUIA_TextEditor_Contents, "");
 
     // cleanup the senderInfoHeaders list
@@ -610,7 +616,8 @@ DECLARE(Clear) // BOOL noTextEditClear
     set(data->senderImageGroup, MUIA_ShowMe, FALSE);
 
     // hide the attachmentGroup also
-    set(data->attachmentGroup, MUIA_ShowMe, FALSE);
+    if(hasKeepAttachmentGroupFlag(msg->flags) == FALSE)
+      set(data->attachmentGroup, MUIA_ShowMe, FALSE);
   }
 
   CleanupReadMailData(data->readMailData, FALSE);
@@ -637,7 +644,10 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
   // we have to make sure we didn't actually have something displayed
   // which should get freed first
   if(!hasUpdateTextOnlyFlag(msg->flags))
-    DoMethod(obj, MUIM_ReadMailGroup_Clear, hasUpdateOnlyFlag(msg->flags));
+  {
+    DoMethod(obj, MUIM_ReadMailGroup_Clear, MUIF_ReadMailGroup_Clear_KeepAttachmentGroup |
+                                            (hasUpdateOnlyFlag(msg->flags) ? MUIF_ReadMailGroup_Clear_KeepText : 0));
+  }
 
   // set the passed mail as the current mail read by our ReadMailData
   // structure
@@ -662,7 +672,9 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
       if(isMultiPartMail(mail))
       {
         if(DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_Refresh, rmData->firstPart) > 0)
+        {
           set(data->attachmentGroup, MUIA_ShowMe, TRUE);
+        }
         else
         {
           set(data->attachmentGroup, MUIA_ShowMe, FALSE);

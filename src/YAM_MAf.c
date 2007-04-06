@@ -683,7 +683,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
       // in case the main window has an embedded read pane, we have to
       // clear it before changing the actual folder
       if(C->EmbeddedReadPane)
-        DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, FALSE);
+        DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, MUIF_NONE);
 
       // if this folder should be disabled, lets do it now
       if(isGroupFolder(folder) || MA_GetIndex(folder) == FALSE)
@@ -2007,7 +2007,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
     // also set an embedded read pane as disabled.
     if(C->EmbeddedReadPane)
     {
-      DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, FALSE);
+      DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, MUIF_NONE);
       set(gui->MN_EMBEDDEDREADPANE, MUIA_Disabled, TRUE);
     }
   }

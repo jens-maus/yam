@@ -7,6 +7,12 @@ $URL$
 
 2007-04-06  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ReadMailGroup.c, YAM_MA.c, YAM_MAf.c: changed the ReadMailGroup_Clear method
+    to take a generalized flag instead of a boolean as an argument. This allows
+    to specify more option what to keep while clearing the group. In fact, this
+    allows to keep the attachment group visible while switching mails as that
+    should avoid unnecessary flickering in case the mail switch was just between
+    two mails with attachments present.
   * AttachmentGroup.c, AttachmentImage.c: minor cosmetic changes to the sources
     to get them more compliant to the STYLEGUIDE.
 
