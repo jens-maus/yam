@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-06  Jens Langner <Jens.Langner@light-speed.de>
+
+  * AttachmentGroup.c, AttachmentImage.c: minor cosmetic changes to the sources
+    to get them more compliant to the STYLEGUIDE.
+
 2007-04-06  Thore Böckelmann <tboeckel@gmx.de>
 
   * ConfigPageList.c: the super class' destructor was not called upon

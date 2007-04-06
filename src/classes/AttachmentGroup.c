@@ -650,7 +650,8 @@ DECLARE(Refresh) // struct Part *firstPart
   ULONG addedParts = 0;
 
   ENTER();
-  D(DBF_GUI, "%lx %ld/%ld", obj, _mwidth(obj), _mheight(obj));
+
+  D(DBF_GUI, "Refresh(): %lx %ld/%ld", obj, _mwidth(obj), _mheight(obj));
 
   // before we are going to add some new childs we have to clean
   // out all old children
@@ -685,8 +686,8 @@ DECLARE(Refresh) // struct Part *firstPart
 
         D(DBF_GUI, "added image obj %08lx for attachment: %ld:%s mp: %08lx %08lx %08lx %08lx", newImage, rp->Nr, rp->Name, rp, rp->ContentType, rp->headerList, rp->rmData);
 
-       addedParts++;
-       }
+        addedParts++;
+      }
     }
 
     if(addedParts)

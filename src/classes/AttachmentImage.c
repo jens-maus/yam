@@ -208,364 +208,379 @@ OVERLOAD(MUIM_Setup)
   GETDATA;
   struct DiskObject *diskObject = NULL;
   struct Part *mailPart = data->mailPart;
+  ULONG result = 0;
 
-  if(!DoSuperMethodA(cl, obj, msg) || mailPart == NULL)
-    return 0;
+  ENTER();
 
-  // only if we have at least icon.library >= v44 and we find deficons
-  // we try to identify the file with deficons
-  if(mailPart->Decoded && mailPart->Filename[0] != '\0' &&
-     IconBase->lib_Version >= 44 &&  FindPort("DEFICONS"))
+  // call the supermethod of the supercall first
+  if(DoSuperMethodA(cl, obj, msg) && mailPart != NULL)
   {
-    diskObject = GetIconTags(mailPart->Filename,
-                             ICONGETA_FailIfUnavailable, FALSE,
-                             ICONGETA_Screen,            _screen(obj),
-                             TAG_DONE);
-  }
-
-  // if we have still not obtained the diskObject we go
-  // and load a default icon for a specific ContentType
-  if(!diskObject)
-  {
-    // with icon.library v44+ we can use GetIconTags again.
-    if(IconBase->lib_Version >= 44 && mailPart->ContentType)
+    // only if we have at least icon.library >= v44 and we find deficons
+    // we try to identify the file with deficons
+    if(mailPart->Decoded && mailPart->Filename[0] != '\0' &&
+       IconBase->lib_Version >= 44 &&  FindPort("DEFICONS"))
     {
-      const char *def;
+      D(DBF_GUI, "retrieving diskicon via DEFICONS for '%s'", mailPart->Filename);
 
-      // build the defaultname now
-      if(!strnicmp(mailPart->ContentType, "image", 5))
-        def = "picture";
-      else if(!strnicmp(mailPart->ContentType, "audio", 5))
-        def = "audio";
-      else if(!strnicmp(mailPart->ContentType, "text", 4))
+      diskObject = GetIconTags(mailPart->Filename,
+                               ICONGETA_FailIfUnavailable, FALSE,
+                               ICONGETA_Screen,            _screen(obj),
+                               TAG_DONE);
+
+      #if defined(DEBUG)
+      if(diskObject == NULL)
+        W(DBF_GUI, "wasn't able to retrieve diskObject via DEFICONS: %d", IoErr());
+      #endif
+    }
+
+    // if we have still not obtained the diskObject we go
+    // and load a default icon for a specific ContentType
+    if(!diskObject)
+    {
+      // with icon.library v44+ we can use GetIconTags again.
+      if(IconBase->lib_Version >= 44 && mailPart->ContentType)
       {
-        if(strlen(mailPart->ContentType) > 5)
+        const char *def;
+
+        // build the defaultname now
+        if(!strnicmp(mailPart->ContentType, "image", 5))
+          def = "picture";
+        else if(!strnicmp(mailPart->ContentType, "audio", 5))
+          def = "audio";
+        else if(!strnicmp(mailPart->ContentType, "text", 4))
         {
-          if(!strnicmp((mailPart->ContentType)+5, "html", 4))
-            def = "html";
-          else if(!strnicmp((mailPart->ContentType)+5, "plain", 5))
-            def = "ascii";
+          if(strlen(mailPart->ContentType) > 5)
+          {
+            if(!strnicmp((mailPart->ContentType)+5, "html", 4))
+              def = "html";
+            else if(!strnicmp((mailPart->ContentType)+5, "plain", 5))
+              def = "ascii";
+            else
+              def = "text";
+          }
           else
             def = "text";
         }
         else
-          def = "text";
-      }
-      else
-        def = "attach";
+          def = "attach";
 
-      // try to retrieve the icon for that type
-      diskObject = GetIconTags(NULL,
-                               ICONGETA_GetDefaultName, def,
-                               ICONGETA_Screen,         _screen(obj),
-                               TAG_DONE);
-
-      // if we still have not retrieved any icon we
-      // obtain the standard project icon
-      if(!diskObject)
-      {
+        // try to retrieve the icon for that type
         diskObject = GetIconTags(NULL,
-                                 ICONGETA_GetDefaultType, WBPROJECT,
+                                 ICONGETA_GetDefaultName, def,
                                  ICONGETA_Screen,         _screen(obj),
                                  TAG_DONE);
+
+        // if we still have not retrieved any icon we
+        // obtain the standard project icon
+        if(!diskObject)
+        {
+          diskObject = GetIconTags(NULL,
+                                   ICONGETA_GetDefaultType, WBPROJECT,
+                                   ICONGETA_Screen,         _screen(obj),
+                                   TAG_DONE);
+        }
+      }
+      else
+      {
+        // on an old OS <= 3.1 we can only use a project icon for
+        // the attachment
+        diskObject = GetDefDiskObject(WBPROJECT);
       }
     }
     else
     {
-      // on an old OS <= 3.1 we can only use a project icon for
-      // the attachment
-      diskObject = GetDefDiskObject(WBPROJECT);
-    }
-  }
-  else
-  {
-    D(DBF_GUI, "DiskObject for file [%s] retrieved with DefIcons", mailPart->Filename);
-  }
-
-  // now that we should have the diskObject we get the image of it, blit it in
-  // a temporary rastport so that we scan scale it down
-  if(diskObject)
-  {
-    struct BitMap *orgBitMap;
-    struct BitMap *screenBitMap = _screen(obj)->RastPort.BitMap;
-    PLANEPTR normalBitMask;
-    PLANEPTR selectedBitMask;
-    struct RastPort rp;
-    ULONG orgWidth;
-    ULONG orgHeight;
-    ULONG screenDepth = GetBitMapAttr(screenBitMap, BMA_DEPTH);
-
-    // prepare the drawIcon/GetIconRentagle tags
-    #ifdef ICONDRAWA_Transparency // defined starting from icon.lib v51+
-    static const struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,      TRUE  },
-                                                   { ICONDRAWA_Frameless,       TRUE  },
-                                                   { ICONDRAWA_Transparency,    255   },
-                                                   { TAG_DONE,                  FALSE } };
-    #else
-    static const struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,      TRUE  },
-                                                   { ICONDRAWA_Frameless,       TRUE  },
-                                                   { TAG_DONE,                  FALSE } };
-    #endif
-
-    // initialize our temporary rastport
-    InitRastPort(&rp);
-
-    // get some information about our diskObject like width/height
-    // and the bitmask for transparency drawing
-    if(IconBase->lib_Version >= 44)
-    {
-      struct Rectangle rect;
-      struct TagItem iconCtrlTags[] = { { ICONCTRLA_GetImageMask1, (ULONG)NULL },
-                                        { ICONCTRLA_GetImageMask2, (ULONG)NULL },
-                                        { TAG_DONE,                FALSE       } };
-  
-      iconCtrlTags[0].ti_Data = (ULONG)&normalBitMask;
-      iconCtrlTags[1].ti_Data = (ULONG)&selectedBitMask;
-
-      GetIconRectangleA(NULL, diskObject, NULL, &rect, drawIconTags);
-
-      orgWidth  = rect.MaxX - rect.MinX + 1;
-      orgHeight = rect.MaxY - rect.MinY + 1;
-
-      // query the bitmask
-      IconControlA(diskObject, iconCtrlTags);
-    }
-    else
-    {
-      orgWidth  = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Width + 1;
-      orgHeight = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Height + 1;
-
-      normalBitMask = NULL;
-      selectedBitMask = NULL;
+      D(DBF_GUI, "DiskObject for file [%s] retrieved with DefIcons", mailPart->Filename);
     }
 
-    // we first allocate a source bitmap with equal size to the icon size of the diskObject
-    orgBitMap = AllocBitMap(orgWidth, orgHeight, screenDepth, 0, screenBitMap);
-    if(orgBitMap)
+    // now that we should have the diskObject we get the image of it, blit it in
+    // a temporary rastport so that we scan scale it down
+    if(diskObject)
     {
-      LONG scaleHeightDiff = orgHeight - data->maxHeight;
-      LONG scaleWidthDiff  = orgHeight - data->maxWidth;
-      LONG newWidth;
-      LONG newHeight;
+      struct BitMap *orgBitMap;
+      struct BitMap *screenBitMap = _screen(obj)->RastPort.BitMap;
+      PLANEPTR normalBitMask;
+      PLANEPTR selectedBitMask;
+      struct RastPort rp;
+      ULONG orgWidth;
+      ULONG orgHeight;
+      ULONG screenDepth = GetBitMapAttr(screenBitMap, BMA_DEPTH);
 
-      // prepare the rastport for drawing the icon in it
-      rp.BitMap = orgBitMap;
+      // prepare the drawIcon/GetIconRentagle tags
+      #ifdef ICONDRAWA_Transparency // defined starting from icon.lib v51+
+      static const struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,      TRUE  },
+                                                     { ICONDRAWA_Frameless,       TRUE  },
+                                                     { ICONDRAWA_Transparency,    255   },
+                                                     { TAG_DONE,                  FALSE } };
+      #else
+      static const struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,      TRUE  },
+                                                     { ICONDRAWA_Frameless,       TRUE  },
+                                                     { TAG_DONE,                  FALSE } };
+      #endif
 
+      // initialize our temporary rastport
+      InitRastPort(&rp);
+
+      // get some information about our diskObject like width/height
+      // and the bitmask for transparency drawing
       if(IconBase->lib_Version >= 44)
-        DrawIconStateA(&rp, diskObject, NULL, 0, 0, IDS_SELECTED, drawIconTags);
+      {
+        struct Rectangle rect;
+        struct TagItem iconCtrlTags[] = { { ICONCTRLA_GetImageMask1, (ULONG)NULL },
+                                          { ICONCTRLA_GetImageMask2, (ULONG)NULL },
+                                          { TAG_DONE,                FALSE       } };
+    
+        iconCtrlTags[0].ti_Data = (ULONG)&normalBitMask;
+        iconCtrlTags[1].ti_Data = (ULONG)&selectedBitMask;
+
+        GetIconRectangleA(NULL, diskObject, NULL, &rect, drawIconTags);
+
+        orgWidth  = rect.MaxX - rect.MinX + 1;
+        orgHeight = rect.MaxY - rect.MinY + 1;
+
+        // query the bitmask
+        IconControlA(diskObject, iconCtrlTags);
+      }
       else
       {
-        if(diskObject->do_Gadget.Flags & GFLG_GADGHIMAGE)
-          DrawImage(&rp, ((struct Image*)diskObject->do_Gadget.SelectRender), 0, 0);
+        orgWidth  = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Width + 1;
+        orgHeight = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Height + 1;
+
+        normalBitMask = NULL;
+        selectedBitMask = NULL;
+      }
+
+      // we first allocate a source bitmap with equal size to the icon size of the diskObject
+      orgBitMap = AllocBitMap(orgWidth, orgHeight, screenDepth, 0, screenBitMap);
+      if(orgBitMap)
+      {
+        LONG scaleHeightDiff = orgHeight - data->maxHeight;
+        LONG scaleWidthDiff  = orgHeight - data->maxWidth;
+        LONG newWidth;
+        LONG newHeight;
+
+        // prepare the rastport for drawing the icon in it
+        rp.BitMap = orgBitMap;
+
+        if(IconBase->lib_Version >= 44)
+          DrawIconStateA(&rp, diskObject, NULL, 0, 0, IDS_SELECTED, drawIconTags);
+        else
+        {
+          if(diskObject->do_Gadget.Flags & GFLG_GADGHIMAGE)
+            DrawImage(&rp, ((struct Image*)diskObject->do_Gadget.SelectRender), 0, 0);
+          else
+            DrawImage(&rp, ((struct Image*)diskObject->do_Gadget.GadgetRender), 0, 0);
+        }
+
+        // calculate the scale factors now that we have fillup our source bitmap
+        if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
+           (scaleWidthDiff > 0 && data->maxWidth > 0))
+        {
+          double scaleFactor;
+
+          // make sure we are scaling proportional
+          if(scaleHeightDiff > scaleWidthDiff)
+          {
+            scaleFactor = (double)orgWidth / (double)orgHeight;
+            newWidth = scaleFactor * data->maxHeight + 0.5; // roundup the value
+            newHeight = data->maxHeight;
+          }
+          else
+          {
+            scaleFactor = (double)orgHeight / (double)orgWidth;
+            newWidth = data->maxWidth;
+            newHeight = scaleFactor * data->maxWidth + 0.5; // roundup the value
+          }
+        }
+        else
+        {
+          newWidth  = orgWidth;
+          newHeight = orgHeight;
+        }
+
+        // now we can allocate a new bitmap which should carry the scaled selected image
+        data->selectedBitMap = AllocBitMap(newWidth, newHeight, screenDepth, 0, orgBitMap);
+        if(data->selectedBitMap)
+        {
+          struct BitScaleArgs args;
+
+          args.bsa_SrcBitMap = orgBitMap;
+          args.bsa_DestBitMap = data->selectedBitMap;
+          args.bsa_Flags = 0;
+
+          args.bsa_SrcY = 0;
+          args.bsa_DestY = 0;
+
+          args.bsa_SrcWidth = orgWidth;
+          args.bsa_SrcHeight = orgHeight;
+
+          args.bsa_XSrcFactor = orgWidth;
+          args.bsa_XDestFactor = newWidth;
+
+          args.bsa_YSrcFactor = orgHeight;
+          args.bsa_YDestFactor = newHeight;
+
+          args.bsa_SrcX = 0;
+          args.bsa_DestX = 0;
+
+          // scale the image now with the arguments set
+          BitMapScale(&args);
+
+          // read out the scaled values
+          data->scaledWidth  = args.bsa_DestWidth;
+          data->scaledHeight = args.bsa_DestHeight;
+
+          D(DBF_GUI, "AttachmentImage selected scale (w/h) from %ld/%ld to %ld/%ld", orgWidth,
+                                                                                     orgHeight,
+                                                                                     data->scaledWidth,
+                                                                                     data->scaledHeight);
+        }
+
+        // now we also scale the selected BitMask down, if it exists
+        if(selectedBitMask &&
+           (data->selectedBitMask = AllocBitMap(newWidth, newHeight, 1L, 0, NULL)))
+        {
+          struct BitScaleArgs args;
+          struct BitMap bm;
+
+          InitBitMap(&bm, 1L, orgWidth, orgHeight);
+          bm.Planes[0] = selectedBitMask;
+
+          args.bsa_SrcBitMap = &bm;
+          args.bsa_DestBitMap = data->selectedBitMask;
+          args.bsa_Flags = 0;
+
+          args.bsa_SrcY = 0;
+          args.bsa_DestY = 0;
+
+          args.bsa_SrcWidth = orgWidth;
+          args.bsa_SrcHeight = orgHeight;
+
+          args.bsa_XSrcFactor = orgWidth;
+          args.bsa_XDestFactor = newWidth;
+
+          args.bsa_YSrcFactor = orgHeight;
+          args.bsa_YDestFactor = newHeight;
+
+          args.bsa_SrcX = 0;
+          args.bsa_DestX = 0;
+
+          // scale the image now with the arguments set
+          BitMapScale(&args);
+        }
+        else
+          data->selectedBitMask = NULL;
+
+        // now that we have the selectedBitMap filled we have to scale down the unselected state
+        // of the icon as well.
+        if(IconBase->lib_Version >= 44)
+          DrawIconStateA(&rp, diskObject, NULL, 0, 0, IDS_NORMAL, drawIconTags);
         else
           DrawImage(&rp, ((struct Image*)diskObject->do_Gadget.GadgetRender), 0, 0);
-      }
 
-      // calculate the scale factors now that we have fillup our source bitmap
-      if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
-         (scaleWidthDiff > 0 && data->maxWidth > 0))
-      {
-        double scaleFactor;
-
-        // make sure we are scaling proportional
-        if(scaleHeightDiff > scaleWidthDiff)
+        // now we can allocate a new bitmap which should carry the scaled unselected normal image
+        data->normalBitMap = AllocBitMap(newWidth, newHeight, screenDepth, 0, orgBitMap);
+        if(data->normalBitMap)
         {
-          scaleFactor = (double)orgWidth / (double)orgHeight;
-          newWidth = scaleFactor * data->maxHeight + 0.5; // roundup the value
-          newHeight = data->maxHeight;
-        }
-        else
-        {
-          scaleFactor = (double)orgHeight / (double)orgWidth;
-          newWidth = data->maxWidth;
-          newHeight = scaleFactor * data->maxWidth + 0.5; // roundup the value
-        }
-      }
-      else
-      {
-        newWidth  = orgWidth;
-        newHeight = orgHeight;
-      }
+          struct BitScaleArgs args;
 
-      // now we can allocate a new bitmap which should carry the scaled selected image
-      data->selectedBitMap = AllocBitMap(newWidth, newHeight, screenDepth, 0, orgBitMap);
-      if(data->selectedBitMap)
-      {
-        struct BitScaleArgs args;
+          args.bsa_SrcBitMap = orgBitMap;
+          args.bsa_DestBitMap = data->normalBitMap;
+          args.bsa_Flags = 0;
 
-        args.bsa_SrcBitMap = orgBitMap;
-        args.bsa_DestBitMap = data->selectedBitMap;
-        args.bsa_Flags = 0;
+          args.bsa_SrcY = 0;
+          args.bsa_DestY = 0;
 
-        args.bsa_SrcY = 0;
-        args.bsa_DestY = 0;
+          args.bsa_SrcWidth = orgWidth;
+          args.bsa_SrcHeight = orgHeight;
 
-        args.bsa_SrcWidth = orgWidth;
-        args.bsa_SrcHeight = orgHeight;
+          args.bsa_XSrcFactor = orgWidth;
+          args.bsa_XDestFactor = newWidth;
 
-        args.bsa_XSrcFactor = orgWidth;
-        args.bsa_XDestFactor = newWidth;
+          args.bsa_YSrcFactor = orgHeight;
+          args.bsa_YDestFactor = newHeight;
 
-        args.bsa_YSrcFactor = orgHeight;
-        args.bsa_YDestFactor = newHeight;
+          args.bsa_SrcX = 0;
+          args.bsa_DestX = 0;
 
-        args.bsa_SrcX = 0;
-        args.bsa_DestX = 0;
+          // scale the image now with the arguments set
+          BitMapScale(&args);
 
-        // scale the image now with the arguments set
-        BitMapScale(&args);
+          // read out the scaled values
+          data->scaledWidth  = args.bsa_DestWidth;
+          data->scaledHeight = args.bsa_DestHeight;
 
-        // read out the scaled values
-        data->scaledWidth  = args.bsa_DestWidth;
-        data->scaledHeight = args.bsa_DestHeight;
-
-        D(DBF_GUI, "AttachmentImage selected scale (w/h) from %ld/%ld to %ld/%ld", orgWidth,
+          D(DBF_GUI, "AttachmentImage normal scale (w/h) from %ld/%ld to %ld/%ld", orgWidth,
                                                                                    orgHeight,
                                                                                    data->scaledWidth,
                                                                                    data->scaledHeight);
+        }
+
+        // now we also scale the normal BitMask down, if it exists
+        if(normalBitMask &&
+           (data->normalBitMask = AllocBitMap(newWidth, newHeight, 1L, 0, NULL)))
+        {
+          struct BitScaleArgs args;
+          struct BitMap bm;
+
+          InitBitMap(&bm, 1L, orgWidth, orgHeight);
+          bm.Planes[0] = normalBitMask;
+
+          args.bsa_SrcBitMap = &bm;
+          args.bsa_DestBitMap = data->normalBitMask;
+          args.bsa_Flags = 0;
+
+          args.bsa_SrcY = 0;
+          args.bsa_DestY = 0;
+
+          args.bsa_SrcWidth = orgWidth;
+          args.bsa_SrcHeight = orgHeight;
+
+          args.bsa_XSrcFactor = orgWidth;
+          args.bsa_XDestFactor = newWidth;
+
+          args.bsa_YSrcFactor = orgHeight;
+          args.bsa_YDestFactor = newHeight;
+
+          args.bsa_SrcX = 0;
+          args.bsa_DestX = 0;
+
+          // scale the image now with the arguments set
+          BitMapScale(&args);
+        }
+        else
+          data->normalBitMask = NULL;
+
+        FreeBitMap(orgBitMap);
       }
-
-      // now we also scale the selected BitMask down, if it exists
-      if(selectedBitMask &&
-         (data->selectedBitMask = AllocBitMap(newWidth, newHeight, 1L, 0, NULL)))
-      {
-        struct BitScaleArgs args;
-        struct BitMap bm;
-
-        InitBitMap(&bm, 1L, orgWidth, orgHeight);
-        bm.Planes[0] = selectedBitMask;
-
-        args.bsa_SrcBitMap = &bm;
-        args.bsa_DestBitMap = data->selectedBitMask;
-        args.bsa_Flags = 0;
-
-        args.bsa_SrcY = 0;
-        args.bsa_DestY = 0;
-
-        args.bsa_SrcWidth = orgWidth;
-        args.bsa_SrcHeight = orgHeight;
-
-        args.bsa_XSrcFactor = orgWidth;
-        args.bsa_XDestFactor = newWidth;
-
-        args.bsa_YSrcFactor = orgHeight;
-        args.bsa_YDestFactor = newHeight;
-
-        args.bsa_SrcX = 0;
-        args.bsa_DestX = 0;
-
-        // scale the image now with the arguments set
-        BitMapScale(&args);
-      }
-      else
-        data->selectedBitMask = NULL;
-
-      // now that we have the selectedBitMap filled we have to scale down the unselected state
-      // of the icon as well.
-      if(IconBase->lib_Version >= 44)
-        DrawIconStateA(&rp, diskObject, NULL, 0, 0, IDS_NORMAL, drawIconTags);
-      else
-        DrawImage(&rp, ((struct Image*)diskObject->do_Gadget.GadgetRender), 0, 0);
-
-      // now we can allocate a new bitmap which should carry the scaled unselected normal image
-      data->normalBitMap = AllocBitMap(newWidth, newHeight, screenDepth, 0, orgBitMap);
-      if(data->normalBitMap)
-      {
-        struct BitScaleArgs args;
-
-        args.bsa_SrcBitMap = orgBitMap;
-        args.bsa_DestBitMap = data->normalBitMap;
-        args.bsa_Flags = 0;
-
-        args.bsa_SrcY = 0;
-        args.bsa_DestY = 0;
-
-        args.bsa_SrcWidth = orgWidth;
-        args.bsa_SrcHeight = orgHeight;
-
-        args.bsa_XSrcFactor = orgWidth;
-        args.bsa_XDestFactor = newWidth;
-
-        args.bsa_YSrcFactor = orgHeight;
-        args.bsa_YDestFactor = newHeight;
-
-        args.bsa_SrcX = 0;
-        args.bsa_DestX = 0;
-
-        // scale the image now with the arguments set
-        BitMapScale(&args);
-
-        // read out the scaled values
-        data->scaledWidth  = args.bsa_DestWidth;
-        data->scaledHeight = args.bsa_DestHeight;
-
-        D(DBF_GUI, "AttachmentImage normal scale (w/h) from %ld/%ld to %ld/%ld", orgWidth,
-                                                                                 orgHeight,
-                                                                                 data->scaledWidth,
-                                                                                 data->scaledHeight);
-      }
-
-      // now we also scale the normal BitMask down, if it exists
-      if(normalBitMask &&
-         (data->normalBitMask = AllocBitMap(newWidth, newHeight, 1L, 0, NULL)))
-      {
-        struct BitScaleArgs args;
-        struct BitMap bm;
-
-        InitBitMap(&bm, 1L, orgWidth, orgHeight);
-        bm.Planes[0] = normalBitMask;
-
-        args.bsa_SrcBitMap = &bm;
-        args.bsa_DestBitMap = data->normalBitMask;
-        args.bsa_Flags = 0;
-
-        args.bsa_SrcY = 0;
-        args.bsa_DestY = 0;
-
-        args.bsa_SrcWidth = orgWidth;
-        args.bsa_SrcHeight = orgHeight;
-
-        args.bsa_XSrcFactor = orgWidth;
-        args.bsa_XDestFactor = newWidth;
-
-        args.bsa_YSrcFactor = orgHeight;
-        args.bsa_YDestFactor = newHeight;
-
-        args.bsa_SrcX = 0;
-        args.bsa_DestX = 0;
-
-        // scale the image now with the arguments set
-        BitMapScale(&args);
-      }
-      else
-        data->normalBitMask = NULL;
-
-      FreeBitMap(orgBitMap);
     }
+
+    // store the diskObject in our instance data for later
+    // reference
+    data->diskObject = diskObject;
+
+    // add an event handler for the drag&drop operations
+    // this object supports.
+    data->ehnode.ehn_Priority = -1;
+    data->ehnode.ehn_Flags    = 0;
+    data->ehnode.ehn_Object   = obj;
+    data->ehnode.ehn_Class    = cl;
+    data->ehnode.ehn_Events   = IDCMP_MOUSEBUTTONS | IDCMP_RAWKEY;
+
+    DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+
+    result = 1;
   }
 
-  // store the diskObject in our instance data for later
-  // reference
-  data->diskObject = diskObject;
-
-  // add an event handler for the drag&drop operations
-  // this object supports.
-  data->ehnode.ehn_Priority = -1;
-  data->ehnode.ehn_Flags    = 0;
-  data->ehnode.ehn_Object   = obj;
-  data->ehnode.ehn_Class    = cl;
-  data->ehnode.ehn_Events   = IDCMP_MOUSEBUTTONS | IDCMP_RAWKEY;
-
-  DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
-
-  return 1;
-
+  RETURN(result);
+  return result;
 }
 ///
 /// OVERLOAD(MUIM_Cleanup)
 OVERLOAD(MUIM_Cleanup)
 {
   GETDATA;
+
+  ENTER();
 
   // remove the eventhandler first
   DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
@@ -602,6 +617,7 @@ OVERLOAD(MUIM_Cleanup)
 
   DoSuperMethodA(cl, obj, msg);
   
+  RETURN(0);
   return 0;
 }
 ///
