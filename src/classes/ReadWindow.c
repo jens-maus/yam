@@ -161,11 +161,11 @@ OVERLOAD(OM_NEW)
   do
   {
     struct MinNode *curNode = G->readMailDataList.mlh_Head;
-    
+
     for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
       struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-      
+
       if(rmData->readWindow &&
          xget(rmData->readWindow, MUIA_ReadWindow_Num) == i)
       {
@@ -401,7 +401,7 @@ OVERLOAD(OM_GET)
 OVERLOAD(OM_SET)
 {
   struct TagItem *tags = inittags(msg), *tag;
-  
+
   while((tag = NextTagItem(&tags)))
   {
     switch(tag->ti_Tag)
@@ -626,13 +626,13 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
   {
     if(hasFlag(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
       SET_FLAG(flags, NEWF_REP_PRIVATE);
-  
+
     if(hasFlag(msg->qualifier, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))
       SET_FLAG(flags, NEWF_REP_MLIST);
-  
+
     if(isFlagSet(msg->qualifier, IEQUALIFIER_CONTROL))
       SET_FLAG(flags, NEWF_REP_NOQUOTE);
-   
+
   }
 
   // then create a new mail depending on the current mode
@@ -748,18 +748,21 @@ DECLARE(CopyMailRequest)
       if(srcfolder)
       {
         MA_MoveCopy(mail, srcfolder, dstfolder, TRUE, FALSE);
-        
+
         AppendLogNormal(24, tr(MSG_LOG_Copying), 1, srcfolder->Name, dstfolder->Name);
       }
       else if(RE_Export(rmData, rmData->readFile,
                 MA_NewMailFile(dstfolder, mail->MailFile), "", 0, FALSE, FALSE, IntMimeTypeArray[MT_ME_EMAIL].ContentType))
       {
-        struct Mail *newmail = AddMailToList(mail, dstfolder);
+        struct Mail *newmail;
 
-        if(dstfolder == FO_GetCurrentFolder())
-          DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
+        if((newmail = AddMailToList(mail, dstfolder)) != NULL)
+        {
+          if(dstfolder == FO_GetCurrentFolder())
+            DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
 
-        setStatusToRead(newmail); // OLD status
+          setStatusToRead(newmail); // OLD status
+        }
       }
     }
   }
@@ -973,7 +976,7 @@ DECLARE(ChangeSubjectRequest)
     char subj[SIZE_SUBJECT];
 
     strlcpy(subj, mail->Subject, sizeof(subj));
-    
+
     if(StringRequest(subj, SIZE_SUBJECT,
                      tr(MSG_MA_ChangeSubj),
                      tr(MSG_MA_ChangeSubjReq),
@@ -986,7 +989,7 @@ DECLARE(ChangeSubjectRequest)
         MA_ChangeSelected(TRUE);
         DisplayStatistics(mail->Folder, TRUE);
       }
-      
+
       // update this window
       DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
     }
@@ -1108,7 +1111,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
               DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
               if(mail == NULL)
                 break;
-              
+
               DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
 
               // this is a valid break and not break because of an error
@@ -1185,7 +1188,7 @@ DECLARE(FollowThread) // LONG direction
     // if the mail is displayed we make it the active one
     if(pos != MUIV_NList_GetPos_End)
       set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, pos);
-    
+
     DoMethod(obj, MUIM_ReadWindow_ReadMail, fmail);
   }
   else
