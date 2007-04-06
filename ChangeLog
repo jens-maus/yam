@@ -7,6 +7,9 @@ $URL$
 
 2007-04-06  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ThemeListGroup.c, YAM_COg.c: moved the themes relevant GUI generation code
+    from the Look&Feel page into a seperate custom class so that all themes
+    related stuff can now be more easily added there instead.
   * ReadMailGroup.c, YAM_MA.c, YAM_MAf.c: changed the ReadMailGroup_Clear method
     to take a generalized flag instead of a boolean as an argument. This allows
     to specify more option what to keep while clearing the group. In fact, this

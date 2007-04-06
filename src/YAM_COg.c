@@ -3178,68 +3178,9 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
 
           ConfigPageHeaderObject("config_lookfeel_big", tr(MSG_CO_LOOKFEEL_TITLE), tr(MSG_CO_LOOKFEEL_SUMMARY)),
 
-          Child, HGroup, GroupFrameT(tr(MSG_CO_LOOKFEEL_THEMES)),
+          Child, data->GUI.GR_THEMES = ThemeListGroupObject,
+            GroupFrameT(tr(MSG_CO_LOOKFEEL_THEMES)),
             MUIA_VertWeight, 70,
-
-            Child, VGroup,
-              MUIA_HorizWeight, 30,
-              Child, NListviewObject,
-                MUIA_CycleChain, TRUE,
-                MUIA_NListview_NList, NListObject,
-                  InputListFrame,
-                  MUIA_NList_DragType,     MUIV_NList_DragType_None,
-//                  MUIA_NList_Format,       "BAR",
-//                  MUIA_NList_Title,        TRUE,
-//                  MUIA_NList_DisplayHook2, &FilterDisplayHook,
-                End,
-              End,
-
-              Child, MakeButton(tr(MSG_CO_THEME_ACTIVATE)),
-            End,
-
-            Child, BalanceObject, End,
-
-            Child, VGroup,
-              MUIA_HorizWeight, 70,
-              Child, HGroup,
-                Child, HSpace(0),
-                Child, TextObject,
-                  MUIA_Text_Contents, tr(MSG_CO_THEME_PREVIEW),
-                  MUIA_Font,          MUIV_Font_Tiny,
-                  MUIA_HorizWeight,   0,
-                End,
-                Child, HSpace(0),
-              End,
-
-              Child, RectangleObject,
-                MUIA_Rectangle_HBar, TRUE,
-                MUIA_FixHeight,      4,
-              End,
-
-              Child, HVSpace,
-
-              Child, RectangleObject,
-                MUIA_Rectangle_HBar, TRUE,
-                MUIA_FixHeight,      4,
-              End,
-
-              Child, ColGroup(2),
-                Child, Label2(tr(MSG_CO_THEME_AUTHOR)),
-                Child, TextObject,
-                  TextFrame,
-                  MUIA_Background,  MUII_TextBack,
-                  MUIA_Text_SetMin, TRUE,
-                End,
-
-                Child, Label2(tr(MSG_CO_THEME_URL)),
-                Child, TextObject,
-                  TextFrame,
-                  MUIA_Background,  MUII_TextBack,
-                  MUIA_Text_SetMin, TRUE,
-                End,
-              End,
-            End,
-
           End,
 
           Child, ColGroup(2), GroupFrameT(tr(MSG_CO_INFOBAR)),

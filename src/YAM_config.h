@@ -276,6 +276,7 @@ struct CO_GUIData
   Object *CH_REQUESTMDN;
   Object *CH_RELDATETIME;
   Object *CA_COLSIG;
+  Object *GR_THEMES;
 };
 
 enum ConfigPage

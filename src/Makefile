@@ -272,6 +272,7 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/ImageArea.o \
 	$(OBJDIR)/$(CLASSDIR)/TransferMailList.o \
 	$(OBJDIR)/$(CLASSDIR)/UpdateNotifyWindow.o \
+	$(OBJDIR)/$(CLASSDIR)/ThemeListGroup.o \
 	$(OBJDIR)/$(CLASSDIR)/YAM.o
 
 # and the other object files
