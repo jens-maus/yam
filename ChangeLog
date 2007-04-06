@@ -12,6 +12,7 @@ $URL$
 
 2007-04-06  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Recipientstring.c: cleaned up the setup method.
   * ReadWindow.c: a call to AddMailToList() might return NULL, but this was not
     handled correctly.
   * misc classes: fixed all other subclasses which make use of MUIM_Setup and

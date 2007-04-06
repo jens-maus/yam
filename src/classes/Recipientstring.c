@@ -222,11 +222,11 @@ OVERLOAD(OM_SET)
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
-      
+
       ATTR(MultipleRecipients):
       {
         data->MultipleRecipients = tag->ti_Data;
-     
+
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
       }
@@ -266,10 +266,11 @@ OVERLOAD(OM_SET)
 OVERLOAD(MUIM_Setup)
 {
   GETDATA;
-  ULONG result = FALSE;
+  ULONG result;
 
   ENTER();
 
+  // create the address match list object, if it does not exist yet
   if(data->Matchwindow == NULL)
   {
     if((data->Matchwindow = AddrmatchlistObject, MUIA_Addrmatchlist_String, obj, End) != NULL)
@@ -279,15 +280,19 @@ OVERLOAD(MUIM_Setup)
     }
   }
 
-  if(data->Matchwindow != NULL && DoSuperMethodA(cl, obj, msg))
+  if(data->Matchwindow != NULL)
   {
-    data->ehnode.ehn_Priority = 1;
-    data->ehnode.ehn_Flags    = 0;
-    data->ehnode.ehn_Object   = obj;
-    data->ehnode.ehn_Class    = cl;
-    data->ehnode.ehn_Events   = IDCMP_RAWKEY | IDCMP_CHANGEWINDOW;
-    result = TRUE;
+    if((result = DoSuperMethodA(cl, obj, msg)))
+    {
+      data->ehnode.ehn_Priority = 1;
+      data->ehnode.ehn_Flags    = 0;
+      data->ehnode.ehn_Object   = obj;
+      data->ehnode.ehn_Class    = cl;
+      data->ehnode.ehn_Events   = IDCMP_RAWKEY | IDCMP_CHANGEWINDOW;
+    }
   }
+  else
+    result = FALSE;
 
   RETURN(result);
   return result;
@@ -533,7 +538,7 @@ OVERLOAD(MUIM_HandleEvent)
         }
         else
           result = DoSuperMethodA(cl, obj, msg);
-      
+
         // if the content changed we do get the current recipient
         if(changed)
         {
@@ -560,7 +565,7 @@ OVERLOAD(MUIM_HandleEvent)
   else if(imsg->Class == IDCMP_CHANGEWINDOW)
   {
     // only if the matchwindow is open we advice the matchwindow to refresh it`s position.
-    if(xget(data->Matchwindow, MUIA_Window_Open))  
+    if(xget(data->Matchwindow, MUIA_Window_Open))
       DoMethod(data->Matchwindow, MUIM_Addrmatchlist_ChangeWindow);
   }
 
@@ -834,7 +839,7 @@ DECLARE(ReplaceSelected) // char *address
 
   start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
   old = (char *)xget(obj, MUIA_String_Contents);
-  
+
   // try to find out the length of our current recipient
   if((ptr = strchr(&old[start], ',')))
     len = ptr-(&old[start]);
