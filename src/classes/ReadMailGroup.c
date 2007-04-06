@@ -170,7 +170,7 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
     p = &line[pos];
     while(p+1 != &line[strlen(line)] && !isspace(*(p+1)))
       p++;
-    
+
     *(++p) = '\0';
 
     // now we start our quick lexical analysis to find a clickable element within
@@ -406,7 +406,7 @@ OVERLOAD(OM_SET)
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
-      
+
       ATTR(TGVertWeight):
       {
         set(data->mailBodyGroup, MUIA_VertWeight, tag->ti_Data);
@@ -1106,7 +1106,7 @@ DECLARE(SaveDisplay) // FILE *fileHandle
       struct HeaderNode *curNode;
       res.pos = MUIV_NList_GetEntryInfo_Line;
       res.line = i;
-      
+
       DoMethod(data->headerList, MUIM_NList_GetEntryInfo, &res);
 
       if((curNode = (struct HeaderNode *)res.entry))
@@ -1125,7 +1125,7 @@ DECLARE(SaveDisplay) // FILE *fileHandle
     }
     fputs("\033[23m\n", fh);
   }
-  
+
   ptr = (char *)DoMethod(data->mailTextObject, MUIM_TextEditor_ExportText);
   for(; *ptr; ptr++)
   {
@@ -1136,22 +1136,22 @@ DECLARE(SaveDisplay) // FILE *fileHandle
         case 'u':
           fputs("\033[4m", fh);
         break;
-        
+
         case 'b':
           fputs("\033[1m", fh);
         break;
-        
+
         case 'i':
           fputs("\033[3m", fh);
         break;
-        
+
         case 'n':
           fputs("\033[0m", fh);
         break;
-        
+
         case 'h':
           break;
-        
+
         case '[':
         {
           if(!strncmp(ptr, "[s:18]", 6))
@@ -1226,25 +1226,27 @@ DECLARE(SaveDecryptedMail)
         memcpy(&email->Mail.transDate, &mail->transDate, sizeof(struct timeval));
 
         // add the mail to the folder now
-        newmail = AddMailToList(&email->Mail, folder);
-
-        // if this was a compressed/encrypted folder we need to pack the mail now
-        if(folder->Mode > FM_SIMPLE)
-          RepackMailFile(newmail, -1, NULL);
-
-        if(FO_GetCurrentFolder() == folder)
-          DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
-        
-        MA_FreeEMailStruct(email);
-        if(choice == 2)
+        if((newmail = AddMailToList(&email->Mail, folder)) != NULL)
         {
-          MA_DeleteSingle(mail, FALSE, FALSE, FALSE);
+          // if this was a compressed/encrypted folder we need to pack the mail now
+          if(folder->Mode > FM_SIMPLE)
+            RepackMailFile(newmail, -1, NULL);
 
-          // erase the old pointer as this has been free()ed by MA_DeleteSingle()
-          rmData->mail = NULL;
+          if(FO_GetCurrentFolder() == folder)
+            DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
 
-          DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, newmail);
+          if(choice == 2)
+          {
+            MA_DeleteSingle(mail, FALSE, FALSE, FALSE);
+
+            // erase the old pointer as this has been free()ed by MA_DeleteSingle()
+            rmData->mail = NULL;
+
+            DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, newmail);
+          }
         }
+
+        MA_FreeEMailStruct(email);
       }
       else
         ER_NewError(tr(MSG_ER_CreateMailError));

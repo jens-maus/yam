@@ -163,16 +163,23 @@ OVERLOAD(MUIM_Hide)
 OVERLOAD(MUIM_Setup)
 {
   GETDATA;
-  
-  data->ehnode.ehn_Priority = 1;
-  data->ehnode.ehn_Flags    = 0;
-  data->ehnode.ehn_Object   = obj;
-  data->ehnode.ehn_Class    = cl;
-  data->ehnode.ehn_Events   = IDCMP_RAWKEY;
+  ULONG result;
 
-  DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+  ENTER();
 
-  return DoSuperMethodA(cl, obj, msg);
+  if((result = DoSuperMethodA(cl, obj, msg)))
+  {
+    data->ehnode.ehn_Priority = 1;
+    data->ehnode.ehn_Flags    = 0;
+    data->ehnode.ehn_Object   = obj;
+    data->ehnode.ehn_Class    = cl;
+    data->ehnode.ehn_Events   = IDCMP_RAWKEY;
+
+    DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -181,10 +188,16 @@ OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Cleanup)
 {
   GETDATA;
+  ULONG result;
+
+  ENTER();
 
   DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
 
-  return DoSuperMethodA(cl, obj, msg);
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///

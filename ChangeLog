@@ -12,6 +12,9 @@ $URL$
 
 2007-04-06  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc classes: fixed all other subclasses which make use of MUIM_Setup and
+    MUIM_Cleanup to do their own work only if the setup of the super class
+    succeeded.
   * ConfigPageList.c: the super class' destructor was not called upon
     OM_DISPOSE.
   * Addrmatchlist.c: the OM_DISPOSE method was not overloaded although the
