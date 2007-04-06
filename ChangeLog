@@ -9,6 +9,9 @@ $URL$
 
   * ConfigPageList.c: the super class' destructor was not called upon
     OM_DISPOSE.
+  * Addrmatchlist.c: the OM_DISPOSE method was not overloaded although the
+    OM_NEW method added an event handler which has to be removed again when the
+    object gets disposed.
 
 2007-04-04  Thore Böckelmann <tboeckel@gmx.de>
 

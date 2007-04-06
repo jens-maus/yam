@@ -37,6 +37,7 @@ struct Data
 {
   struct MUI_EventHandlerNode ehnode;
   Object *Matchlist, *String;
+  BOOL EventHandlerAdded;
   BOOL Open;
 };
 */
@@ -151,8 +152,9 @@ OVERLOAD(OM_NEW)
     }
 
     data->Matchlist = list;
+    data->EventHandlerAdded = FALSE;
 
-    if(!data->String)
+    if(data->String == NULL)
     {
       E(DBF_GUI, "No MUIA_Addrmatchlist_String supplied");
       CoerceMethod(cl, obj, OM_DISPOSE);
@@ -164,11 +166,12 @@ OVERLOAD(OM_NEW)
       // to our string object
       data->ehnode.ehn_Priority = 1;
       data->ehnode.ehn_Flags    = 0;
-      data->ehnode.ehn_Object    = data->String;
+      data->ehnode.ehn_Object   = data->String;
       data->ehnode.ehn_Class    = 0;
-      data->ehnode.ehn_Events    = IDCMP_RAWKEY;
+      data->ehnode.ehn_Events   = IDCMP_RAWKEY;
 
       DoMethod(obj, MUIM_Window_AddEventHandler, &data->ehnode);
+      data->EventHandlerAdded = TRUE;
 
       // set the doubleclick notify to signal the string to resolve a entry
       DoMethod(listview, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, data->String, 2, MUIM_Recipientstring_Resolve, MUIF_NONE);
@@ -179,6 +182,20 @@ OVERLOAD(OM_NEW)
 
   RETURN(obj);
   return (ULONG)obj;
+}
+
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  GETDATA;
+
+  // remove the event handler only if it was added before,
+  // because this might have not been happened yet.
+  if(data->EventHandlerAdded)
+    DoMethod(obj, MUIM_Window_RemEventHandler, &data->ehnode);
+
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
