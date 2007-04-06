@@ -41,21 +41,33 @@ struct Data
 /// OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Setup)
 {
-  if(!DoSuperMethodA(cl, obj, msg))
-    return FALSE;
-  
-  MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
-  
-  return TRUE;
+  ULONG result;
+
+  ENTER();
+
+  if((result = DoSuperMethodA(cl, obj, msg))
+  {
+    MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///
 /// OVERLOAD(MUIM_Cleanup)
 OVERLOAD(MUIM_Cleanup)
 {
+  ULONG result;
+
+  ENTER();
+
   MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
 
-  return DoSuperMethodA(cl, obj, msg);
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -79,19 +91,19 @@ OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragDrop)
 {
   struct MUIP_DragDrop *d = (struct MUIP_DragDrop *)msg;
-  
+
   if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
   {
     struct Attach attach;
     struct Mail *mail;
     int id = MUIV_NList_NextSelected_Start;
-    
+
     do
     {
       DoMethod(d->obj, MUIM_NList_NextSelected, &id);
       if(id == MUIV_NList_NextSelected_End)
         break;
-      
+
       DoMethod(d->obj, MUIM_NList_GetEntry, id, &mail);
       memset(&attach, 0, sizeof(struct Attach));
       GetMailFile(attach.FilePath, NULL, mail);
