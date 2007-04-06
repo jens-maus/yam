@@ -30,6 +30,8 @@
 
 #include "WriteAttachmentList_cl.h"
 
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
@@ -45,7 +47,7 @@ OVERLOAD(MUIM_Setup)
 
   ENTER();
 
-  if((result = DoSuperMethodA(cl, obj, msg))
+  if((result = DoSuperMethodA(cl, obj, msg)))
   {
     MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
   }
