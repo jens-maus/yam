@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.13 (19.02.07)
+## version $VER: YAM.ct 6.14 (08.04.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -53,18 +53,6 @@ MSG_Edit
 Redigera...
 ;#DEF Edit...
 ;#SET (12//)
-MSG_Display
-Visa
-;#DEF Display
-;#SET (13//)
-MSG_Filter
-Filtrera
-;#DEF Filter
-;#SET (14//)
-MSG_Process
-Behandla
-;#DEF Process
-;#SET (15//)
 MSG_Okay
 _OK
 ;#DEF _Okay
@@ -77,10 +65,6 @@ MSG_Cancel
 A_vbryt
 ;#DEF _Cancel
 ;#SET (18//)
-MSG_Yes
-_Ja
-;#DEF _Yes
-;#SET (19//)
 MSG_OkayReq
 *_OK
 ;#DEF *_Okay
@@ -705,10 +689,6 @@ MSG_MA_Project
 Arkiv
 ;#DEF Project
 ;#SET (198//)
-MSG_MA_About
-Om YAM
-;#DEF About YAM
-;#SET (199//)
 MSG_MA_AboutMUI
 Om MUI...
 ;#DEF About MUI...
@@ -973,14 +953,6 @@ MSG_CO_SenderMsgID
 %m  Ursprungligt brev: Brev ID
 ;#DEF %m  Original message: Message ID
 ;#SET (287//)
-MSG_CO_SenderInitials
-%i  Ursprunglig avsändare: Initialer
-;#DEF %i  Original sender: Initials
-;#SET (288//)
-MSG_CO_Sender2Initials
-%j  Ursprunglig avsändare: Två initialer
-;#DEF %j  Original sender: Two initials
-;#SET (289//)
 MSG_CO_RecptName
 %r  Mottagare: Namn
 ;#DEF %r  Recipient: Name
@@ -1202,21 +1174,13 @@ _Lösenord
 ;#DEF _Password
 ;#SET (347//)
 MSG_CO_TimeZone
-Tidszon
-;#DEF Time zone
+Tids_zon
+;#DEF Time _zone
 ;#SET (348//)
-MSG_CO_DaylightSaving
-_Justera för sommartid
-;#DEF _Add adjustment for daylight saving time
-;#SET (349//)
 MSG_CO_SendMail
 Skicka post (SMTP)
 ;#DEF Send mail (SMTP)
 ;#SET (350//)
-MSG_CO_Server
-Ser_ver
-;#DEF Ser_ver
-;#SET (351//)
 MSG_CO_Domain
 Do_män
 ;#DEF Do_main
@@ -1298,8 +1262,8 @@ _Gräns
 ;#DEF Size _limit
 ;#SET (371//)
 MSG_CO_WarnSize2
-kB
-;#DEF kB
+kb
+;#DEF KB
 ;#SET (372//)
 MSG_CO_AutoOperation
 Hämta automatiskt
@@ -1497,10 +1461,6 @@ MSG_CO_FixedFontEdit
 Typsnitt med _fast bredd
 ;#DEF Use _fixed font
 ;#SET (423//)
-MSG_CO_MimeViewers
-MIME-visare
-;#DEF MIME viewers
-;#SET (424//)
 MSG_CO_MimeType
 MIME-_typ
 ;#DEF Attachment _type
@@ -1510,8 +1470,8 @@ _Visare
 ;#DEF _Viewer
 ;#SET (426//)
 MSG_CO_Extension
-Fil_ändelse
-;#DEF File e_xtension
+Fil_ändelser
+;#DEF File e_xtensions
 ;#SET (427//)
 MSG_CO_DefaultViewer
 _Förvald visare
@@ -1617,10 +1577,6 @@ MSG_CO_MLRepInit
 Svarsfras, s_ändningslista
 ;#DEF _Mailing list reply phrase
 ;#SET (454//)
-MSG_CO_QuoteMail
-_Citera brev med
-;#DEF _Quote message using
-;#SET (455//)
 MSG_CO_QuoteEmpty
 Citera t_omrader
 ;#DEF Quote _empty lines
@@ -1873,30 +1829,6 @@ MSG_CO_SaveSent
 _Spara skickade brev
 ;#DEF Sa_ve sent messages
 ;#SET (518//)
-MSG_CO_DispIgnore
-Ignorera
-;#DEF Ignore
-;#SET (519//)
-MSG_CO_DispDeny
-Tillåt inte
-;#DEF Autodeny
-;#SET (520//)
-MSG_CO_DispAsk
-Fråga användaren
-;#DEF Ask user
-;#SET (521//)
-MSG_CO_DispAccept
-Acceptera
-;#DEF Accept
-;#SET (522//)
-MSG_CO_MDN
-Brevspårning
-;#DEF Message tracking
-;#SET (523//)
-MSG_CO_SendAtOnce
-Skicka _genast
-;#DEF Send at _once
-;#SET (524//)
 MSG_CO_XPK
 XPK/LhA-inställningar
 ;#DEF XPK/LhA settings
@@ -2029,10 +1961,6 @@ MSG_HELP_CO_CY_TZONE
 Den tidszon där\ndu befinner dig
 ;#DEF Select the timezone of\nyour current location
 ;#SET (558//)
-MSG_HELP_CO_CH_DLSAVING
-Justera automatiskt för sommartid
-;#DEF Adjust the timezone during daylight\nsaving time (summer time)
-;#SET (559//)
 MSG_HELP_CO_ST_SMTPHOST
 Adress till SMTP-server för att skicka\npost. Om du lämnar detta fält tomt\nanvänds adressen till POP3-servern.
 ;#DEF The address of the SMTP server to send mail to.\nIf you leave this field empty, then the\naddress of the POP3 server is used.
@@ -2337,10 +2265,6 @@ MSG_HELP_CO_CH_QUOTE
 Citera orginalbrevet i svaret?
 ;#DEF Quote original\nmessage in reply?
 ;#SET (639//)
-MSG_HELP_CO_ST_REPLYCHAR
-Tecken i början på varje rad med citerad\ntext. Använd knappen till höger för\natt sätta in en variabel.
-;#DEF String that should precede each line of\nthe quoted message. Use the button at\nthe right side to insert a variable.
-;#SET (640//)
 MSG_HELP_CO_CH_QUOTEEMPTY
 Använd citattecken på\ntomma rader?
 ;#DEF Insert quote character(s)\nfor empty lines?
@@ -2517,26 +2441,6 @@ MSG_HELP_CO_CH_SAVESENT
 Spara skickade brev i skickatmappen
 ;#DEF Save sent messages in the 'Sent' folder
 ;#SET (684//)
-MSG_HELP_CO_RA_MDN_DISP
-När du läser ett brev, skicka ett\nmeddelande om detta till avsändaren\n(om brevet innehåller MDN-rad)
-;#DEF When reading a message, send a\ndisposition notification to the\nsender if requested
-;#SET (685//)
-MSG_HELP_CO_RA_MDN_PROC
-När du vidarebefordrar ett brev, skicka\nett meddelande om detta till avsändaren\n(om brevet innehåller MDN-rad)
-;#DEF When forwarding a message, send a\ndisposition notification to the\nsender if requested
-;#SET (686//)
-MSG_HELP_CO_RA_MDN_DELE
-När du raderar ett brev, skicka ett\nmeddelande om detta till avsändaren\n(om brevet innehåller MDN-rad)
-;#DEF When deleting a message, send a\ndisposition notification to the\nsender if requested
-;#SET (687//)
-MSG_HELP_CO_RA_MDN_RULE
-När du raderar eller vidarebefordrar ett\nbrev via filter, skicka ett meddelande\nom detta till avsändaren (om brevet\ninnehåller MDN-rad)
-;#DEF When deleting or forwarding a message using\nfilters, send a disposition notification to the sender\nif requested
-;#SET (688//)
-MSG_HELP_CO_CH_SEND_MDN
-Skicka MDN-svaret så snart det har skapats
-;#DEF Try to send the disposition notification\nas soon as it is generated
-;#SET (689//)
 MSG_HELP_CO_TX_ENCPACK
 XPK-bibliotek som skall användas för\natt skydda och komprimera mappar
 ;#DEF XPK library used to protect\nand compress folders
@@ -3037,21 +2941,9 @@ MSG_HELP_EA_BT_CANCEL
 Kasta ändringar
 ;#DEF Discard changes
 ;#SET (822//)
-MSG_RE_MDNGads1
-Acceptera och\nskicka senare|Neka och\nskicka senare
-;#DEF Accept and\nsend later|Deny and\nsend later
-;#SET (823//)
-MSG_RE_MDNGads2
-|Acceptera och\nskicka nu|Neka och\nskicka nu
-;#DEF |Accept and\nsend now|Deny and\nsend now
-;#SET (824//)
-MSG_RE_MDNGads3
-|Ignorera
-;#DEF |Ignore
-;#SET (825//)
 MSG_RE_MDNReq
-Avsändaren vill ha ett statusmeddelande tillbaks (MDN).\nVad vill du göra?
-;#DEF The sender of this message requests a disposition notification (MDN).\nWhat do you want to do?
+Avsändaren vill ha ett statusmeddelande\ntillbaks (MDN).\n\nVad vill du göra?
+;#DEF The sender of this message requests\na return receipt.\n\nWhat do you want to do?
 ;#SET (826//)
 MSG_RE_SaveMessage
 Spara brev...
@@ -3165,22 +3057,10 @@ MSG_RE_MDNdisplay
 Brevet\n%s\nhar visats.\n(Detta är ingen garanti för att innehållet\nhar lästs och förståtts.)\n
 ;#DEF The message\n%s\nhas been displayed.\nThis is no guarantee that the content has been read or understood.\n
 ;#SET (854//)
-MSG_RE_MDNprocessed
-Brevet\n%s\nhar tagits emot%s\nmen inte lästs av mottagaren.\nMottagaren kan läsa brevet senare.\n
-;#DEF The message\n%s\nhas been processed%s,\nwithout being displayed to the user. The user may or may not see\nthe message later.\n
-;#SET (855//)
-MSG_RE_MDNdispatched
-Brevet\n%s\nhar skickats vidare%s\nutan att ha visats för mottagaren.\nMottagaren kan läsa brevet senare.\n
-;#DEF The message\n%s\nhas been sent somewhere%s,\nwithout being displayed to the user. The user may or may not see\nthe message later.\n
-;#SET (856//)
 MSG_RE_MDNdeleted
 Brevet\n%s\nhar raderats%s.\nMottagaren kan ha sett brevet.\nMottagaren kan ta fram brevet och läsa det senare.\n
 ;#DEF The message\n%s\nhas been deleted%s.\nThe recipient may or may not have seen the message. The recipient\nmay \"undelete\" the message at a later time and read the message.\n
 ;#SET (857//)
-MSG_RE_MDNdenied
-Mottagaren av brev\n%s\nvill inte meddela vad denne gör med brevet.\n
-;#DEF The recipient of the message\n%s\ndoesn't wish to inform you about the disposition of that message.\n
-;#SET (858//)
 MSG_RE_MDNunknown
 Brevet\n%s\nhar setts %s%s.\n
 ;#DEF The message\n%s\nhas been %s%s.\n
@@ -3569,10 +3449,6 @@ MSG_WR_Receipt
 Beg_är kvitto
 ;#DEF _Return receipt
 ;#SET (957//)
-MSG_WR_GetMDN
-Sp_åra brev (MDN)
-;#DEF Track _message (MDN)
-;#SET (958//)
 MSG_WR_AddInfo
 Lägg till _personinfo
 ;#DEF Add _personal info
@@ -3769,10 +3645,6 @@ MSG_WR_MReceipt
 Begär kvitto
 ;#DEF Return receipt
 ;#SET (1010//)
-MSG_WR_MGetMDN
-Spåra brevet (MDN)
-;#DEF Track message (MDN)
-;#SET (1011//)
 MSG_WR_MAddInfo
 Lägg till personinfo
 ;#DEF Add personal information
@@ -3889,10 +3761,6 @@ MSG_HELP_WR_CH_RECEIPT
 Få ett kvitto vid\nlyckad leverans
 ;#DEF Get a notification on\nsuccessful delivery
 ;#SET (1041//)
-MSG_HELP_WR_CH_DISPNOTI
-Få en indikation om mottagaren läser\neller gör något annat med brevet
-;#DEF Get a notification if the recipient\nreads or processes the message
-;#SET (1042//)
 MSG_HELP_WR_CH_ADDINFO
 Lägg till brevhuvudsrader med data\nom dig själv från adressboken
 ;#DEF Create header fields containing data\nfrom your personal address book entry
@@ -4877,10 +4745,6 @@ MSG_HELP_FO_ST_MLREPLYTOADDRESS
 Använd denna 'Svara till:' adress vid\npostning av nya brev till listan
 ;#DEF Use this 'Reply-To:' address when\nposting new mails to the list
 ;#SET (1327//)
-MSG_RE_MDNGads4
-|Ignorera alla
-;#DEF |Ignore all
-;#SET (1328//)
 MSG_EA_DefSecurity
 _Säkerhet
 ;#DEF Sec_urity
@@ -4913,26 +4777,14 @@ MSG_CO_SMTPPass
 Löseno_rd
 ;#DEF Passwo_rd
 ;#SET (1339//)
-MSG_CO_Del
-Radera
-;#DEF Delete
-;#SET (1340//)
 MSG_WR_AltQuoted
 Alternativt citat
 ;#DEF Alternate quoted
 ;#SET (1342//)
-MSG_CO_AltQuote
-Citera e_xtern med
-;#DEF Quote e_xternal using
-;#SET (1343//)
 MSG_CO_DoQuote
 Citera _meddelande
 ;#DEF Qu_ote message
 ;#SET (1344//)
-MSG_HELP_CO_ST_ALTQUOTECHAR
-Sträng som bör föregå varje linje av ett\ncitat insatt från icke-epost källor
-;#DEF String that should precede each line of a\nquote inserted from non-email sources
-;#SET (1345//)
 MSG_EA_SelectPhoto_Title
 Välj porträtt
 ;#DEF Select portrait
@@ -4961,14 +4813,6 @@ MSG_FOLDER_NEWFOLDERGROUP
 Ny mapp grupp...
 ;#DEF New folder group...
 ;#SET (1355//)
-MSG_FOLDER_SNAPSHOT
-Memorera träd
-;#DEF Snapshot tree
-;#SET (1356//)
-MSG_FOLDER_RELOAD
-Läs om träd
-;#DEF Reload tree
-;#SET (1357//)
 MSG_CO_GENLISTCFG
 Generella inställningar
 ;#DEF General settings
@@ -5221,34 +5065,10 @@ MSG_HELP_CO_NB_EMAILCACHE
 Buffert storlek för de senast använda mottagarna\nsom ännu inte finns i adressboken.\nVälj 0 för att stänga av denna funktion.
 ;#DEF Cache size for the most recently used\nrecipients not yet in the address book.\nSelect 0 to disable this feature.
 ;#SET (1424//)
-MSG_CO_POP3SSL
-Använd POP3 TLSv1/SSLv3
-;#DEF Use POP3 TLSv1/SSLv3
-;#SET (1427//)
-MSG_HELP_CO_CH_POP3SSL
-YAM ansluter sig via TLSv1/SSLv3 till POP3 severn på\nPOP3 SSL port 995 och skickar epost därifrån. Om denna kryssruta\när skuggad, så betyder det att AmiSSL stöd ej är tillgängligt.
-;#DEF YAM will connect via TLSv1/SSLv3 to the POP3 server on the\nPOP3 SSL port 995 port and transfer email from there. If this\ncheckbox is ghosted, it means AmiSSL support is not available.
-;#SET (1428//)
-MSG_CO_USESTLS
-med STLS
-;#DEF _with STLS
-;#SET (1429//)
-MSG_HELP_CO_CH_USESTLS
-Om ikryssad, så antas det att  POP3-servern stödjer STLS\noch att den använder standard POP3 port 110 som vilken\nicke SSL server som helst.
-;#DEF If checked, the POP3 server is assumed to support STLS\nand use the standard POP3 110 port like any non SSL server.
-;#SET (1430//)
-MSG_CO_ST_SMTPPORT
-Port
-;#DEF Port
-;#SET (1431//)
 MSG_HELP_CO_ST_SMTPPORT
 Port som används av SMTP servern (förinställt: 25)
-;#DEF Port used by the SMTP server (default: 25)
+;#DEF Port used by the SMTP server\n(default: 25)
 ;#SET (1432//)
-MSG_CO_ST_POPPORT
-Port
-;#DEF Port
-;#SET (1433//)
 MSG_HELP_CO_ST_POPPORT
 Port som används av POP3 servern (förinställt: 110)
 ;#DEF Port used by the POP3 server (default: 110)
@@ -5578,8 +5398,8 @@ Aktiverar en inbäddad brev vy direkt\ni huvudfönstret.
 ;#DEF Activates an embeeded mail read pane directly\nin the main window.
 ;#SET (1524//)
 MSG_CO_SETSTATUSDELAYED1
-Fördröj markering av brev som läst i
-;#DEF Delay marking of displayed mail as read for
+Fördröj mar_kering av brev som läst i
+;#DEF Delay mar_king of displayed mail as read for
 ;#SET (1525//)
 MSG_CO_SETSTATUSDELAYED2
 sekund(er)
@@ -5910,8 +5730,8 @@ Systeminställningar
 ;#DEF System Settings
 ;#SET (1610//)
 MSG_CO_DEFAULTCHARSET
-Förvald teckenuppsättning
-;#DEF Default Charset
+T_eckenuppsättning
+;#DEF C_harset
 ;#SET (1611//)
 MSG_CO_CHARSETUNKNOWNWARN
 Teckenuppsättningen för YAM är '%s' men stödjs\ninte av den installerade codesets.library versionen.\n\nHur vill du fortsätta?
@@ -6290,8 +6110,8 @@ BZIP2 arkiv
 ;#DEF BZIP2 archive
 ;#SET (1705//)
 MSG_CO_DETECT_CYRILLIC
-Autodetektera cyrillisk teckenuppsättning
-;#DEF Auto-detect cyrillic charsets
+Autodetektera c_yrillisk teckenuppsättning
+;#DEF Auto-detect c_yrillic charsets
 ;#SET (1706//)
 MSG_HELP_CO_DETECT_CYRILLIC
 Försöker använda autodetektera\nfunktionen i codesets.library för att\nautomatiskt identifiera korrekt cyrillisk\nteckenuppsättning.\n(endast relevant för cyrilliska användare)
@@ -6330,8 +6150,8 @@ Brev %%ld av %ld
 ;#DEF Message %%ld of %ld
 ;#SET (1715//)
 MSG_CO_CONVERTHTML
-Konvertera delar av HTML meddelande till vanlig text
-;#DEF Convert viewable HTML message parts to plain text
+Kon_vertera delar av HTML meddelande till vanlig text
+;#DEF Con_vert viewable HTML message parts to plain text
 ;#SET (1716//)
 MSG_HELP_CO_CONVERTHTML
 Om ett brev innehåller delar av HTML i delar av\nhuvudmeddelandet, kommer YAM att konvertera dem\ntill vanlig text.
@@ -6370,8 +6190,8 @@ Bilaga/MIME-del #%ld
 ;#DEF Attachment/MIME part #%ld
 ;#SET (1726//)
 MSG_CO_PGPPASSINTERVAL1
-Kom ihåg lösenord i
-;#DEF Remember passphrase for
+Ko_m ihåg lösenord i
+;#DEF Remem_ber passphrase for
 ;#SET (1727//)
 MSG_CO_PGPPASSINTERVAL2
 inaktiv(a) minut(er)
@@ -6510,8 +6330,8 @@ Konfigurera skräppostfilter...
 ;#DEF Configure spam filter...
 ;#SET (1764//)
 MSG_CO_SPAM_FILTERFORNEWMAIL
-Kontrollera nya brev om de innehåller skräppost
-;#DEF Check new mails for spam content
+Kontrollera _nya brev om de innehåller skräppost
+;#DEF Check _new mails for spam content
 ;#SET (1765//)
 MSG_CO_SPAM_RESETTRAININGDATA
 _Nollställ träningsdata
@@ -6525,29 +6345,25 @@ MSG_CO_SPAM_BADCOUNT
 Antal brev klassifierade som "skräppost"
 ;#DEF Number of "spam" classified mails
 ;#SET (1768//)
-MSG_CO_NB_SPAMPROBTHRESHOLDFMT
-%ld%%
-;#DEF %ld%%
-;#SET (1770//)
 MSG_BUSYFLUSHINGSPAMTRAININGDATA
 Tömmer träningsdata för skräppost...
 ;#DEF Flushing spam training data...
 ;#SET (1771//)
 MSG_CO_SPAM_MARKONMOVE
-Markera brev som skräppost vid flyttning till skräppostmappen
-;#DEF Mark mails as spam when moved to the spam folder
+_Markera brev som skräppost vid flyttning till skräppostmappen
+;#DEF Mark mails as spam when _moved to the spam folder
 ;#SET (1772//)
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
-Adressboken är vitlistad
-;#DEF Address book is white list
+Adressboken är _vitlistad
+;#DEF Address book is _white list
 ;#SET (1773//)
 MSG_CO_SPAM_RECOGNITION
 Skräppostigenkännande
 ;#DEF Spam recognition
 ;#SET (1774//)
 MSG_CO_SPAM_FILTERENABLED
-Aktivera skräppostfilter
-;#DEF Spam filter enabled
+Aktivera skrä_ppostfilter
+;#DEF S_pam filter enabled
 ;#SET (1775//)
 MSG_CO_SPAM_RESETTRAININGDATAASK
 Vill du verkligen nollställa skräppostfiltrets\nträningsdata?\n\nSkräppostfiltret måste tränas igen efteråt.
@@ -6846,8 +6662,8 @@ Radbrytning
 ;#DEF Word-wrap
 ;#SET (1850//)
 MSG_CO_SPAM_MARK_AS_READ
-Markera skräppost som läst
-;#DEF Mark spam mails as read
+Markera ny skräppost som _läst
+;#DEF Mark new spam mai_ls as read
 ;#SET (1851//)
 MSG_HELP_CH_SPAMFILTERENABLED
 Aktiverar skräppostfiltret i YAM, som möjliggör\nfiltrering av reklam och annan elak e-post.
@@ -6885,3 +6701,219 @@ MSG_HELP_CH_UPDATECHECK
 Aktiverar den automatiska uppdateringskontroll\nmekanismen i YAM. Enligt angiven specifierad\nintervall, kommer den att försöka hämta den\nsenaste versionsinformationen via internet och\npåminna dig om tillgängliga uppdateringar.
 ;#DEF Allows to enable the automatic update check\nmechanismin YAM. According to a specified interval\nit will try to get latest version information via\nthe internet and remind you of available software\nupdates.
 ;#SET (1860//)
+MSG_WR_SELECTALL
+Välj alla
+;#DEF Select All
+;#SET (1861//)
+MSG_RE_MDN_ACCEPT_LATER
+Acceptera och\nskicka senare
+;#DEF Accept and\nsend later
+;#SET (1862//)
+MSG_RE_MDN_ACCEPT_NOW
+Acceptera och\nskicka nu
+;#DEF Accept and\nsend now
+;#SET (1863//)
+MSG_RE_MDN_IGNORE
+Ignorera
+;#DEF Ignore
+;#SET (1864//)
+MSG_RE_MDN_IGNORE_ALL
+Ignorera alla
+;#DEF Ignore all
+;#SET (1865//)
+MSG_CO_MDN_ACTION_IGNORE
+Skicka aldrig
+;#DEF Never send
+;#SET (1866//)
+MSG_CO_MDN_ACTION_SEND
+Skicka alltid
+;#DEF Always send
+;#SET (1867//)
+MSG_CO_MDN_ACTION_QUEUE
+Köa alltid
+;#DEF Always queue
+;#SET (1868//)
+MSG_CO_MDN_ACTION_ASK
+Fråga mig
+;#DEF Ask me
+;#SET (1869//)
+MSG_CO_MDN_TITLE
+Meddelande kvitton
+;#DEF Return Receipts
+;#SET (1870//)
+MSG_CO_MDN_DESCRIPTION
+När jag får en förfrågan om meddelande kvitto:
+;#DEF When I receive a request for a return receipt:
+;#SET (1871//)
+MSG_CO_MDN_DISABLED
+_Skicka aldrig ett meddelande kvitto
+;#DEF _Never send a return receipt
+;#SET (1872//)
+MSG_CO_MDN_ENABLED
+Ti_llåt meddelande kvitton för vissa meddelanden
+;#DEF A_llow return receipts for some messages
+;#SET (1873//)
+MSG_CO_MDN_NORECIPIENT
+Om jag inte är i _Till eller Cc av meddelandet:
+;#DEF If I'm not in the _To or Cc of the message:
+;#SET (1874//)
+MSG_CO_MDN_NODOMAIN
+Om sändaren är _utanför min domän:
+;#DEF If the sender is _outside my domain:
+;#SET (1875//)
+MSG_CO_MDN_DELETE
+Om jag bara ska ra_dera meddelandet:
+;#DEF If I'm going to just _delete the message:
+;#SET (1876//)
+MSG_CO_MDN_OTHER
+I alla andra _fall:
+;#DEF In all other _cases:
+;#SET (1877//)
+MSG_CO_REQUESTMDN
+Fråga alltid om _meddelande kvitto, när meddelanden skickas
+;#DEF When sending _messages, always request a return receipt
+;#SET (1878//)
+MSG_HELP_CO_CH_REQUESTMDN
+Om vald, kommer valet meddelande\nkvitto i skrivfönstret att vara aktiverat\nsom förval.
+;#DEF If selected, the return receipt option\nin the write window will be enabled per\ndefault.
+;#SET (1879//)
+MSG_HELP_CO_CH_MDN_NEVER
+Om vald, kommer inget meddelande\nkvitto att skickas, även om det tydligt förfrågas.
+;#DEF If selected, no return receipt will be\nsend out, even if explicitly requested.
+;#SET (1880//)
+MSG_HELP_CO_CH_MDN_ALLOW
+Om vald, kommer meddelandekvitton\natt behandlas enligt reglerna definierade här.
+;#DEF If selected, return receipts will be\nprocessed according to the rules defined\nhere.
+;#SET (1881//)
+MSG_HELP_CO_CY_MDN_NORECIPIENT
+Ifall ett meddelandekvitto förfrågas,\nmen din e-post adress inte finns i Till: eller\nCc: huvudet, kommer den definierade\naktionen att utföras.
+;#DEF In case a return receipt is requested,\nbut your mail address doesn't exist in\nthe To: or Cc: header, the defined action\nwill be performed.
+;#SET (1882//)
+MSG_HELP_CO_CY_MDN_NODOMAIN
+Ifall ett meddelandekvitto förfrågas,\nmen domänen av din e-post adress och en\nav avsändarna inte matchar, kommer\nden definierade aktionen att utföras.
+;#DEF In case a return receipt is requested,\nbut the domain of your mail address and\nthe one of the sender doesn't match,\nthe defined action will be performed.
+;#SET (1883//)
+MSG_HELP_CO_CY_MDN_DELETE
+Om du raderar ett meddelande utan att\nse det, kommer den definierade aktionen att utföras.
+;#DEF If you delete a message without viewing,\nthe defined action will be performed.
+;#SET (1884//)
+MSG_HELP_CO_CY_MDN_OTHER
+Ifall ingen av de ovanstående reglerna\nmatchar, kommer denna aktion att utföras istället.
+;#DEF In case none of the above rules match,\nthis action will be performed instead.
+;#SET (1885//)
+MSG_CO_LOOKFEEL_TITLE
+Utseende&Känsla
+;#DEF Look&Feel
+;#SET (1886//)
+MSG_CO_LOOKFEEL_SUMMARY
+Konfigurera utseende&känsla i YAM...
+;#DEF Configure the general look&feel of YAM...
+;#SET (1887//)
+MSG_CO_CRDLOOKFEEL
+Utseende&Känsla
+;#DEF Look&Feel
+;#SET (1888//)
+MSG_CO_DSTACTIVE
+Somm_artid (DST) är aktiv
+;#DEF D_aylight Saving Time (DST) is active
+;#SET (1889//)
+MSG_HELP_CO_CH_DSTACTIVE
+Aktivera om sommartid är aktuellt i\ndin tidszon.
+;#DEF Activate if the daylight saving time is\ncurrently active in your timezone\n(summer time)
+;#SET (1890//)
+MSG_CO_SMTPSERVERPORT
+Ser_ver/Port
+;#DEF Ser_ver/Port
+;#SET (1891//)
+MSG_CO_POP3SERVERPORT
+Serve_r/Port
+;#DEF Serve_r/Port
+;#SET (1892//)
+MSG_CO_POP3SECURE
+Använd säker anslutning:
+;#DEF Use secure connection:
+;#SET (1893//)
+MSG_CO_POP3SECURE_NO
+Nej
+;#DEF No
+;#SET (1894//)
+MSG_CO_POP3SECURE_TLS
+med TLSv1
+;#DEF with TLSv1
+;#SET (1895//)
+MSG_CO_POP3SECURE_SSL
+med SSLv3
+;#DEF with SSLv3
+;#SET (1896//)
+MSG_HELP_CO_RA_POP3SECURE
+En TLSv1 eller SSLv3 säker anslutning kommer att upprättas mellan\nPOP3 servern och YAM för att ta emot e-post genom en krypterad\nanslutning. Om dessa knappar är inaktiverade, betyder det att\nAmiSSL stöd inte är tillgängligt.
+;#DEF A TLSv1 or SSLv3 secure connection will be established between\nthe POP3 server and YAM to receive email through an encrypted\nconnection. If these radio buttons are ghosted, it means AmiSSL\nsupport is currently not available.
+;#SET (1897//)
+MSG_CO_LOOKFEEL_THEMES
+Teman
+;#DEF Themes
+;#SET (1898//)
+MSG_CO_THEME_ACTIVATE
+Aktivera
+;#DEF Activate
+;#SET (1899//)
+MSG_CO_THEME_PREVIEW
+Förhandstitt
+;#DEF Preview
+;#SET (1900//)
+MSG_CO_THEME_AUTHOR
+Upphovsman
+;#DEF Author
+;#SET (1901//)
+MSG_CO_THEME_URL
+URL
+;#DEF URL
+;#SET (1902//)
+MSG_CO_RELDATETIME
+Relativt datum (idag, igår, ...)
+;#DEF Relative date output (Today, Yesterday, ...)
+;#SET (1903//)
+MSG_HELP_CO_CH_RELDATETIME
+Om vald, kommer datumkolumner att använda\nrelativa datum istället. Dessa kolumner\nkommer att visa 'idag' eller 'igår'\nistället för datumet.
+;#DEF If selected, columns with date information\nwill use a relative output instead. E.g.\nsuch colums will show strings like 'Today'\nor 'Yesterday' instead of the full date.
+;#SET (1904//)
+MSG_ER_LOADDT_TITLE
+Bilddata behandlingsfel
+;#DEF Image data processing error
+;#SET (1905//)
+MSG_ER_LOADDT_ERROR
+Ett fel uppstod vid försök att ladda bilddata för '%s'\nvia datatypes.library.\n\nVar god kontrollera att dina datatyper är korrekt\ninstallerade (t.ex. att bilden visas korrekt i Multiview).
+;#DEF An error occurred while trying to load the image data\nof '%s' via datatypes.library.\n\nPlease make sure that you have your datatypes system\ncorrectly setup (e.g. that the image properly displays\nin Multiview).
+;#SET (1906//)
+MSG_ER_LOADDT_BUTTON
+_Okej
+;#DEF _Okay
+;#SET (1907//)
+MSG_FOLDER_SNAPSHOT_TREE
+Memorera ordning
+;#DEF Snapshot arrangement
+;#SET (1908//)
+MSG_FOLDER_RELOAD_TREE
+Läs om ordning
+;#DEF Reload arrangement
+;#SET (1909//)
+MSG_ER_USER_UNKNOWN_TITLE
+Okänd användare
+;#DEF Unknown user
+;#SET (1910//)
+MSG_ER_USER_UNKNOWN_BUTTON
+_Okej
+;#DEF _Okay
+;#SET (1911//)
+MSG_ER_USER_UNKNOWN_ERROR
+Användare '%s' är okänd!
+;#DEF The user '%s' is not known!
+;#SET (1912//)
+MSG_HELP_CO_CA_COLSIG
+Text färg som ska användas\ntill signaturen i ett brev.
+;#DEF The text color that should be used\nto render the signature of a mail.
+;#SET (1913//)
+MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS
+Du har valt att automatiskt markera skräppost som läst,\nmen du har bara %ld brev klassifierade än.\nDet är inte rekommenderat att aktivera detta val\ni det tidiga skedet av träning av skräppostfiltret.\n\nVill du avaktivera automatisk markering av skräppost\nsom läst?
+;#DEF You chose to automatically mark spam mails as read,\nbut have only %ld mails classified so far.\nIt is not recommended to activate this option in the\nearly state of training the spam filter.\n\nDo you want to deactivate automatic marking of spam\nmails as read?
+;#SET (1914//)

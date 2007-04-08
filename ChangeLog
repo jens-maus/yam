@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-08  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: Updated according to changes in YAM.cd.
+
 2007-04-06  Jens Langner <Jens.Langner@light-speed.de>
 
   * ThemeListGroup.c, YAM_COg.c: moved the themes relevant GUI generation code
