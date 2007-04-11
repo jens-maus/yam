@@ -1166,25 +1166,30 @@ char *MA_NewMailFile(const struct Folder *folder, char *mailfile)
 //  Checks if message contains an uuencoded file
 static BOOL MA_DetectUUE(FILE *fh)
 {
-   char *buffer;
-   BOOL found = FALSE;
+  char *buffer;
+  BOOL found = FALSE;
 
-   buffer = calloc(SIZE_LINE,1);
+  ENTER();
 
-   // Now we process the whole mailfile and check if there is any line that
-   // starts with "begin xxx"
-   while(GetLine(fh, buffer, SIZE_LINE))
-   {
+  if((buffer = malloc(SIZE_LINE)) != NULL)
+  {
+    // Now we process the whole mailfile and check if there is any line that
+    // starts with "begin xxx"
+    while(GetLine(fh, buffer, SIZE_LINE) != NULL)
+    {
       // lets check for digit first because this will throw out many others first
       if(isdigit((int)buffer[6]) && strncmp(buffer, "begin ", 6) == 0)
       {
-         found = TRUE;
-         break;
+        found = TRUE;
+        break;
       }
-   }
+    }
 
-   free(buffer);
-   return found;
+    free(buffer);
+  }
+
+  RETURN(found);
+  return found;
 }
 
 ///
