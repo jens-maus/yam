@@ -886,21 +886,24 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
       RemoveMailFromList(mail, closeWindows);
     }
 
-    if(to == FO_GetCurrentFolder())
-      DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
-
-    // check the status flags and set the mail statues to queued if the mail was copied into
-    // the outgoing folder
-    if(isOutgoingFolder(to) && hasStatusSent(newMail))
-      setStatusToQueued(newMail);
-
-    if(C->SpamFilterEnabled && C->SpamMarkOnMove)
+    if(newMail != NULL)
     {
-      // if we are moving a non-spam mail to the spam folder then this one will be marked as spam
-      if(isSpamFolder(to) && !hasStatusSpam(newMail))
+      if(to == FO_GetCurrentFolder())
+        DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
+
+      // check the status flags and set the mail statues to queued if the mail was copied into
+      // the outgoing folder
+      if(isOutgoingFolder(to) && hasStatusSent(newMail))
+        setStatusToQueued(newMail);
+
+      if(C->SpamFilterEnabled && C->SpamMarkOnMove)
       {
-        BayesFilterSetClassification(newMail, BC_SPAM);
-        setStatusToUserSpam(newMail);
+        // if we are moving a non-spam mail to the spam folder then this one will be marked as spam
+        if(isSpamFolder(to) && !hasStatusSpam(newMail))
+        {
+          BayesFilterSetClassification(newMail, BC_SPAM);
+          setStatusToUserSpam(newMail);
+        }
       }
     }
 
@@ -4269,14 +4272,15 @@ MakeHook(PO_WindowHook, PO_Window);
 /*** MA_LV_FConFunc - Folder listview construction hook ***/
 HOOKPROTONHNO(MA_LV_FConFunc, struct Folder *, struct MUIP_NListtree_ConstructMessage *msg)
 {
-   struct Folder *entry;
+  struct Folder *entry = NULL;
 
-   if(!msg) return(NULL);
+  if(msg != NULL)
+  {
+    if((entry = calloc(1, sizeof(struct Folder))) != NULL)
+      memcpy(entry, msg->UserData, sizeof(struct Folder));
+  }
 
-   entry = calloc(1, sizeof(struct Folder));
-   memcpy(entry, msg->UserData, sizeof(struct Folder));
-
-   return(entry);
+  return(entry);
 }
 MakeStaticHook(MA_LV_FConHook, MA_LV_FConFunc);
 

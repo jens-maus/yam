@@ -7,6 +7,10 @@ $URL$
 
 2007-04-11  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c, YAM_MAf.c, YAM_TR.c: several functions didn't respect that adding
+    a mail to a list might fail and then possibly accessed a NULL pointer. Also
+    made sure that the result of all malloc(), calloc() and realloc() calls is
+    handled correctly to avoid NULL pointer accesses.
   * YAM_MAf.c: the function MA_DetectUUE() did not check for a successful
     memory allocation and hence could access a NULL pointer in a low memory
     situation.

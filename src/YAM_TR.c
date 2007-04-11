@@ -5432,28 +5432,31 @@ static BOOL TR_LoadMessage(struct Folder *infolder, struct TransStat *ts, const 
     {
       struct ExtendedMail *mail;
 
-      if((mail = MA_ExamineMail(infolder, mfile, FALSE)))
+      if((mail = MA_ExamineMail(infolder, mfile, FALSE)) != NULL)
       {
-        struct Mail *new = AddMailToList((struct Mail *)mail, infolder);
+        struct Mail *newMail;
 
-        // we have to get the actual Time and place it in the transDate, so that we know at
-        // which time this mail arrived
-        GetSysTimeUTC(&new->transDate);
+        if((newMail = AddMailToList(&mail->Mail, infolder)) != NULL)
+        {
+          // we have to get the actual Time and place it in the transDate, so that we know at
+          // which time this mail arrived
+          GetSysTimeUTC(&newMail->transDate);
 
-        new->sflags = SFLAG_NEW;
-        MA_UpdateMailFile(new);
+          newMail->sflags = SFLAG_NEW;
+          MA_UpdateMailFile(newMail);
 
-        // if the current folder is the inbox we
-        // can go and add the mail instantly to the maillist
-        if(FO_GetCurrentFolder() == infolder)
-          DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
+          // if the current folder is the inbox we
+          // can go and add the mail instantly to the maillist
+          if(FO_GetCurrentFolder() == infolder)
+            DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
 
-        AppendLogVerbose(32, tr(MSG_LOG_RetrievingVerbose), AddrName(new->From), new->Subject, new->Size);
+          AppendLogVerbose(32, tr(MSG_LOG_RetrievingVerbose), AddrName(newMail->From), newMail->Subject, newMail->Size);
 
-        MA_StartMacro(MACRO_NEWMSG, GetRealPath(GetMailFile(NULL, infolder, new)));
-        MA_FreeEMailStruct(mail);
+          MA_StartMacro(MACRO_NEWMSG, GetRealPath(GetMailFile(NULL, infolder, newMail)));
+          MA_FreeEMailStruct(mail);
 
-        result = TRUE;
+          result = TRUE;
+        }
       }
     }
 
