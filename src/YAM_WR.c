@@ -76,31 +76,6 @@
 
 /**************************************************************************/
 /* local protos */
-static void WR_ComposeMulti(FILE*, struct Compose*, char*);
-static struct WritePart *BuildPartsList(int);
-static char *GetDateTime(void);
-static char *NewID(BOOL);
-static enum Encoding WhichEncodingForFile(const char*, const char*);
-static void HeaderFputs(FILE *, const char *, const char *);
-static void EmitRcptField(FILE*, const char*);
-static void EmitRcptHeader(FILE*, const char*, const char*);
-static void WriteContentTypeAndEncoding(FILE*, struct WritePart*);
-static void WR_WriteUserInfo(FILE *, char *);
-static void EncodePart(FILE*, struct WritePart*);
-static BOOL WR_CreateHashTable(char*, char*, char*);
-static void WR_AddTagline(FILE*);
-static void WR_WriteSignature(FILE*, int);
-static void WR_Anonymize(FILE*, char*);
-static char *WR_GetPGPId(struct Person*);
-static char *WR_GetPGPIds(char*, char*);
-static BOOL WR_Bounce(FILE*, struct Compose*);
-static BOOL WR_SaveDec(FILE*, struct Compose*);
-static void WR_EmitExtHeader(FILE*, struct Compose*);
-static void WR_ComposeReport(FILE*, struct Compose*, char*);
-static BOOL SetDefaultSecurity(struct Compose*);
-static BOOL WR_ComposePGP(FILE*, struct Compose*, char*);
-static char *WR_TransformText(const char*, const enum TransformMode, const char*);
-static void WR_SharedSetup(struct WR_ClassData*, int);
 static struct WR_ClassData *WR_NewBounce(int);
 static struct WR_ClassData *WR_New(int winnum);
 
@@ -2407,11 +2382,11 @@ MakeStaticHook(WR_ChangeSignatureHook, WR_ChangeSignatureFunc);
 static char *WR_TransformText(const char *source, const enum TransformMode mode, const char *qtext)
 {
   char *dest = NULL;
-  int size = FileSize(source);
+  int size;
 
   ENTER();
 
-  if(size > 0)
+  if((size = FileSize(source)) > 0)
   {
     int qtextlen = strlen(qtext);
     BOOL quote = (mode == ED_INSQUOT || mode == ED_PASQUOT ||
@@ -2449,7 +2424,12 @@ static char *WR_TransformText(const char *source, const enum TransformMode mode,
             int i;
 
             if(p+qtextlen > size-2)
-              dest = realloc(dest,(size += SIZE_LARGE));
+            {
+              size += SIZE_LARGE;
+              dest = realloc(dest, size);
+              if(dest == NULL)
+                break;
+            }
 
             for(i=0; i < qtextlen; i++)
               dest[p++] = qtext[i];
@@ -2472,12 +2452,19 @@ static char *WR_TransformText(const char *source, const enum TransformMode mode,
           }
 
           if(p > size-3)
-            dest = realloc(dest,(size += SIZE_LARGE));
+          {
+            size += SIZE_LARGE;
+            dest = realloc(dest, size);
+            if(dest == NULL)
+              break;
+          }
 
           dest[p++] = ch;
         }
 
-        dest[p] = '\0';
+        // a realloc call might have failed, so better check this
+        if(dest != NULL)
+          dest[p] = '\0';
 
         // in case the source is UUencoded text we have to add the
         // "end" stuff at the end of the text as well
@@ -2832,14 +2819,15 @@ void WR_App(int winnum, STRPTR fileName)
 
   if(!mode)
   {
-    char *text = WR_TransformText(fileName, ED_INSERT, "");
+    char *text;
 
-    if(text)
+    if((text = WR_TransformText(fileName, ED_INSERT, "")) != NULL)
+    {
       DoMethod(G->WR[winnum]->GUI.TE_EDIT, MUIM_TextEditor_InsertText, text);
+      free(text);
+    }
     else
       WR_AddFileToList(winnum, fileName, NULL, FALSE);
-
-    free(text);
   }
   else
     WR_AddFileToList(winnum, fileName, NULL, FALSE);
