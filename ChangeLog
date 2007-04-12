@@ -17,6 +17,8 @@ $URL$
 
 2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: the Abort() function now takes a translated string as first parameter
+    instead of translating the error message itself. This is far more intuitive.
   * YAM.c, YAM_UT.c: moved the semaphore stuff to YAM.c as this is the only
     place where these functions will be used.
   * YAM.c, locale/YAM.cd, locale/deutsch.ct: a public semaphore is now used to

@@ -139,7 +139,7 @@ static struct TC_Data
 } TCData;
 /**************************************************************************/
 
-static void Abort(const void *formatnum, ...);
+static void Abort(const char *message, ...);
 
 /**************************************************************************/
 
@@ -237,9 +237,9 @@ static BOOL InitLib(const char *libname,
   if(!base && required)
   {
     if(homepage != NULL)
-      Abort(MSG_ER_LIB_URL, libname, version, revision, homepage);
+      Abort(tr(MSG_ER_LIB_URL), libname, version, revision, homepage);
     else
-      Abort(MSG_ER_LIB, libname, version, revision);
+      Abort(tr(MSG_ER_LIB), libname, version, revision);
   }
 
   return base != NULL;
@@ -1417,19 +1417,19 @@ static void Terminate(void)
 ///
 /// Abort
 //  Shows error requester, then terminates the program
-static void Abort(const void *formatnum, ...)
+static void Abort(const char *message, ...)
 {
   va_list a;
 
   ENTER();
 
-  va_start(a, formatnum);
+  va_start(a, message);
 
-  if(formatnum)
+  if(message != NULL)
   {
     static char error[SIZE_LINE];
 
-    vsnprintf(error, sizeof(error), tr(formatnum), a);
+    vsnprintf(error, sizeof(error), message, a);
 
     if(MUIMasterBase != NULL && G != NULL && G->App != NULL)
     {
@@ -1717,7 +1717,7 @@ static void Initialise2(void)
 
    // Create a new Main & Addressbook Window
    if(!(G->MA = MA_New()) || !(G->AB = AB_New()))
-      Abort(MSG_ErrorMuiApp);
+      Abort(tr(MSG_ErrorMuiApp));
 
    // make sure the GUI objects for the embedded read pane are created
    MA_SetupEmbeddedReadPane();
@@ -1920,7 +1920,7 @@ static void Initialise2(void)
    SplashProgress(tr(MSG_LoadingABook), 90);
    AB_LoadTree(G->AB_Filename, FALSE, FALSE);
    if(!(G->RexxHost = SetupARexxHost("YAM", NULL)))
-      Abort(MSG_ErrorARexx);
+      Abort(tr(MSG_ErrorARexx));
 
    SplashProgress(tr(MSG_OPENGUI), 100);
    G->InStartupPhase = FALSE;
@@ -2040,15 +2040,15 @@ static void Initialise(BOOL hidden)
 
    // create a public semaphore which can be used to single thread certain actions
    if((startupSema = CreateStartupSemaphore()) == NULL)
-     Abort(MSG_ER_CANNOT_CREATE_SEMAPHORE);
+     Abort(tr(MSG_ER_CANNOT_CREATE_SEMAPHORE));
 
    // Initialise and Setup our own MUI custom classes before we go on
    if(!YAM_SetupClasses())
-      Abort(MSG_ErrorClasses);
+      Abort(tr(MSG_ErrorClasses));
 
    // allocate the MUI root object and popup the progress/about window
    if(!Root_New(hidden))
-      Abort(FindPort("YAM") ? NULL : MSG_ErrorMuiApp);
+      Abort(FindPort("YAM") ? NULL : tr(MSG_ErrorMuiApp));
 
    // signal the splash window to show a 10% gauge
    SplashProgress(tr(MSG_LoadingGFX), 10);
@@ -2153,7 +2153,7 @@ static void Initialise(BOOL hidden)
 
    // initialize our timers
    if(!TC_Init())
-     Abort(MSG_ErrorTimer);
+     Abort(tr(MSG_ErrorTimer));
 
    // initialize our ASL FileRequester cache stuff
    for(i = 0; i < ASL_MAX; i++)
