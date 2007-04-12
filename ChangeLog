@@ -17,6 +17,9 @@ $URL$
 
 2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * UserImage.c: replaced the image loading by the functions provided by the
+    image cache. This also speeds up image access, because the user images will
+    be handled by the cache now, too.
   * YAM_WR.c: fixed further possible NULL pointer accesses and free() calls for
     possible NULL pointers.
   * YAM_RE.c, YAM_WR.c: some functions didn't check the result of OpenTempFile()
