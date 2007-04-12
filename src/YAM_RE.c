@@ -2152,33 +2152,40 @@ BOOL RE_DecodePart(struct Part *rp)
 //  Handles a PGP signed message, checks validity of signature
 static void RE_HandleSignedMessage(struct Part *frp)
 {
-   struct Part *rp[2];
+  struct Part *rp[2];
 
-   if ((rp[0] = frp->Next))
-   {
-      if (G->PGPVersion && (rp[1] = rp[0]->Next))
+  ENTER();
+
+  if((rp[0] = frp->Next) != NULL)
+  {
+    if(G->PGPVersion != 0 && (rp[1] = rp[0]->Next) != NULL)
+    {
+      struct TempFile *tf;
+
+      if((tf = OpenTempFile(NULL)) != NULL)
       {
-         int error;
-         struct TempFile *tf = OpenTempFile(NULL);
-         char options[SIZE_LARGE];
+        int error;
+        char options[SIZE_LARGE];
 
-         // flag the mail as having a PGP signature within the MIME encoding
-         SET_FLAG(frp->rmData->signedFlags, PGPS_MIME);
+        // flag the mail as having a PGP signature within the MIME encoding
+        SET_FLAG(frp->rmData->signedFlags, PGPS_MIME);
 
-         ConvertCRLF(rp[0]->Filename, tf->Filename, TRUE);
-         snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", rp[1]->Filename, tf->Filename);
-         error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
-         if(error > 0)
-           SET_FLAG(frp->rmData->signedFlags, PGPS_BADSIG);
+        ConvertCRLF(rp[0]->Filename, tf->Filename, TRUE);
+        snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", rp[1]->Filename, tf->Filename);
+        error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
+        if(error > 0)
+          SET_FLAG(frp->rmData->signedFlags, PGPS_BADSIG);
 
-         if(error >= 0)
-           RE_GetSigFromLog(frp->rmData, NULL);
+        if(error >= 0)
+          RE_GetSigFromLog(frp->rmData, NULL);
 
-         tf->FP = NULL;
-         CloseTempFile(tf);
+        CloseTempFile(tf);
       }
-      RE_DecodePart(rp[0]);
-   }
+    }
+    RE_DecodePart(rp[0]);
+  }
+
+  LEAVE();
 }
 ///
 /// RE_DecryptPGP
@@ -2229,38 +2236,68 @@ static int RE_DecryptPGP(struct ReadMailData *rmData, char *src)
 //  Handles a PGP encryped message
 static void RE_HandleEncryptedMessage(struct Part *frp)
 {
-   struct Part *warnPart;
-   struct Part *encrPart;
+  struct Part *warnPart;
+  struct Part *encrPart;
 
-   // if we find a warning and a encryption part we start decrypting
-   if((warnPart = frp->Next) && (encrPart = warnPart->Next))
-   {
-      int decryptResult;
-      struct TempFile *tf = OpenTempFile("w");
+  ENTER();
 
+  // if we find a warning and a encryption part we start decrypting
+  if((warnPart = frp->Next) != NULL && (encrPart = warnPart->Next) != NULL)
+  {
+    struct TempFile *tf;
+
+    if((tf = OpenTempFile("w")) != NULL)
+    {
       // first we copy our encrypted part because the DecryptPGP()
       // function will overwrite it
-      if(!tf || !CopyFile(NULL, tf->FP, encrPart->Filename, NULL)) return;
-      fclose(tf->FP);
-      tf->FP = NULL;
-
-      decryptResult = RE_DecryptPGP(frp->rmData, tf->Filename);
-
-      if(decryptResult == 1 || decryptResult == 0)
+      if(CopyFile(NULL, tf->FP, encrPart->Filename, NULL))
       {
-         FILE *in;
+        int decryptResult;
 
-         if(decryptResult == 0)
-           SET_FLAG(frp->rmData->signedFlags, PGPS_MIME);
+        fclose(tf->FP);
+        tf->FP = NULL;
 
-         SET_FLAG(frp->rmData->encryptionFlags, PGPE_MIME);
+        decryptResult = RE_DecryptPGP(frp->rmData, tf->Filename);
 
-         // if DecryptPGP() returns with 0 everything worked perfectly and we can
-         // convert & copy our decrypted file over the encrypted part
-         if(ConvertCRLF(tf->Filename, warnPart->Filename, FALSE) && (in = fopen(warnPart->Filename, "r")))
-         {
-            setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+        if(decryptResult == 1 || decryptResult == 0)
+        {
+          FILE *in;
 
+          if(decryptResult == 0)
+            SET_FLAG(frp->rmData->signedFlags, PGPS_MIME);
+
+          SET_FLAG(frp->rmData->encryptionFlags, PGPE_MIME);
+
+          // if DecryptPGP() returns with 0 everything worked perfectly and we can
+          // convert & copy our decrypted file over the encrypted part
+          if(ConvertCRLF(tf->Filename, warnPart->Filename, FALSE))
+          {
+            if((in = fopen(warnPart->Filename, "r")) != NULL)
+            {
+              setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
+              if(warnPart->ContentType)
+                free(warnPart->ContentType);
+
+              warnPart->ContentType = strdup("text/plain");
+              warnPart->Printable = TRUE;
+              warnPart->EncodingCode = ENC_NONE;
+              *warnPart->Description = '\0';
+              RE_ScanHeader(warnPart, in, NULL, 2);
+              fclose(in);
+
+              warnPart->Decoded = FALSE;
+              RE_DecodePart(warnPart);
+              RE_UndoPart(encrPart); // undo the encrypted part because we have a decrypted now.
+            }
+          }
+        }
+        else
+        {
+          // if we end up here the DecryptPGP returned an error an
+          // we have to put this error in place were the nonlocalized version is right now.
+          if(CopyFile(warnPart->Filename, NULL, tf->Filename, NULL))
+          {
             if(warnPart->ContentType)
               free(warnPart->ContentType);
 
@@ -2268,33 +2305,17 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
             warnPart->Printable = TRUE;
             warnPart->EncodingCode = ENC_NONE;
             *warnPart->Description = '\0';
-            RE_ScanHeader(warnPart, in, NULL, 2);
-            fclose(in);
-            warnPart->Decoded = FALSE;
-            RE_DecodePart(warnPart);
-            RE_UndoPart(encrPart); // undo the encrypted part because we have a decrypted now.
-         }
-      }
-      else
-      {
-        // if we end up here the DecryptPGP returned an error an
-        // we have to put this error in place were the nonlocalized version is right now.
-        if(CopyFile(warnPart->Filename, NULL, tf->Filename, NULL))
-        {
-           if(warnPart->ContentType)
-             free(warnPart->ContentType);
-
-           warnPart->ContentType = strdup("text/plain");
-           warnPart->Printable = TRUE;
-           warnPart->EncodingCode = ENC_NONE;
-           *warnPart->Description = '\0';
-           warnPart->Decoded = TRUE;
-           warnPart->HasHeaders = FALSE;
+            warnPart->Decoded = TRUE;
+            warnPart->HasHeaders = FALSE;
+          }
         }
       }
 
       CloseTempFile(tf);
-   }
+    }
+  }
+
+  LEAVE();
 }
 ///
 /// RE_LoadMessagePart

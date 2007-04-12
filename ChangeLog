@@ -17,6 +17,8 @@ $URL$
 
 2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE.c, YAM_WR.c: some functions didn't check the result of OpenTempFile()
+    and could access a NULL pointer later.
   * YAM.c: the Abort() function now takes a translated string as first parameter
     instead of translating the error message itself. This is far more intuitive.
   * YAM.c, YAM_UT.c: moved the semaphore stuff to YAM.c as this is the only
