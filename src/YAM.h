@@ -94,6 +94,7 @@ struct Global
    struct ReadMailData *    ActiveRexxRMData;
    struct codeset *         localCharset;
    struct codesetList *     codesetsList;
+   struct YAMSemaphore *    yamSemaphore;
 
    #if defined(__amigaos4__)
    struct MsgPort *         AppLibPort;

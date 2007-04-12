@@ -6172,3 +6172,6 @@ early state of training the spam filter.\n\
 Do you want to deactivate automatic marking of spam\n\
 mails as read?
 ;
+MSG_ER_CANNOT_CREATE_SEMAPHORE (1915//)
+Can't create semaphore!
+;

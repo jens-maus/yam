@@ -17,6 +17,12 @@ $URL$
 
 2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, locale/YAM.cd, locale/deutsch.ct: a public semaphore is now used to
+    single thread the creation of the basic application object. Running YAM
+    twice with next to no delay inbetween could cause crashes if the second
+    instance was created while the first instance has not yet been completely
+    created. This seems to be an MUI internal bug. All in all the usage of the
+    semaphore fixes bug #1698275.
   * YAM_UT.c: added a 4 new functions to handle public semaphores.
   * YAM_MA.c: cleaned up MA_AppendRcpt().
   * YAM_UT.c: added "<" and ">" to the list of invalid chars for real names

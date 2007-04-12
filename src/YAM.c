@@ -1265,6 +1265,9 @@ static void Terminate(void)
     G->codesetsList = NULL;
   }
 
+  D(DBF_STARTUP, "deleting semaphore");
+  DeleteYAMSemaphore(G->yamSemaphore);
+
   // we deregister the application from
   // application.library
   #if defined(__amigaos4__)
@@ -1322,38 +1325,44 @@ static void Terminate(void)
 //  Shows error requester, then terminates the program
 static void Abort(const void *formatnum, ...)
 {
-   static char error[SIZE_LINE];
-   va_list a;
+  va_list a;
 
-   va_start(a, formatnum);
+  ENTER();
 
-   if(formatnum)
-   {
-      vsnprintf(error, sizeof(error), tr(formatnum), a);
+  va_start(a, formatnum);
 
-      if(MUIMasterBase && G && G->App)
-      {
-         MUI_Request(G->App, NULL, MUIF_NONE, tr(MSG_ErrorStartup), tr(MSG_Quit), error);
-      }
-      else if(IntuitionBase)
-      {
-         struct EasyStruct ErrReq;
+  if(formatnum)
+  {
+    static char error[SIZE_LINE];
 
-         ErrReq.es_StructSize   = sizeof(struct EasyStruct);
-         ErrReq.es_Flags        = 0;
-         ErrReq.es_Title        = (STRPTR)tr(MSG_ErrorStartup);
-         ErrReq.es_TextFormat   = error;
-         ErrReq.es_GadgetFormat = (STRPTR)tr(MSG_Quit);
+    vsnprintf(error, sizeof(error), tr(formatnum), a);
 
-         EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
-      }
-      else
-        puts(error);
-   }
-   va_end(a);
+    if(MUIMasterBase != NULL && G != NULL && G->App != NULL)
+    {
+      MUI_Request(G->App, NULL, MUIF_NONE, tr(MSG_ErrorStartup), tr(MSG_Quit), error);
+    }
+    else if(IntuitionBase != NULL)
+    {
+      struct EasyStruct ErrReq;
 
-   // do a hard exit.
-   exit(RETURN_ERROR);
+      ErrReq.es_StructSize   = sizeof(struct EasyStruct);
+      ErrReq.es_Flags        = 0;
+      ErrReq.es_Title        = (STRPTR)tr(MSG_ErrorStartup);
+      ErrReq.es_TextFormat   = error;
+      ErrReq.es_GadgetFormat = (STRPTR)tr(MSG_Quit);
+
+      EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
+    }
+    else
+      puts(error);
+  }
+
+  va_end(a);
+
+  // do a hard exit.
+  exit(RETURN_ERROR);
+
+  LEAVE();
 }
 ///
 /// yam_exitfunc()
@@ -1401,11 +1410,11 @@ void PopUp(void)
   nnset(G->App, MUIA_Application_Iconified, FALSE);
 
   // avoid MUIA_Window_Open's side effect of activating the window if it was already open
-  if(!xget(G->MA->GUI.WI, MUIA_Window_Open))
-    set(G->MA->GUI.WI, MUIA_Window_Open, TRUE);
+  if(!xget(window, MUIA_Window_Open))
+    set(window, MUIA_Window_Open, TRUE);
 
-  DoMethod(G->MA->GUI.WI, MUIM_Window_ScreenToFront);
-  DoMethod(G->MA->GUI.WI, MUIM_Window_ToFront);
+  DoMethod(window, MUIM_Window_ScreenToFront);
+  DoMethod(window, MUIM_Window_ToFront);
 
   // Now we check if there is any read and write window open and bring it also
   // to the front
@@ -1444,7 +1453,7 @@ void PopUp(void)
 //  A second copy of YAM was started
 HOOKPROTONHNONP(DoublestartFunc, void)
 {
-  if(G->App && G->MA && G->MA->GUI.WI)
+  if(G->App != NULL && G->MA != NULL && G->MA->GUI.WI != NULL)
     PopUp();
 }
 MakeStaticHook(DoublestartHook, DoublestartFunc);
@@ -1526,6 +1535,10 @@ static BOOL Root_New(BOOL hidden)
 
   ENTER();
 
+  // make the following operations single threaded
+  // MUI chokes if a single task application is created a second time while the first instance is not yet fully created
+  ObtainYAMSemaphore(G->yamSemaphore);
+
   if((G->App = YAMObject, End))
   {
     if(hidden)
@@ -1545,6 +1558,9 @@ static BOOL Root_New(BOOL hidden)
       result = TRUE;
     }
   }
+
+  // now a second instance my continue
+  ReleaseYAMSemaphore(G->yamSemaphore);
 
   RETURN(result);
   return result;
@@ -1928,13 +1944,17 @@ static void Initialise(BOOL hidden)
    // codesets via codesets.library
    G->codesetsList = CodesetsListCreateA(NULL);
 
+   // create a public semaphore which can be used to single thread certain actions
+   if((G->yamSemaphore = CreateYAMSemaphore("YAM")) == NULL)
+     Abort(tr(MSG_ER_CANNOT_CREATE_SEMAPHORE));
+
    // Initialise and Setup our own MUI custom classes before we go on
    if(!YAM_SetupClasses())
       Abort(MSG_ErrorClasses);
 
    // allocate the MUI root object and popup the progress/about window
    if(!Root_New(hidden))
-      Abort(FindPort("YAM") ? NULL : MSG_ErrorMuiApp);
+      Abort(FindPort("YAM") ? NULL : tr(MSG_ErrorMuiApp));
 
    // signal the splash window to show a 10% gauge
    SplashProgress(tr(MSG_LoadingGFX), 10);

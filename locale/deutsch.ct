@@ -7614,3 +7614,6 @@ Lernphase des Spamfilters zu aktivieren.\n\
 Wollen Sie das Markieren von neuen Spam-Nachrichten als\n\
 gelesen deaktivieren?
 ;
+MSG_ER_CANNOT_CREATE_SEMAPHORE
+Kann Semaphore nicht erstellen!
+;
