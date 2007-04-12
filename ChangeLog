@@ -7,6 +7,7 @@ $URL$
 
 2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * WriteAttachmentList.c: cleaned up drag&drop code a little bit.
   * AttachmentImage.c: cleaned up icon generation a little bit.
   * YAM_MA.c, YAM_UT.c: SafeOpenWindow() now does a DisplayBeep() itself if
     opening the window fails or a NULL object is supplied.

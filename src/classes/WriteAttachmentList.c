@@ -77,15 +77,21 @@ OVERLOAD(MUIM_Cleanup)
 OVERLOAD(MUIM_DragQuery)
 {
   struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
+  ULONG result;
+
+  ENTER();
 
   // the attachmentlist either accepts drag requests from the main mail list
   // or from a readmailgroup object
   if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
-    return MUIV_DragQuery_Accept;
+    result = MUIV_DragQuery_Accept;
   else if(xget(d->obj, MUIA_AttachmentImage_MailPart) != 0)
-    return MUIV_DragQuery_Accept;
+    result = MUIV_DragQuery_Accept;
+  else
+    result = DoSuperMethodA(cl, obj, msg);
 
-  return DoSuperMethodA(cl, obj, msg);
+  RETURN(result);
+  return(result);
 }
 
 ///
@@ -93,15 +99,19 @@ OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragDrop)
 {
   struct MUIP_DragDrop *d = (struct MUIP_DragDrop *)msg;
+  ULONG result;
+
+  ENTER();
 
   if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
   {
-    struct Attach attach;
-    struct Mail *mail;
     int id = MUIV_NList_NextSelected_Start;
 
     do
     {
+      struct Mail *mail;
+      struct Attach attach;
+
       DoMethod(d->obj, MUIM_NList_NextSelected, &id);
       if(id == MUIV_NList_NextSelected_End)
         break;
@@ -117,7 +127,7 @@ OVERLOAD(MUIM_DragDrop)
     }
     while(TRUE);
 
-    return 0;
+    result = 0;
   }
   else if(xget(d->obj, MUIA_AttachmentImage_MailPart) != 0)
   {
@@ -157,10 +167,16 @@ OVERLOAD(MUIM_DragDrop)
       DisplayBeep(_screen(obj));
 
     BusyEnd();
-    return 0;
+    result = 0;
+  }
+  else
+  {
+    // let the superclass decide
+    result = DoSuperMethodA(cl, obj, msg);
   }
 
-  return DoSuperMethodA(cl, obj, msg);
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -168,3 +184,4 @@ OVERLOAD(MUIM_DragDrop)
 /* Private Functions */
 
 /* Public Methods */
+
