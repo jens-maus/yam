@@ -17,6 +17,8 @@ $URL$
 
 2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_UT.c: moved the semaphore stuff to YAM.c as this is the only
+    place where these functions will be used.
   * YAM.c, locale/YAM.cd, locale/deutsch.ct: a public semaphore is now used to
     single thread the creation of the basic application object. Running YAM
     twice with next to no delay inbetween could cause crashes if the second

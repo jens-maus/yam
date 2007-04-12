@@ -117,12 +117,6 @@ struct FileReqCache
   BOOL used;      // cache is in use
 };
 
-struct YAMSemaphore {
-  struct SignalSemaphore Semaphore; // a standard semaphore structure
-  ULONG UseCount;                   // how many other participants know this semaphore
-  char Name[4];                     // an optional name for a public semaphore
-};
-
 // since the Amiga's timeval structure was renamed to
 // "struct TimeVal" in OS4 (to prevent clashes with the POSIX one)
 // we require to define that slightly compatible structure on our

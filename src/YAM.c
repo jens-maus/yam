@@ -153,6 +153,14 @@ static struct ADST_Data
 
 } ADSTdata;
 
+// Semaphore related suff
+static struct StartupSemaphore {
+  struct SignalSemaphore Semaphore; // a standard semaphore structure
+  ULONG UseCount;                   // how many other participants know this semaphore
+  char Name[4];                     // an optional name for a public semaphore
+} *startupSema;
+#define STARTUP_SEMAPHORE_NAME      "YAM"
+
 /*** Library/MCC check routines ***/
 /// InitLib
 //  Opens a library & on OS4 also the interface
@@ -1087,6 +1095,92 @@ static void FreeXPKPackerList(void)
 
 ///
 
+/*** Synchronization routines ***/
+/// CreateStartupSemaphore
+//  create a new startup semaphore or find an old instance
+static struct StartupSemaphore *CreateStartupSemaphore(void)
+{
+  ULONG nameLen;
+  struct StartupSemaphore *newSema;
+
+  ENTER();
+
+  // if valid name is given round its length to a multiple of 4
+  nameLen = ((strlen(STARTUP_SEMAPHORE_NAME) + 3) / 4) * 4;
+
+  // We must allocate the memory for the new semaphore before we look for an old instance,
+  // because the Forbid() may be broken by AllocVec().
+  if((newSema = AllocVec(sizeof(*newSema) + nameLen + 1, MEMF_SHARED | MEMF_CLEAR)) != NULL)
+  {
+    struct StartupSemaphore *oldSema;
+
+    // initialize the semaphore structure and start with a use counter of 1
+    InitSemaphore(&newSema->Semaphore);
+    strcpy(newSema->Name, STARTUP_SEMAPHORE_NAME);
+    newSema->Semaphore.ss_Link.ln_Name = newSema->Name;
+    newSema->UseCount = 1;
+
+    // we have to disable multitasking before looking for an old instance with the same name
+    Forbid();
+    if((oldSema = (struct StartupSemaphore *)FindSemaphore(STARTUP_SEMAPHORE_NAME)) != NULL)
+    {
+      // the semaphore already exists, so just bump the counter
+      oldSema->UseCount++;
+    }
+    else
+    {
+      // add the new semaphore to the public list of semaphores
+      AddSemaphore(&newSema->Semaphore);
+    }
+    Permit();
+
+    if(oldSema != NULL)
+    {
+      // the semaphore already existed, so we can free our new instance and return the old instance
+      FreeVec(newSema);
+      newSema = oldSema;
+    }
+  }
+
+  RETURN(newSema);
+  return newSema;
+}
+///
+/// DeleteStartupSemaphore
+//  delete a public semaphore, removing it from the syamSematem if it is no longer in use
+static void DeleteStartupSemaphore(void)
+{
+  ENTER();
+
+  if(startupSema != NULL)
+  {
+    BOOL freeIt = FALSE;
+    // first obtain the semaphore so that nobody else can interfere
+    ObtainSemaphore(&startupSema->Semaphore);
+    Forbid();
+    // now we can release the semaphore again, because nobody else can steal it
+    ReleaseSemaphore(&startupSema->Semaphore);
+
+    // one user less for this semaphore
+    startupSema->UseCount--;
+    // if nobody else uses this semaphore it can be removed complete
+    if(startupSema->UseCount == 0)
+    {
+      // remove the semaphore from the public list
+      RemSemaphore(&startupSema->Semaphore);
+      // and the memory can be freed afterwards
+      freeIt = TRUE;
+    }
+    Permit();
+
+    if(freeIt)
+      FreeVec(startupSema);
+  }
+
+  LEAVE();
+}
+///
+
 /*** Application Abort/Termination routines ***/
 /// Terminate
 //  Deallocates used memory and MUI modules and terminates
@@ -1266,7 +1360,7 @@ static void Terminate(void)
   }
 
   D(DBF_STARTUP, "deleting semaphore");
-  DeleteYAMSemaphore(G->yamSemaphore);
+  DeleteStartupSemaphore();
 
   // we deregister the application from
   // application.library
@@ -1537,7 +1631,7 @@ static BOOL Root_New(BOOL hidden)
 
   // make the following operations single threaded
   // MUI chokes if a single task application is created a second time while the first instance is not yet fully created
-  ObtainYAMSemaphore(G->yamSemaphore);
+  ObtainSemaphore(&startupSema->Semaphore);
 
   if((G->App = YAMObject, End))
   {
@@ -1559,8 +1653,8 @@ static BOOL Root_New(BOOL hidden)
     }
   }
 
-  // now a second instance my continue
-  ReleaseYAMSemaphore(G->yamSemaphore);
+  // now a second instance may continue
+  ReleaseSemaphore(&startupSema->Semaphore);
 
   RETURN(result);
   return result;
@@ -1945,8 +2039,8 @@ static void Initialise(BOOL hidden)
    G->codesetsList = CodesetsListCreateA(NULL);
 
    // create a public semaphore which can be used to single thread certain actions
-   if((G->yamSemaphore = CreateYAMSemaphore("YAM")) == NULL)
-     Abort(tr(MSG_ER_CANNOT_CREATE_SEMAPHORE));
+   if((startupSema = CreateStartupSemaphore()) == NULL)
+     Abort(MSG_ER_CANNOT_CREATE_SEMAPHORE);
 
    // Initialise and Setup our own MUI custom classes before we go on
    if(!YAM_SetupClasses())
@@ -1954,7 +2048,7 @@ static void Initialise(BOOL hidden)
 
    // allocate the MUI root object and popup the progress/about window
    if(!Root_New(hidden))
-      Abort(FindPort("YAM") ? NULL : tr(MSG_ErrorMuiApp));
+      Abort(FindPort("YAM") ? NULL : MSG_ErrorMuiApp);
 
    // signal the splash window to show a 10% gauge
    SplashProgress(tr(MSG_LoadingGFX), 10);
