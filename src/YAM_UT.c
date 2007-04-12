@@ -2988,7 +2988,7 @@ char *BuildAddrName(const char *address, const char *name)
 
   if(name[0] != '\0')
   {
-    if(strpbrk(name, ",.()"))
+    if(strpbrk(name, ",.()<>"))
       delim = "\"";
     else
       delim = "";

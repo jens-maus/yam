@@ -17,6 +17,8 @@ $URL$
 
 2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: added "<" and ">" to the list of invalid chars for real names
+    which must be surrounded by quotes. This fixes bug #1697643.
   * extrasrc.h: added missing include for sys/types.h. Otherwise some compilers
     might complain about a missing definition for size_t.
   * YAM_COg.c: added a dummy variable to the look&feel page initialization to
