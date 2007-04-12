@@ -6855,6 +6855,122 @@ ULONG CRC32(void *buffer, unsigned int count, ULONG crc)
   return crc;
 }
 ///
+/// CreateYAMSemaphore
+//  create a new public semaphore
+struct YAMSemaphore *CreateYAMSemaphore(const char *name)
+{
+  ULONG nameLen;
+  struct YAMSemaphore *yamSema;
+
+  ENTER();
+
+  // if valid name is given round its length to a multiple of 4
+  if(name != NULL)
+    nameLen = ((strlen(name) + 3) / 4) * 4;
+  else
+    nameLen = 0;
+
+  // We must allocate the memory for the new semaphore before we look for an old instance,
+  // because the Forbid() may be broken by AllocVec().
+  if((yamSema = AllocVec(sizeof(*yamSema) + nameLen + 1, MEMF_SHARED | MEMF_CLEAR)) != NULL)
+  {
+    struct YAMSemaphore *oldSema;
+
+    // initialize the semaphore structure and start with a use counter of 1
+    InitSemaphore(&yamSema->Semaphore);
+    yamSema->UseCount = 1;
+
+    // only semaphores with a valid name can be made public
+    if(name != NULL)
+    {
+      strcpy(yamSema->Name, name);
+      yamSema->Semaphore.ss_Link.ln_Name = yamSema->Name;
+
+      // we have to disable multitasking before looking for an old instance with the same name
+      Forbid();
+      if((oldSema = (struct YAMSemaphore *)FindSemaphore(name)) != NULL)
+      {
+        // the semaphore already exists, so just bump the counter
+        oldSema->UseCount++;
+      }
+      else
+      {
+        // add the new semaphore to the public list of semaphores
+        AddSemaphore(&yamSema->Semaphore);
+      }
+      Permit();
+
+      if(oldSema != NULL)
+      {
+        // the semaphore already existed, so we can free our new instance and return the old instance
+        FreeVec(yamSema);
+        yamSema = oldSema;
+      }
+    }
+  }
+
+  RETURN(yamSema);
+  return yamSema;
+}
+///
+/// ObtainYAMSemaphore
+//  obtain a public semaphore
+void ObtainYAMSemaphore(struct YAMSemaphore *yamSema)
+{
+  ENTER();
+
+  ObtainSemaphore(&yamSema->Semaphore);
+
+  LEAVE();
+}
+///
+/// ReleaseYAMSemaphore
+//  release a public semaphore
+void ReleaseYAMSemaphore(struct YAMSemaphore *yamSema)
+{
+  ENTER();
+
+  ReleaseSemaphore(&yamSema->Semaphore);
+
+  LEAVE();
+}
+///
+/// DeleteYAMSemaphore
+//  delete a public semaphore, removing it from the syamSematem if it is no longer in use
+void DeleteYAMSemaphore(struct YAMSemaphore *yamSema)
+{
+  ENTER();
+
+  if(yamSema != NULL)
+  {
+    BOOL freeIt = FALSE;
+    // first obtain the semaphore so that nobody else can interfere
+    ObtainSemaphore(&yamSema->Semaphore);
+    Forbid();
+    // now we can release the semaphore again, because nobody else can steal it
+    ReleaseSemaphore(&yamSema->Semaphore);
+
+    // one user less for this semaphore
+    yamSema->UseCount--;
+    // if nobody else uses this semaphore it can be removed complete
+    if(yamSema->UseCount == 0)
+    {
+      // remove the semaphore from the public list if the name exists
+      if(yamSema->Semaphore.ss_Link.ln_Name != NULL)
+        RemSemaphore(&yamSema->Semaphore);
+
+      // and the memory can be freed afterwards
+      freeIt = TRUE;
+    }
+    Permit();
+
+    if(freeIt)
+      FreeVec(yamSema);
+  }
+
+  LEAVE();
+}
+///
 
 /*** REXX interface support ***/
 /// InsertAddresses

@@ -17,6 +17,7 @@ $URL$
 
 2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: added a 4 new functions to handle public semaphores.
   * YAM_MA.c: cleaned up MA_AppendRcpt().
   * YAM_UT.c: added "<" and ">" to the list of invalid chars for real names
     which must be surrounded by quotes. This fixes bug #1697643.

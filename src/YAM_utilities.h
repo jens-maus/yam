@@ -117,6 +117,12 @@ struct FileReqCache
   BOOL used;      // cache is in use
 };
 
+struct YAMSemaphore {
+  struct SignalSemaphore Semaphore; // a standard semaphore structure
+  ULONG UseCount;                   // how many other participants know this semaphore
+  char Name[4];                     // an optional name for a public semaphore
+};
+
 // since the Amiga's timeval structure was renamed to
 // "struct TimeVal" in OS4 (to prevent clashes with the POSIX one)
 // we require to define that slightly compatible structure on our
@@ -406,6 +412,11 @@ LONG     YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const char *
 char *   UnquoteString(const char *s, BOOL new);
 int      ReadUInt32(FILE *stream, ULONG *value);
 int      WriteUInt32(FILE *stream, ULONG value);
+
+struct YAMSemaphore *CreateYAMSemaphore(const char *name);
+void ObtainYAMSemaphore(struct YAMSemaphore *ys);
+void ReleaseYAMSemaphore(struct YAMSemaphore *ys);
+void DeleteYAMSemaphore(struct YAMSemaphore *ys);
 
 // Here we define inline functions that should be inlined by
 // the compiler, if possible.
