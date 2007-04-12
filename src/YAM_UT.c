@@ -5135,25 +5135,32 @@ int GetMUINumer(Object *obj)
 //  Tries to open a window
 BOOL SafeOpenWindow(Object *obj)
 {
+  BOOL success = FALSE;
+
   ENTER();
 
-  // make sure we open the window object
-  set(obj, MUIA_Window_Open, TRUE);
-
-  // now we check whether the window was successfully
-  // open or the application has been in iconify state
-  if(xget(obj, MUIA_Window_Open) == TRUE ||
-     xget(_app(obj), MUIA_Application_Iconified) == TRUE)
+  if(obj != NULL)
   {
-    RETURN(TRUE);
-    return TRUE;
+    // make sure we open the window object
+    set(obj, MUIA_Window_Open, TRUE);
+
+    // now we check whether the window was successfully
+    // open or the application has been in iconify state
+    if(xget(obj, MUIA_Window_Open) == TRUE ||
+       xget(_app(obj), MUIA_Application_Iconified) == TRUE)
+    {
+      success = TRUE;
+    }
   }
 
-  // otherwise we perform a DisplaBeep()
-  DisplayBeep(NULL);
+  if(success == FALSE)
+  {
+    // otherwise we perform a DisplayBeep()
+    DisplayBeep(NULL);
+  }
 
-  RETURN(FALSE);
-  return FALSE;
+  RETURN(success);
+  return success;
 }
 ///
 /// DisposeModule

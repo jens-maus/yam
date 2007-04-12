@@ -4015,10 +4015,7 @@ HOOKPROTONHNONP(MA_AboutMUIFunc, void)
     End;
   }
 
-  if(G->AboutMUIObject)
-    SafeOpenWindow(G->AboutMUIObject);
-  else
-    DisplayBeep(NULL);
+  SafeOpenWindow(G->AboutMUIObject);
 
   LEAVE();
 }
@@ -4062,10 +4059,7 @@ HOOKPROTONHNONP(MA_ShowAboutWindowFunc, void)
     }
   }
 
-  if(G->AboutWinObject)
-    SafeOpenWindow(G->AboutWinObject);
-  else
-    DisplayBeep(NULL);
+  SafeOpenWindow(G->AboutWinObject);
 
   LEAVE();
 }
