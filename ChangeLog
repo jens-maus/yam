@@ -7,6 +7,7 @@ $URL$
 
 2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_US.c: replaced some static buffer sizes by sizeof() representation.
   * misc: several functions did not check the result of a malloc() or calloc()
     call.
 
