@@ -7,6 +7,8 @@ $URL$
 
 2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: added a dummy variable to the look&feel page initialization to
+    work around a possible bug in the gcc 2.95.3 cross compiler for OS3.
   * WriteAttachmentList.c: cleaned up drag&drop code a little bit.
   * AttachmentImage.c: cleaned up icon generation a little bit.
   * YAM_MA.c, YAM_UT.c: SafeOpenWindow() now does a DisplayBeep() itself if

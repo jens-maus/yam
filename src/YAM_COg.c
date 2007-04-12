@@ -3155,6 +3155,10 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 Object *CO_PageLookFeel(struct CO_ClassData *data)
 {
   Object *obj;
+#if !defined(__amigaos4__) && !defined(__MORPHOS__) && !defined(__SASC)
+  #warning dummy variable inserted
+  UNUSED static const char *dummy[1];
+#endif
   static const char *sizef[6];
   static const char *infob[5];
 
