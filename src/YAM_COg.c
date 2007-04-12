@@ -3014,12 +3014,8 @@ Object *CO_PageScripts(struct CO_ClassData *data)
 Object *CO_PageMixed(struct CO_ClassData *data)
 {
   Object *obj;
-  static const char *empty[4];
 
   ENTER();
-
-  empty[0] = empty[1] = empty[2] = "";
-  empty[4] = NULL;
 
   obj = VGroup,
           MUIA_HelpNode, "CO14",
@@ -3155,10 +3151,6 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 Object *CO_PageLookFeel(struct CO_ClassData *data)
 {
   Object *obj;
-#if !defined(__amigaos4__) && !defined(__MORPHOS__) && !defined(__SASC)
-  #warning dummy variable inserted
-  UNUSED static const char *dummy[1];
-#endif
   static const char *sizef[6];
   static const char *infob[5];
 
