@@ -99,15 +99,36 @@ const char mailStatusCycleMap[11] = { 'U', 'O', 'F', 'R', 'W', 'E', 'H', 'S', 'M
 //  Matches string against pattern
 static BOOL FI_MatchString(struct Search *search, char *string)
 {
-   switch (search->Compare)
-   {
-      case 0: return (BOOL)(search->CaseSens ? MatchPattern(search->Pattern, string) : MatchPatternNoCase(search->Pattern, string));
-      case 1: return (BOOL)(search->CaseSens ? !MatchPattern(search->Pattern, string) : !MatchPatternNoCase(search->Pattern, string));
-      case 2: return (BOOL)(search->CaseSens ? strcmp(string, search->Match) < 0 : Stricmp(string, search->Match) < 0);
-      case 3: return (BOOL)(search->CaseSens ? strcmp(string, search->Match) > 0 : Stricmp(string, search->Match) > 0);
-   }
+  BOOL match;
 
-   return FALSE;
+  ENTER();
+
+  switch (search->Compare)
+  {
+    case 0:
+      match = (BOOL)(search->CaseSens ? MatchPattern(search->Pattern, string) : MatchPatternNoCase(search->Pattern, string));
+    break;
+
+    case 1:
+      match = (BOOL)(search->CaseSens ? !MatchPattern(search->Pattern, string) : !MatchPatternNoCase(search->Pattern, string));
+    break;
+
+    case 2:
+      match = (BOOL)(search->CaseSens ? strcmp(string, search->Match) < 0 : Stricmp(string, search->Match) < 0);
+    break;
+
+    case 3:
+      match = (BOOL)(search->CaseSens ? strcmp(string, search->Match) > 0 : Stricmp(string, search->Match) > 0);
+    break;
+
+    default:
+      match = FALSE;
+    break;
+
+  }
+
+  RETURN(match);
+  return match;
 }
 
 ///
@@ -115,30 +136,48 @@ static BOOL FI_MatchString(struct Search *search, char *string)
 //  Matches string against a list of patterns
 static BOOL FI_MatchListPattern(struct Search *search, char *string)
 {
+  BOOL match = FALSE;
   struct MinList *patternList = &search->patternList;
-  struct MinNode *curNode;
 
-  if(IsMinListEmpty(patternList) == TRUE)
-    return FALSE;
+  ENTER();
 
-  // Now we process the read header to set all flags accordingly
-  for(curNode = patternList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  if(IsMinListEmpty(patternList) == FALSE)
   {
-    struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
+    struct MinNode *curNode;
 
-    if(search->CaseSens ? MatchPattern(patternNode->pattern, string)
-                        : MatchPatternNoCase(patternNode->pattern, string)) return TRUE;
+    // Now we process the read header to set all flags accordingly
+    for(curNode = patternList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
+
+      if(search->CaseSens ? MatchPattern(patternNode->pattern, string)
+                          : MatchPatternNoCase(patternNode->pattern, string))
+      {
+        match = TRUE;
+        break;
+      }
+    }
   }
 
-  return FALSE;
+  RETURN(match);
+  return match;
 }
 ///
 /// FI_MatchPerson
 //  Matches string against a person's name or address
 static BOOL FI_MatchPerson(struct Search *search, struct Person *pe)
 {
-   if (search->Compare == 4) return FI_MatchListPattern(search, search->PersMode ? pe->RealName : pe->Address);
-                        else return FI_MatchString(search, search->PersMode ? pe->RealName : pe->Address);
+  BOOL match;
+
+  ENTER();
+
+  if(search->Compare == 4)
+    match = FI_MatchListPattern(search, search->PersMode ? pe->RealName : pe->Address);
+  else
+    match = FI_MatchString(search, search->PersMode ? pe->RealName : pe->Address);
+
+  RETURN(match);
+  return match;
 }
 ///
 /// FI_SearchPatternFast
@@ -307,7 +346,9 @@ static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
   BOOL found = FALSE;
   struct ReadMailData *rmData;
 
-  if((rmData = AllocPrivateRMData(mail, PM_TEXTS|PM_QUIET)))
+  ENTER();
+
+  if((rmData = AllocPrivateRMData(mail, PM_TEXTS|PM_QUIET)) != NULL)
   {
     char *rptr, *ptr, *cmsg;
 
@@ -328,6 +369,7 @@ static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
     FreePrivateRMData(rmData);
   }
 
+  RETURN(found);
   return found;
 }
 
@@ -338,58 +380,61 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 {
   char fullfile[SIZE_PATHFILE];
   BOOL found = FALSE;
-  FILE *fh;
+
+  ENTER();
 
   if(StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
   {
-    if((fh = fopen(fullfile, "r")))
+    FILE *fh;
+
+    if((fh = fopen(fullfile, "r")) != NULL)
     {
-      struct MinList *headerList = calloc(1, sizeof(struct MinList));
+      struct MinList *headerList;
 
-      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
-      if(MA_ReadHeader(fh, headerList))
+      if((headerList = calloc(1, sizeof(struct MinList))) != NULL)
       {
-        struct MinNode *curNode = headerList->mlh_Head;
+        setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-        // search through our headerList
-        for(; curNode->mln_Succ && !found; curNode = curNode->mln_Succ)
+        if(MA_ReadHeader(fh, headerList))
         {
-          struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
+          struct MinNode *curNode = headerList->mlh_Head;
 
-          // if the field is explicitly specified we search for it or
-          // otherwise skip our search
-          if(*search->Field)
+          // search through our headerList
+          for(; curNode->mln_Succ && !found; curNode = curNode->mln_Succ)
           {
-            int searchLen;
-            char *ptr = strchr(search->Field, ':');
+            struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
 
-            // if the field is specified we search if it was specified with a ':'
-            // at the end
-            if(ptr)
-              searchLen = ptr-(search->Field);
+            // if the field is explicitly specified we search for it or
+            // otherwise skip our search
+            if(*search->Field)
+            {
+              int searchLen;
+              char *ptr = strchr(search->Field, ':');
+
+              // if the field is specified we search if it was specified with a ':'
+              // at the end
+              if(ptr)
+                searchLen = ptr-(search->Field);
+              else
+                searchLen = strlen(search->Field);
+
+              if(strnicmp(hdrNode->name, search->Field, searchLen) != 0)
+                continue;
+            }
+
+            if(search->Compare == 4)
+              found = FI_MatchListPattern(search, hdrNode->content);
             else
-              searchLen = strlen(search->Field);
-
-            if(strnicmp(hdrNode->name, search->Field, searchLen) != 0)
-              continue;
+              found = FI_MatchString(search, hdrNode->content);
           }
 
-          if(search->Compare == 4)
-          {
-            if(FI_MatchListPattern(search, hdrNode->content))
-              found = TRUE;
-          }
-          else if(FI_MatchString(search, hdrNode->content))
-            found = TRUE;
+          // free our temporary header list
+          FreeHeaderList(headerList);
         }
 
-        // free our temporary header list
-        FreeHeaderList(headerList);
+        // free our temporary headerList
+        free(headerList);
       }
-
-      // free our temporary headerList
-      free(headerList);
 
       // close the file
       fclose(fh);
@@ -398,6 +443,7 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
     FinishUnpack(fullfile);
   }
 
+  RETURN(found);
   return found;
 }
 
@@ -406,13 +452,13 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 //  Checks if quick search is available for selected header field
 static enum FastSearch FI_IsFastSearch(const char *field)
 {
-   if (!stricmp(field, "from"))     return FS_FROM;
-   if (!stricmp(field, "to"))       return FS_TO;
-   if (!stricmp(field, "cc"))       return FS_CC;
-   if (!stricmp(field, "reply-to")) return FS_REPLYTO;
-   if (!stricmp(field, "subject"))  return FS_SUBJECT;
-   if (!stricmp(field, "date"))     return FS_DATE;
-   return FS_NONE;
+  if (!stricmp(field, "from"))     return FS_FROM;
+  if (!stricmp(field, "to"))       return FS_TO;
+  if (!stricmp(field, "cc"))       return FS_CC;
+  if (!stricmp(field, "reply-to")) return FS_REPLYTO;
+  if (!stricmp(field, "subject"))  return FS_SUBJECT;
+  if (!stricmp(field, "date"))     return FS_DATE;
+  return FS_NONE;
 }
 
 ///
@@ -420,41 +466,45 @@ static enum FastSearch FI_IsFastSearch(const char *field)
 //  Reads list of patterns from a file
 static void FI_GenerateListPatterns(struct Search *search)
 {
-   char pattern[SIZE_PATTERN*2+2]; // ParsePattern() needs at least 2*source+2 bytes buffer
-   char buf[SIZE_PATTERN];
-   FILE *fh;
+  FILE *fh;
 
-   if((fh = fopen(search->Match, "r")))
-   {
-      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+  ENTER();
 
-      // make sure the pattern list is successfully freed
-      FreeSearchPatternList(search);
+  if((fh = fopen(search->Match, "r")) != NULL)
+  {
+    char buf[SIZE_PATTERN];
 
-      while(GetLine(fh, buf, sizeof(buf)))
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+    // make sure the pattern list is successfully freed
+    FreeSearchPatternList(search);
+
+    while(GetLine(fh, buf, sizeof(buf)) != NULL)
+    {
+      if(buf[0] != '\0')
       {
-         if(buf[0])
-         {
-            struct SearchPatternNode *newNode;
+        char pattern[SIZE_PATTERN*2+2]; // ParsePattern() needs at least 2*source+2 bytes buffer
+        struct SearchPatternNode *newNode;
 
-            if(search->CaseSens)
-              ParsePattern(buf, pattern, sizeof(pattern));
-            else
-              ParsePatternNoCase(buf, pattern, sizeof(pattern));
+        if(search->CaseSens)
+          ParsePattern(buf, pattern, sizeof(pattern));
+        else
+          ParsePatternNoCase(buf, pattern, sizeof(pattern));
 
-            // put the pattern in our search pattern list
-            newNode = malloc(sizeof(struct SearchPatternNode));
-            if(newNode != NULL)
-            {
-              strlcpy(newNode->pattern, pattern, sizeof(newNode->pattern));
+        // put the pattern in our search pattern list
+        if((newNode = malloc(sizeof(struct SearchPatternNode))) != NULL)
+        {
+          strlcpy(newNode->pattern, pattern, sizeof(newNode->pattern));
 
-              // add the pattern to our list
-              AddTail((struct List *)&search->patternList, (struct Node *)newNode);
-            }
-         }
+          // add the pattern to our list
+          AddTail((struct List *)&search->patternList, (struct Node *)newNode);
+        }
       }
-      fclose(fh);
-   }
+    }
+    fclose(fh);
+  }
+
+  LEAVE();
 }
 
 ///
@@ -464,86 +514,116 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
                       BOOL casesens, int persmode, int compar,
                       char stat, BOOL substr, const char *match, const char *field)
 {
-   memset(search, 0, sizeof(struct Search));
-   search->Mode      = mode;
-   search->CaseSens  = casesens;
-   search->PersMode  = persmode;
-   search->Compare   = compar;
-   search->Status    = stat;
-   search->SubString = substr;
-   strlcpy(search->Match, match, sizeof(search->Match));
-   strlcpy(search->Field, field, sizeof(search->Field));
-   search->Pattern = search->PatBuf;
-   search->Fast = FS_NONE;
-   NewList((struct List *)&search->patternList);
+  BOOL success = TRUE;
 
-   switch(mode)
-   {
-      case SM_FROM:     search->Fast = FS_FROM; break;
-      case SM_TO:       search->Fast = FS_TO; break;
-      case SM_CC:       search->Fast = FS_CC; break;
-      case SM_REPLYTO:  search->Fast = FS_REPLYTO; break;
-      case SM_SUBJECT:  search->Fast = FS_SUBJECT; break;
+  ENTER();
 
-      case SM_DATE:
+  memset(search, 0, sizeof(struct Search));
+  search->Mode      = mode;
+  search->CaseSens  = casesens;
+  search->PersMode  = persmode;
+  search->Compare   = compar;
+  search->Status    = stat;
+  search->SubString = substr;
+  strlcpy(search->Match, match, sizeof(search->Match));
+  strlcpy(search->Field, field, sizeof(search->Field));
+  search->Pattern = search->PatBuf;
+  search->Fast = FS_NONE;
+  NewList((struct List *)&search->patternList);
+
+  switch(mode)
+  {
+    case SM_FROM:
+      search->Fast = FS_FROM;
+    break;
+
+    case SM_TO:
+      search->Fast = FS_TO;
+    break;
+
+    case SM_CC:
+      search->Fast = FS_CC;
+    break;
+
+    case SM_REPLYTO:
+      search->Fast = FS_REPLYTO;
+    break;
+
+    case SM_SUBJECT:
+      search->Fast = FS_SUBJECT;
+    break;
+
+    case SM_DATE:
+    {
+      char *time;
+
+      search->Fast = FS_DATE;
+      search->DT.dat_Format = FORMAT_DEF;
+      search->DT.dat_StrDate = (STRPTR)match;
+      search->DT.dat_StrTime = (STRPTR)((time = strchr(match,' ')) ? time+1 : "00:00:00");
+
+      if(StrToDate(&(search->DT)))
       {
-        char *time;
-        search->Fast = FS_DATE;
-        search->DT.dat_Format = FORMAT_DEF;
-        search->DT.dat_StrDate = (STRPTR)match;
-        search->DT.dat_StrTime = (STRPTR)((time = strchr(match,' ')) ? time+1 : "00:00:00");
-
-        if(!StrToDate(&(search->DT)))
-        {
-          char datstr[64];
-          DateStamp2String(datstr, sizeof(datstr), NULL, DSS_DATE, TZC_NONE);
-          ER_NewError(tr(MSG_ER_ErrorDateFormat), datstr);
-
-          return FALSE;
-        }
-
         search->Pattern = (char *)&(search->DT.dat_Stamp);
       }
-      break;
-
-      case SM_HEADLINE: search->Fast = FI_IsFastSearch(field); break;
-
-      case SM_SIZE:
+      else
       {
-        search->Fast = FS_SIZE;
-        search->Size = atol(match);
+        char datstr[64];
+
+        DateStamp2String(datstr, sizeof(datstr), NULL, DSS_DATE, TZC_NONE);
+        ER_NewError(tr(MSG_ER_ErrorDateFormat), datstr);
+
+        success = FALSE;
       }
-      break;
+    }
+    break;
 
-      case SM_HEADER:   // continue
-      case SM_WHOLE:    *search->Field = 0;
+    case SM_HEADLINE:
+      search->Fast = FI_IsFastSearch(field);
+    break;
 
-      default:
-        // nothing
-      break;
-   }
+    case SM_SIZE:
+    {
+      search->Fast = FS_SIZE;
+      search->Size = atol(match);
+    }
+    break;
 
-   if(compar == 4)
-     FI_GenerateListPatterns(search);
-   else if (search->Fast != FS_DATE && search->Fast != FS_SIZE && mode != SM_SIZE)
-   {
-      if (substr || mode == SM_HEADER || mode == SM_BODY || mode == SM_WHOLE || mode == SM_STATUS)
+    case SM_HEADER:   // continue
+    case SM_WHOLE:
+      search->Field[0] = '\0';
+    break;
+
+    default:
+      // nothing
+    break;
+  }
+
+  if(success)
+  {
+    if(compar == 4)
+      FI_GenerateListPatterns(search);
+    else if (search->Fast != FS_DATE && search->Fast != FS_SIZE && mode != SM_SIZE)
+    {
+      if(substr || mode == SM_HEADER || mode == SM_BODY || mode == SM_WHOLE || mode == SM_STATUS)
       {
-         char buffer[SIZE_PATTERN+1];
+        char buffer[SIZE_PATTERN+1];
 
-         // if substring is selected lets generate a substring out
-         // of the current match string, but keep the string borders in mind.
-         strlcpy(buffer, search->Match, sizeof(buffer));
-         snprintf(search->Match, sizeof(search->Match), "#?%s#?", buffer);
+        // if substring is selected lets generate a substring out
+        // of the current match string, but keep the string borders in mind.
+        strlcpy(buffer, search->Match, sizeof(buffer));
+        snprintf(search->Match, sizeof(search->Match), "#?%s#?", buffer);
       }
 
       if(casesens)
         ParsePattern(search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);
       else
         ParsePatternNoCase(search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);
-   }
+    }
+  }
 
-   return TRUE;
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -676,6 +756,8 @@ BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail)
   struct MinNode *curNode;
   BOOL lastCond = FALSE;
 
+  ENTER();
+
   // we have to iterate through our ruleList and depending on the combine
   // operation we evaluate if the filter hits any mail criteria or not.
   for(i=0, curNode = filter->ruleList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
@@ -719,6 +801,7 @@ BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail)
     }
   }
 
+  RETURN(lastCond);
   return lastCond;
 }
 
@@ -749,87 +832,93 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
    set(gui->BT_READ, MUIA_Disabled, TRUE);
    DoMethod(gui->LV_MAILS, MUIM_NList_Clear);
    fnr = xget(gui->LV_FOLDERS, MUIA_List_Entries);
-   sfo = calloc(fnr, sizeof(struct Folder *));
-   id = MUIV_List_NextSelected_Start;
-   while (TRUE)
-   {
-      DoMethod(gui->LV_FOLDERS, MUIM_List_NextSelected, &id);
-      if (id == MUIV_List_NextSelected_End) break;
-      DoMethod(gui->LV_FOLDERS, MUIM_List_GetEntry, id, &name);
-      if ((folder = FO_GetFolderByName(name, NULL))) if (MA_GetIndex(folder))
-      {
-         sfo[sfonum++] = folder;
-         totmsg += folder->Total;
-      }
-   }
 
-   if(!totmsg)
+   if((sfo = calloc(fnr, sizeof(struct Folder *))) != NULL)
    {
+     id = MUIV_List_NextSelected_Start;
+     while(TRUE)
+     {
+       DoMethod(gui->LV_FOLDERS, MUIM_List_NextSelected, &id);
+       if(id == MUIV_List_NextSelected_End)
+         break;
+
+       DoMethod(gui->LV_FOLDERS, MUIM_List_GetEntry, id, &name);
+       if((folder = FO_GetFolderByName(name, NULL)) != NULL)
+       {
+         if(MA_GetIndex(folder))
+         {
+           sfo[sfonum++] = folder;
+           totmsg += folder->Total;
+         }
+       }
+     }
+
+     if(totmsg != 0)
+     {
+       // lets prepare the search
+       DoMethod(gui->GR_SEARCH, MUIM_SearchControlGroup_PrepareSearch, &search);
+
+       // set the gauge
+       snprintf(gauge, sizeof(gauge), tr(MSG_FI_GAUGETEXT), totmsg);
+       SetAttrs(ga, MUIA_Gauge_InfoText, gauge,
+                    MUIA_Gauge_Max,      totmsg,
+                    MUIA_Gauge_Current,  0,
+                    TAG_DONE);
+
+       set(gui->GR_PAGE, MUIA_Group_ActivePage, 1);
+
+       memset(&last, 0, sizeof(struct TimeVal));
+
+       for(i = 0; i < sfonum && !G->FI->Abort; i++)
+       {
+         for(mail = sfo[i]->Messages; mail && !G->FI->Abort; mail = mail->Next)
+         {
+           if(FI_DoSearch(&search, mail))
+           {
+             DoMethod(gui->LV_MAILS, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
+             fndmsg++;
+           }
+
+           // increase the progress counter
+           progress++;
+
+           // then we update the gauge, but we take also care of not refreshing
+           // it too often or otherwise it slows down the whole search process.
+           GetSysTime(TIMEVAL(&now));
+           if(-CmpTime(TIMEVAL(&now), TIMEVAL(&last)) > 0)
+           {
+             struct TimeVal delta;
+
+             // how much time has passed exactly?
+             memcpy(&delta, &now, sizeof(struct TimeVal));
+             SubTime(TIMEVAL(&delta), TIMEVAL(&last));
+
+             // update the display at least twice a second
+             if(delta.Seconds > 0 || delta.Microseconds > 250000)
+             {
+               set(ga, MUIA_Gauge_Current, progress);
+
+               // signal the application to update now
+               DoMethod(G->App, MUIM_Application_InputBuffered);
+
+               memcpy(&last, &now, sizeof(struct TimeVal));
+             }
+           }
+         }
+       }
+
+       // to let the gauge move to 100% lets increase it accordingly.
+       set(ga, MUIA_Gauge_Current, progress);
+
+       // signal the application to update now
+       DoMethod(G->App, MUIM_Application_InputBuffered);
+
+       FreeSearchPatternList(&search);
+     }
+
      free(sfo);
-     return;
    }
 
-   // lets prepare the search
-   DoMethod(gui->GR_SEARCH, MUIM_SearchControlGroup_PrepareSearch, &search);
-
-   // set the gauge
-   snprintf(gauge, sizeof(gauge), tr(MSG_FI_GAUGETEXT), totmsg);
-   SetAttrs(ga, MUIA_Gauge_InfoText, gauge,
-                MUIA_Gauge_Max,      totmsg,
-                MUIA_Gauge_Current,  0,
-                TAG_DONE);
-
-   set(gui->GR_PAGE, MUIA_Group_ActivePage, 1);
-
-   memset(&last, 0, sizeof(struct TimeVal));
-
-   for (i = 0; i < sfonum && !G->FI->Abort; i++)
-   {
-      for (mail = sfo[i]->Messages; mail && !G->FI->Abort; mail = mail->Next)
-      {
-         if(FI_DoSearch(&search, mail))
-         {
-            DoMethod(gui->LV_MAILS, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
-            fndmsg++;
-         }
-
-         // increase the progress counter
-         progress++;
-
-         // then we update the gauge, but we take also care of not refreshing
-         // it too often or otherwise it slows down the whole search process.
-         GetSysTime(TIMEVAL(&now));
-         if(-CmpTime(TIMEVAL(&now), TIMEVAL(&last)) > 0)
-         {
-            struct TimeVal delta;
-
-            // how much time has passed exactly?
-            memcpy(&delta, &now, sizeof(struct TimeVal));
-            SubTime(TIMEVAL(&delta), TIMEVAL(&last));
-
-            // update the display at least twice a second
-            if(delta.Seconds > 0 || delta.Microseconds > 250000)
-            {
-              set(ga, MUIA_Gauge_Current, progress);
-
-              // signal the application to update now
-              DoMethod(G->App, MUIM_Application_InputBuffered);
-
-              memcpy(&last, &now, sizeof(struct TimeVal));
-            }
-
-         }
-      }
-   }
-
-   // to let the gauge move to 100% lets increase it accordingly.
-   set(ga, MUIA_Gauge_Current, progress);
-
-   // signal the application to update now
-   DoMethod(G->App, MUIM_Application_InputBuffered);
-
-   FreeSearchPatternList(&search);
-   free(sfo);
    set(gui->GR_PAGE, MUIA_Group_ActivePage, 0);
    set(gui->BT_SELECTACTIVE, MUIA_Disabled, !fndmsg);
    set(gui->BT_SELECT, MUIA_Disabled, !fndmsg);
@@ -839,7 +928,8 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
 
    // if the closeHook has set the DisposeOnEnd flag we have to dispose
    // our object now.
-   if(G->FI->DisposeOnEnd) DisposeModulePush(&G->FI);
+   if(G->FI->DisposeOnEnd)
+     DisposeModulePush(&G->FI);
 }
 MakeStaticHook(FI_SearchHook,FI_SearchFunc);
 
@@ -1045,24 +1135,29 @@ MakeStaticHook(FI_CloseHook, FI_Close);
 void FreeSearchPatternList(struct Search *search)
 {
   struct MinList *patternList = &search->patternList;
-  struct MinNode *curNode;
 
-  if(IsMinListEmpty(patternList) == TRUE)
-    return;
+  ENTER();
 
-  // Now we process the read header to set all flags accordingly
-  for(curNode = patternList->mlh_Head; curNode->mln_Succ;)
+  if(IsMinListEmpty(patternList) == FALSE)
   {
-    struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
+    struct MinNode *curNode;
 
-    // before we remove the node we have to save the pointer to the next one
-    curNode = curNode->mln_Succ;
+    // Now we process the read header to set all flags accordingly
+    for(curNode = patternList->mlh_Head; curNode->mln_Succ;)
+    {
+      struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
 
-    // Remove node from list
-    Remove((struct Node *)patternNode);
+      // before we remove the node we have to save the pointer to the next one
+      curNode = curNode->mln_Succ;
 
-    free(patternNode);
+      // Remove node from list
+      Remove((struct Node *)patternNode);
+
+      free(patternNode);
+    }
   }
+
+  LEAVE();
 }
 
 ///
@@ -1161,6 +1256,8 @@ void FreeFilterSearch(void)
 {
   struct MinNode *curNode;
 
+  ENTER();
+
   // Now we process the read header to set all flags accordingly
   for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
   {
@@ -1172,7 +1269,7 @@ void FreeFilterSearch(void)
       struct RuleNode *rule = (struct RuleNode *)curRuleNode;
 
       // now we do free our search structure if it exists
-      if(rule->search)
+      if(rule->search != NULL)
       {
         FreeSearchPatternList(rule->search);
         free(rule->search);
@@ -1180,6 +1277,8 @@ void FreeFilterSearch(void)
       }
     }
   }
+
+  LEAVE();
 }
 
 ///
@@ -1188,8 +1287,10 @@ void FreeFilterSearch(void)
 //  should continue or FALSE if it should stop afterwards
 BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
 {
+  BOOL success = TRUE;
   struct Mail *mlist[3];
-  struct Folder* fo;
+
+  ENTER();
 
   // initialize mlist
   mlist[0] = (struct Mail *)1;
@@ -1241,7 +1342,9 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
   // Move Action
   if(hasMoveAction(filter) && !filter->remote)
   {
-    if((fo = FO_GetFolderByName(filter->moveTo, NULL)))
+    struct Folder* fo;
+
+    if((fo = FO_GetFolderByName(filter->moveTo, NULL)) != NULL)
     {
       if(mail->Folder != fo)
       {
@@ -1268,7 +1371,9 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
           CLEAR_FLAG(fo->Flags, FOFL_FREEXS);
         }
 
-        return FALSE;
+        // signal failure, although everything was successful yet
+        // but the mail is not available anymore for other filters
+        success = FALSE;
       }
     }
     else
@@ -1276,7 +1381,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
   }
 
   // Delete Action
-  if(hasDeleteAction(filter))
+  if(hasDeleteAction(filter) && success == TRUE)
   {
     G->RRs.Deleted++;
 
@@ -1288,10 +1393,13 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
 
     MA_DeleteSingle(mail, FALSE, FALSE, TRUE);
 
-    return FALSE;
+    // signal failure, although everything was successful yet
+    // but the mail is not available anymore for other filters
+    success = FALSE;
   }
 
-  return TRUE;
+  RETURN(success);
+  return success;
 }
 ///
 /// ApplyFiltersFunc()
@@ -1490,23 +1598,26 @@ void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
   for(curNode = srcFilter->ruleList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
   {
     struct RuleNode *rule = (struct RuleNode *)curNode;
-    struct RuleNode *newRule = calloc(1, sizeof(struct RuleNode));
+    struct RuleNode *newRule;
 
-    // do a raw copy of the rule contents first
-    memcpy(newRule, rule, sizeof(struct RuleNode));
-
-    // check if the search structure exists and if so
-    // so start another deep copy
-    if(rule->search)
+    if((newRule = calloc(1, sizeof(struct RuleNode))) != NULL)
     {
-      newRule->search = calloc(1, sizeof(struct Search));
-      CopySearchData(newRule->search, rule->search);
-    }
-    else
-      newRule->search = NULL;
+      // do a raw copy of the rule contents first
+      memcpy(newRule, rule, sizeof(struct RuleNode));
 
-    // add the rule to the ruleList of our desitionation filter
-    AddTail((struct List *)&dstFilter->ruleList, (struct Node *)newRule);
+      // check if the search structure exists and if so
+      // so start another deep copy
+      if(rule->search)
+      {
+        if((newRule->search = calloc(1, sizeof(struct Search))) != NULL)
+          CopySearchData(newRule->search, rule->search);
+      }
+      else
+        newRule->search = NULL;
+
+      // add the rule to the ruleList of our desitionation filter
+      AddTail((struct List *)&dstFilter->ruleList, (struct Node *)newRule);
+    }
   }
 
   LEAVE();
@@ -1534,11 +1645,14 @@ static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
   for(curNode = srcSearch->patternList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
   {
     struct SearchPatternNode *srcNode = (struct SearchPatternNode *)curNode;
-    struct SearchPatternNode *dstNode = calloc(1, sizeof(struct SearchPatternNode));
+    struct SearchPatternNode *dstNode;
 
-    memcpy(dstNode, srcNode, sizeof(struct SearchPatternNode));
+    if((dstNode = calloc(1, sizeof(struct SearchPatternNode))) != NULL)
+    {
+      memcpy(dstNode, srcNode, sizeof(struct SearchPatternNode));
 
-    AddTail((struct List *)&dstSearch->patternList, (struct Node *)dstNode);
+      AddTail((struct List *)&dstSearch->patternList, (struct Node *)dstNode);
+    }
   }
 
   LEAVE();
@@ -1550,6 +1664,8 @@ void FreeFilterRuleList(struct FilterNode *filter)
 {
   struct MinNode *curNode;
 
+  ENTER();
+
   // we do have to iterate through our ruleList and
   // free them as well
   for(curNode = filter->ruleList.mlh_Head; curNode->mln_Succ;)
@@ -1557,7 +1673,7 @@ void FreeFilterRuleList(struct FilterNode *filter)
     struct RuleNode *rule = (struct RuleNode *)curNode;
 
     // now we do free our search structure if it exists
-    if(rule->search)
+    if(rule->search != NULL)
     {
       FreeSearchPatternList(rule->search);
       free(rule->search);
@@ -1574,6 +1690,8 @@ void FreeFilterRuleList(struct FilterNode *filter)
 
   // initialize the ruleList as well
   NewList((struct List *)&filter->ruleList);
+
+  LEAVE();
 }
 
 ///
@@ -1581,9 +1699,11 @@ void FreeFilterRuleList(struct FilterNode *filter)
 //  Initializes a new filter
 struct FilterNode *CreateNewFilter(void)
 {
-  struct FilterNode *filter = calloc(1, sizeof(struct FilterNode));
+  struct FilterNode *filter;
 
-  if(filter)
+  ENTER();
+
+  if((filter = calloc(1, sizeof(struct FilterNode))) != NULL)
   {
     strlcpy(filter->name, tr(MSG_NewEntry), sizeof(filter->name));
     filter->applyToNew = TRUE;
@@ -1597,6 +1717,7 @@ struct FilterNode *CreateNewFilter(void)
     CreateNewRule(filter);
   }
 
+  RETURN(filter);
   return filter;
 }
 
@@ -1605,16 +1726,18 @@ struct FilterNode *CreateNewFilter(void)
 //  Initializes a new filter rule
 struct RuleNode *CreateNewRule(struct FilterNode *filter)
 {
-  struct RuleNode *rule = calloc(1, sizeof(struct RuleNode));
+  struct RuleNode *rule;
 
   ENTER();
-  SHOWSTRING(DBF_FILTER, filter->name);
 
-  if(rule)
+  if((rule = calloc(1, sizeof(struct RuleNode))) != NULL)
   {
     // if a filter was specified we immediatley add this new rule to it
-    if(filter)
+    if(filter != NULL)
+    {
+      SHOWSTRING(DBF_FILTER, filter->name);
       AddTail((struct List *)&filter->ruleList, (struct Node *)rule);
+    }
   }
 
   RETURN(rule);
@@ -1626,6 +1749,7 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter)
 //  return a pointer to the rule depending on the position in the ruleList
 struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos)
 {
+  struct RuleNode *rule = NULL;
   struct MinNode *curNode;
   int i;
 
@@ -1634,10 +1758,14 @@ struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos)
   for(i=0, curNode = filter->ruleList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
   {
     if(i == pos)
-      return (struct RuleNode *)curNode;
+    {
+      rule = (struct RuleNode *)curNode;
+      break;
+    }
   }
 
-  return NULL;
+  RETURN(rule);
+  return rule;
 }
 
 ///
@@ -1681,11 +1809,11 @@ HOOKPROTONHNP(SearchOptFromFilterPopup, void, Object *pop)
   // get the currently active filter
   DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &filter);
 
-  if(filter)
+  if(filter != NULL)
   {
-    struct RuleNode *rule = GetFilterRule(filter, 0);
+    struct RuleNode *rule;
 
-    if(rule)
+    if((rule = GetFilterRule(filter, 0)) != NULL)
       DoMethod(G->FI->GUI.GR_SEARCH, MUIM_SearchControlGroup_GetFromRule, rule);
   }
 }

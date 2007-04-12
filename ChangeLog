@@ -7,6 +7,8 @@ $URL$
 
 2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c: pimped the source according to the STYLEGUIDE and fixed several
+    missing malloc()/calloc() checks.
   * YAM_US.c: replaced some static buffer sizes by sizeof() representation.
   * misc: several functions did not check the result of a malloc() or calloc()
     call.
