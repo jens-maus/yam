@@ -460,7 +460,7 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
         struct RuleNode *rule;
 
         // get the rule out of the ruleList or create a new one
-        while(!(rule = GetFilterRule(filter, i)))
+        while((rule = GetFilterRule(filter, i)) == NULL)
           CreateNewRule(filter);
 
         // set the rule settings
@@ -1165,11 +1165,14 @@ static void CopyConfigData(struct Config *dco, struct Config *sco)
   for(curNode = sco->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
   {
     struct MimeTypeNode *srcNode = (struct MimeTypeNode *)curNode;
-    struct MimeTypeNode *dstNode = calloc(1, sizeof(struct MimeTypeNode));
+    struct MimeTypeNode *dstNode;
 
-    memcpy(dstNode, srcNode, sizeof(struct MimeTypeNode));
+    if((dstNode = calloc(1, sizeof(struct MimeTypeNode))) != NULL)
+    {
+      memcpy(dstNode, srcNode, sizeof(struct MimeTypeNode));
 
-    AddTail((struct List *)&dco->mimeTypeList, (struct Node *)dstNode);
+      AddTail((struct List *)&dco->mimeTypeList, (struct Node *)dstNode);
+    }
   }
 
   // for copying the filters we do have to do another deep copy
@@ -1178,11 +1181,14 @@ static void CopyConfigData(struct Config *dco, struct Config *sco)
   for(curNode = sco->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
   {
     struct FilterNode *srcFilter = (struct FilterNode *)curNode;
-    struct FilterNode *dstFilter = calloc(1, sizeof(struct FilterNode));
+    struct FilterNode *dstFilter;
 
-    CopyFilterData(dstFilter, srcFilter);
+    if((dstFilter = calloc(1, sizeof(struct FilterNode))) != NULL)
+    {
+      CopyFilterData(dstFilter, srcFilter);
 
-    AddTail((struct List *)&dco->filterList, (struct Node *)dstFilter);
+      AddTail((struct List *)&dco->filterList, (struct Node *)dstFilter);
+    }
   }
 
   LEAVE();

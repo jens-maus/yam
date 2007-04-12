@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: several functions did not check the result of a malloc() or calloc()
+    call.
+
 2007-04-11  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, YAM_MAf.c, YAM_TR.c: several functions didn't respect that adding

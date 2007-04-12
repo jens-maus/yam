@@ -497,11 +497,13 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
             members = StrBufCat(members, "\n");
           }
           len = strlen(members)+1;
-          addr.Members = malloc(len);
-          strlcpy(addr.Members, members, len);
-          FreeStrBuf(members);
-          DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
-          free(addr.Members);
+          if((addr.Members = malloc(len)) != NULL)
+          {
+            strlcpy(addr.Members, members, len);
+            FreeStrBuf(members);
+            DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+            free(addr.Members);
+          }
         }
         else if(strncmp(buffer, "@GROUP", 6) == 0)
         {
@@ -725,9 +727,9 @@ BOOL AB_ImportTreeLDIF(char *fname, BOOL append, BOOL sorted)
             else if(stricmp(key, "cn") == 0)                         // complete name
               strlcpy(addr.RealName, value, sizeof(addr.RealName));
             else if(stricmp(key, "mail") == 0)                       // mail address
-              strlcpy(addr.Address, value, sizeof(addr.Address));   
+              strlcpy(addr.Address, value, sizeof(addr.Address));
             else if(stricmp(key, "mozillaNickname") == 0)            // alias
-              strlcpy(addr.Alias, value, sizeof(addr.Alias));       
+              strlcpy(addr.Alias, value, sizeof(addr.Alias));
             else if(stricmp(key, "telephoneNumber") == 0)            // phone number
             {
               if(addr.Phone[0] != '\0')
@@ -2130,18 +2132,20 @@ MakeStaticHook(AB_CloseHook, AB_Close);
 /*** AB_LV_ConFunc - Address book listview construction hook ***/
 HOOKPROTONHNO(AB_LV_ConFunc, struct ABEntry *, struct MUIP_NListtree_ConstructMessage *msg)
 {
-  struct ABEntry *entry;
+  struct ABEntry *entry = NULL;
 
   ENTER();
 
-  entry = malloc(sizeof(struct ABEntry));
-  if(entry != NULL && msg != NULL)
+  if(msg != NULL)
   {
-    struct ABEntry *addr = (struct ABEntry *)msg->UserData;
+    if((entry = malloc(sizeof(struct ABEntry))) != NULL)
+    {
+      struct ABEntry *addr = (struct ABEntry *)msg->UserData;
 
-    memcpy(entry, addr, sizeof(struct ABEntry));
-    if(addr->Members)
-      entry->Members = strdup(addr->Members);
+      memcpy(entry, addr, sizeof(struct ABEntry));
+      if(addr->Members)
+        entry->Members = strdup(addr->Members);
+    }
   }
 
   RETURN(entry);

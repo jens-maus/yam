@@ -48,9 +48,6 @@
 #include "classes/Classes.h"
 
 /* local protos */
-static void DI_FinishEdit(void);
-static void DI_Save(void);
-static int DI_Load(void);
 static struct DI_ClassData *DI_New(void);
 
 /***************************************************************************
@@ -257,9 +254,7 @@ MakeHook(DI_OpenHook, DI_OpenFunc);
 //  Glossary listview construction hook
 HOOKPROTONHNO(DI_LV_ConFunc, struct Dict *, struct Dict *dict)
 {
-   struct Dict *entry = malloc(sizeof(struct Dict));
-   memcpy(entry, dict, sizeof(struct Dict));
-   return entry;
+   return AllocCopy(dict, sizeof(*dict));
 }
 MakeStaticHook(DI_LV_ConFuncHook, DI_LV_ConFunc);
 
@@ -355,3 +350,4 @@ static struct DI_ClassData *DI_New(void)
    return NULL;
 }
 ///
+

@@ -2513,15 +2513,18 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
       if((fh = fopen(first->Filename, "r")))
       {
         int buflen = first->MaxHeaderLen+4;
-        char *linebuf = malloc(buflen);
+        char *linebuf;
 
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-        while(fgets(linebuf, buflen, fh))
+        if((linebuf = malloc(buflen)) != NULL)
         {
-          cmsg = AppendToBuffer(cmsg, &wptr, &len, linebuf);
+          while(fgets(linebuf, buflen, fh))
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, linebuf);
+
+          free(linebuf);
         }
-        free(linebuf);
+
         fclose(fh);
         cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
       }
@@ -3788,9 +3791,9 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
       // open the decoded part output
       if((fh = fopen(rp[i]->Filename, "r")))
       {
-        struct MinList *headerList = calloc(1, sizeof(struct MinList));
+        struct MinList *headerList;
 
-        if(headerList)
+        if((headerList = calloc(1, sizeof(struct MinList))) != NULL)
         {
           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 

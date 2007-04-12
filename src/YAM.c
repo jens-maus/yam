@@ -1003,9 +1003,9 @@ static BOOL InitXPKPackerList(void)
       {
         if((error = XpkQueryTags(XPK_PackMethod, xpl.xpl_Packer[i], XPK_PackerQuery, &xpi, TAG_DONE)) == 0)
         {
-          struct xpkPackerNode* newPacker = malloc(sizeof(struct xpkPackerNode));
+          struct xpkPackerNode *newPacker;
 
-          if(newPacker)
+          if((newPacker = malloc(sizeof(struct xpkPackerNode))) != NULL)
           {
             memcpy(&newPacker->info, &xpi, sizeof(struct XpkPackerInfo));
 

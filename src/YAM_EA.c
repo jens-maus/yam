@@ -372,8 +372,8 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
 
                       if(old)
                       {
-                        addr->Members = realloc(addr->Members, strlen(members)+1);
-                        memcpy(addr->Members, members, strlen(members)+1);
+                        if((addr->Members = realloc(addr->Members, strlen(members) + 1)) != NULL)
+                          memcpy(addr->Members, members, strlen(members) + 1);
                       }
                       else
                         addr->Members = strdup(members);

@@ -1821,61 +1821,62 @@ void WR_NewMail(enum WriteMode mode, int winnum)
     {
       email->Mail.sflags = stat;
 
-      newMail = AddMailToList((struct Mail *)email, outfolder);
-
-      // Now we have to check whether we have to add the To & CC addresses
-      // to the emailCache
-      if(C->EmailCache > 0)
+      if((newMail = AddMailToList((struct Mail *)email, outfolder)) != NULL)
       {
-        DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &newMail->To);
-
-        // if this mail has more than one recipient we have to add the others too
-        if(isMultiRCPTMail(newMail))
+        // Now we have to check whether we have to add the To & CC addresses
+        // to the emailCache
+        if(C->EmailCache > 0)
         {
-          int j;
+          DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &newMail->To);
 
-          for(j = 0; j < email->NoSTo; j++)
-            DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->STo[j]);
+          // if this mail has more than one recipient we have to add the others too
+          if(isMultiRCPTMail(newMail))
+          {
+            int j;
 
-          for(j = 0; j < email->NoCC; j++)
-            DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->CC[j]);
+            for(j = 0; j < email->NoSTo; j++)
+              DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->STo[j]);
+
+            for(j = 0; j < email->NoCC; j++)
+              DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->CC[j]);
+          }
+        }
+
+        if(FO_GetCurrentFolder() == outfolder)
+          DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
+
+        MA_UpdateMailFile(newMail);
+
+        // if this write operation was an edit mode
+        // we have to check all existing readmail objects for
+        // references and update them accordingly.
+        if(wr->Mode == NEW_EDIT && wr->refMail != NULL)
+        {
+          struct MinNode *curNode;
+
+          // now we search through our existing readMailData
+          // objects and see some of them are pointing to the old mail
+        // and if so we signal them to display the new revised mail instead
+          for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          {
+            struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+            if(rmData->mail == wr->refMail)
+            {
+              if(rmData->readWindow)
+                DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, newMail);
+              else if(rmData->readMailGroup)
+                DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, newMail);
+            }
+          }
+
+          RemoveMailFromList(wr->refMail, TRUE);
+          wr->refMail = newMail;
         }
       }
 
       // cleanup the email structure
       MA_FreeEMailStruct(email);
-
-      if(FO_GetCurrentFolder() == outfolder)
-        DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
-
-      MA_UpdateMailFile(newMail);
-
-      // if this write operation was an edit mode
-      // we have to check all existing readmail objects for
-      // references and update them accordingly.
-      if(wr->Mode == NEW_EDIT && wr->refMail != NULL)
-      {
-        struct MinNode *curNode;
-
-        // now we search through our existing readMailData
-        // objects and see some of them are pointing to the old mail
-        // and if so we signal them to display the new revised mail instead
-        for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-        {
-          struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
-          if(rmData->mail == wr->refMail)
-          {
-            if(rmData->readWindow)
-              DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, newMail);
-            else if(rmData->readMailGroup)
-              DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, newMail);
-          }
-        }
-
-        RemoveMailFromList(wr->refMail, TRUE);
-        wr->refMail = newMail;
-      }
     }
 
     if(wr->Mode != NEW_NEW)

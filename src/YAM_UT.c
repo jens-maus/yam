@@ -121,7 +121,7 @@ struct PathNode
 };
 #endif
 
-/// CloneSearchPath()
+/// CloneSearchPath
 // This returns a duplicated search path (preferable the workbench
 // searchpath) usable for NP_Path of SystemTagList().
 static BPTR CloneSearchPath(void)
@@ -184,7 +184,7 @@ static BPTR CloneSearchPath(void)
 }
 
 ///
-/// FreeSearchPath()
+/// FreeSearchPath
 // Free the memory returned by CloneSearchPath
 static void FreeSearchPath(BPTR path)
 {
@@ -1209,7 +1209,12 @@ LONG CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG numB
 char *itoa(int val)
 {
   static char str[SIZE_SMALL];
+
+  ENTER();
+
   snprintf(str, sizeof(str), "%d", val);
+
+  RETURN(str);
   return str;
 }
 ///
@@ -1219,11 +1224,11 @@ BOOL MatchNoCase(const char *string, const char *match)
 {
   BOOL result = FALSE;
   LONG patternlen = strlen(match)*2+2; // ParsePattern() needs at least 2*source+2 bytes buffer
-  char *pattern = malloc((size_t)patternlen);
+  char *pattern;
 
   ENTER();
 
-  if(pattern)
+  if((pattern = malloc((size_t)patternlen)) != NULL)
   {
     if(ParsePatternNoCase((STRPTR)match, pattern, patternlen) != -1)
       result = MatchPatternNoCase((STRPTR)pattern, (STRPTR)string);
@@ -1242,6 +1247,8 @@ char *StripUnderscore(const char *label)
   static char newlabel[SIZE_DEFAULT];
   char *p;
 
+  ENTER();
+
   for(p=newlabel; *label; label++)
   {
     if(*label != '_')
@@ -1249,6 +1256,7 @@ char *StripUnderscore(const char *label)
   }
   *p = '\0';
 
+  RETURN(newlabel);
   return newlabel;
 }
 ///
@@ -1256,79 +1264,128 @@ char *StripUnderscore(const char *label)
 //  Reads next line from a multi-line string
 char *GetNextLine(char *p1)
 {
-   static char *begin;
-   char *p2;
-   if (p1) begin = p1;
-   if ((p1 = strchr(p2 = begin, '\n'))) { *p1 = 0; begin = ++p1; }
-   return p2;
+  static char *begin;
+  char *p2;
+
+  ENTER();
+
+  if(p1 != NULL)
+    begin = p1;
+
+  p2 = begin;
+  if((p1 = strchr(p2, '\n')) != NULL)
+  {
+    *p1 = '\0';
+    begin = ++p1;
+  }
+
+  RETURN(p2);
+  return p2;
 }
 ///
 /// TrimStart
 //  Strips leading spaces
 char *TrimStart(char *s)
 {
-   while (*s && isspace(*s)) ++s;
-   return s;
+  ENTER();
+
+  while(*s && isspace(*s))
+    ++s;
+
+  RETURN(s);
+  return s;
 }
 ///
 /// TrimEnd
 //  Removes trailing spaces
 char *TrimEnd(char *s)
 {
-   char *e = s+strlen(s)-1;
-   while (e >= s && isspace(*e)) *e-- = 0;
-   return s;
+  char *e = s+strlen(s)-1;
+
+  ENTER();
+
+  while(e >= s && isspace(*e))
+    *e-- = '\0';
+
+  RETURN(s);
+  return s;
 }
 ///
 /// Trim
 //  Removes leading and trailing spaces
 char *Trim(char *s)
 {
-   if(s)
-   {
-      char *e = s+strlen(s)-1;
-      while (*s && isspace(*s)) ++s;
-      while (e >= s && isspace(*e)) *e-- = '\0';
-   }
-   return s;
+  ENTER();
+
+  if(s != NULL)
+  {
+    s = TrimStart(s);
+    s = TrimEnd(s);
+  }
+
+  RETURN(s);
+  return s;
 }
 ///
 /// stristr
 //  Case insensitive version of strstr()
 char *stristr(const char *a, const char *b)
 {
-   int l = strlen(b);
-   for (; *a; a++) if(strnicmp(a, b, l) == 0) return (char *)a;
-   return NULL;
+  char *s = NULL;
+  int l = strlen(b);
+
+  ENTER();
+
+  for (; *a; a++)
+  {
+    if(strnicmp(a, b, l) == 0)
+    {
+      s = (char *)a;
+      break;
+    }
+  }
+
+  RETURN(s);
+  return s;
 }
 ///
 /// MyStrChr
 //  Searches for a character in string, ignoring text in quotes
 char *MyStrChr(const char *s, const char c)
 {
+  char *result = NULL;
   BOOL nested = FALSE;
 
-  while(*s)
+  ENTER();
+
+  while(*s != '\0')
   {
     if(*s == '"')
       nested = !nested;
     else if(*s == c && !nested)
-      return (char *)s;
+    {
+      result = (char *)s;
+      break;
+    }
 
     s++;
   }
 
-  return NULL;
+  RETURN(result);
+  return result;
 }
 ///
 /// AllocStrBuf
 //  Allocates a dynamic buffer
 char *AllocStrBuf(size_t initlen)
 {
-   size_t *strbuf = calloc(initlen+sizeof(size_t), sizeof(char));
-   if(!strbuf) return NULL;
-   *strbuf++ = initlen;
-   return (char *)strbuf;
+  size_t *strbuf;
+
+  if((strbuf = calloc(initlen+sizeof(size_t), sizeof(char))) != NULL)
+    *strbuf++ = initlen;
+
+  RETURN(strbuf);
+  return (char *)strbuf;
 }
 ///
 /// StrBufCpy
@@ -1410,55 +1467,86 @@ char *StrBufCat(char *strbuf, const char *source)
 //  Appends a string to a dynamic-length buffer
 char *AppendToBuffer(char *buf, int *wptr, int *len, const char *add)
 {
-   int nlen = *len, npos = (*wptr)+strlen(add);
-   while (npos >= nlen-1) nlen = (nlen*3)/2;
-   if (nlen != *len) buf = realloc(buf, *len = nlen);
-   while (*add) buf[(*wptr)++] = *add++;
-   buf[*wptr] = '\0'; // we have to make sure that the string is null terminated
-   return buf;
+  int nlen;
+  int npos;
+
+  ENTER();
+
+  nlen = *len;
+  npos = (*wptr)+strlen(add);
+
+  while(npos >= nlen-1)
+    nlen = (nlen*3)/2;
+
+  if(nlen != *len)
+   buf = realloc(buf, *len = nlen);
+
+  if(buf != NULL)
+  {
+    while (*add) buf[(*wptr)++] = *add++;
+    buf[*wptr] = '\0'; // we have to make sure that the string is null terminated
+  }
+
+  RETURN(buf);
+  return buf;
 }
 ///
 /// AllocCopy
 //  Duplicates a memory block
 APTR AllocCopy(APTR source, int size)
 {
-   APTR dest = malloc(size);
-   if (dest) memcpy(dest, source, size);
-   return dest;
+  APTR dest;
+
+  ENTER();
+
+  if((dest = malloc(size)) != NULL)
+    memcpy(dest, source, size);
+
+  RETURN(dest);
+  return dest;
 }
 ///
 /// Decrypt
 //  Decrypts passwords
 char *Decrypt(char *source)
 {
-   static char buffer[SIZE_PASSWORD+2];
-   char *write = &buffer[SIZE_PASSWORD];
+  static char buffer[SIZE_PASSWORD+2];
+  char *write = &buffer[SIZE_PASSWORD];
 
-   *write-- = 0;
-   while (*source)
-   {
-      *write-- = ((char)atoi(source))^CRYPTBYTE;
-      source += 4;
-   }
-   return ++write;
+  ENTER();
+
+  *write-- = '\0';
+  while(*source != '\0')
+  {
+    *write-- = ((char)atoi(source)) ^ CRYPTBYTE;
+    source += 4;
+  }
+  write++;
+
+  RETURN(write);
+  return write;
 }
 ///
 /// Encrypt
 //  Encrypts passwords
 char *Encrypt(char *source)
 {
-   static char buffer[4*SIZE_PASSWORD+2];
-   char *read = source+strlen(source)-1;
+  static char buffer[4*SIZE_PASSWORD+2];
+  char *read = source+strlen(source)-1;
 
-   *buffer = 0;
-   while (read >= source)
-   {
-      unsigned char c = (*read--)^CRYPTBYTE;
-      int p = strlen(buffer);
+  ENTER();
 
-      snprintf(&buffer[p], sizeof(buffer)-p, "%03d ", c);
-   }
-   return buffer;
+  *buffer = '\0';
+  while (read >= source)
+  {
+    unsigned char c = (*read--) ^ CRYPTBYTE;
+    int p = strlen(buffer);
+
+     snprintf(&buffer[p], sizeof(buffer)-p, "%03d ", c);
+  }
+
+  RETURN(buffer);
+  return buffer;
 }
 ///
 /// UnquoteString
@@ -1522,26 +1610,37 @@ char *UnquoteString(const char *s, BOOL new)
 //  Gets Null terminated line of a text file
 char *GetLine(FILE *fh, char *buffer, int bufsize)
 {
-  char *ptr;
+  char *line;
+
+  ENTER();
+
+  // lets NUL-terminate the string at least.
+  buffer[0] = '\0';
 
   // read in the next line or return NULL if
   // a problem occurrs. The caller then should
   // query ferror() to determine why exactly it
   // failed.
-  if(fgets(buffer, bufsize, fh) == NULL)
+  if(fgets(buffer, bufsize, fh) != NULL)
   {
-    // lets NUL-terminate the string at least.
-    buffer[0] = '\0';
-    return NULL;
+    char *ptr;
+
+    // search for either a \r or \n and terminate there
+    // if found.
+    if((ptr = strpbrk(buffer, "\r\n")) != NULL)
+      *ptr = '\0';
+
+    line = buffer;
+  }
+  else
+  {
+    // something bad happened, so we return NULL to signal abortion
+    line = NULL;
   }
 
-  // search for either a \r or \n and terminate there
-  // if found.
-  if((ptr = strpbrk(buffer, "\r\n")))
-    *ptr = '\0';
-
-  // now return the buffer.
-  return buffer;
+  // now return the line
+  RETURN(line);
+  return line;
 }
 
 ///

@@ -629,18 +629,37 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                   else if (!strnicmp(buffer, "Folder", 6) && oldfolders)
                   {
                      static const int sortconv[4] = { -1, 1, 3, 5 };
-                     int j = atoi(&buffer[6]), type;
-                     if (!ofo) ofo = *oldfolders = calloc(100, sizeof(struct Folder *));
-                     if (j >= 3) for (j = 4; j < 100; j++) if (!ofo[j]) break;
-                     type = (j == 0 ? FT_INCOMING : (j == 1 ? FT_OUTGOING : (j == 2 ? FT_SENT : FT_CUSTOM)));
-                     p = strchr(&value[4], ';'); *p++ = 0;
-                     if (!ofo[j]) if ((ofo[j] = FO_NewFolder(type, &value[4], p))) ofo[j]->Sort[0] = sortconv[atoi(&value[2])];
+                     int j = atoi(&buffer[6]);
+                     int type;
+
+                     if(ofo == NULL)
+                       ofo = *oldfolders = calloc(100, sizeof(struct Folder *));
+                     if(ofo != NULL)
+                     {
+                       if(j >= 3)
+                       {
+                       	 for(j = 4; j < 100; j++)
+                       	 {
+                       	   if(ofo[j] == NULL)
+                       	   	 break;
+                       	 }
+                       }
+                       type = (j == 0 ? FT_INCOMING : (j == 1 ? FT_OUTGOING : (j == 2 ? FT_SENT : FT_CUSTOM)));
+                       if((p = strchr(&value[4], ';')) != NULL)
+                       	 *p++ = 0;
+
+                       if(ofo[j] == NULL)
+                       {
+                       	 if((ofo[j] = FO_NewFolder(type, &value[4], p)) != NULL)
+                           ofo[j]->Sort[0] = sortconv[atoi(&value[2])];
+                       }
+                     }
                   }
                   else if (!strnicmp(buffer, "Rule", 4))
                   {
-                     struct FilterNode *filter = CreateNewFilter();
+                     struct FilterNode *filter;
 
-                     if(filter)
+                     if((filter = CreateNewFilter()) != NULL)
                      {
                         struct RuleNode *rule;
                         char *p2;
@@ -705,9 +724,20 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!strnicmp(buffer, "FolderPath", 10) && oldfolders)
                {
                   int j = atoi(&buffer[10]);
-                  if (!ofo) ofo = *oldfolders = calloc(100, sizeof(struct Folder *));
-                  if (!ofo[j]) ofo[j] = FO_NewFolder(FT_CUSTOM, value, (char *)FilePart(value));
-                  if (!FO_LoadConfig(ofo[j])) FO_SaveConfig(ofo[j]);
+
+                  if(ofo == NULL)
+                    ofo = *oldfolders = calloc(100, sizeof(struct Folder *));
+                  if(ofo != NULL)
+                  {
+                    if(ofo[j] == NULL)
+                    {
+                      if((ofo[j] = FO_NewFolder(FT_CUSTOM, value, (char *)FilePart(value))) != NULL)
+                      {
+                        if(!FO_LoadConfig(ofo[j]))
+                          FO_SaveConfig(ofo[j]);
+                      }
+                    }
+                  }
                }
 /*0*/          else if (!stricmp(buffer, "RealName"))       strlcpy(co->RealName, value, sizeof(co->RealName));
                else if (!stricmp(buffer, "EmailAddress"))   strlcpy(co->EmailAddress, value, sizeof(co->EmailAddress));
