@@ -1435,45 +1435,43 @@ MakeHook(MA_ReadMessageHook, MA_ReadMessage);
 //  Appends a recipient address to a string
 static char *MA_AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
 {
-  char *ins;
-
   ENTER();
 
-  if(!pe)
+  if(pe != NULL)
   {
-    RETURN(sbuf);
-    return sbuf;
+    char *ins;
+    BOOL skip;
+
+    if(strchr(pe->Address,'@'))
+      ins = BuildAddrName2(pe);
+    else
+    {
+      char addr[SIZE_ADDRESS];
+      char *p = strchr(C->EmailAddress, '@');
+
+      snprintf(addr, sizeof(addr), "%s%s", pe->Address, p ? p : "");
+      ins = BuildAddrName(addr, pe->RealName);
+    }
+
+    skip = FALSE;
+    // exclude the given person if it is ourself
+    if(excludeme && stricmp(pe->Address, C->EmailAddress) != 0)
+      skip = TRUE;
+
+    // if the string already contains this person then skip it
+    if(stristr(sbuf, ins))
+      skip = TRUE;
+
+    if(skip == FALSE)
+    {
+      // lets prepend a ", " sequence in case sbuf
+      // is not empty
+      if(*sbuf)
+        sbuf = StrBufCat(sbuf, ", ");
+
+      sbuf = StrBufCat(sbuf, ins);
+    }
   }
-
-  if(strchr(pe->Address,'@'))
-    ins = BuildAddrName2(pe);
-  else
-  {
-    char addr[SIZE_ADDRESS];
-    char *p = strchr(C->EmailAddress, '@');
-
-    snprintf(addr, sizeof(addr), "%s%s", pe->Address, p ? p : "");
-    ins = BuildAddrName(addr, pe->RealName);
-  }
-
-  if(excludeme && stricmp(pe->Address, C->EmailAddress) == 0)
-  {
-    RETURN(sbuf);
-    return sbuf;
-  }
-
-  if(stristr(sbuf, ins))
-  {
-    RETURN(sbuf);
-    return sbuf;
-  }
-
-  // lets prepend a ", " sequence in case sbuf
-  // is not empty
-  if(*sbuf)
-    sbuf = StrBufCat(sbuf, ", ");
-
-  sbuf = StrBufCat(sbuf, ins);
 
   RETURN(sbuf);
   return sbuf;
