@@ -7,6 +7,8 @@ $URL$
 
 2007-04-12  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: renamed the new startup sempahore to "YAM_Startup" and used strlcpy()
+    instead of the plain strcpy() for copying the semaphore name.
   * YAM_COg.c: finally fixed the strange issue with a screwed up cycle gadget on
     m68k-amigaos targets in the new Look&Feel page and removed the previously
     added dummy array to work around the problem. It seems that an unused array

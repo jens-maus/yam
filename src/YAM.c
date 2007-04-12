@@ -137,6 +137,7 @@ static struct TC_Data
   struct MsgPort    *port;
   struct TC_Request timer[TIO_NUM];
 } TCData;
+
 /**************************************************************************/
 
 static void Abort(const char *message, ...);
@@ -154,12 +155,14 @@ static struct ADST_Data
 } ADSTdata;
 
 // Semaphore related suff
-static struct StartupSemaphore {
+static struct StartupSemaphore
+{
   struct SignalSemaphore Semaphore; // a standard semaphore structure
   ULONG UseCount;                   // how many other participants know this semaphore
-  char Name[4];                     // an optional name for a public semaphore
+  char Name[12];                    // an optional name for a public semaphore
 } *startupSema;
-#define STARTUP_SEMAPHORE_NAME      "YAM"
+
+#define STARTUP_SEMAPHORE_NAME      "YAM_Startup"
 
 /*** Library/MCC check routines ***/
 /// InitLib
@@ -1116,7 +1119,7 @@ static struct StartupSemaphore *CreateStartupSemaphore(void)
 
     // initialize the semaphore structure and start with a use counter of 1
     InitSemaphore(&newSema->Semaphore);
-    strcpy(newSema->Name, STARTUP_SEMAPHORE_NAME);
+    strlcpy(newSema->Name, STARTUP_SEMAPHORE_NAME, sizeof(newSema->Name));
     newSema->Semaphore.ss_Link.ln_Name = newSema->Name;
     newSema->UseCount = 1;
 
