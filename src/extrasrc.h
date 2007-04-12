@@ -28,6 +28,9 @@
 
 ***************************************************************************/
 
+// needed for size_t definition
+#include <sys/types.h>
+
 #include <proto/intuition.h>
 
 #include "SDI_compiler.h"

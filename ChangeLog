@@ -7,6 +7,8 @@ $URL$
 
 2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc.h: added missing include for sys/types.h. Otherwise some compilers
+    might complain about a missing definition for size_t.
   * YAM_COg.c: added a dummy variable to the look&feel page initialization to
     work around a possible bug in the gcc 2.95.3 cross compiler for OS3.
   * WriteAttachmentList.c: cleaned up drag&drop code a little bit.
