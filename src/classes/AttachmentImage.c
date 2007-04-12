@@ -208,12 +208,14 @@ OVERLOAD(MUIM_Setup)
   GETDATA;
   struct DiskObject *diskObject = NULL;
   struct Part *mailPart = data->mailPart;
-  ULONG result = 0;
+  ULONG result;
 
   ENTER();
 
   // call the supermethod of the supercall first
-  if(DoSuperMethodA(cl, obj, msg) && mailPart != NULL)
+  result = DoSuperMethodA(cl, obj, msg);
+
+  if(result != 0 && mailPart != NULL)
   {
     // only if we have at least icon.library >= v44 and we find deficons
     // we try to identify the file with deficons
@@ -235,7 +237,7 @@ OVERLOAD(MUIM_Setup)
 
     // if we have still not obtained the diskObject we go
     // and load a default icon for a specific ContentType
-    if(!diskObject)
+    if(diskObject == NULL)
     {
       // with icon.library v44+ we can use GetIconTags again.
       if(IconBase->lib_Version >= 44 && mailPart->ContentType)
@@ -272,7 +274,7 @@ OVERLOAD(MUIM_Setup)
 
         // if we still have not retrieved any icon we
         // obtain the standard project icon
-        if(!diskObject)
+        if(diskObject == NULL)
         {
           diskObject = GetIconTags(NULL,
                                    ICONGETA_GetDefaultType, WBPROJECT,
@@ -294,7 +296,7 @@ OVERLOAD(MUIM_Setup)
 
     // now that we should have the diskObject we get the image of it, blit it in
     // a temporary rastport so that we scan scale it down
-    if(diskObject)
+    if(diskObject != NULL)
     {
       struct BitMap *orgBitMap;
       struct BitMap *screenBitMap = _screen(obj)->RastPort.BitMap;
@@ -567,8 +569,6 @@ OVERLOAD(MUIM_Setup)
     data->ehnode.ehn_Events   = IDCMP_MOUSEBUTTONS | IDCMP_RAWKEY;
 
     DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
-
-    result = 1;
   }
 
   RETURN(result);
@@ -579,6 +579,7 @@ OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Cleanup)
 {
   GETDATA;
+  ULONG result;
 
   ENTER();
 
@@ -615,10 +616,10 @@ OVERLOAD(MUIM_Cleanup)
     data->diskObject = NULL;
   }
 
-  DoSuperMethodA(cl, obj, msg);
+  result = DoSuperMethodA(cl, obj, msg);
   
-  RETURN(0);
-  return 0;
+  RETURN(result);
+  return result;
 }
 ///
 /// OVERLOAD(MUIM_AskMinMax)
@@ -647,43 +648,46 @@ OVERLOAD(MUIM_AskMinMax)
 OVERLOAD(MUIM_Draw)
 {
   GETDATA;
+  ULONG result;
 
   // call the super method first
-  DoSuperMethodA(cl, obj, msg);
-
-  if(((struct MUIP_Draw *)msg)->flags & MADF_DRAWOBJECT)
+  if((result = DoSuperMethodA(cl, obj, msg)))
   {
-    struct BitMap *bitmap;
-    struct BitMap *bitmask;
+    if(((struct MUIP_Draw *)msg)->flags & MADF_DRAWOBJECT)
+    {
+      struct BitMap *bitmap;
+      struct BitMap *bitmask;
 
-    // check the selected state
-    if(xget(obj, MUIA_Selected))
-    {
-      bitmap = data->selectedBitMap;
-      bitmask = data->selectedBitMask;
-    }
-    else
-    {
-      bitmap = data->normalBitMap;
-      bitmask = data->normalBitMask;
-    }
+      // check the selected state
+      if(xget(obj, MUIA_Selected))
+      {
+        bitmap = data->selectedBitMap;
+        bitmask = data->selectedBitMask;
+      }
+      else
+      {
+        bitmap = data->normalBitMap;
+        bitmask = data->normalBitMask;
+      }
 
-    // draw the background first.
-    DoMethod(obj, MUIM_DrawBackground, _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0, 0, MUIF_NONE);
+      // draw the background first.
+      DoMethod(obj, MUIM_DrawBackground, _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0, 0, MUIF_NONE);
 
-    if(bitmask)
-    {
-      // we use an own BltMaskBitMapRastPort() implemenation to also support
-      // interleaved images.
-      MyBltMaskBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0, bitmask->Planes[0]);
-    }
-    else
-    {
-      BltBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0);
+      if(bitmask)
+      {
+        // we use an own BltMaskBitMapRastPort() implemenation to also support
+        // interleaved images.
+        MyBltMaskBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0, bitmask->Planes[0]);
+      }
+      else
+      {
+        BltBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0);
+      }
     }
   }
 
-  return 0;
+  RETURN(result);
+  return result;
 }
 ///
 /// OVERLOAD(MUIM_HandleEvent)
@@ -841,9 +845,9 @@ OVERLOAD(MUIM_DeleteDragImage)
   // not, because otherwise we skip our further operations.
   if(wbscreen)
   {
-    if(wbscreen == _screen(obj) && (buf = (STRPTR)malloc(SIZE_PATHFILE)))
+    if(wbscreen == _screen(obj) && (buf = (STRPTR)malloc(SIZE_PATHFILE)) != NULL)
     {
-      char name[256];
+      char name[SIZE_PATH];
       ULONG type = ~0;
 
       struct TagItem ti[] = { { WBOBJA_DrawerPath,      (ULONG)buf          },
@@ -870,7 +874,7 @@ OVERLOAD(MUIM_DeleteDragImage)
     
       if(which == WBO_DRAWER && buf[0] != '\0')
       {
-        if((data->dropPath = strdup(buf)))
+        if((data->dropPath = strdup(buf)) != NULL)
         {
           D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
           
@@ -879,7 +883,7 @@ OVERLOAD(MUIM_DeleteDragImage)
       }
       else
       {
-        W(DBF_GUI, "couldn't found drop point of attachment image");
+        W(DBF_GUI, "couldn't find drop point of attachment image");
         DisplayBeep(_screen(obj));
       }
 
@@ -978,7 +982,7 @@ OVERLOAD(MUIM_DeleteDragImage)
         }
         else
         {
-          W(DBF_GUI, "couldn't found drop point of attachment image");
+          W(DBF_GUI, "couldn't find drop point of attachment image");
           DisplayBeep(_screen(obj));
         }
       }
@@ -998,3 +1002,4 @@ OVERLOAD(MUIM_DeleteDragImage)
 /* Private Functions */
 
 /* Public Methods */
+
