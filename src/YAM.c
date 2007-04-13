@@ -1113,7 +1113,7 @@ static struct StartupSemaphore *CreateStartupSemaphore(void)
 
   // We must allocate the memory for the new semaphore before we look for an old instance,
   // because the Forbid() may be broken by AllocVec().
-  if((newSema = AllocVec(sizeof(*newSema) + nameLen + 1, MEMF_SHARED | MEMF_CLEAR)) != NULL)
+  if((newSema = AllocVec(sizeof(*newSema) + nameLen + 1, MEMF_CLEAR)) != NULL)
   {
     struct StartupSemaphore *oldSema;
 
@@ -1125,7 +1125,7 @@ static struct StartupSemaphore *CreateStartupSemaphore(void)
 
     // we have to disable multitasking before looking for an old instance with the same name
     Forbid();
-    if((oldSema = (struct StartupSemaphore *)FindSemaphore(STARTUP_SEMAPHORE_NAME)) != NULL)
+    if((oldSema = (struct StartupSemaphore *)FindSemaphore((STRPTR)STARTUP_SEMAPHORE_NAME)) != NULL)
     {
       // the semaphore already exists, so just bump the counter
       oldSema->UseCount++;
