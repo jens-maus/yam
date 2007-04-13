@@ -472,6 +472,11 @@ char *ParseEmailText(const char *mailTxt, BOOL handleSigDash)
           break;
         }
       }
+
+      // we have to end the text with a color clearing ESC sequence
+      // in case the signature was active at last
+      if(signatureFound)
+        cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[0]");
     }
     yy_delete_buffer(buffer);
   }

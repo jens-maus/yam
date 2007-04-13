@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-13  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_mail_lex.l: fixed bug #1699625 where the signature color wasn't properly
+    terminated and may have caused that upon deleting the whole text of a mail
+    with signature, the color still remained colored passages with no chance of
+    deactivating the color.
+
 2007-04-12  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: renamed the new startup sempahore to "YAM_Startup" and used strlcpy()
