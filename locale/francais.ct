@@ -3,7 +3,7 @@
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 2811 2007-03-31 11:11:19Z
+; based on YAM.cd 2856 2007-04-12 10:40:20Z
 ;
 ; General
 ;
@@ -1581,7 +1581,7 @@ _Info expéditeur
 ; Sender _info
 ;
 MSG_CO_SignatureSep
-Sig_nature séparée
+Si_gnature séparée
 ; Separate si_g.
 ;
 MSG_CO_ColoredText
@@ -2590,13 +2590,13 @@ Modifier votre signature\n\
 ; using the editor
 ;
 MSG_HELP_CO_BT_INSTAG
-Insère une chaîne de contrôle de\n\
-positionnement des citations aléatoires
+Insère le caractère de contrôle pour\n\
+l'ajout de citations aléatoires
 ; Insert control code for random taglines
 ;
 MSG_HELP_CO_BT_INSENV
 Insère le caractère de contrôle pour\n\
-positionner la signature
+l'ajout de la signature
 ; Insert control code for the\n\
 ; SIGNATURE environment variable
 ;
@@ -5943,8 +5943,8 @@ Barre d'information
 ; Status bar
 ;
 MSG_HELP_CO_CH_INFOBAR
-Vous pouvez choisir l'enplacement de la barre d'information\n\
-des informations générales de YAM.
+Vous pouvez choisir l'emplacement de la barre\n\
+qui affiche les informations générales de YAM.
 ; Here you can select the position of the status bar\n\
 ; that shows general information in YAM.
 ;
@@ -6063,7 +6063,7 @@ En haut
 ; Top
 ;
 MSG_CO_INFOBARPOS02
-Centrer
+Centré
 ; Center
 ;
 MSG_CO_INFOBARPOS03
@@ -6071,7 +6071,7 @@ En bas
 ; Bottom
 ;
 MSG_CO_INFOBARPOS04
-Désactiver
+Désactivée
 ; Disabled
 ;
 MSG_CO_FOLDERLABEL
@@ -6575,7 +6575,7 @@ support AmiSSL n'est pas disponible actuellement.
 ; currently not available.
 ;
 MSG_CO_SHOWEMBEDDEDREADPANE
-_Volet de visualisation dans fenêtre princiaple
+_Volet de visualisation dans fenêtre principale
 ; Embedded mail read _pane in main window
 ;
 MSG_HELP_CO_CH_EMBEDDEDREADPANE
@@ -6707,8 +6707,9 @@ Erreur de chargement de l'icône !
 ; Error on loading icon image!
 ;
 MSG_ER_ICONOBJECT
-Une erreur est survenue lors du chargement de\n\
-l'icône '%s.info' depuis le répertoire '%s'.\n\
+Une erreur est survenue lors du chargement\n\
+de l'icône '%s.info' depuis le répertoire\n\
+'%s'.\n\
 \n\
 Veuillez vous assurer que votre répertoire d'images\n\
 contient bien tous les icônes nécessaires définis\n\
@@ -6724,8 +6725,9 @@ Erreur de chargement d'image !
 ; Error on loading image!
 ;
 MSG_ER_IMAGEOBJECT
-Une erreur est survenue lors du chargement du\n\
-fichier '%s' dans le répertoire '%s'.\n\
+Une erreur est survenue lors du chargement\n\
+du fichier '%s' depuis le répertoire\n\
+'%s'.\n\
 \n\
 Veuillez vous assurer que votre répertoire d'images\n\
 contient bien toutes les images nécessaires telles\n\
@@ -7527,7 +7529,7 @@ Archive BZIP2
 ; BZIP2 archive
 ;
 MSG_CO_DETECT_CYRILLIC
-Auto-détection des caractères c_yrilliques
+Détection automatique des caractères c_yrilliques
 ; Auto-detect c_yrillic charsets
 ;
 MSG_HELP_CO_DETECT_CYRILLIC
@@ -8234,8 +8236,8 @@ Nom du compte
 ; Account name
 ;
 MSG_HELP_CO_ST_POPACCOUNT
-Un nom arbitraire qui sera utilisé pour compte à\n\
-la place de utilisateur@hôte
+Un nom arbitraire qui sera utilisé pour\n\
+ce compte à la place de utilisateur@hôte.
 ; An arbitrary name for this account which will be\n\
 ; used instead of user@host.
 ;
@@ -8256,8 +8258,8 @@ Retour automatique à la ligne
 ; Word-wrap
 ;
 MSG_CO_SPAM_MARK_AS_READ
-Marquer les courriers indésirables comme _lus
-; Mark spam mai_ls as read
+Marquer les nouveaux courriers indésirables comme _lus
+; Mark new spam mai_ls as read
 ;
 MSG_HELP_CH_SPAMFILTERENABLED
 Active le moteur de filtre des indésirables de YAM qui\n\
@@ -8375,11 +8377,11 @@ Lorsque je reçois un demande d'accusé de réception :
 ; When I receive a request for a return receipt:
 ;
 MSG_CO_MDN_DISABLED
-_Ne jamais renvoyer d'accusé de réception
+Ne _jamais renvoyer d'accusé de réception
 ; _Never send a return receipt
 ;
 MSG_CO_MDN_ENABLED
-Toujours renvoyer _les accusés de réception
+Ren_voyer certains accusés de réception :
 ; A_llow return receipts for some messages
 ;
 MSG_CO_MDN_NORECIPIENT
@@ -8387,15 +8389,15 @@ Si je n'apparais pas _dans le champ « A » et « Cc »
 ; If I'm not in the _To or Cc of the message:
 ;
 MSG_CO_MDN_NODOMAIN
-Lorsque l'émetteur est en deh_ors de mon domaine :
+Lorsque l'émetteur est en deh_ors de mon domaine
 ; If the sender is _outside my domain:
 ;
 MSG_CO_MDN_DELETE
-Lorsque je suis sur le point _d'effacer le message sans l'avoir lu :
+Lorsque je suis sur le point d'efface_r le message sans l'avoir lu
 ; If I'm going to just _delete the message:
 ;
 MSG_CO_MDN_OTHER
-Dans tous les autres _cas :
+Dans tous les autres _cas
 ; In all other _cases:
 ;
 MSG_CO_REQUESTMDN
@@ -8472,7 +8474,7 @@ La _correction d'heure d'été (DST) est active
 ; D_aylight Saving Time (DST) is active
 ;
 MSG_HELP_CO_CH_DSTACTIVE
-Activer si la correction d'heure est\n\
+A activer si la correction d'heure est\n\
 actuellement en cours pour votre fuseau\n\
 horaire (i.e. heure d'été).
 ; Activate if the daylight saving time is\n\
@@ -8594,4 +8596,25 @@ La couleur de texte à utiliser pour\n\
 afficher la signature d'un message.
 ; The text color that should be used\n\
 ; to render the signature of a mail.
+;
+MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS
+Vous avez choisi de marquer automatiquement les courriers\n\
+indésirables comme lus, mais pour le moment vous n'avez que\n\
+%ld courriers classés.\n\
+Il n'est pas recommandé d'activer cette option au début de\n\
+l'entrainement du filtre de détection des indésirables.\n\
+\n\
+Voulez-vous désactiver le marquage automatique des courriers\n\
+indésirables comme lus ?
+; You chose to automatically mark spam mails as read,\n\
+; but have only %ld mails classified so far.\n\
+; It is not recommended to activate this option in the\n\
+; early state of training the spam filter.\n\
+; \n\
+; Do you want to deactivate automatic marking of spam\n\
+; mails as read?
+;
+MSG_ER_CANNOT_CREATE_SEMAPHORE
+Impossible de créer le sémaphore !
+; Can't create semaphore!
 ;

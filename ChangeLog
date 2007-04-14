@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-14  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/francais.ct: french translation update according to latest changes,
+    and some small translation fixes.
+
 2007-04-13  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_mail_lex.l: fixed bug #1699625 where the signature color wasn't properly
