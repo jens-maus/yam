@@ -602,7 +602,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOMARKED),        MUIA_Menuitem_Enabled, mail && !hasStatusMarked(mail), MUIA_UserData, MMEN_TOMARKED,   End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOUNMARKED),      MUIA_Menuitem_Enabled, mail &&  hasStatusMarked(mail), MUIA_UserData, MMEN_TOUNMARKED, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOUNREAD),        MUIA_Menuitem_Enabled, mail && !isSentMail && hasStatusRead(mail), MUIA_UserData, MMEN_TOUNREAD,   End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOREAD),          MUIA_Menuitem_Enabled, mail && !isSentMail && hasStatusUnread(mail), MUIA_UserData, MMEN_TOREAD,     End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOREAD),          MUIA_Menuitem_Enabled, mail && !isSentMail && (hasStatusNew(mail) || hasStatusUnread(mail)), MUIA_UserData, MMEN_TOREAD,     End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOHOLD),          MUIA_Menuitem_Enabled, mail && isOutBox && !hasStatusHold(mail), MUIA_UserData, MMEN_TOHOLD,     End,
         Child, afterThis = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOQUEUED),   MUIA_Menuitem_Enabled, mail && isOutBox && !hasStatusQueued(mail), MUIA_UserData, MMEN_TOQUEUED,   End,
         Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,

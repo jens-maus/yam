@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
+
+  * MainMailList.c: a completely new mail can now be marked as "read", too.
+
 2007-04-14  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: french translation update according to latest changes,
