@@ -5,8 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
+2007-04-15  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c: added additional checks to each access to the filter rule list.
+    Creating a new filter now also fails if the first rule cannot be created as
+    this one is always expected to exist.
   * MainMailList.c: a completely new mail can now be marked as "read", too.
 
 2007-04-14  Alexandre Balaban <abalaban@free.fr>
