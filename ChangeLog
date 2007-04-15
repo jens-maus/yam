@@ -7,6 +7,12 @@ $URL$
 
 2007-04-15  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AttachmentImage.c: in case YAM was running on the Workbench screen and an
+    attachment icon from an opened read window was dragged to a write window's
+    attachment list a DisplayBeep() was always issued because workbench.library
+    was most probably not able to detect one of its own objects (drawer, icon,
+    etc) at the dropping coordinates. Now YAM checks if an open write window is
+    the frontmost one at the dropping coordinates. This fixes bug #1695750.
   * YAM_FI.c: added additional checks to each access to the filter rule list.
     Creating a new filter now also fails if the first rule cannot be created as
     this one is always expected to exist.

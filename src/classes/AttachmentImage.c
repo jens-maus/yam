@@ -125,6 +125,34 @@ HOOKPROTONO(SelectionFunc, ULONG, struct IconSelectMsg *ism)
 MakeStaticHook(SelectionHook, SelectionFunc);
 #endif
 ///
+/// FindWriteWindow
+// find an open write window which matches a given one
+BOOL FindWriteWindow(struct Window *win)
+{
+  BOOL found = FALSE;
+  ULONG i;
+
+  ENTER();
+
+  for(i = 0; i < ARRAY_SIZE(G->WR); i++)
+  {
+    if(G->WR[i] != NULL)
+    {
+      Object *w = G->WR[i]->GUI.WI;
+
+      // the window must be open and match the supplied one
+      if(w != NULL && xget(w, MUIA_Window_Open) == TRUE && xget(w, MUIA_Window_Window) == win)
+      {
+        found = TRUE;
+        break;
+      }
+    }
+  }
+
+  RETURN(found);
+  return found;
+}
+///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -829,161 +857,175 @@ OVERLOAD(MUIM_HandleEvent)
 OVERLOAD(MUIM_DeleteDragImage)
 {
   GETDATA;
+  struct Layer *layer;
 
 #if defined(__amigaos4__)
-  ULONG which;
-  char *buf;
-  struct Screen *wbscreen = LockPubScreen("Workbench");
-
-  if(data->dropPath)
+  if(data->dropPath != NULL)
   {
     free(data->dropPath);
     data->dropPath = NULL;
   }
 
-  // now we check whether YAM is running on the workbench screen or
-  // not, because otherwise we skip our further operations.
-  if(wbscreen)
+  if((layer = WhichLayer(&_screen(obj)->LayerInfo, _screen(obj)->MouseX, _screen(obj)->MouseY)) != NULL)
   {
-    if(wbscreen == _screen(obj) && (buf = (STRPTR)malloc(SIZE_PATHFILE)) != NULL)
+    if(FindWriteWindow(layer->Window) == FALSE)
     {
-      char name[SIZE_PATH];
-      ULONG type = ~0;
+      struct Screen *wbscreen;
 
-      struct TagItem ti[] = { { WBOBJA_DrawerPath,      (ULONG)buf          },
-                              { WBOBJA_DrawerPathSize,  SIZE_PATHFILE       },
-                              { WBOBJA_Name,            (ULONG)name         },
-                              { WBOBJA_NameSize,        (ULONG)sizeof(name) },
-                              { WBOBJA_Type,            (ULONG)&type        },
-                              { TAG_DONE,               FALSE               } };
-
-      buf[0] = '\0';
-
-      // Note that we use WhichWorkbenchObjectA() and not WhichWorkbenchObject()
-      // because the latter wasn't implemented in workbench.library < 51.9
-      which = WhichWorkbenchObjectA(NULL, _screen(obj)->MouseX, _screen(obj)->MouseY, ti);
-      if(which == WBO_ICON)
+      // The icon was not dropped on YAM's own write window, so now we check whether
+      // YAM is running on the workbench screen or not, because otherwise we skip our
+      // further operations.
+      if((wbscreen = LockPubScreen("Workbench")) != NULL)
       {
-        if(type == WBDRAWER)
-          AddPart(buf, name, SIZE_PATHFILE);
-        else if(type == WBDISK)
-          snprintf(buf, SIZE_PATHFILE, "%s:", name);
-      
-        which = WBO_DRAWER;
-      }
-    
-      if(which == WBO_DRAWER && buf[0] != '\0')
-      {
-        if((data->dropPath = strdup(buf)) != NULL)
+        char *buf;
+
+        if(wbscreen == _screen(obj) && (buf = (STRPTR)malloc(SIZE_PATHFILE)) != NULL)
         {
-          D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
+          ULONG which;
+          char name[SIZE_PATH];
+          ULONG type = ~0;
+
+          struct TagItem ti[] = { { WBOBJA_DrawerPath,      (ULONG)buf          },
+                                  { WBOBJA_DrawerPathSize,  SIZE_PATHFILE       },
+                                  { WBOBJA_Name,            (ULONG)name         },
+                                  { WBOBJA_NameSize,        (ULONG)sizeof(name) },
+                                  { WBOBJA_Type,            (ULONG)&type        },
+                                  { TAG_DONE,               FALSE               } };
+
+          buf[0] = '\0';
+
+          // Note that we use WhichWorkbenchObjectA() and not WhichWorkbenchObject()
+          // because the latter wasn't implemented in workbench.library < 51.9
+          which = WhichWorkbenchObjectA(NULL, _screen(obj)->MouseX, _screen(obj)->MouseY, ti);
+          if(which == WBO_ICON)
+          {
+            if(type == WBDRAWER)
+              AddPart(buf, name, SIZE_PATHFILE);
+            else if(type == WBDISK)
+              snprintf(buf, SIZE_PATHFILE, "%s:", name);
           
-          DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
+            which = WBO_DRAWER;
+          }
+        
+          if(which == WBO_DRAWER && buf[0] != '\0')
+          {
+            if((data->dropPath = strdup(buf)) != NULL)
+            {
+              D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
+              DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
+            }
+          }
+          else
+          {
+            W(DBF_GUI, "couldn't find drop point of attachment image");
+            DisplayBeep(_screen(obj));
+          }
+
+          free(buf);
         }
-      }
-      else
-      {
-        W(DBF_GUI, "couldn't find drop point of attachment image");
-        DisplayBeep(_screen(obj));
-      }
+        else
+          W(DBF_GUI, "YAM is not running on workbench, skipping drop operation");
 
-      free(buf);
+        UnlockPubScreen(NULL, wbscreen);
+      }
     }
-    else
-      W(DBF_GUI, "YAM is not running on workbench, skipping drop operation");
-
-    UnlockPubScreen(NULL, wbscreen);
   }
 
 #else
   // this stuff only works with Workbench v45+
   if(WorkbenchBase->lib_Version >= 45)
   {
-    struct Layer *l = WhichLayer(&_screen(obj)->LayerInfo, _screen(obj)->MouseX, _screen(obj)->MouseY);
-    if(l)
+    struct Layer *layer;
+
+    if((layer = WhichLayer(&_screen(obj)->LayerInfo, _screen(obj)->MouseX, _screen(obj)->MouseY)) != NULL)
     {
-      struct List *path_list;
-      if(WorkbenchControl(NULL, WBCTRLA_GetOpenDrawerList, &path_list, TAG_DONE))
+      // ask Workbench only, if the icon was not dropped on YAM's write window
+      if(FindWriteWindow(layer->Window) == FALSE)
       {
-        struct Hook hook;
-        struct SelectionMsg selMsg;
-        struct Node *n;
+        struct List *path_list;
 
-        selMsg.l = l;
-        selMsg.mx = _screen(obj)->MouseX;
-        selMsg.my = _screen(obj)->MouseY;
-        selMsg.destName = NULL;
-        selMsg.finish = FALSE;
-
-        // initialise the selection hook with our data
-        InitHook(&hook, SelectionHook, &selMsg);
-
-        if(data->dropPath)
+        if(WorkbenchControl(NULL, WBCTRLA_GetOpenDrawerList, &path_list, TAG_DONE))
         {
-          free(data->dropPath);
-          data->dropPath = NULL;
-        }
+          struct Hook hook;
+          struct SelectionMsg selMsg;
+          struct Node *n;
 
-        for(n = path_list->lh_Head; n->ln_Succ; n = n->ln_Succ)
-        {
-          selMsg.drawer = strdup(n->ln_Name);
-          if(selMsg.drawer)
+          selMsg.l = l;
+          selMsg.mx = _screen(obj)->MouseX;
+          selMsg.my = _screen(obj)->MouseY;
+          selMsg.destName = NULL;
+          selMsg.finish = FALSE;
+
+          // initialise the selection hook with our data
+          InitHook(&hook, SelectionHook, &selMsg);
+
+          if(data->dropPath)
           {
-            ChangeWorkbenchSelectionA(selMsg.drawer, &hook, NULL);
-
-            if(selMsg.finish)
-            {
-              if(!selMsg.destName)
-              {
-                data->dropPath = selMsg.drawer;
-                selMsg.drawer = NULL;
-              }
-              else
-              {
-                int len = strlen(selMsg.destName) + strlen(selMsg.drawer) + 10;
-
-                data->dropPath = malloc(len);
-                if(data->dropPath)
-                {
-                  strlcpy(data->dropPath, selMsg.drawer, len);
-                  AddPart(data->dropPath, selMsg.destName, len);
-                }
-
-                free(selMsg.destName);
-              }
-            }
-            
-            if(selMsg.drawer)
-              free(selMsg.drawer);
-            
-            if(selMsg.finish)
-              break;
+            free(data->dropPath);
+            data->dropPath = NULL;
           }
-        }
 
-        WorkbenchControl(NULL, WBCTRLA_FreeOpenDrawerList, path_list, TAG_DONE);
+          for(n = path_list->lh_Head; n->ln_Succ; n = n->ln_Succ)
+          {
+            selMsg.drawer = strdup(n->ln_Name);
+            if(selMsg.drawer)
+            {
+              ChangeWorkbenchSelectionA(selMsg.drawer, &hook, NULL);
 
-        if(!selMsg.finish)
-        {
-          selMsg.drawer = NULL;
-          
-          ChangeWorkbenchSelectionA(NULL, &hook, NULL);
-          
-          if(selMsg.finish && selMsg.destName)
-            data->dropPath = selMsg.destName;
-        }
+              if(selMsg.finish)
+              {
+                if(!selMsg.destName)
+                {
+                  data->dropPath = selMsg.drawer;
+                  selMsg.drawer = NULL;
+                }
+                else
+                {
+                  int len = strlen(selMsg.destName) + strlen(selMsg.drawer) + 10;
 
-        // signal other listening for the DropPath that we
-        // found out where to icon has dropped at exactly.
-        if(data->dropPath)
-        {
-          D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
-          DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
-        }
-        else
-        {
-          W(DBF_GUI, "couldn't find drop point of attachment image");
-          DisplayBeep(_screen(obj));
+                  data->dropPath = malloc(len);
+                  if(data->dropPath)
+                  {
+                    strlcpy(data->dropPath, selMsg.drawer, len);
+                    AddPart(data->dropPath, selMsg.destName, len);
+                  }
+
+                  free(selMsg.destName);
+                }
+              }
+              
+              if(selMsg.drawer)
+                free(selMsg.drawer);
+              
+              if(selMsg.finish)
+                break;
+            }
+          }
+
+          WorkbenchControl(NULL, WBCTRLA_FreeOpenDrawerList, path_list, TAG_DONE);
+
+          if(!selMsg.finish)
+          {
+            selMsg.drawer = NULL;
+            
+            ChangeWorkbenchSelectionA(NULL, &hook, NULL);
+            
+            if(selMsg.finish && selMsg.destName)
+              data->dropPath = selMsg.destName;
+          }
+
+          // signal other listening for the DropPath that we
+          // found out where to icon has dropped at exactly.
+          if(data->dropPath)
+          {
+            D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
+            DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
+          }
+          else
+          {
+            W(DBF_GUI, "couldn't find drop point of attachment image");
+            DisplayBeep(_screen(obj));
+          }
         }
       }
     }
