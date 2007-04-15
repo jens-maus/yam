@@ -423,6 +423,7 @@ static void EA_SetPhoto(int winnum, char *fname)
                     End;
 
     DoMethod(gui->GR_PHOTO, OM_ADDMEMBER, gui->BC_PHOTO);
+    SetHelp(gui->BC_PHOTO, MSG_HELP_EA_BC_PHOTO);
 
     DoMethod(gui->GR_PHOTO, MUIM_Group_ExitChange);
   }

@@ -11,6 +11,8 @@ $URL$
     Creating a new filter now also fails if the first rule cannot be created as
     this one is always expected to exist.
   * MainMailList.c: a completely new mail can now be marked as "read", too.
+  * YAM_EA.c: the help text is now set again if the user image changes, because
+    the old object has been deleted before.
 
 2007-04-14  Alexandre Balaban <abalaban@free.fr>
 
