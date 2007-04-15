@@ -3172,24 +3172,35 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
 //  Searches portrait of sender in the gallery directory
 BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo)
 {
-   *photo = '\0';
-   if(*ab->Photo)
-     strcpy(photo, ab->Photo);
-   else if (*C->GalleryDir)
-   {
-      char fname[SIZE_FILE];
-      strlcpy(fname, ab->RealName, sizeof(fname));
+  BOOL found;
+
+  ENTER();
+
+  photo[0] = '\0';
+  if(ab->Photo[0] != '\0')
+    strcpy(photo, ab->Photo);
+  else if(C->GalleryDir[0] != '\0')
+  {
+    char fname[SIZE_FILE];
+
+    strlcpy(fname, ab->RealName, sizeof(fname));
+    if(PFExists(C->GalleryDir, fname))
+      strmfp(photo, C->GalleryDir, fname);
+    else
+    {
+      strlcpy(fname, ab->Address, sizeof(fname));
       if(PFExists(C->GalleryDir, fname))
         strmfp(photo, C->GalleryDir, fname);
-      else
-      {
-         strlcpy(fname, ab->Address, sizeof(fname));
-         if(PFExists(C->GalleryDir, fname))
-           strmfp(photo, C->GalleryDir, fname);
-      }
-   }
-   if (!*photo) return FALSE;
-   return (BOOL)(FileSize(photo) > 0);
+    }
+  }
+
+  if(photo[0] == '\0')
+    found = FALSE;
+  else
+    found = (BOOL)(FileSize(photo) > 0);
+
+  RETURN(found);
+  return found;
 }
 ///
 /// RE_ClickedOnMessage
