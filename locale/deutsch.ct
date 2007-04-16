@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (25.03.2007)
+## version $VER: YAM.catalog 6.0 (16.04.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -6378,7 +6378,7 @@ MSG_ER_MOVEFOLDERDIR
 Ein Fehler trat beim Versuch auf den Inhalt des Postfaches \
 '%s' in das Verzeichnis '%s' zu verschieben.\n\
 \n\
-Dies könnte an zu wenig Speicherplatz, einem falschen Verzeichnis \
+Dies kann an zu wenig Speicherplatz, einem falschen Verzeichnis \
 oder aber daran liegen das ein Schreiben in das Verzeichnis nicht \
 möglich ist.
 ;
@@ -6489,7 +6489,7 @@ Ein Fehler trat während des Versuches auf den MIME \
 Teil %ld der Nachricht '%s' mittels base64 zu dekodieren. \
 Der Vorgang wurde daraufhin abgebrochen.\n\
 \n\
-Dies könnte durch eine falsche Kodierung der Nachricht \
+Dies kann durch eine falsche Kodierung der Nachricht \
 durch den Sender hervorgerufen worden sein oder dadurch, dass der \
 base64 kodierte Teil der Nachricht während der Übertragung \
 verstümmelt wurde.
@@ -6499,7 +6499,7 @@ Manch lesbarer Text des MIME-Teils %ld der Nachricht '%s' \
 konnte nicht base64 dekodiert werden und könnte inkorrekt \
 oder gar nicht dargestellt werden.\n\
 \n\
-Dies könnte durch eine falsche Kodierung der Nachricht \
+Dies kann durch eine falsche Kodierung der Nachricht \
 durch den Sender hervorgerufen worden sein oder dadurch, dass der \
 base64 kodierte Teil der Nachricht während der Übertragung \
 verstümmelt wurde.
