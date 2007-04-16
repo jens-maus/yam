@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-16  Jens Langner <Jens.Langner@light-speed.de>
+
+  * AttachmentImage.c: fixed broken build for MOS/OS3, due to a missing struct
+    Layer declaration.
+
 2007-04-16  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c, YAM_FI.c: encapsulated the whole filter list cleanup stuff into a

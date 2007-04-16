@@ -74,7 +74,7 @@ struct Data
 /// SelectionMsg
 struct SelectionMsg
 {
-  struct Layer *l;
+  struct Layer *layer;
   LONG mx;
   LONG my;
 
@@ -94,7 +94,7 @@ HOOKPROTONO(SelectionFunc, ULONG, struct IconSelectMsg *ism)
   if(!wnd)
     return ISMACTION_Stop;
   
-  if(wnd->WLayer != msg->l)
+  if(wnd->WLayer != msg->layer)
     return ISMACTION_Stop;
   
   msg->finish = TRUE;
@@ -141,7 +141,7 @@ BOOL FindWriteWindow(struct Window *win)
       Object *w = G->WR[i]->GUI.WI;
 
       // the window must be open and match the supplied one
-      if(w != NULL && xget(w, MUIA_Window_Open) == TRUE && xget(w, MUIA_Window_Window) == win)
+      if(w != NULL && xget(w, MUIA_Window_Open) == TRUE && (struct Window *)xget(w, MUIA_Window_Window) == win)
       {
         found = TRUE;
         break;
@@ -935,8 +935,6 @@ OVERLOAD(MUIM_DeleteDragImage)
   // this stuff only works with Workbench v45+
   if(WorkbenchBase->lib_Version >= 45)
   {
-    struct Layer *layer;
-
     if((layer = WhichLayer(&_screen(obj)->LayerInfo, _screen(obj)->MouseX, _screen(obj)->MouseY)) != NULL)
     {
       // ask Workbench only, if the icon was not dropped on YAM's write window
@@ -950,7 +948,7 @@ OVERLOAD(MUIM_DeleteDragImage)
           struct SelectionMsg selMsg;
           struct Node *n;
 
-          selMsg.l = l;
+          selMsg.layer = layer;
           selMsg.mx = _screen(obj)->MouseX;
           selMsg.my = _screen(obj)->MouseY;
           selMsg.destName = NULL;
