@@ -1223,10 +1223,13 @@ DECLARE(SaveDecryptedMail)
 
       comp.Mode = NEW_SAVEDEC;
       comp.refMail = mail;
-      comp.FirstPart = p1 = NewPart(2);
-      p1->Filename = rmData->firstPart->Next->Filename;
-      WriteOutMessage(&comp);
-      FreePartsList(p1);
+      if((comp.FirstPart = NewPart(2)) != NULL)
+      {
+        p1 = comp.FirstPart;
+        p1->Filename = rmData->firstPart->Next->Filename;
+        WriteOutMessage(&comp);
+        FreePartsList(p1);
+      }
       fclose(comp.FH);
 
       if((email = MA_ExamineMail(folder, mfile, TRUE)))

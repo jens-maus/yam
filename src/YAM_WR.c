@@ -345,32 +345,44 @@ struct WritePart *NewPart(int winnum)
 //  Builds message parts from attachment list
 static struct WritePart *BuildPartsList(int winnum)
 {
-  int i;
-  struct Attach *att;
-  struct WritePart *first, *p, *np;
+  struct WritePart *first;
 
   ENTER();
 
-  first = p = NewPart(winnum);
-  p->IsTemp = TRUE;
-  p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
-
-  for(i = 0; ; i++)
+  if((first = NewPart(winnum)) != NULL)
   {
-    DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_GetEntry, i, &att);
-    if(att == NULL)
-      break;
+    int i;
+    struct WritePart *p;
 
-    p->Next = np = NewPart(winnum); p = np;
-    p->ContentType = att->ContentType;
-    p->Filename    = att->FilePath;
-    p->Description = att->Description;
-    p->Name        = att->Name;
-    p->IsTemp      = att->IsTemp;
-    if(att->IsMIME)
-      p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
-    else
-      p->EncType = ENC_UUE;
+    p = first;
+    p->IsTemp = TRUE;
+    p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
+
+    for(i = 0; ; i++)
+    {
+      struct Attach *att;
+      struct WritePart *np;
+
+      DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_GetEntry, i, &att);
+      if(att == NULL)
+        break;
+
+      if((np = NewPart(winnum)) != NULL)
+      {
+        p->Next = np;
+        p->ContentType = att->ContentType;
+        p->Filename    = att->FilePath;
+        p->Description = att->Description;
+        p->Name        = att->Name;
+        p->IsTemp      = att->IsTemp;
+        if(att->IsMIME)
+          p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
+        else
+          p->EncType = ENC_UUE;
+
+        p = np;
+      }
+    }
   }
 
   RETURN(first);

@@ -21,6 +21,7 @@ $URL$
     avoid some unnecessary overhead.
   * YAM_RE.c: fixed another possible NULL pointer access.
   * YAM_FI.c, YAM_UT.c: fixed even more possible NULL pointer accesses.
+  * YAM_WR.c, ReadMailGroup.c: fixed even more possible NULL pointer accesses.
 
 2007-04-15  Thore Böckelmann <tboeckel@gmx.de>
 
