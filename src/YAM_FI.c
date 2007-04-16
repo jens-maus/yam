@@ -1754,7 +1754,7 @@ struct FilterNode *CreateNewFilter(void)
 ///
 /// FreeFilterNode
 // frees a complete filter with all embedded rules
-static void FreeFilterNode(struct FilterNode *filter)
+void FreeFilterNode(struct FilterNode *filter)
 {
   ENTER();
 

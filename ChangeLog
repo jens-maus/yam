@@ -11,6 +11,7 @@ $URL$
     new function.
   * YAM_CO.c: upon deleting a filter the rules never got freed and hence created
     some memory leaks.
+  * YAM_FI.c: made FreeFilterNode() public instead of static.
 
 2007-04-15  Thore Böckelmann <tboeckel@gmx.de>
 
