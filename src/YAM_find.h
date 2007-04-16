@@ -164,6 +164,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail);
 void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter);
 void FreeFilterRuleList(struct FilterNode *filter);
 struct FilterNode *CreateNewFilter(void);
+void FreeFilterList(struct MinList *filterList);
 struct RuleNode *CreateNewRule(struct FilterNode *filter);
 struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos);
 BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail);

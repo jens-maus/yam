@@ -946,7 +946,10 @@ HOOKPROTONHNONP(CreateFilterFromSearch, void)
 {
   int ch;
   char name[SIZE_NAME];
-  *name = '\0';
+
+  ENTER();
+
+  name[0] = '\0';
 
   // request a name for that new filter from the user
   if((ch = StringRequest(name, SIZE_NAME,
@@ -959,13 +962,13 @@ HOOKPROTONHNONP(CreateFilterFromSearch, void)
   {
     struct FilterNode *filter;
 
-    if((filter = CreateNewFilter()))
+    if((filter = CreateNewFilter()) != NULL)
     {
-      struct RuleNode *rule = GetFilterRule(filter, 0);
+      struct RuleNode *rule;
 
       strlcpy(filter->name, name, sizeof(filter->name));
 
-      if(rule)
+      if((rule = GetFilterRule(filter, 0)) != NULL)
         DoMethod(G->FI->GUI.GR_SEARCH, MUIM_SearchControlGroup_SetToRule, rule);
 
       // Now add the new filter to our list
@@ -1173,86 +1176,90 @@ void FreeSearchPatternList(struct Search *search)
 int AllocFilterSearch(enum ApplyFilterMode mode)
 {
   int active=0;
-  struct MinNode *curNode;
 
   ENTER();
 
-  // iterate through our filter List
-  for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  if(IsMinListEmpty(&C->filterList) == FALSE)
   {
-    struct FilterNode *filter = (struct FilterNode *)curNode;
-    struct MinNode *curRuleNode;
+    struct MinNode *curNode;
 
-    // let's check if we can skip some filters because of the ApplyMode
-    // and filter relation.
-    // For spam recognition we just clear all filters and don't allocate
-    // anything.
-    if((mode == APPLY_AUTO && (!filter->applyToNew || filter->remote)) ||
-       (mode == APPLY_USER && (!filter->applyOnReq || filter->remote)) ||
-       (mode == APPLY_SENT && (!filter->applyToSent || filter->remote)) ||
-       (mode == APPLY_REMOTE && !filter->remote) ||
-       (mode == APPLY_SPAM))
+    // iterate through our filter List
+    for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
-      if(IsMinListEmpty(&filter->ruleList) == FALSE)
-      {
-        // make sure the current search structures of the rules of the filter
-        // are freed
-        for(curRuleNode = filter->ruleList.mlh_Head; curRuleNode->mln_Succ; curRuleNode = curRuleNode->mln_Succ)
-        {
-          struct RuleNode *rule = (struct RuleNode *)curRuleNode;
+      struct FilterNode *filter = (struct FilterNode *)curNode;
+      struct MinNode *curRuleNode;
 
-          // now we do free our search structure if it exists
-          if(rule->search)
+      // let's check if we can skip some filters because of the ApplyMode
+      // and filter relation.
+      // For spam recognition we just clear all filters and don't allocate
+      // anything.
+      if((mode == APPLY_AUTO && (!filter->applyToNew || filter->remote)) ||
+         (mode == APPLY_USER && (!filter->applyOnReq || filter->remote)) ||
+         (mode == APPLY_SENT && (!filter->applyToSent || filter->remote)) ||
+         (mode == APPLY_REMOTE && !filter->remote) ||
+         (mode == APPLY_SPAM))
+      {
+        if(IsMinListEmpty(&filter->ruleList) == FALSE)
+        {
+          // make sure the current search structures of the rules of the filter
+          // are freed
+          for(curRuleNode = filter->ruleList.mlh_Head; curRuleNode->mln_Succ; curRuleNode = curRuleNode->mln_Succ)
           {
-            FreeSearchPatternList(rule->search);
-            free(rule->search);
-            rule->search = NULL;
+            struct RuleNode *rule = (struct RuleNode *)curRuleNode;
+
+            // now we do free our search structure if it exists
+            if(rule->search)
+            {
+              FreeSearchPatternList(rule->search);
+              free(rule->search);
+              rule->search = NULL;
+            }
           }
         }
       }
-    }
-    else
-    {
-      if(IsMinListEmpty(&filter->ruleList) == FALSE)
+      else
       {
-        // check if the search structures are already allocated or not
-        for(curRuleNode = filter->ruleList.mlh_Head; curRuleNode->mln_Succ; curRuleNode = curRuleNode->mln_Succ)
+        if(IsMinListEmpty(&filter->ruleList) == FALSE)
         {
-          struct RuleNode *rule = (struct RuleNode *)curRuleNode;
-
-          // check if that search structure already exists or not
-          if(rule->search == NULL &&
-             (rule->search = calloc(1, sizeof(struct Search))))
+          // check if the search structures are already allocated or not
+          for(curRuleNode = filter->ruleList.mlh_Head; curRuleNode->mln_Succ; curRuleNode = curRuleNode->mln_Succ)
           {
-            int stat = sizeof(mailStatusCycleMap);
+            struct RuleNode *rule = (struct RuleNode *)curRuleNode;
 
-            // we check the status field first and if we find a match
-            // we can immediatly break up here because we don`t need to prepare the search
-            if(rule->searchMode == SM_STATUS)
+            // check if that search structure already exists or not
+            if(rule->search == NULL &&
+               (rule->search = calloc(1, sizeof(struct Search))))
             {
-              for(stat=0; stat <= (int)sizeof(mailStatusCycleMap) - 1; stat++)
+              int stat = sizeof(mailStatusCycleMap);
+
+              // we check the status field first and if we find a match
+              // we can immediatly break up here because we don`t need to prepare the search
+              if(rule->searchMode == SM_STATUS)
               {
-                if(*rule->matchPattern == mailStatusCycleMap[stat])
-                  break;
+                for(stat=0; stat <= (int)sizeof(mailStatusCycleMap) - 1; stat++)
+                {
+                  if(*rule->matchPattern == mailStatusCycleMap[stat])
+                    break;
+                }
               }
+
+              FI_PrepareSearch(rule->search,
+                               rule->searchMode,
+                               rule->caseSensitive,
+                               rule->subSearchMode,
+                               rule->comparison,
+                               mailStatusCycleMap[stat],
+                               rule->subString,
+                               rule->matchPattern,
+                               rule->customField);
+
+              // save a pointer to the filter in the search structure as well.
+              rule->search->filter = filter;
             }
-
-            FI_PrepareSearch(rule->search,
-                             rule->searchMode,
-                             rule->caseSensitive,
-                             rule->subSearchMode,
-                             rule->comparison,
-                             mailStatusCycleMap[stat],
-                             rule->subString,
-                             rule->matchPattern,
-                             rule->customField);
-
-            // save a pointer to the filter in the search structure as well.
-            rule->search->filter = filter;
           }
-        }
 
-        active++;
+          active++;
+        }
       }
     }
   }
@@ -1601,9 +1608,8 @@ MakeHook(ApplyFiltersHook, ApplyFiltersFunc);
 // copy all data of a filter node (deep copy)
 void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
 {
-  struct MinNode *curNode;
-
   ENTER();
+
   SHOWSTRING(DBF_FILTER, srcFilter->name);
 
   // raw copy all global stuff first
@@ -1614,6 +1620,8 @@ void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
 
   if(IsMinListEmpty(&srcFilter->ruleList) == FALSE)
   {
+    struct MinNode *curNode;
+
     for(curNode = srcFilter->ruleList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
       struct RuleNode *rule = (struct RuleNode *)curNode;
@@ -1741,6 +1749,46 @@ struct FilterNode *CreateNewFilter(void)
 
   RETURN(filter);
   return filter;
+}
+
+///
+/// FreeFilterNode
+// frees a complete filter with all embedded rules
+static void FreeFilterNode(struct FilterNode *filter)
+{
+  ENTER();
+
+  // free this filter's rules
+  FreeFilterRuleList(filter);
+  // and finally free the filter itself
+  free(filter);
+
+  LEAVE();
+}
+
+///
+/// FreeFilterList
+// frees a complete filter list with all embedded filters
+void FreeFilterList(struct MinList *filterList)
+{
+  ENTER();
+
+  if(IsMinListEmpty(filterList) == FALSE)
+  {
+    struct MinNode *curNode;
+
+    // we have to free the filterList
+    while((curNode = (struct MinNode *)RemHead((struct List *)filterList)) != NULL)
+    {
+      struct FilterNode *filter = (struct FilterNode *)curNode;
+
+      FreeFilterNode(filter);
+    }
+
+    NewList((struct List *)filterList);
+  }
+
+  LEAVE();
 }
 
 ///
