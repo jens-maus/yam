@@ -17,6 +17,8 @@ $URL$
   * YAM_CO.c: upon deleting a filter the rules never got freed and hence created
     some memory leaks.
   * YAM_FI.c: made FreeFilterNode() public instead of static.
+  * AttachmentImage.c: moved the check if YAM is running on the WB to the top to
+    avoid some unnecessary overhead.
 
 2007-04-15  Thore Böckelmann <tboeckel@gmx.de>
 
