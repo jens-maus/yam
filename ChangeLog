@@ -7,6 +7,11 @@ $URL$
 
 2007-04-16  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MI.c: mails with main MIME parts that are base64 encoded and contain
+    non-base64 decoded text as well did raise a warning in YAM, but didn't show
+    at least the text that was successfully decoded. Now the base64decode()
+    function always returns a negative counter in case an error/problem occurs
+    and it is up to the caller to correctly handle that.
   * AttachmentImage.c: fixed broken build for MOS/OS3, due to a missing struct
     Layer declaration.
 

@@ -257,62 +257,90 @@ int base64encode(char *to, const unsigned char *from, unsigned int len)
 // ending padding '==' or '=' characters are found.
 int base64decode(char *to, const unsigned char *from, unsigned int len)
 {
+  int result = 0;
   unsigned char *fromp = (unsigned char *)from;
-  unsigned char x, y;
   char *top = to;
+
+  ENTER();
 
   while(len >= 4)
   {
+    unsigned char x;
+    unsigned char y;
+
+    // decrease len in advance
     len--;
+
+    // get the first char, check if it is a valid b64 char and
+    // convert it accordingly to index_64[]
     x = *fromp++;
     if(x > 127 || (x = index_64[x]) == 255)
-      return 0;
+      break; // error
 
-    if((y = *fromp++) == '\0' ||
-       y > 127 || (y = index_64[y]) == 255)
-    {
-      return 0;
-    }
+    // get the second char, check if it is a valid b64 char and
+    // convert it accordingly to index_64[]
+    y = *fromp++;
+    if(y == '\0' || y > 127 || (y = index_64[y]) == 255)
+      break; // error
 
     len--;
+
+    // put the decoded b64 char into the output buffer.
     *top++ = (x << 2) | (y >> 4);
 
+    // if we still have something left in the input buffer,
+    // we go on with our decoding
     if(len > 0)
     {
       len--;
-      if((x = *fromp++) == '=')
+
+      // get next char
+      x = *fromp++;
+
+      // check char for the padding character '='
+      if(x == '=')
       {
+        // check if there is still something left
+        // and if so it just have to be the padding char
         if((len > 0 && *fromp++ != '='))
-          return 0;
+          break; // error
 
         len--;
 
         // we received the padding string
         // lets break out here
-        break;
+        break; // everything fine
       }
       else
       {
+        // it isn't the padding char, so is it a valid
+        // b64 character instead?
         if(x > 127 || (x = index_64[x]) == 255)
-          return 0;
+          break; // error
 
+        // put the second decoded b64 char into our output
+        // buffer
         *top++ = (y << 4) | (x >> 2);
+
+        // and check if there is something left again..
         if(len > 0)
         {
           len--;
-          if ((y = *fromp++) == '=')
+
+          // get next char
+          y = *fromp++;
+
+          // is that char a padding char?
+          if(y == '=')
           {
             // we received the padding string
             // lets break out here
-            break;
+            break; // everything fine
           }
+          else if(y > 127 || (y = index_64[y]) == 255) // char valid b64?
+            break; // error
           else
-          {
-            if (y > 127 || (y = index_64[y]) == 255)
-              return 0;
-
-            *top++ = (x << 6) | y;
-          }
+            *top++ = (x << 6) | y; // decode the third char as it is valid
         }
       }
     }
@@ -324,11 +352,14 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
 
   // if len is still > 0 it is a sign that the
   // base64 decoding aborted. So we return a minus
-  // value to signal that short item count.
+  // value to signal that short item count (error).
   if(len > 0)
-    return -(top-to);
+    result = -(top-to);
   else
-    return top-to;
+    result = top-to;
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -653,7 +684,7 @@ long base64decode_file(FILE *in, FILE *out,
 
       if(outLength < 0)
       {
-        // we faced a short item count. That can actually be a signs that the text
+        // we faced a short item count. That can actually be a sign that the text
         // in question is not a fully base64 compliant string. However, to
         // at least display the text to the user we redefine the outLength and
         // let the write function output that string (even if not correctly
