@@ -136,12 +136,12 @@ HOOKPROTONHNONP(RemoveActiveFilter, void)
 
   // if we got an active entry lets remove it from the GUI List
   // and also from our own global filterList
-  if(filterNode)
+  if(filterNode != NULL)
   {
     DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_Remove, MUIV_NList_Remove_Active);
 
     Remove((struct Node *)filterNode);
-    free(filterNode);
+    FreeFilterNode(filterNode);
   }
 }
 MakeHook(RemoveActiveFilterHook, RemoveActiveFilter);
@@ -781,20 +781,7 @@ void CO_FreeConfig(struct Config *co)
   }
 
   // we have to free the filterList
-  for(curNode = co->filterList.mlh_Head; curNode->mln_Succ;)
-  {
-    struct FilterNode *filter = (struct FilterNode *)curNode;
-
-    // free the ruleList of the filter
-    FreeFilterRuleList(filter);
-
-    // before we remove the node we have to save the pointer to the next one
-    curNode = curNode->mln_Succ;
-
-    // Remove node from list
-    Remove((struct Node *)filter);
-    free(filter);
-  }
+  FreeFilterList(&co->filterList);
 
   // clear the config
   memset(co, 0, sizeof(struct Config));
@@ -868,19 +855,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
    if(page == cp_Filters || page == cp_AllPages)
    {
-      struct MinNode *curNode;
-
-      // we have to free the filterList
-      for(curNode = co->filterList.mlh_Head; curNode->mln_Succ;)
-      {
-        struct MinNode *node = curNode;
-
-        // before we remove the node we have to save the pointer to the next one
-        curNode = curNode->mln_Succ;
-
-        free(node);
-      }
-      NewList((struct List *)&co->filterList);
+     FreeFilterList(&co->filterList);
    }
 
    if(page == cp_Spam || page == cp_AllPages)
