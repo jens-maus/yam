@@ -20,6 +20,7 @@ $URL$
   * AttachmentImage.c: moved the check if YAM is running on the WB to the top to
     avoid some unnecessary overhead.
   * YAM_RE.c: fixed another possible NULL pointer access.
+  * YAM_FI.c, YAM_UT.c: fixed even more possible NULL pointer accesses.
 
 2007-04-15  Thore Böckelmann <tboeckel@gmx.de>
 

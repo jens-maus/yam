@@ -778,16 +778,20 @@ struct Folder *FolderRequest(const char *title, const char *body, const char *ye
     char *fname;
     static int lastactive;
     struct Folder **flist;
-    int i;
 
-    flist = FO_CreateList();
-    for(i = 1; i <= (int)*flist; i++)
+    if((flist = FO_CreateList()) != NULL)
     {
-      if(flist[i] != exclude && !isGroupFolder(flist[i]))
-        DoMethod(lv_folder, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
+      int i;
+
+      for(i = 1; i <= (int)*flist; i++)
+      {
+        if(flist[i] != exclude && !isGroupFolder(flist[i]))
+          DoMethod(lv_folder, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
+      }
+
+      free(flist);
     }
 
-    free(flist);
     set(lv_folder, MUIA_List_Active, lastactive);
     set(wi_fr, MUIA_Window_ActiveObject, lv_folder);
     set(G->App, MUIA_Application_Sleep, TRUE);

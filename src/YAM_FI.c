@@ -987,34 +987,52 @@ MakeStaticHook(CreateFilterFromSearchHook, CreateFilterFromSearch);
 //  Opens find window
 HOOKPROTONHNONP(FI_Open, void)
 {
-   int i, j, apos = 0;
-   struct Folder **flist, *folder;
+  BOOL success = FALSE;
 
-   if (!G->FI)
-   {
-      if (!(G->FI = FI_New())) return;
-      folder = FO_GetCurrentFolder();
-      if(!folder) return;
-      flist = FO_CreateList();
-      for(j = 0, i = 1; i <= (int)*flist; i++)
+  ENTER();
+
+  if(G->FI == NULL)
+  {
+    if((G->FI = FI_New()) != NULL)
+    {
+      struct Folder *folder;
+
+      if((folder = FO_GetCurrentFolder()) != NULL)
       {
-        if(isGroupFolder(flist[i]) == FALSE)
+        struct Folder **flist;
+
+        if((flist = FO_CreateList()) != NULL)
         {
-          DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
+          int i;
+          int j = 0;
+          int apos = 0;
 
-          if(flist[i] == folder)
-            apos = j;
+          for(i = 1; i <= (int)*flist; i++)
+          {
+            if(isGroupFolder(flist[i]) == FALSE)
+            {
+              DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
 
-          j++;
+              if(flist[i] == folder)
+                apos = j;
+
+              j++;
+            }
+          }
+          set(G->FI->GUI.LV_FOLDERS, MUIA_List_Active, apos);
+          free(flist);
+
+          // everything went fine
+          success = TRUE;
         }
       }
-      set(G->FI->GUI.LV_FOLDERS, MUIA_List_Active, apos);
-      free(flist);
-   }
-   if (!SafeOpenWindow(G->FI->GUI.WI))
-   {
-     DisposeModulePush(&G->FI);
-   }
+    }
+  }
+
+  if(success == FALSE || SafeOpenWindow(G->FI->GUI.WI) == FALSE)
+    DisposeModulePush(&G->FI);
+
+  LEAVE();
 }
 MakeHook(FI_OpenHook,FI_Open);
 
