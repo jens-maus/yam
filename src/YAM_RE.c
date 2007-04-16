@@ -3456,14 +3456,14 @@ static void RE_SendMDN(const enum MDNMode mode,
 
             if((email = MA_ExamineMail(outfolder, mfile, TRUE)) != NULL)
             {
-              mlist[2] = AddMailToList(&email->Mail, outfolder);
-              setStatusToQueued(mlist[2]);
+              if((mlist[2] = AddMailToList(&email->Mail, outfolder)) != NULL)
+                setStatusToQueued(mlist[2]);
               MA_FreeEMailStruct(email);
             }
 
             // in case the user wants to send the message
             // immediately we go and send it out
-            if(sendnow && mlist[2] && !G->TR)
+            if(sendnow && mlist[2] != NULL && !G->TR)
               TR_ProcessSEND(mlist);
 
             // refresh the folder statistics
