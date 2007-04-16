@@ -1848,6 +1848,9 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
             for(j = 0; j < email->NoCC; j++)
               DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->CC[j]);
+
+            for(j = 0; j < email->NoBCC; j++)
+              DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->BCC[j]);
           }
         }
 
