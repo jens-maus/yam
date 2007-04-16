@@ -9,6 +9,8 @@ $URL$
 
   * YAM_CO.c, YAM_FI.c: encapsulated the whole filter list cleanup stuff into a
     new function.
+  * YAM_CO.c: upon deleting a filter the rules never got freed and hence created
+    some memory leaks.
 
 2007-04-15  Thore Böckelmann <tboeckel@gmx.de>
 
