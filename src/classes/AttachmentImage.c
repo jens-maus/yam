@@ -884,7 +884,7 @@ OVERLOAD(MUIM_DeleteDragImage)
 #if defined(__amigaos4__)
           char *buf;
 
-       	  if(buf = (STRPTR)malloc(SIZE_PATHFILE)) != NULL)
+       	  if((buf = (STRPTR)malloc(SIZE_PATHFILE)) != NULL)
           {
             ULONG which;
             char name[SIZE_PATH];
