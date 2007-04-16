@@ -86,18 +86,22 @@ static struct WR_ClassData *WR_New(int winnum);
 /*** WR_GetFileEntry -Fills form with data from selected list entry ***/
 HOOKPROTONHNO(WR_GetFileEntry, void, int *arg)
 {
-   int winnum = *arg;
-   struct Attach *attach = NULL;
-   struct WR_GUIData *gui = &G->WR[winnum]->GUI;
+  int winnum = *arg;
+  struct WR_GUIData *gui = &G->WR[winnum]->GUI;
+  struct Attach *attach = NULL;
 
-   DoMethod(gui->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
-   DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, attach ? FALSE : TRUE, gui->RA_ENCODING, gui->ST_CTYPE, gui->ST_DESC, gui->BT_DEL, gui->BT_DISPLAY, NULL);
-   if (attach)
-   {
-      nnset(gui->RA_ENCODING, MUIA_Radio_Active, attach->IsMIME ? 0 : 1);
-      nnset(gui->ST_CTYPE, MUIA_String_Contents, attach->ContentType);
-      nnset(gui->ST_DESC, MUIA_String_Contents, attach->Description);
-   }
+  ENTER();
+
+  DoMethod(gui->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, attach ? FALSE : TRUE, gui->RA_ENCODING, gui->ST_CTYPE, gui->ST_DESC, gui->BT_DEL, gui->BT_DISPLAY, NULL);
+  if(attach != NULL)
+  {
+    nnset(gui->RA_ENCODING, MUIA_Radio_Active, attach->IsMIME ? 0 : 1);
+    nnset(gui->ST_CTYPE, MUIA_String_Contents, attach->ContentType);
+    nnset(gui->ST_DESC, MUIA_String_Contents, attach->Description);
+  }
+
+  LEAVE();
 }
 MakeStaticHook(WR_GetFileEntryHook, WR_GetFileEntry);
 
@@ -106,20 +110,24 @@ MakeStaticHook(WR_GetFileEntryHook, WR_GetFileEntry);
 /*** WR_PutFileEntry - Fills form data into selected list entry ***/
 HOOKPROTONHNO(WR_PutFileEntry, void, int *arg)
 {
-   int winnum = *arg;
-   struct Attach *attach = NULL;
-   struct WR_GUIData *gui = &G->WR[winnum]->GUI;
+  int winnum = *arg;
+  struct WR_GUIData *gui = &G->WR[winnum]->GUI;
+  struct Attach *attach = NULL;
 
-   DoMethod(gui->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
-   if (attach)
-   {
-      int ismime = xget(gui->RA_ENCODING, MUIA_Radio_Active);
+  ENTER();
 
-      attach->IsMIME = (ismime == 0);
-      GetMUIString(attach->ContentType, gui->ST_CTYPE, sizeof(attach->ContentType));
-      GetMUIString(attach->Description, gui->ST_DESC, sizeof(attach->Description));
-      DoMethod(gui->LV_ATTACH, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
-   }
+  DoMethod(gui->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
+  if(attach != NULL)
+  {
+    int ismime = xget(gui->RA_ENCODING, MUIA_Radio_Active);
+
+    attach->IsMIME = (ismime == 0);
+    GetMUIString(attach->ContentType, gui->ST_CTYPE, sizeof(attach->ContentType));
+    GetMUIString(attach->Description, gui->ST_DESC, sizeof(attach->Description));
+    DoMethod(gui->LV_ATTACH, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
+  }
+
+  LEAVE();
 }
 MakeStaticHook(WR_PutFileEntryHook, WR_PutFileEntry);
 
@@ -172,7 +180,7 @@ BOOL WR_AddFileToList(int winnum, const char *filename, const char *name, BOOL i
     // attachment by using the IdentifyFile() function which will
     // do certain checks to guess the content-type out of the file name
     // and content.
-    if(result == TRUE && (ctype = IdentifyFile(filename)) && ctype[0] != '\0')
+    if(result == TRUE && (ctype = IdentifyFile(filename)) != NULL && ctype[0] != '\0')
     {
       int encoding = xget(gui->RA_ENCODING, MUIA_Radio_Active);
 
@@ -208,7 +216,12 @@ BOOL WR_AddFileToList(int winnum, const char *filename, const char *name, BOOL i
 static char *GetDateTime(void)
 {
   static char dt[SIZE_DEFAULT];
+
+  ENTER();
+
   DateStamp2RFCString(dt, sizeof(dt), NULL, C->TimeZone + (C->DaylightSaving ? 60 : 0), FALSE);
+
+  RETURN(dt);
   return dt;
 }
 
@@ -217,32 +230,35 @@ static char *GetDateTime(void)
 //  Creates a unique id, used for Message-ID header field
 static char *NewID(BOOL is_msgid)
 {
-   static char idbuf[SIZE_MSGID];
+  static char idbuf[SIZE_MSGID];
 
-   if(is_msgid)
-   {
-      ULONG seconds;
-      struct DateStamp ds;
+  ENTER();
 
-      // lets calculate the seconds
-      DateStamp(&ds);
-      seconds = ds.ds_Days*24*60*60+ds.ds_Minute*60; // seconds since 1-Jan-78
+  if(is_msgid)
+  {
+    ULONG seconds;
+    struct DateStamp ds;
 
-      // Here we try to generate a unique MessageID.
-      // We try to be as much conform to the Recommandations for generating
-      // unqiue Message IDs as we can: http://www.jwz.org/doc/mid.html
-      snprintf(idbuf, sizeof(idbuf), "%lx%lx.%lx@%s", seconds, ds.ds_Tick, (ULONG)rand(), C->SMTP_Server);
-   }
-   else
-   {
-      static int ctr = 0;
+    // lets calculate the seconds
+    DateStamp(&ds);
+    seconds = ds.ds_Days * 24 * 60 * 60 + ds.ds_Minute * 60; // seconds since 1-Jan-78
 
-      // Generate a unique Boundary ID which conforms to RFC 2045 and includes
-      // a "=_" sequence to make it safe for quoted printable encoded parts
-      snprintf(idbuf, sizeof(idbuf), "--=_BOUNDARY.%lx%lx.%02x", (ULONG)FindTask(NULL), (ULONG)rand(), ++ctr);
-   }
+    // Here we try to generate a unique MessageID.
+    // We try to be as much conform to the Recommandations for generating
+    // unqiue Message IDs as we can: http://www.jwz.org/doc/mid.html
+    snprintf(idbuf, sizeof(idbuf), "%lx%lx.%lx@%s", seconds, ds.ds_Tick, (ULONG)rand(), C->SMTP_Server);
+  }
+  else
+  {
+    static int ctr = 0;
 
-   return idbuf;
+    // Generate a unique Boundary ID which conforms to RFC 2045 and includes
+    // a "=_" sequence to make it safe for quoted printable encoded parts
+    snprintf(idbuf, sizeof(idbuf), "--=_BOUNDARY.%lx%lx.%02x", (ULONG)FindTask(NULL), (ULONG)rand(), ++ctr);
+  }
+
+  RETURN(idbuf);
+  return idbuf;
 }
 
 ///
@@ -250,74 +266,96 @@ static char *NewID(BOOL is_msgid)
 //  Determines best MIME encoding mode for a file
 static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
 {
-   int c, linesize=0, total=0, unsafechars=0, binarychars=0, longlines=0;
-   FILE *fh = fopen(fname, "r");
+  enum Encoding encoding = ENC_B64;
+  FILE *fh;
 
-   if(!fh)
-     return ENC_B64;
+  ENTER();
 
-   setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+  if((fh = fopen(fname, "r")) != NULL)
+  {
+    int c;
+    int linesize = 0;
+    int total = 0;
+    int unsafechars = 0;
+    int binarychars = 0;
+    int longlines = 0;
 
-   // scan until end of file
-   while((c = fgetc(fh)) != EOF)
-   {
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+    // if there is no special stuff within the file we can break out
+    // telling the caller that there is no encoding needed.
+    encoding = ENC_NONE;
+
+    // scan until end of file
+    while((c = fgetc(fh)) != EOF)
+    {
       linesize++; // count the characters to get linelength
       total++;    // count the total number of scanned characters
 
       // first we check if this is a linebreak
       if(c == '\n')
       {
-         // (RFC 821) restricts 7bit lines to a maximum of 1000 characters
-         // so we have to use QP or base64 later on.
-         // but RFC 2822 says that lines shouldn`t be longer than 998 chars, so we take this one
-         if(linesize > 998) ++longlines;
-         linesize = 0;
+        // (RFC 821) restricts 7bit lines to a maximum of 1000 characters
+        // so we have to use QP or base64 later on.
+        // but RFC 2822 says that lines shouldn`t be longer than 998 chars, so we take this one
+        if(linesize > 998)
+          ++longlines;
+        linesize = 0;
       }
-      else if (c > 127) ++unsafechars; // count the number of unprintable >7bit characters
-      else if (c < 32 && c != '\t' && c != '\r') ++binarychars; // count the number of chars used in binaries.
+      else if (c > 127)
+        ++unsafechars; // count the number of unprintable >7bit characters
+      else if (c < 32 && c != '\t' && c != '\r')
+        ++binarychars; // count the number of chars used in binaries.
 
       // if we successfully scanned 4000 bytes out of the file and found enough
       // data we break out here. we have to at least find some longlines or
       // we have to scan the whole part.
-      if(total > 4000 && longlines) break;
-   }
-   fclose(fh);
+      if(total > 4000 && longlines)
+        break;
+    }
+    fclose(fh);
 
-   D(DBF_MIME, "EncodingTest [%s] t:%ld l:%ld u:%ld b:%ld", fname, total, longlines, unsafechars, binarychars);
+    D(DBF_MIME, "EncodingTest [%s] t:%ld l:%ld u:%ld b:%ld", fname, total, longlines, unsafechars, binarychars);
 
-   // now that we analyzed the file we have to decide which encoding to take
-   if(longlines || unsafechars || binarychars)
-   {
+    // now that we analyzed the file we have to decide which encoding to take
+    if(longlines != 0 || unsafechars != 0 || binarychars != 0)
+    {
       // we make sure that the following content-types get always encoded via base64
       if(!strnicmp(ctype, "image/", 6) ||
          !strnicmp(ctype, "audio/", 6) ||
-         !strnicmp(ctype, "video/", 6))      return ENC_B64;
-
-      // if we are here just because of long lines we have to decide for either
-      // binary or quoted-printable encoding.
-      if(!unsafechars && !binarychars)       return C->Allow8bit ? ENC_BIN : ENC_QP;
-
-      // if there are no binary chars in the file we just have
-      // unsafe 8bit characters and if the server support them we can easily decide between binary or 8bit
-      if(!binarychars && C->Allow8bit)       return longlines ? ENC_BIN : ENC_8BIT;
-
-      // if we end up here we have a file with just unprintable characters
-      // and we have to decide if we take base64 or quoted-printable.
-      // base64 is more compact if there are many unprintable characters, as
-      // when sending a graphics file or such. see (RFC 1521)
-      if(total/(unsafechars+binarychars+1) < 16 || !strnicmp(ctype, "application/", 12))
+         !strnicmp(ctype, "video/", 6))
       {
-        return ENC_B64;
+        encoding = ENC_B64;
+      }
+      else if(unsafechars == 0 && binarychars == 0)
+      {
+        // if we are here just because of long lines we have to decide for either
+        // binary or quoted-printable encoding.
+        encoding = C->Allow8bit ? ENC_BIN : ENC_QP;
+      }
+      else if(binarychars == 0 && C->Allow8bit)
+      {
+        // if there are no binary chars in the file we just have
+        // unsafe 8bit characters and if the server support them we can easily decide between binary or 8bit
+        encoding = longlines ? ENC_BIN : ENC_8BIT;
+      }
+      else if(total / (unsafechars+binarychars+1) < 16 || !strnicmp(ctype, "application/", 12))
+      {
+        // if we end up here we have a file with just unprintable characters
+        // and we have to decide if we take base64 or quoted-printable.
+        // base64 is more compact if there are many unprintable characters, as
+        // when sending a graphics file or such. see (RFC 1521)
+        encoding = ENC_B64;
       }
       else
       {
-        return ENC_QP;
+        encoding = ENC_QP;
       }
-   }
+    }
+  }
 
-   // if there are no special stuff within the file we can break out
-   // telling the caller that there is no encoding needed.
-   return ENC_NONE;
+  RETURN(encoding);
+  return encoding;
 }
 
 ///
@@ -429,7 +467,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param)
 
   // let us now search for any non-ascii compliant character aswell
   // as converting each character with the translation table
-  while(*c)
+  while(*c != '\0')
   {
     // check for any non-ascii character or
     // if the string would be
@@ -499,9 +537,13 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param)
 //  Outputs a complete header line
 void EmitHeader(FILE *fh, const char *hdr, const char *body)
 {
+  ENTER();
+
   fprintf(fh, "%s: ", hdr);
   HeaderFputs(fh, body, NULL);
   fputc('\n', fh);
+
+  LEAVE();
 }
 
 ///
@@ -511,11 +553,13 @@ static void EmitRcptField(FILE *fh, const char *body)
 {
   char *bodycpy;
 
-  if((bodycpy = strdup(body)))
+  ENTER();
+
+  if((bodycpy = strdup(body)) != NULL)
   {
     char *part = bodycpy;
 
-    while(part)
+    while(part != NULL)
     {
       char *next;
 
@@ -533,6 +577,8 @@ static void EmitRcptField(FILE *fh, const char *body)
 
     free(bodycpy);
   }
+
+  LEAVE();
 }
 
 ///
@@ -540,9 +586,13 @@ static void EmitRcptField(FILE *fh, const char *body)
 //  Outputs a complete recipient header line
 static void EmitRcptHeader(FILE *fh, const char *hdr, const char *body)
 {
+  ENTER();
+
   fprintf(fh, "%s: ", hdr);
   EmitRcptField(fh, body ? body : "");
   fputc('\n', fh);
+
+  LEAVE();
 }
 
 ///
@@ -605,6 +655,8 @@ static void WR_WriteUserInfo(FILE *fh, char *from)
   struct ABEntry *ab = NULL;
   struct Person pers = { "", "" };
 
+  ENTER();
+
   // Now we extract the real email from the address string
   if(*from)
     ExtractAddress(from, &pers);
@@ -617,93 +669,121 @@ static void WR_WriteUserInfo(FILE *fh, char *from)
       ab = NULL;
   }
 
-  if(!ab && !*C->MyPictureURL)
-    return;
-
-  fputs("X-SenderInfo: 1", fh);
-  if(*C->MyPictureURL) { fputc(';', fh); HeaderFputs(fh, C->MyPictureURL, "picture"); }
-
-  if(ab)
+  if(ab != NULL || C->MyPictureURL[0] != '\0')
   {
-    if(*ab->Homepage) { fputc(';', fh); HeaderFputs(fh, ab->Homepage, "homepage"); }
-    if(*ab->Street)   { fputc(';', fh); HeaderFputs(fh, ab->Street, "street"); }
-    if(*ab->City)     { fputc(';', fh); HeaderFputs(fh, ab->City, "city"); }
-    if(*ab->Country)  { fputc(';', fh); HeaderFputs(fh, ab->Country, "country"); }
-    if(*ab->Phone)    { fputc(';', fh); HeaderFputs(fh, ab->Phone, "phone"); }
-    if(ab->BirthDay)  fprintf(fh, ";\n\tdob=%ld", ab->BirthDay);
+    fputs("X-SenderInfo: 1", fh);
+    if(C->MyPictureURL[0] != '\0')
+    {
+      fputc(';', fh);
+      HeaderFputs(fh, C->MyPictureURL, "picture");
+    }
+
+    if(ab != NULL)
+    {
+      if(*ab->Homepage)
+      {
+        fputc(';', fh);
+        HeaderFputs(fh, ab->Homepage, "homepage");
+      }
+      if(*ab->Street)
+      {
+        fputc(';', fh);
+        HeaderFputs(fh, ab->Street, "street");
+      }
+      if(*ab->City)
+      {
+        fputc(';', fh);
+        HeaderFputs(fh, ab->City, "city");
+      }
+      if(*ab->Country)
+      {
+        fputc(';', fh);
+        HeaderFputs(fh, ab->Country, "country");
+      }
+      if(*ab->Phone)
+      {
+        fputc(';', fh);
+        HeaderFputs(fh, ab->Phone, "phone");
+      }
+      if(ab->BirthDay)
+        fprintf(fh, ";\n\tdob=%ld", ab->BirthDay);
+    }
+    fputc('\n', fh);
   }
-  fputc('\n', fh);
+
+  LEAVE();
 }
 ///
 /// EncodePart
 //  Encodes a message part
 static void EncodePart(FILE *ofh, struct WritePart *part)
 {
-   FILE *ifh;
+  FILE *ifh;
 
-   ENTER();
+  ENTER();
 
-   if((ifh = fopen(part->Filename, "r")))
-   {
-      setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
+  if((ifh = fopen(part->Filename, "r")))
+  {
+    setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      switch(part->EncType)
+    switch(part->EncType)
+    {
+      case ENC_B64:
       {
-         case ENC_B64:
-         {
-            BOOL convLF = FALSE;
+        BOOL convLF = FALSE;
 
-            // let us first check if we need to convert single LF to
-            // CRLF to be somewhat portable.
-            if(!strnicmp(part->ContentType, "text", 4)    ||
-               !strnicmp(part->ContentType, "message", 7) ||
-               !strnicmp(part->ContentType, "multipart", 9))
-            {
-              convLF = TRUE;
-            }
+        // let us first check if we need to convert single LF to
+        // CRLF to be somewhat portable.
+        if(!strnicmp(part->ContentType, "text", 4)    ||
+           !strnicmp(part->ContentType, "message", 7) ||
+           !strnicmp(part->ContentType, "multipart", 9))
+        {
+          convLF = TRUE;
+        }
 
-            // then start base64 encoding the whole file.
-            if(base64encode_file(ifh, ofh, convLF) <= 0)
-            {
-              ER_NewError(tr(MSG_ER_B64FILEENCODE), part->Filename);
-            }
-         }
-         break;
-
-         case ENC_QP:
-         {
-            if(qpencode_file(ifh, ofh) < 0)
-            {
-              ER_NewError(tr(MSG_ER_QPFILEENCODE), part->Filename);
-            }
-         }
-         break;
-
-         case ENC_UUE:
-         {
-            int size = FileSize(part->Filename);
-
-            fprintf(ofh, "begin 644 %s\n", *part->Name ? part->Name : (char *)FilePart(part->Filename));
-
-            if(uuencode_file(ifh, ofh) < 0)
-            {
-              ER_NewError(tr(MSG_ER_UUFILEENCODE), part->Filename);
-            }
-
-            fprintf(ofh, "``\nend\nsize %d\n", size);
-         }
-         break;
-
-         default:
-         {
-            CopyFile(NULL, ofh, NULL, ifh);
-         }
+        // then start base64 encoding the whole file.
+        if(base64encode_file(ifh, ofh, convLF) <= 0)
+        {
+          ER_NewError(tr(MSG_ER_B64FILEENCODE), part->Filename);
+        }
       }
+      break;
 
-      fclose(ifh);
-   }
+      case ENC_QP:
+      {
+        if(qpencode_file(ifh, ofh) < 0)
+        {
+          ER_NewError(tr(MSG_ER_QPFILEENCODE), part->Filename);
+        }
+      }
+      break;
 
-   LEAVE();
+      case ENC_UUE:
+      {
+        int size = FileSize(part->Filename);
+
+        fprintf(ofh, "begin 644 %s\n", *part->Name ? part->Name : (char *)FilePart(part->Filename));
+
+        if(uuencode_file(ifh, ofh) < 0)
+        {
+          ER_NewError(tr(MSG_ER_UUFILEENCODE), part->Filename);
+        }
+
+        fprintf(ofh, "``\nend\nsize %d\n", size);
+      }
+      break;
+
+      default:
+      {
+        CopyFile(NULL, ofh, NULL, ifh);
+      }
+      break;
+    }
+
+    fclose(ifh);
+  }
+
+  LEAVE();
 }
 
 ///
@@ -873,38 +953,42 @@ static void WR_WriteSignature(FILE *out, int signat)
 //  Adds a signature to the end of the file
 void WR_AddSignature(int winnum, int signat)
 {
-   char *mailfile = G->WR_Filename[winnum];
+  char *mailfile = G->WR_Filename[winnum];
 
-   if (signat == -1)
-      signat = C->UseSignature ? 1 : 0;
+  ENTER();
 
-   if (signat)
-   {
-      FILE *fh_mail;
-      BOOL addline = FALSE;
+  if(signat == -1)
+    signat = C->UseSignature ? 1 : 0;
 
-      if ((fh_mail = fopen(mailfile, "r")))
-      {
-         fseek(fh_mail, -1, SEEK_END);
-         addline = fgetc(fh_mail) != '\n';
-         fclose(fh_mail);
-      }
+  if(signat)
+  {
+    FILE *fh_mail;
+    BOOL addline = FALSE;
 
-      if((fh_mail = fopen(mailfile, "a")))
-      {
-         setvbuf(fh_mail, NULL, _IOFBF, SIZE_FILEBUF);
+    if((fh_mail = fopen(mailfile, "r")) != NULL)
+    {
+      fseek(fh_mail, -1, SEEK_END);
+      addline = fgetc(fh_mail) != '\n';
+      fclose(fh_mail);
+    }
 
-         if (addline)
-            fputc('\n', fh_mail);
+    if((fh_mail = fopen(mailfile, "a")) != NULL)
+    {
+      setvbuf(fh_mail, NULL, _IOFBF, SIZE_FILEBUF);
 
-         WR_WriteSignature(fh_mail, signat-1);
-         fclose(fh_mail);
-      }
-   }
+      if(addline)
+        fputc('\n', fh_mail);
 
-   // lets set the signature radiobutton
-   // accordingly to the set signature
-   nnset(G->WR[winnum]->GUI.RA_SIGNATURE, MUIA_Radio_Active, signat);
+      WR_WriteSignature(fh_mail, signat-1);
+      fclose(fh_mail);
+    }
+  }
+
+  // lets set the signature radiobutton
+  // accordingly to the set signature
+  nnset(G->WR[winnum]->GUI.RA_SIGNATURE, MUIA_Radio_Active, signat);
+
+  LEAVE();
 }
 
 ///
@@ -912,15 +996,28 @@ void WR_AddSignature(int winnum, int signat)
 //  Inserts recipient header field for remailer service
 static void WR_Anonymize(FILE *fh, char *body)
 {
-   char *ptr;
+  char *ptr;
 
-   for (ptr = C->RMCommands; *ptr; ptr++)
-   {
-      if (*ptr == '\\') if (*(ptr+1) == 'n') { ptr++; fputs("\n", fh); continue; }
-      if (*ptr == '%') if (*(ptr+1) == 's') { ptr++; EmitRcptField(fh, body); continue; }
+  ENTER();
+
+  for(ptr = C->RMCommands; *ptr; ptr++)
+  {
+    if(ptr[0] == '\\' && ptr[1] == 'n')
+    {
+      ptr++;
+      fputs("\n", fh);
+    }
+    else if(ptr[0] == '%' && ptr[1] == 's')
+    {
+      ptr++;
+      EmitRcptField(fh, body);
+    }
+    else
       fputc(*ptr, fh);
-   }
-   fputs("\n", fh);
+  }
+  fputs("\n", fh);
+
+  LEAVE();
 }
 
 ///
@@ -931,15 +1028,20 @@ static char *WR_GetPGPId(struct Person *pe)
   char *pgpid = NULL;
   struct ABEntry *ab = NULL;
 
+  ENTER();
+
   if(AB_SearchEntry(pe->RealName, ASM_REALNAME|ASM_USER, &ab) == 0)
   {
     AB_SearchEntry(pe->Address, ASM_ADDRESS|ASM_USER, &ab);
   }
 
-  if(!ab) return(NULL);
+  if(ab != NULL)
+  {
+    if(ab->PGPId[0] != '\0')
+      pgpid = ab->PGPId;
+  }
 
-  if (ab->PGPId[0]) pgpid = ab->PGPId;
-
+  RETURN(pgpid);
   return pgpid;
 }
 ///
@@ -947,24 +1049,34 @@ static char *WR_GetPGPId(struct Person *pe)
 //  Collects PGP key ids for all persons in a recipient field
 static char *WR_GetPGPIds(char *source, char *ids)
 {
-   struct Person pe;
-   char *next, *pid;
+  char *next;
 
-   for (; source; source = next)
-   {
-      if (!*source) break;
-      if ((next = MyStrChr(source, ','))) *next++ = 0;
-      ExtractAddress(source, &pe);
-      if (!(pid = WR_GetPGPId(&pe)))
-      {
-         pid = pe.RealName[0] ? pe.RealName : pe.Address;
-         ER_NewError(tr(MSG_ER_ErrorNoPGPId), source, pid);
-      }
-      ids = StrBufCat(ids, (G->PGPVersion == 5) ? "-r \"" : "\"");
-      ids = StrBufCat(ids, pid);
-      ids = StrBufCat(ids, "\" ");
-   }
-   return ids;
+  ENTER();
+
+  for(; source; source = next)
+  {
+    char *pid;
+    struct Person pe;
+
+    if(source[0] == '\0')
+      break;
+
+    if((next = MyStrChr(source, ',')) != NULL)
+      *next++ = 0;
+
+    ExtractAddress(source, &pe);
+    if((pid = WR_GetPGPId(&pe)) == NULL)
+    {
+      pid = pe.RealName[0] ? pe.RealName : pe.Address;
+      ER_NewError(tr(MSG_ER_ErrorNoPGPId), source, pid);
+    }
+    ids = StrBufCat(ids, (G->PGPVersion == 5) ? "-r \"" : "\"");
+    ids = StrBufCat(ids, pid);
+    ids = StrBufCat(ids, "\" ");
+  }
+
+  RETURN(ids);
+  return ids;
 }
 ///
 /// WR_Bounce
@@ -1086,18 +1198,30 @@ static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
 //  Outputs special X-YAM-Header lines to remember user-defined headers
 static void WR_EmitExtHeader(FILE *fh, struct Compose *comp)
 {
-   if (*comp->ExtHeader)
-   {
-      char *p, ch = '\n';
-      for (p = comp->ExtHeader; *p; ++p)
-      {
-         if (ch == '\n') fputs("X-YAM-Header-", fh);
-         if (*p != '\\') ch = *p;
-         else if (*++p == '\\') ch = '\\'; else if (*p == 'n') ch = '\n';
-         fputc(ch, fh);
-      }
-      if (ch != '\n') fputc('\n', fh);
-   }
+  ENTER();
+
+  if(comp->ExtHeader[0] != '\0')
+  {
+    char *p;
+    char ch = '\n';
+
+    for(p = comp->ExtHeader; *p; ++p)
+    {
+      if(ch == '\n')
+        fputs("X-YAM-Header-", fh);
+      if(*p != '\\')
+        ch = *p;
+      else if(*++p == '\\')
+        ch = '\\';
+      else if(*p == 'n')
+        ch = '\n';
+      fputc(ch, fh);
+    }
+    if(ch != '\n')
+      fputc('\n', fh);
+  }
+
+  LEAVE();
 }
 
 ///
@@ -1123,22 +1247,22 @@ static const char *PGPwarn  =
 
 static void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
 {
-   struct WritePart *p;
+  struct WritePart *p;
 
-   ENTER();
+  ENTER();
 
-   fprintf(fh, "Content-type: multipart/report; report-type=disposition-notification; boundary=\"%s\"\n\n", boundary);
+  fprintf(fh, "Content-type: multipart/report; report-type=disposition-notification; boundary=\"%s\"\n\n", boundary);
 
-   for (p = comp->FirstPart; p; p = p->Next)
-   {
-      fprintf(fh, "\n--%s\n", boundary);
-      WriteContentTypeAndEncoding(fh, p);
-      fputs("\n", fh);
-      EncodePart(fh, p);
-   }
-   fprintf(fh, "\n--%s--\n\n", boundary);
+  for(p = comp->FirstPart; p; p = p->Next)
+  {
+    fprintf(fh, "\n--%s\n", boundary);
+    WriteContentTypeAndEncoding(fh, p);
+    fputs("\n", fh);
+    EncodePart(fh, p);
+  }
+  fprintf(fh, "\n--%s--\n\n", boundary);
 
-   LEAVE();
+  LEAVE();
 }
 
 ///
@@ -1567,9 +1691,14 @@ mimebody:
 char *WR_AutoSaveFile(int winnr)
 {
   static char fname[SIZE_PATHFILE];
+
+  ENTER();
+
   strmfp(fname, G->MA_MailDir, ".autosave");
   strlcat(fname, itoa(winnr), sizeof(fname));
   strlcat(fname, ".txt", sizeof(fname));
+
+  RETURN(fname);
   return fname;
 }
 ///
@@ -2028,9 +2157,13 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
 HOOKPROTONHNO(WR_NewMailFunc, void, int *arg)
 {
+  ENTER();
+
   BusyText(tr(MSG_BusyComposing), "");
   WR_NewMail(arg[0], arg[1]);
   BusyEnd();
+
+  LEAVE();
 }
 MakeHook(WR_NewMailHook, WR_NewMailFunc);
 
@@ -2039,6 +2172,8 @@ MakeHook(WR_NewMailHook, WR_NewMailFunc);
 //  Terminates file notification and removes temporary files
 void WR_Cleanup(int winnum)
 {
+  ENTER();
+
   if(G->WR[winnum]->Mode != NEW_BOUNCE)
   {
     int i;
@@ -2051,7 +2186,7 @@ void WR_Cleanup(int winnum)
       struct Attach *att;
 
       DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_GetEntry, i, &att);
-      if(!att)
+      if(att == NULL)
         break;
 
       if(att->IsTemp)
@@ -2061,6 +2196,8 @@ void WR_Cleanup(int winnum)
     // delete a possible autosave file
     DeleteFile(WR_AutoSaveFile(winnum));
   }
+
+  LEAVE();
 }
 
 ///
@@ -2068,27 +2205,27 @@ void WR_Cleanup(int winnum)
 /*** WR_CancelFunc - User clicked the Cancel button ***/
 HOOKPROTONHNO(WR_CancelFunc, void, int *arg)
 {
-   int winnum = *arg;
+  int winnum = *arg;
 
-   if (G->WR[winnum]->Mode != NEW_BOUNCE)
-   {
-      if (winnum < 2)
+  if (G->WR[winnum]->Mode != NEW_BOUNCE)
+  {
+    if (winnum < 2)
+    {
+      int haschanged = xget(G->WR[winnum]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged);
+      if (haschanged)
       {
-         int haschanged = xget(G->WR[winnum]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged);
-         if (haschanged)
-         {
-            switch (MUI_Request(G->App, G->WR[winnum]->GUI.WI, 0, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
-            {
-               case 0: return;
-               case 1: WR_NewMail(WRITE_QUEUE, winnum);
-                       return;
-               case 2: break;
-            }
-         }
+        switch (MUI_Request(G->App, G->WR[winnum]->GUI.WI, 0, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
+        {
+          case 0: return;
+          case 1: WR_NewMail(WRITE_QUEUE, winnum);
+                  return;
+          case 2: break;
+        }
       }
-      WR_Cleanup(winnum);
-   }
-   DisposeModulePush(&G->WR[winnum]);
+    }
+    WR_Cleanup(winnum);
+  }
+  DisposeModulePush(&G->WR[winnum]);
 }
 MakeStaticHook(WR_CancelHook, WR_CancelFunc);
 
@@ -2126,19 +2263,23 @@ MakeStaticHook(WR_SaveAsHook, WR_SaveAsFunc);
 /*** WR_Edit - Launches external editor with message text ***/
 HOOKPROTONHNO(WR_Edit, void, int *arg)
 {
-   if (*(C->Editor))
-   {
-      int winnum = *arg;
-      char buffer[SIZE_COMMAND+SIZE_PATHFILE];
+  ENTER();
 
-      /* Workaround for a MUI bug */
-      if(xget(G->WR[winnum]->GUI.WI, MUIA_Window_Open))
-        set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
+  if(C->Editor[0] != '\0')
+  {
+    int winnum = *arg;
+    char buffer[SIZE_COMMAND+SIZE_PATHFILE];
 
-      EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum]);
-      snprintf(buffer, sizeof(buffer), "%s \"%s\"", C->Editor, GetRealPath(G->WR_Filename[winnum]));
-      ExecuteCommand(buffer, TRUE, OUT_NIL);
-   }
+    /* Workaround for a MUI bug */
+    if(xget(G->WR[winnum]->GUI.WI, MUIA_Window_Open))
+      set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
+
+    EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum]);
+    snprintf(buffer, sizeof(buffer), "%s \"%s\"", C->Editor, GetRealPath(G->WR_Filename[winnum]));
+    ExecuteCommand(buffer, TRUE, OUT_NIL);
+  }
+
+  LEAVE();
 }
 MakeHook(WR_EditHook, WR_Edit);
 
@@ -2322,10 +2463,15 @@ MakeStaticHook(WR_AddArchiveHook, WR_AddArchiveFunc);
 /*** WR_DisplayFile - Displays an attached file using a MIME viewer ***/
 HOOKPROTONHNO(WR_DisplayFile, void, int *arg)
 {
-   struct Attach *attach = NULL;
+  struct Attach *attach = NULL;
 
-   DoMethod(G->WR[*arg]->GUI.LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
-   if (attach) RE_DisplayMIME(attach->FilePath, attach->ContentType);
+  ENTER();
+
+  DoMethod(G->WR[*arg]->GUI.LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
+  if(attach != NULL)
+    RE_DisplayMIME(attach->FilePath, attach->ContentType);
+
+  LEAVE();
 }
 MakeStaticHook(WR_DisplayFileHook, WR_DisplayFile);
 
@@ -2334,17 +2480,23 @@ MakeStaticHook(WR_DisplayFileHook, WR_DisplayFile);
 // Deletes a file from the attachment list and the belonging temporary file
 HOOKPROTONHNO(WR_DeleteFile, void, int *arg)
 {
-   struct Attach *attach = NULL;
+  struct Attach *attach = NULL;
 
-   // first we get the active entry
-   DoMethod(G->WR[*arg]->GUI.LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
-   if(!attach) return;
+  ENTER();
 
-   // then we remove the active entry from the NList
-   DoMethod(G->WR[*arg]->GUI.LV_ATTACH, MUIM_NList_Remove, MUIV_NList_Remove_Active);
+  // first we get the active entry
+  DoMethod(G->WR[*arg]->GUI.LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
+  if(attach != NULL)
+  {
+    // then we remove the active entry from the NList
+    DoMethod(G->WR[*arg]->GUI.LV_ATTACH, MUIM_NList_Remove, MUIV_NList_Remove_Active);
 
-   // delete the temporary file if exists
-   if(attach->IsTemp) DeleteFile(attach->FilePath);
+    // delete the temporary file if exists
+    if(attach->IsTemp)
+      DeleteFile(attach->FilePath);
+  }
+
+  LEAVE();
 }
 MakeStaticHook(WR_DeleteFileHook, WR_DeleteFile);
 
@@ -2353,40 +2505,49 @@ MakeStaticHook(WR_DeleteFileHook, WR_DeleteFile);
 /*** WR_ChangeSignatureFunc - Changes the current signature ***/
 HOOKPROTONHNO(WR_ChangeSignatureFunc, void, int *arg)
 {
-   struct TempFile *tf;
-   int signat = arg[0], winnum = arg[1];
-   char buffer[SIZE_LINE];
-   FILE *in, *out;
+  struct TempFile *tf;
 
-   if ((tf = OpenTempFile(NULL)))
-   {
-      EditorToFile(G->WR[winnum]->GUI.TE_EDIT, tf->Filename);
-      if ((in = fopen(tf->Filename, "r")))
+  ENTER();
+
+  if((tf = OpenTempFile(NULL)) != NULL)
+  {
+    int winnum = arg[1];
+    FILE *in;
+
+    EditorToFile(G->WR[winnum]->GUI.TE_EDIT, tf->Filename);
+    if((in = fopen(tf->Filename, "r")) != NULL)
+    {
+      FILE *out;
+
+      setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
+      if((out = fopen(G->WR_Filename[winnum], "w")) != NULL)
       {
-         setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+        int signat = arg[0];
+        char buffer[SIZE_LINE];
 
-         if ((out = fopen(G->WR_Filename[winnum], "w")))
-         {
-            setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+        setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
-            while(fgets(buffer, SIZE_LINE, in))
-            {
-              if(strcmp(buffer, "-- \n"))
-                fputs(buffer, out);
-              else
-                break;
-            }
+        while(fgets(buffer, SIZE_LINE, in))
+        {
+          if(strcmp(buffer, "-- \n"))
+            fputs(buffer, out);
+          else
+            break;
+        }
 
-            if(signat)
-              WR_WriteSignature(out, signat-1);
+        if(signat)
+          WR_WriteSignature(out, signat-1);
 
-            fclose(out);
-         }
-
-         fclose(in);
+        fclose(out);
       }
-      CloseTempFile(tf);;
-   }
+
+      fclose(in);
+    }
+    CloseTempFile(tf);;
+  }
+
+  LEAVE();
 }
 MakeStaticHook(WR_ChangeSignatureHook, WR_ChangeSignatureFunc);
 ///
@@ -2647,16 +2808,30 @@ MakeHook(WR_SearchHook, WR_SearchFunc);
 /*** WR_AddClipboardFunc - Adds contents of clipboard as attachment ***/
 HOOKPROTONHNO(WR_AddClipboardFunc, void, int *arg)
 {
-   int winnum = *arg;
-   struct TempFile *tf = OpenTempFile("w");
-   if (DumpClipboard(tf->FP))
-   {
-      fclose(tf->FP); tf->FP = NULL;
+  int winnum = *arg;
+  struct TempFile *tf;
+
+  ENTER();
+
+  if((tf = OpenTempFile("w")) != NULL)
+  {
+    BOOL dumped = FALSE;
+
+    if(DumpClipboard(tf->FP))
+    {
+      fclose(tf->FP);
+      tf->FP = NULL;
       WR_AddFileToList(winnum, tf->Filename, "clipboard.text", TRUE);
       free(tf);
-      return;
-   }
-   CloseTempFile(tf);
+      // don't delete this file by CloseTempFile()
+      dumped = TRUE;
+    }
+
+    if(dumped == FALSE)
+      CloseTempFile(tf);
+  }
+
+  LEAVE();
 }
 MakeStaticHook(WR_AddClipboardHook, WR_AddClipboardFunc);
 
@@ -2670,6 +2845,8 @@ HOOKPROTONHNO(WR_AddPGPKeyFunc, void, int *arg)
   char options[SIZE_LARGE];
   const char  *fname = "T:PubKey.asc";
 
+  ENTER();
+
   snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-x %s -o %s +force +batchmode=1" : "-kxa %s %s +f +bat", myid, fname);
 
   if(!PGPCommand((G->PGPVersion == 5) ? "pgpk" : "pgp", options, 0))
@@ -2682,6 +2859,8 @@ HOOKPROTONHNO(WR_AddPGPKeyFunc, void, int *arg)
     else
       ER_NewError(tr(MSG_ER_ErrorAppendKey), myid);
   }
+
+  LEAVE();
 }
 MakeStaticHook(WR_AddPGPKeyHook, WR_AddPGPKeyFunc);
 ///
@@ -2748,8 +2927,9 @@ int WR_Open(int winnum, BOOL bounce)
 /*** WR_SetupOldMail - When editing a message, sets write window options to old values ***/
 void WR_SetupOldMail(int winnum, struct ReadMailData *rmData)
 {
-  static struct Attach attach;
   struct Part *part;
+
+  ENTER();
 
   // we start to iterate right from the first part *after* PART_RAW
   // and check which one really is really an attachment or which
@@ -2759,6 +2939,8 @@ void WR_SetupOldMail(int winnum, struct ReadMailData *rmData)
     if(part->Nr != rmData->letterPartNum &&
        stricmp(part->ContentType, "application/pgp-signature"))
     {
+      static struct Attach attach;
+
       BusyText(tr(MSG_BusyDecSaving), "");
 
       RE_DecodePart(part);
@@ -2779,6 +2961,8 @@ void WR_SetupOldMail(int winnum, struct ReadMailData *rmData)
       BusyEnd();
     }
   }
+
+  LEAVE();
 }
 
 ///
@@ -2789,8 +2973,12 @@ HOOKPROTONHNO(WR_UpdateWTitleFunc, void, int *arg)
   struct WR_ClassData *wr = G->WR[*arg];
   Object *ed = wr->GUI.TE_EDIT;
 
+  ENTER();
+
   snprintf(wr->WTitle, sizeof(wr->WTitle), "%03ld\n%03ld", xget(ed,MUIA_TextEditor_CursorY)+1, xget(ed,MUIA_TextEditor_CursorX)+1);
   set(wr->GUI.TX_POSI, MUIA_Text_Contents, wr->WTitle);
+
+  LEAVE();
 }
 MakeStaticHook(WR_UpdateWTitleHook,WR_UpdateWTitleFunc);
 ///
@@ -2800,13 +2988,16 @@ MakeStaticHook(WR_UpdateWTitleHook,WR_UpdateWTitleFunc);
 /*** WR_App - Handles Drag&Drop ***/
 void WR_App(int winnum, STRPTR fileName)
 {
-  int mode = xget(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage);
+  int mode;
 
+  ENTER();
+
+  mode = xget(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage);
   if(!mode)
   {
     FILE *fh;
 
-    if((fh = fopen(fileName, "r")))
+    if((fh = fopen(fileName, "r")) != NULL)
     {
       char buffer[SIZE_LARGE];
       int j;
@@ -2846,6 +3037,8 @@ void WR_App(int winnum, STRPTR fileName)
   }
   else
     WR_AddFileToList(winnum, fileName, NULL, FALSE);
+
+  LEAVE();
 }
 
 ///
@@ -2856,6 +3049,8 @@ HOOKPROTONHNO(WR_AppFunc, LONG, ULONG *arg)
   struct AppMessage *amsg = (struct AppMessage *)arg[0];
   int winnum = (int)arg[1];
   int i;
+
+  ENTER();
 
   // lets walk through all arguments in the appMessage
   for(i = 0; i < amsg->am_NumArgs; i++)
@@ -2871,6 +3066,7 @@ HOOKPROTONHNO(WR_AppFunc, LONG, ULONG *arg)
     WR_App(winnum, buf);
   }
 
+  RETURN(0);
   return 0;
 }
 MakeStaticHook(WR_AppHook, WR_AppFunc);
@@ -2880,11 +3076,14 @@ MakeStaticHook(WR_AppHook, WR_AppFunc);
 /*** WR_LV_ConFunc - Attachment listview construct hook ***/
 HOOKPROTONHNO(WR_LV_ConFunc, struct Attach *, struct Attach *attach)
 {
-   struct Attach *entry = malloc(sizeof(struct Attach));
+  struct Attach *entry;
 
-   if (entry)
-     *entry = *attach;
-   return entry;
+  ENTER();
+
+  entry = AllocCopy(attach, sizeof(*attach));
+
+  RETURN(entry);
+  return entry;
 }
 MakeStaticHook(WR_LV_ConFuncHook, WR_LV_ConFunc);
 
@@ -2893,24 +3092,27 @@ MakeStaticHook(WR_LV_ConFuncHook, WR_LV_ConFunc);
 /*** WR_LV_DspFunc - Attachment listview display hook ***/
 HOOKPROTONH(WR_LV_DspFunc, long, char **array, struct Attach *entry)
 {
-   static char dispsz[SIZE_SMALL];
-   if (entry)
-   {
-      array[0] = entry->Name;
-      snprintf(array[1] = dispsz, sizeof(dispsz), "%d", entry->Size);
-      array[2] = (STRPTR)DescribeCT(entry->ContentType);
-      array[3] = (STRPTR)(entry->IsMIME ? "MIME" : "UU");
-      array[4] = entry->Description;
-   }
-   else
-   {
-      array[0] = (STRPTR)tr(MSG_WR_TitleFile);
-      array[1] = (STRPTR)tr(MSG_WR_TitleSize);
-      array[2] = (STRPTR)tr(MSG_WR_TitleContents);
-      array[3] = (STRPTR)tr(MSG_WR_TitleEncoding);
-      array[4] = (STRPTR)tr(MSG_WR_TitleDescription);
-   }
-   return 0;
+  static char dispsz[SIZE_SMALL];
+
+  if(entry != NULL)
+  {
+    array[0] = entry->Name;
+    snprintf(array[1] = dispsz, sizeof(dispsz), "%d", entry->Size);
+    array[2] = (STRPTR)DescribeCT(entry->ContentType);
+    array[3] = (STRPTR)(entry->IsMIME ? "MIME" : "UU");
+    array[4] = entry->Description;
+  }
+  else
+  {
+    array[0] = (STRPTR)tr(MSG_WR_TitleFile);
+    array[1] = (STRPTR)tr(MSG_WR_TitleSize);
+    array[2] = (STRPTR)tr(MSG_WR_TitleContents);
+    array[3] = (STRPTR)tr(MSG_WR_TitleEncoding);
+    array[4] = (STRPTR)tr(MSG_WR_TitleDescription);
+  }
+
+  RETURN(0);
+  return 0;
 }
 MakeStaticHook(WR_LV_DspFuncHook, WR_LV_DspFunc);
 ///
@@ -3110,16 +3312,20 @@ MakeHook(WR_SetSoftStyleHook, WR_SetSoftStyleFunc);
 //  Common setup for write and bounce windows
 static void WR_SharedSetup(struct WR_ClassData *data, int winnum)
 {
-   SetHelp(data->GUI.ST_TO      ,MSG_HELP_WR_ST_TO      );
-   SetHelp(data->GUI.BT_QUEUE   ,MSG_HELP_WR_BT_QUEUE   );
-   SetHelp(data->GUI.BT_HOLD    ,MSG_HELP_WR_BT_HOLD    );
-   SetHelp(data->GUI.BT_SEND    ,MSG_HELP_WR_BT_SEND    );
-   SetHelp(data->GUI.BT_CANCEL  ,MSG_HELP_WR_BT_CANCEL  );
-   DoMethod(data->GUI.BT_HOLD    ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_NewMailHook,WRITE_HOLD,winnum);
-   DoMethod(data->GUI.BT_QUEUE   ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_NewMailHook,WRITE_QUEUE,winnum);
-   DoMethod(data->GUI.BT_SEND    ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_NewMailHook,WRITE_SEND,winnum);
-   DoMethod(data->GUI.BT_CANCEL  ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_CancelHook,winnum);
-   DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_CancelHook,winnum);
+  ENTER();
+
+  SetHelp(data->GUI.ST_TO      ,MSG_HELP_WR_ST_TO      );
+  SetHelp(data->GUI.BT_QUEUE   ,MSG_HELP_WR_BT_QUEUE   );
+  SetHelp(data->GUI.BT_HOLD    ,MSG_HELP_WR_BT_HOLD    );
+  SetHelp(data->GUI.BT_SEND    ,MSG_HELP_WR_BT_SEND    );
+  SetHelp(data->GUI.BT_CANCEL  ,MSG_HELP_WR_BT_CANCEL  );
+  DoMethod(data->GUI.BT_HOLD    ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_NewMailHook,WRITE_HOLD,winnum);
+  DoMethod(data->GUI.BT_QUEUE   ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_NewMailHook,WRITE_QUEUE,winnum);
+  DoMethod(data->GUI.BT_SEND    ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_NewMailHook,WRITE_SEND,winnum);
+  DoMethod(data->GUI.BT_CANCEL  ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_CancelHook,winnum);
+  DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_CancelHook,winnum);
+
+  LEAVE();
 }
 
 ///
@@ -3672,34 +3878,43 @@ static struct WR_ClassData *WR_New(int winnum)
 //  Creates a bounce window
 static struct WR_ClassData *WR_NewBounce(int winnum)
 {
-   struct WR_ClassData *data = calloc(1, sizeof(struct WR_ClassData));
-   if (data)
-   {
-      data->GUI.WI = WindowObject,
-         MUIA_Window_Title, tr(MSG_WR_BounceWT),
-         MUIA_HelpNode, "WR_W",
-         MUIA_Window_ID, MAKE_ID('W','R','I','B'),
-         WindowContents, VGroup,
-            Child, ColGroup(2),
-               Child, Label2(tr(MSG_WR_BounceTo)),
-               Child, MakeAddressField(&data->GUI.ST_TO, tr(MSG_WR_BounceTo), MSG_HELP_WR_ST_TO, ABM_TO, winnum, TRUE),
-            End,
-            Child, ColGroup(4),
-               Child, data->GUI.BT_SEND   = MakeButton(tr(MSG_WR_Send)),
-               Child, data->GUI.BT_QUEUE  = MakeButton(tr(MSG_WR_ToQueue)),
-               Child, data->GUI.BT_HOLD   = MakeButton(tr(MSG_WR_Hold)),
-               Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_Cancel)),
-            End,
-         End,
-      End;
-      if (data->GUI.WI)
-      {
-         DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-         WR_SharedSetup(data, winnum);
-         return data;
-      }
+  struct WR_ClassData *data;
+
+  ENTER();
+
+  if((data = calloc(1, sizeof(struct WR_ClassData))) != NULL)
+  {
+    data->GUI.WI = WindowObject,
+       MUIA_Window_Title, tr(MSG_WR_BounceWT),
+       MUIA_HelpNode, "WR_W",
+       MUIA_Window_ID, MAKE_ID('W','R','I','B'),
+       WindowContents, VGroup,
+          Child, ColGroup(2),
+             Child, Label2(tr(MSG_WR_BounceTo)),
+             Child, MakeAddressField(&data->GUI.ST_TO, tr(MSG_WR_BounceTo), MSG_HELP_WR_ST_TO, ABM_TO, winnum, TRUE),
+          End,
+          Child, ColGroup(4),
+             Child, data->GUI.BT_SEND   = MakeButton(tr(MSG_WR_Send)),
+             Child, data->GUI.BT_QUEUE  = MakeButton(tr(MSG_WR_ToQueue)),
+             Child, data->GUI.BT_HOLD   = MakeButton(tr(MSG_WR_Hold)),
+             Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_Cancel)),
+          End,
+       End,
+    End;
+    if(data->GUI.WI != NULL)
+    {
+      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+      WR_SharedSetup(data, winnum);
+    }
+    else
+    {
       free(data);
-   }
-   return NULL;
+      data = NULL;
+    }
+  }
+
+  RETURN(data);
+  return data;
 }
 ///
+

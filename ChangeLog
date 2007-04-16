@@ -23,6 +23,7 @@ $URL$
   * YAM_FI.c, YAM_UT.c: fixed even more possible NULL pointer accesses.
   * YAM_WR.c, ReadMailGroup.c: fixed even more possible NULL pointer accesses.
   * YAM_WR.c: BCC addresses are now added to the address cache, too.
+  * YAM_WR.c: cleaned up most functions.
 
 2007-04-15  Thore Böckelmann <tboeckel@gmx.de>
 
