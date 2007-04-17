@@ -381,12 +381,13 @@ struct WritePart *NewPart(int winnum)
 ///
 /// BuildPartsList
 //  Builds message parts from attachment list
-static struct WritePart *BuildPartsList(int winnum)
+static struct WritePart *BuildPartsList(const int winnum)
 {
   struct WritePart *first;
 
   ENTER();
 
+  // create the first part
   if((first = NewPart(winnum)) != NULL)
   {
     int i;
@@ -396,31 +397,45 @@ static struct WritePart *BuildPartsList(int winnum)
     p->IsTemp = TRUE;
     p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
 
-    for(i = 0; ; i++)
+    // now walk through our attachment list
+    // and create additional parts
+    for(i=0; ;i++)
     {
-      struct Attach *att;
+      struct Attach *att = NULL;
       struct WritePart *np;
 
       DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_GetEntry, i, &att);
       if(att == NULL)
         break;
 
+      // create a new MIME part for the attachment
       if((np = NewPart(winnum)) != NULL)
       {
         // link the two parts together
         p->Next = np;
+
         // and now set the information for the new part
         np->ContentType = att->ContentType;
         np->Filename    = att->FilePath;
         np->Description = att->Description;
         np->Name        = att->Name;
         np->IsTemp      = att->IsTemp;
+
+        // find out which encoding we use for the attachment
         if(att->IsMIME)
-          np->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
+          np->EncType = WhichEncodingForFile(np->Filename, np->ContentType);
         else
           np->EncType = ENC_UUE;
 
         p = np;
+      }
+      else
+      {
+        // an error occurred as we couldn't create a new part
+        FreePartsList(first);
+        first = NULL;
+
+        break;
       }
     }
   }

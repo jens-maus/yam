@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-17  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c: the issues with the BuildPartsList() functions weren't all
+    completly fixed according to the way the function was operating prior to
+    the cleanup that broke some functionality in it. Now also the WhichEncoding()
+    function call gets the correct arguments. In addition, the function should
+    now correctly fail in case a new part couldn't be created.
+
 2007-04-17  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: building a message with more than one part (i.e. attachments)
