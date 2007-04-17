@@ -280,7 +280,6 @@ extern struct Hook    DisposeModuleHook;
 
 // all the utility prototypes
 struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder);
-APTR     AllocCopy(APTR source, int size);
 char *   AllocReqText(char *s);
 char *   AllocStrBuf(size_t initlen);
 void     AppendToLogfile(enum LFMode, int id, const char *text, ...);

@@ -109,6 +109,10 @@
 #define NEED_NEWREADARGS
 #endif
 
+#if !defined(HAVE_MEMDUP)
+#define NEED_MEMDUP
+#endif
+
 /*
  * Function prototypes
  */
@@ -144,6 +148,9 @@ ULONG xget(Object *obj, const ULONG attr);
 Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
 #endif
 
+#if defined(NEED_MEMDUP)
+void *memdup(const void *source, const size_t size);
+#endif
 
 /*
  * Additional defines

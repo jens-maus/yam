@@ -78,6 +78,10 @@
   #include "extrasrc/DoSuperNew.c"
 #endif
 
+#if defined(NEED_MEMDUP)
+  #include "extrasrc/memdup.c"
+#endif
+
 // we replace the function which checks
 // for an abort() condition in case we
 // didn't compile any debug version because

@@ -20,6 +20,8 @@ $URL$
     instead of the last).
   * YAM_AB.c, YAM_FI.c, YAM_MA.c, YAM_US.c, Addrmatchlist.c: replaced custom
     clone code of structures by a call to AllocCopy().
+  * YAM_UT.c, extrasrc.c: renamed function AllocCopy() to memdup and moved it to
+    a separate file in extrasrc/.
 
 2007-04-17  Pär Boberg <pbobbenb@spray.se>
 

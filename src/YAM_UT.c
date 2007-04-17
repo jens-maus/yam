@@ -1483,7 +1483,7 @@ char *AppendToBuffer(char *buf, int *wptr, int *len, const char *add)
     nlen = (nlen*3)/2;
 
   if(nlen != *len)
-   buf = realloc(buf, *len = nlen);
+    buf = realloc(buf, *len = nlen);
 
   if(buf != NULL)
   {
@@ -1493,21 +1493,6 @@ char *AppendToBuffer(char *buf, int *wptr, int *len, const char *add)
 
   RETURN(buf);
   return buf;
-}
-///
-/// AllocCopy
-//  Duplicates a memory block
-APTR AllocCopy(APTR source, int size)
-{
-  APTR dest;
-
-  ENTER();
-
-  if((dest = malloc(size)) != NULL)
-    memcpy(dest, source, size);
-
-  RETURN(dest);
-  return dest;
 }
 ///
 /// Decrypt
