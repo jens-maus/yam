@@ -407,16 +407,18 @@ static struct WritePart *BuildPartsList(int winnum)
 
       if((np = NewPart(winnum)) != NULL)
       {
+        // link the two parts together
         p->Next = np;
-        p->ContentType = att->ContentType;
-        p->Filename    = att->FilePath;
-        p->Description = att->Description;
-        p->Name        = att->Name;
-        p->IsTemp      = att->IsTemp;
+        // and now set the information for the new part
+        np->ContentType = att->ContentType;
+        np->Filename    = att->FilePath;
+        np->Description = att->Description;
+        np->Name        = att->Name;
+        np->IsTemp      = att->IsTemp;
         if(att->IsMIME)
-          p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
+          np->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
         else
-          p->EncType = ENC_UUE;
+          np->EncType = ENC_UUE;
 
         p = np;
       }
@@ -1529,7 +1531,7 @@ static void WR_ComposeMulti(FILE *fh, struct Compose *comp, char *boundary)
 }
 
 ///
-/// WriteOutMessage() (rec)
+/// WriteOutMessage (rec)
 //  Outputs header and body of a new message
 BOOL WriteOutMessage(struct Compose *comp)
 {

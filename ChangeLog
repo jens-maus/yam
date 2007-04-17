@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-17  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c: building a message with more than one part (i.e. attachments)
+    screwed up the order of the single parts (the attachment was the first part
+    instead of the last).
+
 2007-04-17  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: Updated according to changes in YAM.cd.
