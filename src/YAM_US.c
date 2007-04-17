@@ -616,7 +616,7 @@ HOOKPROTONHNO(US_LV_ConFunc, struct User *, struct User *user)
 
   ENTER();
 
-  entry = AllocCopy(user, sizeof(*user));
+  entry = memdup(user, sizeof(*user));
 
   RETURN(entry);
   return entry;

@@ -2137,7 +2137,7 @@ HOOKPROTONHNO(AB_LV_ConFunc, struct ABEntry *, struct MUIP_NListtree_ConstructMe
 
   ENTER();
 
-  if((entry = AllocCopy(addr, sizeof(*addr))) != NULL)
+  if((entry = memdup(addr, sizeof(*addr))) != NULL)
   {
     // clone the member list aswell
     if(addr->Members != NULL)

@@ -3097,7 +3097,7 @@ HOOKPROTONHNO(WR_LV_ConFunc, struct Attach *, struct Attach *attach)
 
   ENTER();
 
-  entry = AllocCopy(attach, sizeof(*attach));
+  entry = memdup(attach, sizeof(*attach));
 
   RETURN(entry);
   return entry;

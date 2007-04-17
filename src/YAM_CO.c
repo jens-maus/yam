@@ -1132,7 +1132,7 @@ static void CopyConfigData(struct Config *dco, struct Config *sco)
 
   // then we have to do a deep copy any allocate separate memory for our copy
   for(i = 0; i < MAXP3; i++)
-    dco->P3[i] = sco->P3[i] ? (struct POP3 *)AllocCopy(sco->P3[i], sizeof(struct POP3)) : NULL;
+    dco->P3[i] = sco->P3[i] ? (struct POP3 *)memdup(sco->P3[i], sizeof(struct POP3)) : NULL;
 
   // for copying the mimetype list we have to do a deep copy of the list
   NewList((struct List *)&dco->mimeTypeList);

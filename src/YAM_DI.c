@@ -254,7 +254,7 @@ MakeHook(DI_OpenHook, DI_OpenFunc);
 //  Glossary listview construction hook
 HOOKPROTONHNO(DI_LV_ConFunc, struct Dict *, struct Dict *dict)
 {
-   return AllocCopy(dict, sizeof(*dict));
+   return memdup(dict, sizeof(*dict));
 }
 MakeStaticHook(DI_LV_ConFuncHook, DI_LV_ConFunc);
 

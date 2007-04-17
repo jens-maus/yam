@@ -4268,7 +4268,7 @@ HOOKPROTONHNO(MA_LV_FConFunc, struct Folder *, struct MUIP_NListtree_ConstructMe
 
   ENTER();
 
-  entry = AllocCopy(msg->UserData, sizeof(struct Folder));
+  entry = memdup(msg->UserData, sizeof(struct Folder));
 
   RETURN(entry);
   return entry;
