@@ -314,7 +314,7 @@ BOOL US_Login(const char *username, const char *password, const char *maildir, c
     {
       // prompt for a password, if none was given by tooltypes/command line
       if(password != NULL)
-        loggedin = (strcmp(password, user->Password) == 0 || password[0] == '\01');
+        loggedin = (strcmp(password, user->Password) == 0 || strcmp(password, "\01") == 0);
       else
         loggedin = DoMethod(G->SplashWinObject, MUIM_Splashwindow_PasswordRequest, user);
     }
@@ -616,8 +616,7 @@ HOOKPROTONHNO(US_LV_ConFunc, struct User *, struct User *user)
 
   ENTER();
 
-  if((entry = malloc(sizeof(*entry))) != NULL)
-    memcpy(entry, user, sizeof(*entry));
+  entry = AllocCopy(user, sizeof(*user));
 
   RETURN(entry);
   return entry;

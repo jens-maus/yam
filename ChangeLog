@@ -18,6 +18,8 @@ $URL$
   * YAM_WR.c: building a message with more than one part (i.e. attachments)
     screwed up the order of the single parts (the attachment was the first part
     instead of the last).
+  * YAM_AB.c, YAM_FI.c, YAM_MA.c, YAM_US.c, Addrmatchlist.c: replaced custom
+    clone code of structures by a call to AllocCopy().
 
 2007-04-17  Pär Boberg <pbobbenb@spray.se>
 

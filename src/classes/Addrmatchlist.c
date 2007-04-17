@@ -55,15 +55,14 @@ struct CustomABEntry
 /// ConstructHook
 HOOKPROTONHNO(ConstructFunc, struct CustomABEntry *, struct CustomABEntry *e)
 {
-  struct CustomABEntry *res;
+  struct CustomABEntry *entry;
 
   ENTER();
 
-  if((res = malloc(sizeof(struct CustomABEntry))))
-    *res = *e;
+  entry = AllocCopy(e, sizeof(*e));
 
-  RETURN(res);
-  return res;
+  RETURN(entry);
+  return entry;
 }
 MakeStaticHook(ConstructHook, ConstructFunc);
 

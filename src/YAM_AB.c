@@ -2132,19 +2132,22 @@ MakeStaticHook(AB_CloseHook, AB_Close);
 /*** AB_LV_ConFunc - Address book listview construction hook ***/
 HOOKPROTONHNO(AB_LV_ConFunc, struct ABEntry *, struct MUIP_NListtree_ConstructMessage *msg)
 {
-  struct ABEntry *entry = NULL;
+  struct ABEntry *addr = (struct ABEntry *)msg->UserData;
+  struct ABEntry *entry;
 
   ENTER();
 
-  if(msg != NULL)
+  if((entry = AllocCopy(addr, sizeof(*addr))) != NULL)
   {
-    if((entry = malloc(sizeof(struct ABEntry))) != NULL)
+    // clone the member list aswell
+    if(addr->Members != NULL)
     {
-      struct ABEntry *addr = (struct ABEntry *)msg->UserData;
-
-      memcpy(entry, addr, sizeof(struct ABEntry));
-      if(addr->Members)
-        entry->Members = strdup(addr->Members);
+      if((entry->Members = strdup(addr->Members)) == NULL)
+      {
+        // if strdup() failed then we let the whole function fail
+        free(entry);
+        entry = NULL;
+      }
     }
   }
 

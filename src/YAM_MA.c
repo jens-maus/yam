@@ -4266,13 +4266,12 @@ HOOKPROTONHNO(MA_LV_FConFunc, struct Folder *, struct MUIP_NListtree_ConstructMe
 {
   struct Folder *entry = NULL;
 
-  if(msg != NULL)
-  {
-    if((entry = calloc(1, sizeof(struct Folder))) != NULL)
-      memcpy(entry, msg->UserData, sizeof(struct Folder));
-  }
+  ENTER();
 
-  return(entry);
+  entry = AllocCopy(msg->UserData, sizeof(struct Folder));
+
+  RETURN(entry);
+  return entry;
 }
 MakeStaticHook(MA_LV_FConHook, MA_LV_FConFunc);
 

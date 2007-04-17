@@ -1693,12 +1693,8 @@ static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
     struct SearchPatternNode *srcNode = (struct SearchPatternNode *)curNode;
     struct SearchPatternNode *dstNode;
 
-    if((dstNode = calloc(1, sizeof(struct SearchPatternNode))) != NULL)
-    {
-      memcpy(dstNode, srcNode, sizeof(struct SearchPatternNode));
-
+    if((dstNode = AllocCopy(srcNode, sizeof(*srcNode))) != NULL)
       AddTail((struct List *)&dstSearch->patternList, (struct Node *)dstNode);
-    }
   }
 
   LEAVE();
