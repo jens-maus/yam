@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.14 (08.04.07)
+## version $VER: YAM.ct 6.15 (17.04.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -6917,3 +6917,7 @@ MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS
 Du har valt att automatiskt markera skräppost som läst,\nmen du har bara %ld brev klassifierade än.\nDet är inte rekommenderat att aktivera detta val\ni det tidiga skedet av träning av skräppostfiltret.\n\nVill du avaktivera automatisk markering av skräppost\nsom läst?
 ;#DEF You chose to automatically mark spam mails as read,\nbut have only %ld mails classified so far.\nIt is not recommended to activate this option in the\nearly state of training the spam filter.\n\nDo you want to deactivate automatic marking of spam\nmails as read?
 ;#SET (1914//)
+MSG_ER_CANNOT_CREATE_SEMAPHORE
+Kan inte skapa semafor!
+;#DEF Can't create semaphore!
+;#SET (1915//)

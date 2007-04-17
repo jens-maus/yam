@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-17  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: Updated according to changes in YAM.cd.
+
 2007-04-16  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MI.c: mails with main MIME parts that are base64 encoded and contain
