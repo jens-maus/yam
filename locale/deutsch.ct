@@ -6379,7 +6379,7 @@ Ein Fehler trat beim Versuch auf den Inhalt des Postfaches \
 '%s' in das Verzeichnis '%s' zu verschieben.\n\
 \n\
 Dies kann an zu wenig Speicherplatz, einem falschen Verzeichnis \
-oder aber daran liegen das ein Schreiben in das Verzeichnis nicht \
+liegen oder aber daran, dass ein Schreiben in das Verzeichnis nicht \
 möglich ist.
 ;
 MSG_CO_QUICKSEARCHBAR
