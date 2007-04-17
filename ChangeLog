@@ -7,6 +7,8 @@ $URL$
 
 2007-04-17  Jens Langner <Jens.Langner@light-speed.de>
 
+  * extrasrc/memdup.c: added minor NULL pointer check in case the source
+    pointer is NULL.
   * YAM_WR.c: the issues with the BuildPartsList() functions weren't all
     completly fixed according to the way the function was operating prior to
     the cleanup that broke some functionality in it. Now also the WhichEncoding()
