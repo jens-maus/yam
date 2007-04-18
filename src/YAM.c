@@ -2617,6 +2617,12 @@ int main(int argc, char **argv)
 
               // put the new mail on hold
               WR_NewMail(WRITE_HOLD, wrwin);
+
+              // we need to explicitly delete the autosave file here because
+              // the delete routine in WR_NewMail() doesn't catch the correct file
+              // because it only cares about the autosave file for the newly created
+              // write object
+              DeleteFile(WR_AutoSaveFile(i));
             }
           }
           else if(answer == 2)
@@ -2632,6 +2638,9 @@ int main(int argc, char **argv)
 
               // make sure the texteditor gadget is marked as being changed
               set(G->WR[wrwin]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, TRUE);
+
+              // we don't need to delete the autosave file here as the write
+              // window itself will delete it when it will be closed
             }
           }
           else if(answer == 3)

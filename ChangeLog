@@ -7,6 +7,8 @@ $URL$
 
 2007-04-18  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: the autosaved file wasn't automatically deleted in case it was put
+    on hold in the outgoing folder.
   * YAM.c, YAM.cd: switched the default buttons of the autosaved requester to
     put the mail on hold per default. In addition, the buttons should contain
     short enough text to make the requester not too large.
