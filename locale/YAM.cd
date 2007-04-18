@@ -4909,11 +4909,12 @@ Please make sure you are using a compatible image layout\n\
 or some images may be displayed incorrectly in YAM.
 ;
 MSG_MA_AUTOSAVEFOUND (1563//)
-YAM has found the autosaved file '%s' which\n\
-have been created in a previous session. This may be due\n\
-to a possible crash or reboot during writing a message.\n\
+YAM has found an autosaved message file '%s'\n\
+which have been created in a previous session. This may\n\
+be due to a possible crash or reboot while writing a\n\
+message.\n\
 \n\
-What do you want to do with that file?
+What do you want to do with that message?
 ;
 MSG_MA_AUTOSAVEFOUND_TITLE (1564//)
 Autosave file found
@@ -6173,5 +6174,5 @@ MSG_ER_CANNOT_CREATE_SEMAPHORE (1915//)
 Can't create semaphore!
 ;
 MSG_MA_AUTOSAVEFOUND_BUTTONS (1916//)
-*_Open in write window|Put on _Hold in Outgoing folder|_Delete|_Ignore
+*Put in _Outbox|_Edit|_Delete|_Ignore
 ;

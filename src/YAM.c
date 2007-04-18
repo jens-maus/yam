@@ -2598,20 +2598,6 @@ int main(int argc, char **argv)
                                                          fileName);
           if(answer == 1)
           {
-            // the user wants to open the autosave file in an own new write window,
-            // so lets do it and delete the autosave file afterwards
-            int wrwin;
-
-            if((wrwin = MA_NewNew(NULL, 0)) >= 0)
-            {
-              // load the file in the new editor gadget
-              FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT);
-              // make sure the texteditor gadget is marked as being changed
-              set(G->WR[wrwin]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, TRUE);
-            }
-          }
-          else if(answer == 2)
-          {
             // the user wants to put the autosave file on hold in the outgoing folder
             // so lets do it and delete the autosave file afterwards
             int wrwin;
@@ -2622,12 +2608,30 @@ int main(int argc, char **argv)
               // the message text
               set(G->WR[wrwin]->GUI.ST_TO, MUIA_String_Contents, "no@receiver");
               set(G->WR[wrwin]->GUI.ST_SUBJECT, MUIA_String_Contents, "(subject)");
+
               // load the file in the new editor gadget
               FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT);
+
               // make sure the texteditor gadget is marked as being changed
               set(G->WR[wrwin]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, TRUE);
+
               // put the new mail on hold
               WR_NewMail(WRITE_HOLD, wrwin);
+            }
+          }
+          else if(answer == 2)
+          {
+            // the user wants to open the autosave file in an own new write window,
+            // so lets do it and delete the autosave file afterwards
+            int wrwin;
+
+            if((wrwin = MA_NewNew(NULL, 0)) >= 0)
+            {
+              // load the file in the new editor gadget
+              FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT);
+
+              // make sure the texteditor gadget is marked as being changed
+              set(G->WR[wrwin]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, TRUE);
             }
           }
           else if(answer == 3)

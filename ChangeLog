@@ -5,6 +5,21 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-18  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, YAM.cd: switched the default buttons of the autosaved requester to
+    put the mail on hold per default. In addition, the buttons should contain
+    short enough text to make the requester not too large.
+  * MainMailListGroup.c: a doubleclick on a mail that is currently in the
+    outgoing folder should have always opened the write window instead no matter
+    if the embedded read pane is enabled or not. Now it is and this fixes
+    bug #1702674.
+  * YAM.cd, deutsch.ct: changed the keyboard shortcuts of the mutual exclusive
+    toolbar item strings for the "Spam" and "Not Spam" buttons to the very same
+    as it makes perfectly sense to be able to quickly switch between both
+    statuses with the same hotkey. Other translations should definitly act the
+    same way.
+
 2007-04-18  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: if an old autosave file is found upon startup the user now has the
@@ -18,18 +33,6 @@ $URL$
     search failed. A failed first search now only displays a requester, while
     a failed continued search produces a DisplayBeep(). This fulfills change
     request #1681866.
-
-2007-04-18  Jens Langner <Jens.Langner@light-speed.de>
-
-  * MainMailListGroup.c: a doubleclick on a mail that is currently in the
-    outgoing folder should have always opened the write window instead no matter
-    if the embedded read pane is enabled or not. Now it is and this fixes
-    bug #1702674.
-  * YAM.cd, deutsch.ct: changed the keyboard shortcuts of the mutual exclusive
-    toolbar item strings for the "Spam" and "Not Spam" buttons to the very same
-    as it makes perfectly sense to be able to quickly switch between both
-    statuses with the same hotkey. Other translations should definitly act the
-    same way.
 
 2007-04-17  Jens Langner <Jens.Langner@light-speed.de>
 
