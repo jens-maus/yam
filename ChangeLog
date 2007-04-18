@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-18  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Searchwindow.c: the MUIM_Searchwindow_Search method now gets some flags
+    passed instead of a single boolean value. This flag value is used to specify
+    whether to search from the beginning of the text and wether to beep if the
+    search failed. A failed first search now only displays a requester, while
+    a failed continued search produces a DisplayBeep(). This fulfills change
+    request #1681866.
+
 2007-04-18  Jens Langner <Jens.Langner@light-speed.de>
 
   * MainMailListGroup.c: a doubleclick on a mail that is currently in the

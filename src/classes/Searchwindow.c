@@ -42,6 +42,14 @@ struct Data
 };
 */
 
+/* EXPORT
+#define MUIF_Searchwindow_FromTop                      (1<<0) // search from the beginning of the text
+#define MUIF_Searchwindow_BeepOnFailure                (1<<1) // do a DisplayBeep() if the text was not found
+
+#define hasFromTopFlag(v)                              (isFlagSet((v), MUIF_Searchwindow_FromTop))
+#define hasBeepOnFailureFlag(v)                        (isFlagSet((v), MUIF_Searchwindow_BeepOnFailure))
+*/
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -83,9 +91,9 @@ OVERLOAD(OM_NEW)
     data = (struct Data *)INST_DATA(cl,obj);
     data->Searchstring = string;
 
-    DoMethod(string,         MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, TRUE);
+    DoMethod(string,         MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, MUIF_Searchwindow_FromTop);
     DoMethod(case_sensitive, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_WriteLong, MUIV_TriggerValue, &data->CaseSensitive);
-    DoMethod(search,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, TRUE);
+    DoMethod(search,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, MUIF_Searchwindow_FromTop);
     DoMethod(cancel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 1, MUIM_Searchwindow_Close);
     DoMethod(obj,            MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 1, MUIM_Searchwindow_Close);
   }
@@ -144,7 +152,7 @@ DECLARE(Close)
 
 ///
 /// DECLARE(Search)
-DECLARE(Search) // ULONG top
+DECLARE(Search) // ULONG flags
 {
   GETDATA;
   STRPTR string;
@@ -156,7 +164,7 @@ DECLARE(Search) // ULONG top
   {
     ULONG flags = 0;
 
-    if(msg->top)
+    if(hasFromTopFlag(msg->flags))
       SET_FLAG(flags, MUIF_TextEditor_Search_FromTop);
 
     if(data->CaseSensitive)
@@ -166,16 +174,18 @@ DECLARE(Search) // ULONG top
     // if the search string wasn't found.
     if(!DoMethod(data->Texteditor, MUIM_TextEditor_Search, string, flags))
     {
-      // beep the display
-      DisplayBeep(_screen(obj));
-
       // put up a requester if we are searching from
       // top
-      if(msg->top)
+      if(hasFromTopFlag(msg->flags))
       {
         MUI_Request(_app(obj), parent, 0L, tr(MSG_SEARCHNOTFOUND_TITLE),
                                            tr(MSG_OkayReq),
                                            tr(MSG_SEARCHNOTFOUND_MSG), string);
+      }
+      else if(hasBeepOnFailureFlag(msg->flags))
+      {
+        // beep the display
+        DisplayBeep(_screen(obj));
       }
     }
   }
@@ -187,7 +197,7 @@ DECLARE(Search) // ULONG top
 /// DECLARE(Next)
 DECLARE(Next)
 {
-  return DoMethod(obj, MUIM_Searchwindow_Search, FALSE);
+  return DoMethod(obj, MUIM_Searchwindow_Search, MUIF_Searchwindow_BeepOnFailure);
 }
 
 ///
