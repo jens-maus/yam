@@ -7052,7 +7052,7 @@ MSG_MA_TBSPAM
 S_pam
 ;
 MSG_MA_TBNOTSPAM
-k. Spa_m
+k. S_pam
 ;
 MSG_HELP_MA_BT_SPAM
 Nachricht als Spam markieren
@@ -7061,10 +7061,10 @@ MSG_HELP_MA_BT_NOTSPAM
 Nachricht als kein Spam markieren
 ;
 MSG_RE_TBSPAM
-Spam
+S_pam
 ;
 MSG_RE_TBNOTSPAM
-k. Spam
+k. S_pam
 ;
 MSG_HELP_RE_BT_SPAM
 Nachricht als Spam markieren

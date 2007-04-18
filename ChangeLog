@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-18  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.cd, deutsch.ct: changed the keyboard shortcuts of the mutual exclusive
+    toolbar item strings for the "Spam" and "Not Spam" buttons to the very same
+    as it makes perfectly sense to be able to quickly switch between both
+    statuses with the same hotkey. Other translations should definitly act the
+    same way.
+
 2007-04-17  Jens Langner <Jens.Langner@light-speed.de>
 
   * extrasrc/memdup.c: added minor NULL pointer check in case the source
