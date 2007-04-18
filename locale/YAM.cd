@@ -4918,9 +4918,6 @@ What do you want to do with that file?
 MSG_MA_AUTOSAVEFOUND_TITLE (1564//)
 Autosave file found
 ;
-MSG_MA_AUTOSAVEFOUND_BT (1565//)
-*_Open in write window|_Delete|_Ignore
-;
 MSG_CO_NB_AUTOSAVE (1566//)
 Autosave interval
 ;
@@ -6174,4 +6171,7 @@ mails as read?
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE (1915//)
 Can't create semaphore!
+;
+MSG_MA_AUTOSAVEFOUND_BUTTONS (1916//)
+*_Open in write window|Put on _Hold in Outgoing folder|_Delete|_Ignore
 ;

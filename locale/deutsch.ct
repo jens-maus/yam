@@ -6333,19 +6333,16 @@ Layout kompatibles Grafikverzeichnis verwenden oder\n\
 es könnten Bilder mitunter inkorrekt angezeigt werden.
 ;
 MSG_MA_AUTOSAVEFOUND
-YAM hat eine automatische Sicherungsdatei '%s' gefunden\n\
+YAM hat eine automatische Sicherungsdatei '%s' gefunden,\n\
 die in einer vorherigen Sitzung erzeugt wurde. Dies\n\
 könnte durch einen event. Absturz oder Neustart ihres\n\
-Systems während Sie eine Mail geschrieben haben\n\
+Systems, während Sie eine Mail geschrieben haben,\n\
 geschehen sein.\n\
 \n\
 Was möchten Sie mit dieser Datei tun?
 ;
 MSG_MA_AUTOSAVEFOUND_TITLE
 Sicherungskopie gefunden
-;
-MSG_MA_AUTOSAVEFOUND_BT
-*_Editieren|_Löschen|_Ignorieren
 ;
 MSG_CO_NB_AUTOSAVE
 Sicherungskopieinterval
@@ -7616,4 +7613,7 @@ gelesen deaktivieren?
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE
 Kann Semaphore nicht erstellen!
+;
+MSG_MA_AUTOSAVEFOUND_BUTTONS
+*_Editieren|In den _Postausgang legen|_Löschen|_Ignorieren
 ;

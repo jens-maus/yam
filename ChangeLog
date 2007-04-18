@@ -7,6 +7,11 @@ $URL$
 
 2007-04-18  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: if an old autosave file is found upon startup the user now has the
+    possibility to just create a new mail with this text in the outgoing folder
+    which is set to HOLD. All other already known possibilities (edit, delete,
+    ignore) are still available. The new mail will get an default receiver and
+    subject, because the autosave file just contains the message text.
   * Searchwindow.c: the MUIM_Searchwindow_Search method now gets some flags
     passed instead of a single boolean value. This flag value is used to specify
     whether to search from the beginning of the text and wether to beep if the
