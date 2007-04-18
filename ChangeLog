@@ -7,6 +7,10 @@ $URL$
 
 2007-04-18  Jens Langner <Jens.Langner@light-speed.de>
 
+  * MainMailListGroup.c: a doubleclick on a mail that is currently in the
+    outgoing folder should have always opened the write window instead no matter
+    if the embedded read pane is enabled or not. Now it is and this fixes
+    bug #1702674.
   * YAM.cd, deutsch.ct: changed the keyboard shortcuts of the mutual exclusive
     toolbar item strings for the "Spam" and "Not Spam" buttons to the very same
     as it makes perfectly sense to be able to quickly switch between both

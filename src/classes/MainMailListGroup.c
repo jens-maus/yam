@@ -326,12 +326,11 @@ DECLARE(DoubleClicked) // LONG entryNum
 
   if(msg->entryNum >= 0)
   {
-    struct Folder *folder;
+    struct Folder *folder = FO_GetCurrentFolder();
 
-    // in case the embedded read pane is used, a double click
-    // in the outgoing folder should popup a write window instead.
-    if(C->EmbeddedReadPane == TRUE &&
-       (folder = FO_GetCurrentFolder()) != NULL && isOutgoingFolder(folder))
+    // A double click in the outgoing folder should popup a write
+    // window instead.
+    if(folder != NULL && isOutgoingFolder(folder))
     {
       // in case the folder is the "outgoing" folder
       // we edit the mail instead.
