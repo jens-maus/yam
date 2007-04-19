@@ -2632,6 +2632,8 @@ int main(int argc, char **argv)
           }
           else if(answer == 2)
           {
+            char newFileName[SIZE_PATHFILE];
+
             // the user wants to open the autosave file in an own new write window,
             // so lets do it and delete the autosave file afterwards
             int wrwin;
@@ -2645,7 +2647,11 @@ int main(int argc, char **argv)
               set(G->WR[wrwin]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, TRUE);
 
               // we don't need to delete the autosave file here as the write
-              // window itself will delete it when it will be closed
+              // window itself will delete it when it will be closed. However,
+              // we do have to rename the autosave file to the one that new wrwin
+              // will expect
+              if(i != wrwin)
+                RenameFile(fileName, WR_AutoSaveFile(wrwin, newFileName, sizeof(newFileName)));
             }
           }
           else if(answer == 3)

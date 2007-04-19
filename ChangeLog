@@ -7,6 +7,9 @@ $URL$
 
 2007-04-19  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: the autosave file have to be renamed in case the found file was
+    created by another write window number than the one we opened for editing
+    the autosaved message.
   * YAM.c, YAM_WR.c, YAM_write.h: changed the WR_AutoSaveFile() function to
     not store the file in a static buffer but take a destination buffer as
     a seperate argument. This e.g. caused problems in the automatic autosave
