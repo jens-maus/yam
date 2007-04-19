@@ -1705,18 +1705,19 @@ mimebody:
 ///
 /// WR_AutoSaveFile
 //  Returns filename of the auto-save file
-char *WR_AutoSaveFile(int winnr)
+char *WR_AutoSaveFile(const int winnr, char *dest, const size_t length)
 {
-  static char fname[SIZE_PATHFILE];
-
   ENTER();
 
-  strmfp(fname, G->MA_MailDir, ".autosave");
-  strlcat(fname, itoa(winnr), sizeof(fname));
-  strlcat(fname, ".txt", sizeof(fname));
+  if(dest != NULL)
+  {
+    strmfp(dest, G->MA_MailDir, ".autosave");
+    strlcat(dest, itoa(winnr), length);
+    strlcat(dest, ".txt", length);
+  }
 
-  RETURN(fname);
-  return fname;
+  RETURN(dest);
+  return dest;
 }
 ///
 
@@ -1729,8 +1730,6 @@ void WR_NewMail(enum WriteMode mode, int winnum)
   struct Compose comp;
   struct Mail *newMail = NULL;
   char *addr;
-
-
   struct Mail *mlist[3];
   int numAttachments = 0;
   struct WR_ClassData *wr = G->WR[winnum];
@@ -1738,6 +1737,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
   struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
   BOOL quietMode = (winnum == 2);
   BOOL winOpen = xget(gui->WI, MUIA_Window_Open);
+  char fileName[SIZE_PATHFILE];
 
   ENTER();
 
@@ -2164,7 +2164,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
   }
 
   // delete a possible autosave file
-  DeleteFile(WR_AutoSaveFile(winnum));
+  DeleteFile(WR_AutoSaveFile(winnum, fileName, sizeof(fileName)));
 
   DisposeModulePush(&G->WR[winnum]);
   DisplayStatistics(outfolder, TRUE);
@@ -2193,6 +2193,7 @@ void WR_Cleanup(int winnum)
 
   if(G->WR[winnum]->Mode != NEW_BOUNCE)
   {
+    char fileName[SIZE_PATHFILE];
     int i;
 
     EndNotify(&G->WR_NRequest[winnum]);
@@ -2211,7 +2212,7 @@ void WR_Cleanup(int winnum)
     }
 
     // delete a possible autosave file
-    DeleteFile(WR_AutoSaveFile(winnum));
+    DeleteFile(WR_AutoSaveFile(winnum, fileName, sizeof(fileName)));
   }
 
   LEAVE();

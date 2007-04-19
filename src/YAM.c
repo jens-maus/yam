@@ -850,6 +850,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     // of the currently used editors.
     case TIO_AUTOSAVE:
     {
+      char fileName[SIZE_PATHFILE];
       int i;
 
       D(DBF_TIMERIO, "timer[%ld]: TIO_AUTOSAVE received at: %s", tio, dateString);
@@ -857,7 +858,7 @@ static void TC_Dispatcher(enum TimerIO tio)
       for(i = 0; i < MAXWR; i++)
       {
         if(G->WR[i] && G->WR[i]->Mode != NEW_BOUNCE)
-          EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i));
+          EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i, fileName, sizeof(fileName)));
       }
 
       // prepare the timer to get fired again
@@ -2586,8 +2587,12 @@ int main(int argc, char **argv)
       // maildir directory. And if so we ask the user what he would like to do with it
       for(i=0; i < MAXWR; i++)
       {
-        char *fileName = WR_AutoSaveFile(i);
+        char fileName[SIZE_PATHFILE];
 
+        // fill fileName with the autosave filename
+        WR_AutoSaveFile(i, fileName, sizeof(fileName));
+
+        // check if the file exists
         if(FileExists(fileName))
         {
           int answer;

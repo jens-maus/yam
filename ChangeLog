@@ -5,7 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-04-18  Thore Böckelmann <tboeckel@gmx.de>
+2007-04-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, YAM_WR.c, YAM_write.h: changed the WR_AutoSaveFile() function to
+    not store the file in a static buffer but take a destination buffer as
+    a seperate argument. This e.g. caused problems in the automatic autosave
+    file deletion in YAM.c where the function had to be used twice because
+    WR_NewMail() was also calling this function and therefore overwrote
+    a pointer that was previously obtained. Now the API should be less
+    error prone, reentrant and more intuitive.
+
+2007-04-19  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: deleting an old autosave file now uses the already obtained file
     name from the testing stage.
