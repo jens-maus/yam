@@ -1373,7 +1373,7 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
        char chr[2];
 
        chr[0] = *src;
-       chr[1] = '\0'
+       chr[1] = '\0';
        dst = StrBufCat(dst, chr);
     }
   }
