@@ -249,7 +249,7 @@ static BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
               foundMatch = stristr(to->Address, searchString) != NULL ||
                            (to->RealName[0] && stristr(to->RealName, searchString) != NULL);
             }
-    
+
             for(j=0; j < email->NoCC && foundMatch == FALSE; j++)
             {
               struct Person *cc = &email->CC[j];
@@ -331,7 +331,7 @@ OVERLOAD(OM_NEW)
   Object *clearButton;
   static const char *searchOptions[7];
   static const char *viewOptions[10];
-  
+
   searchOptions[0] = tr(MSG_QUICKSEARCH_SO_SUBJECT);
   searchOptions[1] = tr(MSG_QUICKSEARCH_SO_SENDER);
   searchOptions[2] = tr(MSG_QUICKSEARCH_SO_SUBJORSENDER);
@@ -532,7 +532,7 @@ DECLARE(SearchContentChanged) // char* content, ULONG force
 
       // now we switch the ActivePage of the mailview pagegroup
       DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_SwitchToList, LT_MAIN);
-      
+
       // now reset some other GUI elements as well.
       set(data->TX_STATUSTEXT, MUIA_Text_Contents, " ");
       set(data->BT_CLEARBUTTON, MUIA_ShowMe, FALSE);
@@ -630,7 +630,7 @@ DECLARE(ProcessSearch)
 
     // get the current time in UTC
     GetSysTimeUTC(&curTimeUTC);
-  
+
     // check the searchString settings for an empty string
     if(searchString && *searchString == '\0')
       searchString = NULL;
@@ -765,7 +765,7 @@ DECLARE(UpdateStats) // ULONG force
 
   if(doUpdate)
   {
-    static char statusText[SIZE_DEFAULT];
+    char statusText[SIZE_DEFAULT];
     ULONG numEntries = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries);
     struct Folder* curFolder = FO_GetCurrentFolder();
 
