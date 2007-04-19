@@ -224,22 +224,26 @@ static void RE_SuggestName(struct Mail *mail, char *name, const size_t length)
 BOOL RE_Export(struct ReadMailData *rmData, const char *source,
                const char *dest, const char *name, int nr, BOOL force, BOOL overwrite, const char *ctype)
 {
-  char buffer[SIZE_PATHFILE];
-  char buffer2[SIZE_FILE+SIZE_DEFAULT];
-  Object *win = rmData->readWindow ? rmData->readWindow : G->MA->GUI.WI;
-  struct Mail *mail = rmData->mail;
+  BOOL success = FALSE;
+  Object *win;
+  struct Mail *mail;
 
   ENTER();
 
-  if(*dest == '\0')
+  win = rmData->readWindow ? rmData->readWindow : G->MA->GUI.WI;
+  mail = rmData->mail;
+
+  if(dest[0] != '\0')
   {
+    char buffer[SIZE_PATHFILE];
+    char buffer2[SIZE_FILE+SIZE_DEFAULT];
     struct FileReqCache *frc;
 
-    if(*name != '\0')
+    if(name[0] != '\0')
     {
       strlcpy(buffer2, name, sizeof(buffer2));
     }
-    else if(nr)
+    else if(nr != 0)
     {
       char ext[SIZE_FILE];
       char suggestedName[SIZE_FILE];
@@ -260,63 +264,77 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
     }
 
     if(force)
+    {
       strmfp(buffer, C->DetachDir, buffer2);
+      dest = buffer;
+    }
     else if((frc = ReqFile(ASL_DETACH, win, tr(MSG_RE_SaveMessage), REQF_SAVEMODE, C->DetachDir, buffer2)))
+    {
       strmfp(buffer, frc->drawer, frc->file);
+      dest = buffer;
+    }
     else
     {
-      RETURN(FALSE);
-      return FALSE;
+      dest = NULL;
     }
-
-    dest = buffer;
   }
 
-  if(FileExists(dest) && !overwrite)
+  if(dest != NULL)
   {
-    if(!MUI_Request(G->App, win, 0, tr(MSG_MA_ConfirmReq), tr(MSG_OkayCancelReq), tr(MSG_RE_Overwrite), FilePart(dest)))
+    if(FileExists(dest) && !overwrite)
     {
-      RETURN(FALSE);
-      return FALSE;
+      if(MUI_Request(G->App, win, 0, tr(MSG_MA_ConfirmReq), tr(MSG_OkayCancelReq), tr(MSG_RE_Overwrite), FilePart(dest)) == 0)
+      	dest = NULL;
     }
   }
 
-  if(!CopyFile(dest, 0, source, 0))
+  if(dest != NULL)
   {
-    ER_NewError(tr(MSG_ER_CantCreateFile), dest);
-
-    RETURN(FALSE);
-    return FALSE;
+    if(CopyFile(dest, 0, source, 0) == FALSE)
+    {
+      ER_NewError(tr(MSG_ER_CantCreateFile), dest);
+      dest = NULL;
+    }
   }
-  SetComment(dest, BuildAddrName2(&mail->From));
 
-  if(!stricmp(ctype, IntMimeTypeArray[MT_AP_AEXE].ContentType))
-    SetProtection(dest, 0);
-  else if(!stricmp(ctype, IntMimeTypeArray[MT_AP_SCRIPT].ContentType))
-    SetProtection(dest, FIBF_SCRIPT);
+  if(dest != NULL)
+  {
+    SetComment(dest, BuildAddrName2(&mail->From));
 
-  AppendLogVerbose(80, tr(MSG_LOG_SavingAtt), dest, mail->MailFile, FolderName(mail->Folder));
+    if(!stricmp(ctype, IntMimeTypeArray[MT_AP_AEXE].ContentType))
+      SetProtection(dest, 0);
+    else if(!stricmp(ctype, IntMimeTypeArray[MT_AP_SCRIPT].ContentType))
+      SetProtection(dest, FIBF_SCRIPT);
 
-  RETURN(TRUE);
-  return TRUE;
+    AppendLogVerbose(80, tr(MSG_LOG_SavingAtt), dest, mail->MailFile, FolderName(mail->Folder));
+
+    success = TRUE;
+  }
+
+  RETURN(success);
+  return success;
 }
 ///
 /// RE_PrintFile
 //  Prints a file. Currently it is just dumped to PRT:
 void RE_PrintFile(char *filename)
 {
-  if(C->PrinterCheck && !CheckPrinter())
-    return;
+  ENTER();
 
-  switch(C->PrintMethod)
+  if(C->PrinterCheck == FALSE || CheckPrinter() == TRUE)
   {
-    case PRINTMETHOD_RAW :
-      // continue
+    switch(C->PrintMethod)
+    {
+      case PRINTMETHOD_RAW :
+        // continue
 
-    default:
-      CopyFile("PRT:", 0, filename, 0);
-    break;
+      default:
+        CopyFile("PRT:", 0, filename, 0);
+      break;
+    }
   }
+
+  LEAVE();
 }
 
 ///
@@ -324,7 +342,6 @@ void RE_PrintFile(char *filename)
 //  Displays a message part (attachment) using a MIME viewer
 void RE_DisplayMIME(char *fname, const char *ctype)
 {
-  struct MinNode *curNode;
   struct MimeTypeNode *mt = NULL;
   BOOL triedToIdentify = FALSE;
 
@@ -350,6 +367,8 @@ void RE_DisplayMIME(char *fname, const char *ctype)
   // MIME types matches or not.
   if(ctype != NULL)
   {
+    struct MinNode *curNode;
+
     for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
       struct MimeTypeNode *curType = (struct MimeTypeNode *)curNode;
@@ -443,6 +462,8 @@ void RE_DisplayMIME(char *fname, const char *ctype)
 
         if((ctype = IdentifyFile(fname)))
         {
+          struct MinNode *curNode;
+
           D(DBF_MIME, "identified file as '%s'", ctype);
 
           for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
@@ -584,16 +605,21 @@ void RE_SaveAll(struct ReadMailData *rmData, const char *path)
 //  Finds e-mail address in PGP output
 static BOOL RE_GetAddressFromLog(char *buf, char *address)
 {
-  if((buf = strchr(buf, '"')))
+  BOOL success = FALSE;
+
+  ENTER();
+
+  if((buf = strchr(buf, '"')) != NULL)
   {
     strlcpy(address, ++buf, SIZE_ADDRESS);
     if((buf = strchr(address, '"')))
       *buf = '\0';
 
-    return TRUE;
+    success = TRUE;
   }
 
-  return FALSE;
+  RETURN(success);
+  return success;
 }
 ///
 /// RE_GetSigFromLog
@@ -603,13 +629,16 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
   BOOL sigDone = FALSE;
   BOOL decrFail = FALSE;
   FILE *fh;
-  char buffer[SIZE_LARGE];
 
-  if((fh = fopen(PGPLOGFILE, "r")))
+  ENTER();
+
+  if((fh = fopen(PGPLOGFILE, "r")) != NULL)
   {
+    char buffer[SIZE_LARGE];
+
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    while (GetLine(fh, buffer, SIZE_LARGE))
+    while(GetLine(fh, buffer, SIZE_LARGE))
     {
       if(!decrFail && decrFor && G->PGPVersion == 5)
       {
@@ -655,6 +684,8 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
     if(sigDone || (decrFor && !decrFail))
       DeleteFile(PGPLOGFILE);
   }
+
+  LEAVE();
 }
 ///
 
@@ -772,7 +803,10 @@ static char *ExtractNextParam(char *s, char **name, char **value)
 //  Finds next parameter in header field
 static char *ParamEnd(char *s)
 {
+  char *result = NULL;
   BOOL inquotes = FALSE;
+
+  ENTER();
 
   while(*s)
   {
@@ -784,14 +818,18 @@ static char *ParamEnd(char *s)
         ++s;
     }
     else if(*s == ';')
-      return(s);
+    {
+      result = s;
+      break;
+    }
     else if(*s == '"')
       inquotes = TRUE;
 
     ++s;
   }
 
-  return NULL;
+  RETURN(result);
+  return result;
 }
 ///
 /// Cleanse
@@ -799,6 +837,8 @@ static char *ParamEnd(char *s)
 static char *Cleanse(char *s)
 {
   char *tmp;
+
+  ENTER();
 
   // skip all leading spaces and return pointer
   // to first real char.
@@ -813,6 +853,7 @@ static char *Cleanse(char *s)
   while(tmp > s && *--tmp && isspace(*tmp))
     *tmp = '\0';
 
+  RETURN(s);
   return s;
 }
 
@@ -848,8 +889,8 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
   if((s = malloc(size+1)))
   {
     char *q = s;
-    p=str;
 
+    p=str;
     while(*p)
     {
       if(isspace(*p) || *p == ';')
@@ -1509,16 +1550,16 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
                             struct Part *prev,
                             struct Part *first)
 {
-  FILE *fp;
+  FILE *fp = NULL;
   struct Part *newPart;
 
   ENTER();
 
-  if(((*new) = newPart = calloc(1,sizeof(struct Part))))
+  if((newPart = calloc(1, sizeof(*newPart))) != NULL)
   {
     char file[SIZE_FILE];
 
-    if(prev)
+    if(prev != NULL)
     {
       // link in the new Part
       newPart->Prev = prev;
@@ -1526,7 +1567,7 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
       newPart->Nr = prev->Nr+1;
     }
 
-    if(first && strnicmp(first->ContentType, "multipart", 9) != 0)
+    if(first != NULL && strnicmp(first->ContentType, "multipart", 9) != 0)
     {
       newPart->ContentType = strdup(first->ContentType);
       newPart->CParCSet = first->CParCSet ? strdup(first->CParCSet) : NULL;
@@ -1537,7 +1578,7 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
       newPart->ContentType = strdup("text/plain");
       newPart->EncodingCode = ENC_NONE;
 
-      if(first && (first->isAltPart ||
+      if(first != NULL && (first->isAltPart ||
          (first->ContentType[9] != '\0' && strnicmp(&first->ContentType[10], "alternative", 11) == 0)))
       {
         newPart->isAltPart = TRUE;
@@ -1562,22 +1603,24 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
     D(DBF_MAIL, "  Parentptr..: %lx",  newPart->Parent);
     D(DBF_MAIL, "  MainAltPart: %lx",  newPart->MainAltPart);
 
-    if((fp = fopen(newPart->Filename, "w")))
+    if((fp = fopen(newPart->Filename, "w")) != NULL)
     {
       setvbuf(fp, NULL, _IOFBF, SIZE_FILEBUF);
-
-      RETURN(fp);
-      return fp;
     }
-
-    free(newPart);
-    *new = NULL;
+    else
+    {
+      // opening the file failed, so we return failure
+      free(newPart);
+      newPart = NULL;
+    }
   }
 
-  E(DBF_MAIL, "Error: Couldn't create a new Part!");
+  *new = newPart;
+  if(newPart == NULL)
+    E(DBF_MAIL, "Error: Couldn't create a new Part!");
 
-  RETURN(NULL);
-  return NULL;
+  RETURN(fp);
+  return fp;
 }
 ///
 /// RE_UndoPart
@@ -1759,58 +1802,75 @@ static BOOL RE_SaveThisPart(struct Part *rp)
 //  Determines size and other information of a message part
 static void RE_SetPartInfo(struct Part *rp)
 {
-   int size = rp->Size = FileSize(rp->Filename);
+  int size = rp->Size = FileSize(rp->Filename);
 
-   // let`s calculate the partsize on a undecoded part, if not a common part
-   if(!rp->Decoded && rp->Nr > 0)
-   {
-      switch (rp->EncodingCode)
+  ENTER();
+
+  // let`s calculate the partsize on a undecoded part, if not a common part
+  if(!rp->Decoded && rp->Nr > 0)
+  {
+    switch (rp->EncodingCode)
+    {
+      case ENC_UUE:
+      case ENC_B64:
       {
-        case ENC_UUE: case ENC_B64: rp->Size = (100*size)/136; break;
-        case ENC_QP:                rp->Size = (100*size)/106; break;
-        default:
-          // nothing
-        break;
+        rp->Size = (100 * size) / 136;
       }
-   }
+      break;
 
-   // if this part hasn`t got any name, we place the CParName as the normal name
-   if(!*rp->Name && (rp->CParName || rp->CParFileName))
-      strlcpy(rp->Name, rp->CParName ? rp->CParName : rp->CParFileName, sizeof(rp->Name));
+      case ENC_QP:
+      {
+        rp->Size = (100 * size) / 106;
+      }
+      break;
 
-   // let`s set if this is a printable (readable part)
-   if(rp->Nr == PART_RAW ||
-      strnicmp(rp->ContentType, "text", 4) == 0 ||
-      strnicmp(rp->ContentType, "message", 7) == 0)
-   {
-     rp->Printable = TRUE;
-   }
-   else
-     rp->Printable = FALSE;
+      default:
+      {
+        // nothing
+      }
+      break;
+    }
+  }
 
-   // Now that we have defined that this part is printable we have
-   // to check whether our readMailData structure already contains a reference
-   // to the actual readable letterPart or not and if not we do make this
-   // part the actual letterPart
-   if((rp->rmData->letterPartNum < PART_LETTER ||
-       (rp->isAltPart == TRUE && rp->Parent != NULL && rp->Parent->MainAltPart == rp)) &&
+  // if this part hasn`t got any name, we place the CParName as the normal name
+  if(rp->Name[0] == '\0' && (rp->CParName != NULL || rp->CParFileName != NULL))
+    strlcpy(rp->Name, (rp->CParName != NULL) ? rp->CParName : rp->CParFileName, sizeof(rp->Name));
+
+  // let`s set if this is a printable (readable part)
+  if(rp->Nr == PART_RAW ||
+     strnicmp(rp->ContentType, "text", 4) == 0 ||
+     strnicmp(rp->ContentType, "message", 7) == 0)
+  {
+    rp->Printable = TRUE;
+  }
+  else
+    rp->Printable = FALSE;
+
+  // Now that we have defined that this part is printable we have
+  // to check whether our readMailData structure already contains a reference
+  // to the actual readable letterPart or not and if not we do make this
+  // part the actual letterPart
+  if((rp->rmData->letterPartNum < PART_LETTER ||
+      (rp->isAltPart == TRUE && rp->Parent != NULL && rp->Parent->MainAltPart == rp)) &&
       rp->Printable &&
       rp->Nr >= PART_LETTER)
-   {
-     D(DBF_MAIL, "setting part #%ld as LETTERPART", rp->Nr);
+  {
+    D(DBF_MAIL, "setting part #%ld as LETTERPART", rp->Nr);
 
-     rp->rmData->letterPartNum = rp->Nr;
+    rp->rmData->letterPartNum = rp->Nr;
 
-     SetComment(rp->Filename, tr(MSG_RE_Letter));
-   }
-   else if(rp->Nr == PART_RAW)
-     SetComment(rp->Filename, tr(MSG_RE_Header));
-   else
-   {
-      // if this is not a printable LETTER part or a RAW part we
-      // write another comment
-      SetComment(rp->Filename, *rp->Description ? rp->Description : (*rp->Name ? rp->Name : rp->ContentType));
-   }
+    SetComment(rp->Filename, tr(MSG_RE_Letter));
+  }
+  else if(rp->Nr == PART_RAW)
+    SetComment(rp->Filename, tr(MSG_RE_Header));
+  else
+  {
+    // if this is not a printable LETTER part or a RAW part we
+    // write another comment
+    SetComment(rp->Filename, *rp->Description ? rp->Description : (*rp->Name ? rp->Name : rp->ContentType));
+  }
+
+  LEAVE();
 }
 ///
 /// RE_ParseMessage (rec)
@@ -2196,43 +2256,54 @@ static void RE_HandleSignedMessage(struct Part *frp)
 //  Decrypts a PGP encrypted file
 static int RE_DecryptPGP(struct ReadMailData *rmData, char *src)
 {
-  FILE *fh;
   int error;
-  char options[SIZE_LARGE], orcpt[SIZE_ADDRESS];
+  char orcpt[SIZE_ADDRESS];
 
-  *orcpt = 0;
+  ENTER();
+
+  orcpt[0] = '\0';
   PGPGetPassPhrase();
 
   if(G->PGPVersion == 5)
   {
     char fname[SIZE_PATHFILE];
+    char options[SIZE_LARGE];
+
     snprintf(fname, sizeof(fname), "%s.asc", src); Rename(src, fname);
     snprintf(options, sizeof(options), "%s +batchmode=1 +force +language=us", fname);
     error = PGPCommand("pgpv", options, KEEPLOG|NOERRORS);
     RE_GetSigFromLog(rmData, orcpt);
-    if(*orcpt)
+    if(orcpt[0] != '\0')
       error = 2;
 
     DeleteFile(fname);
   }
   else
   {
+  	char options[SIZE_LARGE];
+
     snprintf(options, sizeof(options), "%s +bat +f +lang=en", src);
     error = PGPCommand("pgp", options, KEEPLOG|NOERRORS);
     RE_GetSigFromLog(rmData, NULL);
   }
 
   PGPClearPassPhrase(error < 0 || error > 1);
-  if((error < 0 || error > 1) && (fh = fopen(src, "w")))
+  if(error < 0 || error > 1)
   {
-    fputs(tr(MSG_RE_PGPNotAllowed), fh);
+    FILE *fh;
 
-    if(G->PGPVersion == 5 && *orcpt)
-      fprintf(fh, tr(MSG_RE_MsgReadOnly), orcpt);
+    if((fh = fopen(src, "w")) != NULL)
+    {
+      fputs(tr(MSG_RE_PGPNotAllowed), fh);
 
-    fclose(fh);
+      if(G->PGPVersion == 5 && orcpt[0] != '\0')
+        fprintf(fh, tr(MSG_RE_MsgReadOnly), orcpt);
+
+      fclose(fh);
+    }
   }
 
+  RETURN(error);
   return error;
 }
 ///
@@ -2376,6 +2447,9 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
   struct Part *part;
   BOOL result = FALSE;
 
+
+  ENTER();
+
   if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
     BusyText(tr(MSG_BusyReading), "");
 
@@ -2399,6 +2473,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
       if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
         BusyEnd();
 
+      RETURN(FALSE);
       return FALSE;
     }
 
@@ -2473,6 +2548,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
   if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
     BusyEnd();
 
+  RETURN(result);
   return result;
 }
 
@@ -3057,64 +3133,91 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 //  Parses X-SenderInfo header field
 void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
 {
-   char *s, *t, *eq;
-   struct ExtendedMail *email;
+  ENTER();
 
-   memset(ab, 0, sizeof(struct ABEntry));
-   strlcpy(ab->Address, mail->From.Address, sizeof(ab->Address));
-   strlcpy(ab->RealName, mail->From.RealName, sizeof(ab->RealName));
+  memset(ab, 0, sizeof(struct ABEntry));
+  strlcpy(ab->Address, mail->From.Address, sizeof(ab->Address));
+  strlcpy(ab->RealName, mail->From.RealName, sizeof(ab->RealName));
 
-   if(isSenderInfoMail(mail))
-   {
-      if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+  if(isSenderInfoMail(mail))
+  {
+    struct ExtendedMail *email;
+
+    if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
+    {
+      char *s;
+
+      if((s = strchr(email->SenderInfo, ';')) != NULL)
       {
-        if ((s = strchr(email->SenderInfo, ';')))
+        char *t;
+
+        *s++ = '\0';
+        do
         {
-          *s++ = 0;
-          do
+          char *eq;
+
+          if((t = ParamEnd(s)) != NULL)
+            *t++ = '\0';
+
+          if((eq = strchr(s, '=')) == NULL)
+          	Cleanse(s);
+          else
           {
-            if ((t = ParamEnd(s))) *t++ = 0;
-            if (!(eq = strchr(s, '='))) Cleanse(s);
-            else
-            {
-               *eq++ = 0;
-               s = Cleanse(s); eq = TrimStart(eq);
-               TrimEnd(eq);
-               UnquoteString(eq, FALSE);
-               if (!stricmp(s, "street"))   strlcpy(ab->Street, eq, sizeof(ab->Street));
-               if (!stricmp(s, "city"))     strlcpy(ab->City, eq, sizeof(ab->City));
-               if (!stricmp(s, "country"))  strlcpy(ab->Country, eq, sizeof(ab->Country));
-               if (!stricmp(s, "phone"))    strlcpy(ab->Phone, eq, sizeof(ab->Phone));
-               if (!stricmp(s, "homepage")) strlcpy(ab->Homepage, eq, sizeof(ab->Homepage));
-               if (!stricmp(s, "dob"))      ab->BirthDay = atol(eq);
-               if (!stricmp(s, "picture"))  strlcpy(ab->Photo, eq, sizeof(ab->Photo));
-               ab->Type = 1;
-            }
-            s = t;
-         }while (t);
-       }
-       MA_FreeEMailStruct(email);
-     }
+            *eq++ = '\0';
+            s = Cleanse(s);
+            eq = TrimStart(eq);
+            TrimEnd(eq);
+            UnquoteString(eq, FALSE);
+
+            if(stricmp(s, "street") == 0)
+              strlcpy(ab->Street, eq, sizeof(ab->Street));
+            else if(stricmp(s, "city") == 0)
+              strlcpy(ab->City, eq, sizeof(ab->City));
+            else if(stricmp(s, "country") == 0)
+              strlcpy(ab->Country, eq, sizeof(ab->Country));
+            else if(stricmp(s, "phone") == 0)
+              strlcpy(ab->Phone, eq, sizeof(ab->Phone));
+            else if(stricmp(s, "homepage") == 0)
+              strlcpy(ab->Homepage, eq, sizeof(ab->Homepage));
+            else if(stricmp(s, "dob") == 0)
+              ab->BirthDay = atol(eq);
+            else if(stricmp(s, "picture") == 0)
+              strlcpy(ab->Photo, eq, sizeof(ab->Photo));
+
+            ab->Type = 1;
+          }
+          s = t;
+        }
+        while(t != NULL);
+      }
+      MA_FreeEMailStruct(email);
+    }
   }
+
+  LEAVE();
 }
 ///
 /// RE_UpdateSenderInfo
 //  Updates address book entry of sender
 void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new)
 {
-   BOOL changed = FALSE;
+  BOOL changed = FALSE;
 
-   if (!*old->RealName && *new->RealName) { strlcpy(old->RealName, new->RealName, sizeof(old->RealName)); changed = TRUE; }
-   if (!*old->Address  && *new->Address ) { strlcpy(old->Address,  new->Address,  sizeof(old->Address));  changed = TRUE; }
-   if (!*old->Street   && *new->Street  ) { strlcpy(old->Street,   new->Street,   sizeof(old->Street));   changed = TRUE; }
-   if (!*old->Country  && *new->Country ) { strlcpy(old->Country,  new->Country,  sizeof(old->Country));  changed = TRUE; }
-   if (!*old->City     && *new->City    ) { strlcpy(old->City,     new->City,     sizeof(old->City));     changed = TRUE; }
-   if (!*old->Phone    && *new->Phone   ) { strlcpy(old->Phone,    new->Phone,    sizeof(old->Phone));    changed = TRUE; }
-   if (!*old->Homepage && *new->Homepage) { strlcpy(old->Homepage, new->Homepage, sizeof(old->Homepage)); changed = TRUE; }
-   if (!old->BirthDay  && new->BirthDay ) { old->BirthDay = new->BirthDay; changed = TRUE; }
+  ENTER();
 
-   if (changed)
-      CallHookPkt(&AB_SaveABookHook, 0, 0);
+  if(!*old->RealName && *new->RealName) { strlcpy(old->RealName, new->RealName, sizeof(old->RealName)); changed = TRUE; }
+  if(!*old->Address  && *new->Address ) { strlcpy(old->Address,  new->Address,  sizeof(old->Address));  changed = TRUE; }
+  if(!*old->Street   && *new->Street  ) { strlcpy(old->Street,   new->Street,   sizeof(old->Street));   changed = TRUE; }
+  if(!*old->Country  && *new->Country ) { strlcpy(old->Country,  new->Country,  sizeof(old->Country));  changed = TRUE; }
+  if(!*old->City     && *new->City    ) { strlcpy(old->City,     new->City,     sizeof(old->City));     changed = TRUE; }
+  if(!*old->Phone    && *new->Phone   ) { strlcpy(old->Phone,    new->Phone,    sizeof(old->Phone));    changed = TRUE; }
+  if(!*old->Homepage && *new->Homepage) { strlcpy(old->Homepage, new->Homepage, sizeof(old->Homepage)); changed = TRUE; }
+  if(!old->BirthDay  && new->BirthDay ) { old->BirthDay = new->BirthDay; changed = TRUE; }
+
+  if(changed)
+    CallHookPkt(&AB_SaveABookHook, 0, 0);
+
+  LEAVE();
 }
 ///
 /// RE_AddToAddrbook
@@ -3211,62 +3314,77 @@ BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo)
 //  User clicked on a e-mail address
 void RE_ClickedOnMessage(char *address)
 {
-   struct ABEntry *ab = NULL;
-   int l, win, hits;
-   char *p, buf[SIZE_LARGE];
-   char *body = NULL, *subject = NULL, *cc = NULL, *bcc = NULL;
+  int l;
 
-   ENTER();
-   SHOWSTRING(DBF_MAIL, address);
+  ENTER();
 
-   // just prevent something bad from happening.
-   if(!address || !(l = strlen(address)))
-   {
-     LEAVE();
-     return;
-   }
+  SHOWSTRING(DBF_MAIL, address);
 
-   // now we check for additional options to the mailto: string (if it is one)
-   if((p = strchr(address, '?'))) *p++ = '\0';
+  // just prevent something bad from happening.
+  if(address != NULL && (l = strlen(address)) > 0)
+  {
+    char *p;
+    char *body = NULL;
+    char *subject = NULL;
+    char *cc = NULL;
+    char *bcc = NULL;
+    char buf[SIZE_LARGE];
+    struct ABEntry *ab = NULL;
+    int hits;
+    int win;
 
-   while(p)
-   {
-      if(!strnicmp(p, "subject=", 8))    subject = &p[8];
-      else if(!strnicmp(p, "body=", 5))  body = &p[5];
-      else if(!strnicmp(p, "cc=", 3))    cc = &p[3];
-      else if(!strnicmp(p, "bcc=", 4))   bcc = &p[4];
+    // now we check for additional options to the mailto: string (if it is one)
+    if((p = strchr(address, '?')) != NULL)
+      *p++ = '\0';
 
-      if((p = strchr(p, '&'))) *p++ = '\0';
+    while(p != NULL)
+    {
+      if(strnicmp(p, "subject=", 8) == 0)
+        subject = &p[8];
+      else if(strnicmp(p, "body=", 5) == 0)
+        body = &p[5];
+      else if(strnicmp(p, "cc=", 3) == 0)
+        cc = &p[3];
+      else if(strnicmp(p, "bcc=", 4) == 0)
+        bcc = &p[4];
+
+      if((p = strchr(p, '&')) != NULL)
+        *p++ = '\0';
 
       // now we check if this "&" is because of a "&amp;" which is the HTML code
       // for a "&" - we only handle this code because handling ALL HTML code
       // would be too complicated right now. we will support that later anyway.
-      if(p && !strnicmp(p, "amp;", 4)) p+=4;
-   }
+      if(p != NULL && strnicmp(p, "amp;", 4) == 0)
+        p += 4;
+    }
 
-   // please note that afterwards we should normally transfer HTML specific codes
-   // like &amp; %20 aso. because otherwise links like mailto:Bilbo%20Baggins%20&lt;bilbo@baggins.de&gt;
-   // will not work... but this is stuff we can do in one of the next versions.
+    // please note that afterwards we should normally transfer HTML specific codes
+    // like &amp; %20 aso. because otherwise links like mailto:Bilbo%20Baggins%20&lt;bilbo@baggins.de&gt;
+    // will not work... but this is stuff we can do in one of the next versions.
 
-   // lets see if we have an entry for that in the Addressbook
-   // and if so, we reuse it
-   hits = AB_SearchEntry(address, ASM_ADDRESS|ASM_USER|ASM_LIST, &ab);
+    // lets see if we have an entry for that in the Addressbook
+    // and if so, we reuse it
+    hits = AB_SearchEntry(address, ASM_ADDRESS|ASM_USER|ASM_LIST, &ab);
 
-   snprintf(buf, sizeof(buf), tr(MSG_RE_SelectAddressReq), address);
+    snprintf(buf, sizeof(buf), tr(MSG_RE_SelectAddressReq), address);
 
-   switch (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(hits ? MSG_RE_SelectAddressEdit : MSG_RE_SelectAddressAdd), buf))
-   {
+    switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(hits ? MSG_RE_SelectAddressEdit : MSG_RE_SelectAddressAdd), buf))
+    {
       case 1:
       {
-        if ((win = MA_NewNew(NULL, 0)) >= 0)
+        if((win = MA_NewNew(NULL, 0)) >= 0)
         {
           struct WR_GUIData *gui = &G->WR[win]->GUI;
 
           setstring(gui->ST_TO, hits ? BuildAddrName(address, ab->RealName) : address);
-          if (subject) setstring(gui->ST_SUBJECT, subject);
-          if (body) set(gui->TE_EDIT, MUIA_TextEditor_Contents, body);
-          if (cc) setstring(gui->ST_CC, cc);
-          if (bcc) setstring(gui->ST_BCC, bcc);
+          if(subject != NULL)
+            setstring(gui->ST_SUBJECT, subject);
+          if(body != NULL)
+            set(gui->TE_EDIT, MUIA_TextEditor_Contents, body);
+          if(cc != NULL)
+            setstring(gui->ST_CC, cc);
+          if(bcc != NULL)
+            setstring(gui->ST_BCC, bcc);
           set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
         }
       }
@@ -3275,19 +3393,22 @@ void RE_ClickedOnMessage(char *address)
       case 2:
       {
         DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT, TAG_DONE);
-        if (hits)
+        if(hits != 0)
         {
-          if ((win = EA_Init(ab->Type, ab)) >= 0) EA_Setup(win, ab);
+          if((win = EA_Init(ab->Type, ab)) >= 0)
+            EA_Setup(win, ab);
         }
         else
         {
-          if ((win = EA_Init(AET_USER, NULL)) >= 0) setstring(G->EA[win]->GUI.ST_ADDRESS, address);
+          if((win = EA_Init(AET_USER, NULL)) >= 0)
+            setstring(G->EA[win]->GUI.ST_ADDRESS, address);
         }
       }
       break;
-   }
+    }
+  }
 
-   LEAVE();
+  LEAVE();
 }
 ///
 
@@ -3515,7 +3636,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
     // now we examine the original mail and see
     // if we should process the MDN or not according to the user
     // preferences
-    if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+    if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
     {
       // see if we found a Disposition-Notification-To address
       if(email->ReceiptTo.Address[0] != '\0')
@@ -4179,28 +4300,26 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
 // Free all items of an existing header list
 void FreeHeaderList(struct MinList *headerList)
 {
-  struct MinNode *curNode;
+  ENTER();
 
-  if(headerList == NULL || IsMinListEmpty(headerList) == TRUE)
-    return;
-
-  // Now we process the read header to set all flags accordingly
-  for(curNode = headerList->mlh_Head; curNode->mln_Succ;)
+  if(headerList != NULL && IsMinListEmpty(headerList) == FALSE)
   {
-    struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
+    struct MinNode *curNode;
 
-    // before we remove the node we have to save the pointer to the next one
-    curNode = curNode->mln_Succ;
+    // Now we process the read header to set all flags accordingly
+    while((curNode = (struct MinNode *)RemHead((struct List *)headerList)) != NULL)
+    {
+      struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
 
-    // Remove node from list
-    Remove((struct Node *)hdrNode);
+      // Free everything of the node
+      FreeStrBuf(hdrNode->name);
+      FreeStrBuf(hdrNode->content);
 
-    // Free everything of the node
-    FreeStrBuf(hdrNode->name);
-    FreeStrBuf(hdrNode->content);
-
-    free(hdrNode);
+      free(hdrNode);
+    }
   }
+
+  LEAVE();
 }
 
 ///
@@ -4233,4 +4352,3 @@ struct ReadMailData *GetReadMailData(struct Mail *mail)
   return result;
 }
 ///
-
