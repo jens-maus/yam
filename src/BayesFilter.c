@@ -829,6 +829,35 @@ static BOOL readTokens(FILE *stream,
   return TRUE;
 }
 ///
+/// tokenAnalyzerResetTrainingData()
+// reset the training data. The makes the spam filter stupid again
+static void tokenAnalyzerResetTrainingData(struct TokenAnalyzer *ta)
+{
+  char fname[SIZE_PATHFILE];
+
+  ENTER();
+
+  if(ta->goodCount != 0 || ta->goodTokens.tokenTable.entryCount != 0)
+  {
+    tokenizerClearTokens(&ta->goodTokens);
+    ta->goodCount = 0;
+  }
+
+  if(ta->badCount != 0 || ta->badTokens.tokenTable.entryCount != 0)
+  {
+    tokenizerClearTokens(&ta->badTokens);
+    ta->badCount = 0;
+  }
+
+  // prepare the filename for analysis
+  strmfp(fname, G->MA_MailDir, SPAMDATAFILE);
+
+  if(FileExists(fname))
+    DeleteFile(fname);
+
+  LEAVE();
+}
+///
 /// tokenAnalyzerWriteTraningData()
 // write the accumulated training data to disk
 static void tokenAnalyzerWriteTrainingData(struct TokenAnalyzer *ta)
@@ -888,6 +917,7 @@ static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
     if((stream = fopen(fname, "rb")) != NULL)
     {
       TEXT cookie[4];
+      BOOL success = FALSE;
 
       setvbuf(stream, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -895,48 +925,29 @@ static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
 
       if(memcmp(cookie, magicCookie, sizeof(cookie)) == 0)
       {
-        ReadUInt32(stream, &ta->goodCount);
-        SHOWVALUE(DBF_SPAM, ta->goodCount);
+        if(ReadUInt32(stream, &ta->goodCount) == 1 &&
+           ReadUInt32(stream, &ta->badCount) == 1)
+        {
+          SHOWVALUE(DBF_SPAM, ta->goodCount);
+          SHOWVALUE(DBF_SPAM, ta->badCount);
 
-        ReadUInt32(stream, &ta->badCount);
-        SHOWVALUE(DBF_SPAM, ta->badCount);
-
-        readTokens(stream, &ta->goodTokens, fileSize);
-        readTokens(stream, &ta->badTokens, fileSize);
+          if(readTokens(stream, &ta->goodTokens, fileSize) == TRUE &&
+             readTokens(stream, &ta->badTokens, fileSize) == TRUE)
+          {
+            success = TRUE;
+          }
+        }
       }
 
       fclose(stream);
+
+      if(success == FALSE)
+      {
+        // something went wrong during the read process, reset everything
+        tokenAnalyzerResetTrainingData(ta);
+      }
     }
   }
-
-  LEAVE();
-}
-///
-/// tokenAnalyzerResetTrainingData()
-// reset the training data. The makes the spam filter stupid again
-static void tokenAnalyzerResetTrainingData(struct TokenAnalyzer *ta)
-{
-  char fname[SIZE_PATHFILE];
-
-  ENTER();
-
-  if(ta->goodCount != 0 || ta->goodTokens.tokenTable.entryCount != 0)
-  {
-    tokenizerClearTokens(&ta->goodTokens);
-    ta->goodCount = 0;
-  }
-
-  if(ta->badCount != 0 || ta->badTokens.tokenTable.entryCount != 0)
-  {
-    tokenizerClearTokens(&ta->badTokens);
-    ta->badCount = 0;
-  }
-
-  // prepare the filename for analysis
-  strmfp(fname, G->MA_MailDir, SPAMDATAFILE);
-
-  if(FileExists(fname))
-    DeleteFile(fname);
 
   LEAVE();
 }
@@ -1636,6 +1647,4 @@ void BayesFilterResetTrainingData(void)
   LEAVE();
 }
 ///
-
-
 
