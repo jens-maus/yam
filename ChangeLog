@@ -20,6 +20,8 @@ $URL$
 
 2007-04-19  Thore Böckelmann <tboeckel@gmx.de>
 
+  * MainMailList.c: changed the context menu title to be a member of the class
+    instead of a static buffer within a function.
   * QuickSearchBar.c: no static text buffer is needed, because the text will be
     copied by MUI.
   * YAM.c: deleting an old autosave file now uses the already obtained file

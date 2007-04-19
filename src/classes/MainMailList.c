@@ -40,6 +40,7 @@ struct Data
 {
   Object *context_menu;
   Object *statusImage[MAX_STATUSIMG];
+  char context_menu_title[SIZE_DEFAULT];
 };
 */
 
@@ -443,7 +444,7 @@ OVERLOAD(OM_NEW)
     MUIA_NList_Title,                TRUE,
     MUIA_NList_TitleSeparator,       TRUE,
     MUIA_NList_DefaultObjectOnClick, FALSE,
-  
+
     TAG_MORE, inittags(msg))))
   {
     RETURN(0);
@@ -515,7 +516,6 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 {
   GETDATA;
   struct MUIP_NList_ContextMenuBuild *m = (struct MUIP_NList_ContextMenuBuild *)msg;
-  static char menutitle[SIZE_DEFAULT];
   struct MUI_NList_TestPos_Result res;
   struct Mail *mail = NULL;
   struct Folder *fo = FO_GetCurrentFolder();
@@ -582,15 +582,15 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   {
     struct Person *pers = isSentMail ? &mail->To : &mail->From;
 
-    snprintf(menutitle, sizeof(menutitle), "%s: ", tr(isSentMail ? MSG_To : MSG_From));
-    strlcat(menutitle, BuildAddrName2(pers), 20-strlen(menutitle) > 0 ? 20-strlen(menutitle) : 0);
-    strlcat(menutitle, "...", sizeof(menutitle));
+    snprintf(data->context_menu_title, sizeof(data->context_menu_title), "%s: ", tr(isSentMail ? MSG_To : MSG_From));
+    strlcat(data->context_menu_title, BuildAddrName2(pers), 20-strlen(data->context_menu_title) > 0 ? 20-strlen(data->context_menu_title) : 0);
+    strlcat(data->context_menu_title, "...", sizeof(data->context_menu_title));
   }
   else
-    strlcpy(menutitle, tr(MSG_MAIL_NONSEL), sizeof(menutitle));
+    strlcpy(data->context_menu_title, tr(MSG_MAIL_NONSEL), sizeof(data->context_menu_title));
 
   data->context_menu = MenustripObject,
-    Child, MenuObjectT(menutitle),
+    Child, MenuObjectT(data->context_menu_title),
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MREAD),             MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_READ,       End,
       Child, MenuitemObject, MUIA_Menuitem_Title, isOutBox ? tr(MSG_MA_MEDIT) : tr(MSG_MA_MEDITASNEW), MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_EDIT,       End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MREPLY),            MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_REPLY,      End,
