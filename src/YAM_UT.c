@@ -455,7 +455,7 @@ LONG YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const char *tit,
           {
             // by default we set it to "-capslock f1" so that we can press f1
             // even if the capslock is on.
-            static char fstring[13];
+            char fstring[13];
 
             snprintf(fstring, sizeof(fstring), "-capslock f%d", i+1);
             DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, fstring, app, 2, MUIM_Application_ReturnID, i+1);
@@ -2094,7 +2094,7 @@ void QuoteText(FILE *out, const char *src, const int len, const int line_max)
   // make sure the output file handle is valid
   if(out)
   {
-    static char temp_buf[128];
+    char temp_buf[128];
     int temp_len;
     BOOL newline = TRUE;
     BOOL wrapped = FALSE; // needed to implement automatic wordwrap while quoting

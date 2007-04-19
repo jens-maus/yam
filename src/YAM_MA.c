@@ -1370,8 +1370,10 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
     }
     else
     {
-       static char chr[2] = { 0,0 };
+       char chr[2];
+
        chr[0] = *src;
+       chr[1] = '\0'
        dst = StrBufCat(dst, chr);
     }
   }
@@ -4971,8 +4973,9 @@ struct MA_ClassData *MA_New(void)
          // Define Notifies for ShortcutFolderKeys
          for(i = 0; i < 10; i++)
          {
-            static char key[] = "-repeat 0";
-            key[8] = '0'+i;
+            char key[] = "-repeat 0";
+
+            key[8] = '0' + i;
             DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_InputEvent, key, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_FolderKeyHook, i);
          }
 

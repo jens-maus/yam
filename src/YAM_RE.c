@@ -195,26 +195,27 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
 ///
 /// RE_SuggestName
 //  Suggests a file name based on the message subject
-static char *RE_SuggestName(struct Mail *mail)
+static void RE_SuggestName(struct Mail *mail, char *name, const size_t length)
 {
-   static char name[SIZE_FILE];
-   char *ptr = mail->Subject;
-   int i = 0;
-   unsigned char tc;
+  char *ptr = mail->Subject;
+  size_t i = 0;
 
-   memset(name, 0, SIZE_FILE);
-   while (*ptr && i < 26)
-   {
-      tc = *ptr++;
+  ENTER();
 
-      if ((tc <= 32) || (tc > 0x80 && tc < 0xA0) || (tc == ':') || (tc == '/'))
-      {
-         name[i++] = '_';
-      }
-      else name[i++] = tc;
-   }
+  memset(name, 0, length);
+  while(*ptr != '\0' && i < 26 && i < length)
+  {
+    unsigned char tc;
 
-   return name;
+    tc = *ptr++;
+
+    if((tc <= 32) || (tc > 0x80 && tc < 0xA0) || (tc == ':') || (tc == '/'))
+      tc = '_';
+
+    name[i++] = tc;
+  }
+
+  LEAVE();
 }
 
 ///
@@ -241,18 +242,21 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
     else if(nr)
     {
       char ext[SIZE_FILE];
+      char suggestedName[SIZE_FILE];
 
       // we have to get the file extension of our source file and use it
       // in our destination file as well
       stcgfe(ext, source);
 
-      name = RE_SuggestName(mail);
-      snprintf(buffer2, sizeof(buffer2), "%s-%d.%s", name[0] != '\0' ? name : mail->MailFile, nr, ext[0] != '\0' ? ext : "tmp");
+      RE_SuggestName(mail, suggestedName, sizeof(suggestedName));
+      snprintf(buffer2, sizeof(buffer2), "%s-%d.%s", suggestedName[0] != '\0' ? suggestedName : mail->MailFile, nr, ext[0] != '\0' ? ext : "tmp");
     }
     else
     {
-      name = RE_SuggestName(mail);
-      snprintf(buffer2, sizeof(buffer2), "%s.msg", name[0] != '\0' ? name : mail->MailFile);
+      char suggestedName[SIZE_FILE];
+
+      RE_SuggestName(mail, suggestedName, sizeof(suggestedName));
+      snprintf(buffer2, sizeof(buffer2), "%s.msg", suggestedName[0] != '\0' ? suggestedName : mail->MailFile);
     }
 
     if(force)
