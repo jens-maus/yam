@@ -2622,7 +2622,7 @@ int main(int argc, char **argv)
               // the delete routine in WR_NewMail() doesn't catch the correct file
               // because it only cares about the autosave file for the newly created
               // write object
-              DeleteFile(WR_AutoSaveFile(i));
+              DeleteFile(fileName);
             }
           }
           else if(answer == 2)

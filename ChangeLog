@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-18  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: deleting an old autosave file now uses the already obtained file
+    name from the testing stage.
+
 2007-04-18  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: the autosaved file wasn't automatically deleted in case it was put
