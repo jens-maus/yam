@@ -20,6 +20,9 @@ $URL$
 
 2007-04-19  Thore Böckelmann <tboeckel@gmx.de>
 
+  * BayesFilter.c: updated the source according to the latest changes in
+    ThunderBird 2.0.0.0. Basically this means that some more size checks are
+    done while reading in the training data.
   * YAM_RE.c: cleaned up several functions.
   * YAM_MA.c, YAM_RE.c, YAM_UT.c: changed several static buffers to "normal"
     local buffers.

@@ -32,8 +32,15 @@
 #include "YAM_mainFolder.h"
 
 /*
- YAM's spam filter is based upon Mozilla Thunderbird's spam filter.
+ YAM's spam filter is based upon Mozilla Thunderbird's junk filter.
  For further information on Thunderbird go to http://www.mozilla.com.
+
+ The core functions of the ThunderBird 2.0.0.0 junk filter can be found here:
+ http://mxr.mozilla.org/mozilla1.8/source/mailnews/extensions/bayesian-spam-filter/src/nsBayesianFilter.cpp
+ http://mxr.mozilla.org/mozilla1.8/source/mailnews/extensions/bayesian-spam-filter/src/nsBayesianFilter.h
+ http://mxr.mozilla.org/mozilla1.8/source/mailnews/extensions/bayesian-spam-filter/src/nsIncompleteGamma.h
+ http://mxr.mozilla.org/mozilla1.8/source/xpcom/glue/pldhash.c
+ http://mxr.mozilla.org/mozilla1.8/source/xpcom/glue/pldhash.h
 */
 
 // a mail can either be spam, ham (no spam) or not yet classified

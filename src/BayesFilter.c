@@ -256,7 +256,7 @@ static BOOL isDecimalNumber(CONST_STRPTR word)
 
   while((c = *p++) != '\0')
   {
-    if(!isdigit(c))
+    if(!isdigit((unsigned char)c))
     {
       isDecimal = FALSE;
       break;
@@ -746,15 +746,23 @@ static BOOL writeTokens(FILE *stream,
 /// readTokens()
 // read tokens from a stream into the token table
 static BOOL readTokens(FILE *stream,
-                       struct Tokenizer *t)
+                       struct Tokenizer *t,
+                       long fileSize)
 {
+  BOOL success = FALSE;
   ULONG tokenCount;
+  long filePos;
   ULONG bufferSize = 4096;
   STRPTR buffer;
 
   ENTER();
 
   if(ReadUInt32(stream, &tokenCount) != 1)
+  {
+    RETURN(FALSE);
+    return FALSE;
+  }
+  if((filePos = ftell(stream)) < 0)
   {
     RETURN(FALSE);
     return FALSE;
@@ -775,26 +783,40 @@ static BOOL readTokens(FILE *stream,
       if(ReadUInt32(stream, &size) != 1)
         break;
 
+      filePos += 8;
+
       if(size >= bufferSize)
       {
-        ULONG newBufferSize = 2 * bufferSize;
-
         free(buffer);
 
-        while(size >= newBufferSize)
-          newBufferSize *= 2;
-
-        if((buffer = malloc(newBufferSize)) == NULL)
+        if(filePos + size > fileSize)
         {
           RETURN(FALSE);
           return FALSE;
         }
 
-        bufferSize = newBufferSize;
+        while(size >= bufferSize)
+        {
+          bufferSize *= 2;
+          if(bufferSize == 0)
+          {
+            // overrun
+            RETURN(FALSE);
+            return FALSE;
+          }
+        }
+
+        if((buffer = malloc(bufferSize)) == NULL)
+        {
+          RETURN(FALSE);
+          return FALSE;
+        }
       }
 
       if(fread(buffer, size, 1, stream) != 1)
         break;
+
+      fpos += size;
 
       buffer[size] = '\0';
 
@@ -852,35 +874,40 @@ static void tokenAnalyzerWriteTrainingData(struct TokenAnalyzer *ta)
 static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
 {
   char fname[SIZE_PATHFILE];
-  FILE *stream;
+  long fileSize;
 
   ENTER();
 
   // prepare the filename for loading
   strmfp(fname, G->MA_MailDir, SPAMDATAFILE);
 
-  // open the .spamdata file for binary read
-  if((stream = fopen(fname, "rb")) != NULL)
+  if((fileSize = FileSize(fname)) > 0)
   {
-    TEXT cookie[4];
+    FILE *stream;
 
-    setvbuf(stream, NULL, _IOFBF, SIZE_FILEBUF);
-
-    fread(cookie, sizeof(cookie), 1, stream);
-
-    if(memcmp(cookie, magicCookie, sizeof(cookie)) == 0)
+    // open the .spamdata file for binary read
+    if((stream = fopen(fname, "rb")) != NULL)
     {
-      ReadUInt32(stream, &ta->goodCount);
-      SHOWVALUE(DBF_SPAM, ta->goodCount);
+      TEXT cookie[4];
 
-      ReadUInt32(stream, &ta->badCount);
-      SHOWVALUE(DBF_SPAM, ta->badCount);
+      setvbuf(stream, NULL, _IOFBF, SIZE_FILEBUF);
 
-      readTokens(stream, &ta->goodTokens);
-      readTokens(stream, &ta->badTokens);
+      fread(cookie, sizeof(cookie), 1, stream);
+
+      if(memcmp(cookie, magicCookie, sizeof(cookie)) == 0)
+      {
+        ReadUInt32(stream, &ta->goodCount);
+        SHOWVALUE(DBF_SPAM, ta->goodCount);
+
+        ReadUInt32(stream, &ta->badCount);
+        SHOWVALUE(DBF_SPAM, ta->badCount);
+
+        readTokens(stream, &ta->goodTokens, fileSize);
+        readTokens(stream, &ta->badTokens, fileSize);
+      }
+
+      fclose(stream);
     }
-
-    fclose(stream);
   }
 
   LEAVE();
