@@ -749,7 +749,6 @@ static BOOL readTokens(FILE *stream,
                        struct Tokenizer *t,
                        long fileSize)
 {
-  BOOL success = FALSE;
   ULONG tokenCount;
   long filePos;
   ULONG bufferSize = 4096;
@@ -789,7 +788,7 @@ static BOOL readTokens(FILE *stream,
       {
         free(buffer);
 
-        if(filePos + size > fileSize)
+        if((long)(filePos + size) > fileSize)
         {
           RETURN(FALSE);
           return FALSE;
@@ -816,7 +815,7 @@ static BOOL readTokens(FILE *stream,
       if(fread(buffer, size, 1, stream) != 1)
         break;
 
-      fpos += size;
+      filePos += size;
 
       buffer[size] = '\0';
 

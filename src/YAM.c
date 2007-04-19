@@ -2515,9 +2515,9 @@ int main(int argc, char **argv)
 
    for(yamFirst=TRUE;;)
    {
-      ULONG signals, timsig, adstsig, rexsig, appsig, applibsig, notsig[MAXWR+1], i;
+      ULONG signals, timsig, adstsig, rexsig, appsig, applibsig, notsig[MAXWR+1];
       struct User *user;
-      int wrwin, ret;
+      int i, ret;
 
       G = calloc(1, sizeof(struct Global));
       C = calloc(1, sizeof(struct Config));
@@ -2664,6 +2664,8 @@ int main(int argc, char **argv)
 
       if(yamFirst)
       {
+        int wrwin;
+
         DoStartup((BOOL)args.nocheck, (BOOL)args.hide);
         if (args.mailto || args.letter || args.subject || args.attach) if ((wrwin = MA_NewNew(NULL, 0)) >= 0)
         {
