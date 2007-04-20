@@ -194,26 +194,37 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
 
 ///
 /// RE_SuggestName
-//  Suggests a file name based on the message subject
-static void RE_SuggestName(struct Mail *mail, char *name, const size_t length)
+// Suggests a file name based on the message subject and strips characters
+// from it that are not valid for filenames.
+static void RE_SuggestName(const struct Mail *mail, char *name, const size_t length)
 {
   char *ptr = mail->Subject;
-  size_t i = 0;
+  size_t i=0;
 
   ENTER();
 
-  memset(name, 0, length);
-  while(*ptr != '\0' && i < 26 && i < length)
+  // we copy until we reach length-1 as we have
+  // to reserve one space for the NUL char
+  while(*ptr != '\0' && i < length-1)
   {
-    unsigned char tc;
+    unsigned char c = *ptr;
 
-    tc = *ptr++;
+    // see if we have to replace certain unallowed characters
+    // by a '_'
+    if((c <= 32) || (c > 0x80 && c < 0xA0) || (c == ':') || (c == '/'))
+      c = '_';
 
-    if((tc <= 32) || (tc > 0x80 && tc < 0xA0) || (tc == ':') || (tc == '/'))
-      tc = '_';
+    // put that character into our
+    // destination string
+    name[i] = c;
 
-    name[i++] = tc;
+    // continue
+    i++;
+    ptr++;
   }
+
+  // make sure name is NUL terminated
+  name[i] = '\0';
 
   LEAVE();
 }
@@ -227,51 +238,59 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
   BOOL success = FALSE;
   Object *win;
   struct Mail *mail;
+  char path[SIZE_PATHFILE];
 
   ENTER();
 
   win = rmData->readWindow ? rmData->readWindow : G->MA->GUI.WI;
   mail = rmData->mail;
 
-  if(dest[0] != '\0')
+  if(dest[0] == '\0')
   {
-    char buffer[SIZE_PATHFILE];
-    char buffer2[SIZE_FILE+SIZE_DEFAULT];
+    char filename[SIZE_FILE];
     struct FileReqCache *frc;
 
     if(name[0] != '\0')
     {
-      strlcpy(buffer2, name, sizeof(buffer2));
+      strlcpy(filename, name, sizeof(filename));
     }
     else if(nr != 0)
     {
-      char ext[SIZE_FILE];
+      char ext[SIZE_DEFAULT];
       char suggestedName[SIZE_FILE];
+      int extlen;
 
       // we have to get the file extension of our source file and use it
       // in our destination file as well
       stcgfe(ext, source);
 
-      RE_SuggestName(mail, suggestedName, sizeof(suggestedName));
-      snprintf(buffer2, sizeof(buffer2), "%s-%d.%s", suggestedName[0] != '\0' ? suggestedName : mail->MailFile, nr, ext[0] != '\0' ? ext : "tmp");
+      if(ext[0] != '\0')
+        extlen = strlen(ext);
+      else
+        extlen = 3;
+
+      RE_SuggestName(mail, suggestedName, sizeof(suggestedName)-extlen-3);
+      snprintf(filename, sizeof(filename), "%s-%d.%s", suggestedName[0] != '\0' ? suggestedName : mail->MailFile,
+                                                       nr,
+                                                       ext[0] != '\0' ? ext : "tmp");
     }
     else
     {
       char suggestedName[SIZE_FILE];
 
-      RE_SuggestName(mail, suggestedName, sizeof(suggestedName));
-      snprintf(buffer2, sizeof(buffer2), "%s.msg", suggestedName[0] != '\0' ? suggestedName : mail->MailFile);
+      RE_SuggestName(mail, suggestedName, sizeof(suggestedName)-4);
+      snprintf(filename, sizeof(filename), "%s.msg", suggestedName[0] != '\0' ? suggestedName : mail->MailFile);
     }
 
     if(force)
     {
-      strmfp(buffer, C->DetachDir, buffer2);
-      dest = buffer;
+      strmfp(path, C->DetachDir, filename);
+      dest = path;
     }
-    else if((frc = ReqFile(ASL_DETACH, win, tr(MSG_RE_SaveMessage), REQF_SAVEMODE, C->DetachDir, buffer2)))
+    else if((frc = ReqFile(ASL_DETACH, win, tr(MSG_RE_SaveMessage), REQF_SAVEMODE, C->DetachDir, filename)))
     {
-      strmfp(buffer, frc->drawer, frc->file);
-      dest = buffer;
+      strmfp(path, frc->drawer, frc->file);
+      dest = path;
     }
     else
     {

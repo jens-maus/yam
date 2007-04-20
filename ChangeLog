@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-20  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c: fixed the RE_Export() function which was broken due to recent
+    cleanups. In fact, an '==' check ended up in a "!=" expression which
+    caused that if a MIME part was tried to be saved always a overwrite
+    warning was immediately popped up instead of suggesting the correct
+    filename. In addition, the RE_SuggestName() function now proposes
+    filenames until the passed length limit which in fact allows now to
+    suggest filenames up to the internal 107 char limit. Lets see how
+    filesystems play with that new raised limit.
+
 2007-04-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: the autosave file have to be renamed in case the found file was
