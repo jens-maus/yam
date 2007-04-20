@@ -589,7 +589,7 @@ MSG_MA_TBFind (195//)
 _Find
 ;
 MSG_MA_TBAddrBook (196//)
-_Abook
+A_book
 ;
 MSG_MA_TBConfig (197//)
 _Config
@@ -5598,10 +5598,10 @@ MSG_LOADINGSPAMTRAININGDATA (1745//)
 Loading spam training data...
 ;
 MSG_MA_TBSPAM (1746//)
-S_pam
+Sp_am
 ;
 MSG_MA_TBNOTSPAM (1747//)
-NotS_pam
+NotSp_am
 ;
 MSG_HELP_MA_BT_SPAM (1748//)
 Mark mail as spam
@@ -5610,10 +5610,10 @@ MSG_HELP_MA_BT_NOTSPAM (1749//)
 Mark mail as not spam
 ;
 MSG_RE_TBSPAM (1750//)
-S_pam
+Sp_am
 ;
 MSG_RE_TBNOTSPAM (1751//)
-NotS_pam
+NotSp_am
 ;
 MSG_HELP_RE_BT_SPAM (1752//)
 Mark mail as spam

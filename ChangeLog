@@ -7,6 +7,9 @@ $URL$
 
 2007-04-20  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.cd: changed the default toolbar hotkey definitions to not interfere
+    with others anymore and that the hotkeys for the Spam/NotSpam toolbar
+    items are the same for the read and main window. This fixed bug #1704213
   * YAM_RE.c: fixed the RE_Export() function which was broken due to recent
     cleanups. In fact, an '==' check ended up in a "!=" expression which
     caused that if a MIME part was tried to be saved always a overwrite
