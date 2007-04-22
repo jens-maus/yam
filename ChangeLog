@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-22  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: added a range of more invalid characters in an AmigaDOS filename.
+
 2007-04-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.cd: changed the default toolbar hotkey definitions to not interfere

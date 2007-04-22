@@ -199,7 +199,7 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
 static void RE_SuggestName(const struct Mail *mail, char *name, const size_t length)
 {
   char *ptr = mail->Subject;
-  size_t i=0;
+  size_t i = 0;
 
   ENTER();
 
@@ -207,11 +207,13 @@ static void RE_SuggestName(const struct Mail *mail, char *name, const size_t len
   // to reserve one space for the NUL char
   while(*ptr != '\0' && i < length-1)
   {
-    unsigned char c = *ptr;
+    unsigned char c;
+    static const char invalidChars[] = ":/#?*()[]|%'\"";
 
     // see if we have to replace certain unallowed characters
     // by a '_'
-    if((c <= 32) || (c > 0x80 && c < 0xA0) || (c == ':') || (c == '/'))
+    c = *ptr;
+    if((c <= 0x20) || (c > 0x80 && c < 0xA0) || strchr(invalidChars, c) != NULL)
       c = '_';
 
     // put that character into our
@@ -219,8 +221,8 @@ static void RE_SuggestName(const struct Mail *mail, char *name, const size_t len
     name[i] = c;
 
     // continue
-    i++;
     ptr++;
+    i++;
   }
 
   // make sure name is NUL terminated
