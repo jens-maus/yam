@@ -56,15 +56,15 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
       LONG maxMinWidth = 0;
 
       // we iterate through all our children and see how large we are getting
-      while((child = NextObject(&cstate)))
+      while((child = NextObject(&cstate)) != NULL)
       {
         // we know our childs and that we only carry Bodychunk objects
-        maxMinHeight = MAX(_minheight(child)+2, maxMinHeight);
-        maxMinWidth += _minwidth(child)+1;
+        maxMinHeight = MAX(_minheight(child) + 2, maxMinHeight);
+        maxMinWidth += _minwidth(child) + 1;
       }
 
       // then set our calculated values
-      lm->lm_MinMax.MinWidth  = maxMinWidth;
+      lm->lm_MinMax.MinWidth  = MAX(50, maxMinWidth);
       lm->lm_MinMax.MinHeight = maxMinHeight;
       lm->lm_MinMax.DefWidth  = maxMinWidth;
       lm->lm_MinMax.DefHeight = MUI_MAXMAX;
@@ -78,26 +78,36 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 
     case MUILM_LAYOUT:
     {
-      Object *cstate = (Object *)lm->lm_Children->mlh_Head;
+      Object *cstate;
       Object *child;
-      LONG left = 0;
+      LONG left;
       LONG top = ((lm->lm_Layout.Height-1)-_minheight(obj))/2;
 
       // Layout function. Here, we have to call MUI_Layout() for each
       // our children. MUI wants us to place them in a rectangle
       // defined by (0,0,lm->lm_Layout.Width-1,lm->lm_Layout.Height-1)
       // We are free to put the children anywhere in this rectangle.
-      while((child = NextObject(&cstate)))
-      {
-        LONG mw = _minwidth(child);
 
+      // First of all we calculate the left most edge of all icons, starting at the right edge
+      // and subtracting up all widths
+      left = _minwidth(obj);
+      cstate = (Object *)lm->lm_Children->mlh_Head;
+      while((child = NextObject(&cstate)) != NULL)
+      {
+        left -= _minwidth(child) + 1;
+      }
+
+      // now we can layout the children, starting from the left edge calculated above
+      cstate = (Object *)lm->lm_Children->mlh_Head;
+      while((child = NextObject(&cstate)) != NULL)
+      {
         if(!MUI_Layout(child, left, top, _minwidth(child), _minheight(child), 0))
         {
           RETURN(FALSE);
           return FALSE;
         }
 
-        left += mw+1;
+        left += _minwidth(child) + 1;
       }
 
       RETURN(TRUE);
@@ -227,6 +237,8 @@ DECLARE(Update) // struct Mail *mail
   GETDATA;
   struct Mail *mail = msg->mail;
 
+  ENTER();
+
   // update the statusgroup by removing/adding items accordingly
   if(DoMethod(obj, MUIM_Group_InitChange))
   {
@@ -312,6 +324,7 @@ DECLARE(Update) // struct Mail *mail
     DoMethod(obj, MUIM_Group_ExitChange);
   }
 
+  RETURN(0);
   return 0;
 }
 ///

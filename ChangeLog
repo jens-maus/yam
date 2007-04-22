@@ -7,6 +7,11 @@ $URL$
 
 2007-04-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * StatusIconGroup.c: the status icon group in the read window is now at least
+    50 pixels wide, which should be enough for most mails with 3 icons at most.
+    More icons and a wider group are possible, of course, but the refresh will
+    lead to a refresh of the whole window which in sequence may result in a
+    slight "flicker" on slower machines. This fixed bug #1702542.
   * YAM_RE.c: added a range of more invalid characters in an AmigaDOS filename.
 
 2007-04-20  Jens Langner <Jens.Langner@light-speed.de>
