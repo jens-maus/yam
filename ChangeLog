@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-23  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c, YAM_COs.c: fixed two possible NULL pointer accesses.
+
 2007-04-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_mail_lex.l: the colored citing of quoted mails wasn't working when the

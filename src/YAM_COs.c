@@ -757,21 +757,26 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "SMTP-AUTH-Method")) co->SMTP_AUTH_Method = atoi(value);
                else if (!strnicmp(buffer, "POP", 3) && buffer[5] == '.')
                {
-                  int j = atoi(&buffer[3]);
-                  struct POP3 *p3 = co->P3[j];
-                  p = &buffer[6];
-                  if(!p3)
-                    p3 = co->P3[j] = CO_NewPOP3(co, FALSE);
+                 int j = atoi(&buffer[3]);
+                 struct POP3 *p3 = co->P3[j];
 
-                  if(!stricmp(p, "Account"))         strlcpy(p3->Account, value, sizeof(p3->Account));
-                  else if (!stricmp(p, "Server"))    strlcpy(p3->Server, value, sizeof(p3->Server));
-                  else if (!stricmp(p, "Port"))      p3->Port = atoi(value);
-                  else if (!stricmp(p, "Password"))  strlcpy(p3->Password, Decrypt(value), sizeof(p3->Password));
-                  else if (!stricmp(p, "User"))      strlcpy(p3->User, value, sizeof(p3->User));
-                  else if (!stricmp(p, "Enabled"))   p3->Enabled = Txt2Bool(value);
-                  else if (!stricmp(p, "SSLMode"))   p3->SSLMode = atoi(value);
-                  else if (!stricmp(p, "UseAPOP"))   p3->UseAPOP = Txt2Bool(value);
-                  else if (!stricmp(p, "Delete"))    p3->DeleteOnServer = Txt2Bool(value);
+                 if(p3 == NULL)
+                   p3 = co->P3[j] = CO_NewPOP3(co, FALSE);
+                 if(p3 != NULL)
+                 {
+                   p = &buffer[6];
+                   if(!stricmp(p, "Account"))         strlcpy(p3->Account, value, sizeof(p3->Account));
+                   else if (!stricmp(p, "Server"))    strlcpy(p3->Server, value, sizeof(p3->Server));
+                   else if (!stricmp(p, "Port"))      p3->Port = atoi(value);
+                   else if (!stricmp(p, "Password"))  strlcpy(p3->Password, Decrypt(value), sizeof(p3->Password));
+                   else if (!stricmp(p, "User"))      strlcpy(p3->User, value, sizeof(p3->User));
+                   else if (!stricmp(p, "Enabled"))   p3->Enabled = Txt2Bool(value);
+                   else if (!stricmp(p, "SSLMode"))   p3->SSLMode = atoi(value);
+                   else if (!stricmp(p, "UseAPOP"))   p3->UseAPOP = Txt2Bool(value);
+                   else if (!stricmp(p, "Delete"))    p3->DeleteOnServer = Txt2Bool(value);
+                 }
+                 else
+                   break;
                }
 /*2*/          else if (!stricmp(buffer, "AvoidDuplicates"))co->AvoidDuplicates = Txt2Bool(value);
                else if (!stricmp(buffer, "PreSelection"))   co->PreSelection = atoi(value);

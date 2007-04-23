@@ -535,16 +535,25 @@ struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
 //  Adds a new entry to the POP3 account list
 HOOKPROTONHNONP(CO_AddPOP3, void)
 {
-   int i;
-   for (i = 0; i < MAXP3; i++)
-      if (!CE->P3[i])
+  int i;
+
+  ENTER();
+
+  for(i = 0; i < MAXP3; i++)
+  {
+    if(CE->P3[i] == NULL)
+    {
+      if((CE->P3[i] = CO_NewPOP3(CE, i == 0)) != NULL)
       {
-         CE->P3[i] = CO_NewPOP3(CE, i == 0);
-         DoMethod(G->CO->GUI.LV_POP3, MUIM_List_InsertSingle, CE->P3[i], MUIV_List_Insert_Bottom, TAG_DONE);
-         set(G->CO->GUI.LV_POP3, MUIA_List_Active, i);
-         set(G->CO->GUI.WI, MUIA_Window_ActiveObject, G->CO->GUI.ST_POPACCOUNT);
-         break;
+        DoMethod(G->CO->GUI.LV_POP3, MUIM_List_InsertSingle, CE->P3[i], MUIV_List_Insert_Bottom, TAG_DONE);
+        set(G->CO->GUI.LV_POP3, MUIA_List_Active, i);
+        set(G->CO->GUI.WI, MUIA_Window_ActiveObject, G->CO->GUI.ST_POPACCOUNT);
       }
+      break;
+    }
+  }
+
+  LEAVE();
 }
 MakeHook(CO_AddPOP3Hook,CO_AddPOP3);
 
@@ -553,23 +562,28 @@ MakeHook(CO_AddPOP3Hook,CO_AddPOP3);
 //  Deletes an entry from the POP3 account list
 HOOKPROTONHNONP(CO_DelPOP3, void)
 {
-   struct CO_GUIData *gui = &G->CO->GUI;
-   int p = xget(gui->LV_POP3, MUIA_List_Active);
-   int e = xget(gui->LV_POP3, MUIA_List_Entries);
+  struct CO_GUIData *gui = &G->CO->GUI;
+  int p;
+  int e;
 
-   if (p != MUIV_List_Active_Off && e > 1)
-   {
-      int i;
+  ENTER();
 
-      DoMethod(gui->LV_POP3, MUIM_List_Remove, p);
+  p = xget(gui->LV_POP3, MUIA_List_Active);
+  e = xget(gui->LV_POP3, MUIA_List_Entries);
 
-      for(i=p+1; i < MAXP3; i++)
-      {
-        CE->P3[i-1] = CE->P3[i];
-      }
+  if(p != MUIV_List_Active_Off && e > 1)
+  {
+    int i;
 
-      CE->P3[i-1] = NULL;
-   }
+    DoMethod(gui->LV_POP3, MUIM_List_Remove, p);
+
+    for(i = p + 1; i < MAXP3; i++)
+      CE->P3[i - 1] = CE->P3[i];
+
+    CE->P3[i - 1] = NULL;
+  }
+
+  LEAVE();
 }
 MakeHook(CO_DelPOP3Hook,CO_DelPOP3);
 
@@ -836,8 +850,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       *co->SMTP_AUTH_User = '\0';
       *co->SMTP_AUTH_Pass = '\0';
       co->SMTP_AUTH_Method = SMTPAUTH_AUTO;
-      co->P3[0] = CO_NewPOP3(co, TRUE);
-      if(co->P3[0] != NULL)
+      if((co->P3[0] = CO_NewPOP3(co, TRUE)) != NULL)
         co->P3[0]->DeleteOnServer = TRUE;
    }
 
