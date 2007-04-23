@@ -131,6 +131,7 @@ NOTATEOL    ([^[:punct:][:space:]]|{ESCAPE}|"/"|"=")
 ^([[:blank:]]*[[:alpha:]]{0,3}">")+   {return tCITE;}
 ^"-- \n"                              {return tSIGNATURE;}
 ^"\033c\033[s:18]"                    {return tNEXTPART;}
+^"\nFrom: "                           {return tFROM;}
 
 " "  {return tSPACE      ;}
 "  " {return tDOUBLESPACE;}
@@ -365,31 +366,28 @@ char *ParseEmailText(const char *mailTxt, BOOL handleSigDash)
             // we only allow analyzing quoting chars '>'
             // in case we are not in the signature part of
             // the mail
-            if(signatureFound == FALSE)
+            char *ptr;
+            int quotelevel = 0;
+
+            while((ptr = strchr(yytext, '>')))
             {
-              char *ptr;
-              int quotelevel = 0;
+              quotelevel++;
 
-              while((ptr = strchr(yytext, '>')))
-              {
-                quotelevel++;
+              // prepare the ColorTag
+              if(quotelevel%4 == 1)
+                defaultPen = "\033p[8]";
+              else if(quotelevel%4 == 2)
+                defaultPen = "\033p[9]";
+              else if(quotelevel%4 == 3)
+                defaultPen = "\033p[10]";
+              else if(quotelevel%4 == 0)
+                defaultPen = "\033p[11]";
 
-                // prepare the ColorTag
-                if(quotelevel%4 == 1)
-                  defaultPen = "\033p[8]";
-                else if(quotelevel%4 == 2)
-                  defaultPen = "\033p[9]";
-                else if(quotelevel%4 == 3)
-                  defaultPen = "\033p[10]";
-                else if(quotelevel%4 == 0)
-                  defaultPen = "\033p[11]";
-
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
-                *ptr = '\0'; // temporary set the > to a null byte so that we can append to our buffer
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, ">");
-                yytext = ++ptr;
-              }
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+              *ptr = '\0'; // temporary set the > to a null byte so that we can append to our buffer
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, ">");
+              yytext = ++ptr;
             }
           }
           break;
@@ -464,6 +462,25 @@ char *ParseEmailText(const char *mailTxt, BOOL handleSigDash)
               defaultPen = "\033p[13]";
               cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
             }
+          }
+          break;
+
+          case tFROM:
+          {
+            // if we are in signature mode we have to reset that state
+            // in case we find a "\nFrom: " line as this might point out
+            // that this mail may be a message digest from a mailing list
+            // and as such we don't want to have it highlighted as a
+            // signature.
+            if(signatureFound)
+            {
+              defaultPen = "\033p[0]";
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+
+              signatureFound = FALSE;
+            }
+
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
           }
           break;
 

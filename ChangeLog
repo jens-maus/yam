@@ -5,6 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_mail_lex.l: the colored citing of quoted mails wasn't working when the
+    message parser was in signature mode. This caused problems with messages
+    where the actual main message didn't stop right after the signature. In
+    fact, digest messages from mailing lists are known to just concatenate
+    mails without using MIME mechanisms. Therefore we can't assume that
+    everything following the "-- " signature is really just part of the
+    signature. Therefore, a found "\nFrom: " string will now automatically
+    reset the signature state and display further text as normal text. This,
+    of course doesn't catch all such cases, but in the end it is partly a
+    fault of the mailing list server just plainly concatenating emails without
+    using MIME.
+
 2007-04-22  Thore Böckelmann <tboeckel@gmx.de>
 
   * StatusIconGroup.c: the status icon group in the read window is now at least
