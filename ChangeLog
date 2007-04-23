@@ -12,6 +12,9 @@ $URL$
 
 2007-04-23  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes/ThemeListGroup.c, themes: commit the first new default theme
+    directory and file layout including a new added Update() method for the
+    upcoming ThemeListGroup and it's corresponding theme integration.
   * YAM_mail_lex.l: the colored citing of quoted mails wasn't working when the
     message parser was in signature mode. This caused problems with messages
     where the actual main message didn't stop right after the signature. In

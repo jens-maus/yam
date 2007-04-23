@@ -139,3 +139,85 @@ OVERLOAD(OM_NEW)
 ///
 
 /* Public Methods */
+/// DECLARE(Update)
+DECLARE(Update)
+{
+  BOOL result = FALSE;
+  BPTR dirLock;
+  char themesDir[SIZE_PATH];
+
+  ENTER();
+
+  // construct the themes directory path
+  strmfp(themesDir, G->ProgDir, "Themes");
+
+  if((dirLock = Lock(themesDir, ACCESS_READ)))
+  {
+    struct ExAllControl *eac;
+
+    if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)))
+    {
+      struct ExAllData *ead;
+      struct ExAllData *eabuffer;
+      LONG more;
+      eac->eac_LastKey = 0;
+      eac->eac_MatchString = NULL;
+      eac->eac_MatchFunc = NULL;
+
+      if((eabuffer = malloc(SIZE_EXALLBUF)))
+      {
+        result = TRUE;
+
+        do
+        {
+          more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_TYPE, eac);
+          if(!more && IoErr() != ERROR_NO_MORE_ENTRIES)
+          {
+            // fail with an error
+            result = FALSE;
+            break;
+          }
+
+          // ExAll() failed normally with no further entries
+          if(eac->eac_Entries == 0)
+            continue;
+
+          // we received a filled ExAll buffer so we
+          // parse through it now.
+          ead = (struct ExAllData *)eabuffer;
+          do
+          {
+            // check that this entry is a drawer
+            // because we don't accept any file here
+            if(isDrawer(ead->ed_Type))
+            {
+              D(DBF_CONFIG, "found dir '%s' in themes drawer", ead->ed_Name);
+
+            }
+            else
+              W(DBF_CONFIG, "unknown file '%s' in themes directory ignored", ead->ed_Name);
+          }
+          while((ead = ead->ed_Next));
+        }
+        while(more);
+
+        free(eabuffer);
+      }
+      else
+        E(DBF_CONFIG, "couldn't allocate memory for ExAll buffer");
+
+      FreeDosObject(DOS_EXALLCONTROL, eac);
+    }
+    else
+      E(DBF_CONFIG, "couldn't allocate ExAll dos object!");
+
+    UnLock(dirLock);
+  }
+  else
+    E(DBF_CONFIG, "No themes directory found!");
+
+  RETURN(result);
+  return result;
+}
+///
+

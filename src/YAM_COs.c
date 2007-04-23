@@ -2147,6 +2147,9 @@ void CO_SetConfig(void)
         setcheckmark(gui->CH_QUICKSEARCHBAR, CE->QuickSearchBar);
         setcheckmark(gui->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
         setcycle(gui->CY_SIZE, CE->SizeFormat);
+
+        // update the themeslist
+        DoMethod(gui->GR_THEMES, MUIM_ThemeListGroup_Update);
       }
       break;
 
