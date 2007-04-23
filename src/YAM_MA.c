@@ -2300,26 +2300,29 @@ int MA_NewReply(struct Mail **mlist, int flags)
           }
           else if(foundMLFolder && mlistad != NULL)
           {
-            char *p = strdup(mlistad);
-            struct Person pe;
+            char *p;
 
-            // we found a matching folder for the mail we are going to
-            // reply to, so we go and add the 'mlistad' to our To: addresses
-            while(*p)
+            if((p = strdup(mlistad)) != NULL)
             {
-              char *next;
+              struct Person pe;
 
-              if((next = MyStrChr(p, ',')))
-                *next++ = '\0';
+              // we found a matching folder for the mail we are going to
+              // reply to, so we go and add the 'mlistad' to our To: addresses
+              while(p != NULL && *p != '\0')
+              {
+                char *next;
 
-              ExtractAddress(p, &pe);
-              rto = MA_AppendRcpt(rto, &pe, FALSE);
+                if((next = MyStrChr(p, ',')) != NULL)
+                  *next++ = '\0';
 
-              if(!(p = next))
-                break;
+                ExtractAddress(p, &pe);
+                rto = MA_AppendRcpt(rto, &pe, FALSE);
+
+                p = next;
+              }
+
+              free(p);
             }
-
-            free(p);
           }
           else if(C->CompareAddress && !hasMListFlag(flags) &&
                   mail->ReplyTo.Address[0] != '\0')
