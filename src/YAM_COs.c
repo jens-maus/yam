@@ -257,6 +257,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       for (i = 0; i < MAXP3; i++) if (co->P3[i])
       {
          struct POP3 *p3 = co->P3[i];
+
          fprintf(fh, "POP%02d.Account    = %s\n", i, p3->Account);
          fprintf(fh, "POP%02d.Server     = %s\n", i, p3->Server);
          fprintf(fh, "POP%02d.Port       = %d\n", i, p3->Port);
@@ -852,7 +853,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                    {
                      int n = atoi(p+5);
 
-                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                     while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                        CreateNewRule(lastFilter);
 
                      rule->searchMode = atoi(value);
@@ -861,7 +862,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                    {
                      int n = atoi(p+8);
 
-                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                     while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                        CreateNewRule(lastFilter);
 
                      rule->subSearchMode = atoi(value);
@@ -870,7 +871,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                    {
                      int n = atoi(p+11);
 
-                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                     while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                        CreateNewRule(lastFilter);
 
                      strlcpy(rule->customField, value, sizeof(rule->customField));
@@ -879,7 +880,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                    {
                      int n = atoi(p+10);
 
-                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                     while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                        CreateNewRule(lastFilter);
 
                      rule->comparison = atoi(value);
@@ -888,7 +889,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                    {
                      int n = atoi(p+5);
 
-                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                     while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                        CreateNewRule(lastFilter);
 
                      strlcpy(rule->matchPattern, value2, sizeof(rule->matchPattern));
@@ -897,7 +898,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                    {
                      int n = atoi(p+8);
 
-                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                     while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                        CreateNewRule(lastFilter);
 
                      rule->caseSensitive = Txt2Bool(value);
@@ -906,7 +907,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                    {
                      int n = atoi(p+9);
 
-                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                     while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                        CreateNewRule(lastFilter);
 
                      rule->subString = Txt2Bool(value);
@@ -917,7 +918,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 
                      // here we use n and not n-1 on purpose because the combine line
                      // refers always to the next one.
-                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n : 1)))
+                     while((rule = GetFilterRule(lastFilter, n>0 ? n : 1)) == NULL)
                        CreateNewRule(lastFilter);
 
                      rule->combine = atoi(value);
@@ -1258,7 +1259,10 @@ void CO_GetConfig(BOOL saveConfig)
    switch (G->CO->VisiblePage)
    {
       case cp_AllPages:
-         break;
+      {
+        // nothing
+      }
+      break;
 
       case cp_FirstSteps:
          GetMUIString(CE->RealName, gui->ST_REALNAME, sizeof(CE->RealName));
@@ -1270,16 +1274,31 @@ void CO_GetConfig(BOOL saveConfig)
          break;
 
       case cp_TCPIP:
-         GetMUIString(CE->SMTP_Server, gui->ST_SMTPHOST, sizeof(CE->SMTP_Server));
-         CE->SMTP_Port = GetMUIInteger(gui->ST_SMTPPORT);
-         GetMUIString(CE->SMTP_Domain, gui->ST_DOMAIN, sizeof(CE->SMTP_Domain));
-         CE->SMTP_SecureMethod = GetMUIRadio  (gui->RA_SMTPSECURE);
-         CE->Allow8bit         = GetMUICheck  (gui->CH_SMTP8BIT);
-         CE->Use_SMTP_AUTH     = GetMUICheck  (gui->CH_USESMTPAUTH);
-         GetMUIString(CE->SMTP_AUTH_User, gui->ST_SMTPAUTHUSER, sizeof(CE->SMTP_AUTH_User));
-         GetMUIString(CE->SMTP_AUTH_Pass, gui->ST_SMTPAUTHPASS, sizeof(CE->SMTP_AUTH_Pass));
-         CE->SMTP_AUTH_Method = GetMUICycle(gui->CY_SMTPAUTHMETHOD);
-         break;
+      {
+        int i;
+
+        GetMUIString(CE->SMTP_Server, gui->ST_SMTPHOST, sizeof(CE->SMTP_Server));
+        CE->SMTP_Port = GetMUIInteger(gui->ST_SMTPPORT);
+        GetMUIString(CE->SMTP_Domain, gui->ST_DOMAIN, sizeof(CE->SMTP_Domain));
+        CE->SMTP_SecureMethod = GetMUIRadio  (gui->RA_SMTPSECURE);
+        CE->Allow8bit         = GetMUICheck  (gui->CH_SMTP8BIT);
+        CE->Use_SMTP_AUTH     = GetMUICheck  (gui->CH_USESMTPAUTH);
+        GetMUIString(CE->SMTP_AUTH_User, gui->ST_SMTPAUTHUSER, sizeof(CE->SMTP_AUTH_User));
+        GetMUIString(CE->SMTP_AUTH_Pass, gui->ST_SMTPAUTHPASS, sizeof(CE->SMTP_AUTH_Pass));
+        CE->SMTP_AUTH_Method = GetMUICycle(gui->CY_SMTPAUTHMETHOD);
+        // iterate through the account list to update the pointers if the order has been changed
+        for(i = 0;; i++)
+        {
+          struct POP3 *pop3;
+
+          DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, i, &pop3);
+          if(pop3 != NULL)
+            CE->P3[i] = pop3;
+          else
+            break;
+        }
+      }
+      break;
 
       case cp_NewMail:
          CE->PreSelection      = GetMUICycle  (gui->CY_MSGSELECT);

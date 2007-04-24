@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-24  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c, YAM_COg.c, YAM_COs.c: changed the POP3 account list to an NList
+    class object and added an up and down button below the list. This makes it
+    possible to reorder the POP3 accounts.
+
 2007-04-23  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: fixed another possible NULL pointer access.

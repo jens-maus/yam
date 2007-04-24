@@ -545,8 +545,8 @@ HOOKPROTONHNONP(CO_AddPOP3, void)
     {
       if((CE->P3[i] = CO_NewPOP3(CE, i == 0)) != NULL)
       {
-        DoMethod(G->CO->GUI.LV_POP3, MUIM_List_InsertSingle, CE->P3[i], MUIV_List_Insert_Bottom, TAG_DONE);
-        set(G->CO->GUI.LV_POP3, MUIA_List_Active, i);
+        DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_InsertSingle, CE->P3[i], MUIV_List_Insert_Bottom, TAG_DONE);
+        set(G->CO->GUI.LV_POP3, MUIA_NList_Active, i);
         set(G->CO->GUI.WI, MUIA_Window_ActiveObject, G->CO->GUI.ST_POPACCOUNT);
       }
       break;
@@ -568,14 +568,14 @@ HOOKPROTONHNONP(CO_DelPOP3, void)
 
   ENTER();
 
-  p = xget(gui->LV_POP3, MUIA_List_Active);
-  e = xget(gui->LV_POP3, MUIA_List_Entries);
+  p = xget(gui->LV_POP3, MUIA_NList_Active);
+  e = xget(gui->LV_POP3, MUIA_NList_Entries);
 
-  if(p != MUIV_List_Active_Off && e > 1)
+  if(p != MUIV_NList_Active_Off && e > 1)
   {
     int i;
 
-    DoMethod(gui->LV_POP3, MUIM_List_Remove, p);
+    DoMethod(gui->LV_POP3, MUIM_NList_Remove, p);
 
     for(i = p + 1; i < MAXP3; i++)
       CE->P3[i - 1] = CE->P3[i];
@@ -594,16 +594,22 @@ HOOKPROTONHNONP(CO_GetP3Entry, void)
 {
   struct POP3 *pop3 = NULL;
   struct CO_GUIData *gui = &G->CO->GUI;
+  LONG pos = MUIV_NList_GetPos_Start;
 
   ENTER();
 
-  DoMethod(gui->LV_POP3, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &pop3);
+  DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &pop3);
 
   // This is needed due to a bug in MUI
   if(xget(gui->GR_POP3, MUIA_Disabled) != !pop3)
     set(gui->GR_POP3, MUIA_Disabled, !pop3);
 
-  set(gui->BT_PDEL, MUIA_Disabled, !pop3 || xget(gui->LV_POP3, MUIA_List_Entries) < 2);
+  set(gui->BT_PDEL, MUIA_Disabled, pop3 == NULL || xget(gui->LV_POP3, MUIA_NList_Entries) < 2);
+
+  if(pop3 != NULL)
+    DoMethod(gui->LV_POP3, MUIM_NList_GetPos, pop3, &pos);
+  set(gui->BT_POPUP, MUIA_Disabled, pop3 == NULL || pos == 0);
+  set(gui->BT_POPDOWN, MUIA_Disabled, pop3 == NULL || pos == (LONG)xget(gui->LV_POP3, MUIA_NList_Entries) - 1);
 
   if(pop3 != NULL)
   {
@@ -649,13 +655,13 @@ HOOKPROTONHNONP(CO_PutP3Entry, void)
 
   ENTER();
 
-  p = xget(gui->LV_POP3, MUIA_List_Active);
-  if(p != MUIV_List_Active_Off)
+  p = xget(gui->LV_POP3, MUIA_NList_Active);
+  if(p != MUIV_NList_Active_Off)
   {
     struct POP3 *pop3 = NULL;
     int new_ssl_mode = P3SSL_OFF;
 
-    DoMethod(gui->LV_POP3, MUIM_List_GetEntry, p, &pop3);
+    DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, p, &pop3);
     if(pop3 != NULL)
     {
       GetMUIString(pop3->Account, gui->ST_POPACCOUNT, sizeof(pop3->Account));
@@ -700,7 +706,7 @@ HOOKPROTONHNONP(CO_PutP3Entry, void)
 
       pop3->Port = GetMUIInteger(gui->ST_POPPORT);
 
-      DoMethod(gui->LV_POP3, MUIM_List_Redraw, p);
+      DoMethod(gui->LV_POP3, MUIM_NList_Redraw, p);
     }
   }
 
@@ -1449,7 +1455,7 @@ void CO_Validate(struct Config *co, BOOL update)
             setstring(G->CO->GUI.ST_DOMAIN, co->SMTP_Domain);
             setstring(G->CO->GUI.ST_SMTPAUTHUSER, co->SMTP_AUTH_User);
             setstring(G->CO->GUI.ST_SMTPAUTHPASS, co->SMTP_AUTH_Pass);
-            DoMethod(G->CO->GUI.LV_POP3, MUIM_List_Redraw, MUIV_List_Redraw_All);
+            DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
             break;
 
          default:

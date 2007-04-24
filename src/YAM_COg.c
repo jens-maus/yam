@@ -1496,14 +1496,18 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                   Child, ListviewObject,
                     MUIA_CycleChain, TRUE,
                     MUIA_Weight,     60,
-                    MUIA_Listview_List, data->GUI.LV_POP3 = ListObject,
+                    MUIA_Listview_List, data->GUI.LV_POP3 = NListObject,
                       InputListFrame,
                     End,
                   End,
 
-                  Child, ColGroup(2),
+                  Child, ColGroup(3),
                     Child, data->GUI.BT_PADD = MakeButton(tr(MSG_Add)),
                     Child, data->GUI.BT_PDEL = MakeButton(tr(MSG_Del)),
+                    Child, ColGroup(2),
+                       Child, data->GUI.BT_POPUP = PopButton(MUII_ArrowUp),
+                       Child, data->GUI.BT_POPDOWN = PopButton(MUII_ArrowDown),
+                    End,
                   End,
                 End,
 
@@ -1596,7 +1600,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     SetHelp(data->GUI.RA_SMTPSECURE  ,MSG_HELP_CO_RA_SMTPSECURE   );
     SetHelp(data->GUI.RA_POP3SECURE,  MSG_HELP_CO_RA_POP3SECURE);
 
-    DoMethod(data->GUI.LV_POP3       ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_GetP3EntryHook,0);
+    DoMethod(data->GUI.LV_POP3       ,MUIM_Notify,MUIA_NList_Active   ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_GetP3EntryHook,0);
     DoMethod(data->GUI.ST_POPACCOUNT ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
     DoMethod(data->GUI.ST_POPHOST    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
     DoMethod(data->GUI.ST_POPPORT    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
@@ -1607,6 +1611,8 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     DoMethod(data->GUI.CH_DELETE     ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
     DoMethod(data->GUI.BT_PADD       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_AddPOP3Hook,0);
     DoMethod(data->GUI.BT_PDEL       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_DelPOP3Hook,0);
+    DoMethod(data->GUI.BT_POPUP      ,MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
+    DoMethod(data->GUI.BT_POPDOWN    ,MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
     DoMethod(data->GUI.CH_USESMTPAUTH,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,MUIV_Notify_Application,6,MUIM_MultiSet,MUIA_Disabled,MUIV_NotTriggerValue,data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS, data->GUI.CY_SMTPAUTHMETHOD);
 
     // modify the POP3 port according to the security level selected.
