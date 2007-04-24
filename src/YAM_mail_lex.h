@@ -60,12 +60,12 @@ enum tokenType
   tURL,
   tNORMALTEXT,
   tSIGNATURE,
+  tENDSIGNATURE,
   tBOLD,
   tITALIC,
   tUNDERLINE,
   tCOLORED,
-  tNEXTPART,
-  tFROM
+  tNEXTPART
 };
 
 char *ParseEmailText(const char *mailTxt, BOOL handleSigDash);

@@ -7,6 +7,9 @@ $URL$
 
 2007-04-24  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_mail_lex.l: an end of a signature will now be recognized by a dashed
+    line rather than by searching for a "\nFrom :" sequence which isn't always
+    present in a message digest.
   * YAM_COg.c, YAM_COs., YAM_CO.c: the POP3 server list is now dragsortable
     again so that entries can also be sorted via a drag&drop operation. In
     addition, the arrow buttons are now layouted a bit closer to eachother

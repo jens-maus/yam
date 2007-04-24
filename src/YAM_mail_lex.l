@@ -131,7 +131,7 @@ NOTATEOL    ([^[:punct:][:space:]]|{ESCAPE}|"/"|"=")
 ^([[:blank:]]*[[:alpha:]]{0,3}">")+   {return tCITE;}
 ^"-- \n"                              {return tSIGNATURE;}
 ^"\033c\033[s:18]"                    {return tNEXTPART;}
-^"\nFrom: "                           {return tFROM;}
+^"\n""-"{30,}"\n"                     {return tENDSIGNATURE;}
 
 " "  {return tSPACE      ;}
 "  " {return tDOUBLESPACE;}
@@ -435,6 +435,25 @@ char *ParseEmailText(const char *mailTxt, BOOL handleSigDash)
           }
           break;
 
+          case tENDSIGNATURE:
+          {
+            // if we are in signature mode we have to reset that state
+            // in case we find a "\nFrom: " line as this might point out
+            // that this mail may be a message digest from a mailing list
+            // and as such we don't want to have it highlighted as a
+            // signature.
+            if(signatureFound)
+            {
+              defaultPen = "\033p[0]";
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+
+              signatureFound = FALSE;
+            }
+
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+          }
+          break;
+
           case tNEXTPART:
           {
             cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
@@ -462,25 +481,6 @@ char *ParseEmailText(const char *mailTxt, BOOL handleSigDash)
               defaultPen = "\033p[13]";
               cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
             }
-          }
-          break;
-
-          case tFROM:
-          {
-            // if we are in signature mode we have to reset that state
-            // in case we find a "\nFrom: " line as this might point out
-            // that this mail may be a message digest from a mailing list
-            // and as such we don't want to have it highlighted as a
-            // signature.
-            if(signatureFound)
-            {
-              defaultPen = "\033p[0]";
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
-
-              signatureFound = FALSE;
-            }
-
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
           }
           break;
 
