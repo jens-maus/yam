@@ -102,51 +102,6 @@ static void CO_NewPrefsFile(char *fname)
 ///
 
 /**** Filters ****/
-/// AddNewFilterToList
-//  Adds a new entry to the global filter list
-HOOKPROTONHNONP(AddNewFilterToList, void)
-{
-  struct FilterNode *filterNode;
-
-  if((filterNode = CreateNewFilter()))
-  {
-    DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filterNode, MUIV_NList_Insert_Bottom);
-    set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
-
-    // lets set the new string gadget active and select all text in there automatically to
-    // be more handy to the user ;)
-    set(_win(G->CO->GUI.LV_RULES), MUIA_Window_ActiveObject, G->CO->GUI.ST_RNAME);
-    set(G->CO->GUI.ST_RNAME, MUIA_BetterString_SelectSize, -((LONG)strlen(filterNode->name)));
-
-    // now add the filterNode to our global filterList
-    AddTail((struct List *)&CE->filterList, (struct Node *)filterNode);
-  }
-}
-MakeHook(AddNewFilterToListHook, AddNewFilterToList);
-
-///
-/// RemoveActiveFilter
-//  Deletes the active filter entry from the filter list
-HOOKPROTONHNONP(RemoveActiveFilter, void)
-{
-  struct FilterNode *filterNode = NULL;
-
-  // get the active filterNode
-  DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filterNode);
-
-  // if we got an active entry lets remove it from the GUI List
-  // and also from our own global filterList
-  if(filterNode != NULL)
-  {
-    DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_Remove, MUIV_NList_Remove_Active);
-
-    Remove((struct Node *)filterNode);
-    FreeFilterNode(filterNode);
-  }
-}
-MakeHook(RemoveActiveFilterHook, RemoveActiveFilter);
-
-///
 /// AddNewRuleToList
 //  Adds a new entry to the current filter's rule list
 HOOKPROTONHNONP(AddNewRuleToList, void)
@@ -531,63 +486,6 @@ struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
 }
 
 ///
-/// CO_AddPOP3
-//  Adds a new entry to the POP3 account list
-HOOKPROTONHNONP(CO_AddPOP3, void)
-{
-  int i;
-
-  ENTER();
-
-  for(i = 0; i < MAXP3; i++)
-  {
-    if(CE->P3[i] == NULL)
-    {
-      if((CE->P3[i] = CO_NewPOP3(CE, i == 0)) != NULL)
-      {
-        DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_InsertSingle, CE->P3[i], MUIV_List_Insert_Bottom, TAG_DONE);
-        set(G->CO->GUI.LV_POP3, MUIA_NList_Active, i);
-        set(G->CO->GUI.WI, MUIA_Window_ActiveObject, G->CO->GUI.ST_POPACCOUNT);
-      }
-      break;
-    }
-  }
-
-  LEAVE();
-}
-MakeHook(CO_AddPOP3Hook,CO_AddPOP3);
-
-///
-/// CO_DelPOP3
-//  Deletes an entry from the POP3 account list
-HOOKPROTONHNONP(CO_DelPOP3, void)
-{
-  struct CO_GUIData *gui = &G->CO->GUI;
-  int p;
-  int e;
-
-  ENTER();
-
-  p = xget(gui->LV_POP3, MUIA_NList_Active);
-  e = xget(gui->LV_POP3, MUIA_NList_Entries);
-
-  if(p != MUIV_NList_Active_Off && e > 1)
-  {
-    int i;
-
-    DoMethod(gui->LV_POP3, MUIM_NList_Remove, p);
-
-    for(i = p + 1; i < MAXP3; i++)
-      CE->P3[i - 1] = CE->P3[i];
-
-    CE->P3[i - 1] = NULL;
-  }
-
-  LEAVE();
-}
-MakeHook(CO_DelPOP3Hook,CO_DelPOP3);
-
-///
 /// CO_GetP3Entry
 //  Fills form with data from selected list entry
 HOOKPROTONHNONP(CO_GetP3Entry, void)
@@ -672,7 +570,9 @@ HOOKPROTONHNONP(CO_PutP3Entry, void)
       pop3->UseAPOP = GetMUICheck(gui->CH_USEAPOP);
       pop3->DeleteOnServer = GetMUICheck(gui->CH_DELETE);
 
-      if(pop3->Account[0] == '\0')
+      // if the user hasn't yet entered an own account name or the default
+      // account name is still present we go and set an automatic generated one
+      if(pop3->Account[0] == '\0' || strcmp(pop3->Account, tr(MSG_NewEntry)) == 0)
         snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
 
       switch(GetMUIRadio(gui->RA_POP3SECURE))

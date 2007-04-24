@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_COg.c, YAM_COs., YAM_CO.c: the POP3 server list is now dragsortable
+    again so that entries can also be sorted via a drag&drop operation. In
+    addition, the arrow buttons are now layouted a bit closer to eachother
+    to save space. Also a new POP3 server entry does now show a default
+    account name to make it less probable that users generate an empty
+    POP3 server in the list by accident.
+
 2007-04-24  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c, YAM_COg.c, YAM_COs.c: changed the POP3 account list to an NList

@@ -763,6 +763,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 
                  if(p3 == NULL)
                    p3 = co->P3[j] = CO_NewPOP3(co, FALSE);
+
                  if(p3 != NULL)
                  {
                    p = &buffer[6];

@@ -564,8 +564,6 @@ extern struct Config *C;
 extern struct Config *CE;
 
 // external hooks
-extern struct Hook CO_AddPOP3Hook;
-extern struct Hook CO_DelPOP3Hook;
 extern struct Hook CO_EditSignatHook;
 extern struct Hook CO_SwitchSignatHook;
 extern struct Hook CO_SwitchSpamFilterHook;
@@ -575,8 +573,6 @@ extern struct Hook CO_OpenHook;
 extern struct Hook CO_PL_DspFuncHook;
 extern struct Hook CO_PutP3EntryHook;
 extern struct Hook CO_RemoteToggleHook;
-extern struct Hook AddNewFilterToListHook;
-extern struct Hook RemoveActiveFilterHook;
 extern struct Hook SetActiveFilterDataHook;
 extern struct Hook GetActiveFilterDataHook;
 extern struct Hook AddNewRuleToListHook;

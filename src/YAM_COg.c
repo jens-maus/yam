@@ -1282,6 +1282,120 @@ HOOKPROTONHNONP(ResetSpamTrainingDataFunc, void)
 }
 MakeStaticHook(ResetSpamTrainingDataHook, ResetSpamTrainingDataFunc);
 ///
+/// AddNewFilterToList
+//  Adds a new entry to the global filter list
+HOOKPROTONHNONP(AddNewFilterToList, void)
+{
+  struct FilterNode *filterNode;
+
+  if((filterNode = CreateNewFilter()))
+  {
+    DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filterNode, MUIV_NList_Insert_Bottom);
+    set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
+
+    // lets set the new string gadget active and select all text in there automatically to
+    // be more handy to the user ;)
+    set(_win(G->CO->GUI.LV_RULES), MUIA_Window_ActiveObject, G->CO->GUI.ST_RNAME);
+    set(G->CO->GUI.ST_RNAME, MUIA_BetterString_SelectSize, -((LONG)strlen(filterNode->name)));
+
+    // now add the filterNode to our global filterList
+    AddTail((struct List *)&CE->filterList, (struct Node *)filterNode);
+  }
+}
+MakeStaticHook(AddNewFilterToListHook, AddNewFilterToList);
+
+///
+/// RemoveActiveFilter
+//  Deletes the active filter entry from the filter list
+HOOKPROTONHNONP(RemoveActiveFilter, void)
+{
+  struct FilterNode *filterNode = NULL;
+
+  // get the active filterNode
+  DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filterNode);
+
+  // if we got an active entry lets remove it from the GUI List
+  // and also from our own global filterList
+  if(filterNode != NULL)
+  {
+    DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_Remove, MUIV_NList_Remove_Active);
+
+    Remove((struct Node *)filterNode);
+    FreeFilterNode(filterNode);
+  }
+}
+MakeStaticHook(RemoveActiveFilterHook, RemoveActiveFilter);
+
+///
+/// CO_AddPOP3
+//  Adds a new entry to the POP3 account list
+HOOKPROTONHNONP(CO_AddPOP3, void)
+{
+  int i;
+
+  ENTER();
+
+  for(i=0; i < MAXP3; i++)
+  {
+    if(CE->P3[i] == NULL)
+    {
+      if((CE->P3[i] = CO_NewPOP3(CE, i == 0)) != NULL)
+      {
+        if(i != 0)
+          strlcpy(CE->P3[i]->Account, tr(MSG_NewEntry), sizeof(CE->P3[i]->Account));
+
+        DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_InsertSingle, CE->P3[i], MUIV_List_Insert_Bottom);
+
+        // set the new entry active and make sure that the host gadget will be
+        // set as the new active object of the window as that gadget will be used
+        // to automatically set the account name.
+        set(G->CO->GUI.LV_POP3, MUIA_NList_Active, i);
+        set(G->CO->GUI.WI, MUIA_Window_ActiveObject, G->CO->GUI.ST_POPHOST);
+      }
+      else
+        DisplayBeep(NULL);
+
+      break;
+    }
+    else
+      DisplayBeep(NULL);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(CO_AddPOP3Hook,CO_AddPOP3);
+
+///
+/// CO_DelPOP3
+//  Deletes an entry from the POP3 account list
+HOOKPROTONHNONP(CO_DelPOP3, void)
+{
+  struct CO_GUIData *gui = &G->CO->GUI;
+  int p;
+  int e;
+
+  ENTER();
+
+  p = xget(gui->LV_POP3, MUIA_NList_Active);
+  e = xget(gui->LV_POP3, MUIA_NList_Entries);
+
+  if(p != MUIV_NList_Active_Off && e > 1)
+  {
+    int i;
+
+    DoMethod(gui->LV_POP3, MUIM_NList_Remove, p);
+
+    for(i = p + 1; i < MAXP3; i++)
+      CE->P3[i - 1] = CE->P3[i];
+
+    CE->P3[i - 1] = NULL;
+  }
+
+  LEAVE();
+}
+MakeStaticHook(CO_DelPOP3Hook,CO_DelPOP3);
+
+///
 
 /*** Pages ***/
 /// CO_PageFirstSteps
@@ -1493,11 +1607,14 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
 
                 Child, VGroup,
                   MUIA_HorizWeight, 30,
-                  Child, ListviewObject,
+                  Child, NListviewObject,
                     MUIA_CycleChain, TRUE,
                     MUIA_Weight,     60,
-                    MUIA_Listview_List, data->GUI.LV_POP3 = NListObject,
+                    MUIA_NListview_NList, data->GUI.LV_POP3 = NListObject,
                       InputListFrame,
+                      MUIA_NList_Title,        FALSE,
+                      MUIA_NList_DragType,     MUIV_NList_DragType_Immediate,
+                      MUIA_NList_DragSortable, TRUE,
                     End,
                   End,
 
@@ -1505,8 +1622,9 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                     Child, data->GUI.BT_PADD = MakeButton(tr(MSG_Add)),
                     Child, data->GUI.BT_PDEL = MakeButton(tr(MSG_Del)),
                     Child, ColGroup(2),
-                       Child, data->GUI.BT_POPUP = PopButton(MUII_ArrowUp),
-                       Child, data->GUI.BT_POPDOWN = PopButton(MUII_ArrowDown),
+                      MUIA_Group_Spacing, 1,
+                      Child, data->GUI.BT_POPUP = PopButton(MUII_ArrowUp),
+                      Child, data->GUI.BT_POPDOWN = PopButton(MUII_ArrowDown),
                     End,
                   End,
                 End,
@@ -1609,8 +1727,8 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     DoMethod(data->GUI.CH_POPENABLED ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
     DoMethod(data->GUI.CH_USEAPOP    ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
     DoMethod(data->GUI.CH_DELETE     ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.BT_PADD       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_AddPOP3Hook,0);
-    DoMethod(data->GUI.BT_PDEL       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_DelPOP3Hook,0);
+    DoMethod(data->GUI.BT_PADD       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_AddPOP3Hook);
+    DoMethod(data->GUI.BT_PDEL       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_DelPOP3Hook);
     DoMethod(data->GUI.BT_POPUP      ,MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
     DoMethod(data->GUI.BT_POPDOWN    ,MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
     DoMethod(data->GUI.CH_USESMTPAUTH,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,MUIV_Notify_Application,6,MUIM_MultiSet,MUIA_Disabled,MUIV_NotTriggerValue,data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS, data->GUI.CY_SMTPAUTHMETHOD);
@@ -1629,6 +1747,10 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     set(data->GUI.ST_SMTPAUTHUSER,   MUIA_Disabled, TRUE);
     set(data->GUI.ST_SMTPAUTHPASS,   MUIA_Disabled, TRUE);
     set(data->GUI.CY_SMTPAUTHMETHOD, MUIA_Disabled, TRUE);
+
+    // set some additional cyclechain data
+    set(data->GUI.BT_POPUP,   MUIA_CycleChain, TRUE);
+    set(data->GUI.BT_POPDOWN, MUIA_CycleChain, TRUE);
   }
 
   RETURN(obj);
@@ -1791,6 +1913,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                     Child, data->GUI.BT_RADD = MakeButton(tr(MSG_Add)),
                     Child, data->GUI.BT_RDEL = MakeButton(tr(MSG_Del)),
                     Child, ColGroup(2),
+                      MUIA_Group_Spacing, 1,
                       Child, data->GUI.BT_FILTERUP = PopButton(MUII_ArrowUp),
                       Child, data->GUI.BT_FILTERDOWN = PopButton(MUII_ArrowDown),
                     End,
