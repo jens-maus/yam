@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-27  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_main.h, YAM_utilities.h: removed some orphaned prototypes.
+
 2007-04-24  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_mail_lex.l: an end of a signature will now be recognized by a dashed
