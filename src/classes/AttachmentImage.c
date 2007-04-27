@@ -676,46 +676,44 @@ OVERLOAD(MUIM_AskMinMax)
 OVERLOAD(MUIM_Draw)
 {
   GETDATA;
-  ULONG result;
 
   // call the super method first
-  if((result = DoSuperMethodA(cl, obj, msg)))
+  DoSuperMethodA(cl, obj, msg);
+
+  if(((struct MUIP_Draw *)msg)->flags & MADF_DRAWOBJECT)
   {
-    if(((struct MUIP_Draw *)msg)->flags & MADF_DRAWOBJECT)
+    struct BitMap *bitmap;
+    struct BitMap *bitmask;
+
+    // check the selected state
+    if(xget(obj, MUIA_Selected))
     {
-      struct BitMap *bitmap;
-      struct BitMap *bitmask;
+      bitmap = data->selectedBitMap;
+      bitmask = data->selectedBitMask;
+    }
+    else
+    {
+      bitmap = data->normalBitMap;
+      bitmask = data->normalBitMask;
+    }
 
-      // check the selected state
-      if(xget(obj, MUIA_Selected))
-      {
-        bitmap = data->selectedBitMap;
-        bitmask = data->selectedBitMask;
-      }
-      else
-      {
-        bitmap = data->normalBitMap;
-        bitmask = data->normalBitMask;
-      }
+    // draw the background first.
+    DoMethod(obj, MUIM_DrawBackground, _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0, 0, MUIF_NONE);
 
-      // draw the background first.
-      DoMethod(obj, MUIM_DrawBackground, _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0, 0, MUIF_NONE);
-
-      if(bitmask)
-      {
-        // we use an own BltMaskBitMapRastPort() implemenation to also support
-        // interleaved images.
-        MyBltMaskBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0, bitmask->Planes[0]);
-      }
-      else
-      {
-        BltBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0);
-      }
+    if(bitmask)
+    {
+      // we use an own BltMaskBitMapRastPort() implemenation to also support
+      // interleaved images.
+      MyBltMaskBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0, bitmask->Planes[0]);
+    }
+    else
+    {
+      BltBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0);
     }
   }
 
-  RETURN(result);
-  return result;
+  RETURN(0);
+  return 0;
 }
 ///
 /// OVERLOAD(MUIM_HandleEvent)
