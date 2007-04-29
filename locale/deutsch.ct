@@ -7617,3 +7617,15 @@ Kann Semaphore nicht erstellen!
 MSG_MA_AUTOSAVEFOUND_BUTTONS
 *In _Postausgang legen|_Editieren|_Löschen|_Ignorieren
 ;
+MSG_RE_HDR_FROM
+Von
+;
+MSG_RE_HDR_TO
+An
+;
+MSG_RE_HDR_DATE
+Datum
+;
+MSG_RE_HDR_SUBJECT
+Betreff
+;

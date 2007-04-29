@@ -6176,3 +6176,15 @@ Can't create semaphore!
 MSG_MA_AUTOSAVEFOUND_BUTTONS (1916//)
 *Put in _Outbox|_Edit|_Delete|_Ignore
 ;
+MSG_RE_HDR_FROM (1917//)
+From
+;
+MSG_RE_HDR_TO (1918//)
+To
+;
+MSG_RE_HDR_DATE (1919//)
+Date
+;
+MSG_RE_HDR_SUBJECT (1920//)
+Subject
+;

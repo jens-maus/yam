@@ -98,8 +98,20 @@ enum { RMEN_HSHORT=100, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIM
 //  Header listview display hook
 HOOKPROTONH(HeaderDisplayFunc, LONG, char **array, struct HeaderNode *hdrNode)
 {
-  // set the array now so that the NList shows the correct values.
-  array[0] = hdrNode->name;
+  // we translate some common header names into the local
+  // language
+  if(stricmp("From", hdrNode->name) == 0)
+    array[0] = (STRPTR)tr(MSG_RE_HDR_FROM);
+  else if(stricmp("To", hdrNode->name) == 0)
+    array[0] = (STRPTR)tr(MSG_RE_HDR_TO);
+  else if(stricmp("Date", hdrNode->name) == 0)
+    array[0] = (STRPTR)tr(MSG_RE_HDR_DATE);
+  else if(stricmp("Subject", hdrNode->name) == 0)
+    array[0] = (STRPTR)tr(MSG_RE_HDR_SUBJECT);
+  else
+    array[0] = hdrNode->name;
+
+  // set the content of the header line
   array[1] = hdrNode->content;
 
   return 0;

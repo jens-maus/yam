@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-29  Jens Langner <Jens.Langner@light-speed.de>
+
+  * ReadMailGroup.c, YAM.cd: the 4 most common header line names
+    (From/To/Date/Subject) are now translatable into the local language which
+    in fact should make the header display more intuitive and in line what the
+    main mail list title displayes as well.
+
 2007-04-27  Thore Böckelmann <tboeckel@gmx.de>
 
   * AttachmentImage.c: drawing the image no longer relies on a successful
