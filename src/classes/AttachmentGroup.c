@@ -63,6 +63,7 @@ struct Data
 #define SPACING   2 // pixels taken as space between our images/text
 #define TEXTROWS  3 // how many text rows does a attachmentimage normally have?
 
+/* Private Hooks */
 /// LayoutHook
 HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 {
@@ -70,6 +71,8 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 
   switch(lm->lm_Type)
   {
+    // MUI want's to know the min/max of the object so we
+    // need to calculate it accordingly.
     case MUILM_MINMAX:
     {
       LONG maxMinHeight;
@@ -110,6 +113,9 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
     }
     break;
 
+    // MUI asks' us to draw/layout the actual content of the
+    // gadget, so we go and use MUI_Layout() to draw the gadget
+    // components at the right position.
     case MUILM_LAYOUT:
     {
       struct RastPort rp;

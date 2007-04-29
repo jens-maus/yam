@@ -144,7 +144,11 @@ static BOOL LoadImage(struct imageCacheNode *node, const char *filename)
       if(fri.fri_Dimensions.Depth > 0)
       {
         D(DBF_IMAGE, "loaded image '%s' (0x%08lx)", filename, o);
+
         node->dt_obj = o;
+        node->width = fri.fri_Dimensions.Width;
+        node->height = fri.fri_Dimensions.Height;
+
         result = TRUE;
       }
       else
@@ -176,7 +180,7 @@ static BOOL RemapImage(struct imageCacheNode *node, const struct Screen *scr)
   SetDTAttrs(node->dt_obj, NULL, NULL, PDTA_Screen, scr,
                                        TAG_DONE);
 
-  // either the remap must succeed or we reset just reset the screen
+  // either the remap must succeed or we just reset the screen
   if(DoMethod(node->dt_obj, DTM_PROCLAYOUT, NULL, 1) != 0 || scr == NULL)
     success = TRUE;
 
@@ -203,6 +207,7 @@ static struct imageCacheNode *CreateImageCacheNode(const char *filename)
     {
       // success
       node->filename = strdup(filename);
+
       // add the new node to the global list
       AddTail((struct List *)&G->imageCacheList, (struct Node *)&node->node);
     }
@@ -323,7 +328,7 @@ void ImageCacheCleanup(void)
 /// ObtainImage()
 // for receiveing the imagenode object or loading it
 // immediately.
-struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr)
+struct imageCacheNode *ObtainImage(const char *filename, const struct Screen *scr)
 {
   struct imageCacheNode *result = NULL;
   struct MinNode *curNode;
@@ -368,9 +373,10 @@ struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr)
     result = CreateImageCacheNode(filename);
   }
 
-  if(result != NULL)
+  // do a remapping of the image if necessary
+  if(result != NULL && scr != NULL)
   {
-    D(DBF_IMAGE, "setting up image '%s'", filename);
+    D(DBF_IMAGE, "setting up image '%s' for screen 0x%08lx", filename, scr);
 
     // we found a previously loaded node in the cache
     // now we need to remap it to the screen, if not yet done
@@ -402,6 +408,7 @@ struct imageCacheNode *ObtainImage(char *filename, const struct Screen *scr)
       else
       {
         D(DBF_IMAGE, "couldn't remap image '%s' to screen 0x%08lx", filename, scr);
+
         // let this call fail if we cannot remap the image
         result = NULL;
       }
@@ -434,7 +441,7 @@ void DisposeImage(struct imageCacheNode *node)
       {
         if(node->dt_obj != NULL)
         {
-          // clear the the DT object's screen pointer
+          // clear the DT object's screen pointer
           // this always succeeds, hence no need to check the result
           RemapImage(node, NULL);
         }

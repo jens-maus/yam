@@ -699,9 +699,9 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
             // clear the multipart/mixed flag
             CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
 
-            // update the statusIconGroup of an eventually existing read window.
+            // update the status bar of an eventually existing read window.
             if(rmData->readWindow)
-              DoMethod(rmData->readWindow, MUIM_ReadWindow_UpdateStatusIcons);
+              DoMethod(rmData->readWindow, MUIM_ReadWindow_UpdateStatusBar);
 
             // if the mail is no virtual mail we can also
             // refresh the maillist depending information

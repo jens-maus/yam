@@ -913,9 +913,9 @@ static void TC_Dispatcher(enum TimerIO tio)
         // try to get the ReadMailData
         if((rmData = GetReadMailData(mail)) != NULL)
         {
-          // this mail belongs to an open read window, so we can update the status icons
+          // this mail belongs to an open read window, so we can update the status bar
           if(rmData->readWindow != NULL)
-            DoMethod(rmData->readWindow, MUIM_ReadWindow_UpdateStatusIcons);
+            DoMethod(rmData->readWindow, MUIM_ReadWindow_UpdateStatusBar);
         }
       }
     }

@@ -69,7 +69,7 @@ struct Data
   Object *MI_SEARCH;
   Object *MI_SEARCHAGAIN;
   Object *windowToolbar;
-  Object *statusIconGroup;
+  Object *statusBar;
   Object *readMailGroup;
 
   char  title[SIZE_SUBJECT+1];
@@ -258,15 +258,11 @@ OVERLOAD(OM_NEW)
     WindowContents, VGroup,
       Child, hasHideToolBarFlag(C->HideGUIElements) ?
         (RectangleObject, MUIA_ShowMe, FALSE, End) :
-        (HGroup, GroupSpacing(2),
+        (VGroup,
           Child, data->windowToolbar = ReadWindowToolbarObject,
             MUIA_HelpNode, "RE_B",
           End,
-          Child, RectangleObject,
-            MUIA_Rectangle_VBar, TRUE,
-            MUIA_FixWidth,        3,
-          End,
-          Child, data->statusIconGroup = StatusIconGroupObject,
+          Child, data->statusBar = ReadWindowStatusBarObject,
           End,
         End),
         Child, VGroup,
@@ -535,8 +531,8 @@ DECLARE(ReadMail) // struct Mail *mail
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_REPLY,       MUIA_TheBar_Attr_Disabled, isSentMail || inSpamFolder || hasStatusSpam(mail));
   }
 
-  // update the status groups
-  DoMethod(data->statusIconGroup, MUIM_StatusIconGroup_Update, mail);
+  // update the status bar
+  DoMethod(data->statusBar, MUIM_ReadWindowStatusBar_Update, mail);
 
   // now we read in the mail in our read mail group
   if(DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail,
@@ -898,8 +894,8 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
         if(folder == spamfolder)
           DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
 
-        // update the status icons
-        DoMethod(obj, MUIM_ReadWindow_UpdateStatusIcons);
+        // update the status bar
+        DoMethod(obj, MUIM_ReadWindow_UpdateStatusBar);
       }
     }
     else if(!hasStatusHam(mail) && class == BC_HAM)
@@ -912,8 +908,8 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       // update the menu/toolbar
       DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
 
-      // update the status icons
-      DoMethod(obj, MUIM_ReadWindow_UpdateStatusIcons);
+      // update the status bar
+      DoMethod(obj, MUIM_ReadWindow_UpdateStatusBar);
     }
   }
 
@@ -955,7 +951,7 @@ DECLARE(SetStatusTo) // int addflags, int clearflags
 
   MA_ChangeMailStatus(mail, msg->addflags, msg->clearflags);
 
-  DoMethod(data->statusIconGroup, MUIM_StatusIconGroup_Update, mail);
+  DoMethod(data->statusBar, MUIM_ReadWindowStatusBar_Update, mail);
   DisplayStatistics(NULL, TRUE);
 
   RETURN(0);
@@ -1301,15 +1297,15 @@ DECLARE(StyleOptionsChanged)
   return 0;
 }
 ///
-/// DECLARE(UpdateStatusIcons)
-DECLARE(UpdateStatusIcons)
+/// DECLARE(UpdateStatusBar)
+DECLARE(UpdateStatusBar)
 {
   GETDATA;
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 
-  // Update the statusIconGroup
+  // Update the status bar
   if(rmData->mail != NULL)
-    DoMethod(data->statusIconGroup, MUIM_StatusIconGroup_Update, rmData->mail);
+    DoMethod(data->statusBar, MUIM_ReadWindowStatusBar_Update, rmData->mail);
 
   return 0;
 }

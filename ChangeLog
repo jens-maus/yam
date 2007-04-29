@@ -7,6 +7,10 @@ $URL$
 
 2007-04-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * StatusIconGroup, ReadWindowStatusBar, misc: transformed the previous
+    'StatusIconGroup' into a new more general status bar which ís placed right
+    below the read window toolbar and which should carry general mail status
+    information like the status flags and folder information.
   * ReadMailGroup.c, YAM.cd: the 4 most common header line names
     (From/To/Date/Subject) are now translatable into the local language which
     in fact should make the header display more intuitive and in line what the

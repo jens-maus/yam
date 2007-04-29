@@ -61,14 +61,15 @@ struct Data
 /* Private Functions */
 /// Image_Load()
 // loads an image via our datatype methods
-static void Image_Load(struct Data *data, Object *obj)
+static BOOL Image_Load(struct Data *data, Object *obj)
 {
   ENTER();
 
   if(data->name != NULL && data->imageNode == NULL)
     data->imageNode = ObtainImage(data->name, _screen(obj));
 
-  LEAVE();
+  RETURN((BOOL)(data->imageNode != NULL));
+  return data->imageNode != NULL;
 }
 
 ///
@@ -156,6 +157,62 @@ OVERLOAD(OM_GET)
   switch(((struct opGet *)msg)->opg_AttrID)
   {
     ATTR(Filename): *store = (ULONG)data->name; return TRUE;
+
+    // return the raw image width
+    ATTR(RawWidth):
+    {
+      BOOL result = FALSE;
+
+      if(data->setup == TRUE && data->imageNode != NULL)
+      {
+        *store = data->imageNode->width;
+        result = TRUE;
+      }
+      else
+      {
+        struct imageCacheNode *icnode = ObtainImage(data->name, NULL);
+
+        if(icnode != NULL)
+        {
+          *store = icnode->width;
+
+          // dispose the image again
+          DisposeImage(icnode);
+          result = TRUE;
+        }
+      }
+
+      return result;
+    }
+    break;
+
+    // return the raw image height
+    ATTR(RawHeight):
+    {
+      BOOL result = FALSE;
+
+      if(data->setup == TRUE && data->imageNode != NULL)
+      {
+        *store = data->imageNode->height;
+        result = TRUE;
+      }
+      else
+      {
+        struct imageCacheNode *icnode = ObtainImage(data->name, NULL);
+
+        if(icnode != NULL)
+        {
+          *store = icnode->height;
+
+          // dispose the image again
+          DisposeImage(icnode);
+          result = TRUE;
+        }
+      }
+
+      return result;
+    }
+    break;
   }
 
   return DoSuperMethodA(cl, obj, msg);
