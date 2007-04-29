@@ -7,6 +7,10 @@ $URL$
 
 2007-04-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c, YAM_MA.c, YAM.c: added new UpdateReadMailDataStatus() function
+    which allows to sync the status of a readmail data object (window) with
+    what the current mail contains. This should fix issues where a read window
+    ended up with other status images like the main mail list displayed.
   * StatusIconGroup, ReadWindowStatusBar, misc: transformed the previous
     'StatusIconGroup' into a new more general status bar which ís placed right
     below the read window toolbar and which should carry general mail status

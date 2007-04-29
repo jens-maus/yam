@@ -505,26 +505,34 @@ struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folder
 //  Sets the status of a message
 void MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags)
 {
-   unsigned int newstatus = (mail->sflags | addflags) & ~(clearflags);
+  unsigned int newstatus = (mail->sflags | addflags) & ~(clearflags);
 
-   // check if the status is already set or not
-   if(newstatus != mail->sflags)
-   {
-      D(DBF_MAIL, "ChangeMailStatus: +%08lx -%08lx", addflags, clearflags);
+  ENTER();
 
-      // set the new status
-      mail->sflags = newstatus;
+  // check if the status is already set or not
+  if(newstatus != mail->sflags)
+  {
+    D(DBF_MAIL, "ChangeMailStatus: +%08lx -%08lx", addflags, clearflags);
 
-      // set the comment to the Mailfile
-      MA_UpdateMailFile(mail);
+    // set the new status
+    mail->sflags = newstatus;
 
-      // flag the index as expired
-      MA_ExpireIndex(mail->Folder);
+    // set the comment to the Mailfile
+    MA_UpdateMailFile(mail);
 
-      // lets redraw the entry if it is actually displayed, so that
-      // the status icon gets updated.
-      DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
-   }
+    // flag the index as expired
+    MA_ExpireIndex(mail->Folder);
+
+    // update the status of the readmaildata (window)
+    // of the mail here
+    UpdateReadMailDataStatus(mail);
+
+    // lets redraw the entry if it is actually displayed, so that
+    // the status icon gets updated.
+    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
+  }
+
+  LEAVE();
 }
 
 ///

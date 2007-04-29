@@ -4346,7 +4346,7 @@ void FreeHeaderList(struct MinList *headerList)
 ///
 /// GetReadMailData()
 //  returns the ReadMailData of a mail if it exists
-struct ReadMailData *GetReadMailData(struct Mail *mail)
+struct ReadMailData *GetReadMailData(const struct Mail *mail)
 {
   struct ReadMailData *result = NULL;
 
@@ -4365,6 +4365,39 @@ struct ReadMailData *GetReadMailData(struct Mail *mail)
       {
         result = rmData;
         break;
+      }
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+///
+/// UpdateReadMailDataStatus()
+// triggers an update of certain GUI and non-GUI relevant status information
+// according to a provided mail pointer. returns TRUE if mail was found
+BOOL UpdateReadMailDataStatus(const struct Mail *mail)
+{
+  BOOL result = FALSE;
+
+  ENTER();
+
+  if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+  {
+    // search through our ReadDataList
+    struct MinNode *curNode;
+
+    for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+      if(rmData->mail == mail)
+      {
+        // update the status bar information
+        if(rmData->readWindow != NULL)
+          DoMethod(rmData->readWindow, MUIM_ReadWindow_UpdateStatusBar);
+
+        result = TRUE;
       }
     }
   }
