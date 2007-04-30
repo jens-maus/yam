@@ -7629,3 +7629,6 @@ Datum
 MSG_RE_HDR_SUBJECT
 Betreff
 ;
+MSG_CO_MIMECMD_PUBSCREEN
+%p  Name von YAMs öffentlichem Bildschirm
+;

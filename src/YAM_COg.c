@@ -845,6 +845,7 @@ static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, const
       case VPM_MIME_COMMAND:
       {
          DoMethod(lv, MUIM_List_InsertSingle, tr(MSG_CO_MIMECMD_PARAMETER), MUIV_List_Insert_Bottom);
+         DoMethod(lv, MUIM_List_InsertSingle, tr(MSG_CO_MIMECMD_PUBSCREEN), MUIV_List_Insert_Bottom);
       }
       break;
     }

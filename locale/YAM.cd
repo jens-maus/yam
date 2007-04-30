@@ -6191,3 +6191,6 @@ Subject
 MSG_RE_VIRTUALMAIL (1921//)
 Virtual Mail
 ;
+MSG_CO_MIMECMD_PUBSCREEN (1922//)
+%p  Name of YAM's public screen
+;
