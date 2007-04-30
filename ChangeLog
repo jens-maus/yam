@@ -14,6 +14,9 @@ $URL$
 
 2007-04-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: modified DeleteZombieFiles() to not use an additional temporary
+    list but just remove the successfully deleted files from the list and keep
+    all the others. The filename memory is now freed, too.
   * YAM.c, YAM_UT.c, YAM_RE.c: implemented a list of zombie files. Such files
     emerge if for example an attached picture is shown by MultiView and the read
     window is closed before MultiView released the file. Before these files

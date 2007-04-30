@@ -2465,7 +2465,7 @@ void AddZombieFile(const char *fileName)
     {
       AddTail((struct List *)&G->zombieFileList, (struct Node *)&zombie->node);
       // trigger the retry mechanism in 5 minutes
-      TC_Restart(TIO_DELETEZOMBIEFILES, 5 * 60, 0);
+      TC_Restart(TIO_DELETEZOMBIEFILES, 10, 0);
     }
     else
       free(zombie);
@@ -2484,32 +2484,28 @@ BOOL DeleteZombieFiles(BOOL force)
 
   if(IsMinListEmpty(&G->zombieFileList) == FALSE)
   {
-    struct ZombieFile *zombie;
-    struct MinList tmpList;
+    struct MinNode *curNode;
 
-    NewList((struct List *)&tmpList);
-
-    while((zombie = (struct ZombieFile *)RemHead((struct List *)&G->zombieFileList)) != NULL)
+    for(curNode = G->zombieFileList.mlh_Head; curNode->mln_Succ; )
     {
+      struct ZombieFile *zombie = (struct ZombieFile *)curNode;
+
+      // save the pointer to the next zombie first, as we probably are going to Remove() this node later
+      curNode = curNode->mln_Succ;
+
       // try again to delete the file
       if(!DeleteFile(zombie->fileName) && force == FALSE)
       {
         // deleting failed again, but we are allowed to retry
-        AddTail((struct List *)&tmpList, (struct Node *)&zombie->node);
+        listCleared = FALSE;
       }
       else
+      {
+        // remove and free this node
+        Remove((struct Node *)zombie);
+        free(zombie->fileName);
         free(zombie);
-    }
-
-    // check if we have to retry some file
-    // if clearing of the list was enforced, then this temporary list will always be empty
-    if(IsMinListEmpty(&tmpList) == FALSE)
-    {
-      // move all retryable files back to the global zombie file list
-      while((zombie = (struct ZombieFile *)RemHead((struct List *)&tmpList)) != NULL)
-        AddTail((struct List *)&G->zombieFileList, (struct Node *)&zombie->node);
-
-      listCleared = FALSE;
+      }
     }
   }
 
