@@ -458,6 +458,24 @@ static void BuildCommandString(char *command, const size_t commandLen, const cha
                   strlcat(command, "\"", commandLen);
               }
               break;
+
+              // if another '%' is found we just put one
+              // into our command string
+              case '%':
+              {
+                char tmp[2];
+
+                tmp[0] = '%';
+                tmp[1] = '\0';
+                strlcat(command, tmp, commandLen);
+              }
+              break;
+
+              // unknown '%X' sequences will be ignored and
+              // not put in our destination command string
+              default:
+                // nothing
+              break;
             }
           }
         }
