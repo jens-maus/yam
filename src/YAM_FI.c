@@ -1949,6 +1949,7 @@ static struct FI_ClassData *FI_New(void)
                   End,
                End,
                Child, VGroup, GroupFrameT(tr(MSG_FI_FindWhat)),
+                  Child, VSpace(0),
                   Child, data->GUI.GR_SEARCH = SearchControlGroupObject,
                     MUIA_SearchControlGroup_RemoteFilterMode, FALSE,
                   End,
@@ -1967,11 +1968,15 @@ static struct FI_ClassData *FI_New(void)
                      End,
                      Child, bt_torule = MakeButton(tr(MSG_FI_AddAsFilter)),
                   End,
+                  Child, VSpace(0),
                End,
             End,
+            Child, BalanceObject,
+            End,
             Child, VGroup, GroupFrameT(tr(MSG_FI_Results)),
+               MUIA_Weight, 300,
                Child, NListviewObject,
-                  MUIA_CycleChain,  TRUE,
+                  MUIA_CycleChain, TRUE,
                   MUIA_NListview_NList, data->GUI.LV_MAILS = MainMailListObject,
                      MUIA_NList_Format, "COL=8 W=-1 BAR, COL=1 MICW=20 BAR,COL=3 MICW=16 BAR,COL=4 MICW=9 MACW=15 BAR,COL=7 MICW=9 MACW=15 BAR,COL=5 W=-1 MACW=9 P=\33r BAR",
                      MUIA_ContextMenu,  NULL,
@@ -2036,3 +2041,4 @@ static struct FI_ClassData *FI_New(void)
    return NULL;
 }
 ///
+

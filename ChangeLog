@@ -7,6 +7,8 @@ $URL$
 
 2007-04-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c: put a balancing bar between the upper part and the result list in
+    in the find window.
   * YAM_RE.c: reimplemented the MIME command string generation to respect the
     new %p placeholder.
   * YAM_COg.c, locale/YAM.cd, locale/deutsch.ct: MIME command strings now can be
