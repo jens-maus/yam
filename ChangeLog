@@ -7,6 +7,8 @@ $URL$
 
 2007-04-30  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_FI.c: fixed vertical weight factor so that the find window comes up with
+    a minimized folder list group.
   * YAM_RE.c: the new BuildCommandString() function will now replace "%%" with
     a single '%' character to allow to forward a single % char.
 

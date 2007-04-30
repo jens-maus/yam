@@ -1933,7 +1933,7 @@ static struct FI_ClassData *FI_New(void)
          MUIA_Window_ID, MAKE_ID('F','I','N','D'),
          WindowContents, VGroup,
             Child, HGroup,
-               MUIA_VertWeight, 0,
+               MUIA_VertWeight, 1,
                Child, VGroup, GroupFrameT(tr(MSG_FI_FindIn)),
                   Child, ListviewObject,
                      MUIA_Listview_Input, TRUE,
