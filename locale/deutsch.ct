@@ -7629,15 +7629,24 @@ Datum
 MSG_RE_HDR_SUBJECT
 Betreff
 ;
+MSG_RE_VIRTUALMAIL
+Virtuelle Nachricht
+;
 MSG_CO_MIMECMD_PUBSCREEN
 %p  Name von YAMs öffentlichem Bildschirm
 ;
 MSG_ER_ZOMBIE_FILES_EXIST
-Es konnten nicht alle Zombiedateien gelöscht werden!\n\
+YAM war nicht in der Lage während des Beendens alle\n\
+temporär generierten Dateien zu löschen. Diese werden\n\
+event. von anderen Programmen zur Zeit benutzt.\n\
 \n\
-Bitte beenden Sie alle Anzeigeprogramme wie z.B. MultiView,\n\
-bevor Sie YAM beenden.
+Bitte stellen Sie sicher das sie alle Programme die sie\n\
+von YAM aus gestartet haben (z.B. Multiview) beendet\n\
+sind.
 ;
 MSG_ER_ZOMBIE_FILES_EXIST_BT
-_Nochmal versuchen|_Ignorieren
+_Wiederholen|_Ignorieren
+;
+MSG_ER_ZOMBIE_FILES_EXIST_TITLE
+YAM Warnung
 ;

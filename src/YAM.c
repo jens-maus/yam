@@ -1345,10 +1345,12 @@ static void Terminate(void)
 
     do
     {
-      if(MUI_Request(G->App, NULL, MUIF_NONE, NULL,
+      if(MUI_Request(G->App, NULL, MUIF_NONE, tr(MSG_ER_ZOMBIE_FILES_EXIST_TITLE),
                                               tr(MSG_ER_ZOMBIE_FILES_EXIST_BT),
                                               tr(MSG_ER_ZOMBIE_FILES_EXIST)) == 0)
+      {
         ignore = TRUE;
+      }
     }
     while(DeleteZombieFiles(ignore) == FALSE);
   }

@@ -7,6 +7,8 @@ $URL$
 
 2007-04-30  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.cd: added a title and more descriptive explaination for the "zombie files"
+    warning requester.
   * YAM_CO.c: changed the default shot header configuration to also show the
     carbon copy (Cc) and blind carbon copy (Bcc) recipient addresses.
   * YAM_FI.c: fixed vertical weight factor so that the find window comes up with
