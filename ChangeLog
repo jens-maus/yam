@@ -14,6 +14,9 @@ $URL$
 
 2007-04-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, locale/YAM.cd, locale/deutsch.ct: if some zombie files could not be
+    deleted upon quitting a requester will now inform the user about that fact.
+    Pressing "Ignore" here will silently keep all still existing zombie files.
   * YAM_UT.c: modified DeleteZombieFiles() to not use an additional temporary
     list but just remove the successfully deleted files from the list and keep
     all the others. The filename memory is now freed, too.

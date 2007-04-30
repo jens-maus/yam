@@ -6194,3 +6194,12 @@ Virtual Mail
 MSG_CO_MIMECMD_PUBSCREEN (1922//)
 %p  Name of YAM's public screen
 ;
+MSG_ER_ZOMBIE_FILES_EXIST (1923//)
+Could not delete all zombie files!\n\
+\n\
+Please quit all programs like MultiView\n\
+before quitting YAM.
+;
+MSG_ER_ZOMBIE_FILES_EXIST_BT (1924//)
+_Retry|_Ignore
+;

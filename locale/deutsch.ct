@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (16.04.2007)
+## version $VER: YAM.catalog 6.0 (30.04.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -7631,4 +7631,13 @@ Betreff
 ;
 MSG_CO_MIMECMD_PUBSCREEN
 %p  Name von YAMs öffentlichem Bildschirm
+;
+MSG_ER_ZOMBIE_FILES_EXIST
+Es konnten nicht alle Zombiedateien gelöscht werden!\n\
+\n\
+Bitte beenden Sie alle Anzeigeprogramme wie z.B. MultiView,\n\
+bevor Sie YAM beenden.
+;
+MSG_ER_ZOMBIE_FILES_EXIST_BT
+_Nochmal versuchen|_Ignorieren
 ;

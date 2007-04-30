@@ -1338,6 +1338,21 @@ static void Terminate(void)
   if(G->HideIcon)
     FreeDiskObject(G->HideIcon);
 
+  D(DBF_STARTUP, "deleting zombie files...");
+  if(DeleteZombieFiles(FALSE) == FALSE)
+  {
+    BOOL ignore = FALSE;
+
+    do
+    {
+      if(MUI_Request(G->App, NULL, MUIF_NONE, NULL,
+                                              tr(MSG_ER_ZOMBIE_FILES_EXIST_BT),
+                                              tr(MSG_ER_ZOMBIE_FILES_EXIST)) == 0)
+        ignore = TRUE;
+    }
+    while(DeleteZombieFiles(ignore) == FALSE);
+  }
+
   D(DBF_STARTUP, "freeing main application object...");
   if(G->App)
     MUI_DisposeObject(G->App);
@@ -1348,9 +1363,6 @@ static void Terminate(void)
     if(G->DiskObj[i])
       FreeDiskObject(G->DiskObj[i]);
   }
-
-  D(DBF_STARTUP, "deleting zombie files...");
-  DeleteZombieFiles(TRUE);
 
   D(DBF_STARTUP, "freeing toolbar cache...");
   ToolbarCacheCleanup();
