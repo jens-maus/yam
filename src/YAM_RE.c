@@ -359,6 +359,135 @@ void RE_PrintFile(char *filename)
 }
 
 ///
+/// BuildCommandString
+// sets up a complete MIME command string, substituting place holders if necessary
+static void BuildCommandString(char *command, const size_t commandLen, const char *format, const char *file)
+{
+  const char *p;
+
+  ENTER();
+
+  command[0] = '\0';
+
+  if((p = format) != NULL)
+  {
+    char c;
+    BOOL hasQuotes = FALSE;
+
+    D(DBF_MIME, "building command string of '%s'", format);
+
+    while((c = *p++) != '\0')
+    {
+      switch(c)
+      {
+        case '%':
+        {
+          // check if the next character does exist at all
+          if((c = *p) != '\0')
+          {
+            // now we can advance our pointer
+            p++;
+
+            // handle the possible options
+            switch(c)
+            {
+              case 'p':
+              {
+                // insert the public screen name
+                char pubScreenName[MAXPUBSCREENNAME + 1];
+                struct Screen *screen;
+
+                // The public screen name is determined by looking at the screen on which YAM's main
+                // window is located on. The Workbench screen is used as a fallback if no other valid
+                // name can be obtained.
+                strlcpy(pubScreenName, "Workbench", sizeof(pubScreenName));
+
+                if((screen = (struct Screen *)xget(G->MA->GUI.WI, MUIA_Window_Screen)) != NULL)
+                {
+                  // try to get the public screen name
+                  #if defined(__amigaos4__)
+                  // this very handy function is OS4 only
+                  if(GetScreenAttr(screen, SA_PubName, pubScreenName, sizeof(pubScreenName)) == 0)
+                  {
+                    // GetScreenAttr() failed, we copy the default name again, just in case the function changed anything
+                    strlcpy(pubScreenName, "Workbench", sizeof(pubScreenName));
+                  }
+                  #else
+                  struct List *pubScreenList;
+
+                  // on all other systems we have to obtain the public screen name in the hard way
+                  // first get the list of all public screens
+                  if((pubScreenList = LockPubScreenList()) != NULL)
+                  {
+                    struct PubScreenNode *psn;
+
+                    // then iterate through this list
+                    for(psn = (struct PubScreenNode *)pubScreenList->lh_Head; psn->psn_Node.ln_Succ != NULL; psn = (struct PubScreenNode *)psn->psn_Node.ln_Succ)
+                    {
+                      // check if we found YAM's own screen
+                      if(psn->psn_Screen == screen)
+                      {
+                        // copy the name and get out of the loop
+                        strlcpy(pubScreenName, psn->psn_Node.ln_Name, sizeof(pubScreenName));
+                        break;
+                      }
+                    }
+
+                    // unlock the list again
+                    UnlockPubScreenList();
+                  }
+                  #endif
+                }
+
+                // insert the public screen name
+                if(!hasQuotes)
+                  strlcat(command, "\"", commandLen);
+                strlcat(command, pubScreenName, commandLen);
+                if(!hasQuotes)
+                  strlcat(command, "\"", commandLen);
+              }
+              break;
+
+              case 's':
+              {
+                // insert the filename
+                if(!hasQuotes)
+                  strlcat(command, "\"", commandLen);
+                strlcat(command, file, commandLen);
+                if(!hasQuotes)
+                  strlcat(command, "\"", commandLen);
+              }
+              break;
+            }
+          }
+        }
+        break;
+
+        case '"':
+        {
+          // remember that the user put some quotes in the command string himself
+          hasQuotes = !hasQuotes;
+        }
+        // continue
+
+        default:
+        {
+          char tmp[2];
+
+          tmp[0] = c;
+          tmp[1] = '\0';
+          strlcat(command, tmp, commandLen);
+        }
+        break;
+      }
+    }
+  }
+
+  D(DBF_MIME, "built command string '%s'", command);
+
+  LEAVE();
+}
+///
 /// RE_DisplayMIME
 //  Displays a message part (attachment) using a MIME viewer
 void RE_DisplayMIME(char *fname, const char *ctype)
@@ -465,13 +594,12 @@ void RE_DisplayMIME(char *fname, const char *ctype)
   else
   {
     static char command[SIZE_COMMAND+SIZE_PATHFILE];
-    char *fileptr;
     char *cmdPtr;
 
     // if we still didn't found the correct mime type or the command line of the
     // current mime type is empty we use the default mime viewer specified in
     // the YAM configuration.
-    if(!mt || mt->Command[0] == '\0')
+    if(mt == NULL || mt->Command[0] == '\0')
     {
       cmdPtr = C->DefaultMimeViewer;
 
@@ -505,82 +633,11 @@ void RE_DisplayMIME(char *fname, const char *ctype)
     else
       cmdPtr = mt->Command;
 
-    D(DBF_MIME, "compiling command sequence of '%s'", cmdPtr);
+    // set up the command string
+    BuildCommandString(command, sizeof(command), cmdPtr, GetRealPath(fname));
 
-    // now we have to generate a real commandstring and make sure that
-    // the %s is covered with "" or otherwise we will run into trouble with
-    // the execute and pathes that have whitespaces.
-    if((fileptr = strstr(cmdPtr, "%s")))
-    {
-      char *startPtr = fileptr;
-      char *endPtr = fileptr;
-
-      // lets see if the %s is surrounded by some "" and find the beginning where
-      // we should place the quotation marks
-
-      // we first move back until we find whitespace or a quotation mark
-      do
-      {
-        if(*startPtr == ' ' || startPtr == &cmdPtr[0])
-        {
-          startPtr++;
-          break;
-        }
-        else if(*startPtr == '"')
-        {
-          startPtr = NULL;
-          break;
-        }
-
-      }
-      while(startPtr--);
-
-      if(startPtr)
-      {
-        // then we search for the end where we should put the closing quotation mark
-        do
-        {
-          if(*endPtr == ' ' || *endPtr == '\0') break;
-          else if(*endPtr == '"')
-          {
-            endPtr = NULL;
-            break;
-          }
-
-        }
-        while(endPtr++);
-      }
-
-      // if we found the start and endPtr we can place the quotation marks there
-      // by copying the whole string in a buffer.
-      if(startPtr && endPtr)
-      {
-        char realcmd[SIZE_COMMAND];
-        int i,j;
-
-        for(i=0,j=0; ;i++,j++)
-        {
-          // if this is the start or end we place the first quotation mark
-          if(&cmdPtr[j] == startPtr || &cmdPtr[j] == endPtr)
-            realcmd[i++] = '"';
-
-          realcmd[i] = cmdPtr[j];
-
-          if(cmdPtr[j] == '\0')
-            break;
-        }
-
-        snprintf(command, sizeof(command), realcmd, GetRealPath(fname));
-      }
-      else
-        snprintf(command, sizeof(command), cmdPtr, GetRealPath(fname));
-
-      D(DBF_MIME, "executing '%s'", command);
-
-      ExecuteCommand(command, TRUE, OUT_NIL);
-    }
-    else
-      ExecuteCommand(cmdPtr, TRUE, OUT_NIL);
+    // execute the command
+    ExecuteCommand(command, TRUE, OUT_NIL);
   }
 
   LEAVE();
@@ -4406,3 +4463,4 @@ BOOL UpdateReadMailDataStatus(const struct Mail *mail)
   return result;
 }
 ///
+

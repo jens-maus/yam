@@ -7,6 +7,8 @@ $URL$
 
 2007-04-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE.c: reimplemented the MIME command string generation to respect the
+    new %p placeholder.
   * YAM_COg.c, locale/YAM.cd, locale/deutsch.ct: MIME command strings now can be
     enriched with %p as a placeholder for YAM's public screen name.
   * ReadWindowStatusBar.c: fixed a possible NULL pointer access.
