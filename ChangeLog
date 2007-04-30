@@ -7,6 +7,7 @@ $URL$
 
 2007-04-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: code cleanup according to the STYLEGUIDE.
   * YAM_FI.c: put a balancing bar between the upper part and the result list in
     in the find window.
   * YAM_RE.c: reimplemented the MIME command string generation to respect the

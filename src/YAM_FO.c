@@ -186,87 +186,123 @@ BOOL FO_SetCurrentFolder(struct Folder *fo)
 //  Finds a folder by its name, type or position
 struct Folder *FO_GetFolderRexx(char *arg, int *pos)
 {
-   int i, j, k = 0, nr = 0;
-   struct Folder *fo = NULL, **flist;
-   char *p = arg;
-   BOOL numeric = TRUE;
+  struct Folder *fo = NULL;
+  struct Folder **flist;
 
-   if ((flist = FO_CreateList()))
-   {
-      // lets find out if the user wants to have the folder identified by it`s position
-      while (*p) if (!isdigit((int)*p++)) numeric = FALSE;
+  ENTER();
 
-      // if this is a numeric search we go on.
-      if(numeric)
+  if((flist = FO_CreateList()) != NULL)
+  {
+    int nr = 0;
+    char *p = arg;
+    BOOL numeric = TRUE;
+
+    // lets find out if the user wants to have the folder identified by it`s position
+    while(*p != '\0')
+    {
+      int c = (int)*p++;
+
+      if(!isdigit(c))
       {
-        if((i = atoi(arg)) >= 0 && i < (int)*flist)
+        numeric = FALSE;
+        break;
+      }
+    }
+
+    // if this is a numeric search we go on.
+    if(numeric)
+    {
+      int i = atoi(arg);
+      int k = 0;
+
+      if(i >= 0 && i < (int)*flist)
+      {
+        int j;
+
+        for(j = 1; j <= (int)*flist; j++)
         {
-          for(j = 1; j <= (int)*flist; j++)
+          // if the current one is a FT_GROUP we go to the next one until we find
+          // the correct one
+          if(isGroupFolder(flist[j]) == FALSE)
           {
-            // if the current one is a FT_GROUP we go to the next one until we find
-            // the correct one
-            if(isGroupFolder(flist[j]) == FALSE)
+            if(k == i)
             {
-              if(k == i)
-              {
-                nr = j;
-                break;
-              }
-              k++;
+              nr = j;
+              break;
             }
+            k++;
           }
         }
       }
+    }
 
-      // for string folder search
-      if(!nr)
+    // for string folder search
+    if(nr == 0)
+    {
+      int i;
+
+      for(i = 1; i <= (int)*flist; i++)
       {
-        for(i=1; i <= (int)*flist; i++)
+        if((!Stricmp(arg, flist[i]->Name) && !isGroupFolder(flist[i]))    ||
+           (!stricmp(arg, FolderName[FT_INCOMING]) && isIncomingFolder(flist[i]))  ||
+           (!stricmp(arg, FolderName[FT_OUTGOING]) && isOutgoingFolder(flist[i]))  ||
+           (!stricmp(arg, FolderName[FT_SENT]) && isSentFolder(flist[i]))      ||
+           (!stricmp(arg, FolderName[FT_TRASH]) && isTrashFolder(flist[i]))   ||
+           (!stricmp(arg, FolderName[FT_SPAM]) && isSpamFolder(flist[i])))
         {
-          if((!Stricmp(arg, flist[i]->Name) && !isGroupFolder(flist[i]))    ||
-             (!stricmp(arg, FolderName[FT_INCOMING]) && isIncomingFolder(flist[i]))  ||
-             (!stricmp(arg, FolderName[FT_OUTGOING]) && isOutgoingFolder(flist[i]))  ||
-             (!stricmp(arg, FolderName[FT_SENT]) && isSentFolder(flist[i]))      ||
-             (!stricmp(arg, FolderName[FT_TRASH]) && isTrashFolder(flist[i]))   ||
-             (!stricmp(arg, FolderName[FT_SPAM]) && isSpamFolder(flist[i])))
-          {
-            nr = i;
-            break;
-          }
+          nr = i;
+          break;
         }
       }
+    }
 
-      if (nr)
-      {
-         fo = flist[nr];
-         if (pos) *pos = --nr;
-      }
-      free(flist);
-   }
-   return fo;
+    if(nr != 0)
+    {
+      fo = flist[nr];
+      if(pos != NULL)
+        *pos = --nr;
+    }
+
+    free(flist);
+  }
+
+  RETURN(fo);
+  return fo;
 }
 ///
 /// FO_GetFolderByAttribute
 //  Generalized find-folder function
 static struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(struct Folder*,void*), void *attr, int *pos)
 {
-   int i;
-   struct Folder *fo = NULL;
-   struct MUI_NListtree_TreeNode *tn;
+  int i;
+  struct Folder *folder = NULL;
 
-   for(i = 0;;i++)
-   {
-      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-      if (!tn) break;
+  ENTER();
 
-      fo = tn->tn_User;
-      if (!fo) break;
+  for(i = 0; ;i++)
+  {
+    struct MUI_NListtree_TreeNode *tn;
 
-      if (cmpf(fo,attr)) break;
-      fo = NULL;
-   }
-   if (pos) *pos = i;
-   return fo;
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
+    {
+      struct Folder *fo;
+
+      if((fo = tn->tn_User) != NULL)
+      {
+        if(cmpf(fo, attr))
+        {
+          folder = fo;
+          break;
+        }
+      }
+    }
+  }
+
+  if(pos != NULL)
+    *pos = i;
+
+  RETURN(folder);
+  return folder;
 }
 ///
 /// FO_GetFolderByType
@@ -278,14 +314,14 @@ struct Folder *FO_GetFolderByType(enum FolderType type, int *pos)
 // comparison function for FO_GetFolderByType
 static BOOL FO_GetFolderByType_cmp(struct Folder *f, enum FolderType *type)
 {
-   return (BOOL)(f->Type == *type);
+  return (BOOL)(f->Type == *type);
 }
 ///
 /// FO_GetFolderByName
 //  Finds a folder by its name
 struct Folder *FO_GetFolderByName(char *name, int *pos)
 {
-   return FO_GetFolderByAttribute((BOOL (*)(struct Folder*,void*))&FO_GetFolderByName_cmp,name,pos);
+  return FO_GetFolderByAttribute((BOOL (*)(struct Folder*,void*))&FO_GetFolderByName_cmp,name,pos);
 }
 // comparison function for FO_GetFolderByName
 static BOOL FO_GetFolderByName_cmp(struct Folder *f, char *name)
@@ -297,7 +333,7 @@ static BOOL FO_GetFolderByName_cmp(struct Folder *f, char *name)
 //  Finds a folder by its path
 struct Folder *FO_GetFolderByPath(char *path, int *pos)
 {
-   return FO_GetFolderByAttribute((BOOL (*)(struct Folder*,void*))&FO_GetFolderByPath_cmp,path,pos);
+  return FO_GetFolderByAttribute((BOOL (*)(struct Folder*,void*))&FO_GetFolderByPath_cmp,path,pos);
 }
 // comparison function for FO_GetFolderByPath
 static BOOL FO_GetFolderByPath_cmp(struct Folder *f, char *path)
@@ -309,19 +345,39 @@ static BOOL FO_GetFolderByPath_cmp(struct Folder *f, char *path)
 //  Gets the position of a folder in the list
 int FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups)
 {
-   int i, j;
-   struct Folder *fo;
-   struct MUI_NListtree_TreeNode *tn;
+  int pos = -1;
+  int i, j;
 
-   for (i=0,j=0;;i++,j++)
-   {
-      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-      if (!tn || !tn->tn_User) return(-1);
+  ENTER();
 
-      fo = tn->tn_User;
-      if(!withGroups && isGroupFolder(fo)) j--;
-      if (fo == findfo) return(j);
-   }
+  for(i = 0, j = 0; ;i++, j++)
+  {
+    struct MUI_NListtree_TreeNode *tn;
+
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
+    {
+      struct Folder *fo;
+
+      if((fo = tn->tn_User) != NULL)
+      {
+        if(withGroups == FALSE && isGroupFolder(fo))
+          j--;
+        if(fo == findfo)
+        {
+          // success
+          pos = j;
+          break;
+        }
+      }
+      else
+        break;
+    }
+    else
+      break;
+  }
+
+  RETURN(pos);
+  return pos;
 }
 ///
 /// FO_GetFolderTreeNode
@@ -383,13 +439,21 @@ BOOL FO_LoadConfig(struct Folder *fo)
       fo->MLSignature  = 1;
       fo->MLSupport    = TRUE;
 
-      while (fgets(buffer, SIZE_LARGE, fh))
+      while(fgets(buffer, sizeof(buffer), fh))
       {
-        char *p, *value;
-        if ((value = strchr(buffer, '='))) for (++value; isspace(*value); value++);
-        if ((p = strpbrk(buffer,"\r\n"))) *p = 0;
-        for (p = buffer; *p && !isspace(*p); p++); *p = 0;
-        if (*buffer && value)
+        char *p;
+        char *value;
+
+        if((value = strchr(buffer, '=')) != NULL)
+          for(++value; isspace(*value); value++);
+
+        if((p = strpbrk(buffer,"\r\n")) != NULL)
+          *p = '\0';
+
+        for(p = buffer; *p != '\0' && !isspace(*p); p++);
+        *p = '\0';
+
+        if(*buffer != '\0' && value != NULL)
         {
           if(!stricmp(buffer, "Name"))              strlcpy(fo->Name, value, sizeof(fo->Name));
           else if(!stricmp(buffer, "MaxAge"))       fo->MaxAge = atoi(value);
@@ -786,39 +850,40 @@ BOOL FO_LoadTree(char *fname)
 //  Loads the images for the folder that should be displayed in the NListtree
 BOOL FO_LoadFolderImages(struct Folder *fo)
 {
-  char fname[SIZE_PATHFILE];
-  Object *lv = G->MA->GUI.NL_FOLDERS;
+  BOOL success = FALSE;
 
   ENTER();
 
   // first we make sure that valid data is underway.
-  if(!fo && fo->ImageIndex < MAX_FOLDERIMG+1)
+  if(fo != NULL)
   {
-    RETURN(FALSE);
-    return FALSE;
+  	if(fo->ImageIndex < MAX_FOLDERIMG + 1)
+  	{
+      char fname[SIZE_PATHFILE];
+      Object *lv = G->MA->GUI.NL_FOLDERS;
+
+      strlcpy(fname, GetFolderDir(fo), sizeof(fname));
+      AddPart(fname, ".fimage", sizeof(fname));
+
+      if(FileExists(fname))
+      {
+        fo->imageObject = ImageAreaObject,
+                            MUIA_ImageArea_Filename, fname,
+                          End;
+
+        // Now we say that this image could be used by this Listtree
+        if(fo->imageObject != NULL)
+          DoMethod(lv, MUIM_NList_UseImage, fo->imageObject, fo->ImageIndex, MUIF_NONE);
+
+        success = TRUE;
+      }
+    }
+    else
+      fo->imageObject = NULL;
   }
 
-  strlcpy(fname, GetFolderDir(fo), sizeof(fname));
-  AddPart(fname, ".fimage", sizeof(fname));
-
-  if(FileExists(fname))
-  {
-    fo->imageObject = ImageAreaObject,
-                        MUIA_ImageArea_Filename, fname,
-                      End;
-
-    // Now we say that this image could be used by this Listtree
-    if(fo->imageObject != NULL)
-      DoMethod(lv, MUIM_NList_UseImage, fo->imageObject, fo->ImageIndex, MUIF_NONE);
-
-    RETURN(TRUE);
-    return TRUE;
-  }
-  else
-    fo->imageObject = NULL;
-
-  RETURN(FALSE);
-  return FALSE;
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -833,10 +898,12 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
   APTR lv = G->MA->GUI.NL_FOLDERS;
   int i;
 
+  ENTER();
+
   // The root-Treenode is the subtree at the start
   tn_root = subtree;
 
-  for (i = 0;; i++)
+  for(i = 0;; i++)
   {
     if(tn_root == MUIV_NListtree_GetEntry_ListNode_Root)
     {
@@ -859,7 +926,8 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
     if (!tn || tn_parent != subtree)
     {
       // if we reach here it`s just the end of a GROUP
-      if(!noendgroup) fputs("@ENDGROUP\n", fh);
+      if(!noendgroup)
+        fputs("@ENDGROUP\n", fh);
 
       break;
     }
@@ -883,6 +951,7 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
     }
   }
 
+  RETURN(success);
   return success;
 }
 
@@ -891,19 +960,18 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
 //  Saves folder list to a file
 BOOL FO_SaveTree(char *fname)
 {
-  BOOL success = TRUE;
+  BOOL success = FALSE;
   FILE *fh;
 
   ENTER();
 
-  if((fh = fopen(fname, "w")))
+  if((fh = fopen(fname, "w")) != NULL)
   {
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     fputs("YFO1 - YAM Folders\n", fh);
 
-    if(!FO_SaveSubTree(fh, MUIV_NListtree_GetEntry_ListNode_Root))
-      success = FALSE;
+    success = FO_SaveSubTree(fh, MUIV_NListtree_GetEntry_ListNode_Root);
 
     fclose(fh);
   }
@@ -919,34 +987,48 @@ BOOL FO_SaveTree(char *fname)
 //  Moves a folder to a new directory
 static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 {
-   struct Mail *mail;
-   char srcbuf[SIZE_PATHFILE], dstbuf[SIZE_PATHFILE];
-   BOOL success = TRUE;
-   int i;
+  struct Mail *mail;
+  char srcbuf[SIZE_PATHFILE], dstbuf[SIZE_PATHFILE];
+  BOOL success = TRUE;
+  int i;
 
-   BusyGauge(tr(MSG_BusyMoving), itoa(fo->Total), fo->Total);
-   strlcpy(srcbuf, GetFolderDir(oldfo), sizeof(srcbuf));
-   strlcpy(dstbuf, GetFolderDir(fo), sizeof(dstbuf));
+  ENTER();
 
-   for(i = 0, mail = fo->Messages; mail && success; mail = mail->Next, i++)
-   {
-      BusySet(i+1);
-      GetMailFile(dstbuf, fo, mail);
-      GetMailFile(srcbuf, oldfo, mail);
+  BusyGauge(tr(MSG_BusyMoving), itoa(fo->Total), fo->Total);
+  strlcpy(srcbuf, GetFolderDir(oldfo), sizeof(srcbuf));
+  strlcpy(dstbuf, GetFolderDir(fo), sizeof(dstbuf));
 
-      if(MoveFile(srcbuf, dstbuf))
-        RepackMailFile(mail, fo->Mode, fo->Password);
-      else
-        success = FALSE;
-   }
+  for(i = 0, mail = fo->Messages; mail && success; mail = mail->Next, i++)
+  {
+    BusySet(i+1);
+    GetMailFile(dstbuf, fo, mail);
+    GetMailFile(srcbuf, oldfo, mail);
 
-   if(success)
-   {
-      // now we try to move an existing .index file
+    if(MoveFile(srcbuf, dstbuf))
+      RepackMailFile(mail, fo->Mode, fo->Password);
+    else
+      success = FALSE;
+  }
+
+  if(success)
+  {
+    // now we try to move an existing .index file
+    strlcpy(srcbuf, GetFolderDir(oldfo), sizeof(srcbuf));
+    AddPart(srcbuf, ".index", sizeof(srcbuf));
+    strlcpy(dstbuf, GetFolderDir(fo), sizeof(dstbuf));
+    AddPart(dstbuf, ".index", sizeof(dstbuf));
+
+    if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
+    {
+      success = FALSE;
+    }
+    else
+    {
+      // now we try to mvoe the .fimage file aswell
       strlcpy(srcbuf, GetFolderDir(oldfo), sizeof(srcbuf));
-      AddPart(srcbuf, ".index", sizeof(srcbuf));
+      AddPart(srcbuf, ".fimage", sizeof(srcbuf));
       strlcpy(dstbuf, GetFolderDir(fo), sizeof(dstbuf));
-      AddPart(dstbuf, ".index", sizeof(dstbuf));
+      AddPart(dstbuf, ".fimage", sizeof(dstbuf));
 
       if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
       {
@@ -954,29 +1036,19 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
       }
       else
       {
-        // now we try to mvoe the .fimage file aswell
-        strlcpy(srcbuf, GetFolderDir(oldfo), sizeof(srcbuf));
-        AddPart(srcbuf, ".fimage", sizeof(srcbuf));
-        strlcpy(dstbuf, GetFolderDir(fo), sizeof(dstbuf));
-        AddPart(dstbuf, ".fimage", sizeof(dstbuf));
-
-        if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
-        {
-          success = FALSE;
-        }
-        else
-        {
-          // if we were able to successfully move all files
-          // we can also delete the source directory. However,
-          // we are NOT doing any error checking here as the
-          // source may be a VOLUME and as such not deleteable
-          DeleteMailDir(GetFolderDir(oldfo), FALSE);
-        }
+        // if we were able to successfully move all files
+        // we can also delete the source directory. However,
+        // we are NOT doing any error checking here as the
+        // source may be a VOLUME and as such not deleteable
+        DeleteMailDir(GetFolderDir(oldfo), FALSE);
       }
-   }
+    }
+  }
 
-   BusyEnd();
-   return success;
+  BusyEnd();
+
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -984,30 +1056,30 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 //  Sets password for a protected folder
 static BOOL FO_EnterPassword(struct Folder *fo)
 {
-   char passwd[SIZE_PASSWORD], passwd2[SIZE_PASSWORD];
+  char passwd[SIZE_PASSWORD], passwd2[SIZE_PASSWORD];
 
-   for(*passwd = 0;;)
-   {
-      *passwd = *passwd2 = 0;
+  for(*passwd = 0;;)
+  {
+    *passwd = *passwd2 = 0;
 
-      if(!StringRequest(passwd, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_ChangeFolderPass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->FO->GUI.WI))
-        return FALSE;
+    if(!StringRequest(passwd, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_ChangeFolderPass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->FO->GUI.WI))
+      return FALSE;
 
-      if(*passwd && !StringRequest(passwd2, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_RetypePass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->FO->GUI.WI))
-        return FALSE;
+    if(*passwd && !StringRequest(passwd2, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_RetypePass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->FO->GUI.WI))
+      return FALSE;
 
-      if(!Stricmp(passwd, passwd2))
-        break;
-      else
-        DisplayBeep(NULL);
-   }
+    if(!Stricmp(passwd, passwd2))
+      break;
+    else
+      DisplayBeep(NULL);
+  }
 
-   if(!*passwd)
-     return FALSE;
+  if(!*passwd)
+    return FALSE;
 
-   strlcpy(fo->Password, passwd, sizeof(fo->Password));
+  strlcpy(fo->Password, passwd, sizeof(fo->Password));
 
-   return TRUE;
+  return TRUE;
 }
 
 ///
@@ -1015,75 +1087,79 @@ static BOOL FO_EnterPassword(struct Folder *fo)
 //  Fills form with data from folder structure
 static void FO_GetFolder(struct Folder *folder)
 {
-   struct FO_GUIData *gui = &G->FO->GUI;
-   BOOL isdefault = isDefaultFolder(folder);
-   static const int type2cycle[9] = { FT_CUSTOM, FT_CUSTOM, FT_INCOMING, FT_INCOMING, FT_OUTGOING, -1, FT_INCOMING, FT_OUTGOING, FT_CUSTOM };
-   int i;
+  struct FO_GUIData *gui = &G->FO->GUI;
+  BOOL isdefault = isDefaultFolder(folder);
+  static const int type2cycle[9] = { FT_CUSTOM, FT_CUSTOM, FT_INCOMING, FT_INCOMING, FT_OUTGOING, -1, FT_INCOMING, FT_OUTGOING, FT_CUSTOM };
+  int i;
 
-   set(gui->ST_FNAME,  MUIA_String_Contents, folder->Name);
-   set(gui->ST_FPATH,  MUIA_String_Contents, folder->Path);
-   set(gui->NM_MAXAGE, MUIA_Numeric_Value,   folder->MaxAge);
+  ENTER();
 
-   SetAttrs(gui->CY_FTYPE,  MUIA_Cycle_Active, type2cycle[folder->Type],
-                            MUIA_Disabled,     isdefault,
-                            TAG_DONE);
+  set(gui->ST_FNAME,  MUIA_String_Contents, folder->Name);
+  set(gui->ST_FPATH,  MUIA_String_Contents, folder->Path);
+  set(gui->NM_MAXAGE, MUIA_Numeric_Value,   folder->MaxAge);
 
-   SetAttrs(gui->CY_FMODE,  MUIA_Cycle_Active, folder->Mode,
-                            MUIA_Disabled,     isdefault,
-                            TAG_DONE);
+  SetAttrs(gui->CY_FTYPE,  MUIA_Cycle_Active, type2cycle[folder->Type],
+                           MUIA_Disabled,     isdefault,
+                           TAG_DONE);
 
-   for (i = 0; i < 2; i++)
-   {
-      set(gui->CY_SORT[i], MUIA_Cycle_Active, (folder->Sort[i] < 0 ? -folder->Sort[i] : folder->Sort[i])-1);
-      set(gui->CH_REVERSE[i], MUIA_Selected, folder->Sort[i] < 0);
-   }
+  SetAttrs(gui->CY_FMODE,  MUIA_Cycle_Active, folder->Mode,
+                           MUIA_Disabled,     isdefault,
+                           TAG_DONE);
 
-   set(gui->CH_STATS,       MUIA_Selected, folder->Stats);
-   set(gui->BT_AUTODETECT,  MUIA_Disabled, !folder->MLSupport || isdefault);
+  for(i = 0; i < 2; i++)
+  {
+    set(gui->CY_SORT[i], MUIA_Cycle_Active, (folder->Sort[i] < 0 ? -folder->Sort[i] : folder->Sort[i])-1);
+    set(gui->CH_REVERSE[i], MUIA_Selected, folder->Sort[i] < 0);
+  }
 
-   SetAttrs(gui->ST_HELLOTEXT,
-            MUIA_String_Contents, folder->WriteIntro,
-            TAG_DONE);
+  set(gui->CH_STATS,       MUIA_Selected, folder->Stats);
+  set(gui->BT_AUTODETECT,  MUIA_Disabled, !folder->MLSupport || isdefault);
 
-   SetAttrs(gui->ST_BYETEXT,
-            MUIA_String_Contents, folder->WriteGreetings,
-            TAG_DONE);
+  SetAttrs(gui->ST_HELLOTEXT,
+           MUIA_String_Contents, folder->WriteIntro,
+           TAG_DONE);
 
-   // for ML-Support
-   SetAttrs(gui->CH_MLSUPPORT,
-            MUIA_Selected, isdefault ? FALSE : folder->MLSupport,
-            MUIA_Disabled, isdefault,
-            TAG_DONE);
+  SetAttrs(gui->ST_BYETEXT,
+           MUIA_String_Contents, folder->WriteGreetings,
+           TAG_DONE);
 
-   SetAttrs(gui->ST_MLADDRESS,
-            MUIA_String_Contents, folder->MLAddress,
-            MUIA_Disabled, !folder->MLSupport || isdefault,
-            TAG_DONE);
+  // for ML-Support
+  SetAttrs(gui->CH_MLSUPPORT,
+           MUIA_Selected, isdefault ? FALSE : folder->MLSupport,
+           MUIA_Disabled, isdefault,
+           TAG_DONE);
 
-   SetAttrs(gui->ST_MLPATTERN,
-            MUIA_String_Contents, folder->MLPattern,
-            MUIA_Disabled, !folder->MLSupport || isdefault,
-            TAG_DONE);
+  SetAttrs(gui->ST_MLADDRESS,
+           MUIA_String_Contents, folder->MLAddress,
+           MUIA_Disabled, !folder->MLSupport || isdefault,
+           TAG_DONE);
 
-   SetAttrs(gui->ST_MLFROMADDRESS,
-            MUIA_String_Contents, folder->MLFromAddress,
-            MUIA_Disabled, !folder->MLSupport || isdefault,
-            TAG_DONE);
+  SetAttrs(gui->ST_MLPATTERN,
+           MUIA_String_Contents, folder->MLPattern,
+           MUIA_Disabled, !folder->MLSupport || isdefault,
+           TAG_DONE);
 
-   SetAttrs(gui->ST_MLREPLYTOADDRESS,
-            MUIA_String_Contents, folder->MLReplyToAddress,
-            MUIA_Disabled, !folder->MLSupport || isdefault,
-            TAG_DONE);
+  SetAttrs(gui->ST_MLFROMADDRESS,
+           MUIA_String_Contents, folder->MLFromAddress,
+           MUIA_Disabled, !folder->MLSupport || isdefault,
+           TAG_DONE);
 
-   SetAttrs(gui->CY_MLSIGNATURE,
-            MUIA_Cycle_Active,    folder->MLSignature,
-            MUIA_Disabled, !folder->MLSupport || isdefault,
-            TAG_DONE);
+  SetAttrs(gui->ST_MLREPLYTOADDRESS,
+           MUIA_String_Contents, folder->MLReplyToAddress,
+           MUIA_Disabled, !folder->MLSupport || isdefault,
+           TAG_DONE);
 
-   // we make sure the window is at the front if it
-   // is already open
-   if(xget(G->FO->GUI.WI, MUIA_Window_Open))
-     DoMethod(G->FO->GUI.WI, MUIM_Window_ToFront);
+  SetAttrs(gui->CY_MLSIGNATURE,
+           MUIA_Cycle_Active,    folder->MLSignature,
+           MUIA_Disabled, !folder->MLSupport || isdefault,
+           TAG_DONE);
+
+  // we make sure the window is at the front if it
+  // is already open
+  if(xget(G->FO->GUI.WI, MUIA_Window_Open))
+    DoMethod(G->FO->GUI.WI, MUIM_Window_ToFront);
+
+  LEAVE();
 }
 
 ///
@@ -1146,25 +1222,30 @@ static void FO_PutFolder(struct Folder *folder)
 //  Creates a new separator
 HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
 {
-   struct Folder folder;
-   memset(&folder, 0, sizeof(struct Folder));
-   folder.Type = FT_GROUP;
+  struct Folder folder;
 
-   if(StringRequest(folder.Name, SIZE_NAME, tr(MSG_FO_NEWFGROUP), tr(MSG_FO_NEWFGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
-   {
-      long tnflags = (TNF_LIST | TNF_OPEN);
+  ENTER();
 
-      // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-      if(IsImageInCache("folder_fold") &&
-         IsImageInCache("folder_unfold"))
-      {
-        SET_FLAG(tnflags, TNF_NOSIGN);
-      }
+  memset(&folder, 0, sizeof(struct Folder));
+  folder.Type = FT_GROUP;
 
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
+  if(StringRequest(folder.Name, SIZE_NAME, tr(MSG_FO_NEWFGROUP), tr(MSG_FO_NEWFGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
+  {
+    long tnflags = (TNF_LIST | TNF_OPEN);
 
-      FO_SaveTree(CreateFilename(".folders"));
-   }
+    // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
+    if(IsImageInCache("folder_fold") &&
+       IsImageInCache("folder_unfold"))
+    {
+      SET_FLAG(tnflags, TNF_NOSIGN);
+    }
+
+    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
+
+    FO_SaveTree(CreateFilename(".folders"));
+  }
+
+  LEAVE();
 }
 MakeHook(FO_NewFolderGroupHook, FO_NewFolderGroupFunc);
 
@@ -1395,7 +1476,11 @@ MakeHook(FO_DeleteFolderHook, FO_DeleteFolderFunc);
 //  Closes folder configuration window
 HOOKPROTONHNONP(FO_CloseFunc, void)
 {
-   DisposeModulePush(&G->FO);
+  ENTER();
+
+  DisposeModulePush(&G->FO);
+
+  LEAVE();
 }
 MakeStaticHook(FO_CloseHook, FO_CloseFunc);
 
@@ -1615,46 +1700,56 @@ MakeStaticHook(FO_SaveHook, FO_SaveFunc);
 //  Saves or resets folder order
 HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
 {
-   switch (*arg)
-   {
-      case SO_SAVE:  FO_SaveTree(CreateFilename(".folders")); break;
-      case SO_RESET:
+  ENTER();
+
+  switch (*arg)
+  {
+    case SO_SAVE:
+    {
+      FO_SaveTree(CreateFilename(".folders"));
+    }
+    break;
+
+    case SO_RESET:
+    {
+      struct Folder **flist;
+
+      // before we reset/reload the foldertree we have to
+      // make sure everything is freed correctly.
+      if((flist = FO_CreateList()) != NULL)
       {
-        struct Folder **flist;
+        int i;
 
-        // before we reset/reload the foldertree we have to
-        // make sure everything is freed correctly.
-        if((flist = FO_CreateList()))
+        for(i=1; i <= (int)*flist; i++)
         {
-          int i;
+          struct Folder *folder = flist[i];
 
-          for(i=1; i <= (int)*flist; i++)
+          if(folder == NULL)
+            break;
+
+          // we do not have to call FreeFolder manually, because the
+          // destructor of the Listtree will do this for us. But we
+          // have to free the FImage of the folder if it exists
+          if(folder->imageObject)
           {
-            struct Folder *folder = flist[i];
+            // we make sure that the NList also doesn`t use the image in future anymore
+            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
 
-            if(!folder) break;
-
-            // we do not have to call FreeFolder manually, because the
-            // destructor of the Listtree will do this for us. But we
-            // have to free the FImage of the folder if it exists
-            if(folder->imageObject)
-            {
-              // we make sure that the NList also doesn`t use the image in future anymore
-              DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
-
-              // and last, but not least we free the BC object here, so that this Object is also gone
-              MUI_DisposeObject(folder->imageObject);
-              folder->imageObject = NULL; // let`s set it to NULL so that the destructor doesn`t do the work again.
-            }
+            // and last, but not least we free the BC object here, so that this Object is also gone
+            MUI_DisposeObject(folder->imageObject);
+            folder->imageObject = NULL; // let`s set it to NULL so that the destructor doesn`t do the work again.
           }
-
-          free(flist);
         }
 
-        FO_LoadTree(CreateFilename(".folders"));
+        free(flist);
       }
-      break;
-   }
+
+      FO_LoadTree(CreateFilename(".folders"));
+    }
+    break;
+  }
+
+  LEAVE();
 }
 MakeHook(FO_SetOrderHook, FO_SetOrderFunc);
 ///
@@ -1927,3 +2022,6 @@ static struct FO_ClassData *FO_New(void)
    return NULL;
 }
 ///
+
+
+
