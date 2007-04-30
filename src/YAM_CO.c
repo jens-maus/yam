@@ -792,7 +792,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
    if(page == cp_Read || page == cp_AllPages)
    {
       co->ShowHeader = 1;
-      strlcpy(co->ShortHeaders, "(From|To|Date|Subject)", sizeof(co->ShortHeaders));
+      strlcpy(co->ShortHeaders, "(From|To|Cc|BCC|Date|Subject)", sizeof(co->ShortHeaders));
       co->ShowSenderInfo = 2;
       strlcpy(co->ColoredText.buf, "m6", sizeof(co->ColoredText.buf));
       strlcpy(co->Color1stLevel.buf, "m0", sizeof(co->Color1stLevel.buf));
