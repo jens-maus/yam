@@ -280,6 +280,7 @@ extern struct Hook    DisposeModuleHook;
 
 // all the utility prototypes
 struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder);
+void     AddZombieFile(const char *fileName);
 char *   AllocReqText(char *s);
 char *   AllocStrBuf(size_t initlen);
 void     AppendToLogfile(enum LFMode, int id, const char *text, ...);
@@ -289,6 +290,7 @@ BOOL     Busy(const char *text, const char *parameter, int cur, int max);
 BOOL     CheckPrinter(void);
 LONG     CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG numBoxes, const char *text, ...);
 void     ClearMailList(struct Folder *folder, BOOL resetstats);
+BOOL     DeleteZombieFiles(BOOL force);
 void     CloseTempFile(struct TempFile *tf);
 ULONG    CRC32(void *buffer, unsigned int count, ULONG crc);
 ULONG    CompressMsgID(char *msgid);

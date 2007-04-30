@@ -2365,7 +2365,8 @@ static int RE_DecryptPGP(struct ReadMailData *rmData, char *src)
     char fname[SIZE_PATHFILE];
     char options[SIZE_LARGE];
 
-    snprintf(fname, sizeof(fname), "%s.asc", src); Rename(src, fname);
+    snprintf(fname, sizeof(fname), "%s.asc", src);
+    Rename(src, fname);
     snprintf(options, sizeof(options), "%s +batchmode=1 +force +language=us", fname);
     error = PGPCommand("pgpv", options, KEEPLOG|NOERRORS);
     RE_GetSigFromLog(rmData, orcpt);
@@ -4293,7 +4294,10 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
     next = part->Next;
 
     if(*part->Filename)
-      DeleteFile(part->Filename);
+    {
+      if(!DeleteFile(part->Filename))
+        AddZombieFile(part->Filename);
+    }
 
     if(part->headerList)
     {
@@ -4348,7 +4352,10 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
 
     stcgfe(ext, rmData->readFile);
     if(strcmp(ext, "unp") == 0)
-      DeleteFile(rmData->readFile);
+    {
+      if(!DeleteFile(rmData->readFile))
+        AddZombieFile(rmData->readFile);
+    }
   }
 
   // if the caller wants to cleanup everything tidy we do it here or exit immediatly

@@ -121,6 +121,12 @@ struct PathNode
 };
 #endif
 
+struct ZombieFile
+{
+  struct MinNode node;
+  char *fileName;
+};
+
 /// CloneSearchPath
 // This returns a duplicated search path (preferable the workbench
 // searchpath) usable for NP_Path of SystemTagList().
@@ -2445,6 +2451,72 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
   return result;
 }
 ///
+/// AddZombieFile
+//  add an orphaned file to the zombie file list
+void AddZombieFile(const char *fileName)
+{
+  struct ZombieFile *zombie;
+
+  ENTER();
+
+  if((zombie = malloc(sizeof(*zombie))) != NULL)
+  {
+    if((zombie->fileName = strdup(fileName)) != NULL)
+    {
+      AddTail((struct List *)&G->zombieFileList, (struct Node *)&zombie->node);
+      // trigger the retry mechanism in 5 minutes
+      TC_Restart(TIO_DELETEZOMBIEFILES, 5 * 60, 0);
+    }
+    else
+      free(zombie);
+  }
+
+  LEAVE();
+}
+///
+/// DeleteZombieFiles
+//  try to delete all files in the list of zombie files
+BOOL DeleteZombieFiles(BOOL force)
+{
+  BOOL listCleared = TRUE;
+
+  ENTER();
+
+  if(IsMinListEmpty(&G->zombieFileList) == FALSE)
+  {
+    struct ZombieFile *zombie;
+    struct MinList tmpList;
+
+    NewList((struct List *)&tmpList);
+
+    while((zombie = (struct ZombieFile *)RemHead((struct List *)&G->zombieFileList)) != NULL)
+    {
+      // try again to delete the file
+      if(!DeleteFile(zombie->fileName) && force == FALSE)
+      {
+        // deleting failed again, but we are allowed to retry
+        AddTail((struct List *)&tmpList, (struct Node *)&zombie->node);
+      }
+      else
+        free(zombie);
+    }
+
+    // check if we have to retry some file
+    // if clearing of the list was enforced, then this temporary list will always be empty
+    if(IsMinListEmpty(&tmpList) == FALSE)
+    {
+      // move all retryable files back to the global zombie file list
+      while((zombie = (struct ZombieFile *)RemHead((struct List *)&tmpList)) != NULL)
+        AddTail((struct List *)&G->zombieFileList, (struct Node *)&zombie->node);
+
+      listCleared = FALSE;
+    }
+  }
+
+  RETURN(listCleared);
+  return listCleared;
+}
+///
 /// OpenTempFile
 //  Creates or opens a temporary file
 struct TempFile *OpenTempFile(const char *mode)
@@ -2498,7 +2570,9 @@ void CloseTempFile(struct TempFile *tf)
       fclose(tf->FP);
 
     D(DBF_UTIL, "DeleteTempFile: %s\n", tf->Filename);
-    DeleteFile(tf->Filename);
+    if(!DeleteFile(tf->Filename))
+      AddZombieFile(tf->Filename);
+
     free(tf);
   }
 
@@ -2771,7 +2845,7 @@ char *FileToBuffer(const char *file)
   return text;
 }
 ///
-/// FileCount()
+/// FileCount
 // returns the total number of files that are in a directory
 // or -1 if an error occurred
 long FileCount(const char *directory)
@@ -4694,7 +4768,8 @@ void FinishUnpack(char *file)
       }
     }
 
-    DeleteFile(file);
+    if(!DeleteFile(file))
+      AddZombieFile(file);
   }
 
   LEAVE();
@@ -4866,7 +4941,9 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
       }
     }
     fclose(fp);
-    DeleteFile(PGPLOGFILE);
+
+    if(!DeleteFile(PGPLOGFILE))
+      AddZombieFile(PGPLOGFILE);
   }
   if(keys == 0)
     ER_NewError(tr(MSG_ER_NoPublicKeys), "", "");
@@ -5654,7 +5731,10 @@ int PGPCommand(const char *progname, const char *options, int flags)
     ER_NewError(tr(MSG_ER_PGPnotfound), C->PGPCmdPath);
 
   if(!error && !hasKeepLogFlag(flags))
-    DeleteFile(PGPLOGFILE);
+  {
+    if(!DeleteFile(PGPLOGFILE))
+      AddZombieFile(PGPLOGFILE);
+  }
 
   RETURN(error);
   return error;

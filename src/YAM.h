@@ -54,6 +54,7 @@ enum TimerIO { TIO_WRINDEX=0,
                TIO_POP3_KEEPALIVE,
                TIO_UPDATECHECK,
                TIO_SPAMFLUSHTRAININGDATA,
+               TIO_DELETEZOMBIEFILES,
                TIO_NUM
              };
 
@@ -134,6 +135,7 @@ struct Global
    struct MinList           readMailDataList;
    struct MinList           xpkPackerList;
    struct MinList           imageCacheList;
+   struct MinList           zombieFileList;
 
    char                     ProgDir[SIZE_PATH];
    char                     ProgName[SIZE_FILE];
@@ -160,3 +162,4 @@ void PopUp(void);
 void SetupAppIcons(void);
 
 #endif /* MAIN_YAM_H */
+

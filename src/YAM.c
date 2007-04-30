@@ -961,6 +961,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     }
     break;
 
+    // on a SPAMFLUSHTRAININGDATA we write back the spam training data gathered so far
     case TIO_SPAMFLUSHTRAININGDATA:
     {
       D(DBF_TIMERIO, "timer[%ld]: TIO_SPAMFLUSHTRAININGDATA received: %s", tio, dateString);
@@ -970,6 +971,19 @@ static void TC_Dispatcher(enum TimerIO tio)
       BusyEnd();
 
       TC_Prepare(tio, C->SpamFlushTrainingDataInterval, 0);
+    }
+    break;
+
+    // on a DELETEZOMBIEFILES we try to delete zombie files which could not be deleted
+    // before. Files which still cannot be deleted will be kept in the list and retried
+    // later.
+    case TIO_DELETEZOMBIEFILES:
+    {
+      if(DeleteZombieFiles(FALSE) == FALSE)
+      {
+        // trigger the retry mechanism in 5 minutes
+        TC_Prepare(TIO_DELETEZOMBIEFILES, 5 * 60, 0);
+      }
     }
     break;
 
@@ -1334,6 +1348,9 @@ static void Terminate(void)
     if(G->DiskObj[i])
       FreeDiskObject(G->DiskObj[i]);
   }
+
+  D(DBF_STARTUP, "deleting zombie files...");
+  DeleteZombieFiles(TRUE);
 
   D(DBF_STARTUP, "freeing toolbar cache...");
   ToolbarCacheCleanup();
@@ -2554,6 +2571,7 @@ int main(int argc, char **argv)
       NewList((struct List *)&(C->filterList));
       NewList((struct List *)&(G->xpkPackerList));
       NewList((struct List *)&(G->imageCacheList));
+      NewList((struct List *)&(G->zombieFileList));
 
       // We have to initialize the ActiveWin flags to -1, so than the
       // the arexx commands for the windows are reporting an error if
@@ -2621,7 +2639,8 @@ int main(int argc, char **argv)
               // the delete routine in WR_NewMail() doesn't catch the correct file
               // because it only cares about the autosave file for the newly created
               // write object
-              DeleteFile(fileName);
+              if(!DeleteFile(fileName))
+                AddZombieFile(fileName);
             }
           }
           else if(answer == 2)
@@ -2651,7 +2670,8 @@ int main(int argc, char **argv)
           else if(answer == 3)
           {
             // just delete the autosave file
-            DeleteFile(fileName);
+            if(!DeleteFile(fileName))
+              AddZombieFile(fileName);
           }
         }
       }
@@ -2821,6 +2841,9 @@ int main(int argc, char **argv)
 
                 if(TCData.timer[TIO_SPAMFLUSHTRAININGDATA].isPrepared)
                   TC_Start(TIO_SPAMFLUSHTRAININGDATA);
+
+                if(TCData.timer[TIO_DELETEZOMBIEFILES].isPrepared)
+                  TC_Start(TIO_DELETEZOMBIEFILES);
               }
               else
                 W(DBF_TIMERIO, "timer signal received, but no timer request was processed!!!");

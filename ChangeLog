@@ -14,6 +14,13 @@ $URL$
 
 2007-04-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_UT.c, YAM_RE.c: implemented a list of zombie files. Such files
+    emerge if for example an attached picture is shown by MultiView and the read
+    window is closed before MultiView released the file. Before these files
+    existed until a reboot or until the used deleted them manually. Now YAM will
+    try to delete the files every 5 minutes and finally upon shutdown. If a file
+    is still locked then it will remain as before. This finally fixes bug
+    #1659581.
   * YAM_MA.c, YAM_MI.c: minor code cleanups.
   * YAM_FO.c: code cleanup according to the STYLEGUIDE.
   * YAM_FI.c: put a balancing bar between the upper part and the result list in
