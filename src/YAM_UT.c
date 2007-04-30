@@ -2465,7 +2465,7 @@ void AddZombieFile(const char *fileName)
     {
       AddTail((struct List *)&G->zombieFileList, (struct Node *)&zombie->node);
       // trigger the retry mechanism in 5 minutes
-      TC_Restart(TIO_DELETEZOMBIEFILES, 10, 0);
+      TC_Restart(TIO_DELETEZOMBIEFILES, 5 * 60, 0);
     }
     else
       free(zombie);
