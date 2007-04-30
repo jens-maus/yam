@@ -2829,6 +2829,7 @@ const struct IntMimeType IntMimeTypeArray[] =
 struct MimeTypeNode *CreateNewMimeType(void)
 {
   struct MimeTypeNode *mt;
+
   ENTER();
 
   if((mt = calloc(1, sizeof(struct MimeTypeNode))))

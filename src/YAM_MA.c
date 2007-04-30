@@ -168,7 +168,7 @@ void MA_ChangeTransfer(BOOL on)
 ///
 /// MA_ChangeSelected
 // function which updates some mail information on the main
-// window and triggers an update of the embeeded read pane if required.
+// window and triggers an update of the embedded read pane if required.
 void MA_ChangeSelected(BOOL forceUpdate)
 {
   static struct Mail *lastMail = NULL;
@@ -543,8 +543,6 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
 {
   char dateFilePart[12 + 1];
   char statusFilePart[14 + 1];
-  char newFileName[SIZE_MFILE];
-  char newFilePath[SIZE_PATHFILE];
   char oldFilePath[SIZE_PATHFILE];
   const char *folderDir = GetFolderDir(mail->Folder);
   char *ptr;
@@ -590,6 +588,9 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
 
   while(success == FALSE)
   {
+    char newFileName[SIZE_MFILE];
+    char newFilePath[SIZE_PATHFILE];
+
     // generate a new filename with the data we have collected
     snprintf(newFileName, sizeof(newFileName), "%s.%03d,%s", dateFilePart, mcounter, statusFilePart);
 
@@ -620,9 +621,11 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
       {
         // search through our ReadDataList
         struct MinNode *curNode;
+
         for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
         {
           struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
           if(rmData->mail == mail && strcmp(rmData->readFile, oldFilePath) == 0)
             strlcpy(rmData->readFile, newFilePath, sizeof(rmData->readFile));
         }
@@ -1013,18 +1016,19 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
 //  Changes status of all new messages to unread
 static void MA_UpdateStatus(void)
 {
-  int i;
-  struct Mail *mail;
   struct Folder **flist;
 
   ENTER();
 
   if((flist = FO_CreateList()) != NULL)
   {
+    int i;
+
     for(i = 1; i <= (int)*flist; i++)
     {
       if(!isSentMailFolder(flist[i]) && flist[i]->LoadedMode == LM_VALID)
       {
+        struct Mail *mail;
         BOOL updated = FALSE;
 
         for(mail = flist[i]->Messages; mail; mail = mail->Next)
@@ -1398,7 +1402,7 @@ HOOKPROTONHNONP(MA_ReadMessage, void)
 {
   struct Mail *mail;
 
-  if((mail = MA_GetActiveMail(NULL, NULL, NULL)))
+  if((mail = MA_GetActiveMail(NULL, NULL, NULL)) != NULL)
   {
     struct ReadMailData *rmData;
 
@@ -1407,6 +1411,7 @@ HOOKPROTONHNONP(MA_ReadMessage, void)
     {
       // search through our ReadDataList
       struct MinNode *curNode;
+
       for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
         rmData = (struct ReadMailData *)curNode;
