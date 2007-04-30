@@ -375,7 +375,7 @@ void RE_DisplayMIME(char *fname, const char *ctype)
   {
     D(DBF_MIME, "no content-type specified, analyzing '%s'", fname);
 
-    if((ctype = IdentifyFile(fname)))
+    if((ctype = IdentifyFile(fname)) != NULL)
       D(DBF_MIME, "identified file as '%s'", ctype);
 
     triedToIdentify = TRUE;
@@ -404,13 +404,13 @@ void RE_DisplayMIME(char *fname, const char *ctype)
 
   // if the MIME part is an rfc822 conform email attachment we
   // try to open it as a virtual mail in another read window.
-  if(!mt && ctype != NULL && !stricmp(ctype, "message/rfc822"))
+  if(mt == NULL && ctype != NULL && stricmp(ctype, "message/rfc822") == 0)
   {
     struct TempFile *tf;
 
     D(DBF_MIME, "identified content-type as 'message/rfc822'");
 
-    if((tf = OpenTempFile(NULL)))
+    if((tf = OpenTempFile(NULL)) != NULL)
     {
       struct ExtendedMail *email;
 
@@ -422,9 +422,9 @@ void RE_DisplayMIME(char *fname, const char *ctype)
         struct Mail *mail;
         struct ReadMailData *rmData;
 
-        mail = calloc(1, sizeof(struct Mail));
-        if(!mail)
+        if((mail = calloc(1, sizeof(struct Mail))) == NULL)
         {
+          CloseTempFile(tf);
           LEAVE();
           return;
         }
@@ -439,7 +439,7 @@ void RE_DisplayMIME(char *fname, const char *ctype)
         MA_FreeEMailStruct(email);
 
         // create the read read window now
-        if((rmData = CreateReadWindow(TRUE)))
+        if((rmData = CreateReadWindow(TRUE)) != NULL)
         {
           rmData->tempFile = tf;
 

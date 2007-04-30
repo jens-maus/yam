@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-04-30  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: if a memory allocation during RE_DisplayMIME() failed a temporary
+    file construct would persist.
+
 2007-04-29  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c, YAM_MA.c, YAM.c: added new UpdateReadMailDataStatus() function
