@@ -181,9 +181,11 @@ OVERLOAD(OM_NEW)
   // prepare the status icons for adding it later on to our statusGroup object
   for(i=0; i < ARRAY_SIZE(image); i++)
   {
-    Object *newImage = MakeImageObject(image[i].name);
+    Object *newImage;
 
-    minHeight = MAX(xget(newImage, MUIA_ImageArea_RawHeight), minHeight);
+    if((newImage = MakeImageObject(image[i].name)) != NULL)
+      minHeight = MAX(xget(newImage, MUIA_ImageArea_RawHeight), minHeight);
+
     statusImage[image[i].status] = newImage;
   }
 
