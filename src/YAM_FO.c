@@ -69,6 +69,7 @@ static BOOL FO_GetFolderByName_cmp(struct Folder *fo, char *name);
 static BOOL FO_GetFolderByPath_cmp(struct Folder *fo, char *path);
 static struct Folder *FO_GetFolderByAttribute(BOOL(*)(struct Folder *fo, void *), void *, int *);
 static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *tn);
+static BOOL FO_LoadFolderImage(struct Folder *fo);
 
 // According to the folder types we define the corresponding
 // default folder names. Please note that order and length IS important here.
@@ -734,7 +735,7 @@ BOOL FO_LoadTree(char *fname)
                   fo.ImageIndex = j;
 
                   // Now we load the FolderImages if they exists
-                  if(FO_LoadFolderImages(&fo))
+                  if(FO_LoadFolderImage(&fo))
                     j++;
                   else
                   {
@@ -846,41 +847,56 @@ BOOL FO_LoadTree(char *fname)
 }
 
 ///
-/// FO_LoadFolderImages
+/// FO_LoadFolderImage
 //  Loads the images for the folder that should be displayed in the NListtree
-BOOL FO_LoadFolderImages(struct Folder *fo)
+static BOOL FO_LoadFolderImage(struct Folder *folder)
 {
   BOOL success = FALSE;
 
   ENTER();
 
   // first we make sure that valid data is underway.
-  if(fo != NULL)
+  if(folder != NULL)
   {
-  	if(fo->ImageIndex < MAX_FOLDERIMG + 1)
+  	if(folder->ImageIndex >= MAX_FOLDERIMG+1)
   	{
       char fname[SIZE_PATHFILE];
       Object *lv = G->MA->GUI.NL_FOLDERS;
 
-      strlcpy(fname, GetFolderDir(fo), sizeof(fname));
+      strlcpy(fname, GetFolderDir(folder), sizeof(fname));
       AddPart(fname, ".fimage", sizeof(fname));
 
       if(FileExists(fname))
       {
-        fo->imageObject = ImageAreaObject,
-                            MUIA_ImageArea_Filename, fname,
-                          End;
+        folder->imageObject = ImageAreaObject,
+                                MUIA_ImageArea_Filename, fname,
+                              End;
 
         // Now we say that this image could be used by this Listtree
-        if(fo->imageObject != NULL)
-          DoMethod(lv, MUIM_NList_UseImage, fo->imageObject, fo->ImageIndex, MUIF_NONE);
+        if(folder->imageObject != NULL)
+        {
+          DoMethod(lv, MUIM_NList_UseImage, folder->imageObject, folder->ImageIndex, MUIF_NONE);
 
-        success = TRUE;
+          D(DBF_FOLDER, "successfully loaded folder image '%s'", fname);
+          success = TRUE;
+        }
+        else
+          E(DBF_FOLDER, "error while trying to create imageareaobejct for '%s'", fname);
+      }
+      else
+      {
+        D(DBF_FOLDER, "no folder image '%s' found", fname);
+        folder->imageObject = NULL;
       }
     }
     else
-      fo->imageObject = NULL;
+    {
+      W(DBF_FOLDER, "imageIndex of folder < MAX_FOLDERIMG (%ld < %ld)", folder->ImageIndex, MAX_FOLDERIMG+1);
+      folder->imageObject = NULL;
+    }
   }
+  else
+    E(DBF_FOLDER, "folder == NULL");
 
   RETURN(success);
   return success;

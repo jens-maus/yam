@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-01  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_FO.c: fixed folder image (.fimage) loading routine which were broken after
+    recent cleanups.
+
 2007-05-01  Thore Böckelmann <tboeckel@gmx.de>
 
   * InfoBar.c, ReadWindowStatusBar.c: the spam folder icons were not shown due

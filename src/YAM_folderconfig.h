@@ -208,7 +208,6 @@ int             FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups);
 struct MUI_NListtree_TreeNode *FO_GetFolderTreeNode(struct Folder *findfo);
 BOOL            FO_LoadConfig(struct Folder *fo);
 BOOL            FO_LoadTree(char *fname);
-BOOL            FO_LoadFolderImages(struct Folder *fo);
 struct Folder * FO_NewFolder(enum FolderType type, const char *path, const char *name);
 BOOL            FO_SaveConfig(struct Folder *fo);
 BOOL            FO_SaveTree(char *fname);
