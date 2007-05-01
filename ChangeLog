@@ -7,6 +7,10 @@ $URL$
 
 2007-05-01  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_mail_lex.l: soft-styled text (*bold*) which were seperated by only one
+    space wasn't correctly displayed in the corresponding soft-style. Now the
+    mail parser should correctly highlight/soft-style the text by unputtung the
+    last character of the previous soft-styled text.
   * Makefile: the flex generated source files will now be compiled without the
     signed/unsigned warning as the auto-generated source code contains one
     reference to such an signess issue which isn't really problematic.

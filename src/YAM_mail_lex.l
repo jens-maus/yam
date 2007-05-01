@@ -32,7 +32,6 @@
  */
 
 %option noyywrap
-%option nounput
 %option never-interactive
 %option case-insensitive
 %option prefix="pm_"
@@ -133,20 +132,6 @@ NOTATEOL    ([^[:punct:][:space:]]|{ESCAPE}|"/"|"=")
 ^"\033c\033[s:18]"                    {return tNEXTPART;}
 ^"\n""-"{30,}"\n"                     {return tENDSIGNATURE;}
 
-" "  {return tSPACE      ;}
-"  " {return tDOUBLESPACE;}
-"\t" {return tTAB        ;}
-"("  {return tBEGINPAREN ;}
-")"  {return tENDPAREN   ;}
-"<"  {return tLESS       ;}
-">"  {return tGREATER    ;}
-"&"  {return tAMPERSAND  ;}
-"\n" {return tNEWLINE    ;}
-"*"  {return tSTAR       ;}
-"/"  {return tSLASH      ;}
-"_"  {return tUNDERSCORE ;}
-"#"  {return tHASH       ;}
-
 [[:blank:]]"*"[^[:blank:]\n*]([^\n*]*[^[:blank:]\n*])?"*"[[:blank:]\n,.!?:]       |
 ^"*"[^[:blank:]\n*]([^\n*]*[^[:blank:]\n*])?"*"[[:blank:]\n,.!?:]                 {return tBOLD      ;}
 
@@ -158,6 +143,20 @@ NOTATEOL    ([^[:punct:][:space:]]|{ESCAPE}|"/"|"=")
 
 [[:blank:]]"#"[^[:blank:]\n#?]([^\n#]*[^[:blank:]\n#])?"#"[[:blank:]\n,.!?:]      |
 ^"#"[^[:blank:]\n#?]([^\n#]*[^[:blank:]\n#])?"#"[[:blank:]\n,.!?:]                {return tCOLORED   ;}
+
+[:space:]    {return tSPACE      ;}
+[:space:]{2} {return tDOUBLESPACE;}
+"\t"         {return tTAB        ;}
+"("          {return tBEGINPAREN ;}
+")"          {return tENDPAREN   ;}
+"<"          {return tLESS       ;}
+">"          {return tGREATER    ;}
+"&"          {return tAMPERSAND  ;}
+"\n"         {return tNEWLINE    ;}
+"*"          {return tSTAR       ;}
+"/"          {return tSLASH      ;}
+"_"          {return tUNDERSCORE ;}
+"#"          {return tHASH       ;}
 
 {HTTPURL}                                      {return tHTTP      ;}
 {HTTPSURL}                                     {return tHTTPS     ;}
@@ -266,7 +265,9 @@ char *ParseEmailText(const char *mailTxt, BOOL handleSigDash)
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b*");
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, "*\033n");
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, q);
+
+                if(*q != '\0')
+                  yyunput(*q, yytext);
               }
               else
                 W(DBF_MAIL, "couldn't find ending '*'");
@@ -294,7 +295,9 @@ char *ParseEmailText(const char *mailTxt, BOOL handleSigDash)
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033i/");
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, "/\033n");
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, q);
+
+                if(*q != '\0')
+                  yyunput(*q, yytext);
               }
               else
                 W(DBF_MAIL, "couldn't find ending '/'");
@@ -322,7 +325,9 @@ char *ParseEmailText(const char *mailTxt, BOOL handleSigDash)
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033u_");
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, "_\033n");
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, q);
+
+                if(*q != '\0')
+                  yyunput(*q, yytext);
               }
               else
                 W(DBF_MAIL, "couldn't find ending '_'");
@@ -351,7 +356,9 @@ char *ParseEmailText(const char *mailTxt, BOOL handleSigDash)
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, "#");
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, q);
+
+                if(*q != '\0')
+                  yyunput(*q, yytext);
               }
               else
                 W(DBF_MAIL, "couldn't find ending '*'");
