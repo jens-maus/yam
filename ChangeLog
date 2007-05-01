@@ -7,6 +7,9 @@ $URL$
 
 2007-05-01  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ReadWindowStatusBar.c: fixed issue where the size of the font for rendering
+    the folder name label in the status bar wasn't respected and therefore mixed
+    up the layout of the label.
   * YAM.c: added an extended help page for the NewReadArgs() call. If YAM will
     now be executed from the command-line with a "?" as an option, a more
     informative help page will be presented together with the usual ReadArgs

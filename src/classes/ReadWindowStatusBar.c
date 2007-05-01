@@ -69,17 +69,17 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
       while((child = NextObject(&cstate)) != NULL)
       {
         // we know our childs and that we only carry Bodychunk objects
-        minHeight = MAX(_minheight(child) + 2, minHeight);
+        minHeight = MAX(_minheight(child), minHeight);
         minWidth += _minwidth(child) + 1;
       }
 
       // then set our calculated values
       lm->lm_MinMax.MinWidth  = minWidth;
-      lm->lm_MinMax.MinHeight = data->minHeight;
+      lm->lm_MinMax.MinHeight = minHeight;
       lm->lm_MinMax.DefWidth  = MUI_MAXMAX;
-      lm->lm_MinMax.DefHeight = data->minHeight;
+      lm->lm_MinMax.DefHeight = minHeight;
       lm->lm_MinMax.MaxWidth  = MUI_MAXMAX;
-      lm->lm_MinMax.MaxHeight = data->minHeight;
+      lm->lm_MinMax.MaxHeight = minHeight;
 
       RETURN(0);
       return 0;
@@ -95,7 +95,9 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
       Object *cstate;
       Object *child;
       LONG left = 0;
-      LONG top = ((lm->lm_Layout.Height-1)-_minheight(obj))/2;
+      LONG top = 0;
+      LONG height = lm->lm_Layout.Height-1;
+      LONG width = lm->lm_Layout.Width-1;
 
       // Layout function. Here, we have to call MUI_Layout() for each
       // our children. MUI wants us to place them in a rectangle
@@ -105,16 +107,20 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
       // layout the left-aligned folder image and label
       if(data->folderImage != NULL)
       {
-        result = MUI_Layout(data->folderImage, left, top, _minwidth(data->folderImage), _minheight(data->folderImage), 0);
+        result = MUI_Layout(data->folderImage, left, top+(height-_minheight(data->folderImage))/2,
+                                               _minwidth(data->folderImage), _minheight(data->folderImage), 0);
         left += _minwidth(data->folderImage);
       }
 
       if(result == TRUE)
-        result = MUI_Layout(data->folderLabel, left+1, top, _minwidth(data->folderLabel), _minheight(data->folderLabel), 0);
+      {
+        result = MUI_Layout(data->folderLabel, left+1, top+(height-_minheight(data->folderLabel))/2,
+                                               _minwidth(data->folderLabel), _minheight(data->folderLabel), 0);
+      }
 
       // layout the status images which we put right-aligned
       // into our rectangle
-      left = _width(obj);
+      left = width;
       cstate = (Object *)lm->lm_Children->mlh_Head;
       while((child = NextObject(&cstate)) != NULL && result == TRUE)
       {
@@ -122,7 +128,8 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
         if(child != data->folderImage && child != data->folderLabel)
         {
           left -= (_minwidth(child) + 1);
-          result = MUI_Layout(child, left, top, _minwidth(child), _minheight(child), 0);
+          result = MUI_Layout(child, left, top+(height-_minheight(child))/2,
+                                     _minwidth(child), _minheight(child), 0);
         }
       }
 
@@ -196,10 +203,11 @@ OVERLOAD(OM_NEW)
   obj = DoSuperNew(cl, obj,
                     MUIA_ContextMenu,       FALSE,
                     MUIA_Group_Horiz,       TRUE,
-                    MUIA_Group_Spacing,     1,
+                    MUIA_Group_Spacing,     0,
                     MUIA_Group_LayoutHook,  &LayoutHook,
                     Child, folderLabel = TextObject,
                       MUIA_Font,          MUIV_Font_Tiny,
+                      MUIA_Frame,         MUIV_Frame_None,
                       MUIA_Text_PreParse, "\033l",
                     End,
                   TAG_MORE, inittags(msg));
