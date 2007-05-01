@@ -280,7 +280,7 @@ static struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(struct Folder*,void*)
 
   ENTER();
 
-  for(i = 0; ;i++)
+  for(i=0; ;i++)
   {
     struct MUI_NListtree_TreeNode *tn;
 
@@ -296,7 +296,11 @@ static struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(struct Folder*,void*)
           break;
         }
       }
+      else
+        break;
     }
+    else
+      break;
   }
 
   if(pos != NULL)
@@ -1510,6 +1514,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
   struct Folder folder, *oldfolder = G->FO->EditFolder;
   BOOL success = FALSE;
 
+  ENTER();
+
   // if this is a edit folder request we separate here.
   if(oldfolder)
   {
@@ -1520,6 +1526,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     if(memcmp(&folder, oldfolder, sizeof(struct Folder)) == 0)
     {
       DisposeModulePush(&G->FO);
+
+      LEAVE();
       return;
     }
 
@@ -1528,6 +1536,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     if(*folder.Name == '\0' || (stricmp(oldfolder->Name, folder.Name) != 0 && FO_GetFolderByName(folder.Name, NULL)))
     {
       MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
+
+      LEAVE();
       return;
     }
 
@@ -1566,12 +1576,17 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
             if(!(CreateDirectory(GetFolderDir(&folder)) && FO_MoveFolderDir(&folder, oldfolder)))
             {
               ER_NewError(tr(MSG_ER_MOVEFOLDERDIR), folder.Name, folder.Path);
+
+              LEAVE();
               return;
             }
           }
         }
         else
+        {
+          LEAVE();
           return;
+        }
       }
 
       strlcpy(oldfolder->Path, folder.Path, sizeof(oldfolder->Path));
@@ -1604,12 +1619,18 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
               oldfolder->LoadedMode != LM_VALID)
       {
         if(!(changed = MA_PromptFolderPassword(&folder, gui->WI)))
+        {
+          LEAVE();
           return;
+        }
       }
       else if(isProtectedFolder(&folder) && !isProtectedFolder(oldfolder))
       {
         if(!(changed = FO_EnterPassword(&folder)))
+        {
+          LEAVE();
           return;
+        }
       }
 
       if(isProtectedFolder(&folder) && isProtectedFolder(oldfolder))
@@ -1658,6 +1679,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     if(folder.Name[0] == '\0' || FO_GetFolderByName(folder.Name, NULL))
     {
       MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
+
+      LEAVE();
       return;
     }
 
@@ -1665,6 +1688,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     if(folder.Path[0] == '\0')
     {
       MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERPATHINVALID));
+
+      LEAVE();
       return;
     }
     else if(FileExists(folder.Path)) // check if something with folder.Path already exists
@@ -1678,7 +1703,10 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     if(result)
     {
       if(isProtectedFolder(&folder) && FO_EnterPassword(&folder) == FALSE)
+      {
+        LEAVE();
         return;
+      }
 
       if(CreateDirectory(GetFolderDir(&folder)))
       {
@@ -1690,10 +1718,16 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
         }
       }
       else
+      {
+        LEAVE();
         return;
+      }
     }
     else
+    {
+      LEAVE();
       return;
+    }
   }
 
   set(gui->WI, MUIA_Window_Open, FALSE);
@@ -1708,6 +1742,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     DisplayStatistics(oldfolder, TRUE);
   }
   DisposeModulePush(&G->FO);
+
+  LEAVE();
 }
 MakeStaticHook(FO_SaveHook, FO_SaveFunc);
 
@@ -2038,6 +2074,4 @@ static struct FO_ClassData *FO_New(void)
    return NULL;
 }
 ///
-
-
 
