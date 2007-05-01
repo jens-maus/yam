@@ -132,17 +132,17 @@ NOTATEOL    ([^[:punct:][:space:]]|{ESCAPE}|"/"|"=")
 ^"\033c\033[s:18]"                    {return tNEXTPART;}
 ^"\n""-"{30,}"\n"                     {return tENDSIGNATURE;}
 
-[[:blank:]]"*"[^[:blank:]\n*]([^\n*]*[^[:blank:]\n*])?"*"[[:blank:]\n,.!?:]       |
-^"*"[^[:blank:]\n*]([^\n*]*[^[:blank:]\n*])?"*"[[:blank:]\n,.!?:]                 {return tBOLD      ;}
+[[:blank:]]"*"[^[:blank:]\n*]([^\n*_/#]*[^[:blank:]\n*_/#])?"*"[[:blank:]\n,.!?:]   |
+^"*"[^[:blank:]\n*]([^\n*_/#]*[^[:blank:]\n*_/#])?"*"[[:blank:]\n,.!?:]             {return tBOLD      ;}
 
-[[:blank:]]"/"[^[:blank:]\n/]([^\n/]*[^[:blank:]\n/])?"/"[[:blank:]\n,.!?:]       |
-^"/"[^[:blank:]\n/]([^\n/]*[^[:blank:]\n/])?"/"[[:blank:]\n,.!?:]                 {return tITALIC    ;}
+[[:blank:]]"/"[^[:blank:]\n/]([^\n/_*#]*[^[:blank:]\n/_*#])?"/"[[:blank:]\n,.!?:]   |
+^"/"[^[:blank:]\n/]([^\n/_*#]*[^[:blank:]\n/_*#])?"/"[[:blank:]\n,.!?:]             {return tITALIC    ;}
 
-[[:blank:]]"_"[^[:blank:]\n_]([^\n_]*[^[:blank:]\n_])?"_"[[:blank:]\n,.!?:]       |
-^"_"[^[:blank:]\n_]([^\n_]*[^[:blank:]\n_])?"_"[[:blank:]\n,.!?:]                 {return tUNDERLINE ;}
+[[:blank:]]"_"[^[:blank:]\n_]([^\n_*#/]*[^[:blank:]\n_*#/])?"_"[[:blank:]\n,.!?:]   |
+^"_"[^[:blank:]\n_]([^\n_*#/]*[^[:blank:]\n_*#/])?"_"[[:blank:]\n,.!?:]             {return tUNDERLINE ;}
 
-[[:blank:]]"#"[^[:blank:]\n#?]([^\n#]*[^[:blank:]\n#])?"#"[[:blank:]\n,.!?:]      |
-^"#"[^[:blank:]\n#?]([^\n#]*[^[:blank:]\n#])?"#"[[:blank:]\n,.!?:]                {return tCOLORED   ;}
+[[:blank:]]"#"[^[:blank:]\n#?]([^\n#*_/]*[^[:blank:]\n#*_/])?"#"[[:blank:]\n,.!?:]  |
+^"#"[^[:blank:]\n#?]([^\n#*_/]*[^[:blank:]\n#*_/])?"#"[[:blank:]\n,.!?:]            {return tCOLORED   ;}
 
 [:space:]    {return tSPACE      ;}
 [:space:]{2} {return tDOUBLESPACE;}

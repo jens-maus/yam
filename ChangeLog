@@ -7,6 +7,10 @@ $URL$
 
 2007-05-01  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_mail_lex.l: another minor optimization to the soft-style recognition
+    routines in the flex scanner.
+  * YAM_FO.c: fixed another issue that were introduced during the last source
+    cleanup and here the FO_GetFolderByAttribute() ended up in an endless loop.
   * YAM_MA.c: exchange some conflicting menu shortcuts to get V,X,C free so that
     all main shortcuts in the QuickSearchBar still work as expected. This fixes
     bug #1707243.
