@@ -125,6 +125,7 @@ struct Global
    BOOL                     TR_UseTLS;
    BOOL                     InStartupPhase;
    BOOL                     NoImageWarning;
+   BOOL                     NoCatalogTranslation;
 
    struct DateStamp         StartDate;
    struct Users             Users;

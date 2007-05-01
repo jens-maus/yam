@@ -7,6 +7,11 @@ $URL$
 
 2007-05-01  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: added an extended help page for the NewReadArgs() call. If YAM will
+    now be executed from the command-line with a "?" as an option, a more
+    informative help page will be presented together with the usual ReadArgs
+    template. In addition, a new 'NOCATALOG' option allows to start YAM without
+    any catalog translation (in english).
   * YAM_COg.c, YAM_COs.c, YAM_CO.c, AttachmentGroup.c: moved the previously
     hidden "DisplayAllAltPart" config option to the public 'Read' section of
     the configuration and modified AttachmentGroup/Image code to display such

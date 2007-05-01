@@ -103,9 +103,6 @@
 
 struct Global *G = NULL;
 
-static struct NewRDArgs nrda;
-static BPTR olddirlock = -1; /* -1 is an unset indicator */
-
 struct Args
 {
   char  *user;
@@ -120,7 +117,12 @@ struct Args
   char  *letter;
   char **attach;
   LONG   noImgWarning;
+  LONG   noCatalog;
 };
+
+static struct NewRDArgs nrda;
+static struct Args args;
+static BPTR olddirlock = -1; /* -1 is an unset indicator */
 
 /**************************************************************************/
 
@@ -2003,7 +2005,7 @@ static void Initialise(BOOL hidden)
      G->Locale = OpenLocale(NULL);
 
    // Now load the catalog of YAM
-   if(OpenYAMCatalog() == FALSE)
+   if(G->NoCatalogTranslation == FALSE && OpenYAMCatalog() == FALSE)
      Abort(NULL);
 
    // load&initialize all required libraries
@@ -2388,12 +2390,88 @@ static void Login(const char *user, const char *password,
 }
 ///
 
+/*** Command-Line Argument parsing routines ***/
+/// ParseCommandArgs()
+//
+static LONG ParseCommandArgs()
+{
+  LONG result = 0;
+  char *extHelp;
+
+  ENTER();
+
+  // clear the args structure
+  memset(&args, 0, sizeof(struct Args));
+
+  // allocate some memory for the extended help
+  #define SIZE_EXTHELP  2048
+  if((extHelp = malloc(SIZE_EXTHELP)))
+  {
+    // set argument template
+    nrda.Template = (STRPTR)"USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M,NOIMGWARNING/S,NOCATALOG/S";
+
+    // now we build an extended help page text
+    snprintf(extHelp, SIZE_EXTHELP, "%s (%s)\n%s\n\nUsage: YAM <options>\nOptions:\n"
+                                    "  USER=<username>     : Selects the active YAM user and skips\n"
+                                    "                        the login process.\n"
+                                    "  PASSWORD=<password> : Password of selected user (if required).\n"
+                                    "  MAILDIR=<path>      : Sets the home directory for the folders\n"
+                                    "                        and configuration.\n"
+                                    "  PREFSFILE=<filename>: Configuration file that should be used\n"
+                                    "                        instead of the default.\n"
+                                    "  NOCHECK             : Starts YAM without trying to receive/send\n"
+                                    "                        any mail.\n"
+                                    "  HIDE                : Starts YAM in iconify mode.\n"
+                                    "  DEBUG               : Sends all conversations between YAM and a\n"
+                                    "                        mail server to the console window.\n"
+                                    "  MAILTO=<recipient>  : Creates a new mail for the specified\n"
+                                    "                        recipients when YAM started.\n"
+                                    "  SUBJECT=<subject>   : Sets the subject text for a new mail.\n"
+                                    "  LETTER=<file>       : The text file containing the actual mail\n"
+                                    "                        text of a new message.\n"
+                                    "  ATTACH=<file>       : Attaches the specified file to the new\n"
+                                    "                        mail created.\n"
+                                    "  NOIMGWARNING        : Supresses all warnings regarding missing\n"
+                                    "                        image files.\n"
+                                    "  NOCATALOG           : Starts YAM without loading any catalog\n"
+                                    "                        translation (english).\n"
+                                    "\n%s: ", yamversion,
+                                              yamversiondate,
+                                              yamcopyright,
+                                              nrda.Template);
+
+    // set the extHelp pointer
+    nrda.ExtHelp = (STRPTR)extHelp;
+
+    // set rest of new read args structure elements
+    nrda.Window = NULL;
+    nrda.Parameters = (LONG *)&args;
+    nrda.FileParameter = -1;
+    nrda.PrgToolTypesOnly = FALSE;
+
+    // now call NewReadArgs to parse all our commandline/tooltype arguments in accordance
+    // to the above template
+    if((result = NewReadArgs(WBmsg, &nrda)))
+    {
+      args.hide = -args.hide;
+      args.nocheck = -args.nocheck;
+    }
+
+    free(extHelp);
+    nrda.ExtHelp = NULL;
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+
 /*** main entry function ***/
 /// main()
 //  Program entry point, main loop
 int main(int argc, char **argv)
 {
-   struct Args args;
    BOOL yamFirst;
    BPTR progdir;
    LONG err;
@@ -2508,8 +2586,6 @@ int main(int argc, char **argv)
 
    atexit(yam_exitfunc); /* we need to free the stuff on exit()! */
 
-   memset(&args, 0, sizeof(struct Args));
-
    WBmsg = (struct WBStartup *)(0 == argc ? argv : NULL);
 
    INITLIB("intuition.library", 36, 0, &IntuitionBase, "main", &IIntuition, TRUE, NULL);
@@ -2517,25 +2593,19 @@ int main(int argc, char **argv)
    INITLIB("utility.library",   36, 0, &UtilityBase,   "main", &IUtility,   TRUE, NULL);
    INITLIB("diskfont.library",  37, 0, &DiskfontBase,  "main", &IDiskfont,  TRUE, NULL);
 
-   nrda.Template = (STRPTR)"USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M,NOIMGWARNING/S";
-   nrda.ExtHelp = NULL;
-   nrda.Window = NULL;
-   nrda.Parameters = (LONG *)&args;
-   nrda.FileParameter = -1;
-   nrda.PrgToolTypesOnly = FALSE;
-
-   // now call NewReadArgs to parse all our commandline/tooltype arguments in accordance
-   // to the above template
-   if((err = NewReadArgs(WBmsg, &nrda)))
+   // now we parse the command-line arguments
+   if((err = ParseCommandArgs()))
    {
-      PrintFault(err, "YAM");
+     PrintFault(err, "YAM");
 
-      SetIoErr(err);
-      exit(RETURN_ERROR);
+     SetIoErr(err);
+     exit(RETURN_ERROR);
    }
 
-   if(!(progdir = GetProgramDir())) /* security only, can happen for residents only */
+   // security only, can happen for residents only
+   if(!(progdir = GetProgramDir()))
       exit(RETURN_ERROR);
+
    olddirlock = CurrentDir(progdir);
 
    for(yamFirst=TRUE;;)
@@ -2571,13 +2641,12 @@ int main(int argc, char **argv)
       if(!args.maildir)
         strlcpy(G->MA_MailDir, G->ProgDir, sizeof(G->MA_MailDir));
 
-      args.hide = -args.hide;
-      args.nocheck = -args.nocheck;
       G->TR_Debug = -args.debug;
       G->TR_Socket = SMTP_NO_SOCKET;
       G->TR_Allow = TRUE;
       G->CO_DST = GetDST(FALSE);
       G->NoImageWarning = args.noImgWarning;
+      G->NoCatalogTranslation = args.noCatalog;
 
       // prepare some exec lists of either the Global or Config structure
       NewList((struct List *)&(G->readMailDataList));
