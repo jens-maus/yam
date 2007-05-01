@@ -6208,3 +6208,11 @@ _Retry|_Ignore
 MSG_ER_ZOMBIE_FILES_EXIST_TITLE (1925//)
 YAM cleanup warning
 ;
+MSG_CO_SHOWALTPARTS (1926//)
+Show a_lternative parts
+;
+MSG_HELP_CO_CH_SHOWALTPARTS (1927//)
+If enabled, normally hidden alternative message\n\
+parts of an 'multipart/alternative' mail will be\n\
+shown as attachments.
+;

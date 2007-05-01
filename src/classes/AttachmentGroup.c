@@ -153,13 +153,30 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
         if(mailPart)
         {
           const char *ctDescr = DescribeCT(mailPart->ContentType);
-          LONG partNameLen = TextLength(&rp, mailPart->Name, strlen(mailPart->Name));
-          LONG contentTypeLen = TextLength(&rp, ctDescr, strlen(ctDescr));
+          LONG partNameLen;
+          LONG contentTypeLen;
           LONG sizeLabelLen;
-          LONG largestLabelLen = MAX(partNameLen, contentTypeLen) + 10;
+          LONG largestLabelLen;
           LONG labelHeight = TEXTROWS*_font(obj)->tf_YSize;
           char buf[SIZE_DEFAULT];
 
+          // calculate the partNameLen
+          if(mailPart->isAltPart)
+          {
+            SetSoftStyle(&rp, FSF_ITALIC, AskSoftStyle(&rp));
+            partNameLen = TextLength(&rp, "multipart/alternative", 21);
+            SetSoftStyle(&rp, FS_NORMAL, AskSoftStyle(&rp));
+          }
+          else
+            partNameLen = TextLength(&rp, mailPart->Name, strlen(mailPart->Name));
+
+          // calculate the contentTypeLen
+          contentTypeLen = TextLength(&rp, ctDescr, strlen(ctDescr));
+
+          // see if contentTypeLen or partNameLen is longer
+          largestLabelLen = MAX(partNameLen, contentTypeLen)+10;
+
+          // calculate the sizeLabelLen
           if(mailPart->Decoded == FALSE)
           {
             buf[0] = '~';
@@ -437,12 +454,29 @@ OVERLOAD(MUIM_Draw)
 
           if(textSpaceWidth > 0 && textSpaceHeight > 0)
           {
-            cnt = TextFit(_rp(obj), mailPart->Name, strlen(mailPart->Name), &te, NULL, 1, textSpaceWidth, textSpaceHeight);
-            if(cnt > 0)
+            // in case this is an alternative part we go
+            // and write it out
+            if(mailPart->isAltPart)
             {
-              // move the rastport to the start where the text should be placed
-              Move(_rp(obj), _mright(child)+SPACING, topPosition);
-              Text(_rp(obj), mailPart->Name, cnt);
+              SetSoftStyle(_rp(obj), FSF_ITALIC, AskSoftStyle(_rp(obj)));
+              cnt = TextFit(_rp(obj), "multipart/alternative", 21, &te, NULL, 1, textSpaceWidth, textSpaceHeight);
+              if(cnt > 0)
+              {
+                // move the rastport to the start where the text should be placed
+                Move(_rp(obj), _mright(child)+SPACING, topPosition);
+                Text(_rp(obj), "multipart/alternative", cnt);
+              }
+              SetSoftStyle(_rp(obj), FS_NORMAL, AskSoftStyle(_rp(obj)));
+            }
+            else
+            {
+              cnt = TextFit(_rp(obj), mailPart->Name, strlen(mailPart->Name), &te, NULL, 1, textSpaceWidth, textSpaceHeight);
+              if(cnt > 0)
+              {
+                // move the rastport to the start where the text should be placed
+                Move(_rp(obj), _mright(child)+SPACING, topPosition);
+                Text(_rp(obj), mailPart->Name, cnt);
+              }
             }
 
             textSpaceHeight -= _font(obj)->tf_YSize;

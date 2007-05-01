@@ -1571,7 +1571,7 @@ _Mehrere Fenster
 ; _Multiple windows
 ;
 MSG_CO_DisplayAll
-Alle _Texte
+Alle _Texte anzeigen
 ; Display _all texts
 ;
 MSG_CO_FixedFontEdit
@@ -7649,4 +7649,13 @@ _Wiederholen|_Ignorieren
 ;
 MSG_ER_ZOMBIE_FILES_EXIST_TITLE
 YAM Warnung
+;
+MSG_CO_SHOWALTPARTS
+Alternative MIME-Teile anzeigen
+;
+MSG_HELP_CO_CH_SHOWALTPARTS
+Wenn ausgewählt, werden alle normalerweise\n\
+verborgenen alternativen Teile einer\n\
+'multipart/alternative' Nachricht als Anhänge\n\
+angezeigt.
 ;

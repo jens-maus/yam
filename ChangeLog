@@ -7,6 +7,12 @@ $URL$
 
 2007-05-01  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c, YAM_COs.c, YAM_CO.c, AttachmentGroup.c: moved the previously
+    hidden "DisplayAllAltPart" config option to the public 'Read' section of
+    the configuration and modified AttachmentGroup/Image code to display such
+    'artificial' attachments with transparency. In addition, the attachment
+    text will now contain an "multipart/alternative" string which will be
+    rendered italic to demonstrate the special meaning of that MIME part.
   * YAM_mail_lex.l: adapted the tENDSIGNATURE identifier to also identify the
     end of a signature in case "_" chars are used as a message separator.
   * YAM_mail_lex.l: another minor optimization to the soft-style recognition

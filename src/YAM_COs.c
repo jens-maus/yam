@@ -368,6 +368,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "DisplayAllTexts  = %s\n", Bool2Txt(co->DisplayAllTexts));
       fprintf(fh, "FixedFontEdit    = %s\n", Bool2Txt(co->FixedFontEdit));
       fprintf(fh, "UseTextstyles    = %s\n", Bool2Txt(co->UseTextstyles));
+      fprintf(fh, "DisplayAllAltPart= %s\n", Bool2Txt(co->DisplayAllAltPart));
       fprintf(fh, "MDNEnabled       = %s\n", Bool2Txt(co->MDNEnabled));
       fprintf(fh, "MDN_NoRecipient  = %d\n", co->MDN_NoRecipient);
       fprintf(fh, "MDN_NoDomain     = %d\n", co->MDN_NoDomain);
@@ -568,7 +569,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "StyleFolderNew   = %s\n", MUIStyle2String(co->StyleFolderNew));
       fprintf(fh, "StyleMailUnread  = %s\n", MUIStyle2String(co->StyleMailUnread));
       fprintf(fh, "StyleMailRead    = %s\n", MUIStyle2String(co->StyleMailRead));
-      fprintf(fh, "DisplayAllAltPart= %s\n", Bool2Txt(co->DisplayAllAltPart));
 
       fclose(fh);
       AppendLogVerbose(60, tr(MSG_LOG_SavingConfig), fname);
@@ -949,6 +949,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "DisplayAllTexts"))co->DisplayAllTexts = Txt2Bool(value);
                else if (!stricmp(buffer, "FixedFontEdit"))  co->FixedFontEdit = Txt2Bool(value);
                else if (!stricmp(buffer, "UseTextstyles"))  co->UseTextstyles = Txt2Bool(value);
+               else if (!stricmp(buffer, "DisplayAllAltPart")) co->DisplayAllAltPart = Txt2Bool(value);
                else if (!stricmp(buffer, "MDNEnabled"))       co->MDNEnabled = Txt2Bool(value);
                else if (!stricmp(buffer, "MDN_NoRecipient"))  co->MDN_NoRecipient = atoi(value);
                else if (!stricmp(buffer, "MDN_NoDomain"))     co->MDN_NoDomain = atoi(value);
@@ -1230,7 +1231,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "StyleFolderNew")) String2MUIStyle(value, co->StyleFolderNew);
                else if (!stricmp(buffer, "StyleMailUnread")) String2MUIStyle(value, co->StyleMailUnread);
                else if (!stricmp(buffer, "StyleMailRead")) String2MUIStyle(value, co->StyleMailRead);
-               else if (!stricmp(buffer, "DisplayAllAltPart")) co->DisplayAllAltPart = Txt2Bool(value);
                else
                  W(DBF_CONFIG, "unknown config option: '%s' = '%s'", buffer, value);
             }
@@ -1629,6 +1629,7 @@ void CO_GetConfig(BOOL saveConfig)
         CE->FixedFontEdit     = GetMUICheck  (gui->CH_FIXFEDIT);
         CE->WrapHeader        = GetMUICheck  (gui->CH_WRAPHEAD);
         CE->UseTextstyles     = GetMUICheck  (gui->CH_TEXTSTYLES);
+        CE->DisplayAllAltPart = GetMUICheck(gui->CH_SHOWALTPARTS);
 
         // get MDN options from GUI
         CE->MDNEnabled      = GetMUICheck(gui->CH_MDN_ALLOW) && !GetMUICheck(gui->CH_MDN_NEVER);
@@ -1989,6 +1990,7 @@ void CO_SetConfig(void)
         setcheckmark(gui->CH_FIXFEDIT  ,CE->FixedFontEdit);
         setcheckmark(gui->CH_WRAPHEAD  ,CE->WrapHeader);
         setcheckmark(gui->CH_TEXTSTYLES,CE->UseTextstyles);
+        setcheckmark(gui->CH_SHOWALTPARTS, CE->DisplayAllAltPart);
 
         // set the MDN stuff according to other config
         setcheckmark(gui->CH_MDN_NEVER, CE->MDNEnabled == FALSE);

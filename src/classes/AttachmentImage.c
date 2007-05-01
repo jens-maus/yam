@@ -336,16 +336,21 @@ OVERLOAD(MUIM_Setup)
       ULONG screenDepth = GetBitMapAttr(screenBitMap, BMA_DEPTH);
 
       // prepare the drawIcon/GetIconRentagle tags
-      #ifdef ICONDRAWA_Transparency // defined starting from icon.lib v51+
-      static const struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,      TRUE  },
-                                                     { ICONDRAWA_Frameless,       TRUE  },
-                                                     { ICONDRAWA_Transparency,    255   },
-                                                     { TAG_DONE,                  FALSE } };
-      #else
-      static const struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,      TRUE  },
-                                                     { ICONDRAWA_Frameless,       TRUE  },
-                                                     { TAG_DONE,                  FALSE } };
+
+      // defined starting from icon.lib v51+
+      #ifndef ICONDRAWA_Transparency
+      #define ICONDRAWA_Transparency TAG_IGNORE
       #endif
+
+      struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,      TRUE  },
+                                        { ICONDRAWA_Frameless,       TRUE  },
+                                        { ICONDRAWA_Transparency,    255   },
+                                        { TAG_DONE,                  FALSE } };
+
+      // if this is an alternative part we draw it with
+      // transparency of 50%
+      if(mailPart->isAltPart)
+        drawIconTags[2].ti_Data = 128;
 
       // initialize our temporary rastport
       InitRastPort(&rp);

@@ -2240,12 +2240,14 @@ Object *CO_PageRead(struct CO_ClassData *data)
                   MUIA_CycleChain, TRUE,
                 End,
               End,
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFEDIT, tr(MSG_CO_FixedFontEdit)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTSTYLES, tr(MSG_CO_UseTextstyles)),
+
               Child, Label1(tr(MSG_CO_ColoredText)),
               Child, data->GUI.CA_COLTEXT = PoppenObject,
                 MUIA_CycleChain, TRUE,
               End,
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_ALLTEXTS, tr(MSG_CO_DisplayAll)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFEDIT, tr(MSG_CO_FixedFontEdit)),
+
               Child, Label1(tr(MSG_CO_OldQuotes)),
               Child, HGroup,
                 Child, data->GUI.CA_COL1QUOT = PoppenObject,
@@ -2261,12 +2263,13 @@ Object *CO_PageRead(struct CO_ClassData *data)
                   MUIA_CycleChain, TRUE,
                 End,
               End,
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTSTYLES, tr(MSG_CO_UseTextstyles)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_ALLTEXTS, tr(MSG_CO_DisplayAll)),
+
               Child, Label1(tr(MSG_CO_URLCOLOR)),
               Child, data->GUI.CA_COLURL = PoppenObject,
                 MUIA_CycleChain, TRUE,
               End,
-              Child, HSpace(0),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_SHOWALTPARTS, tr(MSG_CO_SHOWALTPARTS)),
             End,
 
             Child, VGroup, GroupFrameT(tr(MSG_CO_MDN_TITLE)),
@@ -2353,6 +2356,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_FIXFEDIT,        MSG_HELP_CO_CH_FIXFEDIT);
     SetHelp(data->GUI.CH_WRAPHEAD,        MSG_HELP_CO_CH_WRAPHEAD);
     SetHelp(data->GUI.CH_TEXTSTYLES,      MSG_HELP_CO_CH_TEXTSTYLES);
+    SetHelp(data->GUI.CH_SHOWALTPARTS,    MSG_HELP_CO_CH_SHOWALTPARTS);
     SetHelp(data->GUI.CH_DELAYEDSTATUS,   MSG_HELP_CO_SETSTATUSDELAYED);
     SetHelp(data->GUI.NB_DELAYEDSTATUS,   MSG_HELP_CO_SETSTATUSDELAYED);
     SetHelp(data->GUI.CH_CONVERTHTML,     MSG_HELP_CO_CONVERTHTML);
