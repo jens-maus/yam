@@ -378,6 +378,14 @@ $(OBJDIR)/YAM.o: YAM.c
 	@printf '\033[32mCompiling $<\033[0m\n'
 	@$(CC) $(DEVFLAGS) $(CFLAGS) $< -o $@
 
+$(OBJDIR)/YAM_mail_lex.o: YAM_mail_lex.c
+	@printf '\033[32mCompiling $<\033[0m\n'
+	@$(CC) $(CFLAGS) -Wno-sign-compare $< -o $@
+
+$(OBJDIR)/HTML2Mail.o: HTML2Mail.c
+	@printf '\033[32mCompiling $<\033[0m\n'
+	@$(CC) $(CFLAGS) -Wno-sign-compare $< -o $@
+
 ## DEPENDENCY GENERATION ##############
 
 Makefile.depend: ;

@@ -7,6 +7,9 @@ $URL$
 
 2007-05-01  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Makefile: the flex generated source files will now be compiled without the
+    signed/unsigned warning as the auto-generated source code contains one
+    reference to such an signess issue which isn't really problematic.
   * YAM_FO.c: fixed folder image (.fimage) loading routine which were broken after
     recent cleanups.
 
