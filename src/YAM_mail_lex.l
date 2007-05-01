@@ -130,7 +130,7 @@ NOTATEOL    ([^[:punct:][:space:]]|{ESCAPE}|"/"|"=")
 ^([[:blank:]]*[[:alpha:]]{0,3}">")+   {return tCITE;}
 ^"-- \n"                              {return tSIGNATURE;}
 ^"\033c\033[s:18]"                    {return tNEXTPART;}
-^"\n""-"{30,}"\n"                     {return tENDSIGNATURE;}
+^[-_]{30,}"\n"{2}                     {return tENDSIGNATURE;}
 
 [[:blank:]]"*"[^[:blank:]\n*]([^\n*_/#]*[^[:blank:]\n*_/#])?"*"[[:blank:]\n,.!?:]   |
 ^"*"[^[:blank:]\n*]([^\n*_/#]*[^[:blank:]\n*_/#])?"*"[[:blank:]\n,.!?:]             {return tBOLD      ;}
