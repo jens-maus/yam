@@ -7,6 +7,9 @@ $URL$
 
 2007-05-01  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c: exchange some conflicting menu shortcuts to get V,X,C free so that
+    all main shortcuts in the QuickSearchBar still work as expected. This fixes
+    bug #1707243.
   * YAM_mail_lex.l: soft-styled text (*bold*) which were seperated by only one
     space wasn't correctly displayed in the corresponding soft-style. Now the
     mail parser should correctly highlight/soft-style the text by unputtung the
@@ -20,7 +23,7 @@ $URL$
 2007-05-01  Thore Böckelmann <tboeckel@gmx.de>
 
   * InfoBar.c, ReadWindowStatusBar.c: the spam folder icons were not shown due
-    to a wrong index check.
+    to a wrong index check. This fixes bug #1710350.
 
 2007-04-30  Jens Langner <Jens.Langner@light-speed.de>
 

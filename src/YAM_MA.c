@@ -4752,6 +4752,53 @@ struct MA_ClassData *MA_New(void)
 
       snprintf(data->WinTitle, sizeof(data->WinTitle), tr(MSG_MA_WinTitle), yamversionver, username);
 
+      //
+      // now we create the Menustrip object with all the menu items
+      // and corresponding shortcuts
+      //
+      // The follwong shortcut list should help to identify the hard-coded
+      // shortcuts:
+      //
+      //  A   Addressbook (MMEN_ABOOK)
+      //  B   Bounce (MMEN_BOUNCE)
+      //  C   reserved by QuickSearchBar (copy)
+      //  D   Read mail (MMEN_READ)
+      //  E   Edit mail (MMEN_EDIT)
+      //  F   Find/Search (MMEN_SEARCH)
+      //  G   Get mail (MMEN_GETMAIL)
+      //  H   Hide application (MMEN_HIDE)
+      //  I   Filter mailn (MMEN_FILTER)
+      //  J   Save address (MMEN_SAVEADDR)
+      //  K   Configuration (MMEN_CONFIG)
+      //  L   Exchange mail (MMEN_EXMAIL)
+      //  M   Move mail (MMEN_MOVE)
+      //  N   New mail (MMEN_NEW)
+      //  O   Crop attachments (MMEN_CROP)
+      //  P   Print (MMEN_PRINT)
+      //  Q   Quit application (MMEN_QUIT)
+      //  R   Reply mail (MMEN_REPLY)
+      //  S   Send mail (MMEN_SEND)
+      //  T   Save attachment (MMEN_DETACH)
+      //  U   Save mail (MMEN_SAVE)
+      //  V   reserved for QuickSearchBar (paste)
+      //  W   Forward mail (MMEN_FORWARD)
+      //  X   reserved for QuickSearchBar (cut)
+      //  Y   Copy mail (MMEN_COPY)
+      //  Z   Remove deleted mail (MMEN_DELDEL)
+      // Del  Remove selected mail (MMEN_DELETE)
+      //  +   Select all (MMEN_SELALL)
+      //  -   Select no mail (MMEN_SELNONE)
+      //  =   Toggle selection (MMEN_SELTOGG)
+      //  ,   Set status to marked (MMEN_TOMARKED)
+      //  .   Set status to unmarked (MMEN_TOUNMARKED)
+      //  [   Set status to unread (MMEN_TOUNREAD)
+      //  ]   Set status to read (MMEN_TOREAD)
+      //  {   Set status to hold (MMEN_TOHOLD)
+      //  }   Set status to queued (MMEN_TOQUEUED)
+      //  #   Set all mails to read (MMEN_ALLTOREAD)
+      //  ?   Open about window (MMEN_ABOUT)
+
+      //
       data->GUI.MS_MAIN = MenustripObject,
          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_MA_Project),
             MUIA_Family_Child, Menuitem(tr(MSG_PROJECT_MABOUT), "?", TRUE, FALSE, MMEN_ABOUT),
@@ -4777,14 +4824,14 @@ struct MA_ClassData *MA_New(void)
             MUIA_Family_Child, data->GUI.MI_FILTER = Menuitem(tr(MSG_MA_MFILTER), "I", TRUE, FALSE, MMEN_FILTER),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
             MUIA_Family_Child, data->GUI.MI_DELDEL = Menuitem(tr(MSG_MA_REMOVEDELETED), "Z", TRUE, FALSE, MMEN_DELDEL),
-            MUIA_Family_Child, data->GUI.MI_UPDINDEX = Menuitem(tr(MSG_MA_UPDATEINDEX), "U", TRUE, FALSE, MMEN_INDEX),
+            MUIA_Family_Child, data->GUI.MI_UPDINDEX = Menuitem(tr(MSG_MA_UPDATEINDEX), NULL, TRUE, FALSE, MMEN_INDEX),
             MUIA_Family_Child, Menuitem(tr(MSG_MA_FlushIndices), NULL, TRUE, FALSE, MMEN_FLUSH),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
             MUIA_Family_Child, data->GUI.MI_IMPORT = Menuitem(tr(MSG_FOLDER_IMPORT), NULL, TRUE, FALSE, MMEN_IMPORT),
             MUIA_Family_Child, data->GUI.MI_EXPORT = Menuitem(tr(MSG_FOLDER_EXPORT), NULL, TRUE, FALSE, MMEN_EXPORT),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
             MUIA_Family_Child, data->GUI.MI_SENDALL = Menuitem(tr(MSG_MA_MSENDALL), "S", TRUE, FALSE, MMEN_SENDMAIL),
-            MUIA_Family_Child, data->GUI.MI_EXCHANGE = Menuitem(tr(MSG_MA_MEXCHANGE), "X", TRUE, FALSE, MMEN_EXMAIL),
+            MUIA_Family_Child, data->GUI.MI_EXCHANGE = Menuitem(tr(MSG_MA_MEXCHANGE), "L", TRUE, FALSE, MMEN_EXMAIL),
             MUIA_Family_Child, data->GUI.MI_GETMAIL = Menuitem(tr(MSG_MA_MGETMAIL), "G", TRUE, FALSE, MMEN_GETMAIL),
         End,
          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Message),
@@ -4795,7 +4842,7 @@ struct MA_ClassData *MA_New(void)
             MUIA_Family_Child, data->GUI.MI_DELETE = Menuitem(tr(MSG_MA_MDelete), "Del", TRUE, TRUE, MMEN_DELETE),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
             MUIA_Family_Child, data->GUI.MI_PRINT = Menuitem(tr(MSG_MA_MPRINT), "P", TRUE, FALSE, MMEN_PRINT),
-            MUIA_Family_Child, data->GUI.MI_SAVE = Menuitem(tr(MSG_MA_MSAVE), "V", TRUE, FALSE, MMEN_SAVE),
+            MUIA_Family_Child, data->GUI.MI_SAVE = Menuitem(tr(MSG_MA_MSAVE), "U", TRUE, FALSE, MMEN_SAVE),
             MUIA_Family_Child, data->GUI.MI_ATTACH = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Attachments),
                MUIA_Family_Child, data->GUI.MI_SAVEATT = Menuitem(tr(MSG_MA_MSAVEATT), "T", TRUE, FALSE, MMEN_DETACH),
                MUIA_Family_Child, data->GUI.MI_REMATT = Menuitem(tr(MSG_MA_MCROP), "O", TRUE, FALSE, MMEN_CROP),
@@ -4809,7 +4856,7 @@ struct MA_ClassData *MA_New(void)
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
             MUIA_Family_Child, data->GUI.MI_GETADDRESS = Menuitem(tr(MSG_MA_MSAVEADDRESS), "J", TRUE, FALSE, MMEN_SAVEADDR),
             MUIA_Family_Child, data->GUI.MI_SELECT = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_Select),
-               MUIA_Family_Child, Menuitem(tr(MSG_MA_SELECTALL), "L", TRUE, FALSE, MMEN_SELALL),
+               MUIA_Family_Child, Menuitem(tr(MSG_MA_SELECTALL), "+", TRUE, FALSE, MMEN_SELALL),
                MUIA_Family_Child, Menuitem(tr(MSG_MA_SELECTNONE), "-", TRUE, FALSE, MMEN_SELNONE),
                MUIA_Family_Child, Menuitem(tr(MSG_MA_SELECTTOGGLE), "=", TRUE, FALSE, MMEN_SELTOGG),
             End,
