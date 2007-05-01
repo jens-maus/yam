@@ -399,7 +399,7 @@ DECLARE(Update) // struct Mail *mail
 
           D(DBF_GUI, "init imagearea: '%s'", xget(folder->imageObject, MUIA_ImageArea_Filename));
         }
-        else if(folder->ImageIndex >= 0 && folder->ImageIndex < MAX_FOLDERIMG)
+        else if(folder->ImageIndex >= 0 && folder->ImageIndex <= MAX_FOLDERIMG)
         {
           Object **imageArray = (Object **)xget(G->MA->GUI.NL_FOLDERS, MUIA_MainFolderListtree_ImageArray);
 

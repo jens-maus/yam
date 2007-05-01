@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-01  Thore Böckelmann <tboeckel@gmx.de>
+
+  * InfoBar.c, ReadWindowStatusBar.c: the spam folder icons were not shown due
+    to a wrong index check.
+
 2007-04-30  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.cd: added a title and more descriptive explaination for the "zombie files"
