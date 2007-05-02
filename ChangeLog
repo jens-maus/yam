@@ -7,6 +7,12 @@ $URL$
 
 2007-05-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COs.c: general clean up of the CO_LoadConfig() function. The variables
+    lastFilter, lastFilterID, lastType and lastTypeID *must* not be declared
+    static as they will survive a restart and eventually will point to no longer
+    allocated memory. On OS4 this will lead to a crash, on OS3 it may eat up
+    all free memory. All in all making these variables non-static and moving
+    them out of their previous scope fixes bug #1700013.
   * YAM.c, YAM_FI.c, YAM_TR.c: replaced several handcraftet list cleanups by
     calls to RemHead().
   * YAM_CO.c: use the new MIME type list free function.

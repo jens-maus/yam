@@ -59,7 +59,7 @@
  Module: Configuration - Basic Get/Put routines
 ***************************************************************************/
 
-/// MUIStyle2String()
+/// MUIStyle2String
 // converts a MUI style string which contains common \033 sequences into a
 // human-readable form which we can save to our configuration file.
 char *MUIStyle2String(const char *style)
@@ -103,7 +103,7 @@ char *MUIStyle2String(const char *style)
   return buf;
 }
 ///
-/// String2MUIStyle()
+/// String2MUIStyle
 // converts a string with style definitions into a MUI style
 // conform string with \033 sequences
 void String2MUIStyle(const char *string, char *muistr)
@@ -581,670 +581,737 @@ void CO_SaveConfig(struct Config *co, char *fname)
 //  Loads configuration from a file
 BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 {
-   struct Folder **ofo = NULL;
-   FILE *fh;
+  BOOL success = FALSE;
+  FILE *fh;
 
-   if((fh = fopen(fname, "r")))
-   {
-      char buffer[SIZE_LARGE];
+  ENTER();
 
-      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+  if((fh = fopen(fname, "r")) != NULL)
+  {
+    char buffer[SIZE_LARGE];
 
-      if(fgets(buffer, SIZE_LARGE, fh) && strnicmp(buffer, "YCO", 3) == 0)
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+    if(fgets(buffer, sizeof(buffer), fh) && strnicmp(buffer, "YCO", 3) == 0)
+    {
+      int version = buffer[3]-'0';
+      struct Folder **ofo = NULL;
+      struct FilterNode *lastFilter = NULL;
+      int lastTypeID = -1;
+      struct MimeTypeNode *lastType = NULL;
+      int lastFilterID = -1;
+
+      CO_SetDefaults(co, cp_AllPages);
+
+      while(fgets(buffer, sizeof(buffer), fh))
       {
-         int version = buffer[3]-'0';
-         CO_SetDefaults(co, -1);
+        char *p;
+        char *value;
+        const char *value2 = "";
 
-         while (fgets(buffer, SIZE_LARGE, fh))
-         {
-            char *p;
-            char *value;
-            const char *value2 = "";
+        if((value = strchr(buffer, '=')) != NULL)
+          for(value2 = (++value)+1; isspace(*value); value++);
 
-            if ((value = strchr(buffer, '='))) for (value2 = (++value)+1; isspace(*value); value++);
-            if ((p = strpbrk(buffer,"\r\n"))) *p = 0;
-            for (p = buffer; *p && *p != '=' && !isspace(*p); p++); *p = 0;
+        if((p = strpbrk(buffer,"\r\n")) != NULL)
+          *p = '\0';
 
-            if (*buffer && value)
+        for(p = buffer; *p != '\0' && *p != '=' && !isspace(*p); p++);
+        *p = '\0';
+
+        if(*buffer != '\0' && value != NULL)
+        {
+          // check for an old config version and try to import its values
+          if(version == 2)
+          {
+            if(!stricmp(buffer, "POP3-Server"))         strlcpy(co->P3[0]->Server, value, sizeof(co->P3[0]->Server));
+            else if(!stricmp(buffer, "POP3-Password"))  strlcpy(co->P3[0]->Password, Decrypt(value), sizeof(co->P3[0]->Password));
+            else if(!stricmp(buffer, "POP3-User"))      strlcpy(co->P3[0]->User, value, sizeof(co->P3[0]->User));
+            else if(!stricmp(buffer, "DeleteOnServer")) co->P3[0]->DeleteOnServer = Txt2Bool(value);
+            else if(!stricmp(buffer, "CheckMail"))      { if(!Txt2Bool(value)) co->CheckMailDelay = 0; }
+            else if(!stricmp(buffer, "ConfirmSize"))
             {
-               // check for an old config version and try to import its values
-               if (version == 2)
-               {
-                  if (!stricmp(buffer, "POP3-Server"))         strlcpy(co->P3[0]->Server, value, sizeof(co->P3[0]->Server));
-                  else if (!stricmp(buffer, "POP3-Password"))  strlcpy(co->P3[0]->Password, Decrypt(value), sizeof(co->P3[0]->Password));
-                  else if (!stricmp(buffer, "POP3-User"))      strlcpy(co->P3[0]->User, value, sizeof(co->P3[0]->User));
-                  else if (!stricmp(buffer, "DeleteOnServer")) co->P3[0]->DeleteOnServer = Txt2Bool(value);
-                  else if (!stricmp(buffer, "CheckMail"))      { if (!Txt2Bool(value)) co->CheckMailDelay = 0; }
-                  else if (!stricmp(buffer, "ConfirmSize"))
-                  {
-                    switch (atoi(value))
-                    {
-                      case  0: co->PreSelection = 2; co->WarnSize = 0; break;
-                      case 13: co->PreSelection = 0; co->WarnSize = 0; break;
-                      default: co->PreSelection = 1; co->WarnSize = 1<<atoi(value); break;
-                    }
-                  }
-                  else if (!stricmp(buffer, "Verbosity"))      co->TransferWindow = atoi(value) > 0 ? 2 : 0;
-                  else if (!stricmp(buffer, "WordWrap"))       co->EdWrapCol = atoi(value);
-                  else if (!stricmp(buffer, "DeleteOnExit"))   co->RemoveAtOnce = !(co->RemoveOnQuit = Txt2Bool(value));
-                  else if (!strnicmp(buffer, "Folder", 6) && oldfolders)
-                  {
-                     static const int sortconv[4] = { -1, 1, 3, 5 };
-                     int j = atoi(&buffer[6]);
-                     int type;
+              switch (atoi(value))
+              {
+                case  0: co->PreSelection = 2; co->WarnSize = 0; break;
+                case 13: co->PreSelection = 0; co->WarnSize = 0; break;
+                default: co->PreSelection = 1; co->WarnSize = 1<<atoi(value); break;
+              }
+            }
+            else if(!stricmp(buffer, "Verbosity"))      co->TransferWindow = atoi(value) > 0 ? 2 : 0;
+            else if(!stricmp(buffer, "WordWrap"))       co->EdWrapCol = atoi(value);
+            else if(!stricmp(buffer, "DeleteOnExit"))   co->RemoveAtOnce = !(co->RemoveOnQuit = Txt2Bool(value));
+            else if(!strnicmp(buffer, "Folder", 6) && oldfolders != NULL)
+            {
+              static const int sortconv[4] = { -1, 1, 3, 5 };
+              int j = atoi(&buffer[6]);
+              int type;
 
-                     if(ofo == NULL)
-                       ofo = *oldfolders = calloc(100, sizeof(struct Folder *));
-                     if(ofo != NULL)
-                     {
-                       if(j >= 3)
-                       {
-                       	 for(j = 4; j < 100; j++)
-                       	 {
-                       	   if(ofo[j] == NULL)
-                       	   	 break;
-                       	 }
-                       }
-                       type = (j == 0 ? FT_INCOMING : (j == 1 ? FT_OUTGOING : (j == 2 ? FT_SENT : FT_CUSTOM)));
-                       if((p = strchr(&value[4], ';')) != NULL)
-                       	 *p++ = 0;
-
-                       if(ofo[j] == NULL)
-                       {
-                       	 if((ofo[j] = FO_NewFolder(type, &value[4], p)) != NULL)
-                           ofo[j]->Sort[0] = sortconv[atoi(&value[2])];
-                       }
-                     }
-                  }
-                  else if (!strnicmp(buffer, "Rule", 4))
-                  {
-                     struct FilterNode *filter;
-
-                     if((filter = CreateNewFilter()) != NULL)
-                     {
-                        struct RuleNode *rule;
-                        char *p2;
-
-                        filter->applyToNew = filter->applyOnReq = Txt2Bool(value);
-                        p = strchr(p2 = &value[2], ';');
-                        *p++ = '\0';
-                        strlcpy(filter->name, p2, sizeof(filter->name));
-
-                        // get the first rule (always existent) and fill in data
-                        rule = (struct RuleNode *)filter->ruleList.mlh_Head;
-                        if((rule->searchMode = atoi(p)) == 2)
-                          rule->searchMode = SM_SUBJECT;
-
-                        rule->caseSensitive = Txt2Bool(&p[2]);
-                        rule->comparison = Txt2Bool(&p[4]) ? CP_NOTEQUAL : CP_EQUAL;
-                        p = strchr(p2 = &p[6], ';');
-                        *p++ = '\0';
-                        strlcpy(rule->matchPattern, p2, sizeof(rule->matchPattern));
-
-                        switch(atoi(p))
-                        {
-                          case 0: filter->actions = FA_MOVE;    break;
-                          case 1: filter->actions = FA_DELETE;  break;
-                          case 2: filter->actions = FA_FORWARD; break;
-                        }
-
-                        p = strchr(p2 = &p[2], ';');
-                        *p++ = '\0';
-                        strlcpy(filter->moveTo, p2, sizeof(filter->moveTo));
-                        strlcpy(filter->forwardTo, p, sizeof(filter->forwardTo));
-                        if(*filter->forwardTo)
-                          SET_FLAG(filter->actions, FA_FORWARD);
-
-                        AddTail((struct List *)&co->filterList, (struct Node *)filter);
-                     }
-                  }
-                  else if (!strnicmp(buffer, "MimeViewer", 10))
-                  {
-                     int j = atoi(&buffer[10]);
-                     struct MimeTypeNode *mt;
-
-                     if(j >= 0 && j < 100 && (mt = CreateNewMimeType()))
-                     {
-                       p = strchr(value, ';');
-                       *p++ = '\0';
-
-                       strlcpy(mt->ContentType, value, sizeof(mt->ContentType));
-                       strlcpy(mt->Command, p, sizeof(mt->Command));
-
-                       AddTail((struct List *)&(co->mimeTypeList), (struct Node *)mt);
-                     }
-                  }
-                  else if (!strnicmp(buffer, "RexxMenu", 8))
-                  {
-                     int j = atoi(&buffer[8]);
-                     strlcpy(co->RX[j].Name, (char *)FilePart(value), sizeof(co->RX[j].Name));
-                     strlcpy(co->RX[j].Script, value, sizeof(co->RX[j].Script));
-                  }
-               }
-
-               if (!strnicmp(buffer, "FolderPath", 10) && oldfolders)
-               {
-                  int j = atoi(&buffer[10]);
-
-                  if(ofo == NULL)
-                    ofo = *oldfolders = calloc(100, sizeof(struct Folder *));
-                  if(ofo != NULL)
+              if(ofo == NULL)
+                ofo = *oldfolders = calloc(100, sizeof(struct Folder *));
+              if(ofo != NULL)
+              {
+                if(j >= 3)
+                {
+                  for(j = 4; j < 100; j++)
                   {
                     if(ofo[j] == NULL)
-                    {
-                      if((ofo[j] = FO_NewFolder(FT_CUSTOM, value, (char *)FilePart(value))) != NULL)
-                      {
-                        if(!FO_LoadConfig(ofo[j]))
-                          FO_SaveConfig(ofo[j]);
-                      }
-                    }
-                  }
-               }
-/*0*/          else if (!stricmp(buffer, "RealName"))       strlcpy(co->RealName, value, sizeof(co->RealName));
-               else if (!stricmp(buffer, "EmailAddress"))   strlcpy(co->EmailAddress, value, sizeof(co->EmailAddress));
-               else if (!stricmp(buffer, "TimeZone"))       co->TimeZone = atoi(value);
-               else if (!stricmp(buffer, "DaylightSaving")) co->DaylightSaving = Txt2Bool(value);
-               else if (!stricmp(buffer, "LocalCharset"))   strlcpy(co->LocalCharset, value, sizeof(co->LocalCharset));
-               else if (!stricmp(buffer, "DetectCyrillic")) co->DetectCyrillic = Txt2Bool(value);
-/*1*/          else if (!stricmp(buffer, "SMTP-Server"))    strlcpy(co->SMTP_Server, value, sizeof(co->SMTP_Server));
-               else if (!stricmp(buffer, "SMTP-Port"))      co->SMTP_Port = atoi(value);
-               else if (!stricmp(buffer, "SMTP-Domain"))    strlcpy(co->SMTP_Domain, value, sizeof(co->SMTP_Domain));
-               else if (!stricmp(buffer, "SMTP-SecMethod")) co->SMTP_SecureMethod = atoi(value);
-               else if (!stricmp(buffer, "Allow8bit"))      co->Allow8bit = Txt2Bool(value);
-               else if (!stricmp(buffer, "Use-SMTP-TLS"))   co->SMTP_SecureMethod = atoi(value); // obsolete
-               else if (!stricmp(buffer, "Use-SMTP-AUTH"))  co->Use_SMTP_AUTH = Txt2Bool(value);
-               else if (!stricmp(buffer, "SMTP-AUTH-User")) strlcpy(co->SMTP_AUTH_User, value, sizeof(co->SMTP_AUTH_User));
-               else if (!stricmp(buffer, "SMTP-AUTH-Pass")) strlcpy(co->SMTP_AUTH_Pass, Decrypt(value), sizeof(co->SMTP_AUTH_Pass));
-               else if (!stricmp(buffer, "SMTP-AUTH-Method")) co->SMTP_AUTH_Method = atoi(value);
-               else if (!strnicmp(buffer, "POP", 3) && buffer[5] == '.')
-               {
-                 int j = atoi(&buffer[3]);
-                 struct POP3 *p3 = co->P3[j];
-
-                 if(p3 == NULL)
-                   p3 = co->P3[j] = CO_NewPOP3(co, FALSE);
-
-                 if(p3 != NULL)
-                 {
-                   p = &buffer[6];
-                   if(!stricmp(p, "Account"))         strlcpy(p3->Account, value, sizeof(p3->Account));
-                   else if (!stricmp(p, "Server"))    strlcpy(p3->Server, value, sizeof(p3->Server));
-                   else if (!stricmp(p, "Port"))      p3->Port = atoi(value);
-                   else if (!stricmp(p, "Password"))  strlcpy(p3->Password, Decrypt(value), sizeof(p3->Password));
-                   else if (!stricmp(p, "User"))      strlcpy(p3->User, value, sizeof(p3->User));
-                   else if (!stricmp(p, "Enabled"))   p3->Enabled = Txt2Bool(value);
-                   else if (!stricmp(p, "SSLMode"))   p3->SSLMode = atoi(value);
-                   else if (!stricmp(p, "UseAPOP"))   p3->UseAPOP = Txt2Bool(value);
-                   else if (!stricmp(p, "Delete"))    p3->DeleteOnServer = Txt2Bool(value);
-                 }
-                 else
-                   break;
-               }
-/*2*/          else if (!stricmp(buffer, "AvoidDuplicates"))co->AvoidDuplicates = Txt2Bool(value);
-               else if (!stricmp(buffer, "PreSelection"))   co->PreSelection = atoi(value);
-               else if (!stricmp(buffer, "TransferWindow")) co->TransferWindow = atoi(value);
-               else if (!stricmp(buffer, "UpdateStatus"))   co->UpdateStatus = Txt2Bool(value);
-               else if (!stricmp(buffer, "WarnSize"))       co->WarnSize = atoi(value);
-               else if (!stricmp(buffer, "CheckMailDelay")) co->CheckMailDelay = atoi(value);
-               else if (!stricmp(buffer, "DownloadLarge"))  co->DownloadLarge = Txt2Bool(value);
-               else if (!stricmp(buffer, "NotifyType"))     co->NotifyType = atoi(value);
-               else if (!stricmp(buffer, "NotifySound"))    strlcpy(co->NotifySound, value, sizeof(co->NotifySound));
-               else if (!stricmp(buffer, "NotifyCommand"))  strlcpy(co->NotifyCommand, value, sizeof(co->NotifyCommand));
-/*3*/          else if (!strnicmp(buffer, "FI", 2) && isdigit(buffer[2]) && isdigit(buffer[3]) && strchr(buffer, '.'))
-               {
-                 static struct FilterNode *lastFilter = NULL;
-                 static int lastFilterID = -1;
-                 int curFilterID = atoi(&buffer[2]);
-                 char *p = strchr(buffer, '.')+1;
-
-                 if(lastFilter && lastFilterID != curFilterID)
-                 {
-                   int i;
-                   struct MinNode *curNode;
-
-                   // reset the lastFilter
-                   lastFilter = NULL;
-                   lastFilterID = -1;
-
-                   // try to get the filter with that particular filter ID out of our
-                   // filterList
-                   for(i=0, curNode = co->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
-                   {
-                     if(i == curFilterID)
-                     {
-                       lastFilter = (struct FilterNode *)curNode;
-                       lastFilterID = i;
-                       break;
-                     }
-                   }
-                 }
-
-                 if(lastFilter == NULL)
-                 {
-                   if((lastFilter = CreateNewFilter()))
-                   {
-                     AddTail((struct List *)&co->filterList, (struct Node *)lastFilter);
-                     lastFilterID = curFilterID;
-                   }
-                   else
-                     break;
-                 }
-
-                 // now find out which subtype this filter has
-                 if(!stricmp(p, "Name"))                  strlcpy(lastFilter->name, value, sizeof(lastFilter->name));
-                 else if(!stricmp(p, "Remote"))           lastFilter->remote = Txt2Bool(value);
-                 else if(!stricmp(p, "ApplyToNew"))       lastFilter->applyToNew = Txt2Bool(value);
-                 else if(!stricmp(p, "ApplyToSent"))      lastFilter->applyToSent = Txt2Bool(value);
-                 else if(!stricmp(p, "ApplyOnReq"))       lastFilter->applyOnReq = Txt2Bool(value);
-                 else if(!stricmp(p, "Actions"))          lastFilter->actions = atoi(value);
-                 else if(!stricmp(p, "BounceTo"))         strlcpy(lastFilter->bounceTo, value, sizeof(lastFilter->bounceTo));
-                 else if(!stricmp(p, "ForwardTo"))        strlcpy(lastFilter->forwardTo, value, sizeof(lastFilter->forwardTo));
-                 else if(!stricmp(p, "ReplyFile"))        strlcpy(lastFilter->replyFile, value, sizeof(lastFilter->replyFile));
-                 else if(!stricmp(p, "ExecuteCmd"))       strlcpy(lastFilter->executeCmd, value, sizeof(lastFilter->executeCmd));
-                 else if(!stricmp(p, "PlaySound"))        strlcpy(lastFilter->playSound, value, sizeof(lastFilter->playSound));
-                 else if(!stricmp(p, "MoveTo"))           strlcpy(lastFilter->moveTo, value, sizeof(lastFilter->moveTo));
-                 else
-                 {
-                   struct RuleNode *rule;
-
-                   // if nothing of the above string matched than the FI string
-                   // is probably a rule definition so we check it here
-
-                   if(!strnicmp(p, "Field", 5))
-                   {
-                     int n = atoi(p+5);
-
-                     while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                       CreateNewRule(lastFilter);
-
-                     rule->searchMode = atoi(value);
-                   }
-                   else if(!strnicmp(p, "SubField", 8))
-                   {
-                     int n = atoi(p+8);
-
-                     while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                       CreateNewRule(lastFilter);
-
-                     rule->subSearchMode = atoi(value);
-                   }
-                   else if(!strnicmp(p, "CustomField", 11))
-                   {
-                     int n = atoi(p+11);
-
-                     while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                       CreateNewRule(lastFilter);
-
-                     strlcpy(rule->customField, value, sizeof(rule->customField));
-                   }
-                   else if(!strnicmp(p, "Comparison", 10))
-                   {
-                     int n = atoi(p+10);
-
-                     while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                       CreateNewRule(lastFilter);
-
-                     rule->comparison = atoi(value);
-                   }
-                   else if(!strnicmp(p, "Match", 5))
-                   {
-                     int n = atoi(p+5);
-
-                     while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                       CreateNewRule(lastFilter);
-
-                     strlcpy(rule->matchPattern, value2, sizeof(rule->matchPattern));
-                   }
-                   else if(!strnicmp(p, "CaseSens", 8))
-                   {
-                     int n = atoi(p+8);
-
-                     while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                       CreateNewRule(lastFilter);
-
-                     rule->caseSensitive = Txt2Bool(value);
-                   }
-                   else if(!strnicmp(p, "Substring", 9))
-                   {
-                     int n = atoi(p+9);
-
-                     while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                       CreateNewRule(lastFilter);
-
-                     rule->subString = Txt2Bool(value);
-                   }
-                   else if(!strnicmp(p, "Combine", 7) && atoi(value) > CB_NONE)
-                   {
-                     int n = atoi(p+7);
-
-                     // here we use n and not n-1 on purpose because the combine line
-                     // refers always to the next one.
-                     while((rule = GetFilterRule(lastFilter, n>0 ? n : 1)) == NULL)
-                       CreateNewRule(lastFilter);
-
-                     rule->combine = atoi(value);
-                   }
-                 }
-               }
-/*Spam*/       else if (!stricmp(buffer, "SpamFilterEnabled")) co->SpamFilterEnabled = Txt2Bool(value);
-               else if (!stricmp(buffer, "SpamFilterForNew")) co->SpamFilterForNewMail = Txt2Bool(value);
-               else if (!stricmp(buffer, "SpamMarkOnMove")) co->SpamMarkOnMove = Txt2Bool(value);
-               else if (!stricmp(buffer, "SpamMarkAsRead")) co->SpamMarkAsRead = Txt2Bool(value);
-               else if (!stricmp(buffer, "SpamABookIsWhite")) co->SpamAddressBookIsWhiteList = Txt2Bool(value);
-               else if (!stricmp(buffer, "SpamProbThreshold")) co->SpamProbabilityThreshold = atoi(value);
-               else if (!stricmp(buffer, "SpamFlushInterval")) co->SpamFlushTrainingDataInterval = atoi(value);
-               else if (!stricmp(buffer, "SpamFlushThres")) co->SpamFlushTrainingDataThreshold = atoi(value);
-/*4*/          else if (!stricmp(buffer, "ShowHeader"))     co->ShowHeader = atoi(value);
-               else if (!stricmp(buffer, "ShortHeaders"))   strlcpy(co->ShortHeaders, value, sizeof(co->ShortHeaders));
-               else if (!stricmp(buffer, "ShowSenderInfo")) co->ShowSenderInfo = atoi(value);
-               else if (!stricmp(buffer, "WrapHeader"))     co->WrapHeader = Txt2Bool(value);
-               else if (!stricmp(buffer, "SigSepLine"))     co->SigSepLine = atoi(value);
-               else if (!stricmp(buffer, "ColorSignature")) strlcpy(co->ColorSignature.buf, value, sizeof(co->ColorSignature.buf));
-               else if (!stricmp(buffer, "ColoredText"))    strlcpy(co->ColoredText.buf, value, sizeof(co->ColoredText.buf));
-               else if (!stricmp(buffer, "Color1stLevel"))  strlcpy(co->Color1stLevel.buf, value, sizeof(co->Color1stLevel.buf));
-               else if (!stricmp(buffer, "Color2ndLevel"))  strlcpy(co->Color2ndLevel.buf, value, sizeof(co->Color2ndLevel.buf));
-               else if (!stricmp(buffer, "Color3rdLevel"))  strlcpy(co->Color3rdLevel.buf, value, sizeof(co->Color3rdLevel.buf));
-               else if (!stricmp(buffer, "Color4thLevel"))  strlcpy(co->Color4thLevel.buf, value, sizeof(co->Color4thLevel.buf));
-               else if (!stricmp(buffer, "ColorURL"))       strlcpy(co->ColorURL.buf, value, sizeof(co->ColorURL.buf));
-               else if (!stricmp(buffer, "DisplayAllTexts"))co->DisplayAllTexts = Txt2Bool(value);
-               else if (!stricmp(buffer, "FixedFontEdit"))  co->FixedFontEdit = Txt2Bool(value);
-               else if (!stricmp(buffer, "UseTextstyles"))  co->UseTextstyles = Txt2Bool(value);
-               else if (!stricmp(buffer, "DisplayAllAltPart")) co->DisplayAllAltPart = Txt2Bool(value);
-               else if (!stricmp(buffer, "MDNEnabled"))       co->MDNEnabled = Txt2Bool(value);
-               else if (!stricmp(buffer, "MDN_NoRecipient"))  co->MDN_NoRecipient = atoi(value);
-               else if (!stricmp(buffer, "MDN_NoDomain"))     co->MDN_NoDomain = atoi(value);
-               else if (!stricmp(buffer, "MDN_OnDelete"))     co->MDN_OnDelete = atoi(value);
-               else if (!stricmp(buffer, "MDN_Other"))        co->MDN_Other = atoi(value);
-               else if (!stricmp(buffer, "MultipleWindows"))  co->MultipleWindows = Txt2Bool(value);
-               else if (!stricmp(buffer, "StatusChangeDelay"))
-               {
-                 int delay = atoi(value);
-
-                 if(delay < 0)
-                 {
-                   co->StatusChangeDelay = -1*delay;
-                   co->StatusChangeDelayOn = FALSE;
-                 }
-                 else
-                 {
-                   co->StatusChangeDelay = delay;
-                   co->StatusChangeDelayOn = TRUE;
-                 }
-               }
-               else if (!stricmp(buffer, "ConvertHTML"))    co->ConvertHTML = Txt2Bool(value);
-/*5*/          else if (!stricmp(buffer, "ReplyTo"))        strlcpy(co->ReplyTo,  value, sizeof(co->ReplyTo));
-               else if (!stricmp(buffer, "Organization"))   strlcpy(co->Organization, value, sizeof(co->Organization));
-               else if (!stricmp(buffer, "ExtraHeaders"))   strlcpy(co->ExtraHeaders, value, sizeof(co->ExtraHeaders));
-               else if (!stricmp(buffer, "NewIntro"))       strlcpy(co->NewIntro, value2, sizeof(co->NewIntro));
-               else if (!stricmp(buffer, "Greetings"))      strlcpy(co->Greetings, value2, sizeof(co->Greetings));
-               else if (!stricmp(buffer, "WarnSubject"))    co->WarnSubject = Txt2Bool(value);
-               else if (!stricmp(buffer, "EdWrapCol"))      co->EdWrapCol = atoi(value);
-               else if (!stricmp(buffer, "EdWrapMode"))     co->EdWrapMode = atoi(value);
-               else if (!stricmp(buffer, "Editor"))         strlcpy(co->Editor, value, sizeof(co->Editor));
-               else if (!stricmp(buffer, "LaunchAlways"))   co->LaunchAlways = Txt2Bool(value);
-               else if (!stricmp(buffer, "EmailCache"))     co->EmailCache = atoi(value);
-               else if (!stricmp(buffer, "AutoSave"))       co->AutoSave = atoi(value);
-               else if (!stricmp(buffer, "RequestMDN"))     co->RequestMDN = Txt2Bool(value);
-               else if (!stricmp(buffer, "SaveSent"))       co->SaveSent = Txt2Bool(value);
-/*6*/          else if (!stricmp(buffer, "ReplyHello"))     strlcpy(co->ReplyHello, value2, sizeof(co->ReplyHello));
-               else if (!stricmp(buffer, "ReplyIntro"))     strlcpy(co->ReplyIntro, value2, sizeof(co->ReplyIntro));
-               else if (!stricmp(buffer, "ReplyBye"))       strlcpy(co->ReplyBye, value2, sizeof(co->ReplyBye));
-               else if (!stricmp(buffer, "AltReplyHello"))  strlcpy(co->AltReplyHello, value2, sizeof(co->AltReplyHello));
-               else if (!stricmp(buffer, "AltReplyIntro"))  strlcpy(co->AltReplyIntro, value2, sizeof(co->AltReplyIntro));
-               else if (!stricmp(buffer, "AltReplyBye"))    strlcpy(co->AltReplyBye, value2, sizeof(co->AltReplyBye));
-               else if (!stricmp(buffer, "AltReplyPattern"))strlcpy(co->AltReplyPattern, value2, sizeof(co->AltReplyPattern));
-               else if (!stricmp(buffer, "MLReplyHello"))   strlcpy(co->MLReplyHello, value2, sizeof(co->MLReplyHello));
-               else if (!stricmp(buffer, "MLReplyIntro"))   strlcpy(co->MLReplyIntro, value2, sizeof(co->MLReplyIntro));
-               else if (!stricmp(buffer, "MLReplyBye"))     strlcpy(co->MLReplyBye, value2, sizeof(co->MLReplyBye));
-               else if (!stricmp(buffer, "ForwardIntro"))   strlcpy(co->ForwardIntro, value2, sizeof(co->ForwardIntro));
-               else if (!stricmp(buffer, "ForwardFinish"))  strlcpy(co->ForwardFinish, value2, sizeof(co->ForwardFinish));
-               else if (!stricmp(buffer, "QuoteMessage"))   co->QuoteMessage = Txt2Bool(value);
-               else if (!stricmp(buffer, "QuoteChar"))      strlcpy(co->QuoteChar, value2, sizeof(co->QuoteChar));
-               else if (!stricmp(buffer, "AltQuoteChar"))   strlcpy(co->AltQuoteChar, value2, sizeof(co->AltQuoteChar));
-               else if (!stricmp(buffer, "QuoteEmptyLines"))co->QuoteEmptyLines = Txt2Bool(value);
-               else if (!stricmp(buffer, "CompareAddress")) co->CompareAddress = Txt2Bool(value);
-               else if (!stricmp(buffer, "StripSignature")) co->StripSignature = Txt2Bool(value);
-/*7*/          else if (!stricmp(buffer, "UseSignature"))   co->UseSignature = Txt2Bool(value);
-               else if (!stricmp(buffer, "TagsFile"))       strlcpy(co->TagsFile, value, sizeof(co->TagsFile));
-               else if (!stricmp(buffer, "TagsSeparator"))  strlcpy(co->TagsSeparator, value2, sizeof(co->TagsSeparator));
-/*8*/          else if (!stricmp(buffer, "FolderCols"))     co->FolderCols = atoi(value);
-               else if (!stricmp(buffer, "MessageCols"))    co->MessageCols = atoi(value);
-               else if (!stricmp(buffer, "FixedFontList"))  co->FixedFontList = Txt2Bool(value);
-               else if (!stricmp(buffer, "DateTimeFormat")) co->DSListFormat = atoi(value);
-               else if (!stricmp(buffer, "ABookLookup"))    co->ABookLookup = Txt2Bool(value);
-               else if (!stricmp(buffer, "FolderCntMenu"))  co->FolderCntMenu = Txt2Bool(value);
-               else if (!stricmp(buffer, "MessageCntMenu")) co->MessageCntMenu = Txt2Bool(value);
-/*9*/          else if (!stricmp(buffer, "PGPCmdPath"))     strlcpy(co->PGPCmdPath, value, sizeof(co->PGPCmdPath));
-               else if (!stricmp(buffer, "MyPGPID"))        strlcpy(co->MyPGPID, value, sizeof(co->MyPGPID));
-               else if (!stricmp(buffer, "EncryptToSelf"))  co->EncryptToSelf = Txt2Bool(value);
-               else if (!stricmp(buffer, "PGPPassInterval"))co->PGPPassInterval = atoi(value);
-               else if (!stricmp(buffer, "ReMailer"))       strlcpy(co->ReMailer, value, sizeof(co->ReMailer));
-               else if (!stricmp(buffer, "RMCommands"))     strlcpy(co->RMCommands, value2, sizeof(co->RMCommands));
-               else if (!stricmp(buffer, "LogfilePath"))    strlcpy(co->LogfilePath, value, sizeof(co->LogfilePath));
-               else if (!stricmp(buffer, "LogfileMode"))    co->LogfileMode = atoi(value);
-               else if (!stricmp(buffer, "SplitLogfile"))   co->SplitLogfile = Txt2Bool(value);
-               else if (!stricmp(buffer, "LogAllEvents"))   co->LogAllEvents = Txt2Bool(value);
-/*10*/         else if (!stricmp(buffer, "GetOnStartup"))   co->GetOnStartup = Txt2Bool(value);
-               else if (!stricmp(buffer, "SendOnStartup"))  co->SendOnStartup = Txt2Bool(value);
-               else if (!stricmp(buffer, "CleanupOnStartup")) co->CleanupOnStartup = Txt2Bool(value);
-               else if (!stricmp(buffer, "RemoveOnStartup"))  co->RemoveOnStartup = Txt2Bool(value);
-               else if (!stricmp(buffer, "LoadAllFolders")) co->LoadAllFolders = Txt2Bool(value);
-               else if (!stricmp(buffer, "UpdateNewMail"))  co->UpdateNewMail = Txt2Bool(value);
-               else if (!stricmp(buffer, "CheckBirthdates"))co->CheckBirthdates = Txt2Bool(value);
-               else if (!stricmp(buffer, "SendOnQuit"))     co->SendOnQuit = Txt2Bool(value);
-               else if (!stricmp(buffer, "CleanupOnQuit"))  co->CleanupOnQuit = Txt2Bool(value);
-               else if (!stricmp(buffer, "RemoveOnQuit"))   co->RemoveOnQuit = Txt2Bool(value);
-/*11*/         else if (!strnicmp(buffer, "MV", 2) && isdigit(buffer[2]) && isdigit(buffer[3]) && strchr(buffer, '.'))
-               {
-                 static struct MimeTypeNode *lastType = NULL;
-                 static int lastTypeID = -1;
-                 int curTypeID = atoi(&buffer[2]);
-                 char *p = strchr(buffer, '.')+1;
-
-                 // we only get the correct mimetype node if the ID
-                 // is greater than zero, because zero is reserved for the default
-                 // mime viewer type.
-                 if(curTypeID > 0)
-                 {
-                   if(lastType && lastTypeID != curTypeID)
-                   {
-                     int i;
-                     struct MinNode *curNode;
-
-                     // reset the lastType
-                     lastType = NULL;
-                     lastTypeID = -1;
-
-                     // try to get the mimeType with that particular filter ID out of our
-                     // filterList
-                     for(i=0, curNode = co->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
-                     {
-                       if(i == curTypeID)
-                       {
-                         lastType = (struct MimeTypeNode *)curNode;
-                         lastTypeID = i;
-                         break;
-                       }
-                     }
-                   }
-
-                   if(lastType == NULL)
-                   {
-                     if((lastType = CreateNewMimeType()))
-                     {
-                        AddTail((struct List *)&co->mimeTypeList, (struct Node *)lastType);
-                        lastTypeID = curTypeID;
-                     }
-                     else
-                      break;
-                   }
-                 }
-
-                 // now we can fill the mimeType with data
-                 if(curTypeID > 0)
-                 {
-                   if(!stricmp(p, "ContentType"))
-                     strlcpy(lastType->ContentType, value, sizeof(lastType->ContentType));
-                   else if(!stricmp(p, "Extension"))
-                     strlcpy(lastType->Extension, value, sizeof(lastType->Extension));
-                   else if(!stricmp(p, "Command"))
-                     strlcpy(lastType->Command, value, sizeof(lastType->Command));
-                   else if(!stricmp(p, "Description"))
-                     strlcpy(lastType->Description, value, sizeof(lastType->Description));
-                 }
-                 else
-                 {
-                   if(!stricmp(p, "Command"))
-                     strlcpy(C->DefaultMimeViewer, value, sizeof(C->DefaultMimeViewer));
-                 }
-               }
-/*12*/         else if (!stricmp(buffer, "GalleryDir"))     strlcpy(co->GalleryDir, value, sizeof(co->GalleryDir));
-               else if (!stricmp(buffer, "MyPictureURL"))   strlcpy(co->MyPictureURL, value, sizeof(co->MyPictureURL));
-               else if (!stricmp(buffer, "ProxyServer"))    strlcpy(co->ProxyServer, value, sizeof(co->ProxyServer));
-               else if (!stricmp(buffer, "NewAddrGroup"))   strlcpy(co->NewAddrGroup, value, sizeof(co->NewAddrGroup));
-               else if (!stricmp(buffer, "AddToAddrbook"))  co->AddToAddrbook = atoi(value);
-               else if (!stricmp(buffer, "AddMyInfo")    )  co->AddMyInfo= Txt2Bool(value);
-               else if (!stricmp(buffer, "AddrbookCols"))   co->AddrbookCols = atoi(value);
-/*13*/         else if (!strnicmp(buffer, "Rexx", 4) && buffer[6] == '.')
-               {
-                  int j = atoi(&buffer[4]);
-                  if (j < MAXRX)
-                  {
-                     p = &buffer[7];
-                     if (!stricmp(p, "Name"))            strlcpy(co->RX[j].Name, value, sizeof(co->RX[j].Name));
-                     else if (!stricmp(p, "Script"))     strlcpy(co->RX[j].Script, value, sizeof(co->RX[j].Script));
-                     else if (!stricmp(p, "IsAmigaDOS")) co->RX[j].IsAmigaDOS = Txt2Bool(value);
-                     else if (!stricmp(p, "UseConsole")) co->RX[j].UseConsole = Txt2Bool(value);
-                     else if (!stricmp(p, "WaitTerm"))   co->RX[j].WaitTerm = Txt2Bool(value);
-                  }
-               }
-/*14*/         else if (!stricmp(buffer, "TempDir"))          strlcpy(co->TempDir, value, sizeof(co->TempDir));
-               else if (!stricmp(buffer, "DetachDir"))        strlcpy(co->DetachDir, value, sizeof(co->DetachDir));
-               else if (!stricmp(buffer, "AttachDir"))        strlcpy(co->AttachDir, value, sizeof(co->AttachDir));
-               else if (!stricmp(buffer, "WBAppIcon"))        co->WBAppIcon = Txt2Bool(value);
-               else if (!stricmp(buffer, "IconPosition"))     sscanf(value, "%d;%d", &(co->IconPositionX), &(co->IconPositionY));
-               else if (!stricmp(buffer, "AppIconText"))      strlcpy(co->AppIconText, value, sizeof(co->AppIconText));
-               else if (!stricmp(buffer, "DockyIcon"))        co->DockyIcon = Txt2Bool(value);
-               else if (!stricmp(buffer, "IconifyOnQuit"))    co->IconifyOnQuit = Txt2Bool(value);
-               else if (!stricmp(buffer, "Confirm"))          co->Confirm = Txt2Bool(value);
-               else if (!stricmp(buffer, "ConfirmDelete"))    co->ConfirmDelete = atoi(value);
-               else if (!stricmp(buffer, "RemoveAtOnce"))     co->RemoveAtOnce = Txt2Bool(value);
-               else if (!stricmp(buffer, "XPKPack"))          { strlcpy(co->XPKPack, value, sizeof(co->XPKPack)); co->XPKPackEff = atoi(&value[5]); }
-               else if (!stricmp(buffer, "XPKPackEncrypt"))   { strlcpy(co->XPKPackEncrypt, value, sizeof(co->XPKPackEncrypt)); co->XPKPackEncryptEff = atoi(&value[5]); }
-               else if (!stricmp(buffer, "PackerCommand"))    strlcpy(co->PackerCommand, value, sizeof(co->PackerCommand));
-/*Look&Feel*/  else if (!stricmp(buffer, "InfoBar"))          co->InfoBar = atoi(value);
-               else if (!stricmp(buffer, "InfoBarText"))      strlcpy(co->InfoBarText, value, sizeof(co->InfoBarText));
-               else if (!stricmp(buffer, "QuickSearchBar"))   co->QuickSearchBar = Txt2Bool(value);
-               else if (!stricmp(buffer, "EmbeddedReadPane")) co->EmbeddedReadPane = Txt2Bool(value);
-               else if (!stricmp(buffer, "SizeFormat"))       co->SizeFormat = atoi(value);
-/*Update*/     else if (!stricmp(buffer, "UpdateInterval"))   co->UpdateInterval = atoi(value);
-               else if (!stricmp(buffer, "UpdateServer"))     strlcpy(co->UpdateServer, value, sizeof(co->UpdateServer));
-/*Advanced*/   else if (!stricmp(buffer, "LetterPart"))       { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
-               else if (!stricmp(buffer, "WriteIndexes"))     co->WriteIndexes = atoi(value);
-               else if (!stricmp(buffer, "SupportSite"))      strlcpy(co->SupportSite, value, sizeof(co->SupportSite));
-               else if (!stricmp(buffer, "JumpToNewMsg"))     co->JumpToNewMsg = Txt2Bool(value);
-               else if (!stricmp(buffer, "JumpToIncoming"))   co->JumpToIncoming = Txt2Bool(value);
-               else if (!stricmp(buffer, "JumpToRecentMsg"))  co->JumpToRecentMsg = Txt2Bool(value);
-               else if (!stricmp(buffer, "AskJumpUnread"))    co->AskJumpUnread = Txt2Bool(value);
-               else if (!stricmp(buffer, "PrinterCheck"))     co->PrinterCheck = Txt2Bool(value);
-               else if (!stricmp(buffer, "IsOnlineCheck"))    co->IsOnlineCheck = Txt2Bool(value);
-               else if (!stricmp(buffer, "IOCInterface"))     strlcpy(co->IOCInterface, value, sizeof(co->IOCInterface));
-               else if (!stricmp(buffer, "ConfirmOnQuit"))    co->ConfirmOnQuit = Txt2Bool(value);
-               else if (!stricmp(buffer, "HideGUIElements"))  co->HideGUIElements = atoi(value);
-               else if (!stricmp(buffer, "SysCharsetCheck"))  co->SysCharsetCheck = Txt2Bool(value);
-               else if (!stricmp(buffer, "AmiSSLCheck"))      co->AmiSSLCheck = Txt2Bool(value);
-               else if (!stricmp(buffer, "TimeZoneCheck"))    co->TimeZoneCheck = Txt2Bool(value);
-               else if (!stricmp(buffer, "AutoDSTCheck"))     co->AutoDSTCheck = Txt2Bool(value);
-               else if (!stricmp(buffer, "StackSize"))        co->StackSize = atoi(value);
-               else if (!stricmp(buffer, "PrintMethod"))      co->PrintMethod = atoi(value);
-               else if (!stricmp(buffer, "AutoColumnResize")) co->AutoColumnResize = Txt2Bool(value);
-               else if (!stricmp(buffer, "SocketOptions"))
-               {
-                  char *s = value;
-
-                  // Now we have to identify the socket option line
-                  // and we to that by tokenizing it
-                  while(*s)
-                  {
-                    char *e;
-
-                    if((e = strpbrk(s, " |;,")) == NULL)
-                      e = s+strlen(s);
-
-                    if(strnicmp(s, "SO_KEEPALIVE", 12) == 0)
-                    {
-                      co->SocketOptions.KeepAlive = TRUE;
-                    }
-                    else if(strnicmp(s, "TCP_NODELAY", 11) == 0)
-                    {
-                      co->SocketOptions.NoDelay = TRUE;
-                    }
-                    else if(strnicmp(s, "IPTOS_LOWDELAY", 14) == 0)
-                    {
-                      co->SocketOptions.LowDelay = TRUE;
-                    }
-                    else if(strnicmp(s, "SO_SNDBUF", 9) == 0)
-                    {
-                      char *p = strchr(s, '=');
-                      if(p) co->SocketOptions.SendBuffer = atoi(p+1);
-                    }
-                    else if(strnicmp(s, "SO_RCVBUF", 9) == 0)
-                    {
-                      char *p = strchr(s, '=');
-                      if(p) co->SocketOptions.RecvBuffer = atoi(p+1);
-                    }
-                    else if(strnicmp(s, "SO_SNDLOWAT", 11) == 0)
-                    {
-                      char *p = strchr(s, '=');
-                      if(p) co->SocketOptions.SendLowAt = atoi(p+1);
-                    }
-                    else if(strnicmp(s, "SO_RCVLOWAT", 11) == 0)
-                    {
-                      char *p = strchr(s, '=');
-                      if(p) co->SocketOptions.RecvLowAt = atoi(p+1);
-                    }
-                    else if(strnicmp(s, "SO_SNDTIMEO", 11) == 0)
-                    {
-                      char *p = strchr(s, '=');
-                      if(p) co->SocketOptions.SendTimeOut = atoi(p+1);
-                    }
-                    else if(strnicmp(s, "SO_RCVTIMEO", 11) == 0)
-                    {
-                      char *p = strchr(s, '=');
-                      if(p) co->SocketOptions.RecvTimeOut = atoi(p+1);
-                    }
-
-                    // set the next start to our last search
-                    if(*e)
-                      s = ++e;
-                    else
                       break;
                   }
-               }
-               else if (!stricmp(buffer, "TRBufferSize")) co->TRBufferSize = atoi(value);
-               else if (!stricmp(buffer, "EmbeddedMailDelay")) co->EmbeddedMailDelay = atoi(value);
-               else if (!stricmp(buffer, "KeepAliveInterval")) co->KeepAliveInterval = atoi(value);
-               else if (!stricmp(buffer, "StyleFGroupUnread")) String2MUIStyle(value, co->StyleFGroupUnread);
-               else if (!stricmp(buffer, "StyleFGroupRead")) String2MUIStyle(value, co->StyleFGroupRead);
-               else if (!stricmp(buffer, "StyleFolderUnread")) String2MUIStyle(value, co->StyleFolderUnread);
-               else if (!stricmp(buffer, "StyleFolderRead")) String2MUIStyle(value, co->StyleFolderRead);
-               else if (!stricmp(buffer, "StyleFolderNew")) String2MUIStyle(value, co->StyleFolderNew);
-               else if (!stricmp(buffer, "StyleMailUnread")) String2MUIStyle(value, co->StyleMailUnread);
-               else if (!stricmp(buffer, "StyleMailRead")) String2MUIStyle(value, co->StyleMailRead);
-               else
-                 W(DBF_CONFIG, "unknown config option: '%s' = '%s'", buffer, value);
+                }
+                type = (j == 0 ? FT_INCOMING : (j == 1 ? FT_OUTGOING : (j == 2 ? FT_SENT : FT_CUSTOM)));
+                if((p = strchr(&value[4], ';')) != NULL)
+                  *p++ = '\0';
+
+                if(ofo[j] == NULL)
+                {
+                  if((ofo[j] = FO_NewFolder(type, &value[4], p)) != NULL)
+                    ofo[j]->Sort[0] = sortconv[atoi(&value[2])];
+                }
+              }
             }
-         }
+            else if(!strnicmp(buffer, "Rule", 4))
+            {
+              struct FilterNode *filter;
 
-         fclose(fh);
+              if((filter = CreateNewFilter()) != NULL)
+              {
+                struct RuleNode *rule;
+                char *p2;
 
-         return TRUE;
+                filter->applyToNew = filter->applyOnReq = Txt2Bool(value);
+                p = strchr(p2 = &value[2], ';');
+                *p++ = '\0';
+                strlcpy(filter->name, p2, sizeof(filter->name));
+
+                // get the first rule (always existent) and fill in data
+                rule = (struct RuleNode *)filter->ruleList.mlh_Head;
+                if((rule->searchMode = atoi(p)) == 2)
+                  rule->searchMode = SM_SUBJECT;
+
+                rule->caseSensitive = Txt2Bool(&p[2]);
+                rule->comparison = Txt2Bool(&p[4]) ? CP_NOTEQUAL : CP_EQUAL;
+                p = strchr(p2 = &p[6], ';');
+                *p++ = '\0';
+                strlcpy(rule->matchPattern, p2, sizeof(rule->matchPattern));
+
+                switch(atoi(p))
+                {
+                  case 0: filter->actions = FA_MOVE;    break;
+                  case 1: filter->actions = FA_DELETE;  break;
+                  case 2: filter->actions = FA_FORWARD; break;
+                }
+
+                p = strchr(p2 = &p[2], ';');
+                *p++ = '\0';
+                strlcpy(filter->moveTo, p2, sizeof(filter->moveTo));
+                strlcpy(filter->forwardTo, p, sizeof(filter->forwardTo));
+                if(*filter->forwardTo != '\0')
+                  SET_FLAG(filter->actions, FA_FORWARD);
+
+                AddTail((struct List *)&co->filterList, (struct Node *)filter);
+              }
+            }
+            else if(!strnicmp(buffer, "MimeViewer", 10))
+            {
+              int j = atoi(&buffer[10]);
+              struct MimeTypeNode *mt;
+
+              if(j >= 0 && j < 100 && (mt = CreateNewMimeType()))
+              {
+                p = strchr(value, ';');
+                *p++ = '\0';
+
+                strlcpy(mt->ContentType, value, sizeof(mt->ContentType));
+                strlcpy(mt->Command, p, sizeof(mt->Command));
+
+                AddTail((struct List *)&(co->mimeTypeList), (struct Node *)mt);
+              }
+            }
+            else if(!strnicmp(buffer, "RexxMenu", 8))
+            {
+              int j = atoi(&buffer[8]);
+
+              strlcpy(co->RX[j].Name, (char *)FilePart(value), sizeof(co->RX[j].Name));
+              strlcpy(co->RX[j].Script, value, sizeof(co->RX[j].Script));
+            }
+          } // version == 2
+
+          if(!strnicmp(buffer, "FolderPath", 10) && oldfolders != NULL)
+          {
+            int j = atoi(&buffer[10]);
+
+            if(ofo == NULL)
+              ofo = *oldfolders = calloc(100, sizeof(struct Folder *));
+            if(ofo != NULL)
+            {
+              if(ofo[j] == NULL)
+              {
+                if((ofo[j] = FO_NewFolder(FT_CUSTOM, value, (char *)FilePart(value))) != NULL)
+                {
+                  if(!FO_LoadConfig(ofo[j]))
+                    FO_SaveConfig(ofo[j]);
+                }
+              }
+            }
+          }
+
+/* First Steps */
+          else if(!stricmp(buffer, "RealName"))       strlcpy(co->RealName, value, sizeof(co->RealName));
+          else if(!stricmp(buffer, "EmailAddress"))   strlcpy(co->EmailAddress, value, sizeof(co->EmailAddress));
+          else if(!stricmp(buffer, "TimeZone"))       co->TimeZone = atoi(value);
+          else if(!stricmp(buffer, "DaylightSaving")) co->DaylightSaving = Txt2Bool(value);
+          else if(!stricmp(buffer, "LocalCharset"))   strlcpy(co->LocalCharset, value, sizeof(co->LocalCharset));
+          else if(!stricmp(buffer, "DetectCyrillic")) co->DetectCyrillic = Txt2Bool(value);
+
+/* TCP/IP */
+          else if(!stricmp(buffer, "SMTP-Server"))    strlcpy(co->SMTP_Server, value, sizeof(co->SMTP_Server));
+          else if(!stricmp(buffer, "SMTP-Port"))      co->SMTP_Port = atoi(value);
+          else if(!stricmp(buffer, "SMTP-Domain"))    strlcpy(co->SMTP_Domain, value, sizeof(co->SMTP_Domain));
+          else if(!stricmp(buffer, "SMTP-SecMethod")) co->SMTP_SecureMethod = atoi(value);
+          else if(!stricmp(buffer, "Allow8bit"))      co->Allow8bit = Txt2Bool(value);
+          else if(!stricmp(buffer, "Use-SMTP-TLS"))   co->SMTP_SecureMethod = atoi(value); // obsolete
+          else if(!stricmp(buffer, "Use-SMTP-AUTH"))  co->Use_SMTP_AUTH = Txt2Bool(value);
+          else if(!stricmp(buffer, "SMTP-AUTH-User")) strlcpy(co->SMTP_AUTH_User, value, sizeof(co->SMTP_AUTH_User));
+          else if(!stricmp(buffer, "SMTP-AUTH-Pass")) strlcpy(co->SMTP_AUTH_Pass, Decrypt(value), sizeof(co->SMTP_AUTH_Pass));
+          else if(!stricmp(buffer, "SMTP-AUTH-Method")) co->SMTP_AUTH_Method = atoi(value);
+          else if(!strnicmp(buffer, "POP", 3) && buffer[5] == '.')
+          {
+            int j = atoi(&buffer[3]);
+
+            if(j >= 0 && j < MAXP3)
+            {
+              struct POP3 *p3 = co->P3[j];
+
+              if(p3 == NULL)
+                p3 = co->P3[j] = CO_NewPOP3(co, FALSE);
+
+              if(p3 != NULL)
+              {
+                p = &buffer[6];
+                if(!stricmp(p, "Account"))        strlcpy(p3->Account, value, sizeof(p3->Account));
+                else if(!stricmp(p, "Server"))    strlcpy(p3->Server, value, sizeof(p3->Server));
+                else if(!stricmp(p, "Port"))      p3->Port = atoi(value);
+                else if(!stricmp(p, "Password"))  strlcpy(p3->Password, Decrypt(value), sizeof(p3->Password));
+                else if(!stricmp(p, "User"))      strlcpy(p3->User, value, sizeof(p3->User));
+                else if(!stricmp(p, "Enabled"))   p3->Enabled = Txt2Bool(value);
+                else if(!stricmp(p, "SSLMode"))   p3->SSLMode = atoi(value);
+                else if(!stricmp(p, "UseAPOP"))   p3->UseAPOP = Txt2Bool(value);
+                else if(!stricmp(p, "Delete"))    p3->DeleteOnServer = Txt2Bool(value);
+              }
+              else
+                break;
+            }
+          }
+
+/* New mail */
+          else if(!stricmp(buffer, "AvoidDuplicates"))co->AvoidDuplicates = Txt2Bool(value);
+          else if(!stricmp(buffer, "PreSelection"))   co->PreSelection = atoi(value);
+          else if(!stricmp(buffer, "TransferWindow")) co->TransferWindow = atoi(value);
+          else if(!stricmp(buffer, "UpdateStatus"))   co->UpdateStatus = Txt2Bool(value);
+          else if(!stricmp(buffer, "WarnSize"))       co->WarnSize = atoi(value);
+          else if(!stricmp(buffer, "CheckMailDelay")) co->CheckMailDelay = atoi(value);
+          else if(!stricmp(buffer, "DownloadLarge"))  co->DownloadLarge = Txt2Bool(value);
+          else if(!stricmp(buffer, "NotifyType"))     co->NotifyType = atoi(value);
+          else if(!stricmp(buffer, "NotifySound"))    strlcpy(co->NotifySound, value, sizeof(co->NotifySound));
+          else if(!stricmp(buffer, "NotifyCommand"))  strlcpy(co->NotifyCommand, value, sizeof(co->NotifyCommand));
+
+/* Filters */
+          else if(!strnicmp(buffer, "FI", 2) && isdigit(buffer[2]) && isdigit(buffer[3]) && strchr(buffer, '.'))
+          {
+            int curFilterID = atoi(&buffer[2]);
+            char *p = strchr(buffer, '.')+1;
+
+            if(curFilterID >= 0)
+            {
+              if(lastFilter != NULL && lastFilterID != curFilterID)
+              {
+                int i;
+                struct MinNode *curNode;
+
+                // reset the lastFilter
+                lastFilter = NULL;
+                lastFilterID = -1;
+
+                // try to get the filter with that particular filter ID out of our
+                // filterList
+                for(i=0, curNode = co->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
+                {
+                  if(i == curFilterID)
+                  {
+                    lastFilter = (struct FilterNode *)curNode;
+                    lastFilterID = i;
+                    break;
+                  }
+                }
+              }
+
+              if(lastFilter == NULL)
+              {
+                if((lastFilter = CreateNewFilter()))
+                {
+                  AddTail((struct List *)&co->filterList, (struct Node *)lastFilter);
+                  lastFilterID = curFilterID;
+                }
+                else
+                  break;
+              }
+
+              // now find out which subtype this filter has
+              if(!stricmp(p, "Name"))                  strlcpy(lastFilter->name, value, sizeof(lastFilter->name));
+              else if(!stricmp(p, "Remote"))           lastFilter->remote = Txt2Bool(value);
+              else if(!stricmp(p, "ApplyToNew"))       lastFilter->applyToNew = Txt2Bool(value);
+              else if(!stricmp(p, "ApplyToSent"))      lastFilter->applyToSent = Txt2Bool(value);
+              else if(!stricmp(p, "ApplyOnReq"))       lastFilter->applyOnReq = Txt2Bool(value);
+              else if(!stricmp(p, "Actions"))          lastFilter->actions = atoi(value);
+              else if(!stricmp(p, "BounceTo"))         strlcpy(lastFilter->bounceTo, value, sizeof(lastFilter->bounceTo));
+              else if(!stricmp(p, "ForwardTo"))        strlcpy(lastFilter->forwardTo, value, sizeof(lastFilter->forwardTo));
+              else if(!stricmp(p, "ReplyFile"))        strlcpy(lastFilter->replyFile, value, sizeof(lastFilter->replyFile));
+              else if(!stricmp(p, "ExecuteCmd"))       strlcpy(lastFilter->executeCmd, value, sizeof(lastFilter->executeCmd));
+              else if(!stricmp(p, "PlaySound"))        strlcpy(lastFilter->playSound, value, sizeof(lastFilter->playSound));
+              else if(!stricmp(p, "MoveTo"))           strlcpy(lastFilter->moveTo, value, sizeof(lastFilter->moveTo));
+              else
+              {
+                struct RuleNode *rule;
+
+                // if nothing of the above string matched than the FI string
+                // is probably a rule definition so we check it here
+
+                if(!strnicmp(p, "Field", 5))
+                {
+                  int n = atoi(p+5);
+
+                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                    CreateNewRule(lastFilter);
+
+                  rule->searchMode = atoi(value);
+                }
+                else if(!strnicmp(p, "SubField", 8))
+                {
+                  int n = atoi(p+8);
+
+                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                    CreateNewRule(lastFilter);
+
+                  rule->subSearchMode = atoi(value);
+                }
+                else if(!strnicmp(p, "CustomField", 11))
+                {
+                  int n = atoi(p+11);
+
+                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                    CreateNewRule(lastFilter);
+
+                  strlcpy(rule->customField, value, sizeof(rule->customField));
+                }
+                else if(!strnicmp(p, "Comparison", 10))
+                {
+                  int n = atoi(p+10);
+
+                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                    CreateNewRule(lastFilter);
+
+                  rule->comparison = atoi(value);
+                }
+                else if(!strnicmp(p, "Match", 5))
+                {
+                  int n = atoi(p+5);
+
+                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                    CreateNewRule(lastFilter);
+
+                  strlcpy(rule->matchPattern, value2, sizeof(rule->matchPattern));
+                }
+                else if(!strnicmp(p, "CaseSens", 8))
+                {
+                  int n = atoi(p+8);
+
+                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                    CreateNewRule(lastFilter);
+
+                  rule->caseSensitive = Txt2Bool(value);
+                }
+                else if(!strnicmp(p, "Substring", 9))
+                {
+                  int n = atoi(p+9);
+
+                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                    CreateNewRule(lastFilter);
+
+                  rule->subString = Txt2Bool(value);
+                }
+                else if(!strnicmp(p, "Combine", 7) && atoi(value) > CB_NONE)
+                {
+                  int n = atoi(p+7);
+
+                  // here we use n and not n-1 on purpose because the combine line
+                  // refers always to the next one.
+                  while((rule = GetFilterRule(lastFilter, n>0 ? n : 1)) == NULL)
+                    CreateNewRule(lastFilter);
+
+                  rule->combine = atoi(value);
+                }
+              }
+            }
+          }
+
+/* Spam */
+          else if(!stricmp(buffer, "SpamFilterEnabled")) co->SpamFilterEnabled = Txt2Bool(value);
+          else if(!stricmp(buffer, "SpamFilterForNew")) co->SpamFilterForNewMail = Txt2Bool(value);
+          else if(!stricmp(buffer, "SpamMarkOnMove")) co->SpamMarkOnMove = Txt2Bool(value);
+          else if(!stricmp(buffer, "SpamMarkAsRead")) co->SpamMarkAsRead = Txt2Bool(value);
+          else if(!stricmp(buffer, "SpamABookIsWhite")) co->SpamAddressBookIsWhiteList = Txt2Bool(value);
+          else if(!stricmp(buffer, "SpamProbThreshold")) co->SpamProbabilityThreshold = atoi(value);
+          else if(!stricmp(buffer, "SpamFlushInterval")) co->SpamFlushTrainingDataInterval = atoi(value);
+          else if(!stricmp(buffer, "SpamFlushThres")) co->SpamFlushTrainingDataThreshold = atoi(value);
+
+/* Read */
+          else if(!stricmp(buffer, "ShowHeader"))     co->ShowHeader = atoi(value);
+          else if(!stricmp(buffer, "ShortHeaders"))   strlcpy(co->ShortHeaders, value, sizeof(co->ShortHeaders));
+          else if(!stricmp(buffer, "ShowSenderInfo")) co->ShowSenderInfo = atoi(value);
+          else if(!stricmp(buffer, "WrapHeader"))     co->WrapHeader = Txt2Bool(value);
+          else if(!stricmp(buffer, "SigSepLine"))     co->SigSepLine = atoi(value);
+          else if(!stricmp(buffer, "ColorSignature")) strlcpy(co->ColorSignature.buf, value, sizeof(co->ColorSignature.buf));
+          else if(!stricmp(buffer, "ColoredText"))    strlcpy(co->ColoredText.buf, value, sizeof(co->ColoredText.buf));
+          else if(!stricmp(buffer, "Color1stLevel"))  strlcpy(co->Color1stLevel.buf, value, sizeof(co->Color1stLevel.buf));
+          else if(!stricmp(buffer, "Color2ndLevel"))  strlcpy(co->Color2ndLevel.buf, value, sizeof(co->Color2ndLevel.buf));
+          else if(!stricmp(buffer, "Color3rdLevel"))  strlcpy(co->Color3rdLevel.buf, value, sizeof(co->Color3rdLevel.buf));
+          else if(!stricmp(buffer, "Color4thLevel"))  strlcpy(co->Color4thLevel.buf, value, sizeof(co->Color4thLevel.buf));
+          else if(!stricmp(buffer, "ColorURL"))       strlcpy(co->ColorURL.buf, value, sizeof(co->ColorURL.buf));
+          else if(!stricmp(buffer, "DisplayAllTexts"))co->DisplayAllTexts = Txt2Bool(value);
+          else if(!stricmp(buffer, "FixedFontEdit"))  co->FixedFontEdit = Txt2Bool(value);
+          else if(!stricmp(buffer, "UseTextstyles"))  co->UseTextstyles = Txt2Bool(value);
+          else if(!stricmp(buffer, "DisplayAllAltPart")) co->DisplayAllAltPart = Txt2Bool(value);
+          else if(!stricmp(buffer, "MDNEnabled"))       co->MDNEnabled = Txt2Bool(value);
+          else if(!stricmp(buffer, "MDN_NoRecipient"))  co->MDN_NoRecipient = atoi(value);
+          else if(!stricmp(buffer, "MDN_NoDomain"))     co->MDN_NoDomain = atoi(value);
+          else if(!stricmp(buffer, "MDN_OnDelete"))     co->MDN_OnDelete = atoi(value);
+          else if(!stricmp(buffer, "MDN_Other"))        co->MDN_Other = atoi(value);
+          else if(!stricmp(buffer, "MultipleWindows"))  co->MultipleWindows = Txt2Bool(value);
+          else if(!stricmp(buffer, "StatusChangeDelay"))
+          {
+            int delay = atoi(value);
+
+            if(delay < 0)
+            {
+              co->StatusChangeDelay = -1*delay;
+              co->StatusChangeDelayOn = FALSE;
+            }
+            else
+            {
+              co->StatusChangeDelay = delay;
+              co->StatusChangeDelayOn = TRUE;
+            }
+          }
+          else if(!stricmp(buffer, "ConvertHTML"))    co->ConvertHTML = Txt2Bool(value);
+
+/* Write */
+          else if(!stricmp(buffer, "ReplyTo"))        strlcpy(co->ReplyTo,  value, sizeof(co->ReplyTo));
+          else if(!stricmp(buffer, "Organization"))   strlcpy(co->Organization, value, sizeof(co->Organization));
+          else if(!stricmp(buffer, "ExtraHeaders"))   strlcpy(co->ExtraHeaders, value, sizeof(co->ExtraHeaders));
+          else if(!stricmp(buffer, "NewIntro"))       strlcpy(co->NewIntro, value2, sizeof(co->NewIntro));
+          else if(!stricmp(buffer, "Greetings"))      strlcpy(co->Greetings, value2, sizeof(co->Greetings));
+          else if(!stricmp(buffer, "WarnSubject"))    co->WarnSubject = Txt2Bool(value);
+          else if(!stricmp(buffer, "EdWrapCol"))      co->EdWrapCol = atoi(value);
+          else if(!stricmp(buffer, "EdWrapMode"))     co->EdWrapMode = atoi(value);
+          else if(!stricmp(buffer, "Editor"))         strlcpy(co->Editor, value, sizeof(co->Editor));
+          else if(!stricmp(buffer, "LaunchAlways"))   co->LaunchAlways = Txt2Bool(value);
+          else if(!stricmp(buffer, "EmailCache"))     co->EmailCache = atoi(value);
+          else if(!stricmp(buffer, "AutoSave"))       co->AutoSave = atoi(value);
+          else if(!stricmp(buffer, "RequestMDN"))     co->RequestMDN = Txt2Bool(value);
+          else if(!stricmp(buffer, "SaveSent"))       co->SaveSent = Txt2Bool(value);
+
+/* Reply/Forward */
+          else if(!stricmp(buffer, "ReplyHello"))     strlcpy(co->ReplyHello, value2, sizeof(co->ReplyHello));
+          else if(!stricmp(buffer, "ReplyIntro"))     strlcpy(co->ReplyIntro, value2, sizeof(co->ReplyIntro));
+          else if(!stricmp(buffer, "ReplyBye"))       strlcpy(co->ReplyBye, value2, sizeof(co->ReplyBye));
+          else if(!stricmp(buffer, "AltReplyHello"))  strlcpy(co->AltReplyHello, value2, sizeof(co->AltReplyHello));
+          else if(!stricmp(buffer, "AltReplyIntro"))  strlcpy(co->AltReplyIntro, value2, sizeof(co->AltReplyIntro));
+          else if(!stricmp(buffer, "AltReplyBye"))    strlcpy(co->AltReplyBye, value2, sizeof(co->AltReplyBye));
+          else if(!stricmp(buffer, "AltReplyPattern"))strlcpy(co->AltReplyPattern, value2, sizeof(co->AltReplyPattern));
+          else if(!stricmp(buffer, "MLReplyHello"))   strlcpy(co->MLReplyHello, value2, sizeof(co->MLReplyHello));
+          else if(!stricmp(buffer, "MLReplyIntro"))   strlcpy(co->MLReplyIntro, value2, sizeof(co->MLReplyIntro));
+          else if(!stricmp(buffer, "MLReplyBye"))     strlcpy(co->MLReplyBye, value2, sizeof(co->MLReplyBye));
+          else if(!stricmp(buffer, "ForwardIntro"))   strlcpy(co->ForwardIntro, value2, sizeof(co->ForwardIntro));
+          else if(!stricmp(buffer, "ForwardFinish"))  strlcpy(co->ForwardFinish, value2, sizeof(co->ForwardFinish));
+          else if(!stricmp(buffer, "QuoteMessage"))   co->QuoteMessage = Txt2Bool(value);
+          else if(!stricmp(buffer, "QuoteChar"))      strlcpy(co->QuoteChar, value2, sizeof(co->QuoteChar));
+          else if(!stricmp(buffer, "AltQuoteChar"))   strlcpy(co->AltQuoteChar, value2, sizeof(co->AltQuoteChar));
+          else if(!stricmp(buffer, "QuoteEmptyLines"))co->QuoteEmptyLines = Txt2Bool(value);
+          else if(!stricmp(buffer, "CompareAddress")) co->CompareAddress = Txt2Bool(value);
+          else if(!stricmp(buffer, "StripSignature")) co->StripSignature = Txt2Bool(value);
+
+/* Signature */
+          else if(!stricmp(buffer, "UseSignature"))   co->UseSignature = Txt2Bool(value);
+          else if(!stricmp(buffer, "TagsFile"))       strlcpy(co->TagsFile, value, sizeof(co->TagsFile));
+          else if(!stricmp(buffer, "TagsSeparator"))  strlcpy(co->TagsSeparator, value2, sizeof(co->TagsSeparator));
+
+/* Lists */
+          else if(!stricmp(buffer, "FolderCols"))     co->FolderCols = atoi(value);
+          else if(!stricmp(buffer, "MessageCols"))    co->MessageCols = atoi(value);
+          else if(!stricmp(buffer, "FixedFontList"))  co->FixedFontList = Txt2Bool(value);
+          else if(!stricmp(buffer, "DateTimeFormat")) co->DSListFormat = atoi(value);
+          else if(!stricmp(buffer, "ABookLookup"))    co->ABookLookup = Txt2Bool(value);
+          else if(!stricmp(buffer, "FolderCntMenu"))  co->FolderCntMenu = Txt2Bool(value);
+          else if(!stricmp(buffer, "MessageCntMenu")) co->MessageCntMenu = Txt2Bool(value);
+
+/* Security */
+          else if(!stricmp(buffer, "PGPCmdPath"))     strlcpy(co->PGPCmdPath, value, sizeof(co->PGPCmdPath));
+          else if(!stricmp(buffer, "MyPGPID"))        strlcpy(co->MyPGPID, value, sizeof(co->MyPGPID));
+          else if(!stricmp(buffer, "EncryptToSelf"))  co->EncryptToSelf = Txt2Bool(value);
+          else if(!stricmp(buffer, "PGPPassInterval"))co->PGPPassInterval = atoi(value);
+          else if(!stricmp(buffer, "ReMailer"))       strlcpy(co->ReMailer, value, sizeof(co->ReMailer));
+          else if(!stricmp(buffer, "RMCommands"))     strlcpy(co->RMCommands, value2, sizeof(co->RMCommands));
+          else if(!stricmp(buffer, "LogfilePath"))    strlcpy(co->LogfilePath, value, sizeof(co->LogfilePath));
+          else if(!stricmp(buffer, "LogfileMode"))    co->LogfileMode = atoi(value);
+          else if(!stricmp(buffer, "SplitLogfile"))   co->SplitLogfile = Txt2Bool(value);
+          else if(!stricmp(buffer, "LogAllEvents"))   co->LogAllEvents = Txt2Bool(value);
+
+/* Startup/QUit */
+          else if(!stricmp(buffer, "GetOnStartup"))   co->GetOnStartup = Txt2Bool(value);
+          else if(!stricmp(buffer, "SendOnStartup"))  co->SendOnStartup = Txt2Bool(value);
+          else if(!stricmp(buffer, "CleanupOnStartup")) co->CleanupOnStartup = Txt2Bool(value);
+          else if(!stricmp(buffer, "RemoveOnStartup"))  co->RemoveOnStartup = Txt2Bool(value);
+          else if(!stricmp(buffer, "LoadAllFolders")) co->LoadAllFolders = Txt2Bool(value);
+          else if(!stricmp(buffer, "UpdateNewMail"))  co->UpdateNewMail = Txt2Bool(value);
+          else if(!stricmp(buffer, "CheckBirthdates"))co->CheckBirthdates = Txt2Bool(value);
+          else if(!stricmp(buffer, "SendOnQuit"))     co->SendOnQuit = Txt2Bool(value);
+          else if(!stricmp(buffer, "CleanupOnQuit"))  co->CleanupOnQuit = Txt2Bool(value);
+          else if(!stricmp(buffer, "RemoveOnQuit"))   co->RemoveOnQuit = Txt2Bool(value);
+
+/* MIME */
+          else if(!strnicmp(buffer, "MV", 2) && isdigit(buffer[2]) && isdigit(buffer[3]) && strchr(buffer, '.'))
+          {
+            int curTypeID = atoi(&buffer[2]);
+            char *p = strchr(buffer, '.')+1;
+
+            // we only get the correct mimetype node if the ID
+            // is greater than zero, because zero is reserved for the default
+            // mime viewer type.
+            if(curTypeID > 0)
+            {
+              if(lastType != NULL && lastTypeID != curTypeID)
+              {
+                int i;
+                struct MinNode *curNode;
+
+                // reset the lastType
+                lastType = NULL;
+                lastTypeID = -1;
+
+                // try to get the mimeType with that particular filter ID out of our
+                // filterList
+                for(i=0, curNode = co->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
+                {
+                  if(i == curTypeID)
+                  {
+                    lastType = (struct MimeTypeNode *)curNode;
+                    lastTypeID = i;
+                    break;
+                  }
+                }
+              }
+
+              if(lastType == NULL)
+              {
+                if((lastType = CreateNewMimeType()) != NULL)
+                {
+                  AddTail((struct List *)&co->mimeTypeList, (struct Node *)lastType);
+                  lastTypeID = curTypeID;
+                }
+                else
+                  break;
+              }
+            }
+
+            // now we can fill the mimeType with data
+            if(curTypeID > 0)
+            {
+              if(!stricmp(p, "ContentType"))
+                strlcpy(lastType->ContentType, value, sizeof(lastType->ContentType));
+              else if(!stricmp(p, "Extension"))
+                strlcpy(lastType->Extension, value, sizeof(lastType->Extension));
+              else if(!stricmp(p, "Command"))
+                strlcpy(lastType->Command, value, sizeof(lastType->Command));
+              else if(!stricmp(p, "Description"))
+                strlcpy(lastType->Description, value, sizeof(lastType->Description));
+            }
+            else
+            {
+              if(!stricmp(p, "Command"))
+                strlcpy(C->DefaultMimeViewer, value, sizeof(C->DefaultMimeViewer));
+            }
+          }
+
+/* Address book*/
+          else if(!stricmp(buffer, "GalleryDir"))     strlcpy(co->GalleryDir, value, sizeof(co->GalleryDir));
+          else if(!stricmp(buffer, "MyPictureURL"))   strlcpy(co->MyPictureURL, value, sizeof(co->MyPictureURL));
+          else if(!stricmp(buffer, "ProxyServer"))    strlcpy(co->ProxyServer, value, sizeof(co->ProxyServer));
+          else if(!stricmp(buffer, "NewAddrGroup"))   strlcpy(co->NewAddrGroup, value, sizeof(co->NewAddrGroup));
+          else if(!stricmp(buffer, "AddToAddrbook"))  co->AddToAddrbook = atoi(value);
+          else if(!stricmp(buffer, "AddMyInfo")    )  co->AddMyInfo= Txt2Bool(value);
+          else if(!stricmp(buffer, "AddrbookCols"))   co->AddrbookCols = atoi(value);
+
+/* Scripts */
+          else if(!strnicmp(buffer, "Rexx", 4) && buffer[6] == '.')
+          {
+            int j = atoi(&buffer[4]);
+
+            if(j >= 0 && j < MAXRX)
+            {
+              p = &buffer[7];
+              if(!stricmp(p, "Name"))            strlcpy(co->RX[j].Name, value, sizeof(co->RX[j].Name));
+              else if(!stricmp(p, "Script"))     strlcpy(co->RX[j].Script, value, sizeof(co->RX[j].Script));
+              else if(!stricmp(p, "IsAmigaDOS")) co->RX[j].IsAmigaDOS = Txt2Bool(value);
+              else if(!stricmp(p, "UseConsole")) co->RX[j].UseConsole = Txt2Bool(value);
+              else if(!stricmp(p, "WaitTerm"))   co->RX[j].WaitTerm = Txt2Bool(value);
+            }
+          }
+
+/* Miscellaneous */
+          else if(!stricmp(buffer, "TempDir"))          strlcpy(co->TempDir, value, sizeof(co->TempDir));
+          else if(!stricmp(buffer, "DetachDir"))        strlcpy(co->DetachDir, value, sizeof(co->DetachDir));
+          else if(!stricmp(buffer, "AttachDir"))        strlcpy(co->AttachDir, value, sizeof(co->AttachDir));
+          else if(!stricmp(buffer, "WBAppIcon"))        co->WBAppIcon = Txt2Bool(value);
+          else if(!stricmp(buffer, "IconPosition"))     sscanf(value, "%d;%d", &(co->IconPositionX), &(co->IconPositionY));
+          else if(!stricmp(buffer, "AppIconText"))      strlcpy(co->AppIconText, value, sizeof(co->AppIconText));
+          else if(!stricmp(buffer, "DockyIcon"))        co->DockyIcon = Txt2Bool(value);
+          else if(!stricmp(buffer, "IconifyOnQuit"))    co->IconifyOnQuit = Txt2Bool(value);
+          else if(!stricmp(buffer, "Confirm"))          co->Confirm = Txt2Bool(value);
+          else if(!stricmp(buffer, "ConfirmDelete"))    co->ConfirmDelete = atoi(value);
+          else if(!stricmp(buffer, "RemoveAtOnce"))     co->RemoveAtOnce = Txt2Bool(value);
+          else if(!stricmp(buffer, "XPKPack"))          { strlcpy(co->XPKPack, value, sizeof(co->XPKPack)); co->XPKPackEff = atoi(&value[5]); }
+          else if(!stricmp(buffer, "XPKPackEncrypt"))   { strlcpy(co->XPKPackEncrypt, value, sizeof(co->XPKPackEncrypt)); co->XPKPackEncryptEff = atoi(&value[5]); }
+          else if(!stricmp(buffer, "PackerCommand"))    strlcpy(co->PackerCommand, value, sizeof(co->PackerCommand));
+
+/* Look&Feel */
+          else if(!stricmp(buffer, "InfoBar"))          co->InfoBar = atoi(value);
+          else if(!stricmp(buffer, "InfoBarText"))      strlcpy(co->InfoBarText, value, sizeof(co->InfoBarText));
+          else if(!stricmp(buffer, "QuickSearchBar"))   co->QuickSearchBar = Txt2Bool(value);
+          else if(!stricmp(buffer, "EmbeddedReadPane")) co->EmbeddedReadPane = Txt2Bool(value);
+          else if(!stricmp(buffer, "SizeFormat"))       co->SizeFormat = atoi(value);
+
+/*Update*/
+          else if(!stricmp(buffer, "UpdateInterval"))   co->UpdateInterval = atoi(value);
+          else if(!stricmp(buffer, "UpdateServer"))     strlcpy(co->UpdateServer, value, sizeof(co->UpdateServer));
+
+/*Advanced*/
+          else if(!stricmp(buffer, "LetterPart"))       { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
+          else if(!stricmp(buffer, "WriteIndexes"))     co->WriteIndexes = atoi(value);
+          else if(!stricmp(buffer, "SupportSite"))      strlcpy(co->SupportSite, value, sizeof(co->SupportSite));
+          else if(!stricmp(buffer, "JumpToNewMsg"))     co->JumpToNewMsg = Txt2Bool(value);
+          else if(!stricmp(buffer, "JumpToIncoming"))   co->JumpToIncoming = Txt2Bool(value);
+          else if(!stricmp(buffer, "JumpToRecentMsg"))  co->JumpToRecentMsg = Txt2Bool(value);
+          else if(!stricmp(buffer, "AskJumpUnread"))    co->AskJumpUnread = Txt2Bool(value);
+          else if(!stricmp(buffer, "PrinterCheck"))     co->PrinterCheck = Txt2Bool(value);
+          else if(!stricmp(buffer, "IsOnlineCheck"))    co->IsOnlineCheck = Txt2Bool(value);
+          else if(!stricmp(buffer, "IOCInterface"))     strlcpy(co->IOCInterface, value, sizeof(co->IOCInterface));
+          else if(!stricmp(buffer, "ConfirmOnQuit"))    co->ConfirmOnQuit = Txt2Bool(value);
+          else if(!stricmp(buffer, "HideGUIElements"))  co->HideGUIElements = atoi(value);
+          else if(!stricmp(buffer, "SysCharsetCheck"))  co->SysCharsetCheck = Txt2Bool(value);
+          else if(!stricmp(buffer, "AmiSSLCheck"))      co->AmiSSLCheck = Txt2Bool(value);
+          else if(!stricmp(buffer, "TimeZoneCheck"))    co->TimeZoneCheck = Txt2Bool(value);
+          else if(!stricmp(buffer, "AutoDSTCheck"))     co->AutoDSTCheck = Txt2Bool(value);
+          else if(!stricmp(buffer, "StackSize"))        co->StackSize = atoi(value);
+          else if(!stricmp(buffer, "PrintMethod"))      co->PrintMethod = atoi(value);
+          else if(!stricmp(buffer, "AutoColumnResize")) co->AutoColumnResize = Txt2Bool(value);
+          else if(!stricmp(buffer, "SocketOptions"))
+          {
+            char *s = value;
+
+            // Now we have to identify the socket option line
+            // and we to that by tokenizing it
+            while(*s != '\0')
+            {
+              char *e;
+
+              if((e = strpbrk(s, " |;,")) == NULL)
+                e = s+strlen(s);
+
+              if(strnicmp(s, "SO_KEEPALIVE", 12) == 0)
+              {
+                co->SocketOptions.KeepAlive = TRUE;
+              }
+              else if(strnicmp(s, "TCP_NODELAY", 11) == 0)
+              {
+                co->SocketOptions.NoDelay = TRUE;
+              }
+              else if(strnicmp(s, "IPTOS_LOWDELAY", 14) == 0)
+              {
+                co->SocketOptions.LowDelay = TRUE;
+              }
+              else if(strnicmp(s, "SO_SNDBUF", 9) == 0)
+              {
+                char *p = strchr(s, '=');
+
+                if(p)
+                  co->SocketOptions.SendBuffer = atoi(p+1);
+              }
+              else if(strnicmp(s, "SO_RCVBUF", 9) == 0)
+              {
+                char *p = strchr(s, '=');
+
+                if(p)
+                  co->SocketOptions.RecvBuffer = atoi(p+1);
+              }
+              else if(strnicmp(s, "SO_SNDLOWAT", 11) == 0)
+              {
+                char *p = strchr(s, '=');
+
+                if(p)
+                  co->SocketOptions.SendLowAt = atoi(p+1);
+              }
+              else if(strnicmp(s, "SO_RCVLOWAT", 11) == 0)
+              {
+                char *p = strchr(s, '=');
+
+                if(p)
+                  co->SocketOptions.RecvLowAt = atoi(p+1);
+              }
+              else if(strnicmp(s, "SO_SNDTIMEO", 11) == 0)
+              {
+                char *p = strchr(s, '=');
+
+                if(p)
+                  co->SocketOptions.SendTimeOut = atoi(p+1);
+              }
+              else if(strnicmp(s, "SO_RCVTIMEO", 11) == 0)
+              {
+                char *p = strchr(s, '=');
+
+                if(p)
+                  co->SocketOptions.RecvTimeOut = atoi(p+1);
+              }
+
+              // set the next start to our last search
+              if(*e != '\0')
+                s = ++e;
+              else
+                break;
+            }
+          }
+          else if(!stricmp(buffer, "TRBufferSize")) co->TRBufferSize = atoi(value);
+          else if(!stricmp(buffer, "EmbeddedMailDelay")) co->EmbeddedMailDelay = atoi(value);
+          else if(!stricmp(buffer, "KeepAliveInterval")) co->KeepAliveInterval = atoi(value);
+          else if(!stricmp(buffer, "StyleFGroupUnread")) String2MUIStyle(value, co->StyleFGroupUnread);
+          else if(!stricmp(buffer, "StyleFGroupRead")) String2MUIStyle(value, co->StyleFGroupRead);
+          else if(!stricmp(buffer, "StyleFolderUnread")) String2MUIStyle(value, co->StyleFolderUnread);
+          else if(!stricmp(buffer, "StyleFolderRead")) String2MUIStyle(value, co->StyleFolderRead);
+          else if(!stricmp(buffer, "StyleFolderNew")) String2MUIStyle(value, co->StyleFolderNew);
+          else if(!stricmp(buffer, "StyleMailUnread")) String2MUIStyle(value, co->StyleMailUnread);
+          else if(!stricmp(buffer, "StyleMailRead")) String2MUIStyle(value, co->StyleMailRead);
+          else
+            W(DBF_CONFIG, "unknown config option: '%s' = '%s'", buffer, value);
+        }
       }
 
-      fclose(fh);
-   }
+      success = TRUE;
+    }
 
-   return FALSE;
+    fclose(fh);
+  }
+
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -2234,7 +2301,7 @@ void CO_SetConfig(void)
 
       case cp_Max:
       {
-      	// nothing
+        // nothing
       }
       break;
    }
