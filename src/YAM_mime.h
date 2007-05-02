@@ -74,6 +74,7 @@ struct MimeTypeNode
 };
 
 struct MimeTypeNode *CreateNewMimeType(void);
+void FreeMimeTypeList(struct MinList *mimeTypeList);
 
 // for maintaing our own internal (hardcoded)
 // MimeType array for identifying files. Please make sure

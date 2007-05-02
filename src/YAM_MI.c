@@ -2056,7 +2056,7 @@ int rfc2047_encode_file(FILE *fh, const char *str)
     {
       // then we check whether the current char is a non US-ASCII (7bit)
       // char which would require us to encode the full word as a RFC 2047
-      // compliant `encoded-word`. 
+      // compliant `encoded-word`.
       if(*c != '\0' &&
          (!isascii(*c) || iscntrl(*c) ||
           (*c == '=' && *(c+1) == '?' && isascii(*(c+2)) &&
@@ -2824,7 +2824,7 @@ const struct IntMimeType IntMimeTypeArray[] =
 };
 
 ///
-/// CreateNewMimeType()
+/// CreateNewMimeType
 //  Initializes a new MIME type structure
 struct MimeTypeNode *CreateNewMimeType(void)
 {
@@ -2840,4 +2840,27 @@ struct MimeTypeNode *CreateNewMimeType(void)
 }
 
 ///
+/// FreeMimeTypeList
+void FreeMimeTypeList(struct MinList *mimeTypeList)
+{
+  ENTER();
 
+  if(IsMinListEmpty(mimeTypeList) == FALSE)
+  {
+    struct MinNode *curNode;
+
+    // we have to free the mimeTypeList
+    while((curNode = (struct MinNode *)RemHead((struct List *)mimeTypeList)) != NULL)
+    {
+      struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
+
+      free(mt);
+    }
+
+    NewList((struct List *)mimeTypeList);
+  }
+
+  LEAVE();
+}
+
+///
