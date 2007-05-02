@@ -688,17 +688,7 @@ void CO_FreeConfig(struct Config *co)
 
 
   // we have to free the mimeTypeList
-  for(curNode = co->mimeTypeList.mlh_Head; curNode->mln_Succ;)
-  {
-    struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
-
-    // before we remove the node we have to save the pointer to the next one
-    curNode = curNode->mln_Succ;
-
-    // Remove node from list
-    Remove((struct Node *)mt);
-    free(mt);
-  }
+  FreeMimeTypeList(&co->mimeTypeList);
 
   // we have to free the filterList
   FreeFilterList(&co->filterList);
@@ -718,320 +708,318 @@ void CO_FreeConfig(struct Config *co)
 //  Sets configuration (or a part of it) to the factory settings
 void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 {
-   ENTER();
-   SHOWVALUE(DBF_CONFIG, co);
-   SHOWVALUE(DBF_CONFIG, page);
+  ENTER();
+  SHOWVALUE(DBF_CONFIG, co);
+  SHOWVALUE(DBF_CONFIG, page);
 
-   if(page == cp_FirstSteps || page == cp_AllPages)
-   {
-      *co->RealName = *co->EmailAddress = 0;
+  if(page == cp_FirstSteps || page == cp_AllPages)
+  {
+    *co->RealName = *co->EmailAddress = 0;
 
-      // If Locale is present, don't use the timezone from the config
-      if(G->Locale) co->TimeZone = -G->Locale->loc_GMTOffset;
-      else          co->TimeZone = 0;
+    // If Locale is present, don't use the timezone from the config
+    if(G->Locale) co->TimeZone = -G->Locale->loc_GMTOffset;
+    else          co->TimeZone = 0;
 
-      co->DaylightSaving = FALSE;
-      co->DetectCyrillic = FALSE;
-   }
+     co->DaylightSaving = FALSE;
+     co->DetectCyrillic = FALSE;
+  }
 
-   if(page == cp_TCPIP || page == cp_AllPages)
-   {
-      int i;
+  if(page == cp_TCPIP || page == cp_AllPages)
+  {
+    int i;
 
-      for(i = 0; i < MAXP3; i++)
+    for(i = 0; i < MAXP3; i++)
+    {
+      if(co->P3[i] != NULL)
       {
-        if(co->P3[i] != NULL)
-        {
-          free(co->P3[i]);
-          co->P3[i] = NULL;
-        }
+        free(co->P3[i]);
+        co->P3[i] = NULL;
       }
+    }
 
-      *co->SMTP_Server = '\0';
-      *co->SMTP_Domain = '\0';
-      co->SMTP_Port = 25;
-      co->Allow8bit = FALSE;
-      co->SMTP_SecureMethod = SMTPSEC_NONE;
-      co->Use_SMTP_AUTH = FALSE;
-      *co->SMTP_AUTH_User = '\0';
-      *co->SMTP_AUTH_Pass = '\0';
-      co->SMTP_AUTH_Method = SMTPAUTH_AUTO;
-      if((co->P3[0] = CO_NewPOP3(co, TRUE)) != NULL)
-        co->P3[0]->DeleteOnServer = TRUE;
-   }
+    *co->SMTP_Server = '\0';
+    *co->SMTP_Domain = '\0';
+    co->SMTP_Port = 25;
+    co->Allow8bit = FALSE;
+    co->SMTP_SecureMethod = SMTPSEC_NONE;
+    co->Use_SMTP_AUTH = FALSE;
+    *co->SMTP_AUTH_User = '\0';
+    *co->SMTP_AUTH_Pass = '\0';
+    co->SMTP_AUTH_Method = SMTPAUTH_AUTO;
+    if((co->P3[0] = CO_NewPOP3(co, TRUE)) != NULL)
+      co->P3[0]->DeleteOnServer = TRUE;
+  }
 
-   if(page == cp_NewMail || page == cp_AllPages)
-   {
-      co->AvoidDuplicates = FALSE;
-      co->TransferWindow = 2;
-      co->UpdateStatus = co->DownloadLarge = TRUE;
-      co->PreSelection = 1;
-      co->WarnSize = 100;
-      co->CheckMailDelay = 0;
-      co->NotifyType = 1;
-      *co->NotifySound = *co->NotifyCommand = 0;
-   }
+  if(page == cp_NewMail || page == cp_AllPages)
+  {
+    co->AvoidDuplicates = FALSE;
+    co->TransferWindow = 2;
+    co->UpdateStatus = co->DownloadLarge = TRUE;
+    co->PreSelection = 1;
+    co->WarnSize = 100;
+    co->CheckMailDelay = 0;
+    co->NotifyType = 1;
+    *co->NotifySound = *co->NotifyCommand = 0;
+  }
 
-   if(page == cp_Filters || page == cp_AllPages)
-   {
-     FreeFilterList(&co->filterList);
-   }
+  if(page == cp_Filters || page == cp_AllPages)
+  {
+    FreeFilterList(&co->filterList);
+  }
 
-   if(page == cp_Spam || page == cp_AllPages)
-   {
-      co->SpamFilterEnabled = FALSE;
-      co->SpamFilterForNewMail = FALSE;
-      co->SpamMarkOnMove = FALSE;
-      co->SpamMarkAsRead = FALSE;
-      co->SpamAddressBookIsWhiteList = FALSE;
-      co->SpamProbabilityThreshold = DEFAULT_SPAM_PROBABILITY_THRESHOLD;
-      co->SpamFlushTrainingDataInterval = DEFAULT_FLUSH_TRAINING_DATA_INTERVAL;
-      co->SpamFlushTrainingDataThreshold = DEFAULT_FLUSH_TRAINING_DATA_THRESHOLD;
-   }
+  if(page == cp_Spam || page == cp_AllPages)
+  {
+    co->SpamFilterEnabled = FALSE;
+    co->SpamFilterForNewMail = FALSE;
+    co->SpamMarkOnMove = FALSE;
+    co->SpamMarkAsRead = FALSE;
+    co->SpamAddressBookIsWhiteList = FALSE;
+    co->SpamProbabilityThreshold = DEFAULT_SPAM_PROBABILITY_THRESHOLD;
+    co->SpamFlushTrainingDataInterval = DEFAULT_FLUSH_TRAINING_DATA_INTERVAL;
+    co->SpamFlushTrainingDataThreshold = DEFAULT_FLUSH_TRAINING_DATA_THRESHOLD;
+  }
 
-   if(page == cp_Read || page == cp_AllPages)
-   {
-      co->ShowHeader = 1;
-      strlcpy(co->ShortHeaders, "(From|To|Cc|BCC|Date|Subject)", sizeof(co->ShortHeaders));
-      co->ShowSenderInfo = 2;
-      strlcpy(co->ColoredText.buf, "m6", sizeof(co->ColoredText.buf));
-      strlcpy(co->Color1stLevel.buf, "m0", sizeof(co->Color1stLevel.buf));
-      strlcpy(co->Color2ndLevel.buf, "m7", sizeof(co->Color2ndLevel.buf));
-      strlcpy(co->Color3rdLevel.buf, "m3", sizeof(co->Color3rdLevel.buf));
-      strlcpy(co->Color4thLevel.buf, "m1", sizeof(co->Color4thLevel.buf));
-      strlcpy(co->ColorURL.buf, "p6", sizeof(co->ColorURL.buf));
-      strlcpy(co->ColorSignature.buf, "m4", sizeof(co->ColorSignature.buf));
-      co->DisplayAllTexts = TRUE;
-      co->FixedFontEdit = TRUE;
-      co->UseTextstyles = TRUE;
-      co->DisplayAllAltPart = FALSE; // hide all sub "multipart/alternative" parts per default
-      co->WrapHeader = FALSE;
-      co->MultipleWindows = FALSE;
-      co->SigSepLine = SST_BAR;
-      co->StatusChangeDelayOn = TRUE;
-      co->StatusChangeDelay   = 1000; // 1s=1000ms delay by default
-      co->ConvertHTML = TRUE;
-      co->MDNEnabled = TRUE;
-      co->MDN_NoRecipient = MDN_ACTION_ASK;
-      co->MDN_NoDomain = MDN_ACTION_ASK;
-      co->MDN_OnDelete = MDN_ACTION_ASK;
-      co->MDN_Other = MDN_ACTION_ASK;
-   }
+  if(page == cp_Read || page == cp_AllPages)
+  {
+    co->ShowHeader = 1;
+    strlcpy(co->ShortHeaders, "(From|To|Cc|BCC|Date|Subject)", sizeof(co->ShortHeaders));
+    co->ShowSenderInfo = 2;
+    strlcpy(co->ColoredText.buf, "m6", sizeof(co->ColoredText.buf));
+    strlcpy(co->Color1stLevel.buf, "m0", sizeof(co->Color1stLevel.buf));
+    strlcpy(co->Color2ndLevel.buf, "m7", sizeof(co->Color2ndLevel.buf));
+    strlcpy(co->Color3rdLevel.buf, "m3", sizeof(co->Color3rdLevel.buf));
+    strlcpy(co->Color4thLevel.buf, "m1", sizeof(co->Color4thLevel.buf));
+    strlcpy(co->ColorURL.buf, "p6", sizeof(co->ColorURL.buf));
+    strlcpy(co->ColorSignature.buf, "m4", sizeof(co->ColorSignature.buf));
+    co->DisplayAllTexts = TRUE;
+    co->FixedFontEdit = TRUE;
+    co->UseTextstyles = TRUE;
+    co->DisplayAllAltPart = FALSE; // hide all sub "multipart/alternative" parts per default
+    co->WrapHeader = FALSE;
+    co->MultipleWindows = FALSE;
+    co->SigSepLine = SST_BAR;
+    co->StatusChangeDelayOn = TRUE;
+    co->StatusChangeDelay   = 1000; // 1s=1000ms delay by default
+    co->ConvertHTML = TRUE;
+    co->MDNEnabled = TRUE;
+    co->MDN_NoRecipient = MDN_ACTION_ASK;
+    co->MDN_NoDomain = MDN_ACTION_ASK;
+    co->MDN_OnDelete = MDN_ACTION_ASK;
+    co->MDN_Other = MDN_ACTION_ASK;
+  }
 
-   if(page == cp_Write || page == cp_AllPages)
-   {
-      *co->ReplyTo = *co->Organization = *co->ExtraHeaders = '\0';
-      strlcpy(co->NewIntro, tr(MSG_CO_NewIntroDef), sizeof(co->NewIntro));
-      strlcpy(co->Greetings, tr(MSG_CO_GreetingsDef), sizeof(co->Greetings));
-      co->WarnSubject = TRUE;
-      co->EdWrapCol = 76;
-      co->EdWrapMode = 2;
-      strlcpy(co->Editor, "C:Ed", sizeof(co->Editor));
-      co->LaunchAlways = FALSE;
-      co->EmailCache = 10;
-      co->AutoSave = 120;
-      co->RequestMDN = FALSE;
-      co->SaveSent = TRUE;
-   }
+  if(page == cp_Write || page == cp_AllPages)
+  {
+    *co->ReplyTo = '\0';
+    *co->Organization = '\0';
+    *co->ExtraHeaders = '\0';
+    strlcpy(co->NewIntro, tr(MSG_CO_NewIntroDef), sizeof(co->NewIntro));
+    strlcpy(co->Greetings, tr(MSG_CO_GreetingsDef), sizeof(co->Greetings));
+    co->WarnSubject = TRUE;
+    co->EdWrapCol = 76;
+    co->EdWrapMode = 2;
+    strlcpy(co->Editor, "C:Ed", sizeof(co->Editor));
+    co->LaunchAlways = FALSE;
+    co->EmailCache = 10;
+    co->AutoSave = 120;
+    co->RequestMDN = FALSE;
+    co->SaveSent = TRUE;
+  }
 
-   if(page == cp_ReplyForward || page == cp_AllPages)
-   {
-      strlcpy(co->ReplyHello, "Hello %f\\n", sizeof(co->ReplyHello));
-      strlcpy(co->ReplyIntro, "On %d, you wrote:\\n", sizeof(co->ReplyIntro));
-      strlcpy(co->ReplyBye, "Regards", sizeof(co->ReplyBye));
-      strlcpy(co->AltReplyHello, tr(MSG_CO_AltRepHelloDef), sizeof(co->AltReplyHello));
-      strlcpy(co->AltReplyIntro, tr(MSG_CO_AltRepIntroDef), sizeof(co->AltReplyIntro));
-      strlcpy(co->AltReplyBye, tr(MSG_CO_AltRepByeDef), sizeof(co->AltReplyBye));
-      strlcpy(co->AltReplyPattern, tr(MSG_CO_AltRepPatternDef), sizeof(co->AltReplyPattern));
-      strlcpy(co->MLReplyHello, tr(MSG_CO_MLRepHelloDef), sizeof(co->MLReplyHello));
-      strlcpy(co->MLReplyIntro, tr(MSG_CO_MLRepIntroDef), sizeof(co->MLReplyIntro));
-      strlcpy(co->MLReplyBye, tr(MSG_CO_MLRepByeDef), sizeof(co->MLReplyBye));
-      strlcpy(co->ForwardIntro, tr(MSG_CO_ForwardIntroDef), sizeof(co->ForwardIntro));
-      strlcpy(co->ForwardFinish, tr(MSG_CO_ForwardFinishDef), sizeof(co->ForwardFinish));
-      strlcpy(co->QuoteChar, ">", sizeof(co->QuoteChar));
-      strlcpy(co->AltQuoteChar, "|", sizeof(co->AltQuoteChar));
+  if(page == cp_ReplyForward || page == cp_AllPages)
+  {
+    strlcpy(co->ReplyHello, "Hello %f\\n", sizeof(co->ReplyHello));
+    strlcpy(co->ReplyIntro, "On %d, you wrote:\\n", sizeof(co->ReplyIntro));
+    strlcpy(co->ReplyBye, "Regards", sizeof(co->ReplyBye));
+    strlcpy(co->AltReplyHello, tr(MSG_CO_AltRepHelloDef), sizeof(co->AltReplyHello));
+    strlcpy(co->AltReplyIntro, tr(MSG_CO_AltRepIntroDef), sizeof(co->AltReplyIntro));
+    strlcpy(co->AltReplyBye, tr(MSG_CO_AltRepByeDef), sizeof(co->AltReplyBye));
+    strlcpy(co->AltReplyPattern, tr(MSG_CO_AltRepPatternDef), sizeof(co->AltReplyPattern));
+    strlcpy(co->MLReplyHello, tr(MSG_CO_MLRepHelloDef), sizeof(co->MLReplyHello));
+    strlcpy(co->MLReplyIntro, tr(MSG_CO_MLRepIntroDef), sizeof(co->MLReplyIntro));
+    strlcpy(co->MLReplyBye, tr(MSG_CO_MLRepByeDef), sizeof(co->MLReplyBye));
+    strlcpy(co->ForwardIntro, tr(MSG_CO_ForwardIntroDef), sizeof(co->ForwardIntro));
+    strlcpy(co->ForwardFinish, tr(MSG_CO_ForwardFinishDef), sizeof(co->ForwardFinish));
+    strlcpy(co->QuoteChar, ">", sizeof(co->QuoteChar));
+    strlcpy(co->AltQuoteChar, "|", sizeof(co->AltQuoteChar));
 
-      co->QuoteMessage = co->QuoteEmptyLines = co->CompareAddress = co->StripSignature = TRUE;
-   }
+    co->QuoteMessage = co->QuoteEmptyLines = co->CompareAddress = co->StripSignature = TRUE;
+  }
 
-   if(page == cp_Signature || page == cp_AllPages)
-   {
-      co->UseSignature = FALSE;
-      strmfp(co->TagsFile, G->ProgDir, ".taglines");
-      strlcpy(co->TagsSeparator, "%%", sizeof(co->TagsSeparator));
-   }
+  if(page == cp_Signature || page == cp_AllPages)
+  {
+    co->UseSignature = FALSE;
+    strmfp(co->TagsFile, G->ProgDir, ".taglines");
+    strlcpy(co->TagsSeparator, "%%", sizeof(co->TagsSeparator));
+  }
 
-   if(page == cp_Lists || page == cp_AllPages)
-   {
-      co->FolderCols = 1+2+16;
-      co->MessageCols = 1+2+8+16;
-      co->FixedFontList = FALSE;
-      co->DSListFormat = DSS_RELDATETIME;
-      co->ABookLookup = FALSE;
-      co->FolderCntMenu = TRUE;
-      co->MessageCntMenu = TRUE;
-   }
+  if(page == cp_Lists || page == cp_AllPages)
+  {
+    co->FolderCols = 1+2+16;
+    co->MessageCols = 1+2+8+16;
+    co->FixedFontList = FALSE;
+    co->DSListFormat = DSS_RELDATETIME;
+    co->ABookLookup = FALSE;
+    co->FolderCntMenu = TRUE;
+    co->MessageCntMenu = TRUE;
+  }
 
-   if(page == cp_Security || page == cp_AllPages)
-   {
-      G->PGPVersion = 0;
-      if(GetVar("PGPPATH", co->PGPCmdPath, sizeof(co->PGPCmdPath), 0) >= 0)
-        G->PGPVersion = CO_DetectPGP(co);
+  if(page == cp_Security || page == cp_AllPages)
+  {
+    G->PGPVersion = 0;
+    if(GetVar("PGPPATH", co->PGPCmdPath, sizeof(co->PGPCmdPath), 0) >= 0)
+      G->PGPVersion = CO_DetectPGP(co);
 
-      if(G->PGPVersion == 0)
-      {
-         strlcpy(co->PGPCmdPath, "C:", sizeof(co->PGPCmdPath));
-         G->PGPVersion = CO_DetectPGP(co);
-      }
-      *co->MyPGPID = 0;
-      co->EncryptToSelf = co->LogAllEvents = TRUE;
-      co->PGPPassInterval = 10; // 10 min per default
-      strlcpy(co->ReMailer, "Remailer <remailer@remailer.xganon.com>", sizeof(co->ReMailer));
-      strlcpy(co->RMCommands, "Anon-To: %s", sizeof(co->RMCommands));
-      strlcpy(co->LogfilePath, G->ProgDir, sizeof(co->LogfilePath));
-      co->LogfileMode = LF_NORMAL;
-      co->SplitLogfile = FALSE;
-   }
+    if(G->PGPVersion == 0)
+    {
+      strlcpy(co->PGPCmdPath, "C:", sizeof(co->PGPCmdPath));
+      G->PGPVersion = CO_DetectPGP(co);
+    }
+    *co->MyPGPID = '\0';
+    co->EncryptToSelf = co->LogAllEvents = TRUE;
+    co->PGPPassInterval = 10; // 10 min per default
+    strlcpy(co->ReMailer, "Remailer <remailer@remailer.xganon.com>", sizeof(co->ReMailer));
+    strlcpy(co->RMCommands, "Anon-To: %s", sizeof(co->RMCommands));
+    strlcpy(co->LogfilePath, G->ProgDir, sizeof(co->LogfilePath));
+    co->LogfileMode = LF_NORMAL;
+    co->SplitLogfile = FALSE;
+  }
 
-   if(page == cp_StartupQuit || page == cp_AllPages)
-   {
-      co->GetOnStartup = co->SendOnStartup = co->LoadAllFolders = co->SendOnQuit = FALSE;
-      co->CleanupOnStartup = co->RemoveOnStartup = FALSE;
-      co->UpdateNewMail = co->CheckBirthdates = co->CleanupOnQuit = co->RemoveOnQuit = TRUE;
-   }
+  if(page == cp_StartupQuit || page == cp_AllPages)
+  {
+    co->GetOnStartup = FALSE;
+    co->SendOnStartup = FALSE;
+    co->LoadAllFolders = FALSE;
+    co->SendOnQuit = FALSE;
+    co->CleanupOnStartup = FALSE;
+    co->RemoveOnStartup = FALSE;
+    co->UpdateNewMail = TRUE;
+    co->CheckBirthdates = TRUE;
+    co->CleanupOnQuit = TRUE;
+    co->RemoveOnQuit = TRUE;
+  }
 
-   if(page == cp_MIME || page == cp_AllPages)
-   {
-      struct MinNode *curNode;
+  if(page == cp_MIME || page == cp_AllPages)
+  {
+    FreeMimeTypeList(&co->mimeTypeList);
+    strlcpy(co->DefaultMimeViewer, "SYS:Utilities/Multiview \"%s\"", sizeof(co->DefaultMimeViewer));
+  }
 
-      // we have to free the mimeTypeList
-      for(curNode = co->mimeTypeList.mlh_Head; curNode->mln_Succ;)
-      {
-        struct MinNode *node = curNode;
+  if(page == cp_AddressBook || page == cp_AllPages)
+  {
+    strlcpy(co->GalleryDir, "YAM:Gallery", sizeof(co->GalleryDir));
+    strlcpy(co->NewAddrGroup, "NEW", sizeof(co->NewAddrGroup));
+    co->AddMyInfo = FALSE;
+    co->AddToAddrbook = 0;
+    co->AddrbookCols = 1+2+4;
+  }
 
-        // before we remove the node we have to save the pointer to the next one
-        curNode = curNode->mln_Succ;
+  if(page == cp_Scripts || page == cp_AllPages)
+  {
+    int i;
 
-        free(node);
-      }
-      NewList((struct List *)&co->mimeTypeList);
+    for(i = 0; i < MAXRX; i++)
+    {
+      *co->RX[i].Name = '\0';
+      *co->RX[i].Script = '\0';
+      co->RX[i].IsAmigaDOS = co->RX[i].UseConsole = FALSE;
+      co->RX[i].WaitTerm = TRUE;
+    }
+  }
 
-      strlcpy(co->DefaultMimeViewer, "SYS:Utilities/Multiview \"%s\"", sizeof(co->DefaultMimeViewer));
-   }
+  if(page == cp_Mixed || page == cp_AllPages)
+  {
+    strlcpy(co->TempDir, "T:", sizeof(co->TempDir));
+    strlcpy(co->DetachDir, "RAM:", sizeof(co->DetachDir));
+    strlcpy(co->AttachDir, "RAM:", sizeof(co->AttachDir));
+    strlcpy(co->PackerCommand, "LhA -a -m -i%l a \"%a\"", sizeof(co->PackerCommand));
+    co->IconPositionX = 0;
+    co->IconPositionY = 0;
+    strlcpy(co->AppIconText, tr(MSG_CO_APPICON_LABEL), sizeof(co->AppIconText));
+    co->IconifyOnQuit = co->RemoveAtOnce = FALSE;
+    co->Confirm = TRUE;
+    co->ConfirmDelete = 2;
+    strlcpy(co->XPKPack, "HUFF", sizeof(co->XPKPack));
+    strlcpy(co->XPKPackEncrypt, "HUFF", sizeof(co->XPKPackEncrypt));
+    co->XPKPackEff = 50;
+    co->XPKPackEncryptEff = 50;
 
-   if(page == cp_AddressBook || page == cp_AllPages)
-   {
-      strlcpy(co->GalleryDir, "YAM:Gallery", sizeof(co->GalleryDir));
-      strlcpy(co->NewAddrGroup, "NEW", sizeof(co->NewAddrGroup));
-      co->AddMyInfo = FALSE;
-      co->AddToAddrbook = 0;
-      co->AddrbookCols = 1+2+4;
-   }
+    // depending on the operating system we set the AppIcon
+    // and docky icon defaults different
+    #if defined(__amigaos4__)
+    if(ApplicationBase)
+    {
+      co->DockyIcon = TRUE;
+      co->WBAppIcon = FALSE;
+    }
+    else
+    #endif
+      co->WBAppIcon = TRUE;
+  }
 
-   if(page == cp_Scripts || page == cp_AllPages)
-   {
-      int i;
+  if(page == cp_LookFeel || page == cp_AllPages)
+  {
+    co->InfoBar = IB_POS_CENTER;
+    strlcpy(co->InfoBarText, tr(MSG_CO_InfoBarDef), sizeof(co->InfoBarText));
+    co->EmbeddedReadPane = TRUE;
+    co->QuickSearchBar = TRUE;
+    co->SizeFormat = SF_MIXED;
+  }
 
-      for(i = 0; i < MAXRX; i++)
-      {
-         *co->RX[i].Name = *co->RX[i].Script = 0;
-         co->RX[i].IsAmigaDOS = co->RX[i].UseConsole = FALSE;
-         co->RX[i].WaitTerm = TRUE;
-      }
-   }
+  if(page == cp_Update || page == cp_AllPages)
+  {
+    co->UpdateInterval = 604800; // check weekly for updates per default
+    SetDefaultUpdateState();
+  }
 
-   if(page == cp_Mixed || page == cp_AllPages)
-   {
-      strlcpy(co->TempDir, "T:", sizeof(co->TempDir));
-      strlcpy(co->DetachDir, "RAM:", sizeof(co->DetachDir));
-      strlcpy(co->AttachDir, "RAM:", sizeof(co->AttachDir));
-      strlcpy(co->PackerCommand, "LhA -a -m -i%l a \"%a\"", sizeof(co->PackerCommand));
-      co->IconPositionX = co->IconPositionY = 0;
-      strlcpy(co->AppIconText, tr(MSG_CO_APPICON_LABEL), sizeof(co->AppIconText));
-      co->IconifyOnQuit = co->RemoveAtOnce = FALSE;
-      co->Confirm = TRUE;
-      co->ConfirmDelete = 2;
-      strlcpy(co->XPKPack, "HUFF", sizeof(co->XPKPack));
-      strlcpy(co->XPKPackEncrypt, "HUFF", sizeof(co->XPKPackEncrypt));
-      co->XPKPackEff = 50;
-      co->XPKPackEncryptEff = 50;
+  // everything else
+  if(page == cp_AllPages)
+  {
+    co->LetterPart = 1;
+    co->WriteIndexes = 120;
+    strlcpy(co->SupportSite, "http://www.yam.ch/", sizeof(co->SupportSite));
+    strlcpy(co->UpdateServer, "http://update.yam.ch/", sizeof(co->UpdateServer));
+    co->JumpToNewMsg = TRUE;
+    co->JumpToIncoming = FALSE;
+    co->JumpToRecentMsg = FALSE;
+    co->AskJumpUnread = TRUE;
+    co->PrinterCheck = TRUE;
+    co->IsOnlineCheck = TRUE;
+    co->ConfirmOnQuit = FALSE;
+    co->HideGUIElements = 0;
+    strlcpy(co->LocalCharset, "ISO-8859-1", sizeof(co->LocalCharset));
+    co->SysCharsetCheck = TRUE;
+    co->AmiSSLCheck = TRUE;
+    co->TimeZoneCheck = TRUE;
+    co->AutoDSTCheck = TRUE;
+    co->PrintMethod = PRINTMETHOD_RAW;
+    co->StackSize = 40000;
+    co->AutoColumnResize = TRUE;
+    co->SocketOptions.SendBuffer  = -1;
+    co->SocketOptions.RecvBuffer  = -1;
+    co->SocketOptions.SendLowAt   = -1;
+    co->SocketOptions.RecvLowAt   = -1;
+    co->SocketOptions.SendTimeOut = -1;
+    co->SocketOptions.RecvTimeOut = -1;
+    co->SocketOptions.KeepAlive   = FALSE;
+    co->SocketOptions.NoDelay     = FALSE;
+    co->SocketOptions.LowDelay    = FALSE;
+    co->TRBufferSize = 8192;
+    co->EmbeddedMailDelay = 200; // 200ms delay per default
+    co->KeepAliveInterval = 30;  // 30s interval per default
 
-      // depending on the operating system we set the AppIcon
-      // and docky icon defaults different
-      #if defined(__amigaos4__)
-      if(ApplicationBase)
-      {
-        co->DockyIcon = TRUE;
-        co->WBAppIcon = FALSE;
-      }
-      else
-      #endif
-        co->WBAppIcon = TRUE;
-   }
+    // set the default styles of the folder listtree and
+    // mail list items.
+    strlcpy(co->StyleFGroupUnread, MUIX_B MUIX_I,         sizeof(co->StyleFGroupUnread));
+    strlcpy(co->StyleFGroupRead,   MUIX_B MUIX_I "\0334", sizeof(co->StyleFGroupRead));
+    strlcpy(co->StyleFolderUnread, MUIX_B        "\0334", sizeof(co->StyleFolderUnread));
+    strlcpy(co->StyleFolderRead,   "",                    sizeof(co->StyleFolderRead));
+    strlcpy(co->StyleFolderNew,    MUIX_B,                sizeof(co->StyleFolderNew));
+    strlcpy(co->StyleMailUnread,   MUIX_B,                sizeof(co->StyleMailUnread));
+    strlcpy(co->StyleMailRead,     "",                    sizeof(co->StyleMailRead));
+  }
 
-   if(page == cp_LookFeel || page == cp_AllPages)
-   {
-      co->InfoBar = IB_POS_CENTER;
-      strlcpy(co->InfoBarText, tr(MSG_CO_InfoBarDef), sizeof(co->InfoBarText));
-      co->EmbeddedReadPane = TRUE;
-      co->QuickSearchBar = TRUE;
-      co->SizeFormat = SF_MIXED;
-   }
-
-   if(page == cp_Update || page == cp_AllPages)
-   {
-      co->UpdateInterval = 604800; // check weekly for updates per default
-      SetDefaultUpdateState();
-   }
-
-   // everything else
-   if(page == cp_AllPages)
-   {
-      co->LetterPart = 1;
-      co->WriteIndexes = 120;
-      strlcpy(co->SupportSite, "http://www.yam.ch/", sizeof(co->SupportSite));
-      strlcpy(co->UpdateServer, "http://update.yam.ch/", sizeof(co->UpdateServer));
-      co->JumpToNewMsg = TRUE;
-      co->JumpToIncoming = FALSE;
-      co->JumpToRecentMsg = FALSE;
-      co->AskJumpUnread = TRUE;
-      co->PrinterCheck = TRUE;
-      co->IsOnlineCheck = TRUE;
-      co->ConfirmOnQuit = FALSE;
-      co->HideGUIElements = 0;
-      strlcpy(co->LocalCharset, "ISO-8859-1", sizeof(co->LocalCharset));
-      co->SysCharsetCheck = TRUE;
-      co->AmiSSLCheck = TRUE;
-      co->TimeZoneCheck = TRUE;
-      co->AutoDSTCheck = TRUE;
-      co->PrintMethod = PRINTMETHOD_RAW;
-      co->StackSize = 40000;
-      co->AutoColumnResize = TRUE;
-      co->SocketOptions.SendBuffer  = -1;
-      co->SocketOptions.RecvBuffer  = -1;
-      co->SocketOptions.SendLowAt   = -1;
-      co->SocketOptions.RecvLowAt   = -1;
-      co->SocketOptions.SendTimeOut = -1;
-      co->SocketOptions.RecvTimeOut = -1;
-      co->SocketOptions.KeepAlive   = FALSE;
-      co->SocketOptions.NoDelay     = FALSE;
-      co->SocketOptions.LowDelay    = FALSE;
-      co->TRBufferSize = 8192;
-      co->EmbeddedMailDelay = 200; // 200ms delay per default
-      co->KeepAliveInterval = 30;  // 30s interval per default
-
-      // set the default styles of the folder listtree and
-      // mail list items.
-      strlcpy(co->StyleFGroupUnread, MUIX_B MUIX_I,         sizeof(co->StyleFGroupUnread));
-      strlcpy(co->StyleFGroupRead,   MUIX_B MUIX_I "\0334", sizeof(co->StyleFGroupRead));
-      strlcpy(co->StyleFolderUnread, MUIX_B        "\0334", sizeof(co->StyleFolderUnread));
-      strlcpy(co->StyleFolderRead,   "",                    sizeof(co->StyleFolderRead));
-      strlcpy(co->StyleFolderNew,    MUIX_B,                sizeof(co->StyleFolderNew));
-      strlcpy(co->StyleMailUnread,   MUIX_B,                sizeof(co->StyleMailUnread));
-      strlcpy(co->StyleMailRead,     "",                    sizeof(co->StyleMailRead));
-   }
-
-   LEAVE();
+  LEAVE();
 }
 
 ///
