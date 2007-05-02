@@ -7,6 +7,8 @@ $URL$
 
 2007-05-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AttachmentImage.c: all bitmaps are cleared now upon allocation. Maybe this
+    fixes some graphical garbage I experienced under AmiKit.
   * MainFolderListtree.c: replaced the DragReport method by NListtree_DropType.
     This makes the folder tree scrollable during dragging again. Unfortunately
     this reveals a bug in NListtree.mcc which will visually accept folder groups

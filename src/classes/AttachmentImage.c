@@ -385,7 +385,7 @@ OVERLOAD(MUIM_Setup)
       }
 
       // we first allocate a source bitmap with equal size to the icon size of the diskObject
-      orgBitMap = AllocBitMap(orgWidth, orgHeight, screenDepth, 0, screenBitMap);
+      orgBitMap = AllocBitMap(orgWidth, orgHeight, screenDepth, BMF_CLEAR, screenBitMap);
       if(orgBitMap)
       {
         LONG scaleHeightDiff = orgHeight - data->maxHeight;
@@ -433,7 +433,7 @@ OVERLOAD(MUIM_Setup)
         }
 
         // now we can allocate a new bitmap which should carry the scaled selected image
-        data->selectedBitMap = AllocBitMap(newWidth, newHeight, screenDepth, 0, orgBitMap);
+        data->selectedBitMap = AllocBitMap(newWidth, newHeight, screenDepth, BMF_CLEAR, orgBitMap);
         if(data->selectedBitMap)
         {
           struct BitScaleArgs args;
@@ -472,7 +472,7 @@ OVERLOAD(MUIM_Setup)
 
         // now we also scale the selected BitMask down, if it exists
         if(selectedBitMask &&
-           (data->selectedBitMask = AllocBitMap(newWidth, newHeight, 1L, 0, NULL)))
+           (data->selectedBitMask = AllocBitMap(newWidth, newHeight, 1L, BMF_CLEAR, NULL)))
         {
           struct BitScaleArgs args;
           struct BitMap bm;
@@ -513,7 +513,7 @@ OVERLOAD(MUIM_Setup)
           DrawImage(&rp, ((struct Image*)diskObject->do_Gadget.GadgetRender), 0, 0);
 
         // now we can allocate a new bitmap which should carry the scaled unselected normal image
-        data->normalBitMap = AllocBitMap(newWidth, newHeight, screenDepth, 0, orgBitMap);
+        data->normalBitMap = AllocBitMap(newWidth, newHeight, screenDepth, BMF_CLEAR, orgBitMap);
         if(data->normalBitMap)
         {
           struct BitScaleArgs args;
@@ -552,7 +552,7 @@ OVERLOAD(MUIM_Setup)
 
         // now we also scale the normal BitMask down, if it exists
         if(normalBitMask &&
-           (data->normalBitMask = AllocBitMap(newWidth, newHeight, 1L, 0, NULL)))
+           (data->normalBitMask = AllocBitMap(newWidth, newHeight, 1L, BMF_CLEAR, NULL)))
         {
           struct BitScaleArgs args;
           struct BitMap bm;
