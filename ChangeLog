@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-02  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_CO.c: minor compilation fix where an unknown MUI attribute creaped into
+    the sources.
+
 2007-05-02  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: changed a malloc()/memcpy() combination to a memdup() call.
