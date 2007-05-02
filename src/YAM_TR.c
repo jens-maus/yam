@@ -3438,6 +3438,8 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
 //  Free temporary message and UIDL lists
 void TR_Cleanup(void)
 {
+  ENTER();
+
   if(G->TR->GUI.LV_MAILS)
     DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Clear);
 
@@ -3451,7 +3453,7 @@ void TR_Cleanup(void)
 
       // free the mail pointer
       if(mtn->mail != NULL)
-        free(mail);
+        free(mtn->mail);
 
       // free the UIDL
       if(mtn->UIDL != NULL)
@@ -3463,6 +3465,8 @@ void TR_Cleanup(void)
   }
 
   NewList((struct List *)&G->TR->transferList);
+
+  LEAVE();
 }
 ///
 /// TR_AbortnClose
