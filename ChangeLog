@@ -7,6 +7,8 @@ $URL$
 
 2007-05-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_FI.c, YAM_TR.c: replaced several handcraftet list cleanups by
+    calls to RemHead().
   * YAM_CO.c: use the new MIME type list free function.
   * YAM_MI.c: added a new function to free a complete list of MIME types.
   * AttachmentImage.c: all bitmaps are cleared now upon allocation. Maybe this

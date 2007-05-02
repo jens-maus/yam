@@ -1080,28 +1080,20 @@ static BOOL InitXPKPackerList(void)
 // free all content of our previously loaded XPK packer list
 static void FreeXPKPackerList(void)
 {
-  struct MinNode *curNode;
   ENTER();
 
-  if(IsMinListEmpty(&G->xpkPackerList) == TRUE)
+  if(IsMinListEmpty(&G->xpkPackerList) == FALSE)
   {
-    LEAVE();
-    return;
-  }
+    struct MinNode *curNode;
 
-  // Now we process the read header to set all flags accordingly
-  for(curNode = G->xpkPackerList.mlh_Head; curNode->mln_Succ;)
-  {
-    struct xpkPackerNode *xpkNode = (struct xpkPackerNode *)curNode;
+    // Now we process the read header to set all flags accordingly
+    while((curNode = (struct MinNode *)RemHead((struct List *)&G->xpkPackerList)) != NULL)
+    {
+      struct xpkPackerNode *xpkNode = (struct xpkPackerNode *)curNode;
 
-    // before we remove the node we have to save the pointer to the next one
-    curNode = curNode->mln_Succ;
-
-    // Remove node from list
-    Remove((struct Node *)xpkNode);
-
-    // Free everything of the node
-    free(xpkNode);
+      // Free everything of the node
+      free(xpkNode);
+    }
   }
 
   LEAVE();
@@ -1547,6 +1539,7 @@ void PopUp(void)
   {
     // search through our ReadDataList
     struct MinNode *curNode;
+
     for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
       struct ReadMailData *rmData = (struct ReadMailData *)curNode;

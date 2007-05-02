@@ -3444,22 +3444,17 @@ void TR_Cleanup(void)
   if(IsMinListEmpty(&G->TR->transferList) == FALSE)
   {
     struct MinNode *curNode;
-    for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ;)
+
+    while((curNode = (struct MinNode *)RemHead((struct List *)&G->TR->transferList)) != NULL)
     {
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-      struct Mail *mail = mtn->mail;
-
-      // before we remove the node we have to save the pointer to the next one
-      curNode = curNode->mln_Succ;
-
-      // Remove node from list
-      Remove((struct Node *)mtn);
 
       // free the mail pointer
-      free(mail);
+      if(mtn->mail != NULL)
+        free(mail);
 
-      // Free everything of the node
-      if(mtn->UIDL)
+      // free the UIDL
+      if(mtn->UIDL != NULL)
         free(mtn->UIDL);
 
       // free the node itself

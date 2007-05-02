@@ -1170,15 +1170,9 @@ void FreeSearchPatternList(struct Search *search)
     struct MinNode *curNode;
 
     // Now we process the read header to set all flags accordingly
-    for(curNode = patternList->mlh_Head; curNode->mln_Succ;)
+    while((curNode = (struct MinNode *)RemHead((struct List *)patternList)) != NULL)
     {
       struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
-
-      // before we remove the node we have to save the pointer to the next one
-      curNode = curNode->mln_Succ;
-
-      // Remove node from list
-      Remove((struct Node *)patternNode);
 
       free(patternNode);
     }
