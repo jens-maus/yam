@@ -7,6 +7,7 @@ $URL$
 
 2007-05-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: changed a malloc()/memcpy() combination to a memdup() call.
   * YAM_COs.c: general clean up of the CO_LoadConfig() function. The variables
     lastFilter, lastFilterID, lastType and lastTypeID *must* not be declared
     static as they will survive a restart and eventually will point to no longer

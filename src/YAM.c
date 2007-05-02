@@ -1027,10 +1027,8 @@ static BOOL InitXPKPackerList(void)
         {
           struct xpkPackerNode *newPacker;
 
-          if((newPacker = malloc(sizeof(struct xpkPackerNode))) != NULL)
+          if((newPacker = memdup(&xpi, sizeof(struct xpkPackerNode))) != NULL)
           {
-            memcpy(&newPacker->info, &xpi, sizeof(struct XpkPackerInfo));
-
             // because the short name isn't always equal to the packer short name
             // we work around that problem and make sure they are equal.
             strlcpy((char *)newPacker->info.xpi_Name, (char *)xpl.xpl_Packer[i], sizeof(newPacker->info.xpi_Name));
