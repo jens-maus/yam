@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <proto/exec.h>
 #include <proto/codesets.h>
 
 #include "extrasrc.h"
