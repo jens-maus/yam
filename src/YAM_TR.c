@@ -4395,8 +4395,17 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                 set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
 
                 // send a 'QUIT' command, but only if
-                // we didn't receive any error during the transfer
-                if(!G->Error)
+                // we didn't receive any error during the transfer or
+                // if the socket was closed unexpected.
+                //
+                // In fact, the socket check here is to fix issues with broken
+                // SMTP server implementations like the one of "smtp.gmail.com".
+                // It seems these broken SMTP servers do automatically drop the
+                // data connection right after the 'DATA' command sequence
+                // was finished. Of course, this clearly violates the RFC 2821
+                // (section 4.1.1.10) but unfortunately we can't do anything about
+                // it really and have to consider this a workaround. :(
+                if(!G->Error && G->TR_Socket != SMTP_NO_SOCKET)
                   TR_SendSMTPCmd(SMTP_QUIT, NULL, MSG_ER_BadResponse);
               }
               else if(err == CONNECTERR_SUCCESS)

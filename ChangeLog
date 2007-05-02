@@ -7,6 +7,21 @@ $URL$
 
 2007-05-02  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c: added an ugly, but necessary workaround for broken SMTP server
+    implementations like the one used by "smtp.gmail.com". It seems, that these
+    stupid implemenations clearly violate RFC 2821 section 4.1.1.10 by directly
+    dropping a connection right after the mail was successfully send via the
+    'DATA' command. Normally, an SMTP server must wait until the client terminates
+    the connection with a 'QUIT' command. However, smtp.gmail.com doesn't seem
+    to care about the standard which in fact caused YAM to always throw an
+    "connection dropped unexpectly" error when trying to send the QUIT command
+    string. Now, YAM will check the socket state right before trying to send the
+    QUIT command and in case the socket points out that the connection was
+    dropped, it will not try to send the QUIT command and exits immediately
+    without any error or warning. Again, this is ugly and not what the standard
+    (RFC 2821) suggests, but as long as there are stupid developers out there
+    not caring about rules, we are forced to introduce such damn workarounds.
+    This should clear bug #1711145 and #1709100.
   * YAM_CO.c: minor compilation fix where an unknown MUI attribute creaped into
     the sources.
 
