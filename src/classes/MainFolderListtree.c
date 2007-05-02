@@ -37,6 +37,8 @@ struct Data
 {
   Object *context_menu;
   Object *folderImage[MAX_FOLDERIMG+1];
+
+  BOOL draggingMails;
 };
 */
 
@@ -129,58 +131,28 @@ OVERLOAD(OM_GET)
 }
 
 ///
-/// OVERLOAD(MUIM_DragReport)
-// we catch MUIM_DragReport because we want to restrict some
-// dragging for some special objects
-OVERLOAD(MUIM_DragReport)
-{
-  struct MUIP_DragReport *dr = (struct MUIP_DragReport *)msg;
-  struct MUI_NListtree_TestPos_Result res;
-  struct MUI_NListtree_TreeNode *tn;
-
-  DoMethod(obj, MUIM_NListtree_TestPos, dr->x, dr->y, &res);
-
-  if((tn = res.tpr_TreeNode))
-  {
-    struct Folder *folder = (struct Folder *)tn->tn_User;
-
-    // If we drag a folder on a folder we reject it immediatly because only below or above
-    // is allowed
-    if(dr->obj == obj)
-    {
-      if(!isGroupFolder(folder) && res.tpr_Type == MUIV_NListtree_TestPos_Result_Onto)
-      {
-        return(MUIV_DragReport_Abort);
-      }
-    }
-    else
-    {
-      // If we drag a mail onto a folder we allow only dragging on and not below or above
-      if(isGroupFolder(folder) || res.tpr_Type != MUIV_NListtree_TestPos_Result_Onto)
-      {
-        return(MUIV_DragReport_Abort);
-      }
-    }
-
-    // to rescue the dropping we call the SuperMethod now
-    return(DoSuperMethodA(cl, obj, msg));
-  }
-
-  return(MUIV_DragReport_Abort);
-}
-
-///
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)
 {
+  GETDATA;
   struct MUIP_DragQuery *dq = (struct MUIP_DragQuery *)msg;
+  ULONG result;
+
+  ENTER();
 
   // check if the object that requests the drag operation
   // is a mail list object or not
   if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, dq->obj) == TRUE)
-    return MUIV_DragQuery_Accept;
+  {
+    data->draggingMails = TRUE;
+    result = MUIV_DragQuery_Accept;
+  } else {
+    data->draggingMails = FALSE;
+    result = DoSuperMethodA(cl, obj, msg);
+  }
 
-  return DoSuperMethodA(cl,obj,msg);
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -215,7 +187,51 @@ OVERLOAD(MUIM_DragDrop)
     return 0;
   }
 
-  return DoSuperMethodA(cl,obj,msg);
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+/// OVERLOAD(MUIM_NListtree_DropType)
+OVERLOAD(MUIM_NListtree_DropType)
+{
+  GETDATA;
+  struct MUIP_NListtree_DropType *dt = (struct MUIP_NListtree_DropType *)msg;
+  struct MUI_NListtree_TreeNode *tn;
+
+  ENTER();
+
+  // determine the folder under the mouse pointer
+  if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, *dt->Pos, MUIV_NListtree_GetEntry_Flag_Visible)) != NULL)
+  {
+    struct Folder *folder;
+
+    if((folder = (struct Folder *)tn->tn_User) != NULL)
+    {
+      if(data->draggingMails)
+      {
+        // if mails are being dragged the currently active folder and group folders must be excluded.
+        // All other folders are valid drop targets.
+        if(*dt->Pos == (LONG)xget(obj, MUIA_NList_Active) || isGroupFolder(folder))
+          *dt->Type = MUIV_NListtree_DropType_None;
+        else
+          *dt->Type = MUIV_NListtree_DropType_Onto;
+      }
+      else
+      {
+        // if folders are being dragged only group folders are valid drop targets. Else we place the
+        // folder being dragged above the current folder below the mouse pointer.
+        if(*dt->Type == MUIV_NListtree_DropType_Onto && !isGroupFolder(folder))
+          *dt->Type = MUIV_NListtree_DropType_Above;
+      }
+    }
+    else
+      *dt->Type = MUIV_NListtree_DropType_None;
+  }
+  else
+    *dt->Type = MUIV_NListtree_DropType_None;
+
+  RETURN(0);
+  return 0;
 }
 
 ///

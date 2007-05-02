@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-02  Thore Böckelmann <tboeckel@gmx.de>
+
+  * MainFolderListtree.c: replaced the DragReport method by NListtree_DropType.
+    This makes the folder tree scrollable during dragging again. Unfortunately
+    this reveals a bug in NListtree.mcc which will visually accept folder groups
+    as valid drop target, although one cannot finally drop a mail there. This
+    will be fixed with the next release of NListtree.mcc.
+
 2007-05-01  Jens Langner <Jens.Langner@light-speed.de>
 
   * ReadWindowStatusBar.c: fixed issue where the size of the font for rendering
