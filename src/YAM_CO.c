@@ -122,6 +122,7 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
       Object *newSearchGroup = SearchControlGroupObject,
                                  MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
                                  MUIA_SearchControlGroup_ShowCombineCycle, TRUE,
+                                 MUIA_SearchControlGroup_ShowDeleteButton, TRUE,
                                End;
 
       if(newSearchGroup == NULL)
@@ -333,6 +334,7 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
             Object *newSearchGroup = SearchControlGroupObject,
                                        MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
                                        MUIA_SearchControlGroup_ShowCombineCycle, i > 0,
+                                       MUIA_SearchControlGroup_ShowDeleteButton, TRUE,
                                      End;
 
             if(newSearchGroup == NULL)
@@ -672,7 +674,6 @@ static int CO_DetectPGP(struct Config *co)
 //  Deallocates a configuration structure
 void CO_FreeConfig(struct Config *co)
 {
-  struct MinNode *curNode;
   int i;
 
   ENTER();
