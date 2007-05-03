@@ -1157,7 +1157,7 @@ HOOKPROTONHNONP(FI_Close, void)
 }
 MakeStaticHook(FI_CloseHook, FI_Close);
 ///
-/// FreeSearchPatternList()
+/// FreeSearchPatternList
 // Function to make the whole pattern list is correctly cleaned up
 void FreeSearchPatternList(struct Search *search)
 {
@@ -1182,7 +1182,23 @@ void FreeSearchPatternList(struct Search *search)
 }
 
 ///
-/// AllocFilterSearch()
+/// FreeRuleSearchData
+// Function to free the search data of a rule
+void FreeRuleSearchData(struct RuleNode *rule)
+{
+  ENTER();
+
+  if(rule->search != NULL)
+  {
+    FreeSearchPatternList(rule->search);
+    free(rule->search);
+    rule->search = NULL;
+  }
+
+  LEAVE();
+}
+///
+/// AllocFilterSearch
 //  Allocates and initializes search structures for filters and returns
 //  the number of active filters/search structures allocated.
 int AllocFilterSearch(enum ApplyFilterMode mode)
@@ -1220,12 +1236,7 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
             struct RuleNode *rule = (struct RuleNode *)curRuleNode;
 
             // now we do free our search structure if it exists
-            if(rule->search)
-            {
-              FreeSearchPatternList(rule->search);
-              free(rule->search);
-              rule->search = NULL;
-            }
+            FreeRuleSearchData(rule);
           }
         }
       }
@@ -1281,7 +1292,7 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
 }
 
 ///
-/// FreeFilterSearch()
+/// FreeFilterSearch
 //  Frees filter search structures
 void FreeFilterSearch(void)
 {
@@ -1303,12 +1314,7 @@ void FreeFilterSearch(void)
         struct RuleNode *rule = (struct RuleNode *)curRuleNode;
 
         // now we do free our search structure if it exists
-        if(rule->search != NULL)
-        {
-          FreeSearchPatternList(rule->search);
-          free(rule->search);
-          rule->search = NULL;
-        }
+        FreeRuleSearchData(rule);
       }
     }
   }
@@ -1317,7 +1323,7 @@ void FreeFilterSearch(void)
 }
 
 ///
-/// ExecuteFilterAction()
+/// ExecuteFilterAction
 //  Applies filter action to a message and return TRUE if the filter search
 //  should continue or FALSE if it should stop afterwards
 BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
@@ -1437,7 +1443,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
   return success;
 }
 ///
-/// ApplyFiltersFunc()
+/// ApplyFiltersFunc
 //  Apply filters
 HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 {
@@ -1616,7 +1622,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 }
 MakeHook(ApplyFiltersHook, ApplyFiltersFunc);
 ///
-/// CopyFilterData()
+/// CopyFilterData
 // copy all data of a filter node (deep copy)
 void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
 {
@@ -1663,7 +1669,7 @@ void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
   LEAVE();
 }
 ///
-/// CopySearchData()
+/// CopySearchData
 // copy all data of a search structure (deep copy)
 static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
 {
@@ -1695,7 +1701,7 @@ static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
 }
 
 ///
-/// FreeFilterRuleList()
+/// FreeFilterRuleList
 void FreeFilterRuleList(struct FilterNode *filter)
 {
   ENTER();
@@ -1711,11 +1717,7 @@ void FreeFilterRuleList(struct FilterNode *filter)
       struct RuleNode *rule = (struct RuleNode *)curNode;
 
       // now we do free our search structure if it exists
-      if(rule->search != NULL)
-      {
-        FreeSearchPatternList(rule->search);
-        free(rule->search);
-      }
+      FreeRuleSearchData(rule);
 
       free(rule);
     }
@@ -1728,7 +1730,7 @@ void FreeFilterRuleList(struct FilterNode *filter)
 }
 
 ///
-/// CreateNewFilter()
+/// CreateNewFilter
 //  Initializes a new filter
 struct FilterNode *CreateNewFilter(void)
 {
@@ -1800,7 +1802,7 @@ void FreeFilterList(struct MinList *filterList)
 }
 
 ///
-/// CreateNewRule()
+/// CreateNewRule
 //  Initializes a new filter rule
 struct RuleNode *CreateNewRule(struct FilterNode *filter)
 {
@@ -1823,7 +1825,7 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter)
 }
 
 ///
-/// GetFilterRule()
+/// GetFilterRule
 //  return a pointer to the rule depending on the position in the ruleList
 struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos)
 {

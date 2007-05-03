@@ -171,12 +171,7 @@ HOOKPROTONHNONP(RemoveLastRule, void)
       struct List *childList;
 
       // now we do free our search structure if it exists
-      if(rule->search)
-      {
-        FreeSearchPatternList(rule->search);
-        free(rule->search);
-        rule->search = NULL;
-      }
+      FreeRuleSearchData(rule);
 
       free(rule);
 
