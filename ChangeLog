@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: removed some unnecessary prototypes.
+
 2007-05-02  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_TR.c: added an ugly, but necessary workaround for broken SMTP server

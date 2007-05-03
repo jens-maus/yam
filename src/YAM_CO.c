@@ -79,10 +79,7 @@ struct Config *C = NULL;
 struct Config *CE = NULL;
 
 /* local protos */
-static void CO_NewPrefsFile(char*);
-static int CO_DetectPGP(struct Config*);
 static struct CO_ClassData *CO_New(void);
-static void CopyConfigData(struct Config*, struct Config*);
 
 /***************************************************************************
  Module: Configuration
