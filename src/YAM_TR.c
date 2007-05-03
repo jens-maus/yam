@@ -221,8 +221,8 @@ struct MailTransferNode
 // static function prototypes
 static void TR_NewMailAlert(void);
 static void TR_CompleteMsgList(void);
-static char *TR_SendPOP3Cmd(enum POPCommand command, const char *parmtext, const void *errorMsg);
-static char *TR_SendSMTPCmd(enum SMTPCommand command, const char *parmtext, const void *errorMsg);
+static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext, const void *errorMsg);
+static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext, const void *errorMsg);
 static int  TR_Recv(char *vptr, int maxlen);
 static int  TR_RecvToFile(FILE *fh, char *filename, struct TransStat *ts);
 static int  TR_ReadLine(LONG socket, char *vptr, int maxlen);
@@ -394,7 +394,7 @@ static BOOL TR_StartTLS(VOID)
   if(ctx != NULL && (ssl = SSL_new(ctx)))
   {
     // set the socket descriptor to the ssl context
-    if(G->TR_Socket != SMTP_NO_SOCKET &&
+    if(G->TR_Socket != TCP_NO_SOCKET &&
        SSL_set_fd(ssl, (int)G->TR_Socket))
     {
       int res;
@@ -1240,7 +1240,7 @@ static void TR_Disconnect(void)
 
   D(DBF_NET, "disconnecting TCP/IP session...");
 
-  if(G->TR_Socket != SMTP_NO_SOCKET)
+  if(G->TR_Socket != TCP_NO_SOCKET)
   {
     if(G->TR_UseTLS)
     {
@@ -1250,7 +1250,7 @@ static void TR_Disconnect(void)
 
     shutdown(G->TR_Socket, SHUT_RDWR);
     CloseSocket(G->TR_Socket);
-    G->TR_Socket = SMTP_NO_SOCKET;
+    G->TR_Socket = TCP_NO_SOCKET;
 
     // free the transfer buffers now
     TR_FreeTransBuffers();
@@ -1426,7 +1426,7 @@ static int TR_Connect(char *host, int port)
 
   ENTER();
 
-  if(G->TR_Socket == SMTP_NO_SOCKET)
+  if(G->TR_Socket == TCP_NO_SOCKET)
   {
     struct hostent *hostaddr;
 
@@ -1455,7 +1455,7 @@ static int TR_Connect(char *host, int port)
       for(i = 0; hostaddr->h_addr_list[i]; i++)
       {
         // lets create a standard AF_INET socket now
-        if((G->TR_Socket = socket(AF_INET, SOCK_STREAM, 0)) != SMTP_NO_SOCKET)
+        if((G->TR_Socket = socket(AF_INET, SOCK_STREAM, 0)) != TCP_NO_SOCKET)
         {
           BOOL connected = FALSE;
 
@@ -1540,7 +1540,7 @@ static int TR_Recv(char *recvdata, int maxlen)
    int len;
 
    DoMethod(G->App,MUIM_Application_InputBuffered);
-   if (G->TR_Socket == SMTP_NO_SOCKET) return 0;
+   if (G->TR_Socket == TCP_NO_SOCKET) return 0;
 
    // we call the ReadBuffered function so that
    // we get out the data from our own buffer.
@@ -1721,7 +1721,7 @@ static int TR_Send(const char *ptr, int len, int flags)
   DoMethod(G->App, MUIM_Application_InputBuffered);
 
   // make sure the socket is active.
-  if(G->TR_Socket != SMTP_NO_SOCKET)
+  if(G->TR_Socket != TCP_NO_SOCKET)
   {
     // perform some debug output on the console if requested
     // by the user
@@ -1769,7 +1769,7 @@ static int TR_ReadLine(LONG socket, char *vptr, int maxlen)
   DoMethod(G->App, MUIM_Application_InputBuffered);
 
   // make sure the socket is active.
-  if(G->TR_Socket != SMTP_NO_SOCKET)
+  if(G->TR_Socket != TCP_NO_SOCKET)
   {
     int n;
     char *ptr;
@@ -2187,80 +2187,62 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
 /*** POP3 routines ***/
 /// TR_SendPOP3Cmd
 //  Sends a command to the POP3 server
-static char *TR_SendPOP3Cmd(enum POPCommand command, const char *parmtext, const void *errorMsg)
+static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext, const void *errorMsg)
 {
-  static char *buf = NULL;
   char *result = NULL;
 
   ENTER();
 
   // first we check if the socket is in a valid state to proceed
-  if(G->TR_Socket != SMTP_NO_SOCKET)
+  if(G->TR_Socket != TCP_NO_SOCKET)
   {
-    // if we are here for the first time lets generate a minimum buffer
-    if(buf == NULL)
-    {
-      // by lookin at the RFC a buffer of 1000 chars for one line
-      // should really be enough
-      buf = AllocStrBuf(SIZE_LINE);
-    }
+    static char buf[SIZE_LINE]; // SIZE_LINE should be enough for the command and reply
 
-    if(buf != NULL)
-    {
-      // if we specified a parameter for the pop command lets add it now
-      if(parmtext == NULL || parmtext[0] == '\0')
-        snprintf(buf, SIZE_LINE, "%s\r\n", POPcmd[command]);
-      else
-        snprintf(buf, SIZE_LINE, "%s %s\r\n", POPcmd[command], parmtext);
+    // if we specified a parameter for the pop command lets add it now
+    if(parmtext == NULL || parmtext[0] == '\0')
+      snprintf(buf, sizeof(buf), "%s\r\n", POPcmd[command]);
+    else
+      snprintf(buf, sizeof(buf), "%s %s\r\n", POPcmd[command], parmtext);
 
-      // send the pop command to the server and see if it was received somehow
-      // and for a connect we don`t send something or the server will get
-      // confused.
-      if(command == POPCMD_CONNECT || TR_WriteLine(buf) > 0)
+    // send the pop command to the server and see if it was received somehow
+    // and for a connect we don`t send something or the server will get
+    // confused.
+    if(command == POPCMD_CONNECT || TR_WriteLine(buf) > 0)
+    {
+      // let us read the next line from the server and check if
+      // some status message can be retrieved.
+      if(TR_ReadLine(G->TR_Socket, buf, sizeof(buf)) > 0 &&
+        strncmp(buf, POP_RESP_OKAY, strlen(POP_RESP_OKAY)) == 0)
       {
-        // let us read the next line from the server and check if
-        // some status message can be retrieved.
-        if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) > 0 &&
-           strncmp(buf, POP_RESP_OKAY, strlen(POP_RESP_OKAY)) == 0)
+        // everything worked out fine so lets set
+        // the result to our allocated buffer
+        result = buf;
+      }
+      else
+      {
+        // only report an error if explicitly wanted
+        if(errorMsg)
         {
-          // everything worked out fine so lets set
-          // the result to our allocated buffer
-          result = buf;
-        }
-        else
-        {
-          // only report a error if wished
-          if(errorMsg)
+          // if we just issued a PASS command and that failed, then overwrite the visible
+          // password with X chars now, so that nobody else can read your password
+          if(command == POPCMD_PASS)
           {
-            // if we just issued a PASS command and that failed, then overwrite the visible
-            // password with X chars now, so that nobody else can read your password
-            if(command == POPCMD_PASS)
+            char *p;
+
+            // find the beginning of the password
+            if((p = strstr(buf, POPcmd[POPCMD_PASS])) != NULL &&
+               (p = strchr(p, ' ')) != NULL)
             {
-              char *p;
-
-              // find the beginning of the password
-              if((p = strstr(buf, POPcmd[POPCMD_PASS])) != NULL &&
-                 (p = strchr(p, ' ')) != NULL)
-              {
-                // now cross it out
-                while(*p != '\0' && *p != ' ' && *p != '\n' && *p != '\r')
-                  *p++ = 'X';
-              }
+              // now cross it out
+              while(*p != '\0' && *p != ' ' && *p != '\n' && *p != '\r')
+                *p++ = 'X';
             }
-
-            ER_NewError(tr(errorMsg), (char *)POPcmd[command], buf);
           }
+
+          ER_NewError(tr(errorMsg), (char *)POPcmd[command], buf);
         }
       }
     }
-  }
-
-  // make sure to free all memory in case
-  // an error occurred.
-  if(buf && result == NULL)
-  {
-    FreeStrBuf(buf);
-    buf = NULL;
   }
 
   RETURN(result);
@@ -2971,105 +2953,167 @@ BOOL TR_SendPOP3KeepAlive(void)
 /*** SMTP routines ***/
 /// TR_SendSMTPCmd
 //  Sends a command to the SMTP server and returns the response message
-//  described in (RFC 821)
-static char *TR_SendSMTPCmd(enum SMTPCommand command, const char *parmtext, const void *errorMsg)
+//  described in (RFC 2821)
+static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext, const void *errorMsg)
 {
-   int len, rc;
-   static char *buf = NULL;
+  BOOL result = FALSE;
+  static char buf[SIZE_LINE]; // RFC 2821 says 1000 should be enough
 
-   // first we check if the socket is ready
-   if(G->TR_Socket == SMTP_NO_SOCKET) { errorMsg = MSG_ER_ConnectionBroken; goto clean_exit; }
+  ENTER();
 
-   // if we are here for the first time lets generate a minimum buffer
-   if(buf == NULL)
-   {
-      // by lookin at RFC 821 a buffer of 1000 chars for one line
-      // should really be enough
-      if(!(buf = AllocStrBuf(SIZE_LINE))) { errorMsg = NULL; goto clean_exit; }
-   }
+  // first we check if the socket is ready
+  if(G->TR_Socket != TCP_NO_SOCKET)
+  {
+    // now we prepare the SMTP command
+    if(parmtext == NULL || parmtext[0] == '\0')
+      snprintf(buf, sizeof(buf), "%s\r\n", SMTPcmd[command]);
+    else
+      snprintf(buf, sizeof(buf), "%s %s\r\n", SMTPcmd[command], parmtext);
 
-   // now we prepare the SMTP command
-   if(parmtext == NULL || parmtext[0] == '\0')
-    snprintf(buf, SIZE_LINE, "%s\r\n", SMTPcmd[command]);
-   else
-    snprintf(buf, SIZE_LINE, "%s %s\r\n", SMTPcmd[command], parmtext);
+    // lets send the command via TR_WriteLine, but not if we are in connection
+    // state
+    if(command == SMTP_CONNECT || TR_WriteLine(buf) > 0)
+    {
+      int len = 0;
 
-   // lets issue the command, but not if we connect
-   if(command != SMTP_CONNECT && TR_WriteLine(buf) <= 0) { errorMsg = MSG_ER_ConnectionBroken; goto clean_exit; }
-
-   // after issuing the SMTP command we read out the server response to it
-   if((len = TR_ReadLine(G->TR_Socket, buf, SIZE_LINE)) <= 0) { errorMsg = MSG_ER_ConnectionBroken; goto clean_exit; }
-
-   // get the response code
-   rc = strtol(buf, NULL, 10);
-
-   // if the response is a multiline response we have to get out more
-   // from the socket
-   if(buf[3] == '-') // (RFC 821) - Page 50
-   {
-      char tbuf[SIZE_LINE];
-
-      do
+      // after issuing the SMTP command we read out the server response to it
+      // but only if this wasn't the SMTP_QUIT command.
+      if((len = TR_ReadLine(G->TR_Socket, buf, sizeof(buf))) > 0)
       {
-         // lets get out the next line from the socket
-         if((len = TR_ReadLine(G->TR_Socket, tbuf, SIZE_LINE)) <= 0) { errorMsg = MSG_ER_ConnectionBroken; goto clean_exit; }
+        // get the response code
+        int rc = strtol(buf, NULL, 10);
 
-         // lets concatenate the both strings
-         if(StrBufCat(buf, tbuf) == NULL) { errorMsg = NULL; goto clean_exit; }
+        // if the response is a multiline response we have to get out more
+        // from the socket
+        if(buf[3] == '-') // (RFC 2821) - section 4.2.1
+        {
+          char tbuf[SIZE_LINE];
 
-      }while(tbuf[3] == '-');
-   }
+          // now we concatenate the multiline reply to
+          // out main buffer
+          do
+          {
+            // lets get out the next line from the socket
+            if((len = TR_ReadLine(G->TR_Socket, tbuf, sizeof(tbuf))) > 0)
+            {
+              // get the response code
+              int rc2 = strtol(buf, NULL, 10);
 
-   // Now we check if we got the correct response code for the command
-   // we issued
-   switch(command)
-   {
-      //  Reponse    Description (RFC 821)
-      //  2xx        command accepted and processed
-      //  3xx        general flow control
-      //  4xx        critical system or transfer failure
-      //  5xx        errors with the SMTP command
+              // check if the response code matches the one
+              // of the first line
+              if(rc == rc2)
+              {
+                // lets concatenate both strings while stripping the
+                // command code and make sure we didn't reach the end
+                // of the buffer
+                if(strlcat(buf, tbuf, sizeof(buf)) >= sizeof(buf))
+                  W(DBF_NET, "buffer overrun on trying to concatenate a multiline reply!");
+              }
+              else
+              {
+                E(DBF_NET, "response codes of multiline reply doesn't match!");
 
-      case SMTP_HELP:    { if(rc == 211 || rc == 214) return buf; } break;
-      case SMTP_VRFY:    { if(rc == 250 || rc == 251) return buf; } break;
-      case SMTP_CONNECT: { if(rc == 220) return buf; } break;
-      case SMTP_QUIT:    { if(rc == 221) return buf; } break;
-      case SMTP_DATA:    { if(rc == 354) return buf; } break;
+                errorMsg = NULL;
+                len = 0;
+                break;
+              }
+            }
+            else
+            {
+              errorMsg = MSG_ER_ConnectionBroken;
+              break;
+            }
+          }
+          while(tbuf[3] == '-');
+        }
 
-      // all codes that accept 250 response code
-      case SMTP_HELO:
-      case SMTP_MAIL:
-      case SMTP_RCPT:
-      case SMTP_FINISH:
-      case SMTP_RSET:
-      case SMTP_SEND:
-      case SMTP_SOML:
-      case SMTP_SAML:
-      case SMTP_EXPN:
-      case SMTP_NOOP:
-      case SMTP_TURN:    { if(rc == 250) return buf; } break;
+        // check that the concatentation worked
+        // out fine and that the rc is valid
+        if(len > 0 && rc >= 100)
+        {
+          // Now we check if we got the correct response code for the command
+          // we issued
+          switch(command)
+          {
+            //  Reponse    Description (RFC 2821 - section 4.2.1)
+            //  1xx        Positive Preliminary reply
+            //  2xx        Positive Completion reply
+            //  3xx        Positive Intermediate reply
+            //  4xx        Transient Negative Completion reply
+            //  5xx        Permanent Negative Completion reply
 
-      // ESMTP commands & response codes
-      case ESMTP_EHLO:            { if(rc == 250) return buf; } break;
-      case ESMTP_STARTTLS:        { if(rc == 220) return buf; } break;
+            case SMTP_HELP:    { result = (rc == 211 || rc == 214); } break;
+            case SMTP_VRFY:    { result = (rc == 250 || rc == 251); } break;
+            case SMTP_CONNECT: { result = (rc == 220); } break;
+            case SMTP_QUIT:    { result = (rc == 221); } break;
+            case SMTP_DATA:    { result = (rc == 354); } break;
 
-      // ESMTP_AUTH command responses
-      case ESMTP_AUTH_CRAM_MD5:
-      case ESMTP_AUTH_DIGEST_MD5:
-      case ESMTP_AUTH_LOGIN:
-      case ESMTP_AUTH_PLAIN:      { if(rc == 334) return buf; } break;
-   }
+            // all codes that accept 250 response code
+            case SMTP_HELO:
+            case SMTP_MAIL:
+            case SMTP_RCPT:
+            case SMTP_FINISH:
+            case SMTP_RSET:
+            case SMTP_SEND:
+            case SMTP_SOML:
+            case SMTP_SAML:
+            case SMTP_EXPN:
+            case SMTP_NOOP:
+            case SMTP_TURN:    { result = (rc == 250); } break;
 
-clean_exit:
+            // ESMTP commands & response codes
+            case ESMTP_EHLO:            { result = (rc == 250); } break;
+            case ESMTP_STARTTLS:        { result = (rc == 220); } break;
 
-   // the rest of the responses throws an error
-   if(errorMsg) ER_NewError(tr(errorMsg), (char *)SMTPcmd[command], buf);
+            // ESMTP_AUTH command responses
+            case ESMTP_AUTH_CRAM_MD5:
+            case ESMTP_AUTH_DIGEST_MD5:
+            case ESMTP_AUTH_LOGIN:
+            case ESMTP_AUTH_PLAIN:      { result = (rc == 334); } break;
+          }
+        }
+      }
+      else
+      {
+        // Unfortunately, there are broken SMTP server implementations out there
+        // like the one used by "smtp.googlemail.com" or "smtp.gmail.com".
+        //
+        // It seems these broken SMTP servers do automatically drop the
+        // data connection right after the 'QUIT' command was send and don't
+        // reply with a status message like it is clearly defined in RFC 2821
+        // (section 4.1.1.10). Unfortunately we can't do anything about
+        // it really and have to consider this a bad and ugly workaround. :(
+        if(command == SMTP_QUIT)
+        {
+          W(DBF_NET, "broken SMTP server implementation found on QUIT, keeping quiet...");
 
-   // if we end up with an error we can free our buffer now
-   FreeStrBuf(buf);
-   buf = NULL;
+          result = TRUE;
+          buf[0] = '\0';
+        }
+        else
+          errorMsg = MSG_ER_ConnectionBroken;
+      }
+    }
+    else
+      errorMsg = MSG_ER_ConnectionBroken;
+  }
+  else
+    errorMsg = MSG_ER_ConnectionBroken;
 
-   return NULL;
+  // the rest of the responses throws an error
+  if(result == FALSE)
+  {
+    if(errorMsg)
+      ER_NewError(tr(errorMsg), (char *)SMTPcmd[command], buf);
+
+    RETURN(NULL);
+    return NULL;
+  }
+  else
+  {
+    RETURN(buf);
+    return buf;
+  }
 }
 ///
 /// TR_ConnectSMTP
@@ -3109,7 +3153,7 @@ static int TR_ConnectESMTP(void)
    }
 
    // Now we send the EHLO command to get the list of features returned.
-   if (G->TR_Socket == SMTP_NO_SOCKET) return 0;
+   if (G->TR_Socket == TCP_NO_SOCKET) return 0;
 
    // Now send the EHLO ESMTP command to log in
    set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, tr(MSG_TR_SendHello));
@@ -4395,17 +4439,8 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                 set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
 
                 // send a 'QUIT' command, but only if
-                // we didn't receive any error during the transfer or
-                // if the socket was closed unexpected.
-                //
-                // In fact, the socket check here is to fix issues with broken
-                // SMTP server implementations like the one of "smtp.gmail.com".
-                // It seems these broken SMTP servers do automatically drop the
-                // data connection right after the 'DATA' command sequence
-                // was finished. Of course, this clearly violates the RFC 2821
-                // (section 4.1.1.10) but unfortunately we can't do anything about
-                // it really and have to consider this a workaround. :(
-                if(!G->Error && G->TR_Socket != SMTP_NO_SOCKET)
+                // we didn't receive any error during the transfer
+                if(!G->Error)
                   TR_SendSMTPCmd(SMTP_QUIT, NULL, MSG_ER_BadResponse);
               }
               else if(err == CONNECTERR_SUCCESS)

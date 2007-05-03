@@ -135,7 +135,7 @@ BOOL CheckForUpdates(void)
 
   // first we check if we can start a connection or if the
   // tcp/ip stuff is busy right now so that we do not interrupt something
-  if(SocketBase == NULL || G->TR_Socket == SMTP_NO_SOCKET)
+  if(SocketBase == NULL || G->TR_Socket == TCP_NO_SOCKET)
   {
     // now we open a new TCP/IP connection socket
     if(TR_OpenTCPIP())

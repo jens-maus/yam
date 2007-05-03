@@ -5,6 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-03  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: the workaround for the unexpected connection drop warning wasn't
+    completly working as it seems that the broken SMTP server implementations
+    in question did accept the 'QUIT' command but dropped the connection
+    immediately without replying with a positive status code. Now YAM will not
+    warn for such unresponded QUIT command sequences and therefore should
+    work as expected for those ugly, damn broken SMTP servers like
+    'smtp.gmail.com' and/or 'smtp.googlemail.com'.
+  * YAM_TR.c: reworked the TR_SendSMTPCmd() and TR_SendPOP3Cmd() functions to
+    not use any goto statements and dynamically allocated buffers as that might
+    end up in unfreed memory somehow. A static buffer of SIZE_LINE should be
+    always enough for the command and its response.
+
 2007-05-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: removed some unnecessary prototypes and made the function

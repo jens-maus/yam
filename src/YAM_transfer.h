@@ -37,7 +37,7 @@ enum TransferType   { TR_IMPORT, TR_EXPORT, TR_GET, TR_SEND };
 enum SMTPSecMethod  { SMTPSEC_NONE, SMTPSEC_TLS, SMTPSEC_SSL };
 enum SMTPAuthMethod { SMTPAUTH_AUTO, SMTPAUTH_DIGEST, SMTPAUTH_CRAM, SMTPAUTH_LOGIN, SMTPAUTH_PLAIN };
 
-#define SMTP_NO_SOCKET -1
+#define TCP_NO_SOCKET -1
 
 // Socket Options a user can set in .config
 // if a value was not specified by the user it is either -1 or
