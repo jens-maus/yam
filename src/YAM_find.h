@@ -157,7 +157,6 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens
                       int compar, char stat, BOOL substr, const char *match, const char *field);
 BOOL FI_DoSearch(struct Search *search, struct Mail *mail);
 
-void FreeSearchPatternList(struct Search *search);
 void FreeRuleSearchData(struct RuleNode *rule);
 int AllocFilterSearch(enum ApplyFilterMode mode);
 void FreeFilterSearch(void);

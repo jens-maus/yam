@@ -62,16 +62,9 @@
 #include "Debug.h"
 
 /* local protos */
-static BOOL FI_MatchString(struct Search*, char*);
-static BOOL FI_MatchListPattern(struct Search*, char*);
-static BOOL FI_MatchPerson(struct Search*, struct Person*);
-static BOOL FI_SearchPatternFast(struct Search*, struct Mail*);
-static BOOL FI_SearchPatternInBody(struct Search*, struct Mail*);
-static BOOL FI_SearchPatternInHeader(struct Search*, struct Mail*);
-static enum FastSearch FI_IsFastSearch(const char*);
-static void FI_GenerateListPatterns(struct Search*);
 static struct FI_ClassData *FI_New(void);
 static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch);
+static void FreeSearchPatternList(struct Search *search);
 
 /***************************************************************************
  Module: Find & Filters
@@ -1159,7 +1152,7 @@ MakeStaticHook(FI_CloseHook, FI_Close);
 ///
 /// FreeSearchPatternList
 // Function to make the whole pattern list is correctly cleaned up
-void FreeSearchPatternList(struct Search *search)
+static void FreeSearchPatternList(struct Search *search)
 {
   struct MinList *patternList = &search->patternList;
 

@@ -7,6 +7,9 @@ $URL$
 
 2007-05-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c: removed some unnecessary prototypes and made the function
+    FreeSearchPatternList() static, because it is not used anywhere outside
+    anymore.
   * YAM_FI.c, YAM_CO.c: added new function FreeRuleSearchData() to free the
     search data of a rule node.
   * YAM_CO.c: removed some unnecessary prototypes.
