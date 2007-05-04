@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-04  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c: fixed bug #1712714 where recent cleanups broke the multiple
+    recipient replying and did strip all To: addresses excluding the one
+    one.
+
 2007-05-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_US.c, locale/YAM.cd, locale/deutsch.ct: when creating more than one

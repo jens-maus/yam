@@ -1455,7 +1455,7 @@ static char *MA_AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
   if(pe != NULL)
   {
     char *ins;
-    BOOL skip;
+    BOOL skip = FALSE;
 
     if(strchr(pe->Address,'@'))
       ins = BuildAddrName2(pe);
@@ -1468,9 +1468,8 @@ static char *MA_AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
       ins = BuildAddrName(addr, pe->RealName);
     }
 
-    skip = FALSE;
     // exclude the given person if it is ourself
-    if(excludeme && stricmp(pe->Address, C->EmailAddress) != 0)
+    if(excludeme && stricmp(pe->Address, C->EmailAddress) == 0)
       skip = TRUE;
 
     // if the string already contains this person then skip it
