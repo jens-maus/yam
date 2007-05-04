@@ -774,13 +774,13 @@ Vil du sende svar...
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-*...til\n\
-av_sender|...til avsender og\n\
-a_lle mottakere|...til\n\
+*til\n\
+av_sender|til avsender og\n\
+a_lle mottakere|til\n\
 _mottakere|_Avbryt
-; *...to the\n\
-; _sender|...to the sender and\n\
-; _all recipients|...to the\n\
+; *to the\n\
+; _sender|to the sender and\n\
+; _all recipients|to the\n\
 ; _recipients|_Cancel
 ;
 MSG_MA_CompareReq

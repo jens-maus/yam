@@ -428,9 +428,9 @@ Il messaggio selezionato ha destinatari multipli.\n\
 Vuoi mandare la risposta...
 ;
 MSG_MA_ReplyReqOpt
-*...al\n\
-_mittente|...al mittente e\n\
-_tutti i destinatari|...ai\n\
+*al\n\
+_mittente|al mittente e\n\
+_tutti i destinatari|ai\n\
 _destinatari|_Annulla
 ;
 MSG_MA_CompareReq

@@ -725,12 +725,12 @@ Cevabýnýzý...
 ;
 MSG_MA_ReplyReqOpt
 *kime göndereceksiniz.\n\
-_göndericiye|...gönderici ve\n\
-_bütün alýcýlara|...sadece\n\
+_göndericiye|gönderici ve\n\
+_bütün alýcýlara|sadece\n\
 _alýcýlara|_Vazgeç
-; *...to the\n\
-; _sender|...to the sender and\n\
-; _all recipients|...to the\n\
+; *to the\n\
+; _sender|to the sender and\n\
+; _all recipients|to the\n\
 ; _recipients|_Cancel
 ;
 MSG_MA_CompareReq

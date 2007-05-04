@@ -702,9 +702,9 @@ MSG_MA_ReplyReq
 ;
 MSG_MA_ReplyReqOpt
 *О_тправителю\n|Отправителю _и\nвсем получателям|_Получателям\n|_Отмена\n
-;*...to the\n\
-;_sender|...to the sender and\n\
-;_all recipients|...to the\n\
+;*to the\n\
+;_sender|to the sender and\n\
+;_all recipients|to the\n\
 ;_recipients|_Cancel
 ;
 MSG_MA_CompareReq

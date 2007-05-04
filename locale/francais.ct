@@ -578,13 +578,13 @@ Vous voulez envoyer la réponse...
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-*...à\n\
-l'_expéditeur|...à l'expéditeur et\n\
-à _tous les destinataires|...aux\n\
+*à\n\
+l'_expéditeur|à l'expéditeur et\n\
+à _tous les destinataires|aux\n\
 _destinataires|_Annuler
-; *...to the\n\
-; _sender|...to the sender and\n\
-; _all recipients|...to the\n\
+; *to the\n\
+; _sender|to the sender and\n\
+; _all recipients|to the\n\
 ; _recipients|_Cancel
 ;
 MSG_MA_CompareReq

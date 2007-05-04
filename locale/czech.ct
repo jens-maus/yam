@@ -676,13 +676,13 @@ Chcete odeslat odpovëð...
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-*...na adresu\n\
-ode_sílatele|...odesílateli\n\
-_a vîem pêíjemcûm|..._pouze\n\
+*na adresu\n\
+ode_sílatele|odesílateli\n\
+_a vîem pêíjemcûm|_pouze\n\
 pêíjemcûm|_Zruîit
-; *...to the\n\
-; _sender|...to the sender and\n\
-; _all recipients|...to the\n\
+; *to the\n\
+; _sender|to the sender and\n\
+; _all recipients|to the\n\
 ; _recipients|_Cancel
 ;
 MSG_MA_CompareReq

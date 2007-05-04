@@ -671,13 +671,13 @@ El akarod küldeni a választ...
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-*...a\n\
-feladónak|...a feladónak és az\n\
-összes címzettnek|...az összes\n\
+*a\n\
+feladónak|a feladónak és az\n\
+összes címzettnek|az összes\n\
 címzettnek|Mégse
-; *...to the\n\
-; _sender|...to the sender and\n\
-; _all recipients|...to the\n\
+; *to the\n\
+; _sender|to the sender and\n\
+; _all recipients|to the\n\
 ; _recipients|_Cancel
 ;
 MSG_MA_CompareReq

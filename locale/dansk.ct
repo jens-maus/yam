@@ -676,13 +676,13 @@ Vil du sende svaret...
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-*...til\n\
-af_senderen|...til afsenderen og\n\
-a_lle modtagerne|...til\n\
+*til\n\
+af_senderen|til afsenderen og\n\
+a_lle modtagerne|til\n\
 _modtagerne|_Fortryde
-; *...to the\n\
-; _sender|...to the sender and\n\
-; _all recipients|...to the\n\
+; *to the\n\
+; _sender|to the sender and\n\
+; _all recipients|to the\n\
 ; _recipients|_Cancel
 ;
 MSG_MA_CompareReq

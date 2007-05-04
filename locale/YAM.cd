@@ -454,9 +454,9 @@ The selected message has multiple recipients.\n\
 Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt (150//)
-*...to the\n\
-_sender|...to the sender and\n\
-_all recipients|...to the\n\
+*to the\n\
+_sender|to the sender and\n\
+_all recipients|to the\n\
 _recipients|_Cancel
 ;
 MSG_MA_CompareReq (151//)

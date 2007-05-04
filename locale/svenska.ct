@@ -526,8 +526,8 @@ Brevet har flera mottagare.\n\nVill du skicka svaret...
 ;#DEF The selected message has multiple recipients.\n\nDo you want to send the reply...
 ;#SET (149//)
 MSG_MA_ReplyReqOpt
-*...till\nav_sändaren|...till avsändaren och\n_alla mottagare|...till\nmottaga_rna|A_vbryt
-;#DEF *...to the\n_sender|...to the sender and\n_all recipients|...to the\n_recipients|_Cancel
+*till\nav_sändaren|till avsändaren och\n_alla mottagare|till\nmottaga_rna|A_vbryt
+;#DEF *to the\n_sender|to the sender and\n_all recipients|to the\n_recipients|_Cancel
 ;#SET (150//)
 MSG_MA_CompareReq
 Avsändarens adress (Från) är \033b<%s>\033n, men\nsvarsadressen (Svar till) är \033b<%s>\033n.\n\nVilken adress vill du använda?

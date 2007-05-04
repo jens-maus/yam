@@ -608,8 +608,8 @@ MSG_MA_ReplyReq
 ;The selected message has multiple recipients.\nDo you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-*...στον\n_αποστολέα|...στον αποστολέα και\n_όλους τους παραλήπτες|...στους\n_παραλήπτες|_Ακύρωση
-;*...to the\n_sender|...to the sender and\n_all recipients|...to the\n_recipients|_Cancel
+*στον\n_αποστολέα|στον αποστολέα και\n_όλους τους παραλήπτες|στους\n_παραλήπτες|_Ακύρωση
+;*to the\n_sender|to the sender and\n_all recipients|to the\n_recipients|_Cancel
 ;
 MSG_MA_CompareReq
 Η διεύθυνση αποστολέα (From) είναι <%s>, αλλά\nη διεύθυνση επιστροφής (Reply-To) είναι <%s>.\nΠοιά διεύθυνση θέλετε να χρησιμοποιήσετε;

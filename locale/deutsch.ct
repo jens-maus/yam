@@ -579,12 +579,12 @@ Antwort senden...
 ;
 MSG_MA_ReplyReqOpt
 *an den\n\
-Ab_sender|...an den Absender _und\n\
-alle Empfänger|...an die\n\
+Ab_sender|an den Absender _und\n\
+alle Empfänger|an die\n\
 _Empfänger|_Abbrechen
-; *...to the\n\
-; _sender|...to the sender and\n\
-; _all recipients|...to the\n\
+; *to the\n\
+; _sender|to the sender and\n\
+; _all recipients|to the\n\
 ; _recipients|_Cancel
 ;
 MSG_MA_CompareReq

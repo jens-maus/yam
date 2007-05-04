@@ -721,10 +721,10 @@ Zelis li odgovoriti...
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-*...posil_jaocu|...posiljaocu i\ns_vim primaocima|...primao_cima|O_dustani
-; *...to the\n\
-; _sender|...to the sender and\n\
-; _all recipients|...to the\n\
+*posil_jaocu|posiljaocu i\ns_vim primaocima|primao_cima|O_dustani
+; *to the\n\
+; _sender|to the sender and\n\
+; _all recipients|to the\n\
 ; _recipients|_Cancel
 ;
 MSG_MA_CompareReq

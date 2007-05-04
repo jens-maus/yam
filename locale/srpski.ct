@@ -751,10 +751,10 @@ Da li äelite da poãaljete odgovor...
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-*...p_oãiljaocu|...poãiljaocu i\n_svim primaocima|...p_rimaocima|_Poniãti
-; *...to the\n\
-; _sender|...to the sender and\n\
-; _all recipients|...to the\n\
+*p_oãiljaocu|poãiljaocu i\n_svim primaocima|p_rimaocima|_Poniãti
+; *to the\n\
+; _sender|to the sender and\n\
+; _all recipients|to the\n\
 ; _recipients|_Cancel
 ;
 MSG_MA_CompareReq

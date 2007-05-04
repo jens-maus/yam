@@ -707,8 +707,8 @@ Haluatko l‰hett‰‰ vastauksen...
 ; The selected message has multiple recipients.\nDo you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-*..._l‰hett‰j‰lle|...l‰hett‰j‰lle _ja\nvastaanottajille|..._vastaanottajille|_Peru
-; *...to the\n_sender|...to the sender and\n_all recipients|...to the\n_recipients|_Cancel
+*_l‰hett‰j‰lle|l‰hett‰j‰lle _ja\nvastaanottajille|_vastaanottajille|_Peru
+; *to the\n_sender|to the sender and\n_all recipients|to the\n_recipients|_Cancel
 ;
 MSG_MA_CompareReq
 L‰hett‰j‰n (From) osoite on <%s>, mutta\nvastausosoite on (Reply-To) <%s>.\nKumpaa osoitetta tahdot k‰ytt‰‰?

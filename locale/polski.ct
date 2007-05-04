@@ -671,10 +671,10 @@ Czy chcesz wysîaê odpowiedú...
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-*...do\n_nadawcy|...do n_adawcy i\nwszystkich odbiorców|...do\nodbio_rców|Ponie_chaj
-; *...to the\n\
-; _sender|...to the sender and\n\
-; _all recipients|...to the\n\
+*do\n_nadawcy|do n_adawcy i\nwszystkich odbiorców|do\nodbio_rców|Ponie_chaj
+; *to the\n\
+; _sender|to the sender and\n\
+; _all recipients|to the\n\
 ; _recipients|_Cancel
 ;
 MSG_MA_CompareReq

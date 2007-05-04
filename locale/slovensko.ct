@@ -670,10 +670,10 @@ Ali ¾elite odgovor poslati...
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-*...p_o¹iljatelju|...po¹iljatelju in\n_vsem prejemnikom|...p_rejemnikom|_Preklièi
-; *...to the\n\
-; _sender|...to the sender and\n\
-; _all recipients|...to the\n\
+*p_o¹iljatelju|po¹iljatelju in\n_vsem prejemnikom|p_rejemnikom|_Preklièi
+; *to the\n\
+; _sender|to the sender and\n\
+; _all recipients|to the\n\
 ; _recipients|_Cancel
 ;
 MSG_MA_CompareReq

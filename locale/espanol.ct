@@ -679,9 +679,9 @@ MSG_MA_ReplyReqOpt
 _remitente|Al remitente y\n\
 _todos los destinatarios|Sólo a los\n\
 _destinatarios|_Cancelar
-; *...to the\n\
-; _sender|...to the sender and\n\
-; _all recipients|...to the\n\
+; *to the\n\
+; _sender|to the sender and\n\
+; _all recipients|to the\n\
 ; _recipients|_Cancel
 ;
 MSG_MA_CompareReq
