@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_US.c, locale/YAM.cd, locale/deutsch.ct: when creating more than one
+    new user and the mail directories did not exist yet the error message
+    indicating this fact didn't contain any information which directory of
+    which user didn't exist. Now the error message does contain all the
+    information.
+
 2007-05-03  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_TR.c: the workaround for the unexpected connection drop warning wasn't

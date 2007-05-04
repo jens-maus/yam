@@ -412,34 +412,40 @@ static BOOL US_SaveUserList(void)
     BOOL validUser = FALSE;
 
     DoMethod(G->US->GUI.LV_USERS, MUIM_NList_GetEntry, i, &user);
-    memcpy(&G->Users.User[i], user, sizeof(G->Users.User[i]));
 
-    if(user->Name[0] != '\0')
+    if(user != NULL)
     {
-      if(user->MailDir[0] != '\0')
+      memcpy(&G->Users.User[i], user, sizeof(G->Users.User[i]));
+
+      if(user->Name[0] != '\0')
       {
-        if(FileType(user->MailDir) != FIT_DRAWER)
+        if(user->MailDir[0] != '\0')
         {
-          if(MUI_Request(G->App, G->US->GUI.WI, 0, tr(MSG_MA_MUsers), tr(MSG_YesNoReq), tr(MSG_US_ErrorNoDirectory)))
+          if(FileType(user->MailDir) != FIT_DRAWER)
           {
-             if(CreateDirectory(user->MailDir))
-               validUser = TRUE;
-             else
-               ER_NewError(tr(MSG_ER_CantCreateDir), user->MailDir);
+            if(MUI_Request(G->App, G->US->GUI.WI, 0, tr(MSG_MA_MUsers), tr(MSG_YesNoReq), tr(MSG_US_DIRECTORY_DOESNT_EXIST), user->MailDir, user->Name))
+            {
+               if(CreateDirectory(user->MailDir))
+                 validUser = TRUE;
+               else
+                 ER_NewError(tr(MSG_ER_CantCreateDir), user->MailDir);
+            }
           }
+          else
+            validUser = TRUE;
         }
         else
-          validUser = TRUE;
+          ER_NewError(tr(MSG_ER_MissingDirectory));
       }
       else
-      	ER_NewError(tr(MSG_ER_MissingDirectory));
+        ER_NewError(tr(MSG_ER_MissingName));
     }
     else
-      ER_NewError(tr(MSG_ER_MissingName));
+      break;
 
     if(validUser)
     {
-      if (user->Clone && user->IsNew)
+      if(user->Clone && user->IsNew)
       {
          char dest[SIZE_PATHFILE];
 

@@ -3858,11 +3858,6 @@ Do you really want to remove the user?
 MSG_US_RemoveReqGads (1216//)
 *_Okay|_Keep files|_Cancel
 ;
-MSG_US_ErrorNoDirectory (1217//)
-Mail directory not found.\n\
-Do you want to create it?
-;
-;
 ; Module US - Window
 ;
 MSG_US_UserName (1218//)
@@ -6215,4 +6210,8 @@ MSG_HELP_CO_CH_SHOWALTPARTS (1927//)
 If enabled, normally hidden alternative message\n\
 parts of an 'multipart/alternative' mail will be\n\
 shown as attachments.
+;
+MSG_US_DIRECTORY_DOESNT_EXIST (1928//)
+Mail directory '%s' of user '%s' does not exist.\n\
+Do you want to create it?
 ;

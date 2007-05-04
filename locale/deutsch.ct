@@ -5016,12 +5016,6 @@ MSG_US_RemoveReqGads
 *_Okay|_Dateien behalten|_Abbrechen
 ; *_Okay|_Keep files|_Cancel
 ;
-MSG_US_ErrorNoDirectory
-Postverzeichnis nicht gefunden.\nWollen Sie es erstellen?
-; Mail directory not found.\n\
-; Do you want to create it?
-;
-;
 ; Module US - Window
 ;
 MSG_US_UserName
@@ -7658,4 +7652,8 @@ Wenn ausgewählt, werden alle normalerweise\n\
 verborgenen alternativen Teile einer\n\
 'multipart/alternative' Nachricht als Anhänge\n\
 angezeigt.
+;
+MSG_US_DIRECTORY_DOESNT_EXIST
+Das Postverzeichnis '%s' von Benutzer '%s' existiert nicht.\n\
+Wollen Sie es erstellen?
 ;
