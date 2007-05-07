@@ -7,6 +7,9 @@ $URL$
 
 2007-05-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AttachmentImage.c: added the BMF_MINPLANES flag to all AllocBitmap() calls.
+    Hopefully this fixes the crashes and garbage images that some people
+    encountered with OS4's 32bit icons and CGX.
   * locale/deutsch.ct: removed a wrong additional line feed.
 
 2007-05-04  Jens Langner <Jens.Langner@light-speed.de>
