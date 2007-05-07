@@ -2377,9 +2377,12 @@ Object *CO_PageRead(struct CO_ClassData *data)
                                                                                               data->GUI.CA_COL4QUOT,
                                                                                               data->GUI.CA_COLURL);
 
-    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 0, data->GUI.ST_HEADERS, 3, MUIM_Set, MUIA_Disabled, TRUE);
-    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 1, data->GUI.ST_HEADERS, 3, MUIM_Set, MUIA_Disabled, FALSE);
-    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 2, data->GUI.ST_HEADERS, 3, MUIM_Set, MUIA_Disabled, TRUE);
+    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 0, data->GUI.ST_HEADERS,  3, MUIM_Set, MUIA_Disabled, TRUE);
+    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 0, data->GUI.CH_WRAPHEAD, 3, MUIM_Set, MUIA_Disabled, TRUE);
+    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 1, data->GUI.ST_HEADERS,  3, MUIM_Set, MUIA_Disabled, FALSE);
+    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 1, data->GUI.CH_WRAPHEAD, 3, MUIM_Set, MUIA_Disabled, FALSE);
+    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 2, data->GUI.ST_HEADERS,  3, MUIM_Set, MUIA_Disabled, TRUE);
+    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 2, data->GUI.CH_WRAPHEAD, 3, MUIM_Set, MUIA_Disabled, FALSE);
 
     // setup the MDN stuff
     DoMethod(data->GUI.CH_MDN_NEVER, MUIM_Notify, MUIA_Selected, TRUE,  data->GUI.CH_MDN_ALLOW, 3, MUIM_NoNotifySet, MUIA_Selected, FALSE);

@@ -7,6 +7,8 @@ $URL$
 
 2007-05-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: setting the header lines to "none" now disables the "wrap
+    headers" checkmark.
   * AttachmentImage.c: added the BMF_MINPLANES flag to all AllocBitmap() calls.
     Hopefully this fixes the crashes and garbage images that some people
     encountered with OS4's 32bit icons and CGX.
