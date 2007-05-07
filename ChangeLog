@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/deutsch.ct: removed a wrong additional line feed.
+
 2007-05-04  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.cd, locale: stripped the unecessary "..." prefixes from the
