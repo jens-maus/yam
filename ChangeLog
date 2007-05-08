@@ -11,6 +11,9 @@ $URL$
 
 2007-05-08  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c, YAM_COs.c: the sender info cycle is now enabled and disabled
+    according to the header lines option. Also all three GUI elements should
+    have the correct state now after reopening the config window.
   * misc: the AppIcon now supports the standard Workbench Snapshot, Unsnapshot
     and Empty Trash methods of workbench.library v44+ and reacts accordingsly.
     Additionally the icon position can now be specified as non-fixed.

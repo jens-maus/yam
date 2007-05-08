@@ -2408,12 +2408,19 @@ Object *CO_PageRead(struct CO_ClassData *data)
                                                                                               data->GUI.CA_COL4QUOT,
                                                                                               data->GUI.CA_COLURL);
 
-    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 0, data->GUI.ST_HEADERS,  3, MUIM_Set, MUIA_Disabled, TRUE);
-    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 0, data->GUI.CH_WRAPHEAD, 3, MUIM_Set, MUIA_Disabled, TRUE);
-    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 1, data->GUI.ST_HEADERS,  3, MUIM_Set, MUIA_Disabled, FALSE);
-    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 1, data->GUI.CH_WRAPHEAD, 3, MUIM_Set, MUIA_Disabled, FALSE);
-    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 2, data->GUI.ST_HEADERS,  3, MUIM_Set, MUIA_Disabled, TRUE);
-    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 2, data->GUI.CH_WRAPHEAD, 3, MUIM_Set, MUIA_Disabled, FALSE);
+    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 0, MUIV_Notify_Application, 7, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_HEADERS,
+                                                                                                                                     data->GUI.CH_WRAPHEAD,
+                                                                                                                                     data->GUI.CY_SENDERINFO,
+                                                                                                                                     NULL);
+    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 1, MUIV_Notify_Application, 7, MUIM_MultiSet, MUIA_Disabled, FALSE, data->GUI.ST_HEADERS,
+                                                                                                                                      data->GUI.CH_WRAPHEAD,
+                                                                                                                                      data->GUI.CY_SENDERINFO,
+                                                                                                                                      NULL);
+    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 2, MUIV_Notify_Application, 5, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_HEADERS,
+                                                                                                                                     NULL);
+    DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 2, MUIV_Notify_Application, 6, MUIM_MultiSet, MUIA_Disabled, FALSE, data->GUI.CH_WRAPHEAD,
+                                                                                                                                      data->GUI.CY_SENDERINFO,
+                                                                                                                                      NULL);
 
     // setup the MDN stuff
     DoMethod(data->GUI.CH_MDN_NEVER, MUIM_Notify, MUIA_Selected, TRUE,  data->GUI.CH_MDN_ALLOW, 3, MUIM_NoNotifySet, MUIA_Selected, FALSE);

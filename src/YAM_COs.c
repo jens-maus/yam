@@ -2049,10 +2049,10 @@ void CO_SetConfig(void)
 
       case cp_Read:
       {
-        setcycle    (gui->CY_HEADER    ,CE->ShowHeader);
-        setstring   (gui->ST_HEADERS   ,CE->ShortHeaders);
-        setcycle    (gui->CY_SENDERINFO,CE->ShowSenderInfo);
-        setcycle    (gui->CY_SIGSEPLINE,CE->SigSepLine);
+        setcycle(gui->CY_HEADER, CE->ShowHeader);
+        setstring(gui->ST_HEADERS, CE->ShortHeaders);
+        setcycle(gui->CY_SENDERINFO, CE->ShowSenderInfo);
+        setcycle(gui->CY_SIGSEPLINE, CE->SigSepLine);
         set(gui->CA_COLSIG,   MUIA_Pendisplay_Spec, &CE->ColorSignature);
         set(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec, &CE->ColoredText);
         set(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec, &CE->Color1stLevel);
@@ -2060,10 +2060,10 @@ void CO_SetConfig(void)
         set(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec, &CE->Color3rdLevel);
         set(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec, &CE->Color4thLevel);
         set(gui->CA_COLURL,   MUIA_Pendisplay_Spec, &CE->ColorURL);
-        setcheckmark(gui->CH_ALLTEXTS  ,CE->DisplayAllTexts);
-        setcheckmark(gui->CH_FIXFEDIT  ,CE->FixedFontEdit);
-        setcheckmark(gui->CH_WRAPHEAD  ,CE->WrapHeader);
-        setcheckmark(gui->CH_TEXTSTYLES,CE->UseTextstyles);
+        setcheckmark(gui->CH_ALLTEXTS, CE->DisplayAllTexts);
+        setcheckmark(gui->CH_FIXFEDIT, CE->FixedFontEdit);
+        setcheckmark(gui->CH_WRAPHEAD, CE->WrapHeader);
+        setcheckmark(gui->CH_TEXTSTYLES, CE->UseTextstyles);
         setcheckmark(gui->CH_SHOWALTPARTS, CE->DisplayAllAltPart);
 
         // set the MDN stuff according to other config
@@ -2078,6 +2078,10 @@ void CO_SetConfig(void)
         setcheckmark(gui->CH_DELAYEDSTATUS, CE->StatusChangeDelayOn);
         set(gui->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay/1000);
         setcheckmark(gui->CH_CONVERTHTML, CE->ConvertHTML);
+
+        set(gui->ST_HEADERS, MUIA_Disabled, CE->ShowHeader == 0 || CE->ShowHeader == 2);
+        set(gui->CY_SENDERINFO, MUIA_Disabled, CE->ShowHeader == 0);
+        set(gui->CH_WRAPHEAD, MUIA_Disabled, CE->ShowHeader == 0);
       }
       break;
 
