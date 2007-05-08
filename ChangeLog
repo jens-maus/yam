@@ -5,11 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-08  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MI.c: added a missing include.
+
 2007-05-08  Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: the AppIcon now supports the standard Workbench Snapshot, Unsnapshot
-    and Empty Trash methods and reacts accordingsly. Additionally the icon
-    position can now be specified as non-fixed.
+    and Empty Trash methods of workbench.library v44+ and reacts accordingsly.
+    Additionally the icon position can now be specified as non-fixed.
 
 2007-05-07  Thore Böckelmann <tboeckel@gmx.de>
 
