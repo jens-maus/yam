@@ -977,7 +977,7 @@ HOOKPROTONHNONP(UpdateCheckFunc, void)
 MakeStaticHook(UpdateCheckHook, UpdateCheckFunc);
 
 ///
-/// AddMimeTypeHook()
+/// AddMimeTypeHook
 //  Adds a new MIME type structure to the internal list
 HOOKPROTONHNONP(AddMimeTypeFunc, void)
 {
@@ -1006,7 +1006,7 @@ HOOKPROTONHNONP(AddMimeTypeFunc, void)
 MakeStaticHook(AddMimeTypeHook, AddMimeTypeFunc);
 
 ///
-/// DelMimeTypeHook()
+/// DelMimeTypeHook
 //  Deletes an entry from the MIME type list.
 HOOKPROTONHNONP(DelMimeTypeFunc, void)
 {
@@ -1039,7 +1039,7 @@ HOOKPROTONHNONP(DelMimeTypeFunc, void)
 MakeStaticHook(DelMimeTypeHook, DelMimeTypeFunc);
 
 ///
-/// GetMimeTypeEntryHook()
+/// GetMimeTypeEntryHook
 //  Fills form with data from selected list entry
 HOOKPROTONHNONP(GetMimeTypeEntryFunc, void)
 {
@@ -1065,7 +1065,7 @@ HOOKPROTONHNONP(GetMimeTypeEntryFunc, void)
 MakeStaticHook(GetMimeTypeEntryHook, GetMimeTypeEntryFunc);
 
 ///
-/// PutMimeTypeEntryHook()
+/// PutMimeTypeEntryHook
 //  Fills form data into selected list entry
 HOOKPROTONHNONP(PutMimeTypeEntryFunc, void)
 {
@@ -1089,7 +1089,7 @@ HOOKPROTONHNONP(PutMimeTypeEntryFunc, void)
 }
 MakeStaticHook(PutMimeTypeEntryHook, PutMimeTypeEntryFunc);
 ///
-/// MimeTypeDisplayHook()
+/// MimeTypeDisplayHook
 // display hook for the mime type list
 HOOKPROTONH(MimeTypeDisplayFunc, LONG, char **array, struct MimeTypeNode *mt)
 {
@@ -1264,7 +1264,7 @@ MakeHookWithData(ScriptsReqStopHook,       FileRequestStopFunc, VPM_SCRIPTS);
 MakeHookWithData(MimeDefViewerReqStopHook, FileRequestStopFunc, VPM_MIME_DEFVIEWER);
 MakeHookWithData(MimeCommandReqStopHook,   FileRequestStopFunc, VPM_MIME_COMMAND);
 ///
-/// ResetSpamTrainingData()
+/// ResetSpamTrainingData
 //  resets the spam training data
 HOOKPROTONHNONP(ResetSpamTrainingDataFunc, void)
 {
@@ -1396,6 +1396,37 @@ HOOKPROTONHNONP(CO_DelPOP3, void)
 }
 MakeStaticHook(CO_DelPOP3Hook,CO_DelPOP3);
 
+///
+/// CO_AppIconHook
+// ghost some GUI elements whenever the AppIcon checkmark is toggled
+HOOKPROTONHNO(CO_AppIconFunc, void, int *active)
+{
+  struct CO_GUIData *gui = &G->CO->GUI;
+
+  ENTER();
+
+  if(*active)
+  {
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, FALSE, gui->ST_APPICON,
+                                                          gui->CH_FREE_ICON_POS_X,
+                                                          gui->CH_FREE_ICON_POS_Y,
+                                                          NULL);
+    set(gui->ST_APPX, MUIA_Disabled, GetMUICheck(gui->CH_FREE_ICON_POS_X));
+    set(gui->ST_APPY, MUIA_Disabled, GetMUICheck(gui->CH_FREE_ICON_POS_Y));
+  }
+  else
+  {
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, gui->ST_APPX,
+                                                         gui->ST_APPY,
+                                                         gui->ST_APPICON,
+                                                         gui->CH_FREE_ICON_POS_X,
+                                                         gui->CH_FREE_ICON_POS_Y,
+                                                         NULL);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(CO_AppIconHook, CO_AppIconFunc);
 ///
 
 /*** Pages ***/
@@ -3199,8 +3230,16 @@ Object *CO_PageMixed(struct CO_ClassData *data)
                     Child, Label2(tr(MSG_CO_PositionX)),
                     Child, HGroup,
                       Child, data->GUI.ST_APPX = MakeInteger(4, "_X"),
-                      Child, Label2("_Y"),
+                      Child, data->GUI.CH_FREE_ICON_POS_X = MakeCheck(tr(MSG_CO_FREE_ICON_POSITION)),
+                      Child, Label1(tr(MSG_CO_FREE_ICON_POSITION)),
+//                      Child, MakeCheckGroup((Object **)&data->GUI.CH_FREE_ICON_POS_X, tr(MSG_CO_FREE_ICON_POSITION)),
+                    End,
+                    Child, Label2(tr(MSG_CO_PositionY)),
+                    Child, HGroup,
                       Child, data->GUI.ST_APPY = MakeInteger(4, "_Y"),
+                      Child, data->GUI.CH_FREE_ICON_POS_Y = MakeCheck(tr(MSG_CO_FREE_ICON_POSITION)),
+                      Child, Label1(tr(MSG_CO_FREE_ICON_POSITION)),
+//                      Child, MakeCheckGroup((Object **)&data->GUI.CH_FREE_ICON_POS_Y, tr(MSG_CO_FREE_ICON_POSITION)),
                     End,
                     Child, Label2(tr(MSG_CO_APPICONTEXT)),
                     Child, MakeVarPop(&data->GUI.ST_APPICON, VPM_MAILSTATS, SIZE_DEFAULT/2, tr(MSG_CO_APPICONTEXT)),
@@ -3264,8 +3303,10 @@ Object *CO_PageMixed(struct CO_ClassData *data)
     SetHelp(data->GUI.ST_ARCHIVER  ,MSG_HELP_CO_ST_ARCHIVER  );
     SetHelp(data->GUI.ST_APPICON   ,MSG_HELP_CO_ST_APPICON   );
 
-    DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, NULL);
-    DoMethod(data->GUI.CH_WBAPPICON, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Application, 7, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, NULL);
+    DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, data->GUI.CH_FREE_ICON_POS_X, data->GUI.CH_FREE_ICON_POS_Y, NULL);
+    DoMethod(data->GUI.CH_WBAPPICON, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_AppIconHook, MUIV_TriggerValue);
+    DoMethod(data->GUI.CH_FREE_ICON_POS_X, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.ST_APPX, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
+    DoMethod(data->GUI.CH_FREE_ICON_POS_Y, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.ST_APPY, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
 
     #if defined(__amigaos4__)
     if(G->applicationID == 0)

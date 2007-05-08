@@ -5888,9 +5888,7 @@ BOOL Busy(const char *text, const char *parameter, int cur, int max)
 void DisplayAppIconStatistics(void)
 {
   static char apptit[SIZE_DEFAULT/2];
-  struct Folder *fo;
   struct Folder **flist;
-  char *src, dst[10];
   int mode;
   int new_msg = 0;
   int unr_msg = 0;
@@ -5902,14 +5900,15 @@ void DisplayAppIconStatistics(void)
 
   // if the user wants to show an AppIcon on the workbench,
   // we go and calculate the mail stats for all folders out there.
-  if((flist = FO_CreateList()))
+  if((flist = FO_CreateList()) != NULL)
   {
     int i;
 
     for(i = 1; i <= (int)*flist; i++)
     {
-      fo = flist[i];
-      if(!fo)
+      struct Folder *fo = flist[i];
+
+      if(fo == NULL)
         break;
 
       if(fo->Stats != 0)
@@ -5930,9 +5929,13 @@ void DisplayAppIconStatistics(void)
 
   if(C->WBAppIcon)
   {
+    char *src;
+
     // Lets create the label of the AppIcon now
     for(src = C->AppIconText; *src; src++)
     {
+      char dst[10];
+
       if(*src == '%')
       {
         switch (*++src)
@@ -5960,16 +5963,16 @@ void DisplayAppIconStatistics(void)
 
 
   // We first have to remove the appicon before we can change it
-  if(G->AppIcon)
+  if(G->AppIcon != NULL)
   {
     RemoveAppIcon(G->AppIcon);
     G->AppIcon = NULL;
   }
 
   // Now we create the new AppIcon and display it
-  if(G->DiskObj[mode])
+  if(G->DiskObj[mode] != NULL)
   {
-    struct DiskObject *dobj=G->DiskObj[mode];
+    struct DiskObject *dobj = G->DiskObj[mode];
 
     // NOTE:
     // 1.) Using the VARARGS version is better for GCC/68k and it doesn't
@@ -5978,7 +5981,14 @@ void DisplayAppIconStatistics(void)
     //     issue (old: "struct FileLock *"; new: "BPTR")
     if(C->WBAppIcon)
     {
-      G->AppIcon = AddAppIcon(0, 0, apptit, G->AppPort, 0, dobj, TAG_DONE);
+      dobj->do_CurrentX = C->FreeIconPositionX ? (LONG)NO_ICON_POSITION : C->IconPositionX;
+      dobj->do_CurrentY = C->FreeIconPositionY ? (LONG)NO_ICON_POSITION : C->IconPositionY;
+      G->AppIcon = AddAppIcon(0, 0, apptit, G->AppPort, 0, dobj, WBAPPICONA_SupportsOpen, TRUE,
+                                                                 WBAPPICONA_SupportsSnapshot, TRUE,
+                                                                 WBAPPICONA_SupportsUnSnapshot, TRUE,
+                                                                 WBAPPICONA_SupportsEmptyTrash, TRUE,
+                                                                 WBAPPICONA_PropagatePosition, TRUE,
+                                                                 TAG_DONE);
       SHOWVALUE(DBF_GUI, G->AppIcon);
     }
 
@@ -6018,6 +6028,9 @@ void DisplayAppIconStatistics(void)
         lastIconID = -1;
     }
     #endif
+
+    // remember this icon pointer for later use
+    G->CurrentDiskObj = dobj;
   }
 
   LEAVE();

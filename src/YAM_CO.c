@@ -926,6 +926,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     strlcpy(co->PackerCommand, "LhA -a -m -i%l a \"%a\"", sizeof(co->PackerCommand));
     co->IconPositionX = 0;
     co->IconPositionY = 0;
+    co->FreeIconPositionX = TRUE;
+    co->FreeIconPositionY = TRUE;
     strlcpy(co->AppIconText, tr(MSG_CO_APPICON_LABEL), sizeof(co->AppIconText));
     co->IconifyOnQuit = co->RemoveAtOnce = FALSE;
     co->Confirm = TRUE;
@@ -1477,7 +1479,6 @@ void CO_Validate(struct Config *co, BOOL update)
 
         // setup the appIcon positions and display all statistics
         // accordingly.
-        SetupAppIcons();
         DisplayStatistics((struct Folder *)-1, TRUE);
 
         // make sure we remove an eventually existing DockyIcon

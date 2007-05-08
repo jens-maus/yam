@@ -280,6 +280,8 @@ struct CO_GUIData
   Object *CA_COLSIG;
   Object *GR_THEMES;
   Object *CH_SHOWALTPARTS;
+  Object *CH_FREE_ICON_POS_X;
+  Object *CH_FREE_ICON_POS_Y;
 };
 
 enum ConfigPage
@@ -485,6 +487,8 @@ struct Config
    BOOL  DisplayAllAltPart;
    BOOL  MDNEnabled;
    BOOL  RequestMDN;
+   BOOL  FreeIconPositionX;
+   BOOL  FreeIconPositionY;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color1stLevel;

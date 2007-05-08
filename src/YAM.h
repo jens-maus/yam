@@ -78,6 +78,7 @@ struct Global
    struct MsgPort *         AppPort;
    struct RexxHost *        RexxHost;
    struct DiskObject *      DiskObj[MAXICONS];
+   struct DiskObject *      CurrentDiskObj;
    struct FileReqCache *    FileReqCache[ASL_MAX];
    struct Locale *          Locale;
    struct Catalog *         Catalog;
@@ -160,7 +161,6 @@ void TC_Restart(enum TimerIO tio, int seconds, int micros);
 void TC_Stop(enum TimerIO tio);
 
 void PopUp(void);
-void SetupAppIcons(void);
 
 #endif /* MAIN_YAM_H */
 

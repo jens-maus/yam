@@ -5,7 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-05-03  Thore Böckelmann <tboeckel@gmx.de>
+2007-05-08  Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: the AppIcon now supports the standard Workbench Snapshot, Unsnapshot
+    and Empty Trash methods and reacts accordingsly. Additionally the icon
+    position can now be specified as non-fixed.
+
+2007-05-07  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c: setting the header lines to "none" now disables the "wrap
     headers" checkmark.

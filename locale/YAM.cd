@@ -6215,3 +6215,9 @@ MSG_US_DIRECTORY_DOESNT_EXIST (1928//)
 Mail directory '%s' of user '%s' does not exist.\n\
 Do you want to create it?
 ;
+MSG_CO_PositionY (1929//)
+Position _Y
+;
+MSG_CO_FREE_ICON_POSITION (1930//)
+free
+;

@@ -30,6 +30,7 @@
 #include <string.h>
 
 #include <clib/alib_protos.h>
+#include <workbench/workbench.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
 #include <mui/TextEditor_mcc.h>
@@ -494,6 +495,8 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "AttachDir        = %s\n", co->AttachDir);
       fprintf(fh, "WBAppIcon        = %s\n", Bool2Txt(co->WBAppIcon));
       fprintf(fh, "IconPosition     = %d;%d\n", co->IconPositionX, co->IconPositionY);
+      fprintf(fh, "FreeIconPosX     = %s\n", Bool2Txt(co->FreeIconPositionX));
+      fprintf(fh, "FreeIconPosY     = %s\n", Bool2Txt(co->FreeIconPositionY));
       fprintf(fh, "AppIconText      = %s\n", co->AppIconText);
       fprintf(fh, "DockyIcon        = %s\n", Bool2Txt(co->DockyIcon));
       fprintf(fh, "IconifyOnQuit    = %s\n", Bool2Txt(co->IconifyOnQuit));
@@ -1173,6 +1176,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
           else if(!stricmp(buffer, "AttachDir"))        strlcpy(co->AttachDir, value, sizeof(co->AttachDir));
           else if(!stricmp(buffer, "WBAppIcon"))        co->WBAppIcon = Txt2Bool(value);
           else if(!stricmp(buffer, "IconPosition"))     sscanf(value, "%d;%d", &(co->IconPositionX), &(co->IconPositionY));
+          else if(!stricmp(buffer, "FreeIconPosX"))     co->FreeIconPositionX = Txt2Bool(value);
+          else if(!stricmp(buffer, "FreeIconPosY"))     co->FreeIconPositionY = Txt2Bool(value);
           else if(!stricmp(buffer, "AppIconText"))      strlcpy(co->AppIconText, value, sizeof(co->AppIconText));
           else if(!stricmp(buffer, "DockyIcon"))        co->DockyIcon = Txt2Bool(value);
           else if(!stricmp(buffer, "IconifyOnQuit"))    co->IconifyOnQuit = Txt2Bool(value);
@@ -1863,6 +1868,8 @@ void CO_GetConfig(BOOL saveConfig)
         CE->WBAppIcon         = GetMUICheck  (gui->CH_WBAPPICON);
         CE->IconPositionX     = GetMUIInteger(gui->ST_APPX);
         CE->IconPositionY     = GetMUIInteger(gui->ST_APPY);
+        CE->FreeIconPositionX = GetMUICheck(gui->CH_FREE_ICON_POS_X);
+        CE->FreeIconPositionY = GetMUICheck(gui->CH_FREE_ICON_POS_Y);
         GetMUIString(CE->AppIconText, gui->ST_APPICON, sizeof(CE->AppIconText));
         CE->DockyIcon         = GetMUICheck  (gui->CH_DOCKYICON);
         CE->IconifyOnQuit     = GetMUICheck  (gui->CH_CLGADGET);
@@ -2215,6 +2222,8 @@ void CO_SetConfig(void)
         setcheckmark(gui->CH_WBAPPICON ,CE->WBAppIcon);
         set(gui->ST_APPX, MUIA_String_Integer, CE->IconPositionX);
         set(gui->ST_APPY, MUIA_String_Integer, CE->IconPositionY);
+        setcheckmark(gui->CH_FREE_ICON_POS_X , CE->FreeIconPositionX);
+        setcheckmark(gui->CH_FREE_ICON_POS_Y , CE->FreeIconPositionY);
         setstring   (gui->ST_APPICON   ,CE->AppIconText);
         setcheckmark(gui->CH_DOCKYICON ,CE->DockyIcon);
         setcheckmark(gui->CH_CLGADGET  ,CE->IconifyOnQuit);

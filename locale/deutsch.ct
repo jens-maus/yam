@@ -7657,3 +7657,9 @@ MSG_US_DIRECTORY_DOESNT_EXIST
 Das Postverzeichnis '%s' von Benutzer '%s' existiert nicht.\n\
 Wollen Sie es erstellen?
 ;
+MSG_CO_PositionY
+Position _Y
+;
+MSG_CO_FREE_ICON_POSITION
+frei
+;

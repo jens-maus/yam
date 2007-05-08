@@ -1683,22 +1683,6 @@ static BOOL Root_New(BOOL hidden)
 }
 ///
 
-/// SetupAppIcons
-//  Sets location of mailbox status icon on workbench screen
-void SetupAppIcons(void)
-{
-  int i;
-
-  for(i = 0; i < MAXICONS; i++)
-  {
-    if(G->DiskObj[i])
-    {
-      G->DiskObj[i]->do_CurrentX = C->IconPositionX;
-      G->DiskObj[i]->do_CurrentY = C->IconPositionY;
-    }
-  }
-}
-///
 /// Initialise2
 //  Phase 2 of program initialization (after user logs in)
 static void Initialise2(void)
@@ -1755,10 +1739,6 @@ static void Initialise2(void)
    // do some initial call to ChangeSelected() for correctly setting up
    // some mail information
    MA_ChangeSelected(TRUE);
-
-   // make sure all appicon diskobject are actually loaded
-   // and are ready for use.
-   SetupAppIcons();
 
    // load the main window GUI layout from the ENV: variable
    LoadLayout();
@@ -2771,7 +2751,8 @@ int main(int argc, char **argv)
         }
         yamFirst = FALSE;
       }
-      else DisplayAppIconStatistics();
+      else
+        DisplayAppIconStatistics();
 
       user = US_GetCurrentUser();
       AppendLogNormal(1, tr(MSG_LOG_LoggedIn), user->Name);
@@ -2943,18 +2924,22 @@ int main(int argc, char **argv)
             // check for a AppMessage signal
             if (signals & appsig)
             {
-               struct AppMessage *apmsg;
+              struct AppMessage *apmsg;
 
-               while((apmsg = (struct AppMessage *)GetMsg(G->AppPort)))
-               {
-                  if (apmsg->am_Type == AMTYPE_APPICON)
+              while((apmsg = (struct AppMessage *)GetMsg(G->AppPort)) != NULL)
+              {
+                if(apmsg->am_Type == AMTYPE_APPICON)
+                {
+                  switch(apmsg->am_Class)
                   {
-                     // bring all windows of YAM to front.
-                     PopUp();
+                    case AMCLASSICON_Open:
+                    {
+                      // bring all windows of YAM to front.
+                      PopUp();
 
-                     // check if something was dropped onto the AppIcon
-                     if (apmsg->am_NumArgs)
-                     {
+                      // check if something was dropped onto the AppIcon
+                      if(apmsg->am_NumArgs != 0)
+                      {
                         int wrwin;
 
                         if(G->WR[0])
@@ -2982,11 +2967,45 @@ int main(int argc, char **argv)
                             WR_App(wrwin, buf);
                           }
                         }
-                     }
-                  }
+                      }
+                    }
+                    break;
 
-                  ReplyMsg(&apmsg->am_Message);
-               }
+                    case AMCLASSICON_Snapshot:
+                    {
+                      if(G->CurrentDiskObj != NULL)
+                      {
+                        // just remember the position, but don't save the configuration as this might save other
+                        // options which should not be saved yet.
+                        C->IconPositionX = G->CurrentDiskObj->do_CurrentX;
+                        C->IconPositionY = G->CurrentDiskObj->do_CurrentY;
+                        C->FreeIconPositionX = FALSE;
+                        C->FreeIconPositionY = FALSE;
+                      }
+                      D(DBF_ALWAYS, "obj=%08lx X=%d Y=%d", G->CurrentDiskObj, C->IconPositionX, C->IconPositionY);
+                    }
+                    break;
+
+                    case AMCLASSICON_UnSnapshot:
+                    {
+                      // set the new position to "none" and update the AppIcon
+                      C->FreeIconPositionX = TRUE;
+                      C->FreeIconPositionY = TRUE;
+                      DisplayAppIconStatistics();
+                    }
+                    break;
+
+                    case AMCLASSICON_EmptyTrash:
+                    {
+                      // empty the "deleted" folder
+                      DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);
+                    }
+                    break;
+                  }
+                }
+
+                ReplyMsg(&apmsg->am_Message);
+              }
             }
 
             #if defined(__amigaos4__)
@@ -2994,7 +3013,7 @@ int main(int argc, char **argv)
             {
               struct ApplicationMsg *msg;
 
-              while((msg = (struct ApplicationMsg *)GetMsg(G->AppLibPort)))
+              while((msg = (struct ApplicationMsg *)GetMsg(G->AppLibPort)) != NULL)
               {
                 switch(msg->type)
                 {
