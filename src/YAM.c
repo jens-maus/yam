@@ -2982,7 +2982,6 @@ int main(int argc, char **argv)
                         C->FreeIconPositionX = FALSE;
                         C->FreeIconPositionY = FALSE;
                       }
-                      D(DBF_ALWAYS, "obj=%08lx X=%d Y=%d", G->CurrentDiskObj, C->IconPositionX, C->IconPositionY);
                     }
                     break;
 
