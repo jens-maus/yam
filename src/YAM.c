@@ -2932,6 +2932,7 @@ int main(int argc, char **argv)
                 {
                   switch(apmsg->am_Class)
                   {
+                    default:
                     case AMCLASSICON_Open:
                     {
                       // bring all windows of YAM to front.
