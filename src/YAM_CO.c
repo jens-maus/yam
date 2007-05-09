@@ -1113,23 +1113,23 @@ void CO_Validate(struct Config *co, BOOL update)
   {
     if(G->Locale && co->TimeZone != -(G->Locale->loc_GMTOffset))
     {
-       int res = MUI_Request(G->App, NULL, 0,
-                             tr(MSG_CO_TIMEZONEWARN_TITLE),
-                             tr(MSG_CO_TIMEZONEWARN_BT),
-                             tr(MSG_CO_TIMEZONEWARN));
+      int res = MUI_Request(G->App, NULL, 0,
+                            tr(MSG_CO_TIMEZONEWARN_TITLE),
+                            tr(MSG_CO_TIMEZONEWARN_BT),
+                            tr(MSG_CO_TIMEZONEWARN));
 
-       // if the user has clicked on Change, we do
-       // change the timezone and save it immediatly
-       if(res == 1)
-       {
-         co->TimeZone = -(G->Locale->loc_GMTOffset);
-         saveAtEnd = TRUE;
-       }
-       else if(res == 2)
-       {
-         co->TimeZoneCheck = FALSE;
-         saveAtEnd = TRUE;
-       }
+      // if the user has clicked on Change, we do
+      // change the timezone and save it immediatly
+      if(res == 1)
+      {
+        co->TimeZone = -(G->Locale->loc_GMTOffset);
+        saveAtEnd = TRUE;
+      }
+      else if(res == 2)
+      {
+        co->TimeZoneCheck = FALSE;
+        saveAtEnd = TRUE;
+      }
     }
   }
   else if(G->Locale && co->TimeZone == -(G->Locale->loc_GMTOffset))
@@ -1146,24 +1146,23 @@ void CO_Validate(struct Config *co, BOOL update)
     // check if we found an AutoDST tool or not.
     if(G->CO_DST > 0 && co->DaylightSaving != (G->CO_DST == 2))
     {
-       int res = MUI_Request(G->App, NULL, 0,
-                             tr(MSG_CO_AUTODSTWARN_TITLE),
-                             tr(MSG_CO_AUTODSTWARN_BT),
-                             tr(MSG_CO_AUTODSTWARN));
+      int res = MUI_Request(G->App, NULL, 0,
+                            tr(MSG_CO_AUTODSTWARN_TITLE),
+                            tr(MSG_CO_AUTODSTWARN_BT),
+                            tr(MSG_CO_AUTODSTWARN));
 
-       // if the user has clicked on Change, we do
-       // change the DST setting and save it immediatly
-       if(res == 1)
-       {
-         co->DaylightSaving = (G->CO_DST == 2);
-         saveAtEnd = TRUE;
-       }
-       else if(res == 2)
-       {
-         co->AutoDSTCheck = FALSE;
-         saveAtEnd = TRUE;
-       }
-
+      // if the user has clicked on Change, we do
+      // change the DST setting and save it immediatly
+      if(res == 1)
+      {
+        co->DaylightSaving = (G->CO_DST == 2);
+        saveAtEnd = TRUE;
+      }
+      else if(res == 2)
+      {
+        co->AutoDSTCheck = FALSE;
+        saveAtEnd = TRUE;
+      }
     }
   }
   else if(G->CO_DST > 0 && co->DaylightSaving == (G->CO_DST == 2))
@@ -1181,10 +1180,10 @@ void CO_Validate(struct Config *co, BOOL update)
   // then prepare the temporary filenames for the write windows
   for(i=0; i <= MAXWR; i++)
   {
-     char filename[SIZE_FILE];
+    char filename[SIZE_FILE];
 
-     snprintf(filename, sizeof(filename), "YAMw%08lx-%d.tmp", (LONG)FindTask(NULL), i);
-     strmfp(G->WR_Filename[i], co->TempDir, filename);
+    snprintf(filename, sizeof(filename), "YAMw%08lx-%d.tmp", (LONG)FindTask(NULL), i);
+    strmfp(G->WR_Filename[i], co->TempDir, filename);
   }
 
   G->CO_Valid = (*co->SMTP_Server && *co->EmailAddress && *co->RealName);
@@ -1193,55 +1192,55 @@ void CO_Validate(struct Config *co, BOOL update)
   // currently configured local charset
   if(co->SysCharsetCheck)
   {
-     struct codeset *sysCodeset;
+    struct codeset *sysCodeset;
 
-     // get the system's default codeset
-     if((sysCodeset = CodesetsFindA(NULL, NULL)))
-     {
-       // now we check whether the currently set localCharset matches
-       // the system charset or not
-       if(co->LocalCharset[0] && sysCodeset->name[0])
-       {
-         if(stricmp(co->LocalCharset, sysCodeset->name) != 0)
-         {
-           int res = MUI_Request(G->App, NULL, 0,
-                                 tr(MSG_CO_CHARSETWARN_TITLE),
-                                 tr(MSG_CO_CHARSETWARN_BT),
-                                 tr(MSG_CO_CHARSETWARN),
-                                 co->LocalCharset, sysCodeset->name);
+    // get the system's default codeset
+    if((sysCodeset = CodesetsFindA(NULL, NULL)))
+    {
+      // now we check whether the currently set localCharset matches
+      // the system charset or not
+      if(co->LocalCharset[0] && sysCodeset->name[0])
+      {
+        if(stricmp(co->LocalCharset, sysCodeset->name) != 0)
+        {
+          int res = MUI_Request(G->App, NULL, 0,
+                                tr(MSG_CO_CHARSETWARN_TITLE),
+                                tr(MSG_CO_CHARSETWARN_BT),
+                                tr(MSG_CO_CHARSETWARN),
+                                co->LocalCharset, sysCodeset->name);
 
-           // if the user has clicked on Change, we do
-           // change the charset and save it immediatly
-           if(res == 1)
-           {
-             strlcpy(co->LocalCharset, sysCodeset->name, sizeof(co->LocalCharset));
-             saveAtEnd = TRUE;
-           }
-           else if(res == 2)
-           {
-             co->SysCharsetCheck = FALSE;
-             saveAtEnd = TRUE;
-           }
-         }
-       }
-       else if(sysCodeset->name[0])
-       {
-         strlcpy(co->LocalCharset, sysCodeset->name, sizeof(co->LocalCharset));
-         saveAtEnd = TRUE;
-       }
-       else
-         W(DBF_CONFIG, "checking the system's codeset seem to have failed?!?");
-     }
-     else
-       W(DBF_CONFIG, "CodesetsFindA(NULL) failed!");
+          // if the user has clicked on Change, we do
+          // change the charset and save it immediatly
+          if(res == 1)
+          {
+            strlcpy(co->LocalCharset, sysCodeset->name, sizeof(co->LocalCharset));
+            saveAtEnd = TRUE;
+          }
+          else if(res == 2)
+          {
+            co->SysCharsetCheck = FALSE;
+            saveAtEnd = TRUE;
+          }
+        }
+      }
+      else if(sysCodeset->name[0])
+      {
+        strlcpy(co->LocalCharset, sysCodeset->name, sizeof(co->LocalCharset));
+        saveAtEnd = TRUE;
+      }
+      else
+        W(DBF_CONFIG, "checking the system's codeset seem to have failed?!?");
+    }
+    else
+      W(DBF_CONFIG, "CodesetsFindA(NULL) failed!");
   }
 
   // if the local charset is still empty we set the default
   // charset to 'iso-8859-1' as this one is probably the most common one.
   if(co->LocalCharset[0] == '\0')
   {
-     strlcpy(co->LocalCharset, "ISO-8859-1", sizeof(co->LocalCharset));
-     saveAtEnd = TRUE;
+    strlcpy(co->LocalCharset, "ISO-8859-1", sizeof(co->LocalCharset));
+    saveAtEnd = TRUE;
   }
 
   // now we check if the set charset is a valid one also supported
@@ -1275,24 +1274,24 @@ void CO_Validate(struct Config *co, BOOL update)
     if(AmiSSLMasterBase == NULL || AmiSSLBase == NULL ||
        G->TR_UseableTLS == FALSE)
     {
-       int res = MUI_Request(G->App, NULL, 0,
-                             tr(MSG_CO_AMISSLWARN_TITLE),
-                             tr(MSG_CO_AMISSLWARN_BT),
-                             tr(MSG_CO_AMISSLWARN),
-                             AMISSLMASTER_MIN_VERSION, 5);
+      int res = MUI_Request(G->App, NULL, 0,
+                            tr(MSG_CO_AMISSLWARN_TITLE),
+                            tr(MSG_CO_AMISSLWARN_BT),
+                            tr(MSG_CO_AMISSLWARN),
+                            AMISSLMASTER_MIN_VERSION, 5);
 
-       // if the user has clicked on "Ignore always", we do
-       // change the AmiSSLCheck variables and save the config
-       // immediatly
-       if(res == 1)
-       {
-         exit(RETURN_ERROR);
-       }
-       else if(res == 2)
-       {
-         co->AmiSSLCheck = FALSE;
-         saveAtEnd = TRUE;
-       }
+      // if the user has clicked on "Ignore always", we do
+      // change the AmiSSLCheck variables and save the config
+      // immediatly
+      if(res == 1)
+      {
+        exit(RETURN_ERROR);
+      }
+      else if(res == 2)
+      {
+        co->AmiSSLCheck = FALSE;
+        saveAtEnd = TRUE;
+      }
     }
   }
   else
@@ -1326,32 +1325,34 @@ void CO_Validate(struct Config *co, BOOL update)
   {
     // a delay less than one second is not possible
     co->StatusChangeDelay = 1000;
+    saveAtEnd = TRUE;
   }
   else if(co->StatusChangeDelay > 10000)
   {
     // a delay longer than ten seconds is not possible, either
     co->StatusChangeDelay = 10000;
+    saveAtEnd = TRUE;
   }
 
   if(update && G->CO)
   {
     switch(G->CO->VisiblePage)
     {
-       case cp_FirstSteps:
-          setstring(G->CO->GUI.ST_POPHOST0, co->P3[0]->Server);
-          break;
+      case cp_FirstSteps:
+        setstring(G->CO->GUI.ST_POPHOST0, co->P3[0]->Server);
+        break;
 
-       case cp_TCPIP:
-          setstring(G->CO->GUI.ST_SMTPHOST, co->SMTP_Server);
-          set(G->CO->GUI.ST_SMTPPORT, MUIA_String_Integer, co->SMTP_Port);
-          setstring(G->CO->GUI.ST_DOMAIN, co->SMTP_Domain);
-          setstring(G->CO->GUI.ST_SMTPAUTHUSER, co->SMTP_AUTH_User);
-          setstring(G->CO->GUI.ST_SMTPAUTHPASS, co->SMTP_AUTH_Pass);
-          DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
-          break;
+      case cp_TCPIP:
+        setstring(G->CO->GUI.ST_SMTPHOST, co->SMTP_Server);
+        set(G->CO->GUI.ST_SMTPPORT, MUIA_String_Integer, co->SMTP_Port);
+        setstring(G->CO->GUI.ST_DOMAIN, co->SMTP_Domain);
+        setstring(G->CO->GUI.ST_SMTPAUTHUSER, co->SMTP_AUTH_User);
+        setstring(G->CO->GUI.ST_SMTPAUTHPASS, co->SMTP_AUTH_Pass);
+        DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
+        break;
 
-       default:
-          break;
+      default:
+        break;
     }
 
     if(G->CO->Visited[cp_NewMail] || G->CO->UpdateAll)
@@ -1399,26 +1400,26 @@ void CO_Validate(struct Config *co, BOOL update)
 
     if(G->CO->Visited[cp_Lists] || G->CO->UpdateAll)
     {
-       // First we set the PG_MAILLIST and NL_FOLDER Quiet
-       set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     TRUE);
-       set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
+      // First we set the PG_MAILLIST and NL_FOLDER Quiet
+      set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     TRUE);
+      set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
 
-       // Modify the ContextMenu flags
-       set(G->MA->GUI.PG_MAILLIST,MUIA_ContextMenu, C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
-       set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
+      // Modify the ContextMenu flags
+      set(G->MA->GUI.PG_MAILLIST,MUIA_ContextMenu, C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
+      set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
 
-       SaveLayout(FALSE);
-       MA_MakeFOFormat(G->MA->GUI.NL_FOLDERS);
-       DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_MakeFormat);
-       LoadLayout();
+      SaveLayout(FALSE);
+      MA_MakeFOFormat(G->MA->GUI.NL_FOLDERS);
+      DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_MakeFormat);
+      LoadLayout();
 
-       // Now we give the control back to the NLists
-       set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     FALSE);
-       set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
+      // Now we give the control back to the NLists
+      set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     FALSE);
+      set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
     }
 
     if(G->CO->Visited[cp_AddressBook] || G->CO->UpdateAll)
-       AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
+      AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
 
     if(G->CO->Visited[cp_LookFeel] || G->CO->UpdateAll)
     {
@@ -1521,7 +1522,7 @@ void CO_Validate(struct Config *co, BOOL update)
 
   // if some items have modified the config we do save it again.
   if(saveAtEnd == TRUE)
-     CO_SaveConfig(co, G->CO_PrefsFile);
+    CO_SaveConfig(co, G->CO_PrefsFile);
 
   LEAVE();
 }
