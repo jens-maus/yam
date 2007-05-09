@@ -1074,445 +1074,456 @@ static void CopyConfigData(struct Config *dco, struct Config *sco)
 //  Validates a configuration, update GUI etc.
 void CO_Validate(struct Config *co, BOOL update)
 {
-   char *p = strchr(co->EmailAddress, '@');
-   BOOL saveAtEnd = FALSE;
-   int i;
+  char *p = strchr(co->EmailAddress, '@');
+  BOOL saveAtEnd = FALSE;
+  int i;
 
-   ENTER();
+  ENTER();
 
-   if(co->SMTP_Server[0] == '\0')
-     strlcpy(co->SMTP_Server, co->P3[0]->Server, sizeof(co->SMTP_Server));
-   if(co->SMTP_Port == 0)
-     co->SMTP_Port = 25;
-   if(co->SMTP_Domain[0] == '\0')
-     strlcpy(co->SMTP_Domain, p ? p + 1 : "", sizeof(co->SMTP_Domain));
+  if(co->SMTP_Server[0] == '\0')
+    strlcpy(co->SMTP_Server, co->P3[0]->Server, sizeof(co->SMTP_Server));
+  if(co->SMTP_Port == 0)
+    co->SMTP_Port = 25;
+  if(co->SMTP_Domain[0] == '\0')
+    strlcpy(co->SMTP_Domain, p ? p + 1 : "", sizeof(co->SMTP_Domain));
 
-   for(i = 0; i < MAXP3; i++)
-   {
-     struct POP3 *pop3 = co->P3[i];
+  for(i = 0; i < MAXP3; i++)
+  {
+    struct POP3 *pop3 = co->P3[i];
 
-   	 if(pop3 != NULL)
-     {
-       if(pop3->Server[0] == '\0')
-         strlcpy(pop3->Server, co->SMTP_Server, sizeof(pop3->Server));
+    if(pop3 != NULL)
+    {
+      if(pop3->Server[0] == '\0')
+        strlcpy(pop3->Server, co->SMTP_Server, sizeof(pop3->Server));
 
-       if(pop3->Port == 0)
-         pop3->Port = 110;
+      if(pop3->Port == 0)
+        pop3->Port = 110;
 
-       if(pop3->User[0] == '\0')
-         strlcpy(pop3->User, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress + 1) : sizeof(pop3->User));
+      if(pop3->User[0] == '\0')
+        strlcpy(pop3->User, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress + 1) : sizeof(pop3->User));
 
-       if(pop3->Account[0] == '\0')
-         snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
-     }
-   }
+      if(pop3->Account[0] == '\0')
+        snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
+    }
+  }
 
-   // now we check whether our timezone setting is coherent to an
-   // eventually set locale setting.
-   if(co->TimeZoneCheck)
-   {
-     if(G->Locale && co->TimeZone != -(G->Locale->loc_GMTOffset))
-     {
-        int res = MUI_Request(G->App, NULL, 0,
-                              tr(MSG_CO_TIMEZONEWARN_TITLE),
-                              tr(MSG_CO_TIMEZONEWARN_BT),
-                              tr(MSG_CO_TIMEZONEWARN));
+  // now we check whether our timezone setting is coherent to an
+  // eventually set locale setting.
+  if(co->TimeZoneCheck)
+  {
+    if(G->Locale && co->TimeZone != -(G->Locale->loc_GMTOffset))
+    {
+       int res = MUI_Request(G->App, NULL, 0,
+                             tr(MSG_CO_TIMEZONEWARN_TITLE),
+                             tr(MSG_CO_TIMEZONEWARN_BT),
+                             tr(MSG_CO_TIMEZONEWARN));
 
-        // if the user has clicked on Change, we do
-        // change the timezone and save it immediatly
-        if(res == 1)
-        {
-          co->TimeZone = -(G->Locale->loc_GMTOffset);
-          saveAtEnd = TRUE;
-        }
-        else if(res == 2)
-        {
-          co->TimeZoneCheck = FALSE;
-          saveAtEnd = TRUE;
-        }
-     }
-   }
-   else if(G->Locale && co->TimeZone == -(G->Locale->loc_GMTOffset))
-   {
-     // enable the timezone checking again!
-     co->TimeZoneCheck = TRUE;
-     saveAtEnd = TRUE;
-   }
-
-   // we also check the DST (Daylight Saving settings) in case
-   // we have a AutoDST tool running.
-   if(co->AutoDSTCheck)
-   {
-     // check if we found an AutoDST tool or not.
-     if(G->CO_DST > 0 && co->DaylightSaving != (G->CO_DST == 2))
-     {
-        int res = MUI_Request(G->App, NULL, 0,
-                              tr(MSG_CO_AUTODSTWARN_TITLE),
-                              tr(MSG_CO_AUTODSTWARN_BT),
-                              tr(MSG_CO_AUTODSTWARN));
-
-        // if the user has clicked on Change, we do
-        // change the DST setting and save it immediatly
-        if(res == 1)
-        {
-          co->DaylightSaving = (G->CO_DST == 2);
-          saveAtEnd = TRUE;
-        }
-        else if(res == 2)
-        {
-          co->AutoDSTCheck = FALSE;
-          saveAtEnd = TRUE;
-        }
-
-     }
-   }
-   else if(G->CO_DST > 0 && co->DaylightSaving == (G->CO_DST == 2))
-   {
-     // enable the autodst checking again!
-     co->AutoDSTCheck = TRUE;
-     saveAtEnd = TRUE;
-   }
-
-   G->PGPVersion = CO_DetectPGP(co);
-
-   // prepare the temporary directory
-   CreateDirectory(co->TempDir);
-
-   // then prepare the temporary filenames for the write windows
-   for(i=0; i <= MAXWR; i++)
-   {
-      char filename[SIZE_FILE];
-
-      snprintf(filename, sizeof(filename), "YAMw%08lx-%d.tmp", (LONG)FindTask(NULL), i);
-      strmfp(G->WR_Filename[i], co->TempDir, filename);
-   }
-
-   G->CO_Valid = (*co->SMTP_Server && *co->EmailAddress && *co->RealName);
-
-   // we try to find out the system charset and validate it with the
-   // currently configured local charset
-   if(co->SysCharsetCheck)
-   {
-      struct codeset *sysCodeset;
-
-      // get the system's default codeset
-      if((sysCodeset = CodesetsFindA(NULL, NULL)))
-      {
-        // now we check whether the currently set localCharset matches
-        // the system charset or not
-        if(co->LocalCharset[0] && sysCodeset->name[0])
-        {
-          if(stricmp(co->LocalCharset, sysCodeset->name) != 0)
-          {
-            int res = MUI_Request(G->App, NULL, 0,
-                                  tr(MSG_CO_CHARSETWARN_TITLE),
-                                  tr(MSG_CO_CHARSETWARN_BT),
-                                  tr(MSG_CO_CHARSETWARN),
-                                  co->LocalCharset, sysCodeset->name);
-
-            // if the user has clicked on Change, we do
-            // change the charset and save it immediatly
-            if(res == 1)
-            {
-              strlcpy(co->LocalCharset, sysCodeset->name, sizeof(co->LocalCharset));
-              saveAtEnd = TRUE;
-            }
-            else if(res == 2)
-            {
-              co->SysCharsetCheck = FALSE;
-              saveAtEnd = TRUE;
-            }
-          }
-        }
-        else if(sysCodeset->name[0])
-        {
-          strlcpy(co->LocalCharset, sysCodeset->name, sizeof(co->LocalCharset));
-          saveAtEnd = TRUE;
-        }
-        else
-          W(DBF_CONFIG, "checking the system's codeset seem to have failed?!?");
-      }
-      else
-        W(DBF_CONFIG, "CodesetsFindA(NULL) failed!");
-   }
-
-   // if the local charset is still empty we set the default
-   // charset to 'iso-8859-1' as this one is probably the most common one.
-   if(co->LocalCharset[0] == '\0')
-   {
-      strlcpy(co->LocalCharset, "ISO-8859-1", sizeof(co->LocalCharset));
-      saveAtEnd = TRUE;
-   }
-
-   // now we check if the set charset is a valid one also supported
-   // by codesets.library and if not we warn the user
-   if((G->localCharset = CodesetsFind(co->LocalCharset,
-                                      CSA_CodesetList,       G->codesetsList,
-                                      CSA_FallbackToDefault, FALSE,
-                                      TAG_DONE)) == NULL)
-   {
-     int res = MUI_Request(G->App, NULL, 0,
-                           tr(MSG_CO_CHARSETWARN_TITLE),
-                           tr(MSG_CO_CHARSETUNKNOWNWARN_BT),
-                           tr(MSG_CO_CHARSETUNKNOWNWARN),
-                           co->LocalCharset);
-     if(res == 1)
-     {
-       // fallback to the system's default codeset
-       if((G->localCharset = CodesetsFindA(NULL, NULL)))
+       // if the user has clicked on Change, we do
+       // change the timezone and save it immediatly
+       if(res == 1)
        {
-         strlcpy(co->LocalCharset, G->localCharset->name, sizeof(co->LocalCharset));
+         co->TimeZone = -(G->Locale->loc_GMTOffset);
          saveAtEnd = TRUE;
        }
-     }
-   }
+       else if(res == 2)
+       {
+         co->TimeZoneCheck = FALSE;
+         saveAtEnd = TRUE;
+       }
+    }
+  }
+  else if(G->Locale && co->TimeZone == -(G->Locale->loc_GMTOffset))
+  {
+    // enable the timezone checking again!
+    co->TimeZoneCheck = TRUE;
+    saveAtEnd = TRUE;
+  }
 
-   // we also check if AmiSSL was found installed or not. And in case the
-   // AmiSSL warning is enabled we notify the user about a not running
-   // amissl installation.
-   if(co->AmiSSLCheck)
-   {
-     if(AmiSSLMasterBase == NULL || AmiSSLBase == NULL ||
-        G->TR_UseableTLS == FALSE)
-     {
-        int res = MUI_Request(G->App, NULL, 0,
-                              tr(MSG_CO_AMISSLWARN_TITLE),
-                              tr(MSG_CO_AMISSLWARN_BT),
-                              tr(MSG_CO_AMISSLWARN),
-                              AMISSLMASTER_MIN_VERSION, 5);
+  // we also check the DST (Daylight Saving settings) in case
+  // we have a AutoDST tool running.
+  if(co->AutoDSTCheck)
+  {
+    // check if we found an AutoDST tool or not.
+    if(G->CO_DST > 0 && co->DaylightSaving != (G->CO_DST == 2))
+    {
+       int res = MUI_Request(G->App, NULL, 0,
+                             tr(MSG_CO_AUTODSTWARN_TITLE),
+                             tr(MSG_CO_AUTODSTWARN_BT),
+                             tr(MSG_CO_AUTODSTWARN));
 
-        // if the user has clicked on "Ignore always", we do
-        // change the AmiSSLCheck variables and save the config
-        // immediatly
-        if(res == 1)
-        {
-          exit(RETURN_ERROR);
-        }
-        else if(res == 2)
-        {
-          co->AmiSSLCheck = FALSE;
-          saveAtEnd = TRUE;
-        }
-     }
-   }
-   else
-   {
-     // we reenable the AmiSSLCheck as soon as we found
-     // the library to be working fine.
-     if(AmiSSLMasterBase != NULL && AmiSSLBase != NULL &&
-        G->TR_UseableTLS == TRUE)
-     {
-       co->AmiSSLCheck = TRUE;
-       saveAtEnd = TRUE;
-     }
-   }
+       // if the user has clicked on Change, we do
+       // change the DST setting and save it immediatly
+       if(res == 1)
+       {
+         co->DaylightSaving = (G->CO_DST == 2);
+         saveAtEnd = TRUE;
+       }
+       else if(res == 2)
+       {
+         co->AutoDSTCheck = FALSE;
+         saveAtEnd = TRUE;
+       }
 
-   if(co->SpamFilterEnabled)
-   {
-     // limit the spam probability threshold to sensible values
-     if(co->SpamProbabilityThreshold < 75)
-     {
-       co->SpamProbabilityThreshold = 75;
-       saveAtEnd = TRUE;
-     }
-     else if(co->SpamProbabilityThreshold > 99)
-     {
-       co->SpamProbabilityThreshold = 99;
-       saveAtEnd = TRUE;
-     }
-   }
+    }
+  }
+  else if(G->CO_DST > 0 && co->DaylightSaving == (G->CO_DST == 2))
+  {
+    // enable the autodst checking again!
+    co->AutoDSTCheck = TRUE;
+    saveAtEnd = TRUE;
+  }
 
-   if(update && G->CO)
-   {
-      switch (G->CO->VisiblePage)
+  G->PGPVersion = CO_DetectPGP(co);
+
+  // prepare the temporary directory
+  CreateDirectory(co->TempDir);
+
+  // then prepare the temporary filenames for the write windows
+  for(i=0; i <= MAXWR; i++)
+  {
+     char filename[SIZE_FILE];
+
+     snprintf(filename, sizeof(filename), "YAMw%08lx-%d.tmp", (LONG)FindTask(NULL), i);
+     strmfp(G->WR_Filename[i], co->TempDir, filename);
+  }
+
+  G->CO_Valid = (*co->SMTP_Server && *co->EmailAddress && *co->RealName);
+
+  // we try to find out the system charset and validate it with the
+  // currently configured local charset
+  if(co->SysCharsetCheck)
+  {
+     struct codeset *sysCodeset;
+
+     // get the system's default codeset
+     if((sysCodeset = CodesetsFindA(NULL, NULL)))
+     {
+       // now we check whether the currently set localCharset matches
+       // the system charset or not
+       if(co->LocalCharset[0] && sysCodeset->name[0])
+       {
+         if(stricmp(co->LocalCharset, sysCodeset->name) != 0)
+         {
+           int res = MUI_Request(G->App, NULL, 0,
+                                 tr(MSG_CO_CHARSETWARN_TITLE),
+                                 tr(MSG_CO_CHARSETWARN_BT),
+                                 tr(MSG_CO_CHARSETWARN),
+                                 co->LocalCharset, sysCodeset->name);
+
+           // if the user has clicked on Change, we do
+           // change the charset and save it immediatly
+           if(res == 1)
+           {
+             strlcpy(co->LocalCharset, sysCodeset->name, sizeof(co->LocalCharset));
+             saveAtEnd = TRUE;
+           }
+           else if(res == 2)
+           {
+             co->SysCharsetCheck = FALSE;
+             saveAtEnd = TRUE;
+           }
+         }
+       }
+       else if(sysCodeset->name[0])
+       {
+         strlcpy(co->LocalCharset, sysCodeset->name, sizeof(co->LocalCharset));
+         saveAtEnd = TRUE;
+       }
+       else
+         W(DBF_CONFIG, "checking the system's codeset seem to have failed?!?");
+     }
+     else
+       W(DBF_CONFIG, "CodesetsFindA(NULL) failed!");
+  }
+
+  // if the local charset is still empty we set the default
+  // charset to 'iso-8859-1' as this one is probably the most common one.
+  if(co->LocalCharset[0] == '\0')
+  {
+     strlcpy(co->LocalCharset, "ISO-8859-1", sizeof(co->LocalCharset));
+     saveAtEnd = TRUE;
+  }
+
+  // now we check if the set charset is a valid one also supported
+  // by codesets.library and if not we warn the user
+  if((G->localCharset = CodesetsFind(co->LocalCharset,
+                                     CSA_CodesetList,       G->codesetsList,
+                                     CSA_FallbackToDefault, FALSE,
+                                     TAG_DONE)) == NULL)
+  {
+    int res = MUI_Request(G->App, NULL, 0,
+                          tr(MSG_CO_CHARSETWARN_TITLE),
+                          tr(MSG_CO_CHARSETUNKNOWNWARN_BT),
+                          tr(MSG_CO_CHARSETUNKNOWNWARN),
+                          co->LocalCharset);
+    if(res == 1)
+    {
+      // fallback to the system's default codeset
+      if((G->localCharset = CodesetsFindA(NULL, NULL)))
       {
-         case cp_FirstSteps:
-            setstring(G->CO->GUI.ST_POPHOST0, co->P3[0]->Server);
-            break;
-
-         case cp_TCPIP:
-            setstring(G->CO->GUI.ST_SMTPHOST, co->SMTP_Server);
-            set(G->CO->GUI.ST_SMTPPORT, MUIA_String_Integer, co->SMTP_Port);
-            setstring(G->CO->GUI.ST_DOMAIN, co->SMTP_Domain);
-            setstring(G->CO->GUI.ST_SMTPAUTHUSER, co->SMTP_AUTH_User);
-            setstring(G->CO->GUI.ST_SMTPAUTHPASS, co->SMTP_AUTH_Pass);
-            DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
-            break;
-
-         default:
-            break;
+        strlcpy(co->LocalCharset, G->localCharset->name, sizeof(co->LocalCharset));
+        saveAtEnd = TRUE;
       }
+    }
+  }
 
-      if(G->CO->Visited[cp_NewMail] || G->CO->UpdateAll)
+  // we also check if AmiSSL was found installed or not. And in case the
+  // AmiSSL warning is enabled we notify the user about a not running
+  // amissl installation.
+  if(co->AmiSSLCheck)
+  {
+    if(AmiSSLMasterBase == NULL || AmiSSLBase == NULL ||
+       G->TR_UseableTLS == FALSE)
+    {
+       int res = MUI_Request(G->App, NULL, 0,
+                             tr(MSG_CO_AMISSLWARN_TITLE),
+                             tr(MSG_CO_AMISSLWARN_BT),
+                             tr(MSG_CO_AMISSLWARN),
+                             AMISSLMASTER_MIN_VERSION, 5);
+
+       // if the user has clicked on "Ignore always", we do
+       // change the AmiSSLCheck variables and save the config
+       // immediatly
+       if(res == 1)
+       {
+         exit(RETURN_ERROR);
+       }
+       else if(res == 2)
+       {
+         co->AmiSSLCheck = FALSE;
+         saveAtEnd = TRUE;
+       }
+    }
+  }
+  else
+  {
+    // we reenable the AmiSSLCheck as soon as we found
+    // the library to be working fine.
+    if(AmiSSLMasterBase != NULL && AmiSSLBase != NULL &&
+       G->TR_UseableTLS == TRUE)
+    {
+      co->AmiSSLCheck = TRUE;
+      saveAtEnd = TRUE;
+    }
+  }
+
+  if(co->SpamFilterEnabled)
+  {
+    // limit the spam probability threshold to sensible values
+    if(co->SpamProbabilityThreshold < 75)
+    {
+      co->SpamProbabilityThreshold = 75;
+      saveAtEnd = TRUE;
+    }
+    else if(co->SpamProbabilityThreshold > 99)
+    {
+      co->SpamProbabilityThreshold = 99;
+      saveAtEnd = TRUE;
+    }
+  }
+
+  if(co->StatusChangeDelay < 1000)
+  {
+    // a delay less than one second is not possible
+    co->StatusChangeDelay = 1000;
+  }
+  else if(co->StatusChangeDelay > 10000)
+  {
+    // a delay longer than ten seconds is not possible, either
+    co->StatusChangeDelay = 10000;
+  }
+
+  if(update && G->CO)
+  {
+    switch(G->CO->VisiblePage)
+    {
+       case cp_FirstSteps:
+          setstring(G->CO->GUI.ST_POPHOST0, co->P3[0]->Server);
+          break;
+
+       case cp_TCPIP:
+          setstring(G->CO->GUI.ST_SMTPHOST, co->SMTP_Server);
+          set(G->CO->GUI.ST_SMTPPORT, MUIA_String_Integer, co->SMTP_Port);
+          setstring(G->CO->GUI.ST_DOMAIN, co->SMTP_Domain);
+          setstring(G->CO->GUI.ST_SMTPAUTHUSER, co->SMTP_AUTH_User);
+          setstring(G->CO->GUI.ST_SMTPAUTHPASS, co->SMTP_AUTH_Pass);
+          DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
+          break;
+
+       default:
+          break;
+    }
+
+    if(G->CO->Visited[cp_NewMail] || G->CO->UpdateAll)
+    {
+      // requeue the timerequest for the CheckMailDelay
+      TC_Restart(TIO_CHECKMAIL, co->CheckMailDelay*60, 0);
+    }
+
+    if(G->CO->Visited[cp_Spam] || G->CO->UpdateAll)
+    {
+      // if we enabled or disable the spam filter then we need to update
+      // the enable/disable status of some toolbar items of the main window
+      MA_ChangeSelected(TRUE);
+
+      // now we also have to update the Spam controls of our various
+      // window toolbars
+      DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
+
+      // update the read windows' toolbar, too
+      if(IsMinListEmpty(&G->readMailDataList) == FALSE)
       {
-        // requeue the timerequest for the CheckMailDelay
-        TC_Restart(TIO_CHECKMAIL, co->CheckMailDelay*60, 0);
+        // search through our ReadDataList
+        struct MinNode *curNode;
+
+        for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+        {
+          struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+          // just obey open read windows with a valid mail pointer
+          if(rmData->readWindow != NULL && rmData->mail != NULL)
+          {
+            // use PushMethod for the case the read window modifies we list we are currently walking through
+            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ReadMail, rmData->mail);
+            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 1, MUIM_ReadWindow_UpdateSpamControls, rmData->mail);
+          }
+        }
       }
+    }
 
-      if(G->CO->Visited[cp_Spam] || G->CO->UpdateAll)
-      {
-        // if we enabled or disable the spam filter then we need to update
-        // the enable/disable status of some toolbar items of the main window
+    if(G->CO->Visited[cp_Write] || G->CO->UpdateAll)
+    {
+      // requeue the timerequest for the AutoSave interval
+      TC_Restart(TIO_AUTOSAVE, co->AutoSave, 0);
+    }
+
+    if(G->CO->Visited[cp_Lists] || G->CO->UpdateAll)
+    {
+       // First we set the PG_MAILLIST and NL_FOLDER Quiet
+       set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     TRUE);
+       set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
+
+       // Modify the ContextMenu flags
+       set(G->MA->GUI.PG_MAILLIST,MUIA_ContextMenu, C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
+       set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
+
+       SaveLayout(FALSE);
+       MA_MakeFOFormat(G->MA->GUI.NL_FOLDERS);
+       DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_MakeFormat);
+       LoadLayout();
+
+       // Now we give the control back to the NLists
+       set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     FALSE);
+       set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
+    }
+
+    if(G->CO->Visited[cp_AddressBook] || G->CO->UpdateAll)
+       AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
+
+    if(G->CO->Visited[cp_LookFeel] || G->CO->UpdateAll)
+    {
+      // First we set the PG_MAILLIST and NL_FOLDER Quiet
+      set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     TRUE);
+      set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
+
+      // Now we reorder the Maingroup accordingly to the InfoBar setting
+      MA_SortWindow();
+
+      // Now we update the InfoBar because the text could have been changed
+      DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, FO_GetCurrentFolder());
+
+      // we signal the mainwindow that it may check whether to include the
+      // quicksearchbar or not
+      MA_SetupQuickSearchBar();
+
+      // we signal the mainwindow that it may check whether to include the
+      // embedded read pane part or not
+      MA_SetupEmbeddedReadPane();
+
+      // Make sure to save the GUI layout before continuing
+      SaveLayout(FALSE);
+
+      // Now we give the control back to the NLists
+      set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     FALSE);
+      set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
+
+      // and to not let the embedded read pane be empty when it is newly created
+      // we have to make sure the actual selected mail is loaded
+      if(C->EmbeddedReadPane)
         MA_ChangeSelected(TRUE);
+    }
 
-        // now we also have to update the Spam controls of our various
-        // window toolbars
-        DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
+    if(G->CO->Visited[cp_Mixed] || G->CO->UpdateAll)
+    {
+      // in case the DockyIcon should be enabled we have reregister YAM
+      // to application library for the DockyIcon to reappear
+      #if defined(__amigaos4__)
+      if(G->applicationID && C->DockyIcon == TRUE)
+      {
+        struct ApplicationIconInfo aii;
 
-        // update the read windows' toolbar, too
-        if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+        GetApplicationAttrs(G->applicationID,
+                            APPATTR_IconType, (uint32)&aii,
+                            TAG_DONE);
+
+        // if the iconType is currently none,
+        // we have to unregister and register YAM again to
+        // application.library
+        if(aii.iconType == APPICONT_None)
         {
-          // search through our ReadDataList
-          struct MinNode *curNode;
+          UnregisterApplication(G->applicationID, TAG_DONE);
 
-          for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-          {
-            struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+          aii.iconType = APPICONT_CustomIcon;
+          aii.info.customIcon = G->HideIcon;
 
-            // just obey open read windows with a valid mail pointer
-            if(rmData->readWindow != NULL && rmData->mail != NULL)
-            {
-              // use PushMethod for the case the read window modifies we list we are currently walking through
-              DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ReadMail, rmData->mail);
-              DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 1, MUIM_ReadWindow_UpdateSpamControls, rmData->mail);
-            }
-          }
+          // register YAM to application.library
+          G->applicationID = RegisterApplication("YAM",
+                                                 REGAPP_URLIdentifier, "yam.ch",
+                                                 REGAPP_AppIconInfo,   (uint32)&aii,
+                                                 REGAPP_Hidden,        xget(G->App, MUIA_Application_Iconified),
+                                                 TAG_DONE);
+
+          D(DBF_STARTUP, "reregistered YAM to application as appId: %ld", G->applicationID);
         }
       }
+      #endif
 
-      if(G->CO->Visited[cp_Write] || G->CO->UpdateAll)
+      // setup the appIcon positions and display all statistics
+      // accordingly.
+      DisplayStatistics((struct Folder *)-1, TRUE);
+
+      // make sure we remove an eventually existing DockyIcon
+      #if defined(__amigaos4__)
+      if(G->applicationID && C->DockyIcon == FALSE)
       {
-        // requeue the timerequest for the AutoSave interval
-        TC_Restart(TIO_AUTOSAVE, co->AutoSave, 0);
+        struct ApplicationIconInfo aii;
+
+        aii.iconType = APPICONT_None;
+        aii.info.customIcon = NULL;
+
+        SetApplicationAttrs(G->applicationID,
+                            APPATTR_IconType, (uint32)&aii,
+                            TAG_DONE);
       }
+      #endif
+    }
 
-      if(G->CO->Visited[cp_Lists] || G->CO->UpdateAll)
-      {
-         // First we set the PG_MAILLIST and NL_FOLDER Quiet
-         set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     TRUE);
-         set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
+    if(G->CO->Visited[cp_Update] || G->CO->UpdateAll)
+    {
+      // make sure we reinit the update check timer
+      InitUpdateCheck(FALSE);
+    }
 
-         // Modify the ContextMenu flags
-         set(G->MA->GUI.PG_MAILLIST,MUIA_ContextMenu, C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
-         set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
+    // make sure the dynamic menus of the main window
+    // is properly refreshed.
+    MA_SetupDynamicMenus();
+  }
 
-         SaveLayout(FALSE);
-         MA_MakeFOFormat(G->MA->GUI.NL_FOLDERS);
-         DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_MakeFormat);
-         LoadLayout();
+  // if some items have modified the config we do save it again.
+  if(saveAtEnd == TRUE)
+     CO_SaveConfig(co, G->CO_PrefsFile);
 
-         // Now we give the control back to the NLists
-         set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     FALSE);
-         set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
-      }
-
-      if(G->CO->Visited[cp_AddressBook] || G->CO->UpdateAll)
-         AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
-
-      if(G->CO->Visited[cp_LookFeel] || G->CO->UpdateAll)
-      {
-        // First we set the PG_MAILLIST and NL_FOLDER Quiet
-        set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     TRUE);
-        set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
-
-        // Now we reorder the Maingroup accordingly to the InfoBar setting
-        MA_SortWindow();
-
-        // Now we update the InfoBar because the text could have been changed
-        DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, FO_GetCurrentFolder());
-
-        // we signal the mainwindow that it may check whether to include the
-        // quicksearchbar or not
-        MA_SetupQuickSearchBar();
-
-        // we signal the mainwindow that it may check whether to include the
-        // embedded read pane part or not
-        MA_SetupEmbeddedReadPane();
-
-        // Make sure to save the GUI layout before continuing
-        SaveLayout(FALSE);
-
-        // Now we give the control back to the NLists
-        set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     FALSE);
-        set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
-
-        // and to not let the embedded read pane be empty when it is newly created
-        // we have to make sure the actual selected mail is loaded
-        if(C->EmbeddedReadPane)
-          MA_ChangeSelected(TRUE);
-      }
-
-      if(G->CO->Visited[cp_Mixed] || G->CO->UpdateAll)
-      {
-        // in case the DockyIcon should be enabled we have reregister YAM
-        // to application library for the DockyIcon to reappear
-        #if defined(__amigaos4__)
-        if(G->applicationID && C->DockyIcon == TRUE)
-        {
-          struct ApplicationIconInfo aii;
-
-          GetApplicationAttrs(G->applicationID,
-                              APPATTR_IconType, (uint32)&aii,
-                              TAG_DONE);
-
-          // if the iconType is currently none,
-          // we have to unregister and register YAM again to
-          // application.library
-          if(aii.iconType == APPICONT_None)
-          {
-            UnregisterApplication(G->applicationID, TAG_DONE);
-
-            aii.iconType = APPICONT_CustomIcon;
-            aii.info.customIcon = G->HideIcon;
-
-            // register YAM to application.library
-            G->applicationID = RegisterApplication("YAM",
-                                                   REGAPP_URLIdentifier, "yam.ch",
-                                                   REGAPP_AppIconInfo,   (uint32)&aii,
-                                                   REGAPP_Hidden,        xget(G->App, MUIA_Application_Iconified),
-                                                   TAG_DONE);
-
-            D(DBF_STARTUP, "reregistered YAM to application as appId: %ld", G->applicationID);
-          }
-        }
-        #endif
-
-        // setup the appIcon positions and display all statistics
-        // accordingly.
-        DisplayStatistics((struct Folder *)-1, TRUE);
-
-        // make sure we remove an eventually existing DockyIcon
-        #if defined(__amigaos4__)
-        if(G->applicationID && C->DockyIcon == FALSE)
-        {
-          struct ApplicationIconInfo aii;
-
-          aii.iconType = APPICONT_None;
-          aii.info.customIcon = NULL;
-
-          SetApplicationAttrs(G->applicationID,
-                              APPATTR_IconType, (uint32)&aii,
-                              TAG_DONE);
-        }
-        #endif
-      }
-
-      if(G->CO->Visited[cp_Update] || G->CO->UpdateAll)
-      {
-        // make sure we reinit the update check timer
-        InitUpdateCheck(FALSE);
-      }
-
-      // make sure the dynamic menus of the main window
-      // is properly refreshed.
-      MA_SetupDynamicMenus();
-   }
-
-   // if some items have modified the config we do save it again.
-   if(saveAtEnd == TRUE)
-      CO_SaveConfig(co, G->CO_PrefsFile);
-
-   LEAVE();
+  LEAVE();
 }
 
 ///

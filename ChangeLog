@@ -7,6 +7,8 @@ $URL$
 
 2007-05-09  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c: added a safety check to the status change delay. Value outside the
+    range of 1 to 10 seconds are limited accordingly.
   * AddrBookListtree.c: applied similar changes to the address book listtree as
     before to the main folder listtree. This change makes the tree scrollable
     again while dragging user entries.
