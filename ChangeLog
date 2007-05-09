@@ -7,6 +7,9 @@ $URL$
 
 2007-05-09  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AddrBookListtree.c: applied similar changes to the address book listtree as
+    before to the main folder listtree. This change makes the tree scrollable
+    again while dragging user entries.
   * YAM.c: in case YAM is running with workbench.library V43 or earlier the
     am_Class field of an AppMessage may contain garbage data which could prevent
     YAM from poping up its window when the AppIcon is double clicked or a file

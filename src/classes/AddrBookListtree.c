@@ -79,36 +79,6 @@ OVERLOAD(OM_DISPOSE)
 }
 
 ///
-/// OVERLOAD(MUIM_DragReport)
-// we catch MUIM_DragReport because we want to restrict some
-// dragging for some special objects
-OVERLOAD(MUIM_DragReport)
-{
-  struct MUIP_DragReport *dr = (struct MUIP_DragReport *)msg;
-  struct MUI_NListtree_TestPos_Result res;
-  struct MUI_NListtree_TreeNode *tn;
-
-  DoMethod(obj, MUIM_NListtree_TestPos, dr->x, dr->y, &res);
-
-  if((tn = res.tpr_TreeNode))
-  {
-    struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
-
-    // If we drag an ABEntry on another ABEntry we abort the
-    // DragReport immediately because we want to support drag operations
-    // between ABEntry elements and groups
-    // is allowed
-    if(entry->Type != AET_GROUP && res.tpr_Type == MUIV_NListtree_TestPos_Result_Onto)
-        return(MUIV_DragReport_Abort);
-
-    // to rescue the dropping we call the SuperMethod now
-    return(DoSuperMethodA(cl, obj, msg));
-  }
-
-  return(MUIV_DragReport_Abort);
-}
-
-///
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)
 {
@@ -140,7 +110,40 @@ OVERLOAD(MUIM_DragDrop)
 }
 
 ///
+/// OVERLOAD(MUIM_NListtree_DropType)
+OVERLOAD(MUIM_NListtree_DropType)
+{
+  struct MUIP_NListtree_DropType *dt = (struct MUIP_NListtree_DropType *)msg;
+  struct MUI_NListtree_TreeNode *tn;
+
+  ENTER();
+
+  // determine the entry under the mouse pointer
+  if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, *dt->Pos, MUIV_NListtree_GetEntry_Flag_Visible)) != NULL)
+  {
+    struct ABEntry *entry;
+
+    if((entry = (struct ABEntry *)tn->tn_User) != NULL)
+    {
+      // If we drag an ABEntry on another ABEntry we abort the
+      // DragReport immediately because we want to support drag operations
+      // between ABEntry elements and groups is allowed
+      if(*dt->Type == MUIV_NListtree_DropType_Onto && entry->Type != AET_GROUP)
+         *dt->Type = MUIV_NListtree_DropType_None;
+    }
+    else
+      *dt->Type = MUIV_NListtree_DropType_None;
+  }
+  else
+    *dt->Type = MUIV_NListtree_DropType_None;
+
+  RETURN(0);
+  return 0;
+}
+
+///
 
 /* Private Functions */
 
 /* Public Methods */
+
