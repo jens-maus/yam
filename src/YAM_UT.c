@@ -4967,20 +4967,6 @@ char ShortCut(const char *label)
   return scut;
 }
 ///
-/// RemoveCut
-//  Removes shortcut character from text label
-#if 0
-static char *RemoveCut(char *label)
-{
-   static char lab[SIZE_DEFAULT];
-   char *p;
-
-   for (p = lab; *label; label++) if (*label != '_') *p++ = *label;
-   *p = 0;
-   return lab;
-}
-#endif
-///
 /// MakeCycle
 //  Creates a MUI cycle object
 Object *MakeCycle(const char **labels, const char *label)
@@ -5981,13 +5967,17 @@ void DisplayAppIconStatistics(void)
     //     issue (old: "struct FileLock *"; new: "BPTR")
     if(C->WBAppIcon)
     {
-      dobj->do_CurrentX = C->FreeIconPositionX ? (LONG)NO_ICON_POSITION : C->IconPositionX;
-      dobj->do_CurrentY = C->FreeIconPositionY ? (LONG)NO_ICON_POSITION : C->IconPositionY;
-      G->AppIcon = AddAppIcon(0, 0, apptit, G->AppPort, 0, dobj, WBAPPICONA_SupportsOpen, TRUE,
-                                                                 WBAPPICONA_SupportsSnapshot, TRUE,
+      // set the icon position
+      dobj->do_CurrentX = C->IconPositionX <= 0 ? (LONG)NO_ICON_POSITION : C->IconPositionX;
+      dobj->do_CurrentY = C->IconPositionY <= 0 ? (LONG)NO_ICON_POSITION : C->IconPositionY;
+
+      // add the AppIcon accordingly. Here we use v44+ tags, however older
+      // workbench versions should perfectly ignore them.
+      G->AppIcon = AddAppIcon(0, 0, apptit, G->AppPort, 0, dobj, WBAPPICONA_SupportsOpen,       TRUE,
+                                                                 WBAPPICONA_SupportsSnapshot,   TRUE,
                                                                  WBAPPICONA_SupportsUnSnapshot, TRUE,
                                                                  WBAPPICONA_SupportsEmptyTrash, TRUE,
-                                                                 WBAPPICONA_PropagatePosition, TRUE,
+                                                                 WBAPPICONA_PropagatePosition,  TRUE,
                                                                  TAG_DONE);
       SHOWVALUE(DBF_GUI, G->AppIcon);
     }

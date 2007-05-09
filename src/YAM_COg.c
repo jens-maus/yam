@@ -39,6 +39,7 @@
 #include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
+#include <proto/wb.h>
 #include <proto/xpkmaster.h>
 
 #if !defined(__amigaos4__)
@@ -1397,36 +1398,29 @@ HOOKPROTONHNONP(CO_DelPOP3, void)
 MakeStaticHook(CO_DelPOP3Hook,CO_DelPOP3);
 
 ///
-/// CO_AppIconHook
-// ghost some GUI elements whenever the AppIcon checkmark is toggled
-HOOKPROTONHNO(CO_AppIconFunc, void, int *active)
+/// GetAppIconPos
+// Retrieves the position x/y of the AppIcon and
+// sets the position label accordingly
+HOOKPROTONHNONP(GetAppIconPos, void)
 {
-  struct CO_GUIData *gui = &G->CO->GUI;
-
   ENTER();
 
-  if(*active)
+  if(G->CurrentDiskObj != NULL)
   {
-    DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, FALSE, gui->ST_APPICON,
-                                                          gui->CH_FREE_ICON_POS_X,
-                                                          gui->CH_FREE_ICON_POS_Y,
-                                                          NULL);
-    set(gui->ST_APPX, MUIA_Disabled, GetMUICheck(gui->CH_FREE_ICON_POS_X));
-    set(gui->ST_APPY, MUIA_Disabled, GetMUICheck(gui->CH_FREE_ICON_POS_Y));
-  }
-  else
-  {
-    DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, gui->ST_APPX,
-                                                         gui->ST_APPY,
-                                                         gui->ST_APPICON,
-                                                         gui->CH_FREE_ICON_POS_X,
-                                                         gui->CH_FREE_ICON_POS_Y,
-                                                         NULL);
+    struct CO_GUIData *gui = &G->CO->GUI;
+
+    // set the position
+    set(gui->ST_APPX, MUIA_String_Integer, G->CurrentDiskObj->do_CurrentX);
+    set(gui->ST_APPY, MUIA_String_Integer, G->CurrentDiskObj->do_CurrentY);
+
+    // enable the checkbox
+    setcheckmark(gui->CH_APPICONPOS, TRUE);
   }
 
   LEAVE();
 }
-MakeStaticHook(CO_AppIconHook, CO_AppIconFunc);
+MakeStaticHook(GetAppIconPosHook, GetAppIconPos);
+
 ///
 
 /*** Pages ***/
@@ -3234,22 +3228,43 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 
                   Child, HSpace(0),
                   Child, ColGroup(2),
-                    Child, Label2(tr(MSG_CO_PositionX)),
-                    Child, HGroup,
-                      Child, data->GUI.ST_APPX = MakeInteger(4, "_X"),
-                      Child, data->GUI.CH_FREE_ICON_POS_X = MakeCheck(tr(MSG_CO_FREE_ICON_POSITION)),
-                      Child, Label1(tr(MSG_CO_FREE_ICON_POSITION)),
-//                      Child, MakeCheckGroup((Object **)&data->GUI.CH_FREE_ICON_POS_X, tr(MSG_CO_FREE_ICON_POSITION)),
-                    End,
-                    Child, Label2(tr(MSG_CO_PositionY)),
-                    Child, HGroup,
-                      Child, data->GUI.ST_APPY = MakeInteger(4, "_Y"),
-                      Child, data->GUI.CH_FREE_ICON_POS_Y = MakeCheck(tr(MSG_CO_FREE_ICON_POSITION)),
-                      Child, Label1(tr(MSG_CO_FREE_ICON_POSITION)),
-//                      Child, MakeCheckGroup((Object **)&data->GUI.CH_FREE_ICON_POS_Y, tr(MSG_CO_FREE_ICON_POSITION)),
-                    End,
+
                     Child, Label2(tr(MSG_CO_APPICONTEXT)),
                     Child, MakeVarPop(&data->GUI.ST_APPICON, VPM_MAILSTATS, SIZE_DEFAULT/2, tr(MSG_CO_APPICONTEXT)),
+
+                    Child, HGroup,
+                      Child, data->GUI.CH_APPICONPOS = MakeCheck(tr(MSG_CO_PositionX)),
+                      Child, Label2(tr(MSG_CO_PositionX)),
+                    End,
+                    Child, HGroup,
+                      Child, data->GUI.ST_APPX = BetterStringObject,
+                        StringFrame,
+                        MUIA_CycleChain,          TRUE,
+                        MUIA_ControlChar,         ShortCut("_X"),
+                        MUIA_FixWidthTxt,         "0000",
+                        MUIA_String_MaxLen,       4+1,
+                        MUIA_String_AdvanceOnCR,  TRUE,
+                        MUIA_String_Integer,      0,
+                        MUIA_String_Accept,       "0123456789",
+                      End,
+                      Child, Label2("_Y"),
+                      Child, HGroup,
+                        MUIA_Group_Spacing, 1,
+                        Child, data->GUI.ST_APPY = BetterStringObject,
+                          StringFrame,
+                          MUIA_CycleChain,          TRUE,
+                          MUIA_ControlChar,         ShortCut("_Y"),
+                          MUIA_FixWidthTxt,         "0000",
+                          MUIA_String_MaxLen,       4+1,
+                          MUIA_String_AdvanceOnCR,  TRUE,
+                          MUIA_String_Integer,      0,
+                          MUIA_String_Accept,       "0123456789",
+                        End,
+                        Child, data->GUI.BT_APPICONGETPOS = PopButton(MUII_PopUp),
+                      End,
+                      Child, HSpace(0),
+                    End,
+
                   End,
                 End,
                 Child, MakeCheckGroup((Object **)&data->GUI.CH_DOCKYICON, tr(MSG_CO_DOCKYICON)),
@@ -3298,6 +3313,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_WBAPPICON ,MSG_HELP_CO_CH_WBAPPICON );
     SetHelp(data->GUI.ST_APPX      ,MSG_HELP_CO_ST_APP       );
     SetHelp(data->GUI.ST_APPY      ,MSG_HELP_CO_ST_APP       );
+    SetHelp(data->GUI.CH_APPICONPOS,MSG_HELP_CO_ST_APP       );
     SetHelp(data->GUI.CH_DOCKYICON ,MSG_HELP_CO_CH_DOCKYICON );
     SetHelp(data->GUI.CH_CLGADGET  ,MSG_HELP_CO_CH_CLGADGET  );
     SetHelp(data->GUI.CH_CONFIRM   ,MSG_HELP_CO_CH_CONFIRM   );
@@ -3309,11 +3325,11 @@ Object *CO_PageMixed(struct CO_ClassData *data)
     SetHelp(data->GUI.NB_PACKER    ,MSG_HELP_CO_NB_ENCPACK   );
     SetHelp(data->GUI.ST_ARCHIVER  ,MSG_HELP_CO_ST_ARCHIVER  );
     SetHelp(data->GUI.ST_APPICON   ,MSG_HELP_CO_ST_APPICON   );
+    SetHelp(data->GUI.BT_APPICONGETPOS, MSG_HELP_CO_BT_APPICONGETPOS);
 
-    DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, data->GUI.CH_FREE_ICON_POS_X, data->GUI.CH_FREE_ICON_POS_Y, NULL);
-    DoMethod(data->GUI.CH_WBAPPICON, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_AppIconHook, MUIV_TriggerValue);
-    DoMethod(data->GUI.CH_FREE_ICON_POS_X, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.ST_APPX, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
-    DoMethod(data->GUI.CH_FREE_ICON_POS_Y, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.ST_APPY, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
+    DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, NULL);
+    DoMethod(data->GUI.CH_WBAPPICON, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Application, 9, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, data->GUI.CH_APPICONPOS, data->GUI.BT_APPICONGETPOS, NULL);
+    DoMethod(data->GUI.BT_APPICONGETPOS, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &GetAppIconPosHook);
 
     #if defined(__amigaos4__)
     if(G->applicationID == 0)

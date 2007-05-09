@@ -5033,14 +5033,14 @@ MSG_BUSY_SEARCHINGFOLDER (1599//)
 Searching for messages in folder '%s'...
 ; FOLDERNAME
 MSG_CO_WBAPPICON (1600//)
-AppIcon on workbench
+A_ppIcon on workbench
 ;
 MSG_HELP_CO_CH_WBAPPICON (1601//)
 If checked, displays an AppIcon on the Workbench\n\
 with folder statistics.
 ;
 MSG_CO_DOCKYICON (1602//)
-DockyIcon
+D_ockyIcon
 ;
 MSG_HELP_CO_CH_DOCKYICON (1603//)
 If enabled, a docky icon is displayed through\n\
@@ -6212,12 +6212,12 @@ parts of an 'multipart/alternative' mail will be\n\
 shown as attachments.
 ;
 MSG_US_DIRECTORY_DOESNT_EXIST (1928//)
-Mail directory '%s' of user '%s' does not exist.\n\
+The mail directory '%s' of user '%s' does not exist.\n\
+\n\
 Do you want to create it?
 ;
-MSG_CO_PositionY (1929//)
-Position _Y
-;
-MSG_CO_FREE_ICON_POSITION (1930//)
-free
+MSG_HELP_CO_BT_APPICONGETPOS (1929//)
+If pressed, the AppIcon position is retrieved from\n\
+the current position of the AppIcon on the workbench\n\
+desktop.
 ;

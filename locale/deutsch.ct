@@ -5548,7 +5548,7 @@ Text, welcher mit dem\nAppIcon dargestellt wird.
 ; as the label of the AppIcon
 ;
 MSG_CO_APPICONTEXT
-Ap_pIcon Text
+Bes_chriftung
 ; _Label
 ;
 MSG_CO_NEWMSGS
@@ -6460,14 +6460,14 @@ MSG_BUSY_SEARCHINGFOLDER
 Suche Nachrichten im Postfach '%s'...
 ; FOLDERNAME
 MSG_CO_WBAPPICON
-AppIcon auf der Workbench
+A_ppIcon auf der Workbench
 ;
 MSG_HELP_CO_CH_WBAPPICON
 Wenn ausgewählt, zeigt ein AppIcon auf der\n\
 Workbench an das Statistiken anzeigt.
 ;
 MSG_CO_DOCKYICON
-DockyIcon
+_DockyIcon
 ;
 MSG_HELP_CO_CH_DOCKYICON
 Wenn ausgewählt, zeigt mit Hilfe der application.library\n\
@@ -7654,12 +7654,12 @@ verborgenen alternativen Teile einer\n\
 angezeigt.
 ;
 MSG_US_DIRECTORY_DOESNT_EXIST
-Das Postverzeichnis '%s' von Benutzer '%s' existiert nicht.\n\
+Das Postverzeichnis '%s' von Benutzer '%s' existiert\n\
+nicht.\n\
+\n\
 Wollen Sie es erstellen?
 ;
-MSG_CO_PositionY
-Position _Y
-;
-MSG_CO_FREE_ICON_POSITION
-frei
+MSG_HELP_CO_BT_APPICONGETPOS
+Wenn ausgewählt, wird die aktuelle Position des\n\
+AppIcons auf der Workbench als permanent angesehen.
 ;

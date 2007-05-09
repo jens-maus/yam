@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-09  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, YAM_CO.c, YAM_COg.c, YAM_CO.s: revised the recently introduced
+    AppMessage catching from workbench.library to be somewhat more compatible
+    to older workbench.library versions. In addition, the configuration GUI
+    now contains only one single config line for changing the X/Y position
+    of the icon as well as a new button that will automatically query the
+    current position of the AppIcon and put it into the corresponding gadgets
+    automatically.
+  * icons/YAM.info: added a new main default YAM .info icon to the repository.
+    This will be the new official application icon of YAM.
+
 2007-05-09  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: a modified status change delay is now saved, too.

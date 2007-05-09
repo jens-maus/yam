@@ -2930,9 +2930,22 @@ int main(int argc, char **argv)
               {
                 if(apmsg->am_Type == AMTYPE_APPICON)
                 {
-                  switch(apmsg->am_Class)
+                  ULONG action = AMCLASSICON_Open;
+
+                  // now we catch the am_Class member of the APPICON message
+                  // which will be set by workbench.library v44+. However,
+                  // older workbench versions doesn't seem to have the Class
+                  // member and may have it uninitialized, therefore we
+                  // check here for the v44+ workbench
+                  if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
+                    action = apmsg->am_Class;
+
+                  // check the action
+                  switch(action)
                   {
-                    default:
+                    // user has pressed "Open" or double-clicked on the
+                    // AppIcon, so we popup YAM and eventually load the
+                    // drag&dropped file into a new write window.
                     case AMCLASSICON_Open:
                     {
                       // bring all windows of YAM to front.
@@ -2972,29 +2985,48 @@ int main(int argc, char **argv)
                     }
                     break;
 
+                    // user has pressed "Snapshot" on the AppIcon
                     case AMCLASSICON_Snapshot:
                     {
                       if(G->CurrentDiskObj != NULL)
                       {
-                        // just remember the position, but don't save the configuration as this might save other
-                        // options which should not be saved yet.
+                        // remember the position.
                         C->IconPositionX = G->CurrentDiskObj->do_CurrentX;
                         C->IconPositionY = G->CurrentDiskObj->do_CurrentY;
-                        C->FreeIconPositionX = FALSE;
-                        C->FreeIconPositionY = FALSE;
+
+                        // we also save the configuration here, even if that
+                        // will trigger that other configurations will
+                        // be saved as well. However, such a snapshot action
+                        // is done very rarely and the user would definitly
+                        // expect that the position will be saved immediately.
+                        CO_SaveConfig(C, G->CO_PrefsFile);
                       }
                     }
                     break;
 
+                    // user has pressed "UnSnapshot" on the AppIcon
                     case AMCLASSICON_UnSnapshot:
                     {
-                      // set the new position to "none" and update the AppIcon
-                      C->FreeIconPositionX = TRUE;
-                      C->FreeIconPositionY = TRUE;
+                      // for unsnapshotting the icon position we negate the
+                      // IconPosition values. So negative values mean they
+                      // are disabled.
+                      C->IconPositionX = -abs(C->IconPositionX);
+                      C->IconPositionY = -abs(C->IconPositionY);
+
+                      // we also save the configuration here, even if that
+                      // will trigger that other configurations will
+                      // be saved as well. However, such a snapshot action
+                      // is done very rarely and the user would definitly
+                      // expect that the position will be saved immediately.
+                      CO_SaveConfig(C, G->CO_PrefsFile);
+
+                      // refresh the AppIcon
                       DisplayAppIconStatistics();
                     }
                     break;
 
+                    // user has pressed "Empty Trash" on the AppIcon,
+                    // so we go and empty the trash folder accordingly.
                     case AMCLASSICON_EmptyTrash:
                     {
                       // empty the "deleted" folder
