@@ -2129,11 +2129,16 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
       if(len > 0 && strnicmp(serverResponse, "HTTP/", 5) == 0 &&
          (p = strchr(serverResponse, ' ')) != NULL && atoi(TrimStart(p)) == 200)
       {
+        ULONG contentLength = 0;
+
         // we can request all further lines from our socket
         // until we reach the entity body
         while(G->Error == FALSE &&
               (len = TR_ReadLine(G->TR_Socket, serverResponse, SIZE_LINE)) > 0)
         {
+          if(strnicmp(serverResponse, "Content-Length:", 15) == 0)
+            contentLength = atoi(TrimStart(&serverResponse[15]));
+
           // if we are still scanning for the end of the
           // response header we go on searching for the empty '\r\n' line
           if(strcmp(serverResponse, "\r\n") == 0)
@@ -2143,11 +2148,13 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
             // prepare the output file.
             if((out = fopen(filename, "w")) != NULL)
             {
+              ULONG retrieved = 0;
+
               setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
               // we seem to have reached the entity body, so
               // we can write the rest out immediately.
-              while(G->Error == FALSE &&
+              while(G->Error == FALSE && (contentLength == 0 || retrieved < contentLength) &&
                     (len = TR_Recv(serverResponse, SIZE_LINE)) > 0)
               {
                 if(fwrite(serverResponse, len, 1, out) == 1)
@@ -2157,6 +2164,8 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
                   result = FALSE;
                   break;
                 }
+
+                retrieved += len;
               }
 
               fclose(out);

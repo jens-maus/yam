@@ -7,6 +7,13 @@ $URL$
 
 2007-05-10  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c: the TR_DownloadURL() function will now respect the
+    "Content-Length:" header which is sent with a server response to a HTTP
+    request. If then the amount of specified content was received we will
+    immediately quit the HTTP download and not wait until the HTTP drops the
+    connection. This should e.g. lower the amount of time an UpdateCheck
+    requires as otherwise we are waiting for a timeout even if we have
+    received all necessary data.
   * YAM_CO.c, YAM_COs.c: if 0/0 should really be an accepted value for
     positioning the AppIcon, then other checks had to be changed as well. In
     addition the default value for the AppIcon position will now be set to
