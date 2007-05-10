@@ -39,6 +39,9 @@ struct Data
   Object *Matchwindow;                //, *Matchlist;
   Object *From, *ReplyTo;             // used when resolving a list address
   STRPTR CurrentRecipient;
+  ULONG bufferPos;
+  ULONG selectSize;
+  BOOL isActive;
   BOOL MultipleRecipients;
   BOOL ResolveOnCR;
   BOOL AdvanceOnCR;                    // we have to save this attribute ourself because Betterstring.mcc is buggy.
@@ -321,6 +324,9 @@ OVERLOAD(MUIM_GoActive)
 
   ENTER();
 
+  // remember the active state
+  data->isActive = TRUE;
+
   DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
   result = DoSuperMethodA(cl, obj, msg);
 
@@ -342,6 +348,12 @@ OVERLOAD(MUIM_GoInactive)
   // this object
   if(!xget(data->Matchwindow, MUIA_Window_Activate))
     set(data->Matchwindow, MUIA_Window_Open, FALSE);
+
+  // remember the current selection before our superclass deletes these values because of going inactive
+  data->bufferPos = xget(obj, MUIA_String_BufferPos);
+  data->selectSize = xget(obj, MUIA_BetterString_SelectSize);
+  // remember the inactive state
+  data->isActive = FALSE;
 
   result = DoSuperMethodA(cl, obj, msg);
 
@@ -825,6 +837,7 @@ DECLARE(CurrentRecipient)
 /// DECLARE(ReplaceSelected)
 DECLARE(ReplaceSelected) // char *address
 {
+  GETDATA;
   char *new_address = msg->address;
   char *old;
   char *ptr;
@@ -833,6 +846,17 @@ DECLARE(ReplaceSelected) // char *address
   long len;
 
   ENTER();
+
+  if(data->isActive == FALSE && data->selectSize != 0)
+  {
+    // The user has clicked with the mouse in the match list the string object has gone inactive before
+    // which deleted the formerly marked block. This block must be restored as it will be replaced here.
+    SetAttrs(obj, MUIA_String_BufferPos, data->bufferPos,
+                  MUIA_BetterString_SelectSize, data->selectSize,
+                  TAG_DONE);
+    // forget the remembered selection size again
+    data->selectSize = 0;
+  }
 
   // we first have to clear the selected area
   DoMethod(obj, MUIM_BetterString_ClearSelected);
@@ -856,7 +880,6 @@ DECLARE(ReplaceSelected) // char *address
 
     start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
   }
-
   pos = xget(obj, MUIA_String_BufferPos);
 
   DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
@@ -869,3 +892,4 @@ DECLARE(ReplaceSelected) // char *address
   return 0;
 }
 ///
+

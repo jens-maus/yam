@@ -23,6 +23,13 @@ $URL$
 
 2007-05-10  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Recipientstring.c: if any entry in the attached address match list was
+    selected with the mouse instead of keyboard the string replacement failed,
+    because the address match list has its own window. Clicking inside another
+    window made the recipient string going inactive and unmarking the selection
+    which in sequence just inserted the new address instead of replacing the
+    formerly selected part. Now a marked part is remebered before going inactive
+    and restored before the replace operation.
   * Addrmatchlist.c: minor optimizations.
   * YAM_UT.c: the position 0/0 for an icon is valid in any case, only negative
     values must be converted to a "free" position.
