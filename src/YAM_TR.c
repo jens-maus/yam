@@ -2129,44 +2129,47 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
       if(len > 0 && strnicmp(serverResponse, "HTTP/", 5) == 0 &&
          (p = strchr(serverResponse, ' ')) != NULL && atoi(TrimStart(p)) == 200)
       {
-        ULONG contentLength = 0;
+        LONG contentLength = -1; // -1 means no Content-Length found
 
         // we can request all further lines from our socket
         // until we reach the entity body
         while(G->Error == FALSE &&
               (len = TR_ReadLine(G->TR_Socket, serverResponse, SIZE_LINE)) > 0)
         {
+          // RFC 2616 section 4.4 requires Content-Length:
           if(strnicmp(serverResponse, "Content-Length:", 15) == 0)
             contentLength = atoi(TrimStart(&serverResponse[15]));
 
           // if we are still scanning for the end of the
           // response header we go on searching for the empty '\r\n' line
-          if(strcmp(serverResponse, "\r\n") == 0)
+          if(contentLength >= 0 && strcmp(serverResponse, "\r\n") == 0)
           {
             FILE *out;
 
             // prepare the output file.
             if((out = fopen(filename, "w")) != NULL)
             {
-              ULONG retrieved = 0;
+              LONG retrieved = 0;
 
               setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
               // we seem to have reached the entity body, so
               // we can write the rest out immediately.
-              while(G->Error == FALSE && (contentLength == 0 || retrieved < contentLength) &&
+              while(G->Error == FALSE && retrieved < contentLength &&
                     (len = TR_Recv(serverResponse, SIZE_LINE)) > 0)
               {
-                if(fwrite(serverResponse, len, 1, out) == 1)
-                  result = TRUE;
-                else
+                if(fwrite(serverResponse, len, 1, out) != 1)
                 {
-                  result = FALSE;
+                  retrieved = -1; // signal an error!
                   break;
                 }
 
                 retrieved += len;
               }
+
+              // check if we retrieved everything required
+              if(retrieved >= contentLength)
+                result = TRUE;
 
               fclose(out);
             }

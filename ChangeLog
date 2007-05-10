@@ -7,6 +7,8 @@ $URL$
 
 2007-05-10  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c: slightly reworked the TR_DownloadURL() once more to be somewhat
+    more compatible to RFC2616 and the "Content-Length:" usage.
   * YAM_TR.c: the TR_DownloadURL() function will now respect the
     "Content-Length:" header which is sent with a server response to a HTTP
     request. If then the amount of specified content was received we will
