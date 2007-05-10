@@ -5968,8 +5968,8 @@ void DisplayAppIconStatistics(void)
     if(C->WBAppIcon)
     {
       // set the icon position
-      dobj->do_CurrentX = C->IconPositionX <= 0 ? (LONG)NO_ICON_POSITION : C->IconPositionX;
-      dobj->do_CurrentY = C->IconPositionY <= 0 ? (LONG)NO_ICON_POSITION : C->IconPositionY;
+      dobj->do_CurrentX = C->IconPositionX < 0 ? (LONG)NO_ICON_POSITION : C->IconPositionX;
+      dobj->do_CurrentY = C->IconPositionY < 0 ? (LONG)NO_ICON_POSITION : C->IconPositionY;
 
       // add the AppIcon accordingly. Here we use v44+ tags, however older
       // workbench versions should perfectly ignore them.
