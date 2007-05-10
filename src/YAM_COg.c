@@ -3327,7 +3327,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
     SetHelp(data->GUI.ST_APPICON   ,MSG_HELP_CO_ST_APPICON   );
     SetHelp(data->GUI.BT_APPICONGETPOS, MSG_HELP_CO_BT_APPICONGETPOS);
 
-    DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, NULL);
+    DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, data->GUI.BT_APPICONGETPOS, NULL);
     DoMethod(data->GUI.CH_WBAPPICON, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Application, 9, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, data->GUI.CH_APPICONPOS, data->GUI.BT_APPICONGETPOS, NULL);
     DoMethod(data->GUI.BT_APPICONGETPOS, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &GetAppIconPosHook);
 

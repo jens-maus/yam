@@ -2228,17 +2228,17 @@ void CO_SetConfig(void)
         set(gui->ST_APPX, MUIA_String_Integer, abs(CE->IconPositionX));
         set(gui->ST_APPY, MUIA_String_Integer, abs(CE->IconPositionY));
         setcheckmark(gui->CH_APPICONPOS, CE->IconPositionX > 0 && CE->IconPositionY > 0);
-        setstring   (gui->ST_APPICON   ,CE->AppIconText);
-        setcheckmark(gui->CH_DOCKYICON ,CE->DockyIcon);
-        setcheckmark(gui->CH_CLGADGET  ,CE->IconifyOnQuit);
-        setcheckmark(gui->CH_CONFIRM   ,CE->Confirm);
-        setslider   (gui->NB_CONFIRMDEL,CE->ConfirmDelete);
-        setcheckmark(gui->CH_REMOVE    ,CE->RemoveAtOnce);
-        set(gui->TX_PACKER , MUIA_Text_Contents, CE->XPKPack);
+        setstring(gui->ST_APPICON, CE->AppIconText);
+        setcheckmark(gui->CH_DOCKYICON, CE->DockyIcon);
+        setcheckmark(gui->CH_CLGADGET, CE->IconifyOnQuit);
+        setcheckmark(gui->CH_CONFIRM, CE->Confirm);
+        setslider(gui->NB_CONFIRMDEL, CE->ConfirmDelete);
+        setcheckmark(gui->CH_REMOVE, CE->RemoveAtOnce);
+        set(gui->TX_PACKER, MUIA_Text_Contents, CE->XPKPack);
         set(gui->TX_ENCPACK, MUIA_Text_Contents, CE->XPKPackEncrypt);
-        setslider   (gui->NB_PACKER    ,CE->XPKPackEff);
-        setslider   (gui->NB_ENCPACK   ,CE->XPKPackEncryptEff);
-        setstring   (gui->ST_ARCHIVER  ,CE->PackerCommand);
+        setslider(gui->NB_PACKER, CE->XPKPackEff);
+        setslider(gui->NB_ENCPACK, CE->XPKPackEncryptEff);
+        setstring(gui->ST_ARCHIVER, CE->PackerCommand);
       }
       break;
 
