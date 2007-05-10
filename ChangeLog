@@ -23,6 +23,7 @@ $URL$
 
 2007-05-10  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Addrmatchlist.c: minor optimizations.
   * YAM_UT.c: the position 0/0 for an icon is valid in any case, only negative
     values must be converted to a "free" position.
   * YAM_COg.c, YAM_COs.c: the button to get the current icon position is now

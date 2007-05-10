@@ -94,16 +94,14 @@ HOOKPROTONH(CompareFunc, LONG, struct CustomABEntry *e2, struct CustomABEntry *e
 
   ENTER();
 
-  if(e1->MatchField == e2->MatchField)
+  result = e1->MatchField - e2->MatchField;
+  if(result == 0)
     result = Stricmp(e1->MatchString, e2->MatchString);
-  else
-    result = e1->MatchField < e2->MatchField ? -1 : +1;
 
   RETURN(result);
   return result;
 }
 MakeStaticHook(CompareHook, CompareFunc);
-
 ///
 
 /* Overloaded Methods */
@@ -306,7 +304,6 @@ DECLARE(Event) // struct IntuiMessage *imsg
   RETURN(result);
   return result;
 }
-
 ///
 /// DECLARE(Open)
 DECLARE(Open) // STRPTR str
@@ -350,19 +347,19 @@ DECLARE(Open) // STRPTR str
   RETURN(res);
   return (ULONG)res;
 }
-
 ///
 /// DECLARE(ActiveChange)
 DECLARE(ActiveChange) // LONG active
 {
   GETDATA;
-  struct CustomABEntry *entry;
-  STRPTR res;
 
   ENTER();
 
   if(msg->active >= 0)
   {
+    struct CustomABEntry *entry;
+    STRPTR res;
+
     // get the active entry
     DoMethod(data->Matchlist, MUIM_List_GetEntry, msg->active, &entry);
 
@@ -403,5 +400,4 @@ DECLARE(ActiveChange) // LONG active
   RETURN(0);
   return 0;
 }
-
 ///
