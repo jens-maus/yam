@@ -2227,7 +2227,7 @@ void CO_SetConfig(void)
         setcheckmark(gui->CH_WBAPPICON ,CE->WBAppIcon);
         set(gui->ST_APPX, MUIA_String_Integer, abs(CE->IconPositionX));
         set(gui->ST_APPY, MUIA_String_Integer, abs(CE->IconPositionY));
-        setcheckmark(gui->CH_APPICONPOS, CE->IconPositionX > 0 && CE->IconPositionY > 0);
+        setcheckmark(gui->CH_APPICONPOS, CE->IconPositionX >= 0 && CE->IconPositionY >= 0);
         setstring(gui->ST_APPICON, CE->AppIconText);
         setcheckmark(gui->CH_DOCKYICON, CE->DockyIcon);
         setcheckmark(gui->CH_CLGADGET, CE->IconifyOnQuit);

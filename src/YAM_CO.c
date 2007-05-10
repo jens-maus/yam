@@ -924,8 +924,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     strlcpy(co->DetachDir, "RAM:", sizeof(co->DetachDir));
     strlcpy(co->AttachDir, "RAM:", sizeof(co->AttachDir));
     strlcpy(co->PackerCommand, "LhA -a -m -i%l a \"%a\"", sizeof(co->PackerCommand));
-    co->IconPositionX = 0;
-    co->IconPositionY = 0;
+    co->IconPositionX = -1; // < 0 means free positioning
+    co->IconPositionY = -1; // < 0 means free positioning
     strlcpy(co->AppIconText, tr(MSG_CO_APPICON_LABEL), sizeof(co->AppIconText));
     co->IconifyOnQuit = co->RemoveAtOnce = FALSE;
     co->Confirm = TRUE;

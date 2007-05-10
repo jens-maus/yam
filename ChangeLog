@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-10  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_CO.c, YAM_COs.c: if 0/0 should really be an accepted value for
+    positioning the AppIcon, then other checks had to be changed as well. In
+    addition the default value for the AppIcon position will now be set to
+    -1/-1 so that a free positioning will be set.
+
 2007-05-10  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: the position 0/0 for an icon is valid in any case, only negative
