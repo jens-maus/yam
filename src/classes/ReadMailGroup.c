@@ -62,6 +62,7 @@ struct Data
   struct Hook headerCompareHook;
 
   BOOL hasContent;
+  BOOL activeAttachmentGroup;
 };
 */
 
@@ -238,36 +239,25 @@ MakeStaticHook(TextEditDoubleClickHook, TextEditDoubleClickFunc);
 ///
 
 /* Private Functions */
-/// AddAttachmentGroup
-// create a new attachment group if none exists
-static BOOL AddAttachmentGroup(struct Data *data)
+/// ShowAttachmentGroup
+// add the attachmentrgoup to our readmailgroup object
+static BOOL ShowAttachmentGroup(struct Data *data)
 {
   BOOL success = FALSE;
 
   ENTER();
 
-  if(data->attachmentGroup == NULL)
+  if(data->activeAttachmentGroup == FALSE)
   {
-    Object *attachmentGroup;
-
-    // create a new attachment group
-    if((attachmentGroup = AttachmentGroupObject, End) != NULL)
+    if(DoMethod(data->mailBodyGroup, MUIM_Group_InitChange))
     {
-      if(DoMethod(data->mailBodyGroup, MUIM_Group_InitChange))
-      {
-        // add the group to the surrounding group
-        DoMethod(data->mailBodyGroup, OM_ADDMEMBER, attachmentGroup);
-        data->attachmentGroup = attachmentGroup;
+      // add the group to the surrounding group
+      DoMethod(data->mailBodyGroup, OM_ADDMEMBER, data->attachmentGroup);
+      data->activeAttachmentGroup = TRUE;
 
-        DoMethod(data->mailBodyGroup, MUIM_Group_ExitChange);
+      DoMethod(data->mailBodyGroup, MUIM_Group_ExitChange);
 
-        success = TRUE;
-      }
-      else
-      {
-        // adding didn't succeed, so we dispose this object again
-        MUI_DisposeObject(attachmentGroup);
-      }
+      success = TRUE;
     }
   }
   else
@@ -280,20 +270,19 @@ static BOOL AddAttachmentGroup(struct Data *data)
   return success;
 }
 ///
-/// RemoveAttachmentGroup
+/// HideAttachmentGroup
 // remove an attachment group from the window if it exists
-static void RemoveAttachmentGroup(struct Data *data)
+static void HideAttachmentGroup(struct Data *data)
 {
   ENTER();
 
-  if(data->attachmentGroup != NULL)
+  if(data->activeAttachmentGroup)
   {
     if(DoMethod(data->mailBodyGroup, MUIM_Group_InitChange))
     {
       // remove the attachment group and free it
       DoMethod(data->mailBodyGroup, OM_REMMEMBER, data->attachmentGroup);
-      MUI_DisposeObject(data->attachmentGroup);
-      data->attachmentGroup = NULL;
+      data->activeAttachmentGroup = FALSE;
 
       DoMethod(data->mailBodyGroup, MUIM_Group_ExitChange);
     }
@@ -307,12 +296,14 @@ static void RemoveAttachmentGroup(struct Data *data)
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct TagItem *tags = inittags(msg), *tag;
-  struct Data *data;
-  struct Data *tmpData;
+  Object *result = NULL;
+  struct TagItem *tags = inittags(msg);
+  struct TagItem *tag;
   struct ReadMailData *rmData;
   LONG hgVertWeight = 5;
   LONG tgVertWeight = 100;
+
+  ENTER();
 
   // get eventually set attributes first
   while((tag = NextTagItem(&tags)) != NULL)
@@ -324,121 +315,141 @@ OVERLOAD(OM_NEW)
     }
   }
 
-  // generate a temporar struct Data to which we store our data and
-  // copy it later on
-  if((tmpData = calloc(1, sizeof(struct Data))) == NULL)
-    return 0;
-
-  data = tmpData;
-
   // allocate the readMailData structure
-  if((rmData = calloc(1, sizeof(struct ReadMailData))) == NULL)
-    return 0;
-
-  data->readMailData = rmData;
-
-  // set some default values for a new readMailGroup
-  rmData->headerMode = C->ShowHeader;
-  rmData->senderInfoMode = C->ShowSenderInfo;
-  rmData->wrapHeaders = C->WrapHeader;
-  rmData->useTextstyles = C->UseTextstyles;
-  rmData->useFixedFont = C->FixedFontEdit;
-
-  // create some object before the real object
-  data->textEditScrollbar = ScrollbarObject, End;
-
-  if((obj = DoSuperNew(cl, obj,
-
-    MUIA_Group_Horiz, FALSE,
-    GroupSpacing(1),
-    Child, data->headerGroup = HGroup,
-      GroupSpacing(0),
-      MUIA_VertWeight, hgVertWeight,
-      MUIA_ShowMe,     rmData->headerMode != HM_NOHEADER,
-      Child, NListviewObject,
-        MUIA_NListview_NList, data->headerList = NListObject,
-          InputListFrame,
-          MUIA_NList_DisplayHook,          &HeaderDisplayHook,
-          MUIA_NList_Format,               "P=\033r\0338 W=-1 MIW=-1,",
-          MUIA_NList_Input,                FALSE,
-          MUIA_NList_TypeSelect,           MUIV_NList_TypeSelect_Char,
-          MUIA_NList_DefaultObjectOnClick, FALSE,
-          MUIA_ContextMenu,                FALSE,
-          MUIA_CycleChain,                 TRUE,
-        End,
-      End,
-      Child, data->senderImageGroup = VGroup,
-        GroupSpacing(0),
-        InnerSpacing(0,0),
-        MUIA_CycleChain,    FALSE,
-        MUIA_ShowMe,         FALSE,
-        MUIA_Weight,         1,
-        Child, data->senderImageSpace = RectangleObject,
-          MUIA_Weight, 1,
-        End,
-      End,
-    End,
-    Child, data->balanceObject = BalanceObject,
-      MUIA_ShowMe, rmData->headerMode != HM_NOHEADER,
-    End,
-    Child, data->mailBodyGroup = VGroup,
-      MUIA_VertWeight, tgVertWeight,
-      GroupSpacing(0),
-      Child, HGroup,
-        GroupSpacing(0),
-        Child, data->mailTextObject = MailTextEditObject,
-          InputListFrame,
-          MUIA_TextEditor_Slider,          data->textEditScrollbar,
-          MUIA_TextEditor_FixedFont,       rmData->useFixedFont,
-          MUIA_TextEditor_DoubleClickHook, &TextEditDoubleClickHook,
-          MUIA_TextEditor_ImportHook,      MUIV_TextEditor_ImportHook_Plain,
-          MUIA_TextEditor_ExportHook,      MUIV_TextEditor_ExportHook_Plain,
-          MUIA_TextEditor_ReadOnly,        TRUE,
-          MUIA_CycleChain,                 TRUE,
-        End,
-        Child, data->textEditScrollbar,
-      End,
-    End,
-
-    TAG_MORE, inittags(msg))))
+  if((rmData = calloc(1, sizeof(struct ReadMailData))))
   {
-    if(!(data = (struct Data *)INST_DATA(cl, obj)))
-      return 0;
+    Object *headerGroup;
+    Object *headerList;
+    Object *senderImageGroup;
+    Object *senderImageSpace;
+    Object *balanceObject;
+    Object *mailBodyGroup;
+    Object *mailTextObject;
+    Object *textEditScrollbar;
+    Object *attachmentGroup;
 
-    // copy back the data stored in our temporarly struct Data
-    memcpy(data, tmpData, sizeof(struct Data));
+    // set some default values for a new readMailGroup
+    rmData->headerMode = C->ShowHeader;
+    rmData->senderInfoMode = C->ShowSenderInfo;
+    rmData->wrapHeaders = C->WrapHeader;
+    rmData->useTextstyles = C->UseTextstyles;
+    rmData->useFixedFont = C->FixedFontEdit;
 
-    // prepare the headerCompareHook to carry a reference to the readMailData
-    InitHook(&data->headerCompareHook, HeaderCompareHook, rmData);
-    set(data->headerList, MUIA_NList_CompareHook, &data->headerCompareHook);
+    // create some object before the real object
+    textEditScrollbar = ScrollbarObject, End;
+    attachmentGroup = AttachmentGroupObject, End;
 
-    // prepare the senderInfoHeader list
-    NewList((struct List *)&data->senderInfoHeaders);
+    // create the readmailgroup obj
+    obj = DoSuperNew(cl, obj,
 
-    // place our data in the node and add it to the readMailDataList
-    rmData->readMailGroup = obj;
-    AddTail((struct List *)&(G->readMailDataList), (struct Node *)data->readMailData);
+            MUIA_Group_Horiz, FALSE,
+            GroupSpacing(1),
+            Child, headerGroup = HGroup,
+              GroupSpacing(0),
+              MUIA_VertWeight, hgVertWeight,
+              MUIA_ShowMe,     rmData->headerMode != HM_NOHEADER,
+              Child, NListviewObject,
+                MUIA_NListview_NList, headerList = NListObject,
+                  InputListFrame,
+                  MUIA_NList_DisplayHook,          &HeaderDisplayHook,
+                  MUIA_NList_Format,               "P=\033r\0338 W=-1 MIW=-1,",
+                  MUIA_NList_Input,                FALSE,
+                  MUIA_NList_TypeSelect,           MUIV_NList_TypeSelect_Char,
+                  MUIA_NList_DefaultObjectOnClick, FALSE,
+                  MUIA_ContextMenu,                FALSE,
+                  MUIA_CycleChain,                 TRUE,
+                End,
+              End,
+              Child, senderImageGroup = VGroup,
+                GroupSpacing(0),
+                InnerSpacing(0,0),
+                MUIA_CycleChain,    FALSE,
+                MUIA_ShowMe,        FALSE,
+                MUIA_Weight,        1,
+                Child, senderImageSpace = RectangleObject,
+                  MUIA_Weight, 1,
+                End,
+              End,
+            End,
+            Child, balanceObject = BalanceObject,
+              MUIA_ShowMe, rmData->headerMode != HM_NOHEADER,
+            End,
+            Child, mailBodyGroup = VGroup,
+              MUIA_VertWeight, tgVertWeight,
+              GroupSpacing(0),
+              Child, HGroup,
+                GroupSpacing(0),
+                Child, mailTextObject = MailTextEditObject,
+                  InputListFrame,
+                  MUIA_TextEditor_Slider,          textEditScrollbar,
+                  MUIA_TextEditor_FixedFont,       rmData->useFixedFont,
+                  MUIA_TextEditor_DoubleClickHook, &TextEditDoubleClickHook,
+                  MUIA_TextEditor_ImportHook,      MUIV_TextEditor_ImportHook_Plain,
+                  MUIA_TextEditor_ExportHook,      MUIV_TextEditor_ExportHook_Plain,
+                  MUIA_TextEditor_ReadOnly,        TRUE,
+                  MUIA_CycleChain,                 TRUE,
+                End,
+                Child, textEditScrollbar,
+              End,
+            End,
 
-    // now we connect some notifies.
-    DoMethod(data->headerList, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime,
-             obj, 1, MUIM_ReadMailGroup_HeaderListDoubleClicked);
+            TAG_MORE, inittags(msg));
 
+    // check if all necessary data was created
+    if(obj != NULL &&
+       textEditScrollbar != NULL &&
+       attachmentGroup != NULL)
+    {
+      GETDATA;
+
+      // copy back the temporary object pointers
+      data->readMailData = rmData;
+      data->textEditScrollbar = textEditScrollbar;
+      data->attachmentGroup = attachmentGroup;
+      data->headerGroup = headerGroup;
+      data->headerList = headerList;
+      data->senderImageGroup = senderImageGroup;
+      data->senderImageSpace = senderImageSpace;
+      data->balanceObject = balanceObject;
+      data->mailBodyGroup = mailBodyGroup;
+      data->mailTextObject = mailTextObject;
+
+      // prepare the headerCompareHook to carry a reference to the readMailData
+      InitHook(&data->headerCompareHook, HeaderCompareHook, rmData);
+      set(data->headerList, MUIA_NList_CompareHook, &data->headerCompareHook);
+
+      // prepare the senderInfoHeader list
+      NewList((struct List *)&data->senderInfoHeaders);
+
+      // place our data in the node and add it to the readMailDataList
+      rmData->readMailGroup = obj;
+      AddTail((struct List *)&(G->readMailDataList), (struct Node *)data->readMailData);
+
+      // now we connect some notifies.
+      DoMethod(data->headerList, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime,
+               obj, 1, MUIM_ReadMailGroup_HeaderListDoubleClicked);
+
+      result = obj;
+    }
+    else
+      free(rmData);
   }
 
-  // free the temporary mem we allocated before
-  free(tmpData);
-
-  return (ULONG)obj;
+  RETURN((ULONG)result);
+  return (ULONG)result;
 }
 ///
 /// OVERLOAD(OM_DISPOSE)
 OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
+  ULONG result;
+  ENTER();
 
   // clear the senderInfoHeaders
   FreeHeaderList(&data->senderInfoHeaders);
 
+  // free the readMailData pointer
   if(data->readMailData)
   {
     // Remove our readWindowNode and free it afterwards
@@ -447,7 +458,19 @@ OVERLOAD(OM_DISPOSE)
     data->readMailData = NULL;
   }
 
-  return DoSuperMethodA(cl, obj, msg);
+  // Dispose the attachmentgroup object in case it isn't
+  // a child of this readmailgroup
+  if(data->activeAttachmentGroup == FALSE)
+  {
+    MUI_DisposeObject(data->attachmentGroup);
+    data->attachmentGroup = NULL;
+  }
+
+  // signal the super class to dipose as well
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -687,9 +710,9 @@ DECLARE(Clear) // ULONG flags
 
     set(data->senderImageGroup, MUIA_ShowMe, FALSE);
 
-    // remove the attachmentGroup also
+    // hide the attachmentGroup
     if(hasKeepAttachmentGroupFlag(msg->flags) == FALSE)
-      RemoveAttachmentGroup(data);
+      HideAttachmentGroup(data);
   }
 
   CleanupReadMailData(data->readMailData, FALSE);
@@ -741,17 +764,17 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
       // the first operation should be: check if the mail is a multipart mail and if so we tell
       // our attachment group about it and read the partlist or otherwise a previously opened
       // attachmentgroup may still hold some references to our already deleted parts
-      if(isMultiPartMail(mail) && AddAttachmentGroup(data))
+      if(isMultiPartMail(mail))
       {
         if(DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_Refresh, rmData->firstPart) > 0)
         {
-          // relayout the attachment group so that it is shown with the correct height
-          DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_Relayout);
+          // make sure we show the attachmentGroup
+          ShowAttachmentGroup(data);
         }
         else
         {
-          // remove the attachment group again as there were no parts added
-          RemoveAttachmentGroup(data);
+          // make sure the attachmentGroup is removed
+          HideAttachmentGroup(data);
 
           // if this mail was/is a multipart mail but no part was
           // actually added to our attachment group we can remove the
@@ -776,7 +799,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
         }
       }
       else
-        RemoveAttachmentGroup(data);
+        HideAttachmentGroup(data);
 
       // make sure the header display is also updated correctly.
       if(!hasUpdateTextOnlyFlag(msg->flags))

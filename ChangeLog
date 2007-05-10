@@ -7,6 +7,13 @@ $URL$
 
 2007-05-10  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ReadMailGroup.c: reworked the OM_NEW method to not allocate a temporary
+    struct Data but use seperate local variables instead. In addition, usual
+    ENTER/LEAVE pairs are added and only a single return path is used. Also
+    the attachmentGroup object will be only created once and then reused
+    accordingly where we just Show/Hide the attachmentgroup via InitChange
+    ExitChange pairs. This should also fix an illegal access problem which
+    occurred after the last changes.
   * YAM_TR.c: slightly reworked the TR_DownloadURL() once more to be somewhat
     more compatible to RFC2616 and the "Content-Length:" usage.
   * YAM_TR.c: the TR_DownloadURL() function will now respect the
