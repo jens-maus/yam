@@ -23,6 +23,9 @@ $URL$
 
 2007-05-10  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ReadMailGroup.c: the attachment group is now handled completely dynamically
+    and added/removed on the fly to the window instead of simply showing/hiding
+    it. Maybe this fixes some old MUI3.8 bugs.
   * Recipientstring.c: if any entry in the attached address match list was
     selected with the mouse instead of keyboard the string replacement failed,
     because the address match list has its own window. Clicking inside another

@@ -238,6 +238,70 @@ MakeStaticHook(TextEditDoubleClickHook, TextEditDoubleClickFunc);
 ///
 
 /* Private Functions */
+/// AddAttachmentGroup
+// create a new attachment group if none exists
+static BOOL AddAttachmentGroup(struct Data *data)
+{
+  BOOL success = FALSE;
+
+  ENTER();
+
+  if(data->attachmentGroup == NULL)
+  {
+    Object *attachmentGroup;
+
+    // create a new attachment group
+    if((attachmentGroup = AttachmentGroupObject, End) != NULL)
+    {
+      if(DoMethod(data->mailBodyGroup, MUIM_Group_InitChange))
+      {
+        // add the group to the surrounding group
+        DoMethod(data->mailBodyGroup, OM_ADDMEMBER, attachmentGroup);
+        data->attachmentGroup = attachmentGroup;
+
+        DoMethod(data->mailBodyGroup, MUIM_Group_ExitChange);
+
+        success = TRUE;
+      }
+      else
+      {
+        // adding didn't succeed, so we dispose this object again
+        MUI_DisposeObject(attachmentGroup);
+      }
+    }
+  }
+  else
+  {
+    // an attachment group existed already so signal success
+    success = TRUE;
+  }
+
+  RETURN(success);
+  return success;
+}
+///
+/// RemoveAttachmentGroup
+// remove an attachment group from the window if it exists
+static void RemoveAttachmentGroup(struct Data *data)
+{
+  ENTER();
+
+  if(data->attachmentGroup != NULL)
+  {
+    if(DoMethod(data->mailBodyGroup, MUIM_Group_InitChange))
+    {
+      // remove the attachment group and free it
+      DoMethod(data->mailBodyGroup, OM_REMMEMBER, data->attachmentGroup);
+      MUI_DisposeObject(data->attachmentGroup);
+      data->attachmentGroup = NULL;
+
+      DoMethod(data->mailBodyGroup, MUIM_Group_ExitChange);
+    }
+  }
+
+  LEAVE();
+}
+///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -324,18 +388,15 @@ OVERLOAD(OM_NEW)
         GroupSpacing(0),
         Child, data->mailTextObject = MailTextEditObject,
           InputListFrame,
-          MUIA_TextEditor_Slider,           data->textEditScrollbar,
-          MUIA_TextEditor_FixedFont,        rmData->useFixedFont,
+          MUIA_TextEditor_Slider,          data->textEditScrollbar,
+          MUIA_TextEditor_FixedFont,       rmData->useFixedFont,
           MUIA_TextEditor_DoubleClickHook, &TextEditDoubleClickHook,
           MUIA_TextEditor_ImportHook,      MUIV_TextEditor_ImportHook_Plain,
           MUIA_TextEditor_ExportHook,      MUIV_TextEditor_ExportHook_Plain,
           MUIA_TextEditor_ReadOnly,        TRUE,
-          MUIA_CycleChain,                  TRUE,
+          MUIA_CycleChain,                 TRUE,
         End,
         Child, data->textEditScrollbar,
-      End,
-      Child, data->attachmentGroup = AttachmentGroupObject,
-        MUIA_ShowMe, FALSE,
       End,
     End,
 
@@ -480,7 +541,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
     struct Mail *mail = rmData->mail;
     BOOL isRealMail = !isVirtualMail(mail);
     BOOL isSentMail = isRealMail ? isSentMailFolder(mail->Folder) : FALSE;
-    BOOL hasAttach = xget(data->attachmentGroup, MUIA_ShowMe);
+    BOOL hasAttach = data->attachmentGroup != NULL;
     BOOL hasPGPKey = rmData->hasPGPKey;
     BOOL hasPGPSig = (hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData));
     BOOL isPGPEnc = isRealMail && (hasPGPEMimeFlag(rmData) || hasPGPEOldFlag(rmData));
@@ -614,22 +675,21 @@ DECLARE(Clear) // ULONG flags
     // cleanup the SenderImage field as well
     if(DoMethod(data->senderImageGroup, MUIM_Group_InitChange))
     {
-      if(data->senderImage)
+      if(data->senderImage != NULL)
       {
         DoMethod(data->senderImageGroup, OM_REMMEMBER, data->senderImage);
         MUI_DisposeObject(data->senderImage);
+        data->senderImage = NULL;
       }
-
-      data->senderImage = NULL;
 
       DoMethod(data->senderImageGroup, MUIM_Group_ExitChange);
     }
 
     set(data->senderImageGroup, MUIA_ShowMe, FALSE);
 
-    // hide the attachmentGroup also
+    // remove the attachmentGroup also
     if(hasKeepAttachmentGroupFlag(msg->flags) == FALSE)
-      set(data->attachmentGroup, MUIA_ShowMe, FALSE);
+      RemoveAttachmentGroup(data);
   }
 
   CleanupReadMailData(data->readMailData, FALSE);
@@ -681,15 +741,17 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
       // the first operation should be: check if the mail is a multipart mail and if so we tell
       // our attachment group about it and read the partlist or otherwise a previously opened
       // attachmentgroup may still hold some references to our already deleted parts
-      if(isMultiPartMail(mail))
+      if(isMultiPartMail(mail) && AddAttachmentGroup(data))
       {
         if(DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_Refresh, rmData->firstPart) > 0)
         {
-          set(data->attachmentGroup, MUIA_ShowMe, TRUE);
+          // relayout the attachment group so that it is shown with the correct height
+          DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_Relayout);
         }
         else
         {
-          set(data->attachmentGroup, MUIA_ShowMe, FALSE);
+          // remove the attachment group again as there were no parts added
+          RemoveAttachmentGroup(data);
 
           // if this mail was/is a multipart mail but no part was
           // actually added to our attachment group we can remove the
@@ -714,7 +776,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
         }
       }
       else
-        set(data->attachmentGroup, MUIA_ShowMe, FALSE);
+        RemoveAttachmentGroup(data);
 
       // make sure the header display is also updated correctly.
       if(!hasUpdateTextOnlyFlag(msg->flags))
@@ -1288,6 +1350,7 @@ DECLARE(SaveDecryptedMail)
 DECLARE(SaveAllAttachments)
 {
   GETDATA;
+
   return DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_SaveAll);
 }
 ///
