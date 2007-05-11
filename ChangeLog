@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-11  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: reworked certain sent/recv function to better comply to our
+    STYLEGUIDE. In addition, more added debug output should make it easier
+    to debug a TCP/IP session and find out why a connection terminated.
+
 2007-05-10  Jens Langner <Jens.Langner@light-speed.de>
 
   * ReadMailGroup.c: reworked the OM_NEW method to not allocate a temporary

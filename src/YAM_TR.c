@@ -1442,7 +1442,7 @@ static int TR_Connect(char *host, int port)
       for(i = 0; hostaddr->h_aliases[i]; ++i)
         D(DBF_NET, "  Alias:\t%s", hostaddr->h_aliases[i]);
 
-      D(DBF_NET, "  Type:\t\t%s", hostaddr->h_addrtype == AF_INET ? "AF_INET" : "AF_INET6");
+      D(DBF_NET, "  Type:\t%s", hostaddr->h_addrtype == AF_INET ? "AF_INET" : "AF_INET6");
       if(hostaddr->h_addrtype == AF_INET)
       {
         for(i = 0; hostaddr->h_addr_list[i]; ++i)
@@ -1537,21 +1537,36 @@ static int TR_Connect(char *host, int port)
 // a null terminated string
 static int TR_Recv(char *recvdata, int maxlen)
 {
-   int len;
+  int nread = -1;
 
-   DoMethod(G->App,MUIM_Application_InputBuffered);
-   if (G->TR_Socket == TCP_NO_SOCKET) return 0;
+  ENTER();
 
-   // we call the ReadBuffered function so that
-   // we get out the data from our own buffer.
-   len = TR_ReadBuffered(G->TR_Socket, recvdata, maxlen-1, TCPF_NONE);
+  // make sure the GUI can still update itself during this
+  // operation
+  DoMethod(G->App, MUIM_Application_InputBuffered);
 
-   if (len <= 0) recvdata[0] = '\0';
-   else recvdata[len] = '\0';
+  // make sure the socket is active.
+  if(G->TR_Socket != TCP_NO_SOCKET)
+  {
+    // we call the ReadBuffered function so that
+    // we get out the data from our own buffer.
+    nread = TR_ReadBuffered(G->TR_Socket, recvdata, maxlen-1, TCPF_NONE);
 
-   if (G->TR_Debug) printf("SERVER[%04d]: %s", len, recvdata);
+    if(nread <= 0)
+      recvdata[0] = '\0';
+    else
+      recvdata[nread] = '\0';
 
-   return len;
+    if(G->TR_Debug)
+      printf("SERVER[%04d]: %s", nread, recvdata);
+
+    D(DBF_NET, "TCP: received %d of max %d bytes", nread, maxlen);
+  }
+  else
+    W(DBF_NET, "socket == TCP_NO_SOCKET");
+
+  RETURN(nread);
+  return nread;
 }
 
 ///
@@ -1733,7 +1748,11 @@ static int TR_Send(const char *ptr, int len, int flags)
     // really will be buffered or if we write and flush the buffer
     // immediatly
     nwritten = TR_WriteBuffered(G->TR_Socket, ptr, len, flags);
+
+    D(DBF_NET, "TCP: sent %d of %d bytes (%d)", nwritten, len, flags);
   }
+  else
+    W(DBF_NET, "socket == TCP_NO_SOCKET");
 
   RETURN(nwritten);
   return nwritten;
@@ -1812,6 +1831,8 @@ static int TR_ReadLine(LONG socket, char *vptr, int maxlen)
     if(G->TR_Debug)
       printf("SERVER[%04d]: %s", n, vptr);
 
+    D(DBF_NET, "TCP: received %d of max %d bytes", n, maxlen);
+
     // return the number of chars we read
     result = n;
   }
@@ -1860,7 +1881,10 @@ static int TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags)
 
       if(read_cnt < 0)
       {
-        if(Errno() == EINTR) goto again;
+        if(Errno() == EINTR)
+          goto again;
+
+        E(DBF_NET, "recv() returned an error %d", Errno());
         return -1;
       }
       else if(read_cnt == 0) return 0;
@@ -1943,8 +1967,11 @@ static int TR_WriteBuffered(UNUSED LONG socket, const char *ptr, int maxlen, int
 
       if(nwritten <= 0)
       {
-        if(Errno() == EINTR) continue; // and call write() again
-        else return -1;
+        if(Errno() == EINTR)
+          continue; // and call write() again
+
+        E(DBF_NET, "send() returned an error %d", Errno());
+        return -1;
       }
 
       write_cnt -= nwritten;
@@ -2000,8 +2027,11 @@ static int TR_WriteBuffered(UNUSED LONG socket, const char *ptr, int maxlen, int
 
       if(nwritten <= 0)
       {
-        if(Errno() == EINTR) continue; // and call write() again
-        else return -1;
+        if(Errno() == EINTR)
+          continue; // and call write() again
+
+        E(DBF_NET, "send() returned an error %d", Errno());
+        return -1;
       }
 
       write_cnt -= nwritten;
@@ -2215,6 +2245,8 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
       snprintf(buf, sizeof(buf), "%s\r\n", POPcmd[command]);
     else
       snprintf(buf, sizeof(buf), "%s %s\r\n", POPcmd[command], parmtext);
+
+    D(DBF_NET, "TCP: POP3 cmd '%s' with param '%s'", POPcmd[command], parmtext != NULL ? parmtext : "<NULL>");
 
     // send the pop command to the server and see if it was received somehow
     // and for a connect we don`t send something or the server will get
@@ -2982,6 +3014,8 @@ static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext
     else
       snprintf(buf, sizeof(buf), "%s %s\r\n", SMTPcmd[command], parmtext);
 
+    D(DBF_NET, "TCP: SMTP cmd '%s' with param '%s'", SMTPcmd[command], parmtext != NULL ? parmtext : "<NULL>");
+
     // lets send the command via TR_WriteLine, but not if we are in connection
     // state
     if(command == SMTP_CONNECT || TR_WriteLine(buf) > 0)
@@ -3132,19 +3166,30 @@ static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext
 //  Connects to a SMTP mail server
 static BOOL TR_ConnectSMTP(void)
 {
+  BOOL result = FALSE;
+
+  ENTER();
+
   // If we did a TLS negotitaion previously we have to skip the
   // welcome message, but if it was another connection like a normal or a SSL
   // one we have wait for the welcome
   if(!G->TR_UseTLS || C->SMTP_SecureMethod == SMTPSEC_SSL)
   {
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
-    if(!TR_SendSMTPCmd(SMTP_CONNECT, NULL, MSG_ER_BadResponse)) return FALSE;
+
+    result = (TR_SendSMTPCmd(SMTP_CONNECT, NULL, MSG_ER_BadResponse) != NULL);
+  }
+  else
+    result = TRUE;
+
+  if(result)
+  {
+    set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, tr(MSG_TR_SendHello));
+    result = (TR_SendSMTPCmd(SMTP_HELO, C->SMTP_Domain, MSG_ER_BadResponse) != NULL);
   }
 
-  set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, tr(MSG_TR_SendHello));
-  if(!TR_SendSMTPCmd(SMTP_HELO, C->SMTP_Domain, MSG_ER_BadResponse)) return FALSE;
-
-  return TRUE;
+  RETURN(result);
+  return result;
 }
 ///
 /// TR_ConnectESMTP
@@ -4075,158 +4120,181 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
 //  Sends a single message
 static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 {
-   int result = 0;
-   struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-   char *mf;
-   FILE *f;
+  int result = 0;
+  struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
+  char *mf;
+  FILE *f;
 
-   if ((f = fopen(mf = GetMailFile(NULL, outfolder, mail), "r")))
-   {
-      char buf[SIZE_LINE];
+  ENTER();
 
-      setvbuf(f, NULL, _IOFBF, SIZE_FILEBUF);
+  D(DBF_NET, "about to send mail '%s' via SMTP", mail->MailFile);
 
-      snprintf(buf, sizeof(buf), "FROM:<%s>", C->EmailAddress);
-      if (TR_SendSMTPCmd(SMTP_MAIL, buf, MSG_ER_BadResponse))
+  // open the mail file for reading
+  if((f = fopen(mf = GetMailFile(NULL, outfolder, mail), "r")))
+  {
+    char buf[SIZE_LINE];
+
+    setvbuf(f, NULL, _IOFBF, SIZE_FILEBUF);
+
+    snprintf(buf, sizeof(buf), "FROM:<%s>", C->EmailAddress);
+
+    // send the MAIL command with the FROM: message
+    if(TR_SendSMTPCmd(SMTP_MAIL, buf, MSG_ER_BadResponse))
+    {
+      struct ExtendedMail *email = MA_ExamineMail(outfolder, mail->MailFile, TRUE);
+
+      if(email)
       {
-         struct ExtendedMail *email = MA_ExamineMail(outfolder, mail->MailFile, TRUE);
+        BOOL rcptok = TRUE;
+        int j;
 
-         if(email)
-         {
-            BOOL rcptok = TRUE;
-            int j;
+        // specify the main 'To:' recipient
+        snprintf(buf, sizeof(buf), "TO:<%s>", mail->To.Address);
+        if(!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse))
+          rcptok = FALSE;
 
-            // specify the main 'To:' recipient
-            snprintf(buf, sizeof(buf), "TO:<%s>", mail->To.Address);
-            if(!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse))
-               rcptok = FALSE;
+        // now add the additional 'To:' recipients of the mail
+        for(j=0; j < email->NoSTo && rcptok; j++)
+        {
+          snprintf(buf, sizeof(buf), "TO:<%s>", email->STo[j].Address);
+          if(!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse))
+            rcptok = FALSE;
+        }
 
-            // now add the additional 'To:' recipients of the mail
-            for(j=0; j < email->NoSTo && rcptok; j++)
+        // add the 'Cc:' recipients
+        for(j=0; j < email->NoCC && rcptok; j++)
+        {
+          snprintf(buf, sizeof(buf), "TO:<%s>", email->CC[j].Address);
+          if(!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse))
+            rcptok = FALSE;
+        }
+
+        // add the 'BCC:' recipients
+        for(j=0; j < email->NoBCC && rcptok; j++)
+        {
+          snprintf(buf, sizeof(buf), "TO:<%s>", email->BCC[j].Address);
+          if(!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse))
+            rcptok = FALSE;
+        }
+
+        if(rcptok)
+        {
+          D(DBF_NET, "RCPTs acceppted, sending mail data");
+
+          // now we send the actual main data of the mail
+          if(TR_SendSMTPCmd(SMTP_DATA, NULL, MSG_ER_BadResponse))
+          {
+            BOOL lineskip = FALSE;
+            BOOL inbody = FALSE;
+            char sendbuf[SIZE_LINE+2];
+            int sendsize;
+            int cpos;
+            int prevpos = ftell(f); // get current file position
+            int startpos = prevpos;
+
+            // as long there is no abort situation we go on reading out
+            // from the stream and sending it to our SMTP server
+            while(!G->TR->Abort && !G->Error && fgets(buf, SIZE_LINE, f))
             {
-              snprintf(buf, sizeof(buf), "TO:<%s>", email->STo[j].Address);
-              if(!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse))
-                rcptok = FALSE;
-            }
+              sendsize = cpos = ftell(f)-prevpos; // get the size we really read out from the stream.
+              prevpos += sendsize;                // set the new prevpos to the ftell() value.
 
-            // add the 'Cc:' recipients
-            for(j=0; j < email->NoCC && rcptok; j++)
-            {
-              snprintf(buf, sizeof(buf), "TO:<%s>", email->CC[j].Address);
-              if(!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse))
-                rcptok = FALSE;
-            }
-
-            // add the 'BCC:' recipients
-            for(j=0; j < email->NoBCC && rcptok; j++)
-            {
-              snprintf(buf, sizeof(buf), "TO:<%s>", email->BCC[j].Address);
-              if(!TR_SendSMTPCmd(SMTP_RCPT, buf, MSG_ER_BadResponse))
-                rcptok = FALSE;
-            }
-
-            if (rcptok)
-            {
-              if (TR_SendSMTPCmd(SMTP_DATA, NULL, MSG_ER_BadResponse))
+              // as long as we process header lines we have to make differ in some ways.
+              if(!inbody)
               {
-                BOOL lineskip = FALSE, inbody = FALSE;
-                char sendbuf[SIZE_LINE+2];
-                int sendsize, cpos;
-                int prevpos = ftell(f); // get current file position
-                int startpos = prevpos;
-
-                // as long there is no abort situation we go on reading out
-                // from the stream and sending it to our SMTP server
-                while(!G->TR->Abort && !G->Error && fgets(buf, SIZE_LINE, f))
+                // we check if we found the body of the mail now
+                // the start of a body is seperated by the header with a single
+                // empty line and we have to make sure that it isn`t the beginning of the file
+                if(sendsize == 1 && buf[0] == '\n' && buf[1] == '\0' && prevpos-startpos > 1)
                 {
-                  sendsize = cpos = ftell(f)-prevpos; // get the size we really read out from the stream.
-                  prevpos += sendsize;                // set the new prevpos to the ftell() value.
+                  inbody = TRUE;
+                  lineskip = FALSE;
+                }
+                else if(!isspace(*buf)) // headerlines don`t start with a space
+                {
+                  // headerlines with bcc or x-yam- will be skipped by us.
+                  lineskip = !strnicmp(buf, "bcc", 3) || !strnicmp(buf, "x-yam-", 6);
+                }
+              }
 
-                  // as long as we process header lines we have to make differ in some ways.
-                  if(!inbody)
-                  {
-                    // we check if we found the body of the mail now
-                    // the start of a body is seperated by the header with a single
-                    // empty line and we have to make sure that it isn`t the beginning of the file
-                    if(sendsize == 1 && buf[0] == '\n' && buf[1] == '\0' && prevpos-startpos > 1)
-                    {
-                      inbody = TRUE;
-                      lineskip = FALSE;
-                    }
-                    else if(!isspace(*buf)) // headerlines don`t start with a space
-                    {
-                      // headerlines with bcc or x-yam- will be skipped by us.
-                      lineskip = !strnicmp(buf, "bcc", 3) || !strnicmp(buf, "x-yam-", 6);
-                    }
-                  }
-
-                  // if we don`t skip this line we write it out to the SMTP server
-                  if(!lineskip)
-                  {
-                    // RFC 821 says a starting period needs a second one
-                    if(buf[0] == '.')
-                    {
-                      sendbuf[0] = buf[0];
-                      sendsize++;
-                    }
-
-                    // lets copy everything into our sendbuffer
-                    memcpy(&sendbuf[sendsize-cpos], &buf[0], (size_t)cpos+1);
-
-                    // RFC 2822 doesn`t allow bare CR and LF so we have to put a CR before a LF
-                    if(sendbuf[sendsize-1] == '\n')
-                    {
-                      sendbuf[sendsize-1] = '\r';
-                      sendbuf[sendsize]   = '\n';
-                      sendbuf[sendsize+1] = '\0';
-                      sendsize++;
-                    }
-
-                    // now lets send the data buffered to the socket.
-                    // we will flush it later then.
-                    if(TR_Send(sendbuf, sendsize, TCPF_NONE) <= 0) ER_NewError(tr(MSG_ER_ConnectionBroken));
-                  }
-
-                  TR_TransStat_Update(ts, cpos);
+              // if we don`t skip this line we write it out to the SMTP server
+              if(!lineskip)
+              {
+                // RFC 821 says a starting period needs a second one
+                if(buf[0] == '.')
+                {
+                  sendbuf[0] = buf[0];
+                  sendsize++;
                 }
 
-                // if buf == NULL when we arrive here, then the fgets()
-                // at the top exited with an error
-                if(buf == NULL) { ER_NewError(tr(MSG_ER_ErrorReadMailfile), mf); result = -1; }
-                else if(!G->TR->Abort && !G->Error)
+                // lets copy everything into our sendbuffer
+                memcpy(&sendbuf[sendsize-cpos], &buf[0], (size_t)cpos+1);
+
+                // RFC 2822 doesn`t allow bare CR and LF so we have to put a CR before a LF
+                if(sendbuf[sendsize-1] == '\n')
                 {
-                  // we have to flush the write buffer if this wasn`t a error or
-                  // abort situation
-                  TR_WriteFlush();
-
-                  // send a CRLF+octet "\r\n." to signal that the data is finished.
-                  // we do it here because if there was an error and we send it, the message
-                  // will be send incomplete.
-                  if(TR_SendSMTPCmd(SMTP_FINISH, NULL, MSG_ER_BadResponse))
-                  {
-                    // put the transferStat to 100%
-                    TR_TransStat_Update(ts, TS_SETMAX);
-
-                    // now that we are at 100% we have to set the transfer Date of the message
-                    GetSysTimeUTC(&mail->Reference->transDate);
-
-                    result = email->DelSend ? 2 : 1;
-                    AppendLogVerbose(42, tr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, mail->Size);
-                  }
+                  sendbuf[sendsize-1] = '\r';
+                  sendbuf[sendsize]   = '\n';
+                  sendbuf[sendsize+1] = '\0';
+                  sendsize++;
                 }
 
-                if(G->TR->Abort || G->Error) result = -1; // signal the caller that we aborted within the DATA part
+                // now lets send the data buffered to the socket.
+                // we will flush it later then.
+                if(TR_Send(sendbuf, sendsize, TCPF_NONE) <= 0)
+                  ER_NewError(tr(MSG_ER_ConnectionBroken));
+              }
+
+              TR_TransStat_Update(ts, cpos);
+            }
+
+            // if buf == NULL when we arrive here, then the fgets()
+            // at the top exited with an error
+            if(buf == NULL)
+            {
+              ER_NewError(tr(MSG_ER_ErrorReadMailfile), mf);
+              result = -1; // signal error
+            }
+            else if(!G->TR->Abort && !G->Error)
+            {
+              // we have to flush the write buffer if this wasn`t a error or
+              // abort situation
+              TR_WriteFlush();
+
+              // send a CRLF+octet "\r\n." to signal that the data is finished.
+              // we do it here because if there was an error and we send it, the message
+              // will be send incomplete.
+              if(TR_SendSMTPCmd(SMTP_FINISH, NULL, MSG_ER_BadResponse))
+              {
+                // put the transferStat to 100%
+                TR_TransStat_Update(ts, TS_SETMAX);
+
+                // now that we are at 100% we have to set the transfer Date of the message
+                GetSysTimeUTC(&mail->Reference->transDate);
+
+                result = email->DelSend ? 2 : 1;
+                AppendLogVerbose(42, tr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, mail->Size);
               }
             }
-            MA_FreeEMailStruct(email);
-          }
-          else ER_NewError(tr(MSG_ER_CantOpenFile), mf);
-      }
-      fclose(f);
-   }
-   else ER_NewError(tr(MSG_ER_CantOpenFile), mf);
 
-   return result;
+            if(G->TR->Abort || G->Error)
+              result = -1; // signal the caller that we aborted within the DATA part
+          }
+        }
+
+        MA_FreeEMailStruct(email);
+      }
+      else
+        ER_NewError(tr(MSG_ER_CantOpenFile), mf);
+    }
+
+    fclose(f);
+  }
+  else
+    ER_NewError(tr(MSG_ER_CantOpenFile), mf);
+
+  RETURN(result);
+  return result;
 }
 ///
 /// TR_ProcessSEND
