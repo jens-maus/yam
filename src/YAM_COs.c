@@ -352,6 +352,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "SpamProbThreshold= %d\n", co->SpamProbabilityThreshold);
       fprintf(fh, "SpamFlushInterval= %d\n", co->SpamFlushTrainingDataInterval);
       fprintf(fh, "SpamFlushThres   = %d\n", co->SpamFlushTrainingDataThreshold);
+      fprintf(fh, "MoveHamToIncoming= %s\n", Bool2Txt(co->MoveHamToIncoming));
 
       fprintf(fh, "\n[Read]\n");
       fprintf(fh, "ShowHeader       = %d\n", co->ShowHeader);
@@ -964,6 +965,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
           else if(!stricmp(buffer, "SpamProbThreshold")) co->SpamProbabilityThreshold = atoi(value);
           else if(!stricmp(buffer, "SpamFlushInterval")) co->SpamFlushTrainingDataInterval = atoi(value);
           else if(!stricmp(buffer, "SpamFlushThres")) co->SpamFlushTrainingDataThreshold = atoi(value);
+          else if(!stricmp(buffer, "MoveHamToIncoming")) co->MoveHamToIncoming = Txt2Bool(value);
 
 /* Read */
           else if(!stricmp(buffer, "ShowHeader"))     co->ShowHeader = atoi(value);
@@ -1334,13 +1336,15 @@ void CO_GetConfig(BOOL saveConfig)
       break;
 
       case cp_FirstSteps:
-         GetMUIString(CE->RealName, gui->ST_REALNAME, sizeof(CE->RealName));
-         GetMUIString(CE->EmailAddress, gui->ST_EMAIL, sizeof(CE->EmailAddress));
-         CE->TimeZone = MapTZ(GetMUICycle(gui->CY_TZONE), TRUE);
-         CE->DaylightSaving = GetMUICheck(gui->CH_DSTACTIVE);
-         GetMUIString(CE->LocalCharset, gui->ST_DEFAULTCHARSET, sizeof(CE->LocalCharset));
-         CE->DetectCyrillic= GetMUICheck(gui->CH_DETECTCYRILLIC);
-         break;
+      {
+        GetMUIString(CE->RealName, gui->ST_REALNAME, sizeof(CE->RealName));
+        GetMUIString(CE->EmailAddress, gui->ST_EMAIL, sizeof(CE->EmailAddress));
+        CE->TimeZone = MapTZ(GetMUICycle(gui->CY_TZONE), TRUE);
+        CE->DaylightSaving = GetMUICheck(gui->CH_DSTACTIVE);
+        GetMUIString(CE->LocalCharset, gui->ST_DEFAULTCHARSET, sizeof(CE->LocalCharset));
+        CE->DetectCyrillic= GetMUICheck(gui->CH_DETECTCYRILLIC);
+      }
+      break;
 
       case cp_TCPIP:
       {
@@ -1370,19 +1374,21 @@ void CO_GetConfig(BOOL saveConfig)
       break;
 
       case cp_NewMail:
-         CE->PreSelection      = GetMUICycle  (gui->CY_MSGSELECT);
-         CE->TransferWindow    = GetMUICycle  (gui->CY_TRANSWIN);
-         CE->AvoidDuplicates   = GetMUICheck  (gui->CH_AVOIDDUP);
-         CE->UpdateStatus      = GetMUICheck  (gui->CH_UPDSTAT);
-         CE->WarnSize          = GetMUIInteger(gui->ST_WARNSIZE);
-         CE->CheckMailDelay    = GetMUINumer  (gui->NM_INTERVAL);
-         CE->DownloadLarge     = GetMUICheck  (gui->CH_DLLARGE);
-         CE->NotifyType        = (GetMUICheck(gui->CH_NOTIREQ)   ? NOTIFY_REQ   : 0)
-                               + (GetMUICheck(gui->CH_NOTISOUND) ? NOTIFY_SOUND : 0)
-                               + (GetMUICheck(gui->CH_NOTICMD)   ? NOTIFY_CMD   : 0);
-         GetMUIString(CE->NotifySound, gui->ST_NOTISOUND, sizeof(CE->NotifySound));
-         GetMUIString(CE->NotifyCommand, gui->ST_NOTICMD, sizeof(CE->NotifyCommand));
-         break;
+      {
+        CE->PreSelection      = GetMUICycle  (gui->CY_MSGSELECT);
+        CE->TransferWindow    = GetMUICycle  (gui->CY_TRANSWIN);
+        CE->AvoidDuplicates   = GetMUICheck  (gui->CH_AVOIDDUP);
+        CE->UpdateStatus      = GetMUICheck  (gui->CH_UPDSTAT);
+        CE->WarnSize          = GetMUIInteger(gui->ST_WARNSIZE);
+        CE->CheckMailDelay    = GetMUINumer  (gui->NM_INTERVAL);
+        CE->DownloadLarge     = GetMUICheck  (gui->CH_DLLARGE);
+        CE->NotifyType        = (GetMUICheck(gui->CH_NOTIREQ)   ? NOTIFY_REQ   : 0)
+                              + (GetMUICheck(gui->CH_NOTISOUND) ? NOTIFY_SOUND : 0)
+                              + (GetMUICheck(gui->CH_NOTICMD)   ? NOTIFY_CMD   : 0);
+        GetMUIString(CE->NotifySound, gui->ST_NOTISOUND, sizeof(CE->NotifySound));
+        GetMUIString(CE->NotifyCommand, gui->ST_NOTICMD, sizeof(CE->NotifyCommand));
+      }
+      break;
 
       case cp_Filters:
       {
@@ -1418,6 +1424,7 @@ void CO_GetConfig(BOOL saveConfig)
         CE->SpamMarkOnMove = GetMUICheck(gui->CH_SPAMMARKONMOVE);
         CE->SpamMarkAsRead = GetMUICheck(gui->CH_SPAMMARKASREAD);
         CE->SpamAddressBookIsWhiteList = GetMUICheck(gui->CH_SPAMABOOKISWHITELIST);
+        CE->MoveHamToIncoming = GetMUICheck(gui->CH_MOVEHAMTOINCOMING);
 
         if(C->SpamFilterEnabled == TRUE && CE->SpamFilterEnabled == FALSE)
         {
@@ -1557,6 +1564,7 @@ void CO_GetConfig(BOOL saveConfig)
             CE->SpamMarkOnMove = FALSE;
             CE->SpamMarkAsRead = FALSE;
             CE->SpamAddressBookIsWhiteList = FALSE;
+            CE->MoveHamToIncoming = FALSE;
 
             // update the toolbar to the new settings
             if(G->MA->GUI.TO_TOOLBAR != NULL)
@@ -2041,6 +2049,7 @@ void CO_SetConfig(void)
         setcheckmark(gui->CH_SPAMMARKONMOVE, CE->SpamMarkOnMove);
         setcheckmark(gui->CH_SPAMMARKASREAD, CE->SpamMarkAsRead);
         setcheckmark(gui->CH_SPAMABOOKISWHITELIST, CE->SpamAddressBookIsWhiteList);
+        setcheckmark(gui->CH_MOVEHAMTOINCOMING, CE->MoveHamToIncoming);
         snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfHamClassifiedMails());
         set(gui->TX_SPAMGOODCOUNT, MUIA_Text_Contents, buf);
         snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfSpamClassifiedMails());

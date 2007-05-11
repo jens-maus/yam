@@ -2167,6 +2167,7 @@ Object *CO_PageSpam(struct CO_ClassData *data)
             Child, MakeCheckGroup((Object **)&data->GUI.CH_SPAMABOOKISWHITELIST, tr(MSG_CO_SPAM_ADDRESSBOOKISWHITELIST)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_SPAMMARKONMOVE, tr(MSG_CO_SPAM_MARKONMOVE)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_SPAMMARKASREAD, tr(MSG_CO_SPAM_MARK_AS_READ)),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_MOVEHAMTOINCOMING, tr(MSG_CO_MOVE_HAM_TO_INCOMING)),
           End,
 
           Child, HVSpace,
@@ -2179,6 +2180,7 @@ Object *CO_PageSpam(struct CO_ClassData *data)
     nnset(data->GUI.CH_SPAMABOOKISWHITELIST,  MUIA_Disabled, TRUE);
     nnset(data->GUI.CH_SPAMMARKONMOVE,        MUIA_Disabled, TRUE);
     nnset(data->GUI.CH_SPAMMARKASREAD,        MUIA_Disabled, TRUE);
+    nnset(data->GUI.CH_MOVEHAMTOINCOMING,     MUIA_Disabled, TRUE);
 
     SetHelp(data->GUI.CH_SPAMFILTERENABLED,     MSG_HELP_CH_SPAMFILTERENABLED);
     SetHelp(data->GUI.TX_SPAMBADCOUNT,          MSG_HELP_TX_SPAMBADCOUNT);
@@ -2188,14 +2190,16 @@ Object *CO_PageSpam(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_SPAMABOOKISWHITELIST,  MSG_HELP_CH_SPAMABOOKISWHITELIST);
     SetHelp(data->GUI.CH_SPAMMARKONMOVE,        MSG_HELP_CH_SPAMMARKONMOVE);
     SetHelp(data->GUI.CH_SPAMMARKASREAD,        MSG_HELP_CH_SPAMMARKASREAD);
+    SetHelp(data->GUI.CH_MOVEHAMTOINCOMING,     MSG_HELP_CH_MOVE_HAM_TO_INCOMING);
 
     DoMethod(data->GUI.CH_SPAMFILTERENABLED, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
-                                             MUIV_Notify_Application, 8, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue,
+                                             MUIV_Notify_Application, 9, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue,
                                                data->GUI.BT_SPAMRESETTRAININGDATA,
                                                data->GUI.CH_SPAMFILTERFORNEWMAIL,
                                                data->GUI.CH_SPAMABOOKISWHITELIST,
                                                data->GUI.CH_SPAMMARKONMOVE,
-                                               data->GUI.CH_SPAMMARKASREAD);
+                                               data->GUI.CH_SPAMMARKASREAD,
+                                               data->GUI.CH_MOVEHAMTOINCOMING);
 
     DoMethod(data->GUI.BT_SPAMRESETTRAININGDATA, MUIM_Notify, MUIA_Pressed,  FALSE,
                                                  MUIV_Notify_Application, 2, MUIM_CallHook, &ResetSpamTrainingDataHook);

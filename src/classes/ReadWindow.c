@@ -835,14 +835,15 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
   struct Mail *mail = rmData->mail;
   struct Folder *folder = mail->Folder;
-  struct Folder *spamfolder = FO_GetFolderByType(FT_SPAM, NULL);
+  struct Folder *spamFolder = FO_GetFolderByType(FT_SPAM, NULL);
+  struct Folder *incomingFolder = FO_GetFolderByType(FT_INCOMING, NULL);
   enum BayesClassification class = msg->class;
 
   ENTER();
 
-  if(MailExists(mail, folder) && spamfolder != NULL)
+  if(MailExists(mail, folder) && spamFolder != NULL && incomingFolder != NULL)
   {
-    if(!hasStatusSpam(mail) && class == BC_SPAM)
+    if(hasStatusSpam(mail) == FALSE && class == BC_SPAM)
     {
       BOOL closeAfter = FALSE;
       int pos = SelectMessage(mail); // select the message in the folder and return position
@@ -864,7 +865,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       setStatusToUserSpam(mail);
 
       // move the mail
-      MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
+      MA_MoveCopy(mail, folder, spamFolder, FALSE, FALSE);
 
       // erase the old pointer as this has been free()ed by MA_MoveCopy()
       rmData->mail = NULL;
@@ -885,31 +886,84 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
 
       // make sure the read window is closed in case there is no further
       // mail for deletion in this direction
-      if(closeAfter)
+      if(closeAfter == TRUE)
         DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
       else
       {
         // only update the menu/toolbar if we are already in the spam folder
         // otherwise a new mail will be read later or the window is closed
-        if(folder == spamfolder)
+        if(folder == spamFolder)
           DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
 
         // update the status bar
         DoMethod(obj, MUIM_ReadWindow_UpdateStatusBar);
       }
     }
-    else if(!hasStatusHam(mail) && class == BC_HAM)
+    else if(hasStatusHam(mail) == FALSE && class == BC_HAM)
     {
+      BOOL closeAfter = FALSE;
+      int pos = SelectMessage(mail); // select the message in the folder and return position
+      int entries;
+
+      // depending on the last move direction we
+      // set it back
+      if(data->lastDirection == -1)
+      {
+        if(pos-1 >= 0)
+          set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, --pos);
+        else
+          closeAfter = TRUE;
+      }
+
       // mark the mail as ham
       AppendLogVerbose(90, tr(MSG_LOG_MAILISNOTSPAM), AddrName(mail->From), mail->Subject);
       BayesFilterSetClassification(mail, BC_HAM);
       setStatusToHam(mail);
 
-      // update the menu/toolbar
-      DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
+      if(C->MoveHamToIncoming == TRUE)
+      {
+        MA_MoveCopy(mail, folder, incomingFolder, FALSE, FALSE);
 
-      // update the status bar
-      DoMethod(obj, MUIM_ReadWindow_UpdateStatusBar);
+        // erase the old pointer as this has been free()ed by MA_MoveCopy()
+        rmData->mail = NULL;
+
+        // if there are still mails in the current folder we make sure
+        // it is displayed in this window now or close it
+        if(closeAfter == FALSE &&
+           (entries = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries)) >= pos+1)
+        {
+          DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, pos, &mail);
+          if(mail != NULL)
+            DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
+          else
+            closeAfter = TRUE;
+        }
+        else
+          closeAfter = TRUE;
+
+        // make sure the read window is closed in case there is no further
+        // mail for deletion in this direction
+        if(closeAfter == TRUE)
+          DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
+        else
+        {
+          // only update the menu/toolbar if we are already in the incoming folder
+          // otherwise a new mail will be read later or the window is closed
+          if(folder == incomingFolder)
+            DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
+
+          // update the status bar
+          DoMethod(obj, MUIM_ReadWindow_UpdateStatusBar);
+        }
+      }
+      else
+      {
+        // update the menu/toolbar
+        DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
+
+        // update the status bar
+        DoMethod(obj, MUIM_ReadWindow_UpdateStatusBar);
+      }
     }
   }
 
@@ -1368,3 +1422,4 @@ DECLARE(UpdateSpamControls)
   return 0;
 }
 ///
+

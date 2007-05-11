@@ -3017,14 +3017,16 @@ MakeHook(MA_DeleteMessageHook, MA_DeleteMessageFunc);
 void MA_ClassifyMessage(enum BayesClassification bclass)
 {
   struct Folder *folder;
-  struct Folder *spamfolder;
+  struct Folder *spamFolder;
+  struct Folder *incomingFolder;
 
   ENTER();
 
   folder = FO_GetCurrentFolder();
-  spamfolder = FO_GetFolderByType(FT_SPAM, NULL);
+  spamFolder = FO_GetFolderByType(FT_SPAM, NULL);
+  incomingFolder = FO_GetFolderByType(FT_INCOMING, NULL);
 
-  if(folder != NULL && spamfolder != NULL)
+  if(folder != NULL && spamFolder != NULL && incomingFolder != NULL)
   {
     Object *lv = G->MA->GUI.PG_MAILLIST;
     struct Mail **mlist;
@@ -3043,7 +3045,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
 
         if(mail != NULL)
         {
-          if(!hasStatusSpam(mail) && bclass == BC_SPAM)
+          if(hasStatusSpam(mail) == FALSE && bclass == BC_SPAM)
           {
             // mark the mail as spam
             AppendLogVerbose(90, tr(MSG_LOG_MAILISSPAM), AddrName(mail->From), mail->Subject);
@@ -3051,15 +3053,19 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
             setStatusToUserSpam(mail);
 
             // move the mail
-            if(folder != spamfolder)
-              MA_MoveCopySingle(mail, folder, spamfolder, FALSE, TRUE);
+            if(folder != spamFolder)
+              MA_MoveCopySingle(mail, folder, spamFolder, FALSE, TRUE);
           }
-          else if(!hasStatusHam(mail) && bclass == BC_HAM)
+          else if(hasStatusHam(mail) == FALSE && bclass == BC_HAM)
           {
             // mark the mail as ham
             AppendLogVerbose(90, tr(MSG_LOG_MAILISNOTSPAM), AddrName(mail->From), mail->Subject);
             BayesFilterSetClassification(mail, BC_HAM);
             setStatusToHam(mail);
+
+            // move the mail back to the Incoming folder, if requested
+            if(C->MoveHamToIncoming == TRUE && folder != incomingFolder)
+              MA_MoveCopySingle(mail, folder, incomingFolder, FALSE, TRUE);
           }
         }
 
@@ -3074,8 +3080,9 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
       set(lv, MUIA_NList_Quiet, FALSE);
       free(mlist);
 
-      AppendLogNormal(22, tr(MSG_LOG_Moving), selected, folder->Name, spamfolder->Name);
-      DisplayStatistics(spamfolder, FALSE);
+      AppendLogNormal(22, tr(MSG_LOG_Moving), selected, folder->Name, spamFolder->Name);
+      DisplayStatistics(spamFolder, FALSE);
+      DisplayStatistics(incomingFolder, FALSE);
 
       DisplayStatistics(NULL, TRUE);
       // force an update of the toolbar

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-11  Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: implemented the "move non-spam mails back to incoming" feature. If
+    this option is enabled falsely classified spam mails which are reclassified
+    as "not spam" will be moved back to the incoming folder.
+
 2007-05-11  Jens Langner <Jens.Langner@light-speed.de>
 
   * STYLEGUIDE: added information to generally try to avoid the use of

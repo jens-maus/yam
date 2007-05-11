@@ -266,6 +266,7 @@ struct CO_GUIData
   Object *CH_SPAMMARKONMOVE;
   Object *CH_SPAMMARKASREAD;
   Object *CH_SPAMABOOKISWHITELIST;
+  Object *CH_MOVEHAMTOINCOMING;
   Object *BT_SPAMRESETTRAININGDATA;
   Object *TX_SPAMGOODCOUNT;
   Object *TX_SPAMBADCOUNT;
@@ -484,6 +485,7 @@ struct Config
    BOOL  SpamMarkOnMove;
    BOOL  SpamMarkAsRead;
    BOOL  SpamAddressBookIsWhiteList;
+   BOOL  MoveHamToIncoming;
    BOOL  DisplayAllAltPart;
    BOOL  MDNEnabled;
    BOOL  RequestMDN;
