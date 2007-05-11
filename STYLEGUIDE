@@ -534,3 +534,19 @@ on the safe side and highly reduce the probablity of unwanted crashes due to
 buffer overflows.
 
 ############################################################################
+
+18. Avoid the use of MUIA_ShowMe
+--------------------------------
+
+It is known, that the use of MUIA_ShowMe may cause trouble with older MUI
+versions (<= 3.8) but also may screw up the window layout with newer MUI
+versions, under certain conditions. See bug #1716466 at http://bugs.yam.ch/
+for more info on a common MUIA_ShowMe issue.
+
+Whereas we don't want to generally ban the use of MUIA_ShowMe
+in the sources of YAM, we highly suggest to try to avoid it. Whereever
+easily possible, a MUIA_ShowMe use should be replaced by the corresponding
+MUIM_Group_InitChange/ExitChange combo so that an object will be dynamically
+removed (hided) and added (shown) by using there Group method calls instead
+
+############################################################################
