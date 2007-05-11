@@ -7,6 +7,9 @@ $URL$
 
 2007-05-11  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.cd: renamed the "Not Spam" toolbar texts to the shorter "N.Spam"
+    variant as that prevents the toolbar from unncessary button resizes
+    in case the user switches between a Spam and Not Spam message.
   * YAM_TR.c: reworked certain sent/recv function to better comply to our
     STYLEGUIDE. In addition, more added debug output should make it easier
     to debug a TCP/IP session and find out why a connection terminated.

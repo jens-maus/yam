@@ -5596,7 +5596,7 @@ MSG_MA_TBSPAM (1746//)
 Sp_am
 ;
 MSG_MA_TBNOTSPAM (1747//)
-NotSp_am
+N.Sp_am
 ;
 MSG_HELP_MA_BT_SPAM (1748//)
 Mark mail as spam
@@ -5608,7 +5608,7 @@ MSG_RE_TBSPAM (1750//)
 Sp_am
 ;
 MSG_RE_TBNOTSPAM (1751//)
-NotSp_am
+N.Sp_am
 ;
 MSG_HELP_RE_BT_SPAM (1752//)
 Mark mail as spam
