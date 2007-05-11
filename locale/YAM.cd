@@ -6222,10 +6222,10 @@ the current position of the AppIcon on the workbench\n\
 desktop.
 ;
 MSG_CO_MOVE_HAM_TO_INCOMING (1930//)
-Move non-spam mails back to Incoming folder
+Move 'Not Spam' mails back to incoming folder
 ;
 MSG_HELP_CH_MOVE_HAM_TO_INCOMING (1931//)
-If enabled, a mail, which was incorrectly classified\n\
-as spam and being marked as not spam it will be moved\n\
-back to the Incoming folder.
+If enabled, a mail which was incorrectly classified\n\
+as spam and being manually marked as 'not spam' will be\n\
+moved back to the incoming folder.
 ;

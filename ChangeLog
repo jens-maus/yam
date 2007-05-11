@@ -13,6 +13,7 @@ $URL$
 
 2007-05-11  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.cd, deutsch.ct: minor typo fixes and rephrasing.
   * STYLEGUIDE: added information to generally try to avoid the use of
     MUIA_ShowMe in the sources of YAM.
   * YAM.cd: renamed the "Not Spam" toolbar texts to the shorter "N.Spam"

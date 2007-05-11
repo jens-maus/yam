@@ -7381,7 +7381,7 @@ Nachrichten an.
 ;
 MSG_HELP_TX_SPAMGOODCOUNT
 Zeigt die Menge manuell klassifizierter\n\
-"Nicht-Spam" Nachrichten (sog. "Ham") an.
+"Nicht-Spam"-Nachrichten (sog. "Ham") an.
 ;
 MSG_HELP_BT_SPAMRESETTRAININGDATA
 Erlaubt es die Spam-Filter Trainingsdaten manuell\n\
@@ -7664,11 +7664,11 @@ Wenn ausgewählt, wird die aktuelle Position des\n\
 AppIcons auf der Workbench als permanent angesehen.
 ;
 MSG_CO_MOVE_HAM_TO_INCOMING
-Nicht-Spam-Nachrichten zurück in den Posteingang verschieben
+"Nicht-Spam"-Nachrichten zurück in den Posteingang verschieben
 ;
 MSG_HELP_CH_MOVE_HAM_TO_INCOMING
 Wenn ausgewählt, werden Nachrichten, die falsch als\n\
-Spam klassifiziert wurden und neu als Nicht-Spam\n\
+"Spam" klassifiziert wurden und manuell als "Nicht-Spam"\n\
 klassifiziert werden, zurück in den Posteingang\n\
 verschoben.
 ;
