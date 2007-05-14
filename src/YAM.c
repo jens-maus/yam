@@ -1781,7 +1781,7 @@ static void Initialise2(void)
      {
        BOOL createSpamFolder;
 
-       if(FileType(FolderName[FT_SPAM]) == FIT_NONEXIST)
+       if(FileType(CreateFilename(FolderName[FT_SPAM])) == FIT_NONEXIST)
        {
          // no directory named "spam" exists, so let's create it
          createSpamFolder = TRUE;
@@ -1807,7 +1807,7 @@ static void Initialise2(void)
 
            case 1:
              // delete everything in the folder, the directory itself can be kept
-             DeleteMailDir(FolderName[FT_SPAM], FALSE);
+             DeleteMailDir(CreateFilename(FolderName[FT_SPAM]), FALSE);
              createSpamFolder = TRUE;
              break;
 

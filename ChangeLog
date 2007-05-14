@@ -7,6 +7,8 @@ $URL$
 
 2007-05-14  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: added missing CreateFilename() calls while checking if a spam folder
+    already exists.
   * YAM_COs.c: upon disabling the spam filter now the former spam folder is
     redrawn instead of the current folder. This makes the folder image go away
     instantly instead of having to click on the old spam folder once again.
