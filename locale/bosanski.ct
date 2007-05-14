@@ -1600,8 +1600,8 @@ Do_men
 ; Do_main
 ;
 MSG_CO_Allow8bit
-SMTP server dozvoljava _8 bit-ova
-; SMTP server allows _8bit
+Server dozvoljava _8 bit-ova
+; Server allows _8bit
 ;
 MSG_CO_ReceiveMail
 Primanje poste (POP3)

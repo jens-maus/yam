@@ -1032,7 +1032,7 @@ MSG_CO_Domain
 Do_minio
 ;
 MSG_CO_Allow8bit
-Server SMTP permette gli _8bit
+Server permette gli _8bit
 ;
 MSG_CO_ReceiveMail
 Ricevi posta (POP3)

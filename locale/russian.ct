@@ -1626,8 +1626,8 @@ MSG_CO_Domain
 ;Do_main
 ;
 MSG_CO_Allow8bit
-SMTP сервер поддерживает _8 бит
-;SMTP server allows _8bit
+сервер поддерживает _8 бит
+;Server allows _8bit
 ;
 MSG_CO_ReceiveMail
 Приём почты (POP3)

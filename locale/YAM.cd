@@ -1005,7 +1005,7 @@ MSG_CO_Domain (352//)
 Do_main
 ;
 MSG_CO_Allow8bit (353//)
-SMTP server allows _8bit characters
+Server allows _8bit characters
 ;
 MSG_CO_ReceiveMail (354//)
 Receive mail (POP3)
@@ -6228,4 +6228,13 @@ MSG_HELP_CH_MOVE_HAM_TO_INCOMING (1931//)
 If enabled, a mail which was incorrectly classified\n\
 as spam and being manually marked as 'not spam' will be\n\
 moved back to the incoming folder.
+;
+MSG_ER_NO8BITMIME (1932//)
+While trying to connect to SMTP server '%s', it reported \
+that it doesn't support 8bit MIME transfers. However, you \
+seem to have the 'Allow8bit' option enabled in your \
+SMTP server configuration.\n\
+\n\
+Please make sure you disable this option and re-edit the \
+mail or otherwise it may be malformed during the transfer.
 ;

@@ -1692,8 +1692,8 @@ Do_mene
 ; Do_main
 ;
 MSG_CO_Allow8bit
-SMTP tjener tillater _8bit
-; SMTP server allows _8bit
+Tjener tillater _8bit
+; Server allows _8bit
 ;
 MSG_CO_ReceiveMail
 Motta post (POP3)

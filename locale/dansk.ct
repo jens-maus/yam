@@ -1606,8 +1606,8 @@ _Domæne
 ; Do_main
 ;
 MSG_CO_Allow8bit
-SMTP-server tillader _8 bit-tegn
-; SMTP server allows _8bit
+Server tillader _8 bit-tegn
+; Server allows _8bit
 ;
 MSG_CO_ReceiveMail
 Postmodtagelse (POP3)

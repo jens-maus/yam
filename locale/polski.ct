@@ -1585,8 +1585,8 @@ Do_mena
 ; Do_main
 ;
 MSG_CO_Allow8bit
-Serwer SMTP obsîuguje _8 bitów
-; SMTP server allows _8bit
+Serwer obsîuguje _8 bitów
+; Server allows _8bit
 ;
 MSG_CO_ReceiveMail
 Odbieranie poczty (POP3)

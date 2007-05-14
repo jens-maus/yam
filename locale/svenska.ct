@@ -1186,8 +1186,8 @@ Do_män
 ;#DEF Do_main
 ;#SET (352//)
 MSG_CO_Allow8bit
-SMTP-server tillåter _8 bitars tecken
-;#DEF SMTP server allows _8bit characters
+Server tillåter _8 bitars tecken
+;#DEF Sserver allows _8bit characters
 ;#SET (353//)
 MSG_CO_ReceiveMail
 Hämta post (POP3)

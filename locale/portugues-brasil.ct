@@ -1129,7 +1129,7 @@ MSG_CO_Domain
 Do_mínio
 ;
 MSG_CO_Allow8bit
-Servidor SMTP permite _8bits
+Servidor permite _8bits
 ;
 MSG_CO_ReceiveMail
 Receber mensagens (POP3)

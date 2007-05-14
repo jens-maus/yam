@@ -1603,8 +1603,8 @@ Do_minio
 ; Do_main
 ;
 MSG_CO_Allow8bit
-Servidor SMTP permite _8 bits
-; SMTP server allows _8bit
+Servidor permite _8 bits
+; Server allows _8bit
 ;
 MSG_CO_ReceiveMail
 Recibir correo (POP3)

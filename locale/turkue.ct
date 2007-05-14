@@ -1643,8 +1643,8 @@ Do_main
 ; Do_main
 ;
 MSG_CO_Allow8bit
-SMTP sunucu _8bit uyumlu
-; SMTP server allows _8bit
+Sunucu _8bit uyumlu
+; Server allows _8bit
 ;
 MSG_CO_ReceiveMail
 Posta al (POP3)

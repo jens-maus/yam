@@ -1588,8 +1588,8 @@ Tarto_mány
 ; Do_main
 ;
 MSG_CO_Allow8bit
-SMTP szerver engedélyez _8-bitet
-; SMTP server allows _8bit
+Szerver engedélyez _8-bitet
+; Server allows _8bit
 ;
 MSG_CO_ReceiveMail
 Levél fogadása (POP3)

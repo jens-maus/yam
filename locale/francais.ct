@@ -1325,8 +1325,8 @@ Do_maine
 ; Do_main
 ;
 MSG_CO_Allow8bit
-Serveur SMTP autorisant les caractères _8 bits
-; SMTP server allows _8bit characters
+Serveur autorisant les caractères _8 bits
+; Server allows _8bit characters
 ;
 MSG_CO_ReceiveMail
 Réception (POP3)

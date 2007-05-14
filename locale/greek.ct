@@ -1420,8 +1420,8 @@ Do_main
 ;Do_main
 ;
 MSG_CO_Allow8bit
-Ο διακομιστής SMTP επιτρέπει _8bit
-;SMTP server allows _8bit
+Ο διακομιστής επιτρέπει _8bit
+;Server allows _8bit
 ;
 MSG_CO_ReceiveMail
 Λήψη μηνυμάτων (POP3)

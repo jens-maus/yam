@@ -1539,8 +1539,8 @@ Toimialu_e
 ; Do_main
 ;
 MSG_CO_Allow8bit
-SMTP-palvelin sallii _8-bittisen merkistön käytön
-; SMTP server allows _8bit
+Palvelin sallii _8-bittisen merkistön käytön
+; Server allows _8bit
 ;
 MSG_CO_ReceiveMail
 Postin vastaanotto (POP3)

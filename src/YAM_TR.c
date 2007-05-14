@@ -126,33 +126,35 @@ static const char *SMTPcmd[] =
 #define SMTP_SERVICE_NOT_AVAILABLE 421
 #define SMTP_ACTION_OK             250
 
-// ESMTP ServerFlags & macros
-#define ESMTP_FLG_AUTH_CRAM_MD5       (1<<0)
-#define ESMTP_FLG_AUTH_DIGEST_MD5     (1<<1)
-#define ESMTP_FLG_AUTH_LOGIN          (1<<2)
-#define ESMTP_FLG_AUTH_PLAIN          (1<<3)
-#define ESMTP_FLG_STARTTLS            (1<<4)
-#define ESMTP_FLG_SIZE                (1<<5)
-#define ESMTP_FLG_PIPELINING          (1<<6)
-#define ESMTP_FLG_8BITMIME            (1<<7)
-#define ESMTP_FLG_DSN                 (1<<8)
-#define ESMTP_FLG_ETRN                (1<<9)
-#define ESMTP_FLG_ENHANCEDSTATUSCODES (1<<10)
-#define ESMTP_FLG_DELIVERBY           (1<<11)
-#define ESMTP_FLG_HELP                (1<<12)
-#define hasCRAM_MD5_Auth(v)           (isFlagSet((v), ESMTP_FLG_AUTH_CRAM_MD5))
-#define hasDIGEST_MD5_Auth(v)         (isFlagSet((v), ESMTP_FLG_AUTH_DIGEST_MD5))
-#define hasLOGIN_Auth(v)              (isFlagSet((v), ESMTP_FLG_AUTH_LOGIN))
-#define hasPLAIN_Auth(v)              (isFlagSet((v), ESMTP_FLG_AUTH_PLAIN))
-#define hasSTARTTLS(v)                (isFlagSet((v), ESMTP_FLG_STARTTLS))
-#define hasSIZE(v)                    (isFlagSet((v), ESMTP_FLG_SIZE))
-#define hasPIPELINING(v)              (isFlagSet((v), ESMTP_FLG_PIPELINING))
-#define has8BITMIME(v)                (isFlagSet((v), ESMTP_FLG_8BITMIME))
-#define hasDSN(v)                     (isFlagSet((v), ESMTP_FLG_DSN))
-#define hasETRN(v)                    (isFlagSet((v), ESMTP_FLG_ETRN))
-#define hasENHANCEDSTATUSCODES(v)     (isFlagSet((v), ESMTP_FLG_ENHANCEDSTATUSCODES))
-#define hasDELIVERBY(v)               (isFlagSet((v), ESMTP_FLG_DELIVERBY))
-#define hasHELP(v)                    (isFlagSet((v), ESMTP_FLG_HELP))
+// SMTP server capabilities flags & macros
+#define SMTP_FLG_ESMTP               (1<<0)
+#define SMTP_FLG_AUTH_CRAM_MD5       (1<<1)
+#define SMTP_FLG_AUTH_DIGEST_MD5     (1<<2)
+#define SMTP_FLG_AUTH_LOGIN          (1<<3)
+#define SMTP_FLG_AUTH_PLAIN          (1<<4)
+#define SMTP_FLG_STARTTLS            (1<<5)
+#define SMTP_FLG_SIZE                (1<<6)
+#define SMTP_FLG_PIPELINING          (1<<7)
+#define SMTP_FLG_8BITMIME            (1<<8)
+#define SMTP_FLG_DSN                 (1<<9)
+#define SMTP_FLG_ETRN                (1<<10)
+#define SMTP_FLG_ENHANCEDSTATUSCODES (1<<11)
+#define SMTP_FLG_DELIVERBY           (1<<12)
+#define SMTP_FLG_HELP                (1<<13)
+#define hasESMTP(v)                  (isFlagSet((v), SMTP_FLG_ESMTP))
+#define hasCRAM_MD5_Auth(v)          (isFlagSet((v), SMTP_FLG_AUTH_CRAM_MD5))
+#define hasDIGEST_MD5_Auth(v)        (isFlagSet((v), SMTP_FLG_AUTH_DIGEST_MD5))
+#define hasLOGIN_Auth(v)             (isFlagSet((v), SMTP_FLG_AUTH_LOGIN))
+#define hasPLAIN_Auth(v)             (isFlagSet((v), SMTP_FLG_AUTH_PLAIN))
+#define hasSTARTTLS(v)               (isFlagSet((v), SMTP_FLG_STARTTLS))
+#define hasSIZE(v)                   (isFlagSet((v), SMTP_FLG_SIZE))
+#define hasPIPELINING(v)             (isFlagSet((v), SMTP_FLG_PIPELINING))
+#define has8BITMIME(v)               (isFlagSet((v), SMTP_FLG_8BITMIME))
+#define hasDSN(v)                    (isFlagSet((v), SMTP_FLG_DSN))
+#define hasETRN(v)                   (isFlagSet((v), SMTP_FLG_ETRN))
+#define hasENHANCEDSTATUSCODES(v)    (isFlagSet((v), SMTP_FLG_ENHANCEDSTATUSCODES))
+#define hasDELIVERBY(v)              (isFlagSet((v), SMTP_FLG_DELIVERBY))
+#define hasHELP(v)                   (isFlagSet((v), SMTP_FLG_HELP))
 
 // help macros for SMTP routines
 #define getResponseCode(str)          ((int)strtol((str), NULL, 10))
@@ -466,14 +468,14 @@ static BOOL TR_StartTLS(VOID)
 ///
 /// TR_InitSTARTTLS()
 // function to initiate a TLS connection to the ESMTP server via STARTTLS
-static BOOL TR_InitSTARTTLS(int ServerFlags)
+static BOOL TR_InitSTARTTLS(void)
 {
   BOOL result = FALSE;
 
   ENTER();
 
   // If this server doesn`t support TLS at all we return with an error
-  if(hasSTARTTLS(ServerFlags))
+  if(hasSTARTTLS(G->TR_SMTPflags))
   {
     // If we end up here the server supports STARTTLS and we can start
     // initializing the connection
@@ -504,7 +506,7 @@ static BOOL TR_InitSTARTTLS(int ServerFlags)
 /*** SMTP-AUTH routines ***/
 /// TR_InitSMTPAUTH()
 // function to authenticate to a ESMTP Server
-static BOOL TR_InitSMTPAUTH(int ServerFlags)
+static BOOL TR_InitSMTPAUTH(void)
 {
   int rc = SMTP_SERVICE_NOT_AVAILABLE;
   char *resp;
@@ -535,20 +537,20 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
     case SMTPAUTH_AUTO:
     {
       // we select the most secure one the server supports
-      if(hasDIGEST_MD5_Auth(ServerFlags))
+      if(hasDIGEST_MD5_Auth(G->TR_SMTPflags))
         selectedMethod = SMTPAUTH_DIGEST;
-      else if(hasCRAM_MD5_Auth(ServerFlags))
+      else if(hasCRAM_MD5_Auth(G->TR_SMTPflags))
         selectedMethod = SMTPAUTH_CRAM;
-      else if(hasLOGIN_Auth(ServerFlags))
+      else if(hasLOGIN_Auth(G->TR_SMTPflags))
         selectedMethod = SMTPAUTH_LOGIN;
-      else if(hasPLAIN_Auth(ServerFlags))
+      else if(hasPLAIN_Auth(G->TR_SMTPflags))
         selectedMethod = SMTPAUTH_PLAIN;
     }
     break;
 
     case SMTPAUTH_DIGEST:
     {
-      if(hasDIGEST_MD5_Auth(ServerFlags))
+      if(hasDIGEST_MD5_Auth(G->TR_SMTPflags))
         selectedMethod = SMTPAUTH_DIGEST;
       else
         W(DBF_NET, "User selected SMTP-Auth 'DIGEST-MD5' but server doesn't support it!");
@@ -557,7 +559,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
     case SMTPAUTH_CRAM:
     {
-      if(hasCRAM_MD5_Auth(ServerFlags))
+      if(hasCRAM_MD5_Auth(G->TR_SMTPflags))
         selectedMethod = SMTPAUTH_CRAM;
       else
         W(DBF_NET, "User selected SMTP-Auth 'CRAM-MD5' but server doesn't support it!");
@@ -566,7 +568,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
     case SMTPAUTH_LOGIN:
     {
-      if(hasLOGIN_Auth(ServerFlags))
+      if(hasLOGIN_Auth(G->TR_SMTPflags))
         selectedMethod = SMTPAUTH_LOGIN;
       else
         W(DBF_NET, "User selected SMTP-Auth 'LOGIN' but server doesn't support it!");
@@ -575,7 +577,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
     case SMTPAUTH_PLAIN:
     {
-      if(hasCRAM_MD5_Auth(ServerFlags))
+      if(hasCRAM_MD5_Auth(G->TR_SMTPflags))
         selectedMethod = SMTPAUTH_CRAM;
       else
         W(DBF_NET, "User selected SMTP-Auth 'DIGEST-MD5' but server doesn't support it!");
@@ -3163,7 +3165,8 @@ static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext
 }
 ///
 /// TR_ConnectSMTP
-//  Connects to a SMTP mail server
+//  Connects to a SMTP mail server - here we always try to do an ESMTP connection
+//  first via an EHLO command and then check if it succeeded or not.
 static BOOL TR_ConnectSMTP(void)
 {
   BOOL result = FALSE;
@@ -3173,7 +3176,7 @@ static BOOL TR_ConnectSMTP(void)
   // If we did a TLS negotitaion previously we have to skip the
   // welcome message, but if it was another connection like a normal or a SSL
   // one we have wait for the welcome
-  if(!G->TR_UseTLS || C->SMTP_SecureMethod == SMTPSEC_SSL)
+  if(G->TR_UseTLS == FALSE || C->SMTP_SecureMethod == SMTPSEC_SSL)
   {
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
 
@@ -3182,116 +3185,140 @@ static BOOL TR_ConnectSMTP(void)
   else
     result = TRUE;
 
-  if(result)
+  // now we either send a HELO (non-ESMTP) or EHLO (ESMTP) command to
+  // signal we wanting to start a session accordingly (RFC 1869 - section 4)
+  if(result && G->TR_Socket != TCP_NO_SOCKET)
   {
-    set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, tr(MSG_TR_SendHello));
-    result = (TR_SendSMTPCmd(SMTP_HELO, C->SMTP_Domain, MSG_ER_BadResponse) != NULL);
+    ULONG flags = 0;
+    char *resp = NULL;
+
+    // per default we flag the SMTP to be capable of an ESMTP
+    // connection.
+    SET_FLAG(flags, SMTP_FLG_ESMTP);
+
+    // set the connection status
+    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendHello));
+
+    D(DBF_NET, "trying ESMTP negotation");
+
+    // in case we require SMTP-AUTH or a TLS secure connection we
+    // have to force an ESMTP connection
+    if(C->Use_SMTP_AUTH || C->SMTP_SecureMethod == SMTPSEC_TLS)
+      resp = TR_SendSMTPCmd(ESMTP_EHLO, C->SMTP_Domain, MSG_ER_BadResponse);
+    else
+    {
+      // in all other cases, we first try to get an ESMTP connection
+      // and if that doesn't work we go and do a normal SMTP connection
+      if((resp = TR_SendSMTPCmd(ESMTP_EHLO, C->SMTP_Domain, NULL)) == NULL)
+      {
+        D(DBF_NET, "ESMTP negotation failed, trying normal SMTP negotation");
+
+        // according to RFC 1869 section 4.7 we send an RSET command
+        // between the two EHLO and HELO commands to play save
+        TR_SendSMTPCmd(SMTP_RSET, NULL, NULL); // no error code check
+
+        // now we send a HELO command which signals we are not
+        // going to use any ESMTP stuff
+        resp = TR_SendSMTPCmd(SMTP_HELO, C->SMTP_Domain, MSG_ER_BadResponse);
+
+        // signal we are not into ESMTP stuff
+        CLEAR_FLAG(flags, SMTP_FLG_ESMTP);
+      }
+    }
+
+    // check the EHLO/HELO answer.
+    if(resp != NULL)
+    {
+      // check the ESMTP flags if this is an
+      // ESMTP connection
+      if(hasESMTP(flags))
+      {
+        // Now lets see what features this ESMTP Server really has
+        while(resp[3] == '-')
+        {
+          // now lets iterate to the next line
+          resp = strchr(resp, '\n');
+
+          // if we do not find any new line or the next one would be anyway
+          // too short we break here.
+          if(resp == NULL || strlen(++resp) < 4)
+            break;
+
+          // lets see what features this server returns
+          if(strnicmp(resp+4, "STARTTLS", 8) == 0)          // STARTTLS (RFC 2487)
+            SET_FLAG(flags, SMTP_FLG_STARTTLS);
+          else if(strnicmp(resp+4, "AUTH", 4) == 0)         // SMTP-AUTH (RFC 2554)
+          {
+            if(NULL != strstr(resp+9,"CRAM-MD5"))
+              SET_FLAG(flags, SMTP_FLG_AUTH_CRAM_MD5);
+
+            if(NULL != strstr(resp+9,"DIGEST-MD5"))
+              SET_FLAG(flags, SMTP_FLG_AUTH_DIGEST_MD5);
+
+            if(NULL != strstr(resp+9,"PLAIN"))
+              SET_FLAG(flags, SMTP_FLG_AUTH_PLAIN);
+
+            if(NULL != strstr(resp+9,"LOGIN"))
+              SET_FLAG(flags, SMTP_FLG_AUTH_LOGIN);
+          }
+          else if(strnicmp(resp+4, "SIZE", 4) == 0)         // STD:10 - SIZE declaration (RFC 1870)
+            SET_FLAG(flags, SMTP_FLG_SIZE);
+          else if(strnicmp(resp+4, "PIPELINING", 10) == 0)  // STD:60 - PIPELINING (RFC 2920)
+            SET_FLAG(flags, SMTP_FLG_PIPELINING);
+          else if(strnicmp(resp+4, "8BITMIME", 8) == 0)     // 8BITMIME support (RFC 1652)
+            SET_FLAG(flags, SMTP_FLG_8BITMIME);
+          else if(strnicmp(resp+4, "DSN", 3) == 0)          // DSN - Delivery Status Notifications (RFC 1891)
+            SET_FLAG(flags, SMTP_FLG_DSN);
+          else if(strnicmp(resp+4, "ETRN", 4) == 0)         // ETRN - Remote Message Queue Starting (RFC 1985)
+            SET_FLAG(flags, SMTP_FLG_ETRN);
+          else if(strnicmp(resp+4, "ENHANCEDSTATUSCODES", 19) == 0) // Enhanced Status Codes (RFC 2034)
+            SET_FLAG(flags, SMTP_FLG_ENHANCEDSTATUSCODES);
+          else if(strnicmp(resp+4, "DELIVERBY", 9) == 0)    // DELIVERBY Extension (RFC 2852)
+            SET_FLAG(flags, SMTP_FLG_DELIVERBY);
+          else if(strnicmp(resp+4, "HELP", 4) == 0)         // HELP Extension (RFC 821)
+            SET_FLAG(flags, SMTP_FLG_HELP);
+        }
+      }
+
+      #ifdef DEBUG
+      D(DBF_NET, "SMTP Server '%s' serves:", C->SMTP_Server);
+      D(DBF_NET, "  ESMTP..............: %ld", hasESMTP(flags));
+      D(DBF_NET, "  AUTH CRAM-MD5......: %ld", hasCRAM_MD5_Auth(flags));
+      D(DBF_NET, "  AUTH DIGEST-MD5....: %ld", hasDIGEST_MD5_Auth(flags));
+      D(DBF_NET, "  AUTH LOGIN.........: %ld", hasLOGIN_Auth(flags));
+      D(DBF_NET, "  AUTH PLAIN.........: %ld", hasPLAIN_Auth(flags));
+      D(DBF_NET, "  STARTTLS...........: %ld", hasSTARTTLS(flags));
+      D(DBF_NET, "  SIZE...............: %ld", hasSIZE(flags));
+      D(DBF_NET, "  PIPELINING.........: %ld", hasPIPELINING(flags));
+      D(DBF_NET, "  8BITMIME...........: %ld", has8BITMIME(flags));
+      D(DBF_NET, "  DSN................: %ld", hasDSN(flags));
+      D(DBF_NET, "  ETRN...............: %ld", hasETRN(flags));
+      D(DBF_NET, "  ENHANCEDSTATUSCODES: %ld", hasENHANCEDSTATUSCODES(flags));
+      D(DBF_NET, "  DELIVERBY..........: %ld", hasDELIVERBY(flags));
+      D(DBF_NET, "  HELP...............: %ld", hasHELP(flags));
+      #endif
+
+      // now we check the 8BITMIME extension against
+      // the user configured Allow8bit setting and if it collides
+      // we raise a warning.
+      if(has8BITMIME(flags) == FALSE && C->Allow8bit == TRUE)
+        result = FALSE;
+    }
+    else
+    {
+      result = FALSE;
+
+      W(DBF_NET, "error on SMTP server negotation");
+    }
+
+    G->TR_SMTPflags = flags;
   }
+  else
+    W(DBF_NET, "SMTP connection failure!");
 
   RETURN(result);
   return result;
 }
-///
-/// TR_ConnectESMTP
-//  Connects to a ESMTP mail server, checks some ESMTP features and returns the
-//  supported features in a Flag variable
-static int TR_ConnectESMTP(void)
-{
-   char *resp;
-   int ServerFlags = 0;
-
-   // If we did a TLS negotitaion previously we have to skip the
-   // welcome message, but if it was another connection like a normal or a SSL
-   // one we have wait for the welcome
-   if(!G->TR_UseTLS || C->SMTP_SecureMethod == SMTPSEC_SSL)
-   {
-      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
-      if(!TR_SendSMTPCmd(SMTP_CONNECT, NULL, MSG_ER_BadResponse)) return 0;
-   }
-
-   // Now we send the EHLO command to get the list of features returned.
-   if (G->TR_Socket == TCP_NO_SOCKET) return 0;
-
-   // Now send the EHLO ESMTP command to log in
-   set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, tr(MSG_TR_SendHello));
-   if(!(resp = TR_SendSMTPCmd(ESMTP_EHLO, C->SMTP_Domain, MSG_ER_BadResponse))) return 0;
-
-   // Now lets see what features this ESMTP Server really has
-   while(resp && resp[3] == '-')
-   {
-      // now lets iterate to the next line
-      resp = strchr(resp, '\n');
-
-      // if we do not find any new line or the next one would be anyway
-      // too short we break here.
-      if(resp == NULL || strlen(++resp) < 4) break;
-
-      // lets see what features this server returns
-      if(strnicmp(resp+4, "STARTTLS", 8) == 0)          // STARTTLS (RFC 2487)
-      {
-         SET_FLAG(ServerFlags, ESMTP_FLG_STARTTLS);
-      }
-      else if(strnicmp(resp+4, "AUTH", 4) == 0)         // SMTP-AUTH (RFC 2554)
-      {
-         if (NULL != strstr(resp+9,"CRAM-MD5"))   SET_FLAG(ServerFlags, ESMTP_FLG_AUTH_CRAM_MD5);
-         if (NULL != strstr(resp+9,"DIGEST-MD5")) SET_FLAG(ServerFlags, ESMTP_FLG_AUTH_DIGEST_MD5);
-         if (NULL != strstr(resp+9,"PLAIN"))      SET_FLAG(ServerFlags, ESMTP_FLG_AUTH_PLAIN);
-         if (NULL != strstr(resp+9,"LOGIN"))      SET_FLAG(ServerFlags, ESMTP_FLG_AUTH_LOGIN);
-      }
-      else if(strnicmp(resp+4, "SIZE", 4) == 0)         // STD:10 - SIZE declaration (RFC 1870)
-      {
-        SET_FLAG(ServerFlags, ESMTP_FLG_SIZE);
-      }
-      else if(strnicmp(resp+4, "PIPELINING", 10) == 0)  // STD:60 - PIPELINING (RFC 2920)
-      {
-        SET_FLAG(ServerFlags, ESMTP_FLG_PIPELINING);
-      }
-      else if(strnicmp(resp+4, "8BITMIME", 8) == 0)     // 8BITMIME support (RFC 1652)
-      {
-        SET_FLAG(ServerFlags, ESMTP_FLG_8BITMIME);
-      }
-      else if(strnicmp(resp+4, "DSN", 3) == 0)          // DSN - Delivery Status Notifications (RFC 1891)
-      {
-        SET_FLAG(ServerFlags, ESMTP_FLG_DSN);
-      }
-      else if(strnicmp(resp+4, "ETRN", 4) == 0)         // ETRN - Remote Message Queue Starting (RFC 1985)
-      {
-        SET_FLAG(ServerFlags, ESMTP_FLG_ETRN);
-      }
-      else if(strnicmp(resp+4, "ENHANCEDSTATUSCODES", 19) == 0) // Enhanced Status Codes (RFC 2034)
-      {
-        SET_FLAG(ServerFlags, ESMTP_FLG_ENHANCEDSTATUSCODES);
-      }
-      else if(strnicmp(resp+4, "DELIVERBY", 9) == 0)    // DELIVERBY Extension (RFC 2852)
-      {
-        SET_FLAG(ServerFlags, ESMTP_FLG_DELIVERBY);
-      }
-      else if(strnicmp(resp+4, "HELP", 4) == 0)         // HELP Extension (RFC 821)
-      {
-        SET_FLAG(ServerFlags, ESMTP_FLG_HELP);
-      }
-   }
-
-#ifdef DEBUG
-   D(DBF_NET, "ESMTP Server '%s' serves:", C->SMTP_Server);
-   D(DBF_NET, "  AUTH CRAM-MD5......: %ld", hasCRAM_MD5_Auth(ServerFlags));
-   D(DBF_NET, "  AUTH DIGEST-MD5....: %ld", hasDIGEST_MD5_Auth(ServerFlags));
-   D(DBF_NET, "  AUTH LOGIN.........: %ld", hasLOGIN_Auth(ServerFlags));
-   D(DBF_NET, "  AUTH PLAIN.........: %ld", hasPLAIN_Auth(ServerFlags));
-   D(DBF_NET, "  STARTTLS...........: %ld", hasSTARTTLS(ServerFlags));
-   D(DBF_NET, "  SIZE...............: %ld", hasSIZE(ServerFlags));
-   D(DBF_NET, "  PIPELINING.........: %ld", hasPIPELINING(ServerFlags));
-   D(DBF_NET, "  8BITMIME...........: %ld", has8BITMIME(ServerFlags));
-   D(DBF_NET, "  DSN................: %ld", hasDSN(ServerFlags));
-   D(DBF_NET, "  ETRN...............: %ld", hasETRN(ServerFlags));
-   D(DBF_NET, "  ENHANCEDSTATUSCODES: %ld", hasENHANCEDSTATUSCODES(ServerFlags));
-   D(DBF_NET, "  DELIVERBY..........: %ld", hasDELIVERBY(ServerFlags));
-   D(DBF_NET, "  HELP...............: %ld", hasHELP(ServerFlags));
-#endif
-
-   return ServerFlags;
-}
-
 ///
 /// TR_ChangeTransFlagsFunc
 //  Changes transfer flags of all selected messages
@@ -4123,20 +4150,33 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
   int result = 0;
   struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
   char *mf;
-  FILE *f;
+  FILE *fh;
 
   ENTER();
 
   D(DBF_NET, "about to send mail '%s' via SMTP", mail->MailFile);
 
   // open the mail file for reading
-  if((f = fopen(mf = GetMailFile(NULL, outfolder, mail), "r")))
+  if((fh = fopen(mf = GetMailFile(NULL, outfolder, mail), "r")))
   {
     char buf[SIZE_LINE];
 
-    setvbuf(f, NULL, _IOFBF, SIZE_FILEBUF);
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
+    // now we put together our parameters for our MAIL command
+    // which in fact may contain serveral parameters as well according
+    // to ESMTP extensions.
     snprintf(buf, sizeof(buf), "FROM:<%s>", C->EmailAddress);
+
+    // in case the server supports the ESMTP SIZE extension lets add the
+    // size
+    if(hasSIZE(G->TR_SMTPflags) && mail->Size > 0)
+      snprintf(buf, sizeof(buf), "%s SIZE=%ld", buf, mail->Size);
+
+    // in case the server supports the ESMTP 8BITMIME extension we can
+    // add information about the encoding mode
+    if(has8BITMIME(G->TR_SMTPflags))
+      snprintf(buf, sizeof(buf), "%s BODY=%s", buf, C->Allow8bit ? "8BITMIME" : "7BIT");
 
     // send the MAIL command with the FROM: message
     if(TR_SendSMTPCmd(SMTP_MAIL, buf, MSG_ER_BadResponse))
@@ -4179,7 +4219,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 
         if(rcptok)
         {
-          D(DBF_NET, "RCPTs acceppted, sending mail data");
+          D(DBF_NET, "RCPTs accepted, sending mail data");
 
           // now we send the actual main data of the mail
           if(TR_SendSMTPCmd(SMTP_DATA, NULL, MSG_ER_BadResponse))
@@ -4189,15 +4229,16 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
             char sendbuf[SIZE_LINE+2];
             int sendsize;
             int cpos;
-            int prevpos = ftell(f); // get current file position
+            int prevpos = ftell(fh); // get current file position
             int startpos = prevpos;
+            int sentbytes = 0;
 
             // as long there is no abort situation we go on reading out
             // from the stream and sending it to our SMTP server
-            while(!G->TR->Abort && !G->Error && fgets(buf, SIZE_LINE, f))
+            while(!G->TR->Abort && !G->Error && fgets(buf, SIZE_LINE, fh))
             {
-              sendsize = cpos = ftell(f)-prevpos; // get the size we really read out from the stream.
-              prevpos += sendsize;                // set the new prevpos to the ftell() value.
+              sendsize = cpos = ftell(fh)-prevpos; // get the size we really read out from the stream.
+              prevpos += sendsize;                 // set the new prevpos to the ftell() value.
 
               // as long as we process header lines we have to make differ in some ways.
               if(!inbody)
@@ -4243,10 +4284,14 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                 // we will flush it later then.
                 if(TR_Send(sendbuf, sendsize, TCPF_NONE) <= 0)
                   ER_NewError(tr(MSG_ER_ConnectionBroken));
+                else
+                  sentbytes += sendsize;
               }
 
               TR_TransStat_Update(ts, cpos);
             }
+
+            D(DBF_NET, "transfered %ld bytes (raw: %ld bytes)", sentbytes, mail->Size);
 
             // if buf == NULL when we arrive here, then the fgets()
             // at the top exited with an error
@@ -4288,7 +4333,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
         ER_NewError(tr(MSG_ER_CantOpenFile), mf);
     }
 
-    fclose(f);
+    fclose(fh);
   }
   else
     ER_NewError(tr(MSG_ER_CantOpenFile), mf);
@@ -4410,20 +4455,22 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                   err = 2; // special SSL connection error
               }
 
-              // first we have to check whether the user requested some
-              // feature that requires a ESMTP Server, and if so we connect via ESMTP
-              if(err == CONNECTERR_SUCCESS &&
-                 (C->Use_SMTP_AUTH || C->SMTP_SecureMethod == SMTPSEC_TLS))
+              // first we have to check whether the TCP/IP connection could
+              // be successfully opened so that we can init the SMTP connection
+              // and query the SMTP server for its capabilities now.
+              if(err == CONNECTERR_SUCCESS)
               {
-                int ServerFlags = TR_ConnectESMTP();
+                // initialize the SMTP connection which will also
+                // query the SMTP server for its capabilities
+                connected = TR_ConnectSMTP();
 
                 // Now we have to check whether the user has selected SSL/TLS
                 // and then we have to initiate the STARTTLS command followed by the TLS negotiation
-                if(C->SMTP_SecureMethod == SMTPSEC_TLS)
+                if(C->SMTP_SecureMethod == SMTPSEC_TLS && connected)
                 {
-                  connected = TR_InitSTARTTLS(ServerFlags);
+                  connected = TR_InitSTARTTLS();
 
-                  // then we have to refresh the ServerFlags and check
+                  // then we have to refresh the SMTPflags and check
                   // again what features we have after the STARTTLS
                   if(connected)
                   {
@@ -4431,21 +4478,17 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                     // TLS session
                     G->TR_UseTLS = TRUE;
 
-                    ServerFlags = TR_ConnectESMTP();
+                    // now run the connect SMTP function again
+                    // so that the SMTP server flags will be refreshed
+                    // accordingly.
+                    connected = TR_ConnectSMTP();
                   }
                 }
-                else
-                  connected = TRUE;
 
                 // If the user selected SMTP_AUTH we have to initiate
                 // a AUTH connection
-                if(connected && C->Use_SMTP_AUTH)
-                  connected = TR_InitSMTPAUTH(ServerFlags);
-              }
-              else if(err == CONNECTERR_SUCCESS)
-              {
-                // Init a normal non-ESMTP connection by sending a HELO
-                connected = TR_ConnectSMTP();
+                if(C->Use_SMTP_AUTH && connected)
+                  connected = TR_InitSMTPAUTH();
               }
 
               // If we are still "connected" we can proceed with transfering the data
@@ -4488,7 +4531,8 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                     case 0:
                     {
                       setStatusToError(mail->Reference);
-                      TR_SendSMTPCmd(SMTP_RSET, NULL, MSG_ER_BadResponse);
+                      TR_SendSMTPCmd(SMTP_RSET, NULL, NULL); // no error check
+                      G->Error = FALSE;
                     }
                     break;
 
@@ -4520,11 +4564,21 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
 
                 // send a 'QUIT' command, but only if
                 // we didn't receive any error during the transfer
-                if(!G->Error)
+                if(G->Error == FALSE)
                   TR_SendSMTPCmd(SMTP_QUIT, NULL, MSG_ER_BadResponse);
               }
-              else if(err == CONNECTERR_SUCCESS)
-                err = 1;
+              else
+              {
+                // check if we end up here cause of the 8BITMIME differences
+                if(has8BITMIME(G->TR_SMTPflags) == FALSE && C->Allow8bit == TRUE)
+                {
+                  W(DBF_NET, "incorrect Allow8bit setting!");
+                  ER_NewError(tr(MSG_ER_NO8BITMIME), C->SMTP_Server);
+                  err = CONNECTERR_SUCCESS;
+                }
+                else if(err == CONNECTERR_SUCCESS)
+                  err = 1;
+              }
 
               // make sure to shutdown the socket
               // and all possible SSL connection stuff

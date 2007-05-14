@@ -1565,8 +1565,8 @@ Do_mena
 ; Do_main
 ;
 MSG_CO_Allow8bit
-Stre¾nik za SMTP dopu¹èa _8 bitov
-; SMTP server allows _8bit
+Stre¾nik za dopu¹èa _8 bitov
+; Server allows _8bit
 ;
 MSG_CO_ReceiveMail
 Prejemanje po¹te (POP3)

@@ -5,6 +5,22 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-14  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c, YAM.h: reworked the whole ESMTP/SMTP connection routine to
+    always try to connect via ESMTP to the mail server first and only
+    fallback to plain SMTP in case the server doesn't seem to accept the
+    'EHLO' command. This allows to always query the SMTP server for its
+    capabilities so that we can make use out of the additional ESMTP
+    specialities documented in RFC 1869. For example, YAM does now
+    automatically use the 'SIZE=' parameter to signal the server the
+    message size in advance so that it can immediately return if it
+    will accept that size or not. Also, an existing '8BITMIME' extension
+    allows to specify if the actual message will be transfered in 8bit
+    MIME or in plain 7bit ASCII. So, in case the users 'Allow8bit'
+    setting is found to conflict with the SMTP server capabilities an
+    error message will now be dropped on an SMTP connection.
+
 2007-05-14  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: changed some functions to use constant parameters.
