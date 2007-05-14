@@ -1552,7 +1552,7 @@ void CO_GetConfig(BOOL saveConfig)
                 FO_SaveConfig(spamFolder);
 
                 // update the statistics in case the spam folder contained new or unread mails
-                DisplayStatistics(NULL, TRUE);
+                DisplayStatistics(spamFolder, TRUE);
               }
             }
 
