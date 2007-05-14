@@ -7,6 +7,9 @@ $URL$
 
 2007-05-14  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: an existing folder named "spam" is now correctly converted to the
+    standard spam folder if the spam filter is enabled on startup. This fixes
+    bug #1717689.
   * YAM.c: added missing CreateFilename() calls while checking if a spam folder
     already exists.
   * YAM_COs.c: upon disabling the spam filter now the former spam folder is

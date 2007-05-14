@@ -1687,266 +1687,285 @@ static BOOL Root_New(BOOL hidden)
 //  Phase 2 of program initialization (after user logs in)
 static void Initialise2(void)
 {
-   struct Folder *folder, **oldfolders = NULL;
-   BOOL newfolders = FALSE;
-   BOOL splashWasActive;
-   int i;
+  struct Folder *folder, **oldfolders = NULL;
+  BOOL newfolders = FALSE;
+  BOOL splashWasActive;
+  int i;
 
-   ENTER();
+  ENTER();
 
-   SplashProgress(tr(MSG_LoadingConfig), 30);
-   CO_SetDefaults(C, cp_AllPages);
-   CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders);
-   CO_Validate(C, FALSE);
-   SplashProgress(tr(MSG_CreatingGUI), 40);
+  SplashProgress(tr(MSG_LoadingConfig), 30);
+  CO_SetDefaults(C, cp_AllPages);
+  CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders);
+  CO_Validate(C, FALSE);
+  SplashProgress(tr(MSG_CreatingGUI), 40);
 
-   // before we go and create the first MUI windows
-   // we register the application to application.library
-   #if defined(__amigaos4__)
-   if(ApplicationBase)
-   {
-     struct ApplicationIconInfo aii;
+  // before we go and create the first MUI windows
+  // we register the application to application.library
+  #if defined(__amigaos4__)
+  if(ApplicationBase)
+  {
+    struct ApplicationIconInfo aii;
 
-     aii.iconType = C->DockyIcon ? APPICONT_CustomIcon : APPICONT_None;
-     aii.info.customIcon = G->HideIcon;
+    aii.iconType = C->DockyIcon ? APPICONT_CustomIcon : APPICONT_None;
+    aii.info.customIcon = G->HideIcon;
 
-     // register YAM to application.library
-     G->applicationID = RegisterApplication("YAM",
-                                            REGAPP_URLIdentifier, "yam.ch",
-                                            REGAPP_AppIconInfo,   (uint32)&aii,
-                                            REGAPP_Hidden,        xget(G->App, MUIA_Application_Iconified),
-                                            TAG_DONE);
+    // register YAM to application.library
+    G->applicationID = RegisterApplication("YAM",
+                                           REGAPP_URLIdentifier, "yam.ch",
+                                           REGAPP_AppIconInfo,   (uint32)&aii,
+                                           REGAPP_Hidden,        xget(G->App, MUIA_Application_Iconified),
+                                           TAG_DONE);
 
-     D(DBF_STARTUP, "Registered YAM to application.library with appID: %ld", G->applicationID);
-   }
-   #endif
+    D(DBF_STARTUP, "Registered YAM to application.library with appID: %ld", G->applicationID);
+  }
+  #endif
 
-   // Create a new Main & Addressbook Window
-   if(!(G->MA = MA_New()) || !(G->AB = AB_New()))
-      Abort(tr(MSG_ErrorMuiApp));
+  // Create a new Main & Addressbook Window
+  if(!(G->MA = MA_New()) || !(G->AB = AB_New()))
+     Abort(tr(MSG_ErrorMuiApp));
 
-   // make sure the GUI objects for the embedded read pane are created
-   MA_SetupEmbeddedReadPane();
+  // make sure the GUI objects for the embedded read pane are created
+  MA_SetupEmbeddedReadPane();
 
-   // Now we have to check on which position we should display the InfoBar and if it`s not
-   // center or off we have to resort the main group
-   if(C->InfoBar != IB_POS_CENTER && C->InfoBar != IB_POS_OFF)
-      MA_SortWindow();
+  // Now we have to check on which position we should display the InfoBar and if it`s not
+  // center or off we have to resort the main group
+  if(C->InfoBar != IB_POS_CENTER && C->InfoBar != IB_POS_OFF)
+     MA_SortWindow();
 
-   // setup some dynamic (changing) menus
-   MA_SetupDynamicMenus();
+  // setup some dynamic (changing) menus
+  MA_SetupDynamicMenus();
 
-   // do some initial call to ChangeSelected() for correctly setting up
-   // some mail information
-   MA_ChangeSelected(TRUE);
+  // do some initial call to ChangeSelected() for correctly setting up
+  // some mail information
+  MA_ChangeSelected(TRUE);
 
-   // load the main window GUI layout from the ENV: variable
-   LoadLayout();
+  // load the main window GUI layout from the ENV: variable
+  LoadLayout();
 
-   SplashProgress(tr(MSG_LoadingFolders), 50);
-   if(!FO_LoadTree(CreateFilename(".folders")) && oldfolders)
-   {
-      for(i = 0; i < 100; i++)
-      {
-        if (oldfolders[i])
-          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, oldfolders[i]->Name, oldfolders[i], MUIV_NListtree_Insert_ListNode_Root);
-      }
-
-      newfolders = TRUE;
-   }
-
-   if(oldfolders)
-   {
-     for(i = 0; oldfolders[i]; i++)
-       free(oldfolders[i]);
-     free(oldfolders);
-   }
-
-   if(FO_GetFolderByType(FT_INCOMING, NULL) == NULL)
-     newfolders |= FO_CreateFolder(FT_INCOMING, FolderName[FT_INCOMING], tr(MSG_MA_Incoming));
-
-   if(FO_GetFolderByType(FT_OUTGOING, NULL) == NULL)
-     newfolders |= FO_CreateFolder(FT_OUTGOING, FolderName[FT_OUTGOING], tr(MSG_MA_Outgoing));
-
-   if(FO_GetFolderByType(FT_SENT, NULL) == NULL)
-     newfolders |= FO_CreateFolder(FT_SENT, FolderName[FT_SENT], tr(MSG_MA_Sent));
-
-   if(FO_GetFolderByType(FT_TRASH, NULL) == NULL)
-     newfolders |= FO_CreateFolder(FT_TRASH, FolderName[FT_TRASH], tr(MSG_MA_TRASH));
-
-   if(C->SpamFilterEnabled)
-   {
-     // check if the spam folder has to be created
-     if(FO_GetFolderByType(FT_SPAM, NULL) == NULL)
+  SplashProgress(tr(MSG_LoadingFolders), 50);
+  if(FO_LoadTree(CreateFilename(".folders")) == FALSE && oldfolders)
+  {
+     for(i = 0; i < 100; i++)
      {
-       BOOL createSpamFolder;
-
-       if(FileType(CreateFilename(FolderName[FT_SPAM])) == FIT_NONEXIST)
-       {
-         // no directory named "spam" exists, so let's create it
-         createSpamFolder = TRUE;
-       }
-       else
-       {
-         // the directory "spam" already exists, but it is not the standard spam folder
-         // let the user decide what to do
-         ULONG result;
-
-         result = MUI_Request(G->App, NULL, 0, NULL,
-                                               tr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
-                                               tr(MSG_ER_SPAMDIR_EXISTS));
-         switch(result)
-         {
-           default:
-           case 0:
-             // the user has chosen to disable the spam filter, so we do it
-             // or the requester was cancelled
-             C->SpamFilterEnabled = FALSE;
-             createSpamFolder = FALSE;
-             break;
-
-           case 1:
-             // delete everything in the folder, the directory itself can be kept
-             DeleteMailDir(CreateFilename(FolderName[FT_SPAM]), FALSE);
-             createSpamFolder = TRUE;
-             break;
-
-           case 2:
-             // keep the folder contents
-             createSpamFolder = TRUE;
-             break;
-         }
-       }
-
-       if(createSpamFolder)
-       {
-         // finally, create the spam folder
-         newfolders |= FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM));
-       }
+       if (oldfolders[i])
+         DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, oldfolders[i]->Name, oldfolders[i], MUIV_NListtree_Insert_ListNode_Root);
      }
-   }
 
-   if(newfolders)
-   {
-      set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible);
-      FO_SaveTree(CreateFilename(".folders"));
-   }
+     newfolders = TRUE;
+  }
 
-   SplashProgress(tr(MSG_RebuildIndices), 60);
-   MA_UpdateIndexes(TRUE);
+  if(oldfolders)
+  {
+    for(i = 0; oldfolders[i]; i++)
+      free(oldfolders[i]);
+    free(oldfolders);
+  }
 
-   SplashProgress(tr(MSG_LOADINGUPDATESTATE), 65);
-   LoadUpdateState();
+  if(FO_GetFolderByType(FT_INCOMING, NULL) == NULL)
+    newfolders |= FO_CreateFolder(FT_INCOMING, FolderName[FT_INCOMING], tr(MSG_MA_Incoming));
 
-   SplashProgress(tr(MSG_LOADINGSPAMTRAININGDATA), 70);
-   BayesFilterInit();
+  if(FO_GetFolderByType(FT_OUTGOING, NULL) == NULL)
+    newfolders |= FO_CreateFolder(FT_OUTGOING, FolderName[FT_OUTGOING], tr(MSG_MA_Outgoing));
 
-   SplashProgress(tr(MSG_LoadingFolders), 75);
-   for(i = 0; ;i++)
-   {
-      struct MUI_NListtree_TreeNode *tn;
-      struct MUI_NListtree_TreeNode *tn_parent;
+  if(FO_GetFolderByType(FT_SENT, NULL) == NULL)
+    newfolders |= FO_CreateFolder(FT_SENT, FolderName[FT_SENT], tr(MSG_MA_Sent));
 
-      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-      if(!tn || !tn->tn_User)
-        break;
+  if(FO_GetFolderByType(FT_TRASH, NULL) == NULL)
+    newfolders |= FO_CreateFolder(FT_TRASH, FolderName[FT_TRASH], tr(MSG_MA_TRASH));
 
-      folder = tn->tn_User;
+  if(C->SpamFilterEnabled)
+  {
+    // check if the spam folder has to be created
+    if(FO_GetFolderByType(FT_SPAM, NULL) == NULL)
+    {
+      BOOL createSpamFolder;
 
-      // if this entry is a group lets skip here immediatly
-      if(isGroupFolder(folder))
-        continue;
-
-      if((isIncomingFolder(folder) || isOutgoingFolder(folder) || isTrashFolder(folder) ||
-          C->LoadAllFolders) && !isProtectedFolder(folder))
+      if(FileType(CreateFilename(FolderName[FT_SPAM])) == FIT_NONEXIST)
       {
-        // call the getIndex function which on one hand loads the full .index file
-        // and makes sure that all "new" mail is marked to unread if the user
-        // enabled the C->UpdateNewMail option in the configuration.
-        MA_GetIndex(folder);
+        // no directory named "spam" exists, so let's create it
+        createSpamFolder = TRUE;
       }
-      else if(folder->LoadedMode != LM_VALID)
+      else
       {
-        // do not load the full index, do load only the header of the .index
-        // which summarizes everything
-        folder->LoadedMode = MA_LoadIndex(folder, FALSE);
+        // the directory "spam" already exists, but it is not the standard spam folder
+        // let the user decide what to do
+        ULONG result;
 
-        // if the user wishs to make sure all "new" mail is flagged as
-        // read upon start we go through our folders and make sure they show
-        // no "new" mail, even if their .index file is not fully loaded
-        if(C->UpdateNewMail && folder->LoadedMode == LM_FLUSHED)
-          folder->New = 0;
-      }
+        result = MUI_Request(G->App, NULL, 0, NULL,
+                                              tr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
+                                              tr(MSG_ER_SPAMDIR_EXISTS));
+        switch(result)
+        {
+          default:
+          case 0:
+            // the user has chosen to disable the spam filter, so we do it
+            // or the requester was cancelled
+            C->SpamFilterEnabled = FALSE;
+            createSpamFolder = FALSE;
+            break;
 
-      // if this folder hasn`t got any own folder image in the folder
-      // directory and it is one of our standard folders we have to check which image we put in front of it
-      if(folder->imageObject == NULL)
-      {
-        if(isIncomingFolder(folder))      folder->ImageIndex = (folder->New+folder->Unread) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
-        else if(isOutgoingFolder(folder)) folder->ImageIndex = (folder->Total > 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
-        else if(isTrashFolder(folder))    folder->ImageIndex = (folder->Total > 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
-        else if(isSentFolder(folder))     folder->ImageIndex = FICON_ID_SENT;
-        else if(isSpamFolder(folder))     folder->ImageIndex = (folder->Total > 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
-        else folder->ImageIndex = -1;
-      }
+          case 1:
+            // delete everything in the folder, the directory itself can be kept
+            DeleteMailDir(CreateFilename(FolderName[FT_SPAM]), FALSE);
+            createSpamFolder = TRUE;
+            break;
 
-      // now we have to add the amount of mails of this folder to the foldergroup
-      // aswell and also the grandparents.
-      while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
-      {
-         // fo_parent is NULL then it`s ROOT and we have to skip here
-         // because we cannot have a status of the ROOT tree.
-         struct Folder *fo_parent = (struct Folder *)tn_parent->tn_User;
-         if(fo_parent)
-         {
-            fo_parent->Unread    += folder->Unread;
-            fo_parent->New       += folder->New;
-            fo_parent->Total     += folder->Total;
-            fo_parent->Sent      += folder->Sent;
-            fo_parent->Deleted   += folder->Deleted;
-
-            // for the next step we set tn to the current parent so that we get the
-            // grandparents ;)
-            tn = tn_parent;
-         }
-         else break;
+          case 2:
+            // keep the folder contents
+            createSpamFolder = TRUE;
+            break;
+        }
       }
 
-      DoMethod(G->App, MUIM_Application_InputBuffered);
-   }
+      if(createSpamFolder)
+      {
+        struct Folder *spamFolder;
 
-   // Now we have to make sure that the current folder is really in "active" state
-   // or we risk to get a unsynced message listview.
-   MA_ChangeFolder(NULL, TRUE);
+        // try to remove the existing folder named "spam"
+        if((spamFolder = FO_GetFolderByPath(FolderName[FT_SPAM], NULL)) != NULL)
+        {
+          struct MUI_NListtree_TreeNode *tn;
 
-   SplashProgress(tr(MSG_LoadingABook), 90);
-   AB_LoadTree(G->AB_Filename, FALSE, FALSE);
-   if(!(G->RexxHost = SetupARexxHost("YAM", NULL)))
-      Abort(tr(MSG_ErrorARexx));
+          if(spamFolder->imageObject != NULL)
+          {
+            // we make sure that the NList also doesn`t use the image in future anymore
+            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
+            spamFolder->imageObject = NULL;
+          }
+          if((tn = FO_GetFolderTreeNode(spamFolder)) != NULL)
+          {
+            // remove the folder from the folder list
+            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
+          }
+        }
+        // finally, create the spam folder
+        newfolders |= FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM));
+      }
+    }
+  }
 
-   SplashProgress(tr(MSG_OPENGUI), 100);
-   G->InStartupPhase = FALSE;
+  if(newfolders)
+  {
+     set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible);
+     FO_SaveTree(CreateFilename(".folders"));
+  }
 
-   // close the splash window right before we open our main YAM window
-   // but ask it before closing if it was activated or not.
-   splashWasActive = xget(G->SplashWinObject, MUIA_Window_Activate);
-   set(G->SplashWinObject, MUIA_Window_Open, FALSE);
+  SplashProgress(tr(MSG_RebuildIndices), 60);
+  MA_UpdateIndexes(TRUE);
 
-   // cleanup the splash window object immediately
-   DoMethod(G->App, OM_REMMEMBER, G->SplashWinObject);
-   MUI_DisposeObject(G->SplashWinObject);
-   G->SplashWinObject = NULL;
+  SplashProgress(tr(MSG_LOADINGUPDATESTATE), 65);
+  LoadUpdateState();
 
-   // only activate the main window if the about window is activ
-   // and open it immediatly
-   // we always start YAM with Window_Open TRUE or else YAM the hide
-   // functionality doesn`t work as expected.
-   SetAttrs(G->MA->GUI.WI,
-            MUIA_Window_Activate, splashWasActive,
-            MUIA_Window_Open,     TRUE,
-            TAG_DONE);
+  SplashProgress(tr(MSG_LOADINGSPAMTRAININGDATA), 70);
+  BayesFilterInit();
 
-   LEAVE();
+  SplashProgress(tr(MSG_LoadingFolders), 75);
+  for(i = 0; ;i++)
+  {
+     struct MUI_NListtree_TreeNode *tn;
+     struct MUI_NListtree_TreeNode *tn_parent;
+
+     tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
+     if(!tn || !tn->tn_User)
+       break;
+
+     folder = tn->tn_User;
+
+     // if this entry is a group lets skip here immediatly
+     if(isGroupFolder(folder))
+       continue;
+
+     if((isIncomingFolder(folder) || isOutgoingFolder(folder) || isTrashFolder(folder) ||
+         C->LoadAllFolders) && !isProtectedFolder(folder))
+     {
+       // call the getIndex function which on one hand loads the full .index file
+       // and makes sure that all "new" mail is marked to unread if the user
+       // enabled the C->UpdateNewMail option in the configuration.
+       MA_GetIndex(folder);
+     }
+     else if(folder->LoadedMode != LM_VALID)
+     {
+       // do not load the full index, do load only the header of the .index
+       // which summarizes everything
+       folder->LoadedMode = MA_LoadIndex(folder, FALSE);
+
+       // if the user wishs to make sure all "new" mail is flagged as
+       // read upon start we go through our folders and make sure they show
+       // no "new" mail, even if their .index file is not fully loaded
+       if(C->UpdateNewMail && folder->LoadedMode == LM_FLUSHED)
+         folder->New = 0;
+     }
+
+     // if this folder hasn`t got any own folder image in the folder
+     // directory and it is one of our standard folders we have to check which image we put in front of it
+     if(folder->imageObject == NULL)
+     {
+       if(isIncomingFolder(folder))      folder->ImageIndex = (folder->New+folder->Unread) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
+       else if(isOutgoingFolder(folder)) folder->ImageIndex = (folder->Total > 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
+       else if(isTrashFolder(folder))    folder->ImageIndex = (folder->Total > 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
+       else if(isSentFolder(folder))     folder->ImageIndex = FICON_ID_SENT;
+       else if(isSpamFolder(folder))     folder->ImageIndex = (folder->Total > 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
+       else folder->ImageIndex = -1;
+     }
+
+     // now we have to add the amount of mails of this folder to the foldergroup
+     // aswell and also the grandparents.
+     while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
+     {
+        // fo_parent is NULL then it`s ROOT and we have to skip here
+        // because we cannot have a status of the ROOT tree.
+        struct Folder *fo_parent = (struct Folder *)tn_parent->tn_User;
+        if(fo_parent)
+        {
+           fo_parent->Unread    += folder->Unread;
+           fo_parent->New       += folder->New;
+           fo_parent->Total     += folder->Total;
+           fo_parent->Sent      += folder->Sent;
+           fo_parent->Deleted   += folder->Deleted;
+
+           // for the next step we set tn to the current parent so that we get the
+           // grandparents ;)
+           tn = tn_parent;
+        }
+        else break;
+     }
+
+     DoMethod(G->App, MUIM_Application_InputBuffered);
+  }
+
+  // Now we have to make sure that the current folder is really in "active" state
+  // or we risk to get a unsynced message listview.
+  MA_ChangeFolder(NULL, TRUE);
+
+  SplashProgress(tr(MSG_LoadingABook), 90);
+  AB_LoadTree(G->AB_Filename, FALSE, FALSE);
+  if(!(G->RexxHost = SetupARexxHost("YAM", NULL)))
+     Abort(tr(MSG_ErrorARexx));
+
+  SplashProgress(tr(MSG_OPENGUI), 100);
+  G->InStartupPhase = FALSE;
+
+  // close the splash window right before we open our main YAM window
+  // but ask it before closing if it was activated or not.
+  splashWasActive = xget(G->SplashWinObject, MUIA_Window_Activate);
+  set(G->SplashWinObject, MUIA_Window_Open, FALSE);
+
+  // cleanup the splash window object immediately
+  DoMethod(G->App, OM_REMMEMBER, G->SplashWinObject);
+  MUI_DisposeObject(G->SplashWinObject);
+  G->SplashWinObject = NULL;
+
+  // only activate the main window if the about window is activ
+  // and open it immediatly
+  // we always start YAM with Window_Open TRUE or else YAM the hide
+  // functionality doesn`t work as expected.
+  SetAttrs(G->MA->GUI.WI,
+           MUIA_Window_Activate, splashWasActive,
+           MUIA_Window_Open,     TRUE,
+           TAG_DONE);
+
+  LEAVE();
 }
 ///
 /// Initialise
