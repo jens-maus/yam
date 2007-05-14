@@ -7176,7 +7176,7 @@ unterstützt.
 ;
 MSG_ER_SPAMDIR_EXISTS
 Während des Versuches den Standard-Spam-Ordner anzugelegen,\n\
-wurde ein bereits ein als 'Spam' benannter Ordner gefunden.\n\
+wurde ein bereits als 'Spam' benannter Ordner gefunden.\n\
 \n\
 Wie wollen Sie das gefundene Verzeichnis als generellen \n\
 Spam-Ordner verwenden?

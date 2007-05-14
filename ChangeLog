@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-14  Thore Böckelmann <tboeckel@gmx.de>
+
+  * deutsch.ct: fixed a typo.
+
 2007-05-11  Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: implemented the "move non-spam mails back to incoming" feature. If
