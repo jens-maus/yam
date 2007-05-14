@@ -7,6 +7,7 @@ $URL$
 
 2007-05-14  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: changed some functions to use constant parameters.
   * YAM.c: an existing folder named "spam" is now correctly converted to the
     standard spam folder if the spam filter is enabled on startup. This fixes
     bug #1717689.
