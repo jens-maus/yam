@@ -7,6 +7,9 @@ $URL$
 
 2007-05-16  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MAf.c: cleaned up the display hook of the folder tree. For folders with
+    both new and unread mails the number of new and unread mails are now shown
+    correctly.
   * deutsch.ct: fixed some german phrasing.
 
 2007-05-14  Jens Langner <Jens.Langner@light-speed.de>

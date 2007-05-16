@@ -2492,89 +2492,105 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
 //  Folder listview display hook
 HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
 {
-   if(msg == NULL)
-    return 0;
+  ENTER();
 
-   if(msg->TreeNode != NULL)
-   {
-      static char dispfold[SIZE_DEFAULT], disptot[SIZE_SMALL], dispunr[SIZE_SMALL], dispnew[SIZE_SMALL], dispsiz[SIZE_SMALL];
-
+  if(msg != NULL)
+  {
+    if(msg->TreeNode != NULL)
+    {
+      static char folderStr[SIZE_DEFAULT];
+      static char totalStr[SIZE_SMALL];
+      static char unreadStr[SIZE_SMALL];
+      static char newStr[SIZE_SMALL];
+      static char sizeStr[SIZE_SMALL];
       struct Folder *entry = (struct Folder *)msg->TreeNode->tn_User;
 
-      msg->Array[0] = msg->Array[1] = msg->Array[2] = msg->Array[3] = msg->Array[4] = (char *)"";
-      *dispsiz = 0;
+      folderStr[0] = '\0';
+      totalStr[0] = '\0';
+      unreadStr[0] = '\0';
+      newStr[0] = '\0';
+      sizeStr[0] = '\0';
+
+      msg->Array[0] = folderStr;
+      msg->Array[1] = totalStr;
+      msg->Array[2] = unreadStr;
+      msg->Array[3] = newStr;
+      msg->Array[4] = sizeStr;
 
       switch(entry->Type)
       {
         case FT_GROUP:
         {
-          snprintf(msg->Array[0] = dispfold, sizeof(dispfold), "\033o[%d] %s", (isFlagSet(msg->TreeNode->tn_Flags, TNF_OPEN) ? FICON_ID_UNFOLD : FICON_ID_FOLD), entry->Name);
-          msg->Preparse[0] = (entry->New+entry->Unread) ? C->StyleFGroupUnread : C->StyleFGroupRead;
+          snprintf(folderStr, sizeof(folderStr), "\033o[%d] %s", (isFlagSet(msg->TreeNode->tn_Flags, TNF_OPEN) ? FICON_ID_UNFOLD : FICON_ID_FOLD), entry->Name);
+          msg->Preparse[0] = (entry->New + entry->Unread > 0) ? C->StyleFGroupUnread : C->StyleFGroupRead;
         }
         break;
 
         default:
         {
           if(entry->ImageIndex >= 0)
-            snprintf(msg->Array[0] = dispfold, sizeof(dispfold), "\033o[%d] ", entry->ImageIndex);
+            snprintf(folderStr, sizeof(folderStr), "\033o[%d] ", entry->ImageIndex);
           else
-            strlcpy(msg->Array[0] = dispfold, " ", sizeof(dispfold));
+            strlcpy(folderStr, " ", sizeof(folderStr));
 
-          if(entry->Name[0])
-            strlcat(dispfold, entry->Name, sizeof(dispfold));
+          if(entry->Name[0] != '\0')
+            strlcat(folderStr, entry->Name, sizeof(folderStr));
           else
-            snprintf(dispfold, sizeof(dispfold), "[%s]", FilePart(entry->Path));
+            snprintf(folderStr, sizeof(folderStr), "[%s]", FilePart(entry->Path));
 
           if(entry->LoadedMode != LM_UNLOAD &&
              entry->LoadedMode != LM_REBUILD)
           {
-            if(entry->New)
+            if(entry->New > 0)
             {
               msg->Preparse[0] = C->StyleFolderNew;
-              if((C->FolderCols & (1<<3)) == 0)
-                snprintf(dispfold, sizeof(dispfold), "%s (%d)", dispfold, entry->Unread);
+              // include the number of new mails, if the column is hidden
+              if(isFlagClear(C->FolderCols, (1<<3)))
+                snprintf(folderStr, sizeof(folderStr), "%s (%d)", folderStr, entry->New);
             }
-            else if(entry->Unread)
+            else if(entry->Unread > 0)
             {
               msg->Preparse[0] = C->StyleFolderUnread;
-              if((C->FolderCols & (1<<2)) == 0)
-                snprintf(dispfold, sizeof(dispfold), "%s (%d)", dispfold, entry->Unread);
+              // include the number of unread mails, if the column is hidden
+              if(isFlagClear(C->FolderCols, (1<<2)))
+                snprintf(folderStr, sizeof(folderStr), "%s (%d)", folderStr, entry->Unread);
             }
             else
               msg->Preparse[0] = C->StyleFolderRead;
 
-            // if other folder columns are enabled lets fill the values
-            // in
-            if(C->FolderCols & (1<<1))
-              snprintf(msg->Array[1] = disptot, sizeof(disptot), "%d", entry->Total);
+            // if other folder columns are enabled lets fill the values in
+            if(isFlagSet(C->FolderCols, (1<<1)))
+              snprintf(totalStr, sizeof(totalStr), "%d", entry->Total);
 
-            if(C->FolderCols & (1<<2) && entry->Unread-entry->New > 0)
-              snprintf(msg->Array[2] = dispunr, sizeof(dispunr), "%d", entry->Unread-entry->New);
+            if(isFlagSet(C->FolderCols, (1<<2)) && entry->Unread > 0)
+              snprintf(unreadStr, sizeof(unreadStr), "%d", entry->Unread);
 
-            if(C->FolderCols & (1<<3) && entry->New > 0)
-              snprintf(msg->Array[3] = dispnew, sizeof(dispnew), "%d", entry->New);
+            if(isFlagSet(C->FolderCols, (1<<3)) && entry->New > 0)
+              snprintf(newStr, sizeof(newStr), "%d", entry->New);
 
-            if(C->FolderCols & (1<<4) && entry->Size > 0)
-              FormatSize(entry->Size, msg->Array[4] = dispsiz, sizeof(dispsiz), SF_AUTO);
+            if(isFlagSet(C->FolderCols, (1<<4)) && entry->Size > 0)
+              FormatSize(entry->Size, sizeStr, sizeof(sizeStr), SF_AUTO);
           }
           else
             msg->Preparse[0] = (char *)MUIX_I;
 
           if(isProtectedFolder(entry))
-            snprintf(dispfold, sizeof(dispfold), "%s \033o[%d]", dispfold, FICON_ID_PROTECTED);
+            snprintf(folderStr, sizeof(folderStr), "%s \033o[%d]", folderStr, FICON_ID_PROTECTED);
         }
       }
-   }
-   else
-   {
+    }
+    else
+    {
       msg->Array[0] = (STRPTR)tr(MSG_Folder);
       msg->Array[1] = (STRPTR)tr(MSG_Total);
       msg->Array[2] = (STRPTR)tr(MSG_Unread);
       msg->Array[3] = (STRPTR)tr(MSG_New);
       msg->Array[4] = (STRPTR)tr(MSG_Size);
-   }
+    }
+  }
 
-   return 0;
+  LEAVE();
+  return 0;
 }
 MakeHook(MA_LV_FDspFuncHook,MA_LV_FDspFunc);
 
@@ -2593,7 +2609,7 @@ void MA_MakeFOFormat(Object *lv)
   format[0] = '\0';
   for(i = 0; i < FOCOLNUM; i++)
   {
-    if(C->FolderCols & (1<<i))
+    if(isFlagSet(C->FolderCols, (1<<i)))
     {
       int p;
 
