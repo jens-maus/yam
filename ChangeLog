@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-16  Thore Böckelmann <tboeckel@gmx.de>
+
+  * deutsch.ct: fixed some german phrasing.
+
 2007-05-14  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_TR.c, YAM.h: reworked the whole ESMTP/SMTP connection routine to

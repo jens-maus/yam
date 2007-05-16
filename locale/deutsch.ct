@@ -7535,7 +7535,7 @@ mittels SSLv3
 ;
 MSG_HELP_CO_RA_POP3SECURE
 Eine TLSv1- oder SSLv3-Verbindung wird mit dem POP3-Server hergestellt\n\
-und YAM empfängt die Mail über eine verschlüsselte Verbindung. Falls\n\
+und YAM empfängt die Nachrichten über eine verschlüsselte Verbindung. Falls\n\
 die AmiSSL-Unterstützung nicht aktiv ist, sind diese Bedienelemente nicht\n\
 benutzbar.
 ;
@@ -7632,10 +7632,10 @@ MSG_CO_MIMECMD_PUBSCREEN
 MSG_ER_ZOMBIE_FILES_EXIST
 YAM war nicht in der Lage während des Beendens alle\n\
 temporär generierten Dateien zu löschen. Diese werden\n\
-event. von anderen Programmen zur Zeit benutzt.\n\
+event. zur Zeit von anderen Programmen benutzt.\n\
 \n\
-Bitte stellen Sie sicher das sie alle Programme die sie\n\
-von YAM aus gestartet haben (z.B. Multiview) beendet\n\
+Bitte stellen Sie sicher, dass alle Programme, die sie\n\
+von YAM aus gestartet haben (z.B. Multiview), beendet\n\
 sind.
 ;
 MSG_ER_ZOMBIE_FILES_EXIST_BT
