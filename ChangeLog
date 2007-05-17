@@ -7,6 +7,14 @@ $URL$
 
 2007-05-17  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Addrmatchlist.c: upon opening the list of matching aliases, addresses and
+    names has no active entry anymore. The list is activated as soon as the user
+    selects one entry with either mouse or keyboard. Then, after one entry has
+    been selected, the currently typed string is completely replaced by the
+    selected entry's address instead of the matching string. This way the
+    recipients are *always* unique and can always be resolved correctly. Address
+    book entries with very similar aliases, names and adresses will no longer
+    cause trouble in the resolve process.
   * Recipientstring.c: minor code cleanups.
   * YAM_UT.c: added some debug output while processing the zombie files.
 

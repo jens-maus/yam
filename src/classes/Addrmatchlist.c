@@ -46,7 +46,7 @@ struct Data
 struct CustomABEntry
 {
   LONG MatchField;
-  STRPTR MatchString;
+  char *MatchString;
   struct ABEntry *MatchEntry;
 };
 */
@@ -289,11 +289,13 @@ DECLARE(Event) // struct IntuiMessage *imsg
     // to enable a circular selection model we have to make some checks.
     if(direction == MUIV_List_Active_Up)
     {
-      if(position == 0) direction = MUIV_List_Active_Bottom;
+      if(position == MUIV_List_Active_Off || position == 0)
+        direction = MUIV_List_Active_Bottom;
     }
-    else if(position == (LONG)xget(data->Matchlist, MUIA_List_Entries)-1)
+    else
     {
-      direction = MUIV_List_Active_Top;
+      if(position == MUIV_List_Active_Off || position == (LONG)xget(data->Matchlist, MUIA_List_Entries)-1)
+        direction = MUIV_List_Active_Top;
     }
 
     set(data->Matchlist, MUIA_List_Active, direction);
@@ -328,19 +330,18 @@ DECLARE(Open) // STRPTR str
   if(entries > 0 && (DoMethod(data->Matchlist, MUIM_List_GetEntry, 0, &entry), (entries != 1 || Stricmp(msg->str, entry->MatchString))))
   {
     res = entry->MatchString;
-    nnset(data->Matchlist, MUIA_List_Active, MUIV_List_Active_Top);
+    // make no entry active yet
+    nnset(data->Matchlist, MUIA_List_Active, MUIV_List_Active_Off);
   }
 
   // should we open the popup list (if not already shown)
-  if(!xget(obj, MUIA_Window_Open))
+  if(res != NULL && xget(obj, MUIA_Window_Open) == FALSE)
   {
-    if(res)
-    {
-      DoMethod(obj, MUIM_Addrmatchlist_ChangeWindow); // refresh the position
-      set(obj, MUIA_Window_Open, TRUE);
-    }
+    DoMethod(obj, MUIM_Addrmatchlist_ChangeWindow); // refresh the position
+    set(obj, MUIA_Window_Open, TRUE);
   }
-  else if(!res) set(obj, MUIA_Window_Open, FALSE);
+  else if(res == NULL)
+    set(obj, MUIA_Window_Open, FALSE);
 
   set(data->Matchlist, MUIA_List_Quiet, FALSE);
 
@@ -358,46 +359,22 @@ DECLARE(ActiveChange) // LONG active
   if(msg->active >= 0)
   {
     struct CustomABEntry *entry;
-    STRPTR res;
 
     // get the active entry
     DoMethod(data->Matchlist, MUIM_List_GetEntry, msg->active, &entry);
-
-    res = entry->MatchString;
-
-    // Now we check if the match is because of the real name and the same name exists twice in
-    // this list we have to return the email as matchstring
-    if(entry->MatchField == 1)  // RealName
+    if(entry != NULL)
     {
-      int i;
-      LONG elen = (LONG)strlen(entry->MatchString);
+      char *res;
 
-      for(i = 0;; i++)
-      {
-        struct CustomABEntry *compareEntry;
-
-        DoMethod(data->Matchlist, MUIM_List_GetEntry, i, &compareEntry);
-        if(compareEntry == NULL)
-          break;
-
-        if(compareEntry != entry)
-        {
-          if(Strnicmp(compareEntry->MatchEntry->RealName, entry->MatchString, elen) == 0)
-          {
-            res = entry->MatchEntry->Address;
-            break;
-          }
-        }
-      }
+      // signal the string that we need to replace the selected part with
+      // some new entry
+      if((res = entry->MatchEntry->Address) != NULL)
+        DoMethod(data->String, MUIM_Recipientstring_ReplaceSelected, res);
     }
-
-    // signal the string that we need to replace the selected part with
-    // some new entry
-    if(res != NULL)
-      DoMethod(data->String, MUIM_Recipientstring_ReplaceSelected, res);
   }
 
   RETURN(0);
   return 0;
 }
 ///
+
