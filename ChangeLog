@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-17  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: added some debug output while processing the zombie files.
+
 2007-05-16  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: cleaned up the display hook of the folder tree. For folders with

@@ -2464,6 +2464,7 @@ void AddZombieFile(const char *fileName)
     if((zombie->fileName = strdup(fileName)) != NULL)
     {
       AddTail((struct List *)&G->zombieFileList, (struct Node *)&zombie->node);
+      D(DBF_STARTUP, "added file '%s' to the zombie list", fileName);
       // trigger the retry mechanism in 5 minutes
       TC_Restart(TIO_DELETEZOMBIEFILES, 5 * 60, 0);
     }
@@ -2493,11 +2494,14 @@ BOOL DeleteZombieFiles(BOOL force)
       // save the pointer to the next zombie first, as we probably are going to Remove() this node later
       curNode = curNode->mln_Succ;
 
-      // try again to delete the file
-      if(!DeleteFile(zombie->fileName) && force == FALSE)
+      D(DBF_STARTUP, "trying to delete zombie file '%s'", zombie->fileName);
+
+      // try again to delete the file, if it still exists
+      if(force == FALSE && FileExists(zombie->fileName) && !DeleteFile(zombie->fileName))
       {
         // deleting failed again, but we are allowed to retry
         listCleared = FALSE;
+        W(DBF_STARTUP, "zombie file '%s' cannot be deleted, leaving in list", zombie->fileName);
       }
       else
       {
