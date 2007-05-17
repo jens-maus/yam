@@ -437,148 +437,147 @@ OVERLOAD(MUIM_HandleEvent)
 
   ENTER();
 
-  if(!(imsg = ((struct MUIP_HandleEvent *)msg)->imsg))
+  if((imsg = ((struct MUIP_HandleEvent *)msg)->imsg) != NULL)
   {
-    RETURN(0);
-    return 0;
-  }
-
-  if(imsg->Class == IDCMP_RAWKEY)
-  {
-    switch(imsg->Code)
+    if(imsg->Class == IDCMP_RAWKEY)
     {
-      case IECODE_RETURN:
+      switch(imsg->Code)
       {
-        if(data->ResolveOnCR)
+        case IECODE_RETURN:
         {
-          // only if we successfully resolved the string we move on to the next object.
-          if(DoMethod(obj, MUIM_Recipientstring_Resolve, hasFlag(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE))
+          if(data->ResolveOnCR)
+          {
+            // only if we successfully resolved the string we move on to the next object.
+            if(DoMethod(obj, MUIM_Recipientstring_Resolve, hasFlag(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE))
+            {
+              set(data->Matchwindow, MUIA_Window_Open, FALSE);
+              set(_win(obj), MUIA_Window_ActiveObject, obj);
+
+              // If the MUIA_String_AdvanceOnCR is TRUE we have to set the next object active in the window
+              // we have to check this within our instance data because Betterstring.mcc is buggy and don`t
+              // return MUIA_String_AdvanceOnCR within a get().
+              if(data->AdvanceOnCR)
+              {
+                set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+              }
+            }
+            else
+              DisplayBeep(_screen(obj));
+
+            result = MUI_EventHandlerRC_Eat;
+          }
+        }
+        break;
+
+        /* keys are sent to the popup-list */
+        case IECODE_UP:
+        case IECODE_DOWN:
+        case NM_WHEEL_UP:
+        case NM_WHEEL_DOWN:
+        case NM_WHEEL_LEFT:
+        case NM_WHEEL_RIGHT:
+        {
+          // forward this event to the addrmatchlist
+          if(DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Event, imsg))
+            result = MUI_EventHandlerRC_Eat;
+        }
+        break;
+
+        case IECODE_DEL:
+        case IECODE_ESCAPE: /* FIXME: Escape should clear the marked text. Currently the marked text goes when leaving the gadget or e.g. pressing ','. Seems to be a refresh problem */
+        {
+          set(data->Matchwindow, MUIA_Window_Open, FALSE);
+        }
+        break;
+
+        // a IECODE_TAB will only be triggered if the tab key
+        // is used within the matchwindow
+        case IECODE_TAB:
+        {
+          if(xget(data->Matchwindow, MUIA_Window_Open))
           {
             set(data->Matchwindow, MUIA_Window_Open, FALSE);
             set(_win(obj), MUIA_Window_ActiveObject, obj);
+            set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+          }
+        }
+        break;
 
-            // If the MUIA_String_AdvanceOnCR is TRUE we have to set the next object active in the window
-            // we have to check this within our instance data because Betterstring.mcc is buggy and don`t
-            // return MUIA_String_AdvanceOnCR within a get().
-            if(data->AdvanceOnCR)
+        default:
+        {
+          BOOL changed = FALSE;
+          long select_size;
+
+          // check if some text is actually selected
+          if((select_size = xget(obj, MUIA_BetterString_SelectSize)) != 0)
+          {
+            if(imsg->Code == IECODE_BACKSPACE)
             {
-              set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+              // now we do check whether everything until the end was selected
+              long pos = xget(obj, MUIA_String_BufferPos)+select_size;
+              char *content = (char *)xget(obj, MUIA_String_Contents);
+
+              if(content != NULL && (content[pos] == '\0' || content[pos] == ','))
+                DoMethod(obj, MUIM_BetterString_ClearSelected);
+
+              changed = TRUE;
             }
+            else if(ConvertKey(imsg) == ',')
+              set(obj, MUIA_String_BufferPos, MUIV_BetterString_BufferPos_End);
+          }
+
+          // if we do not have an early change result we
+          // do have to evaluate the superMethod call
+          if(changed == FALSE)
+          {
+            char *old;
+            char *new;
+
+            // now we get a temporary copy of our string contents, call the supermethod
+            // and compare if something has changed or not
+            old = strdup((char *)xget(obj, MUIA_String_Contents));
+            result = DoSuperMethodA(cl, obj, msg);
+            new = (char *)xget(obj, MUIA_String_Contents);
+
+            // check if the content changed
+            if(strcmp(old, new) != 0)
+              changed = TRUE;
+
+            // free our temporary buffer
+            free(old);
           }
           else
-            DisplayBeep(_screen(obj));
+            result = DoSuperMethodA(cl, obj, msg);
 
-          result = MUI_EventHandlerRC_Eat;
-        }
-      }
-      break;
-
-      /* keys are sent to the popup-list */
-      case IECODE_UP:
-      case IECODE_DOWN:
-      case NM_WHEEL_UP:
-      case NM_WHEEL_DOWN:
-      case NM_WHEEL_LEFT:
-      case NM_WHEEL_RIGHT:
-      {
-        // forward this event to the addrmatchlist
-        if(DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Event, imsg))
-          result = MUI_EventHandlerRC_Eat;
-      }
-      break;
-
-      case IECODE_DEL:
-      case IECODE_ESCAPE: /* FIXME: Escape should clear the marked text. Currently the marked text goes when leaving the gadget or e.g. pressing ','. Seems to be a refresh problem */
-        set(data->Matchwindow, MUIA_Window_Open, FALSE);
-      break;
-
-      // a IECODE_TAB will only be triggered if the tab key
-      // is used within the matchwindow
-      case IECODE_TAB:
-      {
-        if(xget(data->Matchwindow, MUIA_Window_Open))
-        {
-          set(data->Matchwindow, MUIA_Window_Open, FALSE);
-          set(_win(obj), MUIA_Window_ActiveObject, obj);
-          set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
-        }
-      }
-      break;
-
-      default:
-      {
-        BOOL changed = FALSE;
-        long select_size;
-
-        // check if some text is actually selected
-        if((select_size = xget(obj, MUIA_BetterString_SelectSize)) != 0)
-        {
-          if(imsg->Code == IECODE_BACKSPACE)
+          // if the content changed we do get the current recipient
+          if(changed)
           {
-            // now we do check whether everything until the end was selected
-            long pos = xget(obj, MUIA_String_BufferPos)+select_size;
-            char *content = (char *)xget(obj, MUIA_String_Contents);
+            char *cur_rcpt = (char *)DoMethod(obj, MUIM_Recipientstring_CurrentRecipient);
+            char *new_address;
 
-            if(content && (content[pos] == '\0' || content[pos] == ','))
-              DoMethod(obj, MUIM_BetterString_ClearSelected);
+            if(cur_rcpt != NULL &&
+               (new_address = (char *)DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Open, cur_rcpt)) != NULL)
+            {
+              long start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+              long pos = xget(obj, MUIA_String_BufferPos);
 
-            changed = TRUE;
-          }
-          else if(ConvertKey(imsg) == ',')
-            set(obj, MUIA_String_BufferPos, MUIV_BetterString_BufferPos_End);
-        }
+              DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
 
-        // if we do not have an early change result we
-        // do have to evaluate the superMethod call
-        if(changed == FALSE)
-        {
-          char *old;
-          char *new;
-
-          // now we get a temporary copy of our string contents, call the supermethod
-          // and compare if something has changed or not
-          old = strdup((char *)xget(obj, MUIA_String_Contents));
-          result = DoSuperMethodA(cl, obj, msg);
-          new = (char *)xget(obj, MUIA_String_Contents);
-
-          // check if the content changed
-          if(strcmp(old, new) != 0)
-            changed = TRUE;
-
-          // free our temporary buffer
-          free(old);
-        }
-        else
-          result = DoSuperMethodA(cl, obj, msg);
-
-        // if the content changed we do get the current recipient
-        if(changed)
-        {
-          char *cur_rcpt = (char *)DoMethod(obj, MUIM_Recipientstring_CurrentRecipient);
-          char *new_address;
-
-          if(cur_rcpt &&
-             (new_address = (char *)DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Open, cur_rcpt)))
-          {
-            long start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
-            long pos = xget(obj, MUIA_String_BufferPos);
-
-            DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
-
-            SetAttrs(obj, MUIA_String_BufferPos, pos,
-                          MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start),
-                          TAG_DONE);
+              SetAttrs(obj, MUIA_String_BufferPos, pos,
+                            MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start),
+                            TAG_DONE);
+            }
           }
         }
+        break;
       }
-      break;
     }
-  }
-  else if(imsg->Class == IDCMP_CHANGEWINDOW)
-  {
-    // only if the matchwindow is open we advice the matchwindow to refresh it`s position.
-    if(xget(data->Matchwindow, MUIA_Window_Open))
-      DoMethod(data->Matchwindow, MUIM_Addrmatchlist_ChangeWindow);
+    else if(imsg->Class == IDCMP_CHANGEWINDOW)
+    {
+      // only if the matchwindow is open we advice the matchwindow to refresh it`s position.
+      if(xget(data->Matchwindow, MUIA_Window_Open))
+        DoMethod(data->Matchwindow, MUIM_Addrmatchlist_ChangeWindow);
+    }
   }
 
   RETURN(result);
