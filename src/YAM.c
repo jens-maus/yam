@@ -1195,7 +1195,7 @@ static void Terminate(void)
   // Create the shutdown window object, but only show it if the application is visible, too.
   // This window will be closed and disposed automatically as soon as the application itself
   // is disposed.
-  if((shutdownWindow = ShutdownWindowObject, End) != NULL)
+  if(G->App != NULL && (shutdownWindow = ShutdownWindowObject, End) != NULL)
     set(shutdownWindow, MUIA_Window_Open, !xget(G->App, MUIA_Application_Iconified));
 
   D(DBF_STARTUP, "freeing spam filter module...");
@@ -2073,12 +2073,12 @@ static void Initialise(BOOL hidden)
      Abort(tr(MSG_ER_CANNOT_CREATE_SEMAPHORE));
 
    // Initialise and Setup our own MUI custom classes before we go on
-   if(!YAM_SetupClasses())
-      Abort(tr(MSG_ErrorClasses));
+   if(YAM_SetupClasses() == FALSE)
+     Abort(tr(MSG_ErrorClasses));
 
    // allocate the MUI root object and popup the progress/about window
-   if(!Root_New(hidden))
-      Abort(FindPort("YAM") ? NULL : tr(MSG_ErrorMuiApp));
+   if(Root_New(hidden) == FALSE)
+     Abort(FindPort("YAM") ? NULL : tr(MSG_ErrorMuiApp));
 
    // signal the splash window to show a 10% gauge
    SplashProgress(tr(MSG_LoadingGFX), 10);
@@ -2122,7 +2122,7 @@ static void Initialise(BOOL hidden)
    else
      errorMsg = tr(MSG_ER_MISSINGIMGVERFILE);
 
-   if(errorMsg)
+   if(errorMsg != NULL)
    {
      if(MUI_Request(G->App, NULL, 0, tr(MSG_ER_IMGLAYOUTFAILURE),
                                      tr(MSG_ER_EXITIGNORE),
