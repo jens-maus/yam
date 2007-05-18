@@ -1150,6 +1150,41 @@ HOOKPROTONHNONP(FI_Close, void)
 }
 MakeStaticHook(FI_CloseHook, FI_Close);
 ///
+/// FI_FilterSingleMail
+//  applies the configured filters on a single mail
+BOOL FI_FilterSingleMail(struct Mail *mail, int *matches)
+{
+  BOOL success = TRUE;
+  struct MinNode *curNode;
+  int match = 0;
+
+  ENTER();
+
+  for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  {
+    struct FilterNode *filter = (struct FilterNode *)curNode;
+
+    if(DoFilterSearch(filter, mail))
+    {
+      match++;
+
+      // if ExecuteFilterAction returns FALSE then the filter search should be aborted
+      // completley
+      if(ExecuteFilterAction(filter, mail) == FALSE)
+      {
+        success = FALSE;
+        break;
+      }
+    }
+  }
+
+  if(matches != NULL)
+    *matches = match;
+
+  RETURN(success);
+  return success;
+}
+///
 /// FreeSearchPatternList
 // Function to make the whole pattern list is correctly cleaned up
 static void FreeSearchPatternList(struct Search *search)
@@ -1361,7 +1396,8 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
   // Execute Action
   if(hasExecuteAction(filter) && *filter->executeCmd)
   {
-    char buf[SIZE_COMMAND+SIZE_PATHFILE];
+    char buf[SIZE_COMMAND + SIZE_PATHFILE];
+
     snprintf(buf, sizeof(buf), "%s \"%s\"", filter->executeCmd, GetRealPath(GetMailFile(NULL, NULL, mail)));
     ExecuteCommand(buf, FALSE, OUT_DOS);
     G->RRs.Executed++;
@@ -1562,20 +1598,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
               G->RRs.Checked++;
 
               // now we process the search
-              for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-              {
-                struct FilterNode *filter = (struct FilterNode *)curNode;
-
-                if(DoFilterSearch(filter, mail))
-                {
-                  matches++;
-
-                  // if ExecuteFilterAction returns FALSE then the filter search should be aborted
-                  // completley
-                  if(ExecuteFilterAction(filter, mail) == FALSE)
-                    break;
-                }
-              }
+              FI_FilterSingleMail(mail, &matches);
             }
 
             // we update the busy gauge and

@@ -7672,3 +7672,10 @@ Wenn ausgewählt, werden Nachrichten, die falsch als\n\
 klassifiziert werden, zurück in den Posteingang\n\
 verschoben.
 ;
+MSG_CO_FILTER_HAM
+Filter anwenden
+;
+MSG_HELP_CH_FILTER_HAM
+Wenn ausgewählt, werden nach dem Verschieben die benutzer-\n\
+definierten Filter erneut auf die Nachricht angewendet.
+;

@@ -6238,3 +6238,10 @@ SMTP server configuration.\n\
 Please make sure you disable this option and re-edit the \
 mail or otherwise it may be malformed during the transfer.
 ;
+MSG_CO_FILTER_HAM (1933//)
+Apply filters
+;
+MSG_HELP_CH_FILTER_HAM (1934//)
+If enabled, after moving the mail all user defined filters\n\
+will be applied again to the mail.
+;

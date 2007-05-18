@@ -156,6 +156,7 @@ extern const char mailStatusCycleMap[11];
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode,
                       int compar, char stat, BOOL substr, const char *match, const char *field);
 BOOL FI_DoSearch(struct Search *search, struct Mail *mail);
+BOOL FI_FilterSingleMail(struct Mail *mail, int *matches);
 
 void FreeRuleSearchData(struct RuleNode *rule);
 int AllocFilterSearch(enum ApplyFilterMode mode);

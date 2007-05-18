@@ -766,6 +766,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->SpamMarkAsRead = FALSE;
     co->SpamAddressBookIsWhiteList = FALSE;
     co->MoveHamToIncoming = FALSE;
+    co->FilterHam = FALSE;
     co->SpamProbabilityThreshold = DEFAULT_SPAM_PROBABILITY_THRESHOLD;
     co->SpamFlushTrainingDataInterval = DEFAULT_FLUSH_TRAINING_DATA_INTERVAL;
     co->SpamFlushTrainingDataThreshold = DEFAULT_FLUSH_TRAINING_DATA_THRESHOLD;

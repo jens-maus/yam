@@ -7,6 +7,10 @@ $URL$
 
 2007-05-18  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: implemented the "filter non-spam mails again" option. If this option
+    is enabled and a mail is classified as non-spam all user defined filters
+    will be applied to this mail first. If no filter moves or deletes this mail
+    it will eventually be moved back to the incoming folder.
   * misc: removed several unneeded local prototypes.
 
 2007-05-17  Thore Böckelmann <tboeckel@gmx.de>

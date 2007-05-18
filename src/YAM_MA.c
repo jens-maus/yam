@@ -3058,8 +3058,27 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
             setStatusToHam(mail);
 
             // move the mail back to the Incoming folder, if requested
-            if(C->MoveHamToIncoming == TRUE && folder != incomingFolder)
-              MA_MoveCopySingle(mail, folder, incomingFolder, FALSE, TRUE);
+            if(C->MoveHamToIncoming == TRUE)
+            {
+              BOOL moveToIncoming = TRUE;
+
+              // first try to apply the filters to this mail, if requested
+              if(C->FilterHam == TRUE)
+              {
+                if(AllocFilterSearch(APPLY_USER) > 0)
+                {
+                  // FI_FilterSingleMail() returns TRUE if the filters didn't move or delete the mail.
+                  // If the mail is still in place after filtering we will move it back to the incoming
+                  // folder later.
+                  moveToIncoming = FI_FilterSingleMail(mail, NULL);
+                  FreeFilterSearch();
+                }
+              }
+
+              // if the mail has not been moved to another folder before we move it to the incoming folder now.
+              if(moveToIncoming == TRUE && folder != incomingFolder)
+                MA_MoveCopySingle(mail, folder, incomingFolder, FALSE, TRUE);
+            }
           }
         }
 

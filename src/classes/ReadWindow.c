@@ -922,9 +922,26 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
 
       if(C->MoveHamToIncoming == TRUE)
       {
-        MA_MoveCopy(mail, folder, incomingFolder, FALSE, FALSE);
+        BOOL moveToIncoming = TRUE;
 
-        // erase the old pointer as this has been free()ed by MA_MoveCopy()
+        // first try to apply the filters to this mail, if requested
+        if(C->FilterHam == TRUE)
+        {
+          if(AllocFilterSearch(APPLY_USER) > 0)
+          {
+            // FI_FilterSingleMail() returns TRUE if the filters didn't move or delete the mail.
+            // If the mail is still in place after filtering we will move it back to the incoming
+            // folder later.
+            moveToIncoming = FI_FilterSingleMail(mail, NULL);
+            FreeFilterSearch();
+          }
+        }
+
+        // if the mail has not been moved to another folder before we move it to the incoming folder now.
+        if(moveToIncoming == TRUE)
+          MA_MoveCopy(mail, folder, incomingFolder, FALSE, FALSE);
+
+        // erase the old pointer as this has been free()ed by MA_MoveCopy() or by the filter action
         rmData->mail = NULL;
 
         // if there are still mails in the current folder we make sure

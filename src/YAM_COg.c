@@ -177,37 +177,41 @@ MakeStaticHook(PO_List2TextHook, PO_List2TextFunc);
 //  ARexx listview display hook
 HOOKPROTONH(CO_LV_RxDspFunc, long, char **array, int num)
 {
-   static char rexxoptm[SIZE_DEFAULT];
-   int scr = num-1;
+  static char rexxoptm[SIZE_DEFAULT];
+  int scr = num-1;
 
-   rexxoptm[0] = '\0';
-   array[0] = rexxoptm;
+  ENTER();
 
-   if(*CE->RX[scr].Script)
-     strlcat(rexxoptm, MUIX_PH, sizeof(rexxoptm));
+  rexxoptm[0] = '\0';
+  array[0] = rexxoptm;
 
-   switch(scr)
-   {
-      case MACRO_STARTUP:   strlcat(rexxoptm, tr(MSG_CO_ScriptStartup), sizeof(rexxoptm)); break;
-      case MACRO_QUIT:      strlcat(rexxoptm, tr(MSG_CO_ScriptTerminate), sizeof(rexxoptm)); break;
-      case MACRO_PREGET:    strlcat(rexxoptm, tr(MSG_CO_ScriptPreGetMail), sizeof(rexxoptm)); break;
-      case MACRO_POSTGET:   strlcat(rexxoptm, tr(MSG_CO_ScriptPostGetMail), sizeof(rexxoptm)); break;
-      case MACRO_NEWMSG:    strlcat(rexxoptm, tr(MSG_CO_ScriptNewMsg), sizeof(rexxoptm)); break;
-      case MACRO_PRESEND:   strlcat(rexxoptm, tr(MSG_CO_ScriptPreSendMail), sizeof(rexxoptm)); break;
-      case MACRO_POSTSEND:  strlcat(rexxoptm, tr(MSG_CO_ScriptPostSendMail), sizeof(rexxoptm)); break;
-      case MACRO_READ:      strlcat(rexxoptm, tr(MSG_CO_ScriptReadMsg), sizeof(rexxoptm)); break;
-      case MACRO_PREWRITE:  strlcat(rexxoptm, tr(MSG_CO_ScriptPreWriteMsg), sizeof(rexxoptm)); break;
-      case MACRO_POSTWRITE: strlcat(rexxoptm, tr(MSG_CO_ScriptPostWriteMsg), sizeof(rexxoptm)); break;
-      case MACRO_URL:       strlcat(rexxoptm, tr(MSG_CO_ScriptClickURL), sizeof(rexxoptm)); break;
+  if(CE->RX[scr].Script[0] != '\0')
+    strlcat(rexxoptm, MUIX_PH, sizeof(rexxoptm));
 
-      default:
-      {
-        int p = strlen(rexxoptm);
-        snprintf(&rexxoptm[p], sizeof(rexxoptm)-p, tr(MSG_CO_ScriptMenu), num);
-      }
-   }
+  switch(scr)
+  {
+    case MACRO_STARTUP:   strlcat(rexxoptm, tr(MSG_CO_ScriptStartup), sizeof(rexxoptm)); break;
+    case MACRO_QUIT:      strlcat(rexxoptm, tr(MSG_CO_ScriptTerminate), sizeof(rexxoptm)); break;
+    case MACRO_PREGET:    strlcat(rexxoptm, tr(MSG_CO_ScriptPreGetMail), sizeof(rexxoptm)); break;
+    case MACRO_POSTGET:   strlcat(rexxoptm, tr(MSG_CO_ScriptPostGetMail), sizeof(rexxoptm)); break;
+    case MACRO_NEWMSG:    strlcat(rexxoptm, tr(MSG_CO_ScriptNewMsg), sizeof(rexxoptm)); break;
+    case MACRO_PRESEND:   strlcat(rexxoptm, tr(MSG_CO_ScriptPreSendMail), sizeof(rexxoptm)); break;
+    case MACRO_POSTSEND:  strlcat(rexxoptm, tr(MSG_CO_ScriptPostSendMail), sizeof(rexxoptm)); break;
+    case MACRO_READ:      strlcat(rexxoptm, tr(MSG_CO_ScriptReadMsg), sizeof(rexxoptm)); break;
+    case MACRO_PREWRITE:  strlcat(rexxoptm, tr(MSG_CO_ScriptPreWriteMsg), sizeof(rexxoptm)); break;
+    case MACRO_POSTWRITE: strlcat(rexxoptm, tr(MSG_CO_ScriptPostWriteMsg), sizeof(rexxoptm)); break;
+    case MACRO_URL:       strlcat(rexxoptm, tr(MSG_CO_ScriptClickURL), sizeof(rexxoptm)); break;
 
-   return 0;
+    default:
+    {
+      int p = strlen(rexxoptm);
+
+      snprintf(&rexxoptm[p], sizeof(rexxoptm)-p, tr(MSG_CO_ScriptMenu), num);
+    }
+  }
+
+  RETURN(0);
+  return 0;
 }
 MakeStaticHook(CO_LV_RxDspHook,CO_LV_RxDspFunc);
 
@@ -2168,6 +2172,10 @@ Object *CO_PageSpam(struct CO_ClassData *data)
             Child, MakeCheckGroup((Object **)&data->GUI.CH_SPAMMARKONMOVE, tr(MSG_CO_SPAM_MARKONMOVE)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_SPAMMARKASREAD, tr(MSG_CO_SPAM_MARK_AS_READ)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_MOVEHAMTOINCOMING, tr(MSG_CO_MOVE_HAM_TO_INCOMING)),
+            Child, ColGroup(2),
+              Child, HSpace(5),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_FILTERHAM, tr(MSG_CO_FILTER_HAM)),
+            End,
           End,
 
           Child, HVSpace,
@@ -2181,6 +2189,7 @@ Object *CO_PageSpam(struct CO_ClassData *data)
     nnset(data->GUI.CH_SPAMMARKONMOVE,        MUIA_Disabled, TRUE);
     nnset(data->GUI.CH_SPAMMARKASREAD,        MUIA_Disabled, TRUE);
     nnset(data->GUI.CH_MOVEHAMTOINCOMING,     MUIA_Disabled, TRUE);
+    nnset(data->GUI.CH_FILTERHAM,             MUIA_Disabled, TRUE);
 
     SetHelp(data->GUI.CH_SPAMFILTERENABLED,     MSG_HELP_CH_SPAMFILTERENABLED);
     SetHelp(data->GUI.TX_SPAMBADCOUNT,          MSG_HELP_TX_SPAMBADCOUNT);
@@ -2191,15 +2200,21 @@ Object *CO_PageSpam(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_SPAMMARKONMOVE,        MSG_HELP_CH_SPAMMARKONMOVE);
     SetHelp(data->GUI.CH_SPAMMARKASREAD,        MSG_HELP_CH_SPAMMARKASREAD);
     SetHelp(data->GUI.CH_MOVEHAMTOINCOMING,     MSG_HELP_CH_MOVE_HAM_TO_INCOMING);
+    SetHelp(data->GUI.CH_FILTERHAM,             MSG_HELP_CH_FILTER_HAM);
 
     DoMethod(data->GUI.CH_SPAMFILTERENABLED, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
-                                             MUIV_Notify_Application, 9, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue,
+                                             MUIV_Notify_Application, 10, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue,
                                                data->GUI.BT_SPAMRESETTRAININGDATA,
                                                data->GUI.CH_SPAMFILTERFORNEWMAIL,
                                                data->GUI.CH_SPAMABOOKISWHITELIST,
                                                data->GUI.CH_SPAMMARKONMOVE,
                                                data->GUI.CH_SPAMMARKASREAD,
-                                               data->GUI.CH_MOVEHAMTOINCOMING);
+                                               data->GUI.CH_MOVEHAMTOINCOMING,
+                                               data->GUI.CH_FILTERHAM);
+
+    DoMethod(data->GUI.CH_MOVEHAMTOINCOMING, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
+                                             MUIV_Notify_Application, 4, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue,
+                                               data->GUI.CH_FILTERHAM);
 
     DoMethod(data->GUI.BT_SPAMRESETTRAININGDATA, MUIM_Notify, MUIA_Pressed,  FALSE,
                                                  MUIV_Notify_Application, 2, MUIM_CallHook, &ResetSpamTrainingDataHook);

@@ -353,6 +353,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "SpamFlushInterval= %d\n", co->SpamFlushTrainingDataInterval);
       fprintf(fh, "SpamFlushThres   = %d\n", co->SpamFlushTrainingDataThreshold);
       fprintf(fh, "MoveHamToIncoming= %s\n", Bool2Txt(co->MoveHamToIncoming));
+      fprintf(fh, "FilterHam        = %s\n", Bool2Txt(co->FilterHam));
 
       fprintf(fh, "\n[Read]\n");
       fprintf(fh, "ShowHeader       = %d\n", co->ShowHeader);
@@ -966,6 +967,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
           else if(!stricmp(buffer, "SpamFlushInterval")) co->SpamFlushTrainingDataInterval = atoi(value);
           else if(!stricmp(buffer, "SpamFlushThres")) co->SpamFlushTrainingDataThreshold = atoi(value);
           else if(!stricmp(buffer, "MoveHamToIncoming")) co->MoveHamToIncoming = Txt2Bool(value);
+          else if(!stricmp(buffer, "FilterHam")) co->FilterHam = Txt2Bool(value);
 
 /* Read */
           else if(!stricmp(buffer, "ShowHeader"))     co->ShowHeader = atoi(value);
@@ -1425,6 +1427,7 @@ void CO_GetConfig(BOOL saveConfig)
         CE->SpamMarkAsRead = GetMUICheck(gui->CH_SPAMMARKASREAD);
         CE->SpamAddressBookIsWhiteList = GetMUICheck(gui->CH_SPAMABOOKISWHITELIST);
         CE->MoveHamToIncoming = GetMUICheck(gui->CH_MOVEHAMTOINCOMING);
+        CE->FilterHam = GetMUICheck(gui->CH_FILTERHAM);
 
         if(C->SpamFilterEnabled == TRUE && CE->SpamFilterEnabled == FALSE)
         {
@@ -1557,14 +1560,7 @@ void CO_GetConfig(BOOL saveConfig)
             }
 
             // set the spam filter specific config items back to their default values
-            CE->SpamProbabilityThreshold = DEFAULT_SPAM_PROBABILITY_THRESHOLD;
-            CE->SpamFlushTrainingDataInterval = DEFAULT_FLUSH_TRAINING_DATA_INTERVAL;
-            CE->SpamFlushTrainingDataThreshold = DEFAULT_FLUSH_TRAINING_DATA_THRESHOLD;
-            CE->SpamFilterForNewMail = FALSE;
-            CE->SpamMarkOnMove = FALSE;
-            CE->SpamMarkAsRead = FALSE;
-            CE->SpamAddressBookIsWhiteList = FALSE;
-            CE->MoveHamToIncoming = FALSE;
+            CO_SetDefaults(CE, cp_Spam);
 
             // update the toolbar to the new settings
             if(G->MA->GUI.TO_TOOLBAR != NULL)
@@ -2050,6 +2046,7 @@ void CO_SetConfig(void)
         setcheckmark(gui->CH_SPAMMARKASREAD, CE->SpamMarkAsRead);
         setcheckmark(gui->CH_SPAMABOOKISWHITELIST, CE->SpamAddressBookIsWhiteList);
         setcheckmark(gui->CH_MOVEHAMTOINCOMING, CE->MoveHamToIncoming);
+        setcheckmark(gui->CH_FILTERHAM, CE->FilterHam);
         snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfHamClassifiedMails());
         set(gui->TX_SPAMGOODCOUNT, MUIA_Text_Contents, buf);
         snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfSpamClassifiedMails());
