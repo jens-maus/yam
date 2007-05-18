@@ -385,6 +385,7 @@ void     RemoveMailFromList(struct Mail *mail, BOOL closeWindows);
 BOOL     RenameFile(const char *oldname, const char *newname);
 BOOL     RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd);
 struct FileReqCache *ReqFile(enum ReqFileType num, Object *win, const char *title, int mode, const char *drawer, const char *file);
+void     FreeFileReqCache(struct FileReqCache *frc);
 BOOL     SafeOpenWindow(Object *obj);
 void     SaveLayout(BOOL permanent);
 char     ShortCut(const char *label);

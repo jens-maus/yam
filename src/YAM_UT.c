@@ -2373,24 +2373,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
     if(reqResult)
     {
       // free previous resources
-      if(frc->file)
-        free(frc->file);
-
-      if(frc->drawer)
-        free(frc->drawer);
-
-      if(frc->pattern)
-        free(frc->pattern);
-
-      if(frc->numArgs > 0)
-      {
-        int j;
-
-        for(j=0; j < frc->numArgs; j++)
-          free(frc->argList[j]);
-
-        free(frc->argList);
-      }
+      FreeFileReqCache(frc);
 
       // copy all necessary data from the ASL filerequester structure
       // to our cache
@@ -2442,6 +2425,34 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
 
   RETURN(result);
   return result;
+}
+///
+/// FreeFileReqCache
+// free all structures inside a filerequest cache structure
+void FreeFileReqCache(struct FileReqCache *frc)
+{
+  ENTER();
+
+  if(frc->file)
+    free(frc->file);
+
+  if(frc->drawer)
+    free(frc->drawer);
+
+  if(frc->pattern)
+    free(frc->pattern);
+
+  if(frc->numArgs > 0)
+  {
+    int j;
+
+    for(j=0; j < frc->numArgs; j++)
+      free(frc->argList[j]);
+
+    free(frc->argList);
+  }
+
+  LEAVE();
 }
 ///
 /// AddZombieFile

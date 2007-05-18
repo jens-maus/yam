@@ -11,6 +11,7 @@ $URL$
 
 2007-05-18  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_UT.c: added a new function to free a FileReqCache structure.
   * YAM.c, ShutdownWindow.c, YAM.cd, deutsch.ct: added new shutdown window which
     is shown upon shutting down YAM. Its usability will be extended in the
     future. Also cleaned up some functions a bit more.

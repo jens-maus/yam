@@ -1283,25 +1283,7 @@ static void Terminate(void)
 
     if((frc = G->FileReqCache[i]) != NULL)
     {
-      if(frc->file != NULL)
-        free(frc->file);
-
-      if(frc->drawer != NULL)
-        free(frc->drawer);
-
-      if(frc->pattern != NULL)
-        free(frc->pattern);
-
-      if(frc->numArgs > 0)
-      {
-        int j;
-
-        for(j = 0; j < frc->numArgs; j++)
-          free(frc->argList[j]);
-
-        free(frc->argList);
-      }
-
+      FreeFileReqCache(frc);
       free(frc);
     }
   }
