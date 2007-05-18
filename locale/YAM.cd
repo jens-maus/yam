@@ -6222,7 +6222,7 @@ the current position of the AppIcon on the workbench\n\
 desktop.
 ;
 MSG_CO_MOVE_HAM_TO_INCOMING (1930//)
-Move 'Not Spam' mails back to incoming folder
+Move 'Not Spam' mails back to _incoming folder
 ;
 MSG_HELP_CH_MOVE_HAM_TO_INCOMING (1931//)
 If enabled, a mail which was incorrectly classified\n\
@@ -6239,9 +6239,9 @@ Please make sure you disable this option and re-edit the \
 mail or otherwise it may be malformed during the transfer.
 ;
 MSG_CO_FILTER_HAM (1933//)
-Apply filters
+Apply _filters
 ;
 MSG_HELP_CH_FILTER_HAM (1934//)
 If enabled, after moving the mail all user defined filters\n\
-will be applied again to the mail.
+will be applied to the mail.
 ;

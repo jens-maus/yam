@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (30.04.2007)
+## version $VER: YAM.catalog 6.0 (18.05.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -7664,7 +7664,7 @@ Wenn ausgewählt, wird die aktuelle Position des\n\
 AppIcons auf der Workbench als permanent angesehen.
 ;
 MSG_CO_MOVE_HAM_TO_INCOMING
-"Nicht-Spam"-Nachrichten zurück in den Posteingang verschieben
+"Nicht-Spam"-Nachrichten zurück in den Poste_ingang verschieben
 ;
 MSG_HELP_CH_MOVE_HAM_TO_INCOMING
 Wenn ausgewählt, werden Nachrichten, die falsch als\n\
@@ -7672,10 +7672,20 @@ Wenn ausgewählt, werden Nachrichten, die falsch als\n\
 klassifiziert werden, zurück in den Posteingang\n\
 verschoben.
 ;
+MSG_ER_NO8BITMIME
+Während des Verbindungsversuches mit dem SMTP Server '%s' \
+zeigte sich, das dieser 8bit MIME Übertragungen nicht \
+unterstützt. Sie haben jedoch in Ihrer Konfiguration diese \
+Option eingeschalten.\n\
+\n\
+Bitte stellen Sie sicher das sie die Option abschalten und \
+die Nachricht neu editieren, da ansonsten diese event. \
+fehlerhaft übertragen werden kann.
+;
 MSG_CO_FILTER_HAM
-Filter anwenden
+_Filter anwenden
 ;
 MSG_HELP_CH_FILTER_HAM
 Wenn ausgewählt, werden nach dem Verschieben die benutzer-\n\
-definierten Filter erneut auf die Nachricht angewendet.
+definierten Filter auf die Nachricht angewendet.
 ;
