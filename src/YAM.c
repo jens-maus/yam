@@ -1698,6 +1698,7 @@ static void Initialise2(void)
 {
   struct Folder **oldfolders = NULL;
   BOOL newfolders;
+  BOOL splashWasActive;
   int i;
 
   ENTER();
@@ -1956,21 +1957,22 @@ static void Initialise2(void)
   SplashProgress(tr(MSG_OPENGUI), 100);
   G->InStartupPhase = FALSE;
 
-  // Only activate the main window if the about window is active and open it immediatly.
-  // We always start YAM with Window_Open=TRUE or else the hide functionality does not work as expected.
-  SetAttrs(G->MA->GUI.WI,
-           MUIA_Window_Activate, xget(G->SplashWinObject, MUIA_Window_Activate),
-           MUIA_Window_Open,     TRUE,
-           TAG_DONE);
-
-  // Keep the splash window open until the main window is finally opened. This avoids
-  // some unnecessary screen close/open if YAM is running on its own screen.
+  // close the splash window right before we open our main YAM window
+  // but ask it before closing if it was activated or not.
+  splashWasActive = xget(G->SplashWinObject, MUIA_Window_Activate);
   set(G->SplashWinObject, MUIA_Window_Open, FALSE);
 
   // cleanup the splash window object immediately
   DoMethod(G->App, OM_REMMEMBER, G->SplashWinObject);
   MUI_DisposeObject(G->SplashWinObject);
   G->SplashWinObject = NULL;
+
+  // Only activate the main window if the about window is active and open it immediatly.
+  // We always start YAM with Window_Open=TRUE or else the hide functionality does not work as expected.
+  SetAttrs(G->MA->GUI.WI,
+           MUIA_Window_Activate, splashWasActive,
+           MUIA_Window_Open,     TRUE,
+           TAG_DONE);
 
   LEAVE();
 }
