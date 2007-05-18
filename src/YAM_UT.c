@@ -106,13 +106,6 @@ int BusyLevel = 0;
  Utilities
 ***************************************************************************/
 
-/* local protos */
-static int  Word_Length(const char *buf);
-static int  Quoting_Chars(char *buf, const int len, const char *text, int *post_spaces);
-static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff);
-static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff);
-static BOOL UncompressMailFile(const char *src, const char *dst, const char *passwd);
-
 #if !defined(__amigaos4__) || (INCLUDE_VERSION < 50)
 struct PathNode
 {

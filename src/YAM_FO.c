@@ -62,7 +62,6 @@
 
 /* local protos */
 static struct FO_ClassData *FO_New(void);
-static BOOL FO_LoadFolderImage(struct Folder *fo);
 
 // According to the folder types we define the corresponding
 // default folder names. Please note that order and length IS important here.
@@ -663,6 +662,62 @@ BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *
 }
 
 ///
+/// FO_LoadFolderImage
+//  Loads the images for the folder that should be displayed in the NListtree
+static BOOL FO_LoadFolderImage(struct Folder *folder)
+{
+  BOOL success = FALSE;
+
+  ENTER();
+
+  // first we make sure that valid data is underway.
+  if(folder != NULL)
+  {
+  	if(folder->ImageIndex >= MAX_FOLDERIMG+1)
+  	{
+      char fname[SIZE_PATHFILE];
+      Object *lv = G->MA->GUI.NL_FOLDERS;
+
+      strlcpy(fname, GetFolderDir(folder), sizeof(fname));
+      AddPart(fname, ".fimage", sizeof(fname));
+
+      if(FileExists(fname))
+      {
+        folder->imageObject = ImageAreaObject,
+                                MUIA_ImageArea_Filename, fname,
+                              End;
+
+        // Now we say that this image could be used by this Listtree
+        if(folder->imageObject != NULL)
+        {
+          DoMethod(lv, MUIM_NList_UseImage, folder->imageObject, folder->ImageIndex, MUIF_NONE);
+
+          D(DBF_FOLDER, "successfully loaded folder image '%s'", fname);
+          success = TRUE;
+        }
+        else
+          E(DBF_FOLDER, "error while trying to create imageareaobejct for '%s'", fname);
+      }
+      else
+      {
+        D(DBF_FOLDER, "no folder image '%s' found", fname);
+        folder->imageObject = NULL;
+      }
+    }
+    else
+    {
+      W(DBF_FOLDER, "imageIndex of folder < MAX_FOLDERIMG (%ld < %ld)", folder->ImageIndex, MAX_FOLDERIMG+1);
+      folder->imageObject = NULL;
+    }
+  }
+  else
+    E(DBF_FOLDER, "folder == NULL");
+
+  RETURN(success);
+  return success;
+}
+
+///
 /// FO_LoadTree
 //  Loads folder list from a file
 BOOL FO_LoadTree(char *fname)
@@ -699,61 +754,61 @@ BOOL FO_LoadTree(char *fname)
 
           if(CreateDirectory(GetFolderDir(&fo)) == TRUE)
           {
-             // if there doesn't exist any .fconfig configuration in the folder
-             // we do have to generate it and we do that by analyzing its name,
-             // comparing it to the default folder names we know.
-             if(FO_LoadConfig(&fo) == FALSE)
-             {
-               char *folderpath = (char *)FilePart(fo.Path);
+            // if there doesn't exist any .fconfig configuration in the folder
+            // we do have to generate it and we do that by analyzing its name,
+            // comparing it to the default folder names we know.
+            if(FO_LoadConfig(&fo) == FALSE)
+            {
+              char *folderpath = (char *)FilePart(fo.Path);
 
-               // check if this is a so-called "standard" folder (INCOMING/OUTGOING etc.)
-               if(stricmp(folderpath, FolderName[FT_INCOMING]) == 0)
-                 fo.Type = FT_INCOMING;
-               else if(stricmp(folderpath, FolderName[FT_OUTGOING]) == 0)
-                 fo.Type = FT_OUTGOING;
-               else if(stricmp(folderpath, FolderName[FT_SENT]) == 0)
-                 fo.Type = FT_SENT;
-               else if(stricmp(folderpath, FolderName[FT_TRASH]) == 0)
-                 fo.Type = FT_TRASH;
-               else if(C->SpamFilterEnabled && stricmp(folderpath, FolderName[FT_SPAM]) == 0)
-                 fo.Type = FT_SPAM;
+              // check if this is a so-called "standard" folder (INCOMING/OUTGOING etc.)
+              if(stricmp(folderpath, FolderName[FT_INCOMING]) == 0)
+                fo.Type = FT_INCOMING;
+              else if(stricmp(folderpath, FolderName[FT_OUTGOING]) == 0)
+                fo.Type = FT_OUTGOING;
+              else if(stricmp(folderpath, FolderName[FT_SENT]) == 0)
+                fo.Type = FT_SENT;
+              else if(stricmp(folderpath, FolderName[FT_TRASH]) == 0)
+                fo.Type = FT_TRASH;
+              else if(C->SpamFilterEnabled && stricmp(folderpath, FolderName[FT_SPAM]) == 0)
+                fo.Type = FT_SPAM;
 
-               // Save the config now because it could be changed in the meantime
-               if(FO_SaveConfig(&fo) == FALSE)
-               {
-                 fclose(fh);
+              // Save the config now because it could be changed in the meantime
+              if(FO_SaveConfig(&fo) == FALSE)
+              {
+                fclose(fh);
 
-                 RETURN(FALSE);
-                 return FALSE;
-               }
-             }
+                RETURN(FALSE);
+                return FALSE;
+              }
+            }
 
-             fo.SortIndex = i++;
-             fo.ImageIndex = j;
+            fo.SortIndex = i++;
+            fo.ImageIndex = j;
 
-             // Now we load the FolderImages if they exists
-             if(FO_LoadFolderImage(&fo))
-               j++;
-             else
-             {
-               // we cannot find out if there is new/unread mail in the folder,
-               // so we initialize the folder with the std ImageIndex.
-               if(isIncomingFolder(&fo))      fo.ImageIndex = FICON_ID_INCOMING;
-               else if(isOutgoingFolder(&fo)) fo.ImageIndex = FICON_ID_OUTGOING;
-               else if(isTrashFolder(&fo))    fo.ImageIndex = FICON_ID_TRASH;
-               else if(isSentFolder(&fo))     fo.ImageIndex = FICON_ID_SENT;
-               else if(isSpamFolder(&fo))     fo.ImageIndex = FICON_ID_SPAM;
-               else fo.ImageIndex = -1; // or with -1 for a non std folder.
-             }
+            // Now we load the FolderImages if they exists
+            if(FO_LoadFolderImage(&fo))
+              j++;
+            else
+            {
+              // we cannot find out if there is new/unread mail in the folder,
+              // so we initialize the folder with the std ImageIndex.
+              if(isIncomingFolder(&fo))      fo.ImageIndex = FICON_ID_INCOMING;
+              else if(isOutgoingFolder(&fo)) fo.ImageIndex = FICON_ID_OUTGOING;
+              else if(isTrashFolder(&fo))    fo.ImageIndex = FICON_ID_TRASH;
+              else if(isSentFolder(&fo))     fo.ImageIndex = FICON_ID_SENT;
+              else if(isSpamFolder(&fo))     fo.ImageIndex = FICON_ID_SPAM;
+              else fo.ImageIndex = -1; // or with -1 for a non std folder.
+            }
 
-             // Now we add this folder to the folder listtree
-             if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
-             {
-               fclose(fh);
+            // Now we add this folder to the folder listtree
+            if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
+            {
+              fclose(fh);
 
-               RETURN(FALSE);
-               return FALSE;
-             }
+              RETURN(FALSE);
+              return FALSE;
+            }
           }
           do
             if(strcmp(buffer, "@ENDFOLDER") == 0)
@@ -781,7 +836,7 @@ BOOL FO_LoadTree(char *fname)
             SET_FLAG(tnflags, TNF_NOSIGN);
           }
 
-          if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)))
+          if(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags) == NULL)
           {
             fclose(fh);
 
@@ -846,62 +901,6 @@ BOOL FO_LoadTree(char *fname)
   // if nested is still greater zero we have a misconfiguration
   if(nested > 0)
     success = FALSE;
-
-  RETURN(success);
-  return success;
-}
-
-///
-/// FO_LoadFolderImage
-//  Loads the images for the folder that should be displayed in the NListtree
-static BOOL FO_LoadFolderImage(struct Folder *folder)
-{
-  BOOL success = FALSE;
-
-  ENTER();
-
-  // first we make sure that valid data is underway.
-  if(folder != NULL)
-  {
-  	if(folder->ImageIndex >= MAX_FOLDERIMG+1)
-  	{
-      char fname[SIZE_PATHFILE];
-      Object *lv = G->MA->GUI.NL_FOLDERS;
-
-      strlcpy(fname, GetFolderDir(folder), sizeof(fname));
-      AddPart(fname, ".fimage", sizeof(fname));
-
-      if(FileExists(fname))
-      {
-        folder->imageObject = ImageAreaObject,
-                                MUIA_ImageArea_Filename, fname,
-                              End;
-
-        // Now we say that this image could be used by this Listtree
-        if(folder->imageObject != NULL)
-        {
-          DoMethod(lv, MUIM_NList_UseImage, folder->imageObject, folder->ImageIndex, MUIF_NONE);
-
-          D(DBF_FOLDER, "successfully loaded folder image '%s'", fname);
-          success = TRUE;
-        }
-        else
-          E(DBF_FOLDER, "error while trying to create imageareaobejct for '%s'", fname);
-      }
-      else
-      {
-        D(DBF_FOLDER, "no folder image '%s' found", fname);
-        folder->imageObject = NULL;
-      }
-    }
-    else
-    {
-      W(DBF_FOLDER, "imageIndex of folder < MAX_FOLDERIMG (%ld < %ld)", folder->ImageIndex, MAX_FOLDERIMG+1);
-      folder->imageObject = NULL;
-    }
-  }
-  else
-    E(DBF_FOLDER, "folder == NULL");
 
   RETURN(success);
   return success;

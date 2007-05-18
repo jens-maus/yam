@@ -62,15 +62,6 @@
 
 #include "Debug.h"
 
-/* local protos */
-static STACKEXT BOOL AB_FindTodaysBirthdates(struct MUI_NListtree_TreeNode*, long);
-static STACKEXT void AB_SaveTreeNode(FILE*, struct MUI_NListtree_TreeNode *);
-static void AB_PrintField(FILE*, const char*, const char*);
-static void AB_PrintShortEntry(FILE*, struct ABEntry*);
-static void AB_PrintLongEntry(FILE*, struct ABEntry*);
-static STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode*, FILE*, int);
-
-
 /***************************************************************************
  Module: Address book
 ***************************************************************************/

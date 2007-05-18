@@ -223,13 +223,9 @@ struct MailTransferNode
 // static function prototypes
 static void TR_NewMailAlert(void);
 static void TR_CompleteMsgList(void);
-static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext, const void *errorMsg);
 static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext, const void *errorMsg);
-static int  TR_Recv(char *vptr, int maxlen);
-static int  TR_RecvToFile(FILE *fh, char *filename, struct TransStat *ts);
 static int  TR_ReadLine(LONG socket, char *vptr, int maxlen);
 static int  TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags);
-static int  TR_Send(const char *vptr, int len, int flags);
 static int  TR_WriteBuffered(LONG socket, const char *ptr, int maxlen, int flags);
 static void TR_TransStat_Update(struct TransStat *ts, int size_incr);
 
@@ -1600,7 +1596,8 @@ static int TR_RecvToFile(FILE *fh, char *filename, struct TransStat *ts)
       if(l == SIZE_LINE || done == TRUE)
       {
         // update the transferstatus
-        if(ts) TR_TransStat_Update(ts, l);
+        if(ts)
+          TR_TransStat_Update(ts, l);
 
         // write the line to the file now
         if(fwrite(line, 1, l, fh) != (size_t)l)
@@ -1610,7 +1607,8 @@ static int TR_RecvToFile(FILE *fh, char *filename, struct TransStat *ts)
         }
 
         // if we end up here and done is true we have to break that iteration
-        if(done) break;
+        if(done)
+          break;
 
         // set l to zero so that the next char gets written to the beginning
         l=0;

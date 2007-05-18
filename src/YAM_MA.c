@@ -95,14 +95,7 @@ struct ExpandTextData
 };
 
 /* local protos */
-static ULONG MA_GetSortType(int);
 static struct Mail *MA_MoveCopySingle(struct Mail*, struct Folder*, struct Folder*, BOOL, BOOL);
-static void MA_UpdateStatus(void);
-static char *MA_AppendRcpt(char*, struct Person*, BOOL);
-static void MA_InsertIntroText(FILE*, char*, struct ExpandTextData*);
-static void MA_EditorNotification(int);
-static void MA_SetupExpandTextData(struct ExpandTextData*, struct Mail*);
-static int MA_CheckWriteWindow(int);
 
 /***************************************************************************
  Module: Main
@@ -1512,6 +1505,7 @@ static void MA_InsertIntroText(FILE *fh, char *text, struct ExpandTextData *etd)
   if(*text)
   {
     char *sbuf = ExpandText(text, etd);
+
     fprintf(fh, "%s\n", sbuf);
     FreeStrBuf(sbuf);
   }

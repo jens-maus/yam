@@ -119,7 +119,6 @@ struct FIndex
 #include "default-align.h"
 
 /* local protos */
-static BOOL MA_ScanDate(struct Mail *mail, const char *date);
 static BOOL MA_ScanMailBox(struct Folder *folder);
 
 /***************************************************************************
@@ -784,7 +783,7 @@ void MA_JumpToNewMsg(void)
 
   if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
   {
-    i = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries) - 1;
+    i = xget(lv, MUIA_NList_Entries) - 1;
     incr = -1;
   }
   else
@@ -1477,6 +1476,182 @@ static int MA_GetRecipients(char *h, struct Person **per)
   return cnt;
 }
 
+///
+/// MA_ScanDate
+//  Converts textual date header into datestamp format
+static BOOL MA_ScanDate(struct Mail *mail, const char *date)
+{
+  BOOL success = FALSE;
+  int count = 0;
+  int day = 0;
+  int mon = 0;
+  int year = 0;
+  int hour = 0;
+  int min = 0;
+  int sec = 0;
+  char *s;
+  char tdate[SIZE_SMALL];
+  char ttime[SIZE_SMALL];
+  char tzone[SIZE_SMALL];
+  struct DateTime dt;
+
+  ENTER();
+
+  // make sure to skip the weekday definition if it exists
+  if((s = strpbrk(date, " |;,")) != NULL)
+  {
+    // check if we did reach here because the whole
+    // weekday definition was missing
+    if(isspace(*s) && isdigit(*date))
+      s = (char *)date;
+    else
+      s++;
+  }
+  else
+  {
+    W(DBF_MAIL, "no starting separator found!!");
+
+    s = (char *)date;
+  }
+
+  // skip leading spaces
+  while(*s && isspace(*s))
+    s++;
+
+  while(*s)
+  {
+    char *e;
+
+    if((e = strpbrk(s, " |;,")) == NULL)
+      e = s+strlen(s);
+
+    switch(count)
+    {
+      // get the day
+      case 0:
+      {
+        if(!isdigit(*s) || (day = atoi(s)) > 31)
+        {
+          W(DBF_MAIL, "couldn't parse day from '%s'", s);
+
+          day = 1;
+        }
+      }
+      break;
+
+      // get the month
+      case 1:
+      {
+        for(mon = 1; mon <= 12; mon++)
+        {
+          if(strnicmp(s, months[mon-1], 3) == 0)
+            break;
+        }
+
+        if(mon > 12)
+        {
+          W(DBF_MAIL, "couldn't parse month from '%s'", s);
+
+          mon = 1;
+        }
+      }
+      break;
+
+      // get the year
+      case 2:
+      {
+        if(isdigit(*s))
+          year = atoi(s);
+        else
+        {
+          W(DBF_MAIL, "couldn't parse year from '%s'", s);
+
+          year = 1978;
+        }
+      }
+      break;
+
+      // get the time values
+      case 3:
+      {
+        if(sscanf(s, "%d:%d:%d", &hour, &min, &sec) != 3)
+        {
+          if(sscanf(s, "%d:%d", &hour, &min) == 2)
+            sec = 0;
+          else
+          {
+            W(DBF_MAIL, "couldn't parse time from '%s'", s);
+
+            hour = 0;
+            min = 0;
+            sec = 0;
+          }
+        }
+      }
+      break;
+
+      // get the time zone
+      case 4:
+      {
+        while(*s && *s == '(')
+          s++;
+
+        strlcpy(tzone, s, MIN(sizeof(tzone), (unsigned int)(e-s+1)));
+      }
+      break;
+    }
+
+    // if we iterated until 4 we can break out
+    if(count == 4)
+      break;
+
+    count++;
+
+    // set the next start to our last search
+    if(*e)
+    {
+      // skip leading spaces
+      while(*e && isspace(*e))
+        e++;
+
+      s = e;
+    }
+    else
+      break;
+  }
+
+  // then format a standard DateStamp string like string
+  // so that we can use StrToDate()
+  snprintf(tdate, sizeof(tdate), "%02d-%02d-%02d", mon, day, year % 100);
+  snprintf(ttime, sizeof(ttime), "%02d:%02d:%02d", hour, min, sec);
+  dt.dat_Format  = FORMAT_USA;
+  dt.dat_Flags   = 0;
+  dt.dat_StrDate = tdate;
+  dt.dat_StrTime = ttime;
+  if(StrToDate(&dt))
+  {
+    struct DateStamp *ds = &dt.dat_Stamp;
+
+    // save the timezone
+    mail->tzone = TZtoMinutes(tzone);
+
+    // bring the date in relation to UTC
+    ds->ds_Minute -= mail->tzone;
+
+    // we need to check the datestamp variable that it is still in it`s borders
+    // after the UTC correction
+    while(ds->ds_Minute < 0)     { ds->ds_Minute += 1440; ds->ds_Days--; }
+    while(ds->ds_Minute >= 1440) { ds->ds_Minute -= 1440; ds->ds_Days++; }
+
+    // now we do copy the datestamp stuff over the one from our mail
+    memcpy(&mail->Date, ds, sizeof(struct DateStamp));
+
+    success = TRUE;
+  }
+
+  RETURN(success);
+  return success;
+}
 ///
 /// MA_ExamineMail
 //  Parses the header lines of a message and fills email structure
@@ -2308,182 +2483,6 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
   RETURN(result);
   return result;
-}
-///
-/// MA_ScanDate
-//  Converts textual date header into datestamp format
-static BOOL MA_ScanDate(struct Mail *mail, const char *date)
-{
-  BOOL success = FALSE;
-  int count = 0;
-  int day = 0;
-  int mon = 0;
-  int year = 0;
-  int hour = 0;
-  int min = 0;
-  int sec = 0;
-  char *s;
-  char tdate[SIZE_SMALL];
-  char ttime[SIZE_SMALL];
-  char tzone[SIZE_SMALL];
-  struct DateTime dt;
-
-  ENTER();
-
-  // make sure to skip the weekday definition if it exists
-  if((s = strpbrk(date, " |;,")) != NULL)
-  {
-    // check if we did reach here because the whole
-    // weekday definition was missing
-    if(isspace(*s) && isdigit(*date))
-      s = (char *)date;
-    else
-      s++;
-  }
-  else
-  {
-    W(DBF_MAIL, "no starting separator found!!");
-
-    s = (char *)date;
-  }
-
-  // skip leading spaces
-  while(*s && isspace(*s))
-    s++;
-
-  while(*s)
-  {
-    char *e;
-
-    if((e = strpbrk(s, " |;,")) == NULL)
-      e = s+strlen(s);
-
-    switch(count)
-    {
-      // get the day
-      case 0:
-      {
-        if(!isdigit(*s) || (day = atoi(s)) > 31)
-        {
-          W(DBF_MAIL, "couldn't parse day from '%s'", s);
-
-          day = 1;
-        }
-      }
-      break;
-
-      // get the month
-      case 1:
-      {
-        for(mon = 1; mon <= 12; mon++)
-        {
-          if(strnicmp(s, months[mon-1], 3) == 0)
-            break;
-        }
-
-        if(mon > 12)
-        {
-          W(DBF_MAIL, "couldn't parse month from '%s'", s);
-
-          mon = 1;
-        }
-      }
-      break;
-
-      // get the year
-      case 2:
-      {
-        if(isdigit(*s))
-          year = atoi(s);
-        else
-        {
-          W(DBF_MAIL, "couldn't parse year from '%s'", s);
-
-          year = 1978;
-        }
-      }
-      break;
-
-      // get the time values
-      case 3:
-      {
-        if(sscanf(s, "%d:%d:%d", &hour, &min, &sec) != 3)
-        {
-          if(sscanf(s, "%d:%d", &hour, &min) == 2)
-            sec = 0;
-          else
-          {
-            W(DBF_MAIL, "couldn't parse time from '%s'", s);
-
-            hour = 0;
-            min = 0;
-            sec = 0;
-          }
-        }
-      }
-      break;
-
-      // get the time zone
-      case 4:
-      {
-        while(*s && *s == '(')
-          s++;
-
-        strlcpy(tzone, s, MIN(sizeof(tzone), (unsigned int)(e-s+1)));
-      }
-      break;
-    }
-
-    // if we iterated until 4 we can break out
-    if(count == 4)
-      break;
-
-    count++;
-
-    // set the next start to our last search
-    if(*e)
-    {
-      // skip leading spaces
-      while(*e && isspace(*e))
-        e++;
-
-      s = e;
-    }
-    else
-      break;
-  }
-
-  // then format a standard DateStamp string like string
-  // so that we can use StrToDate()
-  snprintf(tdate, sizeof(tdate), "%02d-%02d-%02d", mon, day, year % 100);
-  snprintf(ttime, sizeof(ttime), "%02d:%02d:%02d", hour, min, sec);
-  dt.dat_Format  = FORMAT_USA;
-  dt.dat_Flags   = 0;
-  dt.dat_StrDate = tdate;
-  dt.dat_StrTime = ttime;
-  if(StrToDate(&dt))
-  {
-    struct DateStamp *ds = &dt.dat_Stamp;
-
-    // save the timezone
-    mail->tzone = TZtoMinutes(tzone);
-
-    // bring the date in relation to UTC
-    ds->ds_Minute -= mail->tzone;
-
-    // we need to check the datestamp variable that it is still in it`s borders
-    // after the UTC correction
-    while(ds->ds_Minute < 0)     { ds->ds_Minute += 1440; ds->ds_Days--; }
-    while(ds->ds_Minute >= 1440) { ds->ds_Minute -= 1440; ds->ds_Days++; }
-
-    // now we do copy the datestamp stuff over the one from our mail
-    memcpy(&mail->Date, ds, sizeof(struct DateStamp));
-
-    success = TRUE;
-  }
-
-  RETURN(success);
-  return success;
 }
 ///
 
