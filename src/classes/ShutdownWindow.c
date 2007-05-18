@@ -43,12 +43,15 @@ struct Data
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct Data *data;
   char logopath[SIZE_PATHFILE];
 
+  ENTER();
+
+  // get the path to the logo file
   strmfp(logopath, G->ProgDir, "Icons/logo");
 
-  if(!(obj = DoSuperNew(cl, obj,
+  // create the object
+  if((obj = DoSuperNew(cl, obj,
 
     MUIA_Window_DragBar,        FALSE,
     MUIA_Window_CloseGadget,    FALSE,
@@ -57,7 +60,7 @@ OVERLOAD(OM_NEW)
     MUIA_Window_LeftEdge,       MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,        MUIV_Window_TopEdge_Centered,
     MUIA_Window_ActiveObject,   NULL,
-    MUIA_Window_DefaultObject,   NULL,
+    MUIA_Window_DefaultObject,  NULL,
     WindowContents, VGroup,
       MUIA_Background, MUII_GroupBack,
       Child, HGroup,
@@ -73,18 +76,14 @@ OVERLOAD(OM_NEW)
 
     TAG_MORE, (ULONG)inittags(msg))))
   {
-    return 0;
+    // add the window to our application
+    DoMethod(G->App, OM_ADDMEMBER, obj);
+
+    // make sure it will be opened immediately.
+    set(obj, MUIA_Window_Open, TRUE);
   }
 
-  if(!(data = (struct Data *)INST_DATA(cl,obj)))
-  {
-    return 0;
-  }
-
-  DoMethod(G->App, OM_ADDMEMBER, obj);
-
-  set(obj, MUIA_Window_Activate, TRUE);
-
+  RETURN((ULONG)obj);
   return (ULONG)obj;
 }
 

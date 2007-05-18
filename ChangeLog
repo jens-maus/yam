@@ -7,6 +7,9 @@ $URL$
 
 2007-05-18  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c, ShutdownWindow.c: when restarting YAM, the shutdown window will not
+    be displayed anymore. In addition, it will only be created in case the
+    application isn't in iconify state.
   * YAM.cd, deutsch.ct: minor twirks to the latest changes.
 
 2007-05-18  Thore Böckelmann <tboeckel@gmx.de>

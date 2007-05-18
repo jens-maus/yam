@@ -1187,16 +1187,9 @@ static void DeleteStartupSemaphore(void)
 //  Deallocates used memory and MUI modules and terminates
 static void Terminate(void)
 {
-  Object *shutdownWindow;
   int i;
 
   ENTER();
-
-  // Create the shutdown window object, but only show it if the application is visible, too.
-  // This window will be closed and disposed automatically as soon as the application itself
-  // is disposed.
-  if(G->App != NULL && (shutdownWindow = ShutdownWindowObject, End) != NULL)
-    set(shutdownWindow, MUIA_Window_Open, !xget(G->App, MUIA_Application_Iconified));
 
   D(DBF_STARTUP, "freeing spam filter module...");
   BayesFilterCleanup();
@@ -1478,6 +1471,8 @@ static void Abort(const char *message, ...)
 static void yam_exitfunc(void)
 {
   ENTER();
+
+  D(DBF_STARTUP, "cleaning up in 'yam_exitfunc'...");
 
   if(olddirlock != -1)
   {
@@ -2583,7 +2578,9 @@ int main(int argc, char **argv)
    SetupDebug();
    #endif
 
-   atexit(yam_exitfunc); /* we need to free the stuff on exit()! */
+   // signal that on a exit() the 'yam_exitfunc' function
+   // should be called.
+   atexit(yam_exitfunc);
 
    WBmsg = (struct WBStartup *)(0 == argc ? argv : NULL);
 
@@ -2784,6 +2781,7 @@ int main(int argc, char **argv)
             }
           }
         }
+
         yamFirst = FALSE;
       }
       else
@@ -3212,6 +3210,12 @@ int main(int argc, char **argv)
       // if the user really wants to exit, do it now as Terminate() is broken !
       if(ret == 1)
       {
+        // Create the shutdown window object, but only show it if the application is visible, too.
+        // This window will be closed and disposed automatically as soon as the application itself
+        // is disposed.
+        if(G->App != NULL && xget(G->App, MUIA_Application_Iconified) == FALSE)
+          ShutdownWindowObject, End;
+
         SetIoErr(RETURN_OK);
         exit(RETURN_OK);
       }
