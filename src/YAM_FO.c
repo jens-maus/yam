@@ -836,7 +836,7 @@ BOOL FO_LoadTree(char *fname)
             SET_FLAG(tnflags, TNF_NOSIGN);
           }
 
-          if(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags) == NULL)
+          if((Object *)DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags) == NULL)
           {
             fclose(fh);
 
