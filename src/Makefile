@@ -258,6 +258,7 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/ReadWindowToolbar.o \
 	$(OBJDIR)/$(CLASSDIR)/ReadWindowStatusBar.o \
 	$(OBJDIR)/$(CLASSDIR)/Splashwindow.o \
+    $(OBJDIR)/$(CLASSDIR)/ShutdownWindow.o \
 	$(OBJDIR)/$(CLASSDIR)/UserImage.o \
 	$(OBJDIR)/$(CLASSDIR)/MailTextEdit.o \
 	$(OBJDIR)/$(CLASSDIR)/MainFolderListtree.o \

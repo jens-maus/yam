@@ -6245,3 +6245,6 @@ MSG_HELP_CH_FILTER_HAM (1934//)
 If enabled, after moving the mail all user defined filters\n\
 will be applied to the mail.
 ;
+MSG_SHUTDOWN_SHUTTING_DOWN (1935//)
+Shutting down...
+;

@@ -153,7 +153,6 @@ static struct ADST_Data
 {
   struct NotifyRequest nRequest;
   enum ADSTmethod method;
-
 } ADSTdata;
 
 // Semaphore related suff
@@ -458,7 +457,7 @@ static int GetDST(BOOL update)
     }
   }
   #endif
-
+        #
   // SetDST saves the DST settings in the TZONE env-variable which
   // is a bit more complex than the others, so we need to do some advance parsing
   if((!update || ADSTdata.method == ADST_SETDST) && result == 0
@@ -1010,7 +1009,7 @@ static BOOL InitXPKPackerList(void)
 
   ENTER();
 
-  if(XpkBase)
+  if(XpkBase != NULL)
   {
     struct XpkPackerList xpl;
 
@@ -1087,10 +1086,8 @@ static void FreeXPKPackerList(void)
     // Now we process the read header to set all flags accordingly
     while((curNode = (struct MinNode *)RemHead((struct List *)&G->xpkPackerList)) != NULL)
     {
-      struct xpkPackerNode *xpkNode = (struct xpkPackerNode *)curNode;
-
-      // Free everything of the node
-      free(xpkNode);
+      // free everything of the node
+      free(curNode);
     }
   }
 
@@ -1190,15 +1187,22 @@ static void DeleteStartupSemaphore(void)
 //  Deallocates used memory and MUI modules and terminates
 static void Terminate(void)
 {
+  Object *shutdownWindow;
   int i;
 
   ENTER();
+
+  // Create the shutdown window object, but only show it if the application is visible, too.
+  // This window will be closed and disposed automatically as soon as the application itself
+  // is disposed.
+  if((shutdownWindow = ShutdownWindowObject, End) != NULL)
+    set(shutdownWindow, MUIA_Window_Open, !xget(G->App, MUIA_Application_Iconified));
 
   D(DBF_STARTUP, "freeing spam filter module...");
   BayesFilterCleanup();
 
   D(DBF_STARTUP, "freeing config module...");
-  if(G->CO)
+  if(G->CO != NULL)
   {
     CO_FreeConfig(CE);
     free(CE);
@@ -1230,7 +1234,7 @@ static void Terminate(void)
   D(DBF_STARTUP, "freeing write mail module...");
   for(i = 0; i <= MAXWR; i++)
   {
-    if(G->WR[i])
+    if(G->WR[i] != NULL)
     {
       WR_Cleanup(i);
       DisposeModule(&G->WR[i]);
@@ -1238,31 +1242,38 @@ static void Terminate(void)
   }
 
   D(DBF_STARTUP, "freeing tcp/ip stuff...");
-  if(G->TR)
+  if(G->TR != NULL)
   {
     TR_Cleanup();
     TR_CloseTCPIP();
     DisposeModule(&G->TR);
   }
 
-  if(G->FO) DisposeModule(&G->FO);
-  if(G->FI) DisposeModule(&G->FI);
-  if(G->ER) DisposeModule(&G->ER);
-  if(G->US) DisposeModule(&G->US);
+  if(G->FO != NULL)
+    DisposeModule(&G->FO);
+
+  if(G->FI != NULL)
+    DisposeModule(&G->FI);
+
+  if(G->ER != NULL)
+    DisposeModule(&G->ER);
+
+  if(G->US != NULL)
+    DisposeModule(&G->US);
 
   D(DBF_STARTUP, "finalizing indexes and closing main window...");
-  if(G->MA)
+  if(G->MA != NULL)
   {
     MA_UpdateIndexes(FALSE);
     set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
   }
 
   D(DBF_STARTUP, "freeing addressbook module...");
-  if(G->AB)
+  if(G->AB != NULL)
     DisposeModule(&G->AB);
 
   D(DBF_STARTUP, "freeing main window module...");
-  if(G->MA)
+  if(G->MA != NULL)
     DisposeModule(&G->MA);
 
   D(DBF_STARTUP, "freeing FileReqCache structures...");
@@ -1270,15 +1281,15 @@ static void Terminate(void)
   {
     struct FileReqCache *frc;
 
-    if((frc = G->FileReqCache[i]))
+    if((frc = G->FileReqCache[i]) != NULL)
     {
-      if(frc->file)
+      if(frc->file != NULL)
         free(frc->file);
 
-      if(frc->drawer)
+      if(frc->drawer != NULL)
         free(frc->drawer);
 
-      if(frc->pattern)
+      if(frc->pattern != NULL)
         free(frc->pattern);
 
       if(frc->numArgs > 0)
@@ -1298,20 +1309,20 @@ static void Terminate(void)
   D(DBF_STARTUP, "freeing write window notifies...");
   for(i = 0; i <= MAXWR; i++)
   {
-    if(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port)
+    if(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port != NULL)
       DeleteMsgPort(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port);
   }
 
   D(DBF_STARTUP, "freeing AppIcon...");
-  if(G->AppIcon)
+  if(G->AppIcon != NULL)
     RemoveAppIcon(G->AppIcon);
 
   D(DBF_STARTUP, "freeing AppPort...");
-  if(G->AppPort)
+  if(G->AppPort != NULL)
     DeleteMsgPort(G->AppPort);
 
   D(DBF_STARTUP, "freeing Arexx port...");
-  if(G->RexxHost)
+  if(G->RexxHost != NULL)
     CloseDownARexxHost(G->RexxHost);
 
   D(DBF_STARTUP, "freeing timerIOs...");
@@ -1323,11 +1334,11 @@ static void Terminate(void)
 
   // check if we have an allocated NewMailSound_Obj and dispose it.
   D(DBF_STARTUP, "freeing newmailsound object...");
-  if(G->NewMailSound_Obj)
+  if(G->NewMailSound_Obj != NULL)
     DisposeDTObject(G->NewMailSound_Obj);
 
   D(DBF_STARTUP, "freeing hideIcon...");
-  if(G->HideIcon)
+  if(G->HideIcon != NULL)
     FreeDiskObject(G->HideIcon);
 
   D(DBF_STARTUP, "deleting zombie files...");
@@ -1347,14 +1358,20 @@ static void Terminate(void)
     while(DeleteZombieFiles(ignore) == FALSE);
   }
 
-  D(DBF_STARTUP, "freeing main application object...");
-  if(G->App)
-    MUI_DisposeObject(G->App);
+  // we deregister the application from
+  // application.library
+  #if defined(__amigaos4__)
+  D(DBF_STARTUP, "unregister from application.library...");
+  if(G->applicationID > 0)
+    UnregisterApplication(G->applicationID, NULL);
+
+  CLOSELIB(ApplicationBase, IApplication);
+  #endif
 
   D(DBF_STARTUP, "freeing disk objects...");
   for(i = 0; i < MAXICONS; i++)
   {
-    if(G->DiskObj[i])
+    if(G->DiskObj[i] != NULL)
       FreeDiskObject(G->DiskObj[i]);
   }
 
@@ -1367,9 +1384,6 @@ static void Terminate(void)
   D(DBF_STARTUP, "freeing config...");
   CO_FreeConfig(C);
 
-  D(DBF_STARTUP, "freeing internal MUI classes...");
-  YAM_CleanupClasses();
-
   // free our private codesets list
   D(DBF_STARTUP, "freeing private codesets list...");
   if(G->codesetsList)
@@ -1380,23 +1394,20 @@ static void Terminate(void)
     G->codesetsList = NULL;
   }
 
-  D(DBF_STARTUP, "deleting semaphore");
-  DeleteStartupSemaphore();
-
-  // we deregister the application from
-  // application.library
-  #if defined(__amigaos4__)
-  D(DBF_STARTUP, "unregister from application.library...");
-  if(G->applicationID > 0)
-    UnregisterApplication(G->applicationID, NULL);
-
-  CLOSELIB(ApplicationBase, IApplication);
-  #endif
-
   // free our private internal XPK PackerList
   D(DBF_STARTUP, "cleaning up XPK stuff...");
   FreeXPKPackerList();
   CLOSELIB(XpkBase, IXpk);
+
+  D(DBF_STARTUP, "freeing main application object...");
+  if(G->App != NULL)
+    MUI_DisposeObject(G->App);
+
+  D(DBF_STARTUP, "freeing internal MUI classes...");
+  YAM_CleanupClasses();
+
+  D(DBF_STARTUP, "deleting semaphore");
+  DeleteStartupSemaphore();
 
   // cleaning up all AmiSSL stuff
   D(DBF_STARTUP, "cleaning up AmiSSL stuff...");
@@ -1541,7 +1552,8 @@ void PopUp(void)
     for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
       struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-      if(rmData->readWindow)
+
+      if(rmData->readWindow != NULL)
       {
         DoMethod(rmData->readWindow, MUIM_Window_ToFront);
         window = rmData->readWindow;
@@ -1552,7 +1564,7 @@ void PopUp(void)
   // Bring the write window to the front
   for(i = 0; i < MAXWR; i++)
   {
-    if(G->WR[i])
+    if(G->WR[i] != NULL)
     {
       DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
       window = G->WR[i]->GUI.WI;
@@ -1578,69 +1590,84 @@ MakeStaticHook(DoublestartHook, DoublestartFunc);
 //  Makes sure that the user really wants to quit the program
 static BOOL StayInProg(void)
 {
-   int i;
-   BOOL req = FALSE;
+  int i;
+  BOOL req = FALSE;
+  BOOL stayIn = FALSE;
 
-   if(G->AB->Modified)
-   {
-     if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_ABookModifiedGad), tr(MSG_AB_Modified)))
-       CallHookPkt(&AB_SaveABookHook, 0, 0);
-   }
+  ENTER();
 
-   for(i=0; i < MAXEA && !req; i++) if(G->EA[i]) req = TRUE;
-   for(i=0; i < MAXWR && !req; i++) if(G->WR[i]) req = TRUE;
+  if(G->AB->Modified)
+  {
+    if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_ABookModifiedGad), tr(MSG_AB_Modified)))
+      CallHookPkt(&AB_SaveABookHook, 0, 0);
+  }
 
-   if(req || G->CO || C->ConfirmOnQuit)
-   {
-     if(!MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_QuitYAMReq)))
-       return TRUE;
-   }
+  for(i=0; i < MAXEA && req == FALSE; i++)
+  {
+    if(G->EA[i] != NULL)
+      req = TRUE;
+  }
+  for(i=0; i < MAXWR && req == FALSE; i++)
+  {
+    if(G->WR[i] != NULL)
+      req = TRUE;
+  }
 
-   return FALSE;
+  if(req || G->CO != NULL || C->ConfirmOnQuit)
+  {
+    if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_QuitYAMReq)) == 0)
+      stayIn = TRUE;
+  }
+
+  RETURN(stayIn);
+  return stayIn;
 }
 ///
 /// Root_GlobalDispatcher
 //  Processes return value of MUI_Application_NewInput
 static int Root_GlobalDispatcher(ULONG app_input)
 {
-   int ret = 0;
+  int ret = 0;
 
-   switch (app_input)
-   {
-      case MUIV_Application_ReturnID_Quit:
+  ENTER();
+
+  switch(app_input)
+  {
+    case MUIV_Application_ReturnID_Quit:
+    {
+      if(!xget(G->App, MUIA_Application_ForceQuit))
       {
-        if(!xget(G->App, MUIA_Application_ForceQuit))
-        {
-          ret = (int)!StayInProg();
-        }
-        else
-          ret = 1;
+        ret = (int)!StayInProg();
       }
-      break;
+      else
+        ret = 1;
+    }
+    break;
 
-      case ID_CLOSEALL:
-      {
-        if(!C->IconifyOnQuit)
-          ret = (int)!StayInProg();
+    case ID_CLOSEALL:
+    {
+      if(!C->IconifyOnQuit)
+        ret = (int)!StayInProg();
 
-        set(G->App, MUIA_Application_Iconified, TRUE);
-      }
-      break;
+      set(G->App, MUIA_Application_Iconified, TRUE);
+    }
+    break;
 
-      case ID_RESTART:
-      {
-        ret = 2;
-      }
-      break;
+    case ID_RESTART:
+    {
+      ret = 2;
+    }
+    break;
 
-      case ID_ICONIFY:
-      {
-        MA_UpdateIndexes(FALSE);
-      }
-      break;
-   }
+    case ID_ICONIFY:
+    {
+      MA_UpdateIndexes(FALSE);
+    }
+    break;
+  }
 
-   return ret;
+  RETURN(ret);
+  return ret;
 }
 ///
 /// Root_New
@@ -1687,9 +1714,8 @@ static BOOL Root_New(BOOL hidden)
 //  Phase 2 of program initialization (after user logs in)
 static void Initialise2(void)
 {
-  struct Folder *folder, **oldfolders = NULL;
-  BOOL newfolders = FALSE;
-  BOOL splashWasActive;
+  struct Folder **oldfolders = NULL;
+  BOOL newfolders;
   int i;
 
   ENTER();
@@ -1711,12 +1737,10 @@ static void Initialise2(void)
     aii.info.customIcon = G->HideIcon;
 
     // register YAM to application.library
-    G->applicationID = RegisterApplication("YAM",
-                                           REGAPP_URLIdentifier, "yam.ch",
-                                           REGAPP_AppIconInfo,   (uint32)&aii,
-                                           REGAPP_Hidden,        xget(G->App, MUIA_Application_Iconified),
-                                           TAG_DONE);
-
+    G->applicationID = RegisterApplication("YAM", REGAPP_URLIdentifier, "yam.ch",
+                                                  REGAPP_AppIconInfo,   (uint32)&aii,
+                                                  REGAPP_Hidden,        xget(G->App, MUIA_Application_Iconified),
+                                                  TAG_DONE);
     D(DBF_STARTUP, "Registered YAM to application.library with appID: %ld", G->applicationID);
   }
   #endif
@@ -1744,24 +1768,25 @@ static void Initialise2(void)
   LoadLayout();
 
   SplashProgress(tr(MSG_LoadingFolders), 50);
-  if(FO_LoadTree(CreateFilename(".folders")) == FALSE && oldfolders)
+  if(FO_LoadTree(CreateFilename(".folders")) == FALSE && oldfolders != NULL)
   {
-     for(i = 0; i < 100; i++)
-     {
-       if (oldfolders[i])
-         DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, oldfolders[i]->Name, oldfolders[i], MUIV_NListtree_Insert_ListNode_Root);
-     }
+    for(i = 0; i < 100; i++)
+    {
+      if(oldfolders[i] != NULL)
+        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, oldfolders[i]->Name, oldfolders[i], MUIV_NListtree_Insert_ListNode_Root);
+    }
 
-     newfolders = TRUE;
+    newfolders = TRUE;
   }
 
-  if(oldfolders)
+  if(oldfolders != NULL)
   {
-    for(i = 0; oldfolders[i]; i++)
+    for(i = 0; oldfolders[i] != NULL; i++)
       free(oldfolders[i]);
     free(oldfolders);
   }
 
+  newfolders = FALSE;
   if(FO_GetFolderByType(FT_INCOMING, NULL) == NULL)
     newfolders |= FO_CreateFolder(FT_INCOMING, FolderName[FT_INCOMING], tr(MSG_MA_Incoming));
 
@@ -1847,8 +1872,8 @@ static void Initialise2(void)
 
   if(newfolders)
   {
-     set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible);
-     FO_SaveTree(CreateFilename(".folders"));
+    set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible);
+    FO_SaveTree(CreateFilename(".folders"));
   }
 
   SplashProgress(tr(MSG_RebuildIndices), 60);
@@ -1863,75 +1888,78 @@ static void Initialise2(void)
   SplashProgress(tr(MSG_LoadingFolders), 75);
   for(i = 0; ;i++)
   {
-     struct MUI_NListtree_TreeNode *tn;
-     struct MUI_NListtree_TreeNode *tn_parent;
+    struct MUI_NListtree_TreeNode *tn;
+    struct MUI_NListtree_TreeNode *tn_parent;
+    struct Folder *folder;
 
-     tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-     if(!tn || !tn->tn_User)
-       break;
+    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
+    if(tn == NULL || tn->tn_User == NULL)
+      break;
 
-     folder = tn->tn_User;
+    folder = tn->tn_User;
 
-     // if this entry is a group lets skip here immediatly
-     if(isGroupFolder(folder))
-       continue;
+    // if this entry is a group lets skip here immediatly
+    if(isGroupFolder(folder))
+      continue;
 
-     if((isIncomingFolder(folder) || isOutgoingFolder(folder) || isTrashFolder(folder) ||
-         C->LoadAllFolders) && !isProtectedFolder(folder))
-     {
-       // call the getIndex function which on one hand loads the full .index file
-       // and makes sure that all "new" mail is marked to unread if the user
-       // enabled the C->UpdateNewMail option in the configuration.
-       MA_GetIndex(folder);
-     }
-     else if(folder->LoadedMode != LM_VALID)
-     {
-       // do not load the full index, do load only the header of the .index
-       // which summarizes everything
-       folder->LoadedMode = MA_LoadIndex(folder, FALSE);
+    if((isIncomingFolder(folder) || isOutgoingFolder(folder) || isTrashFolder(folder) ||
+        C->LoadAllFolders) && !isProtectedFolder(folder))
+    {
+      // call the getIndex function which on one hand loads the full .index file
+      // and makes sure that all "new" mail is marked to unread if the user
+      // enabled the C->UpdateNewMail option in the configuration.
+      MA_GetIndex(folder);
+    }
+    else if(folder->LoadedMode != LM_VALID)
+    {
+      // do not load the full index, do load only the header of the .index
+      // which summarizes everything
+      folder->LoadedMode = MA_LoadIndex(folder, FALSE);
 
-       // if the user wishs to make sure all "new" mail is flagged as
-       // read upon start we go through our folders and make sure they show
-       // no "new" mail, even if their .index file is not fully loaded
-       if(C->UpdateNewMail && folder->LoadedMode == LM_FLUSHED)
-         folder->New = 0;
-     }
+      // if the user wishs to make sure all "new" mail is flagged as
+      // read upon start we go through our folders and make sure they show
+      // no "new" mail, even if their .index file is not fully loaded
+      if(C->UpdateNewMail && folder->LoadedMode == LM_FLUSHED)
+        folder->New = 0;
+    }
 
-     // if this folder hasn`t got any own folder image in the folder
-     // directory and it is one of our standard folders we have to check which image we put in front of it
-     if(folder->imageObject == NULL)
-     {
-       if(isIncomingFolder(folder))      folder->ImageIndex = (folder->New+folder->Unread) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
-       else if(isOutgoingFolder(folder)) folder->ImageIndex = (folder->Total > 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
-       else if(isTrashFolder(folder))    folder->ImageIndex = (folder->Total > 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
-       else if(isSentFolder(folder))     folder->ImageIndex = FICON_ID_SENT;
-       else if(isSpamFolder(folder))     folder->ImageIndex = (folder->Total > 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
-       else folder->ImageIndex = -1;
-     }
+    // if this folder hasn`t got any own folder image in the folder
+    // directory and it is one of our standard folders we have to check which image we put in front of it
+    if(folder->imageObject == NULL)
+    {
+      if(isIncomingFolder(folder))      folder->ImageIndex = (folder->New+folder->Unread) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
+      else if(isOutgoingFolder(folder)) folder->ImageIndex = (folder->Total > 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
+      else if(isTrashFolder(folder))    folder->ImageIndex = (folder->Total > 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
+      else if(isSentFolder(folder))     folder->ImageIndex = FICON_ID_SENT;
+      else if(isSpamFolder(folder))     folder->ImageIndex = (folder->Total > 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
+      else folder->ImageIndex = -1;
+    }
 
-     // now we have to add the amount of mails of this folder to the foldergroup
-     // aswell and also the grandparents.
-     while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
-     {
-        // fo_parent is NULL then it`s ROOT and we have to skip here
-        // because we cannot have a status of the ROOT tree.
-        struct Folder *fo_parent = (struct Folder *)tn_parent->tn_User;
-        if(fo_parent)
-        {
-           fo_parent->Unread    += folder->Unread;
-           fo_parent->New       += folder->New;
-           fo_parent->Total     += folder->Total;
-           fo_parent->Sent      += folder->Sent;
-           fo_parent->Deleted   += folder->Deleted;
+    // now we have to add the amount of mails of this folder to the foldergroup
+    // aswell and also the grandparents.
+    while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
+    {
+      // fo_parent is NULL then it`s ROOT and we have to skip here
+      // because we cannot have a status of the ROOT tree.
+      struct Folder *fo_parent;
 
-           // for the next step we set tn to the current parent so that we get the
-           // grandparents ;)
-           tn = tn_parent;
-        }
-        else break;
-     }
+      if((fo_parent = (struct Folder *)tn_parent->tn_User) != NULL)
+      {
+        fo_parent->Unread    += folder->Unread;
+        fo_parent->New       += folder->New;
+        fo_parent->Total     += folder->Total;
+        fo_parent->Sent      += folder->Sent;
+        fo_parent->Deleted   += folder->Deleted;
 
-     DoMethod(G->App, MUIM_Application_InputBuffered);
+        // for the next step we set tn to the current parent so that we get the
+        // grandparents ;)
+        tn = tn_parent;
+      }
+      else
+        break;
+    }
+
+    DoMethod(G->App, MUIM_Application_InputBuffered);
   }
 
   // Now we have to make sure that the current folder is really in "active" state
@@ -1940,30 +1968,27 @@ static void Initialise2(void)
 
   SplashProgress(tr(MSG_LoadingABook), 90);
   AB_LoadTree(G->AB_Filename, FALSE, FALSE);
-  if(!(G->RexxHost = SetupARexxHost("YAM", NULL)))
+  if((G->RexxHost = SetupARexxHost("YAM", NULL)) == NULL)
      Abort(tr(MSG_ErrorARexx));
 
   SplashProgress(tr(MSG_OPENGUI), 100);
   G->InStartupPhase = FALSE;
 
-  // close the splash window right before we open our main YAM window
-  // but ask it before closing if it was activated or not.
-  splashWasActive = xget(G->SplashWinObject, MUIA_Window_Activate);
+  // Only activate the main window if the about window is active and open it immediatly.
+  // We always start YAM with Window_Open=TRUE or else the hide functionality does not work as expected.
+  SetAttrs(G->MA->GUI.WI,
+           MUIA_Window_Activate, xget(G->SplashWinObject, MUIA_Window_Activate),
+           MUIA_Window_Open,     TRUE,
+           TAG_DONE);
+
+  // Keep the splash window open until the main window is finally opened. This avoids
+  // some unnecessary screen close/open if YAM is running on its own screen.
   set(G->SplashWinObject, MUIA_Window_Open, FALSE);
 
   // cleanup the splash window object immediately
   DoMethod(G->App, OM_REMMEMBER, G->SplashWinObject);
   MUI_DisposeObject(G->SplashWinObject);
   G->SplashWinObject = NULL;
-
-  // only activate the main window if the about window is activ
-  // and open it immediatly
-  // we always start YAM with Window_Open TRUE or else YAM the hide
-  // functionality doesn`t work as expected.
-  SetAttrs(G->MA->GUI.WI,
-           MUIA_Window_Activate, splashWasActive,
-           MUIA_Window_Open,     TRUE,
-           TAG_DONE);
 
   LEAVE();
 }
@@ -2126,31 +2151,31 @@ static void Initialise(BOOL hidden)
 
    for(i=0; i < MAXICONS; i++)
    {
-      strmfp(filebuf, pathbuf, icnames[i]);
+     strmfp(filebuf, pathbuf, icnames[i]);
 
-      // depending on the icon.library version we use either GetIconTags()
-      // or the older GetDiskObject() function
-      if(IconBase->lib_Version >= 44)
-        G->DiskObj[i] = GetIconTags(filebuf, TAG_DONE);
-      else
-        G->DiskObj[i] = GetDiskObject(filebuf);
+     // depending on the icon.library version we use either GetIconTags()
+     // or the older GetDiskObject() function
+     if(IconBase->lib_Version >= 44)
+       G->DiskObj[i] = GetIconTags(filebuf, TAG_DONE);
+     else
+       G->DiskObj[i] = GetDiskObject(filebuf);
 
-      // load the diskobject and report an error if something went wrong.
-      if(G->DiskObj[i] == NULL && G->NoImageWarning == FALSE)
-      {
-        int reqResult;
+     // load the diskobject and report an error if something went wrong.
+     if(G->DiskObj[i] == NULL && G->NoImageWarning == FALSE)
+     {
+       int reqResult;
 
-        if((reqResult = MUI_Request(G->App, NULL, 0, tr(MSG_ER_ICONOBJECT_TITLE),
-                                                     tr(MSG_ER_EXITIGNOREALL),
-                                                     tr(MSG_ER_ICONOBJECT),
-                                                     icnames[i], pathbuf)))
-        {
-          if(reqResult == 2)
-            G->NoImageWarning = TRUE;
-          else
-            Abort(NULL); // exit the application
-        }
-      }
+       if((reqResult = MUI_Request(G->App, NULL, 0, tr(MSG_ER_ICONOBJECT_TITLE),
+                                                    tr(MSG_ER_EXITIGNOREALL),
+                                                    tr(MSG_ER_ICONOBJECT),
+                                                    icnames[i], pathbuf)))
+       {
+         if(reqResult == 2)
+           G->NoImageWarning = TRUE;
+         else
+           Abort(NULL); // exit the application
+       }
+     }
    }
 
    // make sure we initialize the image Cache which in turn will
@@ -2280,7 +2305,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
       if(hide || C->PreSelection == 0)
       {
         MA_PopNow(POP_START, -1);
-        if(G->TR)
+        if(G->TR != NULL)
           DisposeModule(&G->TR);
 
         DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -2314,7 +2339,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
       // if he wants to send it.
       SendWaitingMail(hide, FALSE);
 
-      if(G->TR)
+      if(G->TR != NULL)
         DisposeModule(&G->TR);
 
       DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -2594,7 +2619,7 @@ int main(int argc, char **argv)
 
    // security only, can happen for residents only
    if(!(progdir = GetProgramDir()))
-      exit(RETURN_ERROR);
+     exit(RETURN_ERROR);
 
    olddirlock = CurrentDir(progdir);
 
@@ -2621,7 +2646,6 @@ int main(int argc, char **argv)
         char buf[SIZE_PATHFILE];
 
         GetProgramName((STRPTR)&buf[0], sizeof(buf));
-
         strlcpy(G->ProgName, (char *)FilePart(buf), sizeof(G->ProgName));
       }
 
@@ -2754,17 +2778,25 @@ int main(int argc, char **argv)
         int wrwin;
 
         DoStartup((BOOL)args.nocheck, (BOOL)args.hide);
-        if (args.mailto || args.letter || args.subject || args.attach) if ((wrwin = MA_NewNew(NULL, 0)) >= 0)
+        if((args.mailto || args.letter || args.subject || args.attach) && (wrwin = MA_NewNew(NULL, 0)) >= 0)
         {
-          if (args.mailto) setstring(G->WR[wrwin]->GUI.ST_TO, args.mailto);
-          if (args.subject) setstring(G->WR[wrwin]->GUI.ST_SUBJECT, args.subject);
-          if (args.letter) FileToEditor(args.letter, G->WR[wrwin]->GUI.TE_EDIT);
-          if (args.attach)
+          if(args.mailto)
+            setstring(G->WR[wrwin]->GUI.ST_TO, args.mailto);
+
+          if(args.subject)
+            setstring(G->WR[wrwin]->GUI.ST_SUBJECT, args.subject);
+
+          if(args.letter)
+            FileToEditor(args.letter, G->WR[wrwin]->GUI.TE_EDIT);
+
+          if(args.attach)
           {
             char **sptr;
-            for (sptr = args.attach; *sptr; sptr++)
+
+            for(sptr = args.attach; *sptr; sptr++)
             {
-              if (FileSize(*sptr) >= 0) WR_AddFileToList(wrwin, *sptr, NULL, FALSE);
+              if(FileSize(*sptr) >= 0)
+                WR_AddFileToList(wrwin, *sptr, NULL, FALSE);
             }
           }
         }

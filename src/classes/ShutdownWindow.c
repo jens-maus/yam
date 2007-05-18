@@ -1,0 +1,96 @@
+/***************************************************************************
+
+ YAM - Yet Another Mailer
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2007 by YAM Open Source Team
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+ YAM Official Support Site :  http://www.yam.ch
+ YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+
+ $Id$
+
+ Superclass:  MUIC_Window
+ Description: Shutdown window of the application
+
+***************************************************************************/
+
+#include "ShutdownWindow_cl.h"
+
+#include "Debug.h"
+
+/* CLASSDATA
+struct Data
+{
+  ULONG dummy;
+};
+*/
+
+/* Overloaded Methods */
+/// OVERLOAD(OM_NEW)
+OVERLOAD(OM_NEW)
+{
+  struct Data *data;
+  char logopath[SIZE_PATHFILE];
+
+  strmfp(logopath, G->ProgDir, "Icons/logo");
+
+  if(!(obj = DoSuperNew(cl, obj,
+
+    MUIA_Window_DragBar,        FALSE,
+    MUIA_Window_CloseGadget,    FALSE,
+    MUIA_Window_DepthGadget,    FALSE,
+    MUIA_Window_SizeGadget,     FALSE,
+    MUIA_Window_LeftEdge,       MUIV_Window_LeftEdge_Centered,
+    MUIA_Window_TopEdge,        MUIV_Window_TopEdge_Centered,
+    MUIA_Window_ActiveObject,   NULL,
+    MUIA_Window_DefaultObject,   NULL,
+    WindowContents, VGroup,
+      MUIA_Background, MUII_GroupBack,
+      Child, HGroup,
+        MUIA_Group_Spacing, 0,
+        Child, HSpace(0),
+        Child, MakeImageObject(logopath),
+        Child, HSpace(0),
+      End,
+      Child, HCenter((VGroup,
+        Child, CLabel(tr(MSG_SHUTDOWN_SHUTTING_DOWN)),
+      End)),
+    End,
+
+    TAG_MORE, (ULONG)inittags(msg))))
+  {
+    return 0;
+  }
+
+  if(!(data = (struct Data *)INST_DATA(cl,obj)))
+  {
+    return 0;
+  }
+
+  DoMethod(G->App, OM_ADDMEMBER, obj);
+
+  set(obj, MUIA_Window_Activate, TRUE);
+
+  return (ULONG)obj;
+}
+
+///
+
+/* Private Functions */
+
+/* Public Methods */
+
