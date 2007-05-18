@@ -223,6 +223,7 @@ struct MailTransferNode
 // static function prototypes
 static void TR_NewMailAlert(void);
 static void TR_CompleteMsgList(void);
+static int TR_Send(const char *ptr, int len, int flags);
 static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext, const void *errorMsg);
 static int  TR_ReadLine(LONG socket, char *vptr, int maxlen);
 static int  TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags);
