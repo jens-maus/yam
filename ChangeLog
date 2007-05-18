@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-18  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.cd, deutsch.ct: minor twirks to the latest changes.
+
 2007-05-18  Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: implemented the "filter non-spam mails again" option. If this option
