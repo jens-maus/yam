@@ -1545,7 +1545,6 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
         for(m = 0; m < (int)*mlist; m++)
         {
           BOOL wasSpam = FALSE;
-          struct MinNode *curNode;
 
           if((mail = mlist[m + 2]) != NULL)
           {
