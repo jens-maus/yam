@@ -2,7 +2,7 @@
 
  BetterString.mcc - A better String gadget MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by BetterString.mcc Open Source Team
+ Copyright (C) 2005-2007 by BetterString.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,7 @@
 
  BetterString class Support Site:  http://www.sf.net/projects/bstring-mcc/
 
- $Id: BetterString_mcc.h 2024 2006-03-05 10:27:25Z damato $
+ $Id: BetterString_mcc.h 68 2007-05-18 11:28:02Z thboeckel $
 
 ***************************************************************************/
 
@@ -48,6 +48,7 @@ extern "C" {
 #define MUIA_BetterString_StayActive            0xad001003
 #define MUIA_BetterString_KeyUpFocus            0xad001008
 #define MUIA_BetterString_KeyDownFocus          0xad001009
+#define MUIA_BetterString_InactiveContents      0xad00100a
 
 #define MUIM_BetterString_ClearSelected         0xad001004
 #define MUIM_BetterString_FileNameStart         0xad001006

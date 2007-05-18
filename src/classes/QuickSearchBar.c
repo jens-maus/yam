@@ -400,6 +400,7 @@ OVERLOAD(OM_NEW)
         MUIA_CycleChain,          TRUE,
         MUIA_Font,                MUIV_Font_Tiny,
         MUIA_String_AdvanceOnCR,  FALSE,
+        MUIA_BetterString_InactiveContents, tr(MSG_QUICKSEARCH_SO_SUBJORSENDER),
       End,
       Child, clearButton = TextObject,
         ButtonFrame,
@@ -554,6 +555,7 @@ DECLARE(SearchOptionChanged) // int activeSearchOption
 {
   GETDATA;
   char *searchContent = (char *)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
+  const char *inactiveContents;
 
   ENTER();
 
@@ -562,6 +564,19 @@ DECLARE(SearchOptionChanged) // int activeSearchOption
 
   // make sure the popup window is closed
   DoMethod(data->PO_SEARCHOPTIONPOPUP, MUIM_Popstring_Close, TRUE);
+
+  // update the inactive search string accordingly
+  switch(msg->activeSearchOption)
+  {
+    case 0: inactiveContents = tr(MSG_QUICKSEARCH_SO_SUBJECT); break;
+    case 1: inactiveContents = tr(MSG_QUICKSEARCH_SO_SENDER); break;
+    case 2: inactiveContents = tr(MSG_QUICKSEARCH_SO_SUBJORSENDER); break;
+    case 3: inactiveContents = tr(MSG_QUICKSEARCH_SO_TOORCC); break;
+    case 4: inactiveContents = tr(MSG_QUICKSEARCH_SO_INMSG); break;
+    case 5: inactiveContents = tr(MSG_QUICKSEARCH_SO_ENTIREMSG); break;
+    default: inactiveContents = NULL; break;
+  }
+  set(data->ST_SEARCHSTRING, MUIA_BetterString_InactiveContents, inactiveContents);
 
   // now we check whether the there is something to search for or not.
   if(searchContent != NULL && *searchContent != '\0')
@@ -779,3 +794,4 @@ DECLARE(UpdateStats) // ULONG force
 }
 
 ///
+

@@ -11,6 +11,10 @@ $URL$
 
 2007-05-18  Thore Böckelmann <tboeckel@gmx.de>
 
+  * QuickSearchBar.c: if no text is entered in the search string the current
+    search mode will be shown in italic style and with shadow color instead of
+    an empty string object. This feature requires the yet unreleased version
+    of BetterString 11.10.
   * YAM.c, YAM_UT.c: added a new function to free a FileReqCache structure.
   * YAM.c, ShutdownWindow.c, YAM.cd, deutsch.ct: added new shutdown window which
     is shown upon shutting down YAM. Its usability will be extended in the
