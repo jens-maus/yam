@@ -7645,7 +7645,7 @@ MSG_ER_ZOMBIE_FILES_EXIST_TITLE
 YAM Warnung
 ;
 MSG_CO_SHOWALTPARTS
-Alternative MIME-Teile anzeigen
+A_lternative MIME-Teile anzeigen
 ;
 MSG_HELP_CO_CH_SHOWALTPARTS
 Wenn ausgewählt, werden alle normalerweise\n\
