@@ -562,6 +562,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
         snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_RCVTIMEO=%ld", co->SocketOptions.RecvTimeOut);
 
       fprintf(fh, "SocketOptions    =%s\n", buf);
+      fprintf(fh, "SocketTimeout    = %d\n", co->SocketTimeout);
       fprintf(fh, "TRBufferSize     = %d\n", co->TRBufferSize);
       fprintf(fh, "EmbeddedMailDelay= %d\n", co->EmbeddedMailDelay);
       fprintf(fh, "KeepAliveInterval= %d\n", co->KeepAliveInterval);
@@ -1294,6 +1295,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                 break;
             }
           }
+          else if(!stricmp(buffer, "SocketTimeout")) co->SocketTimeout = atoi(value);
           else if(!stricmp(buffer, "TRBufferSize")) co->TRBufferSize = atoi(value);
           else if(!stricmp(buffer, "EmbeddedMailDelay")) co->EmbeddedMailDelay = atoi(value);
           else if(!stricmp(buffer, "KeepAliveInterval")) co->KeepAliveInterval = atoi(value);

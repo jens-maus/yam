@@ -7,6 +7,22 @@ $URL$
 
 2007-05-19  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c, YAM_CO.c, YAM_COs.c, YAM_config.h: finally implemented the long
+    awaited non-blocking socket I/O routines. Now YAM should completly use
+    non-blocking I/O for socket connections, so it will actively set an own
+    timeout (default: 7 seconds) for socket operations like connect()/recv()
+    and send(). In practice, this should significantly improve situations where
+    either the TCP/IP stack wasn't ready or the connecting server wasn't
+    operating properly and caused YAM to totally hang during a socket operation
+    with no control on whether when it will timeout. Now YAM can actively
+    timeout after a predefined interval and return an error.instead. For the
+    moment this timeout is set to 7 seconds per default - however we have to
+    find out what will be a sensible value for most of the people. In addition,
+    this new non-blocking I/O allows now to set a signal break mask on which
+    the socket operating should be interrupted. However, until we are running
+    our TCP/IP stuff in an own process (which is due for 2.6) we can't use it.
+    But it should then allow to immediately break a socket operation in case
+    the user pressed the 'Abort' button.
   * YAM.c: the imagecache cleanup will now be processed after the main
     application object is disposed. This should prevent certain crashes in case
     some images are still shown (e.g. in the shutdown window).

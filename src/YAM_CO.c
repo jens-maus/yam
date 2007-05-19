@@ -997,6 +997,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->SocketOptions.KeepAlive   = FALSE;
     co->SocketOptions.NoDelay     = FALSE;
     co->SocketOptions.LowDelay    = FALSE;
+    co->SocketTimeout = 7; // 7s socket timeout per default
     co->TRBufferSize = 8192;
     co->EmbeddedMailDelay = 200; // 200ms delay per default
     co->KeepAliveInterval = 30;  // 30s interval per default
