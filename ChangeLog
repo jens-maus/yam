@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: the imagecache cleanup will now be processed after the main
+    application object is disposed. This should prevent certain crashes in case
+    some images are still shown (e.g. in the shutdown window).
+
 2007-05-18  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c, ShutdownWindow.c: when restarting YAM, the shutdown window will not

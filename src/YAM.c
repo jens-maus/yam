@@ -1353,9 +1353,6 @@ static void Terminate(void)
   D(DBF_STARTUP, "freeing toolbar cache...");
   ToolbarCacheCleanup();
 
-  D(DBF_STARTUP, "freeing image cache...");
-  ImageCacheCleanup();
-
   D(DBF_STARTUP, "freeing config...");
   CO_FreeConfig(C);
 
@@ -1377,6 +1374,9 @@ static void Terminate(void)
   D(DBF_STARTUP, "freeing main application object...");
   if(G->App != NULL)
     MUI_DisposeObject(G->App);
+
+  D(DBF_STARTUP, "freeing image cache...");
+  ImageCacheCleanup();
 
   D(DBF_STARTUP, "freeing internal MUI classes...");
   YAM_CleanupClasses();
