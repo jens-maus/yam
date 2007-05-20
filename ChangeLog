@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-20  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Addrmatchlist.c: the window containing the attached string object is
+    activated after every change of the active list entry. In case the active
+    change was triggered by a mouse click this reactivation avoids the focus
+    loss of the string object. This fixed bug #1721712.
+
 2007-05-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_TR.c, YAM_CO.c: now that we have non-blocking socket I/O but our

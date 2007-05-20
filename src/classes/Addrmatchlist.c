@@ -356,6 +356,11 @@ DECLARE(ActiveChange) // LONG active
 
   ENTER();
 
+  // activate the window containing the string object again, as this method might
+  // have been triggered by a double click, but we must keep the other window active
+  // so that the string object does not loose focus.
+  ActivateWindow((struct Window *)xget(_win(data->String), MUIA_Window_Window));
+
   if(msg->active >= 0)
   {
     struct CustomABEntry *entry;
