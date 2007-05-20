@@ -7,6 +7,16 @@ $URL$
 
 2007-05-20  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c, YAM_CO.c: now that we have non-blocking socket I/O but our
+    TCP/IP stuff isn't yet running in an own process, the socket timeout
+    calculation will now be done by always performing WaitSelect() calls of
+    length 1s. We do this until the real, user defined timeout value is
+    reached. This should allows to get the GUI even more responsive and make
+    the 'Abort' button of the transfer window more or less instantly abort
+    a transfer instead of having to wait until the defined socket timeout
+    is reached. As a result of this change, the default socket timeout value
+    will now be 10s instead of 7s because the Abort button should finally
+    really abort immediately.
   * YAM.c: now that BetterString.mcc 11.10 is released we make it the new
     minimum version required.
   * misc: removed some typed-punned warnings by replacing all IsMinListEmpty()

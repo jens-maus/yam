@@ -414,39 +414,63 @@ static BOOL TR_StartTLS(VOID)
             // we are using non-blocking socket IO so an SSL_ERROR_WANT_READ
             // signals that the SSL socket wants us to wait until data
             // is available and reissue the SSL_read() command.
-            LONG retVal;
+            LONG retVal = -1;
             fd_set read_fdset;
             fd_set write_fdset;
             struct timeval timeout;
+            int timeoutSum = 0;
 
-            // configure the timeout value
-            timeout.tv_sec = C->SocketTimeout;
-            timeout.tv_usec = 0;
+            // now we iterate in a do/while loop and call WaitSelect()
+            // with a static timeout of 1s. We then continue todo so
+            // until we reach the predefined socket timeout
+            do
+            {
+              // check if we are here because of a second iteration
+              if(retVal == 0)
+              {
+                W(DBF_NET, "TR_StartTLS: recoverable WaitSelect() timeout: %d", timeoutSum);
 
-            // now we put our socket handle into a descriptor set
-            // we can pass on to WaitSelect()
-            FD_ZERO(&read_fdset);
-            FD_ZERO(&write_fdset);
-            FD_SET(G->TR_Socket, &read_fdset);
-            FD_SET(G->TR_Socket, &write_fdset);
+                // give our GUI the chance to update
+                DoMethod(G->App, MUIM_Application_InputBuffered);
 
-            // now we wait until the connection succeeds but make sure we
-            // timeout after a specific amount of time in case we couldn't
-            // establish a connection.
-            retVal = WaitSelect(1, &read_fdset, &write_fdset, NULL, (APTR)&timeout, NULL);
+                // if retVal is zero, then we are here in a
+                // consequtive iteration, so WaitSelect()
+                // seem to have timed out and we have to check
+                // whether we timed out too much already
+                timeoutSum += 1; // +1s
+
+                if(timeoutSum >= C->SocketTimeout ||
+                   (G->TR && G->TR->Abort))
+                {
+                  break;
+                }
+              }
+
+              // we do a static timeout of 1s
+              timeout.tv_sec = 1;
+              timeout.tv_usec = 0;
+
+              // now we put our socket handle into a descriptor set
+              // we can pass on to WaitSelect()
+              FD_ZERO(&read_fdset);
+              FD_SET(G->TR_Socket, &read_fdset);
+              write_fdset = read_fdset;
+            }
+            while((retVal = WaitSelect(G->TR_Socket+1, &read_fdset, &write_fdset, NULL, (APTR)&timeout, NULL)) == 0);
 
             // if WaitSelect() returns 1 we successfully waited for
             // being able to write to the socket. So we go and do another
             // iteration in the while() loop as the next connect() call should
             // return EISCONN if the connection really succeeded.
-            if(retVal >= 1)
+            if(retVal >= 1 &&
+               (FD_ISSET(G->TR_Socket, &read_fdset) || FD_ISSET(G->TR_Socket, &write_fdset)))
             {
               // everything fine
               continue;
             }
             else if(retVal == 0)
             {
-              E(DBF_NET, "WaitSelect() timed out or were interrupted");
+              W(DBF_NET, "WaitSelect() socket timeout reached");
               errorState = TRUE;
             }
             else
@@ -1534,6 +1558,8 @@ static int TR_Connect(char *host, int port)
             // set to no error per default
             LONG err = CONNECTERR_NO_ERROR;
 
+            D(DBF_NET, "successfully set socket to non-blocking I/O mode");
+
             // lets set the socket options the user has defined
             // in the configuration
             TR_SetSocketOpts();
@@ -1563,29 +1589,54 @@ static int TR_Connect(char *host, int port)
                 // the connection succeeds.
                 case EINPROGRESS:
                 {
-                  LONG retVal;
+                  LONG retVal = -1;
                   fd_set fdset;
                   struct timeval timeout;
+                  int timeoutSum = 0;
 
-                  // configure the timeout value
-                  timeout.tv_sec = C->SocketTimeout;
-                  timeout.tv_usec = 0;
+                  // now we iterate in a do/while loop and call WaitSelect()
+                  // with a static timeout of 1s. We then continue todo so
+                  // until we reach the predefined socket timeout
+                  do
+                  {
+                    // check if we are here because of a second iteration
+                    if(retVal == 0)
+                    {
+                      W(DBF_NET, "TR_Connect: recoverable WaitSelect() timeout: %d", timeoutSum);
 
-                  // now we put our socket handle into a descriptor set
-                  // we can pass on WaitSelect()
-                  FD_ZERO(&fdset);
-                  FD_SET(G->TR_Socket, &fdset);
+                      // give our GUI the chance to update
+                      DoMethod(G->App, MUIM_Application_InputBuffered);
 
-                  // now we wait until the connection succeeds but make sure we
-                  // timeout after a specific amount of time in case we couldn't
-                  // establish a connection.
-                  retVal = WaitSelect(1, NULL, &fdset, NULL, (APTR)&timeout, NULL);
+                      // if retVal is zero, then we are here in a
+                      // consequtive iteration, so WaitSelect()
+                      // seem to have timed out and we have to check
+                      // whether we timed out too much already
+                      timeoutSum += 1; // +1s
+
+                      if(timeoutSum >= C->SocketTimeout ||
+                         (G->TR && G->TR->Abort))
+                      {
+                        break;
+                      }
+                    }
+
+                    // we do a static timeout of 1s
+                    timeout.tv_sec = 1;
+                    timeout.tv_usec = 0;
+
+                    // now we put our socket handle into a descriptor set
+                    // we can pass on to WaitSelect()
+                    FD_ZERO(&fdset);
+                    FD_SET(G->TR_Socket, &fdset);
+                  }
+                  while((retVal = WaitSelect(G->TR_Socket+1, NULL, &fdset, NULL, (APTR)&timeout, NULL)) == 0);
 
                   // if WaitSelect() returns 1 we successfully waited for
                   // being able to write to the socket. So we go and do another
                   // iteration in the while() loop as the next connect() call should
                   // return EISCONN if the connection really succeeded.
-                  if(retVal >= 1)
+                  if(retVal >= 1 &&
+                     FD_ISSET(G->TR_Socket, &fdset))
                   {
                     connectState = 1; // signals we succeded the WaitSelect()
                     continue;
@@ -1594,7 +1645,7 @@ static int TR_Connect(char *host, int port)
                   {
                     // the WaitSelect() call timed out or it received a break
                     // signal
-                    E(DBF_NET,"WaitSelect() timed out or were interrupted");
+                    W(DBF_NET, "WaitSelect() socket timeout reached");
                     err = CONNECTERR_TIMEDOUT;
                   }
                   else
@@ -2025,39 +2076,63 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
           // we are using non-blocking socket IO so an SSL_ERROR_WANT_READ
           // signals that the SSL socket wants us to wait until data
           // is available and reissue the SSL_read() command.
-          LONG retVal;
+          LONG retVal = -1;
           fd_set read_fdset;
           fd_set write_fdset;
           struct timeval timeout;
+          int timeoutSum = 0;
 
-          // configure the timeout value
-          timeout.tv_sec = C->SocketTimeout;
-          timeout.tv_usec = 0;
+          // now we iterate in a do/while loop and call WaitSelect()
+          // with a static timeout of 1s. We then continue todo so
+          // until we reach the predefined socket timeout
+          do
+          {
+            // check if we are here because of a second iteration
+            if(retVal == 0)
+            {
+              W(DBF_NET, "TR_Read: recoverable WaitSelect() timeout: %d", timeoutSum);
 
-          // now we put our socket handle into a descriptor set
-          // we can pass on to WaitSelect()
-          FD_ZERO(&read_fdset);
-          FD_ZERO(&write_fdset);
-          FD_SET(socket, &read_fdset);
-          FD_SET(socket, &write_fdset);
+              // give our GUI the chance to update
+              DoMethod(G->App, MUIM_Application_InputBuffered);
 
-          // now we wait until the connection succeeds but make sure we
-          // timeout after a specific amount of time in case we couldn't
-          // establish a connection.
-          retVal = WaitSelect(1, &read_fdset, &write_fdset, NULL, (APTR)&timeout, NULL);
+              // if retVal is zero, then we are here in a
+              // consequtive iteration, so WaitSelect()
+              // seem to have timed out and we have to check
+              // whether we timed out too much already
+              timeoutSum += 1; // +1s
+
+              if(timeoutSum >= C->SocketTimeout ||
+                 (G->TR && G->TR->Abort))
+              {
+                break;
+              }
+            }
+
+            // we do a static timeout of 1s
+            timeout.tv_sec = 1;
+            timeout.tv_usec = 0;
+
+            // now we put our socket handle into a descriptor set
+            // we can pass on to WaitSelect()
+            FD_ZERO(&read_fdset);
+            FD_SET(socket, &read_fdset);
+            write_fdset = read_fdset;
+          }
+          while((retVal = WaitSelect(socket+1, &read_fdset, &write_fdset, NULL, (APTR)&timeout, NULL)) == 0);
 
           // if WaitSelect() returns 1 we successfully waited for
           // being able to write to the socket. So we go and do another
           // iteration in the while() loop as the next connect() call should
           // return EISCONN if the connection really succeeded.
-          if(retVal >= 1)
+          if(retVal >= 1 &&
+             (FD_ISSET(socket, &read_fdset) || FD_ISSET(socket, &write_fdset)))
           {
             // everything fine
             continue;
           }
           else if(retVal == 0)
           {
-            E(DBF_NET, "WaitSelect() timed out or were interrupted");
+            W(DBF_NET, "WaitSelect() socket timeout reached");
             errorState = TRUE;
             nread = -1;
           }
@@ -2096,36 +2171,61 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
           // we are using non-blocking socket IO so an EAGAIN signals
           // that we should wait for more data to arrive before we
           // can issue a recv() again.
-          LONG retVal;
+          LONG retVal = -1;
           fd_set fdset;
           struct timeval timeout;
+          int timeoutSum = 0;
 
-          // configure the timeout value
-          timeout.tv_sec = C->SocketTimeout;
-          timeout.tv_usec = 0;
+          // now we iterate in a do/while loop and call WaitSelect()
+          // with a static timeout of 1s. We then continue todo so
+          // until we reach the predefined socket timeout
+          do
+          {
+            // check if we are here because of a second iteration
+            if(retVal == 0)
+            {
+              W(DBF_NET, "TR_Read: recoverable WaitSelect() timeout: %d", timeoutSum);
 
-          // now we put our socket handle into a descriptor set
-          // we can pass on to WaitSelect()
-          FD_ZERO(&fdset);
-          FD_SET(socket, &fdset);
+              // give our GUI the chance to update
+              DoMethod(G->App, MUIM_Application_InputBuffered);
 
-          // now we wait until the connection succeeds but make sure we
-          // timeout after a specific amount of time in case we couldn't
-          // establish a connection.
-          retVal = WaitSelect(1, &fdset, NULL, NULL, (APTR)&timeout, NULL);
+              // if retVal is zero, then we are here in a
+              // consequtive iteration, so WaitSelect()
+              // seem to have timed out and we have to check
+              // whether we timed out too much already
+              timeoutSum += 1; // +1s
+
+              if(timeoutSum >= C->SocketTimeout ||
+                 (G->TR && G->TR->Abort))
+              {
+                break;
+              }
+            }
+
+            // we do a static timeout of 1s
+            timeout.tv_sec = 1;
+            timeout.tv_usec = 0;
+
+            // now we put our socket handle into a descriptor set
+            // we can pass on to WaitSelect()
+            FD_ZERO(&fdset);
+            FD_SET(socket, &fdset);
+          }
+          while((retVal = WaitSelect(socket+1, &fdset, NULL, NULL, (APTR)&timeout, NULL)) == 0);
 
           // if WaitSelect() returns 1 we successfully waited for
           // being able to write to the socket. So we go and do another
           // iteration in the while() loop as the next connect() call should
           // return EISCONN if the connection really succeeded.
-          if(retVal >= 1)
+          if(retVal >= 1 &&
+             FD_ISSET(socket, &fdset))
           {
             // everything fine
             continue;
           }
           else if(retVal == 0)
           {
-            E(DBF_NET, "WaitSelect() timed out or were interrupted");
+            W(DBF_NET, "WaitSelect() socket timeout reached");
             errorState = TRUE;
           }
           else
@@ -2272,39 +2372,63 @@ static int TR_Write(LONG socket, const char *ptr, int len)
           // we are using non-blocking socket IO so an SSL_ERROR_WANT_READ
           // signals that the SSL socket wants us to wait until data
           // is available and reissue the SSL_read() command.
-          LONG retVal;
+          LONG retVal = -1;
           fd_set read_fdset;
           fd_set write_fdset;
           struct timeval timeout;
+          int timeoutSum = 0;
 
-          // configure the timeout value
-          timeout.tv_sec = C->SocketTimeout;
-          timeout.tv_usec = 0;
+          // now we iterate in a do/while loop and call WaitSelect()
+          // with a static timeout of 1s. We then continue todo so
+          // until we reach the predefined socket timeout
+          do
+          {
+            // check if we are here because of a second iteration
+            if(retVal == 0)
+            {
+              W(DBF_NET, "TR_Write: recoverable WaitSelect() timeout: %d", timeoutSum);
 
-          // now we put our socket handle into a descriptor set
-          // we can pass on to WaitSelect()
-          FD_ZERO(&read_fdset);
-          FD_ZERO(&write_fdset);
-          FD_SET(socket, &read_fdset);
-          FD_SET(socket, &write_fdset);
+              // give our GUI the chance to update
+              DoMethod(G->App, MUIM_Application_InputBuffered);
 
-          // now we wait until the connection succeeds but make sure we
-          // timeout after a specific amount of time in case we couldn't
-          // establish a connection.
-          retVal = WaitSelect(1, &read_fdset, &write_fdset, NULL, (APTR)&timeout, NULL);
+              // if retVal is zero, then we are here in a
+              // consequtive iteration, so WaitSelect()
+              // seem to have timed out and we have to check
+              // whether we timed out too much already
+              timeoutSum += 1; // +1s
+
+              if(timeoutSum >= C->SocketTimeout ||
+                 (G->TR && G->TR->Abort))
+              {
+                break;
+              }
+            }
+
+            // we do a static timeout of 1s
+            timeout.tv_sec = 1;
+            timeout.tv_usec = 0;
+
+            // now we put our socket handle into a descriptor set
+            // we can pass on to WaitSelect()
+            FD_ZERO(&read_fdset);
+            FD_SET(socket, &read_fdset);
+            write_fdset = read_fdset;
+          }
+          while((retVal = WaitSelect(socket+1, &read_fdset, &write_fdset, NULL, (APTR)&timeout, NULL)) == 0);
 
           // if WaitSelect() returns 1 we successfully waited for
           // being able to write to the socket. So we go and do another
           // iteration in the while() loop as the next connect() call should
           // return EISCONN if the connection really succeeded.
-          if(retVal >= 1)
+          if(retVal >= 1 &&
+             (FD_ISSET(socket, &read_fdset) || FD_ISSET(socket, &write_fdset)))
           {
             // everything fine
             continue;
           }
           else if(retVal == 0)
           {
-            E(DBF_NET, "WaitSelect() timed out or were interrupted");
+            W(DBF_NET, "WaitSelect() socket timeout reached");
             errorState = TRUE;
             nwritten = -1;
           }
@@ -2343,36 +2467,61 @@ static int TR_Write(LONG socket, const char *ptr, int len)
           // we are using non-blocking socket IO so an EAGAIN signals
           // that we should wait for more data to arrive before we
           // can issue a recv() again.
-          LONG retVal;
+          LONG retVal = -1;
           fd_set fdset;
           struct timeval timeout;
+          int timeoutSum = 0;
 
-          // configure the timeout value
-          timeout.tv_sec = C->SocketTimeout;
-          timeout.tv_usec = 0;
+          // now we iterate in a do/while loop and call WaitSelect()
+          // with a static timeout of 1s. We then continue todo so
+          // until we reach the predefined socket timeout
+          do
+          {
+            // check if we are here because of a second iteration
+            if(retVal == 0)
+            {
+              W(DBF_NET, "TR_Write: recoverable WaitSelect() timeout: %d", timeoutSum);
 
-          // now we put our socket handle into a descriptor set
-          // we can pass on to WaitSelect()
-          FD_ZERO(&fdset);
-          FD_SET(socket, &fdset);
+              // give our GUI the chance to update
+              DoMethod(G->App, MUIM_Application_InputBuffered);
 
-          // now we wait until the connection succeeds but make sure we
-          // timeout after a specific amount of time in case we couldn't
-          // establish a connection.
-          retVal = WaitSelect(1, NULL, &fdset, NULL, (APTR)&timeout, NULL);
+              // if retVal is zero, then we are here in a
+              // consequtive iteration, so WaitSelect()
+              // seem to have timed out and we have to check
+              // whether we timed out too much already
+              timeoutSum += 1; // +1s
+
+              if(timeoutSum >= C->SocketTimeout ||
+                 (G->TR && G->TR->Abort))
+              {
+                break;
+              }
+            }
+
+            // we do a static timeout of 1s
+            timeout.tv_sec = 1;
+            timeout.tv_usec = 0;
+
+            // now we put our socket handle into a descriptor set
+            // we can pass on to WaitSelect()
+            FD_ZERO(&fdset);
+            FD_SET(socket, &fdset);
+          }
+          while((retVal = WaitSelect(socket+1, NULL, &fdset, NULL, (APTR)&timeout, NULL)) == 0);
 
           // if WaitSelect() returns 1 we successfully waited for
           // being able to write to the socket. So we go and do another
           // iteration in the while() loop as the next connect() call should
           // return EISCONN if the connection really succeeded.
-          if(retVal >= 1)
+          if(retVal >= 1 &&
+             FD_ISSET(socket, &fdset))
           {
             // everything fine
             continue;
           }
           else if(retVal == 0)
           {
-            E(DBF_NET, "WaitSelect() timed out or were interrupted");
+            W(DBF_NET, "WaitSelect() socket timeout reached");
             errorState = TRUE;
           }
           else
