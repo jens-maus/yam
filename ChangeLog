@@ -7,6 +7,8 @@ $URL$
 
 2007-05-20  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: now that BetterString.mcc 11.10 is released we make it the new
+    minimum version required.
   * misc: removed some typed-punned warnings by replacing all IsMinListEmpty()
     calls by IsListEmpty() equivalents. These warnings are only issues by GCC
     4.1.0+ compilers which is now the new default compiler suite for the OS4

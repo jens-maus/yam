@@ -2041,7 +2041,7 @@ static void Initialise(BOOL hidden)
    CheckMCC(MUIC_TheButton,  21, 3, TRUE, "http://www.sf.net/projects/thebar/");
 
    // Lets check for the correct BetterString.mcc version
-   CheckMCC(MUIC_BetterString, 11, 9, TRUE, "http://www.sf.net/projects/bstring-mcc/");
+   CheckMCC(MUIC_BetterString, 11, 10, TRUE, "http://www.sf.net/projects/bstring-mcc/");
 
    // we have to have at least v20.116 of NList.mcc to get YAM working without risking
    // to have it buggy - so we make it a requirement. And also 111 is the fastest one ATM.
