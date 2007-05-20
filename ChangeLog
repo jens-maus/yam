@@ -14,6 +14,9 @@ $URL$
 
 2007-05-20  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c: fixed the graphical jittering of the transfer gauge by
+    using Size_Curr and Size_Curr_Max as the basis for the gauge progress
+    calculation.
   * YAM_TR.c, YAM_CO.c: now that we have non-blocking socket I/O but our
     TCP/IP stuff isn't yet running in an own process, the socket timeout
     calculation will now be done by always performing WaitSelect() calls of

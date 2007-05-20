@@ -4150,9 +4150,9 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
           FormatSize(ts->Size_Curr, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
           snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                                  ts->str_size_curr, ts->str_size_curr_max);
-          SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current,  deltatime,
+          SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current,  ts->Size_Curr/1024,
                                         MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                                        MUIA_Gauge_Max,      deltatime+remclock,
+                                        MUIA_Gauge_Max,      ts->Size_Curr_Max/1024,
                                         TAG_DONE);
 
           // signal the application to update now
