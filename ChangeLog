@@ -14,6 +14,12 @@ $URL$
 
 2007-05-20  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c, YAM_TR.c, YAM_global.c: reworked the whole TR_IsOnline() handling
+    so that on AmigaOS4 RoadShow will always be queried for its system
+    (online) status and tell if it is usable or not. However, by using the
+    IOCInterface+IsOnlineCheck variable it is still possible to directly
+    query for a specific interface instead of a general usability query of
+    the underlying TCP/IP stack.
   * YAM_TR.c: fixed the graphical jittering of the transfer gauge by
     using Size_Curr and Size_Curr_Max as the basis for the gauge progress
     calculation.

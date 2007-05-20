@@ -2341,33 +2341,37 @@ static void Login(const char *user, const char *password,
   // we query genesis.library (from the Genesis TCP/IP stack) for the user
   // name in case the caller doesn't want to force a specific username
   #if !defined(__amigaos4__)
-  if(user == NULL &&
-     INITLIB("genesis.library", 1, 0, &GenesisBase, "main", &IGenesis, FALSE, NULL))
+  if(user == NULL)
   {
-    struct genUser *guser;
+    struct Library *GenesisBase;
 
-    if((guser = GetGlobalUser()))
+    if((GenesisBase = OpenLibrary("genesis.library", 1L)))
     {
-      D(DBF_STARTUP, "GetGlobalUser returned: '%s'", guser->us_name);
+      struct genUser *guser;
 
-      loggedin = US_Login((const char *)guser->us_name, "\01", maildir, prefsfile);
-
-      D(DBF_STARTUP, "US_Login returned: %ld %ld", terminate, loggedin);
-
-      if(!loggedin && !MUI_Request(G->App, NULL, 0, tr(MSG_ER_GENESISUSER_TITLE),
-                                                    tr(MSG_ER_CONTINUEEXIT),
-                                                    tr(MSG_ER_GENESISUSER),
-                                                    guser->us_name))
+      if((guser = GetGlobalUser()))
       {
-        terminate = TRUE;
+        D(DBF_STARTUP, "GetGlobalUser returned: '%s'", guser->us_name);
+
+        loggedin = US_Login((const char *)guser->us_name, "\01", maildir, prefsfile);
+
+        D(DBF_STARTUP, "US_Login returned: %ld %ld", terminate, loggedin);
+
+        if(!loggedin && !MUI_Request(G->App, NULL, 0, tr(MSG_ER_GENESISUSER_TITLE),
+                                                      tr(MSG_ER_CONTINUEEXIT),
+                                                      tr(MSG_ER_GENESISUSER),
+                                                      guser->us_name))
+        {
+          terminate = TRUE;
+        }
+
+        FreeUser(guser);
       }
+      else
+        W(DBF_STARTUP, "GetGlobalUser returned NULL");
 
-      FreeUser(guser);
+      CloseLibrary(GenesisBase);
     }
-    else
-      W(DBF_STARTUP, "GetGlobalUser returned NULL");
-
-    CLOSELIB(GenesisBase, IGenesis);
   }
   #endif
 

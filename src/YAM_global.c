@@ -148,10 +148,6 @@ struct Library* UtilityBase       = NULL;
 struct Library* ApplicationBase = NULL; // application.library
 struct Library* TimezoneBase    = NULL; // timezone.library
 #endif
-#if !defined(__amigaos4__)
-struct Library* GenesisBase       = NULL;
-struct Library* MiamiBase         = NULL;
-#endif
 
 /* AmigaOS4 style interfaces */
 #if defined(__amigaos4__)
