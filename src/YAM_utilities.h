@@ -262,10 +262,6 @@ struct TimeRequest
 #define GetMUIString(a, o, l) strlcpy((a), (char *)xget((o), MUIA_String_Contents), (l))
 #define GetMUIText(a, o, l)   strlcpy((a), (char *)xget((o), MUIA_Text_Contents), (l))
 
-#if !defined(IsMinListEmpty)
-#define IsMinListEmpty(x)     (((x)->mlh_TailPred) == (struct MinNode *)(x))
-#endif
-
 // LogFile enums and macros
 enum LFMode { LF_NONE=0, LF_NORMAL, LF_VERBOSE, LF_ALL };
 

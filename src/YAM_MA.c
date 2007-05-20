@@ -610,7 +610,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
       // they contain the mail we have changed the status, so
       // that we can update the filename in the read window structure
       // aswell
-      if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+      if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
       {
         // search through our ReadDataList
         struct MinNode *curNode;
@@ -1400,7 +1400,7 @@ HOOKPROTONHNONP(MA_ReadMessage, void)
     struct ReadMailData *rmData;
 
     // Check if this mail is already in a readwindow
-    if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+    if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
     {
       // search through our ReadDataList
       struct MinNode *curNode;

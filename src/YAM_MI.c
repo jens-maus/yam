@@ -2848,7 +2848,7 @@ void FreeMimeTypeList(struct MinList *mimeTypeList)
 {
   ENTER();
 
-  if(IsMinListEmpty(mimeTypeList) == FALSE)
+  if(IsListEmpty((struct List *)mimeTypeList) == FALSE)
   {
     struct MinNode *curNode;
 

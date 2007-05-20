@@ -220,14 +220,14 @@ struct rxd_folderinfo
                 char *folder;
         } arg;
         struct {
-                long *number;
+                int *number;
                 char *name;
                 char *path;
-                long *total;
-                long *new;
-                long *unread;
-                long *size;
-                long *type;
+                int *total;
+                int *new;
+                int *unread;
+                LONG *size;
+                int *type;
         } res;
 };
 
@@ -284,7 +284,7 @@ struct rxd_getselected
                 char *var, *stem;
         } arg;
         struct {
-                long **num;
+                int **num;
         } res;
 };
 

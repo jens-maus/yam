@@ -1373,7 +1373,7 @@ void CO_Validate(struct Config *co, BOOL update)
       DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
 
       // update the read windows' toolbar, too
-      if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+      if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
       {
         // search through our ReadDataList
         struct MinNode *curNode;

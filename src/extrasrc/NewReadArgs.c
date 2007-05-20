@@ -123,8 +123,10 @@ STATIC LONG IsArg(CONST_STRPTR template, STRPTR keyword)
 LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 {
   #ifdef ICONGETA_RemapIcon
-  static const Tag icontags[] = {
-    ICONGETA_RemapIcon,FALSE, TAG_DONE
+  static const struct TagItem icontags[] =
+  {
+    { ICONGETA_RemapIcon, FALSE   },
+    { TAG_DONE,           TAG_END }
   };
   #endif
 

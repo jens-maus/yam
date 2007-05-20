@@ -1079,7 +1079,7 @@ static void FreeXPKPackerList(void)
 {
   ENTER();
 
-  if(IsMinListEmpty(&G->xpkPackerList) == FALSE)
+  if(IsListEmpty((struct List *)&G->xpkPackerList) == FALSE)
   {
     struct MinNode *curNode;
 
@@ -1208,7 +1208,7 @@ static void Terminate(void)
 
   D(DBF_STARTUP, "freeing readmailData...");
   // cleanup the still existing readmailData objects
-  if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+  if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
   {
     // search through our ReadDataList
     struct MinNode *curNode;
@@ -1521,7 +1521,7 @@ void PopUp(void)
 
   // Now we check if there is any read and write window open and bring it also
   // to the front
-  if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+  if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
   {
     // search through our ReadDataList
     struct MinNode *curNode;

@@ -2487,7 +2487,7 @@ BOOL DeleteZombieFiles(BOOL force)
 
   ENTER();
 
-  if(IsMinListEmpty(&G->zombieFileList) == FALSE)
+  if(IsListEmpty((struct List *)&G->zombieFileList) == FALSE)
   {
     struct MinNode *curNode;
 
@@ -4260,7 +4260,7 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 
   // Now we check if there is any read window with that very same
   // mail currently open and if so we have to close it.
-  if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+  if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
   {
     // search through our ReadDataList
     struct MinNode *curNode;
@@ -4315,7 +4315,7 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
 
     // Now we check if there is any read window with that very same
     // mail currently open and if so we have to clean it.
-    if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+    if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
     {
       // search through our ReadDataList
       struct MinNode *curNode;
@@ -4754,7 +4754,7 @@ void FinishUnpack(char *file)
   stcgfe(ext, file);
   if(strcmp(ext, "unp") == 0)
   {
-    if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+    if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
     {
       // search through our ReadDataList
       struct MinNode *curNode;

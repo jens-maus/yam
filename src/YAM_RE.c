@@ -198,7 +198,7 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
 // from it that are not valid for filenames.
 static void RE_SuggestName(const struct Mail *mail, char *name, const size_t length)
 {
-  char *ptr = mail->Subject;
+  const char *ptr = mail->Subject;
   size_t i = 0;
 
   ENTER();
@@ -4055,7 +4055,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
           MA_ReadHeader(fh, headerList);
           fclose(fh);
 
-          if(IsMinListEmpty(headerList) == FALSE)
+          if(IsListEmpty((struct List *)headerList) == FALSE)
           {
             struct MinNode *curNode;
 
@@ -4168,7 +4168,7 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
   // readWindow
   if(forceNewWindow == FALSE &&
      C->MultipleWindows == FALSE &&
-     IsMinListEmpty(&G->readMailDataList) == FALSE)
+     IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
   {
     struct MinNode *curNode = G->readMailDataList.mlh_Head;
 
@@ -4405,7 +4405,7 @@ void FreeHeaderList(struct MinList *headerList)
 {
   ENTER();
 
-  if(headerList != NULL && IsMinListEmpty(headerList) == FALSE)
+  if(headerList != NULL && IsListEmpty((struct List *)headerList) == FALSE)
   {
     struct MinNode *curNode;
 
@@ -4434,7 +4434,7 @@ struct ReadMailData *GetReadMailData(const struct Mail *mail)
 
   ENTER();
 
-  if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+  if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
   {
     // search through our ReadDataList
     struct MinNode *curNode;
@@ -4464,7 +4464,7 @@ BOOL UpdateReadMailDataStatus(const struct Mail *mail)
 
   ENTER();
 
-  if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+  if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
   {
     // search through our ReadDataList
     struct MinNode *curNode;

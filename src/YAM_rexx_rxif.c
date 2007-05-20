@@ -1217,7 +1217,7 @@ void rx_folderinfo( UNUSED struct RexxHost *host, struct rxd_folderinfo **rxd, l
 {
    struct rxd_folderinfo *rd = *rxd;
    struct Folder *fo;
-   static long num;
+
    switch( action )
    {
       case RXIF_INIT:
@@ -1231,15 +1231,28 @@ void rx_folderinfo( UNUSED struct RexxHost *host, struct rxd_folderinfo **rxd, l
          // only on a non-group
          if(fo && !isGroupFolder(fo))
          {
+            static int num;
+            static int total;
+            static int new;
+            static int unread;
+            static LONG size;
+            static int type;
+
             num = FO_GetFolderPosition(fo, FALSE);
+            total = fo->Total;
+            new = fo->New;
+            unread = fo->Unread;
+            size = fo->Size;
+            type = fo->Type;
+
             rd->res.number = &num;
             rd->res.name = fo->Name;
             rd->res.path = fo->Path;
-            rd->res.total = (long *)&fo->Total;
-            rd->res.new = (long *)&fo->New;
-            rd->res.unread = (long *)&fo->Unread;
-            rd->res.size = (long *)&fo->Size;
-            rd->res.type = (long *)&fo->Type;
+            rd->res.total = &total;
+            rd->res.new = &new;
+            rd->res.unread = &unread;
+            rd->res.size = &size;
+            rd->res.type = &type;
          }
          else rd->rc = RETURN_ERROR;
          break;
@@ -2087,9 +2100,11 @@ void rx_userinfo( UNUSED struct RexxHost *host, struct rxd_userinfo **rxd, long 
 {
    struct {
       struct rxd_userinfo rd;
-      int folders;
+      long folders;
    } *rd = (void *)*rxd;
+
    struct User *u;
+
    switch( action )
    {
       case RXIF_INIT:
@@ -2117,7 +2132,7 @@ void rx_userinfo( UNUSED struct RexxHost *host, struct rxd_userinfo **rxd, long 
 
             rd->folders = numfolders;
          }
-         rd->rd.res.folders = (long *)&rd->folders;
+         rd->rd.res.folders = &rd->folders;
 
          break;
       
@@ -2270,7 +2285,7 @@ void rx_getselected( UNUSED struct RexxHost *host, struct rxd_getselected **rxd,
                 struct Mail *mail = mlist[i + 2];
 
                 if(mail != NULL)
-                  rd->res.num[i] = (long *)&(mail->position);
+                  rd->res.num[i] = &mail->position;
                 else
                   rd->res.num[i] = 0;
               }

@@ -2987,7 +2987,7 @@ static void TR_DisplayMailList(BOOL largeonly)
 {
   Object *lv = G->TR->GUI.LV_MAILS;
 
-  if(IsMinListEmpty(&G->TR->transferList) == FALSE)
+  if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
   {
     // search through our transferList
     struct MinNode *curNode;
@@ -3866,7 +3866,7 @@ static void TR_TransStat_Init(struct TransStat *ts)
     DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
   }
 
-  if(IsMinListEmpty(&G->TR->transferList) == FALSE)
+  if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
   {
     // search through our transferList
     struct MinNode *curNode;
@@ -4080,7 +4080,7 @@ void TR_Cleanup(void)
   if(G->TR->GUI.LV_MAILS)
     DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Clear);
 
-  if(IsMinListEmpty(&G->TR->transferList) == FALSE)
+  if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
   {
     struct MinNode *curNode;
 
@@ -4307,7 +4307,7 @@ static BOOL FilterDuplicates(void)
   if(G->TR->UIDLhashTable != NULL)
   {
     // check if there is anything to transfer at all
-    if(IsMinListEmpty(&G->TR->transferList) == FALSE)
+    if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
     {
       // inform the user of the operation
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_CHECKUIDL));
@@ -4514,7 +4514,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
 
    // if we have now something in our processing list,
    // lets go on
-   if(IsMinListEmpty(&G->TR->transferList) == FALSE)
+   if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
    {
       FILE *fh;
       struct TransStat ts;
@@ -5795,7 +5795,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
   // if there is nothing to import we can skip
   // immediately.
-  if(IsMinListEmpty(&G->TR->transferList))
+  if(IsListEmpty((struct List *)&G->TR->transferList))
     return;
 
   TR_TransStat_Init(&ts);

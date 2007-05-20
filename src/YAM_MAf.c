@@ -1358,8 +1358,8 @@ BOOL MA_ReadHeader(FILE *fh, struct MinList *headerList)
   if(!success)
     FreeHeaderList(headerList);
 
-  RETURN((BOOL)((success == TRUE && IsMinListEmpty(headerList) == FALSE) || linesread == 1));
-  return (BOOL)((success == TRUE && IsMinListEmpty(headerList) == FALSE) || linesread == 1);
+  RETURN((BOOL)((success == TRUE && IsListEmpty((struct List *)headerList) == FALSE) || linesread == 1));
+  return (BOOL)((success == TRUE && IsListEmpty((struct List *)headerList) == FALSE) || linesread == 1);
 }
 
 ///

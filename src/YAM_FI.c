@@ -134,7 +134,7 @@ static BOOL FI_MatchListPattern(struct Search *search, char *string)
 
   ENTER();
 
-  if(IsMinListEmpty(patternList) == FALSE)
+  if(IsListEmpty((struct List *)patternList) == FALSE)
   {
     struct MinNode *curNode;
 
@@ -749,7 +749,7 @@ BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail)
 
   ENTER();
 
-  if(IsMinListEmpty(&filter->ruleList) == FALSE)
+  if(IsListEmpty((struct List *)&filter->ruleList) == FALSE)
   {
     int i = 0;
     struct MinNode *curNode;
@@ -1193,7 +1193,7 @@ static void FreeSearchPatternList(struct Search *search)
 
   ENTER();
 
-  if(IsMinListEmpty(patternList) == FALSE)
+  if(IsListEmpty((struct List *)patternList) == FALSE)
   {
     struct MinNode *curNode;
 
@@ -1235,7 +1235,7 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
 
   ENTER();
 
-  if(IsMinListEmpty(&C->filterList) == FALSE)
+  if(IsListEmpty((struct List *)&C->filterList) == FALSE)
   {
     struct MinNode *curNode;
 
@@ -1255,7 +1255,7 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
          (mode == APPLY_REMOTE && !filter->remote) ||
          (mode == APPLY_SPAM))
       {
-        if(IsMinListEmpty(&filter->ruleList) == FALSE)
+        if(IsListEmpty((struct List *)&filter->ruleList) == FALSE)
         {
           // make sure the current search structures of the rules of the filter
           // are freed
@@ -1270,7 +1270,7 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
       }
       else
       {
-        if(IsMinListEmpty(&filter->ruleList) == FALSE)
+        if(IsListEmpty((struct List *)&filter->ruleList) == FALSE)
         {
           // check if the search structures are already allocated or not
           for(curRuleNode = filter->ruleList.mlh_Head; curRuleNode->mln_Succ; curRuleNode = curRuleNode->mln_Succ)
@@ -1333,7 +1333,7 @@ void FreeFilterSearch(void)
   {
     struct FilterNode *filter = (struct FilterNode *)curNode;
 
-    if(IsMinListEmpty(&filter->ruleList) == FALSE)
+    if(IsListEmpty((struct List *)&filter->ruleList) == FALSE)
     {
       struct MinNode *curRuleNode;
 
@@ -1651,7 +1651,7 @@ void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
   // then iterate through our ruleList and copy it as well
   NewList((struct List *)&dstFilter->ruleList);
 
-  if(IsMinListEmpty(&srcFilter->ruleList) == FALSE)
+  if(IsListEmpty((struct List *)&srcFilter->ruleList) == FALSE)
   {
     struct MinNode *curNode;
 
@@ -1721,7 +1721,7 @@ void FreeFilterRuleList(struct FilterNode *filter)
 {
   ENTER();
 
-  if(IsMinListEmpty(&filter->ruleList) == FALSE)
+  if(IsListEmpty((struct List *)&filter->ruleList) == FALSE)
   {
     struct MinNode *curNode;
 
@@ -1798,7 +1798,7 @@ void FreeFilterList(struct MinList *filterList)
 {
   ENTER();
 
-  if(IsMinListEmpty(filterList) == FALSE)
+  if(IsListEmpty((struct List *)filterList) == FALSE)
   {
     struct MinNode *curNode;
 
@@ -1848,7 +1848,7 @@ struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos)
 
   ENTER();
 
-  if(IsMinListEmpty(&filter->ruleList) == FALSE)
+  if(IsListEmpty((struct List *)&filter->ruleList) == FALSE)
   {
     // we do have to iterate through the ruleList of the filter
     // and count for rule at position 'pos'
