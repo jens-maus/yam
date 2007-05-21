@@ -1898,25 +1898,30 @@ static BOOL RE_SaveThisPart(struct Part *rp)
 //  Determines size and other information of a message part
 static void RE_SetPartInfo(struct Part *rp)
 {
-  int size = rp->Size = FileSize(rp->Filename);
+  // we use a double precision variable here, because the calculations below
+  // may overflow with a simple long or int if the part is larger than 20MB
+  double size;
 
   ENTER();
 
-  // let`s calculate the partsize on a undecoded part, if not a common part
-  if(!rp->Decoded && rp->Nr > 0)
+  // get the file's size
+  size = FileSize(rp->Filename);
+
+  // let's calculate the partsize of an undecoded part, if not a common part
+  if(rp->Decoded == FALSE && rp->Nr > 0)
   {
     switch (rp->EncodingCode)
     {
       case ENC_UUE:
       case ENC_B64:
       {
-        rp->Size = (100 * size) / 136;
+        size *= 1.36;
       }
       break;
 
       case ENC_QP:
       {
-        rp->Size = (100 * size) / 106;
+        size *= 1.06;
       }
       break;
 
@@ -1927,6 +1932,7 @@ static void RE_SetPartInfo(struct Part *rp)
       break;
     }
   }
+  rp->Size = size;
 
   // if this part hasn`t got any name, we place the CParName as the normal name
   if(rp->Name[0] == '\0' && (rp->CParName != NULL || rp->CParFileName != NULL))

@@ -12,6 +12,9 @@ $URL$
 
 2007-05-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE.c: the size calculation of encoded parts could overflow if the part
+    was larger than 20MB, because the intermediate results exceeded 2^31 in this
+    case. Now a double variable is used to avoid this problem.
   * locale/deutsch.ct: even more grammar fixes and all inlined new lines re-
     placed by single lines.
   * ImageCache.c: if loading of an image fails but the user chose to ignore such
