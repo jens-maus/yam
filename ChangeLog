@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-21  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: the message size labels are now initialized using FormatSize()
+    instead of fixed size strings like "0 B". That way these strings always look
+    the same and don't change their general look when the transfer really
+    starts.
+
 2007-05-20  Thore Böckelmann <tboeckel@gmx.de>
 
   * Addrmatchlist.c: the window containing the attached string object is
