@@ -429,23 +429,23 @@ OVERLOAD(MUIM_Draw)
     Move(_rp(obj), _mleft(obj) + BORDER, _mtop(obj) + _font(obj)->tf_Baseline + BORDER);
     SetSoftStyle(_rp(obj), FSF_BOLD, AskSoftStyle(_rp(obj)));
     cnt = TextFit(_rp(obj), attachmentLabel, strlen(attachmentLabel), &te, NULL, 1, _mwidth(obj)-2*BORDER, _mheight(obj)-2*BORDER);
-    if(cnt)
+    if(cnt > 0)
       Text(_rp(obj), attachmentLabel, cnt);
 
     // then we have to place the other labels for our images right beside
     // them.
     SetSoftStyle(_rp(obj), FS_NORMAL, AskSoftStyle(_rp(obj)));
-    if(childList)
+    if(childList != NULL)
     {
       Object *cstate = (Object *)childList->lh_Head;
       Object *child;
 
-      while((child = NextObject(&cstate)))
+      while((child = NextObject(&cstate)) != NULL)
       {
         struct Part *mailPart = (struct Part *)xget(child, MUIA_AttachmentImage_MailPart);
 
         // make sure this child is valid and does not draw outside
-        if(mailPart && _mtop(child) > 10 && _mleft(child) > 10)
+        if(mailPart != NULL && _mtop(child) > 10 && _mleft(child) > 10)
         {
           LONG maxHeight = MAX(_mheight(child), TEXTROWS*_font(obj)->tf_YSize);
           LONG topPosition = _mtop(child)+_font(obj)->tf_Baseline-(maxHeight-_mheight(child))/2;
@@ -505,6 +505,7 @@ OVERLOAD(MUIM_Draw)
               if(textSpaceHeight > 0)
               {
                 const char *ctDescr = DescribeCT(mailPart->ContentType);
+
                 cnt = TextFit(_rp(obj), ctDescr, strlen(ctDescr), &te, NULL, 1, textSpaceWidth, textSpaceHeight);
                 if(cnt > 0)
                 {
@@ -763,24 +764,39 @@ DECLARE(Relayout)
 /// DECLARE(Display)
 DECLARE(Display) // struct Part *part
 {
-  if(msg->part)
+  ENTER();
+
+  if(msg->part != NULL)
   {
+    BOOL oldDecoded = msg->part->Decoded;
+
     BusyText(tr(MSG_BusyDecDisplaying), "");
 
     RE_DecodePart(msg->part);
     RE_DisplayMIME(msg->part->Filename, msg->part->ContentType);
 
+    if(oldDecoded == FALSE && msg->part->Decoded == TRUE)
+    {
+      // now we know the exact size of the file and can redraw ourself
+      MUI_Redraw(obj, MADF_DRAWOBJECT);
+    }
+
     BusyEnd();
   }
 
+  RETURN(0);
   return 0;
 }
 ///
 /// DECLARE(Save)
 DECLARE(Save) // struct Part *part
 {
-  if(msg->part)
+  ENTER();
+
+  if(msg->part != NULL)
   {
+    BOOL oldDecoded = msg->part->Decoded;
+
     BusyText(tr(MSG_BusyDecSaving), "");
 
     RE_DecodePart(msg->part);
@@ -792,9 +808,16 @@ DECLARE(Save) // struct Part *part
               FALSE,
               msg->part->ContentType);
 
+    if(oldDecoded == FALSE && msg->part->Decoded == TRUE)
+    {
+      // now we know the exact size of the file and can redraw ourself
+      MUI_Redraw(obj, MADF_DRAWOBJECT);
+    }
+
     BusyEnd();
   }
 
+  RETURN(0);
   return 0;
 }
 ///
@@ -805,11 +828,11 @@ DECLARE(SaveAll)
 
   ENTER();
 
-  if(data->firstPart && data->firstPart->Next)
+  if(data->firstPart != NULL && data->firstPart->Next != NULL)
   {
     struct FileReqCache *frc;
 
-    if((frc = ReqFile(ASL_DETACH, _win(obj), tr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, "")))
+    if((frc = ReqFile(ASL_DETACH, _win(obj), tr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, "")) != NULL)
     {
       BusyText(tr(MSG_BusyDecSaving), "");
       RE_SaveAll(data->firstPart->rmData, frc->drawer);
@@ -824,24 +847,30 @@ DECLARE(SaveAll)
 /// DECLARE(SaveSelected)
 DECLARE(SaveSelected)
 {
-  struct List *childList = (struct List *)xget(obj, MUIA_Group_ChildList);
+  struct List *childList;
+
+  ENTER();
 
   BusyText(tr(MSG_BusyDecSaving), "");
 
   // iterate through our child list and remove all attachmentimages
-  if(childList)
+  if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
   {
     Object *cstate = (Object *)childList->lh_Head;
     Object *child;
+    BOOL oldDecoded = TRUE;
+    BOOL newDecoded = FALSE;
 
-    while((child = NextObject(&cstate)))
+    while((child = NextObject(&cstate)) != NULL)
     {
       if(xget(child, MUIA_Selected))
       {
-        struct Part *mailPart = (struct Part *)xget(child, MUIA_AttachmentImage_MailPart);
+        struct Part *mailPart;
 
-        if(mailPart)
+        if((mailPart = (struct Part *)xget(child, MUIA_AttachmentImage_MailPart)) != NULL)
         {
+          oldDecoded &= mailPart->Decoded;
+
           RE_DecodePart(mailPart);
           RE_Export(mailPart->rmData,
                     mailPart->Filename, "",
@@ -850,26 +879,40 @@ DECLARE(SaveSelected)
                     FALSE,
                     FALSE,
                     mailPart->ContentType);
+
+          // at least one part has been decoded
+          newDecoded = TRUE;
         }
       }
+    }
+
+    if(oldDecoded == FALSE && newDecoded == TRUE)
+    {
+      // At least one attachment was not decoded before this operation but is now.
+      // Now we know the exact size of the file and can redraw ourself.
+      MUI_Redraw(obj, MADF_DRAWOBJECT);
     }
   }
 
   BusyEnd();
 
+  RETURN(0);
   return 0;
 }
 ///
 /// DECLARE(Print)
 DECLARE(Print) // struct Part *part
 {
-  if(msg->part)
+  ENTER();
+
+  if(msg->part != NULL)
   {
     BusyText(tr(MSG_BusyDecPrinting), "");
     RE_PrintFile(msg->part->Filename);
     BusyEnd();
   }
 
+  RETURN(0);
   return 0;
 }
 ///
@@ -880,7 +923,7 @@ DECLARE(CropAll)
 
   ENTER();
 
-  if(data->firstPart)
+  if(data->firstPart != NULL)
   {
     struct ReadMailData *rmData = data->firstPart->rmData;
     struct Mail *mail = rmData->mail;
@@ -897,7 +940,7 @@ DECLARE(CropAll)
 
     // make sure to refresh the mail of this window as we do not
     // have any attachments anymore
-    if(rmData->readWindow)
+    if(rmData->readWindow != NULL)
       DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, mail);
     else
       DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail, MUIF_ReadMailGroup_ReadMail_UpdateTextOnly);
@@ -910,9 +953,11 @@ DECLARE(CropAll)
 /// DECLARE(ImageDropped)
 DECLARE(ImageDropped) // Object *imageObject, char *dropPath
 {
-  struct Part *mailPart = (struct Part *)xget(msg->imageObject, MUIA_AttachmentImage_MailPart);
+  struct Part *mailPart;
 
-  if(mailPart && msg->dropPath)
+  ENTER();
+
+  if((mailPart = (struct Part *)xget(msg->imageObject, MUIA_AttachmentImage_MailPart)) != NULL && msg->dropPath != NULL)
   {
     BOOL result;
     char *fileName;
@@ -993,21 +1038,23 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
     BusyEnd();
   }
 
+  RETURN(0);
   return 0;
 }
 ///
 /// DECLARE(ClearSelection)
 DECLARE(ClearSelection)
 {
-  struct List *childList = (struct List *)xget(obj, MUIA_Group_ChildList);
+  struct List *childList;
+
   ENTER();
 
-  if(childList)
+  if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
   {
     Object *cstate = (Object *)childList->lh_Head;
     Object *child;
 
-    while((child = NextObject(&cstate)))
+    while((child = NextObject(&cstate)) != NULL)
       set(child, MUIA_Selected, FALSE);
   }
 

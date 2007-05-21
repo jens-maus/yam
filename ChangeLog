@@ -7,6 +7,9 @@ $URL$
 
 2007-05-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AttachmentGroup.c: whenever a formerly non-decoded mail part is decoded (for
+    example when saving the attachment) the group is now redrawn to show the
+    exact file size instead of the estimated size.
   * ImageCache.c, locale/YAM.cd, locale/deutsch.ct: added the possibility to
     ignore any missing image file.
 
