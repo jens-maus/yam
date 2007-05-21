@@ -374,8 +374,39 @@ struct imageCacheNode *ObtainImage(const char *filename, const struct Screen *sc
 
   if(result == NULL)
   {
-    D(DBF_IMAGE, "creating new cache node for image '%s'", filename);
-    result = CreateImageCacheNode(filename);
+    // check if the file exists or not.
+    if(FileExists(filename) == FALSE)
+    {
+      if(G->NoImageWarning == FALSE)
+      {
+        char *path;
+        int reqResult;
+
+        if((path = strdup(filename)) != NULL)
+        {
+          char *p;
+
+          if((p = PathPart(path)) != NULL)
+            *p = '\0';
+
+          if((reqResult = MUI_Request(G->App, NULL, 0, tr(MSG_ER_IMAGEOBJECT_TITLE),
+                                                       tr(MSG_ER_IGNOREALL),
+                                                       tr(MSG_ER_IMAGEOBJECT),
+                                                       FilePart(filename), path)))
+          {
+            if(reqResult == 1)
+              G->NoImageWarning = TRUE;
+          }
+
+          free(path);
+        }
+      }
+    }
+    else
+    {
+      D(DBF_IMAGE, "creating new cache node for image '%s'", filename);
+      result = CreateImageCacheNode(filename);
+    }
   }
 
   // do a remapping of the image if necessary

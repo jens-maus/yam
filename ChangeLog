@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-22  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c, locale/YAM.cd, locale/deutsch.ct: added the possibility to
+    ignore any missing image file.
+
 2007-05-21  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c: reverted the floating point size calculation as floating

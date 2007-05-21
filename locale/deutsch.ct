@@ -6534,7 +6534,7 @@ MSG_CO_Less
 _Entfernen
 ;
 MSG_ER_EXITIGNOREALL
-*_Beenden|_Dauerhaft Ignorieren|_Ignorieren
+*_Beenden|_Dauerhaft ignorieren|_Ignorieren
 ;
 MSG_ER_ICONOBJECT_TITLE
 Fehler beim Laden eines Piktogrammbildes!
@@ -7940,7 +7940,7 @@ MSG_ER_NO8BITMIME
 Während des Verbindungsversuches mit dem SMTP Server '%s' \
 zeigte sich, dass dieser keine 8bit-MIME Übertragungen \
 unterstützt. Sie haben jedoch in Ihrer Konfiguration diese \
-Option eingeschalten.\n\
+Option eingeschaltet.\n\
 \n\
 Bitte stellen Sie sicher, dass Sie die Option abschalten und \
 danach die Nachricht neu editieren, da diese ansonsten eventuell \
@@ -7955,4 +7955,7 @@ definierten Filter auf die Nachricht angewendet.
 ;
 MSG_SHUTDOWN_SHUTTING_DOWN
 Beende...
+;
+MSG_ER_IGNOREALL
+*_Dauerhaft ignorieren|_Ignorieren
 ;

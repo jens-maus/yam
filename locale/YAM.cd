@@ -6248,3 +6248,6 @@ will be applied to the mail.
 MSG_SHUTDOWN_SHUTTING_DOWN (1935//)
 Shutting down...
 ;
+MSG_ER_IGNOREALL (1936//)
+Ignore _all|*_Ignore
+;
