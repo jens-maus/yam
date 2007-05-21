@@ -214,9 +214,14 @@ static struct imageCacheNode *CreateImageCacheNode(const char *filename)
     else
     {
       // failure
-      MUI_Request(G->App, NULL, 0, tr(MSG_ER_LOADDT_TITLE),
-                                   tr(MSG_ER_LOADDT_BUTTON),
-                                   tr(MSG_ER_LOADDT_ERROR), filename);
+      if(G->NoImageWarning == FALSE)
+      {
+        // show the error requester only if the user did not choose to ignore
+        // all warnings before
+        MUI_Request(G->App, NULL, 0, tr(MSG_ER_LOADDT_TITLE),
+                                     tr(MSG_ER_LOADDT_BUTTON),
+                                     tr(MSG_ER_LOADDT_ERROR), filename);
+      }
 
       free(node);
       node = NULL;

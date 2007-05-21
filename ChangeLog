@@ -7,6 +7,8 @@ $URL$
 
 2007-05-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: if loading of an image fails but the user chose to ignore such
+    errors before the error requester will no longer be displayed now.
   * deutsch.ct: fixed various grammatical errors.
   * YAM_TR.c: the message size labels are now initialized using FormatSize()
     instead of fixed size strings like "0 B". That way these strings always look
