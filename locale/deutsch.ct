@@ -6280,7 +6280,7 @@ Ein Fehler trat während des Versuches auf das Bild\n\
 des Piktogrammes '%s.info' vom Verzeichnis '%s' zu\n\
 laden.\n\
 \n\
-Bitte stellen Sie sicher das ihr Grafikverzeichnis\n\
+Bitte stellen Sie sicher, dass ihr Grafikverzeichnis\n\
 alle notwendigen Piktogramme im aktuellen Layout\n\
 enthält und diese lesbar sind.
 ;
@@ -6291,7 +6291,7 @@ MSG_ER_IMAGEOBJECT
 Ein Fehler trat während des Versuches auf die Bilddatei\n\
 '%s' vom Verzeichnis '%s' zu laden.\n\
 \n\
-Bitte stellen Sie sicher das ihr Grafikverzeichnis\n\
+Bitte stellen Sie sicher, dass ihr Grafikverzeichnis\n\
 alle notwendigen Bilddateien im aktuellen Layout\n\
 enthält und diese lesbar sind.
 ;
@@ -6305,7 +6305,7 @@ MSG_ER_MISSINGIMGVERFILE
 Das Layout ihres '%s' Grafikverzeichnises besitzt keine\n\
 Versionsinformationen und muss geupdated werden.\n\
 \n\
-Bitte stellen Sie sicher das sie ein zum aktuellen\n\
+Bitte stellen Sie sicher, dass sie ein zum aktuellen\n\
 Layout kompatibles Grafikverzeichnis verwenden oder\n\
 es könnten Bilder mitunter inkorrekt angezeigt werden.
 ;
@@ -6313,7 +6313,7 @@ MSG_ER_LOADIMGLAYOUTFAILED
 Ein Fehler trat während des Versuches auf das Layout\n\
 ihres Grafikverzeichnisses '%s' zu laden.\n\
 \n\
-Bitte stellen Sie sicher das sie ein zum aktuellen\n\
+Bitte stellen Sie sicher, dass sie ein zum aktuellen\n\
 Layout kompatibles Grafikverzeichnis verwenden oder\n\
 es könnten Bilder mitunter inkorrekt angezeigt werden.
 ;
@@ -6322,7 +6322,7 @@ Das Layout ihres '%s' Grafikverzeichnisses besitzt eine\n\
 zum aktuellen YAM inkompatible Versionsinformation und\n\
 muss entsprechend geupdated werden.\n\
 \n\
-Bitte stellen Sie sicher das sie ein zum aktuellen\n\
+Bitte stellen Sie sicher, dass sie ein zum aktuellen\n\
 Layout kompatibles Grafikverzeichnis verwenden oder\n\
 es könnten Bilder mitunter inkorrekt angezeigt werden.
 ;
@@ -6358,7 +6358,7 @@ YAM hat festgestellt das sie Genesis/AmiTCP nutzen, konnte\n\
 jedoch Ihren Genesis-Nutzernamen '%s' keinem YAM\n\
 Nutzerzugang zuordnen.\n\
 \n\
-Bitte stellen Sie sicher das sie Ihren Genesis Nutzernamen\n\
+Bitte stellen Sie sicher, dass sie Ihren Genesis Nutzernamen\n\
 mit dem in YAM synchronisieren. Ansonsten kann YAM keinen\n\
 automatischen Login Ihres Nutzers vornehmen.
 ;
@@ -6502,7 +6502,7 @@ MSG_ER_MESSAGEIMPORT
 Ein Fehler trat beim Versuch auf Nachrichten von der Datei '%s' \
 aus zu importieren.\n\
 \n\
-Bitte stellen Sie sicher das die ausgewählte Datei lesbar ist und \
+Bitte stellen Sie sicher, dass die ausgewählte Datei lesbar ist und \
 RFC822 konforme Nachrichten in einem von YAM unterstützen \
 Nachrichtenformat enthält. YAM ist momentan in der Lage Nachrichten \
 von Dateien im 'MBOX', 'DBX' (Outlook Express) oder aber reine RFC822 \
@@ -6537,7 +6537,7 @@ MSG_CO_CHARSETUNKNOWNWARN_BT
 MSG_ER_LIB
 Kann benötigte '%s', Version v%lu.%lu nicht öffnen.\n\
 \n\
-Bitte stellen Sie sicher das sie diese oder eine neuere\n\
+Bitte stellen Sie sicher, dass sie diese oder eine neuere\n\
 Version in Ihrem Bibliothekspfad installiert haben.
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
 ;
@@ -6546,7 +6546,7 @@ Kann benötigte '%s', Version v%lu.%lu nicht öffnen.\n\
 \n\
 Bitte besuchen Sie '%s'\n\
 um die neueste Version herunterzuladen und stellen Sie\n\
-sicher das Sie diese in Ihrem Bibliothekspfad korrekt\n\
+sicher, dass Sie diese in Ihrem Bibliothekspfad korrekt\n\
 installiert haben.
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION, LIBRARY_URL
 ;
@@ -6555,7 +6555,7 @@ Konnte die benötigte MUI custom Klasse '%s' v%lu.%lu\n\
 nicht öffnen.\n\
 \n\
 Bitte besuchen Sie '%s'\n\
-und stellen Sie sicher das sie die neueste Version\n\
+und stellen Sie sicher, dass sie die neueste Version\n\
 installiert haben.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
@@ -6563,20 +6563,20 @@ MSG_ER_MCC_OLD
 Konnte die benötigte MUI custom Klasse '%s' v%lu.%lu\n\
 nicht öffnen.\n\
 \n\
-Momentan installiert ist v%lu.%lu, bitte stellen Sie\n\
-sicher das sie die neueste version von '%s'\n\
+Momentan installiert ist v%lu.%lu. Bitte stellen Sie\n\
+sicher, dass sie die neueste version von '%s'\n\
 korrekt installiert haben.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_IN_USE
 Konnte die benötigte MUI custom Klasse '%s' v%lu.%lu\n\
-nicht öffnen da die Version %lu.%lu bereits verwendet wird.\n\
+nicht öffnen, da die Version %lu.%lu bereits verwendet wird.\n\
 \n\
 Bitte besuchen Sie '%s'.\n\
 Sobald Sie die benötigte Version installiert haben,\n\
-schließen Sie alle MUI Programme und stellen sicher das\n\
+schließen Sie alle MUI Programme und stellen sicher, dass\n\
 alle nicht benötigten Bibliotheken aus dem Speicher entfernt\n\
-werden. Versuchen Sie es dann erneut YAM zu starten.
+werden. Versuchen Sie dann YAM erneut zu starten.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_CO_FIRSTSTEPS_TITLE
@@ -6687,7 +6687,7 @@ und es wurde daher die interne SSLv3/TLSv1 Funktionalität\n\
 deaktiviert. Eine Verbinden über einen verschlüsselten\n\
 Kanal ist daher nicht möglich.\n\
 \n\
-Bitte stellen Sie sicher das sie die Version v%lu.%lu\n\
+Bitte stellen Sie sicher, dass sie die Version v%lu.%lu\n\
 von AmiSSL korrekt installiert haben und starten Sie YAM\n\
 danach erneut.
 ; AMISSL_VERSION, AMISSL_REVISION
@@ -6775,7 +6775,7 @@ MSG_ER_OPENTCPIP
 YAM konnte die notwendige bsdsocket.library Schnittstelle \
 für TCP/IP Verbindungen nicht öffnen.\n\
 \n\
-Bitte stellen Sie sicher das sie einen kompatiblen TCP/IP \
+Bitte stellen Sie sicher, dass sie einen kompatiblen TCP/IP \
 stack installiert haben, dieser korrekt konfiguriert und \
 zur Zeit auch aktiviert ist.
 ;
@@ -6890,14 +6890,14 @@ MSG_ER_ADDFILEERROR
 Die ausgewählte Datei '%s' konnte nicht \
 and die Nachricht angehängt werden.\n\
 \n\
-Bitte stellen Sie sicher das die Datei \
+Bitte stellen Sie sicher, dass die Datei \
 existiert und Sie Leserechte besitzen.
 ;
 MSG_ER_PACKERROR
 Ein Fehler trat bei dem Versuch auf ein \
 Archiv aus den gewählten Dateien zu erzeugen.\n\
 \n\
-Bitte stellen Sie sicher das die Dateien \
+Bitte stellen Sie sicher, dass die Dateien \
 existieren und Sie Leserechte besitzen.
 ;
 MSG_CO_ABOOKLOOKUP
@@ -7678,7 +7678,7 @@ zeigte sich, das dieser 8bit MIME Übertragungen nicht \
 unterstützt. Sie haben jedoch in Ihrer Konfiguration diese \
 Option eingeschalten.\n\
 \n\
-Bitte stellen Sie sicher das sie die Option abschalten und \
+Bitte stellen Sie sicher, dass sie die Option abschalten und \
 die Nachricht neu editieren, da ansonsten diese event. \
 fehlerhaft übertragen werden kann.
 ;
