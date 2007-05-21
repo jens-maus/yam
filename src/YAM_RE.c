@@ -1915,13 +1915,13 @@ static void RE_SetPartInfo(struct Part *rp)
       case ENC_UUE:
       case ENC_B64:
       {
-        size *= 1.36;
+        size /= 1.36;
       }
       break;
 
       case ENC_QP:
       {
-        size *= 1.06;
+        size /= 1.06;
       }
       break;
 
