@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-21  Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/deutsch.ct: some more grammar fixes which should address bug #1722544
+    also.
+ 
 2007-05-21  Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: if loading of an image fails but the user chose to ignore such

@@ -632,7 +632,8 @@ Filtervorgang beendet:\n%3ld Nachrichten geprüft,\n%3ld weitergeleitet,\n%3ld ar
 ; COUNT, COUNT, COUNT, COUNT
 ;
 MSG_MA_ExportAppendReq
-Die Ausgabedatei existiert bereits. Soll sie\nüberschrieben oder die Nachrichten angehängt werden?
+Die Ausgabedatei existiert bereits. Soll sie\n\
+überschrieben oder die Nachrichten angehängt werden?
 ; The output file already exists. Do you want\n\
 ; to overwrite it or append the messages?
 ;
@@ -2171,7 +2172,8 @@ Wie oft wollen Sie auf neue Post prüfen?\n(Geben Sie 0 ein,\num diese Funktion a
 ; (use 0 to disable this feature)
 ;
 MSG_HELP_CO_CH_DLLARGE
-Lade große Nachrichten beim automatischen Postholen,\nselbst wenn sie die oben angegebene Größe überschreiten
+Lade große Nachrichten beim automatischen Postholen,\n\
+selbst wenn sie die oben angegebene Größe überschreiten
 ; When automatically checking for new mail,\n\
 ; download large messages even if they are\n\
 ; larger than the size specified above
@@ -2543,12 +2545,15 @@ Neue Nachrichten auch mit Ihrem öffentlichen\nSchlüssel verschlüsseln, damit ver
 ; so you can still read or edit sent messages
 ;
 MSG_HELP_CO_ST_REMAILER
-E-Mail-Adresse des Remailer-Dienstes,\nwelcher Ihre Post anonymisiert
+E-Mail-Adresse des Remailer-Dienstes,\n\
+welcher Ihre Post anonymisiert
 ; Email address of the remailer service\n\
 ; used to send anonymous mail
 ;
 MSG_HELP_CO_ST_FIRSTLINE
-Diese Zeile wird am Anfang Ihrer\nNachricht eingefügt, falls sie via\nAnonymisierdienst versandt wird
+Diese Zeile wird am Anfang Ihrer\n\
+Nachricht eingefügt, falls sie via\n\
+Anonymisierdienst versandt wird
 ; Insert this line at the top of your\n\
 ; message if it is sent via remailer
 ;
@@ -2591,7 +2596,9 @@ MSG_HELP_CO_CH_CHECKBD
 ; reminder if it's a person's birthday
 ;
 MSG_HELP_CO_CH_DELETEOLD
-Löscht Nachrichten, welche ihr\nmaximales Alter überschreiten\n(siehe Postfach-Konfiguration)
+Löscht Nachrichten, welche ihr\n\
+maximales Alter überschreiten\n\
+(siehe Postfach-Konfiguration)
 ; Delete messages that exceed the maximum\n\
 ; age (see folder configuration)
 ;
@@ -2620,7 +2627,9 @@ Adresse und optional Portnummer Ihres HTTP\nProxyservers (voreingestellter Port 
 ; You may leave this field empty.
 ;
 MSG_HELP_CO_ST_NEWGROUP
-Neue Adressbucheinträge werden in diese\nGruppe aufgenommen (sie wird bei\nBedarf automatisch erstellt)
+Neue Adressbucheinträge werden in diese\n\
+Gruppe aufgenommen (sie wird bei\n\
+Bedarf automatisch erstellt)
 ; Add new address book entries to this group\n\
 ; (it will be created if it doesn't exist yet)
 ;
@@ -3372,7 +3381,12 @@ Die Nachricht\n%s\nwurde angezeigt.\nDies ist keine Garantie dafür, dass der Inh
 ; This is no guarantee that the content has been read or understood.\n
 ;
 MSG_RE_MDNdeleted
-Die Nachricht\n%s\nwurde%s gelöscht,\nohne dass sie dem Benutzer angezeigt wurde. Der Benutzer kann die\nNachricht unter Umständen zu einem späteren Zeitpunkt \"entlöschen\"\nund lesen.\n
+Die Nachricht\n\
+%s\n\
+wurde%s gelöscht,\n\
+ohne dass sie dem Benutzer angezeigt wurde. Der Benutzer kann die\n\
+Nachricht unter Umständen zu einem späteren Zeitpunkt \"entlöschen\"\n\
+und lesen.\n
 ; The message\n\
 ; %s\n\
 ; has been deleted%s.\n\
@@ -4179,7 +4193,8 @@ Wählen Sie eine dieser Sicherheitsoptionen\num Ihre Nachricht PGP signiert, vers
 ; or anonymously
 ;
 MSG_HELP_WR_BT_HOLD
-Kopiert die erstellte Nachricht\nin den Postausgang und\nhält sie für den Versand
+Kopiert die erstellte Nachricht\nin den Postausgang und\n\
+hält sie für den Versand
 ; Copy the created message to\n\
 ; the outgoing mail folder and\n\
 ; set its status to HOLD
@@ -4190,7 +4205,9 @@ Kopiert die erstellte Nachricht\nin den Postausgang
 ; the outgoing mail folder
 ;
 MSG_HELP_WR_BT_SEND
-Kopiert die erstellte Nachricht\nin den Postausgang\nund versendet sie sogleich
+Kopiert die erstellte Nachricht\n\
+in den Postausgang\n\
+und versendet sie sogleich
 ; Copy the created message to\n\
 ; the outgoing mail folder\n\
 ; and send it immediately
@@ -5852,7 +5869,7 @@ Name der Postfachgruppe:
 MSG_ER_UNUSABLEAMISSL
 Sie haben TLSv1/SSLv3 Unterstützung für diese Verbindung \
 ausgewählt, jedoch konnte AmiSSL nicht initialisiert werden. \
-Bitte überprüfen Sie ihre AmiSSL Installation oder schalten Sie \
+Bitte überprüfen Sie Ihre AmiSSL Installation oder schalten Sie \
 die TLS/SSL Unterstützung für diese Verbindung aus.
 ; You have selected TLSv1/SSLv3 for this connection, but AmiSSL \
 ; couldn't be initialized. Please check your AmiSSL installation \
@@ -5863,16 +5880,16 @@ Wiederholen|Beenden
 ; Try again|Quit
 ;
 MSG_ER_NOSTARTTLS
-Der SMTP Server zu dem sie versucht haben eine Verbindung aufzubauen, \
+Der SMTP Server zu dem Sie versucht haben eine Verbindung aufzubauen, \
 unterstützt das TLS/SSL protokoll nicht, jedoch haben Sie dies in der \
-Konfiguration ausgewählt. Bitte kontrollieren Sie ihre Serverdaten und \
+Konfiguration ausgewählt. Bitte kontrollieren Sie Ihre Serverdaten und \
 begutachten Sie die Konfigurationseinstellungen erneut.
 ; Your SMTP server doesn't support TLS/SSL. \
 ; Please disable this option in your YAM configuration.
 ;
 MSG_ER_NOAUTHUSERPASS
 Es wurde kein Benutzername oder Passwort für die aufzubauende SMTP-AUTH \
-Verbindung eingestellt. Bitte kontrollieren Sie ihre Konfiguration und \
+Verbindung eingestellt. Bitte kontrollieren Sie Ihre Konfiguration und \
 wiederholen Sie den Verbindungsaufbau.
 ; No user name or password was specified for the SMTP AUTH connection \
 ; YAM was trying to establish. Please check your configuration.
@@ -6057,7 +6074,7 @@ _Verabschiedung
 MSG_ER_SOCKETOPTION
 Warnung: Die Socketoption '%s' konnte nicht gesetzt werden.\n\
 \n\
-Diese kann mitunter von ihrem laufenden TCP/IP stack nicht \
+Diese kann mitunter von Ihrem laufenden TCP/IP stack nicht \
 unterstützt werden oder ist falsch in der Konfiguration angegeben.
 ; OPTIONNAME
 ;
@@ -6103,7 +6120,7 @@ konnte das im UUcode standard definierte Tag '%s' nicht gefunden werden.
 ;
 MSG_ER_UUDEC_CHECKSUM
 Während des Dekodierens der UUcode datei '%s' hat YAM einige vorgeschriebene \
-Checksummen nicht verifizieren können. Es wird vorgeschlagen das sie die \
+Checksummen nicht verifizieren können. Es wird vorgeschlagen das Sie die \
 erzeugte Datei auf Fehler hin überprüfen.\n\
 \n\
 Es wurde entweder ein defekter UUencoder verwendet oder die Nachricht \
@@ -6149,7 +6166,7 @@ MSG_ER_XPKUSAGE
 Ein Fehler ist bei dem Versuch aufgetreten die Datei '%s' mittels XPK \
 zu bearbeiten.\n\
 \n\
-Bitte kontrollieren Sie ihre XPK Installation und die dazugehörigen \
+Bitte kontrollieren Sie Ihre XPK Installation und die dazugehörigen \
 Komprimierungseinstellungen in der Konfiguration von YAM.
 ; FILENAME
 ;
@@ -6280,7 +6297,7 @@ Ein Fehler trat während des Versuches auf das Bild\n\
 des Piktogrammes '%s.info' vom Verzeichnis '%s' zu\n\
 laden.\n\
 \n\
-Bitte stellen Sie sicher, dass ihr Grafikverzeichnis\n\
+Bitte stellen Sie sicher, dass Ihr Grafikverzeichnis\n\
 alle notwendigen Piktogramme im aktuellen Layout\n\
 enthält und diese lesbar sind.
 ;
@@ -6291,7 +6308,7 @@ MSG_ER_IMAGEOBJECT
 Ein Fehler trat während des Versuches auf die Bilddatei\n\
 '%s' vom Verzeichnis '%s' zu laden.\n\
 \n\
-Bitte stellen Sie sicher, dass ihr Grafikverzeichnis\n\
+Bitte stellen Sie sicher, dass Ihr Grafikverzeichnis\n\
 alle notwendigen Bilddateien im aktuellen Layout\n\
 enthält und diese lesbar sind.
 ;
@@ -6302,36 +6319,36 @@ MSG_ER_EXITIGNORE
 *_Beenden|_Ignorieren
 ;
 MSG_ER_MISSINGIMGVERFILE
-Das Layout ihres '%s' Grafikverzeichnises besitzt keine\n\
+Das Layout Ihres '%s' Grafikverzeichnises besitzt keine\n\
 Versionsinformationen und muss geupdated werden.\n\
 \n\
-Bitte stellen Sie sicher, dass sie ein zum aktuellen\n\
+Bitte stellen Sie sicher, dass Sie ein zum aktuellen\n\
 Layout kompatibles Grafikverzeichnis verwenden oder\n\
 es könnten Bilder mitunter inkorrekt angezeigt werden.
 ;
 MSG_ER_LOADIMGLAYOUTFAILED
 Ein Fehler trat während des Versuches auf das Layout\n\
-ihres Grafikverzeichnisses '%s' zu laden.\n\
+Ihres Grafikverzeichnisses '%s' zu laden.\n\
 \n\
-Bitte stellen Sie sicher, dass sie ein zum aktuellen\n\
+Bitte stellen Sie sicher, dass Sie ein zum aktuellen\n\
 Layout kompatibles Grafikverzeichnis verwenden oder\n\
 es könnten Bilder mitunter inkorrekt angezeigt werden.
 ;
 MSG_ER_WRONGIMGLAYOUTVER
-Das Layout ihres '%s' Grafikverzeichnisses besitzt eine\n\
+Das Layout Ihres '%s' Grafikverzeichnisses besitzt eine\n\
 zum aktuellen YAM inkompatible Versionsinformation und\n\
 muss entsprechend geupdated werden.\n\
 \n\
-Bitte stellen Sie sicher, dass sie ein zum aktuellen\n\
+Bitte stellen Sie sicher, dass Sie ein zum aktuellen\n\
 Layout kompatibles Grafikverzeichnis verwenden oder\n\
 es könnten Bilder mitunter inkorrekt angezeigt werden.
 ;
 MSG_MA_AUTOSAVEFOUND
 YAM hat eine automatische Sicherungsdatei '%s'\n\
 einer Nachricht gefunden, die in einer vorherigen Sitzung\n\
-erzeugt wurde. Dies könnte durch einen event. Absturz oder\n\
-Neustart ihres Systems, während Sie eine Mail geschrieben\n\
-haben, geschehen sein.\n\
+erzeugt wurde. Dies könnte durch einen eventuellen Absturz\n\
+oder Neustart Ihres Systems, während Sie eine Mail\n\
+geschrieben haben, geschehen sein.\n\
 \n\
 Was möchten Sie mit dieser Nachricht tun?
 ;
@@ -6354,11 +6371,11 @@ MSG_ER_GENESISUSER_TITLE
 Unbekannter Genesis/AmiTCP Nutzeraccount!
 ;
 MSG_ER_GENESISUSER
-YAM hat festgestellt das sie Genesis/AmiTCP nutzen, konnte\n\
+YAM hat festgestellt das Sie Genesis/AmiTCP nutzen, konnte\n\
 jedoch Ihren Genesis-Nutzernamen '%s' keinem YAM\n\
 Nutzerzugang zuordnen.\n\
 \n\
-Bitte stellen Sie sicher, dass sie Ihren Genesis Nutzernamen\n\
+Bitte stellen Sie sicher, dass Sie Ihren Genesis Nutzernamen\n\
 mit dem in YAM synchronisieren. Ansonsten kann YAM keinen\n\
 automatischen Login Ihres Nutzers vornehmen.
 ;
@@ -6453,7 +6470,7 @@ des aktuellen Postfaches zur Anzeige ausgewählt\n\
 werden.
 ;
 MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
-Mit diesem Popup können sie das Suchkriterium\n\
+Mit diesem Popup können Sie das Suchkriterium\n\
 auswählen.
 ;
 MSG_BUSY_SEARCHINGFOLDER
@@ -6537,7 +6554,7 @@ MSG_CO_CHARSETUNKNOWNWARN_BT
 MSG_ER_LIB
 Kann benötigte '%s', Version v%lu.%lu nicht öffnen.\n\
 \n\
-Bitte stellen Sie sicher, dass sie diese oder eine neuere\n\
+Bitte stellen Sie sicher, dass Sie diese oder eine neuere\n\
 Version in Ihrem Bibliothekspfad installiert haben.
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
 ;
@@ -6555,7 +6572,7 @@ Konnte die benötigte MUI custom Klasse '%s' v%lu.%lu\n\
 nicht öffnen.\n\
 \n\
 Bitte besuchen Sie '%s'\n\
-und stellen Sie sicher, dass sie die neueste Version\n\
+und stellen Sie sicher, dass Sie die neueste Version\n\
 installiert haben.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
@@ -6564,7 +6581,7 @@ Konnte die benötigte MUI custom Klasse '%s' v%lu.%lu\n\
 nicht öffnen.\n\
 \n\
 Momentan installiert ist v%lu.%lu. Bitte stellen Sie\n\
-sicher, dass sie die neueste version von '%s'\n\
+sicher, dass Sie die neueste Version von '%s'\n\
 korrekt installiert haben.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
@@ -6655,13 +6672,13 @@ MSG_CO_ABOOK_TITLE
 Addressbuch Einstellungen
 ;
 MSG_CO_ABOOK_SUMMARY
-Konfigurieren Sie ihr Adressbuch...
+Konfigurieren Sie Ihr Adressbuch...
 ;
 MSG_CO_SCRIPTS_TITLE
 Benutzer-definierte Skripte
 ;
 MSG_CO_SCRIPTS_SUMMARY
-Konfigurieren Sie ihre Hilfsskripte...
+Konfigurieren Sie Ihre Hilfsskripte...
 ;
 MSG_CO_MIXED_TITLE
 Verschiedenes
@@ -6687,7 +6704,7 @@ und es wurde daher die interne SSLv3/TLSv1 Funktionalität\n\
 deaktiviert. Eine Verbinden über einen verschlüsselten\n\
 Kanal ist daher nicht möglich.\n\
 \n\
-Bitte stellen Sie sicher, dass sie die Version v%lu.%lu\n\
+Bitte stellen Sie sicher, dass Sie die Version v%lu.%lu\n\
 von AmiSSL korrekt installiert haben und starten Sie YAM\n\
 danach erneut.
 ; AMISSL_VERSION, AMISSL_REVISION
@@ -6775,7 +6792,7 @@ MSG_ER_OPENTCPIP
 YAM konnte die notwendige bsdsocket.library Schnittstelle \
 für TCP/IP Verbindungen nicht öffnen.\n\
 \n\
-Bitte stellen Sie sicher, dass sie einen kompatiblen TCP/IP \
+Bitte stellen Sie sicher, dass Sie einen kompatiblen TCP/IP \
 stack installiert haben, dieser korrekt konfiguriert und \
 zur Zeit auch aktiviert ist.
 ;
@@ -7024,8 +7041,8 @@ MSG_ER_CANTOPENASL
 Es trat ein Fehler beim Versuch auf, ein \
 ASL Fenster zu öffnen.\n\
 \n\
-Bitte stellen Sie sicher, dass ihre ASL \
-Einstellung korrekt sind und ASL korrekt \
+Bitte stellen Sie sicher, dass Ihre ASL \
+Einstellungen korrekt sind und ASL korrekt \
 funktioniert.
 ;
 MSG_MA_CONFIRMDELETION
@@ -7632,9 +7649,9 @@ MSG_CO_MIMECMD_PUBSCREEN
 MSG_ER_ZOMBIE_FILES_EXIST
 YAM war nicht in der Lage während des Beendens alle\n\
 temporär generierten Dateien zu löschen. Diese werden\n\
-event. zur Zeit von anderen Programmen benutzt.\n\
+eventuell zur Zeit von anderen Programmen benutzt.\n\
 \n\
-Bitte stellen Sie sicher, dass alle Programme, die sie\n\
+Bitte stellen Sie sicher, dass alle Programme, die Sie\n\
 von YAM aus gestartet haben (z.B. Multiview), beendet\n\
 sind.
 ;
@@ -7674,12 +7691,12 @@ verschoben.
 ;
 MSG_ER_NO8BITMIME
 Während des Verbindungsversuches mit dem SMTP Server '%s' \
-zeigte sich, das dieser 8bit MIME Übertragungen nicht \
+zeigte sich, dass dieser keine 8bit-MIME Übertragungen \
 unterstützt. Sie haben jedoch in Ihrer Konfiguration diese \
-Option eingeschalten.\n\
+Option eingeschaltet.\n\
 \n\
-Bitte stellen Sie sicher, dass sie die Option abschalten und \
-die Nachricht neu editieren, da ansonsten diese event. \
+Bitte stellen Sie sicher, dass Sie die Option abschalten und \
+danach die Nachricht editieren, da ansonsten diese eventuell \
 fehlerhaft übertragen werden kann.
 ;
 MSG_CO_FILTER_HAM
