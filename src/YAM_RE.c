@@ -1898,37 +1898,51 @@ static BOOL RE_SaveThisPart(struct Part *rp)
 //  Determines size and other information of a message part
 static void RE_SetPartInfo(struct Part *rp)
 {
-  // we use a double precision variable here, because the calculations below
-  // may overflow with a simple long or int if the part is larger than 20MB
-  double size;
+  long size;
 
   ENTER();
 
-  // get the file's size
+  // get the part's filesize
   size = FileSize(rp->Filename);
 
-  // let's calculate the partsize of an undecoded part, if not a common part
-  if(rp->Decoded == FALSE && rp->Nr > 0)
+  // let's calculate the partsize of an undecoded part, if this
+  // part isn't the RAW part and we found a positive size.
+  if(rp->Decoded == FALSE && rp->Nr > PART_RAW && size > 0)
   {
-    switch (rp->EncodingCode)
+    // The following calculations are a very loosy estimation of the
+    // real unencoded size of a MIME encoded part. Depending on how
+    // a MIME part is encoded (uucode/base64/quoted-printable),
+    // we can more or less estimate the size by the following
+    // empiric formulars:
+    //
+    // BASE64/UUCODE: unencoded_size = encoded_size / 1.36
+    // QP...........: unencoded_size = encoded_size / 1.06
+    //
+    // However, please note that we perform these calculations using
+    // integer calculations (due to speed considerations) and we
+    // are therefore making sure we first divide and then multiplicate
+    // the value. Otherwise the calculation will overflow with sizes
+    // >= 20MB. Of course, this leads to minor incorrect calculations
+    // (precision loss) - but as we are estimating anyway this shouldn't
+    // be a big deal. All in all we can only loose a max. of 99 bytes
+    // precision which is really neglectable.
+    switch(rp->EncodingCode)
     {
       case ENC_UUE:
       case ENC_B64:
       {
-        size /= 1.36;
+        size = (size / 136) * 100;
       }
       break;
 
       case ENC_QP:
       {
-        size /= 1.06;
+        size = (size / 106) * 100;
       }
       break;
 
       default:
-      {
         // nothing
-      }
       break;
     }
   }

@@ -7,6 +7,11 @@ $URL$
 
 2007-05-21  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c: reverted the floating point size calculation as floating
+    point operations should be really avoided. However, by changing the order
+    of the division/multiplication in the calculation, the estimated MIME part
+    size calculation can be performed without having to worry about any value
+    overflow and with only a minimum precision loss.
   * locale/deutsch.ct: some more grammar fixes which should address bug #1722544
     also.
 
