@@ -748,7 +748,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->UpdateStatus = TRUE;
     co->DownloadLarge = TRUE;
     co->PreSelection = PSM_LARGE;
-    co->WarnSize = 100; // 100KB warn size
+    co->WarnSize = 1024; // 1MB warn size
     co->CheckMailDelay = 0;
     co->NotifyType = 1;
     *co->NotifySound = *co->NotifyCommand = 0;
