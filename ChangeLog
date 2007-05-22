@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-22  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: whoops, the last commit from Thore seem to have broken the OS3/MOS
+    builds as he did revert my last changes by accident. Now my TR_IsOnline()
+    changes should be back again.
+
 2007-05-22  Thore Böckelmann <tboeckel@gmx.de>
 
   * AttachmentGroup.c: whenever a formerly non-decoded mail part is decoded (for
