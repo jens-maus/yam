@@ -7,6 +7,8 @@ $URL$
 
 2007-05-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_FO.c: fixed a bunch of const warnings which the latest GCC 4.2.x seems
+    to not accept anymore.
   * YAM_CO.c: increased the default mail warning size to 1024KB as that should
     really be a sensible default value today instead of just 100KB.
   * YAM_TR.c, YAM_config.h, misc: replaced the integer for 'TransferWindow'

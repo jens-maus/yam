@@ -265,7 +265,7 @@ struct Folder *FO_GetFolderRexx(const char *arg, int *pos)
 ///
 /// FO_GetFolderByAttribute
 //  Generalized find-folder function
-static struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(const struct Folder*,void*), void *attr, int *pos)
+static struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(const struct Folder*, const void*), const void *attr, int *pos)
 {
   int i;
   struct Folder *folder = NULL;
@@ -304,38 +304,38 @@ static struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(const struct Folder*,
 ///
 /// FO_GetFolderByType
 // comparison function for FO_GetFolderByType
-static BOOL FO_GetFolderByType_cmp(const struct Folder *f, enum FolderType *type)
+static BOOL FO_GetFolderByType_cmp(const struct Folder *f, const enum FolderType *type)
 {
   return (BOOL)(f->Type == *type);
 }
 //  Finds a folder by its type
-struct Folder *FO_GetFolderByType(enum FolderType type, int *pos)
+struct Folder *FO_GetFolderByType(const enum FolderType type, int *pos)
 {
-   return FO_GetFolderByAttribute((BOOL (*)(const struct Folder *, void *))&FO_GetFolderByType_cmp, (void *)&type, pos);
+   return FO_GetFolderByAttribute((BOOL (*)(const struct Folder *, const void *))&FO_GetFolderByType_cmp, (const void *)&type, pos);
 }
 ///
 /// FO_GetFolderByName
 // comparison function for FO_GetFolderByName
-static BOOL FO_GetFolderByName_cmp(const struct Folder *f, char *name)
+static BOOL FO_GetFolderByName_cmp(const struct Folder *f, const char *name)
 {
   return (BOOL)(!strcmp(f->Name, name) && (!isGroupFolder(f)));
 }
 //  Finds a folder by its name
 struct Folder *FO_GetFolderByName(const char *name, int *pos)
 {
-  return FO_GetFolderByAttribute((BOOL (*)(const struct Folder *, void *))&FO_GetFolderByName_cmp, (void *)name, pos);
+  return FO_GetFolderByAttribute((BOOL (*)(const struct Folder *, const void *))&FO_GetFolderByName_cmp, (const void *)name, pos);
 }
 ///
 /// FO_GetFolderByPath
 // comparison function for FO_GetFolderByPath
-static BOOL FO_GetFolderByPath_cmp(const struct Folder *f, char *path)
+static BOOL FO_GetFolderByPath_cmp(const struct Folder *f, const char *path)
 {
   return (BOOL)(!stricmp(f->Path, path));
 }
 //  Finds a folder by its path
 struct Folder *FO_GetFolderByPath(const char *path, int *pos)
 {
-  return FO_GetFolderByAttribute((BOOL (*)(const struct Folder *, void *))&FO_GetFolderByPath_cmp, (void *)path, pos);
+  return FO_GetFolderByAttribute((BOOL (*)(const struct Folder *, const void *))&FO_GetFolderByPath_cmp, (const void *)path, pos);
 }
 ///
 /// FO_GetFolderPosition
