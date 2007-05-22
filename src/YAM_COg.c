@@ -1800,15 +1800,15 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
 
   ENTER();
 
-  mpsopt[0] = tr(MSG_CO_PSNever);
-  mpsopt[1] = tr(MSG_CO_PSLarge);
-  mpsopt[2] = tr(MSG_CO_PSAlways);
-  mpsopt[3] = tr(MSG_CO_PSAlwaysFast);
+  mpsopt[PSM_NEVER]       = tr(MSG_CO_PSNever);
+  mpsopt[PSM_LARGE]       = tr(MSG_CO_PSLarge);
+  mpsopt[PSM_ALWAYS]      = tr(MSG_CO_PSAlways);
+  mpsopt[PSM_ALWAYSLARGE] = tr(MSG_CO_PSAlwaysFast);
   mpsopt[4] = NULL;
 
-  trwopt[0] = tr(MSG_CO_TWNever);
-  trwopt[1] = tr(MSG_CO_TWAuto);
-  trwopt[2] = tr(MSG_CO_TWAlways);
+  trwopt[TWM_HIDE] = tr(MSG_CO_TWNever);
+  trwopt[TWM_AUTO] = tr(MSG_CO_TWAuto);
+  trwopt[TWM_SHOW] = tr(MSG_CO_TWAlways);
   trwopt[3] = NULL;
 
   obj = VGroup,

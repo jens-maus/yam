@@ -744,10 +744,11 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
   if(page == cp_NewMail || page == cp_AllPages)
   {
     co->AvoidDuplicates = FALSE;
-    co->TransferWindow = 2;
-    co->UpdateStatus = co->DownloadLarge = TRUE;
-    co->PreSelection = 1;
-    co->WarnSize = 100;
+    co->TransferWindow = TWM_AUTO;
+    co->UpdateStatus = TRUE;
+    co->DownloadLarge = TRUE;
+    co->PreSelection = PSM_LARGE;
+    co->WarnSize = 100; // 100KB warn size
     co->CheckMailDelay = 0;
     co->NotifyType = 1;
     *co->NotifySound = *co->NotifyCommand = 0;

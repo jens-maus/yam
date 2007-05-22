@@ -2281,7 +2281,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
     // first get all mail waiting on the POP3 servers (SMTP-after-POP3
     if(C->GetOnStartup)
     {
-      if(hide || C->PreSelection == 0)
+      if(C->PreSelection == PSM_NEVER || hide)
       {
         MA_PopNow(POP_START, -1);
         if(G->TR != NULL)

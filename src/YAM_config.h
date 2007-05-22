@@ -374,8 +374,6 @@ struct Config
    struct MinList mimeTypeList; // list of user defined MIME types.
 
    int   TimeZone;
-   int   PreSelection;
-   int   TransferWindow;
    int   WarnSize;
    int   CheckMailDelay;
    int   NotifyType;
@@ -422,6 +420,8 @@ struct Config
    enum  MDNAction      MDN_Other;
    enum  DateStampType  DSListFormat;
    enum  SigSepType     SigSepLine;
+   enum  TransWinMode   TransferWindow;
+   enum  PreSelMode     PreSelection;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;

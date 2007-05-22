@@ -636,12 +636,12 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
             {
               switch (atoi(value))
               {
-                case  0: co->PreSelection = 2; co->WarnSize = 0; break;
-                case 13: co->PreSelection = 0; co->WarnSize = 0; break;
-                default: co->PreSelection = 1; co->WarnSize = 1<<atoi(value); break;
+                case  0: co->PreSelection = PSM_ALWAYS; co->WarnSize = 0; break;
+                case 13: co->PreSelection = PSM_NEVER; co->WarnSize = 0; break;
+                default: co->PreSelection = PSM_LARGE; co->WarnSize = 1<<atoi(value); break;
               }
             }
-            else if(!stricmp(buffer, "Verbosity"))      co->TransferWindow = atoi(value) > 0 ? 2 : 0;
+            else if(!stricmp(buffer, "Verbosity"))      co->TransferWindow = atoi(value) > 0 ? TWM_SHOW : TWM_HIDE;
             else if(!stricmp(buffer, "WordWrap"))       co->EdWrapCol = atoi(value);
             else if(!stricmp(buffer, "DeleteOnExit"))   co->RemoveAtOnce = !(co->RemoveOnQuit = Txt2Bool(value));
             else if(!strnicmp(buffer, "Folder", 6) && oldfolders != NULL)

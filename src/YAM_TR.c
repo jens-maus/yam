@@ -3020,7 +3020,7 @@ static int TR_ConnectPOP(int guilevel)
       return -1;
    }
 
-   if(C->TransferWindow == 2 || (C->TransferWindow == 1 && (guilevel == POP_START || guilevel == POP_USER)))
+   if(C->TransferWindow == TWM_SHOW || (C->TransferWindow == TWM_AUTO && (guilevel == POP_START || guilevel == POP_USER)))
    {
      // avoid MUIA_Window_Open's side effect of activating the window if it was already open
      if(!xget(G->TR->GUI.WI, MUIA_Window_Open))
@@ -3181,6 +3181,8 @@ static void TR_DisplayMailList(BOOL largeonly)
 {
   Object *lv = G->TR->GUI.LV_MAILS;
 
+  ENTER();
+
   if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
   {
     // search through our transferList
@@ -3193,15 +3195,20 @@ static void TR_DisplayMailList(BOOL largeonly)
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
       struct Mail *mail = mtn->mail;
 
-      if(mail->Size >= C->WarnSize*1024 || !largeonly)
+      // add this mail to the transfer list in case we either
+      // should show ALL mails or the mail size is >= the warning size
+      if(largeonly == FALSE || mail->Size >= C->WarnSize*1024)
       {
         mtn->position = pos++;
 
         DoMethod(lv, MUIM_NList_InsertSingle, mtn, MUIV_NList_Insert_Bottom);
       }
     }
+
     set(lv, MUIA_NList_Quiet, FALSE);
   }
+
+  LEAVE();
 }
 ///
 /// TR_GetMessageList_GET
@@ -3610,12 +3617,16 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
                 C->P3[G->TR->POP_Nr]->UIDLchecked = TRUE;
             }
 
-            if (G->TR->GUIlevel == POP_USER)              // manually initiated transfer
+            // manually initiated transfer
+            if (G->TR->GUIlevel == POP_USER)
             {
-               if(C->PreSelection >= 2)
-                  preselect = TRUE;                       // preselect messages if preference is "always [sizes only]"
-               else if(C->WarnSize && C->PreSelection)    // ...or any sort of preselection and there is a maximum size
+               // preselect messages if preference is "always" or "always, sizes only"
+               if(C->PreSelection >= PSM_ALWAYS)
+                  preselect = TRUE;
+               else if(C->WarnSize > 0 && C->PreSelection != PSM_NEVER)
                {
+                  // ...or any sort of preselection and there is a maximum size
+
                   struct MinNode *curNode;
                   for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
                   {
@@ -3631,21 +3642,22 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
                }
             }
 
-            if (preselect)                               // anything to preselect?
+            // anything to preselect?
+            if (preselect)
             {
                // avoid MUIA_Window_Open's side effect of activating the window if it was already open
-               if(!xget(G->TR->GUI.WI, MUIA_Window_Open)) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
+               if(!xget(G->TR->GUI.WI, MUIA_Window_Open))
+                 set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
 
-               // if preselect mode is "always [sizes only]"
-               if (C->PreSelection == 1)
+               // if preselect mode is "large only" we display the mail list
+               // but make sure to display/add large emails only.
+               if (C->PreSelection == PSM_LARGE)
                {
-                  TR_DisplayMailList(TRUE);                          // add entries to list
-                  set(G->TR->GUI.GR_LIST, MUIA_ShowMe, TRUE);        // ...and show it
+                  TR_DisplayMailList(TRUE);
+                  set(G->TR->GUI.GR_LIST, MUIA_ShowMe, TRUE);
                }
                else
-               {
                   TR_DisplayMailList(FALSE);
-               }
 
                DoMethod(G->TR->GUI.WI, MUIM_Window_ScreenToFront);
                DoMethod(G->TR->GUI.WI, MUIM_Window_ToFront);
@@ -6450,7 +6462,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
     struct Folder *infolder = FO_GetFolderByType(FT_INCOMING, NULL);
     struct MinNode *curNode;
 
-    if(C->TransferWindow == 2 && !xget(G->TR->GUI.WI, MUIA_Window_Open))
+    if(C->TransferWindow == TWM_SHOW && !xget(G->TR->GUI.WI, MUIA_Window_Open))
       set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
 
     TR_TransStat_Start(&ts);
@@ -6533,7 +6545,7 @@ static void TR_CompleteMsgList(void)
    DoMethod(tr->GUI.BT_QUIT , MUIM_KillNotify, MUIA_Pressed);
    DoMethod(tr->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(tr->Abort));
 
-   if(C->PreSelection < 3)
+   if(C->PreSelection < PSM_ALWAYSLARGE)
    {
       struct MinNode *curNode = tr->GMD_Mail;
 
@@ -6550,7 +6562,7 @@ static void TR_CompleteMsgList(void)
           break;
         }
 
-        if(C->PreSelection != 1 || mtn->mail->Size >= C->WarnSize*1024)
+        if(C->PreSelection != PSM_LARGE || mtn->mail->Size >= C->WarnSize*1024)
         {
           TR_GetMessageDetails(mtn, tr->GMD_Line++);
 
@@ -6720,7 +6732,7 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
       if (fullwin)
       {
          data->GUI.GR_LIST = VGroup, GroupFrameT(TRmode==TR_IMPORT ? tr(MSG_TR_MsgInFile) : tr(MSG_TR_MsgOnServer)),
-            MUIA_ShowMe, TRmode==TR_IMPORT || C->PreSelection>=2,
+            MUIA_ShowMe, TRmode==TR_IMPORT || C->PreSelection >= PSM_ALWAYS,
             Child, NListviewObject,
                MUIA_CycleChain,1,
                MUIA_NListview_NList, data->GUI.LV_MAILS = TransferMailListObject,

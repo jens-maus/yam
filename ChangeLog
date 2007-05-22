@@ -7,6 +7,8 @@ $URL$
 
 2007-05-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c, YAM_config.h, misc: replaced the integer for 'TransferWindow'
+    and 'PreSelection' by an enum value to make the usage more clear.
   * YAM_TR.c: whoops, the last commit from Thore seem to have broken the OS3/MOS
     builds as he did revert my last changes by accident. Now my TR_IsOnline()
     changes should be back again.
