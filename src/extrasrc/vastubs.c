@@ -82,6 +82,10 @@ STRPTR CodesetsUTF8ToStr(Tag tag1, ...)
 UTF8 *CodesetsUTF8Create(Tag tag1, ...)
 { return CodesetsUTF8CreateA((struct TagItem*)&tag1); }
 
+#include <proto/socket.h>
+LONG SocketBaseTags(Tag tag1, ...)
+{ return SocketBaseTagList((struct TagItem*)&tag1); }
+
 #else
   #error "VARGS stubs are only save on m68k systems!"
 #endif

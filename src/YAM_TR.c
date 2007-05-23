@@ -428,7 +428,7 @@ static BOOL TR_StartTLS(VOID)
               // check if we are here because of a second iteration
               if(retVal == 0)
               {
-                W(DBF_NET, "TR_StartTLS: recoverable WaitSelect() timeout: %d", timeoutSum);
+                W(DBF_NET, "TR_StartTLS: recoverable WaitSelect() timeout: %ld", timeoutSum);
 
                 // give our GUI the chance to update
                 DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -476,7 +476,7 @@ static BOOL TR_StartTLS(VOID)
             else
             {
               // the rest should signal an error
-              E(DBF_NET, "WaitSelect() returned an error: %d", err);
+              E(DBF_NET, "WaitSelect() returned an error: %ld", err);
               errorState = TRUE;
             }
           }
@@ -484,7 +484,7 @@ static BOOL TR_StartTLS(VOID)
 
           default:
           {
-            E(DBF_NET, "SSL_connect() returned an error %d", err);
+            E(DBF_NET, "SSL_connect() returned an error %ld", err);
             errorState = TRUE;
           }
           break;
@@ -538,7 +538,7 @@ static BOOL TR_StartTLS(VOID)
       }
     }
     else
-      E(DBF_NET, "SSL_set_fd() error. TR_Socket: %d", G->TR_Socket);
+      E(DBF_NET, "SSL_set_fd() error. TR_Socket: %ld", G->TR_Socket);
   }
   else
     E(DBF_NET, "Can't create a new SSL structure for a connection.");
@@ -1594,16 +1594,15 @@ static int TR_Connect(char *host, int port)
         // lets create a standard AF_INET socket now
         if((G->TR_Socket = socket(AF_INET, SOCK_STREAM, 0)) != TCP_NO_SOCKET)
         {
-          int connectState = 0;
           LONG nonBlockingIO = 1;
 
           // now we set the socket for non-blocking I/O
           if(IoctlSocket(G->TR_Socket, FIONBIO, &nonBlockingIO) != -1)
           {
-            // set to no error per default
-            LONG err = CONNECTERR_NO_ERROR;
+            int connectIssued = 0;
+            LONG err = CONNECTERR_NO_ERROR; // set to no error per default
 
-            D(DBF_NET, "successfully set socket to non-blocking I/O mode");
+            D(DBF_NET, "successfully set socket to %sblocking I/O", nonBlockingIO == 1 ? "non-" : "");
 
             // lets set the socket options the user has defined
             // in the configuration
@@ -1617,22 +1616,31 @@ static int TR_Connect(char *host, int port)
 
             memcpy(&G->TR_INetSocketAddr.sin_addr, hostaddr->h_addr_list[i], (size_t)hostaddr->h_length);
 
-            D(DBF_NET, "trying TCP/IP connection to '%s' on port %d", Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr), port);
+            D(DBF_NET, "trying TCP/IP connection to '%s' on port %ld", Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr), port);
 
             // we call connect() to establish the connection to the socket. In case of
             // a non-blocking connection this call will return immediately with -1 and
-            // the errno value will be EINPROGRESS.
-            while(connectState >= 0 && err == CONNECTERR_NO_ERROR &&
+            // the errno value will be EINPROGRESS, EALREADY or EISCONN
+            while(err == CONNECTERR_NO_ERROR &&
                   connect(G->TR_Socket, (struct sockaddr *)&G->TR_INetSocketAddr, sizeof(G->TR_INetSocketAddr)) == -1)
             {
+              LONG connerr = -1;
+
+              // count the number of connect() processings
+              connectIssued++;
+
+              // get the error value which should normally be set by a connect()
+              SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), &connerr, TAG_END);
+
               // check the errno variable which connect() will set
-              switch(Errno())
+              switch(connerr)
               {
                 // as we are doing non-blocking socket I/O we check the error code
                 // and see if it is EINPROGRESS, the connection is currently in progress.
                 // so we go and call WaitSelect() to wait a specific amount of time until
                 // the connection succeeds.
                 case EINPROGRESS:
+                case EALREADY:
                 {
                   LONG retVal = -1;
                   fd_set fdset;
@@ -1647,7 +1655,7 @@ static int TR_Connect(char *host, int port)
                     // check if we are here because of a second iteration
                     if(retVal == 0)
                     {
-                      W(DBF_NET, "TR_Connect: recoverable WaitSelect() timeout: %d", timeoutSum);
+                      W(DBF_NET, "TR_Connect: recoverable WaitSelect() timeout: %ld", timeoutSum);
 
                       // give our GUI the chance to update
                       DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -1677,14 +1685,20 @@ static int TR_Connect(char *host, int port)
                   while((retVal = WaitSelect(G->TR_Socket+1, NULL, &fdset, NULL, (APTR)&timeout, NULL)) == 0);
 
                   // if WaitSelect() returns 1 we successfully waited for
-                  // being able to write to the socket. So we go and do another
-                  // iteration in the while() loop as the next connect() call should
-                  // return EISCONN if the connection really succeeded.
+                  // being able to write to the socket. So we can break out of the
+                  // loop immediately and continue with our stuff.
                   if(retVal >= 1 &&
                      FD_ISSET(G->TR_Socket, &fdset))
                   {
-                    connectState = 1; // signals we succeded the WaitSelect()
-                    continue;
+                    D(DBF_NET, "WaitSelect() succeeded");
+
+                    // normally we should not set an error code here but
+                    // continue cleanly so that a second connect() will
+                    // return EISCONN. However, it seems there are some broken
+                    // TCP/IP implementations (e.g. bsdsocket of UAE) which
+                    // return an error for subsequent connect() calls instead.
+                    // So we set SUCCESS here to continue cleanly.
+                    err = CONNECTERR_SUCCESS;
                   }
                   else if(retVal == 0)
                   {
@@ -1696,36 +1710,43 @@ static int TR_Connect(char *host, int port)
                   else
                   {
                     // the rest should signal an error
-                    E(DBF_NET, "WaitSelect() returned an error: %d", Errno());
+                    E(DBF_NET, "WaitSelect() returned an error: %ld", connerr);
                     err = CONNECTERR_UNKNOWN_ERROR;
                   }
                 }
                 break;
 
-                // if we received the EISCONN error message the
-                // socket is already connected
+                // check for EISCONN
                 case EISCONN:
                 {
-                  // only accept that error code as a success in
-                  // case we previously succeeded the WaitSelect()
-                  // state.
-                  if(connectState == 1)
+                  // EISCONN is only a valid reponse in case we have already issued
+                  // a connect() before
+                  if(connectIssued > 1)
+                  {
+                    D(DBF_NET, "connect() signaled an EISCONN success");
                     err = CONNECTERR_SUCCESS;
+                  }
                   else
+                  {
+                    E(DBF_NET, "connect() signaled an EISCONN failure");
                     err = CONNECTERR_UNKNOWN_ERROR;
+                  }
                 }
                 break;
 
-                // all other eror are real errors
+                // all other errors are real errors
                 default:
+                {
+                  E(DBF_NET, "connect() returned with an unrecoverable error: %ld", connerr);
                   err = CONNECTERR_UNKNOWN_ERROR;
+                }
                 break;
               }
             }
 
-            // in case the conenction suceeded immediately (no entered the while)
+            // in case the connection suceeded immediately (no entered the while)
             // we flag this connection as success
-            if(connectState == 0 && err == CONNECTERR_NO_ERROR)
+            if(err == CONNECTERR_NO_ERROR)
               result = CONNECTERR_SUCCESS;
             else
               result = err;
@@ -1736,14 +1757,14 @@ static int TR_Connect(char *host, int port)
           }
           else
           {
-            E(DBF_NET, "couldn't establish non-blocking IO: %d", Errno());
+            E(DBF_NET, "couldn't establish non-blocking IO: %ld", Errno());
             result = CONNECTERR_NO_SOCKET;
             break;
           }
         }
         else
         {
-          E(DBF_NET, "socket() returned an error: %d", Errno());
+          E(DBF_NET, "socket() returned an error: %ld", Errno());
           result = CONNECTERR_NO_SOCKET; // socket() failed
           break;
         }
@@ -1761,7 +1782,7 @@ static int TR_Connect(char *host, int port)
         else if(result == CONNECTERR_SUCCESS)
           break;
         else
-          E(DBF_NET, "connection result %d. Trying next IP of host...", result);
+          E(DBF_NET, "connection result %ld. Trying next IP of host...", result);
       }
     }
     else
@@ -1772,9 +1793,9 @@ static int TR_Connect(char *host, int port)
 
   #if defined(DEBUG)
   if(result != CONNECTERR_SUCCESS)
-    E(DBF_NET, "TR_Connect() connection error: %d", result);
+    E(DBF_NET, "TR_Connect() connection error: %ld", result);
   else
-    D(DBF_NET, "connection to %s:%d succedded", host, port);
+    D(DBF_NET, "connection to %s:%ld succedded", host, port);
   #endif
 
   RETURN(result);
@@ -1810,7 +1831,7 @@ static int TR_Recv(char *recvdata, int maxlen)
     if(G->TR_Debug)
       printf("SERVER[%04d]: %s", nread, recvdata);
 
-    D(DBF_NET, "TCP: received %d of max %d bytes", nread, maxlen);
+    D(DBF_NET, "TCP: received %ld of max %ld bytes", nread, maxlen);
   }
   else
     W(DBF_NET, "socket == TCP_NO_SOCKET");
@@ -2001,7 +2022,7 @@ static int TR_Send(const char *ptr, int len, int flags)
     // immediatly
     nwritten = TR_WriteBuffered(G->TR_Socket, ptr, len, flags);
 
-    D(DBF_NET, "TCP: sent %d of %d bytes (%d)", nwritten, len, flags);
+    D(DBF_NET, "TCP: sent %ld of %ld bytes (%ld)", nwritten, len, flags);
   }
   else
     W(DBF_NET, "socket == TCP_NO_SOCKET");
@@ -2083,7 +2104,7 @@ static int TR_ReadLine(LONG socket, char *vptr, int maxlen)
     if(G->TR_Debug)
       printf("SERVER[%04d]: %s", n, vptr);
 
-    D(DBF_NET, "TCP: received %d of max %d bytes", n, maxlen);
+    D(DBF_NET, "TCP: received %ld of max %ld bytes", n, maxlen);
 
     // return the number of chars we read
     result = n;
@@ -2135,7 +2156,7 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
             // check if we are here because of a second iteration
             if(retVal == 0)
             {
-              W(DBF_NET, "TR_Read: recoverable WaitSelect() timeout: %d", timeoutSum);
+              W(DBF_NET, "TR_Read: recoverable WaitSelect() timeout: %ld", timeoutSum);
 
               // give our GUI the chance to update
               DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -2184,7 +2205,7 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
           else
           {
             // the rest should signal an error
-            E(DBF_NET, "WaitSelect() returned an error: %d", err);
+            E(DBF_NET, "WaitSelect() returned an error: %ld", err);
             errorState = TRUE;
             nread = -1;
           }
@@ -2193,7 +2214,7 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
 
         default:
         {
-          E(DBF_NET, "SSL_read() returned an error %d", err);
+          E(DBF_NET, "SSL_read() returned an error %ld", err);
           errorState = TRUE;
           nread = -1;
         }
@@ -2207,7 +2228,10 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
     while(errorState == FALSE &&
           (nread = recv(socket, ptr, maxlen, 0)) == -1)
     {
-      int err = Errno();
+      LONG err = -1;
+
+      // get the error value which should normally be set by a recv()
+      SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), &err, TAG_END);
 
       switch(err)
       {
@@ -2229,7 +2253,7 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
             // check if we are here because of a second iteration
             if(retVal == 0)
             {
-              W(DBF_NET, "TR_Read: recoverable WaitSelect() timeout: %d", timeoutSum);
+              W(DBF_NET, "TR_Read: recoverable WaitSelect() timeout: %ld", timeoutSum);
 
               // give our GUI the chance to update
               DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -2276,7 +2300,7 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
           else
           {
             // the rest should signal an error
-            E(DBF_NET, "WaitSelect() returned an error: %d", err);
+            E(DBF_NET, "WaitSelect() returned an error: %ld", err);
             errorState = TRUE;
           }
         }
@@ -2292,7 +2316,7 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
 
         default:
         {
-          E(DBF_NET, "recv() returned an error %d", err);
+          E(DBF_NET, "recv() returned an error %ld", err);
           errorState = TRUE;
         }
         break;
@@ -2431,7 +2455,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
             // check if we are here because of a second iteration
             if(retVal == 0)
             {
-              W(DBF_NET, "TR_Write: recoverable WaitSelect() timeout: %d", timeoutSum);
+              W(DBF_NET, "TR_Write: recoverable WaitSelect() timeout: %ld", timeoutSum);
 
               // give our GUI the chance to update
               DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -2480,7 +2504,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
           else
           {
             // the rest should signal an error
-            E(DBF_NET, "WaitSelect() returned an error: %d", err);
+            E(DBF_NET, "WaitSelect() returned an error: %ld", err);
             errorState = TRUE;
             nwritten = -1;
           }
@@ -2489,7 +2513,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
 
         default:
         {
-          E(DBF_NET, "SSL_write() returned an error %d", err);
+          E(DBF_NET, "SSL_write() returned an error %ld", err);
           errorState = TRUE;
           nwritten = -1;
         }
@@ -2503,7 +2527,10 @@ static int TR_Write(LONG socket, const char *ptr, int len)
     while(errorState == FALSE &&
           (nwritten = send(socket, (APTR)ptr, len, 0)) == -1)
     {
-      int err = Errno();
+      LONG err = -1;
+
+      // get the error value which should normally be set by a send()
+      SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), &err, TAG_END);
 
       switch(err)
       {
@@ -2525,7 +2552,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
             // check if we are here because of a second iteration
             if(retVal == 0)
             {
-              W(DBF_NET, "TR_Write: recoverable WaitSelect() timeout: %d", timeoutSum);
+              W(DBF_NET, "TR_Write: recoverable WaitSelect() timeout: %ld", timeoutSum);
 
               // give our GUI the chance to update
               DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -2572,7 +2599,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
           else
           {
             // the rest should signal an error
-            E(DBF_NET, "WaitSelect() returned an error: %d", err);
+            E(DBF_NET, "WaitSelect() returned an error: %ld", err);
             errorState = TRUE;
           }
         }
@@ -2588,7 +2615,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
 
         default:
         {
-          E(DBF_NET, "send() returned an error %d", err);
+          E(DBF_NET, "send() returned an error %ld", err);
           errorState = TRUE;
         }
         break;
@@ -2598,7 +2625,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
 
   #if defined(DEBUG)
   if(nwritten != len)
-    E(DBF_NET, "TR_Write() short item count: %d of %d transfered!", nwritten, len);
+    E(DBF_NET, "TR_Write() short item count: %ld of %ld transfered!", nwritten, len);
   #endif
 
   RETURN(nwritten);
@@ -4579,7 +4606,7 @@ static BOOL FilterDuplicates(void)
                     // mark the UIDLtoken as being checked
                     token->checked = TRUE;
 
-                    D(DBF_UIDL, "mail %d: UIDL '%s' was FOUND!", mtn->index, mtn->UIDL);
+                    D(DBF_UIDL, "mail %ld: UIDL '%s' was FOUND!", mtn->index, mtn->UIDL);
                   }
                 }
 
@@ -4628,7 +4655,7 @@ static BOOL FilterDuplicates(void)
               G->TR->Stats.DupSkipped++;
               MASK_FLAG(mtn->tflags, TRF_DELETE);
 
-              D(DBF_UIDL, "mail %d: UIDL '%s' was FOUND!", mtn->index, mtn->UIDL);
+              D(DBF_UIDL, "mail %ld: UIDL '%s' was FOUND!", mtn->index, mtn->UIDL);
             }
           }
         }
@@ -5397,7 +5424,7 @@ static struct MailTransferNode *TR_AddMessageHeader(int *count, int size, long a
 
         AddTail((struct List *)&G->TR->transferList, (struct Node *)mtn);
 
-        D(DBF_IMPORT, "added mail '%s' (%d bytes) to import list.", mail->Subject, size);
+        D(DBF_IMPORT, "added mail '%s' (%ld bytes) to import list.", mail->Subject, size);
 
         ret = mtn;
       }
@@ -5521,7 +5548,7 @@ static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, u
 
   if(!(buf = malloc(size)))
   {
-    E(DBF_IMPORT, "Couldn't allocate %d bytes", size);
+    E(DBF_IMPORT, "Couldn't allocate %ld bytes", size);
     RETURN(FALSE);
     return FALSE;
   }
@@ -5536,7 +5563,7 @@ static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, u
   // read in the whole message info object
   if(fread(buf, 1, size, fh) != size)
   {
-    E(DBF_IMPORT, "Unable to read %d bytes", size);
+    E(DBF_IMPORT, "Unable to read %ld bytes", size);
     goto out;
   }
 
@@ -5562,11 +5589,11 @@ static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, u
   {
     unsigned char *newbuf;
 
-    D(DBF_IMPORT, "read in %d bytes of object at 0x%x, but index length is %d", size, addr, length_of_idxs);
+    D(DBF_IMPORT, "read in %ld bytes of object at 0x%x, but index length is %ld", size, addr, length_of_idxs);
 
     if(!(newbuf = malloc(length_of_idxs + 12)))
     {
-      E(DBF_IMPORT, "Couldn't allocate %d bytes", length_of_idxs+12);
+      E(DBF_IMPORT, "Couldn't allocate %ld bytes", length_of_idxs+12);
       goto out;
     }
 
@@ -5732,7 +5759,7 @@ static BOOL ReadDBXNode(FILE *fh, char *outFileName, unsigned int addr, int *mai
   {
     free(buf);
 
-    E(DBF_IMPORT, "Unable to read %d bytes", 0x18+0x264);
+    E(DBF_IMPORT, "Unable to read %ld bytes", 0x18+0x264);
     RETURN(FALSE);
     return FALSE;
   }
@@ -5966,14 +5993,14 @@ BOOL TR_GetMessageList_IMPORT(void)
               int number_of_mails = GetLong(file_header, 0xc4);
               unsigned int root_node = GetLong(file_header, 0xe4);
 
-              D(DBF_IMPORT, "number of mails in dbx file: %d", number_of_mails);
+              D(DBF_IMPORT, "number of mails in dbx file: %ld", number_of_mails);
 
               // now we actually start at the root node and read in all messages
               // accordingly
               if(ReadDBXNode(ifh, fname, root_node, &c, TRUE) && c == number_of_mails)
                 result = TRUE;
               else
-                E(DBF_IMPORT, "Failed to read from root_node; c=%d", c);
+                E(DBF_IMPORT, "Failed to read from root_node; c=%ld", c);
             }
           }
 
