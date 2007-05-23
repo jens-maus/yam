@@ -1,9 +1,24 @@
-## version $VER: YAM.catalog 6.0 (01.04.2007)
+## version $VER: YAM.catalog 6.0 (24.05.2007)
 ## language français
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 2856 2007-04-12 10:40:20Z
+; based on YAM.cd 3043 2007-05-21 22:29:16Z
+;
+; Please note that all catalog strings have to carry a proper
+; identifier number in the (X//) string part of the MSG_ identifier
+; field and that those numbers have to be unique and continous over
+; all different YAM versions. This allows to remove some obsolete
+; strings later on without having to worry about identifier clashes.
+; This however means that if an entry is being deleted here its
+; identifier should NEVER be reused later on. So, if you are going to
+; add new strings here do that always at the bottom of the file
+; and increase the last listed identifier number by one for your
+; new entries. And if you delete an entry NEVER reorder or resort
+; the ID numbers accordingly.
+;
+;#version 6
+;#language english
 ;
 ; General
 ;
@@ -765,7 +780,7 @@ Chercher
 ;
 MSG_MA_TBAddrBook
 C_arnet
-; _Abook
+; A_book
 ;
 MSG_MA_TBConfig
 _Config
@@ -1617,7 +1632,7 @@ Prog par _défaut
 ; De_fault viewer
 ;
 MSG_CO_MessageHeader
-Message d'en-tête
+Ent-tête de message
 ; Message header
 ;
 MSG_CO_ReplyTo
@@ -2737,7 +2752,7 @@ URL où charger votre photo
 ;
 MSG_HELP_CO_CY_ATAB
 Mettre automatiquement l'adresse de\n\
-l'expéditeur dans votre annuaire,\n\
+l'expéditeur dans votre carnet d'adresses,\n\
 lorsque vous lisez un message ?
 ; Automatically create an address book entry\n\
 ; for the sender when you read his/her message?
@@ -2751,7 +2766,7 @@ Vous pouvez laissez cette zone vide
 ; You may leave this field empty.
 ;
 MSG_HELP_CO_ST_NEWGROUP
-Les nouvelles entrées dans l'annuaire\n\
+Les nouvelles entrées du carnet d'adresses\n\
 seront ajoutées dans ce groupe.\n\
 (Ce groupe sera créé dès la première entrée)
 ; Add new address book entries to this group\n\
@@ -4258,7 +4273,7 @@ du premier destinataire
 ;
 MSG_HELP_WR_BT_ADR
 Choisir un destinataire\n\
-présent dans l'annuaire
+depuis le carnet d'adresses
 ; Select recipient from\n\
 ; the address book
 ;
@@ -5316,13 +5331,6 @@ MSG_US_RemoveReqGads
 *_Oui|_Garder les fichiers|_Annuler
 ; *_Okay|_Keep files|_Cancel
 ;
-MSG_US_ErrorNoDirectory
-Répertoire non trouvé.\n\
-Voulez-vous le créer ?
-; Mail directory not found.\n\
-; Do you want to create it?
-;
-;
 ; Module US - Window
 ;
 MSG_US_UserName
@@ -5334,7 +5342,7 @@ _Répertoire des dossiers
 ; _Mail directory
 ;
 MSG_US_GlobalAddrBook
-Utiliser annuaire glo_bal
+Utiliser le carndet d'adresses glo_bal
 ; Use global address _book
 ;
 MSG_US_GlobalDict
@@ -6791,26 +6799,23 @@ incorrectement dans YAM.
 ; or some images may be displayed incorrectly in YAM.
 ;
 MSG_MA_AUTOSAVEFOUND
-YAM a trouvé le fichier de sauvegarde automatique\n\
-'%s' qui a été créé\n\
-lors d'une session précédente.\n\
-Cela peut être dû a un éventuel crash ou reboot lors\n\
-de la rédaction d'un nouveau message.\n\
+YAM a trouvé un fichier de sauvegarde automatique\n\
+de message '%s' ayant été créé lors\n\
+d'une session précédente. Cela peut être dû a un\n\
+éventuel plantage ou reboot lors de la rédaction du\n\
+nouveau message.\n\
 \n\
 Que voulez-vous faire de ce fichier ?
-; YAM has found the autosaved file '%s' which\n\
-; have been created in a previous session. This may be due\n\
-; to a possible crash or reboot during writing a message.\n\
+; YAM has found an autosaved message file '%s'\n\
+; which have been created in a previous session. This may\n\
+; be due to a possible crash or reboot while writing a\n\
+; message.\n\
 ; \n\
-; What do you want to do with that file?
+; What do you want to do with that message?
 ;
 MSG_MA_AUTOSAVEFOUND_TITLE
 Fichier de sauvegarde automatique détecté
 ; Autosave file found
-;
-MSG_MA_AUTOSAVEFOUND_BT
-*_Ouvrir dans une fenêtre de rédaction|_Effacer|_Ignorer
-; *_Open in write window|_Delete|_Ignore
 ;
 MSG_CO_NB_AUTOSAVE
 Intervalle de sauvegarde automatique
@@ -6984,8 +6989,8 @@ Recherche des messages dans le dossier '%s'...
 ; Searching for messages in folder '%s'...
 ; FOLDERNAME
 MSG_CO_WBAPPICON
-AppIcon sur le workbench
-; AppIcon on workbench
+A_ppIcon sur le workbench
+; A_ppIcon on workbench
 ;
 MSG_HELP_CO_CH_WBAPPICON
 Affiche un AppIcon sur le Workbench\n\
@@ -6994,8 +6999,8 @@ avec les statistiques des dossiers.
 ; with folder statistics.
 ;
 MSG_CO_DOCKYICON
-DockyIcon
-; DockyIcon
+D_ockyIcon
+; D_ockyIcon
 ;
 MSG_HELP_CO_CH_DOCKYICON
 Affiche un Docky icône via application.library.\n\
@@ -7795,12 +7800,12 @@ Chargement de la détection des courriers indésirables...
 ; Loading spam training data...
 ;
 MSG_MA_TBSPAM
-Indésirable
-; S_pam
+Indésir_able
+; Sp_am
 ;
 MSG_MA_TBNOTSPAM
-Acceptable
-; N_otSpam
+Accept_able
+; N.Sp_am
 ;
 MSG_HELP_MA_BT_SPAM
 Marque ce message comme indésirable
@@ -7811,12 +7816,12 @@ Marque ce message comme acceptable
 ; Mark mail as not spam
 ;
 MSG_RE_TBSPAM
-Indésirable
-; Spam
+Indésir_able
+; Sp_am
 ;
 MSG_RE_TBNOTSPAM
-Acceptable
-; Not Spam
+Accept_able
+; N.Sp_am
 ;
 MSG_HELP_RE_BT_SPAM
 Marque ce message comme indésirable
@@ -8335,12 +8340,12 @@ Tout sélectionner
 ; Select All
 ;
 MSG_RE_MDN_ACCEPT_LATER
-Accepter et\n\envoyer plus tard
+Accepter et\nenvoyer plus tard
 ; Accept and\n\
 ; send later
 ;
 MSG_RE_MDN_ACCEPT_NOW
-Accepter et\n\envoyer maintenant
+Accepter et\nenvoyer maintenant
 ; Accept and\n\
 ; send now
 ;
@@ -8617,4 +8622,130 @@ indésirables comme lus ?
 MSG_ER_CANNOT_CREATE_SEMAPHORE
 Impossible de créer le sémaphore !
 ; Can't create semaphore!
+;
+MSG_MA_AUTOSAVEFOUND_BUTTONS
+*_Envoyer|_Editer[E_ffacer|_Ignorer
+; *Put in _Outbox|_Edit|_Delete|_Ignore
+;
+MSG_RE_HDR_FROM
+De
+; From
+;
+MSG_RE_HDR_TO
+A
+; To
+;
+MSG_RE_HDR_DATE
+Date
+; Date
+;
+MSG_RE_HDR_SUBJECT
+Sujet
+; Subject
+;
+MSG_RE_VIRTUALMAIL
+Mail virtuel
+; Virtual Mail
+;
+MSG_CO_MIMECMD_PUBSCREEN
+%p  Nom de l'écran public de YAM
+; %p  Name of YAM's public screen
+;
+MSG_ER_ZOMBIE_FILES_EXIST
+YAM n'a pas été en mesure d'effacer tous les fichiers\n\
+temporaires générés lors du nettoyage. Ces fichiers sont\n\
+peut-être actuellement verrouillés par d'autre applications.\n\
+\n\
+Veuillez vous assurer que vous avez fermé toutes les\n\
+applications que vous pourriez avoir utilisé depuis YAM\n\
+(par exemple Multiview).
+; YAM wasn't able to delete all temporary generated\n\
+; files during cleanup. These files may be currently\n\
+; locked by other applications.\n\
+; \n\
+; Please make sure you closed all applications which\n\
+; you may have used from within YAM (e.g. Multiview).
+;
+MSG_ER_ZOMBIE_FILES_EXIST_BT
+_Ressayer|_Ignorer
+; _Retry|_Ignore
+;
+MSG_ER_ZOMBIE_FILES_EXIST_TITLE
+YAM : Avertissement de nettoyage
+; YAM cleanup warning
+;
+MSG_CO_SHOWALTPARTS
+Afficher les parties a_lternatives
+; Show a_lternative parts
+;
+MSG_HELP_CO_CH_SHOWALTPARTS
+Active l'affichage - normalement masqué - des parties\n\
+alternatives d'un message « multipart/alternative » comme\n\
+des pièces jointes.
+; If enabled, normally hidden alternative message\n\
+; parts of an 'multipart/alternative' mail will be\n\
+; shown as attachments.
+;
+MSG_US_DIRECTORY_DOESNT_EXIST
+Le répertoire de messagerie '%s' de\n\
+l'utilisateur '%s' n'existe pas.\n\
+\n\
+Voulez-vous le créer ?
+; The mail directory '%s' of user '%s' does not exist.\n\
+; \n\
+; Do you want to create it?
+;
+MSG_HELP_CO_BT_APPICONGETPOS
+Configure la position de l'AppIcon en récupérant\n\
+la position actuelle sur le Workbench.
+; If pressed, the AppIcon position is retrieved from\n\
+; the current position of the AppIcon on the workbench\n\
+; desktop.
+;
+MSG_CO_MOVE_HAM_TO_INCOMING
+Remettre les messages « Acceptables » dans la boite de réce_ption
+; Move 'Not Spam' mails back to _incoming folder
+;
+MSG_HELP_CH_MOVE_HAM_TO_INCOMING
+Avec cette option un message faussement classé comme\n\
+indésirable et marqué manuellement comme acceptable\n\
+est remis dans la boite de réception.
+; If enabled, a mail which was incorrectly classified\n\
+; as spam and being manually marked as 'not spam' will be\n\
+; moved back to the incoming folder.
+;
+MSG_ER_NO8BITMIME
+Lors de la tentative de connexion au serveur SMPT '%s',\n\
+celui a indiqué qu'il ne supportait pas les transferts\n\
+8 bits. Cependant il semble que l'option 'Autoriser les\n\
+caractères 8 bits' est activée dans la configuration de\n\
+ce serveur SMTP.\n\
+Veuillez vous assurer de désactiver cette option et de\n\
+rééditer le message, dans le cas contraire il se peut qui\n\
+soit corrompu lors de son transfert.
+; While trying to connect to SMTP server '%s', it reported \
+; that it doesn't support 8bit MIME transfers. However, you \
+; seem to have the 'Allow8bit' option enabled in your \
+; SMTP server configuration.\n\
+; \n\
+; Please make sure you disable this option and re-edit the \
+; mail or otherwise it may be malformed during the transfer.
+;
+MSG_CO_FILTER_HAM
+Appliquer les _filtres
+; Apply _filters
+;
+MSG_HELP_CH_FILTER_HAM
+Avec cett option, après le déplacement du message tous les\n\
+filtres définis par l'utilisteur lui seront appliqués.
+; If enabled, after moving the mail all user defined filters\n\
+; will be applied to the mail.
+;
+MSG_SHUTDOWN_SHUTTING_DOWN
+Arrêt en cours...
+; Shutting down...
+;
+MSG_ER_IGNOREALL
+Ignorer _tout|*_Ignorer
+; Ignore _all|*_Ignore
 ;
