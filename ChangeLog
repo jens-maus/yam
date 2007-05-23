@@ -7,6 +7,11 @@ $URL$
 
 2007-05-23  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c: before considering a connect() attempt to be successfull we will
+    now read out the socket SO_ERROR option and check if it returns an error
+    or if we can consider it successfull. This should make the connect()
+    success state checking a bit safer, especially because of the recently
+    introduced for the UAE bsdsocket workaround.
   * YAM_TR.c: reworked the TR_Connect() to not issue a subsequent connect()
     in case a connection succeeded the WaitSelect() state. Somehow there seem
     to be partly broken bsdsocket TCP/IP stack implementations (e.g. WinUAE)

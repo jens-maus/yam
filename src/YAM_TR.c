@@ -1690,6 +1690,9 @@ static int TR_Connect(char *host, int port)
                   if(retVal >= 1 &&
                      FD_ISSET(G->TR_Socket, &fdset))
                   {
+                    int errval = -1;
+                    LONG errlen = sizeof(errval);
+
                     D(DBF_NET, "WaitSelect() succeeded");
 
                     // normally we should not set an error code here but
@@ -1697,8 +1700,21 @@ static int TR_Connect(char *host, int port)
                     // return EISCONN. However, it seems there are some broken
                     // TCP/IP implementations (e.g. bsdsocket of UAE) which
                     // return an error for subsequent connect() calls instead.
-                    // So we set SUCCESS here to continue cleanly.
-                    err = CONNECTERR_SUCCESS;
+                    //
+                    // So what we do here to workaround the issue is, we
+                    // query the socket options and see if SO_ERROR is zero
+                    // (no error) which sould signal that the connection
+                    // worked out fine, else we return an unknown error.
+                    if(getsockopt(G->TR_Socket, SOL_SOCKET, SO_ERROR, &errval, &errlen) == 0 &&
+                       errval == 0)
+                    {
+                      err = CONNECTERR_SUCCESS;
+                    }
+                    else
+                    {
+                      E(DBF_NET, "SO_ERROR in socket options found! error value read: %ld", errval);
+                      err = CONNECTERR_UNKNOWN_ERROR;
+                    }
                   }
                   else if(retVal == 0)
                   {
