@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: minor modifications to the socket transfer routines so that a
+    write operation to the socket should identify a short item count and
+    besides a debug warning, also end up in an error, if not all requested
+    data could be written to the socket.
+
 2007-05-22  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_FO.c: fixed a bunch of const warnings which the latest GCC 4.2.x seems

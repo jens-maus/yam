@@ -2580,7 +2580,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
 
         case EINTR:
         {
-          // we received an interrupt signal so we issue the recv()
+          // we received an interrupt signal so we issue the send()
           // command again.
           continue;
         }
@@ -2595,6 +2595,11 @@ static int TR_Write(LONG socket, const char *ptr, int len)
       }
     }
   }
+
+  #if defined(DEBUG)
+  if(nwritten != len)
+    E(DBF_NET, "TR_Write() short item count: %d of %d transfered!", nwritten, len);
+  #endif
 
   RETURN(nwritten);
   return nwritten;
@@ -2645,7 +2650,7 @@ static int TR_WriteBuffered(LONG socket, const char *ptr, int maxlen, int flags)
       if(write_cnt >= C->TRBufferSize || hasTCP_ONLYFLUSH(flags))
       {
         // make sure we write out the data to the socket
-        if(TR_Write(socket, write_buf, write_cnt) == -1)
+        if(TR_Write(socket, write_buf, write_cnt) != write_cnt)
         {
           // abort and signal an error
           abortProc = TRUE;
@@ -2655,15 +2660,15 @@ static int TR_WriteBuffered(LONG socket, const char *ptr, int maxlen, int flags)
           // set the ptr to the start of the buffer
           write_ptr = write_buf;
           write_cnt = 0;
-        }
 
-        // if this write operation was just because of a ONLYFLUSH
-        // flag we can abort immediately, but make sure we don't
-        // return an error but a count of zero
-        if(hasTCP_ONLYFLUSH(flags))
-        {
-          abortProc = TRUE;
-          result = 0;
+          // if this write operation was just because of a ONLYFLUSH
+          // flag we can abort immediately, but make sure we don't
+          // return an error but a count of zero
+          if(hasTCP_ONLYFLUSH(flags))
+          {
+            abortProc = TRUE;
+            result = 0;
+          }
         }
       }
 
@@ -2671,7 +2676,7 @@ static int TR_WriteBuffered(LONG socket, const char *ptr, int maxlen, int flags)
       if(abortProc == FALSE)
       {
         // if the string we want to copy into the buffer
-        // wouldn`t fit, we copy as many as we can, clear the buffer
+        // wouldn`t fit, we copy as much as we can, clear the buffer
         // and continue until there is enough space left
         while(write_cnt+maxlen > C->TRBufferSize)
         {
@@ -2690,7 +2695,7 @@ static int TR_WriteBuffered(LONG socket, const char *ptr, int maxlen, int flags)
           maxlen -= fillable;
 
           // now we write out the data
-          if(TR_Write(socket, write_buf, write_cnt) == -1)
+          if(TR_Write(socket, write_buf, write_cnt) != write_cnt)
           {
             // abort and signal an error
             abortProc = TRUE;
@@ -2720,7 +2725,7 @@ static int TR_WriteBuffered(LONG socket, const char *ptr, int maxlen, int flags)
           if(hasTCP_FLUSH(flags))
           {
             // write our whole buffer out to the socket
-            if(TR_Write(socket, write_buf, write_cnt) == -1)
+            if(TR_Write(socket, write_buf, write_cnt) != write_cnt)
             {
               // abort and signal an error
               abortProc = TRUE;
