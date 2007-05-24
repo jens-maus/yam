@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: reworked the TR_Read(), but especially the TR_Write() function
+    to take care of only partially written data. Previously TR_Write() didn't
+    care about 'short item counts' and only did a single data transfer via
+    send(), rather than trying to submit all supplied data. Now it should take
+    care of that as well, which hopefully should fix bug #1722336.
+ 
 2007-05-24  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: french translation update according to latest changes.
