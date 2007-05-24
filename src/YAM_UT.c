@@ -1315,7 +1315,7 @@ char *TrimEnd(char *s)
 }
 ///
 /// Trim
-//� Removes leading and trailing spaces
+// Removes leading and trailing spaces
 char *Trim(char *s)
 {
   ENTER();

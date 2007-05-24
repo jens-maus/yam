@@ -3692,7 +3692,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
         else
         {
           // update the stats first, else the AppIcon might show outdated numbers
-          FO_UpdateStatistics(folder);
+          FO_UpdateStatistics((struct Folder *)-1);
           DisplayAppIconStatistics();
         }
 
