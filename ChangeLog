@@ -7,6 +7,7 @@ $URL$
 
 2007-05-24  Thore B�ckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c, YAM_UT.c: use the new folder stats function.
   * YAM_FO.c: added a new function which updates the statistics for a single
     folder.
 

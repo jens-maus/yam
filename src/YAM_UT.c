@@ -1315,7 +1315,7 @@ char *TrimEnd(char *s)
 }
 ///
 /// Trim
-//  Removes leading and trailing spaces
+//ï¿½ Removes leading and trailing spaces
 char *Trim(char *s)
 {
   ENTER();
@@ -5921,7 +5921,7 @@ void DisplayAppIconStatistics(void)
   // clear AppIcon Label first before we create it new
   apptit[0] = '\0';
 
-  if(C->WBAppIcon)
+  if(C->WBAppIcon == TRUE)
   {
     char *src;
 
@@ -5950,7 +5950,7 @@ void DisplayAppIconStatistics(void)
   }
 
   // we set the mode accordingly to the status of the folder (new/check/old)
-  if(G->TR && G->TR->Checking)
+  if(G->TR != NULL && G->TR->Checking == TRUE)
     mode = 3;
   else
     mode = tot_msg ? (new_msg ? 2 : 1) : 0;
@@ -5973,7 +5973,7 @@ void DisplayAppIconStatistics(void)
     //     hurt other compilers
     // 2.) Using "zero" as lock parameter avoids a header compatibility
     //     issue (old: "struct FileLock *"; new: "BPTR")
-    if(C->WBAppIcon)
+    if(C->WBAppIcon == TRUE)
     {
       // set the icon position
       dobj->do_CurrentX = C->IconPositionX < 0 ? (LONG)NO_ICON_POSITION : C->IconPositionX;
@@ -6040,7 +6040,6 @@ void DisplayAppIconStatistics(void)
 void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
 {
   int pos;
-  struct Mail *mail;
   struct MUI_NListtree_TreeNode *tn;
   struct Folder *actfo = FO_GetCurrentFolder();
 
@@ -6062,23 +6061,8 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
     return;
   }
 
-  // Now we recount the amount of Messages of this Folder
-  for(mail = fo->Messages, fo->Unread = fo->New = fo->Total = fo->Sent = fo->Deleted = 0; mail; mail = mail->Next)
-  {
-    fo->Total++;
-
-    if(hasStatusNew(mail))
-      fo->New++;
-
-    if(!hasStatusRead(mail))
-      fo->Unread++;
-
-    if(hasStatusSent(mail))
-      fo->Sent++;
-
-    if(hasStatusDeleted(mail))
-      fo->Deleted++;
-  }
+  // update the stats for this folder
+  FO_UpdateStatistics(fo);
 
   // if this folder hasn`t got any own folder image in the folder
   // directory and it is one of our standard folders we have to check which image we put in front of it
@@ -6112,14 +6096,18 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
     while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
     {
       // fo_parent is NULL then it`s ROOT and we have to skip here
-      struct Folder *fo_parent = (struct Folder *)tn_parent->tn_User;
+      struct Folder *fo_parent;
 
-      if(fo_parent)
+      if((fo_parent = (struct Folder *)tn_parent->tn_User) != NULL)
       {
         int i;
 
         // clear the parent mailvariables first
-        fo_parent->Unread = fo_parent->New = fo_parent->Total = fo_parent->Sent = fo_parent->Deleted = 0;
+        fo_parent->Unread = 0;
+        fo_parent->New = 0;
+        fo_parent->Total = 0;
+        fo_parent->Sent = 0;
+        fo_parent->Deleted = 0;
 
         // Now we scan every child of the parent and count the mails
         for(i=0;;i++)

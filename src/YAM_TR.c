@@ -3653,7 +3653,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
      }
    }
 
-   if (pop >= MAXP3) /* Finish last connection */
+   if(pop >= MAXP3) /* Finish last connection */
    {
       // close the TCP/IP connection
       TR_CloseTCPIP();
@@ -3682,7 +3682,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 
         // Now we jump to the first new mail we received if the number of messages has changed
         // after the mail transfer
-        if(C->JumpToIncoming)
+        if(C->JumpToIncoming == TRUE)
           MA_JumpToNewMsg();
 
         // only call the DisplayStatistics() function if the actual folder wasn`t already the INCOMING
@@ -3690,11 +3690,16 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
         if((folder = FO_GetCurrentFolder()) && !isIncomingFolder(folder))
           DisplayStatistics((struct Folder *)-1, TRUE);
         else
+        {
+          // update the stats first, else the AppIcon might show outdated numbers
+          FO_UpdateStatistics(folder);
           DisplayAppIconStatistics();
+        }
 
         TR_NewMailAlert();
       }
-      else DisplayAppIconStatistics();
+      else
+        DisplayAppIconStatistics();
 
       // lets populate the LastDL statistics variable with the stats
       // of this download.
@@ -3703,10 +3708,10 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       MA_ChangeTransfer(TRUE);
 
       DisposeModulePush(&G->TR);
-      if (G->TR_Exchange)
+      if(G->TR_Exchange == TRUE)
       {
-         G->TR_Exchange = FALSE;
-         DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, SEND_ALL);
+        G->TR_Exchange = FALSE;
+        DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, SEND_ALL);
       }
 
       return;
