@@ -36,7 +36,7 @@
 #include <proto/intuition.h>
 
 #include "YAM_global.h"
-#include "YAM_utilities.h" // CLEAR_FLAG,SET_FLAG 
+#include "YAM_utilities.h" // CLEAR_FLAG,SET_FLAG
 
 #include "SDI_compiler.h"
 
@@ -453,16 +453,19 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
   if((isFlagSet(debug_classes, dclass) && isFlagSet(debug_flags, dflags)) ||
      (isFlagSet(dclass, DBC_ERROR) || isFlagSet(dclass, DBC_WARNING)))
   {
+    static char buf[1024];
     va_list args;
 
     _INDENT();
 
     va_start(args, format);
+    vsnprintf(buf, 1024, format, args);
+    va_end(args);
 
     if(ansi_output)
     {
       const char *highlight = ANSI_ESC_FG_GREEN;
-  
+
       switch(dclass)
       {
         case DBC_CTRACE:  highlight = ANSI_ESC_FG_BROWN; break;
@@ -474,22 +477,10 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
         case DBC_WARNING: highlight = ANSI_ESC_FG_PURPLE;break;
       }
 
-      kprintf("%s%s:%ld:", highlight, file, line);
-
-      KPutFmt((char *)format, args);
-
-      kprintf("%s\n", ANSI_ESC_CLR);
+      kprintf("%s%s:%ld:%s%s\n", highlight, file, line, buf, ANSI_ESC_CLR);
     }
     else
-    {
-      kprintf("%s:%ld:", file, line);
-
-      KPutFmt((char *)format, args);
-
-      kprintf("\n");
-    }
-
-    va_end(args);
+      kprintf("%s:%ld:%s\n", file, line, buf);
   }
 }
 #endif

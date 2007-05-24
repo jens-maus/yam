@@ -7,6 +7,10 @@ $URL$
 
 2007-05-24  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Debug.c: the OS3 and MOS builds were not able to print out floating point
+    numbers in the debug log, because kprintf() is not able to deal with such
+    values. Now the same code as for OS4 is used, which utilizes vasprintf()
+    and finally that buffer is put out with kprintf().
   * YAM.c, YAM_MAf.c, YAM_UT.c: separated the counting of new and unread mails.
     Mails are now counted according to their current state. That means a NEW
     state does no longer automatically imply an UNREAD state. If YAM does
