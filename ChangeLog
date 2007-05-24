@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-24  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: Updated according to changes in YAM.cd and some minor fixes.
+
 2007-05-24  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COs.c: the "fixed AppIcon position" checkmark was not correctly disabled

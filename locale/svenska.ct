@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.15 (17.04.07)
+## version $VER: YAM.ct 6.16 (24.05.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -274,7 +274,7 @@ Laddar grafik...
 ;#DEF Loading graphics...
 ;#SET (81//)
 MSG_SendStartReq
-Utmappen innehåller post.\nVill du skicka breven nu?
+Utkorgen innehåller oskickade brev.\nVill du skicka dessa brev nu?
 ;#DEF The outgoing folder contains unsent mail.\nDo you want to send these messages now?
 ;#SET (82//)
 MSG_QuitYAMReq
@@ -678,8 +678,8 @@ S_ök
 ;#DEF _Find
 ;#SET (195//)
 MSG_MA_TBAddrBook
-_Abok
-;#DEF _Abook
+A_bok
+;#DEF A_book
 ;#SET (196//)
 MSG_MA_TBConfig
 Ins_t.
@@ -830,7 +830,7 @@ Anslut till e-postservern\noch hämta nya brev
 ;#DEF Connect to the mail server\nand download new messages
 ;#SET (255//)
 MSG_HELP_MA_BT_SENDALL
-Skicka köade brev i utmappen.
+Skicka köade brev i utkorgen
 ;#DEF Send queued messages\nin the outgoing folder
 ;#SET (256//)
 MSG_HELP_MA_BT_FILTER
@@ -1186,8 +1186,8 @@ Do_män
 ;#DEF Do_main
 ;#SET (352//)
 MSG_CO_Allow8bit
-Server tillåter _8 bitars tecken
-;#DEF Sserver allows _8bit characters
+Servern tillåter _8 bitars tecken
+;#DEF Server allows _8bit characters
 ;#SET (353//)
 MSG_CO_ReceiveMail
 Hämta post (POP3)
@@ -2330,7 +2330,7 @@ ID på den PGP-nyckel som ska\nanvändas för att signera brev
 ;#DEF The ID of your PGP key that's\nused to sign messages
 ;#SET (656//)
 MSG_HELP_CO_CH_ENCSELF
-Kryptera nya brev även med din publika nyckel,\nså du fortfarande kan läsa eller redigera\nivägskickade brev
+Kryptera nya brev även med din allmänna nyckel,\nså du fortfarande kan läsa eller redigera\nivägskickade brev
 ;#DEF Encrypt new messages with your public key,\nso you can still read or edit sent messages
 ;#SET (657//)
 MSG_HELP_CO_ST_REMAILER
@@ -2870,7 +2870,7 @@ Webbadress
 ;#DEF Internet address\nof this entry
 ;#SET (803//)
 MSG_HELP_EA_ST_PGPKEY
-Hexadecimalt ID för den här\npersonens PGP-nyckel
+Hexadecimalt ID för den här\npersonens allmänna PGP-nyckel
 ;#DEF Hexadecimal ID of this\nperson's public PGP key
 ;#SET (804//)
 MSG_HELP_EA_ST_HOMEPAGE
@@ -3150,7 +3150,7 @@ Föregående brev i kedjan
 ;#DEF Previous message in thread
 ;#SET (881//)
 MSG_RE_ExtractKey
-Spara publika nycklar
+Spara allmänn nyckel/nycklar
 ;#DEF Extract public key(s)
 ;#SET (882//)
 MSG_RE_SaveDecrypted
@@ -3990,7 +3990,7 @@ Kunde inte öppna temporärfilen '%s'.\n\nKontrollera sökvägen i konfigurationen.
 ;#DEF Couldn't open temporary file '%s'.\n\nCheck the path settings in the configuration.
 ;#SET (1109//)
 MSG_ER_CantCreateTempfile
-Kunde inte skapa temporärfil.\n\nMinnet kan vara slut eller så är en felaktig sökväg angiven i konfigurationen.
+Kunde inte skapa temporär fil.\n\nMinnet kan vara slut eller så är en felaktig sökväg angiven i konfigurationen.
 ;#DEF Couldn't create temporary file.\n\nReason: out of memory or invalid path specified in the configuration.
 ;#SET (1110//)
 MSG_ER_ErrorConsole
@@ -4070,7 +4070,7 @@ Din POP3-server stöder inte APOP. Stäng av APOP i din YAM-konfiguration.
 ;#DEF Your POP3 server doesn't support APOP. Disable the APOP option in your YAM configuration.
 ;#SET (1131//)
 MSG_ER_ErrorWriteMailfile
-Kunde inte skriva till brevfilen %s.\n\nYAM kunde inte spara brevet på disk.Disken kan vara full.
+Skrivfel på brevfilen: %s.\n\nYAM kan inte spara brevet till disk. Disken kan vara full.
 ;#DEF Write error on mail file: %s.\n\nYAM can't save the message to disk, maybe you're out of disk space.
 ;#SET (1132//)
 MSG_ER_ConnectionBroken
@@ -4094,7 +4094,7 @@ Du måste ange ett namn för den nya användaren!
 ;#DEF You must specify a name for the new user!
 ;#SET (1138//)
 MSG_ER_NoPublicKeys
-Inga offentliga PGP-nycklar hittades.\n\nKontrollera att PGP är installerat och att nödvändiga inställningar är gjorda i YAM.
+Inga allmänna PGP-nycklar hittades.\n\nKontrollera att PGP är installerat och att nödvändiga inställningar är gjorda i YAM.
 ;#DEF No public PGP keys found.\n\nMake sure that PGP is installed and the required settings are made in the configuration of YAM.
 ;#SET (1139//)
 MSG_ER_PGPreturnsError
@@ -4114,7 +4114,7 @@ Kunde inte hitta PGP-ID för '%s' i adressboken, försöker med '%s' istället.
 ;#DEF Couldn't find PGP ID for '%s' in the address book, now trying '%s'.
 ;#SET (1146//)
 MSG_ER_ErrorAppendKey
-Kunde inte lägga till PGP-nyckeln %s.\n\nDet gick inte att kopiera den från PGPs nyckelring.
+Kunde inte lägga till allmänna PGP-nyckeln %s.\n\nDet gick inte att kopiera den från PGPs nyckelring.
 ;#DEF Couldn't append public PGP key %s.\n\nThere was a problem extracting it from the PGP keyring.
 ;#SET (1147//)
 MSG_DI_Alias
@@ -4389,10 +4389,6 @@ MSG_US_RemoveReqGads
 *_OK|_Behåll filer|A_vbryt
 ;#DEF *_Okay|_Keep files|_Cancel
 ;#SET (1216//)
-MSG_US_ErrorNoDirectory
-Postkatalogen hittades inte.\nVill du skapa den?
-;#DEF Mail directory not found.\nDo you want to create it?
-;#SET (1217//)
 MSG_US_UserName
 _Användarnamn
 ;#DEF _User name
@@ -5542,17 +5538,13 @@ Layouten av din '%s' bild katalog\ninnehåller en inkompatibel versions informati
 ;#DEF The layout of your '%s' image directory\ncontains an incompatible version information and needs\nto be updated accordingly.\n\nPlease make sure you are using a compatible image layout\nor some images may be displayed incorrectly in YAM.
 ;#SET (1562//)
 MSG_MA_AUTOSAVEFOUND
-YAM har hittat den autosparade filen '%s'\nsom har skapats i en föregående session. Detta kan bero\npå en krash eller omstart, vid skrivning av ett meddelande.\n\nVad vill du göra med den filen?
-;#DEF YAM has found the autosaved file '%s' which\nhave been created in a previous session. This may be due\nto a possible crash or reboot during writing a message.\n\nWhat do you want to do with that file?
+YAM har hittat en autosparad meddelandefil '%s'\nsom har skapats i en föregående session. Detta kan bero\npå en krash eller omstart, vid skrivning av ett meddelande.\n\nVad vill du göra med meddelandet?
+;#DEF YAM has found an autosaved message file '%s'\nwhich have been created in a previous session. This may\nbe due to a possible crash or reboot while writing a\nmessage.\n\nWhat do you want to do with that message?
 ;#SET (1563//)
 MSG_MA_AUTOSAVEFOUND_TITLE
 Autosparad fil hittad
 ;#DEF Autosave file found
 ;#SET (1564//)
-MSG_MA_AUTOSAVEFOUND_BT
-*_Öppna i redigeraren|_Radera|_Ignorera
-;#DEF *_Open in write window|_Delete|_Ignore
-;#SET (1565//)
 MSG_CO_NB_AUTOSAVE
 Autospara intervall
 ;#DEF Autosave interval
@@ -5686,16 +5678,16 @@ Letar efter meddelanden i mappen '%s'...
 ;#DEF Searching for messages in folder '%s'...
 ;#SET (1599//)
 MSG_CO_WBAPPICON
-Appikon på Workbench
-;#DEF AppIcon on workbench
+A_ppikon på Workbench
+;#DEF A_ppIcon on workbench
 ;#SET (1600//)
 MSG_HELP_CO_CH_WBAPPICON
 Visar en appikon på Workbench med mappstatistik.
 ;#DEF If checked, displays an AppIcon on the Workbench\nwith folder statistics.
 ;#SET (1601//)
 MSG_CO_DOCKYICON
-Dockyikon
-;#DEF DockyIcon
+D_ockyikon
+;#DEF D_ockyIcon
 ;#SET (1602//)
 MSG_HELP_CO_CH_DOCKYICON
 En docky ikon visas via application.library.\n(endast tillgängligt på AmigaOS 4)
@@ -6262,12 +6254,12 @@ Laddar träningsdata för skräppost...
 ;#DEF Loading spam training data...
 ;#SET (1745//)
 MSG_MA_TBSPAM
-Skräp
-;#DEF S_pam
+Skr_äp
+;#DEF Sp_am
 ;#SET (1746//)
 MSG_MA_TBNOTSPAM
-Ej skräp
-;#DEF N_otSpam
+Ej skr_äp
+;#DEF N.Sp_am
 ;#SET (1747//)
 MSG_HELP_MA_BT_SPAM
 Markera brev som skräppost
@@ -6278,12 +6270,12 @@ Markera brev som ej skräppost
 ;#DEF Mark mail as not spam
 ;#SET (1749//)
 MSG_RE_TBSPAM
-Skräp
-;#DEF Spam
+Skr_äp
+;#DEF Sp_am
 ;#SET (1750//)
 MSG_RE_TBNOTSPAM
-Ej skräp
-;#DEF Not Spam
+Ej skr_äp
+;#DEF N.Sp_am
 ;#SET (1751//)
 MSG_HELP_RE_BT_SPAM
 Markera brev som skräppost
@@ -6921,3 +6913,87 @@ MSG_ER_CANNOT_CREATE_SEMAPHORE
 Kan inte skapa semafor!
 ;#DEF Can't create semaphore!
 ;#SET (1915//)
+MSG_MA_AUTOSAVEFOUND_BUTTONS
+*Lägg i _Utkorgen|R_edigera|_Radera|_Ignorera
+;#DEF *Put in _Outbox|_Edit|_Delete|_Ignore
+;#SET (1916//)
+MSG_RE_HDR_FROM
+Från
+;#DEF From
+;#SET (1917//)
+MSG_RE_HDR_TO
+Till
+;#DEF To
+;#SET (1918//)
+MSG_RE_HDR_DATE
+Datum
+;#DEF Date
+;#SET (1919//)
+MSG_RE_HDR_SUBJECT
+Ärende
+;#DEF Subject
+;#SET (1920//)
+MSG_RE_VIRTUALMAIL
+Virtuellt mail
+;#DEF Virtual Mail
+;#SET (1921//)
+MSG_CO_MIMECMD_PUBSCREEN
+%p  Namnet på YAM's allmänna skärm
+;#DEF %p  Name of YAM's public screen
+;#SET (1922//)
+MSG_ER_ZOMBIE_FILES_EXIST
+YAM kunde inte radera alla temporära filer.\nDessa filer kan vara låsta av andra program.\n\nVar god kontrollera att du avslutat alla program\nsom du använt inom YAM, t.ex Multiview.
+;#DEF YAM wasn't able to delete all temporary generated\nfiles during cleanup. These files may be currently\nlocked by other applications.\n\nPlease make sure you closed all applications which\nyou may have used from within YAM (e.g. Multiview).
+;#SET (1923//)
+MSG_ER_ZOMBIE_FILES_EXIST_BT
+_Försök igen|_Ignorera
+;#DEF _Retry|_Ignore
+;#SET (1924//)
+MSG_ER_ZOMBIE_FILES_EXIST_TITLE
+YAM rensningsvarning
+;#DEF YAM cleanup warning
+;#SET (1925//)
+MSG_CO_SHOWALTPARTS
+Visa a_lternativa delar
+;#DEF Show a_lternative parts
+;#SET (1926//)
+MSG_HELP_CO_CH_SHOWALTPARTS
+Om vald, vanligtvis gömda alternativa meddelande-\ndelar av ett 'multipart/alternative' brev\nkommer att visas som bilagor.
+;#DEF If enabled, normally hidden alternative message\nparts of an 'multipart/alternative' mail will be\nshown as attachments.
+;#SET (1927//)
+MSG_US_DIRECTORY_DOESNT_EXIST
+Postkatalogen '%s' för användare '%s' existerar inte.\n\nVill du skapa den?
+;#DEF The mail directory '%s' of user '%s' does not exist.\n\nDo you want to create it?
+;#SET (1928//)
+MSG_HELP_CO_BT_APPICONGETPOS
+Klicka, så hämtas appikonens nuvarande\nposition på Workbench skrivbordet.
+;#DEF If pressed, the AppIcon position is retrieved from\nthe current position of the AppIcon on the workbench\ndesktop.
+;#SET (1929//)
+MSG_CO_MOVE_HAM_TO_INCOMING
+Flytta 'Ej skräppost' brev tillbaka till _inkorgen
+;#DEF Move 'Not Spam' mails back to _incoming folder
+;#SET (1930//)
+MSG_HELP_CH_MOVE_HAM_TO_INCOMING
+Om vald, så kommer ett brev som felaktigt klassifierats\nsom skräppost och manuellt markerad som 'ej skräppost'\natt flyttas tillbaka till inkorgen.
+;#DEF If enabled, a mail which was incorrectly classified\nas spam and being manually marked as 'not spam' will be\nmoved back to the incoming folder.
+;#SET (1931//)
+MSG_ER_NO8BITMIME
+Vid försök att ansluta till SMTP server '%s', så rapporterade servern att den inte stödjer 8 bitars MIME överföringar. Du verkar ha 'tillåt 8 bitars tecken' påslaget i din SMTP server konfiguration.\n\nVar god stäng av denna funktion och redigera om brevet annars kan det bli felaktigt formaterat vid överföringen.
+;#DEF While trying to connect to SMTP server '%s', it reported that it doesn't support 8bit MIME transfers. However, you seem to have the 'Allow8bit' option enabled in your SMTP server configuration.\n\nPlease make sure you disable this option and re-edit the mail or otherwise it may be malformed during the transfer.
+;#SET (1932//)
+MSG_CO_FILTER_HAM
+Applicera _filter
+;#DEF Apply _filters
+;#SET (1933//)
+MSG_HELP_CH_FILTER_HAM
+Om vald, vid flyttning av breven, kommer alla användar-\ndefinierade filter att appliceras på breven.
+;#DEF If enabled, after moving the mail all user defined filters\nwill be applied to the mail.
+;#SET (1934//)
+MSG_SHUTDOWN_SHUTTING_DOWN
+Stänger ned...
+;#DEF Shutting down...
+;#SET (1935//)
+MSG_ER_IGNOREALL
+Ignorera _alla|*_Ignorera
+;#DEF Ignore _all|*_Ignore
+;#SET (1936//)
