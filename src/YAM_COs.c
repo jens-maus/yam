@@ -2232,7 +2232,7 @@ void CO_SetConfig(void)
         setstring(gui->ST_TEMPDIR, CE->TempDir);
         setstring(gui->ST_DETACHDIR, CE->DetachDir);
         setstring(gui->ST_ATTACHDIR, CE->AttachDir);
-        setcheckmark(gui->CH_WBAPPICON ,CE->WBAppIcon);
+        setcheckmark(gui->CH_WBAPPICON, CE->WBAppIcon);
         set(gui->ST_APPX, MUIA_String_Integer, abs(CE->IconPositionX));
         set(gui->ST_APPY, MUIA_String_Integer, abs(CE->IconPositionY));
         setcheckmark(gui->CH_APPICONPOS, CE->IconPositionX >= 0 && CE->IconPositionY >= 0);
@@ -2247,6 +2247,8 @@ void CO_SetConfig(void)
         setslider(gui->NB_PACKER, CE->XPKPackEff);
         setslider(gui->NB_ENCPACK, CE->XPKPackEncryptEff);
         setstring(gui->ST_ARCHIVER, CE->PackerCommand);
+
+        set(gui->CH_APPICONPOS, MUIA_Disabled, !CE->WBAppIcon);
       }
       break;
 

@@ -7,6 +7,8 @@ $URL$
 
 2007-05-24  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COs.c: the "fixed AppIcon position" checkmark was not correctly disabled
+    upon opening the config window.
   * BayesFilter.c: extended the debug output a little bit in case the chi2P()
     function fails. Normally this should not happen, but who knows?
   * Debug.c: all builds now use the same _DPRINTF() function, becase there is
