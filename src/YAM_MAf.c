@@ -392,7 +392,10 @@ BOOL MA_SaveIndex(struct Folder *folder)
     // we clear it first, so that the reserved field is also 0
     memset(&fi, 0, sizeof(struct FIndex));
     fi.ID = FINDEX_VER;
-    fi.Total = folder->Total; fi.New = folder->New; fi.Unread = folder->Unread; fi.Size = folder->Size;
+    fi.Total = folder->Total;
+    fi.New = folder->New;
+    fi.Unread = folder->Unread;
+    fi.Size = folder->Size;
     fwrite(&fi, sizeof(struct FIndex), 1, fh);
 
     for(mail = folder->Messages; mail; mail = mail->Next)
@@ -2521,7 +2524,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
         case FT_GROUP:
         {
           snprintf(folderStr, sizeof(folderStr), "\033o[%d] %s", (isFlagSet(msg->TreeNode->tn_Flags, TNF_OPEN) ? FICON_ID_UNFOLD : FICON_ID_FOLD), entry->Name);
-          msg->Preparse[0] = (entry->New + entry->Unread > 0) ? C->StyleFGroupUnread : C->StyleFGroupRead;
+          msg->Preparse[0] = (entry->New != 0 || entry->Unread != 0) ? C->StyleFGroupUnread : C->StyleFGroupRead;
         }
         break;
 
@@ -2561,10 +2564,10 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
             if(isFlagSet(C->FolderCols, (1<<1)))
               snprintf(totalStr, sizeof(totalStr), "%d", entry->Total);
 
-            if(isFlagSet(C->FolderCols, (1<<2)) && entry->Unread > 0)
+            if(isFlagSet(C->FolderCols, (1<<2)) && entry->Unread != 0)
               snprintf(unreadStr, sizeof(unreadStr), "%d", entry->Unread);
 
-            if(isFlagSet(C->FolderCols, (1<<3)) && entry->New > 0)
+            if(isFlagSet(C->FolderCols, (1<<3)) && entry->New != 0)
               snprintf(newStr, sizeof(newStr), "%d", entry->New);
 
             if(isFlagSet(C->FolderCols, (1<<4)) && entry->Size > 0)

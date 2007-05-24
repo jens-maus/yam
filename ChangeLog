@@ -1,12 +1,16 @@
----------------------------
+﻿---------------------------
 YAM Open Source - ChangeLog
 ---------------------------
 
 $Id$
 $URL$
 
-2007-05-24  Thore B�ckelmann <tboeckel@gmx.de>
+2007-05-24  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_MAf.c, YAM_UT.c: separated the counting of new and unread mails.
+    Mails are now counted according to their current state. That means a NEW
+    state does no longer automatically imply an UNREAD state. If YAM does
+    anything wrong here we will notice it now.
   * YAM_TR.c, YAM_UT.c: use the new folder stats function.
   * YAM_FO.c: added a new function which updates the statistics for a single
     folder.

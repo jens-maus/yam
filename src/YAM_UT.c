@@ -4209,14 +4209,10 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
     folder->Size += mail->Size;
 
     if(hasStatusNew(mail))
-    {
       folder->New++;
+
+    if(!hasStatusRead(mail))
       folder->Unread++;
-    }
-    else if(!hasStatusRead(mail))
-    {
-      folder->Unread++;
-    }
 
     MA_ExpireIndex(folder);
   }
@@ -4244,11 +4240,9 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
   folder->Size -= mail->Size;
 
   if(hasStatusNew(mail))
-  {
     folder->New--;
-    folder->Unread--;
-  }
-  else if(!hasStatusRead(mail))
+
+  if(!hasStatusRead(mail))
     folder->Unread--;
 
   // remove the mail from the folderlist now
@@ -6068,11 +6062,11 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
   // directory and it is one of our standard folders we have to check which image we put in front of it
   if(fo->imageObject == NULL)
   {
-    if(isIncomingFolder(fo))      fo->ImageIndex = (fo->New+fo->Unread) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
-    else if(isOutgoingFolder(fo)) fo->ImageIndex = (fo->Total > 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
-    else if(isTrashFolder(fo))    fo->ImageIndex = (fo->Total > 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
+    if(isIncomingFolder(fo))      fo->ImageIndex = (fo->Unread != 0) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
+    else if(isOutgoingFolder(fo)) fo->ImageIndex = (fo->Total != 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
+    else if(isTrashFolder(fo))    fo->ImageIndex = (fo->Total != 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
     else if(isSentFolder(fo))     fo->ImageIndex = FICON_ID_SENT;
-    else if(isSpamFolder(fo))     fo->ImageIndex = (fo->Total > 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
+    else if(isSpamFolder(fo))     fo->ImageIndex = (fo->Total != 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
     else fo->ImageIndex = -1;
   }
 
