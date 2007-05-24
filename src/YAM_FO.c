@@ -1003,6 +1003,44 @@ BOOL FO_SaveTree(char *fname)
 }
 
 ///
+/// FO_UpdateStatistics
+// recalculate the number of new/unread/etc mails in a folder
+void FO_UpdateStatistics(struct Folder *folder)
+{
+  struct Mail *mail;
+
+  ENTER();
+
+  if(folder == (struct Folder *)-1)
+    folder = FO_GetFolderByType(FT_INCOMING, NULL);
+
+  folder->Unread = 0;
+  folder->New = 0;
+  folder->Total = 0;
+  folder->Sent = 0;
+  folder->Deleted = 0;
+
+  // now we recount the amount of messages of this folder
+  for(mail = folder->Messages; mail != NULL; mail = mail->Next)
+  {
+    folder->Total++;
+
+    if(hasStatusNew(mail))
+      folder->New++;
+
+    if(!hasStatusRead(mail))
+      folder->Unread++;
+
+    if(hasStatusSent(mail))
+      folder->Sent++;
+
+    if(hasStatusDeleted(mail))
+      folder->Deleted++;
+  }
+
+  LEAVE();
+}
+///
 /// FO_MoveFolderDir
 //  Moves a folder to a new directory
 static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
