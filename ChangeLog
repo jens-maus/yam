@@ -7,6 +7,8 @@ $URL$
 
 2007-05-24  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Debug.c: all builds now use the same _DPRINTF() function, becase there is
+    absolutely no difference at all anymore.
   * Debug.c: the OS3 and MOS builds were not able to print out floating point
     numbers in the debug log, because kprintf() is not able to deal with such
     values. Now the same code as for OS4 is used, which utilizes vasprintf()
