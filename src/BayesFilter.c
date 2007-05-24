@@ -1285,8 +1285,7 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
 
   ENTER();
 
-  SHOWSTRING(DBF_SPAM, mail->From.Address);
-  SHOWSTRING(DBF_SPAM, mail->Subject);
+  D(DBF_SPAM, "analyzing mail from '%s' with subject '%s'", mail->From.Address, mail->Subject);
 
   // if the sender address is in the address book then we assume it's not spam
   if(C->SpamAddressBookIsWhiteList == FALSE || AB_FindEntry(mail->From.Address, ABF_RX_EMAIL, NULL) == 0)
@@ -1406,17 +1405,17 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
 
           if(goodClues > 0)
           {
-            int chiError;
+            int chiError = 0;
 
             S = chi2P(-2.0 * S, 2.0 * goodClues, &chiError);
 
-            if(!chiError)
+            if(chiError == 0)
               H = chi2P(-2.0 * H, 2.0 * goodClues, &chiError);
 
             // if any error, then toss the complete calculation
-            if(chiError)
+            if(chiError != 0)
             {
-              E(DBF_SPAM, "chi2P error");
+              E(DBF_SPAM, "chi2P error, H=%.2f, S=%.2f, good clues=%d", H, S, goodClues);
               prob = 0.5;
             }
             else
