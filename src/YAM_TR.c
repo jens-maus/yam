@@ -3655,66 +3655,66 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 
    if(pop >= MAXP3) /* Finish last connection */
    {
-      // close the TCP/IP connection
-      TR_CloseTCPIP();
+     // close the TCP/IP connection
+     TR_CloseTCPIP();
 
-      // make sure the transfer window is closed
-      set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
+     // make sure the transfer window is closed
+     set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
 
-      // free/cleanup the UIDL hash tables
-      if(G->TR->DuplicatesChecking)
-        CleanupUIDLhash();
+     // free/cleanup the UIDL hash tables
+     if(G->TR->DuplicatesChecking)
+       CleanupUIDLhash();
 
-      FreeFilterSearch();
-      G->TR->SearchCount = 0;
-      MA_StartMacro(MACRO_POSTGET, itoa((int)G->TR->Stats.Downloaded));
+     FreeFilterSearch();
+     G->TR->SearchCount = 0;
+     MA_StartMacro(MACRO_POSTGET, itoa((int)G->TR->Stats.Downloaded));
 
-      // tell the appicon that we are finished with checking mail
-      // the apply rules or DisplayAppIconStatistics() function will refresh it later on
-      G->TR->Checking = FALSE;
+     // tell the appicon that we are finished with checking mail
+     // the apply rules or DisplayAppIconStatistics() function will refresh it later on
+     G->TR->Checking = FALSE;
 
-      // we only apply the filters if we downloaded something, or it`s wasted
-      if(G->TR->Stats.Downloaded > 0)
-      {
-        struct Folder *folder;
+     // we only apply the filters if we downloaded something, or it`s wasted
+     if(G->TR->Stats.Downloaded > 0)
+     {
+       struct Folder *folder;
 
-        DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, APPLY_AUTO, 0);
+       DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, APPLY_AUTO, 0);
 
-        // Now we jump to the first new mail we received if the number of messages has changed
-        // after the mail transfer
-        if(C->JumpToIncoming == TRUE)
-          MA_JumpToNewMsg();
+       // Now we jump to the first new mail we received if the number of messages has changed
+       // after the mail transfer
+       if(C->JumpToIncoming == TRUE)
+         MA_JumpToNewMsg();
 
-        // only call the DisplayStatistics() function if the actual folder wasn`t already the INCOMING
-        // one or we would hav refreshed it twice
-        if((folder = FO_GetCurrentFolder()) && !isIncomingFolder(folder))
-          DisplayStatistics((struct Folder *)-1, TRUE);
-        else
-        {
-          // update the stats first, else the AppIcon might show outdated numbers
-          FO_UpdateStatistics((struct Folder *)-1);
-          DisplayAppIconStatistics();
-        }
+       // only call the DisplayStatistics() function if the actual folder wasn`t already the INCOMING
+       // one or we would hav refreshed it twice
+       if((folder = FO_GetCurrentFolder()) && !isIncomingFolder(folder))
+         DisplayStatistics((struct Folder *)-1, TRUE);
+       else
+       {
+         // update the stats first, else the AppIcon might show outdated numbers
+         FO_UpdateStatistics((struct Folder *)-1);
+         DisplayAppIconStatistics();
+       }
 
-        TR_NewMailAlert();
-      }
-      else
-        DisplayAppIconStatistics();
+       TR_NewMailAlert();
+     }
+     else
+       DisplayAppIconStatistics();
 
-      // lets populate the LastDL statistics variable with the stats
-      // of this download.
-      memcpy(&G->LastDL, &G->TR->Stats, sizeof(struct DownloadResult));
+     // lets populate the LastDL statistics variable with the stats
+     // of this download.
+     memcpy(&G->LastDL, &G->TR->Stats, sizeof(struct DownloadResult));
 
-      MA_ChangeTransfer(TRUE);
+     MA_ChangeTransfer(TRUE);
 
-      DisposeModulePush(&G->TR);
-      if(G->TR_Exchange == TRUE)
-      {
-        G->TR_Exchange = FALSE;
-        DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, SEND_ALL);
-      }
+     DisposeModulePush(&G->TR);
+     if(G->TR_Exchange == TRUE)
+     {
+       G->TR_Exchange = FALSE;
+       DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, SEND_ALL);
+     }
 
-      return;
+     return;
    }
 
    // lets initialize some important data first so that the transfer can
