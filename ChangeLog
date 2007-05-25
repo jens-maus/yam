@@ -7,6 +7,7 @@ $URL$
 
 2007-05-25  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE.c: added the name of the unknown charset to the warning message.
   * extrasrc/vastubs.c: added some more stubs for the OS3 build in order to be
     able to use clib2's libamiga.a, too, which does not include the varargs
     functions used by YAM.

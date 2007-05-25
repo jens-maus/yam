@@ -1444,7 +1444,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
                                        CSA_FallbackToDefault, FALSE,
                                        TAG_DONE)) == NULL)
       {
-        W(DBF_MAIL, "the specified codeset wasn't found in codesets.library.");
+        W(DBF_MAIL, "the specified codeset '%s' wasn't found in codesets.library", rp->CParCSet);
       }
     }
   }
