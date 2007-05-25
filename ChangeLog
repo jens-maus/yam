@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-25  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c: some invocations of MUIM_MultiSet did not include the terminating
+    NULL pointer.
+
 2007-05-24  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: Updated according to changes in YAM.cd and some minor fixes.

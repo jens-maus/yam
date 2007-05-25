@@ -1761,7 +1761,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     DoMethod(data->GUI.BT_PDEL       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_DelPOP3Hook);
     DoMethod(data->GUI.BT_POPUP      ,MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
     DoMethod(data->GUI.BT_POPDOWN    ,MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
-    DoMethod(data->GUI.CH_USESMTPAUTH,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,MUIV_Notify_Application,6,MUIM_MultiSet,MUIA_Disabled,MUIV_NotTriggerValue,data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS, data->GUI.CY_SMTPAUTHMETHOD);
+    DoMethod(data->GUI.CH_USESMTPAUTH,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,MUIV_Notify_Application,7,MUIM_MultiSet,MUIA_Disabled,MUIV_NotTriggerValue,data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS, data->GUI.CY_SMTPAUTHMETHOD, NULL);
 
     // modify the POP3 port according to the security level selected.
     DoMethod(data->GUI.RA_POP3SECURE, MUIM_Notify, MUIA_Radio_Active, 0, data->GUI.RA_POP3SECURE, 3, MUIM_Set, MUIA_Disabled, !G->TR_UseableTLS);
@@ -2203,18 +2203,20 @@ Object *CO_PageSpam(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_FILTERHAM,             MSG_HELP_CH_FILTER_HAM);
 
     DoMethod(data->GUI.CH_SPAMFILTERENABLED, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
-                                             MUIV_Notify_Application, 10, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue,
+                                             MUIV_Notify_Application, 11, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue,
                                                data->GUI.BT_SPAMRESETTRAININGDATA,
                                                data->GUI.CH_SPAMFILTERFORNEWMAIL,
                                                data->GUI.CH_SPAMABOOKISWHITELIST,
                                                data->GUI.CH_SPAMMARKONMOVE,
                                                data->GUI.CH_SPAMMARKASREAD,
                                                data->GUI.CH_MOVEHAMTOINCOMING,
-                                               data->GUI.CH_FILTERHAM);
+                                               data->GUI.CH_FILTERHAM,
+                                               NULL);
 
     DoMethod(data->GUI.CH_MOVEHAMTOINCOMING, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
-                                             MUIV_Notify_Application, 4, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue,
-                                               data->GUI.CH_FILTERHAM);
+                                             MUIV_Notify_Application, 5, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue,
+                                               data->GUI.CH_FILTERHAM,
+                                               NULL);
 
     DoMethod(data->GUI.BT_SPAMRESETTRAININGDATA, MUIM_Notify, MUIA_Pressed,  FALSE,
                                                  MUIV_Notify_Application, 2, MUIM_CallHook, &ResetSpamTrainingDataHook);
@@ -2413,13 +2415,14 @@ Object *CO_PageRead(struct CO_ClassData *data)
 
     // disable all poppen objects in case the textstyles checkbox is disabled
     DoMethod(data->GUI.CH_TEXTSTYLES, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
-             MUIV_Notify_Application, 10, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.CA_COLSIG,
+             MUIV_Notify_Application, 11, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.CA_COLSIG,
                                                                                               data->GUI.CA_COLTEXT,
                                                                                               data->GUI.CA_COL1QUOT,
                                                                                               data->GUI.CA_COL2QUOT,
                                                                                               data->GUI.CA_COL3QUOT,
                                                                                               data->GUI.CA_COL4QUOT,
-                                                                                              data->GUI.CA_COLURL);
+                                                                                              data->GUI.CA_COLURL,
+                                                                                              NULL);
 
     DoMethod(data->GUI.CY_HEADER, MUIM_Notify, MUIA_Cycle_Active, 0, MUIV_Notify_Application, 7, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_HEADERS,
                                                                                                                                      data->GUI.CH_WRAPHEAD,
