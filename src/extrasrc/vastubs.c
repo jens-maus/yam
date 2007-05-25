@@ -46,7 +46,25 @@
 #define MY_CONST_STRPTR CONST STRPTR
 #endif
 
+#include <proto/intuition.h>
+ULONG SetAttrs( APTR object, ULONG tag1, ... )
+{ return SetAttrsA(object, (struct TagItem *)&tag1); }
+
+#include <proto/dos.h>
+LONG SystemTags( CONST_STRPTR command, ULONG tag1type, ... )
+{ return SystemTagList(command, (struct TagItem *)&tag1type); }
+
+#include <proto/datatypes.h>
+Object *NewDTObject( APTR name, Tag tag1, ... )
+{ return NewDTObjectA(name, (struct TagItem *)&tag1); }
+ULONG SetDTAttrs( Object *o, struct Window *win, struct Requester *req, Tag tag1, ... )
+{ return SetDTAttrsA(o, win, req, (struct TagItem *)&tag1); }
+ULONG GetDTAttrs( Object *o, Tag tag1, ... )
+{ return GetDTAttrsA(o, (struct TagItem *)&tag1); }
+
 #include <proto/wb.h>
+struct AppIcon *AddAppIcon( ULONG id, ULONG userdata, UBYTE *text, struct MsgPort *msgport, BPTR lock, struct DiskObject *diskobj, Tag tag1, ... )
+{ return AddAppIconA(id, userdata, text, msgport, lock, diskobj, (struct TagItem *)&tag1); }
 BOOL WorkbenchControl(STRPTR name, ...)
 { return WorkbenchControlA(name,(struct TagItem *)(&name+1)); }
 

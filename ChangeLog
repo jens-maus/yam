@@ -7,6 +7,12 @@ $URL$
 
 2007-05-25  Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc/vastubs.c: added some more stubs for the OS3 build in order to be
+    able to use clib2's libamiga.a, too, which does not include the varargs
+    functions used by YAM.
+
+2007-05-24  Thore Böckelmann <tboeckel@gmx.de>
+
   * YAM_COg.c: some invocations of MUIM_MultiSet did not include the terminating
     NULL pointer.
 
@@ -22,6 +28,7 @@ $URL$
     function fails. Normally this should not happen, but who knows?
   * Debug.c: all builds now use the same _DPRINTF() function, becase there is
     absolutely no difference at all anymore.
+>>>>>>> .r3065
   * Debug.c: the OS3 and MOS builds were not able to print out floating point
     numbers in the debug log, because kprintf() is not able to deal with such
     values. Now the same code as for OS4 is used, which utilizes vasprintf()
@@ -41,7 +48,7 @@ $URL$
     care about 'short item counts' and only did a single data transfer via
     send(), rather than trying to submit all supplied data. Now it should take
     care of that as well, which hopefully should fix bug #1722336.
- 
+
 2007-05-24  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: french translation update according to latest changes.
@@ -78,7 +85,11 @@ $URL$
     builds as he did revert my last changes by accident. Now my TR_IsOnline()
     changes should be back again.
 
+<<<<<<< .mine
+2007-05-22  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-22  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * AttachmentGroup.c: whenever a formerly non-decoded mail part is decoded (for
     example when saving the attachment) the group is now redrawn to show the
@@ -96,7 +107,11 @@ $URL$
   * locale/deutsch.ct: some more grammar fixes which should address bug #1722544
     also.
 
+<<<<<<< .mine
+2007-05-21  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-21  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_RE.c: the size calculation of encoded parts could overflow if the part
     was larger than 20MB, because the intermediate results exceeded 2^31 in this
@@ -111,7 +126,11 @@ $URL$
     the same and don't change their general look when the transfer really
     starts.
 
+<<<<<<< .mine
+2007-05-20  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-20  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * Addrmatchlist.c: the window containing the attached string object is
     activated after every change of the active list entry. In case the active
@@ -175,7 +194,11 @@ $URL$
     application isn't in iconify state.
   * YAM.cd, deutsch.ct: minor twirks to the latest changes.
 
+<<<<<<< .mine
+2007-05-18  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-18  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM.c: the shutdown window is only created and opened if the application
     object exists (e.g. double start of YAM), else YAM would crash.
@@ -193,7 +216,11 @@ $URL$
     it will eventually be moved back to the incoming folder.
   * misc: removed several unneeded local prototypes.
 
+<<<<<<< .mine
+2007-05-17  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-17  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * Addrmatchlist.c: upon opening the list of matching aliases, addresses and
     names has no active entry anymore. The list is activated as soon as the user
@@ -206,7 +233,11 @@ $URL$
   * Recipientstring.c: minor code cleanups.
   * YAM_UT.c: added some debug output while processing the zombie files.
 
+<<<<<<< .mine
+2007-05-16  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-16  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_MAf.c: cleaned up the display hook of the folder tree. For folders with
     both new and unread mails the number of new and unread mails are now shown
@@ -229,7 +260,11 @@ $URL$
     setting is found to conflict with the SMTP server capabilities an
     error message will now be dropped on an SMTP connection.
 
+<<<<<<< .mine
+2007-05-14  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-14  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_FO.c: changed some functions to use constant parameters.
   * YAM.c: an existing folder named "spam" is now correctly converted to the
@@ -242,7 +277,11 @@ $URL$
     instantly instead of having to click on the old spam folder once again.
   * deutsch.ct: fixed a typo.
 
+<<<<<<< .mine
+2007-05-11  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-11  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * misc: implemented the "move non-spam mails back to incoming" feature. If
     this option is enabled falsely classified spam mails which are reclassified
@@ -283,7 +322,11 @@ $URL$
     addition the default value for the AppIcon position will now be set to
     -1/-1 so that a free positioning will be set.
 
+<<<<<<< .mine
+2007-05-10  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-10  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * ReadMailGroup.c: the attachment group is now handled completely dynamically
     and added/removed on the fly to the window instead of simply showing/hiding
@@ -313,7 +356,11 @@ $URL$
   * icons/YAM.info: added a new main default YAM .info icon to the repository.
     This will be the new official application icon of YAM.
 
+<<<<<<< .mine
+2007-05-09  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-09  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_CO.c: a modified status change delay is now saved, too.
   * YAM_CO.c: added a safety check to the status change delay. Values outside
@@ -330,7 +377,11 @@ $URL$
 
   * YAM_MI.c: added a missing include.
 
+<<<<<<< .mine
+2007-05-08  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-08  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_COg.c, YAM_COs.c: the sender info cycle is now enabled and disabled
     according to the header lines option. Also all three GUI elements should
@@ -339,7 +390,11 @@ $URL$
     and Empty Trash methods of workbench.library v44+ and reacts accordingsly.
     Additionally the icon position can now be specified as non-fixed.
 
+<<<<<<< .mine
+2007-05-07  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-07  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_COg.c: setting the header lines to "none" now disables the "wrap
     headers" checkmark.
@@ -356,7 +411,11 @@ $URL$
     recipient replying and did strip all To: addresses excluding the one
     one.
 
+<<<<<<< .mine
+2007-05-03  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-03  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_US.c, locale/YAM.cd, locale/deutsch.ct: when creating more than one
     new user and the mail directories did not exist yet the error message
@@ -378,7 +437,11 @@ $URL$
     end up in unfreed memory somehow. A static buffer of SIZE_LINE should be
     always enough for the command and its response.
 
+<<<<<<< .mine
+2007-05-03  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-03  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_FI.c: removed some unnecessary prototypes and made the function
     FreeSearchPatternList() static, because it is not used anywhere outside
@@ -407,7 +470,11 @@ $URL$
   * YAM_CO.c: minor compilation fix where an unknown MUI attribute creaped into
     the sources.
 
+<<<<<<< .mine
+2007-05-02  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-02  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM.c: changed a malloc()/memcpy() combination to a memdup() call.
   * YAM_COs.c: general clean up of the CO_LoadConfig() function. The variables
@@ -463,7 +530,11 @@ $URL$
   * YAM_FO.c: fixed folder image (.fimage) loading routine which were broken after
     recent cleanups.
 
+<<<<<<< .mine
+2007-05-01  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-05-01  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * InfoBar.c, ReadWindowStatusBar.c: the spam folder icons were not shown due
     to a wrong index check. This fixes bug #1710350.
@@ -479,7 +550,11 @@ $URL$
   * YAM_RE.c: the new BuildCommandString() function will now replace "%%" with
     a single '%' character to allow to forward a single % char.
 
+<<<<<<< .mine
+2007-04-30  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-30  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM.c, locale/YAM.cd, locale/deutsch.ct: if some zombie files could not be
     deleted upon quitting a requester will now inform the user about that fact.
@@ -513,7 +588,11 @@ $URL$
     what the current mail contains. This should fix issues where a read window
     ended up with other status images like the main mail list displayed.
   * StatusIconGroup, ReadWindowStatusBar, misc: transformed the previous
+<<<<<<< .mine
+    'StatusIconGroup' into a new more general status bar which ?s placed right
+=======
     'StatusIconGroup' into a new more general status bar which ís placed right
+>>>>>>> .r3065
     below the read window toolbar and which should carry general mail status
     information like the status flags and folder information.
   * ReadMailGroup.c, YAM.cd: the 4 most common header line names
@@ -521,7 +600,11 @@ $URL$
     in fact should make the header display more intuitive and in line what the
     main mail list title displayes as well.
 
+<<<<<<< .mine
+2007-04-27  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-27  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * AttachmentImage.c: drawing the image no longer relies on a successful
     drawing of the super class, as this seems to be handled differently in MUI
@@ -540,13 +623,21 @@ $URL$
     account name to make it less probable that users generate an empty
     POP3 server in the list by accident.
 
+<<<<<<< .mine
+2007-04-24  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-24  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_CO.c, YAM_COg.c, YAM_COs.c: changed the POP3 account list to an NList
     class object and added an up and down button below the list. This makes it
     possible to reorder the POP3 accounts.
 
+<<<<<<< .mine
+2007-04-23  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-23  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_MA.c: fixed another possible NULL pointer access.
   * YAM_CO.c, YAM_COs.c: fixed two possible NULL pointer accesses.
@@ -568,7 +659,11 @@ $URL$
     fault of the mailing list server just plainly concatenating emails without
     using MIME.
 
+<<<<<<< .mine
+2007-04-22  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-22  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * StatusIconGroup.c: the status icon group in the read window is now at least
     50 pixels wide, which should be enough for most mails with 3 icons at most.
@@ -604,7 +699,11 @@ $URL$
     a pointer that was previously obtained. Now the API should be less
     error prone, reentrant and more intuitive.
 
+<<<<<<< .mine
+2007-04-19  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-19  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * BayesFilter.c: added some more security checks while reading the training
     data. If something fails the training data will be reset.
@@ -638,7 +737,11 @@ $URL$
     statuses with the same hotkey. Other translations should definitly act the
     same way.
 
+<<<<<<< .mine
+2007-04-18  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-18  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM.c: if an old autosave file is found upon startup the user now has the
     possibility to just create a new mail with this text in the outgoing folder
@@ -662,7 +765,11 @@ $URL$
     function call gets the correct arguments. In addition, the function should
     now correctly fail in case a new part couldn't be created.
 
+<<<<<<< .mine
+2007-04-17  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-17  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_WR.c: building a message with more than one part (i.e. attachments)
     screwed up the order of the single parts (the attachment was the first part
@@ -674,7 +781,11 @@ $URL$
   * misc: changed all occurences of AllocCopy() to memdup().
   * memdup.c: added missing include of stdlib.h
 
+<<<<<<< .mine
+2007-04-17  P?r Boberg <pbobbenb@spray.se>
+=======
 2007-04-17  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: Updated according to changes in YAM.cd.
 
@@ -688,7 +799,11 @@ $URL$
   * AttachmentImage.c: fixed broken build for MOS/OS3, due to a missing struct
     Layer declaration.
 
+<<<<<<< .mine
+2007-04-16  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-16  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_CO.c, YAM_FI.c: encapsulated the whole filter list cleanup stuff into a
     new function.
@@ -703,7 +818,11 @@ $URL$
   * YAM_WR.c: BCC addresses are now added to the address cache, too.
   * YAM_WR.c: cleaned up most functions.
 
+<<<<<<< .mine
+2007-04-15  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-15  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * AttachmentImage.c: in case YAM was running on the Workbench screen and an
     attachment icon from an opened read window was dragged to a write window's
@@ -743,7 +862,11 @@ $URL$
     itself on the m68k-amigaos target with the GCC 2.95.3 compiler suite. This
     should fix bug #1688165.
 
+<<<<<<< .mine
+2007-04-12  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-12  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * UserImage.c: replaced the image loading by the functions provided by the
     image cache. This also speeds up image access, because the user images will
@@ -780,7 +903,11 @@ $URL$
   * misc: several functions did not check the result of a malloc() or calloc()
     call.
 
+<<<<<<< .mine
+2007-04-11  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-11  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_MA.c, YAM_MAf.c, YAM_TR.c: several functions didn't respect that adding
     a mail to a list might fail and then possibly accessed a NULL pointer. Also
@@ -790,7 +917,11 @@ $URL$
     memory allocation and hence could access a NULL pointer in a low memory
     situation.
 
+<<<<<<< .mine
+2007-04-08  P?r Boberg <pbobbenb@spray.se>
+=======
 2007-04-08  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: Updated according to changes in YAM.cd.
 
@@ -808,7 +939,11 @@ $URL$
   * AttachmentGroup.c, AttachmentImage.c: minor cosmetic changes to the sources
     to get them more compliant to the STYLEGUIDE.
 
+<<<<<<< .mine
+2007-04-06  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-06  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * WriteAttachmentList.c: cleaned up the setup and cleanup methods.
   * Recipientstring.c: cleaned up the setup method.
@@ -823,7 +958,11 @@ $URL$
     OM_NEW method added an event handler which has to be removed again when the
     object gets disposed.
 
+<<<<<<< .mine
+2007-04-04  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-04  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * AttachmentGroup.c, ImageArea.c: changed MUIM_Setup and MUIM_Cleanup methods
     to do their own work in the correct sequence.
@@ -834,7 +973,11 @@ $URL$
     possible to use the "jump to new message" and "jump to recent message"
     options in parallel.
 
+<<<<<<< .mine
+2007-04-03  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-03  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * locale/deutsch.ct: fixed some non-consistent namings.
   * locale/YAM.cd, locale/deutsch.ct: changed the name of the option "mark spam
@@ -842,7 +985,11 @@ $URL$
     applies to newly received and automatically classified spam mails. This
     should make things a little bit more clear.
 
+<<<<<<< .mine
+2007-04-02  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-04-02  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_UT.c: cleaned up many functions according to the STYLEGUIDE.
   * YAM_RE.c: cleaned up the function RE_GetThread() and fixed a wrong jump out
@@ -913,7 +1060,11 @@ $URL$
     also react like that and correctly stip at the first position where such
     a seperator is found.
 
+<<<<<<< .mine
+2007-03-30  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-30  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_CO.c: enabling or disabling the embedded read pane didn't show/hide it
     in the main window any more, because the wrong config page was assumed to
@@ -933,7 +1084,11 @@ $URL$
   * YAM_UT.c, YAM_RE.c: moved the new GetReadMailData() function to YAM_RE.c
     as that's where all the ReadMailData stuff belongs.
 
+<<<<<<< .mine
+2007-03-29  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-29  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * locale/deutsch.ct: fixed a typo
   * ReadWindow.c: switching to the next/previous mail didn't work if the only
@@ -948,7 +1103,11 @@ $URL$
   * YAM.cd, deutsch.ct, MainMailListTree.c: changed the "Reload tree" to a
     more appropriate "Reload arrangement" which should be more intuitive.
 
+<<<<<<< .mine
+2007-03-28  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-28  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM.c: the delayed status change of a mail from unread to read now also
     updates the status icons in the opened read window.
@@ -987,7 +1146,11 @@ $URL$
     load and image and failed. Now a user will be adviced to check that the
     image properly displays in multiview first.
 
+<<<<<<< .mine
+2007-03-27  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-27  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * MainMailList.c, ReadWindow.c: reworked the creation of the "Spam" and "Not
     Spam" buttons in the toolbar as well as all menu items concering the spam
@@ -1000,7 +1163,11 @@ $URL$
   * YAM_UT.c: minor optimization to the MakeCycle() wrapper function which
     generates a cycle gadget with a specified control char handling.
 
+<<<<<<< .mine
+2007-03-26  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-26  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * ImageCache.c: changed the debug messages to be a little bit more consistent.
   * InfoBar.c: finally found the bug which caused crashes when the active folder
@@ -1020,7 +1187,11 @@ $URL$
   * YAM_CO.c: validating the configuration now restricts the spam probability
     threshold to sensible values (75% to 99%).
 
+<<<<<<< .mine
+2007-03-25  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-25  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM.c: added NULL pointer check before updating the mail state to "read".
   * ReadWindowToolbar.c: for virtual mails both "Spam" and "no Spam" buttons
@@ -1065,7 +1236,11 @@ $URL$
     use "-g" so that m68k debug builds contain all necessary debugging
     symbols for GccFindHit to work properly.
 
+<<<<<<< .mine
+2007-03-24  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-24  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_COs.c: after disabling the spam filter all other spam filter related
     config items are set to their default value to ensure the default behaviour
@@ -1085,14 +1260,22 @@ $URL$
     xpk packer list. This should prevent issues for people using very old
     builds of XPK which may cause serve problems.
 
+<<<<<<< .mine
+2007-03-23  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-23  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * Debug.c: fixed wrong final output of debug classes and flags.
   * HashTable.c: corrected debug output to use the correct debug class.
   * BayesFilter.c: fixed a bad bug which could prevent YAM from recognizing
     spam mails correctly.
 
+<<<<<<< .mine
+2007-03-22  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-22  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * Recipientstring.c, AddrBookToolbar.c, YAM_EA.c: some code cleanups
   * YAM_MA.c: Added a check to the RE_ProcessMDN() to distinguish between one
@@ -1106,7 +1289,11 @@ $URL$
     mail.
   * YAM_FO.c: cleaned up some functions.
 
+<<<<<<< .mine
+2007-03-21  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-21  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_MA.c, MainWindowToolbar.c: the handling of the "Spam" and "no Spam"
     buttons is now completely handled by the tool bar itself.
@@ -1124,7 +1311,11 @@ $URL$
   * YAM_MA.c: minor twirks to the latest changes of Thore - we just update the
     stats of the trash folder in case the mail wasn't immediately deleted.
 
+<<<<<<< .mine
+2007-03-20  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-20  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_MA.c: when deleting a mail from the spam folder the statistics of the
     spam were never updated. This is fixed now.
@@ -1134,7 +1325,11 @@ $URL$
   * locale/francais.ct: Update according to the latest changes, and some
     minor corrections.
 
+<<<<<<< .mine
+2007-03-19  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-19  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_MA.c: deleting a non-spam mail from the spam folder no longer deletes
     the mail immediately, but moves it to the trash folder instead.
@@ -1182,7 +1377,11 @@ $URL$
   * YAM.c: fixed a bug in the timezone.library usage where we didn't use the
     right datatype for the DST querying variable.
 
+<<<<<<< .mine
+2007-03-13  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-13  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * deutsch.ct: fixed some "denglish" translations.
   * YAM_MA.c, YAM_MAf.c, YAM_CO.c, YAM_COs.c: added "jump to recent message" as
@@ -1214,7 +1413,11 @@ $URL$
   * YAM_UT.c: changed the OpenTempFile() to use utility/GetUniqueID() instead
     of trying to generate an own Applictaion-wide unique ID.
 
+<<<<<<< .mine
+2007-03-12  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-12  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM.cd: removed the "deny" option from the
     range of possible disposition notifications.
@@ -1249,7 +1452,11 @@ $URL$
     Now YAM will remove such a slash from paths before trying to create a
     directory. This fixes bug #1678672.
 
+<<<<<<< .mine
+2007-03-11  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-11  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * Debug.c: clearing one of the debug flags was never possible, because YAM
     checked for the "!" at the wrong index (1 instead of 0).
@@ -1267,7 +1474,11 @@ $URL$
   * YAM.c: bumped minimum required version for TextEditor.mcc to 15.21 as this
     is the latest stable version available right now.
 
+<<<<<<< .mine
+2007-03-07  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-07  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * ReadWindow.c: outgoing, trash und spam folders are now ignored when looking
     for yet unread mail. Although, jumping from one unread mail to another
@@ -1279,7 +1490,11 @@ $URL$
   * YAM.c: bumped minimum required version for TheBar.mcc and BetterString.mcc
     to the latest versions available.
 
+<<<<<<< .mine
+2007-03-06  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-03-06  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_FO.c, YAM_RE.c, YAM_WR.c, YAM_UT.c: cleaned up several functions to
     conform to the style guide.
@@ -1324,7 +1539,11 @@ $URL$
   * TextEditor_mcc.h: updated the TextEditor.mcc header
     files to the very latest 15.20 version.
 
+<<<<<<< .mine
+2007-02-19  P?r Boberg <pbobbenb@spray.se>
+=======
 2007-02-19  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: Updated according to changes.
 
@@ -1341,7 +1560,11 @@ $URL$
   * YAM.cd, deutsch.ct: corrected the "word-wrap" spelling both in the english
     and english catalog.
 
+<<<<<<< .mine
+2007-02-15  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-02-15  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_CO.c: added missing default setting for the new "mark spam as read"
     feature. This now defaults to FALSE.
@@ -1361,7 +1584,11 @@ $URL$
   * Recipientstring.c: fixed a compile-time error with < GCC4 compilers, due to
     an incorrect placement of a ENTER() statement.
 
+<<<<<<< .mine
+2007-02-13  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-02-13  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * classes/YAM.c: the EMail cache accepted real names containing commas without
     quotes. Entering a special combination of aliases and realnames could end up
@@ -1401,7 +1628,11 @@ $URL$
     account name will be shown instead which is fully user configurable since
     a while.
 
+<<<<<<< .mine
+2007-02-05  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-02-05  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_FO.c, YAM_EA.c: the address book window must be opened in ABM_CONFIG
     mode when the "To:", "From:" or "ReplyTo:" addresses of a folder are about
@@ -1409,7 +1640,11 @@ $URL$
     entry instead of adding it the the recipent list, because there is no
     opened write window around at this time.
 
+<<<<<<< .mine
+2007-02-03  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-02-03  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * locale/deutsch.ct: added missing translations and removed obsolete strings.
 
@@ -1424,14 +1659,22 @@ $URL$
     necessary cleanups wasn't done in TR_ProcessSEND(). This also caused
     the mail transfer window to be kept open and undisposed.
 
+<<<<<<< .mine
+2007-01-29  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-01-29  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_COg.c: fixed a signedness warning
   * misc: fixed several strlcpy(), AddPart() and NameFromLock() calls to use
     sizeof() instead of a constant.
   * YAM_CO.c: fixed another strlcpy() to copy one more character.
 
+<<<<<<< .mine
+2007-01-28  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-01-28  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_TR.c: changed the transfer window title and the busy bar back to display
     the current host name instead of the account name.
@@ -1463,15 +1706,27 @@ $URL$
 
   * locale/francais.ct: Update to the latest changes
 
+<<<<<<< .mine
+2007-01-25  P?r Boberg <pbobbenb@spray.se>
+=======
 2007-01-25  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: Updated according to changes.
 
+<<<<<<< .mine
+2007-01-24  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-01-24  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM.c: added missing TAG_DONE to GetTimezoneAttrs() call.
 
+<<<<<<< .mine
+2007-01-23  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-01-23  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * Makefile: added an additional check for uname reporting "ppc" instead of
     "powerpc" as machine name for OS4 (uname (coreutils) 5.2.1-9).
@@ -1489,7 +1744,11 @@ $URL$
     but also the target OS via 'make OS=os3'. So we can still very easily compile
     for all supported operating systems with a simple 'make' call.
 
+<<<<<<< .mine
+2007-01-22  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-01-22  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_UT.c: also fixed a GetVar() call and did some code cleanup.
   * YAM.c, YAM_MA.c, YAM_CO.c: changed some more calls to GetVar() to use
@@ -1571,7 +1830,11 @@ $URL$
     read window menu should in fact be somewhat the same like the main window
     menu in terms of message options including the keyboard hotkeys.
 
+<<<<<<< .mine
+2007-01-13  P?r Boberg <pbobbenb@spray.se>
+=======
 2007-01-13  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: Updated according to changes.
 
@@ -1602,7 +1865,11 @@ $URL$
     file extension for a certain MIME part of a mail. This should also partly
     fix some issues reported in bug #1629670.
 
+<<<<<<< .mine
+2007-01-07  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-01-07  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * ReadMailGroup.c: PGP signed mails are now checked first for a valid
     signature and after that the mail state "read" is set. Before these steps
@@ -1611,7 +1878,11 @@ $URL$
     was enabled and the update was configured to be delayed. This fixes bug
     #1363009.
 
+<<<<<<< .mine
+2007-01-06  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-01-06  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * ImageCache.c, ImageCache.h: reworked the reload check to also check the
     screen's depth. Images will now only be reloaded if the screen depth
@@ -1631,7 +1902,11 @@ $URL$
   * YAM_configFile.h: fixed the missing CO_GetConfig() prototype update to get
     YAM compiled again.
 
+<<<<<<< .mine
+2007-01-05  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-01-05  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_CO.c, YAM_COg.c, YAM_COs.c, locale/YAM.cd, locale/deutsch.cd: whenever
     a signature has been modified in YAM internal editor and the user switches
@@ -1641,7 +1916,11 @@ $URL$
     signatures doesn't get saved permanently unnoticed or unwanted anymore. This
     fixes bug #1212788.
 
+<<<<<<< .mine
+2007-01-04  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-01-04  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM.c, YAM_TR.c: reworked the TR_Connect() function to check if the global
     socket is already in use. This rework also resulted in a clean up, thus now
@@ -1655,7 +1934,11 @@ $URL$
   * UpdateCheck.c: slightly reworked the update state loading function. Also
     added the missing trace macros.
 
+<<<<<<< .mine
+2007-01-03  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-01-03  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * misc: modified the update check in such a way, that the information about
     the last update check are no longer saved to the user's .config file, but to
@@ -1669,14 +1952,22 @@ $URL$
     was never triggered since nothing ever changed in the listview. This fixes
     bug #1626700.
 
+<<<<<<< .mine
+2007-01-02  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2007-01-02  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_UT.c: added some debug output upon changing the dock icon.
   * YAM_MA.c: deletion of old messages checked the age twice, but didn't take
     the spam folder in account on the first check. This could result in not
     deleting too old spam mails. This should fix bug #1621132.
 
+<<<<<<< .mine
+2007-01-01  P?r Boberg <pbobbenb@spray.se>
+=======
 2007-01-01  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: Updated according to changes and some minor fixes.
 
@@ -1691,14 +1982,22 @@ $URL$
     features but also approximately rewritten about 70-75% of the whole sources.
     I think this is one more reason to give everyone a big "cheers!"....
 
+<<<<<<< .mine
+2006-12-31  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-31  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_UT.c: modified GetMailFile() to always return the completely resolved
     path of a file.
   * YAM_MAf.c: modified MA_NewMailFile() to always return the completely resolved
     path of a file.
 
+<<<<<<< .mine
+2006-12-22  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-22  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_WR.c: modified the tagline functions to use the read/write functions for
     integer values that have been introduced for the spam filter.
@@ -1715,7 +2014,11 @@ $URL$
   * YAM_COg.c: the XPK popups are disabled now if xpkmaster.library is not
     available.
 
+<<<<<<< .mine
+2006-12-21  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-21  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_MA.c, YAM_FI.c, YAM_TR.c, YAM_rexx_rxif.c: added even more NULL pointer
     checks while traversing a list of mails created by MA_CreateFullList() or
@@ -1753,7 +2056,11 @@ $URL$
     should note that if a string is used with ER_NewError(), then it should
     not excessivly use \n characters, but only on specific places.
 
+<<<<<<< .mine
+2006-12-20  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-20  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_MA.c, YAM_CO.c, MailMailList.c, ReadWindowToolbar.c: reworked the spam/
     no spam buttons and menu in such a way that you only have one choice at a
@@ -1766,7 +2073,11 @@ $URL$
     or not spam. But the way the spam filter is intended to work contradicts
     this.
 
+<<<<<<< .mine
+2006-12-19  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-19  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_AB.c: reworked CSV/TAB import again a little bit to handle quoted items
     correctly. Did the same for the export to add quotes whenever the current
@@ -1787,7 +2098,11 @@ $URL$
 
   * locale/francais.ct: Update to the latest changes and minor corrections.
 
+<<<<<<< .mine
+2006-12-18  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-18  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_AB.c: extended the LDIF export to handle special characters according
     to RFC 2849.
@@ -1795,7 +2110,11 @@ $URL$
     entries, too. Now there is also an alias created if none is set up during
     the import.
 
+<<<<<<< .mine
+2006-12-17  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-17  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_AB.c: added address book import and export functions for raw value lists
     with either commas or TABs as delimiters. Also added basic LDIF address book
@@ -1841,11 +2160,19 @@ $URL$
 
   * locale/francais.ct: Update to the latest changes.
 
+<<<<<<< .mine
+2006-12-14  P?r Boberg <pbobbenb@spray.se>
+=======
 2006-12-14  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: Small update.
 
+<<<<<<< .mine
+2006-12-11  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-11  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_COs.c: if the spam filter has been disabled but the user chose to keep
     the spam folder it is now converted to a normal folder, which can be deleted
@@ -1870,7 +2197,11 @@ $URL$
     FolderName array to YAM_FO.c to avoid Library base definition problems
     accross platforms.
 
+<<<<<<< .mine
+2006-12-10  P?r Boberg <pbobbenb@spray.se>
+=======
 2006-12-10  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: updated according to the latest changes.
     And some minor word and phrase changes.
@@ -1900,7 +2231,11 @@ $URL$
     to be more compatible with their new functions. Also rephrased some
     german passages to match the way Thunderbird uses the same phrases.
 
+<<<<<<< .mine
+2006-12-09  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-09  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_COs.c: the free()ing of the spam folder upon deleting it was completely
     wrong and caused unpredictable system misbehaviour. The folder structure is
@@ -1935,7 +2270,11 @@ $URL$
     corresponding Splashwindow class instead of doing the analysis with help
     of a static variable directly in the Busy() function.
 
+<<<<<<< .mine
+2006-12-08  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-08  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_MA.c, YAM_main.h, locale/YAM.cd, locale/deutsch.ct: added menu item to
     delete all spam mails from the spam folder. This function will respect non
@@ -1946,7 +2285,11 @@ $URL$
     created in an already existing directory the case that the requester was
     cancelled was not really handled.
 
+<<<<<<< .mine
+2006-12-08  P?r Boberg <pbobbenb@spray.se>
+=======
 2006-12-08  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: updated according to the latest changes.
 
@@ -1960,7 +2303,11 @@ $URL$
     somewhat shorter as it is clear that it will be applied on mails. :)
   * include: updated MUI includes to very latest incarnations.
 
+<<<<<<< .mine
+2006-12-07  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-07  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_COs: added the possibility to use an already existing spam folder as
     standard spam folder when the spam filter has just been enabled, but without
@@ -1982,7 +2329,11 @@ $URL$
   * YAM_MA.c, YAM_CO.c: integrated dynamical adding/removing of the spam menu
     entries into MA_SetupDynamicMenus().
 
+<<<<<<< .mine
+2006-12-06  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-06  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_MI.c: removed unnecessary check during CRLF conversion.
   * YAM.c: removed a redundand statement for debugging purposes
@@ -1996,7 +2347,11 @@ $URL$
     disposed, its playback is stopped now. Maybe this fixes the freezes with
     MOS.
 
+<<<<<<< .mine
+2006-12-05  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-05  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_FO.c: added also some checks if the spam filter is active when the
     folder type and the folder images for a possibly spam folder are set up.
@@ -2005,11 +2360,19 @@ $URL$
     available updates or an available update the last update time in the config
     window is updated. This does not happen in case of an error.
 
+<<<<<<< .mine
+2006-12-04  P?r Boberg <pbobbenb@spray.se>
+=======
 2006-12-04  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: updated according to the latest changes.
 
+<<<<<<< .mine
+2006-12-04  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-04  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * locale/deutsch.ct: fixed some typos
   * YAM_COs.c: added the same checks when creating the spam folder after the
@@ -2045,7 +2408,11 @@ $URL$
     successfull. Now a user can override the automatic selection by explicitly
     selecting one of the supported SMTP-AUTH methods.
 
+<<<<<<< .mine
+2006-12-03  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-03  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_FI.c: reworked the spam filtering a bit again. Now it should always work
     as expected.
@@ -2066,7 +2433,11 @@ $URL$
     file is not deleted aswell. Before the directory was still kept, because
     it was not empty because of the still existing .fimage file.
 
+<<<<<<< .mine
+2006-12-01  P?r Boberg <pbobbenb@spray.se>
+=======
 2006-12-01  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: small update again
 
@@ -2078,7 +2449,11 @@ $URL$
     menu item and toolbar item disable/enable routines to just disable it
     if there is no multiselection active.
 
+<<<<<<< .mine
+2006-12-01  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-12-01  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_MA.c: the attachment menu is now also disabled for empty folders
   * YAM_FI.c: the recent changes complete broke the spam filtering. Now new
@@ -2104,7 +2479,11 @@ $URL$
     not mixed up. Please try to avoid mixing up the indention of the
     used paramaters.
 
+<<<<<<< .mine
+2006-11-30  P?r Boberg <pbobbenb@spray.se>
+=======
 2006-11-30  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: updated according to the latest changes and some minor
     fixes.
@@ -2113,7 +2492,11 @@ $URL$
 
   * locale/francais.ct: minor update and typo fixing.
 
+<<<<<<< .mine
+2006-11-29  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-29  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_COg.c, YAM_COs.c, locale/YAM.cd, locale/deutsch.ct: when disabling the
     spam filter the requester to ask for further actions now pops up when either
@@ -2126,7 +2509,11 @@ $URL$
   * BayesFilter.c: the training data are now always written to disk upon exit if
     there are any tokens and if something has changed since the last flush.
 
+<<<<<<< .mine
+2006-11-28  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-28  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_FI.c, YAM_TR.c: ApplyFiltersFunc() now does all the work. That means
     that we are back to the old state (only one filter function). This single
@@ -2157,7 +2544,11 @@ $URL$
     to the STYLEGUIDE. Please no plain Cut&Paste on new functions, go the
     clean way please :)
 
+<<<<<<< .mine
+2006-11-27  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-27  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_FI.c, YAM_TR.c: moving automatic recognized new spam mails to the spam
     folder after download no longer relies on the existance of user defined
@@ -2171,11 +2562,19 @@ $URL$
     flag is set on those actions where the mail transfer shouldn't be
     interrupted at any time.
 
+<<<<<<< .mine
+2006-11-24  P?r Boberg <pbobbenb@spray.se>
+=======
 2006-11-24  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: small update.
 
+<<<<<<< .mine
+2006-11-24  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-24  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_CO.c, YAM_MA.c, MainMailList.c, ReadWindow.c: the spam menu items are
     now completely hidden if the spam filter is not activated. If the filter is
@@ -2201,7 +2600,11 @@ $URL$
     might have happend that the system crashed during the transfer or if the
     user aborted it unexpectly.
 
+<<<<<<< .mine
+2006-11-23  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-23  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * BayesFilter.c: the spam recognition was slightly broken when the filter was
     completely untrained due to some changes to make the source conform the the
@@ -2221,7 +2624,11 @@ $URL$
     which doesn't correspond to any mail found on a POP3 server will be
     removed. That also fixes the issue with an endless growing ".uidl" file.
 
+<<<<<<< .mine
+2006-11-22  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-22  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * HashTable.c,h: added new function HashTableEnumerate to walk through a hash
     table using a callback function for every single entry. See HashTable.h how
@@ -2236,7 +2643,11 @@ $URL$
     different for vbcc and gcc. Somebody with a little bit more compiler
     knowledge (vbcc in particular) should take a look at this.
 
+<<<<<<< .mine
+2006-11-22  P?r Boberg <pbobbenb@spray.se>
+=======
 2006-11-22  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: updated according to the latest changes.
 
@@ -2246,7 +2657,11 @@ $URL$
     various date expressions in separate makefile variables for more easily
     specifying own date/expr commands instead.
 
+<<<<<<< .mine
+2006-11-21  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-21  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_UT.c: hopefully fixed the problem that when calling RemoveMailFromList()
     and closing open read windows the temporary files in T: never got deleted.
@@ -2272,7 +2687,11 @@ $URL$
   * locale/francais.ct: updated according to the latest changes and some
     minor typo corrections.
 
+<<<<<<< .mine
+2006-11-20  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-20  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_UT.c, YAM_utilities.h: transferred ReadUInt32() and WriteUInt32()
     functions from BayesFilter.c to here, because these two are no spam filter
@@ -2294,7 +2713,11 @@ $URL$
   * BayesFilter.c: The ".spamdata" file will now respect the user's own maildir
     setting instead of being stored in PROGDIR:
 
+<<<<<<< .mine
+2006-11-20  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-20  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * VMakefile: applied changes supplied by Jools Smith.
 
@@ -2310,7 +2733,11 @@ $URL$
     INLINE statement.
   * HashTable.c: fixed a possible uninitialized variable use.
 
+<<<<<<< .mine
+2006-11-19  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-19  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * locale/deutsch.ct: fixed bug #1597938.
   * ReadWindow.c: the toolbar is updated accordingly if a mail in the spam
@@ -2336,7 +2763,11 @@ $URL$
   * VMakefile, smakefile: added missing dependency lines for BayesFilter.o and
     HashTable.o
 
+<<<<<<< .mine
+2006-11-18  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-18  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_UT.c: deleted a printf() call for debugging purposes.
   * misc: all delete and move functions can be told to close a possibly open
@@ -2351,7 +2782,11 @@ $URL$
     should keep in mind that is not always possible to keep the read window open
     because of the invalid pointer problem.
 
+<<<<<<< .mine
+2006-11-17  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-17  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * misc: Too many changes to list each of them, but finally YAM got a working
     spam filter!!
@@ -2401,13 +2836,21 @@ $URL$
     include some debug output as well as make sure all memory is immediately
     freed upon an error.
 
+<<<<<<< .mine
+2006-11-14  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-14  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_UT.c: the info window after a mail download is opened in inactive state
     now to avoid the problem that this window steals the focus of other windows
     one is typing in.
 
+<<<<<<< .mine
+2006-11-13  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-13  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * ReadWindow, ReadMailGroup: after a call to either MA_DeleteSingle() or
     MA_MoveCopy() the pointer to the current mail in the ReadMailData must
@@ -2422,7 +2865,11 @@ $URL$
     after having scanned through all messages (should be faster) and
     without having to save the mail's folder pointer.
 
+<<<<<<< .mine
+2006-11-13  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-13  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * YAM_MA.c: the mail structure must not be accessed after a call to
     MA_DeleteSingle(), because it is free()ed in that function.
@@ -2445,7 +2892,11 @@ $URL$
     for the change to work the minimum required version of TextEditor.mcc
     has been bumped to 15.19.
 
+<<<<<<< .mine
+2006-11-09  Thore B?ckelmann <tboeckel@gmx.de>
+=======
 2006-11-09  Thore Böckelmann <tboeckel@gmx.de>
+>>>>>>> .r3065
 
   * locale/deutsch.ct: changed one string, because the old one was not really
     good german language.
@@ -2465,7 +2916,11 @@ $URL$
   * locale/francais.ct: updated according to the latest changes and some
     minor typo corrections.
 
+<<<<<<< .mine
+2006-10-07  P?r Boberg <pbobbenb@spray.se>
+=======
 2006-10-07  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: updated according to the latest changes.
 
@@ -2521,7 +2976,11 @@ $URL$
     intuitive than the previous behaviour of always assuming a multi-
     selection when clicking on an icon image.
 
+<<<<<<< .mine
+2006-10-01  P?r Boberg <pbobbenb@spray.se>
+=======
 2006-10-01  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: updated according to the latest changes.
 
@@ -2540,7 +2999,11 @@ $URL$
 
 2006-09-27  Jens Langner <Jens.Langner@light-speed.de>
 
+<<<<<<< .mine
+  * deutsch.ct: the 'p' shortcut for the "Sp?ter senden" gadget of the
+=======
   * deutsch.ct: the 'p' shortcut for the "Später senden" gadget of the
+>>>>>>> .r3065
     write window was interfering with the AMIGA+P Shortcut of the window
     menu. Now 't' is used instead.
   * misc: removed unncesessary STDARGS definitions.
@@ -3070,7 +3533,11 @@ $URL$
   * YAM_MI.c: replaced all memcpy() uses in rfc2047_dec_callback() with
     memmove() as the src and dst areas may overlap under certain conditions
     which in fact may cause certain undefined problems. Thanks to Thore
+<<<<<<< .mine
+    B?ckelmann for reporting the issue as it certainly wasn't an easy bug
+=======
     Böckelmann for reporting the issue as it certainly wasn't an easy bug
+>>>>>>> .r3065
     to find.
   * italino.ct: updated italian catalog translation kindly provided by Luca
     Longone.
@@ -3106,7 +3573,11 @@ $URL$
     problems with e.g. plain text attachments not fully matching the file
     which was attached by the sender.
 
+<<<<<<< .mine
+2006-06-13  P?r Boberg <pbobbenb@spray.se>
+=======
 2006-06-13  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: updated according to the latest changes, plus
     some minor changes.
@@ -3476,7 +3947,11 @@ $URL$
     update via internet - however, it will still not notify the user in case
     there are updates available as we still have to do some work on that stuff.
 
+<<<<<<< .mine
+2006-04-21  P?r Boberg <pbobbenb@spray.se>
+=======
 2006-04-21  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: updated according to the latest changes.
 
@@ -3486,7 +3961,11 @@ $URL$
     a direct and more advanced update check via internet. Please note that we
     are still not finished and currently nothing will happen.
 
+<<<<<<< .mine
+2006-04-19  P?r Boberg <pbobbenb@spray.se>
+=======
 2006-04-19  Pär Boberg <pbobbenb@spray.se>
+>>>>>>> .r3065
 
   * locale/svenska.ct: made some very minor changes
 
@@ -3495,7 +3974,11 @@ $URL$
   * YAM_utilities.h: revised our own "struct TimeVal" fallback structure
     definitions to also be defined on older OS4 SDK's.
   * locale/svenska.ct: updated swedish catalog translation kindly provided by
+<<<<<<< .mine
+    P?r Boberg.
+=======
     Pär Boberg.
+>>>>>>> .r3065
 
 2006-04-12  Jens Langner <Jens.Langner@light-speed.de>
 
@@ -7362,7 +7845,11 @@ $URL$
 2002-07-01  Jens Langner <Jens.Langner@htw-dresden.de>
 
   * YAM_TR.c: fixed many major flaws within the whole TCP/IP
+<<<<<<< .mine
+    routines according to some ideas from J?rg:
+=======
     routines according to some ideas from Jörg:
+>>>>>>> .r3065
     1) YAM didn`t make sure that it sent/received whole command
        lines and missused some RecvDat() calls which could have
        caused some weird behaviour if receiving/sending packets
@@ -8259,7 +8746,11 @@ $URL$
     doesn't really fit a category. The rest of the flags has to be added
     when required. They should be categorized, i.e. no flag for 'my fancy
     feature', but instead a flag for i/o, network stuff etc.
+<<<<<<< .mine
+    You enable debug output with "SetEnv YAMDebug ?flags?". Flags is a
+=======
     You enable debug output with "SetEnv YAMDebug «flags»". Flags is a
+>>>>>>> .r3065
     comma, space or semi-colon separated list of stuff you want enabled.
     E.g. "io, verbose, error". You can also enter "all" to get everything
     enabled.
@@ -8299,7 +8790,11 @@ $URL$
 
 2001-08-05  Allan Odgaard <duff@diku.dk>
 
+<<<<<<< .mine
+  * Fixed enforcer hit in Recipientstring class (?censored?).
+=======
   * Fixed enforcer hit in Recipientstring class («censored»).
+>>>>>>> .r3065
   * ResolveOnCR defaults to FALSE similar to AdvanceOnCR.
   * Pressing 'delete' in a recipient string will now delete close the popup
     list.
@@ -8322,7 +8817,11 @@ $URL$
   * Recipientstring class no longer sets the frame, cyclechain or 'advance
     on cr' tags.
   * Ensured that all source descriptions are now prefixed with ' Module:'.
+<<<<<<< .mine
+    This allows e.g. to do a ?Search YAM_#?.c "*N Module:"? to see the
+=======
     This allows e.g. to do a »Search YAM_#?.c "*N Module:"« to see the
+>>>>>>> .r3065
     description of each source file.
 
 2001-08-02  Jens Langner <Jens.Langner@htw-dresden.de>
@@ -8352,7 +8851,11 @@ $URL$
     Now YAM should resolve any entered string without the realname if the user
     press SHIFT+RETURN in a recipientstring gadget.
   * changed the string gadget checks if a mail is going to be sent accordingly
+<<<<<<< .mine
+    to the above behavio?r. Now YAM will pop up an error requester if a user
+=======
     to the above behavioõr. Now YAM will pop up an error requester if a user
+>>>>>>> .r3065
     tries to send a email and it can`t resolve any entered string or if the
     From: is missing.
   * YAM will also change the focus of the pagegroup and string gadget that
@@ -8436,7 +8939,11 @@ $URL$
     of the string). The completion will only kick in if the character under
     the cursor is '\0' or ','.
 
+<<<<<<< .mine
+??? Some bugs/flaws which remain: ???
+=======
 ««« Some bugs/flaws which remain: »»»
+>>>>>>> .r3065
 
 [FIXED] ADDRRESOLVE arexx command is currently broken. Reason is that I have
       retired the WR_Resolve() function which this command require. Suggested
@@ -8591,7 +9098,11 @@ $URL$
     faster (since AddTail is O(n)), however NList layout is still required,
     so it's still painfully slow...
 
+<<<<<<< .mine
+2001-06-24  Dirk St?cker <stoecker@epost.de>
+=======
 2001-06-24  Dirk Stöcker <stoecker@epost.de>
+>>>>>>> .r3065
 
   * YAM.c Added proper exitcode and modified Abort()
   * Added classes directory, moved Searchwindow_class to this as
@@ -8644,7 +9155,11 @@ $URL$
   * YAM_UT.c: (CloneWorkbenchPath) likewise
   * YAM_WR.c: (MIMewarn,PGPwarn) likewise
 
+<<<<<<< .mine
+2001-06-20  Dirk St?cker <stoecker@epost.de>
+=======
 2001-06-20  Dirk Stöcker <stoecker@epost.de>
+>>>>>>> .r3065
 
   * fixed smakefile: $< does NOT work, when there are 2 or more depencies
     in the header line! This only works, if the header files are never
@@ -8714,7 +9229,11 @@ $URL$
   * YAM_WR.c: (PutQP) added const qualifier
     (WR_New, WR_NewBounce) likewise, fixed GCC warning
 
+<<<<<<< .mine
+2001-06-19  Dirk St?cker <stoecker@epost.de>
+=======
 2001-06-19  Dirk Stöcker <stoecker@epost.de>
+>>>>>>> .r3065
 
   * documented disabled warnings in smakefile, remove 2 disabled warnings
   * mada DATA=NEAR in smakefile, suggested by Gunther
@@ -8753,7 +9272,11 @@ $URL$
     really stay so that this fact is recorded instead of leading others to think that
     GCC support has not been considered.
 
+<<<<<<< .mine
+2001-06-17  Dirk St?cker <stoecker@epost.de>
+=======
 2001-06-17  Dirk Stöcker <stoecker@epost.de>
+>>>>>>> .r3065
 
   * Moved __USE_SYSBASE from YAM_UT.c to smakefile (where it really belongs to).
   * Changed YAM_global.c stack stuff. This needs to be completed.
@@ -8878,7 +9401,11 @@ $URL$
     the old .index files from older 2.x versions. Now we should be compatible again.
   * merge the differences from RELEASE 2.3 branch to actual MAIN branch
 
+<<<<<<< .mine
+2001-06-10  Dirk St?cker <stoecker@epost.de>
+=======
 2001-06-10  Dirk Stöcker <stoecker@epost.de>
+>>>>>>> .r3065
 
   * moved a lot more stuff to the corresponding header files
   * removed all includes from old.h
@@ -8970,11 +9497,19 @@ $URL$
   * YAM_UT.c: lame fix for a MUI header problem with GCC
   * YAM_md5.c: removed non-breaking spaces
 
+<<<<<<< .mine
+2001-05-28  Dirk St?cker <stoecker@epost.de>
+=======
 2001-05-28  Dirk Stöcker <stoecker@epost.de>
+>>>>>>> .r3065
 
   * replaced MD5 calculation by PD variant
 
+<<<<<<< .mine
+2001-05-27  Dirk St?cker <stoecker@epost.de>
+=======
 2001-05-27  Dirk Stöcker <stoecker@epost.de>
+>>>>>>> .r3065
 
   * moved a lot more stuff to the corresponding header files
   * NOTE: YAM_UT.c should be splitted!
@@ -9034,14 +9569,22 @@ $URL$
     This will break Dirks plan to remove all "//" comments, but I think that`s
     acceptable. ;)
 
+<<<<<<< .mine
+2001-05-20  Dirk St?cker <stoecker@epost.de>
+=======
 2001-05-20  Dirk Stöcker <stoecker@epost.de>
+>>>>>>> .r3065
 
   * further reorganization
   * made whole code optimizable with SAS-C again (tracking down compiler bugs
     seems to get a hobby of me :-)
   * YAM_FO.c and YAM_EA.c are directly compilable now.
 
+<<<<<<< .mine
+2001-05-20  Dirk St?cker <stoecker@epost.de>
+=======
 2001-05-20  Dirk Stöcker <stoecker@epost.de>
+>>>>>>> .r3065
 
   * some more stuff. Now at least the files
     YAM_ER.c, YAM_DI.c, YAM_US.c and YAM_md5.c compile without old.h
@@ -9060,7 +9603,11 @@ $URL$
     declarations elsewhere (Maybe we should move these declarations to
     YAM_globals.c as Gunther suggested).
 
+<<<<<<< .mine
+2001-05-19  Dirk St?cker <stoecker@epost.de>
+=======
 2001-05-19  Dirk Stöcker <stoecker@epost.de>
+>>>>>>> .r3065
 
   * started second step of cleanup
   * replaced compiler.h by SDI_compiler.h (please don't mind Gunther, but it is
@@ -9074,7 +9621,11 @@ $URL$
   * compiling with SAS will get faster again, when old.h is away. Maybe also the
     optimizing problem will disappear then?
 
+<<<<<<< .mine
+2001-05-19  Dirk St?cker <stoecker@epost.de>
+=======
 2001-05-19  Dirk Stöcker <stoecker@epost.de>
+>>>>>>> .r3065
 
   * started first step of real code cleanup (very likely MorphOS support will
     be broken for some time!)
@@ -9264,7 +9815,11 @@ $URL$
 
   * Added a warning when a mail without subject is going to be sent.
 
+<<<<<<< .mine
+2001-03-10  J?rg Strohmayer <joergs@users.sourceforge.net>
+=======
 2001-03-10  Jörg Strohmayer <joergs@users.sourceforge.net>
+>>>>>>> .r3065
 
   * Changes for GCC/ixemul.
 
@@ -9339,7 +9894,11 @@ $URL$
   * Fixed broken ARexx interface for SAS/C (introduced on January
     28th).
 
+<<<<<<< .mine
+2001-02-04  J?rg Strohmayer <joergs@users.sourceforge.net>
+=======
 2001-02-04  Jörg Strohmayer <joergs@users.sourceforge.net>
+>>>>>>> .r3065
 
   * Fixed Utility and LocalBase types, added m68k-AmigaOS makefile
     and some other minor changes to be able to compile with GCC again.
@@ -9354,7 +9913,11 @@ $URL$
 
   * Added dynamic date string creation in smakefile.
 
+<<<<<<< .mine
+2001-01-28  Dirk St?cker <stoecker@amigaworld.com>
+=======
 2001-01-28  Dirk Stöcker <stoecker@amigaworld.com>
+>>>>>>> .r3065
 
   * Moved SAS-C make process completely into smakefile
 
@@ -9369,7 +9932,11 @@ $URL$
     configured, even though "Use SMTP AUTH" wasn't selected. Fixed.
     Localized ESMTP error message.
 
+<<<<<<< .mine
+2000-12-20  J?rg Strohmayer <joergs@users.sourceforge.net>
+=======
 2000-12-20  Jörg Strohmayer <joergs@users.sourceforge.net>
+>>>>>>> .r3065
 
   * Added SMTP AUTH to config GUI.
 
