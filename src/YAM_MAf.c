@@ -2548,7 +2548,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
               msg->Preparse[0] = C->StyleFolderNew;
               // include the number of new mails, if the column is hidden
               if(isFlagClear(C->FolderCols, (1<<3)))
-                snprintf(folderStr, sizeof(folderStr), "%s (%d)", folderStr, entry->New);
+                snprintf(folderStr, sizeof(folderStr), "%s (%d/%d)", folderStr, entry->New, entry->Unread);
             }
             else if(entry->Unread > 0)
             {
