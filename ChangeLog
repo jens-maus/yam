@@ -7,6 +7,9 @@ $URL$
 
 2007-05-28  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c: some popup buttons must be reenabled in another context to ensure
+    they are really enabled again after the corresponding ASL requester has been
+    closed by MUI. This fixes bug #1725800.
   * YAM_MAf.c: in case the "New" and "Unread" columns of the folder tree are
     hidden the number of new and unread mails is now displayed in this way: if
     new mails exist the numbers will be displayed as "folder (new/unread)". If

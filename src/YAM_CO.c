@@ -208,55 +208,66 @@ MakeHook(RemoveLastRuleHook, RemoveLastRule);
 //  Enables/disables GUI gadgets in filter form
 void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
 {
-  BOOL isremote = filter ? filter->remote : FALSE;
+  BOOL isremote;
   LONG pos = MUIV_NList_GetPos_Start;
   int numRules = 0;
   struct List *childList;
 
-  set(gui->ST_RNAME,             MUIA_Disabled, !filter);
-  set(gui->CH_REMOTE,            MUIA_Disabled, !filter);
-  set(gui->CH_APPLYNEW,          MUIA_Disabled, !filter || isremote);
-  set(gui->CH_APPLYREQ,          MUIA_Disabled, !filter || isremote);
-  set(gui->CH_APPLYSENT,         MUIA_Disabled, !filter || isremote);
-  set(gui->CH_ABOUNCE,           MUIA_Disabled, !filter || isremote);
-  set(gui->CH_AFORWARD,          MUIA_Disabled, !filter || isremote);
-  set(gui->CH_ARESPONSE,         MUIA_Disabled, !filter || isremote);
-  set(gui->CH_AEXECUTE,          MUIA_Disabled, !filter);
-  set(gui->CH_APLAY,             MUIA_Disabled, !filter);
-  set(gui->CH_AMOVE,             MUIA_Disabled, !filter || isremote);
-  set(gui->CH_ADELETE,           MUIA_Disabled, !filter);
-  set(gui->CH_ASKIP,             MUIA_Disabled, !filter || !isremote);
-  set(gui->ST_ABOUNCE,           MUIA_Disabled, !filter || isremote || !xget(gui->CH_ABOUNCE,    MUIA_Selected));
-  set(gui->ST_AFORWARD,          MUIA_Disabled, !filter || isremote || !xget(gui->CH_AFORWARD,   MUIA_Selected));
-  set(gui->PO_ARESPONSE,         MUIA_Disabled, !filter || isremote || !xget(gui->CH_ARESPONSE,  MUIA_Selected));
-  set(gui->PO_AEXECUTE,          MUIA_Disabled, !filter || !xget(gui->CH_AEXECUTE, MUIA_Selected));
-  set(gui->PO_APLAY,             MUIA_Disabled, !filter || !xget(gui->CH_APLAY, MUIA_Selected));
-  set(gui->BT_APLAY,             MUIA_Disabled, !filter || !xget(gui->CH_APLAY, MUIA_Selected));
-  set(gui->PO_MOVETO,            MUIA_Disabled, !filter || !xget(gui->CH_AMOVE, MUIA_Selected));
-  set(gui->BT_RDEL,              MUIA_Disabled, !filter);
+  ENTER();
+
+  isremote = (filter != NULL) ? filter->remote : FALSE;
+
+  set(gui->ST_RNAME,             MUIA_Disabled, filter == NULL);
+  set(gui->CH_REMOTE,            MUIA_Disabled, filter == NULL);
+  set(gui->CH_APPLYNEW,          MUIA_Disabled, filter == NULL || isremote);
+  set(gui->CH_APPLYREQ,          MUIA_Disabled, filter == NULL || isremote);
+  set(gui->CH_APPLYSENT,         MUIA_Disabled, filter == NULL || isremote);
+  set(gui->CH_ABOUNCE,           MUIA_Disabled, filter == NULL || isremote);
+  set(gui->CH_AFORWARD,          MUIA_Disabled, filter == NULL || isremote);
+  set(gui->CH_ARESPONSE,         MUIA_Disabled, filter == NULL || isremote);
+  set(gui->CH_AEXECUTE,          MUIA_Disabled, filter == NULL);
+  set(gui->CH_APLAY,             MUIA_Disabled, filter == NULL);
+  set(gui->CH_AMOVE,             MUIA_Disabled, filter == NULL || isremote);
+  set(gui->CH_ADELETE,           MUIA_Disabled, filter == NULL);
+  set(gui->CH_ASKIP,             MUIA_Disabled, filter == NULL || !isremote);
+  set(gui->ST_ABOUNCE,           MUIA_Disabled, filter == NULL || isremote || !xget(gui->CH_ABOUNCE,   MUIA_Selected));
+  set(gui->ST_AFORWARD,          MUIA_Disabled, filter == NULL || isremote || !xget(gui->CH_AFORWARD,  MUIA_Selected));
+  set(gui->BT_APLAY,             MUIA_Disabled, filter == NULL || !xget(gui->CH_APLAY, MUIA_Selected));
+  set(gui->PO_MOVETO,            MUIA_Disabled, filter == NULL || !xget(gui->CH_AMOVE, MUIA_Selected));
+  set(gui->BT_RDEL,              MUIA_Disabled, filter == NULL);
 
   // lets make sure we ghost the filter up/down buttons if necessary
-  if(filter)
+  if(filter != NULL)
     DoMethod(gui->LV_RULES, MUIM_NList_GetPos, filter, &pos);
 
-  set(gui->BT_FILTERUP,   MUIA_Disabled, !filter || pos == 0);
-  set(gui->BT_FILTERDOWN, MUIA_Disabled, !filter || pos+1 == (LONG)xget(gui->LV_RULES, MUIA_NList_Entries));
+  set(gui->BT_FILTERUP,   MUIA_Disabled, filter == NULL || pos == 0);
+  set(gui->BT_FILTERDOWN, MUIA_Disabled, filter == NULL || pos+1 == (LONG)xget(gui->LV_RULES, MUIA_NList_Entries));
 
   // we have to find out how many rules the filter has
-  if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
+  if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)) != NULL)
   {
     Object *cstate = (Object *)childList->lh_Head;
     Object *child;
 
-    while((child = NextObject(&cstate)))
+    while((child = NextObject(&cstate)) != NULL)
     {
-      set(child, MUIA_Disabled, !filter);
+      set(child, MUIA_Disabled, filter == NULL);
       numRules++;
     }
   }
 
-  set(gui->BT_MORE, MUIA_Disabled, !filter);
-  set(gui->BT_LESS, MUIA_Disabled, !filter || numRules <= 1);
+  set(gui->BT_MORE, MUIA_Disabled, filter == NULL);
+  set(gui->BT_LESS, MUIA_Disabled, filter == NULL || numRules <= 1);
+
+  // These three "disables" must be done in another context, because the Popasl object will en/disable
+  // the pop button itself as long as the requester is open. After that this hook is called but the object
+  // has not yet enabled the pop button again, so we might get wrong visible results. Not a very nice
+  // solution, I must say :(
+  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 4, MUIM_Set, gui->PO_ARESPONSE, MUIA_Disabled, filter == NULL || isremote || !xget(gui->CH_ARESPONSE, MUIA_Selected));
+  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 4, MUIM_Set, gui->PO_AEXECUTE, MUIA_Disabled, filter == NULL || !xget(gui->CH_AEXECUTE, MUIA_Selected));
+  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 4, MUIM_Set, gui->PO_APLAY, MUIA_Disabled, filter == NULL || !xget(gui->CH_APLAY, MUIA_Selected));
+
+  LEAVE();
 }
 
 ///
