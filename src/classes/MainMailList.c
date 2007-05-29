@@ -596,7 +596,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MREPLY),            MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_REPLY,      End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MFORWARD),          MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_FORWARD,    End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MBOUNCE),           MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_BOUNCE,     End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MSend),             MUIA_Menuitem_Enabled, mail && !isOutBox,  MUIA_UserData, MMEN_SEND, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MSend),             MUIA_Menuitem_Enabled, mail && isOutBox,   MUIA_UserData, MMEN_SEND, End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ChangeSubj),        MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_CHSUBJ,     End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SetStatus),         MUIA_Menuitem_Enabled, mail,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOMARKED),        MUIA_Menuitem_Enabled, mail && !hasStatusMarked(mail), MUIA_UserData, MMEN_TOMARKED,   End,
