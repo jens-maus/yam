@@ -2554,13 +2554,28 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
                 else
                   snprintf(folderStr, sizeof(folderStr), "%s (%d)", folderStr, entry->New);
               }
+              else
+              {
+                if(isFlagClear(C->FolderCols, (1<<2)))
+                  snprintf(folderStr, sizeof(folderStr), "%s (%d)", folderStr, entry->Unread);
+              }
             }
             else if(entry->Unread > 0)
             {
               msg->Preparse[0] = C->StyleFolderUnread;
               // include the number of unread mails, if the column is hidden
               if(isFlagClear(C->FolderCols, (1<<2)))
-                snprintf(folderStr, sizeof(folderStr), "%s (%d)", folderStr, entry->Unread);
+              {
+                if(isFlagClear(C->FolderCols, (1<<3)))
+                  snprintf(folderStr, sizeof(folderStr), "%s (%d/%d)", folderStr, entry->New, entry->Unread);
+                else
+                  snprintf(folderStr, sizeof(folderStr), "%s (%d)", folderStr, entry->Unread);
+              }
+              else
+              {
+                if(isFlagClear(C->FolderCols, (1<<3)))
+                  snprintf(folderStr, sizeof(folderStr), "%s (%d)", folderStr, entry->New);
+              }
             }
             else
               msg->Preparse[0] = C->StyleFolderRead;

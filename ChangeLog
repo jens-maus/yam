@@ -7,6 +7,8 @@ $URL$
 
 2007-05-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MAf.c: with this final change now all hidden columns' numbers are
+    shown along with the folder name.
   * MainMailList.c: the disable/enable logic for the "Send" item was reversed.
   * YAM_MAf.c: changed the display of new and unread mails once more. All hidden
     columns' numbers will be shown behind the folder name now.
