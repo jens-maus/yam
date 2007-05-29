@@ -7,6 +7,8 @@ $URL$
 
 2007-05-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MAf.c: changed the display of new and unread mails once more. All hidden
+    columns' numbers will be shown behind the folder name now.
   * YAM_CO.c: the last fix pushed the argument in a wrong way.
 
 2007-05-28  Thore Böckelmann <tboeckel@gmx.de>
