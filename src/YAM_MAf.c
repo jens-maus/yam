@@ -2543,7 +2543,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
           if(entry->LoadedMode != LM_UNLOAD &&
              entry->LoadedMode != LM_REBUILD)
           {
-            if(entry->New > 0)
+            if(entry->New != 0)
             {
               msg->Preparse[0] = C->StyleFolderNew;
               // include the number of new mails, if the column is hidden
@@ -2556,11 +2556,11 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
               }
               else
               {
-                if(isFlagClear(C->FolderCols, (1<<2)))
+                if(isFlagClear(C->FolderCols, (1<<2)) && entry->Unread != 0)
                   snprintf(folderStr, sizeof(folderStr), "%s (%d)", folderStr, entry->Unread);
               }
             }
-            else if(entry->Unread > 0)
+            else if(entry->Unread != 0)
             {
               msg->Preparse[0] = C->StyleFolderUnread;
               // include the number of unread mails, if the column is hidden
@@ -2573,7 +2573,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
               }
               else
               {
-                if(isFlagClear(C->FolderCols, (1<<3)))
+                if(isFlagClear(C->FolderCols, (1<<3)) && entry->New != 0)
                   snprintf(folderStr, sizeof(folderStr), "%s (%d)", folderStr, entry->New);
               }
             }
