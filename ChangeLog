@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-29  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: the last fix pushed the argument in a wrong way.
+
 2007-05-28  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: some popup buttons must be reenabled in another context to ensure
@@ -60,7 +64,7 @@ $URL$
     care about 'short item counts' and only did a single data transfer via
     send(), rather than trying to submit all supplied data. Now it should take
     care of that as well, which hopefully should fix bug #1722336.
- 
+
 2007-05-24  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: french translation update according to latest changes.
