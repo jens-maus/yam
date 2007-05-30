@@ -28,14 +28,20 @@
 
 ***************************************************************************/
 
+#include <exec/nodes.h>
+#include <intuition/screens.h>
 #include <mui/TheBar_mcc.h>
+
+#include "HashTable.h"
 
 // definition of an imageCacheNode which contains
 // all information of a loaded image file, including the
 // loaded image datatype object
-struct imageCacheNode
+struct ImageCacheNode
 {
-  struct MinNode node;    // the node for adding it in a MinList
+  //struct MinNode node;    // the node for adding it in a MinList
+  struct HashEntryHeader hash;
+  char *id;               // pointer to the filename
   char *filename;         // pointer to the filename
   Object *dt_obj;         // the datatypes object
   struct Screen *screen;  // pointer to the screen the image is mapped to
@@ -46,11 +52,12 @@ struct imageCacheNode
 };
 
 // the prototypes for our public available functions
+BOOL ImageCacheSetup(void);
 BOOL ImageCacheInit(const char *path);
 void ImageCacheCleanup(void);
-struct imageCacheNode *ObtainImage(const char *filename, const struct Screen *scr);
-void DisposeImage(struct imageCacheNode *node);
-BOOL IsImageInCache(const char *filename);
+struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const struct Screen *scr);
+void DisposeImage(const char *id);
+BOOL IsImageInCache(const char *id);
 
 // the prototypes/enums for our specialized Toolbarimage
 // cache

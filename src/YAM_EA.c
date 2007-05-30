@@ -416,6 +416,7 @@ static void EA_SetPhoto(int winnum, char *fname)
     MUI_DisposeObject(gui->BC_PHOTO);
 
     gui->BC_PHOTO = UserImageObject,
+                      MUIA_UserImage_Address,     "bla",
                       MUIA_UserImage_File,        fname,
                       MUIA_UserImage_MaxHeight,   64,
                       MUIA_UserImage_MaxWidth,    64,

@@ -137,7 +137,6 @@ struct Global
    struct sockaddr_in       TR_INetSocketAddr;
    struct MinList           readMailDataList;
    struct MinList           xpkPackerList;
-   struct MinList           imageCacheList;
    struct MinList           zombieFileList;
 
    char                     ProgDir[SIZE_PATH];

@@ -1,3 +1,4 @@
+
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -200,7 +201,7 @@ OVERLOAD(OM_NEW)
       Child, HGroup,
         MUIA_Group_Spacing, 0,
         Child, HSpace(0),
-        Child, MakeImageObject(logopath),
+        Child, MakeImageObject("logo", logopath),
         Child, HSpace(0),
       End,
       Child, HCenter((VGroup,

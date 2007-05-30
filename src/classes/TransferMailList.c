@@ -58,8 +58,8 @@ OVERLOAD(OM_NEW)
   data = (struct Data *)INST_DATA(cl,obj);
 
   // prepare the group image
-  data->downloadImage = MakeImageObject("status_download");
-  data->deleteImage   = MakeImageObject("status_delete");
+  data->downloadImage = MakeImageObject("status_download", "status_download");
+  data->deleteImage   = MakeImageObject("status_delete", "status_delete");
 
   DoMethod(obj, MUIM_NList_UseImage, data->downloadImage, SICON_ID_DOWNLOAD, MUIF_NONE);
   DoMethod(obj, MUIM_NList_UseImage, data->deleteImage, SICON_ID_DELETE, MUIF_NONE);

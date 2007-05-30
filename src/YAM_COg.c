@@ -88,7 +88,7 @@ static Object *MakeStaticCheck(void);
 /// ConfigPageHeaderObject()
 #define ConfigPageHeaderObject(image, title, summary) \
           Child, HGroup,                              \
-            Child, MakeImageObject(image),            \
+            Child, MakeImageObject(image, image),     \
             Child, VGroup,                            \
               Child, TextObject,                      \
                 MUIA_Text_PreParse, "\033b",          \

@@ -80,24 +80,24 @@ OVERLOAD(OM_NEW)
     set(obj, MUIA_NList_DisplayHook, &data->displayHook);
 
     // create/load all bodychunkimages of our config icons
-    data->configIcon[cp_FirstSteps  ] = MakeImageObject("config_firststep");
-    data->configIcon[cp_TCPIP       ] = MakeImageObject("config_network");
-    data->configIcon[cp_NewMail     ] = MakeImageObject("config_newmail");
-    data->configIcon[cp_Filters     ] = MakeImageObject("config_filters");
-    data->configIcon[cp_Spam        ] = MakeImageObject("config_spam");
-    data->configIcon[cp_Read        ] = MakeImageObject("config_read");
-    data->configIcon[cp_Write       ] = MakeImageObject("config_write");
-    data->configIcon[cp_ReplyForward] = MakeImageObject("config_answer");
-    data->configIcon[cp_Signature   ] = MakeImageObject("config_signature");
-    data->configIcon[cp_Lists       ] = MakeImageObject("config_lists");
-    data->configIcon[cp_Security    ] = MakeImageObject("config_security");
-    data->configIcon[cp_StartupQuit ] = MakeImageObject("config_start");
-    data->configIcon[cp_MIME        ] = MakeImageObject("config_mime");
-    data->configIcon[cp_AddressBook ] = MakeImageObject("config_abook");
-    data->configIcon[cp_Scripts     ] = MakeImageObject("config_scripts");
-    data->configIcon[cp_Mixed       ] = MakeImageObject("config_misc");
-    data->configIcon[cp_LookFeel    ] = MakeImageObject("config_lookfeel");
-    data->configIcon[cp_Update      ] = MakeImageObject("config_update");
+    data->configIcon[cp_FirstSteps  ] = MakeImageObject("config_firststep", "config_firststep");
+    data->configIcon[cp_TCPIP       ] = MakeImageObject("config_network", "config_network");
+    data->configIcon[cp_NewMail     ] = MakeImageObject("config_newmail", "config_newmail");
+    data->configIcon[cp_Filters     ] = MakeImageObject("config_filters", "config_filters");
+    data->configIcon[cp_Spam        ] = MakeImageObject("config_spam", "config_spam");
+    data->configIcon[cp_Read        ] = MakeImageObject("config_read", "config_read");
+    data->configIcon[cp_Write       ] = MakeImageObject("config_write", "config_write");
+    data->configIcon[cp_ReplyForward] = MakeImageObject("config_answer", "config_answer");
+    data->configIcon[cp_Signature   ] = MakeImageObject("config_signature", "config_signature");
+    data->configIcon[cp_Lists       ] = MakeImageObject("config_lists", "config_lists");
+    data->configIcon[cp_Security    ] = MakeImageObject("config_security", "config_security");
+    data->configIcon[cp_StartupQuit ] = MakeImageObject("config_start", "config_start");
+    data->configIcon[cp_MIME        ] = MakeImageObject("config_mime", "config_mime");
+    data->configIcon[cp_AddressBook ] = MakeImageObject("config_abook", "config_abook");
+    data->configIcon[cp_Scripts     ] = MakeImageObject("config_scripts", "config_scripts");
+    data->configIcon[cp_Mixed       ] = MakeImageObject("config_misc", "config_misc");
+    data->configIcon[cp_LookFeel    ] = MakeImageObject("config_lookfeel", "config_lookfeel");
+    data->configIcon[cp_Update      ] = MakeImageObject("config_update", "config_update");
 
     // now we can add the config icon objects and use UseImage
     // to prepare it for displaying it in the NList

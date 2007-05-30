@@ -1086,6 +1086,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
       if(RE_FindPhotoOnDisk(ab, photopath) &&
          (data->senderImage = UserImageObject,
                                 MUIA_Weight,                 100,
+                                MUIA_UserImage_Address,      from->Address,
                                 MUIA_UserImage_File,         photopath,
                                 MUIA_UserImage_MaxHeight,    64,
                                 MUIA_UserImage_MaxWidth,    64,

@@ -29,8 +29,8 @@
 
 ***************************************************************************/
 
-#include "UserImage_cl.h"
 #include "ImageCache.h"
+#include "UserImage_cl.h"
 
 #include <proto/datatypes.h>
 #include <proto/icon.h>
@@ -41,9 +41,10 @@
 /* CLASSDATA
 struct Data
 {
+  char address[SIZE_ADDRESS];
   char fileName[SIZE_PATHFILE];
 
-  struct imageCacheNode *imageNode;
+  struct ImageCacheNode imageNode;
   struct BitMap *scaledBitMap;
 
   ULONG scaledWidth;
@@ -51,6 +52,8 @@ struct Data
   ULONG maxWidth;
   ULONG maxHeight;
   BOOL noMinHeight;
+
+  BOOL imageLoaded;
 };
 */
 
@@ -70,6 +73,7 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
+        ATTR(Address)     : if(tag->ti_Data) strlcpy(data->address, (char *)tag->ti_Data, sizeof(data->address)); break;
         ATTR(File)        : if(tag->ti_Data) strlcpy(data->fileName, (char *)tag->ti_Data, sizeof(data->fileName)); break;
         ATTR(MaxHeight)   : data->maxHeight   = (ULONG)tag->ti_Data; break;
         ATTR(MaxWidth)    : data->maxWidth    = (ULONG)tag->ti_Data; break;
@@ -90,108 +94,112 @@ OVERLOAD(MUIM_Setup)
   ENTER();
 
   // call the SuperMethod() first
-  if(!DoSuperMethodA(cl, obj, msg) ||
-     data->fileName[0] == '\0')
+  if(DoSuperMethodA(cl, obj, msg) && data->fileName[0] != '\0')
   {
-    RETURN(result);
-    return result;
-  }
-
-  if(data->imageNode == NULL)
-    data->imageNode = ObtainImage(data->fileName, _screen(obj));
-
-  if(data->imageNode != NULL)
-  {
-    struct BitMap *orgBitMap = NULL;
-    struct BitMapHeader *bitMapHeader = NULL;
-
-    GetDTAttrs(data->imageNode->dt_obj, PDTA_BitMapHeader, &bitMapHeader,
-                                        PDTA_DestBitMap,   &orgBitMap,
-                                        TAG_DONE);
-
-    // try another attribute if the other DestBitMap failed
-    if(orgBitMap == NULL)
-      GetDTAttrs(data->imageNode->dt_obj, PDTA_BitMap, &orgBitMap, TAG_DONE);
-
-    // check if correctly obtained the header and if it is valid
-    if(orgBitMap != NULL && bitMapHeader != NULL && bitMapHeader->bmh_Depth > 0)
+    if(data->imageLoaded == FALSE)
     {
-      // make sure to scale down the image if maxHeight/maxWidth is specified
-      LONG scaleHeightDiff = bitMapHeader->bmh_Height - data->maxHeight;
-      LONG scaleWidthDiff  = bitMapHeader->bmh_Width - data->maxWidth;
-      LONG newWidth;
-      LONG newHeight;
+      struct ImageCacheNode *node;
 
-      if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
-         (scaleWidthDiff > 0 && data->maxWidth > 0))
+      if((node = ObtainImage(data->address, data->fileName, _screen(obj))) != NULL)
       {
-        double scaleFactor;
+        memcpy(&data->imageNode, node, sizeof(data->imageNode));
+        data->imageLoaded = TRUE;
+      }
+    }
 
-        // make sure we are scaling proportional
-        if(scaleHeightDiff > scaleWidthDiff)
+    if(data->imageLoaded == TRUE)
+    {
+      struct BitMap *orgBitMap = NULL;
+      struct BitMapHeader *bitMapHeader = NULL;
+
+      GetDTAttrs(data->imageNode.dt_obj, PDTA_BitMapHeader, &bitMapHeader,
+                                         PDTA_DestBitMap,   &orgBitMap,
+                                         TAG_DONE);
+
+      // try another attribute if the other DestBitMap failed
+      if(orgBitMap == NULL)
+        GetDTAttrs(data->imageNode.dt_obj, PDTA_BitMap, &orgBitMap, TAG_DONE);
+
+      // check if correctly obtained the header and if it is valid
+      if(orgBitMap != NULL && bitMapHeader != NULL && bitMapHeader->bmh_Depth > 0)
+      {
+        // make sure to scale down the image if maxHeight/maxWidth is specified
+        LONG scaleHeightDiff = bitMapHeader->bmh_Height - data->maxHeight;
+        LONG scaleWidthDiff  = bitMapHeader->bmh_Width - data->maxWidth;
+        LONG newWidth;
+        LONG newHeight;
+
+        if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
+           (scaleWidthDiff > 0 && data->maxWidth > 0))
         {
-          scaleFactor = (double)bitMapHeader->bmh_Width / (double)bitMapHeader->bmh_Height;
-          newWidth = scaleFactor * data->maxHeight + 0.5; // roundup the value
-          newHeight = data->maxHeight;
+          double scaleFactor;
+
+          // make sure we are scaling proportional
+          if(scaleHeightDiff > scaleWidthDiff)
+          {
+            scaleFactor = (double)bitMapHeader->bmh_Width / (double)bitMapHeader->bmh_Height;
+            newWidth = scaleFactor * data->maxHeight + 0.5; // roundup the value
+            newHeight = data->maxHeight;
+          }
+          else
+          {
+            scaleFactor = (double)bitMapHeader->bmh_Height / (double)bitMapHeader->bmh_Width;
+            newWidth = data->maxWidth;
+            newHeight = scaleFactor * data->maxWidth + 0.5; // roundup the value
+          }
         }
         else
         {
-          scaleFactor = (double)bitMapHeader->bmh_Height / (double)bitMapHeader->bmh_Width;
-          newWidth = data->maxWidth;
-          newHeight = scaleFactor * data->maxWidth + 0.5; // roundup the value
+          newWidth  = bitMapHeader->bmh_Width;
+          newHeight = bitMapHeader->bmh_Height;
+        }
+
+        // now we can allocate the new bitmap and scale it
+        // if required. But we use BitMapScale() for all operations
+        data->scaledBitMap = AllocBitMap(newWidth, newHeight, bitMapHeader->bmh_Depth, BMF_CLEAR|BMF_MINPLANES, orgBitMap);
+        if(data->scaledBitMap != NULL)
+        {
+          struct BitScaleArgs args;
+
+          args.bsa_SrcBitMap = orgBitMap;
+          args.bsa_DestBitMap = data->scaledBitMap;
+          args.bsa_Flags = 0;
+
+          args.bsa_SrcY = 0;
+          args.bsa_DestY = 0;
+
+          args.bsa_SrcWidth = bitMapHeader->bmh_Width;
+          args.bsa_SrcHeight = bitMapHeader->bmh_Height;
+
+          args.bsa_XSrcFactor = bitMapHeader->bmh_Width;
+          args.bsa_XDestFactor = newWidth;
+
+          args.bsa_YSrcFactor = bitMapHeader->bmh_Height;
+          args.bsa_YDestFactor = newHeight;
+
+          args.bsa_SrcX = 0;
+          args.bsa_DestX = 0;
+
+          // scale the image now with the arguments set
+          BitMapScale(&args);
+
+          // read out the scaled values
+          data->scaledWidth  = args.bsa_DestWidth;
+          data->scaledHeight = args.bsa_DestHeight;
+
+          D(DBF_GUI, "UserImage scale (w/h) from %ld/%ld to %ld/%ld", bitMapHeader->bmh_Width,
+                                                                      bitMapHeader->bmh_Height,
+                                                                      data->scaledWidth,
+                                                                      data->scaledHeight);
+
+          result = TRUE;
         }
       }
-      else
-      {
-        newWidth  = bitMapHeader->bmh_Width;
-        newHeight = bitMapHeader->bmh_Height;
-      }
-
-      // now we can allocate the new bitmap and scale it
-      // if required. But we use BitMapScale() for all operations
-      data->scaledBitMap = AllocBitMap(newWidth, newHeight, bitMapHeader->bmh_Depth, BMF_CLEAR|BMF_MINPLANES, orgBitMap);
-      if(data->scaledBitMap)
-      {
-        struct BitScaleArgs args;
-
-        args.bsa_SrcBitMap = orgBitMap;
-        args.bsa_DestBitMap = data->scaledBitMap;
-        args.bsa_Flags = 0;
-
-        args.bsa_SrcY = 0;
-        args.bsa_DestY = 0;
-
-        args.bsa_SrcWidth = bitMapHeader->bmh_Width;
-        args.bsa_SrcHeight = bitMapHeader->bmh_Height;
-
-        args.bsa_XSrcFactor = bitMapHeader->bmh_Width;
-        args.bsa_XDestFactor = newWidth;
-
-        args.bsa_YSrcFactor = bitMapHeader->bmh_Height;
-        args.bsa_YDestFactor = newHeight;
-
-        args.bsa_SrcX = 0;
-        args.bsa_DestX = 0;
-
-        // scale the image now with the arguments set
-        BitMapScale(&args);
-
-        // read out the scaled values
-        data->scaledWidth  = args.bsa_DestWidth;
-        data->scaledHeight = args.bsa_DestHeight;
-
-        D(DBF_GUI, "UserImage scale (w/h) from %ld/%ld to %ld/%ld", bitMapHeader->bmh_Width,
-                                                                    bitMapHeader->bmh_Height,
-                                                                    data->scaledWidth,
-                                                                    data->scaledHeight);
-
-        result = TRUE;
-      }
     }
-  }
 
-  if(result == FALSE)
-    data->scaledBitMap = NULL;
+    if(result == FALSE)
+      data->scaledBitMap = NULL;
+  }
 
   // return always true as we don't want to get that thing hidden.
   RETURN(TRUE);
@@ -213,10 +221,10 @@ OVERLOAD(MUIM_Cleanup)
     data->scaledBitMap = NULL;
   }
 
-  if(data->imageNode != NULL)
+  if(data->imageLoaded == TRUE)
   {
-    DisposeImage(data->imageNode);
-    data->imageNode = NULL;
+    DisposeImage(data->address);
+    data->imageLoaded = FALSE;
   }
 
   result = DoSuperMethodA(cl, obj, msg);
@@ -235,7 +243,7 @@ OVERLOAD(MUIM_Draw)
 
   if(((struct MUIP_Draw *)msg)->flags & MADF_DRAWOBJECT)
   {
-    if(data->scaledBitMap)
+    if(data->scaledBitMap != NULL)
       BltBitMapRastPort(data->scaledBitMap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0);
     else
       DoMethod(obj, MUIM_DrawBackground, _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0, 0, MUIF_NONE);
@@ -255,7 +263,7 @@ OVERLOAD(MUIM_AskMinMax)
 
   mi = ((struct MUIP_AskMinMax *)msg)->MinMaxInfo;
 
-  if(data->scaledBitMap)
+  if(data->scaledBitMap != NULL)
   {
     mi->MinWidth  += data->scaledWidth;
     mi->MinHeight += data->noMinHeight ? 0 : data->scaledHeight;

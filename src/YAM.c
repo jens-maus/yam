@@ -2652,8 +2652,8 @@ int main(int argc, char **argv)
       NewList((struct List *)&(C->mimeTypeList));
       NewList((struct List *)&(C->filterList));
       NewList((struct List *)&(G->xpkPackerList));
-      NewList((struct List *)&(G->imageCacheList));
       NewList((struct List *)&(G->zombieFileList));
+      ImageCacheSetup();
 
       // We have to initialize the ActiveWin flags to -1, so than the
       // the arexx commands for the windows are reporting an error if
@@ -2662,15 +2662,15 @@ int main(int argc, char **argv)
 
       if(yamFirst)
       {
-         Initialise((BOOL)args.hide);
-         Login(args.user, args.password, args.maildir, args.prefsfile);
-         Initialise2();
+        Initialise((BOOL)args.hide);
+        Login(args.user, args.password, args.maildir, args.prefsfile);
+        Initialise2();
       }
       else
       {
-         Initialise(FALSE);
-         Login(NULL, NULL, NULL, NULL);
-         Initialise2();
+        Initialise(FALSE);
+        Login(NULL, NULL, NULL, NULL);
+        Initialise2();
       }
 
       DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);

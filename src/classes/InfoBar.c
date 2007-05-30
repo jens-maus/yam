@@ -233,9 +233,11 @@ DECLARE(SetFolder) // struct Folder *newFolder
       {
         if(folder->imageObject)
         {
-          data->actualImage = MakeImageObject(xget(folder->imageObject, MUIA_ImageArea_Filename));
+          char *imageName = (char *)xget(folder->imageObject, MUIA_ImageArea_Filename);
 
-          D(DBF_GUI, "init imagearea: '%s'", xget(folder->imageObject, MUIA_ImageArea_Filename));
+          data->actualImage = MakeImageObject(imageName, imageName);
+
+          D(DBF_GUI, "init imagearea: '%s'", imageName);
         }
         else if(folder->ImageIndex >= 0 && folder->ImageIndex <= MAX_FOLDERIMG)
         {
@@ -244,7 +246,7 @@ DECLARE(SetFolder) // struct Folder *newFolder
           D(DBF_GUI, "init imagearea: 0x%08lx[%ld]", imageArray, folder->ImageIndex);
 
           if(imageArray && imageArray[folder->ImageIndex])
-            data->actualImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
+            data->actualImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename), xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
         }
 
         D(DBF_GUI, "init finished..: 0x%08lx %ld", data->actualImage, folder->ImageIndex);

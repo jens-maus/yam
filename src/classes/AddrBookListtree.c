@@ -57,7 +57,7 @@ OVERLOAD(OM_NEW)
   data = (struct Data *)INST_DATA(cl,obj);
 
   // prepare the group image
-  data->listImage = MakeImageObject("status_group");
+  data->listImage = MakeImageObject("status_group", "status_group");
   DoMethod(obj, MUIM_NList_UseImage, data->listImage, 0, MUIF_NONE);
 
   RETURN((ULONG)obj);

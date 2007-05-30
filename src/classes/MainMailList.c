@@ -454,25 +454,25 @@ OVERLOAD(OM_NEW)
   data = (struct Data *)INST_DATA(cl,obj);
 
   // prepare the mail status images
-  data->statusImage[SICON_ID_UNREAD]   = MakeImageObject("status_unread");
-  data->statusImage[SICON_ID_OLD]      = MakeImageObject("status_old");
-  data->statusImage[SICON_ID_FORWARD]  = MakeImageObject("status_forward");
-  data->statusImage[SICON_ID_REPLY]    = MakeImageObject("status_reply");
-  data->statusImage[SICON_ID_WAITSEND] = MakeImageObject("status_waitsend");
-  data->statusImage[SICON_ID_ERROR]    = MakeImageObject("status_error");
-  data->statusImage[SICON_ID_HOLD]     = MakeImageObject("status_hold");
-  data->statusImage[SICON_ID_SENT]     = MakeImageObject("status_sent");
-  data->statusImage[SICON_ID_NEW]      = MakeImageObject("status_new");
-  data->statusImage[SICON_ID_DELETE]   = MakeImageObject("status_delete");
-  data->statusImage[SICON_ID_DOWNLOAD] = MakeImageObject("status_download");
-  data->statusImage[SICON_ID_GROUP]    = MakeImageObject("status_group");
-  data->statusImage[SICON_ID_URGENT]   = MakeImageObject("status_urgent");
-  data->statusImage[SICON_ID_ATTACH]   = MakeImageObject("status_attach");
-  data->statusImage[SICON_ID_REPORT]   = MakeImageObject("status_report");
-  data->statusImage[SICON_ID_CRYPT]    = MakeImageObject("status_crypt");
-  data->statusImage[SICON_ID_SIGNED]   = MakeImageObject("status_signed");
-  data->statusImage[SICON_ID_MARK]     = MakeImageObject("status_mark");
-  data->statusImage[SICON_ID_SPAM]     = MakeImageObject("status_spam");
+  data->statusImage[SICON_ID_UNREAD]   = MakeImageObject("status_unread", "status_unread");
+  data->statusImage[SICON_ID_OLD]      = MakeImageObject("status_old", "status_old");
+  data->statusImage[SICON_ID_FORWARD]  = MakeImageObject("status_forward", "status_forward");
+  data->statusImage[SICON_ID_REPLY]    = MakeImageObject("status_reply", "status_reply");
+  data->statusImage[SICON_ID_WAITSEND] = MakeImageObject("status_waitsend", "status_waitsend");
+  data->statusImage[SICON_ID_ERROR]    = MakeImageObject("status_error", "status_error");
+  data->statusImage[SICON_ID_HOLD]     = MakeImageObject("status_hold", "status_hold");
+  data->statusImage[SICON_ID_SENT]     = MakeImageObject("status_sent", "status_sent");
+  data->statusImage[SICON_ID_NEW]      = MakeImageObject("status_new", "status_new");
+  data->statusImage[SICON_ID_DELETE]   = MakeImageObject("status_delete", "status_delete");
+  data->statusImage[SICON_ID_DOWNLOAD] = MakeImageObject("status_download", "status_download");
+  data->statusImage[SICON_ID_GROUP]    = MakeImageObject("status_group", "status_group");
+  data->statusImage[SICON_ID_URGENT]   = MakeImageObject("status_urgent", "status_urgent");
+  data->statusImage[SICON_ID_ATTACH]   = MakeImageObject("status_attach", "status_attach");
+  data->statusImage[SICON_ID_REPORT]   = MakeImageObject("status_report", "status_report");
+  data->statusImage[SICON_ID_CRYPT]    = MakeImageObject("status_crypt", "status_crypt");
+  data->statusImage[SICON_ID_SIGNED]   = MakeImageObject("status_signed", "status_signed");
+  data->statusImage[SICON_ID_MARK]     = MakeImageObject("status_mark", "status_mark");
+  data->statusImage[SICON_ID_SPAM]     = MakeImageObject("status_spam", "status_spam");
   for(i = 0; i < ARRAY_SIZE(data->statusImage); i++)
     DoMethod(obj, MUIM_NList_UseImage, data->statusImage[i], i, MUIF_NONE);
 

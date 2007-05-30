@@ -53,6 +53,7 @@
 #include "Debug.h"
 
 /*** Static variables/functions ***/
+static struct HashTable *imageCacheHashTable;
 /// imageFileArray[]
 // array with all our private image filenames we define in the
 // current imagelayout. Please note that as soon as you change something
@@ -94,15 +95,16 @@ static const char *imageFileArray[MAX_IMAGES] =
 };
 
 ///
-/// LoadImage()
+
+/// LoadImage
 // loads a specific file via datatypes.library
-static BOOL LoadImage(struct imageCacheNode *node, const char *filename)
+static BOOL LoadImage(struct ImageCacheNode *node)
 {
   BOOL result = FALSE;
 
   ENTER();
 
-  if(FileExists(filename))
+  if(FileExists(node->filename))
   {
     Object *o;
     struct Process *myproc;
@@ -113,7 +115,7 @@ static BOOL LoadImage(struct imageCacheNode *node, const char *filename)
     oldwindowptr = myproc->pr_WindowPtr;
     myproc->pr_WindowPtr = (APTR)-1;
 
-    D(DBF_IMAGE, "loading image '%s'", filename);
+    D(DBF_IMAGE, "loading image '%s'", node->filename);
 
     // The source bitmap of the image must *NOT* be freed automatically by datatypes.library,
     // because we need the bitmap to be able to remap the image to another screen, if required.
@@ -121,13 +123,13 @@ static BOOL LoadImage(struct imageCacheNode *node, const char *filename)
     // color to a color mapped screen (16/24/32 bit -> 8 bit). Keeping the source bitmap may
     // take a little bit more memory, but this is unavoidable if we don't want to reload the
     // images from disk again and again all the time.
-    o = NewDTObject((char *)filename, DTA_GroupID,          GID_PICTURE,
-                                      DTA_SourceType,       DTST_FILE,
-                                      OBP_Precision,        PRECISION_EXACT,
-                                      PDTA_DestMode,        PMODE_V43,
-                                      PDTA_UseFriendBitMap, TRUE,
-                                      PDTA_Remap,           TRUE,
-                                      TAG_DONE);
+    o = NewDTObject((char *)node->filename, DTA_GroupID,          GID_PICTURE,
+                                            DTA_SourceType,       DTST_FILE,
+                                            OBP_Precision,        PRECISION_EXACT,
+                                            PDTA_DestMode,        PMODE_V43,
+                                            PDTA_UseFriendBitMap, TRUE,
+                                            PDTA_Remap,           TRUE,
+                                            TAG_DONE);
 
     myproc->pr_WindowPtr = oldwindowptr; // restore window pointer.
 
@@ -143,7 +145,7 @@ static BOOL LoadImage(struct imageCacheNode *node, const char *filename)
 
       if(fri.fri_Dimensions.Depth > 0)
       {
-        D(DBF_IMAGE, "loaded image '%s' (0x%08lx)", filename, o);
+        D(DBF_IMAGE, "loaded image '%s' (0x%08lx)", node->filename, o);
 
         node->dt_obj = o;
         node->width = fri.fri_Dimensions.Width;
@@ -153,24 +155,24 @@ static BOOL LoadImage(struct imageCacheNode *node, const char *filename)
       }
       else
       {
-        E(DBF_IMAGE, "wasn't able to get frame box of image '%s'", filename);
+        E(DBF_IMAGE, "wasn't able to get frame box of image '%s'", node->filename);
         DisposeDTObject(o);
       }
     }
     else
-      E(DBF_IMAGE, "wasn't able to load specified image '%s'. error: %d", filename, IoErr());
+      E(DBF_IMAGE, "wasn't able to load specified image '%s'. error: %d", node->filename, IoErr());
   }
   else
-    W(DBF_IMAGE, "specified image '%s' doesn't exist.", filename);
+    W(DBF_IMAGE, "specified image '%s' doesn't exist.", node->filename);
 
   RETURN(result);
   return result;
 }
 
 ///
-/// RemapImage()
+/// RemapImage
 // remaps an image loaded via datatypes.library to a specific screen
-static BOOL RemapImage(struct imageCacheNode *node, const struct Screen *scr)
+static BOOL RemapImage(struct ImageCacheNode *node, const struct Screen *scr)
 {
   BOOL success = FALSE;
 
@@ -192,39 +194,49 @@ static BOOL RemapImage(struct imageCacheNode *node, const struct Screen *scr)
 }
 
 ///
-/// CreateImageCacheNode()
+/// CreateImageCacheNode
 // create a new cache node
-static struct imageCacheNode *CreateImageCacheNode(const char *filename)
+static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *filename)
 {
-  struct imageCacheNode *node;
+  struct HashEntryHeader *entry;
+  struct ImageCacheNode *node = NULL;
 
   ENTER();
 
-  if((node = (struct imageCacheNode*)calloc(sizeof(struct imageCacheNode), 1)) != NULL)
+  if((entry = HashTableOperate(imageCacheHashTable, id, htoAdd)) != NULL)
   {
-    // load the datatypes image now
-    if((LoadImage(node, filename)))
-    {
-      // success
-      node->filename = strdup(filename);
+    BOOL success = TRUE;
 
-      // add the new node to the global list
-      AddTail((struct List *)&G->imageCacheList, (struct Node *)&node->node);
-    }
-    else
+    node = (struct ImageCacheNode *)entry;
+
+    if((node->id = strdup(id)) != NULL)
     {
-      // failure
-      if(G->NoImageWarning == FALSE)
+      if((node->filename = strdup(filename)) != NULL)
       {
-        // show the error requester only if the user did not choose to ignore
-        // all warnings before
-        MUI_Request(G->App, NULL, 0, tr(MSG_ER_LOADDT_TITLE),
-                                     tr(MSG_ER_LOADDT_BUTTON),
-                                     tr(MSG_ER_LOADDT_ERROR), filename);
+        // load the datatypes image now
+        if((success = LoadImage(node)) == FALSE)
+        {
+          // failure
+          if(G->NoImageWarning == FALSE)
+          {
+            // show the error requester only if the user did not choose to ignore
+            // all warnings before
+            MUI_Request(G->App, NULL, 0, tr(MSG_ER_LOADDT_TITLE),
+                                         tr(MSG_ER_LOADDT_BUTTON),
+                                         tr(MSG_ER_LOADDT_ERROR), filename);
+          }
+        }
       }
+    }
 
-      free(node);
-      node = NULL;
+    if(success == FALSE)
+    {
+      // upon failure remove the node again
+      if(node->id != NULL)
+        free(node->id);
+      if(node->filename != NULL)
+        free(node->filename);
+      HashTableRawRemove(imageCacheHashTable, entry);
     }
   }
 
@@ -233,9 +245,69 @@ static struct imageCacheNode *CreateImageCacheNode(const char *filename)
 }
 
 ///
+/// DeleteImageCacheNode
+// create a new cache node
+static enum HashTableOperator DeleteImageCacheNode(UNUSED struct HashTable *table, struct HashEntryHeader *entry, UNUSED ULONG number, UNUSED void *arg)
+{
+  struct ImageCacheNode *node = (struct ImageCacheNode *)entry;
+
+  ENTER();
+
+  D(DBF_STARTUP, "disposing image cache node (0x%08lx) '%s'", node, node->id);
+
+  #if defined(DEBUG)
+  if(node->openCount > 0)
+    W(DBF_STARTUP, "  openCount of image cache node still %d!!!", node->openCount);
+  #endif
+
+  if(node->dt_obj != NULL)
+  {
+    D(DBF_STARTUP, "  disposing dtobject 0x%08lx of node 0x%08lx", node->dt_obj, node);
+    RemapImage(node, NULL);
+    DisposeDTObject(node->dt_obj);
+  }
+
+  // node->id will be free()'ed by the hash table functions! We MUST NOT free it here,
+  // because this item may be addressed further on while iterating through the list.
+
+  if(node->filename != NULL)
+    free(node->filename);
+
+  RETURN(htoNext);
+  return htoNext;
+}
+
+///
 
 /*** Image caching mechanisms ***/
-/// ImageCacheInit()
+/// ImageCacheSetup
+//
+BOOL ImageCacheSetup(void)
+{
+  static const struct HashTableOps imageCacheHashTableOps =
+  {
+    DefaultHashAllocTable,
+    DefaultHashFreeTable,
+    DefaultHashGetKey,
+    StringHashHashKey,
+    StringHashMatchEntry,
+    DefaultHashMoveEntry,
+    StringHashClearEntry,
+    DefaultHashFinalize,
+    NULL,
+  };
+  BOOL result = FALSE;
+
+  ENTER();
+
+  if((imageCacheHashTable = HashTableNew((struct HashTableOps *)&imageCacheHashTableOps, NULL, sizeof(struct ImageCacheNode), 128)) != NULL)
+    result = TRUE;
+
+  RETURN(result);
+  return result;
+}
+///
+/// ImageCacheInit
 // for initializing the image caching
 BOOL ImageCacheInit(const char *imagePath)
 {
@@ -277,11 +349,11 @@ BOOL ImageCacheInit(const char *imagePath)
     else
     {
       // prepare the imageCacheNode
-      struct imageCacheNode *node;
+      struct ImageCacheNode *node;
 
-      if((node = CreateImageCacheNode(filebuf)) != NULL)
+      if((node = CreateImageCacheNode(imageFileArray[i], filebuf)) != NULL)
       {
-        D(DBF_STARTUP, "init imageCacheNode 0x%08lx of file '%s'", node, node->filename);
+        D(DBF_STARTUP, "init imageCacheNode 0x%08lx of file '%s' with id '%s'", node, filebuf, imageFileArray[i]);
       }
       else
       {
@@ -296,81 +368,39 @@ BOOL ImageCacheInit(const char *imagePath)
 }
 
 ///
-/// ImageCacheCleanup()
+/// ImageCacheCleanup
 // for cleaning up the image cache
 void ImageCacheCleanup(void)
 {
-  struct imageCacheNode *node;
-
   ENTER();
 
-  while((node = (struct imageCacheNode*)RemHead((struct List *)&G->imageCacheList)) != NULL)
-  {
-    D(DBF_STARTUP, "disposing image cache node (0x%08lx) '%s'", node, node->filename ? node->filename : "<NULL>");
-
-    #if defined(DEBUG)
-    if(node->openCount > 0)
-      W(DBF_STARTUP, "  openCount of image cache node still %d!!!", node->openCount);
-    #endif
-
-    if(node->dt_obj != NULL)
-    {
-      D(DBF_STARTUP, "  disposing dtobject 0x%08lx of node 0x%08lx", node->dt_obj, node);
-      RemapImage(node, NULL);
-      DisposeDTObject(node->dt_obj);
-    }
-
-    if(node->filename != NULL)
-      free(node->filename);
-
-    free(node);
-  }
+  HashTableEnumerate(imageCacheHashTable, DeleteImageCacheNode, NULL);
+  HashTableDestroy(imageCacheHashTable);
 
   LEAVE();
 }
 
 ///
-/// ObtainImage()
+/// ObtainImage
 // for receiveing the imagenode object or loading it
 // immediately.
-struct imageCacheNode *ObtainImage(const char *filename, const struct Screen *scr)
+struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const struct Screen *scr)
 {
-  struct imageCacheNode *result = NULL;
-  struct MinNode *curNode;
-  BOOL absoluteFilePath = FALSE;
+  struct ImageCacheNode *result = NULL;
+  struct HashEntryHeader *entry;
 
   ENTER();
 
-  D(DBF_IMAGE, "trying to obtain image '%s' from cache", filename);
+  D(DBF_IMAGE, "trying to obtain image '%s' from cache", id);
 
-  // we try to find out first if we try to find an image
-  // according to its absolute file path or just by the filename
-  if(strpbrk(filename, ":/"))
-    absoluteFilePath = TRUE;
-
-  // walk through our global imageCacheList and try to find the specified
-  // image file.
-  for(curNode = G->imageCacheList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  entry = HashTableOperate(imageCacheHashTable, id, htoLookup);
+  if(HASH_ENTRY_IS_LIVE(entry))
   {
-    struct imageCacheNode *node = (struct imageCacheNode *)curNode;
-
-    if(node->filename != NULL)
-    {
-      char *file;
-
-      if(absoluteFilePath)
-        file = node->filename;
-      else
-        file = FilePart(node->filename);
-
-      if(file != NULL && stricmp(filename, file) == 0)
-      {
-        // we found the node in the cache
-        result = node;
-        break;
-      }
-    }
+    result = (struct ImageCacheNode *)entry;
+    D(DBF_GUI, "found image '%s' with file '%s' in cache", id, result->filename);
   }
+  else
+    W(DBF_GUI, "image '%s' NOT found in cache", id);
 
   if(result == NULL)
   {
@@ -404,15 +434,15 @@ struct imageCacheNode *ObtainImage(const char *filename, const struct Screen *sc
     }
     else
     {
-      D(DBF_IMAGE, "creating new cache node for image '%s'", filename);
-      result = CreateImageCacheNode(filename);
+      D(DBF_IMAGE, "creating new cache node for image '%s' with id '%s'", filename, id);
+      result = CreateImageCacheNode(id, filename);
     }
   }
 
   // do a remapping of the image if necessary
   if(result != NULL && scr != NULL)
   {
-    D(DBF_IMAGE, "setting up image '%s' for screen 0x%08lx", filename, scr);
+    D(DBF_IMAGE, "setting up image '%s' for screen 0x%08lx", id, scr);
 
     // we found a previously loaded node in the cache
     // now we need to remap it to the screen, if not yet done
@@ -438,12 +468,12 @@ struct imageCacheNode *ObtainImage(const char *filename, const struct Screen *sc
             result->height = bmhd->bmh_Height;
           }
           else
-            W(DBF_IMAGE, "couldn't find BitMap header of file '%s'", filename);
+            W(DBF_IMAGE, "couldn't find BitMap header of file '%s'", id);
         }
       }
       else
       {
-        D(DBF_IMAGE, "couldn't remap image '%s' to screen 0x%08lx", filename, scr);
+        D(DBF_IMAGE, "couldn't remap image '%s' to screen 0x%08lx", id, scr);
 
         // let this call fail if we cannot remap the image
         result = NULL;
@@ -460,18 +490,23 @@ struct imageCacheNode *ObtainImage(const char *filename, const struct Screen *sc
 }
 
 ///
-/// DisposeImage()
+/// DisposeImage
 // for disposing an imagenode properly
-void DisposeImage(struct imageCacheNode *node)
+void DisposeImage(const char *id)
 {
+  struct HashEntryHeader *entry;
+
   ENTER();
 
-  if(node != NULL)
+  entry = HashTableOperate(imageCacheHashTable, id, htoLookup);
+  if(HASH_ENTRY_IS_LIVE(entry))
   {
+    struct ImageCacheNode *node = (struct ImageCacheNode *)entry;
+
     if(node->openCount > 0)
     {
       node->openCount--;
-      D(DBF_IMAGE, "reduced open count of image '%s' to %d", node->filename != NULL ? node->filename : "<NULL>", node->openCount);
+      D(DBF_IMAGE, "reduced open count of image '%s' to %d", id, node->openCount);
 
       if(node->openCount == 0)
       {
@@ -484,42 +519,35 @@ void DisposeImage(struct imageCacheNode *node)
       }
     }
     else
-      E(DBF_IMAGE, "couldn't reduce open count (%d) of 0x%08lx (%s)", node ? node->openCount : -1, node, (node && node->filename) ? node->filename : "<NULL>");
+      E(DBF_IMAGE, "couldn't reduce open count (%d) of 0x%08lx (%s)", node->openCount, node, id);
   }
   else
-    E(DBF_IMAGE, "couldn't reduce open count (%d) of 0x%08lx (%s)", node ? node->openCount : -1, node, (node && node->filename) ? node->filename : "<NULL>");
+    E(DBF_IMAGE, "image '%s' not found in cache", id);
 
   LEAVE();
 }
 
 ///
-/// IsImageInCache()
+/// IsImageInCache
 // returns TRUE if the specified image filename is found to
 // be in the cache - may it be loaded or unloaded.
-BOOL IsImageInCache(const char *filename)
+BOOL IsImageInCache(const char *id)
 {
-  struct MinNode *curNode;
+//  struct MinNode *curNode;
+  struct HashEntryHeader *entry;
   BOOL result = FALSE;
 
   ENTER();
 
-  D(DBF_IMAGE, "find image '%s' in cache", filename);
+  D(DBF_IMAGE, "find image '%s' in cache", id);
 
-  // walk through our global imageCacheList and try to find the specified
-  // image file.
-  for(curNode = G->imageCacheList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  // look up the image named 'id' in our hash table
+  entry = HashTableOperate(imageCacheHashTable, id, htoLookup);
+  if(HASH_ENTRY_IS_LIVE(entry))
   {
-    struct imageCacheNode *node = (struct imageCacheNode *)curNode;
-
-    if(node->filename != NULL && stricmp(filename, FilePart(node->filename)) == 0)
-    {
-      D(DBF_IMAGE, "found node %08lx,'%s','%s'", node, node->filename, FilePart(node->filename));
-      result = TRUE;
-      break;
-    }
+    D(DBF_IMAGE, "found node %08lx,'%s','%s'", entry, ((struct ImageCacheNode *)entry)->id, FilePart(((struct ImageCacheNode *)entry)->filename));
+    result = TRUE;
   }
-
-  D(DBF_IMAGE, "image file '%s' was %s in image cache at node %08lx", filename, (result ? "FOUND" : "NOT FOUND"), curNode);
 
   RETURN(result);
   return result;
@@ -528,11 +556,12 @@ BOOL IsImageInCache(const char *filename)
 ///
 
 /*** TheBar toolbar image cache mechanisms ***/
-/// ToolbarCacheInit()
+/// ToolbarCacheInit
 // for initializing the toolbar caching
 BOOL ToolbarCacheInit(const char *imagePath)
 {
   BOOL result = FALSE;
+
   ENTER();
 
   G->ReadToolbarCacheObject = ReadWindowToolbarObject,
@@ -566,7 +595,7 @@ BOOL ToolbarCacheInit(const char *imagePath)
 }
 
 ///
-/// ToolbarCacheCleanup()
+/// ToolbarCacheCleanup
 // for cleaning up the toolbar caches
 void ToolbarCacheCleanup(void)
 {
@@ -594,13 +623,14 @@ void ToolbarCacheCleanup(void)
 }
 
 ///
-/// ObtainToolbarImages()
+/// ObtainToolbarImages
 // for receiveing the various images (normal/ghosted/selected) of a
 // cached toolbar object
 struct MUIS_TheBar_Brush **ObtainToolbarImages(const enum TBType toolbar, const enum TBImage image)
 {
   struct MUIS_TheBar_Brush **images = NULL;
   Object *toolbarCacheObject = NULL;
+
   ENTER();
 
   switch(toolbar)
@@ -641,12 +671,13 @@ struct MUIS_TheBar_Brush **ObtainToolbarImages(const enum TBType toolbar, const 
 }
 
 ///
-/// IsToolbarInCache()
+/// IsToolbarInCache
 // returns TRUE if the specified toolbar is found to
 // be in the cache
 BOOL IsToolbarInCache(const enum TBType toolbar)
 {
   BOOL result = FALSE;
+
   ENTER();
 
   switch(toolbar)
@@ -669,3 +700,4 @@ BOOL IsToolbarInCache(const enum TBType toolbar)
 }
 
 ///
+

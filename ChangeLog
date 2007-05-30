@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-05-30  Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: reworked the ImageCache functions to use a hash table instead of a
+    linear list. First, this is much faster for searching the images, and
+    second, the images are now "indexed" by an ID string instead of the full
+    image file path. This is necessary for the upcoming themes management.
+
 2007-05-29  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: with this final change now all hidden columns' numbers are

@@ -28,8 +28,8 @@
 
 ***************************************************************************/
 
-#include "ImageArea_cl.h"
 #include "ImageCache.h"
+#include "ImageArea_cl.h"
 
 #include <proto/datatypes.h>
 #include <proto/icon.h>
@@ -40,22 +40,25 @@
 /* CLASSDATA
 struct Data
 {
+  char *id;
   char *name;
   char *label;
   BOOL free_horiz;
   BOOL free_vert;
   BOOL show_label;
+  BOOL imageLoaded;
   BOOL setup;
-  struct imageCacheNode *imageNode;
+  struct ImageCacheNode imageNode;
 
   int label_height;
 };
 */
 
 /* EXPORT
-#define MakeImageObject(file) ImageAreaObject,\
-                                MUIA_ImageArea_Filename, (file),\
-                              End
+#define MakeImageObject(id, file) ImageAreaObject,\
+                                    MUIA_ImageArea_ID, (id),\
+                                    MUIA_ImageArea_Filename, (file),\
+                                  End
 */
 
 /* Private Functions */
@@ -63,13 +66,24 @@ struct Data
 // loads an image via our datatype methods
 static BOOL Image_Load(struct Data *data, Object *obj)
 {
+  BOOL success = FALSE;
+
   ENTER();
 
-  if(data->name != NULL && data->imageNode == NULL)
-    data->imageNode = ObtainImage(data->name, _screen(obj));
+  if(data->id != NULL && data->name != NULL && data->imageLoaded == FALSE)
+  {
+    struct ImageCacheNode *node;
 
-  RETURN((BOOL)(data->imageNode != NULL));
-  return data->imageNode != NULL;
+    if((node = ObtainImage(data->id, data->name, _screen(obj))) != NULL)
+    {
+      memcpy(&data->imageNode, node, sizeof(data->imageNode));
+      data->imageLoaded = TRUE;
+      success = TRUE;
+    }
+  }
+
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -79,10 +93,10 @@ static void Image_Unload(struct Data *data)
 {
   ENTER();
 
-  if(data->imageNode)
+  if(data->imageLoaded == TRUE)
   {
-    DisposeImage(data->imageNode);
-    data->imageNode = NULL;
+    DisposeImage(data->id);
+    data->imageLoaded = FALSE;
   }
 
   LEAVE();
@@ -104,6 +118,7 @@ OVERLOAD(OM_NEW)
     struct TagItem *tag;
 
     // set default values
+    data->id = NULL;
     data->name = NULL;
     data->label = NULL;
     data->free_vert = FALSE;
@@ -114,6 +129,7 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
+        ATTR(ID):        data->id = strdup((char *)tag->ti_Data); break;
         ATTR(Filename):  data->name = strdup((char *)tag->ti_Data); break;
         ATTR(Label):     data->label = strdup((char *)tag->ti_Data); break;
         ATTR(FreeVert):  data->free_vert = tag->ti_Data; break;
@@ -163,21 +179,21 @@ OVERLOAD(OM_GET)
     {
       BOOL result = FALSE;
 
-      if(data->setup == TRUE && data->imageNode != NULL)
+      if(data->setup == TRUE && data->imageLoaded == TRUE)
       {
-        *store = data->imageNode->width;
+        *store = data->imageNode.width;
         result = TRUE;
       }
       else
       {
-        struct imageCacheNode *icnode = ObtainImage(data->name, NULL);
+        struct ImageCacheNode *icnode = ObtainImage(data->id, data->name, NULL);
 
         if(icnode != NULL)
         {
           *store = icnode->width;
 
           // dispose the image again
-          DisposeImage(icnode);
+          DisposeImage(data->id);
           result = TRUE;
         }
       }
@@ -191,21 +207,21 @@ OVERLOAD(OM_GET)
     {
       BOOL result = FALSE;
 
-      if(data->setup == TRUE && data->imageNode != NULL)
+      if(data->setup == TRUE && data->imageLoaded == TRUE)
       {
-        *store = data->imageNode->height;
+        *store = data->imageNode.height;
         result = TRUE;
       }
       else
       {
-        struct imageCacheNode *icnode = ObtainImage(data->name, NULL);
+        struct ImageCacheNode *icnode = ObtainImage(data->id, data->name, NULL);
 
         if(icnode != NULL)
         {
           *store = icnode->height;
 
           // dispose the image again
-          DisposeImage(icnode);
+          DisposeImage(data->id);
           result = TRUE;
         }
       }
@@ -340,10 +356,10 @@ OVERLOAD(MUIM_AskMinMax)
 
   mi = ((struct MUIP_AskMinMax *)msg)->MinMaxInfo;
 
-  if(data->imageNode)
+  if(data->imageLoaded == TRUE)
   {
-    minwidth  = data->imageNode->width;
-    minheight = data->imageNode->height;
+    minwidth  = data->imageNode.width;
+    minheight = data->imageNode.height;
   }
   else
   {
@@ -361,7 +377,7 @@ OVERLOAD(MUIM_AskMinMax)
 
     data->label_height = _font(obj)->tf_YSize;
 
-    minheight += data->label_height + (!!data->imageNode);
+    minheight += data->label_height + (!!data->imageLoaded);
     InitRastPort(&rp);
     SetFont(&rp, _font(obj));
 
@@ -411,12 +427,12 @@ OVERLOAD(MUIM_Draw)
 
   // in case we successfully have an imageNode object
   // we blit the image on our rastport
-  if(data->imageNode)
+  if(data->imageLoaded == TRUE)
   {
-    Object *dt_obj = data->imageNode->dt_obj;
+    Object *dt_obj = data->imageNode.dt_obj;
     struct BitMap *bitmap = NULL;
-    int imgWidth = data->imageNode->width;
-    int imgHeight = data->imageNode->height;
+    int imgWidth = data->imageNode.width;
+    int imgHeight = data->imageNode.height;
 
     // try to get the bitmap first via PDTA_DestBitMap and
     // otherwise with PDTA_BitMap
@@ -447,7 +463,7 @@ OVERLOAD(MUIM_Draw)
       }
     }
 
-    rel_y += data->imageNode->height;
+    rel_y += data->imageNode.height;
   }
 
   if(data->label && data->show_label)

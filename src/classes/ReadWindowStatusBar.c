@@ -190,7 +190,7 @@ OVERLOAD(OM_NEW)
   {
     Object *newImage;
 
-    if((newImage = MakeImageObject(image[i].name)) != NULL)
+    if((newImage = MakeImageObject(image[i].name, image[i].name)) != NULL)
       minHeight = MAX(xget(newImage, MUIA_ImageArea_RawHeight), minHeight);
 
     statusImage[image[i].status] = newImage;
@@ -403,9 +403,10 @@ DECLARE(Update) // struct Mail *mail
         // get/create the folder image
         if(folder->imageObject)
         {
-          data->folderImage = MakeImageObject(xget(folder->imageObject, MUIA_ImageArea_Filename));
+          char *imageName = (char *)xget(folder->imageObject, MUIA_ImageArea_Filename);
 
-          D(DBF_GUI, "init imagearea: '%s'", xget(folder->imageObject, MUIA_ImageArea_Filename));
+          data->folderImage = MakeImageObject(imageName, imageName);
+          D(DBF_GUI, "init imagearea: '%s'", imageName);
         }
         else if(folder->ImageIndex >= 0 && folder->ImageIndex <= MAX_FOLDERIMG)
         {
@@ -414,7 +415,7 @@ DECLARE(Update) // struct Mail *mail
           D(DBF_GUI, "init imagearea: 0x%08lx[%ld]", imageArray, folder->ImageIndex);
 
           if(imageArray && imageArray[folder->ImageIndex])
-            data->folderImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
+            data->folderImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename), xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
         }
 
         if(data->folderImage)
