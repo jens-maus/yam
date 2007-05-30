@@ -7,6 +7,8 @@ $URL$
 
 2007-05-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: removed the additional update of the folder statistics for the
+    AppIcon again as the real "bug" was fixed by the changes done in YAM_MAf.c.
   * YAM_UT.c: the docky icon is now updated always again, because else upon
     restart the wrong icon is displayed.
   * misc: reworked the ImageCache functions to use a hash table instead of a

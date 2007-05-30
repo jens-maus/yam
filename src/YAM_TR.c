@@ -3690,11 +3690,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
        if((folder = FO_GetCurrentFolder()) && !isIncomingFolder(folder))
          DisplayStatistics((struct Folder *)-1, TRUE);
        else
-       {
-         // update the stats first, else the AppIcon might show outdated numbers
-         FO_UpdateStatistics((struct Folder *)-1);
          DisplayAppIconStatistics();
-       }
 
        TR_NewMailAlert();
      }
