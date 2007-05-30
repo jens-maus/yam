@@ -5987,37 +5987,15 @@ void DisplayAppIconStatistics(void)
     #if defined(__amigaos4__)
     // check if application.library is used and then
     // we also notify it about the AppIcon change
-    if(G->applicationID)
+    if(G->applicationID > 0 && C->DockyIcon == TRUE)
     {
-      static int lastIconID = -1;
+      struct ApplicationIconInfo aii;
 
-      if(C->DockyIcon)
-      {
-        SHOWVALUE(DBF_GUI, lastIconID);
-        SHOWVALUE(DBF_GUI, mode);
+      aii.iconType = APPICONT_CustomIcon;
+      aii.info.customIcon = dobj;
 
-        if(lastIconID != mode)
-        {
-          struct ApplicationIconInfo aii;
-          BOOL success;
-
-          aii.iconType = APPICONT_CustomIcon;
-          aii.info.customIcon = dobj;
-
-          success = SetApplicationAttrs(G->applicationID,
-                                        APPATTR_IconType, (uint32)&aii,
-                                        TAG_DONE);
-          SHOWVALUE(DBF_GUI, success);
-          if(success)
-            // remember the current icon state on success only
-            lastIconID = mode;
-          else
-            // and return to "nothing/unknown" on failure
-            lastIconID = -1;
-        }
-      }
-      else
-        lastIconID = -1;
+      SetApplicationAttrs(G->applicationID, APPATTR_IconType, (uint32)&aii,
+                                            TAG_DONE);
     }
     #endif
 
