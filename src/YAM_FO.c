@@ -681,14 +681,10 @@ static BOOL FO_LoadFolderImage(struct Folder *folder)
       strlcpy(fname, GetFolderDir(folder), sizeof(fname));
       AddPart(fname, ".fimage", sizeof(fname));
 
-      if(FileExists(fname))
+      if(FileExists(fname) == TRUE)
       {
-        folder->imageObject = ImageAreaObject,
-                                MUIA_ImageArea_Filename, fname,
-                              End;
-
         // Now we say that this image could be used by this Listtree
-        if(folder->imageObject != NULL)
+        if((folder->imageObject = MakeImageObject(fname, fname)) != NULL)
         {
           DoMethod(lv, MUIM_NList_UseImage, folder->imageObject, folder->ImageIndex, MUIF_NONE);
 

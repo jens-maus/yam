@@ -7,6 +7,12 @@ $URL$
 
 2007-05-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: user defined folder images had no hash table ID and hence could
+    never be found and displayed. Now the file name is used as ID. This fixes
+    bug #1728889.
+
+2007-05-30  Thore Böckelmann <tboeckel@gmx.de>
+
   * YAM_TR.c: removed the additional update of the folder statistics for the
     AppIcon again as the real "bug" was fixed by the changes done in YAM_MAf.c.
   * YAM_UT.c: the docky icon is now updated always again, because else upon
