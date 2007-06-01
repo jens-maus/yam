@@ -5,7 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-05-30  Thore Böckelmann <tboeckel@gmx.de>
+2007-06-01  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: invoking "crop attachments" from the main menu never refreshed an
+    open read window. Now an open window or an open read pane will reread the
+    mail. This fixes bug #1729061.
+
+2007-05-31  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: user defined folder images had no hash table ID and hence could
     never be found and displayed. Now the file name is used as ID. This fixes

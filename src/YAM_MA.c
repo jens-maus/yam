@@ -2576,96 +2576,112 @@ int MA_NewReply(struct Mail **mlist, int flags)
 //  Removes attachments from a message
 void MA_RemoveAttach(struct Mail *mail, BOOL warning)
 {
-   struct ReadMailData *rmData;
+  struct ReadMailData *rmData;
 
-   // if we need to warn the user of this operation we put up a requester
-   // before we go on
-   if(warning &&
-      MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_CROPREQUEST)) == 0)
-   {
-     return;
-   }
+  ENTER();
 
-   if((rmData = AllocPrivateRMData(mail, PM_ALL)))
-   {
-     struct Part *part;
-     char *cmsg;
-     char buf[SIZE_LINE];
-     char fname[SIZE_PATHFILE];
-     char tfname[SIZE_PATHFILE];
+  // if we need to warn the user of this operation we put up a requester
+  // before we go on
+  if(warning &&
+     MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_CROPREQUEST)) == 0)
+  {
+    LEAVE();
+    return;
+  }
 
-     snprintf(tfname, sizeof(tfname), "%s.tmp", GetMailFile(fname, NULL, mail));
+  if((rmData = AllocPrivateRMData(mail, PM_ALL)) != NULL)
+  {
+    struct Part *part;
+    char *cmsg;
+    char buf[SIZE_LINE];
+    char fname[SIZE_PATHFILE];
+    char tfname[SIZE_PATHFILE];
 
-     if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)))
-     {
-       if((part = rmData->firstPart->Next) && part->Next)
-       {
-          FILE *out;
+    snprintf(tfname, sizeof(tfname), "%s.tmp", GetMailFile(fname, NULL, mail));
 
-          if((out = fopen(tfname, "w")))
+    if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)) != NULL)
+    {
+      if((part = rmData->firstPart->Next) != NULL && part->Next != NULL)
+      {
+        FILE *out;
+        struct ReadMailData *rmData2;
+
+        if((out = fopen(tfname, "w")) != NULL)
+        {
+          FILE *in;
+          struct Folder *fo = mail->Folder;
+          int f;
+
+          setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+
+          if((in = fopen(rmData->firstPart->Filename, "r")) != NULL)
           {
-             FILE *in;
-             struct Folder *fo = mail->Folder;
-             int f;
+            BOOL infield = FALSE, inbody = FALSE;
 
-             setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+            setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
 
-             if((in = fopen(rmData->firstPart->Filename, "r")))
-             {
-                BOOL infield = FALSE, inbody = FALSE;
+            while(fgets(buf, SIZE_LINE, in))
+            {
+              if(!isspace(*buf))
+                infield = !strnicmp(buf, "content-transfer-encoding", 25) || !strnicmp(buf, "content-type", 12);
 
-                setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
-
-                while(fgets(buf, SIZE_LINE, in))
-                {
-                  if(!isspace(*buf))
-                    infield = !strnicmp(buf, "content-transfer-encoding", 25) || !strnicmp(buf, "content-type", 12);
-
-                  if(!infield || inbody)
-                    fputs(buf, out);
-                }
-                fclose(in);
-             }
-
-             fputs("Content-Transfer-Encoding: 8bit\nContent-Type: text/plain; charset=iso-8859-1\n\n", out);
-             fputs(cmsg, out);
-             MA_ExpireIndex(fo);
-             fputs(tr(MSG_MA_AttachRemoved), out);
-
-             for(part = part->Next; part; part = part->Next)
-             {
-               fprintf(out, "%s (%ld %s, %s)\n", part->Name ? part->Name : tr(MSG_Unnamed),
-                                                 part->Size,
-                                                 tr(MSG_Bytes),
-                                                 part->ContentType);
-             }
-
-             fclose(out);
-
-             f = FileSize(tfname);
-             fo->Size += f - mail->Size;
-             mail->Size = f;
-
-             CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
-             SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
-             DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
-
-             DeleteFile(fname);
-
-             if(fo->Mode > FM_SIMPLE)
-               DoPack(tfname, fname, fo);
-             else
-               RenameFile(tfname, fname);
-
-             AppendLog(81, tr(MSG_LOG_CroppingAtt), mail->MailFile, fo->Name);
+              if(!infield || inbody)
+                fputs(buf, out);
+            }
+            fclose(in);
           }
-       }
 
-       free(cmsg);
-     }
+          fputs("Content-Transfer-Encoding: 8bit\nContent-Type: text/plain; charset=iso-8859-1\n\n", out);
+          fputs(cmsg, out);
+          MA_ExpireIndex(fo);
+          fputs(tr(MSG_MA_AttachRemoved), out);
 
-     FreePrivateRMData(rmData);
-   }
+          for(part = part->Next; part; part = part->Next)
+          {
+            fprintf(out, "%s (%ld %s, %s)\n", part->Name ? part->Name : tr(MSG_Unnamed),
+                                              part->Size,
+                                              tr(MSG_Bytes),
+                                              part->ContentType);
+          }
+
+          fclose(out);
+
+          f = FileSize(tfname);
+          fo->Size += f - mail->Size;
+          mail->Size = f;
+
+          CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
+          SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+          DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
+
+          DeleteFile(fname);
+
+          if(fo->Mode > FM_SIMPLE)
+            DoPack(tfname, fname, fo);
+          else
+            RenameFile(tfname, fname);
+
+          if((rmData2 = GetReadMailData(mail)) != NULL)
+          {
+            // make sure to refresh the mail of this window as we do not
+            // have any attachments anymore
+            if(rmData2->readWindow != NULL)
+              DoMethod(rmData2->readWindow, MUIM_ReadWindow_ReadMail, mail);
+            else if(rmData2->readMailGroup != NULL)
+              DoMethod(rmData2->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail, MUIF_ReadMailGroup_ReadMail_UpdateTextOnly);
+          }
+
+          AppendLog(81, tr(MSG_LOG_CroppingAtt), mail->MailFile, fo->Name);
+        }
+      }
+
+      free(cmsg);
+    }
+
+    FreePrivateRMData(rmData);
+  }
+
+  LEAVE();
 }
 
 ///
