@@ -7,6 +7,7 @@ $URL$
 
 2007-06-01  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AttachmentGroup.c: removed a double refresh after cropping the attachments.
   * YAM_MA.c: invoking "crop attachments" from the main menu never refreshed an
     open read window. Now an open window or an open read pane will reread the
     mail. This fixes bug #1729061.

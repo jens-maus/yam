@@ -938,12 +938,7 @@ DECLARE(CropAll)
       DisplayStatistics(mail->Folder, TRUE);
     }
 
-    // make sure to refresh the mail of this window as we do not
-    // have any attachments anymore
-    if(rmData->readWindow != NULL)
-      DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, mail);
-    else
-      DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail, MUIF_ReadMailGroup_ReadMail_UpdateTextOnly);
+    // the redraw of the mail is already done by MA_RemoveAttach()
   }
 
   RETURN(0);
