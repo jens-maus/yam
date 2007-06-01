@@ -1592,9 +1592,7 @@ DECLARE(CropAttachmentsRequest)
     DisplayStatistics(mail->Folder, TRUE);
   }
 
-  // make sure to refresh the mail of this window as we do not
-  // have any attachments anymore
-  DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
+  // the redraw of the mail is already done by MA_RemoveAttach()
 
   RETURN(0);
   return 0;
