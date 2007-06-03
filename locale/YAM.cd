@@ -6251,3 +6251,28 @@ Shutting down...
 MSG_ER_IGNOREALL (1936//)
 Ignore _all|*_Ignore
 ;
+MSG_CO_FOLDER_TREEVIEW (1937//)
+Folder tree view
+;
+MSG_CO_FOLDER_LABEL (1938//)
+Folder label
+;
+MSG_HELP_CO_CY_FOLDERINFO (1939//)
+Information that should be displayed\n\
+as the folder label
+;
+MSG_CO_FOLDERINFO01 (1940//)
+Folder name only
+;
+MSG_CO_FOLDERINFO02 (1941//)
+Folder name + number of new mails
+;
+MSG_CO_FOLDERINFO03 (1942//)
+Folder name + number of unread mails
+;
+MSG_CO_FOLDERINFO04 (1943//)
+Folder name + number of new/unread mails
+;
+MSG_CO_FOLDERINFO05 (1944//)
+Folder name + number of unread/new mails
+;

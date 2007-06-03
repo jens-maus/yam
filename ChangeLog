@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: the folder tree view labels are now user definable in that sense that
+    one can define if just the folder name should be displayed or the number of
+    new and unread mails, too. This way it is up to the user to decide which
+    numbers get displayed and what meaning they have. YAM no longer will try to
+    decide which numbers should be displayed by just guessing this information
+    from the shown and hidden columns.
+
 2007-06-01  Thore Böckelmann <tboeckel@gmx.de>
 
   * ReadMailGroup.c: removed a double refresh after cropping the attachments.

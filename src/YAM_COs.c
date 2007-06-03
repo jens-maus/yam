@@ -514,6 +514,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "QuickSearchBar   = %s\n", Bool2Txt(co->QuickSearchBar));
       fprintf(fh, "EmbeddedReadPane = %s\n", Bool2Txt(co->EmbeddedReadPane));
       fprintf(fh, "SizeFormat       = %d\n", co->SizeFormat);
+      fprintf(fh, "FolderInfoMode   = %d\n", co->FolderInfoMode);
 
       fprintf(fh, "\n[Update]\n");
       fprintf(fh, "UpdateInterval   = %d\n", co->UpdateInterval);
@@ -1195,6 +1196,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
           else if(!stricmp(buffer, "QuickSearchBar"))   co->QuickSearchBar = Txt2Bool(value);
           else if(!stricmp(buffer, "EmbeddedReadPane")) co->EmbeddedReadPane = Txt2Bool(value);
           else if(!stricmp(buffer, "SizeFormat"))       co->SizeFormat = atoi(value);
+          else if(!stricmp(buffer, "FolderInfoMode"))   co->FolderInfoMode = atoi(value);
 
 /*Update*/
           else if(!stricmp(buffer, "UpdateInterval"))   co->UpdateInterval = atoi(value);
@@ -1893,6 +1895,7 @@ void CO_GetConfig(BOOL saveConfig)
 
       case cp_LookFeel:
       {
+        CE->FolderInfoMode = GetMUICycle(gui->CY_FOLDERINFO);
         CE->InfoBar = GetMUICycle(gui->CY_INFOBAR);
         GetMUIString(CE->InfoBarText, gui->ST_INFOBARTXT, sizeof(CE->InfoBarText));
         CE->QuickSearchBar = GetMUICheck(gui->CH_QUICKSEARCHBAR);
@@ -2254,6 +2257,7 @@ void CO_SetConfig(void)
 
       case cp_LookFeel:
       {
+        setcycle(gui->CY_FOLDERINFO, CE->FolderInfoMode);
         setcycle(gui->CY_INFOBAR, CE->InfoBar);
         setstring(gui->ST_INFOBARTXT, CE->InfoBarText);
         setcheckmark(gui->CH_QUICKSEARCHBAR, CE->QuickSearchBar);

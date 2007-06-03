@@ -2489,6 +2489,75 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 }
 ///
 
+/// FormatFolderInfo
+// puts all user defined folder information into a string
+static void MA_FormatFolderInfo(char *folderStr, const size_t maxLen, const struct Folder *folder)
+{
+  ENTER();
+
+  // add the folder image first, if it exists
+  if(folder->ImageIndex >= 0)
+    snprintf(folderStr, maxLen, "\033o[%d] ", folder->ImageIndex);
+  else
+    strlcpy(folderStr, " ", maxLen);
+
+  // include the folder name/path
+  if(folder->Name[0] != '\0')
+    strlcat(folderStr, folder->Name, maxLen);
+  else
+    snprintf(folderStr, maxLen, "%s[%s]", folderStr, FilePart(folder->Path));
+
+  if(folder->LoadedMode != LM_UNLOAD && folder->LoadedMode != LM_REBUILD)
+  {
+    char dst[SIZE_SMALL];
+
+    dst[0] = '\0';
+
+    switch(C->FolderInfoMode)
+    {
+      case FIM_NAME_ONLY:
+      {
+        // nothing
+      }
+      break;
+
+      case FIM_NAME_AND_NEW_MAILS:
+      {
+        if(folder->New != 0)
+          snprintf(dst, sizeof(dst), " (%d)", folder->New);
+      }
+      break;
+
+      case FIM_NAME_AND_UNREAD_MAILS:
+      {
+        if(folder->Unread != 0)
+          snprintf(dst, sizeof(dst), " (%d)", folder->Unread);
+      }
+      break;
+
+      case FIM_NAME_AND_NEW_UNREAD_MAILS:
+      {
+        if(folder->New != 0 || folder->Unread != 0)
+          snprintf(dst, sizeof(dst), " (%d/%d)", folder->New, folder->Unread);
+      }
+      break;
+
+      case FIM_NAME_AND_UNREAD_NEW_MAILS:
+      {
+        if(folder->New != 0 || folder->Unread != 0)
+          snprintf(dst, sizeof(dst), " (%d/%d)", folder->Unread, folder->New);
+      }
+      break;
+    }
+
+    if(dst[0] != '\0')
+      strlcat(folderStr, dst, maxLen);
+  }
+
+  LEAVE();
+}
+///
+
 /*** Hooks ***/
 /// MA_LV_FDspFunc
 //  Folder listview display hook
@@ -2530,53 +2599,14 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
 
         default:
         {
-          if(entry->ImageIndex >= 0)
-            snprintf(folderStr, sizeof(folderStr), "\033o[%d] ", entry->ImageIndex);
-          else
-            strlcpy(folderStr, " ", sizeof(folderStr));
+          MA_FormatFolderInfo(folderStr, sizeof(folderStr), entry);
 
-          if(entry->Name[0] != '\0')
-            strlcat(folderStr, entry->Name, sizeof(folderStr));
-          else
-            snprintf(folderStr, sizeof(folderStr), "[%s]", FilePart(entry->Path));
-
-          if(entry->LoadedMode != LM_UNLOAD &&
-             entry->LoadedMode != LM_REBUILD)
+          if(entry->LoadedMode != LM_UNLOAD && entry->LoadedMode != LM_REBUILD)
           {
             if(entry->New != 0)
-            {
               msg->Preparse[0] = C->StyleFolderNew;
-              // include the number of new mails, if the column is hidden
-              if(isFlagClear(C->FolderCols, (1<<3)))
-              {
-                if(isFlagClear(C->FolderCols, (1<<2)))
-                  snprintf(folderStr, sizeof(folderStr), "%s (%d/%d)", folderStr, entry->New, entry->Unread);
-                else
-                  snprintf(folderStr, sizeof(folderStr), "%s (%d)", folderStr, entry->New);
-              }
-              else
-              {
-                if(isFlagClear(C->FolderCols, (1<<2)) && entry->Unread != 0)
-                  snprintf(folderStr, sizeof(folderStr), "%s (%d)", folderStr, entry->Unread);
-              }
-            }
             else if(entry->Unread != 0)
-            {
               msg->Preparse[0] = C->StyleFolderUnread;
-              // include the number of unread mails, if the column is hidden
-              if(isFlagClear(C->FolderCols, (1<<2)))
-              {
-                if(isFlagClear(C->FolderCols, (1<<3)))
-                  snprintf(folderStr, sizeof(folderStr), "%s (%d/%d)", folderStr, entry->New, entry->Unread);
-                else
-                  snprintf(folderStr, sizeof(folderStr), "%s (%d)", folderStr, entry->Unread);
-              }
-              else
-              {
-                if(isFlagClear(C->FolderCols, (1<<3)) && entry->New != 0)
-                  snprintf(folderStr, sizeof(folderStr), "%s (%d)", folderStr, entry->New);
-              }
-            }
             else
               msg->Preparse[0] = C->StyleFolderRead;
 

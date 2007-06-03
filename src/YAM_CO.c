@@ -969,6 +969,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->EmbeddedReadPane = TRUE;
     co->QuickSearchBar = TRUE;
     co->SizeFormat = SF_MIXED;
+    co->FolderInfoMode = FIM_NAME_ONLY;
   }
 
   if(page == cp_Update || page == cp_AllPages)

@@ -76,7 +76,7 @@ enum VarPopMode { VPM_FORWARD=0,
                   VPM_MAILSTATS,
                   VPM_SCRIPTS,
                   VPM_MIME_DEFVIEWER,
-                  VPM_MIME_COMMAND
+                  VPM_MIME_COMMAND,
                 };
 
 /* local protos */
@@ -3373,11 +3373,19 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 /// CO_PageLookFeel
 Object *CO_PageLookFeel(struct CO_ClassData *data)
 {
-  Object *obj;
+  static const char *folderf[6];
   static const char *sizef[6];
   static const char *infob[5];
+  Object *obj;
 
   ENTER();
+
+  folderf[0] = tr(MSG_CO_FOLDERINFO01);
+  folderf[1] = tr(MSG_CO_FOLDERINFO02);
+  folderf[2] = tr(MSG_CO_FOLDERINFO03);
+  folderf[3] = tr(MSG_CO_FOLDERINFO04);
+  folderf[4] = tr(MSG_CO_FOLDERINFO05);
+  folderf[5] = NULL;
 
   sizef[0] = tr(MSG_CO_SIZEFORMAT01);
   sizef[1] = tr(MSG_CO_SIZEFORMAT02);
@@ -3402,6 +3410,11 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
             MUIA_VertWeight, 70,
           End,
 
+          Child, ColGroup(2), GroupFrameT(tr(MSG_CO_FOLDER_TREEVIEW)),
+            Child, Label2(tr(MSG_CO_FOLDER_LABEL)),
+            Child, data->GUI.CY_FOLDERINFO = MakeCycle(folderf, tr(MSG_CO_FOLDER_LABEL)),
+          End,
+
           Child, ColGroup(2), GroupFrameT(tr(MSG_CO_INFOBAR)),
             Child, Label1(tr(MSG_CO_INFOBARPOS)),
             Child, data->GUI.CY_INFOBAR = MakeCycle(infob, tr(MSG_CO_INFOBARPOS)),
@@ -3422,11 +3435,12 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.CH_QUICKSEARCHBAR,  MSG_HELP_CO_CH_QUICKSEARCHBAR);
-    SetHelp(data->GUI.CY_INFOBAR,         MSG_HELP_CO_CH_INFOBAR);
-    SetHelp(data->GUI.ST_INFOBARTXT,      MSG_HELP_CO_ST_INFOBARTXT);
-    SetHelp(data->GUI.CH_EMBEDDEDREADPANE,MSG_HELP_CO_CH_EMBEDDEDREADPANE);
-    SetHelp(data->GUI.CY_SIZE,            MSG_HELP_CO_CY_SIZE);
+    SetHelp(data->GUI.CH_QUICKSEARCHBAR,   MSG_HELP_CO_CH_QUICKSEARCHBAR);
+    SetHelp(data->GUI.CY_FOLDERINFO,       MSG_HELP_CO_CY_FOLDERINFO);
+    SetHelp(data->GUI.CY_INFOBAR,          MSG_HELP_CO_CH_INFOBAR);
+    SetHelp(data->GUI.ST_INFOBARTXT,       MSG_HELP_CO_ST_INFOBARTXT);
+    SetHelp(data->GUI.CH_EMBEDDEDREADPANE, MSG_HELP_CO_CH_EMBEDDEDREADPANE);
+    SetHelp(data->GUI.CY_SIZE,             MSG_HELP_CO_CY_SIZE);
   }
 
   RETURN(obj);

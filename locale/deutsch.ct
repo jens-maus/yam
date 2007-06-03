@@ -7959,3 +7959,28 @@ Beende...
 MSG_ER_IGNOREALL
 *_Dauerhaft ignorieren|_Ignorieren
 ;
+MSG_CO_FOLDER_TREEVIEW
+Postfach Baumansicht
+;
+MSG_CO_FOLDER_LABEL
+Beschriftung
+;
+MSG_HELP_CO_CY_FOLDERINFO
+Informationen die als Beschriftung für die Postfächer\n\
+angezeigt werden sollen.
+;
+MSG_CO_FOLDERINFO01
+nur Name des Postfachs
+;
+MSG_CO_FOLDERINFO02
+Name des Postfachs + Anzahl neuer Nachrichten
+;
+MSG_CO_FOLDERINFO03
+Name des Postfachs + Anzahl ungelesener Nachrichten
+;
+MSG_CO_FOLDERINFO04
+Name des Postfachs + Anzahl neuer/ungelesener Nachrichten
+;
+MSG_CO_FOLDERINFO05
+Name des Postfachs + Anzahl ungelesener/neuer Nachrichten
+;

@@ -284,6 +284,7 @@ struct CO_GUIData
   Object *CH_SHOWALTPARTS;
   Object *CH_APPICONPOS;
   Object *BT_APPICONGETPOS;
+  Object *CY_FOLDERINFO;
 };
 
 enum ConfigPage
@@ -363,7 +364,19 @@ struct RxHook
 #define hasSoundNotify(f)     (isFlagSet((f), NOTIFY_SOUND))
 #define hasCommandNotify(f)   (isFlagSet((f), NOTIFY_CMD))
 
-enum PrintMethod { PRINTMETHOD_RAW };
+enum PrintMethod
+{
+  PRINTMETHOD_RAW
+};
+
+enum FolderInfoMode
+{
+  FIM_NAME_ONLY = 0,
+  FIM_NAME_AND_NEW_MAILS,
+  FIM_NAME_AND_UNREAD_MAILS,
+  FIM_NAME_AND_NEW_UNREAD_MAILS,
+  FIM_NAME_AND_UNREAD_NEW_MAILS
+};
 
 /*** Configuration main structure ***/
 struct Config
@@ -422,6 +435,7 @@ struct Config
    enum  SigSepType     SigSepLine;
    enum  TransWinMode   TransferWindow;
    enum  PreSelMode     PreSelection;
+   enum  FolderInfoMode FolderInfoMode;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;
