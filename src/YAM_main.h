@@ -137,6 +137,24 @@
 #define setStatusToUnread(mail)       MA_ChangeMailStatus(mail, SFLAG_NONE, SFLAG_NEW|SFLAG_READ)
 #define setStatusToOld(mail)          MA_ChangeMailStatus(mail, SFLAG_READ, SFLAG_NEW)
 
+// for managing the message list colums via a bitmask
+#define MCOL_STATUS             (1<<0) // message status
+#define MCOL_SENDER             (1<<1) // message sender/recipient
+#define MCOL_REPLYTO            (1<<2) // reply-to address
+#define MCOL_SUBJECT            (1<<3) // message subject
+#define MCOL_DATE               (1<<4) // message date
+#define MCOL_SIZE               (1<<5) // message size
+#define MCOL_FILENAME           (1<<6) // message filename
+#define MCOL_TRANSDATE          (1<<7) // recipient/sender transfer date
+#define hasMColStatus(v)        (isFlagSet((v), MCOL_STATUS))
+#define hasMColSender(v)        (isFlagSet((v), MCOL_SENDER))
+#define hasMColReplyTo(v)       (isFlagSet((v), MCOL_REPLYTO))
+#define hasMColSubject(v)       (isFlagSet((v), MCOL_SUBJECT))
+#define hasMColDate(v)          (isFlagSet((v), MCOL_DATE))
+#define hasMColSize(v)          (isFlagSet((v), MCOL_SIZE))
+#define hasMColFilename(v)      (isFlagSet((v), MCOL_FILENAME))
+#define hasMColTransDate(v)     (isFlagSet((v), MCOL_TRANSDATE))
+
 // for managing the different status icons we manage our IDs and ESC sequences here
 #define SICON_ID_UNREAD     0      // status_unread
 #define SICON_ID_OLD        1      // status_old

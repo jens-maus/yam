@@ -124,6 +124,18 @@ enum FolderMode { FM_NORMAL=0,  // normal folder
 
 #define FolderName(fo) ((fo) ? (fo)->Name : "?")
 
+// for managing the folder colums via a bitmask
+#define FCOL_NAME               (1<<0) // folder name
+#define FCOL_TOTAL              (1<<1) // total amount of mails
+#define FCOL_UNREAD             (1<<2) // number of unread mails
+#define FCOL_NEW                (1<<3) // number of new mails
+#define FCOL_SIZE               (1<<4) // size in bytes of folder
+#define hasFColName(v)          (isFlagSet((v), FCOL_NAME))
+#define hasFColTotal(v)         (isFlagSet((v), FCOL_TOTAL))
+#define hasFColUnread(v)        (isFlagSet((v), FCOL_UNREAD))
+#define hasFColNew(v)           (isFlagSet((v), FCOL_NEW))
+#define hasFColSize(v)          (isFlagSet((v), FCOL_SIZE))
+
 // for managing the different standard folder icons we manage our IDs and ESC sequences here
 #define FICON_ID_FOLD           0  // folder_fold
 #define FICON_ID_UNFOLD         1  // folder_unfold

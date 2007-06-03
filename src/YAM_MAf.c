@@ -2611,16 +2611,16 @@ HOOKPROTONHNO(MA_LV_FDspFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
               msg->Preparse[0] = C->StyleFolderRead;
 
             // if other folder columns are enabled lets fill the values in
-            if(isFlagSet(C->FolderCols, (1<<1)))
+            if(hasFColTotal(C->FolderCols))
               snprintf(totalStr, sizeof(totalStr), "%d", entry->Total);
 
-            if(isFlagSet(C->FolderCols, (1<<2)) && entry->Unread != 0)
+            if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
               snprintf(unreadStr, sizeof(unreadStr), "%d", entry->Unread);
 
-            if(isFlagSet(C->FolderCols, (1<<3)) && entry->New != 0)
+            if(hasFColNew(C->FolderCols) && entry->New != 0)
               snprintf(newStr, sizeof(newStr), "%d", entry->New);
 
-            if(isFlagSet(C->FolderCols, (1<<4)) && entry->Size > 0)
+            if(hasFColSize(C->FolderCols) && entry->Size > 0)
               FormatSize(entry->Size, sizeStr, sizeof(sizeStr), SF_AUTO);
           }
           else

@@ -5,6 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-04  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_main.h, MainMailList.c, MainFolderListtree.c, YAM_MAf.c: added new bitmask
+    preprocessor macros for more easily handling of the folder and message list column
+    selection and propagated them to all places where the folder/message columns will
+    be queried. In addition, a new default set of folder and message columns are now
+    in place to make the look&feel of YAM more intuitive right from the start.
+  * YAM_COg.c, YAM_COs.c, YAM_CO.c, locale/YAM.cd: the recently added GUI
+    elements for changing the folderinfo mode are now selectable in the 'Lists'
+    configuration. In addition, the 'Foldername (unread)' is set as the default
+    as that is what YAM was doing right from the start. This should make the config
+    more compact. Also renamed/removed some unecessary locale strings/translations
+    accordingly.
+
 2007-06-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: the folder tree view labels are now user definable in that sense that

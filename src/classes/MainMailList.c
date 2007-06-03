@@ -143,7 +143,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
       if(hasStatusForwarded(entry))  strlcat(dispsta, SICON_FORWARD, sizeof(dispsta));
 
       // now we generate the proper string for the mailaddress
-      if(C->MessageCols & (1<<1) || searchWinHook)
+      if(hasMColSender(C->MessageCols) || searchWinHook)
       {
         static char dispfro[SIZE_DEFAULT];
         BOOL toPrefix = FALSE;
@@ -189,7 +189,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
       }
 
       // lets set all other fields now
-      if(!searchWinHook && C->MessageCols & (1<<2))
+      if(!searchWinHook && hasMColReplyTo(C->MessageCols))
       {
         if(isMultiReplyToMail(entry))
         {
@@ -207,7 +207,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 
       // we first copy the Date Received/sent because this would probably be not
       // set by all ppl and strcpy() is costy ;)
-      if((C->MessageCols & (1<<7) && entry->transDate.Seconds > 0) || searchWinHook)
+      if((hasMColTransDate(C->MessageCols) && entry->transDate.Seconds > 0) || searchWinHook)
       {
         static char datstr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
         TimeVal2String(datstr, sizeof(datstr), &entry->transDate, C->DSListFormat, TZC_LOCAL);
@@ -216,14 +216,14 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
       else
         array[7] = (STRPTR)"";
 
-      if(C->MessageCols & (1<<4) || searchWinHook)
+      if(hasMColDate(C->MessageCols) || searchWinHook)
       {
         static char datstr[64];
         DateStamp2String(datstr, sizeof(datstr), &entry->Date, C->DSListFormat, TZC_LOCAL);
         array[4] = datstr;
       }
 
-      if(C->MessageCols & (1<<5) || searchWinHook)
+      if(hasMColSize(C->MessageCols) || searchWinHook)
         FormatSize(entry->Size, array[5] = dispsiz, sizeof(dispsiz), SF_AUTO);
 
       array[6] = entry->MailFile;
@@ -536,14 +536,14 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   {
     data->context_menu = MenustripObject,
       Child, MenuObjectT(tr(MSG_MA_CTX_MAILLIST)),
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Status),         MUIA_UserData, 1, MUIA_Menuitem_Enabled, FALSE, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<0)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_SenderRecpt),    MUIA_UserData, 2, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<1)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_ReturnAddress),  MUIA_UserData, 3, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<2)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Subject),        MUIA_UserData, 4, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<3)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MessageDate),    MUIA_UserData, 5, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<4)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Size),           MUIA_UserData, 6, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<5)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Filename),       MUIA_UserData, 7, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<6)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_CO_DATE_SNTRCVD),MUIA_UserData, 8, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<7)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Status),         MUIA_UserData, 1, MUIA_Menuitem_Enabled, FALSE, MUIA_Menuitem_Checked, TRUE, MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_SenderRecpt),    MUIA_UserData, 2, MUIA_Menuitem_Checked, hasMColSender(C->MessageCols),  MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_ReturnAddress),  MUIA_UserData, 3, MUIA_Menuitem_Checked, hasMColReplyTo(C->MessageCols), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Subject),        MUIA_UserData, 4, MUIA_Menuitem_Checked, hasMColSubject(C->MessageCols), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MessageDate),    MUIA_UserData, 5, MUIA_Menuitem_Checked, hasMColDate(C->MessageCols),    MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Size),           MUIA_UserData, 6, MUIA_Menuitem_Checked, hasMColSize(C->MessageCols),    MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Filename),       MUIA_UserData, 7, MUIA_Menuitem_Checked, hasMColFilename(C->MessageCols),MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_CO_DATE_SNTRCVD),MUIA_UserData, 8, MUIA_Menuitem_Checked, hasMColTransDate(C->MessageCols), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFWIDTH_THIS), MUIA_UserData, MUIV_NList_Menu_DefWidth_This, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFWIDTH_ALL),  MUIA_UserData, MUIV_NList_Menu_DefWidth_All,  End,
@@ -664,10 +664,12 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case 7:
     case 8:
     {
-      ULONG col = xget(m->item, MUIA_UserData)-1;
+      ULONG flag = (1 << (xget(m->item, MUIA_UserData)-1));
 
-      if(isFlagSet(C->MessageCols, (1<<col))) CLEAR_FLAG(C->MessageCols, (1<<col));
-      else                                    SET_FLAG(C->MessageCols, (1<<col));
+      if(isFlagSet(C->MessageCols, flag))
+        CLEAR_FLAG(C->MessageCols, flag);
+      else
+        SET_FLAG(C->MessageCols, flag);
 
       DoMethod(obj, MUIM_MainMailList_MakeFormat);
     }
@@ -729,7 +731,7 @@ DECLARE(MakeFormat)
 
   for(i = 0; i < MACOLNUM; i++)
   {
-    if(C->MessageCols & (1<<i))
+    if(isFlagSet(C->MessageCols, (1<<i)))
     {
       int p;
 
