@@ -430,6 +430,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "ABookLookup      = %s\n", Bool2Txt(co->ABookLookup));
       fprintf(fh, "FolderCntMenu    = %s\n", Bool2Txt(co->FolderCntMenu));
       fprintf(fh, "MessageCntMenu   = %s\n", Bool2Txt(co->MessageCntMenu));
+      fprintf(fh, "FolderInfoMode   = %d\n", co->FolderInfoMode);
 
       fprintf(fh, "\n[Security]\n");
       fprintf(fh, "PGPCmdPath       = %s\n", co->PGPCmdPath);
@@ -514,7 +515,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "QuickSearchBar   = %s\n", Bool2Txt(co->QuickSearchBar));
       fprintf(fh, "EmbeddedReadPane = %s\n", Bool2Txt(co->EmbeddedReadPane));
       fprintf(fh, "SizeFormat       = %d\n", co->SizeFormat);
-      fprintf(fh, "FolderInfoMode   = %d\n", co->FolderInfoMode);
 
       fprintf(fh, "\n[Update]\n");
       fprintf(fh, "UpdateInterval   = %d\n", co->UpdateInterval);
@@ -1060,6 +1060,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
           else if(!stricmp(buffer, "ABookLookup"))    co->ABookLookup = Txt2Bool(value);
           else if(!stricmp(buffer, "FolderCntMenu"))  co->FolderCntMenu = Txt2Bool(value);
           else if(!stricmp(buffer, "MessageCntMenu")) co->MessageCntMenu = Txt2Bool(value);
+          else if(!stricmp(buffer, "FolderInfoMode")) co->FolderInfoMode = atoi(value);
 
 /* Security */
           else if(!stricmp(buffer, "PGPCmdPath"))     strlcpy(co->PGPCmdPath, value, sizeof(co->PGPCmdPath));
@@ -1196,7 +1197,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
           else if(!stricmp(buffer, "QuickSearchBar"))   co->QuickSearchBar = Txt2Bool(value);
           else if(!stricmp(buffer, "EmbeddedReadPane")) co->EmbeddedReadPane = Txt2Bool(value);
           else if(!stricmp(buffer, "SizeFormat"))       co->SizeFormat = atoi(value);
-          else if(!stricmp(buffer, "FolderInfoMode"))   co->FolderInfoMode = atoi(value);
 
 /*Update*/
           else if(!stricmp(buffer, "UpdateInterval"))   co->UpdateInterval = atoi(value);
@@ -1782,8 +1782,20 @@ void CO_GetConfig(BOOL saveConfig)
 
       case cp_Lists:
       {
-        CE->FolderCols = 1; for (i = 1; i < FOCOLNUM; i++) if (GetMUICheck(gui->CH_FCOLS[i])) CE->FolderCols += (1<<i);
-        CE->MessageCols = 1; for (i = 1; i < MACOLNUM; i++) if (GetMUICheck(gui->CH_MCOLS[i])) CE->MessageCols += (1<<i);
+        CE->FolderCols = 1;
+        for(i=1; i < FOCOLNUM; i++)
+        {
+          if(GetMUICheck(gui->CH_FCOLS[i]))
+            SET_FLAG(CE->FolderCols, (1<<i));
+        }
+
+        CE->MessageCols = 1;
+        for(i=1; i < MACOLNUM; i++)
+        {
+          if(GetMUICheck(gui->CH_MCOLS[i]))
+            SET_FLAG(CE->MessageCols, (1<<i));
+        }
+
         CE->FixedFontList = GetMUICheck(gui->CH_FIXFLIST);
         CE->ABookLookup   = GetMUICheck(gui->CH_ABOOKLOOKUP);
         CE->FolderCntMenu = GetMUICheck(gui->CH_FCNTMENU);
@@ -1803,6 +1815,8 @@ void CO_GetConfig(BOOL saveConfig)
           else
             CE->DSListFormat = DSS_DATETIME;
         }
+
+        CE->FolderInfoMode = GetMUICycle(gui->CY_FOLDERINFO);
       }
       break;
 
@@ -1895,7 +1909,6 @@ void CO_GetConfig(BOOL saveConfig)
 
       case cp_LookFeel:
       {
-        CE->FolderInfoMode = GetMUICycle(gui->CY_FOLDERINFO);
         CE->InfoBar = GetMUICycle(gui->CY_INFOBAR);
         GetMUIString(CE->InfoBarText, gui->ST_INFOBARTXT, sizeof(CE->InfoBarText));
         CE->QuickSearchBar = GetMUICheck(gui->CH_QUICKSEARCHBAR);
@@ -2150,14 +2163,23 @@ void CO_SetConfig(void)
 
       case cp_Lists:
       {
-        for(i = 0; i < FOCOLNUM; i++) setcheckmark(gui->CH_FCOLS[i], (CE->FolderCols & (1<<i)) != 0);
-        for(i = 0; i < MACOLNUM; i++) setcheckmark(gui->CH_MCOLS[i], (CE->MessageCols & (1<<i)) != 0);
+        for(i=0; i < FOCOLNUM; i++)
+        {
+          setcheckmark(gui->CH_FCOLS[i], isFlagSet(CE->FolderCols, (1<<i)));
+        }
+
+        for(i=0; i < MACOLNUM; i++)
+        {
+          setcheckmark(gui->CH_MCOLS[i], isFlagSet(CE->MessageCols, (1<<i)));
+        }
+
         setcheckmark(gui->CH_FIXFLIST  ,CE->FixedFontList);
         setcheckmark(gui->CH_ABOOKLOOKUP, CE->ABookLookup);
         setcheckmark(gui->CH_FCNTMENU  ,CE->FolderCntMenu);
         setcheckmark(gui->CH_MCNTMENU  ,CE->MessageCntMenu);
         setcheckmark(gui->CH_BEAT, (CE->DSListFormat == DSS_DATEBEAT || CE->DSListFormat == DSS_RELDATEBEAT));
         setcheckmark(gui->CH_RELDATETIME, (CE->DSListFormat == DSS_RELDATETIME || CE->DSListFormat == DSS_RELDATEBEAT));
+        setcycle(gui->CY_FOLDERINFO, CE->FolderInfoMode);
       }
       break;
 
@@ -2257,7 +2279,6 @@ void CO_SetConfig(void)
 
       case cp_LookFeel:
       {
-        setcycle(gui->CY_FOLDERINFO, CE->FolderInfoMode);
         setcycle(gui->CY_INFOBAR, CE->InfoBar);
         setstring(gui->ST_INFOBARTXT, CE->InfoBarText);
         setcheckmark(gui->CH_QUICKSEARCHBAR, CE->QuickSearchBar);

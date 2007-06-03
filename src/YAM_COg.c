@@ -2704,9 +2704,17 @@ Object *CO_PageSignature(struct CO_ClassData *data)
 /// CO_PageLists
 Object *CO_PageLists(struct CO_ClassData *data)
 {
+  static const char *folderf[6];
   Object *obj;
 
   ENTER();
+
+  folderf[0] = tr(MSG_CO_FOLDERINFO01);
+  folderf[1] = tr(MSG_CO_FOLDERINFO02);
+  folderf[2] = tr(MSG_CO_FOLDERINFO03);
+  folderf[3] = tr(MSG_CO_FOLDERINFO04);
+  folderf[4] = tr(MSG_CO_FOLDERINFO05);
+  folderf[5] = NULL;
 
   obj = VGroup,
           MUIA_HelpNode, "CO08",
@@ -2723,7 +2731,7 @@ Object *CO_PageLists(struct CO_ClassData *data)
                 Child, ColGroup(2), GroupFrameT(tr(MSG_FolderList)),
                   MUIA_ShortHelp, tr(MSG_HELP_CO_CG_FO),
                   Child, MakeStaticCheck(),
-                  Child, LLabel(tr(MSG_Folder)),
+                  Child, data->GUI.CY_FOLDERINFO = MakeCycle(folderf, tr(MSG_CO_FOLDERLABEL)),
 
                   Child, data->GUI.CH_FCOLS[1] = MakeCheck(""),
                   Child, LLabel(tr(MSG_Total)),
@@ -2739,6 +2747,7 @@ Object *CO_PageLists(struct CO_ClassData *data)
 
                   Child, data->GUI.CH_FCNTMENU = MakeCheck(""),
                   Child, LLabel(tr(MSG_CO_CONTEXTMENU)),
+
                 End,
                 Child, HVSpace,
               End,
@@ -2796,6 +2805,7 @@ Object *CO_PageLists(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_ABOOKLOOKUP,   MSG_HELP_CO_CH_ABOOKLOOKUP);
     SetHelp(data->GUI.CH_FCNTMENU,      MSG_HELP_CO_CONTEXTMENU);
     SetHelp(data->GUI.CH_MCNTMENU,      MSG_HELP_CO_CONTEXTMENU);
+    SetHelp(data->GUI.CY_FOLDERINFO,    MSG_HELP_CO_CY_FOLDERINFO);
   }
 
   RETURN(obj);
@@ -3373,19 +3383,11 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 /// CO_PageLookFeel
 Object *CO_PageLookFeel(struct CO_ClassData *data)
 {
-  static const char *folderf[6];
   static const char *sizef[6];
   static const char *infob[5];
   Object *obj;
 
   ENTER();
-
-  folderf[0] = tr(MSG_CO_FOLDERINFO01);
-  folderf[1] = tr(MSG_CO_FOLDERINFO02);
-  folderf[2] = tr(MSG_CO_FOLDERINFO03);
-  folderf[3] = tr(MSG_CO_FOLDERINFO04);
-  folderf[4] = tr(MSG_CO_FOLDERINFO05);
-  folderf[5] = NULL;
 
   sizef[0] = tr(MSG_CO_SIZEFORMAT01);
   sizef[1] = tr(MSG_CO_SIZEFORMAT02);
@@ -3410,14 +3412,10 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
             MUIA_VertWeight, 70,
           End,
 
-          Child, ColGroup(2), GroupFrameT(tr(MSG_CO_FOLDER_TREEVIEW)),
-            Child, Label2(tr(MSG_CO_FOLDER_LABEL)),
-            Child, data->GUI.CY_FOLDERINFO = MakeCycle(folderf, tr(MSG_CO_FOLDER_LABEL)),
-          End,
-
           Child, ColGroup(2), GroupFrameT(tr(MSG_CO_INFOBAR)),
             Child, Label1(tr(MSG_CO_INFOBARPOS)),
             Child, data->GUI.CY_INFOBAR = MakeCycle(infob, tr(MSG_CO_INFOBARPOS)),
+
             Child, Label2(tr(MSG_CO_FOLDERLABEL)),
             Child, MakeVarPop(&data->GUI.ST_INFOBARTXT, VPM_MAILSTATS, SIZE_DEFAULT, tr(MSG_CO_FOLDERLABEL)),
           End,
@@ -3436,7 +3434,6 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
   if(obj != NULL)
   {
     SetHelp(data->GUI.CH_QUICKSEARCHBAR,   MSG_HELP_CO_CH_QUICKSEARCHBAR);
-    SetHelp(data->GUI.CY_FOLDERINFO,       MSG_HELP_CO_CY_FOLDERINFO);
     SetHelp(data->GUI.CY_INFOBAR,          MSG_HELP_CO_CH_INFOBAR);
     SetHelp(data->GUI.ST_INFOBARTXT,       MSG_HELP_CO_ST_INFOBARTXT);
     SetHelp(data->GUI.CH_EMBEDDEDREADPANE, MSG_HELP_CO_CH_EMBEDDEDREADPANE);

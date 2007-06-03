@@ -860,13 +860,14 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_Lists || page == cp_AllPages)
   {
-    co->FolderCols = 1+2+16;
-    co->MessageCols = 1+2+8+16;
+    co->FolderCols = (FCOL_NAME | FCOL_TOTAL);
+    co->MessageCols = (MCOL_STATUS | MCOL_SENDER | MCOL_SUBJECT | MCOL_DATE | MCOL_SIZE);
     co->FixedFontList = FALSE;
     co->DSListFormat = DSS_RELDATETIME;
     co->ABookLookup = FALSE;
     co->FolderCntMenu = TRUE;
     co->MessageCntMenu = TRUE;
+    co->FolderInfoMode = FIM_NAME_AND_UNREAD_MAILS;
   }
 
   if(page == cp_Security || page == cp_AllPages)
@@ -969,7 +970,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->EmbeddedReadPane = TRUE;
     co->QuickSearchBar = TRUE;
     co->SizeFormat = SF_MIXED;
-    co->FolderInfoMode = FIM_NAME_ONLY;
   }
 
   if(page == cp_Update || page == cp_AllPages)
