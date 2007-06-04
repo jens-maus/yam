@@ -5989,13 +5989,19 @@ void DisplayAppIconStatistics(void)
     // we also notify it about the AppIcon change
     if(G->applicationID > 0 && C->DockyIcon == TRUE)
     {
-      struct ApplicationIconInfo aii;
+      if(G->LastIconID != mode)
+      {
+        struct ApplicationIconInfo aii;
 
-      aii.iconType = APPICONT_CustomIcon;
-      aii.info.customIcon = dobj;
+        aii.iconType = APPICONT_CustomIcon;
+        aii.info.customIcon = dobj;
 
-      SetApplicationAttrs(G->applicationID, APPATTR_IconType, (uint32)&aii,
-                                            TAG_DONE);
+        if(SetApplicationAttrs(G->applicationID, APPATTR_IconType, (uint32)&aii, TAG_DONE))
+        {
+          // remember the new docky icon state
+          G->LastIconID = mode;
+        }
+      }
     }
     #endif
 

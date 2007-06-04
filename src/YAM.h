@@ -112,6 +112,9 @@ struct Global
    int                      CO_DST;
    int                      ER_NumErr;
    int                      ActiveWriteWin;
+   #if defined(__amigaos4__)
+   int                      LastIconID;
+   #endif
    time_t                   LastPGPUsage;
 
    #if defined(__amigaos4__)

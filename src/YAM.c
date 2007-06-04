@@ -2660,6 +2660,12 @@ int main(int argc, char **argv)
       // some window wasn`t set active manually by an own rexx command.
       G->ActiveWriteWin = -1;
 
+      #if defined(__amigaos4__)
+      // reset the docky icon id to some sensible default
+      // upon restart this makes sure that the docky icon is set to the correct state
+      G->LastIconID = -1;
+      #endif
+
       if(yamFirst)
       {
         Initialise((BOOL)args.hide);

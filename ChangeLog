@@ -7,6 +7,9 @@ $URL$
 
 2007-06-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM.h, YAM_UT.c: the current docky icon state is now remembered
+    globally in order to be able to reset the state upon restart and to avoid
+    unnecessary flickering.
   * misc: moved the image cache's hash table and the spam filter's token
     analyzer to the global structure.
   * ImageCache.c, ImageCache.h: removed the yet commented out struct MinNode
