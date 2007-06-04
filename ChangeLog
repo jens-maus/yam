@@ -7,6 +7,11 @@ $URL$
 
 2007-06-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c, YAM.cd, deutsch.ct: the SMTP and POP3 error messages now include
+    the name of the server signaling the error. This should make it a lot easier
+    to spot the faulty server if for example several POP3 servers are queried
+    and one fails to correctly respond to a command. Future error messages must
+    accept the server name as first parameter!
   * YAM_FI.c, YAM_main.h: removed some old deprecated macros.
   * TODO: removed some items which have been implemented in the meantime.
 

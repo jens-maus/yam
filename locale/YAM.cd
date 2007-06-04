@@ -3523,14 +3523,6 @@ Possible reasons: TCP/IP offline, invalid address, \
 server is currently down or doesn't support HTTP requests.
 ; HOST
 ;
-MSG_ER_BadResponse (1127//)
-Bad %s command response:\n\
-%s\n\
-\n\
-The mail server couldn't execute the command \
-and replied with the above error message.
-; COMMAND, TEXT
-;
 MSG_ER_UnknownPOP (1128//)
 Unknown POP3 server: '%s'.\n\
 \n\
@@ -4512,12 +4504,6 @@ Please disable this option in your YAM configuration.
 MSG_ER_NOAUTHUSERPASS (1456//)
 No user name or password was specified for the SMTP AUTH connection \
 YAM was trying to establish. Please check your configuration.
-;
-MSG_ER_POPWELCOME (1457//)
-The POP server replied with an error message during the welcome \
-procedure and the connection was terminated:\n\
-\n\
-%s\n
 ;
 MSG_CO_APPICON_LABEL (1458//)
 New: %n Total: %t
@@ -6270,3 +6256,17 @@ Folder name (new/unread)
 MSG_CO_FOLDERINFO05 (1942//)
 Folder name (unread/new)
 ;
+MSG_ER_BADRESPONSE (1943//)
+Bad response from mail server '%s' for command '%s':\n\
+%s\n\
+\n\
+The mail server couldn't execute the command \
+and replied with the above error message.
+; SERVER, COMMAND, TEXT
+;
+MSG_ER_POP3WELCOME (1944//)
+The POP3 server '%s' replied with an error message during the welcome \
+procedure and the connection was terminated:\n\
+\n\
+%s\n
+; SERVER, TEXT

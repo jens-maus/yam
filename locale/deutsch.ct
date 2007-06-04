@@ -4831,18 +4831,6 @@ Mögliche Gründe: TCP/IP offline, ungültige Adresse, Server läuft momentan nicht 
 ; server is currently down or doesn't support HTTP requests.
 ; HOST
 ;
-MSG_ER_BadResponse
-Falsche Antwort auf Befehl %s:\n\
-%s\n\
-\n\
-Der Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
-; Bad %s command response:\n\
-; %s\n\
-; \n\
-; The mail server couldn't execute the command \
-; and replied with the error message.
-; COMMAND, TEXT
-;
 MSG_ER_UnknownPOP
 Unbekannter POP3-Server: '%s'.\n\
 \n\
@@ -6140,16 +6128,6 @@ Verbindung eingestellt. Bitte kontrollieren Sie Ihre Konfiguration und \
 wiederholen Sie den Verbindungsaufbau.
 ; No user name or password was specified for the SMTP AUTH connection \
 ; YAM was trying to establish. Please check your configuration.
-;
-MSG_ER_POPWELCOME
-Der POP Server hat mit einer Fehlermeldung beim Verbindungsaufbau reagiert \
-und die Verbindung wurde daraufhin beendet:\n\
-\n\
-%s\n
-; The POP server replied with an error message during the welcome \
-; procedure and the connection was terminated:\n\
-; \n\
-; %s\n
 ;
 MSG_CO_APPICON_LABEL
 Neu: %n Gesamt: %t
@@ -7977,4 +7955,16 @@ Postfachname (neu/ungelesen)
 ;
 MSG_CO_FOLDERINFO05
 Postfachname (ungelesen/neu)
+;
+MSG_ER_BADRESPONSE
+Der Postserver '%s' hat auf den Befehl '%s' falsch geantwortet:\n\
+%s\n\
+\n\
+Der Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
+;
+MSG_ER_POP3WELCOME
+Der POP3 Server '%s' hat mit einer Fehlermeldung beim Verbindungsaufbau reagiert \
+und die Verbindung wurde daraufhin beendet:\n\
+\n\
+%s\n
 ;
