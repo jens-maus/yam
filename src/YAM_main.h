@@ -133,9 +133,7 @@
 // For compatibility to the old status levels we use the following macros
 // But as soon as we have reworked the filename handling we can remove them again
 #define hasStatusUnread(mail)         (!hasStatusRead(mail) && !hasStatusNew(mail))
-#define hasStatusOld(mail)            (hasStatusRead(mail) && !hasStatusNew(mail))
 #define setStatusToUnread(mail)       MA_ChangeMailStatus(mail, SFLAG_NONE, SFLAG_NEW|SFLAG_READ)
-#define setStatusToOld(mail)          MA_ChangeMailStatus(mail, SFLAG_READ, SFLAG_NEW)
 
 // for managing the message list colums via a bitmask
 #define MCOL_STATUS             (1<<0) // message status

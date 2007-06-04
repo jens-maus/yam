@@ -682,7 +682,7 @@ BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
           break;
 
           case 'O':
-            statusFound = hasStatusOld(mail);
+            statusFound = (!hasStatusNew(mail) && hasStatusRead(mail));
           break;
 
           case 'F':

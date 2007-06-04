@@ -7,6 +7,7 @@ $URL$
 
 2007-06-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c, YAM_main.h: removed some old deprecated macros.
   * TODO: removed some items which have been implemented in the meantime.
 
 2007-06-04  Jens Langner <Jens.Langner@light-speed.de>
