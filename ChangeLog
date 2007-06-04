@@ -7,6 +7,8 @@ $URL$
 
 2007-06-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: moved the image cache's hash table and the spam filter's token
+    analyzer to the global structure.
   * ImageCache.c, ImageCache.h: removed the yet commented out struct MinNode
     from the node structure.
   * YAM_TR.c, YAM.cd, deutsch.ct: the SMTP and POP3 error messages now include

@@ -53,11 +53,6 @@
 #include "Debug.h"
 
 /*** Static variables/functions ***/
-/// imageCacheHashTable
-// a standard hash table to cache all the image files. Each image has a
-// unique ID by which it is identified. The hash table is treated as a
-// string hash (see HashTable.h).
-static struct HashTable *imageCacheHashTable;
 /// imageFileArray[]
 // array with all our private image filenames we define in the
 // current imagelayout. Please note that as soon as you change something
@@ -206,7 +201,7 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
 
   ENTER();
 
-  if((entry = HashTableOperate(imageCacheHashTable, id, htoAdd)) != NULL)
+  if((entry = HashTableOperate(G->imageCacheHashTable, id, htoAdd)) != NULL)
   {
     BOOL success = TRUE;
 
@@ -239,7 +234,7 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
         free(node->id);
       if(node->filename != NULL)
         free(node->filename);
-      HashTableRawRemove(imageCacheHashTable, entry);
+      HashTableRawRemove(G->imageCacheHashTable, entry);
     }
   }
 
@@ -303,7 +298,7 @@ BOOL ImageCacheSetup(void)
 
   ENTER();
 
-  if((imageCacheHashTable = HashTableNew((struct HashTableOps *)&imageCacheHashTableOps, NULL, sizeof(struct ImageCacheNode), 128)) != NULL)
+  if((G->imageCacheHashTable = HashTableNew((struct HashTableOps *)&imageCacheHashTableOps, NULL, sizeof(struct ImageCacheNode), 128)) != NULL)
     result = TRUE;
 
   RETURN(result);
@@ -377,8 +372,8 @@ void ImageCacheCleanup(void)
 {
   ENTER();
 
-  HashTableEnumerate(imageCacheHashTable, DeleteImageCacheNode, NULL);
-  HashTableDestroy(imageCacheHashTable);
+  HashTableEnumerate(G->imageCacheHashTable, DeleteImageCacheNode, NULL);
+  HashTableDestroy(G->imageCacheHashTable);
 
   LEAVE();
 }
@@ -396,7 +391,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
 
   D(DBF_IMAGE, "trying to obtain image '%s' from cache", id);
 
-  entry = HashTableOperate(imageCacheHashTable, id, htoLookup);
+  entry = HashTableOperate(G->imageCacheHashTable, id, htoLookup);
   if(HASH_ENTRY_IS_LIVE(entry))
   {
     result = (struct ImageCacheNode *)entry;
@@ -501,7 +496,7 @@ void DisposeImage(const char *id)
 
   ENTER();
 
-  entry = HashTableOperate(imageCacheHashTable, id, htoLookup);
+  entry = HashTableOperate(G->imageCacheHashTable, id, htoLookup);
   if(HASH_ENTRY_IS_LIVE(entry))
   {
     struct ImageCacheNode *node = (struct ImageCacheNode *)entry;
@@ -545,7 +540,7 @@ BOOL IsImageInCache(const char *id)
   D(DBF_IMAGE, "find image '%s' in cache", id);
 
   // look up the image named 'id' in our hash table
-  entry = HashTableOperate(imageCacheHashTable, id, htoLookup);
+  entry = HashTableOperate(G->imageCacheHashTable, id, htoLookup);
   if(HASH_ENTRY_IS_LIVE(entry))
   {
     D(DBF_IMAGE, "found node %08lx,'%s','%s'", entry, ((struct ImageCacheNode *)entry)->id, FilePart(((struct ImageCacheNode *)entry)->filename));

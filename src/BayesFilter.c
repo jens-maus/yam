@@ -32,7 +32,7 @@
 #include <proto/dos.h>
 
 #include "BayesFilter.h"
-#include "HashTable.h"
+#include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_read.h"
 #include "YAM_addressbook.h"
@@ -63,20 +63,6 @@ struct Token
   double distance;
 };
 
-struct Tokenizer
-{
-  struct HashTable tokenTable;
-};
-
-struct TokenAnalyzer
-{
-  struct Tokenizer goodTokens;
-  struct Tokenizer badTokens;
-  ULONG goodCount;
-  ULONG badCount;
-  ULONG numDirtyingMessages;
-};
-
 static const struct HashTableOps tokenTableOps =
 {
   DefaultHashAllocTable,
@@ -98,9 +84,6 @@ struct TokenEnumeration
   STRPTR entryAddr;
   STRPTR entryLimit;
 };
-
-// the spam filter itself
-static struct TokenAnalyzer spamFilter;
 
 // the magic data we expect upon reading the data file
 static const TEXT magicCookie[] = { '\xFE', '\xED', '\xFA', '\xCE' };
@@ -673,17 +656,17 @@ static void tokenizerRememberTokens(struct Tokenizer *t,
 ///
 /// tokenAnalyzerInit()
 // initialize the analyzer
-static BOOL tokenAnalyzerInit(struct TokenAnalyzer *ta)
+static BOOL tokenAnalyzerInit(void)
 {
   BOOL result = FALSE;
 
   ENTER();
 
-  ta->goodCount = 0;
-  ta->badCount = 0;
-  ta->numDirtyingMessages = 0;
+  G->spamFilter.goodCount = 0;
+  G->spamFilter.badCount = 0;
+  G->spamFilter.numDirtyingMessages = 0;
 
-  if(tokenizerInit(&ta->goodTokens) && tokenizerInit(&ta->badTokens))
+  if(tokenizerInit(&G->spamFilter.goodTokens) && tokenizerInit(&G->spamFilter.badTokens))
     result = TRUE;
 
   RETURN(result);
@@ -692,12 +675,12 @@ static BOOL tokenAnalyzerInit(struct TokenAnalyzer *ta)
 ///
 /// tokenAnalyzerCleanup()
 // clean up the analyzer
-static void tokenAnalyzerCleanup(struct TokenAnalyzer *ta)
+static void tokenAnalyzerCleanup(void)
 {
   ENTER();
 
-  tokenizerCleanup(&ta->goodTokens);
-  tokenizerCleanup(&ta->badTokens);
+  tokenizerCleanup(&G->spamFilter.goodTokens);
+  tokenizerCleanup(&G->spamFilter.badTokens);
 
   LEAVE();
 }
@@ -831,22 +814,22 @@ static BOOL readTokens(FILE *stream,
 ///
 /// tokenAnalyzerResetTrainingData()
 // reset the training data. The makes the spam filter stupid again
-static void tokenAnalyzerResetTrainingData(struct TokenAnalyzer *ta)
+static void tokenAnalyzerResetTrainingData(void)
 {
   char fname[SIZE_PATHFILE];
 
   ENTER();
 
-  if(ta->goodCount != 0 || ta->goodTokens.tokenTable.entryCount != 0)
+  if(G->spamFilter.goodCount != 0 || G->spamFilter.goodTokens.tokenTable.entryCount != 0)
   {
-    tokenizerClearTokens(&ta->goodTokens);
-    ta->goodCount = 0;
+    tokenizerClearTokens(&G->spamFilter.goodTokens);
+    G->spamFilter.goodCount = 0;
   }
 
-  if(ta->badCount != 0 || ta->badTokens.tokenTable.entryCount != 0)
+  if(G->spamFilter.badCount != 0 || G->spamFilter.badTokens.tokenTable.entryCount != 0)
   {
-    tokenizerClearTokens(&ta->badTokens);
-    ta->badCount = 0;
+    tokenizerClearTokens(&G->spamFilter.badTokens);
+    G->spamFilter.badCount = 0;
   }
 
   // prepare the filename for analysis
@@ -860,7 +843,7 @@ static void tokenAnalyzerResetTrainingData(struct TokenAnalyzer *ta)
 ///
 /// tokenAnalyzerWriteTraningData()
 // write the accumulated training data to disk
-static void tokenAnalyzerWriteTrainingData(struct TokenAnalyzer *ta)
+static void tokenAnalyzerWriteTrainingData(void)
 {
   char fname[SIZE_PATHFILE];
   FILE *stream;
@@ -876,14 +859,14 @@ static void tokenAnalyzerWriteTrainingData(struct TokenAnalyzer *ta)
     setvbuf(stream, NULL, _IOFBF, SIZE_FILEBUF);
 
     if(fwrite(magicCookie, sizeof(magicCookie), 1, stream) == 1 &&
-       WriteUInt32(stream, ta->goodCount) == 1 &&
-       WriteUInt32(stream, ta->badCount) == 1 &&
-       writeTokens(stream, &ta->goodTokens) == 1 &&
-       writeTokens(stream, &ta->badTokens) == 1)
+       WriteUInt32(stream, G->spamFilter.goodCount) == 1 &&
+       WriteUInt32(stream, G->spamFilter.badCount) == 1 &&
+       writeTokens(stream, &G->spamFilter.goodTokens) == 1 &&
+       writeTokens(stream, &G->spamFilter.badTokens) == 1)
     {
       // everything is ok
       fclose(stream);
-      ta->numDirtyingMessages = 0;
+      G->spamFilter.numDirtyingMessages = 0;
     }
     else
     {
@@ -899,7 +882,7 @@ static void tokenAnalyzerWriteTrainingData(struct TokenAnalyzer *ta)
 ///
 /// tokenAnalyzerReadTrainingData()
 // read the training data from disk
-static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
+static void tokenAnalyzerReadTrainingData(void)
 {
   char fname[SIZE_PATHFILE];
   long fileSize;
@@ -925,14 +908,14 @@ static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
 
       if(memcmp(cookie, magicCookie, sizeof(cookie)) == 0)
       {
-        if(ReadUInt32(stream, &ta->goodCount) == 1 &&
-           ReadUInt32(stream, &ta->badCount) == 1)
+        if(ReadUInt32(stream, &G->spamFilter.goodCount) == 1 &&
+           ReadUInt32(stream, &G->spamFilter.badCount) == 1)
         {
-          SHOWVALUE(DBF_SPAM, ta->goodCount);
-          SHOWVALUE(DBF_SPAM, ta->badCount);
+          SHOWVALUE(DBF_SPAM, G->spamFilter.goodCount);
+          SHOWVALUE(DBF_SPAM, G->spamFilter.badCount);
 
-          if(readTokens(stream, &ta->goodTokens, fileSize) == TRUE &&
-             readTokens(stream, &ta->badTokens, fileSize) == TRUE)
+          if(readTokens(stream, &G->spamFilter.goodTokens, fileSize) == TRUE &&
+             readTokens(stream, &G->spamFilter.badTokens, fileSize) == TRUE)
           {
             success = TRUE;
           }
@@ -944,7 +927,7 @@ static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
       if(success == FALSE)
       {
         // something went wrong during the read process, reset everything
-        tokenAnalyzerResetTrainingData(ta);
+        tokenAnalyzerResetTrainingData();
       }
     }
   }
@@ -955,8 +938,7 @@ static void tokenAnalyzerReadTrainingData(struct TokenAnalyzer *ta)
 /// tokenAnalyzerSetClassification()
 // set a new classification for a token table, substract the data from the old class
 // and add them to the new class, if possible
-static void tokenAnalyzerSetClassification(struct TokenAnalyzer *ta,
-                                           struct Tokenizer *t,
+static void tokenAnalyzerSetClassification(struct Tokenizer *t,
                                            enum BayesClassification oldClass,
                                            enum BayesClassification newClass)
 {
@@ -973,11 +955,11 @@ static void tokenAnalyzerSetClassification(struct TokenAnalyzer *ta,
       case BC_SPAM:
       {
         // remove tokens from spam corpus
-        if(ta->badCount > 0)
+        if(G->spamFilter.badCount > 0)
         {
-          ta->badCount--;
-          ta->numDirtyingMessages++;
-          tokenizerForgetTokens(&ta->badTokens, &te);
+          G->spamFilter.badCount--;
+          G->spamFilter.numDirtyingMessages++;
+          tokenizerForgetTokens(&G->spamFilter.badTokens, &te);
         }
       }
       break;
@@ -985,11 +967,11 @@ static void tokenAnalyzerSetClassification(struct TokenAnalyzer *ta,
       case BC_HAM:
       {
         // remove tokens from ham corpus
-        if(ta->goodCount > 0)
+        if(G->spamFilter.goodCount > 0)
         {
-          ta->goodCount--;
-          ta->numDirtyingMessages++;
-          tokenizerForgetTokens(&ta->goodTokens, &te);
+          G->spamFilter.goodCount--;
+          G->spamFilter.numDirtyingMessages++;
+          tokenizerForgetTokens(&G->spamFilter.goodTokens, &te);
         }
       }
       break;
@@ -1004,18 +986,18 @@ static void tokenAnalyzerSetClassification(struct TokenAnalyzer *ta,
       case BC_SPAM:
       {
         // put tokens into spam corpus
-        ta->badCount++;
-        ta->numDirtyingMessages++;
-        tokenizerRememberTokens(&ta->badTokens, &te);
+        G->spamFilter.badCount++;
+        G->spamFilter.numDirtyingMessages++;
+        tokenizerRememberTokens(&G->spamFilter.badTokens, &te);
       }
       break;
 
       case BC_HAM:
       {
         // put tokens into ham corpus
-        ta->goodCount++;
-        ta->numDirtyingMessages++;
-        tokenizerRememberTokens(&ta->goodTokens, &te);
+        G->spamFilter.goodCount++;
+        G->spamFilter.numDirtyingMessages++;
+        tokenizerRememberTokens(&G->spamFilter.goodTokens, &te);
       }
       break;
 
@@ -1277,8 +1259,7 @@ INLINE double chi2P(double chi2, double nu, int *error)
 ///
 /// tokenAnalyzerClassifyMessage()
 // classify a mail based upon the information gathered so far
-static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
-                                         struct Tokenizer *t,
+static BOOL tokenAnalyzerClassifyMessage(struct Tokenizer *t,
                                          struct Mail *mail)
 {
   BOOL isSpam;
@@ -1292,18 +1273,18 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
   {
     struct Token *tokens = NULL;
 
-    SHOWVALUE(DBF_SPAM, ta->goodCount);
-    SHOWVALUE(DBF_SPAM, ta->badCount);
+    SHOWVALUE(DBF_SPAM, G->spamFilter.goodCount);
+    SHOWVALUE(DBF_SPAM, G->spamFilter.badCount);
 
     if((tokens = tokenizerCopyTokens(t)) != NULL)
     {
-      double nGood = ta->goodCount;
+      double nGood = G->spamFilter.goodCount;
 
-      if(nGood != 0 || ta->goodTokens.tokenTable.entryCount != 0)
+      if(nGood != 0 || G->spamFilter.goodTokens.tokenTable.entryCount != 0)
       {
-        double nBad = ta->badCount;
+        double nBad = G->spamFilter.badCount;
 
-        if(nBad != 0 || ta->badTokens.tokenTable.entryCount != 0)
+        if(nBad != 0 || G->spamFilter.badTokens.tokenTable.entryCount != 0)
         {
           ULONG i;
           ULONG goodClues = 0;
@@ -1328,9 +1309,9 @@ static BOOL tokenAnalyzerClassifyMessage(struct TokenAnalyzer *ta,
             double n;
             double distance;
 
-            t = tokenizerGet(&ta->goodTokens, word);
+            t = tokenizerGet(&G->spamFilter.goodTokens, word);
             hamCount = (t != NULL) ? t->count : 0;
-            t = tokenizerGet(&ta->badTokens, word);
+            t = tokenizerGet(&G->spamFilter.badTokens, word);
             spamCount = (t != NULL) ? t->count : 0;
 
             denom = hamCount * nBad + spamCount * nGood;
@@ -1469,9 +1450,9 @@ BOOL BayesFilterInit(void)
 
   ENTER();
 
-  if(tokenAnalyzerInit(&spamFilter))
+  if(tokenAnalyzerInit())
   {
-    tokenAnalyzerReadTrainingData(&spamFilter);
+    tokenAnalyzerReadTrainingData();
 
     result = TRUE;
   }
@@ -1487,12 +1468,12 @@ void BayesFilterCleanup(void)
   ENTER();
 
   // only write the spam training data to disk if there are any tokens and if something has changed since the last flush
-  if(spamFilter.numDirtyingMessages > 0 && (spamFilter.goodCount > 0 || spamFilter.badCount > 0))
+  if(G->spamFilter.numDirtyingMessages > 0 && (G->spamFilter.goodCount > 0 || G->spamFilter.badCount > 0))
   {
-    tokenAnalyzerWriteTrainingData(&spamFilter);
+    tokenAnalyzerWriteTrainingData();
   }
 
-  tokenAnalyzerCleanup(&spamFilter);
+  tokenAnalyzerCleanup();
 
   LEAVE();
 }
@@ -1552,7 +1533,7 @@ BOOL BayesFilterClassifyMessage(struct Mail *mail)
   {
     tokenizeMail(&t, mail);
 
-    isSpam = tokenAnalyzerClassifyMessage(&spamFilter, &t, mail);
+    isSpam = tokenAnalyzerClassifyMessage(&t, mail);
 
     tokenizerCleanup(&t);
   }
@@ -1584,7 +1565,7 @@ void BayesFilterSetClassification(struct Mail *mail,
     tokenizeMail(&t, mail);
 
     // now we invert the current classification
-    tokenAnalyzerSetClassification(&spamFilter, &t, oldClass, newClass);
+    tokenAnalyzerSetClassification(&t, oldClass, newClass);
 
     tokenizerCleanup(&t);
   }
@@ -1600,7 +1581,7 @@ ULONG BayesFilterNumberOfSpamClassifiedMails(void)
 
   ENTER();
 
-  num = spamFilter.badCount;
+  num = G->spamFilter.badCount;
 
   RETURN(num);
   return num;
@@ -1614,7 +1595,7 @@ ULONG BayesFilterNumberOfHamClassifiedMails(void)
 
   ENTER();
 
-  num = spamFilter.goodCount;
+  num = G->spamFilter.goodCount;
 
   RETURN(num);
   return num;
@@ -1626,10 +1607,10 @@ void BayesFilterFlushTrainingData(void)
 {
   ENTER();
 
-  if(C->SpamFlushTrainingDataThreshold > 0 && spamFilter.numDirtyingMessages > (ULONG)C->SpamFlushTrainingDataThreshold)
+  if(C->SpamFlushTrainingDataThreshold > 0 && G->spamFilter.numDirtyingMessages > (ULONG)C->SpamFlushTrainingDataThreshold)
   {
-    tokenAnalyzerWriteTrainingData(&spamFilter);
-    spamFilter.numDirtyingMessages = 0;
+    tokenAnalyzerWriteTrainingData();
+    G->spamFilter.numDirtyingMessages = 0;
   }
 
   LEAVE();
@@ -1641,7 +1622,7 @@ void BayesFilterResetTrainingData(void)
 {
   ENTER();
 
-  tokenAnalyzerResetTrainingData(&spamFilter);
+  tokenAnalyzerResetTrainingData();
 
   LEAVE();
 }

@@ -28,8 +28,8 @@
 
 ***************************************************************************/
 
-#include "YAM.h"
 #include "YAM_mainFolder.h"
+#include "HashTable.h"
 
 /*
  YAM's spam filter is based upon Mozilla Thunderbird's junk filter.
@@ -54,6 +54,20 @@ enum BayesClassification
 #define DEFAULT_SPAM_PROBABILITY_THRESHOLD      90
 #define DEFAULT_FLUSH_TRAINING_DATA_INTERVAL    (15 * 60)
 #define DEFAULT_FLUSH_TRAINING_DATA_THRESHOLD   50
+
+struct Tokenizer
+{
+  struct HashTable tokenTable;
+};
+
+struct TokenAnalyzer
+{
+  struct Tokenizer goodTokens;
+  struct Tokenizer badTokens;
+  ULONG goodCount;
+  ULONG badCount;
+  ULONG numDirtyingMessages;
+};
 
 /*** Public functions ***/
 BOOL BayesFilterInit(void);

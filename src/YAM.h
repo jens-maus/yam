@@ -39,6 +39,8 @@
 #include "YAM_stringsizes.h"
 #include "YAM_transfer.h"    /* struct DownloadResult */
 #include "YAM_userlist.h"    /* struct Users */
+#include "BayesFilter.h"     /* struct TokenAnalyzer */
+#include "HashTable.h"       /* struct HashTable */
 
 /**************************************************************************/
 
@@ -96,6 +98,7 @@ struct Global
    struct ReadMailData *    ActiveRexxRMData;
    struct codeset *         localCharset;
    struct codesetList *     codesetsList;
+   struct HashTable *       imageCacheHashTable;
 
    #if defined(__amigaos4__)
    struct MsgPort *         AppLibPort;
@@ -138,6 +141,7 @@ struct Global
    struct MinList           readMailDataList;
    struct MinList           xpkPackerList;
    struct MinList           zombieFileList;
+   struct TokenAnalyzer     spamFilter;
 
    char                     ProgDir[SIZE_PATH];
    char                     ProgName[SIZE_FILE];
