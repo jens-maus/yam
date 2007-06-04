@@ -53,6 +53,10 @@
 #include "Debug.h"
 
 /*** Static variables/functions ***/
+/// imageCacheHashTable
+// a standard hash table to cache all the image files. Each image has a
+// unique ID by which it is identified. The hash table is treated as a
+// string hash (see HashTable.h).
 static struct HashTable *imageCacheHashTable;
 /// imageFileArray[]
 // array with all our private image filenames we define in the
@@ -93,7 +97,6 @@ static const char *imageFileArray[MAX_IMAGES] =
   "config_lookfeel",  "config_lookfeel_big",
   "config_update",    "config_update_big",
 };
-
 ///
 
 /// LoadImage

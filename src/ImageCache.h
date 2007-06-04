@@ -39,13 +39,12 @@
 // loaded image datatype object
 struct ImageCacheNode
 {
-  //struct MinNode node;    // the node for adding it in a MinList
-  struct HashEntryHeader hash;
-  char *id;               // pointer to the filename
-  char *filename;         // pointer to the filename
-  Object *dt_obj;         // the datatypes object
-  struct Screen *screen;  // pointer to the screen the image is mapped to
-  int openCount;          // counter how often the image is now opened/used
+  struct HashEntryHeader hash; // standard hash table header
+  char *id;                    // pointer to the id
+  char *filename;              // pointer to the filename
+  Object *dt_obj;              // the datatypes object
+  struct Screen *screen;       // pointer to the screen the image is mapped to
+  int openCount;               // counter how often the image is now opened/used
 
   ULONG width;
   ULONG height;
