@@ -1885,12 +1885,12 @@ BOOL CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh)
   if(sourfh != NULL && dest != NULL && (destfh = fopen(dest, "w")))
     setvbuf(destfh, NULL, _IOFBF, SIZE_FILEBUF);
 
-  if(sourfh !=NULL && destfh != NULL)
+  if(sourfh != NULL && destfh != NULL)
   {
-    char buf[SIZE_LARGE];
+    char buf[8192]; // 8K buffer for read/write operations
     int len;
 
-    while((len = fread(buf, 1, SIZE_LARGE, sourfh)) > 0)
+    while((len = fread(buf, 1, sizeof(buf), sourfh)) > 0)
     {
       if(fwrite(buf, 1, len, destfh) != (size_t)len)
         break;
@@ -1903,10 +1903,10 @@ BOOL CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh)
       success = TRUE;
   }
 
-  if(dest !=NULL && destfh != NULL)
+  if(dest != NULL && destfh != NULL)
     fclose(destfh);
 
-  if(sour !=NULL && sourfh != NULL)
+  if(sour != NULL && sourfh != NULL)
     fclose(sourfh);
 
   RETURN(success);

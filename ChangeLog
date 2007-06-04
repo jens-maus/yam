@@ -7,6 +7,8 @@ $URL$
 
 2007-06-05  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: to potentially speed up the read/write operations in CopyFile()
+    an 8K buffer is now used instead of 1K.
   * YAM_CO.c: to be on the save side the default socket transfer timeout is now
     increased to 30 seconds instead of 10. This should hopefully fix issues
     with slow/unresponsive server connections/transfer. However, please note that
