@@ -7,6 +7,12 @@ $URL$
 
 2007-06-05  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_CO.c: to be on the save side the default socket transfer timeout is now
+    increased to 30 seconds instead of 10. This should hopefully fix issues
+    with slow/unresponsive server connections/transfer. However, please note that
+    everyone is adviced to change the "SocketTimeout" config value to 30 in case
+    an earlier nightly build was used and already wrote another value to the
+    YAM config file.
   * YAM_mail_lex.l: adapted the URL/URI regular expression recognition to take
     more respect of the currently uptodate RFC 3986 which is responsible for
     defining how a URL/URI should look like. This fixes bug #1726183 where
