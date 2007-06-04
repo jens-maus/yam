@@ -54,8 +54,8 @@
 
 /*
  * The URL matching rules for this lexer try to be compatible to the official
- * RFC 1738 (http://www.faqs.org/rfcs/rfc1738.html) which defines how common
- * URLs look like and defines the correct BNF form for matching these URLs
+ * RFC 3986 (http://www.faqs.org/rfcs/rfc3986.html) which defines how common
+ * URL/URI look like and defines the correct BNF form for matching these URLs
  *
  * However, minor adaptions were made to make the URL matching more compatible to
  * the way we require it in our text parser in YAM
@@ -63,12 +63,10 @@
  */
 
 /* common rules */
-LOGIN       ({USER}?(":"{PASSWORD})?"@")?{HOSTPORT}
+AUTHORITY   ({USER}?(":"{PASSWORD})?"@")?{HOSTPORT}
 HOSTPORT    {HOST}(":"{PORT})?
 HOST        ({HOSTNAME}|{HOSTNUMBER})
-HOSTNAME    ({DOMAINLABEL}".")+{TOPLABEL}
-DOMAINLABEL ([[:alnum:]]|[[:alnum:]]([[:alnum:]]|"-")*[[:alnum:]])
-TOPLABEL    ([[:alpha:]]|[[:alpha:]]([[:alnum:]]|"-")*[[:alnum:]])
+HOSTNAME    ([[:alnum:]]|"-"|"."|"_"|"-")*
 HOSTNUMBER  [[:digit:]]{1,3}"."[[:digit:]]{1,3}"."[[:digit:]]{1,3}"."[[:digit:]]{1,3}
 PORT        [[:digit:]]+
 USER        ({UCHAR}|";"|"?"|"&"|"=")*
@@ -76,24 +74,24 @@ PASSWORD    ({UCHAR}|";"|"?"|"&"|"=")*
 URLPATH     {XCHAR}*
 
 /* FTP (see also RFC959) */
-FTPURL      "ftp://"{LOGIN}("/"{FPATH}(";type="{FTPTYPE})?)?{NOTATEOL}
+FTPURL      "ftp://"{AUTHORITY}("/"{FPATH}(";type="{FTPTYPE})?)?{NOTATEOL}
 FPATH       {FSEGMENT}("/"{FSEGMENT})*
 FSEGMENT    ({UCHAR}|"?"|":"|"@"|"&"|"=")*
 FTPTYPE     [AIDaid]
 
 /* FILE */
-FILEURL     "file://"({HOST}|"localhost")?"/"{FPATH}{NOTATEOL}
+FILEURL     "file://"{AUTHORITY}?"/"{FPATH}{NOTATEOL}
 
 /* HTTP/HTTPS/PLAINURL */
-HTTPURL     "http://"{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
-HTTPSURL    "https://"{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
+HTTPURL     "http://"{AUTHORITY}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
+HTTPSURL    "https://"{AUTHORITY}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
 PLAINURL    ("www"|"ftp")"."{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
 HPATH       "~"?{HSEGMENT}("/"{HSEGMENT})*
 HSEGMENT    ({UCHAR}|";"|":"|"@"|"&"|"="|"#")*
 SEARCH      ({UCHAR}|";"|":"|"@"|"&"|"="|"#"|"/")*
 
 /* GOPHER (see also RFC1436) */
-GOPHERURL   "gopher://"{HOSTPORT}("/"({GTYPE}({SELECTOR}("%09"{SEARCH}("%09"{GOPHSTR})?)?)?)?)?{NOTATEOL}
+GOPHERURL   "gopher://"{AUTHORITY}("/"({GTYPE}({SELECTOR}("%09"{SEARCH}("%09"{GOPHSTR})?)?)?)?)?{NOTATEOL}
 GTYPE       {XCHAR}
 SELECTOR    {XCHAR}*
 GOPHSTR     {XCHAR}*
@@ -109,10 +107,10 @@ GROUP       [[:alpha:]]([[:alnum:]]|"-"|"."|"+"|"_")*
 ARTICLE     ({UCHAR}|";"|"/"|"?"|":"|"&"|"=")+"@"{HOST}
 
 /* NNTP (see also RFC977 */
-NNTPURL     "nntp://"{HOSTPORT}"/"{GROUP}("/"[[:digit:]]+)?{NOTATEOL}
+NNTPURL     "nntp://"{AUTHORITY}"/"{GROUP}("/"[[:digit:]]+)?{NOTATEOL}
 
 /* TELNET */
-TELNETURL   "telnet://"{LOGIN}("/")?
+TELNETURL   "telnet://"{AUTHORITY}"/"?
 
 /* Miscellaneous definitions */
 SAFE        ("$"|"-"|"_"|"."|"+")

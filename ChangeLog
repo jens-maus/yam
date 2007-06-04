@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-05  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_mail_lex.l: adapted the URL/URI regular expression recognition to take
+    more respect of the currently uptodate RFC 3986 which is responsible for
+    defining how a URL/URI should look like. This fixes bug #1726183 where
+    some URLs weren't recognized properly and therefore not highlighted in
+    mail texts. Now the URL/URI recognition should be somewhat more compatible
+    to recent standards.
+
 2007-06-04  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, YAM.h, YAM_UT.c: the current docky icon state is now remembered
