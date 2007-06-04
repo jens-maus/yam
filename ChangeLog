@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-04  Thore Böckelmann <tboeckel@gmx.de>
+
+  * TODO: removed some items which have been implemented in the meantime.
+
 2007-06-04  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_main.h, MainMailList.c, MainFolderListtree.c, YAM_MAf.c: added new bitmask

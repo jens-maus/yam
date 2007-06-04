@@ -66,14 +66,6 @@ has no chance to make some room in the drive and click a [Retry] gadget
 as is usually the case in AmigaOS. This needs to be sorted out.
 
 
-Picture caching for portraits
------------------------------
-Caching the last N portraits displayed in the Read window could seriously
-improve the performance on low end machines - reading several messages in
-a row from the same sender should have no overhead at all due to the image
-being loaded and decoded *again*.
-
-
 Additional folder-centric settings
 ----------------------------------
 Every folder should be able to have its own appicon on Workbench, but the
@@ -112,9 +104,3 @@ Enhanced navigation with the keyboard
 -------------------------------------
 The MUIA_CycleChain tag is missing for the three tabs in the Filters config
 window.
-
-
-Enhanced "Avoid duplicates" behaviour
--------------------------------------
-YAM has no provision to maintain the .uidl file, but just keeps adding
-data to it. This needs to be improved.
