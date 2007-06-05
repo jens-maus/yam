@@ -7,9 +7,8 @@ $URL$
 
 2007-06-05  Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_COg.c: use the constant ASL_FileRequest instead of the value zero for
-    MUIA_Popasl_Type. This is in fact no real change, but if a named constant
-    exists for a specific purpose it should be used.
+  * YAM_COs.c: some "beautifications" according to the STYLEGUIDE and use of
+    named constants instead of simple numbers.
   * YAM_CO.c: a changed header layout is directly changed in the read mail group
     instead of the window since the group is able to modify this now itself.
   * ReadWindow.c: the ChangeHeaderInfo and ChangeSenderInfo just forward the
