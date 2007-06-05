@@ -1090,6 +1090,9 @@ void CO_Validate(struct Config *co, BOOL update)
 {
   char *p = strchr(co->EmailAddress, '@');
   BOOL saveAtEnd = FALSE;
+  BOOL updateReadWindows = FALSE;
+  BOOL updateHeaderMode = FALSE;
+  BOOL updateSenderInfo = FALSE;
   int i;
 
   ENTER();
@@ -1353,20 +1356,27 @@ void CO_Validate(struct Config *co, BOOL update)
     switch(G->CO->VisiblePage)
     {
       case cp_FirstSteps:
+      {
         setstring(G->CO->GUI.ST_POPHOST0, co->P3[0]->Server);
-        break;
+      }
+      break;
 
       case cp_TCPIP:
+      {
         setstring(G->CO->GUI.ST_SMTPHOST, co->SMTP_Server);
         set(G->CO->GUI.ST_SMTPPORT, MUIA_String_Integer, co->SMTP_Port);
         setstring(G->CO->GUI.ST_DOMAIN, co->SMTP_Domain);
         setstring(G->CO->GUI.ST_SMTPAUTHUSER, co->SMTP_AUTH_User);
         setstring(G->CO->GUI.ST_SMTPAUTHPASS, co->SMTP_AUTH_Pass);
         DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
-        break;
+      }
+      break;
 
       default:
-        break;
+      {
+        // nothing
+      }
+      break;
     }
 
     if(G->CO->Visited[cp_NewMail] || G->CO->UpdateAll)
@@ -1385,24 +1395,15 @@ void CO_Validate(struct Config *co, BOOL update)
       // window toolbars
       DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
 
-      // update the read windows' toolbar, too
-      if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
-      {
-        // search through our ReadDataList
-        struct MinNode *curNode;
+      // open read windows need to be updated, too
+      updateReadWindows = TRUE;
+    }
 
-        for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-        {
-          struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
-          // just obey open read windows with a valid mail pointer
-          if(rmData->readWindow != NULL && rmData->mail != NULL)
-          {
-            // use PushMethod for the case the read window modifies we list we are currently walking through
-            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ReadMail, rmData->mail);
-          }
-        }
-      }
+    if(G->CO->Visited[cp_Read] || G->CO->UpdateAll)
+    {
+      // open read windows need to be updated, too
+      updateHeaderMode = TRUE;
+      updateSenderInfo = TRUE;
     }
 
     if(G->CO->Visited[cp_Write] || G->CO->UpdateAll)
@@ -1432,7 +1433,9 @@ void CO_Validate(struct Config *co, BOOL update)
     }
 
     if(G->CO->Visited[cp_AddressBook] || G->CO->UpdateAll)
+    {
       AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
+    }
 
     if(G->CO->Visited[cp_LookFeel] || G->CO->UpdateAll)
     {
@@ -1536,6 +1539,35 @@ void CO_Validate(struct Config *co, BOOL update)
   // if some items have modified the config we do save it again.
   if(saveAtEnd == TRUE)
     CO_SaveConfig(co, G->CO_PrefsFile);
+
+  // finally update possibly open read windows
+  if(updateReadWindows == TRUE || updateHeaderMode == TRUE || updateSenderInfo == TRUE)
+  {
+    if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
+    {
+      // search through our ReadDataList
+      struct MinNode *curNode;
+
+      for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      {
+        struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+        // just obey open read windows with a valid mail pointer
+        if(rmData->readWindow != NULL && rmData->mail != NULL)
+        {
+          // use PushMethod for the case the read window modifies we list we are currently walking through
+          if(updateReadWindows == TRUE)
+            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ReadMail, rmData->mail);
+
+          if(updateHeaderMode == TRUE)
+            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ChangeHeaderMode, co->ShowHeader);
+
+          if(updateSenderInfo == TRUE)
+            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ChangeSenderInfoMode, co->ShowSenderInfo);
+        }
+      }
+    }
+  }
 
   LEAVE();
 }

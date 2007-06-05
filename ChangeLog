@@ -7,6 +7,10 @@ $URL$
 
 2007-06-05  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c: all actions that must be applied to open read windows after
+    changing the config are done now in one single loop to minimize the overhead
+    of walking through the window list. This also makes it possible to change
+    the header layout and sender info on-the-fly.
   * YAM_CO.c: removed a double update of the read window toolbar in case the
     spam filter is disabled.
   * YAM_FO.c, YAM_MA.c, YAM_UT.c, YAM.cd, deutsch.ct: implemented the
