@@ -289,9 +289,10 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 
   if(!tn || !tn->tn_User)
   {
-    disable_delete = TRUE;
-    disable_edit   = TRUE;
-    disable_update = TRUE;
+    disable_delete    = TRUE;
+    disable_edit      = TRUE;
+    disable_update    = TRUE;
+    disable_alltoread = TRUE;
   }
   else
   {
@@ -306,10 +307,10 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       disable_delete = TRUE;
 
     if(isGroupFolder(folder))
-    {
       disable_update = TRUE;
+
+    if(isSentMailFolder(folder) || isGroupFolder(folder))
       disable_alltoread = TRUE;
-    }
   }
 
   // We create the ContextMenu now
