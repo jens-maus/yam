@@ -1552,18 +1552,24 @@ void CO_Validate(struct Config *co, BOOL update)
       {
         struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-        // just obey open read windows with a valid mail pointer
-        if(rmData->readWindow != NULL && rmData->mail != NULL)
+        if(rmData->mail != NULL)
         {
-          // use PushMethod for the case the read window modifies we list we are currently walking through
-          if(updateReadWindows == TRUE)
-            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ReadMail, rmData->mail);
+          // we use PushMethod for the case the read window modifies we list we are currently walking through
+          if(rmData->readMailGroup != NULL && (updateHeaderMode == TRUE || updateSenderInfo == TRUE))
+          {
+            // forward the modified information directly to the read mail group
+            if(updateHeaderMode == TRUE)
+              DoMethod(G->App, MUIM_Application_PushMethod, rmData->readMailGroup, 2, MUIM_ReadMailGroup_ChangeHeaderMode, co->ShowHeader);
 
-          if(updateHeaderMode == TRUE)
-            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ChangeHeaderMode, co->ShowHeader);
-
-          if(updateSenderInfo == TRUE)
-            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ChangeSenderInfoMode, co->ShowSenderInfo);
+            if(updateSenderInfo == TRUE)
+              DoMethod(G->App, MUIM_Application_PushMethod, rmData->readMailGroup, 2, MUIM_ReadMailGroup_ChangeSenderInfoMode, co->ShowSenderInfo);
+          }
+          else if(rmData->readWindow != NULL && updateReadWindows == TRUE)
+          {
+            // forward the modifed information to the window, because a read mail group has no toolbar
+            if(updateReadWindows == TRUE)
+              DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ReadMail, rmData->mail);
+          }
         }
       }
     }

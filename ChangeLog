@@ -7,6 +7,8 @@ $URL$
 
 2007-06-05  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c: a changed header layout is directly changed in the read mail group
+    instead of the window since the group is able to modify this now itself.
   * ReadWindow.c: the ChangeHeaderInfo and ChangeSenderInfo just forward the
     message to the read mail group, which in turn does the necessary refresh.
   * ReadMailGroup.c: added the two methods ChangeHeaderInfo and ChangeSenderInfo
