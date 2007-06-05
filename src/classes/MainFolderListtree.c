@@ -45,6 +45,7 @@ struct Data
 enum { CMN_EDITF=10,
        CMN_DELETEF,
        CMN_INDEX,
+       CMN_ALLTOREAD,
        CMN_NEWF,
        CMN_NEWFG,
        CMN_SNAPS,
@@ -168,22 +169,22 @@ OVERLOAD(MUIM_DragDrop)
     struct Folder *dstfolder;
     struct MUI_NListtree_TreeNode *tn_src;
     struct MUI_NListtree_TreeNode *tn_dst;
-    
+
     tn_dst = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_DropTarget);
     if(!tn_dst)
       return 0;
-    
+
     dstfolder = tn_dst->tn_User;
 
     tn_src = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_Active);
     if(!tn_src)
       return 0;
-    
+
     srcfolder = tn_src->tn_User;
 
     if(!isGroupFolder(dstfolder))
       MA_MoveCopy(NULL, srcfolder, dstfolder, FALSE, TRUE);
-    
+
     return 0;
   }
 
@@ -245,9 +246,10 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   struct Folder *folder = NULL;
   struct MA_GUIData *gui = &G->MA->GUI;
   Object *lastItem;
-  BOOL disable_delete = FALSE;
-  BOOL disable_edit   = FALSE;
-  BOOL disable_update = FALSE;
+  BOOL disable_delete    = FALSE;
+  BOOL disable_edit      = FALSE;
+  BOOL disable_update    = FALSE;
+  BOOL disable_alltoread = FALSE;
 
   ENTER();
 
@@ -304,15 +306,20 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       disable_delete = TRUE;
 
     if(isGroupFolder(folder))
+    {
       disable_update = TRUE;
+      disable_alltoread = TRUE;
+    }
   }
 
   // We create the ContextMenu now
   data->context_menu = MenustripObject,
     Child, MenuObjectT(folder ? FolderName(folder) : tr(MSG_FOLDER_NONSEL)),
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_EDIT),           MUIA_Menuitem_Enabled, !disable_edit,   MUIA_UserData, CMN_EDITF,   End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_DELETE),         MUIA_Menuitem_Enabled, !disable_delete, MUIA_UserData, CMN_DELETEF, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_UPDATEINDEX),        MUIA_Menuitem_Enabled, !disable_update, MUIA_UserData, CMN_INDEX,   End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_EDIT),           MUIA_Menuitem_Enabled, !disable_edit,      MUIA_UserData, CMN_EDITF,     End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_DELETE),         MUIA_Menuitem_Enabled, !disable_delete,    MUIA_UserData, CMN_DELETEF,   End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_UPDATEINDEX),        MUIA_Menuitem_Enabled, !disable_update,    MUIA_UserData, CMN_INDEX,     End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_ALLTOREAD),      MUIA_Menuitem_Enabled, !disable_alltoread, MUIA_UserData, CMN_ALLTOREAD, End,
       Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_NEWFOLDER),      MUIA_UserData, CMN_NEWF,   End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_NEWFOLDERGROUP), MUIA_UserData, CMN_NEWFG,  End,
@@ -324,7 +331,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 
   // depending on the folder we have to append some additional
   // menu items or not.
-  if(folder && (isTrashFolder(folder) || isSpamFolder(folder)))
+  if(folder != NULL && (isTrashFolder(folder) || isSpamFolder(folder)))
   {
     Object *newItem;
 
@@ -383,15 +390,16 @@ OVERLOAD(MUIM_ContextMenuChoice)
     break;
 
     // or other item out of the FolderListContextMenu
-    case CMN_EDITF:     { DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);          } break;
-    case CMN_DELETEF:   { DoMethod(G->App, MUIM_CallHook, &FO_DeleteFolderHook);        } break;
-    case CMN_INDEX:     { DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook);         } break;
-    case CMN_NEWF:      { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderHook);           } break;
-    case CMN_NEWFG:     { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderGroupHook);      } break;
-    case CMN_SNAPS:     { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_SAVE);   } break;
-    case CMN_RELOAD:    { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_RESET);  } break;
-    case CMN_EMPTYTRASH:{ DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);} break;
-    case CMN_EMPTYSPAM: { DoMethod(G->App, MUIM_CallHook, &MA_DeleteSpamHook, FALSE);   } break;
+    case CMN_EDITF:     { DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);                            } break;
+    case CMN_DELETEF:   { DoMethod(G->App, MUIM_CallHook, &FO_DeleteFolderHook);                          } break;
+    case CMN_INDEX:     { DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook);                           } break;
+    case CMN_ALLTOREAD: { DoMethod(G->App, MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW); } break;
+    case CMN_NEWF:      { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderHook);                             } break;
+    case CMN_NEWFG:     { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderGroupHook);                        } break;
+    case CMN_SNAPS:     { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_SAVE);                     } break;
+    case CMN_RELOAD:    { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_RESET);                    } break;
+    case CMN_EMPTYTRASH:{ DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);                  } break;
+    case CMN_EMPTYSPAM: { DoMethod(G->App, MUIM_CallHook, &MA_DeleteSpamHook, FALSE);                     } break;
 
     default:
     {
