@@ -1285,14 +1285,13 @@ DECLARE(FollowThread) // LONG direction
 DECLARE(ChangeHeaderMode) // enum HeaderMode hmode
 {
   GETDATA;
-  struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 
-  // change the header display mode
-  rmData->headerMode = msg->hmode;
+  ENTER();
 
-  // issue an update of the readMailGroup
-  DoMethod(data->readMailGroup, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+  // forward this method to the readMailGroup, it will update itself if necessary
+  DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ChangeHeaderMode, msg->hmode);
 
+  RETURN(0);
   return 0;
 }
 
@@ -1302,14 +1301,13 @@ DECLARE(ChangeHeaderMode) // enum HeaderMode hmode
 DECLARE(ChangeSenderInfoMode) // enum SInfoMode simode
 {
   GETDATA;
-  struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 
-  // change the sender info mode
-  rmData->senderInfoMode = msg->simode;
+  ENTER();
 
-  // issue an update of the readMailGroup
-  DoMethod(data->readMailGroup, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+  // forward this method to the readMailGroup, it will update itself if necessary
+  DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ChangeSenderInfoMode, msg->simode);
 
+  RETURN(0);
   return 0;
 }
 
