@@ -7,8 +7,6 @@ $URL$
 
 2007-06-05  Thore Böckelmann <tboeckel@gmx.de>
 
-  * MainFolderListtree.c: added a "mark folder as read" item to the context
-    menu.
   * YAM_FO.c, YAM_MA.c, YAM_UT.c, YAM.cd, deutsch.ct: implemented the
     "expire unread" feature. If enabled even unread messages will be deleted
     if they exceed the maximum message age of a folder. This option is disabled

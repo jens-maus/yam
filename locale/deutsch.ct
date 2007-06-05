@@ -7984,6 +7984,3 @@ MSG_HELP_FO_CH_EXPIREUNREAD
 Falls aktiv, werden alte Nachrichten auch dann\n\
 gelöscht, falls sie noch nicht gelesen wurden.
 ;
-MSG_FOLDER_ALLTOREAD
-Markiere Postfach als gelesen
-;

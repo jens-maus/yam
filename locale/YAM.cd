@@ -6277,6 +6277,3 @@ MSG_HELP_FO_CH_EXPIREUNREAD (1946//)
 If selected, old messages will be deleted,\n\
 even if they are not yet read.
 ;
-MSG_FOLDER_ALLTOREAD (1947//)
-Mark folder as read
-;
