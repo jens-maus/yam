@@ -3469,7 +3469,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
 
   // generate a full list which we can walk through
   // later on
-  if((flist = FO_CreateList()))
+  if((flist = FO_CreateList()) != NULL)
   {
     int f;
 
@@ -3496,7 +3496,8 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
             // or if the message is read already (keep unread messages)
             if(isTrashFolder(folder) ||
                isSpamFolder(folder) ||
-               (!hasStatusNew(mail) && hasStatusRead(mail)))
+               (!hasStatusNew(mail) && hasStatusRead(mail)) ||
+               folder->ExpireUnread == TRUE)
             {
                MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE, FALSE);
             }

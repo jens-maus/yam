@@ -5905,7 +5905,7 @@ void DisplayAppIconStatistics(void)
       if(fo == NULL)
         break;
 
-      if(fo->Stats != 0)
+      if(fo->Stats == TRUE)
       {
         new_msg += fo->New;
         unr_msg += fo->Unread;

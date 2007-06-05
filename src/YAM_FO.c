@@ -452,29 +452,33 @@ BOOL FO_LoadConfig(struct Folder *fo)
 
         if(*buffer != '\0' && value != NULL)
         {
-          if(!stricmp(buffer, "Name"))              strlcpy(fo->Name, value, sizeof(fo->Name));
-          else if(!stricmp(buffer, "MaxAge"))       fo->MaxAge = atoi(value);
-          else if(!stricmp(buffer, "Password"))     strlcpy(fo->Password, Decrypt(value), sizeof(fo->Password));
-          else if(!stricmp(buffer, "Type"))         fo->Type = atoi(value);
-          else if(!stricmp(buffer, "XPKType"))      fo->Mode = atoi(value); // valid < v2.4
-          else if(!stricmp(buffer, "Mode"))         fo->Mode = atoi(value);
-          else if(!stricmp(buffer, "Sort1"))        fo->Sort[0] = atoi(value);
-          else if(!stricmp(buffer, "Sort2"))        fo->Sort[1] = atoi(value);
-          else if(!stricmp(buffer, "Stats"))        { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
-          else if(!stricmp(buffer, "MLSupport"))    fo->MLSupport = Txt2Bool(value);
-          else if(!stricmp(buffer, "MLFromAddr"))   strlcpy(fo->MLFromAddress, value, sizeof(fo->MLFromAddress));
-          else if(!stricmp(buffer, "MLRepToAddr"))  strlcpy(fo->MLReplyToAddress, value, sizeof(fo->MLReplyToAddress));
-          else if(!stricmp(buffer, "MLAddress"))    strlcpy(fo->MLAddress, value, sizeof(fo->MLAddress));
-          else if(!stricmp(buffer, "MLPattern"))    strlcpy(fo->MLPattern, value, sizeof(fo->MLPattern));
-          else if(!stricmp(buffer, "MLSignature"))  fo->MLSignature = atoi(value);
+          if(!stricmp(buffer, "Name"))                strlcpy(fo->Name, value, sizeof(fo->Name));
+          else if(!stricmp(buffer, "MaxAge"))         fo->MaxAge = atoi(value);
+          else if(!stricmp(buffer, "Password"))       strlcpy(fo->Password, Decrypt(value), sizeof(fo->Password));
+          else if(!stricmp(buffer, "Type"))           fo->Type = atoi(value);
+          else if(!stricmp(buffer, "XPKType"))        fo->Mode = atoi(value); // valid < v2.4
+          else if(!stricmp(buffer, "Mode"))           fo->Mode = atoi(value);
+          else if(!stricmp(buffer, "Sort1"))          fo->Sort[0] = atoi(value);
+          else if(!stricmp(buffer, "Sort2"))          fo->Sort[1] = atoi(value);
+          else if(!stricmp(buffer, "Stats"))          { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
+          else if(!stricmp(buffer, "ExpireUnread"))   fo->ExpireUnread = Txt2Bool(value);
+          else if(!stricmp(buffer, "MLSupport"))      fo->MLSupport = Txt2Bool(value);
+          else if(!stricmp(buffer, "MLFromAddr"))     strlcpy(fo->MLFromAddress, value, sizeof(fo->MLFromAddress));
+          else if(!stricmp(buffer, "MLRepToAddr"))    strlcpy(fo->MLReplyToAddress, value, sizeof(fo->MLReplyToAddress));
+          else if(!stricmp(buffer, "MLAddress"))      strlcpy(fo->MLAddress, value, sizeof(fo->MLAddress));
+          else if(!stricmp(buffer, "MLPattern"))      strlcpy(fo->MLPattern, value, sizeof(fo->MLPattern));
+          else if(!stricmp(buffer, "MLSignature"))    fo->MLSignature = atoi(value);
           else if(!stricmp(buffer, "WriteIntro"))     strlcpy(fo->WriteIntro, value, sizeof(fo->WriteIntro));
           else if(!stricmp(buffer, "WriteGreetings")) strlcpy(fo->WriteGreetings, value, sizeof(fo->WriteGreetings));
         }
       }
       success = TRUE;
 
-      if(!statsproc)
+      if(statsproc == FALSE)
         fo->Stats = !isIncomingFolder(fo);
+
+      if(isTrashFolder(fo) || isSpamFolder(fo))
+        fo->ExpireUnread = TRUE;
 
       // check for non custom folder
       // and set some values which shouldn`t be changed
@@ -516,22 +520,23 @@ BOOL FO_SaveConfig(struct Folder *fo)
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     fprintf(fh, "YFC2 - YAM Folder Configuration\n");
-    fprintf(fh, "Name        = %s\n",  fo->Name);
-    fprintf(fh, "MaxAge      = %d\n",  fo->MaxAge);
-    fprintf(fh, "Password    = %s\n",  Encrypt(fo->Password));
-    fprintf(fh, "Type        = %d\n",  fo->Type);
-    fprintf(fh, "Mode        = %d\n",  fo->Mode);
-    fprintf(fh, "Sort1       = %d\n",  fo->Sort[0]);
-    fprintf(fh, "Sort2       = %d\n",  fo->Sort[1]);
-    fprintf(fh, "Stats       = %s\n",  Bool2Txt(fo->Stats));
-    fprintf(fh, "MLSupport   = %s\n",  Bool2Txt(fo->MLSupport));
-    fprintf(fh, "MLFromAddr  = %s\n",  fo->MLFromAddress);
-    fprintf(fh, "MLRepToAddr = %s\n",  fo->MLReplyToAddress);
-    fprintf(fh, "MLPattern   = %s\n",  fo->MLPattern);
-    fprintf(fh, "MLAddress   = %s\n",  fo->MLAddress);
-    fprintf(fh, "MLSignature = %d\n",  fo->MLSignature);
-    fprintf(fh, "WriteIntro  = %s\n",  fo->WriteIntro);
-    fprintf(fh, "WriteGreetings = %s\n",  fo->WriteGreetings);
+    fprintf(fh, "Name           = %s\n", fo->Name);
+    fprintf(fh, "MaxAge         = %d\n", fo->MaxAge);
+    fprintf(fh, "Password       = %s\n", Encrypt(fo->Password));
+    fprintf(fh, "Type           = %d\n", fo->Type);
+    fprintf(fh, "Mode           = %d\n", fo->Mode);
+    fprintf(fh, "Sort1          = %d\n", fo->Sort[0]);
+    fprintf(fh, "Sort2          = %d\n", fo->Sort[1]);
+    fprintf(fh, "Stats          = %s\n", Bool2Txt(fo->Stats));
+    fprintf(fh, "ExpireUnread   = %s\n", Bool2Txt(fo->ExpireUnread));
+    fprintf(fh, "MLSupport      = %s\n", Bool2Txt(fo->MLSupport));
+    fprintf(fh, "MLFromAddr     = %s\n", fo->MLFromAddress);
+    fprintf(fh, "MLRepToAddr    = %s\n", fo->MLReplyToAddress);
+    fprintf(fh, "MLPattern      = %s\n", fo->MLPattern);
+    fprintf(fh, "MLAddress      = %s\n", fo->MLAddress);
+    fprintf(fh, "MLSignature    = %d\n", fo->MLSignature);
+    fprintf(fh, "WriteIntro     = %s\n", fo->WriteIntro);
+    fprintf(fh, "WriteGreetings = %s\n", fo->WriteGreetings);
     fclose(fh);
 
     strlcpy(fname, GetFolderDir(fo), sizeof(fname));
@@ -1152,6 +1157,9 @@ static void FO_GetFolder(struct Folder *folder)
   set(gui->ST_FPATH,  MUIA_String_Contents, folder->Path);
   set(gui->NM_MAXAGE, MUIA_Numeric_Value,   folder->MaxAge);
 
+  SetAttrs(gui->CH_EXPIREUNREAD, MUIA_Selected, folder->ExpireUnread,
+                                 MUIA_Disabled, isTrashFolder(folder) || isSpamFolder(folder));
+
   SetAttrs(gui->CY_FTYPE,  MUIA_Cycle_Active, type2cycle[folder->Type],
                            MUIA_Disabled,     isdefault,
                            TAG_DONE);
@@ -1250,6 +1258,7 @@ static void FO_PutFolder(struct Folder *folder)
       folder->Sort[i] = -folder->Sort[i];
   }
 
+  folder->ExpireUnread = GetMUICheck(gui->CH_EXPIREUNREAD);
   folder->Stats = GetMUICheck(gui->CH_STATS);
   folder->MLSupport = GetMUICheck(gui->CH_MLSUPPORT);
 
@@ -1551,7 +1560,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
   ENTER();
 
   // if this is a edit folder request we separate here.
-  if(oldfolder)
+  if(oldfolder != NULL)
   {
     memcpy(&folder, oldfolder, sizeof(struct Folder));
     FO_PutFolder(&folder);
@@ -1632,12 +1641,13 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     strlcpy(oldfolder->MLReplyToAddress, folder.MLReplyToAddress, sizeof(oldfolder->MLReplyToAddress));
     strlcpy(oldfolder->MLAddress,        folder.MLAddress, sizeof(oldfolder->MLAddress));
     strlcpy(oldfolder->MLPattern,        folder.MLPattern, sizeof(oldfolder->MLPattern));
-    oldfolder->MLSignature = folder.MLSignature;
-    oldfolder->Sort[0]   = folder.Sort[0];
-    oldfolder->Sort[1]   = folder.Sort[1];
-    oldfolder->Stats     = folder.Stats;
-    oldfolder->MaxAge    = folder.MaxAge;
-    oldfolder->MLSupport = folder.MLSupport;
+    oldfolder->MLSignature  = folder.MLSignature;
+    oldfolder->Sort[0]      = folder.Sort[0];
+    oldfolder->Sort[1]      = folder.Sort[1];
+    oldfolder->MaxAge       = folder.MaxAge;
+    oldfolder->ExpireUnread = folder.ExpireUnread;
+    oldfolder->Stats        = folder.Stats;
+    oldfolder->MLSupport    = folder.MLSupport;
 
     if(!xget(gui->CY_FTYPE, MUIA_Disabled))
     {
@@ -1949,163 +1959,171 @@ MakeStaticHook(FO_MLAutoDetectHook, FO_MLAutoDetectFunc);
 //  Creates folder configuration window
 static struct FO_ClassData *FO_New(void)
 {
-   struct FO_ClassData *data = calloc(1, sizeof(struct FO_ClassData));
+  struct FO_ClassData *data;
 
-   if (data)
-   {
-      static const char *ftypes[4];
-      static const char *fmodes[5];
-      static const char *sortopt[8];
-      static const char *fsignat[5];
+  ENTER();
 
-      ftypes[0]  = tr(MSG_FO_FTRcvdMail);
-      ftypes[1]  = tr(MSG_FO_FTSentMail);
-      ftypes[2]  = tr(MSG_FO_FTBothMail);
-      ftypes[3]  = NULL;
+  if((data = calloc(1, sizeof(struct FO_ClassData))) != NULL)
+  {
+    static const char *ftypes[4];
+    static const char *fmodes[5];
+    static const char *sortopt[8];
+    static const char *fsignat[5];
 
-      fmodes[0]  = tr(MSG_FO_FMNormal);
-      fmodes[1]  = tr(MSG_FO_FMSimple);
-      // compression and encryption are only available if XPK is available
-      fmodes[2]  = (XpkBase != NULL) ? tr(MSG_FO_FMPack) : NULL;
-      fmodes[3]  = (XpkBase != NULL) ? tr(MSG_FO_FMEncPack) : NULL;
-      fmodes[4]  = NULL;
+    ftypes[0]  = tr(MSG_FO_FTRcvdMail);
+    ftypes[1]  = tr(MSG_FO_FTSentMail);
+    ftypes[2]  = tr(MSG_FO_FTBothMail);
+    ftypes[3]  = NULL;
 
-      sortopt[0] = tr(MSG_FO_MessageDate);
-      sortopt[1] = tr(MSG_FO_DateRecvd);
-      sortopt[2] = tr(MSG_Sender);
-      sortopt[3] = tr(MSG_Recipient);
-      sortopt[4] = tr(MSG_Subject);
-      sortopt[5] = tr(MSG_Size);
-      sortopt[6] = tr(MSG_Status);
-      sortopt[7] = NULL;
+    fmodes[0]  = tr(MSG_FO_FMNormal);
+    fmodes[1]  = tr(MSG_FO_FMSimple);
+    // compression and encryption are only available if XPK is available
+    fmodes[2]  = (XpkBase != NULL) ? tr(MSG_FO_FMPack) : NULL;
+    fmodes[3]  = (XpkBase != NULL) ? tr(MSG_FO_FMEncPack) : NULL;
+    fmodes[4]  = NULL;
 
-      fsignat[0] = tr(MSG_WR_NoSig);
-      fsignat[1] = tr(MSG_WR_DefSig);
-      fsignat[2] = tr(MSG_WR_AltSig1);
-      fsignat[3] = tr(MSG_WR_AltSig2);
-      fsignat[4] = NULL;
+    sortopt[0] = tr(MSG_FO_MessageDate);
+    sortopt[1] = tr(MSG_FO_DateRecvd);
+    sortopt[2] = tr(MSG_Sender);
+    sortopt[3] = tr(MSG_Recipient);
+    sortopt[4] = tr(MSG_Subject);
+    sortopt[5] = tr(MSG_Size);
+    sortopt[6] = tr(MSG_Status);
+    sortopt[7] = NULL;
 
-      data->GUI.WI = WindowObject,
-         MUIA_Window_Title, tr(MSG_FO_EditFolder),
-         MUIA_HelpNode,  "FO_W",
-         MUIA_Window_ID, MAKE_ID('F','O','L','D'),
-         MUIA_Window_LeftEdge, MUIV_Window_LeftEdge_Centered,
-         MUIA_Window_TopEdge,  MUIV_Window_TopEdge_Centered,
-         WindowContents, VGroup,
-            Child, ColGroup(2), GroupFrameT(tr(MSG_FO_Properties)),
-               Child, Label2(tr(MSG_CO_Name)),
-               Child, data->GUI.ST_FNAME = MakeString(SIZE_NAME,tr(MSG_CO_Name)),
-               Child, Label2(tr(MSG_Path)),
-               Child, PopaslObject,
-                  MUIA_Popasl_Type, ASL_FileRequest,
-                  MUIA_Popstring_String, data->GUI.ST_FPATH = MakeString(SIZE_PATH, ""),
-                  MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
-                  ASLFR_DrawersOnly, TRUE,
-               End,
-               Child, Label2(tr(MSG_FO_MaxAge)),
-               Child, HGroup,
-                  Child, data->GUI.NM_MAXAGE = NumericbuttonObject,
-                    MUIA_CycleChain,      1,
-                    MUIA_Numeric_Min,     0,
-                    MUIA_Numeric_Max,     730,
-                    MUIA_Numeric_Format,  tr(MSG_FO_MAXAGEFMT),
-                  End,
-                  Child, HSpace(0),
-               End,
-               Child, Label1(tr(MSG_FO_FolderType)),
-               Child, data->GUI.CY_FTYPE = MakeCycle(ftypes,tr(MSG_FO_FolderType)),
-               Child, Label1(tr(MSG_FO_FolderMode)),
-               Child, data->GUI.CY_FMODE = MakeCycle(fmodes,tr(MSG_FO_FolderMode)),
-               Child, Label1(tr(MSG_FO_SortBy)),
-               Child, HGroup,
-                  Child, data->GUI.CY_SORT[0] = MakeCycle(sortopt,tr(MSG_FO_SortBy)),
-                  Child, data->GUI.CH_REVERSE[0] = MakeCheck(tr(MSG_FO_Reverse)),
-                  Child, LLabel1(tr(MSG_FO_Reverse)),
-               End,
-               Child, Label1(tr(MSG_FO_ThenBy)),
-               Child, HGroup,
-                  Child, data->GUI.CY_SORT[1] = MakeCycle(sortopt,tr(MSG_FO_ThenBy)),
-                  Child, data->GUI.CH_REVERSE[1] = MakeCheck(tr(MSG_FO_Reverse)),
-                  Child, LLabel1(tr(MSG_FO_Reverse)),
-               End,
-               Child, Label2(tr(MSG_FO_Welcome)),
-               Child, data->GUI.ST_HELLOTEXT = MakeString(SIZE_INTRO,tr(MSG_FO_Welcome)),
-               Child, Label2(tr(MSG_FO_Greetings)),
-               Child, data->GUI.ST_BYETEXT = MakeString(SIZE_INTRO,tr(MSG_FO_Greetings)),
-               Child, Label1(tr(MSG_FO_DSTATS)),
-               Child, HGroup,
+    fsignat[0] = tr(MSG_WR_NoSig);
+    fsignat[1] = tr(MSG_WR_DefSig);
+    fsignat[2] = tr(MSG_WR_AltSig1);
+    fsignat[3] = tr(MSG_WR_AltSig2);
+    fsignat[4] = NULL;
+
+    data->GUI.WI = WindowObject,
+       MUIA_Window_Title, tr(MSG_FO_EditFolder),
+       MUIA_HelpNode,  "FO_W",
+       MUIA_Window_ID, MAKE_ID('F','O','L','D'),
+       MUIA_Window_LeftEdge, MUIV_Window_LeftEdge_Centered,
+       MUIA_Window_TopEdge,  MUIV_Window_TopEdge_Centered,
+       WindowContents, VGroup,
+          Child, ColGroup(2), GroupFrameT(tr(MSG_FO_Properties)),
+             Child, Label2(tr(MSG_CO_Name)),
+             Child, data->GUI.ST_FNAME = MakeString(SIZE_NAME,tr(MSG_CO_Name)),
+             Child, Label2(tr(MSG_Path)),
+             Child, PopaslObject,
+                MUIA_Popasl_Type, ASL_FileRequest,
+                MUIA_Popstring_String, data->GUI.ST_FPATH = MakeString(SIZE_PATH, ""),
+                MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
+                ASLFR_DrawersOnly, TRUE,
+             End,
+             Child, Label2(tr(MSG_FO_MaxAge)),
+             Child, HGroup,
+                Child, data->GUI.NM_MAXAGE = NumericbuttonObject,
+                  MUIA_CycleChain,      1,
+                  MUIA_Numeric_Min,     0,
+                  MUIA_Numeric_Max,     730,
+                  MUIA_Numeric_Format,  tr(MSG_FO_MAXAGEFMT),
+                End,
+                Child, data->GUI.CH_EXPIREUNREAD = MakeCheck(tr(MSG_FO_EXPIREUNREAD)),
+                Child, LLabel1(tr(MSG_FO_EXPIREUNREAD)),
+                Child, HSpace(0),
+             End,
+             Child, Label1(tr(MSG_FO_FolderType)),
+             Child, data->GUI.CY_FTYPE = MakeCycle(ftypes,tr(MSG_FO_FolderType)),
+             Child, Label1(tr(MSG_FO_FolderMode)),
+             Child, data->GUI.CY_FMODE = MakeCycle(fmodes,tr(MSG_FO_FolderMode)),
+             Child, Label1(tr(MSG_FO_SortBy)),
+             Child, HGroup,
+                Child, data->GUI.CY_SORT[0] = MakeCycle(sortopt,tr(MSG_FO_SortBy)),
+                Child, data->GUI.CH_REVERSE[0] = MakeCheck(tr(MSG_FO_Reverse)),
+                Child, LLabel1(tr(MSG_FO_Reverse)),
+            End,
+             Child, Label1(tr(MSG_FO_ThenBy)),
+             Child, HGroup,
+                Child, data->GUI.CY_SORT[1] = MakeCycle(sortopt,tr(MSG_FO_ThenBy)),
+                Child, data->GUI.CH_REVERSE[1] = MakeCheck(tr(MSG_FO_Reverse)),
+                Child, LLabel1(tr(MSG_FO_Reverse)),
+             End,
+             Child, Label2(tr(MSG_FO_Welcome)),
+             Child, data->GUI.ST_HELLOTEXT = MakeString(SIZE_INTRO,tr(MSG_FO_Welcome)),
+             Child, Label2(tr(MSG_FO_Greetings)),
+             Child, data->GUI.ST_BYETEXT = MakeString(SIZE_INTRO,tr(MSG_FO_Greetings)),
+             Child, Label1(tr(MSG_FO_DSTATS)),
+             Child, HGroup,
                 Child, data->GUI.CH_STATS = MakeCheck(tr(MSG_FO_DSTATS)),
                 Child, HSpace(0),
-               End,
-            End,
-            Child, ColGroup(2), GroupFrameT(tr(MSG_FO_MLSupport)),
-               Child, Label2(tr(MSG_FO_MLSUPPORT)),
-               Child, HGroup,
+             End,
+          End,
+          Child, ColGroup(2), GroupFrameT(tr(MSG_FO_MLSupport)),
+             Child, Label2(tr(MSG_FO_MLSUPPORT)),
+             Child, HGroup,
                 Child, data->GUI.CH_MLSUPPORT = MakeCheck(tr(MSG_FO_MLSUPPORT)),
                 Child, HVSpace,
                 Child, data->GUI.BT_AUTODETECT = MakeButton(tr(MSG_FO_AUTODETECT)),
-               End,
-               Child, Label2(tr(MSG_FO_ToPattern)),
-               Child, data->GUI.ST_MLPATTERN = MakeString(SIZE_PATTERN,tr(MSG_FO_ToPattern)),
-               Child, Label2(tr(MSG_FO_ToAddress)),
-               Child, MakeAddressField(&data->GUI.ST_MLADDRESS, tr(MSG_FO_ToAddress), MSG_HELP_FO_ST_MLADDRESS, ABM_CONFIG, -1, TRUE),
-               Child, Label2(tr(MSG_FO_FromAddress)),
-               Child, MakeAddressField(&data->GUI.ST_MLFROMADDRESS, tr(MSG_FO_FromAddress), MSG_HELP_FO_ST_MLFROMADDRESS, ABM_CONFIG, -1, TRUE),
-               Child, Label2(tr(MSG_FO_ReplyToAddress)),
-               Child, MakeAddressField(&data->GUI.ST_MLREPLYTOADDRESS, tr(MSG_FO_ReplyToAddress), MSG_HELP_FO_ST_MLREPLYTOADDRESS, ABM_CONFIG, -1, TRUE),
-               Child, Label1(tr(MSG_WR_Signature)),
-               Child, data->GUI.CY_MLSIGNATURE = MakeCycle(fsignat, tr(MSG_WR_Signature)),
-            End,
-            Child, ColGroup(3),
-               Child, data->GUI.BT_OKAY = MakeButton(tr(MSG_Okay)),
-               Child, HSpace(0),
-               Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_Cancel)),
-            End,
-         End,
-      End;
+             End,
+             Child, Label2(tr(MSG_FO_ToPattern)),
+             Child, data->GUI.ST_MLPATTERN = MakeString(SIZE_PATTERN,tr(MSG_FO_ToPattern)),
+             Child, Label2(tr(MSG_FO_ToAddress)),
+             Child, MakeAddressField(&data->GUI.ST_MLADDRESS, tr(MSG_FO_ToAddress), MSG_HELP_FO_ST_MLADDRESS, ABM_CONFIG, -1, TRUE),
+             Child, Label2(tr(MSG_FO_FromAddress)),
+             Child, MakeAddressField(&data->GUI.ST_MLFROMADDRESS, tr(MSG_FO_FromAddress), MSG_HELP_FO_ST_MLFROMADDRESS, ABM_CONFIG, -1, TRUE),
+             Child, Label2(tr(MSG_FO_ReplyToAddress)),
+             Child, MakeAddressField(&data->GUI.ST_MLREPLYTOADDRESS, tr(MSG_FO_ReplyToAddress), MSG_HELP_FO_ST_MLREPLYTOADDRESS, ABM_CONFIG, -1, TRUE),
+             Child, Label1(tr(MSG_WR_Signature)),
+             Child, data->GUI.CY_MLSIGNATURE = MakeCycle(fsignat, tr(MSG_WR_Signature)),
+          End,
+          Child, ColGroup(3),
+             Child, data->GUI.BT_OKAY = MakeButton(tr(MSG_Okay)),
+             Child, HSpace(0),
+             Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_Cancel)),
+          End,
+       End,
+    End;
 
-      if (data->GUI.WI)
-      {
-         DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+    if(data->GUI.WI != NULL)
+    {
+      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
-         set(data->GUI.ST_FPATH, MUIA_String_Reject, " \";#?(|)");
-         set(data->GUI.CH_STATS, MUIA_Disabled, C->WBAppIcon == FALSE && C->DockyIcon == FALSE);
+      set(data->GUI.ST_FPATH, MUIA_String_Reject, " \";#?(|)");
+      set(data->GUI.CH_STATS, MUIA_Disabled, C->WBAppIcon == FALSE && C->DockyIcon == FALSE);
 
-         SetHelp(data->GUI.ST_FNAME,            MSG_HELP_FO_ST_FNAME            );
-         SetHelp(data->GUI.ST_FPATH,            MSG_HELP_FO_TX_FPATH            );
-         SetHelp(data->GUI.NM_MAXAGE,           MSG_HELP_FO_ST_MAXAGE           );
-         SetHelp(data->GUI.CY_FMODE,            MSG_HELP_FO_CY_FMODE            );
-         SetHelp(data->GUI.CY_FTYPE,            MSG_HELP_FO_CY_FTYPE            );
-         SetHelp(data->GUI.CY_SORT[0],          MSG_HELP_FO_CY_SORT0            );
-         SetHelp(data->GUI.CY_SORT[1],          MSG_HELP_FO_CY_SORT1            );
-         SetHelp(data->GUI.CH_REVERSE[0],       MSG_HELP_FO_CH_REVERSE          );
-         SetHelp(data->GUI.CH_REVERSE[1],       MSG_HELP_FO_CH_REVERSE          );
-         SetHelp(data->GUI.ST_MLPATTERN,        MSG_HELP_FO_ST_MLPATTERN        );
-         SetHelp(data->GUI.CY_MLSIGNATURE,      MSG_HELP_FO_CY_MLSIGNATURE      );
-         SetHelp(data->GUI.CH_STATS,            MSG_HELP_FO_CH_STATS            );
-         SetHelp(data->GUI.CH_MLSUPPORT,        MSG_HELP_FO_CH_MLSUPPORT        );
-         SetHelp(data->GUI.BT_AUTODETECT,       MSG_HELP_FO_BT_AUTODETECT       );
-         SetHelp(data->GUI.ST_HELLOTEXT,        MSG_HELP_FO_ST_HELLOTEXT        );
-         SetHelp(data->GUI.ST_BYETEXT,          MSG_HELP_FO_ST_BYETEXT          );
+      SetHelp(data->GUI.ST_FNAME,            MSG_HELP_FO_ST_FNAME            );
+      SetHelp(data->GUI.ST_FPATH,            MSG_HELP_FO_TX_FPATH            );
+      SetHelp(data->GUI.NM_MAXAGE,           MSG_HELP_FO_ST_MAXAGE           );
+      SetHelp(data->GUI.CY_FMODE,            MSG_HELP_FO_CY_FMODE            );
+      SetHelp(data->GUI.CY_FTYPE,            MSG_HELP_FO_CY_FTYPE            );
+      SetHelp(data->GUI.CY_SORT[0],          MSG_HELP_FO_CY_SORT0            );
+      SetHelp(data->GUI.CY_SORT[1],          MSG_HELP_FO_CY_SORT1            );
+      SetHelp(data->GUI.CH_REVERSE[0],       MSG_HELP_FO_CH_REVERSE          );
+      SetHelp(data->GUI.CH_REVERSE[1],       MSG_HELP_FO_CH_REVERSE          );
+      SetHelp(data->GUI.ST_MLPATTERN,        MSG_HELP_FO_ST_MLPATTERN        );
+      SetHelp(data->GUI.CY_MLSIGNATURE,      MSG_HELP_FO_CY_MLSIGNATURE      );
+      SetHelp(data->GUI.CH_STATS,            MSG_HELP_FO_CH_STATS            );
+      SetHelp(data->GUI.CH_EXPIREUNREAD,     MSG_HELP_FO_CH_EXPIREUNREAD     );
+      SetHelp(data->GUI.CH_MLSUPPORT,        MSG_HELP_FO_CH_MLSUPPORT        );
+      SetHelp(data->GUI.BT_AUTODETECT,       MSG_HELP_FO_BT_AUTODETECT       );
+      SetHelp(data->GUI.ST_HELLOTEXT,        MSG_HELP_FO_ST_HELLOTEXT        );
+      SetHelp(data->GUI.ST_BYETEXT,          MSG_HELP_FO_ST_BYETEXT          );
 
-         DoMethod(data->GUI.BT_OKAY,        MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_SaveHook);
-         DoMethod(data->GUI.BT_CANCEL,      MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_CloseHook);
-         DoMethod(data->GUI.BT_AUTODETECT,  MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_MLAutoDetectHook);
-         DoMethod(data->GUI.WI,             MUIM_Notify, MUIA_Window_CloseRequest,TRUE,   MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_CloseHook);
+      DoMethod(data->GUI.BT_OKAY,        MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_SaveHook);
+      DoMethod(data->GUI.BT_CANCEL,      MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_CloseHook);
+      DoMethod(data->GUI.BT_AUTODETECT,  MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_MLAutoDetectHook);
+      DoMethod(data->GUI.WI,             MUIM_Notify, MUIA_Window_CloseRequest,TRUE,   MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_CloseHook);
 
-         // Now we connect the TriggerValues of the MLSUPPORT Checkbox
-         DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.BT_AUTODETECT,       3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-         DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.ST_MLPATTERN,        3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-         DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.ST_MLADDRESS,        3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-         DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.ST_MLFROMADDRESS,    3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-         DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.ST_MLREPLYTOADDRESS, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-         DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.CY_MLSIGNATURE,      3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-
-         return data;
-      }
+      // Now we connect the TriggerValues of the MLSUPPORT Checkbox
+      DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.BT_AUTODETECT,       3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+      DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.ST_MLPATTERN,        3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+      DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.ST_MLADDRESS,        3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+      DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.ST_MLFROMADDRESS,    3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+      DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.ST_MLREPLYTOADDRESS, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+      DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.CY_MLSIGNATURE,      3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+    }
+    else
+    {
       free(data);
-   }
-   return NULL;
+      data = NULL;
+    }
+  }
+
+  RETURN(data);
+  return data;
 }
 ///
-

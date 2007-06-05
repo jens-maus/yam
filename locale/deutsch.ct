@@ -5460,33 +5460,40 @@ Postfachname
 ; Folder name
 ;
 MSG_HELP_FO_TX_FPATH
-Verzeichnis, in dem die Nachrichten des\nausgewählten Postfachs gespeichert werden
+Verzeichnis, in dem die Nachrichten des\n\
+ausgewählten Postfachs gespeichert werden
 ; Directory where the messages of\n\
 ; the selected folder are stored
 ;
 MSG_HELP_FO_ST_MAXAGE
-Alte Nachrichten werden automatisch nach\nAblauf dieser Zeit (in Tagen) gelöscht.\n0 schaltet diese Funktion aus.
+Alte Nachrichten werden automatisch nach\n\
+Ablauf dieser Zeit (in Tagen) gelöscht.\n\
+0 schaltet diese Funktion aus.
 ; Old messages will automatically\n\
 ; be deleted after this time (in days).\n\
 ; Use 0 to disable this feature.
 ;
 MSG_HELP_FO_CY_FTYPE
-Art des benutzerdefinierten Postfachs\n(Eingang/Ausgang/Beides)
+Art des benutzerdefinierten Postfachs\n\
+(Eingang/Ausgang/Beides)
 ; Type of folder\n\
 ; (in/out/both)
 ;
 MSG_HELP_FO_CY_FMODE
-Postfächer können mit einem Passwort geschützt\noder mittels XPK komprimiert werden
+Postfächer können mit einem Passwort geschützt\n\
+oder mittels XPK komprimiert werden
 ; Folders can be password protected\n\
 ; and/or compressed using XPK
 ;
 MSG_HELP_FO_CY_SORT0
-Primärer Sortierschlüssel der\nNachrichten in diesem Postfach
+Primärer Sortierschlüssel der\n\
+Nachrichten in diesem Postfach
 ; Primary sorting order of the\n\
 ; messages in this folder
 ;
 MSG_HELP_FO_CY_SORT1
-Sekundärer Sortierschlüssel der\nNachrichten in diesem Postfach
+Sekundärer Sortierschlüssel der\n\
+Nachrichten in diesem Postfach
 ; Secondary sorting order of the\n\
 ; messages in this folder
 ;
@@ -5495,13 +5502,15 @@ Umgekehrte Sortierung
 ; Reversed sorting
 ;
 MSG_HELP_FO_ST_MLPATTERN
-Eine Nachricht gehört zu einer Mailingliste,\nfalls das To-Feld auf dieses Muster passt
+Eine Nachricht gehört zu einer Mailingliste,\n\
+falls das To-Feld auf dieses Muster passt
 ; A message belongs to a mailing list\n\
 ; if the contents of the 'To:' field are\n\
 ; matched by this pattern.
 ;
 MSG_HELP_FO_ST_MLADDRESS
-Benutze diese Empfängeradresse bei einer\nAntwort auf eine Mailinglisten-Nachricht
+Benutze diese Empfängeradresse bei einer\n\
+Antwort auf eine Mailinglisten-Nachricht
 ; Use this recipient address for a\n\
 ; reply to a mailing list message
 ;
@@ -7967,4 +7976,11 @@ Der POP3 Server '%s' hat mit einer Fehlermeldung beim Verbindungsaufbau reagiert
 und die Verbindung wurde daraufhin beendet:\n\
 \n\
 %s\n
+;
+MSG_FO_EXPIREUNREAD
+Ungelesene Nachrichten löschen
+;
+MSG_HELP_FO_CH_EXPIREUNREAD
+Falls aktiv, werden alte Nachrichten auch dann\n\
+gelöscht, falls sie noch nicht gelesen wurden.
 ;

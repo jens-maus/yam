@@ -42,6 +42,7 @@ struct FO_GUIData
    Object *CY_FTYPE;
    Object *CY_SORT[2];
    Object *CH_REVERSE[2];
+   Object *CH_EXPIREUNREAD;
    Object *ST_MLPATTERN;
    Object *ST_MLFROMADDRESS;
    Object *ST_MLREPLYTOADDRESS;
@@ -176,11 +177,9 @@ struct Folder
    int             Sent;
    int             Deleted;
    int             Sort[2];
-   int             Stats;
    int             MaxAge;
    int             LastActive;
    int             SortIndex;
-   int             Open;
    int             ImageIndex;
 
    enum FolderMode Mode;
@@ -194,10 +193,11 @@ struct Folder
    char            MLAddress[SIZE_ADDRESS];
    char            MLFromAddress[SIZE_ADDRESS];
    char            MLReplyToAddress[SIZE_ADDRESS];
-
    char            WriteIntro[SIZE_INTRO];
    char            WriteGreetings[SIZE_INTRO];
 
+   BOOL            ExpireUnread;
+   BOOL            Stats;
    BOOL            MLSupport;
 };
 

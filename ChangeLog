@@ -7,6 +7,10 @@ $URL$
 
 2007-06-05  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c, YAM_MA.c, YAM_UT.c, YAM.cd, deutsch.ct: implemented the
+    "expire unread" feature. If enabled even unread messages will be deleted
+    if they exceed the maximum message age of a folder. This option is disabled
+    by default.
   * YAM_UT.c: increased the buffer size of CopyFile() even more to 64K. This
     buffer is now allocated dynamically instead of placing it on the stack.
     Structures of this size don't belong there.
