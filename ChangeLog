@@ -31,6 +31,8 @@ $URL$
 
 2007-06-05  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Makefile, Makefile.depend: minor cleanup and optimizations to the build
+    and strip process.
   * YAM_UT.c: to potentially speed up the read/write operations in CopyFile()
     an 8K buffer is now used instead of 1K.
   * YAM_CO.c: to be on the save side the default socket transfer timeout is now
