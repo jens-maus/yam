@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-05  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: increased the buffer size of CopyFile() even more to 64K. This
+    buffer is now allocated dynamically instead of placing it on the stack.
+    Structures of this size don't belong there.
+
 2007-06-05  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: to potentially speed up the read/write operations in CopyFile()

@@ -1876,38 +1876,44 @@ BOOL RenameFile(const char *oldname, const char *newname)
 BOOL CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh)
 {
   BOOL success = FALSE;
+  char *buf;
 
   ENTER();
 
-  if(sour != NULL && (sourfh = fopen(sour, "r")))
-    setvbuf(sourfh, NULL, _IOFBF, SIZE_FILEBUF);
-
-  if(sourfh != NULL && dest != NULL && (destfh = fopen(dest, "w")))
-    setvbuf(destfh, NULL, _IOFBF, SIZE_FILEBUF);
-
-  if(sourfh != NULL && destfh != NULL)
+  // allocate a dynamic buffer instead of placing it on the stack
+  if((buf = malloc(SIZE_FILEBUF)) != NULL)
   {
-    char buf[8192]; // 8K buffer for read/write operations
-    int len;
+    if(sour != NULL && (sourfh = fopen(sour, "r")) != NULL)
+      setvbuf(sourfh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    while((len = fread(buf, 1, sizeof(buf), sourfh)) > 0)
+    if(sourfh != NULL && dest != NULL && (destfh = fopen(dest, "w")) != NULL)
+      setvbuf(destfh, NULL, _IOFBF, SIZE_FILEBUF);
+
+    if(sourfh != NULL && destfh != NULL)
     {
-      if(fwrite(buf, 1, len, destfh) != (size_t)len)
-        break;
+      int len;
+
+      while((len = fread(buf, 1, SIZE_FILEBUF, sourfh)) > 0)
+      {
+        if(fwrite(buf, 1, len, destfh) != (size_t)len)
+          break;
+      }
+
+      // if we arrived here because this was the eof of the sourcefile
+      // and non of the two filehandles are in error state we can set
+      // success to TRUE.
+      if(feof(sourfh) && !ferror(sourfh) && !ferror(destfh))
+        success = TRUE;
     }
 
-    // if we arrived here because this was the eof of the sourcefile
-    // and non of the two filehandles are in error state we can set
-    // success to TRUE.
-    if(feof(sourfh) && !ferror(sourfh) && !ferror(destfh))
-      success = TRUE;
+    if(dest != NULL && destfh != NULL)
+      fclose(destfh);
+
+    if(sour != NULL && sourfh != NULL)
+      fclose(sourfh);
+
+    free(buf);
   }
-
-  if(dest != NULL && destfh != NULL)
-    fclose(destfh);
-
-  if(sour != NULL && sourfh != NULL)
-    fclose(sourfh);
 
   RETURN(success);
   return success;
