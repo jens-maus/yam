@@ -7,6 +7,8 @@ $URL$
 
 2007-06-05  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ReadMailGroup.c: added the two methods ChangeHeaderInfo and ChangeSenderInfo
+    which modify the corresonding header items and refresh themself upon change.
   * YAM_CO.c: all actions that must be applied to open read windows after
     changing the config are done now in one single loop to minimize the overhead
     of walking through the window list. This also makes it possible to change

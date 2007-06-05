@@ -1649,4 +1649,42 @@ DECLARE(Search) // int flags
   return 0;
 }
 ///
+/// DECLARE(ChangeHeaderMode)
+DECLARE(ChangeHeaderMode) // enum HeaderMode hmode
+{
+  GETDATA;
+
+  ENTER();
+
+  if(data->readMailData->headerMode != msg->hmode)
+  {
+    // change the header display mode
+    data->readMailData->headerMode = msg->hmode;
+    // issue an update of ourself
+    DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+  }
+
+  RETURN(0);
+  return 0;
+}
+///
+/// DECLARE(ChangeSenderInfoMode)
+DECLARE(ChangeSenderInfoMode) // enum SInfoMode simode
+{
+  GETDATA;
+
+  ENTER();
+
+  if(data->readMailData->senderInfoMode != msg->simode)
+  {
+    // change the sender info mode
+    data->readMailData->senderInfoMode = msg->simode;
+    // issue an update of ourself
+    DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+  }
+
+  RETURN(0);
+  return 0;
+}
+///
 
