@@ -7978,7 +7978,7 @@ und die Verbindung wurde daraufhin beendet:\n\
 %s\n
 ;
 MSG_FO_EXPIREUNREAD
-Ungelesene Nachrichten löschen
+Ungelesene alte Nachrichten löschen
 ;
 MSG_HELP_FO_CH_EXPIREUNREAD
 Falls aktiv, werden alte Nachrichten auch dann\n\

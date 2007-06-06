@@ -6271,7 +6271,7 @@ procedure and the connection was terminated:\n\
 %s\n
 ; SERVER, TEXT
 MSG_FO_EXPIREUNREAD (1945//)
-Expire unread messages
+Delete old unread messages
 ;
 MSG_HELP_FO_CH_EXPIREUNREAD (1946//)
 If selected, old messages will be deleted,\n\

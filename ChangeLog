@@ -7,6 +7,8 @@ $URL$
 
 2007-06-06  Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/YAM.cd, locale/deutsch.ct: changed the phrasing from "expire unread
+    messages" to "delete unread old messages".
   * YAM_CO.c: if opening the config window failed for whatever reason the close
     hook was called with the normal "cancel" argument instead of a pointer to
     this value. This caused crashes, because the hook did not check for NULL
