@@ -2963,15 +2963,6 @@ Signature
 MSG_WR_Security (962//)
 Security
 ;
-MSG_WR_ToQueue (963//)
-Send _later
-;
-MSG_WR_Send (964//)
-_Send now
-;
-MSG_WR_Hold (965//)
-_Hold
-;
 MSG_WR_BounceWT (966//)
 Bounce message
 ;
@@ -6276,4 +6267,28 @@ also unread
 MSG_HELP_FO_CH_EXPIREUNREAD (1946//)
 If selected, old messages will be deleted,\n\
 even if they are not yet read.
+;
+MSG_WR_SENDNOW (1947//)
+_Send now
+;
+MSG_WR_SENDLATER (1948//)
+Send _later
+;
+MSG_WR_HOLD (1949//)
+_Hold
+;
+MSG_WR_CANCEL (1950//)
+Cancel
+;
+MSG_WR_MSENDNOW (1951//)
+Send now
+;
+MSG_WR_MSENDLATER (1952//)
+Send later
+;
+MSG_WR_MHOLD (1953//)
+Hold
+;
+MSG_WR_MCANCEL (1954//)
+Cancel
 ;

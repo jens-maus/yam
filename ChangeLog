@@ -5,6 +5,19 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-06  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c: the menu/button keyboard shortcuts were mixed up because we used
+    duplicate keys for different actions. This ended up in not being able to use
+    the push buttons's shortcut properly. Now new menuitems were added to
+    the write window which clear fixed shortcuts/hotkeys for the 4 main
+    write window actions (send now/send later/hold/cancel). These shortcuts are
+    now also fixed through all languages which should be more consistent to what
+    the rest of the application does as well. However, this means that there
+    might now be any char underlines in a push button in a different language.
+    So only in case a translated action also has the same char as the shortcut
+    it should be underlined accordingly. This fixed bug #1732071.
+
 2007-06-06  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: closing the main window will no longer iconify YAM if "iconify on

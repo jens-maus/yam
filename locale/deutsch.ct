@@ -4046,18 +4046,6 @@ MSG_WR_Security
 Sicherheit
 ; Security
 ;
-MSG_WR_ToQueue
-Spä_ter senden
-; Send _later
-;
-MSG_WR_Send
-Jetzt _senden
-; _Send now
-;
-MSG_WR_Hold
-_Halten
-; _Hold
-;
 MSG_WR_BounceWT
 Nachricht umleiten
 ; Bounce message
@@ -7983,4 +7971,28 @@ auch ungelesene
 MSG_HELP_FO_CH_EXPIREUNREAD
 Falls aktiv, werden alte Nachrichten auch dann\n\
 gelöscht, falls sie noch nicht gelesen wurden.
+;
+MSG_WR_SENDNOW
+Jetzt _senden
+;
+MSG_WR_SENDLATER
+Später senden
+;
+MSG_WR_HOLD
+_Halten
+;
+MSG_WR_CANCEL
+Abbrechen
+;
+MSG_WR_MSENDNOW
+Jetzt senden
+;
+MSG_WR_MSENDLATER
+Später senden
+;
+MSG_WR_MHOLD
+Halten
+;
+MSG_WR_MCANCEL
+Abbrechen
 ;

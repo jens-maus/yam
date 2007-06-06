@@ -3365,6 +3365,7 @@ static struct WR_ClassData *WR_New(int winnum)
         WMEN_DELSEND,WMEN_MDN,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
         WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
         WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5, WMEN_INSUUCODE,
+        WMEN_SENDNOW,WMEN_QUEUE,WMEN_HOLD,WMEN_CANCEL
       };
 
       static const char *rtitles[4] = { NULL };
@@ -3428,6 +3429,45 @@ static struct WR_ClassData *WR_New(int winnum)
       // set the winnum variable of the classdata
       data->winnum = winnum;
 
+      //
+      // now we define which window shortcuts are available and which ones
+      // are reserved by either the generated menuobject or by some shortcuts
+      // in the english YAM.cd catalog description (e.g. for buttons)
+      //
+      // The following shortcut list should help to identify the hard-coded
+      // shortcuts:
+      //
+      //  A   reserved by TextEditor.mcc (select all)
+      //  B   Bold soft-style (WMEN_STYLE_BOLD)
+      //  C   reserved by TextEditor.mcc (copy)
+      //  D   Dictonary (WMEN_DICT)
+      //  E   Launch editor (WMEN_EDIT)
+      //  F   Find/Search (WMEN_SEARCH)
+      //  G   Search again (WMEN_SEARCHAGAIN)
+      //  H   Hold mail (reserved by YAM.cd)
+      //  I   Italic soft-style (WMEN_STYLE_BOLD)
+      //  J
+      //  K   Colored soft-style (WMEN_STYLE_COLORED)
+      //  L   Send later (reserved by YAM.cd)
+      //  M
+      //  N   New mail (WMEN_NEW)
+      //  O   Open file (WMEN_OPEN)
+      //  P   Insert as plain text (WMEN_PLAIN)
+      //  Q   Insert as quoted text (WMEN_PASQUOT)
+      //  R   Add file as attachment (WMEN_ADDFILE)
+      //  S   Send mail (WMEN_SEND)
+      //  T
+      //  U   Underline soft-style (WMEN_STYLE_UNDERLINE)
+      //  V   reserved by TextEditor.mcc (paste)
+      //  W   Cancel&Close window (WMEN_CANCEL)
+      //  X   reserved by TextEditor.mcc (cut)
+      //  Y   
+      //  Z
+      //  0   Use signature1 (WMEN_SIGN0)
+      //  7   Use signature2 (WMEN_SIGN1)
+      //  8   Use signature3 (WMEN_SIGN2)
+      //  9   Use signature4 (WMEN_SIGN3)
+
       // now go and create the window object
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, tr(MSG_WR_WriteWT),
@@ -3445,9 +3485,14 @@ static struct WR_ClassData *WR_New(int winnum)
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_UUCODE), MUIA_UserData,WMEN_INSUUCODE, End,
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_LaunchEd), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,WMEN_EDIT, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_SaveAs), MUIA_UserData,WMEN_SAVEAS, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_LaunchEd), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,WMEN_EDIT, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSENDNOW), MUIA_Menuitem_Shortcut, "S", MUIA_UserData, WMEN_SENDNOW, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSENDLATER), MUIA_Menuitem_Shortcut, "L", MUIA_UserData, WMEN_QUEUE, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MHOLD), MUIA_Menuitem_Shortcut, "H", MUIA_UserData, WMEN_HOLD, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MCANCEL), MUIA_Menuitem_Shortcut, "W", MUIA_UserData, WMEN_CANCEL, End,
             End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Edit),
                MUIA_Family_Child, mi_cut = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MCut), MUIA_UserData, WMEN_CUT, End,
@@ -3472,7 +3517,7 @@ static struct WR_ClassData *WR_New(int winnum)
                   MUIA_Family_Child, data->GUI.MI_BOLD = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Bold), MUIA_Menuitem_Shortcut,"B", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_BOLD, End,
                   MUIA_Family_Child, data->GUI.MI_ITALIC = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Italic), MUIA_Menuitem_Shortcut,"I", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_ITALIC, End,
                   MUIA_Family_Child, data->GUI.MI_UNDERLINE = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Underlined), MUIA_Menuitem_Shortcut,"U", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_UNDERLINE, End,
-                  MUIA_Family_Child, data->GUI.MI_COLORED = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Colored), MUIA_Menuitem_Shortcut,"H", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_COLORED, End,
+                  MUIA_Family_Child, data->GUI.MI_COLORED = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Colored), MUIA_Menuitem_Shortcut,"K", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_COLORED, End,
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Emoticons),
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Happy), MUIA_UserData,WMEN_EMOT0, End,
@@ -3485,7 +3530,7 @@ static struct WR_ClassData *WR_New(int winnum)
                MUIA_Family_Child, mi_autowrap = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_AUTOWRAP), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_AUTOWRAP, End,
             End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Attachments),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MAddFile), MUIA_Menuitem_Shortcut,"L", MUIA_UserData,WMEN_ADDFILE, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MAddFile), MUIA_Menuitem_Shortcut,"R", MUIA_UserData,WMEN_ADDFILE, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddCB), MUIA_UserData,WMEN_ADDCLIP, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddKey), MUIA_UserData,WMEN_ADDPGP, End,
             End,
@@ -3647,10 +3692,10 @@ static struct WR_ClassData *WR_New(int winnum)
                End,
             End,
             Child, ColGroup(4),
-               Child, data->GUI.BT_SEND   = MakeButton(tr(MSG_WR_Send)),
-               Child, data->GUI.BT_QUEUE  = MakeButton(tr(MSG_WR_ToQueue)),
-               Child, data->GUI.BT_HOLD   = MakeButton(tr(MSG_WR_Hold)),
-               Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_Cancel)),
+               Child, data->GUI.BT_SEND   = MakeButton(tr(MSG_WR_SENDNOW)),
+               Child, data->GUI.BT_QUEUE  = MakeButton(tr(MSG_WR_SENDLATER)),
+               Child, data->GUI.BT_HOLD   = MakeButton(tr(MSG_WR_HOLD)),
+               Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_WR_CANCEL)),
             End,
          End,
       End;
@@ -3689,31 +3734,38 @@ static struct WR_ClassData *WR_New(int winnum)
          SetHelp(data->GUI.CY_IMPORTANCE ,MSG_HELP_WR_CY_IMPORTANCE);
          SetHelp(data->GUI.RA_SIGNATURE  ,MSG_HELP_WR_RA_SIGNATURE );
          SetHelp(data->GUI.RA_SECURITY   ,MSG_HELP_WR_RA_SECURITY  );
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_NEW       ,data->GUI.TE_EDIT      ,1,MUIM_TextEditor_ClearText);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_OPEN      ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_OPEN,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSFILE   ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSERT,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSQUOT   ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSQUOT,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSALTQUOT,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSALTQUOT,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSROT13  ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSROT13,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSUUCODE ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSUUCODE,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SAVEAS    ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_SaveAsHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_EDIT      ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_EditHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_CUT       ,data->GUI.TE_EDIT      ,2,MUIM_TextEditor_ARexxCmd,"CUT");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_COPY      ,data->GUI.TE_EDIT      ,2,MUIM_TextEditor_ARexxCmd,"COPY");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASTE     ,data->GUI.TE_EDIT      ,2,MUIM_TextEditor_ARexxCmd,"PASTE");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASQUOT   ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_PASQUOT,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASALTQUOT,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_PASALTQUOT,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASROT13  ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_PASROT13,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SEARCH    ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_SearchHook, data->GUI.TE_EDIT, MUIF_NONE);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SEARCHAGAIN,MUIV_Notify_Application,4,MUIM_CallHook  ,&WR_SearchHook, data->GUI.TE_EDIT, MUIF_ReadMailGroup_Search_Again);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_DICT      ,MUIV_Notify_Application,3,MUIM_CallHook   ,&DI_OpenHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_UNDO      ,data->GUI.TE_EDIT      ,2,MUIM_TextEditor_ARexxCmd,"UNDO");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_REDO      ,data->GUI.TE_EDIT      ,2,MUIM_TextEditor_ARexxCmd,"REDO");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_ADDFILE   ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddFileHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_ADDCLIP   ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddClipboardHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_ADDPGP    ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddPGPKeyHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SELECTALL, data->GUI.TE_EDIT,      2, MUIM_TextEditor_ARexxCmd, "SELECTALL");
-         for (i = 0; i < 4; i++) DoMethod(data->GUI.WI,MUIM_Notify,MUIA_Window_MenuAction,WMEN_EMOT0+i,data->GUI.TE_EDIT,2,MUIM_TextEditor_InsertText,emoticons[i]);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_NEW,        data->GUI.TE_EDIT, 1, MUIM_TextEditor_ClearText);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_OPEN,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_OPEN, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSFILE,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSERT, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSQUOT,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSQUOT, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSALTQUOT, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSALTQUOT, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSROT13,   MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSROT13, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSUUCODE,  MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSUUCODE, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SAVEAS,     MUIV_Notify_Application, 3, MUIM_CallHook, &WR_SaveAsHook, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EDIT,       MUIV_Notify_Application, 3, MUIM_CallHook, &WR_EditHook, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_NewMailHook, WRITE_SEND, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,      MUIV_Notify_Application, 4, MUIM_CallHook, &WR_NewMailHook, WRITE_QUEUE, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_HOLD,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_NewMailHook, WRITE_HOLD, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CANCEL,     MUIV_Notify_Application, 3, MUIM_CallHook, &WR_CancelHook,winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,        data->GUI.TE_EDIT,       2, MUIM_TextEditor_ARexxCmd, "CUT");
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,       data->GUI.TE_EDIT,       2, MUIM_TextEditor_ARexxCmd, "COPY");
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASTE,      data->GUI.TE_EDIT,       2, MUIM_TextEditor_ARexxCmd, "PASTE");
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASQUOT,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASQUOT, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASALTQUOT, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASALTQUOT, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASROT13,   MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASROT13, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SEARCH,     MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SearchHook, data->GUI.TE_EDIT, MUIF_NONE);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SEARCHAGAIN,MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SearchHook, data->GUI.TE_EDIT, MUIF_ReadMailGroup_Search_Again);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_DICT,       MUIV_Notify_Application, 3, MUIM_CallHook, &DI_OpenHook, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_UNDO,       data->GUI.TE_EDIT,       2, MUIM_TextEditor_ARexxCmd, "UNDO");
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_REDO,       data->GUI.TE_EDIT,       2, MUIM_TextEditor_ARexxCmd, "REDO");
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDFILE,    MUIV_Notify_Application, 3, MUIM_CallHook, &WR_AddFileHook, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDCLIP,    MUIV_Notify_Application, 3, MUIM_CallHook, &WR_AddClipboardHook, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDPGP,     MUIV_Notify_Application, 3, MUIM_CallHook, &WR_AddPGPKeyHook, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTALL,  data->GUI.TE_EDIT,       2, MUIM_TextEditor_ARexxCmd, "SELECTALL");
+
+         for(i=0; i < 4; i++)
+          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT0+i, data->GUI.TE_EDIT, 2, MUIM_TextEditor_InsertText, emoticons[i]);
+
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_AppMessage          ,MUIV_EveryTime ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_AppHook,MUIV_TriggerValue,winnum);
          DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify,MUIA_TextEditor_AreaMarked,MUIV_EveryTime,MUIV_Notify_Application,6,MUIM_MultiSet   ,MUIA_Menuitem_Enabled,MUIV_TriggerValue,mi_copy,mi_cut,NULL);
 
@@ -3728,9 +3780,9 @@ static struct WR_ClassData *WR_New(int winnum)
            if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Copy)) &&
               key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
            {
-             static char shortcut[] = "ramiga X";
+             static char shortcut[] = "ramiga C";
 
-             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT))
+             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT|0x200))
                shortcut[7] = toupper(key->code-500);
              else
                shortcut[7] = key->code-500;
@@ -3746,7 +3798,7 @@ static struct WR_ClassData *WR_New(int winnum)
            {
              static char shortcut[] = "ramiga X";
 
-             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT))
+             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT|0x200))
                shortcut[7] = toupper(key->code-500);
              else
                shortcut[7] = key->code-500;
@@ -3760,9 +3812,9 @@ static struct WR_ClassData *WR_New(int winnum)
            if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Paste)) &&
               key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
            {
-             static char shortcut[] = "ramiga X";
+             static char shortcut[] = "ramiga V";
 
-             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT))
+             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT|0x200))
                shortcut[7] = toupper(key->code-500);
              else
                shortcut[7] = key->code-500;
@@ -3776,9 +3828,9 @@ static struct WR_ClassData *WR_New(int winnum)
            if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Undo)) &&
               key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
            {
-             static char shortcut[] = "ramiga X";
+             static char shortcut[] = "ramiga z";
 
-             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT))
+             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT|0x200))
                shortcut[7] = toupper(key->code-500);
              else
                shortcut[7] = key->code-500;
@@ -3792,9 +3844,9 @@ static struct WR_ClassData *WR_New(int winnum)
            if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Redo)) &&
               key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
            {
-             static char shortcut[] = "ramiga X";
+             static char shortcut[] = "ramiga Z";
 
-             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT))
+             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT|0x200))
                shortcut[7] = toupper(key->code-500);
              else
                shortcut[7] = key->code-500;
@@ -3810,7 +3862,7 @@ static struct WR_ClassData *WR_New(int winnum)
            {
              static char shortcut[] = "ramiga X";
 
-             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT))
+             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT|0x200))
                shortcut[7] = toupper(key->code-500);
              else
                shortcut[7] = key->code-500;
@@ -3912,10 +3964,10 @@ static struct WR_ClassData *WR_NewBounce(int winnum)
              Child, MakeAddressField(&data->GUI.ST_TO, tr(MSG_WR_BounceTo), MSG_HELP_WR_ST_TO, ABM_TO, winnum, TRUE),
           End,
           Child, ColGroup(4),
-             Child, data->GUI.BT_SEND   = MakeButton(tr(MSG_WR_Send)),
-             Child, data->GUI.BT_QUEUE  = MakeButton(tr(MSG_WR_ToQueue)),
-             Child, data->GUI.BT_HOLD   = MakeButton(tr(MSG_WR_Hold)),
-             Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_Cancel)),
+             Child, data->GUI.BT_SEND   = MakeButton(tr(MSG_WR_SENDNOW)),
+             Child, data->GUI.BT_QUEUE  = MakeButton(tr(MSG_WR_SENDLATER)),
+             Child, data->GUI.BT_HOLD   = MakeButton(tr(MSG_WR_HOLD)),
+             Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_WR_CANCEL)),
           End,
        End,
     End;
