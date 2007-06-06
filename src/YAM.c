@@ -1612,7 +1612,7 @@ static int Root_GlobalDispatcher(ULONG app_input)
   {
     case MUIV_Application_ReturnID_Quit:
     {
-      if(!xget(G->App, MUIA_Application_ForceQuit))
+      if(xget(G->App, MUIA_Application_ForceQuit) == FALSE)
       {
         ret = (int)!StayInProg();
       }
@@ -1623,10 +1623,10 @@ static int Root_GlobalDispatcher(ULONG app_input)
 
     case ID_CLOSEALL:
     {
-      if(!C->IconifyOnQuit)
+      if(C->IconifyOnQuit == FALSE)
         ret = (int)!StayInProg();
-
-      set(G->App, MUIA_Application_Iconified, TRUE);
+      else
+        set(G->App, MUIA_Application_Iconified, TRUE);
     }
     break;
 

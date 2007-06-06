@@ -7,6 +7,9 @@ $URL$
 
 2007-06-06  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: closing the main window will no longer iconify YAM if "iconify on
+    close" is disabled and for example a write window is still open. The main
+    window will stay open if the requester is answered with "no".
   * locale/YAM.cd, locale/deutsch.ct: changed the phrasing from "expire unread
     messages" to "delete unread old messages".
   * YAM_CO.c: if opening the config window failed for whatever reason the close
