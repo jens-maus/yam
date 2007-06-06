@@ -1930,6 +1930,8 @@ MakeStaticHook(CO_ChangePageHook,CO_ChangePageFunc);
 //  Closes configuration window
 HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
 {
+  ENTER();
+
   // check if we should copy our edited configuration
   // to the real one or if we should just free/drop it
   if(*arg >= 1)
@@ -1951,6 +1953,8 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
   CE = NULL;
 
   DisposeModulePush(&G->CO);
+
+  LEAVE();
 }
 MakeStaticHook(CO_CloseHook,CO_CloseFunc);
 
@@ -1963,22 +1967,31 @@ HOOKPROTONHNONP(CO_OpenFunc, void)
 
   // check if there isn't already a configuration
   // open
-  if(!G->CO)
+  if(G->CO == NULL)
   {
-    if(!(G->CO = CO_New()))
-      return;
-
-    if((CE = malloc(sizeof(struct Config))) == NULL)
-      return;
-
-    CopyConfigData(CE, C);
-    CO_SetConfig();
-    CO_NewPrefsFile(G->CO_PrefsFile);
+    if((G->CO = CO_New()) != NULL)
+    {
+      if((CE = malloc(sizeof(struct Config))) != NULL)
+      {
+        CopyConfigData(CE, C);
+        CO_SetConfig();
+        CO_NewPrefsFile(G->CO_PrefsFile);
+      }
+    }
   }
 
-  // make sure the configuration window is open
-  if(!SafeOpenWindow(G->CO->GUI.WI))
-    CallHookPkt(&CO_CloseHook, 0, 0);
+  // only try to open the window if everything above succeeded
+  if(G->CO != NULL)
+  {
+    // make sure the configuration window is open
+    if(SafeOpenWindow(G->CO->GUI.WI) == FALSE)
+    {
+      int zero = 0;
+
+      // the close hook must be called with a *pointer* to the argument, not with the argument itself!
+      CallHookPkt(&CO_CloseHook, 0, &zero);
+    }
+  }
 
   BusyEnd();
 }
@@ -1992,133 +2005,141 @@ enum { CMEN_OPEN = 1201, CMEN_SAVEAS, CMEN_DEF, CMEN_DEFALL, CMEN_LAST, CMEN_RES
 
 static struct CO_ClassData *CO_New(void)
 {
-   struct CO_ClassData *data = calloc(1, sizeof(struct CO_ClassData));
-   if (data)
-   {
-      static struct PageList page[cp_Max], *pages[cp_Max + 1];
-      int i;
+  struct CO_ClassData *data;
 
-      for(i = cp_FirstSteps; i < cp_Max; i++)
-      {
-        page[i].Offset = i;
-        pages[i] = &page[i];
-      }
-      pages[cp_Max] = NULL;
+  ENTER();
 
-      // put some labels on our configpagelist objects
-      page[cp_FirstSteps  ].PageLabel = MSG_CO_CrdFirstSteps;
-      page[cp_TCPIP       ].PageLabel = MSG_CO_CrdTCPIP;
-      page[cp_NewMail     ].PageLabel = MSG_CO_CrdNewMail;
-      page[cp_Filters     ].PageLabel = MSG_CO_CrdFilters;
-      page[cp_Spam        ].PageLabel = MSG_CO_CRDSPAMFILTER;
-      page[cp_Read        ].PageLabel = MSG_CO_CrdRead;
-      page[cp_Write       ].PageLabel = MSG_CO_CrdWrite;
-      page[cp_ReplyForward].PageLabel = MSG_CO_GR_REPLYFORWARD;
-      page[cp_Signature   ].PageLabel = MSG_CO_CrdSignature;
-      page[cp_Lists       ].PageLabel = MSG_CO_CrdLists;
-      page[cp_Security    ].PageLabel = MSG_CO_CrdSecurity;
-      page[cp_StartupQuit ].PageLabel = MSG_CO_GR_STARTUPQUIT;
-      page[cp_MIME        ].PageLabel = MSG_CO_CrdMIME;
-      page[cp_AddressBook ].PageLabel = MSG_CO_CrdABook;
-      page[cp_Scripts     ].PageLabel = MSG_CO_GR_SCRIPTS;
-      page[cp_Mixed       ].PageLabel = MSG_CO_CrdMixed;
-      page[cp_LookFeel    ].PageLabel = MSG_CO_CRDLOOKFEEL;
-      page[cp_Update      ].PageLabel = MSG_CO_CrdUpdate;
+  if((data = calloc(1, sizeof(struct CO_ClassData))) != NULL)
+  {
+    static struct PageList page[cp_Max], *pages[cp_Max + 1];
+    int i;
 
-      data->GUI.WI = WindowObject,
-         MUIA_Window_Title, tr(MSG_MA_MConfig),
-         MUIA_HelpNode,"CO_W",
-         MUIA_Window_Menustrip, MenustripObject,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_MA_Project),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_Open), MUIA_Menuitem_Shortcut,"O", MUIA_UserData,CMEN_OPEN, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_SaveAs), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,CMEN_SAVEAS, End,
-            End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_CO_Edit),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_ResetDefaults), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,CMEN_DEF, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_ResetAll), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,CMEN_DEFALL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_LastSaved), MUIA_Menuitem_Shortcut,"L", MUIA_UserData,CMEN_LAST, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_Restore), MUIA_Menuitem_Shortcut,"R", MUIA_UserData,CMEN_REST, End,
-            End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_CO_Extras),
-               MUIA_Family_Child, data->GUI.MI_IMPMIME = MenuitemObject, MUIA_Menuitem_Enabled,FALSE, MUIA_Menuitem_Title,tr(MSG_CO_ImportMIME), MUIA_UserData,CMEN_MIME, End,
-            End,
-         End,
-         MUIA_Window_ID, MAKE_ID('C','O','N','F'),
-         WindowContents, VGroup,
-            Child, HGroup,
-               Child, data->GUI.NLV_PAGE = NListviewObject,
-                  MUIA_CycleChain,  TRUE,
-                  MUIA_NListview_NList, data->GUI.LV_PAGE = ConfigPageListObject,
-                     MUIA_NList_Format,         "",
-                     MUIA_NList_Title,          FALSE,
-                     MUIA_NList_AdjustWidth,    TRUE,
-                     MUIA_NList_AutoVisible,    TRUE,
-                     MUIA_NList_MinLineHeight,  16,
-                     MUIA_NList_SourceArray,    pages,
-                     MUIA_NList_Active,         MUIV_NList_Active_Top,
-                  End,
-               End,
-               Child, data->GUI.GR_PAGE = PageGroup,
-                  NoFrame,
-                  MUIA_Group_ActivePage, 0,
-                  Child, CO_PageFirstSteps(data),
-                  Child, CO_PageTCPIP(data),
-                  Child, CO_PageNewMail(data),
-                  Child, CO_PageFilters(data),
-                  Child, CO_PageSpam(data),
-                  Child, CO_PageRead(data),
-                  Child, CO_PageWrite(data),
-                  Child, CO_PageReplyForward(data),
-                  Child, CO_PageSignature(data),
-                  Child, CO_PageLists(data),
-                  Child, CO_PageSecurity(data),
-                  Child, CO_PageStartupQuit(data),
-                  Child, CO_PageMIME(data),
-                  Child, CO_PageAddressBook(data),
-                  Child, CO_PageScripts(data),
-                  Child, CO_PageMixed(data),
-                  Child, CO_PageLookFeel(data),
-                  Child, CO_PageUpdate(data),
-               End,
-            End,
+    for(i = cp_FirstSteps; i < cp_Max; i++)
+    {
+      page[i].Offset = i;
+      pages[i] = &page[i];
+    }
+    pages[cp_Max] = NULL;
 
-            Child, RectangleObject,
-               MUIA_Rectangle_HBar, TRUE,
-               MUIA_FixHeight,      4,
-            End,
+    // put some labels on our configpagelist objects
+    page[cp_FirstSteps  ].PageLabel = MSG_CO_CrdFirstSteps;
+    page[cp_TCPIP       ].PageLabel = MSG_CO_CrdTCPIP;
+    page[cp_NewMail     ].PageLabel = MSG_CO_CrdNewMail;
+    page[cp_Filters     ].PageLabel = MSG_CO_CrdFilters;
+    page[cp_Spam        ].PageLabel = MSG_CO_CRDSPAMFILTER;
+    page[cp_Read        ].PageLabel = MSG_CO_CrdRead;
+    page[cp_Write       ].PageLabel = MSG_CO_CrdWrite;
+    page[cp_ReplyForward].PageLabel = MSG_CO_GR_REPLYFORWARD;
+    page[cp_Signature   ].PageLabel = MSG_CO_CrdSignature;
+    page[cp_Lists       ].PageLabel = MSG_CO_CrdLists;
+    page[cp_Security    ].PageLabel = MSG_CO_CrdSecurity;
+    page[cp_StartupQuit ].PageLabel = MSG_CO_GR_STARTUPQUIT;
+    page[cp_MIME        ].PageLabel = MSG_CO_CrdMIME;
+    page[cp_AddressBook ].PageLabel = MSG_CO_CrdABook;
+    page[cp_Scripts     ].PageLabel = MSG_CO_GR_SCRIPTS;
+    page[cp_Mixed       ].PageLabel = MSG_CO_CrdMixed;
+    page[cp_LookFeel    ].PageLabel = MSG_CO_CRDLOOKFEEL;
+    page[cp_Update      ].PageLabel = MSG_CO_CrdUpdate;
 
-            Child, HGroup,
-               MUIA_Group_SameWidth, TRUE,
-               Child, data->GUI.BT_SAVE   = MakeButton(tr(MSG_CO_Save)),
-               Child, data->GUI.BT_USE    = MakeButton(tr(MSG_CO_Use)),
-               Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_CO_Cancel)),
-            End,
-         End,
-      End;
-      if (data->GUI.WI)
-      {
-         DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-         set(data->GUI.WI, MUIA_Window_DefaultObject, data->GUI.NLV_PAGE);
-         SetHelp(data->GUI.BT_SAVE,   MSG_HELP_CO_BT_SAVE);
-         SetHelp(data->GUI.BT_USE,    MSG_HELP_CO_BT_USE);
-         SetHelp(data->GUI.BT_CANCEL, MSG_HELP_CO_BT_CANCEL);
-         DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_OPEN     ,MUIV_Notify_Application,2,MUIM_CallHook,&CO_OpenConfigHook);
-         DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_SAVEAS   ,MUIV_Notify_Application,2,MUIM_CallHook,&CO_SaveConfigAsHook);
-         DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_DEF      ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ResetToDefaultHook,FALSE);
-         DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_DEFALL   ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ResetToDefaultHook,TRUE);
-         DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_LAST     ,MUIV_Notify_Application,2,MUIM_CallHook,&CO_LastSavedHook);
-         DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_REST     ,MUIV_Notify_Application,2,MUIM_CallHook,&CO_RestoreHook);
-         DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_MIME     ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ImportCTypesHook,FALSE);
-         DoMethod(data->GUI.LV_PAGE     ,MUIM_Notify,MUIA_NList_Active       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ChangePageHook,MUIV_TriggerValue);
-         DoMethod(data->GUI.BT_SAVE     ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,2);
-         DoMethod(data->GUI.BT_USE      ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,1);
-         DoMethod(data->GUI.BT_CANCEL   ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,0);
-         DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_CloseRequest,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,0);
-         return data;
-      }
+    data->GUI.WI = WindowObject,
+       MUIA_Window_Title, tr(MSG_MA_MConfig),
+       MUIA_HelpNode,"CO_W",
+       MUIA_Window_Menustrip, MenustripObject,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_MA_Project),
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_Open), MUIA_Menuitem_Shortcut,"O", MUIA_UserData,CMEN_OPEN, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_SaveAs), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,CMEN_SAVEAS, End,
+          End,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_CO_Edit),
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_ResetDefaults), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,CMEN_DEF, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_ResetAll), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,CMEN_DEFALL, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_LastSaved), MUIA_Menuitem_Shortcut,"L", MUIA_UserData,CMEN_LAST, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_Restore), MUIA_Menuitem_Shortcut,"R", MUIA_UserData,CMEN_REST, End,
+          End,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_CO_Extras),
+             MUIA_Family_Child, data->GUI.MI_IMPMIME = MenuitemObject, MUIA_Menuitem_Enabled,FALSE, MUIA_Menuitem_Title,tr(MSG_CO_ImportMIME), MUIA_UserData,CMEN_MIME, End,
+          End,
+       End,
+       MUIA_Window_ID, MAKE_ID('C','O','N','F'),
+       WindowContents, VGroup,
+          Child, HGroup,
+             Child, data->GUI.NLV_PAGE = NListviewObject,
+                MUIA_CycleChain,  TRUE,
+                MUIA_NListview_NList, data->GUI.LV_PAGE = ConfigPageListObject,
+                   MUIA_NList_Format,         "",
+                   MUIA_NList_Title,          FALSE,
+                   MUIA_NList_AdjustWidth,    TRUE,
+                   MUIA_NList_AutoVisible,    TRUE,
+                   MUIA_NList_MinLineHeight,  16,
+                   MUIA_NList_SourceArray,    pages,
+                   MUIA_NList_Active,         MUIV_NList_Active_Top,
+                End,
+             End,
+             Child, data->GUI.GR_PAGE = PageGroup,
+                NoFrame,
+                MUIA_Group_ActivePage, 0,
+                Child, CO_PageFirstSteps(data),
+                Child, CO_PageTCPIP(data),
+                Child, CO_PageNewMail(data),
+                Child, CO_PageFilters(data),
+                Child, CO_PageSpam(data),
+                Child, CO_PageRead(data),
+                Child, CO_PageWrite(data),
+                Child, CO_PageReplyForward(data),
+                Child, CO_PageSignature(data),
+                Child, CO_PageLists(data),
+                Child, CO_PageSecurity(data),
+                Child, CO_PageStartupQuit(data),
+                Child, CO_PageMIME(data),
+                Child, CO_PageAddressBook(data),
+                Child, CO_PageScripts(data),
+                Child, CO_PageMixed(data),
+                Child, CO_PageLookFeel(data),
+                Child, CO_PageUpdate(data),
+             End,
+          End,
+
+          Child, RectangleObject,
+             MUIA_Rectangle_HBar, TRUE,
+             MUIA_FixHeight,      4,
+          End,
+
+          Child, HGroup,
+             MUIA_Group_SameWidth, TRUE,
+             Child, data->GUI.BT_SAVE   = MakeButton(tr(MSG_CO_Save)),
+             Child, data->GUI.BT_USE    = MakeButton(tr(MSG_CO_Use)),
+             Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_CO_Cancel)),
+          End,
+       End,
+    End;
+    if(data->GUI.WI != NULL)
+    {
+      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+      set(data->GUI.WI, MUIA_Window_DefaultObject, data->GUI.NLV_PAGE);
+      SetHelp(data->GUI.BT_SAVE,   MSG_HELP_CO_BT_SAVE);
+      SetHelp(data->GUI.BT_USE,    MSG_HELP_CO_BT_USE);
+      SetHelp(data->GUI.BT_CANCEL, MSG_HELP_CO_BT_CANCEL);
+      DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_OPEN     ,MUIV_Notify_Application,2,MUIM_CallHook,&CO_OpenConfigHook);
+      DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_SAVEAS   ,MUIV_Notify_Application,2,MUIM_CallHook,&CO_SaveConfigAsHook);
+      DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_DEF      ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ResetToDefaultHook,FALSE);
+      DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_DEFALL   ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ResetToDefaultHook,TRUE);
+      DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_LAST     ,MUIV_Notify_Application,2,MUIM_CallHook,&CO_LastSavedHook);
+      DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_REST     ,MUIV_Notify_Application,2,MUIM_CallHook,&CO_RestoreHook);
+      DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_MIME     ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ImportCTypesHook,FALSE);
+      DoMethod(data->GUI.LV_PAGE     ,MUIM_Notify,MUIA_NList_Active       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ChangePageHook,MUIV_TriggerValue);
+      DoMethod(data->GUI.BT_SAVE     ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,2);
+      DoMethod(data->GUI.BT_USE      ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,1);
+      DoMethod(data->GUI.BT_CANCEL   ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,0);
+      DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_CloseRequest,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,0);
+    }
+    else
+    {
       free(data);
-   }
-   return NULL;
+      data = NULL;
+    }
+  }
+
+  RETURN(data);
+  return data;
 }
 ////
 
