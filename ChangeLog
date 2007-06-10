@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-10  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c: when editing a mail as a complete new one, the user's From:
+    and ReplyTo: address will be used instead of blindly copying the addresses
+    of the editing mail. This should make the action more intuitive and prevent
+    from accidently sending mails with a foreign From: address.
+
 2007-06-06  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: the menu/button keyboard shortcuts were mixed up because we used

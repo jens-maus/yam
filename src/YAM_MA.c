@@ -1754,7 +1754,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
 
     if((out = fopen(G->WR_Filename[winnum], "w")))
     {
-      char *sbuf;
+      char *sbuf = NULL;
       struct ReadMailData *rmData;
       struct ExtendedMail *email;
       struct WR_ClassData *wr = G->WR[winnum];
@@ -1799,21 +1799,42 @@ int MA_NewEdit(struct Mail *mail, int flags)
             // set the subject gadget
             setstring(wr->GUI.ST_SUBJECT, mail->Subject);
 
-            // add all From: senders
-            sbuf = StrBufCpy(NULL, BuildAddrName2(&mail->From));
-            for(i=0; i < email->NoSFrom; i++)
+            // in case this is a EDITASNEW action we have to make sure
+            // to add the From: and ReplyTo: address of the user of
+            // YAM instead of filling in the data of the mail we
+            // are trying to edit.
+            if(wr->Mode == NEW_EDITASNEW)
             {
-              sbuf = MA_AppendRcpt(sbuf, &email->SFrom[i], FALSE);
-            }
-            setstring(wr->GUI.ST_FROM, sbuf);
+              if(folder->MLSupport)
+              {
+                if(folder->MLFromAddress[0] != '\0')
+                  setstring(wr->GUI.ST_FROM, folder->MLFromAddress);
 
-            // add all ReplyTo: recipients
-            sbuf = StrBufCpy(sbuf, BuildAddrName2(&mail->ReplyTo));
-            for(i=0; i < email->NoSReplyTo; i++)
-            {
-              sbuf = MA_AppendRcpt(sbuf, &email->SReplyTo[i], FALSE);
+                if(folder->MLReplyToAddress[0] != '\0')
+                  setstring(wr->GUI.ST_REPLYTO, folder->MLReplyToAddress);
+              }
             }
-            setstring(wr->GUI.ST_REPLYTO, sbuf);
+            else
+            {
+              // use all From:/ReplyTo: from the original mail
+              // instead.
+
+              // add all From: senders
+              sbuf = StrBufCpy(sbuf, BuildAddrName2(&mail->From));
+              for(i=0; i < email->NoSFrom; i++)
+              {
+                sbuf = MA_AppendRcpt(sbuf, &email->SFrom[i], FALSE);
+              }
+              setstring(wr->GUI.ST_FROM, sbuf);
+
+              // add all ReplyTo: recipients
+              sbuf = StrBufCpy(sbuf, BuildAddrName2(&mail->ReplyTo));
+              for(i=0; i < email->NoSReplyTo; i++)
+              {
+                sbuf = MA_AppendRcpt(sbuf, &email->SReplyTo[i], FALSE);
+              }
+              setstring(wr->GUI.ST_REPLYTO, sbuf);
+            }
 
             // add all "To:" recipients of the mail
             sbuf = StrBufCpy(sbuf, BuildAddrName2(&mail->To));
