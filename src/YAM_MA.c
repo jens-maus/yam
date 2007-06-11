@@ -4535,7 +4535,7 @@ void MA_SetupDynamicMenus(void)
 
   if(G->MA->GUI.MN_REXX)
   {
-    static const char *shortcuts[10] = { "0","1","2","3","4","5","6","7","8","9" };
+    static const char *const shortcuts[10] = { "0","1","2","3","4","5","6","7","8","9" };
     int i;
 
     // the first ten entries of our user definable

@@ -69,7 +69,7 @@ enum { TB_MAIN_READ=0,
 OVERLOAD(OM_NEW)
 {
   // define the image arrays
-  static const char *normalImages[TB_MAIN_NUM+1] =
+  static const char *const normalImages[TB_MAIN_NUM+1] =
   {
     "Main_Read",          // Read
     "Main_Edit",          // Edit
@@ -90,7 +90,7 @@ OVERLOAD(OM_NEW)
     NULL
   };
 
-  static const char *selectedImages[TB_MAIN_NUM+1] =
+  static const char *const selectedImages[TB_MAIN_NUM+1] =
   {
     "Main_Read_S",        // Read
     "Main_Edit_S",        // Edit
@@ -111,7 +111,7 @@ OVERLOAD(OM_NEW)
     NULL
   };
 
-  static const char *ghostedImages[TB_MAIN_NUM+1] =
+  static const char *const ghostedImages[TB_MAIN_NUM+1] =
   {
     "Main_Read_G",        // Read
     "Main_Edit_G",        // Edit

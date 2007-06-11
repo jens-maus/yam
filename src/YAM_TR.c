@@ -112,7 +112,7 @@ enum SMTPCommand
   ESMTP_AUTH_PLAIN
 };
 
-static const char *SMTPcmd[] =
+static const char *const SMTPcmd[] =
 {
   // SMTP commands
   "HELO", "MAIL", "RCPT", "DATA", "SEND", "SOML", "SAML", "RSET",
@@ -175,7 +175,7 @@ enum POPCommand
   POPCMD_STLS
 };
 
-static const char *POPcmd[] =
+static const char *const POPcmd[] =
 {
   // POP3 standard commands
   "",     "USER", "PASS", "QUIT", "STAT", "LIST",

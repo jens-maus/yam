@@ -1244,7 +1244,7 @@ static void WR_EmitExtHeader(FILE *fh, struct Compose *comp)
 ///
 /// WR_ComposeReport
 //  Assembles the parts of a message disposition notification
-static const char *MIMEwarn =
+static const char *const MIMEwarn =
   "Warning: This is a message in MIME format. Your mail reader does\n"
   "not support MIME. Some parts of this message will be readable as\n"
   "plain text. To see the rest, you will need to upgrade your mail\n"
@@ -1256,7 +1256,7 @@ static const char *MIMEwarn =
   "\n"
   "General information about MIME can be found at:\n"
   "http://en.wikipedia.org/wiki/MIME\n";
-static const char *PGPwarn  =
+static const char *const PGPwarn  =
   "The following body part contains a PGP encrypted message. Either\n"
   "your mail reader doesn't support MIME/PGP as specified in RFC 2015,\n"
   "or the message was encrypted for someone else. To read the encrypted\n"
@@ -3368,13 +3368,13 @@ static struct WR_ClassData *WR_New(int winnum)
         WMEN_SENDNOW,WMEN_QUEUE,WMEN_HOLD,WMEN_CANCEL
       };
 
-      static const char *rtitles[4] = { NULL };
+      static const char *rtitles[4] = { NULL, NULL, NULL, NULL };
       static const char *encoding[3];
       static const char *security[SEC_MAXDUMMY+1];
       static const char *priority[4];
       static const char *signat[5];
 
-      static const char *emoticons[4] =
+      static const char *const emoticons[4] =
       {
         ":-)", ":-|", ":-(", ";-)"
       };

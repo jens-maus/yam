@@ -3144,7 +3144,7 @@ Object *CO_PageAddressBook(struct CO_ClassData *data)
 Object *CO_PageScripts(struct CO_ClassData *data)
 {
    Object *grp;
-   static const char *stype[3] =
+   static const char *const stype[3] =
    {
      "ARexx", "AmigaDOS", NULL
    };

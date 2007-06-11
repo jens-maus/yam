@@ -118,7 +118,7 @@ OVERLOAD(OM_NEW)
   else
   {
     // define the image arrays
-    static const char *normalImages[TB_READ_NUM+1] =
+    static const char *const normalImages[TB_READ_NUM+1] =
     {
       "Read_Prev",          // Prev
       "Read_Next",          // Next
@@ -136,7 +136,7 @@ OVERLOAD(OM_NEW)
       NULL
     };
 
-    static const char *selectedImages[TB_READ_NUM+1] =
+    static const char *const selectedImages[TB_READ_NUM+1] =
     {
       "Read_Prev_S",        // Prev
       "Read_Next_S",        // Next
@@ -154,7 +154,7 @@ OVERLOAD(OM_NEW)
       NULL
     };
 
-    static const char *ghostedImages[TB_READ_NUM+1] =
+    static const char *const ghostedImages[TB_READ_NUM+1] =
     {
       "Read_Prev_G",        // Prev
       "Read_Next_G",        // Next

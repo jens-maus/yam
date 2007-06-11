@@ -113,7 +113,7 @@ OVERLOAD(OM_NEW)
   else
   {
     // define the image arrays
-    static const char *normalImages[TB_WRITE_NUM+1] =
+    static const char *const normalImages[TB_WRITE_NUM+1] =
     {
       "Write_Editor",      // Editor
       "Write_Insert",      // Insert
@@ -129,7 +129,7 @@ OVERLOAD(OM_NEW)
       NULL
     };
 
-    static const char *selectedImages[TB_WRITE_NUM+1] =
+    static const char *const selectedImages[TB_WRITE_NUM+1] =
     {
       "Write_Editor_S",    // Editor
       "Write_Insert_S",    // Insert
@@ -145,7 +145,7 @@ OVERLOAD(OM_NEW)
       NULL
     };
 
-    static const char *ghostedImages[TB_WRITE_NUM+1] =
+    static const char *const ghostedImages[TB_WRITE_NUM+1] =
     {
       "Write_Editor_G",    // Editor
       "Write_Insert_G",    // Insert

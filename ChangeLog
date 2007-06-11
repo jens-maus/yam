@@ -7,6 +7,9 @@ $URL$
 
 2007-06-11  Jens Langner <Jens.Langner@light-speed.de>
 
+  * misc: changed all "static const char**" arrays to be somewhat more const by
+    being defined as "static const char *const *" which should give the compiler
+    even more hints of the const nature of the variable.
   * YAM_MA.c, YAM_main.h: the MA_ImportMessages() function now only checks the
     first 10 lines of a file for identifying a specified import file as an MBOX
     format file or otherwise certain files may be miss-identified.

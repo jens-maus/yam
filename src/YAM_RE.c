@@ -3539,7 +3539,7 @@ static void RE_SendMDN(const enum MDNMode mode,
                        const BOOL autoAction,
                        const BOOL autoSend)
 {
-  static const char *MDNMessage[2] =
+  static const char *const MDNMessage[2] =
   {
      "The message sent on %s to %s with subject \"%s\" has been displayed. This is no guarantee that the content has been read or understood.\n",
      "The message sent on %s to %s with subject \"%s\" has been deleted %s. The recipient may or may not have seen the message. The recipient may \"undelete\" the message at a later time and read the message.\n",

@@ -2326,7 +2326,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
                              const char *drawer, const char *file)
 {
   // the following arrays depend on the ReqFileType enumeration
-  static const char *acceptPattern[ASL_MAX] =
+  static const char *const acceptPattern[ASL_MAX] =
   {
     "#?.addressbook#?",               // ASL_ABOOK
     "#?.config#?",                    // ASL_CONFIG
@@ -4976,7 +4976,7 @@ char ShortCut(const char *label)
 ///
 /// MakeCycle
 //  Creates a MUI cycle object
-Object *MakeCycle(const char **labels, const char *label)
+Object *MakeCycle(const char *const *labels, const char *label)
 {
   return CycleObject,
            MUIA_CycleChain,    TRUE,

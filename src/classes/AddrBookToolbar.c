@@ -109,7 +109,7 @@ OVERLOAD(OM_NEW)
   else
   {
     // define the image arrays
-    static const char *normalImages[TB_ABOOK_NUM+1] =
+    static const char *const normalImages[TB_ABOOK_NUM+1] =
     {
       "Abook_Save",      // Save
       "Abook_Find",      // Find
@@ -124,7 +124,7 @@ OVERLOAD(OM_NEW)
       NULL
     };
 
-    static const char *selectedImages[TB_ABOOK_NUM+1] =
+    static const char *const selectedImages[TB_ABOOK_NUM+1] =
     {
       "Abook_Save_S",      // Save
       "Abook_Find_S",      // Find
@@ -139,7 +139,7 @@ OVERLOAD(OM_NEW)
       NULL
     };
 
-    static const char *ghostedImages[TB_ABOOK_NUM+1] =
+    static const char *const ghostedImages[TB_ABOOK_NUM+1] =
     {
       "Abook_Save_G",      // Save
       "Abook_Find_G",      // Find

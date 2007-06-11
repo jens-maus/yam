@@ -360,7 +360,7 @@ BOOL     MailExists(struct Mail *mailptr, struct Folder *folder);
 Object * MakeButton(const char *txt);
 Object * MakeCheck(const char *label);
 Object * MakeCheckGroup(Object **check, const char *label);
-Object * MakeCycle(const char **labels, const char *label);
+Object * MakeCycle(const char *const *labels, const char *label);
 Object * MakeInteger(int maxlen, const char *label);
 Object * MakeNumeric(int min, int max, BOOL percent);
 Object * MakePassString(const char *label);

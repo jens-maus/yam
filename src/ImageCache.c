@@ -58,7 +58,7 @@
 // current imagelayout. Please note that as soon as you change something
 // here you also have to alter the IMGLAYOUT_VERSION in the ImageCache.h
 // headerfile.
-static const char *imageFileArray[MAX_IMAGES] =
+static const char *const imageFileArray[MAX_IMAGES] =
 {
   // Status information images
   "status_unread",   "status_old",    "status_forward",  "status_reply",

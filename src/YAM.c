@@ -148,7 +148,7 @@ static void Abort(const char *message, ...);
 
 // AutoDST related variables
 enum ADSTmethod { ADST_NONE=0, ADST_TZLIB, ADST_SETDST, ADST_FACTS, ADST_SGUARD, ADST_IXGMT };
-static const char *ADSTfile[] = { "", "ENV:TZONE", "ENV:TZONE", "ENV:FACTS/DST", "ENV:SUMMERTIME", "ENV:IXGMTOFFSET" };
+static const char *const ADSTfile[] = { "", "ENV:TZONE", "ENV:TZONE", "ENV:FACTS/DST", "ENV:SUMMERTIME", "ENV:IXGMTOFFSET" };
 static struct ADST_Data
 {
   struct NotifyRequest nRequest;
@@ -1980,7 +1980,7 @@ static void Initialise(BOOL hidden)
    const char *errorMsg = NULL;
    char pathbuf[SIZE_PATH];
    char filebuf[SIZE_PATHFILE];
-   static const char *icnames[MAXICONS] =
+   static const char *const icnames[MAXICONS] =
    {
      "empty", "old", "new", "check"
    };
