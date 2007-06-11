@@ -7,6 +7,10 @@ $URL$
 
 2007-06-11  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: importing a mail to the Sent folder will now mark it as read if no
+    YAM specific header was found. Mail with such a header which states that the
+    mail is unread will still be marked as such, even if the folder is the Sent
+    folder, which does not offer to mark a mail a read. This fixes bug #1735093.
   * YAM_UT.c: replaced a malloc()/memcpy() pair be a call to memdup().
   * YAM_MA.c: added some ENTER(), LEAVE() and RETURN() macros to some functions.
 

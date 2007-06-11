@@ -5974,7 +5974,7 @@ BOOL TR_GetMessageList_IMPORT(void)
 
       D(DBF_IMPORT, "trying to retrieve mail list from MBOX compliant file");
 
-      if((ifh = fopen(G->TR->ImportFile, "r")))
+      if((ifh = fopen(G->TR->ImportFile, "r")) != NULL)
       {
         FILE *ofh = NULL;
         char buffer[SIZE_LINE];
@@ -6158,273 +6158,277 @@ MakeStaticHook(TR_AbortIMPORTHook, TR_AbortIMPORTFunc);
 //  Imports messages from a MBOX mailbox file
 HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 {
-  struct TransStat ts;
+  ENTER();
 
   // if there is nothing to import we can skip
   // immediately.
-  if(IsListEmpty((struct List *)&G->TR->transferList))
-    return;
-
-  TR_TransStat_Init(&ts);
-  if(ts.Msgs_Tot)
+  if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
   {
-    struct Folder *folder = G->TR->ImportFolder;
-    enum FolderType ftype = folder->Type;
+    struct TransStat ts;
 
-    TR_TransStat_Start(&ts);
-
-    // now we distinguish between the different import format
-    // and import the mails out of it
-    switch(G->TR->ImportFormat)
+    TR_TransStat_Init(&ts);
+    if(ts.Msgs_Tot)
     {
-      // treat the file as a MBOX compliant file but also
-      // in case of plain (*.eml) file we can that the very same
-      // routines.
-      case IMF_MBOX:
-      case IMF_PLAIN:
+      struct Folder *folder = G->TR->ImportFolder;
+      enum FolderType ftype = folder->Type;
+
+      TR_TransStat_Start(&ts);
+
+      // now we distinguish between the different import format
+      // and import the mails out of it
+      switch(G->TR->ImportFormat)
       {
-        FILE *ifh;
-
-        if((ifh = fopen(G->TR->ImportFile, "r")))
+        // treat the file as a MBOX compliant file but also
+        // in case of plain (*.eml) file we can that the very same
+        // routines.
+        case IMF_MBOX:
+        case IMF_PLAIN:
         {
-          struct MinNode *curNode;
+          FILE *ifh;
 
-          setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
-
-          // iterate through our transferList and seek to
-          // each position/address of a mail
-          for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort; curNode = curNode->mln_Succ)
+          if((ifh = fopen(G->TR->ImportFile, "r")) != NULL)
           {
-            struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-            struct Mail *mail = mtn->mail;
-            FILE *ofh = NULL;
-            char mfile[SIZE_MFILE];
-            char buffer[SIZE_LINE];
-            BOOL foundBody = FALSE;
-            unsigned int stat = SFLAG_NONE;
-            BOOL ownStatusFound = FALSE;
+            struct MinNode *curNode;
 
-            // if the mail is not flagged as 'loading' we can continue with the next
-            // node
-            if(hasTR_LOAD(mtn) == FALSE)
-              continue;
+            setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
 
-            // seek to the file position where the mail resist
-            if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
-              break;
-
-            TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
-
-            if((ofh = fopen(MA_NewMailFile(folder, mfile), "w")) == NULL)
-              break;
-
-            setvbuf(ofh, NULL, _IOFBF, SIZE_FILEBUF);
-
-            // now that we seeked to the mail address we go
-            // and read in line by line
-            while(GetLine(ifh, buffer, SIZE_LINE) && !G->TR->Abort)
+            // iterate through our transferList and seek to
+            // each position/address of a mail
+            for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort; curNode = curNode->mln_Succ)
             {
-              // if we did not find the message body yet
-              if(foundBody == FALSE)
+              struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+              struct Mail *mail = mtn->mail;
+              FILE *ofh = NULL;
+              char mfile[SIZE_MFILE];
+              char buffer[SIZE_LINE];
+              BOOL foundBody = FALSE;
+              unsigned int stat = SFLAG_NONE;
+              BOOL ownStatusFound = FALSE;
+
+              // if the mail is not flagged as 'loading' we can continue with the next
+              // node
+              if(hasTR_LOAD(mtn) == FALSE)
+                continue;
+
+              // seek to the file position where the mail resist
+              if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
+                break;
+
+              TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
+
+              if((ofh = fopen(MA_NewMailFile(folder, mfile), "w")) == NULL)
+                break;
+
+              setvbuf(ofh, NULL, _IOFBF, SIZE_FILEBUF);
+
+              // now that we seeked to the mail address we go
+              // and read in line by line
+              while(GetLine(ifh, buffer, SIZE_LINE) && !G->TR->Abort)
               {
-                if(buffer[0] == '\0')
-                  foundBody = TRUE; // we found the body part
+                // if we did not find the message body yet
+                if(foundBody == FALSE)
+                {
+                  if(buffer[0] == '\0')
+                    foundBody = TRUE; // we found the body part
+                  else
+                  {
+                    // we search for some interesting header lines (i.e. X-Status: etc.)
+                    if(strnicmp(buffer, "X-Status: ", 10) == 0)
+                    {
+                      if(ownStatusFound)
+                        stat |= MA_FromXStatusHeader(&buffer[10]);
+                      else
+                        stat = MA_FromXStatusHeader(&buffer[10]);
+
+                      ownStatusFound = TRUE;
+                    }
+                    else if(strnicmp(buffer, "Status: ", 8) == 0)
+                    {
+                      if(ownStatusFound)
+                        stat |= MA_FromStatusHeader(&buffer[8]);
+                      else
+                        stat = MA_FromStatusHeader(&buffer[8]);
+
+                      ownStatusFound = TRUE;
+                    }
+                  }
+
+                  fprintf(ofh, "%s\n", buffer);
+                }
                 else
                 {
-                  // we search for some interesting header lines (i.e. X-Status: etc.)
-                  if(strnicmp(buffer, "X-Status: ", 10) == 0)
-                  {
-                    if(ownStatusFound)
-                      stat |= MA_FromXStatusHeader(&buffer[10]);
-                    else
-                      stat = MA_FromXStatusHeader(&buffer[10]);
+                  char *p;
 
-                     ownStatusFound = TRUE;
-                  }
-                  else if(strnicmp(buffer, "Status: ", 8) == 0)
-                  {
-                    if(ownStatusFound)
-                      stat |= MA_FromStatusHeader(&buffer[8]);
-                    else
-                      stat = MA_FromStatusHeader(&buffer[8]);
+                  // now that we are parsing within the message body we have to
+                  // search for new "From " lines as well.
+                  if(strncmp(buffer, "From ", 5) == 0)
+                    break;
 
-                    ownStatusFound = TRUE;
-                  }
+                  // the mboxrd format specifies that we need to unquote any >From, >>From etc. occurance.
+                  // http://www.qmail.org/man/man5/mbox.html
+                  p = buffer;
+                  while(*p == '>')
+                    p++;
+
+                  // if we found a quoted line we need to check if there is a following "From " and if so
+                  // we have to skip ONE quote.
+                  if(p != buffer && strncmp(p, "From ", 5) == 0)
+                    fprintf(ofh, "%s\n", &buffer[1]);
+                  else
+                    fprintf(ofh, "%s\n", buffer);
                 }
 
-                fprintf(ofh, "%s\n", buffer);
+                // update the transfer statistics
+                TR_TransStat_Update(&ts, strlen(buffer)+1);
               }
-              else
+
+              fclose(ofh);
+              ofh = NULL;
+
+              // after writing out the mail to a
+              // new mail file we go and add it to the folder
+              if(ownStatusFound == FALSE)
               {
-                char *p;
-
-                // now that we are parsing within the message body we have to
-                // search for new "From " lines as well.
-                if(strncmp(buffer, "From ", 5) == 0)
-                  break;
-
-                // the mboxrd format specifies that we need to unquote any >From, >>From etc. occurance.
-                // http://www.qmail.org/man/man5/mbox.html
-                p = buffer;
-                while(*p == '>')
-                  p++;
-
-                // if we found a quoted line we need to check if there is a following "From " and if so
-                // we have to skip ONE quote.
-                if(p != buffer && strncmp(p, "From ", 5) == 0)
-                  fprintf(ofh, "%s\n", &buffer[1]);
+                // define the default status flags depending on the
+                // folder
+                if(ftype == FT_OUTGOING)
+                  stat = SFLAG_QUEUED;
+                else if(ftype == FT_SENT || ftype == FT_CUSTOMSENT)
+                  stat = SFLAG_SENT | SFLAG_READ;
                 else
-                  fprintf(ofh, "%s\n", buffer);
+                  stat = SFLAG_NEW;
               }
-
-              // update the transfer statistics
-              TR_TransStat_Update(&ts, strlen(buffer)+1);
-            }
-
-            fclose(ofh);
-            ofh = NULL;
-
-            // after writing out the mail to a
-            // new mail file we go and add it to the folder
-            if(ownStatusFound == FALSE)
-            {
-              // define the default status flags depending on the
-              // folder
-              if(ftype == FT_OUTGOING)
-                stat = SFLAG_QUEUED;
-              else if(ftype == FT_SENT || ftype == FT_CUSTOMSENT)
-                stat = SFLAG_SENT;
-              else
-                stat = SFLAG_NEW;
-            }
-
-            SET_FLAG(mail->sflags, stat);
-
-            // depending on the Status we have to set the transDate or not
-            if(!hasStatusQueued(mail) && !hasStatusHold(mail))
-              GetSysTimeUTC(&mail->transDate);
-
-            // add the mail to the folderlist now
-            if((mail = AddMailToList(mail, folder)))
-            {
-              // update the mailFile Path
-              memcpy(mail->MailFile, mfile, SIZE_MFILE*sizeof(char));
-
-              // if this was a compressed/encrypted folder we need to pack the mail now
-              if(folder->Mode > FM_SIMPLE)
-                RepackMailFile(mail, -1, NULL);
-
-              // update the mailfile accordingly.
-              MA_UpdateMailFile(mail);
-
-              // put the transferStat to 100%
-              TR_TransStat_Update(&ts, TS_SETMAX);
-            }
-          }
-
-          fclose(ifh);
-        }
-      }
-      break;
-
-      // the file was previously identified as a *.dbx file which
-      // was created by Outlook Express.
-      case IMF_DBX:
-      {
-        FILE *ifh;
-
-        if((ifh = fopen(G->TR->ImportFile, "rb")))
-        {
-          struct MinNode *curNode;
-
-          setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
-
-          // iterate through our transferList and seek to
-          // each position/address of a mail
-          for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort; curNode = curNode->mln_Succ)
-          {
-            struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-            struct Mail *mail = mtn->mail;
-            FILE *ofh = NULL;
-            char mfile[SIZE_MFILE];
-
-            // if the mail is not flagged as 'loading' we can continue with the next
-            // node
-            if(hasTR_LOAD(mtn) == FALSE)
-              continue;
-
-            // seek to the file position where the mail resist
-            if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
-              break;
-
-            TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
-
-            if((ofh = fopen(MA_NewMailFile(folder, mfile), "wb")) == NULL)
-              break;
-
-            setvbuf(ofh, NULL, _IOFBF, SIZE_FILEBUF);
-
-            if(ReadDBXMessage(ifh, ofh, mtn->importAddr) == FALSE)
-              E(DBF_IMPORT, "Couldn't import dbx message from addr %x", mtn->importAddr);
-
-            fclose(ofh);
-
-            // after writing out the mail to a
-            // new mail file we go and add it to the folder
-            if(mail->sflags != SFLAG_NONE)
-            {
-              unsigned int stat = SFLAG_NONE;
-
-              // define the default status flags depending on the
-              // folder
-              if(ftype == FT_OUTGOING)
-                stat = SFLAG_QUEUED;
-              else if(ftype == FT_SENT || ftype == FT_CUSTOMSENT)
-                stat = SFLAG_SENT;
-              else
-                stat = SFLAG_NEW;
 
               SET_FLAG(mail->sflags, stat);
+
+              // depending on the Status we have to set the transDate or not
+              if(!hasStatusQueued(mail) && !hasStatusHold(mail))
+                GetSysTimeUTC(&mail->transDate);
+
+              // add the mail to the folderlist now
+              if((mail = AddMailToList(mail, folder)) != NULL)
+              {
+                // update the mailFile Path
+                strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
+
+                // if this was a compressed/encrypted folder we need to pack the mail now
+                if(folder->Mode > FM_SIMPLE)
+                  RepackMailFile(mail, -1, NULL);
+
+                // update the mailfile accordingly.
+                MA_UpdateMailFile(mail);
+
+                // put the transferStat to 100%
+                TR_TransStat_Update(&ts, TS_SETMAX);
+              }
             }
 
-            // depending on the Status we have to set the transDate or not
-            if(!hasStatusQueued(mail) && !hasStatusHold(mail))
-              GetSysTimeUTC(&mail->transDate);
+            fclose(ifh);
+          }
+        }
+        break;
 
-            // add the mail to the folderlist now
-            if((mail = AddMailToList(mail, folder)))
+        // the file was previously identified as a *.dbx file which
+        // was created by Outlook Express.
+        case IMF_DBX:
+        {
+          FILE *ifh;
+
+          if((ifh = fopen(G->TR->ImportFile, "rb")) != NULL)
+          {
+            struct MinNode *curNode;
+
+            setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
+
+            // iterate through our transferList and seek to
+            // each position/address of a mail
+            for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort; curNode = curNode->mln_Succ)
             {
-              // update the mailFile Path
-              memcpy(mail->MailFile, mfile, SIZE_MFILE*sizeof(char));
+              struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+              struct Mail *mail = mtn->mail;
+              FILE *ofh = NULL;
+              char mfile[SIZE_MFILE];
 
-              // if this was a compressed/encrypted folder we need to pack the mail now
-              if(folder->Mode > FM_SIMPLE)
-                RepackMailFile(mail, -1, NULL);
+              // if the mail is not flagged as 'loading' we can continue with the next
+              // node
+              if(hasTR_LOAD(mtn) == FALSE)
+                continue;
 
-              // update the mailfile accordingly.
-              MA_UpdateMailFile(mail);
+              // seek to the file position where the mail resist
+              if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
+                break;
 
-              // put the transferStat to 100%
-              TR_TransStat_Update(&ts, TS_SETMAX);
+              TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
+
+              if((ofh = fopen(MA_NewMailFile(folder, mfile), "wb")) == NULL)
+                break;
+
+              setvbuf(ofh, NULL, _IOFBF, SIZE_FILEBUF);
+
+              if(ReadDBXMessage(ifh, ofh, mtn->importAddr) == FALSE)
+                E(DBF_IMPORT, "Couldn't import dbx message from addr %x", mtn->importAddr);
+
+              fclose(ofh);
+
+              // after writing out the mail to a
+              // new mail file we go and add it to the folder
+              if(mail->sflags != SFLAG_NONE)
+              {
+                unsigned int stat = SFLAG_NONE;
+
+                // define the default status flags depending on the
+                // folder
+                if(ftype == FT_OUTGOING)
+                  stat = SFLAG_QUEUED;
+                else if(ftype == FT_SENT || ftype == FT_CUSTOMSENT)
+                  stat = SFLAG_SENT | SFLAG_READ;
+                else
+                  stat = SFLAG_NEW;
+
+                SET_FLAG(mail->sflags, stat);
+              }
+
+              // depending on the Status we have to set the transDate or not
+              if(!hasStatusQueued(mail) && !hasStatusHold(mail))
+                GetSysTimeUTC(&mail->transDate);
+
+              // add the mail to the folderlist now
+              if((mail = AddMailToList(mail, folder)) != NULL)
+              {
+                // update the mailFile Path
+                strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
+
+                // if this was a compressed/encrypted folder we need to pack the mail now
+                if(folder->Mode > FM_SIMPLE)
+                  RepackMailFile(mail, -1, NULL);
+
+                // update the mailfile accordingly.
+                MA_UpdateMailFile(mail);
+
+                // put the transferStat to 100%
+                TR_TransStat_Update(&ts, TS_SETMAX);
+              }
             }
+
+            fclose(ifh);
           }
 
-          fclose(ifh);
+          case IMF_UNKNOWN:
+            // nothing
+          break;
         }
-
-        case IMF_UNKNOWN:
-          // nothing
         break;
       }
-      break;
+
+      DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
+      AppendLog(50, tr(MSG_LOG_Importing), ts.Msgs_Done, G->TR->ImportFile, folder->Name);
+      DisplayStatistics(folder, TRUE);
     }
 
-    DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
-    AppendLog(50, tr(MSG_LOG_Importing), ts.Msgs_Done, G->TR->ImportFile, folder->Name);
-    DisplayStatistics(folder, TRUE);
+    TR_AbortnClose();
   }
 
-  TR_AbortnClose();
+  LEAVE();
 }
 MakeHook(TR_ProcessIMPORTHook, TR_ProcessIMPORTFunc);
 ///
@@ -6827,166 +6831,173 @@ MakeStaticHook(TR_LV_DspFuncHook,TR_LV_DspFunc);
 //  Creates transfer window
 struct TR_ClassData *TR_New(enum TransferType TRmode)
 {
-   struct TR_ClassData *data = calloc(1, sizeof(struct TR_ClassData));
+  struct TR_ClassData *data;
 
-   if(data)
-   {
-      Object *bt_all = NULL, *bt_none = NULL, *bt_loadonly = NULL, *bt_loaddel = NULL, *bt_delonly = NULL, *bt_leave = NULL;
-      Object *gr_sel, *gr_proc, *gr_win;
-      BOOL fullwin = (TRmode == TR_GET || TRmode == TR_IMPORT);
-      static char status_label[SIZE_DEFAULT];
-      static char size_gauge_label[SIZE_DEFAULT];
-      static char msg_gauge_label[SIZE_DEFAULT];
-      static char str_size_done[SIZE_SMALL];
-      static char str_size_tot[SIZE_SMALL];
-      static char str_speed[SIZE_SMALL];
-      static char str_size_curr[SIZE_SMALL];
-      static char str_size_curr_max[SIZE_SMALL];
+  ENTER();
 
-      NewList((struct List *)&data->transferList);
+  if((data = calloc(1, sizeof(struct TR_ClassData))) != NULL)
+  {
+    Object *bt_all = NULL, *bt_none = NULL, *bt_loadonly = NULL, *bt_loaddel = NULL, *bt_delonly = NULL, *bt_leave = NULL;
+    Object *gr_sel, *gr_proc, *gr_win;
+    BOOL fullwin = (TRmode == TR_GET || TRmode == TR_IMPORT);
+    static char status_label[SIZE_DEFAULT];
+    static char size_gauge_label[SIZE_DEFAULT];
+    static char msg_gauge_label[SIZE_DEFAULT];
+    static char str_size_done[SIZE_SMALL];
+    static char str_size_tot[SIZE_SMALL];
+    static char str_speed[SIZE_SMALL];
+    static char str_size_curr[SIZE_SMALL];
+    static char str_size_curr_max[SIZE_SMALL];
 
-      // prepare the initial text object content
-      FormatSize(0, str_size_done, sizeof(str_size_done), SF_MIXED);
-      FormatSize(0, str_size_tot, sizeof(str_size_tot), SF_MIXED);
-      FormatSize(0, str_speed, sizeof(str_speed), SF_MIXED);
-      snprintf(status_label, sizeof(status_label), tr(MSG_TR_TRANSFERSTATUS),
-                                      str_size_done, str_size_tot, str_speed, 0, 0, 0, 0);
+    NewList((struct List *)&data->transferList);
 
-      snprintf(msg_gauge_label, sizeof(msg_gauge_label), tr(MSG_TR_MESSAGEGAUGE), 0);
+    // prepare the initial text object content
+    FormatSize(0, str_size_done, sizeof(str_size_done), SF_MIXED);
+    FormatSize(0, str_size_tot, sizeof(str_size_tot), SF_MIXED);
+    FormatSize(0, str_speed, sizeof(str_speed), SF_MIXED);
+    snprintf(status_label, sizeof(status_label), tr(MSG_TR_TRANSFERSTATUS),
+                                    str_size_done, str_size_tot, str_speed, 0, 0, 0, 0);
 
-      FormatSize(0, str_size_curr, sizeof(str_size_curr), SF_AUTO);
-      FormatSize(0, str_size_curr_max, sizeof(str_size_curr_max), SF_AUTO);
-      snprintf(size_gauge_label, sizeof(size_gauge_label), tr(MSG_TR_TRANSFERSIZE),
-                                                           str_size_curr, str_size_curr_max);
+    snprintf(msg_gauge_label, sizeof(msg_gauge_label), tr(MSG_TR_MESSAGEGAUGE), 0);
 
-      gr_proc = ColGroup(2), GroupFrameT(tr(MSG_TR_Status)),
-         Child, data->GUI.TX_STATS = TextObject,
-            MUIA_Text_Contents, status_label,
-            MUIA_Background,    MUII_TextBack,
-            MUIA_Frame,         MUIV_Frame_Text,
-            MUIA_Text_PreParse, MUIX_C,
-         End,
-         Child, VGroup,
-            Child, data->GUI.GA_COUNT = GaugeObject,
-               GaugeFrame,
-               MUIA_Gauge_Horiz,    TRUE,
-               MUIA_Gauge_InfoText, msg_gauge_label,
+    FormatSize(0, str_size_curr, sizeof(str_size_curr), SF_AUTO);
+    FormatSize(0, str_size_curr_max, sizeof(str_size_curr_max), SF_AUTO);
+    snprintf(size_gauge_label, sizeof(size_gauge_label), tr(MSG_TR_TRANSFERSIZE),
+                                                         str_size_curr, str_size_curr_max);
+
+    gr_proc = ColGroup(2), GroupFrameT(tr(MSG_TR_Status)),
+       Child, data->GUI.TX_STATS = TextObject,
+          MUIA_Text_Contents, status_label,
+          MUIA_Background,    MUII_TextBack,
+          MUIA_Frame,         MUIV_Frame_Text,
+          MUIA_Text_PreParse, MUIX_C,
+       End,
+       Child, VGroup,
+          Child, data->GUI.GA_COUNT = GaugeObject,
+             GaugeFrame,
+             MUIA_Gauge_Horiz,    TRUE,
+             MUIA_Gauge_InfoText, msg_gauge_label,
+          End,
+          Child, data->GUI.GA_BYTES = GaugeObject,
+             GaugeFrame,
+             MUIA_Gauge_Horiz,    TRUE,
+             MUIA_Gauge_InfoText, size_gauge_label,
+          End,
+       End,
+       Child, data->GUI.TX_STATUS = TextObject,
+          MUIA_Background,MUII_TextBack,
+          MUIA_Frame     ,MUIV_Frame_Text,
+       End,
+       Child, data->GUI.BT_ABORT = MakeButton(tr(MSG_TR_Abort)),
+    End;
+    if(fullwin)
+    {
+      data->GUI.GR_LIST = VGroup, GroupFrameT(TRmode==TR_IMPORT ? tr(MSG_TR_MsgInFile) : tr(MSG_TR_MsgOnServer)),
+         MUIA_ShowMe, TRmode==TR_IMPORT || C->PreSelection >= PSM_ALWAYS,
+         Child, NListviewObject,
+            MUIA_CycleChain,1,
+            MUIA_NListview_NList, data->GUI.LV_MAILS = TransferMailListObject,
+               MUIA_NList_MultiSelect, MUIV_NList_MultiSelect_Default,
+               MUIA_NList_Format        , "W=-1 BAR,W=-1 MACW=9 P=\33r BAR,MICW=20 BAR,MICW=16 BAR,MICW=9 MACW=15",
+               MUIA_NList_DisplayHook   , &TR_LV_DspFuncHook,
+               MUIA_NList_AutoVisible   , TRUE,
+               MUIA_NList_Title         , TRUE,
+               MUIA_NList_TitleSeparator, TRUE,
+               MUIA_NList_DoubleClick   , TRUE,
+               MUIA_NList_MinColSortable, 0,
+               MUIA_Font, C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
+               MUIA_ContextMenu         , NULL,
+               MUIA_NList_Exports, MUIV_NList_Exports_Cols,
+               MUIA_NList_Imports, MUIV_NList_Imports_Cols,
+               MUIA_ObjectID, MAKE_ID('N','L','0','4'),
             End,
-            Child, data->GUI.GA_BYTES = GaugeObject,
-               GaugeFrame,
-               MUIA_Gauge_Horiz,    TRUE,
-               MUIA_Gauge_InfoText, size_gauge_label,
-            End,
          End,
-         Child, data->GUI.TX_STATUS = TextObject,
-            MUIA_Background,MUII_TextBack,
-            MUIA_Frame     ,MUIV_Frame_Text,
-         End,
-         Child, data->GUI.BT_ABORT = MakeButton(tr(MSG_TR_Abort)),
       End;
-      if (fullwin)
-      {
-         data->GUI.GR_LIST = VGroup, GroupFrameT(TRmode==TR_IMPORT ? tr(MSG_TR_MsgInFile) : tr(MSG_TR_MsgOnServer)),
-            MUIA_ShowMe, TRmode==TR_IMPORT || C->PreSelection >= PSM_ALWAYS,
-            Child, NListviewObject,
-               MUIA_CycleChain,1,
-               MUIA_NListview_NList, data->GUI.LV_MAILS = TransferMailListObject,
-                  MUIA_NList_MultiSelect, MUIV_NList_MultiSelect_Default,
-                  MUIA_NList_Format        , "W=-1 BAR,W=-1 MACW=9 P=\33r BAR,MICW=20 BAR,MICW=16 BAR,MICW=9 MACW=15",
-                  MUIA_NList_DisplayHook   , &TR_LV_DspFuncHook,
-                  MUIA_NList_AutoVisible   , TRUE,
-                  MUIA_NList_Title         , TRUE,
-                  MUIA_NList_TitleSeparator, TRUE,
-                  MUIA_NList_DoubleClick   , TRUE,
-                  MUIA_NList_MinColSortable, 0,
-                  MUIA_Font, C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
-                  MUIA_ContextMenu         , NULL,
-                  MUIA_NList_Exports, MUIV_NList_Exports_Cols,
-                  MUIA_NList_Imports, MUIV_NList_Imports_Cols,
-                  MUIA_ObjectID, MAKE_ID('N','L','0','4'),
-               End,
-            End,
-         End;
-         gr_sel = VGroup, GroupFrameT(tr(MSG_TR_Control)),
-            Child, ColGroup(5),
-               Child, bt_all = MakeButton(tr(MSG_TR_All)),
-               Child, bt_loaddel = MakeButton(tr(MSG_TR_DownloadDelete)),
-               Child, bt_leave = MakeButton(tr(MSG_TR_Leave)),
-               Child, HSpace(0),
-               Child, data->GUI.BT_PAUSE = MakeButton(tr(MSG_TR_Pause)),
-               Child, bt_none = MakeButton(tr(MSG_TR_Clear)),
-               Child, bt_loadonly = MakeButton(tr(MSG_TR_DownloadOnly)),
-               Child, bt_delonly = MakeButton(tr(MSG_TR_DeleteOnly)),
-               Child, HSpace(0),
-               Child, data->GUI.BT_RESUME = MakeButton(tr(MSG_TR_Resume)),
-            End,
-            Child, ColGroup(2),
-               Child, data->GUI.BT_START = MakeButton(tr(MSG_TR_Start)),
-               Child, data->GUI.BT_QUIT = MakeButton(tr(MSG_TR_Abort)),
-            End,
-         End;
-         gr_win = VGroup,
-            Child, data->GUI.GR_LIST,
-            Child, data->GUI.GR_PAGE = PageGroup,
-               Child, gr_sel,
-               Child, gr_proc,
-            End,
-         End;
-      }
-      else
-      {
-        gr_win = VGroup, MUIA_Frame, MUIV_Frame_None,
-           Child, gr_proc,
-        End;
-      }
-
-      data->GUI.WI = WindowObject,
-         MUIA_Window_ID, MAKE_ID('T','R','A','0'+TRmode),
-         MUIA_Window_CloseGadget, FALSE,
-         MUIA_Window_Activate, (TRmode == TR_IMPORT || TRmode == TR_EXPORT),
-         MUIA_HelpNode, "TR_W",
-         WindowContents, gr_win,
+      gr_sel = VGroup, GroupFrameT(tr(MSG_TR_Control)),
+         Child, ColGroup(5),
+            Child, bt_all = MakeButton(tr(MSG_TR_All)),
+            Child, bt_loaddel = MakeButton(tr(MSG_TR_DownloadDelete)),
+            Child, bt_leave = MakeButton(tr(MSG_TR_Leave)),
+            Child, HSpace(0),
+            Child, data->GUI.BT_PAUSE = MakeButton(tr(MSG_TR_Pause)),
+            Child, bt_none = MakeButton(tr(MSG_TR_Clear)),
+            Child, bt_loadonly = MakeButton(tr(MSG_TR_DownloadOnly)),
+            Child, bt_delonly = MakeButton(tr(MSG_TR_DeleteOnly)),
+            Child, HSpace(0),
+            Child, data->GUI.BT_RESUME = MakeButton(tr(MSG_TR_Resume)),
+         End,
+         Child, ColGroup(2),
+            Child, data->GUI.BT_START = MakeButton(tr(MSG_TR_Start)),
+            Child, data->GUI.BT_QUIT = MakeButton(tr(MSG_TR_Abort)),
+         End,
       End;
+      gr_win = VGroup,
+         Child, data->GUI.GR_LIST,
+         Child, data->GUI.GR_PAGE = PageGroup,
+            Child, gr_sel,
+            Child, gr_proc,
+         End,
+      End;
+    }
+    else
+    {
+      gr_win = VGroup, MUIA_Frame, MUIV_Frame_None,
+         Child, gr_proc,
+      End;
+    }
 
-      if (data->GUI.WI)
+    data->GUI.WI = WindowObject,
+       MUIA_Window_ID, MAKE_ID('T','R','A','0'+TRmode),
+       MUIA_Window_CloseGadget, FALSE,
+       MUIA_Window_Activate, (TRmode == TR_IMPORT || TRmode == TR_EXPORT),
+       MUIA_HelpNode, "TR_W",
+       WindowContents, gr_win,
+    End;
+
+    if(data->GUI.WI != NULL)
+    {
+      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+      SetHelp(data->GUI.TX_STATUS,MSG_HELP_TR_TX_STATUS);
+      SetHelp(data->GUI.BT_ABORT ,MSG_HELP_TR_BT_ABORT);
+      if(fullwin)
       {
-         DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-         SetHelp(data->GUI.TX_STATUS,MSG_HELP_TR_TX_STATUS);
-         SetHelp(data->GUI.BT_ABORT ,MSG_HELP_TR_BT_ABORT);
-         if (fullwin)
-         {
-            set(data->GUI.BT_RESUME, MUIA_Disabled, TRUE);
-            if (TRmode == TR_IMPORT)
-            {
-               set(data->GUI.BT_PAUSE, MUIA_Disabled, TRUE);
-               set(bt_delonly        , MUIA_Disabled, TRUE);
-               set(bt_loaddel        , MUIA_Disabled, TRUE);
-               DoMethod(data->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_ProcessIMPORTHook);
-               DoMethod(data->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_AbortIMPORTHook);
-            }
-            else
-            {
-               set(data->GUI.GR_PAGE, MUIA_Group_ActivePage, 1);
-               DoMethod(data->GUI.BT_RESUME,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_PauseHook, FALSE);
-               DoMethod(data->GUI.BT_PAUSE ,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_PauseHook, TRUE);
-               DoMethod(data->GUI.BT_PAUSE, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Pause));
-               DoMethod(data->GUI.LV_MAILS ,MUIM_Notify, MUIA_NList_DoubleClick,TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_GetMessageInfoHook);
-               DoMethod(bt_delonly,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_DELETE);
-               DoMethod(bt_loaddel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, (TRF_LOAD|TRF_DELETE));
-               DoMethod(data->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Start));
-               DoMethod(data->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
-            }
-            DoMethod(bt_loadonly,        MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_LOAD);
-            DoMethod(bt_leave,           MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_NONE);
-            DoMethod(bt_all,             MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
-            DoMethod(bt_none,            MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
-         }
-         DoMethod(data->GUI.BT_ABORT, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
-         MA_ChangeTransfer(FALSE);
-         return data;
+        set(data->GUI.BT_RESUME, MUIA_Disabled, TRUE);
+        if(TRmode == TR_IMPORT)
+        {
+          set(data->GUI.BT_PAUSE, MUIA_Disabled, TRUE);
+          set(bt_delonly        , MUIA_Disabled, TRUE);
+          set(bt_loaddel        , MUIA_Disabled, TRUE);
+          DoMethod(data->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_ProcessIMPORTHook);
+          DoMethod(data->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_AbortIMPORTHook);
+        }
+        else
+        {
+          set(data->GUI.GR_PAGE, MUIA_Group_ActivePage, 1);
+          DoMethod(data->GUI.BT_RESUME,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_PauseHook, FALSE);
+          DoMethod(data->GUI.BT_PAUSE ,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_PauseHook, TRUE);
+          DoMethod(data->GUI.BT_PAUSE, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Pause));
+          DoMethod(data->GUI.LV_MAILS ,MUIM_Notify, MUIA_NList_DoubleClick,TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_GetMessageInfoHook);
+          DoMethod(bt_delonly,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_DELETE);
+          DoMethod(bt_loaddel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, (TRF_LOAD|TRF_DELETE));
+          DoMethod(data->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Start));
+          DoMethod(data->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
+        }
+        DoMethod(bt_loadonly,        MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_LOAD);
+        DoMethod(bt_leave,           MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_NONE);
+        DoMethod(bt_all,             MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
+        DoMethod(bt_none,            MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
       }
+      DoMethod(data->GUI.BT_ABORT, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
+      MA_ChangeTransfer(FALSE);
+    }
+    else
+    {
       free(data);
-   }
-   return NULL;
+      data = NULL;
+    }
+  }
+
+  RETURN(data);
+  return data;
 }
 ///
