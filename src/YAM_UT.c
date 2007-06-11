@@ -4201,9 +4201,8 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
 
   ENTER();
 
-  if((new = malloc(sizeof(struct Mail))) != NULL)
+  if((new = memdup(mail, sizeof(struct Mail))) != NULL)
   {
-    memcpy(new, mail, sizeof(struct Mail));
     new->Folder = folder;
 
     // lets add the new Message to our message list
