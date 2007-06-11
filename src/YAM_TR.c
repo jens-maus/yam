@@ -6292,13 +6292,14 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                 // define the default status flags depending on the
                 // folder
                 if(ftype == FT_OUTGOING)
-                  stat = SFLAG_QUEUED;
+                  stat = SFLAG_QUEUED | SFLAG_READ;
                 else if(ftype == FT_SENT || ftype == FT_CUSTOMSENT)
                   stat = SFLAG_SENT | SFLAG_READ;
                 else
                   stat = SFLAG_NEW;
               }
 
+              // set the status flags now
               SET_FLAG(mail->sflags, stat);
 
               // depending on the Status we have to set the transDate or not
@@ -6379,7 +6380,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                 // define the default status flags depending on the
                 // folder
                 if(ftype == FT_OUTGOING)
-                  stat = SFLAG_QUEUED;
+                  stat = SFLAG_QUEUED | SFLAG_READ;
                 else if(ftype == FT_SENT || ftype == FT_CUSTOMSENT)
                   stat = SFLAG_SENT | SFLAG_READ;
                 else
