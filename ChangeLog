@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-11  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c, YAM_main.h: the MA_ImportMessages() function now only checks the
+    first 10 lines of a file for identifying a specified import file as an MBOX
+    format file or otherwise certain files may be miss-identified.
+  * YAM_TR.c: an outgoing mailfolder is also a sentmail folder per definition
+    and as such the fix for bug #1735093 should include it when setting a default
+    status flag during the import mail action.
+
 2007-06-11  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: importing a mail to the Sent folder will now mark it as read if no

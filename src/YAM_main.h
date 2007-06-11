@@ -348,7 +348,7 @@ void  MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL clos
 BOOL  MA_ExportMessages(BOOL all, char *filename, BOOL append);
 struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folderp, LONG *activep);
 void  MA_GetAddress(struct Mail **mlist);
-BOOL  MA_ImportMessages(char *fname);
+BOOL  MA_ImportMessages(const char *fname);
 struct MA_ClassData *MA_New(void);
 BOOL  MA_SortWindow(void);
 void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit, BOOL closeWindows);

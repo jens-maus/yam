@@ -3772,7 +3772,7 @@ MakeHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
 ///
 /// MA_ImportMessages
 //  Imports messages from a MBOX mailbox file
-BOOL MA_ImportMessages(char *fname)
+BOOL MA_ImportMessages(const char *fname)
 {
   BOOL result = FALSE;
   struct Folder *actfo = FO_GetCurrentFolder();
@@ -3792,6 +3792,7 @@ BOOL MA_ImportMessages(char *fname)
   // it immediately.
   if((fh = fopen(fname, "r")))
   {
+    int i=0;
     char buffer[SIZE_LINE];
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
@@ -3800,12 +3801,19 @@ BOOL MA_ImportMessages(char *fname)
     // file the user tries to import and if it is a valid
     // and supported one.
 
-    // try to identify the file as an MBOX file
+    // try to identify the file as an MBOX file by trying
+    // to find a line starting with "From " in the first 10
+    // successive lines.
     D(DBF_IMPORT, "processing MBOX file identification");
-    while(fgets(buffer, SIZE_LINE, fh) && foundFormat == IMF_UNKNOWN)
+    while(i < 10 && fgets(buffer, SIZE_LINE, fh))
     {
       if(strncmp(buffer, "From ", 5) == 0)
+      {
         foundFormat = IMF_MBOX;
+        break;
+      }
+
+      i++;
     }
 
     // if we still couldn't identify the file
