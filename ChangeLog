@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-11  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: added some ENTER(), LEAVE() and RETURN() macros to some functions.
+
 2007-06-10  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c: when editing a mail as a complete new one, the user's From:

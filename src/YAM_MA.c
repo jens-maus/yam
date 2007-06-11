@@ -537,10 +537,14 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   char dateFilePart[12 + 1];
   char statusFilePart[14 + 1];
   char oldFilePath[SIZE_PATHFILE];
-  const char *folderDir = GetFolderDir(mail->Folder);
+  const char *folderDir;
   char *ptr;
   BOOL success = FALSE;
   int mcounter;
+
+  ENTER();
+
+  folderDir = GetFolderDir(mail->Folder);
 
   // modify the transferDate part
   base64encode(dateFilePart, (unsigned char *)&mail->transDate, sizeof(struct timeval));
@@ -636,6 +640,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
     }
   }
 
+  RETURN(success);
   return success;
 }
 
@@ -1050,6 +1055,8 @@ char *MA_ToStatusHeader(struct Mail *mail)
 {
   static char flags[3]; // should not be more than 3 bytes
 
+  ENTER();
+
   if(hasStatusRead(mail))
   {
     if(hasStatusNew(mail))
@@ -1077,6 +1084,7 @@ char *MA_ToStatusHeader(struct Mail *mail)
     }
   }
 
+  RETURN(flags);
   return flags;
 }
 ///
@@ -1087,6 +1095,8 @@ char *MA_ToXStatusHeader(struct Mail *mail)
 {
   static char flags[10]; // should not be more than 9+1 bytes
   char *ptr = flags;
+
+  ENTER();
 
   if(hasStatusRead(mail))
     *ptr++ = 'R';
@@ -1115,6 +1125,7 @@ char *MA_ToXStatusHeader(struct Mail *mail)
   // NUL terminate it
   *ptr = '\0';
 
+  RETURN(flags);
   return flags;
 }
 ///
@@ -1124,6 +1135,8 @@ char *MA_ToXStatusHeader(struct Mail *mail)
 unsigned int MA_FromStatusHeader(char *statusflags)
 {
   unsigned int sflags = SFLAG_NEW;
+
+  ENTER();
 
   while(*statusflags != '\0')
   {
@@ -1141,6 +1154,7 @@ unsigned int MA_FromStatusHeader(char *statusflags)
     statusflags++;
   }
 
+  RETURN(sflags);
   return sflags;
 }
 ///
@@ -1150,6 +1164,8 @@ unsigned int MA_FromStatusHeader(char *statusflags)
 unsigned int MA_FromXStatusHeader(char *xstatusflags)
 {
   unsigned int sflags = SFLAG_NEW;
+
+  ENTER();
 
   while(*xstatusflags != '\0')
   {
@@ -1198,6 +1214,7 @@ unsigned int MA_FromXStatusHeader(char *xstatusflags)
     xstatusflags++;
   }
 
+  RETURN(sflags);
   return sflags;
 }
 ///
