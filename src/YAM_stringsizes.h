@@ -64,7 +64,6 @@
 #define MAXICONS         4
 #define MAXERR          50
 #define MAXUSERS        16
-#define MAXCTYPE        25
 #define MAXEA            4
 #define MAXWR            2 /* BEWARE: Don't change this value - it's hardcoded many places! */
 
