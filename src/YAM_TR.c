@@ -1885,9 +1885,9 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
     // from the socket can be splitted somehow.
     for(bufptr = buf; read > 0; bufptr++, read--)
     {
-      // first we check if out buffer is full and if so we
+      // first we check if our buffer is full and if so we
       // write it to the file.
-      if(l == sizeof(buf) || done == TRUE)
+      if(l == sizeof(line) || done == TRUE)
       {
         // update the transferstatus
         if(ts != NULL)
@@ -2029,7 +2029,7 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
       break;
 
     // if not, we get another bunch of data and start over again.
-    if((read = TR_Recv(buf, SIZE_LINE)) <= 0)
+    if((read = TR_Recv(buf, sizeof(buf))) <= 0)
       break;
 
     count += read;
@@ -3616,7 +3616,7 @@ static void TR_DisconnectPOP(void)
 {
   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
 
-  if(!G->Error)
+  if(G->Error == FALSE)
     TR_SendPOP3Cmd(POPCMD_QUIT, NULL, tr(MSG_ER_BADRESPONSE));
 
   TR_Disconnect();
@@ -4904,6 +4904,7 @@ static void RemoveUIDLfromHash(const char *uidl)
 BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
 {
   BOOL success = FALSE;
+  BOOL abort = FALSE;
   int i;
 
   ENTER();
@@ -4933,14 +4934,27 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
           AddTail((struct List *)&(G->TR->transferList), (struct Node *)mtn);
         }
         else
+        {
+          // we end up in a low memory condition, lets exit
+          // after having freed everything
           free(mtn);
+          abort = TRUE;
+          break;
+        }
+      }
+      else
+      {
+        // we end up in a low memory condition, lets exit
+        abort = TRUE;
+        break;
       }
     }
   }
 
   // if we have now something in our processing list,
   // lets go on
-  if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
+  if(abort == FALSE &&
+     IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
   {
     FILE *fh;
     struct TransStat ts;

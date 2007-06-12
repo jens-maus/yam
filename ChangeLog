@@ -7,6 +7,9 @@ $URL$
 
 2007-06-12  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c: partly reverted some latest cosmetic changes. In addition, the
+    ProcessEXPORT() function will now abort the export action cleanly because
+    an unsuccessfully malloc() should always be aborted immediately.
   * YAM.cd, deutsch.ct: rephrased the new error message to match the new form
     of other similar connection relevant error messages.
 
