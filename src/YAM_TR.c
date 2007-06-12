@@ -4905,6 +4905,8 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
   BOOL success = FALSE;
   int i;
 
+  ENTER();
+
   // reset our processing list
   NewList((struct List *)&G->TR->transferList);
 
@@ -4930,13 +4932,8 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
           AddTail((struct List *)&(G->TR->transferList), (struct Node *)mtn);
         }
         else
-        {
           free(mtn);
-          return FALSE;
-        }
       }
-      else
-        return FALSE;
     }
   }
 
@@ -5077,6 +5074,8 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
   }
 
   TR_AbortnClose();
+
+  RETURN(success);
   return success;
 }
 ///

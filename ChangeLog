@@ -7,6 +7,9 @@ $URL$
 
 2007-06-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: TR_ProcessEXPORT() no longer returns without freeing the list of
+    mails without freeing the items if copying of one item fails. Instead only
+    the partly copied list will be processed.
   * YAM_TR.c: added some missing free() calls in case a subsequent malloc()
     fails.
   * YAM_CO.c, YAM_FI.c, YAM_TR.c: replaced some more calloc()/memcpy() pairs by
