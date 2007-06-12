@@ -7991,7 +7991,8 @@ MSG_WR_MCANCEL
 Abbrechen
 ;
 MSG_ER_CONNECTIONBROKEN
-TCP/IP-Verbindung mit Server '%s' wurde während des Kommandos '%s' unterbrochen.\n\
+Die TCP/IP-Verbindung mit Server '%s' wurde während \
+des Kommandos '%s' unterbrochen.\n\
 \n\
-Vermutlich hat der Verbindungspartner aufgelegt.
+Vermutlich hat Ihr Verbindungspartner abgebrochen.
 ;

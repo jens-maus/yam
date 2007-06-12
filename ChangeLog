@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-12  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.cd, deutsch.ct: rephrased the new error message to match the new form
+    of other similar connection relevant error messages.
+
 2007-06-12  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: TR_ProcessEXPORT() no longer returns without freeing the list of

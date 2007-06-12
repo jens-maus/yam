@@ -6290,5 +6290,8 @@ MSG_WR_MCANCEL (1954//)
 Cancel
 ;
 MSG_ER_CONNECTIONBROKEN (1955//)
-TCP/IP connection with server '%s' broken on command '%s', probably due to a carrier drop.
+The TCP/IP connection with server '%s' was interrupted \
+while trying to send command '%s'.\n\
+\n\
+This may be due to a connection drop by the server.
 ;
