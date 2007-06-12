@@ -1867,6 +1867,7 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
   char buf[SIZE_LINE];
   char line[SIZE_LINE];
   BOOL done=FALSE;
+  char *lineptr = line;
 
   ENTER();
 
@@ -1877,7 +1878,6 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
   while(G->Error == FALSE && G->TR->Abort == FALSE)
   {
     char *bufptr;
-    char *lineptr = line;
 
     // now we iterate through the received string
     // and strip out the '\r' character.
@@ -1906,6 +1906,7 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
 
         // set l to zero so that the next char gets written to the beginning
         l = 0;
+        lineptr = line;
       }
 
       // we have to analyze different states because we iterate through our
