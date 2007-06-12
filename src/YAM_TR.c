@@ -3840,6 +3840,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
                   // ...or any sort of preselection and there is a maximum size
 
                   struct MinNode *curNode;
+
                   for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
                   {
                     struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
@@ -4293,6 +4294,7 @@ static void TR_TransStat_Init(struct TransStat *ts)
   {
     // search through our transferList
     struct MinNode *curNode;
+
     for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
@@ -4928,7 +4930,10 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
           AddTail((struct List *)&(G->TR->transferList), (struct Node *)mtn);
         }
         else
+        {
+          free(mtn);
           return FALSE;
+        }
       }
       else
         return FALSE;
@@ -5609,7 +5614,10 @@ static struct MailTransferNode *TR_AddMessageHeader(int *count, int size, long a
         ret = mtn;
       }
       else
+      {
+        free(mtn);
         E(DBF_IMPORT, "Couldn't allocate enough memory for struct Mail");
+      }
     }
     else
       E(DBF_IMPORT, "Couldn't allocate enough memory for struct MailTransferNode");
@@ -7059,3 +7067,4 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
   return data;
 }
 ///
+
