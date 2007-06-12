@@ -671,11 +671,11 @@ static void TC_Exit(void)
   // first we abort & delete the IORequests
   if(TCData.timer[0].tr != NULL)
   {
-    int i;
+    enum TimerIO tio;
 
     // first make sure every TimerIO is stoppped
-    for(i=0; i < TIO_NUM; i++)
-      TC_Stop(i);
+    for(tio = TIO_WRINDEX; tio < TIO_NUM; tio++)
+      TC_Stop(tio);
 
     // then close the device
     if(TCData.timer[0].tr->Request.io_Device != NULL)
@@ -687,17 +687,17 @@ static void TC_Exit(void)
     }
 
     // and then we delete the IO requests
-    for(i=1; i < TIO_NUM; i++)
+    for(tio = TIO_WRINDEX + 1; tio < TIO_NUM; tio++)
     {
-      if(TCData.timer[i].tr != NULL)
+      if(TCData.timer[tio].tr != NULL)
       {
         #if defined(__amigaos4__)
-        FreeSysObject(ASOT_IOREQUEST, TCData.timer[i].tr);
+        FreeSysObject(ASOT_IOREQUEST, TCData.timer[tio].tr);
         #else
-        FreeMem(TCData.timer[i].tr, sizeof(struct TimeRequest));
+        FreeMem(TCData.timer[tio].tr, sizeof(struct TimeRequest));
         #endif
 
-        TCData.timer[i].tr = NULL;
+        TCData.timer[tio].tr = NULL;
       }
     }
 
@@ -738,28 +738,28 @@ static BOOL TC_Init(void)
         if((TimerBase = (APTR)TCData.timer[0].tr->Request.io_Device) &&
            GETINTERFACE("main", ITimer, TimerBase))
         {
-          int i;
+          enum TimerIO tio;
 
           // create our other TimerIOs now
-          for(i=1; i < TIO_NUM; i++)
+          for(tio = TIO_WRINDEX + 1; tio < TIO_NUM; tio++)
           {
             #if defined(__amigaos4__)
             // on OS4 we use AllocSysObjectTags to give the OS a better chance to
             // free the data in case YAM crashes
-            if(!(TCData.timer[i].tr = AllocSysObjectTags(ASOT_IOREQUEST,
-                                                         ASOIOR_Size,      sizeof(struct TimeRequest),
-                                                         ASOIOR_ReplyPort, TCData.port,
-                                                         TAG_DONE)))
+            if(!(TCData.timer[tio].tr = AllocSysObjectTags(ASOT_IOREQUEST,
+                                                           ASOIOR_Size,      sizeof(struct TimeRequest),
+                                                           ASOIOR_ReplyPort, TCData.port,
+                                                           TAG_DONE)))
             {
               break;
             }
             #else
-            if(!(TCData.timer[i].tr = AllocMem(sizeof(struct TimeRequest), MEMF_PUBLIC)))
+            if(!(TCData.timer[tio].tr = AllocMem(sizeof(struct TimeRequest), MEMF_PUBLIC)))
               break;
             #endif
 
             // copy the data of timerIO[0] to the new one
-            CopyMem(TCData.timer[0].tr, TCData.timer[i].tr, sizeof(struct TimeRequest));
+            CopyMem(TCData.timer[0].tr, TCData.timer[tio].tr, sizeof(struct TimeRequest));
           }
         }
       }
@@ -980,6 +980,8 @@ static void TC_Dispatcher(enum TimerIO tio)
     // later.
     case TIO_DELETEZOMBIEFILES:
     {
+      D(DBF_TIMERIO, "timer[%ld]: TIO_DELETEZOMBIEFILES received: %s", tio, dateString);
+
       if(DeleteZombieFiles(FALSE) == FALSE)
       {
         // trigger the retry mechanism in 5 minutes
@@ -2888,11 +2890,11 @@ int main(int argc, char **argv)
               // check if we have a waiting message
               while((timeReq = (struct TimeRequest *)GetMsg(TCData.port)))
               {
-                int i;
+                enum TimerIO tio;
 
-                for(i=0; i < TIO_NUM; i++)
+                for(tio = TIO_WRINDEX; tio < TIO_NUM; tio++)
                 {
-                  struct TC_Request *timer = &TCData.timer[i];
+                  struct TC_Request *timer = &TCData.timer[tio];
 
                   if(timeReq == timer->tr)
                   {
@@ -2903,7 +2905,7 @@ int main(int argc, char **argv)
 
                     // call the dispatcher with signalling which timerIO
                     // this request caused
-                    TC_Dispatcher(i);
+                    TC_Dispatcher(tio);
 
                     // signal that we processed something
                     processed = TRUE;

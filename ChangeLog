@@ -7,6 +7,8 @@ $URL$
 
 2007-06-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: all the timer stuff now uses an enumeration value for the loops
+    instead of a simple integer.
   * YAM_stringsizes.h: removed an unused constant.
   * YAM_TR.c, locale/YAM.cd, locale/deutsch.ct: a broken connection message did
     not include the server and command name. Also cleaned up some functions. The
