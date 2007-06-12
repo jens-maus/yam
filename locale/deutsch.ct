@@ -4861,12 +4861,6 @@ YAM kann die Nachricht nicht auf der Festplatte speichern, vielleicht ist diese 
 ; YAM can't save the message to disk, maybe you're out of disk space.
 ; FILENAME
 ;
-MSG_ER_ConnectionBroken
-TCP/IP-Verbindung wurde unterbrochen.\n\
-\n\
-Vermutlich hat der Verbindungspartner aufgelegt.
-; TCP/IP connection broken, probably due to a carrier drop.
-;
 MSG_ER_ErrorReadMailfile
 Fehler beim Lesen der Nachrichtendatei: %s.\n\
 \n\
@@ -7995,4 +7989,9 @@ Halten
 ;
 MSG_WR_MCANCEL
 Abbrechen
+;
+MSG_ER_CONNECTIONBROKEN
+TCP/IP-Verbindung mit Server '%s' wurde während des Kommandos '%s' unterbrochen.\n\
+\n\
+Vermutlich hat der Verbindungspartner aufgelegt.
 ;

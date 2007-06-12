@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-12  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c, locale/YAM.cd, locale/deutsch.ct: a broken connection message did
+    not include the server and command name. Also cleaned up some functions. The
+    SendSMTPCmd() and SendPOPCmd() functions now get the translated error
+    message as last parameter.
+
 2007-06-11  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: changed all "static const char**" arrays to be somewhat more const by
@@ -20,10 +27,10 @@ $URL$
 2007-06-11  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: importing a mail to the Sent folder will now mark it as read if no
-    YAM specific header was found. Mail with such a header which states that the
+    YAM specific header was found. A mail with a header which states that this
     mail is unread will still be marked as such, even if the folder is the Sent
-    folder, which does not offer to mark a mail a read. This fixes bug #1735093.
-  * YAM_UT.c: replaced a malloc()/memcpy() pair be a call to memdup().
+    folder, which does not offer to mark a mail as read. This fixes bug #1735093.
+  * YAM_UT.c: replaced a malloc()/memcpy() pair by a call to memdup().
   * YAM_MA.c: added some ENTER(), LEAVE() and RETURN() macros to some functions.
 
 2007-06-10  Jens Langner <Jens.Langner@light-speed.de>

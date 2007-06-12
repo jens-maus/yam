@@ -3542,9 +3542,6 @@ Write error on mail file: %s.\n\
 YAM can't save the message to disk, maybe you're out of disk space.
 ; FILENAME
 ;
-MSG_ER_ConnectionBroken (1133//)
-TCP/IP connection broken, probably due to a carrier drop.
-;
 MSG_ER_ErrorReadMailfile (1135//)
 Read error on mail file: %s.\n\
 \n\
@@ -6291,4 +6288,7 @@ Hold
 ;
 MSG_WR_MCANCEL (1954//)
 Cancel
+;
+MSG_ER_CONNECTIONBROKEN (1955//)
+TCP/IP connection with server '%s' broken on command '%s', probably due to a carrier drop.
 ;
