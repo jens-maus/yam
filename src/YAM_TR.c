@@ -1863,23 +1863,22 @@ static int TR_Recv(char *recvdata, int maxlen)
 // updates the Transfer status
 static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
 {
-  int l, read, state=0, count;
+  int l=0, read, state=0, count;
   char buf[SIZE_LINE];
   char line[SIZE_LINE];
-  char *bufptr;
-  char *lineptr;
   BOOL done=FALSE;
 
   ENTER();
 
   // get the first data the pop server returns after the TOP command
-  if((read = count = TR_Recv(buf, SIZE_LINE)) <= 0)
+  if((read = count = TR_Recv(buf, sizeof(buf))) <= 0)
     G->Error = TRUE;
 
-  l = 0;
-  lineptr = line;
   while(G->Error == FALSE && G->TR->Abort == FALSE)
   {
+    char *bufptr;
+    char *lineptr = line;
+
     // now we iterate through the received string
     // and strip out the '\r' character.
     // we iterate through it because the strings we receive
@@ -1888,7 +1887,7 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
     {
       // first we check if out buffer is full and if so we
       // write it to the file.
-      if(l == sizeof(line) || done == TRUE)
+      if(l == sizeof(buf) || done == TRUE)
       {
         // update the transferstatus
         if(ts != NULL)
@@ -1907,7 +1906,6 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
 
         // set l to zero so that the next char gets written to the beginning
         l = 0;
-        lineptr = line;
       }
 
       // we have to analyze different states because we iterate through our
@@ -1948,7 +1946,7 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
           {
             state++; // now it`s 3 or 6
             continue;
-          }
+          } 
 
           state = 0;
         }
@@ -1961,8 +1959,7 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
         {
           if(state == 3 && *bufptr == '\r')
           {
-            // we found a \r directly after a "\r\n.", so it can be the start of a TERM
-            state = 4;
+            state = 4; // we found a \r directly after a "\r\n.", so it can be the start of a TERM
           }
           else if(*bufptr == '.')
           {
@@ -3618,7 +3615,7 @@ static void TR_DisconnectPOP(void)
 {
   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
 
-  if(G->Error == FALSE)
+  if(!G->Error)
     TR_SendPOP3Cmd(POPCMD_QUIT, NULL, tr(MSG_ER_BADRESPONSE));
 
   TR_Disconnect();
@@ -4903,178 +4900,179 @@ static void RemoveUIDLfromHash(const char *uidl)
 //  Saves a list of messages to a MBOX mailbox file
 BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
 {
-   BOOL success = FALSE;
-   int i;
+  BOOL success = FALSE;
+  int i;
 
-   // reset our processing list
-   NewList((struct List *)&G->TR->transferList);
+  // reset our processing list
+  NewList((struct List *)&G->TR->transferList);
 
-   // temporarly copy all data out of our mlist to the
-   // processing list and mark all mails to get "loaded"
-   for(i = 0; i < (int)*mlist; i++)
-   {
-     struct Mail *mail = mlist[i + 2];
+  // temporarly copy all data out of our mlist to the
+  // processing list and mark all mails to get "loaded"
+  for(i = 0; i < (int)*mlist; i++)
+  {
+    struct Mail *mail = mlist[i + 2];
 
-     if(mail != NULL)
-     {
-       struct MailTransferNode *mtn;
+    if(mail != NULL)
+    {
+      struct MailTransferNode *mtn;
 
-       if((mtn = calloc(1, sizeof(struct MailTransferNode))) != NULL)
-       {
-         if((mtn->mail = malloc(sizeof(struct Mail))) != NULL)
-         {
-           memcpy(mtn->mail, mail, sizeof(struct Mail));
-           mtn->index = i + 1;
-
-           // set to LOAD
-           mtn->tflags = TRF_LOAD;
-
-           AddTail((struct List *)&(G->TR->transferList), (struct Node *)mtn);
-         }
-         else
-           return FALSE;
-       }
-       else
-         return FALSE;
-     }
-   }
-
-   // if we have now something in our processing list,
-   // lets go on
-   if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
-   {
-      FILE *fh;
-      struct TransStat ts;
-
-      TR_SetWinTitle(FALSE, (char *)FilePart(fname));
-      TR_TransStat_Init(&ts);
-      TR_TransStat_Start(&ts);
-
-      // open our final destination file either in append or in a fresh
-      // write mode.
-      if((fh = fopen(fname, append ? "a" : "w")))
+      if((mtn = calloc(1, sizeof(struct MailTransferNode))) != NULL)
       {
-         struct MinNode *curNode;
+        if((mtn->mail = memdup(mail, sizeof(struct Mail))) != NULL)
+        {
+          mtn->index = i + 1;
 
-         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+          // set to LOAD
+          mtn->tflags = TRF_LOAD;
 
-         success = TRUE;
-
-         for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort && success; curNode = curNode->mln_Succ)
-         {
-            struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-            struct Mail *mail = mtn->mail;
-            char fullfile[SIZE_PATHFILE];
-
-            // update the transfer status
-            ts.Msgs_Done++;
-            TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, tr(MSG_TR_Exporting));
-
-            if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder))
-            {
-               FILE *mfh;
-
-               // open the message file to start exporting it
-               if((mfh = fopen(fullfile, "r")))
-               {
-                  char datstr[64];
-                  char buf[SIZE_LINE];
-                  BOOL inHeader = TRUE;
-
-                  // printf out our leading "From " MBOX format line first
-                  DateStamp2String(datstr, sizeof(datstr), &mail->Date, DSS_UNIXDATE, TZC_NONE);
-                  fprintf(fh, "From %s %s", mail->From.Address, datstr);
-
-                  // let us put out the Status: header field
-                  fprintf(fh, "Status: %s\n", MA_ToStatusHeader(mail));
-
-                  // let us put out the X-Status: header field
-                  fprintf(fh, "X-Status: %s\n", MA_ToXStatusHeader(mail));
-
-                  // initialize buf first
-                  buf[0] = '\0';
-
-                  // now we iterate through every line of our mail and try to substitute
-                  // found "From " line with quoted ones
-                  while(!G->TR->Abort && fgets(buf, SIZE_LINE, mfh))
-                  {
-                     char *tmp = buf;
-
-                     // check if this is a single \n so that it
-                     // signals the end if a line
-                     if(*buf == '\n')
-                     {
-                       inHeader = FALSE;
-                       fputs(buf, fh);
-                       continue;
-                     }
-
-                     // the mboxrd format specifies that we need to quote any
-                     // From, >From, >>From etc. occurance.
-                     // http://www.qmail.org/man/man5/mbox.html
-                     while(*tmp == '>') tmp++;
-                     if(strncmp(tmp, "From ", 5) == 0)
-                     {
-                       fputc('>', fh);
-                     }
-                     else if(inHeader)
-                     {
-                       // let us skip some specific headerlines
-                       // because we placed our own here
-                       if(strncmp(buf, "Status: ", 8) == 0 ||
-                          strncmp(buf, "X-Status: ", 10) == 0)
-                       {
-                          // skip line
-                          continue;
-                       }
-                     }
-
-                     // write the line to our destination file
-                     fputs(buf, fh);
-
-                     // make sure we have a newline at the end of the line
-                     if(buf[strlen(buf)-1] != '\n')
-                       fputc('\n', fh);
-
-                     // update the transfer status
-                     TR_TransStat_Update(&ts, strlen(buf));
-                  }
-
-                  // check why we exited the while() loop and
-                  // if everything is fine
-                  if(feof(mfh) == 0)
-                  {
-                    E(DBF_NET, "error on reading data!");
-
-                    // an error occurred, lets return -1
-                    success = FALSE;
-                  }
-
-                  // close file pointer
-                  fclose(mfh);
-
-                  // put the transferStat to 100%
-                  TR_TransStat_Update(&ts, TS_SETMAX);
-               }
-               else
-                success = FALSE;
-
-               FinishUnpack(fullfile);
-            }
-            else
-              success = FALSE;
-         }
-
-         // close file pointer
-         fclose(fh);
-
-         // write the status to our logfile
-         AppendLog(51, tr(MSG_LOG_Exporting), ts.Msgs_Done, mlist[2]->Folder->Name, fname);
+          AddTail((struct List *)&(G->TR->transferList), (struct Node *)mtn);
+        }
+        else
+          return FALSE;
       }
-   }
+      else
+        return FALSE;
+    }
+  }
 
-   TR_AbortnClose();
-   return success;
+  // if we have now something in our processing list,
+  // lets go on
+  if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
+  {
+    FILE *fh;
+    struct TransStat ts;
+
+    TR_SetWinTitle(FALSE, (char *)FilePart(fname));
+    TR_TransStat_Init(&ts);
+    TR_TransStat_Start(&ts);
+
+    // open our final destination file either in append or in a fresh
+    // write mode.
+    if((fh = fopen(fname, append ? "a" : "w")) != NULL)
+    {
+      struct MinNode *curNode;
+
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+      success = TRUE;
+
+      for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort && success; curNode = curNode->mln_Succ)
+      {
+        struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+        struct Mail *mail = mtn->mail;
+        char fullfile[SIZE_PATHFILE];
+
+        // update the transfer status
+        ts.Msgs_Done++;
+        TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, tr(MSG_TR_Exporting));
+
+        if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder))
+        {
+          FILE *mfh;
+
+          // open the message file to start exporting it
+          if((mfh = fopen(fullfile, "r")) != NULL)
+          {
+            char datstr[64];
+            char buf[SIZE_LINE];
+            BOOL inHeader = TRUE;
+
+            // printf out our leading "From " MBOX format line first
+            DateStamp2String(datstr, sizeof(datstr), &mail->Date, DSS_UNIXDATE, TZC_NONE);
+            fprintf(fh, "From %s %s", mail->From.Address, datstr);
+
+            // let us put out the Status: header field
+            fprintf(fh, "Status: %s\n", MA_ToStatusHeader(mail));
+
+            // let us put out the X-Status: header field
+            fprintf(fh, "X-Status: %s\n", MA_ToXStatusHeader(mail));
+
+            // initialize buf first
+            buf[0] = '\0';
+
+            // now we iterate through every line of our mail and try to substitute
+            // found "From " line with quoted ones
+            while(G->TR->Abort == FALSE && fgets(buf, SIZE_LINE, mfh))
+            {
+              char *tmp = buf;
+
+              // check if this is a single \n so that it
+              // signals the end if a line
+              if(*buf == '\n')
+              {
+                inHeader = FALSE;
+                fputs(buf, fh);
+                continue;
+              }
+
+              // the mboxrd format specifies that we need to quote any
+              // From, >From, >>From etc. occurance.
+              // http://www.qmail.org/man/man5/mbox.html
+              while(*tmp == '>')
+                tmp++;
+
+              if(strncmp(tmp, "From ", 5) == 0)
+              {
+                fputc('>', fh);
+              }
+              else if(inHeader)
+              {
+                // let us skip some specific headerlines
+                // because we placed our own here
+                if(strncmp(buf, "Status: ", 8) == 0 ||
+                   strncmp(buf, "X-Status: ", 10) == 0)
+                {
+                   // skip line
+                   continue;
+                }
+              }
+
+              // write the line to our destination file
+              fputs(buf, fh);
+
+              // make sure we have a newline at the end of the line
+              if(buf[strlen(buf)-1] != '\n')
+                fputc('\n', fh);
+
+              // update the transfer status
+              TR_TransStat_Update(&ts, strlen(buf));
+            }
+
+            // check why we exited the while() loop and
+            // if everything is fine
+            if(feof(mfh) == 0)
+            {
+              E(DBF_NET, "error on reading data!");
+
+              // an error occurred, lets return -1
+              success = FALSE;
+            }
+
+            // close file pointer
+            fclose(mfh);
+
+            // put the transferStat to 100%
+            TR_TransStat_Update(&ts, TS_SETMAX);
+          }
+          else
+           success = FALSE;
+
+          FinishUnpack(fullfile);
+        }
+        else
+          success = FALSE;
+      }
+
+      // close file pointer
+      fclose(fh);
+
+      // write the status to our logfile
+      AppendLog(51, tr(MSG_LOG_Exporting), ts.Msgs_Done, mlist[2]->Folder->Name, fname);
+    }
+  }
+
+  TR_AbortnClose();
+  return success;
 }
 ///
 
@@ -5320,9 +5318,8 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
               {
                 struct Mail *newMail;
 
-                if((newMail = malloc(sizeof(struct Mail))) != NULL)
+                if((newMail = memdup(mail, sizeof(struct Mail))) != NULL)
                 {
-                  memcpy(newMail, mail, sizeof(struct Mail));
                   newMail->Reference = mail;
                   newMail->Next = NULL;
 
@@ -5590,12 +5587,12 @@ static struct MailTransferNode *TR_AddMessageHeader(int *count, int size, long a
   {
     struct MailTransferNode *mtn;
 
-    if((mtn = calloc(1, sizeof(struct MailTransferNode))))
+    if((mtn = calloc(1, sizeof(struct MailTransferNode))) != NULL)
     {
       struct Mail *mail;
-      if((mail = malloc(sizeof(struct Mail))))
+
+      if((mail = memdup(&email->Mail, sizeof(struct Mail))) != NULL)
       {
-        memcpy(mail, &email->Mail, sizeof(struct Mail));
         mail->Folder  = NULL;
         mail->Size    = size;
 

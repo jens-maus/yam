@@ -1660,14 +1660,12 @@ void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
       struct RuleNode *rule = (struct RuleNode *)curNode;
       struct RuleNode *newRule;
 
-      if((newRule = calloc(1, sizeof(struct RuleNode))) != NULL)
+      // do a raw copy of the rule contents first
+      if((newRule = memdup(rule, sizeof(struct RuleNode))) != NULL)
       {
-        // do a raw copy of the rule contents first
-        memcpy(newRule, rule, sizeof(struct RuleNode));
-
         // check if the search structure exists and if so
         // so start another deep copy
-        if(rule->search)
+        if(rule->search != NULL)
         {
           if((newRule->search = calloc(1, sizeof(struct Search))) != NULL)
             CopySearchData(newRule->search, rule->search);

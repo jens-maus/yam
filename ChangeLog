@@ -7,6 +7,8 @@ $URL$
 
 2007-06-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c, YAM_FI.c, YAM_TR.c: replaced some more calloc()/memcpy() pairs by
+    memdup().
   * YAM.c: all the timer stuff now uses an enumeration value for the loops
     instead of a simple integer.
   * YAM_stringsizes.h: removed an unused constant.
