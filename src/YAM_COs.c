@@ -510,6 +510,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
 
 
       fprintf(fh, "\n[Look&Feel]\n");
+      fprintf(fh, "Theme            = %s\n", co->ThemeName);
       fprintf(fh, "InfoBar          = %d\n", co->InfoBar);
       fprintf(fh, "InfoBarText      = %s\n", co->InfoBarText);
       fprintf(fh, "QuickSearchBar   = %s\n", Bool2Txt(co->QuickSearchBar));
@@ -1192,6 +1193,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
           else if(!stricmp(buffer, "PackerCommand"))    strlcpy(co->PackerCommand, value, sizeof(co->PackerCommand));
 
 /* Look&Feel */
+          else if(!stricmp(buffer, "Theme"))            strlcpy(co->ThemeName, value, sizeof(co->ThemeName));
           else if(!stricmp(buffer, "InfoBar"))          co->InfoBar = atoi(value);
           else if(!stricmp(buffer, "InfoBarText"))      strlcpy(co->InfoBarText, value, sizeof(co->InfoBarText));
           else if(!stricmp(buffer, "QuickSearchBar"))   co->QuickSearchBar = Txt2Bool(value);
@@ -1914,6 +1916,10 @@ void CO_GetConfig(BOOL saveConfig)
         CE->QuickSearchBar = GetMUICheck(gui->CH_QUICKSEARCHBAR);
         CE->EmbeddedReadPane = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
         CE->SizeFormat = GetMUICycle(gui->CY_SIZE);
+
+        // get the name of the theme that was
+        // specified as the active one.
+        strlcpy(CE->ThemeName, (char *)xget(gui->GR_THEMES, MUIA_ThemeListGroup_Active), sizeof(CE->ThemeName));
       }
       break;
 
@@ -2285,8 +2291,10 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
       setcycle(gui->CY_SIZE, CE->SizeFormat);
 
-      // update the themeslist
+      // update the themeslist and set the current one
+      // as active
       DoMethod(gui->GR_THEMES, MUIM_ThemeListGroup_Update);
+      set(gui->GR_THEMES, MUIA_ThemeListGroup_Active, CE->ThemeName);
     }
     break;
 

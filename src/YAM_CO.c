@@ -965,6 +965,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_LookFeel || page == cp_AllPages)
   {
+    strlcpy(co->ThemeName, "default", sizeof(co->ThemeName));
     co->InfoBar = IB_POS_CENTER;
     strlcpy(co->InfoBarText, tr(MSG_CO_InfoBarDef), sizeof(co->InfoBarText));
     co->EmbeddedReadPane = TRUE;

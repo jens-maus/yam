@@ -40,6 +40,8 @@ struct Data
   Object *BT_ACTIVATE;
   Object *TX_AUTHOR;
   Object *TX_URL;
+
+  char activeTheme[SIZE_FILE];
 };
 */
 
@@ -135,6 +137,45 @@ OVERLOAD(OM_NEW)
 
   RETURN((ULONG)obj);
   return (ULONG)obj;
+}
+///
+/// OVERLOAD(OM_GET)
+/* this is just so that we can notify the popup tag */
+OVERLOAD(OM_GET)
+{
+  GETDATA;
+  ULONG *store = ((struct opGet *)msg)->opg_Storage;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    ATTR(Active) : *store = (ULONG)data->activeTheme; return TRUE;
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+
+  struct TagItem *tags = inittags(msg), *tag;
+  while((tag = NextTagItem(&tags)))
+  {
+    switch(tag->ti_Tag)
+    {
+      ATTR(Active):
+      {
+        strlcpy(data->activeTheme, (char*)tag->ti_Data, sizeof(data->activeTheme));
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+    }
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
 }
 ///
 

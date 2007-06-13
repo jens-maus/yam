@@ -577,7 +577,7 @@ struct Config
    char StyleMailRead[SIZE_SMALL];
    char QuoteChar[2];
    char AltQuoteChar[2];
-
+   char ThemeName[SIZE_FILE];
 };
 
 enum InfoBarPos { IB_POS_TOP=0, IB_POS_CENTER, IB_POS_BOTTOM, IB_POS_OFF };

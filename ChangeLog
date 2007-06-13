@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-13  Jens Langner <Jens.Langner@light-speed.de>
+
+  * ThemeListGroup.c, YAM_CO.s, YAM_COs.c, YAM_conig.h: for the upcoming
+    themes feature, the listgroup class can now be queried for the active
+    theme and the configuration will now already save the name accordingly.
+
 2007-06-12  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_TR.c: partly reverted some latest cosmetic changes. In addition, the
