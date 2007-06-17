@@ -794,7 +794,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
       }
     }
 
-    AppendLogVerbose(21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name);
+    AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name);
 
     // make sure we delete the mailfile
     DeleteFile(GetMailFile(NULL, mailFolder, mail));
@@ -846,7 +846,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 
     if(copyit)
     {
-      AppendLogVerbose(25, tr(MSG_LOG_CopyingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
+      AppendToLogfile(LF_VERBOSE, 25, tr(MSG_LOG_CopyingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
       strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
 
@@ -857,7 +857,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
     {
       int i;
 
-      AppendLogVerbose(23, tr(MSG_LOG_MovingVerbose),  AddrName(mail->From), mail->Subject, from->Name, to->Name);
+      AppendToLogfile(LF_VERBOSE, 23, tr(MSG_LOG_MovingVerbose),  AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
       // add the new mail
       newMail = AddMailToList(&cmail, to);
@@ -995,9 +995,9 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
 
   // write some log out
   if(copyit)
-    AppendLogNormal(24, tr(MSG_LOG_Copying), selected, FolderName(frombox), FolderName(tobox));
+    AppendToLogfile(LF_NORMAL, 24, tr(MSG_LOG_Copying), selected, FolderName(frombox), FolderName(tobox));
   else
-    AppendLogNormal(22, tr(MSG_LOG_Moving), selected, FolderName(frombox), FolderName(tobox));
+    AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), selected, FolderName(frombox), FolderName(tobox));
 
   // refresh the folder statistics if necessary
   if(!copyit)
@@ -2709,7 +2709,7 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
               DoMethod(rmData2->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail, MUIF_ReadMailGroup_ReadMail_UpdateTextOnly);
           }
 
-          AppendLog(81, tr(MSG_LOG_CroppingAtt), mail->MailFile, fo->Name);
+          AppendToLogfile(LF_ALL, 81, tr(MSG_LOG_CroppingAtt), mail->MailFile, fo->Name);
         }
       }
 
@@ -3024,9 +3024,9 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         set(lv, MUIA_NList_Quiet, FALSE);
 
         if(delatonce || C->RemoveAtOnce || folder == delfolder || isSpamFolder(folder))
-          AppendLogNormal(20, tr(MSG_LOG_Deleting), selected, folder->Name);
+          AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), selected, folder->Name);
         else
-          AppendLogNormal(22, tr(MSG_LOG_Moving), selected, folder->Name, delfolder->Name);
+          AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), selected, folder->Name, delfolder->Name);
 
         // update the stats for the deleted folder,
         // but only if it isn't the current one and only
@@ -3096,7 +3096,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
           if(hasStatusSpam(mail) == FALSE && bclass == BC_SPAM)
           {
             // mark the mail as spam
-            AppendLogVerbose(90, tr(MSG_LOG_MAILISSPAM), AddrName(mail->From), mail->Subject);
+            AppendToLogfile(LF_VERBOSE, 90, tr(MSG_LOG_MAILISSPAM), AddrName(mail->From), mail->Subject);
             BayesFilterSetClassification(mail, BC_SPAM);
             setStatusToUserSpam(mail);
 
@@ -3107,7 +3107,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
           else if(hasStatusHam(mail) == FALSE && bclass == BC_HAM)
           {
             // mark the mail as ham
-            AppendLogVerbose(90, tr(MSG_LOG_MAILISNOTSPAM), AddrName(mail->From), mail->Subject);
+            AppendToLogfile(LF_VERBOSE, 90, tr(MSG_LOG_MAILISNOTSPAM), AddrName(mail->From), mail->Subject);
             BayesFilterSetClassification(mail, BC_HAM);
             setStatusToHam(mail);
 
@@ -3147,7 +3147,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
       set(lv, MUIA_NList_Quiet, FALSE);
       free(mlist);
 
-      AppendLogNormal(22, tr(MSG_LOG_Moving), selected, folder->Name, spamFolder->Name);
+      AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), selected, folder->Name, spamFolder->Name);
       DisplayStatistics(spamFolder, FALSE);
       DisplayStatistics(incomingFolder, FALSE);
 
@@ -3585,7 +3585,7 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
     for(mail = folder->Messages; mail; mail = mail->Next)
     {
       BusySet(++i);
-      AppendLogVerbose(21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
+      AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
       DeleteFile(GetMailFile(NULL, NULL, mail));
     }
 
@@ -3599,7 +3599,7 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
       if(FO_GetCurrentFolder() == folder)
         DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
 
-      AppendLogNormal(20, tr(MSG_LOG_Deleting), i, folder->Name);
+      AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), i, folder->Name);
 
       if(quiet == FALSE)
         DisplayStatistics(folder, TRUE);
@@ -4019,7 +4019,7 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
       }
       fclose(newfh);
       f = FileSize(newfile); fo->Size += f - mail->Size; mail->Size = f;
-      AppendLog(82, tr(MSG_LOG_ChangingSubject), mail->Subject, mail->MailFile, fo->Name, subj);
+      AppendToLogfile(LF_ALL, 82, tr(MSG_LOG_ChangingSubject), mail->Subject, mail->MailFile, fo->Name, subj);
       strlcpy(mail->Subject, subj, sizeof(mail->Subject));
       MA_ExpireIndex(fo);
 

@@ -129,7 +129,7 @@ static void US_SaveUsers(void)
     }
     fclose(fh);
 
-    AppendLogVerbose(62, tr(MSG_LOG_SavingUsers));
+    AppendToLogfile(LF_VERBOSE, 62, tr(MSG_LOG_SavingUsers));
   }
   else
     ER_NewError(tr(MSG_ER_CantCreateFile), fname);

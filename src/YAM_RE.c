@@ -327,7 +327,7 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
     else if(!stricmp(ctype, IntMimeTypeArray[MT_AP_SCRIPT].ContentType))
       SetProtection(dest, FIBF_SCRIPT);
 
-    AppendLogVerbose(80, tr(MSG_LOG_SavingAtt), dest, mail->MailFile, FolderName(mail->Folder));
+    AppendToLogfile(LF_VERBOSE, 80, tr(MSG_LOG_SavingAtt), dest, mail->MailFile, FolderName(mail->Folder));
 
     success = TRUE;
   }

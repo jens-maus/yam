@@ -2100,39 +2100,39 @@ void WR_NewMail(enum WriteMode mode, int winnum)
     {
       case NEW_NEW:
       case NEW_EDITASNEW:
-        AppendLog(10, tr(MSG_LOG_Creating), AddrName(newMail->To), newMail->Subject, numAttachments);
+        AppendToLogfile(LF_ALL, 10, tr(MSG_LOG_Creating), AddrName(newMail->To), newMail->Subject, numAttachments);
       break;
 
       case NEW_REPLY:
       {
         if(wr->refMailList && wr->refMailList[2])
-          AppendLog(11, tr(MSG_LOG_Replying), AddrName(wr->refMailList[2]->From), wr->refMailList[2]->Subject);
+          AppendToLogfile(LF_ALL, 11, tr(MSG_LOG_Replying), AddrName(wr->refMailList[2]->From), wr->refMailList[2]->Subject);
         else
-          AppendLog(11, tr(MSG_LOG_Replying), "<unknown>", "<unknown>");
+          AppendToLogfile(LF_ALL, 11, tr(MSG_LOG_Replying), "<unknown>", "<unknown>");
       }
       break;
 
       case NEW_FORWARD:
       {
         if(wr->refMailList && wr->refMailList[2])
-          AppendLog(12, tr(MSG_LOG_Forwarding), AddrName(wr->refMailList[2]->From), wr->refMailList[2]->Subject, AddrName(newMail->To));
+          AppendToLogfile(LF_ALL, 12, tr(MSG_LOG_Forwarding), AddrName(wr->refMailList[2]->From), wr->refMailList[2]->Subject, AddrName(newMail->To));
         else
-          AppendLog(12, tr(MSG_LOG_Forwarding), "<unknown>", "<unknown>", AddrName(newMail->To));
+          AppendToLogfile(LF_ALL, 12, tr(MSG_LOG_Forwarding), "<unknown>", "<unknown>", AddrName(newMail->To));
       }
       break;
 
       case NEW_BOUNCE:
       {
         if(wr->refMail)
-          AppendLog(13, tr(MSG_LOG_Bouncing), AddrName(wr->refMail->From), wr->refMail->Subject, AddrName(newMail->To));
+          AppendToLogfile(LF_ALL, 13, tr(MSG_LOG_Bouncing), AddrName(wr->refMail->From), wr->refMail->Subject, AddrName(newMail->To));
         else
-          AppendLog(13, tr(MSG_LOG_Bouncing), "<unknown>", "<unknown>", AddrName(newMail->To));
+          AppendToLogfile(LF_ALL, 13, tr(MSG_LOG_Bouncing), "<unknown>", "<unknown>", AddrName(newMail->To));
       }
       break;
 
       case NEW_EDIT:
       {
-        AppendLog(14, tr(MSG_LOG_Editing), AddrName(newMail->From), AddrName(newMail->To), newMail->Subject);
+        AppendToLogfile(LF_ALL, 14, tr(MSG_LOG_Editing), AddrName(newMail->From), AddrName(newMail->To), newMail->Subject);
       }
       break;
 

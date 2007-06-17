@@ -390,7 +390,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
                       if (!old) EA_InsertBelowActive(addr, TNF_LIST);
    }
    if (old) DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_List_Redraw, MUIV_List_Redraw_All);
-   else AppendLogVerbose(71, tr(MSG_LOG_NewAddress), addr->Alias);
+   else AppendToLogfile(LF_VERBOSE, 71, tr(MSG_LOG_NewAddress), addr->Alias);
    DisposeModulePush(&G->EA[winnum]);
 }
 MakeStaticHook(EA_OkayHook, EA_Okay);

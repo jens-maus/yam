@@ -715,7 +715,7 @@ DECLARE(MoveMailRequest)
       if(closeAfter)
         DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
 
-      AppendLogNormal(22, tr(MSG_LOG_Moving), 1, srcfolder->Name, dstfolder->Name);
+      AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), 1, srcfolder->Name, dstfolder->Name);
     }
   }
 
@@ -745,7 +745,7 @@ DECLARE(CopyMailRequest)
       {
         MA_MoveCopy(mail, srcfolder, dstfolder, TRUE, FALSE);
 
-        AppendLogNormal(24, tr(MSG_LOG_Copying), 1, srcfolder->Name, dstfolder->Name);
+        AppendToLogfile(LF_NORMAL, 24, tr(MSG_LOG_Copying), 1, srcfolder->Name, dstfolder->Name);
       }
       else if(RE_Export(rmData, rmData->readFile,
                 MA_NewMailFile(dstfolder, mail->MailFile), "", 0, FALSE, FALSE, IntMimeTypeArray[MT_ME_EMAIL].ContentType))
@@ -819,9 +819,9 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
       DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
 
     if(delatonce || isSpamFolder(folder))
-      AppendLogNormal(20, tr(MSG_LOG_Deleting), 1, folder->Name);
+      AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), 1, folder->Name);
     else
-      AppendLogNormal(22, tr(MSG_LOG_Moving), 1, folder->Name, delfolder->Name);
+      AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), 1, folder->Name, delfolder->Name);
   }
 
   return 0;
@@ -860,7 +860,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       }
 
       // mark the mail as user spam
-      AppendLogVerbose(90, tr(MSG_LOG_MAILISSPAM), AddrName(mail->From), mail->Subject);
+      AppendToLogfile(LF_VERBOSE, 90, tr(MSG_LOG_MAILISSPAM), AddrName(mail->From), mail->Subject);
       BayesFilterSetClassification(mail, BC_SPAM);
       setStatusToUserSpam(mail);
 
@@ -916,7 +916,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       }
 
       // mark the mail as ham
-      AppendLogVerbose(90, tr(MSG_LOG_MAILISNOTSPAM), AddrName(mail->From), mail->Subject);
+      AppendToLogfile(LF_VERBOSE, 90, tr(MSG_LOG_MAILISNOTSPAM), AddrName(mail->From), mail->Subject);
       BayesFilterSetClassification(mail, BC_HAM);
       setStatusToHam(mail);
 

@@ -1562,7 +1562,7 @@ DECLARE(DeleteMail)
 
     // delete the mail
     MA_DeleteSingle(mail, FALSE, FALSE, FALSE);
-    AppendLogNormal(22, tr(MSG_LOG_Moving), 1, folder->Name, delfolder->Name);
+    AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), 1, folder->Name, delfolder->Name);
 
     // erase the old pointer as this has been free()ed by MA_MoveCopy()
     rmData->mail = NULL;

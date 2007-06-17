@@ -2682,7 +2682,7 @@ int main(int argc, char **argv)
       }
 
       DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
-      AppendLog(0, tr(MSG_LOG_Started));
+      AppendToLogfile(LF_ALL, 0, tr(MSG_LOG_Started));
       MA_StartMacro(MACRO_STARTUP, NULL);
 
       // before we go on we check whether there is any .autosaveX.txt file in the
@@ -2800,8 +2800,8 @@ int main(int argc, char **argv)
         DisplayAppIconStatistics();
 
       user = US_GetCurrentUser();
-      AppendLogNormal(1, tr(MSG_LOG_LoggedIn), user->Name);
-      AppendLogVerbose(2, tr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir);
+      AppendToLogfile(LF_NORMAL, 1, tr(MSG_LOG_LoggedIn), user->Name);
+      AppendToLogfile(LF_VERBOSE, 2, tr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir);
 
       // Now start the NotifyRequest for the AutoDST file
       if(ADSTnotify_start())
@@ -3216,7 +3216,7 @@ int main(int argc, char **argv)
       if(C->RemoveOnQuit)
         DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, TRUE);
 
-      AppendLog(99, tr(MSG_LOG_Terminated));
+      AppendToLogfile(LF_ALL, 99, tr(MSG_LOG_Terminated));
       MA_StartMacro(MACRO_QUIT, NULL);
 
       // if the user really wants to exit, do it now as Terminate() is broken !

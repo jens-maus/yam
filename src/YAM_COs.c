@@ -577,7 +577,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "StyleMailRead    = %s\n", MUIStyle2String(co->StyleMailRead));
 
       fclose(fh);
-      AppendLogVerbose(60, tr(MSG_LOG_SavingConfig), fname);
+      AppendToLogfile(LF_VERBOSE, 60, tr(MSG_LOG_SavingConfig), fname);
    }
    else ER_NewError(tr(MSG_ER_CantCreateFile), fname);
 }

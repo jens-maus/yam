@@ -265,10 +265,6 @@ struct TimeRequest
 // LogFile enums and macros
 enum LFMode { LF_NONE=0, LF_NORMAL, LF_VERBOSE, LF_ALL };
 
-#define AppendLog(id, ...)         AppendToLogfile(LF_ALL, id, __VA_ARGS__)
-#define AppendLogNormal(id, ...)   AppendToLogfile(LF_NORMAL, id, __VA_ARGS__)
-#define AppendLogVerbose(id, ...)  AppendToLogfile(LF_VERBOSE, id, __VA_ARGS__)
-
 // external variables
 extern int            BusyLevel;
 extern struct Hook    GeneralDesHook;

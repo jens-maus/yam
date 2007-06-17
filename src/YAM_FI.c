@@ -1610,7 +1610,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
         FreeFilterSearch();
 
         if(G->RRs.Checked)
-          AppendLog(26, tr(MSG_LOG_Filtering), G->RRs.Checked, folder->Name, matches);
+          AppendToLogfile(LF_ALL, 26, tr(MSG_LOG_Filtering), G->RRs.Checked, folder->Name, matches);
 
         BusyEnd();
 

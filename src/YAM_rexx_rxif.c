@@ -2522,7 +2522,7 @@ void rx_addrnew( UNUSED struct RexxHost *host, struct rxd_addrnew **rxd, long ac
             rd->res.alias = addr.Alias;
             EA_InsertBelowActive(&addr, addr.Type == AET_GROUP ? TNF_LIST : 0);
             G->AB->Modified = TRUE;
-            AppendLogVerbose(71, tr(MSG_LOG_NewAddress), addr.Alias);
+            AppendToLogfile(LF_VERBOSE, 71, tr(MSG_LOG_NewAddress), addr.Alias);
          }
          break;
       

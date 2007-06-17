@@ -2488,8 +2488,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
   return result;
 }
 ///
-
-/// FormatFolderInfo
+/// MA_FormatFolderInfo
 // puts all user defined folder information into a string
 static void MA_FormatFolderInfo(char *folderStr, const size_t maxLen, const struct Folder *folder)
 {
