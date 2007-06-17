@@ -623,7 +623,7 @@ BOOL AB_SaveTree(char *fname)
     fputs("YAB4 - YAM Addressbook\n", fh);
     AB_SaveTreeNode(fh, MUIV_NListtree_GetEntry_ListNode_Root);
     fclose(fh);
-    AppendLogVerbose(70, tr(MSG_LOG_SavingABook), fname);
+    AppendToLogfile(LF_VERBOSE, 70, tr(MSG_LOG_SavingABook), fname);
 
     result = TRUE;
   }
