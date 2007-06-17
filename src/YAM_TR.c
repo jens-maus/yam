@@ -1508,9 +1508,9 @@ static void TR_SetSocketOpts(void)
   #ifdef DEBUG
   {
     int optval;
-    LONG optlen = sizeof(optval);
+    socklen_t optlen = sizeof(optval);
     struct TimeVal tv;
-    LONG tvlen = sizeof(tv);
+    socklen_t tvlen = sizeof(tv);
 
     D(DBF_NET, "Opened socket: %lx", G->TR_Socket);
 
@@ -1691,7 +1691,7 @@ static int TR_Connect(char *host, int port)
                      FD_ISSET(G->TR_Socket, &fdset))
                   {
                     int errval = -1;
-                    LONG errlen = sizeof(errval);
+                    socklen_t errlen = sizeof(errval);
 
                     D(DBF_NET, "WaitSelect() succeeded");
 
