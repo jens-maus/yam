@@ -819,7 +819,12 @@ static char *ExtractNextParam(char *s, char **name, char **value)
       // while converting it to lowercase
       while(p <= u)
       {
-        *t++ = tolower((int)*p++);
+        int c = *p++;
+
+        // for SAS/C this is a macro and no function.
+        // Hence we better pass an int than something like "*p++" which
+        // could have unpredictable results.
+        *t++ = tolower(c);
       }
 
       *t = '\0'; // NUL termination

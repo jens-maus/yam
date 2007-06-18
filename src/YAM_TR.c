@@ -3113,8 +3113,8 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
   else
     ER_NewError(tr(MSG_ER_ConnectHTTP), host);
 
-  RETURN(result && G->Error == FALSE);
-  return result && G->Error == FALSE;
+  RETURN((BOOL)(result == TRUE && G->Error == FALSE));
+  return (BOOL)(result == TRUE && G->Error == FALSE);
 }
 ///
 
@@ -6222,8 +6222,8 @@ BOOL TR_GetMessageList_IMPORT(void)
 
   TR_DisplayMailList(FALSE);
 
-  RETURN(result && c > 0);
-  return result && c > 0;
+  RETURN((BOOL)(result == TRUE && c > 0));
+  return (BOOL)(result == TRUE && c > 0);
 }
 ///
 /// TR_AbortIMPORTFunc

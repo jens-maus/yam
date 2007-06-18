@@ -246,7 +246,7 @@ static BOOL InitLib(const char *libname,
       Abort(tr(MSG_ER_LIB), libname, version, revision);
   }
 
-  return base != NULL;
+  return (BOOL)(base != NULL);
 }
 ///
 /// CheckMCC
@@ -767,7 +767,7 @@ static BOOL TC_Init(void)
   }
 
   LEAVE();
-  return (TCData.timer[TIO_NUM-1].tr != NULL ? TRUE : FALSE);
+  return (BOOL)(TCData.timer[TIO_NUM-1].tr != NULL);
 }
 
 ///
@@ -1070,8 +1070,8 @@ static BOOL InitXPKPackerList(void)
     }
   }
 
-  RETURN(result && error == 0);
-  return result && error == 0;
+  RETURN((BOOL)(result == TRUE && error == 0));
+  return (BOOL)(result == TRUE && error == 0);
 }
 
 ///
@@ -2393,7 +2393,7 @@ static void Login(const char *user, const char *password,
 /*** Command-Line Argument parsing routines ***/
 /// ParseCommandArgs()
 //
-static LONG ParseCommandArgs()
+static LONG ParseCommandArgs(void)
 {
   LONG result = 0;
   char *extHelp;
