@@ -46,6 +46,8 @@
 
 #if defined(DEBUG)
 
+#include <stdarg.h>
+
 // debug classes
 #define DBC_CTRACE   (1<<0) // call tracing (ENTER/LEAVE etc.)
 #define DBC_REPORT   (1<<1) // reports (SHOWVALUE/SHOWSTRING etc.)
@@ -89,6 +91,12 @@ void _SHOWPOINTER(unsigned long dclass, unsigned long dflags, const void *p, con
 void _SHOWSTRING(unsigned long dclass, unsigned long dflags, const char *string, const char *name, const char *file, int line);
 void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const char *file, int line);
 void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int line, const char *format, ...);
+void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int line, const char *format, va_list args);
+
+#if defined(__SASC)
+  #define __FUNCTION__        __FUNC__
+  #define NO_VARARG_MARCOS    1
+#endif
 
 // Core class information class messages
 #define ENTER()               _ENTER(DBC_CTRACE, __FILE__, __LINE__, __FUNCTION__)
@@ -98,9 +106,15 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
 #define SHOWPOINTER(f, p)     _SHOWPOINTER(DBC_REPORT, f, p, #p, __FILE__, __LINE__)
 #define SHOWSTRING(f, s)      _SHOWSTRING(DBC_REPORT, f, s, #s, __FILE__, __LINE__)
 #define SHOWMSG(f, m)         _SHOWMSG(DBC_REPORT, f, m, __FILE__, __LINE__)
+#if defined(NO_VARARG_MARCOS)
+void D(unsigned long f, const char *format, ...);
+void E(unsigned long f, const char *format, ...);
+void W(unsigned long f, const char *format, ...);
+#else
 #define D(f, ...)             _DPRINTF(DBC_DEBUG, f, __FILE__, __LINE__, __VA_ARGS__)
 #define E(f, ...)             _DPRINTF(DBC_ERROR, f, __FILE__, __LINE__, __VA_ARGS__)
 #define W(f, ...)             _DPRINTF(DBC_WARNING, f, __FILE__, __LINE__, __VA_ARGS__)
+#endif
 #define ASSERT(expression)      \
   ((void)                       \
    ((expression) ? 0 :          \

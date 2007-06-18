@@ -447,4 +447,54 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
 
 /****************************************************************************/
 
+void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int line, const char *format, va_list args)
+{
+  if((isFlagSet(debug_classes, dclass) && isFlagSet(debug_flags, dflags)) ||
+     (isFlagSet(dclass, DBC_ERROR) || isFlagSet(dclass, DBC_WARNING)))
+  {
+    _DPRINTF(dclass, dflags, file, line, format, args);
+  }
+}
+
+/****************************************************************************/
+
+#if defined(NO_VARARG_MARCOS)
+void D(unsigned long f, const char *format, ...)
+{
+  va_list args;
+
+  va_start(args, format);
+  _VDPRINTF(DBC_DEBUG, f, __FILE__, __LINE__, format, args);
+  va_end(args);
+}
+#endif
+
+/****************************************************************************/
+
+#if defined(NO_VARARG_MARCOS)
+void E(unsigned long f, const char *format, ...)
+{
+  va_list args;
+
+  va_start(args, format);
+  _VDPRINTF(DBC_ERROR, f, __FILE__, __LINE__, format, args);
+  va_end(args);
+}
+#endif
+
+/****************************************************************************/
+
+#if defined(NO_VARARG_MARCOS)
+void W(unsigned long f, const char *format, ...)
+{
+  va_list args;
+
+  va_start(args, format);
+  _VDPRINTF(DBC_WARNING, f, __FILE__, __LINE__, format, args);
+  va_end(args);
+}
+#endif
+
+/****************************************************************************/
+
 #endif /* DEBUG */
