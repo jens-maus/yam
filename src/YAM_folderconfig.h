@@ -214,7 +214,7 @@ struct Folder * FO_GetCurrentFolder(void);
 BOOL            FO_SetCurrentFolder(struct Folder *fo);
 struct Folder * FO_GetFolderByName(const char *name, int *pos);
 struct Folder * FO_GetFolderByPath(const char *path, int *pos);
-struct Folder * FO_GetFolderByType(enum FolderType type, int *pos);
+struct Folder * FO_GetFolderByType(const enum FolderType type, int *pos);
 struct Folder * FO_GetFolderRexx(const char *arg, int *pos);
 int             FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups);
 struct MUI_NListtree_TreeNode *FO_GetFolderTreeNode(struct Folder *findfo);
