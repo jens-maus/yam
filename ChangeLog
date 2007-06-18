@@ -5,6 +5,24 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-18  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, YAM_RE.c, YAM_TR.c: fixed a few warnings to please SAS/C. Yet there
+    are lots of warnings about possible portability problems and even some
+    constructs which cannot be translated by SAS/C.
+  * extrasrc.c: included prototypes for snprintf() and vsnprintf() for those
+    compilers where the runtime library does not offer these functions (i.e.
+    SAS/C).
+  * extrasrc/snprintf.c, extrasrc/vsnprintf.c: added custom implementations for
+    snprintf() and vsnprintf(). These base upon exec/RawDoFmt() and hence do not
+    include support for floating point values, but at least they work for all
+    types of integers and strings.
+  * YAM_folderconfig.h: corrected prototype for FO_GetFolderByType().
+  * Debug.c, Debug.h: reworked the debugging macros so that even compilers which
+    are not able to handle vararg macros (like SAS/C) can compile YAM again.
+    Currently it is not yet possible to build YAM with SAS/C again, but maybe
+    this will be possible again in the future.
+
 2007-06-17  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: the size parameter of getsockopt() is now socklen_t for all calls.
