@@ -30,6 +30,8 @@
 
 // needed for size_t definition
 #include <sys/types.h>
+#include <stddef.h>
+#include <stdio.h>
 
 #include <proto/intuition.h>
 
@@ -50,6 +52,14 @@
 
 #if !defined(HAVE_STRTOK_R)
 #define NEED_STRTOK_R
+#endif
+
+#if !defined(HAVE_VSNPRINTF)
+#define NEED_VSNPRINTF
+#endif
+
+#if !defined(HAVE_SNPRINTF)
+#define NEED_SNPRINTF
 #endif
 
 #endif /* m68k && !clib2 || __SASC */
@@ -126,6 +136,14 @@ size_t strlcat(char *, const char *, size_t);
 
 #if defined(NEED_STRTOK_R)
 char *strtok_r(char *, const char *, char **);
+#endif
+
+#if defined(NEED_VSNPRINTF)
+int vsnprintf(char *buffer, size_t maxlen, const char *fmt, va_list args);
+#endif
+
+#if defined(NEED_SNPRINTF)
+int snprintf(char *buffer, size_t maxlen, const char *fmt, ...);
 #endif
 
 #if defined(NEED_STCGFE)
