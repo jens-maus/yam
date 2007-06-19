@@ -36,7 +36,7 @@
 # # to explicitly compile for AmigaOS3
 # > make OS=os3
 #
-# # to compile for AmigaOS4 but with debugging
+# # to compile for AmigaOS4 but without debugging
 # > make OS=os4 DEBUG=
 #
 
@@ -95,6 +95,12 @@ RM    = rm -f
 RMDIR = rm -rf
 MKDIR = mkdir
 
+# Special macros for version ID and developer builds
+DEVFLAGS = -DDEVWARNING -DEXPDATE="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922 + 31`"
+YAMVERID = -D__YAM_VERDATE=\"`$(DATE) +%d.%m.%Y`\" \
+           -D__YAM_VERDAYS="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922`" \
+           -D__YAM_BUILDID="$(BUILDID)"
+
 # override commands for native builds
 ifeq ($(HOST), AmigaOS4)
   # AmigaOS4 host
@@ -108,6 +114,14 @@ ifeq ($(HOST), AmigaOS)
   RM    = delete force
   RMDIR = delete force all
   MKDIR = makedir
+
+  # override the versionID and developer build macros with calls
+  # to ARexx instead of unix expr/date
+  DEVFLAGS = -DDEVWARNING `rx "say '-DEXPDATE=' || date('I')+31"`
+  YAMVERID = `rx "say '-D__YAM_VERDATE=' || '22'x ||\
+              right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) ||\
+              '22'x || ' -D__YAM_VERDAYS=' || date('I')"` -D__YAM_BUILDID="$(BUILDID)"
+
 else
 ifeq ($(HOST), MorphOS)
   # MorphOS host
@@ -231,12 +245,6 @@ endif
 
 # General vars
 GENCLASSES= $(TOOLS)/genclasses
-
-# Special flags
-DEVFLAGS = -DDEVWARNING -DEXPDATE="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922 + 31`"
-YAMVERID = -D__YAM_VERDATE=\"`$(DATE) +%d.%m.%Y`\" \
-           -D__YAM_VERDAYS="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922`" \
-           -D__YAM_BUILDID="$(BUILDID)"
 
 .PHONY: all clean cleanall distclean classinfo dump depend
 

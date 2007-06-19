@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile: on a AmigaOS3 host, arexx commands will now be used to
+    automatically generate the DEVFLAGS and YAMVERID variables instead of
+    using geekgadgets' unix tools.
+
 2007-06-18  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, YAM_RE.c, YAM_TR.c: fixed a few warnings to please SAS/C. Yet there
