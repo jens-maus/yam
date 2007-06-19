@@ -37,6 +37,7 @@
 
 #include "YAM_global.h"
 #include "YAM_utilities.h" // CLEAR_FLAG,SET_FLAG
+#include "extrasrc.h"
 
 #include "SDI_compiler.h"
 
@@ -414,14 +415,26 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
   if((isFlagSet(debug_classes, dclass) && isFlagSet(debug_flags, dflags)) ||
      (isFlagSet(dclass, DBC_ERROR) || isFlagSet(dclass, DBC_WARNING)))
   {
-    static char buf[1024];
     va_list args;
+
+    va_start(args, format);
+    _VDPRINTF(dclass, dflags, file, line, format, args);
+    va_end(args);
+  }
+}
+
+/****************************************************************************/
+
+void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int line, const char *format, va_list args)
+{
+  if((isFlagSet(debug_classes, dclass) && isFlagSet(debug_flags, dflags)) ||
+     (isFlagSet(dclass, DBC_ERROR) || isFlagSet(dclass, DBC_WARNING)))
+  {
+    static char buf[1024];
 
     _INDENT();
 
-    va_start(args, format);
     vsnprintf(buf, 1024, format, args);
-    va_end(args);
 
     if(ansi_output)
     {
@@ -442,17 +455,6 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
     }
     else
       kprintf("%s:%ld:%s\n", file, line, buf);
-  }
-}
-
-/****************************************************************************/
-
-void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int line, const char *format, va_list args)
-{
-  if((isFlagSet(debug_classes, dclass) && isFlagSet(debug_flags, dflags)) ||
-     (isFlagSet(dclass, DBC_ERROR) || isFlagSet(dclass, DBC_WARNING)))
-  {
-    _DPRINTF(dclass, dflags, file, line, format, args);
   }
 }
 

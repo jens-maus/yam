@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-19  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Debug.c: the (V)DPRINT() functions has reversed dependencies.
+
 2007-06-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile: on a AmigaOS3 host, arexx commands will now be used to
