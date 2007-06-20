@@ -16,6 +16,8 @@ $URL$
 
 2007-06-20  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_global.c: because of the final binary size some variables must be
+    explicitly declared as __near for the SAS/C build.
   * YAM_MA.c: simplified the folder listtree's destructor hook a bit.
   * strlcpy.c: added a typecast to please SAS/C.
   * vsnprintf.c: added a custom implementation of vsnprintf() which does not

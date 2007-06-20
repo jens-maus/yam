@@ -40,9 +40,9 @@ static const char USED_VAR yam_stack_size[] = "$STACK:65536\n";  // Shell v45 an
 #elif defined(__SASC) || defined(__GNUC__)
   #if defined(__libnix__) || defined(__SASC)
   /* GCC (libnix) supports the same as SAS/C! */
-  long __stack = 65536;
-  long __buffsize = 8192;
-  long _MSTEP = 16384;
+  long __near __stack = 65536;
+  long __near __buffsize = 8192;
+  long __near _MSTEP = 16384;
   #else
   long __stack_size = 65536;    // set the minimum startup stack for clib2
   #endif
