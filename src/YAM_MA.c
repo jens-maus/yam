@@ -4364,7 +4364,7 @@ MakeHook(PO_WindowHook, PO_Window);
 /*** MA_LV_FConFunc - Folder listview construction hook ***/
 HOOKPROTONHNO(MA_LV_FConFunc, struct Folder *, struct MUIP_NListtree_ConstructMessage *msg)
 {
-  struct Folder *entry = NULL;
+  struct Folder *entry;
 
   ENTER();
 
@@ -4380,9 +4380,12 @@ MakeStaticHook(MA_LV_FConHook, MA_LV_FConFunc);
 /*** MA_LV_FDesFunc - Folder listtree destruction hook ***/
 HOOKPROTONHNO(MA_LV_FDesFunc, LONG, struct MUIP_NListtree_DestructMessage *msg)
 {
-   if(!msg) return(-1);
-   if(msg->UserData) FO_FreeFolder((struct Folder *)msg->UserData);
-   return(0);
+   ENTER();
+
+   FO_FreeFolder((struct Folder *)msg->UserData);
+
+   RETURN(0);
+   return 0;
 }
 MakeStaticHook(MA_LV_FDesHook, MA_LV_FDesFunc);
 
