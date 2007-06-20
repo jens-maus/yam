@@ -16,6 +16,7 @@ $URL$
 
 2007-06-20  Thore Böckelmann <tboeckel@gmx.de>
 
+  * strlcpy.c: added a typecast to please SAS/C.
   * vsnprintf.c: added a custom implementation of vsnprintf() which does not
     rely on exec/RawDoFmt() and knows how to handle %d and even floating point
     values. The separate sources for vsnprintf() and snprintf() are no longer
