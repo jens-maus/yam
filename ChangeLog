@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-20  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: according to the documentation at the OpenSSL homepage
+    (http://www.openssl.org/docs/ssl/SSL_connect.html) all SSL_ERROR_WANT_READ
+    and SSL_ERROR_WANT_WRITE error conditions have to either query for read
+    descriptor set or a write descriptor set. Therefore, our TR_Write() and
+    TR_Read() functions will now differentate between those two possible
+    error values and act according to the documentation.
+
 2007-06-20  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: the WaitSelect() call should only include those sockets which are

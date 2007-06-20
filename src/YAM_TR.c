@@ -415,8 +415,7 @@ static BOOL TR_StartTLS(VOID)
             // signals that the SSL socket wants us to wait until data
             // is available and reissue the SSL_connect() command.
             LONG retVal = -1;
-            fd_set read_fdset;
-            fd_set write_fdset;
+            fd_set fdset;
             struct timeval timeout;
             int timeoutSum = 0;
 
@@ -452,18 +451,25 @@ static BOOL TR_StartTLS(VOID)
 
               // now we put our socket handle into a descriptor set
               // we can pass on to WaitSelect()
-              FD_ZERO(&read_fdset);
-              FD_SET(G->TR_Socket, &read_fdset);
-              write_fdset = read_fdset;
+              FD_ZERO(&fdset);
+              FD_SET(G->TR_Socket, &fdset);
+
+              // depending on the SSL error (WANT_READ/WANT_WRITE)
+              // we either do a WaitSelect() on the read or write mode
+              // as with SSL both things can happen
+              // see http://www.openssl.org/docs/ssl/SSL_connect.html
+              if(err == SSL_ERROR_WANT_READ)
+                retVal = WaitSelect(G->TR_Socket+1, &fdset, NULL, NULL, (APTR)&timeout, NULL);
+              else
+                retVal = WaitSelect(G->TR_Socket+1, NULL, &fdset, NULL, (APTR)&timeout, NULL);
             }
-            while((retVal = WaitSelect(G->TR_Socket+1, &read_fdset, &write_fdset, NULL, (APTR)&timeout, NULL)) == 0);
+            while(retVal == 0);
 
             // if WaitSelect() returns 1 we successfully waited for
             // being able to write to the socket. So we go and do another
             // iteration in the while() loop as the next connect() call should
             // return EISCONN if the connection really succeeded.
-            if(retVal >= 1 &&
-               (FD_ISSET(G->TR_Socket, &read_fdset) || FD_ISSET(G->TR_Socket, &write_fdset)))
+            if(retVal >= 1 && FD_ISSET(G->TR_Socket, &fdset))
             {
               // everything fine
               continue;
@@ -2241,15 +2247,23 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
               // we can pass on to WaitSelect()
               FD_ZERO(&fdset);
               FD_SET(socket, &fdset);
+
+              // depending on the SSL error (WANT_READ/WANT_WRITE)
+              // we either do a WaitSelect() on the read or write mode
+              // as with SSL both things can happen
+              // see http://www.openssl.org/docs/ssl/SSL_read.html
+              if(err == SSL_ERROR_WANT_READ)
+                retVal = WaitSelect(socket+1, &fdset, NULL, NULL, (APTR)&timeout, NULL);
+              else
+                retVal = WaitSelect(socket+1, NULL, &fdset, NULL, (APTR)&timeout, NULL);
             }
-            while((retVal = WaitSelect(socket+1, &fdset, NULL, NULL, (APTR)&timeout, NULL)) == 0);
+            while(retVal == 0);
 
             // if WaitSelect() returns 1 we successfully waited for
             // being able to read from the socket. So we go and do another
             // iteration in the while() loop as the next connect() call should
             // return EISCONN if the connection really succeeded.
-            if(retVal >= 1 &&
-               (FD_ISSET(socket, &fdset)))
+            if(retVal >= 1 && FD_ISSET(socket, &fdset))
             {
               // everything fine
               continue;
@@ -2591,15 +2605,23 @@ static int TR_Write(LONG socket, const char *ptr, int len)
               // we can pass on to WaitSelect()
               FD_ZERO(&fdset);
               FD_SET(socket, &fdset);
+
+              // depending on the SSL error (WANT_READ/WANT_WRITE)
+              // we either do a WaitSelect() on the read or write mode
+              // as with SSL both things can happen
+              // see http://www.openssl.org/docs/ssl/SSL_write.html
+              if(err == SSL_ERROR_WANT_READ)
+                retVal = WaitSelect(socket+1, &fdset, NULL, NULL, (APTR)&timeout, NULL);
+              else
+                retVal = WaitSelect(socket+1, NULL, &fdset, NULL, (APTR)&timeout, NULL);
             }
-            while((retVal = WaitSelect(socket+1, NULL, &fdset, NULL, (APTR)&timeout, NULL)) == 0);
+            while(retVal == 0);
 
             // if WaitSelect() returns 1 we successfully waited for
             // being able to write to the socket. So we go and do another
             // iteration in the while() loop as the next connect() call should
             // return EISCONN if the connection really succeeded.
-            if(retVal >= 1 &&
-               (FD_ISSET(socket, &fdset)))
+            if(retVal >= 1 && FD_ISSET(socket, &fdset))
             {
               // everything fine
               continue;
