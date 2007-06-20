@@ -61,12 +61,8 @@
   #include "extrasrc/strtok_r.c"
 #endif
 
-#if defined(NEED_VSNPRINTF)
+#if defined(NEED_VSNPRINTF) || defined(NEED_SNPRINTF)
   #include "extrasrc/vsnprintf.c"
-#endif
-
-#if defined(NEED_SNPRINTF)
-  #include "extrasrc/snprintf.c"
 #endif
 
 // Amiga specific functions
