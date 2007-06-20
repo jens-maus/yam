@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-20  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: the WaitSelect() call should only include those sockets which are
+    really to be tested. That means that upon a write test only writeable
+    sockets should be checked and not the readable ones as well. RoadShow seems
+    to choke on checking the same socket to be able to read *and* write at the
+    same time. At least now the CPU load is back to normal with OS4.
+
 2007-06-19  Thore Böckelmann <tboeckel@gmx.de>
 
   * Debug.c: the (V)DPRINT() functions has reversed dependencies.

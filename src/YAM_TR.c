@@ -2203,8 +2203,7 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
             // signals that the SSL socket wants us to wait until data
             // is available and reissue the SSL_read() command.
             LONG retVal = -1;
-            fd_set read_fdset;
-            fd_set write_fdset;
+            fd_set fdset;
             struct timeval timeout;
             int timeoutSum = 0;
 
@@ -2240,18 +2239,17 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
 
               // now we put our socket handle into a descriptor set
               // we can pass on to WaitSelect()
-              FD_ZERO(&read_fdset);
-              FD_SET(socket, &read_fdset);
-              write_fdset = read_fdset;
+              FD_ZERO(&fdset);
+              FD_SET(socket, &fdset);
             }
-            while((retVal = WaitSelect(socket+1, &read_fdset, &write_fdset, NULL, (APTR)&timeout, NULL)) == 0);
+            while((retVal = WaitSelect(socket+1, &fdset, NULL, NULL, (APTR)&timeout, NULL)) == 0);
 
             // if WaitSelect() returns 1 we successfully waited for
-            // being able to write to the socket. So we go and do another
+            // being able to read from the socket. So we go and do another
             // iteration in the while() loop as the next connect() call should
             // return EISCONN if the connection really succeeded.
             if(retVal >= 1 &&
-               (FD_ISSET(socket, &read_fdset) || FD_ISSET(socket, &write_fdset)))
+               (FD_ISSET(socket, &fdset)))
             {
               // everything fine
               continue;
@@ -2369,7 +2367,7 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
             while((retVal = WaitSelect(socket+1, &fdset, NULL, NULL, (APTR)&timeout, NULL)) == 0);
 
             // if WaitSelect() returns 1 we successfully waited for
-            // being able to write to the socket. So we go and do another
+            // being able to read from the socket. So we go and do another
             // iteration in the while() loop as the next connect() call should
             // return EISCONN if the connection really succeeded.
             if(retVal >= 1 &&
@@ -2555,8 +2553,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
             // signals that the SSL socket wants us to wait until data
             // is available and reissue the SSL_read() command.
             LONG retVal = -1;
-            fd_set read_fdset;
-            fd_set write_fdset;
+            fd_set fdset;
             struct timeval timeout;
             int timeoutSum = 0;
 
@@ -2592,18 +2589,17 @@ static int TR_Write(LONG socket, const char *ptr, int len)
 
               // now we put our socket handle into a descriptor set
               // we can pass on to WaitSelect()
-              FD_ZERO(&read_fdset);
-              FD_SET(socket, &read_fdset);
-              write_fdset = read_fdset;
+              FD_ZERO(&fdset);
+              FD_SET(socket, &fdset);
             }
-            while((retVal = WaitSelect(socket+1, &read_fdset, &write_fdset, NULL, (APTR)&timeout, NULL)) == 0);
+            while((retVal = WaitSelect(socket+1, NULL, &fdset, NULL, (APTR)&timeout, NULL)) == 0);
 
             // if WaitSelect() returns 1 we successfully waited for
             // being able to write to the socket. So we go and do another
             // iteration in the while() loop as the next connect() call should
             // return EISCONN if the connection really succeeded.
             if(retVal >= 1 &&
-               (FD_ISSET(socket, &read_fdset) || FD_ISSET(socket, &write_fdset)))
+               (FD_ISSET(socket, &fdset)))
             {
               // everything fine
               continue;
