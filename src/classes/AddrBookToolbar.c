@@ -75,6 +75,7 @@ OVERLOAD(OM_NEW)
     // toolbar looks like.
     struct MUIS_TheBar_Button buttons[TB_ABOOK_NUM+3] =
     {
+    #if !defined(__SASC)
       { TB_ABOOK_SAVE,      TB_ABOOK_SAVE,      tr(MSG_AB_TBSave),      tr(MSG_HELP_AB_BT_SAVE),      0, 0, NULL, NULL },
       { TB_ABOOK_FIND,      TB_ABOOK_FIND,      tr(MSG_AB_TBFind),      tr(MSG_HELP_AB_BT_SEARCH),    0, 0, NULL, NULL },
 
@@ -93,7 +94,40 @@ OVERLOAD(OM_NEW)
       { TB_ABOOK_CLOSETREE, TB_ABOOK_CLOSETREE, tr(MSG_AB_TBCloseTree), tr(MSG_HELP_AB_BT_CLOSE),     0, 0, NULL, NULL },
 
       { MUIV_TheBar_End, -1,        NULL, NULL, 0, 0, NULL, NULL },
+    #else
+      { TB_ABOOK_SAVE,      TB_ABOOK_SAVE,      NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_ABOOK_FIND,      TB_ABOOK_FIND,      NULL,                   NULL,                         0, 0, NULL, NULL },
+
+      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+
+      { TB_ABOOK_NEWUSER,   TB_ABOOK_NEWUSER,   NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_ABOOK_NEWLIST,   TB_ABOOK_NEWLIST,   NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_ABOOK_NEWGROUP,  TB_ABOOK_NEWGROUP,  NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_ABOOK_EDIT,      TB_ABOOK_EDIT,      NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_ABOOK_DELETE,    TB_ABOOK_DELETE,    NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_ABOOK_PRINT,     TB_ABOOK_PRINT,     NULL,                   NULL,                         0, 0, NULL, NULL },
+
+      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+
+      { TB_ABOOK_OPENTREE,  TB_ABOOK_OPENTREE,  NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_ABOOK_CLOSETREE, TB_ABOOK_CLOSETREE, NULL,                   NULL,                         0, 0, NULL, NULL },
+
+      { MUIV_TheBar_End, -1,        NULL, NULL, 0, 0, NULL, NULL },
+    #endif
     };
+
+    #if defined(__SASC)
+    buttons[ 0].text = tr(MSG_AB_TBSave);        buttons[ 0].help = tr(MSG_HELP_AB_BT_SAVE);
+    buttons[ 1].text = tr(MSG_AB_TBFind);        buttons[ 1].help = tr(MSG_HELP_AB_BT_SEARCH);
+    buttons[ 3].text = tr(MSG_AB_TBNewUser);     buttons[ 3].help = tr(MSG_HELP_AB_BT_ADDUSER);
+    buttons[ 4].text = tr(MSG_AB_TBNewList);     buttons[ 4].help = tr(MSG_HELP_AB_BT_ADDMLIST);
+    buttons[ 5].text = tr(MSG_AB_TBNewGroup);    buttons[ 5].help = tr(MSG_HELP_AB_BT_ADDGROUP);
+    buttons[ 6].text = tr(MSG_AB_TBEdit);        buttons[ 6].help = tr(MSG_HELP_AB_BT_EDIT);
+    buttons[ 7].text = tr(MSG_AB_TBDelete);      buttons[ 7].help = tr(MSG_HELP_AB_BT_DELETE);
+    buttons[ 8].text = tr(MSG_AB_TBPrint);       buttons[ 8].help = tr(MSG_HELP_AB_BT_PRINT);
+    buttons[10].text = tr(MSG_AB_TBOpenTree);    buttons[10].help = tr(MSG_HELP_AB_BT_OPEN);
+    buttons[11].text = tr(MSG_AB_TBCloseTree);   buttons[11].help = tr(MSG_HELP_AB_BT_CLOSE);
+    #endif
 
     // create TheBar object with the cached
     // toolbar images

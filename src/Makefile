@@ -93,7 +93,7 @@ SED   = sed
 DATE  = date
 RM    = rm -f
 RMDIR = rm -rf
-MKDIR = mkdir
+MKDIR = mkdir -p
 
 # Special macros for version ID and developer builds
 DEVFLAGS = -DDEVWARNING -DEXPDATE="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922 + 31`"
@@ -104,9 +104,9 @@ YAMVERID = -D__YAM_VERDATE=\"`$(DATE) +%d.%m.%Y`\" \
 # override commands for native builds
 ifeq ($(HOST), AmigaOS4)
   # AmigaOS4 host
-  RM    = delete force
-  RMDIR = delete force all
-  MKDIR = makedir
+#  RM    = delete force
+#  RMDIR = delete force all
+#  MKDIR = makedir
   DATE  = gdate
 else
 ifeq ($(HOST), AmigaOS)

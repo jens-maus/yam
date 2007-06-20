@@ -76,6 +76,7 @@ OVERLOAD(OM_NEW)
     // toolbar looks like.
     struct MUIS_TheBar_Button buttons[TB_WRITE_NUM+4] =
     {
+    #if !defined(__SASC)
       { TB_WRITE_EDITOR,    TB_WRITE_EDITOR,    tr(MSG_WR_TBEditor),    tr(MSG_HELP_WR_BT_EDITOR),    0, 0, NULL, NULL },
       { TB_WRITE_INSERT,    TB_WRITE_INSERT,    tr(MSG_WR_TBInsert),    tr(MSG_HELP_WR_BT_LOAD),      0, 0, NULL, NULL },
 
@@ -98,7 +99,48 @@ OVERLOAD(OM_NEW)
       { TB_WRITE_SEARCH,    TB_WRITE_SEARCH,    tr(MSG_WR_TBSearch),    tr(MSG_HELP_WR_BT_SEARCH),    0, 0, NULL, NULL },
 
       { MUIV_TheBar_End,       -1,  NULL, NULL, 0, 0, NULL, NULL },
+    #else
+      { TB_WRITE_EDITOR,    TB_WRITE_EDITOR,    NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_WRITE_INSERT,    TB_WRITE_INSERT,    NULL,                   NULL,                         0, 0, NULL, NULL },
+
+      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+
+      { TB_WRITE_CUT,       TB_WRITE_CUT,       NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_WRITE_COPY,      TB_WRITE_COPY,      NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_WRITE_PASTE,     TB_WRITE_PASTE,     NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_WRITE_UNDO,      TB_WRITE_UNDO,      NULL,                   NULL,                         0, 0, NULL, NULL },
+
+      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+
+      { TB_WRITE_BOLD,      TB_WRITE_BOLD,      NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_WRITE_ITALIC,    TB_WRITE_ITALIC,    NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_WRITE_UNDERLINE, TB_WRITE_UNDERLINE, NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_WRITE_COLORED,   TB_WRITE_COLORED,   NULL,                   NULL,                         0, 0, NULL, NULL },
+
+      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+
+      { TB_WRITE_SEARCH,    TB_WRITE_SEARCH,    NULL,                   NULL,                         0, 0, NULL, NULL },
+
+      { MUIV_TheBar_End,       -1,  NULL, NULL, 0, 0, NULL, NULL },
+    #endif
     };
+
+    #if defined(__SASC)
+    buttons[ 0].text = tr(MSG_WR_TBEditor);     buttons[ 0].help = tr(MSG_HELP_WR_BT_EDITOR);
+    buttons[ 1].text = tr(MSG_WR_TBInsert);     buttons[ 1].help = tr(MSG_HELP_WR_BT_LOAD);
+
+    buttons[ 3].text = tr(MSG_WR_TBCut);        buttons[ 3].help = tr(MSG_HELP_WR_BT_CUT);
+    buttons[ 4].text = tr(MSG_WR_TBCopy);       buttons[ 4].help = tr(MSG_HELP_WR_BT_COPY);
+    buttons[ 5].text = tr(MSG_WR_TBPaste);      buttons[ 5].help = tr(MSG_HELP_WR_BT_PASTE);
+    buttons[ 6].text = tr(MSG_WR_TBUndo);       buttons[ 6].help = tr(MSG_HELP_WR_BT_UNDO);
+
+    buttons[ 8].text = tr(MSG_WR_TBBold);       buttons[ 8].help = tr(MSG_HELP_WR_BT_BOLD);
+    buttons[ 9].text = tr(MSG_WR_TBItalic);     buttons[ 9].help = tr(MSG_HELP_WR_BT_ITALIC);
+    buttons[10].text = tr(MSG_WR_TBUnderlined); buttons[10].help = tr(MSG_HELP_WR_BT_UNDERL);
+    buttons[11].text = tr(MSG_WR_TBColored);    buttons[11].help = tr(MSG_HELP_WR_BT_COLOR);
+
+    buttons[13].text = tr(MSG_WR_TBSearch);     buttons[13].help = tr(MSG_HELP_WR_BT_SEARCH);
+    #endif
 
     // create TheBar object with the cached
     // toolbar images

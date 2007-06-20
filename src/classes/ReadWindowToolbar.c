@@ -78,6 +78,7 @@ OVERLOAD(OM_NEW)
     // toolbar looks like.
     struct MUIS_TheBar_Button buttons[TB_READ_NUM+4] =
     {
+    #if !defined(__SASC)
       { TB_READ_PREV,       TB_READ_PREV,       tr(MSG_RE_TBPrev),    tr(MSG_HELP_RE_BT_PREVIOUS),    0, 0, NULL, NULL },
       { TB_READ_NEXT,       TB_READ_NEXT,       tr(MSG_RE_TBNext),    tr(MSG_HELP_RE_BT_NEXT),        0, 0, NULL, NULL },
       { TB_READ_PREVTHREAD, TB_READ_PREVTHREAD, tr(MSG_RE_TBPrevTh),  tr(MSG_HELP_RE_BT_QUESTION),    0, 0, NULL, NULL },
@@ -102,8 +103,56 @@ OVERLOAD(OM_NEW)
       // the "not Spam" button is hidden by default
       { TB_READ_SPAM,       TB_READ_SPAM,       tr(MSG_RE_TBSPAM),    tr(MSG_HELP_RE_BT_SPAM),        MUIV_TheBar_ButtonFlag_Disabled, 0, NULL, NULL },
       { TB_READ_HAM,        TB_READ_HAM,        tr(MSG_RE_TBNOTSPAM), tr(MSG_HELP_RE_BT_NOTSPAM),     MUIV_TheBar_ButtonFlag_Hide, 0, NULL, NULL },
+
       { MUIV_TheBar_End,       -1,  NULL, NULL, 0, 0, NULL, NULL },
+    #else
+      { TB_READ_PREV,       TB_READ_PREV,       NULL,                 NULL,                           0, 0, NULL, NULL },
+      { TB_READ_NEXT,       TB_READ_NEXT,       NULL,                 NULL,                           0, 0, NULL, NULL },
+      { TB_READ_PREVTHREAD, TB_READ_PREVTHREAD, NULL,                 NULL,                           0, 0, NULL, NULL },
+      { TB_READ_NEXTTHREAD, TB_READ_NEXTTHREAD, NULL,                 NULL,                           0, 0, NULL, NULL },
+
+      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+
+      { TB_READ_DISPLAY,    TB_READ_DISPLAY,    NULL,                 NULL,                           0, 0, NULL, NULL },
+      { TB_READ_SAVE,       TB_READ_SAVE,       NULL,                 NULL,                           0, 0, NULL, NULL },
+      { TB_READ_PRINT,      TB_READ_PRINT,      NULL,                 NULL,                           0, 0, NULL, NULL },
+
+      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+
+      { TB_READ_DELETE,     TB_READ_DELETE,     NULL,                 NULL,                           0, 0, NULL, NULL },
+      { TB_READ_MOVE,       TB_READ_MOVE,       NULL,                 NULL,                           0, 0, NULL, NULL },
+      { TB_READ_REPLY,      TB_READ_REPLY,      NULL,                 NULL,                           0, 0, NULL, NULL },
+      { TB_READ_FORWARD,    TB_READ_FORWARD,    NULL,                 NULL,                           0, 0, NULL, NULL },
+
+      { MUIV_TheBar_BarSpacer, TB_READ_NUM+1,  NULL, NULL, 0, 0, NULL, NULL },
+
+      // the "Spam" button is disabled by default
+      // the "not Spam" button is hidden by default
+      { TB_READ_SPAM,       TB_READ_SPAM,       NULL,                 NULL,                           0, 0, NULL, NULL },
+      { TB_READ_HAM,        TB_READ_HAM,        NULL,                 NULL,                           0, 0, NULL, NULL },
+
+      { MUIV_TheBar_End,       -1,  NULL, NULL, 0, 0, NULL, NULL },
+    #endif
     };
+
+    #if defined(__SASC)
+    buttons[ 0].text = tr(MSG_RE_TBPrev);    buttons[ 0].help = tr(MSG_HELP_RE_BT_PREVIOUS),
+    buttons[ 1].text = tr(MSG_RE_TBNext);    buttons[ 1].help = tr(MSG_HELP_RE_BT_NEXT),
+    buttons[ 2].text = tr(MSG_RE_TBPrevTh);  buttons[ 2].help = tr(MSG_HELP_RE_BT_QUESTION),
+    buttons[ 3].text = tr(MSG_RE_TBNextTh);  buttons[ 3].help = tr(MSG_HELP_RE_BT_ANSWER),
+
+    buttons[ 5].text = tr(MSG_RE_TBDisplay); buttons[ 5].help = tr(MSG_HELP_RE_BT_DISPLAY),
+    buttons[ 6].text = tr(MSG_RE_TBSave);    buttons[ 6].help = tr(MSG_HELP_RE_BT_EXPORT),
+    buttons[ 7].text = tr(MSG_RE_TBPrint);   buttons[ 7].help = tr(MSG_HELP_RE_BT_PRINT),
+
+    buttons[ 9].text = tr(MSG_RE_TBDelete);  buttons[ 9].help = tr(MSG_HELP_RE_BT_DELETE),
+    buttons[10].text = tr(MSG_RE_TBMove);    buttons[10].help = tr(MSG_HELP_RE_BT_MOVE),
+    buttons[11].text = tr(MSG_RE_TBReply);   buttons[11].help = tr(MSG_HELP_RE_BT_REPLY),
+    buttons[12].text = tr(MSG_RE_TBForward); buttons[12].help = tr(MSG_HELP_RE_BT_FORWARD),
+
+    buttons[14].text = tr(MSG_RE_TBSPAM);    buttons[14].help = tr(MSG_HELP_RE_BT_SPAM),
+    buttons[15].text = tr(MSG_RE_TBNOTSPAM); buttons[15].help = tr(MSG_HELP_RE_BT_NOTSPAM),
+    #endif
 
     // create TheBar object with the cached
     // toolbar images

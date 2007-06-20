@@ -63,7 +63,7 @@ struct Data
 HOOKPROTONHNO(FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *msg)
 {
   struct ABEntry *entry;
-  ULONG result = ~0;
+  LONG result = ~0;
 
   ENTER();
 

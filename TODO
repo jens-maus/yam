@@ -89,9 +89,7 @@ Groups ought to list the total size of their contents, either if they
 are open or closed.
 
 Selecting a group should NOT disable the mail listview, but leave its
-current contents intact until another folder is selected. In addition,
-the mail listview in memory shouldn't vanish when YAM is iconified, as
-this adds a delay to get it again when the application is uniconified.
+current contents intact until another folder is selected. 
 
 
 Additional config flags

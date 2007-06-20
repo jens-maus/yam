@@ -847,7 +847,7 @@ BOOL FO_LoadTree(char *fname)
         }
         else if(strncmp(buffer, "@GROUP", 6) == 0)
         {
-          long tnflags = (TNF_LIST);
+          long tnflags = TNF_LIST;
 
           fo.Type = FT_GROUP;
           strlcpy(fo.Name, Trim(&buffer[7]), sizeof(fo.Name));

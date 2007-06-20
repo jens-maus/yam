@@ -1978,232 +1978,232 @@ static void Initialise2(void)
 //  Phase 1 of program initialization (before user logs in)
 static void Initialise(BOOL hidden)
 {
-   int i;
-   const char *errorMsg = NULL;
-   char pathbuf[SIZE_PATH];
-   char filebuf[SIZE_PATHFILE];
-   static const char *const icnames[MAXICONS] =
-   {
-     "empty", "old", "new", "check"
-   };
+  int i;
+  const char *errorMsg = NULL;
+  char pathbuf[SIZE_PATH];
+  char filebuf[SIZE_PATHFILE];
+  static const char *const icnames[MAXICONS] =
+  {
+    "empty", "old", "new", "check"
+  };
 
-   ENTER();
+  ENTER();
 
-   // lets save the current date/time in our startDate value
-   DateStamp(&G->StartDate);
+  // lets save the current date/time in our startDate value
+  DateStamp(&G->StartDate);
 
-   // initialize the random number seed.
-   srand((unsigned int)GetDateStamp());
+  // initialize the random number seed.
+  srand((unsigned int)GetDateStamp());
 
-   // First open locale.library, so we can display a translated error requester
-   // in case some of the other libraries can't be opened.
-   if(INITLIB("locale.library", 38, 0, &LocaleBase, "main", &ILocale, TRUE, NULL))
-     G->Locale = OpenLocale(NULL);
+  // First open locale.library, so we can display a translated error requester
+  // in case some of the other libraries can't be opened.
+  if(INITLIB("locale.library", 38, 0, &LocaleBase, "main", &ILocale, TRUE, NULL))
+    G->Locale = OpenLocale(NULL);
 
-   // Now load the catalog of YAM
-   if(G->NoCatalogTranslation == FALSE && OpenYAMCatalog() == FALSE)
-     Abort(NULL);
+  // Now load the catalog of YAM
+  if(G->NoCatalogTranslation == FALSE && OpenYAMCatalog() == FALSE)
+    Abort(NULL);
 
-   // load&initialize all required libraries
-   INITLIB("graphics.library",  36, 0, &GfxBase,      "main", &IGraphics, TRUE, NULL);
-   INITLIB("layers.library",    39, 0, &LayersBase,   "main", &ILayers,   TRUE, NULL);
-   INITLIB("workbench.library", 36, 0, &WorkbenchBase,"main", &IWorkbench,TRUE, NULL);
-   INITLIB("keymap.library",    36, 0, &KeymapBase,   "main", &IKeymap,   TRUE, NULL);
-   INITLIB("iffparse.library",  36, 0, &IFFParseBase, "main", &IIFFParse, TRUE, NULL);
-   INITLIB(RXSNAME,             36, 0, &RexxSysBase,  "main", &IRexxSys,  TRUE, NULL);
-   INITLIB("muimaster.library", 19, 0, &MUIMasterBase,"main", &IMUIMaster,TRUE, "http://www.sasg.com/");
-   INITLIB("datatypes.library", 39, 0, &DataTypesBase,"main", &IDataTypes,TRUE, NULL);
-   INITLIB("codesets.library",   6, 3, &CodesetsBase, "main", &ICodesets, TRUE, "http://www.sf.net/projects/codesetslib/");
+  // load&initialize all required libraries
+  INITLIB("graphics.library",  36, 0, &GfxBase,      "main", &IGraphics, TRUE, NULL);
+  INITLIB("layers.library",    39, 0, &LayersBase,   "main", &ILayers,   TRUE, NULL);
+  INITLIB("workbench.library", 36, 0, &WorkbenchBase,"main", &IWorkbench,TRUE, NULL);
+  INITLIB("keymap.library",    36, 0, &KeymapBase,   "main", &IKeymap,   TRUE, NULL);
+  INITLIB("iffparse.library",  36, 0, &IFFParseBase, "main", &IIFFParse, TRUE, NULL);
+  INITLIB(RXSNAME,             36, 0, &RexxSysBase,  "main", &IRexxSys,  TRUE, NULL);
+  INITLIB("muimaster.library", 19, 0, &MUIMasterBase,"main", &IMUIMaster,TRUE, "http://www.sasg.com/");
+  INITLIB("datatypes.library", 39, 0, &DataTypesBase,"main", &IDataTypes,TRUE, NULL);
+  INITLIB("codesets.library",   6, 3, &CodesetsBase, "main", &ICodesets, TRUE, "http://www.sf.net/projects/codesetslib/");
 
-   // we check for the amisslmaster.library v3 accordingly
-   if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", &IAmiSSLMaster, FALSE, NULL))
-   {
-     if(InitAmiSSLMaster(AMISSL_CURRENT_VERSION, TRUE))
-     {
-       if((AmiSSLBase = OpenAmiSSL()) &&
-          GETINTERFACE("main", IAmiSSL, AmiSSLBase))
-       {
-         G->TR_UseableTLS = TRUE;
+  // we check for the amisslmaster.library v3 accordingly
+  if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", &IAmiSSLMaster, FALSE, NULL))
+  {
+    if(InitAmiSSLMaster(AMISSL_CURRENT_VERSION, TRUE))
+    {
+      if((AmiSSLBase = OpenAmiSSL()) &&
+         GETINTERFACE("main", IAmiSSL, AmiSSLBase))
+      {
+        G->TR_UseableTLS = TRUE;
 
-         D(DBF_STARTUP, "successfully opened AmiSSL library.");
-       }
-     }
-   }
+        D(DBF_STARTUP, "successfully opened AmiSSL library.");
+      }
+    }
+  }
 
-   // now we try to open the application.library which is part of OS4
-   // and will be used to notify YAM of certain events and also manage
-   // the docky icon accordingly.
-   #if defined(__amigaos4__)
-   INITLIB("application.library", 50, 0, &ApplicationBase, "application", &IApplication, FALSE, NULL);
-   #endif
+  // now we try to open the application.library which is part of OS4
+  // and will be used to notify YAM of certain events and also manage
+  // the docky icon accordingly.
+  #if defined(__amigaos4__)
+  INITLIB("application.library", 50, 0, &ApplicationBase, "application", &IApplication, FALSE, NULL);
+  #endif
 
-   // Lets check for the correct TheBar.mcc version
-   CheckMCC(MUIC_TheBar,     21, 3, TRUE, "http://www.sf.net/projects/thebar/");
-   CheckMCC(MUIC_TheBarVirt, 21, 3, TRUE, "http://www.sf.net/projects/thebar/");
-   CheckMCC(MUIC_TheButton,  21, 3, TRUE, "http://www.sf.net/projects/thebar/");
+  // Lets check for the correct TheBar.mcc version
+  CheckMCC(MUIC_TheBar,     21, 3, TRUE, "http://www.sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheBarVirt, 21, 3, TRUE, "http://www.sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheButton,  21, 3, TRUE, "http://www.sf.net/projects/thebar/");
 
-   // Lets check for the correct BetterString.mcc version
-   CheckMCC(MUIC_BetterString, 11, 10, TRUE, "http://www.sf.net/projects/bstring-mcc/");
+  // Lets check for the correct BetterString.mcc version
+  CheckMCC(MUIC_BetterString, 11, 10, TRUE, "http://www.sf.net/projects/bstring-mcc/");
 
-   // we have to have at least v20.116 of NList.mcc to get YAM working without risking
-   // to have it buggy - so we make it a requirement. And also 111 is the fastest one ATM.
-   CheckMCC(MUIC_NList, 20, 117, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  // we have to have at least v20.116 of NList.mcc to get YAM working without risking
+  // to have it buggy - so we make it a requirement. And also 111 is the fastest one ATM.
+  CheckMCC(MUIC_NList, 20, 117, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
-   // we also make sure the user uses the latest brand of all other NList classes, such as
-   // NListview, NFloattext etc.
-   CheckMCC(MUIC_NListview, 19, 72, TRUE, "http://www.sf.net/projects/nlist-classes/");
-   CheckMCC(MUIC_NFloattext, 19, 53, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  // we also make sure the user uses the latest brand of all other NList classes, such as
+  // NListview, NFloattext etc.
+  CheckMCC(MUIC_NListview, 19, 72, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NFloattext, 19, 53, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
-   // we make v18.23 the minimum requirement for YAM because earlier versions are
-   // buggy
-   CheckMCC(MUIC_NListtree, 18, 24, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  // we make v18.23 the minimum requirement for YAM because earlier versions are
+  // buggy
+  CheckMCC(MUIC_NListtree, 18, 24, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
-   // Lets check for the correct TextEditor.mcc version
-   CheckMCC(MUIC_TextEditor, 15, 21, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
+  // Lets check for the correct TextEditor.mcc version
+  CheckMCC(MUIC_TextEditor, 15, 21, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
 
-   // now we search through PROGDIR:Charsets and load all user defined
-   // codesets via codesets.library
-   G->codesetsList = CodesetsListCreateA(NULL);
+  // now we search through PROGDIR:Charsets and load all user defined
+  // codesets via codesets.library
+  G->codesetsList = CodesetsListCreateA(NULL);
 
-   // create a public semaphore which can be used to single thread certain actions
-   if((startupSema = CreateStartupSemaphore()) == NULL)
-     Abort(tr(MSG_ER_CANNOT_CREATE_SEMAPHORE));
+  // create a public semaphore which can be used to single thread certain actions
+  if((startupSema = CreateStartupSemaphore()) == NULL)
+    Abort(tr(MSG_ER_CANNOT_CREATE_SEMAPHORE));
 
-   // Initialise and Setup our own MUI custom classes before we go on
-   if(YAM_SetupClasses() == FALSE)
-     Abort(tr(MSG_ErrorClasses));
+  // Initialise and Setup our own MUI custom classes before we go on
+  if(YAM_SetupClasses() == FALSE)
+    Abort(tr(MSG_ErrorClasses));
 
-   // allocate the MUI root object and popup the progress/about window
-   if(Root_New(hidden) == FALSE)
-     Abort(FindPort("YAM") ? NULL : tr(MSG_ErrorMuiApp));
+  // allocate the MUI root object and popup the progress/about window
+  if(Root_New(hidden) == FALSE)
+    Abort(FindPort("YAM") ? NULL : tr(MSG_ErrorMuiApp));
 
-   // signal the splash window to show a 10% gauge
-   SplashProgress(tr(MSG_LoadingGFX), 10);
+  // signal the splash window to show a 10% gauge
+  SplashProgress(tr(MSG_LoadingGFX), 10);
 
-   // before we load our images in YAM:icons we check the image layout
-   // by loading the ".imglayout" file, checking if it matches the version
-   // we are currently using or present the user a warning requester
-   // accordingly.
-   strmfp(pathbuf, G->ProgDir, "Icons");
-   strmfp(filebuf, pathbuf, ".imglayout");
-   if(FileExists(filebuf))
-   {
-     FILE *fp;
+  // before we load our images in YAM:icons we check the image layout
+  // by loading the ".imglayout" file, checking if it matches the version
+  // we are currently using or present the user a warning requester
+  // accordingly.
+  strmfp(pathbuf, G->ProgDir, "Icons");
+  strmfp(filebuf, pathbuf, ".imglayout");
+  if(FileExists(filebuf))
+  {
+    FILE *fp;
 
-     if((fp = fopen(filebuf, "r")))
-     {
-       char verBuf[5];
+    if((fp = fopen(filebuf, "r")))
+    {
+      char verBuf[5];
 
-       // we load the first 4 bytes of the file as these bytes contain the
-       // necessary information
-       if(fread(verBuf, 1, 4, fp) == 4)
-       {
-         verBuf[4] = '\0';
+      // we load the first 4 bytes of the file as these bytes contain the
+      // necessary information
+      if(fread(verBuf, 1, 4, fp) == 4)
+      {
+        verBuf[4] = '\0';
 
-         if(strnicmp(verBuf, "YIM", 3) == 0)
-         {
-           if(atoi(&verBuf[3]) != IMGLAYOUT_VERSION)
-             errorMsg = tr(MSG_ER_WRONGIMGLAYOUTVER);
-         }
-         else
-           errorMsg = tr(MSG_ER_LOADIMGLAYOUTFAILED);
-       }
-       else
-         errorMsg = tr(MSG_ER_LOADIMGLAYOUTFAILED);
+        if(strnicmp(verBuf, "YIM", 3) == 0)
+        {
+          if(atoi(&verBuf[3]) != IMGLAYOUT_VERSION)
+            errorMsg = tr(MSG_ER_WRONGIMGLAYOUTVER);
+        }
+        else
+          errorMsg = tr(MSG_ER_LOADIMGLAYOUTFAILED);
+      }
+      else
+        errorMsg = tr(MSG_ER_LOADIMGLAYOUTFAILED);
 
-       fclose(fp);
-     }
-     else
-       errorMsg = tr(MSG_ER_LOADIMGLAYOUTFAILED);
-   }
-   else
-     errorMsg = tr(MSG_ER_MISSINGIMGVERFILE);
+      fclose(fp);
+    }
+    else
+      errorMsg = tr(MSG_ER_LOADIMGLAYOUTFAILED);
+  }
+  else
+    errorMsg = tr(MSG_ER_MISSINGIMGVERFILE);
 
-   if(errorMsg != NULL)
-   {
-     if(MUI_Request(G->App, NULL, 0, tr(MSG_ER_IMGLAYOUTFAILURE),
-                                     tr(MSG_ER_EXITIGNORE),
-                                     errorMsg, pathbuf))
-     {
-       // exit the application now
-       Abort(NULL);
-     }
-   }
+  if(errorMsg != NULL)
+  {
+    if(MUI_Request(G->App, NULL, 0, tr(MSG_ER_IMGLAYOUTFAILURE),
+                                    tr(MSG_ER_EXITIGNORE),
+                                    errorMsg, pathbuf))
+    {
+      // exit the application now
+      Abort(NULL);
+    }
+  }
 
-   for(i=0; i < MAXICONS; i++)
-   {
-     strmfp(filebuf, pathbuf, icnames[i]);
+  for(i=0; i < MAXICONS; i++)
+  {
+    strmfp(filebuf, pathbuf, icnames[i]);
 
-     // depending on the icon.library version we use either GetIconTags()
-     // or the older GetDiskObject() function
-     if(IconBase->lib_Version >= 44)
-       G->DiskObj[i] = GetIconTags(filebuf, TAG_DONE);
-     else
-       G->DiskObj[i] = GetDiskObject(filebuf);
+    // depending on the icon.library version we use either GetIconTags()
+    // or the older GetDiskObject() function
+    if(IconBase->lib_Version >= 44)
+      G->DiskObj[i] = GetIconTags(filebuf, TAG_DONE);
+    else
+      G->DiskObj[i] = GetDiskObject(filebuf);
 
-     // load the diskobject and report an error if something went wrong.
-     if(G->DiskObj[i] == NULL && G->NoImageWarning == FALSE)
-     {
-       int reqResult;
+    // load the diskobject and report an error if something went wrong.
+    if(G->DiskObj[i] == NULL && G->NoImageWarning == FALSE)
+    {
+      int reqResult;
 
-       if((reqResult = MUI_Request(G->App, NULL, 0, tr(MSG_ER_ICONOBJECT_TITLE),
-                                                    tr(MSG_ER_EXITIGNOREALL),
-                                                    tr(MSG_ER_ICONOBJECT),
-                                                    icnames[i], pathbuf)))
-       {
-         if(reqResult == 2)
-           G->NoImageWarning = TRUE;
-         else
-           Abort(NULL); // exit the application
-       }
-     }
-   }
+      if((reqResult = MUI_Request(G->App, NULL, 0, tr(MSG_ER_ICONOBJECT_TITLE),
+                                                   tr(MSG_ER_EXITIGNOREALL),
+                                                   tr(MSG_ER_ICONOBJECT),
+                                                   icnames[i], pathbuf)))
+      {
+        if(reqResult == 2)
+          G->NoImageWarning = TRUE;
+        else
+          Abort(NULL); // exit the application
+      }
+    }
+  }
 
-   // make sure we initialize the image Cache which in turn will
-   // cause YAM to load all static images from the YAM:Icons directory
-   if(ImageCacheInit(pathbuf) == FALSE)
-     Abort(NULL); // exit the application
+  // make sure we initialize the image Cache which in turn will
+  // cause YAM to load all static images from the YAM:Icons directory
+  if(ImageCacheInit(pathbuf) == FALSE)
+    Abort(NULL); // exit the application
 
-   // make sure we initialize the toolbar Cache which in turn will
-   // cause YAM to cache all often used toolbars and their images
-   if(ToolbarCacheInit(pathbuf) == FALSE)
-     Abort(NULL); // exit the application
+  // make sure we initialize the toolbar Cache which in turn will
+  // cause YAM to cache all often used toolbars and their images
+  if(ToolbarCacheInit(pathbuf) == FALSE)
+    Abort(NULL); // exit the application
 
-   // lets advance the progress bar to 20%
-   SplashProgress(tr(MSG_InitLibs), 20);
+  // lets advance the progress bar to 20%
+  SplashProgress(tr(MSG_InitLibs), 20);
 
-   // try to open xpkmaster.library v5.0+ as this is somewhat the most
-   // stable version available. Previous version might have some issues
-   // as documented in our FAQ.
-   INITLIB(XPKNAME, 5, 0, &XpkBase, "main", &IXpk, FALSE, NULL);
-   InitXPKPackerList();
+  // try to open xpkmaster.library v5.0+ as this is somewhat the most
+  // stable version available. Previous version might have some issues
+  // as documented in our FAQ.
+  INITLIB(XPKNAME, 5, 0, &XpkBase, "main", &IXpk, FALSE, NULL);
+  InitXPKPackerList();
 
-   // initialize our timers
-   if(!TC_Init())
-     Abort(tr(MSG_ErrorTimer));
+  // initialize our timers
+  if(!TC_Init())
+    Abort(tr(MSG_ErrorTimer));
 
-   // initialize our ASL FileRequester cache stuff
-   for(i = 0; i < ASL_MAX; i++)
-   {
-     if((G->FileReqCache[i] = calloc(sizeof(struct FileReqCache), 1)) == NULL)
-       Abort(NULL);
-   }
+  // initialize our ASL FileRequester cache stuff
+  for(i = 0; i < ASL_MAX; i++)
+  {
+    if((G->FileReqCache[i] = calloc(sizeof(struct FileReqCache), 1)) == NULL)
+      Abort(NULL);
+  }
 
-   // create the main message port
-   if((G->AppPort = CreateMsgPort()) == NULL)
-     Abort(NULL);
+  // create the main message port
+  if((G->AppPort = CreateMsgPort()) == NULL)
+    Abort(NULL);
 
-   // initialize the file nofifications
-   for(i=0; i <= MAXWR; i++)
-   {
-      if((G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreateMsgPort()) == NULL)
-        Abort(NULL);
+  // initialize the file nofifications
+  for(i=0; i <= MAXWR; i++)
+  {
+    if((G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreateMsgPort()) == NULL)
+      Abort(NULL);
 
-      G->WR_NRequest[i].nr_Name = (STRPTR)G->WR_Filename[i];
-      G->WR_NRequest[i].nr_Flags = NRF_SEND_MESSAGE;
-   }
+    G->WR_NRequest[i].nr_Name = (STRPTR)G->WR_Filename[i];
+    G->WR_NRequest[i].nr_Flags = NRF_SEND_MESSAGE;
+  }
 
-   LEAVE();
+  LEAVE();
 }
 ///
 /// SendWaitingMail

@@ -136,6 +136,7 @@ OVERLOAD(OM_NEW)
   // toolbar looks like.
   struct MUIS_TheBar_Button buttons[TB_MAIN_NUM+5] =
   {
+  #if !defined(__SASC)
     { TB_MAIN_READ,     TB_MAIN_READ,     tr(MSG_MA_TBRead),    tr(MSG_HELP_MA_BT_READ),        0, 0, NULL, NULL },
     { TB_MAIN_EDIT,     TB_MAIN_EDIT,     tr(MSG_MA_TBEdit),    tr(MSG_HELP_MA_BT_EDIT),        0, 0, NULL, NULL },
     { TB_MAIN_MOVE,     TB_MAIN_MOVE,     tr(MSG_MA_TBMove),    tr(MSG_HELP_MA_BT_MOVE),        0, 0, NULL, NULL },
@@ -165,9 +166,62 @@ OVERLOAD(OM_NEW)
     { TB_MAIN_CONFIG,   TB_MAIN_CONFIG,   tr(MSG_MA_TBConfig),  tr(MSG_HELP_MA_BT_CONFIG),      0, 0, NULL, NULL },
 
     { MUIV_TheBar_End,       -1,  NULL, NULL, 0, 0, NULL, NULL },
+  #else
+    { TB_MAIN_READ,     TB_MAIN_READ,     NULL,                 NULL,                           0, 0, NULL, NULL },
+    { TB_MAIN_EDIT,     TB_MAIN_EDIT,     NULL,                 NULL,                           0, 0, NULL, NULL },
+    { TB_MAIN_MOVE,     TB_MAIN_MOVE,     NULL,                 NULL,                           0, 0, NULL, NULL },
+    { TB_MAIN_DELETE,   TB_MAIN_DELETE,   NULL,                 NULL,                           0, 0, NULL, NULL },
+    { TB_MAIN_GETADDR,  TB_MAIN_GETADDR,  NULL,                 NULL,                           0, 0, NULL, NULL },
+
+    { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+
+    { TB_MAIN_NEWMAIL,  TB_MAIN_NEWMAIL,  NULL,                 NULL,                           0, 0, NULL, NULL },
+    { TB_MAIN_REPLY,    TB_MAIN_REPLY,    NULL,                 NULL,                           0, 0, NULL, NULL },
+    { TB_MAIN_FORWARD,  TB_MAIN_FORWARD,  NULL,                 NULL,                           0, 0, NULL, NULL },
+
+    { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+
+    { TB_MAIN_GETMAIL,  TB_MAIN_GETMAIL,  NULL,                 NULL,                           0, 0, NULL, NULL },
+    { TB_MAIN_SENDALL,  TB_MAIN_SENDALL,  NULL,                 NULL,                           0, 0, NULL, NULL },
+
+    { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+
+    // the "Spam" button is disabled by default
+    // the "not Spam" button is hidden by default
+    { TB_MAIN_SPAM,     TB_MAIN_SPAM,     NULL,                 NULL,                           MUIV_TheBar_ButtonFlag_Disabled, 0, NULL, NULL },
+    { TB_MAIN_HAM,      TB_MAIN_HAM,      NULL,                 NULL,                           MUIV_TheBar_ButtonFlag_Hide, 0, NULL, NULL },
+    { TB_MAIN_FILTER,   TB_MAIN_FILTER,   NULL,                 NULL,                           0, 0, NULL, NULL },
+    { TB_MAIN_FIND,     TB_MAIN_FIND,     NULL,                 NULL,                           0, 0, NULL, NULL },
+    { TB_MAIN_ADDRBOOK, TB_MAIN_ADDRBOOK, NULL,                 NULL,                           0, 0, NULL, NULL },
+    { TB_MAIN_CONFIG,   TB_MAIN_CONFIG,   NULL,                 NULL,                           0, 0, NULL, NULL },
+
+    { MUIV_TheBar_End,       -1,  NULL, NULL, 0, 0, NULL, NULL },
+  #endif
   };
 
   ENTER();
+
+  #if defined(__SASC)
+  buttons[ 0].text = tr(MSG_MA_TBRead);      buttons[ 0].help = tr(MSG_HELP_MA_BT_READ);
+  buttons[ 1].text = tr(MSG_MA_TBEdit);      buttons[ 1].help = tr(MSG_HELP_MA_BT_EDIT);
+  buttons[ 2].text = tr(MSG_MA_TBMove);      buttons[ 2].help = tr(MSG_HELP_MA_BT_MOVE);
+  buttons[ 3].text = tr(MSG_MA_TBDelete);    buttons[ 3].help = tr(MSG_HELP_MA_BT_DELETE);
+  buttons[ 4].text = tr(MSG_MA_TBGetAddr);   buttons[ 4].help = tr(MSG_HELP_MA_BT_GETADDRESS);
+
+  buttons[ 6].text = tr(MSG_MA_TBWrite);     buttons[ 6].help = tr(MSG_HELP_MA_BT_WRITE);
+  buttons[ 7].text = tr(MSG_MA_TBReply);     buttons[ 7].help = tr(MSG_HELP_MA_BT_REPLY);
+  buttons[ 8].text = tr(MSG_MA_TBForward);   buttons[ 8].help =  tr(MSG_HELP_MA_BT_FORWARD);
+
+  buttons[10].text = tr(MSG_MA_TBGetMail);   buttons[10].help = tr(MSG_HELP_MA_BT_POPNOW);
+  buttons[11].text = tr(MSG_MA_TBSendAll);   buttons[11].help = tr(MSG_HELP_MA_BT_SENDALL);
+
+  buttons[13].text = tr(MSG_MA_TBSPAM);      buttons[13].help = tr(MSG_HELP_MA_BT_SPAM);
+  buttons[14].text = tr(MSG_MA_TBNOTSPAM);   buttons[14].help = tr(MSG_HELP_MA_BT_NOTSPAM);
+  buttons[15].text = tr(MSG_MA_TBFilter);    buttons[15].help = tr(MSG_HELP_MA_BT_FILTER);
+  buttons[16].text = tr(MSG_MA_TBFind);      buttons[16].help = tr(MSG_HELP_MA_BT_SEARCH);
+  buttons[17].text = tr(MSG_MA_TBAddrBook);  buttons[17].help = tr(MSG_HELP_MA_BT_ABOOK);
+  buttons[18].text = tr(MSG_MA_TBConfig);    buttons[18].help = tr(MSG_HELP_MA_BT_CONFIG);
+  #endif
 
   // instruct MUI to generate the object
   if((obj = DoSuperNew(cl, obj,

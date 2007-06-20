@@ -493,8 +493,8 @@ DECLARE(IsMailList) // Object* list
 
   ASSERT(msg->list != NULL);
 
-  return (msg->list == data->mainListObjects[LT_MAIN] ||
-          msg->list == data->mainListObjects[LT_QUICKVIEW]);
+  return (ULONG)(msg->list == data->mainListObjects[LT_MAIN] ||
+                 msg->list == data->mainListObjects[LT_QUICKVIEW]);
 }
 
 ///

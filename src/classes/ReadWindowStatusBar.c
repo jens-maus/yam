@@ -191,7 +191,11 @@ OVERLOAD(OM_NEW)
     Object *newImage;
 
     if((newImage = MakeImageObject(image[i].name, image[i].name)) != NULL)
-      minHeight = MAX(xget(newImage, MUIA_ImageArea_RawHeight), minHeight);
+    {
+      ULONG rawHeight = xget(newImage, MUIA_ImageArea_RawHeight);
+
+      minHeight = MAX(rawHeight, minHeight);
+    }
 
     statusImage[image[i].status] = newImage;
   }

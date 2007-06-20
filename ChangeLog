@@ -16,6 +16,10 @@ $URL$
 
 2007-06-20  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: lots of changes to make YAM compilable by SAS/C again. Mainly some
+    typecasts were added. The biggest change happened in the toolbar subclasses,
+    because SAS/C is not able to handle the tr() calls within a structure
+    definition.
   * YAM_global.c: because of the final binary size some variables must be
     explicitly declared as __near for the SAS/C build.
   * YAM_MA.c: simplified the folder listtree's destructor hook a bit.

@@ -4413,8 +4413,8 @@ static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, i
     #endif
   }
 
-  RETURN(error == XPKERR_OK);
-  return error == XPKERR_OK;
+  RETURN((BOOL)(error == XPKERR_OK));
+  return (BOOL)(error == XPKERR_OK);
 }
 ///
 /// UncompressMailFile
@@ -4446,8 +4446,8 @@ static BOOL UncompressMailFile(const char *src, const char *dst, const char *pas
     #endif
   }
 
-  RETURN(error == XPKERR_OK);
-  return error == XPKERR_OK;
+  RETURN((BOOL)(error == XPKERR_OK));
+  return (BOOL)(error == XPKERR_OK);
 }
 ///
 /// TransferMailFile

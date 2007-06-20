@@ -50,7 +50,7 @@ const char *tr(const void *fcstr)
   const char *defaultstr = ((struct FC_Type *)fcstr)->Str;
 
   if(G->Catalog)
-    return GetCatalogStr(G->Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
+    return (const char *)GetCatalogStr(G->Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
 
   return defaultstr;
 }

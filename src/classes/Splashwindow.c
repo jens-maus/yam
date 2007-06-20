@@ -290,7 +290,7 @@ DECLARE(ProgressChange) // char *txt, LONG percent, LONG max
 DECLARE(SelectUser)
 {
   GETDATA;
-  int user = -1;
+  LONG user = -1;
   Object *selectGroup;
   Object *userGroup;
 
@@ -332,7 +332,7 @@ DECLARE(SelectUser)
       {
         Object *button = MakeButton(G->Users.User[i].Name);
       
-        if(!i)
+        if(i == 0)
           button0 = button;
       
         DoMethod(group, OM_ADDMEMBER, button);
@@ -351,7 +351,7 @@ DECLARE(SelectUser)
       wasOpen = xget(obj, MUIA_Window_Open);
       wasIconified = xget(G->App, MUIA_Application_Iconified);
 
-      if(!wasOpen)
+      if(wasOpen == FALSE)
         set(obj, MUIA_Window_Open, TRUE);
 
       if(wasIconified)
@@ -378,8 +378,17 @@ DECLARE(SelectUser)
         LONG ret = DoMethod(G->App, MUIM_Application_NewInput, &signals)-ID_LOGIN;
 
         // bail out if a button was hit
-        if(ret >= 0 && ret < G->Users.Num) { user = ret; break; }
-        if(ret == G->Users.Num)             { user = -1;  break; } // ESC key pressed
+        if(ret >= 0 && ret < G->Users.Num)
+        {
+          user = ret;
+          break;
+        }
+        else if(ret == G->Users.Num)
+        {
+          // ESC key pressed
+          user = -1;
+          break;
+        }
 
         if(signals)
           signals = Wait(signals);
@@ -400,10 +409,10 @@ DECLARE(SelectUser)
                     TAG_DONE);
 
       // lets iconify/close the window if it had this state previously
-      if(!wasOpen)
+      if(wasOpen == FALSE)
         set(obj, MUIA_Window_Open, FALSE);
 
-      if(wasIconified)
+      if(wasIconified == TRUE)
         set(G->App, MUIA_Application_Iconified, TRUE);
 
       if(DoMethod(userGroup, MUIM_Group_InitChange))
@@ -425,7 +434,7 @@ DECLARE(SelectUser)
 
   DoMethod(G->App, MUIM_Application_InputBuffered);
 
-  return user;
+  return (ULONG)user;
 }
 
 ///

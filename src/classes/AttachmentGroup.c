@@ -626,7 +626,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
 OVERLOAD(MUIM_HandleEvent)
 {
   struct IntuiMessage *imsg = ((struct MUIP_HandleEvent *)msg)->imsg;
-  LONG result = 0;
+  ULONG result = 0;
 
   ENTER();
 

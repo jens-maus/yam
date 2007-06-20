@@ -199,7 +199,7 @@ DECLARE(SetFolder) // struct Folder *newFolder
 {
   GETDATA;
   struct Folder *folder = msg->newFolder;
-  LONG result = -1;
+  ULONG result = (ULONG)-1;
 
   ENTER();
 

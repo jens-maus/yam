@@ -47,14 +47,14 @@ OBJDIR     = .obj_sas
 
 # Compiler/Linker flags
 CPU      = 68020
-WARN     = WARN=ALL IGNORE=51,61,148,165,178,212,306
+WARN     = WARN=ALL IGNORE=51,61,120,148,165,178,212,306
 OPTFLAGS = STRIPDEBUG OPT OPTCOMPLEXITY=5 OPTDEPTH=3 OPTINLOCAL\
   OPTGO OPTLOOP OPTPEEP OPTSCHED OPTTIME
 DEBUG    = NOSTRIPDEBUG NOOPT DEF=DEBUG DEBUG=LINE
-CFLAGS   = RESOPT NOVER PARM=R CODE=FAR NOSTKCHK STRINGMERGE IDLEN=60 ERRORREXX\
+CFLAGS   = RESOPT NOVER PARM=R CODE=FAR DATA=FAR NOSTKCHK IDLEN=60 MATH=S\
   INCLUDEDIR=include INCLUDEDIR=include/netinclude INCLUDEDIR=$(CLASSDIR)\
   DEF=__USE_SYSBASE CPU=$(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
-LNKFLAGS = RESOPT NOVER LINK SMALLCODE SMALLDATA UTILLIB MATH=S\
+LNKFLAGS = RESOPT NOVER LINK MATH=S SMALLCODE \
   LIB lib:debug.lib NOICONS NOCHECKABORT $(OPTFLAGS) $(DEBUG)\
   "LINKOPT=MAP $(TARGET).map,fhx FWIDTH 32 PWIDTH 32 SWIDTH 32"
 
@@ -78,70 +78,76 @@ DEVFLAGS = DEF=DEVWARNING `rx "say 'DEF EXPDATE=' || date('I')+31"`
 
 # our few new rewritten classes
 CLASSES = \
-  $(OBJDIR)/$(CLASSDIR)/Classes.o \
-  $(OBJDIR)/$(CLASSDIR)/Recipientstring.o \
-  $(OBJDIR)/$(CLASSDIR)/Searchwindow.o \
-  $(OBJDIR)/$(CLASSDIR)/SearchControlGroup.o \
-  $(OBJDIR)/$(CLASSDIR)/AddrBookEntryList.o \
-  $(OBJDIR)/$(CLASSDIR)/AddrBookListtree.o \
-  $(OBJDIR)/$(CLASSDIR)/Addrmatchlist.o \
-  $(OBJDIR)/$(CLASSDIR)/Aboutwindow.o \
-  $(OBJDIR)/$(CLASSDIR)/AttachmentGroup.o \
-  $(OBJDIR)/$(CLASSDIR)/AttachmentImage.o \
-  $(OBJDIR)/$(CLASSDIR)/ConfigPageList.o \
-  $(OBJDIR)/$(CLASSDIR)/ReadMailGroup.o \
-  $(OBJDIR)/$(CLASSDIR)/ReadWindow.o \
-  $(OBJDIR)/$(CLASSDIR)/Splashwindow.o \
-  $(OBJDIR)/$(CLASSDIR)/StatusIconGroup.o \
-  $(OBJDIR)/$(CLASSDIR)/UserImage.o \
-  $(OBJDIR)/$(CLASSDIR)/MailTextEdit.o \
-  $(OBJDIR)/$(CLASSDIR)/MainFolderListtree.o \
-  $(OBJDIR)/$(CLASSDIR)/MainMailList.o \
-  $(OBJDIR)/$(CLASSDIR)/MainMailListGroup.o \
-  $(OBJDIR)/$(CLASSDIR)/MainWindow.o \
-  $(OBJDIR)/$(CLASSDIR)/InfoBar.o \
-  $(OBJDIR)/$(CLASSDIR)/WriteAttachmentList.o \
-  $(OBJDIR)/$(CLASSDIR)/QuickSearchBar.o \
-  $(OBJDIR)/$(CLASSDIR)/ImageArea.o \
-  $(OBJDIR)/$(CLASSDIR)/TransferMailList.o \
-  $(OBJDIR)/$(CLASSDIR)/UpdateNotifyWindow.o \
-  $(OBJDIR)/$(CLASSDIR)/YAM.o
+	$(OBJDIR)/$(CLASSDIR)/Classes.o \
+	$(OBJDIR)/$(CLASSDIR)/Recipientstring.o \
+	$(OBJDIR)/$(CLASSDIR)/Searchwindow.o \
+	$(OBJDIR)/$(CLASSDIR)/SearchControlGroup.o \
+	$(OBJDIR)/$(CLASSDIR)/AddrBookEntryList.o \
+	$(OBJDIR)/$(CLASSDIR)/AddrBookListtree.o \
+	$(OBJDIR)/$(CLASSDIR)/AddrBookToolbar.o \
+	$(OBJDIR)/$(CLASSDIR)/Addrmatchlist.o \
+	$(OBJDIR)/$(CLASSDIR)/Aboutwindow.o \
+	$(OBJDIR)/$(CLASSDIR)/AttachmentGroup.o \
+	$(OBJDIR)/$(CLASSDIR)/AttachmentImage.o \
+	$(OBJDIR)/$(CLASSDIR)/ConfigPageList.o \
+	$(OBJDIR)/$(CLASSDIR)/ReadMailGroup.o \
+	$(OBJDIR)/$(CLASSDIR)/ReadWindow.o \
+	$(OBJDIR)/$(CLASSDIR)/ReadWindowToolbar.o \
+	$(OBJDIR)/$(CLASSDIR)/ReadWindowStatusBar.o \
+	$(OBJDIR)/$(CLASSDIR)/Splashwindow.o \
+	$(OBJDIR)/$(CLASSDIR)/ShutdownWindow.o \
+	$(OBJDIR)/$(CLASSDIR)/UserImage.o \
+	$(OBJDIR)/$(CLASSDIR)/MailTextEdit.o \
+	$(OBJDIR)/$(CLASSDIR)/MainFolderListtree.o \
+	$(OBJDIR)/$(CLASSDIR)/MainMailList.o \
+	$(OBJDIR)/$(CLASSDIR)/MainMailListGroup.o \
+	$(OBJDIR)/$(CLASSDIR)/MainWindow.o \
+	$(OBJDIR)/$(CLASSDIR)/MainWindowToolbar.o \
+	$(OBJDIR)/$(CLASSDIR)/InfoBar.o \
+	$(OBJDIR)/$(CLASSDIR)/WriteAttachmentList.o \
+	$(OBJDIR)/$(CLASSDIR)/WriteWindowToolbar.o \
+	$(OBJDIR)/$(CLASSDIR)/QuickSearchBar.o \
+	$(OBJDIR)/$(CLASSDIR)/ImageArea.o \
+	$(OBJDIR)/$(CLASSDIR)/TransferMailList.o \
+	$(OBJDIR)/$(CLASSDIR)/UpdateNotifyWindow.o \
+	$(OBJDIR)/$(CLASSDIR)/ThemeListGroup.o \
+	$(OBJDIR)/$(CLASSDIR)/YAM.o
 
 # and the other object files
 OBJS = \
-  $(OBJDIR)/YAM_global.o \
-  $(OBJDIR)/YAM.o \
-  $(OBJDIR)/YAM_AB.o \
-  $(OBJDIR)/YAM_CO.o \
-  $(OBJDIR)/YAM_COg.o \
-  $(OBJDIR)/YAM_COs.o \
-  $(OBJDIR)/YAM_DI.o \
-  $(OBJDIR)/YAM_EA.o \
-  $(OBJDIR)/YAM_ER.o \
-  $(OBJDIR)/YAM_FI.o \
-  $(OBJDIR)/YAM_FO.o \
-  $(OBJDIR)/YAM_locale.o \
-  $(OBJDIR)/YAM_MA.o \
-  $(OBJDIR)/YAM_MAf.o \
-  $(OBJDIR)/YAM_md5.o \
-  $(OBJDIR)/YAM_MI.o \
-  $(OBJDIR)/YAM_mail_lex.o \
-  $(OBJDIR)/YAM_RE.o \
-  $(OBJDIR)/YAM_rexx.o \
-  $(OBJDIR)/YAM_rexx_rxcl.o \
-  $(OBJDIR)/YAM_rexx_rxif.o \
-  $(OBJDIR)/YAM_TR.o \
-  $(OBJDIR)/YAM_US.o \
-  $(OBJDIR)/YAM_UT.o \
-  $(OBJDIR)/YAM_WR.o \
-  $(OBJDIR)/ImageCache.o \
-  $(OBJDIR)/UpdateCheck.o \
-  $(OBJDIR)/HTML2Mail.o \
-  $(OBJDIR)/BayesFilter.o \
-  $(OBJDIR)/HashTable.o \
-  $(CLASSES) \
-  $(OBJDIR)/extrasrc.o \
-  $(OBJDIR)/Debug.o
+	$(OBJDIR)/YAM_global.o \
+	$(OBJDIR)/YAM.o \
+	$(CLASSES) \
+	$(OBJDIR)/YAM_AB.o \
+	$(OBJDIR)/YAM_CO.o \
+	$(OBJDIR)/YAM_COg.o \
+	$(OBJDIR)/YAM_COs.o \
+	$(OBJDIR)/YAM_DI.o \
+	$(OBJDIR)/YAM_EA.o \
+	$(OBJDIR)/YAM_ER.o \
+	$(OBJDIR)/YAM_FI.o \
+	$(OBJDIR)/YAM_FO.o \
+	$(OBJDIR)/YAM_locale.o \
+	$(OBJDIR)/YAM_MA.o \
+	$(OBJDIR)/YAM_MAf.o \
+	$(OBJDIR)/YAM_md5.o \
+	$(OBJDIR)/YAM_MI.o \
+	$(OBJDIR)/YAM_mail_lex.o \
+	$(OBJDIR)/YAM_RE.o \
+	$(OBJDIR)/YAM_rexx.o \
+	$(OBJDIR)/YAM_rexx_rxcl.o \
+	$(OBJDIR)/YAM_rexx_rxif.o \
+	$(OBJDIR)/YAM_TR.o \
+	$(OBJDIR)/YAM_US.o \
+	$(OBJDIR)/YAM_UT.o \
+	$(OBJDIR)/YAM_WR.o \
+	$(OBJDIR)/ImageCache.o \
+	$(OBJDIR)/UpdateCheck.o \
+	$(OBJDIR)/HTML2Mail.o \
+	$(OBJDIR)/HashTable.o \
+	$(OBJDIR)/BayesFilter.o \
+	$(OBJDIR)/extrasrc.o \
+	$(OBJDIR)/Debug.o
 
 #
 
@@ -351,7 +357,17 @@ $(OBJDIR)/YAM_WR.o: YAM_WR.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h YAM_write.h
 
-$(OBJDIR)/all_sas.o: all_sas.c $(EXTSRC)/NewReadArgs.c
+$(OBJDIR)/BayesFilter.o: BayesFilter.c
+
+$(OBJDIR)/HashTable.o: HashTable.c
+
+$(OBJDIR)/ImageCache.o: ImageCache.c
+
+$(OBJDIR)/UpdateCheck.o: UpdateCheck.c
+
+$(OBJDIR)/HTML2Mail.o: HTML2Mail.c
+
+$(OBJDIR)/extrasrc.o: extrasrc.c
 
 $(OBJDIR)/Debug.o: Debug.c Debug.h
 
@@ -443,3 +459,34 @@ $(OBJDIR)/$(CLASSDIR)/Classes.o: $(CLASSDIR)/Classes.c $(CLASSDIR)/Classes.h YAM
 $(OBJDIR)/$(CLASSDIR)/YAM.o: $(CLASSDIR)/YAM.c $(CLASSDIR)/YAM_cl.h YAM.h \
   YAM_addressbook.h YAM_config.h YAM_folderconfig.h include/SDI_hook.h \
   YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+
+$(OBJDIR)/$(CLASSDIR)/AddrBookToolbar.o: $(CLASSDIR)/AddrBookToolbar.c $(CLASSDIR)/AddrBookToolbar_cl.h \
+  $(CLASSDIR)/Classes.h
+
+$(OBJDIR)/$(CLASSDIR)/MainWindowToolbar.o: $(CLASSDIR)/MainWindowToolbar.c $(CLASSDIR)/MainWindowToolbar_cl.h \
+  $(CLASSDIR)/Classes.h
+
+$(OBJDIR)/$(CLASSDIR)/ReadWindowToolbar.o: $(CLASSDIR)/ReadWindowToolbar.c $(CLASSDIR)/ReadWindowToolbar_cl.h \
+  $(CLASSDIR)/Classes.h
+
+$(OBJDIR)/$(CLASSDIR)/ReadWindowStatusBar.o: $(CLASSDIR)/ReadWindowStatusBar.c $(CLASSDIR)/ReadWindowStatusBar_cl.h \
+  $(CLASSDIR)/Classes.h
+
+$(OBJDIR)/$(CLASSDIR)/WriteWindowToolbar.o: $(CLASSDIR)/WriteWindowToolbar.c $(CLASSDIR)/WriteWindowToolbar_cl.h \
+  $(CLASSDIR)/Classes.h
+
+$(OBJDIR)/$(CLASSDIR)/ImageArea.o: $(CLASSDIR)/ImageArea.c $(CLASSDIR)/ImageArea_cl.h \
+  $(CLASSDIR)/Classes.h
+
+$(OBJDIR)/$(CLASSDIR)/ShutdownWindow.o: $(CLASSDIR)/ShutdownWindow.c $(CLASSDIR)/ShutdownWindow_cl.h \
+  $(CLASSDIR)/Classes.h
+
+$(OBJDIR)/$(CLASSDIR)/TransferMailList.o: $(CLASSDIR)/TransferMailList.c $(CLASSDIR)/TransferMailList_cl.h \
+  $(CLASSDIR)/Classes.h
+
+$(OBJDIR)/$(CLASSDIR)/UpdateNotifyWindow.o: $(CLASSDIR)/UpdateNotifyWindow.c $(CLASSDIR)/UpdateNotifyWindow_cl.h \
+  $(CLASSDIR)/Classes.h
+
+$(OBJDIR)/$(CLASSDIR)/ThemeListGroup.o: $(CLASSDIR)/ThemeListGroup.c $(CLASSDIR)/ThemeListGroup_cl.h \
+  $(CLASSDIR)/Classes.h
+

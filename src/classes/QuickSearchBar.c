@@ -705,8 +705,8 @@ DECLARE(MatchMail) // struct Mail* mail
     searchString = NULL;
 
   // now we check that a match is really required and if so we process it
-  return ((viewOption != VO_ALL || searchString != NULL) &&
-          MatchMail(msg->mail, viewOption, searchOption, searchString, &curTimeUTC));
+  return (ULONG)((viewOption != VO_ALL || searchString != NULL) &&
+                 MatchMail(msg->mail, viewOption, searchOption, searchString, &curTimeUTC));
 }
 
 ///
