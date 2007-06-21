@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_compiler.h
-        Versionstring:  $VER: SDI_compiler.h 1.24 (06.05.2006)
+        Versionstring:  $VER: SDI_compiler.h 1.25 (21.06.2007)
         Author:         Dirk Stöcker & Jens Langner
         Distribution:   PD
         Project page:   http://www.sf.net/projects/sditools/
@@ -43,6 +43,7 @@
  1.23  30.04.06 : modified to get it compatible to AROS. (Guido Mersmann)
  1.24  06.05.06 : __linearvarargs is only valid for vbcc and PPC, so I moved VARARGS68K
                   to prevent problems with 68K and i86 targets. (Guido Mersmann)
+ 1.25  21.06.07 : added NEAR to be usable for __near specification for SAS/C
 */
 
 /*
@@ -75,6 +76,7 @@
 #undef INTERRUPT
 #undef CHIP
 #undef FAR
+#undef NEAR
 #undef UNUSED
 #undef USED
 #undef USED_VAR
@@ -135,6 +137,7 @@
     #define LREG(reg,arg) register REG(reg,arg)
   #endif
   #define FAR
+  #define NEAR
 #elif defined(_DCC)
   #define REG(reg,arg) __##reg arg
   #define STACKEXT __stkcheck
@@ -187,6 +190,9 @@
 #if !defined(FAR)
   #define FAR __far
 #endif
+#if !defined(NEAR)
+  #define NEAR __near
+#endif
 #if !defined(UNUSED)
   #define UNUSED
 #endif
@@ -198,6 +204,7 @@
 #endif
 
 /*************************************************************************/
+
 #ifdef __AROS__
 
   #undef REG

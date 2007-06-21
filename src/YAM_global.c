@@ -31,25 +31,31 @@
 
 #include "YAM_global.h"
 
-// some platform/compiler dependent stack definitions.
-static const char USED_VAR yam_stack_size[] = "$STACK:65536\n";  // Shell v45 and later
+// define for specifying the minimum stack size in bytes
+// YAM requests upon startup
+#define MIN_STACKSIZE 65536
+
+// stack cookie for shell v45+
+static const char USED_VAR yam_stack_size[] = "$STACK:" STR(MIN_STACKSIZE) "\n";
+
+// some platform/compiler dependent stack and memory definitions.
 #if defined(__amigaos4__)
-  long __stack_size = 65536;             // set the minimum startup stack for clib2
+  long __stack_size = MIN_STACKSIZE;     // set the minimum startup stack for clib2
   long __default_pool_size = 128*1024;   // set the pool & puddle size for the
   long __default_puddle_size = 32*1024;  // AllocPool() functions to something more reasonable.
 #elif defined(__SASC) || defined(__GNUC__)
   #if defined(__libnix__) || defined(__SASC)
-  /* GCC (libnix) supports the same as SAS/C! */
-  long __near __stack = 65536;
-  long __near __buffsize = 8192;
-  long __near _MSTEP = 16384;
+  // GCC (libnix) supports the same as SAS/C!
+  long NEAR __stack = MIN_STACKSIZE;
+  long NEAR __buffsize = 8192;
+  long NEAR _MSTEP = 16384;
   #else
-  long __stack_size = 65536;    // set the minimum startup stack for clib2
+  long __stack_size = MIN_STACKSIZE;    // set the minimum startup stack for clib2
   #endif
 #elif defined(__VBCC__) /* starting with VBCC 0.8 release */
-  long __stack = 65536;
+  long __stack = MIN_STACKSIZE;
 #else
-  #error "initial stack specification failed"
+  #error "initial stack/memory specification failed"
 #endif
 
 // define the CPU strings
