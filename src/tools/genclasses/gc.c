@@ -34,19 +34,36 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <sys/types.h>
 #include <string.h>
 #include "gc.h"
 #include "lists.h"
 
+#ifndef snprintf
+size_t snprintf(char *s, size_t len, const char *f, ...)
+{
+  va_list args;
+  size_t result;
+
+  va_start(args, f);
+  result = vsprintf(s, f, args);
+  va_end(args);
+
+  return result;
+}
+#endif
+
 /*
  * When compiling for YAM under VBCC use:
  *
- * GenClasses <classespath> -bYAM -gpl -i"/YAM.h" -mkfilevmakefile,vc,-o,-+,-c* 
+ * GenClasses <classespath> -bYAM -gpl -i"/YAM.h" -mkfilevmakefile,vc,-o,-+,-c*
  *
  *
  * History
  * -------
+ * 0.24 - compilable by SAS/C again. The missing snprintf() is redirected to
+ *        sprintf().
  * 0.23 - use new DISPATCHER() macro instead of DISPATCHERPROTO()
  *
  * 0.22 - removed unncesessary STDARGS uses
@@ -170,7 +187,7 @@ int   arg_v               = 0;
  *******************************************************************************
  *
  *
- */ 
+ */
 
 #ifdef EMULATE_DIRENT
 
@@ -231,7 +248,7 @@ DIR *readdir( DIR *de )
  *******************************************************************************
  *
  *
- */ 
+ */
 
 char *skipwhitespaces( char *p ) /* Note: isspace() sucks... */
 {
@@ -263,11 +280,11 @@ char *stralloc( char *str )
   estr = str + (strlen(str) - 1);
   while (estr > str)
   {
-    c = *estr;        
+    c = *estr;
     if (c == '\t' || c == '\r' || c == '\n' || c == ' ' || c == 0xa0) --estr; else break;
   }
   memcpy(strvec, str, (size_t)(estr - str) + 1);
-  return strvec;  
+  return strvec;
 }
 
 int myaddpart( char *path, char *name, size_t len )
@@ -306,7 +323,7 @@ char *myfilepart( char *path )
  *******************************************************************************
  *
  *
- */ 
+ */
 
 int *collision_cnts;
 
@@ -340,7 +357,7 @@ static unsigned int gettagvalue(char *tag, int checkcol)
 
   if(arg_v)
     printf("Assigning tag %-35s with value %x\n", tag, val);
-  
+
   return val;
 }
 
@@ -351,7 +368,7 @@ static unsigned int gettagvalue(char *tag, int checkcol)
  *******************************************************************************
  *
  *
- */ 
+ */
 
 void free_overload( struct overloaddef *od )
 {
@@ -388,25 +405,25 @@ void free_classdef( struct classdef *cd )
   {
     free_overload(n->data);
     free(n);
-  }  
+  }
 
   while((n = list_remhead(&cd->declarelist)))
   {
     free_declare(n->data);
     free(n);
-  }  
+  }
 
   while((n = list_remhead(&cd->attrlist)))
   {
     free_attr(n->data);
     free(n);
-  }  
+  }
 
   while((n = list_remhead(&cd->exportlist)))
   {
     free_exportblk(n->data);
     free(n);
-  }  
+  }
 
   free(cd);
 }
@@ -639,7 +656,7 @@ int scanclasses( char *dirname, struct list *classlist )
     if ((n[len - 2] != '.') || (tolower(n[len - 1]) != 'c'))
     {
       printf("Skipping: %s\n", n); continue;
-    }  
+    }
     if (!strcmp(SOURCE_NAME, n) || !strcmp(HEADER_NAME, n)) continue;
     ++srccnt;
     myaddpart(dirbuf, de->d_name, 255);
@@ -665,7 +682,7 @@ int scanclasses( char *dirname, struct list *classlist )
  *******************************************************************************
  *
  *
- */ 
+ */
 
 void gen_gpl( FILE *fp )
 {
@@ -780,8 +797,8 @@ void gen_supportroutines( FILE *fp )
 "%s"
 "\n",
 
-  arg_storm ? "/// "                : "",  
-  arg_storm ? bn                    : "",  
+  arg_storm ? "/// "                : "",
+  arg_storm ? bn                    : "",
   arg_storm ? "_CleanupClasses()\n" : "",
   bn, bn, bn, bn,
   arg_storm ? "\n/// "              : "");
@@ -816,7 +833,7 @@ int gen_source( char *destfile, struct list *classlist )
   /***************************************/
   /*        Write dispatchers...         */
   /***************************************/
-  
+
   fprintf(fp, "/*** Custom Class Dispatchers ***/\n");
   for(nn = NULL; (nn = list_getnext(classlist, nn, (void **) &nextcd)); )
   {
@@ -870,7 +887,7 @@ int gen_source( char *destfile, struct list *classlist )
 
   if(arg_storm)
     fprintf(fp, "///\n");
-  
+
   /*****************************************/
   /*        Append support routines        */
   /*****************************************/
@@ -912,9 +929,9 @@ int gen_header( char *destfile, struct list *classlist )
   /***************************************/
   /*          Write includes...          */
   /***************************************/
-  
+
 if (0)
-  fprintf(fp, 
+  fprintf(fp,
     "#include <clib/alib_protos.h>\n"
     "#include <libraries/mui.h>\n"
     "#include <proto/intuition.h>\n"
@@ -935,7 +952,7 @@ if (0)
   /*            Write misc...            */
   /***************************************/
 
-  fprintf(fp, 
+  fprintf(fp,
     "\n"
     "#define inittags(msg)   (((struct opSet *)msg)->ops_AttrList)\n"
     "#define GETDATA         struct Data *data = (struct Data *)INST_DATA(cl,obj)\n"
@@ -960,7 +977,7 @@ if (0)
     /* Write MUIC_, xxxObject, etc. for this class */
     /***********************************************/
 
-    fprintf(fp, 
+    fprintf(fp,
       "/******** Class: %s (0x%08x) ********/\n"
       "\n"
       "#define MUIC_%s \"%s_%s\"\n"
@@ -1126,7 +1143,7 @@ int gen_classheaders( struct list *classlist )
 
     *mypathpart(arg_classdir) = 0;
     fclose(fp);
-  }  
+  }
   return 1;
 }
 
@@ -1140,7 +1157,7 @@ int gen_classheaders( struct list *classlist )
  *******************************************************************************
  *
  *
- */ 
+ */
 
 int gen_makefile( char *destfile, struct list *classlist )
 {
@@ -1188,7 +1205,7 @@ int gen_makefile( char *destfile, struct list *classlist )
  *******************************************************************************
  *
  *
- */ 
+ */
 
 int getstrarg( char *argid, char *argline, char *dest, size_t destlen )
 {
