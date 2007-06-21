@@ -207,6 +207,7 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
 
     node = (struct ImageCacheNode *)entry;
 
+    node->delayedDispose = FALSE;
     if((node->id = strdup(id)) != NULL)
     {
       if((node->filename = strdup(filename)) != NULL)
@@ -488,9 +489,9 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
 }
 
 ///
-/// DisposeImage
-// for disposing an imagenode properly
-void DisposeImage(const char *id)
+/// ReleaseImage
+// for releasing an imagenode properly
+void ReleaseImage(const char *id, BOOL dispose)
 {
   struct HashEntryHeader *entry;
 
@@ -514,6 +515,27 @@ void DisposeImage(const char *id)
           // this always succeeds, hence no need to check the result
           RemapImage(node, NULL);
         }
+
+        if(dispose == TRUE || node->delayedDispose == TRUE)
+        {
+          D(DBF_IMAGE, "removing image '%s' from cache", node->id);
+          // remove the image from the cache
+          HashTableRawRemove(G->imageCacheHashTable, entry);
+          // free all the data
+          if(node->dt_obj != NULL)
+            DisposeDTObject(node->dt_obj);
+          if(node->filename != NULL)
+            free(node->filename);
+          // the ID has already been freed by HashTableRawRemove()
+        }
+      }
+      else
+      {
+        // The image is still in use although it should be removed from the cache.
+        // To accomplish this we remember this and remove it as soon as the open
+        // counter reaches zero.
+        if(dispose == TRUE)
+          node->delayedDispose = TRUE;
       }
     }
     else

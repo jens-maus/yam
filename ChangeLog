@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-21  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c: renamed DisposeImage() to ReleaseImage() as it is the opposite
+    function to ObtainImage(). Additionally ReleaseImage() takes one more para-
+    meter to decide wether to leave an unused image in the cache or not. Also
+    added a "delayed dispose" feature. If an image is still in use upon
+    ReleaseImage() but removal is requested this state is now remembered. It
+    will be removed from the cache as soon as the image's open counter reaches
+    zero.
+
 2007-06-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_TR.c: according to the documentation at the OpenSSL homepage

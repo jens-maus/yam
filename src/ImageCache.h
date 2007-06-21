@@ -48,6 +48,8 @@ struct ImageCacheNode
 
   ULONG width;
   ULONG height;
+
+  BOOL delayedDispose;         // do we wish to remove the image from the cache if openCount reaches zero?
 };
 
 // the prototypes for our public available functions
@@ -55,7 +57,7 @@ BOOL ImageCacheSetup(void);
 BOOL ImageCacheInit(const char *path);
 void ImageCacheCleanup(void);
 struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const struct Screen *scr);
-void DisposeImage(const char *id);
+void ReleaseImage(const char *id, BOOL dispose);
 BOOL IsImageInCache(const char *id);
 
 // the prototypes/enums for our specialized Toolbarimage
