@@ -40,7 +40,8 @@
 #include "gc.h"
 #include "lists.h"
 
-#ifndef snprintf
+#if defined(__SASC)
+/* SAS/C does not know snprintf(), hence we redirect it back to sprintf() */
 size_t snprintf(char *s, size_t len, const char *f, ...)
 {
   va_list args;
