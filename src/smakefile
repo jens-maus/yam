@@ -196,7 +196,7 @@ clean:
   -$(RMDIR) $(OBJDIR)
 
 cleanall: clean
-  -$(RM) YAM_locale.? YAM_mail_lex.c $(CLASSDIR)/Classes.? $(CLASSDIR)/*_cl.h
+  -$(RM) YAM_locale.? YAM_mail_lex.c HTML2Mail.c $(CLASSDIR)/Classes.? $(CLASSDIR)/*_cl.h
 
 distclean: cleanall
   @execute <<
@@ -317,7 +317,7 @@ $(OBJDIR)/YAM_MI.o: YAM_MI.c YAM_error.h YAM_locale.h YAM_mime.h YAM_stringsizes
   YAM_utilities.h
 
 $(OBJDIR)/YAM_mail_lex.o: YAM_mail_lex.c
-YAM_mail_lex.c: YAM_mail_lex.l YAM_mail_lex.h
+YAM_mail_lex.c: YAM_mail_lex.l
 
 $(OBJDIR)/YAM_RE.o: YAM_RE.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_config.h YAM_error.h YAM_find.h \
@@ -366,6 +366,7 @@ $(OBJDIR)/ImageCache.o: ImageCache.c
 $(OBJDIR)/UpdateCheck.o: UpdateCheck.c
 
 $(OBJDIR)/HTML2Mail.o: HTML2Mail.c
+HTML2Mail.c: HTML2Mail.l
 
 $(OBJDIR)/extrasrc.o: extrasrc.c
 

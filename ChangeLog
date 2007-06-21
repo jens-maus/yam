@@ -7,7 +7,6 @@ $URL$
 
 2007-06-21  Jens Langner <Jens.Langner@light-speed.de>
 
-  * tools/genclasses/gc.c: compilable by SAS/C again.
   * YAM_global.c: changed the stack size specification to use a single define
     value for easily changing the minimum stack size of the application.
   * include/SDI_compiler.h, YAM_global.c: added NEAR define for being able to specify
@@ -15,6 +14,8 @@ $URL$
 
 2007-06-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * smakefile: added missing HTML2Mail.c target.
+  * tools/genclasses/gc.c: compilable by SAS/C again.
   * YAM_EA.c, UserImage.c: changing a user's image never activated the new
     image, because YAM used a static ID instead of the user's address.
   * ImageArea.c: use the renamed image functions.
