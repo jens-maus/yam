@@ -7,6 +7,7 @@ $URL$
 
 2007-06-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageArea.c: use the renamed image functions.
   * ImageCache.c: renamed DisposeImage() to ReleaseImage() as it is the opposite
     function to ObtainImage(). Additionally ReleaseImage() takes one more para-
     meter to decide wether to leave an unused image in the cache or not. Also

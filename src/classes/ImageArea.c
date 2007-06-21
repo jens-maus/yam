@@ -95,7 +95,7 @@ static void Image_Unload(struct Data *data)
 
   if(data->imageLoaded == TRUE)
   {
-    DisposeImage(data->id);
+    ReleaseImage(data->id, FALSE);
     data->imageLoaded = FALSE;
   }
 
@@ -192,8 +192,8 @@ OVERLOAD(OM_GET)
         {
           *store = icnode->width;
 
-          // dispose the image again
-          DisposeImage(data->id);
+          // release the image again
+          ReleaseImage(data->id, FALSE);
           result = TRUE;
         }
       }
@@ -220,8 +220,8 @@ OVERLOAD(OM_GET)
         {
           *store = icnode->height;
 
-          // dispose the image again
-          DisposeImage(data->id);
+          // release the image again
+          ReleaseImage(data->id, FALSE);
           result = TRUE;
         }
       }
