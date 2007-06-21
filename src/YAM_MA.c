@@ -4380,12 +4380,12 @@ MakeStaticHook(MA_LV_FConHook, MA_LV_FConFunc);
 /*** MA_LV_FDesFunc - Folder listtree destruction hook ***/
 HOOKPROTONHNO(MA_LV_FDesFunc, LONG, struct MUIP_NListtree_DestructMessage *msg)
 {
-   ENTER();
+  ENTER();
 
-   FO_FreeFolder((struct Folder *)msg->UserData);
+  FO_FreeFolder((struct Folder *)msg->UserData);
 
-   RETURN(0);
-   return 0;
+  RETURN(0);
+  return 0;
 }
 MakeStaticHook(MA_LV_FDesHook, MA_LV_FDesFunc);
 
