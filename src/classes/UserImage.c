@@ -41,8 +41,8 @@
 /* CLASSDATA
 struct Data
 {
-  char address[SIZE_ADDRESS];
-  char fileName[SIZE_PATHFILE];
+  char *address;
+  char *fileName;
 
   struct ImageCacheNode imageNode;
   struct BitMap *scaledBitMap;
@@ -73,8 +73,8 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        ATTR(Address)     : if(tag->ti_Data) strlcpy(data->address, (char *)tag->ti_Data, sizeof(data->address)); break;
-        ATTR(File)        : if(tag->ti_Data) strlcpy(data->fileName, (char *)tag->ti_Data, sizeof(data->fileName)); break;
+        ATTR(Address)     : data->address = strdup((char *)tag->ti_Data); break;
+        ATTR(Filename)    : data->fileName = strdup((char *)tag->ti_Data); break;
         ATTR(MaxHeight)   : data->maxHeight   = (ULONG)tag->ti_Data; break;
         ATTR(MaxWidth)    : data->maxWidth    = (ULONG)tag->ti_Data; break;
         ATTR(NoMinHeight) : data->noMinHeight = (BOOL)tag->ti_Data; break;
@@ -85,6 +85,118 @@ OVERLOAD(OM_NEW)
   return (ULONG)obj;
 }
 ///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  GETDATA;
+
+  if(data->address != NULL)
+    free(data->address);
+  if(data->fileName != NULL)
+    free(data->fileName);
+
+  // everything else has been freed during MUIM_Cleanup already
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+  ULONG result;
+  BOOL relayout = FALSE;
+  struct TagItem *tags = inittags(msg), *tag;
+
+  ENTER();
+
+  while((tag = NextTagItem(&tags)))
+  {
+    switch(tag->ti_Tag)
+    {
+      ATTR(Address):
+      {
+        if(data->imageLoaded == TRUE)
+        {
+          // remove the image from the cache
+          ReleaseImage(data->address, TRUE);
+          data->imageLoaded = FALSE;
+          D(DBF_IMAGE, "unloaded old image '%s' from '%s'", data->address, data->fileName);
+        }
+
+        if(data->address != NULL)
+          free(data->address);
+        data->address = strdup((char *)tag->ti_Data);
+
+        // remember to relayout the image
+        relayout = TRUE;
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(Filename):
+      {
+        if(data->imageLoaded == TRUE)
+        {
+          // remove the image from the cache
+          ReleaseImage(data->address, TRUE);
+          data->imageLoaded = FALSE;
+          D(DBF_IMAGE, "unloaded old image '%s' from '%s'", data->address, data->fileName);
+        }
+
+        if(data->fileName != NULL)
+          free(data->fileName);
+
+        data->fileName = strdup((char*)tag->ti_Data);
+
+        // remember to relayout the image
+        relayout = TRUE;
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+    }
+  }
+
+  if(relayout == TRUE)
+  {
+    if(data->imageLoaded == FALSE &&
+       data->address != NULL && data->address[0] != '\0' &&
+       data->fileName != NULL && data->fileName[0] != '\0')
+    {
+      struct ImageCacheNode *node;
+
+      if((node = ObtainImage(data->address, data->fileName, _screen(obj))) != NULL)
+      {
+        Object *parent;
+
+        memcpy(&data->imageNode, node, sizeof(data->imageNode));
+        data->imageLoaded = TRUE;
+
+        if((parent = (Object*)xget(obj, MUIA_Parent)))
+        {
+          // New size if needed
+          if(DoMethod(parent, MUIM_Group_InitChange))
+          {
+            DoMethod(parent, MUIM_Group_ExitChange);
+          }
+
+          MUI_Redraw(obj, MADF_DRAWOBJECT);
+        }
+      }
+    }
+  }
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Setup)
 {
@@ -94,7 +206,9 @@ OVERLOAD(MUIM_Setup)
   ENTER();
 
   // call the SuperMethod() first
-  if(DoSuperMethodA(cl, obj, msg) && data->fileName[0] != '\0')
+  if(DoSuperMethodA(cl, obj, msg) &&
+     data->address != NULL && data->address[0] != '\0' &&
+     data->fileName != NULL && data->fileName[0] != '\0')
   {
     if(data->imageLoaded == FALSE)
     {
@@ -223,7 +337,7 @@ OVERLOAD(MUIM_Cleanup)
 
   if(data->imageLoaded == TRUE)
   {
-    DisposeImage(data->address);
+    ReleaseImage(data->address, FALSE);
     data->imageLoaded = FALSE;
   }
 
@@ -290,3 +404,4 @@ OVERLOAD(MUIM_AskMinMax)
 /* Private Functions */
 
 /* Public Methods */
+
