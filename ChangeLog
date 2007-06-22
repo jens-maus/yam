@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-22  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: applied some changes according to the STYLEGUIDE.
+
 2007-06-21  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_global.c: changed the stack size specification to use a single define

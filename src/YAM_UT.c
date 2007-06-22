@@ -4589,86 +4589,91 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 //        the current mail. It will assume it is plaintext and needs to be packed now
 BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
 {
-   char *pmeth = NULL, srcbuf[SIZE_PATHFILE], dstbuf[SIZE_PATHFILE];
-   struct Folder *folder = mail->Folder;
-   int peff = 0;
-   enum FolderMode srcMode = folder->Mode;
-   BOOL success = FALSE;
+  char *pmeth = NULL;
+  char srcbuf[SIZE_PATHFILE];
+  char dstbuf[SIZE_PATHFILE];
+  struct Folder *folder;
+  int peff = 0;
+  enum FolderMode srcMode;
+  BOOL success = FALSE;
 
-   ENTER();
+  ENTER();
 
-   // if this function was called with dstxpk=-1 and passwd=NULL then
-   // we assume we need to pack the file from plain text to the currently
-   // selected pack method of the folder
-   if((LONG)dstMode == -1 && passwd == NULL)
-   {
-      srcMode = FM_NORMAL;
-      dstMode = folder->Mode;
-      passwd  = folder->Password;
-   }
+  folder = mail->Folder;
+  srcMode = folder->Mode;
 
-   MA_GetIndex(folder);
-   GetMailFile(srcbuf, folder, mail);
-   GetPackMethod(dstMode, &pmeth, &peff);
-   snprintf(dstbuf, sizeof(dstbuf), "%s.tmp", srcbuf);
+  // if this function was called with dstxpk=-1 and passwd=NULL then
+  // we assume we need to pack the file from plain text to the currently
+  // selected pack method of the folder
+  if((LONG)dstMode == -1 && passwd == NULL)
+  {
+    srcMode = FM_NORMAL;
+    dstMode = folder->Mode;
+    passwd  = folder->Password;
+  }
 
-   SHOWSTRING(DBF_UTIL, srcbuf);
+  MA_GetIndex(folder);
+  GetMailFile(srcbuf, folder, mail);
+  GetPackMethod(dstMode, &pmeth, &peff);
+  snprintf(dstbuf, sizeof(dstbuf), "%s.tmp", srcbuf);
 
-   if((srcMode == dstMode && srcMode <= FM_SIMPLE) ||
-      (srcMode <= FM_SIMPLE && dstMode <= FM_SIMPLE))
-   {
-      // the FolderModes are the same so lets do nothing
-      success = TRUE;
+  SHOWSTRING(DBF_UTIL, srcbuf);
 
-      D(DBF_UTIL, "repack not required.");
-   }
-   else if(srcMode > FM_SIMPLE)
-   {
-      if(dstMode <= FM_SIMPLE)
+  if((srcMode == dstMode && srcMode <= FM_SIMPLE) ||
+     (srcMode <= FM_SIMPLE && dstMode <= FM_SIMPLE))
+  {
+    // the FolderModes are the same so lets do nothing
+    success = TRUE;
+
+    D(DBF_UTIL, "repack not required.");
+  }
+  else if(srcMode > FM_SIMPLE)
+  {
+    if(dstMode <= FM_SIMPLE)
+    {
+      D(DBF_UTIL, "uncompressing");
+
+      // if we end up here the source folder is a compressed folder so we
+      // have to just uncompress the file
+      if(UncompressMailFile(srcbuf, dstbuf, folder->Password) &&
+         DeleteFile(srcbuf))
       {
-         D(DBF_UTIL, "uncompressing");
-
-         // if we end up here the source folder is a compressed folder so we
-         // have to just uncompress the file
-         if(UncompressMailFile(srcbuf, dstbuf, folder->Password) &&
-            DeleteFile(srcbuf))
-         {
-            success = RenameFile(dstbuf, srcbuf);
-         }
+        success = RenameFile(dstbuf, srcbuf);
       }
-      else
+    }
+    else
+    {
+      // if we end up here, the source folder is a compressed+crypted one and
+      // the destination mode also
+      D(DBF_UTIL, "uncompressing/recompress");
+
+      if(UncompressMailFile(srcbuf, dstbuf, folder->Password) &&
+         CompressMailFile(dstbuf, srcbuf, passwd, pmeth, peff))
       {
-         // if we end up here, the source folder is a compressed+crypted one and
-         // the destination mode also
-         D(DBF_UTIL, "uncompressing/recompress");
-
-         if(UncompressMailFile(srcbuf, dstbuf, folder->Password) &&
-            CompressMailFile(dstbuf, srcbuf, passwd, pmeth, peff))
-         {
-           success = DeleteFile(dstbuf);
-         }
+        success = DeleteFile(dstbuf);
       }
-   }
-   else
-   {
-      if(dstMode > FM_SIMPLE)
+    }
+  }
+  else
+  {
+    if(dstMode > FM_SIMPLE)
+    {
+      D(DBF_UTIL, "compressing");
+
+      // here the source folder is not compressed, but the destination mode
+      // signals to compress it
+      if(CompressMailFile(srcbuf, dstbuf, passwd, pmeth, peff) &&
+         DeleteFile(srcbuf))
       {
-         D(DBF_UTIL, "compressing");
-
-         // here the source folder is not compressed, but the destination mode
-         // signals to compress it
-         if(CompressMailFile(srcbuf, dstbuf, passwd, pmeth, peff) &&
-            DeleteFile(srcbuf))
-         {
-            success = RenameFile(dstbuf, srcbuf);
-         }
+        success = RenameFile(dstbuf, srcbuf);
       }
-   }
+    }
+  }
 
-   MA_UpdateMailFile(mail);
+  MA_UpdateMailFile(mail);
 
-   RETURN(success);
-   return success;
+  RETURN(success);
+  return success;
 }
 ///
 /// DoPack
@@ -4990,8 +4995,11 @@ Object *MakeCycle(const char *const *labels, const char *label)
 //  Creates a MUI button
 Object *MakeButton(const char *txt)
 {
-   Object *obj = MUI_MakeObject(MUIO_Button,txt);
-   if (obj) set(obj, MUIA_CycleChain, 1);
+   Object *obj;
+
+   if((obj = MUI_MakeObject(MUIO_Button,txt)) != NULL)
+     set(obj, MUIA_CycleChain, TRUE);
+
    return obj;
 }
 ///
@@ -4999,28 +5007,26 @@ Object *MakeButton(const char *txt)
 //  Creates a MUI checkmark object
 Object *MakeCheck(const char *label)
 {
-   return
-   ImageObject,
-      ImageButtonFrame,
-      MUIA_InputMode   , MUIV_InputMode_Toggle,
-      MUIA_Image_Spec  , MUII_CheckMark,
-      MUIA_Background  , MUII_ButtonBack,
-      MUIA_ShowSelState, FALSE,
-      MUIA_ControlChar , ShortCut(label),
-      MUIA_CycleChain  , 1,
-   End;
+  return ImageObject,
+           ImageButtonFrame,
+           MUIA_InputMode   , MUIV_InputMode_Toggle,
+           MUIA_Image_Spec  , MUII_CheckMark,
+           MUIA_Background  , MUII_ButtonBack,
+           MUIA_ShowSelState, FALSE,
+           MUIA_ControlChar , ShortCut(label),
+           MUIA_CycleChain  , TRUE,
+         End;
 }
 ///
 /// MakeCheckGroup
 //  Creates a labelled MUI checkmark object
 Object *MakeCheckGroup(Object **check, const char *label)
 {
-   return
-   HGroup,
-      Child, *check = MakeCheck(label),
-      Child, Label1(label),
-      Child, HSpace(0),
-   End;
+   return HGroup,
+            Child, *check = MakeCheck(label),
+            Child, Label1(label),
+            Child, HSpace(0),
+          End;
 }
 ///
 /// MakeString
@@ -5028,12 +5034,12 @@ Object *MakeCheckGroup(Object **check, const char *label)
 Object *MakeString(int maxlen, const char *label)
 {
   return BetterStringObject,
-    StringFrame,
-    MUIA_String_MaxLen,      maxlen,
-    MUIA_String_AdvanceOnCR, TRUE,
-    MUIA_ControlChar,        ShortCut(label),
-    MUIA_CycleChain,         TRUE,
-  End;
+           StringFrame,
+           MUIA_String_MaxLen,      maxlen,
+           MUIA_String_AdvanceOnCR, TRUE,
+           MUIA_ControlChar,        ShortCut(label),
+           MUIA_CycleChain,         TRUE,
+         End;
 }
 ///
 /// MakePassString
@@ -5041,13 +5047,13 @@ Object *MakeString(int maxlen, const char *label)
 Object *MakePassString(const char *label)
 {
   return BetterStringObject,
-    StringFrame,
-    MUIA_String_MaxLen,       SIZE_PASSWORD,
-    MUIA_String_Secret,       TRUE,
-    MUIA_String_AdvanceOnCR,  TRUE,
-    MUIA_ControlChar,         ShortCut(label),
-    MUIA_CycleChain,          TRUE,
-  End;
+           StringFrame,
+           MUIA_String_MaxLen,       SIZE_PASSWORD,
+           MUIA_String_Secret,       TRUE,
+           MUIA_String_AdvanceOnCR,  TRUE,
+           MUIA_ControlChar,         ShortCut(label),
+           MUIA_CycleChain,          TRUE,
+         End;
 }
 ///
 /// MakeInteger
@@ -5055,43 +5061,43 @@ Object *MakePassString(const char *label)
 Object *MakeInteger(int maxlen, const char *label)
 {
   return BetterStringObject,
-    StringFrame,
-    MUIA_String_MaxLen,       maxlen+1,
-    MUIA_String_AdvanceOnCR,  TRUE,
-    MUIA_ControlChar,         ShortCut(label),
-    MUIA_CycleChain,          TRUE,
-    MUIA_String_Integer,      0,
-    MUIA_String_Accept,       "0123456789",
-  End;
+           StringFrame,
+           MUIA_String_MaxLen,       maxlen+1,
+           MUIA_String_AdvanceOnCR,  TRUE,
+           MUIA_ControlChar,         ShortCut(label),
+           MUIA_CycleChain,          TRUE,
+           MUIA_String_Integer,      0,
+           MUIA_String_Accept,       "0123456789",
+         End;
 }
 ///
 /// MakePGPKeyList
 //  Creates a PGP id popup list
 Object *MakePGPKeyList(Object **st, BOOL secret, const char *label)
 {
-   Object *po, *lv;
+  Object *po, *lv;
 
-   if ((po = PopobjectObject,
-         MUIA_Popstring_String, *st = MakeString(SIZE_DEFAULT, label),
-         MUIA_Popstring_Button, PopButton(MUII_PopUp),
-         MUIA_Popobject_StrObjHook, &PO_ListPublicKeysHook,
-         MUIA_Popobject_ObjStrHook, &PO_SetPublicKeyHook,
-         MUIA_Popobject_WindowHook, &PO_WindowHook,
-         MUIA_Popobject_Object, lv = ListviewObject,
-            MUIA_UserData, secret,
-            MUIA_Listview_List, ListObject,
-               InputListFrame,
-               MUIA_List_AdjustWidth, TRUE,
-               MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
-               MUIA_List_DestructHook, MUIV_List_DestructHook_String,
-            End,
-         End,
-      End))
-   {
-      DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
-   }
+  if ((po = PopobjectObject,
+        MUIA_Popstring_String, *st = MakeString(SIZE_DEFAULT, label),
+        MUIA_Popstring_Button, PopButton(MUII_PopUp),
+        MUIA_Popobject_StrObjHook, &PO_ListPublicKeysHook,
+        MUIA_Popobject_ObjStrHook, &PO_SetPublicKeyHook,
+        MUIA_Popobject_WindowHook, &PO_WindowHook,
+        MUIA_Popobject_Object, lv = ListviewObject,
+           MUIA_UserData, secret,
+           MUIA_Listview_List, ListObject,
+              InputListFrame,
+              MUIA_List_AdjustWidth, TRUE,
+              MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
+              MUIA_List_DestructHook, MUIV_List_DestructHook_String,
+           End,
+        End,
+     End))
+  {
+    DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+  }
 
-   return po;
+  return po;
 }
 ///
 /// MakeAddressField
@@ -5143,12 +5149,12 @@ Object *MakeAddressField(Object **string, const char *label, const Object *help,
 //  Creates a MUI numeric slider
 Object *MakeNumeric(int min, int max, BOOL percent)
 {
-   return NumericbuttonObject,
-      MUIA_Numeric_Min, min,
-      MUIA_Numeric_Max, max,
-      MUIA_Numeric_Format, percent ? "%ld%%" : "%ld",
-      MUIA_CycleChain, TRUE,
-   End;
+  return NumericbuttonObject,
+           MUIA_Numeric_Min, min,
+           MUIA_Numeric_Max, max,
+           MUIA_Numeric_Format, percent ? "%ld%%" : "%ld",
+           MUIA_CycleChain, TRUE,
+         End;
 }
 ///
 /// GetMUIInteger
@@ -5257,169 +5263,169 @@ MakeHook(DisposeModuleHook,DisposeModuleFunc);
 //  Loads column widths from ENV:MUI/YAM.cfg
 void LoadLayout(void)
 {
-   const char *ls;
-   char *endptr;
+  const char *ls;
+  char *endptr;
 
-   ENTER();
+  ENTER();
 
-   // Load the application configuration from the ENV: directory.
-   DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENV);
+  // Load the application configuration from the ENV: directory.
+  DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENV);
 
-   // we encode the different weight factors which are embeeded in a dummy string
-   // gadgets:
-   //
-   // 0:  Horizontal weight of left foldertree in main window.
-   // 1:  Horizontal weight of right maillistview in main window.
-   // 2:  Vertical weight of top headerlistview in read window
-   // 3:  Vertical weight of bottom texteditor field in read window
-   // 4:  Horizontal weight of listview group in the glossary window
-   // 5:  Horizontal weight of text group in the glossary window
-   // 6:  Vertical weight of top right maillistview group in main window.
-   // 7:  Vertical weight of bottom right embedded read pane object in the main window.
-   // 8:  Vertical weight of top object (headerlist) of the embedded read pane
-   // 9:  Vertical weight of bottom object (texteditor) of the embedded read pane
-   // 10: Vertical weight of top object (headerlist) in a read window
-   // 11: Vertical weight of bottom object (texteditor) in a read window
+  // we encode the different weight factors which are embeeded in a dummy string
+  // gadgets:
+  //
+  // 0:  Horizontal weight of left foldertree in main window.
+  // 1:  Horizontal weight of right maillistview in main window.
+  // 2:  Vertical weight of top headerlistview in read window
+  // 3:  Vertical weight of bottom texteditor field in read window
+  // 4:  Horizontal weight of listview group in the glossary window
+  // 5:  Horizontal weight of text group in the glossary window
+  // 6:  Vertical weight of top right maillistview group in main window.
+  // 7:  Vertical weight of bottom right embedded read pane object in the main window.
+  // 8:  Vertical weight of top object (headerlist) of the embedded read pane
+  // 9:  Vertical weight of bottom object (texteditor) of the embedded read pane
+  // 10: Vertical weight of top object (headerlist) in a read window
+  // 11: Vertical weight of bottom object (texteditor) in a read window
 
-   if(!*(ls = (STRPTR)xget(G->MA->GUI.ST_LAYOUT, MUIA_String_Contents)))
-     ls = "30 100 25 100 30 100 25 100 5 100 5 100";
+  if(!*(ls = (STRPTR)xget(G->MA->GUI.ST_LAYOUT, MUIA_String_Contents)))
+    ls = "30 100 25 100 30 100 25 100 5 100 5 100";
 
-   // lets get the numbers for each weight factor out of the contents
-   // of the fake string gadget
-   G->Weights[0] = strtol(ls, &endptr, 10);
-   if(!endptr || endptr == ls)
-      G->Weights[0] = 30;
+  // lets get the numbers for each weight factor out of the contents
+  // of the fake string gadget
+  G->Weights[0] = strtol(ls, &endptr, 10);
+  if(endptr == NULL || endptr == ls)
+    G->Weights[0] = 30;
 
-   ls = endptr;
-   G->Weights[1] = strtol(ls, &endptr, 10);
-   if(!endptr || endptr == ls)
-      G->Weights[1] = 100;
+  ls = endptr;
+  G->Weights[1] = strtol(ls, &endptr, 10);
+  if(endptr == NULL || endptr == ls)
+    G->Weights[1] = 100;
 
-   ls = endptr;
-   G->Weights[2] = strtol(ls, &endptr, 10);
-   if(!endptr || endptr == ls)
-      G->Weights[2] = 25;
+  ls = endptr;
+  G->Weights[2] = strtol(ls, &endptr, 10);
+  if(endptr == NULL || endptr == ls)
+    G->Weights[2] = 25;
 
-   ls = endptr;
-   G->Weights[3] = strtol(ls, &endptr, 10);
-   if(!endptr || endptr == ls)
-      G->Weights[3] = 100;
+  ls = endptr;
+  G->Weights[3] = strtol(ls, &endptr, 10);
+  if(endptr == NULL || endptr == ls)
+    G->Weights[3] = 100;
 
-   ls = endptr;
-   G->Weights[4] = strtol(ls, &endptr, 10);
-   if(!endptr || endptr == ls)
-      G->Weights[4] = 30;
+  ls = endptr;
+  G->Weights[4] = strtol(ls, &endptr, 10);
+  if(endptr == NULL || endptr == ls)
+    G->Weights[4] = 30;
 
-   ls = endptr;
-   G->Weights[5] = strtol(ls, &endptr, 10);
-   if(!endptr || endptr == ls)
-      G->Weights[5] = 100;
+  ls = endptr;
+  G->Weights[5] = strtol(ls, &endptr, 10);
+  if(endptr == NULL || endptr == ls)
+    G->Weights[5] = 100;
 
-   ls = endptr;
-   G->Weights[6] = strtol(ls, &endptr, 10);
-   if(!endptr || endptr == ls)
-      G->Weights[6] = 25;
+  ls = endptr;
+  G->Weights[6] = strtol(ls, &endptr, 10);
+  if(endptr == NULL || endptr == ls)
+    G->Weights[6] = 25;
 
-   ls = endptr;
-   G->Weights[7] = strtol(ls, &endptr, 10);
-   if(!endptr || endptr == ls)
-      G->Weights[7] = 100;
+  ls = endptr;
+  G->Weights[7] = strtol(ls, &endptr, 10);
+  if(endptr == NULL || endptr == ls)
+    G->Weights[7] = 100;
 
-   ls = endptr;
-   G->Weights[8] = strtol(ls, &endptr, 10);
-   if(!endptr || endptr == ls)
-      G->Weights[8] = 5;
+  ls = endptr;
+  G->Weights[8] = strtol(ls, &endptr, 10);
+  if(endptr == NULL || endptr == ls)
+    G->Weights[8] = 5;
 
-   ls = endptr;
-   G->Weights[9] = strtol(ls, &endptr, 10);
-   if(!endptr || endptr == ls)
-      G->Weights[9] = 100;
+  ls = endptr;
+  G->Weights[9] = strtol(ls, &endptr, 10);
+  if(endptr == NULL || endptr == ls)
+    G->Weights[9] = 100;
 
-   ls = endptr;
-   G->Weights[10] = strtol(ls, &endptr, 10);
-   if(!endptr || endptr == ls)
-      G->Weights[10] = 5;
+  ls = endptr;
+  G->Weights[10] = strtol(ls, &endptr, 10);
+  if(endptr == NULL || endptr == ls)
+    G->Weights[10] = 5;
 
-   ls = endptr;
-   G->Weights[11] = strtol(ls, &endptr, 10);
-   if(!endptr || endptr == ls)
-      G->Weights[11] = 100;
+  ls = endptr;
+  G->Weights[11] = strtol(ls, &endptr, 10);
+  if(endptr == NULL || endptr == ls)
+    G->Weights[11] = 100;
 
-   // lets set the weight factors to the corresponding GUI elements now
-   // if they exist
-   set(G->MA->GUI.LV_FOLDERS,  MUIA_HorizWeight, G->Weights[0]);
-   set(G->MA->GUI.GR_MAILVIEW, MUIA_HorizWeight, G->Weights[1]);
-   set(G->MA->GUI.PG_MAILLIST, MUIA_VertWeight,  G->Weights[6]);
+  // lets set the weight factors to the corresponding GUI elements now
+  // if they exist
+  set(G->MA->GUI.LV_FOLDERS,  MUIA_HorizWeight, G->Weights[0]);
+  set(G->MA->GUI.GR_MAILVIEW, MUIA_HorizWeight, G->Weights[1]);
+  set(G->MA->GUI.PG_MAILLIST, MUIA_VertWeight,  G->Weights[6]);
 
-   // if the embedded read pane is active we set its weight values
-   if(C->EmbeddedReadPane)
-   {
-     SetAttrs(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight,                 G->Weights[7],
-                                              MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
-                                              MUIA_ReadMailGroup_TGVertWeight, G->Weights[9],
-                                              TAG_DONE);
-   }
+  // if the embedded read pane is active we set its weight values
+  if(C->EmbeddedReadPane)
+  {
+    SetAttrs(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight,                 G->Weights[7],
+                                             MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
+                                             MUIA_ReadMailGroup_TGVertWeight, G->Weights[9],
+                                             TAG_DONE);
+  }
 
-   LEAVE();
+  LEAVE();
 }
 ///
 /// SaveLayout
 //  Saves column widths to ENV(ARC):MUI/YAM.cfg
 void SaveLayout(BOOL permanent)
 {
-   char buf[SIZE_DEFAULT+1];
+  char buf[SIZE_DEFAULT+1];
 
-   ENTER();
-   SHOWVALUE(DBF_UTIL, permanent);
+  ENTER();
+  SHOWVALUE(DBF_UTIL, permanent);
 
-   // we encode the different weight factors which are embeeded in a dummy string
-   // gadgets:
-   //
-   // 0:  Horizontal weight of left foldertree in main window.
-   // 1:  Horizontal weight of right maillistview in main window.
-   // 2:  Vertical weight of top headerlistview in read window
-   // 3:  Vertical weight of bottom texteditor field in read window
-   // 4:  Horizontal weight of listview group in the glossary window
-   // 5:  Horizontal weight of text group in the glossary window
-   // 6:  Vertical weight of top right maillistview group in main window.
-   // 7:  Vertical weight of bottom right embedded read pane object in the main window.
-   // 8:  Vertical weight of top object (headerlist) of the embedded read pane
-   // 9:  Vertical weight of bottom object (texteditor) of the embedded read pane
-   // 10: Vertical weight of top object (headerlist) in a read window
-   // 11: Vertical weight of bottom object (texteditor) in a read window
-   snprintf(buf, sizeof(buf), "%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld", G->Weights[0],
-                                                                                 G->Weights[1],
-                                                                                 G->Weights[2],
-                                                                                 G->Weights[3],
-                                                                                 G->Weights[4],
-                                                                                 G->Weights[5],
-                                                                                 G->Weights[6],
-                                                                                 G->Weights[7],
-                                                                                 G->Weights[8],
-                                                                                 G->Weights[9],
-                                                                                 G->Weights[10],
-                                                                                 G->Weights[11]);
+  // we encode the different weight factors which are embeeded in a dummy string
+  // gadgets:
+  //
+  // 0:  Horizontal weight of left foldertree in main window.
+  // 1:  Horizontal weight of right maillistview in main window.
+  // 2:  Vertical weight of top headerlistview in read window
+  // 3:  Vertical weight of bottom texteditor field in read window
+  // 4:  Horizontal weight of listview group in the glossary window
+  // 5:  Horizontal weight of text group in the glossary window
+  // 6:  Vertical weight of top right maillistview group in main window.
+  // 7:  Vertical weight of bottom right embedded read pane object in the main window.
+  // 8:  Vertical weight of top object (headerlist) of the embedded read pane
+  // 9:  Vertical weight of bottom object (texteditor) of the embedded read pane
+  // 10: Vertical weight of top object (headerlist) in a read window
+  // 11: Vertical weight of bottom object (texteditor) in a read window
+  snprintf(buf, sizeof(buf), "%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld", G->Weights[0],
+                                                                                G->Weights[1],
+                                                                                G->Weights[2],
+                                                                                G->Weights[3],
+                                                                                G->Weights[4],
+                                                                                G->Weights[5],
+                                                                                G->Weights[6],
+                                                                                G->Weights[7],
+                                                                                G->Weights[8],
+                                                                                G->Weights[9],
+                                                                                G->Weights[10],
+                                                                                G->Weights[11]);
 
-   setstring(G->MA->GUI.ST_LAYOUT, buf);
-   DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);
+  setstring(G->MA->GUI.ST_LAYOUT, buf);
+  DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);
 
-   // if we want to save to ENVARC:
-   if(permanent)
-   {
-      struct Process *pr = (struct Process *)FindTask(NULL);
-      APTR oldWindowPtr = pr->pr_WindowPtr;
+  // if we want to save to ENVARC:
+  if(permanent == TRUE)
+  {
+    struct Process *pr = (struct Process *)FindTask(NULL);
+    APTR oldWindowPtr = pr->pr_WindowPtr;
 
-      // this is for the people out there having their SYS: partition locked and whining about
-      // YAM popping up a error requester upon the exit - so it`s their fault now if
-      // the MUI objects aren`t saved correctly.
-      pr->pr_WindowPtr = (APTR)-1;
+    // this is for the people out there having their SYS: partition locked and whining about
+    // YAM popping up a error requester upon the exit - so it`s their fault now if
+    // the MUI objects aren`t saved correctly.
+    pr->pr_WindowPtr = (APTR)-1;
 
-      DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENVARC);
+    DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENVARC);
 
-      pr->pr_WindowPtr = oldWindowPtr; // restore the old windowPtr
-   }
+    pr->pr_WindowPtr = oldWindowPtr; // restore the old windowPtr
+  }
 
-   LEAVE();
+  LEAVE();
 }
 ///
 /// ConvertKey
@@ -5428,6 +5434,8 @@ ULONG ConvertKey(struct IntuiMessage *imsg)
 {
   struct InputEvent event;
   unsigned char code = 0;
+
+  ENTER();
 
   event.ie_NextEvent    = NULL;
   event.ie_Class        = IECLASS_RAWKEY;
@@ -5438,7 +5446,8 @@ ULONG ConvertKey(struct IntuiMessage *imsg)
 
   MapRawKey(&event, (STRPTR)&code, 1, NULL);
 
-  return code;
+  RETURN((ULONG)code);
+  return (ULONG)code;
 }
 ///
 /// isChildOfGroup
@@ -5479,6 +5488,8 @@ BOOL isChildOfFamily(Object *family, Object *child)
 {
   BOOL isChild = FALSE;
   struct MinList *child_list;
+
+  ENTER();
 
   // get the child list of the group object
   child_list = (struct MinList *)xget(family, MUIA_Family_List);
@@ -5679,6 +5690,7 @@ int PGPCommand(const char *progname, const char *options, int flags)
   int error = -1;
 
   ENTER();
+
   D(DBF_UTIL, "[%s] [%s] - flags: %ld", progname, options, flags);
 
   if((fhi = Open("NIL:", MODE_OLDFILE)))
@@ -5733,61 +5745,56 @@ int PGPCommand(const char *progname, const char *options, int flags)
 //  Appends a line to the logfile
 void AppendToLogfile(enum LFMode mode, int id, const char *text, ...)
 {
-  FILE *fh;
-  char logfile[SIZE_PATHFILE];
-  char filename[SIZE_FILE];
-
   ENTER();
 
   // check the Logfile mode
-  if(C->LogfileMode == LF_NONE ||
-     (mode != LF_ALL && C->LogfileMode != mode))
+  if(C->LogfileMode != LF_NONE &&
+     (mode == LF_ALL || C->LogfileMode == mode))
   {
-    LEAVE();
-    return;
-  }
+    // check if the event in question should really be logged or
+    // not.
+    if(C->LogAllEvents == TRUE || (id >= 30 && id <= 49))
+    {
+      FILE *fh;
+      char logfile[SIZE_PATHFILE];
+      char filename[SIZE_FILE];
 
-  // check if the event in question should really be logged or
-  // not.
-  if(C->LogAllEvents == FALSE && (id < 30 || id > 49))
-  {
-    LEAVE();
-    return;
-  }
+      // if the user wants to split the logfile by date
+      // we go and generate the filename now.
+      if(C->SplitLogfile == TRUE)
+      {
+        struct ClockData cd;
 
-  // if the user wants to split the logfile by date
-  // we go and generate the filename now.
-  if(C->SplitLogfile)
-  {
-    struct ClockData cd;
-    Amiga2Date(GetDateStamp(), &cd);
-    snprintf(filename, sizeof(filename), "YAM-%s%d.log", months[cd.month-1], cd.year);
-  }
-  else
-    strlcpy(filename, "YAM.log", sizeof(filename));
+        Amiga2Date(GetDateStamp(), &cd);
+        snprintf(filename, sizeof(filename), "YAM-%s%d.log", months[cd.month-1], cd.year);
+      }
+      else
+        strlcpy(filename, "YAM.log", sizeof(filename));
 
-  // add the logfile path to the filename.
-  strmfp(logfile, *C->LogfilePath ? C->LogfilePath : G->ProgDir, filename);
+      // add the logfile path to the filename.
+      strmfp(logfile, C->LogfilePath[0] != '\0' ? C->LogfilePath : G->ProgDir, filename);
 
-  // open the file handle in 'append' mode and output the
-  // text accordingly.
-  if((fh = fopen(logfile, "a")))
-  {
-    char datstr[64];
-    va_list args;
+      // open the file handle in 'append' mode and output the
+      // text accordingly.
+      if((fh = fopen(logfile, "a")) != NULL)
+      {
+        char datstr[64];
+        va_list args;
 
-    DateStamp2String(datstr, sizeof(datstr), NULL, DSS_DATETIME, TZC_NONE);
+        DateStamp2String(datstr, sizeof(datstr), NULL, DSS_DATETIME, TZC_NONE);
 
-    // output the header
-    fprintf(fh, "%s [%02d] ", datstr, id);
+        // output the header
+        fprintf(fh, "%s [%02d] ", datstr, id);
 
-    // compose the varags values
-    va_start(args, text);
-    vfprintf(fh, text, args);
-    va_end(args);
+        // compose the varags values
+        va_start(args, text);
+        vfprintf(fh, text, args);
+        va_end(args);
 
-    fprintf(fh, "\n");
-    fclose(fh);
+        fprintf(fh, "\n");
+        fclose(fh);
+      }
+    }
   }
 
   LEAVE();
@@ -7008,4 +7015,3 @@ int ReadUInt32(FILE *stream, ULONG *value)
   return n;
 }
 ///
-
