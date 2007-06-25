@@ -1158,7 +1158,7 @@ static void FO_GetFolder(struct Folder *folder)
   set(gui->NM_MAXAGE, MUIA_Numeric_Value,   folder->MaxAge);
 
   SetAttrs(gui->CH_EXPIREUNREAD, MUIA_Selected, folder->ExpireUnread,
-                                 MUIA_Disabled, isTrashFolder(folder) || isSpamFolder(folder));
+                                 MUIA_Disabled, isTrashFolder(folder) || isSpamFolder(folder) || folder->MaxAge == 0);
 
   SetAttrs(gui->CY_FTYPE,  MUIA_Cycle_Active, type2cycle[folder->Type],
                            MUIA_Disabled,     isdefault,
@@ -2107,6 +2107,9 @@ static struct FO_ClassData *FO_New(void)
       DoMethod(data->GUI.BT_CANCEL,      MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_CloseHook);
       DoMethod(data->GUI.BT_AUTODETECT,  MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_MLAutoDetectHook);
       DoMethod(data->GUI.WI,             MUIM_Notify, MUIA_Window_CloseRequest,TRUE,   MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_CloseHook);
+
+      // disable the "also unread" check mark whenever the max age is set to 0 days
+      DoMethod(data->GUI.NM_MAXAGE,      MUIM_Notify, MUIA_Numeric_Value, MUIV_EveryTime, data->GUI.CH_EXPIREUNREAD, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
 
       // Now we connect the TriggerValues of the MLSUPPORT Checkbox
       DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.BT_AUTODETECT,       3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);

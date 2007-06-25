@@ -20,6 +20,8 @@ $URL$
 
 2007-06-25  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: whenever the max. age of a folder is set to zero days the "also
+    unread" check mark will be disabled now.
   * ShutdownWindow.c: the shutdown window is now opened in inactive state.
   * misc: there are now three central functions to build a properly set up
     address string consisting of name, address and all necessary quoting of
