@@ -85,6 +85,7 @@ OVERLOAD(OM_NEW)
                           "Andrew Bell\n"
                           "Allan Odgaard\n"
                           "Giles Burdett\n"
+                          "Olaf Barthel\n"
                           "\n"
                           "\033bLocalization Contributors:\033n\n\n"
                           "Alexandre Balaban\n"
