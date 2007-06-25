@@ -3365,7 +3365,7 @@ static struct WR_ClassData *WR_New(int winnum)
         WMEN_DELSEND,WMEN_MDN,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
         WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
         WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5, WMEN_INSUUCODE,
-        WMEN_SENDNOW,WMEN_QUEUE,WMEN_HOLD,WMEN_CANCEL
+        WMEN_SENDNOW,WMEN_QUEUE,WMEN_HOLD,WMEN_CANCEL,WMEN_SWITCH1,WMEN_SWITCH2,WMEN_SWITCH3
       };
 
       static const char *rtitles[4] = { NULL, NULL, NULL, NULL };
@@ -3463,6 +3463,9 @@ static struct WR_ClassData *WR_New(int winnum)
       //  X   reserved by TextEditor.mcc (cut)
       //  Y   
       //  Z
+      //  1   Switch to Message view (WMEN_SWITCH1)
+      //  2   Switch to Attachment view (WMEN_SWITCH2)
+      //  3   Switch to Options view (WMEN_SWITCH3)
       //  0   Use signature1 (WMEN_SIGN0)
       //  7   Use signature2 (WMEN_SIGN1)
       //  8   Use signature3 (WMEN_SIGN2)
@@ -3557,6 +3560,10 @@ static struct WR_ClassData *WR_New(int winnum)
                   MUIA_Family_Child, sec_menus[SEC_SENDANON] = MenuitemObject, MUIA_Menuitem_Title,security[SEC_SENDANON], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x2F, MUIA_UserData,WMEN_SECUR4, End,
                   MUIA_Family_Child, sec_menus[SEC_DEFAULTS] = MenuitemObject, MUIA_Menuitem_Title,security[SEC_DEFAULTS], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x1F, MUIA_UserData,WMEN_SECUR5, MUIA_Menuitem_Checked, TRUE, End,
                End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_MSG), MUIA_Menuitem_Shortcut, "1", MUIA_UserData, WMEN_SWITCH1, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_ATT), MUIA_Menuitem_Shortcut, "2", MUIA_UserData, WMEN_SWITCH2, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_OPT), MUIA_Menuitem_Shortcut, "3", MUIA_UserData, WMEN_SWITCH3, End,
             End,
          End,
          MUIA_Window_AppWindow, TRUE,
@@ -3762,6 +3769,9 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDCLIP,    MUIV_Notify_Application, 3, MUIM_CallHook, &WR_AddClipboardHook, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDPGP,     MUIV_Notify_Application, 3, MUIM_CallHook, &WR_AddPGPKeyHook, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTALL,  data->GUI.TE_EDIT,       2, MUIM_TextEditor_ARexxCmd, "SELECTALL");
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH1,    data->GUI.RG_PAGE,       3, MUIM_Set, MUIA_Group_ActivePage, 0);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH2,    data->GUI.RG_PAGE,       3, MUIM_Set, MUIA_Group_ActivePage, 1);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH3,    data->GUI.RG_PAGE,       3, MUIM_Set, MUIA_Group_ActivePage, 2);
 
          for(i=0; i < 4; i++)
           DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT0+i, data->GUI.TE_EDIT, 2, MUIM_TextEditor_InsertText, emoticons[i]);

@@ -7996,3 +7996,12 @@ des Kommandos '%s' unterbrochen.\n\
 \n\
 Vermutlich hat Ihr Verbindungspartner abgebrochen.
 ;
+MSG_WR_MSWITCH_MSG
+Wechsle zur 'Nachricht' Ansicht
+;
+MSG_WR_MSWITCH_ATT
+Wechsle zur 'Anhang' Ansicht
+;
+MSG_WR_MSWITCH_OPT
+Wechsle zur 'Optionen' Ansicht
+;

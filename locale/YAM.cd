@@ -6295,3 +6295,12 @@ while trying to send command '%s'.\n\
 \n\
 This may be due to a connection drop by the server.
 ;
+MSG_WR_MSWITCH_MSG (1956//)
+Switch to 'Message' view
+;
+MSG_WR_MSWITCH_ATT (1957//)
+Switch to 'Attachments' view
+;
+MSG_WR_MSWITCH_OPT (1958//)
+Switch to 'Options' view
+;

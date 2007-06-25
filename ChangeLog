@@ -5,16 +5,23 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-25  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, locale/YAM.cd, locale/deutsch.ct: it is now possible to quickly
+    switch between the different tabs in a write window with predefined
+    shortcuts (Amiga-1,Amiga-2,Amiga-3) instead of having to always use a
+    mouse to e.g. show the current attachment list.
+
 2007-06-25  Thore Böckelmann <tboeckel@gmx.de>
 
   * ReadMailGroup.c: while building the context menu for the embedded read pane
     the wrong variable was used to decide wether the "Attachments" item must be
     enabled or disabled. It was enabled all the time even if there were no
     attachements at all. This of cause caused crashes when invoking the menu
-    item.
+    item. This fixes bug #1742309.
   * YAM_MA.c: the "Reply" button and menu entry is now disabled for the outgoing
     folder as it was before already in the context menu of the embedded read
-    pane.
+    pane. This fixes bug #724517.
 
 2007-06-22  Thore Böckelmann <tboeckel@gmx.de>
 
