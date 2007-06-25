@@ -7,6 +7,10 @@ $URL$
 
 2007-06-25  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c: when forwarding a mail inlined in a new write window, existing
+    signature seperators "-- " will be made invalid by stripping the trailing space
+    so that any automatic signature recognition or stripping mechanism will not
+    be triggered by the inlined text. This should fix bug #1742398.
   * YAM_MA.c: the subject line of a forwarded email will now be layouted as
     [Fwd: XXXX] where "XXXX" is the original subject line. This should be a more
     commonly used way of altering the subject line when forwarding a mail.

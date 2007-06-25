@@ -2034,7 +2034,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
           char buffer[SIZE_LARGE];
 
           snprintf(buffer, sizeof(buffer), "[Fwd: %s]", mail->Subject);
-          if(!strstr(rsub, buffer))
+          if(strstr(rsub, buffer) == NULL)
           {
             if(rsub[0] != '\0')
               rsub = StrBufCat(rsub, "; ");
@@ -2043,6 +2043,9 @@ int MA_NewForward(struct Mail **mlist, int flags)
           }
         }
 
+        // we allocate some private readmaildata object so that
+        // we can silently parse the mail which we want to
+        // forward.
         if((rmData = AllocPrivateRMData(mail, PM_ALL)))
         {
           char *cmsg;
@@ -2051,14 +2054,19 @@ int MA_NewForward(struct Mail **mlist, int flags)
           MA_InsertIntroText(out, C->ForwardIntro, &etd);
           MA_FreeEMailStruct(email);
 
-          if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)))
+          // read in the message text to cmsg.
+          if((cmsg = RE_ReadInMessage(rmData, RIM_FORWARD)))
           {
+            // output the readin message text immediately to
+            // our out filehandle
             fputs(cmsg, out);
             free(cmsg);
 
             MA_InsertIntroText(out, C->ForwardFinish, &etd);
 
-            if(!hasNoAttachFlag(flags))
+            // if the mail we are forwarding has an attachment
+            // we go and attach them to our forwarded mail as well.
+            if(hasNoAttachFlag(flags) == FALSE)
               WR_SetupOldMail(winnum, rmData);
           }
 

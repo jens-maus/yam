@@ -2865,7 +2865,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             // now we analyze if that part of the mail text contains HTML
             // tags or not so that our HTML converter routines can be fired
             // up accordingly.
-            if(C->ConvertHTML == TRUE && (mode == RIM_EDIT || mode == RIM_QUOTE || mode == RIM_READ) &&
+            if(C->ConvertHTML == TRUE && (mode == RIM_EDIT || mode == RIM_QUOTE || mode == RIM_READ || mode == RIM_FORWARD) &&
                part->ContentType != NULL && stricmp(part->ContentType, "text/html") == 0)
             {
               char *converted;
@@ -2912,7 +2912,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               // now that we have a full line we can check for inline stuff
               // like inline uuencode/pgp sections
 
-/* UUenc */   if(mode != RIM_EDIT && // in Edit mode we don't handle inlined UUencoded attachments.
+/* UUenc */   if(mode != RIM_EDIT && mode != RIM_FORWARD && // in Edit&Forward mode we don't handle inlined UUencoded attachments.
                  strncmp(rptr, "begin ", 6) == 0 &&
                  rptr[6] >= '0' && rptr[6] <= '7' &&
                  rptr[7] >= '0' && rptr[7] <= '7' &&
@@ -3162,7 +3162,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
                 D(DBF_MAIL, "done with decryption");
               }
-/* Signat. */ else if(signatureFound == FALSE && !strcmp(rptr, "-- "))
+/* Signat. */ else if(signatureFound == FALSE && strcmp(rptr, "-- ") == 0)
               {
                 if(mode == RIM_READ)
                 {
@@ -3190,6 +3190,18 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   // of a mail we go and strip all further text from
                   // here by breaking out of our current loop
                   break;
+                }
+                else if(mode == RIM_FORWARD)
+                {
+                  // in forward mode we make the signature seperator
+                  // invalid by stripping the trailing space from it,
+                  // just leaving the plain "--". This should prevent
+                  // our signature stripping in forwarded mails from
+                  // stripping at the wrong position.
+                  if(newlineAtEnd)
+                    cmsg = AppendToBuffer(cmsg, &wptr, &len, "--\n");
+                  else
+                    cmsg = AppendToBuffer(cmsg, &wptr, &len, "--");
                 }
                 else
                 {
