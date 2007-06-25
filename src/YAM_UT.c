@@ -5576,9 +5576,7 @@ void MyBltMaskBitMapRastPort(struct BitMap *srcBitMap, LONG xSrc, LONG ySrc, str
     DoHookClipRects(&hook.hook, destRP, &rect);
   }
   else
-  {
     BltMaskBitMapRastPort(srcBitMap, xSrc, ySrc, destRP, xDest, yDest, xSize, ySize, minterm, bltMask);
-  }
 
   LEAVE();
 }

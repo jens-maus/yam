@@ -709,11 +709,11 @@ OVERLOAD(MUIM_Draw)
     {
       // we use an own BltMaskBitMapRastPort() implemenation to also support
       // interleaved images.
-      MyBltMaskBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0, bitmask->Planes[0]);
+      MyBltMaskBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), (ABC|ABNC|ANBC), bitmask->Planes[0]);
     }
     else
     {
-      BltBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0);
+      BltBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), (ABC|ABNC));
     }
   }
 

@@ -453,13 +453,13 @@ OVERLOAD(MUIM_Draw)
         // interleaved images.
         MyBltMaskBitMapRastPort(bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - imgWidth)/2,
                                                   _mtop(obj) + (_mheight(obj) - data->label_height - imgHeight)/2,
-                                                  imgWidth, imgHeight, 0xc0, (PLANEPTR)mask);
+                                                  imgWidth, imgHeight, (ABC|ABNC|ANBC), (PLANEPTR)mask);
       }
       else
       {
         BltBitMapRastPort(bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - imgWidth)/2,
                                             _mtop(obj) + (_mheight(obj) - data->label_height - imgHeight)/2,
-                                            imgWidth, imgHeight, 0xc0);
+                                            imgWidth, imgHeight, (ABC|ABNC));
       }
     }
 

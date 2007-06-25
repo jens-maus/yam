@@ -358,7 +358,7 @@ OVERLOAD(MUIM_Draw)
   if(((struct MUIP_Draw *)msg)->flags & MADF_DRAWOBJECT)
   {
     if(data->scaledBitMap != NULL)
-      BltBitMapRastPort(data->scaledBitMap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0);
+      BltBitMapRastPort(data->scaledBitMap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), (ABC|ABNC));
     else
       DoMethod(obj, MUIM_DrawBackground, _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0, 0, MUIF_NONE);
   }

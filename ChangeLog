@@ -7,6 +7,12 @@ $URL$
 
 2007-06-25  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ImageArea.c, UserImage.c, AttachmentImage.c, misc: changed the static minterm
+    value of all BltMaskBitMapRastPort()-like functions to be 0xe0 instead of 0xc0
+    as this is the only correct value for the BltMask operation according to the
+    manual. In addition, the corresponding preprocessor defines are now used
+    instead of statically defining the minterm value. This should make the
+    BltMask calls more descriptive (e.g. (ABC|ABNC|ANBC) instead of 0xe0).
   * YAM_WR.c, locale/YAM.cd, locale/deutsch.ct: it is now possible to quickly
     switch between the different tabs in a write window with predefined
     shortcuts (Amiga-1,Amiga-2,Amiga-3) instead of having to always use a
