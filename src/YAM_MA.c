@@ -2026,11 +2026,14 @@ int MA_NewForward(struct Mail **mlist, int flags)
         etd.R_Name = mail->To.RealName[0] != '\0' ? mail->To.RealName : mail->To.Address;
         etd.R_Address = mail->To.Address;
 
+        // we create a generic subject line for the forward
+        // action so that a forwarded mail will have a [Fwd: XXX] kinda
+        // subject line instead of the original.
         if(mail->Subject != '\0')
         {
           char buffer[SIZE_LARGE];
 
-          snprintf(buffer, sizeof(buffer), "%s (fwd)", mail->Subject);
+          snprintf(buffer, sizeof(buffer), "[Fwd: %s]", mail->Subject);
           if(!strstr(rsub, buffer))
           {
             if(rsub[0] != '\0')

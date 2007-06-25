@@ -7,6 +7,9 @@ $URL$
 
 2007-06-25  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c: the subject line of a forwarded email will now be layouted as
+    [Fwd: XXXX] where "XXXX" is the original subject line. This should be a more
+    commonly used way of altering the subject line when forwarding a mail.
   * ImageArea.c, UserImage.c, AttachmentImage.c, misc: changed the static minterm
     value of all BltMaskBitMapRastPort()-like functions to be 0xe0 instead of 0xc0
     as this is the only correct value for the BltMask operation according to the
