@@ -57,6 +57,7 @@ OVERLOAD(OM_NEW)
     MUIA_Window_CloseGadget,    FALSE,
     MUIA_Window_DepthGadget,    FALSE,
     MUIA_Window_SizeGadget,     FALSE,
+    MUIA_Window_Activate,       FALSE,
     MUIA_Window_LeftEdge,       MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,        MUIV_Window_TopEdge_Centered,
     MUIA_Window_ActiveObject,   NULL,
