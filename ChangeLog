@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-25  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: the "Reply" button and menu entry is now disabled for the outgoing
+    folder as it was before already in the context menu of the embedded read
+    pane.
+
 2007-06-22  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: applied some changes according to the STYLEGUIDE.
@@ -13,8 +19,8 @@ $URL$
 
   * YAM_global.c: changed the stack size specification to use a single define
     value for easily changing the minimum stack size of the application.
-  * include/SDI_compiler.h, YAM_global.c: added NEAR define for being able to specify
-    __near in a compiler independent way.
+  * include/SDI_compiler.h, YAM_global.c: added NEAR define for being able to
+    specify __near in a compiler independent way.
 
 2007-06-21  Thore Böckelmann <tboeckel@gmx.de>
 

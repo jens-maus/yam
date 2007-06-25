@@ -254,7 +254,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_DELETE, MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETADDR,MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_NEWMAIL,MUIA_TheBar_Attr_Disabled, !folderEnabled);
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_REPLY,  MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_REPLY,  MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isOutgoingFolder(fo) || isSpamFolder(fo));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FORWARD,MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FILTER, MUIA_TheBar_Attr_Disabled, !folderEnabled || numEntries == 0);
     DoMethod(gui->TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
@@ -284,7 +284,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
   //  * the folder is enabled
   //  * NOT in the "SPAM" folder
   //  * > 0 mails selected
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSpamFolder(fo) && (active || numSelected > 0),
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isOutgoingFolder(fo) && !isSpamFolder(fo) && (active || numSelected > 0),
                                                          gui->MI_CHSUBJ,
                                                          gui->MI_EDIT,
                                                          gui->MI_REPLY,
