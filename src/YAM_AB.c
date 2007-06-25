@@ -66,19 +66,45 @@
  Module: Address book
 ***************************************************************************/
 
-/// AB_PrettyPrintAddress
-STRPTR AB_PrettyPrintAddress(struct ABEntry *e)
+/// AB_BuildAddressStringABEntry
+//  Creates "Real Name" <E-mail> string from a given address book entry
+char *AB_BuildAddressStringABEntry(const struct ABEntry *e)
 {
-  return AB_PrettyPrintAddress2(e->RealName, e->Address);
+  return AB_BuildAddressString(e->Address, e->RealName);
 }
 
 ///
-/// AB_PrettyPrintAddress2
-STRPTR AB_PrettyPrintAddress2(STRPTR realname, STRPTR address)
+/// AB_BuildAddressStringPerson
+//  Creates "Real Name" <E-mail> string from a given person
+char *AB_BuildAddressStringPerson(const struct Person *p)
 {
-  static char buf[SIZE_REALNAME + SIZE_ADDRESS + 4];
-  snprintf(buf, sizeof(buf), "%." STR(SIZE_REALNAME) "s <%." STR(SIZE_ADDRESS) "s>", realname, address);
-  return buf;
+  return AB_BuildAddressString(p->Address, p->RealName);
+}
+
+///
+/// AB_BuildAddressString
+//  Creates "Real Name" <E-mail> string from a given address and name
+char *AB_BuildAddressString(const char *address, const char *name)
+{
+  static char buffer[SIZE_REALNAME + SIZE_ADDRESS + 6];
+  const char *delim;
+
+  ENTER();
+
+  if(name[0] != '\0')
+  {
+    if(strpbrk(name, ",.()<>"))
+      delim = "\"";
+    else
+      delim = "";
+
+    snprintf(buffer, sizeof(buffer), "%s%s%s <%s>", delim, name, delim, address);
+  }
+  else
+    snprintf(buffer, sizeof(buffer), "%s", address);
+
+  RETURN(buffer);
+  return buffer;
 }
 
 ///

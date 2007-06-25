@@ -74,14 +74,14 @@ void rx_show( UNUSED struct RexxHost *host, struct rxd_show **rxd, long action, 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
          // lets signal the application to uniconify and open the windows
          PopUp();
       }
       break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -99,11 +99,11 @@ void rx_hide( UNUSED struct RexxHost *host, struct rxd_hide **rxd, long action, 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          set(G->App, MUIA_Application_Iconified, TRUE);
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -121,12 +121,12 @@ void rx_quit( UNUSED struct RexxHost *host, struct rxd_quit **rxd, long action, 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (rd->arg.force) set(G->App, MUIA_Application_ForceQuit, TRUE);
          DoMethod(G->App, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -146,7 +146,7 @@ void rx_help( UNUSED struct RexxHost *host, struct rxd_help **rxd, long action, 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (rd->arg.file) if ((fp = fopen(rd->arg.file, "w"))) out = fp;
          fprintf(out, "Commands for application \"YAM\"\n\nCommand          Template\n-------          --------\n");
@@ -157,7 +157,7 @@ void rx_help( UNUSED struct RexxHost *host, struct rxd_help **rxd, long action, 
                rxc->results ? " => " : "", rxc->results ? rxc->results : "");
          if (fp) fclose(fp);
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -176,7 +176,7 @@ void rx_info( UNUSED struct RexxHost *host, struct rxd_info **rxd, long action, 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          key = rd->arg.item;
          if (!key) rd->rc = RETURN_ERROR;
@@ -210,7 +210,7 @@ void rx_info( UNUSED struct RexxHost *host, struct rxd_info **rxd, long action, 
          }
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -228,12 +228,12 @@ void rx_writeto( UNUSED struct RexxHost *host, struct rxd_writeto **rxd, long ac
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (G->WR[G->ActiveWriteWin]) InsertAddresses(G->WR[G->ActiveWriteWin]->GUI.ST_TO, rd->arg.address, (BOOL)rd->arg.add);
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -251,12 +251,12 @@ void rx_writecc( UNUSED struct RexxHost *host, struct rxd_writecc **rxd, long ac
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (G->WR[G->ActiveWriteWin]) InsertAddresses(G->WR[G->ActiveWriteWin]->GUI.ST_CC, rd->arg.address, (BOOL)rd->arg.add);
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -274,12 +274,12 @@ void rx_writebcc( UNUSED struct RexxHost *host, struct rxd_writebcc **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (G->WR[G->ActiveWriteWin]) InsertAddresses(G->WR[G->ActiveWriteWin]->GUI.ST_BCC, rd->arg.address, (BOOL)rd->arg.add);
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -297,7 +297,7 @@ void rx_writeattach( UNUSED struct RexxHost *host, struct rxd_writeattach **rxd,
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if(FileExists(rd->arg.file) == TRUE && G->WR[G->ActiveWriteWin])
          {
@@ -308,7 +308,7 @@ void rx_writeattach( UNUSED struct RexxHost *host, struct rxd_writeattach **rxd,
          }
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -326,7 +326,7 @@ void rx_writeletter( UNUSED struct RexxHost *host, struct rxd_writeletter **rxd,
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (G->WR[G->ActiveWriteWin] && CopyFile(G->WR_Filename[G->ActiveWriteWin], 0, rd->arg.file, 0))
          {
@@ -482,7 +482,7 @@ void rx_mailreply( UNUSED struct RexxHost *host, struct rxd_mailreply **rxd, lon
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          rd->res.window = &G->ActiveWriteWin;
          if ((winnr = MA_NewMessage(NEW_REPLY, rd->arg.quiet?NEWF_QUIET:0)) >= 0)
@@ -495,7 +495,7 @@ void rx_mailreply( UNUSED struct RexxHost *host, struct rxd_mailreply **rxd, lon
          }
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -515,7 +515,7 @@ void rx_mailforward( UNUSED struct RexxHost *host, struct rxd_mailforward **rxd,
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          rd->res.window = &G->ActiveWriteWin;
          if ((winnr = MA_NewMessage(NEW_FORWARD, rd->arg.quiet?NEWF_QUIET:0)) >= 0)
@@ -528,7 +528,7 @@ void rx_mailforward( UNUSED struct RexxHost *host, struct rxd_mailforward **rxd,
          }
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -547,13 +547,13 @@ void rx_mailmove( UNUSED struct RexxHost *host, struct rxd_mailmove **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if ((folder = FO_GetFolderRexx(rd->arg.folder, NULL)))
             MA_MoveCopy(NULL, FO_GetCurrentFolder(), folder, FALSE, TRUE);
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -572,7 +572,7 @@ void rx_mailread( UNUSED struct RexxHost *host, struct rxd_mailread **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
         static int winNumber = -1;
@@ -646,7 +646,7 @@ void rx_mailread( UNUSED struct RexxHost *host, struct rxd_mailread **rxd, long 
          }
       }
       break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -664,11 +664,11 @@ void rx_mailsend( UNUSED struct RexxHost *host, struct rxd_mailsend **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (!MA_Send(rd->arg.all ? SEND_ALL : SEND_ACTIVE)) rd->rc = RETURN_WARN;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -686,11 +686,11 @@ void rx_maildelete( UNUSED struct RexxHost *host, struct rxd_maildelete **rxd, l
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          MA_DeleteMessage((BOOL)rd->arg.atonce, (BOOL)rd->arg.force);
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -709,7 +709,7 @@ void rx_mailcheck( UNUSED struct RexxHost *host, struct rxd_mailcheck **rxd, lon
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (rd->arg.pop) { if ((pop = *rd->arg.pop) >= 0 && pop < MAXP3) if (C->P3[pop]) popnr = pop; }
          else popnr = -1;
@@ -730,7 +730,7 @@ void rx_mailcheck( UNUSED struct RexxHost *host, struct rxd_mailcheck **rxd, lon
          }
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -748,13 +748,13 @@ void rx_mailimport( UNUSED struct RexxHost *host, struct rxd_mailimport **rxd, l
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (!MA_ImportMessages(rd->arg.filename)) rd->rc = RETURN_ERROR;
          else if(!rd->arg.wait)
            CallHookPkt(&TR_ProcessIMPORTHook, 0, 0);
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -772,11 +772,11 @@ void rx_mailexport( UNUSED struct RexxHost *host, struct rxd_mailexport **rxd, l
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (!MA_ExportMessages((BOOL)rd->arg.all, rd->arg.filename, (BOOL)rd->arg.append)) rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -794,11 +794,11 @@ void rx_mailupdate( UNUSED struct RexxHost *host, struct rxd_mailupdate **rxd, l
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook);
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -817,7 +817,7 @@ void rx_mailfilter( UNUSED struct RexxHost *host, struct rxd_mailfilter **rxd, l
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, rd->arg.all ? APPLY_RX_ALL : APPLY_RX, 0);
          rd->res.checked = &rr->Checked;
@@ -828,7 +828,7 @@ void rx_mailfilter( UNUSED struct RexxHost *host, struct rxd_mailfilter **rxd, l
          rd->res.moved = &rr->Moved;
          rd->res.deleted = &rr->Deleted;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -855,7 +855,7 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
          if (rd->rd.arg.index)
@@ -896,9 +896,9 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
             else if(!hasStatusNew(mail))
               rd->rd.res.status = "O"; // Old status
 
-            strlcpy(rd->rd.res.from = rd->from, BuildAddrName2(&mail->From), sizeof(rd->from));
-            strlcpy(rd->rd.res.to = rd->to, BuildAddrName2(&mail->To), sizeof(rd->to));
-            strlcpy(rd->rd.res.replyto = rd->replyto, BuildAddrName2(mail->ReplyTo.Address[0] != '\0' ? &mail->ReplyTo : &mail->From), sizeof(rd->replyto));
+            strlcpy(rd->rd.res.from = rd->from, AB_BuildAddressStringPerson(&mail->From), sizeof(rd->from));
+            strlcpy(rd->rd.res.to = rd->to, AB_BuildAddressStringPerson(&mail->To), sizeof(rd->to));
+            strlcpy(rd->rd.res.replyto = rd->replyto, AB_BuildAddressStringPerson(mail->ReplyTo.Address[0] != '\0' ? &mail->ReplyTo : &mail->From), sizeof(rd->replyto));
             DateStamp2String(rd->rd.res.date = rd->date, sizeof(rd->date), &mail->Date, DSS_USDATETIME, TZC_LOCAL);
             rd->rd.res.subject = mail->Subject;
             rd->rd.res.size = &mail->Size;
@@ -917,7 +917,7 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
          else rd->rd.rc = RETURN_ERROR;
       }
       break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -936,12 +936,12 @@ void rx_setfolder( UNUSED struct RexxHost *host, struct rxd_setfolder **rxd, lon
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if ((folder = FO_GetFolderRexx(rd->arg.folder, NULL))) MA_ChangeFolder(folder, TRUE);
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -960,7 +960,7 @@ void rx_setmail( UNUSED struct RexxHost *host, struct rxd_setmail **rxd, long ac
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
          Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
@@ -970,7 +970,7 @@ void rx_setmail( UNUSED struct RexxHost *host, struct rxd_setmail **rxd, long ac
          else set(lv, MUIA_NList_Active, mail);
       }
       break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -988,7 +988,7 @@ void rx_writeeditor( UNUSED struct RexxHost *host, struct rxd_writeeditor **rxd,
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (G->WR[G->ActiveWriteWin])
          {
@@ -1003,7 +1003,7 @@ void rx_writeeditor( UNUSED struct RexxHost *host, struct rxd_writeeditor **rxd,
          }
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          if (rd->res.result) FreeVec(rd->res.result);
          FreeVec( rd );
@@ -1027,14 +1027,14 @@ void rx_request( UNUSED struct RexxHost *host, struct rxd_request **rxd, long ac
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          reqtext = AllocReqText(rd->rd.arg.body);
          rd->result = MUI_Request(G->App, NULL, 0, NULL, rd->rd.arg.gadgets, reqtext);
          rd->rd.res.result = &rd->result;
          free(reqtext);
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1059,11 +1059,11 @@ void rx_mailsendall( UNUSED struct RexxHost *host, struct rxd_mailsendall **rxd,
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (!MA_Send(SEND_ALL)) rd->rc = RETURN_WARN;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1088,7 +1088,7 @@ void rx_getfolderinfo( UNUSED struct RexxHost *host, struct rxd_getfolderinfo **
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          key = rd->rd.arg.item;
          fo = FO_GetCurrentFolder();
@@ -1107,7 +1107,7 @@ void rx_getfolderinfo( UNUSED struct RexxHost *host, struct rxd_getfolderinfo **
          else rd->rd.rc = RETURN_ERROR;
 
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1132,7 +1132,7 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if ((mail = MA_GetActiveMail(NULL, NULL, &active)))
          {
@@ -1163,9 +1163,9 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
               else if(!hasStatusNew(mail))
                 rd->rd.res.value = "O"; // Old status
             }
-            else if (!strnicmp(key, "FRO", 3)) strlcpy(rd->result, BuildAddrName2(&mail->From), sizeof(rd->result));
-            else if (!strnicmp(key, "TO" , 2)) strlcpy(rd->result, BuildAddrName2(&mail->To), sizeof(rd->result));
-            else if (!strnicmp(key, "REP", 3)) strlcpy(rd->result, BuildAddrName2(mail->ReplyTo.Address[0] != '\0' ? &mail->ReplyTo : &mail->From), sizeof(rd->result));
+            else if (!strnicmp(key, "FRO", 3)) strlcpy(rd->result, AB_BuildAddressStringPerson(&mail->From), sizeof(rd->result));
+            else if (!strnicmp(key, "TO" , 2)) strlcpy(rd->result, AB_BuildAddressStringPerson(&mail->To), sizeof(rd->result));
+            else if (!strnicmp(key, "REP", 3)) strlcpy(rd->result, AB_BuildAddressStringPerson(mail->ReplyTo.Address[0] != '\0' ? &mail->ReplyTo : &mail->From), sizeof(rd->result));
             else if (!strnicmp(key, "SUB", 3)) rd->rd.res.value = mail->Subject;
             else if (!strnicmp(key, "FIL", 3))
             {
@@ -1177,7 +1177,7 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
          }
          else rd->rd.rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1196,14 +1196,14 @@ void rx_getconfiginfo( UNUSED struct RexxHost *host, struct rxd_getconfiginfo **
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          key = rd->arg.item;
          if (!strnicmp(key, "NAM", 3)) rd->res.value = C->RealName;
          else if (!strnicmp(key, "EMA", 3)) rd->res.value = C->EmailAddress;
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1223,7 +1223,7 @@ void rx_folderinfo( UNUSED struct RexxHost *host, struct rxd_folderinfo **rxd, l
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          fo = rd->arg.folder ? FO_GetFolderRexx(rd->arg.folder, NULL) : FO_GetCurrentFolder();
 
@@ -1256,7 +1256,7 @@ void rx_folderinfo( UNUSED struct RexxHost *host, struct rxd_folderinfo **rxd, l
          }
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1274,12 +1274,12 @@ void rx_writesubject( UNUSED struct RexxHost *host, struct rxd_writesubject **rx
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (G->WR[G->ActiveWriteWin]) setstring(G->WR[G->ActiveWriteWin]->GUI.ST_SUBJECT, rd->arg.subject);
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1297,13 +1297,13 @@ void rx_screentoback( UNUSED struct RexxHost *host, struct rxd_screentoback **rx
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          rd->rc = 0;
          if (G->MA) DoMethod(G->MA->GUI.WI, MUIM_Window_ScreenToBack);
          else rd->rc = RETURN_WARN;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1321,13 +1321,13 @@ void rx_screentofront( UNUSED struct RexxHost *host, struct rxd_screentofront **
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          rd->rc = 0;
          if (G->MA) DoMethod(G->MA->GUI.WI, MUIM_Window_ScreenToFront);
          else rd->rc = RETURN_WARN;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1348,7 +1348,7 @@ void rx_setflag( UNUSED struct RexxHost *host, struct rxd_setflag **rxd, long ac
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
          if ((mail = MA_GetActiveMail(NULL, NULL, NULL)))
@@ -1379,7 +1379,7 @@ void rx_setflag( UNUSED struct RexxHost *host, struct rxd_setflag **rxd, long ac
          else rd->rc = RETURN_WARN;
       }
       break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1398,7 +1398,7 @@ void rx_mailedit( UNUSED struct RexxHost *host, struct rxd_mailedit **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          rd->res.window = &G->ActiveWriteWin;
          if ((winnr = MA_NewMessage(NEW_EDIT, rd->arg.quiet?NEWF_QUIET:0)) >= 0)
@@ -1411,7 +1411,7 @@ void rx_mailedit( UNUSED struct RexxHost *host, struct rxd_mailedit **rxd, long 
          }
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1430,7 +1430,7 @@ void rx_readinfo( UNUSED struct RexxHost *host, struct rxd_readinfo **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
          struct ReadMailData *rmData = G->ActiveRexxRMData;
@@ -1459,7 +1459,7 @@ void rx_readinfo( UNUSED struct RexxHost *host, struct rxd_readinfo **rxd, long 
            rd->rc = RETURN_ERROR;
       }
       break;
-      
+
       case RXIF_FREE:
          if (rd->res.filename) free(rd->res.filename);
          if (rd->res.filetype) free(rd->res.filetype);
@@ -1482,7 +1482,7 @@ void rx_readsave( UNUSED struct RexxHost *host, struct rxd_readsave **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
          BOOL success = FALSE;
@@ -1539,7 +1539,7 @@ void rx_readsave( UNUSED struct RexxHost *host, struct rxd_readsave **rxd, long 
            rd->rc = RETURN_ERROR;
       }
       break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1558,7 +1558,7 @@ void rx_readprint( UNUSED struct RexxHost *host, struct rxd_readprint **rxd, lon
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
          struct ReadMailData *rmData = G->ActiveRexxRMData;
@@ -1602,7 +1602,7 @@ void rx_readprint( UNUSED struct RexxHost *host, struct rxd_readprint **rxd, lon
            rd->rc = RETURN_ERROR;
       }
       break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1621,7 +1621,7 @@ void rx_mailbounce( UNUSED struct RexxHost *host, struct rxd_mailbounce **rxd, l
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          rd->res.window = &G->ActiveWriteWin;
          if ((winnr = MA_NewMessage(NEW_BOUNCE, rd->arg.quiet?NEWF_QUIET:0)) >= 0)
@@ -1634,7 +1634,7 @@ void rx_mailbounce( UNUSED struct RexxHost *host, struct rxd_mailbounce **rxd, l
          }
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1653,7 +1653,7 @@ void rx_addrfind( UNUSED struct RexxHost *host, struct rxd_addrfind **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
         int hits;
@@ -1673,7 +1673,7 @@ void rx_addrfind( UNUSED struct RexxHost *host, struct rxd_addrfind **rxd, long 
           rd->rc = RETURN_WARN;
       }
       break;
-      
+
       case RXIF_FREE:
          if (rd->res.alias) free(rd->res.alias);
          FreeVec( rd );
@@ -1699,7 +1699,7 @@ void rx_addrinfo( UNUSED struct RexxHost *host, struct rxd_addrinfo **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
         if (AB_SearchEntry(rd->rd.arg.alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &ab) && (ab != NULL))
@@ -1744,7 +1744,7 @@ void rx_addrinfo( UNUSED struct RexxHost *host, struct rxd_addrinfo **rxd, long 
         else rd->rd.rc = RETURN_ERROR;
       }
       break;
-      
+
       case RXIF_FREE:
       {
         if (rd->members) free(rd->members);
@@ -1770,7 +1770,7 @@ void rx_addrresolve( UNUSED struct RexxHost *host, struct rxd_addrresolve **rxd,
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
         // generate a "fake" RecipientstringObject and use it on the resolve task
@@ -1815,7 +1815,7 @@ void rx_newmailfile( UNUSED struct RexxHost *host, struct rxd_newmailfile **rxd,
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
 
          if (rd->rd.arg.folder) folder = FO_GetFolderRexx(rd->rd.arg.folder, NULL);
@@ -1829,7 +1829,7 @@ void rx_newmailfile( UNUSED struct RexxHost *host, struct rxd_newmailfile **rxd,
          else rd->rd.rc = RETURN_ERROR;
 
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1847,12 +1847,12 @@ void rx_writefrom( UNUSED struct RexxHost *host, struct rxd_writefrom **rxd, lon
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (G->WR[G->ActiveWriteWin]) setstring(G->WR[G->ActiveWriteWin]->GUI.ST_FROM, rd->arg.address);
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1870,12 +1870,12 @@ void rx_writereplyto( UNUSED struct RexxHost *host, struct rxd_writereplyto **rx
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (G->WR[G->ActiveWriteWin]) setstring(G->WR[G->ActiveWriteWin]->GUI.ST_REPLYTO, rd->arg.address);
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1894,7 +1894,7 @@ void rx_listselect( UNUSED struct RexxHost *host, struct rxd_listselect **rxd, l
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
          Object *nl = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
@@ -1909,7 +1909,7 @@ void rx_listselect( UNUSED struct RexxHost *host, struct rxd_listselect **rxd, l
          }
       }
       break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1928,7 +1928,7 @@ void rx_readclose( UNUSED struct RexxHost *host, struct rxd_readclose **rxd, lon
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
          struct ReadMailData *rmData = G->ActiveRexxRMData;
@@ -1939,7 +1939,7 @@ void rx_readclose( UNUSED struct RexxHost *host, struct rxd_readclose **rxd, lon
            rd->rc = RETURN_ERROR;
       }
       break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1961,7 +1961,7 @@ void rx_setmailfile( UNUSED struct RexxHost *host, struct rxd_setmailfile **rxd,
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
          Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
@@ -1983,7 +1983,7 @@ void rx_setmailfile( UNUSED struct RexxHost *host, struct rxd_setmailfile **rxd,
          if (!mail) rd->rc = RETURN_WARN;
       }
       break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2002,13 +2002,13 @@ void rx_mailcopy( UNUSED struct RexxHost *host, struct rxd_mailcopy **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if ((folder = FO_GetFolderRexx(rd->arg.folder, NULL)))
             MA_MoveCopy(NULL, FO_GetCurrentFolder(), folder, TRUE, FALSE);
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2027,7 +2027,7 @@ void rx_appbusy( UNUSED struct RexxHost *host, struct rxd_appbusy **rxd, long ac
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          s = rd->arg.text;
 
@@ -2039,7 +2039,7 @@ void rx_appbusy( UNUSED struct RexxHost *host, struct rxd_appbusy **rxd, long ac
          if(BusyLevel == 1) nnset(G->App, MUIA_Application_Sleep, TRUE);
          rd->rc = BusyLevel ? 1 : 0;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2057,13 +2057,13 @@ void rx_appnobusy( UNUSED struct RexxHost *host, struct rxd_appnobusy **rxd, lon
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          BusyEnd();
          if(BusyLevel <= 0) nnset(G->App, MUIA_Application_Sleep, FALSE);
          rd->rc = BusyLevel ? 1 : 0;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2081,12 +2081,12 @@ void rx_writemailto( UNUSED struct RexxHost *host, struct rxd_writemailto **rxd,
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (G->WR[G->ActiveWriteWin]) InsertAddresses(G->WR[G->ActiveWriteWin]->GUI.ST_TO, rd->arg.address, FALSE);
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2110,7 +2110,7 @@ void rx_userinfo( UNUSED struct RexxHost *host, struct rxd_userinfo **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          u = US_GetCurrentUser();
          rd->rd.res.username = u->Name;
@@ -2135,7 +2135,7 @@ void rx_userinfo( UNUSED struct RexxHost *host, struct rxd_userinfo **rxd, long 
          rd->rd.res.folders = &rd->folders;
 
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2153,7 +2153,7 @@ void rx_mailstatus( UNUSED struct RexxHost *host, struct rxd_mailstatus **rxd, l
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          switch (tolower(rd->arg.status[0]))
          {
@@ -2166,7 +2166,7 @@ void rx_mailstatus( UNUSED struct RexxHost *host, struct rxd_mailstatus **rxd, l
               rd->rc = RETURN_WARN;
          }
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2184,11 +2184,11 @@ void rx_isonline( UNUSED struct RexxHost *host, struct rxd_isonline **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          rd->rc = SocketBase ? 1 : 0;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2211,7 +2211,7 @@ void rx_requeststring( UNUSED struct RexxHost *host, struct rxd_requeststring **
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          reqtext = AllocReqText(rd->rd.arg.body);
          if(rd->rd.arg.string)
@@ -2220,7 +2220,7 @@ void rx_requeststring( UNUSED struct RexxHost *host, struct rxd_requeststring **
          rd->rd.res.string = rd->string;
          free(reqtext);
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2241,7 +2241,7 @@ void rx_requestfolder( UNUSED struct RexxHost *host, struct rxd_requestfolder **
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          reqtext = AllocReqText(rd->arg.body);
          exfolder = rd->arg.excludeactive ? FO_GetCurrentFolder() : NULL;
@@ -2249,7 +2249,7 @@ void rx_requestfolder( UNUSED struct RexxHost *host, struct rxd_requestfolder **
          else rd->rc = 1;
          free(reqtext);
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2269,7 +2269,7 @@ void rx_getselected( UNUSED struct RexxHost *host, struct rxd_getselected **rxd,
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
          Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
@@ -2300,7 +2300,7 @@ void rx_getselected( UNUSED struct RexxHost *host, struct rxd_getselected **rxd,
          }
       }
       break;
-      
+
       case RXIF_FREE:
          if (rd->res.num) free(rd->res.num);
          FreeVec( rd );
@@ -2321,7 +2321,7 @@ void rx_addredit( UNUSED struct RexxHost *host, struct rxd_addredit **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
          if((tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
@@ -2365,7 +2365,7 @@ void rx_addredit( UNUSED struct RexxHost *host, struct rxd_addredit **rxd, long 
          else rd->rc = RETURN_ERROR;
       }
       break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2384,7 +2384,7 @@ void rx_addrdelete( UNUSED struct RexxHost *host, struct rxd_addrdelete **rxd, l
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
          // if the command was called without any parameter it will delete the active entry
@@ -2401,7 +2401,7 @@ void rx_addrdelete( UNUSED struct RexxHost *host, struct rxd_addrdelete **rxd, l
          else rd->rc = RETURN_WARN;
       }
       break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2420,7 +2420,7 @@ void rx_addrsave( UNUSED struct RexxHost *host, struct rxd_addrsave **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (rd->arg.filename)
          {
@@ -2431,7 +2431,7 @@ void rx_addrsave( UNUSED struct RexxHost *host, struct rxd_addrsave **rxd, long 
             if (AB_SaveTree(G->AB_Filename)) G->AB->Modified = FALSE; else rd->rc = RETURN_ERROR;
          }
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2450,11 +2450,11 @@ void rx_addrload( UNUSED struct RexxHost *host, struct rxd_addrload **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (!AB_LoadTree(rd->arg.filename, FALSE, FALSE)) rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2473,11 +2473,11 @@ void rx_addrgoto( UNUSED struct RexxHost *host, struct rxd_addrgoto **rxd, long 
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (!AB_GotoEntry(rd->arg.alias)) rd->rc = RETURN_WARN;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2497,7 +2497,7 @@ void rx_addrnew( UNUSED struct RexxHost *host, struct rxd_addrnew **rxd, long ac
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          memset(&addr, 0, sizeof(struct ABEntry));
          addr.Type = AET_USER;
@@ -2525,7 +2525,7 @@ void rx_addrnew( UNUSED struct RexxHost *host, struct rxd_addrnew **rxd, long ac
             AppendToLogfile(LF_VERBOSE, 71, tr(MSG_LOG_NewAddress), addr.Alias);
          }
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2544,7 +2544,7 @@ void rx_mailchangesubject( UNUSED struct RexxHost *host, struct rxd_mailchangesu
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
       {
          Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
@@ -2569,7 +2569,7 @@ void rx_mailchangesubject( UNUSED struct RexxHost *host, struct rxd_mailchangesu
             rd->rc = RETURN_ERROR;
       }
       break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -2587,7 +2587,7 @@ void rx_geturl( UNUSED struct RexxHost *host, struct rxd_geturl **rxd, long acti
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (TR_OpenTCPIP())
          {
@@ -2598,7 +2598,7 @@ void rx_geturl( UNUSED struct RexxHost *host, struct rxd_geturl **rxd, long acti
          }
          else rd->rc = RETURN_WARN;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;

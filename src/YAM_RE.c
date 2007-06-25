@@ -320,7 +320,7 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
 
   if(dest != NULL)
   {
-    SetComment(dest, BuildAddrName2(&mail->From));
+    SetComment(dest, AB_BuildAddressStringPerson(&mail->From));
 
     if(!stricmp(ctype, IntMimeTypeArray[MT_AP_AEXE].ContentType))
       SetProtection(dest, 0);
@@ -3353,7 +3353,7 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
    switch (C->AddToAddrbook)
    {
       case 1: if (!templ->Type) break;
-      case 2: snprintf(buf, sizeof(buf), tr(MSG_RE_AddSender), BuildAddrName(templ->Address, templ->RealName));
+      case 2: snprintf(buf, sizeof(buf), tr(MSG_RE_AddSender), AB_BuildAddressString(templ->Address, templ->RealName));
               doit = MUI_Request(G->App, win, 0, NULL, tr(MSG_YesNoReq), buf);
               break;
       case 3: if (!templ->Type) break;
@@ -3498,7 +3498,7 @@ void RE_ClickedOnMessage(char *address)
         {
           struct WR_GUIData *gui = &G->WR[win]->GUI;
 
-          setstring(gui->ST_TO, hits ? BuildAddrName(address, ab->RealName) : address);
+          setstring(gui->ST_TO, hits ? AB_BuildAddressString(address, ab->RealName) : address);
           if(subject != NULL)
             setstring(gui->ST_SUBJECT, subject);
           if(body != NULL)
@@ -3563,7 +3563,7 @@ static void RE_SendMDN(const enum MDNMode mode,
     char buf[SIZE_LINE];
     char disp[SIZE_DEFAULT];
     char date[64];
-    char *rcpt = BuildAddrName2(&mail->To);
+    char *rcpt = AB_BuildAddressStringPerson(&mail->To);
     struct WritePart *p2;
     struct TempFile *tf2;
 
@@ -3617,10 +3617,10 @@ static void RE_SendMDN(const enum MDNMode mode,
         EmitHeader(tf2->FP, "Reporting-UA", buf);
         if(email->OriginalRcpt.Address[0] != '\0')
         {
-          snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddrName2(&email->OriginalRcpt));
+          snprintf(buf, sizeof(buf), "rfc822;%s", AB_BuildAddressStringPerson(&email->OriginalRcpt));
           EmitHeader(tf2->FP, "Original-Recipient", buf);
         }
-        snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddrName(C->EmailAddress, C->RealName));
+        snprintf(buf, sizeof(buf), "rfc822;%s", AB_BuildAddressString(C->EmailAddress, C->RealName));
         EmitHeader(tf2->FP, "Final-Recipient", buf);
         EmitHeader(tf2->FP, "Original-Message-ID", email->MsgID);
         EmitHeader(tf2->FP, "Disposition", disp);
@@ -3671,7 +3671,7 @@ static void RE_SendMDN(const enum MDNMode mode,
 
           // finally, we compose the MDN mail
           memset(&comp, 0, sizeof(struct Compose));
-          comp.MailTo = StrBufCpy(comp.MailTo, BuildAddrName2(recipient));
+          comp.MailTo = StrBufCpy(comp.MailTo, AB_BuildAddressStringPerson(recipient));
           comp.Subject = buf;
           comp.GenerateMDN = TRUE;
           comp.FirstPart = p1;

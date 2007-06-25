@@ -30,6 +30,8 @@
 
 #include "Recipientstring_cl.h"
 
+#include "YAM_addressbook.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -657,17 +659,20 @@ DECLARE(Resolve) // ULONG flags
         {
           if(entry->Type == AET_USER) /* it's a normal person */
           {
-            D(DBF_GUI, "\tPlain user: %s (%s, %s)", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);
-            DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname && entry->RealName[0] ? AB_PrettyPrintAddress(entry) : (STRPTR)entry->Address);
+            D(DBF_GUI, "\tPlain user: %s (%s, %s)", AB_BuildAddressStringABEntry(entry), entry->RealName, entry->Address);
+            DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname && entry->RealName[0] ? AB_BuildAddressStringABEntry(entry) : entry->Address);
           }
           else if(entry->Type == AET_LIST) /* it's a list of persons */
           {
             if(data->MultipleRecipients)
             {
-              STRPTR members, lf;
+              char *members;
+
               if((members = strdup(entry->Members)))
               {
-                while((lf = strchr(members, '\n')))
+              	char *lf;
+
+                while((lf = strchr(members, '\n')) != NULL)
                   lf[0] = ',';
 
                 D(DBF_GUI, "Found list: »%s«", members);
@@ -675,7 +680,7 @@ DECLARE(Resolve) // ULONG flags
                 free(members);
 
                 if(data->From && entry->RealName[0])
-                  set(data->From, MUIA_String_Contents, AB_PrettyPrintAddress2(entry->RealName, C->EmailAddress));
+                  set(data->From, MUIA_String_Contents, AB_BuildAddressString(C->EmailAddress, entry->RealName));
 
                 if(data->ReplyTo && entry->Address[0])
                   set(data->ReplyTo, MUIA_String_Contents, entry->Address);
@@ -710,8 +715,8 @@ DECLARE(Resolve) // ULONG flags
       }
       else if(withcache && (entry = (struct ABEntry *)DoMethod(G->App, MUIM_YAM_FindEmailCacheMatch, s)))
       {
-        D(DBF_GUI, "\tEmailCache Hit: %s (%s, %s)", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);
-        DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname && entry->RealName[0] ? AB_PrettyPrintAddress(entry) : (STRPTR)entry->Address);
+        D(DBF_GUI, "\tEmailCache Hit: %s (%s, %s)", AB_BuildAddressStringABEntry(entry), entry->RealName, entry->Address);
+        DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname && entry->RealName[0] ? AB_BuildAddressStringABEntry(entry) : entry->Address);
       }
       else
       {

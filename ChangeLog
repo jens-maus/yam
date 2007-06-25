@@ -14,6 +14,10 @@ $URL$
 
 2007-06-25  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: there are now three central functions to build a properly set up
+    address string consisting of name, address and all necessary quoting of
+    "forbidden" characters. Two of these new functions base upon the third which
+    does all the horse work. This fixes bug #1742421.
   * ReadMailGroup.c: while building the context menu for the embedded read pane
     the wrong variable was used to decide wether the "Attachments" item must be
     enabled or disabled. It was enabled all the time even if there were no

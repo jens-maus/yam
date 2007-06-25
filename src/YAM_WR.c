@@ -1118,7 +1118,7 @@ static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
       {
         inbody = TRUE;
         EmitRcptHeader(fh, "To", comp->MailTo);
-        EmitHeader(fh, "Resent-From", BuildAddrName(C->EmailAddress, C->RealName));
+        EmitHeader(fh, "Resent-From", AB_BuildAddressString(C->EmailAddress, C->RealName));
         EmitHeader(fh, "Resent-Date", GetDateTime());
       }
 
@@ -1649,7 +1649,7 @@ BOOL WriteOutMessage(struct Compose *comp)
    if (comp->Security) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",%s", SecCodes[comp->Security]);
    if (comp->Signature) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",sigfile%d", comp->Signature-1);
    if (*options) EmitHeader(fh, "X-YAM-Options", &options[1]);
-   EmitRcptHeader(fh, "From", comp->From ? comp->From : BuildAddrName(C->EmailAddress, C->RealName));
+   EmitRcptHeader(fh, "From", comp->From ? comp->From : AB_BuildAddressString(C->EmailAddress, C->RealName));
    if (comp->ReplyTo) EmitRcptHeader(fh, "Reply-To", comp->ReplyTo);
    if (comp->MailTo) EmitRcptHeader(fh, "To", comp->Security == 4 ? C->ReMailer : comp->MailTo);
    if (comp->MailCC) EmitRcptHeader(fh, "CC", comp->MailCC);
@@ -2916,7 +2916,7 @@ int WR_Open(int winnum, BOOL bounce)
         {
           struct WR_GUIData *gui = &G->WR[winnum]->GUI;
 
-          setstring(gui->ST_FROM, BuildAddrName(C->EmailAddress, C->RealName));
+          setstring(gui->ST_FROM, AB_BuildAddressString(C->EmailAddress, C->RealName));
           setstring(gui->ST_REPLYTO, C->ReplyTo);
           setstring(gui->ST_EXTHEADER, C->ExtraHeaders);
           setcheckmark(gui->CH_DELSEND, !C->SaveSent);
@@ -3461,7 +3461,7 @@ static struct WR_ClassData *WR_New(int winnum)
       //  V   reserved by TextEditor.mcc (paste)
       //  W   Cancel&Close window (WMEN_CANCEL)
       //  X   reserved by TextEditor.mcc (cut)
-      //  Y   
+      //  Y
       //  Z
       //  1   Switch to Message view (WMEN_SWITCH1)
       //  2   Switch to Attachment view (WMEN_SWITCH2)

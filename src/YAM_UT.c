@@ -3050,31 +3050,6 @@ char *GetMailFile(char *string, const struct Folder *folder, const struct Mail *
   return result;
 }
 ///
-/// BuildAddrName
-//  Creates "Real Name" <E-mail> string
-char *BuildAddrName(const char *address, const char *name)
-{
-  static char buffer[SIZE_ADDRESS+SIZE_REALNAME+4];
-  const char *delim;
-
-  ENTER();
-
-  if(name[0] != '\0')
-  {
-    if(strpbrk(name, ",.()<>"))
-      delim = "\"";
-    else
-      delim = "";
-
-    snprintf(buffer, sizeof(buffer), "%s%s%s <%s>", delim, name, delim, address);
-  }
-  else
-    snprintf(buffer, sizeof(buffer), "%s", address);
-
-  RETURN(buffer);
-  return buffer;
-}
-///
 /// ExtractAddress
 //  Extracts e-mail address and real name according to RFC2822 (section 3.4)
 void ExtractAddress(const char *line, struct Person *pe)

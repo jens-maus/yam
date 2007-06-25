@@ -249,7 +249,6 @@ struct TimeRequest
 #define MUI_Request YAMMUIRequest
 
 // function macros
-#define BuildAddrName2(p)     BuildAddrName((p)->Address, (p)->RealName)
 #define SetHelp(o,str)        set(o, MUIA_ShortHelp, tr(str))
 #define DisposeModulePush(m)  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, m)
 #define FreeStrBuf(str)       ((str) ? free(((char *)(str))-sizeof(size_t)) : (void)0)
@@ -277,7 +276,6 @@ char *   AllocReqText(char *s);
 char *   AllocStrBuf(size_t initlen);
 void     AppendToLogfile(enum LFMode, int id, const char *text, ...);
 struct Part *AttachRequest(const char *title, const char *body, const char *yestext, const char *notext, int mode, struct ReadMailData *rmData);
-char *   BuildAddrName(const char *address, const char *name);
 BOOL     Busy(const char *text, const char *parameter, int cur, int max);
 BOOL     CheckPrinter(void);
 LONG     CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG numBoxes, const char *text, ...);

@@ -64,7 +64,7 @@ struct AB_GUIData
   Object *BT_CC;
   Object *BT_BCC;
 };
- 
+
 struct AB_ClassData  /* address book window */
 {
    struct AB_GUIData    GUI;
@@ -86,8 +86,9 @@ extern struct Hook AB_EditHook;
 extern struct Hook AB_PrintHook;
 extern struct Hook AB_FoldUnfoldHook;
 
-STRPTR AB_PrettyPrintAddress (struct ABEntry *e);
-STRPTR AB_PrettyPrintAddress2 (STRPTR realname, STRPTR address);
+char * AB_BuildAddressStringABEntry(const struct ABEntry *e);
+char * AB_BuildAddressStringPerson(const struct Person *p);
+char * AB_BuildAddressString(const char *address, const char *name);
 void   AB_CheckBirthdates(void);
 char * AB_CompleteAlias(char *text);
 long   AB_CompressBD(char *datestr);

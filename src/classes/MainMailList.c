@@ -583,7 +583,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     struct Person *pers = isSentMail ? &mail->To : &mail->From;
 
     snprintf(data->context_menu_title, sizeof(data->context_menu_title), "%s: ", tr(isSentMail ? MSG_To : MSG_From));
-    strlcat(data->context_menu_title, BuildAddrName2(pers), 20-strlen(data->context_menu_title) > 0 ? 20-strlen(data->context_menu_title) : 0);
+    strlcat(data->context_menu_title, AB_BuildAddressStringPerson(pers), 20-strlen(data->context_menu_title) > 0 ? 20-strlen(data->context_menu_title) : 0);
     strlcat(data->context_menu_title, "...", sizeof(data->context_menu_title));
   }
   else

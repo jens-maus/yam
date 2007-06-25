@@ -75,7 +75,7 @@ OVERLOAD(OM_NEW)
 OVERLOAD(MUIM_DragQuery)
 {
   struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
-  
+
   return (ULONG)(drop_msg->obj == G->AB->GUI.LV_ADDRESSES);
 }
 
@@ -84,22 +84,22 @@ OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragDrop)
 {
   struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
-  
+
   if(drop_msg->obj == G->AB->GUI.LV_ADDRESSES)
   {
     struct MUI_NListtree_TreeNode *tn;
-    
+
     if((tn = (struct MUI_NListtree_TreeNode *)xget(drop_msg->obj, MUIA_NListtree_Active)))
     {
       struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
-      
+
       if(ab->Type != AET_GROUP)
       {
-        DoMethod(obj, MUIM_TextEditor_InsertText, AB_PrettyPrintAddress(ab), MUIV_TextEditor_InsertText_Cursor);
+        DoMethod(obj, MUIM_TextEditor_InsertText, AB_BuildAddressStringABEntry(ab), MUIV_TextEditor_InsertText_Cursor);
       }
     }
   }
-  
+
   return DoSuperMethodA(cl, obj, msg);
 }
 
@@ -252,7 +252,7 @@ OVERLOAD(MUIM_TextEditor_HandleError)
   ENTER();
 
   SHOWVALUE(DBF_GUI, ((struct MUIP_TextEditor_HandleError *)msg)->errorcode);
-  
+
   switch(((struct MUIP_TextEditor_HandleError *)msg)->errorcode)
   {
     case Error_ClipboardIsEmpty:
@@ -267,7 +267,7 @@ OVERLOAD(MUIM_TextEditor_HandleError)
       errortxt = tr(MSG_WR_ErrorNotEnoughUndoMem);
     break;
   }
-  
+
   if(errortxt)
     MUI_Request(_app(obj), _win(obj), 0L, NULL, tr(MSG_OkayReq), errortxt);
   else
