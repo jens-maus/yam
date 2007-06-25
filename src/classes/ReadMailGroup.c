@@ -564,7 +564,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
     struct Mail *mail = rmData->mail;
     BOOL isRealMail = !isVirtualMail(mail);
     BOOL isSentMail = isRealMail ? isSentMailFolder(mail->Folder) : FALSE;
-    BOOL hasAttach = data->attachmentGroup != NULL;
+    BOOL hasAttach = data->activeAttachmentGroup;
     BOOL hasPGPKey = rmData->hasPGPKey;
     BOOL hasPGPSig = (hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData));
     BOOL isPGPEnc = isRealMail && (hasPGPEMimeFlag(rmData) || hasPGPEOldFlag(rmData));

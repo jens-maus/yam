@@ -7,6 +7,11 @@ $URL$
 
 2007-06-25  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ReadMailGroup.c: while building the context menu for the embedded read pane
+    the wrong variable was used to decide wether the "Attachments" item must be
+    enabled or disabled. It was enabled all the time even if there were no
+    attachements at all. This of cause caused crashes when invoking the menu
+    item.
   * YAM_MA.c: the "Reply" button and menu entry is now disabled for the outgoing
     folder as it was before already in the context menu of the embedded read
     pane.
