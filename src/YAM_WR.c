@@ -2957,12 +2957,14 @@ void WR_SetupOldMail(int winnum, struct ReadMailData *rmData)
     if(part->Nr != rmData->letterPartNum &&
        stricmp(part->ContentType, "application/pgp-signature"))
     {
-      static struct Attach attach;
+      struct Attach attach;
+
+      memset(&attach, 0, sizeof(struct Attach));
 
       BusyText(tr(MSG_BusyDecSaving), "");
 
       RE_DecodePart(part);
-      memset(&attach, 0, sizeof(struct Attach));
+
       attach.Size = part->Size;
       attach.IsMIME = part->EncodingCode != ENC_UUE;
       attach.IsTemp = TRUE;
@@ -3624,18 +3626,18 @@ static struct WR_ClassData *WR_New(int winnum)
                Child, VGroup, /* Attachments */
                   MUIA_HelpNode, "WR01",
                   Child, NListviewObject,
-                     MUIA_CycleChain, 1,
-                     MUIA_Listview_DragType,  MUIV_Listview_DragType_Immediate,
+                     MUIA_CycleChain, TRUE,
                      MUIA_NListview_NList,    data->GUI.LV_ATTACH = WriteAttachmentListObject,
                         InputListFrame,
-                        MUIA_NList_ListBackground, MUII_ListBack,
+                        MUIA_NList_DragType,        MUIV_NList_DragType_Immediate,
+                        MUIA_NList_ListBackground,  MUII_ListBack,
                         MUIA_NList_TitleBackground, MUII_ListBack,
-                        MUIA_NList_DragSortable ,TRUE,
-                        MUIA_NList_Format       ,"D=8 BAR,P=\033r D=8 BAR,D=8 BAR,P=\033c D=8 BAR,",
-                        MUIA_NList_Title        ,TRUE,
-                        MUIA_NList_ConstructHook,&WR_LV_ConFuncHook,
-                        MUIA_NList_DestructHook ,&GeneralDesHook,
-                        MUIA_NList_DisplayHook  ,&WR_LV_DspFuncHook,
+                        MUIA_NList_DragSortable,    TRUE,
+                        MUIA_NList_Format,          "D=8 BAR,P=\033r D=8 BAR,D=8 BAR,P=\033c D=8 BAR,",
+                        MUIA_NList_Title,           TRUE,
+                        MUIA_NList_ConstructHook,   &WR_LV_ConFuncHook,
+                        MUIA_NList_DestructHook,    &GeneralDesHook,
+                        MUIA_NList_DisplayHook,     &WR_LV_DspFuncHook,
                      End,
                   End,
                   Child, ColGroup(4),

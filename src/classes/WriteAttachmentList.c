@@ -109,21 +109,27 @@ OVERLOAD(MUIM_DragDrop)
 
     do
     {
-      struct Mail *mail;
-      struct Attach attach;
+      struct Mail *mail=NULL;
 
       DoMethod(d->obj, MUIM_NList_NextSelected, &id);
       if(id == MUIV_NList_NextSelected_End)
         break;
 
       DoMethod(d->obj, MUIM_NList_GetEntry, id, &mail);
-      memset(&attach, 0, sizeof(struct Attach));
-      GetMailFile(attach.FilePath, NULL, mail);
-      strlcpy(attach.Description, mail->Subject, sizeof(attach.Description));
-      strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));
-      attach.Size = mail->Size;
-      attach.IsMIME = TRUE;
-      DoMethod(obj, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
+      if(mail != NULL)
+      {
+        struct Attach attach;
+
+        memset(&attach, 0, sizeof(struct Attach));
+        GetMailFile(attach.FilePath, NULL, mail);
+        strlcpy(attach.Description, mail->Subject, sizeof(attach.Description));
+        strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));
+        attach.Size = mail->Size;
+        attach.IsMIME = TRUE;
+        DoMethod(obj, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
+      }
+      else
+        break;
     }
     while(TRUE);
 

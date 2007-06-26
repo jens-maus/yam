@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-26  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c, YAM_WR.c, YAM_CO.c, YAM_COg.c, YAM_COs.c, misc: introduced a new
+    forward mode mechanism where it is now possible to select wheter an email
+    should be forwarded by adding the mail as an attachment to a new mail, or
+    if the mail text of a forwarded mail should be inlined in the new message
+    instead. In addition, by holding the ALT qualifier while pressing on the
+    'Forward' toolbar, a user can easily temporary switch between the two
+    forward modes on demand. Also, it is possible to select the forward
+    mode in the configuration whereas the 'as attachment' option is the new
+    default because that's normally what the user wants to do.
+
 2007-06-25  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c: when forwarding a mail inlined in a new write window, existing

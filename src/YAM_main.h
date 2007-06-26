@@ -210,17 +210,24 @@ enum NewMode { NEW_NEW=0,     // composing a new mail
                NEW_SAVEDEC    // create a decrypted copy of a PGP mail
              };
 
+// Mail forward modes
+enum ForwardMode { FWM_ATTACH=0, // forward mail as attachment
+                   FWM_INLINE    // forward mail inlined
+                 };
+
 // flags and macros for creating new mails
 #define NEWF_QUIET        (1<<0)
 #define NEWF_REP_NOQUOTE  (1<<1)
 #define NEWF_REP_PRIVATE  (1<<2)
 #define NEWF_REP_MLIST    (1<<3)
 #define NEWF_FWD_NOATTACH (1<<4)
+#define NEWF_FWD_ALTMODE  (1<<5)
 #define hasQuietFlag(v)         (isFlagSet((v), NEWF_QUIET))
 #define hasNoQuoteFlag(v)       (isFlagSet((v), NEWF_REP_NOQUOTE))
 #define hasPrivateFlag(v)       (isFlagSet((v), NEWF_REP_PRIVATE))
 #define hasMListFlag(v)         (isFlagSet((v), NEWF_REP_MLIST))
 #define hasNoAttachFlag(v)      (isFlagSet((v), NEWF_FWD_NOATTACH))
+#define hasAltFwdModeFlag(v)    (isFlagSet((v), NEWF_FWD_ALTMODE))
 
 enum Macro {
    MACRO_MEN0=0, MACRO_MEN1, MACRO_MEN2, MACRO_MEN3, MACRO_MEN4, MACRO_MEN5,

@@ -1986,7 +1986,25 @@ int MA_NewForward(struct Mail **mlist, int flags)
       int signature = -1;
       struct WR_ClassData *wr = G->WR[winnum];
       char *rsub = AllocStrBuf(SIZE_SUBJECT);
+      enum ForwardMode fwdMode = C->ForwardMode;
 
+      // if the user wants to have the alternative
+      // forward mode we go and select it here
+      if(hasAltFwdModeFlag(flags))
+      {
+        switch(fwdMode)
+        {
+          case FWM_ATTACH:
+            fwdMode = FWM_INLINE;
+          break;
+
+          case FWM_INLINE:
+            fwdMode = FWM_ATTACH;
+          break;
+        }
+      }
+
+      // set the output filestream buffer size
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
       wr->Mode = NEW_FORWARD;
@@ -2000,7 +2018,6 @@ int MA_NewForward(struct Mail **mlist, int flags)
       for(i=0; i < (int)mlist[0]; i++)
       {
         struct ExtendedMail *email;
-        struct ReadMailData *rmData;
         struct ExpandTextData etd;
         struct Mail *mail = mlist[i+2];
 
@@ -2043,34 +2060,63 @@ int MA_NewForward(struct Mail **mlist, int flags)
           }
         }
 
-        // we allocate some private readmaildata object so that
-        // we can silently parse the mail which we want to
-        // forward.
-        if((rmData = AllocPrivateRMData(mail, PM_ALL)))
+        // depending on the selected forward mode we either
+        // forward the email as inlined text or by simply putting
+        // the original message as an attachment to the new one.
+        switch(fwdMode)
         {
-          char *cmsg;
-
-          etd.HeaderFile = rmData->firstPart->Filename;
-          MA_InsertIntroText(out, C->ForwardIntro, &etd);
-          MA_FreeEMailStruct(email);
-
-          // read in the message text to cmsg.
-          if((cmsg = RE_ReadInMessage(rmData, RIM_FORWARD)))
+          // let simply add the original mail as an attachment
+          case FWM_ATTACH:
           {
-            // output the readin message text immediately to
-            // our out filehandle
-            fputs(cmsg, out);
-            free(cmsg);
+            struct Attach attach;
 
-            MA_InsertIntroText(out, C->ForwardFinish, &etd);
-
-            // if the mail we are forwarding has an attachment
-            // we go and attach them to our forwarded mail as well.
-            if(hasNoAttachFlag(flags) == FALSE)
-              WR_SetupOldMail(winnum, rmData);
+            memset(&attach, 0, sizeof(struct Attach));
+            GetMailFile(attach.FilePath, NULL, mail);
+            strlcpy(attach.Description, mail->Subject, sizeof(attach.Description));
+            strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));
+            attach.Size = mail->Size;
+            attach.IsMIME = TRUE;
+            DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
           }
+          break;
 
-          FreePrivateRMData(rmData);
+          // inline the message text of our original mail to
+          // our forward message
+          case FWM_INLINE:
+          {
+            struct ReadMailData *rmData;
+
+            // we allocate some private readmaildata object so that
+            // we can silently parse the mail which we want to
+            // forward.
+            if((rmData = AllocPrivateRMData(mail, PM_ALL)))
+            {
+              char *cmsg;
+
+              etd.HeaderFile = rmData->firstPart->Filename;
+              MA_InsertIntroText(out, C->ForwardIntro, &etd);
+              MA_FreeEMailStruct(email);
+
+              // read in the message text to cmsg.
+              if((cmsg = RE_ReadInMessage(rmData, RIM_FORWARD)))
+              {
+                // output the readin message text immediately to
+                // our out filehandle
+                fputs(cmsg, out);
+                free(cmsg);
+
+                MA_InsertIntroText(out, C->ForwardFinish, &etd);
+
+                // if the mail we are forwarding has an attachment
+                // we go and attach them to our forwarded mail as well.
+                if(hasNoAttachFlag(flags) == FALSE)
+                  WR_SetupOldMail(winnum, rmData);
+              }
+
+              FreePrivateRMData(rmData);
+            }
+          }
+          break;
         }
       }
 
@@ -2951,18 +2997,57 @@ int MA_NewMessage(enum NewMode mode, int flags)
 /// MA_NewMessageFunc
 HOOKPROTONHNO(MA_NewMessageFunc, void, int *arg)
 {
-  int mode = arg[0];
-  int flags = 0;
+  enum NewMode mode = arg[0];
   ULONG qual = arg[1];
+  int flags = 0;
 
   ENTER();
 
-  if(mode == NEW_FORWARD &&   hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) mode = NEW_BOUNCE;
-  if(mode == NEW_FORWARD && isFlagSet(qual, IEQUALIFIER_CONTROL))                     SET_FLAG(flags, NEWF_FWD_NOATTACH);
-  if(mode == NEW_REPLY   &&   hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) SET_FLAG(flags, NEWF_REP_PRIVATE);
-  if(mode == NEW_REPLY   &&   hasFlag(qual, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))     SET_FLAG(flags, NEWF_REP_MLIST);
-  if(mode == NEW_REPLY   && isFlagSet(qual, IEQUALIFIER_CONTROL))                     SET_FLAG(flags, NEWF_REP_NOQUOTE);
+  // before we create a new message we check whether the
+  // user has pressed some qualifier while activating
+  // the NewMessageHook.
+  if(mode == NEW_FORWARD)
+  {
+    // if the user pressed LSHIFT or RSHIFT while pressing
+    // the 'forward' toolbar we do a BOUNCE message action
+    // instead.
+    if(hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
+      mode = NEW_BOUNCE;
+    else
+    {
+      // flag the forward message action to not
+      // add any attachments from the original mail if
+      // the CONTROL qualifier was pressed
+      if(isFlagSet(qual, IEQUALIFIER_CONTROL))
+        SET_FLAG(flags, NEWF_FWD_NOATTACH);
 
+      // flag the foward message action to use the
+      // alternative (not configured) forward mode
+      if(hasFlag(qual, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))
+        SET_FLAG(flags, NEWF_FWD_ALTMODE);
+    }
+  }
+  else if(mode == NEW_REPLY)
+  {
+    // flag the reply mail action to reply to the
+    // sender of the mail directly
+    if(hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
+      SET_FLAG(flags, NEWF_REP_PRIVATE);
+
+    // flag the reply mail action to reply to the mailing list
+    // address instead.
+    if(hasFlag(qual, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))
+      SET_FLAG(flags, NEWF_REP_MLIST);
+
+    // flag the reply mail action to not quote any text
+    // of the original mail.
+    if(isFlagSet(qual, IEQUALIFIER_CONTROL))
+      SET_FLAG(flags, NEWF_REP_NOQUOTE);
+  }
+
+  // call the main NewMessage function which will
+  // then in turn call the correct subfunction for
+  // performing the mail action.
   MA_NewMessage(mode, flags);
 
   LEAVE();

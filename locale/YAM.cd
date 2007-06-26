@@ -6304,3 +6304,18 @@ Switch to 'Attachments' view
 MSG_WR_MSWITCH_OPT (1958//)
 Switch to 'Options' view
 ;
+MSG_CO_FWDMSG (1959//)
+_Forward message
+;
+MSG_CO_FWDMSG_ATTACH (1960//)
+as attachment
+;
+MSG_CO_FWDMSG_INLINE (1961//)
+inlined
+;
+MSG_HELP_CO_CY_FORWARDMODE (1962//)
+Allows to select how a message should be\n\
+forwarded. Either a message can be forwarded\n\
+as an attachment or the message text can be\n\
+put inlined into the forward message text.
+;

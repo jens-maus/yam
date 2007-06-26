@@ -848,7 +848,11 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     strlcpy(co->QuoteChar, ">", sizeof(co->QuoteChar));
     strlcpy(co->AltQuoteChar, "|", sizeof(co->AltQuoteChar));
 
-    co->QuoteMessage = co->QuoteEmptyLines = co->CompareAddress = co->StripSignature = TRUE;
+    co->QuoteMessage = TRUE;
+    co->QuoteEmptyLines = TRUE;
+    co->CompareAddress = TRUE;
+    co->StripSignature = TRUE;
+    co->ForwardMode = FWM_ATTACH;
   }
 
   if(page == cp_Signature || page == cp_AllPages)

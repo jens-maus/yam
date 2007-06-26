@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (18.05.2007)
+## version $VER: YAM.catalog 6.0 (26.06.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -8004,4 +8004,21 @@ Wechsle zur 'Anhang' Ansicht
 ;
 MSG_WR_MSWITCH_OPT
 Wechsle zur 'Optionen' Ansicht
+;
+MSG_CO_FWDMSG
+Nachricht weite_rleiten
+;
+MSG_CO_FWDMSG_ATTACH
+als Anhang
+;
+MSG_CO_FWDMSG_INLINE
+eingebunden
+;
+MSG_HELP_CO_CY_FORWARDMODE
+Erlaubt zu bestimmen in welcher Weise eine\n\
+Nachricht weitergeleitet werden soll. Entweder\n\
+kann die Nachricht als Anhang an eine neue\n\
+Nachricht angehängt werden, oder aber der\n\
+Text wird in die neue Nachricht direkt\n\
+eingebunden.
 ;

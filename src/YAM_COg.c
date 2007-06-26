@@ -2564,6 +2564,11 @@ Object *CO_PageWrite(struct CO_ClassData *data)
 Object *CO_PageReplyForward(struct CO_ClassData *data)
 {
   Object *obj;
+  static const char *fwdmode[3];
+
+  fwdmode[0] = tr(MSG_CO_FWDMSG_ATTACH);
+  fwdmode[1] = tr(MSG_CO_FWDMSG_INLINE);
+  fwdmode[2] = NULL;
 
   ENTER();
 
@@ -2571,14 +2576,6 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
           MUIA_HelpNode, "CO06",
 
           ConfigPageHeaderObject("config_answer_big", tr(MSG_CO_REPLY_TITLE), tr(MSG_CO_REPLY_SUMMARY)),
-
-          Child, ColGroup(2), GroupFrameT(tr(MSG_CO_Forwarding)),
-            Child, Label2(tr(MSG_CO_FwdInit)),
-            Child, MakeVarPop(&data->GUI.ST_FWDSTART, VPM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdInit)),
-
-            Child, Label2(tr(MSG_CO_FwdFinish)),
-            Child, MakeVarPop(&data->GUI.ST_FWDEND, VPM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdFinish)),
-          End,
 
           Child, VGroup, GroupFrameT(tr(MSG_CO_Replying)),
             Child, ColGroup(2),
@@ -2612,18 +2609,32 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
             End,
           End,
 
+          Child, ColGroup(2), GroupFrameT(tr(MSG_CO_Forwarding)),
+
+            Child, Label2(tr(MSG_CO_FWDMSG)),
+            Child, data->GUI.CY_FORWARDMODE = MakeCycle(fwdmode, tr(MSG_CO_FWDMSG)),
+
+            Child, Label2(tr(MSG_CO_FwdInit)),
+            Child, MakeVarPop(&data->GUI.ST_FWDSTART, VPM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdInit)),
+
+            Child, Label2(tr(MSG_CO_FwdFinish)),
+            Child, MakeVarPop(&data->GUI.ST_FWDEND, VPM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdFinish)),
+
+          End,
+
           Child, HVSpace,
         End;
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.ST_FWDSTART    ,MSG_HELP_CO_ST_FWDSTART  );
-    SetHelp(data->GUI.ST_FWDEND      ,MSG_HELP_CO_ST_FWDEND    );
-    SetHelp(data->GUI.ST_AREPLYPAT   ,MSG_HELP_CO_ST_AREPLYPAT );
-    SetHelp(data->GUI.CH_QUOTE       ,MSG_HELP_CO_CH_QUOTE     );
-    SetHelp(data->GUI.CH_QUOTEEMPTY  ,MSG_HELP_CO_CH_QUOTEEMPTY);
-    SetHelp(data->GUI.CH_COMPADDR    ,MSG_HELP_CO_CH_COMPADDR  );
-    SetHelp(data->GUI.CH_STRIPSIG    ,MSG_HELP_CO_CH_STRIPSIG  );
+    SetHelp(data->GUI.ST_FWDSTART,    MSG_HELP_CO_ST_FWDSTART);
+    SetHelp(data->GUI.ST_FWDEND,      MSG_HELP_CO_ST_FWDEND);
+    SetHelp(data->GUI.ST_AREPLYPAT,   MSG_HELP_CO_ST_AREPLYPAT);
+    SetHelp(data->GUI.CH_QUOTE,       MSG_HELP_CO_CH_QUOTE);
+    SetHelp(data->GUI.CH_QUOTEEMPTY,  MSG_HELP_CO_CH_QUOTEEMPTY);
+    SetHelp(data->GUI.CH_COMPADDR,    MSG_HELP_CO_CH_COMPADDR);
+    SetHelp(data->GUI.CH_STRIPSIG,    MSG_HELP_CO_CH_STRIPSIG);
+    SetHelp(data->GUI.CY_FORWARDMODE, MSG_HELP_CO_CY_FORWARDMODE);
 
     DoMethod(data->GUI.CH_QUOTE, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.CH_STRIPSIG, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
   }

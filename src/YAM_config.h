@@ -285,6 +285,7 @@ struct CO_GUIData
   Object *CH_APPICONPOS;
   Object *BT_APPICONGETPOS;
   Object *CY_FOLDERINFO;
+  Object *CY_FORWARDMODE;
 };
 
 enum ConfigPage
@@ -436,6 +437,7 @@ struct Config
    enum  TransWinMode   TransferWindow;
    enum  PreSelMode     PreSelection;
    enum  FolderInfoMode FolderInfoMode;
+   enum  ForwardMode    ForwardMode;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;

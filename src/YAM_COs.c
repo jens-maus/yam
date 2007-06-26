@@ -408,6 +408,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "MLReplyHello     = %s\n", co->MLReplyHello);
       fprintf(fh, "MLReplyIntro     = %s\n", co->MLReplyIntro);
       fprintf(fh, "MLReplyBye       = %s\n", co->MLReplyBye);
+      fprintf(fh, "ForwardMode      = %d\n", co->ForwardMode);
       fprintf(fh, "ForwardIntro     = %s\n", co->ForwardIntro);
       fprintf(fh, "ForwardFinish    = %s\n", co->ForwardFinish);
       fprintf(fh, "QuoteMessage     = %s\n", Bool2Txt(co->QuoteMessage));
@@ -1039,6 +1040,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
           else if(!stricmp(buffer, "MLReplyHello"))   strlcpy(co->MLReplyHello, value2, sizeof(co->MLReplyHello));
           else if(!stricmp(buffer, "MLReplyIntro"))   strlcpy(co->MLReplyIntro, value2, sizeof(co->MLReplyIntro));
           else if(!stricmp(buffer, "MLReplyBye"))     strlcpy(co->MLReplyBye, value2, sizeof(co->MLReplyBye));
+          else if(!stricmp(buffer, "ForwardMode"))    co->ForwardMode = atoi(value);
           else if(!stricmp(buffer, "ForwardIntro"))   strlcpy(co->ForwardIntro, value2, sizeof(co->ForwardIntro));
           else if(!stricmp(buffer, "ForwardFinish"))  strlcpy(co->ForwardFinish, value2, sizeof(co->ForwardFinish));
           else if(!stricmp(buffer, "QuoteMessage"))   co->QuoteMessage = Txt2Bool(value);
@@ -1760,6 +1762,7 @@ void CO_GetConfig(BOOL saveConfig)
         CE->QuoteEmptyLines   = GetMUICheck  (gui->CH_QUOTEEMPTY);
         CE->CompareAddress    = GetMUICheck  (gui->CH_COMPADDR);
         CE->StripSignature    = GetMUICheck  (gui->CH_STRIPSIG);
+        CE->ForwardMode = GetMUICycle(gui->CY_FORWARDMODE);
       }
       break;
 
@@ -2153,6 +2156,7 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_QUOTEEMPTY  ,CE->QuoteEmptyLines);
       setcheckmark(gui->CH_COMPADDR    ,CE->CompareAddress);
       setcheckmark(gui->CH_STRIPSIG    ,CE->StripSignature);
+      setcycle(gui->CY_FORWARDMODE, CE->ForwardMode);
     }
     break;
 
