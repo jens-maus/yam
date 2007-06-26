@@ -527,88 +527,89 @@ static struct EA_ClassData *EA_New(int winnum, int type)
 
         /* build MUI object tree */
         group = HGroup,
-            MUIA_Group_SameWidth, TRUE,
-            Child, VGroup,
-               Child, ColGroup(2), GroupFrameT(tr(MSG_EA_ElectronicMail)),
-                  Child, Label2(tr(MSG_EA_Alias)),
-                  Child, data->GUI.ST_ALIAS = MakeString(SIZE_NAME,tr(MSG_EA_Alias)),
-                  Child, Label2(tr(MSG_EA_RealName)),
-                  Child, data->GUI.ST_REALNAME = MakeString(SIZE_REALNAME,tr(MSG_EA_RealName)),
-                  Child, Label2(tr(MSG_EA_EmailAddress)),
-                  Child, data->GUI.ST_ADDRESS  = MakeString(SIZE_ADDRESS,tr(MSG_EA_EmailAddress)),
-                  Child, Label2(tr(MSG_EA_PGPId)),
-                  Child, MakePGPKeyList(&(data->GUI.ST_PGPKEY), FALSE, tr(MSG_EA_PGPId)),
-                  Child, Label2(tr(MSG_EA_Homepage)),
-                  Child, HGroup,
-                     MUIA_Group_HorizSpacing, 1,
-                     Child, data->GUI.ST_HOMEPAGE = MakeString(SIZE_URL,tr(MSG_EA_Homepage)),
-                     Child, bt_homepage = PopButton(MUII_TapeRecord),
-                  End,
-           Child, Label2(tr(MSG_EA_DefSecurity)),
-           Child, data->GUI.CY_DEFSECURITY = CycleObject,
-             MUIA_Cycle_Entries, SecurityCycleEntries,
-             MUIA_ControlChar, ShortCut(tr(MSG_EA_DefSecurity)),
+           MUIA_Group_SameWidth, TRUE,
+           Child, VGroup,
+              Child, ColGroup(2), GroupFrameT(tr(MSG_EA_ElectronicMail)),
+                 Child, Label2(tr(MSG_EA_Alias)),
+                 Child, data->GUI.ST_ALIAS = MakeString(SIZE_NAME,tr(MSG_EA_Alias)),
+                 Child, Label2(tr(MSG_EA_RealName)),
+                 Child, data->GUI.ST_REALNAME = MakeString(SIZE_REALNAME,tr(MSG_EA_RealName)),
+                 Child, Label2(tr(MSG_EA_EmailAddress)),
+                 Child, data->GUI.ST_ADDRESS  = MakeString(SIZE_ADDRESS,tr(MSG_EA_EmailAddress)),
+                 Child, Label2(tr(MSG_EA_PGPId)),
+                 Child, MakePGPKeyList(&(data->GUI.ST_PGPKEY), FALSE, tr(MSG_EA_PGPId)),
+                 Child, Label2(tr(MSG_EA_Homepage)),
+                 Child, HGroup,
+                    MUIA_Group_HorizSpacing, 1,
+                    Child, data->GUI.ST_HOMEPAGE = MakeString(SIZE_URL,tr(MSG_EA_Homepage)),
+                    Child, bt_homepage = PopButton(MUII_TapeRecord),
+                 End,
+          Child, Label2(tr(MSG_EA_DefSecurity)),
+          Child, data->GUI.CY_DEFSECURITY = CycleObject,
+            MUIA_Cycle_Entries, SecurityCycleEntries,
+            MUIA_ControlChar, ShortCut(tr(MSG_EA_DefSecurity)),
+          End,
+              End,
+              Child, ColGroup(2), GroupFrameT(tr(MSG_EA_SnailMail)),
+                 Child, Label2(tr(MSG_EA_Street)),
+                 Child, data->GUI.ST_STREET = MakeString(SIZE_DEFAULT,tr(MSG_EA_Street)),
+                 Child, Label2(tr(MSG_EA_City)),
+                 Child, data->GUI.ST_CITY = MakeString(SIZE_DEFAULT,tr(MSG_EA_City)),
+                 Child, Label2(tr(MSG_EA_Country)),
+                 Child, data->GUI.ST_COUNTRY = MakeString(SIZE_DEFAULT,tr(MSG_EA_Country)),
+                 Child, Label2(tr(MSG_EA_Phone)),
+                 Child, data->GUI.ST_PHONE = MakeString(SIZE_DEFAULT,tr(MSG_EA_Phone)),
+              End,
            End,
-               End,
-               Child, ColGroup(2), GroupFrameT(tr(MSG_EA_SnailMail)),
-                  Child, Label2(tr(MSG_EA_Street)),
-                  Child, data->GUI.ST_STREET = MakeString(SIZE_DEFAULT,tr(MSG_EA_Street)),
-                  Child, Label2(tr(MSG_EA_City)),
-                  Child, data->GUI.ST_CITY = MakeString(SIZE_DEFAULT,tr(MSG_EA_City)),
-                  Child, Label2(tr(MSG_EA_Country)),
-                  Child, data->GUI.ST_COUNTRY = MakeString(SIZE_DEFAULT,tr(MSG_EA_Country)),
-                  Child, Label2(tr(MSG_EA_Phone)),
-                  Child, data->GUI.ST_PHONE = MakeString(SIZE_DEFAULT,tr(MSG_EA_Phone)),
-               End,
-            End,
-            Child, VGroup,
-               Child, ColGroup(2), GroupFrameT(tr(MSG_EA_Miscellaneous)),
-                  Child, Label2(tr(MSG_EA_Description)),
-                  Child, data->GUI.ST_COMMENT = MakeString(SIZE_DEFAULT,tr(MSG_EA_Description)),
-                  Child, Label2(tr(MSG_EA_DOB)),
-                  Child, data->GUI.ST_BIRTHDAY = MakeString(SIZE_SMALL,tr(MSG_EA_DOB)),
-               End,
-               Child, VGroupV, GroupFrameT(tr(MSG_EA_Portrait)),
-                  Child, HGroup,
-                     Child, HSpace(0),
-                     Child, data->GUI.GR_PHOTO = HGroup,
-                        Child, data->GUI.BC_PHOTO = UserImageObject,
-                          MUIA_UserImage_MaxHeight,   64,
-                          MUIA_UserImage_MaxWidth,    64,
-                          MUIA_UserImage_NoMinHeight, FALSE,
-                        End,
-                        ImageButtonFrame,
-                     End,
-                     Child, HSpace(0),
-                  End,
-                  Child, VSpace(0),
-                  Child, data->GUI.BT_SELECTPHOTO = MakeButton(tr(MSG_EA_SelectPhoto)),
-               End,
-            End,
-         End;
-         if(group != NULL)
-         {
-           DoMethod(group, MUIM_MultiSet, MUIA_String_Reject, ",", data->GUI.ST_ALIAS, data->GUI.ST_ADDRESS, NULL);
-           SetHelp(data->GUI.ST_REALNAME   ,MSG_HELP_EA_ST_REALNAME   );
-           SetHelp(data->GUI.ST_ADDRESS    ,MSG_HELP_EA_ST_ADDRESS    );
-           SetHelp(data->GUI.ST_PGPKEY     ,MSG_HELP_EA_ST_PGPKEY     );
-           SetHelp(data->GUI.ST_HOMEPAGE   ,MSG_HELP_EA_ST_HOMEPAGE   );
-           SetHelp(data->GUI.CY_DEFSECURITY,MSG_HELP_MA_CY_DEFSECURITY);
-           SetHelp(data->GUI.ST_STREET     ,MSG_HELP_EA_ST_STREET     );
-           SetHelp(data->GUI.ST_CITY       ,MSG_HELP_EA_ST_CITY       );
-           SetHelp(data->GUI.ST_COUNTRY    ,MSG_HELP_EA_ST_COUNTRY    );
-           SetHelp(data->GUI.ST_PHONE      ,MSG_HELP_EA_ST_PHONE      );
-           SetHelp(data->GUI.ST_BIRTHDAY   ,MSG_HELP_EA_ST_BIRTHDAY   );
-           SetHelp(data->GUI.BC_PHOTO      ,MSG_HELP_EA_BC_PHOTO      );
-           SetHelp(data->GUI.BT_SELECTPHOTO,MSG_HELP_EA_BT_SELECTPHOTO);
+           Child, VGroup,
+              Child, ColGroup(2), GroupFrameT(tr(MSG_EA_Miscellaneous)),
+                 Child, Label2(tr(MSG_EA_Description)),
+                 Child, data->GUI.ST_COMMENT = MakeString(SIZE_DEFAULT,tr(MSG_EA_Description)),
+                 Child, Label2(tr(MSG_EA_DOB)),
+                 Child, data->GUI.ST_BIRTHDAY = MakeString(SIZE_SMALL,tr(MSG_EA_DOB)),
+              End,
+              Child, VGroupV, GroupFrameT(tr(MSG_EA_Portrait)),
+                 Child, VSpace(0),
+                 Child, HGroup,
+                    Child, HSpace(0),
+                    Child, data->GUI.GR_PHOTO = HGroup,
+                       Child, data->GUI.BC_PHOTO = UserImageObject,
+                         MUIA_UserImage_MaxHeight,   64,
+                         MUIA_UserImage_MaxWidth,    64,
+                         MUIA_UserImage_NoMinHeight, FALSE,
+                       End,
+                       ImageButtonFrame,
+                    End,
+                    Child, HSpace(0),
+                 End,
+                 Child, VSpace(0),
+                 Child, data->GUI.BT_SELECTPHOTO = MakeButton(tr(MSG_EA_SelectPhoto)),
+              End,
+           End,
+        End;
+        if(group != NULL)
+        {
+          DoMethod(group, MUIM_MultiSet, MUIA_String_Reject, ",", data->GUI.ST_ALIAS, data->GUI.ST_ADDRESS, NULL);
+          SetHelp(data->GUI.ST_REALNAME   ,MSG_HELP_EA_ST_REALNAME   );
+          SetHelp(data->GUI.ST_ADDRESS    ,MSG_HELP_EA_ST_ADDRESS    );
+          SetHelp(data->GUI.ST_PGPKEY     ,MSG_HELP_EA_ST_PGPKEY     );
+          SetHelp(data->GUI.ST_HOMEPAGE   ,MSG_HELP_EA_ST_HOMEPAGE   );
+          SetHelp(data->GUI.CY_DEFSECURITY,MSG_HELP_MA_CY_DEFSECURITY);
+          SetHelp(data->GUI.ST_STREET     ,MSG_HELP_EA_ST_STREET     );
+          SetHelp(data->GUI.ST_CITY       ,MSG_HELP_EA_ST_CITY       );
+          SetHelp(data->GUI.ST_COUNTRY    ,MSG_HELP_EA_ST_COUNTRY    );
+          SetHelp(data->GUI.ST_PHONE      ,MSG_HELP_EA_ST_PHONE      );
+          SetHelp(data->GUI.ST_BIRTHDAY   ,MSG_HELP_EA_ST_BIRTHDAY   );
+          SetHelp(data->GUI.BC_PHOTO      ,MSG_HELP_EA_BC_PHOTO      );
+          SetHelp(data->GUI.BT_SELECTPHOTO,MSG_HELP_EA_BT_SELECTPHOTO);
 
-           DoMethod(data->GUI.BT_SELECTPHOTO, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &EA_SelectPhotoHook, winnum);
+          DoMethod(data->GUI.BT_SELECTPHOTO, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &EA_SelectPhotoHook, winnum);
 
-           // when a key ID is selected, set default security to "encrypt"
-           DoMethod(data->GUI.ST_PGPKEY, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, data->GUI.CY_DEFSECURITY, 3, MUIM_Set, MUIA_Cycle_Active, 2);
+          // when a key ID is selected, set default security to "encrypt"
+          DoMethod(data->GUI.ST_PGPKEY, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, data->GUI.CY_DEFSECURITY, 3, MUIM_Set, MUIA_Cycle_Active, 2);
 
-           DoMethod(bt_homepage, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &EA_HomepageHook, winnum);
-         }
+          DoMethod(bt_homepage, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &EA_HomepageHook, winnum);
+        }
       }
       break;
 
