@@ -231,11 +231,12 @@ DECLARE(SetFolder) // struct Folder *newFolder
       // to the grouplist of this infobar
       if(data->actualImage == NULL)
       {
-        if(folder->imageObject)
+        if(folder->imageObject != NULL)
         {
+          char *imageID = (char *)xget(folder->imageObject, MUIA_ImageArea_ID);
           char *imageName = (char *)xget(folder->imageObject, MUIA_ImageArea_Filename);
 
-          data->actualImage = MakeImageObject(imageName, imageName);
+          data->actualImage = MakeImageObject(imageID, imageName);
 
           D(DBF_GUI, "init imagearea: '%s'", imageName);
         }
@@ -245,7 +246,7 @@ DECLARE(SetFolder) // struct Folder *newFolder
 
           D(DBF_GUI, "init imagearea: 0x%08lx[%ld]", imageArray, folder->ImageIndex);
 
-          if(imageArray && imageArray[folder->ImageIndex])
+          if(imageArray != NULL && imageArray[folder->ImageIndex] != NULL)
             data->actualImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename), xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
         }
 

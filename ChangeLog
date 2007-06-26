@@ -7,6 +7,9 @@ $URL$
 
 2007-06-26  Jens Langner <Jens.Langner@light-speed.de>
 
+  * InfoBar.c, ReadWindowStatusBar.c: when adding the folder image the ID is now
+    correctly derived from the folder's image object instead of using the file
+    name as ID.
   * YAM_EA.c: the user image is now centered in the edit window.
 
 2007-06-26  Jens Langner <Jens.Langner@light-speed.de>
