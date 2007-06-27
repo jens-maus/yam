@@ -8022,3 +8022,26 @@ Nachricht angehängt werden, oder aber der\n\
 Text wird in die neue Nachricht direkt\n\
 eingebunden.
 ;
+MSG_ABOUT_CURRENT_DEVELOPERS
+Derzeitige Entwickler:
+;
+MSG_ABOUT_CONTRIBUTORS
+Mitwirkende:
+;
+MSG_ABOUT_LOCALIZATION_CONTRIBUTORS
+Mitwirkende Übersetzer:
+;
+MSG_ABOUT_GPL
+Dieses Programm ist freie Software. Sie dürfen es\n\
+nach den Regeln der GNU General Public Licence\n\
+veröffentlichen und/oder verändern. Für weitere\n\
+Informationen lesen Sie bitte die beigefügten\n\
+Dokumente.
+;
+MSG_ABOUT_3RD_PARTY_SOFTWARE
+Dieses Programm verwendet folgende fremde Software:
+;
+MSG_ABOUT_YAM_NEWS
+Neuigkeiten über YAM finden Sie auf der\n\
+YAM-Homepage unter \0335http://www.yam.ch/\033n
+;

@@ -7,6 +7,8 @@ $URL$
 
 2007-06-27  Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/deutsch.ct: updated german translations according to the lastest
+    changes.
   * AboutWindow.c, YAM.cd: the text in the About window is now localizable.
   * extrasrc.c, vsnprintf.c: enabled the (v)asprintf() functions as they will
     be needed in the future.
