@@ -238,7 +238,7 @@ DECLARE(SetFolder) // struct Folder *newFolder
 
           data->actualImage = MakeImageObject(imageID, imageName);
 
-          D(DBF_GUI, "init imagearea: '%s'", imageName);
+          D(DBF_GUI, "init imagearea: id '%s', file '%s'", imageID, imageName);
         }
         else if(folder->ImageIndex >= 0 && folder->ImageIndex <= MAX_FOLDERIMG)
         {

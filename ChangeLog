@@ -7,6 +7,8 @@ $URL$
 
 2007-06-27  Thore Böckelmann <tboeckel@gmx.de>
 
+  * InfoBar.c, ReadWindowStatusBar.c: added missing parameter to debug macro
+    call.
   * InfoBar.c, ReadWindowStatusBar.c: two usages of the image file name in place
     of the ID had still been active.
   * ImageCache.c: the image ID was never freed upon OM_DISPOSE.

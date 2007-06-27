@@ -411,7 +411,7 @@ DECLARE(Update) // struct Mail *mail
           char *imageName = (char *)xget(folder->imageObject, MUIA_ImageArea_Filename);
 
           data->folderImage = MakeImageObject(imageID, imageName);
-          D(DBF_GUI, "init imagearea: id '%s', file '%s'", imageName);
+          D(DBF_GUI, "init imagearea: id '%s', file '%s'", imageID, imageName);
         }
         else if(folder->ImageIndex >= 0 && folder->ImageIndex <= MAX_FOLDERIMG)
         {
