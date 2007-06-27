@@ -6319,3 +6319,25 @@ forwarded. Either a message can be forwarded\n\
 as an attachment or the message text can be\n\
 put inlined into the forward message text.
 ;
+MSG_ABOUT_CURRENT_DEVELOPERS (1963//)
+Current Developers:
+;
+MSG_ABOUT_CONTRIBUTORS (1964//)
+Contributors:
+;
+MSG_ABOUT_LOCALIZATION_CONTRIBUTORS (1965//)
+Localization Contributors:
+;
+MSG_ABOUT_GPL (1966//)
+This program is free software; you're welcome to\n\
+distribute and/or modify it under the terms of the\n\
+GNU Public License. See the enclosed documents for\n\
+more details.
+;
+MSG_ABOUT_3RD_PARTY_SOFTWARE (1967//)
+This program uses the following third party software:
+;
+MSG_ABOUT_YAM_NEWS (1968//)
+The latest news about YAM can be found at the\n\
+YAM Support Site at \0335http://www.yam.ch/\033n
+;

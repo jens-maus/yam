@@ -70,13 +70,15 @@ OVERLOAD(OM_NEW)
   // locale strings in the YAM.cd file. People should not
   // mess around with the license and other stuff and therefore
   // we keep that text unlocalized.
-  const char *aboutText = "\033bCurrent Developers:\033n\n\n"
+  char *aboutText;
+  const char *aboutTemplate =
+                          "\033b%s\033n\n\n"
                           "Jens Langner\n"
                           "Thore Böckelmann\n"
                           "Gunther Nikl\n"
                           "Alexey Ivanov\n"
                           "\n"
-                          "\033bContributors:\033n\n\n"
+                          "\033b%s\033n\n\n"
                           "David Rey\n"
                           "Dirk Stöcker\n"
                           "Christian Hattemer\n"
@@ -87,16 +89,13 @@ OVERLOAD(OM_NEW)
                           "Giles Burdett\n"
                           "Olaf Barthel\n"
                           "\n"
-                          "\033bLocalization Contributors:\033n\n\n"
+                          "\033b%s\033n\n\n"
                           "Alexandre Balaban\n"
                           "Pär Boberg\n"
                           "\n"
-                          "This program is free software; you're welcome to\n"
-                          "distribute and/or modify it under the terms of the\n"
-                          "GNU Public License. See the enclosed documents for\n"
-                          "more details.\n"
+                          "%s\n"
                           "\n"
-                          "This program uses the following third party software:\n"
+                          "%s\n"
                           "\n"
                           "\033bMagic User Interface\033n\n"
                           "\033iStefan Stuntz\033n\n"
@@ -136,14 +135,20 @@ OVERLOAD(OM_NEW)
                           "http://flex.sourceforge.net/\n\n"
                           "\033bPretty Good Privacy (PGP)\033n\n"
                           "\033iPhil Zimmermann\033n\n\n"
-                          "The latest news about YAM can be found at the\n"
-                          "YAM Support Site at \0335http://www.yam.ch/\033n"
+                          "%s"
                           "\n\n\n\n\n\n\n\n\n\n";
 
   ENTER();
 
   compileInfo = (char *)xget(G->App, MUIA_YAM_CompileInfo);
   strmfp(logopath, G->ProgDir, "Icons/logo");
+
+  asprintf(&aboutText, aboutTemplate, tr(MSG_ABOUT_CURRENT_DEVELOPERS),
+                                      tr(MSG_ABOUT_CONTRIBUTORS),
+                                      tr(MSG_ABOUT_LOCALIZATION_CONTRIBUTORS),
+                                      tr(MSG_ABOUT_GPL),
+                                      tr(MSG_ABOUT_3RD_PARTY_SOFTWARE),
+                                      tr(MSG_ABOUT_YAM_NEWS));
 
   // now we go and try to setup a crawling.mcc object
   // with the object text. However, if that fails we simply generate
@@ -264,6 +269,8 @@ OVERLOAD(OM_NEW)
       MUIA_Window_DefaultObject, bt_okay,
     TAG_DONE);
   }
+
+  free(aboutText);
 
   RETURN((ULONG)obj);
   return (ULONG)obj;
