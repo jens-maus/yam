@@ -5,7 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-06-26  Jens Langner <Jens.Langner@light-speed.de>
+2007-06-27  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageArea.c: MUIA_ImageArea_ID was not OM_GETable, hence getting and using
+    this attribute caused crashes.
+
+2007-06-26  Thore Böckelmann <tboeckel@gmx.de>
 
   * InfoBar.c, ReadWindowStatusBar.c: when adding the folder image the ID is now
     correctly derived from the folder's image object instead of using the file

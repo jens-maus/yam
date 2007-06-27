@@ -172,6 +172,7 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
+    ATTR(ID): *store = (ULONG)data->id; return TRUE;
     ATTR(Filename): *store = (ULONG)data->name; return TRUE;
 
     // return the raw image width
