@@ -129,7 +129,7 @@ OVERLOAD(OM_NEW)
         MUIA_Text_PreParse,  "\033l",
       End,
     End,
-      
+
     Child, HGroup,
 
       Child, gaugeLabel = TextObject,
@@ -247,7 +247,7 @@ DECLARE(SetFolder) // struct Folder *newFolder
           D(DBF_GUI, "init imagearea: 0x%08lx[%ld]", imageArray, folder->ImageIndex);
 
           if(imageArray != NULL && imageArray[folder->ImageIndex] != NULL)
-            data->actualImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename), xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
+            data->actualImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_ID), xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
         }
 
         D(DBF_GUI, "init finished..: 0x%08lx %ld", data->actualImage, folder->ImageIndex);

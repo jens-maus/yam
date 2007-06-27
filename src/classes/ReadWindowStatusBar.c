@@ -420,7 +420,7 @@ DECLARE(Update) // struct Mail *mail
           D(DBF_GUI, "init imagearea: 0x%08lx[%ld]", imageArray, folder->ImageIndex);
 
           if(imageArray != NULL && imageArray[folder->ImageIndex] != NULL)
-            data->folderImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename), xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
+            data->folderImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_ID), xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
         }
 
         if(data->folderImage != NULL)
