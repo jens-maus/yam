@@ -61,7 +61,7 @@
   #include "extrasrc/strtok_r.c"
 #endif
 
-#if defined(NEED_VSNPRINTF) || defined(NEED_SNPRINTF)
+#if defined(NEED_VSNPRINTF) || defined(NEED_SNPRINTF) || defined(NEED_VASPRINTF) || defined(NEED_ASPRINTF)
   #include "extrasrc/vsnprintf.c"
 #endif
 

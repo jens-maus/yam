@@ -62,6 +62,14 @@
 #define NEED_SNPRINTF
 #endif
 
+#if !defined(HAVE_VASPRINTF)
+#define NEED_VASPRINTF
+#endif
+
+#if !defined(HAVE_ASPRINTF)
+#define NEED_ASPRINTF
+#endif
+
 #endif /* m68k && !clib2 || __SASC */
 
 #if !defined(__MORPHOS__) || !defined(__libnix)
@@ -144,6 +152,14 @@ int vsnprintf(char *buffer, size_t maxlen, const char *fmt, va_list args);
 
 #if defined(NEED_SNPRINTF)
 int snprintf(char *buffer, size_t maxlen, const char *fmt, ...);
+#endif
+
+#if defined(NEED_VASPRINTF)
+int vasprintf(char **ptr, const char *format, va_list ap);
+#endif
+
+#if defined(NEED_ASPRINTF)
+int asprintf(char **ptr, const char *format, ...);
 #endif
 
 #if defined(NEED_STCGFE)
