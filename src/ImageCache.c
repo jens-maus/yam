@@ -396,10 +396,10 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
   if(HASH_ENTRY_IS_LIVE(entry))
   {
     result = (struct ImageCacheNode *)entry;
-    D(DBF_GUI, "found image '%s' with file '%s' in cache", id, result->filename);
+    D(DBF_IMAGE, "found image '%s' with file '%s' in cache", id, result->filename);
   }
   else
-    W(DBF_GUI, "image '%s' NOT found in cache", id);
+    W(DBF_IMAGE, "image '%s' NOT found in cache", id);
 
   if(result == NULL)
   {

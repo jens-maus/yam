@@ -7,6 +7,7 @@ $URL$
 
 2007-06-27  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: changed some debug macros to be of class IMAGE instead of GUI.
   * ImageArea.c: MUIA_ImageArea_ID was not OM_GETable, hence getting and using
     this attribute caused crashes.
 
