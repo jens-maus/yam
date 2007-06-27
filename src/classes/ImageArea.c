@@ -151,10 +151,13 @@ OVERLOAD(OM_DISPOSE)
 
   ENTER();
 
-  if(data->name)
+  if(data->id != NULL)
+    free(data->id);
+
+  if(data->name != NULL)
     free(data->name);
 
-  if(data->label)
+  if(data->label != NULL)
     free(data->label);
 
   result = DoSuperMethodA(cl, obj, msg);
@@ -187,9 +190,9 @@ OVERLOAD(OM_GET)
       }
       else
       {
-        struct ImageCacheNode *icnode = ObtainImage(data->id, data->name, NULL);
+        struct ImageCacheNode *icnode;
 
-        if(icnode != NULL)
+        if((icnode = ObtainImage(data->id, data->name, NULL)) != NULL)
         {
           *store = icnode->width;
 
@@ -215,9 +218,9 @@ OVERLOAD(OM_GET)
       }
       else
       {
-        struct ImageCacheNode *icnode = ObtainImage(data->id, data->name, NULL);
+        struct ImageCacheNode *icnode;
 
-        if(icnode != NULL)
+        if((icnode = ObtainImage(data->id, data->name, NULL)) != NULL)
         {
           *store = icnode->height;
 
@@ -265,14 +268,14 @@ OVERLOAD(OM_SET)
 
       ATTR(Filename):
       {
-        if(data->name)
+        if(data->name != NULL)
           free(data->name);
 
         data->name = strdup((char*)tag->ti_Data);
 
         relayout = TRUE;
 
-        if(data->setup)
+        if(data->setup == TRUE)
         {
           Image_Unload(data);
           Image_Load(data, obj);
@@ -286,7 +289,7 @@ OVERLOAD(OM_SET)
     }
   }
 
-  if(relayout && data->setup)
+  if(relayout == TRUE && data->setup == TRUE)
   {
     Object *parent;
 
@@ -369,7 +372,7 @@ OVERLOAD(MUIM_AskMinMax)
   }
   data->label_height = 0;
 
-  if(data->label != NULL && data->show_label)
+  if(data->label != NULL && data->show_label == TRUE)
   {
     struct RastPort rp;
     int width;
