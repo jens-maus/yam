@@ -7,6 +7,11 @@ $URL$
 
 2007-06-27  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AboutWindow.c: replaced all occurences of umlauts by their corresponding
+    substitutions (i.e. ö = oe). Although this generally is no problem for
+    german names I don't know if this applies for scandinavian names (i.e. Pär
+    Boberg), too. These people are hereby requested to stand up and give us a
+    hint how to change their names to fit 7bit US-ASCII.
   * locale/deutsch.ct: updated german translations according to the lastest
     changes.
   * AboutWindow.c, YAM.cd: the text in the About window is now localizable.
