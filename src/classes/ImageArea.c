@@ -77,7 +77,8 @@ static BOOL Image_Load(struct Data *data, Object *obj)
     if((node = ObtainImage(data->id, data->name, _screen(obj))) != NULL)
     {
       memcpy(&data->imageNode, node, sizeof(data->imageNode));
-      data->imageLoaded = TRUE;
+      if(node->dt_obj != NULL)
+        data->imageLoaded = TRUE;
       success = TRUE;
     }
   }

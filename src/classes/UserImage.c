@@ -221,7 +221,7 @@ OVERLOAD(MUIM_Setup)
       }
     }
 
-    if(data->imageLoaded == TRUE)
+    if(data->imageLoaded == TRUE && data->imageNode.dt_obj != NULL)
     {
       struct BitMap *orgBitMap = NULL;
       struct BitMapHeader *bitMapHeader = NULL;

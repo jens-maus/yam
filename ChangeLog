@@ -7,6 +7,7 @@ $URL$
 
 2007-06-27  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageArea.c, UserImage.c: added some checks for valid datatype objects.
   * ImageCache.c: added some checks for empty or NULL file names, as this will
     be required for the upcoming themes, especially for an "empty" theme.
 
