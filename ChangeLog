@@ -7,6 +7,10 @@ $URL$
 
 2007-06-28  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: the variable popup lists are now NList objects with two columns
+    instead of simple List objects. That way the descriptions for the place-
+    holders are always properly aligned and do no longer depend on a specific
+    amount of space characters between them.
   * ImageArea.c, UserImage.c: added some checks for valid datatype objects.
   * ImageCache.c: added some checks for empty or NULL file names, as this will
     be required for the upcoming themes, especially for an "empty" theme.
