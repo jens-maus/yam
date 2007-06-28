@@ -7,6 +7,10 @@ $URL$
 
 2007-06-28  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: the automatic ghosting of the "also unread" check mark whenever
+    the max age of a folder is set to zero is now disabled for the Trash and the
+    Spam folder. Mails in these folders are deleted nevertheless if they are too
+    old, regardless wether they have been read or not.
   * YAM_COg.c: the variable popup lists are now NList objects with two columns
     instead of simple List objects. That way the descriptions for the place-
     holders are always properly aligned and do no longer depend on a specific
