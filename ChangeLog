@@ -7,6 +7,11 @@ $URL$
 
 2007-06-27  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: added some checks for empty or NULL file names, as this will
+    be required for the upcoming themes, especially for an "empty" theme.
+
+2007-06-27  Thore Böckelmann <tboeckel@gmx.de>
+
   * AboutWindow.c: replaced all occurences of umlauts by their corresponding
     substitutions (i.e. ö = oe). Although this generally is no problem for
     german names I don't know if this applies for scandinavian names (i.e. Pär

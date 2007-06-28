@@ -176,13 +176,22 @@ static BOOL RemapImage(struct ImageCacheNode *node, const struct Screen *scr)
 
   ENTER();
 
-  // first set the new screen
-  SetDTAttrs(node->dt_obj, NULL, NULL, PDTA_Screen, scr,
-                                       TAG_DONE);
+  // remapping only works if the DT object exists
+  if(node->dt_obj != NULL)
+  {
+    // first set the new screen
+    SetDTAttrs(node->dt_obj, NULL, NULL, PDTA_Screen, scr,
+                                         TAG_DONE);
 
-  // either the remap must succeed or we just reset the screen
-  if(DoMethod(node->dt_obj, DTM_PROCLAYOUT, NULL, 1) != 0 || scr == NULL)
+    // either the remap must succeed or we just reset the screen
+    if(DoMethod(node->dt_obj, DTM_PROCLAYOUT, NULL, 1) != 0 || scr == NULL)
+      success = TRUE;
+  }
+  else
+  {
+  	// assume success for non-existing DT-objects
     success = TRUE;
+  }
 
   // remember the new screen pointer
   node->screen = (struct Screen *)scr;
@@ -210,7 +219,13 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
     node->delayedDispose = FALSE;
     if((node->id = strdup(id)) != NULL)
     {
-      if((node->filename = strdup(filename)) != NULL)
+      if(filename == NULL || filename[0] == '\0')
+      {
+        // assume success for empty filenames
+        D(DBF_IMAGE, "no file given for image '%s'", id);
+        success = TRUE;
+      }
+      else if((node->filename = strdup(filename)) != NULL)
       {
         // load the datatypes image now
         if((success = LoadImage(node)) == FALSE)
@@ -231,11 +246,11 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
     if(success == FALSE)
     {
       // upon failure remove the node again
-      if(node->id != NULL)
-        free(node->id);
+      HashTableRawRemove(G->imageCacheHashTable, entry);
       if(node->filename != NULL)
         free(node->filename);
-      HashTableRawRemove(G->imageCacheHashTable, entry);
+
+      // node->id has already been freed by HashTableRawRemove()
     }
   }
 
@@ -404,7 +419,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
   if(result == NULL)
   {
     // check if the file exists or not.
-    if(FileExists(filename) == FALSE)
+    if(filename != NULL && filename[0] != '\0' && FileExists(filename) == FALSE)
     {
       if(G->NoImageWarning == FALSE)
       {
@@ -433,7 +448,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
     }
     else
     {
-      D(DBF_IMAGE, "creating new cache node for image '%s' with id '%s'", filename, id);
+      D(DBF_IMAGE, "creating new cache node for image '%s' with id '%s'", filename ? filename : (char *)"NULL", id);
       result = CreateImageCacheNode(id, filename);
     }
   }
@@ -452,7 +467,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
       if(RemapImage(result, scr))
       {
         // check if the image is to be displayed on a new screen
-        if(scr != NULL)
+        if(scr != NULL && result->dt_obj != NULL)
         {
           struct BitMapHeader *bmhd = NULL;
 
@@ -526,7 +541,8 @@ void ReleaseImage(const char *id, BOOL dispose)
             DisposeDTObject(node->dt_obj);
           if(node->filename != NULL)
             free(node->filename);
-          // the ID has already been freed by HashTableRawRemove()
+
+          // node->id has already been freed by HashTableRawRemove()
         }
       }
       else
@@ -565,7 +581,7 @@ BOOL IsImageInCache(const char *id)
   entry = HashTableOperate(G->imageCacheHashTable, id, htoLookup);
   if(HASH_ENTRY_IS_LIVE(entry))
   {
-    D(DBF_IMAGE, "found node %08lx,'%s','%s'", entry, ((struct ImageCacheNode *)entry)->id, FilePart(((struct ImageCacheNode *)entry)->filename));
+    D(DBF_IMAGE, "found node %08lx,'%s','%s'", entry, ((struct ImageCacheNode *)entry)->id, ((struct ImageCacheNode *)entry)->filename);
     result = TRUE;
   }
 
