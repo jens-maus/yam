@@ -5,7 +5,7 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-06-27  Thore Böckelmann <tboeckel@gmx.de>
+2007-06-28  Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageArea.c, UserImage.c: added some checks for valid datatype objects.
   * ImageCache.c: added some checks for empty or NULL file names, as this will
