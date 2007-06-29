@@ -2,15 +2,18 @@
                      YAM 2.5 - Installation notes
 ---------------------------------------------------------------------------
 
-To minimize download time, YAM 2.5 is distributed in five different LhA
-archives which must be unpacked into the same directory before installation.
+FIXME: replace the following with the final archive listing and describe
+the new layout.
 
-YAM25.lha        YAM 2.5 basic installation for 68020 processors or better,
-                 includes installer and English manual
-YAM25os4.lha     AmigaOS 4 version
-YAM25mos.lha     MorphOS version
-YAM25loc.lha     Foreign language support (catalogs and manuals)
-YAM25con.lha     Additional graphics, ARexx scripts, etc.
+|To minimize download time, YAM 2.5 is distributed in five different LhA
+|archives which must be unpacked into the same directory before installation.
+|
+|YAM25.lha        YAM 2.5 basic installation for 68020 processors or better,
+|                 includes installer and English manual
+|YAM25os4.lha     AmigaOS 4 version
+|YAM25mos.lha     MorphOS version
+|YAM25loc.lha     Foreign language support (catalogs and manuals)
+|YAM25con.lha     Additional graphics, ARexx scripts, etc.
 
 
 Before you start the installation
@@ -111,8 +114,8 @@ to the previous official update:
   window when it opens. (damato)
 - Fixed: trying to attach a read protected file would silently fail.
   (damato)
-- Fixed: no longer shuts down a Read window when MUI sends a change
-  notification. (damato)
+- Fixed: no longer forgets to reopen a Read window when MUI sends a
+  change notification. (damato)
 - Fixed: names resolved from the address book no longer make emails
   appear misplaced when sorting emails by name; also, this kind of
   name resolution can now be turned off completely. (damato)
@@ -327,6 +330,13 @@ to the previous official update:
   to a MUI bug when started twice very quickly. (tboeckel)
 - Changed: moved the message status icon group in the Read window to
   just underneath the toolbar and made it more informative. (damato)
+- Changed: the "Reply" button and menu item is now explicitely disabled
+  while browsing the Outgoing folder. (tboeckel)
+- Changed: now uses the more common "[Fwd: Subject]" form instead of
+  "Subject (fwd)" to mark forwarded email. (damato)
+- Changed: when forwarding an email the classic way (inlined), the
+  original signature introducer will have the space stripped to avoid
+  confusion with the user's own signature. (damato)
 - Changed: the name of the 4 most common headers (From, To, Date &
   Subject) are now localized in the Read window to match the
   headlines in the main window. (damato)
@@ -335,10 +345,9 @@ to the previous official update:
 - Changed: turned this text file into a plain US-ASCII one to make it
   100% printable on all languages and charsets. (tactica)
 
-- Added: user configurable spam filter! :) (tboeckel)
-- Added: finally implemented non-blocking socket I/O, which
-  should make the [Abort] button in the mail transference
-  window actually work now! (damato)
+- Added: user configurable spam filter. (tboeckel)
+- Added: non-blocking socket I/O, which should make the [Abort]
+  button in the mail transference window more responsive. (damato)
 - Added: the information bar may now show a small "X" button for
   functions that keep YAM busy to let the user abort the operation,
   making it possible for the first time ever to e.g. cancel a filtering
@@ -375,9 +384,14 @@ to the previous official update:
 - Added: possibility to set an amount of time PGP will remember the
   user's passphrase to avoid asking for it again and again. (damato)
 - Added: "Look & feel" page in the configuration. (damato)
+- Added: now defaults to forward email by making it an attachment
+  of a new Write window, the default can be changed on the fly with
+  the new Alt-Forward hotkey. (damato)
 - Added: "Relative date output" option. (damato)
 - Added: possibility to select the colour used to print the signature
   in the Read window. (damato)
+- Added: RAmiga-1/2/3 shortcuts to quickly switch tabs in the Write
+  window. (damato)
 - Added: new "%p" placeholder in the MIME configuration to return
   the name of the screen where YAM is running. (tboeckel)
 - Added: tracking of temporary files that couldn't be deleted because
