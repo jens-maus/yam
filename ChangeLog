@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-06-29  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: updated according to changes plus some minor corrections
+    and fixes.
+
 2007-06-28  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: the automatic ghosting of the "also unread" check mark whenever

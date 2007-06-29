@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.16 (24.05.07)
+## version $VER: YAM.ct 6.17 (28.06.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -1334,7 +1334,7 @@ Applicera på skickad p_ost
 ;#DEF Apply to sent _mail
 ;#SET (390//)
 MSG_CO_ApplyOnReq
-App_licera vid förfrågan
+App_licera vid begäran
 ;#DEF Apply on _request
 ;#SET (391//)
 MSG_CO_ActionBounce
@@ -3465,18 +3465,6 @@ MSG_WR_Security
 Säkerhet
 ;#DEF Security
 ;#SET (962//)
-MSG_WR_ToQueue
-S_kicka senare
-;#DEF Send _later
-;#SET (963//)
-MSG_WR_Send
-_Skicka nu
-;#DEF _Send now
-;#SET (964//)
-MSG_WR_Hold
-_Håll kvar
-;#DEF _Hold
-;#SET (965//)
 MSG_WR_BounceWT
 Studsa brev
 ;#DEF Bounce message
@@ -4042,17 +4030,13 @@ HTML-dokumentet '%s' hittades inte.\n\nFilen finns inte på webbservern.
 ;#DEF HTML document '%s' not found.\n\nThe file doesn't exist on the WWW server.
 ;#SET (1124//)
 MSG_ER_SendHTTP
-Kunde inte skicka HTTP-förfrågan. Kunde inte hämta dokument från webbservern.
+Kunde inte skicka HTTP-begäran. Kunde inte hämta dokument från webbservern.
 ;#DEF Couldn't send HTTP request. Requesting a document from the WWW server failed.
 ;#SET (1125//)
 MSG_ER_ConnectHTTP
-Kunde inte ansluta till webbservern '%s'.\n\nMöjliga felorsaker: TCP/IP-stacken är inte uppkopplad, servern är nere eller stöder inte HTTP-förfrågningar.
+Kunde inte ansluta till webbservern '%s'.\n\nMöjliga felorsaker: TCP/IP-stacken är inte uppkopplad, servern är nere eller stöder inte HTTP-begär.
 ;#DEF Couldn't connect to WWW server '%s'.\n\nPossible reasons: TCP/IP offline, invalid address, server is currently down or doesn't support HTTP requests.
 ;#SET (1126//)
-MSG_ER_BadResponse
-Felaktigt %s svar på kommandot:\n%s\n\nE-postservern kunde inte exekvera kommandot och svarade med felmeddelandet.
-;#DEF Bad %s command response:\n%s\n\nThe mail server couldn't execute the command and replied with the above error message.
-;#SET (1127//)
 MSG_ER_UnknownPOP
 Okänd POP3-server: '%s'.\n\nTCP/IP-stacken är inte uppkopplad eller så är serverns adress felaktig.
 ;#DEF Unknown POP3 server: '%s'.\n\nTCP/IP is offline or the server address is invalid.
@@ -4073,10 +4057,6 @@ MSG_ER_ErrorWriteMailfile
 Skrivfel på brevfilen: %s.\n\nYAM kan inte spara brevet till disk. Disken kan vara full.
 ;#DEF Write error on mail file: %s.\n\nYAM can't save the message to disk, maybe you're out of disk space.
 ;#SET (1132//)
-MSG_ER_ConnectionBroken
-TCP/IP anslutningen bruten, förmodligen avbröt modemet anslutningen.
-;#DEF TCP/IP connection broken, probably due to a carrier drop.
-;#SET (1133//)
 MSG_ER_ErrorReadMailfile
 Läsfel för brevfilen %s.\n\nFilen existerar, men något blev fel vid läsning av filen.
 ;#DEF Read error on mail file: %s.\n\nThe file exists, but there was an error while reading it.
@@ -5086,7 +5066,7 @@ Kunde inte initiera TLSv1/SSLv3 session för %s
 ;#DEF Couldn't initialize TLSv1/SSLv3 session for %s
 ;#SET (1438//)
 MSG_TR_SENDAUTH
-Skickar SMTP AUTH förfrågan...
+Skickar SMTP AUTH begäran...
 ;#DEF Sending SMTP AUTH request...
 ;#SET (1439//)
 MSG_CO_IMPORTMIMETITLE
@@ -5133,10 +5113,6 @@ MSG_ER_NOAUTHUSERPASS
 Inget användarnamn eller lösenord specifierades för SMTP AUTH anslutningen YAM försökte etablera. Kontrollera din konfiguration.
 ;#DEF No user name or password was specified for the SMTP AUTH connection YAM was trying to establish. Please check your configuration.
 ;#SET (1456//)
-MSG_ER_POPWELCOME
-POP servern svarade med ett felmeddelande under välkomst proceduren och anslutningen avbröts:\n\n%s\n
-;#DEF The POP server replied with an error message during the welcome procedure and the connection was terminated:\n\n%s\n
-;#SET (1457//)
 MSG_CO_APPICON_LABEL
 Nya: %n Totalt: %t
 ;#DEF New: %n Total: %t
@@ -6194,7 +6170,7 @@ Om vald, så kommer det inmatade PGP lösenordet\natt kommas ihåg, enligt det spec
 ;#DEF If selected, an entered PGP passphrase will be\nremembered for the specified amount of idle minutes\nso that subsequent PGP operations doesn't have to\nquery for it again.
 ;#SET (1729//)
 MSG_UT_PGPPASSREQ_TITLE
-PGP lösenord förfrågan
+PGP lösenordsbegäran
 ;#DEF PGP passphrase request
 ;#SET (1730//)
 MSG_CO_GR_REPLYFORWARD
@@ -6594,7 +6570,7 @@ Svara...
 ;#DEF Reply...
 ;#SET (1835//)
 MSG_MA_MFORWARD
-Vidarebefodra...
+Vidarebefordra...
 ;#DEF Forward...
 ;#SET (1836//)
 MSG_MA_MBOUNCE
@@ -6730,27 +6706,27 @@ Fråga mig
 ;#DEF Ask me
 ;#SET (1869//)
 MSG_CO_MDN_TITLE
-Meddelande kvitton
+Mottagningskvitton
 ;#DEF Return Receipts
 ;#SET (1870//)
 MSG_CO_MDN_DESCRIPTION
-När jag får en förfrågan om meddelande kvitto:
+När jag får en begäran om mottagningskvitto:
 ;#DEF When I receive a request for a return receipt:
 ;#SET (1871//)
 MSG_CO_MDN_DISABLED
-_Skicka aldrig ett meddelande kvitto
+_Skicka aldrig ett mottagningskvitto
 ;#DEF _Never send a return receipt
 ;#SET (1872//)
 MSG_CO_MDN_ENABLED
-Ti_llåt meddelande kvitton för vissa meddelanden
+Ti_llåt mottagningskvitton för vissa meddelanden
 ;#DEF A_llow return receipts for some messages
 ;#SET (1873//)
 MSG_CO_MDN_NORECIPIENT
-Om jag inte är i _Till eller Cc av meddelandet:
+Om jag inte står med i _Till eller Kopia:
 ;#DEF If I'm not in the _To or Cc of the message:
 ;#SET (1874//)
 MSG_CO_MDN_NODOMAIN
-Om sändaren är _utanför min domän:
+_Om avsändaren inte är i min domän:
 ;#DEF If the sender is _outside my domain:
 ;#SET (1875//)
 MSG_CO_MDN_DELETE
@@ -6758,31 +6734,31 @@ Om jag bara ska ra_dera meddelandet:
 ;#DEF If I'm going to just _delete the message:
 ;#SET (1876//)
 MSG_CO_MDN_OTHER
-I alla andra _fall:
+I övriga _fall:
 ;#DEF In all other _cases:
 ;#SET (1877//)
 MSG_CO_REQUESTMDN
-Fråga alltid om _meddelande kvitto, när meddelanden skickas
+Begär alltid _mottagningskvitto när meddelanden skickas
 ;#DEF When sending _messages, always request a return receipt
 ;#SET (1878//)
 MSG_HELP_CO_CH_REQUESTMDN
-Om vald, kommer valet meddelande\nkvitto i skrivfönstret att vara aktiverat\nsom förval.
+Om vald, kommer valet mottagnings\nkvitto i skrivfönstret att vara aktiverat\nsom förval.
 ;#DEF If selected, the return receipt option\nin the write window will be enabled per\ndefault.
 ;#SET (1879//)
 MSG_HELP_CO_CH_MDN_NEVER
-Om vald, kommer inget meddelande\nkvitto att skickas, även om det tydligt förfrågas.
+Om vald, kommer inget mottagnings\nkvitto att skickas, även om det tydligt begärs.
 ;#DEF If selected, no return receipt will be\nsend out, even if explicitly requested.
 ;#SET (1880//)
 MSG_HELP_CO_CH_MDN_ALLOW
-Om vald, kommer meddelandekvitton\natt behandlas enligt reglerna definierade här.
+Om vald, kommer mottagningskvitton\natt behandlas enligt reglerna definierade här.
 ;#DEF If selected, return receipts will be\nprocessed according to the rules defined\nhere.
 ;#SET (1881//)
 MSG_HELP_CO_CY_MDN_NORECIPIENT
-Ifall ett meddelandekvitto förfrågas,\nmen din e-post adress inte finns i Till: eller\nCc: huvudet, kommer den definierade\naktionen att utföras.
+Ifall ett mottagningskvitto begärs,\nmen din e-post adress inte finns i Till: eller\nKopia: huvudet, kommer den definierade\naktionen att utföras.
 ;#DEF In case a return receipt is requested,\nbut your mail address doesn't exist in\nthe To: or Cc: header, the defined action\nwill be performed.
 ;#SET (1882//)
 MSG_HELP_CO_CY_MDN_NODOMAIN
-Ifall ett meddelandekvitto förfrågas,\nmen domänen av din e-post adress och en\nav avsändarna inte matchar, kommer\nden definierade aktionen att utföras.
+Ifall ett mottagningskvitto begärs,\nmen domänen av din e-post adress och en\nav avsändarna inte matchar, kommer\nden definierade aktionen att utföras.
 ;#DEF In case a return receipt is requested,\nbut the domain of your mail address and\nthe one of the sender doesn't match,\nthe defined action will be performed.
 ;#SET (1883//)
 MSG_HELP_CO_CY_MDN_DELETE
@@ -6997,3 +6973,131 @@ MSG_ER_IGNOREALL
 Ignorera _alla|*_Ignorera
 ;#DEF Ignore _all|*_Ignore
 ;#SET (1936//)
+MSG_HELP_CO_CY_FOLDERINFO
+Information som ska visas som etikett\nför mappen.
+;#DEF Information that should be displayed\nas the label of the folder.
+;#SET (1937//)
+MSG_CO_FOLDERINFO01
+Mappnamn
+;#DEF Folder name
+;#SET (1938//)
+MSG_CO_FOLDERINFO02
+Mappnamn (nya)
+;#DEF Folder name (new)
+;#SET (1939//)
+MSG_CO_FOLDERINFO03
+Mappnamn (olästa)
+;#DEF Folder name (unread)
+;#SET (1940//)
+MSG_CO_FOLDERINFO04
+Mappnamn (nya/olästa)
+;#DEF Folder name (new/unread)
+;#SET (1941//)
+MSG_CO_FOLDERINFO05
+Mappnamn (olästa/nya)
+;#DEF Folder name (unread/new)
+;#SET (1942//)
+MSG_ER_BADRESPONSE
+Felaktigt svar från mail servern '%s' för kommando '%s':\n%s\n\nMail servern kunde inte exekvera kommandot och svarade med felmeddelandet ovan.
+;#DEF Bad response from mail server '%s' for command '%s':\n%s\n\nThe mail server couldn't execute the command and replied with the above error message.
+;#SET (1943//)
+MSG_ER_POP3WELCOME
+POP3 servern '%s' svarade med ett felmeddelande vid välkomstproceduren och anslutningen avbröts:\n\n%s\n
+;#DEF The POP3 server '%s' replied with an error message during the welcome procedure and the connection was terminated:\n\n%s\n
+;#SET (1944//)
+MSG_FO_EXPIREUNREAD
+också olästa
+;#DEF also unread
+;#SET (1945//)
+MSG_HELP_FO_CH_EXPIREUNREAD
+Om vald, kommer gamla meddelanden att\ntas bort även om de inte är lästa ännu.
+;#DEF If selected, old messages will be deleted,\neven if they are not yet read.
+;#SET (1946//)
+MSG_WR_SENDNOW
+_Skicka nu
+;#DEF _Send now
+;#SET (1947//)
+MSG_WR_SENDLATER
+Skicka s_enare
+;#DEF Send _later
+;#SET (1948//)
+MSG_WR_HOLD
+_Håll kvar
+;#DEF _Hold
+;#SET (1949//)
+MSG_WR_CANCEL
+Avbryt
+;#DEF Cancel
+;#SET (1950//)
+MSG_WR_MSENDNOW
+Skicka nu
+;#DEF Send now
+;#SET (1951//)
+MSG_WR_MSENDLATER
+Skicka senare
+;#DEF Send later
+;#SET (1952//)
+MSG_WR_MHOLD
+Håll kvar
+;#DEF Hold
+;#SET (1953//)
+MSG_WR_MCANCEL
+Avbryt
+;#DEF Cancel
+;#SET (1954//)
+MSG_ER_CONNECTIONBROKEN
+TCP/IP anslutningen mot servern '%s' avbröts vid försök att skicka kommandot '%s'.\n\nDetta kan bero på att servern tappade anslutningen.
+;#DEF The TCP/IP connection with server '%s' was interrupted while trying to send command '%s'.\n\nThis may be due to a connection drop by the server.
+;#SET (1955//)
+MSG_WR_MSWITCH_MSG
+Växla till 'Brev' vy
+;#DEF Switch to 'Message' view
+;#SET (1956//)
+MSG_WR_MSWITCH_ATT
+Växla till 'Bilagor' vy
+;#DEF Switch to 'Attachments' view
+;#SET (1957//)
+MSG_WR_MSWITCH_OPT
+Växla till 'Alternativ' vy
+;#DEF Switch to 'Options' view
+;#SET (1958//)
+MSG_CO_FWDMSG
+Vidarebe_fordra meddelande
+;#DEF _Forward message
+;#SET (1959//)
+MSG_CO_FWDMSG_ATTACH
+som bilaga
+;#DEF as attachment
+;#SET (1960//)
+MSG_CO_FWDMSG_INLINE
+i brevet
+;#DEF inlined
+;#SET (1961//)
+MSG_HELP_CO_CY_FORWARDMODE
+Tillåter att välja hur ett meddelande ska\nvidarebefordras. Ett meddelande kan vidarebefordras\nsom bilaga eller så kan meddelandetexten\nläggas i brevet.
+;#DEF Allows to select how a message should be\nforwarded. Either a message can be forwarded\nas an attachment or the message text can be\nput inlined into the forward message text.
+;#SET (1962//)
+MSG_ABOUT_CURRENT_DEVELOPERS
+Nuvarande utvecklare:
+;#DEF Current Developers:
+;#SET (1963//)
+MSG_ABOUT_CONTRIBUTORS
+Medarbetare:
+;#DEF Contributors:
+;#SET (1964//)
+MSG_ABOUT_LOCALIZATION_CONTRIBUTORS
+Medarbetare översättning:
+;#DEF Localization Contributors:
+;#SET (1965//)
+MSG_ABOUT_GPL
+Detta program är gratis mjukvara; du är välkommen\natt distribuera och/eller modifiera det under villkoren\nför GNU Public License. Läs de bifogade dokumenten\nför mer information.
+;#DEF This program is free software; you're welcome to\ndistribute and/or modify it under the terms of the\nGNU Public License. See the enclosed documents for\nmore details.
+;#SET (1966//)
+MSG_ABOUT_3RD_PARTY_SOFTWARE
+Detta program använder följande mjukvara från tredjepart:
+;#DEF This program uses the following third party software:
+;#SET (1967//)
+MSG_ABOUT_YAM_NEWS
+Senaste nytt om YAM kan hittas på YAM's\nsupportsida \0335http://www.yam.ch/\033n
+;#DEF The latest news about YAM can be found at the\nYAM Support Site at \0335http://www.yam.ch/\033n
+;#SET (1968//)
