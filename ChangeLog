@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-01  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, locale/YAM.cd, locale/deutsch.ct: added a new submenu entry for
+    our new "Switch to 'Message' Tab"-like menu entries and renamed them
+    accordingly.
+
 2007-06-29  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: updated according to changes plus some minor corrections

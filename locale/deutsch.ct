@@ -7997,13 +7997,13 @@ des Kommandos '%s' unterbrochen.\n\
 Vermutlich hat Ihr Verbindungspartner abgebrochen.
 ;
 MSG_WR_MSWITCH_MSG
-Wechsle zur 'Nachricht' Ansicht
+Wechsle zum 'Nachricht'-Tab
 ;
 MSG_WR_MSWITCH_ATT
-Wechsle zur 'Anhang' Ansicht
+Wechsle zum 'Anhang'-Tab
 ;
 MSG_WR_MSWITCH_OPT
-Wechsle zur 'Optionen' Ansicht
+Wechsle zum 'Optionen'-Tab
 ;
 MSG_CO_FWDMSG
 Nachricht weite_rleiten
@@ -8044,4 +8044,7 @@ Dieses Programm verwendet folgende fremde Software:
 MSG_ABOUT_YAM_NEWS
 Neuigkeiten über YAM finden Sie auf der\n\
 YAM-Homepage unter \0335http://www.yam.ch/\033n
+;
+MSG_WR_VIEW
+Ansicht
 ;

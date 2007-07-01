@@ -6296,13 +6296,13 @@ while trying to send command '%s'.\n\
 This may be due to a connection drop by the server.
 ;
 MSG_WR_MSWITCH_MSG (1956//)
-Switch to 'Message' view
+Switch to 'Message' Tab
 ;
 MSG_WR_MSWITCH_ATT (1957//)
-Switch to 'Attachments' view
+Switch to 'Attachments' Tab
 ;
 MSG_WR_MSWITCH_OPT (1958//)
-Switch to 'Options' view
+Switch to 'Options' Tab
 ;
 MSG_CO_FWDMSG (1959//)
 _Forward message
@@ -6340,4 +6340,7 @@ This program uses the following third party software:
 MSG_ABOUT_YAM_NEWS (1968//)
 The latest news about YAM can be found at the\n\
 YAM Support Site at \0335http://www.yam.ch/\033n
+;
+MSG_WR_VIEW (1969//)
+View
 ;
