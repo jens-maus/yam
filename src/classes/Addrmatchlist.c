@@ -36,7 +36,8 @@
 struct Data
 {
   struct MUI_EventHandlerNode ehnode;
-  Object *Matchlist, *String;
+  Object *Matchlist;
+  Object *String;
   BOOL EventHandlerAdded;
   BOOL Open;
 };
@@ -108,24 +109,26 @@ MakeStaticHook(CompareHook, CompareFunc);
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  Object *listview, *list;
+  Object *listview;
+  Object *list;
 
   ENTER();
 
   if((obj = DoSuperNew(cl, obj,
-    MUIA_Window_Activate,         FALSE,
-    MUIA_Window_Borderless,       TRUE,
-    MUIA_Window_CloseGadget,      FALSE,
-    MUIA_Window_DepthGadget,      FALSE,
-    MUIA_Window_DragBar,          FALSE,
-    MUIA_Window_SizeGadget,       FALSE,
-    MUIA_Window_IsSubWindow,      TRUE,
+    MUIA_Window_Activate,     FALSE,
+    MUIA_Window_Borderless,   TRUE,
+    MUIA_Window_CloseGadget,  FALSE,
+    MUIA_Window_DepthGadget,  FALSE,
+    MUIA_Window_DragBar,      FALSE,
+    MUIA_Window_SizeGadget,   FALSE,
+    MUIA_Window_IsSubWindow,  TRUE,
     WindowContents, GroupObject,
       InnerSpacing(0, 0),
+      MUIA_FixHeightTxt, "\n\n\n\n\n\n\n\n",
       Child, listview = NListviewObject,
         MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
-        MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_FullAuto,
-        MUIA_NListview_NList,  list = NListObject,
+        MUIA_NListview_Vert_ScrollBar,  MUIV_NListview_VSB_FullAuto,
+        MUIA_NListview_NList, list = NListObject,
           InputListFrame,
           MUIA_NList_CompareHook,     &CompareHook,
           MUIA_NList_ConstructHook,   &ConstructHook,

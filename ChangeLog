@@ -7,6 +7,8 @@ $URL$
 
 2007-07-02  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Addrmatchlist.c: the addrmatchlistwindow will now always open with a maximum
+    default height of 8 rows.
   * extrasrc: extracted the snprintf/vasprintf/asprintf functions into seperate
     functions in our extrasrc subdirectory so that we can enable/disable each
     single one depending on the capabilities of the OS and/or C-runtime library.
