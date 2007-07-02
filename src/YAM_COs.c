@@ -2031,18 +2031,18 @@ void CO_SetConfig(void)
 
     case cp_NewMail:
     {
-      setcheckmark(gui->CH_AVOIDDUP  ,CE->AvoidDuplicates);
-      setcycle    (gui->CY_MSGSELECT ,CE->PreSelection);
-      setcycle    (gui->CY_TRANSWIN  ,CE->TransferWindow);
-      setcheckmark(gui->CH_UPDSTAT   ,CE->UpdateStatus);
+      setcheckmark(gui->CH_AVOIDDUP, CE->AvoidDuplicates);
+      setcycle(gui->CY_MSGSELECT, CE->PreSelection);
+      setcycle(gui->CY_TRANSWIN, CE->TransferWindow);
+      setcheckmark(gui->CH_UPDSTAT, CE->UpdateStatus);
       set(gui->ST_WARNSIZE, MUIA_String_Integer, CE->WarnSize);
-      set(gui->NM_INTERVAL, MUIA_Numeric_Value,  CE->CheckMailDelay);
-      setcheckmark(gui->CH_DLLARGE   ,CE->DownloadLarge);
-      setcheckmark(gui->CH_NOTIREQ   , hasRequesterNotify(CE->NotifyType));
-      setcheckmark(gui->CH_NOTISOUND , hasSoundNotify(CE->NotifyType));
-      setcheckmark(gui->CH_NOTICMD   , hasCommandNotify(CE->NotifyType));
-      setstring   (gui->ST_NOTISOUND ,CE->NotifySound);
-      setstring   (gui->ST_NOTICMD   ,CE->NotifyCommand);
+      set(gui->NM_INTERVAL, MUIA_Numeric_Value, CE->CheckMailDelay);
+      setcheckmark(gui->CH_DLLARGE, CE->DownloadLarge);
+      setcheckmark(gui->CH_NOTIREQ, hasRequesterNotify(CE->NotifyType));
+      setcheckmark(gui->CH_NOTISOUND, hasSoundNotify(CE->NotifyType));
+      setcheckmark(gui->CH_NOTICMD, hasCommandNotify(CE->NotifyType));
+      setstring(gui->ST_NOTISOUND ,CE->NotifySound);
+      setstring(gui->ST_NOTICMD,CE->NotifyCommand);
     }
     break;
 
@@ -2121,19 +2121,21 @@ void CO_SetConfig(void)
 
     case cp_Write:
     {
-      setstring   (gui->ST_REPLYTO   ,CE->ReplyTo);
-      setstring   (gui->ST_ORGAN     ,CE->Organization);
-      setstring   (gui->ST_EXTHEADER ,CE->ExtraHeaders);
-      setstring   (gui->ST_HELLOTEXT ,CE->NewIntro);
-      setstring   (gui->ST_BYETEXT   ,CE->Greetings);
-      setcheckmark(gui->CH_WARNSUBJECT,CE->WarnSubject);
-      set(gui->ST_EDWRAP, MUIA_String_Integer, CE->EdWrapCol);
-      setcycle    (gui->CY_EDWRAP    ,CE->EdWrapMode);
-      setstring   (gui->ST_EDITOR    ,CE->Editor);
-      setcheckmark(gui->CH_LAUNCH    ,CE->LaunchAlways);
-      setslider   (gui->NB_EMAILCACHE,CE->EmailCache);
-      setslider   (gui->NB_AUTOSAVE,  CE->AutoSave/60);
-      setcheckmark(gui->CH_REQUESTMDN,CE->RequestMDN);
+      setstring(gui->ST_REPLYTO, CE->ReplyTo);
+      setstring(gui->ST_ORGAN, CE->Organization);
+      setstring(gui->ST_EXTHEADER, CE->ExtraHeaders);
+      setstring(gui->ST_HELLOTEXT, CE->NewIntro);
+      setstring(gui->ST_BYETEXT, CE->Greetings);
+      setcheckmark(gui->CH_WARNSUBJECT, CE->WarnSubject);
+      SetAttrs(gui->ST_EDWRAP, MUIA_String_Integer, CE->EdWrapCol,
+                               MUIA_Disabled, CE->EdWrapMode == 0,
+                               TAG_DONE);
+      setcycle(gui->CY_EDWRAP, CE->EdWrapMode);
+      setstring(gui->ST_EDITOR, CE->Editor);
+      setcheckmark(gui->CH_LAUNCH, CE->LaunchAlways);
+      setslider(gui->NB_EMAILCACHE, CE->EmailCache);
+      setslider(gui->NB_AUTOSAVE, CE->AutoSave/60);
+      setcheckmark(gui->CH_REQUESTMDN, CE->RequestMDN);
       setcheckmark(gui->CH_SAVESENT, CE->SaveSent);
     }
     break;

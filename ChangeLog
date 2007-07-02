@@ -7,6 +7,8 @@ $URL$
 
 2007-07-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c, YAM_COs.c: the "word wrap: N" string gadget is now ghosted if
+    if word wrap it disabled. This fulfils change request #1746005.
   * YAM_COg.c, YAM_COs.c: the "quote empty lines" and "strip signature" check-
     marks are now ghosted if "quote message" is disabled. This fixes bug
     #1746017.

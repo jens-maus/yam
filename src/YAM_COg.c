@@ -2597,6 +2597,8 @@ Object *CO_PageWrite(struct CO_ClassData *data)
     SetHelp(data->GUI.NB_AUTOSAVE,    MSG_HELP_CO_NB_AUTOSAVE);
     SetHelp(data->GUI.CH_REQUESTMDN,  MSG_HELP_CO_CH_REQUESTMDN);
     SetHelp(data->GUI.CH_SAVESENT,    MSG_HELP_CO_CH_SAVESENT);
+
+    DoMethod(data->GUI.CY_EDWRAP, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, data->GUI.ST_EDWRAP, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
   }
 
   RETURN(obj);
