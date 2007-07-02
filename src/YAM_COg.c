@@ -1471,7 +1471,7 @@ MakeStaticHook(GetAppIconPosHook, GetAppIconPos);
 
 ///
 /// MDNRequestFunc
-//
+// update the MDN cycle gadgets according to the "never send" and "allow" check marks
 HOOKPROTONHNO(MDNRequestFunc, void, int *arg)
 {
   struct CO_GUIData *gui = &G->CO->GUI;
