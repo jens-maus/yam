@@ -7,6 +7,8 @@ $URL$
 
 2007-07-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: clicking on "Insert ENV:Signature" will now append a linefeed,
+    just like "Insert random tagline". This fixes bug #1746012.
   * locale/deutsch.ct: minor spelling change.
   * YAM_COg.c: the MDN cycle gadgets are now ghosted if sending of a return
     receipt is disabled completely. This fulfils change request #1746002.
