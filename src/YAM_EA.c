@@ -409,7 +409,7 @@ static void EA_SetPhoto(int winnum, char *fname)
 
   fname = G->EA[winnum]->PhotoName;
 
-  if(fname[0] != '\0' && FileType(fname) == FIT_FILE && gui->BC_PHOTO != NULL&&
+  if(fname[0] != '\0' && FileType(fname) == FIT_FILE && gui->BC_PHOTO != NULL &&
      DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
   {
     // set the new attributes, the old image will be deleted from the cache
@@ -489,9 +489,23 @@ static int EA_Open(int type)
 //  Closes address book entry window
 HOOKPROTONHNO(EA_CloseFunc, void, int *arg)
 {
-   int winnum = *arg;
+  int winnum = *arg;
+  struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
 
-   DisposeModulePush(&G->EA[winnum]);
+  ENTER();
+
+  if(gui->BC_PHOTO != NULL)
+  {
+  	// update the user image ID and remove it from the cache
+  	// it will be reloaded when necessary
+    SetAttrs(gui->BC_PHOTO, MUIA_UserImage_Address, G->EA[winnum]->ABEntry->Address,
+                            MUIA_UserImage_Filename, NULL,
+                            TAG_DONE);
+  }
+
+  DisposeModulePush(&G->EA[winnum]);
+
+  LEAVE();
 }
 MakeStaticHook(EA_CloseHook, EA_CloseFunc);
 ///

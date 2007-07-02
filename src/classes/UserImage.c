@@ -110,7 +110,7 @@ OVERLOAD(OM_SET)
 
   ENTER();
 
-  while((tag = NextTagItem(&tags)))
+  while((tag = NextTagItem(&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {
@@ -126,6 +126,7 @@ OVERLOAD(OM_SET)
 
         if(data->address != NULL)
           free(data->address);
+
         data->address = strdup((char *)tag->ti_Data);
 
         // remember to relayout the image
