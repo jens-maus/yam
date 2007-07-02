@@ -62,6 +62,10 @@
 #define NEED_SNPRINTF
 #endif
 
+#endif /* (m68k && !clib2) || __SASC */
+
+#if defined(__libnix) || defined(__SASC)
+
 #if !defined(HAVE_VASPRINTF)
 #define NEED_VASPRINTF
 #endif
@@ -70,7 +74,7 @@
 #define NEED_ASPRINTF
 #endif
 
-#endif /* m68k && !clib2 || __SASC */
+#endif /* libnix || __SASC */
 
 #if !defined(__MORPHOS__) || !defined(__libnix)
 

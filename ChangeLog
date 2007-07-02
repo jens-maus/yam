@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-02  Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc: extracted the snprintf/vasprintf/asprintf functions into seperate
+    functions in our extrasrc subdirectory so that we can enable/disable each
+    single one depending on the capabilities of the OS and/or C-runtime library.
+    This should fix the broken MorphOS compile, for example.
+
 2007-07-02  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c: clicking on "Insert ENV:Signature" will now append a linefeed,

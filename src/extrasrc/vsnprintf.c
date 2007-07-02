@@ -68,9 +68,6 @@
 #define HAVE_CTYPE_H
 #define HAVE_STDLIB_H
 #undef HAVE_VA_COPY
-#undef HAVE_VASPRINTF
-#undef HAVE_ASPRINTF
-#undef HAVE_SNPRINTF
 #define WITH_FLOATINGPOINT
 #define WITH_OCTAL
 #define WITH_POINTER
@@ -411,7 +408,7 @@ static size_t dopr(char *buffer, size_t maxlen, const char *format, va_list args
       case 's':
           strvalue = va_arg(args, char *);
         if(!strvalue)
-          strvalue = "(NULL)";
+          strvalue = (char *)"(NULL)";
         if(max == -1)
           max = strlen(strvalue);
         if(min > 0 && max >= 0 && min > max) max = min;
@@ -692,8 +689,8 @@ static void fmtfp (char *buffer, size_t *currlen, size_t maxlen,
   double ufvalue;
   static char iconvert[311];
   static char fconvert[311];
-  int iplace = 0;
-  int fplace = 0;
+  size_t iplace = 0;
+  size_t fplace = 0;
   int padlen = 0; /* amount to pad */
   int zpadlen = 0;
   int caps = 0;
@@ -855,63 +852,6 @@ int vsnprintf(char *s, size_t maxlen, const char *format, va_list ap)
 }
 #endif
 
-/* yes this really must be a ||. Don't muck wiith this (tridge)
- *
- * The logic for these two is that we need our own definition if the
- * OS *either* has no definition of *sprintf, or if it does have one
- * that doesn't work properly according to the autoconf test.  Perhaps
- * these should really be smb_snprintf to avoid conflicts with buggy
- * linkers? -- mbp
- */
-#if !defined(HAVE_SNPRINTF) || !defined(HAVE_C99_SNPRINTF)
-int snprintf(char *s, size_t maxlen, const char *format, ...)
-{
-  int ret;
-  va_list ap;
-
-  va_start(ap, format);
-  ret = (int)vsnprintf(s, maxlen, format, ap);
-  va_end(ap);
-
-  return ret;
-}
-#endif
-
-#endif
-
-#ifndef HAVE_VASPRINTF
-int vasprintf(char **ptr, const char * format, va_list ap)
-{
-  int ret;
-  va_list ap2;
-
-  VA_COPY(ap2, ap);
-  ret = vsnprintf(NULL, 0, format, ap2);
-  if(ret <= 0) return ret;
-
-  (*ptr) = (char *)malloc(ret+1);
-  if(!*ptr) return -1;
-  VA_COPY(ap2, ap);
-  ret = vsnprintf(*ptr, ret+1, format, ap2);
-
-  return ret;
-}
-#endif
-
-
-#ifndef HAVE_ASPRINTF
-int asprintf(char **ptr, const char * format, ...)
-{
-  va_list ap;
-  int ret;
-
-  *ptr = NULL;
-  va_start(ap, format);
-  ret = vasprintf(ptr, format, ap);
-  va_end(ap);
-
-  return ret;
-}
 #endif
 
 #ifndef HAVE_VSYSLOG
