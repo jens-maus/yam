@@ -107,6 +107,7 @@ struct TR_ClassData
    BOOL                  SinglePOP;
    BOOL                  Checking;
    BOOL                  DuplicatesChecking;
+   BOOL                  UIDLhashIsDirty;
    struct DownloadResult Stats;
 
    char                  WTitle[SIZE_DEFAULT];

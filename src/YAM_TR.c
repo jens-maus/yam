@@ -241,7 +241,6 @@ static BOOL InitUIDLhash(void);
 static void CleanupUIDLhash(void);
 static BOOL FilterDuplicates(void);
 static void AddUIDLtoHash(const char *uidl, BOOL checked);
-static void RemoveUIDLfromHash(const char *uidl);
 
 struct UIDLtoken
 {
@@ -1953,7 +1952,7 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
           {
             state++; // now it`s 3 or 6
             continue;
-          } 
+          }
 
           state = 0;
         }
@@ -3674,11 +3673,11 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       // during POP3 processing or if we can skip that.
       G->TR->DuplicatesChecking = FALSE;
 
-      if(C->AvoidDuplicates)
+      if(C->AvoidDuplicates == TRUE)
       {
-        if(G->TR->SinglePOP)
+        if(G->TR->SinglePOP == TRUE)
         {
-          if(C->P3[pop])
+          if(C->P3[pop] != NULL)
             G->TR->DuplicatesChecking = TRUE;
         }
         else
@@ -3687,7 +3686,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 
           for(i=0; i < MAXP3; i++)
           {
-            if(C->P3[i] && C->P3[i]->Enabled)
+            if(C->P3[i] && C->P3[i]->Enabled == TRUE)
             {
               G->TR->DuplicatesChecking = TRUE;
               break;
@@ -3695,7 +3694,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
           }
         }
 
-        if(G->TR->DuplicatesChecking)
+        if(G->TR->DuplicatesChecking == TRUE)
         {
           int i;
 
@@ -3703,7 +3702,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 
           for(i=0; i < MAXP3; i++)
           {
-            if(C->P3[i])
+            if(C->P3[i] != NULL)
               C->P3[i]->UIDLchecked = FALSE;
           }
         }
@@ -3739,7 +3738,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
      set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
 
      // free/cleanup the UIDL hash tables
-     if(G->TR->DuplicatesChecking)
+     if(G->TR->DuplicatesChecking == TRUE)
        CleanupUIDLhash();
 
      FreeFilterSearch();
@@ -4613,7 +4612,7 @@ static BOOL InitUIDLhash(void)
   ENTER();
 
   // make sure no other UIDLhashTable is active
-  if(G->TR->UIDLhashTable)
+  if(G->TR->UIDLhashTable != NULL)
     CleanupUIDLhash();
 
   // allocate a new hashtable for managing the UIDL data
@@ -4634,6 +4633,9 @@ static BOOL InitUIDLhash(void)
         AddUIDLtoHash(uidl, FALSE);
 
       fclose(fh);
+
+      // start with a clean and and so far unmodified hash table
+      G->TR->UIDLhashIsDirty = FALSE;
     }
     else
       W(DBF_UIDL, "no or empty .uidl file found");
@@ -4644,6 +4646,7 @@ static BOOL InitUIDLhash(void)
   }
   else
     E(DBF_UIDL, "couldn't create new Hashtable for UIDL management");
+
 
   RETURN(result);
   return result;
@@ -4713,23 +4716,27 @@ static void CleanupUIDLhash(void)
 {
   ENTER();
 
-  if(G->TR->UIDLhashTable)
+  if(G->TR->UIDLhashTable != NULL)
   {
-    FILE *fh;
+    // save the UIDLs only if something has been changed
+  	if(G->TR->UIDLhashIsDirty == TRUE)
+  	{
+      FILE *fh;
 
-    // before we go and destroy the UIDL hash we have to
-    // write it to the .uidl file back again.
-    if((fh = fopen(CreateFilename(".uidl"), "w")))
-    {
-      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+      // before we go and destroy the UIDL hash we have to
+      // write it to the .uidl file back again.
+      if((fh = fopen(CreateFilename(".uidl"), "w")))
+      {
+        setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      // call HashTableEnumerate with the SaveUIDLtoken callback function
-      HashTableEnumerate(G->TR->UIDLhashTable, SaveUIDLtoken, fh);
+        // call HashTableEnumerate with the SaveUIDLtoken callback function
+        HashTableEnumerate(G->TR->UIDLhashTable, SaveUIDLtoken, fh);
 
-      fclose(fh);
+        fclose(fh);
+      }
+      else
+        E(DBF_UIDL, "couldn't open .uidl file for writing");
     }
-    else
-      E(DBF_UIDL, "couldn't open .uidl file for writing");
 
     // now we can destroy the uidl hash
     HashTableDestroy(G->TR->UIDLhashTable);
@@ -4737,6 +4744,9 @@ static void CleanupUIDLhash(void)
 
     D(DBF_UIDL, "successfully cleaned up UIDLhash");
   }
+
+  // forget any modification to the hash table
+  G->TR->UIDLhashIsDirty = FALSE;
 
   LEAVE();
 }
@@ -4863,7 +4873,7 @@ static BOOL FilterDuplicates(void)
         }
       }
 
-      result = !G->TR->Abort && !G->Error;
+      result = (G->TR->Abort == FALSE && G->Error == FALSE);
     }
     else
       result = TRUE;
@@ -6744,18 +6754,30 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
           if(hasTR_DELETE(mtn))
           {
             if(TR_DeleteMessage(mtn->index) && G->TR->DuplicatesChecking)
+            {
+              // remove the UIDL from the hash table and remember that change
               RemoveUIDLfromHash(mtn->UIDL);
+              G->TR->UIDLhashIsDirty = TRUE;
+            }
           }
-          else if(G->TR->DuplicatesChecking)
+          else if(G->TR->DuplicatesChecking == TRUE)
+          {
+            // add the UIDL to the hash table and remember that change
             AddUIDLtoHash(mtn->UIDL, TRUE);
+            G->TR->UIDLhashIsDirty = TRUE;
+          }
         }
       }
       else if(hasTR_DELETE(mtn))
       {
         TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Downloading));
 
-        if(TR_DeleteMessage(mtn->index) && G->TR->DuplicatesChecking)
+        if(TR_DeleteMessage(mtn->index) && G->TR->DuplicatesChecking == TRUE)
+        {
+          // remove the UIDL from the hash table and remember that change
           RemoveUIDLfromHash(mtn->UIDL);
+          G->TR->UIDLhashIsDirty = TRUE;
+        }
       }
     }
 

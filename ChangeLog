@@ -14,6 +14,9 @@ $URL$
 
 2007-07-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: added a check if the UIDL hash table has been modified. In case
+    no mail has been downloaded or deleted the unmodified hash table will not
+    be written back to disk.
   * YAM_COg.c, Addrmatchlist.c: the popup lists now will never get a horizontal
     scrollbar, even if the contents would require it.
   * YAM_COg.c: the variable popups now display a scrollbar on demand, too.
