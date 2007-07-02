@@ -123,6 +123,7 @@ OVERLOAD(OM_NEW)
     WindowContents, GroupObject,
       InnerSpacing(0, 0),
       Child, listview = NListviewObject,
+        MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
         MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_FullAuto,
         MUIA_NListview_NList,  list = NListObject,
           InputListFrame,
