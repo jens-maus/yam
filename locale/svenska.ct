@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.17 (28.06.07)
+## version $VER: YAM.ct 6.17 (02.07.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -7050,16 +7050,16 @@ TCP/IP anslutningen mot servern '%s' avbröts vid försök att skicka kommandot '%s
 ;#DEF The TCP/IP connection with server '%s' was interrupted while trying to send command '%s'.\n\nThis may be due to a connection drop by the server.
 ;#SET (1955//)
 MSG_WR_MSWITCH_MSG
-Växla till 'Brev' vy
-;#DEF Switch to 'Message' view
+Växla till 'Brev' flik
+;#DEF Switch to 'Message' Tab
 ;#SET (1956//)
 MSG_WR_MSWITCH_ATT
-Växla till 'Bilagor' vy
-;#DEF Switch to 'Attachments' view
+Växla till 'Bilagor' flik
+;#DEF Switch to 'Attachments' Tab
 ;#SET (1957//)
 MSG_WR_MSWITCH_OPT
-Växla till 'Alternativ' vy
-;#DEF Switch to 'Options' view
+Växla till 'Alternativ' flik
+;#DEF Switch to 'Options' Tab
 ;#SET (1958//)
 MSG_CO_FWDMSG
 Vidarebe_fordra meddelande
@@ -7101,3 +7101,7 @@ MSG_ABOUT_YAM_NEWS
 Senaste nytt om YAM kan hittas på YAM's\nsupportsida \0335http://www.yam.ch/\033n
 ;#DEF The latest news about YAM can be found at the\nYAM Support Site at \0335http://www.yam.ch/\033n
 ;#SET (1968//)
+MSG_WR_VIEW
+Vy
+;#DEF View
+;#SET (1969//)
