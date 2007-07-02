@@ -14,8 +14,9 @@ $URL$
 
 2007-07-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: the variable popups now display a scrollbar on demand, too.
   * Addrmatchlist.c, YAM.c: changed the old List.mcc object to an NList object.
-    This one allows to let the list object decide itself whether a scroll bar
+    This one allows to let the list object decide itself whether a scrollbar
     must be displayed or not. This fulfills feature request #1746393.
   * YAM_EA.c, UserImage.c: changing the user image in the address book window
     but canceling the change afterwards will now correctly restore the old user

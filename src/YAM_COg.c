@@ -825,7 +825,7 @@ static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, const
     MUIA_Popobject_ObjStrHook, &PO_HandleVarHook,
     MUIA_Popobject_WindowHook, &PO_WindowHook,
     MUIA_Popobject_Object, lv = NListviewObject,
-      MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_None,
+      MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_FullAuto,
       MUIA_NListview_NList, NListObject,
         InputListFrame,
         MUIA_NList_AdjustHeight, TRUE,
