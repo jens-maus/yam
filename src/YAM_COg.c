@@ -1470,6 +1470,27 @@ HOOKPROTONHNONP(GetAppIconPos, void)
 MakeStaticHook(GetAppIconPosHook, GetAppIconPos);
 
 ///
+/// MDNRequestFunc
+//
+HOOKPROTONHNO(MDNRequestFunc, void, int *arg)
+{
+  struct CO_GUIData *gui = &G->CO->GUI;
+  BOOL active = (BOOL)*arg;
+
+  ENTER();
+
+  nnset(gui->CH_MDN_NEVER, MUIA_Selected, active == FALSE);
+  nnset(gui->CH_MDN_ALLOW, MUIA_Selected, active == TRUE);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, active == FALSE, gui->CY_MDN_NORECIPIENT,
+                                                                  gui->CY_MDN_NODOMAIN,
+                                                                  gui->CY_MDN_DELETE,
+                                                                  gui->CY_MDN_OTHER,
+                                                                  NULL);
+
+  LEAVE();
+}
+MakeStaticHook(MDNRequestHook, MDNRequestFunc);
+///
 
 /*** Pages ***/
 /// CO_PageFirstSteps
@@ -2486,11 +2507,10 @@ Object *CO_PageRead(struct CO_ClassData *data)
                                                                                                                                       NULL);
 
     // setup the MDN stuff
-    DoMethod(data->GUI.CH_MDN_NEVER, MUIM_Notify, MUIA_Selected, TRUE,  data->GUI.CH_MDN_ALLOW, 3, MUIM_NoNotifySet, MUIA_Selected, FALSE);
-    DoMethod(data->GUI.CH_MDN_NEVER, MUIM_Notify, MUIA_Selected, FALSE, data->GUI.CH_MDN_NEVER, 3, MUIM_NoNotifySet, MUIA_Selected, TRUE);
-    DoMethod(data->GUI.CH_MDN_ALLOW, MUIM_Notify, MUIA_Selected, TRUE,  data->GUI.CH_MDN_NEVER, 3, MUIM_NoNotifySet, MUIA_Selected, FALSE);
-    DoMethod(data->GUI.CH_MDN_ALLOW, MUIM_Notify, MUIA_Selected, FALSE, data->GUI.CH_MDN_ALLOW, 3, MUIM_NoNotifySet, MUIA_Selected, TRUE);
-
+    DoMethod(data->GUI.CH_MDN_NEVER, MUIM_Notify, MUIA_Selected, TRUE,  MUIV_Notify_Application, 3, MUIM_CallHook, &MDNRequestHook, FALSE);
+    DoMethod(data->GUI.CH_MDN_NEVER, MUIM_Notify, MUIA_Selected, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MDNRequestHook, TRUE);
+    DoMethod(data->GUI.CH_MDN_ALLOW, MUIM_Notify, MUIA_Selected, TRUE,  MUIV_Notify_Application, 3, MUIM_CallHook, &MDNRequestHook, TRUE);
+    DoMethod(data->GUI.CH_MDN_ALLOW, MUIM_Notify, MUIA_Selected, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MDNRequestHook, FALSE);
   }
 
   RETURN(obj);
