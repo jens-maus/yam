@@ -128,7 +128,6 @@ OVERLOAD(OM_NEW)
           InputListFrame,
           MUIA_NList_CompareHook,     &CompareHook,
           MUIA_NList_ConstructHook,   &ConstructHook,
-          //MUIA_NList_CursorType,      MUIV_NList_CursorType_Bar,
           MUIA_NList_DestructHook,    &GeneralDesHook,
           MUIA_NList_DisplayHook,     &DisplayHook,
           MUIA_NList_Format,          ",,",
