@@ -293,7 +293,12 @@ OVERLOAD(MUIM_Setup)
       data->ehnode.ehn_Flags    = 0;
       data->ehnode.ehn_Object   = obj;
       data->ehnode.ehn_Class    = cl;
+
+      #if defined(__amigaos4__)
+      data->ehnode.ehn_Events   = IDCMP_RAWKEY | IDCMP_CHANGEWINDOW | IDCMP_EXTENDEDMOUSE;
+      #else
       data->ehnode.ehn_Events   = IDCMP_RAWKEY | IDCMP_CHANGEWINDOW;
+      #endif
     }
   }
   else
@@ -580,6 +585,14 @@ OVERLOAD(MUIM_HandleEvent)
       if(xget(data->Matchwindow, MUIA_Window_Open))
         DoMethod(data->Matchwindow, MUIM_Addrmatchlist_ChangeWindow);
     }
+    #if defined(__amigaos4__)
+    else if(imsg->Class == IDCMP_EXTENDEDMOUSE && (imsg->Code & IMSGCODE_INTUIWHEELDATA))
+    {
+      // we forward OS4 mousewheel events to the addrmatchlist directly
+      if(DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Event, imsg))
+        result = MUI_EventHandlerRC_Eat;
+    }
+    #endif
   }
 
   RETURN(result);

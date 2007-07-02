@@ -7,6 +7,10 @@ $URL$
 
 2007-07-02  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Recipientstring.c, Addrmatchlist.c: on AmigaOS4 the Addrmatchlist wasn't
+    scrollable via a scrollwheel. Now the IDCMP_EXTENDEDMOUSE events are properly
+    forwarded from the Recipientstring object onto the Addrmatchlist so that
+    the matchlist popup is now fully taking respect of OS4 wheelmouse events.
   * Addrmatchlist.c: the addrmatchlistwindow will now always open with a maximum
     default height of 8 rows.
   * extrasrc: extracted the snprintf/vasprintf/asprintf functions into seperate

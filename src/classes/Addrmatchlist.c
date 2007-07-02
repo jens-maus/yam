@@ -286,8 +286,22 @@ DECLARE(Event) // struct IntuiMessage *imsg
   if(xget(obj, MUIA_Window_Open))
   {
     struct IntuiMessage *imsg = msg->imsg;
-    LONG direction = (imsg->Code == IECODE_UP || imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT) ? MUIV_NList_Active_Up : MUIV_NList_Active_Down;
     LONG position = xget(data->Matchlist, MUIA_NList_Active);
+    LONG direction;
+
+    #if defined(__amigaos4__)
+    if(imsg->Class == IDCMP_EXTENDEDMOUSE)
+    {
+      struct IntuiWheelData *iwd = (struct IntuiWheelData *)imsg->IAddress;
+
+      if(iwd->WheelY < 0 || iwd->WheelX < 0)
+        direction = MUIV_NList_Active_Up;
+      else
+        direction = MUIV_NList_Active_Down;
+    }
+    else
+    #endif
+      direction = (imsg->Code == IECODE_UP || imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT) ? MUIV_NList_Active_Up : MUIV_NList_Active_Down;
 
     // to enable a circular selection model we have to make some checks.
     if(direction == MUIV_NList_Active_Up)
