@@ -2680,6 +2680,7 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_STRIPSIG,    MSG_HELP_CO_CH_STRIPSIG);
     SetHelp(data->GUI.CY_FORWARDMODE, MSG_HELP_CO_CY_FORWARDMODE);
 
+    DoMethod(data->GUI.CH_QUOTE, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.CH_QUOTEEMPTY, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
     DoMethod(data->GUI.CH_QUOTE, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.CH_STRIPSIG, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
   }
 

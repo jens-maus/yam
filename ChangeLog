@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-02  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c, YAM_COs.c: the "quote empty lines" and "strip signature" check-
+    marks are now ghosted if "quote message" is disabled. This fixes bug
+    #1746017.
+
 2007-07-02  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: updated according to changes.

@@ -2140,32 +2140,34 @@ void CO_SetConfig(void)
 
     case cp_ReplyForward:
     {
-      setstring   (gui->ST_REPLYHI     ,CE->ReplyHello);
-      setstring   (gui->ST_REPLYTEXT   ,CE->ReplyIntro);
-      setstring   (gui->ST_REPLYBYE    ,CE->ReplyBye);
-      setstring   (gui->ST_AREPLYHI    ,CE->AltReplyHello);
-      setstring   (gui->ST_AREPLYTEXT  ,CE->AltReplyIntro);
-      setstring   (gui->ST_AREPLYBYE   ,CE->AltReplyBye);
-      setstring   (gui->ST_AREPLYPAT   ,CE->AltReplyPattern);
-      setstring   (gui->ST_MREPLYHI    ,CE->MLReplyHello);
-      setstring   (gui->ST_MREPLYTEXT  ,CE->MLReplyIntro);
-      setstring   (gui->ST_MREPLYBYE   ,CE->MLReplyBye);
-      setstring   (gui->ST_FWDSTART    ,CE->ForwardIntro);
-      setstring   (gui->ST_FWDEND      ,CE->ForwardFinish);
-      setcheckmark(gui->CH_QUOTE       ,CE->QuoteMessage);
-      setcheckmark(gui->CH_QUOTEEMPTY  ,CE->QuoteEmptyLines);
-      setcheckmark(gui->CH_COMPADDR    ,CE->CompareAddress);
-      setcheckmark(gui->CH_STRIPSIG    ,CE->StripSignature);
+      setstring(gui->ST_REPLYHI, CE->ReplyHello);
+      setstring(gui->ST_REPLYTEXT, CE->ReplyIntro);
+      setstring(gui->ST_REPLYBYE, CE->ReplyBye);
+      setstring(gui->ST_AREPLYHI, CE->AltReplyHello);
+      setstring(gui->ST_AREPLYTEXT, CE->AltReplyIntro);
+      setstring(gui->ST_AREPLYBYE, CE->AltReplyBye);
+      setstring(gui->ST_AREPLYPAT, CE->AltReplyPattern);
+      setstring(gui->ST_MREPLYHI, CE->MLReplyHello);
+      setstring(gui->ST_MREPLYTEXT, CE->MLReplyIntro);
+      setstring(gui->ST_MREPLYBYE, CE->MLReplyBye);
+      setstring(gui->ST_FWDSTART, CE->ForwardIntro);
+      setstring(gui->ST_FWDEND, CE->ForwardFinish);
+      setcheckmark(gui->CH_QUOTE, CE->QuoteMessage);
+      setcheckmark(gui->CH_QUOTEEMPTY, CE->QuoteEmptyLines);
+      setcheckmark(gui->CH_COMPADDR, CE->CompareAddress);
+      setcheckmark(gui->CH_STRIPSIG, CE->StripSignature);
       setcycle(gui->CY_FORWARDMODE, CE->ForwardMode);
+      nnset(gui->CH_QUOTEEMPTY, MUIA_Disabled, CE->QuoteMessage == FALSE);
+      nnset(gui->CH_STRIPSIG, MUIA_Disabled, CE->QuoteMessage == FALSE);
     }
     break;
 
     case cp_Signature:
     {
-      setcheckmark(gui->CH_USESIG      ,CE->UseSignature);
-      setstring   (gui->ST_TAGFILE     ,CE->TagsFile);
-      setstring   (gui->ST_TAGSEP      ,CE->TagsSeparator);
-      setcycle    (gui->CY_SIGNAT      ,G->CO->LastSig);
+      setcheckmark(gui->CH_USESIG, CE->UseSignature);
+      setstring(gui->ST_TAGFILE, CE->TagsFile);
+      setstring(gui->ST_TAGSEP, CE->TagsSeparator);
+      setcycle(gui->CY_SIGNAT, G->CO->LastSig);
       FileToEditor(CreateFilename(SigNames[G->CO->LastSig]), gui->TE_SIGEDIT);
       DoMethod(G->App, MUIM_CallHook, &CO_SwitchSignatHook, !CE->UseSignature);
     }
