@@ -59,7 +59,7 @@ struct EMailCacheNode
 VOID LoadEMailCache(STRPTR name, struct List *list)
 {
   BPTR fh;
-  
+
   ENTER();
 
   NewList(list);
@@ -165,7 +165,7 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
 ///
 /// FindAllABMatches()
 // tries to find all matching addressbook entries and add them to the list
-VOID FindAllABMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode *root)
+VOID FindAllABMatches(STRPTR text, Object *list, struct MUI_NListtree_TreeNode *root)
 {
   LONG tl;
   struct MUI_NListtree_TreeNode *tn;
@@ -207,7 +207,7 @@ VOID FindAllABMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode 
       if(e.MatchField != -1) /* one of the fields matches, so let's insert it in the MUI list */
       {
         e.MatchEntry = entry;
-        DoMethod(list, MUIM_List_InsertSingle, &e, MUIV_List_Insert_Sorted);
+        DoMethod(list, MUIM_NList_InsertSingle, &e, MUIV_NList_Insert_Sorted);
       }
     }
 
@@ -303,7 +303,7 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
         {
           // at least one of the fields matches, so let's insert it in the MUI list
           e.MatchEntry = entry;
-          DoMethod(msg->list, MUIM_List_InsertSingle, &e, MUIV_List_Insert_Bottom);
+          DoMethod(msg->list, MUIM_NList_InsertSingle, &e, MUIV_NList_Insert_Bottom);
         }
       }
     }

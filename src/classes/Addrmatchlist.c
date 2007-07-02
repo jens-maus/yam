@@ -122,16 +122,16 @@ OVERLOAD(OM_NEW)
     MUIA_Window_IsSubWindow,      TRUE,
     WindowContents, GroupObject,
       InnerSpacing(0, 0),
-      Child, listview = ListviewObject,
-        MUIA_Listview_ScrollerPos,   MUIV_Listview_ScrollerPos_None,
-        MUIA_Listview_List,  list = ListObject,
+      Child, listview = NListviewObject,
+        MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_FullAuto,
+        MUIA_NListview_NList,  list = NListObject,
           InputListFrame,
-          MUIA_List_CompareHook,     &CompareHook,
-          MUIA_List_ConstructHook,   &ConstructHook,
-          MUIA_List_CursorType,      MUIV_List_CursorType_Bar,
-          MUIA_List_DestructHook,    &GeneralDesHook,
-          MUIA_List_DisplayHook,     &DisplayHook,
-          MUIA_List_Format,          ",,",
+          MUIA_NList_CompareHook,     &CompareHook,
+          MUIA_NList_ConstructHook,   &ConstructHook,
+          //MUIA_NList_CursorType,      MUIV_NList_CursorType_Bar,
+          MUIA_NList_DestructHook,    &GeneralDesHook,
+          MUIA_NList_DisplayHook,     &DisplayHook,
+          MUIA_NList_Format,          ",,",
         End,
       End,
     End,
@@ -173,7 +173,7 @@ OVERLOAD(OM_NEW)
       // set the doubleclick notify to signal the string to resolve a entry
       DoMethod(listview, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, data->String, 2, MUIM_Recipientstring_Resolve, MUIF_NONE);
       DoMethod(listview, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);
-      DoMethod(list, MUIM_Notify, MUIA_List_Active, MUIV_EveryTime, obj, 2, MUIM_Addrmatchlist_ActiveChange, MUIV_TriggerValue);
+      DoMethod(list, MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, MUIM_Addrmatchlist_ActiveChange, MUIV_TriggerValue);
     }
   }
 
@@ -283,22 +283,22 @@ DECLARE(Event) // struct IntuiMessage *imsg
   if(xget(obj, MUIA_Window_Open))
   {
     struct IntuiMessage *imsg = msg->imsg;
-    LONG direction = (imsg->Code == IECODE_UP || imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT) ? MUIV_List_Active_Up : MUIV_List_Active_Down;
-    LONG position = xget(data->Matchlist, MUIA_List_Active);
+    LONG direction = (imsg->Code == IECODE_UP || imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT) ? MUIV_NList_Active_Up : MUIV_NList_Active_Down;
+    LONG position = xget(data->Matchlist, MUIA_NList_Active);
 
     // to enable a circular selection model we have to make some checks.
-    if(direction == MUIV_List_Active_Up)
+    if(direction == MUIV_NList_Active_Up)
     {
-      if(position == MUIV_List_Active_Off || position == 0)
-        direction = MUIV_List_Active_Bottom;
+      if(position == MUIV_NList_Active_Off || position == 0)
+        direction = MUIV_NList_Active_Bottom;
     }
     else
     {
-      if(position == MUIV_List_Active_Off || position == (LONG)xget(data->Matchlist, MUIA_List_Entries)-1)
-        direction = MUIV_List_Active_Top;
+      if(position == MUIV_NList_Active_Off || position == (LONG)xget(data->Matchlist, MUIA_NList_Entries)-1)
+        direction = MUIV_NList_Active_Top;
     }
 
-    set(data->Matchlist, MUIA_List_Active, direction);
+    set(data->Matchlist, MUIA_NList_Active, direction);
 
     result = TRUE;
   }
@@ -319,19 +319,19 @@ DECLARE(Open) // STRPTR str
 
   D(DBF_GUI, "Match this: '%s'", msg->str);
 
-  set(data->Matchlist, MUIA_List_Quiet, TRUE);
+  set(data->Matchlist, MUIA_NList_Quiet, TRUE);
 
-  DoMethod(data->Matchlist, MUIM_List_Clear);
+  DoMethod(data->Matchlist, MUIM_NList_Clear);
 
   DoMethod(_app(obj), MUIM_YAM_FindEmailMatches, msg->str, data->Matchlist);
 
   /* is there more entries in the list and if only one, is it longer than what the user already typed... */
-  entries = xget(data->Matchlist, MUIA_List_Entries);
-  if(entries > 0 && (DoMethod(data->Matchlist, MUIM_List_GetEntry, 0, &entry), (entries != 1 || Stricmp(msg->str, entry->MatchString))))
+  entries = xget(data->Matchlist, MUIA_NList_Entries);
+  if(entries > 0 && (DoMethod(data->Matchlist, MUIM_NList_GetEntry, 0, &entry), (entries != 1 || Stricmp(msg->str, entry->MatchString))))
   {
     res = entry->MatchString;
     // make no entry active yet
-    nnset(data->Matchlist, MUIA_List_Active, MUIV_List_Active_Off);
+    nnset(data->Matchlist, MUIA_NList_Active, MUIV_NList_Active_Off);
   }
 
   // should we open the popup list (if not already shown)
@@ -343,7 +343,7 @@ DECLARE(Open) // STRPTR str
   else if(res == NULL)
     set(obj, MUIA_Window_Open, FALSE);
 
-  set(data->Matchlist, MUIA_List_Quiet, FALSE);
+  set(data->Matchlist, MUIA_NList_Quiet, FALSE);
 
   RETURN(res);
   return (ULONG)res;
@@ -366,7 +366,7 @@ DECLARE(ActiveChange) // LONG active
     struct CustomABEntry *entry;
 
     // get the active entry
-    DoMethod(data->Matchlist, MUIM_List_GetEntry, msg->active, &entry);
+    DoMethod(data->Matchlist, MUIM_NList_GetEntry, msg->active, &entry);
     if(entry != NULL)
     {
       char *res;
