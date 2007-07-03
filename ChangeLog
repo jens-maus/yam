@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c, YAM_COs.c: all gadgets relevant for logging are now disabled if
+    logging is set to off.
+
 2007-07-02  Jens Langner <Jens.Langner@light-speed.de>
 
   * Recipientstring.c, Addrmatchlist.c: on AmigaOS4 the Addrmatchlist wasn't

@@ -2953,10 +2953,10 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
             Child, data->GUI.CY_LOGMODE = MakeCycle(logfmode, tr(MSG_CO_LogMode)),
 
             Child, Label2(tr(MSG_CO_LogPath)),
-            Child, PopaslObject,
-              MUIA_Popasl_Type     ,ASL_FileRequest,
-              MUIA_Popstring_String,data->GUI.ST_LOGFILE = MakeString(SIZE_PATH,tr(MSG_CO_LogPath)),
-              MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
+            Child, data->GUI.PO_LOGFILE = PopaslObject,
+              MUIA_Popasl_Type, ASL_FileRequest,
+              MUIA_Popstring_String, data->GUI.ST_LOGFILE = MakeString(SIZE_PATH,tr(MSG_CO_LogPath)),
+              MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
               ASLFR_DrawersOnly, TRUE,
             End,
 
@@ -2985,6 +2985,11 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_SPLITLOG  ,MSG_HELP_CO_CH_SPLITLOG );
     SetHelp(data->GUI.CY_LOGMODE   ,MSG_HELP_CO_CY_LOGMODE  );
     SetHelp(data->GUI.CH_LOGALL    ,MSG_HELP_CO_CH_LOGALL   );
+
+    DoMethod(data->GUI.CY_LOGMODE, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, MUIV_Notify_Application, 7, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.PO_LOGFILE,
+                                                                                                                                                                   data->GUI.CH_SPLITLOG,
+                                                                                                                                                                   data->GUI.CH_LOGALL,
+                                                                                                                                                                   NULL);
   }
 
   RETURN(obj);
