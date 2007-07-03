@@ -179,6 +179,7 @@ struct CO_GUIData
   Object *CH_ENCSELF;
   Object *ST_REMAILER;
   Object *ST_FIRSTLINE;
+  Object *PO_LOGFILE;
   Object *ST_LOGFILE;
   Object *CY_LOGMODE;
   Object *CH_SPLITLOG;
@@ -234,6 +235,7 @@ struct CO_GUIData
   Object *CH_FCNTMENU;
   Object *CH_MCNTMENU;
   Object *CY_INFOBAR;
+  Object *PO_INFOBARTXT;
   Object *ST_INFOBARTXT;
   Object *CH_WARNSUBJECT;
   Object *NB_EMAILCACHE;
@@ -379,6 +381,8 @@ enum FolderInfoMode
   FIM_NAME_AND_UNREAD_NEW_MAILS
 };
 
+enum InfoBarPos { IB_POS_TOP=0, IB_POS_CENTER, IB_POS_BOTTOM, IB_POS_OFF };
+
 /*** Configuration main structure ***/
 struct Config
 {
@@ -410,7 +414,6 @@ struct Config
    int   HideGUIElements;
    int   StackSize;
    int   SizeFormat;
-   int   InfoBar;
    int   EmailCache;
    int   SMTP_Port;
    int   TRBufferSize;
@@ -438,6 +441,7 @@ struct Config
    enum  PreSelMode     PreSelection;
    enum  FolderInfoMode FolderInfoMode;
    enum  ForwardMode    ForwardMode;
+   enum  InfoBarPos     InfoBar;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;
@@ -581,8 +585,6 @@ struct Config
    char AltQuoteChar[2];
    char ThemeName[SIZE_FILE];
 };
-
-enum InfoBarPos { IB_POS_TOP=0, IB_POS_CENTER, IB_POS_BOTTOM, IB_POS_OFF };
 
 extern struct Config *C;
 extern struct Config *CE;
