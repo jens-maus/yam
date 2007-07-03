@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-03  Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc/vasprintf.c: added the missing VA_COPY() calls which were
+    hopefully the reason why this function wasn't working for our MOS builds.
+
 2007-07-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c, YAM_COs.c: the InfoBar contents string gadget is now disabled if
