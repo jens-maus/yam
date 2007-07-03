@@ -214,225 +214,234 @@ struct RexxMsg *SendRexxCommand(struct RexxHost *host, char *buff, BPTR fh)
 
 ///
 /// CloseDownARexxHost
-void CloseDownARexxHost( struct RexxHost *host )
+void CloseDownARexxHost(struct RexxHost *host)
 {
-   struct RexxMsg *rexxmsg;
-   
-   if( host->port )
-   {
-      /* Port abmelden */
-      RemPort( host->port );
+  ENTER();
+
+  if(host->port != NULL)
+  {
+    struct RexxMsg *rexxmsg;
+
+    // remove the port from the public list
+    RemPort(host->port);
       
-      /* Auf noch ausstehende Replies warten */
-      while( host->replies > 0 )
-      {
-         WaitPort( host->port );
+    // remove outstanding messages
+    while(host->replies > 0)
+    {
+      WaitPort(host->port);
          
-         while((rexxmsg = (struct RexxMsg *) GetMsg(host->port)))
-         {
-            if( rexxmsg->rm_Node.mn_Node.ln_Type == NT_REPLYMSG )
-            {
-               if( !rexxmsg->rm_Args[15] )
-               {
-                  /* Reply zu einem SendRexxCommand()-Call */
-                  if( ARexxResultHook )
-                     ARexxResultHook( host, rexxmsg );
-               }
+      while((rexxmsg = (struct RexxMsg *) GetMsg(host->port)) != NULL)
+      {
+        if(rexxmsg->rm_Node.mn_Node.ln_Type == NT_REPLYMSG)
+        {
+          if(!rexxmsg->rm_Args[15] )
+          {
+            // it was a reply to a SendRexxCommand() call
+            if(ARexxResultHook != NULL)
+               ARexxResultHook(host, rexxmsg);
+          }
                
-               FreeRexxCommand( rexxmsg );
-               --host->replies;
-            }
-            else
-               ReplyRexxCommand( rexxmsg, -20, (long) "Host closing down", NULL );
-         }
+          FreeRexxCommand(rexxmsg);
+          host->replies--;
+        }
+        else
+          ReplyRexxCommand(rexxmsg, -20, (long)"Host closing down", NULL);
       }
+    }
       
-      /* MsgPort leeren */
-      while((rexxmsg = (struct RexxMsg *) GetMsg(host->port)))
-         ReplyRexxCommand( rexxmsg, -20, (long) "Host closing down", NULL );
+    // empty the message port
+    while((rexxmsg = (struct RexxMsg *) GetMsg(host->port)) != NULL)
+      ReplyRexxCommand(rexxmsg, -20, (long)"Host closing down", NULL);
       
-      if(isFlagClear(host->flags, ARB_HF_USRMSGPORT))
-         DeleteMsgPort( host->port );
-   }
+    if(isFlagClear(host->flags, ARB_HF_USRMSGPORT))
+      DeleteMsgPort( host->port );
+  }
    
-   if( host->rdargs ) FreeDosObject( DOS_RDARGS, host->rdargs );
-   FreeVec( host );
+  if(host->rdargs != NULL)
+    FreeDosObject(DOS_RDARGS, host->rdargs);
+  FreeVec(host);
+
+  LEAVE();
 }
 
 ///
 /// SetupARexxHost
 struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
 {
-   struct RexxHost *host;
-   int ext = 0;
+  BOOL success = FALSE;
+  struct RexxHost *host;
    
-   ENTER();
+  ENTER();
 
-   if( !basename || !*basename )
-      basename = RexxPortBaseName;
+  if(basename == NULL || basename[0] == '\0' )
+    basename = RexxPortBaseName;
    
-   if( !(host = AllocVec(sizeof(struct RexxHost), MEMF_CLEAR)) )
-   {
-      RETURN(NULL);
-      return NULL;
-   }
-
-   strlcpy(host->portname, basename, sizeof(host->portname));
+  if((host = AllocVec(sizeof(struct RexxHost), MEMF_CLEAR)) != NULL)
+  {
+    strlcpy(host->portname, basename, sizeof(host->portname));
    
-   if( (host->port = usrport) )
-   {
+    if((host->port = usrport) != NULL)
+    {
       SET_FLAG(host->flags, ARB_HF_USRMSGPORT);
-   }
-   else if( !(host->port = CreateMsgPort()) )
-   {
-      FreeVec( host );
-
-      RETURN(NULL);
-      return NULL;
-   }
-   else
-   {
+    }
+    else if((host->port = CreateMsgPort()) != NULL)
+    {
       host->port->mp_Node.ln_Pri = 0;
-   }
+    }
    
-   Forbid();
-   
-   while(FindPort(host->portname))
-      snprintf(host->portname, sizeof(host->portname), "%s.%d", basename, ++ext);
-   
-   host->portnumber = ext;
-   host->port->mp_Node.ln_Name = host->portname;
-   AddPort( host->port );
-   
-   Permit();
-   
-   if( !(host->rdargs = AllocDosObject(DOS_RDARGS, NULL)) )
-   {
-      RemPort( host->port );
-      if(isFlagClear(host->flags, ARB_HF_USRMSGPORT)) DeleteMsgPort( host->port );
-      FreeVec( host );
+    if(host->port != NULL)
+    {
+      if((host->rdargs = AllocDosObject(DOS_RDARGS, NULL)) != NULL)
+      {
+        int ext = 0;
 
-      RETURN(NULL);
-      return NULL;
-   }
+        host->rdargs->RDA_Flags = RDAF_NOPROMPT;
+
+        Forbid();
+       
+        // create a unique name for the port
+        while(FindPort(host->portname) != NULL)
+          snprintf(host->portname, sizeof(host->portname), "%s.%d", basename, ++ext);
+       
+        host->portnumber = ext;
+        host->port->mp_Node.ln_Name = host->portname;
+        AddPort(host->port);
+       
+        Permit();
+
+        success = TRUE;
+      }
+    }
+
+    if(success == FALSE)
+    {
+      // something went wrong
+      if(host->rdargs != NULL)
+        FreeDosObject(DOS_RDARGS, host->rdargs);
+      if(isFlagClear(host->flags, ARB_HF_USRMSGPORT))
+        DeleteMsgPort(host->port);
+      FreeVec(host);
+      host = NULL;
+    }
+  }
    
-   host->rdargs->RDA_Flags = RDAF_NOPROMPT;
-   
-   RETURN(host);
-   return(host);
+  RETURN(host);
+  return(host);
 }
 
 ///
 
-/* StateMachine für FindRXCommand() */
-
+// state machine for FindRXCommand()
 /// scmp
 static char *scmp(char *inp, const char *str)
 {
-   while( *str && *inp )
-      if( *inp++ != *str++ )
-         return NULL;
+  while(*str != '\0' && *inp != '\0')
+    if(*inp++ != *str++)
+      return NULL;
    
-   /* Reststring zurückgeben */
-   return inp;
+  // return the remaining string
+  return inp;
 }
 
 ///
 /// find
 static int find( char *input )
 {
-   struct arb_p_state *st = arb_p_state;
-   struct arb_p_link *ad;
-   char *ni;
-   char tmp[36];
-   const char *s;
+  struct arb_p_state *st = arb_p_state;
+  struct arb_p_link *ad;
+  char *ni;
+  char tmp[36];
+  const char *s;
    
-   ni = tmp;
-   while( *input && ni-tmp < 32 )
-   {
-      *ni++ = toupper(*input);
-      ++input;
-   }
-   *ni = 0;
-   input = tmp;
+  ni = tmp;
+  while(*input != '\0' && ni-tmp < 32)
+  {
+    *ni++ = toupper(*input);
+    ++input;
+  }
+  *ni = 0;
+  input = tmp;
    
-   while( *input )
-   {
-      /* Terminalzustand erreicht? */
-      if( !st->pa )
-      {
-         if( *input )
-            return -1;
-         else
-            return st->cmd;
-      }
+  while(*input != '\0')
+  {
+    // did we reach the terminal state?
+    if(!st->pa)
+    {
+      if(*input != '\0')
+        return -1;
+      else
+        return st->cmd;
+    }
       
-      /* Wo geht's weiter? */
-      ni = 0;
-      for(ad = st->pa; (s = ad->str); ad++)
-      {
-         /* die Links sind absteigend sortiert */
-         if( *input > *s )
-            break;
+    // where to continue?
+    ni = 0;
+    for(ad = st->pa; (s = ad->str); ad++)
+    {
+      // the links are sorted descendant
+      if(*input > *s)
+        break;
          
-         if( *input == *s )
-            if((ni = scmp(input+1, s+1)))
-               break;
-      }
+      if(*input == *s)
+        if((ni = scmp(input+1, s+1)) != NULL)
+          break;
+    }
       
-      /* Nirgends... */
-      if( !ni )
-         return -1;
+    // nowhere to continue
+    if(ni == NULL)
+      return -1;
       
-      /* Zustandsüberführung */
-      st = arb_p_state + ad->dst;
-      input = ni;
-   }
+    // state check
+    st = arb_p_state + ad->dst;
+    input = ni;
+  }
    
-   return st->cmd;
+  return st->cmd;
 }
 
 ///
 /// FindRXCommand
-static struct rxs_command *FindRXCommand( char *com )
+static struct rxs_command *FindRXCommand(char *com)
 {
-   int cmd;
+   int index;
+   struct rxs_command *cmd = NULL;
 
    ENTER();
    SHOWSTRING(DBF_REXX, com);
    
-   cmd = find(com);
+   if((index = find(com)) != -1)
+     cmd = rxs_commandlist + index;
    
-   if(cmd == -1)
-   {
-      RETURN(NULL);
-      return NULL;
-   }
-
-   RETURN(rxs_commandlist+cmd);
-   return(rxs_commandlist+cmd);
+   RETURN(cmd);
+   return cmd;
 }
 
 ///
 /// ParseRXCommand
-static struct rxs_command *ParseRXCommand( char **arg )
+static struct rxs_command *ParseRXCommand(char **arg)
 {
-   char com[256], *s, *t;
+  char com[256], *s, *t;
+   struct rxs_command *cmd;
    
-   s = *arg;
-   t = com;
-   
-   while(*s != '\0' && *s != ' ' && *s != '\n' && (unsigned int)(t - com + 1) < sizeof(com))
-      *t++ = *s++;
-   
-   *t = '\0';
-   while( *s == ' ' ) ++s;
-   *arg = s;
+  ENTER();
 
-   SHOWSTRING(DBF_REXX, com);
-   SHOWSTRING(DBF_REXX, *arg);
+  s = *arg;
+  t = com;
+   
+  while(*s != '\0' && *s != ' ' && *s != '\n' && (unsigned int)(t - com + 1) < sizeof(com))
+    *t++ = *s++;
+   
+  *t = '\0';
+  while(*s == ' ')
+    ++s;
+  *arg = s;
 
-   return( FindRXCommand( com ) );
+  SHOWSTRING(DBF_REXX, com);
+  SHOWSTRING(DBF_REXX, *arg);
+
+  cmd = FindRXCommand(com);
+
+  RETURN(cmd);
+  return cmd;
 }
 
 ///
@@ -566,10 +575,7 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
       if( *rs == ',' ) ++rs;
       *t = '\0';
       
-      /*
-       * Resultat(e) erzeugen
-       */
-      
+      // create the results
       if( !*resarray )
       {
          ++resarray;
@@ -582,8 +588,7 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
          LONG **subarray = (LONG **) *resarray++;
          struct rxs_stemnode *countnd;
          
-         /* Anzahl der Elemente */
-         
+         // number of elements
          if( !(new = new_stemnode(&first, &old)) )
          {
             free_stemlist( first );
@@ -591,8 +596,7 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
          }
          countnd = new;
          
-         /* Die Elemente selbst */
-         
+         // the elements
          while((r = *subarray++))
          {
             if( !(new = new_stemnode(&first, &old)) )
@@ -615,8 +619,7 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
             }
          }
          
-         /* Die Count-Node */
-         
+         // the count node
          strlcpy(t, ".COUNT", sizeof(resb)-(t-resb));
          countnd->name = StrDup( resb );
          
@@ -625,7 +628,7 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
       }
       else
       {
-         /* Neue Node anlegen */
+         // create a new node
          if( !(new = new_stemnode(&first, &old)) )
          {
             free_stemlist( first );
@@ -673,7 +676,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       goto drc_cleanup;
    }
    
-   /* welches Kommando? */
+   // which command
    snprintf(argb, strlen((char *)ARG0(rexxmsg))+2, "%s\n", ARG0(rexxmsg));
    arg = argb;
 
@@ -681,7 +684,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    
    if(!(rxc = ParseRXCommand( &arg )))
    {
-      /* Msg an ARexx schicken, vielleicht existiert ein Skript */
+      // send messahe to ARexx, perhaps a script exists
       struct RexxMsg *rm;
       
       if((rm = CreateRexxCommand(host, (char *) ARG0(rexxmsg), 0, 0)))
@@ -691,7 +694,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
          
          if( CommandToRexx(host, rm) )
          {
-            /* Reply wird später vom Dispatcher gemacht */
+            // the reply is done later by the dispatcher
             if( argb ) FreeVec( argb );
 
             LEAVE();
@@ -713,7 +716,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       goto drc_cleanup;
    }
    
-   /* Speicher für Argumente etc. holen */
+   // get memory for the arguments
    (rxc->function)(host, (void **)(APTR)&array, RXIF_INIT, rexxmsg);
    cargstr = AllocVec((ULONG)(rxc->args ? 15+strlen(rxc->args) : 15), MEMF_ANY );
    
@@ -726,8 +729,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    argarray = array + 2;
    resarray = array + rxc->resindex;
    
-   /* Argumente parsen */
-   
+   // parse the arguments
    if( rxc->results )
       strlcpy(cargstr, "VAR/K,STEM/K", (ULONG)(rxc->args ? 15+strlen(rxc->args) : 15));
    else
@@ -760,14 +762,13 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       }
    }
    
-   /* Funktion aufrufen */
+   // call the function
    (rxc->function)( host, (void **)(APTR)&array, RXIF_ACTION, rexxmsg );
    
    rc = array[0];
    rc2 = array[1];
    
-   /* Resultat(e) auswerten */
-   
+   // evaluate the results
    if( rxc->results && rc==0 &&
       (rexxmsg->rm_Action & RXFF_RESULT) )
    {
@@ -780,7 +781,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       {
          if( argarray[0] )
          {
-            /* VAR */
+            // VAR
             if( (long) result == -1 )
             {
                rc = 20;
@@ -809,7 +810,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
          
          if( !rc && argarray[1] )
          {
-            /* STEM */
+            // STEM
             if( (long) stem == -1 )
             {
                rc = 20;
@@ -833,11 +834,10 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
             result = NULL;
          }
          
-         /* Normales Resultat: Möglich? */
-         
+         // is a normal result possible?
          if( (long) result == -1 )
          {
-            /* Nein */
+            // no!
             rc = 20;
             rc2 = ERROR_NO_FREE_STORE;
             result = NULL;
@@ -849,12 +849,10 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    
 drc_cleanup:
 
-   /* Nur RESULT, wenn weder VAR noch STEM */
-   
+   // return RESULT only, if neither VAR nor STEM
    ReplyRexxCommand( rexxmsg, rc, rc2, result );
    
-   /* benutzten Speicher freigeben */
-   
+   // free the memory
    if( result ) FreeVec( result );
    FreeArgs( host->rdargs );
    if( cargstr ) FreeVec( cargstr );
@@ -919,3 +917,4 @@ void ARexxDispatch( struct RexxHost *host )
    LEAVE();
 }
 ///
+
