@@ -12,6 +12,8 @@ $URL$
 
 2007-07-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: analog to the Addrmatchlist the variable popups are now also
+    opened with a maximum default height of 8 rows.
   * YAM_COg.c, YAM_COs.c: the InfoBar contents string gadget is now disabled if
     the info bar is switched off.
   * YAM_COg.c, YAM_COs.c: all gadgets relevant for logging are now disabled if
