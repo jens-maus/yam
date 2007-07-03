@@ -2291,7 +2291,7 @@ void CO_SetConfig(void)
       setslider(gui->NB_ENCPACK, CE->XPKPackEncryptEff);
       setstring(gui->ST_ARCHIVER, CE->PackerCommand);
 
-      set(gui->CH_APPICONPOS, MUIA_Disabled, !CE->WBAppIcon);
+      set(gui->CH_APPICONPOS, MUIA_Disabled, CE->WBAppIcon == FALSE);
     }
     break;
 
@@ -2303,6 +2303,7 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
       setcycle(gui->CY_SIZE, CE->SizeFormat);
 
+      set(gui->PO_INFOBARTXT, MUIA_Disabled, CE->InfoBar == IB_POS_OFF);
       // update the themeslist and set the current one
       // as active
       DoMethod(gui->GR_THEMES, MUIM_ThemeListGroup_Update);

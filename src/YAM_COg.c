@@ -1492,6 +1492,24 @@ HOOKPROTONHNO(MDNRequestFunc, void, int *arg)
 }
 MakeStaticHook(MDNRequestHook, MDNRequestFunc);
 ///
+/// InfoBarPosFunc
+// update the InfoBar contents string gadget according to the position setting
+HOOKPROTONHNO(InfoBarPosFunc, void, int *arg)
+{
+  struct CO_GUIData *gui = &G->CO->GUI;
+  BOOL inactive = (BOOL)(*arg == IB_POS_OFF);
+
+  ENTER();
+
+  // disabling the Popstring object completely doesn't work, because on reactivation the string
+  // gadget is not redrawn correctly (bug in MUI?), hence we do it separately.
+  nnset(gui->ST_INFOBARTXT, MUIA_Disabled, inactive == TRUE);
+  nnset((Object *)xget(gui->PO_INFOBARTXT, MUIA_Popstring_Button), MUIA_Disabled, inactive == TRUE);
+
+  LEAVE();
+}
+MakeStaticHook(InfoBarPosHook, InfoBarPosFunc);
+///
 
 /*** Pages ***/
 /// CO_PageFirstSteps
@@ -3504,7 +3522,7 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
             Child, data->GUI.CY_INFOBAR = MakeCycle(infob, tr(MSG_CO_INFOBARPOS)),
 
             Child, Label2(tr(MSG_CO_FOLDERLABEL)),
-            Child, MakeVarPop(&data->GUI.ST_INFOBARTXT, VPM_MAILSTATS, SIZE_DEFAULT, tr(MSG_CO_FOLDERLABEL)),
+            Child, data->GUI.PO_INFOBARTXT = MakeVarPop(&data->GUI.ST_INFOBARTXT, VPM_MAILSTATS, SIZE_DEFAULT, tr(MSG_CO_FOLDERLABEL)),
           End,
 
           Child, VGroup, GroupFrameT(tr(MSG_CO_GENLISTCFG)),
@@ -3525,6 +3543,8 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
     SetHelp(data->GUI.ST_INFOBARTXT,       MSG_HELP_CO_ST_INFOBARTXT);
     SetHelp(data->GUI.CH_EMBEDDEDREADPANE, MSG_HELP_CO_CH_EMBEDDEDREADPANE);
     SetHelp(data->GUI.CY_SIZE,             MSG_HELP_CO_CY_SIZE);
+
+    DoMethod(data->GUI.CY_INFOBAR, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &InfoBarPosHook, MUIV_TriggerValue);
   }
 
   RETURN(obj);
