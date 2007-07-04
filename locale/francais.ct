@@ -3,7 +3,7 @@
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 3043 2007-05-21 22:29:16Z
+; based on YAM.cd 3193 2007-07-01 07:28:18Z
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -4068,18 +4068,6 @@ MSG_WR_Security
 Sécurité
 ; Security
 ;
-MSG_WR_ToQueue
-Envoyer p_lus tard
-; Send _later
-;
-MSG_WR_Send
-Envo_yer maintenant
-; _Send now
-;
-MSG_WR_Hold
-_Bloquer
-; _Hold
-;
 MSG_WR_BounceWT
 Détourner
 ; Bounce message
@@ -4861,19 +4849,6 @@ ou ne supporte pas les requêtes HTTP.
 ; server is currently down or doesn't support HTTP requests.
 ; HOST
 ;
-MSG_ER_BadResponse
-Mauvaise commande %s, réponse :\n\
-%s.\n\
-\n\
-Le serveur ne peut pas exécuter cette commande \
-et a répondu avec le message d'erreur précédent.
-; Bad %s command response:\n\
-; %s\n\
-; \n\
-; The mail server couldn't execute the command \
-; and replied with the above error message.
-; COMMAND, TEXT
-;
 MSG_ER_UnknownPOP
 Serveur POP3 inconnu : « %s ».\n\
 \n\
@@ -4915,10 +4890,6 @@ YAM ne peut pas sauver le message sur disque. L'espace disque doit être insuffis
 ; \n\
 ; YAM can't save the message to disk, maybe you're out of disk space.
 ; FILENAME
-;
-MSG_ER_ConnectionBroken
-Connexion TCP/IP suspendu, probablement du à un problème de porteuse.
-; TCP/IP connection broken, probably due to a carrier drop.
 ;
 MSG_ER_ErrorReadMailfile
 Erreur de lecture pour : %s\n\
@@ -6237,16 +6208,6 @@ la connexion SMTP-AUTH que YAM essai d'établir. Veuillez vérifier \
 votre configuration.
 ; No user name or password was specified for the SMTP AUTH connection \
 ; YAM was trying to establish. Please check your configuration.
-;
-MSG_ER_POPWELCOME
-Le serveur POP a répondu avec un message d'erreur durant la procédure \
-de bienvenue et la connexion a été interrompue :\n\
-\n\
-%s\n
-; The POP server replied with an error message during the welcome \
-; procedure and the connection was terminated:\n\
-; \n\
-; %s\n
 ;
 MSG_CO_APPICON_LABEL
 Nvx : %n Total : %t
@@ -8748,4 +8709,179 @@ Arrêt en cours...
 MSG_ER_IGNOREALL
 Ignorer _tout|*_Ignorer
 ; Ignore _all|*_Ignore
+;
+MSG_HELP_CO_CY_FOLDERINFO
+Information à afficher\n\
+comme label de dossier.
+; Information that should be displayed\n\
+; as the label of the folder.
+;
+MSG_CO_FOLDERINFO01
+Nom de dossier
+; Folder name
+;
+MSG_CO_FOLDERINFO02
+Nom (nouveaux)
+; Folder name (new)
+;
+MSG_CO_FOLDERINFO03
+Nom (non-lus)
+; Folder name (unread)
+;
+MSG_CO_FOLDERINFO04
+Nom (nouveaux/non-lus)
+; Folder name (new/unread)
+;
+MSG_CO_FOLDERINFO05
+Nom (non-lus/nouveaux)
+; Folder name (unread/new)
+;
+MSG_ER_BADRESPONSE
+Mauvaise réponse de la part du serveur de courier « %s » \
+pour la commande « %s » :\n\
+%s\n\
+\n\
+Le serveur de mail ne peut pas exécuter la commande \
+et a répondu par le message d'erreur ci-dessus.
+; Bad response from mail server '%s' for command '%s':\n\
+; %s\n\
+; \n\
+; The mail server couldn't execute the command \
+; and replied with the above error message.
+;
+; SERVER, COMMAND, TEXT
+;
+MSG_ER_POP3WELCOME
+Le serveur POP3 « %s » a répondu par un message d'erreur lors de la \
+procédure d'accueil et la communication a été interrompue :\n\
+\n\
+%s\n
+; The POP3 server '%s' replied with an error message during the welcome \
+; procedure and the connection was terminated:\n\
+; \n\
+; %s\n
+;
+; SERVER, TEXT
+MSG_FO_EXPIREUNREAD
+même non-lus
+; also unread
+;
+MSG_HELP_FO_CH_EXPIREUNREAD
+Avec cette option les anciens messages\n\
+seront effacés même sans avoir été lus.
+; If selected, old messages will be deleted,\n\
+; even if they are not yet read.
+;
+MSG_WR_SENDNOW
+Envo_yer maintenant
+; _Send now
+;
+MSG_WR_SENDLATER
+Envoyer p_lus tard
+; Send _later
+;
+MSG_WR_HOLD
+_Bloquer
+; _Hold
+;
+MSG_WR_CANCEL
+_Annuler
+; Cancel
+;
+MSG_WR_MSENDNOW
+Envoyer maintenant
+; Send now
+;
+MSG_WR_MSENDLATER
+Envoyer plus tard
+; Send later
+;
+MSG_WR_MHOLD
+Bloquer
+; Hold
+;
+MSG_WR_MCANCEL
+Annuler
+; Cancel
+;
+MSG_ER_CONNECTIONBROKEN
+La connexion TCP/IP avec le serveur « %s » a été interrompue \
+lors de la tentative d'envoi de la commande « %s ».\n\
+\n\
+Cela peut être dû à une fermeture de connexion par le serveur.
+; The TCP/IP connection with server '%s' was interrupted \
+; while trying to send command '%s'.\n\
+; \n\
+; This may be due to a connection drop by the server.
+;
+MSG_WR_MSWITCH_MSG
+Basculer vers l'onglet « Message »
+; Switch to 'Message' Tab
+;
+MSG_WR_MSWITCH_ATT
+Basculer vers l'onglet « Pièces jointes »
+; Switch to 'Attachments' Tab
+;
+MSG_WR_MSWITCH_OPT
+Basculer vers l'onglet « Options »
+; Switch to 'Options' Tab
+;
+MSG_CO_FWDMSG
+Courr_ier retransmis
+; _Forward message
+;
+MSG_CO_FWDMSG_ATTACH
+en pièce jointe
+; as attachment
+;
+MSG_CO_FWDMSG_INLINE
+inséré dans le corps
+; inlined
+;
+MSG_HELP_CO_CY_FORWARDMODE
+Permet de choisir comment un courrier doit être\n\
+retransmis. Soit il peut être retransmis en tant\n\
+que pièce jointe ou son texte peut être inséré\n\
+dans le corps du nouveau courrier.
+; Allows to select how a message should be\n\
+; forwarded. Either a message can be forwarded\n\
+; as an attachment or the message text can be\n\
+; put inlined into the forward message text.
+;
+MSG_ABOUT_CURRENT_DEVELOPERS
+Développeurs actuels :
+; Current Developers:
+;
+MSG_ABOUT_CONTRIBUTORS
+Contributeurs :
+; Contributors:
+;
+MSG_ABOUT_LOCALIZATION_CONTRIBUTORS
+Traducteurs :
+; Localization Contributors:
+;
+MSG_ABOUT_GPL
+Ce programme est un logiciel libre, vous êtes incités\n\
+à le distribuer et/ou le modifier sous les termes de la\n\
+Licence Publique GNU. Veuillez vous réferer aux documents\n\
+inclus pour plus de détails.
+; This program is free software; you're welcome to\n\
+; distribute and/or modify it under the terms of the\n\
+; GNU Public License. See the enclosed documents for\n\
+; more details.
+;
+MSG_ABOUT_3RD_PARTY_SOFTWARE
+Ce programme utilise les logiciels tiers suivants :
+; This program uses the following third party software:
+;
+MSG_ABOUT_YAM_NEWS
+Les dernières informations concernant YAM peuvent\n\
+être trouvées sur le site officiel de YAM sur\n\
+\0335http://www.yam.ch/\033n
+; The latest news about YAM can be found at the\n\
+; YAM Support Site at \0335http://www.yam.ch/\033n
+;
+MSG_WR_VIEW
+Affichage
+; View
 ;
