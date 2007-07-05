@@ -688,7 +688,6 @@ void CO_FreeConfig(struct Config *co)
       free(co->P3[i]);
   }
 
-
   // we have to free the mimeTypeList
   FreeMimeTypeList(&co->mimeTypeList);
 
@@ -1692,7 +1691,7 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
 
           // if we couldn't find it in our list we have to create a new mimeTypeNode
           // and put it into our list.
-          if(mt == NULL && (mt = CreateNewMimeType()))
+          if(mt == NULL && (mt = CreateNewMimeType()) != NULL)
           {
             // add the new mime type to our internal list of
             // user definable MIME types.

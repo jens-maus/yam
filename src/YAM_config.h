@@ -203,6 +203,8 @@ struct CO_GUIData
   Object *ST_DEFVIEWER;
   Object *BT_MADD;
   Object *BT_MDEL;
+  Object *BT_MIMEUP;
+  Object *BT_MIMEDOWN;
   Object *ST_DETACHDIR;
   Object *ST_ATTACHDIR;
   Object *ST_GALLDIR;

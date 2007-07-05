@@ -1861,6 +1861,28 @@ void CO_GetConfig(BOOL saveConfig)
 
       case cp_MIME:
       {
+        int i=0;
+
+        // as the user may have changed the order of the list of MIME types
+        // we have to make sure the order in the NList fits to the
+        // exec list order of our MIME type list
+        do
+        {
+          struct MimeTypeNode *mt = NULL;
+
+          DoMethod(gui->LV_MIME, MUIM_NList_GetEntry, i, &mt);
+          if(mt != NULL)
+          {
+            // for resorting the MIME type list we just have to remove that particular type
+            // and add it to the tail - all other operations like adding/removing should
+            // have been done by others already - so this is just resorting
+            Remove((struct Node *)mt);
+            AddTail((struct List *)&CE->mimeTypeList, (struct Node *)mt);
+          }
+          else
+            break;
+        }
+        while(++i);
         GetMUIString(CE->DefaultMimeViewer, gui->ST_DEFVIEWER, sizeof(CE->DefaultMimeViewer));
       }
       break;
@@ -2240,17 +2262,17 @@ void CO_SetConfig(void)
       struct MinNode *curNode;
 
       // clear the filter list first
-      DoMethod(gui->LV_MIME, MUIM_List_Clear);
+      DoMethod(gui->LV_MIME, MUIM_NList_Clear);
 
       // iterate through our filter list and add it to our
       // MUI List
       for(curNode = CE->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-        DoMethod(gui->LV_MIME, MUIM_List_InsertSingle, curNode, MUIV_List_Insert_Bottom);
+        DoMethod(gui->LV_MIME, MUIM_NList_InsertSingle, curNode, MUIV_NList_Insert_Bottom);
 
       // make sure the first entry is selected per default
-      set(gui->LV_MIME, MUIA_List_Active, MUIV_List_Active_Top);
+      set(gui->LV_MIME, MUIA_NList_Active, MUIV_NList_Active_Top);
 
-      setstring   (gui->ST_DEFVIEWER ,CE->DefaultMimeViewer);
+      setstring(gui->ST_DEFVIEWER ,CE->DefaultMimeViewer);
     }
     break;
 

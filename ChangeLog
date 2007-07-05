@@ -17,6 +17,9 @@ $URL$
 
 2007-07-05  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c, YAM_COg.c, YAM_COs.c: the MIME type list is now sortable to be
+    able to move the "type/#?" catchall to the end of the list and give certain
+    entries some kind of a priority.
   * locale deutsch.ct: german translation update according to latest changes.
   * YAM_COg.c, YAM_COs.c: the "forget PGP passphrase" object is now ghosted as
     well. This finally fullfils change request #1748099.
