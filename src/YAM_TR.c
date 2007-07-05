@@ -221,6 +221,23 @@ struct MailTransferNode
 #define hasTR_DELETE(v)       (isFlagSet((v)->tflags, TRF_DELETE))
 
 /**************************************************************************/
+// general connection/transfer error enumation values
+enum ConnectError 
+{
+  CONNECTERR_SUCCESS       = 0,
+  CONNECTERR_NO_ERROR      = -1,
+  CONNECTERR_UNKNOWN_ERROR = -2,
+  CONNECTERR_SOCKET_IN_USE = -3,
+  CONNECTERR_UNKNOWN_HOST  = -4,
+  CONNECTERR_NO_SOCKET     = -5,
+  CONNECTERR_NO_NONBLOCKIO = -6,
+  CONNECTERR_TIMEDOUT      = -7,
+  CONNECTERR_ABORTED       = -8,
+  CONNECTERR_SSLFAILED     = -9,
+  CONNECTERR_INVALID8BIT   = -10
+};
+
+/**************************************************************************/
 // static function prototypes
 static void TR_NewMailAlert(void);
 static void TR_CompleteMsgList(void);
@@ -1553,18 +1570,9 @@ static void TR_SetSocketOpts(void)
 ///
 /// TR_Connect
 //  Connects to a internet service
-#define CONNECTERR_SUCCESS         0
-#define CONNECTERR_NO_ERROR       -1
-#define CONNECTERR_UNKNOWN_ERROR  -2
-#define CONNECTERR_SOCKET_IN_USE  -3
-#define CONNECTERR_UNKNOWN_HOST   -4
-#define CONNECTERR_NO_SOCKET      -5
-#define CONNECTERR_TIMEDOUT       -6
-#define CONNECTERR_ABORTED        -7
-
-static int TR_Connect(char *host, int port)
+static enum ConnectError TR_Connect(char *host, int port)
 {
-  int result = CONNECTERR_UNKNOWN_ERROR;
+  enum ConnectError result = CONNECTERR_UNKNOWN_ERROR;
 
   ENTER();
 
@@ -1779,7 +1787,7 @@ static int TR_Connect(char *host, int port)
           else
           {
             E(DBF_NET, "couldn't establish non-blocking IO: %ld", Errno());
-            result = CONNECTERR_NO_SOCKET;
+            result = CONNECTERR_NO_NONBLOCKIO;
             break;
           }
         }
@@ -3015,8 +3023,8 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
   if(TR_Connect(host, hport) == CONNECTERR_SUCCESS)
   {
     char *serverHost;
-  	char serverPath[SIZE_LINE];
-  	char httpRequest[SIZE_LINE];
+    char serverPath[SIZE_LINE];
+    char httpRequest[SIZE_LINE];
     char *port;
 
     // now we build the HTTP request we send out to the HTTP
@@ -3208,10 +3216,11 @@ static int TR_ConnectPOP(int guilevel)
 {
    char passwd[SIZE_PASSWORD], host[SIZE_HOST], buf[SIZE_LINE], *p;
    char *welcomemsg = NULL;
-   int err, pop = G->TR->POP_Nr, msgs;
+   int pop = G->TR->POP_Nr, msgs;
    struct POP3 *pop3 = C->P3[pop];
    int port = pop3->Port;
    char *resp;
+   enum ConnectError err;
 
    strlcpy(passwd, pop3->Password, sizeof(passwd));
    strlcpy(host, pop3->Server, sizeof(host));
@@ -3265,12 +3274,45 @@ static int TR_ConnectPOP(int guilevel)
      {
        switch(err)
        {
-         case CONNECTERR_UNKNOWN_HOST:
-           ER_NewError(tr(MSG_ER_UnknownPOP), pop3->Server);
+         case CONNECTERR_SUCCESS:
+         case CONNECTERR_ABORTED:
+         case CONNECTERR_NO_ERROR:
+           // do nothing
          break;
 
-         default:
-           ER_NewError(tr(MSG_ER_CantConnect), pop3->Server);
+         // socket is already in use
+         case CONNECTERR_SOCKET_IN_USE:
+           ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE), host);
+         break;
+
+         // socket() execution failed
+         case CONNECTERR_NO_SOCKET:
+           ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET), host);
+         break;
+
+         // couldn't establish non-blocking IO
+         case CONNECTERR_NO_NONBLOCKIO:
+           ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO), host);
+         break;
+
+         // connection request timed out
+         case CONNECTERR_TIMEDOUT:
+           ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT), host);
+         break;
+
+         // unknown host - gethostbyname() failed
+         case CONNECTERR_UNKNOWN_HOST:
+           ER_NewError(tr(MSG_ER_UnknownPOP), host);
+         break;
+
+         // general connection error
+         case CONNECTERR_UNKNOWN_ERROR:
+           ER_NewError(tr(MSG_ER_CantConnect), host);
+         break;
+
+         case CONNECTERR_SSLFAILED:
+         case CONNECTERR_INVALID8BIT:
+           // can't occur, do nothing
          break;
        }
      }
@@ -5394,7 +5436,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
           if(C->SMTP_SecureMethod == SMTPSEC_NONE ||
              G->TR_UseableTLS == TRUE)
           {
-            int err;
+            enum ConnectError err;
             int port;
             char *p;
             char host[SIZE_HOST];
@@ -5433,7 +5475,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                 if(TR_InitTLS() && TR_StartTLS())
                   G->TR_UseTLS = TRUE;
                 else
-                  err = 2; // special SSL connection error
+                  err = CONNECTERR_SSLFAILED; // special SSL connection error
               }
 
               // first we have to check whether the TCP/IP connection could
@@ -5554,11 +5596,10 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                 if(has8BITMIME(G->TR_SMTPflags) == FALSE && C->Allow8bit == TRUE)
                 {
                   W(DBF_NET, "incorrect Allow8bit setting!");
-                  ER_NewError(tr(MSG_ER_NO8BITMIME), C->SMTP_Server);
-                  err = CONNECTERR_SUCCESS;
+                  err = CONNECTERR_INVALID8BIT;
                 }
-                else if(err == CONNECTERR_SUCCESS)
-                  err = 1;
+                else if(err != CONNECTERR_SSLFAILED)
+                  err = CONNECTERR_UNKNOWN_ERROR;
               }
 
               // make sure to shutdown the socket
@@ -5570,22 +5611,54 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
             switch(err)
             {
               case CONNECTERR_SUCCESS:
-                // nothing
+              case CONNECTERR_ABORTED:
+              case CONNECTERR_NO_ERROR:
+                // do nothing
               break;
 
-              case CONNECTERR_UNKNOWN_ERROR:
+              // a socket is already in use so we return
+              // a specific error to the user
+              case CONNECTERR_SOCKET_IN_USE:
+                ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE), host);
+              break;
+
+              // socket() execution failed
+              case CONNECTERR_NO_SOCKET:
+                ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET), host);
+              break;
+
+              // couldn't establish non-blocking IO
+              case CONNECTERR_NO_NONBLOCKIO:
+                ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO), host);
+              break;
+
+              // the specified hostname isn't valid, so
+              // lets tell the user
+              case CONNECTERR_UNKNOWN_HOST:
                 ER_NewError(tr(MSG_ER_UnknownSMTP), host);
               break;
 
-              // special error on trying to connect
-              // via the ESMTP command
-              case 1:
-                ER_NewError(tr(MSG_ER_CantConnect), host);
+              // the connection request timed out, so tell
+              // the user
+              case CONNECTERR_TIMEDOUT:
+                ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT), host);
+              break;
+
+              // an error occurred while checking for 8bit MIME
+              // compatibility
+              case CONNECTERR_INVALID8BIT:
+                ER_NewError(tr(MSG_ER_NO8BITMIME), host);
               break;
 
               // error during initialization of an SSL connection
-              case 2:
+              case CONNECTERR_SSLFAILED:
                 ER_NewError(tr(MSG_ER_INITTLS), host);
+              break;
+
+              // an unknown error occurred so lets show
+              // a generic error message
+              case CONNECTERR_UNKNOWN_ERROR:
+                ER_NewError(tr(MSG_ER_CantConnect), host);
               break;
             }
 

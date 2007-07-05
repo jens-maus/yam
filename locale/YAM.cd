@@ -6344,3 +6344,30 @@ YAM Support Site at \0335http://www.yam.ch/\033n
 MSG_WR_VIEW (1969//)
 View
 ;
+MSG_ER_CONNECTERR_SOCKET_IN_USE (1970//)
+Couldn't connect to '%s'.\n\
+\n\
+A TCP/IP socket connection seems to be already active. \
+Please make sure to close all other existing transfers.
+;
+MSG_ER_CONNECTERR_TIMEDOUT (1971//)
+Couldn't connect to '%s'.\n\
+\n\
+The mail server didn't respond within a predefined \
+interval and therefore timed out.
+;
+MSG_ER_CONNECTERR_NO_SOCKET (1972//)
+Couldn't connect to '%s'.\n\
+\n\
+YAM wasn't able to establish a socket connection \
+to the mail server. Please make sure that your TCP/IP \
+stack is up and working properly.
+;
+MSG_ER_CONNECTERR_NO_NONBLOCKIO (1973//)
+Couldn't connect to '%s'.\n\
+\n\
+YAM wasn't able to establish a non-blocking IO \
+connection to the mail server. Please make sure your \
+TCP/IP stack is able to establish non-blocking IO \
+connections.
+;

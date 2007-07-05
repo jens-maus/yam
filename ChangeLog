@@ -7,6 +7,9 @@ $URL$
 
 2007-07-05  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c, locale/YAM.cd: reworked the error reporting mechanism when
+    trying to connect via TR_Connect(). Now YAM should correcly return
+    an error message in all necessary cases. This fixes bug #1746826
   * misc: replaced all MEMF_ANY/MEMF_PUBLIC memory flag occurrancas with
     MEMF_SHARED and defined it for platforms where it doesn't exist. This flag
     is required to make sure a future OS4 version which will come with a pager
