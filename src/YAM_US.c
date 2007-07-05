@@ -359,7 +359,12 @@ HOOKPROTONHNONP(US_DelFunc, void)
   }
 
   if(m != 0)
+  {
   	DoMethod(lv, MUIM_NList_Remove, index);
+    // reactivate the Add/Del buttons
+    set(G->US->GUI.BT_ADD, MUIA_Disabled, FALSE);
+    set(G->US->GUI.BT_DEL, MUIA_Disabled, xget(lv, MUIA_NList_Entries) == 0);
+  }
 
   LEAVE();
 }
@@ -378,7 +383,7 @@ HOOKPROTONHNONP(US_AddFunc, void)
   gui = &G->US->GUI;
   n = xget(gui->LV_USERS, MUIA_NList_Entries);
 
-  if (n < MAXUSERS-1)
+  if(n < MAXUSERS)
   {
     struct User user;
 
@@ -389,6 +394,10 @@ HOOKPROTONHNONP(US_AddFunc, void)
     DoMethod(gui->LV_USERS, MUIM_NList_InsertSingle, &user, MUIV_NList_Insert_Bottom);
     set(gui->LV_USERS, MUIA_NList_Active, MUIV_NList_Active_Bottom);
     set(gui->WI, MUIA_Window_ActiveObject, gui->ST_USER);
+
+    // check again if we reached the limit
+    if(n + 1 == MAXUSERS)
+      set(gui->BT_ADD, MUIA_Disabled, TRUE);
   }
 
   LEAVE();
@@ -502,6 +511,8 @@ HOOKPROTONHNONP(US_OpenFunc, void)
           DoMethod(G->US->GUI.LV_USERS, MUIM_NList_InsertSingle, &G->Users.User[i], MUIV_NList_Insert_Bottom);
 
         set(G->US->GUI.LV_USERS, MUIA_NList_Active, 0);
+        set(G->US->GUI.BT_ADD, MUIA_Disabled, G->Users.Num == MAXUSERS);
+        set(G->US->GUI.BT_DEL, MUIA_Disabled, G->Users.Num == 0);
       }
       else
         DisposeModulePush(&G->US);
@@ -659,87 +670,96 @@ MakeStaticHook(US_LV_DspHook,US_LV_DspFunc);
 //  Creates user list window
 static struct US_ClassData *US_New(BOOL supervisor)
 {
-   struct US_ClassData *data = calloc(1, sizeof(struct US_ClassData));
-   if (data)
-   {
-      data->Supervisor = supervisor;
-      data->GUI.WI = WindowObject,
-         MUIA_Window_Title, tr(MSG_MA_MUsers),
-         MUIA_HelpNode, "US_W",
-         MUIA_Window_ID, MAKE_ID('U','S','E','R'),
-         WindowContents, VGroup,
-            Child, data->GUI.LV_USERS = NListviewObject,
-               MUIA_CycleChain, 1,
-               MUIA_NListview_NList, NListObject,
-                  InputListFrame,
-                  MUIA_NList_ConstructHook, &US_LV_ConHook,
-                  MUIA_NList_DestructHook, &GeneralDesHook,
-                  MUIA_NList_DisplayHook, &US_LV_DspHook,
-//                  MUIA_NList_DisplayHook, &MA_LV_FDspFuncHook,
-                  MUIA_NList_TitleSeparator, TRUE,
-                  MUIA_NList_Title, TRUE,
-                  MUIA_NList_Format, "BAR,",
-               End,
-            End,
-            Child, VGroup, GroupFrameT(tr(MSG_MA_Settings)),
-               Child, ColGroup(2),
-                  Child, Label2(tr(MSG_US_UserName)),
-                  Child, data->GUI.ST_USER = MakeString(SIZE_NAME, tr(MSG_US_UserName)),
-                  Child, Label2(tr(MSG_US_Password)),
-                  Child, data->GUI.ST_PASSWD = MakePassString(tr(MSG_US_Password)),
-                  Child, Label2(tr(MSG_US_MailDirectory)),
-                  Child, data->GUI.PO_MAILDIR = PopaslObject,
-                     MUIA_Popasl_Type,ASL_FileRequest,
-                     MUIA_Popstring_String,data->GUI.ST_MAILDIR = MakeString(SIZE_PATH,tr(MSG_US_MailDirectory)),
-                     MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
-                     ASLFR_DrawersOnly, TRUE,
-                  End,
-               End,
-               Child, VGroup,
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_USEADDR, tr(MSG_US_GlobalAddrBook)),
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_USEDICT, tr(MSG_US_GlobalDict)),
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_ROOT,tr(MSG_US_SuperVisor)),
-               End,
-               Child, VGroup,
-                  MUIA_ShowMe, supervisor,
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_CLONE, tr(MSG_US_CopyConfig)),
-               End,
-            End,
-            Child, ColGroup(2),
-               MUIA_ShowMe, supervisor,
-               Child, data->GUI.BT_ADD = MakeButton(tr(MSG_US_AddUser)),
-               Child, data->GUI.BT_DEL = MakeButton(tr(MSG_US_DelUser)),
-            End,
-         End,
-      End;
-      if (data->GUI.WI)
-      {
-         SetHelp(data->GUI.ST_USER   ,MSG_HELP_US_ST_USER);
-         SetHelp(data->GUI.ST_MAILDIR,MSG_HELP_US_ST_MAILDIR);
-         SetHelp(data->GUI.ST_PASSWD ,MSG_HELP_US_ST_PASSWD);
-         SetHelp(data->GUI.CH_USEADDR,MSG_HELP_US_CH_USEADDR);
-         SetHelp(data->GUI.CH_USEDICT,MSG_HELP_US_CH_USEDICT);
-         SetHelp(data->GUI.CH_CLONE  ,MSG_HELP_US_CH_CLONE);
-         SetHelp(data->GUI.CH_ROOT   ,MSG_HELP_US_CH_ROOT);
-         SetHelp(data->GUI.BT_ADD    ,MSG_HELP_US_BT_ADD);
-         SetHelp(data->GUI.BT_DEL    ,MSG_HELP_US_BT_DEL);
-         DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-         DoMethod(data->GUI.LV_USERS,  MUIM_Notify,MUIA_List_Active,        MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_GetUSEntryHook);
-         DoMethod(data->GUI.ST_USER,   MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
-         DoMethod(data->GUI.ST_MAILDIR,MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
-         DoMethod(data->GUI.ST_PASSWD, MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
-         DoMethod(data->GUI.CH_USEADDR,MUIM_Notify,MUIA_Selected,           MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
-         DoMethod(data->GUI.CH_USEDICT,MUIM_Notify,MUIA_Selected,           MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
-         DoMethod(data->GUI.CH_ROOT,   MUIM_Notify,MUIA_Selected,           MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
-         DoMethod(data->GUI.CH_CLONE,  MUIM_Notify,MUIA_Selected,           MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
-         DoMethod(data->GUI.BT_ADD,    MUIM_Notify,MUIA_Pressed,            FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&US_AddHook);
-         DoMethod(data->GUI.BT_DEL,    MUIM_Notify,MUIA_Pressed,            FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&US_DelHook);
-         DoMethod(data->GUI.WI,        MUIM_Notify,MUIA_Window_CloseRequest,TRUE          ,MUIV_Notify_Application,2,MUIM_CallHook,&US_CloseHook);
-         return data;
-      }
+  struct US_ClassData *data;
+
+  ENTER();
+
+  if((data = calloc(1, sizeof(struct US_ClassData))) != NULL)
+  {
+    data->Supervisor = supervisor;
+    data->GUI.WI = WindowObject,
+       MUIA_Window_Title, tr(MSG_MA_MUsers),
+       MUIA_HelpNode, "US_W",
+       MUIA_Window_ID, MAKE_ID('U','S','E','R'),
+       WindowContents, VGroup,
+          Child, data->GUI.LV_USERS = NListviewObject,
+             MUIA_CycleChain, 1,
+             MUIA_NListview_NList, NListObject,
+                InputListFrame,
+                MUIA_NList_ConstructHook, &US_LV_ConHook,
+                MUIA_NList_DestructHook, &GeneralDesHook,
+                MUIA_NList_DisplayHook, &US_LV_DspHook,
+            //  MUIA_NList_DisplayHook, &MA_LV_FDspFuncHook,
+                MUIA_NList_TitleSeparator, TRUE,
+                MUIA_NList_Title, TRUE,
+                MUIA_NList_Format, "BAR,",
+             End,
+          End,
+          Child, VGroup, GroupFrameT(tr(MSG_MA_Settings)),
+             Child, ColGroup(2),
+                Child, Label2(tr(MSG_US_UserName)),
+                Child, data->GUI.ST_USER = MakeString(SIZE_NAME, tr(MSG_US_UserName)),
+                Child, Label2(tr(MSG_US_Password)),
+                Child, data->GUI.ST_PASSWD = MakePassString(tr(MSG_US_Password)),
+                Child, Label2(tr(MSG_US_MailDirectory)),
+                Child, data->GUI.PO_MAILDIR = PopaslObject,
+                   MUIA_Popasl_Type,ASL_FileRequest,
+                   MUIA_Popstring_String,data->GUI.ST_MAILDIR = MakeString(SIZE_PATH,tr(MSG_US_MailDirectory)),
+                   MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
+                   ASLFR_DrawersOnly, TRUE,
+                End,
+             End,
+             Child, VGroup,
+                Child, MakeCheckGroup((Object **)&data->GUI.CH_USEADDR, tr(MSG_US_GlobalAddrBook)),
+                Child, MakeCheckGroup((Object **)&data->GUI.CH_USEDICT, tr(MSG_US_GlobalDict)),
+                Child, MakeCheckGroup((Object **)&data->GUI.CH_ROOT,tr(MSG_US_SuperVisor)),
+             End,
+             Child, VGroup,
+                MUIA_ShowMe, supervisor,
+                Child, MakeCheckGroup((Object **)&data->GUI.CH_CLONE, tr(MSG_US_CopyConfig)),
+             End,
+          End,
+          Child, ColGroup(2),
+             MUIA_ShowMe, supervisor,
+             Child, data->GUI.BT_ADD = MakeButton(tr(MSG_US_AddUser)),
+             Child, data->GUI.BT_DEL = MakeButton(tr(MSG_US_DelUser)),
+          End,
+       End,
+    End;
+
+    if(data->GUI.WI != NULL)
+    {
+      SetHelp(data->GUI.ST_USER   ,MSG_HELP_US_ST_USER);
+      SetHelp(data->GUI.ST_MAILDIR,MSG_HELP_US_ST_MAILDIR);
+      SetHelp(data->GUI.ST_PASSWD ,MSG_HELP_US_ST_PASSWD);
+      SetHelp(data->GUI.CH_USEADDR,MSG_HELP_US_CH_USEADDR);
+      SetHelp(data->GUI.CH_USEDICT,MSG_HELP_US_CH_USEDICT);
+      SetHelp(data->GUI.CH_CLONE  ,MSG_HELP_US_CH_CLONE);
+      SetHelp(data->GUI.CH_ROOT   ,MSG_HELP_US_CH_ROOT);
+      SetHelp(data->GUI.BT_ADD    ,MSG_HELP_US_BT_ADD);
+      SetHelp(data->GUI.BT_DEL    ,MSG_HELP_US_BT_DEL);
+      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+      DoMethod(data->GUI.LV_USERS,  MUIM_Notify,MUIA_List_Active,        MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_GetUSEntryHook);
+      DoMethod(data->GUI.ST_USER,   MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
+      DoMethod(data->GUI.ST_MAILDIR,MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
+      DoMethod(data->GUI.ST_PASSWD, MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
+      DoMethod(data->GUI.CH_USEADDR,MUIM_Notify,MUIA_Selected,           MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
+      DoMethod(data->GUI.CH_USEDICT,MUIM_Notify,MUIA_Selected,           MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
+      DoMethod(data->GUI.CH_ROOT,   MUIM_Notify,MUIA_Selected,           MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
+      DoMethod(data->GUI.CH_CLONE,  MUIM_Notify,MUIA_Selected,           MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
+      DoMethod(data->GUI.BT_ADD,    MUIM_Notify,MUIA_Pressed,            FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&US_AddHook);
+      DoMethod(data->GUI.BT_DEL,    MUIM_Notify,MUIA_Pressed,            FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&US_DelHook);
+      DoMethod(data->GUI.WI,        MUIM_Notify,MUIA_Window_CloseRequest,TRUE          ,MUIV_Notify_Application,2,MUIM_CallHook,&US_CloseHook);
+    }
+    else
+    {
       free(data);
-   }
-   return NULL;
+      data = NULL;
+    }
+  }
+
+  RETURN(data);
+  return data;
 }
 ///
 

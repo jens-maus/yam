@@ -7,6 +7,8 @@ $URL$
 
 2007-07-05  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_US.c: fixed the "15 or 16 users" issue. Also the "Add" and "Del" buttons
+    are now enabled/disabled if necessary.
   * YAM_COg.c, YAM_COs.c: fixed various "object should be ghosted" issues. This
     partly fixes bug #1748099.
 
