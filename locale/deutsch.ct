@@ -8048,3 +8048,28 @@ YAM-Homepage unter \0335http://www.yam.ch/\033n
 MSG_WR_VIEW
 Ansicht
 ;
+MSG_ER_CONNECTERR_SOCKET_IN_USE
+Verbindung zu '%s' konnte nicht aufgebaut werden.\n\
+\n\
+Die TCP/IP Socket-Verbindung scheint schon aktiv zu sein. \
+Bitte beenden Sie alle anderen existierenden Verbindungen.
+;
+MSG_ER_CONNECTERR_TIMEDOUT
+Verbindung zu '%s' konnte nicht aufgebaut werden.\n\
+\n\
+Der Postserver hat nicht in der erwarteten Zeit geantwortet.
+;
+MSG_ER_CONNECTERR_NO_SOCKET
+Verbindung zu '%s' konnte nicht aufgebaut werden.\n\
+\n\
+YAM konnte keine Verbindung zum Postserver aufbauen. \
+Bitte stellen Sie sicher, dass Ihr TCP/IP-Stack läuft und \
+korrekt funktioniert.
+;
+MSG_ER_CONNECTERR_NO_NONBLOCKIO
+Verbindung zu '%s' konnte nicht aufgebaut werden.\n\
+\n\
+YAM konnte keine nicht blockierende Verbindung zum Postserver \
+aufbauen. Bitte stellen Sie sicher, dass Ihr TCP/IP-Stack in \
+der Lage ist nicht blockierende Verbindungen aufzubauen.
+;

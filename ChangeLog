@@ -17,6 +17,7 @@ $URL$
 
 2007-07-05  Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale deutsch.ct: german translation update according to latest changes.
   * YAM_COg.c, YAM_COs.c: the "forget PGP passphrase" object is now ghosted as
     well. This finally fullfils change request #1748099.
   * YAM_US.c: fixed the "15 or 16 users" issue. Also the "Add" and "Del" buttons
