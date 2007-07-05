@@ -30,6 +30,8 @@
 
 #include "SearchControlGroup_cl.h"
 
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
@@ -46,6 +48,8 @@ struct Data
   Object *CH_CASESENS[5];
   Object *CH_SUBSTR[5];
   Object *CY_COMBINE;
+
+  Object *activeObject;
 
   BOOL remoteFilterMode;
   BOOL showCombineCycle;
@@ -244,21 +248,24 @@ OVERLOAD(OM_NEW)
 
     // set the cyclechain
     set(data->RA_ADRMODE, MUIA_CycleChain, TRUE);
+
+    // set ST_MATCH[0] as the current active object
+    data->activeObject = data->ST_MATCH[0];
     
     // set help text
     SetHelp(data->CY_MODE[0], MSG_HELP_FI_CY_MODE);
     SetHelp(data->CY_MODE[1], MSG_HELP_FI_CY_MODE);
-    SetHelp(data->CY_COMBINE,  MSG_HELP_CO_CY_COMBINE);
-    SetHelp(data->ST_FIELD,    MSG_HELP_FI_ST_FIELD);
-    SetHelp(data->RA_ADRMODE,  MSG_HELP_FI_RA_ADRMODE);
-    SetHelp(data->CY_STATUS,   MSG_HELP_FI_CY_STATUS);
+    SetHelp(data->CY_COMBINE, MSG_HELP_CO_CY_COMBINE);
+    SetHelp(data->ST_FIELD,   MSG_HELP_FI_ST_FIELD);
+    SetHelp(data->RA_ADRMODE, MSG_HELP_FI_RA_ADRMODE);
+    SetHelp(data->CY_STATUS,  MSG_HELP_FI_CY_STATUS);
 
-    DoMethod(data->CY_MODE[0], MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, MUIM_SearchControlGroup_Update);
-    DoMethod(data->CY_MODE[1], MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, MUIM_SearchControlGroup_Update);
-    DoMethod(data->CY_COMBINE, MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime,  obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
-    DoMethod(data->RA_ADRMODE, MUIM_Notify, MUIA_Radio_Active,    MUIV_EveryTime,  obj, 3,  MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
-    DoMethod(data->ST_FIELD,   MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime,  obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
-    DoMethod(data->CY_STATUS,   MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime,  obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
+    DoMethod(data->CY_MODE[0], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, MUIM_SearchControlGroup_Update);
+    DoMethod(data->CY_MODE[1], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, MUIM_SearchControlGroup_Update);
+    DoMethod(data->CY_COMBINE, MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
+    DoMethod(data->RA_ADRMODE, MUIM_Notify, MUIA_Radio_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
+    DoMethod(data->ST_FIELD,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
+    DoMethod(data->CY_STATUS,  MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
 
     for(i = 0; i < 5; i++)
     {
@@ -370,11 +377,13 @@ OVERLOAD(OM_SET)
 /// OVERLOAD(OM_GET)
 OVERLOAD(OM_GET)
 {
+  GETDATA;
   ULONG *store = ((struct opGet *)msg)->opg_Storage;
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(Modified) : *store = 1; return TRUE;
+    ATTR(Modified):      *store = 1; return TRUE;
+    ATTR(ActiveObject): *store = (ULONG)data->activeObject; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -516,13 +525,39 @@ DECLARE(GetFromRule) // struct RuleNode *rule
 DECLARE(Update)
 {
   GETDATA;
-  int mode = GetMUICycle(data->CY_MODE[data->remoteFilterMode]);
-  
-  set(data->PG_SRCHOPT, MUIA_Group_ActivePage, Mode2Group[mode]);
-  
-  set(obj, MUIA_Disabled, FALSE);
-  set(obj, MUIA_SearchControlGroup_Modified, TRUE);
+  ULONG mode = GetMUICycle(data->CY_MODE[data->remoteFilterMode]);
 
+  ENTER();
+
+  if(mode < 12)
+  {
+    ULONG group = Mode2Group[mode];
+
+    set(data->PG_SRCHOPT, MUIA_Group_ActivePage, group);
+
+    switch(group)
+    {
+      case 0:
+      case 1:
+      case 2:
+      case 4:
+        data->activeObject = data->ST_MATCH[group];
+      break;
+
+      case 3:
+        data->activeObject = data->CY_STATUS;
+      break;
+    }
+
+    if(_win(obj) != NULL)
+      set(_win(obj), MUIA_Window_ActiveObject, data->activeObject);
+
+    SetAttrs(obj, MUIA_Disabled, FALSE,
+                  MUIA_SearchControlGroup_Modified, TRUE,
+                  TAG_DONE);
+  }
+  
+  RETURN(0);
   return 0;
 }
 

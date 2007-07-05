@@ -7,6 +7,9 @@ $URL$
 
 2007-07-05  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_FI.c, SearchControlGroup.c: when the find window is going to be opened
+    a default active object will be automatically selected. This should make
+    using the find window more intuitive.
   * YAM_TR.c, locale/YAM.cd: reworked the error reporting mechanism when
     trying to connect via TR_Connect(). Now YAM should correcly return
     an error message in all necessary cases. This fixes bug #1746826
