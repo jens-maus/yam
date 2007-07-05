@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-05  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c, YAM_COs.c: fixed various "object should be ghosted" issues. This
+    partly fixes bug #1748099.
+
 2007-05-24  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: french translation update according to latest changes.

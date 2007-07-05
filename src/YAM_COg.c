@@ -2531,6 +2531,8 @@ Object *CO_PageRead(struct CO_ClassData *data)
     DoMethod(data->GUI.CH_MDN_NEVER, MUIM_Notify, MUIA_Selected, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MDNRequestHook, TRUE);
     DoMethod(data->GUI.CH_MDN_ALLOW, MUIM_Notify, MUIA_Selected, TRUE,  MUIV_Notify_Application, 3, MUIM_CallHook, &MDNRequestHook, TRUE);
     DoMethod(data->GUI.CH_MDN_ALLOW, MUIM_Notify, MUIA_Selected, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MDNRequestHook, FALSE);
+
+    DoMethod(data->GUI.CH_DELAYEDSTATUS, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.NB_DELAYEDSTATUS, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
   }
 
   RETURN(obj);
@@ -3468,6 +3470,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
     DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, data->GUI.BT_APPICONGETPOS, NULL);
     DoMethod(data->GUI.CH_WBAPPICON, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Application, 9, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, data->GUI.CH_APPICONPOS, data->GUI.BT_APPICONGETPOS, NULL);
     DoMethod(data->GUI.BT_APPICONGETPOS, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &GetAppIconPosHook);
+    DoMethod(data->GUI.CH_CONFIRM, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.NB_CONFIRMDEL, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
 
     #if defined(__amigaos4__)
     if(G->applicationID == 0)
