@@ -143,6 +143,11 @@ struct TimeRequest
 
 #endif
 
+// define memory flags not existing on older platforms
+#ifndef MEMF_SHARED
+#define MEMF_SHARED MEMF_PUBLIC
+#endif
+
 // Library open/close macros
 #if defined(__amigaos4__)
 #define INITLIB(lname, v, r, lbase, iname, ibase, req, url)  (InitLib((lname), (v), (r), (APTR)(lbase), (iname), (APTR)(ibase), (req), (url)))

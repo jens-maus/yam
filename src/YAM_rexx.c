@@ -276,7 +276,7 @@ struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
   if(basename == NULL || basename[0] == '\0' )
     basename = RexxPortBaseName;
    
-  if((host = AllocVec(sizeof(struct RexxHost), MEMF_CLEAR)) != NULL)
+  if((host = AllocVec(sizeof(struct RexxHost), MEMF_SHARED|MEMF_CLEAR)) != NULL)
   {
     strlcpy(host->portname, basename, sizeof(host->portname));
    
@@ -458,7 +458,7 @@ static char *CreateVAR( struct rxs_stemnode *stem )
    for( s = stem; s; s = s->succ )
       size += strlen( s->value ) + 1;
    
-   if( !(var = AllocVec( size + 1, MEMF_ANY )) )
+   if( !(var = AllocVec( size + 1, MEMF_SHARED )) )
       return( (char *) -1 );
    
    *var = '\0';
@@ -479,7 +479,7 @@ static struct rxs_stemnode *new_stemnode( struct rxs_stemnode **first, struct rx
 {
    struct rxs_stemnode *new;
    
-   if( !(new = AllocVec(sizeof(struct rxs_stemnode), MEMF_CLEAR)) )
+   if( !(new = AllocVec(sizeof(struct rxs_stemnode), MEMF_SHARED|MEMF_CLEAR)) )
    {
       return( NULL );
    }
@@ -511,22 +511,15 @@ static void free_stemlist( struct rxs_stemnode *first )
    for( ; first; first = next )
    {
       next = first->succ;
-      if( first->name  ) FreeVec( first->name );
-      if( first->value ) FreeVec( first->value );
+
+      if(first->name)
+        free(first->name);
+
+      if(first->value)
+        free(first->value);
+
       FreeVec( first );
    }
-}
-
-///
-/// StrDup
-static char *StrDup(char *s)
-{
-  char *t = AllocVec((ULONG)strlen(s)+1, MEMF_ANY);
-
-  if(t)
-    strlcpy(t, s, strlen(s)+1);
-
-  return t;
 }
 
 ///
@@ -606,25 +599,25 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
             }
             
             snprintf(t, sizeof(resb)-(t-resb), ".%ld", index++);
-            new->name = StrDup( resb );
+            new->name = strdup(resb);
             
             if( optn )
             {
                snprintf(longbuff, sizeof(longbuff), "%ld", *r);
-               new->value = StrDup( longbuff );
+               new->value = strdup(longbuff);
             }
             else
             {
-               new->value = StrDup( (char *) r );
+               new->value = strdup((char *)r);
             }
          }
          
          // the count node
          strlcpy(t, ".COUNT", sizeof(resb)-(t-resb));
-         countnd->name = StrDup( resb );
+         countnd->name = strdup(resb);
          
          snprintf(longbuff, sizeof(longbuff), "%ld", index);
-         countnd->value = StrDup( longbuff );
+         countnd->value = strdup(longbuff);
       }
       else
       {
@@ -635,17 +628,17 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
             return( (struct rxs_stemnode *) -1L );
          }
          
-         new->name = StrDup( resb );
+         new->name = strdup(resb);
          
          if( optn )
          {
             snprintf(longbuff, sizeof(longbuff), "%ld", *((long *)*resarray));
-            new->value = StrDup( longbuff );
+            new->value = strdup(longbuff);
             ++resarray;
          }
          else
          {
-            new->value = StrDup( (char *) (*resarray++) );
+            new->value = strdup((char *)(*resarray++));
          }
       }
    }
@@ -670,7 +663,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    
    ENTER();
 
-   if( !(argb = AllocVec((ULONG)strlen((char *) ARG0(rexxmsg)) + 2, MEMF_ANY)) )
+   if( !(argb = AllocVec((ULONG)strlen((char *) ARG0(rexxmsg)) + 2, MEMF_SHARED)) )
    {
       rc2 = ERROR_NO_FREE_STORE;
       goto drc_cleanup;
@@ -718,7 +711,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    
    // get memory for the arguments
    (rxc->function)(host, (void **)(APTR)&array, RXIF_INIT, rexxmsg);
-   cargstr = AllocVec((ULONG)(rxc->args ? 15+strlen(rxc->args) : 15), MEMF_ANY );
+   cargstr = AllocVec((ULONG)(rxc->args ? 15+strlen(rxc->args) : 15), MEMF_SHARED );
    
    if( !array || !cargstr )
    {

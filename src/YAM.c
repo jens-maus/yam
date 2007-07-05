@@ -754,7 +754,7 @@ static BOOL TC_Init(void)
               break;
             }
             #else
-            if(!(TCData.timer[tio].tr = AllocMem(sizeof(struct TimeRequest), MEMF_PUBLIC)))
+            if(!(TCData.timer[tio].tr = AllocMem(sizeof(struct TimeRequest), MEMF_SHARED)))
               break;
             #endif
 
@@ -1113,7 +1113,7 @@ static struct StartupSemaphore *CreateStartupSemaphore(void)
 
   // We must allocate the memory for the new semaphore before we look for an old instance,
   // because the Forbid() may be broken by AllocVec().
-  if((newSema = AllocVec(sizeof(*newSema) + nameLen + 1, MEMF_CLEAR)) != NULL)
+  if((newSema = AllocVec(sizeof(*newSema) + nameLen + 1, MEMF_SHARED|MEMF_CLEAR)) != NULL)
   {
     struct StartupSemaphore *oldSema;
 

@@ -72,7 +72,7 @@ void rx_show( UNUSED struct RexxHost *host, struct rxd_show **rxd, long action, 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -97,7 +97,7 @@ void rx_hide( UNUSED struct RexxHost *host, struct rxd_hide **rxd, long action, 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -119,7 +119,7 @@ void rx_quit( UNUSED struct RexxHost *host, struct rxd_quit **rxd, long action, 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -144,7 +144,7 @@ void rx_help( UNUSED struct RexxHost *host, struct rxd_help **rxd, long action, 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -174,7 +174,7 @@ void rx_info( UNUSED struct RexxHost *host, struct rxd_info **rxd, long action, 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -226,7 +226,7 @@ void rx_writeto( UNUSED struct RexxHost *host, struct rxd_writeto **rxd, long ac
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -249,7 +249,7 @@ void rx_writecc( UNUSED struct RexxHost *host, struct rxd_writecc **rxd, long ac
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -272,7 +272,7 @@ void rx_writebcc( UNUSED struct RexxHost *host, struct rxd_writebcc **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -295,7 +295,7 @@ void rx_writeattach( UNUSED struct RexxHost *host, struct rxd_writeattach **rxd,
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -324,7 +324,7 @@ void rx_writeletter( UNUSED struct RexxHost *host, struct rxd_writeletter **rxd,
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -351,7 +351,7 @@ void rx_writeoptions( UNUSED struct RexxHost *host, struct rxd_writeoptions **rx
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -382,7 +382,7 @@ void rx_writequeue( UNUSED struct RexxHost *host, struct rxd_writequeue **rxd, l
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -405,7 +405,7 @@ void rx_writesend( UNUSED struct RexxHost *host, struct rxd_writesend **rxd, lon
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -429,7 +429,7 @@ void rx_mailwrite( UNUSED struct RexxHost *host, struct rxd_mailwrite **rxd, lon
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -480,7 +480,7 @@ void rx_mailreply( UNUSED struct RexxHost *host, struct rxd_mailreply **rxd, lon
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -513,7 +513,7 @@ void rx_mailforward( UNUSED struct RexxHost *host, struct rxd_mailforward **rxd,
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -545,7 +545,7 @@ void rx_mailmove( UNUSED struct RexxHost *host, struct rxd_mailmove **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -570,7 +570,7 @@ void rx_mailread( UNUSED struct RexxHost *host, struct rxd_mailread **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -662,7 +662,7 @@ void rx_mailsend( UNUSED struct RexxHost *host, struct rxd_mailsend **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -684,7 +684,7 @@ void rx_maildelete( UNUSED struct RexxHost *host, struct rxd_maildelete **rxd, l
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -707,7 +707,7 @@ void rx_mailcheck( UNUSED struct RexxHost *host, struct rxd_mailcheck **rxd, lon
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -746,7 +746,7 @@ void rx_mailimport( UNUSED struct RexxHost *host, struct rxd_mailimport **rxd, l
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -770,7 +770,7 @@ void rx_mailexport( UNUSED struct RexxHost *host, struct rxd_mailexport **rxd, l
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -792,7 +792,7 @@ void rx_mailupdate( UNUSED struct RexxHost *host, struct rxd_mailupdate **rxd, l
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -815,7 +815,7 @@ void rx_mailfilter( UNUSED struct RexxHost *host, struct rxd_mailfilter **rxd, l
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -853,7 +853,7 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -934,7 +934,7 @@ void rx_setfolder( UNUSED struct RexxHost *host, struct rxd_setfolder **rxd, lon
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -958,7 +958,7 @@ void rx_setmail( UNUSED struct RexxHost *host, struct rxd_setmail **rxd, long ac
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -986,7 +986,7 @@ void rx_writeeditor( UNUSED struct RexxHost *host, struct rxd_writeeditor **rxd,
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1025,7 +1025,7 @@ void rx_request( UNUSED struct RexxHost *host, struct rxd_request **rxd, long ac
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1057,7 +1057,7 @@ void rx_mailsendall( UNUSED struct RexxHost *host, struct rxd_mailsendall **rxd,
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1086,7 +1086,7 @@ void rx_getfolderinfo( UNUSED struct RexxHost *host, struct rxd_getfolderinfo **
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1130,7 +1130,7 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1194,7 +1194,7 @@ void rx_getconfiginfo( UNUSED struct RexxHost *host, struct rxd_getconfiginfo **
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1221,7 +1221,7 @@ void rx_folderinfo( UNUSED struct RexxHost *host, struct rxd_folderinfo **rxd, l
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1272,7 +1272,7 @@ void rx_writesubject( UNUSED struct RexxHost *host, struct rxd_writesubject **rx
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1295,7 +1295,7 @@ void rx_screentoback( UNUSED struct RexxHost *host, struct rxd_screentoback **rx
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1319,7 +1319,7 @@ void rx_screentofront( UNUSED struct RexxHost *host, struct rxd_screentofront **
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1346,7 +1346,7 @@ void rx_setflag( UNUSED struct RexxHost *host, struct rxd_setflag **rxd, long ac
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1396,7 +1396,7 @@ void rx_mailedit( UNUSED struct RexxHost *host, struct rxd_mailedit **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1428,7 +1428,7 @@ void rx_readinfo( UNUSED struct RexxHost *host, struct rxd_readinfo **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1480,7 +1480,7 @@ void rx_readsave( UNUSED struct RexxHost *host, struct rxd_readsave **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1556,7 +1556,7 @@ void rx_readprint( UNUSED struct RexxHost *host, struct rxd_readprint **rxd, lon
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1619,7 +1619,7 @@ void rx_mailbounce( UNUSED struct RexxHost *host, struct rxd_mailbounce **rxd, l
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1651,7 +1651,7 @@ void rx_addrfind( UNUSED struct RexxHost *host, struct rxd_addrfind **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1697,7 +1697,7 @@ void rx_addrinfo( UNUSED struct RexxHost *host, struct rxd_addrinfo **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1768,7 +1768,7 @@ void rx_addrresolve( UNUSED struct RexxHost *host, struct rxd_addrresolve **rxd,
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1813,7 +1813,7 @@ void rx_newmailfile( UNUSED struct RexxHost *host, struct rxd_newmailfile **rxd,
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1845,7 +1845,7 @@ void rx_writefrom( UNUSED struct RexxHost *host, struct rxd_writefrom **rxd, lon
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1868,7 +1868,7 @@ void rx_writereplyto( UNUSED struct RexxHost *host, struct rxd_writereplyto **rx
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1892,7 +1892,7 @@ void rx_listselect( UNUSED struct RexxHost *host, struct rxd_listselect **rxd, l
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1926,7 +1926,7 @@ void rx_readclose( UNUSED struct RexxHost *host, struct rxd_readclose **rxd, lon
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -1959,7 +1959,7 @@ void rx_setmailfile( UNUSED struct RexxHost *host, struct rxd_setmailfile **rxd,
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2000,7 +2000,7 @@ void rx_mailcopy( UNUSED struct RexxHost *host, struct rxd_mailcopy **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2025,7 +2025,7 @@ void rx_appbusy( UNUSED struct RexxHost *host, struct rxd_appbusy **rxd, long ac
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2055,7 +2055,7 @@ void rx_appnobusy( UNUSED struct RexxHost *host, struct rxd_appnobusy **rxd, lon
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2079,7 +2079,7 @@ void rx_writemailto( UNUSED struct RexxHost *host, struct rxd_writemailto **rxd,
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2108,7 +2108,7 @@ void rx_userinfo( UNUSED struct RexxHost *host, struct rxd_userinfo **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2151,7 +2151,7 @@ void rx_mailstatus( UNUSED struct RexxHost *host, struct rxd_mailstatus **rxd, l
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2182,7 +2182,7 @@ void rx_isonline( UNUSED struct RexxHost *host, struct rxd_isonline **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2209,7 +2209,7 @@ void rx_requeststring( UNUSED struct RexxHost *host, struct rxd_requeststring **
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2239,7 +2239,7 @@ void rx_requestfolder( UNUSED struct RexxHost *host, struct rxd_requestfolder **
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2267,7 +2267,7 @@ void rx_getselected( UNUSED struct RexxHost *host, struct rxd_getselected **rxd,
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2319,7 +2319,7 @@ void rx_addredit( UNUSED struct RexxHost *host, struct rxd_addredit **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2382,7 +2382,7 @@ void rx_addrdelete( UNUSED struct RexxHost *host, struct rxd_addrdelete **rxd, l
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2418,7 +2418,7 @@ void rx_addrsave( UNUSED struct RexxHost *host, struct rxd_addrsave **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2448,7 +2448,7 @@ void rx_addrload( UNUSED struct RexxHost *host, struct rxd_addrload **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2471,7 +2471,7 @@ void rx_addrgoto( UNUSED struct RexxHost *host, struct rxd_addrgoto **rxd, long 
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2495,7 +2495,7 @@ void rx_addrnew( UNUSED struct RexxHost *host, struct rxd_addrnew **rxd, long ac
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2542,7 +2542,7 @@ void rx_mailchangesubject( UNUSED struct RexxHost *host, struct rxd_mailchangesu
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:
@@ -2585,7 +2585,7 @@ void rx_geturl( UNUSED struct RexxHost *host, struct rxd_geturl **rxd, long acti
    switch( action )
    {
       case RXIF_INIT:
-         *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
+         *rxd = AllocVec( sizeof *rd, MEMF_SHARED|MEMF_CLEAR );
          break;
 
       case RXIF_ACTION:

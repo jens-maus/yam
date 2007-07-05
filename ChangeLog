@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-05  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: replaced all MEMF_ANY/MEMF_PUBLIC memory flag occurrancas with
+    MEMF_SHARED and defined it for platforms where it doesn't exist. This flag
+    is required to make sure a future OS4 version which will come with a pager
+    can deal with our application.
+
 2007-07-05  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_US.c: fixed the "15 or 16 users" issue. Also the "Add" and "Del" buttons
@@ -12,7 +19,7 @@ $URL$
   * YAM_COg.c, YAM_COs.c: fixed various "object should be ghosted" issues. This
     partly fixes bug #1748099.
 
-2007-05-24  Alexandre Balaban <abalaban@free.fr>
+2007-07-04  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: french translation update according to latest changes.
 
