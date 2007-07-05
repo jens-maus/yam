@@ -2210,7 +2210,9 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_SPLITLOG, CE->SplitLogfile);
       setcheckmark(gui->CH_LOGALL, CE->LogAllEvents);
       setcheckmark(gui->CH_PGPPASSINTERVAL, CE->PGPPassInterval > 0);
-      set(gui->NB_PGPPASSINTERVAL, MUIA_Numeric_Value, abs(CE->PGPPassInterval));
+      SetAttrs(gui->NB_PGPPASSINTERVAL, MUIA_Numeric_Value, abs(CE->PGPPassInterval),
+                                        MUIA_Disabled, CE->PGPPassInterval <= 0,
+                                        TAG_DONE);
       DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, CE->LogfileMode == LF_NONE, gui->PO_LOGFILE,
                                                                                  gui->CH_SPLITLOG,
                                                                                  gui->CH_LOGALL,

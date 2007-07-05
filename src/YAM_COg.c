@@ -3011,6 +3011,7 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
                                                                                                                                                                    data->GUI.CH_SPLITLOG,
                                                                                                                                                                    data->GUI.CH_LOGALL,
                                                                                                                                                                    NULL);
+    DoMethod(data->GUI.CH_PGPPASSINTERVAL, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.NB_PGPPASSINTERVAL, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
   }
 
   RETURN(obj);
