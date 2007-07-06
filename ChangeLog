@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-06  Thore Böckelmann <tboeckel@gmx.de>
+
+  * MailMailListGroup.c: the RemoveMail method is now just forwarded to the
+    affected list objects instead of doing the work itself.
+  * MailMailList.c: added new method RemoveMail to remove a mail from the list.
+
 2007-07-06  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_FI.c: when a find window already exists in case the user presses

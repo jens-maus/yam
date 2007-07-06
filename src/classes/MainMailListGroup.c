@@ -131,7 +131,7 @@ OVERLOAD(OM_SET)
 {
   GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
-  
+
   while((tag = NextTagItem(&tags)))
   {
     switch(tag->ti_Tag)
@@ -435,29 +435,20 @@ DECLARE(AddMailToList) // enum MainListType type, struct Mail* mail
 DECLARE(RemoveMail) // struct Mail* mail
 {
   GETDATA;
-  LONG pos = MUIV_NList_GetPos_Start;
-  ULONG result = 0;
+  ULONG result;
+
   ENTER();
 
   // first we check whether the active one was the quickview and if so we also remove
   // the mail from the main list
   if(data->activeList == LT_QUICKVIEW)
   {
-    // now we try to get the position of the found srcMail in the main listview
-    DoMethod(data->mainListObjects[LT_MAIN], MUIM_NList_GetPos, msg->mail, &pos);
-
-    // and if found we remove it from this list as well.
-    if(pos != MUIV_NList_GetPos_End)
-      DoMethod(data->mainListObjects[LT_MAIN], MUIM_NList_Remove, pos);
-
-    // reset pos again
-    pos = MUIV_NList_GetPos_Start;
+    // forward the command to the listview itself
+    DoMethod(data->mainListObjects[LT_MAIN], MUIM_MainMailList_RemoveMail, msg->mail);
   }
 
   // now also remove the mail from the currently active list
-  DoMethod(data->mainListObjects[data->activeList], MUIM_NList_GetPos, msg->mail, &pos);
-  if(pos != MUIV_NList_GetPos_End)
-    result = DoMethod(data->mainListObjects[data->activeList], MUIM_NList_Remove, pos);
+  result = DoMethod(data->mainListObjects[data->activeList], MUIM_MainMailList_RemoveMail, msg->mail);
 
   RETURN(result);
   return result;
