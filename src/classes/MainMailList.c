@@ -760,15 +760,20 @@ DECLARE(MakeFormat)
 // removes a mail visibly from the message listview
 DECLARE(RemoveMail) // struct Mail* mail
 {
-  LONG pos = MUIV_NList_GetPos_Start;
   ULONG result = 0;
 
   ENTER();
 
-  // now also remove the mail from the currently active list
-  DoMethod(obj, MUIM_NList_GetPos, msg->mail, &pos);
-  if(pos != MUIV_NList_GetPos_End)
-    result = DoMethod(obj, MUIM_NList_Remove, pos);
+  // check if there are any mails in the list at all.
+  if(xget(obj, MUIA_NList_Entries) > 0)
+  {
+    LONG pos = MUIV_NList_GetPos_Start;
+
+    // now also remove the mail from the currently active list
+    DoMethod(obj, MUIM_NList_GetPos, msg->mail, &pos);
+    if(pos != MUIV_NList_GetPos_End)
+      result = DoMethod(obj, MUIM_NList_Remove, pos);
+  }
 
   RETURN(result);
   return result;

@@ -820,8 +820,10 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
    struct TimeVal now;
    struct TimeVal last;
 
+   ENTER();
+
    // by default we don`t dispose on end
-   G->FI->DisposeOnEnd = FALSE;
+   G->FI->ClearOnEnd   = FALSE;
    G->FI->SearchActive = TRUE;
    G->FI->Abort        = FALSE;
 
@@ -925,10 +927,14 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
 
    G->FI->SearchActive = FALSE;
 
-   // if the closeHook has set the DisposeOnEnd flag we have to dispose
-   // our object now.
-   if(G->FI->DisposeOnEnd)
-     DisposeModulePush(&G->FI);
+   // if the closeHook has set the ClearOnEnd flag we have to clear
+   // the result listview
+   if(G->FI->ClearOnEnd)
+     DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_Clear);
+   else
+     set(gui->WI, MUIA_Window_ActiveObject, xget(gui->GR_SEARCH, MUIA_SearchControlGroup_ActiveObject));
+
+   LEAVE();
 }
 MakeStaticHook(FI_SearchHook,FI_SearchFunc);
 
@@ -984,51 +990,72 @@ HOOKPROTONHNONP(FI_Open, void)
 
   if(G->FI == NULL)
   {
-    BOOL success = FALSE;
-
-    if((G->FI = FI_New()) != NULL)
-    {
-      struct Folder *folder;
-
-      if((folder = FO_GetCurrentFolder()) != NULL)
-      {
-        struct Folder **flist;
-
-        if((flist = FO_CreateList()) != NULL)
-        {
-          int i;
-          int j = 0;
-          int apos = 0;
-
-          for(i = 1; i <= (int)*flist; i++)
-          {
-            if(isGroupFolder(flist[i]) == FALSE)
-            {
-              DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
-
-              if(flist[i] == folder)
-                apos = j;
-
-              j++;
-            }
-          }
-          set(G->FI->GUI.LV_FOLDERS, MUIA_List_Active, apos);
-          free(flist);
-
-          // everything went fine
-          success = TRUE;
-        }
-      }
-    }
-
-    if(success == FALSE || SafeOpenWindow(G->FI->GUI.WI) == FALSE)
+    if((G->FI = FI_New()) == NULL)
       DisposeModulePush(&G->FI);
   }
   else if(G->FI->GUI.WI != NULL)
   {
-    // bring window to front and make it active
-    DoMethod(G->FI->GUI.WI, MUIM_Window_ToFront);
-    set(G->FI->GUI.WI, MUIA_Window_Activate, TRUE);
+    // clear the folder list
+    DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_Clear);
+  }
+  else
+    DisposeModulePush(&G->FI);
+
+  if(G->FI != NULL && G->FI->GUI.WI != NULL)
+  {
+    BOOL success = FALSE;
+    struct Folder *folder;
+
+    if((folder = FO_GetCurrentFolder()) != NULL)
+    {
+      struct Folder **flist;
+
+      if((flist = FO_CreateList()) != NULL)
+      {
+        int i;
+        int j = 0;
+        int apos = 0;
+
+        for(i=1; i <= (int)*flist; i++)
+        {
+          if(isGroupFolder(flist[i]) == FALSE)
+          {
+            DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
+
+            if(flist[i] == folder)
+              apos = j;
+
+            j++;
+          }
+        }
+
+        set(G->FI->GUI.LV_FOLDERS, MUIA_List_Active, apos);
+        free(flist);
+
+        // everything went fine
+        success = TRUE;
+      }
+    }
+
+    if(success)
+    {
+      // check if the window is already open
+      if(xget(G->FI->GUI.WI, MUIA_Window_Open) == TRUE)
+      {
+        // bring window to front
+        DoMethod(G->FI->GUI.WI, MUIM_Window_ToFront);
+
+        // make window active
+        set(G->FI->GUI.WI, MUIA_Window_Activate, TRUE);
+      }
+      else if(SafeOpenWindow(G->FI->GUI.WI) == FALSE)
+        DisposeModulePush(&G->FI);
+
+      // set object of last search session active as well
+      set(G->FI->GUI.WI, MUIA_Window_ActiveObject, xget(G->FI->GUI.GR_SEARCH, MUIA_SearchControlGroup_ActiveObject));
+    }
+    else
+      DisposeModulePush(&G->FI);
   }
 
   LEAVE();
@@ -1151,18 +1178,22 @@ HOOKPROTONHNONP(FI_Close, void)
 {
   ENTER();
 
-  if(G->FI->SearchActive == FALSE)
+  // set the abort flag so that a running search will be stopped.
+  if(G->FI->SearchActive)
   {
-    DisposeModulePush(&G->FI);
+    G->FI->Abort = TRUE;
+    G->FI->ClearOnEnd = TRUE;
   }
   else
   {
-    // set the abort flag so that a running search will be stopped.
-    G->FI->Abort = TRUE;
-    G->FI->DisposeOnEnd = TRUE;
-
-    set(G->FI->GUI.WI, MUIA_Window_Open, FALSE);
+    // cleanup the result listview for the next session
+    DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_Clear);
   }
+
+  // close the window. all the other stuff will be
+  // disposed by the application as soon as it
+  // disposes itself..
+  set(G->FI->GUI.WI, MUIA_Window_Open, FALSE);
 
   LEAVE();
 }
@@ -1971,6 +2002,7 @@ static struct FI_ClassData *FI_New(void)
                    MUIA_CycleChain      , 1,
                    MUIA_Listview_List, data->GUI.LV_FOLDERS = ListObject,
                       InputListFrame,
+                      MUIA_List_AutoVisible, TRUE,
                       MUIA_List_AdjustWidth, TRUE,
                    End,
                 End,

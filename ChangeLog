@@ -11,12 +11,19 @@ $URL$
   * YAM_UT.c: a mail being removed from the main window's mail list is now
     removed from the search window's result list, if it is opened. This fixes
     bug #1748819.
-  * MailMailListGroup.c: the RemoveMail method is now just forwarded to the
+  * MainMailListGroup.c: the RemoveMail method is now just forwarded to the
     affected list objects instead of doing the work itself.
-  * MailMailList.c: added new method RemoveMail to remove a mail from the list.
+  * MainMailList.c: added new method RemoveMail to remove a mail from the list.
 
 2007-07-06  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_FI.c: the search window will not be disposed automatically anymore,
+    when the window is closed. This should have the effect that upon reopening
+    the window, all content, excluding the main mail list and the folder list
+    will be restored and available for a consecutive search. This should
+    fullfil change request #1747792. In addition, YAM will now make sure
+    to always reactivate the string gadget of a search right after the search
+    or after having reopened the search window.
   * YAM_FI.c: when a find window already exists in case the user presses
     the 'Find' toolbar gadget and/or menu item, the window will be brought
     to front and activated rather than closed.

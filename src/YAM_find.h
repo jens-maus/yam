@@ -53,9 +53,9 @@ struct FI_GUIData
 struct FI_ClassData
 {
   struct FI_GUIData GUI;
-  LONG              Abort;
+  BOOL              Abort;
   BOOL              SearchActive;
-  BOOL              DisposeOnEnd;
+  BOOL              ClearOnEnd;
 };
 
 enum ApplyFilterMode  { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE, APPLY_RX_ALL, APPLY_RX, APPLY_SPAM };

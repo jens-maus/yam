@@ -4215,8 +4215,9 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
   if(folder == FO_GetCurrentFolder())
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RemoveMail, mail);
 
-  // remove the mail from the search window's mail list as well, if that window exists
-  if(G->FI != NULL && G->FI->GUI.LV_MAILS != NULL)
+  // remove the mail from the search window's mail list as well, if the
+  // search window exists at all
+  if(G->FI != NULL)
     DoMethod(G->FI->GUI.LV_MAILS, MUIM_MainMailList_RemoveMail, mail);
 
   // lets decrease the folder statistics first
