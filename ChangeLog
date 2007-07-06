@@ -17,6 +17,8 @@ $URL$
 
 2007-07-06  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_FI.c: set a new default MUIA_NList_Format with other minimum weight
+    factors so that all columns should properly fit into the window width.
   * YAM_FI.c: the search window will not be disposed automatically anymore,
     when the window is closed. This should have the effect that upon reopening
     the window, all content, excluding the main mail list and the folder list
