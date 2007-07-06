@@ -7,6 +7,8 @@ $URL$
 
 2007-07-06  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: a mail being removed from the main window's mail list is now
+    removed from the search window's result list, if it is opened.
   * MailMailListGroup.c: the RemoveMail method is now just forwarded to the
     affected list objects instead of doing the work itself.
   * MailMailList.c: added new method RemoveMail to remove a mail from the list.
