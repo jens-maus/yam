@@ -382,7 +382,7 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(Modified):      *store = 1; return TRUE;
+    ATTR(Modified):     *store = 1; return TRUE;
     ATTR(ActiveObject): *store = (ULONG)data->activeObject; return TRUE;
   }
 
@@ -532,6 +532,7 @@ DECLARE(Update)
   if(mode < 12)
   {
     ULONG group = Mode2Group[mode];
+    Object *newActiveObj = NULL;
 
     set(data->PG_SRCHOPT, MUIA_Group_ActivePage, group);
 
@@ -541,16 +542,22 @@ DECLARE(Update)
       case 1:
       case 2:
       case 4:
-        data->activeObject = data->ST_MATCH[group];
+        newActiveObj = data->ST_MATCH[group];
       break;
 
       case 3:
-        data->activeObject = data->CY_STATUS;
+        newActiveObj = data->CY_STATUS;
       break;
     }
 
-    if(_win(obj) != NULL)
-      set(_win(obj), MUIA_Window_ActiveObject, data->activeObject);
+    if(_win(obj) != NULL &&
+       ((Object *)xget(_win(obj), MUIA_Window_ActiveObject) == NULL ||
+        (Object *)xget(_win(obj), MUIA_Window_ActiveObject) == data->activeObject))
+    {
+      set(_win(obj), MUIA_Window_ActiveObject, newActiveObj);
+    }
+
+    data->activeObject = newActiveObj;
 
     SetAttrs(obj, MUIA_Disabled, FALSE,
                   MUIA_SearchControlGroup_Modified, TRUE,

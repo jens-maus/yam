@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-06  Jens Langner <Jens.Langner@light-speed.de>
+
+  * SearchControlGroup.c: a new active object will now only be set in case
+    the mode cycle gadget is switch by mouse manually. This should prevent
+    YAM from steeling the focus from the cyclechain when switching modes
+    by keyboard.
+
 2007-07-05  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_FI.c, SearchControlGroup.c: when the find window is going to be opened
