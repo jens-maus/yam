@@ -7,6 +7,9 @@ $URL$
 
 2007-07-06  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_FI.c: when a find window already exists in case the user presses
+    the 'Find' toolbar gadget and/or menu item, the window will be brought
+    to front and activated rather than closed.
   * SearchControlGroup.c: a new active object will now only be set in case
     the mode cycle gadget is switch by mouse manually. This should prevent
     YAM from steeling the focus from the cyclechain when switching modes

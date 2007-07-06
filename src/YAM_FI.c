@@ -980,12 +980,12 @@ MakeStaticHook(CreateFilterFromSearchHook, CreateFilterFromSearch);
 //  Opens find window
 HOOKPROTONHNONP(FI_Open, void)
 {
-  BOOL success = FALSE;
-
   ENTER();
 
   if(G->FI == NULL)
   {
+    BOOL success = FALSE;
+
     if((G->FI = FI_New()) != NULL)
     {
       struct Folder *folder;
@@ -1020,10 +1020,16 @@ HOOKPROTONHNONP(FI_Open, void)
         }
       }
     }
-  }
 
-  if(success == FALSE || SafeOpenWindow(G->FI->GUI.WI) == FALSE)
-    DisposeModulePush(&G->FI);
+    if(success == FALSE || SafeOpenWindow(G->FI->GUI.WI) == FALSE)
+      DisposeModulePush(&G->FI);
+  }
+  else if(G->FI->GUI.WI != NULL)
+  {
+    // bring window to front and make it active
+    DoMethod(G->FI->GUI.WI, MUIM_Window_ToFront);
+    set(G->FI->GUI.WI, MUIA_Window_Activate, TRUE);
+  }
 
   LEAVE();
 }
