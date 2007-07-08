@@ -116,6 +116,8 @@ OVERLOAD(OM_SET)
     {
       ATTR(Address):
       {
+        char *newAddress = (char *)tag->ti_Data;
+
         if(data->imageLoaded == TRUE)
         {
           // remove the image from the cache
@@ -127,7 +129,10 @@ OVERLOAD(OM_SET)
         if(data->address != NULL)
           free(data->address);
 
-        data->address = strdup((char *)tag->ti_Data);
+        if(newAddress != NULL)
+          data->address = strdup(newAddress);
+        else
+          data->address = NULL;
 
         // remember to relayout the image
         relayout = TRUE;
@@ -139,6 +144,8 @@ OVERLOAD(OM_SET)
 
       ATTR(Filename):
       {
+        char *newFilename = (char *)tag->ti_Data;
+
         if(data->imageLoaded == TRUE)
         {
           // remove the image from the cache
@@ -150,7 +157,10 @@ OVERLOAD(OM_SET)
         if(data->fileName != NULL)
           free(data->fileName);
 
-        data->fileName = strdup((char*)tag->ti_Data);
+        if(newFilename != NULL)
+          data->fileName = strdup(newFilename);
+        else
+          data->fileName = NULL;
 
         // remember to relayout the image
         relayout = TRUE;

@@ -269,10 +269,15 @@ OVERLOAD(OM_SET)
 
       ATTR(Filename):
       {
+        char *newFilename = (char *)tag->ti_Data;
+
         if(data->name != NULL)
           free(data->name);
 
-        data->name = strdup((char*)tag->ti_Data);
+        if(newFilename != NULL)
+          data->name = strdup(newFilename);
+        else
+          data->name = NULL;
 
         relayout = TRUE;
 
