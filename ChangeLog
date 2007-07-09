@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-09  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Aboutwindow.c: fixed allocation issue where sometimes the about text
+    wasn't displayed at all due to an unclear text copying situation. Now
+    we allocate the text on our own and display it right away until we free
+    it when the window is closed.
+
 2007-07-08  Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageArea.c, UserImage.c: added NULL pointer checks to avoid calling

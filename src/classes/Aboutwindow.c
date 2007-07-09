@@ -38,7 +38,7 @@
 /* CLASSDATA
 struct Data
 {
-  ULONG dummy;
+  char *aboutText;
 };
 */
 
@@ -143,6 +143,8 @@ OVERLOAD(OM_NEW)
   compileInfo = (char *)xget(G->App, MUIA_YAM_CompileInfo);
   strmfp(logopath, G->ProgDir, "Icons/logo");
 
+  // use asprintf() function to allocate&set the content of our
+  // about text.
   asprintf(&aboutText, aboutTemplate, tr(MSG_ABOUT_CURRENT_DEVELOPERS),
                                       tr(MSG_ABOUT_CONTRIBUTORS),
                                       tr(MSG_ABOUT_LOCALIZATION_CONTRIBUTORS),
@@ -170,6 +172,7 @@ OVERLOAD(OM_NEW)
       MUIA_Text_PreParse, "\033c",
       MUIA_Text_Contents, aboutText,
       MUIA_Text_SetMax,   FALSE,
+      MUIA_Text_Copy,     FALSE,
     End,
 
   End;
@@ -184,7 +187,7 @@ OVERLOAD(OM_NEW)
       MUIA_NListview_NList, NFloattextObject,
         MUIA_Font,            MUIV_Font_Tiny,
         MUIA_NList_Format,    "P=\033c",
-        MUIA_NList_Input,     FALSE,
+        MUIA_NList_Input,     NULL,
         MUIA_NFloattext_Text, aboutText,
       End,
 
@@ -258,6 +261,8 @@ OVERLOAD(OM_NEW)
     if(!(data = (struct Data *)INST_DATA(cl,obj)))
       return 0;
 
+    data->aboutText = aboutText;
+
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
     DoMethod(obj,       MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);
@@ -270,12 +275,27 @@ OVERLOAD(OM_NEW)
     TAG_DONE);
   }
 
-  free(aboutText);
-
   RETURN((ULONG)obj);
   return (ULONG)obj;
 }
 
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  GETDATA;
+  ULONG result;
+
+  ENTER();
+
+  if(data->aboutText != NULL)
+    free(data->aboutText);
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
 ///
 
 /* Private Functions */
