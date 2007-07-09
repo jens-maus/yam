@@ -69,12 +69,12 @@ OVERLOAD(OM_NEW)
     struct TagItem *tags = inittags(msg);
     struct TagItem *tag;
 
-    while((tag = NextTagItem(&tags)))
+    while((tag = NextTagItem(&tags)) != NULL)
     {
       switch(tag->ti_Tag)
       {
-        ATTR(Address)     : data->address = strdup((char *)tag->ti_Data); break;
-        ATTR(Filename)    : data->fileName = strdup((char *)tag->ti_Data); break;
+        ATTR(Address)     : if((char *)tag->ti_Data != NULL) data->address = strdup((char *)tag->ti_Data); break;
+        ATTR(Filename)    : if((char *)tag->ti_Data != NULL) data->fileName = strdup((char *)tag->ti_Data); break;
         ATTR(MaxHeight)   : data->maxHeight   = (ULONG)tag->ti_Data; break;
         ATTR(MaxWidth)    : data->maxWidth    = (ULONG)tag->ti_Data; break;
         ATTR(NoMinHeight) : data->noMinHeight = (BOOL)tag->ti_Data; break;
@@ -127,12 +127,13 @@ OVERLOAD(OM_SET)
         }
 
         if(data->address != NULL)
+        {
           free(data->address);
+          data->address = NULL;
+        }
 
         if(newAddress != NULL)
           data->address = strdup(newAddress);
-        else
-          data->address = NULL;
 
         // remember to relayout the image
         relayout = TRUE;
@@ -155,12 +156,13 @@ OVERLOAD(OM_SET)
         }
 
         if(data->fileName != NULL)
+        {
           free(data->fileName);
+          data->fileName = NULL;
+        }
 
         if(newFilename != NULL)
           data->fileName = strdup(newFilename);
-        else
-          data->fileName = NULL;
 
         // remember to relayout the image
         relayout = TRUE;

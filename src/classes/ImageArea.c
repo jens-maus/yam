@@ -126,13 +126,13 @@ OVERLOAD(OM_NEW)
     data->free_horiz = FALSE;
     data->show_label = TRUE;
 
-    while((tag = NextTagItem(&tags)))
+    while((tag = NextTagItem(&tags)) != NULL)
     {
       switch(tag->ti_Tag)
       {
-        ATTR(ID):        data->id = strdup((char *)tag->ti_Data); break;
-        ATTR(Filename):  data->name = strdup((char *)tag->ti_Data); break;
-        ATTR(Label):     data->label = strdup((char *)tag->ti_Data); break;
+        ATTR(ID):        if((char *)tag->ti_Data != NULL) data->id = strdup((char *)tag->ti_Data); break;
+        ATTR(Filename):  if((char *)tag->ti_Data != NULL) data->name = strdup((char *)tag->ti_Data); break;
+        ATTR(Label):     if((char *)tag->ti_Data != NULL) data->label = strdup((char *)tag->ti_Data); break;
         ATTR(FreeVert):  data->free_vert = tag->ti_Data; break;
         ATTR(FreeHoriz): data->free_horiz = tag->ti_Data; break;
         ATTR(ShowLabel): data->show_label = tag->ti_Data; break;
@@ -272,12 +272,13 @@ OVERLOAD(OM_SET)
         char *newFilename = (char *)tag->ti_Data;
 
         if(data->name != NULL)
+        {
           free(data->name);
+          data->name = NULL;
+        }
 
         if(newFilename != NULL)
           data->name = strdup(newFilename);
-        else
-          data->name = NULL;
 
         relayout = TRUE;
 

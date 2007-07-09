@@ -7,6 +7,7 @@ $URL$
 
 2007-07-09  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageArea.c, UserImage.c: NULL pointers during OM_NEW are now catched, too.
   * Aboutwindow.c: MUIA_NList_Input is documented to be a BOOl value and should
     be treated as such.
 
