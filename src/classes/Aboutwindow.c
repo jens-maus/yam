@@ -187,7 +187,7 @@ OVERLOAD(OM_NEW)
       MUIA_NListview_NList, NFloattextObject,
         MUIA_Font,            MUIV_Font_Tiny,
         MUIA_NList_Format,    "P=\033c",
-        MUIA_NList_Input,     NULL,
+        MUIA_NList_Input,     FALSE,
         MUIA_NFloattext_Text, aboutText,
       End,
 

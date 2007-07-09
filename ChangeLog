@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-09  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Aboutwindow.c: MUIA_NList_Input is documented to be a BOOl value and should
+    be treated as such.
+
 2007-07-09  Jens Langner <Jens.Langner@light-speed.de>
 
   * Aboutwindow.c: fixed allocation issue where sometimes the about text
