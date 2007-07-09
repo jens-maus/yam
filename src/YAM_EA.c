@@ -494,7 +494,7 @@ HOOKPROTONHNO(EA_CloseFunc, void, int *arg)
 
   ENTER();
 
-  if(gui->BC_PHOTO != NULL)
+  if(gui->BC_PHOTO != NULL && G->EA[winnum]->ABEntry != NULL)
   {
   	// update the user image ID and remove it from the cache
   	// it will be reloaded when necessary

@@ -7,6 +7,8 @@ $URL$
 
 2007-07-09  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_EA.c: added missing NULL pointer check which caused crashes when closing
+    the edit window of a new user.
   * ImageArea.c, UserImage.c: NULL pointers during OM_NEW are now catched, too.
   * Aboutwindow.c: MUIA_NList_Input is documented to be a BOOl value and should
     be treated as such.
