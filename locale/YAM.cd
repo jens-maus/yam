@@ -6372,9 +6372,10 @@ TCP/IP stack is able to establish non-blocking IO \
 connections.
 ;
 MSG_CONFIG_MODIFIED (1974//)
-The configuration has been modified!\n\
+The configuration has been modified\n\
+without being saved.\n\
 \n\
-Do you want to save it now?
+How do you want to proceed?
 ;
 MSG_CONFIG_MODIFIED_GAD (1975//)
 *_Save now|_Quit without saving

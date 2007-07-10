@@ -8074,9 +8074,10 @@ aufbauen. Bitte stellen Sie sicher, dass Ihr TCP/IP-Stack in \
 der Lage ist nicht blockierende Verbindungen aufzubauen.
 ;
 MSG_CONFIG_MODIFIED
-Die Konfiguration wurde verändert!\n\
+Die Konfiguration wurde verändert\n\
+ohne das sie gespeichert wurde.\n\
 \n\
-Wollen Sie sie jetzt speichern?
+Wie wollen Sie fortfahren?
 ;
 MSG_CONFIG_MODIFIED_GAD
 *Jetzt _speichern|_Beenden ohne speichern

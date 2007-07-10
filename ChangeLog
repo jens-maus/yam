@@ -24,6 +24,8 @@ $URL$
 
 2007-07-10  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.cd, deutsch.ct: slightly rephrased the requester text of the
+    configuration reminder on quit.
   * YAM_CO.c, YAM_FI.c, misc: added generic compare functions to perform a
     transparent compare of the two config structures when a user closes the
     configuration window. This should allow to identify if the config was
