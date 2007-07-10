@@ -6372,8 +6372,8 @@ TCP/IP stack is able to establish non-blocking IO \
 connections.
 ;
 MSG_CONFIG_MODIFIED (1974//)
-The configuration has been modified\n\
-without being saved.\n\
+The configuration has been modified,\n\
+but wasn't saved yet.\n\
 \n\
 How do you want to proceed?
 ;

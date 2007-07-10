@@ -8075,7 +8075,7 @@ der Lage ist nicht blockierende Verbindungen aufzubauen.
 ;
 MSG_CONFIG_MODIFIED
 Die Konfiguration wurde verändert\n\
-ohne das sie gespeichert wurde.\n\
+und bisher nicht gespeichert.\n\
 \n\
 Wie wollen Sie fortfahren?
 ;
