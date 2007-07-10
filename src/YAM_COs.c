@@ -222,7 +222,7 @@ static int MapTZ(int value, BOOL forward)
 ///
 /// CO_SaveConfig
 //  Saves configuration to a file
-BOOL CO_SaveConfig(const struct Config *co, const char *fname)
+BOOL CO_SaveConfig(struct Config *co, const char *fname)
 {
   BOOL result = FALSE;
   FILE *fh;
