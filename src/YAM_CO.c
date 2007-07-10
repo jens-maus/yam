@@ -1084,21 +1084,65 @@ static void CopyConfigData(struct Config *dco, const struct Config *sco)
 }
 
 ///
-/// CompareConfigData
-// compares two config data structures (deep compare) and returns TRUE if they are equal
-static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
+/// ComparePOP3Accounts
+// compare two POP3 accounts to be equal
+static BOOL ComparePOP3Accounts(const struct POP3 *p1, const struct POP3 *p2)
 {
   BOOL equal = TRUE;
 
   ENTER();
 
+  if(p1 != NULL && p2 != NULL)
+  {
+    if(strcmp(p1->Account,   p2->Account) != 0 ||
+       strcmp(p1->Server,    p2->Server) != 0 ||
+       strcmp(p1->User,      p2->User) != 0 ||
+       strcmp(p1->Password,  p2->Password) != 0 ||
+       p1->Port           != p2->Port ||
+       p1->Enabled        != p2->Enabled ||
+       p1->SSLMode        != p2->SSLMode ||
+       p1->UseAPOP        != p2->UseAPOP ||
+       p1->DeleteOnServer != p2->DeleteOnServer)
+    {
+      // one POP3 account has been modified
+      equal = FALSE;
+    }
+  }
+  else if(p1 != NULL || p2 != NULL)
+  {
+    // the number of POP3 accounts differs
+    equal = FALSE;
+  }
+
+  RETURN(equal);
+  return equal;
+}
+
+///
+/// CompareConfigData
+// compares two config data structures (deep compare) and returns TRUE if they are equal
+static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
+{
+  BOOL equal = TRUE;
+  int i;
+
+  ENTER();
+
   // we first do a deep compare of our generic structures
   // before we compare all other items of the struct Config
-  if(CompareFilterLists(&c1->filterList, &c2->filterList) == FALSE)
+  for(i = 0; i < MAXP3; i++)
+  {
+    if(ComparePOP3Accounts(c1->P3[i], c2->P3[i]) == FALSE)
+    {
+      equal = FALSE;
+      break;
+    }
+  }
+  if(equal == TRUE && CompareFilterLists(&c1->filterList, &c2->filterList) == FALSE)
   {
     equal = FALSE;
   }
-  if(CompareMimeTypeLists(&c1->mimeTypeList, &c2->mimeTypeList) == FALSE)
+  if(equal == TRUE && CompareMimeTypeLists(&c1->mimeTypeList, &c2->mimeTypeList) == FALSE)
   {
     equal = FALSE;
   }
