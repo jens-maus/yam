@@ -7,6 +7,8 @@ $URL$
 
 2007-07-10  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c: implemented the complete deep comparison of two filter lists
+    including all embedded rules.
   * YAM_MI.c, YAM_CO.c: added function to compare two MIME type lists.
   * YAM_FI.c, YAM_CO.c: renamed CompareFilterList() to CompareFilterLists().
 

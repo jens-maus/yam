@@ -1792,15 +1792,95 @@ void FreeFilterRuleList(struct FilterNode *filter)
 }
 
 ///
+/// CompareRuleLists
+// compare two rule lists to be equal
+BOOL CompareRuleLists(const struct MinList *rl1, const struct MinList *rl2)
+{
+  BOOL equal = TRUE;
+  struct MinNode *mln1 = rl1->mlh_Head;
+  struct MinNode *mln2 = rl2->mlh_Head;
+
+  ENTER();
+
+  while(mln1->mln_Succ != NULL && mln2->mln_Succ != NULL)
+  {
+    struct RuleNode *rn1 = (struct RuleNode *)mln1;
+    struct RuleNode *rn2 = (struct RuleNode *)mln2;
+
+    if(rn1->combine           != rn2->combine ||
+       rn1->searchMode        != rn2->searchMode ||
+       rn1->subSearchMode     != rn2->subSearchMode ||
+       rn1->comparison        != rn2->comparison ||
+       rn1->caseSensitive     != rn2->caseSensitive ||
+       rn1->subString         != rn2->subString ||
+       strcmp(rn1->matchPattern, rn2->matchPattern) != 0 ||
+       strcmp(rn1->customField,  rn2->customField) != 0)
+    {
+      // something of this rule does not match
+      equal = FALSE;
+      break;
+    }
+    mln1 = mln1->mln_Succ;
+    mln2 = mln2->mln_Succ;
+  }
+
+  // if there are any nodes left then the two lists cannot be equal
+  if(mln1->mln_Succ != NULL || mln2->mln_Succ != NULL)
+  {
+    equal = FALSE;
+  }
+
+  RETURN(equal);
+  return equal;
+}
+
+///
 /// CompareFilterLists
 // performs a deep compare of two filter lists and returns TRUE if they are
 // equal
 BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2)
 {
-  BOOL equal = FALSE;
+  BOOL equal = TRUE;
+  struct MinNode *mln1 = fl1->mlh_Head;
+  struct MinNode *mln2 = fl2->mlh_Head;
+
   ENTER();
 
-#warning TODO
+  // walk through both lists in parallel and compare the single nodes
+  while(mln1->mln_Succ != NULL && mln2->mln_Succ != NULL)
+  {
+    struct FilterNode *fn1 = (struct FilterNode *)mln1;
+    struct FilterNode *fn2 = (struct FilterNode *)mln2;
+
+    // compare every single member of the structure
+    if(fn1->actions         != fn2->actions ||
+       fn1->remote          != fn2->remote ||
+       fn1->applyToNew      != fn2->applyToNew ||
+       fn1->applyOnReq      != fn2->applyOnReq ||
+       fn1->applyToSent     != fn2->applyToSent ||
+       strcmp(fn1->name,       fn2->name) != 0 ||
+       strcmp(fn1->bounceTo,   fn2->bounceTo) != 0 ||
+       strcmp(fn1->forwardTo,  fn2->forwardTo) != 0 ||
+       strcmp(fn1->replyFile,  fn2->replyFile) != 0 ||
+       strcmp(fn1->executeCmd, fn2->executeCmd) != 0 ||
+       strcmp(fn1->playSound,  fn2->playSound) != 0 ||
+       strcmp(fn1->moveTo,     fn2->moveTo) != 0 ||
+       CompareRuleLists(&fn1->ruleList, &fn2->ruleList) == FALSE)
+    {
+      // something does not match
+      equal = FALSE;
+      break;
+    }
+
+    mln1 = mln1->mln_Succ;
+    mln2 = mln2->mln_Succ;
+  }
+
+  // if there are any nodes left then the two lists cannot be equal
+  if(mln1->mln_Succ != NULL || mln2->mln_Succ != NULL)
+  {
+    equal = FALSE;
+  }
 
   RETURN(equal);
   return equal;
