@@ -7,6 +7,9 @@ $URL$
 
 2007-07-10  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_CO.c, locale/YAM.cd: a modified and yet unsaved configuration is
+    now detected when quitting YAM. The user must then choose to save the
+    changes or discard them. This fixes bug #511209.
   * YAM_CO.c: the comparison of two configuration structures is now complete.
   * YAM_CO.c: added comparison of POP3 accounts.
   * YAM_FI.c: implemented the complete deep comparison of two filter lists

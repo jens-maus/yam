@@ -6371,3 +6371,11 @@ connection to the mail server. Please make sure your \
 TCP/IP stack is able to establish non-blocking IO \
 connections.
 ;
+MSG_CONFIG_MODIFIED (1974//)
+The configuration has been modified!\n\
+\n\
+Do you want to save it now?
+;
+MSG_CONFIG_MODIFIED_GAD (1975//)
+*_Save now|_Quit without saving
+;

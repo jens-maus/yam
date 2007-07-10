@@ -2148,7 +2148,7 @@ HOOKPROTONHNONP(CO_OpenConfig, void)
 
     strmfp(cname, frc->drawer, frc->file);
 
-    if(CO_LoadConfig(CE, cname, NULL))
+    if(CO_LoadConfig(CE, cname, NULL) == TRUE)
       CO_NewPrefsFile(cname);
 
     CO_SetConfig();
@@ -2178,7 +2178,12 @@ HOOKPROTONHNONP(CO_SaveConfigAs, void)
     CO_GetConfig(TRUE);
     CO_Validate(CE, TRUE);
     CO_NewPrefsFile(cname);
-    CO_SaveConfig(CE, cname);
+    if(CO_SaveConfig(CE, cname) == TRUE && stricmp(G->CO_PrefsFile, cname) == 0)
+    {
+      // if saving the configuration was successful and it has been saved to the
+      // standard configuration file we will treat it as "saved".
+      CE->ConfigIsSaved = TRUE;
+    }
   }
 
   LEAVE();
@@ -2205,9 +2210,13 @@ MakeStaticHook(CO_RestoreHook,CO_Restore);
 //  Reloads configuration from file
 HOOKPROTONHNONP(CO_LastSaved, void)
 {
-   CO_LoadConfig(CE, G->CO_PrefsFile, NULL);
-   CO_SetConfig();
-   G->CO->UpdateAll = TRUE;
+  ENTER();
+
+  CO_LoadConfig(CE, G->CO_PrefsFile, NULL);
+  CO_SetConfig();
+  G->CO->UpdateAll = TRUE;
+
+  LEAVE();
 }
 MakeStaticHook(CO_LastSavedHook,CO_LastSaved);
 
@@ -2216,9 +2225,19 @@ MakeStaticHook(CO_LastSavedHook,CO_LastSaved);
 //  Resets configuration (or a part of it)
 HOOKPROTONHNO(CO_ResetToDefaultFunc, void, int *arg)
 {
-   if (*arg) { CO_SetDefaults(CE, cp_AllPages); G->CO->UpdateAll = TRUE; }
-   else CO_SetDefaults(CE, G->CO->VisiblePage);
-   CO_SetConfig();
+  ENTER();
+
+  if(*arg)
+  {
+    CO_SetDefaults(CE, cp_AllPages);
+    G->CO->UpdateAll = TRUE;
+  }
+  else
+    CO_SetDefaults(CE, G->CO->VisiblePage);
+
+  CO_SetConfig();
+
+  LEAVE();
 }
 MakeStaticHook(CO_ResetToDefaultHook,CO_ResetToDefaultFunc);
 
@@ -2276,7 +2295,9 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
 
       // if the configuration should be saved we do it immediatley
       if(*arg == 2)
-        CO_SaveConfig(C, G->CO_PrefsFile);
+        C->ConfigIsSaved = CO_SaveConfig(C, G->CO_PrefsFile);
+      else
+        C->ConfigIsSaved = FALSE;
     }
     else
       D(DBF_CONFIG, "config wasn't altered, skipped copy operations.");

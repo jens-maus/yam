@@ -1580,10 +1580,15 @@ static BOOL StayInProg(void)
 
   ENTER();
 
-  if(G->AB->Modified)
+  if(G->AB->Modified == TRUE)
   {
     if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_ABookModifiedGad), tr(MSG_AB_Modified)))
       CallHookPkt(&AB_SaveABookHook, 0, 0);
+  }
+  if(C->ConfigIsSaved == FALSE)
+  {
+    if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_CONFIG_MODIFIED_GAD), tr(MSG_CONFIG_MODIFIED)))
+      C->ConfigIsSaved = CO_SaveConfig(C, G->CO_PrefsFile);
   }
 
   for(i=0; i < MAXEA && req == FALSE; i++)
@@ -1709,6 +1714,8 @@ static void Initialise2(void)
   CO_SetDefaults(C, cp_AllPages);
   CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders);
   CO_Validate(C, FALSE);
+  // mark the current configuration as "saved"
+  C->ConfigIsSaved = TRUE;
   SplashProgress(tr(MSG_CreatingGUI), 40);
 
   // before we go and create the first MUI windows

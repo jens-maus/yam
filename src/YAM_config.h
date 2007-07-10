@@ -514,6 +514,7 @@ struct Config
   BOOL  DisplayAllAltPart;
   BOOL  MDNEnabled;
   BOOL  RequestMDN;
+  BOOL  ConfigIsSaved;
 
   struct MUI_PenSpec ColoredText;
   struct MUI_PenSpec Color1stLevel;
