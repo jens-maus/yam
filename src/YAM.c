@@ -1588,7 +1588,7 @@ static BOOL StayInProg(void)
   if(C->ConfigIsSaved == FALSE)
   {
     if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_CONFIG_MODIFIED_GAD), tr(MSG_CONFIG_MODIFIED)))
-      C->ConfigIsSaved = CO_SaveConfig(C, G->CO_PrefsFile);
+      CO_SaveConfig(C, G->CO_PrefsFile);
   }
 
   for(i=0; i < MAXEA && req == FALSE; i++)

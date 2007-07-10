@@ -7,6 +7,8 @@ $URL$
 
 2007-07-10  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_CO.c, YAM_COs.c: the "is saved" state of the configuration is
+    now set in CO_SaveConfig() and reset in CopyConfigData().
   * YAM.c, YAM_CO.c, locale/YAM.cd: a modified and yet unsaved configuration is
     now detected when quitting YAM. The user must then choose to save the
     changes or discard them. This fixes bug #511209.

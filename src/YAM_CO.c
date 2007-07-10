@@ -1080,6 +1080,9 @@ static void CopyConfigData(struct Config *dco, const struct Config *sco)
     }
   }
 
+  // remember that this configuration is not yet saved
+  dco->ConfigIsSaved = FALSE;
+
   LEAVE();
 }
 
@@ -2178,12 +2181,7 @@ HOOKPROTONHNONP(CO_SaveConfigAs, void)
     CO_GetConfig(TRUE);
     CO_Validate(CE, TRUE);
     CO_NewPrefsFile(cname);
-    if(CO_SaveConfig(CE, cname) == TRUE && stricmp(G->CO_PrefsFile, cname) == 0)
-    {
-      // if saving the configuration was successful and it has been saved to the
-      // standard configuration file we will treat it as "saved".
-      CE->ConfigIsSaved = TRUE;
-    }
+    CO_SaveConfig(CE, cname);
   }
 
   LEAVE();
@@ -2295,9 +2293,7 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
 
       // if the configuration should be saved we do it immediatley
       if(*arg == 2)
-        C->ConfigIsSaved = CO_SaveConfig(C, G->CO_PrefsFile);
-      else
-        C->ConfigIsSaved = FALSE;
+        CO_SaveConfig(C, G->CO_PrefsFile);
     }
     else
       D(DBF_CONFIG, "config wasn't altered, skipped copy operations.");

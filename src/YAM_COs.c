@@ -587,6 +587,8 @@ BOOL CO_SaveConfig(const struct Config *co, const char *fname)
     if(ferror(fh) == 0)
     {
       result = TRUE;
+      // remember that this configuration has been saved
+      co->ConfigIsSaved = TRUE;
       D(DBF_CONFIG, "configuration successfully saved");
     }
     else
