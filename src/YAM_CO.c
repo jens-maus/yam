@@ -1086,7 +1086,7 @@ static void CopyConfigData(struct Config *dco, const struct Config *sco)
 ///
 /// ComparePOP3Accounts
 // compare two POP3 accounts to be equal
-static BOOL ComparePOP3Accounts(const struct Config *c1, const struct Config *c2)
+static BOOL ComparePOP3Accounts(const struct POP3 **pop1, const struct POP3 **pop2)
 {
   BOOL equal = TRUE;
   int i;
@@ -1095,8 +1095,8 @@ static BOOL ComparePOP3Accounts(const struct Config *c1, const struct Config *c2
 
   for(i = 0; i < MAXP3; i++)
   {
-    struct POP3 *p1 = c1->P3[i];
-    struct POP3 *p2 = c2->P3[i];
+    const struct POP3 *p1 = pop1[i];
+    const struct POP3 *p2 = pop2[i];
 
     if(p1 != NULL && p2 != NULL)
     {
@@ -1138,7 +1138,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
 
   // we first do a deep compare of our generic structures
   // before we compare all other items of the struct Config
-  if(ComparePOP3Accounts(c1, c2) == FALSE)
+  if(ComparePOP3Accounts((const struct POP3 **)c1->P3, (const struct POP3 **)c2->P3) == FALSE)
   {
     equal = FALSE;
   }
