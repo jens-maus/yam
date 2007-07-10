@@ -1794,7 +1794,7 @@ void FreeFilterRuleList(struct FilterNode *filter)
 ///
 /// CompareRuleLists
 // compare two rule lists to be equal
-BOOL CompareRuleLists(const struct MinList *rl1, const struct MinList *rl2)
+static BOOL CompareRuleLists(const struct MinList *rl1, const struct MinList *rl2)
 {
   BOOL equal = TRUE;
   struct MinNode *mln1 = rl1->mlh_Head;
