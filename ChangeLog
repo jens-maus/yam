@@ -7,6 +7,7 @@ $URL$
 
 2007-07-10  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c: fixed wrong pointer access when comparing ARexx functions.
   * YAM_COs.c: removed the const qualifier from CO_SaveConfig() because the
     config structure is now really changed.
   * YAM.c, YAM_CO.c, YAM_COs.c: the "is saved" state of the configuration is

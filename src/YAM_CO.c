@@ -1133,7 +1133,7 @@ static BOOL ComparePOP3Accounts(const struct POP3 **pop1, const struct POP3 **po
 ///
 /// CompareRxHooks
 // compare two RxHook structures to be equal
-static BOOL CompareRxHooks(const struct RxHook **rx1, const struct RxHook **rx2)
+static BOOL CompareRxHooks(const struct RxHook *rx1, const struct RxHook *rx2)
 {
   BOOL equal = TRUE;
   int i;
@@ -1142,8 +1142,8 @@ static BOOL CompareRxHooks(const struct RxHook **rx1, const struct RxHook **rx2)
 
   for(i = 0; i < MAXRX; i++)
   {
-    const struct RxHook *r1 = rx1[i];
-    const struct RxHook *r2 = rx2[i];
+    const struct RxHook *r1 = &rx1[i];
+    const struct RxHook *r2 = &rx2[i];
 
     if(r1->IsAmigaDOS  != r2->IsAmigaDOS ||
        r1->UseConsole  != r2->UseConsole ||
@@ -1308,7 +1308,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
   {
     equal = FALSE;
   }
-  else if(CompareRxHooks((const struct RxHook **)c1->RX, (const struct RxHook **)c2->RX) == FALSE)
+  else if(CompareRxHooks((const struct RxHook *)c1->RX, (const struct RxHook *)c2->RX) == FALSE)
   {
     equal = FALSE;
   }
