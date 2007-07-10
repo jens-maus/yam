@@ -7,6 +7,7 @@ $URL$
 
 2007-07-10  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c: the comparison of two configuration structures is now complete.
   * YAM_CO.c: added comparison of POP3 accounts.
   * YAM_FI.c: implemented the complete deep comparison of two filter lists
     including all embedded rules.
