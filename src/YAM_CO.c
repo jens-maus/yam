@@ -1098,6 +1098,10 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
   {
     equal = FALSE;
   }
+  if(CompareMimeTypeLists(&c1->mimeTypeList, &c2->mimeTypeList) == FALSE)
+  {
+    equal = FALSE;
+  }
 
   #warning TODO
 

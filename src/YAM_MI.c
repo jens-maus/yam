@@ -2867,3 +2867,44 @@ void FreeMimeTypeList(struct MinList *mimeTypeList)
 }
 
 ///
+/// CompareMimeTypeLists
+// compare two MIME type lists
+BOOL CompareMimeTypeLists(const struct MinList *mtl1, const struct MinList *mtl2)
+{
+  BOOL equal = TRUE;
+  struct MinNode *mln1 = mtl1->mlh_Head;
+  struct MinNode *mln2 = mtl2->mlh_Head;
+
+  ENTER();
+
+  // walk through both lists in parallel and compare the single nodes
+  while(mln1->mln_Succ != NULL && mln2->mln_Succ != NULL)
+  {
+    struct MimeTypeNode *mtn1 = (struct MimeTypeNode *)mln1;
+    struct MimeTypeNode *mtn2 = (struct MimeTypeNode *)mln2;
+
+    // compare every single member of the structure
+    if(strcmp(mtn1->ContentType, mtn2->ContentType) != 0 ||
+       strcmp(mtn1->Extension,   mtn2->Extension) != 0 ||
+       strcmp(mtn1->Description, mtn2->Description) != 0 ||
+       strcmp(mtn1->Command,     mtn2->Command) != 0)
+    {
+      // something does not match
+      equal = FALSE;
+      break;
+    }
+    mln1 = mln1->mln_Succ;
+    mln2 = mln2->mln_Succ;
+  }
+
+  // if there are any nodes left then the two lists cannot be equal
+  if(mln1->mln_Succ != NULL || mln2->mln_Succ != NULL)
+  {
+    equal = FALSE;
+  }
+
+  RETURN(equal);
+  return equal;
+}
+
+///
