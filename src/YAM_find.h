@@ -170,5 +170,6 @@ void FreeFilterList(struct MinList *filterList);
 struct RuleNode *CreateNewRule(struct FilterNode *filter);
 struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos);
 BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail);
+BOOL CompareFilterList(const struct MinList *fl1, const struct MinList *fl2);
 
 #endif /* YAM_FIND_H */

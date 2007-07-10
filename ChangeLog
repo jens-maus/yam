@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-10  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_CO.c, YAM_FI.c, misc: added generic compare functions to perform a
+    transparent compare of the two config structures when a user closes the
+    configuration window. This should allow to identify if the config was
+    changed by the user or not. However, more work needs to be done to get
+    that working.
+
 2007-07-09  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_EA.c: added missing NULL pointer check which caused crashes when closing

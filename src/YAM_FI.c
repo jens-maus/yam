@@ -1792,6 +1792,21 @@ void FreeFilterRuleList(struct FilterNode *filter)
 }
 
 ///
+/// CompareFilterList
+// performs a deep compare of two filter lists and returns TRUE if they are
+// euqal
+BOOL CompareFilterList(const struct MinList *fl1, const struct MinList *fl2)
+{
+  BOOL equal = FALSE;
+  ENTER();
+
+#warning TODO
+
+  RETURN(equal);
+  return equal;
+}
+
+///
 /// CreateNewFilter
 //  Initializes a new filter
 struct FilterNode *CreateNewFilter(void)

@@ -1199,8 +1199,10 @@ static void Terminate(void)
   D(DBF_STARTUP, "freeing config module...");
   if(G->CO != NULL)
   {
-    CO_FreeConfig(CE);
+    CO_ClearConfig(CE);
     free(CE);
+    CE = NULL;
+
     DisposeModule(&G->CO);
   }
 
@@ -1356,7 +1358,9 @@ static void Terminate(void)
   ToolbarCacheCleanup();
 
   D(DBF_STARTUP, "freeing config...");
-  CO_FreeConfig(C);
+  CO_ClearConfig(C);
+  free(C);
+  C = NULL;
 
   // free our private codesets list
   D(DBF_STARTUP, "freeing private codesets list...");
@@ -1418,8 +1422,9 @@ static void Terminate(void)
 
   CLOSELIB(LocaleBase, ILocale);
 
-  free(C);
+  // last, but not clear free the global structure
   free(G);
+  G = NULL;
 
   LEAVE();
 }

@@ -1517,20 +1517,20 @@ char *Decrypt(char *source)
 ///
 /// Encrypt
 //  Encrypts passwords
-char *Encrypt(char *source)
+char *Encrypt(const char *source)
 {
   static char buffer[4*SIZE_PASSWORD+2];
-  char *read = source+strlen(source)-1;
+  char *read = (char *)(source+strlen(source)-1);
 
   ENTER();
 
   *buffer = '\0';
-  while (read >= source)
+  while(read >= source)
   {
     unsigned char c = (*read--) ^ CRYPTBYTE;
     int p = strlen(buffer);
 
-     snprintf(&buffer[p], sizeof(buffer)-p, "%03d ", c);
+    snprintf(&buffer[p], sizeof(buffer)-p, "%03d ", c);
   }
 
   RETURN(buffer);

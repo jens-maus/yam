@@ -671,9 +671,9 @@ static int CO_DetectPGP(struct Config *co)
 }
 
 ///
-/// CO_FreeConfig
-//  Deallocates a configuration structure
-void CO_FreeConfig(struct Config *co)
+/// CO_ClearConfig
+//  clears the content of a configuration structure
+void CO_ClearConfig(struct Config *co)
 {
   int i;
 
@@ -1036,7 +1036,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 ///
 /// CopyConfigData
 //  Copies a configuration structure (deep copy)
-static void CopyConfigData(struct Config *dco, struct Config *sco)
+static void CopyConfigData(struct Config *dco, const struct Config *sco)
 {
   int i;
   struct MinNode *curNode;
@@ -1061,9 +1061,7 @@ static void CopyConfigData(struct Config *dco, struct Config *sco)
     struct MimeTypeNode *dstNode;
 
     if((dstNode = memdup(srcNode, sizeof(struct MimeTypeNode))) != NULL)
-    {
       AddTail((struct List *)&dco->mimeTypeList, (struct Node *)dstNode);
-    }
   }
 
   // for copying the filters we do have to do another deep copy
@@ -1074,7 +1072,7 @@ static void CopyConfigData(struct Config *dco, struct Config *sco)
     struct FilterNode *srcFilter = (struct FilterNode *)curNode;
     struct FilterNode *dstFilter;
 
-    if((dstFilter = calloc(1, sizeof(struct FilterNode))) != NULL)
+    if((dstFilter = malloc(sizeof(struct FilterNode))) != NULL)
     {
       CopyFilterData(dstFilter, srcFilter);
 
@@ -1083,6 +1081,27 @@ static void CopyConfigData(struct Config *dco, struct Config *sco)
   }
 
   LEAVE();
+}
+
+///
+/// CompareConfigData
+// compares two config data structures (deep compare) and returns TRUE if they are equal
+static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
+{
+  BOOL equal = FALSE;
+  ENTER();
+
+  // we first do a deep compare of our generic structures
+  // before we compare all other items of the struct Config
+  if(CompareFilterList(&c1->filterList, &c2->filterList))
+  {
+    equal = TRUE;
+  }
+
+  #warning TODO
+
+  RETURN(equal);
+  return equal;
 }
 
 ///
@@ -1877,9 +1896,13 @@ MakeStaticHook(CO_SaveConfigAsHook, CO_SaveConfigAs);
 //  Makes all changes undone
 HOOKPROTONHNONP(CO_Restore, void)
 {
-   CO_FreeConfig(CE);
-   CopyConfigData(CE, C);
-   CO_SetConfig();
+  ENTER();
+
+  CO_ClearConfig(CE);
+  CopyConfigData(CE, C);
+  CO_SetConfig();
+
+  LEAVE();
 }
 MakeStaticHook(CO_RestoreHook,CO_Restore);
 
@@ -1938,22 +1961,39 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
   // to the real one or if we should just free/drop it
   if(*arg >= 1)
   {
-    // this config is either "used" or saved
+    // get the current state of the configuration
     CO_GetConfig(*arg == 2);
-    CO_FreeConfig(C);
-    CopyConfigData(C, CE);
-    CO_Validate(C, TRUE);
 
-    // if the configuration should be saved we do it immediatley
-    if(*arg == 2)
-      CO_SaveConfig(C, G->CO_PrefsFile);
+    // before we copy over the configuration, we
+    // check if it was changed at all
+    if(CompareConfigData(C, CE) == FALSE)
+    {
+      D(DBF_CONFIG, "configuration found to be different");
+
+      // clear all content of our old config
+      CO_ClearConfig(C);
+
+      // the configuration changed so lets copy
+      // it over from CE to C (the real one)
+      CopyConfigData(C, CE);
+
+      // validate that C has still valid values
+      CO_Validate(C, TRUE);
+
+      // if the configuration should be saved we do it immediatley
+      if(*arg == 2)
+        CO_SaveConfig(C, G->CO_PrefsFile);
+    }
+    else
+      D(DBF_CONFIG, "config wasn't altered, skipped copy operations.");
   }
 
   // then we free our temporary config structure
-  CO_FreeConfig(CE);
+  CO_ClearConfig(CE);
   free(CE);
   CE = NULL;
 
+  // Dipose&Close the config window stuff
   DisposeModulePush(&G->CO);
 
   LEAVE();

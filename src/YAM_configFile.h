@@ -29,8 +29,8 @@
 ***************************************************************************/
 
 void CO_GetConfig(BOOL saveConfig);
-BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders);
-void CO_SaveConfig(struct Config *co, char *fname);
+BOOL CO_LoadConfig(struct Config *co, const char *fname, struct Folder ***oldfolders);
+BOOL CO_SaveConfig(const struct Config *co, const char *fname);
 void CO_SetConfig(void);
 
 #endif /* YAM_CONFIGFILE_H */
