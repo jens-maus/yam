@@ -1088,14 +1088,15 @@ static void CopyConfigData(struct Config *dco, const struct Config *sco)
 // compares two config data structures (deep compare) and returns TRUE if they are equal
 static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
 {
-  BOOL equal = FALSE;
+  BOOL equal = TRUE;
+
   ENTER();
 
   // we first do a deep compare of our generic structures
   // before we compare all other items of the struct Config
-  if(CompareFilterList(&c1->filterList, &c2->filterList))
+  if(CompareFilterLists(&c1->filterList, &c2->filterList) == FALSE)
   {
-    equal = TRUE;
+    equal = FALSE;
   }
 
   #warning TODO
