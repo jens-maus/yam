@@ -7,8 +7,12 @@ $URL$
 
 2007-07-11  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, locale/YAM.cd, locale/deutsch.ct, locale/svenska.ct: if either the
+    address book or configuration had been modified without saving these yet,
+    the user now has the chance to stay in YAM instead of quitting. This
+    fulfills feature request #1751590.
   * YAM_AB.c: the To:, CC: and BCC: buttons are now disabled if a group is
-    selected in the listtree.
+    selected in the listtree. This fulfills feature request #1751592.
 
 2007-07-11  Pär Boberg <pbobbenb@spray.se>
 

@@ -5709,10 +5709,6 @@ Das nächste Postfach mit ungelesenen Nachrichten\nist: \eb%s\en\nZu diesem Postf
 ; Next folder with unread messages is \eb%s\en\n\
 ; Go to this folder and continue reading there?
 ;
-MSG_MA_ABookModifiedGad
-*Jetzt _speichern|_Beenden ohne speichern
-; *_Save now|_Quit without saving
-;
 MSG_ATTACH_NO
 Nr.
 ; No.
@@ -8080,5 +8076,8 @@ und bisher nicht gespeichert.\n\
 Wie wollen Sie fortfahren?
 ;
 MSG_CONFIG_MODIFIED_GAD
-*Jetzt _speichern|_Beenden ohne speichern
+*Jetzt _speichern|_Beenden ohne speichern|_Abbruch
+;
+MSG_ABOOK_MODIFIED_GAD
+*Jetzt _speichern|_Beenden ohne speichern|_Abbruch
 ;

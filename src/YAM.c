@@ -1574,38 +1574,90 @@ MakeStaticHook(DoublestartHook, DoublestartFunc);
 //  Makes sure that the user really wants to quit the program
 static BOOL StayInProg(void)
 {
-  int i;
-  BOOL req = FALSE;
   BOOL stayIn = FALSE;
 
   ENTER();
 
-  if(G->AB->Modified == TRUE)
+  if(stayIn == FALSE && G->AB->Modified == TRUE)
   {
-    if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_ABookModifiedGad), tr(MSG_AB_Modified)))
-      CallHookPkt(&AB_SaveABookHook, 0, 0);
+    int result;
+
+    result = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_ABOOK_MODIFIED_GAD), tr(MSG_AB_Modified));
+    switch(result)
+    {
+      default:
+      case 0:
+      {
+        // dont' quit
+        stayIn = TRUE;
+      }
+      break;
+
+      case 1:
+      {
+        // save and quit
+        CallHookPkt(&AB_SaveABookHook, 0, 0);
+      }
+      break;
+
+      case 2:
+      {
+        // quit without save
+      }
+      break;
+    }
   }
-  if(C->ConfigIsSaved == FALSE)
+  if(stayIn == FALSE && C->ConfigIsSaved == FALSE)
   {
-    if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_CONFIG_MODIFIED_GAD), tr(MSG_CONFIG_MODIFIED)))
-      CO_SaveConfig(C, G->CO_PrefsFile);
+    int result;
+
+    result = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_CONFIG_MODIFIED_GAD), tr(MSG_CONFIG_MODIFIED));
+    switch(result)
+    {
+      default:
+      case 0:
+      {
+        // dont' quit
+        stayIn = TRUE;
+      }
+      break;
+
+      case 1:
+      {
+        // save and quit
+        CO_SaveConfig(C, G->CO_PrefsFile);
+      }
+      break;
+
+      case 2:
+      {
+        // quit without save
+      }
+      break;
+    }
   }
 
-  for(i=0; i < MAXEA && req == FALSE; i++)
+  if(stayIn == FALSE)
   {
-    if(G->EA[i] != NULL)
-      req = TRUE;
-  }
-  for(i=0; i < MAXWR && req == FALSE; i++)
-  {
-    if(G->WR[i] != NULL)
-      req = TRUE;
-  }
+    int i;
+    BOOL req = FALSE;
 
-  if(req || G->CO != NULL || C->ConfirmOnQuit)
-  {
-    if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_QuitYAMReq)) == 0)
-      stayIn = TRUE;
+    for(i=0; i < MAXEA && req == FALSE; i++)
+    {
+      if(G->EA[i] != NULL)
+        req = TRUE;
+    }
+    for(i=0; i < MAXWR && req == FALSE; i++)
+    {
+      if(G->WR[i] != NULL)
+        req = TRUE;
+    }
+
+    if(req || G->CO != NULL || C->ConfirmOnQuit)
+    {
+      if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_QuitYAMReq)) == 0)
+        stayIn = TRUE;
+    }
   }
 
   RETURN(stayIn);

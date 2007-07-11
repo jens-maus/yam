@@ -7126,6 +7126,10 @@ Inställningarna har ändrats\nmen inte sparats ännu.\n\nHur vill du fortsätta?
 ;#DEF The configuration has been modified,\nbut wasn't saved yet.\n\nHow do you want to proceed?
 ;#SET (1974//)
 MSG_CONFIG_MODIFIED_GAD
-*_Spara nu|_Avsluta utan att spara
-;#DEF *_Save now|_Quit without saving
+*_Spara nu|_Avsluta utan att spara|A_vbryt
+;#DEF *_Save now|_Quit without saving|_Cancel
 ;#SET (1975//)
+MSG_ABOOK_MODIFIED_GAD
+*_Spara nu|_Avsluta utan att spara|A_vbryt
+;#DEF *_Save now|_Quit without saving|_Cancel
+;#SET (1976//)

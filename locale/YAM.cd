@@ -4190,9 +4190,6 @@ MSG_RE_MoveNextFolderReq (1347//)
 Next folder with unread messages is \eb%s\en\n\
 Go to this folder and continue reading there?
 ;
-MSG_MA_ABookModifiedGad (1350//)
-*_Save now|_Quit without saving
-;
 MSG_ATTACH_NO (1352//)
 No.
 ;
@@ -6378,5 +6375,8 @@ but wasn't saved yet.\n\
 How do you want to proceed?
 ;
 MSG_CONFIG_MODIFIED_GAD (1975//)
-*_Save now|_Quit without saving
+*_Save now|_Quit without saving|_Cancel
+;
+MSG_ABOOK_MODIFIED_GAD (1976//)
+*_Save now|_Quit without saving|_Cancel
 ;
