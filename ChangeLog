@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-11  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c: the To:, CC: and BCC: buttons are now disabled if a group is
+    selected in the listtree.
+
 2007-07-11  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: updated according to changes.

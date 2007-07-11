@@ -1413,6 +1413,29 @@ HOOKPROTONHNONP(AB_EditFunc, void)
 MakeHook(AB_EditHook, AB_EditFunc);
 
 ///
+/// AB_ActiveChange
+/*** AB_ActiveChange - User double-clicked in the address book ***/
+HOOKPROTONHNONP(AB_ActiveChange, void)
+{
+  struct AB_GUIData *gui = &G->AB->GUI;
+  struct MUI_NListtree_TreeNode *active;
+
+  ENTER();
+
+  if((active = (struct MUI_NListtree_TreeNode *)xget(gui->LV_ADDRESSES, MUIA_NListtree_Active)) != NULL)
+  {
+    struct ABEntry *addr = (struct ABEntry *)active->tn_User;
+
+    set(gui->BT_TO, MUIA_Disabled, addr->Type == AET_GROUP);
+    set(gui->BT_CC, MUIA_Disabled, addr->Type == AET_GROUP);
+    set(gui->BT_BCC, MUIA_Disabled, addr->Type == AET_GROUP);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(AB_ActiveChangeHook, AB_ActiveChange);
+
+///
 /// AB_DoubleClick
 /*** AB_DoubleClick - User double-clicked in the address book ***/
 HOOKPROTONHNONP(AB_DoubleClick, void)
@@ -2364,7 +2387,7 @@ struct AB_ClassData *AB_New(void)
 
   ENTER();
 
-  if ((data = calloc(1, sizeof(struct AB_ClassData))) != NULL)
+  if((data = calloc(1, sizeof(struct AB_ClassData))) != NULL)
   {
     Object *list;
 
@@ -2505,6 +2528,7 @@ struct AB_ClassData *AB_New(void)
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTADDR   , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 4);
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_FOLD       , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FoldUnfoldHook, TRUE);
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_UNFOLD     , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FoldUnfoldHook, FALSE);
+      DoMethod(data->GUI.LV_ADDRESSES  , MUIM_Notify, MUIA_NListtree_Active,      MUIV_EveryTime  , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_ActiveChangeHook);
       DoMethod(data->GUI.LV_ADDRESSES  , MUIM_Notify, MUIA_NListtree_DoubleClick, MUIV_EveryTime  , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_DoubleClickHook);
       DoMethod(data->GUI.BT_TO         , MUIM_Notify, MUIA_Pressed              , FALSE           , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FromAddrBookHook, ABM_TO);
       DoMethod(data->GUI.BT_CC         , MUIM_Notify, MUIA_Pressed              , FALSE           , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FromAddrBookHook, ABM_CC);
@@ -2523,3 +2547,4 @@ struct AB_ClassData *AB_New(void)
   return data;
 }
 ///
+
