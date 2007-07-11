@@ -1150,6 +1150,7 @@ HOOKPROTONHNONP(PutMimeTypeEntryFunc, void)
     GetMUIString(mt->Extension, gui->ST_EXTENS, sizeof(mt->Extension));
     GetMUIString(mt->Command, gui->ST_COMMAND, sizeof(mt->Command));
     GetMUIString(mt->Description, gui->ST_DESCRIPTION, sizeof(mt->Description));
+    SplitContentType(mt);
 
     DoMethod(gui->LV_MIME, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
   }
@@ -1162,11 +1163,44 @@ MakeStaticHook(PutMimeTypeEntryHook, PutMimeTypeEntryFunc);
 // display hook for the mime type list
 HOOKPROTONH(MimeTypeDisplayFunc, LONG, char **array, struct MimeTypeNode *mt)
 {
+  ENTER();
+
   array[0] = mt->ContentType;
 
+  RETURN(0);
   return 0;
 }
 MakeStaticHook(MimeTypeDisplayHook, MimeTypeDisplayFunc);
+
+///
+/// MimeTypeCompareHook
+// compare hook for the mime type list
+HOOKPROTONHNO(MimeTypeCompareFunc, LONG, struct NList_CompareMessage *msg)
+{
+  LONG result;
+  struct MimeTypeNode *mt1 = (struct MimeTypeNode *)msg->entry1;
+  struct MimeTypeNode *mt2 = (struct MimeTypeNode *)msg->entry2;
+
+  ENTER();
+
+  // sort by class first
+  result = stricmp(mt1->mimeClass, mt2->mimeClass);
+  if(result == 0)
+  {
+    // if the classes match then sort by type
+    // put the catch-all '*' and '#?' to the end of each class
+    if(stricmp(mt1->mimeType, "*") == 0 || stricmp(mt1->mimeType, "#?") == 0)
+      result = +1;
+    else if(stricmp(mt2->mimeType, "*") == 0 || stricmp(mt2->mimeType, "#?") == 0)
+      result = -1;
+    else
+      result = stricmp(mt1->mimeType, mt2->mimeType);
+  }
+
+  RETURN(result);
+  return result;
+}
+MakeStaticHook(MimeTypeCompareHook, MimeTypeCompareFunc);
 
 ///
 /// CO_GetRXEntryHook
@@ -3100,6 +3134,7 @@ Object *CO_PageMIME(struct CO_ClassData *data)
                    MUIA_NListview_NList, data->GUI.LV_MIME = NListObject,
                      InputListFrame,
                      MUIA_NList_DisplayHook, &MimeTypeDisplayHook,
+                     MUIA_NList_CompareHook2, &MimeTypeCompareHook,
                    End,
                 End,
 

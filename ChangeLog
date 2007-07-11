@@ -26,6 +26,7 @@ $URL$
 
 2007-07-11  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c, YAM_COs.c: the MIME type list will now sort the entries itself.
   * YAM_MI.c, YAM_mime.h: added a new function to do the content-type splitting.
   * YAM_MI.c, YAM_mime.h: added two new members to split the ContentType into
     its parts.
