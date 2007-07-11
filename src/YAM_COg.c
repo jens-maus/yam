@@ -290,62 +290,6 @@ HOOKPROTONH(PO_XPKCloseFunc, void, Object *pop, Object *text)
 MakeStaticHook(PO_XPKCloseHook, PO_XPKCloseFunc);
 
 ///
-/// MakeXPKPop
-//  Creates a popup list of available XPK sublibraries
-static Object *MakeXPKPop(Object **text, BOOL pack, BOOL encrypt)
-{
-  Object *lv, *po, *but;
-
-  if((po = PopobjectObject,
-    MUIA_Popstring_String, *text = TextObject,
-      TextFrame,
-      MUIA_Background, MUII_TextBack,
-      MUIA_FixWidthTxt, "MMMM",
-    End,
-    MUIA_Popstring_Button, but = PopButton(MUII_PopUp),
-    MUIA_Popobject_StrObjHook, &PO_XPKOpenHook,
-    MUIA_Popobject_ObjStrHook, &PO_XPKCloseHook,
-    MUIA_Popobject_WindowHook, &PO_WindowHook,
-    MUIA_Popobject_Object, lv = ListviewObject,
-      MUIA_Listview_List, ListObject,
-        InputListFrame,
-        MUIA_List_AutoVisible,   TRUE,
-        MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
-        MUIA_List_DestructHook,  MUIV_List_DestructHook_String,
-      End,
-    End,
-  End))
-  {
-    struct MinNode *curNode;
-
-    for(curNode = G->xpkPackerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-    {
-      struct xpkPackerNode *xpkNode = (struct xpkPackerNode *)curNode;
-      BOOL suits = TRUE;
-
-      if(encrypt && isFlagClear(xpkNode->info.xpi_Flags, XPKIF_ENCRYPTION))
-        suits = FALSE;
-      else if(pack && isFlagClear(xpkNode->info.xpi_Flags, 0x3f))
-        suits = FALSE;
-
-      if(suits)
-        DoMethod(lv, MUIM_List_InsertSingle, xpkNode->info.xpi_Name, MUIV_List_Insert_Sorted);
-    }
-
-    DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
-
-    // disable the XPK popups if xpkmaster.library is not available
-    if(XpkBase == NULL)
-    {
-      set(po, MUIA_Disabled, TRUE);
-      set(but, MUIA_Disabled, TRUE);
-    }
-  }
-
-  return po;
-}
-
-///
 /// PO_CharsetOpenHook
 //  Sets the popup listview accordingly to the string gadget
 HOOKPROTONH(PO_CharsetOpenFunc, BOOL, Object *list, Object *str)
@@ -434,71 +378,6 @@ HOOKPROTONH(PO_CharsetListDisplayFunc, LONG, const char **array, STRPTR str)
   return 0;
 }
 MakeStaticHook(PO_CharsetListDisplayHook, PO_CharsetListDisplayFunc);
-
-///
-/// MakeCharsetPop
-//  Creates a popup list of available charsets supported by codesets.library
-static Object *MakeCharsetPop(Object **string)
-{
-  Object *lv;
-  Object *po;
-  Object *bt;
-
-  ENTER();
-
-  if((po = PopobjectObject,
-
-    MUIA_Popstring_String, *string = BetterStringObject,
-      StringFrame,
-      MUIA_BetterString_NoInput,  TRUE,
-      MUIA_String_AdvanceOnCR,    TRUE,
-      MUIA_CycleChain,            TRUE,
-    End,
-
-    MUIA_Popstring_Button, bt = PopButton(MUII_PopUp),
-    MUIA_Popobject_StrObjHook, &PO_CharsetOpenHook,
-    MUIA_Popobject_ObjStrHook, &PO_CharsetCloseHook,
-    MUIA_Popobject_WindowHook, &PO_WindowHook,
-    MUIA_Popobject_Object, lv = ListviewObject,
-       MUIA_Listview_ScrollerPos, MUIV_Listview_ScrollerPos_Right,
-       MUIA_Listview_List, ListObject,
-          InputListFrame,
-          MUIA_List_Format,        "BAR,",
-          MUIA_List_AutoVisible,   TRUE,
-          MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
-          MUIA_List_DestructHook,  MUIV_List_DestructHook_String,
-          MUIA_List_DisplayHook,   &PO_CharsetListDisplayHook,
-       End,
-    End,
-
-  End))
-  {
-    struct codeset *codeset;
-    STRPTR *array;
-
-    set(bt, MUIA_CycleChain,TRUE);
-    DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
-
-    // Build list of available codesets
-    if((array = CodesetsSupported(CSA_CodesetList, G->codesetsList,
-                                  TAG_DONE)))
-    {
-      DoMethod(lv, MUIM_List_Insert, array, -1, MUIV_List_Insert_Sorted);
-      CodesetsFreeA(array, NULL);
-    }
-    else
-      set(po, MUIA_Disabled, TRUE);
-
-    // Use the system's default codeset
-    if((codeset = CodesetsFindA(NULL, NULL)))
-      set(*string, MUIA_String_Contents, codeset->name);
-  }
-  else
-    *string = NULL;
-
-  RETURN(po);
-  return po;
-}
 
 ///
 /// PO_MimeTypeListOpenHook
@@ -621,54 +500,6 @@ HOOKPROTONH(PO_MimeTypeListCloseFunc, void, Object *list, Object *str)
   LEAVE();
 }
 MakeStaticHook(PO_MimeTypeListCloseHook, PO_MimeTypeListCloseFunc);
-
-///
-/// MakeMimeTypePop
-//  Creates a popup list of available internal MIME types
-Object *MakeMimeTypePop(Object **string, const char *desc)
-{
-  Object *lv;
-  Object *po;
-  Object *bt;
-
-  ENTER();
-
-  if((po = PopobjectObject,
-
-    MUIA_Popstring_String, *string = BetterStringObject,
-      StringFrame,
-      MUIA_String_Accept,      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-/",
-      MUIA_String_MaxLen,      SIZE_CTYPE,
-      MUIA_ControlChar,        ShortCut(desc),
-      MUIA_String_AdvanceOnCR, TRUE,
-      MUIA_CycleChain,         TRUE,
-    End,
-    MUIA_Popstring_Button, bt = PopButton(MUII_PopUp),
-    MUIA_Popobject_StrObjHook, &PO_MimeTypeListOpenHook,
-    MUIA_Popobject_ObjStrHook, &PO_MimeTypeListCloseHook,
-    MUIA_Popobject_WindowHook, &PO_WindowHook,
-    MUIA_Popobject_Object, lv = ListviewObject,
-       MUIA_Listview_ScrollerPos, MUIV_Listview_ScrollerPos_Right,
-       MUIA_Listview_List, ListObject,
-          InputListFrame,
-          MUIA_List_AutoVisible, TRUE,
-          MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
-          MUIA_List_DestructHook,  MUIV_List_DestructHook_String,
-       End,
-    End,
-
-  End))
-  {
-    set(bt, MUIA_CycleChain,TRUE);
-    DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
-    DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime, po, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
-  }
-  else
-    *string = NULL;
-
-  RETURN(po);
-  return po;
-}
 
 ///
 /// PO_HandleVarHook
@@ -1001,158 +832,6 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
   LEAVE();
 }
 MakeStaticHook(ImportMimeTypesHook, ImportMimeTypesFunc);
-
-///
-/// MakeVarPop
-//  Creates a popup list containing variables and descriptions for phrases etc.
-static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, const char *shortcut)
-{
-  Object *lv;
-  Object *po;
-
-  ENTER();
-
-  if((po = PopobjectObject,
-
-    MUIA_Popstring_String, *string = MakeString(size, shortcut),
-    MUIA_Popstring_Button, PopButton(MUII_PopUp),
-    MUIA_Popobject_ObjStrHook, &PO_HandleVarHook,
-    MUIA_Popobject_WindowHook, &PO_WindowHook,
-    MUIA_Popobject_Object, lv = NListviewObject,
-      MUIA_FixHeightTxt, "\n\n\n\n\n\n\n\n",
-      MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
-      MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_FullAuto,
-      MUIA_NListview_NList, NListObject,
-        InputListFrame,
-        MUIA_NList_AdjustHeight, TRUE,
-        (mode == VPM_SCRIPTS) ? TAG_IGNORE : MUIA_NList_Format, ",",
-        (mode == VPM_SCRIPTS) ? TAG_IGNORE : MUIA_NList_DisplayHook2, &VarPopDisplayHook,
-      End,
-    End,
-
-  End))
-  {
-    switch (mode)
-    {
-      case VPM_FORWARD:
-      case VPM_REPLYHELLO:
-      case VPM_REPLYINTRO:
-      case VPM_REPLYBYE:
-      {
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_LineBreak), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(mode?MSG_CO_RecptName:MSG_CO_ORecptName), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(mode?MSG_CO_RecptFirstname:MSG_CO_ORecptFirstname), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(mode?MSG_CO_RecptAddress:MSG_CO_ORecptAddress), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderName), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderFirstname), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderAddress), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderSubject), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderRFCDateTime), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderDate), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderTime), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderTimeZone), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderDOW), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderMsgID), MUIV_NList_Insert_Bottom);
-
-        // depending on the mode we have the "CompleteHeader" feature or not.
-        if(mode == VPM_FORWARD || mode == VPM_REPLYINTRO)
-          DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_CompleteHeader), MUIV_NList_Insert_Bottom);
-      }
-      break;
-
-      case VPM_ARCHIVE:
-      {
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveName), MUIV_NList_Insert_Bottom);
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveFiles), MUIV_NList_Insert_Bottom);
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveFilelist), MUIV_NList_Insert_Bottom);
-      }
-      break;
-
-      case VPM_MAILSTATS:
-      {
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_NEWMSGS), MUIV_NList_Insert_Bottom);
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_UNREADMSGS), MUIV_NList_Insert_Bottom);
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_TOTALMSGS), MUIV_NList_Insert_Bottom);
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_DELMSGS), MUIV_NList_Insert_Bottom);
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SENTMSGS), MUIV_NList_Insert_Bottom);
-      }
-      break;
-
-      case VPM_SCRIPTS:
-      {
-         // we let the openhook handle the list management
-         set(po, MUIA_Popobject_StrObjHook, &PO_HandleScriptsOpenHook);
-      }
-      break;
-
-      case VPM_MIME_DEFVIEWER:
-      case VPM_MIME_COMMAND:
-      {
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_MIMECMD_PARAMETER), MUIV_NList_Insert_Bottom);
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_MIMECMD_PUBSCREEN), MUIV_NList_Insert_Bottom);
-      }
-      break;
-    }
-
-    DoMethod(lv,MUIM_Notify,MUIA_NList_DoubleClick,TRUE,po,2,MUIM_Popstring_Close,TRUE);
-    DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime, po, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
-  }
-
-  RETURN(po);
-  return po;
-}
-
-///
-/// MakePhraseGroup
-//  Creates a cycle/string gadgets for forward and reply phrases
-static Object *MakePhraseGroup(Object **hello, Object **intro, Object **bye,
-                               const char *label, const char *help)
-{
-   Object *grp, *cycl, *pgrp;
-   static const char *cytext[4];
-
-   cytext[0] = tr(MSG_CO_PhraseOpen);
-   cytext[1] = tr(MSG_CO_PhraseIntro);
-   cytext[2] = tr(MSG_CO_PhraseClose);
-   cytext[3] = NULL;
-
-   if ((grp = HGroup,
-         MUIA_Group_HorizSpacing, 1,
-         Child, cycl = CycleObject,
-            MUIA_CycleChain, 1,
-            MUIA_Font, MUIV_Font_Button,
-            MUIA_Cycle_Entries, cytext,
-            MUIA_ControlChar, ShortCut(label),
-            MUIA_Weight, 0,
-         End,
-         Child, pgrp = PageGroup,
-            Child, MakeVarPop(hello, VPM_REPLYHELLO, SIZE_INTRO, ""),
-            Child, MakeVarPop(intro, VPM_REPLYINTRO, SIZE_INTRO, ""),
-            Child, MakeVarPop(bye,   VPM_REPLYBYE,   SIZE_INTRO, ""),
-         End,
-         MUIA_ShortHelp, help,
-      End))
-   {
-      DoMethod(cycl, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, pgrp, 3, MUIM_Set, MUIA_Group_ActivePage, MUIV_TriggerValue);
-   }
-   return grp;
-}
-
-///
-/// MakeStaticCheck
-//  Creates non-interactive checkmark gadget
-static Object *MakeStaticCheck(void)
-{
-   return
-   ImageObject,
-      ImageButtonFrame,
-      MUIA_Image_Spec  , MUII_CheckMark,
-      MUIA_Background  , MUII_ButtonBack,
-      MUIA_ShowSelState, FALSE,
-      MUIA_Selected    , TRUE,
-      MUIA_Disabled    , TRUE,
-   End;
-}
 
 ///
 /// CO_PlaySoundFunc
@@ -1737,6 +1416,329 @@ HOOKPROTONHNO(InfoBarPosFunc, void, int *arg)
   LEAVE();
 }
 MakeStaticHook(InfoBarPosHook, InfoBarPosFunc);
+///
+
+/*** Special object creation functions ***/
+/// MakeXPKPop
+//  Creates a popup list of available XPK sublibraries
+static Object *MakeXPKPop(Object **text, BOOL pack, BOOL encrypt)
+{
+  Object *lv, *po, *but;
+
+  if((po = PopobjectObject,
+    MUIA_Popstring_String, *text = TextObject,
+      TextFrame,
+      MUIA_Background, MUII_TextBack,
+      MUIA_FixWidthTxt, "MMMM",
+    End,
+    MUIA_Popstring_Button, but = PopButton(MUII_PopUp),
+    MUIA_Popobject_StrObjHook, &PO_XPKOpenHook,
+    MUIA_Popobject_ObjStrHook, &PO_XPKCloseHook,
+    MUIA_Popobject_WindowHook, &PO_WindowHook,
+    MUIA_Popobject_Object, lv = ListviewObject,
+      MUIA_Listview_List, ListObject,
+        InputListFrame,
+        MUIA_List_AutoVisible,   TRUE,
+        MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
+        MUIA_List_DestructHook,  MUIV_List_DestructHook_String,
+      End,
+    End,
+  End))
+  {
+    struct MinNode *curNode;
+
+    for(curNode = G->xpkPackerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct xpkPackerNode *xpkNode = (struct xpkPackerNode *)curNode;
+      BOOL suits = TRUE;
+
+      if(encrypt && isFlagClear(xpkNode->info.xpi_Flags, XPKIF_ENCRYPTION))
+        suits = FALSE;
+      else if(pack && isFlagClear(xpkNode->info.xpi_Flags, 0x3f))
+        suits = FALSE;
+
+      if(suits)
+        DoMethod(lv, MUIM_List_InsertSingle, xpkNode->info.xpi_Name, MUIV_List_Insert_Sorted);
+    }
+
+    DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+
+    // disable the XPK popups if xpkmaster.library is not available
+    if(XpkBase == NULL)
+    {
+      set(po, MUIA_Disabled, TRUE);
+      set(but, MUIA_Disabled, TRUE);
+    }
+  }
+
+  return po;
+}
+
+///
+/// MakeCharsetPop
+//  Creates a popup list of available charsets supported by codesets.library
+static Object *MakeCharsetPop(Object **string)
+{
+  Object *lv;
+  Object *po;
+  Object *bt;
+
+  ENTER();
+
+  if((po = PopobjectObject,
+
+    MUIA_Popstring_String, *string = BetterStringObject,
+      StringFrame,
+      MUIA_BetterString_NoInput,  TRUE,
+      MUIA_String_AdvanceOnCR,    TRUE,
+      MUIA_CycleChain,            TRUE,
+    End,
+
+    MUIA_Popstring_Button, bt = PopButton(MUII_PopUp),
+    MUIA_Popobject_StrObjHook, &PO_CharsetOpenHook,
+    MUIA_Popobject_ObjStrHook, &PO_CharsetCloseHook,
+    MUIA_Popobject_WindowHook, &PO_WindowHook,
+    MUIA_Popobject_Object, lv = ListviewObject,
+       MUIA_Listview_ScrollerPos, MUIV_Listview_ScrollerPos_Right,
+       MUIA_Listview_List, ListObject,
+          InputListFrame,
+          MUIA_List_Format,        "BAR,",
+          MUIA_List_AutoVisible,   TRUE,
+          MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
+          MUIA_List_DestructHook,  MUIV_List_DestructHook_String,
+          MUIA_List_DisplayHook,   &PO_CharsetListDisplayHook,
+       End,
+    End,
+
+  End))
+  {
+    struct codeset *codeset;
+    STRPTR *array;
+
+    set(bt, MUIA_CycleChain,TRUE);
+    DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+
+    // Build list of available codesets
+    if((array = CodesetsSupported(CSA_CodesetList, G->codesetsList,
+                                  TAG_DONE)))
+    {
+      DoMethod(lv, MUIM_List_Insert, array, -1, MUIV_List_Insert_Sorted);
+      CodesetsFreeA(array, NULL);
+    }
+    else
+      set(po, MUIA_Disabled, TRUE);
+
+    // Use the system's default codeset
+    if((codeset = CodesetsFindA(NULL, NULL)))
+      set(*string, MUIA_String_Contents, codeset->name);
+  }
+  else
+    *string = NULL;
+
+  RETURN(po);
+  return po;
+}
+
+///
+/// MakeMimeTypePop
+//  Creates a popup list of available internal MIME types
+Object *MakeMimeTypePop(Object **string, const char *desc)
+{
+  Object *lv;
+  Object *po;
+  Object *bt;
+
+  ENTER();
+
+  if((po = PopobjectObject,
+
+    MUIA_Popstring_String, *string = BetterStringObject,
+      StringFrame,
+      MUIA_String_Accept,      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-/",
+      MUIA_String_MaxLen,      SIZE_CTYPE,
+      MUIA_ControlChar,        ShortCut(desc),
+      MUIA_String_AdvanceOnCR, TRUE,
+      MUIA_CycleChain,         TRUE,
+    End,
+    MUIA_Popstring_Button, bt = PopButton(MUII_PopUp),
+    MUIA_Popobject_StrObjHook, &PO_MimeTypeListOpenHook,
+    MUIA_Popobject_ObjStrHook, &PO_MimeTypeListCloseHook,
+    MUIA_Popobject_WindowHook, &PO_WindowHook,
+    MUIA_Popobject_Object, lv = ListviewObject,
+       MUIA_Listview_ScrollerPos, MUIV_Listview_ScrollerPos_Right,
+       MUIA_Listview_List, ListObject,
+          InputListFrame,
+          MUIA_List_AutoVisible, TRUE,
+          MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
+          MUIA_List_DestructHook,  MUIV_List_DestructHook_String,
+       End,
+    End,
+
+  End))
+  {
+    set(bt, MUIA_CycleChain,TRUE);
+    DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+    DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime, po, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
+  }
+  else
+    *string = NULL;
+
+  RETURN(po);
+  return po;
+}
+
+///
+/// MakeVarPop
+//  Creates a popup list containing variables and descriptions for phrases etc.
+static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, const char *shortcut)
+{
+  Object *lv;
+  Object *po;
+
+  ENTER();
+
+  if((po = PopobjectObject,
+
+    MUIA_Popstring_String, *string = MakeString(size, shortcut),
+    MUIA_Popstring_Button, PopButton(MUII_PopUp),
+    MUIA_Popobject_ObjStrHook, &PO_HandleVarHook,
+    MUIA_Popobject_WindowHook, &PO_WindowHook,
+    MUIA_Popobject_Object, lv = NListviewObject,
+      MUIA_FixHeightTxt, "\n\n\n\n\n\n\n\n",
+      MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
+      MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_FullAuto,
+      MUIA_NListview_NList, NListObject,
+        InputListFrame,
+        MUIA_NList_AdjustHeight, TRUE,
+        (mode == VPM_SCRIPTS) ? TAG_IGNORE : MUIA_NList_Format, ",",
+        (mode == VPM_SCRIPTS) ? TAG_IGNORE : MUIA_NList_DisplayHook2, &VarPopDisplayHook,
+      End,
+    End,
+
+  End))
+  {
+    switch (mode)
+    {
+      case VPM_FORWARD:
+      case VPM_REPLYHELLO:
+      case VPM_REPLYINTRO:
+      case VPM_REPLYBYE:
+      {
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_LineBreak), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(mode?MSG_CO_RecptName:MSG_CO_ORecptName), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(mode?MSG_CO_RecptFirstname:MSG_CO_ORecptFirstname), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(mode?MSG_CO_RecptAddress:MSG_CO_ORecptAddress), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderName), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderFirstname), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderAddress), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderSubject), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderRFCDateTime), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderDate), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderTime), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderTimeZone), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderDOW), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderMsgID), MUIV_NList_Insert_Bottom);
+
+        // depending on the mode we have the "CompleteHeader" feature or not.
+        if(mode == VPM_FORWARD || mode == VPM_REPLYINTRO)
+          DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_CompleteHeader), MUIV_NList_Insert_Bottom);
+      }
+      break;
+
+      case VPM_ARCHIVE:
+      {
+         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveName), MUIV_NList_Insert_Bottom);
+         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveFiles), MUIV_NList_Insert_Bottom);
+         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveFilelist), MUIV_NList_Insert_Bottom);
+      }
+      break;
+
+      case VPM_MAILSTATS:
+      {
+         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_NEWMSGS), MUIV_NList_Insert_Bottom);
+         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_UNREADMSGS), MUIV_NList_Insert_Bottom);
+         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_TOTALMSGS), MUIV_NList_Insert_Bottom);
+         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_DELMSGS), MUIV_NList_Insert_Bottom);
+         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SENTMSGS), MUIV_NList_Insert_Bottom);
+      }
+      break;
+
+      case VPM_SCRIPTS:
+      {
+         // we let the openhook handle the list management
+         set(po, MUIA_Popobject_StrObjHook, &PO_HandleScriptsOpenHook);
+      }
+      break;
+
+      case VPM_MIME_DEFVIEWER:
+      case VPM_MIME_COMMAND:
+      {
+         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_MIMECMD_PARAMETER), MUIV_NList_Insert_Bottom);
+         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_MIMECMD_PUBSCREEN), MUIV_NList_Insert_Bottom);
+      }
+      break;
+    }
+
+    DoMethod(lv,MUIM_Notify,MUIA_NList_DoubleClick,TRUE,po,2,MUIM_Popstring_Close,TRUE);
+    DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime, po, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
+  }
+
+  RETURN(po);
+  return po;
+}
+
+///
+/// MakePhraseGroup
+//  Creates a cycle/string gadgets for forward and reply phrases
+static Object *MakePhraseGroup(Object **hello, Object **intro, Object **bye,
+                               const char *label, const char *help)
+{
+   Object *grp, *cycl, *pgrp;
+   static const char *cytext[4];
+
+   cytext[0] = tr(MSG_CO_PhraseOpen);
+   cytext[1] = tr(MSG_CO_PhraseIntro);
+   cytext[2] = tr(MSG_CO_PhraseClose);
+   cytext[3] = NULL;
+
+   if ((grp = HGroup,
+         MUIA_Group_HorizSpacing, 1,
+         Child, cycl = CycleObject,
+            MUIA_CycleChain, 1,
+            MUIA_Font, MUIV_Font_Button,
+            MUIA_Cycle_Entries, cytext,
+            MUIA_ControlChar, ShortCut(label),
+            MUIA_Weight, 0,
+         End,
+         Child, pgrp = PageGroup,
+            Child, MakeVarPop(hello, VPM_REPLYHELLO, SIZE_INTRO, ""),
+            Child, MakeVarPop(intro, VPM_REPLYINTRO, SIZE_INTRO, ""),
+            Child, MakeVarPop(bye,   VPM_REPLYBYE,   SIZE_INTRO, ""),
+         End,
+         MUIA_ShortHelp, help,
+      End))
+   {
+      DoMethod(cycl, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, pgrp, 3, MUIM_Set, MUIA_Group_ActivePage, MUIV_TriggerValue);
+   }
+   return grp;
+}
+
+///
+/// MakeStaticCheck
+//  Creates non-interactive checkmark gadget
+static Object *MakeStaticCheck(void)
+{
+   return
+   ImageObject,
+      ImageButtonFrame,
+      MUIA_Image_Spec  , MUII_CheckMark,
+      MUIA_Background  , MUII_ButtonBack,
+      MUIA_ShowSelState, FALSE,
+      MUIA_Selected    , TRUE,
+      MUIA_Disabled    , TRUE,
+   End;
+}
+
 ///
 
 /*** Pages ***/
