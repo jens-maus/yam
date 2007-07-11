@@ -507,7 +507,7 @@ HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *list, Object *str)
 
   ENTER();
 
-  if((s = (char *)xget(str, MUIA_String_Contents)))
+  if((s = (char *)xget(str, MUIA_String_Contents)) != NULL)
   {
     struct MinNode *curNode;
     int i;
@@ -522,6 +522,7 @@ HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *list, Object *str)
       for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
         struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
+
         DoMethod(list, MUIM_List_InsertSingle, mt->ContentType, MUIV_List_Insert_Sorted);
       }
     }
@@ -556,7 +557,7 @@ HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *list, Object *str)
       char *c;
 
       DoMethod(list, MUIM_List_GetEntry, i, &c);
-      if(!c || s[0] == '\0')
+      if(c == NULL || s[0] == '\0')
       {
         set(list, MUIA_List_Active, MUIV_List_Active_Off);
         break;
@@ -1113,7 +1114,6 @@ HOOKPROTONHNONP(GetMimeTypeEntryFunc, void)
 {
   struct MimeTypeNode *mt;
   struct CO_GUIData *gui = &G->CO->GUI;
-  LONG pos = MUIV_NList_GetPos_Start;
 
   ENTER();
 
@@ -1124,13 +1124,10 @@ HOOKPROTONHNONP(GetMimeTypeEntryFunc, void)
     nnset(gui->ST_EXTENS, MUIA_String_Contents, mt->Extension);
     nnset(gui->ST_COMMAND, MUIA_String_Contents, mt->Command);
     nnset(gui->ST_DESCRIPTION, MUIA_String_Contents, mt->Description);
-    DoMethod(gui->LV_MIME, MUIM_NList_GetPos, mt, &pos);
   }
 
   set(gui->GR_MIME, MUIA_Disabled, mt == NULL);
   set(gui->BT_MDEL, MUIA_Disabled, mt == NULL);
-  set(gui->BT_MIMEUP, MUIA_Disabled,   mt == NULL || pos == 0);
-  set(gui->BT_MIMEDOWN, MUIA_Disabled, mt == NULL || pos == (LONG)xget(gui->LV_MIME, MUIA_NList_Entries) - 1);
 
   LEAVE();
 }
@@ -3102,20 +3099,13 @@ Object *CO_PageMIME(struct CO_ClassData *data)
                    MUIA_CycleChain, TRUE,
                    MUIA_NListview_NList, data->GUI.LV_MIME = NListObject,
                      InputListFrame,
-                     MUIA_NList_DragType, MUIV_NList_DragType_Immediate,
-                     MUIA_NList_DragSortable, TRUE,
                      MUIA_NList_DisplayHook, &MimeTypeDisplayHook,
                    End,
                 End,
 
-                Child, ColGroup(3),
+                Child, HGroup,
                    Child, data->GUI.BT_MADD = MakeButton(tr(MSG_Add)),
                    Child, data->GUI.BT_MDEL = MakeButton(tr(MSG_Del)),
-                   Child, ColGroup(2),
-                     MUIA_Group_Spacing, 1,
-                     Child, data->GUI.BT_MIMEUP = PopButton(MUII_ArrowUp),
-                     Child, data->GUI.BT_MIMEDOWN = PopButton(MUII_ArrowDown),
-                   End,
                 End,
               End,
 
@@ -3189,8 +3179,6 @@ Object *CO_PageMIME(struct CO_ClassData *data)
     DoMethod(data->GUI.ST_DEFVIEWER,MUIM_Notify, MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
     DoMethod(data->GUI.BT_MADD     ,MUIM_Notify, MUIA_Pressed        ,FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &AddMimeTypeHook);
     DoMethod(data->GUI.BT_MDEL     ,MUIM_Notify, MUIA_Pressed        ,FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &DelMimeTypeHook);
-    DoMethod(data->GUI.BT_MIMEUP,   MUIM_Notify, MUIA_Pressed,        FALSE,          data->GUI.LV_MIME,       3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
-    DoMethod(data->GUI.BT_MIMEDOWN, MUIM_Notify, MUIA_Pressed,        FALSE,          data->GUI.LV_MIME,       3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
   }
 
   RETURN(obj);
@@ -3296,7 +3284,7 @@ Object *CO_PageScripts(struct CO_ClassData *data)
                MUIA_CycleChain, TRUE,
                MUIA_NListview_NList, NListObject,
                   InputListFrame,
-                  MUIA_NList_Format,       ",",
+                  MUIA_NList_Format,       "BAR,",
                   MUIA_NList_DisplayHook2, &ScriptListDisplayHook,
                End,
             End,

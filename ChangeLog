@@ -26,6 +26,7 @@ $URL$
 
 2007-07-11  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: added a bar to the script list.
   * YAM.c, locale/YAM.cd, locale/deutsch.ct, locale/svenska.ct: if either the
     address book or configuration had been modified without saving these yet,
     the user now has the chance to stay in YAM instead of quitting. This
