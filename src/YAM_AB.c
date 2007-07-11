@@ -1414,7 +1414,7 @@ MakeHook(AB_EditHook, AB_EditFunc);
 
 ///
 /// AB_ActiveChange
-/*** AB_ActiveChange - User double-clicked in the address book ***/
+// a hook called whenever the active entry in the address book listtree is changed
 HOOKPROTONHNONP(AB_ActiveChange, void)
 {
   struct AB_GUIData *gui = &G->AB->GUI;
