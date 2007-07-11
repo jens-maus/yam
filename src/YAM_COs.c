@@ -231,6 +231,10 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
   D(DBF_CONFIG, "about to save configuration to '%s'", fname);
 
+  // flag this configuration as not (properly) saved in
+  // advanced, just in case something goes wrong.
+  co->ConfigIsSaved = FALSE;
+
   if((fh = fopen(fname, "w")))
   {
     int i;
@@ -587,17 +591,19 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     if(ferror(fh) == 0)
     {
       result = TRUE;
+
       // remember that this configuration has been saved
       co->ConfigIsSaved = TRUE;
+
       D(DBF_CONFIG, "configuration successfully saved");
+
+      // append something to the logfile
+      AppendToLogfile(LF_VERBOSE, 60, tr(MSG_LOG_SavingConfig), fname);
     }
     else
       E(DBF_CONFIG, "error during config save operation");
 
     fclose(fh);
-
-    // append something to the logfile
-    AppendToLogfile(LF_VERBOSE, 60, tr(MSG_LOG_SavingConfig), fname);
   }
   else
     ER_NewError(tr(MSG_ER_CantCreateFile), fname);
@@ -615,6 +621,12 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
   FILE *fh;
 
   ENTER();
+
+  D(DBF_CONFIG, "about to load configuration from '%s'", fname);
+
+  // flag this configuration as not (properly) saved in
+  // advanced, just in case something goes wrong.
+  co->ConfigIsSaved = FALSE;
 
   if((fh = fopen(fname, "r")) != NULL)
   {
@@ -1340,7 +1352,20 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
         }
       }
 
-      success = TRUE;
+      // we have to check if something went
+      // wrong while loading the config
+      if(feof(fh) != 0 && ferror(fh) == 0)
+      {
+        success = TRUE;
+
+        // mark the configuration as "saved" as we have loaded
+        // it freshly
+        co->ConfigIsSaved = TRUE;
+
+        D(DBF_CONFIG, "configuration successfully loaded");
+      }
+      else
+        E(DBF_CONFIG, "error during config load operation");
     }
 
     fclose(fh);

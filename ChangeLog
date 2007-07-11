@@ -7,6 +7,11 @@ $URL$
 
 2007-07-11  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c, YAM_COs.c: the end-of-file and error status is now properly checked
+    when loading the configuration. This should make the function more secure.
+    In addition, the ConfigIsSaved variable is now set in CO_LoadConfig()
+    and CO_SaveConfig() so that an e.g. reload operation should have that
+    status variable properly set.
   * YAM_CO.c: if the 'Save' button is used on the configuration window,
     the config is now validated and saved regardless if it was changed or not.
     This should fix problems in case the 'Use' button was used previously and

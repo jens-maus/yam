@@ -1607,6 +1607,7 @@ static BOOL StayInProg(void)
       break;
     }
   }
+
   if(stayIn == FALSE && C->ConfigIsSaved == FALSE)
   {
     int result;
@@ -1766,8 +1767,7 @@ static void Initialise2(void)
   CO_SetDefaults(C, cp_AllPages);
   CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders);
   CO_Validate(C, FALSE);
-  // mark the current configuration as "saved"
-  C->ConfigIsSaved = TRUE;
+
   SplashProgress(tr(MSG_CreatingGUI), 40);
 
   // before we go and create the first MUI windows
@@ -2680,11 +2680,20 @@ int main(int argc, char **argv)
       struct User *user;
       int i, ret;
 
-      G = calloc(1, sizeof(struct Global));
-      C = calloc(1, sizeof(struct Config));
-
-      if(G == NULL || C == NULL)
+      // allocate our global G and C structures
+      if((G = calloc(1, sizeof(struct Global))) == NULL ||
+         (C = calloc(1, sizeof(struct Config))) == NULL)
+      {
+        // break out immediately to signal an error!
         break;
+      }
+
+      // prepare the exec lists in G and C
+      NewList((struct List *)&(C->mimeTypeList));
+      NewList((struct List *)&(C->filterList));
+      NewList((struct List *)&(G->readMailDataList));
+      NewList((struct List *)&(G->xpkPackerList));
+      NewList((struct List *)&(G->zombieFileList));
 
       // get the PROGDIR: and program name and put it into own variables
       NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));
@@ -2713,12 +2722,7 @@ int main(int argc, char **argv)
       G->NoImageWarning = args.noImgWarning;
       G->NoCatalogTranslation = args.noCatalog;
 
-      // prepare some exec lists of either the Global or Config structure
-      NewList((struct List *)&(G->readMailDataList));
-      NewList((struct List *)&(C->mimeTypeList));
-      NewList((struct List *)&(C->filterList));
-      NewList((struct List *)&(G->xpkPackerList));
-      NewList((struct List *)&(G->zombieFileList));
+      // setup our ImageCache
       ImageCacheSetup();
 
       // We have to initialize the ActiveWin flags to -1, so than the
