@@ -1906,7 +1906,7 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
 
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-        set(lv, MUIA_List_Quiet, TRUE);
+        set(lv, MUIA_NList_Quiet, TRUE);
 
         while(fgets(buffer, SIZE_LARGE, fh))
         {
@@ -1997,7 +1997,7 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
             AddTail((struct List *)&(C->mimeTypeList), (struct Node *)mt);
 
             // add the new MimeType also to the config page.
-            DoMethod(lv, MUIM_List_InsertSingle, mt, MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_NList_InsertSingle, mt, MUIV_NList_Insert_Bottom);
           }
 
           // if we have a valid mimeTypeNode now we can fill it with valid data
@@ -2039,8 +2039,8 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
 
         fclose(fh);
 
-        set(lv, MUIA_List_Quiet, FALSE);
-        DoMethod(lv, MUIM_List_Redraw, MUIV_List_Redraw_All);
+        set(lv, MUIA_NList_Quiet, FALSE);
+        DoMethod(lv, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
       }
       else
         ER_NewError(tr(MSG_ER_CantOpenFile), fname);
