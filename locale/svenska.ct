@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.17 (02.07.07)
+## version $VER: YAM.ct 6.18 (11.07.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -7105,3 +7105,27 @@ MSG_WR_VIEW
 Vy
 ;#DEF View
 ;#SET (1969//)
+MSG_ER_CONNECTERR_SOCKET_IN_USE
+Kunde inte ansluta till '%s'.\n\nEn TCP/IP socket anslutning verkar redan vara aktiv. Stäng ned alla andra existerande överföringar.
+;#DEF Couldn't connect to '%s'.\n\nA TCP/IP socket connection seems to be already active. Please make sure to close all other existing transfers.
+;#SET (1970//)
+MSG_ER_CONNECTERR_TIMEDOUT
+Kunde inte ansluta till '%s'.\n\nMail servern svarade inte inom en given intervall och därför gick tiden ut.
+;#DEF Couldn't connect to '%s'.\n\nThe mail server didn't respond within a predefined interval and therefore timed out.
+;#SET (1971//)
+MSG_ER_CONNECTERR_NO_SOCKET
+Kunde inte ansluta till '%s'.\n\nYAM kunde inte etablera en socket anslutning till mail servern. Var god kontrollera att din TCP/IP stack är online och fungerar korrekt.
+;#DEF Couldn't connect to '%s'.\n\nYAM wasn't able to establish a socket connection to the mail server. Please make sure that your TCP/IP stack is up and working properly.
+;#SET (1972//)
+MSG_ER_CONNECTERR_NO_NONBLOCKIO
+Kunde inte ansluta till '%s'.\n\nYAM kunde inte etablera en icke-blockerande IO-anslutning till mail servern. Var god kontrollera att din TCP/IP stack kan etablera en icke-blockerande IO-anslutning.
+;#DEF Couldn't connect to '%s'.\n\nYAM wasn't able to establish a non-blocking IO connection to the mail server. Please make sure your TCP/IP stack is able to establish non-blocking IO connections.
+;#SET (1973//)
+MSG_CONFIG_MODIFIED
+Inställningarna har ändrats\nmen inte sparats ännu.\n\nHur vill du fortsätta?
+;#DEF The configuration has been modified,\nbut wasn't saved yet.\n\nHow do you want to proceed?
+;#SET (1974//)
+MSG_CONFIG_MODIFIED_GAD
+*_Spara nu|_Avsluta utan att spara
+;#DEF *_Save now|_Quit without saving
+;#SET (1975//)
