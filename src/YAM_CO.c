@@ -1166,235 +1166,218 @@ static BOOL CompareRxHooks(const struct RxHook *rx1, const struct RxHook *rx2)
 // compares two config data structures (deep compare) and returns TRUE if they are equal
 static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
 {
-  BOOL equal = TRUE;
+  BOOL equal = FALSE;
 
   ENTER();
 
-  // we first do a deep compare of our generic structures
-  // before we compare all other items of the struct Config
-  if(ComparePOP3Accounts((const struct POP3 **)c1->P3, (const struct POP3 **)c2->P3) == FALSE)
-  {
-    equal = FALSE;
-  }
-  else if(CompareFilterLists(&c1->filterList, &c2->filterList) == FALSE)
-  {
-    equal = FALSE;
-  }
-  else if(CompareMimeTypeLists(&c1->mimeTypeList, &c2->mimeTypeList) == FALSE)
-  {
-    equal = FALSE;
-  }
-  else if(c1->TimeZone                        != c2->TimeZone ||
-          c1->WarnSize                        != c2->WarnSize ||
-          c1->CheckMailDelay                  != c2->CheckMailDelay ||
-          c1->NotifyType                      != c2->NotifyType ||
-          c1->ShowHeader                      != c2->ShowHeader ||
-          c1->ShowSenderInfo                  != c2->ShowSenderInfo ||
-          c1->EdWrapCol                       != c2->EdWrapCol ||
-          c1->EdWrapMode                      != c2->EdWrapMode ||
-          c1->FolderCols                      != c2->FolderCols ||
-          c1->MessageCols                     != c2->MessageCols ||
-          c1->AddToAddrbook                   != c2->AddToAddrbook ||
-          c1->AddrbookCols                    != c2->AddrbookCols ||
-          c1->IconPositionX                   != c2->IconPositionX ||
-          c1->IconPositionY                   != c2->IconPositionY ||
-          c1->ConfirmDelete                   != c2->ConfirmDelete ||
-          c1->XPKPackEff                      != c2->XPKPackEff ||
-          c1->XPKPackEncryptEff               != c2->XPKPackEncryptEff ||
-          c1->LetterPart                      != c2->LetterPart ||
-          c1->WriteIndexes                    != c2->WriteIndexes ||
-          c1->AutoSave                        != c2->AutoSave ||
-          c1->HideGUIElements                 != c2->HideGUIElements ||
-          c1->StackSize                       != c2->StackSize ||
-          c1->SizeFormat                      != c2->SizeFormat ||
-          c1->EmailCache                      != c2->EmailCache ||
-          c1->SMTP_Port                       != c2->SMTP_Port ||
-          c1->TRBufferSize                    != c2->TRBufferSize ||
-          c1->EmbeddedMailDelay               != c2->EmbeddedMailDelay ||
-          c1->StatusChangeDelay               != c2->StatusChangeDelay ||
-          c1->KeepAliveInterval               != c2->KeepAliveInterval ||
-          c1->UpdateInterval                  != c2->UpdateInterval ||
-          c1->PGPPassInterval                 != c2->PGPPassInterval ||
-          c1->SpamProbabilityThreshold        != c2->SpamProbabilityThreshold ||
-          c1->SpamFlushTrainingDataInterval   != c2->SpamFlushTrainingDataInterval ||
-          c1->SpamFlushTrainingDataThreshold  != c2->SpamFlushTrainingDataThreshold ||
+  // we do a deep compare here, but start the compare by comparing our normal
+  // plain variables as this will be the faster compare than the compares
+  // of our nested structures/lists, etc.
+  if(c1->TimeZone                        == c2->TimeZone &&
+     c1->WarnSize                        == c2->WarnSize &&
+     c1->CheckMailDelay                  == c2->CheckMailDelay &&
+     c1->NotifyType                      == c2->NotifyType &&
+     c1->ShowHeader                      == c2->ShowHeader &&
+     c1->ShowSenderInfo                  == c2->ShowSenderInfo &&
+     c1->EdWrapCol                       == c2->EdWrapCol &&
+     c1->EdWrapMode                      == c2->EdWrapMode &&
+     c1->FolderCols                      == c2->FolderCols &&
+     c1->MessageCols                     == c2->MessageCols &&
+     c1->AddToAddrbook                   == c2->AddToAddrbook &&
+     c1->AddrbookCols                    == c2->AddrbookCols &&
+     c1->IconPositionX                   == c2->IconPositionX &&
+     c1->IconPositionY                   == c2->IconPositionY &&
+     c1->ConfirmDelete                   == c2->ConfirmDelete &&
+     c1->XPKPackEff                      == c2->XPKPackEff &&
+     c1->XPKPackEncryptEff               == c2->XPKPackEncryptEff &&
+     c1->LetterPart                      == c2->LetterPart &&
+     c1->WriteIndexes                    == c2->WriteIndexes &&
+     c1->AutoSave                        == c2->AutoSave &&
+     c1->HideGUIElements                 == c2->HideGUIElements &&
+     c1->StackSize                       == c2->StackSize &&
+     c1->SizeFormat                      == c2->SizeFormat &&
+     c1->EmailCache                      == c2->EmailCache &&
+     c1->SMTP_Port                       == c2->SMTP_Port &&
+     c1->TRBufferSize                    == c2->TRBufferSize &&
+     c1->EmbeddedMailDelay               == c2->EmbeddedMailDelay &&
+     c1->StatusChangeDelay               == c2->StatusChangeDelay &&
+     c1->KeepAliveInterval               == c2->KeepAliveInterval &&
+     c1->UpdateInterval                  == c2->UpdateInterval &&
+     c1->PGPPassInterval                 == c2->PGPPassInterval &&
+     c1->SpamProbabilityThreshold        == c2->SpamProbabilityThreshold &&
+     c1->SpamFlushTrainingDataInterval   == c2->SpamFlushTrainingDataInterval &&
+     c1->SpamFlushTrainingDataThreshold  == c2->SpamFlushTrainingDataThreshold &&
+     c1->SocketTimeout                   == c2->SocketTimeout &&
+     c1->PrintMethod                     == c2->PrintMethod &&
+     c1->SMTP_SecureMethod               == c2->SMTP_SecureMethod &&
+     c1->LogfileMode                     == c2->LogfileMode &&
+     c1->SMTP_AUTH_Method                == c2->SMTP_AUTH_Method &&
+     c1->MDN_NoRecipient                 == c2->MDN_NoRecipient &&
+     c1->MDN_NoDomain                    == c2->MDN_NoDomain &&
+     c1->MDN_OnDelete                    == c2->MDN_OnDelete &&
+     c1->MDN_Other                       == c2->MDN_Other &&
+     c1->DSListFormat                    == c2->DSListFormat &&
+     c1->SigSepLine                      == c2->SigSepLine &&
+     c1->TransferWindow                  == c2->TransferWindow &&
+     c1->PreSelection                    == c2->PreSelection &&
+     c1->FolderInfoMode                  == c2->FolderInfoMode &&
+     c1->ForwardMode                     == c2->ForwardMode &&
+     c1->InfoBar                         == c2->InfoBar &&
+     c1->DaylightSaving                  == c2->DaylightSaving &&
+     c1->Allow8bit                       == c2->Allow8bit &&
+     c1->Use_SMTP_AUTH                   == c2->Use_SMTP_AUTH &&
+     c1->AvoidDuplicates                 == c2->AvoidDuplicates &&
+     c1->UpdateStatus                    == c2->UpdateStatus &&
+     c1->DownloadLarge                   == c2->DownloadLarge &&
+     c1->DisplayAllTexts                 == c2->DisplayAllTexts &&
+     c1->FixedFontEdit                   == c2->FixedFontEdit &&
+     c1->MultipleWindows                 == c2->MultipleWindows &&
+     c1->UseTextstyles                   == c2->UseTextstyles &&
+     c1->WrapHeader                      == c2->WrapHeader &&
+     c1->LaunchAlways                    == c2->LaunchAlways &&
+     c1->QuoteMessage                    == c2->QuoteMessage &&
+     c1->QuoteEmptyLines                 == c2->QuoteEmptyLines &&
+     c1->CompareAddress                  == c2->CompareAddress &&
+     c1->StripSignature                  == c2->StripSignature &&
+     c1->UseSignature                    == c2->UseSignature &&
+     c1->FixedFontList                   == c2->FixedFontList &&
+     c1->EncryptToSelf                   == c2->EncryptToSelf &&
+     c1->SplitLogfile                    == c2->SplitLogfile &&
+     c1->LogAllEvents                    == c2->LogAllEvents &&
+     c1->GetOnStartup                    == c2->GetOnStartup &&
+     c1->SendOnStartup                   == c2->SendOnStartup &&
+     c1->CleanupOnStartup                == c2->CleanupOnStartup &&
+     c1->RemoveOnStartup                 == c2->RemoveOnStartup &&
+     c1->LoadAllFolders                  == c2->LoadAllFolders &&
+     c1->UpdateNewMail                   == c2->UpdateNewMail &&
+     c1->CheckBirthdates                 == c2->CheckBirthdates &&
+     c1->SendOnQuit                      == c2->SendOnQuit &&
+     c1->CleanupOnQuit                   == c2->CleanupOnQuit &&
+     c1->RemoveOnQuit                    == c2->RemoveOnQuit &&
+     c1->AddMyInfo                       == c2->AddMyInfo &&
+     c1->IconifyOnQuit                   == c2->IconifyOnQuit &&
+     c1->Confirm                         == c2->Confirm &&
+     c1->RemoveAtOnce                    == c2->RemoveAtOnce &&
+     c1->SaveSent                        == c2->SaveSent &&
+     c1->JumpToNewMsg                    == c2->JumpToNewMsg &&
+     c1->JumpToIncoming                  == c2->JumpToIncoming &&
+     c1->JumpToRecentMsg                 == c2->JumpToRecentMsg &&
+     c1->PrinterCheck                    == c2->PrinterCheck &&
+     c1->IsOnlineCheck                   == c2->IsOnlineCheck &&
+     c1->ConfirmOnQuit                   == c2->ConfirmOnQuit &&
+     c1->AskJumpUnread                   == c2->AskJumpUnread &&
+     c1->WarnSubject                     == c2->WarnSubject &&
+     c1->FolderCntMenu                   == c2->FolderCntMenu &&
+     c1->MessageCntMenu                  == c2->MessageCntMenu &&
+     c1->AutoColumnResize                == c2->AutoColumnResize &&
+     c1->EmbeddedReadPane                == c2->EmbeddedReadPane &&
+     c1->StatusChangeDelayOn             == c2->StatusChangeDelayOn &&
+     c1->SysCharsetCheck                 == c2->SysCharsetCheck &&
+     c1->QuickSearchBar                  == c2->QuickSearchBar &&
+     c1->WBAppIcon                       == c2->WBAppIcon &&
+     c1->DockyIcon                       == c2->DockyIcon &&
+     c1->AmiSSLCheck                     == c2->AmiSSLCheck &&
+     c1->TimeZoneCheck                   == c2->TimeZoneCheck &&
+     c1->AutoDSTCheck                    == c2->AutoDSTCheck &&
+     c1->DetectCyrillic                  == c2->DetectCyrillic &&
+     c1->ABookLookup                     == c2->ABookLookup &&
+     c1->ConvertHTML                     == c2->ConvertHTML &&
+     c1->SpamFilterEnabled               == c2->SpamFilterEnabled &&
+     c1->SpamFilterForNewMail            == c2->SpamFilterForNewMail &&
+     c1->SpamMarkOnMove                  == c2->SpamMarkOnMove &&
+     c1->SpamMarkAsRead                  == c2->SpamMarkAsRead &&
+     c1->SpamAddressBookIsWhiteList      == c2->SpamAddressBookIsWhiteList &&
+     c1->MoveHamToIncoming               == c2->MoveHamToIncoming &&
+     c1->FilterHam                       == c2->FilterHam &&
+     c1->DisplayAllAltPart               == c2->DisplayAllAltPart &&
+     c1->MDNEnabled                      == c2->MDNEnabled &&
+     c1->RequestMDN                      == c2->RequestMDN &&
 
-          c1->SocketTimeout                   != c2->SocketTimeout ||
-          c1->PrintMethod                     != c2->PrintMethod ||
-          c1->SMTP_SecureMethod               != c2->SMTP_SecureMethod ||
-          c1->LogfileMode                     != c2->LogfileMode ||
-          c1->SMTP_AUTH_Method                != c2->SMTP_AUTH_Method ||
-          c1->MDN_NoRecipient                 != c2->MDN_NoRecipient ||
-          c1->MDN_NoDomain                    != c2->MDN_NoDomain ||
-          c1->MDN_OnDelete                    != c2->MDN_OnDelete ||
-          c1->MDN_Other                       != c2->MDN_Other ||
-          c1->DSListFormat                    != c2->DSListFormat ||
-          c1->SigSepLine                      != c2->SigSepLine ||
-          c1->TransferWindow                  != c2->TransferWindow ||
-          c1->PreSelection                    != c2->PreSelection ||
-          c1->FolderInfoMode                  != c2->FolderInfoMode ||
-          c1->ForwardMode                     != c2->ForwardMode ||
-          c1->InfoBar                         != c2->InfoBar ||
+     c1->SocketOptions.SendBuffer        == c2->SocketOptions.SendBuffer &&
+  	 c1->SocketOptions.RecvBuffer        == c2->SocketOptions.RecvBuffer &&
+  	 c1->SocketOptions.SendLowAt         == c2->SocketOptions.SendLowAt &&
+  	 c1->SocketOptions.RecvLowAt         == c2->SocketOptions.RecvLowAt &&
+  	 c1->SocketOptions.SendTimeOut       == c2->SocketOptions.SendTimeOut &&
+  	 c1->SocketOptions.RecvTimeOut       == c2->SocketOptions.RecvTimeOut &&
+  	 c1->SocketOptions.KeepAlive         == c2->SocketOptions.KeepAlive &&
+  	 c1->SocketOptions.NoDelay           == c2->SocketOptions.NoDelay &&
+  	 c1->SocketOptions.LowDelay          == c2->SocketOptions.LowDelay &&
 
-          c1->DaylightSaving                  != c2->DaylightSaving ||
-          c1->Allow8bit                       != c2->Allow8bit ||
-          c1->Use_SMTP_AUTH                   != c2->Use_SMTP_AUTH ||
-          c1->AvoidDuplicates                 != c2->AvoidDuplicates ||
-          c1->UpdateStatus                    != c2->UpdateStatus ||
-          c1->DownloadLarge                   != c2->DownloadLarge ||
-          c1->DisplayAllTexts                 != c2->DisplayAllTexts ||
-          c1->FixedFontEdit                   != c2->FixedFontEdit ||
-          c1->MultipleWindows                 != c2->MultipleWindows ||
-          c1->UseTextstyles                   != c2->UseTextstyles ||
-          c1->WrapHeader                      != c2->WrapHeader ||
-          c1->LaunchAlways                    != c2->LaunchAlways ||
-          c1->QuoteMessage                    != c2->QuoteMessage ||
-          c1->QuoteEmptyLines                 != c2->QuoteEmptyLines ||
-          c1->CompareAddress                  != c2->CompareAddress ||
-          c1->StripSignature                  != c2->StripSignature ||
-          c1->UseSignature                    != c2->UseSignature ||
-          c1->FixedFontList                   != c2->FixedFontList ||
-          c1->EncryptToSelf                   != c2->EncryptToSelf ||
-          c1->SplitLogfile                    != c2->SplitLogfile ||
-          c1->LogAllEvents                    != c2->LogAllEvents ||
-          c1->GetOnStartup                    != c2->GetOnStartup ||
-          c1->SendOnStartup                   != c2->SendOnStartup ||
-          c1->CleanupOnStartup                != c2->CleanupOnStartup ||
-          c1->RemoveOnStartup                 != c2->RemoveOnStartup ||
-          c1->LoadAllFolders                  != c2->LoadAllFolders ||
-          c1->UpdateNewMail                   != c2->UpdateNewMail ||
-          c1->CheckBirthdates                 != c2->CheckBirthdates ||
-          c1->SendOnQuit                      != c2->SendOnQuit ||
-          c1->CleanupOnQuit                   != c2->CleanupOnQuit ||
-          c1->RemoveOnQuit                    != c2->RemoveOnQuit ||
-          c1->AddMyInfo                       != c2->AddMyInfo ||
-          c1->IconifyOnQuit                   != c2->IconifyOnQuit ||
-          c1->Confirm                         != c2->Confirm ||
-          c1->RemoveAtOnce                    != c2->RemoveAtOnce ||
-          c1->SaveSent                        != c2->SaveSent ||
-          c1->JumpToNewMsg                    != c2->JumpToNewMsg ||
-          c1->JumpToIncoming                  != c2->JumpToIncoming ||
-          c1->JumpToRecentMsg                 != c2->JumpToRecentMsg ||
-          c1->PrinterCheck                    != c2->PrinterCheck ||
-          c1->IsOnlineCheck                   != c2->IsOnlineCheck ||
-          c1->ConfirmOnQuit                   != c2->ConfirmOnQuit ||
-          c1->AskJumpUnread                   != c2->AskJumpUnread ||
-          c1->WarnSubject                     != c2->WarnSubject ||
-          c1->FolderCntMenu                   != c2->FolderCntMenu ||
-          c1->MessageCntMenu                  != c2->MessageCntMenu ||
-          c1->AutoColumnResize                != c2->AutoColumnResize ||
-          c1->EmbeddedReadPane                != c2->EmbeddedReadPane ||
-          c1->StatusChangeDelayOn             != c2->StatusChangeDelayOn ||
-          c1->SysCharsetCheck                 != c2->SysCharsetCheck ||
-          c1->QuickSearchBar                  != c2->QuickSearchBar ||
-          c1->WBAppIcon                       != c2->WBAppIcon ||
-          c1->DockyIcon                       != c2->DockyIcon ||
-          c1->AmiSSLCheck                     != c2->AmiSSLCheck ||
-          c1->TimeZoneCheck                   != c2->TimeZoneCheck ||
-          c1->AutoDSTCheck                    != c2->AutoDSTCheck ||
-          c1->DetectCyrillic                  != c2->DetectCyrillic ||
-          c1->ABookLookup                     != c2->ABookLookup ||
-          c1->ConvertHTML                     != c2->ConvertHTML ||
-          c1->SpamFilterEnabled               != c2->SpamFilterEnabled ||
-          c1->SpamFilterForNewMail            != c2->SpamFilterForNewMail ||
-          c1->SpamMarkOnMove                  != c2->SpamMarkOnMove ||
-          c1->SpamMarkAsRead                  != c2->SpamMarkAsRead ||
-          c1->SpamAddressBookIsWhiteList      != c2->SpamAddressBookIsWhiteList ||
-          c1->MoveHamToIncoming               != c2->MoveHamToIncoming ||
-          c1->FilterHam                       != c2->FilterHam ||
-          c1->DisplayAllAltPart               != c2->DisplayAllAltPart ||
-          c1->MDNEnabled                      != c2->MDNEnabled ||
-          c1->RequestMDN                      != c2->RequestMDN)
+     ComparePOP3Accounts((const struct POP3 **)c1->P3, (const struct POP3 **)c2->P3) &&
+     CompareFilterLists(&c1->filterList, &c2->filterList) &&
+     CompareMimeTypeLists(&c1->mimeTypeList, &c2->mimeTypeList) &&
+     CompareRxHooks((const struct RxHook *)c1->RX, (const struct RxHook *)c2->RX) &&
+
+     strcmp(c1->ColoredText.buf,    c2->ColoredText.buf) == 0 &&
+     strcmp(c1->Color1stLevel.buf,  c2->Color1stLevel.buf) == 0 &&
+     strcmp(c1->Color2ndLevel.buf,  c2->Color2ndLevel.buf) == 0 &&
+     strcmp(c1->Color3rdLevel.buf,  c2->Color3rdLevel.buf) == 0 &&
+     strcmp(c1->Color4thLevel.buf,  c2->Color4thLevel.buf) == 0 &&
+     strcmp(c1->ColorURL.buf,       c2->ColorURL.buf) == 0 &&
+     strcmp(c1->ColorSignature.buf, c2->ColorSignature.buf) == 0 &&
+     strcmp(c1->RealName,           c2->RealName) == 0 &&
+     strcmp(c1->EmailAddress,       c2->EmailAddress) == 0 &&
+     strcmp(c1->SMTP_Server,        c2->SMTP_Server) == 0 &&
+     strcmp(c1->SMTP_Domain,        c2->SMTP_Domain) == 0 &&
+     strcmp(c1->SMTP_AUTH_User,     c2->SMTP_AUTH_User) == 0 &&
+     strcmp(c1->SMTP_AUTH_Pass,     c2->SMTP_AUTH_Pass) == 0 &&
+     strcmp(c1->NotifySound,        c2->NotifySound) == 0 &&
+     strcmp(c1->NotifyCommand,      c2->NotifyCommand) == 0 &&
+     strcmp(c1->ShortHeaders,       c2->ShortHeaders) == 0 &&
+     strcmp(c1->ReplyTo,            c2->ReplyTo) == 0 &&
+     strcmp(c1->Organization,       c2->Organization) == 0 &&
+     strcmp(c1->ExtraHeaders,       c2->ExtraHeaders) == 0 &&
+     strcmp(c1->NewIntro,           c2->NewIntro) == 0 &&
+     strcmp(c1->Greetings,          c2->Greetings) == 0 &&
+     strcmp(c1->Editor,             c2->Editor) == 0 &&
+     strcmp(c1->ReplyHello,         c2->ReplyHello) == 0 &&
+     strcmp(c1->ReplyIntro,         c2->ReplyIntro) == 0 &&
+     strcmp(c1->ReplyBye,           c2->ReplyBye) == 0 &&
+     strcmp(c1->AltReplyHello,      c2->AltReplyHello) == 0 &&
+     strcmp(c1->AltReplyIntro,      c2->AltReplyIntro) == 0 &&
+     strcmp(c1->AltReplyBye,        c2->AltReplyBye) == 0 &&
+     strcmp(c1->AltReplyPattern,    c2->AltReplyPattern) == 0 &&
+     strcmp(c1->MLReplyHello,       c2->MLReplyHello) == 0 &&
+     strcmp(c1->MLReplyIntro,       c2->MLReplyIntro) == 0 &&
+     strcmp(c1->MLReplyBye,         c2->MLReplyBye) == 0 &&
+     strcmp(c1->ForwardIntro,       c2->ForwardIntro) == 0 &&
+     strcmp(c1->ForwardFinish,      c2->ForwardFinish) == 0 &&
+     strcmp(c1->TagsFile,           c2->TagsFile) == 0 &&
+     strcmp(c1->TagsSeparator,      c2->TagsSeparator) == 0 &&
+     strcmp(c1->PGPCmdPath,         c2->PGPCmdPath) == 0 &&
+     strcmp(c1->MyPGPID,            c2->MyPGPID) == 0 &&
+     strcmp(c1->ReMailer,           c2->ReMailer) == 0 &&
+     strcmp(c1->RMCommands,         c2->RMCommands) == 0 &&
+     strcmp(c1->LogfilePath,        c2->LogfilePath) == 0 &&
+     strcmp(c1->DetachDir,          c2->DetachDir) == 0 &&
+     strcmp(c1->AttachDir,          c2->AttachDir) == 0 &&
+     strcmp(c1->GalleryDir,         c2->GalleryDir) == 0 &&
+     strcmp(c1->MyPictureURL,       c2->MyPictureURL) == 0 &&
+     strcmp(c1->NewAddrGroup,       c2->NewAddrGroup) == 0 &&
+     strcmp(c1->ProxyServer,        c2->ProxyServer) == 0 &&
+     strcmp(c1->TempDir,            c2->TempDir) == 0 &&
+     strcmp(c1->PackerCommand,      c2->PackerCommand) == 0 &&
+     strcmp(c1->XPKPack,            c2->XPKPack) == 0 &&
+     strcmp(c1->XPKPackEncrypt,     c2->XPKPackEncrypt) == 0 &&
+     strcmp(c1->SupportSite,        c2->SupportSite) == 0 &&
+     strcmp(c1->UpdateServer,       c2->UpdateServer) == 0 &&
+     strcmp(c1->LocalCharset,       c2->LocalCharset) == 0 &&
+     strcmp(c1->IOCInterface,       c2->IOCInterface) == 0 &&
+     strcmp(c1->AppIconText,        c2->AppIconText) == 0 &&
+     strcmp(c1->InfoBarText,        c2->InfoBarText) == 0 &&
+     strcmp(c1->DefaultMimeViewer,  c2->DefaultMimeViewer) == 0 &&
+     strcmp(c1->StyleFGroupUnread,  c2->StyleFGroupUnread) == 0 &&
+     strcmp(c1->StyleFGroupRead,    c2->StyleFGroupRead) == 0 &&
+     strcmp(c1->StyleFolderUnread,  c2->StyleFolderUnread) == 0 &&
+     strcmp(c1->StyleFolderRead,    c2->StyleFolderRead) == 0 &&
+     strcmp(c1->StyleFolderNew,     c2->StyleFolderNew) == 0 &&
+     strcmp(c1->StyleMailUnread,    c2->StyleMailUnread) == 0 &&
+     strcmp(c1->StyleMailRead,      c2->StyleMailRead) == 0 &&
+     strcmp(c1->QuoteChar,          c2->QuoteChar) == 0 &&
+     strcmp(c1->AltQuoteChar,       c2->AltQuoteChar) == 0 &&
+     strcmp(c1->ThemeName,          c2->ThemeName) == 0)
   {
-    equal = FALSE;
-  }
-  else if(CompareRxHooks((const struct RxHook *)c1->RX, (const struct RxHook *)c2->RX) == FALSE)
-  {
-    equal = FALSE;
-  }
-  else if(strcmp(c1->ColoredText.buf,    c2->ColoredText.buf) != 0 ||
-          strcmp(c1->Color1stLevel.buf,  c2->Color1stLevel.buf) != 0 ||
-          strcmp(c1->Color2ndLevel.buf,  c2->Color2ndLevel.buf) != 0 ||
-          strcmp(c1->Color3rdLevel.buf,  c2->Color3rdLevel.buf) != 0 ||
-          strcmp(c1->Color4thLevel.buf,  c2->Color4thLevel.buf) != 0 ||
-          strcmp(c1->ColorURL.buf,       c2->ColorURL.buf) != 0 ||
-          strcmp(c1->ColorSignature.buf, c2->ColorSignature.buf) != 0 ||
-          strcmp(c1->RealName,           c2->RealName) != 0 ||
-          strcmp(c1->EmailAddress,       c2->EmailAddress) != 0 ||
-          strcmp(c1->SMTP_Server,        c2->SMTP_Server) != 0 ||
-          strcmp(c1->SMTP_Domain,        c2->SMTP_Domain) != 0 ||
-          strcmp(c1->SMTP_AUTH_User,     c2->SMTP_AUTH_User) != 0 ||
-          strcmp(c1->SMTP_AUTH_Pass,     c2->SMTP_AUTH_Pass) != 0 ||
-          strcmp(c1->NotifySound,        c2->NotifySound) != 0 ||
-          strcmp(c1->NotifyCommand,      c2->NotifyCommand) != 0 ||
-          strcmp(c1->ShortHeaders,       c2->ShortHeaders) != 0 ||
-          strcmp(c1->ReplyTo,            c2->ReplyTo) != 0 ||
-          strcmp(c1->Organization,       c2->Organization) != 0 ||
-          strcmp(c1->ExtraHeaders,       c2->ExtraHeaders) != 0 ||
-          strcmp(c1->NewIntro,           c2->NewIntro) != 0 ||
-          strcmp(c1->Greetings,          c2->Greetings) != 0 ||
-          strcmp(c1->Editor,             c2->Editor) != 0 ||
-          strcmp(c1->ReplyHello,         c2->ReplyHello) != 0 ||
-          strcmp(c1->ReplyIntro,         c2->ReplyIntro) != 0 ||
-          strcmp(c1->ReplyBye,           c2->ReplyBye) != 0 ||
-          strcmp(c1->AltReplyHello,      c2->AltReplyHello) != 0 ||
-          strcmp(c1->AltReplyIntro,      c2->AltReplyIntro) != 0 ||
-          strcmp(c1->AltReplyBye,        c2->AltReplyBye) != 0 ||
-          strcmp(c1->AltReplyPattern,    c2->AltReplyPattern) != 0 ||
-          strcmp(c1->MLReplyHello,       c2->MLReplyHello) != 0 ||
-          strcmp(c1->MLReplyIntro,       c2->MLReplyIntro) != 0 ||
-          strcmp(c1->MLReplyBye,         c2->MLReplyBye) != 0 ||
-          strcmp(c1->ForwardIntro,       c2->ForwardIntro) != 0 ||
-          strcmp(c1->ForwardFinish,      c2->ForwardFinish) != 0 ||
-          strcmp(c1->TagsFile,           c2->TagsFile) != 0 ||
-          strcmp(c1->TagsSeparator,      c2->TagsSeparator) != 0 ||
-          strcmp(c1->PGPCmdPath,         c2->PGPCmdPath) != 0 ||
-          strcmp(c1->MyPGPID,            c2->MyPGPID) != 0 ||
-          strcmp(c1->ReMailer,           c2->ReMailer) != 0 ||
-          strcmp(c1->RMCommands,         c2->RMCommands) != 0 ||
-          strcmp(c1->LogfilePath,        c2->LogfilePath) != 0 ||
-          strcmp(c1->DetachDir,          c2->DetachDir) != 0 ||
-          strcmp(c1->AttachDir,          c2->AttachDir) != 0 ||
-          strcmp(c1->GalleryDir,         c2->GalleryDir) != 0 ||
-          strcmp(c1->MyPictureURL,       c2->MyPictureURL) != 0 ||
-          strcmp(c1->NewAddrGroup,       c2->NewAddrGroup) != 0 ||
-          strcmp(c1->ProxyServer,        c2->ProxyServer) != 0 ||
-          strcmp(c1->TempDir,            c2->TempDir) != 0 ||
-          strcmp(c1->PackerCommand,      c2->PackerCommand) != 0 ||
-          strcmp(c1->XPKPack,            c2->XPKPack) != 0 ||
-          strcmp(c1->XPKPackEncrypt,     c2->XPKPackEncrypt) != 0 ||
-          strcmp(c1->SupportSite,        c2->SupportSite) != 0 ||
-          strcmp(c1->UpdateServer,       c2->UpdateServer) != 0 ||
-          strcmp(c1->LocalCharset,       c2->LocalCharset) != 0 ||
-          strcmp(c1->IOCInterface,       c2->IOCInterface) != 0 ||
-          strcmp(c1->AppIconText,        c2->AppIconText) != 0 ||
-          strcmp(c1->InfoBarText,        c2->InfoBarText) != 0 ||
-          strcmp(c1->DefaultMimeViewer,  c2->DefaultMimeViewer) != 0 ||
-          strcmp(c1->StyleFGroupUnread,  c2->StyleFGroupUnread) != 0 ||
-          strcmp(c1->StyleFGroupRead,    c2->StyleFGroupRead) != 0 ||
-          strcmp(c1->StyleFolderUnread,  c2->StyleFolderUnread) != 0 ||
-          strcmp(c1->StyleFolderRead,    c2->StyleFolderRead) != 0 ||
-          strcmp(c1->StyleFolderNew,     c2->StyleFolderNew) != 0 ||
-          strcmp(c1->StyleMailUnread,    c2->StyleMailUnread) != 0 ||
-          strcmp(c1->StyleMailRead,      c2->StyleMailRead) != 0 ||
-          strcmp(c1->QuoteChar,          c2->QuoteChar) != 0 ||
-          strcmp(c1->AltQuoteChar,       c2->AltQuoteChar) != 0 ||
-          strcmp(c1->ThemeName,          c2->ThemeName) != 0)
-  {
-    equal = FALSE;
-  }
-  else if(c1->SocketOptions.SendBuffer  != c2->SocketOptions.SendBuffer ||
-  	      c1->SocketOptions.RecvBuffer  != c2->SocketOptions.RecvBuffer ||
-  	      c1->SocketOptions.SendLowAt   != c2->SocketOptions.SendLowAt ||
-  	      c1->SocketOptions.RecvLowAt   != c2->SocketOptions.RecvLowAt ||
-  	      c1->SocketOptions.SendTimeOut != c2->SocketOptions.SendTimeOut ||
-  	      c1->SocketOptions.RecvTimeOut != c2->SocketOptions.RecvTimeOut ||
-  	      c1->SocketOptions.KeepAlive   != c2->SocketOptions.KeepAlive ||
-  	      c1->SocketOptions.NoDelay     != c2->SocketOptions.NoDelay ||
-  	      c1->SocketOptions.LowDelay    != c2->SocketOptions.LowDelay)
-  {
-    // some of the socket options do not match
-    equal = FALSE;
+    equal = TRUE;
   }
 
   RETURN(equal);
@@ -2287,16 +2270,17 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
       // the configuration changed so lets copy
       // it over from CE to C (the real one)
       CopyConfigData(C, CE);
-
-      // validate that C has still valid values
-      CO_Validate(C, TRUE);
-
-      // if the configuration should be saved we do it immediatley
-      if(*arg == 2)
-        CO_SaveConfig(C, G->CO_PrefsFile);
     }
     else
       D(DBF_CONFIG, "config wasn't altered, skipped copy operations.");
+
+    // validate that C has valid values
+    CO_Validate(C, TRUE);
+
+    // we save the configuration if the user
+    // has pressed on 'Save' only.
+    if(*arg == 2)
+      CO_SaveConfig(C, G->CO_PrefsFile);
   }
 
   // then we free our temporary config structure

@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-11  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_CO.c: if the 'Save' button is used on the configuration window,
+    the config is now validated and saved regardless if it was changed or not.
+    This should fix problems in case the 'Use' button was used previously and
+    the user wanted to revisit the configuration just for saving it.
+    In addition, the comparison logic in CompareConfigData() was changed to
+    first do simple and quick comparisons and just do the time consuming
+    stuff at the very end.
+
 2007-07-11  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, locale/YAM.cd, locale/deutsch.ct, locale/svenska.ct: if either the
