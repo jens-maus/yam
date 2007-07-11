@@ -3228,10 +3228,15 @@ const char *DescribeCT(const char *ct)
     {
       struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
 
-      if(MatchNoCase(ct, mt->ContentType) && mt->Description[0] != '\0')
+      // don't allow the catch-alls
+      if(stricmp(mt->mimeType, "*") != 0 &&
+         stricmp(mt->mimeType, "#?") != 0)
       {
-        ret = mt->Description;
-        break;
+        if(MatchNoCase(ct, mt->ContentType) && mt->Description[0] != '\0')
+        {
+          ret = mt->Description;
+          break;
+        }
       }
 
     }
