@@ -7,6 +7,11 @@ $URL$
 
 2007-07-11  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c, YAM_CO.c: removed the 'Extras' submenu of the configuration
+    window as it was anyway just used for importing MIME types in case the
+    MIME configuration page was selected. Now a new PopFile button is used
+    in the config page which allows to directly important without having to
+    use the menu.
   * YAM_COg.c, YAM_COs.c: changed the scripts listview in the configuration to
     use NList.mcc instead of List.mui. This allows to add additional columns to
     be more descriptive about the various options configured. This fulfills

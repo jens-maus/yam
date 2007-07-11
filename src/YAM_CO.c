@@ -25,7 +25,6 @@
 
 ***************************************************************************/
 
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1880,178 +1879,6 @@ void CO_Validate(struct Config *co, BOOL update)
 }
 
 ///
-/// CO_ImportCTypes
-//  Imports MIME viewers from a MIME.prefs file
-HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
-{
-  int mode;
-
-  ENTER();
-
-  if((mode = MUI_Request(G->App, G->CO->GUI.WI, 0, tr(MSG_CO_ImportMIME), tr(MSG_CO_ImportMIMEGads), tr(MSG_CO_ImportMIMEReq))))
-  {
-    struct FileReqCache *frc;
-
-    if((frc = ReqFile(ASL_CONFIG,G->CO->GUI.WI, tr(MSG_CO_IMPORTMIMETITLE), REQF_NONE, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types")))))
-    {
-      char fname[SIZE_PATHFILE];
-      FILE *fh;
-
-      strmfp(fname, frc->drawer, frc->file);
-
-      if((fh = fopen(fname, "r")))
-      {
-        Object *lv = G->CO->GUI.LV_MIME;
-        char buffer[SIZE_LARGE];
-
-        setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
-        set(lv, MUIA_NList_Quiet, TRUE);
-
-        while(fgets(buffer, SIZE_LARGE, fh))
-        {
-          struct MimeTypeNode *mt = NULL;
-          struct MinNode *curNode;
-          char *ctype = buffer;
-          const char *ext = "";
-          const char *command = "";
-          char *p;
-          char *p2;
-
-          if((p = strpbrk(ctype, "\r\n")))
-            *p = '\0';
-
-          if(!*ctype || isspace(*ctype))
-            continue;
-
-          if(mode == 1)
-          {
-            if(*ctype == ';')
-              continue;
-
-            for(p = ctype; *p && *p != ','; ++p);
-
-            if(*p)
-            {
-              for(*p = '\0', ext = ++p; *p && *p != ','; ++p);
-
-              if(*p)
-              {
-                for(*p++ = '\0'; *p && *p != ','; ++p);
-
-                if(*p)
-                {
-                  for(command = ++p; *p && *p != ','; ++p);
-
-                  *p = '\0';
-                }
-              }
-            }
-          }
-          else if (mode == 2)
-          {
-            if(*ctype == '#')
-              continue;
-
-            for(p2 = p = ctype; !isspace(*p) && *p && *p != ';'; p2 = ++p);
-
-            if((p = strpbrk(p,";")))
-              ++p;
-
-            if(p)
-              command = TrimStart(p);
-
-            *p2 = '\0';
-          }
-          else
-          {
-            if(*ctype == '#')
-              continue;
-
-            for(p2 = p = ctype; !isspace(*p) && *p; p2 = ++p);
-
-            if(*p)
-              ext = TrimStart(p);
-
-            *p2 = '\0';
-          }
-
-          // now we try to find the content-type in our mimeTypeList
-          for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-          {
-            struct MimeTypeNode *mtNode = (struct MimeTypeNode *)curNode;
-
-            if(stricmp(mtNode->ContentType, ctype) == 0)
-            {
-              mt = mtNode;
-              break;
-            }
-          }
-
-          // if we couldn't find it in our list we have to create a new mimeTypeNode
-          // and put it into our list.
-          if(mt == NULL && (mt = CreateNewMimeType()) != NULL)
-          {
-            // add the new mime type to our internal list of
-            // user definable MIME types.
-            AddTail((struct List *)&(C->mimeTypeList), (struct Node *)mt);
-
-            // add the new MimeType also to the config page.
-            DoMethod(lv, MUIM_NList_InsertSingle, mt, MUIV_NList_Insert_Bottom);
-          }
-
-          // if we have a valid mimeTypeNode now we can fill it with valid data
-          if(mt)
-          {
-            for(p = mt->ContentType; *ctype && strlen(mt->ContentType) < sizeof(mt->ContentType); ctype++)
-            {
-              if(*ctype == '*')
-              {
-                *p++ = '#';
-                *p++ = '?';
-              }
-              else
-                *p++ = *ctype;
-            }
-
-            *p = '\0';
-
-            if(*command)
-            {
-              for(p = mt->Command; *command && strlen(mt->Command) < sizeof(mt->Command); command++)
-              {
-                if(*command == '%' && command[1] == 'f')
-                {
-                  *p++ = *command++;
-                  *p++ = 's';
-                }
-                else
-                  *p++ = *command;
-              }
-
-              *p = '\0';
-            }
-
-            if(*ext)
-              strlcpy(mt->Extension, ext, sizeof(mt->Extension));
-          }
-        }
-
-        fclose(fh);
-
-        set(lv, MUIA_NList_Quiet, FALSE);
-        DoMethod(lv, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
-      }
-      else
-        ER_NewError(tr(MSG_ER_CantOpenFile), fname);
-    }
-  }
-
-  LEAVE();
-}
-MakeStaticHook(CO_ImportCTypesHook, CO_ImportCTypesFunc);
-
-///
 /// CO_EditSignatFunc
 //  Edits the signature file
 HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
@@ -2237,7 +2064,6 @@ HOOKPROTONHNO(CO_ChangePageFunc, void, int *arg)
 
   G->CO->VisiblePage = page;
   G->CO->Visited[page] = TRUE;
-  set(G->CO->GUI.MI_IMPMIME, MUIA_Menuitem_Enabled, page == cp_MIME);
 
   CO_SetConfig();
 
@@ -2338,11 +2164,12 @@ MakeHook(CO_OpenHook,CO_OpenFunc);
 /*** GUI ***/
 /// CO_New
 //  Creates configuration window
-enum { CMEN_OPEN = 1201, CMEN_SAVEAS, CMEN_DEF, CMEN_DEFALL, CMEN_LAST, CMEN_REST, CMEN_MIME };
-
 static struct CO_ClassData *CO_New(void)
 {
   struct CO_ClassData *data;
+
+  // menu item enums
+  enum { CMEN_OPEN = 1201, CMEN_SAVEAS, CMEN_DEF, CMEN_DEFALL, CMEN_LAST, CMEN_REST };
 
   ENTER();
 
@@ -2391,9 +2218,6 @@ static struct CO_ClassData *CO_New(void)
              MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_ResetAll), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,CMEN_DEFALL, End,
              MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_LastSaved), MUIA_Menuitem_Shortcut,"L", MUIA_UserData,CMEN_LAST, End,
              MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_Restore), MUIA_Menuitem_Shortcut,"R", MUIA_UserData,CMEN_REST, End,
-          End,
-          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_CO_Extras),
-             MUIA_Family_Child, data->GUI.MI_IMPMIME = MenuitemObject, MUIA_Menuitem_Enabled,FALSE, MUIA_Menuitem_Title,tr(MSG_CO_ImportMIME), MUIA_UserData,CMEN_MIME, End,
           End,
        End,
        MUIA_Window_ID, MAKE_ID('C','O','N','F'),
@@ -2461,7 +2285,6 @@ static struct CO_ClassData *CO_New(void)
       DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_DEFALL   ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ResetToDefaultHook,TRUE);
       DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_LAST     ,MUIV_Notify_Application,2,MUIM_CallHook,&CO_LastSavedHook);
       DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_REST     ,MUIV_Notify_Application,2,MUIM_CallHook,&CO_RestoreHook);
-      DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_MIME     ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ImportCTypesHook,FALSE);
       DoMethod(data->GUI.LV_PAGE     ,MUIM_Notify,MUIA_NList_Active       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ChangePageHook,MUIV_TriggerValue);
       DoMethod(data->GUI.BT_SAVE     ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,2);
       DoMethod(data->GUI.BT_USE      ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,1);

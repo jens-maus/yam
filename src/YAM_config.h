@@ -46,7 +46,6 @@ struct CO_GUIData
   Object *BT_SAVE;
   Object *BT_USE;
   Object *BT_CANCEL;
-  Object *MI_IMPMIME;
   Object *NLV_PAGE;
   Object *LV_PAGE;
   Object *GR_PAGE;
@@ -290,6 +289,7 @@ struct CO_GUIData
   Object *BT_APPICONGETPOS;
   Object *CY_FOLDERINFO;
   Object *CY_FORWARDMODE;
+  Object *BT_MIMEIMPORT;
 };
 
 enum ConfigPage

@@ -25,6 +25,7 @@
 
 ***************************************************************************/
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -54,6 +55,7 @@
 #include "YAM_addressbook.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"
+#include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_global.h"
 #include "YAM_locale.h"
@@ -827,6 +829,178 @@ HOOKPROTONHNP(PO_HandleScriptsOpenFunc, BOOL, Object *list)
   return TRUE;
 }
 MakeStaticHook(PO_HandleScriptsOpenHook, PO_HandleScriptsOpenFunc);
+
+///
+/// ImportMimeTypesHook
+//  Imports MIME viewers from a MIME.prefs file
+HOOKPROTONHNONP(ImportMimeTypesFunc, void)
+{
+  int mode;
+
+  ENTER();
+
+  if((mode = MUI_Request(G->App, G->CO->GUI.WI, 0, tr(MSG_CO_ImportMIME), tr(MSG_CO_ImportMIMEGads), tr(MSG_CO_ImportMIMEReq))))
+  {
+    struct FileReqCache *frc;
+
+    if((frc = ReqFile(ASL_ATTACH, G->CO->GUI.WI, tr(MSG_CO_IMPORTMIMETITLE), REQF_NONE, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types")))))
+    {
+      char fname[SIZE_PATHFILE];
+      FILE *fh;
+
+      strmfp(fname, frc->drawer, frc->file);
+
+      if((fh = fopen(fname, "r")))
+      {
+        Object *lv = G->CO->GUI.LV_MIME;
+        char buffer[SIZE_LARGE];
+
+        setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+        set(lv, MUIA_NList_Quiet, TRUE);
+
+        while(fgets(buffer, SIZE_LARGE, fh))
+        {
+          struct MimeTypeNode *mt = NULL;
+          struct MinNode *curNode;
+          char *ctype = buffer;
+          const char *ext = "";
+          const char *command = "";
+          char *p;
+          char *p2;
+
+          if((p = strpbrk(ctype, "\r\n")))
+            *p = '\0';
+
+          if(!*ctype || isspace(*ctype))
+            continue;
+
+          if(mode == 1)
+          {
+            if(*ctype == ';')
+              continue;
+
+            for(p = ctype; *p && *p != ','; ++p);
+
+            if(*p)
+            {
+              for(*p = '\0', ext = ++p; *p && *p != ','; ++p);
+
+              if(*p)
+              {
+                for(*p++ = '\0'; *p && *p != ','; ++p);
+
+                if(*p)
+                {
+                  for(command = ++p; *p && *p != ','; ++p);
+
+                  *p = '\0';
+                }
+              }
+            }
+          }
+          else if (mode == 2)
+          {
+            if(*ctype == '#')
+              continue;
+
+            for(p2 = p = ctype; !isspace(*p) && *p && *p != ';'; p2 = ++p);
+
+            if((p = strpbrk(p,";")))
+              ++p;
+
+            if(p)
+              command = TrimStart(p);
+
+            *p2 = '\0';
+          }
+          else
+          {
+            if(*ctype == '#')
+              continue;
+
+            for(p2 = p = ctype; !isspace(*p) && *p; p2 = ++p);
+
+            if(*p)
+              ext = TrimStart(p);
+
+            *p2 = '\0';
+          }
+
+          // now we try to find the content-type in our mimeTypeList
+          for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          {
+            struct MimeTypeNode *mtNode = (struct MimeTypeNode *)curNode;
+
+            if(stricmp(mtNode->ContentType, ctype) == 0)
+            {
+              mt = mtNode;
+              break;
+            }
+          }
+
+          // if we couldn't find it in our list we have to create a new mimeTypeNode
+          // and put it into our list.
+          if(mt == NULL && (mt = CreateNewMimeType()) != NULL)
+          {
+            // add the new mime type to our internal list of
+            // user definable MIME types.
+            AddTail((struct List *)&(C->mimeTypeList), (struct Node *)mt);
+
+            // add the new MimeType also to the config page.
+            DoMethod(lv, MUIM_NList_InsertSingle, mt, MUIV_NList_Insert_Bottom);
+          }
+
+          // if we have a valid mimeTypeNode now we can fill it with valid data
+          if(mt)
+          {
+            for(p = mt->ContentType; *ctype && strlen(mt->ContentType) < sizeof(mt->ContentType); ctype++)
+            {
+              if(*ctype == '*')
+              {
+                *p++ = '#';
+                *p++ = '?';
+              }
+              else
+                *p++ = *ctype;
+            }
+
+            *p = '\0';
+
+            if(*command)
+            {
+              for(p = mt->Command; *command && strlen(mt->Command) < sizeof(mt->Command); command++)
+              {
+                if(*command == '%' && command[1] == 'f')
+                {
+                  *p++ = *command++;
+                  *p++ = 's';
+                }
+                else
+                  *p++ = *command;
+              }
+
+              *p = '\0';
+            }
+
+            if(*ext)
+              strlcpy(mt->Extension, ext, sizeof(mt->Extension));
+          }
+        }
+
+        fclose(fh);
+
+        set(lv, MUIA_NList_Quiet, FALSE);
+        DoMethod(lv, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
+      }
+      else
+        ER_NewError(tr(MSG_ER_CantOpenFile), fname);
+    }
+  }
+
+  LEAVE();
+}
+MakeStaticHook(ImportMimeTypesHook, ImportMimeTypesFunc);
 
 ///
 /// MakeVarPop
@@ -3141,6 +3315,7 @@ Object *CO_PageMIME(struct CO_ClassData *data)
                 Child, HGroup,
                    Child, data->GUI.BT_MADD = MakeButton(tr(MSG_Add)),
                    Child, data->GUI.BT_MDEL = MakeButton(tr(MSG_Del)),
+                   Child, data->GUI.BT_MIMEIMPORT = PopButton(MUII_PopFile),
                 End,
               End,
 
@@ -3203,6 +3378,7 @@ Object *CO_PageMIME(struct CO_ClassData *data)
     SetHelp(data->GUI.ST_COMMAND   ,MSG_HELP_CO_ST_COMMAND   );
     SetHelp(data->GUI.BT_MADD      ,MSG_HELP_CO_BT_MADD      );
     SetHelp(data->GUI.BT_MDEL      ,MSG_HELP_CO_BT_MDEL      );
+    SetHelp(data->GUI.BT_MIMEIMPORT,MSG_HELP_CO_BT_MIMEIMPORT);
     SetHelp(data->GUI.ST_DEFVIEWER ,MSG_HELP_CO_ST_DEFVIEWER );
 
     DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.GR_MIME, data->GUI.BT_MDEL, NULL);
@@ -3214,6 +3390,7 @@ Object *CO_PageMIME(struct CO_ClassData *data)
     DoMethod(data->GUI.ST_DEFVIEWER,MUIM_Notify, MUIA_String_Contents,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutMimeTypeEntryHook);
     DoMethod(data->GUI.BT_MADD     ,MUIM_Notify, MUIA_Pressed        ,FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &AddMimeTypeHook);
     DoMethod(data->GUI.BT_MDEL     ,MUIM_Notify, MUIA_Pressed        ,FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &DelMimeTypeHook);
+    DoMethod(data->GUI.BT_MIMEIMPORT, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &ImportMimeTypesHook);
   }
 
   RETURN(obj);

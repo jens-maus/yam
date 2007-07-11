@@ -6380,3 +6380,8 @@ MSG_CONFIG_MODIFIED_GAD (1975//)
 MSG_ABOOK_MODIFIED_GAD (1976//)
 *_Save now|_Quit without saving|_Cancel
 ;
+MSG_HELP_CO_BT_MIMEIMPORT (1977//)
+Allows to import MIME type settings from\n\
+third party MIME files, such as 'MIME.prefs',\n\
+'mailcap' or 'mime.types'.
+;
