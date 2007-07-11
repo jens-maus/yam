@@ -78,6 +78,7 @@ struct MimeTypeNode
 struct MimeTypeNode *CreateNewMimeType(void);
 void FreeMimeTypeList(struct MinList *mimeTypeList);
 BOOL CompareMimeTypeLists(const struct MinList *mtl1, const struct MinList *mtl2);
+void SplitContentType(struct MimeTypeNode *mt);
 
 // for maintaing our own internal (hardcoded)
 // MimeType array for identifying files. Please make sure

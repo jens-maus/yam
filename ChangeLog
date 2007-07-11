@@ -26,6 +26,7 @@ $URL$
 
 2007-07-11  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MI.c, YAM_mime.h: added a new function to do the content-type splitting.
   * YAM_MI.c, YAM_mime.h: added two new members to split the ContentType into
     its parts.
   * YAM_CO.c: replaced the remaining List.mcc attributes by those for NList.mcc.

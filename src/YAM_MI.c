@@ -2910,3 +2910,25 @@ BOOL CompareMimeTypeLists(const struct MinList *mtl1, const struct MinList *mtl2
 }
 
 ///
+/// SplitContentType
+// splits the content-type into its two parts
+void SplitContentType(struct MimeTypeNode *mt)
+{
+  char *p;
+
+  ENTER();
+
+  // split the content-type into class and type for easier handling later
+  strlcpy(mt->mimeClass, mt->ContentType, sizeof(mt->mimeClass));
+  if((p = strchr(mt->mimeClass, '/')) != NULL)
+  {
+    *p++ = '\0';
+    strlcpy(mt->mimeType, p, sizeof(mt->mimeType));
+  }
+  else
+    strlcpy(mt->mimeType, "?", sizeof(mt->mimeType));
+
+  LEAVE();
+}
+
+///
