@@ -2339,7 +2339,7 @@ void CO_SetConfig(void)
 
     case cp_Scripts:
     {
-      set(G->CO->GUI.LV_REXX, MUIA_List_Active, 0);
+      set(G->CO->GUI.LV_REXX, MUIA_NList_Active, 0);
     }
     break;
 

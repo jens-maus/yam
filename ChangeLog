@@ -7,6 +7,10 @@ $URL$
 
 2007-07-11  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c, YAM_COs.c: changed the scripts listview in the configuration to
+    use NList.mcc instead of List.mui. This allows to add additional columns to
+    be more descriptive about the various options configured. This fulfills
+    feature request #1704792.
   * YAM.c, YAM_COs.c: the end-of-file and error status is now properly checked
     when loading the configuration. This should make the function more secure.
     In addition, the ConfigIsSaved variable is now set in CO_LoadConfig()

@@ -173,47 +173,66 @@ HOOKPROTONH(PO_List2TextFunc, void, Object *list, Object *text)
 MakeStaticHook(PO_List2TextHook, PO_List2TextFunc);
 
 ///
-/// CO_LV_RxDspFunc
+/// ScriptListDisplayHook
 //  ARexx listview display hook
-HOOKPROTONH(CO_LV_RxDspFunc, long, char **array, int num)
+HOOKPROTONHNO(ScriptListDisplayFunc, LONG, struct NList_DisplayMessage *msg)
 {
-  static char rexxoptm[SIZE_DEFAULT];
-  int scr = num-1;
-
   ENTER();
 
-  rexxoptm[0] = '\0';
-  array[0] = rexxoptm;
-
-  if(CE->RX[scr].Script[0] != '\0')
-    strlcat(rexxoptm, MUIX_PH, sizeof(rexxoptm));
-
-  switch(scr)
+  if(msg != NULL)
   {
-    case MACRO_STARTUP:   strlcat(rexxoptm, tr(MSG_CO_ScriptStartup), sizeof(rexxoptm)); break;
-    case MACRO_QUIT:      strlcat(rexxoptm, tr(MSG_CO_ScriptTerminate), sizeof(rexxoptm)); break;
-    case MACRO_PREGET:    strlcat(rexxoptm, tr(MSG_CO_ScriptPreGetMail), sizeof(rexxoptm)); break;
-    case MACRO_POSTGET:   strlcat(rexxoptm, tr(MSG_CO_ScriptPostGetMail), sizeof(rexxoptm)); break;
-    case MACRO_NEWMSG:    strlcat(rexxoptm, tr(MSG_CO_ScriptNewMsg), sizeof(rexxoptm)); break;
-    case MACRO_PRESEND:   strlcat(rexxoptm, tr(MSG_CO_ScriptPreSendMail), sizeof(rexxoptm)); break;
-    case MACRO_POSTSEND:  strlcat(rexxoptm, tr(MSG_CO_ScriptPostSendMail), sizeof(rexxoptm)); break;
-    case MACRO_READ:      strlcat(rexxoptm, tr(MSG_CO_ScriptReadMsg), sizeof(rexxoptm)); break;
-    case MACRO_PREWRITE:  strlcat(rexxoptm, tr(MSG_CO_ScriptPreWriteMsg), sizeof(rexxoptm)); break;
-    case MACRO_POSTWRITE: strlcat(rexxoptm, tr(MSG_CO_ScriptPostWriteMsg), sizeof(rexxoptm)); break;
-    case MACRO_URL:       strlcat(rexxoptm, tr(MSG_CO_ScriptClickURL), sizeof(rexxoptm)); break;
+    const char **array = (const char **)msg->strings;
 
-    default:
+    if(CE != NULL)
     {
-      int p = strlen(rexxoptm);
+      static char title[SIZE_DEFAULT];
+      enum Macro type = (enum Macro)(msg->entry)-1;
 
-      snprintf(&rexxoptm[p], sizeof(rexxoptm)-p, tr(MSG_CO_ScriptMenu), num);
+      title[0] = '\0';
+
+      switch(type)
+      {
+        case MACRO_STARTUP:   strlcpy(title, tr(MSG_CO_ScriptStartup), sizeof(title)); break;
+        case MACRO_QUIT:      strlcpy(title, tr(MSG_CO_ScriptTerminate), sizeof(title)); break;
+        case MACRO_PREGET:    strlcpy(title, tr(MSG_CO_ScriptPreGetMail), sizeof(title)); break;
+        case MACRO_POSTGET:   strlcpy(title, tr(MSG_CO_ScriptPostGetMail), sizeof(title)); break;
+        case MACRO_NEWMSG:    strlcpy(title, tr(MSG_CO_ScriptNewMsg), sizeof(title)); break;
+        case MACRO_PRESEND:   strlcpy(title, tr(MSG_CO_ScriptPreSendMail), sizeof(title)); break;
+        case MACRO_POSTSEND:  strlcpy(title, tr(MSG_CO_ScriptPostSendMail), sizeof(title)); break;
+        case MACRO_READ:      strlcpy(title, tr(MSG_CO_ScriptReadMsg), sizeof(title)); break;
+        case MACRO_PREWRITE:  strlcpy(title, tr(MSG_CO_ScriptPreWriteMsg), sizeof(title)); break;
+        case MACRO_POSTWRITE: strlcpy(title, tr(MSG_CO_ScriptPostWriteMsg), sizeof(title)); break;
+        case MACRO_URL:       strlcpy(title, tr(MSG_CO_ScriptClickURL), sizeof(title)); break;
+
+        // the user definable macros
+        default:
+        {
+          snprintf(title, sizeof(title), tr(MSG_CO_ScriptMenu), type+1);
+
+          if(CE->RX[type].Name[0] != '\0')
+            snprintf(title, sizeof(title), "%s (%s)", title, CE->RX[type].Name);
+        }
+      }
+
+      array[0] = title;
+
+      if(CE->RX[type].Script[0] != '\0')
+      {
+        array[1] = CE->RX[type].Script;
+        msg->preparses[0] = (char *)MUIX_B;
+      }
+    }
+    else
+    {
+      array[0] = NULL;
+      array[1] = NULL;
     }
   }
 
   RETURN(0);
   return 0;
 }
-MakeStaticHook(CO_LV_RxDspHook,CO_LV_RxDspFunc);
+MakeStaticHook(ScriptListDisplayHook, ScriptListDisplayFunc);
 
 ///
 /// PO_XPKOpenHook
@@ -753,7 +772,7 @@ HOOKPROTONHNP(PO_HandleScriptsOpenFunc, BOOL, Object *list)
   // clear the list first
   DoMethod(list, MUIM_NList_Clear);
 
-  if((active = xget(G->CO->GUI.LV_REXX, MUIA_List_Active)) >= 0)
+  if((active = xget(G->CO->GUI.LV_REXX, MUIA_NList_Active)) >= 0)
   {
     enum Macro macro = (enum Macro)active;
 
@@ -1159,7 +1178,7 @@ HOOKPROTONHNONP(CO_GetRXEntryFunc, void)
 {
   struct CO_GUIData *gui = &G->CO->GUI;
   struct RxHook *rh;
-  int act = xget(gui->LV_REXX, MUIA_List_Active);
+  int act = xget(gui->LV_REXX, MUIA_NList_Active);
 
   rh = &(CE->RX[act]);
   nnset(gui->ST_RXNAME, MUIA_String_Contents, act < 10 ? rh->Name : "");
@@ -1169,7 +1188,7 @@ HOOKPROTONHNONP(CO_GetRXEntryFunc, void)
   nnset(gui->CH_WAITTERM, MUIA_Selected, rh->WaitTerm);
   set(gui->ST_RXNAME, MUIA_Disabled, act >= 10);
 
-  DoMethod(gui->LV_REXX, MUIM_List_Redraw, act);
+  DoMethod(gui->LV_REXX, MUIM_NList_Redraw, act);
 }
 MakeStaticHook(CO_GetRXEntryHook, CO_GetRXEntryFunc);
 
@@ -1179,7 +1198,7 @@ MakeStaticHook(CO_GetRXEntryHook, CO_GetRXEntryFunc);
 HOOKPROTONHNONP(CO_PutRXEntryFunc, void)
 {
   struct CO_GUIData *gui = &G->CO->GUI;
-  int act = xget(gui->LV_REXX, MUIA_List_Active);
+  int act = xget(gui->LV_REXX, MUIA_NList_Active);
 
   if(act != MUIV_List_Active_Off)
   {
@@ -1191,7 +1210,7 @@ HOOKPROTONHNONP(CO_PutRXEntryFunc, void)
     rh->UseConsole = GetMUICheck(gui->CH_CONSOLE);
     rh->WaitTerm = GetMUICheck(gui->CH_WAITTERM);
 
-    DoMethod(gui->LV_REXX, MUIM_List_Redraw, act);
+    DoMethod(gui->LV_REXX, MUIM_NList_Redraw, act);
   }
 }
 MakeStaticHook(CO_PutRXEntryHook, CO_PutRXEntryFunc);
@@ -3273,11 +3292,12 @@ Object *CO_PageScripts(struct CO_ClassData *data)
          ConfigPageHeaderObject("config_scripts_big", tr(MSG_CO_SCRIPTS_TITLE), tr(MSG_CO_SCRIPTS_SUMMARY)),
 
          Child, VGroup,
-            Child, data->GUI.LV_REXX = ListviewObject,
+            Child, data->GUI.LV_REXX = NListviewObject,
                MUIA_CycleChain, TRUE,
-               MUIA_Listview_List, ListObject,
+               MUIA_NListview_NList, NListObject,
                   InputListFrame,
-                  MUIA_List_DisplayHook, &CO_LV_RxDspHook,
+                  MUIA_NList_Format,       ",",
+                  MUIA_NList_DisplayHook2, &ScriptListDisplayHook,
                End,
             End,
             Child, ColGroup(2),
@@ -3313,7 +3333,7 @@ Object *CO_PageScripts(struct CO_ClassData *data)
       int i;
 
       for(i = 1; i <= MAXRX; i++)
-        DoMethod(data->GUI.LV_REXX, MUIM_List_InsertSingle, i, MUIV_List_Insert_Bottom);
+        DoMethod(data->GUI.LV_REXX, MUIM_NList_InsertSingle, i, MUIV_NList_Insert_Bottom);
 
       SetHelp(data->GUI.ST_RXNAME    ,MSG_HELP_CO_ST_RXNAME    );
       SetHelp(data->GUI.ST_SCRIPT    ,MSG_HELP_CO_ST_SCRIPT    );
@@ -3321,7 +3341,7 @@ Object *CO_PageScripts(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_CONSOLE   ,MSG_HELP_CO_CH_CONSOLE   );
       SetHelp(data->GUI.CH_WAITTERM  ,MSG_HELP_CO_CH_WAITTERM  );
 
-      DoMethod(data->GUI.LV_REXX     ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_GetRXEntryHook);
+      DoMethod(data->GUI.LV_REXX     ,MUIM_Notify,MUIA_NList_Active   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_GetRXEntryHook);
       DoMethod(data->GUI.ST_RXNAME   ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRXEntryHook);
       DoMethod(data->GUI.ST_SCRIPT   ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRXEntryHook);
       DoMethod(data->GUI.CY_ISADOS   ,MUIM_Notify,MUIA_Cycle_Active   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRXEntryHook);
