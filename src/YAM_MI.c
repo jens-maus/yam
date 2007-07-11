@@ -2884,6 +2884,8 @@ BOOL CompareMimeTypeLists(const struct MinList *mtl1, const struct MinList *mtl2
     struct MimeTypeNode *mtn2 = (struct MimeTypeNode *)mln2;
 
     // compare every single member of the structure
+    // the members mimeClass and mimeType are derived from ContentType and
+    // hence don't need to be checked.
     if(strcmp(mtn1->ContentType, mtn2->ContentType) != 0 ||
        strcmp(mtn1->Extension,   mtn2->Extension) != 0 ||
        strcmp(mtn1->Description, mtn2->Description) != 0 ||

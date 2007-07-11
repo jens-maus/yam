@@ -26,6 +26,8 @@ $URL$
 
 2007-07-11  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MI.c, YAM_mime.h: added two new members to split the ContentType into
+    its parts.
   * YAM_CO.c: replaced the remaining List.mcc attributes by those for NList.mcc.
   * YAM_COg.c: removed the "sortability" of the MIME list again as we plan to
     change this list into a tree which needs completely different handling.
