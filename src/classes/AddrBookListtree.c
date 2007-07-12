@@ -118,8 +118,8 @@ OVERLOAD(MUIM_NListtree_DropType)
 
   ENTER();
 
-  // determine the entry under the mouse pointer
-  if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, *dt->Pos, MUIV_NListtree_GetEntry_Flag_Visible)) != NULL)
+  /// get the current drop target
+  if((tn = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_DropTarget)) != NULL)
   {
     struct ABEntry *entry;
 

@@ -7,6 +7,9 @@ $URL$
 
 2007-07-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AddrBookListtree.c, MainFolderListtree.c: get the current DropTarget instead
+    of the node at a given graphical position while dragging an object over the
+    tree. This is much faster.
   * MainFolderListtree.c: the wrong attribute was used to determine the active
     tree node.
   * YAM_UT.c: empty type strings (ie "application/") will now be skipped, just
