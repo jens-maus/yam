@@ -1059,9 +1059,11 @@ HOOKPROTONHNO(MimeTypeCompareFunc, LONG, struct NList_CompareMessage *msg)
   {
     // the class is the same, now take a look at the type
     // the catch-all is sorted in front of all the others
-    if(stricmp(type1, "*") == 0 || stricmp(type1, "#?") == 0)
+    // as '*' and '?' are forbidden for MIME types it is enough to check just for these
+    // two chars.
+    if(type1[0] == '*' || type1[0] == '#' || type1[0] == '?')
       result = +1;
-    else if(stricmp(type2, "*") == 0 || stricmp(type2, "#?") == 0)
+    else if(type2[0] == '*' || type2[0] == '#' || type2[0] == '?')
       result = -1;
     else
       result = stricmp(type1, type2);

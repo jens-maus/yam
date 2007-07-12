@@ -3227,11 +3227,16 @@ const char *DescribeCT(const char *ct)
     for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
       struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
-      size_t len = strlen(mt->ContentType);
+      char *type;
+
+      // find the type right after the '/' delimiter
+      if((type = strchr(mt->ContentType, '/')) != NULL)
+        type++;
+      else
+        type = (char *)"";
 
       // don't allow the catch-alls
-      if(stricmp(&mt->ContentType[len - 1], "*") != 0 &&
-         stricmp(&mt->ContentType[len - 2], "#?") != 0)
+      if(type[0] != '*' && type[0] != '?' && type[0] != '#')
       {
         if(MatchNoCase(ct, mt->ContentType) && mt->Description[0] != '\0')
         {
