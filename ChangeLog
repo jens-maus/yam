@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-12  Thore Böckelmann <tboeckel@gmx.de>
+
+  * InfoBar.c: the folder image is now updated if the image ID instead of the
+    filename changes.
+
 2007-07-12  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: updated according to changes.

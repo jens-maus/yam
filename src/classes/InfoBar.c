@@ -217,12 +217,12 @@ DECLARE(SetFolder) // struct Folder *newFolder
       // only if the image should be changed we proceed or otherwise
       // MUI will refresh too often
       if(data->actualImage != NULL && (folder->imageObject == NULL ||
-         stricmp((char *)xget(data->actualImage, MUIA_ImageArea_Filename),
-                 (char *)xget(folder->imageObject, MUIA_ImageArea_Filename)) != 0))
+         stricmp((char *)xget(data->actualImage, MUIA_ImageArea_ID),
+                 (char *)xget(folder->imageObject, MUIA_ImageArea_ID)) != 0))
       {
         DoMethod(obj, OM_REMMEMBER, data->actualImage);
 
-        D(DBF_GUI, "disposing imagearea: '%s'", xget(data->actualImage, MUIA_ImageArea_Filename));
+        D(DBF_GUI, "disposing folder image: id '%s' file '%s'", xget(data->actualImage, MUIA_ImageArea_ID), xget(data->actualImage, MUIA_ImageArea_Filename));
         MUI_DisposeObject(data->actualImage);
         data->actualImage = NULL;
       }
