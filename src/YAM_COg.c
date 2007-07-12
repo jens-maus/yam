@@ -1003,7 +1003,6 @@ HOOKPROTONHNONP(PutMimeTypeEntryFunc, void)
     GetMUIString(mt->Extension, gui->ST_EXTENS, sizeof(mt->Extension));
     GetMUIString(mt->Command, gui->ST_COMMAND, sizeof(mt->Command));
     GetMUIString(mt->Description, gui->ST_DESCRIPTION, sizeof(mt->Description));
-    SplitContentType(mt);
 
     DoMethod(gui->LV_MIME, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
   }
@@ -1033,21 +1032,39 @@ HOOKPROTONHNO(MimeTypeCompareFunc, LONG, struct NList_CompareMessage *msg)
   LONG result;
   struct MimeTypeNode *mt1 = (struct MimeTypeNode *)msg->entry1;
   struct MimeTypeNode *mt2 = (struct MimeTypeNode *)msg->entry2;
+  char class1[SIZE_CTYPE];
+  char class2[SIZE_CTYPE];
+  char *type1;
+  char *type2;
 
   ENTER();
 
-  // sort by class first
-  result = stricmp(mt1->mimeClass, mt2->mimeClass);
+  strlcpy(class1, mt1->ContentType, sizeof(class1));
+  strlcpy(class2, mt2->ContentType, sizeof(class2));
+
+  // split the content-type in its two parts
+  if((type1 = strchr(class1, '/')) != NULL)
+    *type1++ = '\0';
+  else
+    type1 = (char *)"";
+  if((type2 = strchr(class2, '/')) != NULL)
+    *type2++ = '\0';
+  else
+    type2 = (char *)"";
+
+  // first check if any is a catch all
+  // these are put to the end of each class
+  result = stricmp(class1, class2);
   if(result == 0)
   {
-    // if the classes match then sort by type
-    // put the catch-all '*' and '#?' to the end of each class
-    if(stricmp(mt1->mimeType, "*") == 0 || stricmp(mt1->mimeType, "#?") == 0)
+    // the class is the same, now take a look at the type
+    // the catch-all is sorted in front of all the others
+    if(stricmp(type1, "*") == 0 || stricmp(type1, "#?") == 0)
       result = +1;
-    else if(stricmp(mt2->mimeType, "*") == 0 || stricmp(mt2->mimeType, "#?") == 0)
+    else if(stricmp(type2, "*") == 0 || stricmp(type2, "#?") == 0)
       result = -1;
     else
-      result = stricmp(mt1->mimeType, mt2->mimeType);
+      result = stricmp(type1, type2);
   }
 
   RETURN(result);

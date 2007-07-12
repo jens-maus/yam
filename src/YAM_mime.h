@@ -71,14 +71,11 @@ struct MimeTypeNode
   char Extension[SIZE_NAME];      // space separated string list of extensions
   char Description[SIZE_DEFAULT]; // a short description of the MIME type
   char Command[SIZE_COMMAND];     // command spec for viewing files of that mime Type
-  char mimeClass[SIZE_CTYPE];
-  char mimeType[SIZE_CTYPE];
 };
 
 struct MimeTypeNode *CreateNewMimeType(void);
 void FreeMimeTypeList(struct MinList *mimeTypeList);
 BOOL CompareMimeTypeLists(const struct MinList *mtl1, const struct MinList *mtl2);
-void SplitContentType(struct MimeTypeNode *mt);
 
 // for maintaing our own internal (hardcoded)
 // MimeType array for identifying files. Please make sure

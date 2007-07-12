@@ -7,6 +7,9 @@ $URL$
 
 2007-07-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c, YAM_COs.c, YAM_MI.c, YAM_UT.c: removed the separated MIME class
+    and type strings again. Instead the ContentType is splitted on the fly
+    during the sort process.
   * InfoBar.c: the folder image is now updated if the image ID instead of the
     filename changes.
 

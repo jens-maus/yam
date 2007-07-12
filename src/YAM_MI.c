@@ -2884,8 +2884,6 @@ BOOL CompareMimeTypeLists(const struct MinList *mtl1, const struct MinList *mtl2
     struct MimeTypeNode *mtn2 = (struct MimeTypeNode *)mln2;
 
     // compare every single member of the structure
-    // the members mimeClass and mimeType are derived from ContentType and
-    // hence don't need to be checked.
     if(strcmp(mtn1->ContentType, mtn2->ContentType) != 0 ||
        strcmp(mtn1->Extension,   mtn2->Extension) != 0 ||
        strcmp(mtn1->Description, mtn2->Description) != 0 ||
@@ -2907,28 +2905,6 @@ BOOL CompareMimeTypeLists(const struct MinList *mtl1, const struct MinList *mtl2
 
   RETURN(equal);
   return equal;
-}
-
-///
-/// SplitContentType
-// splits the content-type into its two parts
-void SplitContentType(struct MimeTypeNode *mt)
-{
-  char *p;
-
-  ENTER();
-
-  // split the content-type into class and type for easier handling later
-  strlcpy(mt->mimeClass, mt->ContentType, sizeof(mt->mimeClass));
-  if((p = strchr(mt->mimeClass, '/')) != NULL)
-  {
-    *p++ = '\0';
-    strlcpy(mt->mimeType, p, sizeof(mt->mimeType));
-  }
-  else
-    strlcpy(mt->mimeType, "?", sizeof(mt->mimeType));
-
-  LEAVE();
 }
 
 ///

@@ -3227,10 +3227,11 @@ const char *DescribeCT(const char *ct)
     for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
       struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
+      size_t len = strlen(mt->ContentType);
 
       // don't allow the catch-alls
-      if(stricmp(mt->mimeType, "*") != 0 &&
-         stricmp(mt->mimeType, "#?") != 0)
+      if(stricmp(&mt->ContentType[len - 1], "*") != 0 &&
+         stricmp(&mt->ContentType[len - 2], "#?") != 0)
       {
         if(MatchNoCase(ct, mt->ContentType) && mt->Description[0] != '\0')
         {

@@ -765,7 +765,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 
                 strlcpy(mt->ContentType, value, sizeof(mt->ContentType));
                 strlcpy(mt->Command, p, sizeof(mt->Command));
-                SplitContentType(mt);
 
                 AddTail((struct List *)&(co->mimeTypeList), (struct Node *)mt);
               }
@@ -1174,10 +1173,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
             if(curTypeID > 0)
             {
               if(!stricmp(p, "ContentType"))
-              {
                 strlcpy(lastType->ContentType, value, sizeof(lastType->ContentType));
-                SplitContentType(lastType);
-              }
               else if(!stricmp(p, "Extension"))
                 strlcpy(lastType->Extension, value, sizeof(lastType->Extension));
               else if(!stricmp(p, "Command"))
