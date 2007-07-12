@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-12  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: updated according to changes.
+
 2007-07-11  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c, YAM_CO.c: removed the 'Extras' submenu of the configuration

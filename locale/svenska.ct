@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.18 (11.07.07)
+## version $VER: YAM.ct 6.18 (12.07.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -4769,10 +4769,6 @@ MSG_RE_MoveNextFolderReq
 Nästa mapp med olästa meddelanden är \eb%s\en\nGå till denna mapp och fortsätta läsa där?
 ;#DEF Next folder with unread messages is \eb%s\en\nGo to this folder and continue reading there?
 ;#SET (1347//)
-MSG_MA_ABookModifiedGad
-*_Spara nu|Avsluta _utan att spara
-;#DEF *_Save now|_Quit without saving
-;#SET (1350//)
 MSG_ATTACH_NO
 Nr.
 ;#DEF No.
@@ -7133,3 +7129,7 @@ MSG_ABOOK_MODIFIED_GAD
 *_Spara nu|_Avsluta utan att spara|A_vbryt
 ;#DEF *_Save now|_Quit without saving|_Cancel
 ;#SET (1976//)
+MSG_HELP_CO_BT_MIMEIMPORT
+Tillåter att importera MIME-typ inställningar\nfrån tredje part MIME-filer, som 'MIME.prefs',\n'mailcap' eller 'mime.types'.
+;#DEF Allows to import MIME type settings from\nthird party MIME files, such as 'MIME.prefs',\n'mailcap' or 'mime.types'.
+;#SET (1977//)
