@@ -7,6 +7,8 @@ $URL$
 
 2007-07-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * MainFolderListtree.c: the wrong attribute was used to determine the active
+    tree node.
   * YAM_UT.c: empty type strings (ie "application/") will now be skipped, just
     like the catch-all types (ie "application/*").
   * YAM_COg.c, YAM_UT.c: simplified the catch-all recognition a little bit more
