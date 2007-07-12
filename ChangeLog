@@ -7,6 +7,8 @@ $URL$
 
 2007-07-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: empty type strings (ie "application/") will now be skipped, just
+    like the catch-all types (ie "application/*").
   * YAM_COg.c, YAM_UT.c: simplified the catch-all recognition a little bit more
     by just checking for single forbidden characters.
   * YAM_COs.c: the MIME list is now set to quiet mode before inserting the

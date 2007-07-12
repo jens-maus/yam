@@ -3235,8 +3235,8 @@ const char *DescribeCT(const char *ct)
       else
         type = (char *)"";
 
-      // don't allow the catch-alls
-      if(type[0] != '*' && type[0] != '?' && type[0] != '#')
+      // don't allow the catch-alls and empty types
+      if(type[0] != '*' && type[0] != '?' && type[0] != '#' && type[0] != '\0')
       {
         if(MatchNoCase(ct, mt->ContentType) && mt->Description[0] != '\0')
         {
