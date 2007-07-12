@@ -2310,17 +2310,22 @@ void CO_SetConfig(void)
       struct MinNode *curNode;
 
       // clear the filter list first
+      set(gui->LV_MIME, MUIA_NList_Quiet, TRUE);
       DoMethod(gui->LV_MIME, MUIM_NList_Clear);
 
       // iterate through our filter list and add it to our
       // MUI List
       for(curNode = CE->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-        DoMethod(gui->LV_MIME, MUIM_NList_InsertSingle, curNode, MUIV_NList_Insert_Sorted);
+        DoMethod(gui->LV_MIME, MUIM_NList_InsertSingle, curNode, MUIV_NList_Insert_Bottom);
+
+      // sort the list after inserting all entries
+      DoMethod(gui->LV_MIME, MUIM_NList_Sort);
+      set(gui->LV_MIME, MUIA_NList_Quiet, FALSE);
 
       // make sure the first entry is selected per default
       set(gui->LV_MIME, MUIA_NList_Active, MUIV_NList_Active_Top);
 
-      setstring(gui->ST_DEFVIEWER ,CE->DefaultMimeViewer);
+      setstring(gui->ST_DEFVIEWER, CE->DefaultMimeViewer);
     }
     break;
 

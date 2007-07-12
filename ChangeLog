@@ -7,6 +7,8 @@ $URL$
 
 2007-07-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COs.c: the MIME list is now set to quiet mode before inserting the
+    entries and sorted completely after all entries have been inserted.
   * YAM_COg.c, YAM_COs.c, YAM_MI.c, YAM_UT.c: removed the separated MIME class
     and type strings again. Instead the ContentType is splitted on the fly
     during the sort process.
