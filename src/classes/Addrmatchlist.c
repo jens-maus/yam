@@ -47,6 +47,7 @@ struct Data
 struct CustomABEntry
 {
   LONG MatchField;
+  LONG RealNameMatchPart;
   char *MatchString;
   struct ABEntry *MatchEntry;
 };
@@ -325,12 +326,12 @@ DECLARE(Event) // struct IntuiMessage *imsg
 }
 ///
 /// DECLARE(Open)
-DECLARE(Open) // STRPTR str
+DECLARE(Open) // char *str
 {
   GETDATA;
-  STRPTR res = NULL;
   LONG entries;
   struct CustomABEntry *entry;
+  struct CustomABEntry *result = NULL;
 
   ENTER();
 
@@ -346,24 +347,27 @@ DECLARE(Open) // STRPTR str
   entries = xget(data->Matchlist, MUIA_NList_Entries);
   if(entries > 0 && (DoMethod(data->Matchlist, MUIM_NList_GetEntry, 0, &entry), (entries != 1 || Stricmp(msg->str, entry->MatchString))))
   {
-    res = entry->MatchString;
+    // now we return the complete first entry of the list of matches instead
+    // of just the matching string to allow the recipient string to derive the
+    // complete name and address.
+    result = entry;
     // make no entry active yet
     nnset(data->Matchlist, MUIA_NList_Active, MUIV_NList_Active_Off);
   }
 
   // should we open the popup list (if not already shown)
-  if(res != NULL && xget(obj, MUIA_Window_Open) == FALSE)
+  if(result != NULL && xget(obj, MUIA_Window_Open) == FALSE)
   {
     DoMethod(obj, MUIM_Addrmatchlist_ChangeWindow); // refresh the position
     set(obj, MUIA_Window_Open, TRUE);
   }
-  else if(res == NULL)
+  else if(result == NULL)
     set(obj, MUIA_Window_Open, FALSE);
 
   set(data->Matchlist, MUIA_NList_Quiet, FALSE);
 
-  RETURN(res);
-  return (ULONG)res;
+  RETURN(result);
+  return (ULONG)result;
 }
 ///
 /// DECLARE(ActiveChange)

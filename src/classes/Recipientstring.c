@@ -490,9 +490,12 @@ OVERLOAD(MUIM_HandleEvent)
         }
         break;
 
+        case IECODE_LEFT:
+        case IECODE_RIGHT:
         case IECODE_DEL:
         case IECODE_ESCAPE: /* FIXME: Escape should clear the marked text. Currently the marked text goes when leaving the gadget or e.g. pressing ','. Seems to be a refresh problem */
         {
+          DoMethod(obj, MUIM_BetterString_ClearSelected);
           set(data->Matchwindow, MUIA_Window_Open, FALSE);
         }
         break;
@@ -560,19 +563,38 @@ OVERLOAD(MUIM_HandleEvent)
           if(changed)
           {
             char *cur_rcpt = (char *)DoMethod(obj, MUIM_Recipientstring_CurrentRecipient);
-            char *new_address;
+            struct CustomABEntry *abentry;
 
             if(cur_rcpt != NULL &&
-               (new_address = (char *)DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Open, cur_rcpt)) != NULL)
+               (abentry = (struct CustomABEntry *)DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Open, cur_rcpt)) != NULL)
             {
-              long start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+              char *new_address = abentry->MatchString;
               long pos = xget(obj, MUIA_String_BufferPos);
 
-              DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
+              // check if the returned entry matches some part of the name (i.e. the last
+              // name), but not right from the start of the name
+              if(abentry->MatchField == 1 && abentry->RealNameMatchPart > 0)
+              {
+                // insert " >> name <address>"
+                new_address = AB_BuildAddressStringABEntry(abentry->MatchEntry);
+                DoMethod(obj, MUIM_BetterString_Insert, " >> ", pos);
+                DoMethod(obj, MUIM_BetterString_Insert, new_address, pos + 4);
 
-              SetAttrs(obj, MUIA_String_BufferPos, pos,
-                            MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start),
-                            TAG_DONE);
+                SetAttrs(obj, MUIA_String_BufferPos, pos,
+                              MUIA_BetterString_SelectSize, strlen(new_address) + 4,
+                              TAG_DONE);
+              }
+              else
+              {
+                // insert the matching string
+                long start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+
+                DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
+
+                SetAttrs(obj, MUIA_String_BufferPos, pos,
+                              MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start),
+                              TAG_DONE);
+              }
             }
           }
         }
@@ -608,7 +630,7 @@ DECLARE(Resolve) // ULONG flags
   GETDATA;
   BOOL list_expansion;
   LONG max_list_nesting = 5;
-  STRPTR s, contents, tmp;
+  char *s, *contents, *tmp;
   BOOL res = TRUE;
   BOOL withrealname = TRUE, checkvalids = TRUE, withcache = TRUE;
   BOOL quiet;
@@ -633,7 +655,7 @@ DECLARE(Resolve) // ULONG flags
 
     list_expansion = FALSE;
     s = (STRPTR)xget(obj, MUIA_String_Contents);
-    if(!(contents = tmp = strdup(s)))
+    if((contents = tmp = strdup(s)) == NULL)
       break;
 
     // clear the string gadget without notifing others
@@ -642,13 +664,23 @@ DECLARE(Resolve) // ULONG flags
     D(DBF_GUI, "Resolve this string: '%s'", tmp);
     while((s = Trim(rcptok(tmp, &quote)))) /* tokenize string and resolve each recipient */
     {
+      char *marks;
+
       D(DBF_GUI, "token: '%s'", s);
 
       // if the resolve string is empty we skip it and go on
-      if(!s[0])
+      if(s[0] == '\0')
       {
         tmp=NULL;
         continue;
+      }
+
+      // skip the " >> " marks if they have been inserted before
+      if((marks = strstr(s, " >> ")) != NULL)
+      {
+        D(DBF_GUI, "skipping marks");
+        s = marks + 4;
+        D(DBF_GUI, "new token: '%s'", s);
       }
 
       if(checkvalids == FALSE && (tmp = strchr(s, '@')))
@@ -712,7 +744,7 @@ DECLARE(Resolve) // ULONG flags
           {
             D(DBF_GUI, "Found matching entry in address book with unknown type: %ld", entry->Type);
             DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-            if(!quiet)
+            if(quiet == FALSE)
               set(_win(obj), MUIA_Window_ActiveObject, obj);
             res = FALSE;
           }
@@ -721,7 +753,7 @@ DECLARE(Resolve) // ULONG flags
         {
           D(DBF_GUI, "Found more than one matching entry in address book!");
           DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-          if(!quiet)
+          if(quiet == FALSE)
             set(_win(obj), MUIA_Window_ActiveObject, obj);
           res = FALSE;
         }
@@ -748,7 +780,8 @@ DECLARE(Resolve) // ULONG flags
         {
           D(DBF_GUI, "No entry found in addressbook for alias: '%s'", s);
           DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-          if(!quiet) set(_win(obj), MUIA_Window_ActiveObject, obj);
+          if(quiet == FALSE)
+            set(_win(obj), MUIA_Window_ActiveObject, obj);
           res = FALSE;
         }
       }
@@ -909,4 +942,3 @@ DECLARE(ReplaceSelected) // char *address
   return 0;
 }
 ///
-

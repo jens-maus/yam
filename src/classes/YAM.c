@@ -163,9 +163,57 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
 }
 
 ///
+/// MatchRealName
+// check whether a given string matches any part of a real name
+static BOOL MatchRealName(const char *realName, const char *text, LONG textLen, LONG *matchPart)
+{
+  BOOL match = FALSE;
+  char *name;
+
+  ENTER();
+
+  if((name = strdup(realName)) != NULL)
+  {
+    char *n = name;
+    char *p;
+    LONG part = 0;
+
+    do
+    {
+      // break up the name in single parts delimited by spaces, quotes and commas
+      if((p = strpbrk(n, " \",")) != NULL)
+        *p++ = '\0';
+
+      if(n[0] != '\0')
+      {
+        // now check if this part of the name matches
+        if(Strnicmp(n, text, textLen) == 0)
+        {
+          // yes!!
+          match = TRUE;
+          // remember which part of the name this is if there is any interest in it
+          if(matchPart != NULL)
+            *matchPart = part;
+          break;
+        }
+      }
+      // advance to the next name part
+      n = p;
+      part++;
+    }
+    while(p != NULL);
+
+    free(name);
+  }
+
+  RETURN(match);
+  return match;
+}
+
+///
 /// FindAllABMatches()
 // tries to find all matching addressbook entries and add them to the list
-VOID FindAllABMatches(STRPTR text, Object *list, struct MUI_NListtree_TreeNode *root)
+VOID FindAllABMatches(const char *text, Object *list, struct MUI_NListtree_TreeNode *root)
 {
   LONG tl;
   struct MUI_NListtree_TreeNode *tn;
@@ -186,19 +234,19 @@ VOID FindAllABMatches(STRPTR text, Object *list, struct MUI_NListtree_TreeNode *
     else
     {
       struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
-      struct CustomABEntry e = { -1, NULL, NULL };
+      struct CustomABEntry e = { -1, -1, NULL, NULL };
 
-      if(!Strnicmp(entry->Alias, text, tl))
+      if(Strnicmp(entry->Alias, text, tl) == 0)
       {
         e.MatchField = 0;
         e.MatchString = entry->Alias;
       }
-      else if(!Strnicmp(entry->RealName, text, tl))
+      else if(MatchRealName(entry->RealName, text, tl, &e.RealNameMatchPart) == TRUE)
       {
         e.MatchField = 1;
         e.MatchString = entry->RealName;
       }
-      else if(!Strnicmp(entry->Address, text, tl))
+      else if(Strnicmp(entry->Address, text, tl) == 0)
       {
         e.MatchField = 2;
         e.MatchString = entry->Address;
@@ -286,14 +334,14 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
       for(i = 0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node = (struct EMailCacheNode *)node->ecn_Node.ln_Succ)
       {
         struct ABEntry *entry = &node->ecn_Person;
-        struct CustomABEntry e = { -1, NULL, NULL };
+        struct CustomABEntry e = { -1, -1, NULL, NULL };
 
-        if(!Strnicmp(entry->RealName, msg->matchText, tl))
+        if(MatchRealName(entry->RealName, msg->matchText, tl, &e.RealNameMatchPart) == TRUE)
         {
           e.MatchField = 1;
           e.MatchString = entry->RealName;
         }
-        else if(!Strnicmp(entry->Address, msg->matchText, tl))
+        else if(Strnicmp(entry->Address, msg->matchText, tl) == 0)
         {
           e.MatchField = 2;
           e.MatchString = entry->Address;
@@ -333,8 +381,8 @@ DECLARE(FindEmailCacheMatch) // STRPTR matchText
     {
       struct ABEntry *entry = &node->ecn_Person;
 
-      if(!Strnicmp(entry->RealName, msg->matchText, tl) ||
-         !Strnicmp(entry->Address,  msg->matchText, tl))
+      if(MatchRealName(entry->RealName, msg->matchText, tl, NULL) == TRUE ||
+         Strnicmp(entry->Address,  msg->matchText, tl) == 0)
       {
         if(++matches > 1)
         {

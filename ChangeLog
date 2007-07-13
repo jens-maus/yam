@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-13  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Addrmatchlist.c, Recipientstring.c, YAM.c: a realname is now matched in all
+    its parts. That means if you have "John Doe <john@doe.com>" in your address
+    book and type "d" in the recipient string then "John Doe" will be found in
+    the address book. Before John only would have been found if you typed "j".
+    Matches not resulting from the first name part will be marked by " >> " in
+    front of the complete address. These marks will be removed upon resolve.
+    Additionally the address match list will be closed if either ESC, DEL,
+    cursor left or cursor right is pressed and any selected text passages will
+    be cleared.
+
 2007-07-12  Thore Böckelmann <tboeckel@gmx.de>
 
   * AddrBookListtree.c, MainFolderListtree.c: get the current DropTarget instead

@@ -109,7 +109,7 @@
 #ifndef MUIA_Window_DisableKeys
 #define MUIA_Window_DisableKeys      0x80424c36 /* V15 isg ULONG    */
 #endif
-#ifndef MUIA_Application_UsedClasses 
+#ifndef MUIA_Application_UsedClasses
 #define MUIA_Application_UsedClasses 0x8042e9a7 /* V20 isg STRPTR * */
 #endif
 #ifndef MUIA_String_Popup
@@ -143,7 +143,9 @@ enum { IECODE_SPACE = 64,
 			 IECODE_BACKSPACE = 65,
 			 IECODE_DEL = 70,
 			 IECODE_UP = 76,
-			 IECODE_DOWN = 77
+			 IECODE_DOWN = 77,
+			 IECODE_RIGHT = 78,
+			 IECODE_LEFT = 79
 		 };
 
 // some own usefull MUI-style macros to check mouse positions in objects
