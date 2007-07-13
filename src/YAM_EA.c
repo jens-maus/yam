@@ -683,7 +683,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
         End;
         if(group != NULL)
         {
-          DoMethod(group, MUIM_MultiSet, MUIA_String_Reject, ",", data->GUI.ST_ALIAS, data->GUI.ST_ADDRESS, data->GUI.ST_REALNAME, NULL);
+          DoMethod(group, MUIM_MultiSet, MUIA_String_Reject, ",<>", data->GUI.ST_ALIAS, data->GUI.ST_ADDRESS, data->GUI.ST_REALNAME, NULL);
           SetHelp(data->GUI.ST_ALIAS   ,MSG_HELP_EA_ST_ALIAS      );
           SetHelp(data->GUI.ST_COMMENT ,MSG_HELP_EA_ST_DESCRIPTION);
           SetHelp(data->GUI.ST_REALNAME,MSG_HELP_EA_ST_REALNAME_L );

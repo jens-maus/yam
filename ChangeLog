@@ -7,6 +7,8 @@ $URL$
 
 2007-07-13  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_EA.c: added '<' and '>' to the list of forbidden characters for aliases,
+    names and addresses.
   * Addrmatchlist.c, Recipientstring.c, YAM.c: a realname is now matched in all
     its parts. That means if you have "John Doe <john@doe.com>" in your address
     book and type "d" in the recipient string then "John Doe" will be found in
