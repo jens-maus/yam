@@ -1675,32 +1675,36 @@ static int Root_GlobalDispatcher(ULONG app_input)
 
   switch(app_input)
   {
+    // user initiated a normal QUIT command
     case MUIV_Application_ReturnID_Quit:
     {
       if(xget(G->App, MUIA_Application_ForceQuit) == FALSE)
-      {
-        ret = (int)!StayInProg();
-      }
+        ret = StayInProg() ? 0 : 1;
       else
         ret = 1;
     }
     break;
 
+    // user closed the main window
     case ID_CLOSEALL:
     {
       if(C->IconifyOnQuit == FALSE)
-        ret = (int)!StayInProg();
+        ret = StayInProg() ? 0 : 1;
       else
         set(G->App, MUIA_Application_Iconified, TRUE);
     }
     break;
 
+    // user initiated a 'restart' action
     case ID_RESTART:
     {
-      ret = 2;
+      ret = StayInProg() ? 0 : 2;
     }
     break;
 
+
+    // the application window was iconfified (either
+    // by a user or automatically)
     case ID_ICONIFY:
     {
       MA_UpdateIndexes(FALSE);
@@ -2932,7 +2936,7 @@ int main(int argc, char **argv)
       InitUpdateCheck(TRUE);
 
       // start the event loop
-      while (!(ret = Root_GlobalDispatcher(DoMethod(G->App, MUIM_Application_NewInput, &signals))))
+      while((ret = Root_GlobalDispatcher(DoMethod(G->App, MUIM_Application_NewInput, &signals))) == 0)
       {
          if (signals)
          {

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-16  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: when YAM was initiated to restart it never actually checked if
+    the addressbook and/or configuration was changed and therefore never warned
+    the user accordingly. This should now be the case and therefore fix
+    bug #1754105.
+
 2007-07-13  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_EA.c: added '<' and '>' to the list of forbidden characters for aliases,
