@@ -7,6 +7,9 @@ $URL$
 
 2007-07-16  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ReadWindow.c, YAM_RE.c: fixed bug #1754233 where a CleanupReadMailData()
+    call didn't always cleanup the active window pointer in the Arexx routines
+    and therefore might have crashed sucessive mailread/readclose calls.
   * YAM.c: when YAM was initiated to restart it never actually checked if
     the addressbook and/or configuration was changed and therefore never warned
     the user accordingly. This should now be the case and therefore fix

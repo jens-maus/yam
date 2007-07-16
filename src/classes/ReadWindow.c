@@ -127,12 +127,6 @@ HOOKPROTONHNO(CloseReadWindowFunc, void, struct ReadMailData **arg)
   if(rmData == G->ActiveRexxRMData ||
      xget(G->App, MUIA_Application_Iconified) == FALSE)
   {
-    // check if this rmData is the current active Rexx background
-    // processing one and if so set the ptr to NULL to signal the rexx
-    // commands that their active window was closed
-    if(rmData == G->ActiveRexxRMData)
-      G->ActiveRexxRMData = NULL;
-
     // calls the CleanupReadMailData to clean everything else up
     CleanupReadMailData(rmData, TRUE);
   }

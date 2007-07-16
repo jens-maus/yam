@@ -4431,6 +4431,12 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   else
     rmData->mail = NULL;
 
+  // check if this rmData is the current active Rexx background
+  // processing one and if so set the ptr to NULL to signal the rexx
+  // commands that their active window was closed/disposed
+  if(rmData == G->ActiveRexxRMData)
+    G->ActiveRexxRMData = NULL;
+
   RETURN(TRUE);
   return TRUE;
 }
