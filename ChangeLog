@@ -7,6 +7,10 @@ $URL$
 
 2007-07-19  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_CO.c, YAM_COs.c: changed the PGP detection code to only be fired
+    up in CO_Validat() rather than in CO_SetDefaults() and CO_Validate(). In
+    addition, CO_DetectPGP() now suppresses any OS warnings during the check
+    for the PGP executables.
   * YAM.c: the CO_SetDefaults() was called two times during startup which
     was unnecessary and just consumed time.
 

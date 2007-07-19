@@ -643,6 +643,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
       struct MimeTypeNode *lastType = NULL;
       int lastFilterID = -1;
 
+      // set defaults
       CO_SetDefaults(co, cp_AllPages);
 
       while(fgets(buffer, sizeof(buffer), fh))

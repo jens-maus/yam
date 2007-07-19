@@ -654,16 +654,35 @@ BOOL CO_IsValid(void)
 ///
 /// CO_DetectPGP
 //  Checks if PGP 2 or 5 is available
-static int CO_DetectPGP(struct Config *co)
+static int CO_DetectPGP(const struct Config *co)
 {
   int version = 0;
+  struct Process *pr = (struct Process *)FindTask(NULL);
+  APTR oldWindowPtr = pr->pr_WindowPtr;
 
   ENTER();
 
+  // make sure the OS doesn't popup any
+  // 'Please insert volume' kind warnings
+  pr->pr_WindowPtr = (APTR)-1;
+
   if(PFExists(co->PGPCmdPath, "pgpe"))
+  {
     version = 5;
-  else if (PFExists(co->PGPCmdPath, "pgp"))
+
+    D(DBF_STARTUP, "found PGP version 5 installed in '%s'", co->PGPCmdPath);
+  }
+  else if(PFExists(co->PGPCmdPath, "pgp"))
+  {
     version = 2;
+
+    D(DBF_STARTUP, "found PGP version 2 installed in '%s'", co->PGPCmdPath);
+  }
+  else
+    W(DBF_STARTUP, "no PGP version found to be installed in '%s'", co->PGPCmdPath);
+
+  // restore the old windowPtr
+  pr->pr_WindowPtr = oldWindowPtr;
 
   RETURN(version);
   return version;
@@ -874,17 +893,15 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_Security || page == cp_AllPages)
   {
-    G->PGPVersion = 0;
-    if(GetVar("PGPPATH", co->PGPCmdPath, sizeof(co->PGPCmdPath), 0) >= 0)
-      G->PGPVersion = CO_DetectPGP(co);
+    // we first try to see if there is a PGPPATH variable and if
+    // so we take that one as the path to PGP or we plainly take PGP:
+    // as the default path.
+    if(GetVar("PGPPATH", co->PGPCmdPath, sizeof(co->PGPCmdPath), 0) == -1)
+      strlcpy(co->PGPCmdPath, "PGP:", sizeof(co->PGPCmdPath));
 
-    if(G->PGPVersion == 0)
-    {
-      strlcpy(co->PGPCmdPath, "C:", sizeof(co->PGPCmdPath));
-      G->PGPVersion = CO_DetectPGP(co);
-    }
-    *co->MyPGPID = '\0';
-    co->EncryptToSelf = co->LogAllEvents = TRUE;
+    co->MyPGPID[0] = '\0';
+    co->EncryptToSelf = TRUE;
+    co->LogAllEvents = TRUE;
     co->PGPPassInterval = 10; // 10 min per default
     strlcpy(co->ReMailer, "Remailer <remailer@remailer.xganon.com>", sizeof(co->ReMailer));
     strlcpy(co->RMCommands, "Anon-To: %s", sizeof(co->RMCommands));
@@ -1489,6 +1506,7 @@ void CO_Validate(struct Config *co, BOOL update)
     saveAtEnd = TRUE;
   }
 
+  // check if PGP is available or not.
   G->PGPVersion = CO_DetectPGP(co);
 
   // prepare the temporary directory
