@@ -1767,11 +1767,17 @@ static void Initialise2(void)
 
   ENTER();
 
+  // clear the configuration (set defaults) and load it
+  // from the user defined .config file
   SplashProgress(tr(MSG_LoadingConfig), 30);
-  CO_SetDefaults(C, cp_AllPages);
-  CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders);
+  if(CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders) == FALSE)
+  {
+    // clear the config with defaults if the config file couldn't be loaded
+    CO_SetDefaults(C, cp_AllPages);
+  }
   CO_Validate(C, FALSE);
 
+  // create all necessary GUI elements
   SplashProgress(tr(MSG_CreatingGUI), 40);
 
   // before we go and create the first MUI windows

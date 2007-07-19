@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: the CO_SetDefaults() was called two times during startup which
+    was unnecessary and just consumed time.
+
 2007-07-16  Jens Langner <Jens.Langner@light-speed.de>
 
   * ReadWindow.c, YAM_RE.c: fixed bug #1754233 where a CleanupReadMailData()
