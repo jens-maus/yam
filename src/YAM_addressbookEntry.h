@@ -31,7 +31,9 @@
 #include <mui/NListtree_mcc.h>
 
 #include "SDI_compiler.h"
+
 #include "YAM_stringsizes.h"
+#include "YAM_write.h"
 
 struct EA_GUIData
 {
@@ -74,22 +76,22 @@ enum ABEntry_Type { AET_USER=0, AET_LIST, AET_GROUP };
 
 struct ABEntry
 {
-   char *            Members;
-   long              BirthDay;
-   enum ABEntry_Type Type;
-   int               DefSecurity;
+  char *            Members;
+  long              BirthDay;
+  enum ABEntry_Type Type;
+  enum Security     DefSecurity;
 
-   char Address[SIZE_ADDRESS];
-   char RealName[SIZE_REALNAME];
-   char Comment[SIZE_DEFAULT];
-   char Alias[SIZE_NAME];
-   char Phone[SIZE_DEFAULT];
-   char Street[SIZE_DEFAULT];
-   char City[SIZE_DEFAULT];
-   char Country[SIZE_DEFAULT];
-   char Homepage[SIZE_URL];
-   char PGPId[SIZE_ADDRESS];
-   char Photo[SIZE_PATHFILE];
+  char Address[SIZE_ADDRESS];
+  char RealName[SIZE_REALNAME];
+  char Comment[SIZE_DEFAULT];
+  char Alias[SIZE_NAME];
+  char Phone[SIZE_DEFAULT];
+  char Street[SIZE_DEFAULT];
+  char City[SIZE_DEFAULT];
+  char Country[SIZE_DEFAULT];
+  char Homepage[SIZE_URL];
+  char PGPId[SIZE_ADDRESS];
+  char Photo[SIZE_PATHFILE];
 };
 
 void   EA_AddSingleMember(Object *obj, struct MUI_NListtree_TreeNode *tn);

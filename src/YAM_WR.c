@@ -1289,6 +1289,7 @@ static BOOL SetDefaultSecurity(struct Compose *comp)
   BOOL result = TRUE;
   enum Security security = SEC_NONE;
   BOOL FirstAddr = TRUE;
+  BOOL warnedAlready = FALSE;
   char *CheckThese[3];
   unsigned int i;
 
@@ -1341,6 +1342,32 @@ static BOOL SetDefaultSecurity(struct Compose *comp)
         {
           // get default from entry
           currsec = ab->DefSecurity;
+
+          // check if PGP is present if security is/was set to sign/encrypt
+          if(G->PGPVersion == 0 &&
+             (currsec == SEC_SIGN || currsec == SEC_ENCRYPT || currsec == SEC_BOTH))
+          {
+            if(warnedAlready)
+              currsec = SEC_NONE;
+            else
+            {
+              // warn the user about this exeptional situation
+              if(MUI_Request(G->App, NULL, 0, tr(MSG_WR_INVALIDSECURITY_TITLE),
+                                              tr(MSG_WR_INVALIDSECURITY_GADS),
+                                              tr(MSG_WR_INVALIDSECURITY),
+                                              AB_BuildAddressStringABEntry(ab)) != 0)
+              {
+                currsec = SEC_NONE;
+              }
+              else
+              {
+                result = FALSE;
+                break;
+              }
+
+              warnedAlready = TRUE;
+            }
+          }
         }
         else
           currsec = SEC_NONE; // entry not in address book -> no security
@@ -1356,8 +1383,8 @@ static BOOL SetDefaultSecurity(struct Compose *comp)
           else
           {
             // conflict: two addresses have different defaults
-            int res = MUI_RequestA(G->App, NULL, 0, NULL, tr(MSG_WR_SECURITYREQ_GADS),
-                                                          tr(MSG_WR_SECURITYREQ), NULL);
+            int res = MUI_Request(G->App, NULL, 0, NULL, tr(MSG_WR_SECURITYREQ_GADS),
+                                                         tr(MSG_WR_SECURITYREQ));
 
             switch(res)
             {
@@ -3561,9 +3588,9 @@ static struct WR_ClassData *WR_New(int winnum)
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_CrdSecurity),
                   MUIA_Family_Child, sec_menus[SEC_NONE]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_NONE]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x3E, MUIA_UserData,WMEN_SECUR0, End,
-                  MUIA_Family_Child, sec_menus[SEC_SIGN]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_SIGN]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x3D, MUIA_UserData,WMEN_SECUR1, End,
-                  MUIA_Family_Child, sec_menus[SEC_ENCRYPT]  = MenuitemObject, MUIA_Menuitem_Title,security[SEC_ENCRYPT] , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x3B, MUIA_UserData,WMEN_SECUR2, End,
-                  MUIA_Family_Child, sec_menus[SEC_BOTH]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_BOTH]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x37, MUIA_UserData,WMEN_SECUR3, End,
+                  MUIA_Family_Child, sec_menus[SEC_SIGN]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_SIGN]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Enabled, G->PGPVersion != 0, MUIA_Menuitem_Exclude,0x3D, MUIA_UserData,WMEN_SECUR1, End,
+                  MUIA_Family_Child, sec_menus[SEC_ENCRYPT]  = MenuitemObject, MUIA_Menuitem_Title,security[SEC_ENCRYPT] , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Enabled, G->PGPVersion != 0, MUIA_Menuitem_Exclude,0x3B, MUIA_UserData,WMEN_SECUR2, End,
+                  MUIA_Family_Child, sec_menus[SEC_BOTH]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_BOTH]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Enabled, G->PGPVersion != 0, MUIA_Menuitem_Exclude,0x37, MUIA_UserData,WMEN_SECUR3, End,
                   MUIA_Family_Child, sec_menus[SEC_SENDANON] = MenuitemObject, MUIA_Menuitem_Title,security[SEC_SENDANON], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x2F, MUIA_UserData,WMEN_SECUR4, End,
                   MUIA_Family_Child, sec_menus[SEC_DEFAULTS] = MenuitemObject, MUIA_Menuitem_Title,security[SEC_DEFAULTS], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x1F, MUIA_UserData,WMEN_SECUR5, MUIA_Menuitem_Checked, TRUE, End,
                End,

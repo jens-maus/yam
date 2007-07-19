@@ -336,28 +336,63 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
       }
    }
 
-   set(gui->WI, MUIA_Window_Open, FALSE);
    G->AB->Modified = TRUE;
    if (old) addr = G->EA[winnum]->ABEntry; else addr = &newaddr;
    GetMUIString(addr->Alias, gui->ST_ALIAS, sizeof(addr->Alias));
    GetMUIString(addr->Comment, gui->ST_COMMENT, sizeof(addr->Comment));
    switch (addr->Type = G->EA[winnum]->Type)
    {
-      case AET_USER:  GetMUIString(addr->RealName, gui->ST_REALNAME, sizeof(addr->RealName));
-                      GetMUIString(addr->Address, gui->ST_ADDRESS, sizeof(addr->Address));
-                      GetMUIString(addr->Phone, gui->ST_PHONE, sizeof(addr->Phone));
-                      GetMUIString(addr->Street, gui->ST_STREET, sizeof(addr->Street));
-                      GetMUIString(addr->City, gui->ST_CITY, sizeof(addr->City));
-                      GetMUIString(addr->Country, gui->ST_COUNTRY, sizeof(addr->Country));
-                      GetMUIString(addr->PGPId, gui->ST_PGPKEY, sizeof(addr->PGPId));
-                      GetMUIString(addr->Homepage, gui->ST_HOMEPAGE, sizeof(addr->Homepage));
-                      addr->DefSecurity = GetMUICycle(gui->CY_DEFSECURITY);
-                      strlcpy(addr->Photo, G->EA[winnum]->PhotoName, sizeof(addr->Photo));
-                      addr->BirthDay = bdate;
-                      if (!*addr->Alias) EA_SetDefaultAlias(addr);
-                      EA_FixAlias(addr, old);
-                      if (!old) EA_InsertBelowActive(addr, 0);
-                      break;
+      case AET_USER:
+      {
+        GetMUIString(addr->RealName, gui->ST_REALNAME, sizeof(addr->RealName));
+        GetMUIString(addr->Address, gui->ST_ADDRESS, sizeof(addr->Address));
+        GetMUIString(addr->Phone, gui->ST_PHONE, sizeof(addr->Phone));
+        GetMUIString(addr->Street, gui->ST_STREET, sizeof(addr->Street));
+        GetMUIString(addr->City, gui->ST_CITY, sizeof(addr->City));
+        GetMUIString(addr->Country, gui->ST_COUNTRY, sizeof(addr->Country));
+        GetMUIString(addr->PGPId, gui->ST_PGPKEY, sizeof(addr->PGPId));
+        GetMUIString(addr->Homepage, gui->ST_HOMEPAGE, sizeof(addr->Homepage));
+
+        // get the default security setting and check if
+        // it is valid or not.
+        addr->DefSecurity = GetMUICycle(gui->CY_DEFSECURITY);
+        switch(addr->DefSecurity)
+        {
+          case SEC_SIGN:
+          case SEC_ENCRYPT:
+          case SEC_BOTH:
+          {
+            // check if PGP was found to be available at all
+            // or warn the user accordingly.
+            if(G->PGPVersion == 0)
+            {
+              if(MUI_Request(G->App, NULL, 0, tr(MSG_AB_INVALIDSECURITY_TITLE),
+                                              tr(MSG_AB_INVALIDSECURITY_GADS),
+                                              tr(MSG_AB_INVALIDSECURITY)) != 0)
+              {
+                addr->DefSecurity = SEC_NONE;
+              }
+            }
+          }
+          break;
+
+          default:
+            // nothing
+          break;
+        }
+
+        strlcpy(addr->Photo, G->EA[winnum]->PhotoName, sizeof(addr->Photo));
+        addr->BirthDay = bdate;
+
+        if(!*addr->Alias)
+          EA_SetDefaultAlias(addr);
+
+        EA_FixAlias(addr, old);
+        if(!old)
+          EA_InsertBelowActive(addr, 0);
+      }
+      break;
+
       case AET_LIST:  GetMUIString(addr->RealName, gui->ST_REALNAME, sizeof(addr->RealName));
                       GetMUIString(addr->Address, gui->ST_ADDRESS, sizeof(addr->Address));
                       members = AllocStrBuf(SIZE_DEFAULT);
@@ -389,6 +424,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
       case AET_GROUP: EA_FixAlias(addr, old);
                       if (!old) EA_InsertBelowActive(addr, TNF_LIST);
    }
+   set(gui->WI, MUIA_Window_Open, FALSE);
    if (old) DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_List_Redraw, MUIV_List_Redraw_All);
    else AppendToLogfile(LF_VERBOSE, 71, tr(MSG_LOG_NewAddress), addr->Alias);
    DisposeModulePush(&G->EA[winnum]);

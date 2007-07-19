@@ -7,6 +7,10 @@ $URL$
 
 2007-07-19  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c, YAM_UT.c, YAM_EA.c, locale/YAM.cd: if PGP was found to be not
+    available, but an addressbook entry is set to sign/encrypt, YAM will now
+    throw a warning requester instead of blindly trying to sign/encrypt the
+    message. This should fix bug #1755776.
   * YAM_CO.c, YAM_COs.c: changed the PGP detection code to only be fired
     up in CO_Validat() rather than in CO_SetDefaults() and CO_Validate(). In
     addition, CO_DetectPGP() now suppresses any OS warnings during the check

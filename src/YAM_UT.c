@@ -2646,7 +2646,7 @@ BOOL DumpClipboard(FILE *out)
 ///
 /// IsFolderDir
 //  Checks if a directory is used as a mail folder
-static BOOL IsFolderDir(char *dir)
+static BOOL IsFolderDir(const char *dir)
 {
   BOOL result = FALSE;
   char *filename;
@@ -2704,7 +2704,7 @@ BOOL AllFolderLoaded(void)
 ///
 /// PFExists
 //  Checks if a file exists in the specified directory
-BOOL PFExists(char *path, const char *file)
+BOOL PFExists(const char *path, const char *file)
 {
   char fname[SIZE_PATHFILE];
   BOOL exists;

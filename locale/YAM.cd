@@ -1569,9 +1569,6 @@ Last saved
 MSG_CO_Restore (550//)
 Restore
 ;
-MSG_CO_Extras (551//)
-Extras
-;
 MSG_CO_ImportMIME (553//)
 Import MIME viewers & types...
 ;
@@ -6385,3 +6382,32 @@ Allows to import MIME type settings from\n\
 third party MIME files, such as 'MIME.prefs',\n\
 'mailcap' or 'mime.types'.
 ;
+MSG_AB_INVALIDSECURITY_TITLE (1978//)
+Security warning
+;
+MSG_AB_INVALIDSECURITY (1979//)
+The addressbook entry was set to either sign\n\
+and/or encrypt messages per default. But the\n\
+required PGP installation wasn't found.\n\
+\n\
+Do you want to clear the default security\n\
+setting for this entry?
+;
+MSG_AB_INVALIDSECURITY_GADS (1980//)
+*_Yes|_No
+;
+MSG_WR_INVALIDSECURITY_TITLE (1981//)
+Security warning
+;
+MSG_WR_INVALIDSECURITY (1982//)
+The addressbook settings for recipient\n\
+'%s'\n\
+was found to be set to sign and/or encrypt\n\
+messages, but the required PGP installation\n\
+wasn't found.\n\
+\n\
+The message will not be signed/encrypted.
+; RECIPIENT
+;
+MSG_WR_INVALIDSECURITY_GADS (1983//)
+*_Ok|_Cancel
