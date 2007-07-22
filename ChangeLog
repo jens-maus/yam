@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-22  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, include/mui/TextEditor_mcc.h: updated TextEditor.mcc SDK
+    includes to very latest versions of the upcoming 15.22 release which
+    allows to set the word wrapping mode explicity to Soft or Hard word
+    wrapping.
+
 2007-07-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, YAM_UT.c, YAM_EA.c, locale/YAM.cd: if PGP was found to be not

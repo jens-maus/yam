@@ -2605,7 +2605,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
             if((cmsg = RE_ReadInMessage(rmData, RIM_QUOTE)))
             {
               // make sure we quote the text in question.
-              QuoteText(out, cmsg, strlen(cmsg), C->EdWrapMode ? C->EdWrapCol-2 : 1024);
+              QuoteText(out, cmsg, strlen(cmsg), C->EdWrapMode != EWM_OFF ? C->EdWrapCol-2 : 1024);
 
               free(cmsg);
             }

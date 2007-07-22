@@ -384,6 +384,10 @@ enum FolderInfoMode
 };
 
 enum InfoBarPos { IB_POS_TOP=0, IB_POS_CENTER, IB_POS_BOTTOM, IB_POS_OFF };
+enum WrapMode { EWM_OFF=0,   // no word wrapping at all
+                EWM_EDITING, // word wrapping while editing
+                EWM_ONSENT   // word wrapping before sent
+              };
 
 /*** Configuration main structure ***/
 struct Config
@@ -400,7 +404,6 @@ struct Config
   int   ShowHeader;
   int   ShowSenderInfo;
   int   EdWrapCol;
-  int   EdWrapMode;
   int   FolderCols;
   int   MessageCols;
   int   AddToAddrbook;
@@ -444,6 +447,7 @@ struct Config
   enum  FolderInfoMode FolderInfoMode;
   enum  ForwardMode    ForwardMode;
   enum  InfoBarPos     InfoBar;
+  enum  WrapMode       EdWrapMode;
 
   BOOL  DaylightSaving;
   BOOL  Allow8bit;

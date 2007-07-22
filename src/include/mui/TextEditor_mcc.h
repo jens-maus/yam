@@ -19,7 +19,7 @@
 
  TextEditor class Support Site:  http://www.sf.net/projects/texteditor-mcc
 
- $Id: TextEditor_mcc.h 298 2007-02-25 15:46:21Z damato $
+ $Id: TextEditor_mcc.h 352 2007-07-22 20:22:33Z damato $
 
 ***************************************************************************/
 
@@ -83,6 +83,8 @@ extern "C" {
 #define MUIA_TextEditor_AutoClip          (TextEditor_Dummy + 0x34)
 #define MUIA_TextEditor_CursorPosition    (TextEditor_Dummy + 0x35)
 #define MUIA_TextEditor_KeyUpFocus        (TextEditor_Dummy + 0x36)
+#define MUIA_TextEditor_UndoLevels        (TextEditor_Dummy + 0x38)
+#define MUIA_TextEditor_WrapMode          (TextEditor_Dummy + 0x39)
 
 #define MUIM_TextEditor_AddKeyBindings    (TextEditor_Dummy + 0x22)
 #define MUIM_TextEditor_ARexxCmd          (TextEditor_Dummy + 0x23)
@@ -129,6 +131,11 @@ struct MUIP_TextEditor_QueryKeyAction    { ULONG MethodID; ULONG keyAction; };
 #define MUIV_TextEditor_InsertText_Cursor      0x00000000
 #define MUIV_TextEditor_InsertText_Top         0x00000001
 #define MUIV_TextEditor_InsertText_Bottom      0x00000002
+
+/* Values for MUIA_TextEditor_WrapMode */
+#define MUIV_TextEditor_WrapMode_NoWrap        0x00000000
+#define MUIV_TextEditor_WrapMode_SoftWrap      0x00000001
+#define MUIV_TextEditor_WrapMode_HardWrap      0x00000002
 
 /* Values for MUIM_TextEditor_MarkText */
 #define MUIV_TextEditor_MarkText_All           -1

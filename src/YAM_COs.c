@@ -2200,7 +2200,7 @@ void CO_SetConfig(void)
       setstring(gui->ST_BYETEXT, CE->Greetings);
       setcheckmark(gui->CH_WARNSUBJECT, CE->WarnSubject);
       SetAttrs(gui->ST_EDWRAP, MUIA_String_Integer, CE->EdWrapCol,
-                               MUIA_Disabled, CE->EdWrapMode == 0,
+                               MUIA_Disabled, CE->EdWrapMode == EWM_OFF,
                                TAG_DONE);
       setcycle(gui->CY_EDWRAP, CE->EdWrapMode);
       setstring(gui->ST_EDITOR, CE->Editor);

@@ -838,8 +838,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     strlcpy(co->NewIntro, tr(MSG_CO_NewIntroDef), sizeof(co->NewIntro));
     strlcpy(co->Greetings, tr(MSG_CO_GreetingsDef), sizeof(co->Greetings));
     co->WarnSubject = TRUE;
-    co->EdWrapCol = 76;
-    co->EdWrapMode = 2;
+    co->EdWrapCol = 78;
+    co->EdWrapMode = EWM_EDITING;
     strlcpy(co->Editor, "C:Ed", sizeof(co->Editor));
     co->LaunchAlways = FALSE;
     co->EmailCache = 10;
