@@ -38,6 +38,7 @@
 #include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
+#include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/utility.h>
@@ -1501,7 +1502,7 @@ HOOKPROTONHNO(AB_Sort, void, int *arg)
   {
     G->AB->SortBy = *arg;
     AB_LoadTree(fname, FALSE, TRUE);
-    remove(fname);
+    DeleteFile(fname);
     G->AB->Modified = TRUE;
   }
 

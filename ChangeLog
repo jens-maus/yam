@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, misc: while composing a message, YAM wasn't complaining about
+    any possible encoding mistake that happened and therefore may have
+    ended up in broken emails to be sent out. Now YAM will check the error
+    status of the EncodePart() function as well as taking care of eventually
+    removed attachments and raising an error in case something went wrong
+    during the encoding session. This should fix bug #1758109.
+
 2007-07-22  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, include/mui/TextEditor_mcc.h: updated TextEditor.mcc SDK

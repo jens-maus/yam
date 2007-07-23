@@ -1641,7 +1641,8 @@ BOOL FileExists(const char *filename)
 
   ENTER();
 
-  if((lock = Lock(filename, ACCESS_READ)))
+  if(filename[0] != '\0' &&
+     (lock = Lock(filename, ACCESS_READ)))
   {
     exists = TRUE;
     UnLock(lock);

@@ -6411,3 +6411,27 @@ The message will not be signed/encrypted.
 ;
 MSG_WR_INVALIDSECURITY_GADS (1983//)
 *_Ok|_Cancel
+;
+MSG_ER_FILEENCODE (1984//)
+An unexpected error occurred while trying to encode file \
+'%s'.\n\
+\n\
+Please make sure that this file exists and is readable \
+before you retry to compose the message.
+; FILENAME
+;
+MSG_ER_MISSINGATTFILE (1985//)
+While trying to compose the attachments of a message, the \
+file '%s' was found to be unavailable.\n\
+\n\
+Please make sure that this file exists and is readable \
+before you retry to compose the message.
+; FILENAME
+;
+MSG_ER_INVALIDATTFILE (1986//)
+While trying to view an attachment of a message the \
+file '%s' was found to be unavailable.\n\
+\n\
+Please make sure that this file exists and is readable.
+; FILENAME
+;

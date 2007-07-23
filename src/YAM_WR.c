@@ -373,6 +373,8 @@ struct WritePart *NewPart(int winnum)
     p->EncType = ENC_NONE;
     p->Filename = G->WR_Filename[winnum];
   }
+  else
+    E(DBF_MAIL, "couldn't create new MIME part for window %d", winnum);
 
   RETURN(p);
   return p;
@@ -402,34 +404,46 @@ static struct WritePart *BuildPartsList(const int winnum)
     for(i=0; ;i++)
     {
       struct Attach *att = NULL;
-      struct WritePart *np;
+      struct WritePart *np = NULL;
 
       DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_GetEntry, i, &att);
       if(att == NULL)
         break;
 
-      // create a new MIME part for the attachment
-      if((np = NewPart(winnum)) != NULL)
+      // we check if the file from the attachment list
+      // still exists and is readable
+      if(FileExists(att->FilePath))
       {
-        // link the two parts together
-        p->Next = np;
+        // create a new MIME part for the attachment
+        if((np = NewPart(winnum)) != NULL)
+        {
+          // link the two parts together
+          p->Next = np;
 
-        // and now set the information for the new part
-        np->ContentType = att->ContentType;
-        np->Filename    = att->FilePath;
-        np->Description = att->Description;
-        np->Name        = att->Name;
-        np->IsTemp      = att->IsTemp;
+          // and now set the information for the new part
+          np->ContentType = att->ContentType;
+          np->Filename    = att->FilePath;
+          np->Description = att->Description;
+          np->Name        = att->Name;
+          np->IsTemp      = att->IsTemp;
 
-        // find out which encoding we use for the attachment
-        if(att->IsMIME)
-          np->EncType = WhichEncodingForFile(np->Filename, np->ContentType);
-        else
-          np->EncType = ENC_UUE;
+          // find out which encoding we use for the attachment
+          if(att->IsMIME)
+            np->EncType = WhichEncodingForFile(np->Filename, np->ContentType);
+          else
+            np->EncType = ENC_UUE;
 
-        p = np;
+          p = np;
+        }
       }
       else
+      {
+        W(DBF_MAIL, "file from attachmentlist doesn't exist anymore: '%s'");
+
+        ER_NewError(tr(MSG_ER_MISSINGATTFILE), att->FilePath);
+      }
+
+      if(np == NULL)
       {
         // an error occurred as we couldn't create a new part
         FreePartsList(first);
@@ -733,8 +747,9 @@ static void WR_WriteUserInfo(FILE *fh, char *from)
 ///
 /// EncodePart
 //  Encodes a message part
-static void EncodePart(FILE *ofh, struct WritePart *part)
+static BOOL EncodePart(FILE *ofh, const struct WritePart *part)
 {
+  BOOL result = FALSE;
   FILE *ifh;
 
   ENTER();
@@ -759,19 +774,19 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
         }
 
         // then start base64 encoding the whole file.
-        if(base64encode_file(ifh, ofh, convLF) <= 0)
-        {
+        if(base64encode_file(ifh, ofh, convLF) > 0)
+          result = TRUE;
+        else
           ER_NewError(tr(MSG_ER_B64FILEENCODE), part->Filename);
-        }
       }
       break;
 
       case ENC_QP:
       {
-        if(qpencode_file(ifh, ofh) < 0)
-        {
+        if(qpencode_file(ifh, ofh) >= 0)
+          result = TRUE;
+        else
           ER_NewError(tr(MSG_ER_QPFILEENCODE), part->Filename);
-        }
       }
       break;
 
@@ -781,10 +796,10 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
 
         fprintf(ofh, "begin 644 %s\n", *part->Name ? part->Name : (char *)FilePart(part->Filename));
 
-        if(uuencode_file(ifh, ofh) < 0)
-        {
+        if(uuencode_file(ifh, ofh) >= 0)
+          result = TRUE;
+        else
           ER_NewError(tr(MSG_ER_UUFILEENCODE), part->Filename);
-        }
 
         fprintf(ofh, "``\nend\nsize %d\n", size);
       }
@@ -792,15 +807,21 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
 
       default:
       {
-        CopyFile(NULL, ofh, NULL, ifh);
+        if(CopyFile(NULL, ofh, NULL, ifh) == TRUE)
+          result = TRUE;
+        else
+          ER_NewError(tr(MSG_ER_FILEENCODE), part->Filename);
       }
       break;
     }
 
     fclose(ifh);
   }
+  else
+    ER_NewError(tr(MSG_ER_FILEENCODE), part->Filename);
 
-  LEAVE();
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -1262,7 +1283,7 @@ static const char *const PGPwarn  =
   "or the message was encrypted for someone else. To read the encrypted\n"
   "message, run the next body part through Pretty Good Privacy (PGP).\n\n";
 
-static void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
+static BOOL WR_ComposeReport(FILE *fh, const struct Compose *comp, const char *boundary)
 {
   struct WritePart *p;
 
@@ -1275,11 +1296,17 @@ static void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
     fprintf(fh, "\n--%s\n", boundary);
     WriteContentTypeAndEncoding(fh, p);
     fputs("\n", fh);
-    EncodePart(fh, p);
+
+    if(EncodePart(fh, p) == FALSE)
+    {
+      RETURN(FALSE);
+      return FALSE;
+    }
   }
   fprintf(fh, "\n--%s--\n\n", boundary);
 
-  LEAVE();
+  RETURN(TRUE);
+  return TRUE;
 }
 
 ///
@@ -1462,7 +1489,16 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
     {
        WriteContentTypeAndEncoding(tf->FP, firstpart);
        fputc('\n', tf->FP);
-       EncodePart(tf->FP, firstpart);
+
+       if(EncodePart(tf->FP, firstpart) == FALSE)
+       {
+         CloseTempFile(tf);
+         CloseTempFile(tf2);
+
+         RETURN(FALSE);
+         return FALSE;
+       }
+
        fclose(tf->FP);
        tf->FP = NULL;
        ConvertCRLF(tf->Filename, tf2->Filename, TRUE);
@@ -1480,7 +1516,15 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
            fprintf(fh, "Content-type: multipart/signed; boundary=\"%s\"; micalg=pgp-md5; protocol=\"application/pgp-signature\"\n\n%s\n--%s\n", boundary, MIMEwarn, boundary);
            WriteContentTypeAndEncoding(fh, firstpart);
            fputc('\n', fh);
-           EncodePart(fh, firstpart);
+
+           if(EncodePart(fh, firstpart) == FALSE)
+           {
+             CloseTempFile(tf2);
+
+             RETURN(FALSE);
+             return FALSE;
+           }
+
            fprintf(fh, "\n--%s\nContent-Type: application/pgp-signature\n\n", boundary);
 
            snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-ab %s +batchmode=1 +force" : "-sab %s +bat +f", tf2->Filename);
@@ -1526,13 +1570,24 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
            // nothing
          break;
       }
+
       if(success)
-        EncodePart(fh, &pgppart);
+      {
+        if(EncodePart(fh, &pgppart) == FALSE)
+        {
+          CloseTempFile(tf2);
+
+          RETURN(FALSE);
+          return FALSE;
+        }
+      }
     }
     CloseTempFile(tf2);
   }
+
   if(*pgpfile)
-    remove(pgpfile);
+    DeleteFile(pgpfile);
+
   fprintf(fh, "\n--%s--\n\n", boundary);
   FreeStrBuf(ids);
   PGPClearPassPhrase(!success);
@@ -1544,7 +1599,7 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
 ///
 /// WR_ComposeMulti
 //  Assembles a multipart message
-static void WR_ComposeMulti(FILE *fh, struct Compose *comp, char *boundary)
+static BOOL WR_ComposeMulti(FILE *fh, const struct Compose *comp, const char *boundary)
 {
   struct WritePart *p;
 
@@ -1564,12 +1619,17 @@ static void WR_ComposeMulti(FILE *fh, struct Compose *comp, char *boundary)
 
     fputs("\n", fh);
 
-    EncodePart(fh, p);
+    if(EncodePart(fh, p) == FALSE)
+    {
+      RETURN(FALSE);
+      return FALSE;
+    }
   }
 
   fprintf(fh, "\n--%s--\n\n", boundary);
 
-  LEAVE();
+  RETURN(TRUE);
+  return TRUE;
 }
 
 ///
@@ -1701,26 +1761,25 @@ mimebody:
 
    if(comp->GenerateMDN)
    {
-      WR_ComposeReport(fh, comp, boundary);
-      success = TRUE;
+     success = WR_ComposeReport(fh, comp, boundary);
    }
    else if(comp->Security > SEC_NONE && comp->Security <= SEC_BOTH)
    {
-      success = WR_ComposePGP(fh, comp, boundary);
+     success = WR_ComposePGP(fh, comp, boundary);
    }
    else if(firstpart->Next)
    {
-      WR_ComposeMulti(fh, comp, boundary);
-      success = TRUE;
+     success = WR_ComposeMulti(fh, comp, boundary);
    }
    else
    {
-      WriteContentTypeAndEncoding(fh, firstpart);
-      if (comp->Security == SEC_SENDANON && comp->OldSecurity != SEC_SENDANON)
-         WR_Anonymize(fh, comp->MailTo);
-      fputs("\n", fh);
-      EncodePart(fh, firstpart);
-      success = TRUE;
+     WriteContentTypeAndEncoding(fh, firstpart);
+     if(comp->Security == SEC_SENDANON && comp->OldSecurity != SEC_SENDANON)
+       WR_Anonymize(fh, comp->MailTo);
+
+     fputs("\n", fh);
+
+     success = EncodePart(fh, firstpart);
    }
 
    CloseTempFile(tf);
@@ -1947,7 +2006,16 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
     // export the text of our texteditor to a file
     EditorToFile(gui->TE_EDIT, G->WR_Filename[winnum]);
-    comp.FirstPart = BuildPartsList(winnum);
+
+    // build the whole mail part list including
+    // the attachments
+    if((comp.FirstPart = BuildPartsList(winnum)) == NULL)
+    {
+      DisplayBeep(NULL);
+
+      LEAVE();
+      return;
+    }
   }
   else
     MA_StartMacro(MACRO_POSTWRITE, itoa(winnum));
@@ -2041,7 +2109,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
           // now we search through our existing readMailData
           // objects and see some of them are pointing to the old mail
-        // and if so we signal them to display the new revised mail instead
+          // and if so we signal them to display the new revised mail instead
           for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
           {
             struct ReadMailData *rmData = (struct ReadMailData *)curNode;
@@ -2514,7 +2582,12 @@ HOOKPROTONHNO(WR_DisplayFile, void, int *arg)
 
   DoMethod(G->WR[*arg]->GUI.LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
   if(attach != NULL)
-    RE_DisplayMIME(attach->FilePath, attach->ContentType);
+  {
+    if(FileExists(attach->FilePath))
+      RE_DisplayMIME(attach->FilePath, attach->ContentType);
+    else
+      ER_NewError(tr(MSG_ER_INVALIDATTFILE), attach->FilePath);
+  }
 
   LEAVE();
 }
