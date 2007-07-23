@@ -275,18 +275,11 @@ void MA_ChangeSelected(BOOL forceUpdate)
 
   // Enable if:
   //  * the folder is enabled
-  //  * NOT in the "SPAM" folder
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled,
-                                                         gui->MI_NEW,
-                                                         NULL);
-
-  // Enable if:
-  //  * the folder is enabled
+  //  * NOT in the "Outgoing" folder
   //  * NOT in the "SPAM" folder
   //  * > 0 mails selected
   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isOutgoingFolder(fo) && !isSpamFolder(fo) && (active || numSelected > 0),
                                                          gui->MI_CHSUBJ,
-                                                         gui->MI_EDIT,
                                                          gui->MI_REPLY,
                                                          NULL);
 
@@ -294,8 +287,8 @@ void MA_ChangeSelected(BOOL forceUpdate)
   //  * the folder is enabled
   //  * NOT in the "SPAM" folder
   //  * > 0 mails selected
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && (active || numSelected > 0),
-                                                         gui->MI_FORWARD,
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSpamFolder(fo) && (active || numSelected > 0),
+                                                         gui->MI_EDIT,
                                                          NULL);
 
   // Enable if:
@@ -333,6 +326,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
                                                          gui->MI_PRINT,
                                                          gui->MI_SAVE,
                                                          gui->MI_ATTACH,
+                                                         gui->MI_FORWARD,
                                                          NULL);
 
   // Enable if:
@@ -350,6 +344,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
                                                          gui->MI_UPDINDEX,
                                                          gui->MI_IMPORT,
                                                          gui->MI_EXPORT,
+                                                         gui->MI_NEW,
                                                          NULL);
 
 
