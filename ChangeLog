@@ -5,11 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c: when popping up a warning requester about a missing file, YAM
+    will not initiate a DisplayBeep() anymore as the requester should be
+    enough to raise the users attention.
+
 2007-07-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c: fixed bug #1758823 where the "Message->Edit" menuitem was always
     disabled in the outgoing folder, but the context-menu and toolbar item
-	 being enabled.
+    being enabled.
   * YAM_WR.c, misc: while composing a message, YAM wasn't complaining about
     any possible encoding mistake that happened and therefore may have
     ended up in broken emails to be sent out. Now YAM will check the error

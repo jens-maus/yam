@@ -2011,8 +2011,6 @@ void WR_NewMail(enum WriteMode mode, int winnum)
     // the attachments
     if((comp.FirstPart = BuildPartsList(winnum)) == NULL)
     {
-      DisplayBeep(NULL);
-
       LEAVE();
       return;
     }
