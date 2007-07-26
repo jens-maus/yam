@@ -172,38 +172,52 @@ static BOOL MatchRealName(const char *realName, const char *text, LONG textLen, 
 
   ENTER();
 
-  if((name = strdup(realName)) != NULL)
+  // check if we have a realname at all
+  if(realName[0] != '\0')
   {
-    char *n = name;
-    char *p;
     LONG part = 0;
 
-    do
+    // first try to match the whole realname string
+    // completly
+    if(Strnicmp(realName, text, textLen) == 0)
+      match = TRUE;
+    else if((name = strdup(realName)) != NULL)
     {
-      // break up the name in single parts delimited by spaces, quotes and commas
-      if((p = strpbrk(n, " \",")) != NULL)
-        *p++ = '\0';
+      char *n = name;
+      char *p;
 
-      if(n[0] != '\0')
+      // if this didn't work out we see if we can seperate the realname
+      // into a first/lastname and see if only parts of it matches
+      do
       {
-        // now check if this part of the name matches
-        if(Strnicmp(n, text, textLen) == 0)
-        {
-          // yes!!
-          match = TRUE;
-          // remember which part of the name this is if there is any interest in it
-          if(matchPart != NULL)
-            *matchPart = part;
-          break;
-        }
-      }
-      // advance to the next name part
-      n = p;
-      part++;
-    }
-    while(p != NULL);
+        // break up the name in single parts delimited by spaces, quotes and commas
+        if((p = strpbrk(n, " \",'")) != NULL)
+          *p++ = '\0';
 
-    free(name);
+        if(n[0] != '\0')
+        {
+          // now check if this part of the name matches
+          if(Strnicmp(n, text, textLen) == 0)
+          {
+            // yes!!
+            match = TRUE;
+            break;
+          }
+
+          part++;
+        }
+
+        // advance to the next name part
+        n = p;
+      }
+      while(p != NULL);
+
+      free(name);
+    }
+
+    // remember which part of the name this is if there is any interest in it
+    if(matchPart != NULL)
+      *matchPart = part;
   }
 
   RETURN(match);

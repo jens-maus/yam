@@ -464,9 +464,7 @@ OVERLOAD(MUIM_HandleEvent)
               // we have to check this within our instance data because Betterstring.mcc is buggy and don`t
               // return MUIA_String_AdvanceOnCR within a get().
               if(data->AdvanceOnCR)
-              {
                 set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
-              }
             }
             else
               DisplayBeep(_screen(obj));

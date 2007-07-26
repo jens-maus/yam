@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-27  Jens Langner <Jens.Langner@light-speed.de>
+
+  * classes/YAM.c: fixed bug where the MatchRealName() function wasn't
+    considering a compare of the whole realname string before trying to
+    compare on either the firstname or lastname. This could have ended up
+    in unresolved address matches when entering the firstname of a person
+    and only one entry in the addressbook/emailcache was found and shown
+    in the addrmatchlist window.
+
 2007-07-24  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: when popping up a warning requester about a missing file, YAM
