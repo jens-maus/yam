@@ -7,6 +7,8 @@ $URL$
 
 2007-07-27  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c: if PGP isn't available the 'Add PGP key' menuitem will be
+    disabled now.
   * YAM.cd, deutsch.ct: minor adaptions to the catalog description and
     updated the german translation accordingly.
   * classes/YAM.c: fixed bug where the MatchRealName() function wasn't

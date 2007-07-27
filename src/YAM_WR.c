@@ -3640,7 +3640,7 @@ static struct WR_ClassData *WR_New(int winnum)
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Attachments),
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MAddFile), MUIA_Menuitem_Shortcut,"R", MUIA_UserData,WMEN_ADDFILE, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddCB), MUIA_UserData,WMEN_ADDCLIP, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddKey), MUIA_UserData,WMEN_ADDPGP, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddKey), MUIA_Menuitem_Enabled, G->PGPVersion != 0, MUIA_UserData,WMEN_ADDPGP, End,
             End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Options),
                MUIA_Family_Child, mi_delsend = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MDelSend), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, MUIA_UserData, WMEN_DELSEND, End,
