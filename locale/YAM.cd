@@ -6290,13 +6290,13 @@ while trying to send command '%s'.\n\
 This may be due to a connection drop by the server.
 ;
 MSG_WR_MSWITCH_MSG (1956//)
-Switch to 'Message' Tab
+Switch to 'Message'
 ;
 MSG_WR_MSWITCH_ATT (1957//)
-Switch to 'Attachments' Tab
+Switch to 'Attachments'
 ;
 MSG_WR_MSWITCH_OPT (1958//)
-Switch to 'Options' Tab
+Switch to 'Options'
 ;
 MSG_CO_FWDMSG (1959//)
 _Forward message

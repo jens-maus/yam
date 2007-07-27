@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (26.06.2007)
+## version $VER: YAM.catalog 6.0 (27.07.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -2084,10 +2084,6 @@ Auf zuletzt gespeichertes
 MSG_CO_Restore
 Auf vorherigen Stand
 ; Restore
-;
-MSG_CO_Extras
-Extras
-; Extras
 ;
 MSG_CO_ImportMIME
 MIME Einstellungen importieren...
@@ -7993,13 +7989,13 @@ des Kommandos '%s' unterbrochen.\n\
 Vermutlich hat Ihr Verbindungspartner abgebrochen.
 ;
 MSG_WR_MSWITCH_MSG
-Wechsle zum 'Nachricht'-Tab
+Wechsle zu 'Nachricht'
 ;
 MSG_WR_MSWITCH_ATT
-Wechsle zum 'Anhänge'-Tab
+Wechsle zu 'Anhänge'
 ;
 MSG_WR_MSWITCH_OPT
-Wechsle zum 'Optionen'-Tab
+Wechsle zu 'Optionen'
 ;
 MSG_CO_FWDMSG
 Nachricht weite_rleiten
@@ -8080,4 +8076,63 @@ MSG_CONFIG_MODIFIED_GAD
 ;
 MSG_ABOOK_MODIFIED_GAD
 *Jetzt _speichern|_Beenden ohne speichern|_Abbruch
+;
+MSG_HELP_CO_BT_MIMEIMPORT
+Erlaubt MIME-Einstellungen von anderen\n\
+MIME Dateien wie 'MIME.prefs', 'mailcap'\n\
+oder 'mime.types' zu importieren.
+;
+MSG_AB_INVALIDSECURITY_TITLE
+Sicherheitswarnung
+;
+MSG_AB_INVALIDSECURITY
+Der Addressbucheintrag wurde entweder auf\n\
+'signieren' oder 'verschlüsseln' eingestellt.\n\
+Jedoch konnte keine PGP Installation gefunden\n\
+werden.\n\
+\n\
+Möchten Sie die Sicherheitseinstellungen\n\
+dieses Eintrages auf 'Standard' zurücksetzen?
+;
+MSG_AB_INVALIDSECURITY_GADS
+*_Ja|_Nein
+;
+MSG_WR_INVALIDSECURITY_TITLE
+Sicherheitswarnung
+;
+MSG_WR_INVALIDSECURITY
+Die Addressbucheinstellungen für den Empfänger\n\
+'%s'\n\
+wurden auf 'signieren' oder 'verschlüsseln'\n\
+eingestellt. Es konnte jedoch keine PGP\n\
+Installation gefunden werden.\n\
+\n\
+Die Nachricht wird nicht verschlüsselt oder\n\
+signiert.
+;
+MSG_WR_INVALIDSECURITY_GADS
+*_Ok|_Abbruch
+;
+MSG_ER_FILEENCODE
+Es trat ein Fehler bei dem Versuch auf die Datei '%s' \
+an eine Nachricht anzuhängen.\n\
+\n\
+Bitte stellen Sie sicher, dass die Datei existiert und \
+lesbar ist bevor Sie erneut versuchen sie anzuhängen.
+;
+MSG_ER_MISSINGATTFILE
+Während des Versuches die Anhänge einer Nachricht \
+zusammen zu stellen trat ein Problem mit der Datei \
+'%s' auf.\n\
+\n\
+Bitte stellen Sie sicher, dass die Datei existiert und \
+lesbar ist bevor Sie erneut versuchen die Nachricht \
+zu generieren.
+;
+MSG_ER_INVALIDATTFILE
+Beim Versuch den Anhang einer Nachricht zu betrachten \
+trat ein Problem mit der Datei '%s' auf.\n\
+\n\
+Bitte stellen Sie sicher, dass die Datei existiert und \
+lesbar ist.
 ;
