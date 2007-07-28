@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-29  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/francais.ct: french translation update according to latest changes.
+
 2007-07-28  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.cd, deutsch.ct: changed all 'Okay' occurances in requesters to

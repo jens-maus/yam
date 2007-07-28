@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 6.0 (24.05.2007)
+## version $VER: YAM.catalog 6.0 (29.07.2007)
 ## language français
-## codeset 111
+## codeset 0
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 3193 2007-07-01 07:28:18Z
+; based on YAM.cd 3300 2007-07-28 17:14:15Z
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -76,7 +76,7 @@ MSG_Edit
 ;
 MSG_Okay
 _Ok
-; _Okay
+; _Ok
 ;
 MSG_Use
 _Utiliser
@@ -88,11 +88,11 @@ _Annuler
 ;
 MSG_OkayReq
 *_Ok
-; *_Okay
+; *_Ok
 ;
 MSG_OkayCancelReq
 *_Ok|_Annuler
-; *_Okay|_Cancel
+; *_Ok|_Cancel
 ;
 MSG_YesNoReq
 *_Oui|_Non
@@ -564,15 +564,6 @@ Charger
 MSG_UT_PGPPassReq
 Entrez votre phrase secrète PGP :
 ; Please enter your PGP passphrase:
-;
-; Replaced by MSG_APPICON_STATS
-MSG_UT_NoPrinter
-Pas d'imprimante en ligne !
-; No printer or printer offline!
-;
-MSG_UT_NoPaper
-Plus de papier !
-; Out of paper!
 ;
 ;
 ; Module MA - Procedures
@@ -2090,10 +2081,6 @@ Dernière sauvegarde
 MSG_CO_Restore
 Restaurer
 ; Restore
-;
-MSG_CO_Extras
-Extras
-; Extras
 ;
 MSG_CO_ImportMIME
 Importe depuis « MIME.types »...
@@ -5300,7 +5287,7 @@ Voulez-vous vraiment retirer cet utilisateur ?
 ;
 MSG_US_RemoveReqGads
 *_Oui|_Garder les fichiers|_Annuler
-; *_Okay|_Keep files|_Cancel
+; *_Ok|_Keep files|_Cancel
 ;
 ; Module US - Window
 ;
@@ -5779,10 +5766,6 @@ la lecture des messages dans celui-ci ?
 ; Next folder with unread messages is \eb%s\en\n\
 ; Go to this folder and continue reading there?
 ;
-MSG_MA_ABookModifiedGad
-*_Sauver maintenant|_Quitter sans sauver
-; *_Save now|_Quit without saving
-;
 MSG_ATTACH_NO
 N°
 ; No.
@@ -5790,10 +5773,6 @@ N°
 MSG_ATTACH_PART
 Partie
 ; Part
-;
-MSG_ABOUT_OKAY_GAD
-\033bOk
-; \033bOkay
 ;
 ;
 ; ADDED AFTER 15-MAR-2001
@@ -5939,7 +5918,7 @@ la ligne du sujet sans contenu ?
 ;
 MSG_WR_OKAYCANCELREQ
 *Ok|Annuler
-; *Okay|Cancel
+; *_Ok|_Cancel
 ;
 MSG_WR_NOSUBJECTREQ
 Il n'y a pas de sujet, poursuivre malgré tout ?
@@ -8535,7 +8514,7 @@ Multiview correctement).
 ;
 MSG_ER_LOADDT_BUTTON
 _Ok
-; _Okay
+; *_Ok
 ;
 MSG_FOLDER_SNAPSHOT_TREE
 Figer la disposition
@@ -8551,7 +8530,7 @@ Utilisateur inconnu
 ;
 MSG_ER_USER_UNKNOWN_BUTTON
 _Ok
-; _Okay
+; *_Ok
 ;
 MSG_ER_USER_UNKNOWN_ERROR
 L'utilisateur « %s » est inconnu !
@@ -8748,7 +8727,6 @@ et a répondu par le message d'erreur ci-dessus.
 ; \n\
 ; The mail server couldn't execute the command \
 ; and replied with the above error message.
-;
 ; SERVER, COMMAND, TEXT
 ;
 MSG_ER_POP3WELCOME
@@ -8760,7 +8738,6 @@ procédure d'accueil et la communication a été interrompue :\n\
 ; procedure and the connection was terminated:\n\
 ; \n\
 ; %s\n
-;
 ; SERVER, TEXT
 MSG_FO_EXPIREUNREAD
 même non-lus
@@ -8815,16 +8792,16 @@ Cela peut être dû à une fermeture de connexion par le serveur.
 ; This may be due to a connection drop by the server.
 ;
 MSG_WR_MSWITCH_MSG
-Basculer vers l'onglet « Message »
-; Switch to 'Message' Tab
+Basculer vers le « Message »
+; Switch to 'Message'
 ;
 MSG_WR_MSWITCH_ATT
-Basculer vers l'onglet « Pièces jointes »
-; Switch to 'Attachments' Tab
+Basculer vers les « Pièces jointes »
+; Switch to 'Attachments'
 ;
 MSG_WR_MSWITCH_OPT
-Basculer vers l'onglet « Options »
-; Switch to 'Options' Tab
+Basculer vers les « Options »
+; Switch to 'Options'
 ;
 MSG_CO_FWDMSG
 Courr_ier retransmis
@@ -8884,4 +8861,208 @@ Les dernières informations concernant YAM peuvent\n\
 MSG_WR_VIEW
 Affichage
 ; View
+;
+MSG_ER_CONNECTERR_SOCKET_IN_USE
+Impossible de se connecter à « %s ».\n\
+\n\
+Une connexion socket TCP/IP semble être déjà active. \
+Veuillez vous assurer de fermer tous les autres transferts en cours.
+; Couldn't connect to '%s'.\n\
+; \n\
+; A TCP/IP socket connection seems to be already active. \
+; Please make sure to close all other existing transfers.
+;
+MSG_ER_CONNECTERR_TIMEDOUT
+Impossible de se connecter à « %s ».\n\
+\n\
+Le serveur de courrier n'a pas répondu dans le délai imparti.
+; Couldn't connect to '%s'.\n\
+; \n\
+; The mail server didn't respond within a predefined \
+; interval and therefore timed out.
+;
+MSG_ER_CONNECTERR_NO_SOCKET
+Impossible de se connecter à « %s ».\n\
+\n\
+YAM n'a pas été en mesure d'établir une connexion socket \
+vers le serveur de courrier. Veuillez vous assurer que votre \
+pile TCP/IP est bien démarrée et fonctionne correctement.
+; Couldn't connect to '%s'.\n\
+; \n\
+; YAM wasn't able to establish a socket connection \
+; to the mail server. Please make sure that your TCP/IP \
+; stack is up and working properly.
+;
+MSG_ER_CONNECTERR_NO_NONBLOCKIO
+Impossible de se connecter à « %s ».\n\
+\n\
+YAM n'a pas été en mesure d'établir une connexion \
+avec accès non bloquant. Veuillez vous assurer que \
+votre pile TCP/IP est caâble d'établir de telles \
+connections.
+; Couldn't connect to '%s'.\n\
+; \n\
+; YAM wasn't able to establish a non-blocking IO \
+; connection to the mail server. Please make sure your \
+; TCP/IP stack is able to establish non-blocking IO \
+; connections.
+;
+MSG_CONFIG_MODIFIED
+La configuration a été modifiée,\n\
+mais n'a pas encore été sauvée.\n\
+\n\
+Comment voulez-vous procéder ?
+; The configuration has been modified,\n\
+; but wasn't saved yet.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_CONFIG_MODIFIED_GAD
+*_Sauver maintenant|_Quitter sans sauver|_Annuler
+; *_Save now|_Quit without saving|_Cancel
+;
+MSG_ABOOK_MODIFIED_GAD
+*_Sauver maintenant|_Quitter sans sauver|_Annuler
+; *_Save now|_Quit without saving|_Cancel
+;
+MSG_HELP_CO_BT_MIMEIMPORT
+Permet d'importer les réglages des types MIME\n\
+depuis des fichiers MIME tiers, tels que \n\
+« MIME.prefs », « mailcap » ou « mime.types ».
+; Allows to import MIME type settings from\n\
+; third party MIME files, such as 'MIME.prefs',\n\
+; 'mailcap' or 'mime.types'.
+;
+MSG_AB_INVALIDSECURITY_TITLE
+Alerte de sécurité
+; Security warning
+;
+MSG_AB_INVALIDSECURITY
+L'entrée du carnet d'adresses spécifie de signer\n\
+et/ou crypter les messages par défaut. Cependant\n\
+l'installation requise de PGP n'a pas été trouvée.\n\
+\n\
+Voulez-vous effacer le réglage de sécurité par\n\
+défaut de cette entrée ?
+; The addressbook entry was set to either sign\n\
+; and/or encrypt messages per default. But the\n\
+; required PGP installation wasn't found.\n\
+; \n\
+; Do you want to clear the default security\n\
+; setting for this entry?
+;
+MSG_AB_INVALIDSECURITY_GADS
+*_Oui|_Non
+; *_Yes|_No
+;
+MSG_WR_INVALIDSECURITY_TITLE
+Alerte de sécurité
+; Security warning
+;
+MSG_WR_INVALIDSECURITY
+Les réglages du carnet d'adresses pour le\n\
+destinataire « %s » \n\
+spécifie de signer ou crypter les messages,\n\
+cependant l'installation requise de PGP n'a\n\
+pas été trouvée.\n\
+\n\
+Le message ne sera pas signé, ni crypté.
+; The addressbook settings for recipient\n\
+; '%s'\n\
+; was found to be set to sign and/or encrypt\n\
+; messages, but the required PGP installation\n\
+; wasn't found.\n\
+; \n\
+; The message will not be signed/encrypted.
+;
+; RECIPIENT
+;
+MSG_WR_INVALIDSECURITY_GADS
+*_Ok|_Annuler
+; *_Ok|_Cancel
+;
+MSG_ER_FILEENCODE
+Une erreur inattendue est survenue lors de l'encodage du \
+fichier « % ».\n\
+\n\
+Veuillez vous assurer que ce fichier existe et est lisible \
+avant d'essayer à nouveau de composer le message.
+; An unexpected error occurred while trying to encode file \
+; '%s'.\n\
+; \n\
+; Please make sure that this file exists and is readable \
+; before you retry to compose the message.
+;
+; FILENAME
+;
+MSG_ER_MISSINGATTFILE
+Lors de la composition des pièces jointes d'un message, le \
+fichier « %s » n'a pas été trouvé.\n\
+\n\
+Veuillez vous assurer que ce fichier existe et est lisible \
+avant d'essayer à nouveau de composer le message.
+; While trying to compose the attachments of a message, the \
+; file '%s' was found to be unavailable.\n\
+; \n\
+; Please make sure that this file exists and is readable \
+; before you retry to compose the message.
+;
+; FILENAME
+;
+MSG_ER_INVALIDATTFILE
+Lors de l'affichage d'une pièce jointe d'un message, \
+le fichier « %s » n'a pas été trouvé.\n\
+\n\
+Veuillez vous assurer que le fichier existe et peut \
+être lu.
+; While trying to view an attachment of a message the \
+; file '%s' was found to be unavailable.\n\
+; \n\
+; Please make sure that this file exists and is readable.
+;
+; FILENAME
+;
+MSG_ER_PRINTER_OFFLINE
+Lors de la vérification de l'état de l'imprimante,\n\
+YAM a détecté qu'elle était hors-ligne ou occupée.\n\
+\n\
+Veuillez vérifier votre imprimante et réessayer plus\n\
+tard.
+; While checking the printer state, YAM has\n\
+; found the printer to be offline or busy.\n\
+; \n\
+; Please check your printer or try again later.
+;
+MSG_ER_PRINTER_OFFLINE_GADS
+*_Réessayer|_Ignorer|_Annuler
+; *_Retry|_Ignore|_Cancel
+;
+MSG_ER_PRINTER_NOPAPER
+Lors de la vérification de l'état de l'imprimante,\n\
+YAM a détecté qu'elle n'avait plus de papier.\n\
+\n\
+Veuillez vérifier votre imprimante et réessayer un\n\
+peu plus tard.
+; While checking the printer state, YAM has\n\
+; found the printer to be out of paper.\n\
+; \n\
+; Please check your printer or try again later.
+;
+; ***NEW***
+;
+MSG_ER_PRINTER_NOPAPER_GADS
+*_Réessayer|_Ignorer|_Annuler
+; *_Retry|_Ignore|_Cancel
+;
+MSG_ER_PRINTER_FAILED
+Lors de l'envoi de données à l'imprimante, une\n\
+erreur a été renvoyée.\n\
+\n\
+Veuillez véirfier votre imprimante et réessayer\n\
+si votre document n'a pas été imprimé correctement.
+; While sending data to the printer an error\n\
+; was returned.\n\
+; \n\
+; Please check your printer and try again if\n\
+; your document wasn't printed properly.
 ;
