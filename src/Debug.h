@@ -79,6 +79,7 @@
 #define DBF_SPAM     (1<<17)    // for the spam dectection engine (BayesFilter.c)
 #define DBF_UIDL     (1<<18)    // for the UIDL managment (YAM_TR.c)
 #define DBF_HASH     (1<<19)    // for the HashTable management (HashTable.c)
+#define DBF_PRINT    (1<<20)    // for print management
 #define DBF_ALL      0xffffffff
 
 void SetupDebug(void);

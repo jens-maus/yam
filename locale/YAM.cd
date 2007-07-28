@@ -433,13 +433,6 @@ Load
 MSG_UT_PGPPassReq (140//)
 Please enter your PGP passphrase:
 ;
-; Replaced by MSG_APPICON_STATS
-MSG_UT_NoPrinter (142//)
-No printer or printer offline!
-;
-MSG_UT_NoPaper (143//)
-Out of paper!
-;
 ;
 ; Module MA - Procedures
 ;
@@ -6434,4 +6427,29 @@ file '%s' was found to be unavailable.\n\
 \n\
 Please make sure that this file exists and is readable.
 ; FILENAME
+;
+MSG_ER_PRINTER_OFFLINE (1987//)
+While checking the printer state, YAM has\n\
+found the printer to be offline or busy.\n\
+\n\
+Please check your printer or try again later.
+;
+MSG_ER_PRINTER_OFFLINE_GADS (1988//)
+*_Retry|Ignore|Cancel
+;
+MSG_ER_PRINTER_NOPAPER (1989//)
+While checking the printer state, YAM has\n\
+found the printer to be out of paper.\n\
+\n\
+Please check your printer or try again later.
+;
+MSG_ER_PRINTER_NOPAPER_GADS (1990//)
+*_Retry|Ignore|Cancel
+;
+MSG_ER_PRINTER_FAILED (1991//)
+While sending data to the printer an error\n\
+was returned.\n\
+\n\
+Please check your printer and try again if\n\
+your document wasn't printed properly.
 ;

@@ -2875,7 +2875,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
    BOOL doprint = (*arg != 0);
    struct Mail **mlist;
 
-   if(doprint && C->PrinterCheck && !CheckPrinter())
+   if(doprint && CheckPrinter() == FALSE)
      return;
 
    if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
@@ -2900,7 +2900,10 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
                   fclose(tf->FP); tf->FP = NULL;
 
                   if(doprint)
-                    CopyFile("PRT:", 0, tf->Filename, 0);
+                  {
+                    if(CopyFile("PRT:", 0, tf->Filename, 0) == FALSE)
+                      MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
+                  }
                   else
                     RE_Export(rmData, tf->Filename, "", "", 0, FALSE, FALSE, IntMimeTypeArray[MT_TX_PLAIN].ContentType);
 

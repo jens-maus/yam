@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-07-28  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c, misc: reworked the whole document print management including
+    the check if a printer is online/available or in an invalid state. Now
+    error requesters should be a bit more descriptive and point out the
+    particular problem more clearly including having a retry button in
+    case the printer check didn't work out.
+
 2007-07-27  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: if PGP isn't available the 'Add PGP key' menuitem will be

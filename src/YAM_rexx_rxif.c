@@ -1564,12 +1564,6 @@ void rx_readprint( UNUSED struct RexxHost *host, struct rxd_readprint **rxd, lon
          struct ReadMailData *rmData = G->ActiveRexxRMData;
          BOOL success = FALSE;
 
-         if(C->PrinterCheck && !CheckPrinter())
-         {
-           rd->rc = RETURN_ERROR;
-           break;
-         }
-
          if(rmData)
          {
             FILE *prt;
@@ -1593,12 +1587,14 @@ void rx_readprint( UNUSED struct RexxHost *host, struct rxd_readprint **rxd, lon
 
                DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_SaveDisplay, prt);
 
+               if(ferror(prt) == 0)
+                 success = TRUE;
+
                fclose(prt);
-               success = TRUE;
             }
          }
 
-         if(!success)
+         if(success == FALSE)
            rd->rc = RETURN_ERROR;
       }
       break;

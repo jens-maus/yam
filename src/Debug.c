@@ -117,6 +117,7 @@ void SetupDebug(void)
       { "spam",     DBF_SPAM    },
       { "uidl",     DBF_UIDL    },
       { "hash",     DBF_HASH    },
+      { "print",    DBF_PRINT   },
       { "all",      DBF_ALL     },
       { NULL,       0           }
     };

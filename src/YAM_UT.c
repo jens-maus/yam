@@ -6127,65 +6127,142 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
 
 ///
 /// CheckPrinter
-//  Checks if printer is ready
+//  Checks if printer is ready to print something
 BOOL CheckPrinter(void)
 {
-  BOOL result = TRUE;
-  struct MsgPort *PrintPort;
-  const char *error = NULL;
+  BOOL result = FALSE;
 
-  if((PrintPort = CreateMsgPort()) != NULL)
+  ENTER();
+
+  // check if the user wants us to check the printer state
+  // at all.
+  if(C->PrinterCheck == TRUE)
   {
-    struct IOStdReq *PrintIO;
+    struct MsgPort *mp;
 
-    //PrintPort->mp_Node.ln_Name = "YAM PrintPort";
-    if((PrintIO = (struct IOStdReq *)CreateIORequest(PrintPort, sizeof(struct IOStdReq))) != NULL)
+    // create the message port
+    if((mp = CreateMsgPort()) != NULL)
     {
-      if(OpenDevice("printer.device", 0, (struct IORequest *)PrintIO, 0) == 0)
+	    struct IOStdReq *pio;
+
+      // create the IO request for checking the printer status
+    	if((pio = (struct IOStdReq *)CreateIORequest(mp, sizeof(struct IOStdReq))) != NULL)
       {
-        UWORD Result = 0;
+        // from here on we assume the printer is online
+        // but we do deeper checks.
+        result = TRUE;
 
-        PrintIO->io_Message.mn_ReplyPort = PrintPort;
-        PrintIO->io_Command = PRD_QUERY;
-        PrintIO->io_Data = &Result;
-        DoIO((struct IORequest *)PrintIO);
+        // open printer.device unit 0
+      	if(OpenDevice("printer.device", 0, (struct IORequest *)pio, 0) == 0)
+      	{
+          // we allow to retry the checking so
+          // we iterate into a do/while loop
+          do
+          {
+            UWORD ioResult = 0;
 
-        // is this a parallel port printer?
-        if(PrintIO->io_Actual == 1)
-        {
-          if(((Result>>8) & 3) == 0)
-          {
-            // no error
-            error = NULL;
+            // fill the IO request for querying the
+            // device/line status of printer.device
+            pio->io_Message.mn_ReplyPort = mp;
+            pio->io_Command = PRD_QUERY;
+            pio->io_Data = &ioResult;
+            pio->io_Actual = 0;
+
+            // initiate the IO request
+            if(DoIO((struct IORequest *)pio) == 0)
+            {
+              // printer seems to be a parallel printer
+              if(pio->io_Actual == 1)
+              {
+                D(DBF_PRINT, "received io request status: %08lx", ioResult);
+
+                // check for any possible error state
+                if(isFlagSet(ioResult>>8, (1<<0))) // printer busy (offline)
+                {
+                  ULONG res;
+
+                  W(DBF_PRINT, "printer found to be in 'busy or offline' status");
+
+                  // issue a requester telling the user about the faulty
+                  // printer state
+                  res = MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq),
+                                                     tr(MSG_ER_PRINTER_OFFLINE_GADS),
+                                                     tr(MSG_ER_PRINTER_OFFLINE));
+
+                  if(res == 0) // Cancel/ESC
+                  {
+                    result = FALSE;
+                    break;
+                  }
+                  else if(res == 1) // Retry
+                    continue;
+                  else // Ignore
+                    break;
+                }
+                else if(isFlagSet(ioResult>>8, (1<<1))) // paper out
+                {
+                  ULONG res;
+
+                  W(DBF_PRINT, "printer found to be in 'paper out' status");
+
+                  // issue a requester telling the user about the faulty
+                  // printer state
+                  res = MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq),
+                                                     tr(MSG_ER_PRINTER_NOPAPER_GADS),
+                                                     tr(MSG_ER_PRINTER_NOPAPER));
+
+                  if(res == 0) // Cancel/ESC
+                  {
+                    result = FALSE;
+                    break;
+                  }
+                  else if(res == 1) // Retry
+                    continue;
+                  else // Ignore
+                    break;
+                }
+                else
+                {
+                  D(DBF_PRINT, "printer was found to be ready");
+                  break;
+                }
+              }
+              else
+              {
+                // the rest signals an unsupported printer device
+                // for status checking, so we assume the printer to
+                // be online
+                W(DBF_PRINT, "unsupported printer device ID '%ld'. Assuming online.", pio->io_Actual);
+                break;
+              }
+            }
+            else
+            {
+              W(DBF_PRINT, "DoIO() on printer status request failed!");
+              break;
+            }
           }
-          else if((Result>>8) & 01)
-          {
-            // /POUT asserted
-            error = tr(MSG_UT_NoPaper);
-          }
-          else
-          {
-            // /BUSY (hopefully no RingIndicator interference)
-            error = tr(MSG_UT_NoPrinter);
-          }
+          while(TRUE);
+
+          CloseDevice((struct IORequest *)pio);
         }
         else
-        {
-          // can't determine status of serial printers
-          error = NULL;
-        }
+          W(DBF_PRINT, "couldn't open printer.device unit 0");
 
-        CloseDevice((struct IORequest *)PrintIO);
-      }
-      DeleteIORequest((struct IORequest *)PrintIO);
+        DeleteIORequest((struct IORequest *)pio);
+	    }
+      else
+        W(DBF_PRINT, "wasn't able to create io request for printer state checking");
+
+    	DeleteMsgPort(mp);
     }
-    DeleteMsgPort(PrintPort);
+    else
+      W(DBF_PRINT, "wasn't able to create msg port for printer state checking");
   }
-
-  if(error != NULL)
+  else
   {
-    if(MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayCancelReq), error) == 0)
-      result = FALSE;
+    W(DBF_PRINT, "PrinterCheck disabled, assuming printer online");
+    result = TRUE;
   }
 
   RETURN(result);

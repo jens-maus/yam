@@ -1829,8 +1829,9 @@ HOOKPROTONHNONP(AB_PrintABookFunc, void)
   mode = MUI_Request(G->App, G->AB->GUI.WI, 0, tr(MSG_Print), tr(MSG_AB_PrintReqGads), tr(MSG_AB_PrintReq));
   if(mode != 0)
   {
-    if(C->PrinterCheck && CheckPrinter())
+    if(CheckPrinter())
     {
+      BOOL success = FALSE;
       FILE *prt;
 
       if((prt = fopen("PRT:", "w")) != NULL)
@@ -1846,9 +1847,20 @@ HOOKPROTONHNONP(AB_PrintABookFunc, void)
           fputs("------------------------------------------------------------------------\n", prt);
         }
         AB_PrintLevel(MUIV_NListtree_GetEntry_ListNode_Root, prt, mode);
-        fclose(prt);
         BusyEnd();
+
+        // before we close the file
+        // handle we check the error state
+        if(ferror(prt) == 0)
+          success = TRUE;
+
+        fclose(prt);
       }
+
+      // signal the failure to the user
+      // in case we were not able to print something
+      if(success == FALSE)
+        MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
     }
   }
 
@@ -1867,8 +1879,9 @@ HOOKPROTONHNONP(AB_PrintFunc, void)
 
   if((tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)) != NULL)
   {
-    if(C->PrinterCheck && CheckPrinter())
+    if(CheckPrinter())
     {
+      BOOL success = FALSE;
       FILE *prt;
 
       if((prt = fopen("PRT:", "w")) != NULL)
@@ -1878,12 +1891,24 @@ HOOKPROTONHNONP(AB_PrintFunc, void)
          setvbuf(prt, NULL, _IOFBF, SIZE_FILEBUF);
 
          set(G->App, MUIA_Application_Sleep, TRUE);
+
          AB_PrintLongEntry(prt, ab);
          if(ab->Type == AET_GROUP)
            AB_PrintLevel(tn, prt, 1);
+
+        // before we close the file
+        // handle we check the error state
+        if(ferror(prt) == 0)
+          success = TRUE;
+
          fclose(prt);
          set(G->App, MUIA_Application_Sleep, FALSE);
       }
+
+      // signal the failure to the user
+      // in case we were not able to print something
+      if(success == FALSE)
+        MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
     }
   }
 

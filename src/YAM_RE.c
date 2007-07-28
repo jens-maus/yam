@@ -338,11 +338,13 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
 ///
 /// RE_PrintFile
 //  Prints a file. Currently it is just dumped to PRT:
-void RE_PrintFile(char *filename)
+BOOL RE_PrintFile(const char *filename)
 {
+  BOOL success = FALSE;
+
   ENTER();
 
-  if(C->PrinterCheck == FALSE || CheckPrinter() == TRUE)
+  if(CheckPrinter() == TRUE)
   {
     switch(C->PrintMethod)
     {
@@ -350,12 +352,18 @@ void RE_PrintFile(char *filename)
         // continue
 
       default:
-        CopyFile("PRT:", 0, filename, 0);
+        success = CopyFile("PRT:", 0, filename, 0);
       break;
     }
+
+    // signal the failure to the user
+    // in case we were not able to print something
+    if(success == FALSE)
+      MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
   }
 
-  LEAVE();
+  RETURN(success);
+  return success;
 }
 
 ///
