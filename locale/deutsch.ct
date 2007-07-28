@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (27.07.2007)
+## version $VER: YAM.catalog 6.0 (28.07.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -60,8 +60,8 @@ MSG_Edit
 ; Edit...
 ;
 MSG_Okay
-_Okay
-; _Okay
+_Ok
+; _Ok
 ;
 MSG_Use
 _Benutzen
@@ -72,12 +72,12 @@ _Abbrechen
 ; _Cancel
 ;
 MSG_OkayReq
-*_Okay
-; *_Okay
+*_Ok
+; *_Ok
 ;
 MSG_OkayCancelReq
-*_Okay|_Abbrechen
-; *_Okay|_Cancel
+*_Ok|_Abbrechen
+; *_Ok|_Cancel
 ;
 MSG_YesNoReq
 *_Ja|_Nein
@@ -552,14 +552,6 @@ Laden
 MSG_UT_PGPPassReq
 Bitte geben Sie Ihr PGP Passwort ein:
 ; Please enter your PGP pass phrase:
-;
-MSG_UT_NoPrinter
-Kein Drucker oder Drucker offline!
-; No printer or printer offline!
-;
-MSG_UT_NoPaper
-Kein Papier im Drucker!
-; Out of paper!
 ;
 ;
 ; Module MA - Procedures
@@ -5243,8 +5235,8 @@ Alle Nachrichten, Postfächer und Konfigurationsdateien\ndieses Benutzers gehen v
 ; Do you really want to remove the user?
 ;
 MSG_US_RemoveReqGads
-*_Okay|_Dateien behalten|_Abbrechen
-; *_Okay|_Keep files|_Cancel
+*_Ok|_Dateien behalten|_Abbrechen
+; *_Ok|_Keep files|_Cancel
 ;
 ; Module US - Window
 ;
@@ -5713,10 +5705,6 @@ MSG_ATTACH_PART
 Teil
 ; Part
 ;
-MSG_ABOUT_OKAY_GAD
-\033bOk
-; \033bOkay
-;
 ;
 ; ADDED AFTER 15-MAR-2001
 ;
@@ -5848,8 +5836,8 @@ Soll bei leerer Betreff-\nzeile gewarnt werden?
 ; leave the subject line blank?
 ;
 MSG_WR_OKAYCANCELREQ
-*OK|Abbruch
-; *Okay|Cancel
+*_Ok|_Abbruch
+; *_Ok|_Cancel
 ;
 MSG_WR_NOSUBJECTREQ
 Kein Betreff gesetzt, trotzdem fortfahren?
@@ -7800,7 +7788,7 @@ richtig funktioniert (z.B. müssen sich alle Bilder\n\
 korrekt mit MultiView anzeigen lassen).
 ;
 MSG_ER_LOADDT_BUTTON
-_Okay
+*_Ok
 ;
 MSG_FOLDER_SNAPSHOT_TREE
 Anordnung fixieren
@@ -7812,7 +7800,7 @@ MSG_ER_USER_UNKNOWN_TITLE
 Unbekannter Benutzer
 ;
 MSG_ER_USER_UNKNOWN_BUTTON
-_Okay
+*_Ok
 ;
 MSG_ER_USER_UNKNOWN_ERROR
 Der Benutzer '%s' ist nicht bekannt!
@@ -8135,4 +8123,35 @@ trat ein Problem mit der Datei '%s' auf.\n\
 \n\
 Bitte stellen Sie sicher, dass die Datei existiert und \
 lesbar ist.
+;
+MSG_ER_PRINTER_OFFLINE
+Während des Versuches den Druckerstatus\n\
+abzufragen wurde festgestellt, dass der Drucker\n\
+entweder nicht erreichbar oder aber beschäftigt\n\
+ist.\n\
+\n\
+Bitte kontrollieren Sie den Drucker oder\n\
+versuchen Sie es später nochmal.
+;
+MSG_ER_PRINTER_OFFLINE_GADS
+*_Wiederholen|_Ignorieren|_Abbrechen
+;
+MSG_ER_PRINTER_NOPAPER
+Während des Versuches den Druckerstatus\n\
+abzufragen wurde festgestellt, dass der Drucker\n\
+über nicht genügend Papier verfügt.\n\
+ist.\n\
+Bitte kontrollieren Sie den Drucker oder\n\
+versuchen Sie es später nochmal.
+;
+MSG_ER_PRINTER_NOPAPER_GADS
+*_Wiederholen|_Ignorieren|_Abbrechen
+;
+MSG_ER_PRINTER_FAILED
+Während des Sendens von Daten gab der Drucker\n\
+einen Fehler zurück.\n\
+\n\
+Bitte kontrollieren Sie den Drucker und\n\
+versuchen Sie es erneut, falls Ihr Dokument\n\
+nicht korrekt gedruckt wurde.
 ;

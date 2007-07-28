@@ -58,7 +58,7 @@ MSG_Edit (12//)
 Edit...
 ;
 MSG_Okay (16//)
-_Okay
+_Ok
 ;
 MSG_Use (17//)
 _Use
@@ -67,10 +67,10 @@ MSG_Cancel (18//)
 _Cancel
 ;
 MSG_OkayReq (21//)
-*_Okay
+*_Ok
 ;
 MSG_OkayCancelReq (22//)
-*_Okay|_Cancel
+*_Ok|_Cancel
 ;
 MSG_YesNoReq (23//)
 *_Yes|_No
@@ -3826,7 +3826,7 @@ files belonging to this user will be lost!\n\
 Do you really want to remove the user?
 ;
 MSG_US_RemoveReqGads (1216//)
-*_Okay|_Keep files|_Cancel
+*_Ok|_Keep files|_Cancel
 ;
 ; Module US - Window
 ;
@@ -4186,9 +4186,6 @@ No.
 MSG_ATTACH_PART (1353//)
 Part
 ;
-MSG_ABOUT_OKAY_GAD (1354//)
-\033bOkay
-;
 ;
 ; ADDED AFTER 15-MAR-2001
 ;
@@ -4291,7 +4288,7 @@ Would you like to be warned if you\n\
 leave the subject line blank?
 ;
 MSG_WR_OKAYCANCELREQ (1388//)
-*Okay|Cancel
+*_Ok|_Cancel
 ;
 MSG_WR_NOSUBJECTREQ (1389//)
 The subject is missing, continue anyway?
@@ -6096,7 +6093,7 @@ correctly setup (e.g. that the image properly displays\n\
 in Multiview).
 ;
 MSG_ER_LOADDT_BUTTON (1907//)
-_Okay
+*_Ok
 ;
 MSG_FOLDER_SNAPSHOT_TREE (1908//)
 Snapshot arrangement
@@ -6108,7 +6105,7 @@ MSG_ER_USER_UNKNOWN_TITLE (1910//)
 Unknown user
 ;
 MSG_ER_USER_UNKNOWN_BUTTON (1911//)
-_Okay
+*_Ok
 ;
 MSG_ER_USER_UNKNOWN_ERROR (1912//)
 The user '%s' is not known!
@@ -6435,7 +6432,7 @@ found the printer to be offline or busy.\n\
 Please check your printer or try again later.
 ;
 MSG_ER_PRINTER_OFFLINE_GADS (1988//)
-*_Retry|Ignore|Cancel
+*_Retry|_Ignore|_Cancel
 ;
 MSG_ER_PRINTER_NOPAPER (1989//)
 While checking the printer state, YAM has\n\
@@ -6444,7 +6441,7 @@ found the printer to be out of paper.\n\
 Please check your printer or try again later.
 ;
 MSG_ER_PRINTER_NOPAPER_GADS (1990//)
-*_Retry|Ignore|Cancel
+*_Retry|_Ignore|_Cancel
 ;
 MSG_ER_PRINTER_FAILED (1991//)
 While sending data to the printer an error\n\

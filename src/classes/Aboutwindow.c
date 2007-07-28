@@ -251,7 +251,7 @@ OVERLOAD(OM_NEW)
 
       Child, HGroup,
         Child, RectangleObject, End,
-        Child, bt_okay = MakeButton(tr(MSG_ABOUT_OKAY_GAD)),
+        Child, bt_okay = MakeButton(tr(MSG_Okay)),
         Child, RectangleObject, End,
       End,
     End,

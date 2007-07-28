@@ -7,6 +7,10 @@ $URL$
 
 2007-07-28  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.cd, deutsch.ct: changed all 'Okay' occurances in requesters to
+    just show 'Ok', which in fact is more commonly used for such cases and
+    also more intuitive. In addition, adapted the german translation
+    accordingly to the latest changes in YAM.cd.
   * YAM_UT.c, misc: reworked the whole document print management including
     the check if a printer is online/available or in an invalid state. Now
     error requesters should be a bit more descriptive and point out the
