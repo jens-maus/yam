@@ -62,6 +62,8 @@ struct Data
 
   struct MUI_EventHandlerNode ehnode;
 
+  BOOL lastDecodedStatus;
+
   ULONG selectSecs;
   ULONG selectMicros;
   ULONG scaledWidth;
@@ -71,6 +73,7 @@ struct Data
 };
 */
 
+/* Private Functions */
 /// SelectionMsg
 struct SelectionMsg
 {
@@ -127,7 +130,7 @@ MakeStaticHook(SelectionHook, SelectionFunc);
 ///
 /// FindWriteWindow
 // find an open write window which matches a given one
-BOOL FindWriteWindow(struct Window *win)
+static BOOL FindWriteWindow(struct Window *win)
 {
   BOOL found = FALSE;
   ULONG i;
@@ -153,102 +156,53 @@ BOOL FindWriteWindow(struct Window *win)
   return found;
 }
 ///
-
-/* Overloaded Methods */
-/// OVERLOAD(OM_NEW)
-OVERLOAD(OM_NEW)
+/// LoadImage
+// function that (re)loads the images for both selected and unselected
+// state
+static void LoadImage(Object *obj, struct Data *data)
 {
   ENTER();
 
-  if((obj = DoSuperNew(cl, obj,
-      MUIA_FillArea,    FALSE, // do not care about background filling
-    TAG_MORE, inittags(msg))))
+  if(data->mailPart != NULL)
   {
-    GETDATA;
-    struct TagItem *tags = inittags(msg);
-    struct TagItem *tag;
+    struct Part *mailPart = data->mailPart;
+    struct DiskObject *diskObject = NULL;
 
-    while((tag = NextTagItem(&tags)))
+    // we first make sure we have freed everything
+    if(data->normalBitMap)
     {
-      switch(tag->ti_Tag)
-      {
-        ATTR(MailPart)  : data->mailPart = (struct Part *)tag->ti_Data; break;
-        ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
-        ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
-      }
+      FreeBitMap(data->normalBitMap);
+      data->normalBitMap = NULL;
     }
 
-    if(data->mailPart)
+    if(data->normalBitMask)
     {
-      struct Part *mp = data->mailPart;
-      char sizestr[SIZE_DEFAULT];
-
-      FormatSize(mp->Size, sizestr, sizeof(sizestr), SF_AUTO);
-
-      snprintf(data->shortHelp, sizeof(data->shortHelp), tr(MSG_MA_MIMEPART_INFO), mp->Nr,
-                                                                                       mp->Name,
-                                                                                       mp->Description,
-                                                                                       DescribeCT(mp->ContentType),
-                                                                                       mp->ContentType,
-                                                                                       sizestr);
-      set(obj, MUIA_ShortHelp, data->shortHelp);
+      FreeBitMap(data->normalBitMask);
+      data->normalBitMask = NULL;
     }
-  }
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
-}
-///
-/// OVERLOAD(OM_DISPOSE)
-OVERLOAD(OM_DISPOSE)
-{
-  GETDATA;
+    if(data->selectedBitMap)
+    {
+      FreeBitMap(data->selectedBitMap);
+      data->selectedBitMap = NULL;
+    }
 
-  if(data->dropPath)
-  {
-    free(data->dropPath);
-    data->dropPath = NULL;
-  }
+    if(data->selectedBitMask)
+    {
+      FreeBitMap(data->selectedBitMask);
+      data->selectedBitMask = NULL;
+    }
 
-  return DoSuperMethodA(cl, obj, msg);
-}
-///
-/// OVERLOAD(OM_GET)
-OVERLOAD(OM_GET)
-{
-  GETDATA;
-  ULONG *store = ((struct opGet *)msg)->opg_Storage;
+    if(data->diskObject)
+    {
+      FreeDiskObject(data->diskObject);
+      data->diskObject = NULL;
+    }
 
-  switch(((struct opGet *)msg)->opg_AttrID)
-  {
-    ATTR(DoubleClick) : *store = 1; return TRUE;
-    ATTR(DropPath)    : *store = (ULONG)data->dropPath;   return TRUE;
-    ATTR(MailPart)    : *store = (ULONG)data->mailPart;   return TRUE;
-    ATTR(DiskObject)  : *store = (ULONG)data->diskObject; return TRUE;
-  }
-
-  return DoSuperMethodA(cl, obj, msg);
-}
-///
-/// OVERLOAD(MUIM_Setup)
-OVERLOAD(MUIM_Setup)
-{
-  GETDATA;
-  struct DiskObject *diskObject = NULL;
-  struct Part *mailPart = data->mailPart;
-  ULONG result;
-
-  ENTER();
-
-  // call the supermethod of the supercall first
-  result = DoSuperMethodA(cl, obj, msg);
-
-  if(result != 0 && mailPart != NULL)
-  {
     // only if we have at least icon.library >= v44 and we find deficons
     // we try to identify the file with deficons
     if(mailPart->Decoded && mailPart->Filename[0] != '\0' &&
-       IconBase->lib_Version >= 44 &&  FindPort("DEFICONS"))
+       IconBase->lib_Version >= 44 && FindPort("DEFICONS"))
     {
       D(DBF_GUI, "retrieving diskicon via DEFICONS for '%s'", mailPart->Filename);
 
@@ -273,17 +227,17 @@ OVERLOAD(MUIM_Setup)
         const char *def;
 
         // build the defaultname now
-        if(!strnicmp(mailPart->ContentType, "image", 5))
+        if(strnicmp(mailPart->ContentType, "image", 5) == 0)
           def = "picture";
-        else if(!strnicmp(mailPart->ContentType, "audio", 5))
+        else if(strnicmp(mailPart->ContentType, "audio", 5) == 0)
           def = "audio";
-        else if(!strnicmp(mailPart->ContentType, "text", 4))
+        else if(strnicmp(mailPart->ContentType, "text", 4) == 0)
         {
           if(strlen(mailPart->ContentType) > 5)
           {
-            if(!strnicmp((mailPart->ContentType)+5, "html", 4))
+            if(strnicmp((mailPart->ContentType)+5, "html", 4) == 0)
               def = "html";
-            else if(!strnicmp((mailPart->ContentType)+5, "plain", 5))
+            else if(strnicmp((mailPart->ContentType)+5, "plain", 5) == 0)
               def = "ascii";
             else
               def = "text";
@@ -308,18 +262,20 @@ OVERLOAD(MUIM_Setup)
                                    ICONGETA_GetDefaultType, WBPROJECT,
                                    ICONGETA_Screen,         _screen(obj),
                                    TAG_DONE);
+
+          D(DBF_GUI, "diskobject for '%s' retrieved from default WBPROJECT type", mailPart->Filename);
         }
+        else
+          D(DBF_GUI, "diskobject for '%s' retrieved from default '%s' type", mailPart->Filename, def);
       }
       else
       {
         // on an old OS <= 3.1 we can only use a project icon for
         // the attachment
         diskObject = GetDefDiskObject(WBPROJECT);
+
+        D(DBF_GUI, "diskobject for '%s' retrieved from default WBPROJECT (OS3.1) type", mailPart->Filename);
       }
-    }
-    else
-    {
-      D(DBF_GUI, "DiskObject for file [%s] retrieved with DefIcons", mailPart->Filename);
     }
 
     // now that we should have the diskObject we get the image of it, blit it in
@@ -588,10 +544,111 @@ OVERLOAD(MUIM_Setup)
         FreeBitMap(orgBitMap);
       }
     }
+    else
+      W(DBF_GUI, "wasn't able to retrieve any diskobject for file '%s'", mailPart->Filename);
 
     // store the diskObject in our instance data for later
     // reference
     data->diskObject = diskObject;
+    data->lastDecodedStatus = mailPart->Decoded;
+  }
+
+  LEAVE();
+}
+
+///
+
+/* Overloaded Methods */
+/// OVERLOAD(OM_NEW)
+OVERLOAD(OM_NEW)
+{
+  ENTER();
+
+  if((obj = DoSuperNew(cl, obj,
+      MUIA_FillArea,    FALSE, // do not care about background filling
+    TAG_MORE, inittags(msg))))
+  {
+    GETDATA;
+    struct TagItem *tags = inittags(msg);
+    struct TagItem *tag;
+
+    while((tag = NextTagItem(&tags)))
+    {
+      switch(tag->ti_Tag)
+      {
+        ATTR(MailPart)  : data->mailPart = (struct Part *)tag->ti_Data; break;
+        ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
+        ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
+      }
+    }
+
+    if(data->mailPart)
+    {
+      struct Part *mp = data->mailPart;
+      char sizestr[SIZE_DEFAULT];
+
+      FormatSize(mp->Size, sizestr, sizeof(sizestr), SF_AUTO);
+
+      snprintf(data->shortHelp, sizeof(data->shortHelp), tr(MSG_MA_MIMEPART_INFO), mp->Nr,
+                                                                                   mp->Name,
+                                                                                   mp->Description,
+                                                                                   DescribeCT(mp->ContentType),
+                                                                                   mp->ContentType,
+                                                                                   sizestr);
+      set(obj, MUIA_ShortHelp, data->shortHelp);
+    }
+  }
+
+  RETURN((ULONG)obj);
+  return (ULONG)obj;
+}
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  GETDATA;
+
+  if(data->dropPath)
+  {
+    free(data->dropPath);
+    data->dropPath = NULL;
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+  GETDATA;
+  ULONG *store = ((struct opGet *)msg)->opg_Storage;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    ATTR(DoubleClick) : *store = 1; return TRUE;
+    ATTR(DropPath)    : *store = (ULONG)data->dropPath;   return TRUE;
+    ATTR(MailPart)    : *store = (ULONG)data->mailPart;   return TRUE;
+    ATTR(DiskObject)  : *store = (ULONG)data->diskObject; return TRUE;
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+///
+/// OVERLOAD(MUIM_Setup)
+OVERLOAD(MUIM_Setup)
+{
+  GETDATA;
+  ULONG result;
+
+  ENTER();
+
+  // call the supermethod of the supercall first
+  result = DoSuperMethodA(cl, obj, msg);
+
+  if(result != 0 && data->mailPart != NULL)
+  {
+    // make sure to load/reload the attachment image
+    LoadImage(obj, data);
 
     // add an event handler for the drag&drop operations
     // this object supports.
@@ -690,6 +747,15 @@ OVERLOAD(MUIM_Draw)
     struct BitMap *bitmap;
     struct BitMap *bitmask;
 
+    // we have to check whether the decoded status
+    // of our mail part changed and if so we have to reload
+    // the image in case
+    if(data->mailPart != NULL && data->mailPart->Decoded == TRUE &&
+       data->lastDecodedStatus == FALSE && IconBase->lib_Version >= 44 && FindPort("DEFICONS"))
+    {
+      LoadImage(obj, data);
+    }
+
     // check the selected state
     if(xget(obj, MUIA_Selected))
     {
@@ -705,15 +771,14 @@ OVERLOAD(MUIM_Draw)
     // draw the background first.
     DoMethod(obj, MUIM_DrawBackground, _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0, 0, MUIF_NONE);
 
-    if(bitmask)
+    if(bitmap != NULL)
     {
       // we use an own BltMaskBitMapRastPort() implemenation to also support
       // interleaved images.
-      MyBltMaskBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), (ABC|ABNC|ANBC), bitmask->Planes[0]);
-    }
-    else
-    {
-      BltBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), (ABC|ABNC));
+      if(bitmask != NULL)
+        MyBltMaskBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), (ABC|ABNC|ANBC), bitmask->Planes[0]);
+      else
+        BltBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), (ABC|ABNC));
     }
   }
 
@@ -1034,8 +1099,6 @@ OVERLOAD(MUIM_DeleteDragImage)
   return result;
 }
 ///
-
-/* Private Functions */
 
 /* Public Methods */
 

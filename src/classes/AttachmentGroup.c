@@ -772,13 +772,22 @@ DECLARE(Display) // struct Part *part
 
     BusyText(tr(MSG_BusyDecDisplaying), "");
 
-    RE_DecodePart(msg->part);
-    RE_DisplayMIME(msg->part->Filename, msg->part->ContentType);
-
-    if(oldDecoded == FALSE && msg->part->Decoded == TRUE)
+    // try to decode the message part
+    if(RE_DecodePart(msg->part))
     {
-      // now we know the exact size of the file and can redraw ourself
-      MUI_Redraw(obj, MADF_DRAWOBJECT);
+      // run our MIME routines for displaying the part
+      // to the user
+      RE_DisplayMIME(msg->part->Filename, msg->part->ContentType);
+
+      // if the part was decoded in RE_DecodePart() then
+      // we issue a full refresh of the attachment image
+      if(oldDecoded == FALSE && msg->part->Decoded == TRUE)
+      {
+        // issue a full redraw of the group which in fact
+        // will issue a refresh of all images as well in
+        // case they have changed.
+        MUI_Redraw(obj, MADF_DRAWOBJECT);
+      }
     }
 
     BusyEnd();
