@@ -783,39 +783,15 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
           }
 
           // if we have a valid mimeTypeNode now we can fill it with valid data
-          if(mt)
+          if(mt != NULL)
           {
-            for(p = mt->ContentType; *ctype && strlen(mt->ContentType) < sizeof(mt->ContentType); ctype++)
-            {
-              if(*ctype == '*')
-              {
-                *p++ = '#';
-                *p++ = '?';
-              }
-              else
-                *p++ = *ctype;
-            }
+            strlcpy(mt->ContentType, ctype, sizeof(mt->ContentType));
+            strlcpy(mt->Command, command, sizeof(mt->Command);
+            strlcpy(mt->Extension, ext, sizeof(mt->Extension);
 
-            *p = '\0';
-
-            if(*command)
-            {
-              for(p = mt->Command; *command && strlen(mt->Command) < sizeof(mt->Command); command++)
-              {
-                if(*command == '%' && command[1] == 'f')
-                {
-                  *p++ = *command++;
-                  *p++ = 's';
-                }
-                else
-                  *p++ = *command;
-              }
-
-              *p = '\0';
-            }
-
-            if(*ext)
-              strlcpy(mt->Extension, ext, sizeof(mt->Extension));
+            // replace any '%f' in the command string by '%s'
+            while((p = strstr(mt->Command, "%f") != NULL)
+              p[1] = 's';
           }
         }
 
