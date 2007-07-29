@@ -7,6 +7,9 @@ $URL$
 
 2007-07-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * misc: all FindPort() uses are now properly surrounded by Forbid/Permit
+    calls as this is what the official documentation suggests. Otherwise
+    we might run into race conditions sooner or later.
   * AttachmentGroup.c, AttachmentImage.c: when the user is doubleclicking on
     an attachment and the action causes the attachment to be decoded, YAM will
     now refresh the attachment icon as it might happen that a different icon

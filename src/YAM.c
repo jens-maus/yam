@@ -2143,13 +2143,27 @@ static void Initialise(BOOL hidden)
   if((startupSema = CreateStartupSemaphore()) == NULL)
     Abort(tr(MSG_ER_CANNOT_CREATE_SEMAPHORE));
 
+  // try to find out if DefIcons is running or not by querying
+  // the Port of DefIcons
+  Forbid();
+  G->DefIconsAvailable = (FindPort("DEFICONS") != NULL);
+  Permit();
+
   // Initialise and Setup our own MUI custom classes before we go on
   if(YAM_SetupClasses() == FALSE)
     Abort(tr(MSG_ErrorClasses));
 
   // allocate the MUI root object and popup the progress/about window
   if(Root_New(hidden) == FALSE)
-    Abort(FindPort("YAM") ? NULL : tr(MSG_ErrorMuiApp));
+  {
+    BOOL activeYAM;
+
+    Forbid();
+    activeYAM = (FindPort("YAM") != NULL);
+    Permit();
+
+    Abort(activeYAM ? NULL : tr(MSG_ErrorMuiApp));
+  }
 
   // signal the splash window to show a 10% gauge
   SplashProgress(tr(MSG_LoadingGFX), 10);

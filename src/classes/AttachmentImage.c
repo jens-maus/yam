@@ -202,7 +202,7 @@ static void LoadImage(Object *obj, struct Data *data)
     // only if we have at least icon.library >= v44 and we find deficons
     // we try to identify the file with deficons
     if(mailPart->Decoded && mailPart->Filename[0] != '\0' &&
-       IconBase->lib_Version >= 44 && FindPort("DEFICONS"))
+       IconBase->lib_Version >= 44 && G->DefIconsAvailable)
     {
       D(DBF_GUI, "retrieving diskicon via DEFICONS for '%s'", mailPart->Filename);
 
@@ -751,7 +751,7 @@ OVERLOAD(MUIM_Draw)
     // of our mail part changed and if so we have to reload
     // the image in case
     if(data->mailPart != NULL && data->mailPart->Decoded == TRUE &&
-       data->lastDecodedStatus == FALSE && IconBase->lib_Version >= 44 && FindPort("DEFICONS"))
+       data->lastDecodedStatus == FALSE && IconBase->lib_Version >= 44 && G->DefIconsAvailable)
     {
       LoadImage(obj, data);
     }

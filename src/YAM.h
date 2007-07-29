@@ -134,6 +134,7 @@ struct Global
    BOOL                     InStartupPhase;
    BOOL                     NoImageWarning;
    BOOL                     NoCatalogTranslation;
+   BOOL                     DefIconsAvailable;
 
    struct DateStamp         StartDate;
    struct Users             Users;
