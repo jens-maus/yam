@@ -6311,7 +6311,7 @@ Zeichen gefunden und in der unkodierten Version entfernt.
 ;
 MSG_ER_UUDEC_TAGMISS
 Während des Versuches die Datei '%s' mittels UUdecode zu dekodieren \
-konnte das im UUcode standard definierte Tag '%s' nicht gefunden werden.
+konnte das im UUcode Standard definierte Tag '%s' nicht gefunden werden.
 ; FILENAME, TAG
 ;
 MSG_ER_UUDEC_CHECKSUM
@@ -8140,7 +8140,7 @@ MSG_ER_PRINTER_NOPAPER
 Während des Versuches den Druckerstatus\n\
 abzufragen wurde festgestellt, dass der Drucker\n\
 über nicht genügend Papier verfügt.\n\
-ist.\n\
+\n\
 Bitte kontrollieren Sie den Drucker oder\n\
 versuchen Sie es später nochmal.
 ;
@@ -8148,7 +8148,7 @@ MSG_ER_PRINTER_NOPAPER_GADS
 *_Wiederholen|_Ignorieren|_Abbrechen
 ;
 MSG_ER_PRINTER_FAILED
-Während des Sendens von Daten gab der Drucker\n\
+Während des sendens von Daten gab der Drucker\n\
 einen Fehler zurück.\n\
 \n\
 Bitte kontrollieren Sie den Drucker und\n\
