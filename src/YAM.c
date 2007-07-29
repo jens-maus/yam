@@ -2112,12 +2112,12 @@ static void Initialise(BOOL hidden)
   #endif
 
   // Lets check for the correct TheBar.mcc version
-  CheckMCC(MUIC_TheBar,     21, 3, TRUE, "http://www.sf.net/projects/thebar/");
-  CheckMCC(MUIC_TheBarVirt, 21, 3, TRUE, "http://www.sf.net/projects/thebar/");
-  CheckMCC(MUIC_TheButton,  21, 3, TRUE, "http://www.sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheBar,     21, 4, TRUE, "http://www.sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheBarVirt, 21, 4, TRUE, "http://www.sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheButton,  21, 4, TRUE, "http://www.sf.net/projects/thebar/");
 
   // Lets check for the correct BetterString.mcc version
-  CheckMCC(MUIC_BetterString, 11, 10, TRUE, "http://www.sf.net/projects/bstring-mcc/");
+  CheckMCC(MUIC_BetterString, 11, 11, TRUE, "http://www.sf.net/projects/bstring-mcc/");
 
   // we also make sure the user uses the latest brand of all other NList classes, such as
   // NListview, NFloattext etc.
