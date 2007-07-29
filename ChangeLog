@@ -7,6 +7,8 @@ $URL$
 
 2007-07-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: bumped all minimum required versions for all NList classes to
+    the ones in the very latest NList 0.99 release.
   * misc: all FindPort() uses are now properly surrounded by Forbid/Permit
     calls as this is what the official documentation suggests. Otherwise
     we might run into race conditions sooner or later.
