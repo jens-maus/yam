@@ -7,6 +7,8 @@ $URL$
 
 2007-07-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: also bumped the min. versions for TextEditor.mcc and codesets
+    library as new more stable versions are out now.
   * YAM.c: also bumped the minimum required versions for TheBar.mcc and
     BetterString.mcc to the recently released versions.
   * YAM.c: bumped all minimum required versions for all NList classes to
