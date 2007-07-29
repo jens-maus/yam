@@ -786,11 +786,11 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
           if(mt != NULL)
           {
             strlcpy(mt->ContentType, ctype, sizeof(mt->ContentType));
-            strlcpy(mt->Command, command, sizeof(mt->Command);
-            strlcpy(mt->Extension, ext, sizeof(mt->Extension);
+            strlcpy(mt->Command, command, sizeof(mt->Command));
+            strlcpy(mt->Extension, ext, sizeof(mt->Extension));
 
             // replace any '%f' in the command string by '%s'
-            while((p = strstr(mt->Command, "%f") != NULL)
+            while((p = strstr(mt->Command, "%f")) != NULL)
               p[1] = 's';
           }
         }
