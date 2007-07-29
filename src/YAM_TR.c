@@ -1902,7 +1902,7 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
       // write it to the file.
       if(l == sizeof(line) || done == TRUE)
       {
-        // update the transferstatus
+        // update the transfer status
         if(ts != NULL)
           TR_TransStat_Update(ts, l);
 
@@ -3844,9 +3844,9 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 
      // reset the statistics display
      snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), 0);
-     SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_Current,  0,
+     SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_Max,      0,
+                                   MUIA_Gauge_Current,  0,
                                    MUIA_Gauge_InfoText, G->TR->CountLabel,
-                                   MUIA_Gauge_Max,      0,
                                    TAG_DONE);
 
      // and last, but not least update the gauge.
@@ -3855,9 +3855,9 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
      snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                             str_size_curr, str_size_curr_max);
 
-     SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current,  0,
+     SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      0,
+                                   MUIA_Gauge_Current,  0,
                                    MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                                   MUIA_Gauge_Max,      0,
                                    TAG_DONE);
    }
 
@@ -4343,7 +4343,8 @@ static void TR_TransStat_Init(struct TransStat *ts)
 {
   ENTER();
 
-  ts->Msgs_Tot = ts->Size_Tot = 0;
+  ts->Msgs_Tot = 0;
+  ts->Size_Tot = 0;
 
   if(G->TR->GUI.GR_LIST)
   {
@@ -4376,7 +4377,8 @@ static void TR_TransStat_Start(struct TransStat *ts)
 {
   ENTER();
 
-  ts->Msgs_Done = ts->Size_Done = 0;
+  ts->Msgs_Done = 0;
+  ts->Size_Done = 0;
 
   // get the actual time we started the TransferStatus
   GetSysTime(TIMEVAL(&ts->Clock_Last));
@@ -4385,6 +4387,7 @@ static void TR_TransStat_Start(struct TransStat *ts)
   snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), ts->Msgs_Tot);
   SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
                                 MUIA_Gauge_Max,      ts->Msgs_Tot,
+                                MUIA_Gauge_Current,  0,
                                 TAG_DONE);
 
   LEAVE();
@@ -4409,19 +4412,19 @@ static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, L
     if(G->TR->GUI.GR_LIST && listpos >= 0)
       set(G->TR->GUI.LV_MAILS, MUIA_NList_Active, listpos);
 
-     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, status);
-     set(G->TR->GUI.GA_COUNT, MUIA_Gauge_Current, index);
+    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, status);
+    set(G->TR->GUI.GA_COUNT, MUIA_Gauge_Current, index);
 
-     // and last, but not least update the gauge.
-     FormatSize(0, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
-     FormatSize(size, ts->str_size_curr_max, sizeof(ts->str_size_curr_max), SF_AUTO);
-     snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
+    // and last, but not least update the gauge.
+    FormatSize(0, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
+    FormatSize(size, ts->str_size_curr_max, sizeof(ts->str_size_curr_max), SF_AUTO);
+    snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                             ts->str_size_curr, ts->str_size_curr_max);
 
-     SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current,  0,
-                                   MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                                   MUIA_Gauge_Max,      0,
-                                   TAG_DONE);
+    SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      0,
+                                  MUIA_Gauge_Current,  0,
+                                  MUIA_Gauge_InfoText, G->TR->BytesLabel,
+                                  TAG_DONE);
   }
 
   LEAVE();
@@ -4464,11 +4467,11 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
 
           // first we calculate the speed in bytes/sec
           // to display to the user
-          if(deltatime)
-            speed = ts->Size_Done/deltatime;
+          if(deltatime != 0)
+            speed = ts->Size_Done / deltatime;
 
           // calculate the estimated remaining time
-          if(speed && ((remclock = (ts->Size_Tot/speed)-deltatime) < 0))
+          if(speed != 0 && ((remclock = (ts->Size_Tot / speed) - deltatime) < 0))
             remclock = 0;
 
           // format the size done and size total strings
@@ -4479,8 +4482,8 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
           // now format the StatsLabel and update it
           snprintf(G->TR->StatsLabel, sizeof(G->TR->StatsLabel), tr(MSG_TR_TRANSFERSTATUS),
                                       ts->str_size_done, ts->str_size_tot, ts->str_speed,
-                                      deltatime/60, deltatime%60,
-                                      remclock/60, remclock%60);
+                                      deltatime / 60, deltatime % 60,
+                                      remclock / 60, remclock % 60);
 
           set(G->TR->GUI.TX_STATS, MUIA_Text_Contents, G->TR->StatsLabel);
 
@@ -4488,9 +4491,9 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
           FormatSize(ts->Size_Curr, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
           snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                                  ts->str_size_curr, ts->str_size_curr_max);
-          SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current,  ts->Size_Curr/1024,
+          SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      ts->Size_Curr_Max / 1024,
+                                        MUIA_Gauge_Current,  ts->Size_Curr / 1024,
                                         MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                                        MUIA_Gauge_Max,      ts->Size_Curr_Max/1024,
                                         TAG_DONE);
 
           // signal the application to update now
@@ -4523,11 +4526,11 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
 
       // first we calculate the speed in bytes/sec
       // to display to the user
-      if(deltatime)
-        speed = ts->Size_Done/deltatime;
+      if(deltatime != 0)
+        speed = ts->Size_Done / deltatime;
 
       // calculate the estimated remaining time
-      if(speed && ((remclock = (ts->Size_Tot/speed)-deltatime) < 0))
+      if(speed != 0 && ((remclock = (ts->Size_Tot / speed)-deltatime) < 0))
         remclock = 0;
 
       // format the size done and size total strings
@@ -4538,17 +4541,26 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
       // now format the StatsLabel and update it
       snprintf(G->TR->StatsLabel, sizeof(G->TR->StatsLabel), tr(MSG_TR_TRANSFERSTATUS),
                                   size_done, size_total, speed_str,
-                                  deltatime/60, deltatime%60,
-                                  remclock/60, remclock%60);
+                                  deltatime / 60, deltatime % 60,
+                                  remclock / 60, remclock % 60);
 
       set(G->TR->GUI.TX_STATS, MUIA_Text_Contents, G->TR->StatsLabel);
 
       // if size_increment is a negative number it is
       // a signal that we are at the end of the transfer, so we can put up
-      // the gauge to maximum
-      SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current,  100,
-                                    MUIA_Gauge_Max,      100,
+      // the gauge to maximum and show 100% size progress
+      FormatSize(ts->Size_Curr, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
+      snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
+                                                             ts->str_size_curr, ts->str_size_curr_max);
+      SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,     100,
+                                    MUIA_Gauge_Current, 100,
+                                    MUIA_Gauge_InfoText, G->TR->BytesLabel,
                                     TAG_DONE);
+
+
+
+
+
 
       // signal the application to update now
       DoMethod(G->App, MUIM_Application_InputBuffered);
