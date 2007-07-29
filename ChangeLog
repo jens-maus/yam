@@ -18,6 +18,10 @@ $URL$
 
 2007-07-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: the final statistics update during a mail transfer did not update
+    the transferred size of the last mail and hence the last shown size could
+    differ from the total size of a mail. One really needs slow connections to
+    see this effect.
   * YAM_COg.c: when importing an alien MIME type list a '*' is no longer replaced
     by '#?'.
   * ImageCache.c: reordered the attributes for picture.datatype. A friend bitmap

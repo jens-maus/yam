@@ -4511,7 +4511,10 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
     ULONG speed = 0;
     LONG remclock = 0;
 
+    // first update the total transferred size
     ts->Size_Done += ts->Size_Curr_Max - ts->Size_Curr;
+    // we are done with this mail, so make sure the current size equals the final size
+    ts->Size_Curr = ts->Size_Curr_Max;
 
     // if the window isn`t open we don`t need to update it, do we?
     if(xget(G->TR->GUI.WI, MUIA_Window_Open))
