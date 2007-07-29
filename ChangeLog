@@ -18,6 +18,9 @@ $URL$
 
 2007-07-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: reordered the attributes for picture.datatype. A friend bitmap
+    will now be requested as soon as a screen is set and not at object creation
+    time.
   * YAM_TR.c: MUIA_Gauge_Max must be set before MUIA_Gauge_Current, else the
     gauge bar will be calculated on wrong data. Additionally the gauge label
     is now set to "maxsize/maxsize" upon completition of one mail.

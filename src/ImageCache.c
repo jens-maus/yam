@@ -123,10 +123,7 @@ static BOOL LoadImage(struct ImageCacheNode *node)
     // images from disk again and again all the time.
     o = NewDTObject((char *)node->filename, DTA_GroupID,          GID_PICTURE,
                                             DTA_SourceType,       DTST_FILE,
-                                            OBP_Precision,        PRECISION_EXACT,
                                             PDTA_DestMode,        PMODE_V43,
-                                            PDTA_UseFriendBitMap, TRUE,
-                                            PDTA_Remap,           TRUE,
                                             TAG_DONE);
 
     myproc->pr_WindowPtr = oldwindowptr; // restore window pointer.
@@ -180,7 +177,10 @@ static BOOL RemapImage(struct ImageCacheNode *node, const struct Screen *scr)
   if(node->dt_obj != NULL)
   {
     // first set the new screen
-    SetDTAttrs(node->dt_obj, NULL, NULL, PDTA_Screen, scr,
+    SetDTAttrs(node->dt_obj, NULL, NULL, PDTA_UseFriendBitMap, TRUE,
+                                         PDTA_Remap, TRUE,
+                                         PDTA_Screen, scr,
+                                         OBP_Precision, PRECISION_EXACT,
                                          TAG_DONE);
 
     // either the remap must succeed or we just reset the screen
