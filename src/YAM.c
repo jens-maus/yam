@@ -575,7 +575,7 @@ static void TC_Prepare(enum TimerIO tio, int seconds, int micros)
 ///
 /// TC_Start
 //  Start a delay depending on the time specified
-static void TC_Start(enum TimerIO tio)
+void TC_Start(enum TimerIO tio)
 {
   struct TC_Request *timer = &TCData.timer[tio];
 
@@ -619,7 +619,7 @@ void TC_Stop(enum TimerIO tio)
   ENTER();
 
   // check if we have a already issued ioreq running
-  if(timer->isRunning)
+  if(timer->isRunning == TRUE)
   {
     struct IORequest *ioreq = &timer->tr->Request;
 

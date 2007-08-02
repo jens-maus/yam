@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-02  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, UpdateCheck.c: the get/send mail buttons and menu items are now
+    disabled during an update check to avoid a possible mail transfer at the
+    same time, as that may cause crashes.
+
 2007-07-29  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: also bumped the min. versions for TextEditor.mcc and codesets

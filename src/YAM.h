@@ -165,6 +165,7 @@ struct xpkPackerNode
   struct XpkPackerInfo info;
 };
 
+void TC_Start(enum TimerIO tio);
 void TC_Restart(enum TimerIO tio, int seconds, int micros);
 void TC_Stop(enum TimerIO tio);
 
