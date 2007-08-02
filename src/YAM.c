@@ -129,9 +129,12 @@ static BPTR olddirlock = -1; /* -1 is an unset indicator */
 // TimerIO structures we use
 struct TC_Request
 {
-  struct TimeRequest *tr; // pointer to the timerequest
-  BOOL isRunning;         // if the request is currenty active/running
-  BOOL isPrepared;        // if the request is prepared to get fired
+  struct TimeRequest *tr;       // pointer to the timerequest
+  struct TimeVal startTime;     // at which time has this request been started
+  struct TimeVal remainingTime; // the remaining time if the request was paused
+  BOOL isRunning;               // if the request is currenty active/running
+  BOOL isPrepared;              // if the request is prepared to get fired
+  BOOL isPaused;                // if the request is currently paused
 };
 
 static struct TC_Data
@@ -559,6 +562,9 @@ static void TC_Prepare(enum TimerIO tio, int seconds, int micros)
       tr->Request.io_Command  = TR_ADDREQUEST;
       tr->Time.Seconds        = seconds;
       tr->Time.Microseconds   = micros;
+      // remember the remaining time
+      timer->remainingTime.Seconds = seconds;
+      timer->remainingTime.Microseconds = micros;
 
       // flag the timer to be prepared to get fired later on
       timer->isPrepared = TRUE;
@@ -596,6 +602,8 @@ static void TC_Start(enum TimerIO tio)
 
     // fire the timer by doing a SendIO()
     SendIO(&timer->tr->Request);
+    // remember the start time
+    GetSysTime(TIMEVAL(&timer->startTime));
 
     // signal that our timer is running
     timer->isRunning = TRUE;
@@ -630,6 +638,10 @@ void TC_Stop(enum TimerIO tio)
 
       WaitIO(ioreq);
 
+      // there is no time left for this request
+      timer->remainingTime.Seconds = 0;
+      timer->remainingTime.Microseconds = 0;
+
       // make sure the timer is signalled to be NOT running
       timer->isRunning = FALSE;
       timer->isPrepared = FALSE;
@@ -641,6 +653,94 @@ void TC_Stop(enum TimerIO tio)
   }
   else
     W(DBF_TIMERIO, "timer[%ld]: already stopped", tio);
+
+  LEAVE();
+}
+
+///
+/// TC_Pause
+//  Pause a currently running TimerIO request
+void TC_Pause(enum TimerIO tio)
+{
+  struct TC_Request *timer = &TCData.timer[tio];
+
+  ENTER();
+
+  // check if we have a already issued ioreq running
+  if(timer->isRunning == TRUE && timer->isPaused == FALSE)
+  {
+    struct IORequest *ioreq = &timer->tr->Request;
+
+    if(ioreq->io_Command != 0)
+    {
+      struct TimeVal stopTime;
+
+      if(CheckIO(ioreq) == NULL)
+        AbortIO(ioreq);
+
+      WaitIO(ioreq);
+
+      // calculate the remaining time
+      GetSysTime(TIMEVAL(&stopTime));
+      SubTime(TIMEVAL(&stopTime), TIMEVAL(&timer->startTime));
+      SubTime(TIMEVAL(&timer->remainingTime), TIMEVAL(&stopTime));
+
+      // make sure the timer is signalled to be NOT running
+      timer->isRunning = FALSE;
+      timer->isPaused = TRUE;
+
+      D(DBF_TIMERIO, "timer[%ld]: successfully paused", tio);
+    }
+    else
+      E(DBF_TIMERIO, "timer[%ld]: is invalid and can't be paused", tio);
+  }
+  else
+    W(DBF_TIMERIO, "timer[%ld]: already paused", tio);
+
+  LEAVE();
+}
+
+///
+/// TC_Unpause
+//  Unpause a time with the remaining time
+void TC_Unpause(enum TimerIO tio)
+{
+  struct TC_Request *timer = &TCData.timer[tio];
+
+  ENTER();
+
+  if(timer->isRunning == FALSE && timer->isPaused == TRUE)
+  {
+    struct TimeRequest *tr = timer->tr;
+    #if defined(DEBUG)
+    char dateString[64];
+    #endif
+
+    // issue a new timerequest with the previously calculated remaining time
+    tr->Request.io_Command  = TR_ADDREQUEST;
+    tr->Time.Seconds = timer->remainingTime.Seconds;
+    tr->Time.Microseconds = timer->remainingTime.Microseconds;
+
+    #if defined(DEBUG)
+    DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
+
+    D(DBF_TIMERIO, "timer[%ld]: unpaused @ %s to finish in %ld'%ld secs", tio,
+                                                                          dateString,
+                                                                          tr->Time.Seconds,
+                                                                          tr->Time.Microseconds);
+    #endif
+
+    // fire the timer by doing a SendIO()
+    SendIO((struct IORequest *)tr);
+	// remember the new start time
+    GetSysTime(TIMEVAL(&timer->startTime));
+
+    // signal that our timer is running
+    timer->isRunning = TRUE;
+    timer->isPaused = FALSE;
+  }
+  else
+    W(DBF_TIMERIO, "timer[%ld]: either already running or not paused", tio);
 
   LEAVE();
 }

@@ -166,6 +166,8 @@ struct xpkPackerNode
 };
 
 void TC_Stop(enum TimerIO tio);
+void TC_Pause(enum TimerIO tio);
+void TC_Unpause(enum TimerIO tio);
 void TC_Restart(enum TimerIO tio, int seconds, int micros);
 
 void PopUp(void);

@@ -140,7 +140,7 @@ BOOL CheckForUpdates(void)
     // disable the transfer buttons in the toolbar
     MA_ChangeTransfer(FALSE);
     // pause the mail check timer
-    TC_Stop(TIO_CHECKMAIL);
+    TC_Pause(TIO_CHECKMAIL);
 
     // now we open a new TCP/IP connection socket
     if(TR_OpenTCPIP() == TRUE)
@@ -437,7 +437,7 @@ BOOL CheckForUpdates(void)
     // enable the transfer buttons in the toolbar again
     MA_ChangeTransfer(TRUE);
     // continue the mail check timer
-    TC_Restart(TIO_CHECKMAIL, C->CheckMailDelay * 60, 0);
+    TC_Unpause(TIO_CHECKMAIL);
   }
 
   // as the last operation we get the current time as the
