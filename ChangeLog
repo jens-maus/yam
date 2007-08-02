@@ -7,6 +7,8 @@ $URL$
 
 2007-08-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: adapted TR_GetMailFromNextPOP() a little bit more according to
+    the STYLEGUIDE.
   * YAM.c, UpdateCheck.c: the get/send mail buttons and menu items are now
     disabled during an update check to avoid a possible mail transfer at the
     same time, as that may cause crashes.

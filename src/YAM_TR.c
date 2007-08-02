@@ -222,7 +222,7 @@ struct MailTransferNode
 
 /**************************************************************************/
 // general connection/transfer error enumation values
-enum ConnectError 
+enum ConnectError
 {
   CONNECTERR_SUCCESS       = 0,
   CONNECTERR_NO_ERROR      = -1,
@@ -3687,288 +3687,299 @@ static void TR_DisconnectPOP(void)
 //  Downloads and filters mail from a POP3 account
 void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 {
-   static int laststats;
-   int msgs, pop = singlepop;
+  static int laststats;
+  int msgs, pop = singlepop;
 
-   if (isfirst) /* Init first connection */
-   {
-      G->LastDL.Error = TRUE;
-      if(!TR_OpenTCPIP())
+  if(isfirst == TRUE) /* Init first connection */
+  {
+    G->LastDL.Error = TRUE;
+    if(TR_OpenTCPIP() == FALSE)
+    {
+      if(guilevel == POP_USER)
+        ER_NewError(tr(MSG_ER_OPENTCPIP));
+
+      return;
+    }
+
+    if(CO_IsValid() == FALSE)
+    {
+      TR_CloseTCPIP();
+      return;
+    }
+    if((G->TR = TR_New(TR_GET)) == NULL)
+    {
+      TR_CloseTCPIP();
+      return;
+    }
+    G->TR->Checking = TRUE;
+    DisplayAppIconStatistics();
+    G->TR->GUIlevel = guilevel;
+    G->TR->SearchCount = AllocFilterSearch(APPLY_REMOTE);
+    if(singlepop >= 0)
+      G->TR->SinglePOP = TRUE;
+    else
+      G->TR->POP_Nr = -1;
+    laststats = 0;
+
+    // now we find out if we need to check for duplicates
+    // during POP3 processing or if we can skip that.
+    G->TR->DuplicatesChecking = FALSE;
+
+    if(C->AvoidDuplicates == TRUE)
+    {
+      if(G->TR->SinglePOP == TRUE)
       {
-        if(guilevel == POP_USER)
-          ER_NewError(tr(MSG_ER_OPENTCPIP));
-
-        return;
-      }
-
-      if (!CO_IsValid()) { TR_CloseTCPIP(); return; }
-      if (!(G->TR = TR_New(TR_GET))) { TR_CloseTCPIP(); return; }
-      G->TR->Checking = TRUE;
-      DisplayAppIconStatistics();
-      G->TR->GUIlevel = guilevel;
-      G->TR->SearchCount = AllocFilterSearch(APPLY_REMOTE);
-      if (singlepop >= 0) G->TR->SinglePOP = TRUE;
-      else G->TR->POP_Nr = -1;
-      laststats = 0;
-
-      // now we find out if we need to check for duplicates
-      // during POP3 processing or if we can skip that.
-      G->TR->DuplicatesChecking = FALSE;
-
-      if(C->AvoidDuplicates == TRUE)
-      {
-        if(G->TR->SinglePOP == TRUE)
-        {
-          if(C->P3[pop] != NULL)
-            G->TR->DuplicatesChecking = TRUE;
-        }
-        else
-        {
-          int i;
-
-          for(i=0; i < MAXP3; i++)
-          {
-            if(C->P3[i] && C->P3[i]->Enabled == TRUE)
-            {
-              G->TR->DuplicatesChecking = TRUE;
-              break;
-            }
-          }
-        }
-
-        if(G->TR->DuplicatesChecking == TRUE)
-        {
-          int i;
-
-          InitUIDLhash();
-
-          for(i=0; i < MAXP3; i++)
-          {
-            if(C->P3[i] != NULL)
-              C->P3[i]->UIDLchecked = FALSE;
-          }
-        }
-      }
-   }
-   else /* Finish previous connection */
-   {
-      struct POP3 *p = C->P3[G->TR->POP_Nr];
-
-      TR_DisconnectPOP();
-      TR_Cleanup();
-      AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_Retrieving), G->TR->Stats.Downloaded-laststats, p->User, p->Server);
-      if (G->TR->SinglePOP) pop = MAXP3;
-      laststats = G->TR->Stats.Downloaded;
-   }
-
-   // what is the next POP3 server we should check
-   if(!G->TR->SinglePOP)
-   {
-     for(pop = ++G->TR->POP_Nr; pop < MAXP3; pop++)
-     {
-       if(C->P3[pop] && C->P3[pop]->Enabled)
-         break;
-     }
-   }
-
-   if(pop >= MAXP3) /* Finish last connection */
-   {
-     // close the TCP/IP connection
-     TR_CloseTCPIP();
-
-     // make sure the transfer window is closed
-     set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
-
-     // free/cleanup the UIDL hash tables
-     if(G->TR->DuplicatesChecking == TRUE)
-       CleanupUIDLhash();
-
-     FreeFilterSearch();
-     G->TR->SearchCount = 0;
-     MA_StartMacro(MACRO_POSTGET, itoa((int)G->TR->Stats.Downloaded));
-
-     // tell the appicon that we are finished with checking mail
-     // the apply rules or DisplayAppIconStatistics() function will refresh it later on
-     G->TR->Checking = FALSE;
-
-     // we only apply the filters if we downloaded something, or it`s wasted
-     if(G->TR->Stats.Downloaded > 0)
-     {
-       struct Folder *folder;
-
-       DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, APPLY_AUTO, 0);
-
-       // Now we jump to the first new mail we received if the number of messages has changed
-       // after the mail transfer
-       if(C->JumpToIncoming == TRUE)
-         MA_JumpToNewMsg();
-
-       // only call the DisplayStatistics() function if the actual folder wasn`t already the INCOMING
-       // one or we would hav refreshed it twice
-       if((folder = FO_GetCurrentFolder()) && !isIncomingFolder(folder))
-         DisplayStatistics((struct Folder *)-1, TRUE);
-       else
-         DisplayAppIconStatistics();
-
-       TR_NewMailAlert();
-     }
-     else
-       DisplayAppIconStatistics();
-
-     // lets populate the LastDL statistics variable with the stats
-     // of this download.
-     memcpy(&G->LastDL, &G->TR->Stats, sizeof(struct DownloadResult));
-
-     MA_ChangeTransfer(TRUE);
-
-     DisposeModulePush(&G->TR);
-     if(G->TR_Exchange == TRUE)
-     {
-       G->TR_Exchange = FALSE;
-       DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, SEND_ALL);
-     }
-
-     return;
-   }
-
-   // lets initialize some important data first so that the transfer can
-   // begin
-   G->TR->POP_Nr = pop;
-   G->TR_Allow = G->TR->Abort = G->TR->Pause = G->TR->Start = G->Error = FALSE;
-
-   // if the window isn`t open we don`t need to update it, do we?
-   if(isfirst == FALSE && xget(G->TR->GUI.WI, MUIA_Window_Open))
-   {
-     char str_size_curr[SIZE_SMALL];
-     char str_size_curr_max[SIZE_SMALL];
-
-     // reset the statistics display
-     snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), 0);
-     SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_Max,      0,
-                                   MUIA_Gauge_Current,  0,
-                                   MUIA_Gauge_InfoText, G->TR->CountLabel,
-                                   TAG_DONE);
-
-     // and last, but not least update the gauge.
-     FormatSize(0, str_size_curr, sizeof(str_size_curr), SF_AUTO);
-     FormatSize(0, str_size_curr_max, sizeof(str_size_curr_max), SF_AUTO);
-     snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
-                                                            str_size_curr, str_size_curr_max);
-
-     SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      0,
-                                   MUIA_Gauge_Current,  0,
-                                   MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                                   TAG_DONE);
-   }
-
-   if((msgs = TR_ConnectPOP(G->TR->GUIlevel)) != -1)     // connection succeeded
-   {
-      if(msgs > 0)                                       // there are messages on the server
-      {
-         if(TR_GetMessageList_GET())                     // message list read OK
-         {
-            BOOL preselect = FALSE;
-
-            G->TR->Stats.OnServer += msgs;
-
-            // do we have to do some remote filter actions?
-            if(G->TR->SearchCount > 0)
-            {
-               struct MinNode *curNode;
-
-               set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_ApplyFilters));
-               for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-                  TR_GetMessageDetails((struct MailTransferNode *)curNode, -2);
-            }
-
-            // if the user wants to avoid to receive the
-            // same message from the POP3 server again
-            // we have to analyze the UIDL of it
-            if(G->TR->DuplicatesChecking)
-            {
-              if(FilterDuplicates())
-                C->P3[G->TR->POP_Nr]->UIDLchecked = TRUE;
-            }
-
-            // manually initiated transfer
-            if (G->TR->GUIlevel == POP_USER)
-            {
-               // preselect messages if preference is "always" or "always, sizes only"
-               if(C->PreSelection >= PSM_ALWAYS)
-                  preselect = TRUE;
-               else if(C->WarnSize > 0 && C->PreSelection != PSM_NEVER)
-               {
-                  // ...or any sort of preselection and there is a maximum size
-
-                  struct MinNode *curNode;
-
-                  for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-                  {
-                    struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-                    struct Mail *mail = mtn->mail;
-
-                    if(mail->Size >= C->WarnSize*1024)
-                    {
-                      preselect = TRUE;
-                      break;
-                    }
-                  }
-               }
-            }
-
-            // anything to preselect?
-            if (preselect)
-            {
-               // avoid MUIA_Window_Open's side effect of activating the window if it was already open
-               if(!xget(G->TR->GUI.WI, MUIA_Window_Open))
-                 set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
-
-               // if preselect mode is "large only" we display the mail list
-               // but make sure to display/add large emails only.
-               if (C->PreSelection == PSM_LARGE)
-               {
-                  TR_DisplayMailList(TRUE);
-                  set(G->TR->GUI.GR_LIST, MUIA_ShowMe, TRUE);
-               }
-               else
-                  TR_DisplayMailList(FALSE);
-
-               DoMethod(G->TR->GUI.WI, MUIM_Window_ScreenToFront);
-               DoMethod(G->TR->GUI.WI, MUIM_Window_ToFront);
-               // activate window only if main window activ
-               set(G->TR->GUI.WI, MUIA_Window_Activate, xget(G->MA->GUI.WI, MUIA_Window_Activate));
-
-               set(G->TR->GUI.GR_PAGE, MUIA_Group_ActivePage, 0);
-               G->TR->GMD_Mail = G->TR->transferList.mlh_Head;
-               G->TR->GMD_Line = 0;
-               TR_CompleteMsgList();
-            }
-            else
-            {
-               CallHookPkt(&TR_ProcessGETHook, 0, 0);
-            }
-
-            BusyEnd();
-            return;
-         }
-         else
-           E(DBF_NET, "couldn't retrieve MessageList");
+        if(C->P3[pop] != NULL)
+          G->TR->DuplicatesChecking = TRUE;
       }
       else
       {
-        W(DBF_NET, "no messages found on server '%s'", C->P3[G->TR->POP_Nr]->Server);
+        int i;
 
-        // per default we flag that POP3 server as being UIDLchecked
-        if(G->TR->DuplicatesChecking)
-          C->P3[G->TR->POP_Nr]->UIDLchecked = TRUE;
+        for(i=0; i < MAXP3; i++)
+        {
+          if(C->P3[i] != NULL && C->P3[i]->Enabled == TRUE)
+          {
+            G->TR->DuplicatesChecking = TRUE;
+            break;
+          }
+        }
       }
-   }
-   else
-     G->TR->Stats.Error = TRUE;
 
-   BusyEnd();
+      if(G->TR->DuplicatesChecking == TRUE)
+      {
+        int i;
 
-   TR_GetMailFromNextPOP(FALSE, 0, 0);
+        InitUIDLhash();
+
+        for(i=0; i < MAXP3; i++)
+        {
+          if(C->P3[i] != NULL)
+            C->P3[i]->UIDLchecked = FALSE;
+        }
+      }
+    }
+  }
+  else /* Finish previous connection */
+  {
+    struct POP3 *p = C->P3[G->TR->POP_Nr];
+
+    TR_DisconnectPOP();
+    TR_Cleanup();
+    AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_Retrieving), G->TR->Stats.Downloaded-laststats, p->User, p->Server);
+    if(G->TR->SinglePOP == TRUE)
+      pop = MAXP3;
+    laststats = G->TR->Stats.Downloaded;
+  }
+
+  // what is the next POP3 server we should check
+  if(G->TR->SinglePOP == FALSE)
+  {
+    for(pop = ++G->TR->POP_Nr; pop < MAXP3; pop++)
+    {
+      if(C->P3[pop] != NULL && C->P3[pop]->Enabled)
+        break;
+    }
+  }
+
+  if(pop >= MAXP3) /* Finish last connection */
+  {
+    // close the TCP/IP connection
+    TR_CloseTCPIP();
+
+    // make sure the transfer window is closed
+    set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
+
+    // free/cleanup the UIDL hash tables
+    if(G->TR->DuplicatesChecking == TRUE)
+      CleanupUIDLhash();
+
+    FreeFilterSearch();
+    G->TR->SearchCount = 0;
+    MA_StartMacro(MACRO_POSTGET, itoa((int)G->TR->Stats.Downloaded));
+
+    // tell the appicon that we are finished with checking mail
+    // the apply rules or DisplayAppIconStatistics() function will refresh it later on
+    G->TR->Checking = FALSE;
+
+    // we only apply the filters if we downloaded something, or it`s wasted
+    if(G->TR->Stats.Downloaded > 0)
+    {
+      struct Folder *folder;
+
+      DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, APPLY_AUTO, 0);
+
+      // Now we jump to the first new mail we received if the number of messages has changed
+      // after the mail transfer
+      if(C->JumpToIncoming == TRUE)
+        MA_JumpToNewMsg();
+
+      // only call the DisplayStatistics() function if the actual folder wasn`t already the INCOMING
+      // one or we would hav refreshed it twice
+      if((folder = FO_GetCurrentFolder()) && !isIncomingFolder(folder))
+        DisplayStatistics((struct Folder *)-1, TRUE);
+      else
+        DisplayAppIconStatistics();
+
+      TR_NewMailAlert();
+    }
+    else
+      DisplayAppIconStatistics();
+
+    // lets populate the LastDL statistics variable with the stats
+    // of this download.
+    memcpy(&G->LastDL, &G->TR->Stats, sizeof(struct DownloadResult));
+
+    MA_ChangeTransfer(TRUE);
+
+    DisposeModulePush(&G->TR);
+    if(G->TR_Exchange == TRUE)
+    {
+      G->TR_Exchange = FALSE;
+      DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, SEND_ALL);
+    }
+
+    return;
+  }
+
+  // lets initialize some important data first so that the transfer can
+  // begin
+  G->TR->POP_Nr = pop;
+  G->TR_Allow = G->TR->Abort = G->TR->Pause = G->TR->Start = G->Error = FALSE;
+
+  // if the window isn`t open we don`t need to update it, do we?
+  if(isfirst == FALSE && xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
+  {
+    char str_size_curr[SIZE_SMALL];
+    char str_size_curr_max[SIZE_SMALL];
+
+    // reset the statistics display
+    snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), 0);
+    SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_Max,      0,
+                                  MUIA_Gauge_Current,  0,
+                                  MUIA_Gauge_InfoText, G->TR->CountLabel,
+                                  TAG_DONE);
+
+    // and last, but not least update the gauge.
+    FormatSize(0, str_size_curr, sizeof(str_size_curr), SF_AUTO);
+    FormatSize(0, str_size_curr_max, sizeof(str_size_curr_max), SF_AUTO);
+    snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
+                                                           str_size_curr, str_size_curr_max);
+
+    SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      0,
+                                  MUIA_Gauge_Current,  0,
+                                  MUIA_Gauge_InfoText, G->TR->BytesLabel,
+                                  TAG_DONE);
+  }
+
+  if((msgs = TR_ConnectPOP(G->TR->GUIlevel)) != -1)     // connection succeeded
+  {
+    if(msgs > 0)                                       // there are messages on the server
+    {
+      if(TR_GetMessageList_GET())                     // message list read OK
+      {
+        BOOL preselect = FALSE;
+
+        G->TR->Stats.OnServer += msgs;
+
+        // do we have to do some remote filter actions?
+        if(G->TR->SearchCount > 0)
+        {
+          struct MinNode *curNode;
+
+          set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_ApplyFilters));
+          for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+            TR_GetMessageDetails((struct MailTransferNode *)curNode, -2);
+        }
+
+        // if the user wants to avoid to receive the
+        // same message from the POP3 server again
+        // we have to analyze the UIDL of it
+        if(G->TR->DuplicatesChecking == TRUE)
+        {
+          if(FilterDuplicates() == TRUE)
+            C->P3[G->TR->POP_Nr]->UIDLchecked = TRUE;
+        }
+
+        // manually initiated transfer
+        if(G->TR->GUIlevel == POP_USER)
+        {
+          // preselect messages if preference is "always" or "always, sizes only"
+          if(C->PreSelection >= PSM_ALWAYS)
+            preselect = TRUE;
+          else if(C->WarnSize > 0 && C->PreSelection != PSM_NEVER)
+          {
+            // ...or any sort of preselection and there is a maximum size
+
+            struct MinNode *curNode;
+
+            for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+            {
+              struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+              struct Mail *mail = mtn->mail;
+
+              if(mail->Size >= C->WarnSize*1024)
+              {
+                preselect = TRUE;
+                break;
+              }
+            }
+          }
+        }
+
+        // anything to preselect?
+        if(preselect == TRUE)
+        {
+          // avoid MUIA_Window_Open's side effect of activating the window if it was already open
+          if(xget(G->TR->GUI.WI, MUIA_Window_Open) == FALSE)
+            set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
+
+          // if preselect mode is "large only" we display the mail list
+          // but make sure to display/add large emails only.
+          if(C->PreSelection == PSM_LARGE)
+          {
+            TR_DisplayMailList(TRUE);
+            set(G->TR->GUI.GR_LIST, MUIA_ShowMe, TRUE);
+          }
+          else
+            TR_DisplayMailList(FALSE);
+
+          DoMethod(G->TR->GUI.WI, MUIM_Window_ScreenToFront);
+          DoMethod(G->TR->GUI.WI, MUIM_Window_ToFront);
+          // activate window only if main window activ
+          set(G->TR->GUI.WI, MUIA_Window_Activate, xget(G->MA->GUI.WI, MUIA_Window_Activate));
+
+          set(G->TR->GUI.GR_PAGE, MUIA_Group_ActivePage, 0);
+          G->TR->GMD_Mail = G->TR->transferList.mlh_Head;
+          G->TR->GMD_Line = 0;
+          TR_CompleteMsgList();
+        }
+        else
+        {
+          CallHookPkt(&TR_ProcessGETHook, 0, 0);
+        }
+
+        BusyEnd();
+        return;
+      }
+      else
+        E(DBF_NET, "couldn't retrieve MessageList");
+    }
+    else
+    {
+      W(DBF_NET, "no messages found on server '%s'", C->P3[G->TR->POP_Nr]->Server);
+
+      // per default we flag that POP3 server as being UIDLchecked
+      if(G->TR->DuplicatesChecking == TRUE)
+        C->P3[G->TR->POP_Nr]->UIDLchecked = TRUE;
+    }
+  }
+  else
+    G->TR->Stats.Error = TRUE;
+
+  BusyEnd();
+
+  TR_GetMailFromNextPOP(FALSE, 0, 0);
 }
 ///
 /// TR_SendPOP3KeepAlive()
@@ -3977,6 +3988,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 BOOL TR_SendPOP3KeepAlive(void)
 {
   BOOL result;
+
   ENTER();
 
   // here we send a STAT command instead of a NOOP which normally
