@@ -137,12 +137,15 @@ BOOL CheckForUpdates(void)
   // tcp/ip stuff is busy right now so that we do not interrupt something
   if(SocketBase == NULL || G->TR_Socket == TCP_NO_SOCKET)
   {
-    // now we open a new TCP/IP connection socket
-    if(TR_OpenTCPIP())
-    {
-      struct TempFile *tf = OpenTempFile(NULL);
+    // disable the transfer buttons in the toolbar
+    MA_ChangeTransfer(FALSE);
 
-      if(tf != NULL)
+    // now we open a new TCP/IP connection socket
+    if(TR_OpenTCPIP() == TRUE)
+    {
+      struct TempFile *tf;
+
+      if((tf = OpenTempFile(NULL)) != NULL)
       {
         char *request;
 
@@ -152,7 +155,7 @@ BOOL CheckForUpdates(void)
         // and will inform it about our configuration/YAM version and so on.
         // use a max. request buffer of 1K.
         #define REQUEST_SIZE 1024
-        if((request = malloc(REQUEST_SIZE))) // don't use stack for the request
+        if((request = malloc(REQUEST_SIZE)) != NULL) // don't use stack for the request
         {
           Object *mccObj;
           struct Library *base;
@@ -172,7 +175,7 @@ BOOL CheckForUpdates(void)
             snprintf(request, REQUEST_SIZE, "%s&builddate=%s", request, buf);
 
           // encode the language in which YAM is running
-          if(G->Catalog && urlencode(buf, G->Catalog->cat_Language, SIZE_LINE) > 0)
+          if(G->Catalog != NULL && urlencode(buf, G->Catalog->cat_Language, SIZE_LINE) > 0)
             snprintf(request, REQUEST_SIZE, "%s&lang=%s%%20%d%%2E%d", request, buf, G->Catalog->cat_Version,
                                                                                     G->Catalog->cat_Revision);
 
@@ -188,17 +191,17 @@ BOOL CheckForUpdates(void)
                                                                                         CodesetsBase->lib_Revision);
 
           // add AmiSSL library information
-          if(AmiSSLMasterBase)
+          if(AmiSSLMasterBase != NULL)
             snprintf(request, REQUEST_SIZE, "%s&lib%d=amissl-%d%%2E%d", request, cnt++, AmiSSLMasterBase->lib_Version,
                                                                                         AmiSSLMasterBase->lib_Revision);
 
           // add XPK library information
-          if(XpkBase)
+          if(XpkBase != NULL)
             snprintf(request, REQUEST_SIZE, "%s&lib%d=xpk-%d%%2E%d", request, cnt++, XpkBase->lib_Version,
                                                                                      XpkBase->lib_Revision);
 
           // add openurl.library information
-          if((base = OpenLibrary("openurl.library", 0)))
+          if((base = OpenLibrary("openurl.library", 0)) != NULL)
           {
             snprintf(request, REQUEST_SIZE, "%s&lib%d=openurl-%d%%2E%d", request, cnt++, base->lib_Version,
                                                                                          base->lib_Revision);
@@ -211,7 +214,7 @@ BOOL CheckForUpdates(void)
                                                                       MUIMasterBase->lib_Revision);
 
           // add TheBar.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_TheBar, TAG_DONE)))
+          if((mccObj = MUI_NewObject(MUIC_TheBar, TAG_DONE)) != NULL)
           {
             snprintf(request, REQUEST_SIZE, "%s&mcc%d=thebar-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
                                                                                           xget(mccObj, MUIA_Revision));
@@ -219,7 +222,7 @@ BOOL CheckForUpdates(void)
           }
 
           // add TextEditor.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_TextEditor, TAG_DONE)))
+          if((mccObj = MUI_NewObject(MUIC_TextEditor, TAG_DONE)) != NULL)
           {
             snprintf(request, REQUEST_SIZE, "%s&mcc%d=texteditor-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
                                                                                               xget(mccObj, MUIA_Revision));
@@ -227,7 +230,7 @@ BOOL CheckForUpdates(void)
           }
 
           // add BetterString.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_BetterString, TAG_DONE)))
+          if((mccObj = MUI_NewObject(MUIC_BetterString, TAG_DONE)) != NULL)
           {
             snprintf(request, REQUEST_SIZE, "%s&mcc%d=betterstring-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
                                                                                                 xget(mccObj, MUIA_Revision));
@@ -235,7 +238,7 @@ BOOL CheckForUpdates(void)
           }
 
           // add NList.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_NList, TAG_DONE)))
+          if((mccObj = MUI_NewObject(MUIC_NList, TAG_DONE)) != NULL)
           {
             snprintf(request, REQUEST_SIZE, "%s&mcc%d=nlist-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
                                                                                          xget(mccObj, MUIA_Revision));
@@ -243,7 +246,7 @@ BOOL CheckForUpdates(void)
           }
 
           // add NListview.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_NListview, TAG_DONE)))
+          if((mccObj = MUI_NewObject(MUIC_NListview, TAG_DONE)) != NULL)
           {
             snprintf(request, REQUEST_SIZE, "%s&mcc%d=nlistview-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
                                                                                              xget(mccObj, MUIA_Revision));
@@ -251,7 +254,7 @@ BOOL CheckForUpdates(void)
           }
 
           // add NFloattext.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_NFloattext, TAG_DONE)))
+          if((mccObj = MUI_NewObject(MUIC_NFloattext, TAG_DONE)) != NULL)
           {
             snprintf(request, REQUEST_SIZE, "%s&mcc%d=nfloattext-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
                                                                                               xget(mccObj, MUIA_Revision));
@@ -259,7 +262,7 @@ BOOL CheckForUpdates(void)
           }
 
           // add NListtree.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_NListtree, TAG_DONE)))
+          if((mccObj = MUI_NewObject(MUIC_NListtree, TAG_DONE)) != NULL)
           {
             snprintf(request, REQUEST_SIZE, "%s&mcc%d=nlisttree-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
                                                                                              xget(mccObj, MUIA_Revision));
@@ -270,7 +273,7 @@ BOOL CheckForUpdates(void)
 
           // now we send a specific request via TR_DownloadURL() to
           // our update server
-          if(TR_DownloadURL(C->UpdateServer, request, tf->Filename))
+          if(TR_DownloadURL(C->UpdateServer, request, tf->Filename) == TRUE)
           {
             // now we parse the result.
             if((tf->FP = fopen(tf->Filename, "r")) != NULL)
@@ -282,7 +285,7 @@ BOOL CheckForUpdates(void)
               setvbuf(tf->FP, NULL, _IOFBF, SIZE_FILEBUF);
 
               // make sure we clear an eventually existing update window
-              if(G->UpdateNotifyWinObject)
+              if(G->UpdateNotifyWinObject != NULL)
                 DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_Clear);
 
               while(GetLine(tf->FP, buf, SIZE_LINE))
@@ -398,7 +401,7 @@ BOOL CheckForUpdates(void)
               }
 
               // make sure we show the update notify window.
-              if(updatesAvailable)
+              if(updatesAvailable == TRUE)
               {
                 set(G->UpdateNotifyWinObject, MUIA_Window_Open, TRUE);
                 LastUpdateState.LastUpdateStatus = UST_UPDATESUCCESS;
@@ -428,6 +431,9 @@ BOOL CheckForUpdates(void)
     }
     else
       ER_NewError(tr(MSG_ER_OPENTCPIP));
+
+    // enable the transfer buttons in the toolbar again
+    MA_ChangeTransfer(TRUE);
   }
 
   // as the last operation we get the current time as the
@@ -437,7 +443,7 @@ BOOL CheckForUpdates(void)
 
   // now save the update state
   SaveUpdateState();
-  if(CE)
+  if(CE != NULL)
   {
     // in case the updatecheck resulted in no further update or a successful update check
     // we have to check if we have to update the config page of an eventually opened YAM
