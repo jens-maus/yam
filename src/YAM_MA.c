@@ -141,9 +141,6 @@ void MA_ChangeTransfer(BOOL on)
 
   ENTER();
 
-  if(on == FALSE)
-    TC_Stop(TIO_CHECKMAIL);
-
   if(gui->TO_TOOLBAR != NULL)
   {
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETMAIL, MUIA_TheBar_Attr_Disabled, !on);
@@ -157,9 +154,6 @@ void MA_ChangeTransfer(BOOL on)
                                                              gui->MI_GETMAIL,
                                                              gui->MI_CSINGLE,
                                                              NULL);
-
-  if(on == TRUE)
-    TC_Start(TIO_CHECKMAIL);
 
   LEAVE();
 }

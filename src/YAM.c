@@ -575,7 +575,7 @@ static void TC_Prepare(enum TimerIO tio, int seconds, int micros)
 ///
 /// TC_Start
 //  Start a delay depending on the time specified
-void TC_Start(enum TimerIO tio)
+static void TC_Start(enum TimerIO tio)
 {
   struct TC_Request *timer = &TCData.timer[tio];
 

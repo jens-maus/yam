@@ -7,6 +7,8 @@ $URL$
 
 2007-08-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_MA.c, UpdateCheck.c: reworked the update check to stop the mail
+    check timer itself instead of letting MA_ChangeTransfer() do the job.
   * YAM_TR.c: adapted TR_GetMailFromNextPOP() a little bit more according to
     the STYLEGUIDE.
   * YAM.c, UpdateCheck.c: the get/send mail buttons and menu items are now
