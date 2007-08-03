@@ -147,7 +147,8 @@ void MA_ChangeTransfer(BOOL on)
     DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_SENDALL, MUIA_TheBar_Attr_Disabled, !on);
   }
 
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, on, gui->MI_IMPORT,
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, on, gui->MI_UPDATECHECK,
+                                                             gui->MI_IMPORT,
                                                              gui->MI_EXPORT,
                                                              gui->MI_SENDALL,
                                                              gui->MI_EXCHANGE,
@@ -4982,7 +4983,7 @@ struct MA_ClassData *MA_New(void)
          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_MA_Project),
             MUIA_Family_Child, Menuitem(tr(MSG_PROJECT_MABOUT), "?", TRUE, FALSE, MMEN_ABOUT),
             MUIA_Family_Child, Menuitem(tr(MSG_MA_AboutMUI), NULL, TRUE, FALSE, MMEN_ABOUTMUI),
-            MUIA_Family_Child, Menuitem(tr(MSG_MA_UPDATECHECK), NULL, TRUE, FALSE, MMEN_VERSION),
+            MUIA_Family_Child, data->GUI.MI_UPDATECHECK = Menuitem(tr(MSG_MA_UPDATECHECK), NULL, TRUE, FALSE, MMEN_VERSION),
             MUIA_Family_Child, data->GUI.MI_ERRORS = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_LastErrors), MUIA_Menuitem_Enabled, G->ER_NumErr > 0, MUIA_UserData, MMEN_ERRORS, End,
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
             MUIA_Family_Child, Menuitem(tr(MSG_MA_Restart), NULL, TRUE, FALSE, MMEN_LOGIN),

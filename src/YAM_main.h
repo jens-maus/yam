@@ -257,6 +257,7 @@ struct MA_GUIData
    Object *MS_MAIN;
    Object *GR_HIDDEN;
    Object *ST_LAYOUT;
+   Object *MI_UPDATECHECK;
    Object *MI_ERRORS;
    Object *MI_CSINGLE;
    Object *MI_IMPORT;

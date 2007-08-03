@@ -7,6 +7,8 @@ $URL$
 
 2007-08-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: the "Check for updates" menu item is now also disabled during
+    an active mail or update check.
   * Recipientstring.c: handling of cursor right/left was still broken and
     would have left the " >> " marks in the recipient string. Now the marks
     are correctly removed and just the completely matched entry will remain.
