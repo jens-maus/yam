@@ -132,6 +132,61 @@ static char *rcptok(char *s, BOOL *quote)
   return s;
 }
 ///
+/// NormalizeSelection()
+// normalized/clears the selection and removes eventually existing
+// ' >> ' marks.
+static void NormalizeSelection(Object *obj)
+{
+  LONG start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+  LONG rcpSize;
+  LONG marksSize;
+  char *rcp = (char *)xget(obj, MUIA_String_Contents) + start;
+  char *p;
+
+  ENTER();
+
+  // Skip the " >> " marks if they have been inserted before.
+  // Also remember how many chars have been skipped, as the
+  // complete current recipient will be replaced later.
+  if((p = strstr(rcp, " >> ")) != NULL)
+  {
+    marksSize = (LONG)(p + 4 - rcp);
+    rcp = strdup(p + 4);
+  }
+  else
+  {
+    marksSize = 0;
+    rcp = strdup(rcp);
+  }
+
+  if(rcp != NULL)
+  {
+    // calculate the length of the current recipient
+    if((p = strchr(rcp, ',')) != NULL)
+      rcpSize = (LONG)(p - rcp);
+    else
+      rcpSize = strlen(rcp);
+
+    // NUL-terminate this recipient
+    rcp[rcpSize] = '\0';
+
+    // remove the current recipient from the string, including the " >> " marks
+    // and everything typed so far
+    SetAttrs(obj, MUIA_String_BufferPos, start,
+                  MUIA_BetterString_SelectSize, rcpSize + marksSize,
+                  TAG_DONE);
+    DoMethod(obj, MUIM_BetterString_ClearSelected);
+
+    // now insert the correct recipient again
+    DoMethod(obj, MUIM_BetterString_Insert, rcp, start);
+
+    free(rcp);
+  }
+
+  LEAVE();
+}
+
+///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -334,7 +389,11 @@ OVERLOAD(MUIM_GoActive)
   // remember the active state
   data->isActive = TRUE;
 
+  // install the event handler so we listen for any key/mouse
+  // events we configured in MUIM_Setup()
   DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+
+  // call the super method
   result = DoSuperMethodA(cl, obj, msg);
 
   RETURN(result);
@@ -349,19 +408,28 @@ OVERLOAD(MUIM_GoInactive)
 
   ENTER();
 
+  // remove the event handler so we don't listen for any further
+  // key/mouse events
   DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+
+  // call NormalizeSelection() to make sure that
+  // now ' >> ' marks are kept when the gadget is going
+  // into inactive state.
+  NormalizeSelection(obj);
 
   // only if the matchwindow is not active we can close it on a inactive state of
   // this object
-  if(!xget(data->Matchwindow, MUIA_Window_Activate))
+  if(xget(data->Matchwindow, MUIA_Window_Activate) == FALSE)
     set(data->Matchwindow, MUIA_Window_Open, FALSE);
 
   // remember the current selection before our superclass deletes these values because of going inactive
   data->bufferPos = xget(obj, MUIA_String_BufferPos);
   data->selectSize = xget(obj, MUIA_BetterString_SelectSize);
+
   // remember the inactive state
   data->isActive = FALSE;
 
+  // call the super method
   result = DoSuperMethodA(cl, obj, msg);
 
   RETURN(result);
@@ -444,10 +512,10 @@ OVERLOAD(MUIM_HandleEvent)
 
   ENTER();
 
-  D(DBF_ALWAYS, "event muikey %ld code %ld", ((struct MUIP_HandleEvent *)msg)->muikey, ((struct MUIP_HandleEvent *)msg)->imsg->Code);
-
   if((imsg = ((struct MUIP_HandleEvent *)msg)->imsg) != NULL)
   {
+    D(DBF_GUI, "event muikey %ld code %ld", ((struct MUIP_HandleEvent *)msg)->muikey, ((struct MUIP_HandleEvent *)msg)->imsg->Code);
+
     if(imsg->Class == IDCMP_RAWKEY)
     {
       switch(imsg->Code)
@@ -506,6 +574,21 @@ OVERLOAD(MUIM_HandleEvent)
         }
         break;
 
+        // IECODE_TAB will only be triggered if the tab key
+        // is hit and the matchwindow is currently open. This is more
+        // or less a workaround for a problem where the addrmatchlist
+        // window can get the key focus - somehow...
+        case IECODE_TAB:
+        {
+          if(xget(data->Matchwindow, MUIA_Window_Open))
+          {
+            set(data->Matchwindow, MUIA_Window_Open, FALSE);
+            set(_win(obj), MUIA_Window_ActiveObject, obj);
+            set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+          }
+        }
+        break;
+
         default:
         {
           BOOL changed = FALSE;
@@ -526,53 +609,15 @@ OVERLOAD(MUIM_HandleEvent)
 
               changed = TRUE;
             }
-            else if(imsg->Code == IECODE_TAB ||
-                    imsg->Code == IECODE_LEFT ||
+            else if(imsg->Code == IECODE_LEFT ||
                     imsg->Code == IECODE_RIGHT ||
                     ConvertKey(imsg) == ',')
             {
-              LONG start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
-              LONG rcpSize;
-              LONG marksSize;
-              char *rcp = (char *)xget(obj, MUIA_String_Contents) + start;
-              char *p;
-
-              // Skip the " >> " marks if they have been inserted before.
-              // Also remember how many chars have been skipped, as the
-              // complete current recipient will be replaced later.
-              if((p = strstr(rcp, " >> ")) != NULL)
-              {
-                marksSize = (LONG)(p + 4 - rcp);
-                rcp = strdup(p + 4);
-              }
-              else
-              {
-                marksSize = 0;
-                rcp = strdup(rcp);
-              }
-
-              if(rcp != NULL)
-              {
-                // calculate the length of the current recipient
-                if((p = strchr(rcp, ',')) != NULL)
-                  rcpSize = (LONG)(p - rcp);
-                else
-                  rcpSize = strlen(rcp);
-                // NUL-terminate this recipient
-                rcp[rcpSize] = '\0';
-
-                // remove the current recipient from the string, including the " >> " marks
-                // and everything typed so far
-                SetAttrs(obj, MUIA_String_BufferPos, start,
-                              MUIA_BetterString_SelectSize, rcpSize + marksSize,
-                              TAG_DONE);
-                DoMethod(obj, MUIM_BetterString_ClearSelected);
-
-                // now insert the correct recipient again
-                DoMethod(obj, MUIM_BetterString_Insert, rcp, start);
-
-                free(rcp);
-              }
+              // call NormalizeSelection() to make sure that
+              // no ' >> ' marks are kept when the user wants to continue
+              // with either the next/prev or by simply pressing left/right
+              // to finish the selection.
+              NormalizeSelection(obj);
 
               closeMatchWin = TRUE;
             }
@@ -643,14 +688,6 @@ OVERLOAD(MUIM_HandleEvent)
           // close the match window if it is open
           if(closeMatchWin == TRUE && xget(data->Matchwindow, MUIA_Window_Open))
             set(data->Matchwindow, MUIA_Window_Open, FALSE);
-
-          // advance to the next object in the cycle chain if the TAB
-          // key has been pressed
-          if(imsg->Code == IECODE_TAB)
-          {
-            set(_win(obj), MUIA_Window_ActiveObject, obj);
-            set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
-          }
         }
         break;
       }

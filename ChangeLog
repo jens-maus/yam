@@ -15,6 +15,9 @@ $URL$
 
 2007-08-03  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Recipientstring.c: the recipient gadget should now correctly alter the
+    currently entered content in case the user presses TAB or sets the
+    gadget inactive via clicking on another gadget.
   * Recipientstring.c: when pressing ESC on a popped up addrmatchlist, the
     marked area is now properly cleared by forcing a redraw of the object.
     In addition, bug #1766535 should be partly fixed by reenabling the
