@@ -602,6 +602,7 @@ static void TC_Start(enum TimerIO tio)
 
     // fire the timer by doing a SendIO()
     SendIO(&timer->tr->Request);
+
     // remember the start time
     GetSysTime(TIMEVAL(&timer->startTime));
 
@@ -689,7 +690,16 @@ void TC_Pause(enum TimerIO tio)
       timer->isRunning = FALSE;
       timer->isPaused = TRUE;
 
-      D(DBF_TIMERIO, "timer[%ld]: successfully paused", tio);
+      #if defined(DEBUG)
+      {
+        char dateString[64];
+        DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
+        D(DBF_TIMERIO, "timer[%ld]: paused @ %s with %ld'%ld secs remaining", tio,
+                                                                              dateString,
+                                                                              timer->remainingTime.Seconds,
+                                                                              timer->remainingTime.Microseconds);
+      }
+      #endif
     }
     else
       E(DBF_TIMERIO, "timer[%ld]: is invalid and can't be paused", tio);
@@ -701,9 +711,9 @@ void TC_Pause(enum TimerIO tio)
 }
 
 ///
-/// TC_Unpause
-//  Unpause a time with the remaining time
-void TC_Unpause(enum TimerIO tio)
+/// TC_Resume
+//  Resume a timer with the remaining time
+void TC_Resume(enum TimerIO tio)
 {
   struct TC_Request *timer = &TCData.timer[tio];
 
@@ -713,7 +723,6 @@ void TC_Unpause(enum TimerIO tio)
   {
     struct TimeRequest *tr = timer->tr;
     #if defined(DEBUG)
-    char dateString[64];
     #endif
 
     // issue a new timerequest with the previously calculated remaining time
@@ -722,17 +731,21 @@ void TC_Unpause(enum TimerIO tio)
     tr->Time.Microseconds = timer->remainingTime.Microseconds;
 
     #if defined(DEBUG)
-    DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
+    {
+      char dateString[64];
+      DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
 
-    D(DBF_TIMERIO, "timer[%ld]: unpaused @ %s to finish in %ld'%ld secs", tio,
-                                                                          dateString,
-                                                                          tr->Time.Seconds,
-                                                                          tr->Time.Microseconds);
+      D(DBF_TIMERIO, "timer[%ld]: resumed @ %s to finish in %ld'%ld secs", tio,
+                                                                           dateString,
+                                                                           tr->Time.Seconds,
+                                                                           tr->Time.Microseconds);
+    }
     #endif
 
     // fire the timer by doing a SendIO()
     SendIO((struct IORequest *)tr);
-	// remember the new start time
+
+	  // remember the new start time
     GetSysTime(TIMEVAL(&timer->startTime));
 
     // signal that our timer is running
@@ -910,7 +923,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     // if so we write the indexes.
     case TIO_WRINDEX:
     {
-      D(DBF_TIMERIO, "timer[%ld]: TIO_WRINDEX received at: %s", tio, dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_WRINDEX fired @ %s", tio, dateString);
 
       // only write the indexes if no Editor is actually in use
       if(!TC_ActiveEditor(0) && !TC_ActiveEditor(1))
@@ -928,7 +941,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     {
       int i;
 
-      D(DBF_TIMERIO, "timer[%ld]: TIO_CHECKMAIL received at: %s", tio, dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_CHECKMAIL fired @ %s", tio, dateString);
 
       // only if there is currently no write window open we
       // check for new mail.
@@ -954,7 +967,7 @@ static void TC_Dispatcher(enum TimerIO tio)
       char fileName[SIZE_PATHFILE];
       int i;
 
-      D(DBF_TIMERIO, "timer[%ld]: TIO_AUTOSAVE received at: %s", tio, dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_AUTOSAVE fired @ %s", tio, dateString);
 
       for(i = 0; i < MAXWR; i++)
       {
@@ -972,7 +985,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     // currently active mail out of the main mail list and display it in the pane
     case TIO_READPANEUPDATE:
     {
-      D(DBF_TIMERIO, "timer[%ld]: TIO_READPANEUPDATE received: %s", tio, dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_READPANEUPDATE fired @ %s", tio, dateString);
 
       if(C->EmbeddedReadPane)
       {
@@ -998,7 +1011,7 @@ static void TC_Dispatcher(enum TimerIO tio)
       struct MA_GUIData *gui = &G->MA->GUI;
       struct Mail *mail;
 
-      D(DBF_TIMERIO, "timer[%ld]: TIO_READSTATUSUPDATE received: %s", tio, dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_READSTATUSUPDATE fired @ %s", tio, dateString);
 
       // get the actually active mail
       DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
@@ -1025,7 +1038,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     {
       struct MA_GUIData *gui = &G->MA->GUI;
 
-      D(DBF_TIMERIO, "timer[%ld]: TIO_PROCESSQUICKSEARCH received: %s", tio, dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_PROCESSQUICKSEARCH fired @ %s", tio, dateString);
 
       // signal the QuickSearchBar now.
       DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_ProcessSearch);
@@ -1037,7 +1050,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     // to the currently connected POP3 server.
     case TIO_POP3_KEEPALIVE:
     {
-      D(DBF_TIMERIO, "timer[%ld]: TIO_POP3_KEEPALIVE received: %s", tio, dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_POP3_KEEPALIVE fired @ %s", tio, dateString);
 
       // send the POP3 server a 'NOOP'
       if(TR_SendPOP3KeepAlive())
@@ -1052,7 +1065,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     // user wants to check if there is a new version of YAM available or not.
     case TIO_UPDATECHECK:
     {
-      D(DBF_TIMERIO, "timer[%ld]: TIO_UPDATECHECK received: %s", tio, dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_UPDATECHECK fired @ %s", tio, dateString);
 
       CheckForUpdates();
 
@@ -1065,7 +1078,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     // on a SPAMFLUSHTRAININGDATA we write back the spam training data gathered so far
     case TIO_SPAMFLUSHTRAININGDATA:
     {
-      D(DBF_TIMERIO, "timer[%ld]: TIO_SPAMFLUSHTRAININGDATA received: %s", tio, dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_SPAMFLUSHTRAININGDATA fired @ %s", tio, dateString);
 
       BusyText(tr(MSG_BUSYFLUSHINGSPAMTRAININGDATA), "");
       BayesFilterFlushTrainingData();
@@ -1080,7 +1093,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     // later.
     case TIO_DELETEZOMBIEFILES:
     {
-      D(DBF_TIMERIO, "timer[%ld]: TIO_DELETEZOMBIEFILES received: %s", tio, dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_DELETEZOMBIEFILES fired @ %s", tio, dateString);
 
       if(DeleteZombieFiles(FALSE) == FALSE)
       {

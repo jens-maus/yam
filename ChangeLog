@@ -15,6 +15,9 @@ $URL$
 
 2007-08-03  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c, UpdateCheck.c: renamed TC_Unpause() to TC_Resume() which should
+    be more intuitive. In addition it will now output a more detailed debug
+    information.
   * Recipientstring.c: the recipient gadget should now correctly alter the
     currently entered content in case the user presses TAB or sets the
     gadget inactive via clicking on another gadget.
