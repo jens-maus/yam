@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-03  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Recipientstring.c: when pressing ESC on a popped up addrmatchlist, the
+    marked area is now properly cleared by forcing a redraw of the object.
+    In addition, bug #1766535 should be partly fixed by reenabling the
+    possibility to press the left/right cursor to interrupt a string
+    edit session which should be quite in line what clients like Thunderbird
+    do and what a user should expect.
+
 2007-08-02  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, UpdateCheck.c: a timer can now be paused. Upon TC_Unpause() it will

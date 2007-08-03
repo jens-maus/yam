@@ -474,7 +474,7 @@ OVERLOAD(MUIM_HandleEvent)
         }
         break;
 
-        /* keys are sent to the popup-list */
+        // keys that are sent to the popup-list
         case IECODE_UP:
         case IECODE_DOWN:
         case NM_WHEEL_UP:
@@ -488,13 +488,19 @@ OVERLOAD(MUIM_HandleEvent)
         }
         break;
 
-        case IECODE_LEFT:
-        case IECODE_RIGHT:
+        // keys that clear the marked area
+        // and close the popup-list
         case IECODE_DEL:
-        case IECODE_ESCAPE: /* FIXME: Escape should clear the marked text. Currently the marked text goes when leaving the gadget or e.g. pressing ','. Seems to be a refresh problem */
+        case IECODE_ESCAPE:
         {
           DoMethod(obj, MUIM_BetterString_ClearSelected);
           set(data->Matchwindow, MUIA_Window_Open, FALSE);
+
+          // Escape should clear the marked text, but somehow it isn't
+          // done automatomatically which seems to be a refresh problem.
+          // Therefore we force a refresh here.
+          if(imsg->Code == IECODE_ESCAPE)
+            MUI_Redraw(obj, MADF_DRAWOBJECT);
         }
         break;
 
