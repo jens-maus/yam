@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Recipientstring.c: handling of cursor right/left was still broken and
+    would have left the " >> " marks in the recipient string. Now the marks
+    are correctly removed and just the completely matched entry will remain.
+
 2007-08-03  Jens Langner <Jens.Langner@light-speed.de>
 
   * Recipientstring.c: when pressing ESC on a popped up addrmatchlist, the

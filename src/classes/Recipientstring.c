@@ -444,6 +444,8 @@ OVERLOAD(MUIM_HandleEvent)
 
   ENTER();
 
+  D(DBF_ALWAYS, "event muikey %ld code %ld", ((struct MUIP_HandleEvent *)msg)->muikey, ((struct MUIP_HandleEvent *)msg)->imsg->Code);
+
   if((imsg = ((struct MUIP_HandleEvent *)msg)->imsg) != NULL)
   {
     if(imsg->Class == IDCMP_RAWKEY)
@@ -504,31 +506,19 @@ OVERLOAD(MUIM_HandleEvent)
         }
         break;
 
-        // a IECODE_TAB will only be triggered if the tab key
-        // is used within the matchwindow
-        case IECODE_TAB:
-        {
-          if(xget(data->Matchwindow, MUIA_Window_Open))
-          {
-            set(data->Matchwindow, MUIA_Window_Open, FALSE);
-            set(_win(obj), MUIA_Window_ActiveObject, obj);
-            set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
-          }
-        }
-        break;
-
         default:
         {
           BOOL changed = FALSE;
-          long select_size;
+          BOOL closeMatchWin = FALSE;
+          LONG selectSize;
 
           // check if some text is actually selected
-          if((select_size = xget(obj, MUIA_BetterString_SelectSize)) != 0)
+          if((selectSize = xget(obj, MUIA_BetterString_SelectSize)) != 0)
           {
             if(imsg->Code == IECODE_BACKSPACE)
             {
               // now we do check whether everything until the end was selected
-              long pos = xget(obj, MUIA_String_BufferPos)+select_size;
+              LONG pos = xget(obj, MUIA_String_BufferPos) + selectSize;
               char *content = (char *)xget(obj, MUIA_String_Contents);
 
               if(content != NULL && (content[pos] == '\0' || content[pos] == ','))
@@ -536,8 +526,56 @@ OVERLOAD(MUIM_HandleEvent)
 
               changed = TRUE;
             }
-            else if(ConvertKey(imsg) == ',')
-              set(obj, MUIA_String_BufferPos, MUIV_BetterString_BufferPos_End);
+            else if(imsg->Code == IECODE_TAB ||
+                    imsg->Code == IECODE_LEFT ||
+                    imsg->Code == IECODE_RIGHT ||
+                    ConvertKey(imsg) == ',')
+            {
+              LONG start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+              LONG rcpSize;
+              LONG marksSize;
+              char *rcp = (char *)xget(obj, MUIA_String_Contents) + start;
+              char *p;
+
+              // Skip the " >> " marks if they have been inserted before.
+              // Also remember how many chars have been skipped, as the
+              // complete current recipient will be replaced later.
+              if((p = strstr(rcp, " >> ")) != NULL)
+              {
+                marksSize = (LONG)(p + 4 - rcp);
+                rcp = strdup(p + 4);
+              }
+              else
+              {
+                marksSize = 0;
+                rcp = strdup(rcp);
+              }
+
+              if(rcp != NULL)
+              {
+                // calculate the length of the current recipient
+                if((p = strchr(rcp, ',')) != NULL)
+                  rcpSize = (LONG)(p - rcp);
+                else
+                  rcpSize = strlen(rcp);
+                // NUL-terminate this recipient
+                rcp[rcpSize] = '\0';
+
+                // remove the current recipient from the string, including the " >> " marks
+                // and everything typed so far
+                SetAttrs(obj, MUIA_String_BufferPos, start,
+                              MUIA_BetterString_SelectSize, rcpSize + marksSize,
+                              TAG_DONE);
+                DoMethod(obj, MUIM_BetterString_ClearSelected);
+
+                // now insert the correct recipient again
+                DoMethod(obj, MUIM_BetterString_Insert, rcp, start);
+
+                free(rcp);
+              }
+
+              closeMatchWin = TRUE;
+            }
           }
 
           // if we do not have an early change result we
@@ -564,7 +602,7 @@ OVERLOAD(MUIM_HandleEvent)
             result = DoSuperMethodA(cl, obj, msg);
 
           // if the content changed we do get the current recipient
-          if(changed)
+          if(changed == TRUE)
           {
             char *cur_rcpt = (char *)DoMethod(obj, MUIM_Recipientstring_CurrentRecipient);
             struct CustomABEntry *abentry;
@@ -600,6 +638,18 @@ OVERLOAD(MUIM_HandleEvent)
                               TAG_DONE);
               }
             }
+          }
+
+          // close the match window if it is open
+          if(closeMatchWin == TRUE && xget(data->Matchwindow, MUIA_Window_Open))
+            set(data->Matchwindow, MUIA_Window_Open, FALSE);
+
+          // advance to the next object in the cycle chain if the TAB
+          // key has been pressed
+          if(imsg->Code == IECODE_TAB)
+          {
+            set(_win(obj), MUIA_Window_ActiveObject, obj);
+            set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
           }
         }
         break;
