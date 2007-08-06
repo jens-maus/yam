@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-06  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c: the MatchExtension() function was doing a slightly incorrect
+    compare to identify if the specified extension matches or not. This may
+    have ended up in e.g. *.zip files being identified as zlib compressed
+    files (*.z) when searching through the internal hardcoded MIME type
+    list.
+
 2007-08-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: the "Check for updates" menu item is now also disabled during

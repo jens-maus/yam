@@ -6321,7 +6321,7 @@ void PlaySound(char *filename)
 ///
 /// MatchExtension
 //  Matches a file extension against a list of extension
-static BOOL MatchExtension(char *fileext, const char *extlist)
+static BOOL MatchExtension(const char *fileext, const char *extlist)
 {
   BOOL result = FALSE;
 
@@ -6330,6 +6330,7 @@ static BOOL MatchExtension(char *fileext, const char *extlist)
   if(extlist)
   {
     const char *s = extlist;
+    size_t extlen = strlen(fileext);
 
     // now we search for our delimiters step by step
     while(*s)
@@ -6342,8 +6343,11 @@ static BOOL MatchExtension(char *fileext, const char *extlist)
       D(DBF_MIME, "try matching file extension '%s' with '%s' %d", fileext, s, e-s);
 
       // now check if the extension matches
-      if(strnicmp(s, fileext, e-s) == 0)
+      if((size_t)(e-s) == extlen &&
+         strnicmp(s, fileext, extlen) == 0)
       {
+        D(DBF_MIME, "matched file extension '%s' with type '%s'", fileext, s);
+
         result = TRUE;
         break;
       }
