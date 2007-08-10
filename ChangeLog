@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: when searching for a content-type description there is no point
+    in performing a pattern match on the type instead of a simple comparison
+    if no wildcards are allowed at all.
+
 2007-08-06  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: the MatchExtension() function was doing a slightly incorrect

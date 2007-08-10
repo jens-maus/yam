@@ -3236,10 +3236,10 @@ const char *DescribeCT(const char *ct)
       else
         type = (char *)"";
 
-      // don't allow the catch-alls and empty types
+      // don't allow the catch-all and empty types
       if(type[0] != '*' && type[0] != '?' && type[0] != '#' && type[0] != '\0')
       {
-        if(MatchNoCase(ct, mt->ContentType) && mt->Description[0] != '\0')
+        if(stricmp(ct, mt->ContentType) == 0 && mt->Description[0] != '\0')
         {
           ret = mt->Description;
           break;
