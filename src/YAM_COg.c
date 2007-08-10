@@ -1549,7 +1549,7 @@ Object *MakeMimeTypePop(Object **string, const char *desc)
 
     MUIA_Popstring_String, *string = BetterStringObject,
       StringFrame,
-      MUIA_String_Accept,      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-/",
+      MUIA_String_Accept,      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-/#?*",
       MUIA_String_MaxLen,      SIZE_CTYPE,
       MUIA_ControlChar,        ShortCut(desc),
       MUIA_String_AdvanceOnCR, TRUE,

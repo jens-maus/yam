@@ -7,6 +7,8 @@ $URL$
 
 2007-08-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: added '#', '?' and '*' to the range of allowed characters to be
+    able to enter a catch-all content-type like "text/*".
   * YAM_UT.c: when searching for a content-type description there is no point
     in performing a pattern match on the type instead of a simple comparison
     if no wildcards are allowed at all.
