@@ -5,7 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-08-03  Thore Böckelmann <tboeckel@gmx.de>
+2007-08-14  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: the .uidl file is now only saved if the hash table has been
+    modified or if there are any entries to be saved at all. An unmodified
+    or empty hash table will never be saved.
+
+2007-08-09  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c: added '#', '?' and '*' to the range of allowed characters to be
     able to enter a catch-all content-type like "text/*".

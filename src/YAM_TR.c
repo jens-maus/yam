@@ -455,7 +455,7 @@ static BOOL TR_StartTLS(VOID)
                 timeoutSum += 1; // +1s
 
                 if(timeoutSum >= C->SocketTimeout ||
-                   (G->TR && G->TR->Abort))
+                   (G->TR != NULL && G->TR->Abort == TRUE))
                 {
                   break;
                 }
@@ -1680,7 +1680,7 @@ static enum ConnectError TR_Connect(char *host, int port)
                       timeoutSum += 1; // +1s
 
                       if(timeoutSum >= C->SocketTimeout ||
-                         (G->TR && G->TR->Abort))
+                         (G->TR != NULL && G->TR->Abort == TRUE))
                       {
                         break;
                       }
@@ -1803,7 +1803,7 @@ static enum ConnectError TR_Connect(char *host, int port)
 
         // if the user pressed the abort button in the transfer
         // window we have to exit the loop
-        if(G->TR && G->TR->Abort)
+        if(G->TR != NULL && G->TR->Abort == TRUE)
         {
           result = CONNECTERR_ABORTED;
           break;
@@ -2240,7 +2240,7 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
                 timeoutSum += 1; // +1s
 
                 if(timeoutSum >= C->SocketTimeout ||
-                   (G->TR && G->TR->Abort))
+                   (G->TR != NULL && G->TR->Abort == TRUE))
                 {
                   break;
                 }
@@ -2370,7 +2370,7 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
                 timeoutSum += 1; // +1s
 
                 if(timeoutSum >= C->SocketTimeout ||
-                   (G->TR && G->TR->Abort))
+                   (G->TR != NULL && G->TR->Abort == TRUE))
                 {
                   break;
                 }
@@ -2598,7 +2598,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
                 timeoutSum += 1; // +1s
 
                 if(timeoutSum >= C->SocketTimeout ||
-                   (G->TR && G->TR->Abort))
+                   (G->TR != NULL && G->TR->Abort == TRUE))
                 {
                   break;
                 }
@@ -2736,7 +2736,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
                 timeoutSum += 1; // +1s
 
                 if(timeoutSum >= C->SocketTimeout ||
-                   (G->TR && G->TR->Abort))
+                   (G->TR != NULL && G->TR->Abort == TRUE))
                 {
                   break;
                 }
@@ -3327,13 +3327,13 @@ static int TR_ConnectPOP(int guilevel)
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
 
       // Initiate a connect and see if we succeed
-      if(!(resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))))
+      if((resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))) == NULL)
         return -1;
       welcomemsg = StrBufCpy(NULL, resp);
 
       // If the user selected STLS support we have to first send the command
       // to start TLS negotiation (RFC 2595)
-      if(!TR_SendPOP3Cmd(POPCMD_STLS, NULL, tr(MSG_ER_BADRESPONSE)))
+      if(TR_SendPOP3Cmd(POPCMD_STLS, NULL, tr(MSG_ER_BADRESPONSE)) == NULL)
         return -1;
    }
 
@@ -3359,7 +3359,7 @@ static int TR_ConnectPOP(int guilevel)
    if(pop3->SSLMode != P3SSL_TLS)
    {
       // Initiate a connect and see if we succeed
-      if(!(resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))))
+      if((resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))) == NULL)
         return -1;
       welcomemsg = StrBufCpy(NULL, resp);
    }
@@ -3398,7 +3398,7 @@ static int TR_ConnectPOP(int guilevel)
            snprintf(&buf[j], sizeof(buf)-j, "%02x", digest[i]);
          buf[j] = 0;
          set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendAPOPLogin));
-         if (!TR_SendPOP3Cmd(POPCMD_APOP, buf, tr(MSG_ER_BADRESPONSE)))
+         if (TR_SendPOP3Cmd(POPCMD_APOP, buf, tr(MSG_ER_BADRESPONSE)) == NULL)
            return -1;
       }
       else
@@ -3410,21 +3410,21 @@ static int TR_ConnectPOP(int guilevel)
    else
    {
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendUserID));
-      if (!TR_SendPOP3Cmd(POPCMD_USER, pop3->User, tr(MSG_ER_BADRESPONSE)))
+      if (TR_SendPOP3Cmd(POPCMD_USER, pop3->User, tr(MSG_ER_BADRESPONSE)) == NULL)
         return -1;
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendPassword));
-      if (!TR_SendPOP3Cmd(POPCMD_PASS, passwd, tr(MSG_ER_BADRESPONSE)))
+      if (TR_SendPOP3Cmd(POPCMD_PASS, passwd, tr(MSG_ER_BADRESPONSE)) == NULL)
         return -1;
    }
 
    FreeStrBuf(welcomemsg);
 
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_GetStats));
-   if (!(resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, tr(MSG_ER_BADRESPONSE))))
+   if ((resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, tr(MSG_ER_BADRESPONSE))) == NULL)
      return -1;
 
    sscanf(&resp[4], "%d", &msgs);
-   if (msgs)
+   if(msgs != 0)
      AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_ConnectPOP), pop3->User, host, msgs);
 
    return msgs;
@@ -3596,7 +3596,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 
   ENTER();
 
-  if(!*mail->From.Address && !G->TR->Abort && !G->Error)
+  if(mail->From.Address[0] != '\0' && G->TR->Abort == FALSE && G->Error == FALSE)
   {
     char cmdbuf[SIZE_SMALL];
 
@@ -3605,13 +3605,13 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
     // This command is optional within the RFC 1939 specification
     // and therefore we don`t throw any error
     snprintf(cmdbuf, sizeof(cmdbuf), "%d 1", mtn->index);
-    if(TR_SendPOP3Cmd(POPCMD_TOP, cmdbuf, NULL))
+    if(TR_SendPOP3Cmd(POPCMD_TOP, cmdbuf, NULL) != NULL)
     {
       struct TempFile *tf;
 
       // we generate a temporary file to buffer the TOP list
       // into it.
-      if((tf = OpenTempFile("w")))
+      if((tf = OpenTempFile("w")) != NULL)
       {
         struct ExtendedMail *email;
         BOOL done = FALSE;
@@ -3627,7 +3627,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 
         // If we end up here because of an error, abort or the upper loop wasn`t finished
         // we exit immediatly with deleting the temp file also.
-        if(G->Error || G->TR->Abort || done == FALSE)
+        if(G->Error == TRUE || G->TR->Abort == TRUE || done == FALSE)
           lline = -1;
         else if((email = MA_ExamineMail(NULL, FilePart(tf->Filename), TRUE)))
         {
@@ -3845,7 +3845,11 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
   // lets initialize some important data first so that the transfer can
   // begin
   G->TR->POP_Nr = pop;
-  G->TR_Allow = G->TR->Abort = G->TR->Pause = G->TR->Start = G->Error = FALSE;
+  G->TR_Allow = FALSE;
+  G->TR->Abort = FALSE;
+  G->TR->Pause = FALSE;
+  G->TR->Start = FALSE;
+  G->Error = FALSE;
 
   // if the window isn`t open we don`t need to update it, do we?
   if(isfirst == FALSE && xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
@@ -4685,14 +4689,14 @@ static BOOL InitUIDLhash(void)
     CleanupUIDLhash();
 
   // allocate a new hashtable for managing the UIDL data
-  if((G->TR->UIDLhashTable = HashTableNew((struct HashTableOps *)&UIDLhashTableOps, NULL, sizeof(struct UIDLtoken), 512)))
+  if((G->TR->UIDLhashTable = HashTableNew((struct HashTableOps *)&UIDLhashTableOps, NULL, sizeof(struct UIDLtoken), 512)) != NULL)
   {
     FILE *fh;
     char *filename = CreateFilename(".uidl");
 
     // open the .uidl file and read in the UIDL/MsgIDs
     // line-by-line
-    if(FileSize(filename) > 0 && (fh = fopen(filename, "r")))
+    if(FileSize(filename) > 0 && (fh = fopen(filename, "r")) != NULL)
     {
       char uidl[SIZE_DEFAULT+SIZE_HOST];
 
@@ -4787,14 +4791,15 @@ static void CleanupUIDLhash(void)
 
   if(G->TR->UIDLhashTable != NULL)
   {
-    // save the UIDLs only if something has been changed
-  	if(G->TR->UIDLhashIsDirty == TRUE)
+    // save the UIDLs only if something has been changed or if there are
+    // some entries to be saved at all
+  	if(G->TR->UIDLhashIsDirty == TRUE || G->TR->UIDLhashTable->entryCount > 0)
   	{
       FILE *fh;
 
       // before we go and destroy the UIDL hash we have to
       // write it to the .uidl file back again.
-      if((fh = fopen(CreateFilename(".uidl"), "w")))
+      if((fh = fopen(CreateFilename(".uidl"), "w")) != NULL)
       {
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -4839,7 +4844,7 @@ static BOOL FilterDuplicates(void)
 
       // before we go and request each UIDL of a message we check wheter the server
       // supports the UIDL command at all
-      if(TR_SendPOP3Cmd(POPCMD_UIDL, NULL, NULL))
+      if(TR_SendPOP3Cmd(POPCMD_UIDL, NULL, NULL) != NULL)
       {
         char buf[SIZE_LINE];
 
@@ -4848,7 +4853,7 @@ static BOOL FilterDuplicates(void)
         {
           // we get the "unique-id list" as long as we haven`t received a a
           // finishing octet
-          while(!G->TR->Abort && !G->Error && strncmp(buf, ".\r\n", 3) != 0)
+          while(G->TR->Abort == FALSE && G->Error == FALSE && strncmp(buf, ".\r\n", 3) != 0)
           {
             int num;
             char uidl[SIZE_DEFAULT+SIZE_HOST];
@@ -4863,7 +4868,7 @@ static BOOL FilterDuplicates(void)
             strlcat(uidl, C->P3[G->TR->POP_Nr]->Server, sizeof(uidl));
 
             // search through our transferList
-            for(curNode = G->TR->transferList.mlh_Head; !G->TR->Abort && !G->Error && curNode->mln_Succ; curNode = curNode->mln_Succ)
+            for(curNode = G->TR->transferList.mlh_Head; G->TR->Abort == FALSE && G->Error == FALSE && curNode->mln_Succ; curNode = curNode->mln_Succ)
             {
               struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
 
@@ -4913,7 +4918,7 @@ static BOOL FilterDuplicates(void)
         W(DBF_UIDL, "POP3 server '%s' doesn't support UIDL command!", C->P3[G->TR->POP_Nr]->Server);
 
         // search through our transferList
-        for(curNode = G->TR->transferList.mlh_Head; !G->TR->Abort && !G->Error && curNode->mln_Succ; curNode = curNode->mln_Succ)
+        for(curNode = G->TR->transferList.mlh_Head; G->TR->Abort == FALSE && G->Error == FALSE && curNode->mln_Succ; curNode = curNode->mln_Succ)
         {
           struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
 
@@ -5071,7 +5076,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
 
       success = TRUE;
 
-      for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort && success; curNode = curNode->mln_Succ)
+      for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && G->TR->Abort == FALSE && success; curNode = curNode->mln_Succ)
       {
         struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
         struct Mail *mail = mtn->mail;
@@ -5208,7 +5213,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
   D(DBF_NET, "about to send mail '%s' via SMTP", mail->MailFile);
 
   // open the mail file for reading
-  if((fh = fopen(mf = GetMailFile(NULL, outfolder, mail), "r")))
+  if((fh = fopen(mf = GetMailFile(NULL, outfolder, mail), "r")) != NULL)
   {
     char buf[SIZE_LINE];
 
@@ -5286,7 +5291,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 
             // as long there is no abort situation we go on reading out
             // from the stream and sending it to our SMTP server
-            while(!G->TR->Abort && !G->Error && fgets(buf, SIZE_LINE, fh))
+            while(G->TR->Abort == FALSE && G->Error == FALSE && fgets(buf, SIZE_LINE, fh))
             {
               sendsize = cpos = ftell(fh)-prevpos; // get the size we really read out from the stream.
               prevpos += sendsize;                 // set the new prevpos to the ftell() value.
@@ -5351,7 +5356,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
               ER_NewError(tr(MSG_ER_ErrorReadMailfile), mf);
               result = -1; // signal error
             }
-            else if(!G->TR->Abort && !G->Error)
+            else if(G->TR->Abort == FALSE && G->Error == FALSE)
             {
               // we have to flush the write buffer if this wasn`t a error or
               // abort situation
@@ -5373,7 +5378,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
               }
             }
 
-            if(G->TR->Abort || G->Error)
+            if(G->TR->Abort == TRUE || G->Error == TRUE)
               result = -1; // signal the caller that we aborted within the DATA part
           }
         }
@@ -5417,7 +5422,9 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
         int i;
 
         NewList((struct List *)&G->TR->transferList);
-        G->TR_Allow = G->TR->Abort = G->Error = FALSE;
+        G->TR_Allow = FALSE;
+        G->TR->Abort = FALSE;
+        G->Error = FALSE;
 
         // now we build the list of mails which should
         // be transfered.
@@ -5558,7 +5565,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                   struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
                   struct Mail *mail = mtn->mail;
 
-                  if(G->TR->Abort || G->Error)
+                  if(G->TR->Abort == TRUE || G->Error == TRUE)
                     break;
 
                   ts.Msgs_Done++;
@@ -6004,7 +6011,7 @@ static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, u
   msg_addr = GetLong(msg_entry, 0);
 
   // Open the output file
-  if(!(mailout = fopen(outFileName, "wb")))
+  if((mailout = fopen(outFileName, "wb")) == NULL)
   {
     E(DBF_IMPORT, "Couldn't open %s for output", outFileName);
     goto out;
@@ -6024,7 +6031,7 @@ static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, u
   rc = TRUE;
 
 out:
-  if(mailout)
+  if(mailout != NULL)
     fclose(mailout);
 
   free(buf);
@@ -6303,7 +6310,7 @@ BOOL TR_GetMessageList_IMPORT(void)
       FILE *ifh;
 
       // lets open the file and read out the root node of the dbx mail file
-      if((ifh = fopen(G->TR->ImportFile, "rb")))
+      if((ifh = fopen(G->TR->ImportFile, "rb")) != NULL)
       {
         unsigned char *file_header;
 
@@ -6402,7 +6409,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
             // iterate through our transferList and seek to
             // each position/address of a mail
-            for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort; curNode = curNode->mln_Succ)
+            for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && G->TR->Abort == FALSE; curNode = curNode->mln_Succ)
             {
               struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
               struct Mail *mail = mtn->mail;
@@ -6431,7 +6438,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
               // now that we seeked to the mail address we go
               // and read in line by line
-              while(GetLine(ifh, buffer, SIZE_LINE) && !G->TR->Abort)
+              while(GetLine(ifh, buffer, SIZE_LINE) && G->TR->Abort == FALSE)
               {
                 // if we did not find the message body yet
                 if(foundBody == FALSE)
@@ -6551,7 +6558,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
             // iterate through our transferList and seek to
             // each position/address of a mail
-            for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort; curNode = curNode->mln_Succ)
+            for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && G->TR->Abort == FALSE; curNode = curNode->mln_Succ)
             {
               struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
               struct Mail *mail = mtn->mail;
@@ -6678,14 +6685,14 @@ static BOOL TR_LoadMessage(struct Folder *infolder, struct TransStat *ts, const 
 
   // open the new mailfile for writing out the retrieved
   // data
-  if((fh = fopen(msgfile, "w")))
+  if((fh = fopen(msgfile, "w")) != NULL)
   {
     BOOL done = FALSE;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     snprintf(msgnum, sizeof(msgnum), "%d", number);
-    if(TR_SendPOP3Cmd(POPCMD_RETR, msgnum, tr(MSG_ER_BADRESPONSE)))
+    if(TR_SendPOP3Cmd(POPCMD_RETR, msgnum, tr(MSG_ER_BADRESPONSE)) != NULL)
     {
       // now we call a subfunction to receive data from the POP3 server
       // and write it in the filehandle as long as there is no termination \r\n.\r\n
@@ -6694,7 +6701,7 @@ static BOOL TR_LoadMessage(struct Folder *infolder, struct TransStat *ts, const 
     }
     fclose(fh);
 
-    if(!G->TR->Abort && !G->Error && done)
+    if(G->TR->Abort == FALSE && G->Error == FALSE && done == TRUE)
     {
       struct ExtendedMail *mail;
 
@@ -6755,7 +6762,7 @@ static BOOL TR_DeleteMessage(int number)
   // inform others of the delete operation
   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_DeletingServerMail));
 
-  if(TR_SendPOP3Cmd(POPCMD_DELE, msgnum, tr(MSG_ER_BADRESPONSE)))
+  if(TR_SendPOP3Cmd(POPCMD_DELE, msgnum, tr(MSG_ER_BADRESPONSE)) != NULL)
   {
     G->TR->Stats.Deleted++;
     result = TRUE;
@@ -6835,7 +6842,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
 
     TR_TransStat_Start(&ts);
 
-    for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort && !G->Error; curNode = curNode->mln_Succ)
+    for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && G->TR->Abort == FALSE && G->Error == FALSE; curNode = curNode->mln_Succ)
     {
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
       struct Mail *mail = mtn->mail;
@@ -6844,7 +6851,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       {
         TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Downloading));
 
-        if(TR_LoadMessage(infolder, &ts, mtn->index))
+        if(TR_LoadMessage(infolder, &ts, mtn->index) == TRUE)
         {
           // put the transferStat to 100%
           TR_TransStat_Update(&ts, TS_SETMAX);
@@ -6853,7 +6860,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
 
           if(hasTR_DELETE(mtn))
           {
-            if(TR_DeleteMessage(mtn->index) && G->TR->DuplicatesChecking)
+            if(TR_DeleteMessage(mtn->index) && G->TR->DuplicatesChecking == TRUE)
             {
               // remove the UIDL from the hash table and remember that change
               RemoveUIDLfromHash(mtn->UIDL);
@@ -6872,7 +6879,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       {
         TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Downloading));
 
-        if(TR_DeleteMessage(mtn->index) && G->TR->DuplicatesChecking == TRUE)
+        if(TR_DeleteMessage(mtn->index) == TRUE && G->TR->DuplicatesChecking == TRUE)
         {
           // remove the UIDL from the hash table and remember that change
           RemoveUIDLfromHash(mtn->UIDL);
@@ -6913,61 +6920,65 @@ MakeStaticHook(TR_GetMessageInfoHook, TR_GetMessageInfoFunc);
 //  Gets details for messages on server
 static void TR_CompleteMsgList(void)
 {
-   struct TR_ClassData *tr = G->TR;
+  struct TR_ClassData *tr = G->TR;
 
-   // first we have to set the notifies to the default values.
-   // this is needed so that if we get mail from more than one POP3 at a line this
-   // abort stuff works out
-   set(G->TR->GUI.BT_PAUSE, MUIA_Disabled, FALSE);
-   set(G->TR->GUI.BT_RESUME, MUIA_Disabled, TRUE);
-   DoMethod(tr->GUI.BT_START, MUIM_KillNotify, MUIA_Pressed);
-   DoMethod(tr->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(tr->Start));
-   DoMethod(tr->GUI.BT_QUIT , MUIM_KillNotify, MUIA_Pressed);
-   DoMethod(tr->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(tr->Abort));
+  ENTER();
 
-   if(C->PreSelection < PSM_ALWAYSLARGE)
-   {
-      struct MinNode *curNode = tr->GMD_Mail;
+  // first we have to set the notifies to the default values.
+  // this is needed so that if we get mail from more than one POP3 at a line this
+  // abort stuff works out
+  set(G->TR->GUI.BT_PAUSE, MUIA_Disabled, FALSE);
+  set(G->TR->GUI.BT_RESUME, MUIA_Disabled, TRUE);
+  DoMethod(tr->GUI.BT_START, MUIM_KillNotify, MUIA_Pressed);
+  DoMethod(tr->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(tr->Start));
+  DoMethod(tr->GUI.BT_QUIT , MUIM_KillNotify, MUIA_Pressed);
+  DoMethod(tr->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(tr->Abort));
 
-      for(; curNode->mln_Succ && !tr->Abort && !G->Error; curNode = curNode->mln_Succ)
+  if(C->PreSelection < PSM_ALWAYSLARGE)
+  {
+    struct MinNode *curNode = tr->GMD_Mail;
+
+    for(; curNode->mln_Succ && tr->Abort == FALSE && G->Error == FALSE; curNode = curNode->mln_Succ)
+    {
+      struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+
+      if(tr->Pause == TRUE)
+        break;
+
+      if(tr->Start == TRUE)
       {
-        struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-
-        if(tr->Pause)
-          break;
-
-        if(tr->Start)
-        {
-          TR_ProcessGETFunc();
-          break;
-        }
-
-        if(C->PreSelection != PSM_LARGE || mtn->mail->Size >= C->WarnSize*1024)
-        {
-          TR_GetMessageDetails(mtn, tr->GMD_Line++);
-
-          // set the next mail as the active one for the display,
-          // so that if the user pauses we can go on here
-          tr->GMD_Mail = curNode->mln_Succ;
-        }
+        TR_ProcessGETFunc();
+        break;
       }
-   }
 
-   set(G->TR->GUI.BT_PAUSE, MUIA_Disabled, TRUE);
-   DoMethod(tr->GUI.BT_START, MUIM_KillNotify, MUIA_Pressed);
-   DoMethod(tr->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_ProcessGETHook);
-   DoMethod(tr->GUI.BT_QUIT , MUIM_KillNotify, MUIA_Pressed);
-   DoMethod(tr->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_AbortGETHook);
+      if(C->PreSelection != PSM_LARGE || mtn->mail->Size >= C->WarnSize*1024)
+      {
+        TR_GetMessageDetails(mtn, tr->GMD_Line++);
 
-   if(tr->Abort)
-     TR_AbortGETFunc();
-   else
-   {
-     // start the timer which makes sure we send
-     // a regular NOOP command to the POP3 server
-     // so that it doesn't drop the connection
-     TC_Restart(TIO_POP3_KEEPALIVE, C->KeepAliveInterval, 0);
-   }
+        // set the next mail as the active one for the display,
+        // so that if the user pauses we can go on here
+        tr->GMD_Mail = curNode->mln_Succ;
+      }
+    }
+  }
+
+  set(G->TR->GUI.BT_PAUSE, MUIA_Disabled, TRUE);
+  DoMethod(tr->GUI.BT_START, MUIM_KillNotify, MUIA_Pressed);
+  DoMethod(tr->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_ProcessGETHook);
+  DoMethod(tr->GUI.BT_QUIT , MUIM_KillNotify, MUIA_Pressed);
+  DoMethod(tr->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_AbortGETHook);
+
+  if(tr->Abort == TRUE)
+    TR_AbortGETFunc();
+  else
+  {
+    // start the timer which makes sure we send
+    // a regular NOOP command to the POP3 server
+    // so that it doesn't drop the connection
+    TC_Restart(TIO_POP3_KEEPALIVE, C->KeepAliveInterval, 0);
+  }
+
+  LEAVE();
 }
 ///
 /// TR_PauseFunc
@@ -6976,9 +6987,11 @@ HOOKPROTONHNO(TR_PauseFunc, void, int *arg)
 {
   BOOL pause = *arg;
 
-  set(G->TR->GUI.BT_RESUME, MUIA_Disabled, !pause);
-  set(G->TR->GUI.BT_PAUSE,  MUIA_Disabled, pause);
-  if(pause)
+  ENTER();
+
+  set(G->TR->GUI.BT_RESUME, MUIA_Disabled, pause == FALSE);
+  set(G->TR->GUI.BT_PAUSE,  MUIA_Disabled, pause == TRUE);
+  if(pause == TRUE)
   {
     // start the timer which makes sure we send
     // a regular NOOP command to the POP3 server
@@ -6989,6 +7002,8 @@ HOOKPROTONHNO(TR_PauseFunc, void, int *arg)
 
   G->TR->Pause = FALSE;
   TR_CompleteMsgList();
+
+  LEAVE();
 }
 MakeStaticHook(TR_PauseHook, TR_PauseFunc);
 ///
