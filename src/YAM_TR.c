@@ -3596,7 +3596,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 
   ENTER();
 
-  if(mail->From.Address[0] != '\0' && G->TR->Abort == FALSE && G->Error == FALSE)
+  if(mail->From.Address[0] == '\0' && G->TR->Abort == FALSE && G->Error == FALSE)
   {
     char cmdbuf[SIZE_SMALL];
 
@@ -3631,12 +3631,12 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
           lline = -1;
         else if((email = MA_ExamineMail(NULL, FilePart(tf->Filename), TRUE)))
         {
-          mail->From    = email->Mail.From;
-          mail->To      = email->Mail.To;
-          mail->ReplyTo = email->Mail.ReplyTo;
+          memcpy(&mail->From, &email->Mail.From, sizeof(mail->From));
+          memcpy(&mail->To, &email->Mail.To, sizeof(mail->To));
+          memcpy(&mail->ReplyTo, &email->Mail.ReplyTo, sizeof(mail->ReplyTo));
           strlcpy(mail->Subject, email->Mail.Subject, sizeof(mail->Subject));
           strlcpy(mail->MailFile, email->Mail.MailFile, sizeof(mail->MailFile));
-          mail->Date = email->Mail.Date;
+          memcpy(&mail->Date, &email->Mail.Date, sizeof(mail->Date));
 
           // if thie function was called with -1, then the POP3 server
           // doesn`t have the UIDL command and we have to generate our
