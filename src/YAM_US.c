@@ -682,9 +682,9 @@ static struct US_ClassData *US_New(BOOL supervisor)
        MUIA_HelpNode, "US_W",
        MUIA_Window_ID, MAKE_ID('U','S','E','R'),
        WindowContents, VGroup,
-          Child, data->GUI.LV_USERS = NListviewObject,
+          Child, NListviewObject,
              MUIA_CycleChain, 1,
-             MUIA_NListview_NList, NListObject,
+             MUIA_NListview_NList, data->GUI.LV_USERS = NListObject,
                 InputListFrame,
                 MUIA_NList_ConstructHook, &US_LV_ConHook,
                 MUIA_NList_DestructHook, &GeneralDesHook,
@@ -739,7 +739,7 @@ static struct US_ClassData *US_New(BOOL supervisor)
       SetHelp(data->GUI.BT_ADD    ,MSG_HELP_US_BT_ADD);
       SetHelp(data->GUI.BT_DEL    ,MSG_HELP_US_BT_DEL);
       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-      DoMethod(data->GUI.LV_USERS,  MUIM_Notify,MUIA_List_Active,        MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_GetUSEntryHook);
+      DoMethod(data->GUI.LV_USERS,  MUIM_Notify,MUIA_NList_Active,       MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_GetUSEntryHook);
       DoMethod(data->GUI.ST_USER,   MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
       DoMethod(data->GUI.ST_MAILDIR,MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
       DoMethod(data->GUI.ST_PASSWD, MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
