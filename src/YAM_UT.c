@@ -867,9 +867,9 @@ struct Part *AttachRequest(const char *title, const char *body, const char *yest
         GroupFrame,
         MUIA_Background, MUII_GroupBack,
         Child, LLabel(body),
-        Child, lv_attach = NListviewObject,
+        Child, NListviewObject,
           MUIA_CycleChain, TRUE,
-          MUIA_NListview_NList, NListObject,
+          MUIA_NListview_NList, lv_attach = NListObject,
             InputListFrame,
             MUIA_NList_Title,        TRUE,
             MUIA_NList_DoubleClick,  TRUE,
@@ -5422,24 +5422,25 @@ void SaveLayout(BOOL permanent)
 ///
 /// ConvertKey
 //  Converts input event to key code
-ULONG ConvertKey(struct IntuiMessage *imsg)
+unsigned char ConvertKey(const struct IntuiMessage *imsg)
 {
-  struct InputEvent event;
+  struct InputEvent ie;
   unsigned char code = 0;
 
   ENTER();
 
-  event.ie_NextEvent    = NULL;
-  event.ie_Class        = IECLASS_RAWKEY;
-  event.ie_SubClass     = 0;
-  event.ie_Code         = imsg->Code;
-  event.ie_Qualifier    = imsg->Qualifier;
-  event.ie_EventAddress = (APTR *) *((ULONG *)imsg->IAddress);
+  ie.ie_NextEvent    = NULL;
+  ie.ie_Class        = IECLASS_RAWKEY;
+  ie.ie_SubClass     = 0;
+  ie.ie_Code         = imsg->Code;
+  ie.ie_Qualifier    = imsg->Qualifier;
+  ie.ie_EventAddress = (APTR *) *((ULONG *)imsg->IAddress);
 
-  MapRawKey(&event, (STRPTR)&code, 1, NULL);
+  if(MapRawKey(&ie, (STRPTR)&code, 1, NULL) != 1)
+    E(DBF_GUI, "MapRawKey retuned != 1");
 
-  RETURN((ULONG)code);
-  return (ULONG)code;
+  RETURN(code);
+  return code;
 }
 ///
 /// isChildOfGroup

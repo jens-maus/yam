@@ -7,6 +7,14 @@ $URL$
 
 2007-08-06  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: fixed incorrect usage of the NListviewObject as the main
+    object where we send our NList requests to. Now the created NList
+    object will be used instead, which in fact should fix issues with
+    seeing the scrollbar in an attachment view being used when trying
+    to use the cursor keys for scrolling around in the List itself.
+  * YAM_UT.c: slightly rewritten the ConvertKey() function to output an
+    error message in case a MapRawKey() operation didn't succeed as
+    expected.
   * YAM_TR.c: the first element in a preselection window will now be
     automatically selected upon popup of the window. In addition, the
     NList object will be the default object which will allow to

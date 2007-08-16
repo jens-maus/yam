@@ -290,7 +290,7 @@ void     CloseTempFile(struct TempFile *tf);
 ULONG    CRC32(void *buffer, unsigned int count, ULONG crc);
 ULONG    CompressMsgID(char *msgid);
 BOOL     ConvertCRLF(char *in, char *out, BOOL to);
-ULONG    ConvertKey(struct IntuiMessage *imsg);
+unsigned char ConvertKey(const struct IntuiMessage *imsg);
 BOOL     isChildOfGroup(Object *group, Object *child);
 BOOL     isChildOfFamily(Object *family, Object *child);
 void     MyBltMaskBitMapRastPort(struct BitMap *srcBitMap, LONG xSrc, LONG ySrc, struct RastPort *destRP, LONG xDest, LONG yDest, LONG xSize, LONG ySize, ULONG minterm, APTR bltMask);
