@@ -3459,7 +3459,9 @@ static void TR_DisplayMailList(BOOL largeonly)
       }
     }
 
-    set(lv, MUIA_NList_Quiet, FALSE);
+    SetAttrs(lv, MUIA_NList_Active, MUIV_NList_Active_Top,
+                 MUIA_NList_Quiet,  FALSE,
+                 TAG_DONE);
   }
 
   LEAVE();
@@ -7131,7 +7133,7 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
       data->GUI.GR_LIST = VGroup, GroupFrameT(TRmode==TR_IMPORT ? tr(MSG_TR_MsgInFile) : tr(MSG_TR_MsgOnServer)),
          MUIA_ShowMe, TRmode==TR_IMPORT || C->PreSelection >= PSM_ALWAYS,
          Child, NListviewObject,
-            MUIA_CycleChain,1,
+            MUIA_CycleChain, TRUE,
             MUIA_NListview_NList, data->GUI.LV_MAILS = TransferMailListObject,
                MUIA_NList_MultiSelect, MUIV_NList_MultiSelect_Default,
                MUIA_NList_Format        , "W=-1 BAR,W=-1 MACW=9 P=\33r BAR,MICW=20 BAR,MICW=16 BAR,MICW=9 MACW=15",
@@ -7197,7 +7199,9 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
       SetHelp(data->GUI.BT_ABORT ,MSG_HELP_TR_BT_ABORT);
       if(fullwin)
       {
+        set(data->GUI.WI, MUIA_Window_DefaultObject, data->GUI.LV_MAILS);
         set(data->GUI.BT_RESUME, MUIA_Disabled, TRUE);
+
         if(TRmode == TR_IMPORT)
         {
           set(data->GUI.BT_PAUSE, MUIA_Disabled, TRUE);

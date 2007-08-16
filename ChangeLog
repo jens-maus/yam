@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-06  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: the first element in a preselection window will now be
+    automatically selected upon popup of the window. In addition, the
+    NList object will be the default object which will allow to
+    immediately use the cursor keys to browse through the list.
+
 2007-08-15  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: fixed the "empty transfer list" bug of report #1774583.
