@@ -7,6 +7,9 @@ $URL$
 
 2007-08-06  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_AB.c: changed DefaultObject to point to NList object instead of
+    NListview object to fix default object activation. Also changed
+    the Addressbook to popup with the first entry selected.
   * YAM_UT.c: fixed incorrect usage of the NListviewObject as the main
     object where we send our NList requests to. Now the created NList
     object will be used instead, which in fact should fix issues with

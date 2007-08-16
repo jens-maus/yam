@@ -2158,7 +2158,7 @@ HOOKPROTONHNO(AB_OpenFunc, void, LONG *arg)
 
   snprintf(ab->WTitle, sizeof(ab->WTitle), "%s %s", tr(MSG_MA_MAddrBook), md);
   set(ab->GUI.WI, MUIA_Window_Title, ab->WTitle);
-  set(ab->GUI.LV_ADDRESSES, MUIA_NListtree_Active, MUIV_NListtree_Active_Off);
+  set(ab->GUI.LV_ADDRESSES, MUIA_NListtree_Active, MUIV_NListtree_Active_First);
 
   SafeOpenWindow(ab->GUI.WI);
 
@@ -2415,8 +2415,6 @@ struct AB_ClassData *AB_New(void)
 
   if((data = calloc(1, sizeof(struct AB_ClassData))) != NULL)
   {
-    Object *list;
-
     enum {
       AMEN_NEW,AMEN_OPEN,AMEN_APPEND,AMEN_SAVE,AMEN_SAVEAS,
       AMEN_IMPORT_LDIF, AMEN_IMPORT_CSV, AMEN_IMPORT_TAB,
@@ -2499,7 +2497,7 @@ struct AB_ClassData *AB_New(void)
                 Child, AddrBookToolbarObject,
                 End,
              End),
-          Child, list = NListviewObject,
+          Child, NListviewObject,
              MUIA_CycleChain,         TRUE,
              MUIA_Listview_DragType,  MUIV_Listview_DragType_Immediate,
              MUIA_NListview_NList,    data->GUI.LV_ADDRESSES = AddrBookListtreeObject,
@@ -2522,7 +2520,7 @@ struct AB_ClassData *AB_New(void)
     {
       AB_MakeABFormat(data->GUI.LV_ADDRESSES);
       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-      set(data->GUI.WI, MUIA_Window_DefaultObject, list);
+      set(data->GUI.WI, MUIA_Window_DefaultObject, data->GUI.LV_ADDRESSES);
       SetHelp(data->GUI.BT_TO ,MSG_HELP_AB_BT_TO );
       SetHelp(data->GUI.BT_CC ,MSG_HELP_AB_BT_CC );
       SetHelp(data->GUI.BT_BCC,MSG_HELP_AB_BT_BCC);
