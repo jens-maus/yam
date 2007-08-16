@@ -5,7 +5,7 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-08-06  Jens Langner <Jens.Langner@light-speed.de>
+2007-08-16  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c, YAM_US.c: fixed some more incorrect NListview/NList
     uses that may have caused some trouble with default object activation.
