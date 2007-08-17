@@ -2170,7 +2170,9 @@ static struct FI_ClassData *FI_New(void)
        set(data->GUI.BT_SELECT,       MUIA_Disabled, TRUE);
        set(data->GUI.BT_READ,         MUIA_Disabled, TRUE);
 
-       set(data->GUI.WI, MUIA_Window_ActiveObject, xget(data->GUI.GR_SEARCH, MUIA_SearchControlGroup_ActiveObject));
+       SetAttrs(data->GUI.WI, MUIA_Window_ActiveObject,  xget(data->GUI.GR_SEARCH, MUIA_SearchControlGroup_ActiveObject),
+                              MUIA_Window_DefaultObject, data->GUI.LV_MAILS,
+                              TAG_DONE);
 
        SetHelp(data->GUI.LV_FOLDERS,       MSG_HELP_FI_LV_FOLDERS);
        SetHelp(bt_all,                     MSG_HELP_FI_BT_ALL);

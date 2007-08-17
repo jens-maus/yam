@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-17  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_FI.c: the result list in the find window wasn't browseable by
+    keyboard because the list wasn't set as the default object of the
+    respective window.
+
 2007-08-16  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c, YAM_US.c: fixed some more incorrect NListview/NList
