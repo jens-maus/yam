@@ -135,11 +135,11 @@ static char *rcptok(char *s, BOOL *quote)
 /// NormalizeSelection()
 // normalized/clears the selection and removes eventually existing
 // ' >> ' marks.
-static void NormalizeSelection(Object *obj)
+static void NormalizeSelection(Object *obj, BOOL clear)
 {
   LONG start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
   LONG rcpSize;
-  LONG marksSize;
+  LONG marksSize = 0;
   char *rcp = (char *)xget(obj, MUIA_String_Contents) + start;
   char *p;
 
@@ -153,11 +153,10 @@ static void NormalizeSelection(Object *obj)
     marksSize = (LONG)(p + 4 - rcp);
     rcp = strdup(p + 4);
   }
-  else
-  {
-    marksSize = 0;
+  else if(clear)
     rcp = strdup(rcp);
-  }
+  else
+    rcp = NULL;
 
   if(rcp != NULL)
   {
@@ -192,7 +191,14 @@ static void NormalizeSelection(Object *obj)
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  if((obj = (Object *)DoSuperMethodA(cl, obj, msg)))
+  ENTER();
+
+  obj = DoSuperNew(cl, obj,
+                    StringFrame,
+                    MUIA_BetterString_NoShortcuts, TRUE,
+                  TAG_MORE, inittags(msg));
+
+  if(obj != NULL)
   {
     GETDATA;
 
@@ -216,6 +222,8 @@ OVERLOAD(OM_NEW)
       MUIA_String_Reject, data->MultipleRecipients ? NULL : ",",
       TAG_DONE);
   }
+
+  RETURN((ULONG)obj);
   return (ULONG)obj;
 }
 ///
@@ -413,9 +421,9 @@ OVERLOAD(MUIM_GoInactive)
   DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
 
   // call NormalizeSelection() to make sure that
-  // now ' >> ' marks are kept when the gadget is going
+  // no ' >> ' marks are kept when the gadget is going
   // into inactive state.
-  NormalizeSelection(obj);
+  NormalizeSelection(obj, TRUE);
 
   // only if the matchwindow is not active we can close it on a inactive state of
   // this object
@@ -609,15 +617,23 @@ OVERLOAD(MUIM_HandleEvent)
 
               changed = TRUE;
             }
-            else if(imsg->Code == IECODE_LEFT ||
-                    imsg->Code == IECODE_RIGHT ||
-                    ConvertKey(imsg) == ',')
+            else if((imsg->Code == IECODE_LEFT || imsg->Code == IECODE_RIGHT))
             {
               // call NormalizeSelection() to make sure that
               // no ' >> ' marks are kept when the user wants to continue
               // with either the next/prev or by simply pressing left/right
               // to finish the selection.
-              NormalizeSelection(obj);
+              NormalizeSelection(obj, FALSE);
+
+              closeMatchWin = TRUE;
+            }
+            else if(ConvertKey(imsg) == ',')
+            {
+              // call NormalizeSelection() to make sure that
+              // no ' >> ' marks are kept when the user wants to continue
+              // with either the next/prev or by simply pressing left/right
+              // to finish the selection.
+              NormalizeSelection(obj, TRUE);
 
               closeMatchWin = TRUE;
             }
