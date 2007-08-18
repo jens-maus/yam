@@ -40,6 +40,36 @@ struct Data
 */
 
 /* Overloaded Methods */
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  ULONG result = 0;
+  struct TagItem *tags = inittags(msg), *tag;
+
+  ENTER();
+
+  while((tag = NextTagItem(&tags)))
+  {
+    switch(tag->ti_Tag)
+    {
+      case MUIA_Window_DefaultObject:
+      {
+        // if the user clicks somewhere where the default
+        // object would be set to NULL we make sure we set
+        // it back to the default object of the readmail group
+        if((Object *)tag->ti_Data == NULL)
+          tag->ti_Data = xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListObject);
+      }
+      break;
+    }
+  }
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+///
 /// OVERLOAD(MUIM_Window_Snapshot)
 OVERLOAD(MUIM_Window_Snapshot)
 {

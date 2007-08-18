@@ -69,21 +69,21 @@ struct Data
 /* EXPORT
 #define MUIF_ReadMailGroup_Clear_KeepText              (1<<0) // don't clear the text editor content
 #define MUIF_ReadMailGroup_Clear_KeepAttachmentGroup   (1<<1) // don't clear the attachmentgroup
-
 #define hasKeepTextFlag(v)            (isFlagSet((v), MUIF_ReadMailGroup_Clear_KeepText))
 #define hasKeepAttachmentGroupFlag(v) (isFlagSet((v), MUIF_ReadMailGroup_Clear_KeepAttachmentGroup))
 
 #define MUIF_ReadMailGroup_ReadMail_UpdateOnly         (1<<0) // the call to ReadMail is just because of an update of the same mail
 #define MUIF_ReadMailGroup_ReadMail_StatusChangeDelay  (1<<1) // the mail status should not be change immediatley but with a specified time interval
 #define MUIF_ReadMailGroup_ReadMail_UpdateTextOnly     (1<<2) // update the main mail text only
-
 #define hasUpdateOnlyFlag(v)         (isFlagSet((v), MUIF_ReadMailGroup_ReadMail_UpdateOnly))
 #define hasStatusChangeDelayFlag(v)  (isFlagSet((v), MUIF_ReadMailGroup_ReadMail_StatusChangeDelay))
 #define hasUpdateTextOnlyFlag(v)     (isFlagSet((v), MUIF_ReadMailGroup_ReadMail_UpdateTextOnly))
 
 #define MUIF_ReadMailGroup_Search_Again                (1<<0) // perform the same search again
-
 #define hasSearchAgainFlag(v)        (isFlagSet((v), MUIF_ReadMailGroup_Search_Again))
+
+#define MUIF_ReadMailGroup_DoEditAction_Fallback       (1<<0) // fallback to default
+#define hasEditActionFallbackFlag(v)  (isFlagSet((v), MUIF_ReadMailGroup_DoEditAction_Fallback))
 */
 
 /// Menu enumerations
@@ -354,8 +354,9 @@ OVERLOAD(OM_NEW)
                   MUIA_NList_DisplayHook,          &HeaderDisplayHook,
                   MUIA_NList_Format,               "P=\033r\0338 W=-1 MIW=-1,",
                   MUIA_NList_Input,                FALSE,
+                  MUIA_NList_AutoClip,             FALSE,
+                  MUIA_NList_AutoCopyToClip,       FALSE,
                   MUIA_NList_TypeSelect,           MUIV_NList_TypeSelect_Char,
-                  MUIA_NList_DefaultObjectOnClick, FALSE,
                   MUIA_ContextMenu,                FALSE,
                   MUIA_CycleChain,                 TRUE,
                 End,
@@ -387,6 +388,7 @@ OVERLOAD(OM_NEW)
                   MUIA_TextEditor_ImportHook,      MUIV_TextEditor_ImportHook_Plain,
                   MUIA_TextEditor_ExportHook,      MUIV_TextEditor_ExportHook_Plain,
                   MUIA_TextEditor_ReadOnly,        TRUE,
+                  MUIA_TextEditor_AutoClip,        FALSE,
                   MUIA_CycleChain,                 TRUE,
                 End,
                 Child, textEditScrollbar,
@@ -485,6 +487,7 @@ OVERLOAD(OM_GET)
     ATTR(HGVertWeight) : *store = xget(data->headerGroup, MUIA_VertWeight); return TRUE;
     ATTR(TGVertWeight) : *store = xget(data->mailBodyGroup, MUIA_VertWeight); return TRUE;
     ATTR(ReadMailData) : *store = (ULONG)data->readMailData; return TRUE;
+    ATTR(DefaultObject): *store = (ULONG)data->mailTextObject; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -1686,5 +1689,98 @@ DECLARE(ChangeSenderInfoMode) // enum SInfoMode simode
   RETURN(0);
   return 0;
 }
+///
+/// DECLARE(DoEditAction)
+DECLARE(DoEditAction) // enum EditAction editAction, ULONG flags
+{
+  GETDATA;
+  Object *curObj;
+  BOOL result = FALSE;
+
+  ENTER();
+
+  // we first check which object is currently selected
+  // as the 'active' Object
+  curObj = (Object *)xget(_win(obj), MUIA_Window_ActiveObject);
+  if(curObj == NULL)
+    curObj = (Object *)xget(_win(obj), MUIA_Window_DefaultObject);
+
+  // check if the current Object matches any of our
+  // maintained objects or if the fallback option was
+  // specified.
+  if(curObj != data->mailTextObject &&
+     curObj != data->headerList &&
+     hasEditActionFallbackFlag(msg->flags))
+  {
+    // we fallback to the mailTextObject
+    curObj = data->mailTextObject;
+  }
+
+  // if we still haven't got anything selected
+  // something must be extremly strange ;)
+  if(curObj != NULL)
+  {
+    // check which action we got
+    switch(msg->editAction)
+    {
+      case EA_COPY:
+      {
+        if(curObj == data->mailTextObject)
+        {
+          DoMethod(curObj, MUIM_TextEditor_ARexxCmd, "COPY");
+          result = TRUE;
+        }
+        else if(curObj == data->headerList)
+        {
+          DoMethod(curObj, MUIM_NList_CopyToClip, MUIV_NList_CopyToClip_Selected, 0, NULL, NULL);
+          DoMethod(curObj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
+          result = TRUE;
+        }
+      }
+      break;
+
+      case EA_SELECTALL:
+      {
+        if(curObj == data->mailTextObject)
+        {
+          DoMethod(curObj, MUIM_TextEditor_ARexxCmd, "SELECTALL");
+          result = TRUE;
+        }
+        else if(curObj == data->headerList)
+        {
+          DoMethod(curObj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
+          result = TRUE;
+        }
+      }
+      break;
+
+      case EA_SELECTNONE:
+      {
+        if(curObj == data->mailTextObject)
+        {
+          DoMethod(curObj, MUIM_TextEditor_ARexxCmd, "SELECTNONE");
+          result = TRUE;
+        }
+        else if(curObj == data->headerList)
+        {
+          DoMethod(curObj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
+          result = TRUE;
+        }
+      }
+      break;
+
+      default:
+        // nothing
+        W(DBF_GUI, "edit action %ld not supported by ReadMailGroup", msg->editAction);
+      break;
+    }
+  }
+  else
+    E(DBF_GUI, "no active nor default object of window: 0x%08lx", _win(obj));
+
+  RETURN(result);
+  return result;
+}
+
 ///
 

@@ -397,10 +397,11 @@ OVERLOAD(OM_NEW)
       End,
       Child, searchString =  BetterStringObject,
         StringFrame,
-        MUIA_CycleChain,          TRUE,
-        MUIA_Font,                MUIV_Font_Tiny,
-        MUIA_String_AdvanceOnCR,  FALSE,
+        MUIA_CycleChain,                    TRUE,
+        MUIA_Font,                          MUIV_Font_Tiny,
+        MUIA_String_AdvanceOnCR,            FALSE,
         MUIA_BetterString_InactiveContents, tr(MSG_QUICKSEARCH_SO_SUBJORSENDER),
+        MUIA_BetterString_NoShortcuts,      TRUE,
       End,
       Child, clearButton = TextObject,
         ButtonFrame,
@@ -791,6 +792,105 @@ DECLARE(UpdateStats) // ULONG force
 
   RETURN(0);
   return 0;
+}
+
+///
+/// DECLARE(DoEditAction)
+DECLARE(DoEditAction) // enum EditAction editAction
+{
+  GETDATA;
+  Object *selectedObj;
+  BOOL result = FALSE;
+
+  ENTER();
+
+  // we first check which object is current selected
+  // as the 'active' Object
+  selectedObj = (Object *)xget(_win(obj), MUIA_Window_ActiveObject);
+  if(selectedObj == NULL)
+    selectedObj = (Object *)xget(_win(obj), MUIA_Window_DefaultObject);
+
+  // if we still haven't got anything selected
+  // something must be extremly strange ;)
+  if(selectedObj != NULL)
+  {
+    // check which action we got
+    switch(msg->editAction)
+    {
+      case EA_CUT:
+      {
+        if(selectedObj == data->ST_SEARCHSTRING)
+        {
+          DoMethod(selectedObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Cut);
+          result = TRUE;
+        }
+      }
+      break;
+
+      case EA_COPY:
+      {
+        if(selectedObj == data->ST_SEARCHSTRING)
+        {
+          DoMethod(selectedObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Copy);
+          result = TRUE;
+        }
+      }
+      break;
+
+      case EA_PASTE:
+      {
+        if(selectedObj == data->ST_SEARCHSTRING)
+        {
+          DoMethod(selectedObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Paste);
+          result = TRUE;
+        }
+      }
+      break;
+
+      case EA_UNDO:
+      {
+        if(selectedObj == data->ST_SEARCHSTRING)
+        {
+          DoMethod(selectedObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Undo);
+          result = TRUE;
+        }
+      }
+      break;
+
+      case EA_REDO:
+      {
+        if(selectedObj == data->ST_SEARCHSTRING)
+        {
+          DoMethod(selectedObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Redo);
+          result = TRUE;
+        }
+      }
+      break;
+
+      case EA_SELECTALL:
+      {
+        if(selectedObj == data->ST_SEARCHSTRING)
+        {
+          DoMethod(selectedObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_SelectAll);
+          result = TRUE;
+        }
+      }
+      break;
+
+      case EA_SELECTNONE:
+      {
+        if(selectedObj == data->ST_SEARCHSTRING)
+        {
+          DoMethod(selectedObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_SelectNone);
+          result = TRUE;
+        }
+      }
+      break;
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///

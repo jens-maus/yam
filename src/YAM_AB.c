@@ -2509,6 +2509,7 @@ struct AB_ClassData *AB_New(void)
                 MUIA_NListtree_DestructHook,    &AB_LV_DesFuncHook,
                 MUIA_NListtree_DisplayHook,     &AB_LV_DspFuncHook,
                 MUIA_NListtree_EmptyNodes,      TRUE,
+                MUIA_NList_DefaultObjectOnClick,FALSE,
                 MUIA_Font,                      C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
              End,
           End,

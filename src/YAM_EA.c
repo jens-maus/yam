@@ -706,7 +706,6 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                  End,
               End,
               Child, data->GUI.ST_MEMBER = RecipientstringObject,
-                 StringFrame,
                  MUIA_CycleChain,    TRUE,
                  MUIA_String_MaxLen, SIZE_ADDRESS,
                  End,

@@ -6450,3 +6450,30 @@ was returned.\n\
 Please check your printer and try again if\n\
 your document wasn't printed properly.
 ;
+MSG_MA_EDIT (1992//)
+Edit
+;
+MSG_MA_EDIT_UNDO (1993//)
+Undo
+;
+MSG_MA_EDIT_REDO (1994//)
+Redo
+;
+MSG_MA_EDIT_CUT (1995//)
+Cut
+;
+MSG_MA_EDIT_COPY (1996//)
+Copy
+;
+MSG_MA_EDIT_PASTE (1997//)
+Paste
+;
+MSG_MA_EDIT_SALL (1998//)
+Select All
+;
+MSG_MA_EDIT_SNONE (1999//)
+Select None
+;
+MSG_WR_SELECTNONE (2000//)
+Select None
+;

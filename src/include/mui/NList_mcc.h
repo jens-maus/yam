@@ -19,7 +19,7 @@
 
  NList classes Support Site:  http://www.sf.net/projects/nlist-classes
 
- $Id: NList_mcc.h 2024 2006-03-05 10:27:25Z damato $
+ $Id: NList_mcc.h 205 2007-08-18 13:00:13Z damato $
 
 ***************************************************************************/
 
@@ -133,6 +133,8 @@
 #define MUIA_NList_ForcePen                 0x9d51009D /* GM  isg  LONG              */
 #define MUIA_NList_SourceInsert             0x9d51009E /* GM  i..  struct MUIP_NList_InsertWrap *   */
 #define MUIA_NList_TitleSeparator           0x9d51009F /* GM  isg  BOOL              */
+
+#define MUIA_NList_AutoClip                 0x9d5100C0 /* GM  isg  BOOL              */
 
 #define MUIA_NList_SortType2                0x9d5100ED /* GM  isgn LONG              */
 #define MUIA_NList_TitleClick2              0x9d5100EE /* GM  isgn LONG              */

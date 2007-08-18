@@ -42,29 +42,44 @@ extern "C" {
 #define MUIC_BetterString     "BetterString.mcc"
 #define BetterStringObject    MUI_NewObject(MUIC_BetterString
 
-#define MUIA_BetterString_Columns               0xad001005
-#define MUIA_BetterString_NoInput               0xad001007
+// attributes
 #define MUIA_BetterString_SelectSize            0xad001001
 #define MUIA_BetterString_StayActive            0xad001003
+#define MUIA_BetterString_Columns               0xad001005
+#define MUIA_BetterString_NoInput               0xad001007
 #define MUIA_BetterString_KeyUpFocus            0xad001008
 #define MUIA_BetterString_KeyDownFocus          0xad001009
 #define MUIA_BetterString_InactiveContents      0xad00100a
+#define MUIA_BetterString_NoShortcuts           0xad00100c
 
+// methods
+#define MUIM_BetterString_Insert                0xad001002
 #define MUIM_BetterString_ClearSelected         0xad001004
 #define MUIM_BetterString_FileNameStart         0xad001006
-#define MUIM_BetterString_Insert                0xad001002
+#define MUIM_BetterString_DoAction              0xad00100b
 
+// values for MUIM_BetterString_Insert
 #define MUIV_BetterString_Insert_StartOfString  0x00000000
 #define MUIV_BetterString_Insert_EndOfString    0xfffffffe
 #define MUIV_BetterString_Insert_BufferPos      0xffffffff
 
-#define MUIV_BetterString_BufferPos_End         0xffffffff
-
+// result values of MUIM_BetterString_FileNameStart
 #define MUIR_BetterString_FileNameStart_Volume  -1
 
-struct MUIP_BetterString_ClearSelected {ULONG MethodID; };
-struct MUIP_BetterString_FileNameStart {ULONG MethodID; STRPTR buffer; LONG pos; };
-struct MUIP_BetterString_Insert        {ULONG MethodID; STRPTR text; LONG pos; };
+// values for MUIM_BetterString_DoAction
+#define MUIV_BetterString_DoAction_Cut          1
+#define MUIV_BetterString_DoAction_Copy         2
+#define MUIV_BetterString_DoAction_Paste        3
+#define MUIV_BetterString_DoAction_SelectAll    4
+#define MUIV_BetterString_DoAction_SelectNone   5
+#define MUIV_BetterString_DoAction_Undo         6
+#define MUIV_BetterString_DoAction_Redo         7
+
+// parameter structures for methods
+struct MUIP_BetterString_Insert        { ULONG MethodID; STRPTR text; LONG pos; };
+struct MUIP_BetterString_ClearSelected { ULONG MethodID; };
+struct MUIP_BetterString_FileNameStart { ULONG MethodID; STRPTR buffer; LONG pos; };
+struct MUIP_BetterString_DoAction      { ULONG MethodID; ULONG action; };
 
 #ifdef __GNUC__
   #ifdef __PPC__

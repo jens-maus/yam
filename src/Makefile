@@ -277,6 +277,7 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/MainWindowToolbar.o \
 	$(OBJDIR)/$(CLASSDIR)/InfoBar.o \
 	$(OBJDIR)/$(CLASSDIR)/WriteAttachmentList.o \
+	$(OBJDIR)/$(CLASSDIR)/WriteWindow.o \
 	$(OBJDIR)/$(CLASSDIR)/WriteWindowToolbar.o \
 	$(OBJDIR)/$(CLASSDIR)/QuickSearchBar.o \
 	$(OBJDIR)/$(CLASSDIR)/ImageArea.o \

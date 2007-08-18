@@ -851,8 +851,14 @@ struct Folder *FolderRequest(const char *title, const char *body, const char *ye
 struct Part *AttachRequest(const char *title, const char *body, const char *yestext,
                            const char *notext, int mode, struct ReadMailData *rmData)
 {
-  struct Part *retpart = (struct Part *)-1, *part;
-  APTR bt_okay, bt_cancel, wi_ar, lv_attach;
+  struct Part *retpart = (struct Part *)-1;
+  struct Part *part;
+  Object *bt_okay;
+  Object *bt_cancel;
+  Object *wi_ar;
+  Object *lv_attach;
+
+  ENTER();
 
   // lets create the AttachSelection window now
   wi_ar = WindowObject,
@@ -871,11 +877,12 @@ struct Part *AttachRequest(const char *title, const char *body, const char *yest
           MUIA_CycleChain, TRUE,
           MUIA_NListview_NList, lv_attach = NListObject,
             InputListFrame,
-            MUIA_NList_Title,        TRUE,
-            MUIA_NList_DoubleClick,  TRUE,
-            MUIA_NList_MultiSelect,  isMultiReq(mode) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
-            MUIA_NList_DisplayHook2, &AttachDspHook,
-            MUIA_NList_Format,       "BAR,BAR,",
+            MUIA_NList_Format,               "BAR,BAR,",
+            MUIA_NList_Title,                TRUE,
+            MUIA_NList_DoubleClick,          TRUE,
+            MUIA_NList_MultiSelect,          isMultiReq(mode) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
+            MUIA_NList_DisplayHook2,         &AttachDspHook,
+            MUIA_NList_DefaultObjectOnClick, FALSE,
           End,
         End,
       End,
@@ -988,6 +995,7 @@ struct Part *AttachRequest(const char *title, const char *body, const char *yest
     set(G->App, MUIA_Application_Sleep, FALSE);
   }
 
+  RETURN(retpart);
   return retpart;
 }
 ///
@@ -5105,12 +5113,11 @@ Object *MakeAddressField(Object **string, const char *label, const Object *help,
 
     GroupSpacing(1),
     Child, *string = RecipientstringObject,
-      StringFrame,
       MUIA_CycleChain,                          TRUE,
       MUIA_String_AdvanceOnCR,                  TRUE,
       MUIA_Recipientstring_ResolveOnCR,         TRUE,
       MUIA_Recipientstring_MultipleRecipients,  allowmulti,
-      MUIA_ControlChar, ShortCut(label),
+      MUIA_ControlChar,                         ShortCut(label),
     End,
     Child, bt_adr = PopButton(MUII_PopUp),
 

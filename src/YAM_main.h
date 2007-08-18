@@ -239,9 +239,10 @@ enum Macro {
 enum SendMode { SEND_ALL, SEND_ACTIVE };
 
 enum { MMEN_ABOUT=100,MMEN_ABOUTMUI,MMEN_VERSION,MMEN_ERRORS,MMEN_LOGIN,MMEN_HIDE,MMEN_QUIT,
-       MMEN_NEWF,MMEN_NEWFG,MMEN_EDITF,MMEN_DELETEF,MMEN_OSAVE,MMEN_ORESET,MMEN_SELALL,MMEN_SELNONE,
-       MMEN_SELTOGG,MMEN_SEARCH,MMEN_FILTER,MMEN_CLASSIFY,MMEN_DELDEL,MMEN_DELSPAM,MMEN_INDEX,MMEN_FLUSH,
-       MMEN_IMPORT,MMEN_EXPORT,MMEN_GETMAIL,MMEN_GET1MAIL,MMEN_SENDMAIL,MMEN_EXMAIL,MMEN_READ,
+       MMEN_EDIT_UNDO,MMEN_EDIT_REDO,MMEN_EDIT_CUT,MMEN_EDIT_COPY,MMEN_EDIT_PASTE,MMEN_EDIT_SALL,
+       MMEN_EDIT_SNONE,MMEN_NEWF,MMEN_NEWFG,MMEN_EDITF,MMEN_DELETEF,MMEN_OSAVE,MMEN_ORESET,MMEN_SELALL,
+       MMEN_SELNONE,MMEN_SELTOGG,MMEN_SEARCH,MMEN_FILTER,MMEN_CLASSIFY,MMEN_DELDEL,MMEN_DELSPAM,MMEN_INDEX,
+       MMEN_FLUSH,MMEN_IMPORT,MMEN_EXPORT,MMEN_GETMAIL,MMEN_GET1MAIL,MMEN_SENDMAIL,MMEN_EXMAIL,MMEN_READ,
        MMEN_EDIT,MMEN_MOVE,MMEN_COPY,MMEN_DELETE,MMEN_PRINT,MMEN_SAVE,MMEN_DETACH,MMEN_CROP,
        MMEN_EXPMSG,MMEN_NEW,MMEN_REPLY,MMEN_FORWARD,MMEN_BOUNCE,MMEN_SAVEADDR,MMEN_TOUNREAD,
        MMEN_TOREAD,MMEN_TOHOLD,MMEN_TOQUEUED,MMEN_TOMARKED,MMEN_TOUNMARKED,MMEN_ALLTOREAD,
@@ -249,74 +250,87 @@ enum { MMEN_ABOUT=100,MMEN_ABOUTMUI,MMEN_VERSION,MMEN_ERRORS,MMEN_LOGIN,MMEN_HID
        MMEN_SCRIPT,MMEN_POPHOST,MMEN_MACRO=MMEN_POPHOST+MAXP3
      };
 
+// Actions for the 'Edit' submenu entries of windows
+// e.g. Amiga+C for COPY, Amiga+V for PASTE
+enum EditAction
+{
+  EA_CUT,
+  EA_COPY,
+  EA_PASTE,
+  EA_UNDO,
+  EA_REDO,
+  EA_SELECTALL,
+  EA_SELECTNONE
+};
+
 struct MA_GUIData
 {
-   Object *WI;
-   Object *MN_FOLDER;
-   Object *MN_REXX;
-   Object *MS_MAIN;
-   Object *GR_HIDDEN;
-   Object *ST_LAYOUT;
-   Object *MI_UPDATECHECK;
-   Object *MI_ERRORS;
-   Object *MI_CSINGLE;
-   Object *MI_IMPORT;
-   Object *MI_EXPORT;
-   Object *MI_SENDALL;
-   Object *MI_EXCHANGE;
-   Object *MI_GETMAIL;
-   Object *MI_READ;
-   Object *MI_EDIT;
-   Object *MI_MOVE;
-   Object *MI_COPY;
-   Object *MI_DELETE;
-   Object *MI_PRINT;
-   Object *MI_SAVE;
-   Object *MI_ATTACH;
-   Object *MI_SAVEATT;
-   Object *MI_REMATT;
-   Object *MI_EXPMSG;
-   Object *MI_NEW;
-   Object *MI_REPLY;
-   Object *MI_FORWARD;
-   Object *MI_BOUNCE;
-   Object *MI_GETADDRESS;
-   Object *MI_STATUS;
-   Object *MI_TOREAD;
-   Object *MI_TOUNREAD;
-   Object *MI_TOHOLD;
-   Object *MI_TOQUEUED;
-   Object *MI_TOMARKED;
-   Object *MI_TOUNMARKED;
-   Object *MI_ALLTOREAD;
-   Object *MI_TOSPAM;
-   Object *MI_TOHAM;
-   Object *MI_CHECKSPAM;
-   Object *MI_DELSPAM;
-   Object *MI_CHSUBJ;
-   Object *MI_SEND;
-   Object *MI_FILTER;
-   Object *MI_DELDEL;
-   Object *MI_UPDINDEX;
-   Object *MI_SELECT;
-   Object *LV_FOLDERS;
-   Object *NL_FOLDERS;
-   Object *TO_TOOLBAR;
-   Object *IB_INFOBAR;
-   Object *GR_MAIN;
-   Object *GR_TOP;
-   Object *GR_BOTTOM;
-   Object *GR_MAILVIEW;
-   Object *BL_MAILVIEW;
-   Object *MN_EMBEDDEDREADPANE;
-   Object *GR_QUICKSEARCHBAR;
-   Object *PG_MAILLIST;
+  Object *WI;
+  Object *MN_FOLDER;
+  Object *MN_REXX;
+  Object *MS_MAIN;
+  Object *GR_HIDDEN;
+  Object *ST_LAYOUT;
+  Object *MI_UPDATECHECK;
+  Object *MI_ERRORS;
+  Object *MI_CSINGLE;
+  Object *MI_IMPORT;
+  Object *MI_EXPORT;
+  Object *MI_SENDALL;
+  Object *MI_EXCHANGE;
+  Object *MI_GETMAIL;
+  Object *MI_READ;
+  Object *MI_EDIT;
+  Object *MI_MOVE;
+  Object *MI_COPY;
+  Object *MI_DELETE;
+  Object *MI_PRINT;
+  Object *MI_SAVE;
+  Object *MI_ATTACH;
+  Object *MI_SAVEATT;
+  Object *MI_REMATT;
+  Object *MI_EXPMSG;
+  Object *MI_NEW;
+  Object *MI_REPLY;
+  Object *MI_FORWARD;
+  Object *MI_BOUNCE;
+  Object *MI_GETADDRESS;
+  Object *MI_STATUS;
+  Object *MI_TOREAD;
+  Object *MI_TOUNREAD;
+  Object *MI_TOHOLD;
+  Object *MI_TOQUEUED;
+  Object *MI_TOMARKED;
+  Object *MI_TOUNMARKED;
+  Object *MI_ALLTOREAD;
+  Object *MI_TOSPAM;
+  Object *MI_TOHAM;
+  Object *MI_CHECKSPAM;
+  Object *MI_DELSPAM;
+  Object *MI_CHSUBJ;
+  Object *MI_SEND;
+  Object *MI_FILTER;
+  Object *MI_DELDEL;
+  Object *MI_UPDINDEX;
+  Object *MI_SELECT;
+  Object *LV_FOLDERS;
+  Object *NL_FOLDERS;
+  Object *TO_TOOLBAR;
+  Object *IB_INFOBAR;
+  Object *GR_MAIN;
+  Object *GR_TOP;
+  Object *GR_BOTTOM;
+  Object *GR_MAILVIEW;
+  Object *BL_MAILVIEW;
+  Object *MN_EMBEDDEDREADPANE;
+  Object *GR_QUICKSEARCHBAR;
+  Object *PG_MAILLIST;
 };
 
 struct MA_ClassData  /* main window */
 {
-   struct MA_GUIData GUI;
-   char WinTitle[SIZE_DEFAULT];
+  struct MA_GUIData GUI;
+  char WinTitle[SIZE_DEFAULT];
 };
 
 // Hooks available to other modules

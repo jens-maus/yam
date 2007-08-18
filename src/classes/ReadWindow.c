@@ -86,7 +86,8 @@ enum
   RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,RMEN_NEXTTH,RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,
   RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,
   RMEN_FFONT,RMEN_SIMAGE,RMEN_TOMARKED,RMEN_TOUNMARKED,RMEN_TOUNREAD,RMEN_TOREAD,RMEN_TOHOLD,
-  RMEN_TOQUEUED,RMEN_TOSPAM,RMEN_TOHAM,RMEN_SEARCH,RMEN_SEARCHAGAIN
+  RMEN_TOQUEUED,RMEN_TOSPAM,RMEN_TOHAM,RMEN_SEARCH,RMEN_SEARCHAGAIN,RMEN_EDIT_COPY,RMEN_EDIT_SALL,
+  RMEN_EDIT_SNONE
 };
 
 /* Private Functions */
@@ -143,11 +144,17 @@ OVERLOAD(OM_NEW)
   ULONG i=0;
   struct Data *data;
   struct Data *tmpData;
+  Object *menuStripObject;
+
+  ENTER();
 
   // generate a temporarly struct Data to which we store our data and
   // copy it later on
-  if(!(data = tmpData = calloc(1, sizeof(struct Data))))
+  if((data = tmpData = calloc(1, sizeof(struct Data))) == NULL)
+  {
+    RETURN(0);
     return 0;
+  }
 
   // before we create all objects of this new read window we have to
   // check which number we can set for this window. Therefore we search in our
@@ -182,73 +189,125 @@ OVERLOAD(OM_NEW)
   }
   while(1);
 
-  if((obj = DoSuperNew(cl, obj,
-
-    MUIA_Window_Title,   "",
-    MUIA_HelpNode,       "RE_W",
-    MUIA_Window_ID,     MAKE_ID('R','D','W',data->windowNumber),
-    MUIA_Window_Menustrip, MenustripObject,
-      MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_Message),
-        MenuChild, data->MI_EDIT = Menuitem(tr(MSG_MA_MEdit), "E", TRUE, FALSE, RMEN_EDIT),
-        MenuChild, data->MI_MOVE = Menuitem(tr(MSG_MA_MMove), "M", TRUE, FALSE, RMEN_MOVE),
-        MenuChild, Menuitem(tr(MSG_MA_MCopy), "Y", TRUE, FALSE, RMEN_COPY),
-        MenuChild, data->MI_DELETE = Menuitem(tr(MSG_MA_MDelete),  "Del", TRUE, TRUE,  RMEN_DELETE),
-        MenuChild, MenuBarLabel,
-        MenuChild, Menuitem(tr(MSG_Print),      "P",     TRUE, FALSE, RMEN_PRINT),
-        MenuChild, Menuitem(tr(MSG_MA_Save),    "S",     TRUE, FALSE, RMEN_SAVE),
-        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Attachments),
-          MenuChild, Menuitem(tr(MSG_RE_MDisplay),"D",  TRUE,  FALSE, RMEN_DISPLAY),
-          MenuChild, data->MI_DETACH = Menuitem(tr(MSG_RE_SaveAll),  "A",  TRUE, FALSE, RMEN_DETACH),
-          MenuChild, data->MI_CROP = Menuitem(tr(MSG_MA_Crop),    "O",  TRUE, FALSE, RMEN_CROP),
-        End,
-        MenuChild, MenuBarLabel,
-        MenuChild, Menuitem(tr(MSG_New),         "N", TRUE, FALSE, RMEN_NEW),
-        MenuChild, data->MI_REPLY = Menuitem(tr(MSG_MA_MReply),   "R", TRUE, FALSE, RMEN_REPLY),
-        MenuChild, data->MI_FORWARD = Menuitem(tr(MSG_MA_MForward), "W", TRUE, FALSE, RMEN_FORWARD),
-        MenuChild, data->MI_BOUNCE = Menuitem(tr(MSG_MA_MBounce),   "B", TRUE, FALSE, RMEN_BOUNCE),
-        MenuChild, MenuBarLabel,
-        MenuChild, data->MI_SEARCH = Menuitem(tr(MSG_RE_SEARCH), "F", TRUE, FALSE, RMEN_SEARCH),
-        MenuChild, data->MI_SEARCHAGAIN = Menuitem(tr(MSG_RE_SEARCH_AGAIN), "G", TRUE, FALSE, RMEN_SEARCHAGAIN),
-        MenuChild, MenuBarLabel,
-        MenuChild, Menuitem(tr(MSG_MA_MGetAddress), "J", TRUE, FALSE, RMEN_SAVEADDR),
-        MenuChild, data->MI_STATUS = MenuObject, MUIA_Menu_Title, tr(MSG_MA_SetStatus),
-          MenuChild, data->MI_TOMARKED = Menuitem(tr(MSG_MA_TOMARKED), ",", TRUE, FALSE, RMEN_TOMARKED),
-          MenuChild, data->MI_TOUNMARKED = Menuitem(tr(MSG_MA_TOUNMARKED), ".", TRUE, FALSE, RMEN_TOUNMARKED),
-          MenuChild, data->MI_TOUNREAD = Menuitem(tr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, RMEN_TOUNREAD),
-          MenuChild, data->MI_TOREAD = Menuitem(tr(MSG_MA_TOREAD), "]", TRUE, FALSE, RMEN_TOREAD),
-          MenuChild, data->MI_TOHOLD = Menuitem(tr(MSG_MA_TOHOLD), "{", TRUE, FALSE, RMEN_TOHOLD),
-          MenuChild, data->MI_TOQUEUED = Menuitem(tr(MSG_MA_TOQUEUED), "}", TRUE, FALSE, RMEN_TOQUEUED),
-        End,
-        MenuChild, data->MI_CHSUBJ = Menuitem(tr(MSG_MA_ChangeSubj), NULL, TRUE, FALSE, RMEN_CHSUBJ),
+  //
+  // now we create the Menustrip object with all the menu items
+  // and corresponding shortcuts
+  //
+  // The follwong shortcut list should help to identify the hard-coded
+  // shortcuts:
+  //
+  //  A   Select all text (RMEN_EDIT_SALL)
+  //  B   Bounce mail (RMEN_BOUNCE)
+  //  C   Copy selected text (RMEN_EDIT_COPY)
+  //  D   Display mail part (RMEN_DISPLAY)
+  //  E   Edit mail in Editor (RMEN_EDIT)
+  //  F   Search in mail (RMEN_SEARCH)
+  //  G   Search again in mail (RMEN_SEARCHAGAIN)
+  //  H   Enable/Disabled 'Wrap Header' (RMEN_WRAPH)
+  //  I   Enable/Disbaled 'Fixed Font' (RMEN_FFONT)
+  //  J   Save address (RMEN_SAVEADDR)
+  //  K   Check PGP signature (RMEN_CHKSIG)
+  //  L   Save all attachments (RMEN_DETACH)
+  //  M   Move mail (RMEN_MOVE)
+  //  N   Create new mail (RMEN_NEW)
+  //  O   Crop attachments (RMEN_CROP)
+  //  P   Print mail part (RMEN_PRINT)
+  //  Q
+  //  R   Reply mail (RMEN_REPLY)
+  //  S   Save mail part (RMEN_SAVE)
+  //  T   Enable/Disable Text Styles (RMEN_TSTYLE)
+  //  U
+  //  V   Save PGP decrypted mail (RMEN_SAVEDEC)
+  //  W   Forward mail (RMEN_FORWARD)
+  //  X   Extract PGP key from mail (RMEN_EXTKEY)
+  //  Y   Copy mail (RMEN_COPY)
+  //  Z
+  // Del  Remove mail (RMEN_DELETE)
+  //  >   Next mail in thread (RMEN_NEXTTH)
+  //  <   Prev mail in thread (RMEN_PREVTH)
+  //  ,   Set status to 'marked' (RMEN_TOMARKED)
+  //  .   Set status to 'unmarked' (RMEN_TOUNMARKED)
+  //  [   Set status to 'unread' (RMEN_TOUNREAD)
+  //  ]   Set status to 'read' (RMEN_TOREAD)
+  //  {   Set status to 'hold' (RMEN_TOHOLD)
+  //  }   Set status to 'queued' (RMEN_TOQUEUED)
+  //
+  menuStripObject = MenustripObject,
+    MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_Message),
+      MenuChild, data->MI_EDIT = Menuitem(tr(MSG_MA_MEdit), "E", TRUE, FALSE, RMEN_EDIT),
+      MenuChild, data->MI_MOVE = Menuitem(tr(MSG_MA_MMove), "M", TRUE, FALSE, RMEN_MOVE),
+      MenuChild, Menuitem(tr(MSG_MA_MCopy), "Y", TRUE, FALSE, RMEN_COPY),
+      MenuChild, data->MI_DELETE = Menuitem(tr(MSG_MA_MDelete), "Del", TRUE, TRUE,  RMEN_DELETE),
+      MenuChild, MenuBarLabel,
+      MenuChild, Menuitem(tr(MSG_Print), "P", TRUE, FALSE, RMEN_PRINT),
+      MenuChild, Menuitem(tr(MSG_MA_Save), "S", TRUE, FALSE, RMEN_SAVE),
+      MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Attachments),
+        MenuChild, Menuitem(tr(MSG_RE_MDisplay),"D", TRUE, FALSE, RMEN_DISPLAY),
+        MenuChild, data->MI_DETACH = Menuitem(tr(MSG_RE_SaveAll), "L", TRUE, FALSE, RMEN_DETACH),
+        MenuChild, data->MI_CROP = Menuitem(tr(MSG_MA_Crop), "O", TRUE, FALSE, RMEN_CROP),
       End,
-      MenuChild, data->MI_NAVIG = MenuObject, MUIA_Menu_Title, tr(MSG_RE_Navigation),
-        MenuChild, Menuitem(tr(MSG_RE_MNext),    "right", TRUE, TRUE, RMEN_NEXT),
-        MenuChild, Menuitem(tr(MSG_RE_MPrev),    "left",  TRUE, TRUE, RMEN_PREV),
-        MenuChild, Menuitem(tr(MSG_RE_MURNext),  "shift right", TRUE, TRUE, RMEN_URNEXT),
-        MenuChild, Menuitem(tr(MSG_RE_MURPrev),  "shift left",  TRUE, TRUE, RMEN_URPREV),
-        MenuChild, data->MI_NEXTTHREAD = Menuitem(tr(MSG_RE_MNextTh), ">", TRUE, FALSE, RMEN_NEXTTH),
-        MenuChild, data->MI_PREVTHREAD = Menuitem(tr(MSG_RE_MPrevTh), "<", TRUE, FALSE, RMEN_PREVTH),
+      MenuChild, MenuBarLabel,
+      MenuChild, Menuitem(tr(MSG_New), "N", TRUE, FALSE, RMEN_NEW),
+      MenuChild, data->MI_REPLY = Menuitem(tr(MSG_MA_MReply), "R", TRUE, FALSE, RMEN_REPLY),
+      MenuChild, data->MI_FORWARD = Menuitem(tr(MSG_MA_MForward), "W", TRUE, FALSE, RMEN_FORWARD),
+      MenuChild, data->MI_BOUNCE = Menuitem(tr(MSG_MA_MBounce), "B", TRUE, FALSE, RMEN_BOUNCE),
+      MenuChild, MenuBarLabel,
+      MenuChild, data->MI_SEARCH = Menuitem(tr(MSG_RE_SEARCH), "F", TRUE, FALSE, RMEN_SEARCH),
+      MenuChild, data->MI_SEARCHAGAIN = Menuitem(tr(MSG_RE_SEARCH_AGAIN), "G", TRUE, FALSE, RMEN_SEARCHAGAIN),
+      MenuChild, MenuBarLabel,
+      MenuChild, Menuitem(tr(MSG_MA_MGetAddress), "J", TRUE, FALSE, RMEN_SAVEADDR),
+      MenuChild, data->MI_STATUS = MenuObject, MUIA_Menu_Title, tr(MSG_MA_SetStatus),
+        MenuChild, data->MI_TOMARKED = Menuitem(tr(MSG_MA_TOMARKED), ",", TRUE, FALSE, RMEN_TOMARKED),
+        MenuChild, data->MI_TOUNMARKED = Menuitem(tr(MSG_MA_TOUNMARKED), ".", TRUE, FALSE, RMEN_TOUNMARKED),
+        MenuChild, data->MI_TOUNREAD = Menuitem(tr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, RMEN_TOUNREAD),
+        MenuChild, data->MI_TOREAD = Menuitem(tr(MSG_MA_TOREAD), "]", TRUE, FALSE, RMEN_TOREAD),
+        MenuChild, data->MI_TOHOLD = Menuitem(tr(MSG_MA_TOHOLD), "{", TRUE, FALSE, RMEN_TOHOLD),
+        MenuChild, data->MI_TOQUEUED = Menuitem(tr(MSG_MA_TOQUEUED), "}", TRUE, FALSE, RMEN_TOQUEUED),
       End,
-      MenuChild, data->MI_PGP = MenuObject, MUIA_Menu_Title, "PGP",
-        MenuChild, data->MI_EXTKEY = Menuitem(tr(MSG_RE_ExtractKey), "X", TRUE, FALSE, RMEN_EXTKEY),
-        MenuChild, data->MI_CHKSIG = Menuitem(tr(MSG_RE_SigCheck), "K", TRUE, FALSE, RMEN_CHKSIG),
-        MenuChild, data->MI_SAVEDEC = Menuitem(tr(MSG_RE_SaveDecrypted), "V", TRUE, FALSE, RMEN_SAVEDEC),
-      End,
-      MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_MA_Settings),
-        MenuChild, MenuitemCheck(tr(MSG_RE_NoHeaders),    "0", TRUE, C->ShowHeader==HM_NOHEADER,    FALSE, 0x06, RMEN_HNONE),
-        MenuChild, MenuitemCheck(tr(MSG_RE_ShortHeaders), "1", TRUE, C->ShowHeader==HM_SHORTHEADER, FALSE, 0x05, RMEN_HSHORT),
-        MenuChild, MenuitemCheck(tr(MSG_RE_FullHeaders),  "2", TRUE, C->ShowHeader==HM_FULLHEADER,  FALSE, 0x03, RMEN_HFULL),
-        MenuChild, MenuBarLabel,
-        MenuChild, MenuitemCheck(tr(MSG_RE_NoSInfo),      "3", TRUE, C->ShowSenderInfo==SIM_OFF,    FALSE, 0xE0, RMEN_SNONE),
-        MenuChild, MenuitemCheck(tr(MSG_RE_SInfo),        "4", TRUE, C->ShowSenderInfo==SIM_DATA,   FALSE, 0xD0, RMEN_SDATA),
-        MenuChild, MenuitemCheck(tr(MSG_RE_SInfoImage),   "5", TRUE, C->ShowSenderInfo==SIM_ALL,    FALSE, 0x90, RMEN_SFULL),
-        MenuChild, MenuitemCheck(tr(MSG_RE_SImageOnly),   "6", TRUE, C->ShowSenderInfo==SIM_IMAGE,  FALSE, 0x70, RMEN_SIMAGE),
-        MenuChild, MenuBarLabel,
-        MenuChild, data->MI_WRAPH  = MenuitemCheck(tr(MSG_RE_WrapHeader), "H", TRUE, C->WrapHeader,    TRUE, 0, RMEN_WRAPH),
-        MenuChild, data->MI_TSTYLE = MenuitemCheck(tr(MSG_RE_Textstyles), "T", TRUE, C->UseTextstyles, TRUE, 0, RMEN_TSTYLE),
-        MenuChild, data->MI_FFONT  = MenuitemCheck(tr(MSG_RE_FixedFont),  "I", TRUE, C->FixedFontEdit, TRUE, 0, RMEN_FFONT),
-      End,
+      MenuChild, data->MI_CHSUBJ = Menuitem(tr(MSG_MA_ChangeSubj), NULL, TRUE, FALSE, RMEN_CHSUBJ),
     End,
+    MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_MA_EDIT),
+      MenuChild, Menuitem(tr(MSG_MA_EDIT_COPY), "C", TRUE, FALSE, RMEN_EDIT_COPY),
+      MenuChild, MenuBarLabel,
+      MenuChild, Menuitem(tr(MSG_MA_EDIT_SALL), "A", TRUE, FALSE, RMEN_EDIT_SALL),
+      MenuChild, Menuitem(tr(MSG_MA_EDIT_SNONE), NULL, TRUE, FALSE, RMEN_EDIT_SNONE),
+    End,
+    MenuChild, data->MI_NAVIG = MenuObject, MUIA_Menu_Title, tr(MSG_RE_Navigation),
+      MenuChild, Menuitem(tr(MSG_RE_MNext),    "right", TRUE, TRUE, RMEN_NEXT),
+      MenuChild, Menuitem(tr(MSG_RE_MPrev),    "left",  TRUE, TRUE, RMEN_PREV),
+      MenuChild, Menuitem(tr(MSG_RE_MURNext),  "shift right", TRUE, TRUE, RMEN_URNEXT),
+      MenuChild, Menuitem(tr(MSG_RE_MURPrev),  "shift left",  TRUE, TRUE, RMEN_URPREV),
+      MenuChild, data->MI_NEXTTHREAD = Menuitem(tr(MSG_RE_MNextTh), ">", TRUE, FALSE, RMEN_NEXTTH),
+      MenuChild, data->MI_PREVTHREAD = Menuitem(tr(MSG_RE_MPrevTh), "<", TRUE, FALSE, RMEN_PREVTH),
+    End,
+    MenuChild, data->MI_PGP = MenuObject, MUIA_Menu_Title, "PGP",
+      MenuChild, data->MI_EXTKEY = Menuitem(tr(MSG_RE_ExtractKey), "X", TRUE, FALSE, RMEN_EXTKEY),
+      MenuChild, data->MI_CHKSIG = Menuitem(tr(MSG_RE_SigCheck), "K", TRUE, FALSE, RMEN_CHKSIG),
+      MenuChild, data->MI_SAVEDEC = Menuitem(tr(MSG_RE_SaveDecrypted), "V", TRUE, FALSE, RMEN_SAVEDEC),
+    End,
+    MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_MA_Settings),
+      MenuChild, MenuitemCheck(tr(MSG_RE_NoHeaders),    "0", TRUE, C->ShowHeader==HM_NOHEADER,    FALSE, 0x06, RMEN_HNONE),
+      MenuChild, MenuitemCheck(tr(MSG_RE_ShortHeaders), "1", TRUE, C->ShowHeader==HM_SHORTHEADER, FALSE, 0x05, RMEN_HSHORT),
+      MenuChild, MenuitemCheck(tr(MSG_RE_FullHeaders),  "2", TRUE, C->ShowHeader==HM_FULLHEADER,  FALSE, 0x03, RMEN_HFULL),
+      MenuChild, MenuBarLabel,
+      MenuChild, MenuitemCheck(tr(MSG_RE_NoSInfo),      "3", TRUE, C->ShowSenderInfo==SIM_OFF,    FALSE, 0xE0, RMEN_SNONE),
+      MenuChild, MenuitemCheck(tr(MSG_RE_SInfo),        "4", TRUE, C->ShowSenderInfo==SIM_DATA,   FALSE, 0xD0, RMEN_SDATA),
+      MenuChild, MenuitemCheck(tr(MSG_RE_SInfoImage),   "5", TRUE, C->ShowSenderInfo==SIM_ALL,    FALSE, 0x90, RMEN_SFULL),
+      MenuChild, MenuitemCheck(tr(MSG_RE_SImageOnly),   "6", TRUE, C->ShowSenderInfo==SIM_IMAGE,  FALSE, 0x70, RMEN_SIMAGE),
+      MenuChild, MenuBarLabel,
+      MenuChild, data->MI_WRAPH  = MenuitemCheck(tr(MSG_RE_WrapHeader), "H", TRUE, C->WrapHeader,    TRUE, 0, RMEN_WRAPH),
+      MenuChild, data->MI_TSTYLE = MenuitemCheck(tr(MSG_RE_Textstyles), "T", TRUE, C->UseTextstyles, TRUE, 0, RMEN_TSTYLE),
+      MenuChild, data->MI_FFONT  = MenuitemCheck(tr(MSG_RE_FixedFont),  "I", TRUE, C->FixedFontEdit, TRUE, 0, RMEN_FFONT),
+    End,
+  End;
+
+  // create the menuStripObject
+  if(menuStripObject != NULL && (obj = DoSuperNew(cl, obj,
+
+    MUIA_Window_Title,  "",
+    MUIA_HelpNode,      "RE_W",
+    MUIA_Window_ID,     MAKE_ID('R','D','W',data->windowNumber),
+    MUIA_Window_Menustrip, menuStripObject,
     WindowContents, VGroup,
       Child, hasHideToolBarFlag(C->HideGUIElements) ?
         (RectangleObject, MUIA_ShowMe, FALSE, End) :
@@ -267,13 +326,14 @@ OVERLOAD(OM_NEW)
         End,
       End,
 
-    TAG_MORE, (ULONG)inittags(msg))))
+    TAG_MORE, (ULONG)inittags(msg))) != NULL)
   {
     struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 
     if(rmData == NULL ||
        (data = (struct Data *)INST_DATA(cl,obj)) == NULL)
     {
+      RETURN(0);
       return 0;
     }
 
@@ -294,8 +354,10 @@ OVERLOAD(OM_NEW)
     if(data->windowToolbar)
       DoMethod(data->windowToolbar, MUIM_ReadWindowToolbar_InitNotify, obj, data->readMailGroup);
 
-    // set some Notifies and stuff
+    // set the default window object
     set(obj, MUIA_Window_DefaultObject, data->readMailGroup);
+
+    // set some Notifies
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT,      obj, 3, MUIM_ReadWindow_NewMail, NEW_EDIT, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_MOVE,      obj, 1, MUIM_ReadWindow_MoveMailRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_COPY,      obj, 1, MUIM_ReadWindow_CopyMailRequest);
@@ -323,6 +385,9 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOHAM,     obj, 2, MUIM_ReadWindow_ClassifyMessage, BC_HAM);
 
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_CHSUBJ,    obj, 1, MUIM_ReadWindow_ChangeSubjectRequest);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT_COPY, data->readMailGroup, 2, MUIM_ReadMailGroup_DoEditAction, EA_COPY, MUIF_NONE);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT_SALL, data->readMailGroup, 2, MUIM_ReadMailGroup_DoEditAction, EA_SELECTALL, MUIF_NONE);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT_SNONE,data->readMailGroup, 2, MUIM_ReadMailGroup_DoEditAction, EA_SELECTNONE, MUIF_NONE);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PREV,      obj, 3, MUIM_ReadWindow_SwitchMail, -1, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEXT,      obj, 3, MUIM_ReadWindow_SwitchMail, +1, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_URPREV,    obj, 3, MUIM_ReadWindow_SwitchMail, -1, IEQUALIFIER_LSHIFT);
@@ -368,6 +433,7 @@ OVERLOAD(OM_NEW)
   // free the temporary mem we allocated before
   free(tmpData);
 
+  RETURN((ULONG)obj);
   return (ULONG)obj;
 }
 
@@ -390,6 +456,7 @@ OVERLOAD(OM_GET)
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
 {
+  GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
 
   while((tag = NextTagItem(&tags)))
@@ -408,6 +475,16 @@ OVERLOAD(OM_SET)
         {
           TC_Stop(TIO_READSTATUSUPDATE);
         }
+      }
+      break;
+
+      case MUIA_Window_DefaultObject:
+      {
+        // if the user clicks somewhere where the default
+        // object would be set to NULL we make sure we set
+        // it back to the default object of the readmail group
+        if((Object *)tag->ti_Data == NULL)
+          tag->ti_Data = xget(data->readMailGroup, MUIA_ReadMailGroup_DefaultObject);
       }
       break;
     }
@@ -1430,5 +1507,5 @@ DECLARE(UpdateSpamControls)
   RETURN(0);
   return 0;
 }
-///
 
+///

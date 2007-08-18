@@ -5,6 +5,26 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-18  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: implemented a common 'Edit' submenu which will be present in
+    each main operation window of YAM (main, read and write window). Each
+    'Edit' submenu contains common items like Cut/Copy/Paste which will
+    be automatically applied to the currently active/default object in
+    the respecitive window. This implies that e.g. all TextEditor.mcc
+    and NList objects have the Styleguide violating 'Autoclipping' disabled
+    now and should only react on e.g. an explicit Amiga+C shortcut for copying
+    the content of the currently selected text. However, please note that
+    this new functionality requires new versions of BetterString.mcc
+    and NList.mcc to work properly, which will be available shortly.
+  * Recipientstring.c: using CTRL+left/right cursor keys didn't work in a
+    recipientstring as expected due to a missing qualifier check.
+  * YAM_MA.c: when plainly pressing the keys 1,2,...,9,0 in the main window
+    will now activate the respective folder rather than starting with zero.
+    So pressing '0' will now activate the 10th folder instead of the first
+    one. This should be more intuitive. In addition, we don't iterate through
+    the folder list, but directly select the folder.
+
 2007-08-17  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_FI.c: the result list in the find window wasn't browseable by

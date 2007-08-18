@@ -3424,6 +3424,134 @@ HOOKPROTONHNO(WR_SetSoftStyleFunc, void, ULONG *arg)
 MakeHook(WR_SetSoftStyleHook, WR_SetSoftStyleFunc);
 
 ///
+/// WR_EditAction
+//  User pressed an item of the edit submenu (cut/copy/paste, etc)
+HOOKPROTONHNO(WR_EditActionFunc, void, int *arg)
+{
+  int winnum = (int)arg[1];
+  ENTER();
+
+  if(winnum >= 0 && G->WR[winnum] != NULL)
+  {
+    struct WR_ClassData *data = G->WR[winnum];
+    Object *actObj = (Object *)xget(data->GUI.WI, MUIA_Window_ActiveObject);
+
+    // now we check what active object we currently got
+    // so that we can send the menu action to the correct
+    // gadget
+    if(actObj != NULL)
+    {
+      enum EditAction action = arg[0];
+
+      // check which action we got
+      switch(action)
+      {
+        case EA_CUT:
+        {
+          if(actObj == data->GUI.TE_EDIT)
+            DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "CUT");
+          else if(actObj == data->GUI.ST_TO || actObj == data->GUI.ST_SUBJECT ||
+                  actObj == data->GUI.ST_CC || actObj == data->GUI.ST_BCC ||
+                  actObj == data->GUI.ST_FROM || actObj == data->GUI.ST_REPLYTO ||
+                  actObj == data->GUI.ST_EXTHEADER)
+          {
+            DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Cut);
+          }
+        }
+        break;
+
+        case EA_COPY:
+        {
+          if(actObj == data->GUI.TE_EDIT)
+            DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "COPY");
+          else if(actObj == data->GUI.ST_TO || actObj == data->GUI.ST_SUBJECT ||
+                  actObj == data->GUI.ST_CC || actObj == data->GUI.ST_BCC ||
+                  actObj == data->GUI.ST_FROM || actObj == data->GUI.ST_REPLYTO ||
+                  actObj == data->GUI.ST_EXTHEADER)
+          {
+            DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Copy);
+          }
+        }
+        break;
+
+        case EA_PASTE:
+        {
+          if(actObj == data->GUI.TE_EDIT)
+            DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "PASTE");
+          else if(actObj == data->GUI.ST_TO || actObj == data->GUI.ST_SUBJECT ||
+                  actObj == data->GUI.ST_CC || actObj == data->GUI.ST_BCC ||
+                  actObj == data->GUI.ST_FROM || actObj == data->GUI.ST_REPLYTO ||
+                  actObj == data->GUI.ST_EXTHEADER)
+          {
+            DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Paste);
+          }
+        }
+        break;
+
+        case EA_UNDO:
+        {
+          if(actObj == data->GUI.TE_EDIT)
+            DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "UNDO");
+          else if(actObj == data->GUI.ST_TO || actObj == data->GUI.ST_SUBJECT ||
+                  actObj == data->GUI.ST_CC || actObj == data->GUI.ST_BCC ||
+                  actObj == data->GUI.ST_FROM || actObj == data->GUI.ST_REPLYTO ||
+                  actObj == data->GUI.ST_EXTHEADER)
+          {
+            DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Undo);
+          }
+        }
+        break;
+
+        case EA_REDO:
+        {
+          if(actObj == data->GUI.TE_EDIT)
+            DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "REDO");
+          else if(actObj == data->GUI.ST_TO || actObj == data->GUI.ST_SUBJECT ||
+                  actObj == data->GUI.ST_CC || actObj == data->GUI.ST_BCC ||
+                  actObj == data->GUI.ST_FROM || actObj == data->GUI.ST_REPLYTO ||
+                  actObj == data->GUI.ST_EXTHEADER)
+          {
+            DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Redo);
+          }
+        }
+        break;
+
+        case EA_SELECTALL:
+        {
+          if(actObj == data->GUI.TE_EDIT)
+            DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "SELECTALL");
+          else if(actObj == data->GUI.ST_TO || actObj == data->GUI.ST_SUBJECT ||
+                  actObj == data->GUI.ST_CC || actObj == data->GUI.ST_BCC ||
+                  actObj == data->GUI.ST_FROM || actObj == data->GUI.ST_REPLYTO ||
+                  actObj == data->GUI.ST_EXTHEADER)
+          {
+            DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_SelectAll);
+          }
+        }
+        break;
+
+        case EA_SELECTNONE:
+        {
+          if(actObj == data->GUI.TE_EDIT)
+            DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "SELECTNONE");
+          else if(actObj == data->GUI.ST_TO || actObj == data->GUI.ST_SUBJECT ||
+                  actObj == data->GUI.ST_CC || actObj == data->GUI.ST_BCC ||
+                  actObj == data->GUI.ST_FROM || actObj == data->GUI.ST_REPLYTO ||
+                  actObj == data->GUI.ST_EXTHEADER)
+          {
+            DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_SelectNone);
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  LEAVE();
+}
+MakeStaticHook(WR_EditActionHook, WR_EditActionFunc);
+
+///
 
 /*** GUI ***/
 /// WR_SharedSetup
@@ -3457,7 +3585,7 @@ static struct WR_ClassData *WR_New(int winnum)
    {
       enum {
         WMEN_NEW=501,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,WMEN_INSALTQUOT,
-        WMEN_INSROT13,WMEN_EDIT,WMEN_CUT,WMEN_COPY,WMEN_PASTE,WMEN_SELECTALL,
+        WMEN_INSROT13,WMEN_EDIT,WMEN_CUT,WMEN_COPY,WMEN_PASTE,WMEN_SELECTALL,WMEN_SELECTNONE,
         WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_SEARCH,WMEN_SEARCHAGAIN,WMEN_DICT,
         WMEN_STYLE_BOLD,WMEN_STYLE_ITALIC,WMEN_STYLE_UNDERLINE,
         WMEN_STYLE_COLORED,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
@@ -3480,12 +3608,6 @@ static struct WR_ClassData *WR_New(int winnum)
       };
 
       Object *sec_menus[SEC_MAXDUMMY];
-      Object *mi_copy;
-      Object *mi_cut;
-      Object *mi_paste;
-      Object *mi_redo;
-      Object *mi_undo;
-      Object *mi_selectall;
       Object *strip;
       Object *mi_autospell;
       Object *mi_autowrap;
@@ -3537,9 +3659,9 @@ static struct WR_ClassData *WR_New(int winnum)
       // The following shortcut list should help to identify the hard-coded
       // shortcuts:
       //
-      //  A   reserved by TextEditor.mcc (select all)
+      //  A   reserved for 'Select All' operation (WMEN_SELECTALL)
       //  B   Bold soft-style (WMEN_STYLE_BOLD)
-      //  C   reserved by TextEditor.mcc (copy)
+      //  C   reserved for 'Copy' operation (WMEN_COPY)
       //  D   Dictonary (WMEN_DICT)
       //  E   Launch editor (WMEN_EDIT)
       //  F   Find/Search (WMEN_SEARCH)
@@ -3558,11 +3680,11 @@ static struct WR_ClassData *WR_New(int winnum)
       //  S   Send mail (WMEN_SEND)
       //  T
       //  U   Underline soft-style (WMEN_STYLE_UNDERLINE)
-      //  V   reserved by TextEditor.mcc (paste)
+      //  V   reserved for 'Paste' operation (WMEN_PASTE)
       //  W   Cancel&Close window (WMEN_CANCEL)
-      //  X   reserved by TextEditor.mcc (cut)
-      //  Y
-      //  Z
+      //  X   reserved for 'Cut' operation (WMEN_CUT)
+      //  Y   reserved for 'Redo' operation (WMEN_REDO)
+      //  Z   reserved for 'Undo' operation (WMEN_UNDO)
       //  1   Switch to Message view (WMEN_SWITCH1)
       //  2   Switch to Attachment view (WMEN_SWITCH2)
       //  3   Switch to Options view (WMEN_SWITCH3)
@@ -3572,7 +3694,7 @@ static struct WR_ClassData *WR_New(int winnum)
       //  9   Use signature4 (WMEN_SIGN3)
 
       // now go and create the window object
-      data->GUI.WI = WindowObject,
+      data->GUI.WI = WriteWindowObject,
          MUIA_Window_Title, tr(MSG_WR_WriteWT),
          MUIA_HelpNode, "WR_W",
          MUIA_Window_ID, MAKE_ID('W','R','I','T'),
@@ -3597,25 +3719,21 @@ static struct WR_ClassData *WR_New(int winnum)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MHOLD), MUIA_Menuitem_Shortcut, "H", MUIA_UserData, WMEN_HOLD, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MCANCEL), MUIA_Menuitem_Shortcut, "W", MUIA_UserData, WMEN_CANCEL, End,
             End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_WR_VIEW),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_MSG), MUIA_Menuitem_Shortcut, "1", MUIA_UserData, WMEN_SWITCH1, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_ATT), MUIA_Menuitem_Shortcut, "2", MUIA_UserData, WMEN_SWITCH2, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_OPT), MUIA_Menuitem_Shortcut, "3", MUIA_UserData, WMEN_SWITCH3, End,
-            End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Edit),
-               MUIA_Family_Child, mi_cut = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MCut), MUIA_UserData, WMEN_CUT, End,
-               MUIA_Family_Child, mi_copy = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MCopy), MUIA_UserData, WMEN_COPY, End,
-               MUIA_Family_Child, mi_paste = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MPaste), MUIA_UserData, WMEN_PASTE, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MUndo), MUIA_Menuitem_Shortcut, "Z", MUIA_UserData, WMEN_UNDO, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Redo), MUIA_Menuitem_Shortcut, "Y", MUIA_UserData, WMEN_REDO, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MCut), MUIA_Menuitem_Shortcut, "X", MUIA_UserData, WMEN_CUT, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MCopy), MUIA_Menuitem_Shortcut, "C", MUIA_UserData, WMEN_COPY, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MPaste), MUIA_Menuitem_Shortcut, "V", MUIA_UserData, WMEN_PASTE, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_PasteAs),
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Quoted), MUIA_Menuitem_Shortcut,"Q", MUIA_UserData,WMEN_PASQUOT, End,
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Quoted), MUIA_Menuitem_Shortcut, "Q", MUIA_UserData,WMEN_PASQUOT, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AltQuoted), MUIA_UserData,WMEN_PASALTQUOT, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_ROT13), MUIA_UserData,WMEN_PASROT13, End,
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, mi_undo = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MUndo), MUIA_UserData, WMEN_UNDO, End,
-               MUIA_Family_Child, mi_redo = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Redo), MUIA_UserData, WMEN_REDO, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, mi_selectall = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_SELECTALL), MUIA_UserData, WMEN_SELECTALL, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_SELECTALL), MUIA_Menuitem_Shortcut, "A", MUIA_UserData, WMEN_SELECTALL, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_SELECTNONE), MUIA_UserData, WMEN_SELECTNONE, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_SEARCH), MUIA_Menuitem_Shortcut,"F", MUIA_UserData,WMEN_SEARCH, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_SEARCH_AGAIN), MUIA_Menuitem_Shortcut,"G", MUIA_UserData,WMEN_SEARCHAGAIN, End,
@@ -3641,6 +3759,11 @@ static struct WR_ClassData *WR_New(int winnum)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MAddFile), MUIA_Menuitem_Shortcut,"R", MUIA_UserData,WMEN_ADDFILE, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddCB), MUIA_UserData,WMEN_ADDCLIP, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddKey), MUIA_Menuitem_Enabled, G->PGPVersion != 0, MUIA_UserData,WMEN_ADDPGP, End,
+            End,
+            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_WR_VIEW),
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_MSG), MUIA_Menuitem_Shortcut, "1", MUIA_UserData, WMEN_SWITCH1, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_ATT), MUIA_Menuitem_Shortcut, "2", MUIA_UserData, WMEN_SWITCH2, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_OPT), MUIA_Menuitem_Shortcut, "3", MUIA_UserData, WMEN_SWITCH3, End,
             End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Options),
                MUIA_Family_Child, mi_delsend = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MDelSend), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, MUIA_UserData, WMEN_DELSEND, End,
@@ -3676,8 +3799,16 @@ static struct WR_ClassData *WR_New(int winnum)
                   Child, ColGroup(2),
                      Child, Label(tr(MSG_WR_To)),
                      Child, MakeAddressField(&data->GUI.ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, winnum, TRUE),
+
                      Child, Label(tr(MSG_WR_Subject)),
-                     Child, data->GUI.ST_SUBJECT = MakeString(SIZE_SUBJECT,tr(MSG_WR_Subject)),
+                     Child, data->GUI.ST_SUBJECT = BetterStringObject,
+                       StringFrame,
+                       MUIA_BetterString_NoShortcuts, TRUE,
+                       MUIA_String_MaxLen,            SIZE_SUBJECT,
+                       MUIA_String_AdvanceOnCR,       TRUE,
+                       MUIA_ControlChar,              ShortCut(tr(MSG_WR_Subject)),
+                       MUIA_CycleChain,               TRUE,
+                     End,
                   End,
                   Child, hasHideToolBarFlag(C->HideGUIElements) ?
                      (RectangleObject, MUIA_ShowMe, FALSE, End) :
@@ -3766,14 +3897,26 @@ static struct WR_ClassData *WR_New(int winnum)
                   Child, ColGroup(2),
                      Child, Label(tr(MSG_WR_CopyTo)),
                      Child, MakeAddressField(&data->GUI.ST_CC, tr(MSG_WR_CopyTo), MSG_HELP_WR_ST_CC, ABM_CC, winnum, TRUE),
+
                      Child, Label(tr(MSG_WR_BlindCopyTo)),
                      Child, MakeAddressField(&data->GUI.ST_BCC, tr(MSG_WR_BlindCopyTo), MSG_HELP_WR_ST_BCC, ABM_BCC, winnum, TRUE),
+
                      Child, Label(tr(MSG_WR_From)),
                      Child, MakeAddressField(&data->GUI.ST_FROM, tr(MSG_WR_From), MSG_HELP_WR_ST_FROM, ABM_FROM, winnum, TRUE),
+
                      Child, Label(tr(MSG_WR_ReplyTo)),
                      Child, MakeAddressField(&data->GUI.ST_REPLYTO, tr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, winnum, TRUE),
+
                      Child, Label(tr(MSG_WR_ExtraHeaders)),
-                     Child, data->GUI.ST_EXTHEADER = MakeString(SIZE_LARGE,tr(MSG_WR_ExtraHeaders)),
+                     Child, data->GUI.ST_EXTHEADER = BetterStringObject,
+                       StringFrame,
+                       MUIA_BetterString_NoShortcuts, TRUE,
+                       MUIA_String_MaxLen,            SIZE_LARGE,
+                       MUIA_String_AdvanceOnCR,       TRUE,
+                       MUIA_ControlChar,              ShortCut(tr(MSG_WR_ExtraHeaders)),
+                       MUIA_CycleChain,               TRUE,
+                     End,
+
                   End,
                   Child, HGroup,
                      Child, VGroup, GroupFrameT(tr(MSG_WR_SendOpt)),
@@ -3856,21 +3999,22 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,      MUIV_Notify_Application, 4, MUIM_CallHook, &WR_NewMailHook, WRITE_QUEUE, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_HOLD,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_NewMailHook, WRITE_HOLD, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CANCEL,     MUIV_Notify_Application, 3, MUIM_CallHook, &WR_CancelHook,winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,        data->GUI.TE_EDIT,       2, MUIM_TextEditor_ARexxCmd, "CUT");
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,       data->GUI.TE_EDIT,       2, MUIM_TextEditor_ARexxCmd, "COPY");
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASTE,      data->GUI.TE_EDIT,       2, MUIM_TextEditor_ARexxCmd, "PASTE");
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,        MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_CUT, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_COPY, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASTE,      MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_PASTE, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASQUOT,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASQUOT, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASALTQUOT, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASALTQUOT, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASROT13,   MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASROT13, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SEARCH,     MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SearchHook, data->GUI.TE_EDIT, MUIF_NONE);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SEARCHAGAIN,MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SearchHook, data->GUI.TE_EDIT, MUIF_ReadMailGroup_Search_Again);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_DICT,       MUIV_Notify_Application, 3, MUIM_CallHook, &DI_OpenHook, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_UNDO,       data->GUI.TE_EDIT,       2, MUIM_TextEditor_ARexxCmd, "UNDO");
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_REDO,       data->GUI.TE_EDIT,       2, MUIM_TextEditor_ARexxCmd, "REDO");
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_UNDO,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_UNDO, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_REDO,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_REDO, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDFILE,    MUIV_Notify_Application, 3, MUIM_CallHook, &WR_AddFileHook, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDCLIP,    MUIV_Notify_Application, 3, MUIM_CallHook, &WR_AddClipboardHook, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDPGP,     MUIV_Notify_Application, 3, MUIM_CallHook, &WR_AddPGPKeyHook, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTALL,  data->GUI.TE_EDIT,       2, MUIM_TextEditor_ARexxCmd, "SELECTALL");
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTALL,  MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_SELECTALL, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTNONE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_SELECTNONE, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH1,    data->GUI.RG_PAGE,       3, MUIM_Set, MUIA_Group_ActivePage, 0);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH2,    data->GUI.RG_PAGE,       3, MUIM_Set, MUIA_Group_ActivePage, 1);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH3,    data->GUI.RG_PAGE,       3, MUIM_Set, MUIA_Group_ActivePage, 2);
@@ -3879,119 +4023,12 @@ static struct WR_ClassData *WR_New(int winnum)
           DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT0+i, data->GUI.TE_EDIT, 2, MUIM_TextEditor_InsertText, emoticons[i]);
 
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_AppMessage          ,MUIV_EveryTime ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_AppHook,MUIV_TriggerValue,winnum);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify,MUIA_TextEditor_AreaMarked,MUIV_EveryTime,MUIV_Notify_Application,6,MUIM_MultiSet   ,MUIA_Menuitem_Enabled,MUIV_TriggerValue,mi_copy,mi_cut,NULL);
-
-         if(data->GUI.TE_EDIT)
-         {
-           struct MUIP_TextEditor_Keybinding *key;
-
-           // now we find out the current key bindings of the TextEditor
-           // object for the copy/paste/cut and so on actions
-
-           // COPY action
-           if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Copy)) &&
-              key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
-           {
-             static char shortcut[] = "ramiga C";
-
-             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT|0x200))
-               shortcut[7] = toupper(key->code-500);
-             else
-               shortcut[7] = key->code-500;
-
-             SetAttrs(mi_copy, MUIA_Menuitem_CommandString, TRUE,
-                               MUIA_Menuitem_Shortcut,      shortcut,
-                               TAG_DONE);
-           }
-
-           // CUT action
-           if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Cut)) &&
-              key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
-           {
-             static char shortcut[] = "ramiga X";
-
-             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT|0x200))
-               shortcut[7] = toupper(key->code-500);
-             else
-               shortcut[7] = key->code-500;
-
-             SetAttrs(mi_cut, MUIA_Menuitem_CommandString, TRUE,
-                              MUIA_Menuitem_Shortcut,      shortcut,
-                              TAG_DONE);
-           }
-
-           // PASTE action
-           if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Paste)) &&
-              key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
-           {
-             static char shortcut[] = "ramiga V";
-
-             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT|0x200))
-               shortcut[7] = toupper(key->code-500);
-             else
-               shortcut[7] = key->code-500;
-
-             SetAttrs(mi_paste, MUIA_Menuitem_CommandString, TRUE,
-                                MUIA_Menuitem_Shortcut,      shortcut,
-                                TAG_DONE);
-           }
-
-           // UNDO action
-           if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Undo)) &&
-              key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
-           {
-             static char shortcut[] = "ramiga z";
-
-             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT|0x200))
-               shortcut[7] = toupper(key->code-500);
-             else
-               shortcut[7] = key->code-500;
-
-             SetAttrs(mi_undo, MUIA_Menuitem_CommandString, TRUE,
-                               MUIA_Menuitem_Shortcut,      shortcut,
-                               TAG_DONE);
-           }
-
-           // REDO action
-           if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_Redo)) &&
-              key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
-           {
-             static char shortcut[] = "ramiga Z";
-
-             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT|0x200))
-               shortcut[7] = toupper(key->code-500);
-             else
-               shortcut[7] = key->code-500;
-
-             SetAttrs(mi_redo, MUIA_Menuitem_CommandString, TRUE,
-                               MUIA_Menuitem_Shortcut,      shortcut,
-                               TAG_DONE);
-           }
-
-           // SELECTALL action
-           if((key = (struct MUIP_TextEditor_Keybinding *)DoMethod(data->GUI.TE_EDIT, MUIM_TextEditor_QueryKeyAction, MUIV_TextEditor_KeyAction_SelectAll)) &&
-              key->code > 500 && hasFlag(key->qualifier, IEQUALIFIER_RCOMMAND))
-           {
-             static char shortcut[] = "ramiga X";
-
-             if(hasFlag(key->qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT|0x200))
-               shortcut[7] = toupper(key->code-500);
-             else
-               shortcut[7] = key->code-500;
-
-             SetAttrs(mi_selectall, MUIA_Menuitem_CommandString, TRUE,
-                                    MUIA_Menuitem_Shortcut,      shortcut,
-                                    TAG_DONE);
-           }
-         }
 
          // set some notifications on the toolbar
          // in case it was generated
          if(data->GUI.TO_TOOLBAR)
            DoMethod(data->GUI.TO_TOOLBAR, MUIM_WriteWindowToolbar_InitNotify, data);
 
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify,MUIA_TextEditor_UndoAvailable,MUIV_EveryTime,mi_undo            ,3,MUIM_Set,MUIA_Menuitem_Enabled,MUIV_TriggerValue);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify,MUIA_TextEditor_RedoAvailable,MUIV_EveryTime,mi_redo            ,3,MUIM_Set,MUIA_Menuitem_Enabled,MUIV_TriggerValue);
          if (data->GUI.TX_POSI)
          {
             DoMethod(data->GUI.TE_EDIT ,MUIM_Notify,MUIA_TextEditor_CursorX,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&WR_UpdateWTitleHook,winnum);
