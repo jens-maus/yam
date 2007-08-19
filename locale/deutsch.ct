@@ -8155,3 +8155,30 @@ Bitte kontrollieren Sie den Drucker und\n\
 versuchen Sie es erneut, falls Ihr Dokument\n\
 nicht korrekt gedruckt wurde.
 ;
+MSG_MA_EDIT
+Ändern
+;
+MSG_MA_EDIT_UNDO
+Rückgängig
+;
+MSG_MA_EDIT_REDO
+Wiederholen
+;
+MSG_MA_EDIT_CUT
+Ausschneiden
+;
+MSG_MA_EDIT_COPY
+Kopieren
+;
+MSG_MA_EDIT_PASTE
+Einfügen
+;
+MSG_MA_EDIT_SALL
+Alles auswählen
+;
+MSG_MA_EDIT_SNONE
+Auswahl aufheben
+;
+MSG_WR_SELECTNONE
+Auswahl aufheben
+;

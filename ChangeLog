@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-19  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/deutsch.ct: updated german translations according to the lastest
+    changes.
+
 2007-08-18  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: implemented a common 'Edit' submenu which will be present in
