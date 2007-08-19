@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.18 (12.07.07)
+## version $VER: YAM.ct 6.19 (19.08.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -54,8 +54,8 @@ Redigera...
 ;#DEF Edit...
 ;#SET (12//)
 MSG_Okay
-_OK
-;#DEF _Okay
+_Ok
+;#DEF _Ok
 ;#SET (16//)
 MSG_Use
 _Använd
@@ -66,12 +66,12 @@ A_vbryt
 ;#DEF _Cancel
 ;#SET (18//)
 MSG_OkayReq
-*_OK
-;#DEF *_Okay
+*_Ok
+;#DEF *_Ok
 ;#SET (21//)
 MSG_OkayCancelReq
-*_OK|A_vbryt
-;#DEF *_Okay|_Cancel
+*_Ok|A_vbryt
+;#DEF *_Ok|_Cancel
 ;#SET (22//)
 MSG_YesNoReq
 *_Ja|_Nej
@@ -509,14 +509,6 @@ MSG_UT_PGPPassReq
 Ange ditt lösenord för PGP:
 ;#DEF Please enter your PGP passphrase:
 ;#SET (140//)
-MSG_UT_NoPrinter
-Skrivaren är ej ansluten eller offline!
-;#DEF No printer or printer offline!
-;#SET (142//)
-MSG_UT_NoPaper
-Slut på papper i skrivaren!
-;#DEF Out of paper!
-;#SET (143//)
 MSG_MA_GetFolderPass
 Mappen '%s' är skyddad.\nAnge lösenord för att komma åt den:
 ;#DEF Folder '%s' is a protected folder.\nPlease enter the password to unlock it:
@@ -1933,10 +1925,6 @@ MSG_CO_Restore
 Återställ
 ;#DEF Restore
 ;#SET (550//)
-MSG_CO_Extras
-Extra
-;#DEF Extras
-;#SET (551//)
 MSG_CO_ImportMIME
 Importera MIME-visare & typer...
 ;#DEF Import MIME viewers & types...
@@ -3542,7 +3530,7 @@ Redigera
 ;#DEF Edit
 ;#SET (984//)
 MSG_WR_MCut
-Klipp
+Klipp ut
 ;#DEF Cut
 ;#SET (985//)
 MSG_WR_MCopy
@@ -3562,7 +3550,7 @@ MSG_WR_MUndo
 ;#DEF Undo
 ;#SET (989//)
 MSG_WR_Redo
-Ta tillbaks
+Gör om
 ;#DEF Redo
 ;#SET (990//)
 MSG_WR_Dictionary
@@ -4366,8 +4354,8 @@ Alla brev, mappar och konfigurationsfiler\nsom tillhör denna användare kommer at
 ;#DEF All messages, folders and configuration\nfiles belonging to this user will be lost!\n\nDo you really want to remove the user?
 ;#SET (1215//)
 MSG_US_RemoveReqGads
-*_OK|_Behåll filer|A_vbryt
-;#DEF *_Okay|_Keep files|_Cancel
+*_Ok|_Behåll filer|A_vbryt
+;#DEF *_Ok|_Keep files|_Cancel
 ;#SET (1216//)
 MSG_US_UserName
 _Användarnamn
@@ -4777,10 +4765,6 @@ MSG_ATTACH_PART
 Del
 ;#DEF Part
 ;#SET (1353//)
-MSG_ABOUT_OKAY_GAD
-\033bOkej
-;#DEF \033bOkay
-;#SET (1354//)
 MSG_FOLDER_NEWFOLDERGROUP
 Ny mapp grupp...
 ;#DEF New folder group...
@@ -4898,8 +4882,8 @@ Vill du bli varnad om\ninget ärende är satt?
 ;#DEF Would you like to be warned if you\nleave the subject line blank?
 ;#SET (1387//)
 MSG_WR_OKAYCANCELREQ
-*Okej|Avbryt
-;#DEF *Okay|Cancel
+*Ok|Avbryt
+;#DEF *_Ok|_Cancel
 ;#SET (1388//)
 MSG_WR_NOSUBJECTREQ
 Inget ärende är satt, forsätt ändå?
@@ -6666,7 +6650,7 @@ Aktiverar den automatiska uppdateringskontroll\nmekanismen i YAM. Enligt angiven
 ;#DEF Allows to enable the automatic update check\nmechanismin YAM. According to a specified interval\nit will try to get latest version information via\nthe internet and remind you of available software\nupdates.
 ;#SET (1860//)
 MSG_WR_SELECTALL
-Välj alla
+Markera allt
 ;#DEF Select All
 ;#SET (1861//)
 MSG_RE_MDN_ACCEPT_LATER
@@ -6850,8 +6834,8 @@ Ett fel uppstod vid försök att ladda bilddata för '%s'\nvia datatypes.library.\n
 ;#DEF An error occurred while trying to load the image data\nof '%s' via datatypes.library.\n\nPlease make sure that you have your datatypes system\ncorrectly setup (e.g. that the image properly displays\nin Multiview).
 ;#SET (1906//)
 MSG_ER_LOADDT_BUTTON
-_Okej
-;#DEF _Okay
+_Ok
+;#DEF *_Ok
 ;#SET (1907//)
 MSG_FOLDER_SNAPSHOT_TREE
 Memorera ordning
@@ -6866,8 +6850,8 @@ Okänd användare
 ;#DEF Unknown user
 ;#SET (1910//)
 MSG_ER_USER_UNKNOWN_BUTTON
-_Okej
-;#DEF _Okay
+_Ok
+;#DEF *_Ok
 ;#SET (1911//)
 MSG_ER_USER_UNKNOWN_ERROR
 Användare '%s' är okänd!
@@ -7046,16 +7030,16 @@ TCP/IP anslutningen mot servern '%s' avbröts vid försök att skicka kommandot '%s
 ;#DEF The TCP/IP connection with server '%s' was interrupted while trying to send command '%s'.\n\nThis may be due to a connection drop by the server.
 ;#SET (1955//)
 MSG_WR_MSWITCH_MSG
-Växla till 'Brev' flik
-;#DEF Switch to 'Message' Tab
+Växla till 'Brev'
+;#DEF Switch to 'Message'
 ;#SET (1956//)
 MSG_WR_MSWITCH_ATT
-Växla till 'Bilagor' flik
-;#DEF Switch to 'Attachments' Tab
+Växla till 'Bilagor'
+;#DEF Switch to 'Attachments'
 ;#SET (1957//)
 MSG_WR_MSWITCH_OPT
-Växla till 'Alternativ' flik
-;#DEF Switch to 'Options' Tab
+Växla till 'Alternativ'
+;#DEF Switch to 'Options'
 ;#SET (1958//)
 MSG_CO_FWDMSG
 Vidarebe_fordra meddelande
@@ -7133,3 +7117,95 @@ MSG_HELP_CO_BT_MIMEIMPORT
 Tillåter att importera MIME-typ inställningar\nfrån tredje part MIME-filer, som 'MIME.prefs',\n'mailcap' eller 'mime.types'.
 ;#DEF Allows to import MIME type settings from\nthird party MIME files, such as 'MIME.prefs',\n'mailcap' or 'mime.types'.
 ;#SET (1977//)
+MSG_AB_INVALIDSECURITY_TITLE
+Säkerhetsvarning
+;#DEF Security warning
+;#SET (1978//)
+MSG_AB_INVALIDSECURITY
+Adressbokens post var satt till antingen signera\noch/eller kryptera meddelanden per förval.\nMen PGP installationen hittades inte.\n\nVill du rensa förvalda säkerhetsinställningarna\nför denna post?
+;#DEF The addressbook entry was set to either sign\nand/or encrypt messages per default. But the\nrequired PGP installation wasn't found.\n\nDo you want to clear the default security\nsetting for this entry?
+;#SET (1979//)
+MSG_AB_INVALIDSECURITY_GADS
+*_Ja|_Nej
+;#DEF *_Yes|_No
+;#SET (1980//)
+MSG_WR_INVALIDSECURITY_TITLE
+Säkerhetsvarning
+;#DEF Security warning
+;#SET (1981//)
+MSG_WR_INVALIDSECURITY
+Adressboksinställningarna för mottagaren\n'%s'\nvar inställd på signera och/eller kryptera\nmeddelanden, men PGP installationen\nhittades inte.\n\nMeddelandet kommer inte att signeras/krypteras.
+;#DEF The addressbook settings for recipient\n'%s'\nwas found to be set to sign and/or encrypt\nmessages, but the required PGP installation\nwasn't found.\n\nThe message will not be signed/encrypted.
+;#SET (1982//)
+MSG_WR_INVALIDSECURITY_GADS
+*_Ok|A_vbryt
+;#DEF *_Ok|_Cancel
+;#SET (1983//)
+MSG_ER_FILEENCODE
+Ett oväntat fel uppstod vid försök att koda filen '%s'.\n\nVar god kontrollera att filen existerar och är läsbar innan du försöker komponera meddelandet igen.
+;#DEF An unexpected error occurred while trying to encode file '%s'.\n\nPlease make sure that this file exists and is readable before you retry to compose the message.
+;#SET (1984//)
+MSG_ER_MISSINGATTFILE
+Vid försök att komponera bilagor för ett meddelande, så var filen '%s' otillgänglig.\n\nVar god kontrollera att filen existerar och är läsbar innan du försöker att komponera meddelandet igen.
+;#DEF While trying to compose the attachments of a message, the file '%s' was found to be unavailable.\n\nPlease make sure that this file exists and is readable before you retry to compose the message.
+;#SET (1985//)
+MSG_ER_INVALIDATTFILE
+Vid försök att visa ett meddelandes bilaga, var filen '%s' ej tillgänglig.\n\nVar god kontrollera att filen existerar och är läsbar.
+;#DEF While trying to view an attachment of a message the file '%s' was found to be unavailable.\n\nPlease make sure that this file exists and is readable.
+;#SET (1986//)
+MSG_ER_PRINTER_OFFLINE
+Vid kontroll av skrivarens status, så har YAM\nupptäckt att skrivaren är offline eller upptagen.\n\nVar god kontrollera din skrivare och försök igen.
+;#DEF While checking the printer state, YAM has\nfound the printer to be offline or busy.\n\nPlease check your printer or try again later.
+;#SET (1987//)
+MSG_ER_PRINTER_OFFLINE_GADS
+*_Försök igen|_Ignorera|A_vbryt
+;#DEF *_Retry|_Ignore|_Cancel
+;#SET (1988//)
+MSG_ER_PRINTER_NOPAPER
+Vid kontroll av skrivarens status, så har YAM\nupptäckt att skrivaren har slut papper.\n\nVar god kontrollera din skrivare eller försök\nigen senare.
+;#DEF While checking the printer state, YAM has\nfound the printer to be out of paper.\n\nPlease check your printer or try again later.
+;#SET (1989//)
+MSG_ER_PRINTER_NOPAPER_GADS
+*_Försök igen|_Ignorera|A_vbryt
+;#DEF *_Retry|_Ignore|_Cancel
+;#SET (1990//)
+MSG_ER_PRINTER_FAILED
+Vid skickande av data till skrivaren, så\nreturnerades ett fel.\n\nVar god kontrollera din skrivare och försök\nigen om ditt dokument inte skrevs ut korrekt.
+;#DEF While sending data to the printer an error\nwas returned.\n\nPlease check your printer and try again if\nyour document wasn't printed properly.
+;#SET (1991//)
+MSG_MA_EDIT
+Redigera
+;#DEF Edit
+;#SET (1992//)
+MSG_MA_EDIT_UNDO
+Ångra
+;#DEF Undo
+;#SET (1993//)
+MSG_MA_EDIT_REDO
+Gör om
+;#DEF Redo
+;#SET (1994//)
+MSG_MA_EDIT_CUT
+Klipp ut
+;#DEF Cut
+;#SET (1995//)
+MSG_MA_EDIT_COPY
+Kopiera
+;#DEF Copy
+;#SET (1996//)
+MSG_MA_EDIT_PASTE
+Klistra in
+;#DEF Paste
+;#SET (1997//)
+MSG_MA_EDIT_SALL
+Markera allt
+;#DEF Select All
+;#SET (1998//)
+MSG_MA_EDIT_SNONE
+Markera inget
+;#DEF Select None
+;#SET (1999//)
+MSG_WR_SELECTNONE
+Markera inget
+;#DEF Select None
+;#SET (2000//)
