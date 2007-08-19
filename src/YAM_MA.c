@@ -2873,53 +2873,66 @@ MakeHook(MA_SaveAttachHook, MA_SaveAttachFunc);
 //  Prints selected messages
 HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
 {
-   BOOL doprint = (*arg != 0);
-   struct Mail **mlist;
+  BOOL doprint = (*arg != 0);
+  struct Mail **mlist;
 
-   if(doprint && CheckPrinter() == FALSE)
-     return;
+  ENTER();
 
-   if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
-   {
+  if(doprint == FALSE || CheckPrinter() == TRUE)
+  {
+    if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
+    {
       int i;
+      BOOL abort = FALSE;
 
-      for(i = 0; i < (int)*mlist; i++)
+      for(i=0; i < (int)*mlist && abort == FALSE; i++)
       {
-         struct ReadMailData *rmData;
+        struct ReadMailData *rmData;
 
-         if((rmData = AllocPrivateRMData(mlist[i+2], PM_TEXTS)))
-         {
-            char *cmsg;
+        if((rmData = AllocPrivateRMData(mlist[i+2], PM_TEXTS)))
+        {
+          char *cmsg;
 
-            if((cmsg = RE_ReadInMessage(rmData, RIM_PRINT)))
+          if((cmsg = RE_ReadInMessage(rmData, RIM_PRINT)))
+          {
+            struct TempFile *tf;
+
+            if((tf = OpenTempFile("w")))
             {
-               struct TempFile *tf;
+              fputs(cmsg, tf->FP);
+              fclose(tf->FP); tf->FP = NULL;
 
-               if((tf = OpenTempFile("w")))
-               {
-                  fputs(cmsg, tf->FP);
-                  fclose(tf->FP); tf->FP = NULL;
+              if(doprint)
+              {
+                if(CopyFile("PRT:", 0, tf->Filename, 0) == FALSE)
+                {
+                  MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
+                  abort = TRUE;
+                }
+              }
+              else
+              {
+                // export the mail but abort our iteration in
+                // case the user pressed 'Cancel' or the export failed
+                if(RE_Export(rmData, tf->Filename, "", "", 0, FALSE, FALSE, IntMimeTypeArray[MT_TX_PLAIN].ContentType) == FALSE)
+                  abort = TRUE;
+              }
 
-                  if(doprint)
-                  {
-                    if(CopyFile("PRT:", 0, tf->Filename, 0) == FALSE)
-                      MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
-                  }
-                  else
-                    RE_Export(rmData, tf->Filename, "", "", 0, FALSE, FALSE, IntMimeTypeArray[MT_TX_PLAIN].ContentType);
-
-                  CloseTempFile(tf);
-               }
-
-               free(cmsg);
+              CloseTempFile(tf);
             }
 
-            FreePrivateRMData(rmData);
-         }
+            free(cmsg);
+          }
+
+          FreePrivateRMData(rmData);
+        }
       }
 
       free(mlist);
-   }
+    }
+  }
+
+  LEAVE();
 }
 MakeHook(MA_SavePrintHook, MA_SavePrintFunc);
 
@@ -4677,7 +4690,7 @@ void MA_SetupDynamicMenus(void)
 
   if(G->MA->GUI.MN_REXX)
   {
-    static const char *const shortcuts[10] = { "0","1","2","3","4","5","6","7","8","9" };
+    static const char *const shortcuts[10] = { "1","2","3","4","5","6","7","8","9","0" };
     int i;
 
     // the first ten entries of our user definable
@@ -4988,7 +5001,7 @@ struct MA_ClassData *MA_New(void)
     // shortcuts:
     //
     //  A   reserved for 'Select All' operation (MMEN_EDIT_SALL)
-    //  B   Bounce (MMEN_BOUNCE)
+    //  B   Addressbook (MMEN_ABOOK)
     //  C   reserved for 'Copy' operation (MMEN_EDIT_COPY)
     //  D   Read mail (MMEN_READ)
     //  E   Edit mail (MMEN_EDIT)
@@ -5013,8 +5026,16 @@ struct MA_ClassData *MA_New(void)
     //  X   reserved for 'Cut' operation (MMEN_EDIT_CUT)
     //  Y   Copy mail (MMEN_COPY)
     //  Z   reserved for 'Undo' operation (MMEN_EDIT_UNDO)
-    //  1   Addressbook (MMEN_ABOOK)
-    //  2   Configuration (MMEN_CONFIG)
+    //  1   reservered for Arexx-Script 1
+    //  2   reservered for Arexx-Script 2
+    //  3   reservered for Arexx-Script 3
+    //  4   reservered for Arexx-Script 4
+    //  5   reservered for Arexx-Script 5
+    //  6   reservered for Arexx-Script 6
+    //  7   reservered for Arexx-Script 7
+    //  8   reservered for Arexx-Script 8
+    //  9   reservered for Arexx-Script 9
+    //  0   reservered for Arexx-Script 10
     // Del  Remove selected mail (MMEN_DELETE)
     //  +   Select all (MMEN_SELALL)
     //  -   Select no mail (MMEN_SELNONE)
@@ -5026,6 +5047,8 @@ struct MA_ClassData *MA_New(void)
     //  {   Set status to hold (MMEN_TOHOLD)
     //  }   Set status to queued (MMEN_TOQUEUED)
     //  #   Set all mails to read (MMEN_ALLTOREAD)
+    //  *   Configuration (MMEN_CONFIG)
+    //  _   Execute script (MMEN_SCRIPT)
     //  ?   Open about window (MMEN_ABOUT)
 
     //
@@ -5064,7 +5087,7 @@ struct MA_ClassData *MA_New(void)
         MUIA_Family_Child, Menuitem(tr(MSG_MA_MSEARCH), "F", TRUE, FALSE, MMEN_SEARCH),
         MUIA_Family_Child, data->GUI.MI_FILTER = Menuitem(tr(MSG_MA_MFILTER), "I", TRUE, FALSE, MMEN_FILTER),
         MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MUIA_Family_Child, data->GUI.MI_DELDEL = Menuitem(tr(MSG_MA_REMOVEDELETED), "Z", TRUE, FALSE, MMEN_DELDEL),
+        MUIA_Family_Child, data->GUI.MI_DELDEL = Menuitem(tr(MSG_MA_REMOVEDELETED), "K", TRUE, FALSE, MMEN_DELDEL),
         MUIA_Family_Child, data->GUI.MI_UPDINDEX = Menuitem(tr(MSG_MA_UPDATEINDEX), NULL, TRUE, FALSE, MMEN_INDEX),
         MUIA_Family_Child, Menuitem(tr(MSG_MA_FlushIndices), NULL, TRUE, FALSE, MMEN_FLUSH),
         MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
@@ -5093,7 +5116,7 @@ struct MA_ClassData *MA_New(void)
         MUIA_Family_Child, data->GUI.MI_NEW = Menuitem(tr(MSG_MA_MNEW), "N", TRUE, FALSE, MMEN_NEW),
         MUIA_Family_Child, data->GUI.MI_REPLY = Menuitem(tr(MSG_MA_MREPLY), "R", TRUE, FALSE, MMEN_REPLY),
         MUIA_Family_Child, data->GUI.MI_FORWARD = Menuitem(tr(MSG_MA_MFORWARD), "W", TRUE, FALSE, MMEN_FORWARD),
-        MUIA_Family_Child, data->GUI.MI_BOUNCE = Menuitem(tr(MSG_MA_MBOUNCE), "B", TRUE, FALSE, MMEN_BOUNCE),
+        MUIA_Family_Child, data->GUI.MI_BOUNCE = Menuitem(tr(MSG_MA_MBOUNCE), NULL, TRUE, FALSE, MMEN_BOUNCE),
         MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
         MUIA_Family_Child, data->GUI.MI_GETADDRESS = Menuitem(tr(MSG_MA_MSAVEADDRESS), "J", TRUE, FALSE, MMEN_SAVEADDR),
         MUIA_Family_Child, data->GUI.MI_SELECT = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_Select),
@@ -5116,8 +5139,8 @@ struct MA_ClassData *MA_New(void)
         MUIA_Family_Child, data->GUI.MI_SEND = Menuitem(tr(MSG_MA_MSend), NULL, TRUE, FALSE, MMEN_SEND),
       End,
       MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_MA_Settings),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_MADDRESSBOOK), "1", TRUE, FALSE, MMEN_ABOOK),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_MCONFIG), "2", TRUE, FALSE, MMEN_CONFIG),
+        MUIA_Family_Child, Menuitem(tr(MSG_MA_MADDRESSBOOK), "B", TRUE, FALSE, MMEN_ABOOK),
+        MUIA_Family_Child, Menuitem(tr(MSG_MA_MCONFIG), "*", TRUE, FALSE, MMEN_CONFIG),
         MUIA_Family_Child, Menuitem(tr(MSG_SETTINGS_USERS), NULL, TRUE, FALSE, MMEN_USER),
         MUIA_Family_Child, Menuitem(tr(MSG_SETTINGS_MUI), NULL, TRUE, FALSE, MMEN_MUI),
       End,

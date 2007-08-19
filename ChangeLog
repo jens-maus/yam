@@ -7,6 +7,15 @@ $URL$
 
 2007-08-19  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c: fixed certain overlapping shortcuts by redefining them to
+    free shortcut keys (e.g. for the addressbook & config).
+  * YAM_MA.c: the automatic script shortcuts are now starting from 1
+    till 0 which means the 10th script. This should be more intuitive than
+    letting the shortcuts start from 0-9.
+  * YAM_MA.c: when having selected multiple mails an iterative 'Save'
+    or 'Print' operation couldn't be canceled. Now the return value of
+    RE_Export() and the print operation will be checked and the whole
+    printing/saving being aborted.
   * locale/deutsch.ct: minor spelling correction to german translation so
     that the 'Edit' menu corresponds to terms which are more standard.
 
