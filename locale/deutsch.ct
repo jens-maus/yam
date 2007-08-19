@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (28.07.2007)
+## version $VER: YAM.catalog 6.0 (19.08.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -7572,10 +7572,10 @@ MSG_RE_SEARCH
 Suchen...
 ;
 MSG_RE_SEARCH_AGAIN
-Weiter suchen
+Weitersuchen
 ;
 MSG_WR_SEARCH_AGAIN
-Weiter suchen
+Weitersuchen
 ;
 MSG_WR_AUTOWRAP
 Zeilenumbruch
