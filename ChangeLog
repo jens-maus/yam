@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/deutsch.ct: minor spelling correction to german translation so
+    that the 'Edit' menu corresponds to terms which are more standard.
+
 2007-08-19  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/deutsch.ct: updated german translations according to the lastest

@@ -4137,7 +4137,7 @@ Rückgängig
 ; Undo
 ;
 MSG_WR_Redo
-Wiederholen
+Wiederherstellen
 ; Redo
 ;
 MSG_WR_Dictionary
@@ -8156,13 +8156,13 @@ versuchen Sie es erneut, falls Ihr Dokument\n\
 nicht korrekt gedruckt wurde.
 ;
 MSG_MA_EDIT
-Ändern
+Bearbeiten
 ;
 MSG_MA_EDIT_UNDO
 Rückgängig
 ;
 MSG_MA_EDIT_REDO
-Wiederholen
+Wiederherstellen
 ;
 MSG_MA_EDIT_CUT
 Ausschneiden
