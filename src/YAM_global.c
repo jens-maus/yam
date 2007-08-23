@@ -64,13 +64,13 @@ static const char USED_VAR yam_stack_size[] = "$STACK:" STR(MIN_STACKSIZE) "\n";
   #define SYSTEMSHORT "OS4"
 #elif defined(__MORPHOS__)
   #define SYSTEM      "MorphOS"
-  #define SYSTEM      "MOS"
+  #define SYSTEMSHORT "MOS"
 #elif defined(__AROS__)
   #define SYSTEM      "AROS"
   #define SYSTEMSHORT SYSTEM
 #elif defined(__AMIGA__)
   #define SYSTEM      "AmigaOS3"
-  #define SYSTEM      "OS3"
+  #define SYSTEMSHORT "OS3"
 #else
   #warning "Unsupported System - check SYSTEM define"
   #define SYSTEM      "??"

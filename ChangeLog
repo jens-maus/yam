@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-23  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_global.c: fixed the wrong SYSTEMSHORT lines for OS3 and MOS.
+
 2007-08-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c, YAM_global.c: changed window title to not contain any
