@@ -53,8 +53,6 @@ OBJDIR     = .obj_vbcc
 
 # Compiler/Linker flags
 CPU	=   68020
-CDEFS	= `rx "say '-D__YAM_VERDATE=' || '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x || ' -D__YAM_VERDAYS=' || date('I')"` \
-        -D__YAM_BUILDID=$(BUILDID)
 WARN	= -dontwarn=153
 OPTFLAGS=
 DEBUG	= -DEBUG -O0
@@ -64,7 +62,11 @@ LDFLAGS = -L$(POSIXLIBLIB)
 LDLIBS  = -lamiga -ldebug -lposix -lmieee
 
 # Special flags
-DEVFLAGS = -DDEVWARNING `rx "say '-DEXPDATE=' || date('I')+31"`
+DEVFLAGS = -DDEVWARNING `rx "say '-DEXPDATE=' || date(I)+31"`
+YAMVERID = `rx "say '-D__YAM_VERDATE=' || '22'x || right(date(S),2)'.'substr(date(S),5,2)'.'left(date(S),4) || '22'x ||\
+                    ' -D__YAM_VERDAYS=' || date(I) ||\
+                    ' -D__YAM_BUILDDATE=' || '22'x || date(S) || '22'x"` \
+            -D__YAM_BUILDID="$(BUILDID)"
 
 # CPU and DEBUG can be defined outside, defaults to above
 # using e.g. "make -f VMakefile DEBUG= OPTFLAGS=-O2 CPU=68060" produces optimized non-debug 68060 version
@@ -219,7 +221,7 @@ $(OBJDIR)/Debug.o: Debug.c YAM_global.h YAM_utilities.h Debug.h
 
 $(OBJDIR)/YAM_global.o: YAM_global.c YAM_global.h YAM_locale.h YAM_stringsizes.h
 	@echo "Compiling $<"
-	@$(CC) $(CDEFS) $(CFLAGS) $< -o $@
+	@$(CC) $(YAMVERID) $(CFLAGS) $< -o $@
 
 YAM_locale.h: YAM_locale.c
 YAM_locale.c: $(LOCALE)/YAM.cd C_h.sd C_c.sd
@@ -232,7 +234,7 @@ $(OBJDIR)/YAM.o: YAM.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
 	YAM_userlist.h YAM_utilities.h YAM_write.h
 	@echo "Compiling $<"
-	@$(CC) $(CDEFS) $(DEVFLAGS) $(CFLAGS) $< -o $@
+	@$(CC) $(DEVFLAGS) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/YAM_AB.o: YAM_AB.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_config.h Debug.h YAM_error.h YAM_find.h YAM_global.h \

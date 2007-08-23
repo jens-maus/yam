@@ -7,6 +7,10 @@ $URL$
 
 2007-08-23  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_global.c, misc: In accordance to standards (RFC 2616), YAM is now
+    defining a "User-Agent:" header line like it is common with modern
+    e-mail clients. The properitary large "X-Mailer:" line with heaps of
+    commercials is therefore now not emitted anymore.
   * YAM_FI.c: the fixed bug #1779543 where the calculation of the filter
     action matches was slightly wrong and always output zero or one.
 

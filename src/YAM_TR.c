@@ -3052,7 +3052,7 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
                                                "Host: %s\r\n"
                                                "User-Agent: %s\r\n"
                                                "Accept: */*\r\n"
-                                               "\r\n", serverPath, serverHost, yamverxmailer);
+                                               "\r\n", serverPath, serverHost, yamuseragent);
 
     SHOWSTRING(DBF_NET, httpRequest);
 

@@ -59,7 +59,7 @@ LNKFLAGS = RESOPT NOVER LINK MATH=S SMALLCODE \
   "LINKOPT=MAP $(TARGET).map,fhx FWIDTH 32 PWIDTH 32 SWIDTH 32"
 
 # Special flags
-DEVFLAGS = DEF=DEVWARNING `rx "say 'DEF EXPDATE=' || date('I')+31"`
+DEVFLAGS = DEF=DEVWARNING `rx "say 'DEF EXPDATE=' || date(I)+31"`
 
 # CPU and DEBUG can be defined outside, defaults to above
 # using e.g. "smake DEBUG= CPU=68060" produces optimized non-debug 68060 version
@@ -233,9 +233,9 @@ Catalogs: $(LOCALE)/deutsch.catalog $(LOCALE)/bosanski.catalog $(LOCALE)/czech.c
 
 $(OBJDIR)/YAM_global.o: YAM_global.c YAM_global.h YAM_locale.h YAM_stringsizes.h
   @echo "*e[32mCompiling $*.c*e[0m"
-  @rx "say 'DEF __YAM_VERDATE=' || '22'x ||\
-       right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) ||\
-       '22'x || ' DEF __YAM_VERDAYS=' || date('I')" >T:YAM_VERDATE.tmp
+  @rx "say 'DEF __YAM_VERDATE=' || '22'x || right(date(S),2)'.'substr(date(S),5,2)'.'left(date(S),4) || '22'x ||\
+           ' DEF __YAM_VERDAYS=' || date(I) ||\
+           ' DEF __YAM_BUILDDATE=' || '22'x || date(S) || '22'x" >T:YAM_VERDATE.tmp
   @$(CC) $(CFLAGS) `type T:YAM_VERDATE.tmp` YAM_global.c OBJNAME=$@
   @$(RM) T:YAM_VERDATE.tmp
 

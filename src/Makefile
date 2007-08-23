@@ -99,6 +99,7 @@ MKDIR = mkdir -p
 DEVFLAGS = -DDEVWARNING -DEXPDATE="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922 + 31`"
 YAMVERID = -D__YAM_VERDATE=\"`$(DATE) +%d.%m.%Y`\" \
            -D__YAM_VERDAYS="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922`" \
+           -D__YAM_BUILDDATE=\"`$(DATE) +%Y%m%d`\" \
            -D__YAM_BUILDID="$(BUILDID)"
 
 # override commands for native builds
@@ -117,10 +118,11 @@ ifeq ($(HOST), AmigaOS)
 
   # override the versionID and developer build macros with calls
   # to ARexx instead of unix expr/date
-  DEVFLAGS = -DDEVWARNING `rx "say '-DEXPDATE=' || date('I')+31"`
-  YAMVERID = `rx "say '-D__YAM_VERDATE=' || '22'x ||\
-              right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) ||\
-              '22'x || ' -D__YAM_VERDAYS=' || date('I')"` -D__YAM_BUILDID="$(BUILDID)"
+  DEVFLAGS = -DDEVWARNING `rx "say '-DEXPDATE=' || date(I)+31"`
+  YAMVERID = `rx "say '-D__YAM_VERDATE=' || '22'x || right(date(S),2)'.'substr(date(S),5,2)'.'left(date(S),4) || '22'x ||\
+                      ' -D__YAM_VERDAYS=' || date(I) ||\
+                      ' -D__YAM_BUILDDATE=' || '22'x || date(S) || '22'x"` \
+              -D__YAM_BUILDID="$(BUILDID)"
 
 else
 ifeq ($(HOST), MorphOS)

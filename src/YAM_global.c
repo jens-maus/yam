@@ -58,30 +58,43 @@ static const char USED_VAR yam_stack_size[] = "$STACK:" STR(MIN_STACKSIZE) "\n";
   #error "initial stack/memory specification failed"
 #endif
 
-// define the CPU strings
-#if defined(__PPC__)
-  #if defined(__amigaos4__)
-    #define CPU " [OS4/PPC]"
-  #elif defined(__MORPHOS__)
-    #define CPU " [MOS/PPC]"
-  #else
-    #define CPU " [PPC]"
-  #endif
-#elif defined(_M68060) || defined(__M68060) || defined(__mc68060)
-  #define CPU " [060]"
-#elif defined(_M68040) || defined(__M68040) || defined(__mc68040)
-  #define CPU " [040]"
-#elif defined(_M68030) || defined(__M68030) || defined(__mc68030)
-  #define CPU " [030]"
-#elif defined(_M68020) || defined(__M68020) || defined(__mc68020)
-  #define CPU " [020]"
-#elif defined(_M68000) || defined(__M68000) || defined(__mc68000)
-  #define CPU " [68k]"
-#elif defined(__i386__)
-  #define CPU " [x86]"
+// identify the system we are compiling for
+#if defined(__amigaos4__)
+  #define SYSTEM      "AmigaOS4"
+  #define SYSTEMSHORT "OS4"
+#elif defined(__MORPHOS__)
+  #define SYSTEM      "MorphOS"
+  #define SYSTEM      "MOS"
+#elif defined(__AROS__)
+  #define SYSTEM      "AROS"
+  #define SYSTEMSHORT SYSTEM
+#elif defined(__AMIGA__)
+  #define SYSTEM      "AmigaOS3"
+  #define SYSTEM      "OS3"
 #else
-  #warning "Unsupported CPU model - check compiler defines"
-  #define CPU " [???]"
+  #warning "Unsupported System - check SYSTEM define"
+  #define SYSTEM      "??"
+  #define SYSTEMSHORT "??"
+#endif
+
+// identify the CPU model
+#if defined(__PPC__)
+  #define CPU "PPC"
+#elif defined(_M68060) || defined(__M68060) || defined(__mc68060)
+  #define CPU "060"
+#elif defined(_M68040) || defined(__M68040) || defined(__mc68040)
+  #define CPU "040"
+#elif defined(_M68030) || defined(__M68030) || defined(__mc68030)
+  #define CPU "030"
+#elif defined(_M68020) || defined(__M68020) || defined(__mc68020)
+  #define CPU "020"
+#elif defined(_M68000) || defined(__M68000) || defined(__mc68000)
+  #define CPU "68k"
+#elif defined(__i386__)
+  #define CPU "i386"
+#else
+  #warning "Unsupported CPU model - check CPU define"
+  #define CPU "???"
 #endif
 
 // for defining the actual version of YAM and mapping it
@@ -94,19 +107,18 @@ static const char USED_VAR yam_stack_size[] = "$STACK:" STR(MIN_STACKSIZE) "\n";
 #endif
 #define __YAM_COPYRIGHT     "Copyright (C) 2000-2007 YAM Open Source Team"
 #define __YAM_FULLCOPYRIGHT "Copyright (C) 1995-2000 Marcel Beck\n" __YAM_COPYRIGHT
-#define __YAM_XMAILER       "AmigaOS E-mail Client (C) 2000-2007 YAM Open Source Team - http://www.yam.ch/"
 
 #if __YAM_BUILDID == 0
-const char * const yamverxmailer    = __YAM " " __YAM_VERSION __YAM_DEVEL CPU " " __YAM_XMAILER;
+const char * const yamuseragent     = __YAM "/" __YAM_VERSION __YAM_DEVEL " (" SYSTEM "/" CPU "/" __YAM_BUILDDATE ")";
 const char * const yambuildid       = "";
 #else
-const char * const yamverxmailer    = __YAM " " __YAM_VERSION __YAM_DEVEL "-" STR(__YAM_BUILDID) CPU " " __YAM_XMAILER;
+const char * const yamuseragent     = __YAM "/" __YAM_VERSION __YAM_DEVEL "-" STR(__YAM_BUILDID) " (" SYSTEM "/" CPU "/" __YAM_BUILDDATE ")";
 const char * const yambuildid       = STR(__YAM_BUILDID);
 #endif
 
-const char * const yamversion       = __YAM " " __YAM_VERSION __YAM_DEVEL CPU;
-const char * const yamversionver    = __YAM_VERSION __YAM_DEVEL CPU;
-const char * const yamversionstring = "$VER: " __YAM " " __YAM_VERSION __YAM_DEVEL CPU " (" __YAM_VERDATE ") " __YAM_COPYRIGHT;
+const char * const yamversion       = __YAM " " __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU "]";
+const char * const yamversionver    = __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU "]";
+const char * const yamversionstring = "$VER: " __YAM " " __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU "] (" __YAM_VERDATE ") " __YAM_COPYRIGHT;
 const char * const yamcopyright     = __YAM_COPYRIGHT;
 const char * const yamfullcopyright = __YAM_FULLCOPYRIGHT;
 const char * const yamversiondate   = __YAM_VERDATE;

@@ -1747,7 +1747,7 @@ BOOL WriteOutMessage(struct Compose *comp)
    rcptto = comp->ReplyTo ? comp->ReplyTo : (comp->From ? comp->From : C->EmailAddress);
    if(comp->RequestMDN) EmitRcptHeader(fh, "Disposition-Notification-To", rcptto);
    if (comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
-   fprintf(fh, "X-Mailer: %s\n", yamverxmailer);
+   fprintf(fh, "User-Agent: %s\n", yamuseragent);
    if (comp->UserInfo) WR_WriteUserInfo(fh, comp->From);
    if (*C->Organization) EmitHeader(fh, "Organization", C->Organization);
    if (*comp->Subject) EmitHeader(fh, "Subject", comp->Subject);
