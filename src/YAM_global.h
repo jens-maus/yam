@@ -32,6 +32,7 @@ extern const char* const months[12];
 extern const char* const SecCodes[5];
 extern const char* const SigNames[3];
 extern const char* const wdays[7];
+extern const char* const yamver;
 extern const char* const yamversion;
 extern const char* const yamversionver;
 extern const char* const yamversionstring;

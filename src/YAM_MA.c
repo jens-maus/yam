@@ -4990,8 +4990,7 @@ struct MA_ClassData *MA_New(void)
       username = user->Name;
 
     // prepare the generic window title of the main window
-    snprintf(data->WinTitle, sizeof(data->WinTitle), tr(MSG_MA_WinTitle), yamversionver,
-                                                                          username != NULL ? username : "");
+    snprintf(data->WinTitle, sizeof(data->WinTitle), tr(MSG_MA_WinTitle), yamver, username != NULL ? username : "");
 
     //
     // now we create the Menustrip object with all the menu items

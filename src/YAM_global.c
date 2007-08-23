@@ -116,6 +116,7 @@ const char * const yamuseragent     = __YAM "/" __YAM_VERSION __YAM_DEVEL "-" ST
 const char * const yambuildid       = STR(__YAM_BUILDID);
 #endif
 
+const char * const yamver           = __YAM_VERSION __YAM_DEVEL;
 const char * const yamversion       = __YAM " " __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU "]";
 const char * const yamversionver    = __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU "]";
 const char * const yamversionstring = "$VER: " __YAM " " __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU "] (" __YAM_VERDATE ") " __YAM_COPYRIGHT;
