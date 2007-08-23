@@ -109,10 +109,10 @@ static const char USED_VAR yam_stack_size[] = "$STACK:" STR(MIN_STACKSIZE) "\n";
 #define __YAM_FULLCOPYRIGHT "Copyright (C) 1995-2000 Marcel Beck\n" __YAM_COPYRIGHT
 
 #if __YAM_BUILDID == 0
-const char * const yamuseragent     = __YAM "/" __YAM_VERSION __YAM_DEVEL " (" SYSTEM "/" CPU "/" __YAM_BUILDDATE ")";
+const char * const yamuseragent     = __YAM "/" __YAM_VERSION __YAM_DEVEL " (" SYSTEM "; " CPU "; rv:" __YAM_BUILDDATE ")";
 const char * const yambuildid       = "";
 #else
-const char * const yamuseragent     = __YAM "/" __YAM_VERSION __YAM_DEVEL "-" STR(__YAM_BUILDID) " (" SYSTEM "/" CPU "/" __YAM_BUILDDATE ")";
+const char * const yamuseragent     = __YAM "/" __YAM_VERSION __YAM_DEVEL "-" STR(__YAM_BUILDID) " (" SYSTEM "; " CPU "; rv:" __YAM_BUILDDATE ")";
 const char * const yambuildid       = STR(__YAM_BUILDID);
 #endif
 

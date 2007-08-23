@@ -11,6 +11,8 @@ $URL$
 
 2007-08-23  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_global.c: adapted new 'User-Agent:' string to match a bit more
+    to other user agent strings out there regarding the comment field.
   * YAM_MA.c, YAM_global.c: changed window title to not contain any
     system specific information. That's really not required there.
   * YAM_global.c, misc: In accordance to standards (RFC 2616), YAM is now
