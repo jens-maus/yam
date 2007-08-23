@@ -1228,7 +1228,7 @@ BOOL FI_FilterSingleMail(struct Mail *mail, int *matches)
   }
 
   if(matches != NULL)
-    *matches = match;
+    *matches += match;
 
   RETURN(success);
   return success;

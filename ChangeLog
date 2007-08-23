@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_FI.c: the fixed bug #1779543 where the calculation of the filter
+    action matches was slightly wrong and always output zero or one.
+
 2007-08-19  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: updated according to changes.
