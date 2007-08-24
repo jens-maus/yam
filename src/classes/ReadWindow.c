@@ -626,7 +626,7 @@ DECLARE(ReadMail) // struct Mail *mail
     if(C->MultipleWindows == TRUE ||
        rmData == G->ActiveRexxRMData)
     {
-      titleLen = snprintf(data->title, sizeof(data->title), "[%d] %s %s: ", data->windowNumber,
+      titleLen = snprintf(data->title, sizeof(data->title), "[%d] %s %s: ", data->windowNumber+1,
                                                             isSentMail ? tr(MSG_To) : tr(MSG_From),
                                                             isSentMail ? AddrName(mail->To) : AddrName(mail->From));
     }

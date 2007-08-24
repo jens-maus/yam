@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * ReadWindow.c: changed the window numbering in the window title of
+    multiple read windows to start from 1 instead of starting always
+    from 0. This should be more intuitive. However, please note that
+    this change is only cosmetical and that the technical numbering
+    e.g. for Arexx scripts isn't changed. That means, if an Arexx
+    script wants to address the first read window it still ought to
+    address it by zero instead. This fulfills change request #1780690.
+
 2007-08-23  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_global.c: fixed the wrong SYSTEMSHORT lines for OS3 and MOS.
