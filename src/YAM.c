@@ -2697,10 +2697,38 @@ int main(int argc, char **argv)
         EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
 
         CLOSELIB(IntuitionBase, IIntuition);
-        exit(RETURN_WARN);
       }
+
+      exit(RETURN_WARN);
    }
    #endif
+
+   // we make sure that if this is a build for 68k processors and for 68020+
+   // that this is really a 68020+ machine
+   #if _M68060 || _M68040 || _M68030 || _M68020 || __mc68020 || __mc68030 || __mc68040 || __mc68060
+   if((SysBase->AttnFlags & AFF_68020) == 0)
+   {
+      if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)))
+      {
+        struct EasyStruct ErrReq;
+
+        ErrReq.es_StructSize = sizeof(struct EasyStruct);
+        ErrReq.es_Flags      = 0;
+
+        ErrReq.es_Title        = (STRPTR)"YAM Startup Error";
+        ErrReq.es_TextFormat   = (STRPTR)"This version of YAM requires at\n"
+                                         "least an 68020 processor or higher.";
+        ErrReq.es_GadgetFormat = (STRPTR)"Exit";
+
+        EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
+
+        CloseLibrary((struct Library *)IntuitionBase);
+     }
+
+     exit(RETURN_WARN);
+   }
+   #endif
+
 
 #if defined(DEVWARNING)
    {

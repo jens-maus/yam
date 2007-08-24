@@ -81,15 +81,15 @@ static const char USED_VAR yam_stack_size[] = "$STACK:" STR(MIN_STACKSIZE) "\n";
 #if defined(__PPC__)
   #define CPU "PPC"
 #elif defined(_M68060) || defined(__M68060) || defined(__mc68060)
-  #define CPU "060"
+  #define CPU "m68060"
 #elif defined(_M68040) || defined(__M68040) || defined(__mc68040)
-  #define CPU "040"
+  #define CPU "m68040"
 #elif defined(_M68030) || defined(__M68030) || defined(__mc68030)
-  #define CPU "030"
+  #define CPU "m68030"
 #elif defined(_M68020) || defined(__M68020) || defined(__mc68020)
-  #define CPU "020"
+  #define CPU "m68k"
 #elif defined(_M68000) || defined(__M68000) || defined(__mc68000)
-  #define CPU "68k"
+  #define CPU "m68000"
 #elif defined(__i386__)
   #define CPU "i386"
 #else

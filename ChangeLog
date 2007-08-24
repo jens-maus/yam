@@ -7,6 +7,12 @@ $URL$
 
 2007-08-24  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_global.c, YAM.c: as we are anyway just going to release 68020+
+    builds for AmigaOS3 in future, they will now be marked as compiled
+    for "m68k" instead. This should make clear that this is a general
+    build optimized for motorola 68k processors. In addition, YAM will
+    now check if an 68020+ processor is present in case it was compiled
+    for them.
   * ReadWindow.c: changed the window numbering in the window title of
     multiple read windows to start from 1 instead of starting always
     from 0. This should be more intuitive. However, please note that
