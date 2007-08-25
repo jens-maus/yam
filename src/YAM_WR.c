@@ -3084,22 +3084,6 @@ void WR_SetupOldMail(int winnum, struct ReadMailData *rmData)
 }
 
 ///
-/// WR_UpdateTitleFunc
-/*** WR_UpdateTitleFunc - Shows cursor coordinates ***/
-HOOKPROTONHNO(WR_UpdateWTitleFunc, void, int *arg)
-{
-  struct WR_ClassData *wr = G->WR[*arg];
-  Object *ed = wr->GUI.TE_EDIT;
-
-  ENTER();
-
-  snprintf(wr->WTitle, sizeof(wr->WTitle), "%03ld\n%03ld", xget(ed,MUIA_TextEditor_CursorY)+1, xget(ed,MUIA_TextEditor_CursorX)+1);
-  set(wr->GUI.TX_POSI, MUIA_Text_Contents, wr->WTitle);
-
-  LEAVE();
-}
-MakeStaticHook(WR_UpdateWTitleHook,WR_UpdateWTitleFunc);
-///
 
 /*** Hooks ***/
 /// WR_App
@@ -3552,6 +3536,62 @@ HOOKPROTONHNO(WR_EditActionFunc, void, int *arg)
 MakeStaticHook(WR_EditActionHook, WR_EditActionFunc);
 
 ///
+/// WR_UpdateCusorPosFunc
+/*** WR_UpdateCursorPocFunc - Shows cursor coordinates ***/
+HOOKPROTONHNO(WR_UpdateCursorPosFunc, void, int *arg)
+{
+  int winnum = (int)arg[0];
+  struct WR_ClassData *wr;
+  ENTER();
+
+  if(winnum >= 0 && (wr = G->WR[winnum]) != NULL)
+  {
+    Object *ed = wr->GUI.TE_EDIT;
+
+    snprintf(wr->CursorPos, sizeof(wr->CursorPos), "%03ld\n%03ld", xget(ed,MUIA_TextEditor_CursorY)+1, xget(ed,MUIA_TextEditor_CursorX)+1);
+    set(wr->GUI.TX_POSI, MUIA_Text_Contents, wr->CursorPos);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(WR_UpdateCursorPosHook,WR_UpdateCursorPosFunc);
+
+///
+/// WR_UpdateWTitleFunc
+//  As soon as the subject string gadget is going to be
+//  changed, this hook will be called.
+HOOKPROTONHNO(WR_UpdateWTitleFunc, void, int *arg)
+{
+  int winnum = (int)arg[0];
+  struct WR_ClassData *wr;
+  ENTER();
+
+  if(winnum >= 0 && (wr = G->WR[winnum]) != NULL)
+  {
+    char *subject = (char *)xget(wr->GUI.ST_SUBJECT, MUIA_String_Contents);
+    size_t titleLen = snprintf(wr->WTitle, sizeof(wr->WTitle), "[%d] %s: ", winnum+1, tr(MSG_WR_WriteWT));
+
+    if(strlen(subject)+titleLen > sizeof(wr->WTitle)-1)
+    {
+      if(titleLen < sizeof(wr->WTitle)-4)
+      {
+        strlcat(wr->WTitle, subject, sizeof(wr->WTitle)-titleLen-4);
+        strlcat(wr->WTitle, "...", sizeof(wr->WTitle)); // signals that the string was cut.
+      }
+      else
+        strlcat(&wr->WTitle[sizeof(wr->WTitle)-5], "...", 4);
+    }
+    else
+      strlcat(wr->WTitle, subject, sizeof(wr->WTitle));
+
+    set(wr->GUI.WI, MUIA_Window_Title, wr->WTitle);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(WR_UpdateWTitleHook, WR_UpdateWTitleFunc);
+
+///
 
 /*** GUI ***/
 /// WR_SharedSetup
@@ -3651,6 +3691,9 @@ static struct WR_ClassData *WR_New(int winnum)
       // set the winnum variable of the classdata
       data->winnum = winnum;
 
+      // setup the window Title
+      snprintf(data->WTitle, sizeof(data->WTitle), "[%d] %s: ", winnum+1, tr(MSG_WR_WriteWT));
+
       //
       // now we define which window shortcuts are available and which ones
       // are reserved by either the generated menuobject or by some shortcuts
@@ -3695,7 +3738,7 @@ static struct WR_ClassData *WR_New(int winnum)
 
       // now go and create the window object
       data->GUI.WI = WriteWindowObject,
-         MUIA_Window_Title, tr(MSG_WR_WriteWT),
+         MUIA_Window_Title, data->WTitle,
          MUIA_HelpNode, "WR_W",
          MUIA_Window_ID, MAKE_ID('W','R','I','T'),
          MUIA_Window_Menustrip, strip = MenustripObject,
@@ -4031,8 +4074,8 @@ static struct WR_ClassData *WR_New(int winnum)
 
          if (data->GUI.TX_POSI)
          {
-            DoMethod(data->GUI.TE_EDIT ,MUIM_Notify,MUIA_TextEditor_CursorX,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&WR_UpdateWTitleHook,winnum);
-            DoMethod(data->GUI.TE_EDIT ,MUIM_Notify,MUIA_TextEditor_CursorY,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&WR_UpdateWTitleHook,winnum);
+            DoMethod(data->GUI.TE_EDIT ,MUIM_Notify,MUIA_TextEditor_CursorX,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&WR_UpdateCursorPosHook,winnum);
+            DoMethod(data->GUI.TE_EDIT ,MUIM_Notify,MUIA_TextEditor_CursorY,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&WR_UpdateCursorPosHook,winnum);
          }
          DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, data->GUI.MI_BOLD, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
          DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, data->GUI.MI_ITALIC, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
@@ -4047,6 +4090,7 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,1             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,TRUE);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,2             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,TRUE);
          DoMethod(data->GUI.ST_SUBJECT ,MUIM_Notify,MUIA_String_Acknowledge  ,MUIV_EveryTime,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_ActiveObject,data->GUI.TE_EDIT);
+         DoMethod(data->GUI.ST_SUBJECT ,MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime, MUIV_Notify_Application,3,MUIM_CallHook,   &WR_UpdateWTitleHook,winnum);
          DoMethod(data->GUI.BT_ADD     ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddFileHook,winnum);
          DoMethod(data->GUI.BT_ADDPACK ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddArchiveHook,winnum);
          DoMethod(data->GUI.BT_DEL     ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_DeleteFileHook,winnum);
@@ -4084,7 +4128,9 @@ static struct WR_ClassData *WR_New(int winnum)
             // ...and the other way round
             DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active     ,i            ,sec_menus[i]         ,3,MUIM_NoNotifySet,MUIA_Menuitem_Checked,TRUE);
          }
+
          WR_SharedSetup(data, winnum);
+
          return data;
       }
       free(data);

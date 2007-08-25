@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-25  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, YAM_write.h: when writing a message, the window title
+    will now be updated according to the entered subject line. This
+    should make it more easier to identify the window based on the
+    added subject line information, in case multiple write windows are
+    open. In addition, the window number is now added to the write
+    window title as well.
+
 2007-08-24  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_global.c, YAM.c: as we are anyway just going to release 68020+

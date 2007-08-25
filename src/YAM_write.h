@@ -87,7 +87,8 @@ struct WR_ClassData  /* write window */
   int               winnum;       // the window number this class data belongs to
 
   char              MsgID[SIZE_MSGID];
-  char              WTitle[SIZE_DEFAULT];
+  char              CursorPos[SIZE_DEFAULT];
+  char              WTitle[SIZE_SUBJECT+1];
 };
 
 struct Attach
