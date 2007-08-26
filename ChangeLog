@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-26  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/francais.ct: french translation update according to latest changes.
+
 2007-08-26  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c, include: now that BetterString.mcc 11.12 is released we

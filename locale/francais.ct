@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 6.0 (29.07.2007)
+## version $VER: YAM.catalog 6.0 (26.08.2007)
 ## language français
 ## codeset 0
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 3300 2007-07-28 17:14:15Z
+; based on YAM.cd 3335 2007-08-18 21:48:19Z
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -8974,7 +8974,6 @@ Le message ne sera pas signé, ni crypté.
 ; wasn't found.\n\
 ; \n\
 ; The message will not be signed/encrypted.
-;
 ; RECIPIENT
 ;
 MSG_WR_INVALIDSECURITY_GADS
@@ -8992,7 +8991,6 @@ avant d'essayer à nouveau de composer le message.
 ; \n\
 ; Please make sure that this file exists and is readable \
 ; before you retry to compose the message.
-;
 ; FILENAME
 ;
 MSG_ER_MISSINGATTFILE
@@ -9006,7 +9004,6 @@ avant d'essayer à nouveau de composer le message.
 ; \n\
 ; Please make sure that this file exists and is readable \
 ; before you retry to compose the message.
-;
 ; FILENAME
 ;
 MSG_ER_INVALIDATTFILE
@@ -9019,7 +9016,6 @@ Veuillez vous assurer que le fichier existe et peut \
 ; file '%s' was found to be unavailable.\n\
 ; \n\
 ; Please make sure that this file exists and is readable.
-;
 ; FILENAME
 ;
 MSG_ER_PRINTER_OFFLINE
@@ -9048,8 +9044,6 @@ peu plus tard.
 ; \n\
 ; Please check your printer or try again later.
 ;
-; ***NEW***
-;
 MSG_ER_PRINTER_NOPAPER_GADS
 *_Réessayer|_Ignorer|_Annuler
 ; *_Retry|_Ignore|_Cancel
@@ -9065,4 +9059,40 @@ si votre document n'a pas été imprimé correctement.
 ; \n\
 ; Please check your printer and try again if\n\
 ; your document wasn't printed properly.
+;
+MSG_MA_EDIT
+Edition
+; Edit
+;
+MSG_MA_EDIT_UNDO
+Annuler
+; Undo
+;
+MSG_MA_EDIT_REDO
+Refaire
+; Redo
+;
+MSG_MA_EDIT_CUT
+Couper
+; Cut
+;
+MSG_MA_EDIT_COPY
+Copier
+; Copy
+;
+MSG_MA_EDIT_PASTE
+Coller
+; Paste
+;
+MSG_MA_EDIT_SALL
+Tout sélectionner
+; Select All
+;
+MSG_MA_EDIT_SNONE
+Tout désélectionner
+; Select None
+;
+MSG_WR_SELECTNONE
+Tout désélectionner
+; Select None
 ;
