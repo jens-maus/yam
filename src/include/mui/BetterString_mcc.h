@@ -16,7 +16,7 @@
 
  BetterString class Support Site:  http://www.sf.net/projects/bstring-mcc/
 
- $Id: BetterString_mcc.h 97 2007-08-19 10:39:51Z damato $
+ $Id: BetterString_mcc.h 98 2007-08-25 22:27:46Z damato $
 
 ***************************************************************************/
 
@@ -67,28 +67,31 @@ extern "C" {
 #define MUIR_BetterString_FileNameStart_Volume  -1
 
 // values for MUIM_BetterString_DoAction
-#define MUIV_BetterString_DoAction_Cut              1
-#define MUIV_BetterString_DoAction_Copy             2
-#define MUIV_BetterString_DoAction_Paste            3
-#define MUIV_BetterString_DoAction_SelectAll        4
-#define MUIV_BetterString_DoAction_SelectNone       5
-#define MUIV_BetterString_DoAction_Undo             6
-#define MUIV_BetterString_DoAction_Redo             7
-#define MUIV_BetterString_DoAction_Revert           8
-#define MUIV_BetterString_DoAction_ToggleCase       9
-#define MUIV_BetterString_DoAction_ToggleCaseWord  10
-#define MUIV_BetterString_DoAction_IncreaseNum     11
-#define MUIV_BetterString_DoAction_DecreaseNum     12
-#define MUIV_BetterString_DoAction_HexToDec        13
-#define MUIV_BetterString_DoAction_DecToHex        14
-#define MUIV_BetterString_DoAction_NextFileComp    15
-#define MUIV_BetterString_DoAction_PrevFileComp    16
+enum MUIV_BetterString_DoActions
+{
+  MUIV_BetterString_DoAction_Cut            = 1,
+  MUIV_BetterString_DoAction_Copy           = 2,
+  MUIV_BetterString_DoAction_Paste          = 3,
+  MUIV_BetterString_DoAction_SelectAll      = 4,
+  MUIV_BetterString_DoAction_SelectNone     = 5,
+  MUIV_BetterString_DoAction_Undo           = 6,
+  MUIV_BetterString_DoAction_Redo           = 7,
+  MUIV_BetterString_DoAction_Revert         = 8,
+  MUIV_BetterString_DoAction_ToggleCase     = 9,
+  MUIV_BetterString_DoAction_ToggleCaseWord = 10,
+  MUIV_BetterString_DoAction_IncreaseNum    = 11,
+  MUIV_BetterString_DoAction_DecreaseNum    = 12,
+  MUIV_BetterString_DoAction_HexToDec       = 13,
+  MUIV_BetterString_DoAction_DecToHex       = 14,
+  MUIV_BetterString_DoAction_NextFileComp   = 15,
+  MUIV_BetterString_DoAction_PrevFileComp   = 16
+};
 
 // parameter structures for methods
 struct MUIP_BetterString_Insert        { ULONG MethodID; STRPTR text; LONG pos; };
 struct MUIP_BetterString_ClearSelected { ULONG MethodID; };
 struct MUIP_BetterString_FileNameStart { ULONG MethodID; STRPTR buffer; LONG pos; };
-struct MUIP_BetterString_DoAction      { ULONG MethodID; ULONG action; };
+struct MUIP_BetterString_DoAction      { ULONG MethodID; enum MUIV_BetterString_DoActions action; };
 
 #ifdef __GNUC__
   #ifdef __PPC__

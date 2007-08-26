@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-26  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, include: now that BetterString.mcc 11.12 is released we
+    make it the new minimum required version for YAM so that copy&paste
+    should work correctly again with the latest nightly builds.
+
 2007-08-25  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, YAM_write.h: when writing a message, the window title
