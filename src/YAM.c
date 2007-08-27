@@ -189,66 +189,68 @@ static BOOL InitLib(const char *libname,
                     const char *homepage)
 #endif
 {
-  struct Library *base;
+  struct Library *base = NULL;
+
+  ENTER();
 
   #if defined(__amigaos4__)
-  if(!libbase || !iface)
-    return FALSE;
+  if(libbase != NULL && iface != NULL)
   #else
-  if(!libbase)
-    return FALSE;
+  if(libbase != NULL)
   #endif
-
-  // open the library base
-  base = OpenLibrary(libname, version);
-
-  if(base && revision)
   {
-    if(base->lib_Version == version && base->lib_Revision < revision)
+    // open the library base
+    base = OpenLibrary(libname, version);
+
+    if(base != NULL && revision != 0)
     {
-      CloseLibrary(base);
-      base = NULL;
+      if(base->lib_Version == version && base->lib_Revision < revision)
+      {
+        CloseLibrary(base);
+        base = NULL;
+      }
     }
-  }
 
-  // store base
-  *libbase = base;
-
-  // if we end up here, we can open the OS4 base library interface
-  if(base)
-  {
-    #if defined(__amigaos4__)
-    struct Interface* i;
-
-    // if we weren`t able to obtain the interface, lets close the library also
-    if(GETINTERFACE(iname, i, base) == NULL)
+    // if we end up here, we can open the OS4 base library interface
+    if(base != NULL)
     {
-      D(DBF_STARTUP, "InitLib: can`t get '%s' interface of library %s", iname, libname);
+      #if defined(__amigaos4__)
+      struct Interface *i;
 
-      CloseLibrary(base);
-      *libbase = NULL;
-      base = NULL;
+      // if we weren`t able to obtain the interface, lets close the library also
+      if(GETINTERFACE(iname, i, base) == NULL)
+      {
+        D(DBF_STARTUP, "InitLib: can`t get '%s' interface of library %s", iname, libname);
+
+        CloseLibrary(base);
+        *libbase = NULL;
+        base = NULL;
+      }
+      else
+        D(DBF_STARTUP, "InitLib: library %s v%ld.%ld with iface '%s' successfully opened.", libname, base->lib_Version, base->lib_Revision, iname);
+
+      // store interface pointer
+      *iface = i;
+      #else
+      D(DBF_STARTUP, "InitLib: library %s v%ld.%ld successfully opened.", libname, base->lib_Version, base->lib_Revision);
+      #endif
     }
     else
-      D(DBF_STARTUP, "InitLib: library %s v%ld.%ld with iface '%s' successfully opened.", libname, base->lib_Version, base->lib_Revision, iname);
+      D(DBF_STARTUP, "InitLib: can`t open library %s with minimum version v%ld.%d", libname, version, revision);
 
-    // store interface pointer
-    *iface = i;
-    #else
-    D(DBF_STARTUP, "InitLib: library %s v%ld.%ld successfully opened.", libname, base->lib_Version, base->lib_Revision);
-    #endif
-  }
-  else
-    D(DBF_STARTUP, "InitLib: can`t open library %s with minimum version v%ld.%d", libname, version, revision);
+    if(base == NULL && required == TRUE)
+    {
+      if(homepage != NULL)
+        Abort(tr(MSG_ER_LIB_URL), libname, version, revision, homepage);
+      else
+        Abort(tr(MSG_ER_LIB), libname, version, revision);
+    }
 
-  if(!base && required)
-  {
-    if(homepage != NULL)
-      Abort(tr(MSG_ER_LIB_URL), libname, version, revision, homepage);
-    else
-      Abort(tr(MSG_ER_LIB), libname, version, revision);
+    // store base
+    *libbase = base;
   }
 
+  RETURN((BOOL)(base != NULL));
   return (BOOL)(base != NULL);
 }
 ///
@@ -256,6 +258,7 @@ static BOOL InitLib(const char *libname,
 //  Checks if a certain version of a MCC is available
 static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, const char *url)
 {
+  BOOL success = FALSE;
   BOOL flush = TRUE;
 
   ENTER();
@@ -269,11 +272,13 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
     if((obj = MUI_NewObject(name, TAG_DONE)) != NULL)
     {
-      ULONG ver = xget(obj, MUIA_Version);
-      ULONG rev = xget(obj, MUIA_Revision);
-
+      ULONG ver;
+      ULONG rev;
       struct Library *base;
       char libname[256];
+
+      ver = xget(obj, MUIA_Version);
+      rev = xget(obj, MUIA_Revision);
 
       MUI_DisposeObject(obj);
 
@@ -281,15 +286,15 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
       {
         D(DBF_STARTUP, "%s v%ld.%ld found through MUIA_Version/Revision", name, ver, rev);
 
-        RETURN(TRUE);
-        return TRUE;
+        success = TRUE;
+        break;
       }
 
       // If we did't get the version we wanted, let's try to open the
       // libraries ourselves and see what happens...
       snprintf(libname, sizeof(libname), "PROGDIR:mui/%s", name);
 
-      if ((base = OpenLibrary(&libname[8], 0)) || (base = OpenLibrary(&libname[0], 0)))
+      if((base = OpenLibrary(&libname[8], 0)) != NULL || (base = OpenLibrary(&libname[0], 0)) != NULL)
       {
         UWORD OpenCnt = base->lib_OpenCnt;
 
@@ -300,17 +305,17 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
         // we add some additional check here so that eventual broken .mcc also have
         // a chance to pass this test (e.g. _very_ old versions of Toolbar.mcc are broken)
-        if (ver > minver || (ver == minver && rev >= minrev))
+        if(ver > minver || (ver == minver && rev >= minrev))
         {
           D(DBF_STARTUP, "%s v%ld.%ld found through OpenLibrary()", name, ver, rev);
 
-          RETURN(TRUE);
-          return TRUE;
+          success = TRUE;
+          break;
         }
 
-        if (OpenCnt > 1)
+        if(OpenCnt > 1)
         {
-          if (req && MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url))
+          if(req == TRUE && MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url) != 0)
             flush = TRUE;
           else
             break;
@@ -318,11 +323,12 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
         // Attempt to flush the library if open count is 0 or because the
         // user wants to retry (meaning there's a chance that it's 0 now)
-        if(flush)
+        if(flush == TRUE)
         {
           struct Library *result;
+
           Forbid();
-          if ((result = (struct Library *)FindName(&((struct ExecBase *)SysBase)->LibList, name)))
+          if((result = (struct Library *)FindName(&((struct ExecBase *)SysBase)->LibList, name)) != NULL)
             RemLibrary(result);
           Permit();
           flush = FALSE;
@@ -333,7 +339,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
           // We're out of luck - open count is 0, we've tried to flush
           // and still haven't got the version we want
-          if (req && MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url))
+          if(req == TRUE && MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url) != 0)
             flush = TRUE;
           else
             break;
@@ -344,17 +350,17 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
     {
       // No MCC at all - no need to attempt flush
       flush = FALSE;
-      if (!MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url))
+      if (MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url) == 0)
         break;
     }
 
   }
 
-  if(req)
+  if(success == FALSE && req == TRUE)
     exit(RETURN_ERROR); // Ugly
 
-  RETURN(FALSE);
-  return FALSE;
+  RETURN(success);
+  return success;
 }
 ///
 
@@ -437,7 +443,7 @@ static int GetDST(BOOL update)
 
   #if defined(__amigaos4__)
   // check via timezone.library in case we are compiled for AmigaOS4
-  if((!update || ADSTdata.method == ADST_TZLIB))
+  if((update == FALSE || ADSTdata.method == ADST_TZLIB))
   {
     if(INITLIB("timezone.library", 52, 1, &TimezoneBase, "main", &ITimezone, TRUE, NULL))
     {
@@ -460,10 +466,10 @@ static int GetDST(BOOL update)
     }
   }
   #endif
-        #
+
   // SetDST saves the DST settings in the TZONE env-variable which
   // is a bit more complex than the others, so we need to do some advance parsing
-  if((!update || ADSTdata.method == ADST_SETDST) && result == 0
+  if((update == FALSE || ADSTdata.method == ADST_SETDST) && result == 0
      && GetVar((STRPTR)&ADSTfile[ADST_SETDST][4], buffer, sizeof(buffer), 0) >= 3)
   {
     int i;
@@ -487,7 +493,7 @@ static int GetDST(BOOL update)
 
   // FACTS saves the DST information in a ENV:FACTS/DST env variable which will be
   // Hex 00 or 01 to indicate the DST value.
-  if((!update || ADSTdata.method == ADST_FACTS) && result == 0
+  if((update == FALSE || ADSTdata.method == ADST_FACTS) && result == 0
     && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], buffer, sizeof(buffer), GVF_BINARY_VAR) > 0)
   {
     ADSTdata.method = ADST_FACTS;
@@ -501,7 +507,7 @@ static int GetDST(BOOL update)
   }
 
   // SummerTimeGuard sets the last string to "YES" if DST is actually active
-  if((!update || ADSTdata.method == ADST_SGUARD) && result == 0
+  if((update == FALSE || ADSTdata.method == ADST_SGUARD) && result == 0
      && GetVar((STRPTR)&ADSTfile[ADST_SGUARD][4], buffer, sizeof(buffer), 0) > 3 && (tmp = strrchr(buffer, ':')))
   {
     ADSTdata.method = ADST_SGUARD;
@@ -516,7 +522,7 @@ static int GetDST(BOOL update)
 
   // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
   // DST is actually active.
-  if((!update || ADSTdata.method == ADST_IXGMT) && result == 0
+  if((update == FALSE || ADSTdata.method == ADST_IXGMT) && result == 0
     && GetVar((STRPTR)&ADSTfile[ADST_IXGMT][4], buffer, sizeof(buffer), GVF_BINARY_VAR) >= 4)
   {
     ADSTdata.method = ADST_IXGMT;
@@ -529,7 +535,7 @@ static int GetDST(BOOL update)
     D(DBF_STARTUP, "Found '%s' (IXGMT) with DST flag: %d", ADSTfile[ADST_IXGMT], result);
   }
 
-  if(!update && result == 0)
+  if(update == FALSE && result == 0)
   {
     ADSTdata.method = ADST_NONE;
 

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-27  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: cleaned up the CheckMCC() and InitLib() functions a bit.
+
 2007-08-27  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MAf.c, YAM.cd: YAM will now identify invalid files which didn't
