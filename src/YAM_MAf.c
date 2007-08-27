@@ -2132,7 +2132,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       return email;
    }
    else
-     E(DBF_MAIL, "couldn't read/parse mail header!");
+     E(DBF_MAIL, "couldn't read/parse mail header of mail file '%s'", fullfile);
 
    FinishUnpack(fullfile);
 
@@ -2241,11 +2241,12 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
             BOOL skipAllOld = FALSE;
             BOOL convertAllUnknown = FALSE;
             BOOL skipAllUnknown = FALSE;
+            BOOL ignoreInvalids = FALSE;
 
             do
             {
               more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_SIZE, eac);
-              if(!more && IoErr() != ERROR_NO_MORE_ENTRIES)
+              if(more == FALSE && IoErr() != ERROR_NO_MORE_ENTRIES)
               {
                 result = FALSE;
                 break;
@@ -2255,13 +2256,11 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                 continue;
 
               ead = (struct ExAllData *)eabuffer;
-
               do
               {
                 // set the gauge and check the stopButton status as well.
-                if(BusySet(++processedFiles) == FALSE)
+                if(BusySet(processedFiles++) == FALSE)
                 {
-                  more = 0; // to break the outer loop as well.
                   result = FALSE;
                   break;
                 }
@@ -2285,7 +2284,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                     BOOL oldFound = TRUE;
 
                     do
-                        {
+                    {
                       // on position 5 should be a colon
                       if(i == 5)
                       {
@@ -2411,13 +2410,53 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                       continue;
                   }
 
+                  // check the filesize of the mail file
                   if(ead->ed_Size != 0)
                   {
                     struct ExtendedMail *email;
 
                     D(DBF_FOLDER, "examining MailFile: %s", fname);
 
-                    if((email = MA_ExamineMail(folder, fname, FALSE)) != NULL)
+                    while((email = MA_ExamineMail(folder, fname, FALSE)) == NULL &&
+                          ignoreInvalids == FALSE)
+                    {
+                      // if the MA_ExamineMail() operation failed we
+                      // warn the user and ask him how to proceed with
+                      // the file
+
+                      int res = MUI_Request(G->App, NULL, 0,
+                                           tr(MSG_MA_INVALIDMFILE_TITLE),
+                                           tr(MSG_MA_INVALIDMFILE_BT),
+                                           tr(MSG_MA_INVALIDMFILE),
+                                           fname, folder->Name);
+
+                      if(res == 0) // cancel/ESC
+                      {
+                        result = FALSE;
+                        break;
+                      }
+                      else if(res == 1) // Retry
+                        continue;
+                      else if(res == 2) // Ignore
+                        break;
+                      else if(res == 3) // Ignore All
+                      {
+                        ignoreInvalids = TRUE;
+                        break;
+                      }
+                      else if(res == 4) // Delete
+                      {
+                        char path[SIZE_PATHFILE+1];
+
+                        strlcpy(path, GetFolderDir(folder), sizeof(path));
+                        AddPart(path, fname, sizeof(path));
+                        DeleteFile(path);
+
+                        break;
+                      }
+                    }
+
+                    if(email != NULL)
                     {
                       struct Mail *newMail;
 
@@ -2452,12 +2491,14 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                     strlcpy(path, GetFolderDir(folder), sizeof(path));
                     AddPart(path, fname, sizeof(path));
                     DeleteFile(path);
+
+                    W(DBF_FOLDER, "empty file '%s' in mail folder found and deleted it", path);
                   }
                 }
               }
-              while((ead = ead->ed_Next) != NULL);
+              while(result == TRUE && (ead = ead->ed_Next) != NULL);
             }
-            while(more);
+            while(result == TRUE && more != FALSE);
 
             free(eabuffer);
           }

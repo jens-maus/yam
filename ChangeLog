@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-27  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MAf.c, YAM.cd: YAM will now identify invalid files which didn't
+    pass MA_ExamineMail() during a mailbox rescan operation and warn the
+    user accordingly. This should reveal eventually existing binary or
+    broken mail files in a folder and give the user the chance to react
+    accordingly upon rescanning a mail folder.
+
 2007-08-26  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: french translation update according to latest changes.

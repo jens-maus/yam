@@ -4666,7 +4666,7 @@ MSG_FI_StatMarked (1510//)
 Marked
 ;
 MSG_MA_CREQUEST_OLDFILE (1511//)
-YAM has found file '%s' in folder '%s' to be an old mailfile normally\n\
+YAM has found file '%s' in folder '%s' to be an old mail file normally\n\
 used in YAM versions prior to the current version.\n\
 \n\
 Do you want to convert this file to the new format?
@@ -4675,14 +4675,14 @@ Do you want to convert this file to the new format?
 MSG_MA_CREQUEST_UNKNOWN (1512//)
 YAM has found an unknown file '%s' in the folder directory of folder '%s'.\n\
 \n\
-Do you want to import it as a normal mailfile?
+Do you want to import it as a normal mail file?
 ; FILENAME, FOLDER
 ;
 MSG_MA_YESNOTOALL (1513//)
 *_Yes|Y_es to all|_No|N_o to all
 ;
 MSG_ER_CONVERTMFILE (1514//)
-An error occurred during mailfile conversion of file '%s' of folder '%s'.\n\
+An error occurred during mail file conversion of file '%s' of folder '%s'.\n\
 \n\
 Please check if the folder directory has enough space and has proper write \
 access.
@@ -4696,7 +4696,7 @@ in the YAM configuration.
 ; FILENAME
 ;
 MSG_MA_CREQ_OLDFILE_TITLE (1516//)
-Mailfile in old format found
+Mail file in old format found
 ;
 MSG_MA_CREQ_UNKNOWN_TITLE (1517//)
 Unknown file in folder directory found
@@ -6476,4 +6476,19 @@ Select None
 ;
 MSG_WR_SELECTNONE (2000//)
 Select None
+;
+MSG_MA_INVALIDMFILE_TITLE (2001//)
+Invalid mail file found
+;
+MSG_MA_INVALIDMFILE (2002//)
+While examining the mail file '%s' of folder '%s',\n\
+YAM has found the file to be either invalid or not being in the correct\n\
+compliant mail format.\n\
+\n\
+Please make sure that the file is a valid mail file and proceed\n\
+accordingly.
+; FILENAME, FOLDER
+;
+MSG_MA_INVALIDMFILE_BT (2003//)
+*_Retry|_Ignore|Ignore _All|_Delete|_Cancel
 ;
