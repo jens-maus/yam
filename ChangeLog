@@ -7,6 +7,11 @@ $URL$
 
 2007-08-27  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, QuickSearchBar.c: a still running search is now aborted as soon as
+    the next search is to be started. Additionally the user can now enter more
+    data in the search string gadget even while a search is in progress. This
+    makes searching in folders with lots of mails more "swift" even on slow
+    machines.
   * YAM.c: cleaned up the CheckMCC() and InitLib() functions a bit.
 
 2007-08-27  Jens Langner <Jens.Langner@light-speed.de>

@@ -1046,7 +1046,9 @@ static void TC_Dispatcher(enum TimerIO tio)
 
       D(DBF_TIMERIO, "timer[%ld]: TIO_PROCESSQUICKSEARCH fired @ %s", tio, dateString);
 
-      // signal the QuickSearchBar now.
+      // abort a still running previous search
+      DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_AbortSearch);
+      // signal the QuickSearchBar to search now
       DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_ProcessSearch);
     }
     break;

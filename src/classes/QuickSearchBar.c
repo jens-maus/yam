@@ -42,6 +42,7 @@ struct Data
   Object *ST_SEARCHSTRING;
   Object *BT_CLEARBUTTON;
   struct TimeVal last_statusupdate;
+  BOOL abortSearch;
 };
 */
 
@@ -64,10 +65,12 @@ enum ViewOptions { VO_ALL=0, VO_UNREAD, VO_NEW, VO_MARKED, VO_IMPORTANT, VO_LAST
 /// MatchMail()
 // function to actually check if a struct Mail* matches
 // the currently active criteria
-static BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
-                      enum SearchOptions so, char* searchString, struct TimeVal* curTimeUTC)
+static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
+                      enum SearchOptions so, char *searchString, struct TimeVal *curTimeUTC)
 {
   BOOL foundMatch = FALSE;
+
+  ENTER();
 
   // we first check for viewOption selection
   switch(vo)
@@ -120,9 +123,9 @@ static BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
 
       if(foundMatch == FALSE && isMultiSenderMail(mail))
       {
-        struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE);
+        struct ExtendedMail *email;
 
-        if(email)
+        if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
         {
           int j;
 
@@ -155,7 +158,7 @@ static BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
 
   // now we do a bit more complicated search if a search string
   // is specified as well
-  if(foundMatch && searchString)
+  if(foundMatch == TRUE && searchString != NULL)
   {
     // we check which search option is currently choosen the matching
     switch(so)
@@ -176,9 +179,9 @@ static BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
 
         if(foundMatch == FALSE && isMultiSenderMail(mail))
         {
-          struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE);
+          struct ExtendedMail *email;
 
-          if(email)
+          if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
           {
             int j;
 
@@ -205,9 +208,9 @@ static BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
 
         if(foundMatch == FALSE && isMultiSenderMail(mail))
         {
-          struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE);
+          struct ExtendedMail *email;
 
-          if(email)
+          if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
           {
             int j;
 
@@ -235,9 +238,9 @@ static BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
         // and do a deeper search
         if(foundMatch == FALSE && isMultiRCPTMail(mail))
         {
-          struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE);
+          struct ExtendedMail *email;
 
-          if(email)
+          if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
           {
             int j;
 
@@ -271,11 +274,11 @@ static BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
 
         // allocate a private readmaildata object in which we readin
         // the mail text
-        if((rmData = AllocPrivateRMData(mail, PM_TEXTS)))
+        if((rmData = AllocPrivateRMData(mail, PM_TEXTS)) != NULL)
         {
           char *cmsg;
 
-          if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)))
+          if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)) != NULL)
           {
             // as we search the entire message text we can do a single
             // stristr() call here for matching
@@ -313,6 +316,7 @@ static BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
     }
   }
 
+  RETURN(foundMatch);
   return foundMatch;
 }
 
@@ -497,7 +501,7 @@ OVERLOAD(OM_GET)
 
 /* Public Methods */
 /// DECLARE(SearchContentChanged)
-DECLARE(SearchContentChanged) // char* content, ULONG force
+DECLARE(SearchContentChanged) // char *content, ULONG force
 {
   GETDATA;
 
@@ -508,11 +512,11 @@ DECLARE(SearchContentChanged) // char* content, ULONG force
 
   // depending on if there is something to search for
   // we have to prepare something different
-  if(msg->content && msg->content[0] != '\0')
+  if(msg->content != NULL && msg->content[0] != '\0')
   {
     // we only start the actual search in case a minimum of two
     // characters are specified or the user pressed return explicitly
-    if(msg->force || msg->content[1] != '\0')
+    if(msg->force == TRUE || msg->content[1] != '\0')
     {
       // make sure the clear button is shown and that
       // the correct mailview is displayed to the user
@@ -580,7 +584,7 @@ DECLARE(SearchOptionChanged) // int activeSearchOption
   set(data->ST_SEARCHSTRING, MUIA_BetterString_InactiveContents, inactiveContents);
 
   // now we check whether the there is something to search for or not.
-  if(searchContent != NULL && *searchContent != '\0')
+  if(searchContent != NULL && searchContent[0] != '\0')
   {
     // immediately process the search, but make sure there is no
     // pending timerIO waiting already
@@ -606,7 +610,7 @@ DECLARE(ViewOptionChanged) // int activeCycle
 
   // set the active group of the MAILVIEW pageGroup to 1 if one of the view
   // options is selected by the user
-  if(msg->activeCycle == VO_ALL && (searchContent == NULL || *searchContent == '\0'))
+  if(msg->activeCycle == VO_ALL && (searchContent == NULL || searchContent[0] == '\0'))
   {
     DoMethod(obj, MUIM_QuickSearchBar_Clear);
   }
@@ -623,61 +627,78 @@ DECLARE(ViewOptionChanged) // int activeCycle
 }
 
 ///
+/// DECLARE(AbortSearch)
+DECLARE(AbortSearch)
+{
+  GETDATA;
+
+  ENTER();
+
+  // signal the search process to abort
+  data->abortSearch = TRUE;
+
+  RETURN(0);
+  return 0;
+}
+
+///
 /// DECLARE(ProcessSearch)
 DECLARE(ProcessSearch)
 {
   GETDATA;
-  struct Folder* curFolder = FO_GetCurrentFolder();
+  struct Folder *curFolder = FO_GetCurrentFolder();
 
   ENTER();
 
   ASSERT(curFolder != NULL);
 
   // a use of the quicksearchbar is only possible on
-  // normale folders
+  // normal folders
   if(!isGroupFolder(curFolder))
   {
-    struct Mail* curMail;
+    struct Mail *curMail;
     enum ViewOptions viewOption = xget(data->CY_VIEWOPTIONS, MUIA_Cycle_Active);
     enum SearchOptions searchOption = xget(data->NL_SEARCHOPTIONS, MUIA_NList_Active);
-    char* searchString = (char*)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
-    BOOL foundMatch = FALSE;
+    char *searchString = (char *)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
     struct TimeVal curTimeUTC;
 
     // get the current time in UTC
     GetSysTimeUTC(&curTimeUTC);
 
     // check the searchString settings for an empty string
-    if(searchString && *searchString == '\0')
+    if(searchString != NULL && searchString[0] == '\0')
       searchString = NULL;
 
     // make sure the correct mailview list is visible
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_SwitchToList, LT_QUICKVIEW);
 
+    // reset any previous abortion
+    data->abortSearch = FALSE;
+
     // now we can process the search/sorting by searching the mail list of the
     // current folder querying different criterias of a mail
     BusyText(tr(MSG_BUSY_SEARCHINGFOLDER), curFolder->Name);
-    for(curMail = curFolder->Messages; curMail; curMail = curMail->Next)
+    for(curMail = curFolder->Messages; curMail != NULL && data->abortSearch == FALSE; curMail = curMail->Next)
     {
       // check if that mail matches the search/view criteria
-      if(MatchMail(curMail, viewOption, searchOption, searchString, &curTimeUTC))
-      {
+      if(MatchMail(curMail, viewOption, searchOption, searchString, &curTimeUTC) == TRUE)
         DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_AddMailToList, LT_QUICKVIEW, curMail);
-        foundMatch = TRUE;
-      }
+
+      DoMethod(G->App, MUIM_Application_InputBuffered);
     }
     BusyEnd();
 
-    // make sure the statistics are update as well
-    DoMethod(obj, MUIM_QuickSearchBar_UpdateStats, TRUE);
+    // only update the GUI if this search was not aborted
+    if(data->abortSearch == FALSE)
+    {
+      // make sure the statistics are updated as well
+      DoMethod(obj, MUIM_QuickSearchBar_UpdateStats, TRUE);
 
-    // make sure the first message is set active or that we notify
-//    if(foundMatch)
-    SetAttrs(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active,       MUIV_NList_Active_Top,
-                                     MUIA_NList_SelectChange, TRUE,
-                                     TAG_DONE);
-//    else
-//      set(G->MA->GUI.PG_MAILLIST, MUIA_NList_SelectChange, TRUE);
+      // make sure the first message is set active or that we notify
+      SetAttrs(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active,       MUIV_NList_Active_Top,
+                                       MUIA_NList_SelectChange, TRUE,
+                                       TAG_DONE);
+    }
   }
   else
     E(DBF_ALL, "curFolder->Type == FT_GROUP ?????");
@@ -690,24 +711,24 @@ DECLARE(ProcessSearch)
 /// DECLARE(MatchMail)
 // method to query the quick search bar to make a match if a certain mail matches
 // the currently active criteria
-DECLARE(MatchMail) // struct Mail* mail
+DECLARE(MatchMail) // struct Mail *mail
 {
   GETDATA;
   enum ViewOptions viewOption = xget(data->CY_VIEWOPTIONS, MUIA_Cycle_Active);
   enum SearchOptions searchOption = xget(data->NL_SEARCHOPTIONS, MUIA_NList_Active);
-  char* searchString = (char*)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
+  char *searchString = (char *)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
   struct TimeVal curTimeUTC;
 
   // get the current time in UTC
   GetSysTimeUTC(&curTimeUTC);
 
   // check the searchString settings for an empty string
-  if(searchString && *searchString == '\0')
+  if(searchString != NULL && searchString[0] == '\0')
     searchString = NULL;
 
   // now we check that a match is really required and if so we process it
   return (ULONG)((viewOption != VO_ALL || searchString != NULL) &&
-                 MatchMail(msg->mail, viewOption, searchOption, searchString, &curTimeUTC));
+                 MatchMail(msg->mail, viewOption, searchOption, searchString, &curTimeUTC) == TRUE);
 }
 
 ///
@@ -779,11 +800,11 @@ DECLARE(UpdateStats) // ULONG force
   else
     doUpdate = TRUE;
 
-  if(doUpdate)
+  if(doUpdate == TRUE)
   {
     char statusText[SIZE_DEFAULT];
     ULONG numEntries = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries);
-    struct Folder* curFolder = FO_GetCurrentFolder();
+    struct Folder *curFolder = FO_GetCurrentFolder();
 
     snprintf(statusText, sizeof(statusText), tr(MSG_QUICKSEARCH_SHOWNMSGS), numEntries, curFolder->Total);
 
@@ -894,4 +915,3 @@ DECLARE(DoEditAction) // enum EditAction editAction
 }
 
 ///
-
