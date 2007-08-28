@@ -8183,23 +8183,36 @@ MSG_WR_SELECTNONE
 Auswahl aufheben
 ;
 MSG_MA_INVALIDMFILE
-Beim Untersuchen der Datei '%s' im Ordner '%s'\n\
-hat YAM herausgefunden, dass diese Datei in einem entweder\n\
-ungültigen oder in einem nicht unterstützten\n\
-Nachrichtenformat vorliegt.\n\
+Beim Analysieren der Datei '%s' des Ordners '%s' hat\n\
+YAM herausgefunden, dass die Datei in einem entweder\n\
+ungültigen oder in einem nicht unterstützten Format\n\
+vorliegt.\n\
 \n\
-Bitte stellen Sie sicher, ob die Datei eine gültige\n\
+Bitte stellen Sie sicher, dass die Datei eine gültige\n\
 Nachrichtendatei ist und fahren Sie entsprechend fort.
 ;
 MSG_MA_INVALIDMFILE_BT
 *_Wiederholen|_Ignorieren|_Dauerhaft ignorieren|_Löschen|_Abbrechen
 ;
 MSG_ER_CANNOT_READ_INDEX
-Beim Lesen der Indexdatei '%s' des Postfachs '%s' trat ein Fehler auf!
+Beim Lesen der Indexdatei '%s' des Postfachs '%s' ist ein \
+Fehler aufgetreten.\n\
+\n\
+Bitte stellen Sie sicher, dass die Datei lesbar ist und Sie \
+über genügend Rechte zum Öffnen besitzen.
 ;
 MSG_ER_CANNOT_WRITE_INDEX
-Beim Schreiben der Indexdatei '%s' des Postfachs '%s' trat ein Fehler auf!
+Beim Schreiben der Indexdatei '%s' des Postfachs '%s' ist ein \
+Fehler aufgetreten.\n\
+\n\
+Bitte stellen Sie sicher, dass Sie über genügend Rechte für die \
+Operation verfügen.
 ;
 MSG_ER_INDEX_CORRUPTED
-Die Indexdatei '%s' des Postfachs '%s' ist fehlerhaft an Position %d in der Nähe der Nachricht '%s'! (MoreBytes: 0x%x)
+Die Indexdatei '%s' des Postfachs '%s' wurde an der Position %d \
+der Information über die Nachricht '%s' als fehlerhaft erkannt \
+(MoreBytes: 0x%x).\n\
+\n\
+Das Postfach wurde als 'ungeladen' markiert und ein eventuelles \
+Neuanlegen der Indexdatei initiert bzw. ist noch notwendig.
 ;

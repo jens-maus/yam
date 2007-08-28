@@ -6493,14 +6493,26 @@ MSG_MA_INVALIDMFILE_BT (2003//)
 *_Retry|_Ignore|Ignore _All|_Delete|_Cancel
 ;
 MSG_ER_CANNOT_READ_INDEX (2004//)
-An error occured while trying to read the index file '%s' of folder '%s'!
+An error occured while trying to read the index file '%s' of \
+folder '%s'.\n\
+\n\
+Please check that you are able to read the content of the file and \
+that the permission settings are correct.
 ; FILENAME, FOLDER
 ;
 MSG_ER_CANNOT_WRITE_INDEX (2005//)
-An error occured while trying to write the index file '%s' of folder '%s'!
+An error occured while trying to write the index file '%s' of \
+folder '%s'.\n\
+\n\
+Please check that you are able to write to the directory where the \
+file is supposed to be written.
 ; FILENAME, FOLDER
 ;
 MSG_ER_INDEX_CORRUPTED (2006//)
-The index file '%s' of folder '%s' is corrupted at position %d near mailfile '%s'! (MoreBytes: 0x%x)
+The index file '%s' of folder '%s' was found to be corrupt at position \
+%d near the information on mail file '%s' (MoreBytes: 0x%x).\n\
+\n\
+The folder was flagged as 'unloaded' and an index rescanning \
+was initiated or is required.
 ; FILENAME, FOLDER, POSITION, MAILFILE, MOREBYTES
 ;

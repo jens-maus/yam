@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-28  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MAf.c, YAM.cd, deutsch.ct: fixed a minor glitch where the recent
+    changes regarding the changed error handling in MA_LoadIndex() resulted
+    in not being able to initiate a manual index rescanning anymore. In
+    addition, the error messages were now slightly rephrased to match the
+    common layout of our error messages.
+
 2007-08-28  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/deutsch.ct: updated german translations according to the lastest

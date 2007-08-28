@@ -326,23 +326,31 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
       }
     }
 
-    if(error == FALSE && ferror(fh) != 0)
+    if(ferror(fh) != 0)
+    {
+      E(DBF_FOLDER, "ferror() returned != 0");
       error = TRUE;
+    }
 
     BusyEnd();
     fclose(fh);
   }
-  else
+  else if(errno != ENOENT)
+  {
+    E(DBF_FOLDER, "fopen() on '%s' failed.", MA_IndexFileName(folder));
     error = TRUE;
+  }
 
+  // in case an error occurred we report it
+  // to the user
   if(error == TRUE)
   {
     E(DBF_FOLDER, "error %d occurred while trying to load the index file '%s'", errno, MA_IndexFileName(folder));
     ClearMailList(folder, TRUE);
     indexloaded = LM_UNLOAD;
-    // report failure only if the file exists
-    if(errno != 0 && errno != ENOENT)
-      ER_NewError(tr(MSG_ER_CANNOT_READ_INDEX), MA_IndexFileName(folder), folder->Name);
+
+    // report failure
+    ER_NewError(tr(MSG_ER_CANNOT_READ_INDEX), MA_IndexFileName(folder), folder->Name);
   }
   else if(corrupt == TRUE || indexloaded == LM_UNLOAD)
   {
