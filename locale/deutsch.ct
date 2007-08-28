@@ -8182,3 +8182,24 @@ Auswahl aufheben
 MSG_WR_SELECTNONE
 Auswahl aufheben
 ;
+MSG_MA_INVALIDMFILE
+Beim Untersuchen der Datei '%s' im Ordner '%s'\n\
+hat YAM herausgefunden, dass diese Datei in einem entweder\n\
+ungültigen oder in einem nicht unterstützten\n\
+Nachrichtenformat vorliegt.\n\
+\n\
+Bitte stellen Sie sicher, ob die Datei eine gültige\n\
+Nachrichtendatei ist und fahren Sie entsprechend fort.
+;
+MSG_MA_INVALIDMFILE_BT
+*_Wiederholen|_Ignorieren|_Dauerhaft ignorieren|_Löschen|_Abbrechen
+;
+MSG_ER_CANNOT_READ_INDEX
+Beim Lesen der Indexdatei '%s' des Postfachs '%s' trat ein Fehler auf!
+;
+MSG_ER_CANNOT_WRITE_INDEX
+Beim Schreiben der Indexdatei '%s' des Postfachs '%s' trat ein Fehler auf!
+;
+MSG_ER_INDEX_CORRUPTED
+Die Indexdatei '%s' des Postfachs '%s' ist fehlerhaft an Position %d in der Nähe der Nachricht '%s'! (MoreBytes: 0x%x)
+;
