@@ -6501,6 +6501,6 @@ An error occured while trying to write the index file '%s' of folder '%s'!
 ; FILENAME, FOLDER
 ;
 MSG_ER_INDEX_CORRUPTED (2006//)
-The index file '%s' of folder '%s' is CORRUPTED at position %d near mailfile '%s' (MoreBytes: 0x%x)
+The index file '%s' of folder '%s' is corrupted at position %d near mailfile '%s'! (MoreBytes: 0x%x)
 ; FILENAME, FOLDER, POSITION, MAILFILE, MOREBYTES
 ;
