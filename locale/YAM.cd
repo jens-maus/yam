@@ -6492,3 +6492,15 @@ accordingly.
 MSG_MA_INVALIDMFILE_BT (2003//)
 *_Retry|_Ignore|Ignore _All|_Delete|_Cancel
 ;
+MSG_ER_CANNOT_READ_INDEX (2004//)
+An error occured while trying to read the index file '%s' of folder '%s'!
+; FILENAME, FOLDER
+;
+MSG_ER_CANNOT_WRITE_INDEX (2005//)
+An error occured while trying to write the index file '%s' of folder '%s'!
+; FILENAME, FOLDER
+;
+MSG_ER_INDEX_CORRUPTED (2006//)
+The index file '%s' of folder '%s' is CORRUPTED at position %d near mailfile '%s' (MoreBytes: 0x%x)
+; FILENAME, FOLDER, POSITION, MAILFILE, MOREBYTES
+;

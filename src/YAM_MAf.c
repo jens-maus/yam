@@ -28,6 +28,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include <clib/alib_protos.h>
 #include <clib/macros.h>
@@ -259,7 +260,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
       folder->Size   = fi.Size;
       indexloaded = LM_FLUSHED;
 
-      if(full)
+      if(full == TRUE)
       {
         ClearMailList(folder, TRUE);
         for(;;)
@@ -271,24 +272,22 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
           memset(&mail, 0, sizeof(struct Mail));
           if(fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1)
           {
-             // check if we are here because of an error or EOF
-             if(ferror(fh) != 0 || feof(fh) == 0)
-             {
-               E(DBF_FOLDER, "error while loading ComprMail struct from .index file");
-               error = TRUE;
-             }
+            // check if we are here because of an error or EOF
+            if(ferror(fh) != 0 || feof(fh) == 0)
+            {
+              E(DBF_FOLDER, "error while loading ComprMail struct from .index file");
+              error = TRUE;
+            }
 
-             // if we end up here it is just a EOF and no error.
-             break;
+            // if we end up here it is just a EOF and no error.
+            break;
           }
 
           if(cmail.moreBytes > SIZE_LARGE)
           {
-             printf("WARNING: Index of folder '%s' CORRUPTED near mailfile '%s' (MoreBytes: 0x%x) - aborting!\n", folder->Name, cmail.mailFile, cmail.moreBytes);
-             printf("File position: %ld\n", ftell(fh));
-
-             corrupt = TRUE;
-             break;
+            ER_NewError(tr(MSG_ER_INDEX_CORRUPTED), MA_IndexFileName(folder), folder->Name, ftell(fh), cmail.mailFile, cmail.moreBytes);
+            corrupt = TRUE;
+            break;
           }
 
           if(fread(buf, cmail.moreBytes, 1, fh) != 1)
@@ -327,20 +326,25 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
       }
     }
 
-    if(!error && ferror(fh) == 1)
+    if(error == FALSE && ferror(fh) != 0)
       error = TRUE;
 
     BusyEnd();
     fclose(fh);
   }
+  else
+    error = TRUE;
 
-  if(error)
+  if(error == TRUE)
   {
-    E(DBF_FOLDER, "an error occurred while trying to load the index file '%s'", MA_IndexFileName(folder));
+    E(DBF_FOLDER, "error %d occurred while trying to load the index file '%s'", errno, MA_IndexFileName(folder));
     ClearMailList(folder, TRUE);
     indexloaded = LM_UNLOAD;
+    // report failure only if the file exists
+    if(errno != 0 && errno != ENOENT)
+      ER_NewError(tr(MSG_ER_CANNOT_READ_INDEX), MA_IndexFileName(folder), folder->Name);
   }
-  else if(corrupt || indexloaded == LM_UNLOAD)
+  else if(corrupt == TRUE || indexloaded == LM_UNLOAD)
   {
     W(DBF_FOLDER, "  %s .index file detected, %s", corrupt ? "corrupt" : "missing",
                                                    full ? "rebuilding..." : "skipping...");
@@ -350,16 +354,16 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 
     // if the "full" mode was requested we make sure we
     // rescan the index accordingly
-    if(full)
+    if(full == TRUE)
     {
       // rebuild the index (rescanning the mailbox directory)
-      if(MA_ScanMailBox(folder) && MA_SaveIndex(folder))
+      if(MA_ScanMailBox(folder) == TRUE && MA_SaveIndex(folder) == TRUE)
       {
         indexloaded = LM_VALID;
       }
     }
   }
-  else if(full)
+  else if(full == TRUE)
   {
     indexloaded = LM_VALID;
     CLEAR_FLAG(folder->Flags, FOFL_MODIFY);
@@ -432,6 +436,8 @@ BOOL MA_SaveIndex(struct Folder *folder)
 
     success = TRUE;
   }
+  else
+    ER_NewError(tr(MSG_ER_CANNOT_WRITE_INDEX), MA_IndexFileName(folder), folder->Name);
 
   RETURN(success);
   return success;
@@ -478,7 +484,7 @@ BOOL MA_GetIndex(struct Folder *folder)
         else
           W(DBF_MAIL, "status of loaded folder != LM_VALID (%ld)", folder->LoadedMode);
 
-        if(G->MA)
+        if(G->MA != NULL)
           DisplayStatistics(folder, FALSE);
       }
       else
