@@ -53,7 +53,7 @@ struct FI_GUIData
 struct FI_ClassData
 {
   struct FI_GUIData GUI;
-  BOOL              Abort;
+  ULONG             Abort;
   BOOL              SearchActive;
   BOOL              ClearOnEnd;
 };
