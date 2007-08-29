@@ -138,23 +138,33 @@ void MA_SetSortFlag(void)
 void MA_ChangeTransfer(BOOL on)
 {
   struct MA_GUIData *gui = &G->MA->GUI;
+  int i;
 
   ENTER();
 
+  // modify the toolbar buttons, if the toolbar is visible
   if(gui->TO_TOOLBAR != NULL)
   {
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETMAIL, MUIA_TheBar_Attr_Disabled, !on);
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_SENDALL, MUIA_TheBar_Attr_Disabled, !on);
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETMAIL, MUIA_TheBar_Attr_Disabled, on == FALSE);
+    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_SENDALL, MUIA_TheBar_Attr_Disabled, on == FALSE);
   }
 
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, on, gui->MI_UPDATECHECK,
-                                                             gui->MI_IMPORT,
-                                                             gui->MI_EXPORT,
-                                                             gui->MI_SENDALL,
-                                                             gui->MI_EXCHANGE,
-                                                             gui->MI_GETMAIL,
-                                                             gui->MI_CSINGLE,
-                                                             NULL);
+  // modify the menu items
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, on == TRUE, gui->MI_UPDATECHECK,
+                                                                     gui->MI_IMPORT,
+                                                                     gui->MI_EXPORT,
+                                                                     gui->MI_SENDALL,
+                                                                     gui->MI_EXCHANGE,
+                                                                     gui->MI_GETMAIL,
+                                                                     gui->MI_CSINGLE,
+                                                                     NULL);
+
+  // modify the write window's "Send now" buttons
+  for(i = 0; i <= MAXWR; i++)
+  {
+    if(G->WR[i] != NULL)
+      set(G->WR[i]->GUI.BT_SEND, MUIA_Disabled, on == FALSE);
+  }
 
   LEAVE();
 }

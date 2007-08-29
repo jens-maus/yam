@@ -7,6 +7,9 @@ $URL$
 
 2007-08-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: the write windows' "Send now" buttons are now disabled during a
+    mail transfer or update check to be consistent with the menu items and the
+    main window toolbar. This fulfills feature request #1581249.
   * include/mui/TheBar_mcc.h: updated to the latest changes, even if only C++
     was affected.
 
