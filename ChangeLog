@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-29  Thore Böckelmann <tboeckel@gmx.de>
+
+  * include/mui/TheBar_mcc.h: updated to the latest changes, even if only C++
+    was affected.
+
 2007-08-28  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MAf.c, YAM.cd, deutsch.ct: fixed a minor glitch where the recent

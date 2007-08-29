@@ -19,7 +19,7 @@
 
  TheBar class Support Site:  http://www.sf.net/projects/thebar
 
- $Id: TheBar_mcc.h 30 2007-01-20 15:28:26Z damato $
+ $Id: TheBar_mcc.h 97 2007-08-29 08:30:25Z thboeckel $
  $URL: https://thebar.svn.sourceforge.net/svnroot/thebar/trunk/include/mui/TheBar_mcc.h $
 
 ***************************************************************************/
@@ -331,7 +331,7 @@ struct MUIS_TheBar_Button
   const char    *help;   /* Button help not copied!                              */
   ULONG         flags;   /* See below                                            */
   ULONG         exclude; /* Exclude mask                                         */
-  struct IClass *class;  /* Easy way of getting a bar of subclassed buttons      */
+  struct IClass *_class; /* Easy way of getting a bar of subclassed buttons      */
   Object        *obj;    /* Filled when the button is created                    */
 };
 
