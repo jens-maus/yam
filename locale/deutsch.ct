@@ -4732,21 +4732,6 @@ Grund: ungültiges Postfachverzeichnis oder Festplattenspeicher erschöpft.
 ; \n\
 ; Reason: invalid folder directory or unsufficient disk space.
 ;
-MSG_ER_MultipartEOF
-Fehler in mehrteiliger Nachricht.\n\
-\n\
-unerwartetes Dateiende. Die Nachricht scheint unvollständig zu sein.
-; Unexpected EOF while decoding multipart message. \
-; The message seems to be truncated.
-;
-MSG_ER_MIMEError
-Kann MIME-Nachricht nicht extrahieren.\n\
-\n\
-Die Nachricht enthält falsche MIME-Kodierungen oder sie ist leer oder unvollständig.
-; Couldn't extract MIME message.\n\
-; \n\
-; The message contains badly formed MIME parts or it's empty or truncated.
-;
 MSG_ER_CantOpenFile
 Kann Datei '%s' nicht öffnen.\n\
 \n\
@@ -8206,4 +8191,13 @@ MSG_ER_UNKNOWN_HEADER_ENCODING
 Unbekannte Kopfzeilenkodierung '%s' in Datei '%s'.\n\
 \n\
 YAM kann eine bestimmte Kopfzeile nicht korrekt anzeigen.
+;
+MSG_ER_UNEXPECTED_MULTIPART_EOF
+Unerwartetes Dateiende beim Dekodieren der mehrteiligen Nachricht in Datei '%s'.\
+Die Nachricht scheint unvollständig zu sein.
+;
+MSG_ER_MIME_ERROR
+Kann MIME-Nachricht in Datei '%s' nicht extrahieren.\n\
+\n\
+Die Nachricht enthält falsche MIME-Kodierungen oder sie ist leer oder unvollständig.
 ;

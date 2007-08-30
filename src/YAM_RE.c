@@ -1185,12 +1185,12 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
     if(mode == 0)
     {
       if(hasFlag(rp->rmData->parseFlags, PM_QUIET) == FALSE)
-        ER_NewError(tr(MSG_ER_MIMEError));
+        ER_NewError(tr(MSG_ER_MIME_ERROR), rp->rmData->readFile);
     }
     else if(mode == 1)
     {
       if(hasFlag(rp->rmData->parseFlags, PM_QUIET) == FALSE)
-        ER_NewError(tr(MSG_ER_MultipartEOF));
+        ER_NewError(tr(MSG_ER_UNEXPECTED_MULTIPART_EOF), rp->rmData->readFile);
     }
 
     rp->HasHeaders = FALSE;

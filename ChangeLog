@@ -7,6 +7,8 @@ $URL$
 
 2007-08-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE.c, YAM.cd, deutsch.ct: replaced some more error messages with those
+    which include a file name.
   * YAM_FI.c, YAM_MAf.c, YAM_RE.c, YAM.cd, deutsch.ct: the error messages about
     unknown encodings now include the corresponding mail file name.
 

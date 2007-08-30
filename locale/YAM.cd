@@ -3454,15 +3454,6 @@ Couldn't create mail file.\n\
 \n\
 Reason: invalid folder directory or insufficient disk space.
 ;
-MSG_ER_MultipartEOF (1119//)
-Unexpected EOF while decoding a multipart message. \
-The message seems to be truncated.
-;
-MSG_ER_MIMEError (1120//)
-Couldn't extract MIME message.\n\
-\n\
-The message contains badly formed MIME parts or it's empty or truncated.
-;
 MSG_ER_CantOpenFile (1122//)
 Couldn't read from file '%s'.\n\
 \n\
@@ -6515,4 +6506,15 @@ Unknown header encoding '%s' in mail file '%s'.\n\
 \n\
 YAM cannot display a particular message header correctly.
 ; ENCODING_TYPE, FILENAME
+;
+MSG_ER_UNEXPECTED_MULTIPART_EOF (2009//)
+Unexpected EOF while decoding the multipart message in file '%s'. \
+The message seems to be truncated.
+; FILENAME
+;
+MSG_ER_MIME_ERROR (2010//)
+Couldn't extract MIME message from file '%s'.\n\
+\n\
+The message contains badly formed MIME parts or it's empty or truncated.
+; FILENAME
 ;
