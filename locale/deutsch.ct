@@ -4710,20 +4710,6 @@ Kann ARexx-Befehl '%s' nicht senden. Versichern Sie sich, dass das Skript existi
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
 ;
-MSG_ER_UnexpEOFUU
-Unerwartetes Dateiende beim Dekodieren einer UU-kodierten Datei. Die Nachricht scheint unvollständig zu sein.
-; Unexpected EOF while decoding a UUencoded file. \
-; The message seems to be truncated.
-;
-MSG_ER_InvalidLength
-Ungültige Zeilenlänge in UU-kodierter Datei: %lD.\n\
-\n\
-Grund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
-; Invalid line length in UUencoded file: %lD.\n\
-; \n\
-; A defective UUencoder was used or the message is truncated.
-; SIZE
-;
 MSG_ER_CreateMailError
 Kann Maildatei nicht erstellen.\n\
 \n\
@@ -8193,11 +8179,20 @@ Unbekannte Kopfzeilenkodierung '%s' in Datei '%s'.\n\
 YAM kann eine bestimmte Kopfzeile nicht korrekt anzeigen.
 ;
 MSG_ER_UNEXPECTED_MULTIPART_EOF
-Unerwartetes Dateiende beim Dekodieren der mehrteiligen Nachricht in Datei '%s'.\
+Unerwartetes Dateiende beim Dekodieren der mehrteiligen Nachricht in Datei '%s'. \
 Die Nachricht scheint unvollständig zu sein.
 ;
 MSG_ER_MIME_ERROR
 Kann MIME-Nachricht in Datei '%s' nicht extrahieren.\n\
 \n\
 Die Nachricht enthält falsche MIME-Kodierungen oder sie ist leer oder unvollständig.
+;
+MSG_ER_UNEXPECTED_UUE_EOF
+Unerwartetes Dateiende beim Dekodieren einer UU-kodierten Datei '%s'. \
+Die Nachricht scheint unvollständig zu sein.
+;
+MSG_ER_INVALID_UUE_LENGTH
+Ungültige Zeilenlänge %lD in UU-kodierter Datei '%s'.\n\
+\n\
+Grund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
 ;

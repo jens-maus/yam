@@ -1578,7 +1578,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
           case -1:
           {
             if(quietParsing == FALSE)
-              ER_NewError(tr(MSG_ER_UnexpEOFUU));
+              ER_NewError(tr(MSG_ER_UNEXPECTED_UUE_EOF), rp->Filename);
           }
           break;
 
@@ -1592,7 +1592,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
           case -3:
           {
             if(quietParsing == FALSE)
-              ER_NewError(tr(MSG_ER_InvalidLength), 0);
+              ER_NewError(tr(MSG_ER_INVALID_UUE_LENGTH), 0, rp->Filename);
           }
           break;
 
@@ -1624,7 +1624,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
           default:
           {
             if(quietParsing == FALSE)
-              ER_NewError(tr(MSG_ER_UnexpEOFUU));
+              ER_NewError(tr(MSG_ER_UNEXPECTED_UUE_EOF), rp->Filename);
           }
         }
       }
@@ -2982,7 +2982,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                         case -1:
                         {
                           if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
-                            ER_NewError(tr(MSG_ER_UnexpEOFUU));
+                            ER_NewError(tr(MSG_ER_UNEXPECTED_UUE_EOF), uup->Filename);
                         }
                         break;
 
@@ -2996,7 +2996,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                         case -3:
                         {
                           if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
-                            ER_NewError(tr(MSG_ER_InvalidLength), 0);
+                            ER_NewError(tr(MSG_ER_INVALID_UUE_LENGTH), 0, uup->Filename);
                         }
                         break;
 
@@ -3028,7 +3028,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                         default:
                         {
                           if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
-                            ER_NewError(tr(MSG_ER_UnexpEOFUU));
+                            ER_NewError(tr(MSG_ER_UNEXPECTED_UUE_EOF), uup->Filename);
                         }
                         break;
                       }

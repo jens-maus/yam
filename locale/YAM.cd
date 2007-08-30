@@ -3439,16 +3439,6 @@ MSG_ER_ErrorARexxScript (1112//)
 Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
 ;
-MSG_ER_UnexpEOFUU (1114//)
-Unexpected EOF while decoding a UUencoded file. \
-The message seems to be truncated.
-;
-MSG_ER_InvalidLength (1115//)
-Invalid line length in UUencoded file: %ld.\n\
-\n\
-A defective UUencoder was used or the message is truncated.
-; SIZE
-;
 MSG_ER_CreateMailError (1116//)
 Couldn't create mail file.\n\
 \n\
@@ -6517,4 +6507,15 @@ Couldn't extract MIME message from file '%s'.\n\
 \n\
 The message contains badly formed MIME parts or it's empty or truncated.
 ; FILENAME
+;
+MSG_ER_UNEXPECTED_UUE_EOF (2011//)
+Unexpected EOF while decoding the UUencoded file '%s'. \
+The message seems to be truncated.
+; FILENAME
+;
+MSG_ER_INVALID_UUE_LENGTH (2012//)
+Invalid line length %ld in UUencoded file '%s'.\n\
+\n\
+A defective UUencoder was used or the message is truncated.
+; SIZE, FILENAME
 ;
