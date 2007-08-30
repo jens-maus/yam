@@ -388,7 +388,7 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
       {
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-        if(MA_ReadHeader(fh, headerList))
+        if(MA_ReadHeader(GetMailFile(NULL, mail->Folder, mail), fh, headerList) == TRUE)
         {
           struct MinNode *curNode = headerList->mlh_Head;
 
@@ -399,14 +399,14 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 
             // if the field is explicitly specified we search for it or
             // otherwise skip our search
-            if(*search->Field)
+            if(search->Field[0] != '\0')
             {
               int searchLen;
-              char *ptr = strchr(search->Field, ':');
+              char *ptr;
 
               // if the field is specified we search if it was specified with a ':'
               // at the end
-              if(ptr)
+              if((ptr = strchr(search->Field, ':')) != NULL)
                 searchLen = ptr-(search->Field);
               else
                 searchLen = strlen(search->Field);

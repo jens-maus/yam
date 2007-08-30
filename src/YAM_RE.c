@@ -1180,7 +1180,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
   }
 
   // we read in the headers from our mail file
-  if(!MA_ReadHeader(in, rp->headerList))
+  if(MA_ReadHeader(rp->rmData->readFile, in, rp->headerList) == FALSE)
   {
     if(mode == 0)
     {
@@ -1268,7 +1268,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
         rp->EncodingCode = ENC_BIN;
       else
       {
-        ER_NewError(tr(MSG_ER_UnknownEnc), p);
+        ER_NewError(tr(MSG_ER_UNKNOWN_MIME_ENCODING), p, rp->rmData->readFile);
 
         // set the default to ENC_NONE
         rp->EncodingCode = ENC_NONE;
@@ -4088,7 +4088,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
       RE_DecodePart(rp[i]);
 
       // open the decoded part output
-      if((fh = fopen(rp[i]->Filename, "r")))
+      if((fh = fopen(rp[i]->Filename, "r")) != NULL)
       {
         struct MinList *headerList;
 
@@ -4097,7 +4097,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
           // read in the header into the headerList
-          MA_ReadHeader(fh, headerList);
+          MA_ReadHeader(frp->rmData->readFile, fh, headerList);
           fclose(fh);
 
           if(IsListEmpty((struct List *)headerList) == FALSE)

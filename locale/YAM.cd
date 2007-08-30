@@ -3452,20 +3452,7 @@ A defective UUencoder was used or the message is truncated.
 MSG_ER_CreateMailError (1116//)
 Couldn't create mail file.\n\
 \n\
-Reason: invalid folder directory or unsufficient disk space.
-;
-MSG_ER_UnknownEnc (1117//)
-Unknown MIME encoding: %s.\n\
-\n\
-YAM failed to decode a part of the message. Save the message \
-to disk and try with a different decoder.
-; ENCODING_TYPE
-;
-MSG_ER_UnknownHeaderEnc (1118//)
-Unknown header encoding: %s.\n\
-\n\
-YAM cannot display a particular message header correctly.
-; ENCODING_TYPE
+Reason: invalid folder directory or insufficient disk space.
 ;
 MSG_ER_MultipartEOF (1119//)
 Unexpected EOF while decoding a multipart message. \
@@ -6515,4 +6502,17 @@ The index file '%s' of folder '%s' was found to be corrupt at position \
 The folder was flagged as 'unloaded' and an index rescanning \
 was initiated or is required.
 ; FILENAME, FOLDER, POSITION, MAILFILE, MOREBYTES
+;
+MSG_ER_UNKNOWN_MIME_ENCODING (2007//)
+Unknown MIME encoding '%s' in mail file '%s'.\n\
+\n\
+YAM failed to decode a part of the message. Save the message \
+to disk and try with a different decoder.
+; ENCODING_TYPE, FILENAME
+;
+MSG_ER_UNKNOWN_HEADER_ENCODING (2008//)
+Unknown header encoding '%s' in mail file '%s'.\n\
+\n\
+YAM cannot display a particular message header correctly.
+; ENCODING_TYPE, FILENAME
 ;

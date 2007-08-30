@@ -4732,25 +4732,6 @@ Grund: ungültiges Postfachverzeichnis oder Festplattenspeicher erschöpft.
 ; \n\
 ; Reason: invalid folder directory or unsufficient disk space.
 ;
-MSG_ER_UnknownEnc
-Unbekannte MIME-Kodierung: %s.\n\
-\n\
-YAM konnte einen Teil der Nachricht nicht dekodieren. Speichern Sie die Nachricht ab und versuchen Sie es mit einem anderen Dekodierer.
-; Unknown MIME encoding: %s.\n\
-; \n\
-; YAM failed to decode a part of the message. Save the message \
-; to disk and try with a different decoder.
-; ENCODING_TYPE
-;
-MSG_ER_UnknownHeaderEnc
-Unbekannte Kopfzeilenkodierung: %s.\n\
-\n\
-YAM kann eine bestimmte Kopfzeile nicht korrekt anzeigen.
-; Unknown header encoding: %s.\n\
-; \n\
-; YAM cannot display a particular message header correctly.
-; ENCODING_TYPE
-;
 MSG_ER_MultipartEOF
 Fehler in mehrteiliger Nachricht.\n\
 \n\
@@ -8215,4 +8196,14 @@ der Information über die Nachricht '%s' als fehlerhaft erkannt \
 \n\
 Das Postfach wurde als 'ungeladen' markiert und ein eventuelles \
 Neuanlegen der Indexdatei initiert bzw. ist noch notwendig.
+;
+MSG_ER_UNKNOWN_MIME_ENCODING
+Unbekannte MIME-Kodierung '%s' in Datei '%s'.\n\
+\n\
+YAM konnte einen Teil der Nachricht nicht dekodieren. Speichern Sie die Nachricht ab und versuchen Sie es mit einem anderen Dekodierer.
+;
+MSG_ER_UNKNOWN_HEADER_ENCODING
+Unbekannte Kopfzeilenkodierung '%s' in Datei '%s'.\n\
+\n\
+YAM kann eine bestimmte Kopfzeile nicht korrekt anzeigen.
 ;

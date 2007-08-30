@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-08-30  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c, YAM_MAf.c, YAM_RE.c, YAM.cd, deutsch.ct: the error messages about
+    unknown encodings now include the corresponding mail file name.
+
 2007-08-29  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: aborting a search process was impossible due to a wrong variable
