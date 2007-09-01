@@ -1220,7 +1220,7 @@ static BOOL MA_DetectUUE(FILE *fh)
 ///
 /// MA_ReadHeader
 //  Reads header lines of a message into memory
-BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList)
+BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, enum ReadHeaderMode mode)
 {
   BOOL success = FALSE;
 
@@ -1228,7 +1228,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList)
 
   if(headerList != NULL)
   {
-    int linesread = 0;
+    unsigned int linesread = 0;
     char *buffer;
 
     // clear the headerList first
@@ -1242,7 +1242,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList)
 
       // we read out the whole header line by line and
       // concatenate lines that are belonging together.
-      while((GetLine(fh, buffer, SIZE_LINE) && (++linesread, buffer[0])) ||
+      while((GetLine(fh, buffer, SIZE_LINE) != NULL && (++linesread, buffer[0] != '\0')) ||
             (finished == FALSE && (finished = TRUE)))
       {
         // if the start of this line is a space or a tabulator sign
@@ -1368,16 +1368,22 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList)
         }
       }
 
+      // if we haven't had success in reading the headers
+      // we make sure we clean everything up. If we read no
+      // headers at all we return a failure. But if we were able to
+      // read a single empty line it is a signal that this part of
+      // the mail doesn't have any header at all (which may be valid)
+      if(success == FALSE)
+        FreeHeaderList(headerList);
+      else if(IsListEmpty((struct List *)headerList) == TRUE &&
+              (mode == RHM_MAINHEADER || buffer[0] != '\0' || linesread != 1))
+      {
+        W(DBF_MAIL, "no required header data found while having scanned '%s'.", mailFile);
+        success = FALSE;
+      }
+
       free(buffer);
     }
-
-    // if we haven't had success in reading the headers
-    // we make sure we clean everything up. If we read no
-    // headers at all we return failure.
-    if(success == FALSE)
-      FreeHeaderList(headerList);
-    else if(IsListEmpty((struct List *)headerList) == TRUE || linesread <= 1)
-      success = FALSE;
   }
 
   RETURN(success);
@@ -1733,9 +1739,9 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
   else
     E(DBF_MAIL, "couldn't open mail file for reading main header");
 
-  // check if the file handle is valid and the immediatly read in the
+  // check if the file handle is valid and then immediatly read in the
   // header lines
-  if(fh != NULL && MA_ReadHeader(fullfile, fh, &headerList) == TRUE)
+  if(fh != NULL && MA_ReadHeader(fullfile, fh, &headerList, RHM_MAINHEADER) == TRUE)
   {
      char *ptr;
      char dateFilePart[12+1];

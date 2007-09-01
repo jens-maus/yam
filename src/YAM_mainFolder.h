@@ -83,6 +83,13 @@ extern struct Hook MA_ChangeFolderHook;
 extern struct Hook MA_FlushIndexHook;
 extern struct Hook MA_LV_FDspFuncHook;
 
+// MA_ReadHeader modes
+enum ReadHeaderMode
+{
+  RHM_MAINHEADER=0, // we are reading the main header of a mail
+  RHM_SUBHEADER,    // we are reading a sub header of a mimepart of a mail
+};
+
 void  MA_ChangeFolder(struct Folder *folder, BOOL set_active);
 void  MA_ExpireIndex(struct Folder *folder);
 struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *file, const BOOL deep);
@@ -95,7 +102,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full);
 void  MA_MakeFOFormat(Object *lv);
 char *MA_NewMailFile(const struct Folder *folder, char *mailfile);
 BOOL  MA_PromptFolderPassword(struct Folder *fo, APTR win);
-BOOL  MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList);
+BOOL  MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, enum ReadHeaderMode mode);
 BOOL  MA_SaveIndex(struct Folder *folder);
 void  MA_UpdateIndexes(BOOL initial);
 void  MA_UpdateInfoBar(struct Folder *);

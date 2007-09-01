@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-01  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MAf.c, YAM_RE.c, YAM_FI.c: fixed a recently introduced issue where mails
+    with a multipart that didn't contain any subheader an error was raised. In
+    addition the whole RE_ScanHeader/MA_ReadHeader combo should now be a bit
+    smarter about when to report and error and how.
+
 2007-08-30  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c, YAM.cd, deutsch.ct: replaced some more error messages with those

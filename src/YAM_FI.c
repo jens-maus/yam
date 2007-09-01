@@ -372,11 +372,12 @@ static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
 static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 {
   char fullfile[SIZE_PATHFILE];
+  char *mailfile = GetMailFile(NULL, mail->Folder, mail);
   BOOL found = FALSE;
 
   ENTER();
 
-  if(StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
+  if(StartUnpack(mailfile, fullfile, mail->Folder))
   {
     FILE *fh;
 
@@ -388,7 +389,7 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
       {
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-        if(MA_ReadHeader(GetMailFile(NULL, mail->Folder, mail), fh, headerList) == TRUE)
+        if(MA_ReadHeader(mailfile, fh, headerList, RHM_MAINHEADER) == TRUE)
         {
           struct MinNode *curNode = headerList->mlh_Head;
 

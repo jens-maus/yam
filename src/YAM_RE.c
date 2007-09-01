@@ -1160,7 +1160,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
 ///
 /// RE_ScanHeader
 //  Parses the header of the message or of a message part
-static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
+static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderMode mode)
 {
   struct MinNode *curNode;
 
@@ -1180,16 +1180,13 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
   }
 
   // we read in the headers from our mail file
-  if(MA_ReadHeader(rp->rmData->readFile, in, rp->headerList) == FALSE)
+  if(MA_ReadHeader(rp->rmData->readFile, in, rp->headerList, mode) == FALSE)
   {
-    if(mode == 0)
+    if(out != NULL && hasFlag(rp->rmData->parseFlags, PM_QUIET) == FALSE)
     {
-      if(hasFlag(rp->rmData->parseFlags, PM_QUIET) == FALSE)
+      if(mode == RHM_MAINHEADER)
         ER_NewError(tr(MSG_ER_MIME_ERROR), rp->rmData->readFile);
-    }
-    else if(mode == 1)
-    {
-      if(hasFlag(rp->rmData->parseFlags, PM_QUIET) == FALSE)
+      else if(mode == RHM_SUBHEADER)
         ER_NewError(tr(MSG_ER_UNEXPECTED_MULTIPART_EOF), rp->rmData->readFile);
     }
 
@@ -2028,7 +2025,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
     {
       if((out = RE_OpenNewPart(rmData, &hrp, NULL, NULL)))
       {
-        BOOL parse_ok = RE_ScanHeader(hrp, in, out, 0);
+        BOOL parse_ok = RE_ScanHeader(hrp, in, out, RHM_MAINHEADER);
 
         fclose(out);
 
@@ -2054,7 +2051,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
 
           if(out == NULL) break;
 
-          if(!RE_ScanHeader(rp, in, out, 1))
+          if(RE_ScanHeader(rp, in, out, RHM_SUBHEADER) == FALSE)
           {
             fclose(out);
             RE_UndoPart(rp);
@@ -2488,7 +2485,7 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
               warnPart->Printable = TRUE;
               warnPart->EncodingCode = ENC_NONE;
               *warnPart->Description = '\0';
-              RE_ScanHeader(warnPart, in, NULL, 2);
+              RE_ScanHeader(warnPart, in, NULL, RHM_MAINHEADER);
               fclose(in);
 
               warnPart->Decoded = FALSE;
@@ -4097,7 +4094,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
           // read in the header into the headerList
-          MA_ReadHeader(frp->rmData->readFile, fh, headerList);
+          MA_ReadHeader(frp->rmData->readFile, fh, headerList, RHM_SUBHEADER);
           fclose(fh);
 
           if(IsListEmpty((struct List *)headerList) == FALSE)
