@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.19 (19.08.07)
+## version $VER: YAM.ct 6.20 (01.09.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -3977,34 +3977,10 @@ MSG_ER_ErrorARexxScript
 Kunde inte utföra ARexxkommandot '%s'. Kontrollera att skriptet existerar.
 ;#DEF Couldn't send ARexx command '%s'. Make sure that the script exists.
 ;#SET (1112//)
-MSG_ER_UnexpEOFUU
-Oväntat filslut vid avkodning av UU-kodad fil. Brevet verkar ha klippts av.
-;#DEF Unexpected EOF while decoding a UUencoded file. The message seems to be truncated.
-;#SET (1114//)
-MSG_ER_InvalidLength
-Felaktig radlängd i UU-kodad fil: %ld.\n\nEn trasig UU-kodare har använts eller så har brevet klippts av.
-;#DEF Invalid line length in UUencoded file: %ld.\n\nA defective UUencoder was used or the message is truncated.
-;#SET (1115//)
 MSG_ER_CreateMailError
 Kunde inte skapa brevfil.\n\nSökvägen kan vara felaktig eller så kan disken vara full.
-;#DEF Couldn't create mail file.\n\nReason: invalid folder directory or unsufficient disk space.
+;#DEF Couldn't create mail file.\n\nReason: invalid folder directory or insufficient disk space.
 ;#SET (1116//)
-MSG_ER_UnknownEnc
-Okänd MIME-kodning: %s.\n\nYAM kunde inte avkoda en del av brevet. Spara brevet på disk och använd en annan avkodare.
-;#DEF Unknown MIME encoding: %s.\n\nYAM failed to decode a part of the message. Save the message to disk and try with a different decoder.
-;#SET (1117//)
-MSG_ER_UnknownHeaderEnc
-Okänd brevhuvudskodning: %s.\n\nYAM kan inte visa ett visst brevhuvud korrekt.
-;#DEF Unknown header encoding: %s.\n\nYAM cannot display a particular message header correctly.
-;#SET (1118//)
-MSG_ER_MultipartEOF
-Oväntat filslut vid avkodning av flerpartsbrev. Brevet verkar ha klippts av.
-;#DEF Unexpected EOF while decoding a multipart message. The message seems to be truncated.
-;#SET (1119//)
-MSG_ER_MIMEError
-Kunde inte avkoda MIME-brev.\n\nBrevet innehåller felaktiga MIME-delar, är tomt, eller har klippts av.
-;#DEF Couldn't extract MIME message.\n\nThe message contains badly formed MIME parts or it's empty or truncated.
-;#SET (1120//)
 MSG_ER_CantOpenFile
 Kunde inte läsa filen '%s'.\n\nFilen verkar inte existera.
 ;#DEF Couldn't read from file '%s'.\n\nThe file doesn't seem to exist.
@@ -5295,27 +5271,27 @@ Markerat
 ;#SET (1510//)
 MSG_MA_CREQUEST_OLDFILE
 YAM har hittat filen '%s' i mapp '%s' som är en gammal epost fil, som normalt\nanvänds i äldre YAM versioner än nuvarande version.\n\nVill du konvertera denna fil till det nya formatet?
-;#DEF YAM has found file '%s' in folder '%s' to be an old mailfile normally\nused in YAM versions prior to the current version.\n\nDo you want to convert this file to the new format?
+;#DEF YAM has found file '%s' in folder '%s' to be an old mail file normally\nused in YAM versions prior to the current version.\n\nDo you want to convert this file to the new format?
 ;#SET (1511//)
 MSG_MA_CREQUEST_UNKNOWN
 YAM har hittat en okänd fil '%s' i mappkatalogen för mapp '%s'.\n\nVill du importera den som ett vanligt brev?
-;#DEF YAM has found an unknown file '%s' in the folder directory of folder '%s'.\n\nDo you want to import it as a normal mailfile?
+;#DEF YAM has found an unknown file '%s' in the folder directory of folder '%s'.\n\nDo you want to import it as a normal mail file?
 ;#SET (1512//)
 MSG_MA_YESNOTOALL
 *_Ja|Ja till alla|_Nej|Nej till alla
 ;#DEF *_Yes|Y_es to all|_No|N_o to all
 ;#SET (1513//)
 MSG_ER_CONVERTMFILE
-Ett fel inträffade under konvertering av filen '%s' för mapp '%s'.\n\nVar snäll och kontrollera om mappens katalog har tillräckligt utrymme och korrekta behörigheter för skrivning.
-;#DEF An error occurred during mailfile conversion of file '%s' of folder '%s'.\n\nPlease check if the folder directory has enough space and has proper write access.
+Ett fel inträffade under konvertering av filen '%s' för mapp '%s'.\n\nVar god kontrollera om mappens katalog har tillräckligt utrymme och korrekta behörigheter för skrivning.
+;#DEF An error occurred during mail file conversion of file '%s' of folder '%s'.\n\nPlease check if the folder directory has enough space and has proper write access.
 ;#SET (1514//)
 MSG_ER_XPKUSAGE
 Ett fel uppstod vid försök att komprimera/avkomprimera filen '%s' via XPK.\n\nVar snäll och kontrollera din XPK installation och de associerade kompressions inställningarna i YAM's konfiguration.
 ;#DEF An error occurred while trying to compress/uncompress the file '%s' via XPK.\n\nPlease check your XPK installation and the associated compression settings in the YAM configuration.
 ;#SET (1515//)
 MSG_MA_CREQ_OLDFILE_TITLE
-Brev fil i gammalt format funnen
-;#DEF Mailfile in old format found
+Brevfil i gammalt format funnen
+;#DEF Mail file in old format found
 ;#SET (1516//)
 MSG_MA_CREQ_UNKNOWN_TITLE
 Okänd fil i mappkatalogen funnen
@@ -7209,3 +7185,51 @@ MSG_WR_SELECTNONE
 Markera inget
 ;#DEF Select None
 ;#SET (2000//)
+MSG_MA_INVALIDMFILE_TITLE
+Ogiltig brevfil funnen
+;#DEF Invalid mail file found
+;#SET (2001//)
+MSG_MA_INVALIDMFILE
+Vid undersökning av brevfilen '%s' för mapp '%s',\nhar YAM funnit filen att vara antingen ogiltig eller inte vara i korrekt\nkompatibelt format.\n\nVar god kontrollera att filen är en giltig brevfil och fortsätt\ni enlighet därmed.
+;#DEF While examining the mail file '%s' of folder '%s',\nYAM has found the file to be either invalid or not being in the correct\ncompliant mail format.\n\nPlease make sure that the file is a valid mail file and proceed\naccordingly.
+;#SET (2002//)
+MSG_MA_INVALIDMFILE_BT
+*_Försök igen|_Ignorera|Ignorera _alla|_Radera|A_vbryt
+;#DEF *_Retry|_Ignore|Ignore _All|_Delete|_Cancel
+;#SET (2003//)
+MSG_ER_CANNOT_READ_INDEX
+Ett fel uppstod vid försök att läsa indexfilen '%s' för mapp '%s'.\n\nVar god kontrollera att du kan läsa filens innehåll och att rättigheterna är korrekt.
+;#DEF An error occured while trying to read the index file '%s' of folder '%s'.\n\nPlease check that you are able to read the content of the file and that the permission settings are correct.
+;#SET (2004//)
+MSG_ER_CANNOT_WRITE_INDEX
+Ett fel uppstod vid försök att skriva indexfilen '%s' för mapp '%s'.\n\nVar god kontrollera att du kan skriva till katalogen där filen är tänkt att skrivas.
+;#DEF An error occured while trying to write the index file '%s' of folder '%s'.\n\nPlease check that you are able to write to the directory where the file is supposed to be written.
+;#SET (2005//)
+MSG_ER_INDEX_CORRUPTED
+Indexfilen '%s' för mapp '%s' har upptäckts vara korrupt vid position %d nära informationen om brevfilen '%s' (MoreBytes: 0x%x).\n\nMappen var flaggad som 'oladdad' och en omskanning var initierad eller krävs.
+;#DEF The index file '%s' of folder '%s' was found to be corrupt at position %d near the information on mail file '%s' (MoreBytes: 0x%x).\n\nThe folder was flagged as 'unloaded' and an index rescanning was initiated or is required.
+;#SET (2006//)
+MSG_ER_UNKNOWN_MIME_ENCODING
+Okänd MIME-kodning '%s' i brevfil '%s'.\n\nYAM misslyckades att avkoda en del av meddelandet. Spara meddelandet till disk och prova med en annan dekoder.
+;#DEF Unknown MIME encoding '%s' in mail file '%s'.\n\nYAM failed to decode a part of the message. Save the message to disk and try with a different decoder.
+;#SET (2007//)
+MSG_ER_UNKNOWN_HEADER_ENCODING
+Okänd huvudkodning '%s' i brevfil '%s'.\n\nYAM kan inte visa ett speciellt meddelandehuvud korrekt.
+;#DEF Unknown header encoding '%s' in mail file '%s'.\n\nYAM cannot display a particular message header correctly.
+;#SET (2008//)
+MSG_ER_UNEXPECTED_MULTIPART_EOF
+Oväntat filslut vid avkodning av flerparts meddelande i fil '%s'. Meddelandet verkar vara skadat.
+;#DEF Unexpected EOF while decoding the multipart message in file '%s'. The message seems to be truncated.
+;#SET (2009//)
+MSG_ER_MIME_ERROR
+Kunde inte extrahera MIME-meddelande från fil '%s'.\n\nMeddelandet innehåller dåliga MIME delar eller så är det tomt eller skadat.
+;#DEF Couldn't extract MIME message from file '%s'.\n\nThe message contains badly formed MIME parts or it's empty or truncated.
+;#SET (2010//)
+MSG_ER_UNEXPECTED_UUE_EOF
+Oväntat filslut vid avkodning av UU-kodad fil '%s'. Meddelandet verkar vara skadat.
+;#DEF Unexpected EOF while decoding the UUencoded file '%s'. The message seems to be truncated.
+;#SET (2011//)
+MSG_ER_INVALID_UUE_LENGTH
+Ogiltig radlängd %ld i UU-kodad fil '%s'.\n\nEn trasig UU-kodare användes eller så är meddelandet skadat.
+;#DEF Invalid line length %ld in UUencoded file '%s'.\n\nA defective UUencoder was used or the message is truncated.
+;#SET (2012//)
