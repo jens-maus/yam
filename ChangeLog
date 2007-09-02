@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-02  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: added "mbox" suffix to the import/export requesters' patterns.
+
 2007-09-02  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: when switching to the 'Message' tab of the write window, the

@@ -2337,18 +2337,18 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
   // the following arrays depend on the ReqFileType enumeration
   static const char *const acceptPattern[ASL_MAX] =
   {
-    "#?.addressbook#?",               // ASL_ABOOK
-    "#?.config#?",                    // ASL_CONFIG
-    NULL,                             // ASL_DETACH
-    "~(#?.info)",                     // ASL_ATTACH
-    "#?.(yam|rexx|rx)",               // ASL_REXX
-    "#?.(gif|jpg|jpeg|png|iff|ilbm)", // ASL_PHOTO
-    "#?.((mbx|eml|dbx|msg)|#?,#?)",   // ASL_IMPORT
-    "#?.mbx",                         // ASL_EXPORT
-    NULL,                             // ASL_FOLDER
-    "#?.(ldif|ldi)",                  // ASL_ABOOK_LIF
-    "#?.csv",                         // ASL_ABOOK_CSV
-    "#?.(tab|txt)",                   // ASL_ABOOK_TAB
+    "#?.addressbook#?",                    // ASL_ABOOK
+    "#?.config#?",                         // ASL_CONFIG
+    NULL,                                  // ASL_DETACH
+    "~(#?.info)",                          // ASL_ATTACH
+    "#?.(yam|rexx|rx)",                    // ASL_REXX
+    "#?.(gif|jpg|jpeg|png|iff|ilbm)",      // ASL_PHOTO
+    "#?.((mbx|mbox|eml|dbx|msg)|#?,#?)",   // ASL_IMPORT
+    "#?.(mbx|mbox)",                       // ASL_EXPORT
+    NULL,                                  // ASL_FOLDER
+    "#?.(ldif|ldi)",                       // ASL_ABOOK_LIF
+    "#?.csv",                              // ASL_ABOOK_CSV
+    "#?.(tab|txt)",                        // ASL_ABOOK_TAB
   };
 
   struct FileRequester *fileReq;
