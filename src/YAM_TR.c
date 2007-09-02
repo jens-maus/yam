@@ -1421,6 +1421,9 @@ static void TR_SetSocketOpts(void)
 {
   ENTER();
 
+  // disable CTRL-C checking
+  SocketBaseTags(SBTM_SETVAL(SBTC_BREAKMASK), 0, TAG_END);
+
   if(C->SocketOptions.KeepAlive)
   {
     int optval = C->SocketOptions.KeepAlive;
@@ -3974,7 +3977,6 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
     else
     {
       W(DBF_NET, "no messages found on server '%s'", C->P3[G->TR->POP_Nr]->Server);
-
       // per default we flag that POP3 server as being UIDLchecked
       if(G->TR->DuplicatesChecking == TRUE)
         C->P3[G->TR->POP_Nr]->UIDLchecked = TRUE;
@@ -4597,7 +4599,7 @@ void TR_Cleanup(void)
 {
   ENTER();
 
-  if(G->TR->GUI.LV_MAILS)
+  if(G->TR->GUI.LV_MAILS != NULL)
     DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Clear);
 
   if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
@@ -4722,7 +4724,6 @@ static BOOL InitUIDLhash(void)
   else
     E(DBF_UIDL, "couldn't create new Hashtable for UIDL management");
 
-
   RETURN(result);
   return result;
 }
@@ -4749,7 +4750,7 @@ static enum HashTableOperator SaveUIDLtoken(UNUSED struct HashTable *table,
     // now we have to see if this uidl belongs to a POP3 server that
     // wasn't UIDL checked and if so we don't touch it and write it
     // out as well. Otherwise we skip the write operation
-    if((p = strrchr(token->uidl, '@')) && *(++p) != '\0')
+    if((p = strrchr(token->uidl, '@')) != NULL && *(++p) != '\0')
     {
       int i;
 
@@ -4769,7 +4770,7 @@ static enum HashTableOperator SaveUIDLtoken(UNUSED struct HashTable *table,
       if(i < MAXP3)
         saveUIDL = TRUE;
       else
-        D(DBF_UIDL, "orphaned uidl found&deleted '%s'", token->uidl);
+        D(DBF_UIDL, "orphaned UIDL found and deleted '%s'", token->uidl);
     }
   }
   else
@@ -4878,7 +4879,7 @@ static BOOL FilterDuplicates(void)
               {
                 mtn->UIDL = strdup(uidl);
 
-                if(G->TR->UIDLhashTable->entryCount > 0 && mtn->UIDL)
+                if(G->TR->UIDLhashTable->entryCount > 0 && mtn->UIDL != NULL)
                 {
                   struct HashEntryHeader *entry = HashTableOperate(G->TR->UIDLhashTable, mtn->UIDL, htoLookup);
 
@@ -4933,7 +4934,7 @@ static BOOL FilterDuplicates(void)
           // mailtransfernode we go and check if that UIDL is already in our UIDLhash
           // and if so we go and flag the mail as a mail that should not be downloaded
           // automatically
-          if(G->TR->UIDLhashTable->entryCount > 0 && mtn->UIDL)
+          if(G->TR->UIDLhashTable->entryCount > 0 && mtn->UIDL != NULL)
           {
             struct HashEntryHeader *entry = HashTableOperate(G->TR->UIDLhashTable, mtn->UIDL, htoLookup);
 
@@ -4987,14 +4988,14 @@ static void AddUIDLtoHash(const char *uidl, BOOL checked)
   LEAVE();
 }
 ///
-/// RemoveUIDLtoHash()
+/// RemoveUIDLfromHash()
 // removes the UIDL of a mail transfer node from the hash
 static void RemoveUIDLfromHash(const char *uidl)
 {
   ENTER();
 
   // signal our hash to remove the entry with the uidl key
-  if(HashTableOperate(G->TR->UIDLhashTable, uidl, htoRemove))
+  if(HashTableOperate(G->TR->UIDLhashTable, uidl, htoRemove) != NULL)
     D(DBF_UIDL, "removed UIDL '%s' from hash", uidl);
   else
     W(DBF_UIDL, "couldn't remove UIDL '%s' from hash", uidl);
@@ -6158,209 +6159,211 @@ static BOOL ReadDBXNode(FILE *fh, char *outFileName, unsigned int addr, int *mai
 BOOL TR_GetMessageList_IMPORT(void)
 {
   BOOL result = FALSE;
-  char tfname[SIZE_MFILE];
-  char fname[SIZE_PATHFILE];
-  int c = 0;
 
   ENTER();
 
   // check if MA_ImportMessages() did correctly set all required
   // data
-  if(G->TR->ImportFile[0] == '\0' || G->TR->ImportFolder == NULL)
+  if(G->TR->ImportFile[0] != '\0' && G->TR->ImportFolder != NULL)
   {
-    RETURN(FALSE);
-    return FALSE;
+    char tfname[SIZE_MFILE];
+    char fname[SIZE_PATHFILE];
+    int c = 0;
+
+    // clear the found mail list per default
+    NewList((struct List *)&G->TR->transferList);
+
+    // prepare the temporary filename buffers
+    snprintf(tfname, sizeof(tfname), "YAMi%08lx.tmp", GetUniqueID());
+    strmfp(fname, C->TempDir, tfname);
+
+    // before this function is called the MA_ImportMessages() function
+    // already found out which import format we can expect. So we
+    // distinguish between the different known formats here
+    switch(G->TR->ImportFormat)
+    {
+      // treat the file as a MBOX compliant file
+      case IMF_MBOX:
+      {
+        FILE *ifh;
+
+        D(DBF_IMPORT, "trying to retrieve mail list from MBOX compliant file");
+
+        if((ifh = fopen(G->TR->ImportFile, "r")) != NULL)
+        {
+          FILE *ofh = NULL;
+          char buffer[SIZE_LINE];
+          BOOL foundBody = FALSE;
+          int size = 0;
+          long addr = 0;
+
+          setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
+
+          while(GetLine(ifh, buffer, SIZE_LINE))
+          {
+            // now we parse through the input file until we
+            // find the "From " separator
+            if(strncmp(buffer, "From ", 5) == 0)
+            {
+              // now we know that a new mail has started so if
+              // we already found a previous mail we can add it
+              // to our list
+              if(foundBody == TRUE)
+              {
+                D(DBF_IMPORT, "found subsequent 'From ' separator: '%s'", buffer);
+
+                result = (TR_AddMessageHeader(&c, size, addr, tfname) != NULL);
+                DeleteFile(fname);
+
+                if(result == FALSE)
+                  break;
+              }
+              else
+                D(DBF_IMPORT, "found first 'From ' separator: '%s'", buffer);
+
+              // as a new mail is starting we have to
+              // open a new file handler
+              if((ofh = fopen(fname, "w")) == NULL)
+                break;
+
+              setvbuf(ofh, NULL, _IOFBF, SIZE_FILEBUF);
+
+              size = 0;
+              foundBody = FALSE;
+              addr = ftell(ifh);
+
+              // continue with the next iteration
+              continue;
+            }
+
+            // if we already have an opened tempfile
+            // and we didn't found the separating mail body
+            // yet we go and write out the buffer content
+            if(ofh != NULL && foundBody == FALSE)
+            {
+              fprintf(ofh, "%s\n", buffer);
+
+              // if the buffer is empty we found the corresponding body
+              // of the mail and can close the ofh pointer
+              if(buffer[0] == '\0')
+              {
+                fclose(ofh);
+                ofh = NULL;
+                foundBody = TRUE;
+
+                D(DBF_IMPORT, "found body part of import mail");
+              }
+            }
+
+            // to sum the size we count the length of our read buffer
+            if(ofh != NULL || foundBody == TRUE)
+              size += strlen(buffer)+1;
+          }
+
+          // check the reason why we exited the while loop
+          if(feof(ifh) == 0)
+          {
+            E(DBF_IMPORT, "while loop seems to have exited without having scanned until EOF!");
+            result = foundBody = FALSE;
+          }
+
+          // after quiting the while() loop, we have to check
+          // if there is still some data to process
+          if(foundBody == TRUE)
+          {
+            result = (TR_AddMessageHeader(&c, size, addr, tfname) != NULL);
+            DeleteFile(fname);
+          }
+          else if(ofh != NULL)
+          {
+            fclose(ofh);
+            ofh = NULL;
+            DeleteFile(fname);
+          }
+
+          fclose(ifh);
+        }
+        else
+          E(DBF_IMPORT, "Error on trying to open file '%s'", G->TR->ImportFile);
+      }
+      break;
+
+      // treat the file as a file that contains a single
+      // unencoded mail (*.eml alike file)
+      case IMF_PLAIN:
+      {
+        if(CopyFile(fname, NULL, G->TR->ImportFile, NULL) == TRUE)
+        {
+          // if the file was identified as a plain .eml file we
+          // just have to go and call TR_AddMessageHeader to let
+          // YAM analyze the file
+          result = (TR_AddMessageHeader(&c, FileSize(fname), 0, tfname) != NULL);
+
+          DeleteFile(fname);
+        }
+      }
+      break;
+
+      // treat the file as a DBX (Outlook Express) compliant mail archive
+      case IMF_DBX:
+      {
+        FILE *ifh;
+
+        // lets open the file and read out the root node of the dbx mail file
+        if((ifh = fopen(G->TR->ImportFile, "rb")) != NULL)
+        {
+          unsigned char *file_header;
+
+          setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
+
+          // read the 9404 bytes long file header for properly identifying
+          // an Outlook Express database file.
+          if((file_header = (unsigned char *)malloc(0x24bc)) != NULL)
+          {
+            if(fread(file_header, 1, 0x24bc, ifh) == 0x24bc)
+            {
+              // try to identify the file as a CLSID_MessageDatabase file
+              if((file_header[0] == 0xcf && file_header[1] == 0xad &&
+                  file_header[2] == 0x12 && file_header[3] == 0xfe) &&
+                 (file_header[4] == 0xc5 && file_header[5] == 0xfd &&
+                  file_header[6] == 0x74 && file_header[7] == 0x6f))
+              {
+                int number_of_mails = GetLong(file_header, 0xc4);
+                unsigned int root_node = GetLong(file_header, 0xe4);
+
+                D(DBF_IMPORT, "number of mails in dbx file: %ld", number_of_mails);
+
+                // now we actually start at the root node and read in all messages
+                // accordingly
+                if(ReadDBXNode(ifh, fname, root_node, &c, TRUE) == TRUE && c == number_of_mails)
+                  result = TRUE;
+                else
+                  E(DBF_IMPORT, "Failed to read from root_node; c=%ld", c);
+              }
+            }
+
+            free(file_header);
+          }
+
+          fclose(ifh);
+        }
+      }
+      break;
+
+      case IMF_UNKNOWN:
+        // nothing
+      break;
+    };
+
+    TR_DisplayMailList(FALSE);
+
+    // if everything went fine but we didn't find any mail to import we signal failure
+    if(c == 0)
+      result = FALSE;
   }
 
-  // clear the found mail list per default
-  NewList((struct List *)&G->TR->transferList);
-
-  // prepare the temporary filename buffers
-  snprintf(tfname, sizeof(tfname), "YAMi%08lx.tmp", GetUniqueID());
-  strmfp(fname, C->TempDir, tfname);
-
-  // before this function is called the MA_ImportMessages() function
-  // already found out which import format we can expect. So we
-  // distinguish between the different known formats here
-  switch(G->TR->ImportFormat)
-  {
-    // treat the file as a MBOX compliant file
-    case IMF_MBOX:
-    {
-      FILE *ifh;
-
-      D(DBF_IMPORT, "trying to retrieve mail list from MBOX compliant file");
-
-      if((ifh = fopen(G->TR->ImportFile, "r")) != NULL)
-      {
-        FILE *ofh = NULL;
-        char buffer[SIZE_LINE];
-        BOOL foundBody = FALSE;
-        int size = 0;
-        long addr = 0;
-
-        setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
-
-        while(GetLine(ifh, buffer, SIZE_LINE))
-        {
-          // now we parse through the input file until we
-          // find the "From " separator
-          if(strncmp(buffer, "From ", 5) == 0)
-          {
-            // now we know that a new mail has started so if
-            // we already found a previous mail we can add it
-            // to our list
-            if(foundBody)
-            {
-              D(DBF_IMPORT, "found subsequent 'From ' separator: '%s'", buffer);
-
-              result = (TR_AddMessageHeader(&c, size, addr, tfname) != NULL);
-              DeleteFile(fname);
-
-              if(result == FALSE)
-                break;
-            }
-            else
-              D(DBF_IMPORT, "found first 'From ' separator: '%s'", buffer);
-
-            // as a new mail is starting we have to
-            // open a new file handler
-            if((ofh = fopen(fname, "w")) == NULL)
-              break;
-
-            setvbuf(ofh, NULL, _IOFBF, SIZE_FILEBUF);
-
-            size = 0;
-            foundBody = FALSE;
-            addr = ftell(ifh);
-
-            // continue with the next iteration
-            continue;
-          }
-
-          // if we already have an opened tempfile
-          // and we didn't found the separating mail body
-          // yet we go and write out the buffer content
-          if(ofh && foundBody == FALSE)
-          {
-            fprintf(ofh, "%s\n", buffer);
-
-            // if the buffer is empty we found the corresponding body
-            // of the mail and can close the ofh pointer
-            if(buffer[0] == '\0')
-            {
-              fclose(ofh);
-              ofh = NULL;
-              foundBody = TRUE;
-
-              D(DBF_IMPORT, "found body part of import mail");
-            }
-          }
-
-          // to sum the size we count the length of our read buffer
-          if(ofh || foundBody)
-            size += strlen(buffer)+1;
-        }
-
-        // check the reason why we exited the while loop
-        if(feof(ifh) == 0)
-        {
-          E(DBF_IMPORT, "while loop seems to have exited without having scanned until EOF!");
-          result = foundBody = FALSE;
-        }
-
-        // after quiting the while() loop, we have to check
-        // if there is still some data to process
-        if(foundBody)
-        {
-          result = (TR_AddMessageHeader(&c, size, addr, tfname) != NULL);
-          DeleteFile(fname);
-        }
-        else if(ofh)
-        {
-          fclose(ofh);
-          ofh = NULL;
-          DeleteFile(fname);
-        }
-
-        fclose(ifh);
-      }
-      else
-        E(DBF_IMPORT, "Error on trying to open file '%s'", G->TR->ImportFile);
-    }
-    break;
-
-    // treat the file as a file that contains a single
-    // unencoded mail (*.eml alike file)
-    case IMF_PLAIN:
-    {
-      if(CopyFile(fname, NULL, G->TR->ImportFile, NULL))
-      {
-        // if the file was identified as a plain .eml file we
-        // just have to go and call TR_AddMessageHeader to let
-        // YAM analyze the file
-        result = (TR_AddMessageHeader(&c, FileSize(fname), 0, tfname) != NULL);
-
-        DeleteFile(fname);
-      }
-    }
-    break;
-
-    // treat the file as a DBX (Outlook Express) compliant mail archive
-    case IMF_DBX:
-    {
-      FILE *ifh;
-
-      // lets open the file and read out the root node of the dbx mail file
-      if((ifh = fopen(G->TR->ImportFile, "rb")) != NULL)
-      {
-        unsigned char *file_header;
-
-        setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
-
-        // read the 9404 bytes long file header for properly identifying
-        // an Outlook Express database file.
-        if((file_header = (unsigned char *)malloc(0x24bc)))
-        {
-          if(fread(file_header, 1, 0x24bc, ifh) == 0x24bc)
-          {
-            // try to identify the file as a CLSID_MessageDatabase file
-            if((file_header[0] == 0xcf && file_header[1] == 0xad &&
-                file_header[2] == 0x12 && file_header[3] == 0xfe) &&
-               (file_header[4] == 0xc5 && file_header[5] == 0xfd &&
-                file_header[6] == 0x74 && file_header[7] == 0x6f))
-            {
-              int number_of_mails = GetLong(file_header, 0xc4);
-              unsigned int root_node = GetLong(file_header, 0xe4);
-
-              D(DBF_IMPORT, "number of mails in dbx file: %ld", number_of_mails);
-
-              // now we actually start at the root node and read in all messages
-              // accordingly
-              if(ReadDBXNode(ifh, fname, root_node, &c, TRUE) && c == number_of_mails)
-                result = TRUE;
-              else
-                E(DBF_IMPORT, "Failed to read from root_node; c=%ld", c);
-            }
-          }
-
-          free(file_header);
-        }
-
-        fclose(ifh);
-      }
-    }
-    break;
-
-    case IMF_UNKNOWN:
-      // nothing
-    break;
-  };
-
-  TR_DisplayMailList(FALSE);
-
-  RETURN((BOOL)(result == TRUE && c > 0));
-  return (BOOL)(result == TRUE && c > 0);
+  RETURN(result);
+  return result;
 }
 ///
 /// TR_AbortIMPORTFunc
@@ -6384,7 +6387,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
     struct TransStat ts;
 
     TR_TransStat_Init(&ts);
-    if(ts.Msgs_Tot)
+    if(ts.Msgs_Tot > 0)
     {
       struct Folder *folder = G->TR->ImportFolder;
       enum FolderType ftype = folder->Type;
@@ -6452,7 +6455,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                     // we search for some interesting header lines (i.e. X-Status: etc.)
                     if(strnicmp(buffer, "X-Status: ", 10) == 0)
                     {
-                      if(ownStatusFound)
+                      if(ownStatusFound == TRUE)
                         stat |= MA_FromXStatusHeader(&buffer[10]);
                       else
                         stat = MA_FromXStatusHeader(&buffer[10]);
@@ -6461,7 +6464,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                     }
                     else if(strnicmp(buffer, "Status: ", 8) == 0)
                     {
-                      if(ownStatusFound)
+                      if(ownStatusFound == TRUE)
                         stat |= MA_FromStatusHeader(&buffer[8]);
                       else
                         stat = MA_FromStatusHeader(&buffer[8]);
@@ -6638,9 +6641,9 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
         break;
       }
 
-      DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
       AppendToLogfile(LF_ALL, 50, tr(MSG_LOG_Importing), ts.Msgs_Done, G->TR->ImportFile, folder->Name);
       DisplayStatistics(folder, TRUE);
+      MA_ChangeFolder(NULL, FALSE);
     }
 
     TR_AbortnClose();

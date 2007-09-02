@@ -767,10 +767,10 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
 
   ENTER();
 
-  if(C->RemoveAtOnce ||
+  if(C->RemoveAtOnce == TRUE ||
      isTrashFolder(mailFolder) ||
      (isSpamFolder(mailFolder) && hasStatusSpam(mail)) ||
-     forceatonce)
+     forceatonce == TRUE)
   {
     int i;
 
@@ -780,12 +780,12 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
     {
       struct WR_ClassData *writeWin = G->WR[i];
 
-      if(writeWin)
+      if(writeWin != NULL)
       {
         if(writeWin->refMail == mail)
           writeWin->refMail = NULL;
 
-        if(writeWin->refMailList)
+        if(writeWin->refMailList != NULL)
         {
           int j;
 
@@ -810,7 +810,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
 
     // if we are allowed to make some noise we
     // update our Statistics
-    if(!quiet)
+    if(quiet == FALSE)
       DisplayStatistics(mailFolder, TRUE);
   }
   else
@@ -821,10 +821,12 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
 
     // if we are allowed to make some noise we
     // update our Statistics
-    if(!quiet)
+    if(quiet == FALSE)
     {
-      DisplayStatistics(delfolder, FALSE);  // don`t update the appicon
-      DisplayStatistics(mailFolder, TRUE);  // but update it now.
+      // don't update the appicon yet
+      DisplayStatistics(delfolder, FALSE);  
+      // but update it now.
+      DisplayStatistics(mailFolder, TRUE);  
     }
   }
 
@@ -3100,17 +3102,17 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
       BOOL okToDelete = TRUE;
 
       selected = (int)*mlist;
-      if(C->Confirm && selected >= C->ConfirmDelete && !force)
+      if(C->Confirm == TRUE && selected >= C->ConfirmDelete && force == FALSE)
       {
         char buffer[SIZE_DEFAULT];
 
         snprintf(buffer, sizeof(buffer), tr(MSG_MA_CONFIRMDELETION), selected);
 
-        if(!MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buffer))
+        if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buffer) == 0)
           okToDelete = FALSE;
       }
 
-      if(okToDelete)
+      if(okToDelete == TRUE)
       {
         int i;
         BOOL ignoreall = FALSE;
@@ -3122,7 +3124,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         {
           struct Mail *mail = mlist[i + 2];
 
-          if(isSendMDNMail(mail) && !ignoreall &&
+          if(isSendMDNMail(mail) && ignoreall == FALSE &&
              (hasStatusNew(mail) || !hasStatusRead(mail)))
           {
             ignoreall = RE_ProcessMDN(MDN_MODE_DELETE, mail, (selected >= 2), FALSE);
@@ -3141,7 +3143,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         BusyEnd();
         set(lv, MUIA_NList_Quiet, FALSE);
 
-        if(delatonce || C->RemoveAtOnce || folder == delfolder || isSpamFolder(folder))
+        if(delatonce == TRUE || C->RemoveAtOnce == TRUE || folder == delfolder || isSpamFolder(folder))
           AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), selected, folder->Name);
         else
           AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), selected, folder->Name, delfolder->Name);
@@ -3873,136 +3875,134 @@ BOOL MA_ImportMessages(const char *fname)
 {
   BOOL result = FALSE;
   struct Folder *actfo = FO_GetCurrentFolder();
-  enum ImportFormat foundFormat = IMF_UNKNOWN;
-  FILE *fh;
 
   ENTER();
 
   // check that a real folder is active
-  if(!actfo || isGroupFolder(actfo))
+  if(actfo != NULL && isGroupFolder(actfo) == FALSE)
   {
-    RETURN(FALSE);
-    return FALSE;
-  }
+    enum ImportFormat foundFormat = IMF_UNKNOWN;
+    FILE *fh;
 
-  // check if the file exists or not and if so, open
-  // it immediately.
-  if((fh = fopen(fname, "r")))
-  {
-    int i=0;
-    char buffer[SIZE_LINE];
-
-    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
-    // what we do first is to try to find out which
-    // file the user tries to import and if it is a valid
-    // and supported one.
-
-    // try to identify the file as an MBOX file by trying
-    // to find a line starting with "From " in the first 10
-    // successive lines.
-    D(DBF_IMPORT, "processing MBOX file identification");
-    while(i < 10 && fgets(buffer, SIZE_LINE, fh))
+    // check if the file exists or not and if so, open
+    // it immediately.
+    if((fh = fopen(fname, "r")) != NULL)
     {
-      if(strncmp(buffer, "From ", 5) == 0)
+      int i=0;
+      char buffer[SIZE_LINE];
+
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+      // what we do first is to try to find out which
+      // file the user tries to import and if it is a valid
+      // and supported one.
+
+      // try to identify the file as an MBOX file by trying
+      // to find a line starting with "From " in the first 10
+      // successive lines.
+      D(DBF_IMPORT, "processing MBOX file identification");
+      while(i < 10 && fgets(buffer, SIZE_LINE, fh))
       {
-        foundFormat = IMF_MBOX;
-        break;
-      }
-
-      i++;
-    }
-
-    // if we still couldn't identify the file
-    // we go and try to identify it as a dbx (Outlook Express)
-    // message file
-    // Please check http://oedbx.aroh.de/ for a recent description
-    // of the format!
-    if(foundFormat == IMF_UNKNOWN)
-    {
-      unsigned char *file_header;
-
-      D(DBF_IMPORT, "processing DBX file identification");
-
-      // seek the file pointer back
-      fseek(fh, 0, SEEK_SET);
-
-      // read the 9404 bytes long file header for properly identifying
-      // an Outlook Express database file.
-      if((file_header = (unsigned char *)malloc(0x24bc)))
-      {
-        if(fread(file_header, 1, 0x24bc, fh) == 0x24bc)
+        if(strncmp(buffer, "From ", 5) == 0)
         {
-          // try to identify the file as a CLSID_MessageDatabase file
-          if((file_header[0] == 0xcf && file_header[1] == 0xad &&
-              file_header[2] == 0x12 && file_header[3] == 0xfe) &&
-             (file_header[4] == 0xc5 && file_header[5] == 0xfd &&
-              file_header[6] == 0x74 && file_header[7] == 0x6f))
-          {
-            // the file seems to be indeed an Outlook Express
-            // message database file (.dbx)
-            foundFormat = IMF_DBX;
-          }
+          foundFormat = IMF_MBOX;
+          break;
         }
 
-        free(file_header);
+        i++;
       }
-    }
 
-    // if we still haven't identified the file we try to find out
-    // if it might be just a RAW mail file without a common "From "
-    // phrase a MBOX compliant mail file normally contains.
-    if(foundFormat == IMF_UNKNOWN || foundFormat == IMF_MBOX)
-    {
-      int foundTokens = 0;
-
-      D(DBF_IMPORT, "processing PLAIN mail file identification");
-
-      // seek the file pointer back
-      fseek(fh, 0, SEEK_SET);
-
-      while(fgets(buffer, SIZE_LINE, fh) && foundTokens < 2)
+      // if we still couldn't identify the file
+      // we go and try to identify it as a dbx (Outlook Express)
+      // message file
+      // Please check http://oedbx.aroh.de/ for a recent description
+      // of the format!
+      if(foundFormat == IMF_UNKNOWN)
       {
-        if(strnicmp(buffer, "From:", 5) == 0)
-          foundTokens = 1;
-        else if(strnicmp(buffer, "Subject:", 8) == 0)
-          foundTokens = 2;
+        unsigned char *file_header;
+
+        D(DBF_IMPORT, "processing DBX file identification");
+
+        // seek the file pointer back
+        fseek(fh, 0, SEEK_SET);
+
+        // read the 9404 bytes long file header for properly identifying
+        // an Outlook Express database file.
+        if((file_header = (unsigned char *)malloc(0x24bc)) !=  NULL)
+        {
+          if(fread(file_header, 1, 0x24bc, fh) == 0x24bc)
+          {
+            // try to identify the file as a CLSID_MessageDatabase file
+            if((file_header[0] == 0xcf && file_header[1] == 0xad &&
+                file_header[2] == 0x12 && file_header[3] == 0xfe) &&
+               (file_header[4] == 0xc5 && file_header[5] == 0xfd &&
+                file_header[6] == 0x74 && file_header[7] == 0x6f))
+            {
+              // the file seems to be indeed an Outlook Express
+              // message database file (.dbx)
+              foundFormat = IMF_DBX;
+            }
+          }
+
+          free(file_header);
+        }
       }
 
-      // if we found all tokens we can set the ImportFormat accordingly.
-      if(foundTokens == 2)
-        foundFormat = (foundFormat == IMF_UNKNOWN ? IMF_PLAIN : IMF_MBOX);
-      else
-        foundFormat = IMF_UNKNOWN;
+      // if we still haven't identified the file we try to find out
+      // if it might be just a RAW mail file without a common "From "
+      // phrase a MBOX compliant mail file normally contains.
+      if(foundFormat == IMF_UNKNOWN || foundFormat == IMF_MBOX)
+      {
+        int foundTokens = 0;
+
+        D(DBF_IMPORT, "processing PLAIN mail file identification");
+
+        // seek the file pointer back
+        fseek(fh, 0, SEEK_SET);
+
+        while(fgets(buffer, SIZE_LINE, fh) && foundTokens < 2)
+        {
+          if(strnicmp(buffer, "From:", 5) == 0)
+            foundTokens = 1;
+          else if(strnicmp(buffer, "Subject:", 8) == 0)
+            foundTokens = 2;
+        }
+
+        // if we found all tokens we can set the ImportFormat accordingly.
+        if(foundTokens == 2)
+          foundFormat = (foundFormat == IMF_UNKNOWN ? IMF_PLAIN : IMF_MBOX);
+        else
+          foundFormat = IMF_UNKNOWN;
+      }
+
+      fclose(fh);
     }
 
-    fclose(fh);
-  }
+    SHOWVALUE(DBF_IMPORT, foundFormat);
 
-  SHOWVALUE(DBF_IMPORT, foundFormat);
-
-  // if we found that the file contains a valid import format
-  // we go and create a transfer window object and let the user
-  // choose which mail he wants to actually import.
-  if(foundFormat != IMF_UNKNOWN && (G->TR = TR_New(TR_IMPORT)))
-  {
-    TR_SetWinTitle(TRUE, (char *)FilePart(fname));
-
-    // put some import relevant data into variables of our
-    // transfer window object
-    strlcpy(G->TR->ImportFile, fname, sizeof(G->TR->ImportFile));
-    G->TR->ImportFolder = actfo;
-    G->TR->ImportFormat = foundFormat;
-
-    // call GetMessageList_IMPORT() to parse the file once again
-    // and present the user with a selectable list of mails the file
-    // contains.
-    if(TR_GetMessageList_IMPORT() && SafeOpenWindow(G->TR->GUI.WI))
-      result = TRUE;
-    else
+    // if we found that the file contains a valid import format
+    // we go and create a transfer window object and let the user
+    // choose which mail he wants to actually import.
+    if(foundFormat != IMF_UNKNOWN && (G->TR = TR_New(TR_IMPORT)) != NULL)
     {
-      MA_ChangeTransfer(TRUE);
-      DisposeModulePush(&G->TR);
+      TR_SetWinTitle(TRUE, (char *)FilePart(fname));
+
+      // put some import relevant data into variables of our
+      // transfer window object
+      strlcpy(G->TR->ImportFile, fname, sizeof(G->TR->ImportFile));
+      G->TR->ImportFolder = actfo;
+      G->TR->ImportFormat = foundFormat;
+
+      // call GetMessageList_IMPORT() to parse the file once again
+      // and present the user with a selectable list of mails the file
+      // contains.
+      if(TR_GetMessageList_IMPORT() == TRUE && SafeOpenWindow(G->TR->GUI.WI) == TRUE)
+        result = TRUE;
+      else
+      {
+        MA_ChangeTransfer(TRUE);
+        DisposeModulePush(&G->TR);
+      }
     }
   }
 
