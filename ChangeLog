@@ -7,6 +7,7 @@ $URL$
 
 2007-09-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: removed some unnecessary local prototypes.
   * YAM_MA.c, YAM_TR.c: when importing mails to an empty folder the menu items
     and the toolbar are now adapted accordingly to be active.
   * YAM_UT.c: added "mbox" suffix to the import/export requesters' patterns.

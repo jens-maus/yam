@@ -81,11 +81,6 @@ enum VarPopMode { VPM_FORWARD=0,
                   VPM_MIME_COMMAND,
                 };
 
-/* local protos */
-static Object *MakeVarPop(Object **, enum VarPopMode, int, const char *);
-static Object *MakePhraseGroup(Object **, Object **, Object **, const char*, const char*);
-static Object *MakeStaticCheck(void);
-
 /* local defines */
 /// ConfigPageHeaderObject()
 #define ConfigPageHeaderObject(image, title, summary) \
