@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-02  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c: when switching to the 'Message' tab of the write window, the
+    texteditor gadget will automatically be set as the new active object of
+    the window. This should help in preventing to send out email by accident
+    in case a user is switching between the tabs and wants to quickly
+    continue writing an email and ending up with automatically sending out
+    the mail.
+
 2007-09-01  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: updated according to changes.

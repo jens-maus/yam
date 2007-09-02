@@ -4086,9 +4086,7 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.MI_ITALIC,  MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_ITALIC, winnum);
          DoMethod(data->GUI.MI_UNDERLINE, MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_UNDERLINE, winnum);
          DoMethod(data->GUI.MI_COLORED, MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_COLOR, winnum);
-         DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,0             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,FALSE);
-         DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,1             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,TRUE);
-         DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,2             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,TRUE);
+         DoMethod(data->GUI.RG_PAGE,    MUIM_Notify, MUIA_Group_ActivePage, 0, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->GUI.TE_EDIT);
          DoMethod(data->GUI.ST_SUBJECT ,MUIM_Notify,MUIA_String_Acknowledge  ,MUIV_EveryTime,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_ActiveObject,data->GUI.TE_EDIT);
          DoMethod(data->GUI.ST_SUBJECT ,MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime, MUIV_Notify_Application,3,MUIM_CallHook,   &WR_UpdateWTitleHook,winnum);
          DoMethod(data->GUI.BT_ADD     ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddFileHook,winnum);
