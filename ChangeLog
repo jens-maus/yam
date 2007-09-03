@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c, YAM_COs.c, ReadMailGroup.c: due to massive public pressure the
+    autoclipping feature of the read mail group is now optional. To activate it
+    you have to manually set the options NListAutoClip and/or TextEditorAutoClip
+    in the advanced section of YAM's configuration. Please note that the
+    autoclip feature will prevent future enhancements which rely on persistent
+    text selections. So don't blame us if these enhancements will not work.
+    Autoclipping is very inconsistent to the usual style guides of all modern
+    operating systems and will destroy the existing clipboard contents without
+    warning even if only one single character is marked. You have been warned!
+
 2007-09-02  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c: removed some unnecessary local prototypes.

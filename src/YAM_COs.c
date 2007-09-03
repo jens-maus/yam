@@ -585,6 +585,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "StyleFolderNew   = %s\n", MUIStyle2String(co->StyleFolderNew));
     fprintf(fh, "StyleMailUnread  = %s\n", MUIStyle2String(co->StyleMailUnread));
     fprintf(fh, "StyleMailRead    = %s\n", MUIStyle2String(co->StyleMailRead));
+    fprintf(fh, "NListAutoClip      = %s\n", Bool2Txt(co->NListAutoClip));
+    fprintf(fh, "TextEditorAutoClip = %s\n", Bool2Txt(co->TextEditorAutoClip));
 
     // analyze if we really didn't meet an error during the
     // numerous write operations
@@ -1348,6 +1350,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
           else if(!stricmp(buffer, "StyleFolderNew")) String2MUIStyle(value, co->StyleFolderNew);
           else if(!stricmp(buffer, "StyleMailUnread")) String2MUIStyle(value, co->StyleMailUnread);
           else if(!stricmp(buffer, "StyleMailRead")) String2MUIStyle(value, co->StyleMailRead);
+          else if(!stricmp(buffer, "NListAutoClip")) co->NListAutoClip = Txt2Bool(value);
+          else if(!stricmp(buffer, "TextEditorAutoClip")) co->TextEditorAutoClip = Txt2Bool(value);
           else
             W(DBF_CONFIG, "unknown config option: '%s' = '%s'", buffer, value);
         }
