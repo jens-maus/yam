@@ -519,8 +519,7 @@ struct Config
   BOOL  MDNEnabled;
   BOOL  RequestMDN;
   BOOL  ConfigIsSaved;
-  BOOL  NListAutoClip;
-  BOOL  TextEditorAutoClip;
+  BOOL  AutoClip;
 
   struct MUI_PenSpec ColoredText;
   struct MUI_PenSpec Color1stLevel;

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-03  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_CO.c, YAM_COs.c: ReadMailGroup.c: revised the recent Autoclip change
+    to only have one single hidden option named "AutoClip" rather than two
+    seperate ones. There is really no reason to spoil our configuration with
+    two options for this kind of workaround.
+
 2007-09-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c, YAM_COs.c, ReadMailGroup.c: due to massive public pressure the

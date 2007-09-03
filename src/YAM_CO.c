@@ -1034,8 +1034,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->TRBufferSize = 8192; // 8K buffer per default
     co->EmbeddedMailDelay = 200; // 200ms delay per default
     co->KeepAliveInterval = 30;  // 30s interval per default
-    co->NListAutoClip = FALSE;
-    co->TextEditorAutoClip = FALSE;
+    co->AutoClip = FALSE;
 
     // set the default styles of the folder listtree and
     // mail list items.
