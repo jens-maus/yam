@@ -525,6 +525,50 @@ OVERLOAD(OM_SET)
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
+///
+/// OVERLOAD(MUIM_Setup)
+OVERLOAD(MUIM_Setup)
+{
+  GETDATA;
+  ULONG result;
+
+  ENTER();
+
+  if((result = DoSuperMethodA(cl, obj, msg)))
+  {
+    // add some notifies to cancel a selection whenever the default object changes
+    // to one these two objects. This must be done here, because _win() is only valid
+    // between MUIM_Setup and MUIM_Cleanup.
+    DoMethod(_win(obj), MUIM_Notify, MUIA_Window_DefaultObject, data->headerList,
+             data->mailTextObject, 5, MUIM_TextEditor_MarkText, 0, MUIV_TextEditor_MarkText_None, 0, MUIV_TextEditor_MarkText_None);
+    DoMethod(_win(obj), MUIM_Notify, MUIA_Window_DefaultObject, data->mailTextObject,
+             data->headerList, 4, MUIM_NList_Select, 0, MUIV_NList_Select_Off, NULL);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// OVERLOAD(MUIM_Cleanup)
+OVERLOAD(MUIM_Cleanup)
+{
+  GETDATA;
+  ULONG result;
+
+  ENTER();
+
+  // remove the notifies done during the setup
+  DoMethod(_win(obj), MUIM_KillNotifyObj, MUIA_Window_DefaultObject, data->headerList);
+  DoMethod(_win(obj), MUIM_KillNotifyObj, MUIA_Window_DefaultObject, data->mailTextObject);
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+
 ///
 /// OVERLOAD(MUIM_ContextMenuBuild)
 OVERLOAD(MUIM_ContextMenuBuild)

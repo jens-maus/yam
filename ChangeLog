@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-06  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ReadMailGroup.c: whenever the default object of a read mail group changes
+    to either the header list or the mail text object a possible selection in
+    the other object is canceled. This is more logical since the Copy/Paste
+    menu items can only work for one object and it is consistent to how string
+    gadgets work for example.
+
 2007-09-03  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_CO.c, YAM_COs.c: ReadMailGroup.c: revised the recent Autoclip change
