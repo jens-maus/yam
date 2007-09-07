@@ -116,12 +116,12 @@ OVERLOAD(OM_NEW)
                             compopt[12] = " IN ";
   compopt[4] = compopt[7] = compopt[13] = NULL;
 
-  fldopt[0][0] = fldopt[1][0] = tr(MSG_FI_FromField);
-  fldopt[0][1] = fldopt[1][1] = tr(MSG_FI_ToField);
-  fldopt[0][2] = fldopt[1][2] = tr(MSG_FI_CCField);
-  fldopt[0][3] = fldopt[1][3] = tr(MSG_FI_ReplyToField);
-  fldopt[0][4] = fldopt[1][4] = tr(MSG_FI_SubjectField);
-  fldopt[0][5] = fldopt[1][5] = tr(MSG_FI_DateField);
+  fldopt[0][0] = fldopt[1][0] = tr(MSG_FI_FROM_FIELD);
+  fldopt[0][1] = fldopt[1][1] = tr(MSG_FI_TO_FIELD);
+  fldopt[0][2] = fldopt[1][2] = tr(MSG_FI_CC_FIELD);
+  fldopt[0][3] = fldopt[1][3] = tr(MSG_FI_REPLYTO_FIELD);
+  fldopt[0][4] = fldopt[1][4] = tr(MSG_FI_SUBJECT_FIELD);
+  fldopt[0][5] = fldopt[1][5] = tr(MSG_FI_DATE_FIELD);
   fldopt[0][6] = fldopt[1][6] = tr(MSG_FI_OtherField);
   fldopt[0][7] = fldopt[1][7] = tr(MSG_FI_MessageSize);
   fldopt[0][8] = fldopt[1][8] = tr(MSG_FI_MessageHeader);
@@ -251,7 +251,7 @@ OVERLOAD(OM_NEW)
 
     // set ST_MATCH[0] as the current active object
     data->activeObject = data->ST_MATCH[0];
-    
+
     // set help text
     SetHelp(data->CY_MODE[0], MSG_HELP_FI_CY_MODE);
     SetHelp(data->CY_MODE[1], MSG_HELP_FI_CY_MODE);
@@ -281,7 +281,7 @@ OVERLOAD(OM_NEW)
         DoMethod(data->ST_MATCH[i], MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
         SetHelp(data->ST_MATCH[i], MSG_HELP_FI_ST_MATCH);
       }
-      
+
       if(data->CH_CASESENS[i])
       {
         DoMethod(data->CH_CASESENS[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
@@ -346,7 +346,7 @@ OVERLOAD(OM_SET)
         int i;
         int mode = GetMUICycle(data->CY_MODE[data->remoteFilterMode]);
         int oper = GetMUICycle(data->CY_COMP[Mode2Group[mode]]);
-      
+
         set(data->CY_MODE[0], MUIA_Disabled, disabled);
         set(data->CY_MODE[1], MUIA_Disabled, disabled);
         set(data->ST_FIELD, MUIA_Disabled, disabled);
@@ -357,7 +357,7 @@ OVERLOAD(OM_SET)
         for(i = 0; i < 5; i++)
         {
           set(data->CY_COMP[i], MUIA_Disabled, disabled);
-          
+
           if(data->ST_MATCH[i])     set(data->ST_MATCH[i], MUIA_Disabled, disabled);
           if(data->CH_CASESENS[i])   set(data->CH_CASESENS[i], MUIA_Disabled, disabled);
           if(data->CH_SUBSTR[i])     set(data->CH_SUBSTR[i], MUIA_Disabled, disabled || oper == 4 || (i < 2 && oper > 1));
@@ -563,7 +563,7 @@ DECLARE(Update)
                   MUIA_SearchControlGroup_Modified, TRUE,
                   TAG_DONE);
   }
-  
+
   RETURN(0);
   return 0;
 }

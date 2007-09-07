@@ -3632,24 +3632,6 @@ On hold
 MSG_FI_StatSent (1169//)
 Sent
 ;
-MSG_FI_FromField (1170//)
-\ebFrom\en field
-;
-MSG_FI_ToField (1171//)
-\ebTo\en
-;
-MSG_FI_CCField (1172//)
-\ebCC\en
-;
-MSG_FI_ReplyToField (1173//)
-\ebReply-To\en
-;
-MSG_FI_SubjectField (1174//)
-\ebSubject\en
-;
-MSG_FI_DateField (1175//)
-\ebDate\en
-;
 MSG_FI_OtherField (1176//)
 other field:
 ;
@@ -3933,12 +3915,6 @@ Rev
 MSG_FO_MLSupport (1258//)
 Mailing list support
 ;
-MSG_FO_ToPattern (1259//)
-To: _pattern
-;
-MSG_FO_ToAddress (1260//)
-_To: address
-;
 ;
 ; Module FO - Bubblehelp
 ;
@@ -4096,15 +4072,9 @@ Users...
 MSG_SETTINGS_MUI (1323//)
 MUI...
 ;
-MSG_FO_FromAddress (1324//)
-_From: address
-;
 MSG_HELP_FO_ST_MLFROMADDRESS (1325//)
 Use this 'From:' address when\n\
 posting new mails to the list
-;
-MSG_FO_ReplyToAddress (1326//)
-_Reply-To: address
 ;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS (1327//)
 Use this 'Reply-To:' address when\n\
@@ -6522,4 +6492,34 @@ A defective UUencoder was used or the message is truncated.
 ;
 MSG_RE_HDR_REPLYTO (2013//)
 Reply-To
+;
+MSG_FI_FROM_FIELD (2014//)
+\ebFrom\en
+;
+MSG_FI_TO_FIELD (2015//)
+\ebTo\en
+;
+MSG_FI_CC_FIELD (2016//)
+\ebCC\en
+;
+MSG_FI_REPLYTO_FIELD (2017//)
+\ebReply-To\en
+;
+MSG_FI_SUBJECT_FIELD (2018//)
+\ebSubject\en
+;
+MSG_FI_DATE_FIELD (2019//)
+\ebDate\en
+;
+MSG_FO_TO_PATTERN (2020//)
+_Pattern (To:)
+;
+MSG_FO_TO_ADDRESS (2021//)
+Sender address (_To:)
+;
+MSG_FO_FROM_ADDRESS (2022//)
+Receiver address (_From:)
+;
+MSG_FO_REPLYTO_ADDRESS (2023//)
+_Reply address (Reply-To:)
 ;

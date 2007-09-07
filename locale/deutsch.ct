@@ -4980,30 +4980,6 @@ MSG_FI_StatSent
 Gesendet
 ; Sent
 ;
-MSG_FI_FromField
-\ebVon\en
-;\ebFrom\en
-;
-MSG_FI_ToField
-\ebAn\en
-;\ebTo\en
-;
-MSG_FI_CCField
-\ebKopie an\en
-; \ebCC\en
-;
-MSG_FI_ReplyToField
-\ebAntwort an\en
-; \ebReply-To\en
-;
-MSG_FI_SubjectField
-\ebBetreff\en
-; \ebSubject\en
-;
-MSG_FI_DateField
-\ebDatum\en
-; \ebDate\en
-;
 MSG_FI_OtherField
 andere Zeile:
 ; Other field:
@@ -5367,14 +5343,6 @@ MSG_FO_MLSupport
 Mailinglisten
 ; Mailing list support
 ;
-MSG_FO_ToPattern
-Empfängerm_uster (To)
-; To: _pattern
-;
-MSG_FO_ToAddress
-Empfängeradr_esse (To)
-; _To: address
-;
 ;
 ; Module FO - Bubblehelp
 ;
@@ -5581,19 +5549,11 @@ MSG_SETTINGS_MUI
 MUI...
 ; MUI...
 ;
-MSG_FO_FromAddress
-Absenderadresse (From)
-; _From: address
-;
 MSG_HELP_FO_ST_MLFROMADDRESS
 Diese Absenderadresse bei neuen Nachrichten\n\
 für diese Liste verwenden
 ; Use this 'From:' address when\n\
 ; posting new mails to the list
-;
-MSG_FO_ReplyToAddress
-Antwortadresse (Reply-To)
-; _Reply-To: address
 ;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
 Diese Antwortadresse bei neuen Nachrichten\n\
@@ -8203,4 +8163,40 @@ Grund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
 ;
 MSG_RE_HDR_REPLYTO
 Antwort an
+;
+MSG_FI_FROM_FIELD
+\ebVon\en
+;\ebFrom\en
+;
+MSG_FI_TO_FIELD
+\ebAn\en
+;\ebTo\en
+;
+MSG_FI_CC_FIELD
+\ebKopie an\en
+; \ebCC\en
+;
+MSG_FI_REPLYTO_FIELD
+\ebAntwort an\en
+; \ebReply-To\en
+;
+MSG_FI_SUBJECT_FIELD
+\ebBetreff\en
+; \ebSubject\en
+;
+MSG_FI_DATE_FIELD
+\ebDatum\en
+; \ebDate\en
+;
+MSG_FO_TO_PATTERN
+Empfängerm_uster (To:)
+;
+MSG_FO_TO_ADDRESS
+Empfängeradr_esse (To:)
+;
+MSG_FO_FROM_ADDRESS
+Absenderadresse (From:)
+;
+MSG_FO_REPLYTO_ADDRESS
+Antwortadresse (Reply-To:)
 ;

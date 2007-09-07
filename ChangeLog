@@ -7,6 +7,8 @@ $URL$
 
 2007-09-07  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.cd, deutsch.ct, SearchControlGroup.c: changed the formerly modified
+    strings so that translators will be notified of the new naming scheme.
   * YAM.cd, deutsch.ct, ReadMailGroup.c: the "Reply-To" field for the header
     list can now be translated as well. Additionally all occurences of From, To,
     Reply-To, etc, have been translated to proper german phrases. This should
