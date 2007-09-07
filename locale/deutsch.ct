@@ -593,11 +593,11 @@ Zu welcher Adresse möchten Sie antworten?
 ; ADDRESS, ADDRESS
 ;
 MSG_MA_Compare3ReqOpt
-_From|*_Reply-To|_Beide|_Abbrechen
+_Von|*A_nwort an|_Beide|_Abbrechen
 ; _From|*_Reply-To|_Both|_Cancel
 ;
 MSG_MA_Compare2ReqOpt
-_From|*_Reply-To|_Abbrechen
+_Von|*A_nwort an|_Abbrechen
 ; _From|*_Reply-To|_Cancel
 ;
 MSG_MA_AttachRemoved
@@ -2386,7 +2386,8 @@ Voreingestellt ist (From|To|Date|Subject)
 ; Default is (From|To|Date|Subject)
 ;
 MSG_HELP_CO_CY_SENDERINFO
-Im Lesefenster anzuzeigende\nAbsenderinformationen (falls verfügbar)
+Im Lesefenster anzuzeigende\n\
+Absenderinformationen (falls verfügbar)
 ; Information about the sender to display\n\
 ; in the Read window (if available)
 ;
@@ -2558,9 +2559,9 @@ Zitatzeichen auch bei leeren Zeilen verwenden?
 ; for empty lines?
 ;
 MSG_HELP_CO_CH_COMPADDR
-Lässt, falls sich 'From:' und 'ReplyTo:'\n\
-Adressen unterscheiden, den Benutzer die\n\
-gewünschte Empfängeradresse auswählen
+Lässt den Benutzer die gewünschte Empfängeradresse\n\
+auswählen, falls sich Absender- und Antwortadressen\n\
+unterscheiden,
 ; Let the user select the desired recipient address if\n\
 ; the 'From:' and 'Reply-To:' addresses are different
 ;
@@ -4980,31 +4981,31 @@ Gesendet
 ; Sent
 ;
 MSG_FI_FromField
-\ebFrom\en-Zeile
-; \ebFrom\en field
+\ebVon\en
+;\ebFrom\en
 ;
 MSG_FI_ToField
-\ebTo\en-Zeile
-; \ebTo\en field
+\ebAn\en
+;\ebTo\en
 ;
 MSG_FI_CCField
-\ebCC\en-Zeile
-; \ebCC\en field
+\ebKopie an\en
+; \ebCC\en
 ;
 MSG_FI_ReplyToField
-\ebReply-To\en-Zeile
-; \ebReply-To\en field
+\ebAntwort an\en
+; \ebReply-To\en
 ;
 MSG_FI_SubjectField
-\ebSubject\en-Zeile
-; \ebSubject\en field
+\ebBetreff\en
+; \ebSubject\en
 ;
 MSG_FI_DateField
-\ebDate\en-Zeile
-; \ebDate\en field
+\ebDatum\en
+; \ebDate\en
 ;
 MSG_FI_OtherField
-Andere Zeile
+andere Zeile:
 ; Other field:
 ;
 MSG_FI_MessageSize
@@ -5020,7 +5021,7 @@ Nachrichtenkörper
 ; Message body
 ;
 MSG_FI_WholeMessage
-Ganzer Nachricht
+ganzer Nachricht
 ; Whole message
 ;
 MSG_FI_SearchIn
@@ -5039,11 +5040,11 @@ Teilkettensuche
 ; Module FI - Window
 ;
 MSG_FI_FindMessages
-Suche Nachrichten
+Nachrichten suchen
 ; Find Messages
 ;
 MSG_FI_AllFolders
-_überall
+_Überall
 ; _everywhere
 ;
 MSG_FI_FindIn
@@ -5367,11 +5368,11 @@ Mailinglisten
 ; Mailing list support
 ;
 MSG_FO_ToPattern
-To: M_uster
+Empfängerm_uster (To)
 ; To: _pattern
 ;
 MSG_FO_ToAddress
-To: Adr_esse
+Empfängeradr_esse (To)
 ; _To: address
 ;
 ;
@@ -5425,7 +5426,7 @@ Umgekehrte Sortierung
 ;
 MSG_HELP_FO_ST_MLPATTERN
 Eine Nachricht gehört zu einer Mailingliste,\n\
-falls das To-Feld auf dieses Muster passt
+falls die Empfängeradresse zu diesem Muster passt
 ; A message belongs to a mailing list\n\
 ; if the contents of the 'To:' field are\n\
 ; matched by this pattern.
@@ -5581,20 +5582,22 @@ MUI...
 ; MUI...
 ;
 MSG_FO_FromAddress
-_From: Adresse
+Absenderadresse (From)
 ; _From: address
 ;
 MSG_HELP_FO_ST_MLFROMADDRESS
-Diese From: Adresse bei neuen Nachrichten\nfür diese Liste verwenden
+Diese Absenderadresse bei neuen Nachrichten\n\
+für diese Liste verwenden
 ; Use this 'From:' address when\n\
 ; posting new mails to the list
 ;
 MSG_FO_ReplyToAddress
-Rep_ly-To: Adresse
+Antwortadresse (Reply-To)
 ; _Reply-To: address
 ;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
-Diese 'Reply-To:' Adresse bei neuen Nachrichten\nfür diese Liste verwenden
+Diese Antwortadresse bei neuen Nachrichten\n\
+für diese Liste verwenden
 ; Use this 'Reply-To:' address when\n\
 ; posting new mails to the list
 ;
@@ -5603,7 +5606,8 @@ S_icherheit
 ; Sec_urity
 ;
 MSG_HELP_MA_CY_DEFSECURITY
-Standardsicherheit beim Senden von\nNachrichten an diese Person
+Standardsicherheit beim Senden von\n\
+Nachrichten an diese Person
 ; Default security for sending\n\
 ; mail to this person
 ;
@@ -8179,7 +8183,8 @@ Unbekannte Kopfzeilenkodierung '%s' in Datei '%s'.\n\
 YAM kann eine bestimmte Kopfzeile nicht korrekt anzeigen.
 ;
 MSG_ER_UNEXPECTED_MULTIPART_EOF
-Unerwartetes Dateiende beim Dekodieren der mehrteiligen Nachricht in Datei '%s'. \
+Unerwartetes Dateiende beim Dekodieren der mehrteiligen Nachricht in Datei '%s'.\n\
+\n\
 Die Nachricht scheint unvollständig zu sein.
 ;
 MSG_ER_MIME_ERROR
@@ -8195,4 +8200,7 @@ MSG_ER_INVALID_UUE_LENGTH
 Ungültige Zeilenlänge %lD in UU-kodierter Datei '%s'.\n\
 \n\
 Grund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
+;
+MSG_RE_HDR_REPLYTO
+Antwort an
 ;

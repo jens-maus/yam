@@ -105,6 +105,8 @@ HOOKPROTONH(HeaderDisplayFunc, LONG, char **array, struct HeaderNode *hdrNode)
     array[0] = (STRPTR)tr(MSG_RE_HDR_FROM);
   else if(stricmp("To", hdrNode->name) == 0)
     array[0] = (STRPTR)tr(MSG_RE_HDR_TO);
+  else if(stricmp("Reply-To", hdrNode->name) == 0)
+    array[0] = (STRPTR)tr(MSG_RE_HDR_REPLYTO);
   else if(stricmp("Date", hdrNode->name) == 0)
     array[0] = (STRPTR)tr(MSG_RE_HDR_DATE);
   else if(stricmp("Subject", hdrNode->name) == 0)

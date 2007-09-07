@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-07  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.cd, deutsch.ct, ReadMailGroup.c: the "Reply-To" field for the header
+    list can now be translated as well. Additionally all occurences of From, To,
+    Reply-To, etc, have been translated to proper german phrases. This should
+    also be done for other non-english languages if not yet done. This fixes bug
+    #1789733.
+
 2007-09-06  Thore Böckelmann <tboeckel@gmx.de>
 
   * ReadMailGroup.c: whenever the default object of a read mail group changes

@@ -3636,22 +3636,22 @@ MSG_FI_FromField (1170//)
 \ebFrom\en field
 ;
 MSG_FI_ToField (1171//)
-\ebTo\en field
+\ebTo\en
 ;
 MSG_FI_CCField (1172//)
-\ebCC\en field
+\ebCC\en
 ;
 MSG_FI_ReplyToField (1173//)
-\ebReply-To\en field
+\ebReply-To\en
 ;
 MSG_FI_SubjectField (1174//)
-\ebSubject\en field
+\ebSubject\en
 ;
 MSG_FI_DateField (1175//)
-\ebDate\en field
+\ebDate\en
 ;
 MSG_FI_OtherField (1176//)
-Other field:
+other field:
 ;
 MSG_FI_MessageSize (1177//)
 Message size
@@ -6498,7 +6498,8 @@ YAM cannot display a particular message header correctly.
 ; ENCODING_TYPE, FILENAME
 ;
 MSG_ER_UNEXPECTED_MULTIPART_EOF (2009//)
-Unexpected EOF while decoding the multipart message in file '%s'. \
+Unexpected EOF while decoding the multipart message in file '%s'.\n\
+\n\
 The message seems to be truncated.
 ; FILENAME
 ;
@@ -6518,4 +6519,7 @@ Invalid line length %ld in UUencoded file '%s'.\n\
 \n\
 A defective UUencoder was used or the message is truncated.
 ; SIZE, FILENAME
+;
+MSG_RE_HDR_REPLYTO (2013//)
+Reply-To
 ;
