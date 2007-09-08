@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-08  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c: partly fixed bug #1789718 where it wasn't possible to simultaneously
+    set more than one word to e.g. bold/italic, etc. Now YAM should automatically
+    identify all single words and set the soft-style accordingly. However, please
+    note that currently this is only possible in case the selected text is on
+    the very same logical line. If text on multiple lines is selected only the
+    words on the very first line will be set to the corresponding soft style.
+
 2007-09-07  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.cd, deutsch.ct, SearchControlGroup.c: changed the formerly modified

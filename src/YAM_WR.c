@@ -3223,181 +3223,267 @@ HOOKPROTONHNO(WR_SetSoftStyleFunc, void, ULONG *arg)
 {
   enum SoftStyleMode ssm = (enum SoftStyleMode)arg[0];
   int winnum = (int)arg[1];
-  Object *textEdit = G->WR[winnum]->GUI.TE_EDIT;
-  ULONG x1=0;
-  ULONG y1=0;
-  ULONG x2=0;
-  ULONG y2=0;
+  struct WR_GUIData *gui = &G->WR[winnum]->GUI;
   char *txt;
 
   ENTER();
 
-  // check the marked text status
-  if(DoMethod(textEdit, MUIM_TextEditor_BlockInfo, &x1, &y1, &x2, &y2) == FALSE)
-  {
-    x1 = xget(textEdit, MUIA_TextEditor_CursorX);
-    y1 = xget(textEdit, MUIA_TextEditor_CursorY);
-  }
-
-  // retrieve the whole text lines where the cursor/block is currently
-  // active at.
-  if((txt = (char *)DoMethod(textEdit, MUIM_TextEditor_ExportBlock, MUIF_TextEditor_ExportBlock_FullLines)))
+  // retrieve the whole text lines where the cursor/block is currently active.
+  if((txt = (char *)DoMethod(gui->TE_EDIT, MUIM_TextEditor_ExportBlock, MUIF_TextEditor_ExportBlock_FullLines)))
   {
     int txtlen = strlen(txt);
 
     if(txtlen > 0)
     {
-      LONG nx1=x1;
-      LONG nx2=x1;
-      char *ntxt;
+      ULONG x1=0;
+      ULONG y1=0;
+      ULONG x2=0;
+      ULONG y2=0;
+      ULONG firstChar=0;
+      ULONG lastChar=0;
+      LONG nx1;
+      LONG nx2;
+      ULONG ny1;
+      char marker[2] = " ";
+      BOOL enableStyle = FALSE;
+      LONG addedChars = 0;
+      LONG lastAddedChars = 0;
 
-      // now we walk back from the starting (x1) position searching for the next space
-      // or start of line
+      //D(DBF_STARTUP, "txt: '%s'", txt);
+
+      // define the marker for the
+      // selected soft-style and check if
+      // we should enable or disable the style
+      switch(ssm)
+      {
+        case SSM_NORMAL:
+          // nothing;
+        break;
+
+        case SSM_BOLD:
+        {
+          marker[0] = '*';
+          enableStyle = (xget(gui->MI_BOLD, MUIA_Menuitem_Checked) == FALSE);
+        }
+        break;
+
+        case SSM_ITALIC:
+        {
+          marker[0] = '/';
+          enableStyle = (xget(gui->MI_ITALIC, MUIA_Menuitem_Checked) == FALSE);
+        }
+        break;
+
+        case SSM_UNDERLINE:
+        {
+          marker[0] = '_';
+          enableStyle = (xget(gui->MI_UNDERLINE, MUIA_Menuitem_Checked) == FALSE);
+        }
+        break;
+
+        case SSM_COLOR:
+        {
+          marker[0] = '#';
+          enableStyle = (xget(gui->MI_COLORED, MUIA_Menuitem_Checked) == FALSE);
+        }
+        break;
+      }
+
+
+      // check/get the status of the marked area
+      if(DoMethod(gui->TE_EDIT, MUIM_TextEditor_BlockInfo, &x1, &y1, &x2, &y2) == FALSE)
+      {
+        x1 = xget(gui->TE_EDIT, MUIA_TextEditor_CursorX);
+        y1 = xget(gui->TE_EDIT, MUIA_TextEditor_CursorY);
+        x2 = 0;
+        y2 = y1;
+      }
+
+      // set the n* values we use to parse
+      // through the retrieved txt
+      nx1=x1;
+      nx2=x1;
+      ny1=y1;
+
+      // we first walk back from the starting (nx1) position searching for the a
+      // space or the start of line
       while(nx1 > 0 && !isspace(txt[nx1]))
         nx1--;
 
       if(nx1 > 0 && (ULONG)nx1 != x1)
         nx1++;
 
+      // now we search forward from nx2 and find the end of the word
+      // by searching for the next space
       while(nx2 < txtlen && !isspace(txt[nx2]))
         nx2++;
 
-      if(nx2-nx1 > 0)
+      // lets set x1 to the actual nx1 we just identified
+      firstChar = nx1;
+      lastChar = nx2;
+
+      // make that the texteditor will  keep quiet during our
+      // operations
+      set(gui->TE_EDIT, MUIA_TextEditor_Quiet, TRUE);
+
+      // prepare to walk through our selected area
+      do
       {
-        char marker[2] = " ";
-        BOOL disableStyle = FALSE;
-
-        // define the marker for the
-        // selected soft-style
-        switch(ssm)
+        // if we found a string between nx1 and nx2 we can now
+        // enable or disable the style for that particular area
+        if(nx2-nx1 > 0)
         {
-          case SSM_NORMAL:
-            // nothing;
-          break;
+          char *ntxt = NULL;
 
-          case SSM_BOLD:
-            marker[0] = '*';
-          break;
-
-          case SSM_ITALIC:
-            marker[0] = '/';
-          break;
-
-          case SSM_UNDERLINE:
-            marker[0] = '_';
-          break;
-
-          case SSM_COLOR:
-            marker[0] = '#';
-          break;
-        }
-
-        // check if there is already some soft-style active
-        // and if yes, we go and strip
-        if(ssm != SSM_NORMAL &&
-           (txt[nx1] == marker[0] && txt[nx2-1] == marker[0]))
-        {
-          if((ntxt = calloc(1, nx2-2-nx1+1+1)))
-            strlcpy(ntxt, &txt[nx1+1], nx2-2-nx1+1);
-
-          disableStyle = TRUE;
-        }
-        else
-        {
-          if((ntxt = calloc(1, nx2-nx1+2+1)))
+          if(enableStyle == TRUE)
           {
-            ntxt[0] = marker[0];
-
-            // strip foreign soft-style markers
-            if((txt[nx1] == '*' && txt[nx2-1] == '*') ||
-               (txt[nx1] == '/' && txt[nx2-1] == '/') ||
-               (txt[nx1] == '_' && txt[nx2-1] == '_') ||
-               (txt[nx1] == '#' && txt[nx2-1] == '#'))
+            // check if there is already some soft-style active
+            // and if yes, we go and strip them
+            if(ssm == SSM_NORMAL ||
+               (txt[nx1] != marker[0] || txt[nx2-1] != marker[0]))
             {
-              strlcat(ntxt, &txt[nx1+1], nx2-nx1);
-            }
-            else
-              strlcat(ntxt, &txt[nx1], nx2-nx1+2);
-
-            strlcat(ntxt, marker, nx2-nx1+2+1);
-          }
-        }
-
-        if(ntxt)
-        {
-          // now we mark the area we found to be the one we want to
-          // set bold
-          DoMethod(textEdit, MUIM_TextEditor_MarkText, nx1, y1, nx2, y1);
-
-          // now we replace the marked area with the text we extract but adding two
-          // bold signs at the back and setting the area bold
-          DoMethod(textEdit, MUIM_TextEditor_Replace, ntxt, MUIF_NONE);
-
-          // set the soft-style accordingly.
-          if(disableStyle == FALSE)
-          {
-            DoMethod(textEdit, MUIM_TextEditor_MarkText, nx1, y1, nx1+strlen(ntxt), y1);
-
-            // make sure the text in question is really in the style we want
-            switch(ssm)
-            {
-              case SSM_NORMAL:
+              if((ntxt = calloc(1, nx2-nx1+2+1)))
               {
-                SetAttrs(textEdit, MUIA_TextEditor_StyleBold,      FALSE,
-                                   MUIA_TextEditor_StyleItalic,    FALSE,
-                                   MUIA_TextEditor_StyleUnderline, FALSE,
-                                   MUIA_TextEditor_Pen,            0,
-                                   TAG_DONE);
-              }
-              break;
+                ntxt[0] = marker[0];
 
-              case SSM_BOLD:
-              {
-                SetAttrs(textEdit, MUIA_TextEditor_StyleBold,      TRUE,
-                                   MUIA_TextEditor_StyleItalic,    FALSE,
-                                   MUIA_TextEditor_StyleUnderline, FALSE,
-                                   MUIA_TextEditor_Pen,            0,
-                                   TAG_DONE);
-              }
-              break;
+                // strip foreign soft-style markers
+                if((txt[nx1] == '*' && txt[nx2-1] == '*') ||
+                   (txt[nx1] == '/' && txt[nx2-1] == '/') ||
+                   (txt[nx1] == '_' && txt[nx2-1] == '_') ||
+                   (txt[nx1] == '#' && txt[nx2-1] == '#'))
+                {
+                  strlcat(ntxt, &txt[nx1+1], nx2-nx1);
+                }
+                else
+                {
+                  strlcat(ntxt, &txt[nx1], nx2-nx1+2);
+                  addedChars += 2;
+                }
 
-              case SSM_ITALIC:
-              {
-                SetAttrs(textEdit, MUIA_TextEditor_StyleBold,      FALSE,
-                                   MUIA_TextEditor_StyleItalic,    TRUE,
-                                   MUIA_TextEditor_StyleUnderline, FALSE,
-                                   MUIA_TextEditor_Pen,            0,
-                                   TAG_DONE);
+                strlcat(ntxt, marker, nx2-nx1+2+1);
               }
-              break;
-
-              case SSM_UNDERLINE:
-              {
-                SetAttrs(textEdit, MUIA_TextEditor_StyleBold,      FALSE,
-                                   MUIA_TextEditor_StyleItalic,    FALSE,
-                                   MUIA_TextEditor_StyleUnderline, TRUE,
-                                   MUIA_TextEditor_Pen,            0,
-                                   TAG_DONE);
-              }
-              break;
-
-              case SSM_COLOR:
-              {
-                SetAttrs(textEdit, MUIA_TextEditor_StyleBold,      FALSE,
-                                   MUIA_TextEditor_StyleItalic,    FALSE,
-                                   MUIA_TextEditor_StyleUnderline, FALSE,
-                                   MUIA_TextEditor_Pen,            7,
-                                   TAG_DONE);
-              }
-              break;
             }
           }
           else
-            DoMethod(textEdit, MUIM_TextEditor_MarkText, nx1, y1, nx2-2, y1);
+          {
+            // check if there is already some soft-style active
+            // and if yes, we go and strip them
+            if(ssm != SSM_NORMAL &&
+               (txt[nx1] == marker[0] && txt[nx2-1] == marker[0]))
+            {
+              if((ntxt = calloc(1, nx2-2-nx1+1+1)))
+                strlcpy(ntxt, &txt[nx1+1], nx2-2-nx1+1);
 
-          free(ntxt);
+              addedChars -= 2;
+            }
+          }
+
+          if(ntxt)
+          {
+            //D(DBF_STARTUP, "ntxt: '%s' : %ld %ld", ntxt, enableStyle, addedChars);
+
+            // now we mark the area we found to be the one we want to
+            // set bold/italic whatever
+            DoMethod(gui->TE_EDIT, MUIM_TextEditor_MarkText, nx1+lastAddedChars, ny1, nx2+lastAddedChars, ny1);
+
+            // now we replace the marked area with the text we extract but adding two
+            // bold signs at the back and setting the area bold
+            DoMethod(gui->TE_EDIT, MUIM_TextEditor_Replace, ntxt, MUIF_NONE);
+
+            // set the soft-style accordingly.
+            if(enableStyle == TRUE)
+            {
+              DoMethod(gui->TE_EDIT, MUIM_TextEditor_MarkText, nx1+lastAddedChars, ny1, nx1+lastAddedChars+strlen(ntxt), ny1);
+
+              // make sure the text in question is really in the style we want
+              switch(ssm)
+              {
+                case SSM_NORMAL:
+                {
+                  SetAttrs(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
+                                         MUIA_TextEditor_StyleItalic,    FALSE,
+                                         MUIA_TextEditor_StyleUnderline, FALSE,
+                                         MUIA_TextEditor_Pen,            0,
+                                         TAG_DONE);
+                }
+                break;
+
+                case SSM_BOLD:
+                {
+                  SetAttrs(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      TRUE,
+                                         MUIA_TextEditor_StyleItalic,    FALSE,
+                                         MUIA_TextEditor_StyleUnderline, FALSE,
+                                         MUIA_TextEditor_Pen,            0,
+                                         TAG_DONE);
+                }
+                break;
+
+                case SSM_ITALIC:
+                {
+                  SetAttrs(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
+                                         MUIA_TextEditor_StyleItalic,    TRUE,
+                                         MUIA_TextEditor_StyleUnderline, FALSE,
+                                         MUIA_TextEditor_Pen,            0,
+                                         TAG_DONE);
+                }
+                break;
+
+                case SSM_UNDERLINE:
+                {
+                  SetAttrs(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
+                                         MUIA_TextEditor_StyleItalic,    FALSE,
+                                         MUIA_TextEditor_StyleUnderline, TRUE,
+                                         MUIA_TextEditor_Pen,            0,
+                                         TAG_DONE);
+                }
+                break;
+
+                case SSM_COLOR:
+                {
+                  SetAttrs(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
+                                         MUIA_TextEditor_StyleItalic,    FALSE,
+                                         MUIA_TextEditor_StyleUnderline, FALSE,
+                                         MUIA_TextEditor_Pen,            7,
+                                         TAG_DONE);
+                }
+                break;
+              }
+            }
+
+            free(ntxt);
+          }
+
+          lastChar = nx2+addedChars;
+          lastAddedChars = addedChars;
         }
+        else
+          break;
+
+        // now we check wheter there is more to process or not.
+        if(x2 > (ULONG)nx2+1)
+        {
+          nx1 = ++nx2; // set nx1 to end of last string
+
+          // now we search forward from nx1 and find the start of the
+          // next word
+          while(nx1 < txtlen && isspace(txt[nx1]))
+            nx1++;
+
+          // search for the end of the found word
+          nx2 = nx1;
+          while(nx2 < txtlen && !isspace(txt[nx2]))
+            nx2++;
+        }
+        else
+          nx2 = nx1;
       }
+      while(TRUE);
+
+      // mark all text we just processed
+      DoMethod(gui->TE_EDIT, MUIM_TextEditor_MarkText, firstChar, ny1, lastChar, ny1);
+
+      // turn the texteditor back on
+      set(gui->TE_EDIT, MUIA_TextEditor_Quiet, FALSE);
     }
 
     FreeVec(txt);
