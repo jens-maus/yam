@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.20 (01.09.07)
+## version $VER: YAM.ct 6.21 (07.09.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -4145,33 +4145,9 @@ MSG_FI_StatSent
 Skickat
 ;#DEF Sent
 ;#SET (1169//)
-MSG_FI_FromField
-\ebFrån\en
-;#DEF \ebFrom\en field
-;#SET (1170//)
-MSG_FI_ToField
-\ebTill\en
-;#DEF \ebTo\en field
-;#SET (1171//)
-MSG_FI_CCField
-\ebCC\en
-;#DEF \ebCC\en field
-;#SET (1172//)
-MSG_FI_ReplyToField
-\ebSvar-till\en
-;#DEF \ebReply-To\en field
-;#SET (1173//)
-MSG_FI_SubjectField
-\ebÄrende\en
-;#DEF \ebSubject\en field
-;#SET (1174//)
-MSG_FI_DateField
-\ebDatum\en
-;#DEF \ebDate\en field
-;#SET (1175//)
 MSG_FI_OtherField
-Annat fält:
-;#DEF Other field:
+annat fält:
+;#DEF other field:
 ;#SET (1176//)
 MSG_FI_MessageSize
 Brevstorlek
@@ -4489,14 +4465,6 @@ MSG_FO_MLSupport
 Sändlistestöd
 ;#DEF Mailing list support
 ;#SET (1258//)
-MSG_FO_ToPattern
-Till:-mö_nster
-;#DEF To: _pattern
-;#SET (1259//)
-MSG_FO_ToAddress
-_Till:-adress
-;#DEF _To: address
-;#SET (1260//)
 MSG_HELP_FO_ST_FNAME
 Mappnamn
 ;#DEF Folder name
@@ -4669,20 +4637,12 @@ MSG_SETTINGS_MUI
 MUI...
 ;#DEF MUI...
 ;#SET (1323//)
-MSG_FO_FromAddress
-_Från: adress
-;#DEF _From: address
-;#SET (1324//)
 MSG_HELP_FO_ST_MLFROMADDRESS
 Använd denna 'Från:' adress vid\npostning av nya brev till listan
 ;#DEF Use this 'From:' address when\nposting new mails to the list
 ;#SET (1325//)
-MSG_FO_ReplyToAddress
-Sva_ra till: adress
-;#DEF _Reply-To: address
-;#SET (1326//)
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
-Använd denna 'Svara till:' adress vid\npostning av nya brev till listan
+Använd denna 'Svar till:' adress vid\npostning av nya brev till listan
 ;#DEF Use this 'Reply-To:' address when\nposting new mails to the list
 ;#SET (1327//)
 MSG_EA_DefSecurity
@@ -7218,8 +7178,8 @@ Okänd huvudkodning '%s' i brevfil '%s'.\n\nYAM kan inte visa ett speciellt medde
 ;#DEF Unknown header encoding '%s' in mail file '%s'.\n\nYAM cannot display a particular message header correctly.
 ;#SET (2008//)
 MSG_ER_UNEXPECTED_MULTIPART_EOF
-Oväntat filslut vid avkodning av flerparts meddelande i fil '%s'. Meddelandet verkar vara skadat.
-;#DEF Unexpected EOF while decoding the multipart message in file '%s'. The message seems to be truncated.
+Oväntat filslut vid avkodning av flerparts meddelande i fil '%s'.\n\nMeddelandet verkar vara skadat.
+;#DEF Unexpected EOF while decoding the multipart message in file '%s'.\n\nThe message seems to be truncated.
 ;#SET (2009//)
 MSG_ER_MIME_ERROR
 Kunde inte extrahera MIME-meddelande från fil '%s'.\n\nMeddelandet innehåller dåliga MIME delar eller så är det tomt eller skadat.
@@ -7233,3 +7193,47 @@ MSG_ER_INVALID_UUE_LENGTH
 Ogiltig radlängd %ld i UU-kodad fil '%s'.\n\nEn trasig UU-kodare användes eller så är meddelandet skadat.
 ;#DEF Invalid line length %ld in UUencoded file '%s'.\n\nA defective UUencoder was used or the message is truncated.
 ;#SET (2012//)
+MSG_RE_HDR_REPLYTO
+Svar till
+;#DEF Reply-To
+;#SET (2013//)
+MSG_FI_FROM_FIELD
+\ebFrån\en
+;#DEF \ebFrom\en
+;#SET (2014//)
+MSG_FI_TO_FIELD
+\ebTill\en
+;#DEF \ebTo\en
+;#SET (2015//)
+MSG_FI_CC_FIELD
+\ebCC\en
+;#DEF \ebCC\en
+;#SET (2016//)
+MSG_FI_REPLYTO_FIELD
+\ebSvar till\en
+;#DEF \ebReply-To\en
+;#SET (2017//)
+MSG_FI_SUBJECT_FIELD
+\ebÄrende\en
+;#DEF \ebSubject\en
+;#SET (2018//)
+MSG_FI_DATE_FIELD
+\ebDatum\en
+;#DEF \ebDate\en
+;#SET (2019//)
+MSG_FO_TO_PATTERN
+_Mönster (Till:)
+;#DEF _Pattern (To:)
+;#SET (2020//)
+MSG_FO_TO_ADDRESS
+Avsändaradress (_Till:)
+;#DEF Sender address (_To:)
+;#SET (2021//)
+MSG_FO_FROM_ADDRESS
+Mottagaradress (_Från:)
+;#DEF Receiver address (_From:)
+;#SET (2022//)
+MSG_FO_REPLYTO_ADDRESS
+_Svarsadress (Svar till:)
+;#DEF _Reply address (Reply-To:)
+;#SET (2023//)
