@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-12  Jens Langner <Jens.Langner@light-speed.de>
+
+  * ReadMailGroup.c: added new MUIA_TextEditor_ActiveObjectOnClick attribute
+    which newer upcoming TextEditor versions will take respect. In addition,
+    reverted the change of Thore from 2007-09-06 as with the upcoming
+    selection changes it isn't required anymore.
+  * include/TextEditor_mcc.h: updated to very latest version available
+
 2007-09-09  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: updated according to changes.
