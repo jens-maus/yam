@@ -2983,6 +2983,8 @@ Object *CO_PageSignature(struct CO_ClassData *data)
                   MUIA_TextEditor_FixedFont,  TRUE,
                   MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_EMail,
                   MUIA_TextEditor_Slider,     slider,
+                  MUIA_TextEditor_WrapMode,   MUIV_TextEditor_WrapMode_HardWrap,
+                  MUIA_TextEditor_WrapBorder, C->EdWrapCol,
                End,
                Child, slider,
             End,

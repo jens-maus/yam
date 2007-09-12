@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (19.08.2007)
+## version $VER: YAM.catalog 6.0 (13.09.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -2588,7 +2588,7 @@ Cookie einfügen
 ;
 MSG_HELP_CO_BT_INSENV
 Steuerzeichen für die Umgebungs-\n\
-variable SIGNATURE einfügen
+variable 'SIGNATURE' einfügen
 ; Insert control code for the\n\
 ; SIGNATURE environment variable
 ;
@@ -3460,7 +3460,7 @@ An_zeigen
 ; Display
 ;
 MSG_RE_BadSig
-WARNUNG: Falsche Signatur
+WARNUNG: Invalide Signatur
 ; WARNING: Bad signature
 ;
 MSG_RE_GoodSig
@@ -7363,11 +7363,11 @@ MSG_LOADINGUPDATESTATE
 Lade Update-Statusdaten...
 ;
 MSG_CO_ASK_SAVE_SIGNATURE
-Änderungen an der Signatur werden müssen getrennt\n\
-von der Konfiguration gespeichert werden!\n\
-Ansonsten sind die Änderungen verloren!\n\
+Änderungen an der Signatur müssen getrennt\n\
+von der Konfiguration gespeichert werden, da\n\
+sie ansonsten verloren gehen.\n\
 \n\
-Wollen Sie die Änderungen jetzt speichern?
+Wollen Sie die Signatur jetzt speichern?
 ;
 MSG_MA_HIDE
 Verbergen

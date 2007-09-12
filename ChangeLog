@@ -13,6 +13,9 @@ $URL$
 
 2007-09-12  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c: set the TE.mcc object to perform a HardWrap and take care of the
+    currently set line word wrap width when entering a signature.
+  * locale/YAM.cd, locale/deutsch.ct: minor sentence rephrasing.
   * ReadMailGroup.c: added new MUIA_TextEditor_ActiveObjectOnClick attribute
     which newer upcoming TextEditor versions will take respect. In addition,
     reverted the change of Thore from 2007-09-06 as with the upcoming
