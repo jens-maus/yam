@@ -235,7 +235,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
   // advanced, just in case something goes wrong.
   co->ConfigIsSaved = FALSE;
 
-  if((fh = fopen(fname, "w")))
+  if((fh = fopen(fname, "w")) != NULL)
   {
     int i;
     char buf[SIZE_LARGE];
@@ -1819,11 +1819,11 @@ void CO_GetConfig(BOOL saveConfig)
 
       case cp_Signature:
       {
-        CE->UseSignature      = GetMUICheck  (gui->CH_USESIG);
+        CE->UseSignature = GetMUICheck(gui->CH_USESIG);
         GetMUIString(CE->TagsFile, gui->ST_TAGFILE, sizeof(CE->TagsFile));
         GetMUIString(CE->TagsSeparator, gui->ST_TAGSEP, sizeof(CE->TagsSeparator));
 
-        if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) && saveConfig == FALSE)
+        if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE && saveConfig == FALSE)
         {
           // if the signature was modified but the config should not be saved but just be "used"
           // then ask the user if the changes to the signature should be made permanent
@@ -1859,14 +1859,14 @@ void CO_GetConfig(BOOL saveConfig)
 
         if(GetMUICheck(gui->CH_BEAT) == TRUE)
         {
-          if(GetMUICheck(gui->CH_RELDATETIME))
+          if(GetMUICheck(gui->CH_RELDATETIME) == TRUE)
             CE->DSListFormat = DSS_RELDATEBEAT;
           else
             CE->DSListFormat = DSS_DATEBEAT;
         }
         else
         {
-          if(GetMUICheck(gui->CH_RELDATETIME))
+          if(GetMUICheck(gui->CH_RELDATETIME) == TRUE)
             CE->DSListFormat = DSS_RELDATETIME;
           else
             CE->DSListFormat = DSS_DATETIME;
@@ -1897,16 +1897,16 @@ void CO_GetConfig(BOOL saveConfig)
 
       case cp_StartupQuit:
       {
-        CE->GetOnStartup      = GetMUICheck  (gui->CH_POPSTART);
-        CE->SendOnStartup     = GetMUICheck  (gui->CH_SENDSTART);
-        CE->CleanupOnStartup  = GetMUICheck  (gui->CH_DELETESTART);
-        CE->RemoveOnStartup   = GetMUICheck  (gui->CH_REMOVESTART);
-        CE->LoadAllFolders    = GetMUICheck  (gui->CH_LOADALL);
-        CE->UpdateNewMail     = GetMUICheck  (gui->CH_MARKNEW);
-        CE->CheckBirthdates   = GetMUICheck  (gui->CH_CHECKBD);
-        CE->SendOnQuit        = GetMUICheck  (gui->CH_SENDQUIT);
-        CE->CleanupOnQuit     = GetMUICheck  (gui->CH_DELETEQUIT);
-        CE->RemoveOnQuit      = GetMUICheck  (gui->CH_REMOVEQUIT);
+        CE->GetOnStartup      = GetMUICheck(gui->CH_POPSTART);
+        CE->SendOnStartup     = GetMUICheck(gui->CH_SENDSTART);
+        CE->CleanupOnStartup  = GetMUICheck(gui->CH_DELETESTART);
+        CE->RemoveOnStartup   = GetMUICheck(gui->CH_REMOVESTART);
+        CE->LoadAllFolders    = GetMUICheck(gui->CH_LOADALL);
+        CE->UpdateNewMail     = GetMUICheck(gui->CH_MARKNEW);
+        CE->CheckBirthdates   = GetMUICheck(gui->CH_CHECKBD);
+        CE->SendOnQuit        = GetMUICheck(gui->CH_SENDQUIT);
+        CE->CleanupOnQuit     = GetMUICheck(gui->CH_DELETEQUIT);
+        CE->RemoveOnQuit      = GetMUICheck(gui->CH_REMOVEQUIT);
       }
       break;
 

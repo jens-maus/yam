@@ -1910,14 +1910,14 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
 
   ENTER();
 
-  if(xget(ed, MUIA_TextEditor_HasChanged))
+  if(xget(ed, MUIA_TextEditor_HasChanged) == TRUE)
   {
     if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
       // save the modified signature only if the user told us to do so
       EditorToFile(ed, CreateFilename(SigNames[G->CO->LastSig]));
   }
 
-  if(editSig)
+  if(editSig == TRUE)
   {
     // if the signature should be modified with an external editor then
     // we need to check if there is an editor defined
@@ -1936,7 +1936,7 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
     // just display the new signature in the internal editor
     refresh = TRUE;
 
-  if(refresh)
+  if(refresh == TRUE)
   {
     // refresh the signature in the internal editor
     if(FileToEditor(CreateFilename(SigNames[sig]), ed) == FALSE)
@@ -2125,7 +2125,13 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
     // we save the configuration if the user
     // has pressed on 'Save' only.
     if(*arg == 2)
+    {
+      // save the signature if it has been modified
+      if(xget(G->CO->GUI.TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE)
+        EditorToFile(G->CO->GUI.TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig]));
+
       CO_SaveConfig(C, G->CO_PrefsFile);
+    }
   }
 
   // then we free our temporary config structure

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-12  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: when the config is saved a modified signature will now be saved,
+    too. Before the user was only asked to save the modified signature if the
+    config was just "used". This fixes bug #1792971.
+
 2007-09-12  Jens Langner <Jens.Langner@light-speed.de>
 
   * ReadMailGroup.c: added new MUIA_TextEditor_ActiveObjectOnClick attribute
