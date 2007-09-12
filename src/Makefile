@@ -376,6 +376,7 @@ clean:
 
 cleanall: clean
 	-$(RM) YAM_locale.? YAM_mail_lex.c HTML2Mail.c $(CLASSDIR)/Classes.? $(CLASSDIR)/*_cl.h
+	-$(RM) $(LOCALE)/*.catalog
 	-$(RMDIR) $(OBJDIR)
 
 distclean: cleanall
