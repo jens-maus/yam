@@ -3460,7 +3460,7 @@ An_zeigen
 ; Display
 ;
 MSG_RE_BadSig
-WARNUNG: Invalide Signatur
+WARNUNG: ungültige Signatur
 ; WARNING: Bad signature
 ;
 MSG_RE_GoodSig

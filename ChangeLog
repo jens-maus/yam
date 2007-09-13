@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-13  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/deutsch.ct: minor sentence rephrasing.
+
 2007-09-12  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: when the config is saved a modified signature will now be saved,
