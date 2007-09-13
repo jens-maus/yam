@@ -330,15 +330,21 @@ CATALOGS = \
   $(LOCALE)/bosanski.catalog \
   $(LOCALE)/czech.catalog \
   $(LOCALE)/dansk.catalog \
+  $(LOCALE)/espanol.catalog \
+  $(LOCALE)/francais.catalog \
   $(LOCALE)/greek.catalog \
   $(LOCALE)/italiano.catalog \
   $(LOCALE)/magyar.catalog \
   $(LOCALE)/norsk.catalog \
   $(LOCALE)/polski.catalog \
+  $(LOCALE)/portugues-brasil.catalog \
+  $(LOCALE)/portugues.catalog \
   $(LOCALE)/russian.catalog \
+  $(LOCALE)/slovensko.catalog \
   $(LOCALE)/srpski.catalog \
   $(LOCALE)/suomi.catalog \
-  $(LOCALE)/svenska.catalog
+  $(LOCALE)/svenska.catalog \
+  $(LOCALE)/turkue.catalog
 
 #
 all: $(OBJDIR) classinfo YAM_locale.c YAM_mail_lex.c HTML2Mail.c $(TARGET)
