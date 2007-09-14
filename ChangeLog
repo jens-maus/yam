@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-14  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_COg.c: instead of having a group in a group with a title we are now
+    using a RectangleObject with a HBar to differentiate between the folder
+    list settings and message list settings. This should make things more
+    clear.
+
 2007-09-13  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/deutsch.ct: minor sentence rephrasing.

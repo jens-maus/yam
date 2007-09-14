@@ -3052,8 +3052,14 @@ Object *CO_PageLists(struct CO_ClassData *data)
             Child, HGroup, GroupFrameT(tr(MSG_CO_FIELDLISTCFG)),
 
               Child, VGroup,
-                Child, ColGroup(2), GroupFrameT(tr(MSG_FolderList)),
+                Child, RectangleObject,
+                  MUIA_VertWeight,          0,
+                  MUIA_Rectangle_HBar,      TRUE,
+                  MUIA_Rectangle_BarTitle,  tr(MSG_FolderList),
+                End,
+                Child, ColGroup(2),
                   MUIA_ShortHelp, tr(MSG_HELP_CO_CG_FO),
+
                   Child, MakeStaticCheck(),
                   Child, data->GUI.CY_FOLDERINFO = MakeCycle(folderf, tr(MSG_CO_FOLDERLABEL)),
 
@@ -3078,34 +3084,42 @@ Object *CO_PageLists(struct CO_ClassData *data)
 
               Child, HSpace(0),
 
-              Child, ColGroup(2), GroupFrameT(tr(MSG_MessageList)),
-                MUIA_ShortHelp, tr(MSG_HELP_CO_CG_MA),
-                Child, MakeStaticCheck(),
-                Child, LLabel(tr(MSG_Status)),
+              Child, VGroup,
+                Child, RectangleObject,
+                  MUIA_VertWeight,          0,
+                  MUIA_Rectangle_HBar,      TRUE,
+                  MUIA_Rectangle_BarTitle,  tr(MSG_MessageList),
+                End,
+                Child, ColGroup(2),
+                  MUIA_ShortHelp, tr(MSG_HELP_CO_CG_MA),
 
-                Child, data->GUI.CH_MCOLS[1] = MakeCheck(""),
-                Child, LLabel(tr(MSG_SenderRecpt)),
+                  Child, MakeStaticCheck(),
+                  Child, LLabel(tr(MSG_Status)),
 
-                Child, data->GUI.CH_MCOLS[2] = MakeCheck(""),
-                Child, LLabel(tr(MSG_ReturnAddress)),
+                  Child, data->GUI.CH_MCOLS[1] = MakeCheck(""),
+                  Child, LLabel(tr(MSG_SenderRecpt)),
 
-                Child, data->GUI.CH_MCOLS[3] = MakeCheck(""),
-                Child, LLabel(tr(MSG_Subject)),
+                  Child, data->GUI.CH_MCOLS[2] = MakeCheck(""),
+                  Child, LLabel(tr(MSG_ReturnAddress)),
 
-                Child, data->GUI.CH_MCOLS[4] = MakeCheck(""),
-                Child, LLabel(tr(MSG_MessageDate)),
+                  Child, data->GUI.CH_MCOLS[3] = MakeCheck(""),
+                  Child, LLabel(tr(MSG_Subject)),
 
-                Child, data->GUI.CH_MCOLS[5] = MakeCheck(""),
-                Child, LLabel(tr(MSG_Size)),
+                  Child, data->GUI.CH_MCOLS[4] = MakeCheck(""),
+                  Child, LLabel(tr(MSG_MessageDate)),
 
-                Child, data->GUI.CH_MCOLS[6] = MakeCheck(""),
-                Child, LLabel(tr(MSG_Filename)),
+                  Child, data->GUI.CH_MCOLS[5] = MakeCheck(""),
+                  Child, LLabel(tr(MSG_Size)),
 
-                Child, data->GUI.CH_MCOLS[7] = MakeCheck(""),
-                Child, LLabel(tr(MSG_CO_DATE_SNTRCVD)),
+                  Child, data->GUI.CH_MCOLS[6] = MakeCheck(""),
+                  Child, LLabel(tr(MSG_Filename)),
 
-                Child, data->GUI.CH_MCNTMENU = MakeCheck(""),
-                Child, LLabel(tr(MSG_CO_CONTEXTMENU)),
+                  Child, data->GUI.CH_MCOLS[7] = MakeCheck(""),
+                  Child, LLabel(tr(MSG_CO_DATE_SNTRCVD)),
+
+                  Child, data->GUI.CH_MCNTMENU = MakeCheck(""),
+                  Child, LLabel(tr(MSG_CO_CONTEXTMENU)),
+                End,
               End,
             End,
 
