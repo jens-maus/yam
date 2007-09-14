@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (13.09.2007)
+## version $VER: YAM.catalog 6.0 (15.09.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -2866,7 +2866,8 @@ und benutzt die alten Einstellungen
 ; Module AB - Routines
 ;
 MSG_AB_BirthdayReq
-Heute wird %s %ld Jahre alt!\n\
+Heute wird %s %ld Jahre alt.\n\
+\n\
 Wollen Sie eine Gruﬂkarte schicken?
 ; Today, %s reaches age %ld!\n\
 ; Do you want to send a greetings card?

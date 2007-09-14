@@ -2095,7 +2095,8 @@ settings
 ; Module AB - Routines
 ;
 MSG_AB_BirthdayReq (702//)
-Today, %s reaches age %ld!\n\
+Today, %s reaches age %ld.\n\
+\n\
 Do you want to send a greetings card?
 ; NAME, AGE
 ;
