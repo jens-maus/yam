@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (15.09.2007)
+## version $VER: YAM.catalog 6.0 (19.09.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -7328,7 +7328,7 @@ MSG_FI_BUSYCHECKSPAM
 Wende Spam-Filter auf Ordner an...
 ;
 MSG_MA_REMOVESPAM
-Spam aus Ordner löschen
+Spam in Ordner löschen
 ;
 MSG_MA_BUSYEMPTYINGSPAM
 Entferne Spam aus Ordner...

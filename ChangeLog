@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/deutsch.ct: minor spelling fix.
+
 2007-09-19  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: greatly improved search speed when many mails match the search
