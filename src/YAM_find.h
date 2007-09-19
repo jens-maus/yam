@@ -44,6 +44,7 @@ struct FI_GUIData
   Object *LV_MAILS;
   Object *GR_PAGE;
   Object *GA_PROGRESS;
+  Object *BT_SEARCH;
   Object *BT_SELECTACTIVE;
   Object *BT_SELECT;
   Object *BT_READ;

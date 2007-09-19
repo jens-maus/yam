@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-19  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c: greatly improved search speed when many mails match the search
+    criteria by "quietening" the result list most of the time. The "Search"
+    button is also disabled now during a search, because the folders may need
+    an index rescan which can take an arbitrary amount of time.
+
 2007-09-14  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c: instead of having a group in a group with a title we are now

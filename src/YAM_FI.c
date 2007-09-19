@@ -810,132 +810,160 @@ BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail)
 //  Starts the search and shows progress
 HOOKPROTONHNONP(FI_SearchFunc, void)
 {
-   int sfonum = 0, fnr, id, i, fndmsg = 0, totmsg = 0, progress = 0;
-   struct FI_GUIData *gui = &G->FI->GUI;
-   struct Folder **sfo, *folder;
-   char *name;
-   static char gauge[40];
-   struct Mail *mail;
-   APTR ga = gui->GA_PROGRESS;
-   struct Search search;
-   struct TimeVal now;
-   struct TimeVal last;
+  int fnr;
+  int fndmsg = 0;
+  int totmsg = 0;
+  int progress = 0;
+  struct FI_GUIData *gui = &G->FI->GUI;
+  struct Folder **sfo;
 
-   ENTER();
+  ENTER();
 
-   // by default we don`t dispose on end
-   G->FI->ClearOnEnd   = FALSE;
-   G->FI->SearchActive = TRUE;
-   G->FI->Abort        = FALSE;
+  // by default we don`t dispose on end
+  G->FI->ClearOnEnd   = FALSE;
+  G->FI->SearchActive = TRUE;
+  G->FI->Abort        = FALSE;
 
-   set(gui->WI, MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_None);
-   set(gui->BT_SELECTACTIVE, MUIA_Disabled, TRUE);
-   set(gui->BT_SELECT, MUIA_Disabled, TRUE);
-   set(gui->BT_READ, MUIA_Disabled, TRUE);
-   DoMethod(gui->LV_MAILS, MUIM_NList_Clear);
-   fnr = xget(gui->LV_FOLDERS, MUIA_List_Entries);
+  set(gui->WI, MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_None);
+  // disable some buttons while the search is going on
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, gui->BT_SEARCH,
+                                                       gui->BT_SELECTACTIVE,
+                                                       gui->BT_SELECT,
+                                                       gui->BT_READ,
+                                                       NULL);
+  DoMethod(gui->LV_MAILS, MUIM_NList_Clear);
+  // start with forbidden immediate display of found mails, this greatly speeds
+  // up the search process if many mails match the search criteria.
+  set(gui->LV_MAILS, MUIA_NList_Quiet, TRUE);
 
-   if((sfo = calloc(fnr, sizeof(struct Folder *))) != NULL)
-   {
-     id = MUIV_List_NextSelected_Start;
-     while(TRUE)
-     {
-       DoMethod(gui->LV_FOLDERS, MUIM_List_NextSelected, &id);
-       if(id == MUIV_List_NextSelected_End)
-         break;
+  fnr = xget(gui->LV_FOLDERS, MUIA_List_Entries);
 
-       DoMethod(gui->LV_FOLDERS, MUIM_List_GetEntry, id, &name);
-       if((folder = FO_GetFolderByName(name, NULL)) != NULL)
-       {
-         if(MA_GetIndex(folder))
-         {
-           sfo[sfonum++] = folder;
-           totmsg += folder->Total;
-         }
-       }
-     }
+  if((sfo = calloc(fnr, sizeof(struct Folder *))) != NULL)
+  {
+    int sfonum = 0;
+    int id;
+    char *name;
+    struct Folder *folder;
 
-     if(totmsg != 0)
-     {
-       // lets prepare the search
-       DoMethod(gui->GR_SEARCH, MUIM_SearchControlGroup_PrepareSearch, &search);
+    id = MUIV_List_NextSelected_Start;
+    while(TRUE)
+    {
+      DoMethod(gui->LV_FOLDERS, MUIM_List_NextSelected, &id);
+      if(id == MUIV_List_NextSelected_End)
+        break;
 
-       // set the gauge
-       snprintf(gauge, sizeof(gauge), tr(MSG_FI_GAUGETEXT), totmsg);
-       SetAttrs(ga, MUIA_Gauge_InfoText, gauge,
-                    MUIA_Gauge_Max,      totmsg,
-                    MUIA_Gauge_Current,  0,
-                    TAG_DONE);
+      DoMethod(gui->LV_FOLDERS, MUIM_List_GetEntry, id, &name);
+      if((folder = FO_GetFolderByName(name, NULL)) != NULL)
+      {
+        if(MA_GetIndex(folder) == TRUE)
+        {
+          sfo[sfonum++] = folder;
+          totmsg += folder->Total;
+        }
+      }
+    }
 
-       set(gui->GR_PAGE, MUIA_Group_ActivePage, 1);
+    if(totmsg != 0)
+    {
+      struct Search search;
+      static char gauge[40];
+      struct TimeVal now;
+      struct TimeVal last;
+      Object *ga = gui->GA_PROGRESS;
+      Object *lv = gui->LV_MAILS;
+      int i;
 
-       memset(&last, 0, sizeof(struct TimeVal));
+      // lets prepare the search
+      DoMethod(gui->GR_SEARCH, MUIM_SearchControlGroup_PrepareSearch, &search);
 
-       for(i = 0; i < sfonum && !G->FI->Abort; i++)
-       {
-         for(mail = sfo[i]->Messages; mail && G->FI->Abort == FALSE; mail = mail->Next)
-         {
-           if(FI_DoSearch(&search, mail))
-           {
-             DoMethod(gui->LV_MAILS, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
-             fndmsg++;
-           }
+      // set the gauge
+      snprintf(gauge, sizeof(gauge), tr(MSG_FI_GAUGETEXT), totmsg);
+      SetAttrs(ga, MUIA_Gauge_InfoText, gauge,
+                   MUIA_Gauge_Max,      totmsg,
+                   MUIA_Gauge_Current,  0,
+                   TAG_DONE);
 
-           // increase the progress counter
-           progress++;
+      set(gui->GR_PAGE, MUIA_Group_ActivePage, 1);
 
-           // then we update the gauge, but we take also care of not refreshing
-           // it too often or otherwise it slows down the whole search process.
-           GetSysTime(TIMEVAL(&now));
-           if(-CmpTime(TIMEVAL(&now), TIMEVAL(&last)) > 0)
-           {
-             struct TimeVal delta;
+      memset(&last, 0, sizeof(struct TimeVal));
 
-             // how much time has passed exactly?
-             memcpy(&delta, &now, sizeof(struct TimeVal));
-             SubTime(TIMEVAL(&delta), TIMEVAL(&last));
+      for(i = 0; i < sfonum && G->FI->Abort == FALSE; i++)
+      {
+        struct Mail *mail;
 
-             // update the display at least twice a second
-             if(delta.Seconds > 0 || delta.Microseconds > 250000)
-             {
-               set(ga, MUIA_Gauge_Current, progress);
+        for(mail = sfo[i]->Messages; mail != NULL && G->FI->Abort == FALSE; mail = mail->Next)
+        {
+          if(FI_DoSearch(&search, mail) == TRUE)
+          {
+            DoMethod(lv, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
+            fndmsg++;
+          }
 
-               // signal the application to update now
-               DoMethod(G->App, MUIM_Application_InputBuffered);
+          // increase the progress counter
+          progress++;
 
-               memcpy(&last, &now, sizeof(struct TimeVal));
-             }
-           }
-         }
-       }
+          // then we update the gauge, but we take also care of not refreshing
+          // it too often or otherwise it slows down the whole search process.
+          GetSysTime(TIMEVAL(&now));
+          if(-CmpTime(TIMEVAL(&now), TIMEVAL(&last)) > 0)
+          {
+            struct TimeVal delta;
 
-       // to let the gauge move to 100% lets increase it accordingly.
-       set(ga, MUIA_Gauge_Current, progress);
+            // how much time has passed exactly?
+            memcpy(&delta, &now, sizeof(struct TimeVal));
+            SubTime(TIMEVAL(&delta), TIMEVAL(&last));
 
-       // signal the application to update now
-       DoMethod(G->App, MUIM_Application_InputBuffered);
+            // update the display at least twice a second
+            if(delta.Seconds > 0 || delta.Microseconds > 250000)
+            {
+              // update the gauge
+              set(ga, MUIA_Gauge_Current, progress);
+              // let the list show the found mails so far
+              set(lv, MUIA_NList_Quiet, FALSE);
 
-       FreeSearchPatternList(&search);
-     }
+              // signal the application to update now
+              DoMethod(G->App, MUIM_Application_InputBuffered);
 
-     free(sfo);
-   }
+              memcpy(&last, &now, sizeof(struct TimeVal));
 
-   set(gui->GR_PAGE, MUIA_Group_ActivePage, 0);
-   set(gui->BT_SELECTACTIVE, MUIA_Disabled, !fndmsg);
-   set(gui->BT_SELECT, MUIA_Disabled, !fndmsg);
-   set(gui->BT_READ, MUIA_Disabled, !fndmsg);
+              // forbid immediate display again
+              set(lv, MUIA_NList_Quiet, TRUE);
+            }
+          }
+        }
+      }
 
-   G->FI->SearchActive = FALSE;
+      // to let the gauge move to 100% lets increase it accordingly.
+      set(ga, MUIA_Gauge_Current, progress);
 
-   // if the closeHook has set the ClearOnEnd flag we have to clear
-   // the result listview
-   if(G->FI->ClearOnEnd)
-     DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_Clear);
-   else
-     set(gui->WI, MUIA_Window_ActiveObject, xget(gui->GR_SEARCH, MUIA_SearchControlGroup_ActiveObject));
+      // signal the application to update now
+      DoMethod(G->App, MUIM_Application_InputBuffered);
 
-   LEAVE();
+      FreeSearchPatternList(&search);
+    }
+
+    free(sfo);
+  }
+
+  set(gui->LV_MAILS, MUIA_NList_Quiet, FALSE);
+  set(gui->GR_PAGE, MUIA_Group_ActivePage, 0);
+  // enable the buttons again
+  set(gui->BT_SEARCH, MUIA_Disabled, FALSE);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, fndmsg == 0, gui->BT_SELECTACTIVE,
+                                                              gui->BT_SELECT,
+                                                              gui->BT_READ,
+                                                              NULL);
+
+  G->FI->SearchActive = FALSE;
+
+  // if the closeHook has set the ClearOnEnd flag we have to clear
+  // the result listview
+  if(G->FI->ClearOnEnd == TRUE)
+    DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_Clear);
+  else
+    set(gui->WI, MUIA_Window_ActiveObject, xget(gui->GR_SEARCH, MUIA_SearchControlGroup_ActiveObject));
+
+  LEAVE();
 }
 MakeStaticHook(FI_SearchHook,FI_SearchFunc);
 
@@ -2076,7 +2104,6 @@ static struct FI_ClassData *FI_New(void)
 
   if((data = calloc(1, sizeof(struct FI_ClassData))) != NULL)
   {
-    Object *bt_search;
     Object *bt_abort;
     Object *lv_fromrule;
     Object *bt_torule;
@@ -2148,7 +2175,7 @@ static struct FI_ClassData *FI_New(void)
           End,
           Child, data->GUI.GR_PAGE = PageGroup,
              Child, HGroup,
-                Child, bt_search = MakeButton(tr(MSG_FI_StartSearch)),
+                Child, data->GUI.BT_SEARCH = MakeButton(tr(MSG_FI_StartSearch)),
                 Child, data->GUI.BT_SELECTACTIVE = MakeButton(tr(MSG_FI_SELECTACTIVE)),
                 Child, data->GUI.BT_SELECT = MakeButton(tr(MSG_FI_SelectMatched)),
                 Child, data->GUI.BT_READ = MakeButton(tr(MSG_FI_ReadMessage)),
@@ -2179,7 +2206,7 @@ static struct FI_ClassData *FI_New(void)
        SetHelp(bt_all,                     MSG_HELP_FI_BT_ALL);
        SetHelp(po_fromrule,                MSG_HELP_FI_PO_FROMRULE);
        SetHelp(bt_torule,                  MSG_HELP_FI_BT_TORULE);
-       SetHelp(bt_search,                  MSG_HELP_FI_BT_SEARCH);
+       SetHelp(data->GUI.BT_SEARCH,        MSG_HELP_FI_BT_SEARCH);
        SetHelp(data->GUI.BT_SELECTACTIVE,  MSG_HELP_FI_BT_SELECTACTIVE);
        SetHelp(data->GUI.BT_SELECT,        MSG_HELP_FI_BT_SELECT);
        SetHelp(data->GUI.BT_READ,          MSG_HELP_FI_BT_READ);
@@ -2192,7 +2219,7 @@ static struct FI_ClassData *FI_New(void)
        DoMethod(bt_all,                   MUIM_Notify, MUIA_Pressed,              FALSE,          data->GUI.LV_FOLDERS   , 5, MUIM_List_Select, MUIV_List_Select_All, MUIV_List_Select_On, NULL);
        DoMethod(bt_none,                  MUIM_Notify, MUIA_Pressed,              FALSE,          data->GUI.LV_FOLDERS   , 5, MUIM_List_Select, MUIV_List_Select_All, MUIV_List_Select_Off, NULL);
        DoMethod(bt_torule,                MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &CreateFilterFromSearchHook);
-       DoMethod(bt_search,                MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &FI_SearchHook);
+       DoMethod(data->GUI.BT_SEARCH,      MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &FI_SearchHook);
        DoMethod(data->GUI.BT_SELECT,      MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &FI_SelectHook);
        DoMethod(data->GUI.BT_SELECTACTIVE,MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &FI_SwitchHook);
        DoMethod(data->GUI.LV_MAILS,       MUIM_Notify, MUIA_NList_DoubleClick,    MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &FI_ReadHook);
