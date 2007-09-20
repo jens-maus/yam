@@ -58,6 +58,13 @@ static const char USED_VAR yam_stack_size[] = "$STACK:" STR(MIN_STACKSIZE) "\n";
   #error "initial stack/memory specification failed"
 #endif
 
+#if defined(__SASC)
+  // define the __AMIGA__ symbol if it is yet unknown
+  #if !defined(__AMIGA__)
+    #define __AMIGA__
+  #endif
+#endif
+
 // identify the system we are compiling for
 #if defined(__amigaos4__)
   #define SYSTEM      "AmigaOS4"

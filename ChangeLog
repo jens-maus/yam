@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-20  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_global.c: added the __AMIGA__ #define for the SAS/C build.
+
 2007-09-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * locale/deutsch.ct: minor spelling fix.
