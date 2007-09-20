@@ -7,6 +7,7 @@ $URL$
 
 2007-09-20  Thore Böckelmann <tboeckel@gmx.de>
 
+  * smakefile: added missing dependencies for WriteWindow.c
   * YAM_global.c: added the __AMIGA__ #define for the SAS/C build.
 
 2007-09-19  Jens Langner <Jens.Langner@light-speed.de>
