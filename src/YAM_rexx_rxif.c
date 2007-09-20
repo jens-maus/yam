@@ -576,27 +576,26 @@ void rx_mailread( UNUSED struct RexxHost *host, struct rxd_mailread **rxd, long 
       case RXIF_ACTION:
       {
         static int winNumber = -1;
-        struct Mail *mail;
 
         rd->res.window = &winNumber;
 
         if(rd->arg.window == NULL)
         {
-          if((mail = MA_GetActiveMail(NULL, NULL, NULL)))
+          struct Mail *mail;
+
+          if((mail = MA_GetActiveMail(NULL, NULL, NULL)) != NULL)
           {
             struct ReadMailData *rmData;
 
-            if((rmData = CreateReadWindow(TRUE)))
+            if((rmData = CreateReadWindow(TRUE)) != NULL)
             {
               G->ActiveRexxRMData = rmData;
 
-              if(!rd->arg.quiet)
+              if(rd->arg.quiet == FALSE)
                 SafeOpenWindow(rmData->readWindow);
 
               if(DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, mail) == FALSE)
               {
-                G->ActiveRexxRMData = NULL;
-
                 // on any error we make sure to delete the read window
                 // immediatly again.
                 CleanupReadMailData(rmData, TRUE);
@@ -604,46 +603,51 @@ void rx_mailread( UNUSED struct RexxHost *host, struct rxd_mailread **rxd, long 
                 rd->rc = RETURN_ERROR;
               }
               else
+              {
+                // Set the active Rexx RMData again, as this might have been overwritten
+                // in the meantime by the read window itself. In this case the read window
+                // will try to cleanup all the stuff allocated for a previous mail.
+                G->ActiveRexxRMData = rmData;
                 winNumber = xget(rmData->readWindow, MUIA_ReadWindow_Num);
+              }
             }
             else
               rd->rc = RETURN_ERROR;
           }
           else
             rd->rc = RETURN_WARN;
-         }
-         else
-         {
-           // if a window number was specified with the command we have to search
-           // through our ReadDataList and find the window with this particular
-           // number
-           int winnr = *rd->arg.window;
-           struct MinNode *curNode = G->readMailDataList.mlh_Head;
+        }
+        else
+        {
+          // if a window number was specified with the command we have to search
+          // through our ReadDataList and find the window with this particular
+          // number
+          int winnr = *rd->arg.window;
+          struct MinNode *curNode = G->readMailDataList.mlh_Head;
 
-           for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
-           {
-             struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+          for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          {
+            struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-             if(rmData->readWindow &&
-                (int)xget(rmData->readWindow, MUIA_ReadWindow_Num) == winnr)
-             {
-               G->ActiveRexxRMData = rmData;
+            if(rmData->readWindow != NULL &&
+               (int)xget(rmData->readWindow, MUIA_ReadWindow_Num) == winnr)
+            {
+              G->ActiveRexxRMData = rmData;
+              winNumber = winnr;
 
-               // bring the window to the user's attention
-               if(!rd->arg.quiet)
-                 set(rmData->readWindow, MUIA_Window_Activate, TRUE);
+              // bring the window to the user's attention
+              if(rd->arg.quiet == FALSE)
+                set(rmData->readWindow, MUIA_Window_Activate, TRUE);
 
-               winNumber = winnr;
+              break;
+            }
+          }
 
-               break;
-             }
-           }
-
-           // check if we successfully found the window with that
-           // number or if we have to return an error message
-           if(curNode->mln_Succ == NULL)
-             rd->rc = RETURN_ERROR;
-         }
+          // check if we successfully found the window with that
+          // number or if we have to return an error message
+          if(curNode->mln_Succ == NULL)
+            rd->rc = RETURN_ERROR;
+        }
       }
       break;
 

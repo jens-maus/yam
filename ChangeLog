@@ -7,6 +7,11 @@ $URL$
 
 2007-09-20  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_rexx_rxif.c: reading a mail via ARexx caused the current ReadMailData
+    pointer to be invalidated again, because every new read window tries to
+    clean up any data of a previous shown mail, including that ARexx pointer.
+    Hence after reading in the mail that pointer was no longer valid, i.e. for
+    closing the read window. This fixes bug #1798654.
   * smakefile: added missing dependencies for WriteWindow.c
   * YAM_global.c: added the __AMIGA__ #define for the SAS/C build.
 
