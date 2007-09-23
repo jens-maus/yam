@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-23  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: updated according to changes.
+
 2007-09-20  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_rexx_rxif.c: reading a mail via ARexx caused the current ReadMailData

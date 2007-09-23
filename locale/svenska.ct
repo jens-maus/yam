@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.21 (07.09.07)
+## version $VER: YAM.ct 6.22 (23.09.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -2478,8 +2478,8 @@ Stäng konfigurationsfönstret och\nanvänd de gamla inställningarna
 ;#DEF Close configuration\nwindow and use old\nsettings
 ;#SET (701//)
 MSG_AB_BirthdayReq
-Idag fyller %s %ld år!\nVill du skicka ett gratulationskort?
-;#DEF Today, %s reaches age %ld!\nDo you want to send a greetings card?
+Idag fyller %s %ld år!\n\nVill du skicka ett gratulationskort?
+;#DEF Today, %s reaches age %ld.\n\nDo you want to send a greetings card?
 ;#SET (702//)
 MSG_AB_BirthdayReminder
 Födelsedagspåminnelse
@@ -6374,8 +6374,8 @@ Laddar tillstånd för uppdateringsdata...
 ;#DEF Loading update state data...
 ;#SET (1807//)
 MSG_CO_ASK_SAVE_SIGNATURE
-Ändringar i signaturfilen måste sparas\nseparat från den globala konfigurationen!\nAnnars går de förlorade!\n\nVill du spara ändringarna nu?
-;#DEF Changes to the signature files must be saved\nseparately from the global configuration!\nOtherwise they will be lost!\n\nDo you want to save the changes now?
+Ändringar i signaturen måste sparas\nseparat från den globala konfigurationen,\nannars går de förlorade!\n\nVill du spara signaturen nu?
+;#DEF Changes to the signature must be saved separately\nfrom the global configuration or otherwise they\nwill be lost.\n\nDo you want to save the signature now?
 ;#SET (1808//)
 MSG_MA_HIDE
 Göm
