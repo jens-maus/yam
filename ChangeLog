@@ -7,6 +7,11 @@ $URL$
 
 2007-09-24  Jens Langner <Jens.Langner@light-speed.de>
 
+  * AttachmentGroup.c: if an attachment part doesn't have any name associated
+    with it, an eventually existing description will now be used instead for
+    the attachment image display in a read window. This should e.g. show
+    the Subject: line of embedded e-mail message rather than leaving that
+    description/name space empty.
   * YAM.c: changed the command-line help text to show "Options/Tooltypes" to
     note that these options can be used as icon tooltypes as well.
 

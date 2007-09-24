@@ -470,12 +470,21 @@ OVERLOAD(MUIM_Draw)
             }
             else
             {
-              cnt = TextFit(_rp(obj), mailPart->Name, strlen(mailPart->Name), &te, NULL, 1, textSpaceWidth, textSpaceHeight);
+              char *text;
+
+              // check if that mail part has a name and if
+              // it is empty we use the description
+              if(mailPart->Name[0] != '\0')
+                text = mailPart->Name;
+              else
+                text = mailPart->Description;
+
+              cnt = TextFit(_rp(obj), text, strlen(text), &te, NULL, 1, textSpaceWidth, textSpaceHeight);
               if(cnt > 0)
               {
                 // move the rastport to the start where the text should be placed
                 Move(_rp(obj), _mright(child)+SPACING, topPosition);
-                Text(_rp(obj), mailPart->Name, cnt);
+                Text(_rp(obj), text, cnt);
               }
             }
 
