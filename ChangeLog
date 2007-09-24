@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: changed the command-line help text to show "Options/Tooltypes" to
+    note that these options can be used as icon tooltypes as well.
+
 2007-09-23  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: updated according to changes.

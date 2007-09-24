@@ -2614,7 +2614,7 @@ static LONG ParseCommandArgs(void)
     nrda.Template = (STRPTR)"USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M,NOIMGWARNING/S,NOCATALOG/S";
 
     // now we build an extended help page text
-    snprintf(extHelp, SIZE_EXTHELP, "%s (%s)\n%s\n\nUsage: YAM <options>\nOptions:\n"
+    snprintf(extHelp, SIZE_EXTHELP, "%s (%s)\n%s\n\nUsage: YAM <options>\nOptions/Tooltypes:\n"
                                     "  USER=<username>     : Selects the active YAM user and skips\n"
                                     "                        the login process.\n"
                                     "  PASSWORD=<password> : Password of selected user (if required).\n"
