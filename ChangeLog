@@ -7,6 +7,8 @@ $URL$
 
 2007-09-26  Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/portugues-brasil.ct, locale/espanol.ct: fixed "missing identifier"
+    errors from FlexCat caused by additional empty lines.
   * YAM.c, locale/YAM.cd, locale/deutsch.ct: whenever an MCC class is outdated
     or missing the user now has the possibility to visit the class's homepage
     directly if openurl.library is available.
