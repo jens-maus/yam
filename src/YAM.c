@@ -2862,7 +2862,9 @@ int main(int argc, char **argv)
                                     "Thanks for your help in improving YAM!";
            if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL &&
            	  GETINTERFACE("main", IOpenURL, OpenURLBase))
+           {
              ErrReq.es_GadgetFormat = (STRPTR)"Visit homepage|Exit";
+           }
            else
              ErrReq.es_GadgetFormat = (STRPTR)"Exit";
 
@@ -2897,7 +2899,9 @@ int main(int argc, char **argv)
                                     "Thanks for your help in improving YAM!";
            if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL &&
            	  GETINTERFACE("main", IOpenURL, OpenURLBase))
+           {
              ErrReq.es_GadgetFormat = (STRPTR)"Go on|Visit homepage|Exit";
+           }
            else
              ErrReq.es_GadgetFormat = (STRPTR)"Go on|Exit";
 
