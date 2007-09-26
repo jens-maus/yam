@@ -2899,7 +2899,7 @@ int main(int argc, char **argv)
            	  GETINTERFACE("main", IOpenURL, OpenURLBase))
              ErrReq.es_GadgetFormat = (STRPTR)"Go on|Visit homepage|Exit";
            else
-             ErrReq.es_GadgetFormat = (STRPTR)"Exit";
+             ErrReq.es_GadgetFormat = (STRPTR)"Go on|Exit";
 
            DisplayBeep(NULL);
            answer = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
