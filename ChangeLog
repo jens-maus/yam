@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-26  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, locale/YAM.cd, locale/deutsch.ct: whenever an MCC class is outdated
+    or missing the user now has the possibility to visit the class's homepage
+    directly if openurl.library is available.
+
 2007-09-24  Jens Langner <Jens.Langner@light-speed.de>
 
   * AttachmentGroup.c: if an attachment part doesn't have any name associated

@@ -6524,3 +6524,6 @@ Receiver address (_From:)
 MSG_FO_REPLYTO_ADDRESS (2023//)
 _Reply address (Reply-To:)
 ;
+MSG_RETRY_HOMEPAGE_QUIT_GAD (2024//)
+Try again|Visit homepage|Quit
+;

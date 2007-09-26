@@ -296,7 +296,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
       if((base = OpenLibrary(&libname[8], 0)) != NULL || (base = OpenLibrary(&libname[0], 0)) != NULL)
       {
-        UWORD OpenCnt = base->lib_OpenCnt;
+        UWORD openCnt = base->lib_OpenCnt;
 
         ver = base->lib_Version;
         rev = base->lib_Revision;
@@ -313,10 +313,30 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
           break;
         }
 
-        if(OpenCnt > 1)
+        if(openCnt > 1)
         {
-          if(req == TRUE && MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url) != 0)
-            flush = TRUE;
+          if(req == TRUE)
+          {
+            LONG answer;
+
+            answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_HOMEPAGE_QUIT_GAD), tr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url);
+            if(answer == 0)
+            {
+              // cancel
+              break;
+            }
+            else if(answer == 1)
+            {
+              // flush and retry
+              flush = TRUE;
+            }
+            else
+            {
+              // visit the home page if it is known but bail out nevertheless
+              GotoURL(url);
+              break;
+            }
+          }
           else
             break;
         }
@@ -339,8 +359,28 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
           // We're out of luck - open count is 0, we've tried to flush
           // and still haven't got the version we want
-          if(req == TRUE && MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url) != 0)
-            flush = TRUE;
+          if(req == TRUE)
+          {
+            LONG answer;
+
+            answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_HOMEPAGE_QUIT_GAD), tr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url);
+            if(answer == 0)
+            {
+              // cancel
+              break;
+            }
+            else if(answer == 1)
+            {
+              // flush and retry
+              flush = TRUE;
+            }
+            else
+            {
+              // visit the home page if it is known but bail out nevertheless
+              GotoURL(url);
+              break;
+            }
+          }
           else
             break;
         }
@@ -348,10 +388,23 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
     }
     else
     {
+      LONG answer;
+
       // No MCC at all - no need to attempt flush
       flush = FALSE;
-      if (MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url) == 0)
+      answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_HOMEPAGE_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url);
+
+      if(answer == 0)
+      {
+        // cancel
         break;
+      }
+      else if(answer == 2)
+      {
+        // visit the home page if it is known but bail out nevertheless
+        GotoURL(url);
+        break;
+      }
     }
 
   }
