@@ -7,6 +7,12 @@ $URL$
 
 2007-09-26  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: adapted GotoURL() to open and close openurl.library itself if
+    that was not already done in the startup phase.
+  * YAM.c, YAM_UT.c, locale/YAM.cd, locale/deutsch.ct: added the possibility
+    to visit a required library's homepage in the same way as for MCCs. The
+    "Visit homepage" button will now appear if openurl.library is really
+    installed. Without it the only possibility is to exit YAM.
   * locale/portugues-brasil.ct, locale/espanol.ct: fixed "missing identifier"
     errors from FlexCat caused by additional empty lines.
   * YAM.c, locale/YAM.cd, locale/deutsch.ct: whenever an MCC class is outdated
