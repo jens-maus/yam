@@ -6678,52 +6678,23 @@ void GotoURL(const char *url)
 
   // The ARexx macro to open a URL is only possible after the startup phase
   // and if a script has been configured for this purpose.
-  if(G->InStartupPhase == FALSE && C->RX[MACRO_URL].Script[0] != '\0')
+  if(G != NULL && G->InStartupPhase == FALSE && C->RX[MACRO_URL].Script[0] != '\0')
   {
     char newurl[SIZE_LARGE];
 
     snprintf(newurl, sizeof(newurl), "%c%s%c", '"', url, '"');
     MA_StartMacro(MACRO_URL, newurl);
   }
-  else
+  else if(OpenURLBase != NULL)
   {
-    BOOL closeOpenURL = FALSE;
-
-    // Try to open openurl.library if that has not been done before.
-    // We already tried to open it during the initialization process,
-    // but since openurl.library is not mandatory that might have failed.
-    // By retrying the user has the chance to install it while YAM is
-    // running and we don't produce unnecessary error messages.
-    if(OpenURLBase == NULL)
-    {
-      if((OpenURLBase = OpenLibrary("openurl.library", 1)) != NULL)
-      {
-        if(GETINTERFACE("main", IOpenURL, OpenURLBase))
-        {
-          closeOpenURL = TRUE;
-        }
-      }
-    }
-
-  	if(OpenURLBase != NULL)
-  	{
-      // open the URL in a defined web browser and
-      // let the user decide himself if he wants to see
-      // it popping up in a new window or not (via OpenURL
-      // prefs)
-      URL_OpenA((STRPTR)url, NULL);
-    }
-    else
-      W(DBF_HTML, "No openurl.library v1+ found");
-
-    // close openurl.library again if we opened it here ourself
-    if(closeOpenURL == TRUE)
-    {
-      DROPINTERFACE(IOpenURL);
-      CloseLibrary(OpenURLBase);
-      OpenURLBase = NULL;
-    }
+    // open the URL in a defined web browser and
+    // let the user decide himself if he wants to see
+    // it popping up in a new window or not (via OpenURL
+    // prefs)
+    URL_OpenA((STRPTR)url, NULL);
   }
+  else
+    W(DBF_HTML, "No openurl.library v1+ found");
 
   LEAVE();
 }

@@ -7,6 +7,9 @@ $URL$
 
 2007-09-26  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_UT.c: reverted the last changes to GotoURL() again. The expiry
+    requester now features a "Visit homepage" button, too, if openurl.library
+    is installed.
   * YAM_UT.c: adapted GotoURL() to open and close openurl.library itself if
     that was not already done in the startup phase.
   * YAM.c, YAM_UT.c, locale/YAM.cd, locale/deutsch.ct: added the possibility

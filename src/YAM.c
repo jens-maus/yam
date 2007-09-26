@@ -2834,10 +2834,10 @@ int main(int argc, char **argv)
    {
      BOOL goon = TRUE;
 
-     if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) &&
+     if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) != NULL &&
         GETINTERFACE("main", IIntuition, IntuitionBase))
      {
-       if((UtilityBase = (APTR)OpenLibrary("utility.library", 36)) &&
+       if((UtilityBase = (APTR)OpenLibrary("utility.library", 36)) != NULL &&
           GETINTERFACE("main", IUtility, UtilityBase))
        {
          char var;
@@ -2860,16 +2860,27 @@ int main(int argc, char **argv)
                                     "that no old versions are floating around causing\n"
                                     "users to report bugs on old versions.\n\n"
                                     "Thanks for your help in improving YAM!";
-           ErrReq.es_GadgetFormat = (STRPTR)"Exit";
+           if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL &&
+           	  GETINTERFACE("main", IOpenURL, OpenURLBase))
+             ErrReq.es_GadgetFormat = (STRPTR)"Visit homepage|Exit";
+           else
+             ErrReq.es_GadgetFormat = (STRPTR)"Exit";
 
            DisplayBeep(NULL);
-           EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
+           if(EasyRequestArgs(NULL, &ErrReq, NULL, NULL) == 1)
+           {
+             // visit YAM's nightly build page and exit
+             GotoURL("http://nightly.yam.ch/");
+           }
 
+           CLOSELIB(OpenURLBase, IOpenURL);
            goon = FALSE;
          }
 
-         if(goon && GetVar("I_KNOW_YAM_IS_UNDER_DEVELOPMENT", &var, sizeof(var), 0) == -1)
+         if(goon == TRUE && GetVar("I_KNOW_YAM_IS_UNDER_DEVELOPMENT", &var, sizeof(var), 0) == -1)
          {
+           LONG answer;
+
            ErrReq.es_Title        = (STRPTR)"YAM Developer Version Warning!";
            ErrReq.es_TextFormat   = (STRPTR)"This is an *internal* developer version and\n"
                                     "not recommended or intended for public use.\n"
@@ -2884,20 +2895,34 @@ int main(int argc, char **argv)
                                     "stable release version available from:\n\n"
                                     "http://www.yam.ch/\n\n"
                                     "Thanks for your help in improving YAM!";
-           ErrReq.es_GadgetFormat = (STRPTR)"Go on|Exit";
+           if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL &&
+           	  GETINTERFACE("main", IOpenURL, OpenURLBase))
+             ErrReq.es_GadgetFormat = (STRPTR)"Go on|Visit homepage|Exit";
+           else
+             ErrReq.es_GadgetFormat = (STRPTR)"Exit";
 
            DisplayBeep(NULL);
-           if(!EasyRequestArgs(NULL, &ErrReq, NULL, NULL))
+           answer = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
+           if(answer == 0)
+           {
+             // exit YAM
              goon = FALSE;
-         }
+           }
+           else if(answer == 2)
+           {
+             // visit YAM's nightly build page and continue normally
+             GotoURL("http://nightly.yam.ch/");
+           }
 
+           CLOSELIB(OpenURLBase, IOpenURL);
+         }
        }
 
        CLOSELIB(UtilityBase, IUtility);
      }
 
      CLOSELIB(IntuitionBase, IIntuition);
-     if(!goon)
+     if(goon == FALSE)
        exit(RETURN_WARN);
    }
 #endif
