@@ -838,7 +838,7 @@ void TC_Resume(enum TimerIO tio)
     // fire the timer by doing a SendIO()
     SendIO((struct IORequest *)tr);
 
-	  // remember the new start time
+    // remember the new start time
     GetSysTime(TIMEVAL(&timer->startTime));
 
     // signal that our timer is running
@@ -2861,7 +2861,7 @@ int main(int argc, char **argv)
                                     "users to report bugs on old versions.\n\n"
                                     "Thanks for your help in improving YAM!";
            if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL &&
-           	  GETINTERFACE("main", IOpenURL, OpenURLBase))
+              GETINTERFACE("main", IOpenURL, OpenURLBase))
            {
              ErrReq.es_GadgetFormat = (STRPTR)"Visit homepage|Exit";
            }
@@ -2898,7 +2898,7 @@ int main(int argc, char **argv)
                                     "http://www.yam.ch/\n\n"
                                     "Thanks for your help in improving YAM!";
            if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL &&
-           	  GETINTERFACE("main", IOpenURL, OpenURLBase))
+              GETINTERFACE("main", IOpenURL, OpenURLBase))
            {
              ErrReq.es_GadgetFormat = (STRPTR)"Go on|Visit homepage|Exit";
            }
@@ -2914,8 +2914,8 @@ int main(int argc, char **argv)
            }
            else if(answer == 2)
            {
-             // visit YAM's nightly build page and continue normally
-             GotoURL("http://nightly.yam.ch/");
+             // visit YAM's home page and continue normally
+             GotoURL("http://www.yam.ch/");
            }
 
            CLOSELIB(OpenURLBase, IOpenURL);
