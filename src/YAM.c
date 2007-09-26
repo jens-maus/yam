@@ -1615,7 +1615,7 @@ static void Abort(const char *message, ...)
 
   if(message != NULL)
   {
-    static char error[SIZE_LINE];
+    char error[SIZE_LINE];
 
     vsnprintf(error, sizeof(error), message, a);
 
@@ -3298,13 +3298,13 @@ int main(int argc, char **argv)
 
                         if(wrwin >= 0)
                         {
-                          int i;
+                          int arg;
 
                           // lets walk through all arguments in the appMessage
-                          for(i = 0; i < apmsg->am_NumArgs; i++)
+                          for(arg = 0; arg < apmsg->am_NumArgs; arg++)
                           {
                             char buf[SIZE_PATHFILE];
-                            struct WBArg *ap = &apmsg->am_ArgList[i];
+                            struct WBArg *ap = &apmsg->am_ArgList[arg];
 
                             NameFromLock(ap->wa_Lock, buf, sizeof(buf));
                             AddPart(buf, (char *)ap->wa_Name, sizeof(buf));
