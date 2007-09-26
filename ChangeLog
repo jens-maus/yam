@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-26  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: updated according to changes.
+
 2007-09-26  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, YAM_UT.c: reverted the last changes to GotoURL() again. The expiry

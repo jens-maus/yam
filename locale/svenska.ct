@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.22 (23.09.07)
+## version $VER: YAM.ct 6.23 (26.09.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -7237,3 +7237,11 @@ MSG_FO_REPLYTO_ADDRESS
 _Svarsadress (Svar till:)
 ;#DEF _Reply address (Reply-To:)
 ;#SET (2023//)
+MSG_RETRY_HOMEPAGE_QUIT_GAD
+Försök igen|Besök hemsida|Avsluta
+;#DEF Try again|Visit homepage|Quit
+;#SET (2024//)
+MSG_HOMEPAGE_QUIT_GAD
+Besök hemsida|Avsluta
+;#DEF Visit homepage|Quit
+;#SET (2025//)
