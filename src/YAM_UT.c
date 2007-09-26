@@ -6665,8 +6665,9 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
 //  Returns a unique number
 int GetSimpleID(void)
 {
-   static int num = 0;
-   return ++num;
+  static int num = 0;
+
+  return ++num;
 }
 ///
 /// GotoURL
@@ -6675,26 +6676,20 @@ void GotoURL(const char *url)
 {
   ENTER();
 
-  if(C->RX[MACRO_URL].Script[0] != '\0')
+  if(G->InStartupPhase == FALSE && C->RX[MACRO_URL].Script[0] != '\0')
   {
     char newurl[SIZE_LARGE];
+
     snprintf(newurl, sizeof(newurl), "%c%s%c", '"', url, '"');
     MA_StartMacro(MACRO_URL, newurl);
   }
-  else if((OpenURLBase = OpenLibrary("openurl.library", 1)) != NULL)
+  else if(OpenURLBase != NULL)
   {
-    if(GETINTERFACE("main", IOpenURL, OpenURLBase))
-    {
-      // open the URL in a defined web browser and
-      // let the user define himself if he wants to see
-      // it popping up in a new window or not (via OpenURL
-      // prefs)
-      URL_OpenA((STRPTR)url, NULL);
-
-      DROPINTERFACE(IOpenURL);
-    }
-    CloseLibrary(OpenURLBase);
-    OpenURLBase = NULL;
+    // open the URL in a defined web browser and
+    // let the user define himself if he wants to see
+    // it popping up in a new window or not (via OpenURL
+    // prefs)
+    URL_OpenA((STRPTR)url, NULL);
   }
   else
     W(DBF_HTML, "No openurl.library v1+ found");

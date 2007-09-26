@@ -8204,3 +8204,6 @@ Antwortadresse (Reply-To:)
 MSG_RETRY_HOMEPAGE_QUIT_GAD
 Wiederholen|Homepage besuchen|Beenden
 ;
+MSG_HOMEPAGE_QUIT_GAD
+Homepage besuchen|Beenden
+;

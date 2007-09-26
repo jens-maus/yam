@@ -55,6 +55,7 @@
 #include <proto/layers.h>
 #include <proto/locale.h>
 #include <proto/muimaster.h>
+#include <proto/openurl.h>
 #include <proto/rexxsyslib.h>
 #include <proto/timer.h>
 #include <proto/utility.h>
@@ -241,7 +242,40 @@ static BOOL InitLib(const char *libname,
     if(base == NULL && required == TRUE)
     {
       if(homepage != NULL)
-        Abort(tr(MSG_ER_LIB_URL), libname, version, revision, homepage);
+      {
+        char error[SIZE_LINE];
+        LONG answer;
+
+        snprintf(error, sizeof(error), tr(MSG_ER_LIB_URL), libname, version, revision, homepage);
+
+        if(MUIMasterBase != NULL && G != NULL && G->App != NULL)
+        {
+          answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), OpenURLBase != NULL ? tr(MSG_HOMEPAGE_QUIT_GAD) : tr(MSG_Quit), error);
+        }
+        else if(IntuitionBase != NULL)
+        {
+          struct EasyStruct ErrReq;
+
+          ErrReq.es_StructSize   = sizeof(struct EasyStruct);
+          ErrReq.es_Flags        = 0;
+          ErrReq.es_Title        = (STRPTR)tr(MSG_ErrorStartup);
+          ErrReq.es_TextFormat   = error;
+          ErrReq.es_GadgetFormat = OpenURLBase != NULL ? (STRPTR)tr(MSG_HOMEPAGE_QUIT_GAD) : (STRPTR)tr(MSG_Quit);
+
+          answer = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
+        }
+        else
+        {
+          puts(error);
+          answer = 0;
+        }
+
+        // visit the home page if the user requested that
+        if(answer == 1)
+          GotoURL(homepage);
+
+        Abort(NULL);
+      }
       else
         Abort(tr(MSG_ER_LIB), libname, version, revision);
     }
@@ -319,7 +353,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
           {
             LONG answer;
 
-            answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_HOMEPAGE_QUIT_GAD), tr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url);
+            answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), OpenURLBase != NULL ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url);
             if(answer == 0)
             {
               // cancel
@@ -363,7 +397,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
           {
             LONG answer;
 
-            answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_HOMEPAGE_QUIT_GAD), tr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url);
+            answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), OpenURLBase != NULL ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url);
             if(answer == 0)
             {
               // cancel
@@ -392,7 +426,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
       // No MCC at all - no need to attempt flush
       flush = FALSE;
-      answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), tr(MSG_RETRY_HOMEPAGE_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url);
+      answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), OpenURLBase != NULL ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url);
 
       if(answer == 0)
       {
@@ -2253,15 +2287,20 @@ static void Initialise(BOOL hidden)
     Abort(NULL);
 
   // load&initialize all required libraries
-  INITLIB("graphics.library",  36, 0, &GfxBase,      "main", &IGraphics, TRUE, NULL);
-  INITLIB("layers.library",    39, 0, &LayersBase,   "main", &ILayers,   TRUE, NULL);
-  INITLIB("workbench.library", 36, 0, &WorkbenchBase,"main", &IWorkbench,TRUE, NULL);
-  INITLIB("keymap.library",    36, 0, &KeymapBase,   "main", &IKeymap,   TRUE, NULL);
-  INITLIB("iffparse.library",  36, 0, &IFFParseBase, "main", &IIFFParse, TRUE, NULL);
-  INITLIB(RXSNAME,             36, 0, &RexxSysBase,  "main", &IRexxSys,  TRUE, NULL);
-  INITLIB("muimaster.library", 19, 0, &MUIMasterBase,"main", &IMUIMaster,TRUE, "http://www.sasg.com/");
-  INITLIB("datatypes.library", 39, 0, &DataTypesBase,"main", &IDataTypes,TRUE, NULL);
-  INITLIB("codesets.library",   6, 4, &CodesetsBase, "main", &ICodesets, TRUE, "http://www.sf.net/projects/codesetslib/");
+  INITLIB("graphics.library",  36, 0, &GfxBase,       "main", &IGraphics,  TRUE,  NULL);
+  INITLIB("layers.library",    39, 0, &LayersBase,    "main", &ILayers,    TRUE,  NULL);
+  INITLIB("workbench.library", 36, 0, &WorkbenchBase, "main", &IWorkbench, TRUE,  NULL);
+  INITLIB("keymap.library",    36, 0, &KeymapBase,    "main", &IKeymap,    TRUE,  NULL);
+  INITLIB("iffparse.library",  36, 0, &IFFParseBase,  "main", &IIFFParse,  TRUE,  NULL);
+  INITLIB(RXSNAME,             36, 0, &RexxSysBase,   "main", &IRexxSys,   TRUE,  NULL);
+  INITLIB("datatypes.library", 39, 0, &DataTypesBase, "main", &IDataTypes, TRUE,  NULL);
+  // openurl.library has a homepage, but providing that homepage without having OpenURL
+  // installed would result in a paradoxon, because InitLib() would provide a button
+  // to visit the URL which in turn requires OpenURL to be installed...
+  // Hence we try to open openurl.library without
+  INITLIB("openurl.library",    1, 0, &OpenURLBase,   "main", &IOpenURL,   FALSE, NULL);
+  INITLIB("muimaster.library", 19, 0, &MUIMasterBase, "main", &IMUIMaster, TRUE, "http://www.sasg.com/");
+  INITLIB("codesets.library",   6, 4, &CodesetsBase,  "main", &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
 
   // we check for the amisslmaster.library v3 accordingly
   if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", &IAmiSSLMaster, FALSE, NULL))

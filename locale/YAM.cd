@@ -6527,3 +6527,6 @@ _Reply address (Reply-To:)
 MSG_RETRY_HOMEPAGE_QUIT_GAD (2024//)
 Try again|Visit homepage|Quit
 ;
+MSG_HOMEPAGE_QUIT_GAD (2025//)
+Visit homepage|Quit
+;
