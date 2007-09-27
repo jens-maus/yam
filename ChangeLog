@@ -7,6 +7,8 @@ $URL$
 
 2007-09-27  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MAf.c: added even more debug messages to the folder scan process and the
+    index save function.
   * YAM_MAf.c: added some more debug messages to the folder scan process to
     be able to detect scanning issues.
   * YAM_UT.c, extrasrc/SetProcWindow.c: moved SetProcWindow() function to a

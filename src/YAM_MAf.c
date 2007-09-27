@@ -367,9 +367,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
     {
       // rebuild the index (rescanning the mailbox directory)
       if(MA_ScanMailBox(folder) == TRUE && MA_SaveIndex(folder) == TRUE)
-      {
         indexloaded = LM_VALID;
-      }
     }
   }
   else if(full == TRUE)
@@ -446,7 +444,10 @@ BOOL MA_SaveIndex(struct Folder *folder)
     success = TRUE;
   }
   else
+  {
+    W(DBF_FOLDER, "saving index file '%s' of folder '%s' failed", MA_IndexFileName(folder), folder->Name);
     ER_NewError(tr(MSG_ER_CANNOT_WRITE_INDEX), MA_IndexFileName(folder), folder->Name);
+  }
 
   RETURN(success);
   return success;
@@ -479,7 +480,7 @@ BOOL MA_GetIndex(struct Folder *folder)
       else
         canLoadIndex = MA_PromptFolderPassword(folder, G->MA->GUI.WI);
 
-      if(canLoadIndex)
+      if(canLoadIndex == TRUE)
       {
         // load the index file (and eventually rebuild it)
         folder->LoadedMode = MA_LoadIndex(folder, TRUE);
@@ -534,7 +535,7 @@ void MA_UpdateIndexes(BOOL initial)
 
   ENTER();
 
-  if((flist = FO_CreateList()))
+  if((flist = FO_CreateList()) != NULL)
   {
     int i;
 
@@ -542,9 +543,9 @@ void MA_UpdateIndexes(BOOL initial)
     {
       struct Folder *folder = flist[i];
 
-      if(folder && !isGroupFolder(folder))
+      if(folder != NULL && !isGroupFolder(folder))
       {
-        if(initial)
+        if(initial == TRUE)
         {
           const char *folderDir = GetFolderDir(folder);
           char *indexFile = MA_IndexFileName(folder);
@@ -2293,6 +2294,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                 // set the gauge and check the stopButton status as well.
                 if(BusySet(processedFiles++) == FALSE)
                 {
+                  D(DBF_FOLDER, "scan process aborted by user");
                   result = FALSE;
                   break;
                 }
@@ -2559,7 +2561,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
         result = FALSE;
       }
 
-      D(DBF_FOLDER, "Scanning finished");
+      D(DBF_FOLDER, "Scanning finished %s", result ? "successfully" : "unsuccessfully");
 
       BusyEnd();
 
