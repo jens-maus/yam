@@ -2193,7 +2193,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
   }
   else if(filecount == 0)
   {
-    // an empty director is ok
+    // an empty directory is ok
     result = TRUE;
   }
   else
@@ -2226,11 +2226,11 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
         // and now we also make sure an eventually enabled preview pane
         // is disabled as well.
-        if(C->QuickSearchBar)
+        if(C->QuickSearchBar == TRUE)
           set(gui->GR_QUICKSEARCHBAR, MUIA_Disabled, TRUE);
 
         // also set an embedded read pane as disabled.
-        if(C->EmbeddedReadPane)
+        if(C->EmbeddedReadPane == TRUE)
         {
           DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, MUIF_NONE);
           set(gui->MN_EMBEDDEDREADPANE, MUIA_Disabled, TRUE);
@@ -2415,7 +2415,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                         strlcpy(oldfile, GetFolderDir(folder), sizeof(oldfile));
                         AddPart(oldfile, fname, sizeof(oldfile));
 
-                        if((newfile = MA_NewMailFile(folder, fbuf)))
+                        if((newfile = MA_NewMailFile(folder, fbuf)) != NULL)
                         {
                           if(Rename(oldfile, newfile))
                           {
@@ -2535,13 +2535,16 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
             free(eabuffer);
           }
           else
+          {
+            W(DBF_FOLDER, "couldn't allocate ExAll buffer");
             result = FALSE;
+          }
 
           FreeDosObject(DOS_EXALLCONTROL, eac);
         }
         else
         {
-          W(DBF_FOLDER, "couldn't allocate ExAllControll structure, IoErr()=%ld", IoErr());
+          W(DBF_FOLDER, "couldn't allocate ExAllControl structure, IoErr()=%ld", IoErr());
           result = FALSE;
         }
 
