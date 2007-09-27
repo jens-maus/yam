@@ -105,13 +105,10 @@ static BOOL LoadImage(struct ImageCacheNode *node)
   if(FileExists(node->filename))
   {
     Object *o;
-    struct Process *myproc;
-    APTR oldwindowptr;
+    APTR oldWindowPtr;
 
     // tell DOS not to bother us with requesters
-    myproc = (struct Process *)FindTask(NULL);
-    oldwindowptr = myproc->pr_WindowPtr;
-    myproc->pr_WindowPtr = (APTR)-1;
+    oldWindowPtr = SetProcWindow((APTR)-1);
 
     D(DBF_IMAGE, "loading image '%s'", node->filename);
 
@@ -126,7 +123,8 @@ static BOOL LoadImage(struct ImageCacheNode *node)
                                             PDTA_DestMode,        PMODE_V43,
                                             TAG_DONE);
 
-    myproc->pr_WindowPtr = oldwindowptr; // restore window pointer.
+    // restore window pointer.
+    SetProcWindow(oldWindowPtr);
 
     // do all the setup/layout stuff that's necessary to get a bitmap from the dto
     // note that when using V43 datatypes, this might not be a real "struct BitMap *"

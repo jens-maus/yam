@@ -403,6 +403,9 @@ LONG     YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const char *
 char *   UnquoteString(const char *s, BOOL new);
 int      ReadUInt32(FILE *stream, ULONG *value);
 int      WriteUInt32(FILE *stream, ULONG value);
+#ifndef __amigaos4__
+APTR     SetProcWindow(const void *newWindowPtr);
+#endif
 
 // Here we define inline functions that should be inlined by
 // the compiler, if possible.

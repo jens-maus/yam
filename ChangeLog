@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-27  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c, YAM_CO.c, ImageCache.c: added SetProcWindow() function for the
+    OS3 and MOS builds which exists in OS4 already and is the preferred way to
+    forbid DOS error requesters.
+
 2007-09-26  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: updated according to changes.

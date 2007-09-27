@@ -657,14 +657,13 @@ BOOL CO_IsValid(void)
 static int CO_DetectPGP(const struct Config *co)
 {
   int version = 0;
-  struct Process *pr = (struct Process *)FindTask(NULL);
-  APTR oldWindowPtr = pr->pr_WindowPtr;
+  APTR oldWindowPtr;
 
   ENTER();
 
   // make sure the OS doesn't popup any
   // 'Please insert volume' kind warnings
-  pr->pr_WindowPtr = (APTR)-1;
+  oldWindowPtr = SetProcWindow((APTR)-1);
 
   if(PFExists(co->PGPCmdPath, "pgpe"))
   {
@@ -682,7 +681,7 @@ static int CO_DetectPGP(const struct Config *co)
     W(DBF_STARTUP, "no PGP version found to be installed in '%s'", co->PGPCmdPath);
 
   // restore the old windowPtr
-  pr->pr_WindowPtr = oldWindowPtr;
+  SetProcWindow(oldWindowPtr);
 
   RETURN(version);
   return version;

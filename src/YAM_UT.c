@@ -5411,17 +5411,17 @@ void SaveLayout(BOOL permanent)
   // if we want to save to ENVARC:
   if(permanent == TRUE)
   {
-    struct Process *pr = (struct Process *)FindTask(NULL);
-    APTR oldWindowPtr = pr->pr_WindowPtr;
+    APTR oldWindowPtr;
 
     // this is for the people out there having their SYS: partition locked and whining about
     // YAM popping up a error requester upon the exit - so it`s their fault now if
     // the MUI objects aren`t saved correctly.
-    pr->pr_WindowPtr = (APTR)-1;
+    oldWindowPtr = SetProcWindow((APTR)-1);
 
     DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENVARC);
 
-    pr->pr_WindowPtr = oldWindowPtr; // restore the old windowPtr
+    // restore the old windowPtr
+    SetProcWindow(oldWindowPtr);
   }
 
   LEAVE();
@@ -7090,4 +7090,23 @@ int ReadUInt32(FILE *stream, ULONG *value)
   RETURN(n);
   return n;
 }
+///
+/// SetProcWindow
+// sets pr_WindowPtr of a process
+#ifndef __amigaos4__
+APTR SetProcWindow(const void *newWindowPtr)
+{
+  struct Process *pr;
+  APTR oldWindowPtr;
+
+  ENTER();
+
+  pr = (struct Process *)FindTask(NULL);
+  oldWindowPtr = pr->pr_WindowPtr;
+  pr->pr_WindowPtr = (APTR)newWindowPtr;
+
+  RETURN(oldWindowPtr);
+  return oldWindowPtr;
+}
+#endif
 ///
