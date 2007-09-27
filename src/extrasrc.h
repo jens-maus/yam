@@ -139,7 +139,7 @@
  * Stuff that exists in OS4 already but not in OS3 or MOS
  */
 #if defined(__amigaos4__)
-#define HAVE_SETWINDOWPROC
+#define HAVE_SETPROCWINDOW
 #endif
 
 #if !defined(HAVE_SETPROCWINDOW)
