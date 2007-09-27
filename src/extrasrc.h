@@ -136,6 +136,17 @@
 #endif
 
 /*
+ * Stuff that exists in OS4 already but not in OS3 or MOS
+ */
+#if defined(__amigaos4__)
+#define HAVE_SETWINDOWPROC
+#endif
+
+#if !defined(HAVE_SETPROCWINDOW)
+#define NEED_SETPROCWINDOW
+#endif
+
+/*
  * Function prototypes
  */
 #if defined(NEED_STRLCPY)
@@ -188,6 +199,10 @@ Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
 
 #if defined(NEED_MEMDUP)
 void *memdup(const void *source, const size_t size);
+#endif
+
+#if defined(NEED_SETPROCWINDOW)
+APTR SetProcWindow(const void *newWindowPtr);
 #endif
 
 /*

@@ -7091,22 +7091,3 @@ int ReadUInt32(FILE *stream, ULONG *value)
   return n;
 }
 ///
-/// SetProcWindow
-// sets pr_WindowPtr of a process
-#ifndef __amigaos4__
-APTR SetProcWindow(const void *newWindowPtr)
-{
-  struct Process *pr;
-  APTR oldWindowPtr;
-
-  ENTER();
-
-  pr = (struct Process *)FindTask(NULL);
-  oldWindowPtr = pr->pr_WindowPtr;
-  pr->pr_WindowPtr = (APTR)newWindowPtr;
-
-  RETURN(oldWindowPtr);
-  return oldWindowPtr;
-}
-#endif
-///

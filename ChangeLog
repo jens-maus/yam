@@ -7,6 +7,8 @@ $URL$
 
 2007-09-27  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c, extrasrc/SetProcWindow.c: moved SetProcWindow() function to a
+    separate file in extrasrc/ which will be included depending on the OS.
   * YAM_UT.c, YAM_CO.c, ImageCache.c: added SetProcWindow() function for the
     OS3 and MOS builds which exists in OS4 already and is the preferred way to
     forbid DOS error requesters.
