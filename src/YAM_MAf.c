@@ -354,8 +354,9 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
   }
   else if(corrupt == TRUE || indexloaded == LM_UNLOAD)
   {
-    W(DBF_FOLDER, "  %s .index file detected, %s", corrupt ? "corrupt" : "missing",
-                                                   full ? "rebuilding..." : "skipping...");
+    W(DBF_FOLDER, "%s .index file '%s' detected, %s", corrupt ? "corrupt" : "missing",
+                                                      MA_IndexFileName(folder),
+                                                      full ? "rebuilding..." : "skipping...");
 
     // clear the mail list of the folder
     ClearMailList(folder, TRUE);
@@ -2239,7 +2240,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
       BusyGaugeInt(tr(MSG_BusyScanning), folder->Name, filecount-1);
       ClearMailList(folder, TRUE);
 
-      D(DBF_FOLDER, "Rescanning index for folder: '%s'...", folder->Name);
+      D(DBF_FOLDER, "Scanning folder: '%s' (path '%s', %ld files)...", folder->Name, GetFolderDir(folder), filecount);
 
       if((dirLock = Lock(GetFolderDir(folder), ACCESS_READ)))
       {
@@ -2271,10 +2272,16 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
             do
             {
               more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_SIZE, eac);
-              if(more == FALSE && IoErr() != ERROR_NO_MORE_ENTRIES)
+              if(more == FALSE)
               {
-                result = FALSE;
-                break;
+                ULONG error = IoErr();
+
+                if(error != ERROR_NO_MORE_ENTRIES)
+                {
+                  W(DBF_FOLDER, "ExAll() failed, IoErr()=%ld", error);
+                  result = FALSE;
+                  break;
+                }
               }
 
               if(eac->eac_Entries == 0)
@@ -2329,7 +2336,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
                     // check if our test was successfully and we found and old style
                     // filename
-                    if(oldFound)
+                    if(oldFound == TRUE)
                     {
                       int res;
                       BOOL convertOnce = FALSE;
@@ -2339,7 +2346,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                       W(DBF_FOLDER, "found < v2.5 style mailfile: '%s'", fname);
 
                       // lets ask if the user wants to convert the file or not
-                      if(!convertAllOld && !skipAllOld)
+                      if(convertAllOld == FALSE && skipAllOld == FALSE)
                       {
                         res = MUI_Request(G->App, NULL, 0,
                                           tr(MSG_MA_CREQ_OLDFILE_TITLE),
@@ -2357,7 +2364,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                           convertAllOld = TRUE;
                       }
 
-                      if(convertAllOld || convertOnce)
+                      if(convertAllOld == TRUE || convertOnce == TRUE)
                       {
                         // now we finally convert the file to a new style mail file
                         if((fname = MA_ConvertOldMailFile(fname, folder)) == NULL)
@@ -2378,10 +2385,10 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                       int res;
                       BOOL convertOnce = FALSE;
 
-                      W(DBF_FOLDER, "found unknown file: %s", fname);
+                      W(DBF_FOLDER, "found unknown file: '%s'", fname);
 
                       // lets ask if the user wants to convert the file or not
-                      if(!convertAllUnknown && !skipAllUnknown)
+                      if(convertAllUnknown == FALSE && skipAllUnknown == FALSE)
                       {
                         res = MUI_Request(G->App, NULL, 0,
                                           tr(MSG_MA_CREQ_UNKNOWN_TITLE),
@@ -2399,7 +2406,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                           convertAllUnknown = TRUE;
                       }
 
-                      if(convertAllUnknown || convertOnce)
+                      if(convertAllUnknown == TRUE || convertOnce == TRUE)
                       {
                         // now it is our job to get a new mailfile name and replace the old one
                         char oldfile[SIZE_PATHFILE+1];
@@ -2517,7 +2524,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                     AddPart(path, fname, sizeof(path));
                     DeleteFile(path);
 
-                    W(DBF_FOLDER, "empty file '%s' in mail folder found and deleted it", path);
+                    W(DBF_FOLDER, "found empty file '%s' in mail folder and deleted it", path);
                   }
                 }
               }
@@ -2533,7 +2540,10 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
           FreeDosObject(DOS_EXALLCONTROL, eac);
         }
         else
+        {
+          W(DBF_FOLDER, "couldn't allocate ExAllControll structure, IoErr()=%ld", IoErr());
           result = FALSE;
+        }
 
         UnLock(dirLock);
 
@@ -2541,11 +2551,16 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
         // because other functions will do that for us - hopefully.
       }
       else
+      {
+        W(DBF_FOLDER, "couldn't get read lock on directory '%s', IoErr()=%ld", GetFolderDir(folder), IoErr());
         result = FALSE;
+      }
+
+      D(DBF_FOLDER, "Scanning finished");
 
       BusyEnd();
 
-      // make sure others scan use this function again
+      // make sure others can use this function again
       alreadyScanning = FALSE;
     }
   }
