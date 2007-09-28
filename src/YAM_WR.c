@@ -3558,6 +3558,20 @@ HOOKPROTONHNO(WR_EditActionFunc, void, int *arg)
         }
         break;
 
+        case EA_DELETE:
+        {
+          if(actObj == data->GUI.TE_EDIT)
+            DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "DELETE");
+          else if(actObj == data->GUI.ST_TO || actObj == data->GUI.ST_SUBJECT ||
+                  actObj == data->GUI.ST_CC || actObj == data->GUI.ST_BCC ||
+                  actObj == data->GUI.ST_FROM || actObj == data->GUI.ST_REPLYTO ||
+                  actObj == data->GUI.ST_EXTHEADER)
+          {
+            DoMethod(actObj, MUIM_BetterString_ClearSelected);
+          }
+        }
+        break;
+
         case EA_UNDO:
         {
           if(actObj == data->GUI.TE_EDIT)
@@ -3709,11 +3723,13 @@ static struct WR_ClassData *WR_New(int winnum)
 
    if(data)
    {
-      enum {
+      // write window menu enumeratioons
+      enum
+      {
         WMEN_NEW=501,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,WMEN_INSALTQUOT,
-        WMEN_INSROT13,WMEN_EDIT,WMEN_CUT,WMEN_COPY,WMEN_PASTE,WMEN_SELECTALL,WMEN_SELECTNONE,
-        WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_SEARCH,WMEN_SEARCHAGAIN,WMEN_DICT,
-        WMEN_STYLE_BOLD,WMEN_STYLE_ITALIC,WMEN_STYLE_UNDERLINE,
+        WMEN_INSROT13,WMEN_EDIT,WMEN_CUT,WMEN_COPY,WMEN_PASTE,WMEN_DELETE,WMEN_SELECTALL,
+        WMEN_SELECTNONE,WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_SEARCH,WMEN_SEARCHAGAIN,
+        WMEN_DICT,WMEN_STYLE_BOLD,WMEN_STYLE_ITALIC,WMEN_STYLE_UNDERLINE,
         WMEN_STYLE_COLORED,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
         WMEN_AUTOSP,WMEN_AUTOWRAP,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
         WMEN_DELSEND,WMEN_MDN,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
@@ -3855,11 +3871,12 @@ static struct WR_ClassData *WR_New(int winnum)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MCut), MUIA_Menuitem_Shortcut, "X", MUIA_UserData, WMEN_CUT, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MCopy), MUIA_Menuitem_Shortcut, "C", MUIA_UserData, WMEN_COPY, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MPaste), MUIA_Menuitem_Shortcut, "V", MUIA_UserData, WMEN_PASTE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_PasteAs),
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_PasteAs),
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Quoted), MUIA_Menuitem_Shortcut, "Q", MUIA_UserData,WMEN_PASQUOT, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AltQuoted), MUIA_UserData,WMEN_PASALTQUOT, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_ROT13), MUIA_UserData,WMEN_PASROT13, End,
                End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_DELETE), MUIA_UserData, WMEN_DELETE, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_SELECTALL), MUIA_Menuitem_Shortcut, "A", MUIA_UserData, WMEN_SELECTALL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_SELECTNONE), MUIA_UserData, WMEN_SELECTNONE, End,
@@ -4131,6 +4148,7 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,        MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_CUT, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_COPY, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASTE,      MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_PASTE, winnum);
+         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_DELETE,     MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_DELETE, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASQUOT,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASQUOT, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASALTQUOT, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASALTQUOT, winnum);
          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASROT13,   MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASROT13, winnum);

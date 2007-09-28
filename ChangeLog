@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-28  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c, YAM_WR.c, QuickSearchBar.c: the write window and main window was
+    missing a "Delete" menu item in the "Edit" branch of their menus. This
+    menu item will allow to delete previously selected content in editable
+    GUI objects in both windows. This should fix bug #1803860.
+
 2007-09-27  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: added even more debug messages to the folder scan process and the

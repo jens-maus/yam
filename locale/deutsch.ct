@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (26.09.2007)
+## version $VER: YAM.catalog 6.0 (28.09.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -8206,4 +8206,10 @@ Wiederholen|Homepage besuchen|Beenden
 ;
 MSG_HOMEPAGE_QUIT_GAD
 Homepage besuchen|Beenden
+;
+MSG_MA_EDIT_DELETE
+Löschen
+;
+MSG_WR_DELETE
+Löschen
 ;

@@ -6530,3 +6530,9 @@ Try again|Visit homepage|Quit
 MSG_HOMEPAGE_QUIT_GAD (2025//)
 Visit homepage|Quit
 ;
+MSG_MA_EDIT_DELETE (2026//)
+Delete
+;
+MSG_WR_DELETE (2027//)
+Delete
+;

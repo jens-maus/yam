@@ -868,6 +868,16 @@ DECLARE(DoEditAction) // enum EditAction editAction
       }
       break;
 
+      case EA_DELETE:
+      {
+        if(selectedObj == data->ST_SEARCHSTRING)
+        {
+          DoMethod(selectedObj, MUIM_BetterString_ClearSelected);
+          result = TRUE;
+        }
+      }
+      break;
+
       case EA_UNDO:
       {
         if(selectedObj == data->ST_SEARCHSTRING)
