@@ -872,7 +872,7 @@ DECLARE(DoEditAction) // enum EditAction editAction
       {
         if(selectedObj == data->ST_SEARCHSTRING)
         {
-          DoMethod(selectedObj, MUIM_BetterString_ClearSelected);
+          DoMethod(selectedObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Delete);
           result = TRUE;
         }
       }

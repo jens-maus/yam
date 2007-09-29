@@ -3567,7 +3567,7 @@ HOOKPROTONHNO(WR_EditActionFunc, void, int *arg)
                   actObj == data->GUI.ST_FROM || actObj == data->GUI.ST_REPLYTO ||
                   actObj == data->GUI.ST_EXTHEADER)
           {
-            DoMethod(actObj, MUIM_BetterString_ClearSelected);
+            DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Delete);
           }
         }
         break;

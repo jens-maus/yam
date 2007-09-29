@@ -7,6 +7,10 @@ $URL$
 
 2007-09-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c, misc: bumped minimum requried version for BetterString.mcc to the
+    new recently released 11.13 version as that one fixes some important
+    issues. In addition, certain function uses were now adapted to the slightly
+    changed API of this new version.
   * YAM_mail_lex.l: minor improvements to the URL parsing regular expressions
     so that e.g. bug #1804649 should be fixed.
 
