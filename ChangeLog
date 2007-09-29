@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-09-29  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_mail_lex.l: minor improvements to the URL parsing regular expressions
+    so that e.g. bug #1804649 should be fixed.
+
 2007-09-28  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c, YAM_WR.c, QuickSearchBar.c: the write window and main window was

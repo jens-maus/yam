@@ -66,7 +66,7 @@
 AUTHORITY   ({USER}?(":"{PASSWORD})?"@")?{HOSTPORT}
 HOSTPORT    {HOST}(":"{PORT})?
 HOST        ({HOSTNAME}|{HOSTNUMBER})
-HOSTNAME    ([[:alnum:]]|"-"|"."|"_"|"-")*
+HOSTNAME    ([[:alnum:]]|"-"|"."|"_"|"-")+
 HOSTNUMBER  [[:digit:]]{1,3}"."[[:digit:]]{1,3}"."[[:digit:]]{1,3}"."[[:digit:]]{1,3}
 PORT        [[:digit:]]+
 USER        ({UCHAR}|";"|"?"|"&"|"=")*
@@ -85,7 +85,7 @@ FILEURL     "file://"{AUTHORITY}?"/"{FPATH}{NOTATEOL}
 /* HTTP/HTTPS/PLAINURL */
 HTTPURL     "http://"{AUTHORITY}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
 HTTPSURL    "https://"{AUTHORITY}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
-PLAINURL    ("www"|"ftp")"."{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
+PLAINURL    ("www"|"ftp")"."{HOSTNAME}"."[[:alpha:]]{1,4}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
 HPATH       "~"?{HSEGMENT}("/"{HSEGMENT})*
 HSEGMENT    ({UCHAR}|";"|":"|"@"|"&"|"="|"#")*
 SEARCH      ({UCHAR}|";"|":"|"@"|"&"|"="|"#"|"/")*
@@ -173,7 +173,7 @@ NOTATEOL    ([^[:punct:][:space:]]|{ESCAPE}|"/"|"=")
 /// ParseEmailText()
 //  Function to parse the supplied text and replace text passages that contain
 //  tokens that could be sourrounded by textstyles.
-char *ParseEmailText(const char *mailTxt, BOOL handleSigDash)
+char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash)
 {
   char *cmsg = NULL;
   int len, wptr=0;
@@ -500,6 +500,7 @@ char *ParseEmailText(const char *mailTxt, BOOL handleSigDash)
       if(signatureFound)
         cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[0]");
     }
+
     yy_delete_buffer(buffer);
   }
 
