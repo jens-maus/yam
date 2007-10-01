@@ -7,6 +7,9 @@ $URL$
 
 2007-10-01  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: a newly created folder is now added right after the current
+    folder if that is a normal folder, or at the end of the current folder
+    group. This fulfills feature request #739901.
   * YAM_TR.c: the POP3 password is now X'ed out in the debug log to ensure that
     no private password leaks out by accident if someone posts a log in the
     public.

@@ -1561,7 +1561,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 {
   struct FO_GUIData *gui = &G->FO->GUI;
   APTR lv = G->MA->GUI.NL_FOLDERS;
-  struct Folder folder, *oldfolder = G->FO->EditFolder;
+  struct Folder folder;
+  struct Folder *oldfolder = G->FO->EditFolder;
   BOOL success = FALSE;
 
   ENTER();
@@ -1583,7 +1584,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 
     // lets first check for a valid folder name
     // if the foldername is empty or it was changed and the new name already exists it`s invalid
-    if(*folder.Name == '\0' || (stricmp(oldfolder->Name, folder.Name) != 0 && FO_GetFolderByName(folder.Name, NULL)))
+    if(*folder.Name == '\0' || (stricmp(oldfolder->Name, folder.Name) != 0 && FO_GetFolderByName(folder.Name, NULL) != NULL))
     {
       MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
 
@@ -1609,7 +1610,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
         int result;
 
         // check if the new folder already exists or not.
-        if(FileExists(folder.Path))
+        if(FileExists(folder.Path) == FALSE)
         {
           result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDEREXISTS));
         }
@@ -1619,7 +1620,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
         }
 
         // If the user really wants to proceed
-        if(result)
+        if(result == 1)
         {
           if(Rename(oldfolder->Path, folder.Path) == FALSE)
           {
@@ -1656,7 +1657,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     oldfolder->Stats        = folder.Stats;
     oldfolder->MLSupport    = folder.MLSupport;
 
-    if(!xget(gui->CY_FTYPE, MUIA_Disabled))
+    if(xget(gui->CY_FTYPE, MUIA_Disabled) == FALSE)
     {
       enum FolderMode oldmode = oldfolder->Mode;
       enum FolderMode newmode = folder.Mode;
@@ -1669,7 +1670,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       else if(!isProtectedFolder(&folder) && isProtectedFolder(oldfolder) &&
               oldfolder->LoadedMode != LM_VALID)
       {
-        if(!(changed = MA_PromptFolderPassword(&folder, gui->WI)))
+        if((changed = MA_PromptFolderPassword(&folder, gui->WI)) == FALSE)
         {
           LEAVE();
           return;
@@ -1677,7 +1678,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       }
       else if(isProtectedFolder(&folder) && !isProtectedFolder(oldfolder))
       {
-        if(!(changed = FO_EnterPassword(&folder)))
+        if((changed = FO_EnterPassword(&folder)) == FALSE)
         {
           LEAVE();
           return;
@@ -1687,7 +1688,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       if(isProtectedFolder(&folder) && isProtectedFolder(oldfolder))
          strlcpy(folder.Password, oldfolder->Password, sizeof(folder.Password));
 
-      if(changed)
+      if(changed == TRUE)
       {
         if(!isProtectedFolder(&folder))
           folder.Password[0] = '\0';
@@ -1727,7 +1728,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 
     // lets first check for a valid folder name
     // if the foldername is empty or the new name already exists it`s invalid
-    if(folder.Name[0] == '\0' || FO_GetFolderByName(folder.Name, NULL))
+    if(folder.Name[0] == '\0' || FO_GetFolderByName(folder.Name, NULL) != NULL)
     {
       MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
 
@@ -1743,7 +1744,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       LEAVE();
       return;
     }
-    else if(FileExists(folder.Path)) // check if something with folder.Path already exists
+    else if(FileExists(folder.Path) == TRUE) // check if something with folder.Path already exists
     {
       result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDEREXISTS));
     }
@@ -1759,11 +1760,24 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
         return;
       }
 
-      if(CreateDirectory(GetFolderDir(&folder)))
+      if(CreateDirectory(GetFolderDir(&folder)) == TRUE)
       {
-        if(FO_SaveConfig(&folder))
+        if(FO_SaveConfig(&folder) == TRUE)
         {
-          DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
+          struct Folder *prevFolder;
+
+          prevFolder = FO_GetCurrentFolder();
+          if(prevFolder != NULL && isGroupFolder(prevFolder))
+          {
+          	// add the folder to the end of the current folder group
+            DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, FO_GetFolderTreeNode(prevFolder), MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
+          }
+          else
+          {
+            // add the folder after the current folder
+            DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
+          }
+
           oldfolder = &folder;
           success = TRUE;
         }
@@ -1783,7 +1797,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 
   set(gui->WI, MUIA_Window_Open, FALSE);
 
-  if(success)
+  if(success == TRUE)
   {
     MA_SetSortFlag();
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Redraw, MUIV_NList_Redraw_Title);
