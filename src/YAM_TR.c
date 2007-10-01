@@ -3166,7 +3166,7 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
     else
       snprintf(buf, sizeof(buf), "%s %s\r\n", POPcmd[command], parmtext);
 
-    D(DBF_NET, "TCP: POP3 cmd '%s' with param '%s'", POPcmd[command], parmtext != NULL ? parmtext : "<NULL>");
+    D(DBF_NET, "TCP: POP3 cmd '%s' with param '%s'", POPcmd[command], parmtext != NULL ? (command == POPCMD_PASS ? "XXX" : parmtext) : "<NULL>");
 
     // send the pop command to the server and see if it was received somehow
     // and for a connect we don`t send something or the server will get

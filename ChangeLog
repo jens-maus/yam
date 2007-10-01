@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-10-01  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: the POP3 password is now X'ed out in the debug log to ensure that
+    no private password leaks out by accident if someone posts a log in the
+    public.
+
 2007-09-29  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c, misc: bumped minimum requried version for BetterString.mcc to the
