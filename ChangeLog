@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-10-03  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: bumped minimum requried version for TextEditor.mcc to the new
+    recently released 15.23 version as that one fixes some important issues
+    and introduces some new features.
+
 2007-10-01  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: a newly created folder is now added right after the current
