@@ -81,7 +81,6 @@ struct ExtendedMail
 
 extern struct Hook MA_ChangeFolderHook;
 extern struct Hook MA_FlushIndexHook;
-extern struct Hook MA_LV_FDspFuncHook;
 
 // MA_ReadHeader modes
 enum ReadHeaderMode

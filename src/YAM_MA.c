@@ -4502,64 +4502,6 @@ HOOKPROTONH(PO_Window, void, Object *pop, Object *win)
 MakeHook(PO_WindowHook, PO_Window);
 
 ///
-/// MA_LV_FConFunc
-/*** MA_LV_FConFunc - Folder listview construction hook ***/
-HOOKPROTONHNO(MA_LV_FConFunc, struct Folder *, struct MUIP_NListtree_ConstructMessage *msg)
-{
-  struct Folder *entry;
-
-  ENTER();
-
-  entry = memdup(msg->UserData, sizeof(struct Folder));
-
-  RETURN(entry);
-  return entry;
-}
-MakeStaticHook(MA_LV_FConHook, MA_LV_FConFunc);
-
-///
-/// MA_LV_FDesFunc
-/*** MA_LV_FDesFunc - Folder listtree destruction hook ***/
-HOOKPROTONHNO(MA_LV_FDesFunc, LONG, struct MUIP_NListtree_DestructMessage *msg)
-{
-  ENTER();
-
-  FO_FreeFolder((struct Folder *)msg->UserData);
-
-  RETURN(0);
-  return 0;
-}
-MakeStaticHook(MA_LV_FDesHook, MA_LV_FDesFunc);
-
-///
-/// MA_LV_FCmp2Func
-//  Folder listtree sort hook
-/*
-HOOKPROTONH(MA_LV_FCmp2Func, long, Object *obj, struct MUIP_NListtree_CompareMessage *ncm)
-{
-   struct Folder *entry1 = (struct Folder *)ncm->TreeNode1->tn_User;
-   struct Folder *entry2 = (struct Folder *)ncm->TreeNode2->tn_User;
-   int cmp = 0;
-
-   if (ncm->SortType != MUIV_NList_SortType_None)
-   {
-      switch (ncm->SortType & MUIV_NList_TitleMark_ColMask)
-      {
-         case 0:  cmp = stricmp(entry1->Name, entry2->Name); break;
-         case 1:  cmp = entry1->Total-entry2->Total; break;
-         case 2:  cmp = entry1->Unread-entry2->Unread; break;
-         case 3:  cmp = entry1->New-entry2->New; break;
-         case 4:  cmp = entry1->Size-entry2->Size; break;
-         case 10: return entry1->SortIndex-entry2->SortIndex;
-      }
-      if (ncm->SortType & MUIV_NList_TitleMark_TypeMask) cmp = -cmp;
-   }
-
-   return cmp;
-}
-MakeStaticHook(MA_LV_FCmp2Hook, MA_LV_FCmp2Func);
-*/
-///
 /// MA_FolderKeyFunc
 //  If the user pressed 1,2,...,9,0 we jump to folder 1-10
 HOOKPROTONHNO(MA_FolderKeyFunc, void, int *idx)
@@ -5185,24 +5127,6 @@ struct MA_ClassData *MA_New(void)
             MUIA_HorizWeight, 30,
             MUIA_Listview_DragType,  MUIV_Listview_DragType_Immediate,
             MUIA_NListview_NList, data->GUI.NL_FOLDERS = MainFolderListtreeObject,
-              InputListFrame,
-              MUIA_ObjectID,                    MAKE_ID('N','L','0','1'),
-              MUIA_ContextMenu,                 C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : 0,
-              MUIA_Font,                        C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
-              MUIA_Dropable,                    TRUE,
-              //MUIA_NList_MinColSortable,        0,
-              //MUIA_NList_TitleClick,            TRUE,
-              MUIA_NList_DragType,              MUIV_NList_DragType_Immediate,
-              MUIA_NList_DragSortable,          TRUE,
-              //MUIA_NListtree_CompareHook,       &MA_LV_FCmp2Hook,
-              MUIA_NListtree_DisplayHook,       &MA_LV_FDspFuncHook,
-              MUIA_NListtree_ConstructHook,     &MA_LV_FConHook,
-              MUIA_NListtree_DestructHook,      &MA_LV_FDesHook,
-              MUIA_NListtree_DragDropSort,      TRUE,
-              MUIA_NListtree_Title,             TRUE,
-              MUIA_NListtree_DoubleClick,       MUIV_NListtree_DoubleClick_All,
-              MUIA_NList_Exports,               MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
-              MUIA_NList_Imports,               MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
             End,
           End,
           Child, BalanceObject, End,

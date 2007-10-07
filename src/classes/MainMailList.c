@@ -433,6 +433,7 @@ OVERLOAD(OM_NEW)
   ENTER();
 
   if(!(obj = DoSuperNew(cl, obj,
+
     MUIA_Font,                       C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
     MUIA_NList_MinColSortable,       0,
     MUIA_NList_TitleClick,           TRUE,
@@ -443,6 +444,7 @@ OVERLOAD(OM_NEW)
     MUIA_NList_AutoVisible,          TRUE,
     MUIA_NList_Title,                TRUE,
     MUIA_NList_TitleSeparator,       TRUE,
+    MUIA_NList_ActiveObjectOnClick,  TRUE,
 
     TAG_MORE, inittags(msg))))
   {

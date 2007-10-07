@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-10-08  Jens Langner <Jens.Langner@light-speed.de>
+
+  * include/mui/NList_mcc.h, misc: updated include with latest version
+    available from the NList repository. In addition, we now use the new
+    ActiveObjectOnClick attribute on NList objects whereever appropriate.
+  * YAM_MA.c: moved all additional tags which were specify on creation time
+    of the main folder listtree object to the actual listtree subclass. In
+    addition, all additional hooks are now within the subclass definition
+    as well rather than globally available.
+
 2007-10-07  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: minor update.

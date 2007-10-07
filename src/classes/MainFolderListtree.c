@@ -52,6 +52,224 @@ enum { CMN_EDITF=10,
        CMN_EMPTYTRASH,
        CMN_EMPTYSPAM };
 
+/* Private Functions */
+/// FormatFolderInfo
+// puts all user defined folder information into a string
+static void FormatFolderInfo(char *folderStr, const size_t maxLen, const struct Folder *folder)
+{
+  ENTER();
+
+  // add the folder image first, if it exists
+  if(folder->ImageIndex >= 0)
+    snprintf(folderStr, maxLen, "\033o[%d] ", folder->ImageIndex);
+  else
+    strlcpy(folderStr, " ", maxLen);
+
+  // include the folder name/path
+  if(folder->Name[0] != '\0')
+    strlcat(folderStr, folder->Name, maxLen);
+  else
+    snprintf(folderStr, maxLen, "%s[%s]", folderStr, FilePart(folder->Path));
+
+  if(folder->LoadedMode != LM_UNLOAD && folder->LoadedMode != LM_REBUILD)
+  {
+    char dst[SIZE_SMALL];
+
+    dst[0] = '\0';
+
+    switch(C->FolderInfoMode)
+    {
+      case FIM_NAME_ONLY:
+      {
+        // nothing
+      }
+      break;
+
+      case FIM_NAME_AND_NEW_MAILS:
+      {
+        if(folder->New != 0)
+          snprintf(dst, sizeof(dst), " (%d)", folder->New);
+      }
+      break;
+
+      case FIM_NAME_AND_UNREAD_MAILS:
+      {
+        if(folder->Unread != 0)
+          snprintf(dst, sizeof(dst), " (%d)", folder->Unread);
+      }
+      break;
+
+      case FIM_NAME_AND_NEW_UNREAD_MAILS:
+      {
+        if(folder->New != 0 || folder->Unread != 0)
+          snprintf(dst, sizeof(dst), " (%d/%d)", folder->New, folder->Unread);
+      }
+      break;
+
+      case FIM_NAME_AND_UNREAD_NEW_MAILS:
+      {
+        if(folder->New != 0 || folder->Unread != 0)
+          snprintf(dst, sizeof(dst), " (%d/%d)", folder->Unread, folder->New);
+      }
+      break;
+    }
+
+    if(dst[0] != '\0')
+      strlcat(folderStr, dst, maxLen);
+  }
+
+  LEAVE();
+}
+///
+
+/* Hooks */
+/// DisplayHook
+// Folder listview display hook
+HOOKPROTONHNO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
+{
+  ENTER();
+
+  if(msg != NULL)
+  {
+    if(msg->TreeNode != NULL)
+    {
+      static char folderStr[SIZE_DEFAULT];
+      static char totalStr[SIZE_SMALL];
+      static char unreadStr[SIZE_SMALL];
+      static char newStr[SIZE_SMALL];
+      static char sizeStr[SIZE_SMALL];
+      struct Folder *entry = (struct Folder *)msg->TreeNode->tn_User;
+
+      folderStr[0] = '\0';
+      totalStr[0] = '\0';
+      unreadStr[0] = '\0';
+      newStr[0] = '\0';
+      sizeStr[0] = '\0';
+
+      msg->Array[0] = folderStr;
+      msg->Array[1] = totalStr;
+      msg->Array[2] = unreadStr;
+      msg->Array[3] = newStr;
+      msg->Array[4] = sizeStr;
+
+      switch(entry->Type)
+      {
+        case FT_GROUP:
+        {
+          snprintf(folderStr, sizeof(folderStr), "\033o[%d] %s", (isFlagSet(msg->TreeNode->tn_Flags, TNF_OPEN) ? FICON_ID_UNFOLD : FICON_ID_FOLD), entry->Name);
+          msg->Preparse[0] = (entry->New != 0 || entry->Unread != 0) ? C->StyleFGroupUnread : C->StyleFGroupRead;
+        }
+        break;
+
+        default:
+        {
+          FormatFolderInfo(folderStr, sizeof(folderStr), entry);
+
+          if(entry->LoadedMode != LM_UNLOAD && entry->LoadedMode != LM_REBUILD)
+          {
+            if(entry->New != 0)
+              msg->Preparse[0] = C->StyleFolderNew;
+            else if(entry->Unread != 0)
+              msg->Preparse[0] = C->StyleFolderUnread;
+            else
+              msg->Preparse[0] = C->StyleFolderRead;
+
+            // if other folder columns are enabled lets fill the values in
+            if(hasFColTotal(C->FolderCols))
+              snprintf(totalStr, sizeof(totalStr), "%d", entry->Total);
+
+            if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
+              snprintf(unreadStr, sizeof(unreadStr), "%d", entry->Unread);
+
+            if(hasFColNew(C->FolderCols) && entry->New != 0)
+              snprintf(newStr, sizeof(newStr), "%d", entry->New);
+
+            if(hasFColSize(C->FolderCols) && entry->Size > 0)
+              FormatSize(entry->Size, sizeStr, sizeof(sizeStr), SF_AUTO);
+          }
+          else
+            msg->Preparse[0] = (char *)MUIX_I;
+
+          if(isProtectedFolder(entry))
+            snprintf(folderStr, sizeof(folderStr), "%s \033o[%d]", folderStr, FICON_ID_PROTECTED);
+        }
+      }
+    }
+    else
+    {
+      msg->Array[0] = (STRPTR)tr(MSG_Folder);
+      msg->Array[1] = (STRPTR)tr(MSG_Total);
+      msg->Array[2] = (STRPTR)tr(MSG_Unread);
+      msg->Array[3] = (STRPTR)tr(MSG_New);
+      msg->Array[4] = (STRPTR)tr(MSG_Size);
+    }
+  }
+
+  LEAVE();
+  return 0;
+}
+MakeStaticHook(DisplayHook, DisplayFunc);
+
+///
+/// ConstructHook
+// Folder listview construction hook
+HOOKPROTONHNO(ConstructFunc, struct Folder *, struct MUIP_NListtree_ConstructMessage *msg)
+{
+  struct Folder *entry;
+
+  ENTER();
+
+  entry = memdup(msg->UserData, sizeof(struct Folder));
+
+  RETURN(entry);
+  return entry;
+}
+MakeStaticHook(ConstructHook, ConstructFunc);
+
+///
+/// DestructHook
+// Folder listtree destruction hook
+HOOKPROTONHNO(DestructFunc, LONG, struct MUIP_NListtree_DestructMessage *msg)
+{
+  ENTER();
+
+  FO_FreeFolder((struct Folder *)msg->UserData);
+
+  RETURN(0);
+  return 0;
+}
+MakeStaticHook(DestructHook, DestructFunc);
+
+///
+/// CompareHook
+// Folder listtree compare hook
+/*
+HOOKPROTONH(CompareFunc, long, Object *obj, struct MUIP_NListtree_CompareMessage *ncm)
+{
+   struct Folder *entry1 = (struct Folder *)ncm->TreeNode1->tn_User;
+   struct Folder *entry2 = (struct Folder *)ncm->TreeNode2->tn_User;
+   int cmp = 0;
+
+   if (ncm->SortType != MUIV_NList_SortType_None)
+   {
+      switch (ncm->SortType & MUIV_NList_TitleMark_ColMask)
+      {
+         case 0:  cmp = stricmp(entry1->Name, entry2->Name); break;
+         case 1:  cmp = entry1->Total-entry2->Total; break;
+         case 2:  cmp = entry1->Unread-entry2->Unread; break;
+         case 3:  cmp = entry1->New-entry2->New; break;
+         case 4:  cmp = entry1->Size-entry2->Size; break;
+         case 10: return entry1->SortIndex-entry2->SortIndex;
+      }
+      if (ncm->SortType & MUIV_NList_TitleMark_TypeMask) cmp = -cmp;
+   }
+
+   return cmp;
+}
+MakeStaticHook(CompareHook, CompareFunc);
+*/
+///
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -62,6 +280,25 @@ OVERLOAD(OM_NEW)
   ENTER();
 
   if(!(obj = DoSuperNew(cl, obj,
+
+    InputListFrame,
+    MUIA_ObjectID,                    MAKE_ID('N','L','0','1'),
+    MUIA_ContextMenu,                 C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : 0,
+    MUIA_Font,                        C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
+    MUIA_Dropable,                    TRUE,
+    MUIA_NList_DragType,              MUIV_NList_DragType_Immediate,
+    MUIA_NList_DragSortable,          TRUE,
+    MUIA_NList_ActiveObjectOnClick,   TRUE,
+    MUIA_NList_Exports,               MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
+    MUIA_NList_Imports,               MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
+    MUIA_NListtree_DisplayHook,       &DisplayHook,
+    MUIA_NListtree_ConstructHook,     &ConstructHook,
+    MUIA_NListtree_DestructHook,      &DestructHook,
+    //MUIA_NListtree_CompareHook,       &MA_LV_FCmp2Hook,
+    MUIA_NListtree_DragDropSort,      TRUE,
+    MUIA_NListtree_Title,             TRUE,
+    MUIA_NListtree_DoubleClick,       MUIV_NListtree_DoubleClick_All,
+
     TAG_MORE, inittags(msg))))
   {
     RETURN(0);
@@ -403,7 +640,5 @@ OVERLOAD(MUIM_ContextMenuChoice)
 }
 
 ///
-
-/* Private Functions */
 
 /* Public Methods */

@@ -19,7 +19,7 @@
 
  NList classes Support Site:  http://www.sf.net/projects/nlist-classes
 
- $Id: NList_mcc.h 205 2007-08-18 13:00:13Z damato $
+ $Id: NList_mcc.h 225 2007-10-07 17:40:36Z damato $
 
 ***************************************************************************/
 
@@ -68,16 +68,19 @@
 #define MUIA_NList_SelectPen                0x9d51003b /* GM  isg  LONG              */
 #define MUIA_NList_CursorPen                0x9d51003c /* GM  isg  LONG              */
 #define MUIA_NList_UnselCurPen              0x9d51003d /* GM  isg  LONG              */
+#define MUIA_NList_InactivePen              0x9d5100C1 /* GM  isg  LONG              */
 
 #define MUIA_NList_ListBackground           0x9d51003e /* GM  isg  LONG              */
 #define MUIA_NList_TitleBackground          0x9d51003f /* GM  isg  LONG              */
 #define MUIA_NList_SelectBackground         0x9d510040 /* GM  isg  LONG              */
 #define MUIA_NList_CursorBackground         0x9d510041 /* GM  isg  LONG              */
 #define MUIA_NList_UnselCurBackground       0x9d510042 /* GM  isg  LONG              */
+#define MUIA_NList_InactiveBackground       0x9d5100C2 /* GM  isg  LONG              */
 
 #define MUIA_NList_MultiClick               0x9d510043 /* GM  ..gn LONG              */
 
 #define MUIA_NList_DefaultObjectOnClick     0x9d510044 /* GM  is.  BOOL              */
+#define MUIA_NList_ActiveObjectOnClick      0x9d5100C3 /* GM  is.  BOOL              */
 
 #define MUIA_NList_ClickColumn              0x9d510045 /* GM  ..g  LONG              */
 #define MUIA_NList_DefClickColumn           0x9d510046 /* GM  isg  LONG              */
@@ -507,6 +510,9 @@ struct MUI_NList_GetSelectInfo
 #define MUIM_NList_Destruct           0x9d5100A2 /* GM */
 #define MUIM_NList_Compare            0x9d5100A3 /* GM */
 #define MUIM_NList_Display            0x9d5100A4 /* GM */
+#define MUIM_NList_GoActive           0x9d5100A5 /* GM */
+#define MUIM_NList_GoInactive         0x9d5100A6 /* GM */
+
 struct  MUIP_NList_Clear              { ULONG MethodID; };
 struct  MUIP_NList_CreateImage        { ULONG MethodID; Object *obj; ULONG flags; };
 struct  MUIP_NList_DeleteImage        { ULONG MethodID; APTR listimg; };
@@ -550,6 +556,8 @@ struct  MUIP_NList_Construct          { ULONG MethodID; APTR entry; APTR pool; }
 struct  MUIP_NList_Destruct           { ULONG MethodID; APTR entry; APTR pool; };
 struct  MUIP_NList_Compare            { ULONG MethodID; APTR entry1; APTR entry2; LONG sort_type1; LONG sort_type2; };
 struct  MUIP_NList_Display            { ULONG MethodID; APTR entry; LONG entry_pos; STRPTR *strings; STRPTR *preparses; };
+struct  MUIP_NList_GoActive           { ULONG MethodID; };
+struct  MUIP_NList_GoInactive         { ULONG MethodID; };
 
 #define DISPLAY_ARRAY_MAX 64
 
