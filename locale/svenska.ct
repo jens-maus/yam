@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.23 (26.09.07)
+## version $VER: YAM.ct 6.23 (28.09.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -7245,3 +7245,11 @@ MSG_HOMEPAGE_QUIT_GAD
 Besök hemsida|Avsluta
 ;#DEF Visit homepage|Quit
 ;#SET (2025//)
+MSG_MA_EDIT_DELETE
+Radera
+;#DEF Delete
+;#SET (2026//)
+MSG_WR_DELETE
+Radera
+;#DEF Delete
+;#SET (2027//)

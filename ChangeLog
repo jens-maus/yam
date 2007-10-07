@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-10-07  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: minor update.
+
 2007-10-03  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: bumped minimum requried version for TextEditor.mcc to the new
