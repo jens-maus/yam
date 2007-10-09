@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-10-09  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: the mail list is now the main window's default active object.
+    Furthermore it is now possible to switch between the folder tree view
+    and the mail list by pressing SHIFT + cursor left/right.
+
 2007-10-08  Jens Langner <Jens.Langner@light-speed.de>
 
   * include/mui/NList_mcc.h, misc: updated include with latest version

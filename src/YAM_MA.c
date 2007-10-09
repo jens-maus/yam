@@ -94,6 +94,12 @@ struct ExpandTextData
   const char *      HeaderFile;
 };
 
+enum ActiveList
+{
+  AL_FOLDERS=0,
+  AL_MAILS,
+};
+
 /* local protos */
 static struct Mail *MA_MoveCopySingle(struct Mail*, struct Folder*, struct Folder*, BOOL, BOOL);
 
@@ -4611,6 +4617,37 @@ HOOKPROTONHNO(MA_EditActionFunc, void, int *arg)
 MakeStaticHook(MA_EditActionHook, MA_EditActionFunc);
 
 ///
+/// MA_ChangeActiveList
+// change the the main window's active list
+HOOKPROTONHNO(MA_ChangeActiveListFunc, void, int *arg)
+{
+  enum ActiveList which = arg[0];
+  struct MA_GUIData *gui = &G->MA->GUI;
+
+  ENTER();
+
+  switch(which)
+  {
+    case AL_FOLDERS:
+    {
+      // activate the folder list tree
+      set(gui->WI, MUIA_Window_ActiveObject, gui->NL_FOLDERS);
+    }
+    break;
+
+    case AL_MAILS:
+    {
+      // activate the current visible mail list view
+      set(gui->WI, MUIA_Window_ActiveObject, xget(gui->PG_MAILLIST, MUIA_MainMailListGroup_ActiveListObject));
+    }
+    break;
+  }
+
+  LEAVE();
+}
+MakeStaticHook(MA_ChangeActiveListHook, MA_ChangeActiveListFunc);
+
+///
 
 /*** GUI ***/
 /// MA_SetupDynamicMenus
@@ -5155,8 +5192,8 @@ struct MA_ClassData *MA_New(void)
 
       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
-      // set the maillist group as the default object of that window
-      set(data->GUI.WI, MUIA_Window_DefaultObject, xget(data->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListObject));
+      // set the maillist group as the active object of that window
+      set(data->GUI.WI, MUIA_Window_ActiveObject, xget(data->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListObject));
 
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUT,     MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ShowAboutWindowHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_VERSION,   MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_CheckVersionHook);
@@ -5240,6 +5277,8 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application  ,2,MUIM_Application_ReturnID,ID_CLOSEALL);
       DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-capslock del",       MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DelKeyHook, FALSE);
       DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-capslock shift del", MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DelKeyHook, TRUE);
+      DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"shift left",          MUIV_Notify_Application, 3, MUIM_CallHook, &MA_ChangeActiveListHook, AL_FOLDERS);
+      DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"shift right",         MUIV_Notify_Application, 3, MUIM_CallHook, &MA_ChangeActiveListHook, AL_MAILS);
 
       // Define Notifies for ShortcutFolderKeys
       for(i = 0; i < 10; i++)
