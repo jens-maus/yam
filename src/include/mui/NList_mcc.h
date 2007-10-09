@@ -19,7 +19,7 @@
 
  NList classes Support Site:  http://www.sf.net/projects/nlist-classes
 
- $Id: NList_mcc.h 225 2007-10-07 17:40:36Z damato $
+ $Id: NList_mcc.h 232 2007-10-09 07:30:32Z damato $
 
 ***************************************************************************/
 
@@ -159,6 +159,11 @@
 #define MUIA_NList_DisplayHook2             0x9d5100FE /* GM  is.  struct Hook *     */
 #define MUIA_NList_SortType                 0x9d5100FF /* GM  isgn LONG              */
 
+#define MUIA_NList_KeyUpFocus               0x9d5100C4 /* GM  isg. Object *          */
+#define MUIA_NList_KeyDownFocus             0x9d5100C5 /* GM  isg. Object *          */
+#define MUIA_NList_KeyLeftFocus             0x9d5100C6 /* GM  isg. Object *          */
+#define MUIA_NList_KeyRightFocus            0x9d5100C7 /* GM  isg. Object *          */
+
 
 #define MUIA_NLIMG_EntryCurrent             MUIA_NList_First   /* LONG (special for nlist custom image object) */
 #define MUIA_NLIMG_EntryHeight              MUIA_NList_Visible /* LONG (special for nlist custom image object) */
@@ -166,9 +171,7 @@
 #define MUIA_NList_VertDeltaFactor          MUIA_NList_Prop_DeltaFactor   /* OBSOLETE NAME */
 #define MUIA_NList_HorizDeltaFactor         MUIA_NList_Horiz_DeltaFactor  /* OBSOLETE NAME */
 
-
 /* Attributes special datas */
-
 #define MUIV_NList_TypeSelect_Line        0
 #define MUIV_NList_TypeSelect_Char        1
 
@@ -239,6 +242,7 @@
 #define MUIV_NList_Redraw_Active         -1
 #define MUIV_NList_Redraw_All            -2
 #define MUIV_NList_Redraw_Title          -3
+#define MUIV_NList_Redraw_Selected       -4
 #define MUIV_NList_Redraw_VisibleCols    -5
 
 #define MUIV_NList_Move_Top               0
@@ -567,8 +571,7 @@ struct  MUIP_NList_GoInactive         { ULONG MethodID; };
 #define ALIGN_JUSTIFY   0x0400
 
 
-/*
- *  Be carrefull ! the 'sort_type2' member don't exist in releases before 19.96
+/*  Be carrefull ! the 'sort_type2' member don't exist in releases before 19.96
  *  where MUIM_NList_Sort3, MUIA_NList_SortType2, MUIA_NList_TitleClick2 and
  *  MUIA_NList_TitleMark2 have appeared !
  *  You can safely use get(obj,MUIA_NList_SortType2,&st2) instead if you are not

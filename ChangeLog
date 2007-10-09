@@ -5,6 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-10-09  Jens Langner <Jens.Langner@light-speed.de>
+
+  * MainMailListGroup.c, YAM_MA.c, NList_mcc.h: updated the NList includes
+    and took respect of the new KeyLeftFocus and KeyRightFocus MUI attributes
+    the upcoming NList classes support now. Now it should be possible to
+    directly switch between the foldertree and the mail list just via direct
+    cursor left/right uses.
+  * YAM_MA.c: reverted the recent changes to be able to switch between the
+    foldertree and the mail list via SHIFT+cursor because the new upcoming
+    NList classes will have a new feature to directly provide this
+    functionality via own MUI attributes which in fact doesn't prevent a
+    user to use SHIFT+cursor to horizontally scroll a listview like the
+    previous adaptions implied.
+
 2007-10-09  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: the mail list is now the main window's default active object.

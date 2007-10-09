@@ -165,6 +165,7 @@ OVERLOAD(OM_SET)
       case MUIA_NList_Quiet:
       case MUIA_NList_SortType:
       case MUIA_NList_SortType2:
+      case MUIA_NList_KeyLeftFocus:
       {
         set(data->mainListObjects[LT_MAIN], tag->ti_Tag, tag->ti_Data);
         set(data->mainListObjects[LT_QUICKVIEW], tag->ti_Tag, tag->ti_Data);
@@ -177,6 +178,20 @@ OVERLOAD(OM_SET)
   }
 
   return DoSuperMethodA(cl, obj, msg);
+}
+///
+/// OVERLOAD(MUIM_GoActive)
+OVERLOAD(MUIM_GoActive)
+{
+  GETDATA;
+  ENTER();
+
+  // we don't forward the GoActive() call to our own
+  // superclass but forward it to the activeList object itself
+  set(_win(obj), MUIA_Window_ActiveObject, data->mainListObjects[data->activeList]);
+
+  RETURN(0);
+  return 0;
 }
 ///
 /// OVERLOAD(MUIM_NList_Clear)
