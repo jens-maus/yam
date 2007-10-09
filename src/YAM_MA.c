@@ -824,9 +824,9 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
     if(quiet == FALSE)
     {
       // don't update the appicon yet
-      DisplayStatistics(delfolder, FALSE);  
+      DisplayStatistics(delfolder, FALSE);
       // but update it now.
-      DisplayStatistics(mailFolder, TRUE);  
+      DisplayStatistics(mailFolder, TRUE);
     }
   }
 
@@ -5138,7 +5138,6 @@ struct MA_ClassData *MA_New(void)
             Child, data->GUI.PG_MAILLIST = MainMailListGroupObject,
               MUIA_VertWeight, 25,
               MUIA_HelpNode,   "MA01",
-              MUIA_CycleChain, TRUE,
             End,
           End,
         End,

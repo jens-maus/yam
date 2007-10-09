@@ -62,6 +62,7 @@ OVERLOAD(OM_NEW)
     MUIA_Group_PageMode, TRUE,
 
     Child, NListviewObject,
+       MUIA_CycleChain, TRUE,
        MUIA_NListview_NList, mainList = MainMailListObject,
           MUIA_ObjectID,                   MAKE_ID('N','L','0','2'),
           MUIA_ContextMenu,                C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never,
@@ -71,6 +72,7 @@ OVERLOAD(OM_NEW)
        End,
     End,
     Child, NListviewObject,
+       MUIA_CycleChain, TRUE,
        MUIA_NListview_NList, quickviewList = MainMailListObject,
           MUIA_ContextMenu,                C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never,
           MUIA_NList_DragType,             MUIV_NList_DragType_Default,

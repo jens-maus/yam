@@ -21,6 +21,8 @@ $URL$
 
 2007-10-09  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c, MainMailListGroup.c: corrected the cycle chain to be able to
+    navigate through all objects with the TAB key.
   * YAM_MA.c: the mail list is now the main window's default active object.
     Furthermore it is now possible to switch between the folder tree view
     and the mail list by pressing SHIFT + cursor left/right.
