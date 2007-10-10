@@ -269,33 +269,34 @@ OVERLOAD(OM_NEW)
 
     for(i = 0; i < 5; i++)
     {
-      if(data->CY_COMP[i])
+      if(data->CY_COMP[i] != NULL)
       {
         DoMethod(data->CY_COMP[i], MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 1, MUIM_SearchControlGroup_Update);
+        DoMethod(data->CY_COMP[i], MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
         SetHelp(data->CY_COMP[i], MSG_HELP_FI_CY_COMP);
         set(data->CY_COMP[i], MUIA_HorizWeight, 0);
       }
 
-      if(data->ST_MATCH[i])
+      if(data->ST_MATCH[i] != NULL)
       {
         DoMethod(data->ST_MATCH[i], MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
         SetHelp(data->ST_MATCH[i], MSG_HELP_FI_ST_MATCH);
       }
 
-      if(data->CH_CASESENS[i])
+      if(data->CH_CASESENS[i] != NULL)
       {
         DoMethod(data->CH_CASESENS[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
         SetHelp(data->CH_CASESENS[i], MSG_HELP_FI_CH_CASESENS);
       }
 
-      if(data->CH_SUBSTR[i])
+      if(data->CH_SUBSTR[i] != NULL)
       {
         DoMethod(data->CH_SUBSTR[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
         SetHelp(data->CH_SUBSTR[i], MSG_HELP_FI_CH_SUBSTR);
         nnset(data->CH_SUBSTR[i], MUIA_Selected, TRUE);
       }
 
-      if(data->BT_EDIT[i])
+      if(data->BT_EDIT[i] != NULL)
         DoMethod(data->BT_EDIT[i], MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_SearchControlGroup_EditFile, i);
     }
 
@@ -328,7 +329,7 @@ OVERLOAD(OM_SET)
 
           // lets first copy the cycle status from the old
           // to the new status
-          if(!data->remoteFilterMode)
+          if(data->remoteFilterMode == FALSE)
             set(data->CY_MODE[tag->ti_Data], MUIA_Cycle_Active, oldActive > 8 ? 8 : oldActive);
           else
             set(data->CY_MODE[tag->ti_Data], MUIA_Cycle_Active, oldActive);
@@ -358,11 +359,16 @@ OVERLOAD(OM_SET)
         {
           set(data->CY_COMP[i], MUIA_Disabled, disabled);
 
-          if(data->ST_MATCH[i])     set(data->ST_MATCH[i], MUIA_Disabled, disabled);
-          if(data->CH_CASESENS[i])   set(data->CH_CASESENS[i], MUIA_Disabled, disabled);
-          if(data->CH_SUBSTR[i])     set(data->CH_SUBSTR[i], MUIA_Disabled, disabled || oper == 4 || (i < 2 && oper > 1));
-          if(data->BT_FILE[i])       set(data->BT_FILE[i], MUIA_Disabled, disabled || oper != 4);
-          if(data->BT_EDIT[i])       set(data->BT_EDIT[i], MUIA_Disabled, disabled || oper != 4);
+          if(data->ST_MATCH[i] != NULL)
+            set(data->ST_MATCH[i], MUIA_Disabled, disabled);
+          if(data->CH_CASESENS[i] != NULL)
+            set(data->CH_CASESENS[i], MUIA_Disabled, disabled);
+          if(data->CH_SUBSTR[i] != NULL)
+            set(data->CH_SUBSTR[i], MUIA_Disabled, disabled || oper == 4 || (i < 2 && oper > 1));
+          if(data->BT_FILE[i] != NULL)
+            set(data->BT_FILE[i], MUIA_Disabled, disabled || oper != 4);
+          if(data->BT_EDIT[i] != NULL)
+            set(data->BT_EDIT[i], MUIA_Disabled, disabled || oper != 4);
         }
 
         return 0;
@@ -402,15 +408,15 @@ DECLARE(Clear)
     // reset all GUI elements due to the new active filter
     nnset(data->CY_COMP[m], MUIA_Cycle_Active, 0);
 
-    if(data->ST_MATCH[m])
+    if(data->ST_MATCH[m] != NULL)
       nnset(data->ST_MATCH[m], MUIA_String_Contents, "");
     else
       nnset(data->CY_STATUS, MUIA_Cycle_Active, 0);
 
-    if(data->CH_CASESENS[m])
+    if(data->CH_CASESENS[m] != NULL)
       nnset(data->CH_CASESENS[m], MUIA_Selected, FALSE);
 
-    if(data->CH_SUBSTR[m])
+    if(data->CH_SUBSTR[m] != NULL)
       nnset(data->CH_SUBSTR[m], MUIA_Selected, FALSE);
   }
 
@@ -469,10 +475,10 @@ DECLARE(SetToRule) // struct RuleNode *rule
     rule->matchPattern[1] = '\0';
   }
 
-  if(data->CH_CASESENS[g])
+  if(data->CH_CASESENS[g] != NULL)
     rule->caseSensitive = GetMUICheck(data->CH_CASESENS[g]);
 
-  if(data->CH_SUBSTR[g])
+  if(data->CH_SUBSTR[g] != NULL)
     rule->subString = GetMUICheck(data->CH_SUBSTR[g]);
 
   return 0;
@@ -510,10 +516,10 @@ DECLARE(GetFromRule) // struct RuleNode *rule
     }
   }
 
-  if(data->CH_CASESENS[g])
+  if(data->CH_CASESENS[g] != NULL)
     nnset(data->CH_CASESENS[g], MUIA_Selected, rule->caseSensitive);
 
-  if(data->CH_SUBSTR[g])
+  if(data->CH_SUBSTR[g] != NULL)
     nnset(data->CH_SUBSTR[g], MUIA_Selected, rule->subString);
 
   return 0;

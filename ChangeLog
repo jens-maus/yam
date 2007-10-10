@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-10-10  Thore Böckelmann <tboeckel@gmx.de>
+
+  * SearchControlGroup.c: modifying the comparison type now correctly marks
+    the search rule as "modified", too. This fixes bug #1810645.
+
 2007-10-09  Jens Langner <Jens.Langner@light-speed.de>
 
   * MainMailListGroup.c, YAM_MA.c, NList_mcc.h: updated the NList includes
