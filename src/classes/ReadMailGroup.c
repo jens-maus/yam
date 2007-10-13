@@ -492,6 +492,17 @@ OVERLOAD(OM_GET)
     ATTR(TGVertWeight) : *store = xget(data->mailBodyGroup, MUIA_VertWeight); return TRUE;
     ATTR(ReadMailData) : *store = (ULONG)data->readMailData; return TRUE;
     ATTR(DefaultObject): *store = (ULONG)data->mailTextObject; return TRUE;
+    ATTR(ActiveObject):
+    {
+      Object *actobj = (Object *)xget(_win(obj), MUIA_Window_ActiveObject);
+
+      if(actobj == data->headerList || actobj == data->mailTextObject)
+        *store = (ULONG)actobj;
+      else
+        *store = (ULONG)NULL;
+
+      return TRUE;
+    }
   }
 
   return DoSuperMethodA(cl, obj, msg);

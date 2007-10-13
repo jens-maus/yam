@@ -1452,7 +1452,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
   if((folder = FO_GetCurrentFolder()) != NULL)
   {
     BOOL delete_folder = FALSE;
-    APTR lv = G->MA->GUI.NL_FOLDERS;
+    Object *lv = G->MA->GUI.NL_FOLDERS;
 
     switch (folder->Type)
     {
@@ -1516,7 +1516,9 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
       break;
 
       default:
-        // nothing
+      {
+        DisplayBeep(NULL);
+      }
       break;
     }
 

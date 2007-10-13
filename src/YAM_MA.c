@@ -4571,14 +4571,20 @@ HOOKPROTONHNO(MA_DelKeyFunc, void, int *arg)
   ENTER();
 
   actobj = (Object *)xget(G->MA->GUI.WI, MUIA_Window_ActiveObject);
-
   if(actobj == NULL || actobj == MUIV_Window_ActiveObject_None)
     actobj = (Object *)xget(G->MA->GUI.WI, MUIA_Window_DefaultObject);
 
-  if(actobj == G->MA->GUI.LV_FOLDERS)
+
+  if(actobj == G->MA->GUI.LV_FOLDERS || actobj == G->MA->GUI.NL_FOLDERS)
+  {
     CallHookPkt(&FO_DeleteFolderHook, 0, 0);
-  else
+  }
+  else if(actobj == G->MA->GUI.PG_MAILLIST ||
+          actobj == (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListObject) ||
+          (C->EmbeddedReadPane == TRUE && (Object *)xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_ActiveObject) != NULL))
+  {
     MA_DeleteMessage(arg[0], FALSE);
+  }
 
   LEAVE();
 }

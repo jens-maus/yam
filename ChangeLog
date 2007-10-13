@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-10-13  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c: the DEL key was always removing/deleting the currently
+    selected mail regardless of the active/inactive status of the mail
+    list. Now the DEL key will be more context sensitive. That means, if
+    the folder list is active it will try to delete the currently selected
+    folder and only delete the selected mail if the mail list or the
+    embedded read pane is the currently active object of the window. This
+    should also prevent the DEL key to remove mails in case the quick search
+    string gadget is active.
+
 2007-10-10  Thore Böckelmann <tboeckel@gmx.de>
 
   * SearchControlGroup.c: modifying the comparison type now correctly marks
