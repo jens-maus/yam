@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_compiler.h
-        Versionstring:  $VER: SDI_compiler.h 1.25 (21.06.2007)
+        Versionstring:  $VER: SDI_compiler.h 1.26 (14.10.2007)
         Author:         Dirk Stöcker & Jens Langner
         Distribution:   PD
         Project page:   http://www.sf.net/projects/sditools/
@@ -44,6 +44,8 @@
  1.24  06.05.06 : __linearvarargs is only valid for vbcc and PPC, so I moved VARARGS68K
                   to prevent problems with 68K and i86 targets. (Guido Mersmann)
  1.25  21.06.07 : added NEAR to be usable for __near specification for SAS/C
+ 1.26  14.10.07 : added DEPRECATED macro which defaults to __attribute__((deprecated))
+                  for GCC compiles.
 */
 
 /*
@@ -80,6 +82,7 @@
 #undef UNUSED
 #undef USED
 #undef USED_VAR
+#undef DEPRECATED
 
 /* first "exceptions" */
 
@@ -116,6 +119,7 @@
 #elif defined(__GNUC__)
   #define UNUSED __attribute__((unused)) /* for functions, variables and types */
   #define USED   __attribute__((used))   /* for functions only! */
+  #define DEPRECATED __attribute__((deprecated))
   #if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 0)
     #define USED_VAR USED /* for variables only! */
     #define INLINE static __inline __attribute__((always_inline))
@@ -201,6 +205,9 @@
 #endif
 #if !defined(USED_VAR)
   #define USED_VAR
+#endif
+#if !defined(DEPRECATED)
+  #define DEPRECATED
 #endif
 
 /*************************************************************************/
