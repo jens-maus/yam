@@ -7,6 +7,8 @@ $URL$
 
 2007-10-14  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: bumped the required version of TextEditor.mcc to the newly
+    released 15.24 version which fixes some important issues.
   * YAM.c: bumped miminum required versions of all NList classes because
     the newly released 0.100 version fixes some important issues and
     introduced some other important features we require now.
