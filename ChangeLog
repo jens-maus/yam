@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-10-22  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: for exported files the protection bits are now always set to
+    ----rwed for normal files and to -s--rwed for script files since it is up
+    to the used filesystem which bits are used by default.
+
 2007-10-14  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: bumped the required version of TextEditor.mcc to the newly

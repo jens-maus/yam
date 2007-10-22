@@ -322,10 +322,16 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
   {
     SetComment(dest, AB_BuildAddressStringPerson(&mail->From));
 
-    if(!stricmp(ctype, IntMimeTypeArray[MT_AP_AEXE].ContentType))
-      SetProtection(dest, 0);
-    else if(!stricmp(ctype, IntMimeTypeArray[MT_AP_SCRIPT].ContentType))
+    if(stricmp(ctype, IntMimeTypeArray[MT_AP_SCRIPT].ContentType) == 0)
+    {
+      // set -s--rwed protection bits for script files
       SetProtection(dest, FIBF_SCRIPT);
+    }
+    else
+    {
+      // set ----rwed protection bits for all other files
+      SetProtection(dest, 0);
+    }
 
     AppendToLogfile(LF_VERBOSE, 80, tr(MSG_LOG_SavingAtt), dest, mail->MailFile, FolderName(mail->Folder));
 
