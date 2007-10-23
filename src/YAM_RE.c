@@ -320,17 +320,24 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
 
   if(dest != NULL)
   {
+    // let us set a default file comment
     SetComment(dest, AB_BuildAddressStringPerson(&mail->From));
 
-    if(stricmp(ctype, IntMimeTypeArray[MT_AP_SCRIPT].ContentType) == 0)
+    // set the protection bits correctly. Here we check if this file
+    // is an identified amiga executable (MT_AP_AEXE) or if it of mime
+    // type (application/octet-stream). Because for an octet-stream file
+    // we really can't tell if it is a real executable or just a plain
+    // binary file, hence we force a ----rwed protection for it.
+    if(stricmp(ctype, IntMimeTypeArray[MT_AP_OCTET].ContentType) == 0 ||
+       stricmp(ctype, IntMimeTypeArray[MT_AP_AEXE].ContentType) == 0)
     {
-      // set -s--rwed protection bits for script files
-      SetProtection(dest, FIBF_SCRIPT);
-    }
-    else
-    {
-      // set ----rwed protection bits for all other files
+      // set protection of file to ----rwed
       SetProtection(dest, 0);
+    }
+    else if(stricmp(ctype, IntMimeTypeArray[MT_AP_SCRIPT].ContentType) == 0)
+    {
+      // set protection of file to -s--rwed
+      SetProtection(dest, FIBF_SCRIPT);
     }
 
     AppendToLogfile(LF_VERBOSE, 80, tr(MSG_LOG_SavingAtt), dest, mail->MailFile, FolderName(mail->Folder));

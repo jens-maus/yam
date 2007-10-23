@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-10-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c: after having rethought about the protection bit changes,
+    a protection scheme of "----rwed" will now just be set to either
+    identified amiga executable or to attachments of type
+    "application/octect-stream". This should be appropriate for all cases
+    and at the same time enforce a slightly better security instead of
+    always setting all files to have all default rights.
+
 2007-10-22  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: for exported files the protection bits are now always set to
