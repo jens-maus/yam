@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 6.0 (26.08.2007)
+## version $VER: YAM.catalog 6.0 (25.10.2007)
 ## language français
 ## codeset 0
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 3335 2007-08-18 21:48:19Z
+; based on YAM.cd 3410 2007-09-28 06:39:11Z
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -408,7 +408,7 @@ YAM désactivé
 ;
 MSG_LOG_LoggedIn
 Connecté en tant que « %s »
-; Logged in as user '%s'
+; Logged in as user « %s »
 ; USER_NAME
 ;
 MSG_LOG_LoggedInVerbose
@@ -2880,9 +2880,11 @@ et utilise les anciennes propriétés
 ; Module AB - Routines
 ;
 MSG_AB_BirthdayReq
-Aujourd'hui, %s à %ld ans !\n\
+Aujourd'hui, %s a %ld ans.\n\
+\n\
 Voulez-vous lui envoyer un message ?
-; Today, %s reaches age %ld!\n\
+; Today, %s reaches age %ld.\n\
+; \n\
 ; Do you want to send a greetings card?
 ; NAME, AGE
 ;
@@ -4734,63 +4736,13 @@ Impossible d'exécuter la commande ARexx « %s ». Vérifiez l'existance du script.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
 ;
-MSG_ER_UnexpEOFUU
-EOF inatendu durant le décodage UU d'un fichier. \
-Le message semble être tronqué.
-; Unexpected EOF while decoding a UUencoded file. \
-; The message seems to be truncated.
-;
-MSG_ER_InvalidLength
-Longueur de ligne du fichier UU invalide : %ld.\n\
-\n\
-Un mauvais encodeur UU a été utilisé ou le message est tronqué.
-; Invalid line length in UUencoded file: %ld.\n\
-; \n\
-; A defective UUencoder was used or the message is truncated.
-; SIZE
-;
 MSG_ER_CreateMailError
 Impossible de créer le fichier du message !\n\
 \n\
 Raison : chemin ou répertoire invalide, ou espace disque insuffisant.
 ; Couldn't create mail file.\n\
 ; \n\
-; Reason: invalid folder directory or unsufficient disk space.
-;
-MSG_ER_UnknownEnc
-Encodage MIME inconnu : %s.\n\
-\n\
-YAM n'a pas réussi à décoder une partie du message. \
-Sauvez le message sur le disque et essayez avec un autre décodeur.
-; Unknown MIME encoding: %s.\n\
-; \n\
-; YAM failed to decode a part of the message. Save the message \
-; to disk and try with a different decoder.
-; ENCODING_TYPE
-;
-MSG_ER_UnknownHeaderEnc
-Encodage de l'en-tête inconnu : %s.\n\
-\n\
-YAM ne peut pas afficher correctement cet en-tête.
-; Unknown header encoding: %s.\n\
-; \n\
-; YAM cannot display a particular message header correctly.
-; ENCODING_TYPE
-;
-MSG_ER_MultipartEOF
-Fin de fichier inattendue lors du décodage \
-d'un message multipartie. \
-Le message semble être tronqué.
-; Unexpected EOF while decoding a multipart message. \
-; The message seems to be truncated.
-;
-MSG_ER_MIMEError
-Impossible d'extraire le message MIME.\n\
-\n\
-Le message est mal composé ou il est vide ou tronqué !
-; Couldn't extract MIME message.\n\
-; \n\
-; The message contains badly formed MIME parts or it's empty or truncated.
+; Reason: invalid folder directory or insufficient disk space.
 ;
 MSG_ER_CantOpenFile
 Impossible de lire le fichier « %s ».\n\
@@ -5061,33 +5013,9 @@ MSG_FI_StatSent
 Envoyé
 ; Sent
 ;
-MSG_FI_FromField
-Ligne \ebDe\en
-; \ebFrom\en field
-;
-MSG_FI_ToField
-Ligne \ebà\en
-; \ebTo\en field
-;
-MSG_FI_CCField
-Ligne \ebCC\en
-; \ebCC\en field
-;
-MSG_FI_ReplyToField
-Ligne \ebRépondre à\en
-; \ebReply-To\en field
-;
-MSG_FI_SubjectField
-Ligne \ebSujet\en
-; \ebSubject\en field
-;
-MSG_FI_DateField
-Ligne \ebDate\en
-; \ebDate\en field
-;
 MSG_FI_OtherField
 Autre champ :
-; Other field:
+; other field:
 ;
 MSG_FI_MessageSize
 Taille du message
@@ -5474,14 +5402,6 @@ MSG_FO_MLSupport
 Liste de discussions
 ; Mailing list support
 ;
-MSG_FO_ToPattern
-À _: motif
-; To: _pattern
-;
-MSG_FO_ToAddress
-_À : adresse
-; _To: address
-;
 ;
 ; Module FO - Bubblehelp
 ;
@@ -5691,19 +5611,11 @@ MSG_SETTINGS_MUI
 MUI...
 ; MUI...
 ;
-MSG_FO_FromAddress
-D_e : adresse
-; _From: address
-;
 MSG_HELP_FO_ST_MLFROMADDRESS
 Utilise cette adresse d'expédition pour poster\n\
 un nouveau courrier sur une liste de discussions.
 ; Use this 'From:' address when\n\
 ; posting new mails to the list
-;
-MSG_FO_ReplyToAddress
-Ré_pondre à : adresse
-; _Reply-To: address
 ;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
 Utilise cette adresse de réponse pour poster\n\
@@ -6401,7 +6313,7 @@ Une erreur inattendue est survenue lors du décodage du fichier '%s' avec les rou
 ; FILENAME
 ;
 MSG_ER_QPDEC_WARN
-Lors du décodage « quoted-printable » du fichier '%s', des séquences de control incorrectes ont été détectées et sont restées non décodées dans le résultat.
+Lors du décodage « quoted-printable » du fichier '%s', des séquences de contrôle incorrectes ont été détectées et sont restées non décodées dans le résultat.
 ; During the quoted-printable decoding of file '%s', some broken \
 ; control sequences where found and kept undecoded in the resulting \
 ; data stream.
@@ -6449,7 +6361,7 @@ YAM s'est aperçu que le fichier '%s' du dossier '%s' est un vieux fichier mail\n
 normalement utilisé dans des versions de YAM antérieures à celle-ci.\n\
 \n\
 Voulez-vous convertir ce fichier dans le nouveau format ?
-; YAM has found file '%s' in folder '%s' to be an old mailfile normally\n\
+; YAM has found file '%s' in folder '%s' to be an old mail file normally\n\
 ; used in YAM versions prior to the current version.\n\
 ; \n\
 ; Do you want to convert this file to the new format?
@@ -6458,10 +6370,10 @@ Voulez-vous convertir ce fichier dans le nouveau format ?
 MSG_MA_CREQUEST_UNKNOWN
 YAM a trouvé un fichier '%s' inconnu dans le dossier '%s'.\n\
 \n\
-Voulez-vous l'importer comme un fichier de mail normal ?
+Voulez-vous l'importer en tant que fichier de mail normal ?
 ; YAM has found an unknown file '%s' in the folder directory of folder '%s'.\n\
 ; \n\
-; Do you want to import it as a normal mailfile?
+; Do you want to import it as a normal mail file?
 ; FILENAME, FOLDER
 ;
 MSG_MA_YESNOTOALL
@@ -6471,8 +6383,8 @@ MSG_MA_YESNOTOALL
 MSG_ER_CONVERTMFILE
 Une erreur est survenue lors de la conversion du fichier de mail '%s' du dossier '%s'.\n\
 \n\
-Veuillez vérifier que le dossier dispose de suffisamment d'espace disque et des autorisations d'écriture nécessaire.
-; An error occurred during mailfile conversion of file '%s' of folder '%s'.\n\
+Veuillez vérifier que le dossier dispose de suffisamment d'espace disque et des autorisations d'écriture nécessaires.
+; An error occurred during mail file conversion of file '%s' of folder '%s'.\n\
 ; \n\
 ; Please check if the folder directory has enough space and has proper write \
 ; access.
@@ -6490,7 +6402,7 @@ Veuillez vérifier votre installation de XPK ainsi que les réglages de compressio
 ;
 MSG_MA_CREQ_OLDFILE_TITLE
 Fichier mail ancien format trouvé
-; Mailfile in old format found
+; Mail file in old format found
 ;
 MSG_MA_CREQ_UNKNOWN_TITLE
 Fichier inconnu trouvé dans dossier
@@ -7344,7 +7256,7 @@ Comment désirez-vous composer ce mail ?
 ; How do you want to compose the mail?
 ;
 MSG_WR_SECURITYREQ_GADS
-*A_ucune[_Signé|_Crypté|S_igné & crypté[Envoi A_nonyme|_Annuler
+*A_ucune|_Signé|_Crypté|S_igné & crypté|Envoi A_nonyme|_Annuler
 ; *_Plain|_Signed|_Encrypted|S_igned&Encrypted|_Anonymous|_Cancel
 ;
 MSG_ER_OPENTCPIP
@@ -7507,11 +7419,11 @@ Détails du mail
 ; Mail Details
 ;
 MSG_ER_ADDFILEERROR
-Le fichier sélectionné '%s' ne peut pas être\
+Le fichier sélectionné '%s' ne peut pas être \
 ajouté comme attachement au mail courant.\n\
 \n\
-Veuillez vous assurer que le fichier est\
-accessible et que vous possédez  les permissions\
+Veuillez vous assurer que le fichier est \
+accessible et que vous possédez les permissions \
 de lecture adéquates.
 ; The selected file '%s' couldn't be added \
 ; as an attachment to the current mail.\n\
@@ -7520,11 +7432,11 @@ de lecture adéquates.
 ; and that you have proper read permissions.
 ;
 MSG_ER_PACKERROR
-Une erreur est survenue lors de la création de\
+Une erreur est survenue lors de la création de \
 l'archive à partir des fichiers sélectionnés.\n\
 \n\
-Veuillez vous assurer que tous les fichiers sont\
-accessibles et que vous possédez les permissions\
+Veuillez vous assurer que tous les fichiers sont \
+accessibles et que vous possédez les permissions \
 d'accès adéquates.
 ; An error occurred while trying to create \
 ; an archive out of the selected files.\n\
@@ -8025,12 +7937,12 @@ Les changements de signature doivent être sauvés\n\
 indépendamment de la configuration globale, sinon\n\
 ils seront perdus !\n\
 \n\
-Voulez-vous sauver les changements maintenant ?
-; Changes to the signature files must be saved\n\
-; separately from the global configuration!\n\
-; Otherwise they will be lost!\n\
+Voulez-vous sauver la signature maintenant ?
+; Changes to the signature must be saved separately\n\
+; from the global configuration or otherwise they\n\
+; will be lost.\n\
 ; \n\
-; Do you want to save the changes now?
+; Do you want to save the signature now?
 ;
 MSG_MA_HIDE
 Icônifier
@@ -8564,7 +8476,7 @@ Impossible de créer le sémaphore !
 ; Can't create semaphore!
 ;
 MSG_MA_AUTOSAVEFOUND_BUTTONS
-*_Envoyer|_Editer[E_ffacer|_Ignorer
+*_Envoyer|_Editer|E_ffacer|_Ignorer
 ; *Put in _Outbox|_Edit|_Delete|_Ignore
 ;
 MSG_RE_HDR_FROM
@@ -9095,4 +9007,191 @@ Tout désélectionner
 MSG_WR_SELECTNONE
 Tout désélectionner
 ; Select None
+;
+MSG_MA_INVALIDMFILE_TITLE
+Fichier de messages invalide trouvé
+; Invalid mail file found
+;
+MSG_MA_INVALIDMFILE
+Lors de l'examen du fichier de messages « %s » du,\n\
+dossier « %s », YAM a trouvé que le fichier été soit\n\
+invalide soit qu'il n'est pas dans un format de fichier\n\
+de message correct.\n\
+\n\
+Veuillez vous assurer que le fichier est valide et agissez\n\
+en conséquence.
+; While examining the mail file '%s' of folder '%s',\n\
+; YAM has found the file to be either invalid or not being in the correct\n\
+; compliant mail format.\n\
+; \n\
+; Please make sure that the file is a valid mail file and proceed\n\
+; accordingly.
+;
+; FILENAME, FOLDER
+;
+MSG_MA_INVALIDMFILE_BT
+*_Réessayer|_Ignorer|Ignorer _Tout|_Effacer|_Annuler
+; *_Retry|_Ignore|Ignore _All|_Delete|_Cancel
+;
+MSG_ER_CANNOT_READ_INDEX
+Une erreur est survenue lors de la lecture du fichier d'index « %s » du \
+dossier « %s ».\n\
+Veuillez vérifier que le contenu du fichier est lisible et que les \
+permissions d'accès sont correctement réglées.
+; An error occured while trying to read the index file '%s' of \
+; folder '%s'.\n\
+; \n\
+; Please check that you are able to read the content of the file and \
+; that the permission settings are correct.
+;
+; FILENAME, FOLDER
+;
+MSG_ER_CANNOT_WRITE_INDEX
+Une erreur est survenue lors de l'écriture du fichier d'index « %s » du \
+dossier « %s ».\n\
+Veuillez vérifier que vous êtes capable d'écrire dans le répertoire où le \
+fichier est supposé être écrit.
+; An error occured while trying to write the index file '%s' of \
+; folder '%s'.\n\
+; \n\
+; Please check that you are able to write to the directory where the \
+; file is supposed to be written.
+;
+; FILENAME, FOLDER
+;
+MSG_ER_INDEX_CORRUPTED
+Le fichier d'index « %s » du dossier « %s » est corrompu à la position %d \
+près des informations concernant le fichier de message « %s » (OctetsSupp. : 0x%x).\n\
+\­\
+Le dossier a été marqué 'déchargé' et une réindexation a été lancée ou est nécessaire.
+; The index file '%s' of folder '%s' was found to be corrupt at position \
+; %d near the information on mail file '%s' (MoreBytes: 0x%x).\n\
+; \n\
+; The folder was flagged as 'unloaded' and an index rescanning \
+; was initiated or is required.
+;
+; FILENAME, FOLDER, POSITION, MAILFILE, MOREBYTES
+;
+MSG_ER_UNKNOWN_MIME_ENCODING
+Encodage MIME « %s » inconnu dans le fichier de message « %s ».\n\
+\n\
+YAM n'a pas réussi à décoder une partie du message. \
+Sauvez le message sur le disque et essayez avec un autre décodeur.
+; Unknown MIME encoding '%s' in mail file '%s'.\n\
+; \n\
+; YAM failed to decode a part of the message. Save the message \
+; to disk and try with a different decoder.
+;
+; ENCODING_TYPE, FILENAME
+;
+MSG_ER_UNKNOWN_HEADER_ENCODING
+Encodage d'en-tête « %s » inconnu dans le fichier de message « %s ».\n\
+\n\
+YAM ne peut pas afficher correctement cet en-tête de message.
+; Unknown header encoding '%s' in mail file '%s'.\n\
+; \n\
+; YAM cannot display a particular message header correctly.
+;
+; ENCODING_TYPE, FILENAME
+;
+MSG_ER_UNEXPECTED_MULTIPART_EOF
+Fin de fichier inattendue lors du décodage du message multipartie dans le fichier « %s ».\n\
+\n\
+Le message semble être tronqué.
+; Unexpected EOF while decoding the multipart message in file '%s'.\n\
+; \n\
+; The message seems to be truncated.
+;
+; FILENAME
+;
+MSG_ER_MIME_ERROR
+Impossible d'extraire le message MIME du fichier « %s ».\n\
+\n\
+Le message contient des parties MIME malformées, est vide ou est tronqué.
+; Couldn't extract MIME message from file '%s'.\n\
+; \n\
+; The message contains badly formed MIME parts or it's empty or truncated.
+;
+; FILENAME
+;
+MSG_ER_UNEXPECTED_UUE_EOF
+Fin de fichier inattendue lors du décodage du fichier UUencodé « %s ».\
+Le message semble avoir été tronqué.
+; Unexpected EOF while decoding the UUencoded file '%s'. \
+; The message seems to be truncated.
+;
+; FILENAME
+;
+MSG_ER_INVALID_UUE_LENGTH
+%ld longueur de ligne invalide dans le fichier UUencodé « %s ».\n\
+\n\
+Un encodeur défectueux a été utilisé ou le message est incomplet.
+; Invalid line length %ld in UUencoded file '%s'.\n\
+; \n\
+; A defective UUencoder was used or the message is truncated.
+;
+; SIZE, FILENAME
+;
+MSG_RE_HDR_REPLYTO
+Répondre à
+; Reply-To
+;
+MSG_FI_FROM_FIELD
+\ebDe\en
+; \ebFrom\en
+;
+MSG_FI_TO_FIELD
+\ebÀ\en
+; \ebTo\en
+;
+MSG_FI_CC_FIELD
+\ebCC\en
+; \ebCC\en
+;
+MSG_FI_REPLYTO_FIELD
+\ebRépondre à\en
+; \ebReply-To\en
+;
+MSG_FI_SUBJECT_FIELD
+\ebSujet\en
+; \ebSubject\en
+;
+MSG_FI_DATE_FIELD
+\ebDate\en
+; \ebDate\en
+;
+MSG_FO_TO_PATTERN
+_Motif (À:)
+; _Pattern (To:)
+;
+MSG_FO_TO_ADDRESS
+Adresse du destinataire (_To:)
+; Sender address (_To:)
+;
+;
+MSG_FO_FROM_ADDRESS
+Adresse de l'émetteur (_From:)
+; Receiver address (_From:)
+;
+;
+MSG_FO_REPLYTO_ADDRESS
+Adresse de _réponse (Reply-To:)
+; _Reply address (Reply-To:)
+;
+;
+MSG_RETRY_HOMEPAGE_QUIT_GAD
+Réessayer|Visiter la page WEB|Quitter
+; Try again|Visit homepage|Quit
+;
+MSG_HOMEPAGE_QUIT_GAD
+Visiter la page WEB|Quitter
+; Visit homepage|Quit
+;
+MSG_MA_EDIT_DELETE
+Effacer
+; Delete
+;
+MSG_WR_DELETE
+Effacer
+; Delete
 ;

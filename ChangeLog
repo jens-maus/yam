@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-10-26  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/francais.ct: french translation update according to latest changes.
+
 2007-10-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c: after having rethought about the protection bit changes,
