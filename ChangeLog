@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-10-27  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: the length parameter of the getsockopt() call should be updated
+    ahead of each call, because getsockopt() could have modified it.
+
 2007-10-26  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: french translation update according to latest changes.

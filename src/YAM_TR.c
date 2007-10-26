@@ -1533,36 +1533,47 @@ static void TR_SetSocketOpts(void)
   #ifdef DEBUG
   {
     int optval;
-    socklen_t optlen = sizeof(optval);
     struct TimeVal tv;
-    socklen_t tvlen = sizeof(tv);
+    socklen_t optlen;
+    socklen_t tvlen;
 
     D(DBF_NET, "Opened socket: %lx", G->TR_Socket);
 
+    // the value of the length pointer must be updated ahead of each call, because
+    // getsockopt() might have modified it.
+    optlen = sizeof(optval);
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_KEEPALIVE, &optval, &optlen);
     D(DBF_NET, "SO_KEEPALIVE..: %ld", optval);
 
+    optlen = sizeof(optval);
     getsockopt(G->TR_Socket, IPPROTO_TCP, TCP_NODELAY, &optval, &optlen);
     D(DBF_NET, "TCP_NODELAY...: %ld", optval);
 
+    optlen = sizeof(optval);
     getsockopt(G->TR_Socket, IPPROTO_IP, IP_TOS, &optval, &optlen);
     D(DBF_NET, "IPTOS_LOWDELAY: %ld", hasFlag(optval, IPTOS_LOWDELAY));
 
+    optlen = sizeof(optval);
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDBUF, &optval, &optlen);
     D(DBF_NET, "SO_SNDBUF.....: %ld bytes", optval);
 
+    optlen = sizeof(optval);
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVBUF, &optval, &optlen);
     D(DBF_NET, "SO_RCVBUF.....: %ld bytes", optval);
 
+    optlen = sizeof(optval);
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDLOWAT, &optval, &optlen);
     D(DBF_NET, "SO_SNDLOWAT...: %ld", optval);
 
+    optlen = sizeof(optval);
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVLOWAT, &optval, &optlen);
     D(DBF_NET, "SO_RCVLOWAT...: %ld", optval);
 
+    tvlen = sizeof(tv);
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, &tvlen);
     D(DBF_NET, "SO_SNDTIMEO...: %ld", tv.Seconds);
 
+    tvlen = sizeof(tv);
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, &tvlen);
     D(DBF_NET, "SO_RCVTIMEO...: %ld", tv.Seconds);
   }
