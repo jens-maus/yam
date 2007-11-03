@@ -703,13 +703,13 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
     else if(set_active)
       FO_SetCurrentFolder(folder);
 
-    if(folderChanged)
+    if(folderChanged == TRUE)
     {
       struct MA_GUIData *gui = &G->MA->GUI;
 
       // in case the main window has an embedded read pane, we have to
       // clear it before changing the actual folder
-      if(C->EmbeddedReadPane)
+      if(C->EmbeddedReadPane == TRUE)
         DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, MUIF_NONE);
 
       // if this folder should be disabled, lets do it now
@@ -720,9 +720,12 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
                                    MUIA_NList_Active, MUIV_NList_Active_Off,
                                    TAG_DONE);
 
-        // set the quickbar as disabled as well
-        if(C->QuickSearchBar)
+        // set the quickbar as disabled as well and abort a search still in progress
+        if(C->QuickSearchBar == TRUE)
+        {
           set(gui->GR_QUICKSEARCHBAR, MUIA_Disabled, TRUE);
+          DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_AbortSearch);
+        }
 
         // also set an embedded read pane as disabled.
         if(C->EmbeddedReadPane)
@@ -744,13 +747,17 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
         DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
 
         // enable an embedded read pane again
-        if(C->EmbeddedReadPane)
+        if(C->EmbeddedReadPane == TRUE)
           set(gui->MN_EMBEDDEDREADPANE, MUIA_Disabled, FALSE);
 
-        // in case the main window has an quicksearchbar, we have to
-        // clear it as well before changing the folder
-        if(C->QuickSearchBar)
+        // In case the main window has an quicksearchbar, we have to
+        // clear it as well before changing the folder. We also abort
+        // a search still being in progress.
+        if(C->QuickSearchBar == TRUE)
+        {
+          DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_AbortSearch);
           DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_Clear);
+        }
 
         // Create the Mail List and display it
         DisplayMailList(folder, gui->PG_MAILLIST);
@@ -759,9 +766,9 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
         set(gui->PG_MAILLIST, MUIA_Disabled, FALSE);
 
         // Now we jump to messages that are NEW
-        if(C->JumpToNewMsg && (folder->New != 0 || folder->Unread != 0))
+        if(C->JumpToNewMsg == TRUE && (folder->New != 0 || folder->Unread != 0))
           MA_JumpToNewMsg();
-        else if(C->JumpToRecentMsg)
+        else if(C->JumpToRecentMsg == TRUE)
           MA_JumpToRecentMsg();
         else if(folder->LastActive >= 0)
           set(gui->PG_MAILLIST, MUIA_NList_Active, folder->LastActive);

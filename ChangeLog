@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: a search initiated by the quick search bar was not aborted if
+    the folder was changed during the search.
+
 2007-10-27  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: the length parameter of the getsockopt() call should be updated
