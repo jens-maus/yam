@@ -1664,11 +1664,22 @@ BOOL FileExists(const char *filename)
 //  Returns size of a file
 int FileSize(const char *filename)
 {
+  #if defined(__amigaos4__)
+  struct ExamineData *ed;
+  #else
   BPTR lock;
+  #endif
   int size = -1;
 
   ENTER();
 
+  #if defined(__amigaos4__)
+  if((ed = ExamineObjectTags(EX_StringName, filename, TAG_DONE)) != NULL)
+  {
+    size = ed->FileSize;
+    FreeDosObject(DOS_EXAMINEDATA, ed);
+  }
+  #else
   if((lock = Lock((STRPTR)filename, ACCESS_READ)))
   {
     struct FileInfoBlock *fib;
@@ -1684,6 +1695,7 @@ int FileSize(const char *filename)
 
     UnLock(lock);
   }
+  #endif
 
   RETURN(size);
   return size;
@@ -1693,11 +1705,22 @@ int FileSize(const char *filename)
 //  Returns protection bits of a file
 long FileProtection(const char *filename)
 {
+  #if defined(__amigaos4__)
+  struct ExamineData *ed;
+  #else
   BPTR lock;
+  #endif
   long prots = -1;
 
   ENTER();
 
+  #if defined(__amigaos4__)
+  if((ed = ExamineObjectTags(EX_StringName, filename, TAG_DONE)) != NULL)
+  {
+    prots = ed->Protection;
+    FreeDosObject(DOS_EXAMINEDATA, ed);
+  }
+  #else
   if((lock = Lock((STRPTR)filename, ACCESS_READ)))
   {
     struct FileInfoBlock *fib;
@@ -1713,6 +1736,7 @@ long FileProtection(const char *filename)
 
     UnLock(lock);
   }
+  #endif
 
   RETURN(prots);
   return prots;
@@ -1722,11 +1746,25 @@ long FileProtection(const char *filename)
 //  Returns file type (file/directory)
 enum FType FileType(const char *filename)
 {
+  #if defined(__amigaos4__)
+  struct ExamineData *ed;
+  #else
   BPTR lock;
+  #endif
   enum FType type = FIT_NONEXIST;
 
   ENTER();
 
+  #if defined(__amigaos4__)
+  if((ed = ExamineObjectTags(EX_StringName, filename, TAG_DONE)) != NULL)
+  {
+    if(EXD_IS_FILE(ed))
+      type = FIT_FILE;
+    else if(EXD_IS_DIRECTORY(ed))
+      type = FIT_DRAWER;
+    FreeDosObject(DOS_EXAMINEDATA, ed);
+  }
+  #else
   if((lock = Lock((STRPTR)filename, ACCESS_READ)))
   {
     struct FileInfoBlock *fib;
@@ -1742,6 +1780,7 @@ enum FType FileType(const char *filename)
 
     UnLock(lock);
   }
+  #endif
 
   RETURN(type);
   return type;
@@ -1751,12 +1790,23 @@ enum FType FileType(const char *filename)
 //  Returns file comment
 char *FileComment(char *filename)
 {
+  #if defined(__amigaos4__)
+  struct ExamineData *ed;
+  #else
   BPTR lock;
+  #endif
   static char fileComment[80];
   char *comment = NULL;
 
   ENTER();
 
+  #if defined(__amigaos4__)
+  if((ed = ExamineObjectTags(EX_StringName, filename, TAG_DONE)) != NULL)
+  {
+    strlcpy(fileComment, ed->Comment, sizeof(fileComment));
+    FreeDosObject(DOS_EXAMINEDATA, ed);
+  }
+  #else
   if((lock = Lock((STRPTR)filename, ACCESS_READ)))
   {
     struct FileInfoBlock *fib;
@@ -1773,6 +1823,7 @@ char *FileComment(char *filename)
 
     UnLock(lock);
   }
+  #endif
 
   RETURN(comment);
   return comment;
@@ -1782,12 +1833,23 @@ char *FileComment(char *filename)
 //  Returns the date of the file
 struct DateStamp *FileDate(char *filename)
 {
+  #if defined(__amigaos4__)
+  struct ExamineData *ed;
+  #else
   BPTR lock;
+  #endif
   static struct DateStamp ds;
   struct DateStamp *res = NULL;
 
   ENTER();
 
+  #if defined(__amigaos4__)
+  if((ed = ExamineObjectTags(EX_StringName, filename, TAG_DONE)) != NULL)
+  {
+    memcpy(&ds, &ed->Date, sizeof(struct DateStamp));
+    FreeDosObject(DOS_EXAMINEDATA, ed);
+  }
+  #else
   if((lock = Lock(filename, ACCESS_READ)))
   {
     struct FileInfoBlock *fib;
@@ -1804,6 +1866,7 @@ struct DateStamp *FileDate(char *filename)
 
     UnLock(lock);
   }
+  #endif
 
   RETURN(res);
   return res;
@@ -1813,11 +1876,27 @@ struct DateStamp *FileDate(char *filename)
 //  Returns the date of the file in seconds since 1.1.1970
 long FileTime(const char *filename)
 {
+  #if defined(__amigaos4__)
+  struct ExamineData *ed;
+  #else
   BPTR lock;
+  #endif
   long ret = 0;
 
   ENTER();
 
+  #if defined(__amigaos4__)
+  if((ed = ExamineObjectTags(EX_StringName, filename, TAG_DONE)) != NULL)
+  {
+    // this is the correct calculation to convert the
+    // struct DateStamp entries which are based on the 1.1.1978
+    // to a long variable for the seconds since 1.1.1970
+    ret = ((ed->Date.ds_Days + 2922) * 1440 +
+            ed->Date.ds_Minute) * 60 +
+            ed->Date.ds_Tick / TICKS_PER_SECOND;
+    FreeDosObject(DOS_EXAMINEDATA, ed);
+  }
+  #else
   if((lock = Lock((STRPTR)filename, ACCESS_READ)))
   {
     struct FileInfoBlock *fib;
@@ -1839,6 +1918,7 @@ long FileTime(const char *filename)
 
     UnLock(lock);
   }
+  #endif
 
   RETURN(ret);
   return ret;
@@ -1854,8 +1934,21 @@ BOOL RenameFile(const char *oldname, const char *newname)
 
   if(Rename(oldname, newname))
   {
-    struct FileInfoBlock *fib;
     // the rename succeeded, now change the file permissions
+
+    #if defined(__amigaos4__)
+    struct ExamineData *ed;
+
+    if((ed = ExamineObjectTags(EX_StringName, newname, TAG_DONE)) != NULL)
+    {
+      ULONG prots = ed->Protection;
+
+      FreeDosObject(DOS_EXAMINEDATA, ed);
+      if(SetProtection(newname, prots & ~FIBF_ARCHIVE))
+        result = TRUE;
+    }
+    #else
+    struct FileInfoBlock *fib;
 
     if((fib = AllocDosObject(DOS_FIB,NULL)) != NULL)
     {
@@ -1866,7 +1959,7 @@ BOOL RenameFile(const char *oldname, const char *newname)
         if(Examine(lock, fib))
         {
           UnLock(lock);
-          if(SetProtection(newname, fib->fib_Protection & (~FIBF_ARCHIVE)))
+          if(SetProtection(newname, fib->fib_Protection & ~FIBF_ARCHIVE))
             result = TRUE;
         }
         else
@@ -1874,6 +1967,7 @@ BOOL RenameFile(const char *oldname, const char *newname)
       }
       FreeDosObject(DOS_FIB, fib);
     }
+    #endif
   }
 
   RETURN(result);
@@ -2740,7 +2834,7 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
   {
     struct ExAllControl *eac;
 
-    if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)))
+    if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)) != NULL)
     {
       struct ExAllData *ead;
       struct ExAllData *eabuffer;
@@ -2749,7 +2843,7 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
       eac->eac_MatchString = NULL;
       eac->eac_MatchFunc = NULL;
 
-      if((eabuffer = malloc(SIZE_EXALLBUF)))
+      if((eabuffer = malloc(SIZE_EXALLBUF)) != NULL)
       {
         do
         {
@@ -2802,21 +2896,23 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
               result = DeleteFile(fname);
             }
           }
-          while((ead = ead->ed_Next) && result);
+          while((ead = ead->ed_Next) != NULL && result == TRUE);
         }
-        while(more && result);
+        while(more && result == TRUE);
 
         free(eabuffer);
       }
-      else result = FALSE;
+      else
+        result = FALSE;
 
       FreeDosObject(DOS_EXALLCONTROL, eac);
     }
-    else result = FALSE;
+    else
+      result = FALSE;
 
     UnLock(dirLock);
 
-    if(result)
+    if(result == TRUE)
       result = DeleteFile(dir);
   }
   else

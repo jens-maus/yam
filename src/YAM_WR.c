@@ -145,12 +145,29 @@ BOOL WR_AddFileToList(int winnum, const char *filename, const char *name, BOOL i
   {
     static struct Attach attach;
     const char *ctype;
+    #if defined(__amigaos4__)
+    struct ExamineData *ed;
+    #else
     BPTR lock;
+    #endif
 
     memset(&attach, 0, sizeof(struct Attach));
 
     // we try to get the filesize and comment and copy
     // it into our attchement structure.
+    #if defined(__amigaos4__)
+    if((ed = ExamineObjectTags(EX_StringName, filename, TAG_DONE)) != NULL)
+    {
+      attach.Size = ed->FileSize;
+      strlcpy(attach.Description, ed->Comment, sizeof(attach.Description));
+      // check the dir type and protection
+      if(EXD_IS_FILE(ed) && isFlagClear(ed->Protection, EXDF_READ))
+      {
+        result = TRUE;
+      }
+      FreeDosObject(DOS_EXAMINEDATA, ed);
+    }
+    #else
     if((lock = Lock((STRPTR)filename, ACCESS_READ)))
     {
       struct FileInfoBlock *fib;
@@ -175,6 +192,7 @@ BOOL WR_AddFileToList(int winnum, const char *filename, const char *name, BOOL i
 
       UnLock(lock);
     }
+    #endif
 
     // now we try to find out the content-type of the
     // attachment by using the IdentifyFile() function which will

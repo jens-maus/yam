@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-05  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c, YAM_UT.c, YAM_WR.c: the OS4 build now calls the preferred
+    ExamineObject() function instead of the deprecated Examine() function.
+
 2007-11-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: a search initiated by the quick search bar was not aborted if

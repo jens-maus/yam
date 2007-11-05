@@ -2131,25 +2131,13 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
        }
        else
        {
-         BPTR lock;
+         struct DateStamp *ds;
 
          // and as a fallback we take the date of the mail file
-         if((lock = Lock(mail->MailFile, ACCESS_READ)))
+         if((ds = FileDate(mail->MailFile)) != NULL)
          {
-           struct FileInfoBlock *fib;
-
-           if((fib = AllocDosObject(DOS_FIB, NULL)))
-           {
-             if(Examine(lock, fib))
-             {
-               memcpy(&mail->Date, &fib->fib_Date, sizeof(struct DateStamp));
-               DateStampTZConvert(&mail->Date, TZC_UTC);
-             }
-
-             FreeDosObject(DOS_FIB, fib);
-           }
-
-           UnLock(lock);
+           memcpy(&mail->Date, ds, sizeof(struct DateStamp));
+           DateStampTZConvert(&mail->Date, TZC_UTC);
          }
        }
 
