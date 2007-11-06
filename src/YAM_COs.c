@@ -2183,8 +2183,11 @@ void CO_SetConfig(void)
 
       setcheckmark(gui->CH_MULTIWIN  ,CE->MultipleWindows);
       setcheckmark(gui->CH_DELAYEDSTATUS, CE->StatusChangeDelayOn);
+
       SetAttrs(gui->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay / 1000,
-                                      MUIA_Disabled, CE->StatusChangeDelayOn == FALSE);
+                                      MUIA_Disabled, CE->StatusChangeDelayOn == FALSE,
+                                      TAG_DONE);
+
       setcheckmark(gui->CH_CONVERTHTML, CE->ConvertHTML);
 
       set(gui->ST_HEADERS, MUIA_Disabled, CE->ShowHeader == HM_NOHEADER || CE->ShowHeader == HM_FULLHEADER);

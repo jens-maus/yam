@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-06  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_COs.c: fixed a potential source for a crash due to an unterminated
+    SetAttrs() call.
+
 2007-11-05  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c, YAM_UT.c, YAM_WR.c: the OS4 build now calls the preferred
