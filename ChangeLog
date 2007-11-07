@@ -17,6 +17,9 @@ $URL$
 2007-11-07  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: fixed another unterminated SetAttrs() call.
+  * extrasrc/xset.c, extrasrc.c: added missing xset() function for compilers
+    which are not able to handle vararg macros. Unfortunately this function
+    cannot ensure the terminating TAG_DONE.
 
 2007-11-06  Jens Langner <Jens.Langner@light-speed.de>
 

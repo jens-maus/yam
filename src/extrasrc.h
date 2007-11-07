@@ -122,6 +122,10 @@
 #define NEED_XGET
 #endif
 
+#if !defined(HAVE_XSET)
+#define NEED_XSET
+#endif
+
 #endif /* !__GNUC__ */
 
 /*
@@ -191,6 +195,10 @@ char *strdup(const char *);
 
 #if defined(NEED_XGET)
 ULONG xget(Object *obj, const ULONG attr);
+#endif
+
+#if defined(NEED_XSET)
+ULONG xset(Object *obj, ...);
 #endif
 
 #if defined(NEED_DOSUPERNEW)

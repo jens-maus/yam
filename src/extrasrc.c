@@ -90,6 +90,10 @@
   #include "extrasrc/xget.c"
 #endif
 
+#if defined(NEED_XSET)
+  #include "extrasrc/xset.c"
+#endif
+
 #if defined(NEED_DOSUPERNEW)
   #include "extrasrc/DoSuperNew.c"
 #endif
