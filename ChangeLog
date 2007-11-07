@@ -20,6 +20,11 @@ $URL$
   * extrasrc/xset.c, extrasrc.c: added missing xset() function for compilers
     which are not able to handle vararg macros. Unfortunately this function
     cannot ensure the terminating TAG_DONE.
+  * extrasrc/xset.c: now a new tag list is built from the supplied tag list
+    to be able to terminate this one by TAG_DONE. This requires some guess-
+    work and is limited to 5 attributes to be set at most with one call of
+    xset(). That's all what can be done to keep up SAS/C compilability if
+    nobody else know how to handle this case.
 
 2007-11-06  Jens Langner <Jens.Langner@light-speed.de>
 
