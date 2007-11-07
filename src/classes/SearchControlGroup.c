@@ -565,9 +565,8 @@ DECLARE(Update)
 
     data->activeObject = newActiveObj;
 
-    SetAttrs(obj, MUIA_Disabled, FALSE,
-                  MUIA_SearchControlGroup_Modified, TRUE,
-                  TAG_DONE);
+    xset(obj, MUIA_Disabled,                    FALSE,
+              MUIA_SearchControlGroup_Modified, TRUE);
   }
 
   RETURN(0);

@@ -2184,9 +2184,8 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_MULTIWIN  ,CE->MultipleWindows);
       setcheckmark(gui->CH_DELAYEDSTATUS, CE->StatusChangeDelayOn);
 
-      SetAttrs(gui->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay / 1000,
-                                      MUIA_Disabled, CE->StatusChangeDelayOn == FALSE,
-                                      TAG_DONE);
+      xset(gui->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay / 1000,
+                                  MUIA_Disabled, CE->StatusChangeDelayOn == FALSE);
 
       setcheckmark(gui->CH_CONVERTHTML, CE->ConvertHTML);
 
@@ -2204,9 +2203,8 @@ void CO_SetConfig(void)
       setstring(gui->ST_HELLOTEXT, CE->NewIntro);
       setstring(gui->ST_BYETEXT, CE->Greetings);
       setcheckmark(gui->CH_WARNSUBJECT, CE->WarnSubject);
-      SetAttrs(gui->ST_EDWRAP, MUIA_String_Integer, CE->EdWrapCol,
-                               MUIA_Disabled, CE->EdWrapMode == EWM_OFF,
-                               TAG_DONE);
+      xset(gui->ST_EDWRAP, MUIA_String_Integer, CE->EdWrapCol,
+                           MUIA_Disabled, CE->EdWrapMode == EWM_OFF);
       setcycle(gui->CY_EDWRAP, CE->EdWrapMode);
       setstring(gui->ST_EDITOR, CE->Editor);
       setcheckmark(gui->CH_LAUNCH, CE->LaunchAlways);
@@ -2286,9 +2284,10 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_SPLITLOG, CE->SplitLogfile);
       setcheckmark(gui->CH_LOGALL, CE->LogAllEvents);
       setcheckmark(gui->CH_PGPPASSINTERVAL, CE->PGPPassInterval > 0);
-      SetAttrs(gui->NB_PGPPASSINTERVAL, MUIA_Numeric_Value, abs(CE->PGPPassInterval),
-                                        MUIA_Disabled, CE->PGPPassInterval <= 0,
-                                        TAG_DONE);
+
+      xset(gui->NB_PGPPASSINTERVAL, MUIA_Numeric_Value, abs(CE->PGPPassInterval),
+                                    MUIA_Disabled, CE->PGPPassInterval <= 0);
+
       DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, CE->LogfileMode == LF_NONE, gui->PO_LOGFILE,
                                                                                  gui->CH_SPLITLOG,
                                                                                  gui->CH_LOGALL,
@@ -2367,9 +2366,10 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_DOCKYICON, CE->DockyIcon);
       setcheckmark(gui->CH_CLGADGET, CE->IconifyOnQuit);
       setcheckmark(gui->CH_CONFIRM, CE->Confirm);
-      SetAttrs(gui->NB_CONFIRMDEL, MUIA_Numeric_Value, CE->ConfirmDelete,
-                                   MUIA_Disabled, CE->Confirm == FALSE,
-                                   TAG_DONE);
+
+      xset(gui->NB_CONFIRMDEL, MUIA_Numeric_Value, CE->ConfirmDelete,
+                               MUIA_Disabled, CE->Confirm == FALSE);
+
       setcheckmark(gui->CH_REMOVE, CE->RemoveAtOnce);
       set(gui->TX_PACKER, MUIA_Text_Contents, CE->XPKPack);
       set(gui->TX_ENCPACK, MUIA_Text_Contents, CE->XPKPackEncrypt);

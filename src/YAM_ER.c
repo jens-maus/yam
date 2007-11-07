@@ -120,11 +120,10 @@ void ER_NewError(const char *error, ...)
   }
 
   snprintf(label, sizeof(label), "\033c%s %%ld/%d", tr(MSG_ErrorReq), G->ER_NumErr);
-  SetAttrs(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, label,
-                                MUIA_Numeric_Min,    1,
-                                MUIA_Numeric_Max,    G->ER_NumErr,
-                                MUIA_Numeric_Value,  G->ER_NumErr,
-                                TAG_DONE);
+  xset(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, label,
+                            MUIA_Numeric_Min,    1,
+                            MUIA_Numeric_Max,    G->ER_NumErr,
+                            MUIA_Numeric_Value,  G->ER_NumErr);
 
   if(G->MA)
     set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);

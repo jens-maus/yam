@@ -419,4 +419,12 @@ ULONG xget(Object *obj, const ULONG attr);
 #endif
 ///
 
+/// xset()
+//  Sets attributes for a MUI object
+ULONG xset(Object *obj, ...);
+#if defined(__GNUC__) || defined(__VBCC__)
+  #define xset(obj, ...)  SetAttrs((obj), __VA_ARGS__, TAG_DONE)
+#endif
+///
+
 #endif /* YAM_UTILITIES_H */

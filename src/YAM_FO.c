@@ -891,10 +891,10 @@ BOOL FO_LoadTree(char *fname)
         }
       }
 
-      SetAttrs(lv, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible,
-                   MUIA_NListtree_Quiet,  FALSE,
-                   TAG_DONE);
+      xset(lv, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible,
+               MUIA_NListtree_Quiet,  FALSE);
     }
+
     fclose(fh);
     success = TRUE;
   }
@@ -1157,17 +1157,14 @@ static void FO_GetFolder(struct Folder *folder)
   set(gui->ST_FPATH,  MUIA_String_Contents, folder->Path);
   set(gui->NM_MAXAGE, MUIA_Numeric_Value,   folder->MaxAge);
 
-  SetAttrs(gui->CH_EXPIREUNREAD, MUIA_Selected, folder->ExpireUnread,
-                                 MUIA_Disabled, isTrashFolder(folder) || isSpamFolder(folder) || folder->MaxAge == 0,
-                                 TAG_DONE);
+  xset(gui->CH_EXPIREUNREAD, MUIA_Selected, folder->ExpireUnread,
+                             MUIA_Disabled, isTrashFolder(folder) || isSpamFolder(folder) || folder->MaxAge == 0);
 
-  SetAttrs(gui->CY_FTYPE,  MUIA_Cycle_Active, type2cycle[folder->Type],
-                           MUIA_Disabled,     isdefault,
-                           TAG_DONE);
+  xset(gui->CY_FTYPE,  MUIA_Cycle_Active, type2cycle[folder->Type],
+                       MUIA_Disabled,     isdefault);
 
-  SetAttrs(gui->CY_FMODE,  MUIA_Cycle_Active, folder->Mode,
-                           MUIA_Disabled,     isdefault,
-                           TAG_DONE);
+  xset(gui->CY_FMODE,  MUIA_Cycle_Active, folder->Mode,
+                       MUIA_Disabled,     isdefault);
 
   for(i = 0; i < 2; i++)
   {
@@ -1181,35 +1178,29 @@ static void FO_GetFolder(struct Folder *folder)
   set(gui->ST_BYETEXT,     MUIA_String_Contents, folder->WriteGreetings);
 
   // for ML-Support
-  SetAttrs(gui->CH_MLSUPPORT,
-           MUIA_Selected, isdefault ? FALSE : folder->MLSupport,
-           MUIA_Disabled, isdefault,
-           TAG_DONE);
+  xset(gui->CH_MLSUPPORT,
+       MUIA_Selected, isdefault ? FALSE : folder->MLSupport,
+       MUIA_Disabled, isdefault);
 
-  SetAttrs(gui->ST_MLADDRESS,
-           MUIA_String_Contents, folder->MLAddress,
-           MUIA_Disabled, !folder->MLSupport || isdefault,
-           TAG_DONE);
+  xset(gui->ST_MLADDRESS,
+       MUIA_String_Contents, folder->MLAddress,
+       MUIA_Disabled, !folder->MLSupport || isdefault);
 
-  SetAttrs(gui->ST_MLPATTERN,
-           MUIA_String_Contents, folder->MLPattern,
-           MUIA_Disabled, !folder->MLSupport || isdefault,
-           TAG_DONE);
+  xset(gui->ST_MLPATTERN,
+       MUIA_String_Contents, folder->MLPattern,
+       MUIA_Disabled, !folder->MLSupport || isdefault);
 
-  SetAttrs(gui->ST_MLFROMADDRESS,
-           MUIA_String_Contents, folder->MLFromAddress,
-           MUIA_Disabled, !folder->MLSupport || isdefault,
-           TAG_DONE);
+  xset(gui->ST_MLFROMADDRESS,
+       MUIA_String_Contents, folder->MLFromAddress,
+       MUIA_Disabled, !folder->MLSupport || isdefault);
 
-  SetAttrs(gui->ST_MLREPLYTOADDRESS,
-           MUIA_String_Contents, folder->MLReplyToAddress,
-           MUIA_Disabled, !folder->MLSupport || isdefault,
-           TAG_DONE);
+  xset(gui->ST_MLREPLYTOADDRESS,
+       MUIA_String_Contents, folder->MLReplyToAddress,
+       MUIA_Disabled, !folder->MLSupport || isdefault);
 
-  SetAttrs(gui->CY_MLSIGNATURE,
-           MUIA_Cycle_Active,    folder->MLSignature,
-           MUIA_Disabled, !folder->MLSupport || isdefault,
-           TAG_DONE);
+  xset(gui->CY_MLSIGNATURE,
+       MUIA_Cycle_Active,    folder->MLSignature,
+       MUIA_Disabled, !folder->MLSupport || isdefault);
 
   if(!isTrashFolder(folder) && !isSpamFolder(folder))
   {

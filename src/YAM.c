@@ -2248,10 +2248,9 @@ static void Initialise2(void)
 
   // Only activate the main window if the about window is active and open it immediatly.
   // We always start YAM with Window_Open=TRUE or else the hide functionality does not work as expected.
-  SetAttrs(G->MA->GUI.WI,
-           MUIA_Window_Activate, splashWasActive,
-           MUIA_Window_Open,     TRUE,
-           TAG_DONE);
+  xset(G->MA->GUI.WI,
+       MUIA_Window_Activate, splashWasActive,
+       MUIA_Window_Open,     TRUE);
 
   LEAVE();
 }

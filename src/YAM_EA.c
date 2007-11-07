@@ -449,9 +449,9 @@ static void EA_SetPhoto(int winnum, char *fname)
      DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
   {
     // set the new attributes, the old image will be deleted from the cache
-    SetAttrs(gui->BC_PHOTO, MUIA_UserImage_Address, G->EA[winnum]->ABEntry->Address,
-                            MUIA_UserImage_Filename, fname,
-                            TAG_DONE);
+    xset(gui->BC_PHOTO, MUIA_UserImage_Address,  G->EA[winnum]->ABEntry->Address,
+                        MUIA_UserImage_Filename, fname);
+
     // and force a cleanup/setup pair
     DoMethod(gui->GR_PHOTO, OM_REMMEMBER, gui->BC_PHOTO);
     DoMethod(gui->GR_PHOTO, OM_ADDMEMBER, gui->BC_PHOTO);
@@ -534,9 +534,8 @@ HOOKPROTONHNO(EA_CloseFunc, void, int *arg)
   {
   	// update the user image ID and remove it from the cache
   	// it will be reloaded when necessary
-    SetAttrs(gui->BC_PHOTO, MUIA_UserImage_Address, G->EA[winnum]->ABEntry->Address,
-                            MUIA_UserImage_Filename, NULL,
-                            TAG_DONE);
+    xset(gui->BC_PHOTO, MUIA_UserImage_Address,  G->EA[winnum]->ABEntry->Address,
+                        MUIA_UserImage_Filename, NULL);
   }
 
   DisposeModulePush(&G->EA[winnum]);

@@ -260,9 +260,8 @@ OVERLOAD(OM_SET)
           DateStamp2String(buf, sizeof(buf), NULL, DSS_DATETIME, TZC_NONE);
           snprintf(data->WindowTitle, sizeof(data->WindowTitle), "%s - %s", tr(MSG_UPD_NOTIFICATION_WTITLE), buf);
 
-          SetAttrs(obj, MUIA_Window_Title,         data->WindowTitle,
-                        MUIA_Window_DefaultObject, data->ComponentList,
-                        TAG_DONE);
+          xset(obj, MUIA_Window_Title,         data->WindowTitle,
+                    MUIA_Window_DefaultObject, data->ComponentList);
 
           // we also make sure the application in uniconified.
           if(xget(G->App, MUIA_Application_Iconified))

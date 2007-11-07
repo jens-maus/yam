@@ -832,9 +832,8 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
       else
         body = cmsg;
 
-      SetAttrs(data->mailTextObject, MUIA_TextEditor_FixedFont, rmData->useFixedFont,
-                                     MUIA_TextEditor_Contents,  body,
-                                     TAG_DONE);
+      xset(data->mailTextObject, MUIA_TextEditor_FixedFont, rmData->useFixedFont,
+                                 MUIA_TextEditor_Contents,  body);
 
       // free the parsed text afterwards as the texteditor has copied it anyway.
       if(rmData->useTextstyles)

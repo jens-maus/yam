@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-07  Jens Langner <Jens.Langner@light-speed.de>
+
+  * STYLEGUIDE: added a section that should renders the use of GetAttr()
+    and SetAttrs() obsolete and should clarify why we think the more secure
+    xget() and xset() macros should be used instead.
+  * YAM_utilities.h, misc: replaced all SetAttrs() calls by a newly
+    introduced xset() macro function. This macro should automatically take
+    care of always properly terminating a SetAttrs() call.
+
 2007-11-07  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: fixed another unterminated SetAttrs() call.

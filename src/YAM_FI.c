@@ -878,10 +878,9 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
 
       // set the gauge
       snprintf(gauge, sizeof(gauge), tr(MSG_FI_GAUGETEXT), totmsg);
-      SetAttrs(ga, MUIA_Gauge_InfoText, gauge,
-                   MUIA_Gauge_Max,      totmsg,
-                   MUIA_Gauge_Current,  0,
-                   TAG_DONE);
+      xset(ga, MUIA_Gauge_InfoText, gauge,
+               MUIA_Gauge_Max,      totmsg,
+               MUIA_Gauge_Current,  0);
 
       set(gui->GR_PAGE, MUIA_Group_ActivePage, 1);
 
@@ -1119,9 +1118,8 @@ HOOKPROTONHNONP(FI_SwitchFunc, void)
       // are sharing the same displayhook we have to call MUIA_NList_DisplayRecall
       // twice here so that it will recognize that something has changed or
       // otherwise both NLists will show glitches.
-      SetAttrs(G->MA->GUI.PG_MAILLIST, MUIA_NList_DisplayRecall, TRUE,
-                                       MUIA_NList_Active, pos,
-                                       TAG_DONE);
+      xset(G->MA->GUI.PG_MAILLIST, MUIA_NList_DisplayRecall, TRUE,
+                                   MUIA_NList_Active, pos);
 
       set(G->FI->GUI.LV_MAILS, MUIA_NList_DisplayRecall, TRUE);
     }
@@ -2198,9 +2196,8 @@ static struct FI_ClassData *FI_New(void)
        set(data->GUI.BT_SELECT,       MUIA_Disabled, TRUE);
        set(data->GUI.BT_READ,         MUIA_Disabled, TRUE);
 
-       SetAttrs(data->GUI.WI, MUIA_Window_ActiveObject,  xget(data->GUI.GR_SEARCH, MUIA_SearchControlGroup_ActiveObject),
-                              MUIA_Window_DefaultObject, data->GUI.LV_MAILS,
-                              TAG_DONE);
+       xset(data->GUI.WI, MUIA_Window_ActiveObject,  xget(data->GUI.GR_SEARCH, MUIA_SearchControlGroup_ActiveObject),
+                          MUIA_Window_DefaultObject, data->GUI.LV_MAILS);
 
        SetHelp(data->GUI.LV_FOLDERS,       MSG_HELP_FI_LV_FOLDERS);
        SetHelp(bt_all,                     MSG_HELP_FI_BT_ALL);

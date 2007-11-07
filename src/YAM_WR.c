@@ -3418,51 +3418,46 @@ HOOKPROTONHNO(WR_SetSoftStyleFunc, void, ULONG *arg)
               {
                 case SSM_NORMAL:
                 {
-                  SetAttrs(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
-                                         MUIA_TextEditor_StyleItalic,    FALSE,
-                                         MUIA_TextEditor_StyleUnderline, FALSE,
-                                         MUIA_TextEditor_Pen,            0,
-                                         TAG_DONE);
+                  xset(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
+                                     MUIA_TextEditor_StyleItalic,    FALSE,
+                                     MUIA_TextEditor_StyleUnderline, FALSE,
+                                     MUIA_TextEditor_Pen,            0);
                 }
                 break;
 
                 case SSM_BOLD:
                 {
-                  SetAttrs(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      TRUE,
-                                         MUIA_TextEditor_StyleItalic,    FALSE,
-                                         MUIA_TextEditor_StyleUnderline, FALSE,
-                                         MUIA_TextEditor_Pen,            0,
-                                         TAG_DONE);
+                  xset(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      TRUE,
+                                     MUIA_TextEditor_StyleItalic,    FALSE,
+                                     MUIA_TextEditor_StyleUnderline, FALSE,
+                                     MUIA_TextEditor_Pen,            0);
                 }
                 break;
 
                 case SSM_ITALIC:
                 {
-                  SetAttrs(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
-                                         MUIA_TextEditor_StyleItalic,    TRUE,
-                                         MUIA_TextEditor_StyleUnderline, FALSE,
-                                         MUIA_TextEditor_Pen,            0,
-                                         TAG_DONE);
+                  xset(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
+                                     MUIA_TextEditor_StyleItalic,    TRUE,
+                                     MUIA_TextEditor_StyleUnderline, FALSE,
+                                     MUIA_TextEditor_Pen,            0);
                 }
                 break;
 
                 case SSM_UNDERLINE:
                 {
-                  SetAttrs(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
-                                         MUIA_TextEditor_StyleItalic,    FALSE,
-                                         MUIA_TextEditor_StyleUnderline, TRUE,
-                                         MUIA_TextEditor_Pen,            0,
-                                         TAG_DONE);
+                  xset(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
+                                     MUIA_TextEditor_StyleItalic,    FALSE,
+                                     MUIA_TextEditor_StyleUnderline, TRUE,
+                                     MUIA_TextEditor_Pen,            0);
                 }
                 break;
 
                 case SSM_COLOR:
                 {
-                  SetAttrs(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
-                                         MUIA_TextEditor_StyleItalic,    FALSE,
-                                         MUIA_TextEditor_StyleUnderline, FALSE,
-                                         MUIA_TextEditor_Pen,            7,
-                                         TAG_DONE);
+                  xset(gui->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
+                                     MUIA_TextEditor_StyleItalic,    FALSE,
+                                     MUIA_TextEditor_StyleUnderline, FALSE,
+                                     MUIA_TextEditor_Pen,            7);
                 }
                 break;
               }
@@ -4120,15 +4115,12 @@ static struct WR_ClassData *WR_New(int winnum)
       {
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
-         SetAttrs(data->GUI.ST_TO,
-                 MUIA_BetterString_KeyDownFocus, data->GUI.ST_SUBJECT,
-                 MUIA_Recipientstring_FromString, data->GUI.ST_FROM,
-                 MUIA_Recipientstring_ReplyToString, data->GUI.ST_REPLYTO,
-                 TAG_DONE);
-         SetAttrs(data->GUI.ST_SUBJECT,
-                 MUIA_BetterString_KeyUpFocus, data->GUI.ST_TO,
-                 MUIA_BetterString_KeyDownFocus, data->GUI.TE_EDIT,
-                 TAG_DONE);
+         xset(data->GUI.ST_TO, MUIA_BetterString_KeyDownFocus, data->GUI.ST_SUBJECT,
+                               MUIA_Recipientstring_FromString, data->GUI.ST_FROM,
+                               MUIA_Recipientstring_ReplyToString, data->GUI.ST_REPLYTO);
+
+         xset(data->GUI.ST_SUBJECT, MUIA_BetterString_KeyUpFocus, data->GUI.ST_TO,
+                                    MUIA_BetterString_KeyDownFocus, data->GUI.TE_EDIT);
 
          set(mi_autospell, MUIA_Menuitem_Checked, xget(data->GUI.TE_EDIT, MUIA_TextEditor_TypeAndSpell));
          set(mi_autowrap,  MUIA_Menuitem_Checked, xget(data->GUI.TE_EDIT, MUIA_TextEditor_WrapBorder) > 0);

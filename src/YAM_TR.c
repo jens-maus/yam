@@ -3473,9 +3473,8 @@ static void TR_DisplayMailList(BOOL largeonly)
       }
     }
 
-    SetAttrs(lv, MUIA_NList_Active, MUIV_NList_Active_Top,
-                 MUIA_NList_Quiet,  FALSE,
-                 TAG_DONE);
+    xset(lv, MUIA_NList_Active, MUIV_NList_Active_Top,
+             MUIA_NList_Quiet,  FALSE);
   }
 
   LEAVE();
@@ -3875,10 +3874,9 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 
     // reset the statistics display
     snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), 0);
-    SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_Max,      0,
-                                  MUIA_Gauge_Current,  0,
-                                  MUIA_Gauge_InfoText, G->TR->CountLabel,
-                                  TAG_DONE);
+    xset(G->TR->GUI.GA_COUNT, MUIA_Gauge_Max,      0,
+                              MUIA_Gauge_Current,  0,
+                              MUIA_Gauge_InfoText, G->TR->CountLabel);
 
     // and last, but not least update the gauge.
     FormatSize(0, str_size_curr, sizeof(str_size_curr), SF_AUTO);
@@ -3886,10 +3884,9 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
     snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                            str_size_curr, str_size_curr_max);
 
-    SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      0,
-                                  MUIA_Gauge_Current,  0,
-                                  MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                                  TAG_DONE);
+    xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      0,
+                              MUIA_Gauge_Current,  0,
+                              MUIA_Gauge_InfoText, G->TR->BytesLabel);
   }
 
   if((msgs = TR_ConnectPOP(G->TR->GUIlevel)) != -1)     // connection succeeded
@@ -4416,10 +4413,9 @@ static void TR_TransStat_Start(struct TransStat *ts)
   ts->Clock_Start = ts->Clock_Last.Seconds;
 
   snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), ts->Msgs_Tot);
-  SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
-                                MUIA_Gauge_Max,      ts->Msgs_Tot,
-                                MUIA_Gauge_Current,  0,
-                                TAG_DONE);
+  xset(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
+                            MUIA_Gauge_Max,      ts->Msgs_Tot,
+                            MUIA_Gauge_Current,  0);
 
   LEAVE();
 }
@@ -4452,10 +4448,9 @@ static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, L
     snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                             ts->str_size_curr, ts->str_size_curr_max);
 
-    SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      0,
-                                  MUIA_Gauge_Current,  0,
-                                  MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                                  TAG_DONE);
+    xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      0,
+                              MUIA_Gauge_Current,  0,
+                              MUIA_Gauge_InfoText, G->TR->BytesLabel);
   }
 
   LEAVE();
@@ -4522,10 +4517,9 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
           FormatSize(ts->Size_Curr, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
           snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                                  ts->str_size_curr, ts->str_size_curr_max);
-          SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      ts->Size_Curr_Max / 1024,
-                                        MUIA_Gauge_Current,  ts->Size_Curr / 1024,
-                                        MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                                        TAG_DONE);
+          xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      ts->Size_Curr_Max / 1024,
+                                    MUIA_Gauge_Current,  ts->Size_Curr / 1024,
+                                    MUIA_Gauge_InfoText, G->TR->BytesLabel);
 
           // signal the application to update now
           DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -4586,15 +4580,9 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
       FormatSize(ts->Size_Curr, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
       snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                              ts->str_size_curr, ts->str_size_curr_max);
-      SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,     100,
-                                    MUIA_Gauge_Current, 100,
-                                    MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                                    TAG_DONE);
-
-
-
-
-
+      xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,     100,
+                                MUIA_Gauge_Current, 100,
+                                MUIA_Gauge_InfoText, G->TR->BytesLabel);
 
       // signal the application to update now
       DoMethod(G->App, MUIM_Application_InputBuffered);

@@ -695,9 +695,8 @@ DECLARE(ProcessSearch)
       DoMethod(obj, MUIM_QuickSearchBar_UpdateStats, TRUE);
 
       // make sure the first message is set active or that we notify
-      SetAttrs(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active,       MUIV_NList_Active_Top,
-                                       MUIA_NList_SelectChange, TRUE,
-                                       TAG_DONE);
+      xset(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active,       MUIV_NList_Active_Top,
+                                   MUIA_NList_SelectChange, TRUE);
     }
   }
   else

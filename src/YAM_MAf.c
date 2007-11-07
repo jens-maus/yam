@@ -715,10 +715,9 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
       // if this folder should be disabled, lets do it now
       if(isGroupFolder(folder) || MA_GetIndex(folder) == FALSE)
       {
-        SetAttrs(gui->PG_MAILLIST, MUIA_Disabled,     TRUE,
-                                   MUIA_ShortHelp,    NULL,
-                                   MUIA_NList_Active, MUIV_NList_Active_Off,
-                                   TAG_DONE);
+        xset(gui->PG_MAILLIST, MUIA_Disabled,     TRUE,
+                               MUIA_ShortHelp,    NULL,
+                               MUIA_NList_Active, MUIV_NList_Active_Off);
 
         // set the quickbar as disabled as well and abort a search still in progress
         if(C->QuickSearchBar == TRUE)

@@ -111,7 +111,8 @@ OVERLOAD(OM_NEW)
 DECLARE(Open) // Object *texteditor
 {
   GETDATA;
-  STRPTR contents;
+
+  ENTER();
 
   if(data->ParentWindow)
     DoMethod(obj, MUIM_Searchwindow_Close);
@@ -121,19 +122,15 @@ DECLARE(Open) // Object *texteditor
 
   DoMethod(data->ParentWindow, MUIM_Notify, MUIA_Window_Open, FALSE, obj, 1, MUIM_Searchwindow_Close);
 
-  contents = (STRPTR)xget(data->Searchstring, MUIA_String_Contents);
-  SetAttrs(data->Searchstring,
-    MUIA_String_BufferPos, 0,
-    MUIA_BetterString_SelectSize, strlen(contents),
-    TAG_DONE);
+  xset(data->Searchstring,  MUIA_String_BufferPos, 0,
+                            MUIA_BetterString_SelectSize, strlen((STRPTR)xget(data->Searchstring, MUIA_String_Contents)));
 
-  SetAttrs(obj,
-    MUIA_Window_Activate, TRUE,
-    MUIA_Window_ActiveObject, data->Searchstring,
-    MUIA_Window_RefWindow, data->ParentWindow,
-    MUIA_Window_Open, TRUE,
-    TAG_DONE);
+  xset(obj, MUIA_Window_Activate,     TRUE,
+            MUIA_Window_ActiveObject, data->Searchstring,
+            MUIA_Window_RefWindow,    data->ParentWindow,
+            MUIA_Window_Open,         TRUE);
 
+  RETURN(0);
   return 0;
 }
 
@@ -143,10 +140,13 @@ DECLARE(Close)
 {
   GETDATA;
 
+  ENTER();
+
   set(obj, MUIA_Window_Open, FALSE);
   DoMethod(data->ParentWindow, MUIM_KillNotifyObj, MUIA_Window_Open, obj);
   data->ParentWindow = NULL;
 
+  RETURN(0);
   return 0;
 }
 

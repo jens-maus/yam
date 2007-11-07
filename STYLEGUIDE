@@ -550,3 +550,21 @@ MUIM_Group_InitChange/ExitChange combo so that an object will be dynamically
 removed (hided) and added (shown) by using there Group method calls instead
 
 ############################################################################
+
+19. Do NOT use GetAttr() or SetAttrs()
+---------------------------------------
+
+A common mistake when programming BOOPSI classes is to either forget to
+properly terminate a SetAttrs() call or that a GetAttr() call might end up
+in an uninitialized variables. Both of these problems should, however, be
+solved by using the more convienent and secure xget() and xset() macros.
+
+These macros will make sure that the GetAttr() and SetAttrs() calls are
+properly terminated and that a GetAttr() call will always return 0 in
+case an attribute isn't available.
+
+So to be on the safe side, the direct use of GetAttrs() or SetAttrs()
+should be considered obsolete and all calls should be replaced by their
+equivalent xget/xset calls.
+
+############################################################################

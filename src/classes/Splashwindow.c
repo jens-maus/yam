@@ -187,9 +187,8 @@ DECLARE(StatusChange) // char *txt, LONG percent
 
   if(msg->txt && msg->percent >= 0)
   {
-    SetAttrs(data->statusGauge, MUIA_Gauge_InfoText, msg->txt,
-                                MUIA_Gauge_Current,  msg->percent,
-             TAG_DONE);
+    xset(data->statusGauge, MUIA_Gauge_InfoText, msg->txt,
+                            MUIA_Gauge_Current,  msg->percent);
   }
   else if(msg->txt)
     set(data->statusGauge, MUIA_Gauge_InfoText, msg->txt);
@@ -362,9 +361,8 @@ DECLARE(SelectUser)
       DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_LOGIN+G->Users.Num);
 
       // make the first button the active object in the window
-      SetAttrs(obj, MUIA_Window_ActiveObject,  button0,
-                    MUIA_Window_DefaultObject, button0,
-                    TAG_DONE);
+      xset(obj, MUIA_Window_ActiveObject,  button0,
+                MUIA_Window_DefaultObject, button0);
 
       // make sure the window is at the front
       DoMethod(obj, MUIM_Window_ToFront);
@@ -404,9 +402,8 @@ DECLARE(SelectUser)
         DoMethod(obj, MUIM_KillNotify, MUIA_Pressed);
 
       // make sure no object of the window is active and default afterwards
-      SetAttrs(obj, MUIA_Window_ActiveObject,  NULL,
-                    MUIA_Window_DefaultObject, NULL,
-                    TAG_DONE);
+      xset(obj, MUIA_Window_ActiveObject,  NULL,
+                MUIA_Window_DefaultObject, NULL);
 
       // lets iconify/close the window if it had this state previously
       if(wasOpen == FALSE)
@@ -505,9 +502,8 @@ DECLARE(PasswordRequest) // struct User *user
     DoMethod(obj, MUIM_Window_ToFront);
 
     // make the passwordString the active object
-    SetAttrs(obj, MUIA_Window_ActiveObject,   pwString,
-                  MUIA_Window_DefaultObject,  pwString,
-                  TAG_DONE);
+    xset(obj, MUIA_Window_ActiveObject,   pwString,
+              MUIA_Window_DefaultObject,  pwString);
 
     // lets collect the waiting returnIDs now
     COLLECT_RETURNIDS;
@@ -547,9 +543,8 @@ DECLARE(PasswordRequest) // struct User *user
     DoMethod(obj, MUIM_KillNotify, MUIA_Pressed);
 
     // make sure no object of the window is active and default afterwards
-    SetAttrs(obj, MUIA_Window_ActiveObject,  NULL,
-                  MUIA_Window_DefaultObject, NULL,
-                  TAG_DONE);
+    xset(obj, MUIA_Window_ActiveObject,  NULL,
+              MUIA_Window_DefaultObject, NULL);
 
     // lets iconify/close the window if it had this state previously
     if(!wasOpen)

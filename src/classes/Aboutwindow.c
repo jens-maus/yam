@@ -269,10 +269,8 @@ OVERLOAD(OM_NEW)
     DoMethod(bt_okay,   MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);
     DoMethod(bt_gopage, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_CallHook, &OpenSupportPageHook);
 
-    SetAttrs(obj,
-      MUIA_Window_Activate,      TRUE,
-      MUIA_Window_DefaultObject, bt_okay,
-    TAG_DONE);
+    xset(obj, MUIA_Window_Activate,      TRUE,
+              MUIA_Window_DefaultObject, bt_okay);
   }
 
   RETURN((ULONG)obj);

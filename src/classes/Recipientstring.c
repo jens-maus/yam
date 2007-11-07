@@ -171,9 +171,9 @@ static void NormalizeSelection(Object *obj, BOOL clear)
 
     // remove the current recipient from the string, including the " >> " marks
     // and everything typed so far
-    SetAttrs(obj, MUIA_String_BufferPos, start,
-                  MUIA_BetterString_SelectSize, rcpSize + marksSize,
-                  TAG_DONE);
+    xset(obj, MUIA_String_BufferPos, start,
+              MUIA_BetterString_SelectSize, rcpSize + marksSize);
+
     DoMethod(obj, MUIM_BetterString_ClearSelected);
 
     // now insert the correct recipient again
@@ -217,10 +217,8 @@ OVERLOAD(OM_NEW)
       }
     }
 
-    SetAttrs(obj,
-      MUIA_String_Popup, obj,
-      MUIA_String_Reject, data->MultipleRecipients ? NULL : ",",
-      TAG_DONE);
+    xset(obj, MUIA_String_Popup, obj,
+              MUIA_String_Reject, data->MultipleRecipients ? NULL : ",");
   }
 
   RETURN((ULONG)obj);
@@ -683,9 +681,8 @@ OVERLOAD(MUIM_HandleEvent)
                 DoMethod(obj, MUIM_BetterString_Insert, " >> ", pos);
                 DoMethod(obj, MUIM_BetterString_Insert, new_address, pos + 4);
 
-                SetAttrs(obj, MUIA_String_BufferPos, pos,
-                              MUIA_BetterString_SelectSize, strlen(new_address) + 4,
-                              TAG_DONE);
+                xset(obj, MUIA_String_BufferPos, pos,
+                          MUIA_BetterString_SelectSize, strlen(new_address) + 4);
               }
               else
               {
@@ -694,9 +691,8 @@ OVERLOAD(MUIM_HandleEvent)
 
                 DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
 
-                SetAttrs(obj, MUIA_String_BufferPos, pos,
-                              MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start),
-                              TAG_DONE);
+                xset(obj, MUIA_String_BufferPos, pos,
+                          MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start));
               }
             }
           }
@@ -1008,9 +1004,9 @@ DECLARE(ReplaceSelected) // char *address
   {
     // The user has clicked with the mouse in the match list the string object has gone inactive before
     // which deleted the formerly marked block. This block must be restored as it will be replaced here.
-    SetAttrs(obj, MUIA_String_BufferPos, data->bufferPos,
-                  MUIA_BetterString_SelectSize, data->selectSize,
-                  TAG_DONE);
+    xset(obj, MUIA_String_BufferPos, data->bufferPos,
+              MUIA_BetterString_SelectSize, data->selectSize);
+
     // forget the remembered selection size again
     data->selectSize = 0;
   }
@@ -1029,9 +1025,8 @@ DECLARE(ReplaceSelected) // char *address
 
   if(Strnicmp(new_address, &old[start], len) != 0)
   {
-    SetAttrs(obj, MUIA_String_BufferPos, start,
-                  MUIA_BetterString_SelectSize, len,
-                  TAG_DONE);
+    xset(obj, MUIA_String_BufferPos,        start,
+              MUIA_BetterString_SelectSize, len);
 
     DoMethod(obj, MUIM_BetterString_ClearSelected);
 
@@ -1041,9 +1036,8 @@ DECLARE(ReplaceSelected) // char *address
 
   DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
 
-  SetAttrs(obj, MUIA_String_BufferPos, pos,
-                MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start),
-                TAG_DONE);
+  xset(obj, MUIA_String_BufferPos, pos,
+            MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start));
 
   RETURN(0);
   return 0;

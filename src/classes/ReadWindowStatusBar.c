@@ -400,9 +400,8 @@ DECLARE(Update) // struct Mail *mail
       if(folder != NULL)
       {
         // set the folderLabel
-        SetAttrs(data->folderLabel, MUIA_Text_PreParse, "\033l",
-                                    MUIA_Text_Contents, folder->Name,
-                                    TAG_DONE);
+        xset(data->folderLabel, MUIA_Text_PreParse, "\033l",
+                                MUIA_Text_Contents, folder->Name);
 
         // get/create the folder image
         if(folder->imageObject)
@@ -430,9 +429,8 @@ DECLARE(Update) // struct Mail *mail
       }
       else
       {
-        SetAttrs(data->folderLabel, MUIA_Text_PreParse, "\033l\033i",
-                                    MUIA_Text_Contents, tr(MSG_RE_VIRTUALMAIL),
-                                    TAG_DONE);
+        xset(data->folderLabel, MUIA_Text_PreParse, "\033l\033i",
+                                MUIA_Text_Contents, tr(MSG_RE_VIRTUALMAIL));
       }
     }
 

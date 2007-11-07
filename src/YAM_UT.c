@@ -5455,10 +5455,9 @@ void LoadLayout(void)
   // if the embedded read pane is active we set its weight values
   if(C->EmbeddedReadPane)
   {
-    SetAttrs(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight,                 G->Weights[7],
-                                             MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
-                                             MUIA_ReadMailGroup_TGVertWeight, G->Weights[9],
-                                             TAG_DONE);
+    xset(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight,                 G->Weights[7],
+                                         MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
+                                         MUIA_ReadMailGroup_TGVertWeight, G->Weights[9]);
   }
 
   LEAVE();

@@ -414,9 +414,8 @@ DECLARE(SwitchToList) // enum MainListType type
       // last active mail as well.
       if(curFolder && curFolder->LastActive >= 0)
       {
-        SetAttrs(data->mainListObjects[LT_MAIN], MUIA_NList_Active,       curFolder->LastActive,
-                                                 MUIA_NList_SelectChange, TRUE,
-                                                 TAG_DONE);
+        xset(data->mainListObjects[LT_MAIN], MUIA_NList_Active,       curFolder->LastActive,
+                                             MUIA_NList_SelectChange, TRUE);
       }
     }
   }

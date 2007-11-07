@@ -264,11 +264,9 @@ DECLARE(ChangeWindow)
   {
     // if there is currently no window open we can use set()
     // to change the position/sizes
-    SetAttrs(obj,
-      MUIA_Window_LeftEdge,   left,
-      MUIA_Window_TopEdge,    top,
-      MUIA_Window_Width,      _width(data->String),
-      TAG_DONE);
+    xset(obj, MUIA_Window_LeftEdge,   left,
+              MUIA_Window_TopEdge,    top,
+              MUIA_Window_Width,      _width(data->String));
   }
 
   RETURN(0);
