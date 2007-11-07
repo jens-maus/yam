@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-07  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c: fixed another unterminated SetAttrs() call.
+
 2007-11-06  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COs.c: fixed a potential source for a crash due to an unterminated

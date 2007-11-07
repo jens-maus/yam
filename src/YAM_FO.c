@@ -1158,7 +1158,8 @@ static void FO_GetFolder(struct Folder *folder)
   set(gui->NM_MAXAGE, MUIA_Numeric_Value,   folder->MaxAge);
 
   SetAttrs(gui->CH_EXPIREUNREAD, MUIA_Selected, folder->ExpireUnread,
-                                 MUIA_Disabled, isTrashFolder(folder) || isSpamFolder(folder) || folder->MaxAge == 0);
+                                 MUIA_Disabled, isTrashFolder(folder) || isSpamFolder(folder) || folder->MaxAge == 0,
+                                 TAG_DONE);
 
   SetAttrs(gui->CY_FTYPE,  MUIA_Cycle_Active, type2cycle[folder->Type],
                            MUIA_Disabled,     isdefault,
@@ -1176,14 +1177,8 @@ static void FO_GetFolder(struct Folder *folder)
 
   set(gui->CH_STATS,       MUIA_Selected, folder->Stats);
   set(gui->BT_AUTODETECT,  MUIA_Disabled, !folder->MLSupport || isdefault);
-
-  SetAttrs(gui->ST_HELLOTEXT,
-           MUIA_String_Contents, folder->WriteIntro,
-           TAG_DONE);
-
-  SetAttrs(gui->ST_BYETEXT,
-           MUIA_String_Contents, folder->WriteGreetings,
-           TAG_DONE);
+  set(gui->ST_HELLOTEXT,   MUIA_String_Contents, folder->WriteIntro);
+  set(gui->ST_BYETEXT,     MUIA_String_Contents, folder->WriteGreetings);
 
   // for ML-Support
   SetAttrs(gui->CH_MLSUPPORT,
