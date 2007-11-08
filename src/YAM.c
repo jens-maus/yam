@@ -237,7 +237,7 @@ static BOOL InitLib(const char *libname,
       #endif
     }
     else
-      D(DBF_STARTUP, "InitLib: can`t open library %s with minimum version v%ld.%d", libname, version, revision);
+      D(DBF_STARTUP, "InitLib: can`t open library %s with minimum version v%ld.%ld", libname, version, revision);
 
     if(base == NULL && required == TRUE)
     {
@@ -544,7 +544,7 @@ static int GetDST(BOOL update)
         else
           result = 1;
 
-        D(DBF_STARTUP, "Found timezone.library with DST flag: %d", result);
+        D(DBF_STARTUP, "Found timezone.library with DST flag: %ld", result);
 
         ADSTdata.method = ADST_TZLIB;
       }
@@ -573,7 +573,7 @@ static int GetDST(BOOL update)
         result = 2; // if it is followed by a alphabetic sign we are in DST mode
     }
 
-    D(DBF_STARTUP, "Found '%s' (SetDST) with DST flag: %d", ADSTfile[ADST_SETDST], result);
+    D(DBF_STARTUP, "Found '%s' (SetDST) with DST flag: %ld", ADSTfile[ADST_SETDST], result);
 
     ADSTdata.method = ADST_SETDST;
   }
@@ -590,7 +590,7 @@ static int GetDST(BOOL update)
     else if(buffer[0] == 0x00)
       result = 1;
 
-    D(DBF_STARTUP, "Found '%s' (FACTS) with DST flag: %d", ADSTfile[ADST_FACTS], result);
+    D(DBF_STARTUP, "Found '%s' (FACTS) with DST flag: %ld", ADSTfile[ADST_FACTS], result);
   }
 
   // SummerTimeGuard sets the last string to "YES" if DST is actually active
@@ -604,7 +604,7 @@ static int GetDST(BOOL update)
     else if(tmp[1] == 'N')
       result = 1;
 
-    D(DBF_STARTUP, "Found '%s' (SGUARD) with DST flag: %d", ADSTfile[ADST_SGUARD], result);
+    D(DBF_STARTUP, "Found '%s' (SGUARD) with DST flag: %ld", ADSTfile[ADST_SGUARD], result);
   }
 
   // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
@@ -619,7 +619,7 @@ static int GetDST(BOOL update)
     else if(buffer[4] == 0x00)
       result = 1;
 
-    D(DBF_STARTUP, "Found '%s' (IXGMT) with DST flag: %d", ADSTfile[ADST_IXGMT], result);
+    D(DBF_STARTUP, "Found '%s' (IXGMT) with DST flag: %ld", ADSTfile[ADST_IXGMT], result);
   }
 
   if(update == FALSE && result == 0)

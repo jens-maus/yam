@@ -213,7 +213,7 @@ static void LoadImage(Object *obj, struct Data *data)
 
       #if defined(DEBUG)
       if(diskObject == NULL)
-        W(DBF_GUI, "wasn't able to retrieve diskObject via DEFICONS: %d", IoErr());
+        W(DBF_GUI, "wasn't able to retrieve diskObject via DEFICONS: %ld", IoErr());
       #endif
     }
 

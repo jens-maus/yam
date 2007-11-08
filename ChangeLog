@@ -23,6 +23,8 @@ $URL$
   * YAM_stringsizes.h: raised the line size for TCP transfers from 1001 to
     1024 which results in a slightly "nicer" display for the first bunch of
     transfered data of a mail.
+  * misc: replaced all occurences of %d in the debug macros by %ld to ensure
+    correct output of numbers on all systems.
 
 2007-11-07  Jens Langner <Jens.Langner@light-speed.de>
 

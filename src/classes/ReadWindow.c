@@ -179,7 +179,7 @@ OVERLOAD(OM_NEW)
     // our readWindow ID
     if(curNode->mln_Succ == NULL)
     {
-      D(DBF_GUI, "Free window number %d found.", i);
+      D(DBF_GUI, "Free window number %ld found.", i);
       data->windowNumber = i;
 
       break;
@@ -1168,7 +1168,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
   // after changing the folder we have to get the MailInfo (Position etc.)
   DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetPos, mail, &act);
 
-  D(DBF_GUI, "act: %d - direction: %d", act, direction);
+  D(DBF_GUI, "act: %ld - direction: %ld", act, direction);
 
   if(act != MUIV_NList_GetPos_End)
   {

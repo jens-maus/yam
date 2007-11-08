@@ -4504,7 +4504,7 @@ static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, i
 
       XpkFault(error, NULL, buf, sizeof(buf));
 
-      E(DBF_XPK, "XpkPackTags() returned an error %d: '%s'", error, buf);
+      E(DBF_XPK, "XpkPackTags() returned an error %ld: '%s'", error, buf);
     }
     #endif
   }
@@ -4537,7 +4537,7 @@ static BOOL UncompressMailFile(const char *src, const char *dst, const char *pas
 
       XpkFault(error, NULL, buf, sizeof(buf));
 
-      E(DBF_XPK, "XpkUnPackTags() returned an error %d: '%s'", error, buf);
+      E(DBF_XPK, "XpkUnPackTags() returned an error %ld: '%s'", error, buf);
     }
     #endif
   }
@@ -4564,7 +4564,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 
   ENTER();
 
-  D(DBF_UTIL, "TransferMailFile: %d->%d [%s]->[%s]", srcMode, dstMode, mail->MailFile, GetFolderDir(dstfolder));
+  D(DBF_UTIL, "TransferMailFile: %ld->%ld [%s]->[%s]", srcMode, dstMode, mail->MailFile, GetFolderDir(dstfolder));
 
   if(MA_GetIndex(srcfolder) && MA_GetIndex(dstfolder))
   {
@@ -6443,7 +6443,7 @@ static BOOL MatchExtension(const char *fileext, const char *extlist)
       if((e = strpbrk(s, " |;,")) == NULL)
         e = s+strlen(s);
 
-      D(DBF_MIME, "try matching file extension '%s' with '%s' %d", fileext, s, e-s);
+      D(DBF_MIME, "try matching file extension '%s' with '%s' %ld", fileext, s, e-s);
 
       // now check if the extension matches
       if((size_t)(e-s) == extlen &&

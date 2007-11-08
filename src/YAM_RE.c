@@ -850,7 +850,7 @@ static char *ExtractNextParam(char *s, char **name, char **value)
 
       *t = '\0'; // NUL termination
 
-      D(DBF_MAIL, "name='%s' %d", *name, nameLen);
+      D(DBF_MAIL, "name='%s' %ld", *name, nameLen);
 
       // now we go and extract the parameter value, actually
       // taking respect of quoted string and such
@@ -902,7 +902,7 @@ static char *ExtractNextParam(char *s, char **name, char **value)
               *t = '\0';
           }
 
-          D(DBF_MAIL, "value='%s' %d", *value, valueLen);
+          D(DBF_MAIL, "value='%s' %ld", *value, valueLen);
 
           RETURN(p);
           return p;
@@ -1245,7 +1245,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
         if(stricmp(rp->ContentType, "text/plain") == 0 ||
            rp->Parent->MainAltPart == NULL)
         {
-          D(DBF_MAIL, "setting new main alternative part in parent #%d [%lx] to #%d [%lx]", rp->Parent->Nr, rp->Parent, rp->Nr, rp);
+          D(DBF_MAIL, "setting new main alternative part in parent #%ld [%lx] to #%ld [%lx]", rp->Parent->Nr, rp->Parent, rp->Nr, rp);
 
           rp->Parent->MainAltPart = rp;
         }
@@ -1458,7 +1458,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
     // differs from the local one we are currently using
     if(stricmp(rp->CParCSet, strippedCharsetName(G->localCharset)) != 0)
     {
-      D(DBF_MAIL, "found Part #%d encoded in charset '%s' which is different than local one.", rp->Nr, rp->CParCSet);
+      D(DBF_MAIL, "found Part #%ld encoded in charset '%s' which is different than local one.", rp->Nr, rp->CParCSet);
 
       // try to obtain the source codeset from codesets.library
       // such that we can convert to our local charset accordingly.
@@ -1714,7 +1714,7 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
     snprintf(file, sizeof(file), "YAMr%08lx-p%d.txt", rmData->uniqueID, newPart->Nr);
     strmfp(newPart->Filename, C->TempDir, file);
 
-    D(DBF_MAIL, "New Part #%d [%lx]", newPart->Nr, newPart);
+    D(DBF_MAIL, "New Part #%ld [%lx]", newPart->Nr, newPart);
     D(DBF_MAIL, "  IsAltPart..: %ld",  newPart->isAltPart);
     D(DBF_MAIL, "  Filename...: [%s]", newPart->Filename);
     D(DBF_MAIL, "  Nextptr....: %lx",  newPart->Next);
@@ -1857,7 +1857,7 @@ static void RE_UndoPart(struct Part *rp)
   // relink the MainAltPart pointer as well
   if(rp->Parent && rp->Parent->MainAltPart == NULL)
   {
-    D(DBF_MAIL, "setting parent #%d [%lx] MainAltPart to %lx", rp->Parent->Nr, rp->Parent, rp->MainAltPart);
+    D(DBF_MAIL, "setting parent #%ld [%lx] MainAltPart to %lx", rp->Parent->Nr, rp->Parent, rp->MainAltPart);
 
     rp->Parent->MainAltPart = rp->MainAltPart;
   }
@@ -2709,7 +2709,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
   ENTER();
 
-  D(DBF_MAIL, "rmData: 0x%08lx, mode: %d", rmData, mode);
+  D(DBF_MAIL, "rmData: 0x%08lx, mode: %ld", rmData, mode);
 
   // save exit conditions
   if(rmData == NULL || (first = rmData->firstPart) == NULL)
@@ -2785,7 +2785,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
         if(C->DisplayAllAltPart == FALSE &&
            (part->isAltPart == TRUE && part->Parent != NULL && part->Parent->MainAltPart != part))
         {
-          D(DBF_MAIL, "flagging part #%d as hided.", part->Nr);
+          D(DBF_MAIL, "flagging part #%ld as hidden.", part->Nr);
 
           dodisp = FALSE;
         }
@@ -2825,7 +2825,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
         }
       }
 
-      D(DBF_MAIL, "Checking if part #%d [%ld] (%d) should be displayed", part->Nr, part->Size, dodisp);
+      D(DBF_MAIL, "Checking if part #%ld [%ld] (%ld) should be displayed", part->Nr, part->Size, dodisp);
 
       // only continue of this part should be displayed
       // and is greater than zero, or else we don`t have
@@ -3869,7 +3869,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
 
               cont = FALSE;
 
-              D(DBF_MAIL, "triggered MDN action %d due to missing address in To/Cc", action);
+              D(DBF_MAIL, "triggered MDN action %ld due to missing address in To/Cc", action);
             }
           }
 
@@ -3913,7 +3913,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
 
               cont = FALSE;
 
-              D(DBF_MAIL, "triggered MDN action %d due to outsideDomain", action);
+              D(DBF_MAIL, "triggered MDN action %ld due to outsideDomain", action);
             }
           }
 
@@ -3925,7 +3925,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
 
             cont = FALSE;
 
-            D(DBF_MAIL, "triggered MDN action %d for MODE_DELETE", action);
+            D(DBF_MAIL, "triggered MDN action %ld for MODE_DELETE", action);
           }
 
           // if this no action was found we use the one the user
@@ -3934,7 +3934,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
           {
             action = C->MDN_Other;
 
-            D(DBF_MAIL, "no other MDN action fired, firing default: %d", action);
+            D(DBF_MAIL, "no other MDN action fired, firing default: %ld", action);
           }
 
           // now we check if the Return-Path matches the Disposition-Notification-To

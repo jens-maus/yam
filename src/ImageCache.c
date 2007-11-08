@@ -153,7 +153,7 @@ static BOOL LoadImage(struct ImageCacheNode *node)
       }
     }
     else
-      E(DBF_IMAGE, "wasn't able to load specified image '%s'. error: %d", node->filename, IoErr());
+      E(DBF_IMAGE, "wasn't able to load specified image '%s'. error: %ld", node->filename, IoErr());
   }
   else
     W(DBF_IMAGE, "specified image '%s' doesn't exist.", node->filename);
@@ -269,7 +269,7 @@ static enum HashTableOperator DeleteImageCacheNode(UNUSED struct HashTable *tabl
 
   #if defined(DEBUG)
   if(node->openCount > 0)
-    W(DBF_STARTUP, "  openCount of image cache node still %d!!!", node->openCount);
+    W(DBF_STARTUP, "  openCount of image cache node still %ld!!!", node->openCount);
   #endif
 
   if(node->dt_obj != NULL)
@@ -518,7 +518,7 @@ void ReleaseImage(const char *id, BOOL dispose)
     if(node->openCount > 0)
     {
       node->openCount--;
-      D(DBF_IMAGE, "reduced open count of image '%s' to %d", id, node->openCount);
+      D(DBF_IMAGE, "reduced open count of image '%s' to %ld", id, node->openCount);
 
       if(node->openCount == 0)
       {
@@ -553,7 +553,7 @@ void ReleaseImage(const char *id, BOOL dispose)
       }
     }
     else
-      E(DBF_IMAGE, "couldn't reduce open count (%d) of 0x%08lx (%s)", node->openCount, node, id);
+      E(DBF_IMAGE, "couldn't reduce open count (%ld) of 0x%08lx (%s)", node->openCount, node, id);
   }
   else
     E(DBF_IMAGE, "image '%s' not found in cache", id);

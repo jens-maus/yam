@@ -108,7 +108,7 @@ void InitUpdateCheck(BOOL initial)
     {
       // we now (re)issue the next update check with the same update
       // interval as our previous one.
-      D(DBF_UPDATE, "update-check is due to be processed in %d seconds.", nextCheck.Seconds - now.Seconds);
+      D(DBF_UPDATE, "update-check is due to be processed in %ld seconds.", nextCheck.Seconds - now.Seconds);
       TC_Restart(TIO_UPDATECHECK, nextCheck.Seconds - now.Seconds, 0);
     }
   }

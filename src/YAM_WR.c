@@ -392,7 +392,7 @@ struct WritePart *NewPart(int winnum)
     p->Filename = G->WR_Filename[winnum];
   }
   else
-    E(DBF_MAIL, "couldn't create new MIME part for window %d", winnum);
+    E(DBF_MAIL, "couldn't create new MIME part for window %ld", winnum);
 
   RETURN(p);
   return p;
@@ -3046,7 +3046,7 @@ int WR_Open(int winnum, BOOL bounce)
       }
     }
     else
-      E(DBF_MAIL, "new write window generated in slot %d, but old one still allocated?", winnum);
+      E(DBF_MAIL, "new write window generated in slot %ld, but old one still allocated?", winnum);
   }
 
   if(result == -1)

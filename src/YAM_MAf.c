@@ -345,7 +345,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
   // to the user
   if(error == TRUE)
   {
-    E(DBF_FOLDER, "error %d occurred while trying to load the index file '%s'", errno, MA_IndexFileName(folder));
+    E(DBF_FOLDER, "error %ld occurred while trying to load the index file '%s'", errno, MA_IndexFileName(folder));
     ClearMailList(folder, TRUE);
     indexloaded = LM_UNLOAD;
 
@@ -1791,7 +1791,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
               SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
           }
 
-          D(DBF_MIME, "'From' senders: %d", email->NoSFrom+1);
+          D(DBF_MIME, "'From' senders: %ld", email->NoSFrom+1);
         }
         else if(stricmp(field, "reply-to") == 0)
         {
@@ -1820,7 +1820,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
               SET_FLAG(mail->mflags, MFLAG_MULTIREPLYTO);
           }
 
-          D(DBF_MIME, "'ReplyTo' recipients: %d", email->NoSReplyTo+1);
+          D(DBF_MIME, "'ReplyTo' recipients: %ld", email->NoSReplyTo+1);
         }
         else if(stricmp(field, "original-recipient") == 0)
         {
@@ -1862,7 +1862,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
                 SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
             }
 
-            D(DBF_MIME, "'To:' recipients: %d", email->NoSTo+1);
+            D(DBF_MIME, "'To:' recipients: %ld", email->NoSTo+1);
           }
         }
         else if(stricmp(field, "cc") == 0)
@@ -1872,7 +1872,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
             if(email->NoCC == 0)
               email->NoCC = MA_GetRecipients(value, &(email->CC));
 
-            D(DBF_MIME, "'Cc:' recipients: %d", email->NoCC);
+            D(DBF_MIME, "'Cc:' recipients: %ld", email->NoCC);
 
             if(email->NoCC > 0)
               SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
@@ -1887,7 +1887,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
             if(email->NoBCC == 0)
               email->NoBCC = MA_GetRecipients(value, &(email->BCC));
 
-            D(DBF_MIME, "'BCC:' recipients: %d", email->NoBCC);
+            D(DBF_MIME, "'BCC:' recipients: %ld", email->NoBCC);
 
             if(email->NoBCC > 0)
               SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);

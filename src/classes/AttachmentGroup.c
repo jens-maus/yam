@@ -976,7 +976,7 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
     char *fileName;
     char filePathBuf[SIZE_PATHFILE];
 
-    D(DBF_GUI, "Image of Part %d was dropped at [%s]", mailPart->Nr, msg->dropPath);
+    D(DBF_GUI, "Image of Part %ld was dropped at [%s]", mailPart->Nr, msg->dropPath);
 
     BusyText(tr(MSG_BusyDecSaving), "");
 
