@@ -44,7 +44,7 @@
 #define SIZE_SMALL      16
 #define SIZE_DEFAULT    80
 #define SIZE_LARGE     512
-#define SIZE_LINE     1024
+#define SIZE_LINE     1001 // RFC 2821 says 1000 maximum + 1 NUL char
 #define SIZE_RCPTS    4096
 #define SIZE_INTRO     200
 #define SIZE_PATTERN   160

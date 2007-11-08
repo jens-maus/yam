@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-08  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_stringsizes.h: reverted the line size change back to 1001 as 1000 is
+    the maximum limit according to RFC2821.
+
 2007-11-08  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c, ReadMailGroup.c: applied some cosmetical changes to adapt the
