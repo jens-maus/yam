@@ -14,6 +14,9 @@ $URL$
     the log() function to return -inf for very small value even if these
     values would still have resulted in a valid log calculation. This very
     often made the spam recognition fail with OS3.
+  * YAM_stringsizes.h: raised the line size for TCP transfers from 1001 to
+    1024 which results in a slightly "nicer" display for the first bunch of
+    transfered data of a mail.
 
 2007-11-07  Jens Langner <Jens.Langner@light-speed.de>
 
