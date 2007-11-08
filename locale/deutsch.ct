@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (28.09.2007)
+## version $VER: YAM.catalog 6.0 (08.11.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -2078,7 +2078,7 @@ Auf vorherigen Stand
 ; Restore
 ;
 MSG_CO_ImportMIME
-MIME Einstellungen importieren...
+MIME-Einstellungen importieren...
 ; Import MIME viewers & types...
 ;
 ;
@@ -5944,7 +5944,7 @@ Sende SMTP-AUTH Anfrage...
 ; Sending SMTP AUTH request...
 ;
 MSG_CO_IMPORTMIMETITLE
-Import MIME Anzeiger & Typen
+Import MIME-Anzeiger & Typen
 ; Import MIME viewers & types
 ;
 MSG_ER_TRANSFERMAIL
@@ -6606,8 +6606,8 @@ momentanen Status von YAM an.\n\
 (nur auf AmigaOS4 systemen verfügbar)
 ;
 MSG_ER_B64DECTRUNC
-Ein Fehler trat während des Versuches auf den MIME \
-Teil %ld der Nachricht '%s' mittels base64 zu dekodieren. \
+Ein Fehler trat während des Versuches auf den MIME-Teil %ld \
+der Nachricht '%s' mittels base64 zu dekodieren. \
 Der Vorgang wurde daraufhin abgebrochen.\n\
 \n\
 Dies kann durch eine falsche Kodierung der Nachricht \
@@ -6779,7 +6779,7 @@ MSG_CO_MIME_TITLE
 MIME-Datentyp Einstellungen
 ;
 MSG_CO_MIME_SUMMARY
-Konfigurieren Sie Ihre eigenen MIME Typen...
+Konfigurieren Sie Ihre eigenen MIME-Typen...
 ;
 MSG_CO_ABOOK_TITLE
 Addressbuch Einstellungen
@@ -7804,7 +7804,7 @@ verschoben.
 ;
 MSG_ER_NO8BITMIME
 Während des Verbindungsversuches mit dem SMTP Server '%s' \
-zeigte sich, dass dieser keine 8bit-MIME Übertragungen \
+zeigte sich, dass dieser keine 8bit MIME-Übertragungen \
 unterstützt. Sie haben jedoch in Ihrer Konfiguration diese \
 Option eingeschaltet.\n\
 \n\
@@ -7984,7 +7984,7 @@ MSG_ABOOK_MODIFIED_GAD
 ;
 MSG_HELP_CO_BT_MIMEIMPORT
 Erlaubt MIME-Einstellungen von anderen\n\
-MIME Dateien wie 'MIME.prefs', 'mailcap'\n\
+MIME-Dateien wie 'MIME.prefs', 'mailcap'\n\
 oder 'mime.types' zu importieren.
 ;
 MSG_AB_INVALIDSECURITY_TITLE

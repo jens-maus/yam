@@ -7,6 +7,7 @@ $URL$
 
 2007-11-08  Jens Langner <Jens.Langner@light-speed.de>
 
+  * locale/deutsch.ct: minor typo/phrasing fixes.
   * YAM_stringsizes.h: reverted the line size change back to 1001 as 1000 is
     the maximum limit according to RFC2821.
 
