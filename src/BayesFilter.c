@@ -1334,11 +1334,11 @@ static BOOL tokenAnalyzerClassifyMessage(struct Tokenizer *t,
             else
             {
               // ignore this clue
-              token->distance = -1;
+              token->distance = -1.0;
             }
           }
 
-          D(DBF_SPAM, "found %d good clues in the first scan", goodClues);
+          D(DBF_SPAM, "found %ld good clues in the first scan", goodClues);
 
           // sort array of token distances
           qsort(tokens, count, sizeof(*tokens), compareTokens);
@@ -1355,7 +1355,7 @@ static BOOL tokenAnalyzerClassifyMessage(struct Tokenizer *t,
 
           for(i = first; i < last; i++)
           {
-            if(tokens[i].distance != -1)
+            if(tokens[i].distance != -1.0)
             {
               double value;
               int e;
@@ -1365,12 +1365,12 @@ static BOOL tokenAnalyzerClassifyMessage(struct Tokenizer *t,
               S *= (1.0 - value);
               H *= value;
 
+              // if the probability values become too small we rescale them
               if(S < 1e-200)
               {
                 S = frexp(S, &e);
                 Sexp += e;
               }
-
               if(H < 1e-200)
               {
                 H = frexp(H, &e);
@@ -1382,7 +1382,7 @@ static BOOL tokenAnalyzerClassifyMessage(struct Tokenizer *t,
           S = log(S) + Sexp * M_LN2;
           H = log(H) + Hexp * M_LN2;
 
-          D(DBF_SPAM, "found %d good clues in the second scan", goodClues);
+          D(DBF_SPAM, "found %ld good clues in the second scan", goodClues);
 
           if(goodClues > 0)
           {
@@ -1396,7 +1396,7 @@ static BOOL tokenAnalyzerClassifyMessage(struct Tokenizer *t,
             // if any error, then toss the complete calculation
             if(chiError != 0)
             {
-              E(DBF_SPAM, "chi2P error, H=%.2f, S=%.2f, good clues=%d", H, S, goodClues);
+              E(DBF_SPAM, "chi2P error, H=%.8f, S=%.8f, good clues=%ld", H, S, goodClues);
               prob = 0.5;
             }
             else

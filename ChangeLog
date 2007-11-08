@@ -9,6 +9,11 @@ $URL$
 
   * YAM_RE.c, ReadMailGroup.c: applied some cosmetical changes to adapt the
     source to the STYLEGUIDE.
+  * BayesFilter.c: replaced some %d by %ld to ensure correct debug output.
+    Additionally a bug in the OS3 clib2 build has been fixed which caused
+    the log() function to return -inf for very small value even if these
+    values would still have resulted in a valid log calculation. This very
+    often made the spam recognition fail with OS3.
 
 2007-11-07  Jens Langner <Jens.Langner@light-speed.de>
 
