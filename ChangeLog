@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-08  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c, ReadMailGroup.c: applied some cosmetical changes to adapt the
+    source to the STYLEGUIDE.
+
 2007-11-07  Jens Langner <Jens.Langner@light-speed.de>
 
   * STYLEGUIDE: added a section that should renders the use of GetAttr()

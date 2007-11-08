@@ -1180,7 +1180,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
   ENTER();
 
   // check if we already have a headerList and if so we clean it first
-  if(rp->headerList)
+  if(rp->headerList != NULL)
     FreeHeaderList(rp->headerList);
   else
   {
@@ -2608,7 +2608,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
   {
     char tmpFile[SIZE_PATHFILE];
 
-    if(!StartUnpack(rmData->readFile, tmpFile, folder))
+    if(StartUnpack(rmData->readFile, tmpFile, folder) == FALSE)
     {
       if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
         BusyEnd();
@@ -2620,7 +2620,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
     strlcpy(rmData->readFile, tmpFile, sizeof(rmData->readFile));
   }
 
-  if((part = rmData->firstPart = RE_ParseMessage(rmData, NULL, rmData->readFile, NULL)))
+  if((part = rmData->firstPart = RE_ParseMessage(rmData, NULL, rmData->readFile, NULL)) != NULL)
   {
     int i;
 
@@ -2712,7 +2712,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
   D(DBF_MAIL, "rmData: 0x%08lx, mode: %d", rmData, mode);
 
   // save exit conditions
-  if(!rmData || !(first = rmData->firstPart))
+  if(rmData == NULL || (first = rmData->firstPart) == NULL)
   {
     RETURN(NULL);
     return NULL;
@@ -2735,7 +2735,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
   }
 
   // then we generate our final buffer for the message
-  if((cmsg = calloc(len=(totsize*3)/2, sizeof(char))))
+  if((cmsg = calloc(len=(totsize*3)/2, sizeof(char))) != NULL)
   {
     int wptr=0, prewptr;
 
@@ -2751,7 +2751,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
     {
       FILE *fh;
 
-      if((fh = fopen(first->Filename, "r")))
+      if((fh = fopen(first->Filename, "r")) != NULL)
       {
         int buflen = first->MaxHeaderLen+4;
         char *linebuf;
@@ -2780,7 +2780,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
       // before we go on we check whether this is an alternative multipart
       // and if so we check that we only display the plain text one
-      if(dodisp)
+      if(dodisp == TRUE)
       {
         if(C->DisplayAllAltPart == FALSE &&
            (part->isAltPart == TRUE && part->Parent != NULL && part->Parent->MainAltPart != part))
@@ -2801,7 +2801,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
       {
         if(mode != RIM_READ)
           continue;
-        else if(dodisp)
+        else if(dodisp == TRUE)
         {
           char buffer[SIZE_LARGE];
 
@@ -2817,7 +2817,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
           cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
 
           *buffer = 0;
-          if(*part->Description)
+          if(*part->Description != '\0')
             snprintf(buffer, sizeof(buffer), "\033b%s:\033n %s\n", tr(MSG_RE_Description), part->Description);
 
           strlcat(buffer, "\033[s:2]\n", sizeof(buffer));
@@ -2830,19 +2830,19 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
       // only continue of this part should be displayed
       // and is greater than zero, or else we don`t have
       // to parse anything at all.
-      if(dodisp && part->Size > 0)
+      if(dodisp == TRUE && part->Size > 0)
       {
         FILE *fh;
 
         D(DBF_MAIL, "  adding text of [%s] to display", part->Filename);
 
-        if((fh = fopen(part->Filename, "r")))
+        if((fh = fopen(part->Filename, "r")) != NULL)
         {
           char *msg;
 
           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-          if((msg = calloc((size_t)(part->Size+3), sizeof(char))))
+          if((msg = calloc((size_t)(part->Size+3), sizeof(char))) != NULL)
           {
             char *ptr;
             char *rptr;
@@ -2906,7 +2906,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               rptr = msg+1; // nothing serious happened so lets continue...
 
             // parse the message string
-            while(*rptr)
+            while(*rptr != '\0')
             {
               BOOL newlineAtEnd;
 
@@ -2952,7 +2952,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
                 // then create the new part to which we will put our uudecoded
                 // data
-                if((outfh = RE_OpenNewPart(rmData, &uup, last, first)))
+                if((outfh = RE_OpenNewPart(rmData, &uup, last, first)) != NULL)
                 {
                   char *endptr = rptr+strlen(rptr)+1;
                   long old_pos;
@@ -3055,12 +3055,12 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   RE_SetPartInfo(uup);
 
                   // if everything was fine we try to find the end marker
-                  if(uup->Decoded)
+                  if(uup->Decoded == TRUE)
                   {
                     // unfortunatly we have to find our ending "end" line now
                     // with an expensive string function. But this shouldn't be
                     // a problem as inline uuencoded parts are very rare today.
-                    while((endptr = strstr(endptr, "\nend")))
+                    while((endptr = strstr(endptr, "\nend")) != '\0')
                     {
                       endptr += 4; // point to the char after end
 
@@ -3074,10 +3074,10 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                     }
 
                     // check if we found the terminating "end" line or not
-                    if(endptr)
+                    if(endptr != NULL)
                     {
                       // then starting from the next line there should be the "size" line
-                      if(*(++endptr) && strncmp(endptr, "size ", 5) == 0)
+                      if(*(++endptr) != '\0' && strncmp(endptr, "size ", 5) == 0)
                       {
                         int expsize = atoi(&endptr[5]);
 
@@ -3096,7 +3096,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                       endptr = rptr;
                     }
                   }
-                  else endptr = rptr;
+                  else
+                    endptr = rptr;
 
                   // find the end of the line
                   for(eolptr = endptr; *eolptr && *eolptr != '\n'; eolptr++);
@@ -3107,22 +3108,22 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 else
                   ER_NewError(tr(MSG_ER_CantCreateTempfile));
               }
-/* PGP msg */ else if(!strncmp(rptr, "-----BEGIN PGP MESSAGE", 21))
+/* PGP msg */ else if(strncmp(rptr, "-----BEGIN PGP MESSAGE", 21) == 0)
               {
                 struct TempFile *tf;
                 D(DBF_MAIL, "inline PGP encrypted message found");
 
-                if((tf = OpenTempFile("w")))
+                if((tf = OpenTempFile("w")) != NULL)
                 {
                   *eolptr = '\n';
                   for(ptr=eolptr+1; *ptr; ptr++)
                   {
                     if(!strncmp(ptr, "-----END PGP MESSAGE", 19)) break;
 
-                    while (*ptr && *ptr != '\n') ptr++;
+                    while(*ptr && *ptr != '\n') ptr++;
                   }
 
-                  while (*ptr && *ptr != '\n') ptr++;
+                  while(*ptr && *ptr != '\n') ptr++;
 
                   eolptr = ptr++;
                   fwrite(rptr, 1, (size_t)(ptr-rptr), tf->FP);
@@ -3231,7 +3232,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
                 signatureFound = TRUE;
               }
-/* PGP sig */ else if (!strncmp(rptr, "-----BEGIN PGP PUBLIC KEY BLOCK", 31))
+/* PGP sig */ else if(strncmp(rptr, "-----BEGIN PGP PUBLIC KEY BLOCK", 31) == 0)
               {
                 rmData->hasPGPKey = TRUE;
 
@@ -3240,7 +3241,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 if(newlineAtEnd)
                   cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
               }
-              else if (!strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29))
+              else if(strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29) == 0)
               {
                 // flag the mail as having a inline PGP signature
                 SET_FLAG(rmData->signedFlags, PGPS_OLD);

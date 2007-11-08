@@ -456,7 +456,7 @@ OVERLOAD(OM_DISPOSE)
   FreeHeaderList(&data->senderInfoHeaders);
 
   // free the readMailData pointer
-  if(data->readMailData)
+  if(data->readMailData != NULL)
   {
     // Remove our readWindowNode and free it afterwards
     Remove((struct Node *)data->readMailData);
@@ -553,7 +553,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
   ENTER();
 
   // dispose the old contextMenu if it still exists
-  if(data->contextMenu)
+  if(data->contextMenu != NULL)
   {
     MUI_DisposeObject(data->contextMenu);
     data->contextMenu = NULL;
@@ -578,7 +578,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
       End,
     End;
   }
-  else if(rmData->mail)
+  else if(rmData->mail != NULL)
   {
     struct Mail *mail = rmData->mail;
     BOOL isRealMail = !isVirtualMail(mail);
@@ -588,7 +588,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
     BOOL hasPGPSig = (hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData));
     BOOL isPGPEnc = isRealMail && (hasPGPEMimeFlag(rmData) || hasPGPEOldFlag(rmData));
 
-    if(hasContent)
+    if(hasContent == TRUE)
     {
       snprintf(data->menuTitle, sizeof(data->menuTitle), "%s: ", tr(MSG_Subject));
       strlcat(data->menuTitle, rmData->mail->Subject, 30-strlen(data->menuTitle) > 0 ? 30-strlen(data->menuTitle) : 0);
@@ -682,12 +682,12 @@ OVERLOAD(MUIM_ContextMenuChoice)
       result = DoSuperMethodA(cl, obj, msg);
   }
 
-  if(updateText)
+  if(updateText == TRUE)
   {
     DoMethod(obj, MUIM_ReadMailGroup_ReadMail, rmData->mail, (MUIF_ReadMailGroup_ReadMail_UpdateOnly |
                                                               MUIF_ReadMailGroup_ReadMail_UpdateTextOnly));
   }
-  else if(updateHeader)
+  else if(updateHeader == TRUE)
     DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
 
   RETURN(result);
@@ -703,7 +703,7 @@ DECLARE(Clear) // ULONG flags
 
   ENTER();
 
-  if(data->hasContent)
+  if(data->hasContent == TRUE)
   {
     // clear all relevant GUI elements
     DoMethod(data->headerList, MUIM_NList_Clear);
@@ -769,14 +769,14 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
   rmData->parseFlags = PM_ALL;
 
   // load the message now
-  if(RE_LoadMessage(rmData))
+  if(RE_LoadMessage(rmData) == TRUE)
   {
     char *cmsg;
 
     BusyText(tr(MSG_BusyDisplaying), "");
 
     // now read in the Mail in a temporary buffer
-    if((cmsg = RE_ReadInMessage(rmData, RIM_READ)))
+    if((cmsg = RE_ReadInMessage(rmData, RIM_READ)) != NULL)
     {
       char *body;
 
@@ -804,7 +804,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
             CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
 
             // update the status bar of an eventually existing read window.
-            if(rmData->readWindow)
+            if(rmData->readWindow != NULL)
               DoMethod(rmData->readWindow, MUIM_ReadWindow_UpdateStatusBar);
 
             // if the mail is no virtual mail we can also
@@ -827,7 +827,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
       // before we can put the message body into the TextEditor, we have to preparse the text and
       // try to set some styles, as we don`t use the buggy ImportHooks of TextEditor anymore and are anyway
       // more powerful this way.
-      if(rmData->useTextstyles)
+      if(rmData->useTextstyles == TRUE)
         body = ParseEmailText(cmsg, TRUE);
       else
         body = cmsg;
@@ -836,13 +836,13 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
                                  MUIA_TextEditor_Contents,  body);
 
       // free the parsed text afterwards as the texteditor has copied it anyway.
-      if(rmData->useTextstyles)
+      if(rmData->useTextstyles == TRUE)
         free(body);
 
       free(cmsg);
 
       // start the macro
-      if(rmData->readWindow)
+      if(rmData->readWindow != NULL)
         MA_StartMacro(MACRO_READ, itoa(xget(rmData->readWindow, MUIA_ReadWindow_Num)));
       else
         MA_StartMacro(MACRO_READ, itoa(-1));
@@ -868,7 +868,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
         // start the timer that will change the mail status to read after a
         // specified time has passed or we change it immediatley here
         if(hasStatusChangeDelayFlag(msg->flags) &&
-           C->StatusChangeDelayOn && C->StatusChangeDelay > 0)
+           C->StatusChangeDelayOn == TRUE && C->StatusChangeDelay > 0)
         {
           // start the timer event. Please note that the timer event might be
           // canceled by the MA_ChangeSelected() function when the next mail
@@ -897,7 +897,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
   else
   {
     // check first if the mail file exists and if not we have to exit with an error
-    if(!FileExists(mail->MailFile))
+    if(FileExists(mail->MailFile) == FALSE)
     {
       ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
     }
@@ -925,7 +925,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   ENTER();
 
   // make sure the headerList is cleared if necessary
-  if(data->hasContent)
+  if(data->hasContent == TRUE)
     DoMethod(data->headerList, MUIM_NList_Clear);
 
   // then we check whether we should disable the headerList display
@@ -938,7 +938,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
 
   // we first go through the headerList of our first Part, which should in fact
   // be the headerPart
-  if(dispheader && rmData->firstPart && rmData->firstPart->headerList)
+  if(dispheader == TRUE && rmData->firstPart != NULL && rmData->firstPart->headerList != NULL)
   {
     struct MinNode *curNode;
 
@@ -954,7 +954,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
       else
         dispheader = (rmData->headerMode == HM_FULLHEADER);
 
-      if(dispheader)
+      if(dispheader == TRUE)
       {
         // we simply insert the whole headerNode and split the display later in our HeaderDisplayHook
         DoMethod(data->headerList, MUIM_NList_InsertSingleWrap, hdrNode,
@@ -965,16 +965,16 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   }
 
   if((hits = AB_SearchEntry(from->Address, ASM_ADDRESS|ASM_USER, &ab)) == 0 &&
-     *from->RealName)
+     *from->RealName != '\0')
   {
     hits = AB_SearchEntry(from->RealName, ASM_REALNAME|ASM_USER, &ab);
   }
 
   RE_GetSenderInfo(rmData->mail, &abtmpl);
 
-  if(!stricmp(from->Address, C->EmailAddress) || !stricmp(from->RealName, C->RealName))
+  if(stricmp(from->Address, C->EmailAddress) == 0 || stricmp(from->RealName, C->RealName) == 0)
   {
-    if(!ab)
+    if(ab == NULL)
     {
       ab = &abtmpl;
       *ab->Photo = '\0';
@@ -982,7 +982,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   }
   else
   {
-    if(ab)
+    if(ab != NULL)
       RE_UpdateSenderInfo(ab, &abtmpl);
     else
     {
@@ -1014,7 +1014,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
         // make sure we cleaned up the senderInfoHeader List beforehand
         FreeHeaderList(&data->senderInfoHeaders);
 
-        if(*ab->RealName && (newNode = malloc(sizeof(struct HeaderNode))))
+        if(*ab->RealName != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_RealName)));
@@ -1023,7 +1023,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Street && (newNode = malloc(sizeof(struct HeaderNode))))
+        if(*ab->Street != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Street)));
@@ -1032,7 +1032,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->City && (newNode = malloc(sizeof(struct HeaderNode))))
+        if(*ab->City != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_City)));
@@ -1041,7 +1041,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Country && (newNode = malloc(sizeof(struct HeaderNode))))
+        if(*ab->Country != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Country)));
@@ -1050,7 +1050,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Phone && (newNode = malloc(sizeof(struct HeaderNode))))
+        if(*ab->Phone != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Phone)));
@@ -1059,7 +1059,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*AB_ExpandBD(ab->BirthDay) && (newNode = malloc(sizeof(struct HeaderNode))))
+        if(*AB_ExpandBD(ab->BirthDay) && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_DOB)));
@@ -1068,7 +1068,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Comment && (newNode = malloc(sizeof(struct HeaderNode))))
+        if(*ab->Comment != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Description)));
@@ -1077,7 +1077,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Homepage && (newNode = malloc(sizeof(struct HeaderNode))))
+        if(*ab->Homepage != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Homepage)));
@@ -1093,7 +1093,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
     {
       char photopath[SIZE_PATHFILE];
 
-      if(data->senderImage)
+      if(data->senderImage != NULL)
       {
         DoMethod(data->senderImageGroup, OM_REMMEMBER, data->senderImage);
         MUI_DisposeObject(data->senderImage);
@@ -1101,7 +1101,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
 
       data->senderImage = NULL;
 
-      if(RE_FindPhotoOnDisk(ab, photopath) &&
+      if(RE_FindPhotoOnDisk(ab, photopath) == TRUE &&
          (data->senderImage = UserImageObject,
                                 MUIA_Weight,                100,
                                 MUIA_UserImage_Address,     from->Address,
@@ -1152,7 +1152,7 @@ DECLARE(CheckPGPSignature) // BOOL forceRequester
     {
       char fullfile[SIZE_PATHFILE];
 
-      if(StartUnpack(GetMailFile(NULL, NULL, rmData->mail), fullfile, rmData->mail->Folder))
+      if(StartUnpack(GetMailFile(NULL, NULL, rmData->mail), fullfile, rmData->mail->Folder) != NULL)
       {
         char options[SIZE_LARGE];
         int error;
@@ -1172,7 +1172,7 @@ DECLARE(CheckPGPSignature) // BOOL forceRequester
         }
       }
 
-      if(result == TRUE && (hasPGPSBadSigFlag(rmData) || msg->forceRequester))
+      if(result == TRUE && (hasPGPSBadSigFlag(rmData) || msg->forceRequester == TRUE))
       {
         char buffer[SIZE_LARGE];
 
@@ -1203,7 +1203,7 @@ DECLARE(ExtractPGPKey)
   char fullfile[SIZE_PATHFILE];
   char options[SIZE_PATHFILE];
 
-  if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder))
+  if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder) != NULL)
   {
     snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-a %s +batchmode=1 +force" : "-ka %s +bat +f", fullfile);
     PGPCommand((G->PGPVersion == 5) ? "pgpk" : "pgp", options, 0);
@@ -1237,7 +1237,7 @@ DECLARE(SaveDisplay) // FILE *fileHandle
 
       DoMethod(data->headerList, MUIM_NList_GetEntryInfo, &res);
 
-      if((curNode = (struct HeaderNode *)res.entry))
+      if((curNode = (struct HeaderNode *)res.entry) != NULL)
       {
         char *name = curNode->name;
         char *content = curNode->content;
@@ -1326,12 +1326,12 @@ DECLARE(SaveDecryptedMail)
 
   if((choice = MUI_Request(G->App, rmData->readWindow, 0, tr(MSG_RE_SaveDecrypted),
                                                           tr(MSG_RE_SaveDecGads),
-                                                          tr(MSG_RE_SaveDecReq))))
+                                                          tr(MSG_RE_SaveDecReq))) != 0)
   {
     struct Compose comp;
     memset(&comp, 0, sizeof(struct Compose));
 
-    if((comp.FH = fopen(MA_NewMailFile(folder, mfile), "w")))
+    if((comp.FH = fopen(MA_NewMailFile(folder, mfile), "w")) != NULL)
     {
       struct ExtendedMail *email;
 
@@ -1348,7 +1348,7 @@ DECLARE(SaveDecryptedMail)
       }
       fclose(comp.FH);
 
-      if((email = MA_ExamineMail(folder, mfile, TRUE)))
+      if((email = MA_ExamineMail(folder, mfile, TRUE)) != NULL)
       {
         struct Mail *newmail;
 
@@ -1403,7 +1403,7 @@ DECLARE(ActivateMailText)
   GETDATA;
   struct ReadMailData *rmData = data->readMailData;
 
-  if(rmData->readWindow)
+  if(rmData->readWindow != NULL)
     set(rmData->readWindow, MUIA_Window_DefaultObject, data->mailTextObject);
 
   return 0;
@@ -1424,7 +1424,7 @@ DECLARE(SaveMailRequest)
   if((part = AttachRequest(tr(MSG_RE_SaveMessage),
                            tr(MSG_RE_SelectSavePart),
                            tr(MSG_RE_SaveGad),
-                           tr(MSG_Cancel), ATTREQ_SAVE|ATTREQ_MULTI, rmData)))
+                           tr(MSG_Cancel), ATTREQ_SAVE|ATTREQ_MULTI, rmData)) != NULL)
   {
     BusyText(tr(MSG_BusyDecSaving), "");
 
@@ -1440,7 +1440,7 @@ DECLARE(SaveMailRequest)
 
         case PART_ALLTEXT:
         {
-          if((tf = OpenTempFile("w")))
+          if((tf = OpenTempFile("w")) != NULL)
           {
             DoMethod(obj, MUIM_ReadMailGroup_SaveDisplay, tf->FP);
             fclose(tf->FP);
@@ -1484,7 +1484,7 @@ DECLARE(PrintMailRequest)
   if((part = AttachRequest(tr(MSG_RE_PrintMsg),
                            tr(MSG_RE_SelectPrintPart),
                            tr(MSG_RE_PrintGad),
-                           tr(MSG_Cancel), ATTREQ_PRINT|ATTREQ_MULTI, rmData)))
+                           tr(MSG_Cancel), ATTREQ_PRINT|ATTREQ_MULTI, rmData)) != NULL)
   {
     BusyText(tr(MSG_BusyDecPrinting), "");
 
@@ -1498,7 +1498,7 @@ DECLARE(PrintMailRequest)
 
         case PART_ALLTEXT:
         {
-          if((prttmp = OpenTempFile("w")))
+          if((prttmp = OpenTempFile("w")) != NULL)
           {
             DoMethod(obj, MUIM_ReadMailGroup_SaveDisplay, prttmp->FP);
             fclose(prttmp->FP);
@@ -1535,7 +1535,7 @@ DECLARE(DisplayMailRequest)
   if((part = AttachRequest(tr(MSG_RE_DisplayMsg),
                            tr(MSG_RE_SelectDisplayPart),
                            tr(MSG_RE_DisplayGad),
-                           tr(MSG_Cancel), ATTREQ_DISP|ATTREQ_MULTI, rmData)))
+                           tr(MSG_Cancel), ATTREQ_DISP|ATTREQ_MULTI, rmData)) != NULL)
   {
     BusyText(tr(MSG_BusyDecDisplaying), "");
 
@@ -1574,7 +1574,7 @@ DECLARE(DeleteMail)
 
   ENTER();
 
-  if(MailExists(mail, folder))
+  if(MailExists(mail, folder) == TRUE)
  {
     struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
 
@@ -1647,7 +1647,7 @@ DECLARE(Search) // int flags
 
   if(data->searchWindow == NULL)
   {
-    if((data->searchWindow = SearchwindowObject, End))
+    if((data->searchWindow = SearchwindowObject, End) != NULL)
     {
       DoMethod(G->App, OM_ADDMEMBER, data->searchWindow);
 
