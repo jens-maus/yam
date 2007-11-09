@@ -6605,26 +6605,6 @@ innerhalb von AmiDock ein sog. DockyIcon über den\n\
 momentanen Status von YAM an.\n\
 (nur auf AmigaOS4 systemen verfügbar)
 ;
-MSG_ER_B64DECTRUNC
-Ein Fehler trat während des Versuches auf den MIME-Teil %ld \
-der Nachricht '%s' mittels base64 zu dekodieren. \
-Der Vorgang wurde daraufhin abgebrochen.\n\
-\n\
-Dies kann durch eine falsche Kodierung der Nachricht \
-durch den Sender hervorgerufen worden sein oder dadurch, dass der \
-base64 kodierte Teil der Nachricht während der Übertragung \
-verstümmelt wurde.
-; PARTNR, MSGFILE
-MSG_ER_B64DECTRUNCTXT
-Manch lesbarer Text des MIME-Teils %ld der Nachricht '%s' \
-konnte nicht base64 dekodiert werden und könnte inkorrekt \
-oder gar nicht dargestellt werden.\n\
-\n\
-Dies kann durch eine falsche Kodierung der Nachricht \
-durch den Sender hervorgerufen worden sein oder dadurch, dass der \
-base64 kodierte Teil der Nachricht während der Übertragung \
-verstümmelt wurde.
-; PARTNR, MSGFILE
 MSG_MA_MessageImport
 Nachrichtenimport von MBOX, DBX bzw.reinen Maildateien...
 ;
@@ -8099,6 +8079,9 @@ Auswahl aufheben
 MSG_WR_SELECTNONE
 Auswahl aufheben
 ;
+MSG_MA_INVALIDMFILE_TITLE
+Invalide Nachrichtendatei gefunden
+;
 MSG_MA_INVALIDMFILE
 Beim Analysieren der Datei '%s' des Ordners '%s' hat\n\
 YAM herausgefunden, dass die Datei in einem entweder\n\
@@ -8212,4 +8195,32 @@ Löschen
 ;
 MSG_WR_DELETE
 Löschen
+;
+MSG_ER_B64DEC_FILEIO
+Ein Dateizugriffsfehler trat während des Versuches auf den \
+MIME-Teil %ld der Nachricht '%s' mittels base64 zu \
+dekodieren. Der Vorgang wurde daraufhin abgebrochen.\n\
+\n\
+Dies kann durch unzureichend Speicherplatz oder aber \
+durch fehlende Zugriffsrechte auf die Datei erfolgt sein.
+;
+MSG_ER_B64DEC_WARN
+Es wurden einige nicht erlaubte Zeichen während des \
+Dekodierens des base64-kodierten MIME-Teiles %ld der \
+Nachricht '%s' gefunden. Die Ausgabe könnte daher \
+möglicherweise invalide Daten erhalten oder aber \
+beschädigt sein.\n\
+\n\
+Dies kann durch eine falsche Kodierung der Nachricht \
+durch den Sender hervorgerufen worden sein oder dadurch, dass der \
+base64-kodierte Teil der Nachricht während der Übertragung \
+verstümmelt wurde.
+;
+MSG_ER_B64DEC_UNEXP
+Es trat ein Fehler während des Dekodierens des base64-kodierten \
+MIME-Teiles %ld der Nachricht '%s' auf. Der Vorgang wurde \
+daraufhin abgebrochen.\n\
+\n\
+Es standen entweder keine Daten zum Dekodieren zur Verfügung \
+oder YAM war nicht in der Lage auf die Daten zuzugreifen.
 ;

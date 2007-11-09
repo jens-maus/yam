@@ -7,6 +7,7 @@ $URL$
 
 2007-11-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * locale/deutsch.ct: updated according to latest changes to YAM.cd
   * YAM_RE.c, YAM.cd: in case a problem occurred during the base64 decoding
     of attachments, YAM always discarded the output data in case it wasn't
     printable text. Now YAM should be a bit more precise on outputing the
