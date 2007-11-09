@@ -1479,33 +1479,37 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
     // process a base64 decoding.
     case ENC_B64:
     {
-      int decoded = base64decode_file(in, out, sourceCodeset, rp->Printable);
+      long decoded = base64decode_file(in, out, sourceCodeset, rp->Printable);
       D(DBF_MAIL, "base64 decoded %ld bytes of part %ld.", decoded, rp->Nr);
 
       if(decoded > 0)
         decodeResult = 1;
       else
       {
-        // now we check whether the part we decoded was
-        // a printable one, and if so we have to just throw a warning at
-        // the user abour the problem and still set the decodeResult to 1
-        if(rp->Printable)
+        switch(decoded)
         {
-          // as this is just a "warning" we can skip the error message
-          // in case we parse the message with q PM_QUIET flag
-          if(quietParsing == FALSE)
-            ER_NewError(tr(MSG_ER_B64DECTRUNCTXT), rp->Nr, rmData->readFile);
+          case -1:
+          {
+            if(quietParsing == FALSE)
+              ER_NewError(tr(MSG_ER_B64DEC_FILEIO), rp->Nr, rmData->readFile);
+          }
+          break;
 
-          decodeResult = 1;
-        }
-        else
-        {
-          // if that part was not a printable/viewable one we
-          // have to make sure decodeResult is set to 0 to signal
-          // the caller that it should not expect that the decoded part
-          // is valid
-          if(quietParsing == FALSE)
-            ER_NewError(tr(MSG_ER_B64DECTRUNC), rp->Nr, rmData->readFile);
+          case -2:
+          {
+            if(quietParsing == FALSE)
+              ER_NewError(tr(MSG_ER_B64DEC_WARN), rp->Nr, rmData->readFile);
+
+            decodeResult = 1;
+          }
+          break;
+
+          default:
+          {
+            if(quietParsing == FALSE)
+              ER_NewError(tr(MSG_ER_B64DEC_UNEXP), rp->Nr, rmData->readFile);
+          }
+          break;
         }
       }
     }
