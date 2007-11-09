@@ -6533,7 +6533,7 @@ accessible.
 MSG_ER_B64DEC_WARN (2029//)
 Some invalid characters were found during the process of \
 undecoding the base64 encoded MIME part %ld of mail '%s'. \
-The generated output may therefore contain invalid data
+The generated output may therefore contain invalid data \
 or may be corrupted.\n\
 \n\
 This can be caused du to an incorrect encoding done by \
