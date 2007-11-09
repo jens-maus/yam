@@ -6526,7 +6526,7 @@ decode MIME part %ld of mail '%s'. The decoding has been \
 aborted.\n\
 \n\
 This may be caused by unsufficient space on the volume the \
-was was being decoded or because the source file wasn't \
+file was being decoded or because the source file wasn't \
 accessible.
 ; PARTNR, MSGFILE
 ;
@@ -6546,6 +6546,6 @@ An error occurred while trying to base64 decode MIME \
 part %ld of mail '%s'. The decoding has been aborted.\n\
 \n\
 There was either no data to decode or YAM wasn't able \
-to acess the encoded data during the decoding phase.
+to access the encoded data during the decoding phase.
 ; PARTNR, MSGFILE
 ;
