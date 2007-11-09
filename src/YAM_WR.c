@@ -3732,522 +3732,530 @@ static void WR_SharedSetup(struct WR_ClassData *data, int winnum)
 //  Creates a write window
 static struct WR_ClassData *WR_New(int winnum)
 {
-   struct WR_ClassData *data = calloc(1, sizeof(struct WR_ClassData));
+  struct WR_ClassData *data;
 
-   if(data)
-   {
-      // write window menu enumeratioons
-      enum
-      {
-        WMEN_NEW=501,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,WMEN_INSALTQUOT,
-        WMEN_INSROT13,WMEN_EDIT,WMEN_CUT,WMEN_COPY,WMEN_PASTE,WMEN_DELETE,WMEN_SELECTALL,
-        WMEN_SELECTNONE,WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_SEARCH,WMEN_SEARCHAGAIN,
-        WMEN_DICT,WMEN_STYLE_BOLD,WMEN_STYLE_ITALIC,WMEN_STYLE_UNDERLINE,
-        WMEN_STYLE_COLORED,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
-        WMEN_AUTOSP,WMEN_AUTOWRAP,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
-        WMEN_DELSEND,WMEN_MDN,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
-        WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
-        WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5, WMEN_INSUUCODE,
-        WMEN_SENDNOW,WMEN_QUEUE,WMEN_HOLD,WMEN_CANCEL,WMEN_SWITCH1,WMEN_SWITCH2,WMEN_SWITCH3
-      };
+  ENTER();
 
-      static const char *rtitles[4] = { NULL, NULL, NULL, NULL };
-      static const char *encoding[3];
-      static const char *security[SEC_MAXDUMMY+1];
-      static const char *priority[4];
-      static const char *signat[5];
+  if((data = calloc(1, sizeof(struct WR_ClassData))) != NULL)
+  {
+    // write window menu enumeratioons
+    enum
+    {
+      WMEN_NEW=501,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,WMEN_INSALTQUOT,
+      WMEN_INSROT13,WMEN_EDIT,WMEN_CUT,WMEN_COPY,WMEN_PASTE,WMEN_DELETE,WMEN_SELECTALL,
+      WMEN_SELECTNONE,WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_SEARCH,WMEN_SEARCHAGAIN,
+      WMEN_DICT,WMEN_STYLE_BOLD,WMEN_STYLE_ITALIC,WMEN_STYLE_UNDERLINE,
+      WMEN_STYLE_COLORED,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
+      WMEN_AUTOSP,WMEN_AUTOWRAP,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
+      WMEN_DELSEND,WMEN_MDN,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
+      WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
+      WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5, WMEN_INSUUCODE,
+      WMEN_SENDNOW,WMEN_QUEUE,WMEN_HOLD,WMEN_CANCEL,WMEN_SWITCH1,WMEN_SWITCH2,WMEN_SWITCH3
+    };
 
-      static const char *const emoticons[4] =
-      {
-        ":-)", ":-|", ":-(", ";-)"
-      };
+    static const char *rtitles[4] = { NULL, NULL, NULL, NULL };
+    static const char *encoding[3];
+    static const char *security[SEC_MAXDUMMY+1];
+    static const char *priority[4];
+    static const char *signat[5];
 
-      Object *sec_menus[SEC_MAXDUMMY];
-      Object *strip;
-      Object *mi_autospell;
-      Object *mi_autowrap;
-      Object *mi_delsend;
-      Object *mi_mdn;
-      Object *mi_addinfo;
-      Object *slider = ScrollbarObject, End;
-      ULONG i;
+    static const char *const emoticons[4] =
+    {
+      ":-)", ":-|", ":-(", ";-)"
+    };
 
-      if(rtitles[0] == '\0')   // only initialize static data on first call
-      {
-         rtitles[0] = tr(MSG_Message);
-         rtitles[1] = tr(MSG_Attachments);
-         rtitles[2] = tr(MSG_Options);
-         rtitles[3] = NULL;
+    Object *sec_menus[SEC_MAXDUMMY];
+    Object *strip;
+    Object *mi_autospell;
+    Object *mi_autowrap;
+    Object *mi_delsend;
+    Object *mi_mdn;
+    Object *mi_addinfo;
+    Object *slider = ScrollbarObject, End;
+    ULONG i;
 
-         encoding[0] = "Base64/QP";
-         encoding[1] = "UUencode";
-         encoding[2] = NULL;
+    // initialize static data on first call only
+    if(rtitles[0] == '\0')   
+    {
+      rtitles[0] = tr(MSG_Message);
+      rtitles[1] = tr(MSG_Attachments);
+      rtitles[2] = tr(MSG_Options);
+      rtitles[3] = NULL;
 
-         security[SEC_NONE]    = tr(MSG_WR_SecNone);
-         security[SEC_SIGN]    = tr(MSG_WR_SecSign);
-         security[SEC_ENCRYPT] = tr(MSG_WR_SecEncrypt);
-         security[SEC_BOTH]    = tr(MSG_WR_SecBoth);
-         security[SEC_SENDANON]= tr(MSG_WR_SecAnon);
-         security[SEC_DEFAULTS]= tr(MSG_WR_SecDefaults);
-         security[SEC_MAXDUMMY]= NULL;
+      encoding[0] = "Base64/QP";
+      encoding[1] = "UUencode";
+      encoding[2] = NULL;
 
-         priority[0] = tr(MSG_WR_ImpHigh);
-         priority[1] = tr(MSG_WR_ImpNormal);
-         priority[2] = tr(MSG_WR_ImpLow);
-         priority[3] = NULL;
+      security[SEC_NONE]    = tr(MSG_WR_SecNone);
+      security[SEC_SIGN]    = tr(MSG_WR_SecSign);
+      security[SEC_ENCRYPT] = tr(MSG_WR_SecEncrypt);
+      security[SEC_BOTH]    = tr(MSG_WR_SecBoth);
+      security[SEC_SENDANON]= tr(MSG_WR_SecAnon);
+      security[SEC_DEFAULTS]= tr(MSG_WR_SecDefaults);
+      security[SEC_MAXDUMMY]= NULL;
 
-         signat[0] = tr(MSG_WR_NoSig);
-         signat[1] = tr(MSG_WR_DefSig);
-         signat[2] = tr(MSG_WR_AltSig1);
-         signat[3] = tr(MSG_WR_AltSig2);
-         signat[4] = NULL;
-      }
+      priority[0] = tr(MSG_WR_ImpHigh);
+      priority[1] = tr(MSG_WR_ImpNormal);
+      priority[2] = tr(MSG_WR_ImpLow);
+      priority[3] = NULL;
 
-      // set the winnum variable of the classdata
-      data->winnum = winnum;
+      signat[0] = tr(MSG_WR_NoSig);
+      signat[1] = tr(MSG_WR_DefSig);
+      signat[2] = tr(MSG_WR_AltSig1);
+      signat[3] = tr(MSG_WR_AltSig2);
+      signat[4] = NULL;
+    }
 
-      // setup the window Title
-      snprintf(data->WTitle, sizeof(data->WTitle), "[%d] %s: ", winnum+1, tr(MSG_WR_WriteWT));
+    // set the winnum variable of the classdata
+    data->winnum = winnum;
 
-      //
-      // now we define which window shortcuts are available and which ones
-      // are reserved by either the generated menuobject or by some shortcuts
-      // in the english YAM.cd catalog description (e.g. for buttons)
-      //
-      // The following shortcut list should help to identify the hard-coded
-      // shortcuts:
-      //
-      //  A   reserved for 'Select All' operation (WMEN_SELECTALL)
-      //  B   Bold soft-style (WMEN_STYLE_BOLD)
-      //  C   reserved for 'Copy' operation (WMEN_COPY)
-      //  D   Dictonary (WMEN_DICT)
-      //  E   Launch editor (WMEN_EDIT)
-      //  F   Find/Search (WMEN_SEARCH)
-      //  G   Search again (WMEN_SEARCHAGAIN)
-      //  H   Hold mail (reserved by YAM.cd)
-      //  I   Italic soft-style (WMEN_STYLE_BOLD)
-      //  J
-      //  K   Colored soft-style (WMEN_STYLE_COLORED)
-      //  L   Send later (reserved by YAM.cd)
-      //  M
-      //  N   New mail (WMEN_NEW)
-      //  O   Open file (WMEN_OPEN)
-      //  P   Insert as plain text (WMEN_PLAIN)
-      //  Q   Insert as quoted text (WMEN_PASQUOT)
-      //  R   Add file as attachment (WMEN_ADDFILE)
-      //  S   Send mail (WMEN_SEND)
-      //  T
-      //  U   Underline soft-style (WMEN_STYLE_UNDERLINE)
-      //  V   reserved for 'Paste' operation (WMEN_PASTE)
-      //  W   Cancel&Close window (WMEN_CANCEL)
-      //  X   reserved for 'Cut' operation (WMEN_CUT)
-      //  Y   reserved for 'Redo' operation (WMEN_REDO)
-      //  Z   reserved for 'Undo' operation (WMEN_UNDO)
-      //  1   Switch to Message view (WMEN_SWITCH1)
-      //  2   Switch to Attachment view (WMEN_SWITCH2)
-      //  3   Switch to Options view (WMEN_SWITCH3)
-      //  0   Use signature1 (WMEN_SIGN0)
-      //  7   Use signature2 (WMEN_SIGN1)
-      //  8   Use signature3 (WMEN_SIGN2)
-      //  9   Use signature4 (WMEN_SIGN3)
+    // setup the window Title
+    snprintf(data->WTitle, sizeof(data->WTitle), "[%d] %s: ", winnum+1, tr(MSG_WR_WriteWT));
 
-      // now go and create the window object
-      data->GUI.WI = WriteWindowObject,
-         MUIA_Window_Title, data->WTitle,
-         MUIA_HelpNode, "WR_W",
-         MUIA_Window_ID, MAKE_ID('W','R','I','T'),
-         MUIA_Window_Menustrip, strip = MenustripObject,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Text),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_New), MUIA_Menuitem_Shortcut,"N", MUIA_UserData,WMEN_NEW, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_Open), MUIA_Menuitem_Shortcut,"O", MUIA_UserData,WMEN_OPEN, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_InsertAs),
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Plain), MUIA_Menuitem_Shortcut,"P", MUIA_UserData,WMEN_INSFILE, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Quoted), MUIA_UserData,WMEN_INSQUOT, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AltQuoted), MUIA_UserData,WMEN_INSALTQUOT, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_ROT13), MUIA_UserData,WMEN_INSROT13, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_UUCODE), MUIA_UserData,WMEN_INSUUCODE, End,
-               End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_LaunchEd), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,WMEN_EDIT, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_SaveAs), MUIA_UserData,WMEN_SAVEAS, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSENDNOW), MUIA_Menuitem_Shortcut, "S", MUIA_UserData, WMEN_SENDNOW, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSENDLATER), MUIA_Menuitem_Shortcut, "L", MUIA_UserData, WMEN_QUEUE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MHOLD), MUIA_Menuitem_Shortcut, "H", MUIA_UserData, WMEN_HOLD, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MCANCEL), MUIA_Menuitem_Shortcut, "W", MUIA_UserData, WMEN_CANCEL, End,
-            End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Edit),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MUndo), MUIA_Menuitem_Shortcut, "Z", MUIA_UserData, WMEN_UNDO, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Redo), MUIA_Menuitem_Shortcut, "Y", MUIA_UserData, WMEN_REDO, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MCut), MUIA_Menuitem_Shortcut, "X", MUIA_UserData, WMEN_CUT, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MCopy), MUIA_Menuitem_Shortcut, "C", MUIA_UserData, WMEN_COPY, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MPaste), MUIA_Menuitem_Shortcut, "V", MUIA_UserData, WMEN_PASTE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_PasteAs),
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Quoted), MUIA_Menuitem_Shortcut, "Q", MUIA_UserData,WMEN_PASQUOT, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AltQuoted), MUIA_UserData,WMEN_PASALTQUOT, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_ROT13), MUIA_UserData,WMEN_PASROT13, End,
-               End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_DELETE), MUIA_UserData, WMEN_DELETE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_SELECTALL), MUIA_Menuitem_Shortcut, "A", MUIA_UserData, WMEN_SELECTALL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_SELECTNONE), MUIA_UserData, WMEN_SELECTNONE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_SEARCH), MUIA_Menuitem_Shortcut,"F", MUIA_UserData,WMEN_SEARCH, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_SEARCH_AGAIN), MUIA_Menuitem_Shortcut,"G", MUIA_UserData,WMEN_SEARCHAGAIN, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Dictionary), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,WMEN_DICT, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Textstyle),
-                  MUIA_Family_Child, data->GUI.MI_BOLD = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Bold), MUIA_Menuitem_Shortcut,"B", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_BOLD, End,
-                  MUIA_Family_Child, data->GUI.MI_ITALIC = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Italic), MUIA_Menuitem_Shortcut,"I", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_ITALIC, End,
-                  MUIA_Family_Child, data->GUI.MI_UNDERLINE = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Underlined), MUIA_Menuitem_Shortcut,"U", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_UNDERLINE, End,
-                  MUIA_Family_Child, data->GUI.MI_COLORED = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Colored), MUIA_Menuitem_Shortcut,"K", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_COLORED, End,
-               End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Emoticons),
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Happy), MUIA_UserData,WMEN_EMOT0, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Indifferent), MUIA_UserData,WMEN_EMOT1, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Sad), MUIA_UserData,WMEN_EMOT2, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Ironic), MUIA_UserData,WMEN_EMOT3, End,
-               End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, mi_autospell = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_SpellCheck), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_AUTOSP, End,
-               MUIA_Family_Child, mi_autowrap = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_AUTOWRAP), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_AUTOWRAP, End,
-            End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Attachments),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MAddFile), MUIA_Menuitem_Shortcut,"R", MUIA_UserData,WMEN_ADDFILE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddCB), MUIA_UserData,WMEN_ADDCLIP, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddKey), MUIA_Menuitem_Enabled, G->PGPVersion != 0, MUIA_UserData,WMEN_ADDPGP, End,
-            End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_WR_VIEW),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_MSG), MUIA_Menuitem_Shortcut, "1", MUIA_UserData, WMEN_SWITCH1, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_ATT), MUIA_Menuitem_Shortcut, "2", MUIA_UserData, WMEN_SWITCH2, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_OPT), MUIA_Menuitem_Shortcut, "3", MUIA_UserData, WMEN_SWITCH3, End,
-            End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Options),
-               MUIA_Family_Child, mi_delsend = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MDelSend), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, MUIA_UserData, WMEN_DELSEND, End,
-               MUIA_Family_Child, mi_mdn =     MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MReceipt), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, MUIA_UserData, WMEN_MDN,     End,
-               MUIA_Family_Child, mi_addinfo = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MAddInfo), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, MUIA_UserData, WMEN_ADDINFO, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MImportance),
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,priority[0], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x06, MUIA_UserData,WMEN_IMPORT0, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,priority[1], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x05, MUIA_Menuitem_Checked,TRUE, MUIA_UserData,WMEN_IMPORT1, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,priority[2], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x03, MUIA_UserData,WMEN_IMPORT2, End,
-               End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_CrdSignature),
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,signat[0], MUIA_Menuitem_Shortcut,"0", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x0E, MUIA_Menuitem_Checked,!C->UseSignature, MUIA_UserData,WMEN_SIGN0, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,signat[1], MUIA_Menuitem_Shortcut,"7", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x0D, MUIA_Menuitem_Checked,C->UseSignature, MUIA_UserData,WMEN_SIGN1, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,signat[2], MUIA_Menuitem_Shortcut,"8", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x0B, MUIA_UserData,WMEN_SIGN2, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,signat[3], MUIA_Menuitem_Shortcut,"9", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x07, MUIA_UserData,WMEN_SIGN3, End,
-               End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_CrdSecurity),
-                  MUIA_Family_Child, sec_menus[SEC_NONE]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_NONE]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x3E, MUIA_UserData,WMEN_SECUR0, End,
-                  MUIA_Family_Child, sec_menus[SEC_SIGN]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_SIGN]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Enabled, G->PGPVersion != 0, MUIA_Menuitem_Exclude,0x3D, MUIA_UserData,WMEN_SECUR1, End,
-                  MUIA_Family_Child, sec_menus[SEC_ENCRYPT]  = MenuitemObject, MUIA_Menuitem_Title,security[SEC_ENCRYPT] , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Enabled, G->PGPVersion != 0, MUIA_Menuitem_Exclude,0x3B, MUIA_UserData,WMEN_SECUR2, End,
-                  MUIA_Family_Child, sec_menus[SEC_BOTH]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_BOTH]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Enabled, G->PGPVersion != 0, MUIA_Menuitem_Exclude,0x37, MUIA_UserData,WMEN_SECUR3, End,
-                  MUIA_Family_Child, sec_menus[SEC_SENDANON] = MenuitemObject, MUIA_Menuitem_Title,security[SEC_SENDANON], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x2F, MUIA_UserData,WMEN_SECUR4, End,
-                  MUIA_Family_Child, sec_menus[SEC_DEFAULTS] = MenuitemObject, MUIA_Menuitem_Title,security[SEC_DEFAULTS], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x1F, MUIA_UserData,WMEN_SECUR5, MUIA_Menuitem_Checked, TRUE, End,
-               End,
-            End,
-         End,
-         MUIA_Window_AppWindow, TRUE,
-         WindowContents, VGroup,
-            Child, data->GUI.RG_PAGE = RegisterGroup(rtitles),
-               MUIA_CycleChain, 1,
-               Child, VGroup, /* Message */
-                  MUIA_HelpNode, "WR00",
-                  Child, ColGroup(2),
-                     Child, Label(tr(MSG_WR_To)),
-                     Child, MakeAddressField(&data->GUI.ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, winnum, TRUE),
+    //
+    // now we define which window shortcuts are available and which ones
+    // are reserved by either the generated menuobject or by some shortcuts
+    // in the english YAM.cd catalog description (e.g. for buttons)
+    //
+    // The following shortcut list should help to identify the hard-coded
+    // shortcuts:
+    //
+    //  A   reserved for 'Select All' operation (WMEN_SELECTALL)
+    //  B   Bold soft-style (WMEN_STYLE_BOLD)
+    //  C   reserved for 'Copy' operation (WMEN_COPY)
+    //  D   Dictonary (WMEN_DICT)
+    //  E   Launch editor (WMEN_EDIT)
+    //  F   Find/Search (WMEN_SEARCH)
+    //  G   Search again (WMEN_SEARCHAGAIN)
+    //  H   Hold mail (reserved by YAM.cd)
+    //  I   Italic soft-style (WMEN_STYLE_BOLD)
+    //  J
+    //  K   Colored soft-style (WMEN_STYLE_COLORED)
+    //  L   Send later (reserved by YAM.cd)
+    //  M
+    //  N   New mail (WMEN_NEW)
+    //  O   Open file (WMEN_OPEN)
+    //  P   Insert as plain text (WMEN_PLAIN)
+    //  Q   Insert as quoted text (WMEN_PASQUOT)
+    //  R   Add file as attachment (WMEN_ADDFILE)
+    //  S   Send mail (WMEN_SEND)
+    //  T
+    //  U   Underline soft-style (WMEN_STYLE_UNDERLINE)
+    //  V   reserved for 'Paste' operation (WMEN_PASTE)
+    //  W   Cancel&Close window (WMEN_CANCEL)
+    //  X   reserved for 'Cut' operation (WMEN_CUT)
+    //  Y   reserved for 'Redo' operation (WMEN_REDO)
+    //  Z   reserved for 'Undo' operation (WMEN_UNDO)
+    //  1   Switch to Message view (WMEN_SWITCH1)
+    //  2   Switch to Attachment view (WMEN_SWITCH2)
+    //  3   Switch to Options view (WMEN_SWITCH3)
+    //  0   Use signature1 (WMEN_SIGN0)
+    //  7   Use signature2 (WMEN_SIGN1)
+    //  8   Use signature3 (WMEN_SIGN2)
+    //  9   Use signature4 (WMEN_SIGN3)
 
-                     Child, Label(tr(MSG_WR_Subject)),
-                     Child, data->GUI.ST_SUBJECT = BetterStringObject,
-                       StringFrame,
-                       MUIA_BetterString_NoShortcuts, TRUE,
-                       MUIA_String_MaxLen,            SIZE_SUBJECT,
-                       MUIA_String_AdvanceOnCR,       TRUE,
-                       MUIA_ControlChar,              ShortCut(tr(MSG_WR_Subject)),
-                       MUIA_CycleChain,               TRUE,
-                     End,
-                  End,
-                  Child, hasHideToolBarFlag(C->HideGUIElements) ?
-                     (RectangleObject, MUIA_ShowMe, FALSE, End) :
-                     (HGroup, GroupSpacing(0),
-                        Child, data->GUI.TO_TOOLBAR = WriteWindowToolbarObject,
-                        End,
-                        Child, hasHideXYFlag(C->HideGUIElements) ?
-                           (HSpace(1)) :
-                           (HGroup,
+    // now go and create the window object
+    data->GUI.WI = WriteWindowObject,
+       MUIA_Window_Title, data->WTitle,
+       MUIA_HelpNode, "WR_W",
+       MUIA_Window_ID, MAKE_ID('W','R','I','T'),
+       MUIA_Window_Menustrip, strip = MenustripObject,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Text),
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_New), MUIA_Menuitem_Shortcut,"N", MUIA_UserData,WMEN_NEW, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_Open), MUIA_Menuitem_Shortcut,"O", MUIA_UserData,WMEN_OPEN, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_InsertAs),
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Plain), MUIA_Menuitem_Shortcut,"P", MUIA_UserData,WMEN_INSFILE, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Quoted), MUIA_UserData,WMEN_INSQUOT, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AltQuoted), MUIA_UserData,WMEN_INSALTQUOT, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_ROT13), MUIA_UserData,WMEN_INSROT13, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_UUCODE), MUIA_UserData,WMEN_INSUUCODE, End,
+             End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_LaunchEd), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,WMEN_EDIT, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_SaveAs), MUIA_UserData,WMEN_SAVEAS, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSENDNOW), MUIA_Menuitem_Shortcut, "S", MUIA_UserData, WMEN_SENDNOW, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSENDLATER), MUIA_Menuitem_Shortcut, "L", MUIA_UserData, WMEN_QUEUE, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MHOLD), MUIA_Menuitem_Shortcut, "H", MUIA_UserData, WMEN_HOLD, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MCANCEL), MUIA_Menuitem_Shortcut, "W", MUIA_UserData, WMEN_CANCEL, End,
+          End,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Edit),
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MUndo), MUIA_Menuitem_Shortcut, "Z", MUIA_UserData, WMEN_UNDO, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Redo), MUIA_Menuitem_Shortcut, "Y", MUIA_UserData, WMEN_REDO, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MCut), MUIA_Menuitem_Shortcut, "X", MUIA_UserData, WMEN_CUT, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MCopy), MUIA_Menuitem_Shortcut, "C", MUIA_UserData, WMEN_COPY, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MPaste), MUIA_Menuitem_Shortcut, "V", MUIA_UserData, WMEN_PASTE, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_PasteAs),
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Quoted), MUIA_Menuitem_Shortcut, "Q", MUIA_UserData,WMEN_PASQUOT, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AltQuoted), MUIA_UserData,WMEN_PASALTQUOT, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_ROT13), MUIA_UserData,WMEN_PASROT13, End,
+             End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_DELETE), MUIA_UserData, WMEN_DELETE, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_SELECTALL), MUIA_Menuitem_Shortcut, "A", MUIA_UserData, WMEN_SELECTALL, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_SELECTNONE), MUIA_UserData, WMEN_SELECTNONE, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_SEARCH), MUIA_Menuitem_Shortcut,"F", MUIA_UserData,WMEN_SEARCH, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_SEARCH_AGAIN), MUIA_Menuitem_Shortcut,"G", MUIA_UserData,WMEN_SEARCHAGAIN, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Dictionary), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,WMEN_DICT, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Textstyle),
+                MUIA_Family_Child, data->GUI.MI_BOLD = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Bold), MUIA_Menuitem_Shortcut,"B", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_BOLD, End,
+                MUIA_Family_Child, data->GUI.MI_ITALIC = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Italic), MUIA_Menuitem_Shortcut,"I", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_ITALIC, End,
+                MUIA_Family_Child, data->GUI.MI_UNDERLINE = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Underlined), MUIA_Menuitem_Shortcut,"U", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_UNDERLINE, End,
+                MUIA_Family_Child, data->GUI.MI_COLORED = MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Colored), MUIA_Menuitem_Shortcut,"K", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE_COLORED, End,
+             End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Emoticons),
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Happy), MUIA_UserData,WMEN_EMOT0, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Indifferent), MUIA_UserData,WMEN_EMOT1, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Sad), MUIA_UserData,WMEN_EMOT2, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Ironic), MUIA_UserData,WMEN_EMOT3, End,
+             End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
+             MUIA_Family_Child, mi_autospell = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_SpellCheck), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_AUTOSP, End,
+             MUIA_Family_Child, mi_autowrap = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_AUTOWRAP), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_AUTOWRAP, End,
+          End,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Attachments),
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MAddFile), MUIA_Menuitem_Shortcut,"R", MUIA_UserData,WMEN_ADDFILE, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddCB), MUIA_UserData,WMEN_ADDCLIP, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_AddKey), MUIA_Menuitem_Enabled, G->PGPVersion != 0, MUIA_UserData,WMEN_ADDPGP, End,
+          End,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_WR_VIEW),
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_MSG), MUIA_Menuitem_Shortcut, "1", MUIA_UserData, WMEN_SWITCH1, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_ATT), MUIA_Menuitem_Shortcut, "2", MUIA_UserData, WMEN_SWITCH2, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MSWITCH_OPT), MUIA_Menuitem_Shortcut, "3", MUIA_UserData, WMEN_SWITCH3, End,
+          End,
+          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Options),
+             MUIA_Family_Child, mi_delsend = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MDelSend), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, MUIA_UserData, WMEN_DELSEND, End,
+             MUIA_Family_Child, mi_mdn =     MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MReceipt), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, MUIA_UserData, WMEN_MDN,     End,
+             MUIA_Family_Child, mi_addinfo = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_MAddInfo), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, MUIA_UserData, WMEN_ADDINFO, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MImportance),
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,priority[0], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x06, MUIA_UserData,WMEN_IMPORT0, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,priority[1], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x05, MUIA_Menuitem_Checked,TRUE, MUIA_UserData,WMEN_IMPORT1, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,priority[2], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x03, MUIA_UserData,WMEN_IMPORT2, End,
+             End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_CrdSignature),
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,signat[0], MUIA_Menuitem_Shortcut,"0", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x0E, MUIA_Menuitem_Checked,!C->UseSignature, MUIA_UserData,WMEN_SIGN0, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,signat[1], MUIA_Menuitem_Shortcut,"7", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x0D, MUIA_Menuitem_Checked,C->UseSignature, MUIA_UserData,WMEN_SIGN1, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,signat[2], MUIA_Menuitem_Shortcut,"8", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x0B, MUIA_UserData,WMEN_SIGN2, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,signat[3], MUIA_Menuitem_Shortcut,"9", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x07, MUIA_UserData,WMEN_SIGN3, End,
+             End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_CrdSecurity),
+                MUIA_Family_Child, sec_menus[SEC_NONE]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_NONE]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x3E, MUIA_UserData,WMEN_SECUR0, End,
+                MUIA_Family_Child, sec_menus[SEC_SIGN]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_SIGN]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Enabled, G->PGPVersion != 0, MUIA_Menuitem_Exclude,0x3D, MUIA_UserData,WMEN_SECUR1, End,
+                MUIA_Family_Child, sec_menus[SEC_ENCRYPT]  = MenuitemObject, MUIA_Menuitem_Title,security[SEC_ENCRYPT] , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Enabled, G->PGPVersion != 0, MUIA_Menuitem_Exclude,0x3B, MUIA_UserData,WMEN_SECUR2, End,
+                MUIA_Family_Child, sec_menus[SEC_BOTH]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_BOTH]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Enabled, G->PGPVersion != 0, MUIA_Menuitem_Exclude,0x37, MUIA_UserData,WMEN_SECUR3, End,
+                MUIA_Family_Child, sec_menus[SEC_SENDANON] = MenuitemObject, MUIA_Menuitem_Title,security[SEC_SENDANON], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x2F, MUIA_UserData,WMEN_SECUR4, End,
+                MUIA_Family_Child, sec_menus[SEC_DEFAULTS] = MenuitemObject, MUIA_Menuitem_Title,security[SEC_DEFAULTS], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x1F, MUIA_UserData,WMEN_SECUR5, MUIA_Menuitem_Checked, TRUE, End,
+             End,
+          End,
+       End,
+       MUIA_Window_AppWindow, TRUE,
+       WindowContents, VGroup,
+          Child, data->GUI.RG_PAGE = RegisterGroup(rtitles),
+             MUIA_CycleChain, 1,
+             Child, VGroup, /* Message */
+                MUIA_HelpNode, "WR00",
+                Child, ColGroup(2),
+                   Child, Label(tr(MSG_WR_To)),
+                   Child, MakeAddressField(&data->GUI.ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, winnum, TRUE),
+
+                   Child, Label(tr(MSG_WR_Subject)),
+                   Child, data->GUI.ST_SUBJECT = BetterStringObject,
+                     StringFrame,
+                     MUIA_BetterString_NoShortcuts, TRUE,
+                     MUIA_String_MaxLen,            SIZE_SUBJECT,
+                     MUIA_String_AdvanceOnCR,       TRUE,
+                     MUIA_ControlChar,              ShortCut(tr(MSG_WR_Subject)),
+                     MUIA_CycleChain,               TRUE,
+                   End,
+                End,
+                Child, hasHideToolBarFlag(C->HideGUIElements) ?
+                   (RectangleObject, MUIA_ShowMe, FALSE, End) :
+                   (HGroup, GroupSpacing(0),
+                      Child, data->GUI.TO_TOOLBAR = WriteWindowToolbarObject,
+                      End,
+                      Child, hasHideXYFlag(C->HideGUIElements) ?
+                         (HSpace(1)) :
+                         (HGroup,
+                           GroupSpacing(0),
+                           Child, RectangleObject,
+                             MUIA_Rectangle_VBar, TRUE,
+                             MUIA_FixWidth,        3,
+                           End,
+                           Child, VGroup,
                              GroupSpacing(0),
-                             Child, RectangleObject,
-                               MUIA_Rectangle_VBar, TRUE,
-                               MUIA_FixWidth,        3,
+                             Child, VSpace(0),
+                             Child, data->GUI.TX_POSI = TextObject,
+                               MUIA_Weight,        0,
+                               MUIA_Text_Contents, "000 \n000 ",
+                               MUIA_Background,    MUII_RegisterBack,
+                               MUIA_Frame,         MUIV_Frame_None,
+                               MUIA_Font,          MUIV_Font_Tiny,
                              End,
-                             Child, VGroup,
-                               GroupSpacing(0),
-                               Child, VSpace(0),
-                               Child, data->GUI.TX_POSI = TextObject,
-                                 MUIA_Weight,        0,
-                                 MUIA_Text_Contents, "000 \n000 ",
-                                 MUIA_Background,    MUII_RegisterBack,
-                                 MUIA_Frame,         MUIV_Frame_None,
-                                 MUIA_Font,          MUIV_Font_Tiny,
-                               End,
-                               Child, VSpace(0),
-                             End,
-                           End),
-                     End),
-                  Child, HGroup,
-                     MUIA_HelpNode, "EDIT",
-                     MUIA_Group_Spacing, 0,
-                     Child, data->GUI.TE_EDIT = MailTextEditObject,
-                        InputListFrame,
-                        MUIA_CycleChain, TRUE,
-                        MUIA_TextEditor_Slider,     slider,
-                        MUIA_TextEditor_FixedFont,  C->FixedFontEdit,
-                        MUIA_TextEditor_WrapMode,   MUIV_TextEditor_WrapMode_SoftWrap,
-                        MUIA_TextEditor_WrapBorder, C->EdWrapMode == EWM_EDITING ? C->EdWrapCol : 0,
-                        MUIA_TextEditor_ExportWrap, C->EdWrapMode != EWM_OFF ? C->EdWrapCol : 0,
-                        MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_Plain,
-                        MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_NoStyle,
-                     End,
-                     Child, slider,
-                  End,
-               End,
-               Child, VGroup, /* Attachments */
-                  MUIA_HelpNode, "WR01",
-                  Child, NListviewObject,
-                     MUIA_CycleChain, TRUE,
-                     MUIA_NListview_NList,    data->GUI.LV_ATTACH = WriteAttachmentListObject,
-                        InputListFrame,
-                        MUIA_NList_DragType,        MUIV_NList_DragType_Immediate,
-                        MUIA_NList_ListBackground,  MUII_ListBack,
-                        MUIA_NList_TitleBackground, MUII_ListBack,
-                        MUIA_NList_DragSortable,    TRUE,
-                        MUIA_NList_Format,          "D=8 BAR,P=\033r D=8 BAR,D=8 BAR,P=\033c D=8 BAR,",
-                        MUIA_NList_Title,           TRUE,
-                        MUIA_NList_ConstructHook,   &WR_LV_ConFuncHook,
-                        MUIA_NList_DestructHook,    &GeneralDesHook,
-                        MUIA_NList_DisplayHook,     &WR_LV_DspFuncHook,
-                     End,
-                  End,
-                  Child, ColGroup(4),
-                     Child, data->GUI.BT_ADD     = MakeButton(tr(MSG_WR_Add)),
-                     Child, data->GUI.BT_ADDPACK = MakeButton(tr(MSG_WR_AddPack)),
-                     Child, data->GUI.BT_DEL     = MakeButton(tr(MSG_Del)),
-                     Child, data->GUI.BT_DISPLAY = MakeButton(tr(MSG_WR_Display)),
-                  End,
-                  Child, HGroup,
-                     Child, data->GUI.RA_ENCODING = RadioObject,
-                        GroupFrameT(tr(MSG_WR_Encoding)),
-                        MUIA_Radio_Entries, encoding,
-                        MUIA_CycleChain, 1,
-                     End,
-                     Child, ColGroup(2),
-                        Child, Label2(tr(MSG_WR_ContentType)),
-                        Child, MakeMimeTypePop(&data->GUI.ST_CTYPE, tr(MSG_WR_ContentType)),
-                        Child, Label2(tr(MSG_WR_Description)),
-                        Child, data->GUI.ST_DESC = MakeString(SIZE_DEFAULT,tr(MSG_WR_Description)),
-                        Child, HSpace(0),
-                     End,
-                  End,
-               End,
-               Child, VGroup, /* Options */
-                  MUIA_HelpNode, "WR02",
-                  Child, ColGroup(2),
-                     Child, Label(tr(MSG_WR_CopyTo)),
-                     Child, MakeAddressField(&data->GUI.ST_CC, tr(MSG_WR_CopyTo), MSG_HELP_WR_ST_CC, ABM_CC, winnum, TRUE),
+                             Child, VSpace(0),
+                           End,
+                         End),
+                   End),
+                Child, HGroup,
+                   MUIA_HelpNode, "EDIT",
+                   MUIA_Group_Spacing, 0,
+                   Child, data->GUI.TE_EDIT = MailTextEditObject,
+                      InputListFrame,
+                      MUIA_CycleChain, TRUE,
+                      MUIA_TextEditor_Slider,     slider,
+                      MUIA_TextEditor_FixedFont,  C->FixedFontEdit,
+                      MUIA_TextEditor_WrapMode,   MUIV_TextEditor_WrapMode_SoftWrap,
+                      MUIA_TextEditor_WrapBorder, C->EdWrapMode == EWM_EDITING ? C->EdWrapCol : 0,
+                      MUIA_TextEditor_ExportWrap, C->EdWrapMode != EWM_OFF ? C->EdWrapCol : 0,
+                      MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_Plain,
+                      MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_NoStyle,
+                   End,
+                   Child, slider,
+                End,
+             End,
+             Child, VGroup, /* Attachments */
+                MUIA_HelpNode, "WR01",
+                Child, NListviewObject,
+                   MUIA_CycleChain, TRUE,
+                   MUIA_NListview_NList,    data->GUI.LV_ATTACH = WriteAttachmentListObject,
+                      InputListFrame,
+                      MUIA_NList_DragType,        MUIV_NList_DragType_Immediate,
+                      MUIA_NList_ListBackground,  MUII_ListBack,
+                      MUIA_NList_TitleBackground, MUII_ListBack,
+                      MUIA_NList_DragSortable,    TRUE,
+                      MUIA_NList_Format,          "D=8 BAR,P=\033r D=8 BAR,D=8 BAR,P=\033c D=8 BAR,",
+                      MUIA_NList_Title,           TRUE,
+                      MUIA_NList_ConstructHook,   &WR_LV_ConFuncHook,
+                      MUIA_NList_DestructHook,    &GeneralDesHook,
+                      MUIA_NList_DisplayHook,     &WR_LV_DspFuncHook,
+                   End,
+                End,
+                Child, ColGroup(4),
+                   Child, data->GUI.BT_ADD     = MakeButton(tr(MSG_WR_Add)),
+                   Child, data->GUI.BT_ADDPACK = MakeButton(tr(MSG_WR_AddPack)),
+                   Child, data->GUI.BT_DEL     = MakeButton(tr(MSG_Del)),
+                   Child, data->GUI.BT_DISPLAY = MakeButton(tr(MSG_WR_Display)),
+                End,
+                Child, HGroup,
+                   Child, data->GUI.RA_ENCODING = RadioObject,
+                      GroupFrameT(tr(MSG_WR_Encoding)),
+                      MUIA_Radio_Entries, encoding,
+                      MUIA_CycleChain, 1,
+                   End,
+                   Child, ColGroup(2),
+                      Child, Label2(tr(MSG_WR_ContentType)),
+                      Child, MakeMimeTypePop(&data->GUI.ST_CTYPE, tr(MSG_WR_ContentType)),
+                      Child, Label2(tr(MSG_WR_Description)),
+                      Child, data->GUI.ST_DESC = MakeString(SIZE_DEFAULT,tr(MSG_WR_Description)),
+                      Child, HSpace(0),
+                   End,
+                End,
+             End,
+             Child, VGroup, /* Options */
+                MUIA_HelpNode, "WR02",
+                Child, ColGroup(2),
+                   Child, Label(tr(MSG_WR_CopyTo)),
+                   Child, MakeAddressField(&data->GUI.ST_CC, tr(MSG_WR_CopyTo), MSG_HELP_WR_ST_CC, ABM_CC, winnum, TRUE),
 
-                     Child, Label(tr(MSG_WR_BlindCopyTo)),
-                     Child, MakeAddressField(&data->GUI.ST_BCC, tr(MSG_WR_BlindCopyTo), MSG_HELP_WR_ST_BCC, ABM_BCC, winnum, TRUE),
+                   Child, Label(tr(MSG_WR_BlindCopyTo)),
+                   Child, MakeAddressField(&data->GUI.ST_BCC, tr(MSG_WR_BlindCopyTo), MSG_HELP_WR_ST_BCC, ABM_BCC, winnum, TRUE),
 
-                     Child, Label(tr(MSG_WR_From)),
-                     Child, MakeAddressField(&data->GUI.ST_FROM, tr(MSG_WR_From), MSG_HELP_WR_ST_FROM, ABM_FROM, winnum, TRUE),
+                   Child, Label(tr(MSG_WR_From)),
+                   Child, MakeAddressField(&data->GUI.ST_FROM, tr(MSG_WR_From), MSG_HELP_WR_ST_FROM, ABM_FROM, winnum, TRUE),
 
-                     Child, Label(tr(MSG_WR_ReplyTo)),
-                     Child, MakeAddressField(&data->GUI.ST_REPLYTO, tr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, winnum, TRUE),
+                   Child, Label(tr(MSG_WR_ReplyTo)),
+                   Child, MakeAddressField(&data->GUI.ST_REPLYTO, tr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, winnum, TRUE),
 
-                     Child, Label(tr(MSG_WR_ExtraHeaders)),
-                     Child, data->GUI.ST_EXTHEADER = BetterStringObject,
-                       StringFrame,
-                       MUIA_BetterString_NoShortcuts, TRUE,
-                       MUIA_String_MaxLen,            SIZE_LARGE,
-                       MUIA_String_AdvanceOnCR,       TRUE,
-                       MUIA_ControlChar,              ShortCut(tr(MSG_WR_ExtraHeaders)),
-                       MUIA_CycleChain,               TRUE,
-                     End,
+                   Child, Label(tr(MSG_WR_ExtraHeaders)),
+                   Child, data->GUI.ST_EXTHEADER = BetterStringObject,
+                     StringFrame,
+                     MUIA_BetterString_NoShortcuts, TRUE,
+                     MUIA_String_MaxLen,            SIZE_LARGE,
+                     MUIA_String_AdvanceOnCR,       TRUE,
+                     MUIA_ControlChar,              ShortCut(tr(MSG_WR_ExtraHeaders)),
+                     MUIA_CycleChain,               TRUE,
+                   End,
 
-                  End,
-                  Child, HGroup,
-                     Child, VGroup, GroupFrameT(tr(MSG_WR_SendOpt)),
-                        Child, MakeCheckGroup((Object **)&data->GUI.CH_DELSEND, tr(MSG_WR_DelSend)),
-                        Child, MakeCheckGroup((Object **)&data->GUI.CH_MDN,     tr(MSG_WR_Receipt)),
-                        Child, MakeCheckGroup((Object **)&data->GUI.CH_ADDINFO, tr(MSG_WR_AddInfo)),
-                        Child, HGroup,
-                           Child, Label(tr(MSG_WR_Importance)),
-                           Child, data->GUI.CY_IMPORTANCE = MakeCycle(priority, tr(MSG_WR_Importance)),
-                        End,
-                     End,
-                     Child, HSpace(0),
-                     Child, data->GUI.RA_SIGNATURE = RadioObject, GroupFrameT(tr(MSG_WR_Signature)),
-                        MUIA_Radio_Entries, signat,
-                        MUIA_Radio_Active, C->UseSignature ? 1 : 0,
-                        MUIA_CycleChain, 1,
-                     End,
-                     Child, HSpace(0),
-                     Child, data->GUI.RA_SECURITY = RadioObject, GroupFrameT(tr(MSG_WR_Security)),
-                        MUIA_Radio_Entries, security,
-                        MUIA_Radio_Active, SEC_DEFAULTS,
-                        MUIA_CycleChain, 1,
-                     End,
-                  End,
-               End,
-            End,
-            Child, ColGroup(4),
-               Child, data->GUI.BT_SEND   = MakeButton(tr(MSG_WR_SENDNOW)),
-               Child, data->GUI.BT_QUEUE  = MakeButton(tr(MSG_WR_SENDLATER)),
-               Child, data->GUI.BT_HOLD   = MakeButton(tr(MSG_WR_HOLD)),
-               Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_WR_CANCEL)),
-            End,
-         End,
-      End;
+                End,
+                Child, HGroup,
+                   Child, VGroup, GroupFrameT(tr(MSG_WR_SendOpt)),
+                      Child, MakeCheckGroup((Object **)&data->GUI.CH_DELSEND, tr(MSG_WR_DelSend)),
+                      Child, MakeCheckGroup((Object **)&data->GUI.CH_MDN,     tr(MSG_WR_Receipt)),
+                      Child, MakeCheckGroup((Object **)&data->GUI.CH_ADDINFO, tr(MSG_WR_AddInfo)),
+                      Child, HGroup,
+                         Child, Label(tr(MSG_WR_Importance)),
+                         Child, data->GUI.CY_IMPORTANCE = MakeCycle(priority, tr(MSG_WR_Importance)),
+                      End,
+                   End,
+                   Child, HSpace(0),
+                   Child, data->GUI.RA_SIGNATURE = RadioObject, GroupFrameT(tr(MSG_WR_Signature)),
+                      MUIA_Radio_Entries, signat,
+                      MUIA_Radio_Active, C->UseSignature ? 1 : 0,
+                      MUIA_CycleChain, 1,
+                   End,
+                   Child, HSpace(0),
+                   Child, data->GUI.RA_SECURITY = RadioObject, GroupFrameT(tr(MSG_WR_Security)),
+                      MUIA_Radio_Entries, security,
+                      MUIA_Radio_Active, SEC_DEFAULTS,
+                      MUIA_CycleChain, 1,
+                   End,
+                End,
+             End,
+          End,
+          Child, ColGroup(4),
+             Child, data->GUI.BT_SEND   = MakeButton(tr(MSG_WR_SENDNOW)),
+             Child, data->GUI.BT_QUEUE  = MakeButton(tr(MSG_WR_SENDLATER)),
+             Child, data->GUI.BT_HOLD   = MakeButton(tr(MSG_WR_HOLD)),
+             Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_WR_CANCEL)),
+          End,
+       End,
+    End;
 
-      if(data->GUI.WI && slider)
+    if(data->GUI.WI != NULL && slider != NULL)
+    {
+      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+
+      xset(data->GUI.ST_TO, MUIA_BetterString_KeyDownFocus, data->GUI.ST_SUBJECT,
+                            MUIA_Recipientstring_FromString, data->GUI.ST_FROM,
+                            MUIA_Recipientstring_ReplyToString, data->GUI.ST_REPLYTO);
+
+      xset(data->GUI.ST_SUBJECT, MUIA_BetterString_KeyUpFocus, data->GUI.ST_TO,
+                                 MUIA_BetterString_KeyDownFocus, data->GUI.TE_EDIT);
+
+      set(mi_autospell, MUIA_Menuitem_Checked, xget(data->GUI.TE_EDIT, MUIA_TextEditor_TypeAndSpell));
+      set(mi_autowrap,  MUIA_Menuitem_Checked, xget(data->GUI.TE_EDIT, MUIA_TextEditor_WrapBorder) > 0);
+
+      set(data->GUI.CY_IMPORTANCE, MUIA_Cycle_Active, 1);
+      DoMethod(G->App, MUIM_MultiSet,  MUIA_Disabled, TRUE, data->GUI.RA_ENCODING, data->GUI.ST_CTYPE, data->GUI.ST_DESC, data->GUI.BT_DEL, data->GUI.BT_DISPLAY, NULL);
+      SetHelp(data->GUI.ST_SUBJECT    ,MSG_HELP_WR_ST_SUBJECT   );
+      SetHelp(data->GUI.BT_ADD        ,MSG_HELP_WR_BT_ADD       );
+      SetHelp(data->GUI.BT_ADDPACK    ,MSG_HELP_WR_BT_ADDPACK   );
+      SetHelp(data->GUI.BT_DEL        ,MSG_HELP_WR_BT_DEL       );
+      SetHelp(data->GUI.BT_DISPLAY    ,MSG_HELP_WR_BT_DISPLAY   );
+      SetHelp(data->GUI.RA_ENCODING   ,MSG_HELP_WR_RA_ENCODING  );
+      SetHelp(data->GUI.ST_CTYPE      ,MSG_HELP_WR_ST_CTYPE     );
+      SetHelp(data->GUI.ST_DESC       ,MSG_HELP_WR_ST_DESC      );
+      SetHelp(data->GUI.ST_EXTHEADER  ,MSG_HELP_WR_ST_EXTHEADER );
+      SetHelp(data->GUI.CH_DELSEND    ,MSG_HELP_WR_CH_DELSEND   );
+      SetHelp(data->GUI.CH_MDN,        MSG_HELP_WR_CH_RECEIPT   );
+      SetHelp(data->GUI.CH_ADDINFO    ,MSG_HELP_WR_CH_ADDINFO   );
+      SetHelp(data->GUI.CY_IMPORTANCE ,MSG_HELP_WR_CY_IMPORTANCE);
+      SetHelp(data->GUI.RA_SIGNATURE  ,MSG_HELP_WR_RA_SIGNATURE );
+      SetHelp(data->GUI.RA_SECURITY   ,MSG_HELP_WR_RA_SECURITY  );
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_NEW,        data->GUI.TE_EDIT, 1, MUIM_TextEditor_ClearText);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_OPEN,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_OPEN, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSFILE,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSERT, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSQUOT,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSQUOT, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSALTQUOT, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSALTQUOT, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSROT13,   MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSROT13, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSUUCODE,  MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSUUCODE, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SAVEAS,     MUIV_Notify_Application, 3, MUIM_CallHook, &WR_SaveAsHook, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EDIT,       MUIV_Notify_Application, 3, MUIM_CallHook, &WR_EditHook, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_NewMailHook, WRITE_SEND, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,      MUIV_Notify_Application, 4, MUIM_CallHook, &WR_NewMailHook, WRITE_QUEUE, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_HOLD,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_NewMailHook, WRITE_HOLD, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CANCEL,     MUIV_Notify_Application, 3, MUIM_CallHook, &WR_CancelHook,winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,        MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_CUT, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_COPY, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASTE,      MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_PASTE, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_DELETE,     MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_DELETE, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASQUOT,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASQUOT, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASALTQUOT, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASALTQUOT, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASROT13,   MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASROT13, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SEARCH,     MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SearchHook, data->GUI.TE_EDIT, MUIF_NONE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SEARCHAGAIN,MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SearchHook, data->GUI.TE_EDIT, MUIF_ReadMailGroup_Search_Again);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_DICT,       MUIV_Notify_Application, 3, MUIM_CallHook, &DI_OpenHook, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_UNDO,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_UNDO, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_REDO,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_REDO, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDFILE,    MUIV_Notify_Application, 3, MUIM_CallHook, &WR_AddFileHook, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDCLIP,    MUIV_Notify_Application, 3, MUIM_CallHook, &WR_AddClipboardHook, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDPGP,     MUIV_Notify_Application, 3, MUIM_CallHook, &WR_AddPGPKeyHook, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTALL,  MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_SELECTALL, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTNONE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_SELECTNONE, winnum);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH1,    data->GUI.RG_PAGE,       3, MUIM_Set, MUIA_Group_ActivePage, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH2,    data->GUI.RG_PAGE,       3, MUIM_Set, MUIA_Group_ActivePage, 1);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH3,    data->GUI.RG_PAGE,       3, MUIM_Set, MUIA_Group_ActivePage, 2);
+
+      for(i=0; i < 4; i++)
+        DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT0+i, data->GUI.TE_EDIT, 2, MUIM_TextEditor_InsertText, emoticons[i]);
+
+      DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_AppMessage          ,MUIV_EveryTime ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_AppHook,MUIV_TriggerValue,winnum);
+
+      // set some notifications on the toolbar
+      // in case it was generated
+      if(data->GUI.TO_TOOLBAR != NULL)
+        DoMethod(data->GUI.TO_TOOLBAR, MUIM_WriteWindowToolbar_InitNotify, data);
+
+      if(data->GUI.TX_POSI != NULL)
       {
-         DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-
-         xset(data->GUI.ST_TO, MUIA_BetterString_KeyDownFocus, data->GUI.ST_SUBJECT,
-                               MUIA_Recipientstring_FromString, data->GUI.ST_FROM,
-                               MUIA_Recipientstring_ReplyToString, data->GUI.ST_REPLYTO);
-
-         xset(data->GUI.ST_SUBJECT, MUIA_BetterString_KeyUpFocus, data->GUI.ST_TO,
-                                    MUIA_BetterString_KeyDownFocus, data->GUI.TE_EDIT);
-
-         set(mi_autospell, MUIA_Menuitem_Checked, xget(data->GUI.TE_EDIT, MUIA_TextEditor_TypeAndSpell));
-         set(mi_autowrap,  MUIA_Menuitem_Checked, xget(data->GUI.TE_EDIT, MUIA_TextEditor_WrapBorder) > 0);
-
-         set(data->GUI.CY_IMPORTANCE, MUIA_Cycle_Active, 1);
-         DoMethod(G->App, MUIM_MultiSet,  MUIA_Disabled, TRUE, data->GUI.RA_ENCODING, data->GUI.ST_CTYPE, data->GUI.ST_DESC, data->GUI.BT_DEL, data->GUI.BT_DISPLAY, NULL);
-         SetHelp(data->GUI.ST_SUBJECT    ,MSG_HELP_WR_ST_SUBJECT   );
-         SetHelp(data->GUI.BT_ADD        ,MSG_HELP_WR_BT_ADD       );
-         SetHelp(data->GUI.BT_ADDPACK    ,MSG_HELP_WR_BT_ADDPACK   );
-         SetHelp(data->GUI.BT_DEL        ,MSG_HELP_WR_BT_DEL       );
-         SetHelp(data->GUI.BT_DISPLAY    ,MSG_HELP_WR_BT_DISPLAY   );
-         SetHelp(data->GUI.RA_ENCODING   ,MSG_HELP_WR_RA_ENCODING  );
-         SetHelp(data->GUI.ST_CTYPE      ,MSG_HELP_WR_ST_CTYPE     );
-         SetHelp(data->GUI.ST_DESC       ,MSG_HELP_WR_ST_DESC      );
-         SetHelp(data->GUI.ST_EXTHEADER  ,MSG_HELP_WR_ST_EXTHEADER );
-         SetHelp(data->GUI.CH_DELSEND    ,MSG_HELP_WR_CH_DELSEND   );
-         SetHelp(data->GUI.CH_MDN,        MSG_HELP_WR_CH_RECEIPT   );
-         SetHelp(data->GUI.CH_ADDINFO    ,MSG_HELP_WR_CH_ADDINFO   );
-         SetHelp(data->GUI.CY_IMPORTANCE ,MSG_HELP_WR_CY_IMPORTANCE);
-         SetHelp(data->GUI.RA_SIGNATURE  ,MSG_HELP_WR_RA_SIGNATURE );
-         SetHelp(data->GUI.RA_SECURITY   ,MSG_HELP_WR_RA_SECURITY  );
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_NEW,        data->GUI.TE_EDIT, 1, MUIM_TextEditor_ClearText);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_OPEN,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_OPEN, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSFILE,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSERT, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSQUOT,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSQUOT, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSALTQUOT, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSALTQUOT, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSROT13,   MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSROT13, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSUUCODE,  MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSUUCODE, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SAVEAS,     MUIV_Notify_Application, 3, MUIM_CallHook, &WR_SaveAsHook, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EDIT,       MUIV_Notify_Application, 3, MUIM_CallHook, &WR_EditHook, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_NewMailHook, WRITE_SEND, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,      MUIV_Notify_Application, 4, MUIM_CallHook, &WR_NewMailHook, WRITE_QUEUE, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_HOLD,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_NewMailHook, WRITE_HOLD, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CANCEL,     MUIV_Notify_Application, 3, MUIM_CallHook, &WR_CancelHook,winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,        MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_CUT, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_COPY, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASTE,      MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_PASTE, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_DELETE,     MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_DELETE, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASQUOT,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASQUOT, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASALTQUOT, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASALTQUOT, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASROT13,   MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_PASROT13, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SEARCH,     MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SearchHook, data->GUI.TE_EDIT, MUIF_NONE);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SEARCHAGAIN,MUIV_Notify_Application, 4, MUIM_CallHook, &WR_SearchHook, data->GUI.TE_EDIT, MUIF_ReadMailGroup_Search_Again);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_DICT,       MUIV_Notify_Application, 3, MUIM_CallHook, &DI_OpenHook, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_UNDO,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_UNDO, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_REDO,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_REDO, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDFILE,    MUIV_Notify_Application, 3, MUIM_CallHook, &WR_AddFileHook, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDCLIP,    MUIV_Notify_Application, 3, MUIM_CallHook, &WR_AddClipboardHook, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDPGP,     MUIV_Notify_Application, 3, MUIM_CallHook, &WR_AddPGPKeyHook, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTALL,  MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_SELECTALL, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTNONE, MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditActionHook, EA_SELECTNONE, winnum);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH1,    data->GUI.RG_PAGE,       3, MUIM_Set, MUIA_Group_ActivePage, 0);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH2,    data->GUI.RG_PAGE,       3, MUIM_Set, MUIA_Group_ActivePage, 1);
-         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH3,    data->GUI.RG_PAGE,       3, MUIM_Set, MUIA_Group_ActivePage, 2);
-
-         for(i=0; i < 4; i++)
-          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT0+i, data->GUI.TE_EDIT, 2, MUIM_TextEditor_InsertText, emoticons[i]);
-
-         DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_AppMessage          ,MUIV_EveryTime ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_AppHook,MUIV_TriggerValue,winnum);
-
-         // set some notifications on the toolbar
-         // in case it was generated
-         if(data->GUI.TO_TOOLBAR)
-           DoMethod(data->GUI.TO_TOOLBAR, MUIM_WriteWindowToolbar_InitNotify, data);
-
-         if (data->GUI.TX_POSI)
-         {
-            DoMethod(data->GUI.TE_EDIT ,MUIM_Notify,MUIA_TextEditor_CursorX,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&WR_UpdateCursorPosHook,winnum);
-            DoMethod(data->GUI.TE_EDIT ,MUIM_Notify,MUIA_TextEditor_CursorY,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&WR_UpdateCursorPosHook,winnum);
-         }
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, data->GUI.MI_BOLD, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, data->GUI.MI_ITALIC, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, data->GUI.MI_UNDERLINE, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_Pen,            7,              data->GUI.MI_COLORED, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, TRUE);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_Pen,            0,              data->GUI.MI_COLORED, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
-         DoMethod(data->GUI.MI_BOLD,    MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_BOLD, winnum);
-         DoMethod(data->GUI.MI_ITALIC,  MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_ITALIC, winnum);
-         DoMethod(data->GUI.MI_UNDERLINE, MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_UNDERLINE, winnum);
-         DoMethod(data->GUI.MI_COLORED, MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_COLOR, winnum);
-         DoMethod(data->GUI.RG_PAGE,    MUIM_Notify, MUIA_Group_ActivePage, 0, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->GUI.TE_EDIT);
-         DoMethod(data->GUI.ST_SUBJECT ,MUIM_Notify,MUIA_String_Acknowledge  ,MUIV_EveryTime,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_ActiveObject,data->GUI.TE_EDIT);
-         DoMethod(data->GUI.ST_SUBJECT ,MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime, MUIV_Notify_Application,3,MUIM_CallHook,   &WR_UpdateWTitleHook,winnum);
-         DoMethod(data->GUI.BT_ADD     ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddFileHook,winnum);
-         DoMethod(data->GUI.BT_ADDPACK ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddArchiveHook,winnum);
-         DoMethod(data->GUI.BT_DEL     ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_DeleteFileHook,winnum);
-         DoMethod(data->GUI.BT_DISPLAY ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_DisplayFileHook,winnum);
-         DoMethod(data->GUI.LV_ATTACH  ,MUIM_Notify,MUIA_NList_Active        ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_GetFileEntryHook,winnum);
-         DoMethod(data->GUI.RA_ENCODING,MUIM_Notify,MUIA_Radio_Active        ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_PutFileEntryHook,winnum);
-         DoMethod(data->GUI.ST_CTYPE   ,MUIM_Notify,MUIA_String_Contents     ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_PutFileEntryHook,winnum);
-         DoMethod(data->GUI.ST_DESC    ,MUIM_Notify,MUIA_String_Contents     ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_PutFileEntryHook,winnum);
-         DoMethod(data->GUI.RA_SIGNATURE,MUIM_Notify,MUIA_Radio_Active        ,MUIV_EveryTime,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_ChangeSignatureHook,MUIV_TriggerValue,winnum);
-         DoMethod(data->GUI.CH_DELSEND ,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_delsend              ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
-         DoMethod(data->GUI.CH_MDN,     MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_mdn                  ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
-         DoMethod(data->GUI.CH_ADDINFO ,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_addinfo              ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
-         DoMethod(mi_autospell         ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.TE_EDIT       ,3,MUIM_Set        ,MUIA_TextEditor_TypeAndSpell,MUIV_TriggerValue);
-         DoMethod(mi_autowrap          ,MUIM_Notify,MUIA_Menuitem_Checked    ,TRUE,          data->GUI.TE_EDIT       ,3,MUIM_Set        ,MUIA_TextEditor_WrapBorder, C->EdWrapCol);
-         DoMethod(mi_autowrap          ,MUIM_Notify,MUIA_Menuitem_Checked    ,FALSE,         data->GUI.TE_EDIT       ,3,MUIM_Set        ,MUIA_TextEditor_WrapBorder, 0);
-         DoMethod(mi_delsend           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_DELSEND    ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
-         DoMethod(mi_mdn,               MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->GUI.CH_MDN, 3, MUIM_Set, MUIA_Selected,MUIV_TriggerValue);
-         DoMethod(mi_addinfo           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_ADDINFO    ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
-         DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active        ,4             ,data->GUI.RA_SIGNATURE  ,3,MUIM_Set        ,MUIA_Radio_Active,0);
-         DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active        ,4             ,data->GUI.CH_ADDINFO    ,3,MUIM_Set        ,MUIA_Selected,FALSE);
-         for (i = 0; i < 3; i++)
-         {
-            DoMethod(data->GUI.CY_IMPORTANCE,MUIM_Notify,MUIA_Cycle_Active     ,i              ,strip                  ,4,MUIM_SetUData,WMEN_IMPORT0+i,MUIA_Menuitem_Checked,TRUE);
-            DoMethod(data->GUI.WI           ,MUIM_Notify,MUIA_Window_MenuAction,WMEN_IMPORT0+i ,data->GUI.CY_IMPORTANCE,3,MUIM_Set     ,MUIA_Cycle_Active,i);
-         }
-         for (i = 0; i < 4; i++)
-         {
-            DoMethod(data->GUI.RA_SIGNATURE ,MUIM_Notify,MUIA_Radio_Active     ,i              ,strip                  ,4,MUIM_SetUData,WMEN_SIGN0+i,MUIA_Menuitem_Checked,TRUE);
-            DoMethod(data->GUI.WI           ,MUIM_Notify,MUIA_Window_MenuAction,WMEN_SIGN0+i   ,data->GUI.RA_SIGNATURE ,3,MUIM_Set     ,MUIA_Radio_Active,i);
-         }
-         for (i = SEC_NONE; i < SEC_MAXDUMMY; i++)
-         {
-            // connect menuitems -> radiobuttons
-            DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction,WMEN_SECUR0+i,data->GUI.RA_SECURITY,3,MUIM_Set        ,MUIA_Radio_Active    ,i);
-            // ...and the other way round
-            DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active     ,i            ,sec_menus[i]         ,3,MUIM_NoNotifySet,MUIA_Menuitem_Checked,TRUE);
-         }
-
-         WR_SharedSetup(data, winnum);
-
-         return data;
+        DoMethod(data->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_CursorX, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &WR_UpdateCursorPosHook, winnum);
+        DoMethod(data->GUI.TE_EDIT, MUIM_Notify, MUIA_TextEditor_CursorY, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &WR_UpdateCursorPosHook, winnum);
       }
+      DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, data->GUI.MI_BOLD, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
+      DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, data->GUI.MI_ITALIC, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
+      DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, data->GUI.MI_UNDERLINE, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
+      DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_Pen,            7,              data->GUI.MI_COLORED, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, TRUE);
+      DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_Pen,            0,              data->GUI.MI_COLORED, 3,MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+      DoMethod(data->GUI.MI_BOLD,    MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_BOLD, winnum);
+      DoMethod(data->GUI.MI_ITALIC,  MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_ITALIC, winnum);
+      DoMethod(data->GUI.MI_UNDERLINE, MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_UNDERLINE, winnum);
+      DoMethod(data->GUI.MI_COLORED, MUIM_Notify, MUIA_Menuitem_Checked,          MUIV_EveryTime, data->GUI.TE_EDIT, 4, MUIM_CallHook, &WR_SetSoftStyleHook, SSM_COLOR, winnum);
+      DoMethod(data->GUI.RG_PAGE,    MUIM_Notify, MUIA_Group_ActivePage, 0, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->GUI.TE_EDIT);
+      DoMethod(data->GUI.ST_SUBJECT ,MUIM_Notify,MUIA_String_Acknowledge  ,MUIV_EveryTime,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_ActiveObject,data->GUI.TE_EDIT);
+      DoMethod(data->GUI.ST_SUBJECT ,MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime, MUIV_Notify_Application,3,MUIM_CallHook,   &WR_UpdateWTitleHook,winnum);
+      DoMethod(data->GUI.BT_ADD     ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddFileHook,winnum);
+      DoMethod(data->GUI.BT_ADDPACK ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddArchiveHook,winnum);
+      DoMethod(data->GUI.BT_DEL     ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_DeleteFileHook,winnum);
+      DoMethod(data->GUI.BT_DISPLAY ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_DisplayFileHook,winnum);
+      DoMethod(data->GUI.LV_ATTACH  ,MUIM_Notify,MUIA_NList_DoubleClick   ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_DisplayFileHook,winnum);
+      DoMethod(data->GUI.LV_ATTACH  ,MUIM_Notify,MUIA_NList_Active        ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_GetFileEntryHook,winnum);
+      DoMethod(data->GUI.RA_ENCODING,MUIM_Notify,MUIA_Radio_Active        ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_PutFileEntryHook,winnum);
+      DoMethod(data->GUI.ST_CTYPE   ,MUIM_Notify,MUIA_String_Contents     ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_PutFileEntryHook,winnum);
+      DoMethod(data->GUI.ST_DESC    ,MUIM_Notify,MUIA_String_Contents     ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_PutFileEntryHook,winnum);
+      DoMethod(data->GUI.RA_SIGNATURE,MUIM_Notify,MUIA_Radio_Active        ,MUIV_EveryTime,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_ChangeSignatureHook,MUIV_TriggerValue,winnum);
+      DoMethod(data->GUI.CH_DELSEND ,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_delsend              ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
+      DoMethod(data->GUI.CH_MDN,     MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_mdn                  ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
+      DoMethod(data->GUI.CH_ADDINFO ,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_addinfo              ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
+      DoMethod(mi_autospell         ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.TE_EDIT       ,3,MUIM_Set        ,MUIA_TextEditor_TypeAndSpell,MUIV_TriggerValue);
+      DoMethod(mi_autowrap          ,MUIM_Notify,MUIA_Menuitem_Checked    ,TRUE,          data->GUI.TE_EDIT       ,3,MUIM_Set        ,MUIA_TextEditor_WrapBorder, C->EdWrapCol);
+      DoMethod(mi_autowrap          ,MUIM_Notify,MUIA_Menuitem_Checked    ,FALSE,         data->GUI.TE_EDIT       ,3,MUIM_Set        ,MUIA_TextEditor_WrapBorder, 0);
+      DoMethod(mi_delsend           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_DELSEND    ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
+      DoMethod(mi_mdn,               MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->GUI.CH_MDN, 3, MUIM_Set, MUIA_Selected,MUIV_TriggerValue);
+      DoMethod(mi_addinfo           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_ADDINFO    ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
+      DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active        ,4             ,data->GUI.RA_SIGNATURE  ,3,MUIM_Set        ,MUIA_Radio_Active,0);
+      DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active        ,4             ,data->GUI.CH_ADDINFO    ,3,MUIM_Set        ,MUIA_Selected,FALSE);
+      for(i = 0; i < 3; i++)
+      {
+        DoMethod(data->GUI.CY_IMPORTANCE,MUIM_Notify,MUIA_Cycle_Active     ,i              ,strip                  ,4,MUIM_SetUData,WMEN_IMPORT0+i,MUIA_Menuitem_Checked,TRUE);
+        DoMethod(data->GUI.WI           ,MUIM_Notify,MUIA_Window_MenuAction,WMEN_IMPORT0+i ,data->GUI.CY_IMPORTANCE,3,MUIM_Set     ,MUIA_Cycle_Active,i);
+      }
+      for(i = 0; i < 4; i++)
+      {
+        DoMethod(data->GUI.RA_SIGNATURE ,MUIM_Notify,MUIA_Radio_Active     ,i              ,strip                  ,4,MUIM_SetUData,WMEN_SIGN0+i,MUIA_Menuitem_Checked,TRUE);
+        DoMethod(data->GUI.WI           ,MUIM_Notify,MUIA_Window_MenuAction,WMEN_SIGN0+i   ,data->GUI.RA_SIGNATURE ,3,MUIM_Set     ,MUIA_Radio_Active,i);
+      }
+      for(i = SEC_NONE; i < SEC_MAXDUMMY; i++)
+      {
+        // connect menuitems -> radiobuttons
+        DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction,WMEN_SECUR0+i,data->GUI.RA_SECURITY,3,MUIM_Set        ,MUIA_Radio_Active    ,i);
+        // ...and the other way round
+        DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active     ,i            ,sec_menus[i]         ,3,MUIM_NoNotifySet,MUIA_Menuitem_Checked,TRUE);
+      }
+
+      WR_SharedSetup(data, winnum);
+    }
+    else
+    {
       free(data);
-   }
-   return NULL;
+      data = NULL;
+    }
+  }
+
+  RETURN(data);
+  return data;
 }
 
 ///

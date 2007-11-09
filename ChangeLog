@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-09  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c: double clicking an entry in the attachment list will now display
+    that file. This fullfils feature request #1828213.
+
 2007-11-08  Jens Langner <Jens.Langner@light-speed.de>
 
   * locale/deutsch.ct: minor typo/phrasing fixes.
