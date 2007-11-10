@@ -2167,21 +2167,24 @@ BOOL RE_DecodePart(struct Part *rp)
 
   // it only makes sense to go on here if
   // the data wasn`t decoded before.
-  if(!rp->Decoded)
+  if(rp->Decoded == FALSE)
   {
     FILE *in;
     FILE *out;
     char file[SIZE_FILE];
     char buf[SIZE_LINE];
-    char ext[SIZE_FILE] = "\0";
+    char ext[SIZE_FILE];
 
-    if((in = fopen(rp->Filename, "r")))
+    // start with an empty extension string
+    ext[0] = '\0';
+
+    if((in = fopen(rp->Filename, "r")) != NULL)
     {
       setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
 
       // if this part has some headers, let`s skip them so that
       // we just decode the raw data.
-      if(rp->HasHeaders)
+      if(rp->HasHeaders == TRUE)
       {
         while(GetLine(in, buf, SIZE_LINE))
         {
@@ -2211,7 +2214,7 @@ BOOL RE_DecodePart(struct Part *rp)
       {
         // we first try to identify the file extension via the user
         // definable MIME type list configuration.
-        if(rp->ContentType && rp->ContentType[0] != '\0')
+        if(rp->ContentType != NULL && rp->ContentType[0] != '\0')
         {
           struct MinNode *curNode;
 
@@ -2225,13 +2228,17 @@ BOOL RE_DecodePart(struct Part *rp)
               char *e;
 
               if((e = strpbrk(s, " |;,")) == NULL)
-                e = s+strlen(s);
+                e = s + strlen(s);
 
-              strlcpy(ext, s, MIN(sizeof(ext), (size_t)(e-s+1)));
+              // break out of the loop only if we found a non-empty extension string
+              if(s[0] != '\0')
+              {
+                strlcpy(ext, s, MIN(sizeof(ext), (size_t)(e - s + 1)));
 
-              D(DBF_MIME, "identified file extension '%s' via user MIME list", ext);
+                D(DBF_MIME, "identified file extension '%s' via user MIME list entry '%s'", ext, curType->ContentType);
 
-              break;
+                break;
+              }
             }
           }
         }
@@ -2253,7 +2260,7 @@ BOOL RE_DecodePart(struct Part *rp)
         // and last, but not least we try to identify the proper file extension
         // via our internal fallback mime type list
         if(ext[0] == '\0' &&
-           rp->ContentType && rp->ContentType[0] != '\0')
+           rp->ContentType != NULL && rp->ContentType[0] != '\0')
         {
           int i;
 
@@ -2293,7 +2300,7 @@ BOOL RE_DecodePart(struct Part *rp)
       D(DBF_MAIL, "decoding '%s' to '%s'", rp->Filename, buf);
 
       // now open the stream and decode it afterwards.
-      if((out = fopen(buf, "w")))
+      if((out = fopen(buf, "w")) != NULL)
       {
         int decodeResult;
 
@@ -2335,7 +2342,7 @@ BOOL RE_DecodePart(struct Part *rp)
           DeleteFile(buf); // delete the temporary file again.
         }
       }
-      else if((out = fopen(buf, "r")))
+      else if((out = fopen(buf, "r")) != NULL)
       {
         // if we couldn`t open that file for writing we check if it exists
         // and if so we use it because it is locked actually and already decoded

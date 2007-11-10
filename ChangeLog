@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-10  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: MIME type entries with no extension strings will now no longer be
+    accepted while scanning for an extension.
+
 2007-11-10  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_FI.c: added somewhat more debug output to the filter functions.
