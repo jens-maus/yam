@@ -9,6 +9,8 @@ $URL$
 
   * YAM_RE.c: MIME type entries with no extension strings will now no longer be
     accepted while scanning for an extension.
+  * YAM.cd: changed to shortcut for the "Search for updates" cycler from "U"
+    to "d". This fixes bug #1829696.
 
 2007-11-10  Jens Langner <Jens.Langner@light-speed.de>
 
