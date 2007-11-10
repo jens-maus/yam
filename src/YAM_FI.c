@@ -625,120 +625,166 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
 //  Checks if a message fulfills the search criteria
 BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
 {
-   BOOL found0, found = FALSE;
-   int comp_bak = search->Compare;
+  BOOL found = FALSE;
 
-   switch(search->Mode)
-   {
-      case SM_FROM:
-      case SM_TO:
-      case SM_CC:
-      case SM_REPLYTO:
-      case SM_SUBJECT:
-      case SM_DATE:
-      case SM_HEADLINE:
-      case SM_SIZE:
+  ENTER();
+
+  D(DBF_FILTER, "doing filter search in message '%s'...", mail->Subject);
+
+  switch(search->Mode)
+  {
+    case SM_FROM:
+    case SM_TO:
+    case SM_CC:
+    case SM_REPLYTO:
+    case SM_SUBJECT:
+    case SM_DATE:
+    case SM_HEADLINE:
+    case SM_SIZE:
+    {
+      // check whether this is a fast search or not.
+      found = (search->Fast == FS_NONE) ? FI_SearchPatternInHeader(search, mail) : FI_SearchPatternFast(search, mail);
+
+      if(found)
+        D(DBF_FILTER, "  search mode %ld matched", search->Mode);
+      else
+        D(DBF_FILTER, "  search mode %ld NOT matched", search->Mode);
+    }
+    break;
+
+    case SM_HEADER:
+    {
+      BOOL found0;
+      int comp_bak = search->Compare;
+
+      search->Compare = 0;
+      found0 = FI_SearchPatternInHeader(search, mail);
+      search->Compare = comp_bak;
+
+      if(found0 == (search->Compare == 0))
       {
-        // check whether this is a fast search or not.
-        found = (search->Fast == FS_NONE) ? FI_SearchPatternInHeader(search, mail) : FI_SearchPatternFast(search, mail);
+        D(DBF_FILTER, "  HEADER: search for '%s' matched", search->Pattern);
+        found = TRUE;
       }
-      break;
+      else
+        D(DBF_FILTER, "  HEADER: search for '%s' NOT matched", search->Pattern);
+    }
+    break;
 
-      case SM_HEADER:
+    case SM_BODY:
+    {
+      BOOL found0;
+      int comp_bak = search->Compare;
+
+      search->Compare = 0;
+      found0 = FI_SearchPatternInBody(search, mail);
+      search->Compare = comp_bak;
+
+      if(found0 == (search->Compare == 0))
       {
-        search->Compare = 0;
-        found0 = FI_SearchPatternInHeader(search, mail);
-        search->Compare = comp_bak;
-        if (found0 == (search->Compare == 0)) found = TRUE;
+        D(DBF_FILTER, "  BODY: search for '%s' matched", search->Pattern);
+        found = TRUE;
       }
-      break;
+      else
+        D(DBF_FILTER, "  BODY: search for '%s' NOT matched", search->Pattern);
+    }
+    break;
 
-      case SM_BODY:
-      {
-        search->Compare = 0;
+    case SM_WHOLE:
+    {
+      BOOL found0;
+      int comp_bak = search->Compare;
+
+      search->Compare = 0;
+
+      if(!(found0 = FI_SearchPatternInHeader(search, mail)))
         found0 = FI_SearchPatternInBody(search, mail);
-        search->Compare = comp_bak;
-        if (found0 == (search->Compare == 0)) found = TRUE;
-      }
-      break;
 
-      case SM_WHOLE:
+      search->Compare = comp_bak;
+
+      if(found0 == (search->Compare == 0))
       {
-        search->Compare = 0;
-        if (!(found0 = FI_SearchPatternInHeader(search, mail)))
-        found0 = FI_SearchPatternInBody(search, mail);
-        search->Compare = comp_bak;
-        if(found0 == (search->Compare == 0)) found = TRUE;
+        D(DBF_FILTER, "  WHOLE: search for '%s' matched", search->Pattern);
+        found = TRUE;
       }
-      break;
+      else
+        D(DBF_FILTER, "  WHOLE: search for '%s' NOT matched", search->Pattern);
+    }
+    break;
 
-      case SM_STATUS:
+    case SM_STATUS:
+    {
+      BOOL statusFound = FALSE;
+
+      switch(search->Status)
       {
-        BOOL statusFound = FALSE;
+        case 'U':
+          statusFound = (hasStatusNew(mail) || !hasStatusRead(mail));
+        break;
 
-        switch(search->Status)
-        {
-          case 'U':
-            statusFound = (hasStatusNew(mail) || !hasStatusRead(mail));
-          break;
+        case 'O':
+          statusFound = (!hasStatusNew(mail) && hasStatusRead(mail));
+        break;
 
-          case 'O':
-            statusFound = (!hasStatusNew(mail) && hasStatusRead(mail));
-          break;
+        case 'F':
+          statusFound = hasStatusForwarded(mail);
+        break;
 
-          case 'F':
-            statusFound = hasStatusForwarded(mail);
-          break;
+        case 'R':
+          statusFound = hasStatusReplied(mail);
+        break;
 
-          case 'R':
-            statusFound = hasStatusReplied(mail);
-          break;
+        case 'W':
+          statusFound = hasStatusQueued(mail);
+        break;
 
-          case 'W':
-            statusFound = hasStatusQueued(mail);
-          break;
+        case 'E':
+          statusFound = hasStatusError(mail);
+        break;
 
-          case 'E':
-            statusFound = hasStatusError(mail);
-          break;
+        case 'H':
+          statusFound = hasStatusHold(mail);
+        break;
 
-          case 'H':
-            statusFound = hasStatusHold(mail);
-          break;
+        case 'S':
+          statusFound = hasStatusSent(mail);
+        break;
 
-          case 'S':
-            statusFound = hasStatusSent(mail);
-          break;
+        case 'M':
+          statusFound = hasStatusMarked(mail);
+        break;
 
-          case 'M':
-            statusFound = hasStatusMarked(mail);
-          break;
-
-          case 'X':
-            statusFound = hasStatusSpam(mail);
-          break;
-        }
-
-        if((search->Compare == 0 && statusFound == TRUE) ||
-           (search->Compare == 1 && statusFound == FALSE))
-        {
-          found = TRUE;
-        }
+        case 'X':
+          statusFound = hasStatusSpam(mail);
+        break;
       }
-      break;
 
-      case SM_SPAM:
+      if((search->Compare == 0 && statusFound == TRUE) ||
+         (search->Compare == 1 && statusFound == FALSE))
       {
-        D(DBF_FILTER, "search for spam");
-      	if(C->SpamFilterEnabled && BayesFilterClassifyMessage(mail))
-      	{
-      	  found = TRUE;
-      	}
+        D(DBF_FILTER, "  status search %ld matched", search->Status);
+        found = TRUE;
       }
-      break;
-   }
+      else
+        D(DBF_FILTER, "  status search %ld NOT matched", search->Status);
+    }
+    break;
 
-   return found;
+    case SM_SPAM:
+    {
+      if(C->SpamFilterEnabled && BayesFilterClassifyMessage(mail))
+      {
+        D(DBF_FILTER, "  identified as SPAM");
+        found = TRUE;
+      }
+      else
+        D(DBF_FILTER, "  identified as HAM");
+    }
+    break;
+  }
+
+  RETURN(found);
+  return found;
 }
 
 ///
@@ -754,6 +800,8 @@ BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail)
   {
     int i = 0;
     struct MinNode *curNode;
+
+    D(DBF_FILTER, "checking rules of filter '%s' for mail '%s'...", filter->name, mail->Subject);
 
     // we have to iterate through our ruleList and depending on the combine
     // operation we evaluate if the filter hits any mail criteria or not.
@@ -1629,6 +1677,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
               BOOL doClassification;
 
               D(DBF_FILTER, "About to apply SPAM filter to message with subject \"%s\"", mail->Subject);
+
               if(mode == APPLY_AUTO && C->SpamFilterForNewMail)
               {
                 // classify this mail if we are allowed to check new mails automatically
@@ -1707,6 +1756,8 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
         MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OkayReq), buf);
       }
     }
+    else
+      D(DBF_FILTER, "filtering rejected by user.");
   }
 
   LEAVE();

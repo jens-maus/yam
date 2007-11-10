@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-10  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_FI.c: added somewhat more debug output to the filter functions.
+
 2007-11-09  Jens Langner <Jens.Langner@light-speed.de>
 
   * locale/deutsch.ct: updated according to latest changes to YAM.cd
