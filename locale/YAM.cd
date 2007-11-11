@@ -1490,7 +1490,7 @@ MSG_CO_XPKPackEnc (527//)
 Pack/protect
 ;
 MSG_CO_Archiver (528//)
-_Archiver
+Archi_ver
 ;
 MSG_CO_ScriptMenu (529//)
 'Scripts' menu entry %ld
@@ -4104,7 +4104,7 @@ MSG_CO_SMTPUser (1338//)
 Us_er ID
 ;
 MSG_CO_SMTPPass (1339//)
-Passwo_rd
+Pass_word
 ;
 MSG_WR_AltQuoted (1342//)
 Alternate quoted
@@ -5253,7 +5253,7 @@ MSG_UPD_NOTIFICATION_URL (1689//)
 URL
 ;
 MSG_CO_MIME_DESCRIPTION (1690//)
-_Description
+D_escription
 ;
 MSG_CTapplicationgz (1691//)
 GNU zip archive
@@ -5577,7 +5577,7 @@ MSG_CO_SPAM_DELETESPAMFOLDER (1782//)
 _Delete spam folder
 ;
 MSG_CO_SMTPAUTH_METHOD (1783//)
-_Method
+Met_hod
 ;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD (1784//)
 Allows to specify the SMTP-AUTH method to be\n\
@@ -5888,7 +5888,7 @@ MSG_CO_MDN_DISABLED (1872//)
 _Never send a return receipt
 ;
 MSG_CO_MDN_ENABLED (1873//)
-A_llow return receipts for some messages
+Allow _return receipts for some messages
 ;
 MSG_CO_MDN_NORECIPIENT (1874//)
 If I'm not in the _To or Cc of the message:
@@ -5900,7 +5900,7 @@ MSG_CO_MDN_DELETE (1876//)
 If I'm going to just _delete the message:
 ;
 MSG_CO_MDN_OTHER (1877//)
-In all other _cases:
+In all oth_er cases:
 ;
 MSG_CO_REQUESTMDN (1878//)
 When sending _messages, always request a return receipt

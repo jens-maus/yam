@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-11  David Rey <tactica@users.sourceforge.net>
+
+  *  YAM.cd: changed MSG_CO_Archiver, MSG_CO_SMTPAUTH_METHOD, MSG_CO_SMTPPass,
+     MSG_CO_MDN_ENABLED, MSG_CO_MDN_OTHER, MSG_CO_MIME_DESCRIPTION to fix even
+     more duplicated shortcuts.
+
 2007-11-10  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: MIME type entries with no extension strings will now no longer be
