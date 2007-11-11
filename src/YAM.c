@@ -162,10 +162,12 @@ static struct ADST_Data
 // Semaphore related suff
 static struct StartupSemaphore
 {
-  struct SignalSemaphore Semaphore; // a standard semaphore structure
+  struct SignalSemaphore semaphore; // a standard semaphore structure
   ULONG UseCount;                   // how many other participants know this semaphore
+  #if !defined(__amigaos4__)
   char Name[12];                    // an optional name for a public semaphore
-} *startupSema;
+  #endif
+} *startupSemaphore = NULL;
 
 #define STARTUP_SEMAPHORE_NAME      "YAM_Startup"
 
@@ -900,7 +902,7 @@ static void TC_Exit(void)
         #if defined(__amigaos4__)
         FreeSysObject(ASOT_IOREQUEST, TCData.timer[tio].tr);
         #else
-        FreeMem(TCData.timer[tio].tr, sizeof(struct TimeRequest));
+        FreeVec(TCData.timer[tio].tr);
         #endif
 
         TCData.timer[tio].tr = NULL;
@@ -981,7 +983,7 @@ static BOOL TC_Init(void)
               break;
             }
             #else
-            if((TCData.timer[tio].tr = AllocMem(sizeof(struct TimeRequest), MEMF_SHARED)) == NULL)
+            if((TCData.timer[tio].tr = AllocPooled(G->SharedMemPool, sizeof(struct TimeRequest))) == NULL)
               break;
             #endif
 
@@ -1332,50 +1334,51 @@ static void FreeXPKPackerList(void)
 //  create a new startup semaphore or find an old instance
 static struct StartupSemaphore *CreateStartupSemaphore(void)
 {
-  ULONG nameLen;
-  struct StartupSemaphore *newSema;
+  struct StartupSemaphore *semaphore;
 
   ENTER();
 
-  // if valid name is given round its length to a multiple of 4
-  nameLen = ((strlen(STARTUP_SEMAPHORE_NAME) + 3) / 4) * 4;
-
-  // We must allocate the memory for the new semaphore before we look for an old instance,
-  // because the Forbid() may be broken by AllocVec().
-  if((newSema = AllocVec(sizeof(*newSema) + nameLen + 1, MEMF_SHARED|MEMF_CLEAR)) != NULL)
+  // we have to disable multitasking before looking for an old instance with the same name
+  Forbid();
+  if((semaphore = (struct StartupSemaphore *)FindSemaphore((STRPTR)STARTUP_SEMAPHORE_NAME)) != NULL)
   {
-    struct StartupSemaphore *oldSema;
+    // the semaphore already exists, so just bump the counter
+    semaphore->UseCount++;
+  }
+  Permit();
 
-    // initialize the semaphore structure and start with a use counter of 1
-    InitSemaphore(&newSema->Semaphore);
-    strlcpy(newSema->Name, STARTUP_SEMAPHORE_NAME, sizeof(newSema->Name));
-    newSema->Semaphore.ss_Link.ln_Name = newSema->Name;
-    newSema->UseCount = 1;
+  // if we didn't find any semaphore with that name we generate a new one
+  if(semaphore == NULL)
+  {
+    // allocate the memory for the semaphore system structure itself
+    #if defined(__amigaos4__)
+    semaphore = AllocSysObjectTags(ASOT_SEMAPHORE,
+                                   ASOSEM_Size,     sizeof(struct StartupSemaphore),
+                                   ASOSEM_Name,     STARTUP_SEMAPHORE_NAME,
+                                   ASOSEM_CopyName, TRUE,
+                                   ASOSEM_Public,   TRUE,
+                                   TAG_DONE);
+    #else
+    semaphore = AllocPooled(G->SharedMemPool, sizeof(struct StartupSemaphore));
+    #endif
 
-    // we have to disable multitasking before looking for an old instance with the same name
-    Forbid();
-    if((oldSema = (struct StartupSemaphore *)FindSemaphore((STRPTR)STARTUP_SEMAPHORE_NAME)) != NULL)
+    if(semaphore != NULL)
     {
-      // the semaphore already exists, so just bump the counter
-      oldSema->UseCount++;
-    }
-    else
-    {
+      // initialize the semaphore structure and start with a use counter of 1
+      semaphore->UseCount = 1;
+
+      #if !defined(__amigaos4__)
+      InitSemaphore(&semaphore->Semaphore);
+      strlcpy(semaphore->Name, STARTUP_SEMAPHORE_NAME, sizeof(semaphore->Name));
+      semaphore->Semaphore.ss_Link.ln_Name = semaphore->Name;
       // add the new semaphore to the public list of semaphores
-      AddSemaphore(&newSema->Semaphore);
-    }
-    Permit();
-
-    if(oldSema != NULL)
-    {
-      // the semaphore already existed, so we can free our new instance and return the old instance
-      FreeVec(newSema);
-      newSema = oldSema;
+      AddSemaphore(&semaphore->Semaphore);
+      #endif
     }
   }
 
-  RETURN(newSema);
-  return newSema;
+  RETURN(semaphore);
+  return semaphore;
 }
 ///
 /// DeleteStartupSemaphore
@@ -1384,29 +1387,40 @@ static void DeleteStartupSemaphore(void)
 {
   ENTER();
 
-  if(startupSema != NULL)
+  if(startupSemaphore != NULL)
   {
     BOOL freeIt = FALSE;
+
     // first obtain the semaphore so that nobody else can interfere
-    ObtainSemaphore(&startupSema->Semaphore);
+    ObtainSemaphore(&startupSemaphore->semaphore);
+
     Forbid();
     // now we can release the semaphore again, because nobody else can steal it
-    ReleaseSemaphore(&startupSema->Semaphore);
+    ReleaseSemaphore(&startupSemaphore->semaphore);
 
     // one user less for this semaphore
-    startupSema->UseCount--;
+    startupSemaphore->UseCount--;
+
     // if nobody else uses this semaphore it can be removed complete
-    if(startupSema->UseCount == 0)
+    if(startupSemaphore->UseCount == 0)
     {
       // remove the semaphore from the public list
-      RemSemaphore(&startupSema->Semaphore);
+      RemSemaphore(&startupSemaphore->semaphore);
+
       // and the memory can be freed afterwards
       freeIt = TRUE;
     }
     Permit();
 
     if(freeIt)
-      FreeVec(startupSema);
+    {
+      #if defined(__amigaos4__)
+      FreeSysObject(ASOT_SEMAPHORE, startupSemaphore);
+      #else
+      FreePooled(G->SharedMemPool, startupSemaphore, sizeof(struct StartupSemaphore));
+      #endif
+      startupSemaphore = NULL;
+    }
   }
 
   LEAVE();
@@ -1662,6 +1676,14 @@ static void Terminate(void)
     CloseLocale(G->Locale);
 
   CLOSELIB(LocaleBase, ILocale);
+
+  // make sure to free the shared memory pool before
+  // freeing the rest
+  #if defined(__amigaos4__)
+  FreeSysObject(ASOT_MEMPOOL, G->SharedMemPool);
+  #else
+  DeletePool(G->SharedMemPool);
+  #endif
 
   // last, but not clear free the global structure
   free(G);
@@ -1967,7 +1989,7 @@ static BOOL Root_New(BOOL hidden)
 
   // make the following operations single threaded
   // MUI chokes if a single task application is created a second time while the first instance is not yet fully created
-  ObtainSemaphore(&startupSema->Semaphore);
+  ObtainSemaphore(&startupSemaphore->semaphore);
 
   if((G->App = YAMObject, End))
   {
@@ -1990,7 +2012,7 @@ static BOOL Root_New(BOOL hidden)
   }
 
   // now a second instance may continue
-  ReleaseSemaphore(&startupSema->Semaphore);
+  ReleaseSemaphore(&startupSemaphore->semaphore);
 
   RETURN(result);
   return result;
@@ -2379,7 +2401,7 @@ static void Initialise(BOOL hidden)
   G->codesetsList = CodesetsListCreateA(NULL);
 
   // create a public semaphore which can be used to single thread certain actions
-  if((startupSema = CreateStartupSemaphore()) == NULL)
+  if((startupSemaphore = CreateStartupSemaphore()) == NULL)
     Abort(tr(MSG_ER_CANNOT_CREATE_SEMAPHORE));
 
   // try to find out if DefIcons is running or not by querying
@@ -3015,6 +3037,23 @@ int main(int argc, char **argv)
       // allocate our global G and C structures
       if((G = calloc(1, sizeof(struct Global))) == NULL ||
          (C = calloc(1, sizeof(struct Config))) == NULL)
+      {
+        // break out immediately to signal an error!
+        break;
+      }
+
+      // create the MEMF_SHARED memory pool we use for our
+      // own AllocVecPooled()/AllocPooled() allocations later on
+      #if defined(__amigaos4__)
+      if((G->SharedMemPool = AllocSysObjectTags(ASOT_MEMPOOL,
+                                                ASOPOOL_MFlags,    MEMF_SHARED|MEMF_CLEAR,
+                                                ASOPOOL_Puddle,    2048,
+                                                ASOPOOL_Threshold, 1024,
+                                                ASOPOOL_Name,      "YAM Shared Pool",
+                                                TAG_DONE)) == NULL)
+      #else
+      if((G->SharedMemPool = CreatePool(MEMF_SHARED|MEMF_CLEAR, 2048, 1024)) == NULL)
+      #endif
       {
         // break out immediately to signal an error!
         break;

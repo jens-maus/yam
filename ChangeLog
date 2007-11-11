@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-11  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, YAM.h, YAM_rexx.c, YAM_UT.c, YAM_rexx_rxif.c, YAM_rexx_rxif.h:
+    changed all own AllocVec()-MEMF_SHARED-like memory allocations to use an
+    own private memory pool instead of allocating memory from the global system
+    pool. Where appropriate we use the new AllocVecPooled() instead of
+    the old AllocPooled() function. In addition, the semaphore handling/setup
+    is now also done via AllocSysObject() on OS4.
+
 2007-11-11  David Rey <tactica@users.sourceforge.net>
 
   * YAM.cd: changed MSG_CO_Archiver, MSG_CO_SMTPAUTH_METHOD, MSG_CO_SMTPPass,

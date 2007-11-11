@@ -132,7 +132,7 @@ static BPTR CloneSearchPath(void)
   if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
     WorkbenchControl(NULL, WBCTRLA_DuplicateSearchPath, &path, TAG_DONE);
 
-  #ifndef __amigaos4__
+  #if !defined(__amigaos4__)
   // if we couldn't obtain a duplicate copy of the workbench search
   // path here it is very likely that we are running on a system with
   // workbench.library < 44 or on MorphOS with an old workbench.lib.

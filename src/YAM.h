@@ -64,6 +64,7 @@ enum TimerIO { TIO_WRINDEX=0,
 struct Global
 {
    // pointers first
+   APTR                     SharedMemPool; // MEMF_SHARED memory pool
    Object *                 App;
    Object *                 WI_SEARCH;
    Object *                 NewMailSound_Obj;

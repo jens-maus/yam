@@ -43,6 +43,7 @@
 
 #include "extrasrc.h"
 
+#include "YAM.h"
 #include "YAM_mime.h"
 #include "YAM_rexx.h"
 #include "YAM_rexx_rxcl.h"
@@ -271,7 +272,11 @@ void CloseDownARexxHost(struct RexxHost *host)
     host->rdargs = NULL;
   }
 
-  FreeVec(host);
+  #if defined(__amigaos4__)
+  FreeVecPooled(G->SharedMemPool, host);
+  #else
+  FreePooled(G->SharedMemPool, host, sizeof(struct RexxHost));
+  #endif
 
   LEAVE();
 }
@@ -288,7 +293,11 @@ struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
   if(basename == NULL || basename[0] == '\0' )
     basename = RexxPortBaseName;
    
-  if((host = AllocVec(sizeof(struct RexxHost), MEMF_SHARED|MEMF_CLEAR)) != NULL)
+  #if defined(__amigaos4__)
+  if((host = AllocVecPooled(G->SharedMemPool, sizeof(struct RexxHost))) != NULL)
+  #else
+  if((host = AllocPooled(G->SharedMemPool, sizeof(struct RexxHost))) != NULL)
+  #endif
   {
     strlcpy(host->portname, basename, sizeof(host->portname));
    
@@ -344,7 +353,11 @@ struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
         #endif
       }
 
-      FreeVec(host);
+      #if defined(__amigaos4__)
+      FreeVecPooled(G->SharedMemPool, host);
+      #else
+      FreePooled(G->SharedMemPool, host, sizeof(struct RexxHost));
+      #endif
       host = NULL;
     }
   }
@@ -482,8 +495,14 @@ static char *CreateVAR( struct rxs_stemnode *stem )
    for( s = stem; s; s = s->succ )
       size += strlen( s->value ) + 1;
    
-   if( !(var = AllocVec( size + 1, MEMF_SHARED )) )
-      return( (char *) -1 );
+   #if defined(__amigaos4__)
+   if((var = AllocVecPooled(G->SharedMemPool, size+1)) == NULL)
+   #else
+   if((var = AllocVec(size+1, MEMF_SHARED|MEMF_CLEAR)) == NULL)
+   #endif
+   {
+      return((char *)-1);
+   }
    
    *var = '\0';
    
@@ -503,7 +522,11 @@ static struct rxs_stemnode *new_stemnode( struct rxs_stemnode **first, struct rx
 {
    struct rxs_stemnode *new;
    
-   if( !(new = AllocVec(sizeof(struct rxs_stemnode), MEMF_SHARED|MEMF_CLEAR)) )
+   #if defined(__amigaos4__)
+   if((new = AllocVecPooled(G->SharedMemPool, sizeof(struct rxs_stemnode))) == NULL)
+   #else
+   if((new = AllocPooled(G->SharedMemPool, sizeof(struct rxs_stemnode))) == NULL)
+   #endif
    {
       return( NULL );
    }
@@ -542,7 +565,11 @@ static void free_stemlist( struct rxs_stemnode *first )
       if(first->value)
         free(first->value);
 
-      FreeVec( first );
+      #if defined(__amigaos4__)
+      FreeVecPooled(G->SharedMemPool, first);
+      #else
+      FreePooled(G->SharedMemPool, first, sizeof(struct rxs_stemnode));
+      #endif
    }
 }
 
@@ -687,7 +714,11 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    
    ENTER();
 
-   if( !(argb = AllocVec((ULONG)strlen((char *) ARG0(rexxmsg)) + 2, MEMF_SHARED)) )
+   #if defined(__amigaos4__)
+   if((argb = AllocVecPooled(G->SharedMemPool, (ULONG)strlen((char *) ARG0(rexxmsg)) + 2)) == NULL)
+   #else
+   if((argb = AllocVec((ULONG)strlen((char *) ARG0(rexxmsg)) + 2, MEMF_SHARED|MEMF_CLEAR)) = NULL)
+   #endif
    {
       rc2 = ERROR_NO_FREE_STORE;
       goto drc_cleanup;
@@ -712,7 +743,14 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
          if( CommandToRexx(host, rm) )
          {
             // the reply is done later by the dispatcher
-            if( argb ) FreeVec( argb );
+            if(argb)
+            {
+              #if defined(__amigaos4__)
+              FreeVecPooled(G->SharedMemPool, argb);
+              #else
+              FreeVec(argb);
+              #endif
+            }
 
             LEAVE();
             return;
@@ -735,8 +773,13 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    
    // get memory for the arguments
    (rxc->function)(host, (void **)(APTR)&array, RXIF_INIT, rexxmsg);
-   cargstr = AllocVec((ULONG)(rxc->args ? 15+strlen(rxc->args) : 15), MEMF_SHARED );
-   
+
+   #if defined(__amigaos4__)
+   cargstr = AllocVecPooled(G->SharedMemPool, (ULONG)(rxc->args ? 15+strlen(rxc->args) : 15));
+   #else
+   cargstr = AllocVec((ULONG)(rxc->args ? 15+strlen(rxc->args) : 15), MEMF_SHARED|MEMF_CLEAR);
+   #endif
+
    if( !array || !cargstr )
    {
       rc2 = ERROR_NO_FREE_STORE;
@@ -819,7 +862,11 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
                   rc2 = (long) "Unable to set Rexx variable";
                }
                
-               FreeVec( result );
+               #if defined(__amigaos4__)
+               FreeVecPooled(G->SharedMemPool, result);
+               #else
+               FreeVec(result);
+               #endif
             }
             
             result = NULL;
@@ -844,8 +891,14 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
                   rc2 = (long) "Unable to set Rexx variable";
                }
                
-               if( result && (long) result != -1 )
-                  FreeVec( result );
+               if(result && (long)result != -1)
+               {
+                 #if defined(__amigaos4__)
+                 FreeVecPooled(G->SharedMemPool, result);
+                 #else
+                 FreeVec(result);
+                 #endif
+               }
             }
             
             result = NULL;
@@ -870,11 +923,37 @@ drc_cleanup:
    ReplyRexxCommand( rexxmsg, rc, rc2, result );
    
    // free the memory
-   if( result ) FreeVec( result );
+   if(result)
+   {
+     #if defined(__amigaos4__)
+     FreeVecPooled(G->SharedMemPool, result);
+     #else
+     FreeVec(result);
+     #endif
+   }
+
    FreeArgs( host->rdargs );
-   if( cargstr ) FreeVec( cargstr );
-   if( array ) (rxc->function)( host, (void **)(APTR)&array, RXIF_FREE, rexxmsg );
-   if( argb ) FreeVec( argb );
+
+   if(cargstr)
+   {
+     #if defined(__amigaos4__)
+     FreeVecPooled(G->SharedMemPool, cargstr);
+     #else
+     FreeVec( cargstr );
+     #endif
+   }
+
+   if(array)
+     (rxc->function)(host, (void **)(APTR)&array, RXIF_FREE, rexxmsg);
+
+   if(argb)
+   {
+     #if defined(__amigaos4__)
+     FreeVecPooled(G->SharedMemPool, argb);
+     #else
+     FreeVec(argb);
+     #endif
+   }
 
    LEAVE();
 }

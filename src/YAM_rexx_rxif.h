@@ -28,11 +28,14 @@
 
 ***************************************************************************/
 
-#define RXIF_INIT   1
-#define RXIF_ACTION 2
-#define RXIF_FREE   3
-
 #include <rexx/storage.h>
+
+enum RexxAction
+{
+  RXIF_INIT   = 1,
+  RXIF_ACTION = 2,
+  RXIF_FREE   = 3
+};
 
 struct RexxHost
 {
@@ -65,7 +68,7 @@ struct rxd_addrdelete
       char *alias;
    } arg;
 };
-void rx_addrdelete( struct RexxHost *, struct rxd_addrdelete **, long, struct RexxMsg * );
+void rx_addrdelete( struct RexxHost *, struct rxd_addrdelete **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_addredit
 {
@@ -88,7 +91,7 @@ struct rxd_addredit
    } arg;
 };
 
-void rx_addredit( struct RexxHost *, struct rxd_addredit **, long, struct RexxMsg * );
+void rx_addredit( struct RexxHost *, struct rxd_addredit **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_addrfind
 {
@@ -104,7 +107,7 @@ struct rxd_addrfind
         } res;
 };
 
-void rx_addrfind( struct RexxHost *, struct rxd_addrfind **, long, struct RexxMsg * );
+void rx_addrfind( struct RexxHost *, struct rxd_addrfind **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_addrgoto
 {
@@ -114,7 +117,7 @@ struct rxd_addrgoto
         } arg;
 };
 
-void rx_addrgoto( struct RexxHost *, struct rxd_addrgoto **, long, struct RexxMsg * );
+void rx_addrgoto( struct RexxHost *, struct rxd_addrgoto **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_addrinfo
 {
@@ -142,7 +145,7 @@ struct rxd_addrinfo
   } res;
 };
 
-void rx_addrinfo( struct RexxHost *, struct rxd_addrinfo **, long, struct RexxMsg * );
+void rx_addrinfo( struct RexxHost *, struct rxd_addrinfo **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_addrload
 {
@@ -152,7 +155,7 @@ struct rxd_addrload
         } arg;
 };
 
-void rx_addrload( struct RexxHost *, struct rxd_addrload **, long, struct RexxMsg * );
+void rx_addrload( struct RexxHost *, struct rxd_addrload **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_addrnew
 {
@@ -169,7 +172,7 @@ struct rxd_addrnew
         } res;
 };
 
-void rx_addrnew( struct RexxHost *, struct rxd_addrnew **, long, struct RexxMsg * );
+void rx_addrnew( struct RexxHost *, struct rxd_addrnew **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_addrresolve
 {
@@ -183,7 +186,7 @@ struct rxd_addrresolve
         } res;
 };
 
-void rx_addrresolve( struct RexxHost *, struct rxd_addrresolve **, long, struct RexxMsg * );
+void rx_addrresolve( struct RexxHost *, struct rxd_addrresolve **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_addrsave
 {
@@ -193,7 +196,7 @@ struct rxd_addrsave
         } arg;
 };
 
-void rx_addrsave( struct RexxHost *, struct rxd_addrsave **, long, struct RexxMsg * );
+void rx_addrsave( struct RexxHost *, struct rxd_addrsave **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_appbusy
 {
@@ -203,14 +206,14 @@ struct rxd_appbusy
         } arg;
 };
 
-void rx_appbusy( struct RexxHost *, struct rxd_appbusy **, long, struct RexxMsg * );
+void rx_appbusy( struct RexxHost *, struct rxd_appbusy **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_appnobusy
 {
         long rc, rc2;
 };
 
-void rx_appnobusy( struct RexxHost *, struct rxd_appnobusy **, long, struct RexxMsg * );
+void rx_appnobusy( struct RexxHost *, struct rxd_appnobusy **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_folderinfo
 {
@@ -231,7 +234,7 @@ struct rxd_folderinfo
         } res;
 };
 
-void rx_folderinfo( struct RexxHost *, struct rxd_folderinfo **, long, struct RexxMsg * );
+void rx_folderinfo( struct RexxHost *, struct rxd_folderinfo **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_getconfiginfo
 {
@@ -245,7 +248,7 @@ struct rxd_getconfiginfo
         } res;
 };
 
-void rx_getconfiginfo( struct RexxHost *, struct rxd_getconfiginfo **, long, struct RexxMsg * );
+void rx_getconfiginfo( struct RexxHost *, struct rxd_getconfiginfo **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_getfolderinfo
 {
@@ -259,7 +262,7 @@ struct rxd_getfolderinfo
         } res;
 };
 
-void rx_getfolderinfo( struct RexxHost *, struct rxd_getfolderinfo **, long, struct RexxMsg * );
+void rx_getfolderinfo( struct RexxHost *, struct rxd_getfolderinfo **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_getmailinfo
 {
@@ -275,7 +278,7 @@ struct rxd_getmailinfo
   } res;
 };
 
-void rx_getmailinfo( struct RexxHost *, struct rxd_getmailinfo **, long, struct RexxMsg * );
+void rx_getmailinfo( struct RexxHost *, struct rxd_getmailinfo **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_getselected
 {
@@ -288,7 +291,7 @@ struct rxd_getselected
         } res;
 };
 
-void rx_getselected( struct RexxHost *, struct rxd_getselected **, long, struct RexxMsg * );
+void rx_getselected( struct RexxHost *, struct rxd_getselected **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_geturl
 {
@@ -299,7 +302,7 @@ struct rxd_geturl
         } arg;
 };
 
-void rx_geturl( struct RexxHost *, struct rxd_geturl **, long, struct RexxMsg * );
+void rx_geturl( struct RexxHost *, struct rxd_geturl **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_help
 {
@@ -309,14 +312,14 @@ struct rxd_help
         } arg;
 };
 
-void rx_help( struct RexxHost *, struct rxd_help **, long, struct RexxMsg * );
+void rx_help( struct RexxHost *, struct rxd_help **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_hide
 {
         long rc, rc2;
 };
 
-void rx_hide( struct RexxHost *, struct rxd_hide **, long, struct RexxMsg * );
+void rx_hide( struct RexxHost *, struct rxd_hide **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_info
 {
@@ -332,14 +335,14 @@ struct rxd_info
   } res;
 };
 
-void rx_info( struct RexxHost *, struct rxd_info **, long, struct RexxMsg * );
+void rx_info( struct RexxHost *, struct rxd_info **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_isonline
 {
         long rc, rc2;
 };
 
-void rx_isonline( struct RexxHost *, struct rxd_isonline **, long, struct RexxMsg * );
+void rx_isonline( struct RexxHost *, struct rxd_isonline **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_listselect
 {
@@ -349,7 +352,7 @@ struct rxd_listselect
         } arg;
 };
 
-void rx_listselect( struct RexxHost *, struct rxd_listselect **, long, struct RexxMsg * );
+void rx_listselect( struct RexxHost *, struct rxd_listselect **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailarchive
 {
@@ -359,7 +362,7 @@ struct rxd_mailarchive
         } arg;
 };
 
-void rx_mailarchive( struct RexxHost *, struct rxd_mailarchive **, long, struct RexxMsg * );
+void rx_mailarchive( struct RexxHost *, struct rxd_mailarchive **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailbounce
 {
@@ -373,7 +376,7 @@ struct rxd_mailbounce
         } res;
 };
 
-void rx_mailbounce( struct RexxHost *, struct rxd_mailbounce **, long, struct RexxMsg * );
+void rx_mailbounce( struct RexxHost *, struct rxd_mailbounce **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailchangesubject
 {
@@ -383,7 +386,7 @@ struct rxd_mailchangesubject
         } arg;
 };
 
-void rx_mailchangesubject( struct RexxHost *, struct rxd_mailchangesubject **, long, struct RexxMsg * );
+void rx_mailchangesubject( struct RexxHost *, struct rxd_mailchangesubject **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailcheck
 {
@@ -401,7 +404,7 @@ struct rxd_mailcheck
         } res;
 };
 
-void rx_mailcheck( struct RexxHost *, struct rxd_mailcheck **, long, struct RexxMsg * );
+void rx_mailcheck( struct RexxHost *, struct rxd_mailcheck **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailcopy
 {
@@ -411,7 +414,7 @@ struct rxd_mailcopy
         } arg;
 };
 
-void rx_mailcopy( struct RexxHost *, struct rxd_mailcopy **, long, struct RexxMsg * );
+void rx_mailcopy( struct RexxHost *, struct rxd_mailcopy **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_maildelete
 {
@@ -422,7 +425,7 @@ struct rxd_maildelete
         } arg;
 };
 
-void rx_maildelete( struct RexxHost *, struct rxd_maildelete **, long, struct RexxMsg * );
+void rx_maildelete( struct RexxHost *, struct rxd_maildelete **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailedit
 {
@@ -436,7 +439,7 @@ struct rxd_mailedit
         } res;
 };
 
-void rx_mailedit( struct RexxHost *, struct rxd_mailedit **, long, struct RexxMsg * );
+void rx_mailedit( struct RexxHost *, struct rxd_mailedit **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailexport
 {
@@ -448,7 +451,7 @@ struct rxd_mailexport
         } arg;
 };
 
-void rx_mailexport( struct RexxHost *, struct rxd_mailexport **, long, struct RexxMsg * );
+void rx_mailexport( struct RexxHost *, struct rxd_mailexport **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailfilter
 {
@@ -468,7 +471,7 @@ struct rxd_mailfilter
         } res;
 };
 
-void rx_mailfilter( struct RexxHost *, struct rxd_mailfilter **, long, struct RexxMsg * );
+void rx_mailfilter( struct RexxHost *, struct rxd_mailfilter **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailforward
 {
@@ -482,7 +485,7 @@ struct rxd_mailforward
         } res;
 };
 
-void rx_mailforward( struct RexxHost *, struct rxd_mailforward **, long, struct RexxMsg * );
+void rx_mailforward( struct RexxHost *, struct rxd_mailforward **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailimport
 {
@@ -493,7 +496,7 @@ struct rxd_mailimport
         } arg;
 };
 
-void rx_mailimport( struct RexxHost *, struct rxd_mailimport **, long, struct RexxMsg * );
+void rx_mailimport( struct RexxHost *, struct rxd_mailimport **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailinfo
 {
@@ -519,7 +522,7 @@ struct rxd_mailinfo
   } res;
 };
 
-void rx_mailinfo( struct RexxHost *, struct rxd_mailinfo **, long, struct RexxMsg * );
+void rx_mailinfo( struct RexxHost *, struct rxd_mailinfo **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailmove
 {
@@ -529,7 +532,7 @@ struct rxd_mailmove
         } arg;
 };
 
-void rx_mailmove( struct RexxHost *, struct rxd_mailmove **, long, struct RexxMsg * );
+void rx_mailmove( struct RexxHost *, struct rxd_mailmove **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailread
 {
@@ -544,7 +547,7 @@ struct rxd_mailread
         } res;
 };
 
-void rx_mailread( struct RexxHost *, struct rxd_mailread **, long, struct RexxMsg * );
+void rx_mailread( struct RexxHost *, struct rxd_mailread **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailreply
 {
@@ -558,7 +561,7 @@ struct rxd_mailreply
         } res;
 };
 
-void rx_mailreply( struct RexxHost *, struct rxd_mailreply **, long, struct RexxMsg * );
+void rx_mailreply( struct RexxHost *, struct rxd_mailreply **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailsend
 {
@@ -568,14 +571,14 @@ struct rxd_mailsend
         } arg;
 };
 
-void rx_mailsend( struct RexxHost *, struct rxd_mailsend **, long, struct RexxMsg * );
+void rx_mailsend( struct RexxHost *, struct rxd_mailsend **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailsendall
 {
         long rc, rc2;
 };
 
-void rx_mailsendall( struct RexxHost *, struct rxd_mailsendall **, long, struct RexxMsg * );
+void rx_mailsendall( struct RexxHost *, struct rxd_mailsendall **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailstatus
 {
@@ -585,14 +588,14 @@ struct rxd_mailstatus
         } arg;
 };
 
-void rx_mailstatus( struct RexxHost *, struct rxd_mailstatus **, long, struct RexxMsg * );
+void rx_mailstatus( struct RexxHost *, struct rxd_mailstatus **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailupdate
 {
         long rc, rc2;
 };
 
-void rx_mailupdate( struct RexxHost *, struct rxd_mailupdate **, long, struct RexxMsg * );
+void rx_mailupdate( struct RexxHost *, struct rxd_mailupdate **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_mailwrite
 {
@@ -607,7 +610,7 @@ struct rxd_mailwrite
         } res;
 };
 
-void rx_mailwrite( struct RexxHost *, struct rxd_mailwrite **, long, struct RexxMsg * );
+void rx_mailwrite( struct RexxHost *, struct rxd_mailwrite **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_newmailfile
 {
@@ -621,7 +624,7 @@ struct rxd_newmailfile
         } res;
 };
 
-void rx_newmailfile( struct RexxHost *, struct rxd_newmailfile **, long, struct RexxMsg * );
+void rx_newmailfile( struct RexxHost *, struct rxd_newmailfile **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_quit
 {
@@ -631,14 +634,14 @@ struct rxd_quit
         } arg;
 };
 
-void rx_quit( struct RexxHost *, struct rxd_quit **, long, struct RexxMsg * );
+void rx_quit( struct RexxHost *, struct rxd_quit **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_readclose
 {
         long rc, rc2;
 };
 
-void rx_readclose( struct RexxHost *, struct rxd_readclose **, long, struct RexxMsg * );
+void rx_readclose( struct RexxHost *, struct rxd_readclose **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_readinfo
 {
@@ -654,7 +657,7 @@ struct rxd_readinfo
         } res;
 };
 
-void rx_readinfo( struct RexxHost *, struct rxd_readinfo **, long, struct RexxMsg * );
+void rx_readinfo( struct RexxHost *, struct rxd_readinfo **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_readprint
 {
@@ -664,7 +667,7 @@ struct rxd_readprint
         } arg;
 };
 
-void rx_readprint( struct RexxHost *, struct rxd_readprint **, long, struct RexxMsg * );
+void rx_readprint( struct RexxHost *, struct rxd_readprint **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_readsave
 {
@@ -676,7 +679,7 @@ struct rxd_readsave
         } arg;
 };
 
-void rx_readsave( struct RexxHost *, struct rxd_readsave **, long, struct RexxMsg * );
+void rx_readsave( struct RexxHost *, struct rxd_readsave **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_request
 {
@@ -691,7 +694,7 @@ struct rxd_request
         } res;
 };
 
-void rx_request( struct RexxHost *, struct rxd_request **, long, struct RexxMsg * );
+void rx_request( struct RexxHost *, struct rxd_request **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_requestfolder
 {
@@ -706,7 +709,7 @@ struct rxd_requestfolder
         } res;
 };
 
-void rx_requestfolder( struct RexxHost *, struct rxd_requestfolder **, long, struct RexxMsg * );
+void rx_requestfolder( struct RexxHost *, struct rxd_requestfolder **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_requeststring
 {
@@ -722,21 +725,21 @@ struct rxd_requeststring
         } res;
 };
 
-void rx_requeststring( struct RexxHost *, struct rxd_requeststring **, long, struct RexxMsg * );
+void rx_requeststring( struct RexxHost *, struct rxd_requeststring **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_screentoback
 {
         long rc, rc2;
 };
 
-void rx_screentoback( struct RexxHost *, struct rxd_screentoback **, long, struct RexxMsg * );
+void rx_screentoback( struct RexxHost *, struct rxd_screentoback **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_screentofront
 {
         long rc, rc2;
 };
 
-void rx_screentofront( struct RexxHost *, struct rxd_screentofront **, long, struct RexxMsg * );
+void rx_screentofront( struct RexxHost *, struct rxd_screentofront **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_setflag
 {
@@ -747,7 +750,7 @@ struct rxd_setflag
         } arg;
 };
 
-void rx_setflag( struct RexxHost *, struct rxd_setflag **, long, struct RexxMsg * );
+void rx_setflag( struct RexxHost *, struct rxd_setflag **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_setfolder
 {
@@ -757,7 +760,7 @@ struct rxd_setfolder
         } arg;
 };
 
-void rx_setfolder( struct RexxHost *, struct rxd_setfolder **, long, struct RexxMsg * );
+void rx_setfolder( struct RexxHost *, struct rxd_setfolder **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_setmail
 {
@@ -767,7 +770,7 @@ struct rxd_setmail
         } arg;
 };
 
-void rx_setmail( struct RexxHost *, struct rxd_setmail **, long, struct RexxMsg * );
+void rx_setmail( struct RexxHost *, struct rxd_setmail **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_setmailfile
 {
@@ -777,14 +780,14 @@ struct rxd_setmailfile
         } arg;
 };
 
-void rx_setmailfile( struct RexxHost *, struct rxd_setmailfile **, long, struct RexxMsg * );
+void rx_setmailfile( struct RexxHost *, struct rxd_setmailfile **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_show
 {
         long rc, rc2;
 };
 
-void rx_show( struct RexxHost *, struct rxd_show **, long, struct RexxMsg * );
+void rx_show( struct RexxHost *, struct rxd_show **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_userinfo
 {
@@ -802,7 +805,7 @@ struct rxd_userinfo
         } res;
 };
 
-void rx_userinfo( struct RexxHost *, struct rxd_userinfo **, long, struct RexxMsg * );
+void rx_userinfo( struct RexxHost *, struct rxd_userinfo **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_writeattach
 {
@@ -815,7 +818,7 @@ struct rxd_writeattach
         } arg;
 };
 
-void rx_writeattach( struct RexxHost *, struct rxd_writeattach **, long, struct RexxMsg * );
+void rx_writeattach( struct RexxHost *, struct rxd_writeattach **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_writebcc
 {
@@ -826,7 +829,7 @@ struct rxd_writebcc
         } arg;
 };
 
-void rx_writebcc( struct RexxHost *, struct rxd_writebcc **, long, struct RexxMsg * );
+void rx_writebcc( struct RexxHost *, struct rxd_writebcc **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_writecc
 {
@@ -837,7 +840,7 @@ struct rxd_writecc
         } arg;
 };
 
-void rx_writecc( struct RexxHost *, struct rxd_writecc **, long, struct RexxMsg * );
+void rx_writecc( struct RexxHost *, struct rxd_writecc **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_writeeditor
 {
@@ -851,7 +854,7 @@ struct rxd_writeeditor
         } res;
 };
 
-void rx_writeeditor( struct RexxHost *, struct rxd_writeeditor **, long, struct RexxMsg * );
+void rx_writeeditor( struct RexxHost *, struct rxd_writeeditor **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_writefrom
 {
@@ -861,7 +864,7 @@ struct rxd_writefrom
         } arg;
 };
 
-void rx_writefrom( struct RexxHost *, struct rxd_writefrom **, long, struct RexxMsg * );
+void rx_writefrom( struct RexxHost *, struct rxd_writefrom **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_writeletter
 {
@@ -872,7 +875,7 @@ struct rxd_writeletter
         } arg;
 };
 
-void rx_writeletter( struct RexxHost *, struct rxd_writeletter **, long, struct RexxMsg * );
+void rx_writeletter( struct RexxHost *, struct rxd_writeletter **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_writemailto
 {
@@ -882,7 +885,7 @@ struct rxd_writemailto
         } arg;
 };
 
-void rx_writemailto( struct RexxHost *, struct rxd_writemailto **, long, struct RexxMsg * );
+void rx_writemailto( struct RexxHost *, struct rxd_writemailto **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_writeoptions
 {
@@ -898,7 +901,7 @@ struct rxd_writeoptions
         } arg;
 };
 
-void rx_writeoptions( struct RexxHost *, struct rxd_writeoptions **, long, struct RexxMsg * );
+void rx_writeoptions( struct RexxHost *, struct rxd_writeoptions **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_writequeue
 {
@@ -908,7 +911,7 @@ struct rxd_writequeue
         } arg;
 };
 
-void rx_writequeue( struct RexxHost *, struct rxd_writequeue **, long, struct RexxMsg * );
+void rx_writequeue( struct RexxHost *, struct rxd_writequeue **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_writereplyto
 {
@@ -918,14 +921,14 @@ struct rxd_writereplyto
         } arg;
 };
 
-void rx_writereplyto( struct RexxHost *, struct rxd_writereplyto **, long, struct RexxMsg * );
+void rx_writereplyto( struct RexxHost *, struct rxd_writereplyto **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_writesend
 {
         long rc, rc2;
 };
 
-void rx_writesend( struct RexxHost *, struct rxd_writesend **, long, struct RexxMsg * );
+void rx_writesend( struct RexxHost *, struct rxd_writesend **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_writesubject
 {
@@ -935,7 +938,7 @@ struct rxd_writesubject
         } arg;
 };
 
-void rx_writesubject( struct RexxHost *, struct rxd_writesubject **, long, struct RexxMsg * );
+void rx_writesubject( struct RexxHost *, struct rxd_writesubject **, enum RexxAction, struct RexxMsg * );
 
 struct rxd_writeto
 {
@@ -946,6 +949,6 @@ struct rxd_writeto
         } arg;
 };
 
-void rx_writeto( struct RexxHost *, struct rxd_writeto **, long, struct RexxMsg * );
+void rx_writeto( struct RexxHost *, struct rxd_writeto **, enum RexxAction, struct RexxMsg * );
 
 #endif /* YAM_REXX_RXIF_H */
