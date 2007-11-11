@@ -568,3 +568,20 @@ should be considered obsolete and all calls should be replaced by their
 equivalent xget/xset calls.
 
 ############################################################################
+
+20. Prefer AllocSysObject(), AllocDosObject() like functions
+------------------------------------------------------------
+
+As with newer operating system versions certain new functionality regarding
+resource tracking has been added (especially AmigaOS4), the use of the
+AllocSysObject() and AllocDosObject() functions should be considered the
+preferred way to allocate system resources.
+
+That means, e.g. instead of doing things like CreateIORequest() you are
+requested to use AllocSysObject() to create an IORequest. The same applies
+for all kind of system structures where these structures are normally
+allocated via AllocVec(). For such structures you are adviced to use the
+corresponding AllocXXXXObject() functions if they exist and do the same
+job!
+
+############################################################################

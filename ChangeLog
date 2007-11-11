@@ -14,6 +14,10 @@ $URL$
 
 2007-11-10  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c, YAM_rexx.c, YAM_UT.c: converted all CreateIORequest() and
+    CreateMsgPort() uses into proper AllocSysObjectTags() calls on OS4. This
+    should allow for a better resource tracking by the OS4. Also modified the
+    STYLEGUIDE to mention the general use of these new system functions.
   * YAM_FI.c: added somewhat more debug output to the filter functions.
 
 2007-11-09  Jens Langner <Jens.Langner@light-speed.de>

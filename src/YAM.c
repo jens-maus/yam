@@ -907,14 +907,22 @@ static void TC_Exit(void)
       }
     }
 
+    #if defined(__amigaos4__)
+    FreeSysObject(ASOT_IOREQUEST, TCData.timer[0].tr);
+    #else
     DeleteIORequest(&TCData.timer[0].tr->Request);
+    #endif
     TCData.timer[0].tr = NULL;
   }
 
   // remove the MsgPort now.
   if(TCData.port != NULL)
   {
+    #if defined(__amigaos4__)
+    FreeSysObject(ASOT_PORT, TCData.port);
+    #else
     DeleteMsgPort(TCData.port);
+    #endif
     TCData.port = NULL;
   }
 
@@ -932,13 +940,26 @@ static BOOL TC_Init(void)
   memset(&TCData, 0, sizeof(struct TC_Data));
 
   // create message port
-  if((TCData.port = CreateMsgPort()))
+  #if defined(__amigaos4__)
+  if((TCData.port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
+  #else
+  if((TCData.port = CreateMsgPort()) != NULL)
+  #endif
   {
     // create the TimerIOs now
-    if((TCData.timer[0].tr = (struct TimeRequest *)CreateIORequest(TCData.port, sizeof(struct TimeRequest))))
+    #if defined(__amigaos4__)
+    // on OS4 we use AllocSysObjectTags to give the OS a better chance to
+    // free the data in case YAM crashes
+    if((TCData.timer[0].tr = AllocSysObjectTags(ASOT_IOREQUEST,
+                                                ASOIOR_Size,      sizeof(struct TimeRequest),
+                                                ASOIOR_ReplyPort, TCData.port,
+                                                TAG_DONE)) != NULL)
+    #else
+    if((TCData.timer[0].tr = (struct TimeRequest *)CreateIORequest(TCData.port, sizeof(struct TimeRequest))) != NULL)
+    #endif
     {
       // then open the device
-      if(!OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.timer[0].tr->Request, 0L))
+      if(OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.timer[0].tr->Request, 0L) == 0)
       {
         // needed to get GetSysTime() working
         if((TimerBase = (APTR)TCData.timer[0].tr->Request.io_Device) &&
@@ -952,15 +973,15 @@ static BOOL TC_Init(void)
             #if defined(__amigaos4__)
             // on OS4 we use AllocSysObjectTags to give the OS a better chance to
             // free the data in case YAM crashes
-            if(!(TCData.timer[tio].tr = AllocSysObjectTags(ASOT_IOREQUEST,
-                                                           ASOIOR_Size,      sizeof(struct TimeRequest),
-                                                           ASOIOR_ReplyPort, TCData.port,
-                                                           TAG_DONE)))
+            if((TCData.timer[tio].tr = AllocSysObjectTags(ASOT_IOREQUEST,
+                                                          ASOIOR_Size,      sizeof(struct TimeRequest),
+                                                          ASOIOR_ReplyPort, TCData.port,
+                                                          TAG_DONE)) == NULL)
             {
               break;
             }
             #else
-            if(!(TCData.timer[tio].tr = AllocMem(sizeof(struct TimeRequest), MEMF_SHARED)))
+            if((TCData.timer[tio].tr = AllocMem(sizeof(struct TimeRequest), MEMF_SHARED)) == NULL)
               break;
             #endif
 
@@ -1497,7 +1518,13 @@ static void Terminate(void)
   for(i = 0; i <= MAXWR; i++)
   {
     if(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port != NULL)
+    {
+      #if defined(__amigaos4__)
+      FreeSysObject(ASOT_PORT, G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port);
+      #else
       DeleteMsgPort(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port);
+      #endif
+    }
   }
 
   D(DBF_STARTUP, "freeing AppIcon...");
@@ -1506,7 +1533,13 @@ static void Terminate(void)
 
   D(DBF_STARTUP, "freeing AppPort...");
   if(G->AppPort != NULL)
+  {
+    #if defined(__amigaos4__)
+    FreeSysObject(ASOT_PORT, G->AppPort);
+    #else
     DeleteMsgPort(G->AppPort);
+    #endif
+  }
 
   D(DBF_STARTUP, "freeing Arexx port...");
   if(G->RexxHost != NULL)
@@ -2484,14 +2517,26 @@ static void Initialise(BOOL hidden)
   }
 
   // create the main message port
+  #if defined(__amigaos4__)
+  if((G->AppPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) == NULL)
+  #else
   if((G->AppPort = CreateMsgPort()) == NULL)
+  #endif
+  {
     Abort(NULL);
+  }
 
   // initialize the file nofifications
   for(i=0; i <= MAXWR; i++)
   {
+    #if defined(__amigaos4__)
+    if((G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) == NULL)
+    #else
     if((G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreateMsgPort()) == NULL)
+    #endif
+    {
       Abort(NULL);
+    }
 
     G->WR_NRequest[i].nr_Name = (STRPTR)G->WR_Filename[i];
     G->WR_NRequest[i].nr_Flags = NRF_SEND_MESSAGE;

@@ -6244,12 +6244,23 @@ BOOL CheckPrinter(void)
     struct MsgPort *mp;
 
     // create the message port
+    #if defined(__amigaos4__)
+    if((mp = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
+    #else
     if((mp = CreateMsgPort()) != NULL)
+    #endif
     {
 	    struct IOStdReq *pio;
 
       // create the IO request for checking the printer status
+      #if defined(__amigaos4__)
+      if((pio = AllocSysObjectTags(ASOT_IOREQUEST,
+                                   ASOIOR_Size,      sizeof(struct IOStdReq),
+                                   ASOIOR_ReplyPort, mp,
+                                   TAG_DONE)) != NULL)
+      #else
     	if((pio = (struct IOStdReq *)CreateIORequest(mp, sizeof(struct IOStdReq))) != NULL)
+      #endif
       {
         // from here on we assume the printer is online
         // but we do deeper checks.
@@ -6352,12 +6363,20 @@ BOOL CheckPrinter(void)
         else
           W(DBF_PRINT, "couldn't open printer.device unit 0");
 
+        #if defined(__amigaos4__)
+        FreeSysObject(ASOT_IOREQUEST, pio);
+        #else
         DeleteIORequest((struct IORequest *)pio);
+        #endif
 	    }
       else
         W(DBF_PRINT, "wasn't able to create io request for printer state checking");
 
+      #if defined(__amigaos4__)
+      FreeSysObject(ASOT_PORT, mp);
+      #else
     	DeleteMsgPort(mp);
+      #endif
     }
     else
       W(DBF_PRINT, "wasn't able to create msg port for printer state checking");
