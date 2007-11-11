@@ -7,9 +7,9 @@ $URL$
 
 2007-11-11  David Rey <tactica@users.sourceforge.net>
 
-  *  YAM.cd: changed MSG_CO_Archiver, MSG_CO_SMTPAUTH_METHOD, MSG_CO_SMTPPass,
-     MSG_CO_MDN_ENABLED, MSG_CO_MDN_OTHER, MSG_CO_MIME_DESCRIPTION to fix even
-     more duplicated shortcuts.
+  * YAM.cd: changed MSG_CO_Archiver, MSG_CO_SMTPAUTH_METHOD, MSG_CO_SMTPPass,
+    MSG_CO_MDN_ENABLED, MSG_CO_MDN_OTHER, MSG_CO_MIME_DESCRIPTION,
+    MSG_FI_NOFOLDERS to fix even more duplicated shortcuts.
 
 2007-11-10  Thore Böckelmann <tboeckel@gmx.de>
 

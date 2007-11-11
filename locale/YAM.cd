@@ -4912,7 +4912,7 @@ MSG_QUICKSEARCH_SHOWNMSGS (1594//)
 %ld of %ld shown
 ; COUNT, COUNT
 MSG_FI_NOFOLDERS (1595//)
-_nowhere
+n_owhere
 ;
 MSG_HELP_QUICKSEARCH_VIEWOPTIONS (1596//)
 If used, only mail matching the selected\n\
