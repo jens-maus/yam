@@ -18,6 +18,8 @@ $URL$
     diffenent From and Reply-To addresses to the address book YAM will now ask
     which address to add, and no which address to reply to. This fixes bug
     #1829977.
+  * deutsch.ct: fixed some shortcuts clashing with the standard Copy/Paste
+    shortcuts.
 
 2007-11-11  Jens Langner <Jens.Langner@light-speed.de>
 

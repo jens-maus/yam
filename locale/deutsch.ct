@@ -5712,7 +5712,7 @@ MSG_CO_SENTMSGS
 ; %s  Sent messages
 ;
 MSG_FO_DSTATS
-App_Icon Statistiken
+A_ppIcon Statistiken
 ; App_Icon stats
 ;
 MSG_HELP_FO_CH_STATS
@@ -6182,7 +6182,7 @@ MSG_FO_Welcome
 Be_grüssung
 ;
 MSG_FO_Greetings
-_Verabschiedung
+Verabsch_iedung
 ;
 MSG_ER_SOCKETOPTION
 Warnung: Die Socketoption '%s' konnte nicht gesetzt werden.\n\
