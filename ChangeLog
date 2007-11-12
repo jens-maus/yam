@@ -37,6 +37,8 @@ $URL$
     This fixes bug #1830039.
   * YAM_COg.c: fixed inconsistend GUI behaviour upon repeatedly (de)activating
     the spam filter. This fixes bug #1829959.
+  * FileInfo.c: added generic file information function ObtainFileInfo(), which
+    replaces the single functions like FileSize(), etc.
 
 2007-11-11  Jens Langner <Jens.Langner@light-speed.de>
 
