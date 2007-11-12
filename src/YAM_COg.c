@@ -1210,6 +1210,46 @@ HOOKPROTONO(FileRequestStopFunc, void, struct FileRequester *fileReq)
 MakeHookWithData(ScriptsReqStopHook,       FileRequestStopFunc, VPM_SCRIPTS);
 MakeHookWithData(MimeDefViewerReqStopHook, FileRequestStopFunc, VPM_MIME_DEFVIEWER);
 MakeHookWithData(MimeCommandReqStopHook,   FileRequestStopFunc, VPM_MIME_COMMAND);
+
+///
+/// ToggleSpamFilter
+// enable/disable all spam filter relevant GUI elements according to the
+// current spam filter settings
+HOOKPROTONHNO(ToggleSpamFilterFunc, void, int *arg)
+{
+  struct CO_GUIData *gui = &G->CO->GUI;
+  BOOL active = (BOOL)*arg;
+
+  ENTER();
+
+  if(active)
+  {
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, FALSE, gui->BT_SPAMRESETTRAININGDATA,
+                                                          gui->CH_SPAMFILTERFORNEWMAIL,
+                                                          gui->CH_SPAMABOOKISWHITELIST,
+                                                          gui->CH_SPAMMARKONMOVE,
+                                                          gui->CH_SPAMMARKASREAD,
+                                                          gui->CH_MOVEHAMTOINCOMING,
+                                                          NULL);
+    set(gui->CH_FILTERHAM, MUIA_Disabled, xget(gui->CH_MOVEHAMTOINCOMING, MUIA_Selected) == FALSE);
+  }
+  else
+  {
+    // disable all spam filter controls
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, gui->BT_SPAMRESETTRAININGDATA,
+                                                         gui->CH_SPAMFILTERFORNEWMAIL,
+                                                         gui->CH_SPAMABOOKISWHITELIST,
+                                                         gui->CH_SPAMMARKONMOVE,
+                                                         gui->CH_SPAMMARKASREAD,
+                                                         gui->CH_MOVEHAMTOINCOMING,
+                                                         gui->CH_FILTERHAM,
+                                                         NULL);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(ToggleSpamFilterHook, ToggleSpamFilterFunc);
+
 ///
 /// ResetSpamTrainingData
 //  resets the spam training data
@@ -1229,6 +1269,7 @@ HOOKPROTONHNONP(ResetSpamTrainingDataFunc, void)
   LEAVE();
 }
 MakeStaticHook(ResetSpamTrainingDataHook, ResetSpamTrainingDataFunc);
+
 ///
 /// AddNewFilterToList
 //  Adds a new entry to the global filter list
@@ -2512,21 +2553,9 @@ Object *CO_PageSpam(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_FILTERHAM,             MSG_HELP_CH_FILTER_HAM);
 
     DoMethod(data->GUI.CH_SPAMFILTERENABLED, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
-                                             MUIV_Notify_Application, 11, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue,
-                                               data->GUI.BT_SPAMRESETTRAININGDATA,
-                                               data->GUI.CH_SPAMFILTERFORNEWMAIL,
-                                               data->GUI.CH_SPAMABOOKISWHITELIST,
-                                               data->GUI.CH_SPAMMARKONMOVE,
-                                               data->GUI.CH_SPAMMARKASREAD,
-                                               data->GUI.CH_MOVEHAMTOINCOMING,
-                                               data->GUI.CH_FILTERHAM,
-                                               NULL);
-
+                                             MUIV_Notify_Application, 3, MUIM_CallHook, &ToggleSpamFilterHook, MUIV_TriggerValue);
     DoMethod(data->GUI.CH_MOVEHAMTOINCOMING, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
-                                             MUIV_Notify_Application, 5, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue,
-                                               data->GUI.CH_FILTERHAM,
-                                               NULL);
-
+                                             data->GUI.CH_FILTERHAM, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
     DoMethod(data->GUI.BT_SPAMRESETTRAININGDATA, MUIM_Notify, MUIA_Pressed,  FALSE,
                                                  MUIV_Notify_Application, 2, MUIM_CallHook, &ResetSpamTrainingDataHook);
   }
