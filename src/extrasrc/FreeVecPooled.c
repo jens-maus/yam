@@ -3,7 +3,7 @@
 
 /// FreeVecPooled
 // return a vector to the pool
-void FreeVecPooled(void *poolHeader, void *memory)
+void FreeVecPooled(APTR poolHeader, APTR memory)
 {
   ULONG *mem = (ULONG *)memory;
   ULONG memSize;

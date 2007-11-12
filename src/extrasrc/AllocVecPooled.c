@@ -3,7 +3,7 @@
 
 /// AllocVecPooled
 // allocate a vector of <memSize> bytes from the pool specified by <poolHeader>
-void *AllocVecPooled(void *poolHeader, ULONG memSize)
+APTR AllocVecPooled(APTR poolHeader, ULONG memSize)
 {
   ULONG *memory;
 

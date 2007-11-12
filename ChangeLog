@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-12  Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc.h, extrasrc/AllocVecPooled.c, extrasrc/FreeVecPooled.c: changed
+    the prototypes of the AllocVecPooled() and FreeVecPooled() wrapper functions
+    to use the proper Amiga-types e.g. APTR as Amiga-wrapper functions should 
+    always use Amiga-like types.
+
 2007-11-12  Thore Böckelmann <tboeckel@gmx.de>
 
   * extrasrc/AllocVecPooled.c, extrasrc/FreeVecPooled.c: added AllocVecPooled()

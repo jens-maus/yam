@@ -227,11 +227,11 @@ APTR SetProcWindow(const void *newWindowPtr);
 #endif
 
 #if defined(NEED_ALLOCVECPOOLED)
-void *AllocVecPooled(void *poolHeader, ULONG memSize);
+APTR AllocVecPooled(APTR poolHeader, ULONG memSize);
 #endif
 
 #if defined(NEED_FREEVECPOOLED)
-void FreeVecPooled(void *poolHeader, void *memory);
+void FreeVecPooled(APTR poolHeader, APTR memory);
 #endif
 
 /*
