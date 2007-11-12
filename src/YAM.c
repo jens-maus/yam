@@ -1368,11 +1368,11 @@ static struct StartupSemaphore *CreateStartupSemaphore(void)
       semaphore->UseCount = 1;
 
       #if !defined(__amigaos4__)
-      InitSemaphore(&semaphore->Semaphore);
+      InitSemaphore(&semaphore->semaphore);
       strlcpy(semaphore->Name, STARTUP_SEMAPHORE_NAME, sizeof(semaphore->Name));
-      semaphore->Semaphore.ss_Link.ln_Name = semaphore->Name;
+      semaphore->semaphore.ss_Link.ln_Name = semaphore->Name;
       // add the new semaphore to the public list of semaphores
-      AddSemaphore(&semaphore->Semaphore);
+      AddSemaphore(&semaphore->semaphore);
       #endif
     }
   }

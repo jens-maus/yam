@@ -717,7 +717,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    #if defined(__amigaos4__)
    if((argb = AllocVecPooled(G->SharedMemPool, (ULONG)strlen((char *) ARG0(rexxmsg)) + 2)) == NULL)
    #else
-   if((argb = AllocVec((ULONG)strlen((char *) ARG0(rexxmsg)) + 2, MEMF_SHARED|MEMF_CLEAR)) = NULL)
+   if((argb = AllocVec((ULONG)strlen((char *) ARG0(rexxmsg)) + 2, MEMF_SHARED|MEMF_CLEAR)) == NULL)
    #endif
    {
       rc2 = ERROR_NO_FREE_STORE;
