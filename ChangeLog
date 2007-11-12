@@ -7,6 +7,10 @@ $URL$
 
 2007-11-12  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: changed all the rest of the AllocPooled()/FreePooled() uses to
+    generally use AllocVecPooled()/FreeVecPooled() instead. In addition, the
+    startup semaphore locking will now not perform an own RemSemaphore() on
+    AmigaOS4 anymore as the FreeSysObject() function explicitly does that.
   * extrasrc.h, extrasrc/AllocVecPooled.c, extrasrc/FreeVecPooled.c: changed
     the prototypes of the AllocVecPooled() and FreeVecPooled() wrapper functions
     to use the proper Amiga-types e.g. APTR as Amiga-wrapper functions should 

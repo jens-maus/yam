@@ -902,7 +902,7 @@ static void TC_Exit(void)
         #if defined(__amigaos4__)
         FreeSysObject(ASOT_IOREQUEST, TCData.timer[tio].tr);
         #else
-        FreeVec(TCData.timer[tio].tr);
+        FreeVecPooled(G->SharedMemPool, TCData.timer[tio].tr);
         #endif
 
         TCData.timer[tio].tr = NULL;
@@ -983,7 +983,7 @@ static BOOL TC_Init(void)
               break;
             }
             #else
-            if((TCData.timer[tio].tr = AllocPooled(G->SharedMemPool, sizeof(struct TimeRequest))) == NULL)
+            if((TCData.timer[tio].tr = AllocVecPooled(G->SharedMemPool, sizeof(struct TimeRequest))) == NULL)
               break;
             #endif
 
@@ -1359,7 +1359,7 @@ static struct StartupSemaphore *CreateStartupSemaphore(void)
                                    ASOSEM_Public,   TRUE,
                                    TAG_DONE);
     #else
-    semaphore = AllocPooled(G->SharedMemPool, sizeof(struct StartupSemaphore));
+    semaphore = AllocVecPooled(G->SharedMemPool, sizeof(struct StartupSemaphore));
     #endif
 
     if(semaphore != NULL)
@@ -1382,7 +1382,7 @@ static struct StartupSemaphore *CreateStartupSemaphore(void)
 }
 ///
 /// DeleteStartupSemaphore
-//  delete a public semaphore, removing it from the syamSematem if it is no longer in use
+//  delete a public semaphore, removing it from the system if it is no longer in use
 static void DeleteStartupSemaphore(void)
 {
   ENTER();
@@ -1394,7 +1394,9 @@ static void DeleteStartupSemaphore(void)
     // first obtain the semaphore so that nobody else can interfere
     ObtainSemaphore(&startupSemaphore->semaphore);
 
+    // protect access to the semaphore
     Forbid();
+
     // now we can release the semaphore again, because nobody else can steal it
     ReleaseSemaphore(&startupSemaphore->semaphore);
 
@@ -1404,23 +1406,28 @@ static void DeleteStartupSemaphore(void)
     // if nobody else uses this semaphore it can be removed complete
     if(startupSemaphore->UseCount == 0)
     {
-      // remove the semaphore from the public list
+      // remove the semaphore from the public listA
+      #if !defined(__amigaos4__)
       RemSemaphore(&startupSemaphore->semaphore);
+      #endif
 
       // and the memory can be freed afterwards
       freeIt = TRUE;
     }
-    Permit();
 
     if(freeIt)
     {
       #if defined(__amigaos4__)
       FreeSysObject(ASOT_SEMAPHORE, startupSemaphore);
       #else
-      FreePooled(G->SharedMemPool, startupSemaphore, sizeof(struct StartupSemaphore));
+      FreeVecPooled(G->SharedMemPool, startupSemaphore);
       #endif
       startupSemaphore = NULL;
     }
+
+    // free access to the semaphore (FreeVecPooled may have
+    // released it already anyway)
+    Permit();
   }
 
   LEAVE();
