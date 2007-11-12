@@ -1917,7 +1917,7 @@ static BOOL StayInProg(void)
         req = TRUE;
     }
 
-    if(req || G->CO != NULL || C->ConfirmOnQuit)
+    if(req == TRUE || G->CO != NULL || C->ConfirmOnQuit == TRUE)
     {
       if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_QuitYAMReq)) == 0)
         stayIn = TRUE;
@@ -2833,853 +2833,860 @@ static LONG ParseCommandArgs(void)
 //  Program entry point, main loop
 int main(int argc, char **argv)
 {
-   BOOL yamFirst;
-   BPTR progdir;
-   LONG err;
+  BOOL yamFirst;
+  BPTR progdir;
+  LONG err;
 
-   // obtain the MainInterface of Exec before anything else.
-   #ifdef __amigaos4__
-   IExec = (struct ExecIFace *)((struct ExecBase *)SysBase)->MainInterface;
+  // obtain the MainInterface of Exec before anything else.
+  #ifdef __amigaos4__
+  IExec = (struct ExecIFace *)((struct ExecBase *)SysBase)->MainInterface;
 
-   // check the exec version first and force be at least an 52.2 version
-   // from AmigaOS4 final. This should assure we are are using the very
-   // latest stable version.
-   if(SysBase->lib_Version < 52 ||
-      (SysBase->lib_Version == 52 && SysBase->lib_Revision < 2))
-   {
-      if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) &&
-         GETINTERFACE("main", IIntuition, IntuitionBase))
-      {
-        struct EasyStruct ErrReq;
+  // check the exec version first and force be at least an 52.2 version
+  // from AmigaOS4 final. This should assure we are are using the very
+  // latest stable version.
+  if(SysBase->lib_Version < 52 ||
+     (SysBase->lib_Version == 52 && SysBase->lib_Revision < 2))
+  {
+    if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) &&
+       GETINTERFACE("main", IIntuition, IntuitionBase))
+    {
+      struct EasyStruct ErrReq;
 
-        ErrReq.es_StructSize = sizeof(struct EasyStruct);
-        ErrReq.es_Flags      = 0;
+      ErrReq.es_StructSize = sizeof(struct EasyStruct);
+      ErrReq.es_Flags      = 0;
+      ErrReq.es_Title        = (STRPTR)"YAM Startup Error";
+      ErrReq.es_TextFormat   = (STRPTR)"This version of YAM requires at least\n"
+                                       "an AmigaOS4 kernel version 52.2";
+      ErrReq.es_GadgetFormat = (STRPTR)"Exit";
 
-        ErrReq.es_Title        = (STRPTR)"YAM Startup Error";
-        ErrReq.es_TextFormat   = (STRPTR)"This version of YAM requires at least\n"
-                                         "an AmigaOS4 kernel version 52.2";
-        ErrReq.es_GadgetFormat = (STRPTR)"Exit";
+      EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
 
-        EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
+      CLOSELIB(IntuitionBase, IIntuition);
+    }
 
-        CLOSELIB(IntuitionBase, IIntuition);
-      }
+    exit(RETURN_WARN);
+  }
+  #endif
 
-      exit(RETURN_WARN);
+  // we make sure that if this is a build for 68k processors and for 68020+
+  // that this is really a 68020+ machine
+  #if _M68060 || _M68040 || _M68030 || _M68020 || __mc68020 || __mc68030 || __mc68040 || __mc68060
+  if((SysBase->AttnFlags & AFF_68020) == 0)
+  {
+    if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)))
+    {
+      struct EasyStruct ErrReq;
+
+      ErrReq.es_StructSize = sizeof(struct EasyStruct);
+      ErrReq.es_Flags      = 0;
+      ErrReq.es_Title        = (STRPTR)"YAM Startup Error";
+      ErrReq.es_TextFormat   = (STRPTR)"This version of YAM requires at\n"
+                                       "least an 68020 processor or higher.";
+      ErrReq.es_GadgetFormat = (STRPTR)"Exit";
+
+      EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
+
+      CloseLibrary((struct Library *)IntuitionBase);
    }
-   #endif
 
-   // we make sure that if this is a build for 68k processors and for 68020+
-   // that this is really a 68020+ machine
-   #if _M68060 || _M68040 || _M68030 || _M68020 || __mc68020 || __mc68030 || __mc68040 || __mc68060
-   if((SysBase->AttnFlags & AFF_68020) == 0)
-   {
-      if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)))
-      {
-        struct EasyStruct ErrReq;
-
-        ErrReq.es_StructSize = sizeof(struct EasyStruct);
-        ErrReq.es_Flags      = 0;
-
-        ErrReq.es_Title        = (STRPTR)"YAM Startup Error";
-        ErrReq.es_TextFormat   = (STRPTR)"This version of YAM requires at\n"
-                                         "least an 68020 processor or higher.";
-        ErrReq.es_GadgetFormat = (STRPTR)"Exit";
-
-        EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
-
-        CloseLibrary((struct Library *)IntuitionBase);
-     }
-
-     exit(RETURN_WARN);
-   }
-   #endif
+   exit(RETURN_WARN);
+  }
+  #endif
 
 
 #if defined(DEVWARNING)
-   {
-     BOOL goon = TRUE;
+  {
+    BOOL goon = TRUE;
 
-     if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) != NULL &&
-        GETINTERFACE("main", IIntuition, IntuitionBase))
-     {
-       if((UtilityBase = (APTR)OpenLibrary("utility.library", 36)) != NULL &&
-          GETINTERFACE("main", IUtility, UtilityBase))
-       {
-         char var;
-         struct EasyStruct ErrReq;
-         struct DateStamp ds;
-         DateStamp(&ds); // get actual time/date
-
-         ErrReq.es_StructSize = sizeof(struct EasyStruct);
-         ErrReq.es_Flags      = 0;
-
-         if(EXPDATE <= ds.ds_Days)
-         {
-           ErrReq.es_Title        = (STRPTR)"YAM Developer Version Expired!";
-           ErrReq.es_TextFormat   = (STRPTR)"This developer version of YAM has expired!\n\n"
-                                    "Please note that you may download a new, updated\n"
-                                    "version from the YAM nightly build page at:\n\n"
-                                    "http://nightly.yam.ch/\n\n"
-                                    "All developer versions will automatically expire\n"
-                                    "after a certian time interval. This is to insure\n"
-                                    "that no old versions are floating around causing\n"
-                                    "users to report bugs on old versions.\n\n"
-                                    "Thanks for your help in improving YAM!";
-           if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL &&
-              GETINTERFACE("main", IOpenURL, OpenURLBase))
-           {
-             ErrReq.es_GadgetFormat = (STRPTR)"Visit homepage|Exit";
-           }
-           else
-             ErrReq.es_GadgetFormat = (STRPTR)"Exit";
-
-           DisplayBeep(NULL);
-           if(EasyRequestArgs(NULL, &ErrReq, NULL, NULL) == 1)
-           {
-             // visit YAM's nightly build page and exit
-             GotoURL("http://nightly.yam.ch/");
-           }
-
-           CLOSELIB(OpenURLBase, IOpenURL);
-           goon = FALSE;
-         }
-
-         if(goon == TRUE && GetVar("I_KNOW_YAM_IS_UNDER_DEVELOPMENT", &var, sizeof(var), 0) == -1)
-         {
-           LONG answer;
-
-           ErrReq.es_Title        = (STRPTR)"YAM Developer Version Warning!";
-           ErrReq.es_TextFormat   = (STRPTR)"This is an *internal* developer version and\n"
-                                    "not recommended or intended for public use.\n"
-                                    "It may contain bugs that can lead to any loss\n"
-                                    "of data and no regular support for this version\n"
-                                    "will be provided in any form.\n\n"
-                                    "In addition, this version will automatically\n"
-                                    "expire after a certain time interval.\n\n"
-                                    "So if you're unsure and prefer to have a stable\n"
-                                    "installation instead of a possibly dangerous\n"
-                                    "version, please consider to use the current\n"
-                                    "stable release version available from:\n\n"
-                                    "http://www.yam.ch/\n\n"
-                                    "Thanks for your help in improving YAM!";
-           if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL &&
-              GETINTERFACE("main", IOpenURL, OpenURLBase))
-           {
-             ErrReq.es_GadgetFormat = (STRPTR)"Go on|Visit homepage|Exit";
-           }
-           else
-             ErrReq.es_GadgetFormat = (STRPTR)"Go on|Exit";
-
-           DisplayBeep(NULL);
-           answer = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
-           if(answer == 0)
-           {
-             // exit YAM
-             goon = FALSE;
-           }
-           else if(answer == 2)
-           {
-             // visit YAM's home page and continue normally
-             GotoURL("http://www.yam.ch/");
-           }
-
-           CLOSELIB(OpenURLBase, IOpenURL);
-         }
-       }
-
-       CLOSELIB(UtilityBase, IUtility);
-     }
-
-     CLOSELIB(IntuitionBase, IIntuition);
-     if(goon == FALSE)
-       exit(RETURN_WARN);
-   }
-#endif
-
-   // initialize our debugging system.
-   #if defined(DEBUG)
-   SetupDebug();
-   #endif
-
-   // signal that on a exit() the 'yam_exitfunc' function
-   // should be called.
-   atexit(yam_exitfunc);
-
-   WBmsg = (struct WBStartup *)(0 == argc ? argv : NULL);
-
-   INITLIB("intuition.library", 36, 0, &IntuitionBase, "main", &IIntuition, TRUE, NULL);
-   INITLIB("icon.library",      36, 0, &IconBase,      "main", &IIcon,      TRUE, NULL);
-   INITLIB("utility.library",   36, 0, &UtilityBase,   "main", &IUtility,   TRUE, NULL);
-   INITLIB("diskfont.library",  37, 0, &DiskfontBase,  "main", &IDiskfont,  TRUE, NULL);
-
-   // now we parse the command-line arguments
-   if((err = ParseCommandArgs()))
-   {
-     PrintFault(err, "YAM");
-
-     SetIoErr(err);
-     exit(RETURN_ERROR);
-   }
-
-   // security only, can happen for residents only
-   if(!(progdir = GetProgramDir()))
-     exit(RETURN_ERROR);
-
-   olddirlock = CurrentDir(progdir);
-
-   for(yamFirst=TRUE;;)
-   {
-      ULONG signals, timsig, adstsig, rexsig, appsig, applibsig, notsig[MAXWR+1];
-      struct User *user;
-      int i, ret;
-
-      // allocate our global G and C structures
-      if((G = calloc(1, sizeof(struct Global))) == NULL ||
-         (C = calloc(1, sizeof(struct Config))) == NULL)
+    if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) != NULL &&
+       GETINTERFACE("main", IIntuition, IntuitionBase))
+    {
+      if((UtilityBase = (APTR)OpenLibrary("utility.library", 36)) != NULL &&
+         GETINTERFACE("main", IUtility, UtilityBase))
       {
-        // break out immediately to signal an error!
-        break;
-      }
+        char var;
+        struct EasyStruct ErrReq;
+        struct DateStamp ds;
+        DateStamp(&ds); // get actual time/date
 
-      // create the MEMF_SHARED memory pool we use for our
-      // own AllocVecPooled()/AllocPooled() allocations later on
-      #if defined(__amigaos4__)
-      if((G->SharedMemPool = AllocSysObjectTags(ASOT_MEMPOOL,
-                                                ASOPOOL_MFlags,    MEMF_SHARED|MEMF_CLEAR,
-                                                ASOPOOL_Puddle,    2048,
-                                                ASOPOOL_Threshold, 1024,
-                                                ASOPOOL_Name,      "YAM Shared Pool",
-                                                TAG_DONE)) == NULL)
-      #else
-      if((G->SharedMemPool = CreatePool(MEMF_SHARED|MEMF_CLEAR, 2048, 1024)) == NULL)
-      #endif
-      {
-        // break out immediately to signal an error!
-        break;
-      }
+        ErrReq.es_StructSize = sizeof(struct EasyStruct);
+        ErrReq.es_Flags      = 0;
 
-      // prepare the exec lists in G and C
-      NewList((struct List *)&(C->mimeTypeList));
-      NewList((struct List *)&(C->filterList));
-      NewList((struct List *)&(G->readMailDataList));
-      NewList((struct List *)&(G->xpkPackerList));
-      NewList((struct List *)&(G->zombieFileList));
-
-      // get the PROGDIR: and program name and put it into own variables
-      NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));
-      if(WBmsg && WBmsg->sm_NumArgs > 0)
-      {
-        strlcpy(G->ProgName, (char *)WBmsg->sm_ArgList[0].wa_Name, sizeof(G->ProgName));
-      }
-      else
-      {
-        char buf[SIZE_PATHFILE];
-
-        GetProgramName((STRPTR)&buf[0], sizeof(buf));
-        strlcpy(G->ProgName, (char *)FilePart(buf), sizeof(G->ProgName));
-      }
-
-      D(DBF_STARTUP, "ProgDir.: '%s'", G->ProgDir);
-      D(DBF_STARTUP, "ProgName: '%s'", G->ProgName);
-
-      if(!args.maildir)
-        strlcpy(G->MA_MailDir, G->ProgDir, sizeof(G->MA_MailDir));
-
-      G->TR_Debug = -args.debug;
-      G->TR_Socket = TCP_NO_SOCKET;
-      G->TR_Allow = TRUE;
-      G->CO_DST = GetDST(FALSE);
-      G->NoImageWarning = args.noImgWarning;
-      G->NoCatalogTranslation = args.noCatalog;
-
-      // setup our ImageCache
-      ImageCacheSetup();
-
-      // We have to initialize the ActiveWin flags to -1, so than the
-      // the arexx commands for the windows are reporting an error if
-      // some window wasn`t set active manually by an own rexx command.
-      G->ActiveWriteWin = -1;
-
-      #if defined(__amigaos4__)
-      // reset the docky icon id to some sensible default
-      // upon restart this makes sure that the docky icon is set to the correct state
-      G->LastIconID = -1;
-      #endif
-
-      if(yamFirst)
-      {
-        Initialise((BOOL)args.hide);
-        Login(args.user, args.password, args.maildir, args.prefsfile);
-        Initialise2();
-      }
-      else
-      {
-        Initialise(FALSE);
-        Login(NULL, NULL, NULL, NULL);
-        Initialise2();
-      }
-
-      DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
-      AppendToLogfile(LF_ALL, 0, tr(MSG_LOG_Started));
-      MA_StartMacro(MACRO_STARTUP, NULL);
-
-      // before we go on we check whether there is any .autosaveX.txt file in the
-      // maildir directory. And if so we ask the user what he would like to do with it
-      for(i=0; i < MAXWR; i++)
-      {
-        char fileName[SIZE_PATHFILE];
-
-        // fill fileName with the autosave filename
-        WR_AutoSaveFile(i, fileName, sizeof(fileName));
-
-        // check if the file exists
-        if(FileExists(fileName))
+        if(EXPDATE <= ds.ds_Days)
         {
-          int answer;
-
-          answer = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_AUTOSAVEFOUND_TITLE),
-                                                         tr(MSG_MA_AUTOSAVEFOUND_BUTTONS),
-                                                         tr(MSG_MA_AUTOSAVEFOUND),
-                                                         fileName);
-          if(answer == 1)
+          ErrReq.es_Title        = (STRPTR)"YAM Developer Version Expired!";
+          ErrReq.es_TextFormat   = (STRPTR)"This developer version of YAM has expired!\n\n"
+                                   "Please note that you may download a new, updated\n"
+                                   "version from the YAM nightly build page at:\n\n"
+                                   "http://nightly.yam.ch/\n\n"
+                                   "All developer versions will automatically expire\n"
+                                   "after a certian time interval. This is to insure\n"
+                                   "that no old versions are floating around causing\n"
+                                   "users to report bugs on old versions.\n\n"
+                                   "Thanks for your help in improving YAM!";
+          if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL &&
+             GETINTERFACE("main", IOpenURL, OpenURLBase))
           {
-            // the user wants to put the autosave file on hold in the outgoing folder
-            // so lets do it and delete the autosave file afterwards
-            int wrwin;
+            ErrReq.es_GadgetFormat = (STRPTR)"Visit homepage|Exit";
+          }
+          else
+            ErrReq.es_GadgetFormat = (STRPTR)"Exit";
 
-            if((wrwin = MA_NewNew(NULL, NEWF_QUIET)) >= 0)
-            {
-              // set some default receiver and subject, because the autosave file just contains
-              // the message text
-              set(G->WR[wrwin]->GUI.ST_TO, MUIA_String_Contents, "no@receiver");
-              set(G->WR[wrwin]->GUI.ST_SUBJECT, MUIA_String_Contents, "(subject)");
+          DisplayBeep(NULL);
+          if(EasyRequestArgs(NULL, &ErrReq, NULL, NULL) == 1)
+          {
+            // visit YAM's nightly build page and exit
+            GotoURL("http://nightly.yam.ch/");
+          }
 
-              // load the file in the new editor gadget
-              FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT);
+          CLOSELIB(OpenURLBase, IOpenURL);
+          goon = FALSE;
+        }
 
-              // make sure the texteditor gadget is marked as being changed
-              set(G->WR[wrwin]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, TRUE);
+        if(goon == TRUE && GetVar("I_KNOW_YAM_IS_UNDER_DEVELOPMENT", &var, sizeof(var), 0) == -1)
+        {
+          LONG answer;
 
-              // put the new mail on hold
-              WR_NewMail(WRITE_HOLD, wrwin);
+          ErrReq.es_Title        = (STRPTR)"YAM Developer Version Warning!";
+          ErrReq.es_TextFormat   = (STRPTR)"This is an *internal* developer version and\n"
+                                   "not recommended or intended for public use.\n"
+                                   "It may contain bugs that can lead to any loss\n"
+                                   "of data and no regular support for this version\n"
+                                   "will be provided in any form.\n\n"
+                                   "In addition, this version will automatically\n"
+                                   "expire after a certain time interval.\n\n"
+                                   "So if you're unsure and prefer to have a stable\n"
+                                   "installation instead of a possibly dangerous\n"
+                                   "version, please consider to use the current\n"
+                                   "stable release version available from:\n\n"
+                                   "http://www.yam.ch/\n\n"
+                                   "Thanks for your help in improving YAM!";
+          if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL &&
+             GETINTERFACE("main", IOpenURL, OpenURLBase))
+          {
+            ErrReq.es_GadgetFormat = (STRPTR)"Go on|Visit homepage|Exit";
+          }
+          else
+            ErrReq.es_GadgetFormat = (STRPTR)"Go on|Exit";
 
-              // we need to explicitly delete the autosave file here because
-              // the delete routine in WR_NewMail() doesn't catch the correct file
-              // because it only cares about the autosave file for the newly created
-              // write object
-              if(!DeleteFile(fileName))
-                AddZombieFile(fileName);
-            }
+          DisplayBeep(NULL);
+          answer = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
+          if(answer == 0)
+          {
+            // exit YAM
+            goon = FALSE;
           }
           else if(answer == 2)
           {
-            char newFileName[SIZE_PATHFILE];
-
-            // the user wants to open the autosave file in an own new write window,
-            // so lets do it and delete the autosave file afterwards
-            int wrwin;
-
-            if((wrwin = MA_NewNew(NULL, 0)) >= 0)
-            {
-              // load the file in the new editor gadget
-              FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT);
-
-              // make sure the texteditor gadget is marked as being changed
-              set(G->WR[wrwin]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, TRUE);
-
-              // we don't need to delete the autosave file here as the write
-              // window itself will delete it when it will be closed. However,
-              // we do have to rename the autosave file to the one that new wrwin
-              // will expect
-              if(i != wrwin)
-                RenameFile(fileName, WR_AutoSaveFile(wrwin, newFileName, sizeof(newFileName)));
-            }
+            // visit YAM's home page and continue normally
+            GotoURL("http://www.yam.ch/");
           }
-          else if(answer == 3)
+
+          CLOSELIB(OpenURLBase, IOpenURL);
+        }
+      }
+
+      CLOSELIB(UtilityBase, IUtility);
+    }
+
+    CLOSELIB(IntuitionBase, IIntuition);
+    if(goon == FALSE)
+      exit(RETURN_WARN);
+  }
+#endif
+
+  // initialize our debugging system.
+  #if defined(DEBUG)
+  SetupDebug();
+  #endif
+
+  // signal that on a exit() the 'yam_exitfunc' function
+  // should be called.
+  atexit(yam_exitfunc);
+
+  WBmsg = (struct WBStartup *)(0 == argc ? argv : NULL);
+
+  INITLIB("intuition.library", 36, 0, &IntuitionBase, "main", &IIntuition, TRUE, NULL);
+  INITLIB("icon.library",      36, 0, &IconBase,      "main", &IIcon,      TRUE, NULL);
+  INITLIB("utility.library",   36, 0, &UtilityBase,   "main", &IUtility,   TRUE, NULL);
+  INITLIB("diskfont.library",  37, 0, &DiskfontBase,  "main", &IDiskfont,  TRUE, NULL);
+
+  // now we parse the command-line arguments
+  if((err = ParseCommandArgs()))
+  {
+    PrintFault(err, "YAM");
+
+    SetIoErr(err);
+    exit(RETURN_ERROR);
+  }
+
+  // security only, can happen for residents only
+  if(!(progdir = GetProgramDir()))
+    exit(RETURN_ERROR);
+
+  olddirlock = CurrentDir(progdir);
+
+  for(yamFirst=TRUE;;)
+  {
+    ULONG signals, timsig, adstsig, rexsig, appsig, applibsig, notsig[MAXWR+1];
+    struct User *user;
+    int i, ret;
+
+    // allocate our global G and C structures
+    if((G = calloc(1, sizeof(struct Global))) == NULL ||
+       (C = calloc(1, sizeof(struct Config))) == NULL)
+    {
+      // break out immediately to signal an error!
+      break;
+    }
+
+    // create the MEMF_SHARED memory pool we use for our
+    // own AllocVecPooled() allocations later on
+    #if defined(__amigaos4__)
+    if((G->SharedMemPool = AllocSysObjectTags(ASOT_MEMPOOL,
+                                              ASOPOOL_MFlags,    MEMF_SHARED|MEMF_CLEAR,
+                                              ASOPOOL_Puddle,    2048,
+                                              ASOPOOL_Threshold, 1024,
+                                              ASOPOOL_Name,      "YAM Shared Pool",
+                                              TAG_DONE)) == NULL)
+    #else
+    if((G->SharedMemPool = CreatePool(MEMF_SHARED|MEMF_CLEAR, 2048, 1024)) == NULL)
+    #endif
+    {
+      // break out immediately to signal an error!
+      break;
+    }
+
+    // prepare the exec lists in G and C
+    NewList((struct List *)&(C->mimeTypeList));
+    NewList((struct List *)&(C->filterList));
+    NewList((struct List *)&(G->readMailDataList));
+    NewList((struct List *)&(G->xpkPackerList));
+    NewList((struct List *)&(G->zombieFileList));
+
+    // get the PROGDIR: and program name and put it into own variables
+    NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));
+    if(WBmsg && WBmsg->sm_NumArgs > 0)
+    {
+      strlcpy(G->ProgName, (char *)WBmsg->sm_ArgList[0].wa_Name, sizeof(G->ProgName));
+    }
+    else
+    {
+      char buf[SIZE_PATHFILE];
+
+      GetProgramName((STRPTR)&buf[0], sizeof(buf));
+      strlcpy(G->ProgName, (char *)FilePart(buf), sizeof(G->ProgName));
+    }
+
+    D(DBF_STARTUP, "ProgDir.: '%s'", G->ProgDir);
+    D(DBF_STARTUP, "ProgName: '%s'", G->ProgName);
+
+    if(args.maildir == NULL)
+      strlcpy(G->MA_MailDir, G->ProgDir, sizeof(G->MA_MailDir));
+
+    G->TR_Debug = -args.debug;
+    G->TR_Socket = TCP_NO_SOCKET;
+    G->TR_Allow = TRUE;
+    G->CO_DST = GetDST(FALSE);
+    G->NoImageWarning = args.noImgWarning;
+    G->NoCatalogTranslation = args.noCatalog;
+
+    // setup our ImageCache
+    ImageCacheSetup();
+
+    // We have to initialize the ActiveWin flags to -1, so than the
+    // the arexx commands for the windows are reporting an error if
+    // some window wasn`t set active manually by an own rexx command.
+    G->ActiveWriteWin = -1;
+
+    #if defined(__amigaos4__)
+    // reset the docky icon id to some sensible default
+    // upon restart this makes sure that the docky icon is set to the correct state
+    G->LastIconID = -1;
+    #endif
+
+    if(yamFirst == TRUE)
+    {
+      Initialise((BOOL)args.hide);
+      Login(args.user, args.password, args.maildir, args.prefsfile);
+      Initialise2();
+    }
+    else
+    {
+      Initialise(FALSE);
+      Login(NULL, NULL, NULL, NULL);
+      Initialise2();
+    }
+
+    DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
+    AppendToLogfile(LF_ALL, 0, tr(MSG_LOG_Started));
+    MA_StartMacro(MACRO_STARTUP, NULL);
+
+    // before we go on we check whether there is any .autosaveX.txt file in the
+    // maildir directory. And if so we ask the user what he would like to do with it
+    for(i=0; i < MAXWR; i++)
+    {
+      char fileName[SIZE_PATHFILE];
+
+      // fill fileName with the autosave filename
+      WR_AutoSaveFile(i, fileName, sizeof(fileName));
+
+      // check if the file exists
+      if(FileExists(fileName))
+      {
+        int answer;
+
+        answer = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_AUTOSAVEFOUND_TITLE),
+                                                       tr(MSG_MA_AUTOSAVEFOUND_BUTTONS),
+                                                       tr(MSG_MA_AUTOSAVEFOUND),
+                                                       fileName);
+        if(answer == 1)
+        {
+          // the user wants to put the autosave file on hold in the outgoing folder
+          // so lets do it and delete the autosave file afterwards
+          int wrwin;
+
+          if((wrwin = MA_NewNew(NULL, NEWF_QUIET)) >= 0)
           {
-            // just delete the autosave file
+            // set some default receiver and subject, because the autosave file just contains
+            // the message text
+            set(G->WR[wrwin]->GUI.ST_TO, MUIA_String_Contents, "no@receiver");
+            set(G->WR[wrwin]->GUI.ST_SUBJECT, MUIA_String_Contents, "(subject)");
+
+            // load the file in the new editor gadget
+            FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT);
+
+            // make sure the texteditor gadget is marked as being changed
+            set(G->WR[wrwin]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, TRUE);
+
+            // put the new mail on hold
+            WR_NewMail(WRITE_HOLD, wrwin);
+
+            // we need to explicitly delete the autosave file here because
+            // the delete routine in WR_NewMail() doesn't catch the correct file
+            // because it only cares about the autosave file for the newly created
+            // write object
             if(!DeleteFile(fileName))
               AddZombieFile(fileName);
           }
         }
-      }
-
-      if(yamFirst)
-      {
-        int wrwin;
-
-        DoStartup((BOOL)args.nocheck, (BOOL)args.hide);
-        if((args.mailto || args.letter || args.subject || args.attach) && (wrwin = MA_NewNew(NULL, 0)) >= 0)
+        else if(answer == 2)
         {
-          if(args.mailto)
-            setstring(G->WR[wrwin]->GUI.ST_TO, args.mailto);
+          char newFileName[SIZE_PATHFILE];
 
-          if(args.subject)
-            setstring(G->WR[wrwin]->GUI.ST_SUBJECT, args.subject);
+          // the user wants to open the autosave file in an own new write window,
+          // so lets do it and delete the autosave file afterwards
+          int wrwin;
 
-          if(args.letter)
-            FileToEditor(args.letter, G->WR[wrwin]->GUI.TE_EDIT);
-
-          if(args.attach)
+          if((wrwin = MA_NewNew(NULL, 0)) >= 0)
           {
-            char **sptr;
+            // load the file in the new editor gadget
+            FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT);
 
-            for(sptr = args.attach; *sptr; sptr++)
-            {
-              if(FileSize(*sptr) >= 0)
-                WR_AddFileToList(wrwin, *sptr, NULL, FALSE);
-            }
+            // make sure the texteditor gadget is marked as being changed
+            set(G->WR[wrwin]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, TRUE);
+
+            // we don't need to delete the autosave file here as the write
+            // window itself will delete it when it will be closed. However,
+            // we do have to rename the autosave file to the one that new wrwin
+            // will expect
+            if(i != wrwin)
+              RenameFile(fileName, WR_AutoSaveFile(wrwin, newFileName, sizeof(newFileName)));
           }
         }
-
-        yamFirst = FALSE;
-      }
-      else
-        DisplayAppIconStatistics();
-
-      user = US_GetCurrentUser();
-      AppendToLogfile(LF_NORMAL, 1, tr(MSG_LOG_LoggedIn), user->Name);
-      AppendToLogfile(LF_VERBOSE, 2, tr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir);
-
-      // Now start the NotifyRequest for the AutoDST file
-      if(ADSTnotify_start())
-        adstsig = 1UL << ADSTdata.nRequest.nr_stuff.nr_Signal.nr_SignalNum;
-      else
-        adstsig = 0;
-
-      // get the msgport of the application.library
-      #if defined(__amigaos4__)
-      if(G->applicationID)
-      {
-        GetApplicationAttrs(G->applicationID,
-                            APPATTR_Port,     (uint32)&G->AppLibPort,
-                            TAG_DONE);
-
-        if(G->AppLibPort)
-          applibsig = (1UL << G->AppLibPort->mp_SigBit);
-        else
+        else if(answer == 3)
         {
-          E(DBF_STARTUP, "Error on trying to retrieve application libraries MsgPort for YAM.");
-          applibsig = 0;
+          // just delete the autosave file
+          if(!DeleteFile(fileName))
+            AddZombieFile(fileName);
         }
       }
-      else
-      #endif
-        applibsig = 0;
+    }
 
-      // prepare the other signal bits
-      timsig    = (1UL << TCData.port->mp_SigBit);
-      rexsig    = (1UL << G->RexxHost->port->mp_SigBit);
-      appsig    = (1UL << G->AppPort->mp_SigBit);
-      notsig[0] = (1UL << G->WR_NRequest[0].nr_stuff.nr_Msg.nr_Port->mp_SigBit);
-      notsig[1] = (1UL << G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port->mp_SigBit);
-      notsig[2] = (1UL << G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port->mp_SigBit);
+    if(yamFirst == TRUE)
+    {
+      int wrwin;
 
-      D(DBF_STARTUP, "YAM allocated signals:");
-      D(DBF_STARTUP, " adstsig  = %08lx", adstsig);
-      D(DBF_STARTUP, " timsig   = %08lx", timsig);
-      D(DBF_STARTUP, " rexsig   = %08lx", rexsig);
-      D(DBF_STARTUP, " appsig   = %08lx", appsig);
-      D(DBF_STARTUP, " applibsig= %08lx", applibsig);
-      D(DBF_STARTUP, " notsig[0]= %08lx", notsig[0]);
-      D(DBF_STARTUP, " notsig[1]= %08lx", notsig[1]);
-      D(DBF_STARTUP, " notsig[2]= %08lx", notsig[2]);
-
-      // start our maintanance TimerIO requests for
-      // different purposes (writeindexes/mailcheck/autosave)
-      TC_Prepare(TIO_WRINDEX,   C->WriteIndexes, 0);
-      TC_Prepare(TIO_CHECKMAIL, C->CheckMailDelay*60, 0);
-      TC_Prepare(TIO_AUTOSAVE,  C->AutoSave, 0);
-      TC_Start(TIO_WRINDEX);
-      TC_Start(TIO_CHECKMAIL);
-      TC_Start(TIO_AUTOSAVE);
-
-      TC_Prepare(TIO_SPAMFLUSHTRAININGDATA, C->SpamFlushTrainingDataInterval, 0);
-      TC_Start(TIO_SPAMFLUSHTRAININGDATA);
-
-      // initialize the automatic UpdateCheck facility and schedule an
-      // automatic update check during startup if necessary
-      InitUpdateCheck(TRUE);
-
-      // start the event loop
-      while((ret = Root_GlobalDispatcher(DoMethod(G->App, MUIM_Application_NewInput, &signals))) == 0)
+      DoStartup((BOOL)args.nocheck, (BOOL)args.hide);
+      if((args.mailto != NULL|| args.letter != NULL || args.subject != NULL || args.attach != NULL) && (wrwin = MA_NewNew(NULL, 0)) >= 0)
       {
-         if (signals)
-         {
-            signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexsig | appsig | applibsig | notsig[0] | notsig[1] | notsig[2] | adstsig);
+        if(args.mailto != NULL)
+          setstring(G->WR[wrwin]->GUI.ST_TO, args.mailto);
 
-            if (signals & SIGBREAKF_CTRL_C) { ret = 1; break; }
-            if (signals & SIGBREAKF_CTRL_D) { ret = 0; break; }
-            if (signals & SIGBREAKF_CTRL_F) PopUp();
+        if(args.subject != NULL)
+          setstring(G->WR[wrwin]->GUI.ST_SUBJECT, args.subject);
 
-            // check for a TimerIO event
-            if(signals & timsig)
+        if(args.letter != NULL)
+          FileToEditor(args.letter, G->WR[wrwin]->GUI.TE_EDIT);
+
+        if(args.attach != NULL)
+        {
+          char **sptr;
+
+          for(sptr = args.attach; *sptr; sptr++)
+          {
+            if(FileSize(*sptr) >= 0)
+              WR_AddFileToList(wrwin, *sptr, NULL, FALSE);
+          }
+        }
+      }
+
+      yamFirst = FALSE;
+    }
+    else
+      DisplayAppIconStatistics();
+
+    user = US_GetCurrentUser();
+    AppendToLogfile(LF_NORMAL, 1, tr(MSG_LOG_LoggedIn), user->Name);
+    AppendToLogfile(LF_VERBOSE, 2, tr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir);
+
+    // Now start the NotifyRequest for the AutoDST file
+    if(ADSTnotify_start() == TRUE)
+      adstsig = 1UL << ADSTdata.nRequest.nr_stuff.nr_Signal.nr_SignalNum;
+    else
+      adstsig = 0;
+
+    // get the msgport of the application.library
+    #if defined(__amigaos4__)
+    if(G->applicationID != 0)
+    {
+      GetApplicationAttrs(G->applicationID,
+                          APPATTR_Port,     (uint32)&G->AppLibPort,
+                          TAG_DONE);
+
+      if(G->AppLibPort)
+        applibsig = (1UL << G->AppLibPort->mp_SigBit);
+      else
+      {
+        E(DBF_STARTUP, "Error on trying to retrieve application libraries MsgPort for YAM.");
+        applibsig = 0;
+      }
+    }
+    else
+    #endif
+      applibsig = 0;
+
+    // prepare the other signal bits
+    timsig    = (1UL << TCData.port->mp_SigBit);
+    rexsig    = (1UL << G->RexxHost->port->mp_SigBit);
+    appsig    = (1UL << G->AppPort->mp_SigBit);
+    notsig[0] = (1UL << G->WR_NRequest[0].nr_stuff.nr_Msg.nr_Port->mp_SigBit);
+    notsig[1] = (1UL << G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port->mp_SigBit);
+    notsig[2] = (1UL << G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port->mp_SigBit);
+
+    D(DBF_STARTUP, "YAM allocated signals:");
+    D(DBF_STARTUP, " adstsig  = %08lx", adstsig);
+    D(DBF_STARTUP, " timsig   = %08lx", timsig);
+    D(DBF_STARTUP, " rexsig   = %08lx", rexsig);
+    D(DBF_STARTUP, " appsig   = %08lx", appsig);
+    D(DBF_STARTUP, " applibsig= %08lx", applibsig);
+    D(DBF_STARTUP, " notsig[0]= %08lx", notsig[0]);
+    D(DBF_STARTUP, " notsig[1]= %08lx", notsig[1]);
+    D(DBF_STARTUP, " notsig[2]= %08lx", notsig[2]);
+
+    // start our maintanance TimerIO requests for
+    // different purposes (writeindexes/mailcheck/autosave)
+    TC_Prepare(TIO_WRINDEX,   C->WriteIndexes, 0);
+    TC_Prepare(TIO_CHECKMAIL, C->CheckMailDelay*60, 0);
+    TC_Prepare(TIO_AUTOSAVE,  C->AutoSave, 0);
+    TC_Start(TIO_WRINDEX);
+    TC_Start(TIO_CHECKMAIL);
+    TC_Start(TIO_AUTOSAVE);
+
+    TC_Prepare(TIO_SPAMFLUSHTRAININGDATA, C->SpamFlushTrainingDataInterval, 0);
+    TC_Start(TIO_SPAMFLUSHTRAININGDATA);
+
+    // initialize the automatic UpdateCheck facility and schedule an
+    // automatic update check during startup if necessary
+    InitUpdateCheck(TRUE);
+
+    // start the event loop
+    while((ret = Root_GlobalDispatcher(DoMethod(G->App, MUIM_Application_NewInput, &signals))) == 0)
+    {
+      if(signals)
+      {
+        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexsig | appsig | applibsig | notsig[0] | notsig[1] | notsig[2] | adstsig);
+
+        if(signals & SIGBREAKF_CTRL_C)
+        {
+          ret = 1;
+          break;
+        }
+        if(signals & SIGBREAKF_CTRL_D)
+        {
+          ret = 0;
+          break;
+        }
+        if(signals & SIGBREAKF_CTRL_F)
+          PopUp();
+
+        // check for a TimerIO event
+        if(signals & timsig)
+        {
+          struct TimeRequest *timeReq;
+          BOOL processed = FALSE;
+
+          #if defined(DEBUG)
+          char dateString[64];
+
+          DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
+          D(DBF_TIMERIO, "timer signal received @ %s", dateString);
+          #endif
+
+          // check if we have a waiting message
+          while((timeReq = (struct TimeRequest *)GetMsg(TCData.port)))
+          {
+            enum TimerIO tio;
+
+            for(tio = TIO_WRINDEX; tio < TIO_NUM; tio++)
             {
-              struct TimeRequest *timeReq;
-              BOOL processed = FALSE;
+              struct TC_Request *timer = &TCData.timer[tio];
 
-              #if defined(DEBUG)
-              char dateString[64];
-
-              DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
-              D(DBF_TIMERIO, "timer signal received @ %s", dateString);
-              #endif
-
-              // check if we have a waiting message
-              while((timeReq = (struct TimeRequest *)GetMsg(TCData.port)))
+              if(timeReq == timer->tr)
               {
-                enum TimerIO tio;
+                // set the timer to be not running and not be prepared for
+                // another shot. Our dispatcher have to do the rest then
+                timer->isRunning = FALSE;
+                timer->isPrepared = FALSE;
 
-                for(tio = TIO_WRINDEX; tio < TIO_NUM; tio++)
-                {
-                  struct TC_Request *timer = &TCData.timer[tio];
+                // call the dispatcher with signalling which timerIO
+                // this request caused
+                TC_Dispatcher(tio);
 
-                  if(timeReq == timer->tr)
-                  {
-                    // set the timer to be not running and not be prepared for
-                    // another shot. Our dispatcher have to do the rest then
-                    timer->isRunning = FALSE;
-                    timer->isPrepared = FALSE;
+                // signal that we processed something
+                processed = TRUE;
 
-                    // call the dispatcher with signalling which timerIO
-                    // this request caused
-                    TC_Dispatcher(tio);
-
-                    // signal that we processed something
-                    processed = TRUE;
-
-                    // break out of the for() loop
-                    break;
-                  }
-                }
-
-                // no ReplyMsg() needed
-              }
-
-              // make sure that we are starting the timer again after the GetMsg loop
-              if(processed)
-              {
-                // here we just check for the timers that TC_Dispatcher really
-                // prepares and not all of them in a loop
-
-                if(TCData.timer[TIO_WRINDEX].isPrepared)
-                  TC_Start(TIO_WRINDEX);
-
-                if(TCData.timer[TIO_CHECKMAIL].isPrepared)
-                  TC_Start(TIO_CHECKMAIL);
-
-                if(TCData.timer[TIO_AUTOSAVE].isPrepared)
-                  TC_Start(TIO_AUTOSAVE);
-
-                if(TCData.timer[TIO_POP3_KEEPALIVE].isPrepared)
-                  TC_Start(TIO_POP3_KEEPALIVE);
-
-                if(TCData.timer[TIO_UPDATECHECK].isPrepared)
-                  TC_Start(TIO_UPDATECHECK);
-
-                if(TCData.timer[TIO_SPAMFLUSHTRAININGDATA].isPrepared)
-                  TC_Start(TIO_SPAMFLUSHTRAININGDATA);
-
-                if(TCData.timer[TIO_DELETEZOMBIEFILES].isPrepared)
-                  TC_Start(TIO_DELETEZOMBIEFILES);
-              }
-              else
-                W(DBF_TIMERIO, "timer signal received, but no timer request was processed!!!");
-
-              #if defined(DEBUG)
-              // let us check whether all necessary maintenance timers are running
-              // because right here ALL maintenance timers should run or something is definitly wrong!
-
-              if(C->WriteIndexes > 0 && TCData.timer[TIO_WRINDEX].isRunning == FALSE)
-                E(DBF_ALWAYS, "timer[%ld]: TIO_WRINDEX is not running and was probably lost!", TIO_WRINDEX);
-
-              if(C->CheckMailDelay > 0 && TCData.timer[TIO_CHECKMAIL].isRunning == FALSE)
-                E(DBF_ALWAYS, "timer[%ld]: TIO_CHECKMAIL is not running and was probably lost!", TIO_CHECKMAIL);
-
-              if(C->AutoSave > 0 && TCData.timer[TIO_AUTOSAVE].isRunning == FALSE)
-                E(DBF_ALWAYS, "timer[%ld]: TIO_AUTOSAVE is not running and was probably lost!", TIO_AUTOSAVE);
-              #endif
-            }
-
-            // check for a Arexx signal
-            if (signals & rexsig) ARexxDispatch(G->RexxHost);
-
-            // check for a AppMessage signal
-            if (signals & appsig)
-            {
-              struct AppMessage *apmsg;
-
-              while((apmsg = (struct AppMessage *)GetMsg(G->AppPort)) != NULL)
-              {
-                if(apmsg->am_Type == AMTYPE_APPICON)
-                {
-                  ULONG action = AMCLASSICON_Open;
-
-                  // now we catch the am_Class member of the APPICON message
-                  // which will be set by workbench.library v44+. However,
-                  // older workbench versions doesn't seem to have the Class
-                  // member and may have it uninitialized, therefore we
-                  // check here for the v44+ workbench
-                  if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
-                    action = apmsg->am_Class;
-
-                  // check the action
-                  switch(action)
-                  {
-                    // user has pressed "Open" or double-clicked on the
-                    // AppIcon, so we popup YAM and eventually load the
-                    // drag&dropped file into a new write window.
-                    case AMCLASSICON_Open:
-                    {
-                      // bring all windows of YAM to front.
-                      PopUp();
-
-                      // check if something was dropped onto the AppIcon
-                      if(apmsg->am_NumArgs != 0)
-                      {
-                        int wrwin;
-
-                        if(G->WR[0])
-                          wrwin = 0;
-                        else if(G->WR[1])
-                          wrwin = 1;
-                        else
-                          wrwin = MA_NewNew(NULL, 0);
-
-                        if(wrwin >= 0)
-                        {
-                          int arg;
-
-                          // lets walk through all arguments in the appMessage
-                          for(arg = 0; arg < apmsg->am_NumArgs; arg++)
-                          {
-                            char buf[SIZE_PATHFILE];
-                            struct WBArg *ap = &apmsg->am_ArgList[arg];
-
-                            NameFromLock(ap->wa_Lock, buf, sizeof(buf));
-                            AddPart(buf, (char *)ap->wa_Name, sizeof(buf));
-
-                            // call WR_App to let it put in the text of the file
-                            // to the write window
-                            WR_App(wrwin, buf);
-                          }
-                        }
-                      }
-                    }
-                    break;
-
-                    // user has pressed "Snapshot" on the AppIcon
-                    case AMCLASSICON_Snapshot:
-                    {
-                      if(G->CurrentDiskObj != NULL)
-                      {
-                        // remember the position.
-                        C->IconPositionX = G->CurrentDiskObj->do_CurrentX;
-                        C->IconPositionY = G->CurrentDiskObj->do_CurrentY;
-
-                        // we also save the configuration here, even if that
-                        // will trigger that other configurations will
-                        // be saved as well. However, such a snapshot action
-                        // is done very rarely and the user would definitly
-                        // expect that the position will be saved immediately.
-                        CO_SaveConfig(C, G->CO_PrefsFile);
-                      }
-                    }
-                    break;
-
-                    // user has pressed "UnSnapshot" on the AppIcon
-                    case AMCLASSICON_UnSnapshot:
-                    {
-                      // for unsnapshotting the icon position we negate the
-                      // IconPosition values. So negative values mean they
-                      // are disabled.
-                      C->IconPositionX = -abs(C->IconPositionX);
-                      C->IconPositionY = -abs(C->IconPositionY);
-
-                      // we also save the configuration here, even if that
-                      // will trigger that other configurations will
-                      // be saved as well. However, such a snapshot action
-                      // is done very rarely and the user would definitly
-                      // expect that the position will be saved immediately.
-                      CO_SaveConfig(C, G->CO_PrefsFile);
-
-                      // refresh the AppIcon
-                      DisplayAppIconStatistics();
-                    }
-                    break;
-
-                    // user has pressed "Empty Trash" on the AppIcon,
-                    // so we go and empty the trash folder accordingly.
-                    case AMCLASSICON_EmptyTrash:
-                    {
-                      // empty the "deleted" folder
-                      DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);
-                    }
-                    break;
-                  }
-                }
-
-                ReplyMsg(&apmsg->am_Message);
+                // break out of the for() loop
+                break;
               }
             }
 
-            #if defined(__amigaos4__)
-            if(signals & applibsig)
+            // no ReplyMsg() needed
+          }
+
+          // make sure that we are starting the timer again after the GetMsg loop
+          if(processed == TRUE)
+          {
+            // here we just check for the timers that TC_Dispatcher really
+            // prepares and not all of them in a loop
+
+            if(TCData.timer[TIO_WRINDEX].isPrepared == TRUE)
+              TC_Start(TIO_WRINDEX);
+
+            if(TCData.timer[TIO_CHECKMAIL].isPrepared == TRUE)
+              TC_Start(TIO_CHECKMAIL);
+
+            if(TCData.timer[TIO_AUTOSAVE].isPrepared == TRUE)
+              TC_Start(TIO_AUTOSAVE);
+
+            if(TCData.timer[TIO_POP3_KEEPALIVE].isPrepared == TRUE)
+              TC_Start(TIO_POP3_KEEPALIVE);
+
+            if(TCData.timer[TIO_UPDATECHECK].isPrepared == TRUE)
+              TC_Start(TIO_UPDATECHECK);
+
+            if(TCData.timer[TIO_SPAMFLUSHTRAININGDATA].isPrepared == TRUE)
+              TC_Start(TIO_SPAMFLUSHTRAININGDATA);
+
+            if(TCData.timer[TIO_DELETEZOMBIEFILES].isPrepared == TRUE)
+              TC_Start(TIO_DELETEZOMBIEFILES);
+          }
+          else
+            W(DBF_TIMERIO, "timer signal received, but no timer request was processed!!!");
+
+          #if defined(DEBUG)
+          // let us check whether all necessary maintenance timers are running
+          // because right here ALL maintenance timers should run or something is definitly wrong!
+
+          if(C->WriteIndexes > 0 && TCData.timer[TIO_WRINDEX].isRunning == FALSE)
+            E(DBF_ALWAYS, "timer[%ld]: TIO_WRINDEX is not running and was probably lost!", TIO_WRINDEX);
+
+          if(C->CheckMailDelay > 0 && TCData.timer[TIO_CHECKMAIL].isRunning == FALSE)
+            E(DBF_ALWAYS, "timer[%ld]: TIO_CHECKMAIL is not running and was probably lost!", TIO_CHECKMAIL);
+
+          if(C->AutoSave > 0 && TCData.timer[TIO_AUTOSAVE].isRunning == FALSE)
+            E(DBF_ALWAYS, "timer[%ld]: TIO_AUTOSAVE is not running and was probably lost!", TIO_AUTOSAVE);
+          #endif
+        }
+
+        // check for a Arexx signal
+        if(signals & rexsig)
+          ARexxDispatch(G->RexxHost);
+
+        // check for a AppMessage signal
+        if(signals & appsig)
+        {
+          struct AppMessage *apmsg;
+
+          while((apmsg = (struct AppMessage *)GetMsg(G->AppPort)) != NULL)
+          {
+            if(apmsg->am_Type == AMTYPE_APPICON)
             {
-              struct ApplicationMsg *msg;
+              ULONG action = AMCLASSICON_Open;
 
-              while((msg = (struct ApplicationMsg *)GetMsg(G->AppLibPort)) != NULL)
+              // now we catch the am_Class member of the APPICON message
+              // which will be set by workbench.library v44+. However,
+              // older workbench versions doesn't seem to have the Class
+              // member and may have it uninitialized, therefore we
+              // check here for the v44+ workbench
+              if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
+                action = apmsg->am_Class;
+
+              // check the action
+              switch(action)
               {
-                switch(msg->type)
+                // user has pressed "Open" or double-clicked on the
+                // AppIcon, so we popup YAM and eventually load the
+                // drag&dropped file into a new write window.
+                case AMCLASSICON_Open:
                 {
-                  // ask the user if he really wants to quit the application
-                  case APPLIBMT_Quit:
-                  {
-                    ret = (int)!StayInProg();
-                  }
-                  break;
+                  // bring all windows of YAM to front.
+                  PopUp();
 
-                  // exit without bothering the user at all.
-                  case APPLIBMT_ForceQuit:
+                  // check if something was dropped onto the AppIcon
+                  if(apmsg->am_NumArgs != 0)
                   {
-                    ret = 1;
-                  }
-                  break;
-
-                  // simply make sure YAM will be iconified/hidden
-                  case APPLIBMT_Hide:
-                  {
-                    set(G->App, MUIA_Application_Iconified, TRUE);
-                  }
-                  break;
-
-                  // simply make sure YAM will be uniconified
-                  case APPLIBMT_Unhide:
-                  {
-                    set(G->App, MUIA_Application_Iconified, FALSE);
-                  }
-                  break;
-
-                  // make sure the GUI of YAM is in front
-                  // and open with the latest document.
-                  case APPLIBMT_ToFront:
-                  {
-                    PopUp();
-                  }
-                  break;
-
-                  // make sure YAM is in front and open
-                  // the configuration window
-                  case APPLIBMT_OpenPrefs:
-                  {
-                    PopUp();
-                    CallHookPkt(&CO_OpenHook, 0, 0);
-                  }
-                  break;
-
-                  // open YAM in front of everyone and
-                  // import the passed document in
-                  // a new or existing write window.
-                  case APPLIBMT_OpenDoc:
-                  {
-                    struct ApplicationOpenPrintDocMsg* appmsg = (struct ApplicationOpenPrintDocMsg*)msg;
                     int wrwin;
 
-                    if(G->WR[0])
+                    if(G->WR[0] != NULL)
                       wrwin = 0;
-                    else if(G->WR[1])
+                    else if(G->WR[1] != NULL)
                       wrwin = 1;
                     else
                       wrwin = MA_NewNew(NULL, 0);
 
                     if(wrwin >= 0)
                     {
-                      PopUp();
-                      WR_App(wrwin, appmsg->fileName);
+                      int arg;
+
+                      // lets walk through all arguments in the appMessage
+                      for(arg = 0; arg < apmsg->am_NumArgs; arg++)
+                      {
+                        char buf[SIZE_PATHFILE];
+                        struct WBArg *ap = &apmsg->am_ArgList[arg];
+
+                        NameFromLock(ap->wa_Lock, buf, sizeof(buf));
+                        AddPart(buf, (char *)ap->wa_Name, sizeof(buf));
+
+                        // call WR_App to let it put in the text of the file
+                        // to the write window
+                        WR_App(wrwin, buf);
+                      }
                     }
                   }
-                  break;
-
-                  // make sure YAM is in front and open
-                  // a new write window.
-                  case APPLIBMT_NewBlankDoc:
-                  {
-                    PopUp();
-                    MA_NewNew(NULL, 0);
-                  }
-                  break;
                 }
-
-                ReplyMsg((struct Message *)msg);
-              }
-
-              // make sure to break out here in case
-              // the Quit or ForceQuit succeeded.
-              if(ret == 1)
                 break;
-            }
-            #endif
 
-            // check for the write window signals
-            for(i = 0; i <= MAXWR; i++)
+                // user has pressed "Snapshot" on the AppIcon
+                case AMCLASSICON_Snapshot:
+                {
+                  if(G->CurrentDiskObj != NULL)
+                  {
+                    // remember the position.
+                    C->IconPositionX = G->CurrentDiskObj->do_CurrentX;
+                    C->IconPositionY = G->CurrentDiskObj->do_CurrentY;
+
+                    // we also save the configuration here, even if that
+                    // will trigger that other configurations will
+                    // be saved as well. However, such a snapshot action
+                    // is done very rarely and the user would definitly
+                    // expect that the position will be saved immediately.
+                    CO_SaveConfig(C, G->CO_PrefsFile);
+                  }
+                }
+                break;
+
+                // user has pressed "UnSnapshot" on the AppIcon
+                case AMCLASSICON_UnSnapshot:
+                {
+                  // for unsnapshotting the icon position we negate the
+                  // IconPosition values. So negative values mean they
+                  // are disabled.
+                  C->IconPositionX = -abs(C->IconPositionX);
+                  C->IconPositionY = -abs(C->IconPositionY);
+
+                  // we also save the configuration here, even if that
+                  // will trigger that other configurations will
+                  // be saved as well. However, such a snapshot action
+                  // is done very rarely and the user would definitly
+                  // expect that the position will be saved immediately.
+                  CO_SaveConfig(C, G->CO_PrefsFile);
+
+                  // refresh the AppIcon
+                  DisplayAppIconStatistics();
+                }
+                break;
+
+                // user has pressed "Empty Trash" on the AppIcon,
+                // so we go and empty the trash folder accordingly.
+                case AMCLASSICON_EmptyTrash:
+                {
+                  // empty the "deleted" folder
+                  DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);
+                }
+                break;
+              }
+            }
+
+            ReplyMsg(&apmsg->am_Message);
+          }
+        }
+
+        #if defined(__amigaos4__)
+        if(signals & applibsig)
+        {
+          struct ApplicationMsg *msg;
+
+          while((msg = (struct ApplicationMsg *)GetMsg(G->AppLibPort)) != NULL)
+          {
+            switch(msg->type)
             {
-               if(signals & notsig[i])
-               {
-                  struct Message *msg;
+              // ask the user if he really wants to quit the application
+              case APPLIBMT_Quit:
+              {
+                ret = (int)!StayInProg();
+              }
+              break;
 
-                  while((msg = GetMsg(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port)))
-                    ReplyMsg(msg);
+              // exit without bothering the user at all.
+              case APPLIBMT_ForceQuit:
+              {
+                ret = 1;
+              }
+              break;
 
-                  if(G->WR[i])
-                    FileToEditor(G->WR_Filename[i], G->WR[i]->GUI.TE_EDIT);
-               }
+              // simply make sure YAM will be iconified/hidden
+              case APPLIBMT_Hide:
+              {
+                set(G->App, MUIA_Application_Iconified, TRUE);
+              }
+              break;
+
+              // simply make sure YAM will be uniconified
+              case APPLIBMT_Unhide:
+              {
+                set(G->App, MUIA_Application_Iconified, FALSE);
+              }
+              break;
+
+              // make sure the GUI of YAM is in front
+              // and open with the latest document.
+              case APPLIBMT_ToFront:
+              {
+                PopUp();
+              }
+              break;
+
+              // make sure YAM is in front and open
+              // the configuration window
+              case APPLIBMT_OpenPrefs:
+              {
+                PopUp();
+                CallHookPkt(&CO_OpenHook, 0, 0);
+              }
+              break;
+
+              // open YAM in front of everyone and
+              // import the passed document in
+              // a new or existing write window.
+              case APPLIBMT_OpenDoc:
+              {
+                struct ApplicationOpenPrintDocMsg* appmsg = (struct ApplicationOpenPrintDocMsg*)msg;
+                int wrwin;
+
+                if(G->WR[0] != NULL)
+                  wrwin = 0;
+                else if(G->WR[1] != NULL)
+                  wrwin = 1;
+                else
+                  wrwin = MA_NewNew(NULL, 0);
+
+                if(wrwin >= 0)
+                {
+                  PopUp();
+                  WR_App(wrwin, appmsg->fileName);
+                }
+              }
+              break;
+
+              // make sure YAM is in front and open
+              // a new write window.
+              case APPLIBMT_NewBlankDoc:
+              {
+                PopUp();
+                MA_NewNew(NULL, 0);
+              }
+              break;
             }
 
-            // check for the AutoDST signal
-            if(signals & adstsig)
-            {
-              // check the DST file and validate the configuration once more.
-              G->CO_DST = GetDST(TRUE);
-              CO_Validate(C, FALSE);
-            }
-         }
+            ReplyMsg((struct Message *)msg);
+          }
+
+          // make sure to break out here in case
+          // the Quit or ForceQuit succeeded.
+          if(ret == 1)
+            break;
+        }
+        #endif
+
+        // check for the write window signals
+        for(i = 0; i <= MAXWR; i++)
+        {
+          if(signals & notsig[i])
+          {
+            struct Message *msg;
+
+            while((msg = GetMsg(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port)) != NULL)
+              ReplyMsg(msg);
+
+            if(G->WR[i] != NULL)
+              FileToEditor(G->WR_Filename[i], G->WR[i]->GUI.TE_EDIT);
+          }
+        }
+
+        // check for the AutoDST signal
+        if(signals & adstsig)
+        {
+          // check the DST file and validate the configuration once more.
+          G->CO_DST = GetDST(TRUE);
+          CO_Validate(C, FALSE);
+        }
       }
+    }
 
-      if(C->SendOnQuit && !args.nocheck && TR_IsOnline())
-        SendWaitingMail(FALSE, FALSE);
+    if(C->SendOnQuit == TRUE && args.nocheck == FALSE && TR_IsOnline() == TRUE)
+      SendWaitingMail(FALSE, FALSE);
 
-      if(C->CleanupOnQuit)
-        DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
+    if(C->CleanupOnQuit == TRUE)
+      DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
 
-      if(C->RemoveOnQuit)
-        DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, TRUE);
+    if(C->RemoveOnQuit == TRUE)
+      DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, TRUE);
 
-      AppendToLogfile(LF_ALL, 99, tr(MSG_LOG_Terminated));
-      MA_StartMacro(MACRO_QUIT, NULL);
+    AppendToLogfile(LF_ALL, 99, tr(MSG_LOG_Terminated));
+    MA_StartMacro(MACRO_QUIT, NULL);
 
-      // if the user really wants to exit, do it now as Terminate() is broken !
-      if(ret == 1)
-      {
-        // Create the shutdown window object, but only show it if the application is visible, too.
-        // This window will be closed and disposed automatically as soon as the application itself
-        // is disposed.
-        if(G->App != NULL && xget(G->App, MUIA_Application_Iconified) == FALSE)
-          ShutdownWindowObject, End;
+    // if the user really wants to exit, do it now as Terminate() is broken !
+    if(ret == 1)
+    {
+      // Create the shutdown window object, but only show it if the application is visible, too.
+      // This window will be closed and disposed automatically as soon as the application itself
+      // is disposed.
+      if(G->App != NULL && xget(G->App, MUIA_Application_Iconified) == FALSE)
+        ShutdownWindowObject, End;
 
-        SetIoErr(RETURN_OK);
-        exit(RETURN_OK);
-      }
+      SetIoErr(RETURN_OK);
+      exit(RETURN_OK);
+    }
 
-      D(DBF_STARTUP, "Restart issued");
+    D(DBF_STARTUP, "Restart issued");
 
-      // prepare for restart
-      Terminate();
-   }
+    // prepare for restart
+    Terminate();
+  }
 
-   /* not reached */
-   SetIoErr(RETURN_OK);
-   return RETURN_OK;
+  /* not reached */
+  SetIoErr(RETURN_OK);
+  return RETURN_OK;
 }
 ///
-

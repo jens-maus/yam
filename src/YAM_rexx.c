@@ -98,15 +98,15 @@ void ReplyRexxCommand(struct RexxMsg *rexxmessage, long primary, long secondary,
             primary = -primary;
             result = (char *) secondary;
          }
-         
+
          SetRexxVar( REXXMSG(rexxmessage), (STRPTR)"RC2", result, (LONG)strlen(result) );
-         
+
          secondary = 0;
       }
    }
    else if( primary < 0 )
       primary = -primary;
-   
+
    rexxmessage->rm_Result1 = primary;
    rexxmessage->rm_Result2 = secondary;
    ReplyMsg( (struct Message *) rexxmessage );
@@ -173,9 +173,9 @@ static struct RexxMsg *CommandToRexx( struct RexxHost *host, struct RexxMsg *rex
    }
 
    PutMsg( rexxport, &rexx_command_message->rm_Node );
-   
+
    Permit();
-   
+
    ++host->replies;
 
    return( rexx_command_message );
@@ -225,12 +225,12 @@ void CloseDownARexxHost(struct RexxHost *host)
 
     // remove the port from the public list
     RemPort(host->port);
-      
+
     // remove outstanding messages
     while(host->replies > 0)
     {
       WaitPort(host->port);
-         
+
       while((rexxmsg = (struct RexxMsg *) GetMsg(host->port)) != NULL)
       {
         if(rexxmsg->rm_Node.mn_Node.ln_Type == NT_REPLYMSG)
@@ -241,7 +241,7 @@ void CloseDownARexxHost(struct RexxHost *host)
             if(ARexxResultHook != NULL)
                ARexxResultHook(host, rexxmsg);
           }
-               
+
           FreeRexxCommand(rexxmsg);
           host->replies--;
         }
@@ -249,11 +249,11 @@ void CloseDownARexxHost(struct RexxHost *host)
           ReplyRexxCommand(rexxmsg, -20, (long)"Host closing down", NULL);
       }
     }
-      
+
     // empty the message port
     while((rexxmsg = (struct RexxMsg *) GetMsg(host->port)) != NULL)
       ReplyRexxCommand(rexxmsg, -20, (long)"Host closing down", NULL);
-      
+
     if(isFlagClear(host->flags, ARB_HF_USRMSGPORT))
     {
       #if defined(__amigaos4__)
@@ -265,18 +265,14 @@ void CloseDownARexxHost(struct RexxHost *host)
       host->port = NULL;
     }
   }
-   
+
   if(host->rdargs != NULL)
   {
     FreeDosObject(DOS_RDARGS, host->rdargs);
     host->rdargs = NULL;
   }
 
-  #if defined(__amigaos4__)
   FreeVecPooled(G->SharedMemPool, host);
-  #else
-  FreePooled(G->SharedMemPool, host, sizeof(struct RexxHost));
-  #endif
 
   LEAVE();
 }
@@ -287,20 +283,16 @@ struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
 {
   BOOL success = FALSE;
   struct RexxHost *host;
-   
+
   ENTER();
 
   if(basename == NULL || basename[0] == '\0' )
     basename = RexxPortBaseName;
-   
-  #if defined(__amigaos4__)
+
   if((host = AllocVecPooled(G->SharedMemPool, sizeof(struct RexxHost))) != NULL)
-  #else
-  if((host = AllocPooled(G->SharedMemPool, sizeof(struct RexxHost))) != NULL)
-  #endif
   {
     strlcpy(host->portname, basename, sizeof(host->portname));
-   
+
     if((host->port = usrport) != NULL)
     {
       SET_FLAG(host->flags, ARB_HF_USRMSGPORT);
@@ -313,7 +305,7 @@ struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
     {
       host->port->mp_Node.ln_Pri = 0;
     }
-   
+
     if(host->port != NULL)
     {
       if((host->rdargs = AllocDosObject(DOS_RDARGS, NULL)) != NULL)
@@ -323,15 +315,15 @@ struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
         host->rdargs->RDA_Flags = RDAF_NOPROMPT;
 
         Forbid();
-       
+
         // create a unique name for the port
         while(FindPort(host->portname) != NULL)
           snprintf(host->portname, sizeof(host->portname), "%s.%d", basename, ++ext);
-       
+
         host->portnumber = ext;
         host->port->mp_Node.ln_Name = host->portname;
         AddPort(host->port);
-       
+
         Permit();
 
         success = TRUE;
@@ -353,15 +345,11 @@ struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
         #endif
       }
 
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, host);
-      #else
-      FreePooled(G->SharedMemPool, host, sizeof(struct RexxHost));
-      #endif
       host = NULL;
     }
   }
-   
+
   RETURN(host);
   return(host);
 }
@@ -375,7 +363,7 @@ static char *scmp(char *inp, const char *str)
   while(*str != '\0' && *inp != '\0')
     if(*inp++ != *str++)
       return NULL;
-   
+
   // return the remaining string
   return inp;
 }
@@ -389,7 +377,7 @@ static int find( char *input )
   char *ni;
   char tmp[36];
   const char *s;
-   
+
   ni = tmp;
   while(*input != '\0' && ni-tmp < 32)
   {
@@ -398,7 +386,7 @@ static int find( char *input )
   }
   *ni = 0;
   input = tmp;
-   
+
   while(*input != '\0')
   {
     // did we reach the terminal state?
@@ -409,7 +397,7 @@ static int find( char *input )
       else
         return st->cmd;
     }
-      
+
     // where to continue?
     ni = 0;
     for(ad = st->pa; (s = ad->str); ad++)
@@ -417,21 +405,21 @@ static int find( char *input )
       // the links are sorted descendant
       if(*input > *s)
         break;
-         
+
       if(*input == *s)
         if((ni = scmp(input+1, s+1)) != NULL)
           break;
     }
-      
+
     // nowhere to continue
     if(ni == NULL)
       return -1;
-      
+
     // state check
     st = arb_p_state + ad->dst;
     input = ni;
   }
-   
+
   return st->cmd;
 }
 
@@ -444,10 +432,10 @@ static struct rxs_command *FindRXCommand(char *com)
 
    ENTER();
    SHOWSTRING(DBF_REXX, com);
-   
+
    if((index = find(com)) != -1)
      cmd = rxs_commandlist + index;
-   
+
    RETURN(cmd);
    return cmd;
 }
@@ -458,15 +446,15 @@ static struct rxs_command *ParseRXCommand(char **arg)
 {
   char com[256], *s, *t;
    struct rxs_command *cmd;
-   
+
   ENTER();
 
   s = *arg;
   t = com;
-   
+
   while(*s != '\0' && *s != ' ' && *s != '\n' && (unsigned int)(t - com + 1) < sizeof(com))
     *t++ = *s++;
-   
+
   *t = '\0';
   while(*s == ' ')
     ++s;
@@ -488,31 +476,27 @@ static char *CreateVAR( struct rxs_stemnode *stem )
    char *var;
    struct rxs_stemnode *s;
    long size = 0;
-   
+
    if( !stem || stem == (struct rxs_stemnode *) -1L )
       return( (char *) stem );
-   
+
    for( s = stem; s; s = s->succ )
       size += strlen( s->value ) + 1;
-   
-   #if defined(__amigaos4__)
+
    if((var = AllocVecPooled(G->SharedMemPool, size+1)) == NULL)
-   #else
-   if((var = AllocVec(size+1, MEMF_SHARED|MEMF_CLEAR)) == NULL)
-   #endif
    {
       return((char *)-1);
    }
-   
+
    *var = '\0';
-   
+
    for( s = stem; s; s = s->succ )
    {
       strlcat(var, s->value, size+1);
       if(s->succ)
          strlcat(var, " ", size+1);
    }
-   
+
    return( var );
 }
 
@@ -521,12 +505,8 @@ static char *CreateVAR( struct rxs_stemnode *stem )
 static struct rxs_stemnode *new_stemnode( struct rxs_stemnode **first, struct rxs_stemnode **old )
 {
    struct rxs_stemnode *new;
-   
-   #if defined(__amigaos4__)
+
    if((new = AllocVecPooled(G->SharedMemPool, sizeof(struct rxs_stemnode))) == NULL)
-   #else
-   if((new = AllocPooled(G->SharedMemPool, sizeof(struct rxs_stemnode))) == NULL)
-   #endif
    {
       return( NULL );
    }
@@ -542,7 +522,7 @@ static struct rxs_stemnode *new_stemnode( struct rxs_stemnode **first, struct rx
          *first = *old = new;
       }
    }
-   
+
    return( new );
 }
 
@@ -551,10 +531,10 @@ static struct rxs_stemnode *new_stemnode( struct rxs_stemnode **first, struct rx
 static void free_stemlist( struct rxs_stemnode *first )
 {
    struct rxs_stemnode *next;
-   
+
    if( (long) first == -1 )
       return;
-   
+
    for( ; first; first = next )
    {
       next = first->succ;
@@ -565,11 +545,7 @@ static void free_stemlist( struct rxs_stemnode *first )
       if(first->value)
         free(first->value);
 
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, first);
-      #else
-      FreePooled(G->SharedMemPool, first, sizeof(struct rxs_stemnode));
-      #endif
    }
 }
 
@@ -582,7 +558,7 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
    char *rb;
    char longbuff[16];
    const char *rs;
-   
+
    rb = resb;
    if( stembase )
    {
@@ -593,15 +569,15 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
       }
    }
    *rb = '\0';
-   
+
    rb = resb + strlen(resb);
    rs = rxc->results;
-   
+
    while( *rs )
    {
       char *t = rb;
       BOOL optn = FALSE, optm = FALSE;
-      
+
       while( *rs && *rs != ',' )
       {
          if( *rs == '/' )
@@ -612,26 +588,26 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
          }
          else
             *t++ = *rs;
-         
+
          ++rs;
       }
-      
+
       if( *rs == ',' ) ++rs;
       *t = '\0';
-      
+
       // create the results
       if( !*resarray )
       {
          ++resarray;
          continue;
       }
-      
+
       if( optm )
       {
          long *r, index = 0;
          LONG **subarray = (LONG **) *resarray++;
          struct rxs_stemnode *countnd;
-         
+
          // number of elements
          if( !(new = new_stemnode(&first, &old)) )
          {
@@ -639,7 +615,7 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
             return( (struct rxs_stemnode *) -1L );
          }
          countnd = new;
-         
+
          // the elements
          while((r = *subarray++))
          {
@@ -648,10 +624,10 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
                free_stemlist( first );
                return( (struct rxs_stemnode *) -1L );
             }
-            
+
             snprintf(t, sizeof(resb)-(t-resb), ".%ld", index++);
             new->name = strdup(resb);
-            
+
             if( optn )
             {
                snprintf(longbuff, sizeof(longbuff), "%ld", *r);
@@ -662,11 +638,11 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
                new->value = strdup((char *)r);
             }
          }
-         
+
          // the count node
          strlcpy(t, ".COUNT", sizeof(resb)-(t-resb));
          countnd->name = strdup(resb);
-         
+
          snprintf(longbuff, sizeof(longbuff), "%ld", index);
          countnd->value = strdup(longbuff);
       }
@@ -678,9 +654,9 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
             free_stemlist( first );
             return( (struct rxs_stemnode *) -1L );
          }
-         
+
          new->name = strdup(resb);
-         
+
          if( optn )
          {
             snprintf(longbuff, sizeof(longbuff), "%ld", *((long *)*resarray));
@@ -693,7 +669,7 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
          }
       }
    }
-   
+
    return( first );
 }
 
@@ -703,53 +679,45 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
 {
    struct rxs_command *rxc = 0;
    char *argb, *arg;
-   
+
    LONG *array = NULL;
    LONG *argarray;
    LONG *resarray;
-   
+
    char *cargstr = NULL;
    long rc=20, rc2;
    char *result = NULL;
-   
+
    ENTER();
 
-   #if defined(__amigaos4__)
    if((argb = AllocVecPooled(G->SharedMemPool, (ULONG)strlen((char *) ARG0(rexxmsg)) + 2)) == NULL)
-   #else
-   if((argb = AllocVec((ULONG)strlen((char *) ARG0(rexxmsg)) + 2, MEMF_SHARED|MEMF_CLEAR)) == NULL)
-   #endif
    {
-      rc2 = ERROR_NO_FREE_STORE;
-      goto drc_cleanup;
+     rc2 = ERROR_NO_FREE_STORE;
+     goto drc_cleanup;
    }
-   
+
    // which command
    snprintf(argb, strlen((char *)ARG0(rexxmsg))+2, "%s\n", ARG0(rexxmsg));
    arg = argb;
 
    SHOWSTRING(DBF_REXX, arg);
-   
+
    if(!(rxc = ParseRXCommand( &arg )))
    {
       // send messahe to ARexx, perhaps a script exists
       struct RexxMsg *rm;
-      
+
       if((rm = CreateRexxCommand(host, (char *) ARG0(rexxmsg), 0, 0)))
       {
          /* Original-Msg merken */
          rm->rm_Args[15] = (STRPTR) rexxmsg;
-         
+
          if( CommandToRexx(host, rm) )
          {
             // the reply is done later by the dispatcher
             if(argb)
             {
-              #if defined(__amigaos4__)
               FreeVecPooled(G->SharedMemPool, argb);
-              #else
-              FreeVec(argb);
-              #endif
             }
 
             LEAVE();
@@ -760,7 +728,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       }
       else
          rc2 = ERROR_NO_FREE_STORE;
-      
+
       goto drc_cleanup;
    }
 
@@ -770,31 +738,27 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       rc2 = (long) "Command disabled";
       goto drc_cleanup;
    }
-   
+
    // get memory for the arguments
    (rxc->function)(host, (void **)(APTR)&array, RXIF_INIT, rexxmsg);
 
-   #if defined(__amigaos4__)
    cargstr = AllocVecPooled(G->SharedMemPool, (ULONG)(rxc->args ? 15+strlen(rxc->args) : 15));
-   #else
-   cargstr = AllocVec((ULONG)(rxc->args ? 15+strlen(rxc->args) : 15), MEMF_SHARED|MEMF_CLEAR);
-   #endif
 
    if( !array || !cargstr )
    {
       rc2 = ERROR_NO_FREE_STORE;
       goto drc_cleanup;
    }
-   
+
    argarray = array + 2;
    resarray = array + rxc->resindex;
-   
+
    // parse the arguments
    if( rxc->results )
       strlcpy(cargstr, "VAR/K,STEM/K", (ULONG)(rxc->args ? 15+strlen(rxc->args) : 15));
    else
       *cargstr = '\0';
-   
+
    if( rxc->args )
    {
       if(*cargstr)
@@ -802,7 +766,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
 
       strlcat(cargstr, rxc->args, (ULONG)(rxc->args ? 15+strlen(rxc->args) : 15));
    }
-   
+
    if( *cargstr )
    {
       host->rdargs->RDA_Source.CS_Buffer = arg;
@@ -821,22 +785,22 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
          goto drc_cleanup;
       }
    }
-   
+
    // call the function
    (rxc->function)( host, (void **)(APTR)&array, RXIF_ACTION, rexxmsg );
-   
+
    rc = array[0];
    rc2 = array[1];
-   
+
    // evaluate the results
    if( rxc->results && rc==0 &&
       (rexxmsg->rm_Action & RXFF_RESULT) )
    {
       struct rxs_stemnode *stem, *s;
-      
+
       stem = CreateSTEM( rxc, resarray, (char *)argarray[1] );
       result = CreateVAR( stem );
-      
+
       if( result )
       {
          if( argarray[0] )
@@ -850,10 +814,10 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
             else
             {
                char *rb;
-               
+
                for( rb = (char *) argarray[0]; *rb; ++rb )
                   *rb = toupper( *rb );
-               
+
                if( SetRexxVar( REXXMSG(rexxmsg),
                   (STRPTR)(*((char *)argarray[0]) ? (char *)argarray[0] : "RESULT"),
                   result, (LONG)strlen(result) ) )
@@ -861,17 +825,13 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
                   rc = -10;
                   rc2 = (long) "Unable to set Rexx variable";
                }
-               
-               #if defined(__amigaos4__)
+
                FreeVecPooled(G->SharedMemPool, result);
-               #else
-               FreeVec(result);
-               #endif
             }
-            
+
             result = NULL;
          }
-         
+
          if( !rc && argarray[1] )
          {
             // STEM
@@ -884,26 +844,22 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
             {
                for( s = stem; s; s = s->succ )
                   rc |= SetRexxVar( REXXMSG(rexxmsg), s->name, s->value, (LONG)strlen(s->value) );
-               
+
                if( rc )
                {
                   rc = -10;
                   rc2 = (long) "Unable to set Rexx variable";
                }
-               
+
                if(result && (long)result != -1)
                {
-                 #if defined(__amigaos4__)
                  FreeVecPooled(G->SharedMemPool, result);
-                 #else
-                 FreeVec(result);
-                 #endif
                }
             }
-            
+
             result = NULL;
          }
-         
+
          // is a normal result possible?
          if( (long) result == -1 )
          {
@@ -913,34 +869,26 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
             result = NULL;
          }
       }
-      
+
       free_stemlist( stem );
    }
-   
+
 drc_cleanup:
 
    // return RESULT only, if neither VAR nor STEM
    ReplyRexxCommand( rexxmsg, rc, rc2, result );
-   
+
    // free the memory
    if(result)
    {
-     #if defined(__amigaos4__)
      FreeVecPooled(G->SharedMemPool, result);
-     #else
-     FreeVec(result);
-     #endif
    }
 
    FreeArgs( host->rdargs );
 
    if(cargstr)
    {
-     #if defined(__amigaos4__)
      FreeVecPooled(G->SharedMemPool, cargstr);
-     #else
-     FreeVec( cargstr );
-     #endif
    }
 
    if(array)
@@ -948,11 +896,7 @@ drc_cleanup:
 
    if(argb)
    {
-     #if defined(__amigaos4__)
      FreeVecPooled(G->SharedMemPool, argb);
-     #else
-     FreeVec(argb);
-     #endif
    }
 
    LEAVE();
@@ -976,7 +920,7 @@ void ARexxDispatch( struct RexxHost *host )
       else if( rexxmsg->rm_Node.mn_Node.ln_Type == NT_REPLYMSG )
       {
          struct RexxMsg *org = (struct RexxMsg *) rexxmsg->rm_Args[15];
-         
+
          if( org )
          {
             // Reply to a forwarded Msg
@@ -996,7 +940,7 @@ void ARexxDispatch( struct RexxHost *host )
             if( ARexxResultHook )
                ARexxResultHook( host, rexxmsg );
          }
-         
+
          FreeRexxCommand( rexxmsg );
          --host->replies;
       }

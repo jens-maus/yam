@@ -10,6 +10,8 @@ $URL$
   * extrasrc/AllocVecPooled.c, extrasrc/FreeVecPooled.c: added AllocVecPooled()
     and FreeVecPooled() functions for systems which don't yet have these
     implemented.
+  * YAM.c, YAM_rexx_rxif.c, YAM_rexx.c: now only AllocVecPooled() and
+    FreeVecPooled() will be used for all systems.
 
 2007-11-11  Jens Langner <Jens.Langner@light-speed.de>
 

@@ -78,11 +78,7 @@ void rx_show( UNUSED struct RexxHost *host, struct rxd_show **rxd, enum RexxActi
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -95,11 +91,7 @@ void rx_show( UNUSED struct RexxHost *host, struct rxd_show **rxd, enum RexxActi
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -119,11 +111,7 @@ void rx_hide( UNUSED struct RexxHost *host, struct rxd_hide **rxd, enum RexxActi
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -135,11 +123,7 @@ void rx_hide( UNUSED struct RexxHost *host, struct rxd_hide **rxd, enum RexxActi
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -159,11 +143,7 @@ void rx_quit( UNUSED struct RexxHost *host, struct rxd_quit **rxd, enum RexxActi
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -178,11 +158,7 @@ void rx_quit( UNUSED struct RexxHost *host, struct rxd_quit **rxd, enum RexxActi
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -202,11 +178,7 @@ void rx_help( UNUSED struct RexxHost *host, struct rxd_help **rxd, enum RexxActi
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -236,11 +208,7 @@ void rx_help( UNUSED struct RexxHost *host, struct rxd_help **rxd, enum RexxActi
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -260,11 +228,7 @@ void rx_info( UNUSED struct RexxHost *host, struct rxd_info **rxd, enum RexxActi
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -309,11 +273,7 @@ void rx_info( UNUSED struct RexxHost *host, struct rxd_info **rxd, enum RexxActi
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -333,11 +293,7 @@ void rx_writeto( UNUSED struct RexxHost *host, struct rxd_writeto **rxd, enum Re
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -352,11 +308,7 @@ void rx_writeto( UNUSED struct RexxHost *host, struct rxd_writeto **rxd, enum Re
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -376,11 +328,7 @@ void rx_writecc( UNUSED struct RexxHost *host, struct rxd_writecc **rxd, enum Re
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -395,11 +343,7 @@ void rx_writecc( UNUSED struct RexxHost *host, struct rxd_writecc **rxd, enum Re
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -419,11 +363,7 @@ void rx_writebcc( UNUSED struct RexxHost *host, struct rxd_writebcc **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -438,11 +378,7 @@ void rx_writebcc( UNUSED struct RexxHost *host, struct rxd_writebcc **rxd, enum 
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -462,11 +398,7 @@ void rx_writeattach( UNUSED struct RexxHost *host, struct rxd_writeattach **rxd,
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -487,11 +419,7 @@ void rx_writeattach( UNUSED struct RexxHost *host, struct rxd_writeattach **rxd,
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -511,11 +439,7 @@ void rx_writeletter( UNUSED struct RexxHost *host, struct rxd_writeletter **rxd,
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -535,11 +459,7 @@ void rx_writeletter( UNUSED struct RexxHost *host, struct rxd_writeletter **rxd,
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -559,11 +479,7 @@ void rx_writeoptions( UNUSED struct RexxHost *host, struct rxd_writeoptions **rx
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -585,11 +501,7 @@ void rx_writeoptions( UNUSED struct RexxHost *host, struct rxd_writeoptions **rx
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -609,11 +521,7 @@ void rx_writequeue( UNUSED struct RexxHost *host, struct rxd_writequeue **rxd, e
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -628,11 +536,7 @@ void rx_writequeue( UNUSED struct RexxHost *host, struct rxd_writequeue **rxd, e
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -652,11 +556,7 @@ void rx_writesend( UNUSED struct RexxHost *host, struct rxd_writesend **rxd, enu
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -671,11 +571,7 @@ void rx_writesend( UNUSED struct RexxHost *host, struct rxd_writesend **rxd, enu
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -695,11 +591,7 @@ void rx_mailwrite( UNUSED struct RexxHost *host, struct rxd_mailwrite **rxd, enu
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -742,11 +634,7 @@ void rx_mailwrite( UNUSED struct RexxHost *host, struct rxd_mailwrite **rxd, enu
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -766,11 +654,7 @@ void rx_mailreply( UNUSED struct RexxHost *host, struct rxd_mailreply **rxd, enu
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -794,11 +678,7 @@ void rx_mailreply( UNUSED struct RexxHost *host, struct rxd_mailreply **rxd, enu
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -818,11 +698,7 @@ void rx_mailforward( UNUSED struct RexxHost *host, struct rxd_mailforward **rxd,
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -846,11 +722,7 @@ void rx_mailforward( UNUSED struct RexxHost *host, struct rxd_mailforward **rxd,
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -870,11 +742,7 @@ void rx_mailmove( UNUSED struct RexxHost *host, struct rxd_mailmove **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -891,11 +759,7 @@ void rx_mailmove( UNUSED struct RexxHost *host, struct rxd_mailmove **rxd, enum 
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -915,11 +779,7 @@ void rx_mailread( UNUSED struct RexxHost *host, struct rxd_mailread **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1003,11 +863,7 @@ void rx_mailread( UNUSED struct RexxHost *host, struct rxd_mailread **rxd, enum 
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1027,11 +883,7 @@ void rx_mailsend( UNUSED struct RexxHost *host, struct rxd_mailsend **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1044,11 +896,7 @@ void rx_mailsend( UNUSED struct RexxHost *host, struct rxd_mailsend **rxd, enum 
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1068,11 +916,7 @@ void rx_maildelete( UNUSED struct RexxHost *host, struct rxd_maildelete **rxd, e
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1084,11 +928,7 @@ void rx_maildelete( UNUSED struct RexxHost *host, struct rxd_maildelete **rxd, e
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1108,11 +948,7 @@ void rx_mailcheck( UNUSED struct RexxHost *host, struct rxd_mailcheck **rxd, enu
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1152,11 +988,7 @@ void rx_mailcheck( UNUSED struct RexxHost *host, struct rxd_mailcheck **rxd, enu
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1176,11 +1008,7 @@ void rx_mailimport( UNUSED struct RexxHost *host, struct rxd_mailimport **rxd, e
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1195,11 +1023,7 @@ void rx_mailimport( UNUSED struct RexxHost *host, struct rxd_mailimport **rxd, e
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1219,11 +1043,7 @@ void rx_mailexport( UNUSED struct RexxHost *host, struct rxd_mailexport **rxd, e
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1236,11 +1056,7 @@ void rx_mailexport( UNUSED struct RexxHost *host, struct rxd_mailexport **rxd, e
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1260,11 +1076,7 @@ void rx_mailupdate( UNUSED struct RexxHost *host, struct rxd_mailupdate **rxd, e
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1276,11 +1088,7 @@ void rx_mailupdate( UNUSED struct RexxHost *host, struct rxd_mailupdate **rxd, e
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1300,11 +1108,7 @@ void rx_mailfilter( UNUSED struct RexxHost *host, struct rxd_mailfilter **rxd, e
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1326,11 +1130,7 @@ void rx_mailfilter( UNUSED struct RexxHost *host, struct rxd_mailfilter **rxd, e
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1356,11 +1156,7 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1433,11 +1229,7 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, enum 
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1457,11 +1249,7 @@ void rx_setfolder( UNUSED struct RexxHost *host, struct rxd_setfolder **rxd, enu
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1478,11 +1266,7 @@ void rx_setfolder( UNUSED struct RexxHost *host, struct rxd_setfolder **rxd, enu
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1502,11 +1286,7 @@ void rx_setmail( UNUSED struct RexxHost *host, struct rxd_setmail **rxd, enum Re
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1527,11 +1307,7 @@ void rx_setmail( UNUSED struct RexxHost *host, struct rxd_setmail **rxd, enum Re
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1551,11 +1327,7 @@ void rx_writeeditor( UNUSED struct RexxHost *host, struct rxd_writeeditor **rxd,
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1582,11 +1354,7 @@ void rx_writeeditor( UNUSED struct RexxHost *host, struct rxd_writeeditor **rxd,
       if(rd->res.result)
         FreeVec(rd->res.result);
 
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1610,11 +1378,7 @@ void rx_request( UNUSED struct RexxHost *host, struct rxd_request **rxd, enum Re
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1631,11 +1395,7 @@ void rx_request( UNUSED struct RexxHost *host, struct rxd_request **rxd, enum Re
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1662,11 +1422,7 @@ void rx_mailsendall( UNUSED struct RexxHost *host, struct rxd_mailsendall **rxd,
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1679,11 +1435,7 @@ void rx_mailsendall( UNUSED struct RexxHost *host, struct rxd_mailsendall **rxd,
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1707,11 +1459,7 @@ void rx_getfolderinfo( UNUSED struct RexxHost *host, struct rxd_getfolderinfo **
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1739,11 +1487,7 @@ void rx_getfolderinfo( UNUSED struct RexxHost *host, struct rxd_getfolderinfo **
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1767,11 +1511,7 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1832,11 +1572,7 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1856,11 +1592,7 @@ void rx_getconfiginfo( UNUSED struct RexxHost *host, struct rxd_getconfiginfo **
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1879,11 +1611,7 @@ void rx_getconfiginfo( UNUSED struct RexxHost *host, struct rxd_getconfiginfo **
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1901,11 +1629,7 @@ void rx_folderinfo( UNUSED struct RexxHost *host, struct rxd_folderinfo **rxd, e
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1947,11 +1671,7 @@ void rx_folderinfo( UNUSED struct RexxHost *host, struct rxd_folderinfo **rxd, e
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -1971,11 +1691,7 @@ void rx_writesubject( UNUSED struct RexxHost *host, struct rxd_writesubject **rx
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -1990,11 +1706,7 @@ void rx_writesubject( UNUSED struct RexxHost *host, struct rxd_writesubject **rx
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2014,11 +1726,7 @@ void rx_screentoback( UNUSED struct RexxHost *host, struct rxd_screentoback **rx
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2035,11 +1743,7 @@ void rx_screentoback( UNUSED struct RexxHost *host, struct rxd_screentoback **rx
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2059,11 +1763,7 @@ void rx_screentofront( UNUSED struct RexxHost *host, struct rxd_screentofront **
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2080,11 +1780,7 @@ void rx_screentofront( UNUSED struct RexxHost *host, struct rxd_screentofront **
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2104,11 +1800,7 @@ void rx_setflag( UNUSED struct RexxHost *host, struct rxd_setflag **rxd, enum Re
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2149,11 +1841,7 @@ void rx_setflag( UNUSED struct RexxHost *host, struct rxd_setflag **rxd, enum Re
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2173,11 +1861,7 @@ void rx_mailedit( UNUSED struct RexxHost *host, struct rxd_mailedit **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2200,11 +1884,7 @@ void rx_mailedit( UNUSED struct RexxHost *host, struct rxd_mailedit **rxd, enum 
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2224,11 +1904,7 @@ void rx_readinfo( UNUSED struct RexxHost *host, struct rxd_readinfo **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2268,11 +1944,7 @@ void rx_readinfo( UNUSED struct RexxHost *host, struct rxd_readinfo **rxd, enum 
       if(rd->res.filesize) free(rd->res.filesize);
       if(rd->res.tempfile) free(rd->res.tempfile);
 
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2292,11 +1964,7 @@ void rx_readsave( UNUSED struct RexxHost *host, struct rxd_readsave **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2360,11 +2028,7 @@ void rx_readsave( UNUSED struct RexxHost *host, struct rxd_readsave **rxd, enum 
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2384,11 +2048,7 @@ void rx_readprint( UNUSED struct RexxHost *host, struct rxd_readprint **rxd, enu
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2434,11 +2094,7 @@ void rx_readprint( UNUSED struct RexxHost *host, struct rxd_readprint **rxd, enu
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2458,11 +2114,7 @@ void rx_mailbounce( UNUSED struct RexxHost *host, struct rxd_mailbounce **rxd, e
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2485,11 +2137,7 @@ void rx_mailbounce( UNUSED struct RexxHost *host, struct rxd_mailbounce **rxd, e
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2509,11 +2157,7 @@ void rx_addrfind( UNUSED struct RexxHost *host, struct rxd_addrfind **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2543,11 +2187,7 @@ void rx_addrfind( UNUSED struct RexxHost *host, struct rxd_addrfind **rxd, enum 
       if(rd->res.alias)
         free(rd->res.alias);
 
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2571,11 +2211,7 @@ void rx_addrinfo( UNUSED struct RexxHost *host, struct rxd_addrinfo **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2641,11 +2277,7 @@ void rx_addrinfo( UNUSED struct RexxHost *host, struct rxd_addrinfo **rxd, enum 
       if (rd->members) free(rd->members);
       if (rd->memberptr) free(rd->memberptr);
 
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2669,11 +2301,7 @@ void rx_addrresolve( UNUSED struct RexxHost *host, struct rxd_addrresolve **rxd,
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2702,11 +2330,7 @@ void rx_addrresolve( UNUSED struct RexxHost *host, struct rxd_addrresolve **rxd,
     {
       FreeStrBuf(rd->string);
 
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2730,11 +2354,7 @@ void rx_newmailfile( UNUSED struct RexxHost *host, struct rxd_newmailfile **rxd,
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2759,11 +2379,7 @@ void rx_newmailfile( UNUSED struct RexxHost *host, struct rxd_newmailfile **rxd,
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2783,11 +2399,7 @@ void rx_writefrom( UNUSED struct RexxHost *host, struct rxd_writefrom **rxd, enu
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2802,11 +2414,7 @@ void rx_writefrom( UNUSED struct RexxHost *host, struct rxd_writefrom **rxd, enu
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2826,11 +2434,7 @@ void rx_writereplyto( UNUSED struct RexxHost *host, struct rxd_writereplyto **rx
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2845,11 +2449,7 @@ void rx_writereplyto( UNUSED struct RexxHost *host, struct rxd_writereplyto **rx
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2869,11 +2469,7 @@ void rx_listselect( UNUSED struct RexxHost *host, struct rxd_listselect **rxd, e
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2894,11 +2490,7 @@ void rx_listselect( UNUSED struct RexxHost *host, struct rxd_listselect **rxd, e
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2918,11 +2510,7 @@ void rx_readclose( UNUSED struct RexxHost *host, struct rxd_readclose **rxd, enu
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -2939,11 +2527,7 @@ void rx_readclose( UNUSED struct RexxHost *host, struct rxd_readclose **rxd, enu
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -2963,11 +2547,7 @@ void rx_setmailfile( UNUSED struct RexxHost *host, struct rxd_setmailfile **rxd,
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3000,11 +2580,7 @@ void rx_setmailfile( UNUSED struct RexxHost *host, struct rxd_setmailfile **rxd,
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3024,11 +2600,7 @@ void rx_mailcopy( UNUSED struct RexxHost *host, struct rxd_mailcopy **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3045,11 +2617,7 @@ void rx_mailcopy( UNUSED struct RexxHost *host, struct rxd_mailcopy **rxd, enum 
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3069,11 +2637,7 @@ void rx_appbusy( UNUSED struct RexxHost *host, struct rxd_appbusy **rxd, enum Re
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3097,11 +2661,7 @@ void rx_appbusy( UNUSED struct RexxHost *host, struct rxd_appbusy **rxd, enum Re
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3121,11 +2681,7 @@ void rx_appnobusy( UNUSED struct RexxHost *host, struct rxd_appnobusy **rxd, enu
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3142,11 +2698,7 @@ void rx_appnobusy( UNUSED struct RexxHost *host, struct rxd_appnobusy **rxd, enu
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3166,11 +2718,7 @@ void rx_writemailto( UNUSED struct RexxHost *host, struct rxd_writemailto **rxd,
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3185,11 +2733,7 @@ void rx_writemailto( UNUSED struct RexxHost *host, struct rxd_writemailto **rxd,
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3213,11 +2757,7 @@ void rx_userinfo( UNUSED struct RexxHost *host, struct rxd_userinfo **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3249,11 +2789,7 @@ void rx_userinfo( UNUSED struct RexxHost *host, struct rxd_userinfo **rxd, enum 
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3273,11 +2809,7 @@ void rx_mailstatus( UNUSED struct RexxHost *host, struct rxd_mailstatus **rxd, e
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3298,11 +2830,7 @@ void rx_mailstatus( UNUSED struct RexxHost *host, struct rxd_mailstatus **rxd, e
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3322,11 +2850,7 @@ void rx_isonline( UNUSED struct RexxHost *host, struct rxd_isonline **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3338,11 +2862,7 @@ void rx_isonline( UNUSED struct RexxHost *host, struct rxd_isonline **rxd, enum 
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3366,11 +2886,7 @@ void rx_requeststring( UNUSED struct RexxHost *host, struct rxd_requeststring **
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3390,11 +2906,7 @@ void rx_requeststring( UNUSED struct RexxHost *host, struct rxd_requeststring **
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3414,11 +2926,7 @@ void rx_requestfolder( UNUSED struct RexxHost *host, struct rxd_requestfolder **
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3440,11 +2948,7 @@ void rx_requestfolder( UNUSED struct RexxHost *host, struct rxd_requestfolder **
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3464,11 +2968,7 @@ void rx_getselected( UNUSED struct RexxHost *host, struct rxd_getselected **rxd,
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3509,11 +3009,7 @@ void rx_getselected( UNUSED struct RexxHost *host, struct rxd_getselected **rxd,
       if(rd->res.num)
         free(rd->res.num);
 
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3533,11 +3029,7 @@ void rx_addredit( UNUSED struct RexxHost *host, struct rxd_addredit **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3596,11 +3088,7 @@ void rx_addredit( UNUSED struct RexxHost *host, struct rxd_addredit **rxd, enum 
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3620,11 +3108,7 @@ void rx_addrdelete( UNUSED struct RexxHost *host, struct rxd_addrdelete **rxd, e
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3648,11 +3132,7 @@ void rx_addrdelete( UNUSED struct RexxHost *host, struct rxd_addrdelete **rxd, e
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3672,11 +3152,7 @@ void rx_addrsave( UNUSED struct RexxHost *host, struct rxd_addrsave **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3699,11 +3175,7 @@ void rx_addrsave( UNUSED struct RexxHost *host, struct rxd_addrsave **rxd, enum 
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3723,11 +3195,7 @@ void rx_addrload( UNUSED struct RexxHost *host, struct rxd_addrload **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3740,11 +3208,7 @@ void rx_addrload( UNUSED struct RexxHost *host, struct rxd_addrload **rxd, enum 
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3764,11 +3228,7 @@ void rx_addrgoto( UNUSED struct RexxHost *host, struct rxd_addrgoto **rxd, enum 
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3781,11 +3241,7 @@ void rx_addrgoto( UNUSED struct RexxHost *host, struct rxd_addrgoto **rxd, enum 
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3805,11 +3261,7 @@ void rx_addrnew( UNUSED struct RexxHost *host, struct rxd_addrnew **rxd, enum Re
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3854,11 +3306,7 @@ void rx_addrnew( UNUSED struct RexxHost *host, struct rxd_addrnew **rxd, enum Re
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3878,11 +3326,7 @@ void rx_mailchangesubject( UNUSED struct RexxHost *host, struct rxd_mailchangesu
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3914,11 +3358,7 @@ void rx_mailchangesubject( UNUSED struct RexxHost *host, struct rxd_mailchangesu
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
@@ -3938,11 +3378,7 @@ void rx_geturl( UNUSED struct RexxHost *host, struct rxd_geturl **rxd, enum Rexx
   {
     case RXIF_INIT:
     {
-      #if defined(__amigaos4__)
       *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
-      #else
-      *rxd = AllocPooled(G->SharedMemPool, sizeof(*rd));
-      #endif
     }
     break;
 
@@ -3965,11 +3401,7 @@ void rx_geturl( UNUSED struct RexxHost *host, struct rxd_geturl **rxd, enum Rexx
 
     case RXIF_FREE:
     {
-      #if defined(__amigaos4__)
       FreeVecPooled(G->SharedMemPool, rd);
-      #else
-      FreePooled(G->SharedMemPool, rd, sizeof(*rd));
-      #endif
     }
     break;
   }
