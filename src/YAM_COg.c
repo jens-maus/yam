@@ -1822,6 +1822,8 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_DSTACTIVE,      MSG_HELP_CO_CH_DSTACTIVE);
     SetHelp(data->GUI.CH_DETECTCYRILLIC, MSG_HELP_CO_DETECT_CYRILLIC);
 
+    set(data->GUI.ST_DEFAULTCHARSET, MUIA_ControlChar, ShortCut(tr(MSG_CO_DEFAULTCHARSET)));
+
     DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetDefaultPOPHook, 0);
     DoMethod(data->GUI.ST_PASSWD0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetDefaultPOPHook, 0);
   }

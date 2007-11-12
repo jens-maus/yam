@@ -12,6 +12,8 @@ $URL$
     implemented.
   * YAM.c, YAM_rexx_rxif.c, YAM_rexx.c: now only AllocVecPooled() and
     FreeVecPooled() will be used for all systems.
+  * YAM_COg.c: added missing shortcut for the "default charset" string gadget.
+    This fixes bug #1829952.
 
 2007-11-11  Jens Langner <Jens.Langner@light-speed.de>
 
