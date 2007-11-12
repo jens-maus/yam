@@ -211,7 +211,7 @@ struct TimeRequest
 
 // some flags for MakeAddressField()
 #define AFF_ALLOW_MULTI         (1<<0)
-#define AFF_INTERNAL_SHORTCUTS  (1<<1)
+#define AFF_EXTERNAL_SHORTCUTS  (1<<1)
 
 /* ReturnID collecting macros
 ** every COLLECT_ have to be finished with a REISSUE_
