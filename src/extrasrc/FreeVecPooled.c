@@ -2,7 +2,7 @@
 #include <proto/exec.h>
 
 /// FreeVecPooled
-// free a vector to the pool
+// return a vector to the pool
 void FreeVecPooled(void *poolHeader, void *memory)
 {
   ULONG *mem = (ULONG *)memory;
