@@ -106,6 +106,14 @@
   #include "extrasrc/SetProcWindow.c"
 #endif
 
+#if defined(NEED_ALLOCVECPOOLED)
+  #include "extrasrc/AllocVecPooled.c"
+#endif
+
+#if defined(NEED_FREEVECPOOLED)
+  #include "extrasrc/FreeVecPooled.c"
+#endif
+
 // we replace the function which checks
 // for an abort() condition in case we
 // didn't compile any debug version because

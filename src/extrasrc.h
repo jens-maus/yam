@@ -150,6 +150,19 @@
 #define NEED_SETPROCWINDOW
 #endif
 
+#if defined(__amigaos4__) || defined(__MORPHOS__)
+#define HAVE_ALLOCVECPOOLED
+#define HAVE_FREEVECPOOLED
+#endif
+
+#if !defined(HAVE_ALLOCVECPOOLED)
+#define NEED_ALLOCVECPOOLED
+#endif
+
+#if !defined(HAVE_FREEVECPOOLED)
+#define NEED_FREEVECPOOLED
+#endif
+
 /*
  * Function prototypes
  */
@@ -211,6 +224,14 @@ void *memdup(const void *source, const size_t size);
 
 #if defined(NEED_SETPROCWINDOW)
 APTR SetProcWindow(const void *newWindowPtr);
+#endif
+
+#if defined(NEED_ALLOCVECPOOLED)
+void *AllocVecPooled(void *poolHeader, ULONG memSize);
+#endif
+
+#if defined(NEED_FREEVECPOOLED)
+void FreeVecPooled(void *poolHeader, void *memory);
 #endif
 
 /*
