@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-12  Thore Böckelmann <tboeckel@gmx.de>
+
+  * extrasrc/AllocVecPooled.c, extrasrc/FreeVecPooled.c: added AllocVecPooled()
+    and FreeVecPooled() functions for systems which don't yet have these
+    implemented.
+
 2007-11-11  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c, YAM.h, YAM_rexx.c, YAM_UT.c, YAM_rexx_rxif.c, YAM_rexx_rxif.h:
