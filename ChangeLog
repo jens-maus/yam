@@ -14,6 +14,10 @@ $URL$
     FreeVecPooled() will be used for all systems.
   * YAM_COg.c: added missing shortcut for the "default charset" string gadget.
     This fixes bug #1829952.
+  * YAM_MA.c, YAM.cd, deutsch.ct: when adding the address from a mail with
+    diffenent From and Reply-To addresses to the address book YAM will now ask
+    which address to add, and no which address to reply to. This fixes bug
+    #1829977.
 
 2007-11-11  Jens Langner <Jens.Langner@light-speed.de>
 

@@ -8224,3 +8224,9 @@ daraufhin abgebrochen.\n\
 Es standen entweder keine Daten zum Dekodieren zur Verfügung \
 oder YAM war nicht in der Lage auf die Daten zuzugreifen.
 ;
+MSG_MA_ADD_WHICH_ADDRESS
+Die Absenderadresse (From) ist \033b<%s>\033n und\n\
+die Antwortadresse (Reply-To) ist \033b<%s>\033n.\n\
+\n\
+Welche Adresse wollen Sie zu Ihrem Adressbuch hinzufügen?
+;

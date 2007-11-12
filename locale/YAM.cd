@@ -6549,3 +6549,10 @@ There was either no data to decode or YAM wasn't able \
 to access the encoded data during the decoding phase.
 ; PARTNR, MSGFILE
 ;
+MSG_MA_ADD_WHICH_ADDRESS (2031//)
+The sender address (From) is \033b<%s>\033n and\n\
+the return address (Reply-To) is \033b<%s>\033n.\n\
+\n\
+Which address do you want to add to your address book?
+; ADDRESS, ADDRESS
+;

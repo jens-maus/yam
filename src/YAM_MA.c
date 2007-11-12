@@ -3318,7 +3318,7 @@ void MA_GetAddress(struct Mail **mlist)
          stricmp(mail->From.Address, mail->ReplyTo.Address) != 0)
       {
         char buffer[SIZE_LARGE];
-        snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
+        snprintf(buffer, sizeof(buffer), tr(MSG_MA_ADD_WHICH_ADDRESS), mail->From.Address, mail->ReplyTo.Address);
 
         switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_Compare2ReqOpt), buffer))
         {
@@ -4114,7 +4114,11 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
          DeleteFile(oldfile);
       }
       fclose(newfh);
-      f = FileSize(newfile); fo->Size += f - mail->Size; mail->Size = f;
+
+      f = FileSize(newfile);
+      fo->Size += f - mail->Size;
+      mail->Size = f;
+
       AppendToLogfile(LF_ALL, 82, tr(MSG_LOG_ChangingSubject), mail->Subject, mail->MailFile, fo->Name, subj);
       strlcpy(mail->Subject, subj, sizeof(mail->Subject));
       MA_ExpireIndex(fo);
