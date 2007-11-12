@@ -209,6 +209,10 @@ struct TimeRequest
 #define isFile(etype)     (etype < 0)
 #define isDrawer(etype)   (etype >= 0 && etype != ST_SOFTLINK && etype != ST_LINKDIR)
 
+// some flags for MakeAddressField()
+#define AFF_ALLOW_MULTI   (1<<0)
+#define AFF_NO_SHORTCUTS  (1<<1)
+
 /* ReturnID collecting macros
 ** every COLLECT_ have to be finished with a REISSUE_
 **
@@ -365,7 +369,7 @@ Object * MakeNumeric(int min, int max, BOOL percent);
 Object * MakePassString(const char *label);
 Object * MakePGPKeyList(Object **st, BOOL secret, const char *label);
 Object * MakeString(int maxlen, const char *label);
-Object * MakeAddressField(Object **string, const char *label, const Object *help, int abmode, int winnum, BOOL allowmulti);
+Object * MakeAddressField(Object **string, const char *label, const Object *help, int abmode, int winnum, ULONG flags);
 BOOL     MatchNoCase(const char *string, const char *match);
 char *   MyStrChr(const char *s, const char c);
 struct TempFile *OpenTempFile(const char *mode);

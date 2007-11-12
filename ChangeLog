@@ -31,6 +31,10 @@ $URL$
     #1829977.
   * deutsch.ct: fixed some shortcuts clashing with the standard Copy/Paste
     shortcuts.
+  * YAM_UT.c, YAM_FO.c, YAM_EA.c, YAM_WR.c, YAM_COg.c: address fields can now
+    be told to catch copy/paste shortcuts themself again in case where the
+    surrounding window does not handle this (i.e. the folder config window).
+    This fixes bug #1830039.
 
 2007-11-11  Jens Langner <Jens.Langner@light-speed.de>
 

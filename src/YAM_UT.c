@@ -5198,7 +5198,7 @@ Object *MakePGPKeyList(Object **st, BOOL secret, const char *label)
 ///
 /// MakeAddressField
 //  Creates a recipient field
-Object *MakeAddressField(Object **string, const char *label, const Object *help, int abmode, int winnum, BOOL allowmulti)
+Object *MakeAddressField(Object **string, const char *label, const Object *help, int abmode, int winnum, ULONG flags)
 {
   Object *obj;
   Object *bt_adr;
@@ -5212,7 +5212,8 @@ Object *MakeAddressField(Object **string, const char *label, const Object *help,
       MUIA_CycleChain,                          TRUE,
       MUIA_String_AdvanceOnCR,                  TRUE,
       MUIA_Recipientstring_ResolveOnCR,         TRUE,
-      MUIA_Recipientstring_MultipleRecipients,  allowmulti,
+      MUIA_Recipientstring_MultipleRecipients,  isFlagSet(flags, AFF_ALLOW_MULTI),
+      MUIA_BetterString_NoShortcuts,            isFlagClear(flags, AFF_NO_SHORTCUTS),
       MUIA_ControlChar,                         ShortCut(label),
     End,
     Child, bt_adr = PopButton(MUII_PopUp),

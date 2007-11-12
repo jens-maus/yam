@@ -3775,7 +3775,7 @@ static struct WR_ClassData *WR_New(int winnum)
     ULONG i;
 
     // initialize static data on first call only
-    if(rtitles[0] == '\0')   
+    if(rtitles[0] == '\0')
     {
       rtitles[0] = tr(MSG_Message);
       rtitles[1] = tr(MSG_Attachments);
@@ -3960,7 +3960,7 @@ static struct WR_ClassData *WR_New(int winnum)
                 MUIA_HelpNode, "WR00",
                 Child, ColGroup(2),
                    Child, Label(tr(MSG_WR_To)),
-                   Child, MakeAddressField(&data->GUI.ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, winnum, TRUE),
+                   Child, MakeAddressField(&data->GUI.ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, winnum, AFF_ALLOW_MULTI),
 
                    Child, Label(tr(MSG_WR_Subject)),
                    Child, data->GUI.ST_SUBJECT = BetterStringObject,
@@ -4058,16 +4058,16 @@ static struct WR_ClassData *WR_New(int winnum)
                 MUIA_HelpNode, "WR02",
                 Child, ColGroup(2),
                    Child, Label(tr(MSG_WR_CopyTo)),
-                   Child, MakeAddressField(&data->GUI.ST_CC, tr(MSG_WR_CopyTo), MSG_HELP_WR_ST_CC, ABM_CC, winnum, TRUE),
+                   Child, MakeAddressField(&data->GUI.ST_CC, tr(MSG_WR_CopyTo), MSG_HELP_WR_ST_CC, ABM_CC, winnum, AFF_ALLOW_MULTI),
 
                    Child, Label(tr(MSG_WR_BlindCopyTo)),
-                   Child, MakeAddressField(&data->GUI.ST_BCC, tr(MSG_WR_BlindCopyTo), MSG_HELP_WR_ST_BCC, ABM_BCC, winnum, TRUE),
+                   Child, MakeAddressField(&data->GUI.ST_BCC, tr(MSG_WR_BlindCopyTo), MSG_HELP_WR_ST_BCC, ABM_BCC, winnum, AFF_ALLOW_MULTI),
 
                    Child, Label(tr(MSG_WR_From)),
-                   Child, MakeAddressField(&data->GUI.ST_FROM, tr(MSG_WR_From), MSG_HELP_WR_ST_FROM, ABM_FROM, winnum, TRUE),
+                   Child, MakeAddressField(&data->GUI.ST_FROM, tr(MSG_WR_From), MSG_HELP_WR_ST_FROM, ABM_FROM, winnum, AFF_ALLOW_MULTI),
 
                    Child, Label(tr(MSG_WR_ReplyTo)),
-                   Child, MakeAddressField(&data->GUI.ST_REPLYTO, tr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, winnum, TRUE),
+                   Child, MakeAddressField(&data->GUI.ST_REPLYTO, tr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, winnum, AFF_ALLOW_MULTI),
 
                    Child, Label(tr(MSG_WR_ExtraHeaders)),
                    Child, data->GUI.ST_EXTHEADER = BetterStringObject,
@@ -4276,7 +4276,7 @@ static struct WR_ClassData *WR_NewBounce(int winnum)
        WindowContents, VGroup,
           Child, ColGroup(2),
              Child, Label2(tr(MSG_WR_BounceTo)),
-             Child, MakeAddressField(&data->GUI.ST_TO, tr(MSG_WR_BounceTo), MSG_HELP_WR_ST_TO, ABM_TO, winnum, TRUE),
+             Child, MakeAddressField(&data->GUI.ST_TO, tr(MSG_WR_BounceTo), MSG_HELP_WR_ST_TO, ABM_TO, winnum, AFF_ALLOW_MULTI),
           End,
           Child, ColGroup(4),
              Child, data->GUI.BT_SEND   = MakeButton(tr(MSG_WR_SENDNOW)),
