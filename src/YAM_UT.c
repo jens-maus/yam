@@ -2567,6 +2567,7 @@ BOOL PFExists(const char *path, const char *file)
 //  Recursively deletes a mail directory
 BOOL DeleteMailDir(const char *dir, BOOL isroot)
 {
+  BPTR dirLock;
   BOOL result = TRUE;
 
   ENTER();
@@ -2672,9 +2673,8 @@ char *FileToBuffer(const char *file)
 
   ENTER();
 
-  ObtainFileInfo(file, FI_SIZE, &size);
-
-  if(size > 0 && (text = malloc((size+1)*sizeof(char))) != NULL)
+  if(ObtainFileInfo(file, FI_SIZE, &size) == TRUE &&
+     size > 0 && (text = malloc((size+1)*sizeof(char))) != NULL)
   {
     FILE *fh;
 

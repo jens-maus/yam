@@ -2519,10 +2519,17 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                           // as the fallback
                           if(!hasStatusQueued(newMail) && !hasStatusHold(newMail))
                           {
+                            struct DateStamp *ds;
+
                             W(DBF_FOLDER, "no transfer Date information found in mail file, taking fileDate...");
 
-                            // now convert the local TZ fib_Date to a UTC transDate
-                            DateStamp2TimeVal(FileDate(GetMailFile(NULL, folder, newMail)), &newMail->transDate, TZC_UTC);
+                            // obtain the datestamp information from  and as a fallback we take the date of the mail file
+                            if(ObtainFileInfo(GetMailFile(NULL, folder, newMail), FI_DATE, &ds) == TRUE)
+                            {
+                              // now convert the local TZ fib_Date to a UTC transDate
+                              DateStamp2TimeVal(ds, &newMail->transDate, TZC_UTC);
+                              free(ds);
+                            }
 
                             // then we update the mailfilename
                             MA_UpdateMailFile(newMail);
