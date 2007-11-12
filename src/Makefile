@@ -321,6 +321,7 @@ OBJS = \
 	$(OBJDIR)/HTML2Mail.o \
 	$(OBJDIR)/HashTable.o \
 	$(OBJDIR)/BayesFilter.o \
+	$(OBJDIR)/FileInfo.o \
 	$(OBJDIR)/extrasrc.o \
 	$(OBJDIR)/Debug.o
 

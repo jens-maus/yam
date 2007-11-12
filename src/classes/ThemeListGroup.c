@@ -181,6 +181,8 @@ OVERLOAD(OM_SET)
 
 /* Public Methods */
 /// DECLARE(Update)
+#define isDrawer(etype)   (etype >= 0 && etype != ST_SOFTLINK && etype != ST_LINKDIR)
+
 DECLARE(Update)
 {
   BOOL result = FALSE;

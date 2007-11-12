@@ -52,6 +52,7 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
+#include "FileInfo.h"
 #include "Debug.h"
 
 /* local protos */
@@ -444,18 +445,21 @@ static void EA_SetPhoto(int winnum, char *fname)
     strlcpy(G->EA[winnum]->PhotoName, fname, sizeof(G->EA[winnum]->PhotoName));
 
   fname = G->EA[winnum]->PhotoName;
-
-  if(fname[0] != '\0' && FileType(fname) == FIT_FILE && gui->BC_PHOTO != NULL &&
-     DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
+  if(fname[0] != '\0')
   {
-    // set the new attributes, the old image will be deleted from the cache
-    xset(gui->BC_PHOTO, MUIA_UserImage_Address,  G->EA[winnum]->ABEntry->Address,
-                        MUIA_UserImage_Filename, fname);
+    enum FType type;
 
-    // and force a cleanup/setup pair
-    DoMethod(gui->GR_PHOTO, OM_REMMEMBER, gui->BC_PHOTO);
-    DoMethod(gui->GR_PHOTO, OM_ADDMEMBER, gui->BC_PHOTO);
-    DoMethod(gui->GR_PHOTO, MUIM_Group_ExitChange);
+    if(ObtainFileInfo(fname, FI_TYPE, &type) == TRUE && type == FIT_FILE && gui->BC_PHOTO != NULL &&
+     DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
+    {
+      // set the new attributes, the old image will be deleted from the cache
+      xset(gui->BC_PHOTO, MUIA_UserImage_Address, G->EA[winnum]->ABEntry->Address,
+                          MUIA_UserImage_Filename, fname);
+      // and force a cleanup/setup pair
+      DoMethod(gui->GR_PHOTO, OM_REMMEMBER, gui->BC_PHOTO);
+      DoMethod(gui->GR_PHOTO, OM_ADDMEMBER, gui->BC_PHOTO);
+      DoMethod(gui->GR_PHOTO, MUIM_Group_ExitChange);
+    }
   }
 
   LEAVE();
@@ -534,7 +538,7 @@ HOOKPROTONHNO(EA_CloseFunc, void, int *arg)
   {
   	// update the user image ID and remove it from the cache
   	// it will be reloaded when necessary
-    xset(gui->BC_PHOTO, MUIA_UserImage_Address,  G->EA[winnum]->ABEntry->Address,
+    xset(gui->BC_PHOTO, MUIA_UserImage_Address, G->EA[winnum]->ABEntry->Address,
                         MUIA_UserImage_Filename, NULL);
   }
 

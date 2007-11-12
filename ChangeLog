@@ -39,6 +39,7 @@ $URL$
     the spam filter. This fixes bug #1829959.
   * FileInfo.c: added generic file information function ObtainFileInfo(), which
     replaces the single functions like FileSize(), etc.
+  * misc: replaces all calls to FileSize(), etc to calls to ObtainFileInfo().
 
 2007-11-11  Jens Langner <Jens.Langner@light-speed.de>
 

@@ -39,6 +39,8 @@
 #include "YAM_utilities.h"
 #include "extrasrc.h"
 
+#include "FileInfo.h"
+
 #include "Debug.h"
 
 #define BAYES_TOKEN_DELIMITERS  " \t\n\r\f.,"
@@ -885,14 +887,14 @@ static void tokenAnalyzerWriteTrainingData(void)
 static void tokenAnalyzerReadTrainingData(void)
 {
   char fname[SIZE_PATHFILE];
-  long fileSize;
+  LONG fileSize;
 
   ENTER();
 
   // prepare the filename for loading
   strmfp(fname, G->MA_MailDir, SPAMDATAFILE);
 
-  if((fileSize = FileSize(fname)) > 0)
+  if(ObtainFileInfo(fname, FI_SIZE, &fileSize) == TRUE && fileSize > 0)
   {
     FILE *stream;
 

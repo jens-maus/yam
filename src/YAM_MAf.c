@@ -61,6 +61,8 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
+#include "FileInfo.h"
+
 #include "Debug.h"
 /*
 ** The following structures are used to build the
@@ -549,63 +551,73 @@ void MA_UpdateIndexes(BOOL initial)
         {
           const char *folderDir = GetFolderDir(folder);
           char *indexFile = MA_IndexFileName(folder);
+          ULONG dirDate;
+          ULONG indexDate;
 
           // get date of the folder directory and the .index file
           // itself
-          long dirdate = FileTime(folderDir);
-          long inddate = FileTime(indexFile);
-
-          // only consider starting to rebuilding the .index if
-          // either the date of the directory is greater than the
-          // date of the .index file itself, or if there is no index
-          // file date at all (no file present)
-          if(dirdate > inddate+30)
+          if(ObtainFileInfo(folderDir, FI_TIME, &dirDate) == TRUE &&
+             ObtainFileInfo(indexFile, FI_TIME, &indexDate) == TRUE)
           {
-            // get the protection bits of the folder index file
-            // and the folder directory, and if both have the A
-            // bit set we skip the index rescanning process because
-            // the A bits might have been set by a backup program
-            if(isFlagClear(FileProtection(indexFile), FIBF_ARCHIVE) ||
-               isFlagClear(FileProtection(folderDir), FIBF_ARCHIVE))
+            // only consider starting to rebuilding the .index if
+            // either the date of the directory is greater than the
+            // date of the .index file itself, or if there is no index
+            // file date at all (no file present)
+            if(dirDate > indexDate + 30)
             {
-              // lets first delete the .index file to
-              // make sure MA_GetIndex() is going to
-              // rebuild it.
-              if(inddate > 0)
-                DeleteFile(indexFile);
+              ULONG dirProtection;
+              ULONG indexProtection;
 
-              // then lets call GetIndex() to start rebuilding
-              // the .index - but only if this folder is one of the folders
-              // that should update it indexes during startup
-              if((isIncomingFolder(folder) || isOutgoingFolder(folder) ||
-                  isTrashFolder(folder) || C->LoadAllFolders) &&
-                 !isProtectedFolder(folder))
+              // get the protection bits of the folder index file
+              // and the folder directory, and if both have the A
+              // bit set we skip the index rescanning process because
+              // the A bits might have been set by a backup program
+              if(ObtainFileInfo(folderDir, FI_PROTECTION, &dirProtection) == TRUE &&
+                 ObtainFileInfo(indexFile, FI_PROTECTION, &indexProtection) == TRUE)
               {
-                if(MA_GetIndex(folder) == TRUE)
+                if(isFlagClear(indexProtection, FIBF_ARCHIVE) ||
+                   isFlagClear(dirProtection, FIBF_ARCHIVE))
                 {
-                  // if we finally rebuilt the .index we
-                  // immediatly flush it here so that another
-                  // following index rebuild doesn't take
-                  // all remaining memory.
-                  if((isSentFolder(folder) || !isDefaultFolder(folder)) &&
-                      folder->LoadedMode == LM_VALID &&
-                      isFreeAccess(folder))
-                  {
-                    if(isModified(folder))
-                      MA_SaveIndex(folder);
+                  // lets first delete the .index file to
+                  // make sure MA_GetIndex() is going to
+                  // rebuild it.
+                  if(indexDate > 0)
+                    DeleteFile(indexFile);
 
+                  // then lets call GetIndex() to start rebuilding
+                  // the .index - but only if this folder is one of the folders
+                  // that should update it indexes during startup
+                  if((isIncomingFolder(folder) || isOutgoingFolder(folder) ||
+                      isTrashFolder(folder) || C->LoadAllFolders) &&
+                     !isProtectedFolder(folder))
+                  {
+                    if(MA_GetIndex(folder) == TRUE)
+                    {
+                      // if we finally rebuilt the .index we
+                      // immediatly flush it here so that another
+                      // following index rebuild doesn't take
+                      // all remaining memory.
+                      if((isSentFolder(folder) || !isDefaultFolder(folder)) &&
+                          folder->LoadedMode == LM_VALID &&
+                          isFreeAccess(folder))
+                      {
+                        if(isModified(folder))
+                          MA_SaveIndex(folder);
+
+                        ClearMailList(folder, FALSE);
+                        folder->LoadedMode = LM_FLUSHED;
+                        CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
+                      }
+                    }
+                  }
+                  else
+                  {
+                    // otherwise we make sure everything is cleared
                     ClearMailList(folder, FALSE);
                     folder->LoadedMode = LM_FLUSHED;
                     CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
                   }
                 }
-              }
-              else
-              {
-                // otherwise we make sure everything is cleared
-                ClearMailList(folder, FALSE);
-                folder->LoadedMode = LM_FLUSHED;
-                CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
               }
             }
           }
@@ -899,7 +911,8 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
   strlcpy(oldFilePath, GetFolderDir(folder), sizeof(oldFilePath));
 
   if(AddPart(oldFilePath, filename, sizeof(oldFilePath)) == 0 ||
-     (comment = FileComment(oldFilePath)) == NULL)
+     ObtainFileInfo(oldFilePath, FI_COMMENT, &comment) == FALSE ||
+     comment == NULL)
   {
     return NULL;
   }
@@ -990,6 +1003,9 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
       strlcpy(dateFilePart, &comment[2], sizeof(dateFilePart));
     }
   }
+
+  // free the duplicated comment again
+  free(comment);
 
   if(dateFilePart[0] == '\0')
   {
@@ -1755,6 +1771,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
      char dateFilePart[12+1];
      char timebuf[sizeof(struct TimeVal)+1]; // +1 because the b64decode does set a NUL byte
      struct MinNode *curNode = headerList.mlh_Head;
+     LONG size;
 
      // Now we process the read header to set all flags accordingly
      for(ok=0; curNode->mln_Succ; curNode = curNode->mln_Succ)
@@ -2133,10 +2150,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
          struct DateStamp *ds;
 
          // and as a fallback we take the date of the mail file
-         if((ds = FileDate(mail->MailFile)) != NULL)
+         if(ObtainFileInfo(mail->MailFile, FI_DATE, &ds) == TRUE)
          {
            memcpy(&mail->Date, ds, sizeof(struct DateStamp));
            DateStampTZConvert(&mail->Date, TZC_UTC);
+           free(ds);
          }
        }
 
@@ -2145,7 +2163,10 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
      }
 
      // lets calculate the mailSize out of the FileSize() function
-     mail->Size = FileSize(fullfile);
+     if(ObtainFileInfo(fullfile, FI_SIZE, &size) == TRUE)
+       mail->Size = size;
+     else
+       mail->Size = -1;
 
      FinishUnpack(fullfile);
 

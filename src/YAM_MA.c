@@ -75,6 +75,7 @@
 #include "UpdateCheck.h"
 #include "HTML2Mail.h"
 #include "BayesFilter.h"
+#include "FileInfo.h"
 
 #include "Debug.h"
 
@@ -2712,7 +2713,7 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
         {
           FILE *in;
           struct Folder *fo = mail->Folder;
-          int f;
+          LONG size;
 
           setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -2748,9 +2749,13 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
 
           fclose(out);
 
-          f = FileSize(tfname);
-          fo->Size += f - mail->Size;
-          mail->Size = f;
+          if(ObtainFileInfo(tfname, FI_SIZE, &size) == TRUE)
+          {
+            fo->Size += size - mail->Size;
+            mail->Size = size;
+          }
+          else
+            mail->Size = -1;
 
           CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
           SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
@@ -4073,62 +4078,84 @@ MakeHook(MA_CopyMessageHook, MA_CopyMessageFunc);
 //  Changes subject of a message
 void MA_ChangeSubject(struct Mail *mail, char *subj)
 {
-   struct Folder *fo = mail->Folder;
-   int f;
-   FILE *oldfh, *newfh;
-   char *oldfile, newfile[SIZE_PATHFILE], fullfile[SIZE_PATHFILE], buf[SIZE_LINE];
+  ENTER();
 
-   if (!strcmp(subj, mail->Subject)) return;
-   if (!StartUnpack(oldfile = GetMailFile(NULL, NULL, mail), fullfile, fo)) return;
-   strmfp(newfile, GetFolderDir(fo), "00000.tmp");
+  if(strcmp(subj, mail->Subject) != 0)
+  {
+    struct Folder *fo = mail->Folder;
+    char *oldfile = GetMailFile(NULL, NULL, mail);
+    char fullfile[SIZE_PATHFILE];
 
-   if((newfh = fopen(newfile, "w")))
-   {
-      setvbuf(newfh, NULL, _IOFBF, SIZE_FILEBUF);
+    if(StartUnpack(oldfile, fullfile, fo) != NULL)
+    {
+      char newfile[SIZE_PATHFILE];
+      FILE *newfh;
 
-      if((oldfh = fopen(fullfile, "r")))
+      strmfp(newfile, GetFolderDir(fo), "00000.tmp");
+
+      if((newfh = fopen(newfile, "w")) != NULL)
       {
-         BOOL infield = FALSE;
-         BOOL inbody = FALSE;
-         BOOL hasorigsubj = FALSE;
+        FILE *oldfh;
+        LONG size;
 
-         setvbuf(oldfh, NULL, _IOFBF, SIZE_FILEBUF);
+        setvbuf(newfh, NULL, _IOFBF, SIZE_FILEBUF);
 
-         while(fgets(buf, SIZE_LINE, oldfh))
-         {
-            if (*buf == '\n' && !inbody)
+        if((oldfh = fopen(fullfile, "r")) != NULL)
+        {
+          char buf[SIZE_LINE];
+          BOOL infield = FALSE;
+          BOOL inbody = FALSE;
+          BOOL hasorigsubj = FALSE;
+
+          setvbuf(oldfh, NULL, _IOFBF, SIZE_FILEBUF);
+
+          while(fgets(buf, SIZE_LINE, oldfh))
+          {
+            if(*buf == '\n' && inbody == FALSE)
             {
-               inbody = TRUE;
-               if (!hasorigsubj) EmitHeader(newfh, "X-Original-Subject", mail->Subject);
-               EmitHeader(newfh, "Subject", subj);
+              inbody = TRUE;
+              if(hasorigsubj == FALSE)
+                EmitHeader(newfh, "X-Original-Subject", mail->Subject);
+              EmitHeader(newfh, "Subject", subj);
             }
 
             if(!isspace(*buf))
             {
-               infield = !strnicmp(buf, "subject:", 8);
-               if (!strnicmp(buf, "x-original-subject:", 19)) hasorigsubj = TRUE;
+              infield = (strnicmp(buf, "subject:", 8) == 0);
+              if(strnicmp(buf, "x-original-subject:", 19) == 0)
+                hasorigsubj = TRUE;
             }
-            if (!infield || inbody) fputs(buf, newfh);
-         }
-         fclose(oldfh);
-         DeleteFile(oldfile);
+            if(infield == FALSE || inbody == TRUE)
+              fputs(buf, newfh);
+          }
+          fclose(oldfh);
+          DeleteFile(oldfile);
+        }
+        fclose(newfh);
+
+        if(ObtainFileInfo(newfile, FI_SIZE, &size) == TRUE)
+        {
+          fo->Size += size - mail->Size;
+          mail->Size = size;
+        }
+        else
+          mail->Size = -1;
+
+        AppendToLogfile(LF_ALL, 82, tr(MSG_LOG_ChangingSubject), mail->Subject, mail->MailFile, fo->Name, subj);
+        strlcpy(mail->Subject, subj, sizeof(mail->Subject));
+        MA_ExpireIndex(fo);
+
+        if(fo->Mode > FM_SIMPLE)
+          DoPack(newfile, oldfile, fo);
+        else
+          RenameFile(newfile, oldfile);
       }
-      fclose(newfh);
 
-      f = FileSize(newfile);
-      fo->Size += f - mail->Size;
-      mail->Size = f;
+      FinishUnpack(fullfile);
+    }
+  }
 
-      AppendToLogfile(LF_ALL, 82, tr(MSG_LOG_ChangingSubject), mail->Subject, mail->MailFile, fo->Name, subj);
-      strlcpy(mail->Subject, subj, sizeof(mail->Subject));
-      MA_ExpireIndex(fo);
-
-      if(fo->Mode > FM_SIMPLE)
-        DoPack(newfile, oldfile, fo);
-      else
-        RenameFile(newfile, oldfile);
-   }
-   FinishUnpack(fullfile);
+  LEAVE();
 }
 
 ///

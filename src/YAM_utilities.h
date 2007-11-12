@@ -75,8 +75,6 @@ enum ReqFileType { ASL_ABOOK=0, ASL_CONFIG, ASL_DETACH, ASL_ATTACH,
 
 enum OutputDefType { OUT_DOS=0, OUT_NIL };
 
-enum FType { FIT_NONEXIST=0, FIT_FILE, FIT_DRAWER };
-
 enum SizeFormat { SF_DEFAULT=0, // format sizes in old-style   1,234,567 (bytes)
                   SF_MIXED,     // format in mixed mode        1.234 GB - 12.34 MB - 123.4 KB - 1234 B
                   SF_1PREC,     // format in one-precision     1.2 GB - 12.3 MB - 123.4 KB - 1234 B
@@ -205,10 +203,6 @@ struct TimeRequest
 #define CLEAR_FLAG(v,f)     ((v) &= ~(f))         // clear the flag f in v
 #define MASK_FLAG(v,f)      ((v) &= (f))          // mask the variable v with flag f bitwise
 
-// some filetype handling macros
-#define isFile(etype)     (etype < 0)
-#define isDrawer(etype)   (etype >= 0 && etype != ST_SOFTLINK && etype != ST_LINKDIR)
-
 // some flags for MakeAddressField()
 #define AFF_ALLOW_MULTI         (1<<0)
 #define AFF_EXTERNAL_SHORTCUTS  (1<<1)
@@ -330,14 +324,8 @@ char *   GetRealPath(char *path);
 BOOL     ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef);
 void     ExtractAddress(const char *line, struct Person *pe);
 BOOL     FileExists(const char *filename);
-int      FileSize(const char *filename);
-long     FileProtection(const char *filename);
 char *   FileToBuffer(const char *file);
 BOOL     FileToEditor(char *file, Object *editor);
-enum FType FileType(const char *filename);
-char *   FileComment(char *filename);
-struct DateStamp *FileDate(char *filename);
-long     FileTime(const char *filename);
 long     FileCount(const char *directory);
 void     FinishUnpack(char *file);
 struct Folder *FolderRequest(const char *title, const char *body, const char *yestext, const char *notext, struct Folder *exclude, Object *parent);

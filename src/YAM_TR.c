@@ -72,9 +72,10 @@
 #include "YAM_md5.h"
 #include "YAM_mime.h"
 #include "YAM_utilities.h"
-#include "HashTable.h"
-
 #include "classes/Classes.h"
+
+#include "HashTable.h"
+#include "FileInfo.h"
 
 #include "Debug.h"
 
@@ -4696,10 +4697,11 @@ static BOOL InitUIDLhash(void)
   {
     FILE *fh;
     char *filename = CreateFilename(".uidl");
+    LONG size;
 
     // open the .uidl file and read in the UIDL/MsgIDs
     // line-by-line
-    if(FileSize(filename) > 0 && (fh = fopen(filename, "r")) != NULL)
+    if(ObtainFileInfo(filename, FI_SIZE, &size) == TRUE && size > 0 && (fh = fopen(filename, "r")) != NULL)
     {
       char uidl[SIZE_DEFAULT+SIZE_HOST];
 
@@ -6042,12 +6044,15 @@ out:
   {
     if(preview == TRUE)
     {
+      LONG size;
       struct MailTransferNode *mtn;
+
+      ObtainFileInfo(outFileName, FI_SIZE, &size);
 
       // if this is the preview run we go and
       // use the TR_AddMessageHeader method to
       // add the found mail to our mail list
-      if((mtn = TR_AddMessageHeader(mail_accu, FileSize(outFileName), msg_addr, FilePart(outFileName))))
+      if((mtn = TR_AddMessageHeader(mail_accu, size, msg_addr, FilePart(outFileName))))
       {
         SET_FLAG(mtn->mail->sflags, mailStatusFlags);
       }
@@ -6293,10 +6298,13 @@ BOOL TR_GetMessageList_IMPORT(void)
       {
         if(CopyFile(fname, NULL, G->TR->ImportFile, NULL) == TRUE)
         {
+          LONG size;
+
+          ObtainFileInfo(fname, FI_SIZE, &size);
           // if the file was identified as a plain .eml file we
           // just have to go and call TR_AddMessageHeader to let
           // YAM analyze the file
-          result = (TR_AddMessageHeader(&c, FileSize(fname), 0, tfname) != NULL);
+          result = (TR_AddMessageHeader(&c, size, 0, tfname) != NULL);
 
           DeleteFile(fname);
         }

@@ -54,6 +54,7 @@
 #include "classes/Classes.h"
 
 #include "BayesFilter.h"
+#include "FileInfo.h"
 #include "Debug.h"
 
 /***************************************************************************
@@ -1637,8 +1638,9 @@ void CO_GetConfig(BOOL saveConfig)
         {
           // the spam filter has been enabled, now try to create the mandatory spam folder
           BOOL createSpamFolder;
+          enum FType type;
 
-          if(FileType(CreateFilename(FolderName[FT_SPAM])) == FIT_NONEXIST)
+          if(ObtainFileInfo(CreateFilename(FolderName[FT_SPAM]), FI_TYPE, &type) == TRUE && type == FIT_NONEXIST)
           {
             // no directory named "spam" exists, so let's create it
             createSpamFolder = TRUE;

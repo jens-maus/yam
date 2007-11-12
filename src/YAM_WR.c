@@ -72,6 +72,8 @@
 #include "YAM_write.h"
 #include "classes/Classes.h"
 
+#include "FileInfo.h"
+
 #include "Debug.h"
 
 /**************************************************************************/
@@ -810,7 +812,9 @@ static BOOL EncodePart(FILE *ofh, const struct WritePart *part)
 
       case ENC_UUE:
       {
-        int size = FileSize(part->Filename);
+        LONG size;
+
+        ObtainFileInfo(part->Filename, FI_SIZE, &size);
 
         fprintf(ofh, "begin 644 %s\n", *part->Name ? part->Name : (char *)FilePart(part->Filename));
 
@@ -819,7 +823,7 @@ static BOOL EncodePart(FILE *ofh, const struct WritePart *part)
         else
           ER_NewError(tr(MSG_ER_UUFILEENCODE), part->Filename);
 
-        fprintf(ofh, "``\nend\nsize %d\n", size);
+        fprintf(ofh, "``\nend\nsize %ld\n", size);
       }
       break;
 
@@ -896,12 +900,18 @@ static void WR_AddTagline(FILE *fh_mail)
   if(C->TagsFile[0] != '\0')
   {
     char hashfile[SIZE_PATHFILE];
+    LONG tagsTime;
+    LONG hashTime;
     FILE *fh_tag;
 
     snprintf(hashfile, sizeof(hashfile), "%s.hsh", C->TagsFile);
 
-    if(FileTime(C->TagsFile) > FileTime(hashfile))
+    if(ObtainFileInfo(C->TagsFile, FI_TIME, &tagsTime) == TRUE &&
+       ObtainFileInfo(hashfile, FI_TIME, &hashTime) == TRUE &&
+       tagsTime > hashTime)
+    {
       WR_CreateHashTable(C->TagsFile, hashfile, C->TagsSeparator);
+    }
 
     if((fh_tag = fopen(C->TagsFile, "r")) != NULL)
     {
@@ -2561,16 +2571,18 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
 
         // if everything worked out fine we go
         // and find out the real final attachment name
-        if(result)
+        if(result == TRUE)
         {
+          LONG size;
+
           strlcpy(filename, arcpath, sizeof(filename));
-          if(FileSize(filename) == -1)
+          if(ObtainFileInfo(filename, FI_SIZE, &size) == FALSE)
           {
             snprintf(filename, sizeof(filename), "%s.lha", arcpath);
-            if(FileSize(filename) == -1)
+            if(ObtainFileInfo(filename, FI_SIZE, &size) == FALSE)
             {
               snprintf(filename, sizeof(filename), "%s.lzx", arcpath);
-              if(FileSize(filename) == -1)
+              if(ObtainFileInfo(filename, FI_SIZE, &size) == FALSE)
                 snprintf(filename, sizeof(filename), "%s.zip", arcpath);
             }
           }
@@ -2692,11 +2704,11 @@ MakeStaticHook(WR_ChangeSignatureHook, WR_ChangeSignatureFunc);
 static char *WR_TransformText(const char *source, const enum TransformMode mode, const char *qtext)
 {
   char *dest = NULL;
-  int size;
+  LONG size;
 
   ENTER();
 
-  if((size = FileSize(source)) > 0)
+  if(ObtainFileInfo(source, FI_SIZE, &size) == TRUE && size > 0)
   {
     int qtextlen = strlen(qtext);
     BOOL quote = (mode == ED_INSQUOT || mode == ED_PASQUOT ||
@@ -2985,7 +2997,9 @@ HOOKPROTONHNO(WR_AddPGPKeyFunc, void, int *arg)
 
   if(!PGPCommand((G->PGPVersion == 5) ? "pgpk" : "pgp", options, 0))
   {
-    if(FileSize(fname) > 0)
+    LONG size;
+
+    if(ObtainFileInfo(fname, FI_SIZE, &size) == TRUE && size > 0)
     {
       WR_AddFileToList(winnum, fname, NULL, TRUE);
       setstring(G->WR[winnum]->GUI.ST_CTYPE, "application/pgp-keys");

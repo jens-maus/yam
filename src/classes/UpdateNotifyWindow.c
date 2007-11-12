@@ -35,6 +35,8 @@
 
 #include "YAM_configFile.h"
 
+#include "FileInfo.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -307,28 +309,31 @@ DECLARE(Select) // ULONG num
   ENTER();
 
   DoMethod(data->ComponentList, MUIM_NList_GetEntry, msg->num, &comp);
-  if(comp && comp->changeLogFile)
+  if(comp != NULL && comp->changeLogFile)
   {
-    int size = FileSize(comp->changeLogFile->Filename);
+    LONG size;
 
     // lets open the changelog file and parse it
-    if(size > 0 && (comp->changeLogFile->FP = fopen(comp->changeLogFile->Filename, "r")))
+    if(ObtainFileInfo(comp->changeLogFile->Filename, FI_SIZE, &size) == TRUE && size > 0)
     {
-      if(data->ChangeLogText)
-        free(data->ChangeLogText);
-
-      if((data->ChangeLogText = malloc(size+1)))
+      if((comp->changeLogFile->FP = fopen(comp->changeLogFile->Filename, "r")) != NULL)
       {
-        if(fread(data->ChangeLogText, size, 1, comp->changeLogFile->FP) == 1)
+        if(data->ChangeLogText != NULL)
+          free(data->ChangeLogText);
+
+        if((data->ChangeLogText = malloc(size+1)) != NULL)
         {
-          data->ChangeLogText[size] = '\0';
+          if(fread(data->ChangeLogText, size, 1, comp->changeLogFile->FP) == 1)
+          {
+            data->ChangeLogText[size] = '\0';
 
-          set(data->ComponentHistory, MUIA_NFloattext_Text, data->ChangeLogText);
+            set(data->ComponentHistory, MUIA_NFloattext_Text, data->ChangeLogText);
+          }
         }
-      }
 
-      fclose(comp->changeLogFile->FP);
-      comp->changeLogFile->FP = NULL;
+        fclose(comp->changeLogFile->FP);
+        comp->changeLogFile->FP = NULL;
+      }
     }
   }
 

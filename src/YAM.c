@@ -93,6 +93,7 @@
 #include "ImageCache.h"
 #include "UpdateCheck.h"
 #include "BayesFilter.h"
+#include "FileInfo.h"
 
 #include "classes/Classes.h"
 
@@ -2129,8 +2130,9 @@ static void Initialise2(void)
     if(FO_GetFolderByType(FT_SPAM, NULL) == NULL)
     {
       BOOL createSpamFolder;
+      enum FType type;
 
-      if(FileType(CreateFilename(FolderName[FT_SPAM])) == FIT_NONEXIST)
+      if(ObtainFileInfo(CreateFilename(FolderName[FT_SPAM]), FI_TYPE, &type) == TRUE && type == FIT_NONEXIST)
       {
         // no directory named "spam" exists, so let's create it
         createSpamFolder = TRUE;
@@ -3232,7 +3234,9 @@ int main(int argc, char **argv)
 
           for(sptr = args.attach; *sptr; sptr++)
           {
-            if(FileSize(*sptr) >= 0)
+            LONG size;
+
+            if(ObtainFileInfo(*sptr, FI_SIZE, &size) == TRUE && size > 0)
               WR_AddFileToList(wrwin, *sptr, NULL, FALSE);
           }
         }

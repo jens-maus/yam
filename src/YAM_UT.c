@@ -90,6 +90,8 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
+#include "FileInfo.h"
+
 #include "Debug.h"
 
 #define CRYPTBYTE 164
@@ -1660,270 +1662,6 @@ BOOL FileExists(const char *filename)
   return exists;
 }
 ///
-/// FileSize
-//  Returns size of a file
-int FileSize(const char *filename)
-{
-  #if defined(__amigaos4__)
-  struct ExamineData *ed;
-  #else
-  BPTR lock;
-  #endif
-  int size = -1;
-
-  ENTER();
-
-  #if defined(__amigaos4__)
-  if((ed = ExamineObjectTags(EX_StringName, filename, TAG_DONE)) != NULL)
-  {
-    size = ed->FileSize;
-    FreeDosObject(DOS_EXAMINEDATA, ed);
-  }
-  #else
-  if((lock = Lock((STRPTR)filename, ACCESS_READ)))
-  {
-    struct FileInfoBlock *fib;
-
-    if((fib = AllocDosObject(DOS_FIB, NULL)))
-    {
-      if(Examine(lock, fib))
-      {
-        size = fib->fib_Size;
-      }
-      FreeDosObject(DOS_FIB, fib);
-    }
-
-    UnLock(lock);
-  }
-  #endif
-
-  RETURN(size);
-  return size;
-}
-///
-/// FileProtection
-//  Returns protection bits of a file
-long FileProtection(const char *filename)
-{
-  #if defined(__amigaos4__)
-  struct ExamineData *ed;
-  #else
-  BPTR lock;
-  #endif
-  long prots = -1;
-
-  ENTER();
-
-  #if defined(__amigaos4__)
-  if((ed = ExamineObjectTags(EX_StringName, filename, TAG_DONE)) != NULL)
-  {
-    prots = ed->Protection;
-    FreeDosObject(DOS_EXAMINEDATA, ed);
-  }
-  #else
-  if((lock = Lock((STRPTR)filename, ACCESS_READ)))
-  {
-    struct FileInfoBlock *fib;
-
-    if((fib = AllocDosObject(DOS_FIB, NULL)))
-    {
-      if(Examine(lock, fib))
-      {
-        prots = fib->fib_Protection;
-      }
-      FreeDosObject(DOS_FIB, fib);
-    }
-
-    UnLock(lock);
-  }
-  #endif
-
-  RETURN(prots);
-  return prots;
-}
-///
-/// FileType
-//  Returns file type (file/directory)
-enum FType FileType(const char *filename)
-{
-  #if defined(__amigaos4__)
-  struct ExamineData *ed;
-  #else
-  BPTR lock;
-  #endif
-  enum FType type = FIT_NONEXIST;
-
-  ENTER();
-
-  #if defined(__amigaos4__)
-  if((ed = ExamineObjectTags(EX_StringName, filename, TAG_DONE)) != NULL)
-  {
-    if(EXD_IS_FILE(ed))
-      type = FIT_FILE;
-    else if(EXD_IS_DIRECTORY(ed))
-      type = FIT_DRAWER;
-    FreeDosObject(DOS_EXAMINEDATA, ed);
-  }
-  #else
-  if((lock = Lock((STRPTR)filename, ACCESS_READ)))
-  {
-    struct FileInfoBlock *fib;
-
-    if((fib = AllocDosObject(DOS_FIB, NULL)) != NULL)
-    {
-      if(Examine(lock, fib))
-      {
-        type = fib->fib_DirEntryType < 0 ? FIT_FILE : FIT_DRAWER;
-      }
-      FreeDosObject(DOS_FIB, fib);
-    }
-
-    UnLock(lock);
-  }
-  #endif
-
-  RETURN(type);
-  return type;
-}
-///
-/// FileComment
-//  Returns file comment
-char *FileComment(char *filename)
-{
-  #if defined(__amigaos4__)
-  struct ExamineData *ed;
-  #else
-  BPTR lock;
-  #endif
-  static char fileComment[80];
-  char *comment = NULL;
-
-  ENTER();
-
-  #if defined(__amigaos4__)
-  if((ed = ExamineObjectTags(EX_StringName, filename, TAG_DONE)) != NULL)
-  {
-    strlcpy(fileComment, ed->Comment, sizeof(fileComment));
-    FreeDosObject(DOS_EXAMINEDATA, ed);
-  }
-  #else
-  if((lock = Lock((STRPTR)filename, ACCESS_READ)))
-  {
-    struct FileInfoBlock *fib;
-
-    if((fib = AllocDosObject(DOS_FIB, NULL)))
-    {
-      if(Examine(lock, fib))
-      {
-        strlcpy(fileComment, fib->fib_Comment, sizeof(fileComment));
-        comment = fileComment;
-      }
-      FreeDosObject(DOS_FIB, fib);
-    }
-
-    UnLock(lock);
-  }
-  #endif
-
-  RETURN(comment);
-  return comment;
-}
-///
-/// FileDate
-//  Returns the date of the file
-struct DateStamp *FileDate(char *filename)
-{
-  #if defined(__amigaos4__)
-  struct ExamineData *ed;
-  #else
-  BPTR lock;
-  #endif
-  static struct DateStamp ds;
-  struct DateStamp *res = NULL;
-
-  ENTER();
-
-  #if defined(__amigaos4__)
-  if((ed = ExamineObjectTags(EX_StringName, filename, TAG_DONE)) != NULL)
-  {
-    memcpy(&ds, &ed->Date, sizeof(struct DateStamp));
-    FreeDosObject(DOS_EXAMINEDATA, ed);
-  }
-  #else
-  if((lock = Lock(filename, ACCESS_READ)))
-  {
-    struct FileInfoBlock *fib;
-
-    if((fib = AllocDosObject(DOS_FIB, NULL)))
-    {
-      if(Examine(lock, fib))
-      {
-        memcpy(&ds, &fib->fib_Date, sizeof(struct DateStamp));
-        res = &ds;
-      }
-      FreeDosObject(DOS_FIB, fib);
-    }
-
-    UnLock(lock);
-  }
-  #endif
-
-  RETURN(res);
-  return res;
-}
-///
-/// FileTime
-//  Returns the date of the file in seconds since 1.1.1970
-long FileTime(const char *filename)
-{
-  #if defined(__amigaos4__)
-  struct ExamineData *ed;
-  #else
-  BPTR lock;
-  #endif
-  long ret = 0;
-
-  ENTER();
-
-  #if defined(__amigaos4__)
-  if((ed = ExamineObjectTags(EX_StringName, filename, TAG_DONE)) != NULL)
-  {
-    // this is the correct calculation to convert the
-    // struct DateStamp entries which are based on the 1.1.1978
-    // to a long variable for the seconds since 1.1.1970
-    ret = ((ed->Date.ds_Days + 2922) * 1440 +
-            ed->Date.ds_Minute) * 60 +
-            ed->Date.ds_Tick / TICKS_PER_SECOND;
-    FreeDosObject(DOS_EXAMINEDATA, ed);
-  }
-  #else
-  if((lock = Lock((STRPTR)filename, ACCESS_READ)))
-  {
-    struct FileInfoBlock *fib;
-
-    if((fib = AllocDosObject(DOS_FIB, NULL)))
-    {
-      if(Examine(lock, fib))
-      {
-        // this is the correct calculation to convert the
-        // struct DateStamp entries which are based on the 1.1.1978
-        // to a long variable for the seconds since 1.1.1970
-        ret = ((fib->fib_Date.ds_Days + 2922) * 1440 +
-                fib->fib_Date.ds_Minute) * 60 +
-                fib->fib_Date.ds_Tick / TICKS_PER_SECOND;
-      }
-
-      FreeDosObject(DOS_FIB, fib);
-    }
-
-    UnLock(lock);
-  }
-  #endif
-
-  RETURN(ret);
-  return ret;
-}
-///
 /// RenameFile
 //  Renames a file and restores the protection bits
 BOOL RenameFile(const char *oldname, const char *newname)
@@ -2809,13 +2547,17 @@ BOOL AllFolderLoaded(void)
 //  Checks if a file exists in the specified directory
 BOOL PFExists(const char *path, const char *file)
 {
-  char fname[SIZE_PATHFILE];
-  BOOL exists;
+  BOOL exists = FALSE;
 
   ENTER();
 
-  strmfp(fname, path, file);
-  exists = FileExists(fname);
+  if(file != NULL && file[0] != '\0')
+  {
+    char fname[SIZE_PATHFILE];
+
+    strmfp(fname, path, file);
+    exists = FileExists(fname);
+  }
 
   RETURN(exists);
   return exists;
@@ -2825,7 +2567,6 @@ BOOL PFExists(const char *path, const char *file)
 //  Recursively deletes a mail directory
 BOOL DeleteMailDir(const char *dir, BOOL isroot)
 {
-  BPTR dirLock;
   BOOL result = TRUE;
 
   ENTER();
@@ -2866,9 +2607,9 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
 
             strmfp(fname, dir, filename);
 
-            if(isroot)
+            if(isroot == TRUE)
             {
-              if(isdir)
+              if(isdir == TRUE)
               {
                 if(IsFolderDir(fname))
                   result = DeleteMailDir(fname, FALSE);
@@ -2887,9 +2628,9 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
                 }
               }
             }
-            else if(!isdir && (isValidMailFile(filename) ||
-                    stricmp(filename, ".fconfig") == 0   ||
-                    stricmp(filename, ".fimage") == 0   ||
+            else if(isdir == FALSE && (isValidMailFile(filename) ||
+                    stricmp(filename, ".fconfig") == 0           ||
+                    stricmp(filename, ".fimage") == 0            ||
                     stricmp(filename, ".index") == 0)
                    )
             {
@@ -2927,13 +2668,13 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
 char *FileToBuffer(const char *file)
 {
   char *text = NULL;
-  int size;
+  LONG size;
 
   ENTER();
 
-  size = FileSize(file);
+  ObtainFileInfo(file, FI_SIZE, &size);
 
-  if(size >= 0 && (text = malloc((size+1)*sizeof(char))))
+  if(size > 0 && (text = malloc((size+1)*sizeof(char))) != NULL)
   {
     FILE *fh;
 
@@ -3069,41 +2810,44 @@ BOOL CreateDirectory(const char *dir)
   // check if dir isn't empty
   if(dir[0] != '\0')
   {
-    enum FType ft = FileType(dir);
+    enum FType ft;
 
-    if(ft == FIT_DRAWER)
-      success = TRUE;
-    else if(ft == FIT_NONEXIST)
+    if(ObtainFileInfo(dir, FI_TYPE, &ft) == TRUE)
     {
-      char buf[SIZE_PATHFILE];
-      BPTR fl;
-      size_t len = strlen(dir)-1;
-
-      // check for trailing slashes
-      if(dir[len] == '/')
-      {
-        // we make a copy of dir first because
-        // we are not allowed to modify it
-        strlcpy(buf, dir, sizeof(buf));
-
-        // remove all trailing slashes
-        while(len > 0 && buf[len] == '/')
-          buf[len--] = '\0';
-
-        // set dir to our buffer
-        dir = buf;
-      }
-
-      // use utility/CreateDir() to create the
-      // directory
-      if((fl = CreateDir(dir)))
-      {
-        UnLock(fl);
+      if(ft == FIT_DRAWER)
         success = TRUE;
+      else if(ft == FIT_NONEXIST)
+      {
+        char buf[SIZE_PATHFILE];
+        BPTR fl;
+        size_t len = strlen(dir)-1;
+
+        // check for trailing slashes
+        if(dir[len] == '/')
+        {
+          // we make a copy of dir first because
+          // we are not allowed to modify it
+          strlcpy(buf, dir, sizeof(buf));
+
+          // remove all trailing slashes
+          while(len > 0 && buf[len] == '/')
+            buf[len--] = '\0';
+
+          // set dir to our buffer
+          dir = buf;
+        }
+
+        // use utility/CreateDir() to create the
+        // directory
+        if((fl = CreateDir(dir)))
+        {
+          UnLock(fl);
+          success = TRUE;
+        }
       }
     }
 
-    if(G->MA && !success)
+    if(G->MA != NULL && success == FALSE)
       ER_NewError(tr(MSG_ER_CantCreateDir), dir);
   }
 
@@ -4828,7 +4572,7 @@ char *StartUnpack(const char *file, char *newfile, const struct Folder *folder)
 
       // check that the destination filename
       // doesn't already exist
-      if(FileSize(newfile) < 0 && UncompressMailFile(file, newfile, folder ? folder->Password : ""))
+      if(FileExists(newfile) == FALSE && UncompressMailFile(file, newfile, folder ? folder->Password : ""))
         result = newfile;
     }
     else
@@ -6610,7 +6354,12 @@ const char *IdentifyFile(const char *fname)
         // if the amount of not ASCII chars is lower than rlen/10 we
         // consider it a text file and don't do a deeper analysis.
         if(notascii < rlen/10)
-           ctype = IntMimeTypeArray[(FileProtection(fname) & FIBF_SCRIPT) ? MT_AP_SCRIPT : MT_TX_PLAIN].ContentType;
+        {
+          ULONG prot;
+
+          ObtainFileInfo(fname, FI_PROTECTION, &prot);
+          ctype = IntMimeTypeArray[(prot & FIBF_SCRIPT) ? MT_AP_SCRIPT : MT_TX_PLAIN].ContentType;
+        }
         else
         {
           D(DBF_MIME, "identifying file through datatypes.library");
@@ -6618,7 +6367,7 @@ const char *IdentifyFile(const char *fname)
           // per default we end up with an "application/octet-stream" content-type
           ctype = IntMimeTypeArray[MT_AP_OCTET].ContentType;
 
-          if(DataTypesBase)
+          if(DataTypesBase != NULL)
           {
             BPTR lock;
 
@@ -6626,7 +6375,7 @@ const char *IdentifyFile(const char *fname)
             {
               struct DataType *dtn;
 
-              if((dtn = ObtainDataTypeA(DTST_FILE, (APTR)lock, NULL)))
+              if((dtn = ObtainDataTypeA(DTST_FILE, (APTR)lock, NULL)) != NULL)
               {
                 const char *type = NULL;
                 struct DataTypeHeader *dth = dtn->dtn_Header;

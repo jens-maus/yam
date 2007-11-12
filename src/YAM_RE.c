@@ -63,9 +63,10 @@
 #include "YAM_read.h"
 #include "YAM_write.h"
 #include "YAM_utilities.h"
-#include "HTML2Mail.h"
-
 #include "classes/Classes.h"
+
+#include "HTML2Mail.h"
+#include "FileInfo.h"
 
 #include "Debug.h"
 
@@ -1925,12 +1926,12 @@ static BOOL RE_SaveThisPart(struct Part *rp)
 //  Determines size and other information of a message part
 static void RE_SetPartInfo(struct Part *rp)
 {
-  long size;
+  LONG size;
 
   ENTER();
 
   // get the part's filesize
-  size = FileSize(rp->Filename);
+  ObtainFileInfo(rp->Filename, FI_SIZE, &size);
 
   // let's calculate the partsize of an undecoded part, if this
   // part isn't the RAW part and we found a positive size.
@@ -3443,7 +3444,7 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
 //  Searches portrait of sender in the gallery directory
 BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo)
 {
-  BOOL found;
+  BOOL found = FALSE;
 
   ENTER();
 
@@ -3465,10 +3466,13 @@ BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo)
     }
   }
 
-  if(photo[0] == '\0')
-    found = FALSE;
-  else
-    found = (BOOL)(FileSize(photo) > 0);
+  if(photo[0] != '\0')
+  {
+    LONG size;
+
+    if(ObtainFileInfo(photo, FI_SIZE, &size) == TRUE && size > 0)
+      found = TRUE;
+  }
 
   RETURN(found);
   return found;

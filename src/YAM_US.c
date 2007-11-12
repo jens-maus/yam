@@ -50,6 +50,8 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
+#include "FileInfo.h"
+
 #include "Debug.h"
 
 #define UFLAG_LIMITED_USER              (1 << 2)
@@ -166,6 +168,7 @@ static void US_LoadUsers(void)
         if(strncmp(buffer, "@USER", 5) == 0)
         {
           struct User *user = &G->Users.User[G->Users.Num];
+          enum FType type;
 
           strlcpy(user->Name, Trim(&buffer[6]), sizeof(user->Name));
           strlcpy(user->MailDir, Trim(GetLine(fh, buffer, sizeof(buffer))), sizeof(user->MailDir));
@@ -174,7 +177,7 @@ static void US_LoadUsers(void)
             strlcpy(user->MailDir, G->MA_MailDir, sizeof(user->MailDir));
             save = TRUE;
           }
-          if(FileType(user->MailDir) != FIT_DRAWER)
+          if(ObtainFileInfo(user->MailDir, FI_TYPE, &type) == TRUE && type != FIT_DRAWER)
           {
             ER_NewError(tr(MSG_ER_UserRemoved), user->MailDir, user->Name);
             user->Name[0] = 0;
@@ -430,11 +433,13 @@ static BOOL US_SaveUserList(void)
       {
         if(user->MailDir[0] != '\0')
         {
-          if(FileType(user->MailDir) != FIT_DRAWER)
+          enum FType type;
+
+          if(ObtainFileInfo(user->MailDir, FI_TYPE, &type) == FALSE || type != FIT_DRAWER)
           {
             if(MUI_Request(G->App, G->US->GUI.WI, 0, tr(MSG_MA_MUsers), tr(MSG_YesNoReq), tr(MSG_US_DIRECTORY_DOESNT_EXIST), user->MailDir, user->Name))
             {
-               if(CreateDirectory(user->MailDir))
+               if(CreateDirectory(user->MailDir) == TRUE)
                  validUser = TRUE;
                else
                  ER_NewError(tr(MSG_ER_CantCreateDir), user->MailDir);
@@ -452,9 +457,9 @@ static BOOL US_SaveUserList(void)
     else
       break;
 
-    if(validUser)
+    if(validUser == TRUE)
     {
-      if(user->Clone && user->IsNew)
+      if(user->Clone == TRUE && user->IsNew == TRUE)
       {
          char dest[SIZE_PATHFILE];
 
