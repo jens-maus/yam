@@ -30,14 +30,7 @@
 
 #include <exec/types.h>
 
-enum FType
-{
-  FIT_NONEXIST = 0,
-  FIT_UNKNOWN,
-  FIT_FILE,
-  FIT_DRAWER
-};
-
+// possible information available for query
 enum FileInfo
 {
   FI_SIZE = 0 ,
@@ -48,9 +41,20 @@ enum FileInfo
   FI_TYPE,
 };
 
+// possible return values for FI_TYPE
+enum FType
+{
+  FIT_NONEXIST = 0,
+  FIT_UNKNOWN,
+  FIT_FILE,
+  FIT_DRAWER
+};
+
+#if !defined(__amigaos4__)
 // some filetype handling macros
 #define isFile(etype)     (etype < 0)
 #define isDrawer(etype)   (etype >= 0 && etype != ST_SOFTLINK && etype != ST_LINKDIR)
+#endif
 
 BOOL ObtainFileInfo(const char *name, enum FileInfo which, void *valuePtr);
 

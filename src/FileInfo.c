@@ -35,6 +35,18 @@
 
 #include "Debug.h"
 
+/// ObtainFileInfo
+// query file <name> for the information <which>. If successful, the queried
+// value is returned in the variable that <valuePtr> points to.
+// Depending on <which> these variable types MUST be used for proper function:
+//   FI_SIZE          LONG
+//   FI_PROTECTION    ULONG
+//   FI_COMMENT       char *
+//   FI_DATE          struct DateStamp *
+//   FI_TIME          ULONG
+//   FI_TYPE          enum FileType
+// Pointer types like FI_COMMENT or FI_DATE must be free()'d after usage to
+// avoid memory leaks.
 BOOL ObtainFileInfo(const char *name, enum FileInfo which, void *valuePtr)
 {
   BOOL result = FALSE;

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-13  Thore Böckelmann <tboeckel@gmx.de>
+
+  * FileInfo.c, FileInfo.h: added some more "documentation" comments on how to
+    use this new function.
+
 2007-11-12  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c, FileInfo.h, FileInfo.c, YAM_MAf.c: fixed partly broken build
