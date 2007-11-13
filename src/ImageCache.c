@@ -39,16 +39,16 @@
 #include <proto/graphics.h>
 #include <proto/muimaster.h>
 
-#include "extrasrc.h"
 
 #include "YAM.h"
 #include "YAM_locale.h"
 #include "YAM_stringsizes.h"
 #include "YAM_utilities.h"
-
 #include "classes/Classes.h"
 
 #include "ImageCache.h"
+#include "FileInfo.h"
+#include "extrasrc.h"
 
 #include "Debug.h"
 

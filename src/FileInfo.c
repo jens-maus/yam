@@ -25,10 +25,10 @@
 
 ***************************************************************************/
 
+#include <string.h>
+
 #include <dos/dos.h>
 #include <proto/dos.h>
-
-#include <string.h>
 
 #include "FileInfo.h"
 #include "extrasrc.h"
@@ -194,3 +194,25 @@ BOOL ObtainFileInfo(const char *name, enum FileInfo which, void *valuePtr)
   return result;
 }
 
+///
+/// FileExists
+//  return true/false if a file/directory exists
+BOOL FileExists(const char *filename)
+{
+  BOOL exists = FALSE;
+  BPTR lock;
+
+  ENTER();
+
+  if(filename[0] != '\0' &&
+     (lock = Lock(filename, ACCESS_READ)))
+  {
+    exists = TRUE;
+    UnLock(lock);
+  }
+
+  RETURN(exists);
+  return exists;
+}
+
+///

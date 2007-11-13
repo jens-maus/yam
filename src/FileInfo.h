@@ -57,5 +57,6 @@ enum FType
 #endif
 
 BOOL ObtainFileInfo(const char *name, enum FileInfo which, void *valuePtr);
+BOOL FileExists(const char *filename);
 
 #endif /* FILEINFO_H */

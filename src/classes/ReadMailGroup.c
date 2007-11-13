@@ -35,6 +35,7 @@
 #include "YAM_read.h"
 
 #include "HTML2Mail.h"
+#include "FileInfo.h"
 
 #include "Debug.h"
 

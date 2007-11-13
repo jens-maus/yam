@@ -323,7 +323,6 @@ char *   Encrypt(const char *source);
 char *   GetRealPath(char *path);
 BOOL     ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef);
 void     ExtractAddress(const char *line, struct Person *pe);
-BOOL     FileExists(const char *filename);
 char *   FileToBuffer(const char *file);
 BOOL     FileToEditor(char *file, Object *editor);
 long     FileCount(const char *directory);

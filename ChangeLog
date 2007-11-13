@@ -9,6 +9,7 @@ $URL$
 
   * FileInfo.c, FileInfo.h: added some more "documentation" comments on how to
     use this new function.
+  * misc: moved the FileExists() function over to FileInfo.c.
 
 2007-11-12  Jens Langner <Jens.Langner@light-speed.de>
 

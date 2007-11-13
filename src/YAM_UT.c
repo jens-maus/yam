@@ -1642,26 +1642,6 @@ char *GetLine(FILE *fh, char *buffer, int bufsize)
 }
 
 ///
-/// FileExists
-//  return true/false if file exists
-BOOL FileExists(const char *filename)
-{
-  BOOL exists = FALSE;
-  BPTR lock;
-
-  ENTER();
-
-  if(filename[0] != '\0' &&
-     (lock = Lock(filename, ACCESS_READ)))
-  {
-    exists = TRUE;
-    UnLock(lock);
-  }
-
-  RETURN(exists);
-  return exists;
-}
-///
 /// RenameFile
 //  Renames a file and restores the protection bits
 BOOL RenameFile(const char *oldname, const char *newname)

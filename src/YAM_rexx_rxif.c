@@ -43,8 +43,6 @@
 #include <proto/rexxsyslib.h>
 #include <proto/utility.h>
 
-#include "extrasrc.h"
-
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
@@ -60,6 +58,9 @@
 #include "YAM_write.h"
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
+
+#include "FileInfo.h"
+#include "extrasrc.h"
 
 #include "Debug.h"
 

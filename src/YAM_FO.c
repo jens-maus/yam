@@ -41,8 +41,6 @@
 #include <proto/utility.h>
 #include <proto/xpkmaster.h>
 
-#include "extrasrc.h"
-
 #include "SDI_hook.h"
 
 #include "YAM.h"
@@ -58,6 +56,9 @@
 #include "classes/Classes.h"
 
 #include "ImageCache.h"
+#include "FileInfo.h"
+#include "extrasrc.h"
+
 #include "Debug.h"
 
 /* local protos */
