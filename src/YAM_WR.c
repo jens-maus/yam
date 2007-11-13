@@ -2270,18 +2270,18 @@ void WR_NewMail(enum WriteMode mode, int winnum)
   // cleanup certain references
   wr->refMail = NULL;
 
-  if(wr->refMailList)
+  if(wr->refMailList != NULL)
   {
     free(wr->refMailList);
     wr->refMailList = NULL;
   }
 
   // now we make sure we immediately send out the mail.
-  if(mode == WRITE_SEND && newMail && !G->TR)
+  if(mode == WRITE_SEND && newMail != NULL && G->TR == NULL)
   {
     set(gui->WI, MUIA_Window_Open, FALSE);
     mlist[2] = newMail;
-    TR_ProcessSEND(mlist);
+    TR_ProcessSEND(mlist, SEND_ACTIVE_USER);
   }
 
   // delete a possible autosave file

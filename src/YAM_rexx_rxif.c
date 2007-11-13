@@ -890,7 +890,7 @@ void rx_mailsend( UNUSED struct RexxHost *host, struct rxd_mailsend **rxd, enum 
 
     case RXIF_ACTION:
     {
-      if(!MA_Send(rd->arg.all ? SEND_ALL : SEND_ACTIVE))
+      if(!MA_Send(rd->arg.all ? SEND_ALL_AUTO : SEND_ACTIVE_AUTO))
         rd->rc = RETURN_WARN;
     }
     break;
@@ -1429,7 +1429,7 @@ void rx_mailsendall( UNUSED struct RexxHost *host, struct rxd_mailsendall **rxd,
 
     case RXIF_ACTION:
     {
-      if(!MA_Send(SEND_ALL))
+      if(!MA_Send(SEND_ALL_AUTO))
         rd->rc = RETURN_WARN;
     }
     break;

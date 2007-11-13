@@ -3461,7 +3461,7 @@ MakeHook(MA_GetAddressHook, MA_GetAddressFunc);
 ///
 /// MA_PopNow
 //  Fetches new mail from POP3 account(s)
-void MA_PopNow(enum GuiLevel mode, int pop)
+void MA_PopNow(enum GUILevel mode, int pop)
 {
   ENTER();
 
@@ -3508,11 +3508,13 @@ BOOL MA_Send(enum SendMode mode)
 
     switch(mode)
     {
-      case SEND_ALL:
+      case SEND_ALL_USER:
+      case SEND_ALL_AUTO:
         mlist = MA_CreateFullList(fo, FALSE);
       break;
 
-      case SEND_ACTIVE:
+      case SEND_ACTIVE_USER:
+      case SEND_ACTIVE_AUTO:
       {
         if(fo == FO_GetCurrentFolder())
           mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE);
@@ -3522,7 +3524,7 @@ BOOL MA_Send(enum SendMode mode)
 
     if(mlist != NULL)
     {
-      success = TR_ProcessSEND(mlist);
+      success = TR_ProcessSEND(mlist, mode);
       free(mlist);
     }
   }
@@ -5232,7 +5234,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXPORT,    MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ExportMessagesHook, TRUE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_IMPORT,    MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ImportMessagesHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_GETMAIL,   MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, POP_USER, -1, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SENDMAIL,  MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SEND_ALL);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SENDMAIL,  MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SEND_ALL_USER);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXMAIL,    MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, POP_USER, -1, IEQUALIFIER_LSHIFT);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_READ,      MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ReadMessageHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT,      MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NEW_EDIT, 0);
@@ -5250,7 +5252,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_BOUNCE,    MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NEW_BOUNCE, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SAVEADDR,  MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_GetAddressHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CHSUBJ,    MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ChangeSubjectHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SEND,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SEND_ACTIVE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SEND,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SEND_ACTIVE_USER);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOUNREAD,  MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_NONE,              SFLAG_NEW|SFLAG_READ);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOREAD,    MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_READ,              SFLAG_NEW);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOHOLD,    MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_HOLD|SFLAG_READ,   SFLAG_QUEUED|SFLAG_ERROR);

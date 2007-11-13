@@ -10,6 +10,10 @@ $URL$
   * FileInfo.c, FileInfo.h: added some more "documentation" comments on how to
     use this new function.
   * misc: moved the FileExists() function over to FileInfo.c.
+  * misc: the GUI does now distinguish between user triggered and automatically
+    (i.e. timer, ARexx, etc) triggered mail transfers. The transfer window will
+    be opened in active state for user triggered transfers only to avoid
+    stealing the focus from other windows by automatic actions.
 
 2007-11-12  Jens Langner <Jens.Langner@light-speed.de>
 

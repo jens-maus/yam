@@ -236,8 +236,6 @@ enum Macro {
    MACRO_READ, MACRO_PREWRITE, MACRO_POSTWRITE, MACRO_URL
 };
 
-enum SendMode { SEND_ALL, SEND_ACTIVE };
-
 // main window menu enumerations
 enum
 {
@@ -384,7 +382,7 @@ int   MA_NewForward(struct Mail **mlist, int flags);
 int   MA_NewMessage(enum NewMode mode, int flags);
 int   MA_NewNew(struct Mail *mail, int flags);
 int   MA_NewReply(struct Mail **mlist, int flags);
-void  MA_PopNow(enum GuiLevel mode, int pop);
+void  MA_PopNow(enum GUILevel mode, int pop);
 void  MA_RemoveAttach(struct Mail *mail, BOOL warning);
 BOOL  MA_Send(enum SendMode sendpos);
 void  MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags);

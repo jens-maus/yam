@@ -995,7 +995,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
 
   // scan for the real size of the content-type: value without the
   // corresponding parameters.
-  while(*p)
+  while(*p != '\0')
   {
     if(isspace(*p) || *p == ';')
       break;
@@ -1009,7 +1009,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
   // in between until we reach a ";" which signals a next parameter.
   // we also make sure we just allocate memory for the content-type
   // as our ParseContentParameters() function will allocate the rest.
-  if((s = malloc(size+1)))
+  if((s = malloc(size+1)) != NULL)
   {
     char *q = s;
 
@@ -1033,7 +1033,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
   {
     case PT_CONTENTTYPE:
     {
-      if(rp->ContentType)
+      if(rp->ContentType != NULL)
         free(rp->ContentType);
 
       rp->ContentType = s;
@@ -1042,7 +1042,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
 
     case PT_CONTENTDISPOSITION:
     {
-      if(rp->ContentDisposition)
+      if(rp->ContentDisposition != NULL)
         free(rp->ContentDisposition);
 
       rp->ContentDisposition = s;
@@ -1060,9 +1060,9 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
 
     // now we walk through our string by extracting each
     // content parameter/value combo in a while loop.
-    while(*next != '\0' && (next = ExtractNextParam(next, &attribute, &value)))
+    while(*next != '\0' && (next = ExtractNextParam(next, &attribute, &value)) != NULL)
     {
-      if(attribute && value)
+      if(attribute != NULL && value != NULL)
       {
         // depending on the parameterType we
         // have to parse different parameters
@@ -1070,7 +1070,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
         {
           case PT_CONTENTTYPE:
           {
-            if(!strncmp(attribute, "name", 4))
+            if(strncmp(attribute, "name", 4) == 0)
             {
               // we try to find out which encoding the
               // parameter is actually using by checking for
@@ -1078,6 +1078,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
               if(attribute[4] == '*')
               {
                 static struct codeset *nameCodeset = NULL;
+
                 rfc2231_decode(&attribute[5], value, &rp->CParName, &nameCodeset);
               }
               else
@@ -1091,7 +1092,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
                 rp->CParName = value;
               }
             }
-            else if(!strncmp(attribute, "description", 11))
+            else if(strncmp(attribute, "description", 11) == 0)
             {
               // we try to find out which encoding the
               // parameter is actually using by checking for
@@ -1099,6 +1100,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
               if(attribute[11] == '*')
               {
                 static struct codeset *descCodeset = NULL;
+
                 rfc2231_decode(&attribute[12], value, &rp->CParDesc, &descCodeset);
               }
               else
@@ -1112,13 +1114,13 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
                 rp->CParDesc = value;
               }
             }
-            else if(!strcmp(attribute, "boundary"))
+            else if(strcmp(attribute, "boundary") == 0)
               rp->CParBndr = value;
-            else if(!strcmp(attribute, "protocol"))
+            else if(strcmp(attribute, "protocol") == 0)
               rp->CParProt = value;
-            else if(!strcmp(attribute, "report-type"))
+            else if(strcmp(attribute, "report-type") == 0)
               rp->CParRType = value;
-            else if(!strcmp(attribute, "charset"))
+            else if(strcmp(attribute, "charset") == 0)
               rp->CParCSet = value;
             else
               free(value);
@@ -1127,7 +1129,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
 
           case PT_CONTENTDISPOSITION:
           {
-            if(!strncmp(attribute, "filename", 8))
+            if(strncmp(attribute, "filename", 8) == 0)
             {
               // we try to find out which encoding the
               // parameter is actually using by checking for
@@ -1762,7 +1764,7 @@ static void RE_UndoPart(struct Part *rp)
 
   // we only iterate through our partlist if there is
   // a next item, if not we can simply relink it
-  if(trp->Next)
+  if(trp->Next != NULL)
   {
     // if we remove a part from the part list we have to take
     // care of the part index number aswell. So all following
@@ -1781,7 +1783,7 @@ static void RE_UndoPart(struct Part *rp)
       Rename(trp->Filename, trp->Prev->Filename);
 
     }
-    while(trp->Next);
+    while(trp->Next != NULL);
 
     // now go from the end to the start again and copy
     // the filenames strings as we couldn`t do that in the previous
@@ -1797,15 +1799,17 @@ static void RE_UndoPart(struct Part *rp)
       strlcpy(trp->Next->Filename, trp->Filename, sizeof(trp->Next->Filename));
 
     }
-    while(trp->Prev && trp != rp);
+    while(trp->Prev != NULL && trp != rp);
   }
 
   // relink the partlist
-  if(rp->Prev) rp->Prev->Next = rp->Next;
-  if(rp->Next) rp->Next->Prev = rp->Prev;
+  if(rp->Prev != NULL)
+    rp->Prev->Next = rp->Next;
+  if(rp->Next != NULL)
+    rp->Next->Prev = rp->Prev;
 
   // free an eventually existing headerList
-  if(rp->headerList)
+  if(rp->headerList != NULL)
   {
     FreeHeaderList(rp->headerList);
     free(rp->headerList);
@@ -1816,17 +1820,24 @@ static void RE_UndoPart(struct Part *rp)
   free(rp->ContentDisposition);
 
   // free all the CPar structue members
-  if(rp->CParName)      free(rp->CParName);
-  if(rp->CParFileName)  free(rp->CParFileName);
-  if(rp->CParBndr)      free(rp->CParBndr);
-  if(rp->CParProt)      free(rp->CParProt);
-  if(rp->CParDesc)      free(rp->CParDesc);
-  if(rp->CParRType)     free(rp->CParRType);
-  if(rp->CParCSet)      free(rp->CParCSet);
+  if(rp->CParName != NULL)
+    free(rp->CParName);
+  if(rp->CParFileName != NULL)
+    free(rp->CParFileName);
+  if(rp->CParBndr != NULL)
+    free(rp->CParBndr);
+  if(rp->CParProt != NULL)
+    free(rp->CParProt);
+  if(rp->CParDesc != NULL)
+    free(rp->CParDesc);
+  if(rp->CParRType != NULL)
+    free(rp->CParRType);
+  if(rp->CParCSet != NULL)
+    free(rp->CParCSet);
 
   // now we check whether the readMailData letterPartNum has to be decreased to
   // point to the correct letterPart number again
-  if(rp->rmData)
+  if(rp->rmData != NULL)
   {
     struct ReadMailData *rmData = rp->rmData;
 
@@ -1860,7 +1871,7 @@ static void RE_UndoPart(struct Part *rp)
   }
 
   // relink the MainAltPart pointer as well
-  if(rp->Parent && rp->Parent->MainAltPart == NULL)
+  if(rp->Parent != NULL && rp->Parent->MainAltPart == NULL)
   {
     D(DBF_MAIL, "setting parent #%ld [%lx] MainAltPart to %lx", rp->Parent->Nr, rp->Parent, rp->MainAltPart);
 
@@ -1881,20 +1892,20 @@ static enum SMsgType RE_RequiresSpecialHandling(const struct Part *hrp)
 
   ENTER();
 
-  if(hrp->CParRType && !stricmp(hrp->ContentType, "multipart/report") &&
-                       !stricmp(hrp->CParRType, "disposition-notification"))
+  if(hrp->CParRType != NULL && stricmp(hrp->ContentType, "multipart/report") == 0 &&
+                               stricmp(hrp->CParRType, "disposition-notification") == 0)
   {
     res = SMT_MDN;
   }
-  else if(hrp->CParProt)
+  else if(hrp->CParProt != NULL)
   {
-    if(!stricmp(hrp->ContentType, "multipart/signed") &&
-       !stricmp(hrp->CParProt, "application/pgp-signature"))
+    if(stricmp(hrp->ContentType, "multipart/signed") == 0 &&
+       stricmp(hrp->CParProt, "application/pgp-signature") == 0)
     {
       res = SMT_SIGNED;
     }
-    else if(!stricmp(hrp->ContentType, "multipart/encrypted") &&
-            !stricmp(hrp->CParProt, "application/pgp-encrypted"))
+    else if(stricmp(hrp->ContentType, "multipart/encrypted") == 0 &&
+            stricmp(hrp->CParProt, "application/pgp-encrypted") == 0)
     {
       res = SMT_ENCRYPTED;
     }
@@ -3756,8 +3767,8 @@ static void RE_SendMDN(const enum MDNMode mode,
 
             // in case the user wants to send the message
             // immediately we go and send it out
-            if(sendnow && mlist[2] != NULL && !G->TR)
-              TR_ProcessSEND(mlist);
+            if(sendnow == TRUE && mlist[2] != NULL && G->TR == NULL)
+              TR_ProcessSEND(mlist, autoSend ? SEND_ACTIVE_AUTO : SEND_ACTIVE_USER);
 
             // refresh the folder statistics
             DisplayStatistics(outfolder, TRUE);

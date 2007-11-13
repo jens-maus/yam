@@ -3701,7 +3701,7 @@ static void TR_DisconnectPOP(void)
 ///
 /// TR_GetMailFromNextPOP
 //  Downloads and filters mail from a POP3 account
-void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
+void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
 {
   static int laststats;
   int msgs, pop = singlepop;
@@ -3722,7 +3722,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       TR_CloseTCPIP();
       return;
     }
-    if((G->TR = TR_New(TR_GET)) == NULL)
+    if((G->TR = TR_New(guilevel == POP_USER ? TR_GET_USER : TR_GET_AUTO)) == NULL)
     {
       TR_CloseTCPIP();
       return;
@@ -3852,7 +3852,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
     if(G->TR_Exchange == TRUE)
     {
       G->TR_Exchange = FALSE;
-      DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, SEND_ALL);
+      DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, guilevel == POP_USER ? SEND_ALL_USER : SEND_ALL_AUTO);
     }
 
     return;
@@ -5404,7 +5404,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 ///
 /// TR_ProcessSEND
 //  Sends a list of messages
-BOOL TR_ProcessSEND(struct Mail **mlist)
+BOOL TR_ProcessSEND(struct Mail **mlist, enum SendMode mode)
 {
   BOOL success = FALSE;
 
@@ -5414,13 +5414,13 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
   MA_StartMacro(MACRO_PRESEND, NULL);
 
   // try to open the TCP/IP stack
-  if(TR_OpenTCPIP())
+  if(TR_OpenTCPIP() == TRUE)
   {
     // verify that the configuration is ready for sending mail
-    if(CO_IsValid() && (G->TR = TR_New(TR_SEND)))
+    if(CO_IsValid() == TRUE && (G->TR = TR_New((mode == SEND_ALL_AUTO || mode == SEND_ACTIVE_AUTO) ? TR_SEND_AUTO : TR_SEND_USER)) != NULL)
     {
       // open the transfer window
-      if(SafeOpenWindow(G->TR->GUI.WI))
+      if(SafeOpenWindow(G->TR->GUI.WI) == TRUE)
       {
         int c;
         int i;
@@ -5487,7 +5487,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
 
             // If the hostname has a explicit :xxxxx port statement at the end we
             // take this one, even if its not needed anymore.
-            if((p = strchr(host, ':')))
+            if((p = strchr(host, ':')) != NULL)
             {
               *p = '\0';
               port = atoi(++p);
@@ -5510,7 +5510,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
               if(C->SMTP_SecureMethod == SMTPSEC_SSL)
               {
                 // lets try to establish the SSL connection via AmiSSL
-                if(TR_InitTLS() && TR_StartTLS())
+                if(TR_InitTLS() == TRUE && TR_StartTLS() == TRUE)
                   G->TR_UseTLS = TRUE;
                 else
                   err = CONNECTERR_SSLFAILED; // special SSL connection error
@@ -5533,7 +5533,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
 
                   // then we have to refresh the SMTPflags and check
                   // again what features we have after the STARTTLS
-                  if(connected)
+                  if(connected == TRUE)
                   {
                     // first we flag this connection as a sucessfull
                     // TLS session
@@ -5548,12 +5548,12 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
 
                 // If the user selected SMTP_AUTH we have to initiate
                 // a AUTH connection
-                if(C->Use_SMTP_AUTH && connected)
+                if(C->Use_SMTP_AUTH == TRUE && connected == TRUE)
                   connected = TR_InitSMTPAUTH();
               }
 
               // If we are still "connected" we can proceed with transfering the data
-              if(connected)
+              if(connected == TRUE)
               {
                 struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
                 struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
@@ -7087,7 +7087,7 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
   {
     Object *bt_all = NULL, *bt_none = NULL, *bt_loadonly = NULL, *bt_loaddel = NULL, *bt_delonly = NULL, *bt_leave = NULL;
     Object *gr_sel, *gr_proc, *gr_win;
-    BOOL fullwin = (TRmode == TR_GET || TRmode == TR_IMPORT);
+    BOOL fullwin = (TRmode == TR_GET_USER || TRmode == TR_GET_AUTO || TRmode == TR_IMPORT);
     static char status_label[SIZE_DEFAULT];
     static char size_gauge_label[SIZE_DEFAULT];
     static char msg_gauge_label[SIZE_DEFAULT];
@@ -7197,7 +7197,7 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
     data->GUI.WI = WindowObject,
        MUIA_Window_ID, MAKE_ID('T','R','A','0'+TRmode),
        MUIA_Window_CloseGadget, FALSE,
-       MUIA_Window_Activate, (TRmode == TR_IMPORT || TRmode == TR_EXPORT),
+       MUIA_Window_Activate, (TRmode == TR_IMPORT || TRmode == TR_EXPORT || TRmode == TR_GET_USER || TRmode == TR_SEND_USER),
        MUIA_HelpNode, "TR_W",
        WindowContents, gr_win,
     End;

@@ -2581,7 +2581,7 @@ static void Initialise(BOOL hidden)
 static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
 {
   struct Folder *fo;
-  BOOL sentableMail = FALSE;
+  BOOL sendableMail = FALSE;
 
   ENTER();
 
@@ -2593,7 +2593,7 @@ static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
     {
       if(!hasStatusHold(mail) && !hasStatusError(mail))
       {
-        sentableMail = TRUE;
+        sendableMail = TRUE;
         break;
       }
     }
@@ -2601,7 +2601,7 @@ static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
     // in case the folder contains
     // mail which could be sent, we ask the
     // user what to do with it
-    if(sentableMail &&
+    if(sendableMail == TRUE &&
        (hideDisplay == FALSE && xget(G->App, MUIA_Application_Iconified) == FALSE))
     {
       // change the folder first so that the user
@@ -2609,15 +2609,15 @@ static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
       MA_ChangeFolder(fo, TRUE);
 
       // now ask the user for permission to send the mail.
-      sentableMail = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_SendStartReq));
+      sendableMail = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_SendStartReq));
     }
   }
 
-  if(skipSend == FALSE && sentableMail)
-    MA_Send(SEND_ALL);
+  if(skipSend == FALSE && sendableMail == TRUE)
+    MA_Send(SEND_ALL_USER);
 
-  RETURN(sentableMail);
-  return(sentableMail);
+  RETURN(sendableMail);
+  return(sendableMail);
 }
 ///
 /// DoStartup

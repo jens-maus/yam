@@ -115,13 +115,13 @@ struct Part
    struct MinList      *headerList;         // ptr to a list of headers or NULL
    char                *ContentType;        // ptr to the content-type "text/plain"
    char                *ContentDisposition; // ptr to the content-disposition "attachment"
-   char                *CParName;           // ptr to the content-type name
-   char                *CParFileName;       // ptr to the content-disposition filename
-   char                *CParBndr;           // ptr to the content-type boundary
-   char                *CParProt;           // ptr to the content-type protocol
-   char                *CParDesc;           // ptr to the content-type description
-   char                *CParRType;          // ptr to the content-type report-type
-   char                *CParCSet;           // ptr to the content-type charset "iso8859-1"
+   char                *CParName;           // ptr to the content-type "name"
+   char                *CParFileName;       // ptr to the content-disposition "filename"
+   char                *CParBndr;           // ptr to the content-type "boundary"
+   char                *CParProt;           // ptr to the content-type "protocol"
+   char                *CParDesc;           // ptr to the content-type "description"
+   char                *CParRType;          // ptr to the content-type "report-type"
+   char                *CParCSet;           // ptr to the content-type "charset" "iso8859-1"
    long                 Size;
    int                  MaxHeaderLen;
    int                  Nr;
