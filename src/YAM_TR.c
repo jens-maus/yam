@@ -4632,10 +4632,14 @@ void TR_Cleanup(void)
 //  Aborts a transfer
 static void TR_AbortnClose(void)
 {
-   set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
-   TR_Cleanup();
-   MA_ChangeTransfer(TRUE);
-   DisposeModulePush(&G->TR);
+  ENTER();
+
+  set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
+  TR_Cleanup();
+  MA_ChangeTransfer(TRUE);
+  DisposeModulePush(&G->TR);
+
+  LEAVE();
 }
 ///
 /// TR_ApplySentFilters

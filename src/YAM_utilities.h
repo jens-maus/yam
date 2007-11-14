@@ -342,7 +342,7 @@ char *   GetNextLine(char *p1);
 int      GetSimpleID(void);
 void     GotoURL(const char *url);
 const char *IdentifyFile(const char *fname);
-void     InfoWindow(const char *title, const char *body, const char *oktext, APTR parent, BOOL active);
+void     InfoWindow(const char *title, const char *body, const char *oktext, Object *parent, BOOL active);
 void     InsertAddresses(Object *obj, char **addr, BOOL add);
 char *   itoa(int val);
 void     LoadLayout(void);

@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-14  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c, YAM_TR.c: changed the transfer info window to only get
+    activated in case the parent window is active as well and not just because
+    it was a manual action that opened the window. This should be more
+    intuitive, especially because during a transfer the active window may
+    change due to user action and then automatically activating the infowindow
+    is not was a user might expect.
+
 2007-11-14  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, YAM_MA.c, YAM_WR.c: replaced the embedded NotifyRequests by
