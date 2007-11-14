@@ -1003,7 +1003,7 @@ struct Part *AttachRequest(const char *title, const char *body, const char *yest
 ///
 /// InfoWindow
 //  Displays a text in an own modeless window
-void InfoWindow(const char *title, const char *body, const char *oktext, APTR parent)
+void InfoWindow(const char *title, const char *body, const char *oktext, APTR parent, BOOL active)
 {
    Object *bt_okay;
    Object *wi_iw;
@@ -1013,7 +1013,7 @@ void InfoWindow(const char *title, const char *body, const char *oktext, APTR pa
          MUIA_Window_RefWindow, parent,
          MUIA_Window_LeftEdge,  MUIV_Window_LeftEdge_Centered,
          MUIA_Window_TopEdge,   MUIV_Window_TopEdge_Centered,
-         MUIA_Window_Activate,  FALSE,
+         MUIA_Window_Activate,  active,
          WindowContents, VGroup,
             MUIA_Background, MUII_RequesterBack,
             Child, VGroup,

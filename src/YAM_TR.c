@@ -6792,39 +6792,36 @@ static void TR_NewMailAlert(void)
 
   ENTER();
 
-  if(!stats->Downloaded)
+  if(stats->Downloaded != 0)
   {
-    LEAVE();
-    return;
+    if(hasRequesterNotify(C->NotifyType) && G->TR->GUIlevel != POP_REXX)
+    {
+      static char buffer[SIZE_LARGE];
+      struct RuleResult *rr = &G->RRs;
+
+      // make sure the application isn't iconified
+      if(xget(G->App, MUIA_Application_Iconified) == TRUE)
+        PopUp();
+
+      snprintf(buffer, sizeof(buffer), tr(MSG_TR_NewMailReq), stats->Downloaded, stats->OnServer-stats->Deleted, stats->DupSkipped);
+      snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), tr(MSG_TR_FilterStats), rr->Checked,
+                                                                       rr->Bounced,
+                                                                       rr->Forwarded,
+                                                                       rr->Replied,
+                                                                       rr->Executed,
+                                                                       rr->Moved,
+                                                                       rr->Deleted);
+
+      // show the info window.
+      InfoWindow(tr(MSG_TR_NewMail), buffer, tr(MSG_Okay), G->MA->GUI.WI, G->TR->GUIlevel == POP_USER);
+    }
+
+    if(hasCommandNotify(C->NotifyType))
+      ExecuteCommand(C->NotifyCommand, FALSE, OUT_DOS);
+
+    if(hasSoundNotify(C->NotifyType))
+      PlaySound(C->NotifySound);
   }
-
-  if(hasRequesterNotify(C->NotifyType) && G->TR->GUIlevel != POP_REXX)
-  {
-    static char buffer[SIZE_LARGE];
-    struct RuleResult *rr = &G->RRs;
-
-    // make sure the application isn't iconified
-    if(xget(G->App, MUIA_Application_Iconified) == TRUE)
-      PopUp();
-
-    snprintf(buffer, sizeof(buffer), tr(MSG_TR_NewMailReq), stats->Downloaded, stats->OnServer-stats->Deleted, stats->DupSkipped);
-    snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), tr(MSG_TR_FilterStats), rr->Checked,
-                                                                     rr->Bounced,
-                                                                     rr->Forwarded,
-                                                                     rr->Replied,
-                                                                     rr->Executed,
-                                                                     rr->Moved,
-                                                                     rr->Deleted);
-
-    // show the info window.
-    InfoWindow(tr(MSG_TR_NewMail), buffer, tr(MSG_Okay), G->MA->GUI.WI);
-  }
-
-  if(hasCommandNotify(C->NotifyType))
-    ExecuteCommand(C->NotifyCommand, FALSE, OUT_DOS);
-
-  if(hasSoundNotify(C->NotifyType))
-    PlaySound(C->NotifySound);
 
   LEAVE();
 }

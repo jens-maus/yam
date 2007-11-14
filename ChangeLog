@@ -10,6 +10,10 @@ $URL$
   * YAM.c, YAM_MA.c, YAM_WR.c: replaced the embedded NotifyRequests by
     dynamically allocated ones. On OS4 this is done via AllocSysObject() to
     improve memory tracking. All other systems use simple memory allocation.
+  * YAM_TR.c, YAM_UT.c: the notification window after downloading mails will
+    now also be activated only if the transfer was initiated by the user.
+    ARexx or timer initiated transfers will open an inactive window to avoid
+    stealing the focus from other windows.
 
 2007-11-13  Thore Böckelmann <tboeckel@gmx.de>
 
