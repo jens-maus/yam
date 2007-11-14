@@ -2091,7 +2091,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
     fclose(comp.FH);
 
     if(wr->Mode != NEW_BOUNCE)
-      EndNotify(&G->WR_NRequest[winnum]);
+      EndNotify(G->WR_NotifyRequest[winnum]);
 
     if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)))
     {
@@ -2317,7 +2317,7 @@ void WR_Cleanup(int winnum)
     char fileName[SIZE_PATHFILE];
     int i;
 
-    EndNotify(&G->WR_NRequest[winnum]);
+    EndNotify(G->WR_NotifyRequest[winnum]);
     DeleteFile(G->WR_Filename[winnum]);
 
     for(i=0; ;i++)

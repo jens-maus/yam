@@ -1544,7 +1544,7 @@ static void MA_InsertIntroText(FILE *fh, char *text, struct ExpandTextData *etd)
 static void MA_EditorNotification(int winnum)
 {
    FileToEditor(G->WR_Filename[winnum], G->WR[winnum]->GUI.TE_EDIT);
-   StartNotify(&G->WR_NRequest[winnum]);
+   StartNotify(G->WR_NotifyRequest[winnum]);
    set(G->WR[winnum]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);
 }
 

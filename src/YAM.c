@@ -1539,12 +1539,20 @@ static void Terminate(void)
   D(DBF_STARTUP, "freeing write window notifies...");
   for(i = 0; i <= MAXWR; i++)
   {
-    if(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port != NULL)
+    if(G->WR_NotifyRequest[i] != NULL)
     {
+      if(G->WR_NotifyRequest[i]->nr_stuff.nr_Msg.nr_Port != NULL)
+      {
+        #if defined(__amigaos4__)
+        FreeSysObject(ASOT_PORT, G->WR_NotifyRequest[i]->nr_stuff.nr_Msg.nr_Port);
+        #else
+        DeleteMsgPort(G->WR_NotifyRequest[i]->nr_stuff.nr_Msg.nr_Port);
+        #endif
+      }
       #if defined(__amigaos4__)
-      FreeSysObject(ASOT_PORT, G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port);
+      FreeDosObject(DOS_NOTIFYREQUEST, G->WR_NotifyRequest[i]);
       #else
-      DeleteMsgPort(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port);
+      FreeVecPooled(G->SharedMemPool, G->WR_NotifyRequest[i]);
       #endif
     }
   }
@@ -2560,17 +2568,36 @@ static void Initialise(BOOL hidden)
   // initialize the file nofifications
   for(i=0; i <= MAXWR; i++)
   {
+    struct MsgPort *notifyPort;
+
     #if defined(__amigaos4__)
-    if((G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) == NULL)
+    if((notifyPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) == NULL)
     #else
-    if((G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreateMsgPort()) == NULL)
+    if((notifyPort = CreateMsgPort()) == NULL)
     #endif
     {
+      // port creation failed
       Abort(NULL);
     }
 
-    G->WR_NRequest[i].nr_Name = (STRPTR)G->WR_Filename[i];
-    G->WR_NRequest[i].nr_Flags = NRF_SEND_MESSAGE;
+    #if defined(__amigaos4__)
+    if((G->WR_NotifyRequest[i] = AllocDosObjectTags(DOS_NOTIFYREQUEST, ADO_NotifyName, G->WR_Filename[i],
+                                                                       ADO_NotifyMethod, NRF_SEND_MESSAGE,
+                                                                       ADO_NotifyPort, notifyPort,
+                                                                       TAG_DONE)) == NULL)
+    #else
+    if((G->WR_NotifyRequest[i] = AllocVecPooled(G->SharedMemPool, sizeof(struct NotifyRequest))) == NULL)
+    #endif
+    {
+      // notify request creation failed
+      Abort(NULL);
+    }
+
+    #if !defined(__amigaos4__)
+    G->WR_NotifyRequest[i]->nr_Name = (STRPTR)G->WR_Filename[i];
+    G->WR_NotifyRequest[i]->nr_Flags = NRF_SEND_MESSAGE;
+    G->WR_NotifyRequest[i]->nr_stuff.nr_Msg.nr_Port = notifyPort;
+    #endif
   }
 
   LEAVE();
@@ -2585,7 +2612,7 @@ static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
 
   ENTER();
 
-  if((fo = FO_GetFolderByType(FT_OUTGOING, NULL)))
+  if((fo = FO_GetFolderByType(FT_OUTGOING, NULL)) != NULL)
   {
     struct Mail *mail;
 
@@ -3281,9 +3308,9 @@ int main(int argc, char **argv)
     timsig    = (1UL << TCData.port->mp_SigBit);
     rexsig    = (1UL << G->RexxHost->port->mp_SigBit);
     appsig    = (1UL << G->AppPort->mp_SigBit);
-    notsig[0] = (1UL << G->WR_NRequest[0].nr_stuff.nr_Msg.nr_Port->mp_SigBit);
-    notsig[1] = (1UL << G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port->mp_SigBit);
-    notsig[2] = (1UL << G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port->mp_SigBit);
+    notsig[0] = (1UL << G->WR_NotifyRequest[0]->nr_stuff.nr_Msg.nr_Port->mp_SigBit);
+    notsig[1] = (1UL << G->WR_NotifyRequest[1]->nr_stuff.nr_Msg.nr_Port->mp_SigBit);
+    notsig[2] = (1UL << G->WR_NotifyRequest[2]->nr_stuff.nr_Msg.nr_Port->mp_SigBit);
 
     D(DBF_STARTUP, "YAM allocated signals:");
     D(DBF_STARTUP, " adstsig  = %08lx", adstsig);
@@ -3647,7 +3674,7 @@ int main(int argc, char **argv)
           {
             struct Message *msg;
 
-            while((msg = GetMsg(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port)) != NULL)
+            while((msg = GetMsg(G->WR_NotifyRequest[i]->nr_stuff.nr_Msg.nr_Port)) != NULL)
               ReplyMsg(msg);
 
             if(G->WR[i] != NULL)

@@ -100,6 +100,7 @@ struct Global
    struct codeset *         localCharset;
    struct codesetList *     codesetsList;
    struct HashTable *       imageCacheHashTable;
+   struct NotifyRequest *   WR_NotifyRequest[MAXWR+1];
 
    #if defined(__amigaos4__)
    struct MsgPort *         AppLibPort;
@@ -141,7 +142,6 @@ struct Global
    struct Users             Users;
    struct RuleResult        RRs;
    struct DownloadResult    LastDL;
-   struct NotifyRequest     WR_NRequest[MAXWR+1];
    struct sockaddr_in       TR_INetSocketAddr;
    struct MinList           readMailDataList;
    struct MinList           xpkPackerList;

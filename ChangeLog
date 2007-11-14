@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-14  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, YAM_MA.c, YAM_WR.c: replaced the embedded NotifyRequests by
+    dynamically allocated ones. On OS4 this is done via AllocSysObject() to
+    improve memory tracking. All other systems use simple memory allocation.
+
 2007-11-13  Thore Böckelmann <tboeckel@gmx.de>
 
   * FileInfo.c, FileInfo.h: added some more "documentation" comments on how to
