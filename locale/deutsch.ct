@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (09.11.2007)
+## version $VER: YAM.catalog 6.0 (14.11.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -4491,7 +4491,7 @@ Lösche Nachricht auf Server...
 ; Deleting mail on server...
 ;
 MSG_TR_NewMailReq
-\e8Sie erhalten neue Post!\e2\n\
+\e8Sie haben neue Post!\e2\n\
 \n\
 %3ld Nachrichten geladen,\n\
 %3ld verbleiben auf Server,\n\
