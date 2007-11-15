@@ -1,16 +1,22 @@
+#include "SDI_compiler.h"
+#include "SDI_stdarg.h"
+
 #include <proto/intuition.h>
 #include <proto/utility.h>
 
 #warning possible incomplete tag list parsing!!
 
-ULONG xset(Object *obj, ...)
+ULONG VARARGS68K xset(Object *obj, ...)
 {
-  struct TagItem *tags = (struct TagItem *)(&obj + 1);
+  VA_LIST args;
+  struct TagItem *tags;
   struct TagItem *tag;
   struct TagItem newTags[6];
   struct TagItem *newTag = newTags;
   int i;
 
+  VA_START(args, obj);
+  tags = VA_ARG(args, struct TagItem *);
   // We will try to rebuild a new tag list with a terminating TAG_DONE.
   // This approach is not perfect as we have to "guess" the end of the
   // supplied tag list or at least have to set a definite limit on the
@@ -28,6 +34,7 @@ ULONG xset(Object *obj, ...)
       i++;
     }
   }
+  VA_END(args);
 
   // add the terminating TAG_DONE
   newTag->ti_Tag = TAG_DONE;

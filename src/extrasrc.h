@@ -37,6 +37,7 @@
 #include <proto/intuition.h>
 
 #include "SDI_compiler.h"
+#include "SDI_stdarg.h"
 
 /*
  * Differentations between runtime libs and operating system
@@ -188,19 +189,19 @@ char *strtok_r(char *, const char *, char **);
 #endif
 
 #if defined(NEED_VSNPRINTF)
-int vsnprintf(char *buffer, size_t maxlen, const char *fmt, va_list args);
+int vsnprintf(char *buffer, size_t maxlen, const char *fmt, VA_LIST args);
 #endif
 
 #if defined(NEED_SNPRINTF)
-int snprintf(char *buffer, size_t maxlen, const char *fmt, ...);
+int VARARGS68K snprintf(char *buffer, size_t maxlen, const char *fmt, ...);
 #endif
 
 #if defined(NEED_VASPRINTF)
-int vasprintf(char **ptr, const char *format, va_list ap);
+int vasprintf(char **ptr, const char *format, VA_LIST ap);
 #endif
 
 #if defined(NEED_ASPRINTF)
-int asprintf(char **ptr, const char *format, ...);
+int VARARGS68K asprintf(char **ptr, const char *format, ...);
 #endif
 
 #if defined(NEED_STCGFE)
@@ -220,7 +221,7 @@ ULONG xget(Object *obj, const ULONG attr);
 #endif
 
 #if defined(NEED_XSET)
-ULONG xset(Object *obj, ...);
+ULONG VARARGS68K xset(Object *obj, ...);
 #endif
 
 #if defined(NEED_DOSUPERNEW)
@@ -237,7 +238,13 @@ APTR SetProcWindow(const void *newWindowPtr);
 
 #if defined(NEED_EXAMINEDIR)
 APTR ObtainDirContext(struct TagItem *tags);
-APTR ObtainDirContextTags(ULONG tag1, ...);
+#if defined(PPC)
+#define ObtainDirContextTags(...) \
+    ({ULONG _tags[] = { __VA_ARGS__ }; \
+    ObtainDirContext((struct TagItem *)_tags);})
+#else
+APTR VARARGS68K ObtainDirContextTags(ULONG tag1, ...);
+#endif
 void ReleaseDirContext(APTR context);
 struct ExamineData *ExamineDir(APTR context);
 #include "extrasrc/ExamineDir.h"

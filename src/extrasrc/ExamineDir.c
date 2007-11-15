@@ -25,6 +25,9 @@
 
 ***************************************************************************/
 
+#include "SDI_compiler.h"
+#include "SDI_stdarg.h"
+
 #include <proto/dos.h>
 #include <proto/utility.h>
 
@@ -110,10 +113,12 @@ APTR ObtainDirContext(struct TagItem *tags)
 ///
 /// ObtainDirContextTags
 // varargs implementation of ObtainDirContext()
-APTR ObtainDirContextTags(ULONG tag1, ...)
+#if !defined(PPC)
+APTR VARARGS68K ObtainDirContextTags(ULONG tag1, ...)
 {
   return ObtainDirContext((struct TagItem *)&tag1);
 }
+#endif
 
 ///
 /// ReleaseDirContext
