@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-15  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ExamineDir.c: implemented a basic emulation of the new OS4 directory
+    scanning API based on ExAll().
+
 2007-11-14  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c, YAM_TR.c: changed the transfer info window to only get
