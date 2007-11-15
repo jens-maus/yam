@@ -1050,37 +1050,16 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
     // the mail counter or not.
     if(Rename(oldFilePath, newFilePath) == 0)
     {
-      char matchPattern[15+1];
-      char pattern[16*2+2];
-      APTR context;
-      int mailCounter = 0;
+      char pattern[15+1];
+      LONG mailCounter;
 
       // search for files matching the dateFilePart
-      snprintf(matchPattern, sizeof(matchPattern), "%s.#?", dateFilePart);
-      ParsePatternNoCase(matchPattern, pattern, sizeof(pattern));
+      snprintf(pattern, sizeof(pattern), "%s.#?", dateFilePart);
+      mailCounter = FileCount(GetFolderDir(folder), pattern);
 
-      if((context = ObtainDirContextTags(EX_StringName, GetFolderDir(folder),
-                                         EX_MatchString, pattern,
-                                         TAG_DONE)) != NULL)
-      {
-        struct ExamineData *ed;
-
-        while((ed = ExamineDir(context)) != NULL)
-        {
-          mailCounter++;
-        }
-
-        ReleaseDirContext(context);
-      }
-      else
-      {
-        E(DBF_FOLDER, "  error on getting folderdir lock");
-        result = NULL;
-      }
-
-      // if we didn't find any matching file then this is signals
+      // if we didn't find any matching file then this signals
       // another error than an already existing file!
-      if(mailCounter == 0)
+      if(mailCounter <= 0)
       {
         E(DBF_FOLDER, "  error on renaming '%s' to '%s'", oldFilePath, newFilePath);
         result = NULL;
@@ -2165,7 +2144,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
   ENTER();
 
-  filecount = FileCount(GetFolderDir(folder));
+  filecount = FileCount(GetFolderDir(folder), NULL);
 
   // check if there are files in this mailbox or not.
   if(filecount < 0)

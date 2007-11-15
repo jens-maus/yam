@@ -11,6 +11,8 @@ $URL$
     scanning API based on ExAll().
   * YAM_MAf.c, YAM_UT.c, ThemeListGroup.c, extrasrc.c: replaced all direct
     calls to ExAll() by the new directory scanning API.
+  * YAM_UT.c, YAM_MAf.c: added a pattern parameter to the FileCount() function
+    which can be used to limit the counting to certain files.
 
 2007-11-14  Jens Langner <Jens.Langner@light-speed.de>
 

@@ -2650,31 +2650,46 @@ char *FileToBuffer(const char *file)
 }
 ///
 /// FileCount
-// returns the total number of files that are in a directory
-// or -1 if an error occurred
-LONG FileCount(const char *directory)
+// returns the total number of files matching a pattern that are in a directory
+// or -1 if an error occurred.
+LONG FileCount(const char *directory, const char *pattern)
 {
   APTR context;
+  char *parsedPattern;
+  LONG parsedPatternSize;
   LONG result = 0;
 
   ENTER();
 
-  if((context = ObtainDirContextTags(EX_StringName, directory, TAG_DONE)) != NULL)
+  if(pattern == NULL)
+    pattern = "#?";
+
+  parsedPatternSize = strlen(pattern) * 2 + 2;
+  if((parsedPattern = malloc(parsedPatternSize)) != NULL)
   {
-    struct ExamineData *ed;
+    ParsePatternNoCase(pattern, parsedPattern, parsedPatternSize);
 
-    while((ed = ExamineDir(context)) != NULL)
+    if((context = ObtainDirContextTags(EX_StringName, directory,
+                                       EX_MatchString, parsedPattern,
+                                       TAG_DONE)) != NULL)
     {
-      // count the entries
-      result++;
-    }
-    if(IoErr() != ERROR_NO_MORE_ENTRIES)
-    {
-      D(DBF_ALWAYS, "FileCount failed");
-      result = -1;
+      struct ExamineData *ed;
+
+      while((ed = ExamineDir(context)) != NULL)
+      {
+        // count the entries
+        result++;
+      }
+      if(IoErr() != ERROR_NO_MORE_ENTRIES)
+      {
+        D(DBF_ALWAYS, "FileCount failed");
+        result = -1;
+      }
+
+      ReleaseDirContext(context);
     }
 
-    ReleaseDirContext(context);
+    free(parsedPattern);
   }
   else
     result = -1;

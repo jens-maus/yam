@@ -325,7 +325,7 @@ BOOL     ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef);
 void     ExtractAddress(const char *line, struct Person *pe);
 char *   FileToBuffer(const char *file);
 BOOL     FileToEditor(char *file, Object *editor);
-LONG     FileCount(const char *directory);
+LONG     FileCount(const char *directory, const char *pattern);
 void     FinishUnpack(char *file);
 struct Folder *FolderRequest(const char *title, const char *body, const char *yestext, const char *notext, struct Folder *exclude, Object *parent);
 void     FormatSize(LONG size, char *buffer, int buflen, enum SizeFormat forcedPrecision);
