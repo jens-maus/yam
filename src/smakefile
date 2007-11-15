@@ -147,6 +147,7 @@ OBJS = \
 	$(OBJDIR)/HTML2Mail.o \
 	$(OBJDIR)/HashTable.o \
 	$(OBJDIR)/BayesFilter.o \
+	$(OBJDIR)/FileInfo.o \
 	$(OBJDIR)/extrasrc.o \
 	$(OBJDIR)/Debug.o
 
@@ -358,16 +359,18 @@ $(OBJDIR)/YAM_WR.o: YAM_WR.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h YAM_write.h
 
-$(OBJDIR)/BayesFilter.o: BayesFilter.c
+$(OBJDIR)/BayesFilter.o: BayesFilter.c BayesFilter.h
 
-$(OBJDIR)/HashTable.o: HashTable.c
+$(OBJDIR)/HashTable.o: HashTable.c HashTable.h
 
-$(OBJDIR)/ImageCache.o: ImageCache.c
+$(OBJDIR)/ImageCache.o: ImageCache.c ImageCache.h
 
-$(OBJDIR)/UpdateCheck.o: UpdateCheck.c
+$(OBJDIR)/UpdateCheck.o: UpdateCheck.c UpdateCheck.h
 
 $(OBJDIR)/HTML2Mail.o: HTML2Mail.c
 HTML2Mail.c: HTML2Mail.l HTML2Mail.h
+
+$(OBJDIR)/FileInfo.o: FileInfo.c FileInfo.h
 
 $(OBJDIR)/extrasrc.o: extrasrc.c
 
