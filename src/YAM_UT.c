@@ -72,8 +72,6 @@
 #include <proto/application.h>
 #endif
 
-#include "extrasrc.h"
-
 #include "SDI_hook.h"
 #include "SDI_stdarg.h"
 
@@ -91,6 +89,7 @@
 #include "classes/Classes.h"
 
 #include "FileInfo.h"
+#include "extrasrc.h"
 
 #include "Debug.h"
 
@@ -2551,92 +2550,57 @@ BOOL PFExists(const char *path, const char *file)
 //  Recursively deletes a mail directory
 BOOL DeleteMailDir(const char *dir, BOOL isroot)
 {
-  BPTR dirLock;
+  APTR context;
   BOOL result = TRUE;
 
   ENTER();
 
-  if((dirLock = Lock(dir, ACCESS_READ)))
+  if((context = ObtainDirContextTags(EX_StringName, dir,
+                                     EX_DoCurrentDir, TRUE,
+                                     TAG_DONE)) != NULL)
   {
-    struct ExAllControl *eac;
+    struct ExamineData *ed;
 
-    if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)) != NULL)
+    while((ed = ExamineDir(context)) != NULL && result == TRUE)
     {
-      struct ExAllData *ead;
-      struct ExAllData *eabuffer;
-      LONG more;
-      eac->eac_LastKey = 0;
-      eac->eac_MatchString = NULL;
-      eac->eac_MatchFunc = NULL;
+      BOOL isdir = EXD_IS_DIRECTORY(ed);
+      char *filename = (char *)ed->Name;
+      char fname[SIZE_PATHFILE];
 
-      if((eabuffer = malloc(SIZE_EXALLBUF)) != NULL)
+      strmfp(fname, dir, filename);
+
+      if(isroot == TRUE)
       {
-        do
+        if(isdir == TRUE)
         {
-          more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_TYPE, eac);
-          if(!more && IoErr() != ERROR_NO_MORE_ENTRIES)
-          {
-            result = FALSE;
-            break;
-          }
-
-          if(eac->eac_Entries == 0)
-            continue;
-
-          ead = (struct ExAllData *)eabuffer;
-          do
-          {
-            BOOL isdir = isDrawer(ead->ed_Type);
-            char *filename = (char *)ead->ed_Name;
-            char fname[SIZE_PATHFILE];
-
-            strmfp(fname, dir, filename);
-
-            if(isroot == TRUE)
-            {
-              if(isdir == TRUE)
-              {
-                if(IsFolderDir(fname))
-                  result = DeleteMailDir(fname, FALSE);
-              }
-              else
-              {
-                if(stricmp(filename, ".config")      == 0 ||
-                   stricmp(filename, ".glossary")    == 0 ||
-                   stricmp(filename, ".addressbook") == 0 ||
-                   stricmp(filename, ".emailcache")  == 0 ||
-                   stricmp(filename, ".folders")     == 0 ||
-                   stricmp(filename, ".spamdata")    == 0 ||
-                   stricmp(filename, ".uidl")        == 0)
-                {
-                  result = DeleteFile(fname);
-                }
-              }
-            }
-            else if(isdir == FALSE && (isValidMailFile(filename) ||
-                    stricmp(filename, ".fconfig") == 0           ||
-                    stricmp(filename, ".fimage") == 0            ||
-                    stricmp(filename, ".index") == 0)
-                   )
-            {
-              result = DeleteFile(fname);
-            }
-          }
-          while((ead = ead->ed_Next) != NULL && result == TRUE);
+          if(IsFolderDir(fname))
+            result = DeleteMailDir(fname, FALSE);
         }
-        while(more && result == TRUE);
-
-        free(eabuffer);
+        else
+        {
+          if(stricmp(filename, ".config")      == 0 ||
+             stricmp(filename, ".glossary")    == 0 ||
+             stricmp(filename, ".addressbook") == 0 ||
+             stricmp(filename, ".emailcache")  == 0 ||
+             stricmp(filename, ".folders")     == 0 ||
+             stricmp(filename, ".spamdata")    == 0 ||
+             stricmp(filename, ".uidl")        == 0)
+          {
+            result = DeleteFile(fname);
+          }
+        }
       }
-      else
-        result = FALSE;
-
-      FreeDosObject(DOS_EXALLCONTROL, eac);
+      else if(isdir == FALSE && (isValidMailFile(filename) ||
+              stricmp(filename, ".fconfig") == 0           ||
+              stricmp(filename, ".fimage") == 0            ||
+              stricmp(filename, ".index") == 0)
+             )
+      {
+        result = DeleteFile(fname);
+      }
     }
-    else
-      result = FALSE;
 
-    UnLock(dirLock);
+    ReleaseDirContext(context);
 
     if(result == TRUE)
       result = DeleteFile(dir);
@@ -2688,52 +2652,29 @@ char *FileToBuffer(const char *file)
 /// FileCount
 // returns the total number of files that are in a directory
 // or -1 if an error occurred
-long FileCount(const char *directory)
+LONG FileCount(const char *directory)
 {
-  BPTR dirLock;
-  long result = 0;
+  APTR context;
+  LONG result = 0;
 
   ENTER();
 
-  if((dirLock = Lock(directory, ACCESS_READ)))
+  if((context = ObtainDirContextTags(EX_StringName, directory, TAG_DONE)) != NULL)
   {
-    struct ExAllControl *eac;
+    struct ExamineData *ed;
 
-    if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)))
+    while((ed = ExamineDir(context)) != NULL)
     {
-      struct ExAllData *eabuffer;
-      LONG more;
-      eac->eac_LastKey = 0;
-      eac->eac_MatchString = NULL;
-      eac->eac_MatchFunc = NULL;
-
-      if((eabuffer = malloc(SIZE_EXALLBUF)))
-      {
-        do
-        {
-          more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_NAME, eac);
-          if(!more && IoErr() != ERROR_NO_MORE_ENTRIES)
-          {
-            result = -1;
-            break;
-          }
-
-          // count the entries
-          result += eac->eac_Entries;
-        }
-        while(more);
-
-        free(eabuffer);
-      }
-      else
-        result = -1;
-
-      FreeDosObject(DOS_EXALLCONTROL, eac);
+      // count the entries
+      result++;
     }
-    else
+    if(IoErr() != ERROR_NO_MORE_ENTRIES)
+    {
+      D(DBF_ALWAYS, "FileCount failed");
       result = -1;
+    }
 
-    UnLock(dirLock);
+    ReleaseDirContext(context);
   }
   else
     result = -1;

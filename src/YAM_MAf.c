@@ -42,8 +42,6 @@
 #include <proto/muimaster.h>
 #include <proto/utility.h>
 
-#include "extrasrc.h"
-
 #include "SDI_hook.h"
 
 #include "YAM.h"
@@ -62,6 +60,7 @@
 #include "classes/Classes.h"
 
 #include "FileInfo.h"
+#include "extrasrc.h"
 
 #include "Debug.h"
 /*
@@ -1051,60 +1050,27 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
     // the mail counter or not.
     if(Rename(oldFilePath, newFilePath) == 0)
     {
-      BPTR dirLock;
+      char matchPattern[15+1];
+      char pattern[16*2+2];
+      APTR context;
       int mailCounter = 0;
 
-      if((dirLock = Lock(GetFolderDir(folder), ACCESS_READ)))
+      // search for files matching the dateFilePart
+      snprintf(matchPattern, sizeof(matchPattern), "%s.#?", dateFilePart);
+      ParsePatternNoCase(matchPattern, pattern, sizeof(pattern));
+
+      if((context = ObtainDirContextTags(EX_StringName, GetFolderDir(folder),
+                                         EX_MatchString, pattern,
+                                         TAG_DONE)) != NULL)
       {
-        struct ExAllControl *eac;
+        struct ExamineData *ed;
 
-        if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)))
+        while((ed = ExamineDir(context)) != NULL)
         {
-          struct ExAllData *eabuffer;
-          char matchPattern[15+1];
-          char pattern[16*2+2];
-          LONG more;
-
-          eac->eac_LastKey = 0;
-          eac->eac_MatchFunc = NULL;
-
-          // search for files matching the dateFilePart
-          snprintf(matchPattern, sizeof(matchPattern), "%s.#?", dateFilePart);
-          ParsePatternNoCase(matchPattern, pattern, 16*2+2);
-          eac->eac_MatchString = pattern;
-
-          if((eabuffer = malloc(SIZE_EXALLBUF)))
-          {
-            do
-            {
-              more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_NAME, eac);
-              if(!more && IoErr() != ERROR_NO_MORE_ENTRIES)
-              {
-                result = NULL;
-                break;
-              }
-
-              mailCounter += eac->eac_Entries;
-            }
-            while(more);
-
-            free(eabuffer);
-          }
-          else
-          {
-            E(DBF_FOLDER, "  error on allocating enough buffers");
-            result = NULL;
-          }
-
-          FreeDosObject(DOS_EXALLCONTROL, eac);
-        }
-        else
-        {
-          E(DBF_FOLDER, "  error on allocating dos object");
-          result = NULL;
+          mailCounter++;
         }
 
-        UnLock(dirLock);
+        ReleaseDirContext(context);
       }
       else
       {
@@ -2222,7 +2188,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
     }
     else
     {
-      BPTR dirLock;
+      APTR context;
 
       // make sure others notice that an index scanning already
       // runs
@@ -2258,328 +2224,275 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
       D(DBF_FOLDER, "Scanning folder: '%s' (path '%s', %ld files)...", folder->Name, GetFolderDir(folder), filecount);
 
-      if((dirLock = Lock(GetFolderDir(folder), ACCESS_READ)))
+      if((context = ObtainDirContextTags(EX_StringName, GetFolderDir(folder), TAG_DONE)) != NULL)
       {
-        struct ExAllControl *eac;
+        struct ExamineData *ed;
+        long processedFiles = 0;
+        BOOL convertAllOld = FALSE;
+        BOOL skipAllOld = FALSE;
+        BOOL convertAllUnknown = FALSE;
+        BOOL skipAllUnknown = FALSE;
+        BOOL ignoreInvalids = FALSE;
 
         // now that the folder is locked we go and define its
         // loaded mode to LM_REBUILD so that others don't try to access
         // it anymore
         folder->LoadedMode = LM_REBUILD;
 
-        if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)) != NULL)
+        while((ed = ExamineDir(context)) != NULL)
         {
-          struct ExAllData *ead;
-          struct ExAllData *eabuffer;
-          LONG more;
-          eac->eac_LastKey = 0;
-          eac->eac_MatchString = NULL;
-          eac->eac_MatchFunc = NULL;
-
-          if((eabuffer = malloc(SIZE_EXALLBUF)) != NULL)
+          // set the gauge and check the stopButton status as well.
+          if(BusySet(processedFiles++) == FALSE)
           {
-            long processedFiles = 0;
-            BOOL convertAllOld = FALSE;
-            BOOL skipAllOld = FALSE;
-            BOOL convertAllUnknown = FALSE;
-            BOOL skipAllUnknown = FALSE;
-            BOOL ignoreInvalids = FALSE;
+            D(DBF_FOLDER, "scan process aborted by user");
+            result = FALSE;
+            break;
+          }
 
-            do
+          // give the GUI the chance to refresh
+          DoMethod(G->App,MUIM_Application_InputBuffered);
+
+          // then check whether this is a file as we don't care for subdirectories
+          if(EXD_IS_FILE(ed))
+          {
+            // check whether the filename is a valid mailfilename
+            char fbuf[SIZE_PATHFILE+1];
+            char *fname = (char *)ed->Name;
+            BOOL validMailFile = isValidMailFile(fname);
+
+            if(validMailFile == FALSE)
             {
-              more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_SIZE, eac);
-              if(more == FALSE)
-              {
-                ULONG error = IoErr();
+              // ok, the file doesn't seem to have to be a valid mailfilename, so
+              // lets see if it is an "old" file (<= YAM2.4) or just trash
+              int i = 0;
+              BOOL oldFound = TRUE;
 
-                if(error != ERROR_NO_MORE_ENTRIES)
+              do
+              {
+                // on position 5 should be a colon
+                if(i == 5)
                 {
-                  W(DBF_FOLDER, "ExAll() failed, IoErr()=%ld", error);
-                  result = FALSE;
+                  if(fname[i] != '.')
+                  {
+                    oldFound = FALSE;
+                    break;
+                  }
+                }
+                else if(!isdigit(fname[i]))
+                {
+                  oldFound = FALSE;
                   break;
                 }
               }
+              while(fname[++i] != '\0');
 
-              if(eac->eac_Entries == 0)
-                continue;
-
-              ead = (struct ExAllData *)eabuffer;
-              do
+              // check if our test was successfully and we found and old style
+              // filename
+              if(oldFound == TRUE)
               {
-                // set the gauge and check the stopButton status as well.
-                if(BusySet(processedFiles++) == FALSE)
+                int res;
+                BOOL convertOnce = FALSE;
+
+                // ok we seem to have found an old-fashioned mailfile, so lets
+                // convert it to the newstyle
+                W(DBF_FOLDER, "found < v2.5 style mailfile: '%s'", fname);
+
+                // lets ask if the user wants to convert the file or not
+                if(convertAllOld == FALSE && skipAllOld == FALSE)
                 {
-                  D(DBF_FOLDER, "scan process aborted by user");
-                  result = FALSE;
-                  break;
+                  res = MUI_Request(G->App, NULL, 0,
+                                    tr(MSG_MA_CREQ_OLDFILE_TITLE),
+                                    tr(MSG_MA_YESNOTOALL),
+                                    tr(MSG_MA_CREQUEST_OLDFILE),
+                                    fname, folder->Name);
+
+                  // if the user has clicked on Yes or YesToAll then
+                  // set the flags accordingly
+                  if(res == 0)
+                    skipAllOld = TRUE;
+                  else if(res == 1)
+                    convertOnce = TRUE;
+                  else if(res == 2)
+                    convertAllOld = TRUE;
                 }
 
-                // give the GUI the chance to refresh
-                DoMethod(G->App,MUIM_Application_InputBuffered);
-
-                // then check whether this is a file as we don't care for subdirectories
-                if(isFile(ead->ed_Type))
+                if(convertAllOld == TRUE || convertOnce == TRUE)
                 {
-                  // check whether the filename is a valid mailfilename
-                  char fbuf[SIZE_PATHFILE+1];
-                  char *fname = (char *)ead->ed_Name;
-                  BOOL validMailFile = isValidMailFile(fname);
-
-                  if(validMailFile == FALSE)
+                  // now we finally convert the file to a new style mail file
+                  if((fname = MA_ConvertOldMailFile(fname, folder)) == NULL)
                   {
-                    // ok, the file doesn't seem to have to be a valid mailfilename, so
-                    // lets see if it is an "old" file (<= YAM2.4) or just trash
-                    int i=0;
-                    BOOL oldFound = TRUE;
+                    // if there occurred any error we skip to the next file.
+                    ER_NewError(tr(MSG_ER_CONVERTMFILE), fname, folder->Name);
+                    continue;
+                  }
+                }
+                else
+                  continue;
+              }
+              else if(fname[0] != '.')
+              {
+                // to make it as convienent as possible for a user we also allow
+                // to copy mail files to a folder directory without having to take
+                // care that they have the correct filename.
+                int res;
+                BOOL convertOnce = FALSE;
 
-                    do
+                W(DBF_FOLDER, "found unknown file: '%s'", fname);
+
+                // lets ask if the user wants to convert the file or not
+                if(convertAllUnknown == FALSE && skipAllUnknown == FALSE)
+                {
+                  res = MUI_Request(G->App, NULL, 0,
+                                    tr(MSG_MA_CREQ_UNKNOWN_TITLE),
+                                    tr(MSG_MA_YESNOTOALL),
+                                    tr(MSG_MA_CREQUEST_UNKNOWN),
+                                    fname, folder->Name);
+
+                  // if the user has clicked on Yes or YesToAll then
+                  // set the flags accordingly
+                  if(res == 0)
+                    skipAllUnknown = TRUE;
+                  else if(res == 1)
+                    convertOnce = TRUE;
+                  else if(res == 2)
+                    convertAllUnknown = TRUE;
+                }
+
+                if(convertAllUnknown == TRUE || convertOnce == TRUE)
+                {
+                  // now it is our job to get a new mailfile name and replace the old one
+                  char oldfile[SIZE_PATHFILE+1];
+                  char *newfile;
+
+                  strlcpy(oldfile, GetFolderDir(folder), sizeof(oldfile));
+                  AddPart(oldfile, fname, sizeof(oldfile));
+
+                  if((newfile = MA_NewMailFile(folder, fbuf)) != NULL)
+                  {
+                    if(Rename(oldfile, newfile))
                     {
-                      // on position 5 should be a colon
-                      if(i == 5)
-                      {
-                        if(fname[i] != '.')
-                        {
-                          oldFound = FALSE;
-                          break;
-                        }
-                      }
-                      else if(!isdigit(fname[i]))
-                      {
-                        oldFound = FALSE;
-                        break;
-                      }
-                    }
-                    while(fname[++i] != '\0');
-
-                    // check if our test was successfully and we found and old style
-                    // filename
-                    if(oldFound == TRUE)
-                    {
-                      int res;
-                      BOOL convertOnce = FALSE;
-
-                      // ok we seem to have found an old-fashioned mailfile, so lets
-                      // convert it to the newstyle
-                      W(DBF_FOLDER, "found < v2.5 style mailfile: '%s'", fname);
-
-                      // lets ask if the user wants to convert the file or not
-                      if(convertAllOld == FALSE && skipAllOld == FALSE)
-                      {
-                        res = MUI_Request(G->App, NULL, 0,
-                                          tr(MSG_MA_CREQ_OLDFILE_TITLE),
-                                          tr(MSG_MA_YESNOTOALL),
-                                          tr(MSG_MA_CREQUEST_OLDFILE),
-                                          fname, folder->Name);
-
-                        // if the user has clicked on Yes or YesToAll then
-                        // set the flags accordingly
-                        if(res == 0)
-                          skipAllOld = TRUE;
-                        else if(res == 1)
-                          convertOnce = TRUE;
-                        else if(res == 2)
-                          convertAllOld = TRUE;
-                      }
-
-                      if(convertAllOld == TRUE || convertOnce == TRUE)
-                      {
-                        // now we finally convert the file to a new style mail file
-                        if((fname = MA_ConvertOldMailFile(fname, folder)) == NULL)
-                        {
-                          // if there occurred any error we skip to the next file.
-                          ER_NewError(tr(MSG_ER_CONVERTMFILE), fname, folder->Name);
-                          continue;
-                        }
-                      }
-                      else
-                        continue;
-                    }
-                    else if(fname[0] != '.')
-                    {
-                      // to make it as convienent as possible for a user we also allow
-                      // to copy mail files to a folder directory without having to take
-                      // care that they have the correct filename.
-                      int res;
-                      BOOL convertOnce = FALSE;
-
-                      W(DBF_FOLDER, "found unknown file: '%s'", fname);
-
-                      // lets ask if the user wants to convert the file or not
-                      if(convertAllUnknown == FALSE && skipAllUnknown == FALSE)
-                      {
-                        res = MUI_Request(G->App, NULL, 0,
-                                          tr(MSG_MA_CREQ_UNKNOWN_TITLE),
-                                          tr(MSG_MA_YESNOTOALL),
-                                          tr(MSG_MA_CREQUEST_UNKNOWN),
-                                          fname, folder->Name);
-
-                        // if the user has clicked on Yes or YesToAll then
-                        // set the flags accordingly
-                        if(res == 0)
-                          skipAllUnknown = TRUE;
-                        else if(res == 1)
-                          convertOnce = TRUE;
-                        else if(res == 2)
-                          convertAllUnknown = TRUE;
-                      }
-
-                      if(convertAllUnknown == TRUE || convertOnce == TRUE)
-                      {
-                        // now it is our job to get a new mailfile name and replace the old one
-                        char oldfile[SIZE_PATHFILE+1];
-                        char *newfile;
-
-                        strlcpy(oldfile, GetFolderDir(folder), sizeof(oldfile));
-                        AddPart(oldfile, fname, sizeof(oldfile));
-
-                        if((newfile = MA_NewMailFile(folder, fbuf)) != NULL)
-                        {
-                          if(Rename(oldfile, newfile))
-                          {
-                            fname = fbuf;
-                          }
-                          else
-                          {
-                            // if there occurred any error we skip to the next file.
-                            ER_NewError(tr(MSG_ER_CONVERTMFILE), fname, folder->Name);
-                            continue;
-                          }
-                        }
-                        else
-                        {
-                          // if there occurred any error we skip to the next file.
-                          ER_NewError(tr(MSG_ER_CONVERTMFILE), fname, folder->Name);
-                          continue;
-                        }
-                      }
-                      else
-                        continue;
+                      fname = fbuf;
                     }
                     else
+                    {
+                      // if there occurred any error we skip to the next file.
+                      ER_NewError(tr(MSG_ER_CONVERTMFILE), fname, folder->Name);
                       continue;
-                  }
-
-                  // check the filesize of the mail file
-                  if(ead->ed_Size != 0)
-                  {
-                    struct ExtendedMail *email;
-
-                    D(DBF_FOLDER, "examining MailFile: %s", fname);
-
-                    while((email = MA_ExamineMail(folder, fname, FALSE)) == NULL &&
-                          ignoreInvalids == FALSE)
-                    {
-                      // if the MA_ExamineMail() operation failed we
-                      // warn the user and ask him how to proceed with
-                      // the file
-
-                      int res = MUI_Request(G->App, NULL, 0,
-                                           tr(MSG_MA_INVALIDMFILE_TITLE),
-                                           tr(MSG_MA_INVALIDMFILE_BT),
-                                           tr(MSG_MA_INVALIDMFILE),
-                                           fname, folder->Name);
-
-                      if(res == 0) // cancel/ESC
-                      {
-                        result = FALSE;
-                        break;
-                      }
-                      else if(res == 1) // Retry
-                        continue;
-                      else if(res == 2) // Ignore
-                        break;
-                      else if(res == 3) // Ignore All
-                      {
-                        ignoreInvalids = TRUE;
-                        break;
-                      }
-                      else if(res == 4) // Delete
-                      {
-                        char path[SIZE_PATHFILE+1];
-
-                        strlcpy(path, GetFolderDir(folder), sizeof(path));
-                        AddPart(path, fname, sizeof(path));
-                        DeleteFile(path);
-
-                        break;
-                      }
-                    }
-
-                    if(email != NULL)
-                    {
-                      struct Mail *newMail;
-
-                      if((newMail = AddMailToList(&email->Mail, folder)) != NULL)
-                      {
-                        // if this new mail hasn`t got a valid transDate we have to check if we
-                        // have to take the fileDate as a fallback value.
-                        if(newMail->transDate.Seconds == 0)
-                        {
-                          // only if it is _not_ a "waitforsend" and "hold" message we can take the fib_Date
-                          // as the fallback
-                          if(!hasStatusQueued(newMail) && !hasStatusHold(newMail))
-                          {
-                            struct DateStamp *ds;
-
-                            W(DBF_FOLDER, "no transfer Date information found in mail file, taking fileDate...");
-
-                            // obtain the datestamp information from  and as a fallback we take the date of the mail file
-                            if(ObtainFileInfo(GetMailFile(NULL, folder, newMail), FI_DATE, &ds) == TRUE)
-                            {
-                              // now convert the local TZ fib_Date to a UTC transDate
-                              DateStamp2TimeVal(ds, &newMail->transDate, TZC_UTC);
-                              free(ds);
-                            }
-
-                            // then we update the mailfilename
-                            MA_UpdateMailFile(newMail);
-                          }
-                        }
-                      }
-
-                      MA_FreeEMailStruct(email);
                     }
                   }
                   else
                   {
-                    char path[SIZE_PATHFILE+1];
-
-                    strlcpy(path, GetFolderDir(folder), sizeof(path));
-                    AddPart(path, fname, sizeof(path));
-                    DeleteFile(path);
-
-                    W(DBF_FOLDER, "found empty file '%s' in mail folder and deleted it", path);
+                    // if there occurred any error we skip to the next file.
+                    ER_NewError(tr(MSG_ER_CONVERTMFILE), fname, folder->Name);
+                    continue;
                   }
                 }
+                else
+                  continue;
               }
-              while(result == TRUE && (ead = ead->ed_Next) != NULL);
+              else
+                continue;
             }
-            while(result == TRUE && more != FALSE);
 
-            free(eabuffer);
+            // check the filesize of the mail file
+            if(ed->FileSize > 0)
+            {
+              struct ExtendedMail *email;
+
+              D(DBF_FOLDER, "examining MailFile: %s", fname);
+
+              while((email = MA_ExamineMail(folder, fname, FALSE)) == NULL &&
+                    ignoreInvalids == FALSE)
+              {
+                // if the MA_ExamineMail() operation failed we
+                // warn the user and ask him how to proceed with
+                // the file
+
+                int res = MUI_Request(G->App, NULL, 0,
+                                     tr(MSG_MA_INVALIDMFILE_TITLE),
+                                     tr(MSG_MA_INVALIDMFILE_BT),
+                                     tr(MSG_MA_INVALIDMFILE),
+                                     fname, folder->Name);
+
+                if(res == 0) // cancel/ESC
+                {
+                  result = FALSE;
+                  break;
+                }
+                else if(res == 1) // Retry
+                  continue;
+                else if(res == 2) // Ignore
+                  break;
+                else if(res == 3) // Ignore All
+                {
+                  ignoreInvalids = TRUE;
+                  break;
+                }
+                else if(res == 4) // Delete
+                {
+                  char path[SIZE_PATHFILE+1];
+
+                  strlcpy(path, GetFolderDir(folder), sizeof(path));
+                  AddPart(path, fname, sizeof(path));
+                  DeleteFile(path);
+
+                  break;
+                }
+              }
+
+              if(email != NULL)
+              {
+                struct Mail *newMail;
+
+                if((newMail = AddMailToList(&email->Mail, folder)) != NULL)
+                {
+                  // if this new mail hasn`t got a valid transDate we have to check if we
+                  // have to take the fileDate as a fallback value.
+                  if(newMail->transDate.Seconds == 0)
+                  {
+                    // only if it is _not_ a "waitforsend" and "hold" message we can take the fib_Date
+                    // as the fallback
+                    if(!hasStatusQueued(newMail) && !hasStatusHold(newMail))
+                    {
+                      struct DateStamp *ds;
+
+                      W(DBF_FOLDER, "no transfer Date information found in mail file, taking fileDate...");
+
+                      // obtain the datestamp information from  and as a fallback we take the date of the mail file
+                      if(ObtainFileInfo(GetMailFile(NULL, folder, newMail), FI_DATE, &ds) == TRUE)
+                      {
+                        // now convert the local TZ fib_Date to a UTC transDate
+                        DateStamp2TimeVal(ds, &newMail->transDate, TZC_UTC);
+                        free(ds);
+                      }
+
+                      // then we update the mailfilename
+                      MA_UpdateMailFile(newMail);
+                    }
+                  }
+                }
+
+                MA_FreeEMailStruct(email);
+              }
+            }
+            else
+            {
+              char path[SIZE_PATHFILE+1];
+
+              strlcpy(path, GetFolderDir(folder), sizeof(path));
+              AddPart(path, fname, sizeof(path));
+              DeleteFile(path);
+
+              W(DBF_FOLDER, "found empty file '%s' in mail folder and deleted it", path);
+            }
           }
-          else
-          {
-            W(DBF_FOLDER, "couldn't allocate ExAll buffer");
-            result = FALSE;
-          }
-
-          FreeDosObject(DOS_EXALLCONTROL, eac);
-        }
-        else
-        {
-          W(DBF_FOLDER, "couldn't allocate ExAllControl structure, IoErr()=%ld", IoErr());
-          result = FALSE;
         }
 
-        UnLock(dirLock);
-
-        // we don't need to set the LoadedMode of the folder back from LM_REBUILD
-        // because other functions will do that for us - hopefully.
+        ReleaseDirContext(context);
       }
       else
       {
-        W(DBF_FOLDER, "couldn't get read lock on directory '%s', IoErr()=%ld", GetFolderDir(folder), IoErr());
+        W(DBF_FOLDER, "couldn't allocate DirContext structure for directory '%s', IoErr()=%ld", GetFolderDir(folder), IoErr());
         result = FALSE;
       }
 

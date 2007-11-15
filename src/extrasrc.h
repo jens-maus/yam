@@ -33,6 +33,7 @@
 #include <stddef.h>
 #include <stdio.h>
 
+#include <utility/tagitem.h>
 #include <proto/intuition.h>
 
 #include "SDI_compiler.h"
@@ -144,12 +145,20 @@
  */
 #if defined(__amigaos4__)
 #define HAVE_SETPROCWINDOW
+#define HAVE_EXAMINEDIR
 #endif
 
 #if !defined(HAVE_SETPROCWINDOW)
 #define NEED_SETPROCWINDOW
 #endif
 
+#if !defined(HAVE_EXAMINEDIR)
+#define NEED_EXAMINEDIR
+#endif
+
+/*
+ * Stuff that exists in OS4 and MOS already, but not in OS3
+ */
 #if defined(__amigaos4__) || defined(__MORPHOS__)
 #define HAVE_ALLOCVECPOOLED
 #define HAVE_FREEVECPOOLED
@@ -224,6 +233,14 @@ void *memdup(const void *source, const size_t size);
 
 #if defined(NEED_SETPROCWINDOW)
 APTR SetProcWindow(const void *newWindowPtr);
+#endif
+
+#if defined(NEED_EXAMINEDIR)
+APTR ObtainDirContext(struct TagItem *tags);
+APTR ObtainDirContextTags(ULONG tag1, ...);
+void ReleaseDirContext(APTR context);
+struct ExamineData *ExamineDir(APTR context);
+#include "extrasrc/ExamineDir.h"
 #endif
 
 #if defined(NEED_ALLOCVECPOOLED)

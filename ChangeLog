@@ -9,6 +9,8 @@ $URL$
 
   * ExamineDir.c: implemented a basic emulation of the new OS4 directory
     scanning API based on ExAll().
+  * YAM_MAf.c, YAM_UT.c, ThemeListGroup.c, extrasrc.c: replaced all direct
+    calls to ExAll() by the new directory scanning API.
 
 2007-11-14  Jens Langner <Jens.Langner@light-speed.de>
 

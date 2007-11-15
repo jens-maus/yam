@@ -31,6 +31,8 @@
 
 #include "ThemeListGroup_cl.h"
 
+#include "extrasrc.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -186,75 +188,37 @@ OVERLOAD(OM_SET)
 DECLARE(Update)
 {
   BOOL result = FALSE;
-  BPTR dirLock;
   char themesDir[SIZE_PATH];
+  APTR context;
 
   ENTER();
 
   // construct the themes directory path
   strmfp(themesDir, G->ProgDir, "Themes");
 
-  if((dirLock = Lock(themesDir, ACCESS_READ)))
+  if((context = ObtainDirContextTags(EX_StringName, themesDir, TAG_DONE)) != NULL)
   {
-    struct ExAllControl *eac;
+    struct ExamineData *ed;
 
-    if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)))
+    while((ed = ExamineDir(context)) != NULL)
     {
-      struct ExAllData *ead;
-      struct ExAllData *eabuffer;
-      LONG more;
-      eac->eac_LastKey = 0;
-      eac->eac_MatchString = NULL;
-      eac->eac_MatchFunc = NULL;
-
-      if((eabuffer = malloc(SIZE_EXALLBUF)))
+      // check that this entry is a drawer
+      // because we don't accept any file here
+      if(EXD_IS_DIRECTORY(ed))
       {
-        result = TRUE;
-
-        do
-        {
-          more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_TYPE, eac);
-          if(!more && IoErr() != ERROR_NO_MORE_ENTRIES)
-          {
-            // fail with an error
-            result = FALSE;
-            break;
-          }
-
-          // ExAll() failed normally with no further entries
-          if(eac->eac_Entries == 0)
-            continue;
-
-          // we received a filled ExAll buffer so we
-          // parse through it now.
-          ead = (struct ExAllData *)eabuffer;
-          do
-          {
-            // check that this entry is a drawer
-            // because we don't accept any file here
-            if(isDrawer(ead->ed_Type))
-            {
-              D(DBF_CONFIG, "found dir '%s' in themes drawer", ead->ed_Name);
-
-            }
-            else
-              W(DBF_CONFIG, "unknown file '%s' in themes directory ignored", ead->ed_Name);
-          }
-          while((ead = ead->ed_Next));
-        }
-        while(more);
-
-        free(eabuffer);
+        D(DBF_CONFIG, "found dir '%s' in themes drawer", ed->Name);
       }
       else
-        E(DBF_CONFIG, "couldn't allocate memory for ExAll buffer");
-
-      FreeDosObject(DOS_EXALLCONTROL, eac);
+      {
+        W(DBF_CONFIG, "unknown file '%s' in themes directory ignored", ed->Name);
+      }
     }
-    else
-      E(DBF_CONFIG, "couldn't allocate ExAll dos object!");
+    if(IoErr() != ERROR_NO_MORE_ENTRIES)
+    {
+      E(DBF_CONFIG, "ExamineDir() failed");
+    }
 
-    UnLock(dirLock);
+    ReleaseDirContext(context);
   }
   else
     E(DBF_CONFIG, "No themes directory found!");

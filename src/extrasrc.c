@@ -106,6 +106,11 @@
   #include "extrasrc/SetProcWindow.c"
 #endif
 
+#if defined(NEED_EXAMINEDIR)
+  #include "extrasrc/ExamineDir.h"
+  #include "extrasrc/ExamineDir.c"
+#endif
+
 #if defined(NEED_ALLOCVECPOOLED)
   #include "extrasrc/AllocVecPooled.c"
 #endif
