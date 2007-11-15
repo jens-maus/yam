@@ -17,6 +17,8 @@ $URL$
   * asprintf.c, snprintf.c, xset.c, ObtainDirContext.c: added VARARGS68K
     specifier for all varargs functions where it was missing. Also adapted the
     tag list passing for MorphOS for ObtainDirContextTags().
+  * YAM_MAf.c: fixed a GCC complaint about passing in a LONG for %d instead of
+    and int.
 
 2007-11-14  Jens Langner <Jens.Langner@light-speed.de>
 
