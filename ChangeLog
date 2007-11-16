@@ -9,6 +9,8 @@ $URL$
 
   * YAM_MAf.c: as soon as a folder directory is Lock()'ed during an index
     rebuild the folder listtree will reflect this state change.
+  * YAM_MAf.c: now the folder being rescanned will be updated instead of the
+    active one.
 
 2007-11-15  Thore Böckelmann <tboeckel@gmx.de>
 
