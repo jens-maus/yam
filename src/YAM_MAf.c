@@ -2167,6 +2167,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
     }
     else
     {
+      struct MA_GUIData *gui = &G->MA->GUI;
       APTR context;
 
       // make sure others notice that an index scanning already
@@ -2177,8 +2178,6 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
       // or cleared if the rescanning folder is the current one
       if(FO_GetCurrentFolder() == folder)
       {
-        struct MA_GUIData *gui = &G->MA->GUI;
-
         // before we go and rebuild the index of the folder we make
         // sure all major GUI components of it are disabled for the
         // time being...
@@ -2213,10 +2212,12 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
         BOOL skipAllUnknown = FALSE;
         BOOL ignoreInvalids = FALSE;
 
-        // now that the folder is locked we go and define its
-        // loaded mode to LM_REBUILD so that others don't try to access
-        // it anymore
+        // Now that the folder is locked we go and define its loaded
+        // mode to LM_REBUILD so that others don't try to access it
+        // anymore.
         folder->LoadedMode = LM_REBUILD;
+        // visually update this state change
+        DoMethod(gui->NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
 
         while((ed = ExamineDir(context)) != NULL)
         {
