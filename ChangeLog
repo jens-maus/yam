@@ -11,6 +11,9 @@ $URL$
     rebuild the folder listtree will reflect this state change.
   * YAM_MAf.c: now the folder being rescanned will be updated instead of the
     active one.
+  * NewReadArgs.c: in case YAM was started as "YAM ?" to read the template and
+    got send a CTRL-C while the template was displayed it will now immediately
+    abort, because otherwise the CTRL-C will be catched later and cause crashes.
 
 2007-11-15  Thore Böckelmann <tboeckel@gmx.de>
 

@@ -429,15 +429,22 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
     /*- call ReadArgs() -*/
     nrdargs->RDArgs->RDA_ExtHelp = nrdargs->ExtHelp;
-    if(!(nrdargs->FreeArgs = ReadArgs(nrdargs->Template, nrdargs->Parameters, nrdargs->RDArgs)))
+    if((nrdargs->FreeArgs = ReadArgs(nrdargs->Template, nrdargs->Parameters, nrdargs->RDArgs)) == NULL)
     {
       E(DBF_STARTUP, "ReadArgs() error");
 
       RETURN(IoErr());
       return(IoErr());
     }
+    if(SetSignal(0, SIGBREAKF_CTRL_C) & SIGBREAKF_CTRL_C)
+    {
+      E(DBF_STARTUP, "ReadArgs() aborted by CTRL-C");
 
-    D(DBF_STARTUP, "ReadArgs() okay");
+      RETURN(ERROR_BREAK);
+      return ERROR_BREAK;
+    }
+    else
+      D(DBF_STARTUP, "ReadArgs() okay");
 
     /*- when started from wb, open window if requested -*/
     if(ToolWindow && WBStartup)
