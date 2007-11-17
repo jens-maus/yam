@@ -84,10 +84,6 @@
 #define NEED_STCGFE
 #endif
 
-#if !defined(HAVE_STRMFP)
-#define NEED_STRMFP
-#endif
-
 #if !defined(HAVE_DOSUPERNEW)
 #define NEED_DOSUPERNEW
 #endif
@@ -206,10 +202,6 @@ int VARARGS68K asprintf(char **ptr, const char *format, ...);
 
 #if defined(NEED_STCGFE)
 int stcgfe(char *, const char *);
-#endif
-
-#if defined(NEED_STRMFP)
-void strmfp(char *, const char *, const char *);
 #endif
 
 #if defined(NEED_STRDUP)

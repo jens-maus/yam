@@ -45,10 +45,6 @@
   #include "extrasrc/stcgfe.c"
 #endif
 
-#if defined(NEED_STRMFP)
-  #include "extrasrc/strmfp.c"
-#endif
-
 #if defined(NEED_STRLCPY)
   #include "extrasrc/strlcpy.c"
 #endif

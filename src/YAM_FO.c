@@ -420,9 +420,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
 
   ENTER();
 
-  strlcpy(fname, GetFolderDir(fo), sizeof(fname));
-  AddPart(fname, ".fconfig", sizeof(fname));
-
+  AddPath(fname, GetFolderDir(fo), ".fconfig", sizeof(fname));
   if((fh = fopen(fname, "r")) != NULL)
   {
     char buffer[SIZE_LARGE];
@@ -511,9 +509,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
 
   ENTER();
 
-  strlcpy(fname, GetFolderDir(fo), sizeof(fname));
-  AddPart(fname, ".fconfig", sizeof(fname));
-
+  AddPath(fname, GetFolderDir(fo), ".fconfig", sizeof(fname));
   if((fh = fopen(fname, "w")) != NULL)
   {
     struct DateStamp ds;
@@ -540,8 +536,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
     fprintf(fh, "WriteGreetings = %s\n", fo->WriteGreetings);
     fclose(fh);
 
-    strlcpy(fname, GetFolderDir(fo), sizeof(fname));
-    AddPart(fname, ".index", sizeof(fname));
+    AddPath(fname, GetFolderDir(fo), ".index", sizeof(fname));
 
     if(!isModified(fo))
       SetFileDate(fname, DateStamp(&ds));
@@ -684,9 +679,7 @@ static BOOL FO_LoadFolderImage(struct Folder *folder)
       char fname[SIZE_PATHFILE];
       Object *lv = G->MA->GUI.NL_FOLDERS;
 
-      strlcpy(fname, GetFolderDir(folder), sizeof(fname));
-      AddPart(fname, ".fimage", sizeof(fname));
-
+      AddPath(fname, GetFolderDir(folder), ".fimage", sizeof(fname));
       if(FileExists(fname) == TRUE)
       {
         // Now we say that this image could be used by this Listtree
@@ -1073,11 +1066,8 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
   if(success)
   {
     // now we try to move an existing .index file
-    strlcpy(srcbuf, GetFolderDir(oldfo), sizeof(srcbuf));
-    AddPart(srcbuf, ".index", sizeof(srcbuf));
-    strlcpy(dstbuf, GetFolderDir(fo), sizeof(dstbuf));
-    AddPart(dstbuf, ".index", sizeof(dstbuf));
-
+    AddPath(srcbuf, GetFolderDir(oldfo), ".index", sizeof(srcbuf));
+    AddPath(dstbuf, GetFolderDir(fo), ".index", sizeof(dstbuf));
     if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
     {
       success = FALSE;
@@ -1085,11 +1075,8 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
     else
     {
       // now we try to mvoe the .fimage file aswell
-      strlcpy(srcbuf, GetFolderDir(oldfo), sizeof(srcbuf));
-      AddPart(srcbuf, ".fimage", sizeof(srcbuf));
-      strlcpy(dstbuf, GetFolderDir(fo), sizeof(dstbuf));
-      AddPart(dstbuf, ".fimage", sizeof(dstbuf));
-
+      AddPath(srcbuf, GetFolderDir(oldfo), ".fimage", sizeof(srcbuf));
+      AddPath(dstbuf, GetFolderDir(fo), ".fimage", sizeof(dstbuf));
       if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
       {
         success = FALSE;

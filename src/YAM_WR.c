@@ -1825,7 +1825,7 @@ char *WR_AutoSaveFile(const int winnr, char *dest, const size_t length)
 
   if(dest != NULL)
   {
-    strmfp(dest, G->MA_MailDir, ".autosave");
+    AddPath(dest, G->MA_MailDir, ".autosave", length);
     strlcat(dest, itoa(winnr), length);
     strlcat(dest, ".txt", length);
   }
@@ -2385,7 +2385,7 @@ HOOKPROTONHNO(WR_SaveAsFunc, void, int *arg)
   {
     char filename[SIZE_PATHFILE];
 
-    strmfp(filename, frc->drawer, frc->file);
+    AddPath(filename, frc->drawer, frc->file, sizeof(filename));
 
     EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum]);
 
@@ -2440,7 +2440,7 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
     {
       D(DBF_GUI, "choosen file: [%s] from drawer: [%s]", frc->file, frc->drawer);
 
-      strmfp(filename, frc->drawer, frc->file);
+      AddPath(filename, frc->drawer, frc->file, sizeof(filename));
       WR_AddFileToList(winnum, filename, NULL, FALSE);
     }
     else
@@ -2451,7 +2451,7 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
       {
         D(DBF_GUI, "choosen file: [%s] from drawer: [%s]", frc->argList[i], frc->drawer);
 
-        strmfp(filename, frc->drawer, frc->argList[i]);
+        AddPath(filename, frc->drawer, frc->argList[i], sizeof(filename));
         WR_AddFileToList(winnum, filename, NULL, FALSE);
       }
     }
@@ -2494,7 +2494,7 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
       struct TempFile *tf = NULL;
 
       // create the destination archive name
-      strmfp(filename, C->TempDir, arcname);
+      AddPath(filename, C->TempDir, arcname, sizeof(filename));
       snprintf(arcpath, sizeof(arcpath), strchr(filename, ' ') ? "\"%s\"" : "%s", filename);
 
       // now we generate the temporary file containing the file names
@@ -2831,7 +2831,7 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
 
       if((frc = ReqFile(ASL_ATTACH, wr->GUI.WI, tr(MSG_WR_InsertFile), REQF_NONE, C->AttachDir, "")))
       {
-        strmfp(filename, frc->drawer, frc->file);
+        AddPath(filename, frc->drawer, frc->file, sizeof(filename));
         text = WR_TransformText(filename, cmd, quoteChar);
       }
       else
@@ -2852,7 +2852,7 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
       // uuencoded interpretation to be inserted into the editor
       if((frc = ReqFile(ASL_ATTACH, wr->GUI.WI, tr(MSG_WR_InsertFile), REQF_NONE, C->AttachDir, "")))
       {
-        strmfp(filename, frc->drawer, frc->file);
+        AddPath(filename, frc->drawer, frc->file, sizeof(filename));
 
         // open a temporary file
         if((tf = OpenTempFile("w")))

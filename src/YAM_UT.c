@@ -2371,7 +2371,7 @@ struct TempFile *OpenTempFile(const char *mode)
     snprintf(buf, sizeof(buf), "YAMt%08lx.tmp", GetUniqueID());
 
     // now add the temporary path to the filename
-    strmfp(tf->Filename, C->TempDir, buf);
+    AddPath(tf->Filename, C->TempDir, buf, sizeof(tf->Filename));
 
     if(mode != NULL)
     {
@@ -2538,7 +2538,7 @@ BOOL PFExists(const char *path, const char *file)
   {
     char fname[SIZE_PATHFILE];
 
-    strmfp(fname, path, file);
+    AddPath(fname, path, file, sizeof(fname));
     exists = FileExists(fname);
   }
 
@@ -2567,7 +2567,7 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
       char *filename = (char *)ed->Name;
       char fname[SIZE_PATHFILE];
 
-      strmfp(fname, dir, filename);
+      AddPath(fname, dir, filename, sizeof(fname));
 
       if(isroot == TRUE)
       {
@@ -2698,6 +2698,17 @@ LONG FileCount(const char *directory, const char *pattern)
   return result;
 }
 ///
+/// AddPath
+// Function that is a wrapper to AddPart so that we can add the
+// specified path 'add' to an existing/non-existant 'src' which
+// is then stored in dst of max size 'size'.
+char *AddPath(char *dst, const char *src, const char *add, size_t size)
+{
+  strlcpy(dst, src, size);
+  AddPart(dst, add, size);
+  return dst;
+}
+///
 
 /*** Mail related ***/
 /// MyRemove
@@ -2733,7 +2744,7 @@ char *CreateFilename(const char * const file)
 
   ENTER();
 
-  strmfp(buffer, G->MA_MailDir, file);
+  AddPath(buffer, G->MA_MailDir, file, sizeof(buffer));
 
   RETURN(buffer);
   return buffer;
@@ -2808,7 +2819,7 @@ const char *GetFolderDir(const struct Folder *fo)
     dir = fo->Path;
   else
   {
-    strmfp(buffer, G->MA_MailDir, fo->Path);
+    AddPath(buffer, G->MA_MailDir, fo->Path, sizeof(buffer));
     dir = buffer;
   }
 
@@ -2831,7 +2842,7 @@ char *GetMailFile(char *string, const struct Folder *folder, const struct Mail *
   if(string == NULL)
     string = buffer;
 
-  strmfp(string, (folder == NULL || folder == (struct Folder *)-1) ? C->TempDir : GetFolderDir(folder), mail->MailFile);
+  AddPath(string, (folder == NULL || folder == (struct Folder *)-1) ? C->TempDir : GetFolderDir(folder), mail->MailFile, SIZE_PATHFILE);
 
   result = GetRealPath(string);
 
@@ -4262,9 +4273,8 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
     // folder or if we require to increase the mailfile counter to make it
     // unique
     strlcpy(dstFileName, mail->MailFile, sizeof(dstFileName));
-    strlcpy(dstbuf, GetFolderDir(dstfolder), sizeof(dstbuf));
-    AddPart(dstbuf, dstFileName, sizeof(dstbuf));
 
+    AddPath(dstbuf, GetFolderDir(dstfolder), dstFileName, sizeof(dstbuf));
     if(FileExists(dstbuf))
     {
       int mCounter = atoi(&dstFileName[13]);
@@ -4282,8 +4292,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
           snprintf(&dstFileName[13], sizeof(dstFileName)-13, "%03d", mCounter);
           dstFileName[16] = ','; // restore it
 
-          strlcpy(dstbuf, GetFolderDir(dstfolder), sizeof(dstbuf));
-          AddPart(dstbuf, dstFileName, sizeof(dstbuf));
+          AddPath(dstbuf, GetFolderDir(dstfolder), dstFileName, sizeof(dstbuf));
         }
       }
       while(counterExceeded == FALSE && FileExists(dstbuf));
@@ -4508,7 +4517,7 @@ char *StartUnpack(const char *file, char *newfile, const struct Folder *folder)
       char nfile[SIZE_FILE];
 
       snprintf(nfile, sizeof(nfile), "YAMu%08lx.unp", GetUniqueID());
-      strmfp(newfile, C->TempDir, nfile);
+      AddPath(newfile, C->TempDir, nfile, SIZE_PATHFILE);
 
       // check that the destination filename
       // doesn't already exist
@@ -5478,7 +5487,8 @@ int PGPCommand(const char *progname, const char *options, int flags)
     if((fho = Open("NIL:", MODE_NEWFILE)))
     {
       BusyText(tr(MSG_BusyPGPrunning), "");
-      strmfp(command, C->PGPCmdPath, progname);
+
+      AddPath(command, C->PGPCmdPath, progname, sizeof(command));
       strlcat(command, " >" PGPLOGFILE " ", sizeof(command));
       strlcat(command, options, sizeof(command));
 
@@ -5550,7 +5560,7 @@ void AppendToLogfile(enum LFMode mode, int id, const char *text, ...)
         strlcpy(filename, "YAM.log", sizeof(filename));
 
       // add the logfile path to the filename.
-      strmfp(logfile, C->LogfilePath[0] != '\0' ? C->LogfilePath : G->ProgDir, filename);
+      AddPath(logfile, C->LogfilePath[0] != '\0' ? C->LogfilePath : G->ProgDir, filename, sizeof(logfile));
 
       // open the file handle in 'append' mode and output the
       // text accordingly.

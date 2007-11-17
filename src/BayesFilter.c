@@ -835,7 +835,7 @@ static void tokenAnalyzerResetTrainingData(void)
   }
 
   // prepare the filename for analysis
-  strmfp(fname, G->MA_MailDir, SPAMDATAFILE);
+  AddPath(fname, G->MA_MailDir, SPAMDATAFILE, sizeof(fname));
 
   if(FileExists(fname))
     DeleteFile(fname);
@@ -853,7 +853,7 @@ static void tokenAnalyzerWriteTrainingData(void)
   ENTER();
 
   // prepare the filename for saving
-  strmfp(fname, G->MA_MailDir, SPAMDATAFILE);
+  AddPath(fname, G->MA_MailDir, SPAMDATAFILE, sizeof(fname));
 
   // open the .spamdata file for binary write
   if((stream = fopen(fname, "wb")) != NULL)
@@ -892,7 +892,7 @@ static void tokenAnalyzerReadTrainingData(void)
   ENTER();
 
   // prepare the filename for loading
-  strmfp(fname, G->MA_MailDir, SPAMDATAFILE);
+  AddPath(fname, G->MA_MailDir, SPAMDATAFILE, sizeof(fname));
 
   if(ObtainFileInfo(fname, FI_SIZE, &fileSize) == TRUE && fileSize > 0)
   {

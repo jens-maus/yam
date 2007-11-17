@@ -2450,8 +2450,8 @@ static void Initialise(BOOL hidden)
   // by loading the ".imglayout" file, checking if it matches the version
   // we are currently using or present the user a warning requester
   // accordingly.
-  strmfp(pathbuf, G->ProgDir, "Icons");
-  strmfp(filebuf, pathbuf, ".imglayout");
+  AddPath(pathbuf, G->ProgDir, "Icons", sizeof(pathbuf));
+  AddPath(filebuf, pathbuf, ".imglayout", sizeof(filebuf));
   if(FileExists(filebuf))
   {
     FILE *fp;
@@ -2498,7 +2498,7 @@ static void Initialise(BOOL hidden)
 
   for(i=0; i < MAXICONS; i++)
   {
-    strmfp(filebuf, pathbuf, icnames[i]);
+    AddPath(filebuf, pathbuf, icnames[i], sizeof(filebuf));
 
     // depending on the icon.library version we use either GetIconTags()
     // or the older GetDiskObject() function

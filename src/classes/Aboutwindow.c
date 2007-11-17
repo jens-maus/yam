@@ -141,7 +141,7 @@ OVERLOAD(OM_NEW)
   ENTER();
 
   compileInfo = (char *)xget(G->App, MUIA_YAM_CompileInfo);
-  strmfp(logopath, G->ProgDir, "Icons/logo");
+  AddPath(logopath, G->ProgDir, "Icons/logo", sizeof(logopath));
 
   // use asprintf() function to allocate&set the content of our
   // about text.

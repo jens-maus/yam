@@ -6183,7 +6183,7 @@ BOOL TR_GetMessageList_IMPORT(void)
 
     // prepare the temporary filename buffers
     snprintf(tfname, sizeof(tfname), "YAMi%08lx.tmp", GetUniqueID());
-    strmfp(fname, C->TempDir, tfname);
+    AddPath(fname, C->TempDir, tfname, sizeof(fname));
 
     // before this function is called the MA_ImportMessages() function
     // already found out which import format we can expect. So we

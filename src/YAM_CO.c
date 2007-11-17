@@ -874,7 +874,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
   if(page == cp_Signature || page == cp_AllPages)
   {
     co->UseSignature = FALSE;
-    strmfp(co->TagsFile, G->ProgDir, ".taglines");
+    AddPath(co->TagsFile, G->ProgDir, ".taglines", sizeof(co->TagsFile));
     strlcpy(co->TagsSeparator, "%%", sizeof(co->TagsSeparator));
   }
 
@@ -931,7 +931,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_AddressBook || page == cp_AllPages)
   {
-    strlcpy(co->GalleryDir, "YAM:Gallery", sizeof(co->GalleryDir));
+    AddPath(co->GalleryDir, G->ProgDir, "Gallery", sizeof(co->GalleryDir));
     strlcpy(co->NewAddrGroup, "NEW", sizeof(co->NewAddrGroup));
     co->AddMyInfo = FALSE;
     co->AddToAddrbook = 0;
@@ -1518,7 +1518,7 @@ void CO_Validate(struct Config *co, BOOL update)
     char filename[SIZE_FILE];
 
     snprintf(filename, sizeof(filename), "YAMw%08lx-%d.tmp", (LONG)FindTask(NULL), i);
-    strmfp(G->WR_Filename[i], co->TempDir, filename);
+    AddPath(G->WR_Filename[i], co->TempDir, filename, sizeof(G->WR_Filename[i]));
   }
 
   G->CO_Valid = (*co->SMTP_Server && *co->EmailAddress && *co->RealName);
@@ -1977,8 +1977,7 @@ HOOKPROTONHNONP(CO_OpenConfig, void)
   {
     char cname[SIZE_PATHFILE];
 
-    strmfp(cname, frc->drawer, frc->file);
-
+    AddPath(cname, frc->drawer, frc->file, sizeof(cname));
     if(CO_LoadConfig(CE, cname, NULL) == TRUE)
       CO_NewPrefsFile(cname);
 
@@ -2003,7 +2002,7 @@ HOOKPROTONHNONP(CO_SaveConfigAs, void)
   {
     char cname[SIZE_PATHFILE];
 
-    strmfp(cname, frc->drawer, frc->file);
+    AddPath(cname, frc->drawer, frc->file, sizeof(cname));
 
     // the config is really saved
     CO_GetConfig(TRUE);

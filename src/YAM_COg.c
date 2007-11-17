@@ -674,8 +674,7 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
       char fname[SIZE_PATHFILE];
       FILE *fh;
 
-      strmfp(fname, frc->drawer, frc->file);
-
+      AddPath(fname, frc->drawer, frc->file, sizeof(fname));
       if((fh = fopen(fname, "r")))
       {
         Object *lv = G->CO->GUI.LV_MIME;
@@ -1188,8 +1187,7 @@ HOOKPROTONO(FileRequestStopFunc, void, struct FileRequester *fileReq)
   {
     char buf[SIZE_PATHFILE];
 
-    strlcpy(buf, fileReq->fr_Drawer, sizeof(buf));
-    AddPart(buf, fileReq->fr_File, sizeof(buf));
+    AddPath(buf, fileReq->fr_Drawer, fileReq->fr_File, sizeof(buf));
 
     // check if there is any space in our path
     if(strchr(buf, ' ') != NULL)

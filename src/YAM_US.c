@@ -308,10 +308,10 @@ BOOL US_Login(const char *username, const char *password, const char *maildir, c
     if(prefsfile != NULL)
       strlcpy(G->CO_PrefsFile, prefsfile, sizeof(G->CO_PrefsFile));
     else
-      strmfp(G->CO_PrefsFile, G->MA_MailDir, ".config");
+      AddPath(G->CO_PrefsFile, G->MA_MailDir, ".config", sizeof(G->CO_PrefsFile));
 
-    strmfp(G->AB_Filename, user->UseAddr ? G->ProgDir : G->MA_MailDir, ".addressbook");
-    strmfp(G->DI_Filename, user->UseDict ? G->ProgDir : G->MA_MailDir, ".glossary");
+    AddPath(G->AB_Filename, user->UseAddr ? G->ProgDir : G->MA_MailDir, ".addressbook", sizeof(G->AB_Filename));
+    AddPath(G->DI_Filename, user->UseDict ? G->ProgDir : G->MA_MailDir, ".glossary", sizeof(G->DI_Filename));
 
     if(user->Password[0] != '\0')
     {
@@ -464,13 +464,13 @@ static BOOL US_SaveUserList(void)
          char dest[SIZE_PATHFILE];
 
          // clone the
-         strmfp(dest, user->MailDir, ".addressbook");
+         AddPath(dest, user->MailDir, ".addressbook", sizeof(dest));
          CopyFile(dest, NULL, G->AB_Filename, NULL);
 
-         strmfp(dest, user->MailDir, ".glossary");
+         AddPath(dest, user->MailDir, ".glossary", sizeof(dest));
          CopyFile(dest, NULL, G->DI_Filename, NULL);
 
-         strmfp(dest, user->MailDir, ".config");
+         AddPath(dest, user->MailDir, ".config", sizeof(dest));
          CopyFile(dest, NULL, G->CO_PrefsFile, NULL);
       }
 	}

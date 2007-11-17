@@ -326,6 +326,7 @@ void     ExtractAddress(const char *line, struct Person *pe);
 char *   FileToBuffer(const char *file);
 BOOL     FileToEditor(char *file, Object *editor);
 LONG     FileCount(const char *directory, const char *pattern);
+char *   AddPath(char *dst, const char *src, const char *add, size_t size);
 void     FinishUnpack(char *file);
 struct Folder *FolderRequest(const char *title, const char *body, const char *yestext, const char *notext, struct Folder *exclude, Object *parent);
 void     FormatSize(LONG size, char *buffer, int buflen, enum SizeFormat forcedPrecision);

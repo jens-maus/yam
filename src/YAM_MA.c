@@ -586,8 +586,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   *ptr = '\0'; // NUL terminate it
 
   // construct the full old file path
-  strlcpy(oldFilePath, folderDir, sizeof(oldFilePath));
-  AddPart(oldFilePath, mail->MailFile, sizeof(oldFilePath));
+  AddPath(oldFilePath, folderDir, mail->MailFile, sizeof(oldFilePath));
 
   while(success == FALSE)
   {
@@ -605,8 +604,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
     }
 
     // construct new full file path
-    strlcpy(newFilePath, folderDir, sizeof(newFilePath));
-    AddPart(newFilePath, newFileName, sizeof(newFilePath));
+    AddPath(newFilePath, folderDir, newFileName, sizeof(newFilePath));
 
     // then rename it
     if(Rename(oldFilePath, newFilePath) != 0)
@@ -3834,8 +3832,7 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
 
     if(!filename && (frc = ReqFile(ASL_EXPORT, G->MA->GUI.WI, tr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, "")))
     {
-      strmfp(filename = outname, frc->drawer, frc->file);
-
+      filename = AddPath(outname, frc->drawer, frc->file, sizeof(outname));
       if(FileExists(filename))
       {
         switch(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_MESSAGEEXPORT), tr(MSG_MA_ExportAppendOpts), tr(MSG_MA_ExportAppendReq)))
@@ -4036,7 +4033,7 @@ HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
   {
     char inname[SIZE_PATHFILE];
 
-    strmfp(inname, frc->drawer, frc->file);
+    AddPath(inname, frc->drawer, frc->file, sizeof(inname));
 
     // now start the actual importing of the messages
     if(!MA_ImportMessages(inname))
@@ -4090,11 +4087,12 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
 
     if(StartUnpack(oldfile, fullfile, fo) != NULL)
     {
+      char tfname[SIZE_MFILE];
       char newfile[SIZE_PATHFILE];
       FILE *newfh;
 
-      strmfp(newfile, GetFolderDir(fo), "00000.tmp");
-
+      snprintf(tfname, sizeof(tfname), "YAMt%08lx.tmp", GetUniqueID());
+      AddPath(newfile, GetFolderDir(fo), tfname, sizeof(newfile));
       if((newfh = fopen(newfile, "w")) != NULL)
       {
         FILE *oldfh;
@@ -4452,11 +4450,10 @@ HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
     struct FileReqCache *frc;
     char scname[SIZE_COMMAND];
 
-    strmfp(scname, G->ProgDir, "rexx");
-
+    AddPath(scname, G->ProgDir, "rexx", sizeof(scname));
     if((frc = ReqFile(ASL_REXX, G->MA->GUI.WI, tr(MSG_MA_ExecuteScript), REQF_NONE, scname, "")))
     {
-      strmfp(scname, frc->drawer, frc->file);
+      AddPath(scname, frc->drawer, frc->file, sizeof(scname));
 
       // only RexxSysBase v45+ seems to support properly quoted
       // strings via the new RXFF_SCRIPT flag

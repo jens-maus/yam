@@ -522,7 +522,8 @@ OVERLOAD(OM_NEW)
 
   // now we load the standard icons like (check.info, new.info etc)
   // but we also try to take care of different icon.library versions.
-  strmfp(filebuf, G->ProgDir, G->ProgName);
+  AddPath(filebuf, G->ProgDir, G->ProgName, sizeof(filebuf));
+
   if(IconBase->lib_Version >= 44)
    G->HideIcon = GetIconTags(filebuf, TAG_DONE);
   else

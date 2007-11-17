@@ -1036,10 +1036,7 @@ OVERLOAD(MUIM_DeleteDragImage)
                       int len = strlen(selMsg.destName) + strlen(selMsg.drawer) + 10;
 
                       if((data->dropPath = malloc(len)) != NULL)
-                      {
-                        strlcpy(data->dropPath, selMsg.drawer, len);
-                        AddPart(data->dropPath, selMsg.destName, len);
-                      }
+                        AddPath(data->dropPath, selMsg.drawer, selMsg.destName, len);
 
                       free(selMsg.destName);
                     }

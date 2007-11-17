@@ -1989,7 +1989,7 @@ void rx_readsave( UNUSED struct RexxHost *host, struct rxd_readsave **rxd, enum 
             {
               char file[SIZE_PATHFILE];
 
-              strmfp(file, C->DetachDir, part->Name);
+              AddPath(file, C->DetachDir, part->Name, sizeof(file));
 
               success = RE_Export(rmData,
                                   part->Filename,

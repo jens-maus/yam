@@ -334,7 +334,7 @@ BOOL ImageCacheInit(const char *imagePath)
   {
     char filebuf[SIZE_PATHFILE];
 
-    strmfp(filebuf, imagePath, imageFileArray[i]);
+    AddPath(filebuf, imagePath, imageFileArray[i], sizeof(filebuf));
 
     // check if the file exists or not.
     if(FileExists(filebuf) == FALSE)

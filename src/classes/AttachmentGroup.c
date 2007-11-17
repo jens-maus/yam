@@ -986,7 +986,7 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
 
     // prepare the final path
     fileName = mailPart->CParFileName ? mailPart->CParFileName : mailPart->Name;
-    strmfp(filePathBuf, msg->dropPath, fileName);
+    AddPath(filePathBuf, msg->dropPath, fileName, sizeof(filePathBuf));
 
     RE_DecodePart(mailPart);
     result = RE_Export(mailPart->rmData,

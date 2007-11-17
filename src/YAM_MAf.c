@@ -220,8 +220,7 @@ static char *MA_IndexFileName(struct Folder *folder)
 
   ENTER();
 
-  strlcpy(buffer, GetFolderDir(folder), sizeof(buffer));
-  AddPart(buffer, ".index", sizeof(buffer));
+  AddPath(buffer, GetFolderDir(folder), ".index", sizeof(buffer));
 
   RETURN(buffer);
   return buffer;
@@ -907,9 +906,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
 
   // construct the full path of the old filename
   // and get the file comment
-  strlcpy(oldFilePath, GetFolderDir(folder), sizeof(oldFilePath));
-
-  if(AddPart(oldFilePath, filename, sizeof(oldFilePath)) == 0 ||
+  if(AddPath(oldFilePath, GetFolderDir(folder), filename, sizeof(oldFilePath)) == NULL ||
      ObtainFileInfo(oldFilePath, FI_COMMENT, &comment) == FALSE ||
      comment == NULL)
   {
@@ -1038,9 +1035,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
 
     // so, now we should be finished with finding the new filename of the mail file.
     // lets try to rename it with the dos.library's Rename() function
-    strlcpy(newFilePath, GetFolderDir(folder), sizeof(newFilePath));
-
-    if(AddPart(newFilePath, newFileName, sizeof(newFilePath)) == 0)
+    if(AddPath(newFilePath, GetFolderDir(folder), newFileName, sizeof(newFilePath)) == NULL)
     {
       result = NULL;
       break;
@@ -1069,9 +1064,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
       // let us now try it again to rename the file
       snprintf(newFileName, sizeof(newFileName), "%s.%03ld,%s", dateFilePart, ++mailCounter, statusFilePart);
 
-      strlcpy(newFilePath, GetFolderDir(folder), sizeof(newFilePath));
-
-      if(AddPart(newFilePath, newFileName, sizeof(newFilePath)) == 0)
+      if(AddPath(newFilePath, GetFolderDir(folder), newFileName, sizeof(newFilePath)) == NULL)
       {
         result = NULL;
         break;
@@ -1134,8 +1127,8 @@ char *MA_NewMailFile(const struct Folder *folder, char *mailfile)
   do
   {
     snprintf(newFileName, sizeof(newFileName), "%s.%03d,N", dateFilePart, ++mCounter);
-    strlcpy(fullpath, folderDir, sizeof(fullpath));
-    AddPart(fullpath, newFileName, sizeof(fullpath));
+
+    AddPath(fullpath, folderDir, newFileName, sizeof(fullpath));
   }
   while(mCounter < 999 && FileExists(fullpath));
 
@@ -2344,9 +2337,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                   char oldfile[SIZE_PATHFILE+1];
                   char *newfile;
 
-                  strlcpy(oldfile, GetFolderDir(folder), sizeof(oldfile));
-                  AddPart(oldfile, fname, sizeof(oldfile));
-
+                  AddPath(oldfile, GetFolderDir(folder), fname, sizeof(oldfile));
                   if((newfile = MA_NewMailFile(folder, fbuf)) != NULL)
                   {
                     if(Rename(oldfile, newfile))
@@ -2412,8 +2403,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                 {
                   char path[SIZE_PATHFILE+1];
 
-                  strlcpy(path, GetFolderDir(folder), sizeof(path));
-                  AddPart(path, fname, sizeof(path));
+                  AddPath(path, GetFolderDir(folder), fname, sizeof(path));
                   DeleteFile(path);
 
                   break;
@@ -2459,8 +2449,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
             {
               char path[SIZE_PATHFILE+1];
 
-              strlcpy(path, GetFolderDir(folder), sizeof(path));
-              AddPart(path, fname, sizeof(path));
+              AddPath(path, GetFolderDir(folder), fname, sizeof(path));
               DeleteFile(path);
 
               W(DBF_FOLDER, "found empty file '%s' in mail folder and deleted it", path);

@@ -72,7 +72,7 @@ OVERLOAD(OM_NEW)
   Object *bt_gopage;
 
   compileInfo = (char *)xget(G->App, MUIA_YAM_CompileInfo);
-  strmfp(logopath, G->ProgDir, "Icons/logo");
+  AddPath(logopath, G->ProgDir, "Icons/logo", sizeof(logopath));
 
   if(!(obj = DoSuperNew(cl, obj,
 

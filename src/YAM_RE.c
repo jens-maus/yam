@@ -286,19 +286,11 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
     }
 
     if(force)
-    {
-      strmfp(path, C->DetachDir, filename);
-      dest = path;
-    }
+      dest = AddPath(path, C->DetachDir, filename, sizeof(path));
     else if((frc = ReqFile(ASL_DETACH, win, tr(MSG_RE_SaveMessage), REQF_SAVEMODE, C->DetachDir, filename)))
-    {
-      strmfp(path, frc->drawer, frc->file);
-      dest = path;
-    }
+      dest = AddPath(path, frc->drawer, frc->file, sizeof(path));
     else
-    {
       dest = NULL;
-    }
   }
 
   if(dest != NULL)
@@ -688,10 +680,11 @@ void RE_DisplayMIME(char *fname, const char *ctype)
 void RE_SaveAll(struct ReadMailData *rmData, const char *path)
 {
   char *dest;
+  size_t size = strlen(path)+SIZE_DEFAULT+1;
 
   ENTER();
 
-  if((dest = calloc(1, strlen(path)+SIZE_DEFAULT+1)))
+  if((dest = calloc(1, size)))
   {
     struct Part *part;
     char fname[SIZE_DEFAULT];
@@ -706,7 +699,7 @@ void RE_SaveAll(struct ReadMailData *rmData, const char *path)
         else
           snprintf(fname, sizeof(fname), "%s-%d", rmData->mail->MailFile, part->Nr);
 
-        strmfp(dest, path, fname);
+        AddPath(dest, path, fname, size);
 
         RE_DecodePart(part);
         RE_Export(rmData, part->Filename, dest, part->Name, part->Nr, FALSE, FALSE, part->ContentType);
@@ -1719,7 +1712,7 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
 
     newPart->rmData = rmData;
     snprintf(file, sizeof(file), "YAMr%08lx-p%d.txt", rmData->uniqueID, newPart->Nr);
-    strmfp(newPart->Filename, C->TempDir, file);
+    AddPath(newPart->Filename, C->TempDir, file, sizeof(newPart->Filename));
 
     D(DBF_MAIL, "New Part #%ld [%lx]", newPart->Nr, newPart);
     D(DBF_MAIL, "  IsAltPart..: %ld",  newPart->isAltPart);
@@ -2307,7 +2300,7 @@ BOOL RE_DecodePart(struct Part *rp)
 
       // lets generate the destination file name for the decoded part
       snprintf(file, sizeof(file), "YAMm%08lx-p%d.%s", rp->rmData->uniqueID, rp->Nr, ext[0] != '\0' ? ext : "tmp");
-      strmfp(buf, C->TempDir, file);
+      AddPath(buf, C->TempDir, file, sizeof(buf));
 
       D(DBF_MAIL, "decoding '%s' to '%s'", rp->Filename, buf);
 
@@ -2658,7 +2651,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
 
         part->Nr = i;
         snprintf(file, sizeof(file), "YAMm%08lx-p%d%s", rmData->uniqueID, i, strchr(part->Filename, '.'));
-        strmfp(tmpFile, C->TempDir, file);
+        AddPath(tmpFile, C->TempDir, file, sizeof(tmpFile));
 
         D(DBF_MAIL, "renaming '%s' to '%s'", part->Filename, tmpFile);
 
@@ -3468,12 +3461,12 @@ BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo)
 
     strlcpy(fname, ab->RealName, sizeof(fname));
     if(PFExists(C->GalleryDir, fname))
-      strmfp(photo, C->GalleryDir, fname);
+      AddPath(photo, C->GalleryDir, fname, SIZE_PATHFILE);
     else
     {
       strlcpy(fname, ab->Address, sizeof(fname));
       if(PFExists(C->GalleryDir, fname))
-        strmfp(photo, C->GalleryDir, fname);
+        AddPath(photo, C->GalleryDir, fname, SIZE_PATHFILE);
     }
   }
 
@@ -4202,7 +4195,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
 
     // now we generate the translated MDN report
     snprintf(file, sizeof(file), "YAMm%08lx-p%d.txt", rp[0]->rmData->uniqueID, rp[0]->Nr);
-    strmfp(buf, C->TempDir, file);
+    AddPath(buf, C->TempDir, file, sizeof(buf));
 
     D(DBF_MAIL, "creating MDN report in '%s'", buf);
 

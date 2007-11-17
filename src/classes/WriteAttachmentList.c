@@ -152,7 +152,7 @@ OVERLOAD(MUIM_DragDrop)
     // then we create a copy of our decoded file which we can use
     // independent from the object we got the mailPart from
     snprintf(tempFile, sizeof(tempFile), "YAMt%08lx.tmp", (ULONG)mailPart);
-    strmfp(attach.FilePath, C->TempDir, tempFile);
+    AddPath(attach.FilePath, C->TempDir, tempFile, sizeof(attach.FilePath));
 
     // copy the file now
     if(CopyFile(attach.FilePath, NULL, mailPart->Filename, NULL))

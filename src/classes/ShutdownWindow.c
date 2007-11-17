@@ -48,7 +48,7 @@ OVERLOAD(OM_NEW)
   ENTER();
 
   // get the path to the logo file
-  strmfp(logopath, G->ProgDir, "Icons/logo");
+  AddPath(logopath, G->ProgDir, "Icons/logo", sizeof(logopath));
 
   // create the object
   if((obj = DoSuperNew(cl, obj,

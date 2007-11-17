@@ -477,7 +477,7 @@ HOOKPROTONHNO(EA_SelectPhotoFunc, void, int *arg)
 
   if((frc = ReqFile(ASL_PHOTO,G->EA[winnum]->GUI.WI, tr(MSG_EA_SelectPhoto_Title), REQF_NONE, C->GalleryDir, "")))
   {
-    strmfp(G->EA[winnum]->PhotoName, frc->drawer, frc->file);
+    AddPath(G->EA[winnum]->PhotoName, frc->drawer, frc->file, sizeof(G->EA[winnum]->PhotoName));
     EA_SetPhoto(winnum, NULL);
   }
 

@@ -194,7 +194,7 @@ DECLARE(Update)
   ENTER();
 
   // construct the themes directory path
-  strmfp(themesDir, G->ProgDir, "Themes");
+  AddPath(themesDir, G->ProgDir, "Themes", sizeof(themesDir));
 
   if((context = ObtainDirContextTags(EX_StringName, themesDir, TAG_DONE)) != NULL)
   {

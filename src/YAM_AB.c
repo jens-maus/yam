@@ -1497,7 +1497,8 @@ HOOKPROTONHNO(AB_Sort, void, int *arg)
 
   ENTER();
 
-  strmfp(fname, C->TempDir, ".addressbook.tmp");
+  AddPath(fname, C->TempDir, ".addressbook.tmp", sizeof(fname));
+
   if(AB_SaveTree(fname))
   {
     G->AB->SortBy = *arg;
@@ -1535,7 +1536,7 @@ HOOKPROTONHNONP(AB_OpenABookFunc, void)
 
   if((frc = ReqFile(ASL_ABOOK,G->AB->GUI.WI, tr(MSG_Open), REQF_NONE, G->MA_MailDir, "")))
   {
-    strmfp(G->AB_Filename, frc->drawer, frc->file);
+    AddPath(G->AB_Filename, frc->drawer, frc->file, sizeof(G->AB_Filename));
     AB_LoadTree(G->AB_Filename, FALSE, FALSE);
   }
 
@@ -1556,7 +1557,7 @@ HOOKPROTONHNONP(AB_AppendABookFunc, void)
   {
     char aname[SIZE_PATHFILE];
 
-    strmfp(aname, frc->drawer, frc->file);
+    AddPath(aname, frc->drawer, frc->file, sizeof(aname));
     AB_LoadTree(aname, TRUE, FALSE);
   }
 
@@ -1577,7 +1578,7 @@ HOOKPROTONHNONP(AB_ImportLDIFABookFunc, void)
   {
     char ldifname[SIZE_PATHFILE];
 
-    strmfp(ldifname, frc->drawer, frc->file);
+    AddPath(ldifname, frc->drawer, frc->file, sizeof(ldifname));
     AB_ImportTreeLDIF(ldifname, TRUE, FALSE);
   }
 
@@ -1598,7 +1599,7 @@ HOOKPROTONHNONP(AB_ExportLDIFABookFunc, void)
   {
     char ldifname[SIZE_PATHFILE];
 
-    strmfp(ldifname, frc->drawer, frc->file);
+    AddPath(ldifname, frc->drawer, frc->file, sizeof(ldifname));
     AB_ExportTreeLDIF(ldifname);
   }
 
@@ -1628,7 +1629,7 @@ HOOKPROTONHNO(AB_ImportTabCSVABookFunc, void, int *arg)
   {
     char aname[SIZE_PATHFILE];
 
-    strmfp(aname, frc->drawer, frc->file);
+    AddPath(aname, frc->drawer, frc->file, sizeof(aname));
     AB_ImportTreeTabCSV(aname, TRUE, FALSE, delim);
   }
 
@@ -1658,7 +1659,7 @@ HOOKPROTONHNO(AB_ExportTabCSVABookFunc, void, int *arg)
   {
     char aname[SIZE_PATHFILE];
 
-    strmfp(aname, frc->drawer, frc->file);
+    AddPath(aname, frc->drawer, frc->file, sizeof(aname));
     AB_ExportTreeTabCSV(aname, delim);
   }
 
@@ -1694,7 +1695,7 @@ HOOKPROTONHNONP(AB_SaveABookAsFunc, void)
 
   if((frc = ReqFile(ASL_ABOOK,G->AB->GUI.WI, tr(MSG_SaveAs), REQF_SAVEMODE, G->MA_MailDir, "")))
   {
-    strmfp(G->AB_Filename, frc->drawer, frc->file);
+    AddPath(G->AB_Filename, frc->drawer, frc->file, sizeof(G->AB_Filename));
     AB_SaveABookFunc();
   }
 
