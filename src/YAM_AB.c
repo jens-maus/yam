@@ -1253,18 +1253,16 @@ BOOL AB_ImportTreeTabCSV(char *fname, BOOL append, BOOL sorted, char delim)
 ///
 /// WriteTabCSVItem
 // writes TAB or comma separated item to an address book file
-static void WriteTabCSVItem(FILE *fh, char *value, char delim)
+static void WriteTabCSVItem(FILE *fh, const char *value, const char delim)
 {
   ENTER();
 
   if(value != NULL)
   {
     char c;
-    char *p;
-    BOOL addQuotes;
+    char *p = (char *)value;
+    BOOL addQuotes = FALSE;
 
-    p = value;
-    addQuotes = FALSE;
     // check if we need to add quotes to the item because it contains the separating character
     while((c = *p++) != '\0' && addQuotes == FALSE)
     {
@@ -1273,11 +1271,15 @@ static void WriteTabCSVItem(FILE *fh, char *value, char delim)
     }
 
     if(addQuotes)
+    {
       // surround the value by quotes and add the delimiter
       fprintf(fh, "\"%s\"%c", value, delim);
+    }
     else
+    {
       // just write the value and the delimiter
       fprintf(fh, "%s%c", value, delim);
+    }
   }
   else
     // no value given, that means this was the final item in the line
@@ -1289,7 +1291,7 @@ static void WriteTabCSVItem(FILE *fh, char *value, char delim)
 ///
 /// AB_ExportTreeNodeTabCSV
 //  Exports an address book with comma or tab separated entries
-static STACKEXT void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_TreeNode *list, char delim)
+static STACKEXT void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_TreeNode *list, const char delim)
 {
   int i;
 
@@ -1308,41 +1310,41 @@ static STACKEXT void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_Tree
       {
         case AET_USER:
         {
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
           WriteTabCSVItem(fh, ab->RealName, delim);
           WriteTabCSVItem(fh, ab->Alias, delim);
           WriteTabCSVItem(fh, ab->Address, delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
           WriteTabCSVItem(fh, ab->Phone, delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
           WriteTabCSVItem(fh, ab->Street, delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, "", delim);
           WriteTabCSVItem(fh, ab->City, delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim); // postal code
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim); // postal code
           WriteTabCSVItem(fh, ab->Country, delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
           WriteTabCSVItem(fh, ab->Homepage, delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
-          WriteTabCSVItem(fh, (char *)"", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
+          WriteTabCSVItem(fh, "", delim);
           WriteTabCSVItem(fh, NULL, delim);
         }
         break;
