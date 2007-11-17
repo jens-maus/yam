@@ -7,6 +7,9 @@ $URL$
 
 2007-11-17  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c: the attachment listview should now have the default background
+    colors assigned instead of using custom colors. This should really be the
+    job of the user to choose the default colors and not ours.
   * YAM.c: minor change to the developer warning requester text.
   * YAM_AB.c: fixed some minor compiler warnings.
   * YAM_UT.c, misc: replaced all calls to strmfp() with calls to our own
