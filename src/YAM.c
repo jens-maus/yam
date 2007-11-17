@@ -2948,6 +2948,7 @@ int main(int argc, char **argv)
         ErrReq.es_StructSize = sizeof(struct EasyStruct);
         ErrReq.es_Flags      = 0;
 
+        #if defined(EXPDATE)
         if(EXPDATE <= ds.ds_Days)
         {
           ErrReq.es_Title        = (STRPTR)"YAM Developer Version Expired!";
@@ -2978,25 +2979,29 @@ int main(int argc, char **argv)
           CLOSELIB(OpenURLBase, IOpenURL);
           goon = FALSE;
         }
+        #endif
 
         if(goon == TRUE && GetVar("I_KNOW_YAM_IS_UNDER_DEVELOPMENT", &var, sizeof(var), 0) == -1)
         {
           LONG answer;
 
-          ErrReq.es_Title        = (STRPTR)"YAM Developer Version Warning!";
-          ErrReq.es_TextFormat   = (STRPTR)"This is an *internal* developer version and\n"
-                                   "not recommended or intended for public use.\n"
-                                   "It may contain bugs that can lead to any loss\n"
-                                   "of data and no regular support for this version\n"
-                                   "will be provided in any form.\n\n"
-                                   "In addition, this version will automatically\n"
-                                   "expire after a certain time interval.\n\n"
-                                   "So if you're unsure and prefer to have a stable\n"
-                                   "installation instead of a possibly dangerous\n"
-                                   "version, please consider to use the current\n"
-                                   "stable release version available from:\n\n"
-                                   "http://www.yam.ch/\n\n"
-                                   "Thanks for your help in improving YAM!";
+          ErrReq.es_Title        = (STRPTR)"YAM Developer Snapshot Warning!";
+          ErrReq.es_TextFormat   = (STRPTR)"This is just an *internal* developer snapshot\n"
+                                           "version of YAM. It is not recommended or intended\n"
+                                           "for general use as it may contain bugs that can\n"
+                                           "lead to any loss of data. No regular support\n"
+                                           "for this version is provided.\n\n"
+                                           #if defined(EXPDATE)
+                                           "In addition, this version will automatically\n"
+                                           "expire after a certain time interval.\n\n"
+                                           #endif
+                                           "So, if you're unsure and prefer to have a stable\n"
+                                           "installation instead of a potentially dangerous\n"
+                                           "version, please consider to use the current\n"
+                                           "stable release version available from:\n\n"
+                                           "http://www.yam.ch/\n\n"
+                                           "Thanks for your help in improving YAM!";
+
           if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL &&
              GETINTERFACE("main", IOpenURL, OpenURLBase))
           {

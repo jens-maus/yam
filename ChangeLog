@@ -7,6 +7,8 @@ $URL$
 
 2007-11-17  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: minor change to the developer warning requester text.
+  * YAM_AB.c: fixed some minor compiler warnings.
   * YAM_UT.c, misc: replaced all calls to strmfp() with calls to our own
     buffer overflow safe AddPath() variant. This should make the dynamic path
     generation a bit safer and avoid buffer overflows. strmfp() should be
