@@ -2689,8 +2689,16 @@ LONG FileCount(const char *directory, const char *pattern)
 // is then stored in dst of max size 'size'.
 char *AddPath(char *dst, const char *src, const char *add, size_t size)
 {
+  ENTER();
+
   strlcpy(dst, src, size);
-  AddPart(dst, add, size);
+  if(AddPart(dst, add, size) == FALSE)
+  {
+    E(DBF_ALWAYS, "AddPath()/AddPart() buffer overflow detected!");
+    dst = NULL;
+  }
+
+  RETURN(dst);
   return dst;
 }
 ///

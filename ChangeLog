@@ -7,6 +7,8 @@ $URL$
 
 2007-11-21  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: changed AddPath() to return NULL in case the buffer would have
+    overflown.
   * YAM_UT.c, YAM_CO.c, FileInfo.c: replaced the obsolete PFExists() function
     with direct calls to AddPath() and FileExists().
   * YAM_RE.c, ReadMailGroup.c: removed the RE_FindPhotoOnDisk() function as
