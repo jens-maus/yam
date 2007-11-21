@@ -676,40 +676,25 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
   GETDATA;
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
   struct Mail *mail = rmData->mail;
-  enum NewMode mode = msg->mode;
-  int flags = 0;
 
   ENTER();
-
-  // check for qualifier keys
-  if(mode == NEW_FORWARD)
-  {
-    if(hasFlag(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
-      mode = NEW_BOUNCE;
-    else if(isFlagSet(msg->qualifier, IEQUALIFIER_CONTROL))
-      SET_FLAG(flags, NEWF_FWD_NOATTACH);
-  }
-  else if(mode == NEW_REPLY)
-  {
-    if(hasFlag(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
-      SET_FLAG(flags, NEWF_REP_PRIVATE);
-
-    if(hasFlag(msg->qualifier, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))
-      SET_FLAG(flags, NEWF_REP_MLIST);
-
-    if(isFlagSet(msg->qualifier, IEQUALIFIER_CONTROL))
-      SET_FLAG(flags, NEWF_REP_NOQUOTE);
-
-  }
 
   // then create a new mail depending on the current mode
   if(MailExists(mail, NULL))
   {
+    enum NewMode mode = msg->mode;
+    int flags;
+
     // create some fake mail list
     struct Mail *mlist[3];
     mlist[0] = (struct Mail*)1;
     mlist[1] = NULL;
     mlist[2] = mail;
+
+    // get the newmail flags depending on the currently
+    // set qualifier keys. We submit these flags to the
+    // NewMessage() function later on
+    mode = CheckNewMailQualifier(mode, msg->qualifier, &flags);
 
     switch(mode)
     {

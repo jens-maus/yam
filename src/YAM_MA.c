@@ -3025,51 +3025,14 @@ HOOKPROTONHNO(MA_NewMessageFunc, void, int *arg)
 {
   enum NewMode mode = arg[0];
   ULONG qual = arg[1];
-  int flags = 0;
+  int flags;
 
   ENTER();
 
-  // before we create a new message we check whether the
-  // user has pressed some qualifier while activating
-  // the NewMessageHook.
-  if(mode == NEW_FORWARD)
-  {
-    // if the user pressed LSHIFT or RSHIFT while pressing
-    // the 'forward' toolbar we do a BOUNCE message action
-    // instead.
-    if(hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
-      mode = NEW_BOUNCE;
-    else
-    {
-      // flag the forward message action to not
-      // add any attachments from the original mail if
-      // the CONTROL qualifier was pressed
-      if(isFlagSet(qual, IEQUALIFIER_CONTROL))
-        SET_FLAG(flags, NEWF_FWD_NOATTACH);
-
-      // flag the foward message action to use the
-      // alternative (not configured) forward mode
-      if(hasFlag(qual, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))
-        SET_FLAG(flags, NEWF_FWD_ALTMODE);
-    }
-  }
-  else if(mode == NEW_REPLY)
-  {
-    // flag the reply mail action to reply to the
-    // sender of the mail directly
-    if(hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
-      SET_FLAG(flags, NEWF_REP_PRIVATE);
-
-    // flag the reply mail action to reply to the mailing list
-    // address instead.
-    if(hasFlag(qual, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))
-      SET_FLAG(flags, NEWF_REP_MLIST);
-
-    // flag the reply mail action to not quote any text
-    // of the original mail.
-    if(isFlagSet(qual, IEQUALIFIER_CONTROL))
-      SET_FLAG(flags, NEWF_REP_NOQUOTE);
-  }
+  // get the newmail flags depending on the currently
+  // set qualifier keys. We submit these flags to the
+  // NewMessage() function later on
+  mode = CheckNewMailQualifier(mode, qual, &flags);
 
   // call the main NewMessage function which will
   // then in turn call the correct subfunction for
@@ -3079,6 +3042,61 @@ HOOKPROTONHNO(MA_NewMessageFunc, void, int *arg)
   LEAVE();
 }
 MakeHook(MA_NewMessageHook, MA_NewMessageFunc);
+
+///
+/// CheckNewMailQualifier()
+enum NewMode CheckNewMailQualifier(const enum NewMode mode, const ULONG qualifier, int *flags)
+{
+  enum NewMode newMode = mode;
+
+  ENTER();
+
+  // reset the flags
+  *flags = 0;
+
+  // depending on the newmode we go and check different qualifiers
+  if(mode == NEW_FORWARD)
+  {
+    // if the user pressed LSHIFT or RSHIFT while pressing
+    // the 'forward' toolbar we do a BOUNCE message action
+    // instead.
+    if(hasFlag(qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
+      newMode = NEW_BOUNCE;
+    else
+    {
+      // flag the forward message action to not
+      // add any attachments from the original mail if
+      // the CONTROL qualifier was pressed
+      if(isFlagSet(qualifier, IEQUALIFIER_CONTROL))
+        SET_FLAG(*flags, NEWF_FWD_NOATTACH);
+
+      // flag the foward message action to use the
+      // alternative (not configured) forward mode
+      if(hasFlag(qualifier, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))
+        SET_FLAG(*flags, NEWF_FWD_ALTMODE);
+    }
+  }
+  else if(mode == NEW_REPLY)
+  {
+    // flag the reply mail action to reply to the
+    // sender of the mail directly
+    if(hasFlag(qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
+      SET_FLAG(*flags, NEWF_REP_PRIVATE);
+
+    // flag the reply mail action to reply to the mailing list
+    // address instead.
+    if(hasFlag(qualifier, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))
+      SET_FLAG(*flags, NEWF_REP_MLIST);
+
+    // flag the reply mail action to not quote any text
+    // of the original mail.
+    if(isFlagSet(qualifier, IEQUALIFIER_CONTROL))
+      SET_FLAG(*flags, NEWF_REP_NOQUOTE);
+  }
+
+  RETURN(newMode);
+  return newMode;
+}
 
 ///
 /// MA_DeleteMessage

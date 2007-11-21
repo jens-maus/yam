@@ -7,6 +7,9 @@ $URL$
 
 2007-11-21  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c, ReadWindow.c: fixed bug #1836134 where the ALT qualifier was
+    only working from within the mainwindow toolbar. Now the whole qualifier
+    check is unified within an extra function.
   * YAM_UT.c: changed AddPath() to return NULL in case the buffer would have
     overflown.
   * YAM_UT.c, YAM_CO.c, FileInfo.c: replaced the obsolete PFExists() function

@@ -400,4 +400,6 @@ void  MA_SetupQuickSearchBar(void);
 char *MA_GetRealSubject(char *sub);
 void  MA_ChangeSelected(BOOL forceUpdate);
 
+enum NewMode CheckNewMailQualifier(const enum NewMode mode, const ULONG qualifier, int *flags);
+
 #endif /* YAM_MAIN_H */
