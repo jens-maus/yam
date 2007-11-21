@@ -69,6 +69,8 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
+#include "FileInfo.h"
+
 #include "Debug.h"
 
 extern struct Library *AmiSSLBase;
@@ -658,6 +660,7 @@ static int CO_DetectPGP(const struct Config *co)
 {
   int version = 0;
   APTR oldWindowPtr;
+  char fname[SIZE_PATHFILE];
 
   ENTER();
 
@@ -665,13 +668,13 @@ static int CO_DetectPGP(const struct Config *co)
   // 'Please insert volume' kind warnings
   oldWindowPtr = SetProcWindow((APTR)-1);
 
-  if(PFExists(co->PGPCmdPath, "pgpe"))
+  if(FileExists(AddPath(fname, co->PGPCmdPath, "pgpe", sizeof(fname))))
   {
     version = 5;
 
     D(DBF_STARTUP, "found PGP version 5 installed in '%s'", co->PGPCmdPath);
   }
-  else if(PFExists(co->PGPCmdPath, "pgp"))
+  else if(FileExists(AddPath(fname, co->PGPCmdPath, "pgp", sizeof(fname))))
   {
     version = 2;
 

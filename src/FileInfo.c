@@ -204,7 +204,7 @@ BOOL FileExists(const char *filename)
 
   ENTER();
 
-  if(filename[0] != '\0' &&
+  if(filename != NULL && filename[0] != '\0' &&
      (lock = Lock(filename, ACCESS_READ)))
   {
     exists = TRUE;

@@ -2490,7 +2490,12 @@ static BOOL IsFolderDir(const char *dir)
   }
 
   if(result == FALSE)
-    result = (PFExists(dir, ".fconfig") || PFExists(dir, ".index"));
+  {
+    char fname[SIZE_PATHFILE];
+
+    result = (FileExists(AddPath(fname, dir, ".fconfig", sizeof(fname))) ||
+              FileExists(AddPath(fname, dir, ".index", sizeof(fname))));
+  }
 
   RETURN(result);
   return result;
@@ -2524,26 +2529,6 @@ BOOL AllFolderLoaded(void)
 
   RETURN(allLoaded);
   return allLoaded;
-}
-///
-/// PFExists
-//  Checks if a file exists in the specified directory
-BOOL PFExists(const char *path, const char *file)
-{
-  BOOL exists = FALSE;
-
-  ENTER();
-
-  if(file != NULL && file[0] != '\0')
-  {
-    char fname[SIZE_PATHFILE];
-
-    AddPath(fname, path, file, sizeof(fname));
-    exists = FileExists(fname);
-  }
-
-  RETURN(exists);
-  return exists;
 }
 ///
 /// DeleteMailDir (rec)

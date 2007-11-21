@@ -362,7 +362,6 @@ BOOL     MatchNoCase(const char *string, const char *match);
 char *   MyStrChr(const char *s, const char c);
 struct TempFile *OpenTempFile(const char *mode);
 BOOL     AllFolderLoaded(void);
-BOOL     PFExists(const char *path, const char *file);
 void     PGPClearPassPhrase(BOOL force);
 int      PGPCommand(const char *progname, const char *options, int flags);
 void     PGPGetPassPhrase(void);
