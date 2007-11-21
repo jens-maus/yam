@@ -3444,44 +3444,6 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
    return NULL;
 }
 ///
-/// RE_FindPhotoOnDisk
-//  Searches portrait of sender in the gallery directory
-BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo)
-{
-  BOOL found = FALSE;
-
-  ENTER();
-
-  photo[0] = '\0';
-  if(ab->Photo[0] != '\0')
-    strcpy(photo, ab->Photo);
-  else if(C->GalleryDir[0] != '\0')
-  {
-    char fname[SIZE_FILE];
-
-    strlcpy(fname, ab->RealName, sizeof(fname));
-    if(PFExists(C->GalleryDir, fname))
-      AddPath(photo, C->GalleryDir, fname, SIZE_PATHFILE);
-    else
-    {
-      strlcpy(fname, ab->Address, sizeof(fname));
-      if(PFExists(C->GalleryDir, fname))
-        AddPath(photo, C->GalleryDir, fname, SIZE_PATHFILE);
-    }
-  }
-
-  if(photo[0] != '\0')
-  {
-    LONG size;
-
-    if(ObtainFileInfo(photo, FI_SIZE, &size) == TRUE && size > 0)
-      found = TRUE;
-  }
-
-  RETURN(found);
-  return found;
-}
-///
 /// RE_ClickedOnMessage
 //  User clicked on a e-mail address
 void RE_ClickedOnMessage(char *address)

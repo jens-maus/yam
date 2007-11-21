@@ -822,7 +822,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
         HideAttachmentGroup(data);
 
       // make sure the header display is also updated correctly.
-      if(!hasUpdateTextOnlyFlag(msg->flags))
+      if(hasUpdateTextOnlyFlag(msg->flags) == FALSE)
         DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, msg->flags);
 
       // before we can put the message body into the TextEditor, we have to preparse the text and
@@ -899,9 +899,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
   {
     // check first if the mail file exists and if not we have to exit with an error
     if(FileExists(mail->MailFile) == FALSE)
-    {
       ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
-    }
   }
 
   // make sure we know that there is some content
@@ -1089,41 +1087,45 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
       }
     }
 
+    // now we check if that addressbook entry has a specified
+    // photo entry and if so we go and show that sender picture
     if((rmData->senderInfoMode == SIM_ALL || rmData->senderInfoMode == SIM_IMAGE) &&
-       DoMethod(data->senderImageGroup, MUIM_Group_InitChange))
+       (data->senderImage != NULL || FileExists(ab->Photo)))
     {
-      char photopath[SIZE_PATHFILE];
-
-      if(data->senderImage != NULL)
+      if(DoMethod(data->senderImageGroup, MUIM_Group_InitChange))
       {
-        DoMethod(data->senderImageGroup, OM_REMMEMBER, data->senderImage);
-        MUI_DisposeObject(data->senderImage);
+        if(data->senderImage != NULL)
+        {
+          DoMethod(data->senderImageGroup, OM_REMMEMBER, data->senderImage);
+          MUI_DisposeObject(data->senderImage);
+          data->senderImage = NULL;
+        }
+
+        if(FileExists(ab->Photo) &&
+           (data->senderImage = UserImageObject,
+                                  MUIA_Weight,                100,
+                                  MUIA_UserImage_Address,     from->Address,
+                                  MUIA_UserImage_Filename,    ab->Photo,
+                                  MUIA_UserImage_MaxHeight,   64,
+                                  MUIA_UserImage_MaxWidth,    64,
+                                  MUIA_UserImage_NoMinHeight, TRUE,
+                                End))
+        {
+          D(DBF_GUI, "SenderPicture found: %s %ld %ld", ab->Photo, xget(data->headerList, MUIA_Width), xget(data->headerList, MUIA_Height));
+
+          DoMethod(data->senderImageGroup, OM_ADDMEMBER, data->senderImage);
+
+          // resort the group so that the space object is at the bottom of it.
+          DoMethod(data->senderImageGroup, MUIM_Group_Sort, data->senderImage,
+                                                            data->senderImageSpace,
+                                                            NULL);
+        }
+
+        DoMethod(data->senderImageGroup, MUIM_Group_ExitChange);
       }
-
-      data->senderImage = NULL;
-
-      if(RE_FindPhotoOnDisk(ab, photopath) == TRUE &&
-         (data->senderImage = UserImageObject,
-                                MUIA_Weight,                100,
-                                MUIA_UserImage_Address,     from->Address,
-                                MUIA_UserImage_Filename,    photopath,
-                                MUIA_UserImage_MaxHeight,   64,
-                                MUIA_UserImage_MaxWidth,    64,
-                                MUIA_UserImage_NoMinHeight, TRUE,
-                              End))
-      {
-        D(DBF_GUI, "SenderPicture found: %s %ld %ld", photopath, xget(data->headerList, MUIA_Width), xget(data->headerList, MUIA_Height));
-
-        DoMethod(data->senderImageGroup, OM_ADDMEMBER, data->senderImage);
-
-        // resort the group so that the space object is at the bottom of it.
-        DoMethod(data->senderImageGroup, MUIM_Group_Sort, data->senderImage,
-                                                          data->senderImageSpace,
-                                                          NULL);
-      }
-      DoMethod(data->senderImageGroup, MUIM_Group_ExitChange);
     }
   }
+
   set(data->senderImageGroup, MUIA_ShowMe, (rmData->senderInfoMode == SIM_ALL ||
                                             rmData->senderInfoMode == SIM_IMAGE) &&
                                            (data->senderImage != NULL));

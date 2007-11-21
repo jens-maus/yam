@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-21  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c, ReadMailGroup.c: removed the RE_FindPhotoOnDisk() function as
+    it was not necessary to search for a photo file other than what was
+    specified by the user itself in the addressbook. This should also fix a
+    bug where in case the sender realname/address contained a ':' YAM was
+    asking to "insert a disk" for the search.
+  * QuickSearchBar.c: minor cosmetic changes to the object layout.
+
 2007-11-17  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: the attachment listview should now have the default background

@@ -160,7 +160,6 @@ void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab);
 void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new);
 struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ);
 void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor);
-BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo);
 void RE_ClickedOnMessage(char *address);
 BOOL RE_PrintFile(const char *filename);
 struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAllFolder, Object *readWindow);
