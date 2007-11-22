@@ -190,6 +190,15 @@ BOOL ObtainFileInfo(const char *name, enum FileInfo which, void *valuePtr)
   }
   #endif
 
+  // In case the query failed, but we have been asked for the type of the object,
+  // then we will simply signal success and tell that the requested object does
+  // not exist.
+  if(result == FALSE && which == FI_TYPE)
+  {
+    *((ULONG *)valuePtr) = FIT_NONEXIST;
+    result = TRUE;
+  }
+
   RETURN(result);
   return result;
 }

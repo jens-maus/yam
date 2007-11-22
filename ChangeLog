@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-22  Thore Böckelmann <tboeckel@gmx.de>
+
+  * FileInfo.c: querying the non-existance of a file/directory via
+    ObtainFileInfo() always failed because of the non-existance of the object.
+
 2007-11-21  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c, ReadWindow.c: fixed bug #1836134 where the ALT qualifier was
