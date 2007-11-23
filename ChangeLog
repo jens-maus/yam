@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * ReadMailGroup.c, YAM_RE.c: fixed bug #1836623 where YAM always searched
+    for sender information by comparing also the realname of the sender in
+    case the mail address wasn't found in the addressbook. This, however,
+    caused YAM to sometimes show the incorrect sender information as there
+    might be more than one person with the same realname. Now only the mail
+    address is compared as that one can be assumed to be unique.
+
 2007-11-22  Thore Böckelmann <tboeckel@gmx.de>
 
   * FileInfo.c: querying the non-existance of a file/directory via

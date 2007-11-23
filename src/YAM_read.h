@@ -156,7 +156,6 @@ struct ReadMailData *GetReadMailData(const struct Mail *mail);
 BOOL UpdateReadMailDataStatus(const struct Mail *mail);
 BOOL RE_LoadMessage(struct ReadMailData *rmData);
 char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode rMode);
-void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab);
 void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new);
 struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ);
 void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor);

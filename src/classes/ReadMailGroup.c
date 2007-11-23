@@ -294,6 +294,135 @@ static void HideAttachmentGroup(struct Data *data)
   LEAVE();
 }
 ///
+/// ParamEnd
+//  Finds next parameter in header field
+static char *ParamEnd(char *s)
+{
+  char *result = NULL;
+  BOOL inquotes = FALSE;
+
+  ENTER();
+
+  while(*s)
+  {
+    if(inquotes)
+    {
+      if(*s == '"')
+        inquotes = FALSE;
+      else if(*s == '\\')
+        ++s;
+    }
+    else if(*s == ';')
+    {
+      result = s;
+      break;
+    }
+    else if(*s == '"')
+      inquotes = TRUE;
+
+    ++s;
+  }
+
+  RETURN(result);
+  return result;
+}
+///
+/// Cleanse
+//  Removes trailing and leading spaces and converts string to lower case
+static char *Cleanse(char *s)
+{
+  char *tmp;
+
+  ENTER();
+
+  // skip all leading spaces and return pointer
+  // to first real char.
+  s = TrimStart(s);
+
+  // convert all chars to lowercase no matter what
+  for(tmp=s; *tmp; ++tmp)
+    *tmp = tolower((int)*tmp);
+
+  // now we walk back from the end of the string
+  // and strip the trailing spaces.
+  while(tmp > s && *--tmp && isspace(*tmp))
+    *tmp = '\0';
+
+  RETURN(s);
+  return s;
+}
+
+///
+/// ExtractSenderInfo
+// Extracts all sender information of a mail and put it
+// into a supplied ABEntry. (parses X-SenderInfo header field)
+static void ExtractSenderInfo(const struct Mail *mail, struct ABEntry *ab)
+{
+  ENTER();
+
+  memset(ab, 0, sizeof(struct ABEntry));
+  strlcpy(ab->Address, mail->From.Address, sizeof(ab->Address));
+  strlcpy(ab->RealName, mail->From.RealName, sizeof(ab->RealName));
+
+  if(isSenderInfoMail(mail))
+  {
+    struct ExtendedMail *email;
+
+    if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
+    {
+      char *s;
+
+      if((s = strchr(email->SenderInfo, ';')) != NULL)
+      {
+        char *t;
+
+        *s++ = '\0';
+        do
+        {
+          char *eq;
+
+          if((t = ParamEnd(s)) != NULL)
+            *t++ = '\0';
+
+          if((eq = strchr(s, '=')) == NULL)
+          	Cleanse(s);
+          else
+          {
+            *eq++ = '\0';
+            s = Cleanse(s);
+            eq = TrimStart(eq);
+            TrimEnd(eq);
+            UnquoteString(eq, FALSE);
+
+            if(stricmp(s, "street") == 0)
+              strlcpy(ab->Street, eq, sizeof(ab->Street));
+            else if(stricmp(s, "city") == 0)
+              strlcpy(ab->City, eq, sizeof(ab->City));
+            else if(stricmp(s, "country") == 0)
+              strlcpy(ab->Country, eq, sizeof(ab->Country));
+            else if(stricmp(s, "phone") == 0)
+              strlcpy(ab->Phone, eq, sizeof(ab->Phone));
+            else if(stricmp(s, "homepage") == 0)
+              strlcpy(ab->Homepage, eq, sizeof(ab->Homepage));
+            else if(stricmp(s, "dob") == 0)
+              ab->BirthDay = atol(eq);
+            else if(stricmp(s, "picture") == 0)
+              strlcpy(ab->Photo, eq, sizeof(ab->Photo));
+
+            ab->Type = 1;
+          }
+          s = t;
+        }
+        while(t != NULL);
+      }
+
+      MA_FreeEMailStruct(email);
+    }
+  }
+
+  LEAVE();
+}
+///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -963,13 +1092,14 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
     }
   }
 
-  if((hits = AB_SearchEntry(from->Address, ASM_ADDRESS|ASM_USER, &ab)) == 0 &&
-     *from->RealName != '\0')
-  {
-    hits = AB_SearchEntry(from->RealName, ASM_REALNAME|ASM_USER, &ab);
-  }
+  // we search in the address for the matching entry by just comparing
+  // the email addresses or otherwise we can't be certain that the found
+  // addressbook entry really belongs to the sender address of the mail.
+  hits = AB_SearchEntry(from->Address, ASM_ADDRESS|ASM_USER, &ab);
 
-  RE_GetSenderInfo(rmData->mail, &abtmpl);
+  // extract the realname/email address and
+  // X-SenderInfo information from the mail into a temporary ABEntry
+  ExtractSenderInfo(rmData->mail, &abtmpl);
 
   if(stricmp(from->Address, C->EmailAddress) == 0 || stricmp(from->RealName, C->RealName) == 0)
   {
