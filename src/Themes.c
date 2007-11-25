@@ -260,62 +260,51 @@ void AllocTheme(struct Theme *theme)
   theme->version = NULL;
 
   // contruct the path to the themes directory
-  strlcpy(theme->directory, G->ProgDir, sizeof(theme->directory));
-  AddPart(theme->directory, "themes", sizeof(theme->directory));
+  AddPath(theme->directory, G->ProgDir, "themes", sizeof(theme->directory));
   AddPart(theme->directory, C->ThemeName, sizeof(theme->directory));
 
   D(DBF_THEME, "theme directory: '%s' '%s'", theme->directory, G->ProgDir);
 
   // construct pathes to config images
-  strlcpy(dirname, theme->directory, sizeof(dirname));
-  AddPart(dirname, "config", sizeof(dirname));
+  AddPath(dirname, theme->directory, "config", sizeof(dirname));
   for(i=ci_First; i < ci_Max; i++)
   {
-    strlcpy(filepath, dirname, sizeof(filepath));
-    AddPart(filepath, configImageIDs[i], sizeof(filepath));
+    AddPath(filepath, dirname, configImageIDs[i], sizeof(filepath));
     theme->configImages[i] = strdup(filepath);
   }
 
   // construct pathes to folder images
-  strlcpy(dirname, theme->directory, sizeof(dirname));
-  AddPart(dirname, "folder", sizeof(dirname));
+  AddPath(dirname, theme->directory, "folder", sizeof(dirname));
   for(i=fi_First; i < fi_Max; i++)
   {
-    strlcpy(filepath, dirname, sizeof(filepath));
-    AddPart(filepath, folderImageIDs[i], sizeof(filepath));
+    AddPath(filepath, dirname, folderImageIDs[i], sizeof(filepath));
     theme->folderImages[i] = strdup(filepath);
   }
 
   // construct pathes to icon images
-  strlcpy(dirname, theme->directory, sizeof(dirname));
-  AddPart(dirname, "icon", sizeof(dirname));
+  AddPath(dirname, theme->directory, "icon", sizeof(dirname));
   for(i=ii_First; i < ii_Max; i++)
   {
-    strlcpy(filepath, dirname, sizeof(filepath));
-    AddPart(filepath, iconImageIDs[i], sizeof(filepath));
+    AddPath(filepath, dirname, iconImageIDs[i], sizeof(filepath));
     theme->iconImages[i] = strdup(filepath);
   }
 
   // construct pathes to status images
-  strlcpy(dirname, theme->directory, sizeof(dirname));
-  AddPart(dirname, "status", sizeof(dirname));
+  AddPath(dirname, theme->directory, "status", sizeof(dirname));
   for(i=si_First; i < si_Max; i++)
   {
-    strlcpy(filepath, dirname, sizeof(filepath));
-    AddPart(filepath, statusImageIDs[i], sizeof(filepath));
+    AddPath(filepath, dirname, statusImageIDs[i], sizeof(filepath));
     theme->statusImages[i] = strdup(filepath);
   }
 
   // construct pathes for the toolbar images
-  strlcpy(dirname, theme->directory, sizeof(dirname));
-  AddPart(dirname, "toolbar", sizeof(dirname));
+  AddPath(dirname, theme->directory, "toolbar", sizeof(dirname));
   for(j=tbim_Normal; j < tbim_Max; j++)
   {
     // main window toolbar
     for(i=mwtbi_First; i < mwtbi_Null; i++)
     {
-      strlcpy(filepath, dirname, sizeof(filepath));
-      AddPart(filepath, tbii[mainWindowToolbarImageIDs[i]][j], sizeof(filepath));
+      AddPath(filepath, dirname, tbii[mainWindowToolbarImageIDs[i]][j], sizeof(filepath));
       theme->mainWindowToolbarImages[j][i] = strdup(filepath);
     }
     // the array must be NULL terminated
@@ -324,8 +313,7 @@ void AllocTheme(struct Theme *theme)
     // read window toolbar
     for(i=rwtbi_First; i < rwtbi_Null; i++)
     {
-      strlcpy(filepath, dirname, sizeof(filepath));
-      AddPart(filepath, tbii[readWindowToolbarImageIDs[i]][j], sizeof(filepath));
+      AddPath(filepath, dirname, tbii[readWindowToolbarImageIDs[i]][j], sizeof(filepath));
       theme->readWindowToolbarImages[j][i] = strdup(filepath);
     }
     // the array must be NULL terminated
@@ -334,8 +322,7 @@ void AllocTheme(struct Theme *theme)
     // write window toolbar
     for(i=wwtbi_First; i < wwtbi_Null; i++)
     {
-      strlcpy(filepath, dirname, sizeof(filepath));
-      AddPart(filepath, tbii[writeWindowToolbarImageIDs[i]][j], sizeof(filepath));
+      AddPath(filepath, dirname, tbii[writeWindowToolbarImageIDs[i]][j], sizeof(filepath));
       theme->writeWindowToolbarImages[j][i] = strdup(filepath);
     }
     // the array must be NULL terminated
@@ -344,8 +331,7 @@ void AllocTheme(struct Theme *theme)
     // addressbook window toolbar
     for(i=awtbi_First; i < awtbi_Null; i++)
     {
-      strlcpy(filepath, dirname, sizeof(filepath));
-      AddPart(filepath, tbii[abookWindowToolbarImageIDs[i]][j], sizeof(filepath));
+      AddPath(filepath, dirname, tbii[abookWindowToolbarImageIDs[i]][j], sizeof(filepath));
       theme->abookWindowToolbarImages[j][i] = strdup(filepath);
     }
     // the array must be NULL terminated
@@ -675,8 +661,7 @@ BOOL LoadTheme(struct Theme *theme)
 
   // Parse the .theme file within the
   // theme directory
-  strlcpy(themeFile, theme->directory, sizeof(themeFile));
-  AddPart(themeFile, ".theme", sizeof(themeFile));
+  AddPath(themeFile, theme->directory, ".theme", sizeof(themeFile));
   if(ParseThemeFile(themeFile) == TRUE)
     D(DBF_THEME, "successfully parsed theme file '%s'", themeFile);
   else
