@@ -1618,13 +1618,6 @@ static void Terminate(void)
   CLOSELIB(ApplicationBase, IApplication);
   #endif
 
-  D(DBF_STARTUP, "freeing disk objects...");
-  for(i = 0; i < MAXICONS; i++)
-  {
-    if(G->DiskObj[i] != NULL)
-      FreeDiskObject(G->DiskObj[i]);
-  }
-
   D(DBF_STARTUP, "freeing toolbar cache...");
   ToolbarCacheCleanup();
 
@@ -1651,6 +1644,9 @@ static void Terminate(void)
   D(DBF_STARTUP, "freeing main application object...");
   if(G->App != NULL)
     MUI_DisposeObject(G->App);
+
+  D(DBF_STARTUP, "unloading/freeing theme images...");
+  FreeTheme(&G->theme);
 
   D(DBF_STARTUP, "freeing image cache...");
   ImageCacheCleanup();
@@ -2035,9 +2031,9 @@ static BOOL Root_New(BOOL hidden)
 }
 ///
 
-/// Initialise2
+/// InitAfterLogin
 //  Phase 2 of program initialization (after user logs in)
-static void Initialise2(void)
+static void InitAfterLogin(void)
 {
   struct Folder **oldfolders = NULL;
   BOOL newfolders;
@@ -2048,13 +2044,25 @@ static void Initialise2(void)
 
   // clear the configuration (set defaults) and load it
   // from the user defined .config file
-  SplashProgress(tr(MSG_LoadingConfig), 30);
+  SplashProgress(tr(MSG_LoadingConfig), 20);
+
   if(CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders) == FALSE)
   {
     // clear the config with defaults if the config file couldn't be loaded
     CO_SetDefaults(C, cp_AllPages);
   }
   CO_Validate(C, FALSE);
+
+  // load all necessary graphics/themes
+  SplashProgress(tr(MSG_LoadingGFX), 30);
+
+  // load the choosen theme of the user
+  LoadTheme(&G->theme);
+
+  // make sure we initialize the toolbar Cache which in turn will
+  // cause YAM to cache all often used toolbars and their images
+  if(ToolbarCacheInit() == FALSE)
+    Abort(NULL); // exit the application
 
   // create all necessary GUI elements
   SplashProgress(tr(MSG_CreatingGUI), 40);
@@ -2074,6 +2082,7 @@ static void Initialise2(void)
                                                   REGAPP_AppIconInfo,   (uint32)&aii,
                                                   REGAPP_Hidden,        xget(G->App, MUIA_Application_Iconified),
                                                   TAG_DONE);
+
     D(DBF_STARTUP, "Registered YAM to application.library with appID: %ld", G->applicationID);
   }
   #endif
@@ -2327,18 +2336,11 @@ static void Initialise2(void)
   LEAVE();
 }
 ///
-/// Initialise
+/// InitBeforeLogin
 //  Phase 1 of program initialization (before user logs in)
-static void Initialise(BOOL hidden)
+static void InitBeforeLogin(BOOL hidden)
 {
   int i;
-  const char *errorMsg = NULL;
-  char pathbuf[SIZE_PATH];
-  char filebuf[SIZE_PATHFILE];
-  static const char *const icnames[MAXICONS] =
-  {
-    "empty", "old", "new", "check"
-  };
 
   ENTER();
 
@@ -2443,100 +2445,8 @@ static void Initialise(BOOL hidden)
     Abort(activeYAM ? NULL : tr(MSG_ErrorMuiApp));
   }
 
-  // signal the splash window to show a 10% gauge
-  SplashProgress(tr(MSG_LoadingGFX), 10);
-
-  // before we load our images in YAM:icons we check the image layout
-  // by loading the ".imglayout" file, checking if it matches the version
-  // we are currently using or present the user a warning requester
-  // accordingly.
-  AddPath(pathbuf, G->ProgDir, "Icons", sizeof(pathbuf));
-  AddPath(filebuf, pathbuf, ".imglayout", sizeof(filebuf));
-  if(FileExists(filebuf))
-  {
-    FILE *fp;
-
-    if((fp = fopen(filebuf, "r")))
-    {
-      char verBuf[5];
-
-      // we load the first 4 bytes of the file as these bytes contain the
-      // necessary information
-      if(fread(verBuf, 1, 4, fp) == 4)
-      {
-        verBuf[4] = '\0';
-
-        if(strnicmp(verBuf, "YIM", 3) == 0)
-        {
-          if(atoi(&verBuf[3]) != IMGLAYOUT_VERSION)
-            errorMsg = tr(MSG_ER_WRONGIMGLAYOUTVER);
-        }
-        else
-          errorMsg = tr(MSG_ER_LOADIMGLAYOUTFAILED);
-      }
-      else
-        errorMsg = tr(MSG_ER_LOADIMGLAYOUTFAILED);
-
-      fclose(fp);
-    }
-    else
-      errorMsg = tr(MSG_ER_LOADIMGLAYOUTFAILED);
-  }
-  else
-    errorMsg = tr(MSG_ER_MISSINGIMGVERFILE);
-
-  if(errorMsg != NULL)
-  {
-    if(MUI_Request(G->App, NULL, 0, tr(MSG_ER_IMGLAYOUTFAILURE),
-                                    tr(MSG_ER_EXITIGNORE),
-                                    errorMsg, pathbuf))
-    {
-      // exit the application now
-      Abort(NULL);
-    }
-  }
-
-  for(i=0; i < MAXICONS; i++)
-  {
-    AddPath(filebuf, pathbuf, icnames[i], sizeof(filebuf));
-
-    // depending on the icon.library version we use either GetIconTags()
-    // or the older GetDiskObject() function
-    if(IconBase->lib_Version >= 44)
-      G->DiskObj[i] = GetIconTags(filebuf, TAG_DONE);
-    else
-      G->DiskObj[i] = GetDiskObject(filebuf);
-
-    // load the diskobject and report an error if something went wrong.
-    if(G->DiskObj[i] == NULL && G->NoImageWarning == FALSE)
-    {
-      int reqResult;
-
-      if((reqResult = MUI_Request(G->App, NULL, 0, tr(MSG_ER_ICONOBJECT_TITLE),
-                                                   tr(MSG_ER_EXITIGNOREALL),
-                                                   tr(MSG_ER_ICONOBJECT),
-                                                   icnames[i], pathbuf)))
-      {
-        if(reqResult == 2)
-          G->NoImageWarning = TRUE;
-        else
-          Abort(NULL); // exit the application
-      }
-    }
-  }
-
-  // make sure we initialize the image Cache which in turn will
-  // cause YAM to load all static images from the YAM:Icons directory
-  if(ImageCacheInit(pathbuf) == FALSE)
-    Abort(NULL); // exit the application
-
-  // make sure we initialize the toolbar Cache which in turn will
-  // cause YAM to cache all often used toolbars and their images
-  if(ToolbarCacheInit(pathbuf) == FALSE)
-    Abort(NULL); // exit the application
-
-  // lets advance the progress bar to 20%
-  SplashProgress(tr(MSG_InitLibs), 20);
+  // signal that we are loading our libraries
+  SplashProgress(tr(MSG_InitLibs), 10);
 
   // try to open xpkmaster.library v5.0+ as this is somewhat the most
   // stable version available. Previous version might have some issues
@@ -3148,15 +3058,15 @@ int main(int argc, char **argv)
 
     if(yamFirst == TRUE)
     {
-      Initialise((BOOL)args.hide);
+      InitBeforeLogin((BOOL)args.hide);
       Login(args.user, args.password, args.maildir, args.prefsfile);
-      Initialise2();
+      InitAfterLogin();
     }
     else
     {
-      Initialise(FALSE);
+      InitBeforeLogin(FALSE);
       Login(NULL, NULL, NULL, NULL);
-      Initialise2();
+      InitAfterLogin();
     }
 
     DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
@@ -3523,11 +3433,13 @@ int main(int argc, char **argv)
                 // user has pressed "Snapshot" on the AppIcon
                 case AMCLASSICON_Snapshot:
                 {
-                  if(G->CurrentDiskObj != NULL)
+                  struct DiskObject *dobj;
+
+                  if((dobj = G->theme.icons[G->currentAppIcon]) != NULL)
                   {
                     // remember the position.
-                    C->IconPositionX = G->CurrentDiskObj->do_CurrentX;
-                    C->IconPositionY = G->CurrentDiskObj->do_CurrentY;
+                    C->IconPositionX = dobj->do_CurrentX;
+                    C->IconPositionY = dobj->do_CurrentY;
 
                     // we also save the configuration here, even if that
                     // will trigger that other configurations will

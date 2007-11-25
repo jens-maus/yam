@@ -5,6 +5,23 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-25  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: merged the changes from the 'themes' branch back to the main trunk
+    as the changes seem to work quite smooth here and we want to get the new
+    themes system to a broader audience. However, be warned that the new
+    'themes' system may fail for you. So please report any issue you might find
+    so that we can quickly fix issues before we are going stable. So go
+    and copy the new "themes" directory to your YAM installation and see if
+    everything works and please note that this is currently work-in-progress.
+  * Themes.c,h, Aboutwindow.c, ShutdownWindow.c, Splashwindow.c: the YAM logo
+    should now also be loaded from the themes directory instead of the old
+    icons directory.
+  * Themes, misc: reworked the new upcoming themes management to load and
+    cache all theme images right after a user login rather than before the
+    login. This should finally get the new themes management working so that
+    we soon can merge our new themes management to the main trunk.
+
 2007-11-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * ReadMailGroup.c, YAM_RE.c: fixed bug #1836623 where YAM always searched
@@ -982,6 +999,16 @@ $URL$
     configuration window. This should allow to identify if the config was
     changed by the user or not. However, more work needs to be done to get
     that working.
+
+2007-07-10  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Themes.c: Name, Author and Version keywords are parsed now.
+  * themes/default.theme: added default theme description.
+  * YAM.c: readded call to ImageCacheCleanup().
+  * ReadWindowStatusBar.c: corrected initialization.
+  * misc: several changes to integrate the themes management. At least it is
+    possible to use the internal "empty" theme (without any graphics) and to
+    load arbitrary other themes from external files.
 
 2007-07-09  Thore Böckelmann <tboeckel@gmx.de>
 

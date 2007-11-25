@@ -41,6 +41,7 @@
 #include "YAM_userlist.h"    /* struct Users */
 #include "BayesFilter.h"     /* struct TokenAnalyzer */
 #include "HashTable.h"       /* struct HashTable */
+#include "Themes.h"          /* struct Theme */
 
 /**************************************************************************/
 
@@ -80,8 +81,6 @@ struct Global
    struct AppIcon *         AppIcon;
    struct MsgPort *         AppPort;
    struct RexxHost *        RexxHost;
-   struct DiskObject *      DiskObj[MAXICONS];
-   struct DiskObject *      CurrentDiskObj;
    struct FileReqCache *    FileReqCache[ASL_MAX];
    struct Locale *          Locale;
    struct Catalog *         Catalog;
@@ -114,8 +113,9 @@ struct Global
    int                      CO_DST;
    int                      ER_NumErr;
    int                      ActiveWriteWin;
+   enum IconImage           currentAppIcon;
    #if defined(__amigaos4__)
-   int                      LastIconID;
+   enum IconImage           LastIconID;
    #endif
    time_t                   LastPGPUsage;
 
@@ -146,6 +146,7 @@ struct Global
    struct MinList           readMailDataList;
    struct MinList           xpkPackerList;
    struct MinList           zombieFileList;
+   struct Theme             theme;
    struct TokenAnalyzer     spamFilter;
 
    char                     ProgDir[SIZE_PATH];

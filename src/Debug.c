@@ -118,6 +118,7 @@ void SetupDebug(void)
       { "uidl",     DBF_UIDL    },
       { "hash",     DBF_HASH    },
       { "print",    DBF_PRINT   },
+      { "theme",    DBF_THEME   },
       { "all",      DBF_ALL     },
       { NULL,       0           }
     };

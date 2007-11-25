@@ -54,7 +54,6 @@ struct ImageCacheNode
 
 // the prototypes for our public available functions
 BOOL ImageCacheSetup(void);
-BOOL ImageCacheInit(const char *path);
 void ImageCacheCleanup(void);
 struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const struct Screen *scr);
 void ReleaseImage(const char *id, BOOL dispose);
@@ -65,23 +64,9 @@ BOOL IsImageInCache(const char *id);
 enum TBType  { TBT_ReadWindow, TBT_WriteWindow, TBT_AbookWindow };
 enum TBImage { TBI_Normal, TBI_Ghosted, TBI_Selected };
 
-BOOL ToolbarCacheInit(const char *imagePath);
+BOOL ToolbarCacheInit(void);
 void ToolbarCacheCleanup(void);
 struct MUIS_TheBar_Brush **ObtainToolbarImages(const enum TBType toolbar, const enum TBImage image);
 BOOL IsToolbarInCache(const enum TBType toolbar);
-
-// the imagelayout define which defines the current "version" of
-// the image layout we are currently using
-// Please note that as soon as you change something to the internal
-// image array of the image cache you have to bump the VERSION accordingly
-// to make sure the user is reminded of having the correct image layout
-// installed or not.
-//
-// VERSIONS:
-// 1 : <= YAM 2.3
-// 2 : == YAM 2.4-2.4p1
-// 3 : >= YAM 2.5
-//
-#define IMGLAYOUT_VERSION 3
 
 #endif // IMAGECACHE_H

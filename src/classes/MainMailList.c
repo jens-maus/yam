@@ -455,25 +455,25 @@ OVERLOAD(OM_NEW)
   data = (struct Data *)INST_DATA(cl,obj);
 
   // prepare the mail status images
-  data->statusImage[SICON_ID_UNREAD]   = MakeImageObject("status_unread", "status_unread");
-  data->statusImage[SICON_ID_OLD]      = MakeImageObject("status_old", "status_old");
-  data->statusImage[SICON_ID_FORWARD]  = MakeImageObject("status_forward", "status_forward");
-  data->statusImage[SICON_ID_REPLY]    = MakeImageObject("status_reply", "status_reply");
-  data->statusImage[SICON_ID_WAITSEND] = MakeImageObject("status_waitsend", "status_waitsend");
-  data->statusImage[SICON_ID_ERROR]    = MakeImageObject("status_error", "status_error");
-  data->statusImage[SICON_ID_HOLD]     = MakeImageObject("status_hold", "status_hold");
-  data->statusImage[SICON_ID_SENT]     = MakeImageObject("status_sent", "status_sent");
-  data->statusImage[SICON_ID_NEW]      = MakeImageObject("status_new", "status_new");
-  data->statusImage[SICON_ID_DELETE]   = MakeImageObject("status_delete", "status_delete");
-  data->statusImage[SICON_ID_DOWNLOAD] = MakeImageObject("status_download", "status_download");
-  data->statusImage[SICON_ID_GROUP]    = MakeImageObject("status_group", "status_group");
-  data->statusImage[SICON_ID_URGENT]   = MakeImageObject("status_urgent", "status_urgent");
-  data->statusImage[SICON_ID_ATTACH]   = MakeImageObject("status_attach", "status_attach");
-  data->statusImage[SICON_ID_REPORT]   = MakeImageObject("status_report", "status_report");
-  data->statusImage[SICON_ID_CRYPT]    = MakeImageObject("status_crypt", "status_crypt");
-  data->statusImage[SICON_ID_SIGNED]   = MakeImageObject("status_signed", "status_signed");
-  data->statusImage[SICON_ID_MARK]     = MakeImageObject("status_mark", "status_mark");
-  data->statusImage[SICON_ID_SPAM]     = MakeImageObject("status_spam", "status_spam");
+  data->statusImage[SICON_ID_UNREAD]   = MakeImageObject("status_unread",   G->theme.statusImages[si_Unread]);
+  data->statusImage[SICON_ID_OLD]      = MakeImageObject("status_old",      G->theme.statusImages[si_Old]);
+  data->statusImage[SICON_ID_FORWARD]  = MakeImageObject("status_forward",  G->theme.statusImages[si_Forward]);
+  data->statusImage[SICON_ID_REPLY]    = MakeImageObject("status_reply",    G->theme.statusImages[si_Reply]);
+  data->statusImage[SICON_ID_WAITSEND] = MakeImageObject("status_waitsend", G->theme.statusImages[si_WaitSend]);
+  data->statusImage[SICON_ID_ERROR]    = MakeImageObject("status_error",    G->theme.statusImages[si_Error]);
+  data->statusImage[SICON_ID_HOLD]     = MakeImageObject("status_hold",     G->theme.statusImages[si_Hold]);
+  data->statusImage[SICON_ID_SENT]     = MakeImageObject("status_sent",     G->theme.statusImages[si_Sent]);
+  data->statusImage[SICON_ID_NEW]      = MakeImageObject("status_new",      G->theme.statusImages[si_New]);
+  data->statusImage[SICON_ID_DELETE]   = MakeImageObject("status_delete",   G->theme.statusImages[si_Delete]);
+  data->statusImage[SICON_ID_DOWNLOAD] = MakeImageObject("status_download", G->theme.statusImages[si_Download]);
+  data->statusImage[SICON_ID_GROUP]    = MakeImageObject("status_group",    G->theme.statusImages[si_Group]);
+  data->statusImage[SICON_ID_URGENT]   = MakeImageObject("status_urgent",   G->theme.statusImages[si_Urgent]);
+  data->statusImage[SICON_ID_ATTACH]   = MakeImageObject("status_attach",   G->theme.statusImages[si_Attach]);
+  data->statusImage[SICON_ID_REPORT]   = MakeImageObject("status_report",   G->theme.statusImages[si_Report]);
+  data->statusImage[SICON_ID_CRYPT]    = MakeImageObject("status_crypt",    G->theme.statusImages[si_Crypt]);
+  data->statusImage[SICON_ID_SIGNED]   = MakeImageObject("status_signed",   G->theme.statusImages[si_Signed]);
+  data->statusImage[SICON_ID_MARK]     = MakeImageObject("status_mark",     G->theme.statusImages[si_Mark]);
+  data->statusImage[SICON_ID_SPAM]     = MakeImageObject("status_spam",     G->theme.statusImages[si_Spam]);
   for(i = 0; i < ARRAY_SIZE(data->statusImage); i++)
     DoMethod(obj, MUIM_NList_UseImage, data->statusImage[i], i, MUIF_NONE);
 

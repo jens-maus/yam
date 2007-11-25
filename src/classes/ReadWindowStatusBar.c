@@ -153,29 +153,29 @@ OVERLOAD(OM_NEW)
 {
   // *don't* add MAXBCSTATUSIMG as size since it would fill the missing
   // entries with NULL values...
-  static const struct { const int status; const char *const name; } image[] =
+  static const struct { const enum StatusImages id; const char *const idstr; } image[] =
   {
-    { SICON_ID_UNREAD,   "status_unread" },
-    { SICON_ID_OLD,      "status_old" },
-    { SICON_ID_FORWARD,  "status_forward" },
-    { SICON_ID_REPLY,    "status_reply" },
-    { SICON_ID_WAITSEND, "status_waitsend" },
-    { SICON_ID_ERROR,    "status_error" },
-    { SICON_ID_HOLD,     "status_hold" },
-    { SICON_ID_SENT,     "status_sent" },
-    { SICON_ID_NEW,      "status_new" },
-    { SICON_ID_DELETE,   "status_delete" },
-    { SICON_ID_DOWNLOAD, "status_download" },
-    { SICON_ID_GROUP,    "status_group" },
-    { SICON_ID_URGENT,   "status_urgent" },
-    { SICON_ID_ATTACH,   "status_attach" },
-    { SICON_ID_REPORT,   "status_report" },
-    { SICON_ID_CRYPT,    "status_crypt" },
-    { SICON_ID_SIGNED,   "status_signed" },
-    { SICON_ID_MARK,     "status_mark" },
-    { SICON_ID_SPAM,     "status_spam" }
+    { si_Unread,   "status_unread"   },
+    { si_Old,      "status_old"      },
+    { si_Forward,  "status_forward"  },
+    { si_Reply,    "status_reply"    },
+    { si_WaitSend, "status_waitsend" },
+    { si_Error,    "status_error"    },
+    { si_Hold,     "status_hold"     },
+    { si_Sent,     "status_sent"     },
+    { si_New,      "status_new"      },
+    { si_Delete,   "status_delete"   },
+    { si_Download, "status_download" },
+    { si_Group,    "status_group"    },
+    { si_Urgent,   "status_urgent"   },
+    { si_Attach,   "status_attach"   },
+    { si_Report,   "status_report"   },
+    { si_Crypt,    "status_crypt"    },
+    { si_Signed,   "status_signed"   },
+    { si_Mark,     "status_mark"     },
+    { si_Spam,     "status_spam"     }
   };
-  Object *statusImage[MAX_STATUSIMG];
+  Object *statusImage[si_Max];
   Object *folderLabel;
   ULONG i;
   ULONG minHeight = 0;
@@ -183,25 +183,25 @@ OVERLOAD(OM_NEW)
   ENTER();
 
   // make sure that all icons are listed!
-  ASSERT(ARRAY_SIZE(image) == MAX_STATUSIMG);
+  ASSERT(ARRAY_SIZE(image) == si_Max);
 
   // prepare the status icons for adding it later on to our statusGroup object
   for(i=0; i < ARRAY_SIZE(image); i++)
   {
     Object *newImage;
 
-    if((newImage = MakeImageObject(image[i].name, image[i].name)) != NULL)
+    if((newImage = MakeImageObject(image[i].idstr, G->theme.statusImages[image[i].id])) != NULL)
     {
       ULONG rawHeight = xget(newImage, MUIA_ImageArea_RawHeight);
 
       minHeight = MAX(rawHeight, minHeight);
     }
 
-    statusImage[image[i].status] = newImage;
+    statusImage[image[i].id] = newImage;
   }
 
   // should be a compile-time nop!
-  for(i = ARRAY_SIZE(image); i < MAX_STATUSIMG; i++)
+  for(i = ARRAY_SIZE(image); i < si_Max; i++)
     statusImage[i] = NULL;
 
   obj = DoSuperNew(cl, obj,

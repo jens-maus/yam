@@ -308,18 +308,18 @@ OVERLOAD(OM_NEW)
   data = (struct Data *)INST_DATA(cl,obj);
 
   // prepare the folder images
-  data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold", "folder_fold");
-  data->folderImage[FICON_ID_UNFOLD]      = MakeImageObject("folder_unfold", "folder_unfold");
-  data->folderImage[FICON_ID_INCOMING]    = MakeImageObject("folder_incoming", "folder_incoming");
-  data->folderImage[FICON_ID_INCOMING_NEW]= MakeImageObject("folder_incoming_new", "folder_incoming_new");
-  data->folderImage[FICON_ID_OUTGOING]    = MakeImageObject("folder_outgoing", "folder_outgoing");
-  data->folderImage[FICON_ID_OUTGOING_NEW]= MakeImageObject("folder_outgoing_new", "folder_outgoing_new");
-  data->folderImage[FICON_ID_TRASH]       = MakeImageObject("folder_trash", "folder_trash");
-  data->folderImage[FICON_ID_TRASH_NEW]   = MakeImageObject("folder_trash_new", "folder_trash_new");
-  data->folderImage[FICON_ID_SENT]        = MakeImageObject("folder_sent", "folder_sent");
-  data->folderImage[FICON_ID_PROTECTED]   = MakeImageObject("status_crypt", "status_crypt");
-  data->folderImage[FICON_ID_SPAM]        = MakeImageObject("folder_spam", "folder_spam");
-  data->folderImage[FICON_ID_SPAM_NEW]    = MakeImageObject("folder_spam_new", "folder_spam_new");
+  data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold",         G->theme.folderImages[fi_Fold]);
+  data->folderImage[FICON_ID_UNFOLD]      = MakeImageObject("folder_unfold",       G->theme.folderImages[fi_Unfold]);
+  data->folderImage[FICON_ID_INCOMING]    = MakeImageObject("folder_incoming",     G->theme.folderImages[fi_Incoming]);
+  data->folderImage[FICON_ID_INCOMING_NEW]= MakeImageObject("folder_incoming_new", G->theme.folderImages[fi_IncomingNew]);
+  data->folderImage[FICON_ID_OUTGOING]    = MakeImageObject("folder_outgoing",     G->theme.folderImages[fi_Outgoing]);
+  data->folderImage[FICON_ID_OUTGOING_NEW]= MakeImageObject("folder_outgoing_new", G->theme.folderImages[fi_OutgoingNew]);
+  data->folderImage[FICON_ID_TRASH]       = MakeImageObject("folder_trash",        G->theme.folderImages[fi_Trash]);
+  data->folderImage[FICON_ID_TRASH_NEW]   = MakeImageObject("folder_trash_new",    G->theme.folderImages[fi_TrashNew]);
+  data->folderImage[FICON_ID_SENT]        = MakeImageObject("folder_sent",         G->theme.folderImages[fi_Sent]);
+  data->folderImage[FICON_ID_PROTECTED]   = MakeImageObject("status_crypt",        G->theme.statusImages[si_Crypt]);
+  data->folderImage[FICON_ID_SPAM]        = MakeImageObject("folder_spam",         G->theme.folderImages[fi_Spam]);
+  data->folderImage[FICON_ID_SPAM_NEW]    = MakeImageObject("folder_spam_new",     G->theme.folderImages[fi_SpamNew]);
   for(i = 0; i < ARRAY_SIZE(data->folderImage); i++)
     DoMethod(obj, MUIM_NList_UseImage, data->folderImage[i], i, MUIF_NONE);
 

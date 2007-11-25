@@ -319,6 +319,7 @@ OBJS = \
 	$(OBJDIR)/ImageCache.o \
 	$(OBJDIR)/UpdateCheck.o \
 	$(OBJDIR)/HTML2Mail.o \
+	$(OBJDIR)/Themes.o \
 	$(OBJDIR)/HashTable.o \
 	$(OBJDIR)/BayesFilter.o \
 	$(OBJDIR)/FileInfo.o \

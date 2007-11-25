@@ -48,7 +48,10 @@ OVERLOAD(OM_NEW)
   ENTER();
 
   // get the path to the logo file
-  AddPath(logopath, G->ProgDir, "Icons/logo", sizeof(logopath));
+  if(G->theme.loaded == TRUE)
+    AddPath(logopath, G->theme.directory, "logo", sizeof(logopath));
+  else
+    AddPath(logopath, G->ProgDir, "themes/default/logo", sizeof(logopath));
 
   // create the object
   if((obj = DoSuperNew(cl, obj,

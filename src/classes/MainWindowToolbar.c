@@ -68,70 +68,6 @@ enum { TB_MAIN_READ=0,
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  // define the image arrays
-  static const char *const normalImages[TB_MAIN_NUM+1] =
-  {
-    "Main_Read",          // Read
-    "Main_Edit",          // Edit
-    "Main_Move",          // Move
-    "Main_Delete",        // Delete
-    "Main_GetAddr",       // GetAddr
-    "Main_NewMail",       // NewMail
-    "Main_Reply",         // Reply
-    "Main_Forward",       // Forward
-    "Main_GetMail",       // GetMail
-    "Main_SendAll",       // SendAll
-    "Main_Spam",          // Spam
-    "Main_Ham",           // Ham
-    "Main_Filter",        // Filter
-    "Main_Find",          // Find
-    "Main_AddrBook",      // AddrBook
-    "Main_Config",        // Config
-    NULL
-  };
-
-  static const char *const selectedImages[TB_MAIN_NUM+1] =
-  {
-    "Main_Read_S",        // Read
-    "Main_Edit_S",        // Edit
-    "Main_Move_S",        // Move
-    "Main_Delete_S",      // Delete
-    "Main_GetAddr_S",     // GetAddr
-    "Main_NewMail_S",     // NewMail
-    "Main_Reply_S",       // Reply
-    "Main_Forward_S",     // Forward
-    "Main_GetMail_S",     // GetMail
-    "Main_SendAll_S",     // SendAll
-    "Main_Spam_S",        // Spam
-    "Main_Ham_S",         // Ham
-    "Main_Filter_S",      // Filter
-    "Main_Find_S",        // Find
-    "Main_AddrBook_S",    // AddrBook
-    "Main_Config_S",      // Config
-    NULL
-  };
-
-  static const char *const ghostedImages[TB_MAIN_NUM+1] =
-  {
-    "Main_Read_G",        // Read
-    "Main_Edit_G",        // Edit
-    "Main_Move_G",        // Move
-    "Main_Delete_G",      // Delete
-    "Main_GetAddr_G",     // GetAddr
-    "Main_NewMail_G",     // NewMail
-    "Main_Reply_G",       // Reply
-    "Main_Forward_G",     // Forward
-    "Main_GetMail_G",     // GetMail
-    "Main_SendAll_G",     // SendAll
-    "Main_Spam_G",        // Spam
-    "Main_Ham_G",         // Ham
-    "Main_Filter_G",      // Filter
-    "Main_Find_G",        // Find
-    "Main_AddrBook_G",    // AddrBook
-    "Main_Config_G",      // Config
-    NULL
-  };
-
   // prepare the buttons array which defines how our
   // toolbar looks like.
   struct MUIS_TheBar_Button buttons[TB_MAIN_NUM+5] =
@@ -210,7 +146,7 @@ OVERLOAD(OM_NEW)
 
   buttons[ 6].text = tr(MSG_MA_TBWrite);     buttons[ 6].help = tr(MSG_HELP_MA_BT_WRITE);
   buttons[ 7].text = tr(MSG_MA_TBReply);     buttons[ 7].help = tr(MSG_HELP_MA_BT_REPLY);
-  buttons[ 8].text = tr(MSG_MA_TBForward);   buttons[ 8].help =  tr(MSG_HELP_MA_BT_FORWARD);
+  buttons[ 8].text = tr(MSG_MA_TBForward);   buttons[ 8].help = tr(MSG_HELP_MA_BT_FORWARD);
 
   buttons[10].text = tr(MSG_MA_TBGetMail);   buttons[10].help = tr(MSG_HELP_MA_BT_POPNOW);
   buttons[11].text = tr(MSG_MA_TBSendAll);   buttons[11].help = tr(MSG_HELP_MA_BT_SENDALL);
@@ -227,10 +163,9 @@ OVERLOAD(OM_NEW)
   if((obj = DoSuperNew(cl, obj,
                        MUIA_Group_Horiz,             TRUE,
                        MUIA_TheBar_Buttons,          buttons,
-                       MUIA_TheBar_PicsDrawer,       "PROGDIR:Icons",
-                       MUIA_TheBar_Pics,             normalImages,
-                       MUIA_TheBar_SelPics,          selectedImages,
-                       MUIA_TheBar_DisPics,          ghostedImages,
+                       MUIA_TheBar_Pics,             G->theme.mainWindowToolbarImages[tbim_Normal],
+                       MUIA_TheBar_SelPics,          G->theme.mainWindowToolbarImages[tbim_Selected],
+                       MUIA_TheBar_DisPics,          G->theme.mainWindowToolbarImages[tbim_Ghosted],
                        TAG_MORE, inittags(msg))))
   {
     // update the SPAM control buttons only if the spam filter is not enabled

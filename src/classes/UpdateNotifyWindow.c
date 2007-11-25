@@ -126,7 +126,7 @@ OVERLOAD(OM_NEW)
     WindowContents, VGroup,
 
       Child, HGroup,
-        Child, MakeImageObject("config_update_big", "config_update_big"),
+        Child, MakeImageObject("config_update_big", G->theme.configImages[ci_UpdateBig]),
         Child, VGroup,
           Child, TextObject,
             MUIA_Text_PreParse, "\033b",

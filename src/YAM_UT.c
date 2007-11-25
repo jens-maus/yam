@@ -5670,7 +5670,7 @@ void DisplayAppIconStatistics(void)
 {
   static char apptit[SIZE_DEFAULT/2];
   struct Folder **flist;
-  int mode;
+  enum IconImage mode;
   int new_msg = 0;
   int unr_msg = 0;
   int tot_msg = 0;
@@ -5738,9 +5738,9 @@ void DisplayAppIconStatistics(void)
 
   // we set the mode accordingly to the status of the folder (new/check/old)
   if(G->TR != NULL && G->TR->Checking == TRUE)
-    mode = 3;
+    mode = ii_Check;
   else
-    mode = tot_msg ? (new_msg ? 2 : 1) : 0;
+    mode = tot_msg ? (new_msg != 0 ? ii_New : ii_Old) : ii_Empty;
 
 
   // We first have to remove the appicon before we can change it
@@ -5751,9 +5751,9 @@ void DisplayAppIconStatistics(void)
   }
 
   // Now we create the new AppIcon and display it
-  if(G->DiskObj[mode] != NULL)
+  if(G->theme.icons[mode] != NULL)
   {
-    struct DiskObject *dobj = G->DiskObj[mode];
+    struct DiskObject *dobj = G->theme.icons[mode];
 
     // NOTE:
     // 1.) Using the VARARGS version is better for GCC/68k and it doesn't
@@ -5799,7 +5799,7 @@ void DisplayAppIconStatistics(void)
     #endif
 
     // remember this icon pointer for later use
-    G->CurrentDiskObj = dobj;
+    G->currentAppIcon = mode;
   }
 
   LEAVE();

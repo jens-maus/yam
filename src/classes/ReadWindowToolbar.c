@@ -166,67 +166,12 @@ OVERLOAD(OM_NEW)
   }
   else
   {
-    // define the image arrays
-    static const char *const normalImages[TB_READ_NUM+1] =
-    {
-      "Read_Prev",          // Prev
-      "Read_Next",          // Next
-      "Read_PrevThread",    // PrevThread
-      "Read_NextThread",    // NextThread
-      "Read_Display",       // Display
-      "Read_Save",          // Save
-      "Read_Print",         // Print
-      "Read_Delete",        // Delete
-      "Read_Move",          // Move
-      "Read_Reply",         // Reply
-      "Read_Forward",       // Forward
-      "Read_Spam",          // Spam
-      "Read_Ham",           // Ham
-      NULL
-    };
-
-    static const char *const selectedImages[TB_READ_NUM+1] =
-    {
-      "Read_Prev_S",        // Prev
-      "Read_Next_S",        // Next
-      "Read_PrevThread_S",  // PrevThread
-      "Read_NextThread_S",  // NextThread
-      "Read_Display_S",     // Display
-      "Read_Save_S",        // Save
-      "Read_Print_S",       // Print
-      "Read_Delete_S",      // Delete
-      "Read_Move_S",        // Move
-      "Read_Reply_S",       // Reply
-      "Read_Forward_S",     // Forward
-      "Read_Spam_S",        // Spam
-      "Read_Ham_S",         // Ham
-      NULL
-    };
-
-    static const char *const ghostedImages[TB_READ_NUM+1] =
-    {
-      "Read_Prev_G",        // Prev
-      "Read_Next_G",        // Next
-      "Read_PrevThread_G",  // PrevThread
-      "Read_NextThread_G",  // NextThread
-      "Read_Display_G",     // Display
-      "Read_Save_G",        // Save
-      "Read_Print_G",       // Print
-      "Read_Delete_G",      // Delete
-      "Read_Move_G",        // Move
-      "Read_Reply_G",       // Reply
-      "Read_Forward_G",     // Forward
-      "Read_Spam_G",        // Spam
-      "Read_Ham_G",         // Ham
-      NULL
-    };
-
     // create the TheBar object, but via loading the images from
     // the corresponding image files.
     obj = DoSuperNew(cl, obj,
-                     MUIA_TheBar_Pics,      normalImages,
-                     MUIA_TheBar_DisPics,   ghostedImages,
-                     MUIA_TheBar_SelPics,   selectedImages,
+                     MUIA_TheBar_Pics,      G->theme.readWindowToolbarImages[tbim_Normal],
+                     MUIA_TheBar_SelPics,   G->theme.readWindowToolbarImages[tbim_Selected],
+                     MUIA_TheBar_DisPics,   G->theme.readWindowToolbarImages[tbim_Ghosted],
                      TAG_MORE, inittags(msg));
   }
 

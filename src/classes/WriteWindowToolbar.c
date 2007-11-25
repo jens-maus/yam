@@ -154,61 +154,12 @@ OVERLOAD(OM_NEW)
   }
   else
   {
-    // define the image arrays
-    static const char *const normalImages[TB_WRITE_NUM+1] =
-    {
-      "Write_Editor",      // Editor
-      "Write_Insert",      // Insert
-      "Write_Cut",         // Cut
-      "Write_Copy",        // Copy
-      "Write_Paste",       // Paste
-      "Write_Undo",        // Undo
-      "Write_Bold",        // Bold
-      "Write_Italic",      // Italic
-      "Write_Underline",   // Underline
-      "Write_Colored",     // Colored
-      "Write_Search",      // Search
-      NULL
-    };
-
-    static const char *const selectedImages[TB_WRITE_NUM+1] =
-    {
-      "Write_Editor_S",    // Editor
-      "Write_Insert_S",    // Insert
-      "Write_Cut_S",       // Cut
-      "Write_Copy_S",      // Copy
-      "Write_Paste_S",     // Paste
-      "Write_Undo_S",      // Undo
-      "Write_Bold_S",      // Bold
-      "Write_Italic_S",    // Italic
-      "Write_Underline_S", // Underline
-      "Write_Colored_S",   // Colored
-      "Write_Search_S",    // Search
-      NULL
-    };
-
-    static const char *const ghostedImages[TB_WRITE_NUM+1] =
-    {
-      "Write_Editor_G",    // Editor
-      "Write_Insert_G",    // Insert
-      "Write_Cut_G",       // Cut
-      "Write_Copy_G",      // Copy
-      "Write_Paste_G",     // Paste
-      "Write_Undo_G",      // Undo
-      "Write_Bold_G",      // Bold
-      "Write_Italic_G",    // Italic
-      "Write_Underline_G", // Underline
-      "Write_Colored_G",   // Colored
-      "Write_Search_G",    // Search
-      NULL
-    };
-
     // create the TheBar object, but via loading the images from
     // the corresponding image files.
     obj = DoSuperNew(cl, obj,
-                     MUIA_TheBar_Pics,      normalImages,
-                     MUIA_TheBar_DisPics,   ghostedImages,
-                     MUIA_TheBar_SelPics,   selectedImages,
+                     MUIA_TheBar_Pics,      G->theme.writeWindowToolbarImages[tbim_Normal],
+                     MUIA_TheBar_SelPics,   G->theme.writeWindowToolbarImages[tbim_Selected],
+                     MUIA_TheBar_DisPics,   G->theme.writeWindowToolbarImages[tbim_Ghosted],
                      TAG_MORE, inittags(msg));
   }
 

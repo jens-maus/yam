@@ -142,58 +142,12 @@ OVERLOAD(OM_NEW)
   }
   else
   {
-    // define the image arrays
-    static const char *const normalImages[TB_ABOOK_NUM+1] =
-    {
-      "Abook_Save",      // Save
-      "Abook_Find",      // Find
-      "Abook_NewUser",   // New User
-      "Abook_NewList",   // New List
-      "Abook_NewGroup",  // New Group
-      "Abook_Edit",      // Edit
-      "Abook_Delete",    // Delete
-      "Abook_Print",     // Print
-      "Abook_OpenTree",  // Open Tree
-      "Abook_CloseTree", // Close Tree
-      NULL
-    };
-
-    static const char *const selectedImages[TB_ABOOK_NUM+1] =
-    {
-      "Abook_Save_S",      // Save
-      "Abook_Find_S",      // Find
-      "Abook_NewUser_S",   // New User
-      "Abook_NewList_S",   // New List
-      "Abook_NewGroup_S",  // New Group
-      "Abook_Edit_S",      // Edit
-      "Abook_Delete_S",    // Delete
-      "Abook_Print_S",     // Print
-      "Abook_OpenTree_S",  // Open Tree
-      "Abook_CloseTree_S", // Close Tree
-      NULL
-    };
-
-    static const char *const ghostedImages[TB_ABOOK_NUM+1] =
-    {
-      "Abook_Save_G",      // Save
-      "Abook_Find_G",      // Find
-      "Abook_NewUser_G",   // New User
-      "Abook_NewList_G",   // New List
-      "Abook_NewGroup_G",  // New Group
-      "Abook_Edit_G",      // Edit
-      "Abook_Delete_G",    // Delete
-      "Abook_Print_G",     // Print
-      "Abook_OpenTree_G",  // Open Tree
-      "Abook_CloseTree_G", // Close Tree
-      NULL
-    };
-
     // create the TheBar object, but via loading the images from
     // the corresponding image files.
     obj = DoSuperNew(cl, obj,
-                     MUIA_TheBar_Pics,      normalImages,
-                     MUIA_TheBar_DisPics,   ghostedImages,
-                     MUIA_TheBar_SelPics,   selectedImages,
+                     MUIA_TheBar_Pics,      G->theme.abookWindowToolbarImages[tbim_Normal],
+                     MUIA_TheBar_SelPics,   G->theme.abookWindowToolbarImages[tbim_Selected],
+                     MUIA_TheBar_DisPics,   G->theme.abookWindowToolbarImages[tbim_Ghosted],
                      TAG_MORE, inittags(msg));
   }
 

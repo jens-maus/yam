@@ -53,47 +53,6 @@
 #include "Debug.h"
 
 /*** Static variables/functions ***/
-/// imageFileArray[]
-// array with all our private image filenames we define in the
-// current imagelayout. Please note that as soon as you change something
-// here you also have to alter the IMGLAYOUT_VERSION in the ImageCache.h
-// headerfile.
-static const char *const imageFileArray[MAX_IMAGES] =
-{
-  // Status information images
-  "status_unread",   "status_old",    "status_forward",  "status_reply",
-  "status_waitsend", "status_error",  "status_hold",     "status_sent",
-  "status_new",      "status_delete", "status_download", "status_group",
-  "status_urgent",   "status_attach", "status_report",   "status_crypt",
-  "status_signed",   "status_mark",   "status_spam",
-
-  // Default images for the folder list
-  "folder_fold",     "folder_unfold",       "folder_incoming", "folder_incoming_new",
-  "folder_outgoing", "folder_outgoing_new", "folder_trash",    "folder_trash_new",
-  "folder_sent",     "folder_spam",         "folder_spam_new",
-
-  // Images for the YAM configuration window
-  "config_firststep", "config_firststep_big",
-  "config_network",   "config_network_big",
-  "config_newmail",   "config_newmail_big",
-  "config_filters",   "config_filters_big",
-  "config_spam",      "config_spam_big",
-  "config_read",      "config_read_big",
-  "config_write",     "config_write_big",
-  "config_answer",    "config_answer_big",
-  "config_signature", "config_signature_big",
-  "config_lists",     "config_lists_big",
-  "config_security",  "config_security_big",
-  "config_start",     "config_start_big",
-  "config_mime",      "config_mime_big",
-  "config_abook",     "config_abook_big",
-  "config_scripts",   "config_scripts_big",
-  "config_misc",      "config_misc_big",
-  "config_lookfeel",  "config_lookfeel_big",
-  "config_update",    "config_update_big",
-};
-///
-
 /// LoadImage
 // loads a specific file via datatypes.library
 static BOOL LoadImage(struct ImageCacheNode *node)
@@ -319,67 +278,6 @@ BOOL ImageCacheSetup(void)
   return result;
 }
 ///
-/// ImageCacheInit
-// for initializing the image caching
-BOOL ImageCacheInit(const char *imagePath)
-{
-  BOOL success = TRUE;
-  int i;
-
-  ENTER();
-
-  // now we walk through our imageFileArray and populate our
-  // imagecachelist
-  for(i = 0; i < MAX_IMAGES; i++)
-  {
-    char filebuf[SIZE_PATHFILE];
-
-    AddPath(filebuf, imagePath, imageFileArray[i], sizeof(filebuf));
-
-    // check if the file exists or not.
-    if(FileExists(filebuf) == FALSE)
-    {
-      if(G->NoImageWarning == FALSE)
-      {
-        int reqResult;
-
-        if((reqResult = MUI_Request(G->App, NULL, 0, tr(MSG_ER_IMAGEOBJECT_TITLE),
-                                                     tr(MSG_ER_EXITIGNOREALL),
-                                                     tr(MSG_ER_IMAGEOBJECT),
-                                                     imageFileArray[i], imagePath)))
-        {
-          if(reqResult == 2)
-            G->NoImageWarning = TRUE;
-          else
-          {
-            success = FALSE;
-            break;
-          }
-        }
-      }
-    }
-    else
-    {
-      // prepare the imageCacheNode
-      struct ImageCacheNode *node;
-
-      if((node = CreateImageCacheNode(imageFileArray[i], filebuf)) != NULL)
-      {
-        D(DBF_STARTUP, "init imageCacheNode 0x%08lx of file '%s' with id '%s'", node, filebuf, imageFileArray[i]);
-      }
-      else
-      {
-        success = FALSE;
-        break;
-      }
-    }
-  }
-
-  RETURN(success);
-  return success;
-}
-
-///
 /// ImageCacheCleanup
 // for cleaning up the image cache
 void ImageCacheCleanup(void)
@@ -592,34 +490,25 @@ BOOL IsImageInCache(const char *id)
 /*** TheBar toolbar image cache mechanisms ***/
 /// ToolbarCacheInit
 // for initializing the toolbar caching
-BOOL ToolbarCacheInit(const char *imagePath)
+BOOL ToolbarCacheInit(void)
 {
   BOOL result = FALSE;
 
   ENTER();
 
-  G->ReadToolbarCacheObject = ReadWindowToolbarObject,
-                                MUIA_TheBar_PicsDrawer, imagePath,
-                              End;
-
+  G->ReadToolbarCacheObject = ReadWindowToolbarObject, End;
   D(DBF_STARTUP, "init readwindow toolbar: %08lx", G->ReadToolbarCacheObject);
 
-  G->WriteToolbarCacheObject = WriteWindowToolbarObject,
-                                 MUIA_TheBar_PicsDrawer, imagePath,
-                               End;
-
+  G->WriteToolbarCacheObject = WriteWindowToolbarObject, End;
   D(DBF_STARTUP, "init writewindow toolbar: %08lx", G->WriteToolbarCacheObject);
 
-  G->AbookToolbarCacheObject = AddrBookToolbarObject,
-                                 MUIA_TheBar_PicsDrawer, imagePath,
-                               End;
-
+  G->AbookToolbarCacheObject = AddrBookToolbarObject, End;
   D(DBF_STARTUP, "init abookwindow toolbar: %08lx", G->AbookToolbarCacheObject);
 
 
-  if(G->ReadToolbarCacheObject  &&
-     G->WriteToolbarCacheObject &&
-     G->AbookToolbarCacheObject)
+  if(G->ReadToolbarCacheObject != NULL  &&
+     G->WriteToolbarCacheObject != NULL &&
+     G->AbookToolbarCacheObject != NULL)
   {
     result = TRUE;
   }
