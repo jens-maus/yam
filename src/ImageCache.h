@@ -59,6 +59,10 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
 void ReleaseImage(const char *id, BOOL dispose);
 BOOL IsImageInCache(const char *id);
 
+#if defined(DEBUG)
+void DumpImageCache(void);
+#endif
+
 // the prototypes/enums for our specialized Toolbarimage
 // cache
 enum TBType  { TBT_ReadWindow, TBT_WriteWindow, TBT_AbookWindow };

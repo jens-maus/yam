@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-26  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c: added the function DumpImageCache() to print out all image
+    nodes which are currently cached. This function is only available in the
+    debug builds.
+
 2007-11-25  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: merged the changes from the 'themes' branch back to the main trunk

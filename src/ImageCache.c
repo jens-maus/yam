@@ -486,6 +486,41 @@ BOOL IsImageInCache(const char *id)
 }
 
 ///
+/// DumpImageCache
+// print out the complete image cache with all necessary information
+#if defined(DEBUG)
+static enum HashTableOperator DumpImageCacheNode(UNUSED struct HashTable *table, struct HashEntryHeader *entry, UNUSED ULONG number, UNUSED void *arg)
+{
+  struct ImageCacheNode *node = (struct ImageCacheNode *)entry;
+
+  ENTER();
+
+  D(DBF_IMAGE, "  node %08lx", node);
+  D(DBF_IMAGE, "    id               '%s'", node->id);
+  D(DBF_IMAGE, "    file             '%s'", node->filename);
+  D(DBF_IMAGE, "    openCount        %ld", node->openCount);
+  D(DBF_IMAGE, "    dtobj            %08lx", node->dt_obj);
+  D(DBF_IMAGE, "    screen           %08lx", node->screen);
+  D(DBF_IMAGE, "    width            %ld", node->width);
+  D(DBF_IMAGE, "    height           %ld", node->height);
+  D(DBF_IMAGE, "    delayed dispose  %ld", node->delayedDispose);
+
+  RETURN(htoNext);
+  return htoNext;
+}
+
+void DumpImageCache(void)
+{
+  ENTER();
+
+  D(DBF_IMAGE, "current image cache contents");
+  HashTableEnumerate(G->imageCacheHashTable, DumpImageCacheNode, NULL);
+
+  LEAVE();
+}
+#endif
+
+///
 
 /*** TheBar toolbar image cache mechanisms ***/
 /// ToolbarCacheInit
