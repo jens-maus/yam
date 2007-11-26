@@ -741,7 +741,7 @@ BOOL LoadTheme(struct Theme *theme)
     }
   }
 
-  G->theme.loaded = TRUE;
+  theme->loaded = TRUE;
 
   RETURN(success);
   return success;
@@ -756,13 +756,13 @@ void UnloadTheme(struct Theme *theme)
   ENTER();
 
   for(i=ci_First; i < ci_Max; i++)
-    ReleaseImage(configImageIDs[i], TRUE);
+    ReleaseImage(configImageIDs[i], FALSE);
 
   for(i=fi_First; i < fi_Max; i++)
-    ReleaseImage(folderImageIDs[i], TRUE);
+    ReleaseImage(folderImageIDs[i], FALSE);
 
   for(i=si_First; i < si_Max; i++)
-    ReleaseImage(statusImageIDs[i], TRUE);
+    ReleaseImage(statusImageIDs[i], FALSE);
 
   for(i=ii_First; i < ii_Max; i++)
   {
@@ -773,7 +773,7 @@ void UnloadTheme(struct Theme *theme)
     }
   }
 
-  G->theme.loaded = FALSE;
+  theme->loaded = FALSE;
 
   LEAVE();
 }
