@@ -205,7 +205,10 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
       // upon failure remove the node again
       HashTableRawRemove(G->imageCacheHashTable, entry);
       if(node->filename != NULL)
+      {
         free(node->filename);
+        node->filename = NULL;
+      }
 
       // node->id has already been freed by HashTableRawRemove()
     }
@@ -236,13 +239,16 @@ static enum HashTableOperator DeleteImageCacheNode(UNUSED struct HashTable *tabl
     D(DBF_STARTUP, "  disposing dtobject 0x%08lx of node 0x%08lx", node->dt_obj, node);
     RemapImage(node, NULL);
     DisposeDTObject(node->dt_obj);
+    node->dt_obj = NULL;
   }
 
   // node->id will be free()'ed by the hash table functions! We MUST NOT free it here,
   // because this item may be addressed further on while iterating through the list.
-
   if(node->filename != NULL)
+  {
     free(node->filename);
+    node->filename = NULL;
+  }
 
   RETURN(htoNext);
   return htoNext;
@@ -430,13 +436,22 @@ void ReleaseImage(const char *id, BOOL dispose)
         if(dispose == TRUE || node->delayedDispose == TRUE)
         {
           D(DBF_IMAGE, "removing image '%s' from cache", node->id);
+
           // remove the image from the cache
           HashTableRawRemove(G->imageCacheHashTable, entry);
+
           // free all the data
           if(node->dt_obj != NULL)
+          {
             DisposeDTObject(node->dt_obj);
+            node->dt_obj = NULL;
+          }
+
           if(node->filename != NULL)
+          {
             free(node->filename);
+            node->filename = NULL;
+          }
 
           // node->id has already been freed by HashTableRawRemove()
         }
