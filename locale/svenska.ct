@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.23 (28.09.07)
+## version $VER: YAM.ct 6.24 (26.11.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -1835,7 +1835,7 @@ Packa/skydda
 ;#SET (527//)
 MSG_CO_Archiver
 _Arkiverare
-;#DEF _Archiver
+;#DEF Archi_ver
 ;#SET (528//)
 MSG_CO_ScriptMenu
 Skriptmeny, post %ld
@@ -4675,7 +4675,7 @@ Användar _ID
 ;#SET (1338//)
 MSG_CO_SMTPPass
 Löseno_rd
-;#DEF Passwo_rd
+;#DEF Pass_word
 ;#SET (1339//)
 MSG_WR_AltQuoted
 Alternativt citat
@@ -5551,7 +5551,7 @@ MSG_QUICKSEARCH_SHOWNMSGS
 ;#SET (1594//)
 MSG_FI_NOFOLDERS
 i_ngenstans
-;#DEF _nowhere
+;#DEF n_owhere
 ;#SET (1595//)
 MSG_HELP_QUICKSEARCH_VIEWOPTIONS
 Endast brev matchande det valda\nvisningskriteriet kommer att visas.
@@ -5585,14 +5585,6 @@ MSG_HELP_CO_CH_DOCKYICON
 En docky ikon visas via application.library.\n(endast tillgängligt på AmigaOS 4)
 ;#DEF If enabled, a docky icon is displayed through\napplication.library. (only available on AmigaOS4\nsystems)
 ;#SET (1603//)
-MSG_ER_B64DECTRUNC
-Ett fel inträffade vid försök att base64 avkoda MIME del %ld av brev '%s'. Avkodningen har avbrutits.\n\nDetta kan bero på en felaktig kodning av den skickande mail klienten eller för att base64 delen har blivit skadad under sändning.
-;#DEF An error occurred while trying to base64 decode MIME part %ld of mail '%s'. The decoding has been aborted.\n\nThis may be caused by an incorrect encoding done by the sending mail client or because the base64 part has been malformed during transmission.
-;#SET (1604//)
-MSG_ER_B64DECTRUNCTXT
-Viss läsbar text från MIME del %ld av brev '%s' kunde inte base64 avkodas och kan visas felaktigt eller inte alls.\n\nDetta kan bero på en felaktig kodning av den skickande mail klienten eller för att base64 delen har blivit skadad under sändning.
-;#DEF Some readable text from MIME part %ld of mail '%s' couldn't be base64 decoded and may show up incorrect or is even missing.\n\nThis may be caused by an incorrect encoding done by the sending mail client or because the base64 part has been malformed during transmission.
-;#SET (1605//)
 MSG_MA_MessageImport
 Importera meddelanden från MBOX, DBX eller vanliga mailfiler...
 ;#DEF Import messages from MBOX, DBX or plain mail files...
@@ -5839,7 +5831,7 @@ Varje månad
 ;#SET (1666//)
 MSG_CO_SEARCHFORUPDATES
 Sök efter _uppdatering:
-;#DEF Search for _Updates:
+;#DEF Search for Up_dates:
 ;#SET (1667//)
 MSG_CO_SEARCHFORUPDATESINFO
 Du blir meddelad så snart en uppdatering är tillgänglig.
@@ -5931,7 +5923,7 @@ URL
 ;#SET (1689//)
 MSG_CO_MIME_DESCRIPTION
 _Beskrivning
-;#DEF _Description
+;#DEF D_escription
 ;#SET (1690//)
 MSG_CTapplicationgz
 GNU zip arkiv
@@ -6275,7 +6267,7 @@ Ra_dera skräppostmappen
 ;#SET (1782//)
 MSG_CO_SMTPAUTH_METHOD
 _Metod
-;#DEF _Method
+;#DEF Met_hod
 ;#SET (1783//)
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
 Tillåter specifiering av SMTP-AUTH metoden som\nskall användas för den konfigurerade servern.\n'Auto' väljer metod automatiskt beroende\npå serverns förmåga. De andra är för att\nspecifikt välja metod, där de säkraste\när listade överst.
@@ -6635,7 +6627,7 @@ _Skicka aldrig ett mottagningskvitto
 ;#SET (1872//)
 MSG_CO_MDN_ENABLED
 Ti_llåt mottagningskvitton för vissa meddelanden
-;#DEF A_llow return receipts for some messages
+;#DEF Allow _return receipts for some messages
 ;#SET (1873//)
 MSG_CO_MDN_NORECIPIENT
 Om jag inte står med i _Till eller Kopia:
@@ -6651,7 +6643,7 @@ Om jag bara ska ra_dera meddelandet:
 ;#SET (1876//)
 MSG_CO_MDN_OTHER
 I övriga _fall:
-;#DEF In all other _cases:
+;#DEF In all oth_er cases:
 ;#SET (1877//)
 MSG_CO_REQUESTMDN
 Begär alltid _mottagningskvitto när meddelanden skickas
@@ -7253,3 +7245,19 @@ MSG_WR_DELETE
 Radera
 ;#DEF Delete
 ;#SET (2027//)
+MSG_ER_B64DEC_FILEIO
+Ett fil inmatning/utmatningsfel inträffade vid försök att avkoda en base64 MIME-del %ld av brev '%s'. Avkodningen har avbrutits.\n\nDetta kan bero på otillräckligt utrymme på volymen filen avkodades på eller att källfilen inte var åtkomstbar.
+;#DEF A file input/output error occurred while trying to base64 decode MIME part %ld of mail '%s'. The decoding has been aborted.\n\nThis may be caused by unsufficient space on the volume the file was being decoded or because the source file wasn't accessible.
+;#SET (2028//)
+MSG_ER_B64DEC_WARN
+Vissa ogiltiga tecken hittades vid avkodningen av base64 kodade MIME-delen %ld av brev '%s'. Den genererade utmatningen kan därför innehålla ogiltig data eller vara korrupt.\n\nDetta kan orsakas av en inkorrekt kodning, gjord av den skickande mail klienten eller för att base64 delen blivit skadad vid överföringen.
+;#DEF Some invalid characters were found during the process of undecoding the base64 encoded MIME part %ld of mail '%s'. The generated output may therefore contain invalid data or may be corrupted.\n\nThis can be caused du to an incorrect encoding done by the sending mail client or because the base64 part has been malformed during transmission.
+;#SET (2029//)
+MSG_ER_B64DEC_UNEXP
+Ett fel uppstod vid försök att avkoda base64 MIME-delen %ld av brev '%s'. Avkodningen har avbrutits.\n\nAntingen fanns ingen data att avkoda eller så kunde inte YAM komma åt den kodade datan vid avkodningsfasen.
+;#DEF An error occurred while trying to base64 decode MIME part %ld of mail '%s'. The decoding has been aborted.\n\nThere was either no data to decode or YAM wasn't able to access the encoded data during the decoding phase.
+;#SET (2030//)
+MSG_MA_ADD_WHICH_ADDRESS
+Avsändaradressen (Från) är \033b<%s>\033n och\nsvarsadressen (Svar-till) är \033b<%s>\033n.\n\nVilken adress vill du lägga till i din adressbok?
+;#DEF The sender address (From) is \033b<%s>\033n and\nthe return address (Reply-To) is \033b<%s>\033n.\n\nWhich address do you want to add to your address book?
+;#SET (2031//)

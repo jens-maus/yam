@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-26  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: Updated according to changes.
+
 2007-11-26  Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: added the function DumpImageCache() to print out all image
