@@ -8,6 +8,9 @@ $URL$
 2007-11-27  Thore Böckelmann <tboeckel@gmx.de>
 
   * Themes.c: fixed wrong order of status image names.
+  * HashTable.c: removing an entry causing a collision wasn't marked as removed
+    and further on caused other entries to be unfindable. Also added some test
+    code to check some basic hash table operations.
 
 2007-11-26  Pär Boberg <pbobbenb@spray.se>
 

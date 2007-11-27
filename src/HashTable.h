@@ -99,7 +99,7 @@ struct HashTable
   ULONG entryCount;                 // number of entries in table
   ULONG removedCount;               // removed entry sentinels in table
   ULONG generation;                 // entry storage generation number
-  STRPTR entryStore;                // entry storage
+  char *entryStore;                 // entry storage
 };
 
 enum HashTableOperator
@@ -114,15 +114,15 @@ enum HashTableOperator
 #define HASH_BITS                   32
 // Multiplicative hash uses an unsigned 32 bit integer and the golden ratio,
 // expressed as a fixed-point 32-bit fraction.
-#define HASH_GOLDEN_RATIO           0x9e3778b9U
+#define HASH_GOLDEN_RATIO           0x9e3778b9UL
 // Minimum table size, or gross entry count (net is at most .75 loaded).
 #define HASH_MIN_SIZE               16
 // Table size limit, do not equal or exceed (see min&maxAlphaFrac, below).
-#define HASH_SIZE_LIMIT             (1L << 24)
+#define HASH_SIZE_LIMIT             (1UL << 24)
 // Size in entries (gross, not net of free and removed sentinels) for table.
 // We store hashShift rather than sizeLog2 to optimize the collision-free case
 // in SearchTable.
-#define HASH_TABLE_SIZE(table)      (1L << (HASH_BITS - (table)->shift))
+#define HASH_TABLE_SIZE(table)      (1UL << (HASH_BITS - (table)->shift))
 
 #define HASH_ENTRY_IS_LIVE(entry)   ((entry)->keyHash >= 2)
 #define HASH_ENTRY_IS_FREE(entry)   ((entry)->keyHash == 0)
@@ -253,6 +253,11 @@ void DefaultHashFinalize(UNUSED struct HashTable *table);
 ULONG StringHashHashKey(struct HashTable *table, const void *key);
 BOOL StringHashMatchEntry(UNUSED struct HashTable *table, const struct HashEntryHeader *entry, const void *key);
 void StringHashClearEntry(struct HashTable *table, struct HashEntryHeader *entry);
+
+/*
+// uncomment this if you want to try the demo code
+void HashTableTest(void);
+*/
 
 #endif /* HASH_TABLE_H */
 
