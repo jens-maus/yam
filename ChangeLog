@@ -15,6 +15,8 @@ $URL$
   * ImageCache.c: when adding an image to the hash table the found entry is now
     used directly instead of first looking up the image and adding it after-
     wards.
+  * HashTable.h: added some links to the Mozilla repository since YAM's hash
+    tables base on those used in Mozilla Thunderbird.
 
 2007-11-26  Pär Boberg <pbobbenb@spray.se>
 

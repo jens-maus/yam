@@ -28,6 +28,15 @@
 
 ***************************************************************************/
 
+/*
+ YAM's hash table implementation is based upon Mozilla Thunderbird's hash tables.
+ For further information on Thunderbird go to http://www.mozilla.com.
+
+ The core functions of the ThunderBird 2.0.0.0 hash tables can be found here:
+ http://mxr.mozilla.org/mozilla1.8/source/xpcom/glue/pldhash.c
+ http://mxr.mozilla.org/mozilla1.8/source/xpcom/glue/pldhash.h
+*/
+
 #include <exec/types.h>
 
 #include "SDI_compiler.h"
