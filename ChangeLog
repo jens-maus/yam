@@ -11,6 +11,7 @@ $URL$
   * HashTable.c: removing an entry causing a collision wasn't marked as removed
     and further on caused other entries to be unfindable. Also added some test
     code to check some basic hash table operations.
+  * Themes.c: restored the old dispose handling.
 
 2007-11-26  Pär Boberg <pbobbenb@spray.se>
 

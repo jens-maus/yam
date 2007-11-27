@@ -756,13 +756,13 @@ void UnloadTheme(struct Theme *theme)
   ENTER();
 
   for(i=ci_First; i < ci_Max; i++)
-    ReleaseImage(configImageIDs[i], FALSE);
+    ReleaseImage(configImageIDs[i], TRUE);
 
   for(i=fi_First; i < fi_Max; i++)
-    ReleaseImage(folderImageIDs[i], FALSE);
+    ReleaseImage(folderImageIDs[i], TRUE);
 
   for(i=si_First; i < si_Max; i++)
-    ReleaseImage(statusImageIDs[i], FALSE);
+    ReleaseImage(statusImageIDs[i], TRUE);
 
   for(i=ii_First; i < ii_Max; i++)
   {
