@@ -435,9 +435,6 @@ void ReleaseImage(const char *id, BOOL dispose)
         {
           D(DBF_IMAGE, "removing image '%s' from cache", node->id);
 
-          // remove the image from the cache
-          HashTableRawRemove(G->imageCacheHashTable, entry);
-
           // free all the data
           if(node->dt_obj != NULL)
           {
@@ -450,8 +447,10 @@ void ReleaseImage(const char *id, BOOL dispose)
             free(node->filename);
             node->filename = NULL;
           }
+          // node->id will be freed by HashTableRawRemove()
 
-          // node->id has already been freed by HashTableRawRemove()
+          // remove the image from the cache
+          HashTableRawRemove(G->imageCacheHashTable, entry);
         }
       }
       else
