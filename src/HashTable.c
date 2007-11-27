@@ -336,7 +336,7 @@ void DefaultHashFinalize(UNUSED struct HashTable *table)
 ULONG StringHashHashKey(UNUSED struct HashTable *table, const void *key)
 {
   ULONG h = 0;
-  const unsigned char *s = (const char *)key;
+  const unsigned char *s = (const unsigned char *)key;
 
   ENTER();
 
@@ -705,7 +705,7 @@ ULONG HashTableEnumerate(struct HashTable *table, enum HashTableOperator (* etor
   // and is not minimal-size already.  Do this only if we removed above, so
   // non-removing enumerations can count on stable table->entryStore until
   // the next non-lookup-Operate or removing-Enumerate.
-  if(didRemove &&
+  if(didRemove == TRUE &&
      (table->removedCount >= capacity >> 2 ||
       (capacity > HASH_MIN_SIZE && table->entryCount <= MIN_LOAD(table, capacity))))
   {
@@ -911,4 +911,6 @@ void HashTableTest(void)
     HashTableDestroy(table);
   }
 }
+///
 */
+

@@ -17,6 +17,7 @@ $URL$
     wards.
   * HashTable.h: added some links to the Mozilla repository since YAM's hash
     tables base on those used in Mozilla Thunderbird.
+  * HashTable.c: fixed a signedness warning.
 
 2007-11-26  Pär Boberg <pbobbenb@spray.se>
 
