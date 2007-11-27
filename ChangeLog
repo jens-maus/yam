@@ -12,6 +12,9 @@ $URL$
     and further on caused other entries to be unfindable. Also added some test
     code to check some basic hash table operations.
   * Themes.c: restored the old dispose handling.
+  * ImageCache.c: when adding an image to the hash table the found entry is now
+    used directly instead of first looking up the image and adding it after-
+    wards.
 
 2007-11-26  Pär Boberg <pbobbenb@spray.se>
 

@@ -169,48 +169,61 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
 
   if((entry = HashTableOperate(G->imageCacheHashTable, id, htoAdd)) != NULL)
   {
-    BOOL success = TRUE;
-
     node = (struct ImageCacheNode *)entry;
-
-    node->delayedDispose = FALSE;
-    if((node->id = strdup(id)) != NULL)
+    // If the search operation returned an already initialized node, then this
+    // image has been added to the cache before and we don't have to do anything
+    // else. Otherwise we create a new node
+    if(node->id == NULL)
     {
-      if(filename == NULL || filename[0] == '\0')
+      BOOL success = FALSE;
+
+      W(DBF_IMAGE, "image '%s' NOT found in cache, creating new node", id);
+
+      // create a new node in the cache
+      node->delayedDispose = FALSE;
+      if((node->id = strdup(id)) != NULL)
       {
-        // assume success for empty filenames
-        D(DBF_IMAGE, "no file given for image '%s'", id);
-        success = TRUE;
-      }
-      else if((node->filename = strdup(filename)) != NULL)
-      {
-        // load the datatypes image now
-        if((success = LoadImage(node)) == FALSE)
+        if(filename == NULL || filename[0] == '\0')
         {
-          // failure
-          if(G->NoImageWarning == FALSE)
+          // assume success for empty filenames
+          D(DBF_IMAGE, "no file given for image '%s'", id);
+          success = TRUE;
+        }
+        else if((node->filename = strdup(filename)) != NULL)
+        {
+          // load the datatypes image now
+          if((success = LoadImage(node)) == FALSE)
           {
-            // show the error requester only if the user did not choose to ignore
-            // all warnings before
-            MUI_Request(G->App, NULL, 0, tr(MSG_ER_LOADDT_TITLE),
-                                         tr(MSG_ER_LOADDT_BUTTON),
-                                         tr(MSG_ER_LOADDT_ERROR), filename);
+            // failure
+            if(G->NoImageWarning == FALSE)
+            {
+              // show the error requester only if the user did not choose to ignore
+              // all warnings before
+              MUI_Request(G->App, NULL, 0, tr(MSG_ER_LOADDT_TITLE),
+                                           tr(MSG_ER_LOADDT_BUTTON),
+                                           tr(MSG_ER_LOADDT_ERROR), filename);
+            }
           }
         }
       }
-    }
 
-    if(success == FALSE)
-    {
-      // upon failure remove the node again
-      HashTableRawRemove(G->imageCacheHashTable, entry);
-      if(node->filename != NULL)
+      if(success == FALSE)
       {
-        free(node->filename);
-        node->filename = NULL;
-      }
+        // upon failure remove the node again
+        if(node->filename != NULL)
+        {
+          free(node->filename);
+          node->filename = NULL;
+        }
+        // node->id will be freed by HashTableRawRemove()
 
-      // node->id has already been freed by HashTableRawRemove()
+        HashTableRawRemove(G->imageCacheHashTable, entry);
+        node = NULL;
+      }
+    }
+    else
+    {
+      D(DBF_IMAGE, "image '%s' found in cache", id);
     }
   }
 
@@ -302,23 +315,13 @@ void ImageCacheCleanup(void)
 // immediately.
 struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const struct Screen *scr)
 {
-  struct ImageCacheNode *result = NULL;
-  struct HashEntryHeader *entry;
+  struct ImageCacheNode *node;
 
   ENTER();
 
-  D(DBF_IMAGE, "trying to obtain image '%s' from cache", id);
+  D(DBF_IMAGE, "obtain image '%s' from cache", id);
 
-  entry = HashTableOperate(G->imageCacheHashTable, id, htoLookup);
-  if(HASH_ENTRY_IS_LIVE(entry))
-  {
-    result = (struct ImageCacheNode *)entry;
-    D(DBF_IMAGE, "found image '%s' with file '%s' in cache", id, result->filename);
-  }
-  else
-    W(DBF_IMAGE, "image '%s' NOT found in cache", id);
-
-  if(result == NULL)
+  if((node = CreateImageCacheNode(id, filename)) == NULL)
   {
     // check if the file exists or not.
     if(filename != NULL && filename[0] != '\0' && FileExists(filename) == FALSE)
@@ -348,43 +351,38 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
         }
       }
     }
-    else
-    {
-      D(DBF_IMAGE, "creating new cache node for image '%s' with id '%s'", filename ? filename : (char *)"NULL", id);
-      result = CreateImageCacheNode(id, filename);
-    }
   }
 
   // do a remapping of the image if necessary
-  if(result != NULL && scr != NULL)
+  if(node != NULL && scr != NULL)
   {
     D(DBF_IMAGE, "setting up image '%s' for screen 0x%08lx", id, scr);
 
     // we found a previously loaded node in the cache
     // now we need to remap it to the screen, if not yet done
-    if(result->screen != scr)
+    if(node->screen != scr)
     {
       // remap the image
       // this cannot fail for NULL screens
-      if(RemapImage(result, scr))
+      if(RemapImage(node, scr))
       {
         // check if the image is to be displayed on a new screen
-        if(scr != NULL && result->dt_obj != NULL)
+        if(scr != NULL && node->dt_obj != NULL)
         {
           struct BitMapHeader *bmhd = NULL;
 
           // now we retrieve the bitmap header to
           // get the width/height of the loaded object
-          GetDTAttrs(result->dt_obj, PDTA_BitMapHeader, &bmhd,
-                                     TAG_DONE);
+          GetDTAttrs(node->dt_obj, PDTA_BitMapHeader, &bmhd,
+                                   TAG_DONE);
 
           if(bmhd != NULL)
           {
-            result->width = bmhd->bmh_Width;
-            result->height = bmhd->bmh_Height;
+            node->width = bmhd->bmh_Width;
+            node->height = bmhd->bmh_Height;
           }
           else
-            W(DBF_IMAGE, "couldn't find BitMap header of file '%s'", id);
+            W(DBF_IMAGE, "couldn't find BitMap header of file '%s' for image '%s'", node->filename, id);
         }
       }
       else
@@ -392,17 +390,17 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
         D(DBF_IMAGE, "couldn't remap image '%s' to screen 0x%08lx", id, scr);
 
         // let this call fail if we cannot remap the image
-        result = NULL;
+        node = NULL;
       }
     }
   }
 
   // increase the counter if everything went fine
-  if(result != NULL)
-    result->openCount++;
+  if(node != NULL)
+    node->openCount++;
 
-  RETURN(result);
-  return result;
+  RETURN(node);
+  return node;
 }
 
 ///
@@ -466,7 +464,7 @@ void ReleaseImage(const char *id, BOOL dispose)
       }
     }
     else
-      E(DBF_IMAGE, "couldn't reduce open count (%ld) of 0x%08lx (%s)", node->openCount, node, id);
+      E(DBF_IMAGE, "couldn't reduce open count (%ld) of image '%s'", node->openCount, id);
   }
   else
     E(DBF_IMAGE, "image '%s' not found in cache", id);
@@ -511,6 +509,7 @@ static enum HashTableOperator DumpImageCacheNode(UNUSED struct HashTable *table,
   ENTER();
 
   D(DBF_IMAGE, "  node %08lx", node);
+  D(DBF_IMAGE, "    hash key         %08lx", node->hash.keyHash);
   D(DBF_IMAGE, "    id               '%s'", node->id);
   D(DBF_IMAGE, "    file             '%s'", node->filename);
   D(DBF_IMAGE, "    openCount        %ld", node->openCount);
