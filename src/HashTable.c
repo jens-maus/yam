@@ -725,8 +725,10 @@ ULONG HashTableEnumerate(struct HashTable *table, enum HashTableOperator (* etor
 }
 ///
 
+/*** Testcase ***/
+/// Testcase
+// a little bit of demonstration code on how to use the hash table functions
 /*
-/// a little bit of demonstration code on how to use the hash table functions
 enum StatusImages
 {
   si_First = 0,
@@ -911,6 +913,5 @@ void HashTableTest(void)
     HashTableDestroy(table);
   }
 }
-///
 */
-
+///
