@@ -106,9 +106,9 @@ static const char * const statusImageIDs[si_Max] =
 {
   "status_attach",
   "status_crypt",
-  "status_error",
   "status_delete",
   "status_download",
+  "status_error",
   "status_forward",
   "status_group",
   "status_hold",

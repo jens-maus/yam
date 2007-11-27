@@ -5,10 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+<<<<<<< .mine
+2007-11-27  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Themes.c: fixed wrong order of status image names.
+
+=======
 2007-11-26  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: Updated according to changes.
 
+>>>>>>> .r3514
 2007-11-26  Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: added the function DumpImageCache() to print out all image
