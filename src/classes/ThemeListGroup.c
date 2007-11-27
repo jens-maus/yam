@@ -48,6 +48,54 @@ struct Data
 */
 
 /* Hooks */
+/// ConstructHook
+HOOKPROTONHNO(ConstructFunc, struct Theme *, struct Theme *e)
+{
+  struct Theme *entry;
+
+  ENTER();
+
+  entry = memdup(e, sizeof(*e));
+
+  RETURN(entry);
+  return entry;
+}
+MakeStaticHook(ConstructHook, ConstructFunc);
+
+///
+/// DestructHook
+//  destruction hook
+HOOKPROTONHNO(DestructFunc, LONG, struct Theme *entry)
+{
+  FreeTheme(entry);
+  return 0;
+}
+MakeStaticHook(DestructHook, DestructFunc);
+
+///
+/// DisplayHook
+HOOKPROTONHNO(DisplayFunc, LONG, struct NList_DisplayMessage *msg)
+{
+  struct Theme *entry;
+  char **array;
+
+  if(!msg)
+    return 0;
+
+  // now we set our local variables to the DisplayMessage structure ones
+  entry = (struct Theme *)msg->entry;
+  array = msg->strings;
+
+  if(entry)
+  {
+    array[0] = entry->name;
+  }
+
+  return 0;
+}
+MakeStaticHook(DisplayHook, DisplayFunc);
+
+///
 
 /* Private Functions */
 
@@ -72,10 +120,10 @@ OVERLOAD(OM_NEW)
               MUIA_CycleChain, TRUE,
               MUIA_NListview_NList, themeListObject = NListObject,
                 InputListFrame,
-                MUIA_NList_DragType,     MUIV_NList_DragType_None,
-//                  MUIA_NList_Format,       "BAR",
-//                  MUIA_NList_Title,        TRUE,
-//                  MUIA_NList_DisplayHook2, &FilterDisplayHook,
+                MUIA_NList_DragType,      MUIV_NList_DragType_None,
+                MUIA_NList_ConstructHook, &ConstructHook,
+                MUIA_NList_DestructHook,  &DestructHook,
+                MUIA_NList_DisplayHook2,  &DisplayHook,
               End,
             End,
 
@@ -183,10 +231,9 @@ OVERLOAD(OM_SET)
 
 /* Public Methods */
 /// DECLARE(Update)
-#define isDrawer(etype)   (etype >= 0 && etype != ST_SOFTLINK && etype != ST_LINKDIR)
-
 DECLARE(Update)
 {
+  GETDATA;
   BOOL result = FALSE;
   char themesDir[SIZE_PATH];
   APTR context;
@@ -196,27 +243,52 @@ DECLARE(Update)
   // construct the themes directory path
   AddPath(themesDir, G->ProgDir, "Themes", sizeof(themesDir));
 
+  // prepare for an ExamineDir()
   if((context = ObtainDirContextTags(EX_StringName, themesDir, TAG_DONE)) != NULL)
   {
     struct ExamineData *ed;
 
+    // iterate through the entries of the Themes directory
     while((ed = ExamineDir(context)) != NULL)
     {
       // check that this entry is a drawer
       // because we don't accept any file here
       if(EXD_IS_DIRECTORY(ed))
       {
+        struct Theme theme;
+        char filename[SIZE_PATHFILE];
+
         D(DBF_CONFIG, "found dir '%s' in themes drawer", ed->Name);
+
+        // clear our temporary themes structure
+        memset(&theme, 0, sizeof(struct Theme));
+
+        // now we check whether this is a drawer which contains a
+        // ".theme" file which should be a sign that this is a YAM theme
+        AddPath(filename, themesDir, ed->Name, sizeof(filename));
+        AddPart(filename, ".theme", sizeof(filename));
+
+        // parse the .theme file to check wheter this
+        // is a valid theme or not.
+        if(ParseThemeFile(filename, &theme))
+        {
+          D(DBF_CONFIG, "found valid .theme file '%s'", filename);
+
+          // add the theme to our NList which in fact will allocate/free everything the
+          // ParseThemeFile() function did allocate previously.
+          DoMethod(data->NL_THEMELIST, MUIM_NList_InsertSingle, &theme, MUIV_NList_Insert_Bottom);
+
+          result = TRUE;
+        }
+        else
+          W(DBF_CONFIG, "couldn't parse .theme file '%s'", filename);
       }
       else
-      {
         W(DBF_CONFIG, "unknown file '%s' in themes directory ignored", ed->Name);
-      }
     }
+
     if(IoErr() != ERROR_NO_MORE_ENTRIES)
-    {
       E(DBF_CONFIG, "ExamineDir() failed");
-    }
 
     ReleaseDirContext(context);
   }

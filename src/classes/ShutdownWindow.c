@@ -51,7 +51,7 @@ OVERLOAD(OM_NEW)
   if(G->theme.loaded == TRUE)
     AddPath(logopath, G->theme.directory, "logo", sizeof(logopath));
   else
-    AddPath(logopath, G->ProgDir, "themes/default/logo", sizeof(logopath));
+    AddPath(logopath, G->ProgDir, "Themes/default/logo", sizeof(logopath));
 
   // create the object
   if((obj = DoSuperNew(cl, obj,

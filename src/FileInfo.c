@@ -35,6 +35,10 @@
 
 #include "Debug.h"
 
+// some filetype handling macros
+#define isFile(etype)     (etype < 0)
+#define isDrawer(etype)   (etype >= 0 && etype != ST_SOFTLINK && etype != ST_LINKDIR)
+
 /// ObtainFileInfo
 // query file <name> for the information <which>. If successful, the queried
 // value is returned in the variable that <valuePtr> points to.

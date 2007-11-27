@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-27  Jens Langner <Jens.Langner@light-speed.de>
+
+  * ThemeListGroup.c, misc: a found and valid themes directory will now be
+    displayed in the ThemeList within the YAM configuration. However, we still
+    need to finalize the theme selektion as well as the preview.
+
 2007-11-27  Thore Böckelmann <tboeckel@gmx.de>
 
   * Themes.c: fixed wrong order of status image names.

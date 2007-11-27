@@ -260,7 +260,7 @@ void AllocTheme(struct Theme *theme)
   theme->version = NULL;
 
   // contruct the path to the themes directory
-  AddPath(theme->directory, G->ProgDir, "themes", sizeof(theme->directory));
+  AddPath(theme->directory, G->ProgDir, "Themes", sizeof(theme->directory));
   AddPart(theme->directory, C->ThemeName, sizeof(theme->directory));
 
   D(DBF_THEME, "theme directory: '%s' '%s'", theme->directory, G->ProgDir);
@@ -345,7 +345,7 @@ void AllocTheme(struct Theme *theme)
 ///
 /// ParseThemeFile
 // parse a complete theme file
-BOOL ParseThemeFile(const char *themeFile)
+BOOL ParseThemeFile(const char *themeFile, struct Theme *theme)
 {
   BOOL success = FALSE;
   FILE *fh;
@@ -393,10 +393,10 @@ BOOL ParseThemeFile(const char *themeFile)
             char *image = strdup(value);
 
             // theme description
-                 if(stricmp(id, "Name") == 0)     { G->theme.name = image;    found = TRUE; }
-            else if(stricmp(id, "Author") == 0)   { G->theme.author = image;  found = TRUE; }
-            else if(stricmp(id, "URL") == 0)      { G->theme.url = image;     found = TRUE; }
-            else if(stricmp(id, "Version") == 0)  { G->theme.version = image; found = TRUE; }
+                 if(stricmp(id, "Name") == 0)     { theme->name = image;    found = TRUE; }
+            else if(stricmp(id, "Author") == 0)   { theme->author = image;  found = TRUE; }
+            else if(stricmp(id, "URL") == 0)      { theme->url = image;     found = TRUE; }
+            else if(stricmp(id, "Version") == 0)  { theme->version = image; found = TRUE; }
             else
             {
               // config images
@@ -404,10 +404,10 @@ BOOL ParseThemeFile(const char *themeFile)
               {
                 if(stricmp(id, configImageIDs[i]) == 0)
                 {
-                  if(G->theme.configImages[i] != NULL)
-                    free(G->theme.configImages[i]);
+                  if(theme->configImages[i] != NULL)
+                    free(theme->configImages[i]);
 
-                  G->theme.configImages[i] = image;
+                  theme->configImages[i] = image;
                   found = TRUE;
                 }
               }
@@ -417,10 +417,10 @@ BOOL ParseThemeFile(const char *themeFile)
               {
                 if(stricmp(id, folderImageIDs[i]) == 0)
                 {
-                  if(G->theme.folderImages[i] != NULL)
-                    free(G->theme.folderImages[i]);
+                  if(theme->folderImages[i] != NULL)
+                    free(theme->folderImages[i]);
 
-                  G->theme.folderImages[i] = image;
+                  theme->folderImages[i] = image;
                   found = TRUE;
                 }
               }
@@ -430,10 +430,10 @@ BOOL ParseThemeFile(const char *themeFile)
               {
                 if(stricmp(id, iconImageIDs[i]) == 0)
                 {
-                  if(G->theme.folderImages[i] != NULL)
-                    free(G->theme.folderImages[i]);
+                  if(theme->folderImages[i] != NULL)
+                    free(theme->folderImages[i]);
 
-                  G->theme.folderImages[i] = image;
+                  theme->folderImages[i] = image;
                   found = TRUE;
                 }
               }
@@ -443,10 +443,10 @@ BOOL ParseThemeFile(const char *themeFile)
               {
                 if(stricmp(id, statusImageIDs[i]) == 0)
                 {
-                  if(G->theme.statusImages[i] != NULL)
-                    free(G->theme.statusImages[i]);
+                  if(theme->statusImages[i] != NULL)
+                    free(theme->statusImages[i]);
 
-                  G->theme.statusImages[i] = image;
+                  theme->statusImages[i] = image;
                   found = TRUE;
                 }
               }
@@ -459,10 +459,10 @@ BOOL ParseThemeFile(const char *themeFile)
                 {
                   if(stricmp(id, tbii[mainWindowToolbarImageIDs[i]][j]) == 0)
                   {
-                    if(G->theme.mainWindowToolbarImages[j][i] != NULL)
-                      free(G->theme.mainWindowToolbarImages[j][i]);
+                    if(theme->mainWindowToolbarImages[j][i] != NULL)
+                      free(theme->mainWindowToolbarImages[j][i]);
 
-                    G->theme.mainWindowToolbarImages[j][i] = image;
+                    theme->mainWindowToolbarImages[j][i] = image;
 
                     found = TRUE;
                     break;
@@ -474,10 +474,10 @@ BOOL ParseThemeFile(const char *themeFile)
                 {
                   if(stricmp(id, tbii[readWindowToolbarImageIDs[i]][j]) == 0)
                   {
-                    if(G->theme.readWindowToolbarImages[j][i] != NULL)
-                      free(G->theme.readWindowToolbarImages[j][i]);
+                    if(theme->readWindowToolbarImages[j][i] != NULL)
+                      free(theme->readWindowToolbarImages[j][i]);
 
-                    G->theme.readWindowToolbarImages[j][i] = image;
+                    theme->readWindowToolbarImages[j][i] = image;
 
                     found = TRUE;
                     break;
@@ -489,10 +489,10 @@ BOOL ParseThemeFile(const char *themeFile)
                 {
                   if(stricmp(id, tbii[writeWindowToolbarImageIDs[i]][j]) == 0)
                   {
-                    if(G->theme.writeWindowToolbarImages[j][i] != NULL)
-                      free(G->theme.writeWindowToolbarImages[j][i]);
+                    if(theme->writeWindowToolbarImages[j][i] != NULL)
+                      free(theme->writeWindowToolbarImages[j][i]);
 
-                    G->theme.writeWindowToolbarImages[j][i] = image;
+                    theme->writeWindowToolbarImages[j][i] = image;
 
                     found = TRUE;
                     break;
@@ -504,10 +504,10 @@ BOOL ParseThemeFile(const char *themeFile)
                 {
                   if(stricmp(id, tbii[abookWindowToolbarImageIDs[i]][j]) == 0)
                   {
-                    if(G->theme.abookWindowToolbarImages[j][i] != NULL)
-                      free(G->theme.abookWindowToolbarImages[j][i]);
+                    if(theme->abookWindowToolbarImages[j][i] != NULL)
+                      free(theme->abookWindowToolbarImages[j][i]);
 
-                    G->theme.abookWindowToolbarImages[j][i] = image;
+                    theme->abookWindowToolbarImages[j][i] = image;
 
                     found = TRUE;
                     break;
@@ -662,7 +662,7 @@ BOOL LoadTheme(struct Theme *theme)
   // Parse the .theme file within the
   // theme directory
   AddPath(themeFile, theme->directory, ".theme", sizeof(themeFile));
-  if(ParseThemeFile(themeFile) == TRUE)
+  if(ParseThemeFile(themeFile, theme) == TRUE)
     D(DBF_THEME, "successfully parsed theme file '%s'", themeFile);
   else
     W(DBF_THEME, "parsing of theme file '%s' failed!", themeFile);

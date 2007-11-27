@@ -50,10 +50,6 @@ enum FType
   FIT_DRAWER
 };
 
-// some filetype handling macros
-#define isFile(etype)     (etype < 0)
-#define isDrawer(etype)   (etype >= 0 && etype != ST_SOFTLINK && etype != ST_LINKDIR)
-
 BOOL ObtainFileInfo(const char *name, enum FileInfo which, void *valuePtr);
 BOOL FileExists(const char *filename);
 
