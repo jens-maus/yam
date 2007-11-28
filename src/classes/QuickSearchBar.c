@@ -43,6 +43,7 @@ struct Data
   Object *BT_CLEARBUTTON;
   struct TimeVal last_statusupdate;
   BOOL abortSearch;
+  BOOL searchInProgress;
 };
 */
 
@@ -437,6 +438,8 @@ OVERLOAD(OM_NEW)
   data->NL_SEARCHOPTIONS = searchOptionsList;
   data->ST_SEARCHSTRING = searchString;
 
+  data->searchInProgress = FALSE;
+
   // set the help text for each GUI element
   SetHelp(data->CY_VIEWOPTIONS,       MSG_HELP_QUICKSEARCH_VIEWOPTIONS);
   SetHelp(data->ST_SEARCHSTRING,      MSG_HELP_QUICKSEARCH_SEARCHSTRING);
@@ -677,6 +680,7 @@ DECLARE(ProcessSearch)
 
     // reset any previous abortion
     data->abortSearch = FALSE;
+    data->searchInProgress = TRUE;
 
     // now we can process the search/sorting by searching the mail list of the
     // current folder querying different criterias of a mail
@@ -703,6 +707,7 @@ DECLARE(ProcessSearch)
     }
     // finally de-quiet the list again
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
+    data->searchInProgress = FALSE;
   }
   else
     E(DBF_ALL, "curFolder->Type == FT_GROUP ?????");
@@ -809,18 +814,15 @@ DECLARE(UpdateStats) // ULONG force
     char statusText[SIZE_DEFAULT];
     ULONG numEntries = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries);
     struct Folder *curFolder = FO_GetCurrentFolder();
-    BOOL wasQuiet;
 
     snprintf(statusText, sizeof(statusText), tr(MSG_QUICKSEARCH_SHOWNMSGS), numEntries, curFolder->Total);
 
     // if the list is quiet then leave that state
-    if((wasQuiet = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet)) == TRUE)
+    if(data->searchInProgress == TRUE)
       set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
-
     set(data->TX_STATUSTEXT, MUIA_Text_Contents, statusText);
-
     // and restore the previous state if we changed it
-    if(wasQuiet == TRUE)
+    if(data->searchInProgress == TRUE)
       set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
   }
 
