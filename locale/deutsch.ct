@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (14.11.2007)
+## version $VER: YAM.catalog 6.0 (28.11.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -6768,7 +6768,7 @@ MSG_CO_ABOOK_SUMMARY
 Konfigurieren Sie Ihr Adressbuch...
 ;
 MSG_CO_SCRIPTS_TITLE
-Benutzer-definierte Skripte
+Benutzerdefinierte Skripte
 ;
 MSG_CO_SCRIPTS_SUMMARY
 Konfigurieren Sie Ihre Hilfsskripte...
@@ -8229,4 +8229,10 @@ Die Absenderadresse (From) ist \033b<%s>\033n und\n\
 die Antwortadresse (Reply-To) ist \033b<%s>\033n.\n\
 \n\
 Welche Adresse wollen Sie zu Ihrem Adressbuch hinzufügen?
+;
+MSG_CO_SCRIPTACTION
+Skriptaktion (Name)
+;
+MSG_CO_SCRIPTPATH
+Skriptpfad
 ;

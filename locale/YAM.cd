@@ -6556,3 +6556,9 @@ the return address (Reply-To) is \033b<%s>\033n.\n\
 Which address do you want to add to your address book?
 ; ADDRESS, ADDRESS
 ;
+MSG_CO_SCRIPTACTION (2032//)
+Script action (Name)
+;
+MSG_CO_SCRIPTPATH (2033//)
+Script path
+;

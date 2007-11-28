@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-28  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_COg.c, YAM.cd, deutsch.ct: Changed the ARexx script listview in the
+    configuration to have a listview title like every other listview in YAM.
+    This should be more consistent and should make the purpose of the
+    listview more clear.
+
 2007-11-27  Jens Langner <Jens.Langner@light-speed.de>
 
   * ThemeListGroup.c, misc: a found and valid themes directory will now be

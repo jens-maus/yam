@@ -182,41 +182,49 @@ HOOKPROTONHNO(ScriptListDisplayFunc, LONG, struct NList_DisplayMessage *msg)
 
     if(CE != NULL)
     {
-      static char title[SIZE_DEFAULT];
-      enum Macro type = (enum Macro)(msg->entry)-1;
-
-      title[0] = '\0';
-
-      switch(type)
+      if(msg->entry != NULL)
       {
-        case MACRO_STARTUP:   strlcpy(title, tr(MSG_CO_ScriptStartup), sizeof(title)); break;
-        case MACRO_QUIT:      strlcpy(title, tr(MSG_CO_ScriptTerminate), sizeof(title)); break;
-        case MACRO_PREGET:    strlcpy(title, tr(MSG_CO_ScriptPreGetMail), sizeof(title)); break;
-        case MACRO_POSTGET:   strlcpy(title, tr(MSG_CO_ScriptPostGetMail), sizeof(title)); break;
-        case MACRO_NEWMSG:    strlcpy(title, tr(MSG_CO_ScriptNewMsg), sizeof(title)); break;
-        case MACRO_PRESEND:   strlcpy(title, tr(MSG_CO_ScriptPreSendMail), sizeof(title)); break;
-        case MACRO_POSTSEND:  strlcpy(title, tr(MSG_CO_ScriptPostSendMail), sizeof(title)); break;
-        case MACRO_READ:      strlcpy(title, tr(MSG_CO_ScriptReadMsg), sizeof(title)); break;
-        case MACRO_PREWRITE:  strlcpy(title, tr(MSG_CO_ScriptPreWriteMsg), sizeof(title)); break;
-        case MACRO_POSTWRITE: strlcpy(title, tr(MSG_CO_ScriptPostWriteMsg), sizeof(title)); break;
-        case MACRO_URL:       strlcpy(title, tr(MSG_CO_ScriptClickURL), sizeof(title)); break;
+        static char title[SIZE_DEFAULT];
+        enum Macro type = (enum Macro)(msg->entry)-1;
 
-        // the user definable macros
-        default:
+        title[0] = '\0';
+
+        switch(type)
         {
-          snprintf(title, sizeof(title), tr(MSG_CO_ScriptMenu), type+1);
+          case MACRO_STARTUP:   strlcpy(title, tr(MSG_CO_ScriptStartup), sizeof(title)); break;
+          case MACRO_QUIT:      strlcpy(title, tr(MSG_CO_ScriptTerminate), sizeof(title)); break;
+          case MACRO_PREGET:    strlcpy(title, tr(MSG_CO_ScriptPreGetMail), sizeof(title)); break;
+          case MACRO_POSTGET:   strlcpy(title, tr(MSG_CO_ScriptPostGetMail), sizeof(title)); break;
+          case MACRO_NEWMSG:    strlcpy(title, tr(MSG_CO_ScriptNewMsg), sizeof(title)); break;
+          case MACRO_PRESEND:   strlcpy(title, tr(MSG_CO_ScriptPreSendMail), sizeof(title)); break;
+          case MACRO_POSTSEND:  strlcpy(title, tr(MSG_CO_ScriptPostSendMail), sizeof(title)); break;
+          case MACRO_READ:      strlcpy(title, tr(MSG_CO_ScriptReadMsg), sizeof(title)); break;
+          case MACRO_PREWRITE:  strlcpy(title, tr(MSG_CO_ScriptPreWriteMsg), sizeof(title)); break;
+          case MACRO_POSTWRITE: strlcpy(title, tr(MSG_CO_ScriptPostWriteMsg), sizeof(title)); break;
+          case MACRO_URL:       strlcpy(title, tr(MSG_CO_ScriptClickURL), sizeof(title)); break;
 
-          if(CE->RX[type].Name[0] != '\0')
-            snprintf(title, sizeof(title), "%s (%s)", title, CE->RX[type].Name);
+          // the user definable macros
+          default:
+          {
+            snprintf(title, sizeof(title), tr(MSG_CO_ScriptMenu), type+1);
+
+            if(CE->RX[type].Name[0] != '\0')
+              snprintf(title, sizeof(title), "%s (%s)", title, CE->RX[type].Name);
+          }
+        }
+
+        array[0] = title;
+
+        if(CE->RX[type].Script[0] != '\0')
+        {
+          array[1] = CE->RX[type].Script;
+          msg->preparses[0] = (char *)MUIX_B;
         }
       }
-
-      array[0] = title;
-
-      if(CE->RX[type].Script[0] != '\0')
+      else
       {
-        array[1] = CE->RX[type].Script;
-        msg->preparses[0] = (char *)MUIX_B;
+        array[0] = tr(MSG_CO_SCRIPTACTION);
+        array[1] = tr(MSG_CO_SCRIPTPATH);
       }
     }
     else
@@ -3535,6 +3543,7 @@ Object *CO_PageScripts(struct CO_ClassData *data)
                MUIA_CycleChain, TRUE,
                MUIA_NListview_NList, data->GUI.LV_REXX = NListObject,
                   InputListFrame,
+                  MUIA_NList_Title,        TRUE,
                   MUIA_NList_Format,       "BAR,",
                   MUIA_NList_DisplayHook2, &ScriptListDisplayHook,
                End,
