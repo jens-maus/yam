@@ -819,8 +819,9 @@ DECLARE(UpdateStats) // ULONG force
 
     set(data->TX_STATUSTEXT, MUIA_Text_Contents, statusText);
 
-    // and restore the previous state
-    set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, wasQuiet);
+    // and restore the previous state if we changed it
+    if(wasQuiet == TRUE)
+      set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
   }
 
   RETURN(0);
