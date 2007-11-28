@@ -671,8 +671,9 @@ DECLARE(ProcessSearch)
     if(searchString != NULL && searchString[0] == '\0')
       searchString = NULL;
 
-    // make sure the correct mailview list is visible
+    // make sure the correct mailview list is visible and quiet
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_SwitchToList, LT_QUICKVIEW);
+    set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
 
     // reset any previous abortion
     data->abortSearch = FALSE;
@@ -700,6 +701,8 @@ DECLARE(ProcessSearch)
       xset(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active,       MUIV_NList_Active_Top,
                                    MUIA_NList_SelectChange, TRUE);
     }
+    // finally de-quiet the list again
+    set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
   }
   else
     E(DBF_ALL, "curFolder->Type == FT_GROUP ?????");
@@ -806,10 +809,18 @@ DECLARE(UpdateStats) // ULONG force
     char statusText[SIZE_DEFAULT];
     ULONG numEntries = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries);
     struct Folder *curFolder = FO_GetCurrentFolder();
+    BOOL wasQuiet;
 
     snprintf(statusText, sizeof(statusText), tr(MSG_QUICKSEARCH_SHOWNMSGS), numEntries, curFolder->Total);
 
+    // if the list is quiet then leave that state
+    if((wasQuiet = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet)) == TRUE)
+      set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
+
     set(data->TX_STATUSTEXT, MUIA_Text_Contents, statusText);
+
+    // and restore the previous state
+    set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, wasQuiet);
   }
 
   RETURN(0);

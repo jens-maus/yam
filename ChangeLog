@@ -9,6 +9,8 @@ $URL$
 
   * ImageCache.c: fixed another possible memory leak in case a DT object could
     be created, but the frame box had an invalid depth.
+  * QuickSearchBar.c: the list of found mails is now set quiet while the search
+    is in progress. This greatly speeds up the search.
 
 2007-11-28  Jens Langner <Jens.Langner@light-speed.de>
 
