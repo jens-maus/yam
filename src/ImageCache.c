@@ -210,6 +210,11 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
       if(success == FALSE)
       {
         // upon failure remove the node again
+        if(node->dt_obj != NULL)
+        {
+          DisposeDTObject(node->dt_obj);
+          node->dt_obj = NULL;
+        }
         if(node->filename != NULL)
         {
           free(node->filename);
@@ -441,7 +446,6 @@ void ReleaseImage(const char *id, BOOL dispose)
             DisposeDTObject(node->dt_obj);
             node->dt_obj = NULL;
           }
-
           if(node->filename != NULL)
           {
             free(node->filename);

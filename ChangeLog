@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-28  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c: fixed another possible memory leak in case a DT object could
+    be created, but the frame box had an invalid depth.
+
 2007-11-28  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c, YAM.cd, deutsch.ct: Changed the ARexx script listview in the
