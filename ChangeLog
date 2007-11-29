@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-29  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c: try to avoid a possible crash situation where within the
+    MA_DeleteSingle() function a mail was supplied which has a folder pointer
+    which is NULL. This should hopefully catch bug #1840608.
+
 2007-11-28  Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: fixed another possible memory leak in case a DT object could

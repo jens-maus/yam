@@ -761,72 +761,78 @@ struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
 //  Deletes a single message
 void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL closeWindows)
 {
-  struct Folder *mailFolder = mail->Folder;
-
   ENTER();
 
-  if(C->RemoveAtOnce == TRUE ||
-     isTrashFolder(mailFolder) ||
-     (isSpamFolder(mailFolder) && hasStatusSpam(mail)) ||
-     forceatonce == TRUE)
+  if(mail != NULL && mail->Folder != NULL)
   {
-    int i;
+    struct Folder *mailFolder = mail->Folder;
 
-    // before we go and delete/free the mail we have to check
-    // all possible write windows if they are refering to it
-    for(i=0; i < MAXWR; i++)
+    if(C->RemoveAtOnce == TRUE ||
+       isTrashFolder(mailFolder) ||
+       (isSpamFolder(mailFolder) && hasStatusSpam(mail)) ||
+       forceatonce == TRUE)
     {
-      struct WR_ClassData *writeWin = G->WR[i];
+      int i;
 
-      if(writeWin != NULL)
+      // before we go and delete/free the mail we have to check
+      // all possible write windows if they are refering to it
+      for(i=0; i < MAXWR; i++)
       {
-        if(writeWin->refMail == mail)
-          writeWin->refMail = NULL;
+        struct WR_ClassData *writeWin = G->WR[i];
 
-        if(writeWin->refMailList != NULL)
+        if(writeWin != NULL)
         {
-          int j;
+          if(writeWin->refMail == mail)
+            writeWin->refMail = NULL;
 
-          for(j=0; j < (int)writeWin->refMailList[0]; j++)
+          if(writeWin->refMailList != NULL)
           {
-            struct Mail *curMail = writeWin->refMailList[j+2];
+            int j;
 
-            if(curMail == mail)
-              writeWin->refMailList[j+2] = NULL;
+            for(j=0; j < (int)writeWin->refMailList[0]; j++)
+            {
+              struct Mail *curMail = writeWin->refMailList[j+2];
+
+              if(curMail == mail)
+                writeWin->refMailList[j+2] = NULL;
+            }
           }
         }
       }
+
+      AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name);
+
+      // make sure we delete the mailfile
+      DeleteFile(GetMailFile(NULL, mailFolder, mail));
+
+      // now remove the mail from its folder/mail list
+      RemoveMailFromList(mail, closeWindows);
+
+      // if we are allowed to make some noise we
+      // update our Statistics
+      if(quiet == FALSE)
+        DisplayStatistics(mailFolder, TRUE);
     }
+    else
+    {
+      struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
 
-    AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name);
+      MA_MoveCopySingle(mail, mailFolder, delfolder, FALSE, closeWindows);
 
-    // make sure we delete the mailfile
-    DeleteFile(GetMailFile(NULL, mailFolder, mail));
+      // if we are allowed to make some noise we
+      // update our Statistics
+      if(quiet == FALSE)
+      {
+        // don't update the appicon yet
+        DisplayStatistics(delfolder, FALSE);
 
-    // now remove the mail from its folder/mail list
-    RemoveMailFromList(mail, closeWindows);
-
-    // if we are allowed to make some noise we
-    // update our Statistics
-    if(quiet == FALSE)
-      DisplayStatistics(mailFolder, TRUE);
+        // but update it now.
+        DisplayStatistics(mailFolder, TRUE);
+      }
+    }
   }
   else
-  {
-    struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
-
-    MA_MoveCopySingle(mail, mailFolder, delfolder, FALSE, closeWindows);
-
-    // if we are allowed to make some noise we
-    // update our Statistics
-    if(quiet == FALSE)
-    {
-      // don't update the appicon yet
-      DisplayStatistics(delfolder, FALSE);
-      // but update it now.
-      DisplayStatistics(mailFolder, TRUE);
-    }
-  }
+    E(DBF_MAIL, "mail or mail->Folder is NULL!! (%08lx)", mail);
 
   LEAVE();
 }
