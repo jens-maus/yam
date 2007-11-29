@@ -9,6 +9,7 @@ $URL$
 
   * ImageCache.c: if an image could not be loaded via datatypes.library the
     error message will only be displayed if the file exists.
+  * deutsch.ct: fixed to two minor typos.
 
 2007-11-29  Jens Langner <Jens.Langner@light-speed.de>
 

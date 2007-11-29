@@ -6406,7 +6406,7 @@ MSG_ER_ICONOBJECT_TITLE
 Fehler beim Laden eines Piktogrammbildes!
 ;
 MSG_ER_ICONOBJECT
-Ein Fehler trat während des Versuches auf das Bild\n\
+Ein Fehler trat während des Versuches auf, das Bild\n\
 des Piktogrammes '%s.info' vom Verzeichnis '%s' zu\n\
 laden.\n\
 \n\
@@ -6418,7 +6418,7 @@ MSG_ER_IMAGEOBJECT_TITLE
 Fehler beim Laden einer Bilddatei!
 ;
 MSG_ER_IMAGEOBJECT
-Ein Fehler trat während des Versuches auf die Bilddatei\n\
+Ein Fehler trat während des Versuches auf, die Bilddatei\n\
 '%s' vom Verzeichnis '%s' zu laden.\n\
 \n\
 Bitte stellen Sie sicher, dass Ihr Grafikverzeichnis\n\
