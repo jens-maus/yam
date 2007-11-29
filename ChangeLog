@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-29  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c: if an image could not be loaded via datatypes.library the
+    error message will only be displayed if the file exists.
+
 2007-11-29  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c: try to avoid a possible crash situation where within the

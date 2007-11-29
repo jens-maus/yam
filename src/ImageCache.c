@@ -192,9 +192,9 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
         else if((node->filename = strdup(filename)) != NULL)
         {
           // load the datatypes image now
-          if((success = LoadImage(node)) == FALSE)
+          if((success = LoadImage(node)) == FALSE && FileExists(filename) == TRUE)
           {
-            // failure
+            // the file exists, but loading it failed
             if(G->NoImageWarning == FALSE)
             {
               // show the error requester only if the user did not choose to ignore
