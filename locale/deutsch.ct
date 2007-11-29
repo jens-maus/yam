@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (28.11.2007)
+## version $VER: YAM.catalog 6.0 (29.11.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -7916,7 +7916,7 @@ Informationen lesen Sie bitte die beigefügten\n\
 Dokumente.
 ;
 MSG_ABOUT_3RD_PARTY_SOFTWARE
-Dieses Programm verwendet folgende fremde Software:
+Dieses Programm verwendet folgende Drittsoftware:
 ;
 MSG_ABOUT_YAM_NEWS
 Neuigkeiten über YAM finden Sie auf der\n\
