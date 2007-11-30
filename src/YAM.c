@@ -2057,7 +2057,8 @@ static void InitAfterLogin(void)
   SplashProgress(tr(MSG_LoadingGFX), 30);
 
   // load the choosen theme of the user
-  LoadTheme(&G->theme);
+  if(LoadTheme(&G->theme, C->ThemeName) == FALSE)
+    Abort(NULL); // exit the application
 
   // make sure we initialize the toolbar Cache which in turn will
   // cause YAM to cache all often used toolbars and their images

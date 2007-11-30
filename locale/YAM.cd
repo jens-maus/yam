@@ -4771,35 +4771,6 @@ file '%s' from directory '%s'.\n\
 Please make sure your image directory contains all\n\
 necessary images as defined in the latest image layout.
 ;
-MSG_ER_IMGLAYOUTFAILURE (1558//)
-Image layout failure!
-;
-MSG_ER_EXITIGNORE (1559//)
-*_Exit|_Ignore
-;
-MSG_ER_MISSINGIMGVERFILE (1560//)
-The layout of your '%s' image directory\n\
-contains no version information and needs to be updated\n\
-accordingly.\n\
-\n\
-Please make sure you are using a compatible image layout\n\
-or some images may be displayed incorrectly in YAM.
-;
-MSG_ER_LOADIMGLAYOUTFAILED (1561//)
-An error occurred while trying to load the image\n\
-layout information from your '%s' directory.\n\
-\n\
-Please make sure you are using a compatible image layout\n\
-or some images may be displayed incorrectly in YAM.
-;
-MSG_ER_WRONGIMGLAYOUTVER (1562//)
-The layout of your '%s' image directory\n\
-contains an incompatible version information and needs\n\
-to be updated accordingly.\n\
-\n\
-Please make sure you are using a compatible image layout\n\
-or some images may be displayed incorrectly in YAM.
-;
 MSG_MA_AUTOSAVEFOUND (1563//)
 YAM has found an autosaved message file '%s'\n\
 which have been created in a previous session. This may\n\
@@ -6561,4 +6532,21 @@ Script action (Name)
 ;
 MSG_CO_SCRIPTPATH (2033//)
 Script path
+;
+MSG_ER_THEMEVER_TITLE (2034//)
+Theme version incorrect
+;
+MSG_ER_THEMEVER_BUTTON2 (2035//)
+*_Ignore|_Exit
+;
+MSG_ER_THEMEVER_BUTTON3 (2036//)
+*_Use default|_Ignore|_Exit
+;
+MSG_ER_THEMEVER_ERROR (2037//)
+The currently activated theme '%s' was found\n\
+to be of an incompatible version and can't be\n\
+loaded.\n\
+\n\
+Please make sure to update the theme to a version\n\
+compatible to this version of YAM.
 ;

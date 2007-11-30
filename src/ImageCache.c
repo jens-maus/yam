@@ -446,6 +446,7 @@ void ReleaseImage(const char *id, BOOL dispose)
             DisposeDTObject(node->dt_obj);
             node->dt_obj = NULL;
           }
+
           if(node->filename != NULL)
           {
             free(node->filename);
@@ -463,7 +464,11 @@ void ReleaseImage(const char *id, BOOL dispose)
         // To accomplish this we remember this and remove it as soon as the open
         // counter reaches zero.
         if(dispose == TRUE)
+        {
           node->delayedDispose = TRUE;
+
+          D(DBF_IMAGE, "  flagged as delayedDispose");
+        }
       }
     }
     else

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-30  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Themes.c: the version of a ".theme" file will now be checked and the
+    user warned accordingly. In case an invalid version is found YAM will
+    now popup a requester and give the user the change to load the default
+    theme, ignore the requester or exit the application.
+
 2007-11-29  Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: if an image could not be loaded via datatypes.library the

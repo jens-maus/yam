@@ -50,7 +50,7 @@
 // VERSIONS:
 // 1: YAM 2.5
 //
-#define THEMELAYOUT_VERSION 1
+#define THEME_REQVERSION 1
 
 // static image identifiers
 /// config image IDs
@@ -246,7 +246,7 @@ static const enum ToolbarImages abookWindowToolbarImageIDs[awtbi_Max] =
 /// AllocTheme
 // allocate everything for a theme while setting everything
 // to the default first.
-void AllocTheme(struct Theme *theme)
+void AllocTheme(struct Theme *theme, const char *themeName)
 {
   int i;
   int j;
@@ -261,7 +261,7 @@ void AllocTheme(struct Theme *theme)
 
   // contruct the path to the themes directory
   AddPath(theme->directory, G->ProgDir, "Themes", sizeof(theme->directory));
-  AddPart(theme->directory, C->ThemeName, sizeof(theme->directory));
+  AddPart(theme->directory, themeName, sizeof(theme->directory));
 
   D(DBF_THEME, "theme directory: '%s' '%s'", theme->directory, G->ProgDir);
 
@@ -344,10 +344,10 @@ void AllocTheme(struct Theme *theme)
 }
 ///
 /// ParseThemeFile
-// parse a complete theme file
-BOOL ParseThemeFile(const char *themeFile, struct Theme *theme)
+// parse a complete theme file and returns > 0 in case of success
+LONG ParseThemeFile(const char *themeFile, struct Theme *theme, BOOL quiet)
 {
-  BOOL success = FALSE;
+  LONG result = 0; // signals an error
   FILE *fh;
 
   ENTER();
@@ -362,30 +362,31 @@ BOOL ParseThemeFile(const char *themeFile, struct Theme *theme)
     {
       int version = buffer[3]-'0';
 
-      while(fgets(buffer, sizeof(buffer), fh))
+      // check if the these has the correct version
+      if(version == THEME_REQVERSION)
       {
-        char *p;
-        char *id;
-        char *value;
-
-        if((p = strpbrk(buffer, ";#\r\n")) != NULL)
-          *p = '\0';
-
-        if((value = strchr(buffer, '=')) != NULL)
+        while(fgets(buffer, sizeof(buffer), fh))
         {
-          *value++ = '\0';
-          value = Trim(value);
-        }
-        else
-        {
-          // assume empty filename
-          value = (char *)"";
-        }
+          char *p;
+          char *id;
+          char *value;
 
-        id = Trim(buffer);
-        if(id[0] != '\0')
-        {
-          if(version == 1)
+          if((p = strpbrk(buffer, ";#\r\n")) != NULL)
+            *p = '\0';
+
+          if((value = strchr(buffer, '=')) != NULL)
+          {
+            *value++ = '\0';
+            value = Trim(value);
+          }
+          else
+          {
+            // assume empty filename
+            value = (char *)"";
+          }
+
+          id = Trim(buffer);
+          if(id[0] != '\0')
           {
             int i;
             int j;
@@ -393,10 +394,38 @@ BOOL ParseThemeFile(const char *themeFile, struct Theme *theme)
             char *image = strdup(value);
 
             // theme description
-                 if(stricmp(id, "Name") == 0)     { theme->name = image;    found = TRUE; }
-            else if(stricmp(id, "Author") == 0)   { theme->author = image;  found = TRUE; }
-            else if(stricmp(id, "URL") == 0)      { theme->url = image;     found = TRUE; }
-            else if(stricmp(id, "Version") == 0)  { theme->version = image; found = TRUE; }
+            if(stricmp(id, "Name") == 0)
+            {
+              if(theme->name != NULL)
+                free(theme->name);
+
+              theme->name = image;
+              found = TRUE;
+            }
+            else if(stricmp(id, "Author") == 0)
+            {
+              if(theme->author != NULL)
+                free(theme->author);
+
+              theme->author = image;
+              found = TRUE;
+            }
+            else if(stricmp(id, "URL") == 0)
+            {
+              if(theme->url != NULL)
+                free(theme->url);
+
+              theme->url = image;
+              found = TRUE;
+            }
+            else if(stricmp(id, "Version") == 0)
+            {
+              if(theme->version != NULL)
+                free(theme->version);
+
+              theme->version = image;
+              found = TRUE;
+            }
             else
             {
               // config images
@@ -522,15 +551,56 @@ BOOL ParseThemeFile(const char *themeFile, struct Theme *theme)
               free(image);
             }
 
-            success = TRUE;
+            result = 1; // signal success
+          }
+        }
+      }
+      else
+      {
+        W(DBF_THEME, "incorrect theme version found: %ld != %ld", version, THEME_REQVERSION);
+
+        // check if we should warn the user or not
+        if(quiet == FALSE)
+        {
+          char *themeName = FilePart(theme->directory);
+
+          if(stricmp(themeName, "default") != 0)
+          {
+            int res = MUI_Request(G->App, NULL, 0, tr(MSG_ER_THEMEVER_TITLE),
+                                                   tr(MSG_ER_THEMEVER_BUTTON3),
+                                                   tr(MSG_ER_THEMEVER_ERROR), themeName);
+
+
+            if(res == 1)
+              result = -1; // signal to load the default theme
+            else if(res == 2)
+              result = -2; // signal to ignore the theme loading
+            else
+              result = 0;  // signal a fatal error
+          }
+          else
+          {
+            int res = MUI_Request(G->App, NULL, 0, tr(MSG_ER_THEMEVER_TITLE),
+                                                   tr(MSG_ER_THEMEVER_BUTTON2),
+                                                   tr(MSG_ER_THEMEVER_ERROR), themeName);
+
+
+            if(res == 1)
+              result = -2; // signal to ignore the theme loading
+            else
+              result = 0;  // signal a fatal error
           }
         }
       }
     }
+    else
+      W(DBF_THEME, "invalid header in .theme file found");
   }
+  else
+    W(DBF_THEME, "couldn't open .theme file '%s'", themeFile);
 
-  RETURN(success);
-  return success;
+  RETURN(result);
+  return result;
 }
 ///
 /// FreeTheme
@@ -648,24 +718,65 @@ void FreeTheme(struct Theme *theme)
 ///
 /// LoadTheme
 // load all images of a theme
-BOOL LoadTheme(struct Theme *theme)
+BOOL LoadTheme(struct Theme *theme, const char *themeName)
 {
   BOOL success = TRUE;
   char themeFile[SIZE_PATHFILE];
   int i;
+  LONG parsed;
 
   ENTER();
 
   // allocate all resources for the theme
-  AllocTheme(theme);
+  AllocTheme(theme, themeName);
 
   // Parse the .theme file within the
   // theme directory
   AddPath(themeFile, theme->directory, ".theme", sizeof(themeFile));
-  if(ParseThemeFile(themeFile, theme) == TRUE)
+  parsed = ParseThemeFile(themeFile, theme, FALSE);
+
+  // check if parsing the theme file worked out or not
+  if(parsed > 0)
     D(DBF_THEME, "successfully parsed theme file '%s'", themeFile);
+  else if(parsed == -1)
+  {
+    W(DBF_THEME, "parsing of theme file '%s' failed! trying default theme...", themeFile);
+
+    // free the theme resources
+    FreeTheme(theme);
+
+    // allocate the default theme
+    AllocTheme(theme, "default");
+    AddPath(themeFile, theme->directory, ".theme", sizeof(themeFile));
+
+    if(ParseThemeFile(themeFile, theme, FALSE) <= 0)
+    {
+      FreeTheme(theme);
+
+      RETURN(FALSE);
+      return FALSE;
+    }
+  }
+  else if(parsed == -2)
+  {
+    W(DBF_THEME, "parsing of theme file '%s' failed! ignoring...", themeFile);
+
+    // free the theme resources
+    FreeTheme(theme);
+
+    RETURN(TRUE);
+    return TRUE;
+  }
   else
-    W(DBF_THEME, "parsing of theme file '%s' failed!", themeFile);
+  {
+    E(DBF_THEME, "parsing of theme file '%s' failed! aborting...", themeFile);
+
+    // free the theme resources
+    FreeTheme(theme);
+
+    RETURN(FALSE);
+    return FALSE;
+  }
 
   for(i=ci_First; i < ci_Max; i++)
   {
