@@ -6425,37 +6425,6 @@ Bitte stellen Sie sicher, dass Ihr Grafikverzeichnis\n\
 alle notwendigen Bilddateien im aktuellen Layout\n\
 enthält und diese lesbar sind.
 ;
-MSG_ER_IMGLAYOUTFAILURE
-Grafiklayout Fehler!
-;
-MSG_ER_EXITIGNORE
-*_Beenden|_Ignorieren
-;
-MSG_ER_MISSINGIMGVERFILE
-Das Layout Ihres '%s' Grafikverzeichnises besitzt keine\n\
-Versionsinformationen und muss geupdated werden.\n\
-\n\
-Bitte stellen Sie sicher, dass Sie ein zum aktuellen\n\
-Layout kompatibles Grafikverzeichnis verwenden oder\n\
-es könnten Bilder mitunter inkorrekt angezeigt werden.
-;
-MSG_ER_LOADIMGLAYOUTFAILED
-Ein Fehler trat während des Versuches auf das Layout\n\
-Ihres Grafikverzeichnisses '%s' zu laden.\n\
-\n\
-Bitte stellen Sie sicher, dass Sie ein zum aktuellen\n\
-Layout kompatibles Grafikverzeichnis verwenden oder\n\
-es könnten Bilder mitunter inkorrekt angezeigt werden.
-;
-MSG_ER_WRONGIMGLAYOUTVER
-Das Layout Ihres '%s' Grafikverzeichnisses besitzt eine\n\
-zum aktuellen YAM inkompatible Versionsinformation und\n\
-muss entsprechend geupdated werden.\n\
-\n\
-Bitte stellen Sie sicher, dass Sie ein zum aktuellen\n\
-Layout kompatibles Grafikverzeichnis verwenden oder\n\
-es könnten Bilder mitunter inkorrekt angezeigt werden.
-;
 MSG_MA_AUTOSAVEFOUND
 YAM hat eine automatische Sicherungsdatei '%s'\n\
 einer Nachricht gefunden, die in einer vorherigen Sitzung\n\
@@ -8235,4 +8204,20 @@ Skriptaktion (Name)
 ;
 MSG_CO_SCRIPTPATH
 Skriptpfad
+;
+MSG_ER_THEMEVER_TITLE
+Ungültige Theme-Version
+;
+MSG_ER_THEMEVER_BUTTON2
+*_Ignorieren|_Beenden
+;
+MSG_ER_THEMEVER_BUTTON3
+*Benutze _Standard-Theme|_Ignorieren|_Beenden
+;
+MSG_ER_THEMEVER_ERROR
+Das aktuelle Theme '%s' ist nicht kompatibel mit\n\
+dieser Version von YAM und kann nicht geladen werden.\n\
+\n\
+Bitte benutzen Sie eine neuere Version des Themes,\n\
+die mit dieser Version von YAM kompatibel ist.
 ;

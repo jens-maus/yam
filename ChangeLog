@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-11-30  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/deutsch.ct: Updated according to changes.
+
 2007-11-30  Jens Langner <Jens.Langner@light-speed.de>
 
   * Themes.c: the version of a ".theme" file will now be checked and the
