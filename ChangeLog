@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-02  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: Updated according to changes.
+
 2007-12-01  Jens Langner <Jens.Langner@light-speed.de>
 
   * Themes.c, ImageCache.c: temporarly replaced all modal warning requesters

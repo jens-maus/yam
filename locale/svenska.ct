@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.24 (26.11.07)
+## version $VER: YAM.ct 6.25 (01.12.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -5409,26 +5409,6 @@ MSG_ER_IMAGEOBJECT
 Ett fel inträffade vid försök att ladda bildfilen\n'%s' från katalog '%s'.\n\nVar god kontrollera, att din bild katalog innehåller alla\nnödvändiga bilder, definierade enligt senaste bild layouten.
 ;#DEF An error occurred while trying to load the image\nfile '%s' from directory '%s'.\n\nPlease make sure your image directory contains all\nnecessary images as defined in the latest image layout.
 ;#SET (1557//)
-MSG_ER_IMGLAYOUTFAILURE
-Bild layout fel!
-;#DEF Image layout failure!
-;#SET (1558//)
-MSG_ER_EXITIGNORE
-*A_vsluta|_Ignorera
-;#DEF *_Exit|_Ignore
-;#SET (1559//)
-MSG_ER_MISSINGIMGVERFILE
-Layouten av din '%s' bild katalog\ninnehåller ingen versions information och behöver uppdateras.\n\nVar god kontrollera, att du använder en kompatibel bild layout,\nannars kan vissa bilder visas felaktigt i YAM.
-;#DEF The layout of your '%s' image directory\ncontains no version information and needs to be updated\naccordingly.\n\nPlease make sure you are using a compatible image layout\nor some images may be displayed incorrectly in YAM.
-;#SET (1560//)
-MSG_ER_LOADIMGLAYOUTFAILED
-Ett fel inträffade vid försök att ladda bild layout\ninformation från din '%s' katalog.\n\nVar god kontrollera, att du använder en kompatibel bild layout,\nannars kan vissa bilder visas felaktigt i YAM.
-;#DEF An error occurred while trying to load the image\nlayout information from your '%s' directory.\n\nPlease make sure you are using a compatible image layout\nor some images may be displayed incorrectly in YAM.
-;#SET (1561//)
-MSG_ER_WRONGIMGLAYOUTVER
-Layouten av din '%s' bild katalog\ninnehåller en inkompatibel versions information och behöver uppdateras.\n\nVar god kontrollera, att du använder en kompatibel bild layout,\nannars kan vissa bilder visas felaktigt i YAM.
-;#DEF The layout of your '%s' image directory\ncontains an incompatible version information and needs\nto be updated accordingly.\n\nPlease make sure you are using a compatible image layout\nor some images may be displayed incorrectly in YAM.
-;#SET (1562//)
 MSG_MA_AUTOSAVEFOUND
 YAM har hittat en autosparad meddelandefil '%s'\nsom har skapats i en föregående session. Detta kan bero\npå en krash eller omstart, vid skrivning av ett meddelande.\n\nVad vill du göra med meddelandet?
 ;#DEF YAM has found an autosaved message file '%s'\nwhich have been created in a previous session. This may\nbe due to a possible crash or reboot while writing a\nmessage.\n\nWhat do you want to do with that message?
@@ -7261,3 +7241,27 @@ MSG_MA_ADD_WHICH_ADDRESS
 Avsändaradressen (Från) är \033b<%s>\033n och\nsvarsadressen (Svar-till) är \033b<%s>\033n.\n\nVilken adress vill du lägga till i din adressbok?
 ;#DEF The sender address (From) is \033b<%s>\033n and\nthe return address (Reply-To) is \033b<%s>\033n.\n\nWhich address do you want to add to your address book?
 ;#SET (2031//)
+MSG_CO_SCRIPTACTION
+Skript handling (Namn)
+;#DEF Script action (Name)
+;#SET (2032//)
+MSG_CO_SCRIPTPATH
+Skript sökväg
+;#DEF Script path
+;#SET (2033//)
+MSG_ER_THEMEVER_TITLE
+Tema version felaktig
+;#DEF Theme version incorrect
+;#SET (2034//)
+MSG_ER_THEMEVER_BUTTON2
+*_Ignorera|A_vsluta
+;#DEF *_Ignore|_Exit
+;#SET (2035//)
+MSG_ER_THEMEVER_BUTTON3
+*_Använd förval|_Ignorera|A_vsluta
+;#DEF *_Use default|_Ignore|_Exit
+;#SET (2036//)
+MSG_ER_THEMEVER_ERROR
+Det nuvarande aktiverade temat '%s' är av\nen inkompatibel version och kan inte laddas.\n\nVar god uppdatera temat till en version som\när kompatibel med denna version av YAM.
+;#DEF The currently activated theme '%s' was found\nto be of an incompatible version and can't be\nloaded.\n\nPlease make sure to update the theme to a version\ncompatible to this version of YAM.
+;#SET (2037//)
