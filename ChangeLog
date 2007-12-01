@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-01  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Themes.c, ImageCache.c: temporarly replaced all modal warning requesters
+    with calls to ER_NewError() so that a missing image/theme or error on
+    trying to load a theme should not interrupt the loading process. Lets
+    see if this is more convinient than modal dialogs (see bug #1838367).
+
 2007-11-30  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/deutsch.ct: Updated according to changes.

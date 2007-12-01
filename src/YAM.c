@@ -1339,6 +1339,8 @@ static struct StartupSemaphore *CreateStartupSemaphore(void)
 
   ENTER();
 
+  D(DBF_STARTUP, "creating startup semaphore...");
+
   // we have to disable multitasking before looking for an old instance with the same name
   Forbid();
   if((semaphore = (struct StartupSemaphore *)FindSemaphore((STRPTR)STARTUP_SEMAPHORE_NAME)) != NULL)
@@ -1708,17 +1710,18 @@ static void Terminate(void)
 //  Shows error requester, then terminates the program
 static void Abort(const char *message, ...)
 {
-  va_list a;
-
   ENTER();
-
-  va_start(a, message);
 
   if(message != NULL)
   {
+    va_list a;
     char error[SIZE_LINE];
 
+    va_start(a, message);
     vsnprintf(error, sizeof(error), message, a);
+    va_end(a);
+
+    W(DBF_STARTUP, "aborting application due to reason '%s'", error);
 
     if(MUIMasterBase != NULL && G != NULL && G->App != NULL)
     {
@@ -1739,8 +1742,8 @@ static void Abort(const char *message, ...)
     else
       puts(error);
   }
-
-  va_end(a);
+  else
+    W(DBF_STARTUP, "aborting application");
 
   // do a hard exit.
   exit(RETURN_ERROR);
@@ -2003,7 +2006,7 @@ static BOOL Root_New(BOOL hidden)
   // MUI chokes if a single task application is created a second time while the first instance is not yet fully created
   ObtainSemaphore(&startupSemaphore->semaphore);
 
-  if((G->App = YAMObject, End))
+  if((G->App = YAMObject, End) != NULL)
   {
     if(hidden)
       set(G->App, MUIA_Application_Iconified, TRUE);
@@ -2021,7 +2024,11 @@ static BOOL Root_New(BOOL hidden)
 
       result = TRUE;
     }
+    else
+      E(DBF_STARTUP, "couldn't create splash window object!");
   }
+  else
+    E(DBF_STARTUP, "couldnn't create root object!");
 
   // now a second instance may continue
   ReleaseSemaphore(&startupSemaphore->semaphore);
@@ -2044,6 +2051,7 @@ static void InitAfterLogin(void)
 
   // clear the configuration (set defaults) and load it
   // from the user defined .config file
+  D(DBF_STARTUP, "loading configuration...");
   SplashProgress(tr(MSG_LoadingConfig), 20);
 
   if(CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders) == FALSE)
@@ -2057,8 +2065,7 @@ static void InitAfterLogin(void)
   SplashProgress(tr(MSG_LoadingGFX), 30);
 
   // load the choosen theme of the user
-  if(LoadTheme(&G->theme, C->ThemeName) == FALSE)
-    Abort(NULL); // exit the application
+  LoadTheme(&G->theme, C->ThemeName);
 
   // make sure we initialize the toolbar Cache which in turn will
   // cause YAM to cache all often used toolbars and their images
@@ -2066,6 +2073,7 @@ static void InitAfterLogin(void)
     Abort(NULL); // exit the application
 
   // create all necessary GUI elements
+  D(DBF_STARTUP, "creating GUI...");
   SplashProgress(tr(MSG_CreatingGUI), 40);
 
   // before we go and create the first MUI windows
@@ -2431,10 +2439,12 @@ static void InitBeforeLogin(BOOL hidden)
   Permit();
 
   // Initialise and Setup our own MUI custom classes before we go on
+  D(DBF_STARTUP, "setup internal MUI classes...");
   if(YAM_SetupClasses() == FALSE)
     Abort(tr(MSG_ErrorClasses));
 
   // allocate the MUI root object and popup the progress/about window
+  D(DBF_STARTUP, "creating root object...");
   if(Root_New(hidden) == FALSE)
   {
     BOOL activeYAM;
@@ -2447,6 +2457,7 @@ static void InitBeforeLogin(BOOL hidden)
   }
 
   // signal that we are loading our libraries
+  D(DBF_STARTUP, "init libraries...");
   SplashProgress(tr(MSG_InitLibs), 10);
 
   // try to open xpkmaster.library v5.0+ as this is somewhat the most

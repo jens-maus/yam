@@ -32,6 +32,7 @@
 #include "YAM_global.h"
 #include "YAM_locale.h"
 #include "YAM_config.h"
+#include "YAM_error.h"
 #include "extrasrc.h"
 
 #include "ImageCache.h"
@@ -566,6 +567,10 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme, BOOL quiet)
 
           if(stricmp(themeName, "default") != 0)
           {
+            ER_NewError(tr(MSG_ER_THEMEVER_ERROR), themeName);
+            result = -1;
+
+            /*
             int res = MUI_Request(G->App, NULL, 0, tr(MSG_ER_THEMEVER_TITLE),
                                                    tr(MSG_ER_THEMEVER_BUTTON3),
                                                    tr(MSG_ER_THEMEVER_ERROR), themeName);
@@ -577,9 +582,14 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme, BOOL quiet)
               result = -2; // signal to ignore the theme loading
             else
               result = 0;  // signal a fatal error
+            */
           }
           else
           {
+            ER_NewError(tr(MSG_ER_THEMEVER_ERROR), themeName);
+            result = -2;
+
+            /*
             int res = MUI_Request(G->App, NULL, 0, tr(MSG_ER_THEMEVER_TITLE),
                                                    tr(MSG_ER_THEMEVER_BUTTON2),
                                                    tr(MSG_ER_THEMEVER_ERROR), themeName);
@@ -589,6 +599,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme, BOOL quiet)
               result = -2; // signal to ignore the theme loading
             else
               result = 0;  // signal a fatal error
+            */
           }
         }
       }
@@ -836,6 +847,9 @@ BOOL LoadTheme(struct Theme *theme, const char *themeName)
       // load the diskobject and report an error if something went wrong.
       if(theme->icons[i] == NULL && G->NoImageWarning == FALSE)
       {
+        ER_NewError(tr(MSG_ER_ICONOBJECT), FilePart(image), PathPart(image));
+
+        /*
         int reqResult;
 
         if((reqResult = MUI_Request(G->App, NULL, 0, tr(MSG_ER_ICONOBJECT_TITLE),
@@ -848,6 +862,7 @@ BOOL LoadTheme(struct Theme *theme, const char *themeName)
           else
             success = FALSE;
         }
+        */
       }
     }
   }
