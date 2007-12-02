@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-02  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Themes.c: fixed a typical copy'n'paste bug which screwed by certain image
+    paths and caused crashes because of doubly freed memory.
+
 2007-12-02  Jens Langner <Jens.Langner@light-speed.de>
 
   * Themes/ReadMe: added a short readme file explaining the new themes

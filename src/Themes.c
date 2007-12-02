@@ -429,6 +429,13 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
             }
             else
             {
+              if(strchr(image, ':') == NULL)
+              {
+                // image filename is relative to the theme directory
+                free(image);
+                asprintf(&image, "%s/%s", theme->directory, value);
+              }
+
               // config images
               for(i=ci_First; i < ci_Max && found == FALSE; i++)
               {
@@ -460,10 +467,10 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
               {
                 if(stricmp(id, iconImageIDs[i]) == 0)
                 {
-                  if(theme->folderImages[i] != NULL)
-                    free(theme->folderImages[i]);
+                  if(theme->iconImages[i] != NULL)
+                    free(theme->iconImages[i]);
 
-                  theme->folderImages[i] = image;
+                  theme->iconImages[i] = image;
                   found = TRUE;
                 }
               }
