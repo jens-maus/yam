@@ -346,7 +346,7 @@ void AllocTheme(struct Theme *theme, const char *themeName)
 ///
 /// ParseThemeFile
 // parse a complete theme file and returns > 0 in case of success
-LONG ParseThemeFile(const char *themeFile, struct Theme *theme, BOOL quiet)
+LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
 {
   LONG result = 0; // signals an error
   FILE *fh;
@@ -560,48 +560,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme, BOOL quiet)
       {
         W(DBF_THEME, "incorrect theme version found: %ld != %ld", version, THEME_REQVERSION);
 
-        // check if we should warn the user or not
-        if(quiet == FALSE)
-        {
-          char *themeName = FilePart(theme->directory);
-
-          if(stricmp(themeName, "default") != 0)
-          {
-            ER_NewError(tr(MSG_ER_THEMEVER_ERROR), themeName);
-            result = -1;
-
-            /*
-            int res = MUI_Request(G->App, NULL, 0, tr(MSG_ER_THEMEVER_TITLE),
-                                                   tr(MSG_ER_THEMEVER_BUTTON3),
-                                                   tr(MSG_ER_THEMEVER_ERROR), themeName);
-
-
-            if(res == 1)
-              result = -1; // signal to load the default theme
-            else if(res == 2)
-              result = -2; // signal to ignore the theme loading
-            else
-              result = 0;  // signal a fatal error
-            */
-          }
-          else
-          {
-            ER_NewError(tr(MSG_ER_THEMEVER_ERROR), themeName);
-            result = -2;
-
-            /*
-            int res = MUI_Request(G->App, NULL, 0, tr(MSG_ER_THEMEVER_TITLE),
-                                                   tr(MSG_ER_THEMEVER_BUTTON2),
-                                                   tr(MSG_ER_THEMEVER_ERROR), themeName);
-
-
-            if(res == 1)
-              result = -2; // signal to ignore the theme loading
-            else
-              result = 0;  // signal a fatal error
-            */
-          }
-        }
+        result = -1; // signal a version problem
       }
     }
     else
@@ -729,12 +688,11 @@ void FreeTheme(struct Theme *theme)
 ///
 /// LoadTheme
 // load all images of a theme
-BOOL LoadTheme(struct Theme *theme, const char *themeName)
+void LoadTheme(struct Theme *theme, const char *themeName)
 {
-  BOOL success = TRUE;
   char themeFile[SIZE_PATHFILE];
   int i;
-  LONG parsed;
+  LONG res;
 
   ENTER();
 
@@ -744,49 +702,61 @@ BOOL LoadTheme(struct Theme *theme, const char *themeName)
   // Parse the .theme file within the
   // theme directory
   AddPath(themeFile, theme->directory, ".theme", sizeof(themeFile));
-  parsed = ParseThemeFile(themeFile, theme, FALSE);
+  res = ParseThemeFile(themeFile, theme);
 
   // check if parsing the theme file worked out or not
-  if(parsed > 0)
+  if(res > 0)
     D(DBF_THEME, "successfully parsed theme file '%s'", themeFile);
-  else if(parsed == -1)
-  {
-    W(DBF_THEME, "parsing of theme file '%s' failed! trying default theme...", themeFile);
-
-    // free the theme resources
-    FreeTheme(theme);
-
-    // allocate the default theme
-    AllocTheme(theme, "default");
-    AddPath(themeFile, theme->directory, ".theme", sizeof(themeFile));
-
-    if(ParseThemeFile(themeFile, theme, FALSE) <= 0)
-    {
-      FreeTheme(theme);
-
-      RETURN(FALSE);
-      return FALSE;
-    }
-  }
-  else if(parsed == -2)
-  {
-    W(DBF_THEME, "parsing of theme file '%s' failed! ignoring...", themeFile);
-
-    // free the theme resources
-    FreeTheme(theme);
-
-    RETURN(TRUE);
-    return TRUE;
-  }
   else
   {
-    E(DBF_THEME, "parsing of theme file '%s' failed! aborting...", themeFile);
+    // check if it was the default theme that failed or
+    // not.
+    if(stricmp(themeName, "default") == 0)
+    {
+      W(DBF_THEME, "parsing of theme file '%s' failed! ignoring...", themeFile);
 
-    // free the theme resources
-    FreeTheme(theme);
+      // warn the user
+      if(res == -1)
+        ER_NewError(tr(MSG_ER_THEMEVER_IGNORE));
+      else
+        ER_NewError(tr(MSG_ER_THEME_FATAL));
 
-    RETURN(FALSE);
-    return FALSE;
+      // free the theme resources
+      FreeTheme(theme);
+
+      LEAVE();
+      return;
+    }
+    else
+    {
+      W(DBF_THEME, "parsing of theme file '%s' failed! trying default theme...", themeFile);
+
+      // warn the user
+      if(res == -1)
+        ER_NewError(tr(MSG_ER_THEMEVER_FALLBACK), themeName);
+      else
+        ER_NewError(tr(MSG_ER_THEME_FALLBACK), themeName);
+
+      // free the theme resources
+      FreeTheme(theme);
+
+      // allocate the default theme
+      AllocTheme(theme, "default");
+      AddPath(themeFile, theme->directory, ".theme", sizeof(themeFile));
+      if(ParseThemeFile(themeFile, theme) <= 0)
+      {
+        // warn the user
+        if(res == -1)
+          ER_NewError(tr(MSG_ER_THEMEVER_IGNORE));
+        else
+          ER_NewError(tr(MSG_ER_THEME_FATAL));
+
+        FreeTheme(theme);
+
+        LEAVE();
+        return;
+      }
+    }
   }
 
   for(i=ci_First; i < ci_Max; i++)
@@ -796,10 +766,7 @@ BOOL LoadTheme(struct Theme *theme, const char *themeName)
     if(image != NULL && image[0] != '\0')
     {
       if(ObtainImage(configImageIDs[i], image, NULL) == NULL)
-      {
         W(DBF_THEME, "couldn't obtain image '%s' of theme '%s'", image, theme->directory);
-        success = FALSE;
-      }
     }
   }
 
@@ -810,10 +777,7 @@ BOOL LoadTheme(struct Theme *theme, const char *themeName)
     if(image != NULL && image[0] != '\0')
     {
       if(ObtainImage(folderImageIDs[i], image, NULL) == NULL)
-      {
         W(DBF_THEME, "couldn't obtain image '%s' of theme '%s'", image, theme->directory);
-        success = FALSE;
-      }
     }
   }
 
@@ -824,10 +788,7 @@ BOOL LoadTheme(struct Theme *theme, const char *themeName)
     if(image != NULL && image[0] != '\0')
     {
       if(ObtainImage(statusImageIDs[i], image, NULL) == NULL)
-      {
         W(DBF_THEME, "couldn't obtain image '%s' of theme '%s'", image, theme->directory);
-        success = FALSE;
-      }
     }
   }
 
@@ -846,31 +807,13 @@ BOOL LoadTheme(struct Theme *theme, const char *themeName)
 
       // load the diskobject and report an error if something went wrong.
       if(theme->icons[i] == NULL && G->NoImageWarning == FALSE)
-      {
-        ER_NewError(tr(MSG_ER_ICONOBJECT), FilePart(image), PathPart(image));
-
-        /*
-        int reqResult;
-
-        if((reqResult = MUI_Request(G->App, NULL, 0, tr(MSG_ER_ICONOBJECT_TITLE),
-                                                     tr(MSG_ER_EXITIGNOREALL),
-                                                     tr(MSG_ER_ICONOBJECT),
-                                                     FilePart(image), PathPart(image))))
-        {
-          if(reqResult == 2)
-            G->NoImageWarning = TRUE;
-          else
-            success = FALSE;
-        }
-        */
-      }
+        ER_NewError(tr(MSG_ER_ICONOBJECT_WARNING), FilePart(image), themeName);
     }
   }
 
   theme->loaded = TRUE;
 
-  RETURN(success);
-  return success;
+  LEAVE();
 }
 ///
 /// UnloadTheme

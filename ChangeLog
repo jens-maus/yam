@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-02  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Themes.c, ImageCache.c, ThemeListGroup.c: reworked the whole error and
+    warning messages used for the theme loading/processing. Now, no missing
+    image file should prevent YAM from immediately starting up. Only
+    warning messages will be triggered and also only in case no NOIMGWARNING
+    commandline/tooltype option was specified.
+
 2007-12-02  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: Updated according to changes.

@@ -277,8 +277,8 @@ struct Theme
 
 void AllocTheme(struct Theme *theme, const char *themeName);
 void FreeTheme(struct Theme *theme);
-LONG ParseThemeFile(const char *themeFile, struct Theme *theme, BOOL quiet);
-BOOL LoadTheme(struct Theme *theme, const char *themeName);
+LONG ParseThemeFile(const char *themeFile, struct Theme *theme);
+void LoadTheme(struct Theme *theme, const char *themeName);
 void UnloadTheme(struct Theme *theme);
 
 #endif /* THEMES_H */

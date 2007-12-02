@@ -1,5 +1,8 @@
 YTH1 - YAM Theme
-Name    = YAM default theme (256 colors)
+Name    = YAM default theme
 Author  = YAM Development Team
 URL     = http://www.yam.ch/
-Version = 0.1 (01.04.2007)
+Version = 1.0 (02.12.2007)
+
+; External replacements
+; <image id> = <file path>

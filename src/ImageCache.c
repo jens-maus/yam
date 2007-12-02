@@ -198,14 +198,9 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
             // the file exists, but loading it failed
             if(G->NoImageWarning == FALSE)
             {
-              // show the error requester only if the user did not choose to ignore
+              // show the error message only if the user did not choose to ignore
               // all warnings before
-              ER_NewError(tr(MSG_ER_LOADDT_ERROR), filename);
-/*
-              MUI_Request(G->App, NULL, 0, tr(MSG_ER_LOADDT_TITLE),
-                                           tr(MSG_ER_LOADDT_BUTTON),
-                                           tr(MSG_ER_LOADDT_ERROR), filename);
-*/
+              ER_NewError(tr(MSG_ER_DATATYPE_ERROR), filename);
             }
           }
         }
@@ -338,7 +333,6 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
       if(G->NoImageWarning == FALSE)
       {
         char *path;
-//        int reqResult;
 
         if((path = strdup(filename)) != NULL)
         {
@@ -347,18 +341,8 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
           if((p = PathPart(path)) != NULL)
             *p = '\0';
 
-          if(G->NoImageWarning == FALSE)
-            ER_NewError(tr(MSG_ER_IMAGEOBJECT), FilePart(filename), path);
+          ER_NewError(tr(MSG_ER_IMAGEOBJECT_WARNING), FilePart(filename), path);
 
-/*          if((reqResult = MUI_Request(G->App, NULL, 0, tr(MSG_ER_IMAGEOBJECT_TITLE),
-                                                       tr(MSG_ER_IGNOREALL),
-                                                       tr(MSG_ER_IMAGEOBJECT),
-                                                       FilePart(filename), path)))
-          {
-            if(reqResult == 1)
-              G->NoImageWarning = TRUE;
-          }
-*/
           free(path);
         }
       }
@@ -635,7 +619,7 @@ struct MUIS_TheBar_Brush **ObtainToolbarImages(const enum TBType toolbar, const 
     break;
   }
 
-  if(toolbarCacheObject != NULL)
+  if(toolbarCacheObject != NULL && xget(toolbarCacheObject, MUIA_TheBar_TextOnly) == FALSE)
   {
     switch(image)
     {

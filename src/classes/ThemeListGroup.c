@@ -270,7 +270,7 @@ DECLARE(Update)
 
         // parse the .theme file to check wheter this
         // is a valid theme or not.
-        if(ParseThemeFile(filename, &theme, TRUE) > 0)
+        if(ParseThemeFile(filename, &theme) > 0)
         {
           D(DBF_CONFIG, "found valid .theme file '%s'", filename);
 

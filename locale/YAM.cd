@@ -4748,29 +4748,6 @@ _More
 MSG_CO_Less (1552//)
 _Less
 ;
-MSG_ER_EXITIGNOREALL (1553//)
-*_Exit|Ignore _all|_Ignore
-;
-MSG_ER_ICONOBJECT_TITLE (1554//)
-Error on loading icon image!
-;
-MSG_ER_ICONOBJECT (1555//)
-An error occurred while trying to load the icon\n\
-object '%s.info' from directory '%s'.\n\
-\n\
-Please make sure your image directory contains all\n\
-necessary icons as defined in the latest image layout.
-;
-MSG_ER_IMAGEOBJECT_TITLE (1556//)
-Error on loading image!
-;
-MSG_ER_IMAGEOBJECT (1557//)
-An error occurred while trying to load the image\n\
-file '%s' from directory '%s'.\n\
-\n\
-Please make sure your image directory contains all\n\
-necessary images as defined in the latest image layout.
-;
 MSG_MA_AUTOSAVEFOUND (1563//)
 YAM has found an autosaved message file '%s'\n\
 which have been created in a previous session. This may\n\
@@ -5975,20 +5952,6 @@ will use a relative output instead. E.g.\n\
 such colums will show strings like 'Today'\n\
 or 'Yesterday' instead of the full date.
 ;
-MSG_ER_LOADDT_TITLE (1905//)
-Image data processing error
-;
-MSG_ER_LOADDT_ERROR (1906//)
-An error occurred while trying to load the image data\n\
-of '%s' via datatypes.library.\n\
-\n\
-Please make sure that you have your datatypes system\n\
-correctly setup (e.g. that the image properly displays\n\
-in Multiview).
-;
-MSG_ER_LOADDT_BUTTON (1907//)
-*_Ok
-;
 MSG_FOLDER_SNAPSHOT_TREE (1908//)
 Snapshot arrangement
 ;
@@ -6098,10 +6061,7 @@ If enabled, after moving the mail all user defined filters\n\
 will be applied to the mail.
 ;
 MSG_SHUTDOWN_SHUTTING_DOWN (1935//)
-Shutting down...
-;
-MSG_ER_IGNOREALL (1936//)
-Ignore _all|*_Ignore
+Shutting down YAM...
 ;
 MSG_HELP_CO_CY_FOLDERINFO (1937//)
 Information that should be displayed\n\
@@ -6533,20 +6493,59 @@ Script action (Name)
 MSG_CO_SCRIPTPATH (2033//)
 Script path
 ;
-MSG_ER_THEMEVER_TITLE (2034//)
-Theme version incorrect
-;
-MSG_ER_THEMEVER_BUTTON2 (2035//)
-*_Ignore|_Exit
-;
-MSG_ER_THEMEVER_BUTTON3 (2036//)
-*_Use default|_Ignore|_Exit
-;
-MSG_ER_THEMEVER_ERROR (2037//)
-The currently activated theme '%s' was found\n\
-to be of an incompatible version and can't be\n\
-loaded.\n\
+MSG_ER_ICONOBJECT_WARNING (2038//)
+An error occurred while trying to load the icon object \
+'%s.info' from theme '%s'. The icon will not be displayed \
+during that session.\n\
 \n\
-Please make sure to update the theme to a version\n\
-compatible to this version of YAM.
+Please make sure your theme directory contains all \
+necessary icons or disable the themes support for no \
+further warnings.
+;
+MSG_ER_THEMEVER_FALLBACK (2039//)
+The currently activated theme '%s' was found to be \
+of an incompatible version and wasn't loaded.\n\
+\n\
+The default YAM theme was therefore activated as a \
+fallback. Please make sure to update the theme to \
+compatible version or disable it in the configuration.
+;
+MSG_ER_THEMEVER_IGNORE (2040//)
+While trying to load the default theme of YAM, it \
+was found to be of an incorrect version.\n\
+\n\
+The theme loading process was aborted and you are \
+adviced to upgrade the default theme to a compatible \
+version.
+;
+MSG_ER_DATATYPE_ERROR (2041//)
+An error occurred while trying to load the image data \
+of '%s' via datatypes.library.\n\
+\n\
+Please make sure that the file exists and that you have \
+your datatypes system correctly setup (e.g. that the \
+image properly displays in Multiview).
+;
+MSG_ER_IMAGEOBJECT_WARNING (2042//)
+An error occurred while trying to load the image file '%s' \
+from directory '%s'.\n\
+\n\
+Please make sure your theme directory contains all \
+necessary images as defined in the latest theme version \
+layout.
+;
+MSG_ER_THEME_FATAL (2043//)
+YAM was unable to load the default theme and aborted \
+the theme loading completly.\n\
+\n\
+Please make sure your themes directory is readable and \
+contains the correct default theme distributed with YAM.
+;
+MSG_ER_THEME_FALLBACK (2044//)
+The currently activated theme '%s' was found to be \
+inaccessible or corrupt and wasn't loaded.\n\
+\n\
+The default YAM theme was therefore activated as a \
+fallback. Please make sure your selected theme is readable \
+and a valid YAM theme.
 ;
