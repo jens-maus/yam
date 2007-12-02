@@ -33,7 +33,6 @@
 enum tokenType
 {
   tSPACE = 1,
-  tDOUBLESPACE,
   tTAB,
   tBEGINPAREN,
   tENDPAREN,

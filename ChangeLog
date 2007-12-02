@@ -12,6 +12,8 @@ $URL$
 
 2007-12-02  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_mail_lex.l: fixed bug #1841389 where the mail text parser wasn't
+    always able to correctly extract an email address from the text.
   * UserImage.c, ImageArea.c, misc: merged the differences between the
     internal UserImage and ImageArea class as both classes had pretty much
     the very same job/purpose. Therefore the UserImage class is now obsolete.

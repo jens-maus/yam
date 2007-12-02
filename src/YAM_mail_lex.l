@@ -142,19 +142,18 @@ NOTATEOL    ([^[:punct:][:space:]]|{ESCAPE}|"/"|"=")
 [[:blank:]]"#"[^[:blank:]\n#?]([^\n#*_/]*[^[:blank:]\n#*_/])?"#"[[:blank:]\n,.!?:]  |
 ^"#"[^[:blank:]\n#?]([^\n#*_/]*[^[:blank:]\n#*_/])?"#"[[:blank:]\n,.!?:]            {return tCOLORED   ;}
 
-[:space:]    {return tSPACE      ;}
-[:space:]{2} {return tDOUBLESPACE;}
-"\t"         {return tTAB        ;}
-"("          {return tBEGINPAREN ;}
-")"          {return tENDPAREN   ;}
-"<"          {return tLESS       ;}
-">"          {return tGREATER    ;}
-"&"          {return tAMPERSAND  ;}
-"\n"         {return tNEWLINE    ;}
-"*"          {return tSTAR       ;}
-"/"          {return tSLASH      ;}
-"_"          {return tUNDERSCORE ;}
-"#"          {return tHASH       ;}
+" "            {return tSPACE      ;}
+"\t"           {return tTAB        ;}
+"("            {return tBEGINPAREN ;}
+")"            {return tENDPAREN   ;}
+"<"            {return tLESS       ;}
+">"            {return tGREATER    ;}
+"&"            {return tAMPERSAND  ;}
+"\n"           {return tNEWLINE    ;}
+"*"            {return tSTAR       ;}
+"/"            {return tSLASH      ;}
+"_"            {return tUNDERSCORE ;}
+"#"            {return tHASH       ;}
 
 {HTTPURL}                                      {return tHTTP      ;}
 {HTTPSURL}                                     {return tHTTPS     ;}
