@@ -1,0 +1,34 @@
+-----------------------------------------------------------------
+THEMES IMPLEMENTATION IN YAM 2.5+:
+
+This is the themes directory of YAM 2.5+. Beside a required
+"default" directory a user can put an unlimited amount of user
+themes within this directory. All of these themes subdirectories
+have to have a ".theme" file with META information about the
+theme so that YAM is able to identify the directory as a valid
+theme and load the images from it during startup.
+
+USER THEMES:
+Own themes can be created very easily. You just have to copy
+the content of the 'default' theme (except the logo file) to
+a new subdirectory. Then you have to modify the ".theme" file
+and add your own information/details about the new theme. After
+a restart of YAM the new theme should then be available in the
+'Look&Feel' configuration of YAM. After that you can replace
+every image or icon in the new theme with your own images/icons.
+
+WARNING:
+The "default" theme is special. It is the fallback theme of YAM
+and should NOT be touched/changed/altered by a user. It must be
+in the exact state like it is distributed with YAM. This means
+that you should NOT touch anything in the 'default' theme or
+even rename it or replace it with your own one! Future YAM
+versions will automatically replace the content of the default
+theme directory without any notice or warning. So keep it
+untouched and if you want to have your own graphics/images, then
+create your own theme instead! Also please note that while the
+default theme contains a "logo" file, user themes can NOT have
+own logo files as the YAM logo should be the same throughout
+the different themes/configurations.
+-----------------------------------------------------------------
+

@@ -7,6 +7,8 @@ $URL$
 
 2007-12-02  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Themes/ReadMe: added a short readme file explaining the new themes
+    mechanism and explains the limitations.
   * Themes.c, ImageCache.c, ThemeListGroup.c: reworked the whole error and
     warning messages used for the theme loading/processing. Now, no missing
     image file should prevent YAM from immediately starting up. Only
