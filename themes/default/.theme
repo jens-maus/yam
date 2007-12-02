@@ -2,7 +2,7 @@ YTH1 - YAM Theme
 Name    = YAM default theme
 Author  = YAM Development Team
 URL     = http://www.yam.ch/
-Version = 1.0 (02.12.2007)
+Version = 0.2 (02.12.2007)
 
-; External replacements
+; Image file substitutions
 ; <image id> = <file path>
