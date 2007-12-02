@@ -1232,13 +1232,13 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
         }
 
         if(FileExists(ab->Photo) &&
-           (data->senderImage = UserImageObject,
+           (data->senderImage = ImageAreaObject,
                                   MUIA_Weight,                100,
-                                  MUIA_UserImage_Address,     from->Address,
-                                  MUIA_UserImage_Filename,    ab->Photo,
-                                  MUIA_UserImage_MaxHeight,   64,
-                                  MUIA_UserImage_MaxWidth,    64,
-                                  MUIA_UserImage_NoMinHeight, TRUE,
+                                  MUIA_ImageArea_ID,          from->Address,
+                                  MUIA_ImageArea_Filename,    ab->Photo,
+                                  MUIA_ImageArea_MaxHeight,   64,
+                                  MUIA_ImageArea_MaxWidth,    64,
+                                  MUIA_ImageArea_NoMinHeight, TRUE,
                                 End))
         {
           D(DBF_GUI, "SenderPicture found: %s %ld %ld", ab->Photo, xget(data->headerList, MUIA_Width), xget(data->headerList, MUIA_Height));

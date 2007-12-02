@@ -166,10 +166,11 @@ OVERLOAD(OM_NEW)
               Child, HSpace(0),
 
               Child, imageGroupObject = VGroup,
-                Child, previewImageObject = UserImageObject,
-                  MUIA_UserImage_MaxWidth,    300,
-                  MUIA_UserImage_MaxHeight,   200,
-                  MUIA_UserImage_NoMinHeight, FALSE,
+                Child, previewImageObject = ImageAreaObject,
+                  MUIA_ImageArea_ShowLabel,   FALSE,
+                  MUIA_ImageArea_MaxWidth,    300,
+                  MUIA_ImageArea_MaxHeight,   200,
+                  MUIA_ImageArea_NoMinHeight, FALSE,
                 End,
               End,
 
@@ -347,8 +348,8 @@ DECLARE(SelectionChanged)
       AddPath(filename, theme->directory, "preview", sizeof(filename));
 
       // set the new attributes, the old image will be deleted from the cache
-      xset(data->IM_PREVIEW, MUIA_UserImage_Address,  filename,
-                             MUIA_UserImage_Filename, filename);
+      xset(data->IM_PREVIEW, MUIA_ImageArea_ID,       filename,
+                             MUIA_ImageArea_Filename, filename);
 
       // and force a cleanup/setup pair
       DoMethod(data->GR_PREVIEW, OM_REMMEMBER, data->IM_PREVIEW);

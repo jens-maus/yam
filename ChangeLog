@@ -12,6 +12,9 @@ $URL$
 
 2007-12-02  Jens Langner <Jens.Langner@light-speed.de>
 
+  * UserImage.c, ImageArea.c, misc: merged the differences between the
+    internal UserImage and ImageArea class as both classes had pretty much
+    the very same job/purpose. Therefore the UserImage class is now obsolete.
   * ThemeListGroup.c, YAM_COs.c, YAM_EA.c: finalized the whole theme
     functionality by enabling a user to activate/select a theme within the
     look&feel configuration of YAM.

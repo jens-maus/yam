@@ -41,14 +41,23 @@
 struct Data
 {
   char *id;
-  char *name;
+  char *filename;
   char *label;
+
+  struct ImageCacheNode imageNode;
+  struct BitMap *scaledBitMap;
+
+  ULONG scaledWidth;
+  ULONG scaledHeight;
+  ULONG maxWidth;
+  ULONG maxHeight;
+
+  BOOL noMinHeight;
   BOOL free_horiz;
   BOOL free_vert;
   BOOL show_label;
   BOOL imageLoaded;
   BOOL setup;
-  struct ImageCacheNode imageNode;
 
   int label_height;
 };
@@ -66,25 +75,25 @@ struct Data
 // loads an image via our datatype methods
 static BOOL Image_Load(struct Data *data, Object *obj)
 {
-  BOOL success = FALSE;
-
   ENTER();
 
-  if(data->id != NULL && data->name != NULL && data->imageLoaded == FALSE)
+  if(data->imageLoaded == FALSE &&
+     data->id != NULL && data->id[0] != '\0' &&
+     data->filename != NULL && data->filename[0] != '\0')
   {
     struct ImageCacheNode *node;
 
-    if((node = ObtainImage(data->id, data->name, _screen(obj))) != NULL)
+    if((node = ObtainImage(data->id, data->filename, _screen(obj))) != NULL)
     {
       memcpy(&data->imageNode, node, sizeof(data->imageNode));
+
       if(node->dt_obj != NULL)
         data->imageLoaded = TRUE;
-      success = TRUE;
     }
   }
 
-  RETURN(success);
-  return success;
+  RETURN(data->imageLoaded);
+  return data->imageLoaded;
 }
 
 ///
@@ -96,6 +105,7 @@ static void Image_Unload(struct Data *data)
 
   if(data->imageLoaded == TRUE)
   {
+    D(DBF_IMAGE, "unloaded old image '%s' from '%s'", data->id, data->filename);
     ReleaseImage(data->id, FALSE);
     data->imageLoaded = FALSE;
   }
@@ -120,7 +130,7 @@ OVERLOAD(OM_NEW)
 
     // set default values
     data->id = NULL;
-    data->name = NULL;
+    data->filename = NULL;
     data->label = NULL;
     data->free_vert = FALSE;
     data->free_horiz = FALSE;
@@ -130,12 +140,15 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        ATTR(ID):        if((char *)tag->ti_Data != NULL) data->id = strdup((char *)tag->ti_Data); break;
-        ATTR(Filename):  if((char *)tag->ti_Data != NULL) data->name = strdup((char *)tag->ti_Data); break;
-        ATTR(Label):     if((char *)tag->ti_Data != NULL) data->label = strdup((char *)tag->ti_Data); break;
-        ATTR(FreeVert):  data->free_vert = tag->ti_Data; break;
-        ATTR(FreeHoriz): data->free_horiz = tag->ti_Data; break;
-        ATTR(ShowLabel): data->show_label = tag->ti_Data; break;
+        ATTR(ID):          if((char *)tag->ti_Data != NULL) data->id = strdup((char *)tag->ti_Data); break;
+        ATTR(Filename):    if((char *)tag->ti_Data != NULL) data->filename = strdup((char *)tag->ti_Data); break;
+        ATTR(Label):       if((char *)tag->ti_Data != NULL) data->label = strdup((char *)tag->ti_Data); break;
+        ATTR(FreeVert):    data->free_vert   = (BOOL)tag->ti_Data; break;
+        ATTR(FreeHoriz):   data->free_horiz  = (BOOL)tag->ti_Data; break;
+        ATTR(ShowLabel):   data->show_label  = (BOOL)tag->ti_Data; break;
+        ATTR(MaxHeight):   data->maxHeight   = (ULONG)tag->ti_Data; break;
+        ATTR(MaxWidth):    data->maxWidth    = (ULONG)tag->ti_Data; break;
+        ATTR(NoMinHeight): data->noMinHeight = (BOOL)tag->ti_Data; break;
       }
     }
   }
@@ -155,11 +168,13 @@ OVERLOAD(OM_DISPOSE)
   if(data->id != NULL)
     free(data->id);
 
-  if(data->name != NULL)
-    free(data->name);
+  if(data->filename != NULL)
+    free(data->filename);
 
   if(data->label != NULL)
     free(data->label);
+
+  // everything else has been freed during MUIM_Cleanup already
 
   result = DoSuperMethodA(cl, obj, msg);
 
@@ -177,7 +192,7 @@ OVERLOAD(OM_GET)
   switch(((struct opGet *)msg)->opg_AttrID)
   {
     ATTR(ID): *store = (ULONG)data->id; return TRUE;
-    ATTR(Filename): *store = (ULONG)data->name; return TRUE;
+    ATTR(Filename): *store = (ULONG)data->filename; return TRUE;
 
     // return the raw image width
     ATTR(RawWidth):
@@ -193,7 +208,7 @@ OVERLOAD(OM_GET)
       {
         struct ImageCacheNode *icnode;
 
-        if((icnode = ObtainImage(data->id, data->name, NULL)) != NULL)
+        if((icnode = ObtainImage(data->id, data->filename, NULL)) != NULL)
         {
           *store = icnode->width;
 
@@ -221,7 +236,7 @@ OVERLOAD(OM_GET)
       {
         struct ImageCacheNode *icnode;
 
-        if((icnode = ObtainImage(data->id, data->name, NULL)) != NULL)
+        if((icnode = ObtainImage(data->id, data->filename, NULL)) != NULL)
         {
           *store = icnode->height;
 
@@ -267,27 +282,46 @@ OVERLOAD(OM_SET)
       }
       break;
 
+      ATTR(ID):
+      {
+        char *newId = (char *)tag->ti_Data;
+
+        Image_Unload(data);
+
+        if(data->id != NULL)
+        {
+          free(data->id);
+          data->id = NULL;
+        }
+
+        if(newId != NULL)
+          data->id = strdup(newId);
+
+        // remember to relayout the image
+        relayout = TRUE;
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
       ATTR(Filename):
       {
         char *newFilename = (char *)tag->ti_Data;
 
-        if(data->name != NULL)
+        Image_Unload(data);
+
+        if(data->filename != NULL)
         {
-          free(data->name);
-          data->name = NULL;
+          free(data->filename);
+          data->filename = NULL;
         }
 
         if(newFilename != NULL)
-          data->name = strdup(newFilename);
+          data->filename = strdup(newFilename);
 
+        // remember to relayout the image
         relayout = TRUE;
-
-        if(data->setup == TRUE)
-        {
-          Image_Unload(data);
-          Image_Load(data, obj);
-          MUI_Redraw(obj, MADF_DRAWOBJECT);
-        }
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -296,7 +330,9 @@ OVERLOAD(OM_SET)
     }
   }
 
-  if(relayout == TRUE && data->setup == TRUE)
+  if(relayout == TRUE &&
+     data->setup == TRUE &&
+     Image_Load(data, obj) == TRUE)
   {
     Object *parent;
 
@@ -304,9 +340,9 @@ OVERLOAD(OM_SET)
     {
       // New size if needed
       if(DoMethod(parent,MUIM_Group_InitChange))
-      {
         DoMethod(parent,MUIM_Group_ExitChange);
-      }
+
+      MUI_Redraw(obj, MADF_DRAWOBJECT);
     }
   }
 
@@ -327,7 +363,91 @@ OVERLOAD(MUIM_Setup)
 
   if((result = DoSuperMethodA(cl, obj, msg)))
   {
-    Image_Load(data, obj);
+    if(Image_Load(data, obj) == TRUE)
+    {
+      struct BitMap *orgBitMap = NULL;
+      struct BitMapHeader *bitMapHeader = NULL;
+
+      GetDTAttrs(data->imageNode.dt_obj, PDTA_BitMapHeader, &bitMapHeader,
+                                         PDTA_DestBitMap,   &orgBitMap,
+                                         TAG_DONE);
+
+      // try another attribute if the other DestBitMap failed
+      if(orgBitMap == NULL)
+        GetDTAttrs(data->imageNode.dt_obj, PDTA_BitMap, &orgBitMap, TAG_DONE);
+
+      // check if correctly obtained the header and if it is valid
+      if(orgBitMap != NULL && bitMapHeader != NULL && bitMapHeader->bmh_Depth > 0)
+      {
+        // make sure to scale down the image if maxHeight/maxWidth is specified
+        LONG scaleHeightDiff = bitMapHeader->bmh_Height - data->maxHeight;
+        LONG scaleWidthDiff  = bitMapHeader->bmh_Width - data->maxWidth;
+        LONG newWidth;
+        LONG newHeight;
+
+        if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
+           (scaleWidthDiff > 0 && data->maxWidth > 0))
+        {
+          double scaleFactor;
+
+          // make sure we are scaling proportional
+          if(scaleHeightDiff > scaleWidthDiff)
+          {
+            scaleFactor = (double)bitMapHeader->bmh_Width / (double)bitMapHeader->bmh_Height;
+            newWidth = scaleFactor * data->maxHeight + 0.5; // roundup the value
+            newHeight = data->maxHeight;
+          }
+          else
+          {
+            scaleFactor = (double)bitMapHeader->bmh_Height / (double)bitMapHeader->bmh_Width;
+            newWidth = data->maxWidth;
+            newHeight = scaleFactor * data->maxWidth + 0.5; // roundup the value
+          }
+
+          // now we can allocate the new bitmap and scale it
+          // if required. But we use BitMapScale() for all operations
+          data->scaledBitMap = AllocBitMap(newWidth, newHeight, bitMapHeader->bmh_Depth, BMF_CLEAR|BMF_MINPLANES, orgBitMap);
+          if(data->scaledBitMap != NULL)
+          {
+            struct BitScaleArgs args;
+
+            args.bsa_SrcBitMap = orgBitMap;
+            args.bsa_DestBitMap = data->scaledBitMap;
+            args.bsa_Flags = 0;
+
+            args.bsa_SrcY = 0;
+            args.bsa_DestY = 0;
+
+            args.bsa_SrcWidth = bitMapHeader->bmh_Width;
+            args.bsa_SrcHeight = bitMapHeader->bmh_Height;
+
+            args.bsa_XSrcFactor = bitMapHeader->bmh_Width;
+            args.bsa_XDestFactor = newWidth;
+
+            args.bsa_YSrcFactor = bitMapHeader->bmh_Height;
+            args.bsa_YDestFactor = newHeight;
+
+            args.bsa_SrcX = 0;
+            args.bsa_DestX = 0;
+
+            // scale the image now with the arguments set
+            BitMapScale(&args);
+
+            // read out the scaled values
+            data->scaledWidth  = args.bsa_DestWidth;
+            data->scaledHeight = args.bsa_DestHeight;
+
+            D(DBF_GUI, "Scaled image in ImageArea (w/h) from %ld/%ld to %ld/%ld", bitMapHeader->bmh_Width,
+                                                                                  bitMapHeader->bmh_Height,
+                                                                                  data->scaledWidth,
+                                                                                  data->scaledHeight);
+          }
+        }
+        else
+          data->scaledBitMap = NULL;
+      }
+    }
+
     data->setup = TRUE;
   }
 
@@ -343,7 +463,15 @@ OVERLOAD(MUIM_Cleanup)
 
   ENTER();
 
+  // now it should be fine to free the allocated bitmap
+  if(data->scaledBitMap != NULL)
+  {
+    FreeBitMap(data->scaledBitMap);
+    data->scaledBitMap = NULL;
+  }
+
   Image_Unload(data);
+
   data->setup = FALSE;
 
   result = DoSuperMethodA(cl, obj, msg);
@@ -369,8 +497,16 @@ OVERLOAD(MUIM_AskMinMax)
 
   if(data->imageLoaded == TRUE)
   {
-    minwidth  = data->imageNode.width;
-    minheight = data->imageNode.height;
+    if(data->scaledBitMap != NULL)
+    {
+      minwidth  = data->scaledWidth;
+      minheight = data->scaledHeight;
+    }
+    else
+    {
+      minwidth  = data->imageNode.width;
+      minheight = data->imageNode.height;
+    }
   }
   else
   {
@@ -406,7 +542,7 @@ OVERLOAD(MUIM_AskMinMax)
       minwidth = width;
   }
 
-  mi->MinHeight += minheight;
+  mi->MinHeight += data->noMinHeight ? 0 : minheight;
   mi->DefHeight += minheight;
   if(data->free_vert)
     mi->MaxHeight = MUI_MAXMAX;
@@ -440,41 +576,52 @@ OVERLOAD(MUIM_Draw)
   // we blit the image on our rastport
   if(data->imageLoaded == TRUE)
   {
-    Object *dt_obj = data->imageNode.dt_obj;
-    struct BitMap *bitmap = NULL;
-    int imgWidth = data->imageNode.width;
-    int imgHeight = data->imageNode.height;
-
-    // try to get the bitmap first via PDTA_DestBitMap and
-    // otherwise with PDTA_BitMap
-    GetDTAttrs(dt_obj, PDTA_DestBitMap, &bitmap, TAG_DONE);
-    if(bitmap == NULL)
-      GetDTAttrs(dt_obj, PDTA_BitMap, &bitmap, TAG_DONE);
-
-    // blit the bitmap if we retrieved it successfully.
-    if(bitmap)
+    if(data->scaledBitMap != NULL)
     {
-      APTR mask = NULL;
+      BltBitMapRastPort(data->scaledBitMap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - data->scaledWidth)/2,
+                                                      _mtop(obj) + (_mheight(obj) - data->label_height - data->scaledHeight)/2,
+                                                      data->scaledWidth, data->scaledHeight, (ABC|ABNC));
 
-      // try to obtain a mask for e.g. transparency display of an image
-      GetDTAttrs(dt_obj, PDTA_MaskPlane, &mask, TAG_DONE);
-      if(mask)
-      {
-        // we use an own BltMaskBitMapRastPort() implemenation to also support
-        // interleaved images.
-        MyBltMaskBitMapRastPort(bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - imgWidth)/2,
-                                                  _mtop(obj) + (_mheight(obj) - data->label_height - imgHeight)/2,
-                                                  imgWidth, imgHeight, (ABC|ABNC|ANBC), (PLANEPTR)mask);
-      }
-      else
-      {
-        BltBitMapRastPort(bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - imgWidth)/2,
-                                            _mtop(obj) + (_mheight(obj) - data->label_height - imgHeight)/2,
-                                            imgWidth, imgHeight, (ABC|ABNC));
-      }
+      rel_y += data->scaledHeight;
     }
+    else
+    {
+      Object *dt_obj = data->imageNode.dt_obj;
+      struct BitMap *bitmap = NULL;
+      int imgWidth = data->imageNode.width;
+      int imgHeight = data->imageNode.height;
 
-    rel_y += data->imageNode.height;
+      // try to get the bitmap first via PDTA_DestBitMap and
+      // otherwise with PDTA_BitMap
+      GetDTAttrs(dt_obj, PDTA_DestBitMap, &bitmap, TAG_DONE);
+      if(bitmap == NULL)
+        GetDTAttrs(dt_obj, PDTA_BitMap, &bitmap, TAG_DONE);
+
+      // blit the bitmap if we retrieved it successfully.
+      if(bitmap)
+      {
+        APTR mask = NULL;
+
+        // try to obtain a mask for e.g. transparency display of an image
+        GetDTAttrs(dt_obj, PDTA_MaskPlane, &mask, TAG_DONE);
+        if(mask)
+        {
+          // we use an own BltMaskBitMapRastPort() implemenation to also support
+          // interleaved images.
+          MyBltMaskBitMapRastPort(bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - imgWidth)/2,
+                                                    _mtop(obj) + (_mheight(obj) - data->label_height - imgHeight)/2,
+                                                    imgWidth, imgHeight, (ABC|ABNC|ANBC), (PLANEPTR)mask);
+        }
+        else
+        {
+          BltBitMapRastPort(bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - imgWidth)/2,
+                                              _mtop(obj) + (_mheight(obj) - data->label_height - imgHeight)/2,
+                                              imgWidth, imgHeight, (ABC|ABNC));
+        }
+      }
+
+      rel_y += data->imageNode.height;
+    }
   }
 
   if(data->label && data->show_label)

@@ -453,8 +453,8 @@ static void EA_SetPhoto(int winnum, char *fname)
        DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
     {
       // set the new attributes, the old image will be deleted from the cache
-      xset(gui->BC_PHOTO, MUIA_UserImage_Address, G->EA[winnum]->ABEntry->Address,
-                          MUIA_UserImage_Filename, fname);
+      xset(gui->BC_PHOTO, MUIA_ImageArea_ID,       G->EA[winnum]->ABEntry->Address,
+                          MUIA_ImageArea_Filename, fname);
 
       // and force a cleanup/setup pair
       DoMethod(gui->GR_PHOTO, OM_REMMEMBER, gui->BC_PHOTO);
@@ -540,8 +540,8 @@ HOOKPROTONHNO(EA_CloseFunc, void, int *arg)
   {
   	// update the user image ID and remove it from the cache
   	// it will be reloaded when necessary
-    xset(gui->BC_PHOTO, MUIA_UserImage_Address, G->EA[winnum]->ABEntry->Address,
-                        MUIA_UserImage_Filename, NULL);
+    xset(gui->BC_PHOTO, MUIA_ImageArea_ID,       G->EA[winnum]->ABEntry->Address,
+                        MUIA_ImageArea_Filename, NULL);
   }
 
   DisposeModulePush(&G->EA[winnum]);
@@ -628,10 +628,10 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                  Child, HGroup,
                     Child, HSpace(0),
                     Child, data->GUI.GR_PHOTO = HGroup,
-                       Child, data->GUI.BC_PHOTO = UserImageObject,
-                         MUIA_UserImage_MaxHeight,   64,
-                         MUIA_UserImage_MaxWidth,    64,
-                         MUIA_UserImage_NoMinHeight, FALSE,
+                       Child, data->GUI.BC_PHOTO = ImageAreaObject,
+                         MUIA_ImageArea_MaxHeight,   64,
+                         MUIA_ImageArea_MaxWidth,    64,
+                         MUIA_ImageArea_NoMinHeight, FALSE,
                        End,
                        ImageButtonFrame,
                     End,
