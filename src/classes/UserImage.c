@@ -193,9 +193,7 @@ OVERLOAD(OM_SET)
         {
           // New size if needed
           if(DoMethod(parent, MUIM_Group_InitChange))
-          {
             DoMethod(parent, MUIM_Group_ExitChange);
-          }
 
           MUI_Redraw(obj, MADF_DRAWOBJECT);
         }

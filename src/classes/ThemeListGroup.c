@@ -39,11 +39,12 @@
 struct Data
 {
   Object *NL_THEMELIST;
+  Object *TX_THEMELABEL;
+  Object *GR_PREVIEW;
+  Object *IM_PREVIEW;
   Object *BT_ACTIVATE;
   Object *TX_AUTHOR;
   Object *TX_URL;
-
-  char activeTheme[SIZE_FILE];
 };
 */
 
@@ -88,7 +89,10 @@ HOOKPROTONHNO(DisplayFunc, LONG, struct NList_DisplayMessage *msg)
 
   if(entry)
   {
-    array[0] = entry->name;
+    array[0] = FilePart(entry->directory);
+
+    if(stricmp(array[0], CE->ThemeName) == 0)
+      msg->preparses[0] = (char *)"\033b";
   }
 
   return 0;
@@ -104,6 +108,9 @@ MakeStaticHook(DisplayHook, DisplayFunc);
 OVERLOAD(OM_NEW)
 {
   Object *themeListObject;
+  Object *themeTextObject;
+  Object *previewImageObject;
+  Object *imageGroupObject;
   Object *activateButtonObject;
   Object *authorTextObject;
   Object *urlTextObject;
@@ -115,11 +122,14 @@ OVERLOAD(OM_NEW)
           MUIA_ContextMenu,       FALSE,
 
           Child, VGroup,
-            MUIA_HorizWeight, 30,
+            MUIA_FixWidth, 100,
+
             Child, NListviewObject,
               MUIA_CycleChain, TRUE,
               MUIA_NListview_NList, themeListObject = NListObject,
                 InputListFrame,
+                MUIA_NList_Format,        "",
+                MUIA_NList_Title,         FALSE,
                 MUIA_NList_DragType,      MUIV_NList_DragType_None,
                 MUIA_NList_ConstructHook, &ConstructHook,
                 MUIA_NList_DestructHook,  &DestructHook,
@@ -130,10 +140,16 @@ OVERLOAD(OM_NEW)
             Child, activateButtonObject = MakeButton(tr(MSG_CO_THEME_ACTIVATE)),
           End,
 
-          Child, BalanceObject, End,
-
           Child, VGroup,
-            MUIA_HorizWeight, 70,
+            Child, themeTextObject = TextObject,
+              MUIA_Text_PreParse, "\033b\033c",
+            End,
+
+            Child, RectangleObject,
+              MUIA_Rectangle_HBar, TRUE,
+              MUIA_FixHeight,      4,
+            End,
+
             Child, HGroup,
               Child, HSpace(0),
               Child, TextObject,
@@ -144,9 +160,20 @@ OVERLOAD(OM_NEW)
               Child, HSpace(0),
             End,
 
-            Child, RectangleObject,
-              MUIA_Rectangle_HBar, TRUE,
-              MUIA_FixHeight,      4,
+            Child, HVSpace,
+
+            Child, HGroup,
+              Child, HSpace(0),
+
+              Child, imageGroupObject = VGroup,
+                Child, previewImageObject = UserImageObject,
+                  MUIA_UserImage_MaxWidth,    300,
+                  MUIA_UserImage_MaxHeight,   200,
+                  MUIA_UserImage_NoMinHeight, FALSE,
+                End,
+              End,
+
+              Child, HSpace(0),
             End,
 
             Child, HVSpace,
@@ -180,52 +207,20 @@ OVERLOAD(OM_NEW)
     GETDATA;
 
     data->NL_THEMELIST = themeListObject;
+    data->TX_THEMELABEL = themeTextObject;
+    data->GR_PREVIEW = imageGroupObject;
+    data->IM_PREVIEW = previewImageObject;
     data->BT_ACTIVATE = activateButtonObject;
     data->TX_AUTHOR = authorTextObject;
     data->TX_URL = urlTextObject;
+
+    // set notifies
+    DoMethod(themeListObject,      MUIM_Notify, MUIA_NList_SelectChange, TRUE, obj, 1, MUIM_ThemeListGroup_SelectionChanged);
+    DoMethod(activateButtonObject, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, MUIM_ThemeListGroup_ActivateTheme);
   }
 
   RETURN((ULONG)obj);
   return (ULONG)obj;
-}
-///
-/// OVERLOAD(OM_GET)
-/* this is just so that we can notify the popup tag */
-OVERLOAD(OM_GET)
-{
-  GETDATA;
-  ULONG *store = ((struct opGet *)msg)->opg_Storage;
-
-  switch(((struct opGet *)msg)->opg_AttrID)
-  {
-    ATTR(Active) : *store = (ULONG)data->activeTheme; return TRUE;
-  }
-
-  return DoSuperMethodA(cl, obj, msg);
-}
-///
-/// OVERLOAD(OM_SET)
-OVERLOAD(OM_SET)
-{
-  GETDATA;
-
-  struct TagItem *tags = inittags(msg), *tag;
-  while((tag = NextTagItem(&tags)))
-  {
-    switch(tag->ti_Tag)
-    {
-      ATTR(Active):
-      {
-        strlcpy(data->activeTheme, (char*)tag->ti_Data, sizeof(data->activeTheme));
-
-        // make the superMethod call ignore those tags
-        tag->ti_Tag = TAG_IGNORE;
-      }
-      break;
-    }
-  }
-
-  return DoSuperMethodA(cl, obj, msg);
 }
 ///
 
@@ -239,6 +234,9 @@ DECLARE(Update)
   APTR context;
 
   ENTER();
+
+  // clear the NList
+  DoMethod(data->NL_THEMELIST, MUIM_NList_Clear);
 
   // construct the themes directory path
   AddPath(themesDir, G->ProgDir, "Themes", sizeof(themesDir));
@@ -265,8 +263,8 @@ DECLARE(Update)
 
         // now we check whether this is a drawer which contains a
         // ".theme" file which should be a sign that this is a YAM theme
-        AddPath(filename, themesDir, ed->Name, sizeof(filename));
-        AddPart(filename, ".theme", sizeof(filename));
+        AddPath(theme.directory, themesDir, ed->Name, sizeof(theme.directory));
+        AddPath(filename, theme.directory, ".theme", sizeof(filename));
 
         // parse the .theme file to check wheter this
         // is a valid theme or not.
@@ -290,6 +288,35 @@ DECLARE(Update)
     if(IoErr() != ERROR_NO_MORE_ENTRIES)
       E(DBF_CONFIG, "ExamineDir() failed");
 
+    // now we have to check which item we should set active
+    if(xget(data->NL_THEMELIST, MUIA_NList_Entries) > 1)
+    {
+      // walk through our list and check if the theme is the currently
+      // active one, and if so we go and make it the currently selected one.
+      ULONG pos;
+      BOOL found = FALSE;
+      for(pos=0;;pos++)
+      {
+        struct Theme *theme = NULL;
+
+        DoMethod(data->NL_THEMELIST, MUIM_NList_GetEntry, pos, &theme);
+        if(theme == NULL)
+          break;
+
+        if(stricmp(FilePart(theme->directory), CE->ThemeName) == 0)
+        {
+          set(data->NL_THEMELIST, MUIA_NList_Active, pos);
+          found = TRUE;
+          break;
+        }
+      }
+
+      if(found == FALSE)
+        set(data->NL_THEMELIST, MUIA_NList_Active, MUIV_NList_Active_Top);
+    }
+    else
+      set(data->NL_THEMELIST, MUIA_NList_Active, MUIV_NList_Active_Top);
+
     ReleaseDirContext(context);
   }
   else
@@ -299,4 +326,84 @@ DECLARE(Update)
   return result;
 }
 ///
+/// DECLARE(SelectionChanged)
+DECLARE(SelectionChanged)
+{
+  GETDATA;
+  struct Theme *theme = NULL;
 
+  ENTER();
+
+  // get the currently selected entry
+  DoMethod(data->NL_THEMELIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &theme);
+  if(theme != NULL)
+  {
+    char buf[SIZE_DEFAULT];
+
+    if(DoMethod(data->GR_PREVIEW, MUIM_Group_InitChange))
+    {
+      char filename[SIZE_PATHFILE];
+
+      AddPath(filename, theme->directory, "preview", sizeof(filename));
+
+      // set the new attributes, the old image will be deleted from the cache
+      xset(data->IM_PREVIEW, MUIA_UserImage_Address,  filename,
+                             MUIA_UserImage_Filename, filename);
+
+      // and force a cleanup/setup pair
+      DoMethod(data->GR_PREVIEW, OM_REMMEMBER, data->IM_PREVIEW);
+      DoMethod(data->GR_PREVIEW, OM_ADDMEMBER, data->IM_PREVIEW);
+
+      DoMethod(data->GR_PREVIEW, MUIM_Group_ExitChange);
+    }
+
+    snprintf(buf, sizeof(buf), "%s - %s", theme->name, theme->version);
+    set(data->TX_THEMELABEL, MUIA_Text_Contents, buf);
+    set(data->TX_AUTHOR, MUIA_Text_Contents, theme->author);
+    set(data->TX_URL, MUIA_Text_Contents, theme->url);
+  }
+
+  RETURN(0);
+  return 0;
+}
+///
+/// DECLARE(ActivateTheme)
+DECLARE(ActivateTheme)
+{
+  GETDATA;
+  struct Theme *theme = NULL;
+
+  ENTER();
+
+  // get the currently selected entry
+  DoMethod(data->NL_THEMELIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &theme);
+  if(theme != NULL)
+  {
+    char *themeName = FilePart(theme->directory);
+
+    // check that this theme isn't already the
+    // active one.
+    if(stricmp(themeName, CE->ThemeName) != 0)
+    {
+      // now we activate the theme and we warn the user about
+      // the fact that a restart is required for the new theme to
+      // be activated.
+      strlcpy(CE->ThemeName, themeName, sizeof(CE->ThemeName));
+
+      // redraw the NList.
+      DoMethod(data->NL_THEMELIST, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
+
+      // remind the users to save the configuration and
+      // restart yam.
+      MUI_Request(G->App, G->CO->GUI.WI, 0, tr(MSG_ER_THEME_ACTIVATED_TITLE),
+                                            tr(MSG_Okay),
+                                            tr(MSG_ER_THEME_ACTIVATED));
+    }
+    else
+      W(DBF_THEME, "theme '%s' is already the currently active one!", themeName);
+  }
+
+  RETURN(0);
+  return 0;
+}
+///

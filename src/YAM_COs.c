@@ -1994,10 +1994,6 @@ void CO_GetConfig(BOOL saveConfig)
         CE->QuickSearchBar = GetMUICheck(gui->CH_QUICKSEARCHBAR);
         CE->EmbeddedReadPane = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
         CE->SizeFormat = GetMUICycle(gui->CY_SIZE);
-
-        // get the name of the theme that was
-        // specified as the active one.
-        strlcpy(CE->ThemeName, (char *)xget(gui->GR_THEMES, MUIA_ThemeListGroup_Active), sizeof(CE->ThemeName));
       }
       break;
 
@@ -2392,10 +2388,10 @@ void CO_SetConfig(void)
       setcycle(gui->CY_SIZE, CE->SizeFormat);
 
       set(gui->PO_INFOBARTXT, MUIA_Disabled, CE->InfoBar == IB_POS_OFF);
+
       // update the themeslist and set the current one
       // as active
       DoMethod(gui->GR_THEMES, MUIM_ThemeListGroup_Update);
-      set(gui->GR_THEMES, MUIA_ThemeListGroup_Active, CE->ThemeName);
     }
     break;
 

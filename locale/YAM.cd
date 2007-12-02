@@ -5932,7 +5932,7 @@ MSG_CO_LOOKFEEL_THEMES (1898//)
 Themes
 ;
 MSG_CO_THEME_ACTIVATE (1899//)
-Activate
+A_ctivate
 ;
 MSG_CO_THEME_PREVIEW (1900//)
 Preview
@@ -6548,4 +6548,12 @@ inaccessible or corrupt and wasn't loaded.\n\
 The default YAM theme was therefore activated as a \
 fallback. Please make sure your selected theme is readable \
 and a valid YAM theme.
+;
+MSG_ER_THEME_ACTIVATED_TITLE (2045//)
+YAM restart required
+;
+MSG_ER_THEME_ACTIVATED (2046//)
+Please note that before the selected theme can be\n\
+activated, you have to save the configuration and\n\
+restart YAM.
 ;

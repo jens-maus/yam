@@ -12,6 +12,9 @@ $URL$
 
 2007-12-02  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ThemeListGroup.c, YAM_COs.c, YAM_EA.c: finalized the whole theme
+    functionality by enabling a user to activate/select a theme within the
+    look&feel configuration of YAM.
   * Themes/ReadMe: added a short readme file explaining the new themes
     mechanism and explains the limitations.
   * Themes.c, ImageCache.c, ThemeListGroup.c: reworked the whole error and

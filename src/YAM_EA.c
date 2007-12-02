@@ -450,14 +450,16 @@ static void EA_SetPhoto(int winnum, char *fname)
     enum FType type;
 
     if(ObtainFileInfo(fname, FI_TYPE, &type) == TRUE && type == FIT_FILE && gui->BC_PHOTO != NULL &&
-     DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
+       DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
     {
       // set the new attributes, the old image will be deleted from the cache
       xset(gui->BC_PHOTO, MUIA_UserImage_Address, G->EA[winnum]->ABEntry->Address,
                           MUIA_UserImage_Filename, fname);
+
       // and force a cleanup/setup pair
       DoMethod(gui->GR_PHOTO, OM_REMMEMBER, gui->BC_PHOTO);
       DoMethod(gui->GR_PHOTO, OM_ADDMEMBER, gui->BC_PHOTO);
+
       DoMethod(gui->GR_PHOTO, MUIM_Group_ExitChange);
     }
   }
