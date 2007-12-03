@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-03  Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/deutsch.ct: fixed some minor mistakes in the german catalog
+    translation.
+
 2007-12-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * ThemeListGroup.c: if a theme file could not be parsed it will now be freed

@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (29.11.2007)
+## version $VER: YAM.catalog 6.0 (03.12.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -8162,8 +8162,8 @@ MSG_CO_SCRIPTPATH
 Skriptpfad
 ;
 MSG_ER_ICONOBJECT_WARNING
-Während des Ladens den Piktogramms '%s.info' aus dem Theme \
-'%s' ist ein Fehler aufgetreten. Das Piktogramm wird während \
+Beim Laden des Piktogramms '%s.info' aus dem Theme \
+'%s' ist ein Fehler aufgetreten. Es wird daher während \
 dieser Sitzung nicht angezeigt werden.\n\
 \n\
 Bitte stellen Sie sicher, dass das Theme-Verzeichnis all nötigen \
@@ -8186,7 +8186,7 @@ Der Ladeprozess des Themes wurde abgebrochen. Bitte erneuern Sie das \
 Standard-Theme auf eine kompatible Version.
 ;
 MSG_ER_DATATYPE_ERROR
-Während des Ladens des Bildes '%s' durch die datatypes.library \
+Beim Laden des Bildes '%s' durch die datatypes.library \
 ist ein Fehler aufgetreten.\n\
 \n\
 Bitte stellen Sie sicher, dass die Datei existiert und durch Ihr \
@@ -8194,29 +8194,29 @@ DataTypes-System korrekt installiert ist (z.B. muss das Bild korrekt \
 durch MultiView darstellbar sein).
 ;
 MSG_ER_IMAGEOBJECT_WARNING
-Während des Ladens des Bildes '%s' aus dem Verzeichnis '%s' ist \
+Beim Laden des Bildes '%s' aus dem Verzeichnis '%s' ist \
 ein Fehler aufgetreten.\n\
 \n\
 Bitte stellen Sie sicher, dass Ihr Theme-Verzeichnis alle nötigen Bilder \
 entsprechend der neuesten Theme-Version enthält.
 ;
 MSG_ER_THEME_FATAL
-YAM konnte das Standard-Theme nicht laden und hat das Laden des Themes \
-komplett abgebrochen.\n\
+YAM konnte das Standard-Theme nicht initialisieren und hat das Laden \
+des Themes komplett abgebrochen.\n\
 \n\
 Bitte stellen Sie sicher, dass Ihr Theme-Verzeichnis lesbar ist und die \
 richtige Version des Standard-Themes von YAM enthält.
 ;
 MSG_ER_THEME_FALLBACK
-Das derzeit aktive Theme '%s' ist entweder nicht ansprechbar oder \
+Das derzeit aktive Theme '%s' ist entweder nicht lesbar oder \
 beschädigt und konnte nicht geladen werden.\n\
 \n\
 Das Standard-Theme von YAM wurde daher als Ersatz aktiviert. Bitte stellen \
-Sie sicher, dass das ausgewählte Theme lesbar ist und ein gültiges Theme \
-für YAM ist.
+Sie sicher, dass das ausgewählte Themeverzeichnis lesbar ist und ein gültiges \
+Theme für YAM enthält.
 ;
 MSG_ER_THEME_ACTIVATED_TITLE
-YAM-Neustart nötig
+Neustart von YAM notwendig
 ;
 MSG_ER_THEME_ACTIVATED
 Bitte beachten Sie, dass das Sie die Konfiguration\n\
