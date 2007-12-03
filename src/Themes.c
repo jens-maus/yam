@@ -392,7 +392,6 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
             int i;
             int j;
             BOOL found = FALSE;
-            char *image = strdup(value);
 
             // theme description
             if(stricmp(id, "Name") == 0)
@@ -400,7 +399,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
               if(theme->name != NULL)
                 free(theme->name);
 
-              theme->name = image;
+              theme->name = strdup(value);
               found = TRUE;
             }
             else if(stricmp(id, "Author") == 0)
@@ -408,7 +407,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
               if(theme->author != NULL)
                 free(theme->author);
 
-              theme->author = image;
+              theme->author = strdup(value);
               found = TRUE;
             }
             else if(stricmp(id, "URL") == 0)
@@ -416,7 +415,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
               if(theme->url != NULL)
                 free(theme->url);
 
-              theme->url = image;
+              theme->url = strdup(value);
               found = TRUE;
             }
             else if(stricmp(id, "Version") == 0)
@@ -424,16 +423,22 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
               if(theme->version != NULL)
                 free(theme->version);
 
-              theme->version = image;
+              theme->version = strdup(value);
               found = TRUE;
             }
             else
             {
-              if(strchr(image, ':') == NULL)
+              char *image;
+
+              if(strchr(value, ':') == NULL)
               {
                 // image filename is relative to the theme directory
-                free(image);
                 asprintf(&image, "%s/%s", theme->directory, value);
+              }
+              else
+              {
+                // leave the name as it is
+                image = value;
               }
 
               // config images
@@ -444,7 +449,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
                   if(theme->configImages[i] != NULL)
                     free(theme->configImages[i]);
 
-                  theme->configImages[i] = image;
+                  theme->configImages[i] = strdup(image);
                   found = TRUE;
                 }
               }
@@ -457,7 +462,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
                   if(theme->folderImages[i] != NULL)
                     free(theme->folderImages[i]);
 
-                  theme->folderImages[i] = image;
+                  theme->folderImages[i] = strdup(image);
                   found = TRUE;
                 }
               }
@@ -470,7 +475,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
                   if(theme->iconImages[i] != NULL)
                     free(theme->iconImages[i]);
 
-                  theme->iconImages[i] = image;
+                  theme->iconImages[i] = strdup(image);
                   found = TRUE;
                 }
               }
@@ -483,7 +488,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
                   if(theme->statusImages[i] != NULL)
                     free(theme->statusImages[i]);
 
-                  theme->statusImages[i] = image;
+                  theme->statusImages[i] = strdup(image);
                   found = TRUE;
                 }
               }
@@ -492,63 +497,66 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
               for(j=tbim_Normal; j < tbim_Max && found == FALSE; j++)
               {
                 // main window toolbar
-                for(i=mwtbi_First; i < mwtbi_Null && found == FALSE; i++)
+                for(i=mwtbi_First; i < mwtbi_Null; i++)
                 {
                   if(stricmp(id, tbii[mainWindowToolbarImageIDs[i]][j]) == 0)
                   {
                     if(theme->mainWindowToolbarImages[j][i] != NULL)
                       free(theme->mainWindowToolbarImages[j][i]);
 
-                    theme->mainWindowToolbarImages[j][i] = image;
+                    theme->mainWindowToolbarImages[j][i] = strdup(image);
                     found = TRUE;
                   }
                 }
 
                 // read window toolbar
-                for(i=rwtbi_First; i < rwtbi_Null && found == FALSE; i++)
+                for(i=rwtbi_First; i < rwtbi_Null; i++)
                 {
                   if(stricmp(id, tbii[readWindowToolbarImageIDs[i]][j]) == 0)
                   {
                     if(theme->readWindowToolbarImages[j][i] != NULL)
                       free(theme->readWindowToolbarImages[j][i]);
 
-                    theme->readWindowToolbarImages[j][i] = image;
+                    theme->readWindowToolbarImages[j][i] = strdup(image);
                     found = TRUE;
                   }
                 }
 
                 // write window toolbar
-                for(i=wwtbi_First; i < wwtbi_Null && found == FALSE; i++)
+                for(i=wwtbi_First; i < wwtbi_Null; i++)
                 {
                   if(stricmp(id, tbii[writeWindowToolbarImageIDs[i]][j]) == 0)
                   {
                     if(theme->writeWindowToolbarImages[j][i] != NULL)
                       free(theme->writeWindowToolbarImages[j][i]);
 
-                    theme->writeWindowToolbarImages[j][i] = image;
+                    theme->writeWindowToolbarImages[j][i] = strdup(image);
                     found = TRUE;
                   }
                 }
 
                 // addressbook window toolbar
-                for(i=awtbi_First; i < awtbi_Null && found == FALSE; i++)
+                for(i=awtbi_First; i < awtbi_Null; i++)
                 {
                   if(stricmp(id, tbii[abookWindowToolbarImageIDs[i]][j]) == 0)
                   {
                     if(theme->abookWindowToolbarImages[j][i] != NULL)
                       free(theme->abookWindowToolbarImages[j][i]);
 
-                    theme->abookWindowToolbarImages[j][i] = image;
+                    theme->abookWindowToolbarImages[j][i] = strdup(image);
                     found = TRUE;
                   }
                 }
               }
+
+              // free the image name if it was constructed from the theme path
+              if(image != NULL && image != value)
+                free(image);
             }
 
             if(found == FALSE)
             {
-              W(DBF_IMAGE, "unknown theme setting '%s' = '%s'", id, image);
-              free(image);
+              W(DBF_IMAGE, "unknown theme setting '%s' = '%s'", id, value);
             }
 
             result = 1; // signal success

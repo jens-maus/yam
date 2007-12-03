@@ -13,6 +13,8 @@ $URL$
     image name pointer was used for one toolbar it was reused unchanged for the
     other toolbars (i.e. the delete button image) eventually causing pointers
     to be free()'d twice upon freeing the theme.
+  * Themes.c: again modified the image name duplication process to ensure that
+    all toolbars get unique name pointers.
 
 2007-12-02  Thore Böckelmann <tboeckel@gmx.de>
 
