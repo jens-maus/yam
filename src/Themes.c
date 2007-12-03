@@ -581,7 +581,6 @@ void FreeTheme(struct Theme *theme)
 
   ENTER();
 
-  DumpTheme(theme);
   if(theme->loaded == TRUE)
     UnloadTheme(theme);
 
