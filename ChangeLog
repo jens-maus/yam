@@ -15,6 +15,10 @@ $URL$
     to be free()'d twice upon freeing the theme.
   * Themes.c: again modified the image name duplication process to ensure that
     all toolbars get unique name pointers.
+  * themes/aiss: added a first AISS theme. Currently not all images will be
+    taken from the AISS installation, because some are still missing. Basically
+    this theme is meant for educational purposes to show how a complete .theme
+    file might look like.
 
 2007-12-02  Thore Böckelmann <tboeckel@gmx.de>
 
