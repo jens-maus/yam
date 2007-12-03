@@ -280,7 +280,10 @@ DECLARE(Update)
           result = TRUE;
         }
         else
+        {
           W(DBF_CONFIG, "couldn't parse .theme file '%s'", filename);
+          FreeTheme(&theme);
+        }
       }
       else
         W(DBF_CONFIG, "unknown file '%s' in themes directory ignored", ed->Name);

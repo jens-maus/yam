@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ThemeListGroup.c: if a theme file could not be parsed it will now be freed
+    again to avoid memory leaks.
+
 2007-12-02  Thore Böckelmann <tboeckel@gmx.de>
 
   * Themes.c: fixed a typical copy'n'paste bug which screwed by certain image
