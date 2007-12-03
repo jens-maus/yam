@@ -1239,6 +1239,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
                                   MUIA_ImageArea_MaxHeight,   64,
                                   MUIA_ImageArea_MaxWidth,    64,
                                   MUIA_ImageArea_NoMinHeight, TRUE,
+                                  MUIA_ImageArea_ShowLabel,   FALSE,
                                 End))
         {
           D(DBF_GUI, "SenderPicture found: %s %ld %ld", ab->Photo, xget(data->headerList, MUIA_Width), xget(data->headerList, MUIA_Height));

@@ -444,7 +444,10 @@ OVERLOAD(MUIM_Setup)
           }
         }
         else
+        {
+          D(DBF_GUI, "no image scaling required");
           data->scaledBitMap = NULL;
+        }
       }
     }
 

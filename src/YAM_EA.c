@@ -632,6 +632,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                          MUIA_ImageArea_MaxHeight,   64,
                          MUIA_ImageArea_MaxWidth,    64,
                          MUIA_ImageArea_NoMinHeight, FALSE,
+                         MUIA_ImageArea_ShowLabel,   FALSE,
                        End,
                        ImageButtonFrame,
                     End,
