@@ -19,6 +19,7 @@ $URL$
     taken from the AISS installation, because some are still missing. Basically
     this theme is meant for educational purposes to show how a complete .theme
     file might look like.
+  * locale/deutsch.ct: Updated according to changes.
 
 2007-12-02  Thore Böckelmann <tboeckel@gmx.de>
 

@@ -6399,32 +6399,6 @@ _Hinzufügen
 MSG_CO_Less
 _Entfernen
 ;
-MSG_ER_EXITIGNOREALL
-*_Beenden|_Dauerhaft ignorieren|_Ignorieren
-;
-MSG_ER_ICONOBJECT_TITLE
-Fehler beim Laden eines Piktogrammbildes!
-;
-MSG_ER_ICONOBJECT
-Ein Fehler trat während des Versuches auf, das Bild\n\
-des Piktogrammes '%s.info' vom Verzeichnis '%s' zu\n\
-laden.\n\
-\n\
-Bitte stellen Sie sicher, dass Ihr Grafikverzeichnis\n\
-alle notwendigen Piktogramme im aktuellen Layout\n\
-enthält und diese lesbar sind.
-;
-MSG_ER_IMAGEOBJECT_TITLE
-Fehler beim Laden einer Bilddatei!
-;
-MSG_ER_IMAGEOBJECT
-Ein Fehler trat während des Versuches auf, die Bilddatei\n\
-'%s' vom Verzeichnis '%s' zu laden.\n\
-\n\
-Bitte stellen Sie sicher, dass Ihr Grafikverzeichnis\n\
-alle notwendigen Bilddateien im aktuellen Layout\n\
-enthält und diese lesbar sind.
-;
 MSG_MA_AUTOSAVEFOUND
 YAM hat eine automatische Sicherungsdatei '%s'\n\
 einer Nachricht gefunden, die in einer vorherigen Sitzung\n\
@@ -7641,21 +7615,6 @@ Falls aktiv, werden alle Spalten mit Datumsangaben\n\
 relativ dargestellt. Zum Beispiel wird das aktuelle\n\
 Datum als 'Heute' angezeigt.
 ;
-MSG_ER_LOADDT_TITLE
-Bildverarbeitungsfehler
-;
-MSG_ER_LOADDT_ERROR
-Während des Ladens des Bildes\n\
-'%s'\n\
-durch die datatypes.library ist ein Fehler aufgetreten.\n\
-\n\
-Bitte überprüfen Sie, dass Ihr DataTypes-System\n\
-richtig funktioniert (z.B. müssen sich alle Bilder\n\
-korrekt mit MultiView anzeigen lassen).
-;
-MSG_ER_LOADDT_BUTTON
-*_Ok
-;
 MSG_FOLDER_SNAPSHOT_TREE
 Anordnung fixieren
 ;
@@ -7770,9 +7729,6 @@ definierten Filter auf die Nachricht angewendet.
 ;
 MSG_SHUTDOWN_SHUTTING_DOWN
 Beende YAM...
-;
-MSG_ER_IGNOREALL
-*_Dauerhaft ignorieren|_Ignorieren
 ;
 MSG_HELP_CO_CY_FOLDERINFO
 Informationen die als Beschriftung für die Postfächer\n\
@@ -8205,19 +8161,65 @@ Skriptaktion (Name)
 MSG_CO_SCRIPTPATH
 Skriptpfad
 ;
-MSG_ER_THEMEVER_TITLE
-Ungültige Theme-Version
-;
-MSG_ER_THEMEVER_BUTTON2
-*_Ignorieren|_Beenden
-;
-MSG_ER_THEMEVER_BUTTON3
-*Benutze _Standard-Theme|_Ignorieren|_Beenden
-;
-MSG_ER_THEMEVER_ERROR
-Das aktuelle Theme '%s' ist nicht kompatibel mit\n\
-dieser Version von YAM und kann nicht geladen werden.\n\
+MSG_ER_ICONOBJECT_WARNING
+Während des Ladens den Piktogramms '%s.info' aus dem Theme \
+'%s' ist ein Fehler aufgetreten. Das Piktogramm wird während \
+dieser Sitzung nicht angezeigt werden.\n\
 \n\
-Bitte benutzen Sie eine neuere Version des Themes,\n\
-die mit dieser Version von YAM kompatibel ist.
+Bitte stellen Sie sicher, dass das Theme-Verzeichnis all nötigen \
+Piktogramme enthält oder deaktivieren Sie die Theme-Unterstützung, \
+um weitere Warnungen zu unterdrücken.
+;
+MSG_ER_THEMEVER_FALLBACK
+Das derzeit aktive Theme '%s' hat eine inkompatible Version und \
+wurde nicht geladen.\n\
+\n\
+Stattdessen wurde das Standard-Theme von YAM aktiviert. Bitte erneuern \
+Sie die das Theme zu einer kompatiblen Version oder deaktivieren Sie \
+es in der Konfiguration.
+;
+MSG_ER_THEMEVER_IGNORE
+Während des Ladens des Standard-Themes von YAM wurde eine ungültige \
+Version festgestellt.\n\
+\n\
+Der Ladeprozess des Themes wurde abgebrochen. Bitte erneuern Sie das \
+Standard-Theme auf eine kompatible Version.
+;
+MSG_ER_DATATYPE_ERROR
+Während des Ladens des Bildes '%s' durch die datatypes.library \
+ist ein Fehler aufgetreten.\n\
+\n\
+Bitte stellen Sie sicher, dass die Datei existiert und durch Ihr \
+DataTypes-System korrekt installiert ist (z.B. muss das Bild korrekt \
+durch MultiView darstellbar sein).
+;
+MSG_ER_IMAGEOBJECT_WARNING
+Während des Ladens des Bildes '%s' aus dem Verzeichnis '%s' ist \
+ein Fehler aufgetreten.\n\
+\n\
+Bitte stellen Sie sicher, dass Ihr Theme-Verzeichnis alle nötigen Bilder \
+entsprechend der neuesten Theme-Version enthält.
+;
+MSG_ER_THEME_FATAL
+YAM konnte das Standard-Theme nicht laden und hat das Laden des Themes \
+komplett abgebrochen.\n\
+\n\
+Bitte stellen Sie sicher, dass Ihr Theme-Verzeichnis lesbar ist und die \
+richtige Version des Standard-Themes von YAM enthält.
+;
+MSG_ER_THEME_FALLBACK
+Das derzeit aktive Theme '%s' ist entweder nicht ansprechbar oder \
+beschädigt und konnte nicht geladen werden.\n\
+\n\
+Das Standard-Theme von YAM wurde daher als Ersatz aktiviert. Bitte stellen \
+Sie sicher, dass das ausgewählte Theme lesbar ist und ein gültiges Theme \
+für YAM ist.
+;
+MSG_ER_THEME_ACTIVATED_TITLE
+YAM-Neustart nötig
+;
+MSG_ER_THEME_ACTIVATED
+Bitte beachten Sie, dass das Sie die Konfiguration\n\
+speichern und YAM neu starten müssen, bevor das ausgewählte\n\
+Theme aktiviert werden kann.
 ;
