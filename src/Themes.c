@@ -492,7 +492,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
               for(j=tbim_Normal; j < tbim_Max && found == FALSE; j++)
               {
                 // main window toolbar
-                for(i=mwtbi_First; i < mwtbi_Null; i++)
+                for(i=mwtbi_First; i < mwtbi_Null && found == FALSE; i++)
                 {
                   if(stricmp(id, tbii[mainWindowToolbarImageIDs[i]][j]) == 0)
                   {
@@ -500,14 +500,12 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
                       free(theme->mainWindowToolbarImages[j][i]);
 
                     theme->mainWindowToolbarImages[j][i] = image;
-
                     found = TRUE;
-                    break;
                   }
                 }
 
                 // read window toolbar
-                for(i=rwtbi_First; i < rwtbi_Null; i++)
+                for(i=rwtbi_First; i < rwtbi_Null && found == FALSE; i++)
                 {
                   if(stricmp(id, tbii[readWindowToolbarImageIDs[i]][j]) == 0)
                   {
@@ -515,14 +513,12 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
                       free(theme->readWindowToolbarImages[j][i]);
 
                     theme->readWindowToolbarImages[j][i] = image;
-
                     found = TRUE;
-                    break;
                   }
                 }
 
                 // write window toolbar
-                for(i=wwtbi_First; i < wwtbi_Null; i++)
+                for(i=wwtbi_First; i < wwtbi_Null && found == FALSE; i++)
                 {
                   if(stricmp(id, tbii[writeWindowToolbarImageIDs[i]][j]) == 0)
                   {
@@ -530,14 +526,12 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
                       free(theme->writeWindowToolbarImages[j][i]);
 
                     theme->writeWindowToolbarImages[j][i] = image;
-
                     found = TRUE;
-                    break;
                   }
                 }
 
                 // addressbook window toolbar
-                for(i=awtbi_First; i < awtbi_Null; i++)
+                for(i=awtbi_First; i < awtbi_Null && found == FALSE; i++)
                 {
                   if(stricmp(id, tbii[abookWindowToolbarImageIDs[i]][j]) == 0)
                   {
@@ -545,9 +539,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
                       free(theme->abookWindowToolbarImages[j][i]);
 
                     theme->abookWindowToolbarImages[j][i] = image;
-
                     found = TRUE;
-                    break;
                   }
                 }
               }
@@ -589,6 +581,7 @@ void FreeTheme(struct Theme *theme)
 
   ENTER();
 
+  DumpTheme(theme);
   if(theme->loaded == TRUE)
     UnloadTheme(theme);
 

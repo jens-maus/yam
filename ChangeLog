@@ -9,6 +9,10 @@ $URL$
 
   * ThemeListGroup.c: if a theme file could not be parsed it will now be freed
     again to avoid memory leaks.
+  * Themes.c: finally found the memory trashing bug with custom themes. If an
+    image name pointer was used for one toolbar it was reused unchanged for the
+    other toolbars (i.e. the delete button image) eventually causing pointers
+    to be free()'d twice upon freeing the theme.
 
 2007-12-02  Thore Böckelmann <tboeckel@gmx.de>
 
