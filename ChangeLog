@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-04  Jens Langner <Jens.Langner@light-speed.de>
+
+  * MainFolderListtree.c, YAM.cd: fixed bug #1700670 where the folderlist
+    context menu didn't have a "Mark folder read" item which makes sure
+    that all mail in a folder is marked as read in one go.
+
 2007-12-04  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/deutsch.ct: fixed a minor mistake in the german catalog

@@ -50,7 +50,9 @@ enum { CMN_EDITF=10,
        CMN_SNAPS,
        CMN_RELOAD,
        CMN_EMPTYTRASH,
-       CMN_EMPTYSPAM };
+       CMN_EMPTYSPAM,
+       CMN_ALLTOREAD,
+       CMN_SEARCH };
 
 /* Private Functions */
 /// FormatFolderInfo
@@ -485,6 +487,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   BOOL disable_delete = FALSE;
   BOOL disable_edit   = FALSE;
   BOOL disable_update = FALSE;
+  BOOL disable_alltoread = FALSE;
+  BOOL disable_search = FALSE;
 
   ENTER();
 
@@ -527,6 +531,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     disable_delete = TRUE;
     disable_edit   = TRUE;
     disable_update = TRUE;
+    disable_alltoread = TRUE;
+    disable_search = TRUE;
   }
   else
   {
@@ -541,12 +547,20 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       disable_delete = TRUE;
 
     if(isGroupFolder(folder))
+    {
       disable_update = TRUE;
+      disable_search = TRUE;
+      disable_alltoread = TRUE;
+    }
+
+    if(isSentMailFolder(folder))
+      disable_alltoread = TRUE;
   }
 
   // We create the ContextMenu now
   data->context_menu = MenustripObject,
     Child, MenuObjectT(folder ? FolderName(folder) : tr(MSG_FOLDER_NONSEL)),
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MSEARCH),            MUIA_Menuitem_Enabled, !disable_search, MUIA_UserData, CMN_SEARCH,  End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_EDIT),           MUIA_Menuitem_Enabled, !disable_edit,   MUIA_UserData, CMN_EDITF,   End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_DELETE),         MUIA_Menuitem_Enabled, !disable_delete, MUIA_UserData, CMN_DELETEF, End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_UPDATEINDEX),        MUIA_Menuitem_Enabled, !disable_update, MUIA_UserData, CMN_INDEX,   End,
@@ -554,23 +568,18 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_NEWFOLDER),      MUIA_UserData, CMN_NEWF,   End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_NEWFOLDERGROUP), MUIA_UserData, CMN_NEWFG,  End,
       Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+      Child, lastItem = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_ALLTOREAD),      MUIA_Menuitem_Enabled, !disable_alltoread, MUIA_UserData, CMN_ALLTOREAD, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_SNAPSHOT_TREE),  MUIA_UserData, CMN_SNAPS,  End,
-      Child, lastItem = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_RELOAD_TREE), MUIA_UserData, CMN_RELOAD, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_RELOAD_TREE), MUIA_UserData, CMN_RELOAD, End,
     End,
   End;
 
   // depending on the folder we have to append some additional
   // menu items or not.
-  if(folder && (isTrashFolder(folder) || isSpamFolder(folder)))
+  if(folder != NULL)
   {
     Object *newItem;
-
-    // insert a BARLABEL first
-    if((newItem = MenuBarLabel) != NULL)
-    {
-      DoMethod(data->context_menu, MUIM_Family_Insert, newItem, lastItem);
-      lastItem = newItem;
-    }
 
     // check if this is the trash folder
     if(isTrashFolder(folder) &&
@@ -581,8 +590,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     }
 
     // check if this is the SPAM folder
-    if(isSpamFolder(folder) &&
-       (newItem = Menuitem(tr(MSG_MA_REMOVESPAM), NULL, TRUE, FALSE, CMN_EMPTYSPAM)) != NULL)
+    if(C->SpamFilterEnabled &&
+       (newItem = Menuitem(tr(MSG_MA_REMOVESPAM), NULL, !isGroupFolder(folder), FALSE, CMN_EMPTYSPAM)) != NULL)
     {
       DoMethod(data->context_menu, MUIM_Family_Insert, newItem, lastItem);
       lastItem = newItem;
@@ -629,6 +638,8 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case CMN_RELOAD:    { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_RESET);  } break;
     case CMN_EMPTYTRASH:{ DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);} break;
     case CMN_EMPTYSPAM: { DoMethod(G->App, MUIM_CallHook, &MA_DeleteSpamHook, FALSE);   } break;
+    case CMN_ALLTOREAD: { DoMethod(G->App, MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW); } break;
+    case CMN_SEARCH:    { DoMethod(G->App, MUIM_CallHook, &FI_OpenHook); } break;
 
     default:
     {

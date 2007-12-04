@@ -6557,3 +6557,6 @@ Please note that before the selected theme can be\n\
 activated, you have to save the configuration and\n\
 restart YAM.
 ;
+MSG_FOLDER_ALLTOREAD (2047//)
+Mark folder read
+;
