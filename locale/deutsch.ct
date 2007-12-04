@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (03.12.2007)
+## version $VER: YAM.catalog 6.0 (04.12.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -8189,7 +8189,7 @@ MSG_ER_DATATYPE_ERROR
 Beim Laden des Bildes '%s' durch die datatypes.library \
 ist ein Fehler aufgetreten.\n\
 \n\
-Bitte stellen Sie sicher, dass die Datei existiert und durch Ihr \
+Bitte stellen Sie sicher, dass die Datei existiert und Ihr \
 DataTypes-System korrekt installiert ist (z.B. muss das Bild korrekt \
 durch MultiView darstellbar sein).
 ;

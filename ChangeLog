@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-04  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/deutsch.ct: fixed a minor mistake in the german catalog
+
 2007-12-03  Jens Langner <Jens.Langner@light-speed.de>
 
   * locale/deutsch.ct: fixed some minor mistakes in the german catalog
