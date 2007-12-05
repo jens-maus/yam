@@ -474,7 +474,6 @@ OVERLOAD(MUIM_Setup)
   {
     if(Image_Load(data, obj) == TRUE)
     {
-      D(DBF_IMAGE, "scale image");
       Image_Scale(data);
     }
 
@@ -606,12 +605,8 @@ OVERLOAD(MUIM_Draw)
   // we blit the image on our rastport
   if(data->imageLoaded == TRUE)
   {
-    SHOWVALUE(DBF_IMAGE, data->maxWidth);
-    SHOWVALUE(DBF_IMAGE, data->maxHeight);
     if(data->scaledBitMap != NULL)
     {
-    SHOWVALUE(DBF_IMAGE, data->scaledWidth);
-    SHOWVALUE(DBF_IMAGE, data->scaledHeight);
       BltBitMapRastPort(data->scaledBitMap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - data->scaledWidth)/2,
                                                       _mtop(obj) + (_mheight(obj) - data->label_height - data->scaledHeight)/2,
                                                       data->scaledWidth, data->scaledHeight, (ABC|ABNC));
@@ -625,8 +620,6 @@ OVERLOAD(MUIM_Draw)
       int imgWidth = data->imageNode.width;
       int imgHeight = data->imageNode.height;
 
-    SHOWVALUE(DBF_IMAGE, imgWidth);
-    SHOWVALUE(DBF_IMAGE, imgHeight);
       // try to get the bitmap first via PDTA_DestBitMap and
       // otherwise with PDTA_BitMap
       GetDTAttrs(dt_obj, PDTA_DestBitMap, &bitmap, TAG_DONE);
