@@ -18,6 +18,8 @@ $URL$
   * YAM_EA.c, ImageArea.c: fixed the scaling bug that occured whenever a new
     user image was loaded.
   * misc: minor indentation and cosmetic fixes.
+  * misc: fixed the broken images in the read window status bar. The old icon
+    definitions are no longer necessary.
 
 2007-12-04  Jens Langner <Jens.Langner@light-speed.de>
 

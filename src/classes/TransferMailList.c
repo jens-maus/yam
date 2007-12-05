@@ -30,6 +30,8 @@
 
 #include "TransferMailList_cl.h"
 
+#include "Themes.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -61,8 +63,8 @@ OVERLOAD(OM_NEW)
   data->downloadImage = MakeImageObject("status_download", G->theme.statusImages[si_Download]);
   data->deleteImage   = MakeImageObject("status_delete", G->theme.statusImages[si_Delete]);
 
-  DoMethod(obj, MUIM_NList_UseImage, data->downloadImage, SICON_ID_DOWNLOAD, MUIF_NONE);
-  DoMethod(obj, MUIM_NList_UseImage, data->deleteImage, SICON_ID_DELETE, MUIF_NONE);
+  DoMethod(obj, MUIM_NList_UseImage, data->downloadImage, si_Download, MUIF_NONE);
+  DoMethod(obj, MUIM_NList_UseImage, data->deleteImage, si_Delete, MUIF_NONE);
 
   RETURN((ULONG)obj);
   return (ULONG)obj;
@@ -74,16 +76,16 @@ OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
 
-  if(data->downloadImage)
+  if(data->downloadImage != NULL)
   {
-    DoMethod(obj, MUIM_NList_UseImage, NULL, SICON_ID_DOWNLOAD, MUIF_NONE);
+    DoMethod(obj, MUIM_NList_UseImage, NULL, si_Download, MUIF_NONE);
     MUI_DisposeObject(data->downloadImage);
     data->downloadImage = NULL;
   }
 
-  if(data->deleteImage)
+  if(data->deleteImage != NULL)
   {
-    DoMethod(obj, MUIM_NList_UseImage, NULL, SICON_ID_DELETE, MUIF_NONE);
+    DoMethod(obj, MUIM_NList_UseImage, NULL, si_Delete, MUIF_NONE);
     MUI_DisposeObject(data->deleteImage);
     data->deleteImage = NULL;
   }

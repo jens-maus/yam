@@ -32,6 +32,7 @@
 
 #include "YAM_config.h"
 #include "BayesFilter.h"
+#include "Themes.h"
 
 #include "Debug.h"
 
@@ -39,7 +40,7 @@
 struct Data
 {
   Object *context_menu;
-  Object *statusImage[MAX_STATUSIMG];
+  Object *statusImage[si_Max];
   char context_menu_title[SIZE_DEFAULT];
 };
 */
@@ -119,28 +120,28 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 
       // first we check which main status this mail has
       // and put the leftmost mail icon accordingly.
-      if(hasStatusError(entry) || isPartialMail(entry)) strlcat(dispsta, SICON_ERROR, sizeof(dispsta));
-      else if(hasStatusQueued(entry))  strlcat(dispsta, SICON_WAITSEND, sizeof(dispsta));
-      else if(hasStatusSent(entry))    strlcat(dispsta, SICON_SENT, sizeof(dispsta));
-      else if(hasStatusRead(entry))    strlcat(dispsta, SICON_OLD, sizeof(dispsta));
-      else                             strlcat(dispsta, SICON_UNREAD, sizeof(dispsta));
+      if(hasStatusError(entry) || isPartialMail(entry)) strlcat(dispsta, SI_STR_ERROR, sizeof(dispsta));
+      else if(hasStatusQueued(entry))  strlcat(dispsta, SI_STR_WAITSEND, sizeof(dispsta));
+      else if(hasStatusSent(entry))    strlcat(dispsta, SI_STR_SENT, sizeof(dispsta));
+      else if(hasStatusRead(entry))    strlcat(dispsta, SI_STR_OLD, sizeof(dispsta));
+      else                             strlcat(dispsta, SI_STR_UNREAD, sizeof(dispsta));
 
       // then we add the 2. level if icons with the additional mail information
       // like importance, signed/crypted, report and attachment information
-      if(C->SpamFilterEnabled && hasStatusSpam(entry)) strlcat(dispsta, SICON_SPAM, sizeof(dispsta));
-      if(getImportanceLevel(entry) == IMP_HIGH)  strlcat(dispsta, SICON_URGENT, sizeof(dispsta));
-      if(isMP_CryptedMail(entry))                strlcat(dispsta, SICON_CRYPT, sizeof(dispsta));
-      else if(isMP_SignedMail(entry))            strlcat(dispsta, SICON_SIGNED, sizeof(dispsta));
-      if(isMP_ReportMail(entry))                 strlcat(dispsta, SICON_REPORT, sizeof(dispsta));
-      if(isMP_MixedMail(entry))                  strlcat(dispsta, SICON_ATTACH, sizeof(dispsta));
+      if(C->SpamFilterEnabled && hasStatusSpam(entry)) strlcat(dispsta, SI_STR_SPAM, sizeof(dispsta));
+      if(getImportanceLevel(entry) == IMP_HIGH)  strlcat(dispsta, SI_STR_URGENT, sizeof(dispsta));
+      if(isMP_CryptedMail(entry))                strlcat(dispsta, SI_STR_CRYPT, sizeof(dispsta));
+      else if(isMP_SignedMail(entry))            strlcat(dispsta, SI_STR_SIGNED, sizeof(dispsta));
+      if(isMP_ReportMail(entry))                 strlcat(dispsta, SI_STR_REPORT, sizeof(dispsta));
+      if(isMP_MixedMail(entry))                  strlcat(dispsta, SI_STR_ATTACH, sizeof(dispsta));
 
       // and as the 3rd level of icons we put information on the secondary status
       // like replied, forwarded, hold
-      if(hasStatusNew(entry))        strlcat(dispsta, SICON_NEW, sizeof(dispsta));
-      else if(hasStatusHold(entry))  strlcat(dispsta, SICON_HOLD, sizeof(dispsta));
-      if(hasStatusMarked(entry))     strlcat(dispsta, SICON_MARK, sizeof(dispsta));
-      if(hasStatusReplied(entry))    strlcat(dispsta, SICON_REPLY, sizeof(dispsta));
-      if(hasStatusForwarded(entry))  strlcat(dispsta, SICON_FORWARD, sizeof(dispsta));
+      if(hasStatusNew(entry))        strlcat(dispsta, SI_STR_NEW, sizeof(dispsta));
+      else if(hasStatusHold(entry))  strlcat(dispsta, SI_STR_HOLD, sizeof(dispsta));
+      if(hasStatusMarked(entry))     strlcat(dispsta, SI_STR_MARK, sizeof(dispsta));
+      if(hasStatusReplied(entry))    strlcat(dispsta, SI_STR_REPLY, sizeof(dispsta));
+      if(hasStatusForwarded(entry))  strlcat(dispsta, SI_STR_FORWARD, sizeof(dispsta));
 
       // now we generate the proper string for the mailaddress
       if(hasMColSender(C->MessageCols) || searchWinHook)
@@ -180,7 +181,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
           addr = AddrName(*pe);
 
         // lets put the string together
-        snprintf(dispfro, sizeof(dispfro), "%s%s%s%s", isMultiRCPTMail(entry) ? SICON_GROUP : "",
+        snprintf(dispfro, sizeof(dispfro), "%s%s%s%s", isMultiRCPTMail(entry) ? SI_STR_GROUP : "",
                                                        toPrefix ? tr(MSG_MA_ToPrefix) : "",
                                                        addr,
                                                        isMultiSenderMail(entry) && toPrefix == FALSE ? ", ..." : "");
@@ -455,27 +456,30 @@ OVERLOAD(OM_NEW)
   data = (struct Data *)INST_DATA(cl,obj);
 
   // prepare the mail status images
-  data->statusImage[SICON_ID_UNREAD]   = MakeImageObject("status_unread",   G->theme.statusImages[si_Unread]);
-  data->statusImage[SICON_ID_OLD]      = MakeImageObject("status_old",      G->theme.statusImages[si_Old]);
-  data->statusImage[SICON_ID_FORWARD]  = MakeImageObject("status_forward",  G->theme.statusImages[si_Forward]);
-  data->statusImage[SICON_ID_REPLY]    = MakeImageObject("status_reply",    G->theme.statusImages[si_Reply]);
-  data->statusImage[SICON_ID_WAITSEND] = MakeImageObject("status_waitsend", G->theme.statusImages[si_WaitSend]);
-  data->statusImage[SICON_ID_ERROR]    = MakeImageObject("status_error",    G->theme.statusImages[si_Error]);
-  data->statusImage[SICON_ID_HOLD]     = MakeImageObject("status_hold",     G->theme.statusImages[si_Hold]);
-  data->statusImage[SICON_ID_SENT]     = MakeImageObject("status_sent",     G->theme.statusImages[si_Sent]);
-  data->statusImage[SICON_ID_NEW]      = MakeImageObject("status_new",      G->theme.statusImages[si_New]);
-  data->statusImage[SICON_ID_DELETE]   = MakeImageObject("status_delete",   G->theme.statusImages[si_Delete]);
-  data->statusImage[SICON_ID_DOWNLOAD] = MakeImageObject("status_download", G->theme.statusImages[si_Download]);
-  data->statusImage[SICON_ID_GROUP]    = MakeImageObject("status_group",    G->theme.statusImages[si_Group]);
-  data->statusImage[SICON_ID_URGENT]   = MakeImageObject("status_urgent",   G->theme.statusImages[si_Urgent]);
-  data->statusImage[SICON_ID_ATTACH]   = MakeImageObject("status_attach",   G->theme.statusImages[si_Attach]);
-  data->statusImage[SICON_ID_REPORT]   = MakeImageObject("status_report",   G->theme.statusImages[si_Report]);
-  data->statusImage[SICON_ID_CRYPT]    = MakeImageObject("status_crypt",    G->theme.statusImages[si_Crypt]);
-  data->statusImage[SICON_ID_SIGNED]   = MakeImageObject("status_signed",   G->theme.statusImages[si_Signed]);
-  data->statusImage[SICON_ID_MARK]     = MakeImageObject("status_mark",     G->theme.statusImages[si_Mark]);
-  data->statusImage[SICON_ID_SPAM]     = MakeImageObject("status_spam",     G->theme.statusImages[si_Spam]);
-  for(i = 0; i < ARRAY_SIZE(data->statusImage); i++)
-    DoMethod(obj, MUIM_NList_UseImage, data->statusImage[i], i, MUIF_NONE);
+  data->statusImage[si_Attach]   = MakeImageObject("status_attach",   G->theme.statusImages[si_Attach]);
+  data->statusImage[si_Crypt]    = MakeImageObject("status_crypt",    G->theme.statusImages[si_Crypt]);
+  data->statusImage[si_Delete]   = MakeImageObject("status_delete",   G->theme.statusImages[si_Delete]);
+  data->statusImage[si_Download] = MakeImageObject("status_download", G->theme.statusImages[si_Download]);
+  data->statusImage[si_Error]    = MakeImageObject("status_error",    G->theme.statusImages[si_Error]);
+  data->statusImage[si_Forward]  = MakeImageObject("status_forward",  G->theme.statusImages[si_Forward]);
+  data->statusImage[si_Group]    = MakeImageObject("status_group",    G->theme.statusImages[si_Group]);
+  data->statusImage[si_Hold]     = MakeImageObject("status_hold",     G->theme.statusImages[si_Hold]);
+  data->statusImage[si_Mark]     = MakeImageObject("status_mark",     G->theme.statusImages[si_Mark]);
+  data->statusImage[si_New]      = MakeImageObject("status_new",      G->theme.statusImages[si_New]);
+  data->statusImage[si_Old]      = MakeImageObject("status_old",      G->theme.statusImages[si_Old]);
+  data->statusImage[si_Reply]    = MakeImageObject("status_reply",    G->theme.statusImages[si_Reply]);
+  data->statusImage[si_Report]   = MakeImageObject("status_report",   G->theme.statusImages[si_Report]);
+  data->statusImage[si_Sent]     = MakeImageObject("status_sent",     G->theme.statusImages[si_Sent]);
+  data->statusImage[si_Signed]   = MakeImageObject("status_signed",   G->theme.statusImages[si_Signed]);
+  data->statusImage[si_Spam]     = MakeImageObject("status_spam",     G->theme.statusImages[si_Spam]);
+  data->statusImage[si_Unread]   = MakeImageObject("status_unread",   G->theme.statusImages[si_Unread]);
+  data->statusImage[si_Urgent]   = MakeImageObject("status_urgent",   G->theme.statusImages[si_Urgent]);
+  data->statusImage[si_WaitSend] = MakeImageObject("status_waitsend", G->theme.statusImages[si_WaitSend]);
+  for(i = 0; i < si_Max; i++)
+  {
+    if(data->statusImage[i] != NULL)
+      DoMethod(obj, MUIM_NList_UseImage, data->statusImage[i], i, MUIF_NONE);
+  }
 
   // connect some notifies to the mainMailList group
   DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,  MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_Both);
@@ -495,13 +499,13 @@ OVERLOAD(OM_DISPOSE)
   int i;
 
   // make sure that our context menus are also disposed
-  if(data->context_menu)
+  if(data->context_menu != NULL)
     MUI_DisposeObject(data->context_menu);
 
-  for(i=0; i < MAX_STATUSIMG; i++)
+  for(i=0; i < si_Max; i++)
   {
     DoMethod(obj, MUIM_NList_UseImage, NULL, i, MUIF_NONE);
-    if(data->statusImage[i])
+    if(data->statusImage[i] != NULL)
     {
       MUI_DisposeObject(data->statusImage[i]);
       data->statusImage[i] = NULL;
@@ -565,7 +569,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   if(res.entry >= 0)
   {
     DoMethod(obj, MUIM_NList_GetEntry, res.entry, &mail);
-    if(!mail)
+    if(mail == NULL)
       return(0);
 
     fo->LastActive = xget(obj, MUIA_NList_Active);

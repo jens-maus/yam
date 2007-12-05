@@ -7035,10 +7035,10 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
     // status icon display
     snprintf(array[0] = dispsta, sizeof(dispsta), "%3d ", entry->index);
     if(hasTR_LOAD(entry))
-      strlcat(dispsta, SICON_DOWNLOAD, sizeof(dispsta));
+      strlcat(dispsta, SI_STR_DOWNLOAD, sizeof(dispsta));
 
     if(hasTR_DELETE(entry))
-      strlcat(dispsta, SICON_DELETE, sizeof(dispsta));
+      strlcat(dispsta, SI_STR_DELETE, sizeof(dispsta));
 
     // size display
     if(C->WarnSize > 0 && mail->Size >= C->WarnSize*1024)

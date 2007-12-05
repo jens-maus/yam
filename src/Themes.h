@@ -124,6 +124,30 @@ enum StatusImages
   si_Max
 };
 
+// the status image numbers for use in an NList object
+// Unfortunately we cannot use the STR() macro here, because that
+// will always generate a "0" string. So take care when adding new
+// status images!
+#define SI_STR_ATTACH                "\033o[ 0]"
+#define SI_STR_CRYPT                 "\033o[ 1]"
+#define SI_STR_DELETE                "\033o[ 2]"
+#define SI_STR_DOWNLOAD              "\033o[ 3]"
+#define SI_STR_ERROR                 "\033o[ 4]"
+#define SI_STR_FORWARD               "\033o[ 5]"
+#define SI_STR_GROUP                 "\033o[ 6]"
+#define SI_STR_HOLD                  "\033o[ 7]"
+#define SI_STR_MARK                  "\033o[ 8]"
+#define SI_STR_NEW                   "\033o[ 9]"
+#define SI_STR_OLD                   "\033o[10]"
+#define SI_STR_REPLY                 "\033o[11]"
+#define SI_STR_REPORT                "\033o[12]"
+#define SI_STR_SENT                  "\033o[13]"
+#define SI_STR_SIGNED                "\033o[14]"
+#define SI_STR_SPAM                  "\033o[15]"
+#define SI_STR_UNREAD                "\033o[16]"
+#define SI_STR_URGENT                "\033o[17]"
+#define SI_STR_WAITSEND              "\033o[18]"
+
 enum ToolbarImageModes
 {
   tbim_Normal = 0,
