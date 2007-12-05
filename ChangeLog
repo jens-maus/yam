@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-05  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c, YAM_COs.c, locale/deutsch.ct: the charset popup is now bound to
+    a simple text object instead of a string object, since the charset must be
+    selected from the list of available charset and cannot be an arbitrary name.
+    Also added the missing shortcut for that in the german catalog.
+
 2007-12-04  Jens Langner <Jens.Langner@light-speed.de>
 
   * MainFolderListtree.c, YAM.cd: fixed bug #1700670 where the folderlist

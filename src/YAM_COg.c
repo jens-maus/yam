@@ -285,7 +285,7 @@ HOOKPROTONH(PO_XPKCloseFunc, void, Object *pop, Object *text)
   ENTER();
 
   DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
-  if(entry)
+  if(entry != NULL)
     set(text, MUIA_Text_Contents, entry);
 
   LEAVE();
@@ -331,15 +331,15 @@ MakeStaticHook(PO_CharsetOpenHook, PO_CharsetOpenFunc);
 ///
 /// PO_CharsetCloseHook
 //  Pastes an entry from the popup listview into string gadget
-HOOKPROTONH(PO_CharsetCloseFunc, void, Object *list, Object *str)
+HOOKPROTONH(PO_CharsetCloseFunc, void, Object *list, Object *txt)
 {
   char *var = NULL;
 
   ENTER();
 
   DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &var);
-  if(var)
-    set(str, MUIA_String_Contents, var);
+  if(var != NULL)
+    set(txt, MUIA_Text_Contents, var);
 
   LEAVE();
 }
@@ -350,7 +350,9 @@ MakeStaticHook(PO_CharsetCloseHook, PO_CharsetCloseFunc);
 //  Pastes an entry from the popup listview into string gadget
 HOOKPROTONH(PO_CharsetListDisplayFunc, LONG, const char **array, STRPTR str)
 {
-  if(str)
+  ENTER();
+
+  if(str != NULL)
   {
     struct codeset *cs;
 
@@ -378,6 +380,7 @@ HOOKPROTONH(PO_CharsetListDisplayFunc, LONG, const char **array, STRPTR str)
     array[1] = "";
   }
 
+  RETURN(0);
   return 0;
 }
 MakeStaticHook(PO_CharsetListDisplayHook, PO_CharsetListDisplayFunc);
@@ -1516,24 +1519,20 @@ static Object *MakeXPKPop(Object **text, BOOL pack, BOOL encrypt)
 ///
 /// MakeCharsetPop
 //  Creates a popup list of available charsets supported by codesets.library
-static Object *MakeCharsetPop(Object **string)
+static Object *MakeCharsetPop(Object **string, Object **pop)
 {
   Object *lv;
   Object *po;
-  Object *bt;
 
   ENTER();
 
   if((po = PopobjectObject,
 
-    MUIA_Popstring_String, *string = BetterStringObject,
-      StringFrame,
-      MUIA_BetterString_NoInput,  TRUE,
-      MUIA_String_AdvanceOnCR,    TRUE,
-      MUIA_CycleChain,            TRUE,
+    MUIA_Popstring_String, *string = TextObject,
+      TextFrame,
     End,
 
-    MUIA_Popstring_Button, bt = PopButton(MUII_PopUp),
+    MUIA_Popstring_Button, *pop = PopButton(MUII_PopUp),
     MUIA_Popobject_StrObjHook, &PO_CharsetOpenHook,
     MUIA_Popobject_ObjStrHook, &PO_CharsetCloseHook,
     MUIA_Popobject_WindowHook, &PO_WindowHook,
@@ -1554,12 +1553,12 @@ static Object *MakeCharsetPop(Object **string)
     struct codeset *codeset;
     STRPTR *array;
 
-    set(bt, MUIA_CycleChain,TRUE);
+    set(*pop, MUIA_CycleChain,TRUE);
     DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
 
     // Build list of available codesets
     if((array = CodesetsSupported(CSA_CodesetList, G->codesetsList,
-                                  TAG_DONE)))
+                                  TAG_DONE)) != NULL)
     {
       DoMethod(lv, MUIM_List_Insert, array, -1, MUIV_List_Insert_Sorted);
       CodesetsFreeA(array, NULL);
@@ -1568,11 +1567,14 @@ static Object *MakeCharsetPop(Object **string)
       set(po, MUIA_Disabled, TRUE);
 
     // Use the system's default codeset
-    if((codeset = CodesetsFindA(NULL, NULL)))
+    if((codeset = CodesetsFindA(NULL, NULL)) != NULL)
       set(*string, MUIA_String_Contents, codeset->name);
   }
   else
+  {
     *string = NULL;
+    *pop = NULL;
+  }
 
   RETURN(po);
   return po;
@@ -1785,6 +1787,7 @@ static Object *MakeStaticCheck(void)
 Object *CO_PageFirstSteps(struct CO_ClassData *data)
 {
   Object *obj;
+  Object *charsetPopButton;
   static const char *tzone[34];
 
   ENTER();
@@ -1851,7 +1854,7 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
             Child, MakeCheckGroup((Object **)&data->GUI.CH_DSTACTIVE, tr(MSG_CO_DSTACTIVE)),
 
             Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
-            Child, MakeCharsetPop((Object **)&data->GUI.ST_DEFAULTCHARSET),
+            Child, MakeCharsetPop((Object **)&data->GUI.TX_DEFAULTCHARSET, &charsetPopButton),
 
             Child, HSpace(1),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_DETECTCYRILLIC, tr(MSG_CO_DETECT_CYRILLIC)),
@@ -1871,7 +1874,7 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_DSTACTIVE,      MSG_HELP_CO_CH_DSTACTIVE);
     SetHelp(data->GUI.CH_DETECTCYRILLIC, MSG_HELP_CO_DETECT_CYRILLIC);
 
-    set(data->GUI.ST_DEFAULTCHARSET, MUIA_ControlChar, ShortCut(tr(MSG_CO_DEFAULTCHARSET)));
+    set(charsetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_CO_DEFAULTCHARSET)));
 
     DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetDefaultPOPHook, 0);
     DoMethod(data->GUI.ST_PASSWD0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetDefaultPOPHook, 0);

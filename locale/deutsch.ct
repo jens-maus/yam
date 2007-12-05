@@ -6574,7 +6574,7 @@ MSG_CO_SYSTEMSETTINGS
 Systemeinstellungen
 ;
 MSG_CO_DEFAULTCHARSET
-Zeichenkodierung
+Zeic_henkodierung
 ;
 MSG_CO_CHARSETUNKNOWNWARN
 Die eingestellte Zeichenkodierung ist '%s' und wird\n\

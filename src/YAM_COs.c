@@ -1403,7 +1403,7 @@ void CO_GetConfig(BOOL saveConfig)
         GetMUIString(CE->EmailAddress, gui->ST_EMAIL, sizeof(CE->EmailAddress));
         CE->TimeZone = MapTZ(GetMUICycle(gui->CY_TZONE), TRUE);
         CE->DaylightSaving = GetMUICheck(gui->CH_DSTACTIVE);
-        GetMUIString(CE->LocalCharset, gui->ST_DEFAULTCHARSET, sizeof(CE->LocalCharset));
+        GetMUIText(CE->LocalCharset, gui->TX_DEFAULTCHARSET, sizeof(CE->LocalCharset));
         CE->DetectCyrillic= GetMUICheck(gui->CH_DETECTCYRILLIC);
       }
       break;
@@ -2056,13 +2056,13 @@ void CO_SetConfig(void)
 
     case cp_FirstSteps:
     {
-      setstring(gui->ST_REALNAME  ,CE->RealName);
-      setstring(gui->ST_EMAIL     ,CE->EmailAddress);
+      setstring(gui->ST_REALNAME, CE->RealName);
+      setstring(gui->ST_EMAIL, CE->EmailAddress);
       setcycle(gui->CY_TZONE, MapTZ(CE->TimeZone, FALSE));
       setcheckmark(gui->CH_DSTACTIVE, CE->DaylightSaving);
       nnset(gui->ST_POPHOST0, MUIA_String_Contents, CE->P3[0]->Server);
       nnset(gui->ST_PASSWD0,  MUIA_String_Contents, CE->P3[0]->Password);
-      nnset(gui->ST_DEFAULTCHARSET,  MUIA_String_Contents, CE->LocalCharset);
+      nnset(gui->TX_DEFAULTCHARSET,  MUIA_Text_Contents, CE->LocalCharset);
       setcheckmark(gui->CH_DETECTCYRILLIC, CE->DetectCyrillic);
     }
     break;
