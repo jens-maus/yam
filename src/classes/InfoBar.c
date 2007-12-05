@@ -247,7 +247,12 @@ DECLARE(SetFolder) // struct Folder *newFolder
           D(DBF_GUI, "init imagearea: 0x%08lx[%ld]", imageArray, folder->ImageIndex);
 
           if(imageArray != NULL && imageArray[folder->ImageIndex] != NULL)
-            data->actualImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_ID), xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
+          {
+            char *imageID = (char *)xget(imageArray[folder->ImageIndex], MUIA_ImageArea_ID);
+            char *imageName = (char *)xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename);
+
+            data->actualImage = MakeImageObject(imageID, imageName);
+          }
         }
 
         D(DBF_GUI, "init finished..: 0x%08lx %ld", data->actualImage, folder->ImageIndex);

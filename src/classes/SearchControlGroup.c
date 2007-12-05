@@ -216,11 +216,11 @@ OVERLOAD(OM_NEW)
           Child, HVSpace,
         End,
         Child, VGroup, // 3  status
-            Child, HGroup,
-              Child, data->CY_COMP[3] = MakeCycle(&compopt[5],""),
-              Child, data->CY_STATUS = MakeCycle(statopt,""),
-              Child, HSpace(0),
-            End,
+           Child, HGroup,
+             Child, data->CY_COMP[3] = MakeCycle(&compopt[5],""),
+             Child, data->CY_STATUS = MakeCycle(statopt,""),
+             Child, HSpace(0),
+           End,
           Child, HVSpace,
         End,
         Child, VGroup, // 4  message header/body

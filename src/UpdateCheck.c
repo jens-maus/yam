@@ -96,7 +96,7 @@ void InitUpdateCheck(BOOL initial)
     // compare it against the last checked time we have
     // in our config and if greater than we go and do an immediate update
     // check.
-    if(initial && CmpTime(TIMEVAL(&now), TIMEVAL(&nextCheck)) <= 0)
+    if(initial == TRUE && CmpTime(TIMEVAL(&now), TIMEVAL(&nextCheck)) <= 0)
     {
       D(DBF_UPDATE, "update-check is due to be processed NOW.");
 
@@ -164,7 +164,7 @@ BOOL CheckForUpdates(void)
           Object *mccObj;
           struct Library *base;
           char buf[SIZE_LINE];
-          unsigned short cnt=0;
+          unsigned short cnt = 0;
 
           // encode the yam version
           if(urlencode(buf, yamversion, SIZE_LINE) > 0)
@@ -322,9 +322,9 @@ BOOL CheckForUpdates(void)
 
                   // make sure that we have created the update notification
                   // window in advance.
-                  if(!G->UpdateNotifyWinObject)
+                  if(G->UpdateNotifyWinObject == NULL)
                   {
-                    if((G->UpdateNotifyWinObject = UpdateNotifyWindowObject, End))
+                    if((G->UpdateNotifyWinObject = UpdateNotifyWindowObject, End) != NULL)
                       DoMethod(G->App, OM_ADDMEMBER, G->UpdateNotifyWinObject);
                     else
                       break;
@@ -345,7 +345,7 @@ BOOL CheckForUpdates(void)
 
                   // create a new UpdateComponent structure which we
                   // are going to fill step by step
-                  if(!(comp = calloc(sizeof(struct UpdateComponent), 1)))
+                  if((comp = calloc(sizeof(struct UpdateComponent), 1)) == NULL)
                   {
                     updatesAvailable = FALSE;
                     break;
@@ -372,7 +372,7 @@ BOOL CheckForUpdates(void)
                   else if(stricmp(p, "<changelog>") == 0)
                   {
                     // we put the changelog text into a temporary file
-                    if((comp->changeLogFile = OpenTempFile("w")))
+                    if((comp->changeLogFile = OpenTempFile("w")) != NULL)
                     {
                       FILE *out = comp->changeLogFile->FP;
 
@@ -411,7 +411,10 @@ BOOL CheckForUpdates(void)
                 LastUpdateState.LastUpdateStatus = UST_UPDATESUCCESS;
               }
               else
-                LastUpdateState.LastUpdateStatus = UST_NOUPDATE; // we didn't find any new updates.
+              {
+                // we didn't find any new updates
+                LastUpdateState.LastUpdateStatus = UST_NOUPDATE;
+              }
 
               // the updatecheck was successfull
               result = TRUE;

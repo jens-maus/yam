@@ -192,7 +192,7 @@ static struct Token *tokenizerAdd(struct Tokenizer *t,
           HashTableRawRemove(&t->tokenTable, (struct HashEntryHeader *)token);
       }
       else
-       token->count += count;
+        token->count += count;
     }
 
     free(tmpWord);

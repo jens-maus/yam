@@ -17,6 +17,7 @@ $URL$
     able to select a different image afterwards.
   * YAM_EA.c, ImageArea.c: fixed the scaling bug that occured whenever a new
     user image was loaded.
+  * misc: minor indentation and cosmetic fixes.
 
 2007-12-04  Jens Langner <Jens.Langner@light-speed.de>
 

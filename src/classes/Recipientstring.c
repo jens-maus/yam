@@ -520,7 +520,7 @@ OVERLOAD(MUIM_HandleEvent)
 
   if((imsg = ((struct MUIP_HandleEvent *)msg)->imsg) != NULL)
   {
-    D(DBF_GUI, "event muikey %ld code %ld", ((struct MUIP_HandleEvent *)msg)->muikey, ((struct MUIP_HandleEvent *)msg)->imsg->Code);
+    D(DBF_GUI, "event muikey %ld code %02lx", ((struct MUIP_HandleEvent *)msg)->muikey, ((struct MUIP_HandleEvent *)msg)->imsg->Code);
 
     if(imsg->Class == IDCMP_RAWKEY)
     {
