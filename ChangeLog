@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-05  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_COg.c: changed the new TextObject to actually use a Text background which
+    should give the textobject a more intuitive contrast against the background.
+
 2007-12-05  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c, YAM_COs.c, locale/deutsch.ct: the charset popup is now bound to

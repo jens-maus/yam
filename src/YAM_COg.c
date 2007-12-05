@@ -1530,6 +1530,7 @@ static Object *MakeCharsetPop(Object **string, Object **pop)
 
     MUIA_Popstring_String, *string = TextObject,
       TextFrame,
+      MUIA_Background,  MUII_TextBack,
     End,
 
     MUIA_Popstring_Button, *pop = PopButton(MUII_PopUp),
