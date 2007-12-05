@@ -6560,3 +6560,10 @@ restart YAM.
 MSG_FOLDER_ALLTOREAD (2047//)
 Mark folder read
 ;
+MSG_EA_REMOVEPHOTO (2048//)
+_Remove
+;
+MSG_HELP_EA_BT_REMOVEPHOTO (2049//)
+Remove the selected picture.\n\
+(The file will remain on the hard disk)
+;

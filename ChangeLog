@@ -11,6 +11,10 @@ $URL$
     a simple text object instead of a string object, since the charset must be
     selected from the list of available charset and cannot be an arbitrary name.
     Also added the missing shortcut for that in the german catalog.
+  * YAM_EA.c, ImageCache.c, ImageArea.c, YAM.cd: added a button to remove a user
+    image. Don't know why we didn't spot this missing button earlier. Anyway,
+    removing a user image is supposed to remove it from the cache too, to be
+    able to select a different image afterwards.
 
 2007-12-04  Jens Langner <Jens.Langner@light-speed.de>
 

@@ -417,53 +417,53 @@ void ReleaseImage(const char *id, BOOL dispose)
     {
       node->openCount--;
       D(DBF_IMAGE, "reduced open count of image '%s' to %ld", id, node->openCount);
+    }
+    else if(dispose == FALSE)
+      E(DBF_IMAGE, "couldn't reduce open count (%ld) of image '%s'", node->openCount, id);
 
-      if(node->openCount == 0)
+    if(node->openCount == 0)
+    {
+      if(node->dt_obj != NULL)
       {
+        // clear the DT object's screen pointer
+        // this always succeeds, hence no need to check the result
+        RemapImage(node, NULL);
+      }
+
+      if(dispose == TRUE || node->delayedDispose == TRUE)
+      {
+        D(DBF_IMAGE, "removing image '%s' from cache", node->id);
+
+        // free all the data
         if(node->dt_obj != NULL)
         {
-          // clear the DT object's screen pointer
-          // this always succeeds, hence no need to check the result
-          RemapImage(node, NULL);
+          DisposeDTObject(node->dt_obj);
+          node->dt_obj = NULL;
         }
 
-        if(dispose == TRUE || node->delayedDispose == TRUE)
+        if(node->filename != NULL)
         {
-          D(DBF_IMAGE, "removing image '%s' from cache", node->id);
-
-          // free all the data
-          if(node->dt_obj != NULL)
-          {
-            DisposeDTObject(node->dt_obj);
-            node->dt_obj = NULL;
-          }
-
-          if(node->filename != NULL)
-          {
-            free(node->filename);
-            node->filename = NULL;
-          }
-          // node->id will be freed by HashTableRawRemove()
-
-          // remove the image from the cache
-          HashTableRawRemove(G->imageCacheHashTable, entry);
+          free(node->filename);
+          node->filename = NULL;
         }
-      }
-      else
-      {
-        // The image is still in use although it should be removed from the cache.
-        // To accomplish this we remember this and remove it as soon as the open
-        // counter reaches zero.
-        if(dispose == TRUE)
-        {
-          node->delayedDispose = TRUE;
+        // node->id will be freed by HashTableRawRemove()
 
-          D(DBF_IMAGE, "  flagged as delayedDispose");
-        }
+        // remove the image from the cache
+        HashTableRawRemove(G->imageCacheHashTable, entry);
       }
     }
     else
-      E(DBF_IMAGE, "couldn't reduce open count (%ld) of image '%s'", node->openCount, id);
+    {
+      // The image is still in use although it should be removed from the cache.
+      // To accomplish this we remember this and remove it as soon as the open
+      // counter reaches zero.
+      if(dispose == TRUE)
+      {
+        node->delayedDispose = TRUE;
+
+        D(DBF_IMAGE, "  flagged as delayedDispose");
+      }
+    }
   }
   else
     E(DBF_IMAGE, "image '%s' not found in cache", id);

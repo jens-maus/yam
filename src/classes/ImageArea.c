@@ -105,8 +105,12 @@ static void Image_Unload(struct Data *data)
 
   if(data->imageLoaded == TRUE)
   {
-    D(DBF_IMAGE, "unloaded old image '%s' from '%s'", data->id, data->filename);
-    ReleaseImage(data->id, FALSE);
+  	// releasing an image requires a valid ID
+  	if(data->id != NULL && data->id[0] != '\0')
+  	{
+      D(DBF_IMAGE, "unloaded old image '%s' from '%s'", data->id, data->filename);
+      ReleaseImage(data->id, FALSE);
+    }
     data->imageLoaded = FALSE;
   }
 
@@ -319,6 +323,8 @@ OVERLOAD(OM_SET)
 
         if(newFilename != NULL)
           data->filename = strdup(newFilename);
+        else
+          ReleaseImage(data->id, TRUE);
 
         // remember to relayout the image
         relayout = TRUE;
@@ -675,4 +681,3 @@ OVERLOAD(MUIM_Draw)
 ///
 
 /* Public Methods */
-

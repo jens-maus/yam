@@ -8226,3 +8226,10 @@ Theme aktiviert werden kann.
 MSG_FOLDER_ALLTOREAD
 Ordner als gelesen markieren
 ;
+MSG_EA_REMOVEPHOTO
+Ent_fernen
+;
+MSG_HELP_EA_BT_REMOVEPHOTO (2049//)
+Ausgewähltes Bild entfernen\n\
+(Die Datei bleibt auf der Festplatte erhalten)
+;
