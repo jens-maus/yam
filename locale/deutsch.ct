@@ -8229,7 +8229,7 @@ Ordner als gelesen markieren
 MSG_EA_REMOVEPHOTO
 Ent_fernen
 ;
-MSG_HELP_EA_BT_REMOVEPHOTO (2049//)
+MSG_HELP_EA_BT_REMOVEPHOTO
 Ausgewähltes Bild entfernen\n\
 (Die Datei bleibt auf der Festplatte erhalten)
 ;
