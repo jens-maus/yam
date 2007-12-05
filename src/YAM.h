@@ -113,9 +113,9 @@ struct Global
    int                      CO_DST;
    int                      ER_NumErr;
    int                      ActiveWriteWin;
-   enum IconImage           currentAppIcon;
+   enum IconImages          currentAppIcon;
    #if defined(__amigaos4__)
-   enum IconImage           LastIconID;
+   enum IconImages          LastIconID;
    #endif
    time_t                   LastPGPUsage;
 

@@ -120,28 +120,28 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 
       // first we check which main status this mail has
       // and put the leftmost mail icon accordingly.
-      if(hasStatusError(entry) || isPartialMail(entry)) strlcat(dispsta, SI_STR_ERROR, sizeof(dispsta));
-      else if(hasStatusQueued(entry))  strlcat(dispsta, SI_STR_WAITSEND, sizeof(dispsta));
-      else if(hasStatusSent(entry))    strlcat(dispsta, SI_STR_SENT, sizeof(dispsta));
-      else if(hasStatusRead(entry))    strlcat(dispsta, SI_STR_OLD, sizeof(dispsta));
-      else                             strlcat(dispsta, SI_STR_UNREAD, sizeof(dispsta));
+      if(hasStatusError(entry) || isPartialMail(entry)) strlcat(dispsta, SI_STR(si_Error), sizeof(dispsta));
+      else if(hasStatusQueued(entry))  strlcat(dispsta, SI_STR(si_WaitSend), sizeof(dispsta));
+      else if(hasStatusSent(entry))    strlcat(dispsta, SI_STR(si_Sent), sizeof(dispsta));
+      else if(hasStatusRead(entry))    strlcat(dispsta, SI_STR(si_Old), sizeof(dispsta));
+      else                             strlcat(dispsta, SI_STR(si_Unread), sizeof(dispsta));
 
       // then we add the 2. level if icons with the additional mail information
       // like importance, signed/crypted, report and attachment information
-      if(C->SpamFilterEnabled && hasStatusSpam(entry)) strlcat(dispsta, SI_STR_SPAM, sizeof(dispsta));
-      if(getImportanceLevel(entry) == IMP_HIGH)  strlcat(dispsta, SI_STR_URGENT, sizeof(dispsta));
-      if(isMP_CryptedMail(entry))                strlcat(dispsta, SI_STR_CRYPT, sizeof(dispsta));
-      else if(isMP_SignedMail(entry))            strlcat(dispsta, SI_STR_SIGNED, sizeof(dispsta));
-      if(isMP_ReportMail(entry))                 strlcat(dispsta, SI_STR_REPORT, sizeof(dispsta));
-      if(isMP_MixedMail(entry))                  strlcat(dispsta, SI_STR_ATTACH, sizeof(dispsta));
+      if(C->SpamFilterEnabled && hasStatusSpam(entry)) strlcat(dispsta, SI_STR(si_Spam), sizeof(dispsta));
+      if(getImportanceLevel(entry) == IMP_HIGH)  strlcat(dispsta, SI_STR(si_Urgent), sizeof(dispsta));
+      if(isMP_CryptedMail(entry))                strlcat(dispsta, SI_STR(si_Crypt), sizeof(dispsta));
+      else if(isMP_SignedMail(entry))            strlcat(dispsta, SI_STR(si_Signed), sizeof(dispsta));
+      if(isMP_ReportMail(entry))                 strlcat(dispsta, SI_STR(si_Report), sizeof(dispsta));
+      if(isMP_MixedMail(entry))                  strlcat(dispsta, SI_STR(si_Attach), sizeof(dispsta));
 
       // and as the 3rd level of icons we put information on the secondary status
       // like replied, forwarded, hold
-      if(hasStatusNew(entry))        strlcat(dispsta, SI_STR_NEW, sizeof(dispsta));
-      else if(hasStatusHold(entry))  strlcat(dispsta, SI_STR_HOLD, sizeof(dispsta));
-      if(hasStatusMarked(entry))     strlcat(dispsta, SI_STR_MARK, sizeof(dispsta));
-      if(hasStatusReplied(entry))    strlcat(dispsta, SI_STR_REPLY, sizeof(dispsta));
-      if(hasStatusForwarded(entry))  strlcat(dispsta, SI_STR_FORWARD, sizeof(dispsta));
+      if(hasStatusNew(entry))        strlcat(dispsta, SI_STR(si_New), sizeof(dispsta));
+      else if(hasStatusHold(entry))  strlcat(dispsta, SI_STR(si_Hold), sizeof(dispsta));
+      if(hasStatusMarked(entry))     strlcat(dispsta, SI_STR(si_Mark), sizeof(dispsta));
+      if(hasStatusReplied(entry))    strlcat(dispsta, SI_STR(si_Reply), sizeof(dispsta));
+      if(hasStatusForwarded(entry))  strlcat(dispsta, SI_STR(si_Forward), sizeof(dispsta));
 
       // now we generate the proper string for the mailaddress
       if(hasMColSender(C->MessageCols) || searchWinHook)
@@ -181,7 +181,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
           addr = AddrName(*pe);
 
         // lets put the string together
-        snprintf(dispfro, sizeof(dispfro), "%s%s%s%s", isMultiRCPTMail(entry) ? SI_STR_GROUP : "",
+        snprintf(dispfro, sizeof(dispfro), "%s%s%s%s", isMultiRCPTMail(entry) ? SI_STR(si_Group) : "",
                                                        toPrefix ? tr(MSG_MA_ToPrefix) : "",
                                                        addr,
                                                        isMultiSenderMail(entry) && toPrefix == FALSE ? ", ..." : "");

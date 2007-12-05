@@ -30,7 +30,7 @@
 
 #include <exec/types.h>
 
-enum ConfigImage
+enum ConfigImages
 {
   ci_First = 0,
   ci_ABook = 0,
@@ -72,7 +72,7 @@ enum ConfigImage
   ci_Max
 };
 
-enum FolderImage
+enum FolderImages
 {
   fi_First = 0,
   fi_Fold = 0,
@@ -89,7 +89,7 @@ enum FolderImage
   fi_Max
 };
 
-enum IconImage
+enum IconImages
 {
   ii_First = 0,
   ii_Check = 0,
@@ -123,30 +123,6 @@ enum StatusImages
   si_WaitSend,
   si_Max
 };
-
-// the status image numbers for use in an NList object
-// Unfortunately we cannot use the STR() macro here, because that
-// will always generate a "0" string. So take care when adding new
-// status images!
-#define SI_STR_ATTACH                "\033o[ 0]"
-#define SI_STR_CRYPT                 "\033o[ 1]"
-#define SI_STR_DELETE                "\033o[ 2]"
-#define SI_STR_DOWNLOAD              "\033o[ 3]"
-#define SI_STR_ERROR                 "\033o[ 4]"
-#define SI_STR_FORWARD               "\033o[ 5]"
-#define SI_STR_GROUP                 "\033o[ 6]"
-#define SI_STR_HOLD                  "\033o[ 7]"
-#define SI_STR_MARK                  "\033o[ 8]"
-#define SI_STR_NEW                   "\033o[ 9]"
-#define SI_STR_OLD                   "\033o[10]"
-#define SI_STR_REPLY                 "\033o[11]"
-#define SI_STR_REPORT                "\033o[12]"
-#define SI_STR_SENT                  "\033o[13]"
-#define SI_STR_SIGNED                "\033o[14]"
-#define SI_STR_SPAM                  "\033o[15]"
-#define SI_STR_UNREAD                "\033o[16]"
-#define SI_STR_URGENT                "\033o[17]"
-#define SI_STR_WAITSEND              "\033o[18]"
 
 enum ToolbarImageModes
 {
@@ -304,6 +280,10 @@ void FreeTheme(struct Theme *theme);
 LONG ParseThemeFile(const char *themeFile, struct Theme *theme);
 void LoadTheme(struct Theme *theme, const char *themeName);
 void UnloadTheme(struct Theme *theme);
+
+char *BuildNListString(enum StatusImages id);
+// a macro to build the necessary string to use an image in an NList object
+#define SI_STR(id)  BuildNListString(id)
 
 #endif /* THEMES_H */
 

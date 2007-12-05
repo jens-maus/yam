@@ -5670,7 +5670,7 @@ void DisplayAppIconStatistics(void)
 {
   static char apptit[SIZE_DEFAULT/2];
   struct Folder **flist;
-  enum IconImage mode;
+  enum IconImages mode;
   int new_msg = 0;
   int unr_msg = 0;
   int tot_msg = 0;

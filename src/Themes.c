@@ -853,5 +853,20 @@ void UnloadTheme(struct Theme *theme)
 
   LEAVE();
 }
-///
 
+///
+/// BuildNListString
+// build a "\033o[x]" style string to include an image in an NList object
+char *BuildNListString(enum StatusImages id)
+{
+  static char buf[10];
+
+  ENTER();
+
+  snprintf(buf, sizeof(buf), "\033o[%d]", id);
+
+  RETURN(buf);
+  return buf;
+}
+
+///
