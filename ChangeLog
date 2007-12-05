@@ -15,6 +15,8 @@ $URL$
     image. Don't know why we didn't spot this missing button earlier. Anyway,
     removing a user image is supposed to remove it from the cache too, to be
     able to select a different image afterwards.
+  * YAM_EA.c, ImageArea.c: fixed the scaling bug that occured whenever a new
+    user image was loaded.
 
 2007-12-04  Jens Langner <Jens.Langner@light-speed.de>
 

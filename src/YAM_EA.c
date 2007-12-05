@@ -214,14 +214,14 @@ HOOKPROTONHNO(EA_PutEntry, void, int *arg)
 
    if(active == MUIV_List_Active_Off)
    {
-      DoMethod(G->App, MUIM_CallHook, &EA_AddHook, *arg);
+     DoMethod(G->App, MUIM_CallHook, &EA_AddHook, *arg);
    }
    else
    {
-      char *buf = (char *)xget(gui->ST_MEMBER, MUIA_String_Contents);
+     char *buf = (char *)xget(gui->ST_MEMBER, MUIA_String_Contents);
 
-      DoMethod(gui->LV_MEMBER, MUIM_NList_InsertSingle, buf, active);
-      DoMethod(gui->LV_MEMBER, MUIM_NList_Remove, active+1);
+     DoMethod(gui->LV_MEMBER, MUIM_NList_InsertSingle, buf, active);
+     DoMethod(gui->LV_MEMBER, MUIM_NList_Remove, active+1);
    }
 }
 MakeStaticHook(EA_PutEntryHook, EA_PutEntry);
@@ -452,8 +452,12 @@ static void EA_SetPhoto(int winnum, char *fname)
     if(ObtainFileInfo(fname, FI_TYPE, &type) == TRUE && type == FIT_FILE && gui->BC_PHOTO != NULL &&
        DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
     {
-      // remove the old image from the cache
-      set(gui->BC_PHOTO, MUIA_ImageArea_Filename, NULL);
+      if((char *)xget(gui->BC_PHOTO, MUIA_ImageArea_Filename) != NULL)
+      {
+        // remove the old image from the cache
+        set(gui->BC_PHOTO, MUIA_ImageArea_Filename, NULL);
+      }
+
       // set the new attributes
       xset(gui->BC_PHOTO, MUIA_ImageArea_ID,       G->EA[winnum]->ABEntry->Address,
                           MUIA_ImageArea_Filename, fname);
@@ -466,6 +470,33 @@ static void EA_SetPhoto(int winnum, char *fname)
 
       set(gui->BT_REMOVEPHOTO, MUIA_Disabled, FALSE);
     }
+  }
+
+  LEAVE();
+}
+
+///
+/// EA_RemovePhoto
+// remove a user photo from the GUI
+static void EA_RemovePhoto(int winnum)
+{
+  struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
+
+  ENTER();
+
+  G->EA[winnum]->PhotoName[0] = '\0';
+  if(DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
+  {
+    // force the image to be removed from the cache
+    set(gui->BC_PHOTO, MUIA_ImageArea_Filename, NULL);
+
+    // and force a cleanup/setup pair
+    DoMethod(gui->GR_PHOTO, OM_REMMEMBER, gui->BC_PHOTO);
+    DoMethod(gui->GR_PHOTO, OM_ADDMEMBER, gui->BC_PHOTO);
+
+    DoMethod(gui->GR_PHOTO, MUIM_Group_ExitChange);
+
+    set(gui->BT_REMOVEPHOTO, MUIA_Disabled, TRUE);
   }
 
   LEAVE();
@@ -497,24 +528,10 @@ MakeStaticHook(EA_SelectPhotoHook, EA_SelectPhotoFunc);
 HOOKPROTONHNO(EA_RemovePhotoFunc, void, int *arg)
 {
   int winnum = *arg;
-  struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
 
   ENTER();
 
-  G->EA[winnum]->PhotoName[0] = '\0';
-  if(DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
-  {
-    // force the image to be removed from the cache
-    set(gui->BC_PHOTO, MUIA_ImageArea_Filename, NULL);
-
-    // and force a cleanup/setup pair
-    DoMethod(gui->GR_PHOTO, OM_REMMEMBER, gui->BC_PHOTO);
-    DoMethod(gui->GR_PHOTO, OM_ADDMEMBER, gui->BC_PHOTO);
-
-    DoMethod(gui->GR_PHOTO, MUIM_Group_ExitChange);
-
-    set(gui->BT_REMOVEPHOTO, MUIA_Disabled, TRUE);
-  }
+  EA_RemovePhoto(winnum);
 
   LEAVE();
 }
@@ -525,11 +542,15 @@ MakeStaticHook(EA_RemovePhotoHook, EA_RemovePhotoFunc);
 //  Launches a browser to view the homepage of the person
 HOOKPROTONHNO(EA_HomepageFunc, void, int *arg)
 {
-   char *url = (char *)xget(G->EA[*arg]->GUI.ST_HOMEPAGE, MUIA_String_Contents);
-   if(*url)
-   {
-      GotoURL(url);
-   }
+  char *url;
+
+  ENTER();
+
+  url = (char *)xget(G->EA[*arg]->GUI.ST_HOMEPAGE, MUIA_String_Contents);
+  if(url != NULL && url[0] != '\0')
+    GotoURL(url);
+
+  LEAVE();
 }
 MakeStaticHook(EA_HomepageHook, EA_HomepageFunc);
 
