@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-06  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c: the popup button for the scripts will now be disabled if the
+    script doesn't take any parameters. This fixes bug #1845233.
+
 2007-12-05  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c: changed the new TextObject to actually use a Text background which
