@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-06  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: Updated according to changes.
+
 2007-12-06  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c: the popup button for the scripts will now be disabled if the

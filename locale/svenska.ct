@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.25 (01.12.07)
+## version $VER: YAM.ct 6.26 (06.12.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -5389,26 +5389,6 @@ MSG_CO_Less
 Mindre
 ;#DEF _Less
 ;#SET (1552//)
-MSG_ER_EXITIGNOREALL
-*A_vsluta|Ignorera _alla|_Ignorera
-;#DEF *_Exit|Ignore _all|_Ignore
-;#SET (1553//)
-MSG_ER_ICONOBJECT_TITLE
-Fel vid laddning av ikonbild!
-;#DEF Error on loading icon image!
-;#SET (1554//)
-MSG_ER_ICONOBJECT
-Ett fel inträffade vid försök att ladda ikonobjektet\n'%s.info' från katalog '%s'.\n\nVar god kontrollera, att din bild katalog innehåller alla\nnödvändiga ikoner, definierade enligt senaste bild layouten.
-;#DEF An error occurred while trying to load the icon\nobject '%s.info' from directory '%s'.\n\nPlease make sure your image directory contains all\nnecessary icons as defined in the latest image layout.
-;#SET (1555//)
-MSG_ER_IMAGEOBJECT_TITLE
-Fel vid laddning av bild!
-;#DEF Error on loading image!
-;#SET (1556//)
-MSG_ER_IMAGEOBJECT
-Ett fel inträffade vid försök att ladda bildfilen\n'%s' från katalog '%s'.\n\nVar god kontrollera, att din bild katalog innehåller alla\nnödvändiga bilder, definierade enligt senaste bild layouten.
-;#DEF An error occurred while trying to load the image\nfile '%s' from directory '%s'.\n\nPlease make sure your image directory contains all\nnecessary images as defined in the latest image layout.
-;#SET (1557//)
 MSG_MA_AUTOSAVEFOUND
 YAM har hittat en autosparad meddelandefil '%s'\nsom har skapats i en föregående session. Detta kan bero\npå en krash eller omstart, vid skrivning av ett meddelande.\n\nVad vill du göra med meddelandet?
 ;#DEF YAM has found an autosaved message file '%s'\nwhich have been created in a previous session. This may\nbe due to a possible crash or reboot while writing a\nmessage.\n\nWhat do you want to do with that message?
@@ -6710,8 +6690,8 @@ Teman
 ;#DEF Themes
 ;#SET (1898//)
 MSG_CO_THEME_ACTIVATE
-Aktivera
-;#DEF Activate
+A_ktivera
+;#DEF A_ctivate
 ;#SET (1899//)
 MSG_CO_THEME_PREVIEW
 Förhandstitt
@@ -6733,18 +6713,6 @@ MSG_HELP_CO_CH_RELDATETIME
 Om vald, kommer datumkolumner att använda\nrelativa datum istället. Dessa kolumner\nkommer att visa 'idag' eller 'igår'\nistället för datumet.
 ;#DEF If selected, columns with date information\nwill use a relative output instead. E.g.\nsuch colums will show strings like 'Today'\nor 'Yesterday' instead of the full date.
 ;#SET (1904//)
-MSG_ER_LOADDT_TITLE
-Bilddata behandlingsfel
-;#DEF Image data processing error
-;#SET (1905//)
-MSG_ER_LOADDT_ERROR
-Ett fel uppstod vid försök att ladda bilddata för '%s'\nvia datatypes.library.\n\nVar god kontrollera att dina datatyper är korrekt\ninstallerade (t.ex. att bilden visas korrekt i Multiview).
-;#DEF An error occurred while trying to load the image data\nof '%s' via datatypes.library.\n\nPlease make sure that you have your datatypes system\ncorrectly setup (e.g. that the image properly displays\nin Multiview).
-;#SET (1906//)
-MSG_ER_LOADDT_BUTTON
-_Ok
-;#DEF *_Ok
-;#SET (1907//)
 MSG_FOLDER_SNAPSHOT_TREE
 Memorera ordning
 ;#DEF Snapshot arrangement
@@ -6855,12 +6823,8 @@ Om vald, vid flyttning av breven, kommer alla användar-\ndefinierade filter att 
 ;#SET (1934//)
 MSG_SHUTDOWN_SHUTTING_DOWN
 Stänger ned YAM...
-;#DEF Shutting down...
+;#DEF Shutting down YAM...
 ;#SET (1935//)
-MSG_ER_IGNOREALL
-Ignorera _alla|*_Ignorera
-;#DEF Ignore _all|*_Ignore
-;#SET (1936//)
 MSG_HELP_CO_CY_FOLDERINFO
 Information som ska visas som etikett\nför mappen.
 ;#DEF Information that should be displayed\nas the label of the folder.
@@ -7249,19 +7213,51 @@ MSG_CO_SCRIPTPATH
 Skript sökväg
 ;#DEF Script path
 ;#SET (2033//)
-MSG_ER_THEMEVER_TITLE
-Tema version felaktig
-;#DEF Theme version incorrect
-;#SET (2034//)
-MSG_ER_THEMEVER_BUTTON2
-*_Ignorera|A_vsluta
-;#DEF *_Ignore|_Exit
-;#SET (2035//)
-MSG_ER_THEMEVER_BUTTON3
-*_Använd förval|_Ignorera|A_vsluta
-;#DEF *_Use default|_Ignore|_Exit
-;#SET (2036//)
-MSG_ER_THEMEVER_ERROR
-Det nuvarande aktiverade temat '%s' är av\nen inkompatibel version och kan inte laddas.\n\nVar god uppdatera temat till en version som\när kompatibel med denna version av YAM.
-;#DEF The currently activated theme '%s' was found\nto be of an incompatible version and can't be\nloaded.\n\nPlease make sure to update the theme to a version\ncompatible to this version of YAM.
-;#SET (2037//)
+MSG_ER_ICONOBJECT_WARNING
+Ett fel uppstod vid försök att ladda ikonobjektet '%s.info' från tema '%s'. Ikonen kommer inte att visas under den sessionen.\n\nVar god kontrollera att din tema katalog innehåller alla nödvändiga ikoner eller stäng av tema stödet för att inte få fler varningar.
+;#DEF An error occurred while trying to load the icon object '%s.info' from theme '%s'. The icon will not be displayed during that session.\n\nPlease make sure your theme directory contains all necessary icons or disable the themes support for no further warnings.
+;#SET (2038//)
+MSG_ER_THEMEVER_FALLBACK
+Det nuvarande aktiverade temat '%s' är av en ogiltig version och laddades därför inte.\n\nDet förvalda YAM temat aktiverades därför som en reservlösning. Var god uppdatera temat till en kompatibel version eller stäng av det i konfigurationen.
+;#DEF The currently activated theme '%s' was found to be of an incompatible version and wasn't loaded.\n\nThe default YAM theme was therefore activated as a fallback. Please make sure to update the theme to compatible version or disable it in the configuration.
+;#SET (2039//)
+MSG_ER_THEMEVER_IGNORE
+Vid försök att ladda det förvalda temat för YAM, så upptäcktes det att vara av en felaktig version.\n\nLaddningsprocessen för temat avbröts och du rekommenderas att uppgradera det förvalda temat till en kompatibel version.
+;#DEF While trying to load the default theme of YAM, it was found to be of an incorrect version.\n\nThe theme loading process was aborted and you are adviced to upgrade the default theme to a compatible version.
+;#SET (2040//)
+MSG_ER_DATATYPE_ERROR
+Ett fel uppstod vid försök att ladda bilddatan för '%s' via datatypes.library.\n\nVar god kontrollera att filen existerar och att du har ett fungerande datatypssystem (t.ex. att bilden visas korrekt i Multiview).
+;#DEF An error occurred while trying to load the image data of '%s' via datatypes.library.\n\nPlease make sure that the file exists and that you have your datatypes system correctly setup (e.g. that the image properly displays in Multiview).
+;#SET (2041//)
+MSG_ER_IMAGEOBJECT_WARNING
+Ett fel uppstod vid försök att ladda bildfilen '%s' från katalogen '%s'.\n\nVar god kontrollera att din tema katalog, innehåller alla nödvändiga bilder som definierats i senaste temaversionslayouten.
+;#DEF An error occurred while trying to load the image file '%s' from directory '%s'.\n\nPlease make sure your theme directory contains all necessary images as defined in the latest theme version layout.
+;#SET (2042//)
+MSG_ER_THEME_FATAL
+YAM kunde inte ladda det förvalda temat och avbröt temaladdningen helt.\n\nVar god kontrollera att din tema katalog är läsbar och innehåller korrekt förvalt tema som distribueras med YAM.
+;#DEF YAM was unable to load the default theme and aborted the theme loading completly.\n\nPlease make sure your themes directory is readable and contains the correct default theme distributed with YAM.
+;#SET (2043//)
+MSG_ER_THEME_FALLBACK
+Det nuvarande aktiverade temat '%s' har visat sig vara oåtkomstbar eller korrupt och laddades inte.\n\nDet förvalda temat för YAM aktiverades därför som reservlösning. Var god kontrollera att ditt valda tema är läsbart och är ett giltigt YAM tema.
+;#DEF The currently activated theme '%s' was found to be inaccessible or corrupt and wasn't loaded.\n\nThe default YAM theme was therefore activated as a fallback. Please make sure your selected theme is readable and a valid YAM theme.
+;#SET (2044//)
+MSG_ER_THEME_ACTIVATED_TITLE
+Omstart av YAM krävs
+;#DEF YAM restart required
+;#SET (2045//)
+MSG_ER_THEME_ACTIVATED
+Var god notera att innan det valda temat kan\naktiveras, så måste du spara konfigurationen\noch starta om YAM.
+;#DEF Please note that before the selected theme can be\nactivated, you have to save the configuration and\nrestart YAM.
+;#SET (2046//)
+MSG_FOLDER_ALLTOREAD
+Markera mapp som läst
+;#DEF Mark folder read
+;#SET (2047//)
+MSG_EA_REMOVEPHOTO
+Ta bo_rt
+;#DEF _Remove
+;#SET (2048//)
+MSG_HELP_EA_BT_REMOVEPHOTO
+Ta bort den valda bilden.\n(Filen kommer att finnas kvar på hårddisken)
+;#DEF Remove the selected picture.\n(The file will remain on the hard disk)
+;#SET (2049//)
