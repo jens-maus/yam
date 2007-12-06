@@ -3,7 +3,7 @@
 ## codeset 0
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 3410 2007-09-28 06:39:11Z
+; based on YAM.cd 3560 2007-12-05 10:18:55Z
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -408,7 +408,7 @@ YAM désactivé
 ;
 MSG_LOG_LoggedIn
 Connecté en tant que « %s »
-; Logged in as user « %s »
+; Logged in as user '%s'
 ; USER_NAME
 ;
 MSG_LOG_LoggedInVerbose
@@ -1988,7 +1988,7 @@ Comp./protection
 ;
 MSG_CO_Archiver
 Arc_hiveur
-; _Archiver
+; Archi_ver
 ;
 MSG_CO_ScriptMenu
 « Scripts » menu entrée %ld
@@ -5515,7 +5515,7 @@ Vide le dossier « Effacés »...
 ; Emptying trash folder...
 ;
 MSG_BusyGettingVerInfo
-Recherche des informations de mise à jour...
+Recherche de mise à jour...
 ; Getting update information...
 ;
 MSG_BusyLoadingIndex
@@ -5656,7 +5656,7 @@ I_D utilisateur
 ;
 MSG_CO_SMTPPass
 M_ot de passe
-; Passwo_rd
+; Pass_word
 ;
 MSG_WR_AltQuoted
 Citation externe
@@ -6558,98 +6558,6 @@ MSG_CO_Less
 _Moins
 ; _Less
 ;
-MSG_ER_EXITIGNOREALL
-*_Sortir|Ignorer _tous|_Ignorer
-; *_Exit|Ignore _all|_Ignore
-;
-MSG_ER_ICONOBJECT_TITLE
-Erreur de chargement de l'icône !
-; Error on loading icon image!
-;
-MSG_ER_ICONOBJECT
-Une erreur est survenue lors du chargement\n\
-de l'icône '%s.info' depuis le répertoire\n\
-'%s'.\n\
-\n\
-Veuillez vous assurer que votre répertoire d'images\n\
-contient bien tous les icônes nécessaires définis\n\
-dans le dernier layout d'images.
-; An error occurred while trying to load the icon\n\
-; object '%s.info' from directory '%s'.\n\
-; \n\
-; Please make sure your image directory contains all\n\
-; necessary icons as defined in the latest image layout.
-;
-MSG_ER_IMAGEOBJECT_TITLE
-Erreur de chargement d'image !
-; Error on loading image!
-;
-MSG_ER_IMAGEOBJECT
-Une erreur est survenue lors du chargement\n\
-du fichier '%s' depuis le répertoire\n\
-'%s'.\n\
-\n\
-Veuillez vous assurer que votre répertoire d'images\n\
-contient bien toutes les images nécessaires telles\n\
-que définies dans le dernier layout d'images.
-; An error occurred while trying to load the image\n\
-; file '%s' from directory '%s'.\n\
-; \n\
-; Please make sure your image directory contains all\n\
-; necessary images as defined in the latest image layout.
-;
-MSG_ER_IMGLAYOUTFAILURE
-Erreur dans le layout d'image !
-; Image layout failure!
-;
-MSG_ER_EXITIGNORE
-*_Sortir|_Ignorer
-; *_Exit|_Ignore
-;
-MSG_ER_MISSINGIMGVERFILE
-Le layout de votre répertoire d'image '%s' ne contient\n\
-pas d'information de version et nécessite d'être mis à\n\
-jour correctement.\n\
-\n\
-Veuillez vous assurer que vous utilisez un layout d'image\n\
-compatible ou certaines images risquent de ne pas être\n\
-affichées correctement dans YAM.
-; The layout of your '%s' image directory\n\
-; contains no version information and needs to be updated\n\
-; accordingly.\n\
-; \n\
-; Please make sure you are using a compatible image layout\n\
-; or some images may be displayed incorrectly in YAM.
-;
-MSG_ER_LOADIMGLAYOUTFAILED
-Une erreur est survenue lors du chargement des informations\n\
-du layout d'images depuis votre répertoire '%s'.\n\
-\n\
-Veuillez vous assurer que vous utilisez un layout d'images\n\
-compatible, ou certaines images risquent de ne pas être\n\
-affichées correctement dans YAM.
-; An error occurred while trying to load the image\n\
-; layout information from your '%s' directory.\n\
-; \n\
-; Please make sure you are using a compatible image layout\n\
-; or some images may be displayed incorrectly in YAM.
-;
-MSG_ER_WRONGIMGLAYOUTVER
-Le layout de votre répertoire d'image '%s'\n\
-contient une information de version\n\
-incompatible et doit être mis à jour.\n\
-\n\
-Veuillez vous assurer que vous utilisez\n\
-un layout compatible ou bien certaines\n\
-images pourraient être affichées\n\
-incorrectement dans YAM.
-; The layout of your '%s' image directory\n\
-; contains an incompatible version information and needs\n\
-; to be updated accordingly.\n\
-; \n\
-; Please make sure you are using a compatible image layout\n\
-; or some images may be displayed incorrectly in YAM.
-;
 MSG_MA_AUTOSAVEFOUND
 YAM a trouvé un fichier de sauvegarde automatique\n\
 de message '%s' ayant été créé lors\n\
@@ -6815,7 +6723,7 @@ MSG_QUICKSEARCH_SHOWNMSGS
 ; COUNT, COUNT
 MSG_FI_NOFOLDERS
 _nulle part
-; _nowhere
+; n_owhere
 ;
 MSG_HELP_QUICKSEARCH_VIEWOPTIONS
 Seuls les mails correspondant au critère\n\
@@ -6861,26 +6769,6 @@ Affiche un Docky icône via application.library.\n\
 ; application.library. (only available on AmigaOS4\n\
 ; systems)
 ;
-MSG_ER_B64DECTRUNC
-Une erreur est survenue lors du décodage base64 de la pièce jointe %ld du message '%s'. Le décodage a été annulé.\n\n\
-Cela peut être du à un encodage incorrect  par le client de mail émetteur ou à une altération de la partie base64 lors de la transmission.
-; An error occurred while trying to base64 decode MIME \
-; part %ld of mail '%s'. The decoding has been aborted.\n\
-; \n\
-; This may be caused by an incorrect encoding done by the \
-; sending mail client or because the base64 part has been malformed \
-; during transmission.
-; PARTNR, MSGFILE
-MSG_ER_B64DECTRUNCTXT
-Du texte lisible de la pièce jointe %ld du message '%s'  n'a pas pu être décodé en base64 et peut être affiché de manière incorrecte ou même absent.\n\n\
-Cela peut être du à un encodage incorrect  par le client de mail émetteur ou à une altération de la partie base64 lors de la transmission.
-; Some readable text from MIME part %ld of mail '%s' couldn't \
-; be base64 decoded and may show up incorrect or is even missing.\n\
-; \n\
-; This may be caused by an incorrect encoding done by the \
-; sending mail client or because the base64 part has been malformed \
-; during transmission.
-; PARTNR, MSGFILE
 MSG_MA_MessageImport
 Importation des messages depuis fichier MBOX, BX ou texte...
 ; Import messages from MBOX, DBX or plain mail files...
@@ -7215,7 +7103,7 @@ Mensuelle
 ;
 MSG_CO_SEARCHFORUPDATES
 Recherche de _mises à jour
-; Search for _Updates:
+; Search for Up_dates:
 ;
 MSG_CO_SEARCHFORUPDATESINFO
 Vous serez notifié dès que des mises à jour sont disponibles.
@@ -7323,7 +7211,7 @@ URL
 ;
 MSG_CO_MIME_DESCRIPTION
 _Description
-; _Description
+; D_escription
 ;
 MSG_CTapplicationgz
 Archive GNU zip
@@ -7795,7 +7683,7 @@ _Vider le dossier Courrier indésirable
 ;
 MSG_CO_SMTPAUTH_METHOD
 M_éthode
-; _Method
+; Met_hod
 ;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
 Permet de spécifier la méthode d'authentification\n\
@@ -8239,7 +8127,7 @@ Ne _jamais renvoyer d'accusé de réception
 ;
 MSG_CO_MDN_ENABLED
 Ren_voyer certains accusés de réception :
-; A_llow return receipts for some messages
+; Allow _return receipts for some messages
 ;
 MSG_CO_MDN_NORECIPIENT
 Si je n'apparais pas _dans le champ « A » et « Cc »
@@ -8255,7 +8143,7 @@ Lorsque je suis sur le point d'efface_r le message sans l'avoir lu
 ;
 MSG_CO_MDN_OTHER
 Dans tous les autres _cas
-; In all other _cases:
+; In all oth_er cases:
 ;
 MSG_CO_REQUESTMDN
 Lors de l'envoi de _messages, toujours demander un accusé
@@ -8331,7 +8219,7 @@ La _correction d'heure d'été (DST) est active
 ; D_aylight Saving Time (DST) is active
 ;
 MSG_HELP_CO_CH_DSTACTIVE
-A activer si la correction d'heure est\n\
+À activer si la correction d'heure est\n\
 actuellement en cours pour votre fuseau\n\
 horaire (i.e. heure d'été).
 ; Activate if the daylight saving time is\n\
@@ -8351,7 +8239,7 @@ Utiliser une connexion sécurisée :
 ; Use secure connection:
 ;
 MSG_CO_POP3SECURE_NO
-Oui
+Non
 ; No
 ;
 MSG_CO_POP3SECURE_TLS
@@ -8377,8 +8265,8 @@ Thèmes
 ; Themes
 ;
 MSG_CO_THEME_ACTIVATE
-Activer
-; Activate
+Activ_er
+; A_ctivate
 ;
 MSG_CO_THEME_PREVIEW
 Aperçu
@@ -8405,28 +8293,6 @@ de telles colonnes afficheront des textes comme\n\
 ; will use a relative output instead. E.g.\n\
 ; such colums will show strings like 'Today'\n\
 ; or 'Yesterday' instead of the full date.
-;
-MSG_ER_LOADDT_TITLE
-Erreur de traitement des données de l'image
-; Image data processing error
-;
-MSG_ER_LOADDT_ERROR
-Une erreur est survenue au cours du chargement des données\n\
-de l'image « %s » via datatypes.library.\n\
-\n\
-Veuillez vous assurer que votre système de datatypes est\n\
-configurer correctement (p. ex. que l'image s'affiche sous\n\
-Multiview correctement).
-; An error occurred while trying to load the image data\n\
-; of '%s' via datatypes.library.\n\
-; \n\
-; Please make sure that you have your datatypes system\n\
-; correctly setup (e.g. that the image properly displays\n\
-; in Multiview).
-;
-MSG_ER_LOADDT_BUTTON
-_Ok
-; *_Ok
 ;
 MSG_FOLDER_SNAPSHOT_TREE
 Figer la disposition
@@ -8595,11 +8461,7 @@ filtres définis par l'utilisteur lui seront appliqués.
 ;
 MSG_SHUTDOWN_SHUTTING_DOWN
 YAM Arrêt en cours...
-; Shutting down...
-;
-MSG_ER_IGNOREALL
-Ignorer _tout|*_Ignorer
-; Ignore _all|*_Ignore
+; Shutting down YAM...
 ;
 MSG_HELP_CO_CY_FOLDERINFO
 Information à afficher\n\
@@ -9026,7 +8888,6 @@ en conséquence.
 ; \n\
 ; Please make sure that the file is a valid mail file and proceed\n\
 ; accordingly.
-;
 ; FILENAME, FOLDER
 ;
 MSG_MA_INVALIDMFILE_BT
@@ -9043,7 +8904,6 @@ permissions d'accès sont correctement réglées.
 ; \n\
 ; Please check that you are able to read the content of the file and \
 ; that the permission settings are correct.
-;
 ; FILENAME, FOLDER
 ;
 MSG_ER_CANNOT_WRITE_INDEX
@@ -9056,7 +8916,6 @@ fichier est supposé être écrit.
 ; \n\
 ; Please check that you are able to write to the directory where the \
 ; file is supposed to be written.
-;
 ; FILENAME, FOLDER
 ;
 MSG_ER_INDEX_CORRUPTED
@@ -9069,7 +8928,6 @@ Le dossier a été marqué 'déchargé' et une réindexation a été lancée ou est néces
 ; \n\
 ; The folder was flagged as 'unloaded' and an index rescanning \
 ; was initiated or is required.
-;
 ; FILENAME, FOLDER, POSITION, MAILFILE, MOREBYTES
 ;
 MSG_ER_UNKNOWN_MIME_ENCODING
@@ -9081,7 +8939,6 @@ Sauvez le message sur le disque et essayez avec un autre décodeur.
 ; \n\
 ; YAM failed to decode a part of the message. Save the message \
 ; to disk and try with a different decoder.
-;
 ; ENCODING_TYPE, FILENAME
 ;
 MSG_ER_UNKNOWN_HEADER_ENCODING
@@ -9091,7 +8948,6 @@ YAM ne peut pas afficher correctement cet en-tête de message.
 ; Unknown header encoding '%s' in mail file '%s'.\n\
 ; \n\
 ; YAM cannot display a particular message header correctly.
-;
 ; ENCODING_TYPE, FILENAME
 ;
 MSG_ER_UNEXPECTED_MULTIPART_EOF
@@ -9101,7 +8957,6 @@ Le message semble être tronqué.
 ; Unexpected EOF while decoding the multipart message in file '%s'.\n\
 ; \n\
 ; The message seems to be truncated.
-;
 ; FILENAME
 ;
 MSG_ER_MIME_ERROR
@@ -9111,7 +8966,6 @@ Le message contient des parties MIME malformées, est vide ou est tronqué.
 ; Couldn't extract MIME message from file '%s'.\n\
 ; \n\
 ; The message contains badly formed MIME parts or it's empty or truncated.
-;
 ; FILENAME
 ;
 MSG_ER_UNEXPECTED_UUE_EOF
@@ -9119,7 +8973,6 @@ Fin de fichier inattendue lors du décodage du fichier UUencodé « %s ».\
 Le message semble avoir été tronqué.
 ; Unexpected EOF while decoding the UUencoded file '%s'. \
 ; The message seems to be truncated.
-;
 ; FILENAME
 ;
 MSG_ER_INVALID_UUE_LENGTH
@@ -9129,7 +8982,6 @@ Un encodeur défectueux a été utilisé ou le message est incomplet.
 ; Invalid line length %ld in UUencoded file '%s'.\n\
 ; \n\
 ; A defective UUencoder was used or the message is truncated.
-;
 ; SIZE, FILENAME
 ;
 MSG_RE_HDR_REPLYTO
@@ -9168,16 +9020,13 @@ MSG_FO_TO_ADDRESS
 Adresse du destinataire (_To:)
 ; Sender address (_To:)
 ;
-;
 MSG_FO_FROM_ADDRESS
 Adresse de l'émetteur (_From:)
 ; Receiver address (_From:)
 ;
-;
 MSG_FO_REPLYTO_ADDRESS
 Adresse de _réponse (Reply-To:)
 ; _Reply address (Reply-To:)
-;
 ;
 MSG_RETRY_HOMEPAGE_QUIT_GAD
 Réessayer|Visiter la page WEB|Quitter
@@ -9194,4 +9043,205 @@ Effacer
 MSG_WR_DELETE
 Effacer
 ; Delete
+;
+MSG_ER_B64DEC_FILEIO
+Une erreur d'entrée/sortie est survenue lors du décodage \
+base64 de la pièce jointe %ld du message « %s ». Le décodage \
+a été annulé.\n\
+n\
+Cela peut être du à un manque d'espace sur le volume dans \
+lequell le fichier était décodé ou au fait que le fichier \
+n'était pas accessible.
+; A file input/output error occurred while trying to base64 \
+; decode MIME part %ld of mail '%s'. The decoding has been \
+; aborted.\n\
+; \n\
+; This may be caused by unsufficient space on the volume the \
+; file was being decoded or because the source file wasn't \
+; accessible.
+;
+; PARTNR, MSGFILE
+;
+MSG_ER_B64DEC_WARN
+Des caractères invalides ont été rencontrés lors du décodage \
+de la pièce jointe, encodée en base64, %ld du message « %s ». \
+Le résultat peut par conséquent contenir des données invalides \
+ou être corrompu.\n\
+\n\
+Cela peut être du à un encodage incorrect par le client de mail \
+émetteur ou à une altération de la partie base64 lors de la transmission.
+; Some invalid characters were found during the process of \
+; undecoding the base64 encoded MIME part %ld of mail '%s'. \
+; The generated output may therefore contain invalid data \
+; or may be corrupted.\n\
+; \n\
+; This can be caused du to an incorrect encoding done by \
+; the sending mail client or because the base64 part has \
+; been malformed during transmission.
+;
+; PARTNR, MSGFILE
+;
+MSG_ER_B64DEC_UNEXP
+Une erreur est survenue lors du décodage base64 de la pièce \
+jointe %ld du message « %s ». Le décodage a été annulé.\n\
+n\
+Soit il n'y avait pas de données à décoder soit YAM n'a pas \
+été en mesure d'accéder aux données encodées durant la phase \
+de décodage.
+; An error occurred while trying to base64 decode MIME \
+; part %ld of mail '%s'. The decoding has been aborted.\n\
+; \n\
+; There was either no data to decode or YAM wasn't able \
+; to access the encoded data during the decoding phase.
+;
+; PARTNR, MSGFILE
+;
+MSG_MA_ADD_WHICH_ADDRESS
+L'adresse de l'émetteur (De) est \033b<%s>\033n mais\n\
+l'adresse de réponse (Répondre à) est\033b<%s>\033n.\n\
+\n\
+Laquelle voulez-vous ajouter à votre carnet d'adresses ?
+; The sender address (From) is \033b<%s>\033n and\n\
+; the return address (Reply-To) is \033b<%s>\033n.\n\
+; \n\
+; Which address do you want to add to your address book?
+;
+; ADDRESS, ADDRESS
+;
+MSG_CO_SCRIPTACTION
+Action du script (Nom)
+; Script action (Name)
+;
+MSG_CO_SCRIPTPATH
+Chemin du script
+; Script path
+;
+MSG_ER_ICONOBJECT_WARNING
+Une erreur est survenue lors du chargement du l'icone \
+« %s.info » du le thème « %s ». L'icône ne sera pas \
+affiché durant cette session.\n\
+\n\
+Veuillez vous assurer que répertoire de thèmes contient \
+tous les icônes nécessaires ou désactivez le support des \
+thèmes pour ne plus en être averti.
+; An error occurred while trying to load the icon object \
+; '%s.info' from theme '%s'. The icon will not be displayed \
+; during that session.\n\
+; \n\
+; Please make sure your theme directory contains all \
+; necessary icons or disable the themes support for no \
+; further warnings.
+;
+MSG_ER_THEMEVER_FALLBACK
+Le thème « %s » actuellement activé est d'une version \
+incompatible et n'a pas été chargé.\n\
+\n\
+Le thème par défaut de YAM a donc été activé en dernier \
+recours. Veuillez vous assurer de mettre à jour le thème \
+dans une version compatible ou de le désactiver dans la \
+configuration.
+; The currently activated theme '%s' was found to be \
+; of an incompatible version and wasn't loaded.\n\
+; \n\
+; The default YAM theme was therefore activated as a \
+; fallback. Please make sure to update the theme to \
+; compatible version or disable it in the configuration.
+;
+MSG_ER_THEMEVER_IGNORE
+Lors du chargement du thème par défaut de YAM, ce dernier \
+s'est avéré être d'une version incorrecte.\n\
+\n\
+Le chargement du thème a été avortée et il est conseillé \
+que vous mettiez à jour le thème par défaut dans une \
+version compatible.
+; While trying to load the default theme of YAM, it \
+; was found to be of an incorrect version.\n\
+; \n\
+; The theme loading process was aborted and you are \
+; adviced to upgrade the default theme to a compatible \
+; version.
+;
+MSG_ER_DATATYPE_ERROR
+Une erreur est survenue lors du chargement des données \
+de l'image « %s » via les datatypes.\n\
+\n\
+Veuillez vous assurer que le fichier existe et que votre \
+système de datatypes est correctement configuré (p. ex. \
+que l'images est affichée correctement dans Multiview).
+; An error occurred while trying to load the image data \
+; of '%s' via datatypes.library.\n\
+; \n\
+; Please make sure that the file exists and that you have \
+; your datatypes system correctly setup (e.g. that the \
+; image properly displays in Multiview).
+;
+MSG_ER_IMAGEOBJECT_WARNING
+Une erreur est survenur lors du chargement de l'image « %s » \
+depuis le répertoire « %s ».\n\
+\n\
+Veuillez vous assurer que votre répertoire de thèmes contient \
+toutes les images nécessaires telles que définies dans la \
+dernier version du layout de thème.
+; An error occurred while trying to load the image file '%s' \
+; from directory '%s'.\n\
+; \n\
+; Please make sure your theme directory contains all \
+; necessary images as defined in the latest theme version \
+; layout.
+;
+MSG_ER_THEME_FATAL
+YAM n'a pas été en mesure de charger le thème par défaut \
+et a avorté le chargement du thème.\n\
+\n\
+Veuillez vous assurer que votre répertoire de thèmes est \
+lisible et contient le thème par défaut correct distribué \
+avec YAM.
+; YAM was unable to load the default theme and aborted \
+; the theme loading completly.\n\
+; \n\
+; Please make sure your themes directory is readable and \
+; contains the correct default theme distributed with YAM.
+;
+MSG_ER_THEME_FALLBACK
+Le thème « % » actuellement activé n'est pas accessible \
+ou est corrompu et n'a pas pu être chargé.\n\
+\n\
+Le thème par défaut de YAM a donc été activé en dernier \
+recours. Veuillez vous assurer que le thème sélectionné \
+est lisible et est un thème YAM valide.
+; The currently activated theme '%s' was found to be \
+; inaccessible or corrupt and wasn't loaded.\n\
+; \n\
+; The default YAM theme was therefore activated as a \
+; fallback. Please make sure your selected theme is readable \
+; and a valid YAM theme.
+;
+MSG_ER_THEME_ACTIVATED_TITLE
+Redémarrage de YAM nécessaire
+; YAM restart required
+;
+;
+MSG_ER_THEME_ACTIVATED
+Veuillez noter qu'avant que le thème sélectionné puisse\n\
+être activén vous devez sauver la configuration et YAM\n\
+doit être redémarré.
+; Please note that before the selected theme can be\n\
+; activated, you have to save the configuration and\n\
+; restart YAM.
+;
+;
+MSG_FOLDER_ALLTOREAD
+Marque le dossier comme lu
+; Mark folder read
+;
+;
+MSG_EA_REMOVEPHOTO
+Suppri_mer
+; _Remove
+;
+MSG_HELP_EA_BT_REMOVEPHOTO
+Supprime le portrait sélectionné.\n\
+(Le fichier reste sur le disque dur)
+; Remove the selected picture.\n\
+; (The file will remain on the hard disk)
 ;
