@@ -61,6 +61,7 @@
 #include <proto/utility.h>
 #include <proto/wb.h>
 #include <proto/xpkmaster.h>
+#include <proto/cybergraphics.h>
 
 #if defined(__amigaos4__)
 #include <proto/application.h>
@@ -2369,20 +2370,21 @@ static void InitBeforeLogin(BOOL hidden)
     Abort(NULL);
 
   // load&initialize all required libraries
-  INITLIB("graphics.library",  36, 0, &GfxBase,       "main", &IGraphics,  TRUE,  NULL);
-  INITLIB("layers.library",    39, 0, &LayersBase,    "main", &ILayers,    TRUE,  NULL);
-  INITLIB("workbench.library", 36, 0, &WorkbenchBase, "main", &IWorkbench, TRUE,  NULL);
-  INITLIB("keymap.library",    36, 0, &KeymapBase,    "main", &IKeymap,    TRUE,  NULL);
-  INITLIB("iffparse.library",  36, 0, &IFFParseBase,  "main", &IIFFParse,  TRUE,  NULL);
-  INITLIB(RXSNAME,             36, 0, &RexxSysBase,   "main", &IRexxSys,   TRUE,  NULL);
-  INITLIB("datatypes.library", 39, 0, &DataTypesBase, "main", &IDataTypes, TRUE,  NULL);
+  INITLIB("graphics.library",      36, 0, &GfxBase,       "main", &IGraphics,  TRUE,  NULL);
+  INITLIB("layers.library",        39, 0, &LayersBase,    "main", &ILayers,    TRUE,  NULL);
+  INITLIB("workbench.library",     36, 0, &WorkbenchBase, "main", &IWorkbench, TRUE,  NULL);
+  INITLIB("keymap.library",        36, 0, &KeymapBase,    "main", &IKeymap,    TRUE,  NULL);
+  INITLIB("iffparse.library",      36, 0, &IFFParseBase,  "main", &IIFFParse,  TRUE,  NULL);
+  INITLIB(RXSNAME,                 36, 0, &RexxSysBase,   "main", &IRexxSys,   TRUE,  NULL);
+  INITLIB("datatypes.library",     39, 0, &DataTypesBase, "main", &IDataTypes, TRUE,  NULL);
   // openurl.library has a homepage, but providing that homepage without having OpenURL
   // installed would result in a paradoxon, because InitLib() would provide a button
   // to visit the URL which in turn requires OpenURL to be installed...
   // Hence we try to open openurl.library without
-  INITLIB("openurl.library",    1, 0, &OpenURLBase,   "main", &IOpenURL,   FALSE, NULL);
-  INITLIB("muimaster.library", 19, 0, &MUIMasterBase, "main", &IMUIMaster, TRUE, "http://www.sasg.com/");
-  INITLIB("codesets.library",   6, 4, &CodesetsBase,  "main", &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
+  INITLIB("openurl.library",        1, 0, &OpenURLBase,   "main", &IOpenURL,   FALSE, NULL);
+  INITLIB("muimaster.library",     19, 0, &MUIMasterBase, "main", &IMUIMaster, TRUE, "http://www.sasg.com/");
+  INITLIB("codesets.library",       6, 4, &CodesetsBase,  "main", &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
+  INITLIB("cybergraphics.library", 40, 0, &CyberGfxBase,  "main", &ICyberGfx,  TRUE, NULL);
 
   // we check for the amisslmaster.library v3 accordingly
   if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", &IAmiSSLMaster, FALSE, NULL))
@@ -2724,7 +2726,7 @@ static LONG ParseCommandArgs(void)
 
   // allocate some memory for the extended help
   #define SIZE_EXTHELP  2048
-  if((extHelp = malloc(SIZE_EXTHELP)))
+  if((extHelp = malloc(SIZE_EXTHELP)) != NULL)
   {
     // set argument template
     nrda.Template = (STRPTR)"USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M,NOIMGWARNING/S,NOCATALOG/S";
@@ -2770,7 +2772,7 @@ static LONG ParseCommandArgs(void)
 
     // now call NewReadArgs to parse all our commandline/tooltype arguments in accordance
     // to the above template
-    if((result = NewReadArgs(WBmsg, &nrda)))
+    if((result = NewReadArgs(WBmsg, &nrda)) != 0)
     {
       args.hide = -args.hide;
       args.nocheck = -args.nocheck;

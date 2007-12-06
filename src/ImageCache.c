@@ -103,6 +103,7 @@ static BOOL LoadImage(struct ImageCacheNode *node)
         node->dt_obj = o;
         node->width = fri.fri_Dimensions.Width;
         node->height = fri.fri_Dimensions.Height;
+        node->depth = fri.fri_Dimensions.Depth;
 
         result = TRUE;
       }
@@ -376,6 +377,57 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
           {
             node->width = bmhd->bmh_Width;
             node->height = bmhd->bmh_Height;
+            node->depth = bmhd->bmh_Depth;
+            node->bitmap = NULL;
+
+            // if we are asked to display a hi/truecolor image on a CLUT screen, then we
+            // let datatypes.library do the dirty dithering work
+            if(node->depth > 8 && GetBitMapAttr(scr->RastPort.BitMap, BMA_DEPTH) <= 8)
+              node->depth = 8;
+
+            // The lower line should be used for 24bit images as well.
+            // Unfortunately this doesn't give the desired result on OS4, so
+            // we restrict this to 32bit image until we have a solution.
+            #if defined(__amigaos4__)
+            #warning fix me for 24bit
+            if(node->depth == 32 && node->pixelArray == NULL)
+            #else
+            if(node->depth > 8 && node->pixelArray == NULL)
+            #endif
+            {
+              node->bytesPerPixel = node->depth / 8;
+              node->bytesPerRow = node->width * node->bytesPerPixel;
+              node->pixelFormat = (node->depth == 32) ? PBPAFMT_ARGB : PBPAFMT_RGB;
+
+              if((node->pixelArray = malloc(node->bytesPerRow * node->height)) != NULL)
+              {
+                struct pdtBlitPixelArray pbpa;
+
+                memset(&pbpa, 0, sizeof(struct pdtBlitPixelArray));
+
+                pbpa.MethodID = PDTM_READPIXELARRAY;
+                pbpa.pbpa_PixelData = node->pixelArray;
+                pbpa.pbpa_PixelFormat = node->pixelFormat;
+                pbpa.pbpa_PixelArrayMod = node->bytesPerRow;
+                pbpa.pbpa_Left = 0;
+                pbpa.pbpa_Top = 0;
+                pbpa.pbpa_Width = node->width;
+                pbpa.pbpa_Height = node->height;
+
+                DoMethodA(node->dt_obj, (Msg)(void *)&pbpa);
+              }
+            }
+
+            if(node->pixelArray == NULL)
+            {
+              node->bytesPerPixel = 1;
+              node->bytesPerRow = node->width;
+              node->pixelFormat = PBPAFMT_LUT8;
+
+              GetDTAttrs(node->dt_obj, PDTA_DestBitMap, &node->bitmap, TAG_DONE);
+              if(node->bitmap == NULL)
+                GetDTAttrs(node->dt_obj, PDTA_BitMap, &node->bitmap, TAG_DONE);
+            }
           }
           else
             W(DBF_IMAGE, "couldn't find BitMap header of file '%s' for image '%s'", node->filename, id);

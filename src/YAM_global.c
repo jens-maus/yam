@@ -167,12 +167,13 @@ struct Library* GfxBase           = NULL;
 struct Library* LayersBase        = NULL;
 struct Library* DiskfontBase      = NULL;
 struct Library* CodesetsBase      = NULL;
+struct Library* CyberGfxBase      = NULL;
 #if !defined(__NEWLIB__)
 struct Library* UtilityBase       = NULL;
 #endif
 #if defined(__amigaos4__)
-struct Library* ApplicationBase = NULL; // application.library
-struct Library* TimezoneBase    = NULL; // timezone.library
+struct Library* ApplicationBase   = NULL; // application.library
+struct Library* TimezoneBase      = NULL; // timezone.library
 #endif
 
 /* AmigaOS4 style interfaces */
@@ -196,6 +197,7 @@ struct GraphicsIFace*     IGraphics     = NULL;
 struct LayersIFace*       ILayers       = NULL;
 struct DiskfontIFace*     IDiskfont     = NULL;
 struct CodesetsIFace*     ICodesets     = NULL;
+struct CyberGfxIFace*     ICyberGfx     = NULL;
 struct ApplicationIFace*  IApplication  = NULL;
 struct TimezoneIFace*     ITimezone     = NULL;
 #if !defined(__NEWLIB__)

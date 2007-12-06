@@ -11,6 +11,8 @@ $URL$
     script doesn't take any parameters. This fixes bug #1845233.
   * YAM_COs.c: restoring the configuration after having changed some scripts
     now properly refreshes the script listview. This fixes bug #1845235.
+  * misc: added alpha channel support for hi/truecolor images, like the example
+    AISS theme. This is not yet perfect, but at least it is a beginning...
 
 2007-12-05  Jens Langner <Jens.Langner@light-speed.de>
 

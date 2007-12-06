@@ -31,9 +31,15 @@
 #include "ImageCache.h"
 #include "ImageArea_cl.h"
 
+#if defined(__amigaos4__)
+#include <graphics/blitattr.h>
+#else
+#endif
+#include <cybergraphx/cybergraphics.h>
 #include <proto/datatypes.h>
 #include <proto/icon.h>
 #include <proto/graphics.h>
+#include <proto/cybergraphics.h>
 
 #include "Debug.h"
 
@@ -616,18 +622,62 @@ OVERLOAD(MUIM_Draw)
     else
     {
       Object *dt_obj = data->imageNode.dt_obj;
-      struct BitMap *bitmap = NULL;
-      int imgWidth = data->imageNode.width;
-      int imgHeight = data->imageNode.height;
 
-      // try to get the bitmap first via PDTA_DestBitMap and
-      // otherwise with PDTA_BitMap
-      GetDTAttrs(dt_obj, PDTA_DestBitMap, &bitmap, TAG_DONE);
-      if(bitmap == NULL)
-        GetDTAttrs(dt_obj, PDTA_BitMap, &bitmap, TAG_DONE);
-
+      // blit the (A)RGB data if we retrieved them successfully.
+      if(data->imageNode.pixelArray != NULL)
+      {
+        #if defined(__amigaos4__)
+        BltBitMapTags(BLITA_Source, data->imageNode.pixelArray,
+                      BLITA_Dest, _rp(obj),
+                      BLITA_SrcX, 0,
+                      BLITA_SrcY, 0,
+                      BLITA_DestX, _left(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
+                      BLITA_DestY, _top(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
+                      BLITA_Width, data->imageNode.width,
+                      BLITA_Height, data->imageNode.height,
+                      BLITA_SrcType, (data->imageNode.depth == 32) ? BLITT_ARGB32 : BLITT_RGB24,
+                      BLITA_DestType, BLITT_RASTPORT,
+                      BLITA_SrcBytesPerRow, data->imageNode.bytesPerRow,
+                      BLITA_UseSrcAlpha, TRUE,
+                      TAG_DONE);
+        #elif defined(__MORPHOS__)
+        if(data->imageNode.depth == 32)
+          WritePixelArrayAlpha(data->imageNode.pixelArray,
+                               0,
+                               0,
+                               data->imageNode.bytesPerPixel,
+                               _rp(obj),
+                               _left(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
+                               _top(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
+                               data->imageNode.width,
+                               data->imageNode.height,
+                               0xffffffff);
+        else
+          WritePixelArray(data->imageNode.pixelArray,
+                          0,
+                          0,
+                          data->imageNode.bytesPerPixel,
+                          _rp(obj),
+                          _left(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
+                          _top(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
+                          data->imageNode.width,
+                          data->imageNode.height,
+                          RECTFMT_RGB);
+        #else
+        WritePixelArray(data->imageNode.pixelArray,
+                        0,
+                        0,
+                        data->imageNode.bytesPerPixel,
+                        _rp(obj),
+                        _left(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
+                        _top(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
+                        data->imageNode.width,
+                        data->imageNode.height,
+                        (data->imageNode.depth == 32) ? RECTFMT_ARGB : RECTFMT_RGB);
+        #endif
+      }
       // blit the bitmap if we retrieved it successfully.
-      if(bitmap)
+      else if(data->imageNode.bitmap != NULL)
       {
         APTR mask = NULL;
 
@@ -637,15 +687,15 @@ OVERLOAD(MUIM_Draw)
         {
           // we use an own BltMaskBitMapRastPort() implemenation to also support
           // interleaved images.
-          MyBltMaskBitMapRastPort(bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - imgWidth)/2,
-                                                    _mtop(obj) + (_mheight(obj) - data->label_height - imgHeight)/2,
-                                                    imgWidth, imgHeight, (ABC|ABNC|ANBC), (PLANEPTR)mask);
+          MyBltMaskBitMapRastPort(data->imageNode.bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - data->imageNode.width)/2,
+                                                    _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
+                                                    data->imageNode.width, data->imageNode.height, (ABC|ABNC|ANBC), (PLANEPTR)mask);
         }
         else
         {
-          BltBitMapRastPort(bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - imgWidth)/2,
-                                              _mtop(obj) + (_mheight(obj) - data->label_height - imgHeight)/2,
-                                              imgWidth, imgHeight, (ABC|ABNC));
+          BltBitMapRastPort(data->imageNode.bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - data->imageNode.width)/2,
+                                              _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
+                                              data->imageNode.width, data->imageNode.height, (ABC|ABNC));
         }
       }
 

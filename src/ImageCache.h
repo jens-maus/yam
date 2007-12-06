@@ -45,9 +45,15 @@ struct ImageCacheNode
   Object *dt_obj;              // the datatypes object
   struct Screen *screen;       // pointer to the screen the image is mapped to
   int openCount;               // counter how often the image is now opened/used
+  APTR pixelArray;
+  ULONG pixelFormat;
+  struct BitMap *bitmap;
 
   ULONG width;
   ULONG height;
+  ULONG depth;
+  ULONG bytesPerPixel;
+  ULONG bytesPerRow;
 
   BOOL delayedDispose;         // do we wish to remove the image from the cache if openCount reaches zero?
 };
