@@ -2334,20 +2334,31 @@ void CO_SetConfig(void)
 
     case cp_AddressBook:
     {
-      setstring   (gui->ST_GALLDIR   ,CE->GalleryDir);
-      setstring   (gui->ST_PHOTOURL  ,CE->MyPictureURL);
-      setstring   (gui->ST_NEWGROUP  ,CE->NewAddrGroup);
+      setstring(gui->ST_GALLDIR, CE->GalleryDir);
+      setstring(gui->ST_PHOTOURL, CE->MyPictureURL);
+      setstring(gui->ST_NEWGROUP, CE->NewAddrGroup);
       set(gui->ST_NEWGROUP, MUIA_Disabled, CE->AddToAddrbook == 0);
-      setstring   (gui->ST_PROXY     ,CE->ProxyServer);
-      setcycle    (gui->CY_ATAB      ,CE->AddToAddrbook);
-      setcheckmark(gui->CH_ADDINFO   ,CE->AddMyInfo);
-      for(i = 0; i < ABCOLNUM; i++) setcheckmark(gui->CH_ACOLS[i], (CE->AddrbookCols & (1<<i)) != 0);
+      setstring(gui->ST_PROXY, CE->ProxyServer);
+      setcycle(gui->CY_ATAB, CE->AddToAddrbook);
+      setcheckmark(gui->CH_ADDINFO, CE->AddMyInfo);
+      for(i = 0; i < ABCOLNUM; i++)
+        setcheckmark(gui->CH_ACOLS[i], (CE->AddrbookCols & (1<<i)) != 0);
     }
     break;
 
     case cp_Scripts:
     {
-      set(G->CO->GUI.LV_REXX, MUIA_NList_Active, 0);
+      int act = xget(gui->LV_REXX, MUIA_NList_Active);
+      struct RxHook *rh = &(CE->RX[act]);
+
+      nnset(gui->ST_RXNAME, MUIA_String_Contents, act < 10 ? rh->Name : "");
+      nnset(gui->ST_SCRIPT, MUIA_String_Contents, rh->Script);
+      nnset(gui->CY_ISADOS, MUIA_Cycle_Active, rh->IsAmigaDOS ? 1 : 0);
+      nnset(gui->CH_CONSOLE, MUIA_Selected, rh->UseConsole);
+      nnset(gui->CH_WAITTERM, MUIA_Selected, rh->WaitTerm);
+      set(gui->ST_RXNAME, MUIA_Disabled, act >= 10);
+      set(gui->LV_REXX, MUIA_NList_Active, 0);
+      DoMethod(gui->LV_REXX, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
     }
     break;
 

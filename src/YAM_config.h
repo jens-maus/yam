@@ -216,6 +216,7 @@ struct CO_GUIData
   Object *LV_REXX;
   Object *ST_RXNAME;
   Object *ST_SCRIPT;
+  Object *PO_SCRIPT;
   Object *CY_ISADOS;
   Object *CH_CONSOLE;
   Object *CH_WAITTERM;

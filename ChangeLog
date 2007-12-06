@@ -9,6 +9,8 @@ $URL$
 
   * YAM_COg.c: the popup button for the scripts will now be disabled if the
     script doesn't take any parameters. This fixes bug #1845233.
+  * YAM_COs.c: restoring the configuration after having changed some scripts
+    now properly refreshes the script listview. This fixes bug #1845235.
 
 2007-12-05  Jens Langner <Jens.Langner@light-speed.de>
 
