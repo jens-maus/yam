@@ -8531,14 +8531,17 @@ REQUEST
 
 @{b}EXAMPLE@{ub}
          /* Enable result codes */
-
          OPTIONS RESULTS
 
-         /* Open a custom requester */
-
+         /* Prepare the text for our requester.
+          * Here we have to escape the single '*' (asterisk) via
+          * an additional asterisk sign because an asterisk is 
+          * a reserved character for ARexx itself
+          */
          body = '"Isn't YAM just great?"'
-         gadgets = '"*_Yeah!|_No way, Outlook rules!|_What is YAM?"'
+         gadgets = '"**_Yeah!|_No way, Outlook rules!|_What is YAM?"'
 
+         /* Open a custom requester */
          REQUEST body gadgets
 
 @{b}BUGS@{ub}
@@ -8615,7 +8618,7 @@ REQUESTSTRING
                   stored
      BODY/A     - a string containing the body of the requester
      STRING/K   - optional, text string used by default
-     SECRET/S   - force characters to appear as asterisks ("*")
+     SECRET/S   - force characters to appear as asterisks ('*')
 
 @{b}RETURNS@{ub}
      VAR          - info returned by the query
