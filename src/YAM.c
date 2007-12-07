@@ -2370,6 +2370,7 @@ static void InitBeforeLogin(BOOL hidden)
     Abort(NULL);
 
   // load&initialize all required libraries
+  // first all system relevant libraries
   INITLIB("graphics.library",      36, 0, &GfxBase,       "main", &IGraphics,  TRUE,  NULL);
   INITLIB("layers.library",        39, 0, &LayersBase,    "main", &ILayers,    TRUE,  NULL);
   INITLIB("workbench.library",     36, 0, &WorkbenchBase, "main", &IWorkbench, TRUE,  NULL);
@@ -2377,14 +2378,17 @@ static void InitBeforeLogin(BOOL hidden)
   INITLIB("iffparse.library",      36, 0, &IFFParseBase,  "main", &IIFFParse,  TRUE,  NULL);
   INITLIB(RXSNAME,                 36, 0, &RexxSysBase,   "main", &IRexxSys,   TRUE,  NULL);
   INITLIB("datatypes.library",     39, 0, &DataTypesBase, "main", &IDataTypes, TRUE,  NULL);
+
+  // then all third-party libraries (either as mandatory or non-mandatory)
+  INITLIB("cybergraphics.library", 40, 0, &CyberGfxBase,  "main", &ICyberGfx,  FALSE, NULL);
+  INITLIB("muimaster.library",     19, 0, &MUIMasterBase, "main", &IMUIMaster, TRUE, "http://www.sasg.com/");
+
   // openurl.library has a homepage, but providing that homepage without having OpenURL
   // installed would result in a paradoxon, because InitLib() would provide a button
   // to visit the URL which in turn requires OpenURL to be installed...
   // Hence we try to open openurl.library without
   INITLIB("openurl.library",        1, 0, &OpenURLBase,   "main", &IOpenURL,   FALSE, NULL);
-  INITLIB("muimaster.library",     19, 0, &MUIMasterBase, "main", &IMUIMaster, TRUE, "http://www.sasg.com/");
   INITLIB("codesets.library",       6, 4, &CodesetsBase,  "main", &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
-  INITLIB("cybergraphics.library", 40, 0, &CyberGfxBase,  "main", &ICyberGfx,  TRUE, NULL);
 
   // we check for the amisslmaster.library v3 accordingly
   if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", &IAmiSSLMaster, FALSE, NULL))
