@@ -424,6 +424,8 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
               }
             }
 
+            // get the normal bitmaps supplied by datatypes.library if either this is
+            // an 8bit image or we could not get the hi/truecolor pixel data
             if(node->pixelArray == NULL)
             {
               node->bytesPerPixel = 1;

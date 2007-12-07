@@ -621,8 +621,6 @@ OVERLOAD(MUIM_Draw)
     }
     else
     {
-      Object *dt_obj = data->imageNode.dt_obj;
-
       // blit the (A)RGB data if we retrieved them successfully.
       if(data->imageNode.pixelArray != NULL)
       {
@@ -645,7 +643,7 @@ OVERLOAD(MUIM_Draw)
           WritePixelArrayAlpha(data->imageNode.pixelArray,
                                0,
                                0,
-                               data->imageNode.bytesPerPixel,
+                               data->imageNode.bytesPerRow,
                                _rp(obj),
                                _left(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
                                _top(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
@@ -656,7 +654,7 @@ OVERLOAD(MUIM_Draw)
           WritePixelArray(data->imageNode.pixelArray,
                           0,
                           0,
-                          data->imageNode.bytesPerPixel,
+                          data->imageNode.bytesPerRow,
                           _rp(obj),
                           _left(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
                           _top(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
@@ -667,7 +665,7 @@ OVERLOAD(MUIM_Draw)
         WritePixelArray(data->imageNode.pixelArray,
                         0,
                         0,
-                        data->imageNode.bytesPerPixel,
+                        data->imageNode.bytesPerRow,
                         _rp(obj),
                         _left(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
                         _top(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
@@ -679,23 +677,23 @@ OVERLOAD(MUIM_Draw)
       // blit the bitmap if we retrieved it successfully.
       else if(data->imageNode.bitmap != NULL)
       {
-        APTR mask = NULL;
+        PLANEPTR mask = NULL;
 
         // try to obtain a mask for e.g. transparency display of an image
-        GetDTAttrs(dt_obj, PDTA_MaskPlane, &mask, TAG_DONE);
-        if(mask)
+        GetDTAttrs(data->imageNode.dt_obj, PDTA_MaskPlane, &mask, TAG_DONE);
+        if(mask != NULL)
         {
           // we use an own BltMaskBitMapRastPort() implemenation to also support
           // interleaved images.
           MyBltMaskBitMapRastPort(data->imageNode.bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - data->imageNode.width)/2,
-                                                    _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
-                                                    data->imageNode.width, data->imageNode.height, (ABC|ABNC|ANBC), (PLANEPTR)mask);
+                                                                    _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
+                                                                    data->imageNode.width, data->imageNode.height, (ABC|ABNC|ANBC), mask);
         }
         else
         {
           BltBitMapRastPort(data->imageNode.bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - data->imageNode.width)/2,
-                                              _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
-                                              data->imageNode.width, data->imageNode.height, (ABC|ABNC));
+                                                              _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
+                                                              data->imageNode.width, data->imageNode.height, (ABC|ABNC));
         }
       }
 

@@ -14,12 +14,12 @@ $URL$
 2007-12-07  Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: forgot to free the 24/32bit pixel data.
+  * ImageArea.c: fixed the wrong hi/truecolor blitting under OS3 and MOS.
 
 2007-12-07  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: french translation update according to latest changes.
 
->>>>>>> .r3572
 2007-12-06  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: Updated according to changes.
