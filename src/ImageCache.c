@@ -483,10 +483,10 @@ void ReleaseImage(const char *id, BOOL dispose)
     if(node->openCount > 0)
     {
       node->openCount--;
-      D(DBF_IMAGE, "reduced open count of image '%s' to %ld", id, node->openCount);
+      D(DBF_IMAGE, "reduced open count of image '%s' (%s) to %ld", id, node->filename, node->openCount);
     }
     else if(dispose == FALSE)
-      E(DBF_IMAGE, "couldn't reduce open count (%ld) of image '%s'", node->openCount, id);
+      E(DBF_IMAGE, "couldn't reduce open count (%ld) of image '%s' (%s)", node->openCount, id, node->filename);
 
     if(node->openCount == 0)
     {

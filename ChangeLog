@@ -7,6 +7,10 @@ $URL$
 
 2007-12-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ImageArea.c, ImageCache.c: images with an alpha channel were not able
+    to be properly scaled with their alpha channel. Now PDTM_SCALE is used
+    for those images instead of BitMapScale(). This seems to fix the
+    issue. However, for that to work, picture.datatype v45+ is required.
   * ImageCache.c: for extracting the alpha channel data from the images
     we first check if the image actually has an alpha mask via the
     BitMapHeader structure. This should fix the issues with 24bit image
