@@ -7,6 +7,8 @@ $URL$
 
 2007-12-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_EA.c: fixed a potential crash bug where due to a missing ABEntry
+    a photo can't be set to a new addressbook item.
   * ImageArea.c, ImageCache.c: images with an alpha channel were not able
     to be properly scaled with their alpha channel. Now PDTM_SCALE is used
     for those images instead of BitMapScale(). This seems to fix the

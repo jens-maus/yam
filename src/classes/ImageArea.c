@@ -525,17 +525,22 @@ OVERLOAD(OM_SET)
 
         Image_Unload(data);
 
+        if(newId == NULL || newId[0] != '\0')
+          ReleaseImage(data->id, TRUE);
+
         if(data->id != NULL)
         {
           free(data->id);
           data->id = NULL;
         }
 
-        if(newId != NULL)
+        if(newId != NULL && newId[0] != '\0')
+        {
           data->id = strdup(newId);
 
-        // remember to relayout the image
-        relayout = TRUE;
+          // remember to relayout the image
+          relayout = TRUE;
+        }
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -574,18 +579,7 @@ OVERLOAD(OM_SET)
      data->setup == TRUE &&
      Image_Load(data, obj) == TRUE)
   {
-    Object *parent;
-
     Image_Scale(data);
-
-    if((parent = (Object*)xget(obj, MUIA_Parent)))
-    {
-      // New size if needed
-      if(DoMethod(parent,MUIM_Group_InitChange))
-        DoMethod(parent,MUIM_Group_ExitChange);
-
-      MUI_Redraw(obj, MADF_DRAWOBJECT);
-    }
   }
 
   result = DoSuperMethodA(cl, obj, msg);

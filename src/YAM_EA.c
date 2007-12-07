@@ -459,7 +459,7 @@ static void EA_SetPhoto(int winnum, char *fname)
       }
 
       // set the new attributes
-      xset(gui->BC_PHOTO, MUIA_ImageArea_ID,       G->EA[winnum]->ABEntry->Address,
+      xset(gui->BC_PHOTO, MUIA_ImageArea_ID,       G->EA[winnum]->ABEntry != NULL ? G->EA[winnum]->ABEntry->Address : "dummy",
                           MUIA_ImageArea_Filename, fname);
 
       // and force a cleanup/setup pair
