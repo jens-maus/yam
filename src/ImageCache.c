@@ -394,30 +394,33 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
             // The lower line should be used for 24bit images as well.
             // Unfortunately this doesn't give the desired result on OS4, so
             // we restrict this to 32bit image until we have a solution.
-            #if defined(__amigaos4__)
-            #warning fix me for 24bit
-            if(node->depth == 32 && node->pixelArray == NULL && CyberGfxBase != NULL)
-            #elif defined(__MORPHOS__)
-            if(node->depth > 8 && node->pixelArray == NULL && CyberGfxBase != NULL)
-            #else
-            // OS3 cannot handle the alpha channel properly
-            if(FALSE)
-            #endif
+            if(CyberGfxBase != NULL && node->pixelArray == NULL)
             {
-              node->bytesPerPixel = node->depth / 8;
-              node->bytesPerRow = node->width * node->bytesPerPixel;
-              node->pixelFormat = (node->depth == 32) ? PBPAFMT_ARGB : PBPAFMT_RGB;
-
-              if((node->pixelArray = AllocVecPooled(G->SharedMemPool, node->bytesPerRow * node->height)) != NULL)
+              // check if the bitmap may have alpha channel data or not.
+              if(node->depth > 8 && bmhd->bmh_Masking == mskHasAlpha)
               {
-                // perform a PDTM_READPIXELARRAY operation
-                // for writing the image data of the image in our pixelArray
-                if(DoMethod(node->dt_obj, PDTM_READPIXELARRAY, node->pixelArray, node->pixelFormat, node->bytesPerRow,
-                                                               0, 0, node->width, node->height) == FALSE)
+                node->bytesPerPixel = node->depth / 8;
+                node->bytesPerRow = node->width * node->bytesPerPixel;
+                node->pixelFormat = (node->depth == 32) ? PBPAFMT_ARGB : PBPAFMT_RGBA;
+
+                if((node->pixelArray = AllocVecPooled(G->SharedMemPool, node->bytesPerRow * node->height)) != NULL)
                 {
-                  W(DBF_IMAGE, "PDTM_READPIXELARRAY of image '%s' failed!", node->id);
+                  // perform a PDTM_READPIXELARRAY operation
+                  // for writing the image data of the image in our pixelArray
+                  if(DoMethod(node->dt_obj, PDTM_READPIXELARRAY, node->pixelArray, node->pixelFormat, node->bytesPerRow,
+                                                                 0, 0, node->width, node->height) == FALSE)
+                  {
+                    W(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' with depth %ld (%ld) failed!", node->id, node->depth, bmhd->bmh_Masking);
+
+                    FreeVecPooled(G->SharedMemPool, node->pixelArray);
+                    node->pixelArray = NULL;
+                  }
+                  else
+                    D(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' with depth %ld (%ld) succeeded", node->id, node->depth, bmhd->bmh_Masking);
                 }
               }
+              else
+                D(DBF_IMAGE, "PDTM_READPIXELARRAY not required - no alpha data in image '%s' (%ld/%ld)", node->id, node->depth, bmhd->bmh_Masking);
             }
 
             // get the normal bitmaps supplied by datatypes.library if either this is
@@ -432,7 +435,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
 
             // get the image bitmap and mask for transparency display of the image
             GetDTAttrs(node->dt_obj, PDTA_DestBitMap, &node->bitmap,
-                                     PDTA_MaskPlane, &node->mask,
+                                     PDTA_MaskPlane,  &node->mask,
                                      TAG_DONE);
 
             if(node->bitmap == NULL)

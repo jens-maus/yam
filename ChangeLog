@@ -7,6 +7,10 @@ $URL$
 
 2007-12-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ImageCache.c: for extracting the alpha channel data from the images
+    we first check if the image actually has an alpha mask via the
+    BitMapHeader structure. This should fix the issues with 24bit image
+    data on AmigaOS4 and other systems.
   * ImageArea.c, ImageCache, AttachmentImage.c, YAM_UT.c: on AmigaOS4 we
     now use BltBitMapTags() for all blit operations rather than using our
     workaround function MyBltMaskBitMapRastPort() function. In addition,
