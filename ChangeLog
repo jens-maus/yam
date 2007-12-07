@@ -18,6 +18,8 @@ $URL$
 
 2007-12-07  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: temporarily disabled alpha channel support for OS3 again, as
+    this currently seems to be not possible to handle reliably.
   * ImageArea.c, ImageCache.c: fixed the wrong user image drawing which could
     paint the image over the object's borders.
   * ImageArea.c: fixed the wrong hi/truecolor blitting under OS3 and MOS.

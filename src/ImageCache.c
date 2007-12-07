@@ -270,7 +270,7 @@ static enum HashTableOperator DeleteImageCacheNode(UNUSED struct HashTable *tabl
 
   if(node->pixelArray != NULL)
   {
-    free(node->pixelArray);
+    FreeVecPooled(G->SharedMemPool, node->pixelArray);
     node->pixelArray = NULL;
   }
 
@@ -397,15 +397,18 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
             #if defined(__amigaos4__)
             #warning fix me for 24bit
             if(node->depth == 32 && node->pixelArray == NULL && CyberGfxBase != NULL)
-            #else
+            #elif defined(__MORPHOS__)
             if(node->depth > 8 && node->pixelArray == NULL && CyberGfxBase != NULL)
+            #else
+            // OS3 cannot handle the alpha channel properly
+            if(FALSE)
             #endif
             {
               node->bytesPerPixel = node->depth / 8;
               node->bytesPerRow = node->width * node->bytesPerPixel;
               node->pixelFormat = (node->depth == 32) ? PBPAFMT_ARGB : PBPAFMT_RGB;
 
-              if((node->pixelArray = malloc(node->bytesPerRow * node->height)) != NULL)
+              if((node->pixelArray = AllocVecPooled(G->SharedMemPool, node->bytesPerRow * node->height)) != NULL)
               {
                 struct pdtBlitPixelArray pbpa;
 
@@ -513,7 +516,7 @@ void ReleaseImage(const char *id, BOOL dispose)
 
         if(node->pixelArray != NULL)
         {
-          free(node->pixelArray);
+          FreeVecPooled(G->SharedMemPool, node->pixelArray);
           node->pixelArray = NULL;
         }
         // node->id will be freed by HashTableRawRemove()
