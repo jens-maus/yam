@@ -76,6 +76,27 @@ struct Data
                                   End
 */
 
+/* Defines */
+/// WritePixelArrayAlpha
+#if defined(__MORPHOS__)
+#ifndef WritePixelArrayAlpha
+#define WritePixelArrayAlpha(__p0, __p1, __p2, __p3, __p4, __p5, __p6, __p7, __p8, __p9) \
+  LP10(216, ULONG , WritePixelArrayAlpha, \
+    APTR , __p0, a0, \
+    UWORD , __p1, d0, \
+    UWORD , __p2, d1, \
+    UWORD , __p3, d2, \
+    struct RastPort *, __p4, a1, \
+    UWORD , __p5, d3, \
+    UWORD , __p6, d4, \
+    UWORD , __p7, d5, \
+    UWORD , __p8, d6, \
+    ULONG , __p9, d7, \
+    , CYBERGRAPHICS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+#endif
+#endif
+///
+
 /* Private Functions */
 /// Image_Load
 // loads an image via our datatype methods

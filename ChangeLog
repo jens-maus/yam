@@ -7,6 +7,9 @@ $URL$
 
 2007-12-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ImageArea.c: added WritePixelArrayAlpha() stub for the MorphOS compile
+    because that libcall definition doesn't seem to be part of the MOS
+    SDK itself.
   * ReadWindow.c: fixed bug #1845068 where the "Set status to" submenu
     entry was setup as a top-level MenuObject rather than a MenuitemObject
     which in fact seem to have caused a graphical glitch on OS3 systems.
