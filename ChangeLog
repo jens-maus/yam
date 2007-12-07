@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-07  Jens Langner <Jens.Langner@light-speed.de>
+
+  * ReadWindow.c: fixed bug #1845068 where the "Set status to" submenu
+    entry was setup as a top-level MenuObject rather than a MenuitemObject
+    which in fact seem to have caused a graphical glitch on OS3 systems.
+
 2007-12-07  Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: forgot to free the 24/32bit pixel data.
@@ -13,6 +19,7 @@ $URL$
 
   * locale/francais.ct: french translation update according to latest changes.
 
+>>>>>>> .r3572
 2007-12-06  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: Updated according to changes.

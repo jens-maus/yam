@@ -256,7 +256,7 @@ OVERLOAD(OM_NEW)
       MenuChild, data->MI_SEARCHAGAIN = Menuitem(tr(MSG_RE_SEARCH_AGAIN), "G", TRUE, FALSE, RMEN_SEARCHAGAIN),
       MenuChild, MenuBarLabel,
       MenuChild, Menuitem(tr(MSG_MA_MGetAddress), "J", TRUE, FALSE, RMEN_SAVEADDR),
-      MenuChild, data->MI_STATUS = MenuObject, MUIA_Menu_Title, tr(MSG_MA_SetStatus),
+      MenuChild, data->MI_STATUS = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SetStatus),
         MenuChild, data->MI_TOMARKED = Menuitem(tr(MSG_MA_TOMARKED), ",", TRUE, FALSE, RMEN_TOMARKED),
         MenuChild, data->MI_TOUNMARKED = Menuitem(tr(MSG_MA_TOUNMARKED), ".", TRUE, FALSE, RMEN_TOUNMARKED),
         MenuChild, data->MI_TOUNREAD = Menuitem(tr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, RMEN_TOUNREAD),
