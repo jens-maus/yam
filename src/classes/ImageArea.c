@@ -24,7 +24,7 @@
  $Id$
 
  Superclass:  MUIC_Area
- Description: Class for loading/mainting datatype based images
+ Description: Class for loading/maintaining datatype based images
 
 ***************************************************************************/
 
@@ -149,9 +149,6 @@ static void Image_Unload(struct Data *data)
 // scale the image to the given size
 static void Image_Scale(struct Data *data)
 {
-  struct BitMap *orgBitMap = NULL;
-  struct BitMapHeader *bitMapHeader = NULL;
-
   ENTER();
 
   if(data->scaledBitMap != NULL)
@@ -160,20 +157,12 @@ static void Image_Scale(struct Data *data)
     data->scaledBitMap = NULL;
   }
 
-  GetDTAttrs(data->imageNode.dt_obj, PDTA_BitMapHeader, &bitMapHeader,
-                                     PDTA_DestBitMap,   &orgBitMap,
-                                     TAG_DONE);
-
-  // try another attribute if the other DestBitMap failed
-  if(orgBitMap == NULL)
-    GetDTAttrs(data->imageNode.dt_obj, PDTA_BitMap, &orgBitMap, TAG_DONE);
-
   // check if correctly obtained the header and if it is valid
-  if(orgBitMap != NULL && bitMapHeader != NULL && bitMapHeader->bmh_Depth > 0)
+  if(data->imageNode.bitmap != NULL && data->imageNode.depth > 0)
   {
     // make sure to scale down the image if maxHeight/maxWidth is specified
-    LONG scaleHeightDiff = bitMapHeader->bmh_Height - data->maxHeight;
-    LONG scaleWidthDiff  = bitMapHeader->bmh_Width - data->maxWidth;
+    LONG scaleHeightDiff = data->imageNode.height - data->maxHeight;
+    LONG scaleWidthDiff  = data->imageNode.width - data->maxWidth;
     LONG newWidth;
     LONG newHeight;
 
@@ -185,37 +174,37 @@ static void Image_Scale(struct Data *data)
       // make sure we are scaling proportional
       if(scaleHeightDiff > scaleWidthDiff)
       {
-        scaleFactor = (double)bitMapHeader->bmh_Width / (double)bitMapHeader->bmh_Height;
+        scaleFactor = (double)data->imageNode.width / (double)data->imageNode.height;
         newWidth = scaleFactor * data->maxHeight + 0.5; // roundup the value
         newHeight = data->maxHeight;
       }
       else
       {
-        scaleFactor = (double)bitMapHeader->bmh_Height / (double)bitMapHeader->bmh_Width;
+        scaleFactor = (double)data->imageNode.height / (double)data->imageNode.width;
         newWidth = data->maxWidth;
         newHeight = scaleFactor * data->maxWidth + 0.5; // roundup the value
       }
 
       // now we can allocate the new bitmap and scale it
       // if required. But we use BitMapScale() for all operations
-      if((data->scaledBitMap = AllocBitMap(newWidth, newHeight, bitMapHeader->bmh_Depth, BMF_CLEAR|BMF_MINPLANES, orgBitMap)) != NULL)
+      if((data->scaledBitMap = AllocBitMap(newWidth, newHeight, data->imageNode.depth, BMF_CLEAR|BMF_MINPLANES, data->imageNode.bitmap)) != NULL)
       {
         struct BitScaleArgs args;
 
-        args.bsa_SrcBitMap = orgBitMap;
+        args.bsa_SrcBitMap = data->imageNode.bitmap;
         args.bsa_DestBitMap = data->scaledBitMap;
         args.bsa_Flags = 0;
 
         args.bsa_SrcY = 0;
         args.bsa_DestY = 0;
 
-        args.bsa_SrcWidth = bitMapHeader->bmh_Width;
-        args.bsa_SrcHeight = bitMapHeader->bmh_Height;
+        args.bsa_SrcWidth = data->imageNode.width;
+        args.bsa_SrcHeight = data->imageNode.height;
 
-        args.bsa_XSrcFactor = bitMapHeader->bmh_Width;
+        args.bsa_XSrcFactor = data->imageNode.width;
         args.bsa_XDestFactor = newWidth;
 
-        args.bsa_YSrcFactor = bitMapHeader->bmh_Height;
+        args.bsa_YSrcFactor = data->imageNode.height;
         args.bsa_YDestFactor = newHeight;
 
         args.bsa_SrcX = 0;
@@ -228,8 +217,8 @@ static void Image_Scale(struct Data *data)
         data->scaledWidth  = args.bsa_DestWidth;
         data->scaledHeight = args.bsa_DestHeight;
 
-        D(DBF_IMAGE, "Scaled image in ImageArea (w/h) from %ld/%ld to %ld/%ld", bitMapHeader->bmh_Width,
-                                                                                bitMapHeader->bmh_Height,
+        D(DBF_IMAGE, "Scaled image in ImageArea (w/h) from %ld/%ld to %ld/%ld", data->imageNode.width,
+                                                                                data->imageNode.height,
                                                                                 data->scaledWidth,
                                                                                 data->scaledHeight);
       }
@@ -266,6 +255,9 @@ OVERLOAD(OM_NEW)
     data->free_vert = FALSE;
     data->free_horiz = FALSE;
     data->show_label = TRUE;
+    data->noMinHeight = FALSE;
+    data->maxHeight = 0;
+    data->maxWidth = 0;
 
     while((tag = NextTagItem(&tags)) != NULL)
     {
@@ -542,8 +534,8 @@ OVERLOAD(MUIM_AskMinMax)
 {
   GETDATA;
   struct MUI_MinMax *mi;
-  int minwidth;
-  int minheight;
+  ULONG minwidth;
+  ULONG minheight;
 
   ENTER();
 
@@ -574,7 +566,7 @@ OVERLOAD(MUIM_AskMinMax)
   if(data->label != NULL && data->show_label == TRUE)
   {
     struct RastPort rp;
-    int width;
+    ULONG width;
     char *str = data->label;
     char *uptr;
 
@@ -634,11 +626,11 @@ OVERLOAD(MUIM_Draw)
   {
     if(data->scaledBitMap != NULL)
     {
-      BltBitMapRastPort(data->scaledBitMap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - data->scaledWidth)/2,
-                                                      _mtop(obj) + (_mheight(obj) - data->label_height - data->scaledHeight)/2,
-                                                      data->scaledWidth, data->scaledHeight, (ABC|ABNC));
+      // don't enforce our scaled size but respect the objects size,
+      // which might be a little bit smaller
+      BltBitMapRastPort(data->scaledBitMap, 0, 0, rp, _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), (ABC|ABNC));
 
-      rel_y += data->scaledHeight;
+      rel_y += _mheight(obj);
     }
     else
     {
@@ -647,11 +639,11 @@ OVERLOAD(MUIM_Draw)
       {
         #if defined(__amigaos4__)
         BltBitMapTags(BLITA_Source, data->imageNode.pixelArray,
-                      BLITA_Dest, _rp(obj),
+                      BLITA_Dest, rp,
                       BLITA_SrcX, 0,
                       BLITA_SrcY, 0,
-                      BLITA_DestX, _left(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
-                      BLITA_DestY, _top(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
+                      BLITA_DestX, _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
+                      BLITA_DestY, _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
                       BLITA_Width, data->imageNode.width,
                       BLITA_Height, data->imageNode.height,
                       BLITA_SrcType, (data->imageNode.depth == 32) ? BLITT_ARGB32 : BLITT_RGB24,
@@ -665,9 +657,9 @@ OVERLOAD(MUIM_Draw)
                                0,
                                0,
                                data->imageNode.bytesPerRow,
-                               _rp(obj),
-                               _left(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
-                               _top(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
+                               rp,
+                               _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
+                               _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
                                data->imageNode.width,
                                data->imageNode.height,
                                0xffffffff);
@@ -676,9 +668,9 @@ OVERLOAD(MUIM_Draw)
                           0,
                           0,
                           data->imageNode.bytesPerRow,
-                          _rp(obj),
-                          _left(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
-                          _top(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
+                          rp,
+                          _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
+                          _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
                           data->imageNode.width,
                           data->imageNode.height,
                           RECTFMT_RGB);
@@ -687,9 +679,9 @@ OVERLOAD(MUIM_Draw)
                         0,
                         0,
                         data->imageNode.bytesPerRow,
-                        _rp(obj),
-                        _left(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
-                        _top(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
+                        rp,
+                        _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
+                        _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
                         data->imageNode.width,
                         data->imageNode.height,
                         (data->imageNode.depth == 32) ? RECTFMT_ARGB : RECTFMT_RGB);
@@ -698,17 +690,13 @@ OVERLOAD(MUIM_Draw)
       // blit the bitmap if we retrieved it successfully.
       else if(data->imageNode.bitmap != NULL)
       {
-        PLANEPTR mask = NULL;
-
-        // try to obtain a mask for e.g. transparency display of an image
-        GetDTAttrs(data->imageNode.dt_obj, PDTA_MaskPlane, &mask, TAG_DONE);
-        if(mask != NULL)
+        if(data->imageNode.mask != NULL)
         {
           // we use an own BltMaskBitMapRastPort() implemenation to also support
           // interleaved images.
           MyBltMaskBitMapRastPort(data->imageNode.bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - data->imageNode.width)/2,
                                                                     _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
-                                                                    data->imageNode.width, data->imageNode.height, (ABC|ABNC|ANBC), mask);
+                                                                    data->imageNode.width, data->imageNode.height, (ABC|ABNC|ANBC), data->imageNode.mask);
         }
         else
         {

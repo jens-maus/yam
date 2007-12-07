@@ -18,8 +18,10 @@ $URL$
 
 2007-12-07  Thore Böckelmann <tboeckel@gmx.de>
 
-  * ImageCache.c: forgot to free the 24/32bit pixel data.
+  * ImageArea.c, ImageCache.c: fixed the wrong user image drawing which could
+    paint the image over the object's borders.
   * ImageArea.c: fixed the wrong hi/truecolor blitting under OS3 and MOS.
+  * ImageCache.c: forgot to free the 24/32bit pixel data.
 
 2007-12-07  Alexandre Balaban <abalaban@free.fr>
 

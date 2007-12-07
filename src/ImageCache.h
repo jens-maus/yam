@@ -48,6 +48,7 @@ struct ImageCacheNode
   APTR pixelArray;
   ULONG pixelFormat;
   struct BitMap *bitmap;
+  PLANEPTR mask;
 
   ULONG width;
   ULONG height;

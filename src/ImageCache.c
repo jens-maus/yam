@@ -38,7 +38,7 @@
 #include <proto/intuition.h>
 #include <proto/graphics.h>
 #include <proto/muimaster.h>
-
+#include <proto/cybergraphics.h>
 
 #include "YAM.h"
 #include "YAM_locale.h"
@@ -396,9 +396,9 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
             // we restrict this to 32bit image until we have a solution.
             #if defined(__amigaos4__)
             #warning fix me for 24bit
-            if(node->depth == 32 && node->pixelArray == NULL)
+            if(node->depth == 32 && node->pixelArray == NULL && CyberGfxBase != NULL)
             #else
-            if(node->depth > 8 && node->pixelArray == NULL)
+            if(node->depth > 8 && node->pixelArray == NULL && CyberGfxBase != NULL)
             #endif
             {
               node->bytesPerPixel = node->depth / 8;
@@ -426,16 +426,20 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
 
             // get the normal bitmaps supplied by datatypes.library if either this is
             // an 8bit image or we could not get the hi/truecolor pixel data
-            if(node->pixelArray == NULL)
+            if(node->pixelArray == NULL || CyberGfxBase == NULL)
             {
               node->bytesPerPixel = 1;
               node->bytesPerRow = node->width;
               node->pixelFormat = PBPAFMT_LUT8;
-
-              GetDTAttrs(node->dt_obj, PDTA_DestBitMap, &node->bitmap, TAG_DONE);
-              if(node->bitmap == NULL)
-                GetDTAttrs(node->dt_obj, PDTA_BitMap, &node->bitmap, TAG_DONE);
+              node->pixelArray = NULL;
             }
+
+            // get the image bitmap and mask for transparency display of the image
+            GetDTAttrs(node->dt_obj, PDTA_DestBitMap, &node->bitmap,
+                                     PDTA_MaskPlane, &node->mask,
+                                     TAG_DONE);
+            if(node->bitmap == NULL)
+              GetDTAttrs(node->dt_obj, PDTA_BitMap, &node->bitmap, TAG_DONE);
           }
           else
             W(DBF_IMAGE, "couldn't find BitMap header of file '%s' for image '%s'", node->filename, id);
