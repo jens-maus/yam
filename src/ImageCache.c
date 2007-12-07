@@ -268,6 +268,12 @@ static enum HashTableOperator DeleteImageCacheNode(UNUSED struct HashTable *tabl
     node->filename = NULL;
   }
 
+  if(node->pixelArray != NULL)
+  {
+    free(node->pixelArray);
+    node->pixelArray = NULL;
+  }
+
   RETURN(htoNext);
   return htoNext;
 }
@@ -497,6 +503,12 @@ void ReleaseImage(const char *id, BOOL dispose)
         {
           free(node->filename);
           node->filename = NULL;
+        }
+
+        if(node->pixelArray != NULL)
+        {
+          free(node->pixelArray);
+          node->pixelArray = NULL;
         }
         // node->id will be freed by HashTableRawRemove()
 

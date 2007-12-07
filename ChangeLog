@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-07  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c: forgot to free the 24/32bit pixel data.
+
 2007-12-07  Alexandre Balaban <abalaban@free.fr>
 
   * locale/francais.ct: french translation update according to latest changes.
