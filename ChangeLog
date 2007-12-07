@@ -7,6 +7,11 @@ $URL$
 
 2007-12-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ImageArea.c, ImageCache, AttachmentImage.c, YAM_UT.c: on AmigaOS4 we
+    now use BltBitMapTags() for all blit operations rather than using our
+    workaround function MyBltMaskBitMapRastPort() function. In addition,
+    ImageArea should now also scale the bitmask in case a bitmask is
+    present in the source data.
   * doc/YAM_english.guide: fixed bug #1277804 where the example of the
     REQUEST arexx function was slightly wrong.
   * YAM.c: changed library init code to not force to require cybergraphics

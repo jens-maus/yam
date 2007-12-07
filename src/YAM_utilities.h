@@ -291,7 +291,6 @@ BOOL     ConvertCRLF(char *in, char *out, BOOL to);
 unsigned char ConvertKey(const struct IntuiMessage *imsg);
 BOOL     isChildOfGroup(Object *group, Object *child);
 BOOL     isChildOfFamily(Object *family, Object *child);
-void     MyBltMaskBitMapRastPort(struct BitMap *srcBitMap, LONG xSrc, LONG ySrc, struct RastPort *destRP, LONG xDest, LONG yDest, LONG xSize, LONG ySize, ULONG minterm, APTR bltMask);
 BOOL     CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh);
 BOOL     MoveFile(const char *oldname, const char *newname);
 char *   CreateFilename(const char * const file);
@@ -395,6 +394,10 @@ char *   UnquoteString(const char *s, BOOL new);
 int      ReadUInt32(FILE *stream, ULONG *value);
 int      WriteUInt32(FILE *stream, ULONG value);
 
+#if !defined(__amigaos4__)
+void MyBltMaskBitMapRastPort(struct BitMap *srcBitMap, LONG xSrc, LONG ySrc, struct RastPort *destRP, LONG xDest, LONG yDest, LONG xSize, LONG ySize, ULONG minterm, APTR bltMask);
+#endif
+
 // Here we define inline functions that should be inlined by
 // the compiler, if possible.
 
@@ -409,7 +412,6 @@ ULONG xget(Object *obj, const ULONG attr);
   #define xget(OBJ, ATTR) ({ULONG b=0; GetAttr(ATTR, OBJ, &b); b;})
 #endif
 ///
-
 /// xset()
 //  Sets attributes for a MUI object
 ULONG xset(Object *obj, ...);

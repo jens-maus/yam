@@ -33,8 +33,8 @@
 
 #if defined(__amigaos4__)
 #include <graphics/blitattr.h>
-#else
 #endif
+
 #include <cybergraphx/cybergraphics.h>
 #include <proto/datatypes.h>
 #include <proto/icon.h>
@@ -52,6 +52,7 @@ struct Data
 
   struct ImageCacheNode imageNode;
   struct BitMap *scaledBitMap;
+  struct BitMap *scaledBitMask;
 
   ULONG scaledWidth;
   ULONG scaledHeight;
@@ -157,30 +158,38 @@ static void Image_Scale(struct Data *data)
     data->scaledBitMap = NULL;
   }
 
+  if(data->scaledBitMask != NULL)
+  {
+    FreeBitMap(data->scaledBitMask);
+    data->scaledBitMask = NULL;
+  }
+
   // check if correctly obtained the header and if it is valid
   if(data->imageNode.bitmap != NULL && data->imageNode.depth > 0)
   {
     // make sure to scale down the image if maxHeight/maxWidth is specified
-    LONG scaleHeightDiff = data->imageNode.height - data->maxHeight;
-    LONG scaleWidthDiff  = data->imageNode.width - data->maxWidth;
-    LONG newWidth;
-    LONG newHeight;
+    ULONG oldWidth = data->imageNode.width;
+    ULONG oldHeight = data->imageNode.height;
+    LONG scaleHeightDiff = oldHeight - data->maxHeight;
+    LONG scaleWidthDiff  = oldWidth - data->maxWidth;
 
     if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
        (scaleWidthDiff > 0 && data->maxWidth > 0))
     {
+      ULONG newWidth;
+      ULONG newHeight;
       double scaleFactor;
 
       // make sure we are scaling proportional
       if(scaleHeightDiff > scaleWidthDiff)
       {
-        scaleFactor = (double)data->imageNode.width / (double)data->imageNode.height;
+        scaleFactor = (double)oldWidth / (double)oldHeight;
         newWidth = scaleFactor * data->maxHeight + 0.5; // roundup the value
         newHeight = data->maxHeight;
       }
       else
       {
-        scaleFactor = (double)data->imageNode.height / (double)data->imageNode.width;
+        scaleFactor = (double)oldHeight / (double)oldWidth;
         newWidth = data->maxWidth;
         newHeight = scaleFactor * data->maxWidth + 0.5; // roundup the value
       }
@@ -198,13 +207,13 @@ static void Image_Scale(struct Data *data)
         args.bsa_SrcY = 0;
         args.bsa_DestY = 0;
 
-        args.bsa_SrcWidth = data->imageNode.width;
-        args.bsa_SrcHeight = data->imageNode.height;
+        args.bsa_SrcWidth = oldWidth;
+        args.bsa_SrcHeight = oldHeight;
 
-        args.bsa_XSrcFactor = data->imageNode.width;
+        args.bsa_XSrcFactor = oldWidth;
         args.bsa_XDestFactor = newWidth;
 
-        args.bsa_YSrcFactor = data->imageNode.height;
+        args.bsa_YSrcFactor = oldHeight;
         args.bsa_YDestFactor = newHeight;
 
         args.bsa_SrcX = 0;
@@ -222,11 +231,52 @@ static void Image_Scale(struct Data *data)
                                                                                 data->scaledWidth,
                                                                                 data->scaledHeight);
       }
+
+      // now we can allocate the new bitmap for our scale mask
+      if(data->imageNode.mask != NULL &&
+         (data->scaledBitMask = AllocBitMap(newWidth, newHeight, 1L, BMF_CLEAR|BMF_MINPLANES, NULL)) != NULL)
+      {
+        struct BitScaleArgs args;
+        struct BitMap bm;
+
+        InitBitMap(&bm, 1L, oldWidth, oldHeight);
+        bm.Planes[0] = data->imageNode.mask;
+
+        args.bsa_SrcBitMap = &bm;
+        args.bsa_DestBitMap = data->scaledBitMask;
+        args.bsa_Flags = 0;
+
+        args.bsa_SrcY = 0;
+        args.bsa_DestY = 0;
+
+        args.bsa_SrcWidth = oldWidth;
+        args.bsa_SrcHeight = oldHeight;
+
+        args.bsa_XSrcFactor = oldWidth;
+        args.bsa_XDestFactor = newWidth;
+
+        args.bsa_YSrcFactor = oldHeight;
+        args.bsa_YDestFactor = newHeight;
+
+        args.bsa_SrcX = 0;
+        args.bsa_DestX = 0;
+
+        // scale the image now with the arguments set
+        BitMapScale(&args);
+
+        D(DBF_IMAGE, "Scaled transparency mask of image");
+      }
+      else
+      {
+        D(DBF_IMAGE, "no bitmask for image available, skipped scaling of bitmask");
+        data->scaledBitMask = NULL;
+      }
     }
     else
     {
       D(DBF_IMAGE, "no image scaling required");
       data->scaledBitMap = NULL;
+      data->scaledBitMask = NULL;
     }
   }
 
@@ -518,6 +568,12 @@ OVERLOAD(MUIM_Cleanup)
     data->scaledBitMap = NULL;
   }
 
+  if(data->scaledBitMask != NULL)
+  {
+    FreeBitMap(data->scaledBitMask);
+    data->scaledBitMask = NULL;
+  }
+
   Image_Unload(data);
 
   data->setup = FALSE;
@@ -626,9 +682,42 @@ OVERLOAD(MUIM_Draw)
   {
     if(data->scaledBitMap != NULL)
     {
-      // don't enforce our scaled size but respect the objects size,
-      // which might be a little bit smaller
-      BltBitMapRastPort(data->scaledBitMap, 0, 0, rp, _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), (ABC|ABNC));
+      // we use an own BltMaskBitMapRastPort() implemenation to also support
+      // interleaved images.
+      #if defined(__amigaos4__)
+      if(data->scaledBitMask != NULL)
+      {
+        BltBitMapTags(BLITA_Source,     data->scaledBitMap,
+                      BLITA_Dest,       rp,
+                      BLITA_SrcType,    BLITT_BITMAP,
+                      BLITA_DestType,   BLITT_RASTPORT,
+                      BLITA_DestX,      _mleft(obj),
+                      BLITA_DestY,      _mtop(obj),
+                      BLITA_Width,      _mwidth(obj),
+                      BLITA_Height,     _mheight(obj),
+                      BLITA_Minterm,    (ABC|ABNC|ANBC),
+                      BLITA_MaskPlane,  data->scaledBitMask->Planes[0],
+                      TAG_DONE);
+      }
+      else
+      {
+        BltBitMapTags(BLITA_Source,     data->scaledBitMap,
+                      BLITA_Dest,       rp,
+                      BLITA_SrcType,    BLITT_BITMAP,
+                      BLITA_DestType,   BLITT_RASTPORT,
+                      BLITA_DestX,      _mleft(obj),
+                      BLITA_DestY,      _mtop(obj),
+                      BLITA_Width,      _mwidth(obj),
+                      BLITA_Height,     _mheight(obj),
+                      BLITA_Minterm,    (ABC|ABNC),
+                      TAG_DONE);
+      }
+      #else
+      if(data->scaledBitMask != NULL)
+        MyBltMaskBitMapRastPort(data->scaledBitMap, 0, 0, rp, _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), (ABC|ABNC|ANBC), data->scaledBitMask->Planes[0]);
+      else
+        BltBitMapRastPort(data->scaledBitMap, 0, 0, rp, _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), (ABC|ABNC));
+      #endif
 
       rel_y += _mheight(obj);
     }
@@ -638,21 +727,20 @@ OVERLOAD(MUIM_Draw)
       if(data->imageNode.pixelArray != NULL)
       {
         #if defined(__amigaos4__)
-        BltBitMapTags(BLITA_Source, data->imageNode.pixelArray,
-                      BLITA_Dest, rp,
-                      BLITA_SrcX, 0,
-                      BLITA_SrcY, 0,
-                      BLITA_DestX, _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
-                      BLITA_DestY, _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
-                      BLITA_Width, data->imageNode.width,
-                      BLITA_Height, data->imageNode.height,
-                      BLITA_SrcType, (data->imageNode.depth == 32) ? BLITT_ARGB32 : BLITT_RGB24,
-                      BLITA_DestType, BLITT_RASTPORT,
+        BltBitMapTags(BLITA_Source,         data->imageNode.pixelArray,
+                      BLITA_Dest,           rp,
+                      BLITA_SrcType,        (data->imageNode.depth == 32) ? BLITT_ARGB32 : BLITT_RGB24,
+                      BLITA_DestType,       BLITT_RASTPORT,
+                      BLITA_DestX,          _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
+                      BLITA_DestY,          _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
+                      BLITA_Width,          data->imageNode.width,
+                      BLITA_Height,         data->imageNode.height,
                       BLITA_SrcBytesPerRow, data->imageNode.bytesPerRow,
-                      BLITA_UseSrcAlpha, TRUE,
+                      BLITA_UseSrcAlpha,    TRUE,
                       TAG_DONE);
         #elif defined(__MORPHOS__)
         if(data->imageNode.depth == 32)
+        {
           WritePixelArrayAlpha(data->imageNode.pixelArray,
                                0,
                                0,
@@ -663,7 +751,9 @@ OVERLOAD(MUIM_Draw)
                                data->imageNode.width,
                                data->imageNode.height,
                                0xffffffff);
+        }
         else
+        {
           WritePixelArray(data->imageNode.pixelArray,
                           0,
                           0,
@@ -674,6 +764,7 @@ OVERLOAD(MUIM_Draw)
                           data->imageNode.width,
                           data->imageNode.height,
                           RECTFMT_RGB);
+        }
         #else
         WritePixelArray(data->imageNode.pixelArray,
                         0,
@@ -690,6 +781,35 @@ OVERLOAD(MUIM_Draw)
       // blit the bitmap if we retrieved it successfully.
       else if(data->imageNode.bitmap != NULL)
       {
+        #if defined(__amigaos4__)
+        if(data->imageNode.mask != NULL)
+        {
+          BltBitMapTags(BLITA_Source,     data->imageNode.bitmap,
+                        BLITA_Dest,       rp,
+                        BLITA_SrcType,    BLITT_BITMAP,
+                        BLITA_DestType,   BLITT_RASTPORT,
+                        BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
+                        BLITA_DestY,      _mtop(obj)  + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
+                        BLITA_Width,      data->imageNode.width,
+                        BLITA_Height,     data->imageNode.height,
+                        BLITA_Minterm,    (ABC|ABNC|ANBC),
+                        BLITA_MaskPlane,  data->imageNode.mask,
+                        TAG_DONE);
+        }
+        else
+        {
+          BltBitMapTags(BLITA_Source,     data->imageNode.bitmap,
+                        BLITA_Dest,       rp,
+                        BLITA_SrcType,    BLITT_BITMAP,
+                        BLITA_DestType,   BLITT_RASTPORT,
+                        BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
+                        BLITA_DestY,      _mtop(obj)  + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
+                        BLITA_Width,      data->imageNode.width,
+                        BLITA_Height,     data->imageNode.height,
+                        BLITA_Minterm,    (ABC|ABNC),
+                        TAG_DONE);
+        }
+        #else
         if(data->imageNode.mask != NULL)
         {
           // we use an own BltMaskBitMapRastPort() implemenation to also support
@@ -704,6 +824,7 @@ OVERLOAD(MUIM_Draw)
                                                               _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
                                                               data->imageNode.width, data->imageNode.height, (ABC|ABNC));
         }
+        #endif
       }
 
       rel_y += data->imageNode.height;

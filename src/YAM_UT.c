@@ -5298,6 +5298,7 @@ BOOL isChildOfFamily(Object *family, Object *child)
 ///
 
 /*** GFX related ***/
+#if !defined(__amigaos4__)
 /// struct LayerHookMsg
 struct LayerHookMsg
 {
@@ -5389,6 +5390,7 @@ void MyBltMaskBitMapRastPort(struct BitMap *srcBitMap, LONG xSrc, LONG ySrc, str
 }
 
 ///
+#endif
 
 /*** Miscellaneous stuff ***/
 /// PGPGetPassPhrase

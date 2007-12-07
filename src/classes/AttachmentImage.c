@@ -38,6 +38,10 @@
 
 #include <workbench/icon.h>
 
+#if defined(__amigaos4__)
+#include <graphics/blitattr.h>
+#endif
+
 #include <proto/graphics.h>
 #include <proto/layers.h>
 #include <proto/icon.h>
@@ -773,12 +777,42 @@ OVERLOAD(MUIM_Draw)
 
     if(bitmap != NULL)
     {
+      #if defined(__amigaos4__)
+      if(bitmask != NULL)
+      {
+        BltBitMapTags(BLITA_Source,     bitmap,
+                      BLITA_Dest,       _rp(obj),
+                      BLITA_SrcType,    BLITT_BITMAP,
+                      BLITA_DestType,   BLITT_RASTPORT,
+                      BLITA_DestX,      _mleft(obj),
+                      BLITA_DestY,      _mtop(obj),
+                      BLITA_Width,      _mwidth(obj),
+                      BLITA_Height,     _mheight(obj),
+                      BLITA_Minterm,    (ABC|ABNC|ANBC),
+                      BLITA_MaskPlane,  bitmask->Planes[0],
+                      TAG_DONE);
+      }
+      else
+      {
+        BltBitMapTags(BLITA_Source,     bitmap,
+                      BLITA_Dest,       _rp(obj),
+                      BLITA_SrcType,    BLITT_BITMAP,
+                      BLITA_DestType,   BLITT_RASTPORT,
+                      BLITA_DestX,      _mleft(obj),
+                      BLITA_DestY,      _mtop(obj),
+                      BLITA_Width,      _mwidth(obj),
+                      BLITA_Height,     _mheight(obj),
+                      BLITA_Minterm,    (ABC|ABNC),
+                      TAG_DONE);
+      }
+      #else
       // we use an own BltMaskBitMapRastPort() implemenation to also support
       // interleaved images.
       if(bitmask != NULL)
         MyBltMaskBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), (ABC|ABNC|ANBC), bitmask->Planes[0]);
       else
         BltBitMapRastPort(bitmap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), (ABC|ABNC));
+      #endif
     }
   }
 

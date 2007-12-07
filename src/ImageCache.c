@@ -410,20 +410,13 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
 
               if((node->pixelArray = AllocVecPooled(G->SharedMemPool, node->bytesPerRow * node->height)) != NULL)
               {
-                struct pdtBlitPixelArray pbpa;
-
-                memset(&pbpa, 0, sizeof(struct pdtBlitPixelArray));
-
-                pbpa.MethodID = PDTM_READPIXELARRAY;
-                pbpa.pbpa_PixelData = node->pixelArray;
-                pbpa.pbpa_PixelFormat = node->pixelFormat;
-                pbpa.pbpa_PixelArrayMod = node->bytesPerRow;
-                pbpa.pbpa_Left = 0;
-                pbpa.pbpa_Top = 0;
-                pbpa.pbpa_Width = node->width;
-                pbpa.pbpa_Height = node->height;
-
-                DoMethodA(node->dt_obj, (Msg)(void *)&pbpa);
+                // perform a PDTM_READPIXELARRAY operation
+                // for writing the image data of the image in our pixelArray
+                if(DoMethod(node->dt_obj, PDTM_READPIXELARRAY, node->pixelArray, node->pixelFormat, node->bytesPerRow,
+                                                               0, 0, node->width, node->height) == FALSE)
+                {
+                  W(DBF_IMAGE, "PDTM_READPIXELARRAY of image '%s' failed!", node->id);
+                }
               }
             }
 
@@ -441,8 +434,12 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
             GetDTAttrs(node->dt_obj, PDTA_DestBitMap, &node->bitmap,
                                      PDTA_MaskPlane, &node->mask,
                                      TAG_DONE);
+
             if(node->bitmap == NULL)
               GetDTAttrs(node->dt_obj, PDTA_BitMap, &node->bitmap, TAG_DONE);
+
+            if(node->mask == NULL)
+              D(DBF_IMAGE, "no maskplane bitmask found for image '%s'", id);
           }
           else
             W(DBF_IMAGE, "couldn't find BitMap header of file '%s' for image '%s'", node->filename, id);
