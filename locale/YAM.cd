@@ -444,13 +444,10 @@ Please enter the password to unlock it:
 MSG_MA_ReplyReq (149//)
 The selected message has multiple recipients.\n\
 \n\
-Do you want to send the reply...
+You want to send the reply to...
 ;
 MSG_MA_ReplyReqOpt (150//)
-*to the\n\
-_sender|to the sender and\n\
-_all recipients|to the\n\
-_recipients|_Cancel
+*the _sender|sender and _all recipients|the _recipients|_Cancel
 ;
 MSG_MA_CompareReq (151//)
 Sender address (From) is \033b<%s>\033n, but\n\
@@ -552,7 +549,7 @@ MSG_MA_TBEdit (185//)
 _Edit
 ;
 MSG_MA_TBMove (186//)
-_Move
+_Move...
 ;
 MSG_MA_TBDelete (187//)
 De_lete
@@ -579,10 +576,10 @@ MSG_MA_TBFilter (194//)
 F_ilter
 ;
 MSG_MA_TBFind (195//)
-_Find
+_Find...
 ;
 MSG_MA_TBAddrBook (196//)
-A_book
+A. _book
 ;
 MSG_MA_TBConfig (197//)
 _Config
@@ -664,7 +661,7 @@ MSG_MA_Settings (243//)
 Settings
 ;
 MSG_MA_MAddrBook (244//)
-Address Book
+Address book
 ;This is the title of the address book window, not the menu item.
 ;
 MSG_MA_MConfig (245//)
@@ -678,12 +675,12 @@ Users
 ; Module MA - Bubblehelp
 ;
 MSG_HELP_MA_BT_READ (247//)
-Display contents of\n\
-selected message
+Display the contents of\n\
+the current message
 ;
 MSG_HELP_MA_BT_EDIT (248//)
 Modify the\n\
-selected message
+current message
 ;
 MSG_HELP_MA_BT_MOVE (249//)
 Move selected message(s)\n\
@@ -700,10 +697,11 @@ MSG_HELP_MA_BT_WRITE (252//)
 Compose a new message
 ;
 MSG_HELP_MA_BT_REPLY (253//)
-Reply to selected message
+Reply to the\n\
+selected message(s)
 ;
 MSG_HELP_MA_BT_FORWARD (254//)
-Forward selected message\n\
+Forward the selected message(s)\n\
 to another recipient
 ;
 MSG_HELP_MA_BT_POPNOW (255//)
@@ -715,8 +713,12 @@ Send queued messages\n\
 in the outgoing folder
 ;
 MSG_HELP_MA_BT_FILTER (257//)
-Apply filters to all\n\
-messages in this folder
+Apply filters to the\n\
+messages in this folder.\n\
+\n\
+Please note that if 2 or more\n\
+messages are currently selected,\n\
+only those will be filtered.
 ;
 MSG_HELP_MA_BT_SEARCH (258//)
 Search your mail folders
@@ -980,7 +982,7 @@ MSG_CO_RealName (344//)
 _Real name
 ;
 MSG_CO_EmailAddress (345//)
-_Email address
+_E-mail address
 ;
 MSG_CO_POPServer (346//)
 POP_3 server
@@ -1004,7 +1006,7 @@ MSG_CO_ReceiveMail (354//)
 Receive mail (POP3)
 ;
 MSG_CO_POPUserID (355//)
-User _ID
+User name
 ;
 MSG_CO_POPActive (356//)
 _Active
@@ -1013,7 +1015,7 @@ MSG_CO_DeleteServerMail (357//)
 Delete mail _on server
 ;
 MSG_CO_UseAPOP (358//)
-_Login using APOP
+_Log in using APOP
 ;
 MSG_CO_PSNever (359//)
 never
@@ -1139,10 +1141,10 @@ MSG_CO_HeadNone (400//)
 none
 ;
 MSG_CO_HeadShort (401//)
-selected
+custom
 ;
 MSG_CO_HeadFull (402//)
-full
+all
 ;
 MSG_CO_SINone (403//)
 none
@@ -1190,7 +1192,7 @@ MSG_CO_SenderInfo (417//)
 Sender _info
 ;
 MSG_CO_SignatureSep (418//)
-Separate si_g.
+Si_g. separator
 ;
 MSG_CO_ColoredText (419//)
 Colored text
@@ -1205,7 +1207,7 @@ MSG_CO_FixedFontEdit (423//)
 Use _fixed font
 ;
 MSG_CO_MimeType (425//)
-Attachment _type
+MIME _type
 ;
 MSG_CO_MimeCmd (426//)
 _Viewer
@@ -1217,7 +1219,7 @@ MSG_CO_DefaultViewer (428//)
 De_fault viewer
 ;
 MSG_CO_MessageHeader (430//)
-Message header
+Message headers
 ;
 MSG_CO_ReplyTo (431//)
 _Reply to
@@ -1280,16 +1282,16 @@ MSG_CO_Replying (450//)
 Replying
 ;
 MSG_CO_RepInit (451//)
-Default _reply phrase
+Default _reply phrases
 ;
 MSG_CO_AltRepInit (452//)
-_Alternative reply phrase
+_Alternative reply phrases
 ;
 MSG_CO_AltRepPat (453//)
 Use with these _domains
 ;
 MSG_CO_MLRepInit (454//)
-_Mailing list reply phrase
+_Mailing list reply phrases
 ;
 MSG_CO_QuoteEmpty (456//)
 Quote _empty lines
@@ -1313,7 +1315,7 @@ MSG_CO_Signature (462//)
 Signature
 ;
 MSG_CO_UseSig (463//)
-Use s_ignature
+Use s_ignatures
 ;
 MSG_CO_EditSig (464//)
 _Edit in external editor
@@ -1436,7 +1438,7 @@ MSG_CO_AddToAddrbook (503//)
 Sa_ve sender's address
 ;
 MSG_CO_ProxyServer (504//)
-_HTTP Proxy server
+_HTTP proxy server
 ;
 MSG_CO_NewGroup (505//)
 _Group for new entries
@@ -1457,7 +1459,7 @@ MSG_CO_TempDir (510//)
 Directory for _temporary files
 ;
 MSG_CO_AppIcon (511//)
-Mailbox status AppIcon
+Mailbox status
 ;
 MSG_CO_PositionX (512//)
 Position _X
@@ -1573,34 +1575,34 @@ Your full name\n\
 (first name last name)
 ;
 MSG_HELP_CO_ST_EMAIL (555//)
-Your email address.
+Your e-mail address.
 ;
 MSG_HELP_CO_ST_POPHOST (556//)
 The address of the POP3 server to receive mail from.\n\
-If you leave this field empty, then the address\n\
-of the SMTP server is used.
+If you leave this field empty, the address of the\n\
+SMTP server will be used as fallback.
 ;
 MSG_HELP_CO_ST_PASSWD (557//)
 Password to access\n\
-the mail server
+the POP3 server
 ;
 MSG_HELP_CO_CY_TZONE (558//)
-Select the timezone of\n\
-your current location
+Select the time zone of\n\
+your current location.
 ;
 MSG_HELP_CO_ST_SMTPHOST (560//)
 The address of the SMTP server to send mail to.\n\
-If you leave this field empty, then the\n\
-address of the POP3 server is used.
+If you leave this field empty, the address of the\n\
+POP3 server will be used as fallback.
 ;
 MSG_HELP_CO_ST_DOMAIN (561//)
 The hostname of your Amiga. Change this\n\
 field if the HELO commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT (562//)
-Don't convert messages to 7bit when transfering.\n\
-Only use this option if your server supports 8bit\n\
-transfers, otherwise your messages may get corrupted.
+Do not convert messages to 7-bit when transferring.\n\
+You should only use this option if you're sure that your SMTP server\n\
+supports 8-bit transfers, otherwise your messages may get corrupted.
 ;
 MSG_HELP_CO_LV_POP3 (563//)
 List of POP3 accounts
@@ -1609,12 +1611,13 @@ MSG_HELP_CO_BT_PADD (564//)
 Add a new POP3 account to the list
 ;
 MSG_HELP_CO_BT_PDEL (565//)
-Remove selected POP3 account from the list
+Remove the selected POP3\n\
+account from the list.
 ;
 MSG_HELP_CO_ST_POPUSERID (566//)
 User name to log in on the POP3 server.\n\
-If you leave this field empty, then the user-ID\n\
-will be taken from your email address.
+If you leave this field empty, the user name\n\
+part of your e-mail address will be used.
 ;
 MSG_HELP_CO_CH_DELETE (567//)
 Delete messages from\n\
@@ -1622,11 +1625,13 @@ mail server after\n\
 downloading
 ;
 MSG_HELP_CO_CH_USEAPOP (568//)
-Login using APOP authentication
+Log in using APOP authentication\n\
+to keep your user name and password\n\
+away from prying eyes
 ;
 MSG_HELP_CO_CH_POPENABLED (569//)
-Connect to this server\n\
-when checking for new mail
+Check this account while\n\
+checking for new mail
 ;
 MSG_HELP_CO_CH_AVOIDDUP (570//)
 If you don't delete old mail\n\
@@ -1634,40 +1639,42 @@ on the server, use this option\n\
 to avoid duplicate messages.
 ;
 MSG_HELP_CO_CH_TRANSWIN (571//)
-Show progress window during mail transfers
+Show a progress window\n\
+during mail transfers.
 ;
 MSG_HELP_CO_CY_MSGSELECT (572//)
-Enable this option to show the contents of the POP3 mailbox\n\
-and allow selection of the messages before downloading
+Message pre-selection shows (a part of) the contents of the\n\
+POP3 mailbox and allows you to select which messages you\n\
+want to download. Press <Help> for more information.
 ;
 MSG_HELP_CO_CH_UPDSTAT (573//)
 Mark new messages in the incoming folder\n\
-as unread before downloading new mail
+as just 'unread' before downloading new mail.
 ;
 MSG_HELP_CO_ST_WARNSIZE (574//)
-Incoming messages which are bigger than this\n\
-size will be considered as large.
+Incoming messages bigger than this\n\
+will be considered as 'large'.
 ;
 MSG_HELP_CO_ST_INTERVAL (575//)
-How frequently do you want to check for new mail?\n\
-(use 0 to disable this feature)
+How often do you want YAM to automatically check for new mail?\n\
+Use '0' if you don't want YAM to do this.
 ;
 MSG_HELP_CO_CH_DLLARGE (576//)
 When automatically checking for new mail,\n\
-download large messages even if they are\n\
-larger than the size specified above
+download large messages even if they exceed\n\
+the size limit specified above.
 ;
 MSG_HELP_CO_CH_NOTIREQ (577//)
 Show a requester when\n\
-you get new mail
+you get new mail.
 ;
 MSG_HELP_CO_ST_NOTICMD (578//)
 The program you want to execute\n\
-when you get new mail
+when you get new mail.
 ;
 MSG_HELP_CO_ST_NOTISOUND (579//)
 The sound file you want to play\n\
-when you get new mail
+when you get new mail.
 ;
 MSG_HELP_CO_LV_RULES (580//)
 List of filters
@@ -1677,48 +1684,49 @@ Filter name
 ;
 MSG_HELP_CO_CH_REMOTE (582//)
 Apply this filter before\n\
-downloading a message
+downloading new email.
 ;
 MSG_HELP_CO_CH_APPLYNEW (583//)
-Apply this filter to new messages
+Apply this filter to new messages.
 ;
 MSG_HELP_CO_CH_APPLYSENT (584//)
-Apply this filter to sent messages
+Apply this filter to sent messages.
 ;
 MSG_HELP_CO_CH_APPLYREQ (585//)
-Apply this filter when you activate\n\
-the filter function manually
+Apply this filter when you use\n\
+the filter function manually.
 ;
 MSG_HELP_CO_CY_COMBINE (586//)
-How to combine the two\n\
-search keys for this filter
+How to combine the rules\n\
+for this filter.
 ;
 MSG_HELP_CO_CH_ABOUNCE (587//)
 Bounce matching messages\n\
-to another person
+to another person.
 ;
 MSG_HELP_CO_ST_ABOUNCE (588//)
-Email address of the person who\n\
-gets the bounced messages
+E-mail address(es) that should\n\
+get the bounced messages.
 ;
 MSG_HELP_CO_CH_AFORWARD (589//)
 Forward matching messages\n\
-to another person
+to another person.
 ;
 MSG_HELP_CO_ST_AFORWARD (590//)
-Email address of the person who\n\
-gets the forwarded messages
+E-mail address(es) that should\n\
+get the forwarded messages.
 ;
 MSG_HELP_CO_CH_ARESPONSE (591//)
 Send an automatic reply\n\
 for each matching message
 ;
 MSG_HELP_CO_ST_ARESPONSE (592//)
-Text file that contains the response
+Text file that contains\n\
+the response.
 ;
 MSG_HELP_CO_CH_AEXECUTE (593//)
 Execute a command for\n\
-each matching message
+each matching message.
 ;
 MSG_HELP_CO_ST_AEXECUTE (594//)
 Command to execute. The path of the matching\n\
@@ -1726,253 +1734,266 @@ message is passed as an argument.
 ;
 MSG_HELP_CO_CH_APLAY (595//)
 Play a sound file for\n\
-each matching message
+each matching message.
 ;
 MSG_HELP_CO_ST_APLAY (596//)
-Sound file to play
+Sound file to play.
 ;
 MSG_HELP_CO_CH_AMOVE (597//)
 Move matching messages\n\
-to a different folder
+to a different folder.
 ;
 MSG_HELP_CO_PO_MOVETO (598//)
-Destination folder
+Destination folder.
 ;
 MSG_HELP_CO_CH_ADELETE (599//)
-Delete matching messages
+Delete the matching messages.
 ;
 MSG_HELP_CO_CH_ASKIP (600//)
-Don't download matching messages
+Do not download\n\
+the matching messages.
 ;
 MSG_HELP_CO_BT_RADD (601//)
 Add a new filter
 ;
 MSG_HELP_CO_BT_RDEL (602//)
-Remove selected filter
+Remove the selected filter\n\
+from the list.
 ;
 MSG_HELP_CO_CA_COL2QUOT (603//)
-Color used for displaying\n\
+Color used to display\n\
 2nd level quotes
 ;
 MSG_HELP_CO_CH_WRAPHEAD (604//)
-Display long headers on multiple lines
+Split long headers\n\
+on multiple lines.
 ;
 MSG_HELP_CO_CH_TEXTSTYLES (605//)
 Interpret / * _ and # as\n\
-control codes for text styles
+control codes for text styles.
 ;
 MSG_HELP_CO_CY_HEADER (606//)
-How do you want to display\n\
-the message headers in the\n\
-Read window?
+Which messages headers do you want YAM\n\
+to display by default in the Read window?
 ;
 MSG_HELP_CO_ST_HEADERS (607//)
 Specify an AmigaDOS pattern to\n\
 choose the headers in SELECTED format.\n\
-Default is (From|To|Date|Subject)
+Default is (From|To|Cc|BCC|Date|Subject).
 ;
 MSG_HELP_CO_CY_SENDERINFO (608//)
 Information about the sender to display\n\
-in the Read window (if available)
+in the Read window (if available).
 ;
 MSG_HELP_CO_CY_SIGSEPLINE (609//)
-Type of the signature\n\
-separation line
+Type of separation line\n\
+for the signature.
 ;
 MSG_HELP_CO_CH_ALLTEXTS (611//)
-Display all textual parts\n\
-of a multipart message
+Display all plain text parts\n\
+of a multipart message.
 ;
 MSG_HELP_CO_CH_MULTIWIN (612//)
-Open a new Read window\n\
-for each selected message
+Use a separate Read window\n\
+for each opened message
 ;
 MSG_HELP_CO_CA_COLTEXT (613//)
-Color of 'colored' text used in\n\
-the Read window and the editor
+Color for the 'colored' text used in\n\
+the Read window and the editor.
 ;
 MSG_HELP_CO_CH_FIXFEDIT (614//)
 Display messages using\n\
-a fixed width font
+a fixed width font.
 ;
 MSG_HELP_CO_ST_CTYPE (615//)
-MIME viewer is activated\n\
-by this attachment type
+Enter a new MIME type or select one\n\
+using the popup button at the right.
 ;
 MSG_HELP_CO_ST_COMMAND (616//)
 Path and optional arguments of\n\
-the viewer command. Use %s to\n\
-insert the data file.
+the viewer command. Click the popup\n\
+button to see the list of supported\n\
+variables.
 ;
 MSG_HELP_CO_BT_MADD (617//)
 Add a new MIME viewer
 ;
 MSG_HELP_CO_BT_MDEL (618//)
-Remove selected MIME viewer
+Remove the selected\n\
+MIME viewer.
 ;
 MSG_HELP_CO_ST_EXTENS (619//)
-File extensions used\n\
-by this file type
+A space separated list of extensions\n\
+(suffixes) used by this file type.
 ;
 MSG_HELP_CO_ST_DEFVIEWER (620//)
 Program used to display\n\
-attachments of unknown type
+attachments of unknown type.
 ;
 MSG_HELP_CO_ST_REPLYTO (622//)
-Enter the default return address, if\n\
-it differs from your email address.
+Should replies to your messages need to be sent\n\
+by default somewhere besides your e-mail\n\
+address, specify those other addresses here.
 ;
 MSG_HELP_CO_ST_ORGAN (623//)
 The name of your\n\
-company or institute
+company or institute.
 ;
 MSG_HELP_CO_ST_EXTHEADER (624//)
 Additional message header(s) that will\n\
-be added to every outgoing message
+be added to every outgoing message.
 ;
 MSG_HELP_CO_ST_HELLOTEXT (625//)
 Text to insert at the\n\
-top of a new message
+top of a new message.
 ;
 MSG_HELP_CO_ST_BYETEXT (626//)
-Text to insert at the\n\
-bottom of a new message
+Text to add at the\n\
+bottom of a new message.
 ;
 MSG_HELP_CO_ST_EDWRAP (628//)
 Word-wrap message text\n\
-at this column
+at this column.
 ;
 MSG_HELP_CO_CY_EDWRAP (630//)
-Select 'as you type' to insert linebreak\n\
-codes while you're typing the message
+Select 'as you type' to insert linefeed\n\
+codes while you're typing the message.
 ;
 MSG_HELP_CO_CH_LAUNCH (631//)
 Automatically launch the external editor\n\
-when starting a new message
+when starting a new message.
 ;
 MSG_HELP_CO_ST_EDITOR (632//)
 Filename of your\n\
-favorite text editor
+favorite text editor.
 ;
 MSG_HELP_CO_ST_FWDSTART (633//)
 Text used to introduce a forwarded message.\n\
-Use the button at the right side to insert a variable.
+Click the popup button at the right to see\n\
+the variables you can use.
 ;
 MSG_HELP_CO_ST_FWDEND (634//)
-Text to insert at the end\n\
+Text to add at the end\n\
 of a forwarded message.
 ;
 MSG_HELP_CO_ST_REPLYTEXT (635//)
-Texts used in replies to messages. Use the\n\
-button at the right side to insert a variable.
+Default phrases used in replies to messages. Use the\n\
+popup button at the right to see the supported variables.
 ;
 MSG_HELP_CO_ST_AREPLYTEXT (636//)
-Use these texts in replies to messages if the\n\
-pattern below matches the recipient address.
+Use these phrases instead when then pattern\n\
+below matches the recipient's address.
 ;
 MSG_HELP_CO_ST_AREPLYPAT (637//)
 AmigaDOS pattern that triggers\n\
-the alternative reply headers
+the alternative reply phrases.
 ;
 MSG_HELP_CO_ST_MREPLYTEXT (638//)
-Use these texts in replies to\n\
+Use these phrases in replies to\n\
 messages from a mailing list.
 ;
 MSG_HELP_CO_CH_QUOTE (639//)
-Quote original\n\
-message in reply?
+Quote the original\n\
+message in your reply?
 ;
 MSG_HELP_CO_CH_QUOTEEMPTY (641//)
-Insert quote character(s)\n\
+Insert quote character\n\
 for empty lines?
 ;
 MSG_HELP_CO_CH_COMPADDR (642//)
-Let the user select the desired recipient address if\n\
-the 'From:' and 'Reply-To:' addresses are different
+If checked, you will be asked where to send your\n\
+reply when the 'From:' and 'Reply-To:' addresses\n\
+of the original message differ.
 ;
 MSG_HELP_CO_CH_STRIPSIG (643//)
-Don't quote signature\n\
-of original message
+Avoid quoting the signature\n\
+of the original message?
 ;
 MSG_HELP_CO_CY_SIGNAT (644//)
-Select signature to edit
+Select the signature\n\
+you want to edit.
 ;
 MSG_HELP_CO_BT_EDITSIG (645//)
-Modify your signature\n\
-using the editor
+Modify this signature\n\
+using the external editor.
 ;
 MSG_HELP_CO_BT_INSTAG (646//)
-Insert control code for random taglines
+Insert a control code\n\
+for a random tagline.
 ;
 MSG_HELP_CO_BT_INSENV (647//)
-Insert control code for the\n\
-SIGNATURE environment variable
+Insert a control code for the\n\
+SIGNATURE environment variable.
 ;
 MSG_HELP_CO_ST_TAGFILE (648//)
-Database containing taglines (\"cookies\")
+Specify here a database file containing\n\
+taglines (also known as "cookies").
 ;
 MSG_HELP_CO_ST_TAGSEP (649//)
-Character or string used to separate\n\
-the taglines in the database
+String used to separate the\n\
+taglines in the database.
 ;
 MSG_HELP_CO_CG_FO (650//)
-Columns displayed\n\
-in the folder list
+Columns that should be\n\
+displayed in the folder list.
 ;
 MSG_HELP_CO_CG_MA (651//)
-Columns displayed\n\
-in the message list
+Columns that should be\n\
+displayed in the message list.
 ;
 MSG_HELP_CO_CG_AB (652//)
 Columns displayed\n\
-in the address book
+in the address book.
 ;
 MSG_HELP_CO_CH_FIXFLIST (653//)
 Display list entries\n\
-using a fixed width font
+using a fixed width font.
 ;
 MSG_HELP_CO_CH_BEAT (654//)
 Display time in Swatch Beats, the\n\
-revolutionary new unit of time
+revolutionary new unit of time.
 ;
 MSG_HELP_CO_ST_PGPCMD (655//)
 Directory where the PGP\n\
-executable can be found
+executable can be found.
 ;
 MSG_HELP_CO_ST_MYPGPID (656//)
-The ID of your PGP key that's\n\
-used to sign messages
+The ID of your PGP key that's used\n\
+to sign and encrypt messages.
 ;
 MSG_HELP_CO_CH_ENCSELF (657//)
 Encrypt new messages with your public key,\n\
-so you can still read or edit sent messages
+so you can still read or edit outgoing messages.
 ;
 MSG_HELP_CO_ST_REMAILER (658//)
-Email address of the remailer service\n\
-used to send anonymous mail
+E-mail address of the remailer service\n\
+used to send anonymous mail.
 ;
 MSG_HELP_CO_ST_FIRSTLINE (659//)
-Insert this line at the top of your\n\
-message if it is sent via remailer
+Automatically insert this line at the top\n\
+of all messages sent through the remailer.
 ;
 MSG_HELP_CO_ST_LOGFILE (660//)
-Path where the log files will be saved
+Path where the log\n\
+files will be stored.
 ;
 MSG_HELP_CO_CH_SPLITLOG (661//)
-Start a new log file every month
+If checked, a separate log file\n\
+will be started every month.
 ;
 MSG_HELP_CO_CY_LOGMODE (662//)
-Select type of logging
+Select type of logging.
 ;
 MSG_HELP_CO_CH_LOGALL (663//)
 Disable this option to\n\
-log mail transfers only
+log mail transfers only.
 ;
 MSG_HELP_CO_CH_LOADALL (664//)
-Load index files of all folders
+Load index files of all folders.
 ;
 MSG_HELP_CO_CH_MARKNEW (665//)
-Change status of new messages to unread
+Change status of new\n\
+messages to unread.
 ;
 MSG_HELP_CO_CH_SEND (666//)
 Send queued messages
@@ -1982,21 +2003,22 @@ Check for mail
 ;
 MSG_HELP_CO_CH_CHECKBD (668//)
 Check the address book and open a\n\
-reminder if it's a person's birthday
+reminder if it's a person's birthday.
 ;
 MSG_HELP_CO_CH_DELETEOLD (669//)
-Delete messages that exceed the maximum\n\
-age (see folder configuration)
+Delete messages that exceed the\n\
+maximum age (see folder configuration).
 ;
 MSG_HELP_CO_CH_REMOVEDEL (670//)
-Empty trash folder
+Empty trash folder.
 ;
 MSG_HELP_CO_ST_GALLDIR (671//)
 Directory to save the pictures\n\
-of your correspondents
+of your correspondents.
 ;
 MSG_HELP_CO_ST_PHOTOURL (672//)
-WWW address of your portrait image
+WWW address of your\n\
+portrait image.
 ;
 MSG_HELP_CO_CY_ATAB (673//)
 Automatically create an address book entry\n\
@@ -2009,23 +2031,23 @@ You may leave this field empty.
 ;
 MSG_HELP_CO_ST_NEWGROUP (675//)
 Add new address book entries to this group\n\
-(it will be created if it doesn't exist yet)
+(it will be created if it doesn't exist yet).
 ;
 MSG_HELP_CO_ST_TEMPDIR (676//)
 Directory to store\n\
-temporary files
+temporary files.
 ;
 MSG_HELP_CO_ST_DETACHDIR (677//)
 Directory to save\n\
-attached files to
+attached files to.
 ;
 MSG_HELP_CO_ST_ATTACHDIR (678//)
 Default source directory\n\
-for attachments
+for attachments.
 ;
 MSG_HELP_CO_ST_APP (679//)
-Position of the mailbox\n\
-AppIcon in pixels
+Try to put the AppIcon\n\
+exactly at these coordinates.
 ;
 MSG_HELP_CO_CH_CLGADGET (680//)
 Do you want YAM to iconify when\n\
@@ -2037,48 +2059,51 @@ deletion of messages?
 ;
 MSG_HELP_CO_NB_CONFIRMDEL (682//)
 Minimum number of messages to\n\
-display the confirmation requester
+display the confirmation requester.
 ;
 MSG_HELP_CO_CH_REMOVE (683//)
 Immediately delete the messages rather\n\
-than moving them to the trash folder
+than moving them to the trash folder.\n\
+Use with care!
 ;
 MSG_HELP_CO_CH_SAVESENT (684//)
-Save sent messages in the 'Sent' folder
+Move sent messages to\n\
+the 'sent' folder.
 ;
 MSG_HELP_CO_TX_ENCPACK (690//)
 XPK library used to protect\n\
-and compress folders
+and compress folders.
 ;
 MSG_HELP_CO_TX_PACKER (691//)
 XPK library used to\n\
-compress folders
+compress folders.
 ;
 MSG_HELP_CO_NB_ENCPACK (692//)
-Efficiency of this packer.\n\
-100% is best, but slowest
+Efficiency of this packer. 100% is\n\
+the best value, but also the slowest.
 ;
 MSG_HELP_CO_ST_ARCHIVER (693//)
-Archiver command and options used\n\
-to create compressed attachments
+Command and options used to\n\
+create archived attachments.
 ;
 MSG_HELP_CO_ST_RXNAME (694//)
 Description of the script\n\
-in the 'Scripts' menu
+in the 'Scripts' menu.
 ;
 MSG_HELP_CO_ST_SCRIPT (695//)
 Filename of the script
 ;
 MSG_HELP_CO_CY_ISADOS (696//)
 Type of the script\n\
-(ARexx or AmigaDOS)
+(ARexx or AmigaDOS).
 ;
 MSG_HELP_CO_CH_CONSOLE (697//)
 Open a console window to allow input\n\
-and output from the script
+and output from the script.
 ;
 MSG_HELP_CO_CH_WAITTERM (698//)
-Don't run the script asynchronously
+Do not run the script\n\
+asynchronously.
 ;
 MSG_HELP_CO_BT_SAVE (699//)
 Save current settings
@@ -2088,8 +2113,8 @@ Use current settings
 ;
 MSG_HELP_CO_BT_CANCEL (701//)
 Close configuration\n\
-window and use old\n\
-settings
+window and use the old\n\
+settings.
 ;
 ;
 ; Module AB - Routines
@@ -2199,13 +2224,13 @@ MSG_AB_Entry (731//)
 Entry
 ;
 MSG_AB_AddUser (732//)
-New person...
+New person
 ;
 MSG_AB_AddGroup (733//)
-New group...
+New group
 ;
 MSG_AB_AddList (734//)
-New distribution list...
+New distribution list
 ;
 MSG_AB_Duplicate (735//)
 Duplicate
@@ -2250,7 +2275,7 @@ MSG_AB_TBSave (747//)
 _Save
 ;
 MSG_AB_TBFind (748//)
-_Find
+_Find...
 ;
 MSG_AB_TBNewUser (749//)
 _Person
@@ -2284,50 +2309,49 @@ Save current changes
 ;
 MSG_HELP_AB_BT_SEARCH (758//)
 Find an entry in\n\
-the address book
+the address book.
 ;
 MSG_HELP_AB_BT_ADDUSER (759//)
 Add a new person to\n\
-your address book
+your address book.
 ;
 MSG_HELP_AB_BT_ADDGROUP (760//)
 Add a new group (directory)\n\
-to your address book
+to the address book.
 ;
 MSG_HELP_AB_BT_ADDMLIST (761//)
 Add a new distribution list\n\
-to your address book
+to the address book.
 ;
 MSG_HELP_AB_BT_EDIT (762//)
-Modify selected\n\
-entry
+Edit this entry
 ;
 MSG_HELP_AB_BT_DELETE (763//)
-Delete selected entry\n\
-from your address book
+Delete the selected entry\n\
+from the address book.
 ;
 MSG_HELP_AB_BT_PRINT (764//)
-Print selected entry
+Print the selected entry
 ;
 MSG_HELP_AB_BT_OPEN (765//)
-Display all entries in\n\
-the address book
+Display all the entries\n\
+in the address book.
 ;
 MSG_HELP_AB_BT_CLOSE (766//)
-Only display root entries\n\
-in the address book
+Only display the root\n\
+entries in the address book.
 ;
 MSG_HELP_AB_BT_TO (767//)
 Set primary recipient(s)\n\
-for new message
+for a new message.
 ;
 MSG_HELP_AB_BT_CC (768//)
 Set secondary recipient(s)\n\
-for new message
+for a new message.
 ;
 MSG_HELP_AB_BT_BCC (769//)
 Set blind copy recipient(s)\n\
-for new message
+for a new message.
 ;
 ;
 ; Module EA - Procedures
@@ -2354,7 +2378,7 @@ MSG_EA_RealName (781//)
 _Real name
 ;
 MSG_EA_EmailAddress (782//)
-E_mail address
+E-_mail address
 ;
 MSG_EA_PGPId (783//)
 PGP _key ID
@@ -2409,22 +2433,23 @@ _Sort
 ;
 MSG_HELP_EA_ST_ALIAS (800//)
 Identity (e.g. nickname or\n\
-abbreviation) of this entry
+abbreviation) of this entry.
 ;
 MSG_HELP_EA_ST_DESCRIPTION (801//)
-Comment for this entry
+A short comment\n\
+for this entry.
 ;
 MSG_HELP_EA_ST_REALNAME (802//)
 Full name of this entry\n\
-(first name last name)
+(first name last name).
 ;
 MSG_HELP_EA_ST_ADDRESS (803//)
 Internet address\n\
-of this entry
+of this entry.
 ;
 MSG_HELP_EA_ST_PGPKEY (804//)
 Hexadecimal ID of this\n\
-person's public PGP key
+person's public PGP key.
 ;
 MSG_HELP_EA_ST_HOMEPAGE (805//)
 URL of the homepage of this person.\n\
@@ -2432,57 +2457,61 @@ Click the button at the right side\n\
 to load the page into your browser.
 ;
 MSG_HELP_EA_ST_STREET (806//)
-Postal address:\n\
-Street name and number
+Postal address: street\n\
+name and number.
 ;
 MSG_HELP_EA_ST_CITY (807//)
-Postal address:\n\
-City and postal code
+Postal address: city\n\
+and postal code.
 ;
 MSG_HELP_EA_ST_COUNTRY (808//)
-Postal address:\n\
-State and/or country
+Postal address: state\n\
+and/or country.
 ;
 MSG_HELP_EA_ST_PHONE (809//)
-Phone and/or FAX number(s)
+Phone and/or\n\
+FAX number(s).
 ;
 MSG_HELP_EA_ST_BIRTHDAY (810//)
-Date of birth.\n\
-Use AmigaDOS format,\n\
+Date of birth in\n\
+AmigaDOS format,\n\
 e.g. 10-Jan-1950
 ;
 MSG_HELP_EA_BC_PHOTO (811//)
-Portrait picture of this person
+Portrait picture\n\
+of this person.
 ;
 MSG_HELP_EA_BT_SELECTPHOTO (812//)
 Select a picture file from disk\n\
-(image datatypes supported)
+(image datatypes supported).
 ;
 MSG_HELP_EA_ST_REALNAME_L (814//)
 Full name of this distribution list\n\
-(will be used in the To: field)
+(it will be used in the 'To:' field).
 ;
 MSG_HELP_EA_ST_ADDRESS_L (815//)
 Return address to use when\n\
-sending a message to this list
+sending a message to this list.
 ;
 MSG_HELP_EA_LV_MEMBERS (816//)
-Members of this distribution list
+Members of this\n\
+distribution list.
 ;
 MSG_HELP_EA_ST_MEMBER (817//)
 Address (and name) or\n\
-alias of a member
+alias of a member.
 ;
 MSG_HELP_EA_BT_ADD (818//)
 Add a new member\n\
-to the list
+to the list.
 ;
 MSG_HELP_EA_BT_DEL (819//)
-Remove selected member\n\
-from the list
+Remove the selected\n\
+member from the list.
 ;
 MSG_HELP_EA_BT_SORT (820//)
-Sort member list alphabetically
+Sort the member list\n\
+alphabetically.
 ;
 MSG_HELP_EA_BT_OKAY (821//)
 Accept this entry
@@ -2733,19 +2762,19 @@ MSG_RE_TBNextTh (895//)
 NextT_hr
 ;
 MSG_RE_TBDisplay (896//)
-_Display
+_Display...
 ;
 MSG_RE_TBSave (897//)
-_Save
+_Save...
 ;
 MSG_RE_TBPrint (898//)
-Pr_int
+Pr_int...
 ;
 MSG_RE_TBDelete (899//)
 De_lete
 ;
 MSG_RE_TBMove (900//)
-_Move
+_Move...
 ;
 MSG_RE_TBReply (901//)
 _Reply
@@ -2775,9 +2804,9 @@ to this message\n\
 (follow thread)
 ;
 MSG_HELP_RE_BT_DISPLAY (907//)
-Use a configured MIME\n\
+Use the configured MIME\n\
 viewer to display a\n\
-part of this message
+part of this message.
 ;
 MSG_HELP_RE_BT_EXPORT (908//)
 Save displayed message or\n\
@@ -2823,7 +2852,7 @@ MSG_WR_SaveTextAs (919//)
 Save text as...
 ;
 MSG_WR_AddFile (920//)
-Select file(s) to attach...
+Select file(s) to attach
 ;
 MSG_WR_CreateArc (921//)
 Create archive
@@ -2832,7 +2861,7 @@ MSG_WR_CreateArcReq (922//)
 Please enter a filename for the new archive
 ;
 MSG_WR_InsertFile (923//)
-Insert file...
+Insert file
 ;
 ;
 ; Module WR - Hooks
@@ -2901,10 +2930,10 @@ MSG_WR_To (943//)
 _To
 ;
 MSG_WR_Add (944//)
-_Add file(s)
+_Add file(s)...
 ;
 MSG_WR_AddPack (945//)
-_Pack & add
+_Pack & add...
 ;
 MSG_WR_Display (946//)
 D_isplay
@@ -2931,19 +2960,19 @@ MSG_WR_ReplyTo (953//)
 Reply _to
 ;
 MSG_WR_ExtraHeaders (954//)
-_Additional header
+_Additional headers
 ;
 MSG_WR_SendOpt (955//)
 Send options
 ;
 MSG_WR_DelSend (956//)
-_Delete after sending
+_Delete after sending?
 ;
 MSG_WR_Receipt (957//)
-_Return receipt
+_Return receipt?
 ;
 MSG_WR_AddInfo (959//)
-Add _personal info
+Add _personal info?
 ;
 MSG_WR_Importance (960//)
 _Importance
@@ -2967,7 +2996,7 @@ MSG_WR_TBEditor (968//)
 Editor
 ;
 MSG_WR_TBInsert (969//)
-Insert
+Insert...
 ;
 MSG_WR_TBCut (970//)
 Cut
@@ -3100,18 +3129,19 @@ Address (and name) or alias\n\
 of the primary recipient(s)
 ;
 MSG_HELP_WR_BT_ADR (1016//)
-Select recipient from\n\
-the address book
+Select recipient(s) from\n\
+the address book.
 ;
 MSG_HELP_WR_ST_SUBJECT (1017//)
 Subject of your message
 ;
 MSG_HELP_WR_BT_EDITOR (1018//)
-Use external editor to\n\
+Use an external editor to\n\
 modify the message text
 ;
 MSG_HELP_WR_BT_LOAD (1019//)
-Insert text file at cursor position
+Insert the contents of a text file\n\
+at the current cursor position
 ;
 MSG_HELP_WR_BT_CUT (1020//)
 Cut marked text to the clipboard
@@ -3120,44 +3150,48 @@ MSG_HELP_WR_BT_COPY (1021//)
 Copy marked text to the clipboard
 ;
 MSG_HELP_WR_BT_PASTE (1022//)
-Insert clipboard contents\n\
-at cursor position
+Insert the contents of the clipboard\n\
+at the current cursor position
 ;
 MSG_HELP_WR_BT_UNDO (1023//)
-Undo recent changes to the text
+Undo the last change in the text
 ;
 MSG_HELP_WR_BT_BOLD (1024//)
-Use bold typeface for marked text
+Use bold typeface for marked\n\
+text (whole words only)
 ;
 MSG_HELP_WR_BT_ITALIC (1025//)
-Use italic typeface for marked text
+Use italic typeface for marked\n\
+text (whole words only)
 ;
 MSG_HELP_WR_BT_UNDERL (1026//)
-Underline marked text
+Underline marked text\n\
+(whole words only)
 ;
 MSG_HELP_WR_BT_COLOR (1027//)
-Color marked text
+Color marked text\n\
+(whole words only)
 ;
 MSG_HELP_WR_BT_ADD (1028//)
-Add an attachment\n\
-to the list
+Add attachments\n\
+to the list.
 ;
 MSG_HELP_WR_BT_ADDPACK (1029//)
-Create an archive from\n\
-several files and add it to\n\
-the list as an attachment
+Create an archive with one\n\
+or more files and add it to\n\
+the list as an attachment.
 ;
 MSG_HELP_WR_BT_DEL (1030//)
 Remove the selected\n\
-attachment from the list
+attachment from the list.
 ;
 MSG_HELP_WR_BT_DISPLAY (1031//)
-Use a configured MIME viewer\n\
-to display this attachment
+Use the configured MIME viewer\n\
+to display this attachment.
 ;
 MSG_HELP_WR_RA_ENCODING (1032//)
 Type of encoding used for the selected attachment.\n\
-Select UUencode only if the recipient hasn't got\n\
+Select UUencode only if the recipient is not using\n\
 a MIME compliant mailer.
 ;
 MSG_HELP_WR_ST_CTYPE (1033//)
@@ -3166,71 +3200,74 @@ Whenever possible, use one from the popup list.
 ;
 MSG_HELP_WR_ST_DESC (1034//)
 Optional description for\n\
-the selected attachment
+the selected attachment.
 ;
 MSG_HELP_WR_ST_CC (1035//)
-Address (and name) or alias\n\
-of the secondary recipient(s)
+Send a copy of the message\n\
+to these recipients.
 ;
 MSG_HELP_WR_ST_BCC (1036//)
 Send a blind carbon copy of\n\
-the message to this recipient
+the message to these recipients.
 ;
 MSG_HELP_WR_ST_EXTHEADER (1037//)
-Additional message header(s) that\n\
-will be added to the message
+Additional message headers that should\n\
+be added to the message. Press <Help>\n\
+for more information.
 ;
 MSG_HELP_WR_ST_FROM (1038//)
 Contents of the 'From:' header\n\
 (name and address of the person\n\
-who is writing this letter)
+who is writing this message).
 ;
 MSG_HELP_WR_ST_REPLYTO (1039//)
 Return address\n\
-for this letter
+for this message.
 ;
 MSG_HELP_WR_CH_DELSEND (1040//)
-Don't store this message\n\
-in the 'Sent' folder
+Do not store this message\n\
+in the 'sent' folder.
 ;
 MSG_HELP_WR_CH_RECEIPT (1041//)
-Get a notification on\n\
-successful delivery
+Request a notification on\n\
+successful delivery.
 ;
 MSG_HELP_WR_CH_ADDINFO (1043//)
 Create header fields containing data\n\
-from your personal address book entry
+from your personal address book entry.
 ;
 MSG_HELP_WR_CY_IMPORTANCE (1044//)
 Set the priority\n\
-of this message
+of this message.
 ;
 MSG_HELP_WR_RA_SIGNATURE (1045//)
 Which signature do you want\n\
-to append to this letter?
+to append to this message?
 ;
 MSG_HELP_WR_RA_SECURITY (1046//)
 Select one of these security options to send\n\
 your message PGP signed, encrypted\n\
-or anonymously
+or anonymously. "Default" tries to find\n\
+the recipient in your address book and use\n\
+the security specified there.
 ;
 MSG_HELP_WR_BT_HOLD (1047//)
 Copy the created message to\n\
-the outgoing mail folder and\n\
-set its status to HOLD
+the 'outgoing' mail folder and\n\
+set its status to HELD.
 ;
 MSG_HELP_WR_BT_QUEUE (1048//)
 Copy the created message to\n\
-the outgoing mail folder
+the 'outgoing' mail folder.
 ;
 MSG_HELP_WR_BT_SEND (1049//)
 Copy the created message to\n\
-the outgoing mail folder\n\
-and send it immediately
+the 'outgoing' mail folder\n\
+and send it immediately.
 ;
 MSG_HELP_WR_BT_CANCEL (1050//)
 Discard the\n\
-created message
+created message.
 ;
 ;
 ; Module TR - Procedures
@@ -3304,7 +3341,7 @@ Filtering done:\n\
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_NewMail (1071//)
-New Mail
+New mail
 ;
 MSG_TR_Downloading (1072//)
 Downloading message...
@@ -3418,7 +3455,7 @@ DD-MMM-YYYY (month names in English).
 MSG_ER_ErrorDateFormat (1107//)
 Invalid date/time format.\n\
 \n\
-The date has to be in AmigaDOS format.\n\
+The date has to be specified in the format DD-MM-YYYY.\n\
 Example: %s
 ; DATE
 ;
@@ -3652,10 +3689,10 @@ MSG_FI_SearchIn (1181//)
 Search in
 ;
 MSG_FI_CaseSensitive (1182//)
-Case sensitive
+Case sensitive?
 ;
 MSG_FI_SubString (1183//)
-Substring search
+Substring search?
 ;
 ;
 ; Module FI - Window
@@ -3728,32 +3765,35 @@ Stop searching
 ;
 MSG_HELP_FI_CY_MODE (1203//)
 Field or message part that\n\
-should match the pattern
+should match the pattern.
 ;
 MSG_HELP_FI_ST_FIELD (1204//)
-Name of header field to search in
+Name of the header\n\
+to search in.
 ;
 MSG_HELP_FI_RA_ADRMODE (1205//)
 Choose whether you want to search in the\n\
-address or real name part of the field
+address or real name part of the field.
 ;
 MSG_HELP_FI_CY_STATUS (1206//)
-Message status to match
+Message status\n\
+to match.
 ;
 MSG_HELP_FI_ST_MATCH (1207//)
 Search pattern (AmigaDOS\n\
-wildchars are supported)
+wildchars are supported).
 ;
 MSG_HELP_FI_CH_CASESENS (1208//)
 Should the search\n\
 be case sensitive?
 ;
 MSG_HELP_FI_CH_SUBSTR (1209//)
-Enable partial string search
+Enable partial\n\
+string search.
 ;
 MSG_HELP_FI_CY_COMP (1210//)
 Type of comparison. Select <> to get all messages that\n\
-don't match the pattern, IN to use a file of patterns
+don't match the pattern, IN to use a file of patterns.
 ;
 ;
 ; Module US - Routines
@@ -4086,7 +4126,7 @@ Sec_urity
 ;
 MSG_HELP_MA_CY_DEFSECURITY (1330//)
 Default security for sending\n\
-mail to this person
+mail to this person.
 ;
 MSG_WR_SecDefaults (1333//)
 Default
@@ -4101,7 +4141,7 @@ MSG_CO_UseSMTPAUTH (1337//)
 Use SMTP AU_TH
 ;
 MSG_CO_SMTPUser (1338//)
-Us_er ID
+Us_er name
 ;
 MSG_CO_SMTPPass (1339//)
 Pass_word
@@ -4167,14 +4207,16 @@ yourself to a foreign SMTP server\n\
 If in doubt, don't enable this option.
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER (1368//)
-User name of the SMTP AUTH user
+User name of the\n\
+SMTP AUTH user.
 ;
 MSG_HELP_CO_ST_SMTPAUTHPASS (1369//)
-Password of the SMTP AUTH user
+Password of the\n\
+SMTP AUTH user.
 ;
 MSG_HELP_CO_ST_APPICON (1370//)
 Text that should be displayed\n\
-as the label of the AppIcon
+as the label of the AppIcon.
 ;
 MSG_CO_APPICONTEXT (1371//)
 _Label
@@ -4233,7 +4275,7 @@ MSG_WR_NOSUBJECTREQ (1389//)
 The subject is missing, continue anyway?
 ;
 MSG_WR_TBSearch (1390//)
-Search
+Search...
 ;
 MSG_HELP_WR_BT_SEARCH (1391//)
 Search the text\n\
@@ -4243,7 +4285,7 @@ MSG_SEARCHWINDOW_TITLE (1392//)
 Search
 ;
 MSG_SEARCHWINDOW_TOGGLE_CASESENSITVE (1393//)
-C_ase sensitive
+C_ase sensitive?
 ;
 MSG_SEARCHWINDOW_BT_SEARCH (1394//)
 _Search
@@ -4335,7 +4377,7 @@ MSG_FO_MAXAGEFMT (1421//)
 %ld days
 ;
 MSG_CO_NB_EMAILCACHE (1422//)
-Email cache
+E-mail cache
 ;
 MSG_CO_NB_EMAILCACHEFMT (1423//)
 %ld address(es)
@@ -4350,7 +4392,8 @@ Port used by the SMTP server\n\
 (default: 25)
 ;
 MSG_HELP_CO_ST_POPPORT (1434//)
-Port used by the POP3 server (default: 110)
+Port used by the POP3 server\n\
+(default: 110)
 ;
 MSG_CO_InfoBarDef (1435//)
 - Total: %t New: %n Unread: %u
@@ -4435,19 +4478,23 @@ MSG_FROMTO (1463//)
 From/To
 ;
 MSG_HELP_CO_CA_COL1QUOT (1464//)
-Color used for displaying quotes
+Color used to\n\
+display quotes.
 ;
 MSG_HELP_CO_CA_COL3QUOT (1465//)
-Color used for displaying 3rd level quotes
+Color used to display\n\
+3rd level quotes.
 ;
 MSG_HELP_CO_CA_COL4QUOT (1466//)
-Color used for displaying 4th level quotes
+Color used to display\n\
+4th level quotes.
 ;
 MSG_CO_URLCOLOR (1467//)
 URL color
 ;
 MSG_HELP_CO_CA_COLURL (1468//)
-Color used for displaying clickable URL links
+Color used to display\n\
+clickable URL links.
 ;
 MSG_FO_FOLDEREXISTS (1469//)
 A file or directory with the given folder path already exists.\n\
@@ -4515,7 +4562,7 @@ MSG_CO_TZone13 (1491//)
 ;
 MSG_HELP_CO_ST_INFOBARTXT (1492//)
 Text that should be displayed\n\
-in the status bar
+in the status bar.
 ;
 MSG_MA_CROPREQUEST (1493//)
 All attachments of the selected mails will be cropped.\n\
@@ -4659,11 +4706,11 @@ If these radio buttons are ghosted, it means AmiSSL support is\n\
 currently not available.
 ;
 MSG_CO_SHOWEMBEDDEDREADPANE (1523//)
-Embedded mail read _pane in main window
+Use read _pane
 ;
 MSG_HELP_CO_CH_EMBEDDEDREADPANE (1524//)
-Activates an embeeded mail read pane directly\n\
-in the main window.
+Use a read pane in the main window\n\
+instead of a separate window to read email.
 ;
 MSG_CO_SETSTATUSDELAYED1 (1525//)
 Delay mar_king of displayed mail as read for
@@ -4672,9 +4719,8 @@ MSG_CO_SETSTATUSDELAYED2 (1526//)
 second(s)
 ;
 MSG_HELP_CO_SETSTATUSDELAYED (1527//)
-Upon switching mails or showing a mail in the embedded mail view,\n\
-YAM will delay the marking of a mail as read for the specified amount\n\
-of seconds.
+After opening an email in the embedded mail view,\n\
+YAM will wait this time before marking it as read.
 ;
 MSG_MA_ATTACHMENT (1528//)
 Attachment
@@ -4766,9 +4812,8 @@ MSG_CO_NB_AUTOSAVEFMT (1567//)
 %ld minute(s)
 ;
 MSG_HELP_CO_NB_AUTOSAVE (1568//)
-Number of minutes YAM should automatically\n\
-generate a save copy of the mail you are\n\
-currently composing.\n\
+How often YAM should write to disk a backup\n\
+of the email you are currently composing.\n\
 Select 0 to disable this feature.
 ;
 MSG_ER_GENESISUSER_TITLE (1569//)
@@ -4795,11 +4840,12 @@ This may either be due to insufficient space or because the \
 destination path is not valid or writable.
 ;
 MSG_CO_QUICKSEARCHBAR (1574//)
-Show QuickSearchBar in main window
+Use quick search _bar
 ;
 MSG_HELP_CO_CH_QUICKSEARCHBAR (1575//)
-If enabled, provides an embedded search bar in the\n\
-main window for quickly searching for mails.
+Use a search bar in the main window\n\
+to be able to quickly search for\n\
+certain emails.
 ;
 MSG_FI_SELECTACTIVE (1576//)
 Select _active matched
@@ -4878,19 +4924,18 @@ MSG_BUSY_SEARCHINGFOLDER (1599//)
 Searching for messages in folder '%s'...
 ; FOLDERNAME
 MSG_CO_WBAPPICON (1600//)
-A_ppIcon on workbench
+A_ppIcon on Workbench
 ;
 MSG_HELP_CO_CH_WBAPPICON (1601//)
-If checked, displays an AppIcon on the Workbench\n\
-with folder statistics.
+If checked, an AppIcon will appear on\n\
+Workbench showing folder statistics.
 ;
 MSG_CO_DOCKYICON (1602//)
-D_ockyIcon
+Use a d_ocky icon
 ;
 MSG_HELP_CO_CH_DOCKYICON (1603//)
-If enabled, a docky icon is displayed through\n\
-application.library. (only available on AmigaOS4\n\
-systems)
+If checked, YAM will add a docky to\n\
+AmiDock. This requires AmigaOS 4.x.
 ;
 MSG_MA_MessageImport (1606//)
 Import messages from MBOX, DBX or plain mail files...
@@ -4913,7 +4958,7 @@ MSG_YAMINFO (1609//)
 Open Source E-mail package for the Amiga
 ;
 MSG_CO_SYSTEMSETTINGS (1610//)
-System Settings
+System settings
 ;
 MSG_CO_DEFAULTCHARSET (1611//)
 C_harset
@@ -4967,85 +5012,85 @@ is flushed from memory and try again.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_CO_FIRSTSTEPS_TITLE (1619//)
-First Steps Settings
+First steps settings
 ;
 MSG_CO_FIRSTSTEPS_SUMMARY (1620//)
-For quickly configurating the bare minimum...
+The minimum parameters YAM must know to be able to send/receive email!
 ;
 MSG_CO_TCPIP_TITLE (1621//)
-TCP/IP Settings
+TCP/IP settings
 ;
 MSG_CO_TCPIP_SUMMARY (1622//)
-For configuring your SMTP and POP3 server...
+Configure here your SMTP and POP3 accounts.
 ;
 MSG_CO_NEWMAIL_TITLE (1623//)
-New Mail Settings
+New mail settings
 ;
 MSG_CO_NEWMAIL_SUMMARY (1624//)
-How to react upon receiving new mails...
+How to handle and react upon incoming mail.
 ;
 MSG_CO_FILTER_TITLE (1625//)
-Mail Filter Settings
+Filter settings
 ;
 MSG_CO_FILTER_SUMMARY (1626//)
-Define your own mail filters...
+Define here the mail filters you need.
 ;
 MSG_CO_READ_TITLE (1627//)
-Mail Reading Settings
+Mail reading settings
 ;
 MSG_CO_READ_SUMMARY (1628//)
-Configure mail reading...
+Almost all settings related to email reading are here!
 ;
 MSG_CO_WRITE_TITLE (1629//)
-Mail Writing Settings
+Mail writing settings
 ;
 MSG_CO_WRITE_SUMMARY (1630//)
-Configure mail writing...
+Some settings you really want to edit...
 ;
 MSG_CO_REPLY_TITLE (1631//)
-Mail Replying Settings
+Reply & forward settings
 ;
 MSG_CO_REPLY_SUMMARY (1632//)
-Configure mail replying...
+Or how replies and forwards should be done.
 ;
 MSG_CO_SIGNATURE_TITLE (1633//)
-Mail Signature Settings
+Signature settings
 ;
 MSG_CO_SIGNATURE_SUMMARY (1634//)
-Configure your signatures...
+The place to go to set up your signatures.
 ;
 MSG_CO_LISTS_TITLE (1635//)
-Mail Lists Settings
+Lists settings
 ;
 MSG_CO_LISTS_SUMMARY (1636//)
-Change the mail lists appearance...
+Change here the basic appearance of mail listviews.
 ;
 MSG_CO_SECURITY_TITLE (1637//)
-Security Settings
+Security settings
 ;
 MSG_CO_SECURITY_SUMMARY (1638//)
-Configure security relevant settings...
+PGP, remailers and logging are set up here.
 ;
 MSG_CO_STARTUP_TITLE (1639//)
-Startup/Quit Actions Setup
+Startup/Quit setup
 ;
 MSG_CO_STARTUP_SUMMARY (1640//)
-Maintenance processing during startup and shutdown of YAM...
+Set here what YAM should do on startup and exit.
 ;
 MSG_CO_MIME_TITLE (1641//)
-MIME Datatype Setup
+MIME types
 ;
 MSG_CO_MIME_SUMMARY (1642//)
-Setup how MIME types should be handled...
+The place to set up MIME types and viewers.
 ;
 MSG_CO_ABOOK_TITLE (1643//)
-Adressbook Settings
+Address book settings
 ;
 MSG_CO_ABOOK_SUMMARY (1644//)
-Handle additional adressbook related option...
+Address book related options are set up here.
 ;
 MSG_CO_SCRIPTS_TITLE (1645//)
-User-definable Scripts
+Scripts
 ;
 MSG_CO_SCRIPTS_SUMMARY (1646//)
 Configure your helper scripts...
@@ -5054,16 +5099,16 @@ MSG_CO_MIXED_TITLE (1647//)
 Miscellaneous
 ;
 MSG_CO_MIXED_SUMMARY (1648//)
-Configure various mixed settings...
+A bunch of settings that don't fit anywhere else.
 ;
 MSG_CO_UPDATE_TITLE (1649//)
-Software Update
+Online updates
 ;
 MSG_CO_UPDATE_SUMMARY (1650//)
-Check for updates of YAM...
+Or how to keep track of updates to YAM and related components.
 ;
 MSG_CO_CrdUpdate (1651//)
-Update
+Updates
 ;
 MSG_CO_AMISSLWARN_TITLE (1652//)
 AmiSSL availibility warning
@@ -5112,7 +5157,7 @@ MSG_MA_UPDATECHECK (1662//)
 Check for updates...
 ;
 MSG_CO_SOFTWAREUPDATE (1663//)
-Software Update
+Update check
 ;
 MSG_CO_UPDATE_DAILY (1664//)
 Daily
@@ -5124,28 +5169,28 @@ MSG_CO_UPDATE_MONTHLY (1666//)
 Monthly
 ;
 MSG_CO_SEARCHFORUPDATES (1667//)
-Search for Up_dates:
+Check for up_dates:
 ;
 MSG_CO_SEARCHFORUPDATESINFO (1668//)
 You will be notified as soon as updates are available.
 ;
 MSG_CO_SEARCHNOW (1669//)
-Search _now
+Check _now
 ;
 MSG_CO_LASTSEARCH (1670//)
-Last Search:
+Last check:
 ;
 MSG_CO_LASTSTATUS_NOCHECK (1671//)
-No check performed yet.
+no check performed yet.
 ;
 MSG_CO_LASTSTATUS_NOUPDATE (1672//)
-No new software updates were available.
+no new software updates were available.
 ;
 MSG_CO_LASTSTATUS_NOQUERY (1673//)
-Couldn't query update server for updates.
+couldn't query server for updates.
 ;
 MSG_CO_LASTSTATUS_UPDATESUCCESS (1674//)
-Successfully found and notified on new updates.
+successfully found and notified on new updates.
 ;
 MSG_WR_SECURITYREQ (1675//)
 The recipients of the mail have different\n\
@@ -5254,8 +5299,8 @@ Auto-detect c_yrillic charsets
 MSG_HELP_CO_DETECT_CYRILLIC (1707//)
 Tries to use the auto-detect feature\n\
 of codesets.library to automatically\n\
-identify the correct cyrillic codeset.\n\
-(only relevant for cyrillic users)
+identify the correct cyrillic codeset\n\
+(only relevant for cyrillic users).
 ;
 MSG_WR_ErrorNotEnoughUndoMem (1708//)
 The erased text was too large to be\n\
@@ -5284,29 +5329,23 @@ Please make sure that all files are accessible \
 and that you have proper permissions.
 ;
 MSG_CO_ABOOKLOOKUP (1713//)
-Perform addressbook lookup in message list
+_Address book lookup in message list
 ;
 MSG_HELP_CO_CH_ABOOKLOOKUP (1714//)
-Performs an addressbook lookup for every main\n\
-mail recipient in the mail list and shows the\n\
-real name of the addressbook entry instead.\n\
-\n\
-Please note: This is a quite time consuming job\n\
-and may bring down the performance of the list\n\
-display - especially on setups with a large\n\
-addressbook.
+Resolve sender/destination addresses in the message\n\
+list by looking them up in the address book and show\n\
+the real name instead. Press <Help> for more information.
 ;
 MSG_TR_MESSAGEGAUGE (1715//)
 Message %%ld of %ld
 ; COUNT, COUNT
 ;
 MSG_CO_CONVERTHTML (1716//)
-Con_vert viewable HTML message parts to plain text
+Con_vert HTML parts to plain text
 ;
 MSG_HELP_CO_CONVERTHTML (1717//)
-If a mail contains viewable HTML parts as its main\n\
-message parts, YAM will convert them to plain text\n\
-when this option is enabled.
+If enabled and a mail contains HTML parts, YAM will\n\
+convert them to plain text before displaying them.
 ;
 MSG_RE_FOLLOWTHREAD (1718//)
 In order to search for more mails of the same thread,\n\
@@ -5364,10 +5403,9 @@ MSG_CO_PGPPASSINTERVAL2 (1728//)
 idle minute(s)
 ;
 MSG_HELP_CO_PGPPASSINTERVAL (1729//)
-If selected, an entered PGP passphrase will be\n\
-remembered for the specified amount of idle minutes\n\
-so that subsequent PGP operations doesn't have to\n\
-query for it again.
+If selected, your PGP passphrase will be remembered\n\
+for this time so that subsequent PGP operations don't\n\
+trigger a query for it every time.
 ;
 MSG_UT_PGPPASSREQ_TITLE (1730//)
 PGP passphrase request
@@ -5472,7 +5510,7 @@ MSG_CO_SPAMFILTER_TITLE (1763//)
 Spam filter
 ;
 MSG_CO_SPAMFILTER_SUMMARY (1764//)
-Configure spam filter...
+Configure here the spam filter.
 ;
 MSG_CO_SPAM_FILTERFORNEWMAIL (1765//)
 Check _new mails for spam content
@@ -5481,10 +5519,10 @@ MSG_CO_SPAM_RESETTRAININGDATA (1766//)
 _Reset training data
 ;
 MSG_CO_SPAM_GOODCOUNT (1767//)
-Number of "not spam" classified mails
+"Not spam" classified mails
 ;
 MSG_CO_SPAM_BADCOUNT (1768//)
-Number of "spam" classified mails
+"Spam" classified mails
 ;
 MSG_BUSYFLUSHINGSPAMTRAININGDATA (1771//)
 Flushing spam training data...
@@ -5528,12 +5566,12 @@ MSG_CO_SMTPAUTH_METHOD (1783//)
 Met_hod
 ;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD (1784//)
-Allows to specify the SMTP-AUTH method to be\n\
-used for the configured server. 'Auto' selects\n\
-the method automatically depending on the server\n\
-capabilities. The others are for explicitly\n\
-selecting the method whereas the most secure one\n\
-is listed at the top.
+Select here the authentication method YAM should use.\n\
+'Auto' lets YAM pick one automatically depending on\n\
+the server's capabilities and is the recommended value,\n\
+whereas the others let you explicitly select one. They are\n\
+listed in order according to how safe they are, with the\n\
+safest at the top.
 ;
 MSG_CO_SMTPAUTH_AUTO (1785//)
 Auto
@@ -5755,47 +5793,43 @@ MSG_CO_SPAM_MARK_AS_READ (1851//)
 Mark new spam mai_ls as read
 ;
 MSG_HELP_CH_SPAMFILTERENABLED (1852//)
-Enables the Spam filter engine in YAM which\n\
-allows to filter out abusive advertising emails.
+Enables the spam filter, allowing you\n\
+to filter out abusive advertising emails.
 ;
 MSG_HELP_TX_SPAMBADCOUNT (1853//)
-Shows the amount of manually classified "Spam"\n\
-emails.
+Shows the amount of emails\n\
+manually classified as "spam".
 ;
 MSG_HELP_TX_SPAMGOODCOUNT (1854//)
-Shows the amount of manually classified "Not-Spam"\n\
-emails - also known as "Ham".
+Shows the amount of emails\n\
+manually classified as "not spam",\n\
+also known as "ham".
 ;
 MSG_HELP_BT_SPAMRESETTRAININGDATA (1855//)
 Allows to manually reset the whole spam filter\n\
-training data. Please note that this might only\n\
-be necessary in very rare cases.
+training data. This should be necessary only\n\
+in very rare cases.
 ;
 MSG_HELP_CH_SPAMFILTERFORNEWMAIL (1856//)
-If checked, incoming new mails will be automatically\n\
-checked for their "Spam" classification.
+If enabled, new incoming email will be\n\
+immediately analyzed by the spam filter.
 ;
 MSG_HELP_CH_SPAMABOOKISWHITELIST (1857//)
-If checked, mails with a sender address that can be\n\
-found in the addressbook will not considered to be\n\
-spam mails.
+If enabled, any email with a From: address that\n\
+can be found in the address book will never\n\
+be considered as spam.
 ;
 MSG_HELP_CH_SPAMMARKONMOVE (1858//)
-If checked, mails will be automatically marked as\n\
-spam mails if they are manually dropped into the\n\
-spam folder.
+If checked, any email manually moved to the "Spam"\n\
+folder will be automatically marked as "spam".
 ;
 MSG_HELP_CH_SPAMMARKASREAD (1859//)
-If checked, spam mail will be automatically flagged\n\
-as read and therefore not raise attention to the\n\
-user.
+If checked, spam mail will be\n\
+automatically flagged as "read".
 ;
 MSG_HELP_CH_UPDATECHECK (1860//)
-Allows to enable the automatic update check\n\
-mechanismin YAM. According to a specified interval\n\
-it will try to get latest version information via\n\
-the internet and remind you of available software\n\
-updates.
+How often do you want YAM to automatically check\n\
+for updates? Select "never" to disable this feature.
 ;
 MSG_WR_SELECTALL (1861//)
 Select All
@@ -5827,10 +5861,10 @@ MSG_CO_MDN_ACTION_ASK (1869//)
 Ask me
 ;
 MSG_CO_MDN_TITLE (1870//)
-Return Receipts
+Return receipts
 ;
 MSG_CO_MDN_DESCRIPTION (1871//)
-When I receive a request for a return receipt:
+When I receive a request for a return receipt...
 ;
 MSG_CO_MDN_DISABLED (1872//)
 _Never send a return receipt
@@ -5851,58 +5885,54 @@ MSG_CO_MDN_OTHER (1877//)
 In all oth_er cases:
 ;
 MSG_CO_REQUESTMDN (1878//)
-When sending _messages, always request a return receipt
+Always request a retur_n receipt
 ;
 MSG_HELP_CO_CH_REQUESTMDN (1879//)
-If selected, the return receipt option\n\
-in the write window will be enabled per\n\
-default.
+If selected, the return receipt option in\n\
+the Write window will always be enabled\n\
+by default. Use this with care!
 ;
 MSG_HELP_CO_CH_MDN_NEVER (1880//)
 If selected, no return receipt will be\n\
 send out, even if explicitly requested.
 ;
 MSG_HELP_CO_CH_MDN_ALLOW (1881//)
-If selected, return receipts will be\n\
-processed according to the rules defined\n\
-here.
+If selected, return receipts will be processed\n\
+according to the rules defined here.
 ;
 MSG_HELP_CO_CY_MDN_NORECIPIENT (1882//)
-In case a return receipt is requested,\n\
-but your mail address doesn't exist in\n\
-the To: or Cc: header, the defined action\n\
-will be performed.
+What to do with a return receipt request\n\
+when your e-mail address doesn't appear\n\
+neither in the To: or Cc: headers.
 ;
 MSG_HELP_CO_CY_MDN_NODOMAIN (1883//)
-In case a return receipt is requested,\n\
-but the domain of your mail address and\n\
-the one of the sender doesn't match,\n\
-the defined action will be performed.
+What to do with a return receipt request\n\
+when the sender's domain doesn't match yours.
 ;
 MSG_HELP_CO_CY_MDN_DELETE (1884//)
-If you delete a message without viewing,\n\
-the defined action will be performed.
+What to do with a return receipt request\n\
+when you just delete the original message.
 ;
 MSG_HELP_CO_CY_MDN_OTHER (1885//)
-In case none of the above rules match,\n\
-this action will be performed instead.
+What to do with a return receipt request\n\
+when none of the above rules applies.
 ;
 MSG_CO_LOOKFEEL_TITLE (1886//)
-Look&Feel
+Look & feel
 ;
 MSG_CO_LOOKFEEL_SUMMARY (1887//)
-Configure the general look&feel of YAM...
+Some generic elements of the GUI are set up here.
 ;
 MSG_CO_CRDLOOKFEEL (1888//)
-Look&Feel
+Look & feel
 ;
 MSG_CO_DSTACTIVE (1889//)
 D_aylight Saving Time (DST) is active
 ;
 MSG_HELP_CO_CH_DSTACTIVE (1890//)
-Activate if the daylight saving time is\n\
-currently active in your timezone\n\
-(summer time)
+Enable this if daylight saving time is\n\
+currently active in your time zone\n\
+(summer time).
 ;
 MSG_CO_SMTPSERVERPORT (1891//)
 Ser_ver/Port
@@ -5932,7 +5962,7 @@ MSG_CO_LOOKFEEL_THEMES (1898//)
 Themes
 ;
 MSG_CO_THEME_ACTIVATE (1899//)
-A_ctivate
+_Apply
 ;
 MSG_CO_THEME_PREVIEW (1900//)
 Preview
@@ -5944,13 +5974,12 @@ MSG_CO_THEME_URL (1902//)
 URL
 ;
 MSG_CO_RELDATETIME (1903//)
-Relative date output (Today, Yesterday, ...)
+Relative date output
 ;
 MSG_HELP_CO_CH_RELDATETIME (1904//)
 If selected, columns with date information\n\
-will use a relative output instead. E.g.\n\
-such colums will show strings like 'Today'\n\
-or 'Yesterday' instead of the full date.
+will use a relative output (e.g. 'Today' or\n\
+'Yesterday') instead of the full date if possible.
 ;
 MSG_FOLDER_SNAPSHOT_TREE (1908//)
 Snapshot arrangement
@@ -5968,8 +5997,8 @@ MSG_ER_USER_UNKNOWN_ERROR (1912//)
 The user '%s' is not known!
 ;
 MSG_HELP_CO_CA_COLSIG (1913//)
-The text color that should be used\n\
-to render the signature of a mail.
+The color that should be used to\n\
+print the signature of a mail.
 ;
 MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS (1914//)
 You chose to automatically mark spam mails as read,\n\
@@ -6022,9 +6051,10 @@ MSG_CO_SHOWALTPARTS (1926//)
 Show a_lternative parts
 ;
 MSG_HELP_CO_CH_SHOWALTPARTS (1927//)
-If enabled, normally hidden alternative message\n\
-parts of an 'multipart/alternative' mail will be\n\
-shown as attachments.
+If enabled, alternative message parts of a\n\
+'multipart/alternative' email that would\n\
+otherwise remain hidden will be displayed\n\
+as attachments instead.
 ;
 MSG_US_DIRECTORY_DOESNT_EXIST (1928//)
 The mail directory '%s' of user '%s' does not exist.\n\
@@ -6032,17 +6062,16 @@ The mail directory '%s' of user '%s' does not exist.\n\
 Do you want to create it?
 ;
 MSG_HELP_CO_BT_APPICONGETPOS (1929//)
-If pressed, the AppIcon position is retrieved from\n\
-the current position of the AppIcon on the workbench\n\
-desktop.
+Click to get the current\n\
+position of the AppIcon.
 ;
 MSG_CO_MOVE_HAM_TO_INCOMING (1930//)
-Move 'Not Spam' mails back to _incoming folder
+Move 'not spam' emails back to _Incoming folder
 ;
 MSG_HELP_CH_MOVE_HAM_TO_INCOMING (1931//)
-If enabled, a mail which was incorrectly classified\n\
-as spam and being manually marked as 'not spam' will be\n\
-moved back to the incoming folder.
+If enabled, any email which was incorrectly classified\n\
+as "spam" and later manually marked as "not spam" will be\n\
+automatically moved back to the Incoming folder.
 ;
 MSG_ER_NO8BITMIME (1932//)
 While trying to connect to SMTP server '%s', it reported \
@@ -6057,8 +6086,8 @@ MSG_CO_FILTER_HAM (1933//)
 Apply _filters
 ;
 MSG_HELP_CH_FILTER_HAM (1934//)
-If enabled, after moving the mail all user defined filters\n\
-will be applied to the mail.
+If enabled, after moving the email all the user\n\
+defined filters will be applied to it.
 ;
 MSG_SHUTDOWN_SHUTTING_DOWN (1935//)
 Shutting down YAM...
@@ -6134,28 +6163,27 @@ while trying to send command '%s'.\n\
 This may be due to a connection drop by the server.
 ;
 MSG_WR_MSWITCH_MSG (1956//)
-Switch to 'Message'
+Message
 ;
 MSG_WR_MSWITCH_ATT (1957//)
-Switch to 'Attachments'
+Attachments
 ;
 MSG_WR_MSWITCH_OPT (1958//)
-Switch to 'Options'
+Options
 ;
 MSG_CO_FWDMSG (1959//)
-_Forward message
+_Forward messages
 ;
 MSG_CO_FWDMSG_ATTACH (1960//)
-as attachment
+as attachments
 ;
 MSG_CO_FWDMSG_INLINE (1961//)
 inlined
 ;
 MSG_HELP_CO_CY_FORWARDMODE (1962//)
-Allows to select how a message should be\n\
-forwarded. Either a message can be forwarded\n\
-as an attachment or the message text can be\n\
-put inlined into the forward message text.
+Select here the way messages should be\n\
+forwarded by default. Press <Help> for\n\
+more information.
 ;
 MSG_ABOUT_CURRENT_DEVELOPERS (1963//)
 Current Developers:
@@ -6488,10 +6516,10 @@ Which address do you want to add to your address book?
 ; ADDRESS, ADDRESS
 ;
 MSG_CO_SCRIPTACTION (2032//)
-Script action (Name)
+Action (Name)
 ;
 MSG_CO_SCRIPTPATH (2033//)
-Script path
+Path
 ;
 MSG_ER_ICONOBJECT_WARNING (2038//)
 An error occurred while trying to load the icon object \
@@ -6561,9 +6589,64 @@ MSG_FOLDER_ALLTOREAD (2047//)
 Mark folder read
 ;
 MSG_EA_REMOVEPHOTO (2048//)
-_Remove
+Remo_ve
 ;
 MSG_HELP_EA_BT_REMOVEPHOTO (2049//)
-Remove the selected picture.\n\
-(The file will remain on the hard disk)
+'Forget' this picture (the\n\
+file on disk will remain).
+;
+MSG_HELP_CO_TX_DEFAULTCHARSET (2050//)
+Use the popup button to select the character set\n\
+you would like YAM to use by default. This should\n\
+match the system's default charset, otherwise a\n\
+requester will appear asking how do you want to proceed.
+;
+MSG_HELP_CO_CH_NOTISOUND (2051//)
+Play a sound file\n\
+when you get new mail.
+;
+MSG_HELP_CO_CH_NOTICMD (2052//)
+Execute a command\n\
+when you get new mail.
+;
+MSG_HELP_CO_BT_MORE (2053//)
+Add a rule to this filter.
+;
+MSG_HELP_CO_BT_LESS (2054//)
+Remove the last rule\n\
+from this filter.
+;
+MSG_HELP_CO_BT_FILTERUP (2055//)
+Move this filter\n\
+up in the list.
+;
+MSG_HELP_CO_BT_FILTERDOWN (2056//)
+Move this filter\n\
+down in the list.
+;
+MSG_HELP_CO_PO_APLAY (2057//)
+Open a file requester to\n\
+select the file to play.
+;
+MSG_HELP_CO_BT_APLAY (2058//)
+Test the sound.
+;
+MSG_HELP_CO_CH_USESIG (2059//)
+Do you want to enable\n\
+signatures by default?
+;
+MSG_HELP_CO_ST_DESCRIPTION (2060//)
+A custom description for\n\
+this MIME type.
+;
+MSG_HELP_CO_LV_REXX (2061//)
+List of scripts
+;
+MSG_HELP_CO_BT_UPDATENOW (2062//)
+Force a check\n\
+for updates now.
+;
+MSG_HELP_WR_LV_ATTACH (2063//)
+List of attachments\n\
+in this message.
 ;

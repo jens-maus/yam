@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-08  David Rey <tactica@users.sourceforge.net>
+
+  * YAM_COg.c, YAM_WR.c, YAM.cd: added a few missing help bubbles and applied
+    several changes and fixes to the catalog. Also disabled the "you will be
+    notified as soon as updates are available" note in the update prefs page,
+    this doesn't belong in the GUI.
+
 2007-12-07  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_EA.c: fixed a potential crash bug where due to a missing ABEntry

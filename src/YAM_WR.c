@@ -265,7 +265,7 @@ static char *NewID(BOOL is_msgid)
 
     // Here we try to generate a unique MessageID.
     // We try to be as much conform to the Recommandations for generating
-    // unqiue Message IDs as we can: http://www.jwz.org/doc/mid.html
+    // unique Message IDs as we can: http://www.jwz.org/doc/mid.html
     snprintf(idbuf, sizeof(idbuf), "%lx%lx.%lx@%s", seconds, ds.ds_Tick, (ULONG)rand(), C->SMTP_Server);
   }
   else
@@ -2438,7 +2438,7 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
 
     if(frc->numArgs == 0)
     {
-      D(DBF_GUI, "choosen file: [%s] from drawer: [%s]", frc->file, frc->drawer);
+      D(DBF_GUI, "chosen file: [%s] from drawer: [%s]", frc->file, frc->drawer);
 
       AddPath(filename, frc->drawer, frc->file, sizeof(filename));
       WR_AddFileToList(winnum, filename, NULL, FALSE);
@@ -2449,7 +2449,7 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
 
       for(i=0; i < frc->numArgs; i++)
       {
-        D(DBF_GUI, "choosen file: [%s] from drawer: [%s]", frc->argList[i], frc->drawer);
+        D(DBF_GUI, "chosen file: [%s] from drawer: [%s]", frc->argList[i], frc->drawer);
 
         AddPath(filename, frc->drawer, frc->argList[i], sizeof(filename));
         WR_AddFileToList(winnum, filename, NULL, FALSE);
@@ -3354,7 +3354,7 @@ HOOKPROTONHNO(WR_SetSoftStyleFunc, void, ULONG *arg)
       firstChar = nx1;
       lastChar = nx2;
 
-      // make that the texteditor will  keep quiet during our
+      // make the texteditor be quiet during our
       // operations
       set(gui->TE_EDIT, MUIA_TextEditor_Quiet, TRUE);
 
@@ -4157,6 +4157,8 @@ static struct WR_ClassData *WR_New(int winnum)
       SetHelp(data->GUI.CY_IMPORTANCE ,MSG_HELP_WR_CY_IMPORTANCE);
       SetHelp(data->GUI.RA_SIGNATURE  ,MSG_HELP_WR_RA_SIGNATURE );
       SetHelp(data->GUI.RA_SECURITY   ,MSG_HELP_WR_RA_SECURITY  );
+      SetHelp(data->GUI.LV_ATTACH     ,MSG_HELP_WR_LV_ATTACH    );
+
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_NEW,        data->GUI.TE_EDIT, 1, MUIM_TextEditor_ClearText);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_OPEN,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_OPEN, winnum);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSFILE,    MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_INSERT, winnum);

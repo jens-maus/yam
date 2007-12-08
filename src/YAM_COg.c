@@ -1908,6 +1908,7 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
     SetHelp(data->GUI.ST_PASSWD0,        MSG_HELP_CO_ST_PASSWD);
     SetHelp(data->GUI.CY_TZONE,          MSG_HELP_CO_CY_TZONE);
     SetHelp(data->GUI.CH_DSTACTIVE,      MSG_HELP_CO_CH_DSTACTIVE);
+    SetHelp(data->GUI.TX_DEFAULTCHARSET, MSG_HELP_CO_TX_DEFAULTCHARSET);
     SetHelp(data->GUI.CH_DETECTCYRILLIC, MSG_HELP_CO_DETECT_CYRILLIC);
 
     set(charsetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_CO_DEFAULTCHARSET)));
@@ -2120,46 +2121,46 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.ST_SMTPHOST    ,MSG_HELP_CO_ST_SMTPHOST     );
-    SetHelp(data->GUI.ST_SMTPPORT    ,MSG_HELP_CO_ST_SMTPPORT     );
-    SetHelp(data->GUI.ST_DOMAIN      ,MSG_HELP_CO_ST_DOMAIN       );
-    SetHelp(data->GUI.CH_SMTP8BIT    ,MSG_HELP_CO_CH_SMTP8BIT     );
-    SetHelp(data->GUI.CH_USESMTPAUTH ,MSG_HELP_CO_CH_USESMTPAUTH  );
-    SetHelp(data->GUI.ST_SMTPAUTHUSER,MSG_HELP_CO_ST_SMTPAUTHUSER );
-    SetHelp(data->GUI.ST_SMTPAUTHPASS,MSG_HELP_CO_ST_SMTPAUTHPASS );
-    SetHelp(data->GUI.CY_SMTPAUTHMETHOD, MSG_HELP_CO_CY_SMTPAUTHMETHOD);
-    SetHelp(data->GUI.LV_POP3        ,MSG_HELP_CO_LV_POP3         );
-    SetHelp(data->GUI.BT_PADD        ,MSG_HELP_CO_BT_PADD         );
-    SetHelp(data->GUI.BT_PDEL        ,MSG_HELP_CO_BT_PDEL         );
-    SetHelp(data->GUI.ST_POPACCOUNT  ,MSG_HELP_CO_ST_POPACCOUNT   );
-    SetHelp(data->GUI.ST_POPHOST     ,MSG_HELP_CO_ST_POPHOST      );
-    SetHelp(data->GUI.ST_POPPORT     ,MSG_HELP_CO_ST_POPPORT      );
-    SetHelp(data->GUI.ST_POPUSERID   ,MSG_HELP_CO_ST_POPUSERID    );
-    SetHelp(data->GUI.ST_PASSWD      ,MSG_HELP_CO_ST_PASSWD       );
-    SetHelp(data->GUI.CH_DELETE      ,MSG_HELP_CO_CH_DELETE       );
-    SetHelp(data->GUI.CH_USEAPOP     ,MSG_HELP_CO_CH_USEAPOP      );
-    SetHelp(data->GUI.CH_POPENABLED  ,MSG_HELP_CO_CH_POPENABLED   );
-    SetHelp(data->GUI.RA_SMTPSECURE  ,MSG_HELP_CO_RA_SMTPSECURE   );
-    SetHelp(data->GUI.RA_POP3SECURE,  MSG_HELP_CO_RA_POP3SECURE);
+    SetHelp(data->GUI.ST_SMTPHOST       ,MSG_HELP_CO_ST_SMTPHOST       );
+    SetHelp(data->GUI.ST_SMTPPORT       ,MSG_HELP_CO_ST_SMTPPORT       );
+    SetHelp(data->GUI.ST_DOMAIN         ,MSG_HELP_CO_ST_DOMAIN         );
+    SetHelp(data->GUI.CH_SMTP8BIT       ,MSG_HELP_CO_CH_SMTP8BIT       );
+    SetHelp(data->GUI.CH_USESMTPAUTH    ,MSG_HELP_CO_CH_USESMTPAUTH    );
+    SetHelp(data->GUI.ST_SMTPAUTHUSER   ,MSG_HELP_CO_ST_SMTPAUTHUSER   );
+    SetHelp(data->GUI.ST_SMTPAUTHPASS   ,MSG_HELP_CO_ST_SMTPAUTHPASS   );
+    SetHelp(data->GUI.CY_SMTPAUTHMETHOD ,MSG_HELP_CO_CY_SMTPAUTHMETHOD );
+    SetHelp(data->GUI.LV_POP3           ,MSG_HELP_CO_LV_POP3           );
+    SetHelp(data->GUI.BT_PADD           ,MSG_HELP_CO_BT_PADD           );
+    SetHelp(data->GUI.BT_PDEL           ,MSG_HELP_CO_BT_PDEL           );
+    SetHelp(data->GUI.ST_POPACCOUNT     ,MSG_HELP_CO_ST_POPACCOUNT     );
+    SetHelp(data->GUI.ST_POPHOST        ,MSG_HELP_CO_ST_POPHOST        );
+    SetHelp(data->GUI.ST_POPPORT        ,MSG_HELP_CO_ST_POPPORT        );
+    SetHelp(data->GUI.ST_POPUSERID      ,MSG_HELP_CO_ST_POPUSERID      );
+    SetHelp(data->GUI.ST_PASSWD         ,MSG_HELP_CO_ST_PASSWD         );
+    SetHelp(data->GUI.CH_DELETE         ,MSG_HELP_CO_CH_DELETE         );
+    SetHelp(data->GUI.CH_USEAPOP        ,MSG_HELP_CO_CH_USEAPOP        );
+    SetHelp(data->GUI.CH_POPENABLED     ,MSG_HELP_CO_CH_POPENABLED     );
+    SetHelp(data->GUI.RA_SMTPSECURE     ,MSG_HELP_CO_RA_SMTPSECURE     );
+    SetHelp(data->GUI.RA_POP3SECURE     ,MSG_HELP_CO_RA_POP3SECURE     );
 
-    DoMethod(data->GUI.LV_POP3       ,MUIM_Notify,MUIA_NList_Active   ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_GetP3EntryHook,0);
-    DoMethod(data->GUI.ST_POPACCOUNT ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.ST_POPHOST    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.ST_POPPORT    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.ST_POPUSERID  ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.ST_PASSWD     ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.CH_POPENABLED ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.CH_USEAPOP    ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.CH_DELETE     ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.BT_PADD       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_AddPOP3Hook);
-    DoMethod(data->GUI.BT_PDEL       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_DelPOP3Hook);
-    DoMethod(data->GUI.BT_POPUP      ,MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
-    DoMethod(data->GUI.BT_POPDOWN    ,MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
-    DoMethod(data->GUI.CH_USESMTPAUTH,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,MUIV_Notify_Application,7,MUIM_MultiSet,MUIA_Disabled,MUIV_NotTriggerValue,data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS, data->GUI.CY_SMTPAUTHMETHOD, NULL);
+    DoMethod(data->GUI.LV_POP3        ,MUIM_Notify ,MUIA_NList_Active    ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_GetP3EntryHook,0);
+    DoMethod(data->GUI.ST_POPACCOUNT  ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.ST_POPHOST     ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.ST_POPPORT     ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.ST_POPUSERID   ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.ST_PASSWD      ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.CH_POPENABLED  ,MUIM_Notify ,MUIA_Selected        ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.CH_USEAPOP     ,MUIM_Notify ,MUIA_Selected        ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.CH_DELETE      ,MUIM_Notify ,MUIA_Selected        ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.BT_PADD        ,MUIM_Notify ,MUIA_Pressed         ,FALSE          ,MUIV_Notify_Application ,2 ,MUIM_CallHook ,&CO_AddPOP3Hook);
+    DoMethod(data->GUI.BT_PDEL        ,MUIM_Notify ,MUIA_Pressed         ,FALSE          ,MUIV_Notify_Application ,2 ,MUIM_CallHook ,&CO_DelPOP3Hook);
+    DoMethod(data->GUI.BT_POPUP       ,MUIM_Notify ,MUIA_Pressed         ,FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
+    DoMethod(data->GUI.BT_POPDOWN     ,MUIM_Notify ,MUIA_Pressed         ,FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
+    DoMethod(data->GUI.CH_USESMTPAUTH ,MUIM_Notify ,MUIA_Selected        ,MUIV_EveryTime ,MUIV_Notify_Application ,7 ,MUIM_MultiSet,MUIA_Disabled,MUIV_NotTriggerValue,data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS, data->GUI.CY_SMTPAUTHMETHOD, NULL);
 
     // modify the POP3 port according to the security level selected.
-    DoMethod(data->GUI.RA_POP3SECURE, MUIM_Notify, MUIA_Radio_Active, 0, data->GUI.RA_POP3SECURE, 3, MUIM_Set, MUIA_Disabled, !G->TR_UseableTLS);
-    DoMethod(data->GUI.RA_POP3SECURE, MUIM_Notify, MUIA_Radio_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutP3EntryHook, 0);
+    DoMethod(data->GUI.RA_POP3SECURE, MUIM_Notify  ,MUIA_Radio_Active, 0, data->GUI.RA_POP3SECURE, 3, MUIM_Set, MUIA_Disabled, !G->TR_UseableTLS);
+    DoMethod(data->GUI.RA_POP3SECURE, MUIM_Notify  ,MUIA_Radio_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutP3EntryHook, 0);
 
     // modify the SMTP port according to the security level selected.
     DoMethod(data->GUI.RA_SMTPSECURE, MUIM_Notify, MUIA_Radio_Active, 0, data->GUI.RA_SMTPSECURE, 3, MUIM_Set, MUIA_Disabled, !G->TR_UseableTLS);
@@ -2287,8 +2288,11 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
     SetHelp(data->GUI.NM_INTERVAL  ,MSG_HELP_CO_ST_INTERVAL  );
     SetHelp(data->GUI.CH_DLLARGE   ,MSG_HELP_CO_CH_DLLARGE   );
     SetHelp(data->GUI.CH_NOTIREQ   ,MSG_HELP_CO_CH_NOTIREQ   );
+    SetHelp(data->GUI.CH_NOTISOUND ,MSG_HELP_CO_CH_NOTISOUND );
+    SetHelp(data->GUI.CH_NOTICMD   ,MSG_HELP_CO_CH_NOTICMD   );
     SetHelp(data->GUI.ST_NOTICMD   ,MSG_HELP_CO_ST_NOTICMD   );
     SetHelp(data->GUI.ST_NOTISOUND ,MSG_HELP_CO_ST_NOTISOUND );
+
     DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, pa_notisound, bt_notisound, pa_noticmd, NULL);
     set(bt_notisound,MUIA_CycleChain,1);
     DoMethod(bt_notisound          ,MUIM_Notify,MUIA_Pressed ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_PlaySoundHook,data->GUI.ST_NOTISOUND);
@@ -2450,26 +2454,32 @@ Object *CO_PageFilters(struct CO_ClassData *data)
          End,
       End))
    {
-      SetHelp(data->GUI.LV_RULES     ,MSG_HELP_CO_LV_RULES     );
-      SetHelp(data->GUI.ST_RNAME     ,MSG_HELP_CO_ST_RNAME     );
-      SetHelp(data->GUI.CH_REMOTE    ,MSG_HELP_CO_CH_REMOTE    );
-      SetHelp(data->GUI.CH_APPLYNEW  ,MSG_HELP_CO_CH_APPLYNEW  );
-      SetHelp(data->GUI.CH_APPLYSENT ,MSG_HELP_CO_CH_APPLYSENT );
-      SetHelp(data->GUI.CH_APPLYREQ  ,MSG_HELP_CO_CH_APPLYREQ  );
-      SetHelp(data->GUI.CH_ABOUNCE   ,MSG_HELP_CO_CH_ABOUNCE   );
-      SetHelp(data->GUI.CH_AFORWARD  ,MSG_HELP_CO_CH_AFORWARD  );
-      SetHelp(data->GUI.CH_ARESPONSE ,MSG_HELP_CO_CH_ARESPONSE );
-      SetHelp(data->GUI.ST_ARESPONSE ,MSG_HELP_CO_ST_ARESPONSE );
-      SetHelp(data->GUI.CH_AEXECUTE  ,MSG_HELP_CO_CH_AEXECUTE  );
-      SetHelp(data->GUI.ST_AEXECUTE  ,MSG_HELP_CO_ST_AEXECUTE  );
-      SetHelp(data->GUI.CH_APLAY     ,MSG_HELP_CO_CH_APLAY     );
-      SetHelp(data->GUI.ST_APLAY     ,MSG_HELP_CO_ST_APLAY     );
-      SetHelp(data->GUI.CH_AMOVE     ,MSG_HELP_CO_CH_AMOVE     );
-      SetHelp(data->GUI.PO_MOVETO    ,MSG_HELP_CO_PO_MOVETO    );
-      SetHelp(data->GUI.CH_ADELETE   ,MSG_HELP_CO_CH_ADELETE   );
-      SetHelp(data->GUI.CH_ASKIP     ,MSG_HELP_CO_CH_ASKIP     );
-      SetHelp(data->GUI.BT_RADD      ,MSG_HELP_CO_BT_RADD      );
-      SetHelp(data->GUI.BT_RDEL      ,MSG_HELP_CO_BT_RDEL      );
+      SetHelp(data->GUI.LV_RULES      ,MSG_HELP_CO_LV_RULES      );
+      SetHelp(data->GUI.ST_RNAME      ,MSG_HELP_CO_ST_RNAME      );
+      SetHelp(data->GUI.CH_REMOTE     ,MSG_HELP_CO_CH_REMOTE     );
+      SetHelp(data->GUI.CH_APPLYNEW   ,MSG_HELP_CO_CH_APPLYNEW   );
+      SetHelp(data->GUI.CH_APPLYSENT  ,MSG_HELP_CO_CH_APPLYSENT  );
+      SetHelp(data->GUI.CH_APPLYREQ   ,MSG_HELP_CO_CH_APPLYREQ   );
+      SetHelp(data->GUI.CH_ABOUNCE    ,MSG_HELP_CO_CH_ABOUNCE    );
+      SetHelp(data->GUI.CH_AFORWARD   ,MSG_HELP_CO_CH_AFORWARD   );
+      SetHelp(data->GUI.CH_ARESPONSE  ,MSG_HELP_CO_CH_ARESPONSE  );
+      SetHelp(data->GUI.ST_ARESPONSE  ,MSG_HELP_CO_ST_ARESPONSE  );
+      SetHelp(data->GUI.CH_AEXECUTE   ,MSG_HELP_CO_CH_AEXECUTE   );
+      SetHelp(data->GUI.ST_AEXECUTE   ,MSG_HELP_CO_ST_AEXECUTE   );
+      SetHelp(data->GUI.CH_APLAY      ,MSG_HELP_CO_CH_APLAY      );
+      SetHelp(data->GUI.ST_APLAY      ,MSG_HELP_CO_ST_APLAY      );
+      SetHelp(data->GUI.PO_APLAY      ,MSG_HELP_CO_PO_APLAY      );
+      SetHelp(data->GUI.BT_APLAY      ,MSG_HELP_CO_BT_APLAY      );
+      SetHelp(data->GUI.CH_AMOVE      ,MSG_HELP_CO_CH_AMOVE      );
+      SetHelp(data->GUI.PO_MOVETO     ,MSG_HELP_CO_PO_MOVETO     );
+      SetHelp(data->GUI.CH_ADELETE    ,MSG_HELP_CO_CH_ADELETE    );
+      SetHelp(data->GUI.CH_ASKIP      ,MSG_HELP_CO_CH_ASKIP      );
+      SetHelp(data->GUI.BT_RADD       ,MSG_HELP_CO_BT_RADD       );
+      SetHelp(data->GUI.BT_RDEL       ,MSG_HELP_CO_BT_RDEL       );
+      SetHelp(data->GUI.BT_MORE       ,MSG_HELP_CO_BT_MORE       );
+      SetHelp(data->GUI.BT_LESS       ,MSG_HELP_CO_BT_LESS       );
+      SetHelp(data->GUI.BT_FILTERUP   ,MSG_HELP_CO_BT_FILTERUP   );
+      SetHelp(data->GUI.BT_FILTERDOWN ,MSG_HELP_CO_BT_FILTERDOWN );
 
       // set the cyclechain
       set(data->GUI.BT_APLAY, MUIA_CycleChain, TRUE);
@@ -2479,37 +2489,37 @@ Object *CO_PageFilters(struct CO_ClassData *data)
 
       GhostOutFilter(&(data->GUI), NULL);
 
-      DoMethod(data->GUI.LV_RULES    ,MUIM_Notify,MUIA_NList_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&GetActiveFilterDataHook);
-      DoMethod(data->GUI.ST_RNAME    ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.CH_REMOTE   ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_RemoteToggleHook,MUIV_TriggerValue);
-      DoMethod(data->GUI.CH_APPLYREQ ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.CH_APPLYSENT,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.CH_APPLYNEW ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.CH_ABOUNCE  ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.CH_AFORWARD ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.CH_ARESPONSE,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.CH_AEXECUTE ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.CH_APLAY    ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.CH_AMOVE    ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.CH_ADELETE  ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.CH_ASKIP    ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.ST_ABOUNCE  ,MUIM_Notify,MUIA_String_BufferPos   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.ST_AFORWARD ,MUIM_Notify,MUIA_String_BufferPos   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.ST_ARESPONSE,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.ST_AEXECUTE ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.ST_APLAY    ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.BT_APLAY    ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook, &CO_PlaySoundHook,data->GUI.ST_APLAY);
-      DoMethod(data->GUI.TX_MOVETO   ,MUIM_Notify,MUIA_Text_Contents      ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.LV_MOVETO   ,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE         ,data->GUI.PO_MOVETO   ,2,MUIM_Popstring_Close,TRUE);
-      DoMethod(data->GUI.LV_MOVETO   ,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE         ,data->GUI.CH_AMOVE    ,3,MUIM_Set,MUIA_Selected,TRUE);
-      DoMethod(data->GUI.BT_RADD,       MUIM_Notify, MUIA_Pressed,  FALSE,  MUIV_Notify_Application,  2,  MUIM_CallHook,    &AddNewFilterToListHook);
-      DoMethod(data->GUI.BT_RDEL,       MUIM_Notify, MUIA_Pressed,  FALSE,  MUIV_Notify_Application,  2,  MUIM_CallHook,    &RemoveActiveFilterHook);
-      DoMethod(data->GUI.BT_FILTERUP,   MUIM_Notify, MUIA_Pressed,  FALSE,  data->GUI.LV_RULES,       3,  MUIM_NList_Move,  MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
-      DoMethod(data->GUI.BT_FILTERDOWN, MUIM_Notify, MUIA_Pressed,  FALSE,  data->GUI.LV_RULES,       3,  MUIM_NList_Move,  MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
-      DoMethod(data->GUI.CH_AMOVE,      MUIM_Notify, MUIA_Selected, TRUE,   data->GUI.CH_ADELETE,     3,  MUIM_Set,         MUIA_Selected,            FALSE);
-      DoMethod(data->GUI.CH_ADELETE,    MUIM_Notify, MUIA_Selected, TRUE,   data->GUI.CH_AMOVE,       3,  MUIM_Set,         MUIA_Selected,            FALSE);
-      DoMethod(data->GUI.BT_MORE,       MUIM_Notify, MUIA_Pressed,  FALSE,  MUIV_Notify_Application,  2,  MUIM_CallHook,    &AddNewRuleToListHook);
-      DoMethod(data->GUI.BT_LESS,       MUIM_Notify, MUIA_Pressed,  FALSE,  MUIV_Notify_Application,  2,  MUIM_CallHook,    &RemoveLastRuleHook);
+      DoMethod(data->GUI.LV_RULES     ,MUIM_Notify, MUIA_NList_Active         ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&GetActiveFilterDataHook);
+      DoMethod(data->GUI.ST_RNAME     ,MUIM_Notify, MUIA_String_Contents      ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_REMOTE    ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook          ,&CO_RemoteToggleHook       ,MUIV_TriggerValue);
+      DoMethod(data->GUI.CH_APPLYREQ  ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_APPLYSENT ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_APPLYNEW  ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_ABOUNCE   ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_AFORWARD  ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_ARESPONSE ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_AEXECUTE  ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_APLAY     ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_AMOVE     ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_ADELETE   ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_ASKIP     ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.ST_ABOUNCE   ,MUIM_Notify, MUIA_String_BufferPos     ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.ST_AFORWARD  ,MUIM_Notify, MUIA_String_BufferPos     ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.ST_ARESPONSE ,MUIM_Notify, MUIA_String_Contents      ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.ST_AEXECUTE  ,MUIM_Notify, MUIA_String_Contents      ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.ST_APLAY     ,MUIM_Notify, MUIA_String_Contents      ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.BT_APLAY     ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,MUIV_Notify_Application ,3 ,MUIM_CallHook          ,&CO_PlaySoundHook,data->GUI.ST_APLAY);
+      DoMethod(data->GUI.TX_MOVETO    ,MUIM_Notify, MUIA_Text_Contents        ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.LV_MOVETO    ,MUIM_Notify, MUIA_Listview_DoubleClick ,TRUE           ,data->GUI.PO_MOVETO     ,2 ,MUIM_Popstring_Close   ,TRUE);
+      DoMethod(data->GUI.LV_MOVETO    ,MUIM_Notify, MUIA_Listview_DoubleClick ,TRUE           ,data->GUI.CH_AMOVE      ,3 ,MUIM_Set,MUIA_Selected ,TRUE);
+      DoMethod(data->GUI.BT_RADD      ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&AddNewFilterToListHook);
+      DoMethod(data->GUI.BT_RDEL      ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&RemoveActiveFilterHook);
+      DoMethod(data->GUI.BT_FILTERUP  ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,data->GUI.LV_RULES      ,3 ,MUIM_NList_Move        ,MUIV_NList_Move_Selected   ,MUIV_NList_Move_Previous);
+      DoMethod(data->GUI.BT_FILTERDOWN,MUIM_Notify, MUIA_Pressed              ,FALSE          ,data->GUI.LV_RULES      ,3 ,MUIM_NList_Move        ,MUIV_NList_Move_Selected   ,MUIV_NList_Move_Next);
+      DoMethod(data->GUI.CH_AMOVE     ,MUIM_Notify, MUIA_Selected             ,TRUE           ,data->GUI.CH_ADELETE    ,3 ,MUIM_Set               ,MUIA_Selected              ,FALSE);
+      DoMethod(data->GUI.CH_ADELETE   ,MUIM_Notify, MUIA_Selected             ,TRUE           ,data->GUI.CH_AMOVE      ,3 ,MUIM_Set               ,MUIA_Selected              ,FALSE);
+      DoMethod(data->GUI.BT_MORE      ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&AddNewRuleToListHook);
+      DoMethod(data->GUI.BT_LESS      ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,MUIV_Notify_Application ,2 ,MUIM_CallHook          ,&RemoveLastRuleHook);
    }
 
    return grp;
@@ -3086,6 +3096,7 @@ Object *CO_PageSignature(struct CO_ClassData *data)
          End,
       End))
    {
+      SetHelp(data->GUI.CH_USESIG,  MSG_HELP_CO_CH_USESIG   );
       SetHelp(data->GUI.CY_SIGNAT,  MSG_HELP_CO_CY_SIGNAT   );
       SetHelp(data->GUI.BT_SIGEDIT, MSG_HELP_CO_BT_EDITSIG  );
       SetHelp(data->GUI.BT_INSTAG,  MSG_HELP_CO_BT_INSTAG   );
@@ -3461,13 +3472,14 @@ Object *CO_PageMIME(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.ST_CTYPE     ,MSG_HELP_CO_ST_CTYPE     );
-    SetHelp(data->GUI.ST_EXTENS    ,MSG_HELP_CO_ST_EXTENS    );
-    SetHelp(data->GUI.ST_COMMAND   ,MSG_HELP_CO_ST_COMMAND   );
-    SetHelp(data->GUI.BT_MADD      ,MSG_HELP_CO_BT_MADD      );
-    SetHelp(data->GUI.BT_MDEL      ,MSG_HELP_CO_BT_MDEL      );
-    SetHelp(data->GUI.BT_MIMEIMPORT,MSG_HELP_CO_BT_MIMEIMPORT);
-    SetHelp(data->GUI.ST_DEFVIEWER ,MSG_HELP_CO_ST_DEFVIEWER );
+    SetHelp(data->GUI.ST_CTYPE       ,MSG_HELP_CO_ST_CTYPE       );
+    SetHelp(data->GUI.ST_EXTENS      ,MSG_HELP_CO_ST_EXTENS      );
+    SetHelp(data->GUI.ST_COMMAND     ,MSG_HELP_CO_ST_COMMAND     );
+    SetHelp(data->GUI.BT_MADD        ,MSG_HELP_CO_BT_MADD        );
+    SetHelp(data->GUI.BT_MDEL        ,MSG_HELP_CO_BT_MDEL        );
+    SetHelp(data->GUI.BT_MIMEIMPORT  ,MSG_HELP_CO_BT_MIMEIMPORT  );
+    SetHelp(data->GUI.ST_DEFVIEWER   ,MSG_HELP_CO_ST_DEFVIEWER   );
+    SetHelp(data->GUI.ST_DESCRIPTION ,MSG_HELP_CO_ST_DESCRIPTION );
 
     DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.GR_MIME, data->GUI.BT_MDEL, NULL);
     DoMethod(data->GUI.LV_MIME     ,MUIM_Notify, MUIA_NList_Active   ,MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &GetMimeTypeEntryHook);
@@ -3629,6 +3641,7 @@ Object *CO_PageScripts(struct CO_ClassData *data)
       SetHelp(data->GUI.CY_ISADOS    ,MSG_HELP_CO_CY_ISADOS    );
       SetHelp(data->GUI.CH_CONSOLE   ,MSG_HELP_CO_CH_CONSOLE   );
       SetHelp(data->GUI.CH_WAITTERM  ,MSG_HELP_CO_CH_WAITTERM  );
+      SetHelp(data->GUI.LV_REXX      ,MSG_HELP_CO_LV_REXX      );
 
       DoMethod(data->GUI.LV_REXX     ,MUIM_Notify,MUIA_NList_Active   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_GetRXEntryHook);
       DoMethod(data->GUI.ST_RXNAME   ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRXEntryHook);
@@ -3770,25 +3783,25 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.ST_TEMPDIR   ,MSG_HELP_CO_ST_TEMPDIR   );
-    SetHelp(data->GUI.ST_DETACHDIR ,MSG_HELP_CO_ST_DETACHDIR );
-    SetHelp(data->GUI.ST_ATTACHDIR ,MSG_HELP_CO_ST_ATTACHDIR );
-    SetHelp(data->GUI.CH_WBAPPICON ,MSG_HELP_CO_CH_WBAPPICON );
-    SetHelp(data->GUI.ST_APPX      ,MSG_HELP_CO_ST_APP       );
-    SetHelp(data->GUI.ST_APPY      ,MSG_HELP_CO_ST_APP       );
-    SetHelp(data->GUI.CH_APPICONPOS,MSG_HELP_CO_ST_APP       );
-    SetHelp(data->GUI.CH_DOCKYICON ,MSG_HELP_CO_CH_DOCKYICON );
-    SetHelp(data->GUI.CH_CLGADGET  ,MSG_HELP_CO_CH_CLGADGET  );
-    SetHelp(data->GUI.CH_CONFIRM   ,MSG_HELP_CO_CH_CONFIRM   );
-    SetHelp(data->GUI.NB_CONFIRMDEL,MSG_HELP_CO_NB_CONFIRMDEL);
-    SetHelp(data->GUI.CH_REMOVE    ,MSG_HELP_CO_CH_REMOVE    );
-    SetHelp(data->GUI.TX_ENCPACK   ,MSG_HELP_CO_TX_ENCPACK   );
-    SetHelp(data->GUI.TX_PACKER    ,MSG_HELP_CO_TX_PACKER    );
-    SetHelp(data->GUI.NB_ENCPACK   ,MSG_HELP_CO_NB_ENCPACK   );
-    SetHelp(data->GUI.NB_PACKER    ,MSG_HELP_CO_NB_ENCPACK   );
-    SetHelp(data->GUI.ST_ARCHIVER  ,MSG_HELP_CO_ST_ARCHIVER  );
-    SetHelp(data->GUI.ST_APPICON   ,MSG_HELP_CO_ST_APPICON   );
-    SetHelp(data->GUI.BT_APPICONGETPOS, MSG_HELP_CO_BT_APPICONGETPOS);
+    SetHelp(data->GUI.ST_TEMPDIR        ,MSG_HELP_CO_ST_TEMPDIR       );
+    SetHelp(data->GUI.ST_DETACHDIR      ,MSG_HELP_CO_ST_DETACHDIR     );
+    SetHelp(data->GUI.ST_ATTACHDIR      ,MSG_HELP_CO_ST_ATTACHDIR     );
+    SetHelp(data->GUI.CH_WBAPPICON      ,MSG_HELP_CO_CH_WBAPPICON     );
+    SetHelp(data->GUI.ST_APPX           ,MSG_HELP_CO_ST_APP           );
+    SetHelp(data->GUI.ST_APPY           ,MSG_HELP_CO_ST_APP           );
+    SetHelp(data->GUI.CH_APPICONPOS     ,MSG_HELP_CO_ST_APP           );
+    SetHelp(data->GUI.CH_DOCKYICON      ,MSG_HELP_CO_CH_DOCKYICON     );
+    SetHelp(data->GUI.CH_CLGADGET       ,MSG_HELP_CO_CH_CLGADGET      );
+    SetHelp(data->GUI.CH_CONFIRM        ,MSG_HELP_CO_CH_CONFIRM       );
+    SetHelp(data->GUI.NB_CONFIRMDEL     ,MSG_HELP_CO_NB_CONFIRMDEL    );
+    SetHelp(data->GUI.CH_REMOVE         ,MSG_HELP_CO_CH_REMOVE        );
+    SetHelp(data->GUI.TX_ENCPACK        ,MSG_HELP_CO_TX_ENCPACK       );
+    SetHelp(data->GUI.TX_PACKER         ,MSG_HELP_CO_TX_PACKER        );
+    SetHelp(data->GUI.NB_ENCPACK        ,MSG_HELP_CO_NB_ENCPACK       );
+    SetHelp(data->GUI.NB_PACKER         ,MSG_HELP_CO_NB_ENCPACK       );
+    SetHelp(data->GUI.ST_ARCHIVER       ,MSG_HELP_CO_ST_ARCHIVER      );
+    SetHelp(data->GUI.ST_APPICON        ,MSG_HELP_CO_ST_APPICON       );
+    SetHelp(data->GUI.BT_APPICONGETPOS  ,MSG_HELP_CO_BT_APPICONGETPOS );
 
     DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, data->GUI.BT_APPICONGETPOS, NULL);
     DoMethod(data->GUI.CH_WBAPPICON, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Application, 9, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, data->GUI.CH_APPICONPOS, data->GUI.BT_APPICONGETPOS, NULL);
@@ -3906,11 +3919,11 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
                   Child, data->GUI.CY_UPDATEINTERVAL = MakeCycle(updateInterval, ""),
                   Child, HVSpace,
                 End,
-                Child, HVSpace,
-                Child, TextObject,
-                  MUIA_Text_Contents, tr(MSG_CO_SEARCHFORUPDATESINFO),
-                  MUIA_Font,          MUIV_Font_Tiny,
-                End,
+//                Child, HVSpace,
+//                Child, TextObject,
+//                  MUIA_Text_Contents, tr(MSG_CO_SEARCHFORUPDATESINFO),
+//                  MUIA_Font,          MUIV_Font_Tiny,
+//                End,
                 Child, VSpace(10),
                 Child, VSpace(10),
                 Child, HVSpace,
@@ -3945,6 +3958,7 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
 
     SetHelp(data->GUI.CH_UPDATECHECK,    MSG_HELP_CH_UPDATECHECK);
     SetHelp(data->GUI.CY_UPDATEINTERVAL, MSG_HELP_CH_UPDATECHECK);
+    SetHelp(data->GUI.BT_UPDATENOW,      MSG_HELP_CO_BT_UPDATENOW);
 
     DoMethod(data->GUI.CH_UPDATECHECK, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.CY_UPDATEINTERVAL, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
     DoMethod(data->GUI.BT_UPDATENOW,   MUIM_Notify, MUIA_Pressed,  FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &UpdateCheckHook);
