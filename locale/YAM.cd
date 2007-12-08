@@ -6459,10 +6459,10 @@ MSG_FO_TO_PATTERN (2020//)
 _Pattern (To:)
 ;
 MSG_FO_TO_ADDRESS (2021//)
-Sender address (_To:)
+Destination address (_To:)
 ;
 MSG_FO_FROM_ADDRESS (2022//)
-Receiver address (_From:)
+Sender address (_From:)
 ;
 MSG_FO_REPLYTO_ADDRESS (2023//)
 _Reply address (Reply-To:)

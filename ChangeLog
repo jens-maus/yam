@@ -7,6 +7,8 @@ $URL$
 
 2007-12-08  David Rey <tactica@users.sourceforge.net>
 
+  * classes/MainMailList.c, classes/MainFolderListtree.c: applied most of
+    the changes suggested in change request #588495.
   * YAM_COg.c, YAM_WR.c, YAM.cd: added a few missing help bubbles and applied
     several changes and fixes to the catalog. Also disabled the "you will be
     notified as soon as updates are available" note in the update prefs page,
