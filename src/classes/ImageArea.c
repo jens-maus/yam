@@ -825,8 +825,8 @@ OVERLOAD(MUIM_Draw)
                         0,
                         data->scaledBytesPerRow,
                         rp,
-                        _mleft(obj)
-                        _mtop(obj)
+                        _mleft(obj),
+                        _mtop(obj),
                         width,
                         height,
                         RECTFMT_RGB);
