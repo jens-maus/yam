@@ -676,41 +676,41 @@ Users
 ;
 MSG_HELP_MA_BT_READ (247//)
 Display the contents of\n\
-the current message
+the current message.
 ;
 MSG_HELP_MA_BT_EDIT (248//)
 Modify the\n\
-current message
+current message.
 ;
 MSG_HELP_MA_BT_MOVE (249//)
 Move selected message(s)\n\
-to another folder
+to another folder.
 ;
 MSG_HELP_MA_BT_DELETE (250//)
-Delete selected message(s)
+Delete selected message(s).
 ;
 MSG_HELP_MA_BT_GETADDRESS (251//)
 Save sender's address\n\
-in your address book
+in your address book.
 ;
 MSG_HELP_MA_BT_WRITE (252//)
-Compose a new message
+Compose a new message.
 ;
 MSG_HELP_MA_BT_REPLY (253//)
 Reply to the\n\
-selected message(s)
+selected message(s).
 ;
 MSG_HELP_MA_BT_FORWARD (254//)
 Forward the selected message(s)\n\
-to another recipient
+to another recipient.
 ;
 MSG_HELP_MA_BT_POPNOW (255//)
 Connect to the mail server\n\
-and download new messages
+and download new messages.
 ;
 MSG_HELP_MA_BT_SENDALL (256//)
 Send queued messages\n\
-in the Outgoing folder
+in the Outgoing folder.
 ;
 MSG_HELP_MA_BT_FILTER (257//)
 Apply filters to the\n\
@@ -721,13 +721,13 @@ messages are currently selected,\n\
 only those will be filtered.
 ;
 MSG_HELP_MA_BT_SEARCH (258//)
-Search your mail folders
+Search your mail folders.
 ;
 MSG_HELP_MA_BT_ABOOK (259//)
-Open the address book
+Open the address book.
 ;
 MSG_HELP_MA_BT_CONFIG (260//)
-Modify YAM's preferences
+Modify YAM's preferences.
 ;
 ;
 ; Module CO - Procedures
@@ -1572,7 +1572,7 @@ Import MIME viewers & types...
 ;
 MSG_HELP_CO_ST_REALNAME (554//)
 Your full name\n\
-(first name last name)
+(first name last name).
 ;
 MSG_HELP_CO_ST_EMAIL (555//)
 Your e-mail address.
@@ -1584,7 +1584,7 @@ SMTP server will be used as fallback.
 ;
 MSG_HELP_CO_ST_PASSWD (557//)
 Password to access\n\
-the POP3 server
+the POP3 server.
 ;
 MSG_HELP_CO_CY_TZONE (558//)
 Select the time zone of\n\
@@ -1596,8 +1596,9 @@ If you leave this field empty, the address of the\n\
 POP3 server will be used as fallback.
 ;
 MSG_HELP_CO_ST_DOMAIN (561//)
-The hostname of your Amiga. Change this\n\
-field if the HELO commands fails.
+The hostname of your computer.\n\
+Change this field if the HELO\n\
+commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT (562//)
 Do not convert messages to 7-bit when transferring.\n\
@@ -1605,10 +1606,12 @@ You should only use this option if you're sure that your SMTP server\n\
 supports 8-bit transfers, otherwise your messages may get corrupted.
 ;
 MSG_HELP_CO_LV_POP3 (563//)
-List of POP3 accounts
+List of the POP3\n\
+accounts.
 ;
 MSG_HELP_CO_BT_PADD (564//)
-Add a new POP3 account to the list
+Add a new POP3 account\n\
+to the list.
 ;
 MSG_HELP_CO_BT_PDEL (565//)
 Remove the selected POP3\n\
@@ -1679,10 +1682,10 @@ The sound file you want to play\n\
 when you get new mail.
 ;
 MSG_HELP_CO_LV_RULES (580//)
-List of filters
+List of filters.
 ;
 MSG_HELP_CO_ST_RNAME (581//)
-Filter name
+Filter name.
 ;
 MSG_HELP_CO_CH_REMOTE (582//)
 Apply this filter before\n\
@@ -1720,7 +1723,7 @@ get the forwarded messages.
 ;
 MSG_HELP_CO_CH_ARESPONSE (591//)
 Send an automatic reply\n\
-for each matching message
+for each matching message.
 ;
 MSG_HELP_CO_ST_ARESPONSE (592//)
 Text file that contains\n\
@@ -1756,7 +1759,7 @@ Do not download\n\
 the matching messages.
 ;
 MSG_HELP_CO_BT_RADD (601//)
-Add a new filter
+Add a new filter.
 ;
 MSG_HELP_CO_BT_RDEL (602//)
 Remove the selected filter\n\
@@ -1764,7 +1767,7 @@ from the list.
 ;
 MSG_HELP_CO_CA_COL2QUOT (603//)
 Color used to display\n\
-2nd level quotes
+2nd level quotes.
 ;
 MSG_HELP_CO_CH_WRAPHEAD (604//)
 Split long headers\n\
@@ -1797,7 +1800,7 @@ of a multipart message.
 ;
 MSG_HELP_CO_CH_MULTIWIN (612//)
 Use a separate Read window\n\
-for each opened message
+for each opened message.
 ;
 MSG_HELP_CO_CA_COLTEXT (613//)
 Color for the 'colored' text used in\n\
@@ -1818,7 +1821,7 @@ button to see the list of supported\n\
 variables.
 ;
 MSG_HELP_CO_BT_MADD (617//)
-Add a new MIME viewer
+Add a new MIME viewer.
 ;
 MSG_HELP_CO_BT_MDEL (618//)
 Remove the selected\n\
@@ -1998,10 +2001,10 @@ Change status of new\n\
 messages to unread.
 ;
 MSG_HELP_CO_CH_SEND (666//)
-Send queued messages
+Send queued messages.
 ;
 MSG_HELP_CO_CH_POPSTART (667//)
-Check for mail
+Check for mail.
 ;
 MSG_HELP_CO_CH_CHECKBD (668//)
 Check the address book and open a\n\
@@ -2093,7 +2096,7 @@ Description of the script\n\
 in the 'Scripts' menu.
 ;
 MSG_HELP_CO_ST_SCRIPT (695//)
-Filename of the script
+Filename of the script.
 ;
 MSG_HELP_CO_CY_ISADOS (696//)
 Type of the script\n\
@@ -2108,10 +2111,10 @@ Do not run the script\n\
 asynchronously.
 ;
 MSG_HELP_CO_BT_SAVE (699//)
-Save current settings
+Save current settings.
 ;
 MSG_HELP_CO_BT_USE (700//)
-Use current settings
+Use current settings.
 ;
 MSG_HELP_CO_BT_CANCEL (701//)
 Close configuration\n\
@@ -2307,7 +2310,7 @@ F_old
 ; Module AB - Bubblehelp
 ;
 MSG_HELP_AB_BT_SAVE (757//)
-Save current changes
+Save current changes.
 ;
 MSG_HELP_AB_BT_SEARCH (758//)
 Find an entry in\n\
@@ -2326,14 +2329,14 @@ Add a new distribution list\n\
 to the address book.
 ;
 MSG_HELP_AB_BT_EDIT (762//)
-Edit this entry
+Edit this entry.
 ;
 MSG_HELP_AB_BT_DELETE (763//)
 Delete the selected entry\n\
 from the address book.
 ;
 MSG_HELP_AB_BT_PRINT (764//)
-Print the selected entry
+Print the selected entry.
 ;
 MSG_HELP_AB_BT_OPEN (765//)
 Display all the entries\n\
@@ -2476,8 +2479,8 @@ FAX number(s).
 ;
 MSG_HELP_EA_ST_BIRTHDAY (810//)
 Date of birth in\n\
-AmigaDOS format,\n\
-e.g. 10-Jan-1950
+AmigaDOS format.\n\
+(e.g. 10-Jan-1950)
 ;
 MSG_HELP_EA_BC_PHOTO (811//)
 Portrait picture\n\
@@ -2516,10 +2519,10 @@ Sort the member list\n\
 alphabetically.
 ;
 MSG_HELP_EA_BT_OKAY (821//)
-Accept this entry
+Accept this entry.
 ;
 MSG_HELP_EA_BT_CANCEL (822//)
-Discard changes
+Discard changes.
 ;
 ;
 ; Module RE - Procedures
@@ -2789,21 +2792,21 @@ For_ward
 ;
 MSG_HELP_RE_BT_PREVIOUS (903//)
 Display contents of\n\
-the previous message
+the previous message.
 ;
 MSG_HELP_RE_BT_NEXT (904//)
 Display contents of\n\
-the next message
+the next message.
 ;
 MSG_HELP_RE_BT_QUESTION (905//)
 Show the message that\n\
 is being answered here\n\
-(go back in thread)
+(go back in thread).
 ;
 MSG_HELP_RE_BT_ANSWER (906//)
 Show the reply\n\
 to this message\n\
-(follow thread)
+(follow thread).
 ;
 MSG_HELP_RE_BT_DISPLAY (907//)
 Use the configured MIME\n\
@@ -2812,27 +2815,27 @@ part of this message.
 ;
 MSG_HELP_RE_BT_EXPORT (908//)
 Save displayed message or\n\
-a part of it to disk
+a part of it to disk.
 ;
 MSG_HELP_RE_BT_PRINT (909//)
 Send this message\n\
-to the printer
+to the printer.
 ;
 MSG_HELP_RE_BT_MOVE (910//)
 Move this message to another folder\n\
-and display the next one
+and display the next one.
 ;
 MSG_HELP_RE_BT_DELETE (911//)
 Delete this message and\n\
-display the next one
+display the next one.
 ;
 MSG_HELP_RE_BT_REPLY (912//)
 Reply to this\n\
-message
+message.
 ;
 MSG_HELP_RE_BT_FORWARD (913//)
 Forward this\n\
-message
+message.
 ;
 ;
 ; Module WR - Procedures
@@ -3128,51 +3131,51 @@ Importance
 ;
 MSG_HELP_WR_ST_TO (1014//)
 Address (and name) or alias\n\
-of the primary recipient(s)
+of the primary recipient(s).
 ;
 MSG_HELP_WR_BT_ADR (1016//)
 Select recipient(s) from\n\
 the address book.
 ;
 MSG_HELP_WR_ST_SUBJECT (1017//)
-Subject of your message
+Subject of your message.
 ;
 MSG_HELP_WR_BT_EDITOR (1018//)
 Use an external editor to\n\
-modify the message text
+modify the message text.
 ;
 MSG_HELP_WR_BT_LOAD (1019//)
 Insert the contents of a text file\n\
-at the current cursor position
+at the current cursor position.
 ;
 MSG_HELP_WR_BT_CUT (1020//)
-Cut marked text to the clipboard
+Cut marked text to the clipboard.
 ;
 MSG_HELP_WR_BT_COPY (1021//)
-Copy marked text to the clipboard
+Copy marked text to the clipboard.
 ;
 MSG_HELP_WR_BT_PASTE (1022//)
 Insert the contents of the clipboard\n\
-at the current cursor position
+at the current cursor position.
 ;
 MSG_HELP_WR_BT_UNDO (1023//)
-Undo the last change in the text
+Undo the last change in the text.
 ;
 MSG_HELP_WR_BT_BOLD (1024//)
 Use bold typeface for marked\n\
-text (whole words only)
+text (whole words only).
 ;
 MSG_HELP_WR_BT_ITALIC (1025//)
 Use italic typeface for marked\n\
-text (whole words only)
+text (whole words only).
 ;
 MSG_HELP_WR_BT_UNDERL (1026//)
 Underline marked text\n\
-(whole words only)
+(whole words only).
 ;
 MSG_HELP_WR_BT_COLOR (1027//)
 Colorize marked text\n\
-(whole words only)
+(whole words only).
 ;
 MSG_HELP_WR_BT_ADD (1028//)
 Add attachments\n\
@@ -3404,11 +3407,11 @@ _Abort
 ;
 MSG_HELP_TR_TX_STATUS (1092//)
 Current state\n\
-of mail transfer
+of mail transfer.
 ;
 MSG_HELP_TR_BT_ABORT (1093//)
 Abort mail transfer\n\
-as soon as possible
+as soon as possible.
 ;
 ;
 ; Module ER - Window
@@ -3615,25 +3618,25 @@ _Paste
 ; Module DI - Bubblehelp
 ;
 MSG_HELP_DI_LV_ENTRIES (1153//)
-List of available abbreviations
+List of available abbreviations.
 ;
 MSG_HELP_DI_ST_ALIAS (1154//)
-Abbreviation of selected entry
+Abbreviation of selected entry.
 ;
 MSG_HELP_DI_BT_NEW (1155//)
 Add a new abbreviation\n\
-to the glossary
+to the glossary.
 ;
 MSG_HELP_DI_BT_ADDSELECT (1156//)
 Create a new entry based on\n\
-the marked text in the editor
+the marked text in the editor.
 ;
 MSG_HELP_DI_BT_DELETE (1157//)
-Remove selected entry
+Remove selected entry.
 ;
 MSG_HELP_DI_BT_PASTE (1158//)
 Insert selected entry at the current\n\
-position in the text editor
+position in the text editor.
 ;
 ;
 ; Module FI - Procedures
@@ -3736,33 +3739,33 @@ _Abort
 ;
 MSG_HELP_FI_LV_FOLDERS (1195//)
 Select one or more\n\
-folders to search in
+folders to search in.
 ;
 MSG_HELP_FI_BT_ALL (1196//)
-Include all folders in your search
+Include all folders in your search.
 ;
 MSG_HELP_FI_PO_FROMRULE (1197//)
 Get search criterion\n\
-from a filter
+from a filter.
 ;
 MSG_HELP_FI_BT_TORULE (1198//)
 Create a new filter from\n\
-this search criterion
+this search criterion.
 ;
 MSG_HELP_FI_BT_SEARCH (1199//)
 Start the search and display\n\
-the results in the list above
+the results in the list above.
 ;
 MSG_HELP_FI_BT_SELECT (1200//)
 Select matching messages\n\
-in the main window
+in the main window.
 ;
 MSG_HELP_FI_BT_READ (1201//)
 Display selected message\n\
-from the list above
+from the list above.
 ;
 MSG_HELP_FI_BT_ABORT (1202//)
-Stop searching
+Stop searching.
 ;
 MSG_HELP_FI_CY_MODE (1203//)
 Field or message part that\n\
@@ -3853,38 +3856,38 @@ _Delete user
 ; Module US - Bubblehelp
 ;
 MSG_HELP_US_ST_USER (1227//)
-Name of the new YAM user
+Name of the new YAM user.
 ;
 MSG_HELP_US_ST_MAILDIR (1228//)
 Directory to store the\n\
 folders and config files\n\
-of the new user account
+of the new user account.
 ;
 MSG_HELP_US_CH_USEADDR (1229//)
 Share address book\n\
-with other users
+with other users.
 ;
 MSG_HELP_US_CH_USEDICT (1230//)
 Share glossary\n\
-with other users
+with other users.
 ;
 MSG_HELP_US_ST_PASSWD (1231//)
 Password required for\n\
-this user to login
+this user to login.
 ;
 MSG_HELP_US_CH_ROOT (1232//)
 Enable this option if the user should be\n\
-allowed to add or remove other users
+allowed to add or remove other users.
 ;
 MSG_HELP_US_CH_CLONE (1233//)
 Use current configuration as\n\
-default for the new account
+default for the new account.
 ;
 MSG_HELP_US_BT_ADD (1234//)
-Create a new account
+Create a new account.
 ;
 MSG_HELP_US_BT_DEL (1235//)
-Remove selected account
+Remove selected account.
 ;
 ;
 ; Module FO - Routines
@@ -3961,11 +3964,11 @@ Mailing list support
 ; Module FO - Bubblehelp
 ;
 MSG_HELP_FO_ST_FNAME (1261//)
-Folder name
+Folder name.
 ;
 MSG_HELP_FO_TX_FPATH (1262//)
 Directory where the messages of\n\
-the selected folder are stored
+the selected folder are stored.
 ;
 MSG_HELP_FO_ST_MAXAGE (1263//)
 Old messages will automatically\n\
@@ -3974,22 +3977,22 @@ Use 0 to disable this feature.
 ;
 MSG_HELP_FO_CY_FTYPE (1264//)
 Type of folder\n\
-(in/out/both)
+(in/out/both).
 ;
 MSG_HELP_FO_CY_FMODE (1265//)
 Folders can be password protected\n\
-and/or compressed using XPK
+and/or compressed using XPK.
 ;
 MSG_HELP_FO_CY_SORT0 (1266//)
 Primary sorting order of the\n\
-messages in this folder
+messages in this folder.
 ;
 MSG_HELP_FO_CY_SORT1 (1267//)
 Secondary sorting order of the\n\
-messages in this folder
+messages in this folder.
 ;
 MSG_HELP_FO_CH_REVERSE (1268//)
-Reversed sorting
+Reversed sorting.
 ;
 MSG_HELP_FO_ST_MLPATTERN (1269//)
 A message belongs to a mailing list\n\
@@ -3998,7 +4001,7 @@ matched by this pattern.
 ;
 MSG_HELP_FO_ST_MLADDRESS (1270//)
 Use this recipient address for a\n\
-reply to a mailing list message
+reply to a mailing list message.
 ;
 ;
 ; BUSY messages
@@ -4116,11 +4119,11 @@ MUI...
 ;
 MSG_HELP_FO_ST_MLFROMADDRESS (1325//)
 Use this 'From:' address when\n\
-posting new mails to the list
+posting new mails to the list.
 ;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS (1327//)
 Use this 'Reply-To:' address when\n\
-posting new mails to the list
+posting new mails to the list.
 ;
 MSG_EA_DefSecurity (1329//)
 Sec_urity
@@ -4280,7 +4283,7 @@ Search...
 ;
 MSG_HELP_WR_BT_SEARCH (1391//)
 Search the text\n\
-for a given string
+for a given string.
 ;
 MSG_SEARCHWINDOW_TITLE (1392//)
 Search
@@ -4361,7 +4364,7 @@ ML_-Support
 ;
 MSG_HELP_FO_CH_MLSUPPORT (1417//)
 Turn on/off the mailing list\n\
-support for this folder
+support for this folder.
 ;
 MSG_FO_AUTODETECT (1418//)
 Auto_detect
@@ -4390,11 +4393,11 @@ Select 0 to disable this feature.
 ;
 MSG_HELP_CO_ST_SMTPPORT (1432//)
 Port used by the SMTP server\n\
-(default: 25)
+(default: 25).
 ;
 MSG_HELP_CO_ST_POPPORT (1434//)
 Port used by the POP3 server\n\
-(default: 110)
+(default: 110).
 ;
 MSG_CO_InfoBarDef (1435//)
 - Total: %t New: %n Unread: %u
@@ -4532,7 +4535,7 @@ Folder list
 ;
 MSG_HELP_FO_CY_MLSIGNATURE (1482//)
 Use this signature when posting\n\
-new mails to the list
+new mails to the list.
 ;
 MSG_CTapplicationpdf (1483//)
 PDF document
@@ -4575,11 +4578,11 @@ _Yes|*_No
 ;
 MSG_HELP_FO_ST_HELLOTEXT (1495//)
 Text to insert at the\n\
-top of a new message
+top of a new message.
 ;
 MSG_HELP_FO_ST_BYETEXT (1496//)
 Text to insert at the\n\
-bottom of a new message
+bottom of a new message.
 ;
 MSG_FO_Welcome (1497//)
 _Welcome phrase
@@ -5473,10 +5476,10 @@ MSG_MA_TBNOTSPAM (1747//)
 N.Sp_am
 ;
 MSG_HELP_MA_BT_SPAM (1748//)
-Mark mail as Spam
+Mark mail as Spam.
 ;
 MSG_HELP_MA_BT_NOTSPAM (1749//)
-Mark mail as Not Spam
+Mark mail as Not Spam.
 ;
 MSG_RE_TBSPAM (1750//)
 Sp_am
@@ -5485,10 +5488,10 @@ MSG_RE_TBNOTSPAM (1751//)
 N.Sp_am
 ;
 MSG_HELP_RE_BT_SPAM (1752//)
-Mark mail as Spam
+Mark mail as Spam.
 ;
 MSG_HELP_RE_BT_NOTSPAM (1753//)
-Mark mail as Not Spam
+Mark mail as Not Spam.
 ;
 MSG_LOG_MAILISSPAM (1754//)
 Message from '%s' about '%s' is treated as Spam
@@ -5897,7 +5900,7 @@ Always request a retur_n receipt
 MSG_HELP_CO_CH_REQUESTMDN (1879//)
 If selected, the return receipt option in\n\
 the Write window will always be enabled\n\
-by default. Use this with care!
+by default. (Use this with care)
 ;
 MSG_HELP_CO_CH_MDN_NEVER (1880//)
 If selected, no return receipt will be\n\
@@ -6650,7 +6653,7 @@ A custom description for\n\
 this MIME type.
 ;
 MSG_HELP_CO_LV_REXX (2061//)
-List of scripts
+List of scripts.
 ;
 MSG_HELP_CO_BT_UPDATENOW (2062//)
 Perform a check\n\
