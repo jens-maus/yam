@@ -4475,7 +4475,7 @@ HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
     char scname[SIZE_COMMAND];
 
     AddPath(scname, G->ProgDir, "rexx", sizeof(scname));
-    if((frc = ReqFile(ASL_REXX, G->MA->GUI.WI, tr(MSG_MA_ExecuteScript), REQF_NONE, scname, "")))
+    if((frc = ReqFile(ASL_REXX, G->MA->GUI.WI, tr(MSG_MA_EXECUTESCRIPT_TITLE), REQF_NONE, scname, "")))
     {
       AddPath(scname, frc->drawer, frc->file, sizeof(scname));
 
@@ -5036,16 +5036,16 @@ struct MA_ClassData *MA_New(void)
     //  X   reserved for 'Cut' operation (MMEN_EDIT_CUT)
     //  Y   Copy mail (MMEN_COPY)
     //  Z   reserved for 'Undo' operation (MMEN_EDIT_UNDO)
-    //  1   reservered for Arexx-Script 1
-    //  2   reservered for Arexx-Script 2
-    //  3   reservered for Arexx-Script 3
-    //  4   reservered for Arexx-Script 4
-    //  5   reservered for Arexx-Script 5
-    //  6   reservered for Arexx-Script 6
-    //  7   reservered for Arexx-Script 7
-    //  8   reservered for Arexx-Script 8
-    //  9   reservered for Arexx-Script 9
-    //  0   reservered for Arexx-Script 10
+    //  1   reserved for Arexx-Script 1
+    //  2   reserved for Arexx-Script 2
+    //  3   reserved for Arexx-Script 3
+    //  4   reserved for Arexx-Script 4
+    //  5   reserved for Arexx-Script 5
+    //  6   reserved for Arexx-Script 6
+    //  7   reserved for Arexx-Script 7
+    //  8   reserved for Arexx-Script 8
+    //  9   reserved for Arexx-Script 9
+    //  0   reserved for Arexx-Script 10
     // Del  Remove selected mail (MMEN_DELETE)
     //  +   Select all (MMEN_SELALL)
     //  -   Select no mail (MMEN_SELNONE)
@@ -5138,8 +5138,8 @@ struct MA_ClassData *MA_New(void)
         MUIA_Family_Child, data->GUI.MI_STATUS = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SetStatus),
           MUIA_Family_Child, data->GUI.MI_TOMARKED = Menuitem(tr(MSG_MA_TOMARKED), ",", TRUE, FALSE, MMEN_TOMARKED),
           MUIA_Family_Child, data->GUI.MI_TOUNMARKED = Menuitem(tr(MSG_MA_TOUNMARKED), ".", TRUE, FALSE, MMEN_TOUNMARKED),
-          MUIA_Family_Child, data->GUI.MI_TOUNREAD = Menuitem(tr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, MMEN_TOUNREAD),
           MUIA_Family_Child, data->GUI.MI_TOREAD = Menuitem(tr(MSG_MA_TOREAD), "]", TRUE, FALSE, MMEN_TOREAD),
+          MUIA_Family_Child, data->GUI.MI_TOUNREAD = Menuitem(tr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, MMEN_TOUNREAD),
           MUIA_Family_Child, data->GUI.MI_TOHOLD = Menuitem(tr(MSG_MA_TOHOLD), "{", TRUE, FALSE, MMEN_TOHOLD),
           MUIA_Family_Child, data->GUI.MI_TOQUEUED = Menuitem(tr(MSG_MA_TOQUEUED), "}", TRUE, FALSE, MMEN_TOQUEUED),
           MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,

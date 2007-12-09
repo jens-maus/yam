@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-10  David Rey <tactica@users.sourceforge.net>
+
+  * YAM_FI.c: missing help bubble added for the "nowhere" button.
+  * YAM_MA.c: exchanged the positions of the "Set status to read/unread"
+    menu items for consistency with the popup menu.
+  * YAM.cd: applied the last lot of changes to the catalog despite the,
+    uh, "burden" of concurrent changes done to it. The code should be now
+    ready for external localization, and it only took me a week...
+
 2007-12-09  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c, YAM_RE.c, YAM_UT.c: changed some more DeleteFile() calls to actually

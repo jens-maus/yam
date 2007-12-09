@@ -467,7 +467,7 @@ MSG_MA_AttachRemoved (154//)
 _The following attachments have been removed manually:_\n
 ;
 MSG_MA_ConfirmReq (155//)
-Please confirm...
+Confirmation request
 ;
 MSG_MA_ConfirmFilter (159//)
 Is it okay to filter messages\n\
@@ -713,8 +713,8 @@ Send queued messages\n\
 in the Outgoing folder.
 ;
 MSG_HELP_MA_BT_FILTER (257//)
-Apply filters to the\n\
-messages in this folder.\n\
+Apply filters to the messages\n\
+in this folder.\n\
 \n\
 Please note that if 2 or more\n\
 messages are currently selected,\n\
@@ -744,7 +744,7 @@ Do you really want to delete it?
 ;
 MSG_CO_InvalidConf (265//)
 Invalid configuration (missing SMTP/POP3\n\
-server name or e-mail address)\n\
+server name or e-mail address).\n\
 \n\
 Please fill in these fields and try again!
 ;
@@ -1630,9 +1630,7 @@ download.
 MSG_HELP_CO_CH_USEAPOP (568//)
 Log in using APOP authentication\n\
 to keep your user name and password\n\
-away from prying eyes.\n\
-\n\
-(not supported by all POP3 servers)
+away from prying eyes.
 ;
 MSG_HELP_CO_CH_POPENABLED (569//)
 Check this account while\n\
@@ -1650,7 +1648,7 @@ during mail transfers.
 MSG_HELP_CO_CY_MSGSELECT (572//)
 Message pre-selection shows (a part of) the contents of the\n\
 POP3 mailbox and allows you to select which messages you\n\
-want to download.
+want to download. Press <Help> for more information.
 ;
 MSG_HELP_CO_CH_UPDSTAT (573//)
 Mark new messages in the Incoming folder\n\
@@ -1689,7 +1687,7 @@ Filter name.
 ;
 MSG_HELP_CO_CH_REMOTE (582//)
 Apply this filter before\n\
-downloading new e-mail.
+downloading new mail.
 ;
 MSG_HELP_CO_CH_APPLYNEW (583//)
 Apply this filter to new messages.
@@ -1836,9 +1834,9 @@ Program used to display\n\
 attachments of unknown type.
 ;
 MSG_HELP_CO_ST_REPLYTO (622//)
-Should replies to your messages need to be sent\n\
-by default somewhere besides your e-mail\n\
-address, specify those other addresses here.
+Should replies to your messages need to be sent by\n\
+default somewhere else besides (or instead of) your\n\
+e-mail address, specify those other addresses here.
 ;
 MSG_HELP_CO_ST_ORGAN (623//)
 The name of your\n\
@@ -1861,8 +1859,9 @@ Word-wrap message text\n\
 at this column.
 ;
 MSG_HELP_CO_CY_EDWRAP (630//)
-Select 'as you type' to insert linefeed\n\
-codes while you're typing the message.
+Select 'as you type' to have line feeds\n\
+automatically added while you're\n\
+typing your messages.
 ;
 MSG_HELP_CO_CH_LAUNCH (631//)
 Automatically launch the external editor\n\
@@ -1947,8 +1946,8 @@ Columns that should be\n\
 displayed in the message list.
 ;
 MSG_HELP_CO_CG_AB (652//)
-Columns displayed\n\
-in the address book.
+Columns that should be\n\
+displayed in the address book.
 ;
 MSG_HELP_CO_CH_FIXFLIST (653//)
 Display list entries\n\
@@ -1956,7 +1955,7 @@ using a fixed width font.
 ;
 MSG_HELP_CO_CH_BEAT (654//)
 Display time in Swatch Beats, the\n\
-revolutionary new unit of time.
+unit of time from Swatch.
 ;
 MSG_HELP_CO_ST_PGPCMD (655//)
 Directory where the PGP\n\
@@ -2132,7 +2131,7 @@ Do you want to send a greetings card?
 ; NAME, AGE
 ;
 MSG_AB_BirthdayReminder (703//)
-Birthday Reminder
+Birthday reminder
 ;
 MSG_AB_HappyBirthday (704//)
 Happy birthday!
@@ -2157,12 +2156,13 @@ Alias
 ;
 MSG_AB_FoundEntry (711//)
 Found matching entry!\n\
+\n\
 Alias: \eb%s\en\n\
 Name: \eb%s\en
 ; ALIAS, NAME
 ;
 MSG_AB_FindEntry (712//)
-Find Entry
+Find entry
 ;
 MSG_AB_FindEntryReq (713//)
 This module finds a given text in the alias, name, address,\n\
@@ -2480,8 +2480,8 @@ FAX number(s).
 ;
 MSG_HELP_EA_ST_BIRTHDAY (810//)
 Date of birth in\n\
-AmigaDOS format.\n\
-(e.g. 10-Jan-1950)
+AmigaDOS format\n\
+(e.g. 10-Jan-1950).
 ;
 MSG_HELP_EA_BC_PHOTO (811//)
 Portrait picture\n\
@@ -2535,7 +2535,7 @@ a return receipt.\n\
 What do you want to do?
 ;
 MSG_RE_SaveMessage (827//)
-Save message...
+Save message
 ;
 MSG_RE_Overwrite (828//)
 File '%s' already exists.\n\
@@ -2582,7 +2582,7 @@ MSG_RE_SaveDecGads (841//)
 *_Keep|_Replace|_Cancel
 ;
 MSG_RE_SaveDecReq (842//)
-What do you want to do with\n\
+What do you want to do with the\n\
 original (encrypted) message?
 ;
 MSG_RE_Header (843//)
@@ -2747,10 +2747,10 @@ MSG_RE_SInfoImage (889//)
 Data and image
 ;
 MSG_RE_WrapHeader (890//)
-Wrap headers
+Wrap headers?
 ;
 MSG_RE_Textstyles (891//)
-Text styles
+Text styles?
 ;
 ;
 ; Module RE - Toolbar
@@ -2855,10 +2855,10 @@ MSG_WR_DiscardChangesGad (918//)
 *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs (919//)
-Save text as...
+Save text as
 ;
 MSG_WR_AddFile (920//)
-Select file(s) to attach
+Select files to attach
 ;
 MSG_WR_CreateArc (921//)
 Create archive
@@ -3023,7 +3023,7 @@ MSG_WR_TBItalic (975//)
 Italic
 ;
 MSG_WR_TBUnderlined (976//)
-ULined
+Underlined
 ;
 MSG_WR_TBColored (977//)
 Colored
@@ -3104,7 +3104,7 @@ MSG_WR_Ironic (1004//)
 Ironic
 ;
 MSG_WR_SpellCheck (1005//)
-Type and spell
+Type and spell?
 ;
 MSG_WR_MAddFile (1006//)
 Add file...
@@ -3116,13 +3116,13 @@ MSG_WR_AddKey (1008//)
 Add PGP key
 ;
 MSG_WR_MDelSend (1009//)
-Delete after sending
+Delete after sending?
 ;
 MSG_WR_MReceipt (1010//)
-Return receipt
+Return receipt?
 ;
 MSG_WR_MAddInfo (1012//)
-Add personal information
+Add personal information?
 ;
 MSG_WR_MImportance (1013//)
 Importance
@@ -3217,7 +3217,7 @@ Send a blind carbon copy of\n\
 the message to these recipients.
 ;
 MSG_HELP_WR_ST_EXTHEADER (1037//)
-Additional message headers that should\n\
+Additional headers that should\n\
 be added to the message.
 ;
 MSG_HELP_WR_ST_FROM (1038//)
@@ -3337,7 +3337,7 @@ MSG_TR_FilterStats (1070//)
 Filtering done:\n\
 \n\
 %3ld messages checked,\n\
-%3ld redirected,\n\
+%3ld bounced,\n\
 %3ld forwarded,\n\
 %3ld auto-replied,\n\
 %3ld command activated,\n\
@@ -3438,13 +3438,13 @@ _Close window
 MSG_ER_CantCreateFile (1100//)
 Couldn't write to file '%s'.\n\
 \n\
-Make sure that the path exists and that the volume isn't write-protected.
+Make sure that the path exists and that the volume isn't write protected.
 ; FILENAME
 ;
 MSG_ER_CantCreateDir (1101//)
 Couldn't create directory '%s'.\n\
 \n\
-Make sure that the volume isn't write-protected.
+Make sure that the volume isn't write protected.
 ; PATH
 ;
 MSG_ER_ErrorNoAlias (1102//)
@@ -3454,13 +3454,13 @@ MSG_ER_ErrorNoAddress (1103//)
 You must specify an address for this entry!
 ;
 MSG_ER_ErrorDOBformat (1104//)
-Date of birth is in wrong format. The correct format is \
+Date of birth uses a wrong format. The correct format is \
 DD-MMM-YYYY (month names in English).
 ;
 MSG_ER_ErrorDateFormat (1107//)
 Invalid date/time format.\n\
 \n\
-The date and time has to be specified in a compatible format.\n\
+The date has to be specified in the format DD-MM-YYYY.\n\
 Example: %s
 ; DATE
 ;
@@ -3494,9 +3494,9 @@ The file doesn't seem to exist.
 ; FILENAME
 ;
 MSG_ER_UUSize (1123//)
-Decoded size [%ld] does not match original size [%ld].\n\
+Decoded size (%ld) does not match original size (%ld).\n\
 \n\
-A defective UUencoder was used or the message is truncated.
+A faulty UU encoder was used, or the message is truncated.
 ; SIZE, SIZE
 ;
 MSG_ER_DocNotFound (1124//)
@@ -3535,7 +3535,7 @@ The mail server is currently down or doesn't support the POP3/SMTP protocols.
 ;
 MSG_ER_NoAPOP (1131//)
 Your POP3 server doesn't support APOP. \
-Disable the APOP option in your YAM configuration.
+Please disable APOP in the configuration.
 ;
 MSG_ER_ErrorWriteMailfile (1132//)
 Write error on mail file: %s.\n\
@@ -3630,10 +3630,10 @@ to the glossary.
 ;
 MSG_HELP_DI_BT_ADDSELECT (1156//)
 Create a new entry based on\n\
-the marked text in the editor.
+the text marked in the editor.
 ;
 MSG_HELP_DI_BT_DELETE (1157//)
-Remove selected entry.
+Remove the selected entry.
 ;
 MSG_HELP_DI_BT_PASTE (1158//)
 Insert selected entry at the current\n\
@@ -3703,7 +3703,7 @@ Substring search
 ; Module FI - Window
 ;
 MSG_FI_FindMessages (1184//)
-Find Messages
+Find messages
 ;
 MSG_FI_AllFolders (1185//)
 _everywhere
@@ -3743,7 +3743,8 @@ Select one or more\n\
 folders to search in.
 ;
 MSG_HELP_FI_BT_ALL (1196//)
-Include all folders in your search.
+Include all folders\n\
+in your search.
 ;
 MSG_HELP_FI_PO_FROMRULE (1197//)
 Get search criterion\n\
@@ -3758,11 +3759,11 @@ Start the search and display\n\
 the results in the list above.
 ;
 MSG_HELP_FI_BT_SELECT (1200//)
-Select matching messages\n\
-in the main window.
+Select all the matching\n\
+messages in the main window.
 ;
 MSG_HELP_FI_BT_READ (1201//)
-Display selected message\n\
+Display the current message\n\
 from the list above.
 ;
 MSG_HELP_FI_BT_ABORT (1202//)
@@ -3895,14 +3896,14 @@ Remove selected account.
 ;
 MSG_FO_NewFolderReq (1237//)
 What settings do you want to use for the new folder?\n\
-Select 'Existing directory' if the folder already exists\n\
-on your disk
+Select 'Existing directory' if you want to re-use an\n\
+already existing directory.
 ;
 MSG_FO_NewFolderGads (1238//)
 *_Internal defaults|_Like current|_Existing directory|_Cancel
 ;
 MSG_FO_SelectDir (1239//)
-Select directory...
+Select directory
 ;
 ;
 ; Module FO - Window
@@ -4140,7 +4141,7 @@ MSG_ER_PGPMultipart (1334//)
 Error creating multipart PGP message. Encrypting/signing disabled!
 ;
 MSG_RE_FixedFont (1335//)
-Fixed font
+Fixed font?
 ;
 MSG_CO_UseSMTPAUTH (1337//)
 Use SMTP AU_TH
@@ -4152,7 +4153,7 @@ MSG_CO_SMTPPass (1339//)
 Pass_word
 ;
 MSG_WR_AltQuoted (1342//)
-Alternate quoted
+Alternative quoted
 ;
 MSG_CO_DoQuote (1344//)
 Qu_ote message
@@ -4340,7 +4341,7 @@ MSG_MA_EXECUTINGCMD (1408//)
 Executing command...
 ;
 MSG_APP_DESCRIPTION (1409//)
-SMTP/POP3 E-Mail Client for AmigaOS
+SMTP/POP3 E-Mail client for AmigaOS
 ;
 MSG_CO_INFOBARPOS (1410//)
 Pos_ition
@@ -4373,7 +4374,7 @@ Auto_detect
 MSG_HELP_FO_BT_AUTODETECT (1419//)
 Try to guess automatically the suitable\n\
 ML support settings by scanning the\n\
-first 5 e-mails in the folder.
+first 5 emails in the folder.
 ;
 MSG_FO_NOTRECOGNIZED (1420//)
 Couldn't be recognized!
@@ -4458,7 +4459,7 @@ Try again|Quit
 ;
 MSG_ER_NOSTARTTLS (1455//)
 Your SMTP server doesn't support TLS/SSL. \
-Please disable this option in your YAM configuration.
+Please disable this option in the configuration.
 ;
 MSG_ER_NOAUTHUSERPASS (1456//)
 No user name or password was specified for the SMTP AUTH connection \
@@ -4517,16 +4518,16 @@ MSG_FO_FOLDERPATHINVALID (1472//)
 You haven't specified a valid path for the new folder.
 ;
 MSG_MA_CTX_DEFWIDTH_THIS (1476//)
-Default Width: this
+Default width: this
 ;
 MSG_MA_CTX_DEFWIDTH_ALL (1477//)
-Default Width: all
+Default width: all
 ;
 MSG_MA_CTX_DEFORDER_THIS (1478//)
-Default Order: this
+Default order: this
 ;
 MSG_MA_CTX_DEFORDER_ALL (1479//)
-Default Order: all
+Default order: all
 ;
 MSG_MA_CTX_MAILLIST (1480//)
 Message list
@@ -4569,6 +4570,9 @@ MSG_HELP_CO_ST_INFOBARTXT (1492//)
 Text that should be displayed\n\
 in the status bar.
 ;
+;
+; *** Added for YAM 2.5 ********************************************************
+;
 MSG_MA_CROPREQUEST (1493//)
 All attachments of the selected mails will be cropped.\n\
 \n\
@@ -4592,79 +4596,73 @@ MSG_FO_Greetings (1498//)
 C_losing phrase
 ;
 MSG_ER_SOCKETOPTION (1499//)
-Warning: Wasn`t able to set the specified socket option '%s'.\n\
+Couldn't set socket option '%s'.\n\
 \n\
-It may not be supported by the TCP/IP Stack your are using, \
-or it is incorrectly specified in your configuration.
+Either this option is not supported by the TCP/IP stack your are using, \
+or it is specified wrong in your configuration.
 ; OPTIONNAME
 ;
 MSG_ER_B64FILEENCODE (1500//)
-An unexpected error occurred while trying to encode the file \
-'%s' with the base64 file encoding routines.
+An unexpected error occurred while trying to Base64 encode file '%s'.
 ; FILENAME
 ;
 MSG_ER_QPFILEENCODE (1501//)
-An unexpected error occurred while trying to encode the file \
-'%s' with the quoted-printable file encoding routines.
+An unexpected error occurred while trying to QP encode file '%s'.
 ; FILENAME
 ;
 MSG_ER_UUFILEENCODE (1502//)
-An unexpected error occurred while trying to encode the file \
-'%s' with the UUcode file encoding routines.
+An unexpected error occurred while trying to UU encode file '%s'.
 ; FILENAME
 ;
 MSG_ER_QPDEC_FILEIO (1503//)
-A file input/output error occurred during decoding of the quoted \
-printable encoded file '%s'.
+I/O error while decoding QP encoded file '%s'.
 ;
 MSG_ER_QPDEC_UNEXP (1504//)
-An unexpected error occurred while trying to decode the file \
-'%s' with the quoted-printable file decoding routines.
+An unexpected error occurred while trying to QP decode file '%s'.
 ; FILENAME
 ;
 MSG_ER_QPDEC_WARN (1505//)
-During the quoted-printable decoding of file '%s', some broken \
-control sequences where found and kept undecoded in the resulting \
-data stream.
+During the quoted-printable decoding of file '%s' some broken \
+control sequences were detected and kept undecoded in the output.
 ; FILENAME
 ;
 MSG_ER_QPDEC_CHAR (1506//)
-Some disallowed characters were spotted during the quoted-printable \
-decoding of file '%s' and were therefore removed during the decoding.
+During the quoted-printable decoding of file '%s' some forbidden \
+characters were found and therefore removed in the output.
 ; FILENAME
 ;
 MSG_ER_UUDEC_TAGMISS (1507//)
-While trying to UUdecode file '%s', YAM wasn't able to find the required \
-'%s' tag as proposed by the UUcode standard.
+During the UU decoding of file '%s' the required '%s' tag couldn't be found.\n\
+\n\
+Either the file is truncated or it wasn't encoded following the UU \
+encoding standard.
 ; FILENAME, TAG
 ;
 MSG_ER_UUDEC_CHECKSUM (1508//)
-While trying to UUdecode file '%s', YAM has found that some embedded \
-checksums were invalid and therefore suggests to check that the resulting \
-file isn't corrupted.\n\
+During the UU decoding of file '%s' some checksums were found invalid, so \n\
+the resulting file might be corrupt.\n\
 \n\
-A defective UUencoder was used or the message is truncated.
+Either the message is truncated or it was generated with a faulty UU encoder.
 ; FILENAME
 ;
 MSG_ER_UUDEC_CORRUPT (1509//)
-While trying to UUdecode file '%s', YAM has found that the UUencoded part \
-seems to be corrupt. \n\
+During the UU decoding of file '%s' the UU encoded part was found corrupt.\n\
 \n\
-A defective UUencoder was used or the message is truncated.
+Either the message is truncated or it was generated with a faulty UU encoder.
 ; FILENAME
 ;
 MSG_FI_StatMarked (1510//)
 Marked
 ;
 MSG_MA_CREQUEST_OLDFILE (1511//)
-YAM has found file '%s' in folder '%s' to be an old mail file normally\n\
-used in YAM versions prior to the current version.\n\
+File '%s' in folder '%s' uses an obsolete format\n\
+only supported by old YAM versions.\n\
 \n\
 Do you want to convert this file to the new format?
 ; FILENAME, FOLDER
 ;
 MSG_MA_CREQUEST_UNKNOWN (1512//)
-YAM has found an unknown file '%s' in the folder directory of folder '%s'.\n\
+Unknown file '%s' found in folder '%s'.\n\
 \n\
 Do you want to import it as a normal mail file?
 ; FILENAME, FOLDER
@@ -4673,17 +4671,18 @@ MSG_MA_YESNOTOALL (1513//)
 *_Yes|Y_es to all|_No|N_o to all
 ;
 MSG_ER_CONVERTMFILE (1514//)
-An error occurred during mail file conversion of file '%s' of folder '%s'.\n\
+An error occurred while trying to upgrade file \
+'%s' in folder '%s' to the current format.\n\
 \n\
-Please check if the folder directory has enough space and has proper write \
-access.
+Please check that the folder directory has enough space and \
+is not write protected.
 ; FILENAME, FOLDER
 ;
 MSG_ER_XPKUSAGE (1515//)
-An error occurred while trying to compress/uncompress the file '%s' via XPK.\n\
+An error occurred while trying to compress/uncompress file '%s' with XPK.\n\
 \n\
-Please check your XPK installation and the associated compression settings \
-in the YAM configuration.
+Please check your XPK installation and the relevant settings \
+in the configuration.
 ; FILENAME
 ;
 MSG_MA_CREQ_OLDFILE_TITLE (1516//)
@@ -4711,10 +4710,10 @@ If these radio buttons are ghosted, it means AmiSSL support is\n\
 currently not available.
 ;
 MSG_CO_SHOWEMBEDDEDREADPANE (1523//)
-Show embedded read _pane in main window
+Use read _pane
 ;
 MSG_HELP_CO_CH_EMBEDDEDREADPANE (1524//)
-Shows an embeeded read pane directly\n\
+Show an embedded read pane\n\
 in the main window.
 ;
 MSG_CO_SETSTATUSDELAYED1 (1525//)
@@ -4724,8 +4723,8 @@ MSG_CO_SETSTATUSDELAYED2 (1526//)
 second(s)
 ;
 MSG_HELP_CO_SETSTATUSDELAYED (1527//)
-After opening an e-mail, YAM will wait this\n\
-amount of time before marking the mail as 'read'.
+After opening an email using the read pane, YAM will\n\
+wait this amount of time before marking the email as 'read'.
 ;
 MSG_MA_ATTACHMENT (1528//)
 Attachment
@@ -4758,22 +4757,23 @@ MSG_RE_SImageOnly (1539//)
 Image only
 ;
 MSG_CO_CHARSETWARN_TITLE (1540//)
-Local Charset configuration warning
+Local charset configuration warning
 ;
 MSG_CO_CHARSETWARN (1541//)
-The charset configured for YAM is '%s' and doesn't\n\
+The '%s' charset selected for YAM doesn't\n\
 match the system's default charset '%s'.\n\
 \n\
 How do you want to proceed?
 ; LOCALCHARSET, SYSCHARSET
+;
 MSG_CO_CHARSETWARN_BT (1542//)
 *_Change|Ignore _always|_Ignore
 ;
 MSG_CO_SenderRFCDateTime (1543//)
-%c  Original sender: RFC2822 Date&Time
+%c  Original sender: RFC 2822 date & time
 ;
 MSG_CO_SenderTimeZone (1544//)
-%z  Original sender: TimeZone (+0000)
+%z  Original sender: Time zone (+0000)
 ;
 MSG_CO_Filter_Name (1545//)
 Name
@@ -4801,9 +4801,7 @@ _Less
 ;
 MSG_MA_AUTOSAVEFOUND (1563//)
 YAM has found an autosaved message file '%s'\n\
-which have been created in a previous session. This may\n\
-be due to a possible crash or reboot while writing a\n\
-message.\n\
+which was created in a previous session.\n\
 \n\
 What do you want to do with that message?
 ;
@@ -4817,10 +4815,9 @@ MSG_CO_NB_AUTOSAVEFMT (1567//)
 %ld minute(s)
 ;
 MSG_HELP_CO_NB_AUTOSAVE (1568//)
-Number of minutes YAM should automatically\n\
-generate a backup copy of the mail your are\n\
-currently composing.\n\
-(Select 0 to disable this feature)
+How often YAM should write to disk a backup\n\
+of the email you are currently composing.\n\
+Select 0 to disable this feature.
 ;
 MSG_ER_GENESISUSER_TITLE (1569//)
 Unknown Genesis/AmiTCP user account!
@@ -4829,35 +4826,36 @@ MSG_ER_GENESISUSER (1570//)
 YAM has identified that you are using Genesis/AmiTCP, but\n\
 could not find a YAM user account which corresponds to\n\
 the currently active global account you have configured\n\
-in Genesis: '%s'\n\
+in Genesis (%s).\n\
 \n\
-Please make sure your Genesis username and YAM username\n\
-are in sync. Otherwise the autologin feature will not work\n\
+Please make sure that your Genesis user name and the YAM user name\n\
+are in sync, otherwise the auto-login feature will not work\n\
 correctly.
 ;
 MSG_ER_CONTINUEEXIT (1571//)
 *_Continue|Exit
 ;
 MSG_ER_MOVEFOLDERDIR (1573//)
-An error occurred while trying to move the content of folder \
+An error occurred while trying to move the contents of folder \
 '%s' to directory '%s'.\n\
 \n\
-This may either be due to insufficient space or because the \
-destination path is not valid or writable.
+This may be due to insufficient space or an invalid or not writable \
+destination path.
 ;
 MSG_CO_QUICKSEARCHBAR (1574//)
-Show search _bar in main window
+Use quick search _bar
 ;
 MSG_HELP_CO_CH_QUICKSEARCHBAR (1575//)
-If enabled, provides an embedded search bar within\n\
-the main window for quickly searching for e-mails.
+If checked, a quick search bar will appear\n\
+in the main window to let you find certain\n\
+emails quickly.
 ;
 MSG_FI_SELECTACTIVE (1576//)
-Select _active matched
+Select this m_atch
 ;
 MSG_HELP_FI_BT_SELECTACTIVE (1577//)
-Selects the currently active mails in the\n\
-main window.
+Select the current message\n\
+in the main window.
 ;
 MSG_QUICKSEARCH_SO_SUBJECT (1578//)
 Subject
@@ -4866,16 +4864,16 @@ MSG_QUICKSEARCH_SO_SENDER (1579//)
 Sender
 ;
 MSG_QUICKSEARCH_SO_SUBJORSENDER (1580//)
-Subject Or Sender
+Subject or sender
 ;
 MSG_QUICKSEARCH_SO_TOORCC (1581//)
-Recipient (To Or CC)
+Recipient (To: or CC:)
 ;
 MSG_QUICKSEARCH_SO_INMSG (1582//)
-Find In Message
+Message body
 ;
 MSG_QUICKSEARCH_SO_ENTIREMSG (1583//)
-Entire Message
+Whole message
 ;
 MSG_QUICKSEARCH_VO_ALL (1584//)
 All
@@ -4893,16 +4891,16 @@ MSG_QUICKSEARCH_VO_IMPORTANT (1588//)
 Important
 ;
 MSG_QUICKSEARCH_VO_LAST5DAYS (1589//)
-Last 5 Days
+Last 5 days
 ;
 MSG_QUICKSEARCH_VO_KNOWNPEOPLE (1590//)
-People I Know
+People I know
 ;
 MSG_QUICKSEARCH_VO_HASATTACHMENTS (1591//)
-Has Attachments
+Has attachments
 ;
 MSG_QUICKSEARCH_VO_MINSIZE (1592//)
-Message Size > 1 MB
+Message size > 1 MB
 ;
 MSG_QUICKSEARCH_VIEW (1593//)
 _View:
@@ -4910,24 +4908,26 @@ _View:
 MSG_QUICKSEARCH_SHOWNMSGS (1594//)
 %ld of %ld shown
 ; COUNT, COUNT
+;
 MSG_FI_NOFOLDERS (1595//)
 n_owhere
 ;
 MSG_HELP_QUICKSEARCH_VIEWOPTIONS (1596//)
-If used, only mail matching the selected\n\
-view criteria will be displayed.
+Only mail matching this criterion\n\
+will be displayed.
 ;
 MSG_HELP_QUICKSEARCH_SEARCHSTRING (1597//)
 Text inserted here will be used as the search\n\
-criteria for displaying mail in the current folder.
+criterion to display mail in this folder.
 ;
 MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP (1598//)
-By using this popup you can select the criteria\n\
-for the specified search text.
+Select here where the string at the right\n\
+should be searched in the mail.
 ;
 MSG_BUSY_SEARCHINGFOLDER (1599//)
-Searching for messages in folder '%s'...
+Searching messages in folder '%s'...
 ; FOLDERNAME
+;
 MSG_CO_WBAPPICON (1600//)
 A_ppIcon on Workbench
 ;
@@ -4940,27 +4940,24 @@ Enable 'd_ocky' icon
 ;
 MSG_HELP_CO_CH_DOCKYICON (1603//)
 If checked, YAM will add a 'docky' to\n\
-AmiDock. (This requires AmigaOS 4.x)
+AmiDock. This requires AmigaOS 4.x.
 ;
 MSG_MA_MessageImport (1606//)
-Import messages from MBOX, DBX or plain mail files...
+Import messages
 ;
 MSG_ER_MESSAGEIMPORT (1607//)
-An error occurred while trying to import mails from file '%s'.\n\
+An error occurred while trying to import mail from file '%s'.\n\
 \n\
-Make sure that the choosen file is readable and contains \
-RFC822 compliant e-mails in one of YAM's supported import data \
-formats. YAM is currently able to import mails from either a 'MBOX', \
-'DBX' (Outlook Express) or even a plain RFC822 mail file. Please \
-check the documentation for more information on the supported import \
-formats and alternative methods to import mails.
+Please check that the file is readable and contains RFC822 compliant \
+emails using an export format supported by YAM. Read the documentation \
+for more information.
 ; FILENAME
 ;
 MSG_MA_MESSAGEEXPORT (1608//)
-Export messages to a MBOX compliant mail file...
+Export messages
 ;
 MSG_YAMINFO (1609//)
-Open Source E-mail package for the Amiga
+Open Source E-Mail client for the Amiga
 ;
 MSG_CO_SYSTEMSETTINGS (1610//)
 System settings
@@ -4974,159 +4971,161 @@ supported by the installed codesets.library version.\n\
 \n\
 How do you want to proceed?
 ; LOCALCHARSET
+;
 MSG_CO_CHARSETUNKNOWNWARN_BT (1613//)
 *_Change to default|_Ignore
 ;
 MSG_ER_LIB (1614//)
-Can't open required '%s', version v%lu.%lu\n\
+Couldn't open %s %lu.%lu\n\
 \n\
-Please make sure you have at least this minimum\n\
-version installed in your library path.
+Please make sure you have at least this\n\
+minimum version correctly installed.
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
 ;
 MSG_ER_LIB_URL (1615//)
-Can't open required '%s', version v%lu.%lu\n\
+Couldn't open %s %lu.%lu\n\
 \n\
-Please consult '%s'\n\
-for downloading the very latest version and make\n\
-sure you have it properly installed in your library path.
+Please visit '%s',\n\
+download the most recent version and make\n\
+sure you have it correctly installed.
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION, LIBRARY_URL
 ;
 MSG_ER_NO_MCC (1616//)
-Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
+Couldn't open %s %lu.%lu\n\
 \n\
-Please consult '%s'\n\
-and make sure you have the latest version installed.
+Please visit '%s',\n\
+download the most recent version and make\n\
+sure you have it correctly installed.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_OLD (1617//)
-Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
+Couldn't open %s %lu.%lu\n\
 \n\
-Currently installed is v%lu.%lu, please upgrade by downloading\n\
+Currently installed is %lu.%lu, please upgrade by downloading\n\
 the latest version from '%s'.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_IN_USE (1618//)
-Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
+Couldn't open %s %lu.%lu\n\
+\n\
 %lu.%lu is currently in use by other applications.\n\
 \n\
-Please consult '%s'.\n\
-Once you have installed the required version,\n\
+Please visit '%s',\n\
+make sure you have installed the required version,\n\
 close all MUI programs, make sure the old class\n\
 is flushed from memory and try again.
-; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
+; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_CO_FIRSTSTEPS_TITLE (1619//)
-First Steps Settings
+First steps settings
 ;
 MSG_CO_FIRSTSTEPS_SUMMARY (1620//)
-The minimum parameters to be able to send/receive e-mail...
+The minimum parameters YAM must know to be able to send/receive email!
 ;
 MSG_CO_TCPIP_TITLE (1621//)
-TCP/IP Settings
+TCP/IP settings
 ;
 MSG_CO_TCPIP_SUMMARY (1622//)
-Configure your SMTP and POP3 accounts...
+Configure here your SMTP and POP3 accounts.
 ;
 MSG_CO_NEWMAIL_TITLE (1623//)
-New Mail Settings
+New mail settings
 ;
 MSG_CO_NEWMAIL_SUMMARY (1624//)
-How to handle and react upon incoming mail...
+How to handle and react upon incoming mail.
 ;
 MSG_CO_FILTER_TITLE (1625//)
-Mail Filter Settings
+Filter settings
 ;
 MSG_CO_FILTER_SUMMARY (1626//)
-Define own mail filters you need...
+Define here the mail filters you need.
 ;
 MSG_CO_READ_TITLE (1627//)
-Mail Reading Settings
+Mail reading settings
 ;
 MSG_CO_READ_SUMMARY (1628//)
-Settings related to e-mail reading...
+Almost all settings related to reading mail are here!
 ;
 MSG_CO_WRITE_TITLE (1629//)
-Mail Writing Settings
+Mail writing settings
 ;
 MSG_CO_WRITE_SUMMARY (1630//)
-Settings related to e-mail composing...
+Some settings related to e-mail composing.
 ;
 MSG_CO_REPLY_TITLE (1631//)
-Mail Reply/Forward Settings
+Reply & forward settings
 ;
 MSG_CO_REPLY_SUMMARY (1632//)
-Settings related to e-mail replying/forwarding...
+Or how replies and forwards should be done.
 ;
 MSG_CO_SIGNATURE_TITLE (1633//)
-Mail Signature Settings
+Signature settings
 ;
 MSG_CO_SIGNATURE_SUMMARY (1634//)
-Configure your e-mail signatures...
+The place to go to set up your signatures.
 ;
 MSG_CO_LISTS_TITLE (1635//)
-Mail Listview Settings
+Lists settings
 ;
 MSG_CO_LISTS_SUMMARY (1636//)
-Configure the basic appearance of mail listviews...
+Change here the basic appearance of mail listviews.
 ;
 MSG_CO_SECURITY_TITLE (1637//)
-Security Settings
+Security settings
 ;
 MSG_CO_SECURITY_SUMMARY (1638//)
-Configure security related settings...
+PGP, remailers and logging are set up here.
 ;
 MSG_CO_STARTUP_TITLE (1639//)
-Startup/Quit Settings
+Startup/Quit setup
 ;
 MSG_CO_STARTUP_SUMMARY (1640//)
-Configure what YAM should do on startup and exit...
+Set here what YAM should do on startup and exit.
 ;
 MSG_CO_MIME_TITLE (1641//)
-MIME Types Settings
+MIME types
 ;
 MSG_CO_MIME_SUMMARY (1642//)
-Configure own MIME types and viewers...
+The place to set up MIME types and viewers.
 ;
 MSG_CO_ABOOK_TITLE (1643//)
-Address Book settings
+Address book settings
 ;
 MSG_CO_ABOOK_SUMMARY (1644//)
-Configure address book related options...
+Address book related options are set up here.
 ;
 MSG_CO_SCRIPTS_TITLE (1645//)
-Scripts Settings
+Scripts
 ;
 MSG_CO_SCRIPTS_SUMMARY (1646//)
-Configure your helper scripts...
+Configure your helper scripts here.
 ;
 MSG_CO_MIXED_TITLE (1647//)
-Miscellaneous Settings
+Miscellaneous
 ;
 MSG_CO_MIXED_SUMMARY (1648//)
-A bunch of settings that don't fit anywhere else...
+A bunch of settings that don't fit anywhere else.
 ;
 MSG_CO_UPDATE_TITLE (1649//)
-Software Updates
+Software updates
 ;
 MSG_CO_UPDATE_SUMMARY (1650//)
-Keep track of updates to YAM and related components...
+The easy way to keep track of updates for YAM.
 ;
 MSG_CO_CrdUpdate (1651//)
 Updates
 ;
 MSG_CO_AMISSLWARN_TITLE (1652//)
-AmiSSL availibility warning
+AmiSSL not available
 ;
 MSG_CO_AMISSLWARN (1653//)
-YAM has found AmiSSL to be unavailable for its\n\
-internal SSLv3/TLSv1 functionality. Therefore all\n\
-secure connections were disabled until AmiSSL is\n\
-found to be installed correctly.\n\
+AmiSSL couldn't be correctly opened.\n\
+Secure connections not available.\n\
 \n\
-Please make sure you correctly installed at least\n\
-AmiSSL v%lu.%lu on your system and restart YAM.
+Please verify that AmiSSL %lu.%lu is\n\
+correctly installed and then restart YAM.
 ; AMISSL_VERSION, AMISSL_REVISION
+;
 MSG_CO_AMISSLWARN_BT (1654//)
 *_Exit|Ignore _always|Ignore
 ;
@@ -5134,11 +5133,11 @@ MSG_BUSY_OPENINGCONFIG (1655//)
 Opening configuration...
 ;
 MSG_CO_TIMEZONEWARN_TITLE (1656//)
-Timezone setting warning
+Time zone setting warning
 ;
 MSG_CO_TIMEZONEWARN (1657//)
-The timezone setting in YAM doesn't match\n\
-the system's default timezone.\n\
+The time zone setting in YAM doesn't match\n\
+the system's default time zone.\n\
 \n\
 How do you want to proceed?
 ;
@@ -5150,8 +5149,8 @@ AutoDST warning
 ;
 MSG_CO_AUTODSTWARN (1660//)
 YAM has found an AutoDST tool active and\n\
-it reports a different Daylight Saving setting\n\
-than currently set in your YAM configuration.\n\
+it is reporting a Daylight Saving Time which\n\
+doesn't match the configuration for YAM.\n\
 \n\
 How do you want to proceed?
 ;
@@ -5159,7 +5158,7 @@ MSG_CO_AUTODSTWARN_BT (1661//)
 *_Change|Ignore _always|_Ignore
 ;
 MSG_MA_UPDATECHECK (1662//)
-Check for updates...
+Check for updates
 ;
 MSG_CO_SOFTWAREUPDATE (1663//)
 Update check
@@ -5174,7 +5173,7 @@ MSG_CO_UPDATE_MONTHLY (1666//)
 Monthly
 ;
 MSG_CO_SEARCHFORUPDATES (1667//)
-Check for up_dates:
+Check for up_dates
 ;
 MSG_CO_SEARCHFORUPDATESINFO (1668//)
 You will be notified as soon as updates are available.
@@ -5186,45 +5185,44 @@ MSG_CO_LASTSEARCH (1670//)
 Last check:
 ;
 MSG_CO_LASTSTATUS_NOCHECK (1671//)
-No check performed yet.
+no check performed yet.
 ;
 MSG_CO_LASTSTATUS_NOUPDATE (1672//)
-No new software updates were available.
+no new software updates were available.
 ;
 MSG_CO_LASTSTATUS_NOQUERY (1673//)
-Couldn't query server for updates.
+couldn't query server for updates.
 ;
 MSG_CO_LASTSTATUS_UPDATESUCCESS (1674//)
-Successfully found and notified on new updates.
+successfully found and notified on new updates.
 ;
 MSG_WR_SECURITYREQ (1675//)
-The recipients of the mail have different\n\
+The recipients of the email have different\n\
 default mail security settings.\n\
 \n\
-How do you want to compose the mail?
+What type of security do you want to use?
 ;
 MSG_WR_SECURITYREQ_GADS (1676//)
-*_Plain|_Signed|_Encrypted|S_igned&Encrypted|_Anonymous|_Cancel
+*_Plain|_Signed|_Encrypted|S_igned & encrypted|_Anonymous|_Cancel
 ;
 MSG_ER_OPENTCPIP (1677//)
-YAM wasn't able to open the appropriate bsdsocket.library \
-interface, required for TCP/IP connections.\n\
+Couldn't open bsdsocket.library interface.\n\
 \n\
-Please make sure that you have a compatible TCP/IP stack \
-installed, correctly configured and that your network \
+Please make sure that you have a compatible and correctly \
+configured TCP/IP stack installed, and that your network \
 interface is up and running.
 ;
 MSG_WR_UUCODE (1678//)
 UUencoded text
 ;
 MSG_UPD_NOTIFICATION_WTITLE (1679//)
-Update Notification
+Update notification
 ;
 MSG_UPD_NOTIFICATION_TITLE (1680//)
 Updates available
 ;
 MSG_UPD_NOTIFICATION_SUMMARY (1681//)
-YAM has found the following updates to be available:
+The following updates are available for download:
 ;
 MSG_UPD_NOTIFICATION_CHANGES (1682//)
 Changes:
@@ -5263,7 +5261,7 @@ MSG_CTapplicationxls (1693//)
 Microsoft Excel file
 ;
 MSG_CTapplicationppt (1694//)
-Microsoft Powerpoint file
+Microsoft PowerPoint file
 ;
 MSG_CTapplicationdoc (1695//)
 Microsoft Word file
@@ -5302,7 +5300,7 @@ MSG_CO_DETECT_CYRILLIC (1706//)
 Auto-detect c_yrillic charsets
 ;
 MSG_HELP_CO_DETECT_CYRILLIC (1707//)
-Tries to use the auto-detect feature\n\
+Try to use the auto-detect feature\n\
 of codesets.library to automatically\n\
 identify the correct cyrillic codeset\n\
 (only relevant for cyrillic users).
@@ -5314,49 +5312,42 @@ put into the undo buffer.\n\
 Therefore, the undo buffer is lost.
 ;
 MSG_RE_HEADERDISPLAY (1709//)
-Header Display
+Header display
 ;
 MSG_RE_MAILDETAILS (1710//)
-Mail Details
+Mail details
 ;
 MSG_ER_ADDFILEERROR (1711//)
-The selected file '%s' couldn't be added \
-as an attachment to the current mail.\n\
+File '%s' couldn't be added as an attachment to the current email.\n\
 \n\
 Please make sure that the file is accessible \
-and that you have proper read permissions.
+and that is not read protected.
 ;
 MSG_ER_PACKERROR (1712//)
 An error occurred while trying to create \
 an archive out of the selected files.\n\
 \n\
 Please make sure that all files are accessible \
-and that you have proper permissions.
+and not read protected.
 ;
 MSG_CO_ABOOKLOOKUP (1713//)
 _Address book lookup in message list
 ;
 MSG_HELP_CO_CH_ABOOKLOOKUP (1714//)
-Resolve sender/destination addresses in the message\n\
+Resolve sender/recipient addresses in the message\n\
 list by looking them up in the address book and show\n\
-the real name instead.\n\
-\n\
-Please note that this is a quite time consuming job\n\
-and my bring down the performance of the list display.\n\
-This is especially true for a large amount of address\n\
-book entries.
+the real name instead. Press <Help> for more information.
 ;
 MSG_TR_MESSAGEGAUGE (1715//)
 Message %%ld of %ld
 ; COUNT, COUNT
 ;
 MSG_CO_CONVERTHTML (1716//)
-Con_vert HTML e-mails to plain text
+Con_vert HTML emails to plain text
 ;
 MSG_HELP_CO_CONVERTHTML (1717//)
-If enabled and a mail contains a HTML part as its main\n\
-message part, YAM will convert it to plain text before\n\
-displaying it.
+If the main part of an email is HTML, YAM will\n\
+convert it to plain text before displaying it.
 ;
 MSG_RE_FOLLOWTHREAD (1718//)
 In order to search for more mails of the same thread,\n\
@@ -5368,7 +5359,7 @@ Do you want to continue?
 MSG_TR_TRANSFERSTATUS (1719//)
 %s of %s @ %s/s\n\
 %02ld'%02ld'' running - %02ld'%02ld'' left
-; SIZE, SIZE, SPEED, MINS, SECS
+; SIZE, SIZE, SPEED, MINS, SECS, MINS, SECS
 ;
 MSG_TR_TRANSFERSIZE (1720//)
 %s of %s
@@ -5452,54 +5443,54 @@ MSG_CO_MIMECMD_PARAMETER (1740//)
 %s  Full path of file
 ;
 MSG_ER_CANTOPENASL (1741//)
-An error occurred while trying to popup \
+An error occurred while trying to open \
 an ASL requester.\n\
 \n\
-Please make sure that your ASL setup is \
-valid and that you have enough resources.
+This might be due to lack of memory.
 ;
 MSG_MA_CONFIRMDELETION (1742//)
 %ld message(s) are selected.\n\
 \n\
-Do you really want to delete these\n\
-messages?
+Do you really want to delete\n\
+these messages?
 ; AMOUNT
+;
 MSG_MA_SPAM (1744//)
 Spam
 ;
 MSG_LOADINGSPAMTRAININGDATA (1745//)
-Loading Spam training data...
+Loading spam training data...
 ;
 MSG_MA_TBSPAM (1746//)
 Sp_am
 ;
 MSG_MA_TBNOTSPAM (1747//)
-N.Sp_am
+No sp_am
 ;
 MSG_HELP_MA_BT_SPAM (1748//)
-Mark mail as Spam.
+Mark message as spam
 ;
 MSG_HELP_MA_BT_NOTSPAM (1749//)
-Mark mail as Not Spam.
+Mark message as not spam
 ;
 MSG_RE_TBSPAM (1750//)
 Sp_am
 ;
 MSG_RE_TBNOTSPAM (1751//)
-N.Sp_am
+No sp_am
 ;
 MSG_HELP_RE_BT_SPAM (1752//)
-Mark mail as Spam.
+Mark message as spam
 ;
 MSG_HELP_RE_BT_NOTSPAM (1753//)
-Mark mail as Not Spam.
+Mark message as not spam
 ;
 MSG_LOG_MAILISSPAM (1754//)
-Message from '%s' about '%s' is treated as Spam
+Message from '%s' about '%s' is treated as spam
 ; SENDER, SUBJECT
 ;
 MSG_LOG_MAILISNOTSPAM (1755//)
-Message from '%s' about '%s' is no longer treated as Spam
+Message from '%s' about '%s' is no longer treated as spam
 ; SENDER, SUBJECT
 ;
 MSG_FI_STATSPAM (1756//)
@@ -5509,7 +5500,7 @@ MSG_MA_TOSPAM (1757//)
 Spam
 ;
 MSG_MA_TONOTSPAM (1758//)
-Not Spam
+Not spam
 ;
 MSG_CO_CRDSPAMFILTER (1761//)
 Spam
@@ -5521,25 +5512,25 @@ MSG_CO_SPAMFILTER_TITLE (1763//)
 Spam filter
 ;
 MSG_CO_SPAMFILTER_SUMMARY (1764//)
-Configure the Spam filter.
+Configure here the spam filter.
 ;
 MSG_CO_SPAM_FILTERFORNEWMAIL (1765//)
-Check _new mails for Spam content
+Check _new mails for spam content
 ;
 MSG_CO_SPAM_RESETTRAININGDATA (1766//)
 _Reset training data
 ;
 MSG_CO_SPAM_GOODCOUNT (1767//)
-"Not Spam" classified mails
+"Not spam" classified mails
 ;
 MSG_CO_SPAM_BADCOUNT (1768//)
 "Spam" classified mails
 ;
 MSG_BUSYFLUSHINGSPAMTRAININGDATA (1771//)
-Flushing Spam training data...
+Flushing spam training data...
 ;
 MSG_CO_SPAM_MARKONMOVE (1772//)
-Mark mails as Spam when _moved to the Spam folder
+Mark mails as spam when _moved to the Spam folder
 ;
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST (1773//)
 Address book is _white list
@@ -5551,24 +5542,25 @@ MSG_CO_SPAM_FILTERENABLED (1775//)
 S_pam filter enabled
 ;
 MSG_CO_SPAM_RESETTRAININGDATAASK (1776//)
-Do you really want to reset the Spam filter's\n\
+Do you really want to reset the spam filter's\n\
 training data?\n\
 \n\
-The Spam filter must be trained again afterwards.
+The spam filter must be trained again afterwards.
 ;
 MSG_TR_CHECKUIDL (1778//)
 Checking UIDLs to avoid duplicates...
 ;
 MSG_CO_SPAM_DISABLEFILTERASK (1779//)
-The Spam filter was found to be active and has\n\
-now been disabled. Which of the following\n\
-operations do you want to apply?
+The spam filter has now been disabled.\n\
+\n\
+Which of the following operations\n\
+do you want to apply?
 ;
 MSG_CO_SPAM_RESETTDATA (1780//)
 _Reset training data
 ;
 MSG_CO_SPAM_RESETMAILFLAGS (1781//)
-Reset _Spam state of all mails
+Reset _spam state of all mails
 ;
 MSG_CO_SPAM_DELETESPAMFOLDER (1782//)
 _Delete Spam folder
@@ -5603,38 +5595,37 @@ MSG_CO_ER_SMTPAUTH (1790//)
 The SMTP server '%s' doesn't seem to support the \
 selected SMTP-AUTH method.\n\
 \n\
-Please verify with your provider which authentication \
-methods are available and how to configure them in your \
-mail client.
+Please ask your provider which authentication methods are \
+available and how to configure them in your e-mail client.
 ;
 MSG_ER_SPAMDIR_EXISTS (1791//)
-While trying to create a new Spam folder, YAM found that\n\
-there seems to already exists a folder named 'Spam'.\n\
+While trying to create a new 'spam' folder, YAM\n\
+found that a directory named 'spam' already exists.\n\
 \n\
-How do you want to use this directory as the standard\n\
+Do you want to use this directory as the standard\n\
 Spam folder?
 ;
 MSG_ER_SPAMDIR_EXISTS_ANSWERS (1792//)
-_Cleanup&Use|_Use|*_Cancel
+C_leanup & use|_Use 'as is'|*_Cancel
 ;
 MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER (1793//)
-Could not create standard Spam folder!\n\
+Couldn't create the standard spam folder.\n\
 \n\
-The Spam filter has been deactivated again.\n\
-Please make sure that there is enough space left on the drive \
-and that the drive is not write protected.
+The spam filter has been disabled again. Please make sure that \
+there is enough space left on the drive and that the drive is \
+not write protected.
 ;
 MSG_MA_CHECKSPAM (1794//)
-Apply Spam filter
+Apply spam filter
 ;
 MSG_FI_BUSYCHECKSPAM (1795//)
-Applying Spam filter on folder...
+Applying spam filter on folder...
 ;
 MSG_MA_REMOVESPAM (1796//)
-Delete Spam from folder
+Delete spam from folder
 ;
 MSG_MA_BUSYEMPTYINGSPAM (1797//)
-Deleting Spam from folder...
+Deleting spam from folder...
 ;
 MSG_MA_TRASH (1798//)
 Trash
@@ -5667,11 +5658,11 @@ MSG_LOADINGUPDATESTATE (1807//)
 Loading update state data...
 ;
 MSG_CO_ASK_SAVE_SIGNATURE (1808//)
-Changes to the signature must be saved separately\n\
+Changes to the signatures must be saved separately\n\
 from the global configuration or otherwise they\n\
 will be lost.\n\
 \n\
-Do you want to save the signature now?
+Do you want to save the signatures now?
 ;
 MSG_MA_HIDE (1809//)
 Hide
@@ -5764,7 +5755,7 @@ MSG_MA_MSAVEADDRESS (1838//)
 Save address...
 ;
 MSG_MA_MADDRESSBOOK (1839//)
-Address Book...
+Address book...
 ;
 MSG_MA_MCONFIG (1840//)
 Configuration...
@@ -5776,17 +5767,17 @@ MSG_MA_TOUNMARKED (1842//)
 Unmarked
 ;
 MSG_MA_ALLTOREAD (1843//)
-All to Read
+All to read
 ;
 MSG_MA_MEDITASNEW (1844//)
-Edit As New...
+Edit as new...
 ;
 MSG_CO_POPACCOUNT (1845//)
 Account name
 ;
 MSG_HELP_CO_ST_POPACCOUNT (1846//)
-An arbitrary name for this account which will be\n\
-used instead of user@host.
+An arbitrary name for this account which\n\
+will be used instead of user@host.
 ;
 MSG_RE_SEARCH (1847//)
 Search...
@@ -5798,52 +5789,53 @@ MSG_WR_SEARCH_AGAIN (1849//)
 Search again
 ;
 MSG_WR_AUTOWRAP (1850//)
-Word-wrap
+Word-wrap?
 ;
 MSG_CO_SPAM_MARK_AS_READ (1851//)
-Mark new Spam mai_ls as read
+Mark new spam mai_ls as read
 ;
 MSG_HELP_CH_SPAMFILTERENABLED (1852//)
-Enables the Spam filter, allowing you\n\
-to filter out abusive advertising e-mails.
+Enables the spam filter, allowing you\n\
+to filter out abusive advertising emails.
 ;
 MSG_HELP_TX_SPAMBADCOUNT (1853//)
-Shows the amount of e-mails\n\
-manually classified as Spam.
+Shows the amount of emails\n\
+manually classified as 'spam'.
 ;
 MSG_HELP_TX_SPAMGOODCOUNT (1854//)
-Shows the amount of e-mails\n\
-manually classified as 'Not Spam',\n\
-also known as 'Ham'.
+Shows the amount of emails\n\
+manually classified as 'not spam',\n\
+also known as 'ham'.
 ;
 MSG_HELP_BT_SPAMRESETTRAININGDATA (1855//)
-Allows to manually reset the whole Spam filter\n\
+Allows to manually reset the whole spam filter\n\
 training data. This should be necessary only\n\
 in very rare cases.
 ;
 MSG_HELP_CH_SPAMFILTERFORNEWMAIL (1856//)
-If enabled, new incoming e-mail will be\n\
-immediately analyzed by the Spam filter.
+If enabled, new incoming email will be\n\
+immediately analyzed by the spam filter.
 ;
 MSG_HELP_CH_SPAMABOOKISWHITELIST (1857//)
-If enabled, any e-mail with a From: address that\n\
+If enabled, any email with a From: address that\n\
 can be found in the address book will never\n\
-be considered as Spam.
+be considered as spam.
 ;
 MSG_HELP_CH_SPAMMARKONMOVE (1858//)
-If checked, any e-mail manually moved to the Spam\n\
-folder will be automatically marked as 'Spam'.
+If checked, any email manually moved to the "Spam"\n\
+folder will be automatically marked as spam.
 ;
 MSG_HELP_CH_SPAMMARKASREAD (1859//)
-If checked, Spam mail will be\n\
+If checked, spam mail will be\n\
 automatically flagged as 'read'.
 ;
 MSG_HELP_CH_UPDATECHECK (1860//)
-How often do you want YAM to automatically check\n\
-for updates via the internet?
+How often do you want YAM to\n\
+automatically check for updates?\n\
+Select 'never' to disable this feature.
 ;
 MSG_WR_SELECTALL (1861//)
-Select All
+Select all
 ;
 MSG_RE_MDN_ACCEPT_LATER (1862//)
 Accept and\n\
@@ -5884,7 +5876,7 @@ MSG_CO_MDN_ENABLED (1873//)
 Allow _return receipts for some messages
 ;
 MSG_CO_MDN_NORECIPIENT (1874//)
-If I'm not in the _To or Cc of the message:
+If I'm not in the _To: or Cc: of the message:
 ;
 MSG_CO_MDN_NODOMAIN (1875//)
 If the sender is _outside my domain:
@@ -5901,11 +5893,11 @@ Always request a retur_n receipt
 MSG_HELP_CO_CH_REQUESTMDN (1879//)
 If selected, the return receipt option in\n\
 the Write window will always be enabled\n\
-by default. (Use this with care)
+by default. Use this with care!
 ;
 MSG_HELP_CO_CH_MDN_NEVER (1880//)
 If selected, no return receipt will be\n\
-send out, even if explicitly requested.
+sent, even if explicitly requested.
 ;
 MSG_HELP_CO_CH_MDN_ALLOW (1881//)
 If selected, return receipts will be processed\n\
@@ -5935,7 +5927,7 @@ MSG_CO_LOOKFEEL_SUMMARY (1887//)
 Configure the general Look & Feel of YAM...
 ;
 MSG_CO_CRDLOOKFEEL (1888//)
-Look & Feel
+Look & feel
 ;
 MSG_CO_DSTACTIVE (1889//)
 D_aylight Saving Time (DST) is active
@@ -5973,7 +5965,7 @@ MSG_CO_LOOKFEEL_THEMES (1898//)
 Themes
 ;
 MSG_CO_THEME_ACTIVATE (1899//)
-_Activate
+_Apply
 ;
 MSG_CO_THEME_PREVIEW (1900//)
 Preview
@@ -5993,10 +5985,10 @@ will use a relative output (e.g. 'Today' or\n\
 'Yesterday') instead of the full date if possible.
 ;
 MSG_FOLDER_SNAPSHOT_TREE (1908//)
-Snapshot arrangement
+Snapshot tree
 ;
 MSG_FOLDER_RELOAD_TREE (1909//)
-Reload arrangement
+Reload tree
 ;
 MSG_ER_USER_UNKNOWN_TITLE (1910//)
 Unknown user
@@ -6005,26 +5997,24 @@ MSG_ER_USER_UNKNOWN_BUTTON (1911//)
 *_Ok
 ;
 MSG_ER_USER_UNKNOWN_ERROR (1912//)
-The user '%s' is not known!
+Unknown user '%s'!
 ;
 MSG_HELP_CO_CA_COLSIG (1913//)
 The color that should be used to\n\
 print the signature of a mail.
 ;
 MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS (1914//)
-You chose to automatically mark Spam mails as read,\n\
-but have only %ld mails classified so far.\n\
-It is not recommended to activate this option in the\n\
-early state of training the Spam filter.\n\
+It is not recommended to enable this feature with as\n\
+few as %ld mails classified as spam so far, as this\n\
+may lead to poor performance from the spam filter.\n\
 \n\
-Do you want to deactivate automatic marking of Spam\n\
-mails as read?
+Do you want to disable this option again?
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE (1915//)
 Can't create semaphore!
 ;
 MSG_MA_AUTOSAVEFOUND_BUTTONS (1916//)
-*Put in _Outbox|_Edit|_Delete|_Ignore
+*Move to _Outgoing folder|_Edit|_Delete|_Ignore
 ;
 MSG_RE_HDR_FROM (1917//)
 From
@@ -6039,18 +6029,18 @@ MSG_RE_HDR_SUBJECT (1920//)
 Subject
 ;
 MSG_RE_VIRTUALMAIL (1921//)
-Virtual Mail
+Virtual email
 ;
 MSG_CO_MIMECMD_PUBSCREEN (1922//)
 %p  Name of YAM's public screen
 ;
 MSG_ER_ZOMBIE_FILES_EXIST (1923//)
-YAM wasn't able to delete all temporary generated\n\
-files during cleanup. These files may be currently\n\
-locked by other applications.\n\
+Couldn't delete all temporary files.\n\
 \n\
-Please make sure you closed all applications which\n\
-you may have used from within YAM (e.g. Multiview).
+These files might be locked by other applications.\n\
+Please make sure that you have closed all aplications\n\
+which you may have used from within YAM, like the MIME\n\
+viewers.
 ;
 MSG_ER_ZOMBIE_FILES_EXIST_BT (1924//)
 _Retry|_Ignore
@@ -6062,42 +6052,41 @@ MSG_CO_SHOWALTPARTS (1926//)
 Show a_lternative parts
 ;
 MSG_HELP_CO_CH_SHOWALTPARTS (1927//)
-If enabled, alternative message parts of a\n\
-'multipart/alternative' e-mail that would\n\
-otherwise remain hidden will be displayed\n\
-as attachments instead.
+If enabled, alternative parts of a\n\
+'multipart/alternative' message that\n\
+would otherwise remain hidden will be\n\
+displayed as attachments instead.
 ;
 MSG_US_DIRECTORY_DOESNT_EXIST (1928//)
-The mail directory '%s' of user '%s' does not exist.\n\
+Mail directory '%s' for user '%s' does not exist.\n\
 \n\
-Do you want to create it?
+Do you want to create it now?
 ;
 MSG_HELP_CO_BT_APPICONGETPOS (1929//)
 Click to get the current\n\
 position of the AppIcon.
 ;
 MSG_CO_MOVE_HAM_TO_INCOMING (1930//)
-Move 'Not Spam' e-mails back to _Incoming folder
+Move 'not spam' emails back to _Incoming folder
 ;
 MSG_HELP_CH_MOVE_HAM_TO_INCOMING (1931//)
-If enabled, any e-mail which was incorrectly classified\n\
-as 'Spam' and later manually marked as 'Not Spam' will be\n\
+If enabled, any email which was incorrectly classified\n\
+as 'spam' and later manually marked as 'not spam' will be\n\
 automatically moved back to the Incoming folder.
 ;
 MSG_ER_NO8BITMIME (1932//)
-While trying to connect to SMTP server '%s', it reported \
-that it doesn't support 8bit MIME transfers. However, you \
-seem to have the 'Allow8bit' option enabled in your \
-SMTP server configuration.\n\
+SMTP server '%s' reported that it doesn't support 8bit \
+mail transfers.\n\
 \n\
-Please make sure you disable this option and re-edit the \
-mail or otherwise it may be malformed during the transfer.
+Please disable this option in your TCP/IP preferences\n\
+and re-edit the email before trying to send it again,\n\
+otherwise the email may be malformed.
 ;
 MSG_CO_FILTER_HAM (1933//)
 Apply _filters
 ;
 MSG_HELP_CH_FILTER_HAM (1934//)
-If enabled, after moving the e-mail all the user\n\
+If enabled, after moving the email all the user\n\
 defined filters will be applied to it.
 ;
 MSG_SHUTDOWN_SHUTTING_DOWN (1935//)
@@ -6123,7 +6112,8 @@ MSG_CO_FOLDERINFO05 (1942//)
 Folder name (unread/new)
 ;
 MSG_ER_BADRESPONSE (1943//)
-Bad response from mail server '%s' for command '%s':\n\
+Bad response from mail server '%s' to command '%s':\n\
+\n\
 %s\n\
 \n\
 The mail server couldn't execute the command \
@@ -6131,11 +6121,13 @@ and replied with the above error message.
 ; SERVER, COMMAND, TEXT
 ;
 MSG_ER_POP3WELCOME (1944//)
-The POP3 server '%s' replied with an error message during the welcome \
+POP3 server '%s' replied with an error message during the welcome \
 procedure and the connection was terminated:\n\
 \n\
-%s\n
+%s\n\
+\n
 ; SERVER, TEXT
+;
 MSG_FO_EXPIREUNREAD (1945//)
 also unread
 ;
@@ -6168,10 +6160,11 @@ MSG_WR_MCANCEL (1954//)
 Cancel
 ;
 MSG_ER_CONNECTIONBROKEN (1955//)
-The TCP/IP connection with server '%s' was interrupted \
+Connection with server '%s' was interrupted \
 while trying to send command '%s'.\n\
 \n\
-This may be due to a connection drop by the server.
+This may be due to a connection dropped by the server.
+; SERVER, COMMAND
 ;
 MSG_WR_MSWITCH_MSG (1956//)
 Message
@@ -6193,19 +6186,17 @@ inlined
 ;
 MSG_HELP_CO_CY_FORWARDMODE (1962//)
 Select here the way messages should be\n\
-forwarded by default. Either a message\n\
-can be forwarded as an attachment or the\n\
-message text can be put inlined to the\n\
-new message.
+forwarded by default. Press <Help> for\n\
+more information.
 ;
 MSG_ABOUT_CURRENT_DEVELOPERS (1963//)
-Current Developers:
+Current developers:
 ;
 MSG_ABOUT_CONTRIBUTORS (1964//)
 Contributors:
 ;
 MSG_ABOUT_LOCALIZATION_CONTRIBUTORS (1965//)
-Localization Contributors:
+Localization contributors:
 ;
 MSG_ABOUT_GPL (1966//)
 This program is free software; you're welcome to\n\
@@ -6218,7 +6209,7 @@ This program uses the following third party software:
 ;
 MSG_ABOUT_YAM_NEWS (1968//)
 The latest news about YAM can be found at the\n\
-YAM Support Site at \0335http://www.yam.ch/\033n
+YAM support site at \0335http://www.yam.ch/\033n
 ;
 MSG_WR_VIEW (1969//)
 View
@@ -6227,27 +6218,27 @@ MSG_ER_CONNECTERR_SOCKET_IN_USE (1970//)
 Couldn't connect to '%s'.\n\
 \n\
 A TCP/IP socket connection seems to be already active. \
-Please make sure to close all other existing transfers.
+Please close any other existing transfers.
 ;
 MSG_ER_CONNECTERR_TIMEDOUT (1971//)
 Couldn't connect to '%s'.\n\
 \n\
-The mail server didn't respond within a predefined \
-interval and therefore timed out.
+The mail server didn't respond within the predefined \
+time frame and therefore timed out.
 ;
 MSG_ER_CONNECTERR_NO_SOCKET (1972//)
 Couldn't connect to '%s'.\n\
 \n\
 YAM wasn't able to establish a socket connection \
 to the mail server. Please make sure that your TCP/IP \
-stack is up and working properly.
+stack is online and working properly.
 ;
 MSG_ER_CONNECTERR_NO_NONBLOCKIO (1973//)
 Couldn't connect to '%s'.\n\
 \n\
-YAM wasn't able to establish a non-blocking IO \
-connection to the mail server. Please make sure your \
-TCP/IP stack is able to establish non-blocking IO \
+YAM wasn't able to establish a non-blocking I/O \
+connection to the mail server. Please make sure that \
+your TCP/IP stack can establish non-blocking I/O \
 connections.
 ;
 MSG_CONFIG_MODIFIED (1974//)
@@ -6271,11 +6262,11 @@ MSG_AB_INVALIDSECURITY_TITLE (1978//)
 Security warning
 ;
 MSG_AB_INVALIDSECURITY (1979//)
-The addressbook entry was set to either sign\n\
-and/or encrypt messages per default. But the\n\
-required PGP installation wasn't found.\n\
+This address book entry was set to default to\n\
+either signed and/or encrypted messages, but the\n\
+required PGP installation couldn't be found.\n\
 \n\
-Do you want to clear the default security\n\
+Do you want to reset the default security\n\
 setting for this entry?
 ;
 MSG_AB_INVALIDSECURITY_GADS (1980//)
@@ -6285,13 +6276,14 @@ MSG_WR_INVALIDSECURITY_TITLE (1981//)
 Security warning
 ;
 MSG_WR_INVALIDSECURITY (1982//)
-The addressbook settings for recipient\n\
-'%s'\n\
-was found to be set to sign and/or encrypt\n\
-messages, but the required PGP installation\n\
-wasn't found.\n\
+The address book security setting for recipient\n\
 \n\
-The message will not be signed/encrypted.
+'%s'\n\
+\n\
+is set to signed and/or encrypted messages,\n\
+but the required PGP installation wasn't found.\n\
+\n\
+The message will be neither signed or encrypted.
 ; RECIPIENT
 ;
 MSG_WR_INVALIDSECURITY_GADS (1983//)
@@ -6301,46 +6293,44 @@ MSG_ER_FILEENCODE (1984//)
 An unexpected error occurred while trying to encode file \
 '%s'.\n\
 \n\
-Please make sure that this file exists and is readable \
-before you retry to compose the message.
+Please make sure that the file exists and is readable, \
+then try to compose the message again.
 ; FILENAME
 ;
 MSG_ER_MISSINGATTFILE (1985//)
-While trying to compose the attachments of a message, the \
-file '%s' was found to be unavailable.\n\
+File '%s' couldn't be found while trying to compose the \
+attachments of a message.\n\
 \n\
-Please make sure that this file exists and is readable \
-before you retry to compose the message.
+Please make sure that the file exists and is readable, \
+then try to compose the message again.
 ; FILENAME
 ;
 MSG_ER_INVALIDATTFILE (1986//)
-While trying to view an attachment of a message the \
-file '%s' was found to be unavailable.\n\
+File '%s' couldn't be found while trying to view the attachment \
+of a message.\n\
 \n\
-Please make sure that this file exists and is readable.
+Please make sure that the file exists and is readable.
 ; FILENAME
 ;
 MSG_ER_PRINTER_OFFLINE (1987//)
-While checking the printer state, YAM has\n\
-found the printer to be offline or busy.\n\
+The printer seems to be offline or busy.\n\
 \n\
-Please check your printer or try again later.
+Please check the printer or try again later.
 ;
 MSG_ER_PRINTER_OFFLINE_GADS (1988//)
 *_Retry|_Ignore|_Cancel
 ;
 MSG_ER_PRINTER_NOPAPER (1989//)
-While checking the printer state, YAM has\n\
-found the printer to be out of paper.\n\
+The printer seems to be out of paper.\n\
 \n\
-Please check your printer or try again later.
+Please check the printer or try again later.
 ;
 MSG_ER_PRINTER_NOPAPER_GADS (1990//)
 *_Retry|_Ignore|_Cancel
 ;
 MSG_ER_PRINTER_FAILED (1991//)
-While sending data to the printer an error\n\
-was returned.\n\
+An error was returned while\n\
+sending data to the printer.\n\
 \n\
 Please check your printer and try again if\n\
 your document wasn't printed properly.
@@ -6364,51 +6354,48 @@ MSG_MA_EDIT_PASTE (1997//)
 Paste
 ;
 MSG_MA_EDIT_SALL (1998//)
-Select All
+Select all
 ;
 MSG_MA_EDIT_SNONE (1999//)
-Select None
+Select none
 ;
 MSG_WR_SELECTNONE (2000//)
-Select None
+Select none
 ;
 MSG_MA_INVALIDMFILE_TITLE (2001//)
 Invalid mail file found
 ;
 MSG_MA_INVALIDMFILE (2002//)
-While examining the mail file '%s' of folder '%s',\n\
-YAM has found the file to be either invalid or not being in the correct\n\
-compliant mail format.\n\
+Mail file '%s' in folder '%s'\n\
+doesn't seem to have a valid mail format.\n\
 \n\
-Please make sure that the file is a valid mail file and proceed\n\
-accordingly.
+Please make sure that the file is a valid\n\
+mail file and proceed accordingly.
 ; FILENAME, FOLDER
 ;
 MSG_MA_INVALIDMFILE_BT (2003//)
-*_Retry|_Ignore|Ignore _All|_Delete|_Cancel
+*_Retry|_Ignore|Ignore _all|_Delete|_Cancel
 ;
 MSG_ER_CANNOT_READ_INDEX (2004//)
-An error occured while trying to read the index file '%s' of \
-folder '%s'.\n\
+An error occurred while trying to read the index file '%s' of folder '%s'.\n\
 \n\
-Please check that you are able to read the content of the file and \
+Please check that you can read the contents of the file and \
 that the permission settings are correct.
 ; FILENAME, FOLDER
 ;
 MSG_ER_CANNOT_WRITE_INDEX (2005//)
-An error occured while trying to write the index file '%s' of \
-folder '%s'.\n\
+An error occurred while trying to write the index file '%s' in folder '%s'.\n\
 \n\
-Please check that you are able to write to the directory where the \
+Please check that you can write to the directory where the \
 file is supposed to be written.
 ; FILENAME, FOLDER
 ;
 MSG_ER_INDEX_CORRUPTED (2006//)
-The index file '%s' of folder '%s' was found to be corrupt at position \
-%d near the information on mail file '%s' (MoreBytes: 0x%x).\n\
+Index file '%s' in folder '%s' is corrupt at position \
+%d near the information about mail file '%s' (MoreBytes: 0x%x).\n\
 \n\
-The folder was flagged as 'unloaded' and an index rescanning \
-was initiated or is required.
+The folder was flagged as 'unloaded' and an index update \
+was initiated or is required to solve the problem.
 ; FILENAME, FOLDER, POSITION, MAILFILE, MOREBYTES
 ;
 MSG_ER_UNKNOWN_MIME_ENCODING (2007//)
@@ -6421,11 +6408,11 @@ to disk and try with a different decoder.
 MSG_ER_UNKNOWN_HEADER_ENCODING (2008//)
 Unknown header encoding '%s' in mail file '%s'.\n\
 \n\
-YAM cannot display a particular message header correctly.
+YAM cannot display a certain header in this message.
 ; ENCODING_TYPE, FILENAME
 ;
 MSG_ER_UNEXPECTED_MULTIPART_EOF (2009//)
-Unexpected EOF while decoding the multipart message in file '%s'.\n\
+Unexpected EOF while decoding multipart message in file '%s'.\n\
 \n\
 The message seems to be truncated.
 ; FILENAME
@@ -6433,18 +6420,18 @@ The message seems to be truncated.
 MSG_ER_MIME_ERROR (2010//)
 Couldn't extract MIME message from file '%s'.\n\
 \n\
-The message contains badly formed MIME parts or it's empty or truncated.
+The message contains malformed MIME parts, or it's empty or truncated.
 ; FILENAME
 ;
 MSG_ER_UNEXPECTED_UUE_EOF (2011//)
-Unexpected EOF while decoding the UUencoded file '%s'. \
+Unexpected EOF while decoding UU encoded file '%s'. \
 The message seems to be truncated.
 ; FILENAME
 ;
 MSG_ER_INVALID_UUE_LENGTH (2012//)
-Invalid line length %ld in UUencoded file '%s'.\n\
+Invalid line length %ld in UU encoded file '%s'.\n\
 \n\
-A defective UUencoder was used or the message is truncated.
+Either a faulty UU encoder was used or the message is truncated.
 ; SIZE, FILENAME
 ;
 MSG_RE_HDR_REPLYTO (2013//)
@@ -6493,36 +6480,34 @@ MSG_WR_DELETE (2027//)
 Delete
 ;
 MSG_ER_B64DEC_FILEIO (2028//)
-A file input/output error occurred while trying to base64 \
-decode MIME part %ld of mail '%s'. The decoding has been \
-aborted.\n\
+A file I/O error occurred while trying to Base64 decode MIME part \
+%ld of mail file '%s'. The decoding has been aborted.\n\
 \n\
-This may be caused by unsufficient space on the volume the \
-file was being decoded or because the source file wasn't \
+This may be caused by insufficient space on the volume the \
+file was being decoded to, or because the source file wasn't \
 accessible.
 ; PARTNR, MSGFILE
 ;
 MSG_ER_B64DEC_WARN (2029//)
-Some invalid characters were found during the process of \
-undecoding the base64 encoded MIME part %ld of mail '%s'. \
-The generated output may therefore contain invalid data \
-or may be corrupted.\n\
+Some invalid characters were found while Base64 decoding \
+MIME part %ld of mail file '%s'. The generated output may \
+therefore contain invalid data or may be corrupted.\n\
 \n\
-This can be caused du to an incorrect encoding done by \
-the sending mail client or because the base64 part has \
+This may be caused by an incorrect encoding done by \
+the sending mail client or because the Base64 part has \
 been malformed during transmission.
 ; PARTNR, MSGFILE
 ;
 MSG_ER_B64DEC_UNEXP (2030//)
-An error occurred while trying to base64 decode MIME \
-part %ld of mail '%s'. The decoding has been aborted.\n\
+An error occurred while trying to Base64 decode MIME part \
+%ld of mail file '%s'. The decoding has been aborted.\n\
 \n\
-There was either no data to decode or YAM wasn't able \
-to access the encoded data during the decoding phase.
+Either there's no data to decode or YAM can't access \
+the encoded data.
 ; PARTNR, MSGFILE
 ;
 MSG_MA_ADD_WHICH_ADDRESS (2031//)
-The sender address (From) is \033b<%s>\033n and\n\
+The sender address (From) is \033b<%s>\033n but\n\
 the return address (Reply-To) is \033b<%s>\033n.\n\
 \n\
 Which address do you want to add to your address book?
@@ -6535,71 +6520,60 @@ MSG_CO_SCRIPTPATH (2033//)
 Path
 ;
 MSG_ER_ICONOBJECT_WARNING (2038//)
-An error occurred while trying to load the icon object \
+An error occurred while trying to load icon \
 '%s.info' from theme '%s'. The icon will not be displayed \
-during that session.\n\
+during this session.\n\
 \n\
-Please make sure your theme directory contains all \
-necessary icons or disable the themes support for no \
+Please make sure that your theme directory contains all \
+the necessary icons, or disable the theme to avoid \
 further warnings.
 ;
 MSG_ER_THEMEVER_FALLBACK (2039//)
-The currently activated theme '%s' was found to be \
-of an incompatible version and wasn't loaded.\n\
+Theme '%s' has an incompatible version number.\n\
 \n\
-The default YAM theme was therefore activated as a \
-fallback. Please make sure to update the theme to \
-compatible version or disable it in the configuration.
+The default theme will be used as a fallback.
 ;
 MSG_ER_THEMEVER_IGNORE (2040//)
-While trying to load the default theme of YAM, it \
-was found to be of an incorrect version.\n\
+The default theme has an incompatible version number.\n\
 \n\
-The theme loading process was aborted and you are \
-adviced to upgrade the default theme to a compatible \
-version.
+Please upgrade the theme to a compatible version.
 ;
 MSG_ER_DATATYPE_ERROR (2041//)
-An error occurred while trying to load the image data \
-of '%s' via datatypes.library.\n\
+An error occurred while trying to load picture file \
+'%s' with datatypes.\n\
 \n\
 Please make sure that the file exists and that you have \
-your datatypes system correctly setup (e.g. that the \
-image properly displays in Multiview).
+your datatypes system correctly set up (e.g. that the \
+picture displays properly with MultiView).
 ;
 MSG_ER_IMAGEOBJECT_WARNING (2042//)
-An error occurred while trying to load the image file '%s' \
-from directory '%s'.\n\
+An error occurred while trying to load picture file \
+'%s' from directory '%s'.\n\
 \n\
-Please make sure your theme directory contains all \
+Please make sure that your theme contains all the \
 necessary images as defined in the latest theme version \
 layout.
 ;
 MSG_ER_THEME_FATAL (2043//)
-YAM was unable to load the default theme and aborted \
-the theme loading completly.\n\
+Couldn't open the default theme.\n\
 \n\
-Please make sure your themes directory is readable and \
+Please make sure that your themes directory is readable and \
 contains the correct default theme distributed with YAM.
 ;
 MSG_ER_THEME_FALLBACK (2044//)
-The currently activated theme '%s' was found to be \
-inaccessible or corrupt and wasn't loaded.\n\
+Theme '%s' is either inaccesible or it is corrupt.\n\
 \n\
-The default YAM theme was therefore activated as a \
-fallback. Please make sure your selected theme is readable \
-and a valid YAM theme.
+The default theme will be used as a fallback.
 ;
 MSG_ER_THEME_ACTIVATED_TITLE (2045//)
 YAM restart required
 ;
 MSG_ER_THEME_ACTIVATED (2046//)
-Please note that before the selected theme can be\n\
-activated, you have to save the configuration and\n\
-restart YAM.
+Before the selected theme can be applied, you have\n\
+to save the configuration and restart YAM.
 ;
 MSG_FOLDER_ALLTOREAD (2047//)
-Mark folder read
+Mark folder as read
 ;
 MSG_EA_REMOVEPHOTO (2048//)
 Remo_ve
@@ -6617,11 +6591,11 @@ proceed.
 ;
 MSG_HELP_CO_CH_NOTISOUND (2051//)
 Play a sound file\n\
-when you get new e-mail.
+when you get new mail.
 ;
 MSG_HELP_CO_CH_NOTICMD (2052//)
 Execute a command\n\
-when you get new e-mail.
+when you get new mail.
 ;
 MSG_HELP_CO_BT_MORE (2053//)
 Add a rule to this filter.
@@ -6669,4 +6643,11 @@ k
 ;
 MSG_CO_UPDATE_NEVER (2065//)
 Never
+;
+MSG_MA_EXECUTESCRIPT_TITLE (2066//)
+Select script to execute
+;
+MSG_HELP_FI_BT_NONE (2067//)
+Exclude all folders from the\n\
+search, except the current one.
 ;

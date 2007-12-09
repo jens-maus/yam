@@ -2252,6 +2252,7 @@ static struct FI_ClassData *FI_New(void)
 
        SetHelp(data->GUI.LV_FOLDERS,       MSG_HELP_FI_LV_FOLDERS);
        SetHelp(bt_all,                     MSG_HELP_FI_BT_ALL);
+       SetHelp(bt_none,                    MSG_HELP_FI_BT_NONE);
        SetHelp(po_fromrule,                MSG_HELP_FI_PO_FROMRULE);
        SetHelp(bt_torule,                  MSG_HELP_FI_BT_TORULE);
        SetHelp(data->GUI.BT_SEARCH,        MSG_HELP_FI_BT_SEARCH);
