@@ -612,7 +612,7 @@ HOOKPROTONHNP(PO_HandleScriptsOpenFunc, BOOL, Object *list)
   // clear the list first
   DoMethod(list, MUIM_NList_Clear);
 
-  if((active = xget(list, MUIA_NList_Active)) >= 0)
+  if((active = xget(G->CO->GUI.LV_REXX, MUIA_NList_Active)) >= 0)
   {
     enum Macro macro = (enum Macro)active;
 
@@ -1066,6 +1066,8 @@ HOOKPROTONHNONP(CO_GetRXEntryFunc, void)
   int act = xget(gui->LV_REXX, MUIA_NList_Active);
   enum Macro macro = (enum Macro)act;
 
+  ENTER();
+
   rh = &(CE->RX[act]);
   nnset(gui->ST_RXNAME, MUIA_String_Contents, act < 10 ? rh->Name : "");
   nnset(gui->ST_SCRIPT, MUIA_String_Contents, rh->Script);
@@ -1108,6 +1110,8 @@ HOOKPROTONHNONP(CO_GetRXEntryFunc, void)
   }
 
   DoMethod(gui->LV_REXX, MUIM_NList_Redraw, act);
+
+  LEAVE();
 }
 MakeStaticHook(CO_GetRXEntryHook, CO_GetRXEntryFunc);
 
@@ -1118,6 +1122,8 @@ HOOKPROTONHNONP(CO_PutRXEntryFunc, void)
 {
   struct CO_GUIData *gui = &G->CO->GUI;
   int act = xget(gui->LV_REXX, MUIA_NList_Active);
+
+  ENTER();
 
   if(act != MUIV_List_Active_Off)
   {
@@ -1131,6 +1137,8 @@ HOOKPROTONHNONP(CO_PutRXEntryFunc, void)
 
     DoMethod(gui->LV_REXX, MUIM_NList_Redraw, act);
   }
+
+  LEAVE();
 }
 MakeStaticHook(CO_PutRXEntryHook, CO_PutRXEntryFunc);
 ///

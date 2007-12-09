@@ -7,6 +7,8 @@ $URL$
 
 2007-12-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c: fixed bug #1845233 where an incorrect list pointer caused that
+    the scripts parameter popup list was always empty.
   * YAM.cd, YAM_COg.c: rephrased some internal strings so that we take more care
     about technical terms and captions and their upper/lowercase rules. In
     addition, reenabled the "you will be notified..." message in the software
