@@ -7,6 +7,8 @@ $URL$
 
 2007-12-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c, YAM_RE.c, YAM_UT.c: changed some more DeleteFile() calls to actually
+    check for equal/non-equal zero rather than using boolean operations.
   * deutsch.ct: updated catalog translation to what has happened between
     revision 3560 and 3594 of our YAM.cd file.
   * YAM.cd: made sure that all help strings are closed with a '.' char.

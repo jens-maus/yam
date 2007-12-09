@@ -4323,7 +4323,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
           // destination one not. so lets uncompress it
           success = UncompressMailFile(srcbuf, dstbuf, srcpw) ? 1 : -2;
           if(success > 0 && !copyit)
-            success = DeleteFile(srcbuf) ? 1 : -1;
+            success = (DeleteFile(srcbuf) != 0) ? 1 : -1;
         }
         else
         {
@@ -4341,7 +4341,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
               // compress it immediatly again
               success = CompressMailFile(tf->Filename, dstbuf, dstpw, pmeth, peff) ? 1 : -2;
               if(success > 0 && !copyit)
-                success = DeleteFile(srcbuf) ? 1 : -1;
+                success = (DeleteFile(srcbuf) != 0) ? 1 : -1;
             }
 
             CloseTempFile(tf);
@@ -4356,7 +4356,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
           // so we compress the file in the destionation folder now
           success = CompressMailFile(srcbuf, dstbuf, dstpw, pmeth, peff) ? 1 : -2;
           if(success > 0 && !copyit)
-            success = DeleteFile(srcbuf) ? 1 : -1;
+            success = (DeleteFile(srcbuf) != 0) ? 1 : -1;
         }
         else
           // if we end up here then there is something seriously wrong

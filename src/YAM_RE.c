@@ -4205,7 +4205,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
 
     if(*part->Filename)
     {
-      if(!DeleteFile(part->Filename))
+      if(DeleteFile(part->Filename) == 0)
         AddZombieFile(part->Filename);
     }
 
@@ -4263,7 +4263,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
     stcgfe(ext, rmData->readFile);
     if(strcmp(ext, "unp") == 0)
     {
-      if(!DeleteFile(rmData->readFile))
+      if(DeleteFile(rmData->readFile) == 0)
         AddZombieFile(rmData->readFile);
     }
   }

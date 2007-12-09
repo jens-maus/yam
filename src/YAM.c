@@ -3135,7 +3135,7 @@ int main(int argc, char **argv)
             // the delete routine in WR_NewMail() doesn't catch the correct file
             // because it only cares about the autosave file for the newly created
             // write object
-            if(!DeleteFile(fileName))
+            if(DeleteFile(fileName) == 0)
               AddZombieFile(fileName);
           }
         }
@@ -3166,7 +3166,7 @@ int main(int argc, char **argv)
         else if(answer == 3)
         {
           // just delete the autosave file
-          if(!DeleteFile(fileName))
+          if(DeleteFile(fileName) == 0)
             AddZombieFile(fileName);
         }
       }
