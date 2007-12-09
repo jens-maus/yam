@@ -217,6 +217,7 @@ OVERLOAD(OM_NEW)
 
     // set notifies
     DoMethod(themeListObject,      MUIM_Notify, MUIA_NList_SelectChange, TRUE, obj, 1, MUIM_ThemeListGroup_SelectionChanged);
+    DoMethod(themeListObject,      MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, MUIM_ThemeListGroup_ActivateTheme);
     DoMethod(activateButtonObject, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, MUIM_ThemeListGroup_ActivateTheme);
   }
 

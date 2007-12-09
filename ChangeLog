@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-09  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ThemeListGroup.c: a double click on a theme entry is now the same as a click
+    on the "Activate" button.
+
 2007-12-08  David Rey <tactica@users.sourceforge.net>
 
   * classes/MainMailList.c, classes/MainFolderListtree.c: applied most of
