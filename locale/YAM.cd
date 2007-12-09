@@ -1928,11 +1928,11 @@ for a random tagline.
 ;
 MSG_HELP_CO_BT_INSENV (647//)
 Insert a control code for the\n\
-SIGNATURE environment variable.
+'SIGNATURE' environment variable.
 ;
 MSG_HELP_CO_ST_TAGFILE (648//)
 Specify here a database file containing\n\
-taglines (also known as "cookies").
+taglines (also known as 'cookies').
 ;
 MSG_HELP_CO_ST_TAGSEP (649//)
 String used to separate the\n\
@@ -2108,7 +2108,8 @@ and output from the script.
 ;
 MSG_HELP_CO_CH_WAITTERM (698//)
 Do not run the script\n\
-asynchronously.
+asynchronously but wait\n\
+for it to complete.
 ;
 MSG_HELP_CO_BT_SAVE (699//)
 Save current settings.
@@ -2449,7 +2450,7 @@ Full name of this entry\n\
 (first name last name).
 ;
 MSG_HELP_EA_ST_ADDRESS (803//)
-Internet address\n\
+Official e-mail address\n\
 of this entry.
 ;
 MSG_HELP_EA_ST_PGPKEY (804//)
@@ -2872,7 +2873,7 @@ Insert file
 ; Module WR - Hooks
 ;
 MSG_WR_TitleFile (924//)
-File name
+Filename
 ;
 MSG_WR_TitleSize (925//)
 Size
