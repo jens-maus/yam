@@ -4901,7 +4901,7 @@ MSG_QUICKSEARCH_VO_MINSIZE (1592//)
 Message Size > 1 MB
 ;
 MSG_QUICKSEARCH_VIEW (1593//)
-View:
+_View:
 ;
 MSG_QUICKSEARCH_SHOWNMSGS (1594//)
 %ld of %ld shown
@@ -6659,4 +6659,7 @@ for updates now.
 MSG_HELP_WR_LV_ATTACH (2063//)
 List of attachments\n\
 in this message.
+;
+MSG_QUICKSEARCH_STR_CONTROLCHAR (2064//)
+k
 ;
