@@ -1665,7 +1665,7 @@ BOOL RenameFile(const char *oldname, const char *newname)
       ULONG prots = ed->Protection;
 
       FreeDosObject(DOS_EXAMINEDATA, ed);
-      if(SetProtection(newname, prots & ~FIBF_ARCHIVE))
+      if(SetProtection(newname, prots & ~EXDF_ARCHIVE))
         result = TRUE;
     }
     #else
@@ -1757,7 +1757,7 @@ BOOL MoveFile(const char *oldfile, const char *newfile)
   {
     // a normal rename didn't work, so lets copy the file
     if(!CopyFile(newfile, 0, oldfile, 0) ||
-       !DeleteFile(oldfile))
+       DeleteFile(oldfile) == 0)
     {
       // also a copy didn't work, so lets return an error
       success = FALSE;
@@ -2331,7 +2331,7 @@ BOOL DeleteZombieFiles(BOOL force)
       D(DBF_STARTUP, "trying to delete zombie file '%s'", zombie->fileName);
 
       // try again to delete the file, if it still exists
-      if(force == FALSE && FileExists(zombie->fileName) && !DeleteFile(zombie->fileName))
+      if(force == FALSE && FileExists(zombie->fileName) && DeleteFile(zombie->fileName) == 0)
       {
         // deleting failed again, but we are allowed to retry
         listCleared = FALSE;
@@ -2404,7 +2404,7 @@ void CloseTempFile(struct TempFile *tf)
       fclose(tf->FP);
 
     D(DBF_UTIL, "DeleteTempFile: %s\n", tf->Filename);
-    if(!DeleteFile(tf->Filename))
+    if(DeleteFile(tf->Filename) == 0)
       AddZombieFile(tf->Filename);
 
     free(tf);
@@ -2535,8 +2535,8 @@ BOOL AllFolderLoaded(void)
 //  Recursively deletes a mail directory
 BOOL DeleteMailDir(const char *dir, BOOL isroot)
 {
-  APTR context;
   BOOL result = TRUE;
+  APTR context;
 
   ENTER();
 
@@ -2571,24 +2571,28 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
              stricmp(filename, ".spamdata")    == 0 ||
              stricmp(filename, ".uidl")        == 0)
           {
-            result = DeleteFile(fname);
+            if(DeleteFile(fname) == 0)
+              result = FALSE;
           }
         }
       }
-      else if(isdir == FALSE && (isValidMailFile(filename) ||
-              stricmp(filename, ".fconfig") == 0           ||
-              stricmp(filename, ".fimage") == 0            ||
-              stricmp(filename, ".index") == 0)
-             )
+      else if(isdir == FALSE)
       {
-        result = DeleteFile(fname);
+        if(isValidMailFile(filename) == TRUE  ||
+           stricmp(filename, ".fconfig") == 0 ||
+           stricmp(filename, ".fimage") == 0  ||
+           stricmp(filename, ".index") == 0)
+        {
+          if(DeleteFile(fname) == 0)
+            result = FALSE;
+        }
       }
     }
 
     ReleaseDirContext(context);
 
-    if(result == TRUE)
-      result = DeleteFile(dir);
+    if(result == TRUE && DeleteFile(dir) == 0)
+      result = FALSE;
   }
   else
     result = FALSE;
@@ -4418,9 +4422,10 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
       // if we end up here the source folder is a compressed folder so we
       // have to just uncompress the file
       if(UncompressMailFile(srcbuf, dstbuf, folder->Password) &&
-         DeleteFile(srcbuf))
+         DeleteFile(srcbuf) != 0)
       {
-        success = RenameFile(dstbuf, srcbuf);
+        if(RenameFile(dstbuf, srcbuf) != 0)
+          success = TRUE;
       }
     }
     else
@@ -4432,7 +4437,8 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
       if(UncompressMailFile(srcbuf, dstbuf, folder->Password) &&
          CompressMailFile(dstbuf, srcbuf, passwd, pmeth, peff))
       {
-        success = DeleteFile(dstbuf);
+        if(DeleteFile(dstbuf) != 0)
+          success = TRUE;
       }
     }
   }
@@ -4445,7 +4451,7 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
       // here the source folder is not compressed, but the destination mode
       // signals to compress it
       if(CompressMailFile(srcbuf, dstbuf, passwd, pmeth, peff) &&
-         DeleteFile(srcbuf))
+         DeleteFile(srcbuf) != 0)
       {
         success = RenameFile(dstbuf, srcbuf);
       }
@@ -4472,7 +4478,7 @@ BOOL DoPack(char *file, char *newfile, struct Folder *folder)
   {
     if(CompressMailFile(file, newfile, folder->Password, pmeth, peff))
     {
-      if(DeleteFile(file))
+      if(DeleteFile(file) != 0)
       {
         result = TRUE;
       }
@@ -4558,7 +4564,7 @@ void FinishUnpack(char *file)
       }
     }
 
-    if(!DeleteFile(file))
+    if(DeleteFile(file) == 0)
       AddZombieFile(file);
   }
 
@@ -4732,7 +4738,7 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
     }
     fclose(fp);
 
-    if(!DeleteFile(PGPLOGFILE))
+    if(DeleteFile(PGPLOGFILE) == 0)
       AddZombieFile(PGPLOGFILE);
   }
   if(keys == 0)
@@ -5014,7 +5020,7 @@ void DisposeModule(void *modptr)
 
   ENTER();
 
-  if(*module)
+  if(*module != NULL)
   {
     Object *window = (*module)->GUI.WI;
 
@@ -5516,7 +5522,7 @@ int PGPCommand(const char *progname, const char *options, int flags)
 
   if(!error && !hasKeepLogFlag(flags))
   {
-    if(!DeleteFile(PGPLOGFILE))
+    if(DeleteFile(PGPLOGFILE) == 0)
       AddZombieFile(PGPLOGFILE);
   }
 

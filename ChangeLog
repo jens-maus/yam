@@ -21,6 +21,10 @@ $URL$
 
 2007-12-09  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: DOS functions are guaranteed to return a non-zero value on
+    success, but not exactly TRUE, which broke the DeleteMailDir() function. Now
+    the return values are just checked for being not FALSE. This fixes bug
+    #1847267.
   * ThemeListGroup.c: a double click on a theme entry is now the same as a click
     on the "Activate" button.
 
