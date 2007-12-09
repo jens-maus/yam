@@ -1073,6 +1073,7 @@ HOOKPROTONHNONP(CO_GetRXEntryFunc, void)
   nnset(gui->CH_CONSOLE, MUIA_Selected, rh->UseConsole);
   nnset(gui->CH_WAITTERM, MUIA_Selected, rh->WaitTerm);
   set(gui->ST_RXNAME, MUIA_Disabled, act >= 10);
+
   switch(macro)
   {
     case MACRO_MEN0:
@@ -3919,11 +3920,11 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
                   Child, data->GUI.CY_UPDATEINTERVAL = MakeCycle(updateInterval, ""),
                   Child, HVSpace,
                 End,
-//                Child, HVSpace,
-//                Child, TextObject,
-//                  MUIA_Text_Contents, tr(MSG_CO_SEARCHFORUPDATESINFO),
-//                  MUIA_Font,          MUIV_Font_Tiny,
-//                End,
+                Child, HVSpace,
+                Child, TextObject,
+                  MUIA_Text_Contents, tr(MSG_CO_SEARCHFORUPDATESINFO),
+                  MUIA_Font,          MUIV_Font_Tiny,
+                End,
                 Child, VSpace(10),
                 Child, VSpace(10),
                 Child, HVSpace,

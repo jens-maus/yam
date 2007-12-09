@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-09  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.cd, YAM_COg.c: rephrased some internal strings so that we take more care
+    about technical terms and captions and their upper/lowercase rules. In
+    addition, reenabled the "you will be notified..." message in the software
+    update configuration section as it is more intuitive and easy to grasp what
+    will happen and looks more nice and there is enough space.
+
 2007-12-09  Thore Böckelmann <tboeckel@gmx.de>
 
   * ThemeListGroup.c: a double click on a theme entry is now the same as a click
