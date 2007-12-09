@@ -255,7 +255,6 @@ struct CO_GUIData
   Object *CH_WBAPPICON;
   Object *CH_DOCKYICON;
   Object *TX_DEFAULTCHARSET;
-  Object *CH_UPDATECHECK;
   Object *CY_UPDATEINTERVAL;
   Object *BT_UPDATENOW;
   Object *TX_UPDATESTATUS;

@@ -1732,39 +1732,39 @@ static Object *MakeVarPop(Object **string, Object **popButton, enum VarPopMode m
 
       case VPM_ARCHIVE:
       {
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveName), MUIV_NList_Insert_Bottom);
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveFiles), MUIV_NList_Insert_Bottom);
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveFilelist), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveName), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveFiles), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveFilelist), MUIV_NList_Insert_Bottom);
       }
       break;
 
       case VPM_MAILSTATS:
       {
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_NEWMSGS), MUIV_NList_Insert_Bottom);
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_UNREADMSGS), MUIV_NList_Insert_Bottom);
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_TOTALMSGS), MUIV_NList_Insert_Bottom);
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_DELMSGS), MUIV_NList_Insert_Bottom);
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SENTMSGS), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_NEWMSGS), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_UNREADMSGS), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_TOTALMSGS), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_DELMSGS), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SENTMSGS), MUIV_NList_Insert_Bottom);
       }
       break;
 
       case VPM_SCRIPTS:
       {
-         // we let the openhook handle the list management
-         set(po, MUIA_Popobject_StrObjHook, &PO_HandleScriptsOpenHook);
+        // we let the openhook handle the list management
+        set(po, MUIA_Popobject_StrObjHook, &PO_HandleScriptsOpenHook);
       }
       break;
 
       case VPM_MIME_DEFVIEWER:
       case VPM_MIME_COMMAND:
       {
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_MIMECMD_PARAMETER), MUIV_NList_Insert_Bottom);
-         DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_MIMECMD_PUBSCREEN), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_MIMECMD_PARAMETER), MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_MIMECMD_PUBSCREEN), MUIV_NList_Insert_Bottom);
       }
       break;
     }
 
-    DoMethod(lv,MUIM_Notify,MUIA_NList_DoubleClick,TRUE,po,2,MUIM_Popstring_Close,TRUE);
+    DoMethod(lv, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
     DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime, po, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
   }
 
@@ -3905,71 +3905,52 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
 Object *CO_PageUpdate(struct CO_ClassData *data)
 {
   Object *obj;
-  static const char *updateInterval[4];
+  static const char *updateInterval[5];
 
   ENTER();
 
-  updateInterval[0] = tr(MSG_CO_UPDATE_DAILY);
-  updateInterval[1] = tr(MSG_CO_UPDATE_WEEKLY);
-  updateInterval[2] = tr(MSG_CO_UPDATE_MONTHLY);
-  updateInterval[3] = NULL;
+  updateInterval[0] = tr(MSG_CO_UPDATE_NEVER);
+  updateInterval[1] = tr(MSG_CO_UPDATE_DAILY);
+  updateInterval[2] = tr(MSG_CO_UPDATE_WEEKLY);
+  updateInterval[3] = tr(MSG_CO_UPDATE_MONTHLY);
+  updateInterval[4] = NULL;
 
   obj = VGroup,
           MUIA_HelpNode, "CO16",
 
           ConfigPageHeaderObject("config_update_big", G->theme.configImages[ci_UpdateBig], tr(MSG_CO_UPDATE_TITLE), tr(MSG_CO_UPDATE_SUMMARY)),
 
-          Child, VGroup,
-            Child, VGroup, GroupFrameT(tr(MSG_CO_SOFTWAREUPDATE)),
-              Child, ColGroup(2),
-                Child, data->GUI.CH_UPDATECHECK = MakeCheck(tr(MSG_CO_SEARCHFORUPDATES)),
-                Child, HGroup,
-                  Child, LLabel1(tr(MSG_CO_SEARCHFORUPDATES)),
-                  Child, data->GUI.CY_UPDATEINTERVAL = MakeCycle(updateInterval, ""),
-                  Child, HVSpace,
-                End,
-                Child, HVSpace,
-                Child, TextObject,
-                  MUIA_Text_Contents, tr(MSG_CO_SEARCHFORUPDATESINFO),
-                  MUIA_Font,          MUIV_Font_Tiny,
-                End,
-                Child, VSpace(10),
-                Child, VSpace(10),
-                Child, HVSpace,
-                Child, HGroup,
-                  Child, data->GUI.BT_UPDATENOW = MakeButton(tr(MSG_CO_SEARCHNOW)),
-                  Child, HVSpace,
-                  Child, HVSpace,
-                End,
+          Child, VGroup, GroupFrameT(tr(MSG_CO_SOFTWAREUPDATE)),
+            Child, HGroup,
+              Child, LLabel1(tr(MSG_CO_SEARCHFORUPDATES)),
+              Child, data->GUI.CY_UPDATEINTERVAL = MakeCycle(updateInterval, tr(MSG_CO_SEARCHFORUPDATES)),
+              Child, data->GUI.BT_UPDATENOW = MakeButton(tr(MSG_CO_SEARCHNOW)),
+            End,
+            Child, TextObject,
+              MUIA_Text_Contents, tr(MSG_CO_SEARCHFORUPDATESINFO),
+              MUIA_Font,          MUIV_Font_Tiny,
+            End,
+            Child, VSpace(10),
+            Child, ColGroup(2),
+              Child, LLabel1(tr(MSG_CO_LASTSEARCH)),
+              Child, data->GUI.TX_UPDATESTATUS = TextObject,
+                MUIA_Text_Contents, tr(MSG_CO_LASTSTATUS_NOCHECK),
               End,
-              Child, RectangleObject,
-                MUIA_Rectangle_HBar, TRUE,
-                MUIA_FixHeight,      4,
-              End,
-              Child, ColGroup(2),
-                Child, LLabel1(tr(MSG_CO_LASTSEARCH)),
-                Child, data->GUI.TX_UPDATESTATUS = TextObject,
-                  MUIA_Text_Contents, tr(MSG_CO_LASTSTATUS_NOCHECK),
-                End,
-                Child, HSpace(1),
-                Child, data->GUI.TX_UPDATEDATE = TextObject,
-                  MUIA_Text_Contents, "",
-                End,
+              Child, HSpace(1),
+              Child, data->GUI.TX_UPDATEDATE = TextObject,
+                MUIA_Text_Contents, "",
               End,
             End,
-            Child, HVSpace,
           End,
+
+          Child, HVSpace,
         End;
 
   if(obj != NULL)
   {
-    nnset(data->GUI.CY_UPDATEINTERVAL, MUIA_Disabled, TRUE);
-
-    SetHelp(data->GUI.CH_UPDATECHECK,    MSG_HELP_CH_UPDATECHECK);
     SetHelp(data->GUI.CY_UPDATEINTERVAL, MSG_HELP_CH_UPDATECHECK);
     SetHelp(data->GUI.BT_UPDATENOW,      MSG_HELP_CO_BT_UPDATENOW);
 
-    DoMethod(data->GUI.CH_UPDATECHECK, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.CY_UPDATEINTERVAL, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
     DoMethod(data->GUI.BT_UPDATENOW,   MUIM_Notify, MUIA_Pressed,  FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &UpdateCheckHook);
   }
 

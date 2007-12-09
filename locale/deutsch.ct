@@ -6855,13 +6855,13 @@ MSG_CO_SOFTWAREUPDATE
 Updatesuche
 ;
 MSG_CO_UPDATE_DAILY
-Täglich
+täglich
 ;
 MSG_CO_UPDATE_WEEKLY
-Wöchentlich
+wöchentlich
 ;
 MSG_CO_UPDATE_MONTHLY
-Monatlich
+monatlich
 ;
 MSG_CO_SEARCHFORUPDATES
 Nach _Updates suchen:
@@ -8295,8 +8295,8 @@ Neustart von YAM notwendig
 ;
 MSG_ER_THEME_ACTIVATED
 Bitte beachten Sie, dass das Sie die Konfiguration\n\
-speichern und YAM neu starten müssen, bevor das ausgewählte\n\
-Theme aktiviert werden kann.
+speichern und YAM neu starten müssen, bevor das\n\
+ausgewählte Theme aktiviert werden kann.
 ;
 MSG_FOLDER_ALLTOREAD
 Ordner als gelesen markieren
@@ -8373,4 +8373,7 @@ E-Mail.
 ;
 MSG_QUICKSEARCH_STR_CONTROLCHAR
 e
+;
+MSG_CO_UPDATE_NEVER
+niemals
 ;

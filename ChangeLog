@@ -25,6 +25,8 @@ $URL$
 
 2007-12-09  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c, YAM_COs.c, YAM.cd: the "check for updates" checkmark has been
+    replaced by an item in the cycler. This effectively fixes bug #1837539.
   * YAM_UT.c: DOS functions are guaranteed to return a non-zero value on
     success, but not exactly TRUE, which broke the DeleteMailDir() function. Now
     the return values are just checked for being not FALSE. This fixes bug

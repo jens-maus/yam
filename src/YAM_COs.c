@@ -1999,30 +1999,27 @@ void CO_GetConfig(BOOL saveConfig)
 
       case cp_Update:
       {
-        if(GetMUICheck(gui->CH_UPDATECHECK) == TRUE)
+        int interval = GetMUICycle(gui->CY_UPDATEINTERVAL);
+
+        switch(interval)
         {
-          int interval = GetMUICycle(gui->CY_UPDATEINTERVAL);
+          default:
+          case 0:
+            CE->UpdateInterval = 0; // never
+          break;
 
-          switch(interval)
-          {
-            case 0:
-              CE->UpdateInterval = 86400; // 1 day
-            break;
+          case 1:
+            CE->UpdateInterval = 86400; // 1 day
+          break;
 
-            case 1:
-              CE->UpdateInterval = 604800; // 1 week
-            break;
+          case 2:
+            CE->UpdateInterval = 604800; // 1 week
+          break;
 
-            case 2:
-              CE->UpdateInterval = 2419200; // 1 month
-            break;
-
-            default:
-              CE->UpdateInterval = 0;
-          }
+          case 3:
+            CE->UpdateInterval = 2419200; // 1 month
+          break;
         }
-        else
-          CE->UpdateInterval = 0; // disabled
       }
       break;
 
@@ -2413,19 +2410,17 @@ void CO_SetConfig(void)
       // copy the last update state information
       GetLastUpdateState(&state);
 
-      setcheckmark(gui->CH_UPDATECHECK, CE->UpdateInterval > 0);
-
       if(CE->UpdateInterval > 0)
       {
         if(CE->UpdateInterval <= 86400)
-          setcycle(gui->CY_UPDATEINTERVAL, 0); // daily
+          setcycle(gui->CY_UPDATEINTERVAL, 1); // daily
         else if(CE->UpdateInterval <= 604800)
-          setcycle(gui->CY_UPDATEINTERVAL, 1); // weekly
+          setcycle(gui->CY_UPDATEINTERVAL, 2); // weekly
         else
-          setcycle(gui->CY_UPDATEINTERVAL, 2); // monthly
+          setcycle(gui->CY_UPDATEINTERVAL, 3); // monthly
       }
       else
-        setcycle(gui->CY_UPDATEINTERVAL, 1);
+        setcycle(gui->CY_UPDATEINTERVAL, 0);
 
       // now we set the information on the last update check
       switch(state.LastUpdateStatus)

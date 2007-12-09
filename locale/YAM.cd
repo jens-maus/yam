@@ -6667,3 +6667,6 @@ in this message.
 MSG_QUICKSEARCH_STR_CONTROLCHAR (2064//)
 k
 ;
+MSG_CO_UPDATE_NEVER (2065//)
+Never
+;
