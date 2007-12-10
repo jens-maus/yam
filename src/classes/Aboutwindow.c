@@ -142,10 +142,7 @@ OVERLOAD(OM_NEW)
 
   compileInfo = (char *)xget(G->App, MUIA_YAM_CompileInfo);
 
-  if(G->theme.loaded == TRUE)
-    AddPath(logopath, G->theme.directory, "logo", sizeof(logopath));
-  else
-    AddPath(logopath, G->ProgDir, "Themes/default/logo", sizeof(logopath));
+  AddPath(logopath, G->ProgDir, "Themes/default/logo", sizeof(logopath));
 
   // use asprintf() function to allocate&set the content of our
   // about text.

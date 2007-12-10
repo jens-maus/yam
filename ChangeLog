@@ -7,6 +7,9 @@ $URL$
 
 2007-12-10  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AboutWindow.c, ShutdownWindow.c, SplashWindow.c: the logo image is now
+    always taken from the default theme and the URL in the splash window is
+    no longer clickable.
   * smakefile: updated according to latest changes.
 
 2007-12-10  Jens Langner <Jens.Langner@light-speed.de>

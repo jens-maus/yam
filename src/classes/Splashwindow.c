@@ -46,16 +46,6 @@ struct Data
 };
 */
 
-/* Hooks */
-/// OpenSupportPageHook
-//  User clicked homepage URL in About window
-HOOKPROTONHNONP(OpenSupportPageFunc, void)
-{
-  GotoURL("http://www.yam.ch/");
-}
-MakeStaticHook(OpenSupportPageHook, OpenSupportPageFunc);
-///
-
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -69,16 +59,12 @@ OVERLOAD(OM_NEW)
   Object *statusGauge;
   Object *progressGroup;
   Object *progressGauge;
-  Object *bt_gopage;
 
   compileInfo = (char *)xget(G->App, MUIA_YAM_CompileInfo);
 
-  if(G->theme.loaded == TRUE)
-    AddPath(logopath, G->theme.directory, "logo", sizeof(logopath));
-  else
-    AddPath(logopath, G->ProgDir, "Themes/default/logo", sizeof(logopath));
+  AddPath(logopath, G->ProgDir, "Themes/default/logo", sizeof(logopath));
 
-  if(!(obj = DoSuperNew(cl, obj,
+  if((obj = DoSuperNew(cl, obj,
 
     MUIA_Window_DragBar,        FALSE,
     MUIA_Window_CloseGadget,    FALSE,
@@ -100,9 +86,8 @@ OVERLOAD(OM_NEW)
         Child, CLabel(tr(MSG_YAMINFO)),
         Child, CLabel(yamfullcopyright),
         Child, ColGroup(2),
-          Child, bt_gopage = TextObject,
+          Child, TextObject,
             MUIA_Text_Contents, "\033c\033u\0335http://www.yam.ch/",
-            MUIA_InputMode, MUIV_InputMode_RelVerify,
           End,
         End,
         Child, RectangleObject,
@@ -130,7 +115,7 @@ OVERLOAD(OM_NEW)
       End,
     End,
 
-    TAG_MORE, (ULONG)inittags(msg))))
+    TAG_MORE, (ULONG)inittags(msg))) == NULL)
   {
     return 0;
   }
@@ -142,8 +127,8 @@ OVERLOAD(OM_NEW)
     MUIA_Gauge_Horiz,     TRUE,
   End;
 
-  if(!(data = (struct Data *)INST_DATA(cl,obj)) ||
-     !progressGauge)
+  if((data = (struct Data *)INST_DATA(cl,obj)) == NULL ||
+     progressGauge == NULL)
   {
     return 0;
   }
@@ -157,8 +142,6 @@ OVERLOAD(OM_NEW)
   data->progressGaugeActive = FALSE;
 
   DoMethod(G->App, OM_ADDMEMBER, obj);
-
-  DoMethod(bt_gopage, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_CallHook, &OpenSupportPageHook);
 
   set(obj, MUIA_Window_Activate, TRUE);
 
@@ -334,10 +317,10 @@ DECLARE(SelectUser)
       for(i = 0; i < G->Users.Num; i++)
       {
         Object *button = MakeButton(G->Users.User[i].Name);
-      
+
         if(i == 0)
           button0 = button;
-      
+
         DoMethod(group, OM_ADDMEMBER, button);
         DoMethod(button, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_LOGIN+i);
       }
@@ -347,9 +330,9 @@ DECLARE(SelectUser)
 
       DoMethod(userGroup, OM_ADDMEMBER, group);
       DoMethod(userGroup, MUIM_Group_ExitChange);
-      
+
       set(data->statusGauge, MUIA_Gauge_InfoText, tr(MSG_US_WaitLogin));
-    
+
       // make sure the window is open and not iconified
       wasOpen = xget(obj, MUIA_Window_Open);
       wasIconified = xget(G->App, MUIA_Application_Iconified);
@@ -421,11 +404,11 @@ DECLARE(SelectUser)
         // remove & dispose the group object
         DoMethod(userGroup, OM_REMMEMBER, group);
         MUI_DisposeObject(group);
-    
+
         DoMethod(userGroup, MUIM_Group_ExitChange);
       }
     }
-    
+
     if(DoMethod(data->windowGroup, MUIM_Group_InitChange))
     {
       DoMethod(data->windowGroup, OM_REMMEMBER, selectGroup);
