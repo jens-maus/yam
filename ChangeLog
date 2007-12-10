@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-10  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.cd: rephrased and corrected some more of the recent changes to
+    the catalog to match a bit more what we would like to see in the
+    final 2.5 release.
+
 2007-12-10  David Rey <tactica@users.sourceforge.net>
 
   * YAM_FI.c: missing help bubble added for the "nowhere" button.
