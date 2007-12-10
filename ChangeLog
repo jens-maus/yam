@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-10  Thore Böckelmann <tboeckel@gmx.de>
+
+  * smakefile: updated according to latest changes.
+
 2007-12-10  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.cd: rephrased and corrected some more of the recent changes to
