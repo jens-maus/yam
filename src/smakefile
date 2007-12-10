@@ -47,7 +47,7 @@ OBJDIR     = .obj_sas
 
 # Compiler/Linker flags
 CPU      = 68020
-WARN     = WARN=ALL IGNORE=51,61,120,148,165,178,212,306
+WARN     = WARN=ALL IGNORE=51,61,79,120,148,162,165,178,212,306
 OPTFLAGS = STRIPDEBUG OPT OPTCOMPLEXITY=5 OPTDEPTH=3 OPTINLOCAL\
   OPTGO OPTLOOP OPTPEEP OPTSCHED OPTTIME
 DEBUG    = NOSTRIPDEBUG NOOPT DEF=DEBUG DEBUG=LINE
@@ -147,6 +147,7 @@ OBJS = \
 	$(OBJDIR)/HashTable.o \
 	$(OBJDIR)/BayesFilter.o \
 	$(OBJDIR)/FileInfo.o \
+	$(OBJDIR)/Themes.o \
 	$(OBJDIR)/extrasrc.o \
 	$(OBJDIR)/Debug.o
 
@@ -370,6 +371,8 @@ $(OBJDIR)/HTML2Mail.o: HTML2Mail.c
 HTML2Mail.c: HTML2Mail.l HTML2Mail.h
 
 $(OBJDIR)/FileInfo.o: FileInfo.c FileInfo.h
+
+$(OBJDIR)/Themes.o: Themes.c Themes.h
 
 $(OBJDIR)/extrasrc.o: extrasrc.c
 
