@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-11  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_main.h: minor optimization to the status flag checking for the SPAM
+    status.
+
 2007-12-11  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, ImageCache.c: move the access to picture.datatype over to the image

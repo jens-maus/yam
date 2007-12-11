@@ -111,7 +111,7 @@
 #define hasStatusDeleted(mail)        (isFlagSet((mail)->sflags, SFLAG_DELETED))
 #define hasStatusMarked(mail)         (isFlagSet((mail)->sflags, SFLAG_MARKED))
 #define hasStatusError(mail)          (isFlagSet((mail)->sflags, SFLAG_ERROR))
-#define hasStatusSpam(mail)           (isFlagSet((mail)->sflags, SFLAG_USERSPAM) || isFlagSet((mail)->sflags, SFLAG_AUTOSPAM))
+#define hasStatusSpam(mail)           (hasFlag((mail)->sflags, SFLAG_USERSPAM | SFLAG_AUTOSPAM))
 #define hasStatusUserSpam(mail)       (isFlagSet((mail)->sflags, SFLAG_USERSPAM))
 #define hasStatusAutoSpam(mail)       (isFlagSet((mail)->sflags, SFLAG_AUTOSPAM))
 #define hasStatusHam(mail)            (isFlagSet((mail)->sflags, SFLAG_HAM))
