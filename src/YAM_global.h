@@ -44,6 +44,9 @@ extern const char* const yamfullcopyright;
 extern const char* const yamcompiler;
 extern const unsigned long yamversiondays;
 extern struct WBStartup * WBmsg;
+#if !defined(__amigaos4__) && !defined(__MORPHOS__)
+extern struct Library * PictureDTBase;
+#endif
 
 // transforms a define into a string
 #define STR(x)  STR2(x)

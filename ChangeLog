@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-11  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, YAM_global.c, ImageCache.c, ImageArea.c: for OS3 the versions of
+    cybergraphics.library and picture.datatype are checked now upon loading
+    an image. With at least cybergraphics.libraqry V45 and picture.datatype
+    V46 the alpha channel of 32bit image can be handled and displayed correctly.
+    Otherwise remapped and dithered bitmaps will be used.
+
 2007-12-10  Thore Böckelmann <tboeckel@gmx.de>
 
   * AboutWindow.c, ShutdownWindow.c, SplashWindow.c: the logo image is now

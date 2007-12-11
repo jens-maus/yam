@@ -99,6 +99,22 @@ struct Data
     ULONG , __p9, d7, \
     , CYBERGRAPHICS_BASE_NAME, 0, 0, 0, 0, 0, 0)
 #endif
+#elif !defined(__amigaos4__)
+#ifndef WritePixelArrayAlpha
+#define WritePixelArrayAlpha(__p0, __p1, __p2, __p3, __p4, __p5, __p6, __p7, __p8, __p9) \
+  LP10(216, ULONG , WritePixelArrayAlpha, \
+    APTR , __p0, a0, \
+    UWORD , __p1, d0, \
+    UWORD , __p2, d1, \
+    UWORD , __p3, d2, \
+    struct RastPort *, __p4, a1, \
+    UWORD , __p5, d3, \
+    UWORD , __p6, d4, \
+    UWORD , __p7, d5, \
+    UWORD , __p8, d6, \
+    ULONG , __p9, d7, \
+    , CYBERGRAPHICS_BASE_NAME)
+#endif
 #endif
 ///
 
@@ -780,9 +796,26 @@ OVERLOAD(MUIM_Draw)
       }
       #else
       if(data->scaledBitMask != NULL)
-        MyBltMaskBitMapRastPort(data->scaledBitMap, 0, 0, rp, _mleft(obj), _mtop(obj), width, height, (ABC|ABNC|ANBC), data->scaledBitMask->Planes[0]);
+        MyBltMaskBitMapRastPort(data->scaledBitMap,
+                                0,
+                                0,
+                                rp,
+                                _mleft(obj),
+                                _mtop(obj),
+                                width,
+                                height,
+                                (ABC|ABNC|ANBC),
+                                data->scaledBitMask->Planes[0]);
       else
-        BltBitMapRastPort(data->scaledBitMap, 0, 0, rp, _mleft(obj), _mtop(obj), width, height, (ABC|ABNC));
+        BltBitMapRastPort(data->scaledBitMap,
+                          0,
+                          0,
+                          rp,
+                          _mleft(obj),
+                          _mtop(obj),
+                          width,
+                          height,
+                          (ABC|ABNC));
       #endif
 
       rel_y += height;
@@ -804,7 +837,10 @@ OVERLOAD(MUIM_Draw)
                     BLITA_SrcBytesPerRow, data->scaledBytesPerRow,
                     BLITA_UseSrcAlpha,    TRUE,
                     TAG_DONE);
-      #elif defined(__MORPHOS__)
+      #else
+      // this also works for OS3, because we only have valid pixel data if
+      // cybergraphics.library and picture.datatype are able to handle the
+      // alpha channel correctly.
       if(data->imageNode.depth == 32)
       {
         WritePixelArrayAlpha(data->scaledPixelArray,
@@ -831,17 +867,6 @@ OVERLOAD(MUIM_Draw)
                         height,
                         RECTFMT_RGB);
       }
-      #else
-      WritePixelArray(data->scaledPixelArray,
-                      0,
-                      0,
-                      data->scaledBytesPerRow,
-                      rp,
-                      _mleft(obj),
-                      _mtop(obj),
-                      width,
-                      height,
-                      (data->imageNode.depth == 32) ? RECTFMT_ARGB : RECTFMT_RGB);
       #endif
 
       rel_y += height;
@@ -863,7 +888,10 @@ OVERLOAD(MUIM_Draw)
                       BLITA_SrcBytesPerRow, data->imageNode.bytesPerRow,
                       BLITA_UseSrcAlpha,    TRUE,
                       TAG_DONE);
-        #elif defined(__MORPHOS__)
+        #else
+        // this also works for OS3, because we only have valid pixel data if
+        // cybergraphics.library and picture.datatype are able to handle the
+        // alpha channel correctly.
         if(data->imageNode.depth == 32)
         {
           WritePixelArrayAlpha(data->imageNode.pixelArray,
@@ -890,17 +918,6 @@ OVERLOAD(MUIM_Draw)
                           data->imageNode.height,
                           RECTFMT_RGB);
         }
-        #else
-        WritePixelArray(data->imageNode.pixelArray,
-                        0,
-                        0,
-                        data->imageNode.bytesPerRow,
-                        rp,
-                        _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
-                        _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
-                        data->imageNode.width,
-                        data->imageNode.height,
-                        (data->imageNode.depth == 32) ? RECTFMT_ARGB : RECTFMT_RGB);
         #endif
       }
       // blit the bitmap if we retrieved it successfully.
@@ -939,15 +956,28 @@ OVERLOAD(MUIM_Draw)
         {
           // we use an own BltMaskBitMapRastPort() implemenation to also support
           // interleaved images.
-          MyBltMaskBitMapRastPort(data->imageNode.bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - data->imageNode.width)/2,
-                                                                    _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
-                                                                    data->imageNode.width, data->imageNode.height, (ABC|ABNC|ANBC), data->imageNode.mask);
+          MyBltMaskBitMapRastPort(data->imageNode.bitmap,
+                                  0,
+                                  0,
+                                  rp,
+                                  _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
+                                  _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
+                                  data->imageNode.width,
+                                  data->imageNode.height,
+                                  (ABC|ABNC|ANBC),
+                                  data->imageNode.mask);
         }
         else
         {
-          BltBitMapRastPort(data->imageNode.bitmap, 0, 0, rp, _mleft(obj)+(_mwidth(obj) - data->imageNode.width)/2,
-                                                              _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
-                                                              data->imageNode.width, data->imageNode.height, (ABC|ABNC));
+          BltBitMapRastPort(data->imageNode.bitmap,
+                            0,
+                            0,
+                            rp,
+                            _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
+                            _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
+                            data->imageNode.width,
+                            data->imageNode.height,
+                            (ABC|ABNC));
         }
         #endif
       }

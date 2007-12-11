@@ -41,6 +41,7 @@
 #include <proto/cybergraphics.h>
 
 #include "YAM.h"
+#include "YAM_global.h"
 #include "YAM_locale.h"
 #include "YAM_stringsizes.h"
 #include "YAM_utilities.h"
@@ -394,7 +395,16 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
             // The lower line should be used for 24bit images as well.
             // Unfortunately this doesn't give the desired result on OS4, so
             // we restrict this to 32bit image until we have a solution.
+            #if defined(__amigaos4__) || defined(__MORPHOS__)
+            // OS4 and MorphOS can handle the alpha channel correctly
             if(CyberGfxBase != NULL && node->pixelArray == NULL)
+            #else
+            // for OS3 we check for CGX V45+ and picture.datatype V46+
+            // older versions cannot handle the alpha channel correctly
+            if(CyberGfxBase != NULL && CyberGfxBase->lib_Version >= 45 &&
+               PictureDTBase != NULL && PictureDTBase->lib_Version >= 46 &&
+               node->pixelArray == NULL)
+            #endif
             {
               // check if the bitmap may have alpha channel data or not.
               if(node->depth > 8 && bmhd->bmh_Masking == mskHasAlpha)
