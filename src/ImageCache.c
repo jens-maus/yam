@@ -302,6 +302,10 @@ BOOL ImageCacheSetup(void)
 
   ENTER();
 
+  #if !defined(__amigaos4__) && !defined(__MORPHOS__)
+  PictureDTBase = OpenLibrary("picture.datatype", 0);
+  #endif
+
   if((G->imageCacheHashTable = HashTableNew((struct HashTableOps *)&imageCacheHashTableOps, NULL, sizeof(struct ImageCacheNode), 128)) != NULL)
     result = TRUE;
 
@@ -317,6 +321,14 @@ void ImageCacheCleanup(void)
 
   HashTableEnumerate(G->imageCacheHashTable, DeleteImageCacheNode, NULL);
   HashTableDestroy(G->imageCacheHashTable);
+
+  #if !defined(__amigaos4__) && !defined(__MORPHOS__)
+  if(PictureDTBase != NULL)
+  {
+    CloseLibrary(PictureDTBase);
+    PictureDTBase = NULL;
+  }
+  #endif
 
   LEAVE();
 }

@@ -1660,14 +1660,6 @@ static void Terminate(void)
   D(DBF_STARTUP, "deleting semaphore");
   DeleteStartupSemaphore();
 
-  #if !defined(__amigaos4__) && !defined(__MORPHOS__)
-  if(PictureDTBase != NULL)
-  {
-    CloseLibrary(PictureDTBase);
-    PictureDTBase = NULL;
-  }
-  #endif
-
   // cleaning up all AmiSSL stuff
   D(DBF_STARTUP, "cleaning up AmiSSL stuff...");
   if(AmiSSLBase)
@@ -2437,10 +2429,6 @@ static void InitBeforeLogin(BOOL hidden)
 
   // Lets check for the correct TextEditor.mcc version
   CheckMCC(MUIC_TextEditor, 15, 24, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
-
-  #if !defined(__amigaos4__) && !defined(__MORPHOS__)
-  PictureDTBase = OpenLibrary("picture.datatype", 0);
-  #endif
 
   // now we search through PROGDIR:Charsets and load all user defined
   // codesets via codesets.library

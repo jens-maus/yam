@@ -7,6 +7,8 @@ $URL$
 
 2007-12-11  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, ImageCache.c: move the access to picture.datatype over to the image
+    cache module.
   * YAM.c, YAM_global.c, ImageCache.c, ImageArea.c: for OS3 the versions of
     cybergraphics.library and picture.datatype are checked now upon loading
     an image. With at least cybergraphics.libraqry V45 and picture.datatype
