@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-12  Jens Langner <Jens.Langner@light-speed.de>
+
+  * themes/default/status: updated the status_new and status_hold images to have
+    a full envelope displayed with the corresponding new/hold addition as the
+    general status type was changed for new/hold.
+
 2007-12-12  Thore Böckelmann <tboeckel@gmx.de>
 
   * MainMailList.c, ReadWindowStatusBar.c: a new mail doesn't get an additional
