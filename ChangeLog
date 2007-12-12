@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-12  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: Updated according to changes and changed some wording
+    to be more like Thunderbird in swedish and other fixes and clean ups.
+
 2007-12-12  Jens Langner <Jens.Langner@light-speed.de>
 
   * themes/default/status: updated the status_new and status_hold images to have
