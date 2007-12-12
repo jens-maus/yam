@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-12  Thore Böckelmann <tboeckel@gmx.de>
+
+  * MainMailList.c, ReadWindowStatusBar.c: a new mail doesn't get an additional
+    icon for this state anymore. Instead we now have sequence like New -> Unread
+    -> Old/Read.
+
 2007-12-11  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_main.h: minor optimization to the status flag checking for the SPAM

@@ -322,27 +322,21 @@ DECLARE(Update) // struct Mail *mail
       // now we can add the status icons depending on the set status flags of
       // the mail (sort upside-down)
 
-      // StatusGroup 9 (Spam status)
+      // StatusGroup 8 (Spam status)
       if(hasStatusSpam(mail) && data->statusImage[si_Spam] != NULL)
         DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Spam]);
 
-      // StatusGroup 8 (Forwarded status)
+      // StatusGroup 7 (Forwarded status)
       if(hasStatusForwarded(mail) && data->statusImage[si_Forward] != NULL)
         DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Forward]);
 
-      // StatusGroup 7 (Replied status)
+      // StatusGroup 6 (Replied status)
       if(hasStatusReplied(mail) && data->statusImage[si_Reply] != NULL)
         DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Reply]);
 
-      // StatusGroup 6 (marked flag)
+      // StatusGroup 5 (marked flag)
       if(hasStatusMarked(mail) && data->statusImage[si_Mark] != NULL)
         DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Mark]);
-
-      // StatusGroup 5 (New/Hold info)
-      if(hasStatusNew(mail) && data->statusImage[si_New] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_New]);
-      else if(hasStatusHold(mail) && data->statusImage[si_Hold] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Hold]);
 
       // StatusGroup 4 (multipart info)
       if(isMP_MixedMail(mail) && data->statusImage[si_Attach] != NULL)
@@ -369,6 +363,10 @@ DECLARE(Update) // struct Mail *mail
         DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_WaitSend]);
       else if(hasStatusSent(mail) && data->statusImage[si_Sent] != NULL)
         DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Sent]);
+      else if(hasStatusNew(mail) && data->statusImage[si_New] != NULL)
+        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_New]);
+      else if(hasStatusHold(mail) && data->statusImage[si_Hold] != NULL)
+        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Hold]);
       else if(hasStatusRead(mail) && data->statusImage[si_Old] != NULL)
         DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Old]);
       else if(data->statusImage[si_Unread] != NULL)

@@ -123,6 +123,8 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
       if(hasStatusError(entry) || isPartialMail(entry)) strlcat(dispsta, SI_STR(si_Error), sizeof(dispsta));
       else if(hasStatusQueued(entry))  strlcat(dispsta, SI_STR(si_WaitSend), sizeof(dispsta));
       else if(hasStatusSent(entry))    strlcat(dispsta, SI_STR(si_Sent), sizeof(dispsta));
+      else if(hasStatusNew(entry))     strlcat(dispsta, SI_STR(si_New), sizeof(dispsta));
+      else if(hasStatusHold(entry))    strlcat(dispsta, SI_STR(si_Hold), sizeof(dispsta));
       else if(hasStatusRead(entry))    strlcat(dispsta, SI_STR(si_Old), sizeof(dispsta));
       else                             strlcat(dispsta, SI_STR(si_Unread), sizeof(dispsta));
 
@@ -136,9 +138,7 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
       if(isMP_MixedMail(entry))                  strlcat(dispsta, SI_STR(si_Attach), sizeof(dispsta));
 
       // and as the 3rd level of icons we put information on the secondary status
-      // like replied, forwarded, hold
-      if(hasStatusNew(entry))        strlcat(dispsta, SI_STR(si_New), sizeof(dispsta));
-      else if(hasStatusHold(entry))  strlcat(dispsta, SI_STR(si_Hold), sizeof(dispsta));
+      // like marked, replied, forwarded
       if(hasStatusMarked(entry))     strlcat(dispsta, SI_STR(si_Mark), sizeof(dispsta));
       if(hasStatusReplied(entry))    strlcat(dispsta, SI_STR(si_Reply), sizeof(dispsta));
       if(hasStatusForwarded(entry))  strlcat(dispsta, SI_STR(si_Forward), sizeof(dispsta));
