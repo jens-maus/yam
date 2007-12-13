@@ -7,6 +7,12 @@ $URL$
 
 2007-12-13  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: removed the shortcut for the bounce and reply string field, as
+    the same shortcut was already used for the corresponding checkbox. This
+    made it impossible to control both, checkbox and string field, by keyboard
+    consistently. The drawback is that the string field cannot be activated by
+    shortcut anymore, but that already was the case for the other string fields
+    on that page. This fixes bug #1837543.
   * YAM.cd, deutsch.ct: fixed some shortcuts which collided with the menu
     shortcuts.
 
