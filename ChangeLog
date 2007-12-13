@@ -5,16 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-12-12  Pär Boberg <pbobbenb@spray.se>
+2007-12-13  Thore Böckelmann <tboeckel@gmx.de>
 
-  * locale/svenska.ct: Updated according to changes and changed some wording
-    to be more like Thunderbird in swedish and other fixes and clean ups.
-
-2007-12-12  Jens Langner <Jens.Langner@light-speed.de>
-
-  * themes/default/status: updated the status_new and status_hold images to have
-    a full envelope displayed with the corresponding new/hold addition as the
-    general status type was changed for new/hold.
+  * YAM.cd, deutsch.ct: fixed some shortcuts which collided with the menu
+    shortcuts.
 
 2007-12-12  Thore Böckelmann <tboeckel@gmx.de>
 

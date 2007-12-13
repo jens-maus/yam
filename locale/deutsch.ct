@@ -1482,35 +1482,27 @@ Auf An_frage anwenden
 ;
 MSG_CO_ActionBounce
 _Umleiten
-; _Bounce
 ;
 MSG_CO_ActionForward
 _Weiterleiten
-; _Forward
 ;
 MSG_CO_ActionReply
-Antwo_rten
-; _Reply
+A_ntworten
 ;
 MSG_CO_ActionExecute
 Aus_führen
-; _Execute
 ;
 MSG_CO_ActionPlay
 _Ton spielen
-; _Play sound
 ;
 MSG_CO_ActionMove
 _Verschieben
-; _Move
 ;
 MSG_CO_ActionDelete
-_Löschen
-; De_lete
+Lö_schen
 ;
 MSG_CO_ActionSkip
 N_icht runterladen
-; D_on't download
 ;
 MSG_CO_HeadNone
 keine

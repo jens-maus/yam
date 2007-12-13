@@ -1120,10 +1120,10 @@ MSG_CO_ActionForward (393//)
 _Forward
 ;
 MSG_CO_ActionReply (394//)
-_Reply
+Repl_y
 ;
 MSG_CO_ActionExecute (395//)
-_Execute
+E_xecute
 ;
 MSG_CO_ActionPlay (396//)
 _Play sound
@@ -1132,10 +1132,10 @@ MSG_CO_ActionMove (397//)
 _Move
 ;
 MSG_CO_ActionDelete (398//)
-De_lete
+Dele_te
 ;
 MSG_CO_ActionSkip (399//)
-D_on't download
+Don't do_wnload
 ;
 MSG_CO_HeadNone (400//)
 none
