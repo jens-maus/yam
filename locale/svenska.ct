@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.27 (12.12.07)
+## version $VER: YAM.ct 6.28 (13.12.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -1162,7 +1162,7 @@ POP_3-server
 ;#DEF POP_3 server
 ;#SET (346//)
 MSG_CO_Password
-_Lösenord
+Lösenord
 ;#DEF _Password
 ;#SET (347//)
 MSG_CO_TimeZone
@@ -1190,7 +1190,7 @@ Användarnamn
 ;#DEF User name
 ;#SET (355//)
 MSG_CO_POPActive
-_Aktiv
+A_ktiv
 ;#DEF _Active
 ;#SET (356//)
 MSG_CO_DeleteServerMail
@@ -1290,7 +1290,7 @@ Ko_mmando
 ;#DEF Co_mmand
 ;#SET (380//)
 MSG_CO_Name
-N_amn
+_Namn
 ;#DEF N_ame
 ;#SET (381//)
 MSG_CO_CTAnd
@@ -1318,7 +1318,7 @@ _Fjärrfilter
 ;#DEF Remote _filter
 ;#SET (388//)
 MSG_CO_ApplyToNew
-_Applicera på ny post
+A_pplicera på ny post
 ;#DEF A_pply to new mail
 ;#SET (389//)
 MSG_CO_ApplyToSent
@@ -1338,7 +1338,7 @@ Vidarebe_fordra
 ;#DEF _Forward
 ;#SET (393//)
 MSG_CO_ActionReply
-S_vara
+Svara
 ;#DEF _Reply
 ;#SET (394//)
 MSG_CO_ActionExecute
@@ -1354,7 +1354,7 @@ Fl_ytta
 ;#DEF _Move
 ;#SET (397//)
 MSG_CO_ActionDelete
-_Radera
+Ra_dera
 ;#DEF De_lete
 ;#SET (398//)
 MSG_CO_ActionSkip
@@ -1442,11 +1442,11 @@ Färgad text
 ;#DEF Colored text
 ;#SET (419//)
 MSG_CO_MultiReadWin
-Flera f_önster
+Flera fönster
 ;#DEF _Multiple windows
 ;#SET (420//)
 MSG_CO_DisplayAll
-Visa _alla texter
+Visa alla _texter
 ;#DEF Display _all texts
 ;#SET (422//)
 MSG_CO_FixedFontEdit
@@ -1458,7 +1458,7 @@ MIME-_typ
 ;#DEF MIME _type
 ;#SET (425//)
 MSG_CO_MimeCmd
-_Visare
+Visar_e
 ;#DEF _Viewer
 ;#SET (426//)
 MSG_CO_Extension
@@ -1502,7 +1502,7 @@ Redigerare
 ;#DEF Editor
 ;#SET (437//)
 MSG_CO_WordWrap
-_Radbrytning
+Ra_dbrytning
 ;#DEF _Word-wrap
 ;#SET (438//)
 MSG_CO_EWOff
@@ -1558,7 +1558,7 @@ Fö_rvalda svarsfraser
 ;#DEF Default _reply phrases
 ;#SET (451//)
 MSG_CO_AltRepInit
-_Alternativa svarsfraser
+A_lternativa svarsfraser
 ;#DEF _Alternative reply phrases
 ;#SET (452//)
 MSG_CO_AltRepPat
@@ -1574,7 +1574,7 @@ Citera t_omrader
 ;#DEF Quote _empty lines
 ;#SET (456//)
 MSG_CO_VerifyAddress
-_Verifiera mottagaradress
+V_erifiera mottagaradress
 ;#DEF _Verify recipient address
 ;#SET (457//)
 MSG_CO_StripSignature
@@ -1622,7 +1622,7 @@ _Fil
 ;#DEF Tagline _file
 ;#SET (468//)
 MSG_CO_TaglineSep
-_Avdelare
+Av_delare
 ;#DEF T_agline separator
 ;#SET (469//)
 MSG_CO_FixedFontList
@@ -1686,7 +1686,7 @@ Loggnings_typ
 ;#DEF _Mode
 ;#SET (484//)
 MSG_CO_LogAllEvents
-Logga _alla händelser
+L_ogga alla händelser
 ;#DEF Log _all events
 ;#SET (485//)
 MSG_CO_OnStartup
@@ -1758,7 +1758,7 @@ _Webbadress till din bild
 ;#DEF UR_L of your picture
 ;#SET (502//)
 MSG_CO_AddToAddrbook
-_Spara avsändaradress
+S_para avsändaradress
 ;#DEF Sa_ve sender's address
 ;#SET (503//)
 MSG_CO_ProxyServer
@@ -1814,11 +1814,11 @@ eller fler meddelanden
 ;#DEF or more messages
 ;#SET (516//)
 MSG_CO_Remove
-Ta bo_rt meddelanden omedelbart
+Ta bort me_ddelanden omedelbart
 ;#DEF _Remove messages immediately
 ;#SET (517//)
 MSG_CO_SaveSent
-_Spara skickade meddelanden
+S_para skickade meddelanden
 ;#DEF Sa_ve sent messages
 ;#SET (518//)
 MSG_CO_XPK
@@ -1834,7 +1834,7 @@ Packa/Skydda
 ;#DEF Pack/Protect
 ;#SET (527//)
 MSG_CO_Archiver
-_Arkiverare
+Ark_iverare
 ;#DEF Archi_ver
 ;#SET (528//)
 MSG_CO_ScriptMenu
@@ -1882,7 +1882,7 @@ Efter ett meddelande har skrivits
 ;#DEF After writing a message
 ;#SET (539//)
 MSG_CO_ScriptClickURL
-Vid dubbelklickning av URL address
+Vid dubbelklickning av URL-address
 ;#DEF When double-clicking a URL
 ;#SET (540//)
 MSG_CO_Script
@@ -1894,7 +1894,7 @@ _Öppna konsollfönster
 ;#DEF _Open console window
 ;#SET (542//)
 MSG_CO_WaitTerm
-_Vänta tills det avslutats
+V_änta tills det avslutats
 ;#DEF _Wait for termination
 ;#SET (543//)
 MSG_CO_Open
@@ -2378,7 +2378,7 @@ Katalog för att spara bilder\nav de du kommunicerar med.
 ;#DEF Directory to save the pictures\nof your correspondents.
 ;#SET (671//)
 MSG_HELP_CO_ST_PHOTOURL
-URL adress till bilden på dig.
+URL-adress till bilden på dig.
 ;#DEF URL address of your\nportrait image.
 ;#SET (672//)
 MSG_HELP_CO_CY_ATAB
@@ -2582,7 +2582,7 @@ Födelsedatum
 ;#DEF Birth date
 ;#SET (727//)
 MSG_AB_TitlePGPId
-PGP ID
+PGP-ID
 ;#DEF PGP Id
 ;#SET (728//)
 MSG_AB_TitleHomepage
@@ -2822,7 +2822,7 @@ Bild
 ;#DEF Portrait
 ;#SET (793//)
 MSG_EA_SelectPhoto
-Vä_lj
+Väl_j
 ;#DEF Se_lect
 ;#SET (794//)
 MSG_EA_ReturnAddress
@@ -2862,7 +2862,7 @@ Hexadecimalt ID för den här\npersonens allmänna PGP-nyckel.
 ;#DEF Hexadecimal ID of this\nperson's public PGP key.
 ;#SET (804//)
 MSG_HELP_EA_ST_HOMEPAGE
-Webbadress till denna persons hemsida.\nKlicka på knappen till höger\nför att ladda in sidan i din webbläsare.
+URL-adress till denna persons hemsida.\nKlicka på knappen till höger\nför att ladda in sidan i din webbläsare.
 ;#DEF URL of the homepage of this person.\nClick the button at the right side\nto load the page into your browser.
 ;#SET (805//)
 MSG_HELP_EA_ST_STREET
@@ -3054,7 +3054,7 @@ Meddelandet\n%s\nhar setts %s%s.\n
 ;#DEF The message\n%s\nhas been %s%s.\n
 ;#SET (859//)
 MSG_RE_PGPNotAllowed
->PGP fel<\n\nDu får inte läsa detta PGP krypterade meddelande.\nAntingen är PGP felkonfigurerat, eller\nså är meddelandet krypterat till någon annan.\n
+>PGP-fel<\n\nDu får inte läsa detta PGP-krypterade meddelande.\nAntingen är PGP felkonfigurerat, eller\nså är meddelandet krypterat till någon annan.\n
 ;#DEF >PGP Error<\n\nYou're not allowed to view this PGP encrypted message.\nEither your PGP software isn't configured properly or\nthe message was encrypted for someone else.\n
 ;#SET (860//)
 MSG_RE_MsgReadOnly
@@ -3402,7 +3402,7 @@ _MIME-typ
 ;#DEF _MIME type
 ;#SET (948//)
 MSG_WR_Description
-B_eskrivning
+_Beskrivning
 ;#DEF D_escription
 ;#SET (949//)
 MSG_WR_CopyTo
@@ -3610,7 +3610,7 @@ Skicka med urklipp
 ;#DEF Add clipboard
 ;#SET (1007//)
 MSG_WR_AddKey
-Skicka med PGP-nyckel
+Lägg till PGP-nyckel
 ;#DEF Add PGP key
 ;#SET (1008//)
 MSG_WR_MDelSend
@@ -3750,7 +3750,7 @@ Vilken signatur vill du\ninfoga till detta meddelande?
 ;#DEF Which signature do you want\nto append to this message?
 ;#SET (1045//)
 MSG_HELP_WR_RA_SECURITY
-Välj ett av dessa säkerhetsval för att skicka\nditt meddelande PGP signerat, krypterat eller\nanonymt. "Förvalt" försöker hitta mottagaren\ni din adressbok och använda säkerhets-\ninställningarna specifierade där.
+Välj ett av dessa säkerhetsval för att skicka\nditt meddelande PGP-signerat, krypterat eller\nanonymt. "Förvalt" försöker hitta mottagaren\ni din adressbok och använda säkerhets-\ninställningarna specifierade där.
 ;#DEF Select one of these security options to send\nyour message PGP signed, encrypted\nor anonymously. "Default" tries to find\nthe recipient in your address book and use\nthe security settings specified there.
 ;#SET (1046//)
 MSG_HELP_WR_BT_HOLD
@@ -4042,11 +4042,11 @@ Inga allmänna PGP-nycklar hittades.\n\nKontrollera att PGP är installerat och at
 ;#DEF No public PGP keys found.\n\nMake sure that PGP is installed and the required settings are made in the configuration of YAM.
 ;#SET (1139//)
 MSG_ER_PGPreturnsError
-Följande PGP kommando genererade ett felmeddelande:\n\n'%s'\n\nSe filen %s för felsökning.
+Följande PGP-kommando genererade ett felmeddelande:\n\n'%s'\n\nSe filen %s för felsökning.
 ;#DEF The following PGP command returned with an error:\n\n'%s'\n\nCheck the file %s for a diagnosis.
 ;#SET (1140//)
 MSG_ER_PGPnotfound
-Kunde inte köra PGP kommando.\n\nKontrollera att %s finns.
+Kunde inte köra PGP-kommando.\n\nKontrollera att %s finns.
 ;#DEF Couldn't execute PGP command.\n\nCheck if %s exists.
 ;#SET (1141//)
 MSG_ER_AliasNotFound
@@ -4182,7 +4182,7 @@ Hitta meddelanden
 ;#DEF Find messages
 ;#SET (1184//)
 MSG_FI_AllFolders
-alla _mappar
+alla ma_ppar
 ;#DEF _everywhere
 ;#SET (1185//)
 MSG_FI_FindIn
@@ -4194,7 +4194,7 @@ Sök vad
 ;#DEF Find what
 ;#SET (1187//)
 MSG_FI_UseFilter
-_Använd filter
+Använd _filterinställningar
 ;#DEF _Use filter settings
 ;#SET (1188//)
 MSG_FI_AddAsFilter
@@ -4206,7 +4206,7 @@ Resultat
 ;#DEF Results
 ;#SET (1190//)
 MSG_FI_StartSearch
-Börja _sök
+_Börja sök
 ;#DEF _Start search
 ;#SET (1191//)
 MSG_FI_SelectMatched
@@ -4218,7 +4218,7 @@ L_äs meddelande
 ;#DEF _Read message
 ;#SET (1193//)
 MSG_FI_Abort
-_Avbryt
+A_vbryt
 ;#DEF _Abort
 ;#SET (1194//)
 MSG_HELP_FI_LV_FOLDERS
@@ -4338,7 +4338,7 @@ _Fulla privilegier
 ;#DEF _Supervisor privileges
 ;#SET (1224//)
 MSG_US_AddUser
-Ny _användare
+_Ny användare
 ;#DEF _Add user
 ;#SET (1225//)
 MSG_US_DelUser
@@ -4658,7 +4658,7 @@ Förinställt
 ;#DEF Default
 ;#SET (1333//)
 MSG_ER_PGPMultipart
-Fel vid skapande av flerparts PGP meddelande. Kryptering/signering avstängd!
+Fel vid skapande av flerparts PGP-meddelande. Kryptering/signering avstängd!
 ;#DEF Error creating multipart PGP message. Encrypting/signing disabled!
 ;#SET (1334//)
 MSG_RE_FixedFont
@@ -4666,7 +4666,7 @@ Fast typsnitt?
 ;#DEF Fixed font?
 ;#SET (1335//)
 MSG_CO_UseSMTPAUTH
-Använd SMTP AU_TH
+Använd SMTP A_UTH
 ;#DEF Use SMTP AU_TH
 ;#SET (1337//)
 MSG_CO_SMTPUser
@@ -4674,7 +4674,7 @@ Anv_ändarnamn
 ;#DEF Us_er name
 ;#SET (1338//)
 MSG_CO_SMTPPass
-Löseno_rd
+L_ösenord
 ;#DEF Pass_word
 ;#SET (1339//)
 MSG_WR_AltQuoted
@@ -4818,7 +4818,7 @@ Vill du bli varnad om\ninget ärende är satt?
 ;#DEF Would you like to be warned if you\nleave the subject line blank?
 ;#SET (1387//)
 MSG_WR_OKAYCANCELREQ
-*Ok|Avbryt
+*_Ok|A_vbryt
 ;#DEF *_Ok|_Cancel
 ;#SET (1388//)
 MSG_WR_NOSUBJECTREQ
@@ -5066,11 +5066,11 @@ Färg för visning av 4:e nivåns citat.
 ;#DEF Color used to display\n4th level quotes.
 ;#SET (1466//)
 MSG_CO_URLCOLOR
-URL färg
+URL-färg
 ;#DEF URL color
 ;#SET (1467//)
 MSG_HELP_CO_CA_COLURL
-Färg för visning av klickbara URL länkar.
+Färg för visning av klickbara URL-länkar.
 ;#DEF Color used to display\nclickable URL links.
 ;#SET (1468//)
 MSG_FO_FOLDEREXISTS
@@ -5174,11 +5174,11 @@ Text för insättning\nnederst i ett nytt meddelande.
 ;#DEF Text to insert at the\nbottom of a new message.
 ;#SET (1496//)
 MSG_FO_Welcome
-_Välkomstfras
+Väl_komstfras
 ;#DEF _Welcome phrase
 ;#SET (1497//)
 MSG_FO_Greetings
-Avs_lutningsfras
+Avsl_utningsfras
 ;#DEF C_losing phrase
 ;#SET (1498//)
 MSG_ER_SOCKETOPTION
@@ -5278,7 +5278,7 @@ En TLSv1 eller SSLv3 säker anslutning kommer att etableras mellan\nSMTP-servern 
 ;#DEF A TLSv1 or SSLv3 secure connection will be established between\nthe SMTP server and YAM to send e-mail through an encrypted connection.\nIf these radio buttons are ghosted, it means AmiSSL support is\ncurrently not available.
 ;#SET (1522//)
 MSG_CO_SHOWEMBEDDEDREADPANE
-Inbäddad läs_vy i huvudfönstret
+Inbäddad _läsvy i huvudfönstret
 ;#DEF Show embedded read _pane in main window
 ;#SET (1523//)
 MSG_HELP_CO_CH_EMBEDDEDREADPANE
@@ -5502,7 +5502,7 @@ Medd. storlek > 1MB
 ;#DEF Message Size > 1 MB
 ;#SET (1592//)
 MSG_QUICKSEARCH_VIEW
-_Visa:
+Vis_a:
 ;#DEF _View:
 ;#SET (1593//)
 MSG_QUICKSEARCH_SHOWNMSGS
@@ -5510,7 +5510,7 @@ MSG_QUICKSEARCH_SHOWNMSGS
 ;#DEF %ld of %ld shown
 ;#SET (1594//)
 MSG_FI_NOFOLDERS
-i_ngenstans
+in_genstans
 ;#DEF n_owhere
 ;#SET (1595//)
 MSG_HELP_QUICKSEARCH_VIEWOPTIONS
@@ -5566,7 +5566,7 @@ Systeminställningar
 ;#DEF System settings
 ;#SET (1610//)
 MSG_CO_DEFAULTCHARSET
-T_eckenuppsättning
+Te_ckenuppsättning
 ;#DEF C_harset
 ;#SET (1611//)
 MSG_CO_CHARSETUNKNOWNWARN
@@ -5938,7 +5938,7 @@ gzippat tar arkiv
 ;#DEF gzipped tar archive
 ;#SET (1703//)
 MSG_CTapplicationpgp
-PGP krypterad fil
+PGP-krypterad fil
 ;#DEF PGP encrypted file
 ;#SET (1704//)
 MSG_CTapplicationbz2
@@ -5974,7 +5974,7 @@ Ett fel uppstod vid försök att skapa ett arkiv av de valda filerna.\n\nVar god k
 ;#DEF An error occurred while trying to create an archive out of the selected files.\n\nPlease make sure that all files are accessible and not read protected.
 ;#SET (1712//)
 MSG_CO_ABOOKLOOKUP
-_Adressbokssökning i meddelandelistan
+A_dressbokssökning i meddelandelistan
 ;#DEF _Address book lookup in message list
 ;#SET (1713//)
 MSG_HELP_CO_CH_ABOOKLOOKUP
@@ -5986,7 +5986,7 @@ Meddelande %%ld av %ld
 ;#DEF Message %%ld of %ld
 ;#SET (1715//)
 MSG_CO_CONVERTHTML
-Kon_vertera HTML e-post till vanlig text
+Konvertera HTML e-post till vanlig text
 ;#DEF Con_vert HTML e-mails to plain text
 ;#SET (1716//)
 MSG_HELP_CO_CONVERTHTML
@@ -6034,7 +6034,7 @@ inaktiv(a) minut(er)
 ;#DEF idle minute(s)
 ;#SET (1728//)
 MSG_HELP_CO_PGPPASSINTERVAL
-Om vald, så kommer ditt PGP lösenordet att\nkommas ihåg, enligt specifierade antal minuter,\nså att efterföljande PGP operationer inte\nbehöver fråga om det igen.
+Om vald, så kommer ditt PGP-lösenord att\nkommas ihåg, enligt specifierade antal minuter,\nså att efterföljande PGP operationer inte\nbehöver fråga om det igen.
 ;#DEF If selected, your PGP passphrase will be remembered\nfor this amount of time. Subsequent PGP operations then\nwon't trigger another passphrase query.
 ;#SET (1729//)
 MSG_UT_PGPPASSREQ_TITLE
@@ -6074,7 +6074,7 @@ MSG_CO_SCRIPTS_WRITE
 ;#DEF %p  Number of write window
 ;#SET (1738//)
 MSG_CO_SCRIPTS_URL
-%p  Full URL sökväg
+%p  Full URL-sökväg
 ;#DEF %p  Full URL path
 ;#SET (1739//)
 MSG_CO_MIMECMD_PARAMETER
@@ -6166,7 +6166,7 @@ Konfigurera skräppostfiltret här...
 ;#DEF Configure here the spam filter.
 ;#SET (1764//)
 MSG_CO_SPAM_FILTERFORNEWMAIL
-Kontrollera _nya brev om de innehåller skräppost
+Kontrollera nya _brev om de innehåller skräppost
 ;#DEF Check _new mails for spam content
 ;#SET (1765//)
 MSG_CO_SPAM_RESETTRAININGDATA
@@ -6190,7 +6190,7 @@ _Markera brev som skräppost vid flyttning till skräppostmappen
 ;#DEF Mark mails as spam when _moved to the Spam folder
 ;#SET (1772//)
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
-Adressboken är _vitlistad
+A_dressboken är vitlistad
 ;#DEF Address book is _white list
 ;#SET (1773//)
 MSG_CO_SPAM_RECOGNITION
@@ -6226,7 +6226,7 @@ Ra_dera skräppostmappen
 ;#DEF _Delete Spam folder
 ;#SET (1782//)
 MSG_CO_SMTPAUTH_METHOD
-_Metod
+Me_tod
 ;#DEF Met_hod
 ;#SET (1783//)
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
@@ -6582,15 +6582,15 @@ När jag får en begäran om mottagningskvitto...
 ;#DEF When I receive a request for a return receipt...
 ;#SET (1871//)
 MSG_CO_MDN_DISABLED
-_Skicka aldrig ett mottagningskvitto
+Ski_cka aldrig ett mottagningskvitto
 ;#DEF _Never send a return receipt
 ;#SET (1872//)
 MSG_CO_MDN_ENABLED
-Ti_llåt mottagningskvitton för vissa meddelanden
+Till_åt mottagningskvitton för vissa meddelanden
 ;#DEF Allow _return receipts for some messages
 ;#SET (1873//)
 MSG_CO_MDN_NORECIPIENT
-Om jag inte står med i _Till: eller Kopia: i meddelandet:
+Om _jag inte står med i Till: eller Kopia: i meddelandet:
 ;#DEF If I'm not in the _To: or Cc: of the message:
 ;#SET (1874//)
 MSG_CO_MDN_NODOMAIN
@@ -6602,7 +6602,7 @@ Om jag bara ska ra_dera meddelandet:
 ;#DEF If I'm going to just _delete the message:
 ;#SET (1876//)
 MSG_CO_MDN_OTHER
-I övriga _fall:
+I _övriga fall:
 ;#DEF In all oth_er cases:
 ;#SET (1877//)
 MSG_CO_REQUESTMDN
@@ -6650,7 +6650,7 @@ Utseende & Känsla
 ;#DEF Look & Feel
 ;#SET (1888//)
 MSG_CO_DSTACTIVE
-Somm_artid (DST) är aktiv
+So_mmartid (DST) är aktiv
 ;#DEF D_aylight Saving Time (DST) is active
 ;#SET (1889//)
 MSG_HELP_CO_CH_DSTACTIVE
@@ -6658,11 +6658,11 @@ Aktivera detta om sommartid för\nnärvarande är aktivt i din tidszon.
 ;#DEF Enable this if daylight saving time is\ncurrently active in your time zone\n(summer time).
 ;#SET (1890//)
 MSG_CO_SMTPSERVERPORT
-Ser_ver/Port
+Server/_Port
 ;#DEF Ser_ver/Port
 ;#SET (1891//)
 MSG_CO_POP3SERVERPORT
-Serve_r/Port
+Server/Port
 ;#DEF Serve_r/Port
 ;#SET (1892//)
 MSG_CO_POP3SECURE
@@ -6690,7 +6690,7 @@ Teman
 ;#DEF Themes
 ;#SET (1898//)
 MSG_CO_THEME_ACTIVATE
-_Aktivera
+A_ktivera
 ;#DEF _Activate
 ;#SET (1899//)
 MSG_CO_THEME_PREVIEW
@@ -6914,7 +6914,7 @@ Alternativ
 ;#DEF Options
 ;#SET (1958//)
 MSG_CO_FWDMSG
-Vidarebe_fordra meddelanden
+Vidarebefordra meddelande_n
 ;#DEF _Forward messages
 ;#SET (1959//)
 MSG_CO_FWDMSG_ATTACH
@@ -6994,7 +6994,7 @@ Säkerhetsvarning
 ;#DEF Security warning
 ;#SET (1978//)
 MSG_AB_INVALIDSECURITY
-Adressbokens post var satt till antingen signera\noch/eller kryptera meddelanden per förval,\nmen PGP installationen hittades inte.\n\nVill du rensa de förvalda säkerhetsinställningarna\nför denna post?
+Adressbokens post var satt till antingen signera\noch/eller kryptera meddelanden per förval,\nmen PGP-installationen hittades inte.\n\nVill du rensa de förvalda säkerhetsinställningarna\nför denna post?
 ;#DEF This address book entry was set to default to\neither signed and/or encrypted messages, but the\nrequired PGP installation couldn't be found.\n\nDo you want to reset the default security\nsetting for this entry?
 ;#SET (1979//)
 MSG_AB_INVALIDSECURITY_GADS
@@ -7006,7 +7006,7 @@ Säkerhetsvarning
 ;#DEF Security warning
 ;#SET (1981//)
 MSG_WR_INVALIDSECURITY
-Adressboksinställningarna för mottagaren\n\n'%s'\n\när inställd på signera och/eller kryptera\nmeddelanden, men PGP installationen\nhittades inte.\n\nMeddelandet kommer inte att signeras\neller krypteras.
+Adressboksinställningarna för mottagaren\n\n'%s'\n\när inställd på signera och/eller kryptera\nmeddelanden, men PGP-installationen\nhittades inte.\n\nMeddelandet kommer inte att signeras\neller krypteras.
 ;#DEF The address book security setting for recipient\n\n'%s'\n\nis set to signed and/or encrypted messages,\nbut the required PGP installation wasn't found.\n\nThe message will be neither signed or encrypted.
 ;#SET (1982//)
 MSG_WR_INVALIDSECURITY_GADS
@@ -7162,7 +7162,7 @@ _Mönster (Till:)
 ;#DEF _Pattern (To:)
 ;#SET (2020//)
 MSG_FO_TO_ADDRESS
-Destinationsadress (_Till:)
+_Destinationsadress (Till:)
 ;#DEF Destination address (_To:)
 ;#SET (2021//)
 MSG_FO_FROM_ADDRESS
@@ -7170,7 +7170,7 @@ Avsändaradress (_Från:)
 ;#DEF Sender address (_From:)
 ;#SET (2022//)
 MSG_FO_REPLYTO_ADDRESS
-_Svarsadress (Svar till:)
+Sva_rsadress (Svar till:)
 ;#DEF _Reply address (Reply-To:)
 ;#SET (2023//)
 MSG_RETRY_HOMEPAGE_QUIT_GAD
@@ -7254,7 +7254,7 @@ Markera mapp som läst
 ;#DEF Mark folder read
 ;#SET (2047//)
 MSG_EA_REMOVEPHOTO
-Ta bo_rt
+Ta _bort
 ;#DEF Remo_ve
 ;#SET (2048//)
 MSG_HELP_EA_BT_REMOVEPHOTO
