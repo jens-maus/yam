@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-14  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: added the missing parameter for a hook call.
+
 2007-12-13  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: Fixed many keyboard shortcuts that was interfering

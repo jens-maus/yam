@@ -819,8 +819,6 @@ void TC_Resume(enum TimerIO tio)
   if(timer->isRunning == FALSE && timer->isPaused == TRUE)
   {
     struct TimeRequest *tr = timer->tr;
-    #if defined(DEBUG)
-    #endif
 
     // issue a new timerequest with the previously calculated remaining time
     tr->Request.io_Command  = TR_ADDREQUEST;
@@ -2592,7 +2590,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
 
   // if the user wants to clean the trash upon starting YAM, do it
   if(C->RemoveOnStartup)
-    DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook);
+    DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);
 
   // check for current birth days in our addressbook if the user
   // selected it
