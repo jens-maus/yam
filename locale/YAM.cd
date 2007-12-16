@@ -469,11 +469,6 @@ _The following attachments have been removed manually:_\n
 MSG_MA_ConfirmReq (155//)
 Confirmation Request
 ;
-MSG_MA_ConfirmFilter (159//)
-Is it okay to filter messages\n\
-in folder '%s'?
-; FOLDER
-;
 MSG_MA_FilterStats (160//)
 Filtering done:\n\
 \n\
@@ -6686,4 +6681,19 @@ Select script to execute
 MSG_HELP_FI_BT_NONE (2067//)
 Exclude all folders from the\n\
 search, except the current one.
+;
+MSG_MA_CONFIRMFILTER_ALL (2068//)
+If you continue, all messages of folder\n\
+'%s' will be filtered.\n\
+\n\
+Do you want to proceed?
+; FOLDER
+;
+MSG_MA_CONFIRMFILTER_SELECTED (2069//)
+You have selected several messages in\n\
+folder '%s'. Only these messages\n\
+are going to be filtered.\n\
+\n\
+Do you want to proceed?
+; FOLDER
 ;

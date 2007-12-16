@@ -657,7 +657,7 @@ struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
 
   ENTER();
 
-  if(fo != NULL)
+  if(fo != NULL && isGroupFolder(fo) == FALSE)
   {
     int selected;
 

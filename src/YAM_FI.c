@@ -1611,49 +1611,65 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
   if((folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : FO_GetCurrentFolder()) != NULL &&
      (C->SpamFilterEnabled == FALSE || (spamfolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL))
   {
-    BOOL applyFilters = TRUE;
+    Object *lv = G->MA->GUI.PG_MAILLIST;
+    struct Mail **mlist = NULL;
+    BOOL processAllMails = TRUE;
 
-    // if this function was called manually by the user we ask him
-    // if he really wants to apply the filters or not.
-    if(mode == APPLY_USER)
+    // query how many mails are currently selected/marked
+    if(mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL || mode == APPLY_SPAM)
     {
-      char buf[SIZE_LARGE];
+      int minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
 
-      snprintf(buf, sizeof(buf), tr(MSG_MA_ConfirmFilter), folder->Name);
-      if(!MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buf))
-        applyFilters = FALSE;
-    }
-
-    // the user has not cancelled the filter process
-    if(applyFilters)
-    {
-      Object *lv = G->MA->GUI.PG_MAILLIST;
-      struct Mail **mlist = NULL;
-
-      memset(&G->RRs, 0, sizeof(struct RuleResult));
-      set(lv, MUIA_NList_Quiet, TRUE);
-      G->AppIconQuiet = TRUE;
-
-      if(mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL || mode == APPLY_SPAM)
+      if((mlist = MA_CreateMarkedList(lv, mode == APPLY_RX)) != NULL)
       {
-        int minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
-
-        if((mlist = MA_CreateMarkedList(lv, mode == APPLY_RX)) != NULL && (int)mlist[0] < minselected)
+        if((int)mlist[0] < minselected)
         {
+          W(DBF_FILTER, "number of selected mails < required minimum (%ld < %ld)", mlist[0], minselected);
+
           free(mlist);
           mlist = NULL;
         }
+        else
+          processAllMails = FALSE;
+      }
+    }
+
+    // if we haven't got any mail list, we
+    // go and create one over all mails in the folder
+    if(mlist == NULL)
+      mlist = MA_CreateFullList(folder, (mode == APPLY_AUTO || mode == APPLY_RX));
+
+    // check that we can continue
+    if(mlist != NULL)
+    {
+      BOOL applyFilters = TRUE;
+
+      // if this function was called manually by the user we ask him
+      // if he really wants to apply the filters or not.
+      if(mode == APPLY_USER)
+      {
+        char buf[SIZE_LARGE];
+
+        if(processAllMails == TRUE)
+          snprintf(buf, sizeof(buf), tr(MSG_MA_CONFIRMFILTER_ALL), folder->Name);
+        else
+          snprintf(buf, sizeof(buf), tr(MSG_MA_CONFIRMFILTER_SELECTED), folder->Name);
+
+        if(!MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buf))
+          applyFilters = FALSE;
       }
 
-      if(mlist == NULL)
-        mlist = MA_CreateFullList(folder, (mode == APPLY_AUTO || mode == APPLY_RX));
-
-      if(mlist != NULL)
+      // the user has not cancelled the filter process
+      if(applyFilters == TRUE)
       {
         int m;
         int scnt;
         int matches = 0;
         struct Mail *mail;
+
+        memset(&G->RRs, 0, sizeof(struct RuleResult));
+        set(lv, MUIA_NList_Quiet, TRUE);
+        G->AppIconQuiet = TRUE;
 
         // for simple spam classification this will result in zero
         scnt = AllocFilterSearch(mode);
@@ -1739,25 +1755,28 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 
         BusyEnd();
 
-        free(mlist);
+        set(lv, MUIA_NList_Quiet, FALSE);
+        G->AppIconQuiet = FALSE;
+
+        if(mode != APPLY_AUTO)
+          DisplayStatistics(NULL, TRUE);
+
+        if(G->RRs.Checked && mode == APPLY_USER)
+        {
+          char buf[SIZE_LARGE];
+
+          snprintf(buf, sizeof(buf), tr(MSG_MA_FilterStats), G->RRs.Checked, G->RRs.Forwarded, G->RRs.Moved, G->RRs.Deleted);
+          MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OkayReq), buf);
+        }
       }
+      else
+        D(DBF_FILTER, "filtering rejected by user.");
 
-      set(lv, MUIA_NList_Quiet, FALSE);
-      G->AppIconQuiet = FALSE;
-
-      if(mode != APPLY_AUTO)
-        DisplayStatistics(NULL, TRUE);
-
-      if(G->RRs.Checked && mode == APPLY_USER)
-      {
-        char buf[SIZE_LARGE];
-
-        snprintf(buf, sizeof(buf), tr(MSG_MA_FilterStats), G->RRs.Checked, G->RRs.Forwarded, G->RRs.Moved, G->RRs.Deleted);
-        MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OkayReq), buf);
-      }
+      free(mlist);
+      mlist = NULL;
     }
     else
-      D(DBF_FILTER, "filtering rejected by user.");
+      W(DBF_FILTER, "folder empty or error on creating list of mails.");
   }
 
   LEAVE();
