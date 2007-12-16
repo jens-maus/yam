@@ -7,6 +7,8 @@ $URL$
 
 2007-12-16  Jens Langner <Jens.Langner@light-speed.de>
 
+  * locale/deutsch.ct: adapted german translation to latest changes and
+    fixed a minor spelling bug #1851944.
   * YAM.cd, YAM_FI.c, YAM_MA.c: fixed bug #1851127 by showing two different
     requester texts in case all messages or just the selected messages of
     a folder should get filtered.

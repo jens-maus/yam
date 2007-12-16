@@ -606,13 +606,6 @@ _Die folgenden Anhänge wurden manuell entfernt:_\n
 MSG_MA_ConfirmReq
 Bitte bestätigen
 ;
-MSG_MA_ConfirmFilter
-Sollen wirklich Nachrichten im\n\
-Postfach '%s' gefiltert werden?
-; Is it okay to filter messages\n\
-; in folder '%s'?
-; FOLDER
-;
 MSG_MA_FilterStats
 Filtervorgang beendet:\n\
 %3ld Nachrichten geprüft,\n\
@@ -6279,7 +6272,7 @@ Zeichen gefunden und in der unkodierten Version entfernt.
 ;
 MSG_ER_UUDEC_TAGMISS
 Während des Versuches die Datei '%s' anhand des UUcode Standards zu \
-dekodieren wurde das benötigte Tag '%s' nicht gefunden werden.
+dekodieren wurde das benötigte Tag '%s' nicht gefunden.
 ; FILENAME, TAG
 ;
 MSG_ER_UUDEC_CHECKSUM
@@ -8364,4 +8357,20 @@ MSG_HELP_FI_BT_NONE
 Alle Postfächer von der\n\
 Suche ausschließen. Nur\n\
 nicht das Ausgewählte.
+;
+MSG_MA_CONFIRMFILTER_ALL
+Alle Nachrichten im Postfach\n\
+'%s' werden im Folgenden\n\
+gefiltert.\n\
+\n\
+Möchten Sie wirklich fortfahren?
+; FOLDER
+;
+MSG_MA_CONFIRMFILTER_SELECTED
+Sie haben mehr als eine Nachricht im\n\
+Postfach '%s' selektiert. Nur\n\
+diese werden im Folgenden gefiltert.\n\
+\n\
+Möchten Sie wirklich fortfahren?
+; FOLDER
 ;
