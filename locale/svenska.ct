@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.28 (13.12.07)
+## version $VER: YAM.ct 6.29 (16.12.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -541,10 +541,6 @@ MSG_MA_ConfirmReq
 Bekräftelseförfrågan
 ;#DEF Confirmation Request
 ;#SET (155//)
-MSG_MA_ConfirmFilter
-Är det OK att filtrera alla\nmeddelanden i mappen '%s'?
-;#DEF Is it okay to filter messages\nin folder '%s'?
-;#SET (159//)
 MSG_MA_FilterStats
 Filtreringen är klar:\n\n%3ld meddelanden genomsökta,\n%3ld vidarebefordrade,\n%3ld arkiverade,\n%3ld raderade
 ;#DEF Filtering done:\n\n%3ld messages checked,\n%3ld forwarded,\n%3ld archived,\n%3ld deleted
@@ -1339,11 +1335,11 @@ Vidarebe_fordra
 ;#SET (393//)
 MSG_CO_ActionReply
 Svara
-;#DEF _Reply
+;#DEF Repl_y
 ;#SET (394//)
 MSG_CO_ActionExecute
 _Kör
-;#DEF _Execute
+;#DEF E_xecute
 ;#SET (395//)
 MSG_CO_ActionPlay
 S_pela ljud
@@ -1355,11 +1351,11 @@ Fl_ytta
 ;#SET (397//)
 MSG_CO_ActionDelete
 Ra_dera
-;#DEF De_lete
+;#DEF Dele_te
 ;#SET (398//)
 MSG_CO_ActionSkip
 _Hämta inte
-;#DEF D_on't download
+;#DEF Don't do_wnload
 ;#SET (399//)
 MSG_CO_HeadNone
 inga
@@ -6162,8 +6158,8 @@ Inställningar skräppostfilter
 ;#DEF Spam filter
 ;#SET (1763//)
 MSG_CO_SPAMFILTER_SUMMARY
-Konfigurera skräppostfiltret här...
-;#DEF Configure here the spam filter.
+Konfigurera skräppostfiltret...
+;#DEF Configure the spam filter...
 ;#SET (1764//)
 MSG_CO_SPAM_FILTERFORNEWMAIL
 Kontrollera nya _brev om de innehåller skräppost
@@ -7333,3 +7329,11 @@ MSG_HELP_FI_BT_NONE
 Exkludera alla mappar från\nsökningen, förutom den nuvarande.
 ;#DEF Exclude all folders from the\nsearch, except the current one.
 ;#SET (2067//)
+MSG_MA_CONFIRMFILTER_ALL
+Om du fortsätter, kommer alla meddelanden\ni mappen '%s' att filtreras.\n\nVill du fortsätta?
+;#DEF If you continue, all messages of folder\n'%s' will be filtered.\n\nDo you want to proceed?
+;#SET (2068//)
+MSG_MA_CONFIRMFILTER_SELECTED
+Du har valt flera meddelanden i mappen '%s'.\nBara dessa meddelanden kommer att filtreras.\n\nVill du fortsätta?
+;#DEF You have selected several messages in\nfolder '%s'. Only these messages\nare going to be filtered.\n\nDo you want to proceed?
+;#SET (2069//)
