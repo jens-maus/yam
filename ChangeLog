@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-17  Pär Boberg <pbobbenb@spray.se>
+
+  * doc/YAM_english.guide: Changed a little bit here and there, info about
+    developers/contributors, SVN access, required third party software and
+    version/copyright numbers.
+
 2007-12-16  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: Updated according to changes.

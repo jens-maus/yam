@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.5 (10.11.2004)
+@$VER: YAM.guide 2.5 (17.12.2007)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -48,11 +48,11 @@
 
 
             @{b}=============================================
-             Y A M    (Yet Another Mailer)   VERSION 2.4
+             Y A M    (Yet Another Mailer)   VERSION 2.5
             =============================================@{ub}
 
                       © 1995-2000 by Marcel Beck
-                 © 2000-2004 by YAM Open Source Team
+                 © 2000-2007 by YAM Open Source Team
 
 
       @{" Legal stuff     " link "COPY"}  - Legal information
@@ -185,10 +185,11 @@ Features of YAM
 * Comprehensive @{" search capabilities " link "FI_W"}, for example a full text search
   through all articles using a single query.
 
-* Automatic sorting of the post with up to 100 @{" filters " link "CO03"}.  Archiving or
-  diversion of specified articles, automatic replies or the deletion
-  of advertising are just a few of the possible applications of the
-  filters.
+* Automatic sorting of the post with a theoretically unlimited
+  amount of @{" filters " link "CO03"}.
+  Archiving or diversion of specified articles, automatic replies or
+  the deletion of advertising are just a few of the possible
+  applications of the filters.
 
 * Support for @{" PGP " link "PGP"} encryption and signing of messages as well as
   read and receive authentication.
@@ -229,21 +230,20 @@ Software
    * @{" MUI " link "MUI"} 3.8 or higher
    * 3rd party MUI custom classes:
 
-        - BetterString 11.6+
-            http://us.aminet.net/pub/aminet/dev/mui/MCC_Betterstring.lha
-        - NList 20.111+
-            http://home.t-online.de/home/sebauer/MCC_NList.lha
-        - NListtree 18.12+
-            http://home.t-online.de/home/sebauer/MCC_NListtree.lha
-        - TextEditor 15.9+
-            http://us.aminet.net/pub/aminet/dev/mui/MCC_TextEditor.lha
-        - Toolbar 15.8+
-            http://us.aminet.net/pub/aminet/dev/mui/MCC_Toolbar.lha
+        - BetterString 11.13+
+            http://aminet.net/dev/mui/MCC_BetterString-11.13.lha
+        - NList 0.100+
+            http://aminet.net/dev/mui/MCC_NList-0.100.lha
+        - TextEditor 15.24+
+            http://aminet.net/dev/mui/MCC_TextEditor-15.24.lha
+        - Thebar 21.4+
+            http://aminet.net/dev/mui/MCC_TheBar-21.4.lha
 
+   * Codesets Library 6.4+
    * AmiTCP compatible TCP/IP stack (AmiTCP, Miami[DX], TermiteTCP, RoadShow)
    * optional: XPK for compression of articles
    * optional: PGP 2.6 or 5.0 for encryption and signing messages
-   * optional: AmiSSL v1 for TLSv1/SSLv3 security layers over SMTP/POP
+   * optional: AmiSSL v3 for TLSv1/SSLv3 security layers over SMTP/POP
    * optional: Archiver for attachment compression, e.g.  LhA
    * optional: Program for spell-checking, e.g.  AlphaSpell
    * optional: @{" AutoDST " link "TIP5"} handling tool, e.g.  SetDST, FACTS, SummerTimeGuard
@@ -286,7 +286,7 @@ Installation by using the installer
    Open the 'Install' folder, double-click the 'English' icon and
 follow the instructions given by the installer.  If you have already
 installed an older version of YAM, please restart your Amiga after the
-installation of YAM 2.4.
+installation of YAM 2.5.
 
 
 Manual installation
@@ -308,26 +308,9 @@ unable or unwilling to use it, proceed as follows:
   @{b}MUI:libs/MUI@{ub}.
 
 - Create an entry in your @{b}S:User-Startup@{ub} assigning @{b}YAM:@{ub} to the
-  directory you have created for YAM 2.4.  For example,
+  directory you have created for YAM 2.5.  For example,
 
           1:> assign YAM: Work:Internet/YAM
-
-- If you have a 68040 or 68060 CPU, you might want to use a version
-  of YAM optimized for those processors.  To do this, you need the
-  supplied @{b}GPatch@{ub} CLI utility -which you should copy to your @{b}C:@{ub}
-  directory for future use- and the @{b}YAM.gpatch@{ub} file.  This file
-  contains patches to update the basic 020 executable to both 040
-  and 060 binaries.  Use the following command to create a 040 binary:
-
-          1:> GPatch YAM:YAM  <path/>YAM.gpatch  DIRECT
-
-  If you want the 060 flavour instead, use this command:
-
-          1:> GPatch YAM:YAM  <path/>YAM.gpatch  DIRECT RECURSIVE
-
-- (Optional) Delete libs:imagepool.library.  This library was formerly
-  used by Toolbar.mcc, but the bugfixed Toolbar class supplied with
-  YAM 2.4 no longer supports it.
 
 - Reboot your Amiga
 
@@ -10617,7 +10600,7 @@ Support
  @{" Bug reporting             " link "INF2"}  - How to report a bug
  @{" Enhancement requests      " link "INF3"}  - Where to post them
  @{" Change requests           " link "INF4"}  - How to get something changed in YAM
- @{" CVS repository            " link "INF5"}  - Getting the current sources
+ @{" SVN repository            " link "INF5"}  - Getting the current sources
 
 @endnode
 
@@ -10626,14 +10609,14 @@ Support
 @prev "INF5"
 @toc "INFO"
 
-Support - YAM in the World Wide Web
+Support - YAM on the World Wide Web
 ===================================
 
 
 @{b}The YAM homepage@{ub}
 
    In order to provide all users with up-to-date information about YAM,
-Marcel Beck, its original author, made a homepage available in the
+Marcel Beck, its original author, made a homepage available on the
 World Wide Web:  http://www.yam.ch/
 
 
@@ -10713,7 +10696,7 @@ points:
               and therefore not be listed in the default "Open bugs" list.
               You may want to check the ChangeLog to be sure:
 
-      http://cvs.sf.net/cgi-bin/viewcvs.cgi/*checkout*/yamos/yamos/ChangeLog
+      http://yamos.svn.sourceforge.net/viewvc/yamos/trunk/ChangeLog?view=log
 
       2. Try your best to enter a meaningful "Short description" of the
          problem.  *Don't forget* to state the version of YAM to whom this
@@ -10770,25 +10753,29 @@ and submit your change request there.
 
 @endnode
 
-@node "INF5" "Support - CVS repository"
+@node "INF5" "Support - SVN repository"
 @next "INF0"
 @prev "INF4"
 @toc "INFO"
 
-Support - CVS repository
+Support - SVN repository
 ========================
 
 
-   The YAMOS CVS repository is hosted by SourceForge.net and can be
-checked out through anonymous (pserver) CVS.  To begin with, you will
-probably need to login on the server with
+   The YAMOS SVN repository is hosted by SourceForge.net and can be
+checked out through anonymous SVN access.
+   You can obtain the very latest source code of YAM (from 'trunk')
+with the following command sequence:
 
-     cvs -d:pserver:anonymous\@cvs.yamos.sf.net:/cvsroot/yamos login
+     svn co https://yamos.svn.sourceforge.net/svnroot/yamos/trunk yamos
 
-hitting <Return> when prompted for a password.  Then you can checkout the
-whole project with
+This will checkout the sources from our 'trunk' to your local directory
+'yamos'.
 
-     cvs -d:pserver:anonymous\@cvs.yamos.sf.net:/cvsroot/yamos checkout .
+If you already have an existing version of any module checked out and want to update it:
+
+$> cd <your module directory>
+$> svn up
 
    If you want to get write access and contribute to the project, please
 join the @{" YAMOS developers mailing list " link "INF1"} and ask there.
@@ -10806,19 +10793,18 @@ Future plans
 
    More attractions coming (possibly) in future versions of YAM:
 
-   - Support for messages in HTML format (read only)
-
-   - User-defined context menus
-
-   - User-defined toolbars
-
-   - Support for the IMAP-4 protocol
-
-   - Support for LDAP functionality, replacing the old address book
-
+   - HTML read mail support [optional] (via htmlview.mcc)
+   - IMAPv4 protocol support
+   - Unlimited write window support
+   - Completly reworked address book GUI
+   - Multiple user identity support (similar to Thunderbird)
+   - GnuPG support (via gpgme interface)
    - Asynchronous email transfer (internal multithreading)
-
-   - Ready to print documentation
+   - User-definable context menus
+   - User-definable toolbars
+   - Multiple SMTP server support
+   - Rework and simplification of the mailing-list feature
+   - Creating an AROS port (under Zune)
 
 @endnode
 
@@ -10831,48 +10817,69 @@ Credits
 *******
 
 
-   The YAM 2.4 update was brought to you by (in alphabetical order):
+   The YAM 2.5 release was brought to you by:
 
-      Alexey Ivanov <amis\@amiga.org.ru>
-      Allan Odgaard <duff\@diku.dk>
-      Christian Hattemer <krille\@users.sourceforge.net>
-      Dirk Stöcker <stoecker\@epost.de>
-      Giles Burdett <layabouts\@the-giant-sofa.demon.co.uk>
-      Gunther Nikl <gni\@gecko.de>
-      Jacob Laursen <laursen\@myself.com>
       Jens Langner <Jens.Langner\@light-speed.de>
-      Jörg Strohmayer <nospam\@gmx.de>
-      Karoly Balogh <charlie\@scenergy.dfmk.hu>
+      Thore Boeckelmann <tboeckel\@gmx.de>
+      Gunther Nikl <gni\@gecko.de>
+      Alexey Ivanov <amis\@amiga.org.ru>
 
+   Contributors
 
-   Third party contributors
+      David Rey
+      Dirk Stoecker
+      Christian Hattemer
+      Jacob Laursen
+      Joerg Strohmayer
+      Andrew Bell
+      Allan Odgaard
+      Giles Burdett
+      Olaf Barthel
 
-      Stefan Stuntz           (MUI)
-      Allan Odgaard           (TextEditor.mcc, BetterString.mcc)
-      Benny Kjær Nielsen      (Toolbar.mcc)
-      Marcin Orlowski         (Flexcat)
+   Localization contributors
+
+      Alexandre Balaban
+      Par Boberg
+
+   Third party software contributors
+
+      Stefan Stuntz                  (MUI)
+      Allan Odgaard,
+      TextEditor Open Source Team &
+      BetterString Open Source Team  (TextEditor.mcc, BetterString.mcc)
+      Alfonso Ranieri &
+      Thebar Open Source Team        (Thebar.mcc)
+      Marcin Orlowski &
+      Flexcat Open Source Team       (Flexcat)
       Gilles Masson,
       Carsten Scholling,
       Przemyslaw Gruchala,
-      Sebastian Bauer
-      & Jens Langner          (NList.mcc, NListview.mcc)
-      Carsten Scholling       (NListtree.mcc)
-      Andrija Antonijevic     (AmiSSL library)
+      Sebastian Bauer,
+      Jens Langner,
+      Carsten Scholling &
+      NList Open Source Team         (NList.mcc, NListview.mcc & NListtree.mcc)
+      Andrija Antonijevic,
+      Stefan Burstroem               (AmiSSL library)
       Urban Dominik Mueller,
       Bryan Ford,
       Christian Schneider,
-      Christian von Roques
-      & Dirk Stöcker          (XPK)
-      Stephan Rupprecht       (NewReadArgs)
-      Andrew Bell             (GenClasses)
-      Emmanuel Lesueur        (MorphOS starter tool)
-      Ralf Gruner             (GPatch)
-      Troels Walsted Hansen   (OpenURL)
-      Alessandro Zumo         (NewMouse standard)
-      Holger Kruse            (Miami)
-      NSDi                    (AmiTCP/Genesis)
+      Christian von Roques &
+      Dirk Stöcker                   (XPK)
+      Alfonso Ranieri &
+      Codesets library -
+      Open Source Team               (Codesets library)
+      Stephan Rupprecht              (NewReadArgs)
+      Andrew Bell                    (GenClasses)
+      Emmanuel Lesueur               (MorphOS starter tool)
+      Ralf Gruner                    (GPatch)
+      Troels Walsted Hansen,
+      Alfonso Ranieri &
+      OpenURL Open Source Team       (OpenURL)
+      Alessandro Zumo                (NewMouse standard)
+      Holger Kruse                   (Miami)
+      NSDi                           (AmiTCP/Genesis)
       Ron Rivest &
-      Colin Plumb             (MD5 algorithm support)
+      Colin Plumb                    (MD5 algorithm support)
 
 
    Original idea
@@ -11083,7 +11090,6 @@ local bulletin boards or on public domain disks.
    @{" Context menus " link "CO08"}
    @{" Confirm deletion of X messages, Configuration " link "CO14"}
    @{" Credits " link "CRED"}
-   @{" CVS repository " link "INF5"}
 
    D...
 
@@ -11301,6 +11307,7 @@ local bulletin boards or on public domain disks.
    @{" SUBJECT, Tooltype " link "RF00"}
    @{" Subject, Warn when there's an empty " link "CO05"}
    @{" Support " link "INFO"}
+   @{" SVN repository " link "INF5"}
    @{" Swatch Beats, Time unit " link "CO08"}
 
    T...
