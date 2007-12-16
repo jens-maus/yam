@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (09.12.2007)
+## version $VER: YAM.catalog 6.0 (16.12.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -604,8 +604,7 @@ _Die folgenden Anhänge wurden manuell entfernt:_\n
 ; _The following attachments have been removed manually:_\n
 ;
 MSG_MA_ConfirmReq
-Bitte bestätigen Sie...
-; Please confirm...
+Bitte bestätigen
 ;
 MSG_MA_ConfirmFilter
 Sollen wirklich Nachrichten im\n\
@@ -718,8 +717,7 @@ _Ändern
 ; _Edit
 ;
 MSG_MA_TBMove
-_Versch.
-; _Move...
+_Versch...
 ;
 MSG_MA_TBDelete
 L_öschen
@@ -754,8 +752,7 @@ _Filtern
 ; F_ilter
 ;
 MSG_MA_TBFind
-S_uchen
-; _Find
+S_uchen...
 ;
 MSG_MA_TBAddrBook
 A-_Buch
@@ -2893,7 +2890,7 @@ Wollen Sie eine Grußkarte schicken?
 ; NAME, AGE
 ;
 MSG_AB_BirthdayReminder
-Erinnerung an den Geburtstag
+Geburtstagserinnerung
 ; Birthday Reminder
 ;
 MSG_AB_HappyBirthday
@@ -3437,8 +3434,7 @@ eine Empfangsbestätigung erhalten.\n\
 Wie wollen Sie reagieren?
 ;
 MSG_RE_SaveMessage
-Nachricht speichern...
-; Save message...
+Nachricht speichern
 ;
 MSG_RE_Overwrite
 Die Datei '%s' existiert bereits.\n\
@@ -3758,20 +3754,17 @@ _Zeigen...
 ; _Display
 ;
 MSG_RE_TBSave
-_Speich.
-; _Save
+_Speich...
 ;
 MSG_RE_TBPrint
-_Drucken
-; Pr_int
+_Drucken...
 ;
 MSG_RE_TBDelete
 L_öschen
 ; De_lete
 ;
 MSG_RE_TBMove
-_Versch.
-; _Move
+_Versch...
 ;
 MSG_RE_TBReply
 _Antwort
@@ -3877,12 +3870,10 @@ MSG_WR_DiscardChangesGad
 ; *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs
-Text speichern unter...
-; Save text as...
+Text speichern unter
 ;
 MSG_WR_AddFile
-Wählen Sie die anzuhängende(n) Datei(en)...
-; Select file(s) to attach...
+Wählen Sie die anzuhängende(n) Datei(en)
 ;
 MSG_WR_CreateArc
 Archiv erstellen
@@ -4071,7 +4062,7 @@ Editor
 ; Editor
 ;
 MSG_WR_TBInsert
-D.Einf
+D.Einf...
 ; Insert
 ;
 MSG_WR_TBCut
@@ -4760,9 +4751,9 @@ Die Datei scheint nicht zu existieren.
 ; FILENAME
 ;
 MSG_ER_UUSize
-Dekodierte Größe [%lD] stimmt nicht mit der ursprünglichen Größe [%lD] überein.\n\
+Dekodierte Größe (%lD) stimmt nicht mit der ursprünglichen Größe (%lD) überein.\n\
 \n\
-Grund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
+Grund: fehlerhafter UUcode Kodierer oder unvollständige Nachricht.
 ; Decoded size [%lD] does not match original size [%lD].\n\
 ; \n\
 ; A defective UUencoder was used or the message is truncated.
@@ -5320,8 +5311,7 @@ MSG_FO_NewFolderGads
 ; *_Internal defaults|_Like current|_Existing directory|_Cancel
 ;
 MSG_FO_SelectDir
-Verzeichnis auswählen...
-; Select directory...
+Verzeichnis auswählen
 ;
 ;
 ; Module FO - Window
@@ -5820,8 +5810,7 @@ Kein Betreff gesetzt, trotzdem fortfahren?
 ; The subject is missing, continue anyway?
 ;
 MSG_WR_TBSearch
-Suchen
-; Search
+Suchen...
 ;
 MSG_HELP_WR_BT_SEARCH
 Sucht den Text für eine gegebene Zeichenkette.
@@ -5943,7 +5932,7 @@ Autoer_kennung
 ;
 MSG_HELP_FO_BT_AUTODETECT
 Versucht die passenden Einstellungen der ML-\n\
-Unterstützung durch Auswertung der ersten 5\n\
+Unterstützung durch Auswertung der ersten fünf\n\
 E-Mails im Postfach automatisch zu finden.
 ; Try to guess automatically the suitable\n\
 ; ML support settings by scanning the\n\
@@ -6255,12 +6244,12 @@ unterstützt werden oder ist falsch in der Konfiguration angegeben.
 ;
 MSG_ER_B64FILEENCODE
 Ein unerwarteter Fehler trat bei dem Versuch die Datei '%s' \
-mit base64 zu kodieren.
+mit Base64 zu kodieren.
 ; FILENAME
 ;
 MSG_ER_QPFILEENCODE
 Ein unerwarteter Fehler trat bei dem Versuch die Datei '%s' \
-mit quoted-printable zu kodieren.
+mit Quoted-Printable (QP) zu kodieren.
 ; FILENAME
 ;
 MSG_ER_UUFILEENCODE
@@ -6270,43 +6259,43 @@ mit UUcode zu kodieren.
 ;
 MSG_ER_QPDEC_FILEIO
 Ein Ein/Ausgabefehler ist aufgetreten bei dem Versuch die Datei '%s' \
-mit quoted-printable zu dekodieren.
+mit Quoted-Printable (QP) zu dekodieren.
 ;
 MSG_ER_QPDEC_UNEXP
 Ein unerwarteter Fehler trat bei dem Versuch die Datei '%s' \
-mit quoted-printable zu dekodieren.
+mit Quoted-Printable (QP) zu dekodieren.
 ; FILENAME
 ;
 MSG_ER_QPDEC_WARN
-Während des Dekodierens der quoted-printable Datei '%s' wurden \
+Während des Dekodierens der Quoted-Printable (QP) Datei '%s' wurden \
 unerlaubte Kontrollsequenzen gefunden, die in der unkodierten Version \
 beibehalten wurden.
 ; FILENAME
 ;
 MSG_ER_QPDEC_CHAR
-Beim Dekodieren der quoted-printable Datei '%s' wurden unerlaubte \
+Beim Dekodieren der Quoted-Printable (QP) Datei '%s' wurden unerlaubte \
 Zeichen gefunden und in der unkodierten Version entfernt.
 ; FILENAME
 ;
 MSG_ER_UUDEC_TAGMISS
-Während des Versuches die Datei '%s' mittels UUdecode zu dekodieren \
-konnte das im UUcode Standard definierte Tag '%s' nicht gefunden werden.
+Während des Versuches die Datei '%s' anhand des UUcode Standards zu \
+dekodieren wurde das benötigte Tag '%s' nicht gefunden werden.
 ; FILENAME, TAG
 ;
 MSG_ER_UUDEC_CHECKSUM
-Während des Dekodierens der UUcode datei '%s' hat YAM einige vorgeschriebene \
-Checksummen nicht verifizieren können. Es wird vorgeschlagen, dass Sie die \
+Während des Dekodierens der UUcode Datei '%s' hat YAM einige vorgeschriebene \
+Prüfsummen nicht verifizieren können. Es wird vorgeschlagen, dass Sie die \
 erzeugte Datei auf Fehler hin überprüfen.\n\
 \n\
-Es wurde entweder ein defekter UUencoder verwendet oder die Nachricht \
+Es wurde entweder ein defekter UUcode Kodierer verwendet oder die Nachricht \
 ist unvollständig.
 ; FILENAME
 ;
 MSG_ER_UUDEC_CORRUPT
-Während des Dekodierens der UUcode datei '%s' hat YAM festgestellt das der \
+Während des Dekodierens der UUcode Datei '%s' hat YAM festgestellt das der \
 kodierte Teil defekt zu sein scheint.\n\
 \n\
-Es wurde entweder ein defekter UUencoder verwendet oder die Nachricht \
+Es wurde entweder ein defekter UUcode Kodierer verwendet oder die Nachricht \
 ist unvollständig.
 ; FILENAME
 ;
@@ -6315,7 +6304,7 @@ Markiert
 ;
 MSG_MA_CREQUEST_OLDFILE
 YAM hat die Datei '%s' im Postfach '%s' als eine Maildatei identifiziert\n\
-die mit einer Version vor dieser generiert wurde.\n\
+die mit einer älteren YAM Version generiert wurde.\n\
 \n\
 Möchten Sie die Datei in das neue Mailformat konvertieren?
 ; FILENAME, FOLDER
@@ -6371,7 +6360,7 @@ Wenn diese Schaltsymbole nicht auswählbar sind, dann ist vermutlich\n\
 AmiSSL nicht korrekt installiert oder verfügbar.
 ;
 MSG_CO_SHOWEMBEDDEDREADPANE
-Nutze eingebettetes Nachrichten_objekt im Hauptfenster
+Eingebettetes Nachrichten_objekt im Hauptfenster
 ;
 MSG_HELP_CO_CH_EMBEDDEDREADPANE
 Zeigt ein in das Hauptfenster\n\
@@ -6466,7 +6455,7 @@ _Entfernen
 MSG_MA_AUTOSAVEFOUND
 YAM hat eine automatische Sicherungsdatei '%s'\n\
 einer Nachricht gefunden, die in einer vorherigen Sitzung\n\
-erzeugt wurde. Dies könnte durch einen eventuell Absturz oder\n\
+erzeugt wurde. Dies könnte durch einen eventuellen Absturz oder\n\
 Neustart Ihres Systems, während Sie eine Mail geschrieben\n\
 haben, geschehen sein.\n\
 \n\
@@ -6511,11 +6500,11 @@ liegen oder aber daran, dass ein Schreiben in das Verzeichnis nicht \
 möglich ist.
 ;
 MSG_CO_QUICKSEARCHBAR
-Nutze Schnellsuchleiste im Hauptfenster
+Suchleiste im Hauptfenster
 ;
 MSG_HELP_CO_CH_QUICKSEARCHBAR
 Wenn ausgewählt erscheint im Hauptfenster eine\n\
-Schnellsuchleiste die es Ihnen erlaubt schnell\n\
+Suchleiste, die es Ihnen erlaubt schnell\n\
 nach E-Mails zu suchen.
 ;
 MSG_FI_SELECTACTIVE
@@ -6613,7 +6602,7 @@ momentanen Status von YAM angezeigt.\n\
 (nur für AmigaOS4.x Systemen verfügbar)
 ;
 MSG_MA_MessageImport
-Nachrichtenimport von MBOX, DBX bzw.reinen Maildateien...
+Nachrichtenimport
 ;
 MSG_ER_MESSAGEIMPORT
 Ein Fehler trat beim Versuch auf Nachrichten von der Datei '%s' \
@@ -6624,15 +6613,14 @@ RFC822 konforme Nachrichten in einem von YAM unterstützen \
 Nachrichtenformat enthält. YAM ist momentan in der Lage Nachrichten \
 von Dateien im 'MBOX', 'DBX' (Outlook Express) oder aber reine RFC822 \
 Maildateien zu importieren. Bitte konsultieren Sie die Dokumentation \
-für eine genauere Beschreibung der unterstützen Formate sowie für \
-alternative Wege Nachrichten in YAM zu importieren.
+für mehr Informationen.
 ; FILENAME
 ;
 MSG_MA_MESSAGEEXPORT
-Nachrichtenexport als MBOX konforme Datei...
+Nachrichtenexport
 ;
 MSG_YAMINFO
-Open Source E-Mail Software für den Amiga
+Open Source E-Mail Client für den Amiga
 ;
 MSG_CO_SYSTEMSETTINGS
 Systemeinstellungen
@@ -6652,14 +6640,14 @@ MSG_CO_CHARSETUNKNOWNWARN_BT
 *_Standard verwenden|_Ignorieren
 ;
 MSG_ER_LIB
-Kann benötigte '%s', Version v%lu.%lu nicht öffnen.\n\
+Konnte benötigte '%s', Version v%lu.%lu nicht öffnen.\n\
 \n\
 Bitte stellen Sie sicher, dass Sie diese oder eine neuere\n\
 Version in Ihrem Bibliothekspfad installiert haben.
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
 ;
 MSG_ER_LIB_URL
-Kann benötigte '%s', Version v%lu.%lu nicht öffnen.\n\
+Konnte benötigte '%s', Version v%lu.%lu nicht öffnen.\n\
 \n\
 Bitte besuchen Sie '%s'\n\
 um die neueste Version herunterzuladen und stellen Sie\n\
@@ -6668,7 +6656,7 @@ installiert haben.
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION, LIBRARY_URL
 ;
 MSG_ER_NO_MCC
-Konnte die benötigte MUI custom Klasse '%s' v%lu.%lu\n\
+Konnte die benötigte MUI Custom Klasse '%s' v%lu.%lu\n\
 nicht öffnen.\n\
 \n\
 Bitte besuchen Sie '%s'\n\
@@ -6677,7 +6665,7 @@ installiert haben.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_OLD
-Konnte die benötigte MUI custom Klasse '%s' v%lu.%lu\n\
+Konnte die benötigte MUI Custom Klasse '%s' v%lu.%lu\n\
 nicht öffnen.\n\
 \n\
 Momentan installiert ist v%lu.%lu. Bitte stellen Sie\n\
@@ -6686,14 +6674,14 @@ korrekt installiert haben.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_IN_USE
-Konnte die benötigte MUI custom Klasse '%s' v%lu.%lu\n\
+Konnte die benötigte MUI Custom Klasse '%s' v%lu.%lu\n\
 nicht öffnen, da die Version %lu.%lu bereits verwendet wird.\n\
 \n\
 Bitte besuchen Sie '%s'.\n\
 Sobald Sie die benötigte Version installiert haben,\n\
 schließen Sie alle MUI Programme und stellen sicher, dass\n\
 alle nicht benötigten Bibliotheken aus dem Speicher entfernt\n\
-werden. Versuchen Sie dann YAM erneut zu starten.
+werden. Starten Sie dann YAM neu.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_CO_FIRSTSTEPS_TITLE
@@ -6841,7 +6829,7 @@ MSG_CO_AUTODSTWARN_BT
 *_Anpassen|_Dauerhaft Ignorieren|_Ignorieren
 ;
 MSG_MA_UPDATECHECK
-Nach Updates suchen...
+Nach Updates suchen
 ;
 MSG_CO_SOFTWAREUPDATE
 Updatesuche
@@ -7143,8 +7131,8 @@ Es trat ein Fehler beim Versuch auf, ein \
 ASL Fenster zu öffnen.\n\
 \n\
 Bitte stellen Sie sicher, dass Ihre ASL \
-Einstellungen korrekt sind und ASL korrekt \
-funktioniert.
+Einstellungen korrekt sind und Sie über \
+genügend freien Speicher verfügen.
 ;
 MSG_MA_CONFIRMDELETION
 %ld Nachrichte(n) sind ausgewählt.\n\
@@ -7300,7 +7288,7 @@ Wie wollen Sie das gefundene Verzeichnis als generellen \n\
 Spam-Ordner verwenden?
 ;
 MSG_ER_SPAMDIR_EXISTS_ANSWERS
-_Leeren+Verwenden|_Verwenden|*_Abbrechen
+_Leeren&Verwenden|_Verwenden|*_Abbrechen
 ;
 MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER
 Es trat ein Fehler beim Anlegen des Spam-Ordners auf. Der\n\
@@ -7491,15 +7479,15 @@ Neue Spam-Nachrichten als _gelesen markieren
 MSG_HELP_CH_SPAMFILTERENABLED
 Aktiviert den Spam-Filter innerhalb von YAM.\n\
 Dieser erkennt automatisch Werbenachrichten und\n\
-reagiert hieraus entsprechend.
+reagiert entsprechend Ihren Einstellungen.
 ;
 MSG_HELP_TX_SPAMBADCOUNT
 Zeigt die Menge manuell klassifizierter "Spam"\n\
-Nachrichten an.
+E-Mails an.
 ;
 MSG_HELP_TX_SPAMGOODCOUNT
 Zeigt die Menge manuell klassifizierter\n\
-"Nicht-Spam"-Nachrichten (sog. "Ham") an.
+"Nicht-Spam" E-Mails (sog. "Ham") an.
 ;
 MSG_HELP_BT_SPAMRESETTRAININGDATA
 Erlaubt es die Spam-Filter Trainingsdaten manuell\n\
@@ -7588,8 +7576,8 @@ I_mmer eine Empfangsbestätigung anfordern
 ;
 MSG_HELP_CO_CH_REQUESTMDN
 Wenn aktiviert, wird die Empfangsbestätigungs-\n\
-Option im Schreibfenster standardmäßig benutzt.\n\
-(Verwenden Sie dies mit Bedacht)
+Option im Schreibfenster standardmäßig benutzt\n\
+(Verwenden Sie dies mit Bedacht).
 ;
 MSG_HELP_CO_CH_MDN_NEVER
 Wenn aktiviert, wird keinerlei Empfangsbestätigung\n\
@@ -7728,7 +7716,7 @@ MSG_RE_HDR_SUBJECT
 Betreff
 ;
 MSG_RE_VIRTUALMAIL
-Virtuelle Nachricht
+Virtuelle E-Mail
 ;
 MSG_CO_MIMECMD_PUBSCREEN
 %p  Name von YAMs öffentlichem Bildschirm
@@ -8129,13 +8117,13 @@ Kann MIME-Nachricht in Datei '%s' nicht extrahieren.\n\
 Die Nachricht enthält falsche MIME-Kodierungen oder sie ist leer oder unvollständig.
 ;
 MSG_ER_UNEXPECTED_UUE_EOF
-Unerwartetes Dateiende beim Dekodieren einer UU-kodierten Datei '%s'. \
+Unerwartetes Dateiende beim Dekodieren der UUcode kodierten Datei '%s'. \
 Die Nachricht scheint unvollständig zu sein.
 ;
 MSG_ER_INVALID_UUE_LENGTH
-Ungültige Zeilenlänge %lD in UU-kodierter Datei '%s'.\n\
+Ungültige Zeilenlänge %lD in UUcode kodierter Datei '%s'.\n\
 \n\
-Grund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
+Grund: fehlerhafter UUcode Kodierer oder unvollständige Nachricht.
 ;
 MSG_RE_HDR_REPLYTO
 Antwort an
@@ -8368,4 +8356,12 @@ e
 ;
 MSG_CO_UPDATE_NEVER
 niemals
+;
+MSG_MA_EXECUTESCRIPT_TITLE
+Auszuführendes Skript auswählen
+;
+MSG_HELP_FI_BT_NONE
+Alle Postfächer von der\n\
+Suche ausschließen. Nur\n\
+nicht das Ausgewählte.
 ;

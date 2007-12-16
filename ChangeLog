@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-16  Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/deutsch.ct, YAM.cd: adapted german translation to very latest
+    changes so that it should be in line with the latest YAM.cd.
+
 2007-12-14  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: added the missing parameter for a hook call.

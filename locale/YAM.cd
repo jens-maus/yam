@@ -5531,7 +5531,7 @@ MSG_CO_SPAMFILTER_TITLE (1763//)
 Spam filter
 ;
 MSG_CO_SPAMFILTER_SUMMARY (1764//)
-Configure here the spam filter.
+Configure the spam filter...
 ;
 MSG_CO_SPAM_FILTERFORNEWMAIL (1765//)
 Check _new mails for spam content
