@@ -15,6 +15,7 @@ $URL$
 
 2007-12-17  Jens Langner <Jens.Langner@light-speed.de>
 
+  * deutsch.ct: minor adaptions/fixes.
   * YAM_MA.c: fixed bug #1851175 where removing the last mail from a folder
     didn't hide the attachment group.
   * YAM_MA.c, YAM_WR.c, WriteAttachmentList.c: fixed bug #1851566 where

@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (16.12.2007)
+## version $VER: YAM.catalog 6.0 (17.12.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -564,19 +564,12 @@ Geben Sie das Passwort ein, um es zu öffnen:
 ; FOLDER
 ;
 MSG_MA_ReplyReq
-Die Nachricht hat mehrere Empfänger.\n\
+Die Nachricht hat mehrere mögliche Empfänger.\n\
 \n\
-Antwort senden die...
-; The selected message has multiple recipients.\n\
-; \n\
-; Do you want to send the reply...
+Möchten Sie die Antwort senden an die...
 ;
 MSG_MA_ReplyReqOpt
-*Ab_sender|Absender _und\nalle Empfänger|_Empfänger|_Abbrechen
-; *to the\n\
-; _sender|to the sender and\n\
-; _all recipients|to the\n\
-; _recipients|_Cancel
+*Ab_sender|A_bsender&Empfänger|_Empfänger|_Abbrechen
 ;
 MSG_MA_CompareReq
 Die Absenderadresse (From) ist \033b<%s>\033n,\n\
