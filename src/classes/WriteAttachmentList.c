@@ -118,15 +118,23 @@ OVERLOAD(MUIM_DragDrop)
       DoMethod(d->obj, MUIM_NList_GetEntry, id, &mail);
       if(mail != NULL)
       {
+        char filename[SIZE_PATHFILE];
         struct Attach attach;
 
         memset(&attach, 0, sizeof(struct Attach));
-        GetMailFile(attach.FilePath, NULL, mail);
-        strlcpy(attach.Description, mail->Subject, sizeof(attach.Description));
-        strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));
-        attach.Size = mail->Size;
-        attach.IsMIME = TRUE;
-        DoMethod(obj, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
+
+        if(StartUnpack(GetMailFile(filename, NULL, mail), attach.FilePath, mail->Folder) != NULL)
+        {
+          strlcpy(attach.Description, mail->Subject, sizeof(attach.Description));
+          strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));
+          attach.Size = mail->Size;
+          attach.IsMIME = TRUE;
+
+          // add the attachment to our attachment listview
+          DoMethod(obj, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
+        }
+        else
+          E(DBF_MAIL, "unpacking of file '%s' failed!", filename);
       }
       else
         break;

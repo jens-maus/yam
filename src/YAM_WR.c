@@ -3222,6 +3222,21 @@ HOOKPROTONHNO(WR_LV_ConFunc, struct Attach *, struct Attach *attach)
 MakeStaticHook(WR_LV_ConFuncHook, WR_LV_ConFunc);
 
 ///
+/// WR_LV_DesFunc
+/*** WR_LV_DesFunc - Attachment listview destruct hook ***/
+HOOKPROTONHNO(WR_LV_DesFunc, LONG, struct Attach *attach)
+{
+  ENTER();
+
+  FinishUnpack(attach->FilePath);
+  free(attach);
+
+  RETURN(0);
+  return 0;
+}
+MakeStaticHook(WR_LV_DesFuncHook, WR_LV_DesFunc);
+
+///
 /// WR_LV_DspFunc
 /*** WR_LV_DspFunc - Attachment listview display hook ***/
 HOOKPROTONH(WR_LV_DspFunc, long, char **array, struct Attach *entry)
@@ -4041,7 +4056,7 @@ static struct WR_ClassData *WR_New(int winnum)
                       MUIA_NList_Format,          "D=8 BAR,P=\033r D=8 BAR,D=8 BAR,P=\033c D=8 BAR,",
                       MUIA_NList_Title,           TRUE,
                       MUIA_NList_ConstructHook,   &WR_LV_ConFuncHook,
-                      MUIA_NList_DestructHook,    &GeneralDesHook,
+                      MUIA_NList_DestructHook,    &WR_LV_DesFuncHook,
                       MUIA_NList_DisplayHook,     &WR_LV_DspFuncHook,
                    End,
                 End,

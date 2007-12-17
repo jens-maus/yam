@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-17  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c, YAM_WR.c, WriteAttachmentList.c: fixed bug #1851566 where
+    forwarding or drag&dropping a mail from a compressed folder as an
+    attachment ended up in having the mail attached in compressed/encrypted
+    form rather than in plain text.
+
 2007-12-17  Pär Boberg <pbobbenb@spray.se>
 
   * doc/YAM_english.guide: Changed a little bit here and there, info about
