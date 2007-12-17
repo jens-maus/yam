@@ -15,6 +15,8 @@ $URL$
 
 2007-12-17  Jens Langner <Jens.Langner@light-speed.de>
 
+  * locale/english-british.ct: added a first primilary version of a british
+    english translation of our internal catalog.
   * deutsch.ct: minor adaptions/fixes.
   * YAM_MA.c: fixed bug #1851175 where removing the last mail from a folder
     didn't hide the attachment group.

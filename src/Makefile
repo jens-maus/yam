@@ -330,6 +330,7 @@ CATALOGS = \
   $(LOCALE)/bosanski.catalog \
   $(LOCALE)/czech.catalog \
   $(LOCALE)/dansk.catalog \
+  $(LOCALE)/english-british.catalog \
   $(LOCALE)/espanol.catalog \
   $(LOCALE)/francais.catalog \
   $(LOCALE)/greek.catalog \
