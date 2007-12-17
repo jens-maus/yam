@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-17  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: in case the user wanted old mails to be deleted upon startup and
+    the current folder was not the trash folder, then the trash folder was not
+    updated after the complete cleanup process. Only a click on the trash folder
+    itself would immediately update the treeview item. Maybe this also fixes
+    bug #1822876.
+
 2007-12-17  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c: fixed bug #1851175 where removing the last mail from a folder

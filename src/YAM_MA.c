@@ -3645,6 +3645,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
   if((flist = FO_CreateList()) != NULL)
   {
     int f;
+    BOOL mailsDeleted = FALSE;
 
     BusyGaugeInt(tr(MSG_BusyDeletingOld), "", (int)*flist);
 
@@ -3673,6 +3674,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
                folder->ExpireUnread == TRUE)
             {
                MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE, FALSE);
+               mailsDeleted = TRUE;
             }
           }
 
@@ -3691,6 +3693,20 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
     }
 
     free(flist);
+
+    // MA_DeleteSingle() does not update the trash folder treeitem if something was deleted from
+    // from another folder, because it was advised to be quiet. So we must refresh the trash folder
+    // tree item manually here to get an up-to-date folder treeview.
+    if(mailsDeleted == TRUE)
+    {
+      struct Folder *trashFolder;
+
+      trashFolder = FO_GetFolderByType(FT_TRASH, NULL);
+      // only update the trash folder item if it is not the active one, as the active one
+      // will be updated below
+      if(FO_GetCurrentFolder() != trashFolder)
+        DisplayStatistics(trashFolder, FALSE);
+    }
 
     // and last but not least we update the appIcon also
     DisplayStatistics(NULL, TRUE);
