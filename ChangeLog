@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-18  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: bumped minimum required version for codesets.library and
+    BetterString.mcc to the latest available version.
+
 2007-12-18  Pär Boberg <pbobbenb@spray.se>
 
   * doc/YAM_english.guide: Made some more changes, added a section in

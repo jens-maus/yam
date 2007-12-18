@@ -2386,7 +2386,7 @@ static void InitBeforeLogin(BOOL hidden)
   // to visit the URL which in turn requires OpenURL to be installed...
   // Hence we try to open openurl.library without
   INITLIB("openurl.library",        1, 0, &OpenURLBase,   "main", &IOpenURL,   FALSE, NULL);
-  INITLIB("codesets.library",       6, 4, &CodesetsBase,  "main", &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
+  INITLIB("codesets.library",       6, 5, &CodesetsBase,  "main", &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
 
   // we check for the amisslmaster.library v3 accordingly
   if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", &IAmiSSLMaster, FALSE, NULL))
@@ -2416,7 +2416,7 @@ static void InitBeforeLogin(BOOL hidden)
   CheckMCC(MUIC_TheButton,  21, 4, TRUE, "http://www.sf.net/projects/thebar/");
 
   // Lets check for the correct BetterString.mcc version
-  CheckMCC(MUIC_BetterString, 11, 13, TRUE, "http://www.sf.net/projects/bstring-mcc/");
+  CheckMCC(MUIC_BetterString, 11, 14, TRUE, "http://www.sf.net/projects/bstring-mcc/");
 
   // we also make sure the user uses the latest brand of all other NList classes, such as
   // NListview, NFloattext etc.
