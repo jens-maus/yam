@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-18  Pär Boberg <pbobbenb@spray.se>
+
+  * doc/YAM_english.guide: Made some more changes, added a section in
+    Configuration about the Spam filter.
+
 2007-12-17  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: in case the user wanted old mails to be deleted upon startup and

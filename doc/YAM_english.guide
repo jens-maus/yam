@@ -168,9 +168,11 @@ Features of YAM
 * Hierarchical @{" address book " link "AB_W"} with groups and distribution lists as
   well as comprehensive descriptions for each entry.
 
+* Embedded read pane in main window, allows for easier reading of your mail.
+
 * Freely customisable interface, thanks to @{" MUI " link "MUI"}.
 
-* A choice of MagicWorkbench, ProLite, @{" NewIcons " link "NEWI"} and GlowIcons.
+* Themes, allows easy switching between different icon themes.
 
 * Built-in @{" POP3 " link "PROT"} client, which can check up to 16 different POP3
   accounts in one connection and also allows prior selection of the
@@ -201,6 +203,8 @@ Features of YAM
   support.
 
 * TLSv1/SSLv3 secure connections (POP3/SMTP) via AmiSSL.library.
+
+* Spam filter ported from Thunderbird.
 
 * Localized to many languages.
 
@@ -349,8 +353,8 @@ Quickstart
 ==========
 
 
-   This chapter is meant to be a step-by-step guide to the way YAM 2.4
-works.  It is assumed that you already have installed YAM 2.4 on your
+   This chapter is meant to be a step-by-step guide to the way YAM
+works.  It is assumed that you already have YAM installed on your
 system and that you're using Miami as your TCP/IP software.
 
    If you have used YAM before, you probably can skip this chapter.
@@ -864,7 +868,7 @@ Installing PGP 5.0i
    1. To begin with, download PGP5 from a reliable source.  A good
       starting point is
 
-       http://www.pgpi.org/products/pgp/versions/freeware/amiga/5.0i/
+       http://www.amigau.com/amigarealm/pgp5/pgp6.html
 
    2. Install PGP in e.g. "Work:PGP/" and create your key pair entering
       "pgpk -g" in a shell window.  The PGP5 directory has the following
@@ -1033,6 +1037,7 @@ part of the configuration window.  There are also three menus available.
  @{" TCP/IP         " link "CO01"}  - SMTP and POP3 settings for mail transfer
  @{" New Mail       " link "CO02"}  - Controlling the way mail is downloaded
  @{" Filters        " link "CO03"}  - Automated sorting and filing of messages
+ @{" Spam           " link "CO15"}  - Setup of the spam filter
  @{" Read           " link "CO04"}  - Layout options
  @{" Write          " link "CO05"}  - Headers, stock phrases and editor settings
  @{" Reply          " link "CO06"}  - Options for quoting messages
@@ -1426,7 +1431,7 @@ Configuration - New mail
 @endnode
 
 @node "CO03" "Configuration - Filters"
-@next "CO04"
+@next "CO15"
 @prev "CO02"
 @toc "CO_W"
 
@@ -1448,13 +1453,13 @@ trigger certain actions.  Applications for the use of filters include
 
 - automatic re-directing of mails to another recipient.
 
-   You can define upto 100 of such filters.  The list on the left shows
-the names of all the filters defined so far.  Click on a name to bring
-up its details on the right, spread across three sheets -- @{b}Options@{ub},
-@{b}Comparison@{ub} and @{b}Action@{ub}.  Click on [New] to create a new filter or use
-[Delete] to delete one.  Filters are executed in top-to-bottom order,
-therefore you should place filters that delete or move messages at the
-bottom of the list.
+   You can define theoretically an unlimited number of filters.
+The list on the left shows the names of all the filters defined so far.
+Click on a name to bring up its details on the right, spread across
+three sheets -- @{b}Options@{ub}, @{b}Comparison@{ub} and @{b}Action@{ub}.
+Click on [New] to create a new filter or use [Delete] to delete one.
+Filters are executed in top-to-bottom order, therefore you should place
+filters that delete or move messages at the bottom of the list.
 
 
 ---- Options sheet -------------------------------------------------------
@@ -1646,9 +1651,55 @@ bottom of the list.
 
 @endnode
 
+@node "CO15" "Spam"
+@next "CO04"
+@prev "CO03"
+@toc "CO_W"
+
+Spam filter
+***********
+
+
+@{b}Activate spam filter@{ub}
+     Activates the spam filter, believe it or not :)
+
+     @{b}Reset Spam training data@{ub}
+      Resets the Spam training data.
+      Should only be necessary in rare circumstances.
+
+@{b}Check new mail for spam content@{ub}
+     Automatically checks new mail for spam content.
+
+
+@{b}Addressbook whitelisted@{ub}
+     If a mail has an From: address that exist in your addressbook,
+     it will never be considered as spam.
+
+
+@{b}Mark mail as spam when moved to Spam folder@{ub}
+     Any mail that is manually moved to the Spam folder are
+     automatically marked as spam.
+
+
+@{b}Mark new spam as read@{ub}
+     This option will automatically mark new spam mails as read.
+
+
+@{b}Move 'Not Spam' back to 'Incoming'@{ub}
+     Will move mails that has been wrongfully detected as spam
+     or mails that have manually been marked as 'Not Spam' back
+     to 'Incoming' folder.
+
+
+@{b}Apply filters@{ub}
+     Applies all your defined filters to mail that is moved back
+     to the 'Incoming' folder.
+
+@endnode
+
 @node "CO04" "Configuration - Read"
 @next "CO05"
-@prev "CO03"
+@prev "CO15"
 @toc "CO_W"
 
 Configuration - Read
@@ -9709,7 +9760,7 @@ old.info@{ub}
      "ghosted" variety, i.e. they provide the images to be used when the
      icons must look ghosted.
 
-     Since YAM 2.4 features a Search facility in the Write window, the
+     Since YAM 2.5 features a Search facility in the Write window, the
      Write#?.toolbar images were upgraded to implement the needed Search
      icon.
 
@@ -10478,7 +10529,7 @@ when they are supposed to be part of URLs, a number of Internet
 resources, entities and users keep using the "[]" braces in unencoded
 form, and this used to make YAM stop parsing an URL as soon as such
 characters were found, as in "<http://www.example.com/files[7]/myfile>".
-As a workaround for this problem, YAM 2.4 takes these characters as
+As a workaround for this problem, YAM 2.5 takes these characters as
 part of the URL.
 
    Parenthesis are allowed in URLs in unencoded form, which again
@@ -10595,7 +10646,7 @@ Support
 *******
 
 
- @{" YAM in the World Wide Web " link "INF0"}  - Where to look for more info about YAM in the WWW
+ @{" YAM on the World Wide Web " link "INF0"}  - Where to look for more info about YAM on the WWW
  @{" Mailing lists             " link "INF1"}  - Join the YAM community!
  @{" Bug reporting             " link "INF2"}  - How to report a bug
  @{" Enhancement requests      " link "INF3"}  - Where to post them
@@ -10604,7 +10655,7 @@ Support
 
 @endnode
 
-@node "INF0" "Support - YAM in the World Wide Web"
+@node "INF0" "Support - YAM on the World Wide Web"
 @next "INF1"
 @prev "INF5"
 @toc "INFO"
@@ -10700,7 +10751,7 @@ points:
 
       2. Try your best to enter a meaningful "Short description" of the
          problem.  *Don't forget* to state the version of YAM to whom this
-         applies, i.e. use a template like "2.4: Doing xyz crashes YAM".
+         applies, i.e. use a template like "2.5: Doing xyz crashes YAM".
 
       3. Do not hesitate to be descriptive in your report, giving a
          step-by-step guide on how to reproduce the problem and stating
@@ -10890,6 +10941,7 @@ Credits
    Documentation
 
       David Rey
+      Par Boberg
 
 
    Interim betas provided by
@@ -10987,7 +11039,7 @@ MUI
 
                         MUI - MagicUserInterface
 
-                (c) Copyright 1993-2004 by Stefan Stuntz
+                (c) Copyright 1993-2007 by Stefan Stuntz
 
 MUI  is  a system to generate and maintain graphical user interfaces. With
 the  aid  of  a  preferences  program,  the user of an application has the
