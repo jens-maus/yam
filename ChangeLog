@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-18  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c: put all config pages on a scroll group object. This fixes a
+    possible crash caused by MUI itself if the screen is too small to take the
+    resized window in case the preview image on the Look&Feel page is too big.
+    Additionally this makes all pages look a bit more uniform.
+
 2007-12-18  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: bumped minimum required version for codesets.library and
