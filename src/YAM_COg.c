@@ -2481,8 +2481,6 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                    End,
               End,
 
-              Child, HVSpace,
-
             End,
           End,
 
@@ -3554,8 +3552,6 @@ Object *CO_PageMIME(struct CO_ClassData *data)
                   End,
                 End,
 
-                Child, HVSpace,
-
               End,
             End,
 
@@ -3732,8 +3728,6 @@ Object *CO_PageScripts(struct CO_ClassData *data)
 
                 End,
              End,
-
-             Child, HVSpace,
 
            End,
          End,

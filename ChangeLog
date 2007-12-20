@@ -7,6 +7,7 @@ $URL$
 
 2007-12-20  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: removed again some HVSpaces where they were not necessary.
   * doc/Install_YAM: removed the YAM: assign from the installer script and the
     british english catalog for OS3/MOS, as these systems cannot handle accents
     of a language.
