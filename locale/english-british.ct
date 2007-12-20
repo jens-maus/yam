@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.0 (16.12.2007)
+## version $VER: YAM.catalog 6.0 (20.12.2007)
 ## language english-british
 ## codeset 0
 ; $Id$
@@ -50,7 +50,7 @@ Programme used to display\n\
 attachments of unknown type.
 ;
 MSG_WR_TBColored
-Coloured
+Colour
 ;
 MSG_WR_Colored
 Alternative colour

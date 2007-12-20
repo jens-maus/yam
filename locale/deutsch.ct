@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (17.12.2007)
+## version $VER: YAM.catalog 6.0 (20.12.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -703,7 +703,7 @@ _Ändern
 ; _Edit
 ;
 MSG_MA_TBMove
-_Versch...
+_Versch.
 ;
 MSG_MA_TBDelete
 L_öschen
@@ -722,7 +722,7 @@ _Antwort
 ; _Reply
 ;
 MSG_MA_TBForward
-_Weiterl.
+_Weiterl
 ; For_ward
 ;
 MSG_MA_TBGetMail
@@ -738,7 +738,7 @@ _Filtern
 ; F_ilter
 ;
 MSG_MA_TBFind
-S_uchen...
+S_uchen
 ;
 MSG_MA_TBAddrBook
 A-_Buch
@@ -3074,7 +3074,7 @@ _Speich.
 ; _Save
 ;
 MSG_AB_TBFind
-S_uchen...
+S_uchen
 ; _Find
 ;
 MSG_AB_TBNewUser
@@ -3736,28 +3736,28 @@ N.T_hema
 ; NextT_hr
 ;
 MSG_RE_TBDisplay
-_Zeigen...
+_Zeigen
 ; _Display
 ;
 MSG_RE_TBSave
-_Speich...
+_Speich.
 ;
 MSG_RE_TBPrint
-_Drucken...
+_Drucken
 ;
 MSG_RE_TBDelete
 L_öschen
 ; De_lete
 ;
 MSG_RE_TBMove
-_Versch...
+_Versch.
 ;
 MSG_RE_TBReply
 _Antwort
 ; _Reply
 ;
 MSG_RE_TBForward
-_Weiter
+_Weiterl
 ; For_ward
 ;
 ;
@@ -4048,7 +4048,7 @@ Editor
 ; Editor
 ;
 MSG_WR_TBInsert
-D.Einf...
+D.Einf.
 ; Insert
 ;
 MSG_WR_TBCut
@@ -5796,7 +5796,7 @@ Kein Betreff gesetzt, trotzdem fortfahren?
 ; The subject is missing, continue anyway?
 ;
 MSG_WR_TBSearch
-Suchen...
+Suchen
 ;
 MSG_HELP_WR_BT_SEARCH
 Sucht den Text für eine gegebene Zeichenkette.

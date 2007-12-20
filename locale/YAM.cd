@@ -537,46 +537,46 @@ Outgoing
 MSG_MA_Sent (181//)
 Sent
 ;
-MSG_MA_TBRead (184//)
+MSG_MA_TBRead (184//8)
 Rea_d
 ;
-MSG_MA_TBEdit (185//)
+MSG_MA_TBEdit (185//8)
 _Edit
 ;
-MSG_MA_TBMove (186//)
-_Move...
+MSG_MA_TBMove (186//8)
+_Move
 ;
-MSG_MA_TBDelete (187//)
+MSG_MA_TBDelete (187//8)
 De_lete
 ;
-MSG_MA_TBGetAddr (188//)
+MSG_MA_TBGetAddr (188//8)
 Ge_tAdd
 ;
-MSG_MA_TBWrite (189//)
+MSG_MA_TBWrite (189//8)
 _New
 ;
-MSG_MA_TBReply (190//)
+MSG_MA_TBReply (190//8)
 _Reply
 ;
-MSG_MA_TBForward (191//)
+MSG_MA_TBForward (191//8)
 For_ward
 ;
-MSG_MA_TBGetMail (192//)
+MSG_MA_TBGetMail (192//8)
 _Get
 ;
-MSG_MA_TBSendAll (193//)
+MSG_MA_TBSendAll (193//8)
 _Send
 ;
-MSG_MA_TBFilter (194//)
+MSG_MA_TBFilter (194//8)
 F_ilter
 ;
-MSG_MA_TBFind (195//)
-_Find...
+MSG_MA_TBFind (195//8)
+_Find
 ;
-MSG_MA_TBAddrBook (196//)
-A. _book
+MSG_MA_TBAddrBook (196//8)
+A_book
 ;
-MSG_MA_TBConfig (197//)
+MSG_MA_TBConfig (197//8)
 _Config
 ;
 ;
@@ -2273,34 +2273,34 @@ Unfold all
 ;
 ; Module AB - Toolbar
 ;
-MSG_AB_TBSave (747//)
+MSG_AB_TBSave (747//8)
 _Save
 ;
-MSG_AB_TBFind (748//)
-_Find...
+MSG_AB_TBFind (748//8)
+_Find
 ;
-MSG_AB_TBNewUser (749//)
+MSG_AB_TBNewUser (749//8)
 _Person
 ;
-MSG_AB_TBNewList (750//)
+MSG_AB_TBNewList (750//8)
 _List
 ;
-MSG_AB_TBNewGroup (751//)
+MSG_AB_TBNewGroup (751//8)
 _Group
 ;
-MSG_AB_TBEdit (752//)
+MSG_AB_TBEdit (752//8)
 _Edit
 ;
-MSG_AB_TBDelete (753//)
+MSG_AB_TBDelete (753//8)
 _Delete
 ;
-MSG_AB_TBPrint (754//)
+MSG_AB_TBPrint (754//8)
 P_rint
 ;
-MSG_AB_TBOpenTree (755//)
+MSG_AB_TBOpenTree (755//8)
 _Unfold
 ;
-MSG_AB_TBCloseTree (756//)
+MSG_AB_TBCloseTree (756//8)
 F_old
 ;
 ;
@@ -2751,37 +2751,37 @@ Text styles?
 ;
 ; Module RE - Toolbar
 ;
-MSG_RE_TBPrev (892//)
+MSG_RE_TBPrev (892//8)
 _Prev
 ;
-MSG_RE_TBNext (893//)
+MSG_RE_TBNext (893//8)
 _Next
 ;
-MSG_RE_TBPrevTh (894//)
+MSG_RE_TBPrevTh (894//8)
 Prev_Thr
 ;
-MSG_RE_TBNextTh (895//)
+MSG_RE_TBNextTh (895//8)
 NextT_hr
 ;
-MSG_RE_TBDisplay (896//)
-_Display...
+MSG_RE_TBDisplay (896//8)
+_Display
 ;
-MSG_RE_TBSave (897//)
-_Save...
+MSG_RE_TBSave (897//8)
+_Save
 ;
-MSG_RE_TBPrint (898//)
-Pr_int...
+MSG_RE_TBPrint (898//8)
+Pr_int
 ;
-MSG_RE_TBDelete (899//)
+MSG_RE_TBDelete (899//8)
 De_lete
 ;
-MSG_RE_TBMove (900//)
-_Move...
+MSG_RE_TBMove (900//8)
+_Move
 ;
-MSG_RE_TBReply (901//)
+MSG_RE_TBReply (901//8)
 _Reply
 ;
-MSG_RE_TBForward (902//)
+MSG_RE_TBForward (902//8)
 For_ward
 ;
 ;
@@ -2994,35 +2994,35 @@ Bounce _to
 ;
 ; Module WR - Toolbar
 ;
-MSG_WR_TBEditor (968//)
+MSG_WR_TBEditor (968//8)
 Editor
 ;
-MSG_WR_TBInsert (969//)
-Insert...
+MSG_WR_TBInsert (969//8)
+Insert
 ;
-MSG_WR_TBCut (970//)
+MSG_WR_TBCut (970//8)
 Cut
 ;
-MSG_WR_TBCopy (971//)
+MSG_WR_TBCopy (971//8)
 Copy
 ;
-MSG_WR_TBPaste (972//)
+MSG_WR_TBPaste (972//8)
 Paste
 ;
-MSG_WR_TBUndo (973//)
+MSG_WR_TBUndo (973//8)
 Undo
 ;
-MSG_WR_TBBold (974//)
+MSG_WR_TBBold (974//8)
 Bold
 ;
-MSG_WR_TBItalic (975//)
+MSG_WR_TBItalic (975//8)
 Italic
 ;
-MSG_WR_TBUnderlined (976//)
+MSG_WR_TBUnderlined (976//8)
 ULined
 ;
-MSG_WR_TBColored (977//)
-Colored
+MSG_WR_TBColored (977//8)
+Color
 ;
 ;
 ; Module WR - Menus
@@ -4276,8 +4276,8 @@ MSG_WR_OKAYCANCELREQ (1388//)
 MSG_WR_NOSUBJECTREQ (1389//)
 The subject is missing, continue anyway?
 ;
-MSG_WR_TBSearch (1390//)
-Search...
+MSG_WR_TBSearch (1390//8)
+Search
 ;
 MSG_HELP_WR_BT_SEARCH (1391//)
 Search the text\n\
@@ -5475,10 +5475,10 @@ Spam
 MSG_LOADINGSPAMTRAININGDATA (1745//)
 Loading spam training data...
 ;
-MSG_MA_TBSPAM (1746//)
+MSG_MA_TBSPAM (1746//8)
 Sp_am
 ;
-MSG_MA_TBNOTSPAM (1747//)
+MSG_MA_TBNOTSPAM (1747//8)
 No sp_am
 ;
 MSG_HELP_MA_BT_SPAM (1748//)
@@ -5487,11 +5487,11 @@ Mark message as spam
 MSG_HELP_MA_BT_NOTSPAM (1749//)
 Mark message as not spam
 ;
-MSG_RE_TBSPAM (1750//)
+MSG_RE_TBSPAM (1750//8)
 Sp_am
 ;
-MSG_RE_TBNOTSPAM (1751//)
-N.Spam
+MSG_RE_TBNOTSPAM (1751//8)
+No sp_am
 ;
 MSG_HELP_RE_BT_SPAM (1752//)
 Mark message as spam.

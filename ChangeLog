@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-20  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.cd, deutsch.ct, english-british.ct: adapted all toolbar strings to
+    not be wider than 8 characters or otherwise the size of the toolbars
+    may become to wide for systems with a small screen size. In addition,
+    please note, that the strings of the toolbar are just meant to carry
+    rough abbreviations of the actions. So translators should keep the
+    strings small as well.
+
 2007-12-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: bumped minimum required version for all NList-classes according
