@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: bumped minimum required version for all NList-classes according
+    to the version in the v0.101 release.
+
 2007-12-18  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c: put all config pages on a scroll group object. This fixes a
