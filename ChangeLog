@@ -7,6 +7,9 @@ $URL$
 
 2007-12-20  Thore Böckelmann <tboeckel@gmx.de>
 
+  * doc/Install_YAM: removed the YAM: assign from the installer script and the
+    british english catalog for OS3/MOS, as these systems cannot handle accents
+    of a language.
   * doc/Install_YAM: first modifications for upcoming release of 2.5. Currently
     only english, british english, german, french and swedish are all languages
     still supported. All other languages will be excluded from the release,

@@ -8,10 +8,12 @@
 ;
 ; /// Setting up
 (set #def_lang_English              0)
-(set #def_lang_English_British      1)
-(set #def_lang_Deutsch              2)
-(set #def_lang_Francais             4)
-(set #def_lang_Svenska              8)
+(set #def_lang_Deutsch              1)
+(set #def_lang_Francais             2)
+(set #def_lang_Svenska              4)
+; accents of languages should be appended at the end rather than somewhere in the middle,
+; because only OS4 can handle them.
+(set #def_lang_English_British      8)
 
 (set #def_doc_English               0)
 (set #def_doc_Deutsch               1)
@@ -143,16 +145,15 @@
 (if os4
   ; OS4 does use english locale names only
   (
-    (set #cat_name_English_British       "english-british")
     (set #cat_name_Deutsch               "german")
     (set #cat_name_Francais              "french")
     (set #cat_name_Svenska               "swedish")
+    (set #cat_name_English_British       "english-british")
   )
   ; OS3 and MOS use localized locale names
   (
-    (set #cat_name_English_British       "english-british")
     (set #cat_name_Deutsch               "deutsch")
-    (set #cat_name_Francais              "francais")
+    (set #cat_name_Francais              "français")
     (set #cat_name_Svenska               "svenska")
   )
 )
@@ -175,16 +176,31 @@
 
 (complete 10)
 
-(set Catalog_lang
-   (askoptions
-      (prompt  #lang_catalog)
-      (help @askoptions-help)
-      (choices "English (british)"
-               "Deutsch"
-               "Français"
-               "Svenska"
+(if os4
+   ; OS4 can handle different accents of one language (i.e. british english)
+   (set Catalog_lang
+      (askoptions
+         (prompt  #lang_catalog)
+         (help @askoptions-help)
+         (choices "English (british)"
+                  "Deutsch"
+                  "Français"
+                  "Svenska"
+         )
+         (default #def_cat_lang)
       )
-      (default #def_cat_lang)
+   )
+   ; but OS3/MOS cannot
+   (set Catalog_lang
+      (askoptions
+         (prompt  #lang_catalog)
+         (help @askoptions-help)
+         (choices "Deutsch"
+                  "Français"
+                  "Svenska"
+         )
+         (default #def_cat_lang)
+      )
    )
 )
 
@@ -229,16 +245,6 @@
       (set Cat_dir (tackon YAM_dir "Catalogs"))
       (if (not (exists Cat_dir))  (makedir Cat_dir))
 
-      (if (bitand Catalog_lang #def_lang_English_British)
-         (
-            (set lang #cat_name_English_British)
-            (copyfiles (source (tackon "/Catalogs" lang))
-               (choices "YAM.catalog")
-               (dest (tackon Cat_dir lang))
-            )
-         )
-      )
-
       (if (bitand Catalog_lang #def_lang_Deutsch)
          (
             (set lang #cat_name_Deutsch)
@@ -262,6 +268,17 @@
       (if (bitand Catalog_lang #def_lang_Svenska)
          (
             (set lang #cat_name_Svenska)
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      ; accents of certain languages (OS4 only)
+      (if (bitand Catalog_lang #def_lang_English_British)
+         (
+            (set lang #cat_name_English_British)
             (copyfiles (source (tackon "/Catalogs" lang))
                (choices "YAM.catalog")
                (dest (tackon Cat_dir lang))
@@ -332,7 +349,7 @@
    )
 )
 
-(complete 85)
+(complete 90)
 
 (foreach "Libs/" "#?.library"
    (copylib (prompt @each-name)
@@ -342,15 +359,6 @@
             (help @copylib-help)
    )
 )
-
-(complete 90)
-
-(startup "YAM - Amiga mailer © Marcel Beck & YAM Open Source Team"
-   (prompt #assign_prompt)
-   (help   #assign_help)
-   (command "C:Assign YAM: \"" YAM_dir "\"\n")
-)
-(makeassign "YAM" YAM_dir)
 
 (complete 100)
 
