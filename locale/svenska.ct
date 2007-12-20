@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.29 (16.12.07)
+## version $VER: YAM.ct 6.30 (20.12.07)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -620,59 +620,59 @@ Skickat
 MSG_MA_TBRead
 _Läs
 ;#DEF Rea_d
-;#SET (184//)
+;#SET (184//8)
 MSG_MA_TBEdit
 R_edig.
 ;#DEF _Edit
-;#SET (185//)
+;#SET (185//8)
 MSG_MA_TBMove
-_Flytta...
-;#DEF _Move...
-;#SET (186//)
+_Flytta
+;#DEF _Move
+;#SET (186//8)
 MSG_MA_TBDelete
 _Radera
 ;#DEF De_lete
-;#SET (187//)
+;#SET (187//8)
 MSG_MA_TBGetAddr
 S_paAdr
 ;#DEF Ge_tAdd
-;#SET (188//)
+;#SET (188//8)
 MSG_MA_TBWrite
 _Nytt
 ;#DEF _New
-;#SET (189//)
+;#SET (189//8)
 MSG_MA_TBReply
 S_vara
 ;#DEF _Reply
-;#SET (190//)
+;#SET (190//8)
 MSG_MA_TBForward
 Vi_dare.
 ;#DEF For_ward
-;#SET (191//)
+;#SET (191//8)
 MSG_MA_TBGetMail
 _Hämta
 ;#DEF _Get
-;#SET (192//)
+;#SET (192//8)
 MSG_MA_TBSendAll
 _Skicka
 ;#DEF _Send
-;#SET (193//)
+;#SET (193//8)
 MSG_MA_TBFilter
 F_ilt.
 ;#DEF F_ilter
-;#SET (194//)
+;#SET (194//8)
 MSG_MA_TBFind
-S_ök...
-;#DEF _Find...
-;#SET (195//)
+S_ök
+;#DEF _Find
+;#SET (195//8)
 MSG_MA_TBAddrBook
 A._bok
-;#DEF A. _book
-;#SET (196//)
+;#DEF A_book
+;#SET (196//8)
 MSG_MA_TBConfig
 Ins_t.
 ;#DEF _Config
-;#SET (197//)
+;#SET (197//8)
 MSG_MA_Project
 Arkiv
 ;#DEF Project
@@ -2656,43 +2656,43 @@ Visa alla
 MSG_AB_TBSave
 _Spara
 ;#DEF _Save
-;#SET (747//)
+;#SET (747//8)
 MSG_AB_TBFind
-S_ök...
-;#DEF _Find...
-;#SET (748//)
+S_ök
+;#DEF _Find
+;#SET (748//8)
 MSG_AB_TBNewUser
 _Person
 ;#DEF _Person
-;#SET (749//)
+;#SET (749//8)
 MSG_AB_TBNewList
 _Lista
 ;#DEF _List
-;#SET (750//)
+;#SET (750//8)
 MSG_AB_TBNewGroup
 _Grupp
 ;#DEF _Group
-;#SET (751//)
+;#SET (751//8)
 MSG_AB_TBEdit
 R_ed.
 ;#DEF _Edit
-;#SET (752//)
+;#SET (752//8)
 MSG_AB_TBDelete
 _Radera
 ;#DEF _Delete
-;#SET (753//)
+;#SET (753//8)
 MSG_AB_TBPrint
 S_kriv.
 ;#DEF P_rint
-;#SET (754//)
+;#SET (754//8)
 MSG_AB_TBOpenTree
 _Visa
 ;#DEF _Unfold
-;#SET (755//)
+;#SET (755//8)
 MSG_AB_TBCloseTree
 Döl_j
 ;#DEF F_old
-;#SET (756//)
+;#SET (756//8)
 MSG_HELP_AB_BT_SAVE
 Spara nuvarande ändringar.
 ;#DEF Save current changes.
@@ -3176,47 +3176,47 @@ Textstilar?
 MSG_RE_TBPrev
 _Föreg.
 ;#DEF _Prev
-;#SET (892//)
+;#SET (892//8)
 MSG_RE_TBNext
 _Nästa
 ;#DEF _Next
-;#SET (893//)
+;#SET (893//8)
 MSG_RE_TBPrevTh
 För_Ked
 ;#DEF Prev_Thr
-;#SET (894//)
+;#SET (894//8)
 MSG_RE_TBNextTh
 NäsK_ed
 ;#DEF NextT_hr
-;#SET (895//)
+;#SET (895//8)
 MSG_RE_TBDisplay
-_Visa...
-;#DEF _Display...
-;#SET (896//)
+_Visa
+;#DEF _Display
+;#SET (896//8)
 MSG_RE_TBSave
-_Spara...
-;#DEF _Save...
-;#SET (897//)
+_Spara
+;#DEF _Save
+;#SET (897//8)
 MSG_RE_TBPrint
-Skr_iv...
-;#DEF Pr_int...
-;#SET (898//)
+Skr_iv
+;#DEF Pr_int
+;#SET (898//8)
 MSG_RE_TBDelete
 _Radera
 ;#DEF De_lete
-;#SET (899//)
+;#SET (899//8)
 MSG_RE_TBMove
-Fl_ytta...
-;#DEF _Move...
-;#SET (900//)
+Fl_ytta
+;#DEF _Move
+;#SET (900//8)
 MSG_RE_TBReply
 Sv_ara
 ;#DEF _Reply
-;#SET (901//)
+;#SET (901//8)
 MSG_RE_TBForward
 Vi_dare.
 ;#DEF For_ward
-;#SET (902//)
+;#SET (902//8)
 MSG_HELP_RE_BT_PREVIOUS
 Visa innehållet för\nföregående meddelande.
 ;#DEF Display contents of\nthe previous message.
@@ -3460,43 +3460,43 @@ Studsa _till
 MSG_WR_TBEditor
 Redig.
 ;#DEF Editor
-;#SET (968//)
+;#SET (968//8)
 MSG_WR_TBInsert
-Infoga...
-;#DEF Insert...
-;#SET (969//)
+Infoga
+;#DEF Insert
+;#SET (969//8)
 MSG_WR_TBCut
 Klipp
 ;#DEF Cut
-;#SET (970//)
+;#SET (970//8)
 MSG_WR_TBCopy
 Kop.
 ;#DEF Copy
-;#SET (971//)
+;#SET (971//8)
 MSG_WR_TBPaste
 Klist.
 ;#DEF Paste
-;#SET (972//)
+;#SET (972//8)
 MSG_WR_TBUndo
 Ångra
 ;#DEF Undo
-;#SET (973//)
+;#SET (973//8)
 MSG_WR_TBBold
 Fet
 ;#DEF Bold
-;#SET (974//)
+;#SET (974//8)
 MSG_WR_TBItalic
 Kursiv
 ;#DEF Italic
-;#SET (975//)
+;#SET (975//8)
 MSG_WR_TBUnderlined
 Under.
 ;#DEF ULined
-;#SET (976//)
+;#SET (976//8)
 MSG_WR_TBColored
-Färgad
-;#DEF Colored
-;#SET (977//)
+Färg
+;#DEF Color
+;#SET (977//8)
 MSG_WR_Text
 Text
 ;#DEF Text
@@ -4822,9 +4822,9 @@ Inget ärende är satt, forsätt ändå?
 ;#DEF The subject is missing, continue anyway?
 ;#SET (1389//)
 MSG_WR_TBSearch
-Sök...
-;#DEF Search...
-;#SET (1390//)
+Sök
+;#DEF Search
+;#SET (1390//8)
 MSG_HELP_WR_BT_SEARCH
 Sök efter en\ngiven textsträng.
 ;#DEF Search the text\nfor a given string.
@@ -6096,11 +6096,11 @@ Laddar träningsdata för skräppost...
 MSG_MA_TBSPAM
 Skr_äp
 ;#DEF Sp_am
-;#SET (1746//)
+;#SET (1746//8)
 MSG_MA_TBNOTSPAM
 Ej skr_äp
 ;#DEF No sp_am
-;#SET (1747//)
+;#SET (1747//8)
 MSG_HELP_MA_BT_SPAM
 Markera meddelande som skräppost
 ;#DEF Mark message as spam
@@ -6112,11 +6112,11 @@ Markera meddelande som ej skräppost
 MSG_RE_TBSPAM
 Skr_äp
 ;#DEF Sp_am
-;#SET (1750//)
+;#SET (1750//8)
 MSG_RE_TBNOTSPAM
-Ej skr_äp
-;#DEF N.Spam
-;#SET (1751//)
+Ej skräp
+;#DEF No sp_am
+;#SET (1751//8)
 MSG_HELP_RE_BT_SPAM
 Markera meddelande som skräppost.
 ;#DEF Mark message as spam.

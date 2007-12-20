@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.5 (17.12.2007)
+@$VER: YAM.guide 2.5 (18.12.2007)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -234,16 +234,16 @@ Software
    * @{" MUI " link "MUI"} 3.8 or higher
    * 3rd party MUI custom classes:
 
-        - BetterString 11.13+
-            http://aminet.net/dev/mui/MCC_BetterString-11.13.lha
-        - NList 0.100+
-            http://aminet.net/dev/mui/MCC_NList-0.100.lha
-        - TextEditor 15.24+
-            http://aminet.net/dev/mui/MCC_TextEditor-15.24.lha
+        - BetterString 11.14+
+            http://aminet.net/dev/mui/MCC_BetterString-11.14.lha
+        - NList 0.101+
+            http://aminet.net/dev/mui/MCC_NList-0.101.lha
+        - TextEditor 15.25+
+            http://aminet.net/dev/mui/MCC_TextEditor-15.25.lha
         - Thebar 21.4+
             http://aminet.net/dev/mui/MCC_TheBar-21.4.lha
 
-   * Codesets Library 6.4+
+   * Codesets Library 6.5+
    * AmiTCP compatible TCP/IP stack (AmiTCP, Miami[DX], TermiteTCP, RoadShow)
    * optional: XPK for compression of articles
    * optional: PGP 2.6 or 5.0 for encryption and signing messages
@@ -263,25 +263,16 @@ Installation
 ============
 
 
-   To minimize download time, YAM 2.4 is distributed in five different LhA
-archives which must be unpacked into the same directory before installation:
+   YAM 2.5 is distributed in three LhA archives:
 
-@{b}YAM24.lha@{ub}
-     The main archive.  Includes a basic installation for 68020 processors
-     or better, and the English manual in AmigaGuide format.
+@{b}YAM25-AmigaOS4.lha@{ub}
+     YAM for AmigaOS 4
 
-@{b}YAM24cpu.lha@{ub}
-     Diff to patch the 020 executable and turn it into a 68040/060
-     executable.  Includes the GPatch utility.
+@{b}YAM25-AmigaOS3.lha@{ub}
+     YAM for AmigaOS 3
 
-@{b}YAM24loc.lha@{ub}
-     Foreign language support files: catalogs and AmigaGuide manuals.
-
-@{b}YAM24con.lha@{ub}
-     Additional graphics, ARexx scripts, etc.
-
-@{b}YAM24mos.lha@{ub}
-     MorphOS binary, includes starter.
+@{b}YAM25-MorphOS.lha@{ub}
+     YAM for MorphOS
 
 
 Installation by using the installer
@@ -302,7 +293,7 @@ unable or unwilling to use it, proceed as follows:
 - Create a directory for YAM on your hard disk.
 
 - Copy the files @{b}YAM@{ub}, @{b}YAM_english.guide@{ub} and @{b}.taglines@{ub} as well as the
-  directories @{b}Charsets@{ub}, @{b}Icons@{ub} and @{b}Rexx@{ub} to this new directory.  Rename
+  directories @{b}Rexx@{ub} and @{b}Themes@{ub} to this new directory.  Rename
   the guide file to @{b}YAM.guide@{ub}.
 
 - (If appropriate) Copy the file @{b}YAM.catalog@{ub} for your language to
@@ -312,35 +303,12 @@ unable or unwilling to use it, proceed as follows:
   @{b}MUI:libs/MUI@{ub}.
 
 - Create an entry in your @{b}S:User-Startup@{ub} assigning @{b}YAM:@{ub} to the
-  directory you have created for YAM 2.5.  For example,
+  directory you have created for YAM.  For example,
 
           1:> assign YAM: Work:Internet/YAM
 
 - Reboot your Amiga
 
-
-Installation notes under MorphOS
---------------------------------
-
-   Manual installation under MorphOS requires some additional steps:
-
-- In your YAM: directory, rename "YAM" (AmigaOS 68k version installed
-  either manually or using the installer script) as "YAM.amigaos"
-  (don't rename the icon!):
-
-          1:> rename YAM:YAM as YAM:YAM.amigaos
-
-- Copy the "YAM.morphos" binary from "YAM24mos.lha" to your YAM: directory:
-
-          1:> copy YAM.morphos YAM:
-
-- Copy the "YAM.starter" executable as "YAM" into your YAM: directory:
-
-          1:> copy YAM.starter YAM:YAM
-
-   Now you can launch YAM in the usual way (from CLI or Workbench).
-The 68k or the PPC version will be selected automatically according
-to the OS you are using.
 
 @endnode
 
@@ -10891,6 +10859,7 @@ Credits
 
       Alexandre Balaban
       Par Boberg
+      Vit Sindlar
 
    Third party software contributors
 
@@ -11349,6 +11318,7 @@ local bulletin boards or on public domain disks.
    @{" SMTP AUTH " link "CO01"}
    @{" SMTP server " link "CO01"}
    @{" Sources, Getting the " link "INF5"}
+   @{" Spam " link "CO15"}
    @{" SSLv3, POP3 secure settings " link "CO01"}
    @{" Startup options " link "RF00"}
    @{" Status bar " link "CO08"}

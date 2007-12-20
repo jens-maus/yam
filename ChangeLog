@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-20  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: Updated according to changes.
+  * doc/YAM_english.guide: Updated the software requirements with the recently
+    release MUI mcc's and Codesets library.
+
 2007-12-20  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c: removed again some HVSpaces where they were not necessary.
