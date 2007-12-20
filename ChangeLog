@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-20  Thore Böckelmann <tboeckel@gmx.de>
+
+  * doc/Install_YAM: first modifications for upcoming release of 2.5. Currently
+    only english, british english, german, french and swedish are all languages
+    still supported. All other languages will be excluded from the release,
+    because the catalogs have not been updated since 2.4 or even 2.3. The
+    documentation laggs even more behind, but since this is not essential to be
+    able to run YAM we leave it as it is for the moment.
+
 2007-12-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.cd, deutsch.ct, english-british.ct: adapted all toolbar strings to
