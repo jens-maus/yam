@@ -2426,7 +2426,7 @@ static void InitBeforeLogin(BOOL hidden)
   CheckMCC(MUIC_NListtree,  18,  27, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
   // Lets check for the correct TextEditor.mcc version
-  CheckMCC(MUIC_TextEditor, 15, 24, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
+  CheckMCC(MUIC_TextEditor, 15, 25, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
 
   // now we search through PROGDIR:Charsets and load all user defined
   // codesets via codesets.library

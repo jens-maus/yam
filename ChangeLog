@@ -19,6 +19,8 @@ $URL$
 
 2007-12-20  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: bumped minimum required version of TextEditor.mcc to 15.25 as
+    that one is the very latest now.
   * YAM.cd, deutsch.ct, english-british.ct: adapted all toolbar strings to
     not be wider than 8 characters or otherwise the size of the toolbars
     may become to wide for systems with a small screen size. In addition,
