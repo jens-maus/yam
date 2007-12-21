@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-21  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c: not all XPK libraries were added to the packers list because some
+    do not offer all flags. But since XPK is basically a packing suite all these
+    libs should occur in the list. This fixes bug #1855456.
+
 2007-12-20  Pär Boberg <pbobbenb@spray.se>
 
   * locale/svenska.ct: Updated according to changes.

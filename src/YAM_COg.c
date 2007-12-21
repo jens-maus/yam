@@ -1506,7 +1506,7 @@ MakeStaticHook(InfoBarPosHook, InfoBarPosFunc);
 /*** Special object creation functions ***/
 /// MakeXPKPop
 //  Creates a popup list of available XPK sublibraries
-static Object *MakeXPKPop(Object **text, BOOL pack, BOOL encrypt)
+static Object *MakeXPKPop(Object **text, BOOL encrypt)
 {
   Object *lv, *po, *but;
 
@@ -1537,12 +1537,15 @@ static Object *MakeXPKPop(Object **text, BOOL pack, BOOL encrypt)
       struct xpkPackerNode *xpkNode = (struct xpkPackerNode *)curNode;
       BOOL suits = TRUE;
 
-      if(encrypt && isFlagClear(xpkNode->info.xpi_Flags, XPKIF_ENCRYPTION))
-        suits = FALSE;
-      else if(pack && isFlagClear(xpkNode->info.xpi_Flags, 0x3f))
-        suits = FALSE;
+      D(DBF_XPK, "XPK lib '%s' has flags %08lx", xpkNode->info.xpi_Name, xpkNode->info.xpi_Flags);
 
-      if(suits)
+      if(encrypt == TRUE && isFlagClear(xpkNode->info.xpi_Flags, XPKIF_ENCRYPTION))
+      {
+        D(DBF_XPK, "'%s' has no encryption capabilities, excluded from encryption list", xpkNode->info.xpi_Name);
+        suits = FALSE;
+      }
+
+      if(suits == TRUE)
         DoMethod(lv, MUIM_List_InsertSingle, xpkNode->info.xpi_Name, MUIV_List_Insert_Sorted);
     }
 
@@ -3863,7 +3866,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
               Child, HGroup, GroupFrameT(tr(MSG_CO_XPK)),
                 Child, ColGroup(5),
                   Child, Label1(tr(MSG_CO_XPKPack)),
-                  Child, MakeXPKPop(&data->GUI.TX_PACKER, TRUE, FALSE),
+                  Child, MakeXPKPop(&data->GUI.TX_PACKER, FALSE),
                   Child, data->GUI.NB_PACKER = MakeNumeric(0,100,TRUE),
                   Child, HSpace(8),
                   Child, HGroup,
@@ -3872,7 +3875,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
                   End,
 
                   Child, Label1(tr(MSG_CO_XPKPackEnc)),
-                  Child, MakeXPKPop(&data->GUI.TX_ENCPACK, TRUE, TRUE),
+                  Child, MakeXPKPop(&data->GUI.TX_ENCPACK, TRUE),
                   Child, data->GUI.NB_ENCPACK = MakeNumeric(0,100,TRUE),
                   Child, HSpace(8),
                   Child, MakeVarPop(&data->GUI.ST_ARCHIVER, &popButton, VPM_ARCHIVE, SIZE_COMMAND, tr(MSG_CO_Archiver)),
