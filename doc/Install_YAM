@@ -32,6 +32,18 @@
 (set #lang_catalog (cat "Which catalog file do you want to install?\n"
                         "(English language is built-in)"))
 (set #lang_manual "Select language for online AmigaGuide help")
+(set #faq_and_bugtracker (cat "\n"
+                              "If you have any questions concerning YAM\n"
+                              "you can ask these in the YAM forum:\n"
+                              "http://forum.yam.ch/\n"
+                              "\n"
+                              "Frequently asked questions are already\n"
+                              "answered in the YAM FAQ:\n"
+                              "http://faq.yam.ch/\n"
+                              "\n"
+                              "In case you find a bug in YAM, please,\n"
+                              "report it in the YAM bugtracker:\n"
+                              "http://bugs.yam.ch/"))
 (set #done_1   (cat "\nYAM has been successfully installed.\n\n"
                     "Double click the \"YAM\" icon in the\n"))
 (set #done_2        "\ndirectory to taste it.\n\nHave fun...")
@@ -50,6 +62,18 @@
 (set #lang_catalog (cat "Welche catalog-Datei wollen Sie installieren?\n"
                         "(Englisch ist eingebaut)"))
 (set #lang_manual "Wählen Sie eine Sprache für die Online-AmigaGuide-Hilfe")
+(set #faq_and_bugtracker (cat "\n"
+                              "Falls Sie allgemeine Fragen zu YAM haben,\n"
+                              "können Sie diese im YAM-Forum stellen:\n"
+                              "http://forum.yam.ch/\n"
+                              "\n"
+                              "Oft gestellte Fragen werden in der YAM-FAQ\n"
+                              "beantwortet:\n"
+                              "http://faq.yam.ch/\n"
+                              "\n"
+                              "Falls Sie einen Fehler in YAM finden sollten,\n"
+                              "dann melden Sie ihn bitte im YAM-Bugtracker:\n"
+                              "http://bugs.yam.ch/"))
 (set #done_1   (cat "\nYAM wurde erfolgreich installiert.\n\n"
                     "Klicken Sie auf das \"YAM\"-Icon im Verzeichnis\n"))
 (set #done_2        "\nund es kann losgehen.\n\nViel Spass!")
@@ -69,6 +93,18 @@
 (set #lang_catalog (cat "Quel langage désirez-vous installer ?\n"
                         "(L'anglais est intégré au programme)"))
 (set #lang_manual "Choisissez la langue de l'aide en ligne. (AmigaGuide)")
+(set #faq_and_bugtracker (cat "\n"
+                              "If you have any questions concerning YAM\n"
+                              "you can ask these in the YAM forum:\n"
+                              "http://forum.yam.ch/\n"
+                              "\n"
+                              "Frequently asked questions are already\n"
+                              "answered in the YAM FAQ:\n"
+                              "http://faq.yam.ch/\n"
+                              "\n"
+                              "In case you find a bug in YAM, please,\n"
+                              "report it in the YAM bugtracker:\n"
+                              "http://bugs.yam.ch/"))
 (set #done_1   (cat "\nYAM a été installé avec succès.\n\n"
                     "Cliquez sur l'icône de « YAM » dans le répertoire\n"))
 (set #done_2        "\npour l'essayer.\n\nAmusez vous bien !!")
@@ -87,6 +123,18 @@
 (set #lang_catalog (cat "Vilka språkkataloger vill du installera?\n"
                         "(Engelska är inbyggt)"))
 (set #lang_manual "Välj språk för den AmigaGuide-baserade hjälpen")
+(set #faq_and_bugtracker (cat "\n"
+                              "If you have any questions concerning YAM\n"
+                              "you can ask these in the YAM forum:\n"
+                              "http://forum.yam.ch/\n"
+                              "\n"
+                              "Frequently asked questions are already\n"
+                              "answered in the YAM FAQ:\n"
+                              "http://faq.yam.ch/\n"
+                              "\n"
+                              "In case you find a bug in YAM, please,\n"
+                              "report it in the YAM bugtracker:\n"
+                              "http://bugs.yam.ch/"))
 (set #done_1   (cat "\nYAM installerades utan problem\n\n"
                     "Klicka på \"YAM\"-ikonen i katalogen\n"))
 (set #done_2        "\nför att pröva det.\n\nHa det så bra!")
@@ -118,7 +166,7 @@
   )
   (
     (set os4 0)
-    (if (>= OS_VER (51 * 65536))
+    (if (>= OS_VER (* 51 65536))
       (
         (set mos 1)
         (set os3 0)
@@ -171,10 +219,10 @@
       (askoptions
          (prompt  #lang_catalog)
          (help @askoptions-help)
-         (choices "English (british)"
-                  "Deutsch"
+         (choices "Deutsch"
                   "Français"
                   "Svenska"
+                  "English (british)"
          )
          (default #def_cat_lang)
       )
@@ -353,6 +401,10 @@
              (all)
   )
 )
+
+(complete 99)
+
+(message #faq_and_bugtracker)
 
 (complete 100)
 
