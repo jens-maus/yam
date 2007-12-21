@@ -13,6 +13,7 @@ $URL$
 
 2007-12-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * doc/Install_YAM: some more adaptions for the final install script.
   * YAM_COg.c: not all XPK libraries were added to the packers list because some
     do not offer all flags. But since XPK is basically a packing suite all these
     libs should occur in the list. This fixes bug #1855456.

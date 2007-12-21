@@ -1,5 +1,5 @@
 ;
-; $VER: Installer script 1.7 for YAM 2.5 (XX.12.2007) © 2000-2007 by YAM Open Source Team
+; $VER: Installer script 1.7 for YAM 2.5 (21.12.2007) © 2000-2007 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -32,12 +32,6 @@
 (set #lang_catalog (cat "Which catalog file do you want to install?\n"
                         "(English language is built-in)"))
 (set #lang_manual "Select language for online AmigaGuide help")
-(set #assign_prompt (cat "A \"YAM:\" assign needs to be added to your "
-                         "\"S:User-Startup\" file.\n\n"
-                         "Do you mind?"))
-(set #assign_help (cat "If this assign is not present, the next time you boot up "
-                       "your machine the program will be unable to find the files "
-                       "and drawers it needs to run.\n"))
 (set #done_1   (cat "\nYAM has been successfully installed.\n\n"
                     "Double click the \"YAM\" icon in the\n"))
 (set #done_2        "\ndirectory to taste it.\n\nHave fun...")
@@ -56,13 +50,6 @@
 (set #lang_catalog (cat "Welche catalog-Datei wollen Sie installieren?\n"
                         "(Englisch ist eingebaut)"))
 (set #lang_manual "Wählen Sie eine Sprache für die Online-AmigaGuide-Hilfe")
-(set #assign_prompt (cat "In S:User-Startup sollte ein Assign YAM: eingefügt werden.\n"
-                         "Sind Sie damit einverstanden?"))
-(set #assign_help (cat "Wenn Sie vom Installer gefragt werden, ob er diese Zuweisung "
-                       "in der Datei s:user-startup vornehmen darf, sollten Sie den "
-                       "Knopf \"Weiter\" drücken; andernfalls kann das Programm nach "
-                       "dem nächsten Booten die benötigten Dateien und Verzeichnisse "
-                       "nicht finden.\n"))
 (set #done_1   (cat "\nYAM wurde erfolgreich installiert.\n\n"
                     "Klicken Sie auf das \"YAM\"-Icon im Verzeichnis\n"))
 (set #done_2        "\nund es kann losgehen.\n\nViel Spass!")
@@ -82,14 +69,6 @@
 (set #lang_catalog (cat "Quel langage désirez-vous installer ?\n"
                         "(L'anglais est intégré au programme)"))
 (set #lang_manual "Choisissez la langue de l'aide en ligne. (AmigaGuide)")
-(set #assign_prompt (cat "l'assignation « YAM: » devrait être ajoutée à "
-                         "« S:User-Startup ».\n"
-                         "Le souhaitez-vous ?"))
-(set #assign_help (cat "YAM a besoin d'une assignation pour fonctionner correctement. "
-                       "Si cette assignation n'est pas présente, la prochaine fois "
-                       "que vous démarrerez l'Amiga, le programme ne sera pas capable "
-                       "de trouver les fichiers et les répertoires nécessaires "
-                       "à son exécution.\n"))
 (set #done_1   (cat "\nYAM a été installé avec succès.\n\n"
                     "Cliquez sur l'icône de « YAM » dans le répertoire\n"))
 (set #done_2        "\npour l'essayer.\n\nAmusez vous bien !!")
@@ -108,12 +87,6 @@
 (set #lang_catalog (cat "Vilka språkkataloger vill du installera?\n"
                         "(Engelska är inbyggt)"))
 (set #lang_manual "Välj språk för den AmigaGuide-baserade hjälpen")
-(set #assign_prompt (cat "\"Assign YAM:\" behöver adderas till S:User-Startup\n"
-                         "Är det Ok?"))
-(set #assign_help (cat "När installationsprogrammet frågar efter att göra denna "
-                       "tilldelning i filen s:user-startup, bör du klicka på knappen "
-                       "\"Fortsätt\". Annars kan YAM inte hitta sina filer "
-                       "och kataloger efter nästa ombootning\n"))
 (set #done_1   (cat "\nYAM installerades utan problem\n\n"
                     "Klicka på \"YAM\"-ikonen i katalogen\n"))
 (set #done_2        "\nför att pröva det.\n\nHa det så bra!")
@@ -138,8 +111,24 @@
 ; we use newlib.library to check whether we are running on OS4 or MorphOS
 (set NEWLIB_ver (getversion "newlib.library" (resident)))
 (if (>= NEWLIB_ver (* 4 65536))
-  (set os4 1)
-  (set os4 0)
+  (
+    (set os3 0)
+    (set os4 1)
+    (set mos 0)
+  )
+  (
+    (set os4 0)
+    (if (>= OS_VER (51 * 65536))
+      (
+        (set mos 1)
+        (set os3 0)
+      )
+      (
+        (set os3 1)
+        (set mos 0)
+      )
+    )
+  )
 )
 
 (if os4
@@ -315,8 +304,8 @@
    )
 )
 
-(copyfiles (source "/Readme First") (dest YAM_dir) (infos) (noposition))
-(copyfiles (source "/GPL.txt")      (dest YAM_dir) (noposition))
+(copyfiles (source "/Readme")       (dest YAM_dir) (infos) (noposition))
+(copyfiles (source "/COPYING")      (dest YAM_dir) (noposition))
 
 (complete 60)
 
@@ -326,7 +315,6 @@
            (dest Themes_dir)
            (all)
 )
-(copyfiles (source "/Themes.info") (dest YAM_dir) (noposition))
 
 (complete 70)
 
@@ -336,7 +324,6 @@
            (dest ARexx_dir)
            (all)
 )
-(copyfiles (source "/Rexx.info") (dest YAM_dir) (noposition))
 
 (complete 80)
 
@@ -358,6 +345,13 @@
             (confirm)
             (help @copylib-help)
    )
+)
+
+(if (or os3 mos)
+  (copyfiles (source "Libs/Charsets/")
+             (dest "LIBS:Charsets")
+             (all)
+  )
 )
 
 (complete 100)
