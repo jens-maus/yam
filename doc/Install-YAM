@@ -231,6 +231,16 @@
       (set Cat_dir (tackon YAM_dir "Catalogs"))
       (if (not (exists Cat_dir))  (makedir Cat_dir))
 
+
+      (if (not (exists (tackon YAM_dir "Catalogs.info")))
+         (copyfiles (source "/Catalogs.info")
+                    (dest YAM_dir)
+                    (infos)
+                    (noposition)
+                    (help @copyfiles-help)
+         )
+      )
+
       (if (bitand Catalog_lang #def_lang_Deutsch)
          (
             (makedir (tackon Cat_dir #cat_name_Deutsch))
