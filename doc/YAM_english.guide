@@ -1017,6 +1017,8 @@ part of the configuration window.  There are also three menus available.
  @{" Address book   " link "CO12"}  - Visible columns, personal data exchange
  @{" ARexx          " link "CO13"}  - Setting up your macros
  @{" Miscellaneous  " link "CO14"}  - Paths, AppIcon, save/delete, tracking & packing
+ @{" Look & Feel    " link "CO16"}  - Change the Icon theme amongst others
+ @{" Updates        " link "CO17"}  - Update settings
 
  @{" Hidden Options " link "CO_H"}  - You can't see them :-)
  @{" Menus          " link "CO_M"}  - The Project, Edit and Extras menus
@@ -1619,13 +1621,13 @@ filters that delete or move messages at the bottom of the list.
 
 @endnode
 
-@node "CO15" "Spam"
+@node "CO15" "Configuration - Spam"
 @next "CO04"
 @prev "CO03"
 @toc "CO_W"
 
-Spam filter
-***********
+Configuration - Spam
+********************
 
 
 @{b}Activate spam filter@{ub}
@@ -1749,29 +1751,6 @@ Configuration - Read
 
 
 ---- Other options -------------------------------------------------------
-
-@{b}Charset translation@{ub}
-     While reading messages, YAM will use the character set selected
-     here.  In some countries, not all letters can be written with the
-     standard ISO-Latin-1 charset of the Amiga -- in Poland, for
-     instance, the AmigaPL charset is very popular since it contains
-     the missing characters.  YAM supports such charsets for reading and
-     writing messages.  See the @{" Reference " link "RFCH"} chapter for more information
-     about the format of the character set translation files used by YAM.
-
-
-@{b}Codepage autodetect/Translation@{ub}
-     In some countries, like Russia, there isn't such a thing as a
-     commonly accepted charset, but several are used, e.g. KOI8R,
-     Windows1251, Alt866, etcetera -- therefore, charset translation
-     may not be feasible or efficient under these circumstances.
-
-     This option will make YAM take a different approach, statistically
-     scanning the message body, the From/To/Subject headers and any
-     MIME text attachment trying to find a suitable charset to display
-     every part of the message.
-
-     This option is especially meant for Russian (cyrillic) users.
 
 
 @{b}Multiple windows@{ub}
@@ -2520,7 +2499,7 @@ once the mail has been downloaded.
 @endnode
 
 @node "CO14" "Configuration - Miscellaneous"
-@next "CO_H"
+@next "CO16"
 @prev "CO13"
 @toc "CO_W"
 
@@ -2652,9 +2631,75 @@ the disposition notification:
 
 @endnode
 
+@node "CO16" "Configuration - Look & Feel"
+@next "CO17"
+@prev "CO14"
+@toc "CO_W"
+
+Configuration - Look & Feel
+***************************
+
+
+   Here YAM will display a list with available themes and a small
+preview of what it will look like.
+
+
+@{b}Activate@{ub}
+     Activates the selected theme, which requires you to save the
+     configuration and restart YAM, in order to see the new icons.
+
+
+@{b}Status bar@{ub}
+     Will show a status bar at either - top, middle, bottom or
+     don't show any at all.
+
+
+@{b}Label@{ub}
+     Here you can select what the status bar should show.
+     There are a number of different options to select from.
+
+
+@{b}Size format@{ub}
+     Here you can select how YAM will display sizes for mails and
+     mail drawers.
+
+
+@{b}Embedded read pane in main window@{ub}
+     Shows an embedded read pane in the main window, which allows
+     you to read mails directly in the main window instead of
+     double-clicking a mail to open it in a separate read
+     window.
+
+
+@{b}Show quick search in main window@{ub}
+     Shows a quick search field in the main window, for quick
+     searches :)
+
+@endnode
+
+@node "CO17" "Configuration - Updates"
+@next "CO_H"
+@prev "CO16"
+@toc "CO_W"
+
+Configuration - Updates
+***********************
+
+
+@{b}Check for updates@{ub}
+     Allows you to select the interval at which YAM will check
+     for updates to itself and other third party software,
+     which YAM needs. A button next to it, allows you to do
+     manual checks for updates at will.
+
+     Below you can also see when exactly the last check
+     was done.
+
+@endnode
+
 @node "CO_H" "Configuration - Hidden options"
 @next "CO_M"
-@prev "CO14"
+@prev "CO17"
 @toc "CO_W"
 
 Configuration - Hidden options
@@ -2876,6 +2921,11 @@ Main window
   |  @{" Folder list " link "MA00"}  |                                      |
   |                 |      This shows the contents         |
   |                 |      of the selected folder          |
+  |                 |--------------------------------------|
+  |                 |                                      |
+  |                 |       Embedded read pane             |
+  |                 |       Shows the contents of the      |
+  |                 |       currently selected mail        |
   |                 |                                      |
   `-----------------^--------------------------------------'
 
@@ -2908,7 +2958,7 @@ Main window - folder list
      actually transmitted.  Again, you can use @{" filters " link "CO03"} to transfer
      sent messages to other folders.
 
-@{b}Deleted@{ub}
+@{b}Trash@{ub}
      This box contains messages marked for deletion.  Normally messages
      are not actually deleted from the hard disk until you quit YAM.
      This allows you to recover messages deleted earlier in the session.
@@ -3108,9 +3158,9 @@ Main window - toolbar
 
    The toolbar gives you easy access the most frequently used functions.
 
-   .---.---.---.---.---.  .---.---.---.  .---.---.  .---.---.---.---.
-   | 1 | 2 | 3 | 4 | 5 |  | 6 | 7 | 8 |  | 9 |10 |  |11 |12 |13 |14 |
-   `---^---^---^---^---'  `---^---^---'  `---^---'  `---^---^---^---'
+   .---.---.---.---.---.  .---.---.---.  .---.---.  .---.---.---.---.---.
+   | 1 | 2 | 3 | 4 | 5 |  | 6 | 7 | 8 |  | 9 |10 |  |11 |12 |13 |14 |15 |
+   `---^---^---^---^---'  `---^---^---'  `---^---'  `---^---^---^---^---'
 
    The table shows the equivalences between buttons (position and
 label), keyboard shortcuts and menu commands.  You can choose whether
@@ -3132,10 +3182,11 @@ to show icons, labels or both on the buttons: see @{" Settings/MUI " link "MAM4"
   9   [Get]       G           @{" Folder/Get new mail " link "MAM2"}
  10   [Send]      S           @{" Folder/Send queued mail " link "MAM2"}
 
- 11   [Filter]    I           @{" Folder/Filter " link "MAM2"}
- 12   [Find]      F           @{" Folder/Search... " link "MAM2"}
- 13   [Addr]      A           @{" Settings/Address book... " link "MAM4"}
- 14   [Config]    C           @{" Settings/Configuration... " link "MAM4"}
+ 11   [Spam]      A           @{" Folder/Apply Spam filter " link "MAM2"}
+ 12   [Filter]    I           @{" Folder/Filter " link "MAM2"}
+ 13   [Find]      F           @{" Folder/Search... " link "MAM2"}
+ 14   [Addr]      A           @{" Settings/Address book... " link "MAM4"}
+ 15   [Config]    C           @{" Settings/Configuration... " link "MAM4"}
 
 
    Additional features are available by clicking a toolbar button while
@@ -3241,7 +3292,7 @@ Main window - Folder menu
      up in the tree.
 
 
-@{b}Folder/Order »  Save | Reset@{ub}
+@{b}Folder/Order >>  Save | Reset@{ub}
      Saves or restores the order of the folders in their @{" list " link "MA00"}.
      This order is also saved when modifing the folder settings.
 
@@ -3257,8 +3308,12 @@ Main window - Folder menu
      options being defined in the configuration settings.
 
 
+@{b}Folder/Apply Spam filter@{ub}
+     Applies the Spam filter to all messages in the current folder.
+
+
 @{b}Folder/Empty trash@{ub}
-     Actually deletes the messages in the 'Deleted' folder.
+     Actually deletes the messages in the 'Trash' folder.
 
 
 @{b}Folder/Update index@{ub}
@@ -3362,12 +3417,12 @@ Main window - Message menu
      format, use @{" Folder/Export " link "MAM2"} instead.
 
 
-@{b}Message/Attachments »  Save@{ub}
+@{b}Message/Attachments >>  Save@{ub}
      Saves the attached files from one or more messages in a directory
      you select.
 
 
-@{b}Message/Attachments »  Crop@{ub}
+@{b}Message/Attachments >>  Crop@{ub}
      Deletes, without further warning, the MIME attachments from one or
      more messages, in order to save storage space.  A notice about the
      deleted data is written into any message cropped in this way.
@@ -3407,7 +3462,7 @@ Main window - Message menu
      defined for forwarded messages are not used here.
 
 
-@{b}Message/Select  »  All | None | Toggle@{ub}
+@{b}Message/Select >>  All | None | Toggle@{ub}
      Selects all the messages in the current folder, clears any
      selection or toggles the selection (i.e. exchanges selected and
      unselected items), respectively.
@@ -3421,10 +3476,11 @@ Main window - Message menu
      creating a new distribution list.
 
 
-@{b}Message/Set status to  »  Marked | Unmarked | Unread | Read | Hold | Queued@{ub}
+@{b}Message/Set status >>
+     Marked | Unmarked | Read | Unread | Hold | Queued | Spam | No Spam || All as Read@{ub}
      This changes the status of one or more messages.  Thus you can
-     release held messages in the Outgoing mailbox, or mark unread
-     messages as read.
+     release held messages in the Outgoing mailbox, mark unread
+     messages as read or manually mark suspicious mails as spam.
 
 
 @{b}Message/Change subject...@{ub}
@@ -3810,15 +3866,7 @@ Send options
      folder.
 
 
-@{b}Return receipt@{ub}
-     By activating this option you ask the recipient's mail server to
-     inform you of the successful mail transfer.  Normally you'll only
-     be notified if problems have occurred.  Please note that not all
-     mail servers support this function.  The command to notify you is
-     sent in the @{b}Return-Receipt-To:@{ub} header field.
-
-
-@{b}Track message@{ub}
+@{b}Disposition Notification@{ub}
      Activate this option to request the recipient's e-mail program to
      let you know about what the recipient did with your message, e.g.
      if the message has been read by the recipient or if the recipient
@@ -3902,21 +3950,21 @@ Write window - Text menu
      Opens an existing text file.
 
 
-@{b}Text/Insert as »  Plain@{ub}
+@{b}Text/Insert as >>  Plain@{ub}
      Inserts a text file at the current cursor position.
 
 
-@{b}Text/Insert as »  Quoted@{ub}
+@{b}Text/Insert as >>  Quoted@{ub}
      Inserts a text file at the current cursor position, prefacing each
      line with the quote character (usually @{b}>@{ub}).
 
 
-@{b}Text/Insert as »  Alternate Quoted@{ub}
+@{b}Text/Insert as >>  Alternate Quoted@{ub}
      Inserts a text file at the current cursor position, prefacing each
      line with an alternate quote character (usually @{b}|@{ub}).
 
 
-@{b}Text/Insert as »  ROT13 encoded@{ub}
+@{b}Text/Insert as >>  ROT13 encoded@{ub}
      Inserts a text file at the current cursor position and replaces
      each letter with the one 13 characters ahead on the alphabet,
      cycling back from Z to A (so A->M, B->N, M->A) as appropriate.
@@ -3960,18 +4008,18 @@ Write window - Edit menu
      Inserts the text on the clipboard at the current cursor position.
 
 
-@{b}Edit/Paste as »  Quoted@{ub}
+@{b}Edit/Paste as >>  Quoted@{ub}
      Inserts the text on the clipboard at the current cursor position,
      prefacing each line with the quote character (usually @{b}>@{ub}).
 
 
-@{b}Edit/Paste as »  Alternate Quoted@{ub}
+@{b}Edit/Paste as >>  Alternate Quoted@{ub}
      Inserts the text on the clipboard at the current cursor position,
      prefacing each line with the alternative quote character (usually
      @{b}|@{ub}).
 
 
-@{b}Edit/Paste as »  ROT13 encoded@{ub}
+@{b}Edit/Paste as >>  ROT13 encoded@{ub}
      Inserts a text file at the current cursor position, applying ROT-13
      encoding (see also under @{" Text/Insert as/ROT13 encoded " link "WRM1"}).
 
@@ -3988,39 +4036,39 @@ Write window - Edit menu
      Opens the @{" Glossary " link "DI_W"} window.
 
 
-@{b}Edit/Textstyle »  Bold@{ub}
+@{b}Edit/Textstyle >>  Bold@{ub}
      Toggles bold type on or off for a marked block or for text entered
      subsequently.  In the resulting message, text in bold type is
      delimited by asterisks, thus: bold -> *bold*
 
 
-@{b}Edit/Textstyle »  Italic@{ub}
+@{b}Edit/Textstyle >>  Italic@{ub}
      Toggles italic type on or off for a marked block or for text
      entered subsequently.  In the resulting message, text in italics
      is delimited by slashes, thus: italic -> /italic/
 
 
-@{b}Edit/Textstyle »  Underlined@{ub}
+@{b}Edit/Textstyle >>  Underlined@{ub}
      Toggles underlining on or off for a marked block or for text
      entered subsequently.  In the resulting message, underlined text is
      delimited by underline characters, thus: underline -> _underline_
 
 
-@{b}Edit/Textstyle »  Alternative color@{ub}
+@{b}Edit/Textstyle >>  Alternative color@{ub}
      Toggles colored type on or off for a marked block or for text
      entered subsequently.  The color is defined in the
      @{" Read configuration " link "CO04"}.  In the resulting message, the colored text
      is delimited by hash signs, thus: color -> #color#
 
 
-@{b}Edit/Separators »  Thin | Thick@{ub}
+@{b}Edit/Separators >>  Thin | Thick@{ub}
      Inserts a separator at the current cursor position.  This is done by
      inserting an extra line containing either @{b}<sb>@{ub} or @{b}<tsb>@{ub}.  YAM and
      other (MUI-) mail programs interpret this character sequence as a
      separator.
 
 
-@{b}Edit/Emoticons »  Happy | Indifferent | Sad/angry | Ironic@{ub}
+@{b}Edit/Emoticons >>  Happy | Indifferent | Sad/angry | Ironic@{ub}
      Inserts a 'smiley' at the current cursor position.  Smilies express
      your feelings about the topic and compensate for the loss of
      intonation when expressing yourself in writing rather than speech
@@ -4104,7 +4152,7 @@ is a list of the important default settings in TextEditor 15.9:
 
    The TextEditor homepage can be found at
 
-   http://www.diku.dk/hjemmesider/studerende/duff/TextEditor/index.html
+   http://sourceforge.net/projects/texteditor-mcc/
 
 @endnode
 
@@ -4278,7 +4326,7 @@ Read window - Message menu
      appears in the Read window), or to save one of the attached files.
 
 
-@{b}Message/Attachments »  Display...@{ub}
+@{b}Message/Attachments >>  Display...@{ub}
      Displays the current message or part of it using the MIME viewer
      selected in the @{" MIME configuration " link "CO11"}.  You can choose whether to
      display the message in raw format (to check for errors) or to view
@@ -4286,12 +4334,12 @@ Read window - Message menu
      for MIME viewers in the configuration.
 
 
-@{b}Message/Attachments »  Save all...@{ub}
+@{b}Message/Attachments >>  Save all...@{ub}
      Saves all the files attached to the current message to the
      directory you select.
 
 
-@{b}Message/Attachments »  Crop@{ub}
+@{b}Message/Attachments >>  Crop@{ub}
      Deletes all the attached files for the current message in order to
      save disk space.  @{b}BEWARE:@{ub} these files are not sent to the @{b}Deleted@{ub}
      folder, so be sure that you don't want to keep any of them!  This
@@ -4332,12 +4380,9 @@ Read window - Message menu
      creating a new distribution list.
 
 
-@{b}Message/Set status to unread@{ub}
-     Lets you change the status of the current message to unread.
-
-
-@{b}Message/Set status to marked@{ub}
-     Adds a visible mark to the message to make it easier to find.
+@{b}Message/Set status@{ub}
+     Lets you change the status of the current message to >>
+     Marked | Unmarked | Read | Unread | Hold | Queued | Spam | No Spam
 
 
 @{b}Message/Change subject...@{ub}
@@ -4481,9 +4526,9 @@ Read window - toolbar
 *********************
 
 
-          .---.---.---.---. .---.---.---. .---.---.---.---.
-          | 1 | 2 | 3 | 4 | | 5 | 6 | 7 | | 8 | 9 |10 |11 |
-          `---^---^---^---' `---^---^---' `---^---^---^---'
+          .---.---.---.---. .---.---.---. .---.---.---.---. .---.
+          | 1 | 2 | 3 | 4 | | 5 | 6 | 7 | | 8 | 9 |10 |11 | |12 |
+          `---^---^---^---' `---^---^---' `---^---^---^---' `---'
 
       Button      Shortcut    Equivalent to menu...
 
@@ -4500,6 +4545,8 @@ Read window - toolbar
   9.  [Move]      M           @{" Message/Move... " link "REM1"}
  10.  [Reply]     R           @{" Message/Reply... " link "REM1"}
  11.  [Forward]   W           @{" Message/Forward... " link "REM1"}
+
+ 12.  [Spam]      A           @{" Message/Set status " link "REM1"}
 
 
    Additional features are available by clicking a toolbar button while
@@ -5421,7 +5468,7 @@ Reference
  @{" ARexx interface   " link "RF01"}  - Controlling YAM from within other programs
  @{" Install structure " link "RF02"}  - How a working YAM install is organized
  @{" Message storage   " link "RF03"}  - How email is stored and indexed on disk
- @{" Icon handling     " link "RF04"}  - Adding/changing the icons used by YAM
+ @{" Theme handling    " link "RF04"}  - Adding/changing the themes used by YAM
  @{" File formats      " link "RF05"}  - Misc. file formats
 
 @endnode
@@ -9651,18 +9698,18 @@ files and directories will be found:
  YAM.info          The program icon
  YAM.guide         This documentation in AmigaGuide format
 
- Icons/            @{" Icons " link "RF04"} used by YAM along its Graphical User Interface
+ Themes/            @{" Themes " link "RF04"} used by YAM along its Graphical User Interface
 
  Rexx/             ARexx programs for YAM
  Gallery/          Pictures of people mentioned in the address book
- Charsets/         Character set conversion tables
- Parsers/          Parsers for @{" automatic codepage translation " link "CO04"}
 
  .config           the @{" configuration " link "CO_W"} file
  .folders          a list of the @{" folders " link "MA00"}
  .addressbook      the @{" address book " link "AB_W"}
  .glossary         the @{" glossary " link "DI_W"}
  .users            a list of the @{" YAM users " link "US_W"}
+ .spamdata         YAM's spam training data
+ .updatestate      information for the auto update mechanism
  .signature        your personal @{" signature " link "CO07"}
  .altsignature1    first alternative signature
  .altsignature2    second alternative signature
@@ -9675,7 +9722,7 @@ files and directories will be found:
  incoming/         the incoming mailbox directory
  outgoing/         the outgoing mailbox directory
  sent/             the directory for sent mail
- deleted/          the directory for mail marked for deletion
+ trash/          the directory for mail marked for deletion
 
 @endnode
 
@@ -9697,52 +9744,25 @@ called @{b}.fconfig@{ub} which holds the settings for that particular folder.
 
 @endnode
 
-@node "RF04" "Reference - Icon handling"
+@node "RF04" "Reference - Theme handling"
 @next "RF05"
 @prev "RF03"
 @toc "RF_W"
 
-Reference - Icon handling
+Reference - Theme handling
 =========================
 
 
-   YAM will use the icons and pictures in /Icons along its Graphical
-User Interface.  There are several kinds of icons:
+   YAM will use the icons and pictures in /Themes/default along its
+Graphical User Interface.  There are several kinds of icons:
 
 
-@{b}check.info
-empty.info
-new.info
-old.info@{ub}
-     Icons which show the status of the "Incoming" mailbox:
-
-     check.info     YAM is checking for new mail
-     empty.info     the mailbox is empty
-     new.info       the mailbox has at least one new message
-     old.info       the mailbox only holds "old" mail
-     
-
-@{b}#?.toolbar@{ub}
-     These are the images used to build the toolbars in the Main, Read,
-     Write and Address book windows.  Those named "#?_G.toolbar" are the
-     "ghosted" variety, i.e. they provide the images to be used when the
-     icons must look ghosted.
-
-     Since YAM 2.5 features a Search facility in the Write window, the
-     Write#?.toolbar images were upgraded to implement the needed Search
-     icon.
+@{b}config/config_#?, config_#?_big@{ub}
+     These images are what you see when you open Settings to
+     configure YAM.
 
 
-@{b}status_#?@{ub}
-     These are the @{" status icons " link "MA0S"} displayed by YAM to show the status
-     of the messages.
-
-     The "status_mark" icon used when messages are set to "marked"
-     is special: if it is not present, YAM will mark the messages by
-     displaying the sender/recipient data in bold letters.
-
-
-@{b}folder_#?@{ub} (V2.4)
+@{b}folder/folder_#?, folder_#?_new@{ub}
      These are the images used in front of the basic Incoming, Deleted,
      Outgoing and Sent folders.  Those with the "_new" suffix are used
      automatically whenever there is new or unread mail in the folder.
@@ -9753,6 +9773,44 @@ old.info@{ub}
      A ".fimage" picture file in a folder overrides the default image.
      This is also the only method supported to have images displayed
      in front of custom folders.
+
+
+@{b}icon/check.info, empty.info, new.info, old.info@{ub}
+     Icons which show the status of the "Incoming" mailbox:
+
+     check.info     YAM is checking for new mail
+     empty.info     the mailbox is empty
+     new.info       the mailbox has at least one new message
+     old.info       the mailbox only holds "old" mail
+     
+
+@{b}status/status_#?@{ub}
+     These are the @{" status icons " link "MA0S"} displayed by YAM to show the status
+     of the messages.
+
+     The "status_mark" icon used when messages are set to "marked"
+     is special: if it is not present, YAM will mark the messages by
+     displaying the sender/recipient data in bold letters.
+
+
+@{b}toolbar/tb_#?, tb_#?_G, tb_#?_S@{ub}
+     These are the images used to build the toolbars in the Main, Read,
+     Write and Address book windows.  Those named "tb_#?_G" are the
+     "ghosted" variety, i.e. they provide the images to be used when the
+     icons must look ghosted.
+     "tb_#?_S" are the "selected" variety, i.e. when you press a button.
+
+
+@{b}.theme, logo, preview@{ub}
+     .theme contains various important text variables that are needed
+     for the theme engine to work.
+
+     The "logo" is what you see when you start and quit YAM and also
+     in the "about" window in YAM. (Note: only the default logo is
+     displayed, no matter what theme you have selected.)
+
+     The "preview" is a small preview that shows what that icon theme
+     looks like in Settings/Look & Feel.
 
 @endnode
 
@@ -9772,7 +9830,6 @@ Reference - Misc file formats
  @{" The .glossary file    " link "RFGL"}  - Format of the ".glossary" file
  @{" The .uidl file        " link "RFUI"}  - Format of the ".uidl" file
  @{" The .users file       " link "RFUS"}  - Format of the ".users" file
- @{" The charsets files    " link "RFCH"}  - Format of the charset conversion tables
  @{" The log file          " link "RFLO"}  - Format of the log files
 
 @endnode
@@ -9806,16 +9863,16 @@ format:
     homepage                     |                ·
     default security             |                ·
     \@ENDUSER        -------------'                ·
-    \@LIST alias     »»»»»»»»»»»»»                 ·
+    \@LIST alias     >>>>>>>>>>>>>>>>>>>>>>>>>>                 ·
     return address               v                ·
     list name                    v                ·
     description                  v                ·
-    member #1                     » LIST          ·
+    member #1                     >> LIST          ·
     member #2                    ^                ·
     ...                          ^                ·
     member #n                    ^                ·
                                  ^                ·
-    \@ENDLIST        »»»»»»»»»»»»»                 ·
+    \@ENDLIST        >>>>>>>>>>>>>>>>>>>>>>>>>>                 ·
     \@ENDGROUP     ·································
 
 
@@ -10054,7 +10111,7 @@ to it as the corresponding messages are successfully downloaded.
 @endnode
 
 @node "RFUS" "The .users file"
-@next "RFCH"
+@next "RFLO"
 @prev "RFUI"
 @toc "RF05"
 
@@ -10092,46 +10149,9 @@ single user setup.
 
 @endnode
 
-@node "RFCH" "The charsets files"
-@next "RFLO"
-@prev "RFUS"
-@toc "RF05"
-
-The charsets files
-------------------
-
-   YAM can use character set conversion tables for reading and writing
-messages, as specified in the configuration.  A character set conversion
-table is set up as follows:
-
-
-        1st line:   YCT1 - YAM Charset Translation
-        2nd line:   Description of the converter
-   further lines:   (optional) FROM source charset pattern (e.g. iso-8859-1)
-                    (optional) TO target charset pattern
-                    (optional) HEADER
-                    (optional) AUTHOR name/email of author of charset file
-                    Old character=New character
-                    ...
-                    ...
-
-   Characters can be defined either in hexadecimal code with a '$'
-character in front, or using the actual characters.  Therefore, both
-"$E5=$61" and "å=a" are valid character definitions.
-
-   With the HEADER keyword, the charset conversion is also applied to
-the message headers.
-
-   The FROM and TO charset specifications are pattern based specifications.
-That means that one can specify a pattern like charset spec like 'iso-8859-[1|2]'
-(cf. @{" AmigaDOS wildcards " link "DOSW"}). This way it is possible to match multiple different
-charsets at a time for the charset translation.
-
-@endnode
-
 @node "RFLO" "The log file"
 @next "RFAB"
-@prev "RFCH"
+@prev "RFUS"
 @toc "RF05"
 
 The log file
@@ -10994,7 +11014,7 @@ to replace text) and they look very professional now.
 
 
                   eMAIL:  ash\@absurd.demon.co.uk
-                    URL:  http://www.absurd.demon.co.uk »
+                    URL:  http://www.absurd.demon.co.uk
 
 @endnode
 

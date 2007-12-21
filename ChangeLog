@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-21  Pär Boberg <pbobbenb@spray.se>
+
+  * doc/YAM_english.guide: Quite a lot of changes, among them the theme
+    layout, added spam to the toolbar info, removed info about Charset
+    and Parsers since they are now handled with codesets.library etc...
+
 2007-12-21  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c, YAM_CO.c: minor adaptions to the debug output of the XPK packer
