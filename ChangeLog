@@ -5,19 +5,22 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-12-21  Pär Boberg <pbobbenb@spray.se>
-
-  * doc/YAM_english.guide: Quite a lot of changes, among them the theme
-    layout, added spam to the toolbar info, removed info about Charset
-    and Parsers since they are now handled with codesets.library etc...
+#### YAM 2.5 RELEASE ####################################################
 
 2007-12-21  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_global.c: removed "-dev" for the final stable 2.5 release.
   * YAM.c: bumped minimum required version of TheBar to v21.5 which is
     available since today.
   * YAM.c, YAM_CO.c: minor adaptions to the debug output of the XPK packer
     loading. Also the xpk packer list will only be iterated through in case
     xpk was found at all.
+
+2007-12-21  Pär Boberg <pbobbenb@spray.se>
+
+  * doc/YAM_english.guide: Quite a lot of changes, among them the theme
+    layout, added spam to the toolbar info, removed info about Charset
+    and Parsers since they are now handled with codesets.library etc...
 
 2007-12-21  Thore Böckelmann <tboeckel@gmx.de>
 
