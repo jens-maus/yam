@@ -1391,7 +1391,7 @@ Configuration - New mail
      script, you have to put the 'RX' command in front of the name of
      the script.
 
-     Example:  RX YAM:rexx/Newmail.YAM
+     Example:  RX PROGDIR:rexx/Newmail.YAM
 
 @endnode
 
@@ -1571,7 +1571,7 @@ filters that delete or move messages at the bottom of the list.
      containing the auto-answer text into the text field next to this
      option.
 
-     Example:  YAM:Auto-Texts/Answer1.txt
+     Example:  PROGDIR:Auto-Texts/Answer1.txt
 
 
 @{b}Execute@{ub}
@@ -1584,7 +1584,7 @@ filters that delete or move messages at the bottom of the list.
      Please note that if you want an ARexx script to be executed, you
      will have to explicitely put the 'RX' command first.
 
-     Example:  rx YAM:Rexx/Subscribe.rexx
+     Example:  rx PROGDIR:Rexx/Subscribe.rexx
 
 
 @{b}Play sound@{ub}
@@ -1814,14 +1814,6 @@ Configuration - Write
      Example:  Kind regards\\n\\nJohn Doe
 
 
-@{b}Charset translation@{ub}
-     This character set translation will be used when writing messages.
-     Further information about charset translations can be found in the
-     @{" Read " link "CO04"} configuration.
-
-     Example:  YAM:charsets/Latin1toUSASCII  (deletes mutated vowels, etc.)
-
-
 @{b}Warn when there's an empty subject line@{ub}
      Activate this option to let YAM warn you any time you try to send
      an email with an empty subject line.  This may be the case when
@@ -2046,7 +2038,7 @@ small text editor window below.
      randomly and be inserted into the signature.  There are collections
      of thousands of these taglines on Aminet.
 
-     Example:  YAM:.taglines
+     Example:  PROGDIR:.taglines
 
 
 @{b}Tagline separator@{ub}
@@ -2431,7 +2423,7 @@ Configuration - Address book
 @{b}Save photos in@{ub}
      The pictures of the senders are stored here.
 
-     Example:  YAM:Gallery
+     Example:  PROGDIR:Gallery
 
 
 @{b}URL of your picture@{ub}
@@ -2477,7 +2469,7 @@ once the mail has been downloaded.
      File name of the ARexx script, including any needed parameters
      (in the usual ARexx fashion, but without a call to 'RX').
 
-     Example:  YAM:rexx/StartBrowser.rexx
+     Example:  PROGDIR:rexx/StartBrowser.rexx
 
 
 @{b}Open Console window@{ub}
@@ -2702,7 +2694,7 @@ Configuration - Hidden options
 
 
    YAM recognises some extra parameters that are not mentioned in any
-configuration window.  You have to load the file @{b}YAM:.config@{ub} into a text
+configuration window.  You have to load the file @{b}.config@{ub} into a text
 editor and alter the parameters in the @{b}Advanced@{ub} section by hand.
 
 
@@ -5376,7 +5368,7 @@ Users window.
      folders and configuration settings.  Obviously, this directory
      must be different for any user in the system.
 
-     Example:  YAM:bill
+     Example:  PROGDIR:bill
 
 
 @{b}Use global address book@{ub}
@@ -9685,8 +9677,8 @@ Reference - Install structure
 =============================
 
 
-   In the program directory for YAM (generally YAM:) the following
-files and directories will be found:
+   In the program directory for YAM the following files and
+directories will be found:
 
 
  YAM               The program itself
@@ -9992,7 +9984,7 @@ where
      messages to this mailing list:
 
         0 = none
-        1 = default signature, i.e. YAM:.signature
+        1 = default signature, i.e. PROGDIR:.signature
         2 = alt. signature #1
         3 = alt. signature #2
 
@@ -10268,30 +10260,26 @@ ContextMenu = Never.  Save your MUI settings and you're done.
 @prev "TIP1"
 @toc "TIPS"
 
-Moving "YAM:" to another partition or directory
------------------------------------------------
+Moving "YAM" program directory to another partition or directory
+----------------------------------------------------------------
 
-   Moving your YAM: directory to another place is a procedure
+   Moving your YAM directory to another place is a procedure
 requiring four steps:
 
   1. Quit YAM if it is currently running.
 
-  2. Copy your YAM: directory to the new place with a tool that allows
+  2. Copy your YAM directory to the new place with a tool that allows
      you to preserve the original file protection bits, datestamps and
      comments. This is needed to prevent your mail archives from getting
      mangled in the process.  Example:
 
-            1.RAM Disk:> copy YAM: DH2:Comms/mail/YAM/ ALL QUIET CLONE
+            1.RAM Disk:> copy YAM DH2:Comms/mail/YAM/ ALL QUIET CLONE
 
      The "CLONE" switch for Copy is paramount here, as it will prevent
      your mail from getting their status information (read, new, etc.)
      lost.
 
-  3. Point your YAM: assign to the new place.  You should use "assign
-     YAM: <new path>" now and modify this statement in your
-     s:User-Startup file.
-
-  4. Lastly, update your YAM:.users file to make sure it points to the
+  3. Lastly, update your PROGDIR:.users file to make sure it points to the
      new mail directory.  If you fail to do so, YAM will keep trying to
      read/create/etc. the folders in the old place.  Beware!
 
@@ -10825,7 +10813,7 @@ Future plans
 ************
 
 
-   More attractions coming (possibly) in future versions of YAM:
+   More attractions coming (possibly) in future versions of YAM
 
    - HTML read mail support [optional] (via htmlview.mcc)
    - IMAPv4 protocol support
