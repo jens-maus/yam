@@ -13,6 +13,8 @@ $URL$
 
 2007-12-21  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: bumped minimum required version of TheBar to v21.5 which is
+    available since today.
   * YAM.c, YAM_CO.c: minor adaptions to the debug output of the XPK packer
     loading. Also the xpk packer list will only be iterated through in case
     xpk was found at all.

@@ -2411,9 +2411,9 @@ static void InitBeforeLogin(BOOL hidden)
   #endif
 
   // Lets check for the correct TheBar.mcc version
-  CheckMCC(MUIC_TheBar,     21, 4, TRUE, "http://www.sf.net/projects/thebar/");
-  CheckMCC(MUIC_TheBarVirt, 21, 4, TRUE, "http://www.sf.net/projects/thebar/");
-  CheckMCC(MUIC_TheButton,  21, 4, TRUE, "http://www.sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheBar,     21, 5, TRUE, "http://www.sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheBarVirt, 21, 5, TRUE, "http://www.sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheButton,  21, 5, TRUE, "http://www.sf.net/projects/thebar/");
 
   // Lets check for the correct BetterString.mcc version
   CheckMCC(MUIC_BetterString, 11, 14, TRUE, "http://www.sf.net/projects/bstring-mcc/");
