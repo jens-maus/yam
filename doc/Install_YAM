@@ -190,7 +190,7 @@
   ; OS3 and MOS use localized locale names
   (
     (set #cat_name_Deutsch               "deutsch")
-    (set #cat_name_Francais              "français")
+    (set #cat_name_Francais              "francais")
     (set #cat_name_Svenska               "svenska")
   )
 )
@@ -284,30 +284,27 @@
 
       (if (bitand Catalog_lang #def_lang_Deutsch)
          (
-            (set lang #cat_name_Deutsch)
-            (copyfiles (source (tackon "/Catalogs" lang))
+            (copyfiles (source "/Catalogs/german")
                (choices "YAM.catalog")
-               (dest (tackon Cat_dir lang))
+               (dest (tackon Cat_dir #cat_name_Deutsch))
             )
          )
       )
 
       (if (bitand Catalog_lang #def_lang_Francais)
          (
-            (set lang #cat_name_Francais)
-            (copyfiles (source (tackon "/Catalogs" lang))
+            (copyfiles (source "/Catalogs/french")
                (choices "YAM.catalog")
-               (dest (tackon Cat_dir lang))
+               (dest (tackon Cat_dir #cat_name_Francais))
             )
          )
       )
 
       (if (bitand Catalog_lang #def_lang_Svenska)
          (
-            (set lang #cat_name_Svenska)
-            (copyfiles (source (tackon "/Catalogs" lang))
+            (copyfiles (source "/Catalogs/swedish")
                (choices "YAM.catalog")
-               (dest (tackon Cat_dir lang))
+               (dest (tackon Cat_dir #cat_name_Svenska))
             )
          )
       )
@@ -315,10 +312,9 @@
       ; accents of certain languages (OS4 only)
       (if (bitand Catalog_lang #def_lang_English_British)
          (
-            (set lang #cat_name_English_British)
-            (copyfiles (source (tackon "/Catalogs" lang))
+            (copyfiles (source "/Catalogs/english-british")
                (choices "YAM.catalog")
-               (dest (tackon Cat_dir lang))
+               (dest (tackon Cat_dir #cat_name_English_British))
             )
          )
       )
@@ -344,7 +340,7 @@
    )
 )
 (if (= Docs_lang #def_doc_Francais)
-   (copyfiles (source "/Docs/YAM_français.guide")
+   (copyfiles (source "/Docs/YAM_francais.guide")
       (dest YAM_dir)
       (newname "YAM.guide")
       (infos)
