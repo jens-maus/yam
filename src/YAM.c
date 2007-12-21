@@ -1265,7 +1265,7 @@ static BOOL InitXPKPackerList(void)
             // we work around that problem and make sure they are equal.
             strlcpy((char *)newPacker->info.xpi_Name, (char *)xpl.xpl_Packer[i], sizeof(newPacker->info.xpi_Name));
 
-            D(DBF_XPK, "Found XPKPacker: %ld: [%s] = '%s'", i, xpl.xpl_Packer[i], newPacker->info.xpi_Name);
+            D(DBF_XPK, "Found XPKPacker: %ld: [%s] = '%s' flags = %08lx", i, xpl.xpl_Packer[i], newPacker->info.xpi_Name, newPacker->info.xpi_Flags);
 
             // add the new packer to our internal list.
             AddTail((struct List *)&G->xpkPackerList, (struct Node *)newPacker);

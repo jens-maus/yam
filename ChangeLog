@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-21  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, YAM_CO.c: minor adaptions to the debug output of the XPK packer
+    loading. Also the xpk packer list will only be iterated through in case
+    xpk was found at all.
+
 2007-12-21  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c: not all XPK libraries were added to the packers list because some

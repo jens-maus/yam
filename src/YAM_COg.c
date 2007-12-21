@@ -1510,6 +1510,8 @@ static Object *MakeXPKPop(Object **text, BOOL encrypt)
 {
   Object *lv, *po, *but;
 
+  ENTER();
+
   if((po = PopobjectObject,
     MUIA_Popstring_String, *text = TextObject,
       TextFrame,
@@ -1530,35 +1532,38 @@ static Object *MakeXPKPop(Object **text, BOOL encrypt)
     End,
   End))
   {
-    struct MinNode *curNode;
-
-    for(curNode = G->xpkPackerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-    {
-      struct xpkPackerNode *xpkNode = (struct xpkPackerNode *)curNode;
-      BOOL suits = TRUE;
-
-      D(DBF_XPK, "XPK lib '%s' has flags %08lx", xpkNode->info.xpi_Name, xpkNode->info.xpi_Flags);
-
-      if(encrypt == TRUE && isFlagClear(xpkNode->info.xpi_Flags, XPKIF_ENCRYPTION))
-      {
-        D(DBF_XPK, "'%s' has no encryption capabilities, excluded from encryption list", xpkNode->info.xpi_Name);
-        suits = FALSE;
-      }
-
-      if(suits == TRUE)
-        DoMethod(lv, MUIM_List_InsertSingle, xpkNode->info.xpi_Name, MUIV_List_Insert_Sorted);
-    }
-
-    DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
-
     // disable the XPK popups if xpkmaster.library is not available
     if(XpkBase == NULL)
     {
       set(po, MUIA_Disabled, TRUE);
       set(but, MUIA_Disabled, TRUE);
     }
+    else
+    {
+      struct MinNode *curNode;
+
+      for(curNode = G->xpkPackerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      {
+        struct xpkPackerNode *xpkNode = (struct xpkPackerNode *)curNode;
+        BOOL suits = TRUE;
+
+        D(DBF_XPK, "XPK lib '%s' has flags %08lx", xpkNode->info.xpi_Name, xpkNode->info.xpi_Flags);
+
+        if(encrypt == TRUE && isFlagClear(xpkNode->info.xpi_Flags, XPKIF_ENCRYPTION))
+        {
+          D(DBF_XPK, "'%s' has no encryption capabilities, excluded from encryption list", xpkNode->info.xpi_Name);
+          suits = FALSE;
+        }
+
+        if(suits == TRUE)
+          DoMethod(lv, MUIM_List_InsertSingle, xpkNode->info.xpi_Name, MUIV_List_Insert_Sorted);
+      }
+
+      DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+    }
   }
 
+  RETURN(po);
   return po;
 }
 
