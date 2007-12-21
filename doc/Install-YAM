@@ -1,5 +1,5 @@
 ;
-; $VER: Installer script 1.7 for YAM 2.5 (21.12.2007) © 2000-2007 by YAM Open Source Team
+; $VER: Installer script 1.7 for YAM 2.5 (21.12.2007) (c) 2000-2007 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -224,6 +224,10 @@
 
 (if (not (exists (tackon YAM_dir ".taglines")))
    (copyfiles (source "/.taglines") (dest YAM_dir) (help @copyfiles-help))
+)
+
+(if (not (exists (tackon YAM_dir ".addressbook")))
+   (copyfiles (source "/.addressbook") (dest YAM_dir) (help @copyfiles-help))
 )
 
 (if (> Catalog_lang 0)
