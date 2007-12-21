@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.5 (18.12.2007)
+@$VER: YAM.guide 2.5 (21.12.2007)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -240,8 +240,8 @@ Software
             http://aminet.net/dev/mui/MCC_NList-0.101.lha
         - TextEditor 15.25+
             http://aminet.net/dev/mui/MCC_TextEditor-15.25.lha
-        - Thebar 21.4+
-            http://aminet.net/dev/mui/MCC_TheBar-21.4.lha
+        - TheBar 21.5+
+            http://aminet.net/dev/mui/MCC_TheBar-21.5.lha
 
    * Codesets Library 6.5+
    * AmiTCP compatible TCP/IP stack (AmiTCP, Miami[DX], TermiteTCP, RoadShow)
@@ -278,7 +278,7 @@ Installation
 Installation by using the installer
 -----------------------------------
 
-   Open the 'Install' folder, double-click the 'English' icon and
+   Open the 'Install' folder, double-click the 'Install-YAM' icon and
 follow the instructions given by the installer.  If you have already
 installed an older version of YAM, please restart your Amiga after the
 installation of YAM 2.5.
@@ -290,24 +290,19 @@ Manual installation
    If you don't have the Amiga Installer or for some reason you are
 unable or unwilling to use it, proceed as follows:
 
-- Create a directory for YAM on your hard disk.
+- Copy the whole "YAM 2.5" directory path to your destination directory.
 
-- Copy the files @{b}YAM@{ub}, @{b}YAM_english.guide@{ub} and @{b}.taglines@{ub} as well as the
-  directories @{b}Rexx@{ub} and @{b}Themes@{ub} to this new directory.  Rename
-  the guide file to @{b}YAM.guide@{ub}.
-
-- (If appropriate) Copy the file @{b}YAM.catalog@{ub} for your language to
-  @{b}LOCALE:Catalogs/<your language>@{ub}.
-
-- Copy all MUI libraries (mcc/mcp) from the directory @{b}MUI@{ub} to
+- Copy all MUI libraries (mcc/mcp) from the directory @{b}Install/MUI@{ub} to
   @{b}MUI:libs/MUI@{ub}.
 
-- Create an entry in your @{b}S:User-Startup@{ub} assigning @{b}YAM:@{ub} to the
-  directory you have created for YAM.  For example,
+- Copy all Libraries located in the @{b}Install/Libs@{ub} directory to
+  @{b}LIBS:@{ub}
 
-          1:> assign YAM: Work:Internet/YAM
+- Delete the "Install" directory within the "YAM 2.5" path as you don't
+  need it anymore.
 
-- Reboot your Amiga
+- Reboot your Amiga and start YAM from the new path by doubleclicking its
+  icon.
 
 
 @endnode
