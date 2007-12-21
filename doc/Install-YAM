@@ -9,15 +9,10 @@
 ; /// Setting up
 (set #def_lang_English              0)
 (set #def_lang_Deutsch              1)
-(set #def_lang_Francais             2)
-(set #def_lang_Svenska              4)
+(set #def_lang_Svenska              2)
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only OS4 can handle them.
-(set #def_lang_English_British      8)
-
-(set #def_doc_English               0)
-(set #def_doc_Deutsch               1)
-(set #def_doc_Francais              2)
+(set #def_lang_English_British      4)
 
 ; ///
 ;----------------------------------------------------------------------------
@@ -77,37 +72,6 @@
 (set #done_1   (cat "\nYAM wurde erfolgreich installiert.\n\n"
                     "Klicken Sie auf das \"YAM\"-Icon im Verzeichnis\n"))
 (set #done_2        "\nund es kann losgehen.\n\nViel Spass!")
-)
-)
-; ///
-; /// ***** Français
-(IF (= @language "français")
-(
-(set #def_cat_lang #def_lang_Francais)
-(set #def_doc_lang #def_doc_Francais)
-(set #wrongOS  "YAM a besoin de l' OS 3.0 minimum !\n")
-(set #wrongMUI "YAM a besoin de MUI 3.8 minimum !\n")
-(set #wrongCPU "YAM a besoin d'un CPU 68020 minimum !\n")
-(set #YAM_dir  (cat "Choisissez le répertoire d'installation pour YAM.\n"
-                    "(Il n'y aura pas de création de répertoire !)"))
-(set #lang_catalog (cat "Quel langage désirez-vous installer ?\n"
-                        "(L'anglais est intégré au programme)"))
-(set #lang_manual "Choisissez la langue de l'aide en ligne. (AmigaGuide)")
-(set #faq_and_bugtracker (cat "\n"
-                              "If you have any questions concerning YAM\n"
-                              "you can ask these in the YAM forum:\n"
-                              "http://forum.yam.ch/\n"
-                              "\n"
-                              "Frequently asked questions are already\n"
-                              "answered in the YAM FAQ:\n"
-                              "http://faq.yam.ch/\n"
-                              "\n"
-                              "In case you find a bug in YAM, please,\n"
-                              "report it in the YAM bugtracker:\n"
-                              "http://bugs.yam.ch/"))
-(set #done_1   (cat "\nYAM a été installé avec succès.\n\n"
-                    "Cliquez sur l'icône de « YAM » dans le répertoire\n"))
-(set #done_2        "\npour l'essayer.\n\nAmusez vous bien !!")
 )
 )
 ; ///
@@ -183,14 +147,12 @@
   ; OS4 does use english locale names only
   (
     (set #cat_name_Deutsch               "german")
-    (set #cat_name_Francais              "french")
     (set #cat_name_Svenska               "swedish")
     (set #cat_name_English_British       "english-british")
   )
   ; OS3 and MOS use localized locale names
   (
     (set #cat_name_Deutsch               "deutsch")
-    (set #cat_name_Francais              "francais")
     (set #cat_name_Svenska               "svenska")
   )
 )
@@ -220,7 +182,6 @@
          (prompt  #lang_catalog)
          (help @askoptions-help)
          (choices "Deutsch"
-                  "Français"
                   "Svenska"
                   "English (british)"
          )
@@ -233,25 +194,10 @@
          (prompt  #lang_catalog)
          (help @askoptions-help)
          (choices "Deutsch"
-                  "Français"
                   "Svenska"
          )
          (default #def_cat_lang)
       )
-   )
-)
-
-(complete 15)
-
-(set Docs_lang
-   (askchoice
-      (prompt  #lang_manual)
-      (help    @askchoice-help)
-      (choices "English (V2.5)"
-               "Deutsch (V2.4)"
-               "Français (V2.4)"
-      )
-      (default #def_doc_lang)
    )
 )
 
@@ -260,7 +206,11 @@
 ; /// Here we go!
 (complete 30)
 
+; make sure the YAM dir really exists
 (makedir YAM_dir (infos))
+
+; copy the executable
+(copyfiles (source "/YAM") (dest YAM_dir) (help @copyfiles-help))
 (if (not (exists (tackon YAM_dir "YAM.info")))
    (copyfiles (source "/YAM.info")
               (dest YAM_dir)
@@ -269,7 +219,6 @@
               (help @copyfiles-help)
    )
 )
-(copyfiles (source "/YAM") (dest YAM_dir) (help @copyfiles-help))
 
 (complete 40)
 
@@ -284,6 +233,8 @@
 
       (if (bitand Catalog_lang #def_lang_Deutsch)
          (
+            (makedir (tackon Cat_dir #cat_name_Deutsch))
+
             (copyfiles (source "/Catalogs/german")
                (choices "YAM.catalog")
                (dest (tackon Cat_dir #cat_name_Deutsch))
@@ -291,17 +242,10 @@
          )
       )
 
-      (if (bitand Catalog_lang #def_lang_Francais)
-         (
-            (copyfiles (source "/Catalogs/french")
-               (choices "YAM.catalog")
-               (dest (tackon Cat_dir #cat_name_Francais))
-            )
-         )
-      )
-
       (if (bitand Catalog_lang #def_lang_Svenska)
          (
+            (makedir (tackon Cat_dir #cat_name_Svenska))
+
             (copyfiles (source "/Catalogs/swedish")
                (choices "YAM.catalog")
                (dest (tackon Cat_dir #cat_name_Svenska))
@@ -312,6 +256,8 @@
       ; accents of certain languages (OS4 only)
       (if (bitand Catalog_lang #def_lang_English_British)
          (
+            (makedir (tackon Cat_dir #cat_name_English_British))
+
             (copyfiles (source "/Catalogs/english-british")
                (choices "YAM.catalog")
                (dest (tackon Cat_dir #cat_name_English_British))
@@ -323,33 +269,39 @@
 
 (complete 50)
 
-(if (= Docs_lang #def_doc_English)
-   (copyfiles (source "/Docs/YAM_english.guide")
-      (dest YAM_dir)
-      (newname "YAM.guide")
-      (infos)
-      (noposition)
-   )
+(set Gallery_dir (tackon YAM_dir "Gallery"))
+(if (not (exists Gallery_dir)) (makedir Gallery_dir))
+(copyfiles (source "/Gallery/")
+           (dest Gallery_dir)
+           (all)
 )
-(if (= Docs_lang #def_doc_Deutsch)
-   (copyfiles (source "/Docs/YAM_deutsch.guide")
-      (dest YAM_dir)
-      (newname "YAM.guide")
-      (infos)
-      (noposition)
-   )
-)
-(if (= Docs_lang #def_doc_Francais)
-   (copyfiles (source "/Docs/YAM_francais.guide")
-      (dest YAM_dir)
-      (newname "YAM.guide")
-      (infos)
-      (noposition)
+
+(if (not (exists (tackon YAM_dir "Gallery.info")))
+   (copyfiles (source "/Gallery.info")
+              (dest YAM_dir)
+              (infos)
+              (noposition)
+              (help @copyfiles-help)
    )
 )
 
-(copyfiles (source "/Readme")       (dest YAM_dir) (infos) (noposition))
-(copyfiles (source "/COPYING")      (dest YAM_dir) (noposition))
+(set Docs_dir (tackon YAM_dir "Docs"))
+(if (not (exists Docs_dir)) (makedir Docs_dir))
+(copyfiles (source "/Docs/")
+           (dest Docs_dir)
+           (all)
+)
+
+(if (not (exists (tackon YAM_dir "Docs.info")))
+   (copyfiles (source "/Docs.info")
+              (dest YAM_dir)
+              (infos)
+              (noposition)
+              (help @copyfiles-help)
+   )
+)
+
+(copyfiles (source "/ReadMe")  (dest YAM_dir) (infos))
 
 (complete 60)
 
@@ -360,6 +312,15 @@
            (all)
 )
 
+(if (not (exists (tackon YAM_dir "Themes.info")))
+   (copyfiles (source "/Themes.info")
+              (dest YAM_dir)
+              (infos)
+              (noposition)
+              (help @copyfiles-help)
+   )
+)
+
 (complete 70)
 
 (set ARexx_dir (tackon YAM_dir "Rexx"))
@@ -367,6 +328,15 @@
 (copyfiles (source "/Rexx/")
            (dest ARexx_dir)
            (all)
+)
+
+(if (not (exists (tackon YAM_dir "Rexx.info")))
+   (copyfiles (source "/Rexx.info")
+              (dest YAM_dir)
+              (infos)
+              (noposition)
+              (help @copyfiles-help)
+   )
 )
 
 (complete 80)
