@@ -116,6 +116,32 @@
 (set #lang_catalog (cat "Vilka språkkataloger vill du installera?\n"
                         "(Engelska är inbyggt)"))
 (set #lang_manual "Välj språk för den AmigaGuide-baserade hjälpen")
+(set #no_way_back_warning (cat "\n"
+                               "VARNING!!\n"
+                               "(om du vill uppdatera en existerande\n"
+                               "YAM 2.4 installation)\n"
+                               "\n"
+                               "Namn schemat för mailfilerna har ändrats totalt.\n"
+                               "När du kör YAM 2.5 för första gången, kommer alla\n"
+                               "dina nuvarande mailfiler att konverteras automatiskt till\n"
+                               "det nya schemat. Efter det kommer inte YAM 2.4 att kunna\n"
+                               "hantera dem längre!\n"
+                               "Så, backa upp ALLA dina mailfiler FÖRE du kör YAM 2.5!!\n"
+                               "\n"
+                               "Men, det är absolut INGA problem att installera\n"
+                               "YAM 2.4 och YAM 2.5 i separata kataloger."))
+(set #faq_and_bugtracker (cat "\n"
+                              "Om du har några frågor rörande YAM\n"
+                              "kan du fråga dessa i YAM's forum:\n"
+                              "http://forum.yam.ch/\n"
+                              "\n"
+                              "Frequently asked questions är redan\n"
+                              "besvarade i YAM's FAQ:\n"
+                              "http://faq.yam.ch/\n"
+                              "\n"
+                              "Om du skulle hitta en bugg i YAM, var god\n"
+                              "rapportera det i YAM's buggtracker:\n"
+                              "http://bugs.yam.ch/"))
 (set #done_1   (cat "\nYAM installerades utan problem\n\n"
                     "Klicka på \"YAM\"-ikonen i katalogen\n"))
 (set #done_2        "\nför att pröva det.\n\nHa det så bra!")
