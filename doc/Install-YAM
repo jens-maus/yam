@@ -14,6 +14,8 @@
 ; because only OS4 can handle them.
 (set #def_lang_English_British      4)
 
+(set #def_doc_English               0)
+
 ; ///
 ;----------------------------------------------------------------------------
 ;/// ***** English
@@ -48,7 +50,6 @@
 (IF (= @language "deutsch")
 (
 (set #def_cat_lang #def_lang_Deutsch)
-(set #def_doc_lang #def_doc_Deutsch)
 (set #wrongOS  "YAM benötigt OS3.0 oder höher\n")
 (set #wrongMUI "YAM benötigt MUI3.8 oder höher\n")
 (set #wrongCPU "YAM läuft nur ab einer 68020 CPU\n")
@@ -201,6 +202,15 @@
    )
 )
 
+(set Docs_lang
+   (askchoice
+      (prompt  #lang_manual)
+      (help    @askchoice-help)
+      (choices "English")
+      (default #def_doc_lang)
+   )
+)
+
 (complete 20)
 ; ///
 ; /// Here we go!
@@ -278,6 +288,15 @@
             )
          )
       )
+   )
+)
+
+(if (= Docs_lang #def_doc_English)
+   (copyfiles (source "/Docs/YAM_english.guide")
+      (dest YAM_dir)
+      (newname "YAM.guide")
+      (infos)
+      (noposition)
    )
 )
 
