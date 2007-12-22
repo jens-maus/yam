@@ -1,0 +1,84 @@
+---------------------------------------------------------------------------
+                     YAM 2.5 - Installation notes
+---------------------------------------------------------------------------
+
+In contrast to YAM 2.4, YAM 2.5 is distributed as "one archive per platform".
+This approach assures that nobody is missing any optional archive.
+
+
+Before you start the installation
+---------------------------------
+YAM 2.5 not only uses newer configuration files, the files used to store
+separate emails are named differently as well. Therefore, before you start
+the installation script, it's strongly recommended that you create a
+backup of your old YAM directory, including all folders and configuration
+files. Now you can install the update into your old YAM directory if you
+wish. YAM 2.5 will automatically convert your old configuration files to
+the new 2.5 format, and after being started, YAM will rename your old
+emails as necessary, always under your control. It is also recommended
+that you re-save your configuration as soon as possible in order to
+update your .config file to the new format, which will reveal all the
+new options available.
+
+
+Source code
+-----------
+Due to lack of time and motivation, Marcel stopped working on YAM back in
+2000, but the sources were released under the GNU General Public License
+at SourceForge.net. If you want to help developing this program further
+or perhaps you are considering a port to a different operating system,
+please consider joining the YAM Open Source team instead of doing it
+on your own. Our homepage is at http://sourceforge.net/projects/yamos/
+and there you will find out how to contact us. We want to hear from you!
+
+
+What's new since YAM 2.4p1?
+---------------------------
+Here's a list (in alphabetical order) of the brave developers who have
+contributed to this update:
+
+              Alexey Ivanov       (AmiS)
+              David Rey           (tactica)
+              Guenther Nikl       (gnikl)
+              Jens Langner        (damato)
+              Joerg Strohmayer    (joergs)
+              Olaf Barthel        (obarthel)
+              Thore Boeckelmann   (tboeckel)
+
+And here's a PARTIAL list of the major changes in this version with
+respect to the previous official update:
+
+- lots of bugs fixed
+- overall stability and error tolerance has improved
+- completely changed mail file nameing scheme to be independent of the
+  file system being used (no more file comments)
+- improved GUI feedback during mail transfers (non-blocking I/O)
+- improved handling of foreign character sets via codesets.library
+- support for AmiSSL v3
+- optional embedded read pane instead of separate windows
+- quick search bar for fast search in a folder
+- a new toolbar which will be adjustable to your personal needs in the
+  future
+- import/export of LDIF and TAB or comma separated address books for
+  exchange with foreign EMail clients
+- cached images for faster access on slow machines
+- integrated (bayesian) spam filter, which will adapt itself over the
+  time (AKA: learning spam filter)
+- themes management to adjust YAM to your preferred look
+- enhanced UIDL support to avoid duplicate mails
+- automatic update function for all required components
+- lots of other improvement I don't remember right now :)
+
+
+What is still missing?
+----------------------
+- lots of translators! YAM 2.4 featured lots of different languages, but
+  due to the large amount of changed texts these catalogs are completely
+  outdated. Especially support for such common languages as french, italian,
+  spanish, etc is currently missing.
+  If you are a native speaker of a language that YAM does not offer (anymore),
+  then please contact us!!
+- lots of documentation! As with the translation the documentation largely
+  lags behind. Again, if you are a native speaker (even for english) and if
+  you are interested in updating/writing YAM's documentation then please
+  contact us!
