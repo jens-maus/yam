@@ -29,6 +29,21 @@
 (set #lang_catalog (cat "Which catalog file do you want to install?\n"
                         "(English language is built-in)"))
 (set #lang_manual "Select language for online AmigaGuide help")
+(set #no_way_back_warning (cat "\n"
+                               "WARNING!!\n"
+                               "(if your want to update an existing\n"
+                               "YAM 2.4 installation)\n"
+                               "\n"
+                               "The mail naming scheme has been changed completely.\n"
+                               "When you run YAM 2.5 for the first time all your\n"
+                               "existing mails will be converted automatically to\n"
+                               "the new scheme. After that YAM 2.4 will not be able\n"
+                               "to handle them anymore!\n"
+                               "So better backup ALL your mails BEFORE running\n"
+                               "YAM 2.5!!\n"
+                               "\n"
+                               "However, it is absolutely NO problem to install"
+                               "YAM 2.4 and YAM 2.5 in separate directories."))
 (set #faq_and_bugtracker (cat "\n"
                               "If you have any questions concerning YAM\n"
                               "you can ask these in the YAM forum:\n"
@@ -47,7 +62,7 @@
 
 ; ///
 ; /// ***** Deutsch
-(IF (= @language "deutsch")
+(if (= @language "deutsch")
 (
 (set #def_cat_lang #def_lang_Deutsch)
 (set #wrongOS  "YAM benötigt OS3.0 oder höher\n")
@@ -70,6 +85,19 @@
                               "Falls Sie einen Fehler in YAM finden sollten,\n"
                               "dann melden Sie ihn bitte im YAM-Bugtracker:\n"
                               "http://bugs.yam.ch/"))
+(set #no_way_back_warning (cat "\n"
+                               "WARNUNG!!\n"
+                               "(falls Sie eine bestehende Installation von\n"
+                               "YAM 2.4 updaten wollen)\n"
+                               "\n"
+                               "Das Namensformat der EMail-Dateien wurde grundlegend geändert.\n"
+                               "Wenn Sie YAM 2.5 zum ersten Mal starten werden alle Ihre EMails\n"
+                               "automatisch auf das neue Namensformat konvertiert. Danach\n"
+                               "können sie NICHT mehr von YAM 2.4 verarbeitet werden.\n"
+                               "Machen Sie also besser ein Backup BEVOR Sie YAM 2.5 starten!!\n"
+                               "\n"
+                               "Es ist absolut KEIN Problem YAM 2.4 und YAM 2.5 in unter-\n"
+                               "schiedlichen Verzeichnissen zu installieren."))
 (set #done_1   (cat "\nYAM wurde erfolgreich installiert.\n\n"
                     "Klicken Sie auf das \"YAM\"-Icon im Verzeichnis\n"))
 (set #done_2        "\nund es kann losgehen.\n\nViel Spass!")
@@ -77,7 +105,7 @@
 )
 ; ///
 ; /// ***** Svenska
-(IF (= @language "svenska")
+(if (= @language "svenska")
 (
 (set #def_cat_lang #def_lang_Svenska)
 (set #wrongOS  "YAM kräver OS 3.0 eller senare\n")
@@ -88,18 +116,6 @@
 (set #lang_catalog (cat "Vilka språkkataloger vill du installera?\n"
                         "(Engelska är inbyggt)"))
 (set #lang_manual "Välj språk för den AmigaGuide-baserade hjälpen")
-(set #faq_and_bugtracker (cat "\n"
-                              "If you have any questions concerning YAM\n"
-                              "you can ask these in the YAM forum:\n"
-                              "http://forum.yam.ch/\n"
-                              "\n"
-                              "Frequently asked questions are already\n"
-                              "answered in the YAM FAQ:\n"
-                              "http://faq.yam.ch/\n"
-                              "\n"
-                              "In case you find a bug in YAM, please,\n"
-                              "report it in the YAM bugtracker:\n"
-                              "http://bugs.yam.ch/"))
 (set #done_1   (cat "\nYAM installerades utan problem\n\n"
                     "Klicka på \"YAM\"-ikonen i katalogen\n"))
 (set #done_2        "\nför att pröva det.\n\nHa det så bra!")
@@ -112,7 +128,6 @@
 ;(set installer_rev (- @installer-version (* installer_ver 65536)))
 ;(if (or (< installer_ver 42) (< installer_rev 6)) (abort #wronginstaller))
 
-(message @user-level)
 (set OS_ver (getversion "exec.library" (resident)))
 (if (< OS_ver (* 39 65536)) (abort #wrongOS))
 
@@ -163,10 +178,15 @@
 ; /// Let's ask user for anything
 (complete 0)
 
+(message #no_way_back_warning)
+
+(complete 1)
+
 (if (<> 0 (exists "YAM:" (noreq)))
    (set YAM_def_dir (getassign "YAM"))
    (set YAM_def_dir @default-dest)
 )
+
 (set YAM_dir
    (askdir
       (default YAM_def_dir)
