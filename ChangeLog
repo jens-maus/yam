@@ -7,6 +7,12 @@ $URL$
 
 #### YAM 2.5 RELEASE ####################################################
 
+2007-12-07  Alexandre Balaban <abalaban@free.fr>
+
+  * doc/YAM_francais.guide: documentation french translation update according
+    to latest changes.
+  * locale/francais.ct: french translation update according to latest changes.
+
 2007-12-21  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_global.c: removed "-dev" for the final stable 2.5 release.

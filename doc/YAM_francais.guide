@@ -1,5 +1,5 @@
 @database YAM.guide
-@$VER: YAM.guide 2.5 (09.01.2007)
+@$VER: YAM.guide 2.5 (21.12.2007)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -34,11 +34,12 @@
 @REMARK  - Jean-Marc Mossu <jeanmarc.mossu@free.fr>
 @REMARK  - Pascal Rullier <rullier@bugss.org>
 @REMARK  Mise à jour v2.5 Alexandre Balaban <alexandre@balaban.fr>
+@REMARK  Basée sur YAM_english v3669
 
 @NODE "Main" "YAM - Documentation en Français (ATO-Fr)"
 
               @{B}=============================================
-               Y A M    (Yet Another Mailer)   VERSION 2.4
+               Y A M    (Yet Another Mailer)   VERSION 2.5
               =============================================@{UB}
 
                           © 2000 par Marcel Beck
@@ -131,7 +132,7 @@ Source de YAM.
 
 
 Marcel Beck
-November 2000
+Novembre 2000
 
 
 
@@ -153,10 +154,12 @@ November 2000
 * Un @{" carnet d'adresses " link "AB_W"} hiérarchisé avec groupes et listes de distribution ainsi
   que les données complètes de chaque destinataire.
 
+* Volet de visualisation intégré à la fenêtre principale, facilitant la lecture
+  de vos messages.
+
 * Configuration de l'interface graphique grâce à @{" MUI " link "MUI"}.
 
-* Un choix d'icônes MagicWorkbench, ProLite, @{" NewIcons " link "NEWI"} ou
-  GlowIcons.
+* Des thèmes, facilitant le basculement entre plusieurs thèmes d'icônes.
 
 * Client @{" POP3 " link "PROT"} interne, permettant de consulter jusqu'à 16 messageries
   différentes sur une même connexion et aussi sélectionner les messages à rapatrier.
@@ -171,9 +174,10 @@ November 2000
 * @{" Possibilités de recherche " link "FI_W"} approfondie, par exemple : rechercher un texte
   complet dans tous les messages à travers une simple requête.
 
-* Traitement des messages avec jusqu'à 100 @{" filtres " link "CO03"}. Archivage ou détournement
-  de certains messages. Messages de réponse automatique ou effacement de
-  messages publicitaires sont quelques exemples des possibilités des filtres.
+* Traitement automatique des messages avec un nombre théoriquement illimité de
+  @{" filtres " link "CO03"}. Archivage ou détournement de certains messages,
+  messages de réponse automatique ou effacement de messages publicitaires sont
+  quelques exemples des possibilités des filtres.
 
 * Support des messages protégés et signature des messages avec @{" PGP " link "PGP"} ainsi
   que l'authentification à la lecture et à la réception.
@@ -184,6 +188,8 @@ November 2000
 * Possibilité de lancer des @{" macros " link "CO13"} et support compréhensible @{" ARexx " link "REXX"}.
 
 * Des connexions sécurisées TLSv1/SSLv3 (POP3/SMTP) via AmiSSL.library.
+
+* Un filtre antispam importé de Thunderbird.
 
 * Localisé en plusieurs langues.
 
@@ -210,22 +216,21 @@ November 2000
    * @{" MUI " link "MUI"}, version 3.8 ou supérieure
    * Les classes additionnelles pour MUI :
 
-        - BetterString 11.6+
-            http://us.aminet.net/pub/aminet/dev/mui/MCC_Betterstring.lha
-        - NList 20.111+
-            http://home.t-online.de/home/sebauer/MCC_NList.lha
-        - NListtree 18.12+
-            http://home.t-online.de/home/sebauer/MCC_NListtree.lha
-        - TextEditor 15.9+
-            http://us.aminet.net/pub/aminet/dev/mui/MCC_TextEditor.lha
-        - Toolbar 15.8+
-            http://us.aminet.net/pub/aminet/dev/mui/MCC_Toolbar.lha
+        - BetterString 11.14+
+            http://aminet.net/dev/mui/MCC_BetterString-11.14.lha
+        - NList 0.101+
+            http://aminet.net/dev/mui/MCC_NList-0.101.lha
+        - TextEditor 15.25+
+             http://aminet.net/dev/mui/MCC_TextEditor-15.25.lha
+        - Thebar 21.5+
+            http://aminet.net/dev/mui/MCC_TheBar-21.5.lha
 
+   * Codesets.library 6.5+.
    * Une pile TCP/IP compatible AmiTCP (AmiTCP, Miami[DX], TermiteTCP ou
      RoadShow).
    * optionnel : XPK pour la compression/décompression des objets.
    * optionnel : PGP 2.6 ou 5.0 pour le codage et la signature des messages.
-   * optionnel : AmiSSL v1 pour les couches de sécurisées TLSv1/SSLv3 sur
+   * optionnel : AmiSSL v3 pour les couches de sécurisées TLSv1/SSLv3 sur
                  SMTP/POP.
    * optionnel : Archiveur pour la compression des fichiers, par exemple : LhA.
    * optionnel : Programme de correction, par exemple : AlphaSpell.
@@ -239,35 +244,24 @@ November 2000
 
 @{B}INSTALLATION@{UB}
 
-   Pour minimiser le temps de téléchargement, YAM 2.4 est distribué en
-cinq archives différentes qui doivent être désarchivées dans un même
-répertoire avant de lancer l'installation :
+   YAM 2.5 est distribué en trois archives différentes :
 
-@{b}YAM24.lha@{ub}
-     L'archive principale. Inclus une installation de base pour les
-     microprocesseurs 68020 ou mieux, et le manuel en Anglais au format
-     AmigaGuide.
+@{b}YAM25-AmigaOS4.lha@{ub}
+     YAM pour AmigaOS 4.
 
-@{b}YAM24cpu.lha@{ub}
-     Les différents correctifs pour transformer l'exécutable 020 en un
-     exécutable 68040/060. Inclus l'utilitaire Gpatch.
+@{b}YAM25-AmigaOS3.lha@{ub}
+     YAM pour AmigaOS 3.
 
-@{b}YAM24loc.lha@{ub}
-     Les fichiers avec les autres langues supportées : catalogues et
-     manuels au format AmigaGuide.
-
-@{b}YAM24con.lha@{ub}
-     D'autres graphismes, scripts ARexx, etc.
-
-@{b}YAM24mos.lha@{ub}
-     Le binaire pour MorphOS, inclus le lanceur.
+@{b}YAM25-MorphOS.lha@{ub}
+     YAM pour MorphOS.
 
 
 @{U}Installation avec Installer@{UU}
 
-   Ouvrez le répertoire « Install », double-cliquez sur l'icône « Français »
-et suivez les instructions de l'installer. Si vous possédez une version
-antérieure de YAM, redémarrez votre Amiga après l'installation de YAM 2.4.
+   Ouvrez le répertoire « Install », puis double-cliquez sur l'icône
+« Install-YAM » et suivez les instructions de l'installer. Si vous
+possédez une version antérieure de YAM, redémarrez votre Amiga après
+l'installation de YAM 2.5.
 
 
 @{U}Installation manuelle@{UU}
@@ -275,68 +269,18 @@ antérieure de YAM, redémarrez votre Amiga après l'installation de YAM 2.4.
    Si vous ne possédez pas l'Installer d'Amiga ou que pour une raison
 quelconque vous ne vouliez pas l'utiliser, procédez comme suit :
 
-- Créez un répertoire YAM sur votre disque dur.
+- Copiez tout le répertoire « YAM 2.5 » dans le répertoire de destination.
 
-- Copiez les fichiers « YAM », « YAM_français.guide » et « .taglines » ainsi
-  que les répertoires « Charsets », « Icons » et « Rexx » dans ce nouveau
-  répertoire. Puis renommez l'aide en « YAM.guide ».
+- Copiez les bibliothèques Mui (mcc,mcp) du répertoire @{b}Install/MUI@{ub}
+  dans le répertoire @{b}MUI:libs/MUI@{ub}.
 
-- Copiez le catalogue français « YAM.catalog » dans votre répertoire
-  « LOCALE:Catalogs/français ».
+- Copiez toutes les bibliothèques situées dans le répertoire @{b}Install/Libs@{ub}
+  vers @{b}LIBS:@{ub}.
 
-- Copiez les bibliothèques Mui (mcc,mcp) dans le répertoire « MUI:Libs/MUI ».
+- Effacez le répertoire  « Install » dans « YAM 2.5 » car vous n'en avez plus besoin.
 
-- Éditez votre fichier « S:User-Startup » et insérez cette ligne au bas du
-  texte « assign YAM: [chemin du répertoire] ».
-
-  Par exemple : « assign YAM: Work:Internet/YAM ».
-
-- Si vous possédez un microprocesseur 68040 ou 68060, vous pouvez vouloir
-  utiliser une version optimisée de YAM pour votre processeur. Pour ce
-  faire, utilisez la commande « Gpatch » fournie, que vous pouvez aussi
-  copier dans le répertoire C: pour une utilisation future et le fichier
-  « YAM.gpatch ». Ce fichier contient les correctifs binaires des versions
-  des micro-processeurs 040 et 060.
-  Utilisez cette commande pour créer un exécutable pour le 040 :
-
-          1:> GPatch YAM:YAM  <path/>YAM.gpatch  DIRECT
-
-  Si vous préférez une version 060, utilisez cette commande :
-
-          1:> GPatch YAM:YAM  <path/>YAM.gpatch  DIRECT RECURSIVE
-
-- (Optionnel) Effacez la bibliothèque « imagepool.library » du répertoire
-  « Libs: ». Cette bibliothèque était utilisé par la classe Toolbar.mcc,
-  mais la classe Toolbar corrigée fournie avec YAM 2.4 ne l'utilise plus.
-
-- Redémarrez votre AMIGA...
-
-
-Notes d'installation pour MorphOS
----------------------------------
-
-   L'installation manuel pour MorphOS nécessite quelques étapes
-   additionnelles :
-
-- Dans votre répertoire YAM:, renommez « YAM » (la version AmigaOS 68k
-  installée soit manuellement, soit en ayant utilisé le script) en
-  « YAM.amigaos », ne renommez pas l'icône !
-
-                1.> rename YAM:YAM as YAM:YAM.amigaos
-
-- Copiez l'exécutable « YAM.morphos » de « YAM24mos.lha » dans votre
-  répertoire YAM:
-
-                1.> copy YAM.morphos YAM:
-
-- Copiez l'exécutable « YAM.starter » en tant que « YAM » dans votre
-  répertoire YAM:
-
-                1.> copy YAM.starter YAM:YAM
-
-   Maintenant, vous pouvez démarrer YAM de manière habituelle (à partir
-d'un Shell ou du Workbench). La version 68k ou bien PPC sera sélectionnée
-automatiquement en fonction du système (OS) que vous utilisez.
+- Redémarrez votre Amiga et démarrez YAM depuis le nouvel emplacement en double-
+  cliquant sur son icône.
 
 @endnode
 
@@ -851,7 +795,7 @@ Installation de PGP 5.0i
  1. Pour commencer, téléchargez PGP5 à partir d'une source sûre.
     Un bon point de départ est le site :
 
-    http://www.pgpi.org/products/pgp/versions/freeware/amiga/5.0i/
+    http://www.amigau.com/amigarealm/pgp5/pgp6.html
 
  2. Installez PGP par exemple dans « Work:PGP/ » et créez votre paire de
     clefs en utilisant la commande « pgpk -g » dans un Shell.
@@ -1021,6 +965,7 @@ configuration. Il y a également trois menus de disponible.
  @{" TCP/IP           " link "CO01"}  - Réglages SMTP & POP pour le transfert des messages.
  @{" Nouveau          " link "CO02"}  - Contrôle de la réception des messages.
  @{" Filtres          " link "CO03"}  - Tri automatique et compression des messages.
+ @{" Indésirables     " link "CO15"}  - Configuration du filtre des courriers indésirables.
  @{" Lecture          " link "CO04"}  - Options d'affichage.
  @{" Écriture         " link "CO05"}  - En-têtes, corps des messages et options d'éditeur.
  @{" Répondre         " link "CO06"}  - Options des citations dans les messages.
@@ -1032,6 +977,8 @@ configuration. Il y a également trois menus de disponible.
  @{" Carnet d'adresses" link "CO12"}  - Colonnes visibles et échange de données personnelles.
  @{" ARexx            " link "CO13"}  - Réglages des scripts.
  @{" Divers           " link "CO14"}  - Chemins, AppIcon, sauver/effacer, tracer, compresser.
+ @{" Apparence        " link "CO16"}  - Changer le thème d'icône, entre autres.
+ @{" Mise à jour      " link "CO17"}  - Configuration des mises à jour.
 
  @{" Options cachées  " link "CO_H"}  - Vous ne pouvez pas les voir. :-)
  @{" Menus            " link "CO_M"}  - Les menus Projet, Éditer et Extras.
@@ -1423,12 +1370,12 @@ Entrez la commande comme si elle était exécutée depuis le Shell. Si il
 s'agit d'un script ARexx, vous devez ajouter la commande « RX » avant le nom
 du script.
 
- @{i}Exemple :@{ui} RX YAM:rexx/Newmail.yam
+ @{i}Exemple :@{ui} RX PROGDIR:rexx/Newmail.YAM
 
 @endnode
 
 @node "CO03" "Configuration - Filtres"
-@next "CO04"
+@next "CO15"
 @prev "CO02"
 @toc "CO_W"
 
@@ -1445,15 +1392,16 @@ critère, il peut déclencher certaines actions. Voici quelques applications :
  - Envoyer automatiquement des réponses définis par avance, en fonction de
    certains types de messages.
 
- - Suppression automatique des messages indésirables (SPAM (PUB...) ; une
+ - Suppression automatique des courriers indésirables (SPAM (PUB...) ; une
    vraie plaie, de nos jours).
 
  - Retransmettre automatiquement certains courriers vers un autre
    destinataire.
 
-   Vous pouvez définir jusqu'à 100 filtres. La liste de gauche montre le nom
-des filtres déjà définis. Cliquez sur un nom pour afficher dans la partie de
-droite (trois onglets), tous les détails associés à ce filtre.
+   Vous pouvez définir théoriquement un nombre illimité de filtres. La liste
+de gauche montre le nom des filtres déjà définis. Cliquez sur un nom pour
+afficher dans la partie de droite (trois onglets), tous les détails associés
+à ce filtre.
 
    Cliquez sur [Nouveau] pour créer un nouveau filtre ou utilisez [Effacer]
 pour en supprimer un. Les filtres sont exécutés dans l'ordre, du haut vers
@@ -1612,7 +1560,7 @@ l'option.
 courrier satisfaisant au(x) critère(s) du filtre. Insérez le nom du fichier
 texte à envoyer dans le champ de texte à côté de cette option.
 
- @{i}Exemple :@{ui} YAM:Auto-Texts/Answer1.txt
+ @{i}Exemple :@{ui} PROGDIR:Auto-Texts/Answer1.txt
 
 
 [ ] @{u}Exécuter@{uu}
@@ -1623,7 +1571,7 @@ ligne de commande dans le champ de texte placé à côté de cette option.
 Attention, si il s'agit d'un script ARexx, n'oubliez pas d'ajouter la
 commande « RX » en début de commande.
 
- @{i}Exemple :@{ui} rx YAM:Rexx/Subscribe.rexx
+ @{i}Exemple :@{ui} rx PROGDIR:Rexx/Subscribe.rexx
 
 
 [ ] @{u}Jouer un son@{uu}
@@ -1657,9 +1605,55 @@ option si plusieurs personnes partagent un même compte POP3.
 
 @endnode
 
+@node "CO15" "Configuration - Courrier indésirable"
+@next "CO04" 
+@prev "CO03" 
+@toc "CO_W" 
+ 
+Configuration du filtrage du courrier indésirable
+*************************************************
+ 
+ 
+@{b}Activer le filtrage des courrier indésirables@{ub}
+     Active le filtre des courriers indésirables, croyez le ou non :) 
+ 
+     @{b}Réinitialiser l'apprentissage@{ub}
+      Réinitialise les données collectées pour la détéection des indésirables. 
+      N'est nécesaire qu'en de très rares circonstances. 
+ 
+@{b}Filtrer les contenus indésirables des nouveaux courriers@{ub}
+     Inspecte automatiquement les nouveaux courriers pour détecter le contenu
+     indésirable. 
+ 
+ 
+@{b}Le carnet d'adresses est une liste blanche@{ub}
+     Un courrier dont l'adresse du champ « De: » est présente dans le carnet
+     d'adresses ne sera jamais considéré comme indésirable. 
+ 
+ 
+@{b}Marquer comme indésirable les courriers déplacés vers le dossier « Indésirables »@{ub}
+     Tout courrier déplacé manuellement dans le dossier « Indésirables » sera
+     automatiquement marqué comme étant indésirable. 
+ 
+ 
+@{b}Marquer les nouveaux courriers indésirables comme lus@{ub}
+     Tout nouveau courrier indésriable sera marqué comme étant lu.
+ 
+ 
+@{b}Remettre les courriers « Acceptables » dans la boite de réception@{ub}
+     Déplace les courriers détectés à tort comme indésirables ou les courriers
+     manuellement marqués comme « Acceptables » vers le dossier « Arrivée ».
+ 
+ 
+@{b}Appliquer les filtres@{ub}
+     Applique tous les filtres définis aux courriers redéplacés vers le dossier
+     « Boite de réception ».
+ 
+@endnode 
+
 @node "CO04" "Configuration - Lecture"
 @next "CO05"
-@prev "CO03"
+@prev "CO15"
 @toc "CO_W"
 
 @{b}@{u}Configuration - LECTURE@{uu}  (Préférences lors de la lecture des messages)@{ub}
@@ -1692,7 +1686,7 @@ dans le carnet d'adresses (bien sur, si elles s'y trouvent ;-)). Sélectionnez
 affichée (si elle a été spécifiée dans le carnet), en plus des autres données.
 
 
-[ ] @{u}Mise à la ligne@{uu}
+@{u}Retour à la ligne@{uu}
 
    Choisissez ici, soit un en-tête long sur une seule ligne, soit un en-tête
 coupé sur plusieurs lignes. Dans le premier cas, vous devrez utiliser la
@@ -1721,7 +1715,7 @@ pouvez ici définir la couleur à employer.
    Sélectionnez ici, la couleur à utiliser pour chaque niveau de citation.
 
 
-[ ] @{u}Police fixe@{uu}
+@{u}Police fixe@{uu}
 
    Il est plus pratique d'utiliser une police non-proportionnelle pour lire
 les messages car les mises en page alignées ou en tableaux seraient
@@ -1730,13 +1724,13 @@ pas de préciser la police de votre choix dans le module « TextEditor »,
 rubrique « Police fixe », des préférences MUI de YAM.
 
 
-[ ] @{u}Afficher tous les textes@{uu}
+@{u}Afficher tous les textes@{uu}
 
    Si cette option est activée et que le message est accompagné de documents
 joints au format texte, ceux-ci seront également affichés en clair.
 
 
-[ ] @{u}Formatage du texte@{uu}
+@{u}Formatage du texte@{uu}
 
    YAM utilise les caractères _ / * et # pour indiquer le soulignement,
 l'italique, le gras et la couleur. Pour certains documents spéciaux (comme
@@ -1746,41 +1740,11 @@ du texte.
 
 ---- Autres options -------------------------------------------------------
 
-@{u}Convertisseur de caractères@{uu}
-
-   Quand vous lisez un message, c'est cette table de correspondance des
-caractères qui est utilisée. Dans quelques pays, toutes les lettres ne
-peuvent pas être écrits en utilisant la norme standard ISO-Latin-1 de
-l'Amiga. En Pologne, par exemple, la table des caractères AmigaPL est très
-utilisée car elle contient les caractères spécifiques qui manquent dans les
-autres tables. YAM gère ces caractères à la lecture et à l'écriture des
-messages. Reportez-vous au chapitre @{" Référence " link "RFCH"} pour plus
-d'informations au sujet du format des tables de conversion utilisées par
-YAM.
-
-
-[ ] Auto-détection/Traduction du code
-
-   Dans certains pays, comme la Russie, il n'y a pas un seul jeu de
-caractères utilisé, mais plusieurs, comme : KOI8R, Windows1251, Alt866,
-etc. La traduction des caractères ne pourra pas être des plus efficace
-dans ce cas précis.
-
-   Cette option permet à YAM d'utiliser une approche différente, il utilise
-les statistiques qu'il peut recueillir dans le corps du texte, dans
-l'en-tête et dans toutes les parties MIME qu'il pourraît y avoir, pour
-essayer de trouver le bon jeu de caractères à utiliser pour chaque partie
-du message.
-
-   Cette option a été mise en place spécifiquement pour les utilisateurs
-de caractères cyrillic (Russes).
-
-
-[ ] Fenêtres multiples
-
-   Avec cette option, chaque message que vous choisirez de lire sera affiché
-dans une nouvelle fenêtre. Il peut y avoir jusqu'à quatre de ces fenêtres
+@{b}Fenêtres multiples@{ub}
+   Avec cette option, chaque courrier que vous choisissez de lire s'ouvre
+dans sa propre fenêtre de lecture, jusqu'à quatre fenêtres peuvent être
 ouvertes en même temps.
+
 
 @endnode
 
@@ -1834,7 +1798,7 @@ posséder les connaissances appropriées sur la structure des messages
 message que vous écrirez (sauf en cas de réponse ou de retransmission). Vous
 pouvez insérer un saut de ligne en ajoutant la suite de caractères « \\n ».
 
- @{i}Exemple :@{ui} Hello,\\n
+ @{i}Exemple :@{ui} Bonjour,\\n
 
 
 @{u}Phrase de fin@{uu}
@@ -1843,19 +1807,10 @@ pouvez insérer un saut de ligne en ajoutant la suite de caractères « \\n ».
 juste avant le séparateur de signature. Vous pouvez ajouter un saut de ligne
 en insérant les caractères suivants : « \\n ».
 
- @{i}Exemple :@{ui} Kind regards\\n\\nJohn Doe
+ @{i}Exemple :@{ui} Cordialement\\n\\nJean Durand
 
 
-@{u}Conversion des caractères@{uu}
-
-   Cette table de conversion est utilisée lors de l'écriture des nouveaux
-messages. Vous pouvez trouver des informations plus complètes dans le
-chapitre @{" Lecture " link "CO04"}.
-
- @{i}Exemple :@{ui} YAM:charsets/Latin1toUSASCII (efface les voyelles mutantes, etc.)
-
-
-[ ] Avertir lorsque la ligne du sujet est vide
+@{u}Avertir lorsque la ligne du sujet est vide@{uu}
 
    Activez cette option pour laisser YAM vous avertir lorsque vous essayez
 d'envoyer un message sans avoir rempli la ligne du sujet.
@@ -1891,14 +1846,14 @@ ici. Insérez le chemin complet de l'éditeur et un éventuel argument
       ou   C:CED -keepio
 
 
-[ ] @{u}Lancer immédiatement@{uu}
+@{u}Lancer immédiatement@{uu}
 
    Activez cette option, si vous souhaitez que l'éditeur externe soit lancé
 automatiquement lors de la création d'un nouveau message. De ce fait, vous
 n'aurez pas à cliquer sur le bouton [Éditeur] de la fenêtre d'édition.
 
 
-[ ] Mémoriser les adresses électroniques
+@{u}Mémoriser les adresses électroniques@{uu}
 
    YAM peut garder en mémoire un certain nombre d'adresses, les plus
 récentes des destinataires, lorsque vous écrivez un nouveau message, si ces
@@ -1954,7 +1909,7 @@ droite. Le gadget vous propose une liste de variables pouvant être utilisées
 
  @{i}Exemple :@{ui}
    [Début]          Bonjour %f,\\n
-   [Introduction]   Le %d, tu a écrits :\\n
+   [Introduction]   Le %d, tu a écris :\\n
    [Fin]            Salutations...
 
 
@@ -1994,7 +1949,7 @@ listes de discussion. (@{" Configuration des dossiers " link "FO_W"}).
    [Fin]            Cordialement
 
 
-[ ] @{u}Citer les messages avec@{uu}
+@{u}Citer les messages avec@{uu}
 
    Le(s) caractère(s) à utiliser pour la citation du message est définit
 dans le champ de droite. Un espace sera ajouté entre ce(s) caractère(s) et
@@ -2004,7 +1959,7 @@ initiales de l'expéditeur.
  @{i}Exemple :@{ui} %i>
 
 
-[ ] @{u}Citation externes avec@{uu}
+@{u}Citation externes avec@{uu}
 
    Le(s) caractère(s) à placer devant chaque ligne insérée en tant que
 citation externe. Un espace sera placé entre la citation et le(s)
@@ -2013,14 +1968,14 @@ avec la méthode « Citation externe ».
 
   @{i}Exemple :@{ui}  |
 
-[ ] @{u}Citer lignes vides@{uu}
+@{u}Citer lignes vides@{uu}
 
    Normalement, les lignes vides sont également affichées avec le caractère
 de citation à son début. Si vous ne souhaitez pas cela, désactivez cette
 option.
 
 
-[ ] @{u}Vérifier destinataire(s)@{uu}
+@{u}Vérifier destinataire(s)@{uu}
 
    Si cette option est activée, YAM vérifiera si l'expéditeur du message
 d'origine et le destinataire ont la même adresse. Si l'adresse du champ
@@ -2030,7 +1985,7 @@ fait, il est facile de répondre en privé à un courrier de liste de
 discussions.
 
 
-[ ] @{u}Enlever signature@{uu}
+@{u}Enlever la signature@{uu}
 
    Activez cette option pour que la signature ne soit pas citée (la
 signature étant le plus souvent effacée). Cette option ne fonctionnera que
@@ -2052,27 +2007,27 @@ privé et une autre pour le travail). Cliquez sur le bouton cyclique et
 éditez les signatures dans la petite fenêtre d'édition.
 
 
-[ ] @{u}Utiliser une signature@{uu}
+@{u}Utiliser une signature@{uu}
 
    Si cette option est activée, une signature sera insérée à la fin de
 chaque nouveau message.
 
 
-[@{u}Modifier dans éditeur externe@{uu}]
+@{u}Modifier dans éditeur externe@{uu}
 
    Cliquez sur ce bouton pour ouvrir l'éditeur externe que vous avez définit
 dans « Configuration/Écrire/Éditeur externe » et éditer la signature
 actuelle.
 
 
-[@{u}Insérer cookies aléatoires@{uu}]
+@{u}Insérer cookies aléatoires@{uu}
 
    Cliquez sur ce bouton pour insérer la variable « %t » à la position
 actuelle du curseur. YAM remplacera cette variable par un cookie choisi
 aléatoirement dans le fichier « .tagline » lors de la création du message.
 
 
-[@{u}Insérer ENV:Signature@{uu}]
+@{u}Insérer ENV:Signature@{uu}
 
    Cliquez sur ce bouton pour insérer la variable « %e » à la position
 actuelle du curseur. YAM remplacera cette variable par le contenu de la
@@ -2087,7 +2042,7 @@ l'heure ou votre poids ou ce que vous voulez...
    La base de données des cookies contient de petits poèmes ou proverbes ou
 encore, tout autre énoncé spirituel qui pourront être insérés dans votre
 signature. Il y a des milliers de ces cookies sur Aminet.
- @{i}Exemple :@{ui} YAM:.taglines
+ @{i}Exemple :@{ui} PROGDIR:.taglines
 
 
 @{u}Ligne de séparation cookies@{uu}
@@ -2113,12 +2068,12 @@ Liste des dossiers, liste des messages :
 
    Sélectionnez les éléments que vous voulez voir affichés dans les listes.
 
-   Dans tout YAM 2.4, vous pouvez avoir des menus contextuels à la
-   fois pour la liste des dossiers et celle des messages.
+   Depuis YAM 2.4, vous pouvez avoir des menus contextuels à la fois pour la
+   liste des dossiers et celle des messages.
 
 ---- Réglages généraux ----------------------------------------------------
 
-[ ] @{u}Police fixe@{uu}
+@{u}Police fixe@{uu}
 
    Il peut être plus judicieux d'utiliser des caractères non proportionnels
 pour éviter un affichage chaotique dû aux polices proportionnelles.
@@ -2126,7 +2081,7 @@ N'oubliez pas de préciser la police de votre choix dans le module
 « TextEditor » rubrique « Fonts/fixed » de la configuration de MUI.
 
 
-[ ] @{u}Heure type Swatch@{uu}
+@{u}Heure type Swatch@{uu}
 
    Activer cette option remplace l'affichage normal du temps heures:minutes
 en nombre Swatch. Cette unité de temps révolutionnaire, inventé par Swatch,
@@ -2135,10 +2090,10 @@ et a supprimée les fuseaux horaire. Le méridien de référence est dans la
 ville de Biel en Suisse.
 
 
-Format de la taille
+@{u}Format de la taille@{uu}
 
-Ce réglage vous permet de choisir un format pour la taille des messages et
-des dossiers affichés dans la liste, à partir du moment que le champ
+   Ce réglage vous permet de choisir un format pour la taille des messages
+et des dossiers affichés dans la liste, à partir du moment que le champ
 « Taille » est utilisé dans la liste.
 
 
@@ -2193,7 +2148,7 @@ vous n'avez pas spécifié le bon chemin pour l'exécutable.
  @{i}Exemple :@{ui} 0x70804A7B
 
 
-[ ] @{u}Avec clé personnelle@{uu}
+@{u}Avec clé personnelle@{uu}
 
    Crypter les messages pour un destinataire en particulier a un désavantage,
 vous ne pourrez plus lire ou éditer le message, une fois celui-ci chiffré.
@@ -2243,7 +2198,7 @@ pour une gestion informatisée alors que la référence à l'évènement peut être
 dans n'importe quelle langue.
 
 
-[ ] @{u}Découper fichier log@{uu}
+@{u}Découper fichier log@{uu}
 
    Activez cette option si vous souhaitez créer un nouveau fichier
 d'évènements chaque mois. Pour distinguer ces différents fichiers, YAM
@@ -2259,7 +2214,7 @@ comme la réception et l'envoie des messages. Dans le mode « détaillé », YAM
 indiquera tous ce qu'il fait sur chaque message.
 
 
-[ ] @{u}Archiver tous les évènements@{uu}
+@{u}Archiver tous les évènements@{uu}
 
    Désactivez cette option si vous n'êtes intéressé que par les évènements
 de transferts (envoie/réception).
@@ -2278,7 +2233,7 @@ de transferts (envoie/réception).
 ---- Au démarrage du programme -------------------------------------------
 
 
-[ ] @{u}Charger tous les dossiers@{uu}
+@{u}Charger tous les dossiers@{uu}
 
    Si vous avez des dossiers volumineux, vous pouvez accroître la vitesse
 de démarrage de YAM en désactivant cette option. De plus, le fait de
@@ -2287,25 +2242,25 @@ dossiers internes seront chargés au lancement. Les index des autres dossiers
 seront chargés au fur et à mesure des besoins.
 
 
-[ ] @{u}Marquer les nouveaux messages en non-lus@{uu}
+@{u}Marquer les nouveaux messages en non-lus@{uu}
 
    Activez cette option pour changer le statut « nouveau » en « non lu » des
 nouveaux messages dès le départ.
 
 
-[ ] @{u}Effacer les anciens messages@{uu}
+@{u}Effacer les anciens messages@{uu}
 
    Dans le cas ou vous auriez définit une durée de conservation des messages
 dans un ou plusieurs dossiers, et que vous activez cette option, YAM
 effacerait tous les messages dépassant cette durée au démarrage.
 
 
-[ ] @{u}Supprimer les messages effacés@{uu}
+@{u}Supprimer les messages effacés@{uu}
 
    Activez cette option pour supprimer les messages du dossier « effacés ».
 
 
-[ ] @{u}Vérifier les dates de naissance@{uu}
+@{u}Vérifier les dates de naissance@{uu}
 
    Si vous activez cette option, YAM recherchera dans le carnet d'adresses
 les personnes qui sont nées ce jour. Vous pourrez ainsi envoyer vos
@@ -2313,7 +2268,7 @@ félicitations dans la foulée. Lorsque YAM est exécuté depuis un Shell,
 Vous pouvez empêcher cette fonction avec l'argument NOCHECK.
 
 
-[ ] @{u}Envoyer les messages en attente@{uu}
+@{u}Envoyer les messages en attente@{uu}
 
    Si vous activez cette option et qu'il y a des messages dans le dossier en
 attente, YAM vous demandera si vous souhaitez les envoyer maintenant.
@@ -2322,7 +2277,7 @@ est établie. Vous pouvez à l'occasion empêcher YAM de faire ceci en le
 lançant depuis un Shell avec l'argument NOCHECK.
 
 
-[ ] @{u}Charger les nouveaux messages@{uu}
+@{u}Charger les nouveaux messages@{uu}
 
    Si cette option est activée (et qu'une couche TCP/IP est en route sur
 votre système), YAM vérifiera la présence de nouveaux messages sur votre
@@ -2333,7 +2288,7 @@ le lançant depuis un Shell avec l'argument NOCHECK.
 ---- À la fermeture de YAM -----------
 
 
-[ ] @{u}Envoyer les messages en attente@{uu}
+@{u}Envoyer les messages en attente@{uu}
 
    Si vous activez cette option et qu'il reste des messages dans le dossier
 en attente, YAM vous demandera si vous souhaitez les envoyer maintenant.
@@ -2341,14 +2296,14 @@ Veuillez noter que cela ne pourra fonctionner que si une connexion TCP/IP
 est établie.
 
 
-[ ] @{u}Effacer les anciens messages@{uu}
+@{u}Effacer les anciens messages@{uu}
 
    Dans le cas ou vous auriez définit une durée de conservation des messages
 dans un ou plusieurs dossiers, et que vous activez cette option, YAM
 effacerait tous les messages dépassant cette durée avant de quitter.
 
 
-[ ] @{u}Supprimer les messages effacés@{uu}
+@{u}Supprimer les messages effacés@{uu}
 
    Activez cette option pour supprimer les messages du dossier « effacés ».
 
@@ -2491,7 +2446,7 @@ Choisissez un de ces modes :
 
    Les photos des expéditeurs seront sauvegardées ici.
 
- @{i}Exemple :@{ui} YAM:Gallery
+ @{i}Exemple :@{ui} PROGDIR:Gallery
 
 
 @{u}Groupe pour les nouvelles entrées@{uu}
@@ -2548,7 +2503,7 @@ Démarrer navigateur.
    Nom du fichier script, avec les paramètres à utiliser, mais sans la
 commande « RX ».
 
- @{i}Exemple :@{ui} YAM:rexx/StartBrowser.rexx
+ @{i}Exemple :@{ui} PROGDIR:rexx/StartBrowser.rexx
 
 
 [ ] @{u}Ouvre une fenêtre de suivit@{uu}
@@ -2566,7 +2521,7 @@ d'attendre qu'il se termine pour poursuivre.
 @endnode
 
 @node "CO14" "Configuration - Divers"
-@next "CO_H"
+@next "CO16"
 @prev "CO13"
 @toc "CO_W"
 
@@ -2705,6 +2660,71 @@ sources en utilisant le gadget de droite.
 
 @endnode
 
+@node "CO16" "Configuration - Apparence"
+@next "CO17"
+@prev "CO14"
+@toc "CO_W"
+
+Configuration - Apparence
+*************************
+
+
+   Ici YAM affichera une liste des thèmes disponibles et un petit
+aperçu de ce à quoi cela ressemblera.
+
+
+@{b}Activer@{ub}
+     Activate le thème sélection, ce qui nécessite que vous enregistriez
+la configuration et que vous relanciez YAM de façon à voir les nouveaux
+icônes.
+
+
+@{b}Barre d'information@{ub}
+     Affichera une barre d'information soit en haut, au milieu, en bas ou
+pas du tout.
+
+
+@{b}Affichage@{ub}
+     Vous permet de déterminer ce que la barre d'information doit afficher.
+Il existe un grand nombre d'options différentes parmi lesquelles choisir.
+
+
+@{b}Format de la taille@{ub}
+     Vous permet de choisir comment YAM affichera les tailles des courriers
+et des dossiers.
+
+
+@{b}Volet de visualisation dans fenêtre principalew@{ub}
+     Affiche un volet de visualisation dans la fenêtre principake, ce qui
+vous permet de lire vos courriers directement dans la fenêtre principales
+au lieu de double cliquer dessus pour l'ouvrir dans une fenêtre de lecture
+séparée.
+
+
+@{b}Afficher la barre de recherche rapide dans la fenêtre principale@{ub}
+     Affiche une barre de recherche rapide dans la fenêtre principale pour
+les recherches rapides :)
+
+@endnode
+
+@node "CO17" "Configuration - Mises à jour"
+@next "CO_H"
+@prev "CO16"
+@toc "CO_W"
+
+Configuration - Mises à jour
+****************************
+
+
+@{b}Recherche de mises à jour@{ub}
+     Vous permet de choisir l'intervalle auquel YAM va rechercher des mises
+à jour de lui-même et d'autres logiciels tiers. Un bouton à côté vous permet
+de rechercher manuellement les mises à jour à souhait.
+
+     En dessous la date exacte de la dernière recherche est affichée.
+
+@endnode
+
 @node "CO_H" "Configuration - Options cachées"
 @next "CO_M"
 @prev "CO14"
@@ -2714,8 +2734,8 @@ sources en utilisant le gadget de droite.
 
    YAM utilise quelques paramètres qui ne sont pas accessibles à partir de
 la fenêtre de configuration. Vous devez éditer manuellement, à l'aide d'un
-éditeur de texte, le fichier YAM:.config et modifier les paramètres qui se
-trouvent dans la partie [Advanced].
+éditeur de texte, le fichier @{b}:.config@{ub} et modifier les paramètres qui se
+trouvent dans la partie @{b}Advanced@{ub}.
 
 
 @{u}LetterPart@{uu}
@@ -2951,6 +2971,12 @@ La fenêtre principale de YAM est construite de cette façon :
    |                  |      Ici s'affiche le contenu       |
    |                  |      du dossier sélectionné         |
    |                  |                                     |
+   |                  |-------------------------------------|
+   |                  |                                     |
+   |                  |    Volet de visualisation           |
+   |                  |    Affiche le contenu du courrier   |
+   |                  |    actuellement sélectionné         |
+   |                  |                                     |
    `------------------^-------------------------------------'
 
 @endnode
@@ -2969,7 +2995,7 @@ Quand vous interrogez votre serveur, les nouveaux messages sont sauvés dans
 ce dossier. Avec l'aide des @{" Filtres " link "CO03"} vous pouvez aussi faire déplacer
 les nouveaux messages dans des dossiers définis.
 
-@{FG SHINE}Attente@{FG TEXT} : Ce dossier contient les messages que vous avez écrit et qui
+@{FG SHINE}En Attente@{FG TEXT} : Ce dossier contient les messages que vous avez écrit et qui
 ne sont pas encore expédiés
 
 @{FG SHINE}Envoyés@{FG TEXT} : Ici vous pouvez voir les messages qui ont été expédiés avec succès.
@@ -2977,7 +3003,7 @@ Les messages expédiés sont automatiquement déplacés dans ce dossier. Ici
 aussi vous pouvez appliquer un filtre qui déplacera les messages dans
 différents dossiers que vous aurez définis.
 
-@{FG SHINE}Effacés@{FG TEXT} : Ce dossier contient les messages que vous avez effacé à l'aide de
+@{FG SHINE}Corbeille@{FG TEXT} : Ce dossier contient les messages que vous avez effacé à l'aide de
 l'icône « Poubelle » ou avec un filtre. Avant d'être supprimés du disque dur,
 les messages sont placés ici. Cela vous permet de récupérer les messages que
 vous effacez.
@@ -3176,9 +3202,9 @@ le style classique MagicWB :
 Sur la barre des boutons, les fonctions les plus utilisées sont accessibles
 directement.
 
-     ___ ___ ___ ___ ___    ___ ___ ___    ___ ___    ___ ___ ___ ___
-    | 1 | 2 | 3 | 4 | 5 |  | 6 | 7 | 8 |  | 9 |10 |  |11 |12 |13 |14 |
-    |___|___|___|___|___|  |___|___|___|  |___|___|  |___|___|___|___|
+   .---.---.---.---.---.  .---.---.---.  .---.---.  .---.---.---.---.---.
+   | 1 | 2 | 3 | 4 | 5 |  | 6 | 7 | 8 |  | 9 |10 |  |11 |12 |13 |14 |15 |
+   `---^---^---^---^---'  `---^---^---'  `---^---'  `---^---^---^---^---'
 
 Le tableau indique le lien entre les boutons (position et description), les
 raccourcis clavier et les fonctions dans le menu. Vous pouvez choisir soit
@@ -3187,23 +3213,24 @@ combinaison des deux : voir dans @{" Préférences/MUI " LINK "MAM4"}.
 
       @{U}Boutons@{UU}    @{U}Raccourci@{UU}     @{U}Concerne le menu...@{UU}
 
-  1   [Lire]     l,Entrer      @{" Messages/Lire " link "MAM3"}
-  2   [Éditer]   é             @{" Messages/Éditer " link "MAM3"}
-  3   [Déplacer] d             @{" Messages/Déplacer " link "MAM3"}
-  4   [Effacer]  f,<Del>       @{" Messages/Effacer " link "MAM3"}
-  5   [-> Annu]  n             @{" Messages/Sauver adresse... " link "MAM3"}
+  1   [Lire]        l,Entrer   @{" Messages/Lire " link "MAM3"}
+  2   [Éditer]      é          @{" Messages/Éditer " link "MAM3"}
+  3   [Déplacer]    d          @{" Messages/Déplacer " link "MAM3"}
+  4   [Effacer]     f,<Del>    @{" Messages/Effacer " link "MAM3"}
+  5   [-> Annu]     n          @{" Messages/Sauver adresse... " link "MAM3"}
 
-  6   [Écrire]   c             @{" Messages/Nouveau " link "MAM3"}
-  7   [Répondre] r             @{" Messages/Répondre " link "MAM3"}
-  8   [Retrans.] t             @{" Messages/Retransmettre... " link "MAM3"}
+  6   [Nouveau]     n          @{" Messages/Nouveau " link "MAM3"}
+  7   [Répondre]    r          @{" Messages/Répondre " link "MAM3"}
+  8   [Retrans.]    t          @{" Messages/Retransmettre... " link "MAM3"}
 
-  9   [Recevoir] v             @{" Dossiers/Charger les nouveaux messages " link "MAM2" 70}
- 10   [Envoyer]  y             @{" Dossiers/Envoyer les courriers en attente " link "MAM2" 70}
+  9   [Recevoir]    v          @{" Dossiers/Charger les nouveaux messages " link "MAM2" 70}
+ 10   [Envoyer]     y          @{" Dossiers/Envoyer les courriers en attente " link "MAM2" 70}
 
- 11   [Filtrer]  i             @{" Dossiers/Filtrer " link "MAM2"}
- 12   [Chercher] h             @{" Dossiers/Chercher " link "MAM2"}
- 13   [Carnet]   a             @{" Préférences/Carnet d'adresses... " link "MAM4"}
- 14   [Config]   g             @{" Préférences/Configuration " link "MAM4"}
+ 11   [Indésirable] a          @{" Dossiers/Appliquer le filtre des indésirables " link "MAM2"}
+ 12   [Filtrer]     i          @{" Dossiers/Filtrer " link "MAM2"}
+ 13   [Chercher]    h          @{" Dossiers/Chercher " link "MAM2"}
+ 14   [Carnet]      a          @{" Préférences/Carnet d'adresses... " link "MAM4"}
+ 15   [Config]      g          @{" Préférences/Configuration " link "MAM4"}
 
 
 ATTENTION : les raccourcis clavier sont en MINUCSULE.
@@ -3324,7 +3351,7 @@ de confirmation vous sera proposée. Lorsqu'il s'agit d'un groupe, sont
 contenu sera déplacé vers un niveau d'imbriquement supérieur.
 
 
-@{U}Dossiers/Ordre@{UU}  » Sauver|Restituer
+@{U}Dossiers/Ordre » Sauver|Restituer @{UU}
 
    Sauve ou restitue l'ordre de classement des dossiers dans votre @{" liste " link "MA00"}.
 L'ordre est également sauvé après la modification des paramètres d'un dossier.
@@ -3342,9 +3369,13 @@ dans le dossier.
 messages du dossier actuel.
 
 
-@{U}Dossiers/Vider dossier « Effacés » !@{UU}
+@{U}Dossiers/Appliquer le filtre des indésirables@{UU}
 
-   Détruit DEFINITIVEMENT les messages qui sont dans le dossier « Effacés »
+   Applique le filtre des courriers indésirables à tous les courriers du dossier courant.
+
+@{U}Dossiers/Vider la corbeille@{UU}
+
+   Détruit DEFINITIVEMENT les messages qui sont dans le dossier « Corbeille ».
 
 
 @{U}Dossiers/Réindexer@{UU}
@@ -3457,15 +3488,15 @@ message. Si vous voulez sauver les messages sous leur format original,
 utilisez @{" Dossiers/Exporter " link "MAM2"}.
 
 
-@{U}Messages/Documents joints@{UU}  » Sauver
+@{U}Messages/Pièces jointes » Sauver@{UU}
 
-   Sauve les attachements d'un ou plusieurs messages dans le répertoire de
-votre choix.
+   Sauve les pièces jointes d'un ou plusieurs messages dans le répertoire
+de votre choix.
 
 
-@{U}Messages/Documents joints@{UU}  » Supprimer
+@{U}Messages/Pièces jointes » Supprimer@{UU}
 
-   Efface les documents joints qui ne sont plus utiles d'un ou plusieurs
+   Efface les pièces jointes qui ne sont plus utiles d'un ou plusieurs
 messages pour gagner de la place sur votre disque dur. Une remarque sera
 laissée dans le message ainsi modifié.
 
@@ -3508,7 +3539,7 @@ l'en-tête du message. Les texte pour répondre définis dans la configuration
 ne sont pas utilisés.
 
 
-@{U}Messages/Sélectionner@{UU}  » Tous|Rien|Inverser
+@{U}Messages/Sélectionner » Tous | Aucun | Inverser@{UU}
 
    Sélectionne tous les messages contenus dans le dossier actif, enlève
 la sélection ou l'inverse (les messages non-sélectionnés seront sélectionnés
@@ -3525,11 +3556,12 @@ plusieurs destinataires, il sera créé une liste de distribution dans votre
 carnet.
 
 
-@{U}Messages/Changer le statut@{UU}  » Non-lu|Lu|Bloqué|Attente
+@{U}Messages/Changer le statut » Marqué | Non marqué | Non lu | Lu | Bloqué | En Attente | Courrier indésirable | Courrier acceptable || Tous à Lu@{UU}
 
    Modifie le statut d'un ou plusieurs messages. Vous pourrez par exemple
 changer un message bloqué en message en attente ou mettre un message en
-statut non-lu.
+statut non-lu, ou manuellement marquer des courriers suspects comme
+indésirables.
 
 
 @{U}Message/Changer de sujet...@{UU}
@@ -3924,18 +3956,8 @@ copié dans le dossier « effacés », après qu'il ait été transmis.
 
 @{u}Accusé de réception@{uu}
 
-   En activant cette option, vous demandez au serveur de courriers du
-destinataire de vous retourner un accusé de bonne réception du message.
-Normalement vous ne serez averti qu'en cas de problème. Veuillez remarquer
-que tous les serveurs de courriers ne gèrent pas cette fonction. La commande
-de notification est envoyée dans le champ « Return-Receipt-To: »
-de l'en-tête.
-
-
-@{u}Suivre le message@{uu}
-
    Si cette option est activée, il sera demandé au programme de courrier
-électronique du destinataire de vous informer du suivit de votre message, en
+électronique du destinataire de vous informer du suivi de votre message, en
 précisant si le message a été lu, effacé, ou retransmis par le destinataire.
 Notez qu'il y a peu de programmes de courrier qui gèrent cette option et que
 le destinataire peut interdire l'envoi de ce rapport. Par conséquent, ne
@@ -4017,24 +4039,24 @@ chapitre consacré à @{" PGP " link "PGP"} et dans : @{" CONFIGURATION/Sécurité "
    Ouvre un fichier existant.
 
 
-@{u}Texte/Inséré en@{uu}  » texte normal
+@{u}Texte/Inséré en » texte normal@{uu}
 
    Insère un fichier texte à la position actuelle du curseur.
 
 
-@{u}Texte/Inséré en@{uu}  » citation
+@{u}Texte/Inséré en » citation@{uu}
 
    Insère un fichier texte à la position actuelle du curseur, en débutant
 chaque ligne avec le caractère de citation (habituellement « > »).
 
 
-@{u}Texte/Inséré en@{uu}  » citation externe
+@{u}Texte/Inséré en » citation externe@{uu}
 
    Insère un fichier texte à la position actuelle du curseur, en débutant
 chaque ligne avec un autre caractère de citation (habituellement « | »).
 
 
-@{u}Texte/Inséré en@{uu}  » codé ROT-13
+@{u}Texte/Inséré en » codé ROT-13@{uu}
 
    Insère un fichier texte à la position actuelle du curseur et remplace
 chaque lettre par une lettre située 13 caractères plus loin, en cyclant de
@@ -4071,15 +4093,16 @@ par le système lors de la sauvegarde du fichier temporaire).
 @{u}Édition/Coller@{uu}
    Insère le texte présent dans le presse-papiers à la position du curseur.
 
-@{u}Édition/Coller en@{uu}  » citation
+@{u}Édition/Coller en » citation@{uu}
    Insère le texte présent dans le presse-papiers à la position du curseur
 en ajoutant le préfixe de citation en début de chaque ligne.
 
-@{u}Édition/Coller en@{uu}  » citation externe
+@{u}Édition/Coller en » citation externe@{uu}
    Insère le texte présent dans le presse-papiers à la position du curseur
-en ajoutant le préfixe de citation externe en début de chaque ligne.
+en ajoutant le préfixe de citation externe en début de chaque ligne (en
+général @{b}|@{ub}).
 
-@{u}Édition/Coller en@{uu}  » codé ROT-13
+@{u}Édition/Coller en » codé ROT-13@{uu}
    Insère le texte présent dans le presse-papiers à la position du curseur en
 lui appliquant l'encodage ROT 13. (Voir aussi @{" Texte/Insérer en " link "WRM1"}).
 
@@ -4092,35 +4115,35 @@ lui appliquant l'encodage ROT 13. (Voir aussi @{" Texte/Insérer en " link "WRM1"
 @{u}Édition/Glossaire@{uu}
    Ouvre la fenêtre du @{" Glossaire " link "DI_W"}.
 
-@{u}Édition/Style@{uu} » Gras
+@{u}Édition/Style » Gras@{uu}
    Alterne le style « Gras » sur les caractères sélectionnés ou entrés en
 séquences. Lors de la transmission, les caractères en gras sont délimités
 par des astérisques. Ce qui donne : @{b}gras@{ub} -> *gras*
 
-@{u}Édition/Style@{uu} » Italique
+@{u}Édition/Style » Italique@{uu}
    Alterne le style « Italique » sur les caractères sélectionnés ou entrés en
 séquences. Lors de la transmission, les caractères en italiques sont
 délimités par des barres obliques (slash).
 Ce qui donne : @{i}italique@{ui} -> /italique/
 
-@{u}Édition/Style@{uu} » Souligné
+@{u}Édition/Style » Souligné@{uu}
    Alterne le style « Souligné » sur les caractères sélectionnés ou entrés
 en séquences. Lors de la transmission, les caractères soulignés sont
 délimités par le caractère souligné (« _ »).
 Ce qui donne : @{u}souligné@{uu} -> _souligné_
 
-@{u}Édition/Style@{uu} » Couleur
+@{u}Édition/Style » Couleur@{uu}
    Alterne le style « Gras » sur les caractères sélectionnés ou entrés en
 séquences. La couleur à appliquer est définie dans la partie @{" Lecture " link "CO04"} de la
 configuration. Lors de la transmission, les caractères en couleur sont
 délimités par des dièses, ce qui donne : @{fg fill}couleur@{fg text} -> #couleur#
 
-@{u}Édition/Ligne de séparation@{uu}  » Fine @{i}ou@{ui} Epaisse
+@{u}Édition/Ligne de séparation » Fine | Epaisse@{uu}
    Insère une ligne de séparation à la position du curseur. Ceci se fait en
 ajoutant l'une des deux balises <sd> ou <tsb>. YAM et d'autres programmes de
 courriers sous MUI interprètent ces balises comme une ligne de séparation.
 
-@{u}Édition/Emotions@{uu} » sourire | indifférent | mécontent/triste | ironique
+@{u}Édition/Emotions » sourire | indifférent | mécontent/triste | ironique@{uu}
     Insère un « smiley » à la position du curseur. Les expressions des
 « smilies » sont là pour exprimer vos sentiments en compensant le manque
 d'intonation que vous auriez mis en vous exprimant de vive voix.
@@ -4196,7 +4219,7 @@ ceux qui existent par défaut :
  <Alt-Tab>             quitte l'éditeur
 
 La page internet de « TextEditor » peut être visité à :
-http:\//www.diku.dk/students/duff/TextEditor/index.html
+http://sourceforge.net/projects/texteditor-mcc/
 @endnode
 
 @node "DI_W" "Le glossaire"
@@ -4371,22 +4394,22 @@ le message « décodé » (comme il apparaît à l'écran), ou de sauver un des
 fichiers joint.
 
 
-@{u}Message/Documents joints@{uu}  » Montrer
+@{u}Message/Pièces jointes » Montrer@{uu}
 
    Ceci affiche le message ou une de ces parties à l'aide d'un des
-programmes MIME spécifiés dans la configuration MIME. Vous pouvez choisir
+programmes MIME spécifiés dans la @{" configuration MIME " link "CO11"}. Vous pouvez choisir
 soit d'afficher le message au format brut (pour vérifier les erreurs), soit
-voir l'un des fichiers attachés. Si rien ne se passe, vérifiez les
-préférences des @{" programmes MIME " link "CO11"}. dans la configuration.
+voir l'une des pièces jointes. Si rien ne se passe, vérifiez les préférences
+des programmes MIME dans la configuration.
 
 
-@{u}Message/Documents joints@{uu}  » Tout sauver
+@{u}Message/Pièces jointes » Tout sauver@{uu}
 
    Sauve tous les fichiers attachés du message actuel vers un répertoire de
 votre choix.
 
 
-@{u}Message/Documents joints@{uu}  » Supprimer
+@{u}Message/Pièces jointes » Supprimer@{uu}
 
    Supprime tous les documents joints au message sélectionné afin de
 récupérer de l'espace disque. Remarque : Ces fichiers ne sont pas envoyés
@@ -4435,7 +4458,7 @@ liste de distribution.
 
 
 @{u}Message/Changer le statut@{uu}
-   Vous permet de changer le statut d'un message (lu, non-lu, ...)
+   Vous permet de changer le statut d'un message (lu, non-lu, marqué...)
 
 
 @{u}Message/Changer de sujet@{uu}
@@ -4583,9 +4606,9 @@ de formatage du texte.
 
 @{b}@{u}Fenêtre de lecture - BARRE D'OUTILS@{ub}@{uu}
 
-  ____ ____ ____ ____   ____ ____ ____   ____ ____ ____ ____
- |  1 |  2 |  3 |  4 | |  5 |  6 |  7 | |  8 |  9 | 10 | 11 |
- |____|____|____|____| |____|____|____| |____|____|____|____|
+          .---.---.---.---. .---.---.---. .---.---.---.---. .---.
+          | 1 | 2 | 3 | 4 | | 5 | 6 | 7 | | 8 | 9 |10 |11 | |12 |
+          `---^---^---^---' `---^---^---' `---^---^---^---' `---'
 
       @{u}Bouton@{uu}        @{u}Raccourcis@{uu}   @{u}Equivalent au menu...@{uu}
 
@@ -4602,6 +4625,8 @@ de formatage du texte.
   9.  [Déplacer]    V             @{" Message/Déplacer " link "REM1"}
  10.  [Répondre]    R             @{" Message/Répondre " link "REM1"}
  11.  [Retrans.]    W             @{" Message/Retransmettre " link "REM1"}
+
+ 12.  [Indésirable] A             @{" Message/Changer le statut " link "REM1"}
 
    Autres caractéristiques à l'aide d'une touche de contrôle en plus du
 bouton pressé :
@@ -5466,10 +5491,10 @@ vous sélectionnerez cet utilisateur, au lancement du programme.
 utilisateur,  comme  ses  dossiers  et  ses  fichiers  de  configuration. Ce
 répertoire sera manifestement différent d'un utilisateur à l'autre.
 
- @{i}Exemple:@{ui} YAM:bill
+ @{i}Exemple:@{ui} PROGDIR:bill
 
 
-[ ] @{u}Utiliser annuaire global@{uu}
+@{u}Utiliser annuaire global@{uu}
 
    Cochez cette option si l'utilisateur n'utilise pas son propre carnet
 d'adresses. Le carnet d'adresses sera alors partagé avec les autres
@@ -5477,7 +5502,7 @@ utilisateurs. Le fichier est placé dans le répertoire de base du programme
 et non pas dans le répertoire de l'utilisateur.
 
 
-[ ] @{u}Utilise glossaire global@{uu}
+@{u}Utilise glossaire global@{uu}
 
    Activez cette option si l'utilisateur n'utilise pas un glossaire
 différent, mais partage celui des autres utilisateurs. Le fichier reste
@@ -5485,13 +5510,13 @@ alors placé dans le répertoire du programme et non dans le répertoire de
 l'utilisateur.
 
 
-[ ] @{u}Privilèges super-utilisateur@{uu}
+@{u}Privilèges super-utilisateur@{uu}
 
    Activer cette option permet à l'utilisateur de créer ou de retirer les
 autres utilisateurs.
 
 
-[ ] @{u}Copie la configuration de l'utilisateur actuel@{uu}
+@{u}Copie la configuration de l'utilisateur actuel@{uu}
 
    Si vous ajoutez un utilisateur, vous pouvez sélectionner cette option  et
 ainsi copier les préférences actuelles vers le répertoire du nouvel
@@ -5549,7 +5574,7 @@ Référence
  @{" Interface ARexx       " link "RF01"}  - Contrôler YAM à partir d'autres programmes.
  @{" Structure de l'installation " link "RF02"}  - Organisation de YAM une fois installé.
  @{" Stockage d'un message " link "RF03"}  - Stockage et indexation des courriers sur le disque.
- @{" Gestion des icônes    " link "RF04"}  - Ajouter ou modifier les icônes utilisées par YAM.
+ @{" Gestion des thèmes    " link "RF04"}  - Ajouter ou modifier les thèmes utilisés par YAM.
  @{" Formats des fichiers  " link "RF05"}  - Divers formats de fichiers.
 
 @endnode
@@ -8656,14 +8681,18 @@ REQUEST
 
 @{b}EXEMPLE@{ub}
          /* Enable result codes */
-
          OPTIONS RESULTS
 
-         /* Open a custom requester */
+         /* Prepare the text for our requester.
+          * Here we have to escape the single '*' (asterisk) via
+          * an additional asterisk sign because an asterisk is
+          * a reserved character for ARexx itself
+          */
 
          body = '"Isn't YAM just great?"'
-         gadgets = '"*_Yeah!|_No way, Outlook rules!|_What is YAM?"'
+         gadgets = '"**_Yeah!|_No way, Outlook rules!|_What is YAM?"
 
+         /* Open a custom requester */
          REQUEST body gadgets
 
 @{b}BUGS@{ub}
@@ -8740,7 +8769,7 @@ REQUESTSTRING
                   stored
      BODY/A     - a string containing the body of the requester
      STRING/K   - optional, text string used by default
-     SECRET/S   - force characters to appear as asterisks ("*")
+     SECRET/S   - force characters to appear as asterisks ('*')
 
 @{b}RESULTAT@{ub}
      VAR          - info returned by the query
@@ -9767,25 +9796,25 @@ WRITETO
 
 @{b}@{u}Structure des fichiers@{ub}@{uu}
 
-   Dans le répertoire du programme YAM (généralement YAM:) on peut y trouver
-les fichiers et les sous-répertoires suivants :
+   Dans le répertoire du programme YAM on peut trouver les fichiers et
+les sous-répertoires suivants :
 
   YAM               Le programme lui-même.
   YAM.info          L'icône du programme.
   YAM.guide         Cette documentation au format AmigaGuide.
 
-  Icons/            Les @{" Icônes " link "RF04"} utilisées par YAM pour son interface graphique.
+  Themes/           Les @{" Thèmes " link "RF04"} utilisées par YAM pour son interface graphique.
 
   Rexx/             Les programmes ARexx pour YAM.
   Gallery/          Les photos des personnes présentes dans le carnet d'adresses.
-  Charsets/         Character set conversion tables
-  Parsers/          Les analysers pour la @{" conversion automatique des codepages " link "CO04"}
 
   .config           le fichier de @{" configuration " link "CO_W"}.
   .folders          la liste des @{" dossiers " link "MA00"}.
   .addressbook      le @{" carnet d'adresses " link "AB_W"}.
   .glossary         le @{" glossaire " link "DI_W"}.
   .users            la liste des @{" utilisateurs de YAM " link "US_W"}.
+  .spamdata         les données d'apprentissage des indésirables
+  .updatestate      informations pour le mécanisme de mise à jour automatique.
   .signature        votre @{" signature " link "CO07"} personnelle.
   .altsignature1    la première signature alternative.
   .altsignature2    la seconde signature alternative.
@@ -9798,7 +9827,7 @@ les fichiers et les sous-répertoires suivants :
   incoming/         le répertoire des messages reçus.
   outgoing/         le répertoire des messages à envoyer.
   sent/             le répertoire des messages envoyés.
-  deleted/          le répertoire des messages effacés.
+  trash/            le répertoire des messages effacés.
 
 @endnode
 
@@ -9820,22 +9849,38 @@ caractéristiques de chaque dossier (boîte aux lettres).
 
 @endnode
 
-@node "RF04" "Référence - Gestion des icônes"
+@node "RF04" "Référence - Gestion des thèmes"
 @next "RF05"
 @prev "RF03"
 @toc "RF_W"
 
-Référence - Gestion des icônes
+Référence - Gestion des thèmes
 ==============================
 
 
-   YAM utilise les icônes et images contenues dans /Icons pour son interface
-graphique. Il existe plusieurs types d'icônes :
+   YAM utilise les icônes et images contenues dans /Themes/default pour son
+interface graphique. Il existe plusieurs types d'icônes :
 
-@{b}check.info
-empty.info
-new.info
-old.info@{ub}
+@{b}config/config_#?, config_#?_big@{ub}
+     Ce sont les images que vous voyez lorsque vous ouvrez la fenêtre de
+     configuration.de YAM.
+
+
+@{b}folder/folder_#?, folder_#?_new@{ub}
+     Ce sont les images utilisées devant les dossiers standards Arrivée,
+     Corbeille, En Attente et Envoyés. Ceux ayant le suffixe « _new »
+     sont utilisés automatiquement lorsqu'il y a des courriers nouveaux
+     ou non lus dans le dossier.
+
+     Les images « folder_fold » et « folder_unfold » sont spéciales : elles
+     sont utilisées comme icône pour les groupes de dossiers.
+
+     Un fichier image « .fimage » dans un dossier permet de remplacer
+     l'image par défaut. C'est également la seule méthode pour avoir
+     des images affichées devant les dossiers personnalisés.
+
+
+@{b}icon/check.info icon/empty.info icon/new.info icon/old.info@{ub}
 
     Les icônes montrant l'état de la boîte aux lettres YAM.
 
@@ -9845,18 +9890,7 @@ old.info@{ub}
     @{b}old.info@{ub}      La boîte aux lettres ne contient que d'anciens messages.
 
 
-@{b}#?.toolbar@{ub}
-     Ceci sont les images utilisées pour la construction des barres d'outils
-     dans les fenêtres principale, de lecture, d'édition et du carnet
-     d'adresses. Celles nommées « #?_G.toolbar » sont les images grisées
-     affichées lorsqu'elles sont désactivées.
-
-     Depuis la version 2.4 de YAM, une fonction de recherche de texte dans
-     la fenêtre d'édition a vue le jour. Les images « Write#?.toolbar » ont
-     été mises à jour pour implémenter l'icône de cette fonction.
-
-
-@{b}Icons/status_#?@{ub}
+@{b}Status/status_#?@{ub}
      Les @{" icônes de statuts " link "MA0S"} affichées dans YAM pour indiquer le statut
      des messages.
 
@@ -9865,19 +9899,26 @@ old.info@{ub}
      données correspondantes à l'expéditeur/destinataire.
 
 
-@{b}icons/folder_#?@{ub} (V2.4)
+@{b}toolbar/tb_#?, tb_#?_G, tb_#?_S@{ub}
 
-     C'est ici que sont définies les images placées devant les noms des
-     dossiers de bases : En attente, Reçus, Effacés et Envoyés. Celles
-     avec le suffixe « _new » sont utilisées automatiquement à chaque fois
-     qu'il y a des messages non lus dans le dossier.
+     C'est ici que sont définies les images utilisées pour construire les
+     barres d'outils des fenêtres principale, lecture, écriture et carnet
+     d'adresse. Celles nommées « tb_#?_G » correspondent à la variante
+     « grisée », c-à-d qu'elles fournissent les images à utiliser lorsque
+     l'icône doit semblé « grisé » ou désactivé.
+     Celles nommées « tb_#?_S » correspondent à la variante « sélectionnée »
+     soit lorsque vous pressez un bouton.
 
-     Les images « folder_fold » et « folder_unfold » sont spéciales : elles
-     sont utilisées comme icône pour les groupes de dossiers.
+@{b}.theme, logo, preview@{ub}
+     .theme contient diverses variables textuelles importantes nécessaires
+     au moteur de thème pour fonctionner.
 
-     Un fichier d'image « .fimage » dans un dossier, remplace l'image par
-     défaut. C'est la seule méthode supportée pour afficher des images
-     devant les dossiers personnalisés.
+     Le « logo » est ce que vous voyez lorsque vous démarrez et quittez YAM
+     mais aussi dans la fenêtre « à propos ». (Note: seul le logo par défaut
+     est affiché, quel que soit le thème que vous avez sélectionné).
+
+     La "preview" est un petit aperçu montrant à quoi ressemble ce thème
+     d'icône dans Configuration/Apparence.
 
 @endnode
 
@@ -9897,7 +9938,6 @@ Référence - Divers formats de fichiers
  @{" Le fichier .glossary    " link "RFGL"}  - Format du fichier « .glossary ».
  @{" Le fichier .uidl        " link "RFUI"}  - Format du fichier « .uidl ».
  @{" Le fichier .users       " link "RFUS"}  - Format du fichier « .users ».
- @{" Les fichiers de caractères " link "RFCH"}  - Format du fichier des tables de conversion.
  @{" Le fichier d'évènements   " link "RFLO"}  - Format du fichier des évènements.
 
 @endnode
@@ -9931,16 +9971,16 @@ format :
     page d'accueil               |                ·
     sécurité par défaut          |                ·
     \@ENDUSER        -------------'                ·
-    \@LIST alias     »»»»»»»»»»»»»                 ·
-    adresse retour               v                ·
-    liste nom                    v                ·
-    description                  v                ·
-    membre #1                     » LISTE         ·
-    membre #2                    ^                ·
-    ...                          ^                ·
-    membre #n                    ^                ·
-                                 ^                ·
-    \@ENDLIST        »»»»»»»»»»»»»                 ·
+    \@LIST alias     -------------.                ·
+    adresse retour               |                ·
+    liste nom                    |                ·
+    description                  |                ·
+    membre #1                     > LISTE         ·
+    membre #2                    |                ·
+    ...                          |                ·
+    membre #n                    |                ·
+                                 |                ·
+    \@ENDLIST        -------------'                ·
     \@ENDGROUP     ·································
 
 
@@ -10068,7 +10108,7 @@ où
      utiliser lors d'un envoi dans la liste de discussions :
 
         0 = aucune
-        1 = signature par défaut, i.e. YAM:.signature
+        1 = signature par défaut, i.e. PROGDIR:.signature
         2 = alt. signature #1
         3 = alt. signature #2
 
@@ -10182,7 +10222,7 @@ correspondants ayant été téléchargés avec succès.
 @endnode
 
 @node "RFUS" "Le fichier .users"
-@next "RFCH"
+@next "RFLO"
 @prev "RFUI"
 @toc "RF05"
 
@@ -10220,46 +10260,10 @@ par défaut dans le réglage pour un seul utilisateur.
 
 @endnode
 
-@node "RFCH" "Les fichiers de jeux de caractères (charsets)"
-@next "RFLO"
-@prev "RFUS"
-@toc "RF05"
-
-Les fichiers de jeux de caractères (charsets)
----------------------------------------------
-
-   YAM peut utiliser des tables de conversion des jeux de caractères lors
-de la lecture et de l'écriture des messages, comme indiqué dans la
-configuration. Une table de conversion d'un jeu de caractères ressemble
-à ceci :
-
-
-       1ere ligne :   YCT1 - YAM Charset Translation
-       2nde ligne :   Description du convertisseur
-    autres lignes :   (optionnel) FROM jeu de caractères source (e.g. iso-5589-1)
-                      (optionnel) TO jeu de caractères de destination
-                      (optionnel) HEADER (NDT: en-tête)
-                      Ancien caractère = Nouveau caractère
-
-
-   Les caractères peuvent être défini soit en code hexadécimal avec un « $ »
-juste devant, soit avec le vrai caractère. Ces deux définitions sont
-valides : « $E5=$61 » et « å=a ».
-
-   Avec le mot clé HEADER, la conversion du jeu de caractères est également
-applicable à l'en-tête du message.
-
-   Les jeux de caractères spécifiés par FROM et TO peuvent être spécifiés avec
-des motifs AmigaDOS. Cela signifie qu'il est possible de spécifier un motif de
-jeu de caractères de la façon suivante 'iso-8859-[1|2]' (se reporter aux
- @{" Jokers Amiga-DOS " link "DOSW"}). De cette manière il est possible de
-traiter plusieurs jeux de caractères différents avec une table de conversion.
-
-@endnode
 
 @node "RFLO" "Le fichier d'événéments"
 @next "RFAB"
-@prev "RFCH"
+@prev "RFUS"
 @toc "RF05"
 
 Le fichier d'événéments
@@ -10388,8 +10392,8 @@ des réglages de MUI et choisir NListviews ->  Misc ->  Misc2 ->
 Déplacer YAM sur une autre partition ou dans un autre répertoire
 ----------------------------------------------------------------
 
-   Déplacer votre répertoire « YAM: » vers un nouvel emplacement
-   est une procédure qui requière quelques étapes :
+   Déplacer votre répertoire de YAM vers un nouvel emplacement
+   est une procédure qui requiert quelques étapes :
 
   1. Quittez YAM s'il est actuellement en cours d'utilisation.
 
@@ -10404,11 +10408,7 @@ Déplacer YAM sur une autre partition ou dans un autre répertoire
      courriers de conserver les informations de leur statut (lu, non-lu,
      nouveau, ...)
 
-  3. Modifiez l'assignation de « YAM: » vers la nouvelle place. Vous devriez
-     utiliser : « assign YAM: <nouveau chemin> » maintenant et modifier
-     cette phrase dans votre fichier « s:User-Startup ».
-
-  4. Enfin, mettez à jour le fichier YAM:.users pour être sûr qu'il pointe
+  3. Enfin, mettez à jour le fichier YAM:.users pour être sûr qu'il pointe
      vers le nouveau répertoire. Si vous ne le faites pas, YAM essaiera
      de recréer/lire/ etc. les dossiers à l'ancienne position. Faites-y
      attention.
@@ -10645,10 +10645,10 @@ nombre de ressources internet, entités et utilisateurs conservent les
 crochets « [] » dans la forme non encodée et ceci est utilisé par YAM pour
 arrêter son analyse d'URL dès qu'un de ces caractères est trouvé, par
 exemple, dans « <http://www.example.com/files[7]/myfile> ».
-Pour contourner ce problème, YAM 2.4 tient compte de ces caractères dans
-l'adresse (URL).
+Pour contourner ce problème, depuis la version 2.4, YAM tient compte de ces
+caractères dans l'adresse (URL).
 
-   Les paranthèses « () » sont autorisées dans les adresse URL non encodées.
+   Les parenthèses « () » sont autorisées dans les adresse URL non encodées.
 Sachant que celles-ci ne doivent pas être utilisées pour délimiter les
 adresses. Il est recommandé d'utiliser « < » et « > » pour cela.
 
@@ -10770,7 +10770,7 @@ Support
  @{" Rapporter les erreurs      " link "INF2"}  - Comment rapporter une erreur ?
  @{" Demander des améliorations " link "INF3"}  - Où les poster ?
  @{" Demander des modifications " link "INF4"}  - Comment obtenir des modifications dans YAM ?
- @{" Gestion des CVS            " link "INF5"}  - Obtenir les codes sources.
+ @{" Dépôt SVN                  " link "INF5"}  - Obtenir les codes sources.
 
 @endnode
 
@@ -10867,11 +10867,11 @@ précisions de votre part. L'erreur en sera corrigée plus rapidement.
               interne, et par conséquent retirée de la base de données.
               Vérifiez le fichier « ChangeLog », pour en être sûr :
 
-      http://cvs.sf.net/cgi-bin/viewcvs.cgi/*checkout*/yamos/yamos/ChangeLog
+      http://yamos.svn.sourceforge.net/viewvc/yamos/trunk/ChangeLog?view=log
 
       2. Essayez de faire au mieux pour indiquer une « courte description »
          mais très explicite du problème. N'oubliez pas d'indiquer la
-         version de YAM qui cause le problème. Exemple : « 2.4 : Faire
+         version de YAM qui cause le problème. Exemple : « 2.5 : Faire
          xyz provoque un crash de YAM ».
 
       3. N'hésitez pas à bien décrire le problème dans votre rapport en
@@ -10924,29 +10924,33 @@ Soyez précis dans votre demande, elle n'en sera que mieux comprise.
 
 @endnode
 
-@node "INF5" "Support - Dépositaire CVS"
+@node "INF5" "Support - Dépôt SVN
 @next "INF0"
 @prev "INF4"
 @toc "INFO"
 
-Support - Dépositaire CVS
-=========================
+Support - Dépôt SVN
+===================
 
 
-   Le dépositaire YAMOS CVS est hébergé par SourceForge.net et peut être
-vérifié à travers un serveur anonyme (pserver) CVS. Pour commencer vous
-devez vous connecter au serveur avec :
+   Le dépôt SVN YAMOS est hébergé par SourceForge.net et peut être téléchargé
+à travers accès SVN anonyme. Vous pouvez obtenir les tous derniers sources de
+YAM (dans la branche trunk) en utilisant la commande suivante :
 
-     cvs -d:pserver:anonymous\@cvs.yamos.sf.net:/cvsroot/yamos login
+     svn co https://yamos.svn.sourceforge.net/svnroot/yamos/trunk yamos
 
-   Appuyez sur <Entrer> quand un mot de passe vous est demandé. Vous pourrez
-alors vérifier le projet dans son ensemble avec :
+   Cela récupèrera les sources de notre tronc (NDT: 'trunk' en anglais) dans
+un répertoire local 'yamos'.
 
-     cvs -d:pserver:anonymous\@cvs.yamos.sf.net:/cvsroot/yamos checkout .
+   Si vous avez déjà récupéré une version d'un des modules et que vous voulez
+le mettre à jour :
+
+     $> cd <le répertoire du module>
+     $> svn up
 
    Si vous souhaitez obtenir un accès en écriture pour contribuer à ce
 projet, merci de rejoindre la @{" liste des développeurs YAMOS " link "INF1"}
-et leur demander.
+et de le demander là bas.
 
 @endnode
 
@@ -10960,19 +10964,18 @@ et leur demander.
 Quelques unes des fonctions qui pourraient apparaître dans une prochaine
 version de YAM :
 
-- Support des messages au format HTML (lecture seul).
-
-- Configuration des menus contextuels.
-
-- Configuration des barres d'outils.
-
-- Support du protocole IMAP-4.
-
-- Support des fonctionnalités LDAP pour remplacer le carnet d'adresses.
-
-- Transfert asynchrone des courriers (multithreading interne).
-
-- Amélioration de la documentation.
+- Lecture des messages au format HTML [optionnel] (via htmlview.mcc),
+- Support du protocole IMAP-4,
+- Nombre illimité de fenêtre de lecture,
+- Complètement retravailler l'interface du carnet d'adresse,
+- Support de plusieurs identités utilisateur (similaire à Thunderbird),
+- Support de GnuPG (via interface gpgme),
+- Transfert asynchrone des courriers (multithreading interne),
+- Menus contextuels configurables,
+- Barres d'outils configurables,
+- Supprot de plusieurs serveurs SMTP,
+- Retravailler et simplifier la fonctionnalité des liste de diffusion,
+- Créer un port AROS (sous Zune).
 
 @endnode
 
@@ -10984,49 +10987,72 @@ version de YAM :
 @{b}@{u}REMERCIEMENTS@{ub}@{uu}
 
 
-YAM 2.4 vous est proposé par :
-   (par ordre alphabétique)
+YAM 2.5 vous est proposé par :
 
-      Alexey Ivanov <amis\@amiga.org.ru>
-      Allan Odgaard <duff\@diku.dk>
-      Christian Hattemer <krille\@users.sourceforge.net>
-      Dirk Stöcker <stoecker\@epost.de>
-      Giles Burdett <layabouts\@the-giant-sofa.demon.co.uk>
-      Gunther Nikl <gni\@gecko.de>
-      Jacob Laursen <laursen\@myself.com>
-      Jens Langner <Jens.Langner\@light-speed.de>
-      Jörg Strohmayer <nospam\@gmx.de>
-      Karoly Balogh <charlie\@scenergy.dfmk.hu>
+      Jens Langner <Jens.Langner\@light-speed.de> 
+      Thore Boeckelmann <tboeckel\@gmx.de> 
+      Gunther Nikl <gni\@gecko.de> 
+      Alexey Ivanov <amis\@amiga.org.ru> 
+
+
+   Contributeurs 
+
+      David Rey 
+      Dirk Stoecker 
+      Christian Hattemer 
+      Jacob Laursen 
+      Joerg Strohmayer 
+      Andrew Bell 
+      Allan Odgaard 
+      Giles Burdett 
+      Olaf Barthel 
+
+
+   Contributeurs traducteurs
+
+      Alexandre Balaban
+      Par Boberg
 
 
    Contributions intégrées
 
-      Stefan Stuntz        (MUI)
-      Allan Odgaard        (TextEditor.mcc, BetterString.mcc)
-      Benny Kjær Nielsen   (Toolbar.mcc)
-      Marcin Orlowski      (Flexcat)
+      Stefan Stuntz                  (MUI)
+      Allan Odgaard,
+      TextEditor Open Source Team &
+      BetterString Open Source Team  (TextEditor.mcc, BetterString.mcc)
+      Alfonso Ranieri &
+      Thebar Open Source Team        (Thebar.mcc)
+      Marcin Orlowski &
+      Flexcat Open Source Team       (Flexcat)
       Gilles Masson,
       Carsten Scholling,
       Przemyslaw Gruchala,
-      Sebastian Bauer
-      & Jens Langner       (NList.mcc, NListview.mcc)
-      Carsten Scholling    (NListtree.mcc)
-      Andrija Antonijevic  (AmiSSL library)
+      Sebastian Bauer,
+      Jens Langner,
+      Carsten Scholling &
+      NList Open Source Team         (NList.mcc, NListview.mcc & NListtree.mcc)
+      Andrija Antonijevic,
+      Stefan Burstroem               (AmiSSL library)
       Urban Dominik Mueller,
       Bryan Ford,
       Christian Schneider,
-      Christian von Roques
-      & Dirk Stöcker          (XPK)
-      Stephan Rupprecht       (NewReadArgs)
-      Andrew Bell             (GenClasses)
-      Emmanuel Lesueur        (MorphOS starter tool)
-      Ralf Gruner             (GPatch)
-      Troels Walsted Hansen   (OpenURL)
-      Alessandro Zumo         (NewMouse standard)
-      Holger Kruse            (Miami)
-      NSDi                    (AmiTCP/Genesis)
+      Christian von Roques &
+      Dirk Stöcker                   (XPK)
+      Alfonso Ranieri &
+      Codesets library -
+      Open Source Team               (Codesets library)
+      Stephan Rupprecht              (NewReadArgs)
+      Andrew Bell                    (GenClasses)
+      Emmanuel Lesueur               (MorphOS starter tool)
+      Ralf Gruner                    (GPatch)
+      Troels Walsted Hansen,
+      Alfonso Ranieri &
+      OpenURL Open Source Team       (OpenURL)
+      Alessandro Zumo                (NewMouse standard)
+      Holger Kruse                   (Miami)
+      NSDi                           (AmiTCP/Genesis)
       Ron Rivest &
-      Colin Plumb             (MD5 algorithm support)
+      Colin Plumb                    (MD5 algorithm support)
 
 
    Idée originale
@@ -11039,17 +11065,17 @@ YAM 2.4 vous est proposé par :
       David Rey
 
 
-   Interim betas provided by
+   Bétas intermédiaires fournies par
 
       Michael Trebilcock
 
 
-   Standard Folder images
+   Images standard des dossiers
 
       Philip A. Vedovatti <vedovatti\@u.washington.edu>
 
 
-   MagicWBIcons
+   Icônes MagicWB
 
       Pavel Narozny, Roman Patzner
 
@@ -11059,18 +11085,18 @@ YAM 2.4 vous est proposé par :
       Ash Thomas
 
 
-   ProLite style icons
+   Icônes style ProLite
   
       Eric van Velthooveen, Trevor Morris
 
 
-   Additional GlowIcons
+   GlowIcons additionnels
 
       Thomas Peterseim  <http://mitglied.lycos.de/IconDesigner/>
       Martin Merz       <http://www.masonicons.de/>
 
 
-   YAM 1.0 - 2.2 betatesters
+   YAM 1.0 - 2.2 betatesteurs
 
       Phil Beazley, Benjamin Busche, Mario Cattaneo, Patrick Ernst,
       Giuseppe Ghibo, Christian Just, Laurent Kempe, Peter Kromarek,
@@ -11082,7 +11108,7 @@ YAM 2.4 vous est proposé par :
       Michael Zaruba
 
 
-   YAM 1.0 - 2.2 English guide translators
+   YAM 1.0 - 2.2 Traducteurs du guide anglais
 
       Ulf Seltier, James Bridge, Tony P. Parr
 
@@ -11094,6 +11120,9 @@ Du guide de YAM, du catalogue et du script d'installation (Français) :
  - Hervé Dupont,
  - Jean-Marc Mossu,
  - Pascal Rullier.
+
+Après la version 2.4, la mise à jour de la traduction française est
+exclusivement réalisée par Alexandre Balaban.
 
 @endnode
 
@@ -11138,7 +11167,7 @@ elles ont une apparence très professionnelle maintenant.
                           @{B}MUI - MagicUserInterface@{UB}
 
 
-                  (c) Copyright 1993-2003 de Stefan Stuntz
+                  (c) Copyright 1993-2007 de Stefan Stuntz
 
 
  MUI est un système pour configurer des interfaces graphiques utilisateur.
@@ -11264,7 +11293,6 @@ elles ont une apparence très professionnelle maintenant.
    @{" Correspondance des motifs " link "DOSW"}
    @{" Couleur des URLs " link "CO04"}
    @{" Courrier électronique, qu'est-ce que c'est ? " link "MAIL"}
-   @{" CVS repository " link "INF5"}
 
 
    D...
@@ -11363,6 +11391,7 @@ elles ont une apparence très professionnelle maintenant.
    @{" Icônes de statut (d'état) " link MA0S}
    @{" Immédiatement. Effacer les messages " link "CO14"}
    @{" Importation des courriers " link "MAM2"}
+   @{" Indésirables (spam) " link "CO15"}
    @{" INFO, commande ARexx " link "RX_INFO"}
    @{" Installation " link "INST"}
    @{" Interface ARexx" link REXX}
@@ -11504,6 +11533,7 @@ elles ont une apparence très professionnelle maintenant.
    @{" Signatures. Comment les afficher " link "CO04"}
    @{" SMTP AUTH " link "CO01"}
    @{" Sources. Obtenir les sources " link "INF5"}
+   @{" Spam " link "CO15"}
    @{" SSLv3. Réglages de POP3 sécurisé " link "CO01"}
    @{" Statuts des icônes " link MA0S}
    @{" STLS. Réglages de POP3 sécurisé " link "CO01"}
@@ -11513,6 +11543,7 @@ elles ont une apparence très professionnelle maintenant.
    @{" SUBJECT, Type d'outils " link "RF00"}
    @{" Sujet. Avertissement lorsqu'il est vide " link "CO05"}
    @{" Support " link "INFO"}
+   @{" SVN, dépôt " link "INF5"}
    @{" Swatch Beats, unité de temps " link "CO08"}
    @{" Système requis " link REQS}
 
@@ -11541,6 +11572,7 @@ elles ont une apparence très professionnelle maintenant.
    V...
 
    @{" Vérification automatique des courriers " link "CO02"}
+   @{" SVN, dépôt " link "INF5"}
 
 
    W...
