@@ -21,7 +21,7 @@
 ;/// ***** English
 (set #def_cat_lang #def_lang_English)
 (set #def_doc_lang #def_doc_English)
-(set #wrongOS  "YAM needs at least OS 3.0 to run!\n")
+(set #wrongOS  "YAM needs at least AmigaOS 3.0 to run!\n")
 (set #wrongMUI "YAM needs at least MUI 3.8 to run!\n")
 (set #wrongCPU "YAM needs at least a 68020 CPU to run!\n")
 (set #YAM_dir  (cat "Please select a directory for YAM\n"
@@ -31,16 +31,16 @@
 (set #lang_manual "Select language for online AmigaGuide help")
 (set #no_way_back_warning (cat "\n"
                                "WARNING!!\n"
-                               "(if your want to update an existing\n"
+                               "(if you want to update an existing\n"
                                "YAM 2.4 installation)\n"
                                "\n"
                                "The mail naming scheme has been changed completely.\n"
                                "When you run YAM 2.5 for the first time all your\n"
                                "existing mails will be converted automatically to\n"
                                "the new scheme. After that YAM 2.4 will not be able\n"
-                               "to handle them anymore!\n"
+                               "to handle them anymore\n"
                                "So better backup ALL your mails BEFORE running\n"
-                               "YAM 2.5!!\n"
+                               "YAM 2.5.\n"
                                "\n"
                                "However, it is absolutely NO problem to install"
                                "YAM 2.4 and YAM 2.5 in separate directories."))
@@ -65,8 +65,8 @@
 (if (= @language "deutsch")
 (
 (set #def_cat_lang #def_lang_Deutsch)
-(set #wrongOS  "YAM benötigt OS3.0 oder höher\n")
-(set #wrongMUI "YAM benötigt MUI3.8 oder höher\n")
+(set #wrongOS  "YAM benötigt AmigaOS 3.0 oder höher\n")
+(set #wrongMUI "YAM benötigt MUI 3.8 oder höher\n")
 (set #wrongCPU "YAM läuft nur ab einer 68020 CPU\n")
 (set #YAM_dir  (cat"Wählen Sie ein Verzeichnis für YAM\n"
                    "(es wird KEIN eigenes Verzeichnis erstellt!)"))
@@ -94,7 +94,7 @@
                                "Wenn Sie YAM 2.5 zum ersten Mal starten werden alle Ihre EMails\n"
                                "automatisch auf das neue Namensformat konvertiert. Danach\n"
                                "können sie NICHT mehr von YAM 2.4 verarbeitet werden.\n"
-                               "Machen Sie also besser ein Backup BEVOR Sie YAM 2.5 starten!!\n"
+                               "Machen Sie also besser ein Backup BEVOR Sie YAM 2.5 starten.\n"
                                "\n"
                                "Es ist absolut KEIN Problem YAM 2.4 und YAM 2.5 in unter-\n"
                                "schiedlichen Verzeichnissen zu installieren."))
@@ -108,7 +108,7 @@
 (if (= @language "svenska")
 (
 (set #def_cat_lang #def_lang_Svenska)
-(set #wrongOS  "YAM kräver OS 3.0 eller senare\n")
+(set #wrongOS  "YAM kräver AmigaOS 3.0 eller senare\n")
 (set #wrongMUI "YAM kräver MUI 3.8 eller senare\n")
 (set #wrongCPU "YAM kräver 68020 processor eller bättre\n")
 (set #YAM_dir  (cat "Välj katalog att installera YAM i\n"
@@ -125,8 +125,8 @@
                                "När du kör YAM 2.5 för första gången, kommer alla\n"
                                "dina nuvarande mailfiler att konverteras automatiskt till\n"
                                "det nya schemat. Efter det kommer inte YAM 2.4 att kunna\n"
-                               "hantera dem längre!\n"
-                               "Så, backa upp ALLA dina mailfiler FÖRE du kör YAM 2.5!!\n"
+                               "hantera dem längre.\n"
+                               "Så, backa upp ALLA dina mailfiler FÖRE du kör YAM 2.5.\n"
                                "\n"
                                "Men, det är absolut INGA problem att installera\n"
                                "YAM 2.4 och YAM 2.5 i separata kataloger."))
@@ -249,16 +249,6 @@
    )
 )
 
-; disabled temporarily
-;(set Docs_lang
-;   (askchoice
-;      (prompt  #lang_manual)
-;      (help    @askchoice-help)
-;      (choices "English")
-;      (default #def_doc_lang)
-;   )
-;)
-
 (complete 20)
 ; ///
 ; /// Here we go!
@@ -293,74 +283,75 @@
 
 (complete 40)
 
+; copy .taglines file
 (if (not (exists (tackon YAM_dir ".taglines")))
    (copyfiles (source "/.taglines") (dest YAM_dir) (help @copyfiles-help))
 )
 
+; copy .addressbook file
 (if (not (exists (tackon YAM_dir ".addressbook")))
    (copyfiles (source "/.addressbook") (dest YAM_dir) (help @copyfiles-help))
 )
 
-(if (> Catalog_lang 0)
+; make sure the Catalogs directory exists
+(set Cat_dir (tackon YAM_dir "Catalogs"))
+(if (not (exists Cat_dir))  (makedir Cat_dir))
+
+; copy the icon of the Catalogs directory
+(if (not (exists (tackon YAM_dir "Catalogs.info")))
+   (copyfiles (source "/Catalogs.info")
+              (dest YAM_dir)
+              (infos)
+              (noposition)
+              (help @copyfiles-help)
+   )
+)
+
+; copy the YAM.cd file for people wanting to translate
+(if (not (exists (tackon Cat_dir "YAM.cd")))
+   (copyfiles (source "/Catalogs/YAM.cd")
+              (dest Cat_dir)
+              (infos)
+              (noposition)
+              (help @copyfiles-help)
+   )
+)
+
+; german catalog file
+(if (bitand Catalog_lang #def_lang_Deutsch)
    (
-      (set Cat_dir (tackon YAM_dir "Catalogs"))
-      (if (not (exists Cat_dir))  (makedir Cat_dir))
+      (makedir (tackon Cat_dir #cat_name_Deutsch))
 
-
-      (if (not (exists (tackon YAM_dir "Catalogs.info")))
-         (copyfiles (source "/Catalogs.info")
-                    (dest YAM_dir)
-                    (infos)
-                    (noposition)
-                    (help @copyfiles-help)
-         )
-      )
-
-      (if (bitand Catalog_lang #def_lang_Deutsch)
-         (
-            (makedir (tackon Cat_dir #cat_name_Deutsch))
-
-            (copyfiles (source "/Catalogs/german")
-               (choices "YAM.catalog")
-               (dest (tackon Cat_dir #cat_name_Deutsch))
-            )
-         )
-      )
-
-      (if (bitand Catalog_lang #def_lang_Svenska)
-         (
-            (makedir (tackon Cat_dir #cat_name_Svenska))
-
-            (copyfiles (source "/Catalogs/swedish")
-               (choices "YAM.catalog")
-               (dest (tackon Cat_dir #cat_name_Svenska))
-            )
-         )
-      )
-
-      ; accents of certain languages (OS4 only)
-      (if (bitand Catalog_lang #def_lang_English_British)
-         (
-            (makedir (tackon Cat_dir #cat_name_English_British))
-
-            (copyfiles (source "/Catalogs/english-british")
-               (choices "YAM.catalog")
-               (dest (tackon Cat_dir #cat_name_English_British))
-            )
-         )
+      (copyfiles (source "/Catalogs/german")
+         (choices "YAM.catalog")
+         (dest (tackon Cat_dir #cat_name_Deutsch))
       )
    )
 )
 
-; disabled temporarily
-;(if (= Docs_lang #def_doc_English)
-   (copyfiles (source "/Docs/YAM_english.guide")
-              (dest YAM_dir)
-              (newname "YAM.guide")
-              (infos)
-              (noposition)
+; swedish catalog file
+(if (bitand Catalog_lang #def_lang_Svenska)
+   (
+      (makedir (tackon Cat_dir #cat_name_Svenska))
+
+      (copyfiles (source "/Catalogs/swedish")
+         (choices "YAM.catalog")
+         (dest (tackon Cat_dir #cat_name_Svenska))
+      )
    )
-;)
+)
+
+; english-british catalog file
+(if (bitand Catalog_lang #def_lang_English_British)
+   (
+      (makedir (tackon Cat_dir #cat_name_English_British))
+
+      (copyfiles (source "/Catalogs/english-british")
+         (choices "YAM.catalog")
+         (dest (tackon Cat_dir #cat_name_English_British))
+      )
+   )
+)
 
 (complete 50)
 
@@ -396,6 +387,15 @@
    )
 )
 
+; copy the guide to the main installation directory
+(copyfiles (source "/Docs/YAM_english.guide")
+   (dest YAM_dir)
+   (newname "YAM.guide")
+   (infos)
+   (noposition)
+)
+
+; copy the ReadMe file
 (copyfiles (source "/ReadMe")  (dest YAM_dir) (infos))
 
 (complete 60)
@@ -436,7 +436,7 @@
 
 (complete 80)
 
-(foreach "MUI/" "#?.m??"
+(foreach "MUI/" "#?.mc?"
    (copylib (prompt (cat "MUI - " @each-name))
             (source (cat "MUI/" @each-name))
             (dest "MUI:Libs/MUI/")
