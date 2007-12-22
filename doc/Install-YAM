@@ -112,6 +112,7 @@
 ;(set installer_rev (- @installer-version (* installer_ver 65536)))
 ;(if (or (< installer_ver 42) (< installer_rev 6)) (abort #wronginstaller))
 
+(message @user-level)
 (set OS_ver (getversion "exec.library" (resident)))
 (if (< OS_ver (* 39 65536)) (abort #wrongOS))
 
@@ -218,7 +219,20 @@
 (complete 30)
 
 ; make sure the YAM dir really exists
-(makedir YAM_dir (infos))
+(if (not (exists YAM_dir))
+   (
+      ; create the directory
+      (makedir YAM_dir)
+      ; copy the directory icon
+      (copyfiles (source "//YAM 2.5.info")
+                 (dest (tackon YAM_dir "/"))
+                 (newname "YAM.info")
+                 (infos)
+                 (noposition)
+                 (help @copyfiles-help)
+      )
+   )
+)
 
 ; copy the executable
 (copyfiles (source "/YAM") (dest YAM_dir) (help @copyfiles-help))
@@ -295,10 +309,10 @@
 ; disabled temporarily
 ;(if (= Docs_lang #def_doc_English)
    (copyfiles (source "/Docs/YAM_english.guide")
-      (dest YAM_dir)
-      (newname "YAM.guide")
-      (infos)
-      (noposition)
+              (dest YAM_dir)
+              (newname "YAM.guide")
+              (infos)
+              (noposition)
    )
 ;)
 
