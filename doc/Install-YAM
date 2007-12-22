@@ -202,14 +202,15 @@
    )
 )
 
-(set Docs_lang
-   (askchoice
-      (prompt  #lang_manual)
-      (help    @askchoice-help)
-      (choices "English")
-      (default #def_doc_lang)
-   )
-)
+; disabled temporarily
+;(set Docs_lang
+;   (askchoice
+;      (prompt  #lang_manual)
+;      (help    @askchoice-help)
+;      (choices "English")
+;      (default #def_doc_lang)
+;   )
+;)
 
 (complete 20)
 ; ///
@@ -291,14 +292,15 @@
    )
 )
 
-(if (= Docs_lang #def_doc_English)
+; disabled temporarily
+;(if (= Docs_lang #def_doc_English)
    (copyfiles (source "/Docs/YAM_english.guide")
       (dest YAM_dir)
       (newname "YAM.guide")
       (infos)
       (noposition)
    )
-)
+;)
 
 (complete 50)
 
